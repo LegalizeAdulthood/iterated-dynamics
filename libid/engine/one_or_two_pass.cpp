@@ -4,8 +4,10 @@
 
 #include "engine/calcfrac.h"
 #include "engine/resume.h"
+#include "engine/StandardFractal.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
+#include "ui/KeyboardHandler.h"
 #include "ui/video.h"
 
 using namespace id::ui;
@@ -16,8 +18,7 @@ namespace id::engine
 
 bool OnePass::iterate()
 {
-    run();
-    return true;
+    return run() != -1;
 }
 
 int OnePass::run()
@@ -25,8 +26,11 @@ int OnePass::run()
     g_total_passes = 1;
     if (standard_calc(2, CalcMode::ONE_PASS) == -1)
     {
-        add_work_list(g_start_pt.x, m_resume_row, g_stop_pt.x, stop_row_for_resume(), m_resume_col, m_resume_row,
-            g_work_pass, g_work_symmetry);
+        if (calc_interrupted())
+        {
+            add_work_list(g_start_pt.x, m_resume_row, g_stop_pt.x, stop_row_for_resume(), m_resume_col, m_resume_row,
+                g_work_pass, g_work_symmetry);
+        }
         return -1;
     }
     return 0;
@@ -34,8 +38,7 @@ int OnePass::run()
 
 bool TwoPass::iterate()
 {
-    run();
-    return true;
+    return run() != -1;
 }
 
 int TwoPass::run()
@@ -45,8 +48,11 @@ int TwoPass::run()
     {
         if (standard_calc(1, CalcMode::TWO_PASS) == -1)
         {
-            add_work_list(
-                g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, m_resume_col, m_resume_row, 0, g_work_symmetry);
+            if (calc_interrupted())
+            {
+                add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, m_resume_col, m_resume_row, 0,
+                    g_work_symmetry);
+            }
             return -1;
         }
         if (g_num_work_list > 0) // worklist not empty, defer 2nd pass
@@ -62,8 +68,11 @@ int TwoPass::run()
     // second or only pass
     if (standard_calc(2, CalcMode::TWO_PASS) == -1)
     {
-        add_work_list(g_start_pt.x, m_resume_row, g_stop_pt.x, stop_row_for_resume(), m_resume_col, m_resume_row,
-            g_work_pass, g_work_symmetry);
+        if (calc_interrupted())
+        {
+            add_work_list(g_start_pt.x, m_resume_row, g_stop_pt.x, stop_row_for_resume(), m_resume_col, m_resume_row,
+                g_work_pass, g_work_symmetry);
+        }
         return -1;
     }
 
@@ -75,8 +84,12 @@ int OneOrTwoPass::standard_calc(const int pass_num, const CalcMode calc_mode)
     g_passes = Passes::SEQUENTIAL_SCAN;
     m_current_pass = pass_num;
     g_current_pass = m_current_pass;
-    m_row = g_begin_pt.y;
-    m_col = g_begin_pt.x;
+    if (!m_standard_calc_active)
+    {
+        m_row = g_begin_pt.y;
+        m_col = g_begin_pt.x;
+        m_standard_calc_active = true;
+    }
     g_row = m_row;
     g_col = m_col;
 
@@ -130,6 +143,11 @@ int OneOrTwoPass::standard_calc(const int pass_num, const CalcMode calc_mode)
                 }
             }
             ++m_col;
+            if (StandardFractal *standard_fractal = active_standard_fractal();
+                standard_fractal != nullptr && standard_fractal->consume_standard_pixel_yield())
+            {
+                return -1;
+            }
         }
         m_col = g_i_start_pt.x;
         if (pass_num == 1 && (m_row & 1) == 0)
@@ -140,6 +158,7 @@ int OneOrTwoPass::standard_calc(const int pass_num, const CalcMode calc_mode)
     }
     g_row = m_row;
     g_col = m_col;
+    m_standard_calc_active = false;
     return 0;
 }
 

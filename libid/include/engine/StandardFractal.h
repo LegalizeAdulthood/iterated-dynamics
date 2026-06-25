@@ -15,6 +15,7 @@ class StandardFractal
 {
 public:
     int calculate_standard_pixel(bool yield_to_ui);
+    bool consume_standard_pixel_yield();
 
     void resume();
 
@@ -50,6 +51,7 @@ private:
     void start_next_pass();
     void start_timer();
     void start_work_list();
+    bool standard_pixel_yield_enabled() const;
     void update_timer();
 
     fractals::FractalDispatch m_saved_dispatch{};
@@ -79,6 +81,7 @@ private:
     bool m_caught_a_cycle{};
     bool m_dispatch_saved{};
     bool m_standard_pixel_active{};
+    bool m_standard_pixel_completed_yield{};
     bool m_standard_pixel_input_checked{};
     bool m_standard_pixel_iteration_started{};
     bool m_timer_started{};

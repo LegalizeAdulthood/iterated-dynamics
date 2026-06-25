@@ -18,6 +18,7 @@ protected:
     int m_col{};
     int m_resume_row{};
     int m_resume_col{};
+    bool m_standard_calc_active{};
 };
 
 class OnePass : private OneOrTwoPass

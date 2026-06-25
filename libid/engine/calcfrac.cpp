@@ -1104,13 +1104,14 @@ static void set_new_z_from_bignum()
 // per pixel 1/2/b/g, called with g_row & g_col set
 int standard_fractal_type()
 {
-    if (StandardFractal *standard_fractal = active_standard_fractal(); standard_fractal != nullptr)
+    StandardFractal *standard_fractal = active_standard_fractal();
+    assert(standard_fractal != nullptr);
+    if (standard_fractal != nullptr)
     {
         return standard_fractal->calculate_standard_pixel(true);
     }
 
-    StandardFractal standard_fractal;
-    return standard_fractal.calculate_standard_pixel(false);
+    return -1;
 }
 
 int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
@@ -1301,12 +1302,10 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                     g_max_iterations = m_save_max_it;
                     return -1;
                 }
-            }
-            else if (check_key())
-            {
-                clear_standard_pixel();
-                g_max_iterations = m_save_max_it;
-                return -1;
+                if (standard_pixel_yield_enabled())
+                {
+                    return -1;
+                }
             }
         }
 
@@ -1830,9 +1829,9 @@ plot_pixel:
         {
             return -1;
         }
-        if (!yield_to_ui && check_key())
+        if (yield_to_ui && standard_pixel_yield_enabled())
         {
-            return -1;
+            m_standard_pixel_completed_yield = true;
         }
     }
     return g_color;

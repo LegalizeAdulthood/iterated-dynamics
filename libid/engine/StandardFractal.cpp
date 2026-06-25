@@ -121,6 +121,7 @@ void StandardFractal::resume()
     m_work_item_active = false;
     m_work_item_yielded = false;
     m_work_list_started = false;
+    m_standard_pixel_completed_yield = false;
     s_standard_pass_status = {};
     clear_standard_pixel();
 }
@@ -151,6 +152,13 @@ void StandardFractal::suspend()
 bool StandardFractal::done() const
 {
     return m_phase == Phase::COMPLETE;
+}
+
+bool StandardFractal::consume_standard_pixel_yield()
+{
+    const bool yielded{m_standard_pixel_completed_yield};
+    m_standard_pixel_completed_yield = false;
+    return yielded;
 }
 
 StandardPassStatus StandardFractal::standard_pass_status() const
@@ -438,6 +446,12 @@ void StandardFractal::start_work_list()
         setup_standard_fractal_distance_estimator();
     }
     m_work_list_started = true;
+}
+
+bool StandardFractal::standard_pixel_yield_enabled() const
+{
+    const CalcMode calc_mode{m_standard_pass.calc_mode()};
+    return calc_mode == CalcMode::ONE_PASS || calc_mode == CalcMode::TWO_PASS;
 }
 
 void StandardFractal::update_timer()

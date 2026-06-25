@@ -141,8 +141,10 @@ The current code is already part-way through this plan:
   explicit `CalcMode` dispatch.
 - Tesseral is closest to the target shape.  `StandardFractal` owns a
   `Tesseral`, and `Tesseral` has `iterate()`, `done()`, and `suspend()`.
-- The one-pass and two-pass paths still use `g_row`, `g_col`,
-  `g_work_pass`, and the global work list as traversal state.
+- The one-pass and two-pass paths preserve scan position in the
+  `StandardPass` object and yield standard pixel work back to the UI.
+  They still communicate active pixel position through `g_row` and
+  `g_col`.
 - Boundary trace is still a monolithic function with static trail state
   and work-list resume on pixel interruption.
 - Diffusion scan traversal state is owned by the `StandardPass`
@@ -242,35 +244,7 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: StandardFractal Pixel Yielding
-
-Work:
-
-- Keep `ui/standard_fractal.cpp` as the owner of keyboard polling for
-  standard rendering.
-- Make the standard-pixel path under
-  `libid/engine/calcfrac.cpp:1290-1833` yield through the existing
-  `StandardFractal::iterate()` loop instead of using `check_key()`.
-- Remove the direct standard-pixel fallback path that calls
-  `StandardFractal::calculate_standard_pixel(false)` outside the yielding
-  `StandardFractal` context, or reshape that caller so it is driven by a
-  `StandardFractal` instance.
-- Preserve the current `iterate()` / `done()` / `suspend()` API shape.
-
-Done when:
-
-- The standard pixel orbit code does bounded work and returns to
-  `ui/standard_fractal.cpp` for input polling.
-- `calcfrac.cpp` no longer calls `check_key()` for standard pixel
-  interruption.
-
-Manual testing:
-
-- Render `type=mandel passes=1` and interrupt it.
-- Toggle orbit display with `o` during rendering and confirm rendering
-  continues.
-
-### Slice 2: StandardFractal Perturbation Orbit Strategy
+### Slice 1: StandardFractal Perturbation Orbit Strategy
 
 Work:
 
@@ -307,7 +281,7 @@ Manual testing:
 - Confirm progress text remains responsive during interruption and
   resume.
 
-### Slice 3: LSystem Renderer
+### Slice 2: LSystem Renderer
 
 Work:
 
@@ -331,7 +305,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 4: Lyapunov Renderer
+### Slice 3: Lyapunov Renderer
 
 Work:
 
@@ -352,7 +326,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 5: Lorenz Photographer Mode
+### Slice 4: Lorenz Photographer Mode
 
 Work:
 
@@ -372,7 +346,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 6: Non-Interrupt Pending-Key Utilities
+### Slice 5: Non-Interrupt Pending-Key Utilities
 
 Work:
 

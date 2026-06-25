@@ -6,6 +6,7 @@
 #include "engine/fractals.h"
 #include "engine/orbit.h"
 #include "engine/resume.h"
+#include "engine/StandardFractal.h"
 #include "engine/VideoInfo.h"
 #include "math/arg.h"
 #include "math/fpu087.h"
@@ -32,12 +33,13 @@ int popcorn_type()
     g_keyboard_check_interval = g_max_keyboard_check_interval;
     g_plot = no_plot;
     g_temp_sqr_x = 0;
+    StandardFractal standard_fractal;
     for (g_row = start_row; g_row <= g_i_stop_pt.y; g_row++)
     {
         g_reset_periodicity = true;
         for (g_col = 0; g_col <= g_i_stop_pt.x; g_col++)
         {
-            if (standard_fractal_type() == -1) // interrupted
+            if (standard_fractal.calculate_standard_pixel(false) == -1) // interrupted
             {
                 alloc_resume(10, 1);
                 put_resume(g_row);
