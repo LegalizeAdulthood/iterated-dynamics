@@ -805,29 +805,19 @@ jobs:
       uses: vmactions/openbsd-vm@18edb32f4e48dae5865d7b8b3a9587bc01218a20 # v1.4.4
       env:
         VCPKG_GITHUB_CACHE_TOKEN: ${{github.token}}
-        VCPKG_FORCE_SYSTEM_BINARIES: "1"
         VCPKG_ROOT: vcpkg
       with:
         release: "7.9"
         usesh: true
         sync: rsync
         copyback: true
-        envs: VCPKG_FORCE_SYSTEM_BINARIES VCPKG_GITHUB_CACHE_TOKEN VCPKG_ROOT
+        envs: VCPKG_GITHUB_CACHE_TOKEN VCPKG_ROOT
         prepare: |
           pkg_add -I \
-            autoconf%2.72 \
-            automake%1.17 \
-            bash \
-            bison \
             cmake \
             curl \
-            gettext-tools \
             git \
-            gmake \
-            libtool \
             ninja \
-            patchelf \
-            python%3.13 \
             rsync-- \
             unzip-- \
             zip
@@ -852,9 +842,6 @@ jobs:
               /usr/X11R6/bin/Xvfb :99 -screen 0 1024x768x24 >xvfb.log 2>&1 &
               xvfb_pid=$!
               sleep 3
-              export AUTOCONF_VERSION=2.72
-              export AUTOMAKE_VERSION=1.17
-              export VCPKG_OVERLAY_TRIPLETS="${PWD}/vcpkg-overlays/triplets"
               DISPLAY=:99 cmake --workflow --preset ci-release
               status=$?
               kill "$xvfb_pid" || true
