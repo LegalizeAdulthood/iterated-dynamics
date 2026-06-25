@@ -133,7 +133,7 @@ void Diffusion::release_new_particle()
     case DiffusionMode::CENTRAL:
     {
         // Release new point on a circle inside the box
-        const double angle = 2 * static_cast<double>(random15()) / (RANDOM_MAX / PI);
+        const double angle = 2 * static_cast<double>(random15()) / (ID_RANDOM_MAX / PI);
         double cosine;
         double sine;
         sin_cos(angle, sine, cosine);
@@ -153,7 +153,7 @@ void Diffusion::release_new_particle()
     case DiffusionMode::SQUARE_CAVITY:
     {
         // Release new point on a circle inside the box with radius given by the radius variable
-        const double angle = 2 * static_cast<double>(random15()) / (RANDOM_MAX / PI);
+        const double angle = 2 * static_cast<double>(random15()) / (ID_RANDOM_MAX / PI);
         double cosine;
         double sine;
         sin_cos(angle, sine, cosine);

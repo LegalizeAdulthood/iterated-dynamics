@@ -118,7 +118,7 @@ TEST(TestRandomSeed, randomUnitScalesMsvcSequenceToUnitInterval)
 {
     set_random_seed(SEED);
 
-    EXPECT_DOUBLE_EQ(static_cast<double>(MSVC_RAND15_SEQUENCE.front()) / RANDOM_MAX, random_unit());
+    EXPECT_DOUBLE_EQ(static_cast<double>(MSVC_RAND15_SEQUENCE.front()) / ID_RANDOM_MAX, random_unit());
 }
 
 } // namespace id::test

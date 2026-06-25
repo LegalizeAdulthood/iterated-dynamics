@@ -7,7 +7,7 @@
 namespace id::engine
 {
 
-constexpr int RANDOM_MAX{0x7FFF};
+constexpr int ID_RANDOM_MAX{0x7FFF};
 
 extern int g_random_seed;
 extern bool g_random_seed_flag;
