@@ -2,21 +2,14 @@
 //
 #include "engine/StandardFractal.h"
 
-#include "engine/boundary_trace.h"
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
-#include "engine/diffusion_scan.h"
 #include "engine/engine_timer.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
-#include "engine/one_or_two_pass.h"
 #include "engine/orbit.h"
 #include "engine/Potential.h"
 #include "engine/resume.h"
-#include "engine/soi.h"
-#include "engine/solid_guess.h"
-#include "engine/sticky_orbits.h"
-#include "engine/tesseral.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
 #include "ui/diskvid.h"
@@ -293,54 +286,23 @@ void StandardFractal::run_current_work_item()
 
 void StandardFractal::run_current_work_item_mode()
 {
-    m_standard_pass.select(g_std_calc_mode);
-
-    switch (g_std_calc_mode)
+    if (g_std_calc_mode == CalcMode::PERTURBATION)
     {
-    case CalcMode::SYNCHRONOUS_ORBIT:
-        soi();
-        break;
-
-    case CalcMode::TESSERAL:
-        if (!m_standard_pass.tesseral().iterate() || !m_standard_pass.tesseral().done())
-        {
-            m_work_item_yielded = true;
-        }
-        else
-        {
-            m_standard_pass.reset();
-        }
-        break;
-
-    case CalcMode::BOUNDARY_TRACE:
-        boundary_trace();
-        break;
-
-    case CalcMode::SOLID_GUESS:
-        if (g_calc_status != CalcStatus::COMPLETED)
-        {
-            solid_guess();
-        }
-        break;
-
-    case CalcMode::DIFFUSION:
-        diffusion_scan();
-        break;
-
-    case CalcMode::ORBIT:
-        sticky_orbits();
-        break;
-
-    case CalcMode::PERTURBATION:
         if (bit_set(fractals::g_cur_fractal_specific->flags, fractals::FractalFlags::PERTURB))
         {
             complete();
         }
-        break;
+        return;
+    }
 
-    default:
-        one_or_two_pass();
-        break;
+    m_standard_pass.select(g_std_calc_mode);
+    if (!m_standard_pass.iterate())
+    {
+        m_work_item_yielded = true;
+    }
+    else
+    {
+        m_standard_pass.reset();
     }
 }
 

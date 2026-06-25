@@ -233,29 +233,7 @@ The remaining standard-pass work is mostly ownership and bounded
 iteration: moving pass traversal state out of globals, statics, stack
 locals, and recursive frames into concrete `StandardPass` state.
 
-### Slice 1: StandardPass Adapter
-
-Work:
-
-- Add temporary dispatch branches for existing pass entry points so
-  `StandardFractal` can drive all standard modes through grouped pass
-  state.
-- These branches may still call existing one-pass, two-pass, boundary
-  trace, Tesseral, solid guess, diffusion, SOI, and orbit entry points.
-- Do not add perturbation as a pass adapter.  Normalize `passes=p` before
-  pass dispatch, or treat it as orbit-function selection after pass
-  traversal has set up the current pixel state.
-- Keep this dispatch thin and temporary; it exists to make later slices
-  convert one pass at a time without adding virtual functions.
-- Do not move keyboard polling in this slice.
-
-Done when:
-
-- `StandardFractal::run_current_work_item_mode()` dispatches through the
-  grouped pass state.
-- Existing standard rendering behavior is unchanged.
-
-### Slice 2: StandardFractal Pixel Yielding
+### Slice 1: StandardFractal Pixel Yielding
 
 Work:
 
@@ -283,7 +261,7 @@ Manual testing:
 - Toggle orbit display with `o` during rendering and confirm rendering
   continues.
 
-### Slice 3: StandardFractal SolidGuess State
+### Slice 2: StandardFractal SolidGuess State
 
 Work:
 
@@ -307,7 +285,7 @@ Manual testing:
 - Render `type=mandel passes=g` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 4: StandardFractal SOI Resume State
+### Slice 3: StandardFractal SOI Resume State
 
 Work:
 
@@ -330,7 +308,7 @@ Manual testing:
 - Render `type=mandel passes=s` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 5: StandardFractal Perturbation Orbit Strategy
+### Slice 4: StandardFractal Perturbation Orbit Strategy
 
 Work:
 
@@ -367,7 +345,7 @@ Manual testing:
 - Confirm progress text remains responsive during interruption and
   resume.
 
-### Slice 6: StandardFractal Orbit Mode State
+### Slice 5: StandardFractal Orbit Mode State
 
 Work:
 
@@ -391,7 +369,7 @@ Manual testing:
 - Render `type=mandel passes=o` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 7: LSystem Renderer
+### Slice 6: LSystem Renderer
 
 Work:
 
@@ -415,7 +393,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 8: Lyapunov Renderer
+### Slice 7: Lyapunov Renderer
 
 Work:
 
@@ -436,7 +414,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 9: Lorenz Photographer Mode
+### Slice 8: Lorenz Photographer Mode
 
 Work:
 
@@ -456,7 +434,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 10: Non-Interrupt Pending-Key Utilities
+### Slice 9: Non-Interrupt Pending-Key Utilities
 
 Work:
 

@@ -2,31 +2,91 @@
 //
 #include "engine/StandardPass.h"
 
-#include <cassert>
-#include <type_traits>
+#include "engine/boundary_trace.h"
+#include "engine/diffusion_scan.h"
+#include "engine/one_or_two_pass.h"
+#include "engine/soi.h"
+#include "engine/solid_guess.h"
+#include "engine/sticky_orbits.h"
 
 namespace id::engine
 {
 
-namespace
-{
-
-template <typename State>
-CalcMode state_calc_mode(const State &)
-{
-    return State::CALC_MODE;
-}
-
-} // namespace
-
 CalcMode StandardPass::calc_mode() const
 {
-    return std::visit([](const auto &state) { return state_calc_mode(state); }, m_state);
+    switch (m_state.index())
+    {
+    case ONE_PASS:
+        return CalcMode::ONE_PASS;
+
+    case TWO_PASS:
+        return CalcMode::TWO_PASS;
+
+    case SYNCHRONOUS_ORBIT:
+        return CalcMode::SYNCHRONOUS_ORBIT;
+
+    case BOUNDARY_TRACE:
+        return CalcMode::BOUNDARY_TRACE;
+
+    case SOLID_GUESS:
+        return CalcMode::SOLID_GUESS;
+
+    case DIFFUSION:
+        return CalcMode::DIFFUSION;
+
+    case TESSERAL:
+        return CalcMode::TESSERAL;
+
+    case ORBIT:
+        return CalcMode::ORBIT;
+
+    default:
+        return CalcMode::NONE;
+    }
 }
 
 void StandardPass::reset()
 {
     m_state.emplace<NoPass>();
+}
+
+bool StandardPass::iterate()
+{
+    switch (m_state.index())
+    {
+    case SYNCHRONOUS_ORBIT:
+        soi();
+        return true;
+
+    case BOUNDARY_TRACE:
+        boundary_trace();
+        return true;
+
+    case SOLID_GUESS:
+        if (g_calc_status != CalcStatus::COMPLETED)
+        {
+            solid_guess();
+        }
+        return true;
+
+    case DIFFUSION:
+        diffusion_scan();
+        return true;
+
+    case TESSERAL:
+    {
+        Tesseral &tesseral{std::get<Tesseral>(m_state)};
+        return tesseral.iterate() && tesseral.done();
+    }
+
+    case ORBIT:
+        sticky_orbits();
+        return true;
+
+    default:
+        one_or_two_pass();
+        return true;
+    }
 }
 
 void StandardPass::select(const CalcMode calc_mode)
@@ -63,7 +123,7 @@ void StandardPass::select(const CalcMode calc_mode)
         break;
 
     case CalcMode::TESSERAL:
-        m_state.emplace<TesseralPass>();
+        m_state.emplace<Tesseral>();
         break;
 
     case CalcMode::ORBIT:
@@ -78,25 +138,16 @@ void StandardPass::select(const CalcMode calc_mode)
 
 void StandardPass::suspend()
 {
-    std::visit(
-        [](auto &state)
-        {
-            using State = std::decay_t<decltype(state)>;
-            if constexpr (std::is_same_v<State, TesseralPass>)
-            {
-                if (!state.tesseral.done())
-                {
-                    state.tesseral.suspend();
-                }
-            }
-        },
-        m_state);
-}
+    if (m_state.index() != TESSERAL)
+    {
+        return;
+    }
 
-Tesseral &StandardPass::tesseral()
-{
-    assert(std::holds_alternative<TesseralPass>(m_state));
-    return std::get<TesseralPass>(m_state).tesseral;
+    Tesseral &tesseral{std::get<Tesseral>(m_state)};
+    if (!tesseral.done())
+    {
+        tesseral.suspend();
+    }
 }
 
 } // namespace id::engine

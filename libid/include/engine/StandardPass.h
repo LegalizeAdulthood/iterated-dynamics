@@ -21,62 +21,59 @@ public:
     StandardPass &operator=(StandardPass &&) = delete;
 
     CalcMode calc_mode() const;
+    bool iterate();
     void reset();
     void select(CalcMode calc_mode);
     void suspend();
 
-    Tesseral &tesseral();
-
 private:
+    enum StateIndex
+    {
+        NO_PASS,
+        ONE_PASS,
+        TWO_PASS,
+        SYNCHRONOUS_ORBIT,
+        BOUNDARY_TRACE,
+        SOLID_GUESS,
+        DIFFUSION,
+        TESSERAL,
+        ORBIT,
+    };
+
     struct NoPass
     {
-        static constexpr CalcMode CALC_MODE{CalcMode::NONE};
     };
 
     struct OnePass
     {
-        static constexpr CalcMode CALC_MODE{CalcMode::ONE_PASS};
     };
 
     struct TwoPass
     {
-        static constexpr CalcMode CALC_MODE{CalcMode::TWO_PASS};
     };
 
     struct SynchronousOrbit
     {
-        static constexpr CalcMode CALC_MODE{CalcMode::SYNCHRONOUS_ORBIT};
     };
 
     struct BoundaryTrace
     {
-        static constexpr CalcMode CALC_MODE{CalcMode::BOUNDARY_TRACE};
     };
 
     struct SolidGuess
     {
-        static constexpr CalcMode CALC_MODE{CalcMode::SOLID_GUESS};
     };
 
     struct Diffusion
     {
-        static constexpr CalcMode CALC_MODE{CalcMode::DIFFUSION};
-    };
-
-    struct TesseralPass
-    {
-        static constexpr CalcMode CALC_MODE{CalcMode::TESSERAL};
-
-        Tesseral tesseral{};
     };
 
     struct Orbit
     {
-        static constexpr CalcMode CALC_MODE{CalcMode::ORBIT};
     };
 
-    using State = std::variant<NoPass, OnePass, TwoPass, SynchronousOrbit, BoundaryTrace, SolidGuess, Diffusion,
-        TesseralPass, Orbit>;
+    using State =
+        std::variant<NoPass, OnePass, TwoPass, SynchronousOrbit, BoundaryTrace, SolidGuess, Diffusion, Tesseral, Orbit>;
 
     State m_state{NoPass{}};
 };
