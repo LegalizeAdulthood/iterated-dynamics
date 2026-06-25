@@ -41,46 +41,63 @@ enum
 namespace
 {
 
-struct DoubleComplex
+class SOI
 {
-    double re;
-    double im;
-};
+public:
+    void calculate();
 
-struct SOIDoubleState
-{
-    bool esc[9];
-    bool t_esc[4];
+private:
+    bool rhombus(double c_re1, double c_re2, double c_im1, double c_im2,     //
+        int x1, int x2, int y1, int y2, long iter);
+    bool rhombus_aux(double c_re1, double c_re2, double c_im1, double c_im2, //
+        int x1, int x2, int y1, int y2, long iter);
+    bool rhombus2(double cre1, double cre2, double cim1, double cim2,        //
+        int x1, int x2, int y1, int y2,                                      //
+        double zre1, double zim1, double zre2, double zim2,                  //
+        double zre3, double zim3, double zre4, double zim4,                  //
+        double zre5, double zim5, double zre6, double zim6,                  //
+        double zre7, double zim7, double zre8, double zim8,                  //
+        double zre9, double zim9, long iter);
+    bool rhombus2(double cre1, double cre2, double cim1, double cim2,        //
+        int x1, int x2, int y1, int y2,                                      //
+        DComplex z1, DComplex z2,                                  //
+        DComplex z3, DComplex z4,                                  //
+        double zre5, double zim5, double zre6, double zim6,                  //
+        double zre7, double zim7, double zre8, double zim8,                  //
+        double zre9, double zim9, long iter);
+    void soi_orbit(DComplex &z, DComplex &rq, double cr, double ci, bool &esc);
 
-    DoubleComplex z;
-    DoubleComplex step;
-    double interleave_step;
-    double help_real;
-    DoubleComplex scan_z;
-    DoubleComplex b1[3];
-    DoubleComplex b2[3];
-    DoubleComplex b3[3];
-    DoubleComplex limit;
-    DoubleComplex rq[9];
-    DoubleComplex corner[2];
-    DoubleComplex tz[4];
-    DoubleComplex tq[4];
+    DComplex m_zi[9]{};
+    bool m_esc[9]{};
+    bool m_t_esc[4]{};
+    DComplex m_z{};
+    DComplex m_step{};
+    double m_interleave_step{};
+    double m_help_real{};
+    DComplex m_scan_z{};
+    DComplex m_b1[3]{};
+    DComplex m_b2[3]{};
+    DComplex m_b3[3]{};
+    DComplex m_limit{};
+    DComplex m_rq[9]{};
+    DComplex m_corner[2]{};
+    DComplex m_tz[4]{};
+    DComplex m_tq[4]{};
+    double m_t_width{};
+    double m_equal{};
+    int m_rhombus_depth{-1};
 };
 
 } // namespace
 
 int g_rhombus_stack[10]{};
-static int g_rhombus_depth{};
 int g_max_rhombus_depth{};
 int g_soi_min_stack_available{};
 int g_soi_min_stack{2200}; // and this much stack to not crash when <tab> is pressed
 
-static bool rhombus(double c_re1, double c_re2, double c_im1, double c_im2, //
-    int x1, int x2, int y1, int y2, long iter);
-
-static DoubleComplex z_sqr(const DoubleComplex z)
+static DComplex z_sqr(const DComplex z)
 {
-    return { z.re*z.re, z.im*z.im };
+    return { z.x*z.x, z.y*z.y };
 }
 
 /* compute coefficients of Newton polynomial (b0,..,b2) from
@@ -101,11 +118,6 @@ static double evaluate(const double x0, const double x1, //
 {
     return (b2*(t - x1) + b1)*(t - x0) + b0;
 }
-
-static DoubleComplex s_zi[9]{};
-static SOIDoubleState s_state{};
-static double s_t_width{};
-static double s_equal{};
 
 static long iteration(const double cr, const double ci, //
     const double re, const double im,                   //
@@ -173,109 +185,109 @@ static inline double interpolate(const double x0, const double x1, const double 
 //
 // Input: c_re1..c_im2 : values defining the four corners of the rectangle
 //        x1..y2     : corresponding pixel values
-//    s_zi[0..8].re,im  : intermediate iterated values of the key points (key values)
+//    m_zi[0..8].x,im  : intermediate iterated values of the key points (key values)
 //
 // (c_re1,c_im1)                                    (c_re2,c_im1)
-// (s_zi[0].re,s_zi[0].im)   (s_zi[4].re,s_zi[4].im)  (s_zi[1].re,s_zi[1].im)
+// (m_zi[0].x,m_zi[0].y)   (m_zi[4].x,m_zi[4].y)  (m_zi[1].x,m_zi[1].y)
 //     +--------------------------+--------------------+
 //     |                          |                    |
 //     |                          |                    |
-// (s_zi[5].re,s_zi[5].im)   (s_zi[8].re,s_zi[8].im)  (s_zi[6].re,s_zi[6].im)
+// (m_zi[5].x,m_zi[5].y)   (m_zi[8].x,m_zi[8].y)  (m_zi[6].x,m_zi[6].y)
 //     |                          |                    |
 //     |                          |                    |
 //     +--------------------------+--------------------+
-// (s_zi[2].re,s_zi[2].im)   (s_zi[7].re,s_zi[7].im)  (s_zi[3].re,s_zi[3].im)
+// (m_zi[2].x,m_zi[2].y)   (m_zi[7].x,m_zi[7].y)  (m_zi[3].x,m_zi[3].y)
 // (c_re1,c_im2)                                    (c_re2,c_im2)
 //
 // iter       : current number of iterations
 
-static bool rhombus2(const double cre1, const double cre2, const double cim1, const double cim2, //
-    const int x1, const int x2, const int y1, const int y2,                                      //
-    const double zre1, const double zim1, const double zre2, const double zim2,                  //
-    const double zre3, const double zim3, const double zre4, const double zim4,                  //
-    const double zre5, const double zim5, const double zre6, const double zim6,                  //
-    const double zre7, const double zim7, const double zre8, const double zim8,                  //
-    const double zre9, const double zim9,                                                        //
+bool SOI::rhombus2(const double cre1, const double cre2, const double cim1, const double cim2, //
+    const int x1, const int x2, const int y1, const int y2,                                    //
+    const double zre1, const double zim1, const double zre2, const double zim2,                //
+    const double zre3, const double zim3, const double zre4, const double zim4,                //
+    const double zre5, const double zim5, const double zre6, const double zim6,                //
+    const double zre7, const double zim7, const double zre8, const double zim8,                //
+    const double zre9, const double zim9,                                                      //
     const long iter)
 {
-    s_zi[0].re = zre1;
-    s_zi[0].im = zim1;
-    s_zi[1].re = zre2;
-    s_zi[1].im = zim2;
-    s_zi[2].re = zre3;
-    s_zi[2].im = zim3;
-    s_zi[3].re = zre4;
-    s_zi[3].im = zim4;
-    s_zi[4].re = zre5;
-    s_zi[4].im = zim5;
-    s_zi[5].re = zre6;
-    s_zi[5].im = zim6;
-    s_zi[6].re = zre7;
-    s_zi[6].im = zim7;
-    s_zi[7].re = zre8;
-    s_zi[7].im = zim8;
-    s_zi[8].re = zre9;
-    s_zi[8].im = zim9;
+    m_zi[0].x = zre1;
+    m_zi[0].y = zim1;
+    m_zi[1].x = zre2;
+    m_zi[1].y = zim2;
+    m_zi[2].x = zre3;
+    m_zi[2].y = zim3;
+    m_zi[3].x = zre4;
+    m_zi[3].y = zim4;
+    m_zi[4].x = zre5;
+    m_zi[4].y = zim5;
+    m_zi[5].x = zre6;
+    m_zi[5].y = zim6;
+    m_zi[6].x = zre7;
+    m_zi[6].y = zim7;
+    m_zi[7].x = zre8;
+    m_zi[7].y = zim8;
+    m_zi[8].x = zre9;
+    m_zi[8].y = zim9;
     return rhombus(cre1, cre2, cim1, cim2, x1, x2, y1, y2, iter);
 }
 
-static bool rhombus2(const double cre1, const double cre2, const double cim1, const double cim2, //
-    const int x1, const int x2, const int y1, const int y2,                                      //
-    const DoubleComplex z1, const DoubleComplex z2,                                              //
-    const DoubleComplex z3, const DoubleComplex z4,                                              //
-    const double zre5, const double zim5, const double zre6, const double zim6,                  //
-    const double zre7, const double zim7, const double zre8, const double zim8,                  //
-    const double zre9, const double zim9,                                                        //
+bool SOI::rhombus2(const double cre1, const double cre2, const double cim1, const double cim2, //
+    const int x1, const int x2, const int y1, const int y2,                                    //
+    const DComplex z1, const DComplex z2,                                            //
+    const DComplex z3, const DComplex z4,                                            //
+    const double zre5, const double zim5, const double zre6, const double zim6,                //
+    const double zre7, const double zim7, const double zre8, const double zim8,                //
+    const double zre9, const double zim9,                                                      //
     const long iter)
 {
-    return rhombus2(cre1, cre2, cim1, cim2,                              //
-        x1, x2, y1, y2,                                                  //
-        z1.re, z1.im, z2.re, z2.im,                                      //
-        z3.re, z3.im, z4.re, z4.im,                                      //
-        zre5, zim5, zre6, zim6,                                          //
-        zre7, zim7, zre8, zim8,                                          //
-        zre9, zim9,                                                      //
+    return rhombus2(cre1, cre2, cim1, cim2,                                                    //
+        x1, x2, y1, y2,                                                                        //
+        z1.x, z1.y, z2.x, z2.y,                                                            //
+        z3.x, z3.y, z4.x, z4.y,                                                            //
+        zre5, zim5, zre6, zim6,                                                                //
+        zre7, zim7, zre8, zim8,                                                                //
+        zre9, zim9,                                                                            //
         iter);
 }
 
-static void soi_orbit(DoubleComplex &z, DoubleComplex &rq, const double cr, const double ci, bool &esc)
+void SOI::soi_orbit(DComplex &z, DComplex &rq, const double cr, const double ci, bool &esc)
 {
-    z.im = (z.im + z.im) * z.re + ci;
-    z.re = rq.re - rq.im + cr;
-    rq.re = z.re * z.re;
-    rq.im = z.im * z.im;
-    esc = rq.re + rq.im > 16.0;
+    z.y = (z.y + z.y) * z.x + ci;
+    z.x = rq.x - rq.y + cr;
+    rq.x = z.x * z.x;
+    rq.y = z.y * z.y;
+    esc = rq.x + rq.y > 16.0;
 }
 
-static bool rhombus_aux(const double c_re1, const double c_re2, const double c_im1, const double c_im2, //
+bool SOI::rhombus_aux(const double c_re1, const double c_re2, const double c_im1, const double c_im2, //
     const int x1, const int x2, const int y1, const int y2, long iter)
 {
     // The following variables do not need their values saved
     // used in scanning
-    static long save_color;
-    static long color;
-    static long help_color;
-    static int x;
-    static int y;
-    static int z;
-    static int save_x;
+    long save_color{};
+    long color{};
+    long help_color{};
+    int x{};
+    int y{};
+    int z{};
+    int save_x{};
 
     // number of iterations before SOI iteration cycle
-    static long before;
-    static int avail;
+    long before{};
+    int avail{};
 
     // the variables below need to have local copies for recursive calls
     // center of rectangle
     const double mid_r = (c_re1 + c_re2) / 2;
     const double mid_i = (c_im1 + c_im2)/2;
 
-    DoubleComplex s[9];
+    DComplex s[9];
 
     bool status{};
     avail = stack_avail();
     g_soi_min_stack_available = std::min(avail, g_soi_min_stack_available);
-    g_max_rhombus_depth = std::max(g_rhombus_depth, g_max_rhombus_depth);
-    g_rhombus_stack[g_rhombus_depth] = avail;
+    g_max_rhombus_depth = std::max(m_rhombus_depth, g_max_rhombus_depth);
+    g_rhombus_stack[m_rhombus_depth] = avail;
 
     if (driver_key_pressed())
     {
@@ -291,17 +303,17 @@ static bool rhombus_aux(const double c_re1, const double c_re2, const double c_i
     {
         // finish up the image by scanning the rectangle
 scan:
-        interpolate(c_re1, mid_r, c_re2, s_zi[0].re, s_zi[4].re, s_zi[1].re, s_state.b1[0].re, s_state.b1[1].re, s_state.b1[2].re);
-        interpolate(c_re1, mid_r, c_re2, s_zi[5].re, s_zi[8].re, s_zi[6].re, s_state.b2[0].re, s_state.b2[1].re, s_state.b2[2].re);
-        interpolate(c_re1, mid_r, c_re2, s_zi[2].re, s_zi[7].re, s_zi[3].re, s_state.b3[0].re, s_state.b3[1].re, s_state.b3[2].re);
+        interpolate(c_re1, mid_r, c_re2, m_zi[0].x, m_zi[4].x, m_zi[1].x, m_b1[0].x, m_b1[1].x, m_b1[2].x);
+        interpolate(c_re1, mid_r, c_re2, m_zi[5].x, m_zi[8].x, m_zi[6].x, m_b2[0].x, m_b2[1].x, m_b2[2].x);
+        interpolate(c_re1, mid_r, c_re2, m_zi[2].x, m_zi[7].x, m_zi[3].x, m_b3[0].x, m_b3[1].x, m_b3[2].x);
 
-        interpolate(c_im1, mid_i, c_im2, s_zi[0].im, s_zi[5].im, s_zi[2].im, s_state.b1[0].im, s_state.b1[1].im, s_state.b1[2].im);
-        interpolate(c_im1, mid_i, c_im2, s_zi[4].im, s_zi[8].im, s_zi[7].im, s_state.b2[0].im, s_state.b2[1].im, s_state.b2[2].im);
-        interpolate(c_im1, mid_i, c_im2, s_zi[1].im, s_zi[6].im, s_zi[3].im, s_state.b3[0].im, s_state.b3[1].im, s_state.b3[2].im);
+        interpolate(c_im1, mid_i, c_im2, m_zi[0].y, m_zi[5].y, m_zi[2].y, m_b1[0].y, m_b1[1].y, m_b1[2].y);
+        interpolate(c_im1, mid_i, c_im2, m_zi[4].y, m_zi[8].y, m_zi[7].y, m_b2[0].y, m_b2[1].y, m_b2[2].y);
+        interpolate(c_im1, mid_i, c_im2, m_zi[1].y, m_zi[6].y, m_zi[3].y, m_b3[0].y, m_b3[1].y, m_b3[2].y);
 
-        s_state.step.re = (c_re2 - c_re1)/(x2 - x1);
-        s_state.step.im = (c_im2 - c_im1)/(y2 - y1);
-        s_state.interleave_step = INTERLEAVE*s_state.step.re;
+        m_step.x = (c_re2 - c_re1) / (x2 - x1);
+        m_step.y = (c_im2 - c_im1) / (y2 - y1);
+        m_interleave_step = INTERLEAVE * m_step.x;
 
         /* compute the value of the interpolation polynomial at (x,y)
            during scanning. Here, key values do not change, so we can precompute
@@ -310,38 +322,38 @@ scan:
         const auto get_scan_real{[=](const double re, const double im)
             {
                 return interpolate(c_im1, mid_i, c_im2,
-                    evaluate(c_re1, mid_r, s_state.b1[0].re, s_state.b1[1].re, s_state.b1[2].re, re),
-                    evaluate(c_re1, mid_r, s_state.b2[0].re, s_state.b2[1].re, s_state.b2[2].re, re),
-                    evaluate(c_re1, mid_r, s_state.b3[0].re, s_state.b3[1].re, s_state.b3[2].re, re), im);
+                    evaluate(c_re1, mid_r, m_b1[0].x, m_b1[1].x, m_b1[2].x, re),
+                    evaluate(c_re1, mid_r, m_b2[0].x, m_b2[1].x, m_b2[2].x, re),
+                    evaluate(c_re1, mid_r, m_b3[0].x, m_b3[1].x, m_b3[2].x, re), im);
             }};
         const auto get_scan_imag{[=](const double re, const double im)
             {
                 return interpolate(c_re1, mid_r, c_re2,
-                    evaluate(c_im1, mid_i, s_state.b1[0].im, s_state.b1[1].im, s_state.b1[2].im, im),
-                    evaluate(c_im1, mid_i, s_state.b2[0].im, s_state.b2[1].im, s_state.b2[2].im, im),
-                    evaluate(c_im1, mid_i, s_state.b3[0].im, s_state.b3[1].im, s_state.b3[2].im, im), re);
+                    evaluate(c_im1, mid_i, m_b1[0].y, m_b1[1].y, m_b1[2].y, im),
+                    evaluate(c_im1, mid_i, m_b2[0].y, m_b2[1].y, m_b2[2].y, im),
+                    evaluate(c_im1, mid_i, m_b3[0].y, m_b3[1].y, m_b3[2].y, im), re);
             }};
-        for (y = y1, s_state.z.im = c_im1; y < y2; y++, s_state.z.im += s_state.step.im)
+        for (y = y1, m_z.y = c_im1; y < y2; y++, m_z.y += m_step.y)
         {
             if (driver_key_pressed())
             {
                 return true;
             }
-            s_state.scan_z.re = get_scan_real(c_re1, s_state.z.im);
-            s_state.scan_z.im = get_scan_imag(c_re1, s_state.z.im);
-            save_color = iteration(c_re1, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
+            m_scan_z.x = get_scan_real(c_re1, m_z.y);
+            m_scan_z.y = get_scan_imag(c_re1, m_z.y);
+            save_color = iteration(c_re1, m_z.y, m_scan_z.x, m_scan_z.y, iter);
             if (save_color < 0)
             {
                 return true;
             }
             save_x = x1;
-            for (x = x1 + INTERLEAVE, s_state.z.re = c_re1 + s_state.interleave_step; x < x2;
-                    x += INTERLEAVE, s_state.z.re += s_state.interleave_step)
+            for (x = x1 + INTERLEAVE, m_z.x = c_re1 + m_interleave_step; x < x2;
+                x += INTERLEAVE, m_z.x += m_interleave_step)
             {
-                s_state.scan_z.re = get_scan_real(s_state.z.re, s_state.z.im);
-                s_state.scan_z.im = get_scan_imag(s_state.z.re, s_state.z.im);
+                m_scan_z.x = get_scan_real(m_z.x, m_z.y);
+                m_scan_z.y = get_scan_imag(m_z.x, m_z.y);
 
-                color = iteration(s_state.z.re, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
+                color = iteration(m_z.x, m_z.y, m_scan_z.x, m_scan_z.y, iter);
                 if (color < 0)
                 {
                     return true;
@@ -351,11 +363,12 @@ scan:
                     continue;
                 }
 
-                for (z = x - 1, s_state.help_real = s_state.z.re - s_state.step.re; z > x - INTERLEAVE; z--, s_state.help_real -= s_state.step.re)
+                for (z = x - 1, m_help_real = m_z.x - m_step.x; z > x - INTERLEAVE;
+                    z--, m_help_real -= m_step.x)
                 {
-                    s_state.scan_z.re = get_scan_real(s_state.help_real, s_state.z.im);
-                    s_state.scan_z.im = get_scan_imag(s_state.help_real, s_state.z.im);
-                    help_color = iteration(s_state.help_real, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
+                    m_scan_z.x = get_scan_real(m_help_real, m_z.y);
+                    m_scan_z.y = get_scan_imag(m_help_real, m_z.y);
+                    help_color = iteration(m_help_real, m_z.y, m_scan_z.x, m_scan_z.y, iter);
                     if (help_color < 0)
                     {
                         return true;
@@ -380,11 +393,12 @@ scan:
                 save_color = color;
             }
 
-            for (z = x2 - 1, s_state.help_real = c_re2 - s_state.step.re; z > save_x; z--, s_state.help_real -= s_state.step.re)
+            for (z = x2 - 1, m_help_real = c_re2 - m_step.x; z > save_x;
+                z--, m_help_real -= m_step.x)
             {
-                s_state.scan_z.re = get_scan_real(s_state.help_real, s_state.z.im);
-                s_state.scan_z.im = get_scan_imag(s_state.help_real, s_state.z.im);
-                help_color = iteration(s_state.help_real, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
+                m_scan_z.x = get_scan_real(m_help_real, m_z.y);
+                m_scan_z.y = get_scan_imag(m_help_real, m_z.y);
+                help_color = iteration(m_help_real, m_z.y, m_scan_z.x, m_scan_z.y, iter);
                 if (help_color < 0)
                 {
                     return true;
@@ -410,106 +424,106 @@ scan:
         return false;
     }
 
-    std::transform(std::begin(s_zi), std::end(s_zi), std::begin(s_state.rq), z_sqr);
+    std::transform(std::begin(m_zi), std::end(m_zi), std::begin(m_rq), z_sqr);
 
-    s_state.corner[0].re = 0.75*c_re1 + 0.25*c_re2;
-    s_state.corner[0].im = 0.75*c_im1 + 0.25*c_im2;
-    s_state.corner[1].re = 0.25*c_re1 + 0.75*c_re2;
-    s_state.corner[1].im = 0.25*c_im1 + 0.75*c_im2;
+    m_corner[0].x = 0.75 * c_re1 + 0.25 * c_re2;
+    m_corner[0].y = 0.75 * c_im1 + 0.25 * c_im2;
+    m_corner[1].x = 0.25 * c_re1 + 0.75 * c_re2;
+    m_corner[1].y = 0.25 * c_im1 + 0.75 * c_im2;
 
     // compute the value of the interpolation polynomial at (x,y)
     const auto get_real{[=](const double re, const double im)
         {
             return interpolate(c_im1, mid_i, c_im2,
-                interpolate(c_re1, mid_r, c_re2, s_zi[0].re, s_zi[4].re, s_zi[1].re, re),
-                interpolate(c_re1, mid_r, c_re2, s_zi[5].re, s_zi[8].re, s_zi[6].re, re),
-                interpolate(c_re1, mid_r, c_re2, s_zi[2].re, s_zi[7].re, s_zi[3].re, re), im);
+                interpolate(c_re1, mid_r, c_re2, m_zi[0].x, m_zi[4].x, m_zi[1].x, re),
+                interpolate(c_re1, mid_r, c_re2, m_zi[5].x, m_zi[8].x, m_zi[6].x, re),
+                interpolate(c_re1, mid_r, c_re2, m_zi[2].x, m_zi[7].x, m_zi[3].x, re), im);
         }};
     const auto get_imag{[=](const double re, const double im)
         {
             return interpolate(c_re1, mid_r, c_re2,
-                interpolate(c_im1, mid_i, c_im2, s_zi[0].im, s_zi[5].im, s_zi[2].im, im),
-                interpolate(c_im1, mid_i, c_im2, s_zi[4].im, s_zi[8].im, s_zi[7].im, im),
-                interpolate(c_im1, mid_i, c_im2, s_zi[1].im, s_zi[6].im, s_zi[3].im, im), re);
+                interpolate(c_im1, mid_i, c_im2, m_zi[0].y, m_zi[5].y, m_zi[2].y, im),
+                interpolate(c_im1, mid_i, c_im2, m_zi[4].y, m_zi[8].y, m_zi[7].y, im),
+                interpolate(c_im1, mid_i, c_im2, m_zi[1].y, m_zi[6].y, m_zi[3].y, im), re);
         }};
-    s_state.tz[0].re = get_real(s_state.corner[0].re, s_state.corner[0].im);
-    s_state.tz[0].im = get_imag(s_state.corner[0].re, s_state.corner[0].im);
+    m_tz[0].x = get_real(m_corner[0].x, m_corner[0].y);
+    m_tz[0].y = get_imag(m_corner[0].x, m_corner[0].y);
 
-    s_state.tz[1].re = get_real(s_state.corner[1].re, s_state.corner[0].im);
-    s_state.tz[1].im = get_imag(s_state.corner[1].re, s_state.corner[0].im);
+    m_tz[1].x = get_real(m_corner[1].x, m_corner[0].y);
+    m_tz[1].y = get_imag(m_corner[1].x, m_corner[0].y);
 
-    s_state.tz[2].re = get_real(s_state.corner[0].re, s_state.corner[1].im);
-    s_state.tz[2].im = get_imag(s_state.corner[0].re, s_state.corner[1].im);
+    m_tz[2].x = get_real(m_corner[0].x, m_corner[1].y);
+    m_tz[2].y = get_imag(m_corner[0].x, m_corner[1].y);
 
-    s_state.tz[3].re = get_real(s_state.corner[1].re, s_state.corner[1].im);
-    s_state.tz[3].im = get_imag(s_state.corner[1].re, s_state.corner[1].im);
+    m_tz[3].x = get_real(m_corner[1].x, m_corner[1].y);
+    m_tz[3].y = get_imag(m_corner[1].x, m_corner[1].y);
 
-    std::transform(std::begin(s_state.tz), std::end(s_state.tz), std::begin(s_state.tq), z_sqr);
+    std::transform(std::begin(m_tz), std::end(m_tz), std::begin(m_tq), z_sqr);
 
     before = iter;
 
     while (true)
     {
-        std::copy(std::begin(s_zi), std::end(s_zi), std::begin(s));
+        std::copy(std::begin(m_zi), std::end(m_zi), std::begin(s));
 
         // iterate key values
-        soi_orbit(s_zi[0], s_state.rq[0], c_re1, c_im1, s_state.esc[0]);
+        soi_orbit(m_zi[0], m_rq[0], c_re1, c_im1, m_esc[0]);
         /*
               zim1=(zim1+zim1)*zre1+c_im1;
               zre1=rq1-iq1+c_re1;
               rq1=zre1*zre1;
               iq1=zim1*zim1;
         */
-        soi_orbit(s_zi[1], s_state.rq[1], c_re2, c_im1, s_state.esc[1]);
+        soi_orbit(m_zi[1], m_rq[1], c_re2, c_im1, m_esc[1]);
         /*
               zim2=(zim2+zim2)*zre2+c_im1;
               zre2=rq2-iq2+c_re2;
               rq2=zre2*zre2;
               iq2=zim2*zim2;
         */
-        soi_orbit(s_zi[2], s_state.rq[2], c_re1, c_im2, s_state.esc[2]);
+        soi_orbit(m_zi[2], m_rq[2], c_re1, c_im2, m_esc[2]);
         /*
               zim3=(zim3+zim3)*zre3+c_im2;
               zre3=rq3-iq3+c_re1;
               rq3=zre3*zre3;
               iq3=zim3*zim3;
         */
-        soi_orbit(s_zi[3], s_state.rq[3], c_re2, c_im2, s_state.esc[3]);
+        soi_orbit(m_zi[3], m_rq[3], c_re2, c_im2, m_esc[3]);
         /*
               zim4=(zim4+zim4)*zre4+c_im2;
               zre4=rq4-iq4+c_re2;
               rq4=zre4*zre4;
               iq4=zim4*zim4;
         */
-        soi_orbit(s_zi[4], s_state.rq[4], mid_r, c_im1, s_state.esc[4]);
+        soi_orbit(m_zi[4], m_rq[4], mid_r, c_im1, m_esc[4]);
         /*
               zim5=(zim5+zim5)*zre5+c_im1;
               zre5=rq5-iq5+mid_r;
               rq5=zre5*zre5;
               iq5=zim5*zim5;
         */
-        soi_orbit(s_zi[5], s_state.rq[5], c_re1, mid_i, s_state.esc[5]);
+        soi_orbit(m_zi[5], m_rq[5], c_re1, mid_i, m_esc[5]);
         /*
               zim6=(zim6+zim6)*zre6+mid_i;
               zre6=rq6-iq6+c_re1;
               rq6=zre6*zre6;
               iq6=zim6*zim6;
         */
-        soi_orbit(s_zi[6], s_state.rq[6], c_re2, mid_i, s_state.esc[6]);
+        soi_orbit(m_zi[6], m_rq[6], c_re2, mid_i, m_esc[6]);
         /*
               zim7=(zim7+zim7)*zre7+mid_i;
               zre7=rq7-iq7+c_re2;
               rq7=zre7*zre7;
               iq7=zim7*zim7;
         */
-        soi_orbit(s_zi[7], s_state.rq[7], mid_r, c_im2, s_state.esc[7]);
+        soi_orbit(m_zi[7], m_rq[7], mid_r, c_im2, m_esc[7]);
         /*
               zim8=(zim8+zim8)*zre8+c_im2;
               zre8=rq8-iq8+mid_r;
               rq8=zre8*zre8;
               iq8=zim8*zim8;
         */
-        soi_orbit(s_zi[8], s_state.rq[8], mid_r, mid_i, s_state.esc[8]);
+        soi_orbit(m_zi[8], m_rq[8], mid_r, mid_i, m_esc[8]);
         /*
               zim9=(zim9+zim9)*zre9+mid_i;
               zre9=rq9-iq9+mid_r;
@@ -517,7 +531,7 @@ scan:
               iq9=zim9*zim9;
         */
         // iterate test point
-        soi_orbit(s_state.tz[0], s_state.tq[0], s_state.corner[0].re, s_state.corner[0].im, s_state.t_esc[0]);
+        soi_orbit(m_tz[0], m_tq[0], m_corner[0].x, m_corner[0].y, m_t_esc[0]);
         /*
               tzi1=(tzi1+tzi1)*tzr1+ci1;
               tzr1=trq1-tiq1+cr1;
@@ -525,21 +539,21 @@ scan:
               tiq1=tzi1*tzi1;
         */
 
-        soi_orbit(s_state.tz[1], s_state.tq[1], s_state.corner[1].re, s_state.corner[0].im, s_state.t_esc[1]);
+        soi_orbit(m_tz[1], m_tq[1], m_corner[1].x, m_corner[0].y, m_t_esc[1]);
         /*
               tzi2=(tzi2+tzi2)*tzr2+ci1;
               tzr2=trq2-tiq2+cr2;
               trq2=tzr2*tzr2;
               tiq2=tzi2*tzi2;
         */
-        soi_orbit(s_state.tz[2], s_state.tq[2], s_state.corner[0].re, s_state.corner[1].im, s_state.t_esc[2]);
+        soi_orbit(m_tz[2], m_tq[2], m_corner[0].x, m_corner[1].y, m_t_esc[2]);
         /*
               tzi3=(tzi3+tzi3)*tzr3+ci2;
               tzr3=trq3-tiq3+cr1;
               trq3=tzr3*tzr3;
               tiq3=tzi3*tzi3;
         */
-        soi_orbit(s_state.tz[3], s_state.tq[3], s_state.corner[1].re, s_state.corner[1].im, s_state.t_esc[3]);
+        soi_orbit(m_tz[3], m_tq[3], m_corner[1].x, m_corner[1].y, m_t_esc[3]);
         /*
               tzi4=(tzi4+tzi4)*tzr4+ci2;
               tzr4=trq4-tiq4+cr2;
@@ -549,8 +563,8 @@ scan:
         iter++;
 
         // if one of the iterated values bails out, subdivide
-        if (std::find(std::begin(s_state.esc), std::end(s_state.esc), true) != std::end(s_state.esc)
-            || std::find(std::begin(s_state.t_esc), std::end(s_state.t_esc), true) != std::end(s_state.t_esc))
+        if (std::find(std::begin(m_esc), std::end(m_esc), true) != std::end(m_esc) ||
+            std::find(std::begin(m_t_esc), std::end(m_t_esc), true) != std::end(m_t_esc))
         {
             break;
         }
@@ -566,74 +580,66 @@ scan:
 
         /* now for all test points, check whether they exceed the
         allowed tolerance. if so, subdivide */
-        s_state.limit.re = get_real(s_state.corner[0].re, s_state.corner[0].im);
-        s_state.limit.re = s_state.tz[0].re == 0.0 ?
-           s_state.limit.re == 0.0 ?1.0:1000.0:
-           s_state.limit.re/s_state.tz[0].re;
-        if (std::abs(1.0 - s_state.limit.re) > s_t_width)
+        m_limit.x = get_real(m_corner[0].x, m_corner[0].y);
+        m_limit.x =
+            m_tz[0].x == 0.0 ? m_limit.x == 0.0 ? 1.0 : 1000.0 : m_limit.x / m_tz[0].x;
+        if (std::abs(1.0 - m_limit.x) > m_t_width)
         {
             break;
         }
 
-        s_state.limit.im = get_imag(s_state.corner[0].re, s_state.corner[0].im);
-        s_state.limit.im = s_state.tz[0].im == 0.0 ?
-           s_state.limit.im == 0.0 ?1.0:1000.0:
-           s_state.limit.im/s_state.tz[0].im;
-        if (std::abs(1.0 - s_state.limit.im) > s_t_width)
+        m_limit.y = get_imag(m_corner[0].x, m_corner[0].y);
+        m_limit.y =
+            m_tz[0].y == 0.0 ? m_limit.y == 0.0 ? 1.0 : 1000.0 : m_limit.y / m_tz[0].y;
+        if (std::abs(1.0 - m_limit.y) > m_t_width)
         {
             break;
         }
 
-        s_state.limit.re = get_real(s_state.corner[1].re, s_state.corner[0].im);
-        s_state.limit.re = s_state.tz[1].re == 0.0 ?
-           s_state.limit.re == 0.0 ?1.0:1000.0:
-           s_state.limit.re/s_state.tz[1].re;
-        if (std::abs(1.0 - s_state.limit.re) > s_t_width)
+        m_limit.x = get_real(m_corner[1].x, m_corner[0].y);
+        m_limit.x =
+            m_tz[1].x == 0.0 ? m_limit.x == 0.0 ? 1.0 : 1000.0 : m_limit.x / m_tz[1].x;
+        if (std::abs(1.0 - m_limit.x) > m_t_width)
         {
             break;
         }
 
-        s_state.limit.im = get_imag(s_state.corner[1].re, s_state.corner[0].im);
-        s_state.limit.im = s_state.tz[1].im == 0.0 ?
-           s_state.limit.im == 0.0 ?1.0:1000.0:
-           s_state.limit.im/s_state.tz[1].im;
-        if (std::abs(1.0 - s_state.limit.im) > s_t_width)
+        m_limit.y = get_imag(m_corner[1].x, m_corner[0].y);
+        m_limit.y =
+            m_tz[1].y == 0.0 ? m_limit.y == 0.0 ? 1.0 : 1000.0 : m_limit.y / m_tz[1].y;
+        if (std::abs(1.0 - m_limit.y) > m_t_width)
         {
             break;
         }
 
-        s_state.limit.re = get_real(s_state.corner[0].re, s_state.corner[1].im);
-        s_state.limit.re = s_state.tz[2].re == 0.0 ?
-           s_state.limit.re == 0.0 ?1.0:1000.0:
-           s_state.limit.re/s_state.tz[2].re;
-        if (std::abs(1.0 - s_state.limit.re) > s_t_width)
+        m_limit.x = get_real(m_corner[0].x, m_corner[1].y);
+        m_limit.x =
+            m_tz[2].x == 0.0 ? m_limit.x == 0.0 ? 1.0 : 1000.0 : m_limit.x / m_tz[2].x;
+        if (std::abs(1.0 - m_limit.x) > m_t_width)
         {
             break;
         }
 
-        s_state.limit.im = get_imag(s_state.corner[0].re, s_state.corner[1].im);
-        s_state.limit.im = s_state.tz[2].im == 0.0 ?
-           s_state.limit.im == 0.0 ?1.0:1000.0:
-           s_state.limit.im/s_state.tz[2].im;
-        if (std::abs(1.0 - s_state.limit.im) > s_t_width)
+        m_limit.y = get_imag(m_corner[0].x, m_corner[1].y);
+        m_limit.y =
+            m_tz[2].y == 0.0 ? m_limit.y == 0.0 ? 1.0 : 1000.0 : m_limit.y / m_tz[2].y;
+        if (std::abs(1.0 - m_limit.y) > m_t_width)
         {
             break;
         }
 
-        s_state.limit.re = get_real(s_state.corner[1].re, s_state.corner[1].im);
-        s_state.limit.re = s_state.tz[3].re == 0.0 ?
-           s_state.limit.re == 0.0 ?1.0:1000.0:
-           s_state.limit.re/s_state.tz[3].re;
-        if (std::abs(1.0 - s_state.limit.re) > s_t_width)
+        m_limit.x = get_real(m_corner[1].x, m_corner[1].y);
+        m_limit.x =
+            m_tz[3].x == 0.0 ? m_limit.x == 0.0 ? 1.0 : 1000.0 : m_limit.x / m_tz[3].x;
+        if (std::abs(1.0 - m_limit.x) > m_t_width)
         {
             break;
         }
 
-        s_state.limit.im = get_imag(s_state.corner[1].re, s_state.corner[1].im);
-        s_state.limit.im = s_state.tz[3].im == 0.0 ?
-           s_state.limit.im == 0.0 ?1.0:1000.0:
-           s_state.limit.im/s_state.tz[3].im;
-        if (std::abs(1.0 - s_state.limit.im) > s_t_width)
+        m_limit.y = get_imag(m_corner[1].x, m_corner[1].y);
+        m_limit.y =
+            m_tz[3].y == 0.0 ? m_limit.y == 0.0 ? 1.0 : 1000.0 : m_limit.y / m_tz[3].y;
+        if (std::abs(1.0 - m_limit.y) > m_t_width)
         {
             break;
         }
@@ -644,120 +650,121 @@ scan:
     // this is a little heuristic I tried to improve performance.
     if (iter - before < 10)
     {
-        std::copy(std::begin(s), std::end(s), std::begin(s_zi));
+        std::copy(std::begin(s), std::end(s), std::begin(m_zi));
         goto scan;
     }
 
     // compute key values for subsequent rectangles
 
-    const double re10 = interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, s_state.corner[0].re);
-    const double im10 = interpolate(c_re1, mid_r, c_re2, s[0].im, s[4].im, s[1].im, s_state.corner[0].re);
+    const double re10 = interpolate(c_re1, mid_r, c_re2, s[0].x, s[4].x, s[1].x, m_corner[0].x);
+    const double im10 = interpolate(c_re1, mid_r, c_re2, s[0].y, s[4].y, s[1].y, m_corner[0].x);
 
-    const double re11 = interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, s_state.corner[1].re);
-    const double im11 = interpolate(c_re1, mid_r, c_re2, s[0].im, s[4].im, s[1].im, s_state.corner[1].re);
+    const double re11 = interpolate(c_re1, mid_r, c_re2, s[0].x, s[4].x, s[1].x, m_corner[1].x);
+    const double im11 = interpolate(c_re1, mid_r, c_re2, s[0].y, s[4].y, s[1].y, m_corner[1].x);
 
-    const double re20 = interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, s_state.corner[0].re);
-    const double im20 = interpolate(c_re1, mid_r, c_re2, s[2].im, s[7].im, s[3].im, s_state.corner[0].re);
+    const double re20 = interpolate(c_re1, mid_r, c_re2, s[2].x, s[7].x, s[3].x, m_corner[0].x);
+    const double im20 = interpolate(c_re1, mid_r, c_re2, s[2].y, s[7].y, s[3].y, m_corner[0].x);
 
-    const double re21 = interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, s_state.corner[1].re);
-    const double im21 = interpolate(c_re1, mid_r, c_re2, s[2].im, s[7].im, s[3].im, s_state.corner[1].re);
+    const double re21 = interpolate(c_re1, mid_r, c_re2, s[2].x, s[7].x, s[3].x, m_corner[1].x);
+    const double im21 = interpolate(c_re1, mid_r, c_re2, s[2].y, s[7].y, s[3].y, m_corner[1].x);
 
-    const double re15 = interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, s_state.corner[0].re);
-    const double im15 = interpolate(c_re1, mid_r, c_re2, s[5].im, s[8].im, s[6].im, s_state.corner[0].re);
+    const double re15 = interpolate(c_re1, mid_r, c_re2, s[5].x, s[8].x, s[6].x, m_corner[0].x);
+    const double im15 = interpolate(c_re1, mid_r, c_re2, s[5].y, s[8].y, s[6].y, m_corner[0].x);
 
-    const double re16 = interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, s_state.corner[1].re);
-    const double im16 = interpolate(c_re1, mid_r, c_re2, s[5].im, s[8].im, s[6].im, s_state.corner[1].re);
+    const double re16 = interpolate(c_re1, mid_r, c_re2, s[5].x, s[8].x, s[6].x, m_corner[1].x);
+    const double im16 = interpolate(c_re1, mid_r, c_re2, s[5].y, s[8].y, s[6].y, m_corner[1].x);
 
-    const double re12 = interpolate(c_im1, mid_i, c_im2, s[0].re, s[5].re, s[2].re, s_state.corner[0].im);
-    const double im12 = interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, s_state.corner[0].im);
+    const double re12 = interpolate(c_im1, mid_i, c_im2, s[0].x, s[5].x, s[2].x, m_corner[0].y);
+    const double im12 = interpolate(c_im1, mid_i, c_im2, s[0].y, s[5].y, s[2].y, m_corner[0].y);
 
-    const double re14 = interpolate(c_im1, mid_i, c_im2, s[1].re, s[6].re, s[3].re, s_state.corner[0].im);
-    const double im14 = interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, s_state.corner[0].im);
+    const double re14 = interpolate(c_im1, mid_i, c_im2, s[1].x, s[6].x, s[3].x, m_corner[0].y);
+    const double im14 = interpolate(c_im1, mid_i, c_im2, s[1].y, s[6].y, s[3].y, m_corner[0].y);
 
-    const double re17 = interpolate(c_im1, mid_i, c_im2, s[0].re, s[5].re, s[2].re, s_state.corner[1].im);
-    const double im17 = interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, s_state.corner[1].im);
+    const double re17 = interpolate(c_im1, mid_i, c_im2, s[0].x, s[5].x, s[2].x, m_corner[1].y);
+    const double im17 = interpolate(c_im1, mid_i, c_im2, s[0].y, s[5].y, s[2].y, m_corner[1].y);
 
-    const double re19 = interpolate(c_im1, mid_i, c_im2, s[1].re, s[6].re, s[3].re, s_state.corner[1].im);
-    const double im19 = interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, s_state.corner[1].im);
+    const double re19 = interpolate(c_im1, mid_i, c_im2, s[1].x, s[6].x, s[3].x, m_corner[1].y);
+    const double im19 = interpolate(c_im1, mid_i, c_im2, s[1].y, s[6].y, s[3].y, m_corner[1].y);
 
-    const double re13 = interpolate(c_im1, mid_i, c_im2, s[4].re, s[8].re, s[7].re, s_state.corner[0].im);
-    const double im13 = interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, s_state.corner[0].im);
+    const double re13 = interpolate(c_im1, mid_i, c_im2, s[4].x, s[8].x, s[7].x, m_corner[0].y);
+    const double im13 = interpolate(c_im1, mid_i, c_im2, s[4].y, s[8].y, s[7].y, m_corner[0].y);
 
-    const double re18 = interpolate(c_im1, mid_i, c_im2, s[4].re, s[8].re, s[7].re, s_state.corner[1].im);
-    const double im18 = interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, s_state.corner[1].im);
+    const double re18 = interpolate(c_im1, mid_i, c_im2, s[4].x, s[8].x, s[7].x, m_corner[1].y);
+    const double im18 = interpolate(c_im1, mid_i, c_im2, s[4].y, s[8].y, s[7].y, m_corner[1].y);
 
     // compute the value of the interpolation polynomial at (x,y)
     // from saved values before interpolation failed to stay within tolerance
     const auto get_saved_real{[=](const double re, const double im)
         {
-            return interpolate(c_im1, mid_i, c_im2,
-                interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, re),
-                interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, re),
-                interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, re), im);
+            return interpolate(c_im1, mid_i, c_im2, interpolate(c_re1, mid_r, c_re2, s[0].x, s[4].x, s[1].x, re),
+                interpolate(c_re1, mid_r, c_re2, s[5].x, s[8].x, s[6].x, re),
+                interpolate(c_re1, mid_r, c_re2, s[2].x, s[7].x, s[3].x, re), im);
         }};
     const auto get_saved_imag{[=](const double re, const double im)
         {
-            return interpolate(c_re1, mid_r, c_re2,
-                interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, im),
-                interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, im),
-                interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, im), re);
+            return interpolate(c_re1, mid_r, c_re2, interpolate(c_im1, mid_i, c_im2, s[0].y, s[5].y, s[2].y, im),
+                interpolate(c_im1, mid_i, c_im2, s[4].y, s[8].y, s[7].y, im),
+                interpolate(c_im1, mid_i, c_im2, s[1].y, s[6].y, s[3].y, im), re);
         }};
-    const double re91 = get_saved_real(s_state.corner[0].re, s_state.corner[0].im);
-    const double im91 = get_saved_imag(s_state.corner[0].re, s_state.corner[0].im);
-    const double re92 = get_saved_real(s_state.corner[1].re, s_state.corner[0].im);
-    const double im92 = get_saved_imag(s_state.corner[1].re, s_state.corner[0].im);
-    const double re93 = get_saved_real(s_state.corner[0].re, s_state.corner[1].im);
-    const double im93 = get_saved_imag(s_state.corner[0].re, s_state.corner[1].im);
-    const double re94 = get_saved_real(s_state.corner[1].re, s_state.corner[1].im);
-    const double im94 = get_saved_imag(s_state.corner[1].re, s_state.corner[1].im);
+    const double re91 = get_saved_real(m_corner[0].x, m_corner[0].y);
+    const double im91 = get_saved_imag(m_corner[0].x, m_corner[0].y);
+    const double re92 = get_saved_real(m_corner[1].x, m_corner[0].y);
+    const double im92 = get_saved_imag(m_corner[1].x, m_corner[0].y);
+    const double re93 = get_saved_real(m_corner[0].x, m_corner[1].y);
+    const double im93 = get_saved_imag(m_corner[0].x, m_corner[1].y);
+    const double re94 = get_saved_real(m_corner[1].x, m_corner[1].y);
+    const double im94 = get_saved_imag(m_corner[1].x, m_corner[1].y);
 
-    status = rhombus2(c_re1, mid_r,                 //
-        c_im1, mid_i,                               //
-        x1, (x1 + x2) >> 1, y1, (y1 + y2) >> 1,     //
-        s[0], s[4], s[5], s[8],                     //
-        re10, im10, re12, im12,                     //
-        re13, im13, re15, im15,                     //
-        re91, im91,                                 //
+    status = rhombus2(c_re1, mid_r,                      //
+        c_im1, mid_i,                                    //
+        x1, (x1 + x2) >> 1, y1, (y1 + y2) >> 1,          //
+        s[0], s[4], s[5], s[8],                          //
+        re10, im10, re12, im12,                          //
+        re13, im13, re15, im15,                          //
+        re91, im91,                                      //
         iter);
-    status = rhombus2(mid_r, c_re2,                 //
-        c_im1, mid_i,                               //
-        (x1 + x2) >> 1, x2, y1, (y1 + y2) >> 1,     //
-        s[4], s[1], s[8], s[6],                     //
-        re11, im11, re13, im13,                     //
-        re14, im14, re16, im16,                     //
-        re92, im92,                                 //
-        iter) && status;
-    status = rhombus2(c_re1, mid_r,                 //
-        mid_i, c_im2,                               //
-        x1, (x1 + x2) >> 1, (y1 + y2) >> 1, y2,     //
-        s[5], s[8], s[2], s[7],                     //
-        re15, im15, re17, im17,                     //
-        re18, im18, re20, im20,                     //
-        re93, im93,                                 //
-        iter) && status;
-    status = rhombus2(mid_r, c_re2,                 //
-        mid_i, c_im2,                               //
-        (x1 + x2) >> 1, x2, (y1 + y2) >> 1, y2,     //
-        s[8], s[6], s[7], s[3],                     //
-        re16, im16, re18, im18,                     //
-        re19, im19, re21, im21,                     //
-        re94, im94,                                 //
-        iter) && status;
+    status = rhombus2(mid_r, c_re2,                      //
+                 c_im1, mid_i,                           //
+                 (x1 + x2) >> 1, x2, y1, (y1 + y2) >> 1, //
+                 s[4], s[1], s[8], s[6],                 //
+                 re11, im11, re13, im13,                 //
+                 re14, im14, re16, im16,                 //
+                 re92, im92,                             //
+                 iter) &&
+        status;
+    status = rhombus2(c_re1, mid_r,                      //
+                 mid_i, c_im2,                           //
+                 x1, (x1 + x2) >> 1, (y1 + y2) >> 1, y2, //
+                 s[5], s[8], s[2], s[7],                 //
+                 re15, im15, re17, im17,                 //
+                 re18, im18, re20, im20,                 //
+                 re93, im93,                             //
+                 iter) &&
+        status;
+    status = rhombus2(mid_r, c_re2,                      //
+                 mid_i, c_im2,                           //
+                 (x1 + x2) >> 1, x2, (y1 + y2) >> 1, y2, //
+                 s[8], s[6], s[7], s[3],                 //
+                 re16, im16, re18, im18,                 //
+                 re19, im19, re21, im21,                 //
+                 re94, im94,                             //
+                 iter) &&
+        status;
 
     return status;
 }
 
-static bool rhombus(const double c_re1, const double c_re2, const double c_im1, const double c_im2, //
-    const int x1, const int x2, const int y1, const int y2,                                         //
+bool SOI::rhombus(const double c_re1, const double c_re2, const double c_im1, const double c_im2, //
+    const int x1, const int x2, const int y1, const int y2,                                       //
     const long iter)
 {
-    ++g_rhombus_depth;
+    ++m_rhombus_depth;
     const bool result = rhombus_aux(c_re1, c_re2, c_im1, c_im2, x1, x2, y1, y2, iter);
-    --g_rhombus_depth;
+    --m_rhombus_depth;
     return result;
 }
 
-void soi()
+void SOI::calculate()
 {
     // cppcheck-suppress unreadVariable
     constexpr double TOLERANCE = 0.1;
@@ -766,7 +773,7 @@ void soi()
     double yy_min_l;
     double yy_max_l;
     g_soi_min_stack_available = 30000;
-    g_rhombus_depth = -1;
+    m_rhombus_depth = -1;
     g_max_rhombus_depth = 0;
     if (g_bf_math != BFMathType::NONE)
     {
@@ -782,10 +789,10 @@ void soi()
         xx_max_l = g_image_region.m_max.x;
         yy_max_l = g_image_region.m_max.y;
     }
-    s_t_width = TOLERANCE / (g_logical_screen.x_dots - 1);
+    m_t_width = TOLERANCE / (g_logical_screen.x_dots - 1);
     const double step_x = (xx_max_l - xx_min_l) / g_logical_screen.x_dots;
     const double step_y = (yy_min_l - yy_max_l) / g_logical_screen.y_dots;
-    s_equal = step_x < step_y ? step_x : step_y;
+    m_equal = step_x < step_y ? step_x : step_y;
 
     rhombus2(xx_min_l, xx_max_l,                                //
         yy_max_l, yy_min_l,                                     //
@@ -800,6 +807,12 @@ void soi()
         (xx_max_l + xx_min_l) / 2, yy_min_l,                    //
         (xx_min_l + xx_max_l) / 2, (yy_max_l + yy_min_l) / 2,   //
         1);
+}
+
+void soi()
+{
+    SOI soi_calculation;
+    soi_calculation.calculate();
 }
 
 } // namespace id::engine

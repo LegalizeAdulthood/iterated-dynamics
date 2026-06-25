@@ -233,35 +233,7 @@ The remaining standard-pass work is mostly ownership and bounded
 iteration: moving pass traversal state out of globals, statics, stack
 locals, and recursive frames into concrete `StandardPass` state.
 
-### Slice 1: SOI Recursive Class Refactor
-
-Work:
-
-- Purely refactor `libid/engine/soi.cpp`; do not make SOI resumable in
-  this slice.
-- Keep the recursive SOI algorithm and rendered output unchanged.
-- Add a concrete `SOI` class in `soi.cpp` to own recursive SOI scratch
-  state.
-- Move file-static scratch state such as `s_zi`, `s_state`, `s_t_width`,
-  `s_equal`, and rhombus recursion depth into `SOI`.
-- Keep externally visible tab-display state global for now, including
-  `g_rhombus_stack`, `g_max_rhombus_depth`,
-  `g_soi_min_stack_available`, and `g_soi_min_stack`.
-- Convert internal helper functions such as `rhombus()`,
-  `rhombus_aux()`, `rhombus2()`, and `soi_orbit()` to private class
-  methods.
-- Keep the existing public `soi()` function as a thin delegating wrapper.
-- Do not remove key probes in this slice unless the class boundary makes
-  that mechanical and behavior-neutral.
-
-Done when:
-
-- SOI scratch state is owned by a concrete class instead of file statics.
-- The external SOI entry point and behavior are unchanged.
-- The existing recursive control flow is still recognizable.
-- `ImageTest.passes-synchronous-orbits` passes.
-
-### Slice 2: StandardPass Boundary
+### Slice 1: StandardPass Boundary
 
 Work:
 
@@ -300,7 +272,7 @@ Done when:
   existing pass implementations are still called through temporary
   dispatch branches.
 
-### Slice 3: StandardPass Adapter
+### Slice 2: StandardPass Adapter
 
 Work:
 
@@ -322,7 +294,7 @@ Done when:
   grouped pass state.
 - Existing standard rendering behavior is unchanged.
 
-### Slice 4: StandardFractal Pixel Yielding
+### Slice 3: StandardFractal Pixel Yielding
 
 Work:
 
@@ -350,7 +322,7 @@ Manual testing:
 - Toggle orbit display with `o` during rendering and confirm rendering
   continues.
 
-### Slice 5: StandardFractal SolidGuess State
+### Slice 4: StandardFractal SolidGuess State
 
 Work:
 
@@ -374,11 +346,11 @@ Manual testing:
 - Render `type=mandel passes=g` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 6: StandardFractal SOI Resume State
+### Slice 5: StandardFractal SOI Resume State
 
 Work:
 
-- Convert the `SOI` class from the cleanup slice into concrete
+- Convert the concrete `SOI` class into
   `StandardPass` state for `passes=s`.
 - Replace the recursive SOI control flow with resumable state that can
   advance by bounded scan or rhombus steps.
@@ -397,7 +369,7 @@ Manual testing:
 - Render `type=mandel passes=s` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 7: StandardFractal Perturbation Orbit Strategy
+### Slice 6: StandardFractal Perturbation Orbit Strategy
 
 Work:
 
@@ -434,7 +406,7 @@ Manual testing:
 - Confirm progress text remains responsive during interruption and
   resume.
 
-### Slice 8: StandardFractal Orbit Mode State
+### Slice 7: StandardFractal Orbit Mode State
 
 Work:
 
@@ -458,7 +430,7 @@ Manual testing:
 - Render `type=mandel passes=o` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 9: LSystem Renderer
+### Slice 8: LSystem Renderer
 
 Work:
 
@@ -482,7 +454,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 10: Lyapunov Renderer
+### Slice 9: Lyapunov Renderer
 
 Work:
 
@@ -503,7 +475,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 11: Lorenz Photographer Mode
+### Slice 10: Lorenz Photographer Mode
 
 Work:
 
@@ -523,7 +495,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 12: Non-Interrupt Pending-Key Utilities
+### Slice 11: Non-Interrupt Pending-Key Utilities
 
 Work:
 
