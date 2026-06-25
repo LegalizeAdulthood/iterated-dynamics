@@ -275,6 +275,9 @@ New Features in Version 1.4.2
 
 Bugs Fixed in Version 1.4.2
 
+o The image random number maximum constant no longer conflicts with system
+  headers that define RANDOM_MAX.  (Fixes #433)
+
 Code Cleanup in Version 1.4.2
 
 Version 1.4.1 is a bug fix release for version 1.4.0.
