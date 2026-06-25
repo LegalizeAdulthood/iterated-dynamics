@@ -277,6 +277,8 @@ Bugs Fixed in Version 1.4.2
 
 o The image random number maximum constant no longer conflicts with system
   headers that define RANDOM_MAX.  (Fixes #433)
+o Runtime dependency scanning is only used when installing Windows builds.
+  (Fixes #434)
 
 Code Cleanup in Version 1.4.2
 
