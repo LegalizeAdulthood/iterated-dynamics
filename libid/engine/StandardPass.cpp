@@ -2,7 +2,6 @@
 //
 #include "engine/StandardPass.h"
 
-#include "engine/boundary_trace.h"
 #include "engine/diffusion_scan.h"
 #include "engine/soi.h"
 #include "engine/solid_guess.h"
@@ -58,8 +57,7 @@ bool StandardPass::iterate()
         return true;
 
     case BOUNDARY_TRACE:
-        boundary_trace();
-        return true;
+        return std::get<BoundaryTrace>(m_state).iterate();
 
     case SOLID_GUESS:
         if (g_calc_status != CalcStatus::COMPLETED)

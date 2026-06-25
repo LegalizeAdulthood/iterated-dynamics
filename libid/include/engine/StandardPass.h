@@ -2,6 +2,7 @@
 //
 #pragma once
 
+#include "engine/boundary_trace.h"
 #include "engine/calcfrac.h"
 #include "engine/one_or_two_pass.h"
 #include "engine/tesseral.h"
@@ -46,10 +47,6 @@ private:
     };
 
     struct SynchronousOrbit
-    {
-    };
-
-    struct BoundaryTrace
     {
     };
 
