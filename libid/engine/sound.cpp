@@ -69,7 +69,7 @@ void write_sound(const int tone)
         // cppcheck-suppress leakNoVarFunctionCall
         if (sound_open())
         {
-            std::fprintf(s_snd_fp, "%-d\n", tone);
+            fmt::print(s_snd_fp, "{:d}\n", tone);
         }
     }
     if (!driver_key_pressed())
@@ -90,7 +90,7 @@ void sound_time_write()
     // cppcheck-suppress leakNoVarFunctionCall
     if (sound_open())
     {
-        std::fprintf(s_snd_fp, "time=%-ld\n", std::clock() *1000/CLOCKS_PER_SEC);
+        fmt::print(s_snd_fp, "time={}\n", std::clock() * 1000 / CLOCKS_PER_SEC);
     }
 }
 
