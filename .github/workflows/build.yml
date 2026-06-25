@@ -659,6 +659,7 @@ jobs:
             patchelf \
             perl5 \
             pkgconf \
+            python3 \
             rsync \
             unzip \
             xauth \
