@@ -814,11 +814,13 @@ jobs:
         envs: VCPKG_GITHUB_CACHE_TOKEN VCPKG_ROOT
         prepare: |
           pkg_add -I \
+            autoconf-2.72 \
             cmake \
             curl \
             git \
             bash \
             gmake \
+            metaauto \
             ninja \
             rsync-- \
             unzip-- \
@@ -857,6 +859,7 @@ jobs:
               /usr/X11R6/bin/Xvfb :99 -screen 0 1024x768x24 >xvfb.log 2>&1 &
               xvfb_pid=$!
               sleep 3
+              export AUTOCONF_VERSION=2.72
               export VCPKG_FORCE_SYSTEM_BINARIES=1
               DISPLAY=:99 cmake --workflow --preset ci-release
               status=$?
