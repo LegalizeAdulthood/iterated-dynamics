@@ -42,12 +42,16 @@ if(WIN32)
 endif()
 gui_executable(id RUNTIME_NAME "$<IF:$<PLATFORM_ID:Windows>,id,xid>")
 vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")
-install(TARGETS id
-    DESTINATION .
-    RUNTIME_DEPENDENCIES
-        PRE_EXCLUDE_REGEXES "api-ms-.*" "ext-ms-.*"
-        POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
-)
+if(WIN32)
+    install(TARGETS id
+        DESTINATION .
+        RUNTIME_DEPENDENCIES
+            PRE_EXCLUDE_REGEXES "api-ms-.*" "ext-ms-.*"
+            POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
+    )
+else()
+    install(TARGETS id DESTINATION .)
+endif()
 
 if(BUILD_TESTING)
     add_subdirectory(tests)
