@@ -817,8 +817,8 @@ jobs:
             cmake \
             curl \
             git \
+            bash \
             ninja \
-            nuget \
             rsync-- \
             unzip-- \
             zip
@@ -838,6 +838,18 @@ jobs:
               test -f build-ci-release/hc/src/id.pdf &&
               cmake --version
               status=$?
+            fi
+            if [ "${status}" -eq 0 ]; then
+              nuget_exe=$(find "${VCPKG_ROOT}/downloads/tools" -type f \
+                -name nuget.exe | sed -n '/openbsd/p' | sed -n '1p')
+              if [ -z "${nuget_exe}" ]; then
+                echo "OpenBSD NuGet executable was not prepared"
+                status=1
+              else
+                nuget_dir=$(dirname "${nuget_exe}")
+                ln -sf nuget.exe "${nuget_dir}/nuget"
+                export PATH="${nuget_dir}:${PATH}"
+              fi
             fi
             if [ "${status}" -eq 0 ]; then
               /usr/X11R6/bin/Xvfb :99 -screen 0 1024x768x24 >xvfb.log 2>&1 &
