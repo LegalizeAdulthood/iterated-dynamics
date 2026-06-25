@@ -755,11 +755,170 @@ jobs:
       run: gh run cancel ${{github.run_id}} || true
 
   #############################################################################
+  build-openbsd:
+    needs: [ html-docs, pdf-docs ]
+    runs-on: ubuntu-22.04
+    permissions:
+      actions: write
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        fetch-depth: 0
+        submodules: true
+
+    - name: Get prebuilt HTML documentation
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        name: html-docs
+        path: ${{github.workspace}}/build-ci-release/hc/src
+
+    - name: Get prebuilt PDF documentation
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        name: pdf-docs
+        path: ${{github.workspace}}/build-ci-release/hc/src
+
+    - name: Verify prebuilt documentation
+      run: >
+        cmake -E sha256sum
+        ${{github.workspace}}/build-ci-release/hc/src/id.html
+        ${{github.workspace}}/build-ci-release/hc/src/id.pdf
+
+    - name: Generate vcpkg cache setup script
+      id: vc
+      uses: LegalizeAdulthood/vcpkg-github-cache@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      with:
+        token: ${{github.token}}
+        execution-mode: emit-script
+        target-os: openbsd
+        bootstrap: "true"
+        install-nuget: "true"
+        install-mono: "true"
+        debug: "false"
+        trace: "false"
+
+    - name: Run OpenBSD workflow
+      uses: vmactions/openbsd-vm@18edb32f4e48dae5865d7b8b3a9587bc01218a20 # v1.4.4
+      env:
+        VCPKG_GITHUB_CACHE_TOKEN: ${{github.token}}
+        VCPKG_FORCE_SYSTEM_BINARIES: "1"
+        VCPKG_ROOT: vcpkg
+      with:
+        release: "7.9"
+        usesh: true
+        sync: rsync
+        copyback: true
+        envs: VCPKG_FORCE_SYSTEM_BINARIES VCPKG_GITHUB_CACHE_TOKEN VCPKG_ROOT
+        prepare: |
+          pkg_add -I \
+            autoconf%2.72 \
+            automake%1.17 \
+            bash \
+            bison \
+            cmake \
+            curl \
+            gettext-tools \
+            git \
+            gmake \
+            libtool \
+            ninja \
+            patchelf \
+            python%3.13 \
+            rsync-- \
+            unzip-- \
+            zip
+        run: |
+          set +e
+          set -u
+          mkdir -p .openbsd-copyback
+
+          {
+            status=0
+            sh "${{steps.vc.outputs.setup-script}}" || status=$?
+            if [ "${status}" -eq 0 ]; then
+              . "${{steps.vc.outputs.setup-env}}" || status=$?
+            fi
+            if [ "${status}" -eq 0 ]; then
+              test -f build-ci-release/hc/src/id.html &&
+              test -f build-ci-release/hc/src/id.pdf &&
+              cmake --version
+              status=$?
+            fi
+            if [ "${status}" -eq 0 ]; then
+              /usr/X11R6/bin/Xvfb :99 -screen 0 1024x768x24 >xvfb.log 2>&1 &
+              xvfb_pid=$!
+              sleep 3
+              export AUTOCONF_VERSION=2.72
+              export AUTOMAKE_VERSION=1.17
+              export VCPKG_OVERLAY_TRIPLETS="${PWD}/vcpkg-overlays/triplets"
+              DISPLAY=:99 cmake --workflow --preset ci-release
+              status=$?
+              kill "$xvfb_pid" || true
+            fi
+            echo "${status}" > build.status
+          } 2>&1 | tee build.log
+
+          if [ -f build.status ] && [ "$(cat build.status)" -eq 0 ]; then
+            cp build-ci-release/*.tar.gz .openbsd-copyback/
+            copy_status=$?
+            if [ "${copy_status}" -ne 0 ]; then
+              echo "${copy_status}" > build.status
+            fi
+          fi
+          cp build.log build.status .openbsd-copyback/
+          if [ -f xvfb.log ]; then
+            cp xvfb.log .openbsd-copyback/
+          fi
+          find . -mindepth 1 -maxdepth 1 ! -name .git \
+            ! -name .openbsd-copyback -exec rm -rf {} +
+          mv .openbsd-copyback/* .
+          rmdir .openbsd-copyback
+
+    - name: Analyze vcpkg package cache
+      if: always()
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      with:
+        token: ${{github.token}}
+        build-log: build.log
+        artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{github.run_attempt}}
+        fail-on: "never"
+        debug: "false"
+        trace: "false"
+
+    - name: Check OpenBSD build status
+      if: always()
+      run: |
+        if [ ! -f build.status ]; then
+          echo "build.status was not copied back from the OpenBSD VM"
+          exit 1
+        fi
+        exit "$(cat build.status)"
+
+    - name: Upload OpenBSD tar.gz package artifacts
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        archive: false
+        name: Tar-openbsd-release
+        path: ${{github.workspace}}/*.tar.gz
+        if-no-files-found: error
+        compression-level: 0
+
+    - name: Cancel workflow after OpenBSD build failure
+      if: failure()
+      env:
+        GH_TOKEN: ${{github.token}}
+      run: gh run cancel ${{github.run_id}} || true
+
+  #############################################################################
   # When a tag is pushed, create a draft release from the build assets
   release:
     if: ${{github.event_name == 'push' && github.ref_type == 'tag'}}
     runs-on: ubuntu-22.04
-    needs: [ build, build-freebsd ]
+    needs: [ build, build-freebsd, build-openbsd ]
     permissions:
       contents: write
 
