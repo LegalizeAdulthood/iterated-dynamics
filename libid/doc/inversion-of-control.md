@@ -90,11 +90,18 @@ this refactor, that communication may remain indirect through existing
 globals such as `g_row`, `g_col`, `g_color`, and `g_plot`.  Removing those
 globals is separate work.
 
-A practical implementation is a non-virtual `StandardPass` wrapper that
-holds a `std::variant` of concrete pass state types.  `StandardPass`
-exposes one small interface, such as `resume()`, `suspend()`, `done()`,
-and `iterate()`, and dispatches to the active variant alternative with
-`std::visit`.
+A practical implementation is a non-virtual `StandardPass` router that
+holds a `std::variant` of concrete pass classes.  `StandardPass` exposes
+one small interface, such as `resume()`, `suspend()`, `done()`, and
+`iterate()`, and delegates to the active variant alternative.
+
+Empty pass placeholders may start in `StandardPass.h`, but they should not
+grow there.  As each pass slice is implemented, move that placeholder into
+its own pass header and implementation file.  The pass class owns the
+state and operation methods.  `StandardPass` includes that header, stores
+the concrete class in the variant, and routes calls to it.  Thin
+compatibility wrappers for the old free functions may remain during the
+transition.
 
 `StandardFractal` also owns the standard-mode dispatch currently selected
 by `g_std_calc_mode`, including synchronous orbit, Tesseral, boundary
@@ -228,12 +235,165 @@ Do not introduce a new progress-result enum unless an individual renderer
 needs more state than the existing `iterate()` and `done()` pattern can
 express.
 
-The audit found that the StandardPass Adapter shape mostly exists already.
-The remaining standard-pass work is mostly ownership and bounded
-iteration: moving pass traversal state out of globals, statics, stack
-locals, and recursive frames into concrete `StandardPass` state.
+The next slices are split into two phases.  First, finish the
+`StandardPass` ownership boundary by moving pass state out of globals,
+file statics, stack locals, and recursive frames into the variant
+alternatives.  These ownership slices should preserve synchronous
+behavior and existing polling.  After pass state is owned, later slices
+can change control flow and remove direct input from calculation code.
 
-### Slice 1: StandardFractal Pixel Yielding
+### Slice 1: StandardPass One/Two State
+
+Work:
+
+- Move the `OnePass` and `TwoPass` placeholders out of
+  `StandardPass.h` into pass-specific header and implementation files.
+- Make `OnePass` and `TwoPass` the concrete classes that `StandardPass`
+  stores in its variant for `passes=1` and `passes=2`.
+- Move one-pass and two-pass traversal state from
+  `libid/engine/one_or_two_pass.cpp` into those classes.
+- Delegate from `StandardPass::iterate()` to the active class.
+- Own current pass, current row, current column, resume row and column,
+  and second-pass setup state in the pass class.
+- Keep the existing global handoff through `g_row`, `g_col`,
+  `g_current_pass`, and `g_work_pass` while pixel orbit code still uses
+  those globals.
+- Keep `one_or_two_pass()` as a thin compatibility wrapper if needed.
+- Preserve synchronous behavior and existing key polling.
+
+Done when:
+
+- `OnePass` and `TwoPass` are no longer empty structs in
+  `StandardPass.h`.
+- `passes=1` and `passes=2` traversal state is owned by the pass
+  classes.
+- `one_or_two_pass.cpp` no longer owns traversal state in stack locals.
+- `ImageTest.passes-one` and `ImageTest.passes-two` pass.
+
+### Slice 2: StandardPass BoundaryTrace State
+
+Work:
+
+- Move the `BoundaryTrace` placeholder out of `StandardPass.h` into a
+  pass-specific header and implementation file.
+- Make `BoundaryTrace` the concrete class that `StandardPass` stores in
+  its variant for boundary trace.
+- Move boundary-trace traversal state into that class.
+- Delegate from `StandardPass::iterate()` to `BoundaryTrace`.
+- Move file-static state such as direction, trail row, trail column, and
+  line buffers out of `libid/engine/boundary_trace.cpp`.
+- Own active scan row, scan column, trail state, and fill state in the
+  pass class.
+- Keep `boundary_trace()` as a thin compatibility wrapper if needed.
+- Preserve synchronous behavior and existing key polling.
+
+Done when:
+
+- `BoundaryTrace` is no longer an empty struct in `StandardPass.h`.
+- Boundary-trace state is owned by the `BoundaryTrace` class.
+- `boundary_trace.cpp` no longer has file-static pass state.
+- `ImageTest.passes-boundary-trace` passes.
+
+### Slice 3: StandardPass SolidGuess State
+
+Work:
+
+- Promote `SolidGuess` from a source-local class into a pass-specific
+  header and implementation file.
+- Remove the empty `SolidGuess` placeholder from `StandardPass.h`.
+- Make `SolidGuess` the concrete class that `StandardPass` stores in its
+  variant for `passes=g`.
+- Delegate from `StandardPass::iterate()` to `SolidGuess`.
+- Move scan position, row repaint position, and any needed block state
+  out of stack locals and into `SolidGuess`.
+- Keep `solid_guess()` as a thin compatibility wrapper if needed.
+- Preserve synchronous behavior and existing key polling.
+
+Done when:
+
+- `SolidGuess` is no longer an empty struct in `StandardPass.h`.
+- Solid-guess state is owned by the `SolidGuess` class.
+- `solid_guess.cpp` no longer creates the active `SolidGuess` as a
+  stack-local object for each call.
+- `ImageTest.passes-guess` passes.
+
+### Slice 4: StandardPass Diffusion State
+
+Work:
+
+- Move the `Diffusion` placeholder out of `StandardPass.h` into a
+  pass-specific header and implementation file.
+- Make `Diffusion` the concrete class that `StandardPass` stores in its
+  variant for diffusion scan.
+- Move diffusion traversal state into that class.
+- Delegate from `StandardPass::iterate()` to `Diffusion`.
+- Move resumable globals such as `g_diffusion_counter`,
+  `g_diffusion_bits`, and `g_diffusion_limit` into the pass state.
+- Keep tab-display progress state available through the existing global
+  names or explicit accessors until tab display is refactored.
+- Keep `diffusion_scan()` as a thin compatibility wrapper if needed.
+- Preserve synchronous behavior and existing key polling.
+
+Done when:
+
+- `Diffusion` is no longer an empty struct in `StandardPass.h`.
+- Diffusion traversal state is owned by the `Diffusion` class.
+- `diffusion_scan.cpp` no longer owns pass progress in globals.
+- `ImageTest.passes-diffusion` passes.
+
+### Slice 5: StandardPass SOI State
+
+Work:
+
+- Promote the concrete `SOI` class from source-local state into a
+  pass-specific header and implementation file.
+- Remove the empty `SynchronousOrbit` placeholder from `StandardPass.h`.
+- Make `SOI` the concrete class that `StandardPass` stores in its variant
+  for `CalcMode::SYNCHRONOUS_ORBIT`.
+- Delegate from `StandardPass::iterate()` to `SOI`.
+- Keep recursive SOI control flow and rendered output unchanged.
+- Keep externally visible tab-display state global for now, including
+  `g_rhombus_stack`, `g_max_rhombus_depth`,
+  `g_soi_min_stack_available`, and `g_soi_min_stack`.
+- Keep `soi()` as a thin compatibility wrapper if needed.
+- Preserve synchronous behavior and existing key polling.
+
+Done when:
+
+- `SynchronousOrbit` is no longer an empty struct in `StandardPass.h`.
+- SOI calculation state is owned by the `SOI` class.
+- `soi.cpp` no longer constructs the active `SOI` object as a
+  stack-local object for each call.
+- `ImageTest.passes-synchronous-orbits` passes.
+
+### Slice 6: StandardPass Orbit Mode State
+
+Work:
+
+- Move the orbit-mode placeholder out of `StandardPass.h` into a
+  pass-specific header and implementation file.
+- Use a concrete orbit-mode class such as `StickyOrbits` so it does not
+  collide with the existing orbit calculation helpers.
+- Make that class the concrete object that `StandardPass` stores in its
+  variant for orbit mode.
+- Delegate from `StandardPass::iterate()` to the orbit-mode class.
+- Replace file-static or implicit state in `sticky_orbits()` and
+  `plot_orbits2d()` with owned orbit-mode state where practical.
+- Keep rectangle, line, and function orbit drawing state in the pass
+  class.
+- Keep `sticky_orbits()` as a thin compatibility wrapper if needed.
+- Preserve synchronous behavior and existing key polling.
+
+Done when:
+
+- The orbit-mode placeholder is no longer an empty struct in
+  `StandardPass.h`.
+- Standard orbit-mode state is owned by the orbit-mode class.
+- `sticky_orbits.cpp` and related orbit drawing code no longer own
+  pass state in file statics.
+- `ImageTest.passes-orbit` passes.
+
+### Slice 7: StandardFractal Pixel Yielding
 
 Work:
 
@@ -261,54 +421,7 @@ Manual testing:
 - Toggle orbit display with `o` during rendering and confirm rendering
   continues.
 
-### Slice 2: StandardFractal SolidGuess State
-
-Work:
-
-- Keep `SolidGuess` as a concrete state holder in
-  `libid/engine/solid_guess.cpp`.
-- Change the concrete solid-guess `StandardPass` state to own a
-  `SolidGuess` instance while `passes=g` work is active.
-- Move scan position, row repaint position, and any needed block state
-  into `SolidGuess` so `SolidGuess::iterate()` can do bounded work and
-  return to `StandardFractal`.
-- Remove the key probes from `SolidGuess::guess_row()`.
-
-Done when:
-
-- `solid_guess.cpp` has no direct keyboard polling.
-- `ui/standard_fractal.cpp` can interrupt and suspend solid guessing
-  between `StandardFractal::iterate()` calls.
-
-Manual testing:
-
-- Render `type=mandel passes=g` and interrupt it.
-- Resume the interrupted render.
-
-### Slice 3: StandardFractal SOI Resume State
-
-Work:
-
-- Convert the concrete `SOI` class into
-  `StandardPass` state for `passes=s`.
-- Replace the recursive SOI control flow with resumable state that can
-  advance by bounded scan or rhombus steps.
-- Keep SOI math, stack-depth tracking, and resume behavior unchanged.
-- Remove key probes from `soi.cpp`.
-
-Done when:
-
-- `soi.cpp` has no direct keyboard polling.
-- SOI returns control to `ui/standard_fractal.cpp` between bounded units
-  of work.
-- `ImageTest.passes-synchronous-orbits` passes.
-
-Manual testing:
-
-- Render `type=mandel passes=s` and interrupt it.
-- Resume the interrupted render.
-
-### Slice 4: StandardFractal Perturbation Orbit Strategy
+### Slice 8: StandardFractal Perturbation Orbit Strategy
 
 Work:
 
@@ -345,31 +458,7 @@ Manual testing:
 - Confirm progress text remains responsive during interruption and
   resume.
 
-### Slice 5: StandardFractal Orbit Mode State
-
-Work:
-
-- Replace the polling path through `sticky_orbits()` and
-  `plot_orbits2d()` with concrete orbit-mode `StandardPass` state.
-- Keep rectangle, line, and function orbit drawing state in the orbit-mode
-  state.
-- Move the interruption decision and resume request to
-  `ui/standard_fractal.cpp`.
-- Leave Lorenz orbit math in calculation code, but remove keyboard polling
-  from `plot_orbits2d()`.
-
-Done when:
-
-- Standard orbit mode returns control to `ui/standard_fractal.cpp`
-  between bounded orbit-drawing steps.
-- `plot_orbits2d()` no longer polls keyboard input.
-
-Manual testing:
-
-- Render `type=mandel passes=o` and interrupt it.
-- Resume the interrupted render.
-
-### Slice 6: LSystem Renderer
+### Slice 9: LSystem Renderer
 
 Work:
 
@@ -393,7 +482,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 7: Lyapunov Renderer
+### Slice 10: Lyapunov Renderer
 
 Work:
 
@@ -414,7 +503,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 8: Lorenz Photographer Mode
+### Slice 11: Lorenz Photographer Mode
 
 Work:
 
@@ -434,7 +523,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 9: Non-Interrupt Pending-Key Utilities
+### Slice 12: Non-Interrupt Pending-Key Utilities
 
 Work:
 
