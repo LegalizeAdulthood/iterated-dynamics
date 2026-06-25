@@ -846,7 +846,7 @@ jobs:
                 echo "OpenBSD NuGet executable was not prepared"
                 status=1
               else
-                nuget_dir=$(dirname "${nuget_exe}")
+                nuget_dir=$(cd "$(dirname "${nuget_exe}")" && pwd -P)
                 chmod +x "${nuget_exe}"
                 ln -sf nuget.exe "${nuget_dir}/nuget"
                 export PATH="${nuget_dir}:${PATH}"
