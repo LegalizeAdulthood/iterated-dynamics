@@ -814,7 +814,7 @@ jobs:
         envs: VCPKG_GITHUB_CACHE_TOKEN VCPKG_ROOT
         prepare: |
           pkg_add -I \
-            autoconf-2.72 \
+            autoconf-2.72p0 \
             cmake \
             curl \
             git \
