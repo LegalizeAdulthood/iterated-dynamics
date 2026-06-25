@@ -401,6 +401,7 @@ jobs:
   build:
     needs: [ html-docs, pdf-docs ]
     strategy:
+      fail-fast: true
       matrix:
         include:
         - os: ubuntu-22.04
@@ -418,6 +419,7 @@ jobs:
 
     runs-on: ${{matrix.os}}
     permissions:
+      actions: write
       contents: read
       packages: write
 
@@ -584,11 +586,18 @@ jobs:
         if-no-files-found: error
         compression-level: 0
 
+    - name: Cancel workflow after build failure
+      if: failure()
+      env:
+        GH_TOKEN: ${{github.token}}
+      run: gh run cancel ${{github.run_id}} || true
+
   #############################################################################
   build-freebsd:
     needs: [ html-docs, pdf-docs ]
     runs-on: ubuntu-22.04
     permissions:
+      actions: write
       contents: read
       packages: write
 
@@ -723,6 +732,12 @@ jobs:
           exit 1
         fi
         exit "$(cat build.status)"
+
+    - name: Cancel workflow after FreeBSD build failure
+      if: failure()
+      env:
+        GH_TOKEN: ${{github.token}}
+      run: gh run cancel ${{github.run_id}} || true
 
   #############################################################################
   # When a tag is pushed, create a draft release from the build assets
