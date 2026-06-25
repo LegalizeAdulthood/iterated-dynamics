@@ -172,7 +172,7 @@ The current code is already part-way through this plan:
   calculation decisions.  It does not interpret keys.
 - Keep behavior first.  Rename and reshape after calls are moved.
 - End each slice that changes calculation control flow with manual testing
-  steps.
+  steps only for user interaction paths not covered by automated tests.
 
 ## Keyboard Handler Stack
 
@@ -242,30 +242,7 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: StandardPass SolidGuess State
-
-Work:
-
-- Promote `SolidGuess` from a source-local class into a pass-specific
-  header and implementation file.
-- Remove the empty `SolidGuess` placeholder from `StandardPass.h`.
-- Make `SolidGuess` the concrete class that `StandardPass` stores in its
-  variant for `passes=g`.
-- Delegate from `StandardPass::iterate()` to `SolidGuess`.
-- Move scan position, row repaint position, and any needed block state
-  out of stack locals and into `SolidGuess`.
-- Keep `solid_guess()` as a thin compatibility wrapper if needed.
-- Preserve synchronous behavior and existing key polling.
-
-Done when:
-
-- `SolidGuess` is no longer an empty struct in `StandardPass.h`.
-- Solid-guess state is owned by the `SolidGuess` class.
-- `solid_guess.cpp` no longer creates the active `SolidGuess` as a
-  stack-local object for each call.
-- `ImageTest.passes-guess` passes.
-
-### Slice 2: StandardPass Diffusion State
+### Slice 1: StandardPass Diffusion State
 
 Work:
 
@@ -289,7 +266,7 @@ Done when:
 - `diffusion_scan.cpp` no longer owns pass progress in globals.
 - `ImageTest.passes-diffusion` passes.
 
-### Slice 3: StandardPass SOI State
+### Slice 2: StandardPass SOI State
 
 Work:
 
@@ -314,7 +291,7 @@ Done when:
   stack-local object for each call.
 - `ImageTest.passes-synchronous-orbits` passes.
 
-### Slice 4: StandardPass Orbit Mode State
+### Slice 3: StandardPass Orbit Mode State
 
 Work:
 
@@ -341,7 +318,7 @@ Done when:
   pass state in file statics.
 - `ImageTest.passes-orbit` passes.
 
-### Slice 5: StandardFractal Pixel Yielding
+### Slice 4: StandardFractal Pixel Yielding
 
 Work:
 
@@ -369,7 +346,7 @@ Manual testing:
 - Toggle orbit display with `o` during rendering and confirm rendering
   continues.
 
-### Slice 6: StandardFractal Perturbation Orbit Strategy
+### Slice 5: StandardFractal Perturbation Orbit Strategy
 
 Work:
 
@@ -406,7 +383,7 @@ Manual testing:
 - Confirm progress text remains responsive during interruption and
   resume.
 
-### Slice 7: LSystem Renderer
+### Slice 6: LSystem Renderer
 
 Work:
 
@@ -430,7 +407,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 8: Lyapunov Renderer
+### Slice 7: Lyapunov Renderer
 
 Work:
 
@@ -451,7 +428,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 9: Lorenz Photographer Mode
+### Slice 8: Lorenz Photographer Mode
 
 Work:
 
@@ -471,7 +448,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 10: Non-Interrupt Pending-Key Utilities
+### Slice 9: Non-Interrupt Pending-Key Utilities
 
 Work:
 

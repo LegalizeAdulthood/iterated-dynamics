@@ -23,16 +23,14 @@ using namespace id::fractals;
 namespace id::engine
 {
 
-int g_stop_pass{};  // stop at this guessing pass early
-
-// MAX_X_BLK defn must match fracsubr.c
-enum
-{
-    MAX_Y_BLK = 7,  // MAX_X_BLK*MAX_Y_BLK*2 <= 4096, the size of "prefix"
-    MAX_X_BLK = 202 // each maxnblk is oversize by 2 for a "border"
-};
+int g_stop_pass{}; // stop at this guessing pass early
 
 int ssg_block_size()
+{
+    return SolidGuess::block_size();
+}
+
+int SolidGuess::block_size()
 {
     // blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >=1200
     int block_size = 4;
@@ -43,47 +41,18 @@ int ssg_block_size()
         i += i;
     }
     // increase blocksize if prefix array not big enough
-    while (block_size*(MAX_X_BLK-2) < g_logical_screen.x_dots || block_size*(MAX_Y_BLK-2)*16 < g_logical_screen.y_dots)
+    while (block_size * (MAX_X_BLK - 2) < g_logical_screen.x_dots ||
+        block_size * (MAX_Y_BLK - 2) * 16 < g_logical_screen.y_dots)
     {
         block_size += block_size;
     }
     return block_size;
 }
 
-class SolidGuess
-{
-public:
-    SolidGuess();
-    SolidGuess(const SolidGuess &rhs) = delete;
-    SolidGuess(SolidGuess &&rhs) = delete;
-    ~SolidGuess() = default;
-    SolidGuess &operator=(const SolidGuess &rhs) = delete;
-    SolidGuess &operator=(SolidGuess &&rhs) = delete;
-
-    int scan();
-
-private:
-    void fill_prefix_plane(int plane, unsigned int value);
-    bool guess_row(bool first_pass, int y, int block_size);
-    void fill_d_stack(int x1, int x2, Byte value);
-    void plot_block(int build_row, int x, int y, int color);
-
-    bool m_guess_plot{};                              // paint 1st pass row at a time?
-    bool m_bottom_guess{};                            //
-    bool m_right_guess{};                             //
-    int m_max_block{};                                //
-    int m_half_block{};                               //
-    unsigned int m_prefix[2][MAX_Y_BLK][MAX_X_BLK]{}; // common temp
-    int m_stack_row_offset{};                         // offset of second scratch row
-    std::vector<Byte> m_stack;                        // common temp, two write_span calls
-    int m_block_size{};                               //
-};
-
 SolidGuess::SolidGuess() :
     m_guess_plot(g_plot != g_put_color && g_plot != sym_plot2 && g_plot != sym_plot2j),
     // check if guessing at bottom & right edges is ok
-    m_bottom_guess(
-        g_plot == sym_plot2 || (g_plot == g_put_color && g_i_stop_pt.y + 1 == g_logical_screen.y_dots)),
+    m_bottom_guess(g_plot == sym_plot2 || (g_plot == g_put_color && g_i_stop_pt.y + 1 == g_logical_screen.y_dots)),
     m_right_guess(g_plot == sym_plot2j ||
         ((g_plot == g_put_color || g_plot == sym_plot2) && g_i_stop_pt.x + 1 == g_logical_screen.x_dots)),
     m_max_block(ssg_block_size()),
@@ -108,11 +77,17 @@ SolidGuess::SolidGuess() :
     // ensure window top and left are on required boundary, treat window
     // as larger than it really is if necessary (this is the reason symplot
     // routines must check for > xdots/ydots before plotting sym points)
-    g_i_start_pt.x &= -1 - (m_max_block-1);
+    g_i_start_pt.x &= -1 - (m_max_block - 1);
     g_i_start_pt.y = g_begin_pt.y;
-    g_i_start_pt.y &= -1 - (m_max_block-1);
+    g_i_start_pt.y &= -1 - (m_max_block - 1);
 
     g_passes = Passes::SOLID_GUESS;
+}
+
+bool SolidGuess::iterate()
+{
+    scan();
+    return true;
 }
 
 // Timothy Wegner invented this solid guessing idea and implemented it in

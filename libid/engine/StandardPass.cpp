@@ -4,7 +4,6 @@
 
 #include "engine/diffusion_scan.h"
 #include "engine/soi.h"
-#include "engine/solid_guess.h"
 #include "engine/sticky_orbits.h"
 
 namespace id::engine
@@ -62,7 +61,7 @@ bool StandardPass::iterate()
     case SOLID_GUESS:
         if (g_calc_status != CalcStatus::COMPLETED)
         {
-            solid_guess();
+            return std::get<SolidGuess>(m_state).iterate();
         }
         return true;
 
