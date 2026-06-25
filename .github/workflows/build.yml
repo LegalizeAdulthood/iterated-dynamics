@@ -703,6 +703,13 @@ jobs:
             echo "${status}" > build.status
           } 2>&1 | tee build.log
 
+          if [ -f build.status ] && [ "$(cat build.status)" -eq 0 ]; then
+            cp build-ci-release/*.tar.gz .freebsd-copyback/
+            copy_status=$?
+            if [ "${copy_status}" -ne 0 ]; then
+              echo "${copy_status}" > build.status
+            fi
+          fi
           cp build.log build.status .freebsd-copyback/
           if [ -f xvfb.log ]; then
             cp xvfb.log .freebsd-copyback/
@@ -711,8 +718,6 @@ jobs:
             ! -name .freebsd-copyback -exec rm -rf {} +
           mv .freebsd-copyback/* .
           rmdir .freebsd-copyback
-
-    # TODO: Copy CPack artifacts back out of the FreeBSD VM and upload them.
 
     - name: Analyze vcpkg package cache
       if: always()
@@ -734,6 +739,15 @@ jobs:
         fi
         exit "$(cat build.status)"
 
+    - name: Upload FreeBSD tar.gz package artifacts
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        archive: false
+        name: Tar-freebsd-release
+        path: ${{github.workspace}}/*.tar.gz
+        if-no-files-found: error
+        compression-level: 0
+
     - name: Cancel workflow after FreeBSD build failure
       if: failure()
       env:
@@ -745,7 +759,7 @@ jobs:
   release:
     if: ${{github.event_name == 'push' && github.ref_type == 'tag'}}
     runs-on: ubuntu-22.04
-    needs: build
+    needs: [ build, build-freebsd ]
     permissions:
       contents: write
 
