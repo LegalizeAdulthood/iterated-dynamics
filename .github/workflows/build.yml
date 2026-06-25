@@ -818,6 +818,7 @@ jobs:
             curl \
             git \
             bash \
+            gmake \
             ninja \
             rsync-- \
             unzip-- \
