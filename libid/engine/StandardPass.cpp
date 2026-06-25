@@ -4,7 +4,6 @@
 
 #include "engine/boundary_trace.h"
 #include "engine/diffusion_scan.h"
-#include "engine/one_or_two_pass.h"
 #include "engine/soi.h"
 #include "engine/solid_guess.h"
 #include "engine/sticky_orbits.h"
@@ -83,8 +82,13 @@ bool StandardPass::iterate()
         sticky_orbits();
         return true;
 
+    case ONE_PASS:
+        return std::get<OnePass>(m_state).iterate();
+
+    case TWO_PASS:
+        return std::get<TwoPass>(m_state).iterate();
+
     default:
-        one_or_two_pass();
         return true;
     }
 }

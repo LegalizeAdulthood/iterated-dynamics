@@ -14,21 +14,39 @@ using namespace id::fractals;
 namespace id::engine
 {
 
-// routines in this module
-static int  standard_calc(int pass_num);
+bool OnePass::iterate()
+{
+    run();
+    return true;
+}
 
-int one_or_two_pass()
+int OnePass::run()
 {
     g_total_passes = 1;
-    if (g_std_calc_mode == CalcMode::TWO_PASS)
+    if (standard_calc(2, CalcMode::ONE_PASS) == -1)
     {
-        g_total_passes = 2;
+        add_work_list(g_start_pt.x, m_resume_row, g_stop_pt.x, stop_row_for_resume(), m_resume_col, m_resume_row,
+            g_work_pass, g_work_symmetry);
+        return -1;
     }
-    if (g_std_calc_mode == CalcMode::TWO_PASS && g_work_pass == 0) // do 1st pass of two
+    return 0;
+}
+
+bool TwoPass::iterate()
+{
+    run();
+    return true;
+}
+
+int TwoPass::run()
+{
+    g_total_passes = 2;
+    if (g_work_pass == 0) // do 1st pass of two
     {
-        if (standard_calc(1) == -1)
+        if (standard_calc(1, CalcMode::TWO_PASS) == -1)
         {
-            add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_col, g_row, 0, g_work_symmetry);
+            add_work_list(
+                g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, m_resume_col, m_resume_row, 0, g_work_symmetry);
             return -1;
         }
         if (g_num_work_list > 0) // worklist not empty, defer 2nd pass
@@ -42,77 +60,109 @@ int one_or_two_pass()
         g_begin_pt.y = g_start_pt.y;
     }
     // second or only pass
-    if (standard_calc(2) == -1)
+    if (standard_calc(2, CalcMode::TWO_PASS) == -1)
     {
-        int i = g_stop_pt.y;
-        if (g_i_stop_pt.y != g_stop_pt.y)   // must be due to symmetry
-        {
-            i -= g_row - g_i_start_pt.y;
-        }
-        add_work_list(g_start_pt.x, g_row, g_stop_pt.x, i, g_col, g_row, g_work_pass, g_work_symmetry);
+        add_work_list(g_start_pt.x, m_resume_row, g_stop_pt.x, stop_row_for_resume(), m_resume_col, m_resume_row,
+            g_work_pass, g_work_symmetry);
         return -1;
     }
 
     return 0;
 }
 
-static int standard_calc(const int pass_num)
+int OneOrTwoPass::standard_calc(const int pass_num, const CalcMode calc_mode)
 {
     g_passes = Passes::SEQUENTIAL_SCAN;
-    g_current_pass = pass_num;
-    g_row = g_begin_pt.y;
-    g_col = g_begin_pt.x;
+    m_current_pass = pass_num;
+    g_current_pass = m_current_pass;
+    m_row = g_begin_pt.y;
+    m_col = g_begin_pt.x;
+    g_row = m_row;
+    g_col = m_col;
 
-    while (g_row <= g_i_stop_pt.y)
+    while (m_row <= g_i_stop_pt.y)
     {
-        g_current_row = g_row;
+        g_current_row = m_row;
         g_reset_periodicity = true;
-        while (g_col <= g_i_stop_pt.x)
+        while (m_col <= g_i_stop_pt.x)
         {
+            g_row = m_row;
+            g_col = m_col;
             // on 2nd pass of two, skip even pts
             if (g_quick_calc && !g_resuming)
             {
-                g_color = get_color(g_col, g_row);
+                g_color = get_color(m_col, m_row);
                 if (g_color != g_inside_color)
                 {
-                    ++g_col;
+                    ++m_col;
                     continue;
                 }
             }
-            if (pass_num == 1 || g_std_calc_mode == CalcMode::ONE_PASS || (g_row&1) != 0 || (g_col&1) != 0)
+            if (pass_num == 1 || calc_mode == CalcMode::ONE_PASS || (m_row & 1) != 0 || (m_col & 1) != 0)
             {
-                if (calc_type() == -1)   // standard_fractal(), calcmand() or calcmandfp()
+                const int result = calc_type(); // standard_fractal(), calcmand() or calcmandfp()
+                m_row = g_row;
+                m_col = g_col;
+                if (result == -1)
                 {
-                    return -1;          // interrupted
+                    m_resume_row = m_row;
+                    m_resume_col = m_col;
+                    return -1;      // interrupted
                 }
-                g_resuming = false;       // reset so quick_calc works
+                g_resuming = false; // reset so quick_calc works
                 g_reset_periodicity = false;
-                if (pass_num == 1)       // first pass, copy pixel and bump col
+                if (pass_num == 1)  // first pass, copy pixel and bump col
                 {
-                    if ((g_row&1) == 0 && g_row < g_i_stop_pt.y)
+                    if ((m_row & 1) == 0 && m_row < g_i_stop_pt.y)
                     {
-                        g_plot(g_col, g_row+1, g_color);
-                        if ((g_col&1) == 0 && g_col < g_i_stop_pt.x)
+                        g_plot(m_col, m_row + 1, g_color);
+                        if ((m_col & 1) == 0 && m_col < g_i_stop_pt.x)
                         {
-                            g_plot(g_col+1, g_row+1, g_color);
+                            g_plot(m_col + 1, m_row + 1, g_color);
                         }
                     }
-                    if ((g_col&1) == 0 && g_col < g_i_stop_pt.x)
+                    if ((m_col & 1) == 0 && m_col < g_i_stop_pt.x)
                     {
-                        g_plot(++g_col, g_row, g_color);
+                        ++m_col;
+                        g_col = m_col;
+                        g_plot(m_col, m_row, g_color);
                     }
                 }
             }
-            ++g_col;
+            ++m_col;
         }
-        g_col = g_i_start_pt.x;
-        if (pass_num == 1 && (g_row&1) == 0)
+        m_col = g_i_start_pt.x;
+        if (pass_num == 1 && (m_row & 1) == 0)
         {
-            ++g_row;
+            ++m_row;
         }
-        ++g_row;
+        ++m_row;
     }
+    g_row = m_row;
+    g_col = m_col;
     return 0;
+}
+
+int OneOrTwoPass::stop_row_for_resume() const
+{
+    int stop_row = g_stop_pt.y;
+    if (g_i_stop_pt.y != g_stop_pt.y) // must be due to symmetry
+    {
+        stop_row -= m_resume_row - g_i_start_pt.y;
+    }
+    return stop_row;
+}
+
+int one_or_two_pass()
+{
+    if (g_std_calc_mode == CalcMode::TWO_PASS)
+    {
+        TwoPass pass;
+        return pass.run();
+    }
+
+    OnePass pass;
+    return pass.run();
 }
 
 } // namespace id::engine

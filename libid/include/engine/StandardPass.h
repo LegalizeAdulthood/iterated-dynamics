@@ -3,6 +3,7 @@
 #pragma once
 
 #include "engine/calcfrac.h"
+#include "engine/one_or_two_pass.h"
 #include "engine/tesseral.h"
 
 #include <variant>
@@ -41,14 +42,6 @@ private:
     };
 
     struct NoPass
-    {
-    };
-
-    struct OnePass
-    {
-    };
-
-    struct TwoPass
     {
     };
 
