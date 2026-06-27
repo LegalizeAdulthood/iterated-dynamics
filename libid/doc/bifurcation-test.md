@@ -54,21 +54,7 @@ beta handling, broken bailout behavior, and major sequence drift.
 
 ## Implementation Slices
 
-### 1. Add Chaotic Summary Cases
-
-Add chaotic-region cases for sensitive types such as `bifmay`,
-`bif+sinpi`, and `bif=sinpi`.
-
-Each case should:
-
-- run enough iterations to exercise chaotic behavior
-- discard an initial burn-in window
-- compute min, max, mean, variance, and histogram buckets
-- compare those values with platform-tolerant thresholds
-
-Do not compare every value after burn-in.
-
-### 2. Add Column-Level Coverage
+### 1. Add Column-Level Coverage
 
 After the renderer state is easier to call directly, expose or test the
 single-column calculation shape.
@@ -83,7 +69,7 @@ For selected rates, compare:
 
 This verifies the population-to-row mapping without comparing a full GIF.
 
-### 3. Reduce Full-Image Exactness
+### 2. Reduce Full-Image Exactness
 
 Replace platform-sensitive full-image exact tests for bifurcation types
 with the sequence and column tests above.
