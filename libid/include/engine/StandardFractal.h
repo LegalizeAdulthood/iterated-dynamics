@@ -83,6 +83,7 @@ private:
     bool m_attracted{};
     bool m_caught_a_cycle{};
     bool m_dispatch_saved{};
+    bool m_perturbation_active{};
     bool m_standard_pixel_active{};
     bool m_standard_pixel_completed_yield{};
     bool m_standard_pixel_input_checked{};

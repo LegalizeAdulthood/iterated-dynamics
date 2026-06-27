@@ -116,6 +116,7 @@ void StandardFractal::resume()
     m_after_work_list = AfterWorkList::COMPLETE;
     m_phase = Phase::START;
     m_dispatch_saved = false;
+    m_perturbation_active = false;
     m_standard_pass.reset();
     m_timer_started = false;
     m_work_item_active = false;
@@ -130,6 +131,12 @@ void StandardFractal::suspend()
 {
     m_standard_pass.suspend();
     s_standard_pass_status = m_standard_pass.status();
+    if (m_perturbation_active && !m_pert_engine.done())
+    {
+        m_pert_engine.suspend();
+        add_work_list(g_start_pt, g_stop_pt, g_begin_pt, g_work_pass, g_work_symmetry);
+        m_perturbation_active = false;
+    }
     if (g_num_work_list > 0)
     {
         alloc_resume(sizeof(g_work_list) + 20, 2);
@@ -146,6 +153,7 @@ void StandardFractal::suspend()
     }
     m_standard_pass.reset();
     clear_standard_pixel();
+    m_perturbation_active = false;
     complete();
 }
 
@@ -336,7 +344,17 @@ void StandardFractal::run_current_work_item_mode()
     {
         if (bit_set(fractals::g_cur_fractal_specific->flags, fractals::FractalFlags::PERTURB))
         {
-            complete();
+            m_pert_engine.iterate();
+            if (m_pert_engine.done())
+            {
+                m_perturbation_active = false;
+                g_calc_status = CalcStatus::COMPLETED;
+                complete();
+            }
+            else
+            {
+                m_work_item_yielded = true;
+            }
         }
         return;
     }

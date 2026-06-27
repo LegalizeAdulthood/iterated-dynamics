@@ -15,22 +15,27 @@ namespace id::engine
 class PertEngine
 {
 public:
-    void initialize_frame(
-        const math::BFComplex &center_bf, const std::complex<double> &center, double zoom_radius);
+    math::BFComplex initialize_frame_bf(double zoom_radius);
+    void initialize_frame(const std::complex<double> &center, double zoom_radius);
     int calculate_one_frame();
+    bool done() const;
+    bool iterate();
+    void suspend();
 
 private:
+    void cleanup();
+    void complete_frame();
     void initialize_frame_state();
     void initialize_point_list();
     void allocate_working_values();
     bool needs_reference_point() const;
+    void reset_for_frame(double zoom_radius);
     bool select_reference_point();
     int calculate_point_chunk();
     int calculate_point(const Point &pt, double magnified_radius, int window_radius);
     void prepare_glitch_retries();
     void reference_zoom_point(const math::BFComplex &center, int max_iteration);
     void reference_zoom_point(const std::complex<double> &center, int max_iteration);
-    void cleanup();
 
     std::string m_status;
     std::vector<std::complex<double>> m_xn;
@@ -54,7 +59,12 @@ private:
     double m_zoom_radius{};
     int m_window_radius{};
     int m_last_checked{};
+    int m_result{};
     bool m_calculate_glitches{true};
+    bool m_center_stack_saved{};
+    bool m_done{true};
+    bool m_frame_initialized{};
+    bool m_reference_selected{};
     double m_percent_glitch_tolerance{0.1}; // What percentage of the image is okay to be glitched.
     int m_reference_points{};
     int m_saved_stack{};

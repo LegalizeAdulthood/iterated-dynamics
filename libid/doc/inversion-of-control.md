@@ -155,9 +155,9 @@ The current code is already part-way through this plan:
   calculation state is owned by the `StandardPass` SOI class.
 - Orbit mode traversal is owned by the `StandardPass` sticky-orbits
   class; interruption still happens in the orbit plotting helper.
-- Perturbation has a `PertEngine`, but it is file-static in
-  `perturbation.cpp`, computes the full frame during setup, and should be
-  moved below the pass layer per issue #180.
+- Perturbation has a `PertEngine` owned by `StandardFractal`, yields to
+  the UI between point chunks, still computes the full frame from setup,
+  and should be moved below the pass layer per issue #180.
 
 ## Input Rules
 
@@ -244,31 +244,7 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: PertEngine UI Yield
-
-Work:
-
-- Add a bounded `PertEngine::iterate()` or equivalent chunk operation.
-- Add `PertEngine::done()` and `PertEngine::suspend()` if needed by the
-  standard UI wrapper.
-- Have `StandardFractal` drive the perturbation object in chunks while
-  perturbation still owns full-frame traversal.
-- Remove the key probe from `PertEngine.cpp`.
-- Let the existing UI polling decide whether to suspend the render.
-
-Done when:
-
-- `PertEngine.cpp` has no direct keyboard polling.
-- Perturbation can yield to the UI between chunks.
-- The perturbation render still follows the old full-frame traversal.
-
-Manual testing:
-
-- Interrupt and resume the perturbation-enabled render.
-- Confirm progress text remains responsive during interruption and
-  resume.
-
-### Slice 2: Perturbation Setup Boundary
+### Slice 1: Perturbation Setup Boundary
 
 Work:
 
@@ -292,7 +268,7 @@ Manual testing:
   complete.
 - Resume the interrupted render.
 
-### Slice 3: Perturbation Compatibility Mode Mapping
+### Slice 2: Perturbation Compatibility Mode Mapping
 
 Work:
 
@@ -313,7 +289,7 @@ Manual testing:
 - Render `type=mandel passes=p`.
 - Confirm the pass display and resume behavior remain sensible.
 
-### Slice 4: Perturbation Pixel Strategy
+### Slice 3: Perturbation Pixel Strategy
 
 Work:
 
@@ -334,7 +310,7 @@ Manual testing:
 - Render `type=mandel passes=p`.
 - Interrupt and resume while pixels are being computed.
 
-### Slice 5: Perturbation Glitch Work Items
+### Slice 4: Perturbation Glitch Work Items
 
 Work:
 
@@ -358,7 +334,7 @@ Manual testing:
 - Render a perturbation image that produces glitch retries.
 - Interrupt and resume during glitch retry work.
 
-### Slice 6: LSystem Renderer
+### Slice 5: LSystem Renderer
 
 Work:
 
@@ -382,7 +358,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 7: Lyapunov Renderer
+### Slice 6: Lyapunov Renderer
 
 Work:
 
@@ -403,7 +379,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 8: Lorenz Photographer Mode
+### Slice 7: Lorenz Photographer Mode
 
 Work:
 
@@ -423,7 +399,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 9: Non-Interrupt Pending-Key Utilities
+### Slice 8: Non-Interrupt Pending-Key Utilities
 
 Work:
 
@@ -452,7 +428,6 @@ Direct polling or key consumption exists outside `libid/ui` in:
 
 - `libid/engine/calcfrac.cpp`: non-standard wrapper polling and direct
   standard-pixel fallback polling.
-- `libid/engine/PertEngine.cpp`: interrupt check during reference pass.
 - `libid/engine/solid_guess.cpp`: interrupt checks during block repaint.
 - `libid/engine/soi.cpp`: interrupt checks during recursive scan.
 - `libid/engine/sound.cpp`: suppress tone while keys are pending.
