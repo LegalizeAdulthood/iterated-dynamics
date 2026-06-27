@@ -244,36 +244,70 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: StandardFractal Perturbation Orbit Strategy
+### Slice 1: PertEngine Ownership Cleanup
 
 Work:
 
 - Keep `PertEngine` as the perturbation calculation object.
-- Stop treating perturbation as a standard pass or full-image setup path.
-- Replace the `perturbation.cpp` full-frame setup calculation with a
-  standard orbit strategy used after normal pass traversal sets up the
-  current pixel state.
-- Make `passes=p` compatibility syntax.  It selects perturbation orbit
-  calculation, while the traversal behaves like the default `passes=g`.
-- Use the standard work list to represent pixels or regions that still
-  need work, including glitch points that must be recomputed.
-- Split `PertEngine::calculate_one_frame()` into resumable state:
+- Move the file-static `PertEngine` out of `perturbation.cpp`.
+- Make ownership explicit in the standard rendering layer.
+- Preserve the current full-frame perturbation behavior.
+- Keep `perturbation()` as a compatibility wrapper if useful during this
+  slice.
+
+Done when:
+
+- Perturbation state is owned by an object with the same lifetime as the
+  standard renderer.
+- No perturbation behavior or traversal order changes.
+- `perturbation()` still computes the same full frame.
+
+Manual testing: none.  Behavior should be unchanged and covered by
+existing image tests.
+
+### Slice 2: PertEngine Resumable State
+
+Work:
+
+- Split `PertEngine::calculate_one_frame()` into resumable state while
+  keeping synchronous behavior.
+- Move the current function locals into `PertEngine` members as needed:
   reference pass, selected reference point, point index, glitch list,
-  current work-list item, and progress text.
-- Make `StandardFractal` own and advance the active `PertEngine` only as
-  part of standard orbit calculation, not as a peer pass algorithm.
+  remaining-point list, big-float temporaries, and progress text.
+- Add small operation methods for initializing the point list, selecting a
+  reference point, calculating a point chunk, and preparing glitch
+  retries.
+- Keep `calculate_one_frame()` as a wrapper that drives the new state
+  until completion.
+
+Done when:
+
+- `calculate_one_frame()` is mostly orchestration over resumable members.
+- The perturbation render still runs synchronously and produces the same
+  image.
+- Direct keyboard polling in `PertEngine.cpp` is still allowed in this
+  slice.
+
+Manual testing: none.  Behavior should be unchanged and covered by
+existing image tests.
+
+### Slice 3: PertEngine UI Yield
+
+Work:
+
+- Add a bounded `PertEngine::iterate()` or equivalent chunk operation.
+- Add `PertEngine::done()` and `PertEngine::suspend()` if needed by the
+  standard UI wrapper.
+- Have `StandardFractal` drive the perturbation object in chunks while
+  perturbation still owns full-frame traversal.
 - Remove the key probe from `PertEngine.cpp`.
-- Consider a `perturbation=epsilon` parameter for the glitch-divergence
-  threshold after the ownership boundary is correct.
+- Let the existing UI polling decide whether to suspend the render.
 
 Done when:
 
 - `PertEngine.cpp` has no direct keyboard polling.
-- Perturbation no longer computes the full image during fractal setup.
-- `StandardFractal` traverses the image through the normal pass path while
-  perturbation supplies the orbit implementation.
-- `passes=p` preserves user-visible compatibility and no longer appears
-  as a peer `StandardPass`.
+- Perturbation can yield to the UI between chunks.
+- The perturbation render still follows the old full-frame traversal.
 
 Manual testing:
 
@@ -281,7 +315,97 @@ Manual testing:
 - Confirm progress text remains responsive during interruption and
   resume.
 
-### Slice 2: LSystem Renderer
+### Slice 4: Perturbation Setup Boundary
+
+Work:
+
+- Stop computing the full perturbation image during fractal setup.
+- Let setup select perturbation rendering state and return to the normal
+  standard rendering path.
+- Keep perturbation as a renderer-owned full-frame calculation for this
+  slice.
+- Remove or shrink `perturbation()` once setup no longer needs it as the
+  image-level entry point.
+
+Done when:
+
+- Perturbation no longer computes the full image during fractal setup.
+- Standard rendering owns when perturbation work starts and stops.
+- User-visible `passes=p` behavior is preserved.
+
+Manual testing:
+
+- Start a perturbation-enabled render and interrupt it before any image is
+  complete.
+- Resume the interrupted render.
+
+### Slice 5: Perturbation Compatibility Mode Mapping
+
+Work:
+
+- Make `passes=p` compatibility syntax rather than a peer standard pass.
+- Preserve the user-visible parameter value.
+- Select perturbation orbit calculation separately from traversal mode.
+- Map perturbation traversal to the default solid-guessing path for now.
+
+Done when:
+
+- `CalcMode::PERTURBATION` no longer appears as a peer
+  `StandardPass` alternative.
+- `passes=p` still selects perturbation for supported fractal types.
+- Unsupported fractal types retain the existing fallback behavior.
+
+Manual testing:
+
+- Render `type=mandel passes=p`.
+- Confirm the pass display and resume behavior remain sensible.
+
+### Slice 6: Perturbation Pixel Strategy
+
+Work:
+
+- Expose the perturbation point calculator as a standard orbit strategy.
+- Have `StandardFractal::calculate_standard_pixel()` use perturbation
+  when perturbation is active and the fractal type supports it.
+- Keep communication through existing pixel globals during this refactor.
+- Leave glitch retry ownership in `PertEngine` until the next slice.
+
+Done when:
+
+- Standard pass traversal chooses the pixels.
+- Perturbation supplies the per-pixel orbit calculation.
+- `passes=p` traverses like the default standard path.
+
+Manual testing:
+
+- Render `type=mandel passes=p`.
+- Interrupt and resume while pixels are being computed.
+
+### Slice 7: Perturbation Glitch Work Items
+
+Work:
+
+- Represent perturbation glitch retries as standard renderer work, not a
+  private full-frame loop.
+- Use the standard work list or an equivalent renderer-owned queue for
+  pixels or regions that need recomputation.
+- Keep the glitch-divergence threshold behavior unchanged.
+- Consider a later `perturbation=epsilon` parameter only after this
+  ownership boundary is correct.
+
+Done when:
+
+- Glitch points that need recomputation are owned by the standard
+  renderer state.
+- `PertEngine` no longer owns image-level traversal.
+- Perturbation is an orbit strategy below the pass layer.
+
+Manual testing:
+
+- Render a perturbation image that produces glitch retries.
+- Interrupt and resume during glitch retry work.
+
+### Slice 8: LSystem Renderer
 
 Work:
 
@@ -305,7 +429,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 3: Lyapunov Renderer
+### Slice 9: Lyapunov Renderer
 
 Work:
 
@@ -326,7 +450,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 4: Lorenz Photographer Mode
+### Slice 10: Lorenz Photographer Mode
 
 Work:
 
@@ -346,7 +470,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 5: Non-Interrupt Pending-Key Utilities
+### Slice 11: Non-Interrupt Pending-Key Utilities
 
 Work:
 
