@@ -54,22 +54,7 @@ beta handling, broken bailout behavior, and major sequence drift.
 
 ## Implementation Slices
 
-### 1. Add Column-Level Coverage
-
-After the renderer state is easier to call directly, expose or test the
-single-column calculation shape.
-
-For selected rates, compare:
-
-- total visible hits
-- occupied row count
-- first and last occupied row
-- centroid row
-- coarse row bucket occupancy
-
-This verifies the population-to-row mapping without comparing a full GIF.
-
-### 2. Reduce Full-Image Exactness
+### 1. Reduce Full-Image Exactness
 
 Replace platform-sensitive full-image exact tests for bifurcation types
 with the sequence and column tests above.

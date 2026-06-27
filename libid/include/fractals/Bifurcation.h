@@ -28,10 +28,9 @@ public:
     void resume();
     void suspend();
     bool iterate();
+    const std::vector<int> &calculate_column(double rate);
 
 private:
-    void verhulst();
-
     std::vector<int> m_verhulst;
     unsigned long m_filter_cycles{};
     bool m_half_time_check{};

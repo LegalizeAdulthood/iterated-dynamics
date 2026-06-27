@@ -2,8 +2,12 @@
 //
 #include "fractals/Bifurcation.h"
 
+#include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
+#include "engine/fractals.h"
+#include "engine/ImageRegion.h"
 #include "engine/trig_fns.h"
+#include "engine/VideoInfo.h"
 #include "fractals/bif_may.h"
 #include "fractals/fractalp.h"
 #include "fractals/population.h"
@@ -30,6 +34,8 @@ namespace id::test
 using TrigFunction = void (*)();
 constexpr std::size_t CHAOTIC_HISTOGRAM_BUCKETS{8};
 using ChaoticHistogram = std::array<int, CHAOTIC_HISTOGRAM_BUCKETS>;
+constexpr std::size_t COLUMN_ROW_BUCKETS{8};
+using ColumnRowBuckets = std::array<int, COLUMN_ROW_BUCKETS>;
 
 struct BifurcationSequenceInput
 {
@@ -74,6 +80,59 @@ struct ChaoticBifurcationSummaryCase
     ChaoticBifurcationSummary expected{};
     double value_tolerance{};
     int histogram_tolerance{};
+};
+
+struct BifurcationColumnSummary
+{
+    int total_hits{};
+    int occupied_rows{};
+    int first_occupied_row{-1};
+    int last_occupied_row{-1};
+    double centroid_row{};
+    ColumnRowBuckets row_buckets{};
+};
+
+struct BifurcationColumnCase
+{
+    const char *name{};
+    double rate{};
+    BifurcationColumnSummary expected{};
+};
+
+class BifurcationColumnState
+{
+public:
+    BifurcationColumnState()
+    {
+        g_dispatch.set_orbit_calc(bifurc_lambda_trig_orbit);
+        set_trig_pointers(0);
+    }
+
+    BifurcationColumnState(const BifurcationColumnState &) = delete;
+    BifurcationColumnState(BifurcationColumnState &&) = delete;
+    BifurcationColumnState &operator=(const BifurcationColumnState &) = delete;
+    BifurcationColumnState &operator=(BifurcationColumnState &&) = delete;
+
+private:
+    Arg m_stack{};
+    ValueSaver<Arg *> m_saved_arg1{g_arg1, &m_stack};
+    ValueSaver<Arg *> m_saved_arg2{g_arg2, &m_stack};
+    ValueSaver<TrigFn> m_saved_trig_index{g_trig_index[0], TrigFn::IDENT};
+    ValueSaver<TrigFunction> m_saved_trig_fn{g_d_trig0};
+    ValueSaver<Point2i> m_saved_i_stop_pt{g_i_stop_pt, Point2i{0, 63}};
+    ValueSaver<Point2i> m_saved_stop_pt{g_stop_pt, Point2i{0, 63}};
+    ValueSaver<ImageRegion> m_saved_image_region{g_image_region, ImageRegion{{0.0, 0.0}, {1.0, 1.0}, {0.0, 0.0}}};
+    ValueSaver<LDouble> m_saved_delta_y{g_delta_y, 1.0 / 63.0};
+    ValueSaver<DComplex> m_saved_param_z1{g_param_z1, DComplex{16.0, 0.66}};
+    ValueSaver<DComplex> m_saved_init{g_init};
+    ValueSaver<double> m_saved_population{g_population};
+    ValueSaver<double> m_saved_rate{g_rate};
+    ValueSaver<bool> m_saved_overflow{g_overflow};
+    ValueSaver<DComplex> m_saved_tmp_z{g_tmp_z};
+    ValueSaver<long> m_saved_max_iterations{g_max_iterations, 128};
+    ValueSaver<int> m_saved_periodicity_check{g_periodicity_check, 0};
+    ValueSaver<int> m_saved_colors{g_colors, 16};
+    ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
 };
 
 static BifurcationSequence run_bifurcation_sequence(const BifurcationSequenceInput &input)
@@ -168,6 +227,46 @@ static void expect_summary_near(const ChaoticBifurcationSummary &expected, const
             static_cast<double>(histogram_tolerance))
             << "bucket " << bucket;
     }
+}
+
+static BifurcationColumnSummary summarize_column(const std::vector<int> &column)
+{
+    BifurcationColumnSummary summary{};
+    double weighted_row_total{};
+
+    for (std::size_t row = 0; row < column.size(); ++row)
+    {
+        const int count{column[row]};
+        summary.total_hits += count;
+        if (count == 0)
+        {
+            continue;
+        }
+
+        if (summary.first_occupied_row < 0)
+        {
+            summary.first_occupied_row = static_cast<int>(row);
+        }
+        summary.last_occupied_row = static_cast<int>(row);
+        ++summary.occupied_rows;
+        weighted_row_total += static_cast<double>(row) * count;
+        const std::size_t bucket{row * COLUMN_ROW_BUCKETS / column.size()};
+        summary.row_buckets[bucket] += count;
+    }
+
+    summary.centroid_row = weighted_row_total / summary.total_hits;
+
+    return summary;
+}
+
+static void expect_column_summary(const BifurcationColumnSummary &expected, const BifurcationColumnSummary &actual)
+{
+    EXPECT_EQ(expected.total_hits, actual.total_hits);
+    EXPECT_EQ(expected.occupied_rows, actual.occupied_rows);
+    EXPECT_EQ(expected.first_occupied_row, actual.first_occupied_row);
+    EXPECT_EQ(expected.last_occupied_row, actual.last_occupied_row);
+    EXPECT_DOUBLE_EQ(expected.centroid_row, actual.centroid_row);
+    EXPECT_EQ(expected.row_buckets, actual.row_buckets);
 }
 
 TEST(TestBifurcationSequence, recordsPopulationValues)
@@ -265,6 +364,24 @@ TEST(TestBifurcationChaoticSequence, followsSummaryStatistics)
         const ChaoticBifurcationSummary summary{
             summarize_sequence(result, test.burn_in, test.histogram_minimum, test.histogram_maximum)};
         expect_summary_near(test.expected, summary, test.value_tolerance, test.histogram_tolerance);
+    }
+}
+
+TEST(TestBifurcationColumn, mapsPopulationToRows)
+{
+    BifurcationColumnState state;
+    Bifurcation bifurcation;
+    const std::vector<BifurcationColumnCase> tests{
+        BifurcationColumnCase{"PeriodTwo", 3.2, {128, 2, 13, 31, 22.0, ColumnRowBuckets{0, 64, 0, 64, 0, 0, 0, 0}}},
+        BifurcationColumnCase{
+            "Chaotic", 3.7, {128, 38, 5, 47, 21.21875, ColumnRowBuckets{17, 31, 37, 16, 8, 19, 0, 0}}}};
+
+    for (const BifurcationColumnCase &test : tests)
+    {
+        SCOPED_TRACE(test.name);
+        const std::vector<int> &column{bifurcation.calculate_column(test.rate)};
+
+        expect_column_summary(test.expected, summarize_column(column));
     }
 }
 

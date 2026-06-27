@@ -14,6 +14,7 @@
 #include "math/fixed_pt.h"
 #include "misc/id.h"
 
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
@@ -25,9 +26,9 @@ namespace id::fractals
 
 enum
 {
-    DEFAULT_FILTER = 1000     /* "Beauty of Fractals" recommends using 5000
-                               (p.25), but that seems unnecessary. Can
-                               override this value with a nonzero param1 */
+    DEFAULT_FILTER = 1000    /* "Beauty of Fractals" recommends using 5000
+                              (p.25), but that seems unnecessary. Can
+                              override this value with a nonzero param1 */
 };
 
 constexpr double SEED{0.66}; // starting value for population
@@ -119,8 +120,7 @@ bool Bifurcation::iterate()
 {
     if (m_x <= g_i_stop_pt.x)
     {
-        g_rate = static_cast<double>(g_image_region.m_min.x + m_x * g_delta_x);
-        verhulst();        // calculate array once per column
+        calculate_column(static_cast<double>(g_image_region.m_min.x + m_x * g_delta_x));
 
         for (int y = g_i_stop_pt.y; y >= 0; y--) // should be iystop & >=0
         {
@@ -133,9 +133,9 @@ bool Bifurcation::iterate()
             {
                 color = m_outside_x;
             }
-            else if (color>=g_colors)
+            else if (color >= g_colors)
             {
-                color = g_colors-1;
+                color = g_colors - 1;
             }
             m_verhulst[y] = 0;
             g_plot(m_x, y, color); // was row-1, but that's not right?
@@ -146,8 +146,10 @@ bool Bifurcation::iterate()
     return false;
 }
 
-void Bifurcation::verhulst()          // P. F. Verhulst (1845)
+const std::vector<int> &Bifurcation::calculate_column(const double rate)
 {
+    std::fill(m_verhulst.begin(), m_verhulst.end(), 0);
+    g_rate = rate;
     g_population = g_param_z1.y == 0 ? SEED : g_param_z1.y;
 
     g_overflow = false;
@@ -156,31 +158,31 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
     {
         if (orbit_calc())
         {
-            return;
+            return m_verhulst;
         }
     }
     if (m_half_time_check) // check for periodicity at half-time
     {
         s_period.init();
         unsigned long counter;
-        for (counter = 0; counter < static_cast<unsigned long>(g_max_iterations) ; counter++)
+        for (counter = 0; counter < static_cast<unsigned long>(g_max_iterations); counter++)
         {
             if (orbit_calc())
             {
-                return;
+                return m_verhulst;
             }
             if (g_periodicity_check && s_period.periodic(counter))
             {
                 break;
             }
         }
-        if (counter >= static_cast<unsigned long>(g_max_iterations))   // if not periodic, go the distance
+        if (counter >= static_cast<unsigned long>(g_max_iterations)) // if not periodic, go the distance
         {
-            for (counter = 0; counter < m_filter_cycles ; counter++)
+            for (counter = 0; counter < m_filter_cycles; counter++)
             {
                 if (orbit_calc())
                 {
-                    return;
+                    return m_verhulst;
                 }
             }
         }
@@ -190,11 +192,11 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
     {
         s_period.init();
     }
-    for (unsigned long counter = 0UL; counter < static_cast<unsigned long>(g_max_iterations) ; counter++)
+    for (unsigned long counter = 0UL; counter < static_cast<unsigned long>(g_max_iterations); counter++)
     {
         if (orbit_calc())
         {
-            return;
+            return m_verhulst;
         }
 
         // assign population value to Y coordinate in pixels
@@ -203,17 +205,19 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
         // if it's visible on the screen, save it in the column array
         if (pixel_row <= static_cast<unsigned int>(g_i_stop_pt.y))
         {
-            m_verhulst[ pixel_row ] ++;
+            m_verhulst[pixel_row]++;
         }
         if (g_periodicity_check && s_period.periodic(counter))
         {
             if (pixel_row <= static_cast<unsigned int>(g_i_stop_pt.y))
             {
-                m_verhulst[ pixel_row ] --;
+                m_verhulst[pixel_row]--;
             }
             break;
         }
     }
+
+    return m_verhulst;
 }
 
 void BifurcationPeriod::init()
