@@ -54,20 +54,7 @@ beta handling, broken bailout behavior, and major sequence drift.
 
 ## Implementation Slices
 
-### 1. Add Stable Sequence Cases
-
-Add stable-region cases for each bifurcation type.
-
-Each case checks:
-
-- the first small set of population values
-- final population after the checked prefix
-- bailout or no-bailout status
-
-Use tight but realistic tolerances.  These cases prove formula wiring and
-parameter setup.
-
-### 2. Add Chaotic Summary Cases
+### 1. Add Chaotic Summary Cases
 
 Add chaotic-region cases for sensitive types such as `bifmay`,
 `bif+sinpi`, and `bif=sinpi`.
@@ -81,7 +68,7 @@ Each case should:
 
 Do not compare every value after burn-in.
 
-### 3. Add Column-Level Coverage
+### 2. Add Column-Level Coverage
 
 After the renderer state is easier to call directly, expose or test the
 single-column calculation shape.
@@ -96,7 +83,7 @@ For selected rates, compare:
 
 This verifies the population-to-row mapping without comparing a full GIF.
 
-### 4. Reduce Full-Image Exactness
+### 3. Reduce Full-Image Exactness
 
 Replace platform-sensitive full-image exact tests for bifurcation types
 with the sequence and column tests above.

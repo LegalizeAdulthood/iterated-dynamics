@@ -42,6 +42,14 @@ struct BifurcationSequence
     std::optional<int> bailout_step;
 };
 
+struct StableBifurcationSequenceCase
+{
+    const char *name{};
+    BifurcationSequenceInput input{};
+    std::vector<double> expected_populations;
+    double tolerance{};
+};
+
 static BifurcationSequence run_bifurcation_sequence(const BifurcationSequenceInput &input)
 {
     Arg stack{};
@@ -77,6 +85,16 @@ static BifurcationSequence run_bifurcation_sequence(const BifurcationSequenceInp
     return result;
 }
 
+static void expect_populations_near(
+    const BifurcationSequence &result, const std::vector<double> &expected_populations, const double tolerance)
+{
+    ASSERT_EQ(expected_populations.size(), result.populations.size());
+    for (std::size_t index = 0; index < expected_populations.size(); ++index)
+    {
+        EXPECT_NEAR(expected_populations[index], result.populations[index], tolerance) << "population " << index;
+    }
+}
+
 TEST(TestBifurcationSequence, recordsPopulationValues)
 {
     const BifurcationSequence result{
@@ -107,6 +125,37 @@ TEST(TestBifurcationSequence, initializesMayBeta)
     ASSERT_EQ(1U, result.populations.size());
     EXPECT_DOUBLE_EQ(0.25, result.populations[0]);
     EXPECT_FALSE(result.bailout_step.has_value());
+}
+
+TEST(TestBifurcationStableSequence, followsReferencePrefixes)
+{
+    const std::vector<StableBifurcationSequenceCase> tests{
+        StableBifurcationSequenceCase{"Bifurcation",
+            {bifurc_verhulst_trig_orbit, TrigFn::IDENT, 0.5, 0.2, std::nullopt, 4},
+            {0.28, 0.3808, 0.49869568000000003, 0.6236948293746688}, 1.0e-12},
+        StableBifurcationSequenceCase{"BifLambda", {bifurc_lambda_trig_orbit, TrigFn::IDENT, 1.5, 0.2, std::nullopt, 4},
+            {0.24000000000000005, 0.27360000000000007, 0.29811456000000003, 0.31386340367400961}, 1.0e-12},
+        StableBifurcationSequenceCase{"BifMay", {bifurc_may_orbit, TrigFn::SIN, 2.0, 1.0, 3.0, 4},
+            {0.25, 0.256, 0.25840507734968382, 0.25934008734078989}, 1.0e-10},
+        StableBifurcationSequenceCase{"BifStewart",
+            {bifurc_stewart_trig_orbit, TrigFn::IDENT, 0.8, 0.5, std::nullopt, 4},
+            {-0.8, -0.48799999999999988, -0.80948480000000012, -0.47578748685516781}, 1.0e-12},
+        StableBifurcationSequenceCase{"BifPlusSinPi",
+            {bifurc_add_trig_pi_orbit, TrigFn::SIN, 0.1, 0.2, std::nullopt, 4},
+            {0.25877852522924732, 0.33141216542207341, 0.41771135392690084, 0.51438836012500488}, 1.0e-10},
+        StableBifurcationSequenceCase{"BifEqualSinPi",
+            {bifurc_set_trig_pi_orbit, TrigFn::SIN, 0.9, 0.2, std::nullopt, 4},
+            {0.52900672706322582, 0.89626570041163567, 0.28813764047421686, 0.70789997473289534}, 1.0e-10}};
+
+    for (const StableBifurcationSequenceCase &test : tests)
+    {
+        SCOPED_TRACE(test.name);
+        const BifurcationSequence result{run_bifurcation_sequence(test.input)};
+
+        expect_populations_near(result, test.expected_populations, test.tolerance);
+        EXPECT_NEAR(test.expected_populations.back(), result.populations.back(), test.tolerance);
+        EXPECT_FALSE(result.bailout_step.has_value());
+    }
 }
 
 } // namespace id::test
