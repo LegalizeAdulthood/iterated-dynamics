@@ -1,50 +1,41 @@
 # Debug Flags
 
-This list is complete as of Iterated Dynamics version 1.0.
-None of these are necessarily supported in future.
+`debugflag=nnn` sets developer debugging behavior.  `debug=nnn` is
+accepted as a synonym.
 
-Add one to any debug value to trigger writing benchmark values to
-the file `id-bench.txt`.  This gets stripped at startup; so all values
-used for other purposes are even.
+Add one to any even debug value to trigger writing benchmark timing to
+`id-bench`.  This low bit is stripped at startup, so the other debug
+values are even.
 
-Example:
-`id debug=22` forces Id to use floating-point math for 3D perpsective calculations.
-`id debug=23` does the same thing, but also turns on the benchmark timer.
+Example: `id debug=91` forces standard fractal calculation and turns on
+the benchmark timer.
 
 | Value | Meaning |
 |:--:|----|
-| 2 | append image history values as JSON to history.json |
-| 22 | force float for 3D perspective |
-| 50 | compare <r>estored files |
-| 90 | force "C" mandel & julia code (no calcmand or calmanfp) |
-| 90 | force generic code for fn+fn etc types |
-| 90 | force "C" parser code even if FPU >= 387 |
-| 96 | Use real formula for popcorn in the old case. |
-| 96 | write debug messages to disk files(3) |
-| 98 | write formula parser tokens to frmtokens.txt |
-| 110 | turns off first-time initialization of variables |
-| 200 | time encoder |
-| 300 | prevent modified inverse iteration method (MIIM) |
-| 324 | disables help ESC in screen messages |
-| 420 | don't use extended/expanded mem (force disk) same for screen save (force disk) |
-| 422 | don't use expanded mem (force extended or disk)  same for screen save (force extended or disk) |
-| 470 | disable prevention of color 0 for BTM |
-| 472 | enable solid guessing at bottom and right |
-| 7nn | set `<b>` getprec() digits variable to nn |
-| 750 | print out as many params digits as possible in PAR |
-| 910 | disables Sylvie Gallet's colors= color compression fix. |
-| 920 | makes colors= compression lossless. |
-| 1010 | force fp for newton & newtbasin (no mpc math) |
-| 1012 | swap sign bit of zero for mandelbrotmix4 |
-| 1234 | force larger integer arithmetic bitshift value |
-| 2224 | old just-the-dots logic, probably a temporary thing |
-| 3200 | disable auto switch back from arbitrary precision |
-| 3400 | disable auto switch from integer to float |
-| 3600 | pins the plasma corners to 1 |
-| 4010 | use old centermag conversion. |
-| 4030 | use old orbit->sound code w/integer overflow. |
-| 4200 | sets disk video cache size to minimum |
-| 6000 | turns off optimization of using realzzpower types instead of complexzpower when imaginary part of parameter is zero |
-| 10000 | display cpu, fpu, and free memory at startup |
-| `!=0` | show "normal vector" errors instead of just fixing |
-| `!=0` | show info if fullscreen_prompt array invalid |
+| 1 | Write engine and decoder benchmark timing. |
+| 2 | Append image history values as JSON to `history.json`. |
+| 50 | Compare restored image pixels instead of normal restore. |
+| 90 | Force standard or generic fractal calculation paths. |
+| 96 | Force the real Popcorn orbit for the old default setup. |
+| 98 | Write formula parser and interpreter debug files. |
+| 110 | Allow startup-only commands after startup. |
+| 200 | Time GIF encoding. |
+| 300 | Prevent modified inverse iteration method (MIIM). |
+| 324 | Leave formula compile information visible. |
+| 420 | Force memory and screen-save allocation to disk. |
+| 422 | Force memory and screen-save allocation to memory. |
+| 470 | Allow boundary-trace color-zero behavior. |
+| 472 | Enable solid guessing at bottom and right edges. |
+| 700-719 | Set PAR numeric precision to value minus 700 digits. |
+| 750 | Write params with long-double precision in PAR output. |
+| 910 | Allow large color-map component jumps during compression. |
+| 920 | Force lossless color-map compression. |
+| 1012 | Flip MandelbrotMix4 zero sign handling. |
+| 3200 | Force or keep arbitrary precision math where supported. |
+| 3400 | Prevent automatic arbitrary precision math. |
+| 3600 | Pin Plasma random table values to 1. |
+| 4010 | Allow negative cross product in center-mag conversion. |
+| 4030 | Use the old scaled orbit-to-sound formula. |
+| 6000 | Force complex z-power math instead of real-power shortcut. |
+| 10000 | Display memory allocation diagnostics and bounds checks. |
+| `!=0` | Show extra debug messages in stop-message and 3D paths. |
