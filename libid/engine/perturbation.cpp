@@ -7,7 +7,7 @@
 #include "engine/calcfrac.h"
 #include "engine/convert_center_mag.h"
 #include "engine/ImageRegion.h"
-#include "engine/PertEngine.h"
+#include "engine/StandardFractal.h"
 #include "math/biginit.h"
 
 #include <config/port.h>
@@ -20,9 +20,7 @@ using namespace id::math;
 namespace id::engine
 {
 
-static PertEngine s_pert_engine;
-
-bool perturbation()
+bool StandardFractal::calculate_perturbation_frame()
 {
     BigStackSaver saved;
     double mandel_width; // width of display
@@ -57,13 +55,23 @@ bool perturbation()
         mandel_width = bf_to_float(tmp_bf);
     }
 
-    s_pert_engine.initialize_frame(center_bf, {center.x, center.y}, mandel_width / 2.0);
-    if (const int result = s_pert_engine.calculate_one_frame(); result < 0)
+    m_pert_engine.initialize_frame(center_bf, {center.x, center.y}, mandel_width / 2.0);
+    if (const int result = m_pert_engine.calculate_one_frame(); result < 0)
     {
         throw std::runtime_error("Failed to initialize perturbation engine (" + std::to_string(result) + ")");
     }
     g_calc_status = CalcStatus::COMPLETED;
     return false;
+}
+
+bool perturbation()
+{
+    StandardFractal *standard_fractal = active_standard_fractal();
+    if (standard_fractal == nullptr)
+    {
+        throw std::runtime_error("Perturbation requires an active standard fractal");
+    }
+    return standard_fractal->calculate_perturbation_frame();
 }
 
 } // namespace id::engine

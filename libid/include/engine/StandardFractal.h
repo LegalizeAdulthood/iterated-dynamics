@@ -3,6 +3,7 @@
 #pragma once
 
 #include "engine/calcfrac.h"
+#include "engine/PertEngine.h"
 #include "engine/StandardPass.h"
 #include "fractals/fractalp.h"
 
@@ -15,6 +16,7 @@ class StandardFractal
 {
 public:
     int calculate_standard_pixel(bool yield_to_ui);
+    bool calculate_perturbation_frame();
     bool consume_standard_pixel_yield();
 
     void resume();
@@ -55,6 +57,7 @@ private:
     void update_timer();
 
     fractals::FractalDispatch m_saved_dispatch{};
+    PertEngine m_pert_engine{};
     StandardPass m_standard_pass{};
     std::array<double, 16> m_tan_table{};
     math::DComplex m_deriv{};
