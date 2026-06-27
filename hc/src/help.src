@@ -285,6 +285,8 @@ Code Cleanup in Version 1.5
 o Runtime fractal dispatch now uses explicit dispatch state for selected
   function pointers, leaving the FractalSpecific table as constant
   metadata.
+o Replaced platform-sensitive bifurcation image gold tests with direct
+  sequence and column behavior tests.
 ;
 ;
 ;
