@@ -16,6 +16,12 @@ namespace id::fractals
 
 static long s_beta{};
 
+void set_bifurc_may_beta(const double beta)
+{
+    g_params[2] = std::max(beta, 2.0);
+    s_beta = static_cast<long>(g_params[2]);
+}
+
 int bifurc_may_orbit()
 {
     /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
@@ -28,8 +34,7 @@ int bifurc_may_orbit()
 
 bool bifurc_may_per_image()
 {
-    g_params[2] = std::max(g_params[2], 2.0);
-    s_beta = static_cast<long>(g_params[2]);
+    set_bifurc_may_beta(g_params[2]);
     engine_timer(g_dispatch.calc_type());
     return false;
 }

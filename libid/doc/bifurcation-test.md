@@ -54,30 +54,7 @@ beta handling, broken bailout behavior, and major sequence drift.
 
 ## Implementation Slices
 
-### 1. Add Sequence Test Harness
-
-Add a test helper that runs a bifurcation recurrence without rendering an
-image.
-
-Inputs:
-
-- fractal type or orbit function
-- trig function selection
-- rate
-- seed population
-- May beta when needed
-- iteration count
-
-Output:
-
-- population values
-- bailout step, if any
-
-The helper should use the same orbit functions as rendering.  It may set
-the current global recurrence state directly until that state is easier to
-control.
-
-### 2. Add Stable Sequence Cases
+### 1. Add Stable Sequence Cases
 
 Add stable-region cases for each bifurcation type.
 
@@ -90,7 +67,7 @@ Each case checks:
 Use tight but realistic tolerances.  These cases prove formula wiring and
 parameter setup.
 
-### 3. Add Chaotic Summary Cases
+### 2. Add Chaotic Summary Cases
 
 Add chaotic-region cases for sensitive types such as `bifmay`,
 `bif+sinpi`, and `bif=sinpi`.
@@ -104,7 +81,7 @@ Each case should:
 
 Do not compare every value after burn-in.
 
-### 4. Add Column-Level Coverage
+### 3. Add Column-Level Coverage
 
 After the renderer state is easier to call directly, expose or test the
 single-column calculation shape.
@@ -119,7 +96,7 @@ For selected rates, compare:
 
 This verifies the population-to-row mapping without comparing a full GIF.
 
-### 5. Reduce Full-Image Exactness
+### 4. Reduce Full-Image Exactness
 
 Replace platform-sensitive full-image exact tests for bifurcation types
 with the sequence and column tests above.

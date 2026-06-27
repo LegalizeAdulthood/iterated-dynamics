@@ -75,6 +75,7 @@ add_executable(test-id
     engine/test_trig_fns.cpp
     engine/test_wait_until.cpp
     fractals/test_ant.cpp
+    fractals/test_bifurcation.cpp
     fractals/test_check_orbit_name.cpp
     fractals/test_frothy_basin.cpp
     fractals/test_fractalp.cpp
