@@ -244,33 +244,7 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: PertEngine Resumable State
-
-Work:
-
-- Split `PertEngine::calculate_one_frame()` into resumable state while
-  keeping synchronous behavior.
-- Move the current function locals into `PertEngine` members as needed:
-  reference pass, selected reference point, point index, glitch list,
-  remaining-point list, big-float temporaries, and progress text.
-- Add small operation methods for initializing the point list, selecting a
-  reference point, calculating a point chunk, and preparing glitch
-  retries.
-- Keep `calculate_one_frame()` as a wrapper that drives the new state
-  until completion.
-
-Done when:
-
-- `calculate_one_frame()` is mostly orchestration over resumable members.
-- The perturbation render still runs synchronously and produces the same
-  image.
-- Direct keyboard polling in `PertEngine.cpp` is still allowed in this
-  slice.
-
-Manual testing: none.  Behavior should be unchanged and covered by
-existing image tests.
-
-### Slice 2: PertEngine UI Yield
+### Slice 1: PertEngine UI Yield
 
 Work:
 
@@ -294,7 +268,7 @@ Manual testing:
 - Confirm progress text remains responsive during interruption and
   resume.
 
-### Slice 3: Perturbation Setup Boundary
+### Slice 2: Perturbation Setup Boundary
 
 Work:
 
@@ -318,7 +292,7 @@ Manual testing:
   complete.
 - Resume the interrupted render.
 
-### Slice 4: Perturbation Compatibility Mode Mapping
+### Slice 3: Perturbation Compatibility Mode Mapping
 
 Work:
 
@@ -339,7 +313,7 @@ Manual testing:
 - Render `type=mandel passes=p`.
 - Confirm the pass display and resume behavior remain sensible.
 
-### Slice 5: Perturbation Pixel Strategy
+### Slice 4: Perturbation Pixel Strategy
 
 Work:
 
@@ -360,7 +334,7 @@ Manual testing:
 - Render `type=mandel passes=p`.
 - Interrupt and resume while pixels are being computed.
 
-### Slice 6: Perturbation Glitch Work Items
+### Slice 5: Perturbation Glitch Work Items
 
 Work:
 
@@ -384,7 +358,7 @@ Manual testing:
 - Render a perturbation image that produces glitch retries.
 - Interrupt and resume during glitch retry work.
 
-### Slice 7: LSystem Renderer
+### Slice 6: LSystem Renderer
 
 Work:
 
@@ -408,7 +382,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 8: Lyapunov Renderer
+### Slice 7: Lyapunov Renderer
 
 Work:
 
@@ -429,7 +403,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 9: Lorenz Photographer Mode
+### Slice 8: Lorenz Photographer Mode
 
 Work:
 
@@ -449,7 +423,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 10: Non-Interrupt Pending-Key Utilities
+### Slice 9: Non-Interrupt Pending-Key Utilities
 
 Work:
 

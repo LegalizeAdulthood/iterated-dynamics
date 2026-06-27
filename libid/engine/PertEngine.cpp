@@ -59,23 +59,57 @@ void PertEngine::initialize_frame(
 // Full frame calculation
 int PertEngine::calculate_one_frame()
 {
-    BFComplex c_bf{};
-    BFComplex reference_coordinate_bf;
-    std::complex<double> c;
-    std::complex<double> reference_coordinate;
+    int result{};
+    {
+        BigStackSaver saved;
+        initialize_frame_state();
 
+        while (needs_reference_point())
+        {
+            if (!select_reference_point())
+            {
+                break;
+            }
+            if (calculate_point_chunk() < 0)
+            {
+                result = -1;
+                break;
+            }
+            prepare_glitch_retries();
+        }
+    }
+
+    if (result < 0)
+    {
+        return result;
+    }
+
+    cleanup();
+    return 0;
+}
+
+void PertEngine::initialize_frame_state()
+{
     m_reference_points = 0;
     m_glitch_point_count = 0L;
     m_remaining_point_count = 0L;
+    m_current_point = 0L;
+    m_last_checked = -1;
+    m_magnified_radius = m_zoom_radius;
+    m_window_radius = std::min(g_screen_x_dots, g_screen_y_dots);
 
     m_points_remaining.resize(g_screen_x_dots * g_screen_y_dots);
     m_glitch_points.resize(g_screen_x_dots * g_screen_y_dots);
     m_perturbation_tolerance_check.resize(g_max_iterations * 2);
     m_xn.resize(g_max_iterations + 1);
 
-    // calculate the pascal's triangle coefficients for powers > 3
     pascal_triangle();
-    // Fill the list of points with all points in the image.
+    initialize_point_list();
+    allocate_working_values();
+}
+
+void PertEngine::initialize_point_list()
+{
     for (long y = 0; y < g_screen_y_dots; y++)
     {
         for (long x = 0; x < g_screen_x_dots; x++)
@@ -85,130 +119,122 @@ int PertEngine::calculate_one_frame()
             m_remaining_point_count++;
         }
     }
+}
 
-    const double magnified_radius = m_zoom_radius;
-    const int window_radius = std::min(g_screen_x_dots, g_screen_y_dots);
-    BigStackSaver saved;
-    BigFloat tmp_bf;
-
+void PertEngine::allocate_working_values()
+{
     if (g_bf_math != BFMathType::NONE)
     {
-        c_bf.x = alloc_stack(g_r_bf_length + 2);
-        c_bf.y = alloc_stack(g_r_bf_length + 2);
-        reference_coordinate_bf.x = alloc_stack(g_r_bf_length + 2);
-        reference_coordinate_bf.y = alloc_stack(g_r_bf_length + 2);
-        tmp_bf = alloc_stack(g_r_bf_length + 2);
+        m_c_bf.x = alloc_stack(g_r_bf_length + 2);
+        m_c_bf.y = alloc_stack(g_r_bf_length + 2);
+        m_reference_coordinate_bf.x = alloc_stack(g_r_bf_length + 2);
+        m_reference_coordinate_bf.y = alloc_stack(g_r_bf_length + 2);
+        m_tmp_bf = alloc_stack(g_r_bf_length + 2);
     }
+}
 
-    while (m_remaining_point_count > g_screen_x_dots * g_screen_y_dots * (m_percent_glitch_tolerance / 100))
+bool PertEngine::needs_reference_point() const
+{
+    return m_remaining_point_count > g_screen_x_dots * g_screen_y_dots * (m_percent_glitch_tolerance / 100);
+}
+
+bool PertEngine::select_reference_point()
+{
+    m_reference_points++;
+
+    if (m_reference_points == 1)
     {
-        m_reference_points++;
-
-        // Determine the reference point to calculate
-        // Check whether this is the first time running the loop.
-        if (m_reference_points == 1)
+        if (g_bf_math != BFMathType::NONE)
         {
-            if (g_bf_math != BFMathType::NONE)
-            {
-                copy_bf(c_bf.x, m_center_bf.x);
-                copy_bf(c_bf.y, m_center_bf.y);
-                copy_bf(reference_coordinate_bf.x, c_bf.x);
-                copy_bf(reference_coordinate_bf.y, c_bf.y);
-            }
-            else
-            {
-                c = m_center;
-                reference_coordinate = m_center;
-            }
-
-            m_delta_real = 0;
-            m_delta_imag = 0;
-
-            if (g_bf_math != BFMathType::NONE)
-            {
-                reference_zoom_point(reference_coordinate_bf, g_max_iterations);
-            }
-            else
-            {
-                reference_zoom_point(reference_coordinate, g_max_iterations);
-            }
+            copy_bf(m_c_bf.x, m_center_bf.x);
+            copy_bf(m_c_bf.y, m_center_bf.y);
+            copy_bf(m_reference_coordinate_bf.x, m_c_bf.x);
+            copy_bf(m_reference_coordinate_bf.y, m_c_bf.y);
         }
         else
         {
-            if (!m_calculate_glitches)
-            {
-                break;
-            }
-
-            set_random_seed();
-
-            const int index{static_cast<int>(random_unit() * m_remaining_point_count)};
-            Point pt{m_points_remaining[index]};
-            // Get the complex point at the chosen reference point
-            const double delta_real = magnified_radius * (2 * pt.get_x() - g_screen_x_dots) / window_radius;
-            const double delta_imag = -magnified_radius * (2 * pt.get_y() - g_screen_y_dots) / window_radius;
-
-            // We need to store this offset because the formula we use to convert pixels into a complex point
-            // does so relative to the center of the image. We need to offset that calculation when our
-            // reference point isn't in the center. The actual offsetting is done in calculate point.
-
-            m_delta_real = delta_real;
-            m_delta_imag = delta_imag;
-
-            if (g_bf_math != BFMathType::NONE)
-            {
-                float_to_bf(tmp_bf, delta_real);
-                add_bf(reference_coordinate_bf.x, c_bf.x, tmp_bf);
-                float_to_bf(tmp_bf, delta_imag);
-                add_bf(reference_coordinate_bf.y, c_bf.y, tmp_bf);
-            }
-            else
-            {
-                reference_coordinate.real(c.real() + delta_real);
-                reference_coordinate.imag(c.imag() + delta_imag);
-            }
-
-            if (g_bf_math != BFMathType::NONE)
-            {
-                reference_zoom_point(reference_coordinate_bf, g_max_iterations);
-            }
-            else
-            {
-                reference_zoom_point(reference_coordinate, g_max_iterations);
-            }
+            m_c = m_center;
+            m_reference_coordinate = m_center;
         }
 
-        int last_checked{-1};
-        m_glitch_point_count = 0;
-        for (int i = 0; i < m_remaining_point_count; i++)
+        m_delta_real = 0;
+        m_delta_imag = 0;
+    }
+    else
+    {
+        if (!m_calculate_glitches)
         {
-            if (i % 1000 == 0 && driver_key_pressed())
-            {
-                return -1;
-            }
-            if (Point pt{m_points_remaining[i]}; //
-                calculate_point(pt, magnified_radius, window_radius) < 0)
-            {
-                return -1;
-            }
-            // Everything else in this loop is just for updating the progress counter.
-            if (const double progress = static_cast<double>(i) / m_remaining_point_count;
-                static_cast<int>(progress * 100) != last_checked)
-            {
-                last_checked = static_cast<int>(progress * 100);
-                m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" +
-                    std::to_string(static_cast<int>(progress * 100)) + "%)";
-            }
+            return false;
         }
 
-        // These points are glitched, so we need to mark them for recalculation. We need to recalculate them
-        // using Pauldelbrot's glitch fixing method (see calculate point).
-        std::memcpy(m_points_remaining.data(), m_glitch_points.data(), sizeof(Point) * m_glitch_point_count);
-        m_remaining_point_count = m_glitch_point_count;
+        set_random_seed();
+
+        const int index{static_cast<int>(random_unit() * m_remaining_point_count)};
+        m_reference_point = m_points_remaining[index];
+        const double delta_real =
+            m_magnified_radius * (2 * m_reference_point.get_x() - g_screen_x_dots) / m_window_radius;
+        const double delta_imag =
+            -m_magnified_radius * (2 * m_reference_point.get_y() - g_screen_y_dots) / m_window_radius;
+
+        m_delta_real = delta_real;
+        m_delta_imag = delta_imag;
+
+        if (g_bf_math != BFMathType::NONE)
+        {
+            float_to_bf(m_tmp_bf, delta_real);
+            add_bf(m_reference_coordinate_bf.x, m_c_bf.x, m_tmp_bf);
+            float_to_bf(m_tmp_bf, delta_imag);
+            add_bf(m_reference_coordinate_bf.y, m_c_bf.y, m_tmp_bf);
+        }
+        else
+        {
+            m_reference_coordinate.real(m_c.real() + delta_real);
+            m_reference_coordinate.imag(m_c.imag() + delta_imag);
+        }
     }
 
-    cleanup();
+    if (g_bf_math != BFMathType::NONE)
+    {
+        reference_zoom_point(m_reference_coordinate_bf, g_max_iterations);
+    }
+    else
+    {
+        reference_zoom_point(m_reference_coordinate, g_max_iterations);
+    }
+    return true;
+}
+
+int PertEngine::calculate_point_chunk()
+{
+    m_current_point = 0L;
+    m_last_checked = -1;
+    m_glitch_point_count = 0;
+    for (; m_current_point < m_remaining_point_count; m_current_point++)
+    {
+        if (m_current_point % 1000 == 0 && driver_key_pressed())
+        {
+            return -1;
+        }
+        if (Point pt{m_points_remaining[m_current_point]}; //
+            calculate_point(pt, m_magnified_radius, m_window_radius) < 0)
+        {
+            return -1;
+        }
+        if (const double progress = static_cast<double>(m_current_point) / m_remaining_point_count;
+            static_cast<int>(progress * 100) != m_last_checked)
+        {
+            m_last_checked = static_cast<int>(progress * 100);
+            m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" +
+                std::to_string(static_cast<int>(progress * 100)) + "%)";
+        }
+    }
     return 0;
+}
+
+void PertEngine::prepare_glitch_retries()
+{
+    std::memcpy(m_points_remaining.data(), m_glitch_points.data(), sizeof(Point) * m_glitch_point_count);
+    m_remaining_point_count = m_glitch_point_count;
 }
 
 void PertEngine::cleanup()
