@@ -664,6 +664,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>New Features in Version 1.5</p>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>The Tab screen now reports the number of reference orbits used for
+perturbation rendering.</p>
+</li>
+</ul>
+</div>
 <div class="paragraph">
 <p>Bugs Fixed in Version 1.5</p>
 </div>
@@ -692,6 +700,9 @@ metadata.</p>
 <li>
 <p>Replaced platform-sensitive bifurcation image gold tests with direct
 sequence and column behavior tests.</p>
+</li>
+<li>
+<p>Unused debug flags were removed and documentation updated.</p>
 </li>
 </ul>
 </div>
@@ -910,6 +921,10 @@ finished - a handy feature for those overnight, 1024x768 resolution
 fractal images.  If the image is incomplete, it also tells you whether
 it can be interrupted and resumed.  (Any function other than <kbd>Tab</kbd> and
 <kbd>F1</kbd> counts as an "interrupt".)</p>
+</div>
+<div class="paragraph">
+<p>For perturbation images, the Tab screen also shows how many reference
+orbits have been selected.</p>
 </div>
 <div class="paragraph">
 <p>The Tab screen also includes a pixel-counting function, which will count
@@ -5743,6 +5758,17 @@ one of the single-pass, dual-pass, triple-pass, solid-guessing
 synchronous orbits, or orbits modes.</p>
 </div>
 <div class="paragraph">
+<p>The "perturbation" option (<kbd>X</kbd> options screen or "perturbation="
+parameter) selects whether supported fractal types use the perturbation
+orbit algorithm.  The default value is "auto", which uses perturbation
+when arbitrary precision is active.</p>
+</div>
+<div class="paragraph">
+<p>The "perturbation-tolerance" option (<kbd>X</kbd> options screen or
+"perturbation-tolerance=" parameter) controls perturbation glitch
+detection.  The value must be greater than zero.  The default is 1e-6.</p>
+</div>
+<div class="paragraph">
 <p>This option applies to most fractal types.</p>
 </div>
 <div class="paragraph">
@@ -5813,12 +5839,16 @@ a quick visualization even in the slowest fractals.  With "fillcolor=0"
 image until all have being calculated (sort of a "fade in").</p>
 </div>
 <div class="paragraph">
-<p>Perturbation ("p") is a drawing type that is particularly fast when used
+<p>Perturbation is an orbit algorithm that is particularly fast when used
 with deep-zooms of the Mandelbrot set that require arbitrary precision
-arithmetic.  This initial implementation of perturbation does not
-support periodicity checking and only supports a limited number of
-inside and outside coloring algorithms.  Suspend and resume is not
-supported with perturbation.</p>
+arithmetic.  Use "perturbation=yes" to force it on for supported fractal
+types, or "perturbation=no" to force it off.  The "passes=p" value is
+accepted for compatibility and is equivalent to "perturbation=yes" using
+the default solid-guessing traversal.</p>
+</div>
+<div class="paragraph">
+<p>Use "perturbation-tolerance=&lt;n&gt;" to adjust glitch detection.  Smaller
+values make glitch detection stricter; the default is 1e-6.</p>
 </div>
 <div class="paragraph">
 <p>The "fillcolor=" option in the <kbd>X</kbd> screen or on the command line sets a
@@ -13065,7 +13095,7 @@ parsed and validated and the results ignored.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-27 18:03:52 UTC
+Last updated 2026-06-28 03:48:48 UTC
 </div>
 </div>
 <script type="text/x-mathjax-config">
