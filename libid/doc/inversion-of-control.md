@@ -257,30 +257,129 @@ pending key should still wake that delay promptly.  The UI controller
 owns that pacing because the delay exists to make plotted orbit points
 visible, not to advance fractal math.
 
-### Slice 1: Remaining Orbit Plot Callers
+### Slice 1: Popcorn Old Orbit Plot Caller
 
 Work:
 
-- Apply the same yield-and-controller shape to remaining `plot_orbit()`
-  callers that can display or pace orbit points.
-- Start with Popcorn and FrothyBasin, which already have UI wrappers.
-- Audit `libid/engine/calmanfp.cpp` and add a UI wrapper first if needed.
+- In `libid/fractals/popcorn.cpp`, split the `plot_orbit()` caller in
+  `popcorn_fractal_old()` into calculation state and UI presentation.
+- Report the pending orbit point and color to the `ui::Popcorn`
+  controller, then let the controller display, pace, and resume it.
+- Preserve the `reset=1960` compatibility behavior and the no-plot
+  calculation path.
 - Do not add per-fractal one-off pacing helpers.
 
 Done when:
 
-- Remaining orbit display paths are driven by UI controllers.
-- Calculation code reports pending orbit work instead of polling input.
-- The synchronous compatibility path is used only where no UI controller
-  exists yet.
+- `popcorn_fractal_old()` no longer calls `plot_orbit()` directly.
+- The old popcorn orbit point is displayed through the UI controller.
+- The synchronous compatibility path remains available for other callers
+  until their slices are complete.
 
 Manual testing:
 
-- Render Popcorn with a visible orbit delay.
+- Render the 1960-compatibility Popcorn image with a visible
+  `orbitdelay`.
+- Press a key during orbit delay and confirm the UI responds promptly.
+
+### Slice 2: Popcorn Orbit Plot Caller
+
+Work:
+
+- In `libid/fractals/popcorn.cpp`, split the `plot_orbit()` caller in
+  `popcorn_fractal()` into calculation state and UI presentation.
+- Report the pending orbit point and color to the `ui::Popcorn`
+  controller, then let the controller display, pace, and resume it.
+- Preserve the current Popcorn escape and magnitude-limit behavior.
+- Do not add per-fractal one-off pacing helpers.
+
+Done when:
+
+- `popcorn_fractal()` no longer calls `plot_orbit()` directly.
+- The current Popcorn orbit point is displayed through the UI
+  controller.
+- The synchronous compatibility path remains available for other callers
+  until their slices are complete.
+
+Manual testing:
+
+- Render Popcorn with a visible `orbitdelay`.
+- Press a key during orbit delay and confirm the UI responds promptly.
+
+### Slice 3: Generalized Popcorn Orbit Plot Caller
+
+Work:
+
+- In `libid/fractals/popcorn.cpp`, split the `plot_orbit()` caller in
+  `popcorn_orbit()` into calculation state and UI presentation.
+- Report the pending orbit point and color to the `ui::Popcorn`
+  controller, then let the controller display, pace, and resume it.
+- Preserve generalized Popcorn and PopcornJulia orbit math.
+- Do not add per-fractal one-off pacing helpers.
+
+Done when:
+
+- `popcorn_orbit()` no longer calls `plot_orbit()` directly.
+- Generalized Popcorn orbit points are displayed through the UI
+  controller.
+- The synchronous compatibility path remains available for other callers
+  until their slices are complete.
+
+Manual testing:
+
+- Render a PopcornJulia parameter set with a visible `orbitdelay`.
+- Press a key during orbit delay and confirm the UI responds promptly.
+
+### Slice 4: FrothyBasin Orbit Plot Caller
+
+Work:
+
+- In `libid/fractals/FrothyBasin.cpp`, split the `plot_orbit()` caller
+  into calculation state and UI presentation.
+- Report the pending orbit point and color to the FrothyBasin UI
+  controller, then let the controller display, pace, and resume it.
+- Preserve attractor detection and repeat-mapping behavior.
+- Do not add per-fractal one-off pacing helpers.
+
+Done when:
+
+- `FrothyBasin` no longer calls `plot_orbit()` directly.
+- FrothyBasin orbit points are displayed through the UI controller.
+- The synchronous compatibility path remains available for other callers
+  until their slices are complete.
+
+Manual testing:
+
 - Render FrothyBasin with orbit display enabled.
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 2: Orbit Scrub Ownership
+### Slice 5: Standard Orbit Plot Caller
+
+Work:
+
+- In `libid/engine/calmanfp.cpp`, split the `plot_orbit()` caller into
+  standard orbit calculation state and UI presentation.
+- Add or extend the `StandardFractal` UI controller first if this caller
+  needs a standard-renderer resume point.
+- Report the pending orbit point and color to the UI controller, then let
+  the controller display, pace, and resume it.
+- Do not add a `ui` include from `libid/engine` or `libid/fractals`.
+- Do not add per-fractal one-off pacing helpers.
+
+Done when:
+
+- `libid/engine/calmanfp.cpp` no longer calls `plot_orbit()` directly.
+- Standard escape-time orbit points are displayed through the UI
+  controller.
+- No `plot_orbit()` callers remain in `libid/engine` or
+  `libid/fractals`.
+
+Manual testing:
+
+- Render Mandelbrot with `showorbit=yes` and a visible `orbitdelay`.
+- Press a key during orbit delay and confirm the UI responds promptly.
+
+### Slice 6: Orbit Scrub Ownership
 
 Work:
 
@@ -302,7 +401,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 3: Sound Pending-Key Utilities
+### Slice 7: Sound Pending-Key Utilities
 
 Work:
 
