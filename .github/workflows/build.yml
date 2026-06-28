@@ -990,9 +990,10 @@ jobs:
             ninja-build \
             patchelf \
             pkgconf \
-            python3 \
+            python313 \
             rsync \
             tigervnc
+          ln -sf python3.13 /usr/pkg/bin/python3
         run: |
           set +e
           set -u
