@@ -280,34 +280,7 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Popcorn Owns Pending Image-Orbit Points
-
-Work:
-
-- Add pending image-orbit point state to `fractals::Popcorn`: real,
-  imag, color, and pending/completed accessors.
-- Change `ui::popcorn_type()` to ask `Popcorn` for pending image-orbit
-  points and drive them from the UI layer.
-- Keep the existing `StandardFractal`-backed pixel calculation in place
-  for this slice; this slice only moves the presentation handoff to the
-  `Popcorn` object.
-- Do not add per-fractal one-off pacing helpers.
-
-Done when:
-
-- `ui::popcorn_type()` no longer calls `Popcorn::standard_fractal()`.
-- `Popcorn` owns the pending image-orbit point displayed by the UI.
-- Popcorn uses the image-orbit plotting path, not overlay save or scrub
-  state.
-- Popcorn orbit point display and `orbitdelay` pacing still behave as
-  before.
-
-Manual testing:
-
-- `type=popcorn orbitdelay=200`
-- `type=popcornjul orbitdelay=200`
-
-### Slice 2: Popcorn Owns Map Step Selection
+### Slice 1: Popcorn Owns Map Step Selection
 
 Work:
 
@@ -340,7 +313,7 @@ Manual testing:
 - `type=popcorn debugflags=96 orbitdelay=200`
 - `type=popcornjul orbitdelay=200`
 
-### Slice 3: Popcorn Owns Seed Scanning
+### Slice 2: Popcorn Owns Seed Scanning
 
 Work:
 
@@ -371,7 +344,7 @@ Manual testing:
 - `type=popcorn orbitdelay=200`
 - `type=popcorn reset=1960 orbitdelay=200`
 
-### Slice 4: PopcornJulia Uses Popcorn Renderer
+### Slice 3: PopcornJulia Uses Popcorn Renderer
 
 Work:
 
@@ -395,7 +368,7 @@ Manual testing:
 - `type=popcornjul orbitdelay=200`
 - `type=popcornjul reset=1960 orbitdelay=200`
 
-### Slice 5: FrothyBasin Overlay Orbit Caller
+### Slice 4: FrothyBasin Overlay Orbit Caller
 
 Work:
 
@@ -419,7 +392,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=200`
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 6: Standard Overlay Orbit Caller
+### Slice 5: Standard Overlay Orbit Caller
 
 Work:
 
@@ -445,7 +418,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=200`
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 7: Overlay Orbit Scrub Ownership
+### Slice 6: Overlay Orbit Scrub Ownership
 
 Work:
 
@@ -469,7 +442,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 8: Sound Pending-Key Utilities
+### Slice 7: Sound Pending-Key Utilities
 
 Work:
 

@@ -11,6 +11,7 @@
 #include "math/arg.h"
 #include "math/fpu087.h"
 
+#include <cassert>
 #include <cmath>
 #include <memory>
 
@@ -45,6 +46,49 @@ private:
     StandardFractal *m_previous{};
 };
 
+Popcorn *s_active_popcorn{};
+
+Popcorn *set_active_popcorn(Popcorn *popcorn)
+{
+    Popcorn *previous{s_active_popcorn};
+    s_active_popcorn = popcorn;
+    return previous;
+}
+
+class ActivePopcornScope
+{
+public:
+    explicit ActivePopcornScope(Popcorn &popcorn) :
+        m_previous{set_active_popcorn(&popcorn)}
+    {
+    }
+
+    ~ActivePopcornScope()
+    {
+        set_active_popcorn(m_previous);
+    }
+
+    ActivePopcornScope(const ActivePopcornScope &) = delete;
+    ActivePopcornScope(ActivePopcornScope &&) = delete;
+    ActivePopcornScope &operator=(const ActivePopcornScope &) = delete;
+    ActivePopcornScope &operator=(ActivePopcornScope &&) = delete;
+
+private:
+    Popcorn *m_previous{};
+};
+
+void submit_popcorn_image_orbit_plot(const double real, const double imag, const int color)
+{
+    if (s_active_popcorn != nullptr)
+    {
+        s_active_popcorn->queue_image_orbit_plot(real, imag, color);
+    }
+    else
+    {
+        submit_image_orbit_plot(real, imag, color);
+    }
+}
+
 } // namespace
 
 Popcorn::Popcorn() :
@@ -67,6 +111,8 @@ void Popcorn::resume()
     g_plot = no_plot;
     g_temp_sqr_x = 0;
     m_standard_fractal = std::make_unique<StandardFractal>();
+    m_pending_image_orbit_plot = {};
+    m_image_orbit_plot_pending = false;
     m_row = start_row;
     m_col = 0;
     m_done = false;
@@ -102,9 +148,10 @@ void Popcorn::iterate()
         g_reset_periodicity = true;
     }
     ActiveStandardFractalScope active_standard_fractal{*m_standard_fractal};
+    ActivePopcornScope active_popcorn{*this};
     if (m_standard_fractal->calculate_standard_pixel(false) == -1)
     {
-        if (m_standard_fractal->orbit_plot_pending())
+        if (image_orbit_plot_pending())
         {
             return;
         }
@@ -130,9 +177,33 @@ void Popcorn::iterate()
     }
 }
 
-StandardFractal &Popcorn::standard_fractal()
+bool Popcorn::image_orbit_plot_pending() const
 {
-    return *m_standard_fractal;
+    return m_image_orbit_plot_pending;
+}
+
+OrbitPlot &Popcorn::pending_image_orbit_plot()
+{
+    assert(m_image_orbit_plot_pending);
+    return m_standard_fractal->pending_orbit_plot();
+}
+
+void Popcorn::complete_pending_image_orbit_plot()
+{
+    assert(m_image_orbit_plot_pending);
+    m_standard_fractal->complete_pending_orbit_plot();
+    m_pending_image_orbit_plot = {};
+    m_image_orbit_plot_pending = false;
+}
+
+void Popcorn::queue_image_orbit_plot(const double real, const double imag, const int color)
+{
+    if (!m_image_orbit_plot_pending)
+    {
+        m_pending_image_orbit_plot = {real, imag, color};
+        m_standard_fractal->queue_image_orbit_plot(real, imag, color);
+        m_image_orbit_plot_pending = true;
+    }
 }
 
 void Popcorn::complete()
@@ -158,7 +229,7 @@ int popcorn_fractal_old()
     g_new_z.y = g_old_z.y - g_param_z1.x * g_sin_x;
     if (g_plot == no_plot)
     {
-        submit_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
+        submit_popcorn_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
         g_old_z = g_new_z;
     }
     else
@@ -188,11 +259,11 @@ int popcorn_fractal()
     g_tmp_z.y = sin_y/cos_y + g_old_z.y;
     sin_cos(g_tmp_z.x, g_sin_x, g_cos_x);
     sin_cos(g_tmp_z.y, sin_y, cos_y);
-    g_new_z.x = g_old_z.x - g_param_z1.x*sin_y;
-    g_new_z.y = g_old_z.y - g_param_z1.x*g_sin_x;
+    g_new_z.x = g_old_z.x - g_param_z1.x * sin_y;
+    g_new_z.y = g_old_z.y - g_param_z1.x * g_sin_x;
     if (g_plot == no_plot)
     {
-        submit_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
+        submit_popcorn_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
         g_old_z = g_new_z;
     }
     g_temp_sqr_x = sqr(g_new_z.x);
@@ -234,7 +305,7 @@ int popcorn_orbit()
 
     if (g_plot == no_plot)
     {
-        plot_image_orbit(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
+        submit_popcorn_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
         g_old_z = g_new_z;
     }
 

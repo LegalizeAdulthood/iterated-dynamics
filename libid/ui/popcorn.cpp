@@ -2,7 +2,6 @@
 //
 #include "ui/popcorn.h"
 
-#include "engine/StandardFractal.h"
 #include "fractals/popcorn.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/standard_orbit_plot.h"
@@ -26,19 +25,18 @@ int popcorn_type()
 
     while (!popcorn.done())
     {
-        if (popcorn.standard_fractal().orbit_plot_pending())
+        if (popcorn.image_orbit_plot_pending())
         {
-            auto &standard_fractal{popcorn.standard_fractal()};
-            if (drive_orbit_plot(standard_fractal.pending_orbit_plot()))
+            if (drive_orbit_plot(popcorn.pending_image_orbit_plot()))
             {
-                standard_fractal.complete_pending_orbit_plot();
+                popcorn.complete_pending_image_orbit_plot();
             }
         }
         else
         {
             popcorn.iterate();
         }
-        if (!popcorn.done() && !popcorn.standard_fractal().orbit_plot_pending() && calc_interrupted())
+        if (!popcorn.done() && !popcorn.image_orbit_plot_pending() && calc_interrupted())
         {
             popcorn.suspend();
             return -1;

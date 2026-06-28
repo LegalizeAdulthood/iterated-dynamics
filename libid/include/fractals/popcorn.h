@@ -7,9 +7,10 @@
 namespace id::engine
 {
 
+class OrbitPlot;
 class StandardFractal;
 
-}
+} // namespace id::engine
 
 namespace id::fractals
 {
@@ -29,14 +30,26 @@ public:
     void suspend();
     bool done() const;
     void iterate();
-    engine::StandardFractal &standard_fractal();
+    bool image_orbit_plot_pending() const;
+    engine::OrbitPlot &pending_image_orbit_plot();
+    void complete_pending_image_orbit_plot();
+    void queue_image_orbit_plot(double real, double imag, int color);
 
 private:
+    struct ImageOrbitPoint
+    {
+        double real{};
+        double imag{};
+        int color{};
+    };
+
     void complete();
 
     std::unique_ptr<engine::StandardFractal> m_standard_fractal;
+    ImageOrbitPoint m_pending_image_orbit_plot{};
     int m_row{};
     int m_col{};
+    bool m_image_orbit_plot_pending{};
     bool m_done{};
 };
 
