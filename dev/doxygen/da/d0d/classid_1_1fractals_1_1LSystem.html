@@ -87,8 +87,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a82b88cf3c8bbe224344be57a7d044a1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f065ca51ad1425de062bdbb153c10b3" id="r_a4f065ca51ad1425de062bdbb153c10b3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/d0d/classid_1_1fractals_1_1LSystem.html#a4f065ca51ad1425de062bdbb153c10b3">~LSystem</a> ()</td></tr>
 <tr class="separator:a4f065ca51ad1425de062bdbb153c10b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7dbd1db7440bf7cd3631f9f90378874e" id="r_a7dbd1db7440bf7cd3631f9f90378874e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/d0d/classid_1_1fractals_1_1LSystem.html#a7dbd1db7440bf7cd3631f9f90378874e">run</a> ()</td></tr>
-<tr class="separator:a7dbd1db7440bf7cd3631f9f90378874e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9306f11551819c92839060df1064ed14" id="r_a9306f11551819c92839060df1064ed14"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/d0d/classid_1_1fractals_1_1LSystem.html#a9306f11551819c92839060df1064ed14">start</a> ()</td></tr>
+<tr class="separator:a9306f11551819c92839060df1064ed14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a169e0069a859067ab3dd1b80422a2096" id="r_a169e0069a859067ab3dd1b80422a2096"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/d0d/classid_1_1fractals_1_1LSystem.html#a169e0069a859067ab3dd1b80422a2096">done</a> () const</td></tr>
+<tr class="separator:a169e0069a859067ab3dd1b80422a2096"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff9d6ad4e944b9167d4290d72942d644" id="r_aff9d6ad4e944b9167d4290d72942d644"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/d0d/classid_1_1fractals_1_1LSystem.html#aff9d6ad4e944b9167d4290d72942d644">interrupted</a> () const</td></tr>
+<tr class="separator:aff9d6ad4e944b9167d4290d72942d644"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a987919b44cbaaef194dcb4c0d1d50ab4" id="r_a987919b44cbaaef194dcb4c0d1d50ab4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/d0d/classid_1_1fractals_1_1LSystem.html#a987919b44cbaaef194dcb4c0d1d50ab4">iterate</a> ()</td></tr>
+<tr class="separator:a987919b44cbaaef194dcb4c0d1d50ab4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -109,7 +115,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00903">903</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00908">908</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -128,19 +134,57 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00911">911</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00916">916</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7dbd1db7440bf7cd3631f9f90378874e" name="a7dbd1db7440bf7cd3631f9f90378874e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7dbd1db7440bf7cd3631f9f90378874e">&#9670;&#160;</a></span>run()</h2>
+<a id="a169e0069a859067ab3dd1b80422a2096" name="a169e0069a859067ab3dd1b80422a2096"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a169e0069a859067ab3dd1b80422a2096">&#9670;&#160;</a></span>done()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int id::fractals::LSystem::run </td>
+          <td class="memname">bool id::fractals::LSystem::done </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00941">941</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aff9d6ad4e944b9167d4290d72942d644" name="aff9d6ad4e944b9167d4290d72942d644"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff9d6ad4e944b9167d4290d72942d644">&#9670;&#160;</a></span>interrupted()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool id::fractals::LSystem::interrupted </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00946">946</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a987919b44cbaaef194dcb4c0d1d50ab4" name="a987919b44cbaaef194dcb4c0d1d50ab4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a987919b44cbaaef194dcb4c0d1d50ab4">&#9670;&#160;</a></span>iterate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void id::fractals::LSystem::iterate </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -148,7 +192,26 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00919">919</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l01000">1000</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a9306f11551819c92839060df1064ed14" name="a9306f11551819c92839060df1064ed14"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9306f11551819c92839060df1064ed14">&#9670;&#160;</a></span>start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void id::fractals::LSystem::start </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00924">924</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
