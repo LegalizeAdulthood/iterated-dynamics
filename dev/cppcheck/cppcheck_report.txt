@@ -79,40 +79,40 @@ hc/HelpCompiler.cpp:1578:9: note: First condition
 hc/HelpCompiler.cpp:1582:9: note: Second condition
     if (!g_errors)
         ^
-libid/engine/StandardFractal.cpp:176:32: style: Local variable 'active_standard_fractal' shadows outer function [shadowFunction]
+libid/engine/StandardFractal.cpp:233:32: style: Local variable 'active_standard_fractal' shadows outer function [shadowFunction]
     ActiveStandardFractalScope active_standard_fractal{*this};
                                ^
-libid/engine/StandardFractal.cpp:88:18: note: Shadowed declaration
+libid/engine/StandardFractal.cpp:124:18: note: Shadowed declaration
 StandardFractal *active_standard_fractal()
                  ^
-libid/engine/StandardFractal.cpp:176:32: note: Shadow variable
+libid/engine/StandardFractal.cpp:233:32: note: Shadow variable
     ActiveStandardFractalScope active_standard_fractal{*this};
                                ^
 libid/engine/cmdfiles.cpp:211:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3688:28: style: Condition 'value.empty()' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3725:28: style: Condition 'value.empty()' is always false [knownConditionTrueFalse]
             if (value.empty())
                            ^
-libid/engine/cmdfiles.cpp:3762:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3799:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:4176:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4215:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
-libid/engine/cmdfiles.cpp:4279:20: style: Condition 'cmd.size()>29' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4318:20: style: Condition 'cmd.size()>29' is always false [knownConditionTrueFalse]
     if (cmd.size() > 29)
                    ^
-libid/engine/cmdfiles.cpp:4283:9: style: Condition '!cmd.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4322:9: style: Condition '!cmd.empty()' is always true [knownConditionTrueFalse]
     if (!cmd.empty())
         ^
-libid/engine/cmdfiles.cpp:1764:24: style: Local variable 'color' shadows outer variable [shadowVariable]
+libid/engine/cmdfiles.cpp:1766:24: style: Local variable 'color' shadows outer variable [shadowVariable]
             for (auto &color : g_dac_box)
                        ^
-libid/engine/cmdfiles.cpp:1686:21: note: Shadowed declaration
+libid/engine/cmdfiles.cpp:1688:21: note: Shadowed declaration
         const char *color{colors.c_str()};
                     ^
-libid/engine/cmdfiles.cpp:1764:24: note: Shadow variable
+libid/engine/cmdfiles.cpp:1766:24: note: Shadow variable
             for (auto &color : g_dac_box)
                        ^
 libid/fractals/Ant.cpp:276:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
@@ -3391,16 +3391,16 @@ libid/ui/get_fract_type.cpp:638:45: warning: Char literal compared with pointer 
 libid/ui/help.cpp:1334:9: style: Condition '!path.empty()' is always true [knownConditionTrueFalse]
     if (!path.empty())
         ^
-libid/ui/make_batch_file.cpp:1531:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
+libid/ui/make_batch_file.cpp:1567:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
     if (!colors_only)
         ^
-libid/ui/make_batch_file.cpp:954:9: note: Assuming that condition 'colors_only' is not redundant
+libid/ui/make_batch_file.cpp:998:9: note: Assuming that condition 'colors_only' is not redundant
     if (colors_only)
         ^
-libid/ui/make_batch_file.cpp:1531:9: note: Condition '!colors_only' is always true
+libid/ui/make_batch_file.cpp:1567:9: note: Condition '!colors_only' is always true
     if (!colors_only)
         ^
-libid/ui/make_batch_file.cpp:1746:13: style: Condition '!filename.empty()' is always true [knownConditionTrueFalse]
+libid/ui/make_batch_file.cpp:1782:13: style: Condition '!filename.empty()' is always true [knownConditionTrueFalse]
         if (!filename.empty())
             ^
 libid/ui/menu_handler.cpp:107:36: style: Parameter 'context' can be declared with const [constParameter]
@@ -3421,13 +3421,13 @@ libid/ui/stereo.cpp:288:16: note: Variable created here.
 libid/ui/stereo.cpp:297:5: note: Non-local variable 's_data' will use pointer to local variable 'v'.
     s_data = &v; // set static vars to stack structure
     ^
-tests/libid/engine/test_cmdfiles.cpp:1353:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
+tests/libid/engine/test_cmdfiles.cpp:1363:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
-tests/libid/engine/test_cmdfiles.cpp:1345:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
+tests/libid/engine/test_cmdfiles.cpp:1355:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
     const std::string saved_browse_name{g_browse.name};
                                                 ^
-tests/libid/engine/test_cmdfiles.cpp:1353:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
+tests/libid/engine/test_cmdfiles.cpp:1363:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
 tests/libid/fractals/test_fractalp.cpp:368:20: style: Unused variable: reset_parser [unusedVariable]
