@@ -174,6 +174,8 @@ The current code is already part-way through this plan:
 - Code outside `libid/ui` must not use `MouseNotification`,
   `mouse_subscribe`, `mouse_unsubscribe`, `g_cursor_mouse_tracking`, or
   `g_look_at_mouse`.
+- A change to a file in `libid/engine` or `libid/fractals` must not add
+  an include from `libid/ui`.
 - Calculation code reports progress, completion, suspension state, and
   calculation decisions.  It does not interpret keys.
 - Keep behavior first.  Rename and reshape after calls are moved.
@@ -247,30 +249,71 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: Orbit Delay Pacing
+### Slice 1: Orbit Plot Work Object
 
 Work:
 
-- Treat `libid/engine/orbit.cpp:57-130` separately from generic timing
-  cleanup.
-- `plot_d_orbit()` calls `wait_until()` for orbit-delay pacing in two
-  branches.  Since `wait_until()` wakes on pending keyboard input, this
-  is hidden keyboard I/O in the orbit display path.
-- Split raw timing from input-aware waiting.  Keep
-  `libid/engine/wait_until.cpp` as a pure timing primitive, or add such a
-  primitive, and put the pending-input wake behavior behind a UI-owned
-  orbit pacing helper.
-- Update `plot_d_orbit()` to use the UI-owned orbit pacing helper for
-  `g_orbit_delay`.
-- Preserve scaled-sound and normal orbit-delay behavior.
+- Do not add a plug-in plotter interface.
+- Introduce a concrete engine orbit plot work object that represents
+  plotting one orbit point and scrubbing saved orbit points.
+- Move the current `plot_d_orbit()` implementation into that object
+  without changing behavior.
+- Keep `plot_orbit()` and `scrub_orbit()` as synchronous compatibility
+  functions that drive the concrete work object to completion.
+- Keep saved-orbit state in the concrete work object for now.
 
 Done when:
 
-- `plot_d_orbit()` no longer reaches keyboard polling through
-  `wait_until()`.
-- Orbit delay still paces plotted orbit dots.
-- A pending key still wakes the orbit delay promptly and is left for the
-  existing UI handling.
+- The current orbit display behavior is unchanged.
+- The engine has a concrete unit of orbit plotting work that can later be
+  driven incrementally by UI.
+- No `libid/engine` or `libid/fractals` file adds a `libid/ui` include.
+
+Manual testing:
+
+- None.
+
+### Slice 2: Orbit Plot Yield State
+
+Work:
+
+- Add state so the standard renderer can yield when an orbit point needs
+  display work.
+- Expose the pending orbit plot work from `engine::StandardFractal`.
+- Preserve the synchronous `plot_orbit()` compatibility path for callers
+  that have not been moved to a UI controller yet.
+- Do not make `plot_orbit()` delegate to a replaceable side-effect
+  service.
+
+Done when:
+
+- `StandardFractal` can report pending orbit plot work to the UI wrapper.
+- The existing synchronous callers still behave as before.
+- No keyboard polling is added to engine code.
+
+Manual testing:
+
+- None.
+
+### Slice 3: Standard Orbit Plot Controller
+
+Work:
+
+- Update `libid/ui/standard_fractal.cpp` to drive pending orbit plot work
+  from `StandardFractal`.
+- Interleave orbit plot work with the keyboard handler stack.
+- Move orbit-delay pacing for standard-render orbit points into the UI
+  controller.
+- Keep `o` orbit toggling and main-loop key interruption behavior.
+
+Done when:
+
+- Standard rendering yields orbit display work to UI.
+- UI decides when to continue plotting, delay, or interrupt rendering.
+- Standard orbit plotting no longer reaches keyboard polling through
+  `engine/wait_until.cpp`.
+- A pending key still wakes orbit delay promptly and is left for existing
+  UI handling.
 
 Manual testing:
 
@@ -278,8 +321,55 @@ Manual testing:
 - Confirm orbit dots are paced.
 - Press a key during orbit delay and confirm the UI responds promptly
   without losing the key.
+- Toggle orbit display with `o` and confirm saved orbit points are
+  scrubbed.
 
-### Slice 2: Sound Pending-Key Utilities
+### Slice 4: Remaining Orbit Plot Callers
+
+Work:
+
+- Apply the same yield-and-controller shape to remaining `plot_orbit()`
+  callers that can display or pace orbit points.
+- Start with Popcorn and FrothyBasin, which already have UI wrappers.
+- Audit `libid/engine/calmanfp.cpp` and add a UI wrapper first if needed.
+- Do not add per-fractal one-off pacing helpers.
+
+Done when:
+
+- Remaining orbit display paths are driven by UI controllers.
+- Calculation code reports pending orbit work instead of polling input.
+- The synchronous compatibility path is used only where no UI controller
+  exists yet.
+
+Manual testing:
+
+- Render Popcorn with a visible orbit delay.
+- Render FrothyBasin with orbit display enabled.
+- Press a key during orbit delay and confirm the UI responds promptly.
+
+### Slice 5: Orbit Scrub Ownership
+
+Work:
+
+- Move saved-orbit scrubbing ownership to the UI controllers once all
+  orbit display paths are controller-driven.
+- Remove engine-side callers that scrub display state directly.
+- Keep a compatibility `scrub_orbit()` only while synchronous callers
+  still exist.
+
+Done when:
+
+- Orbit display callers no longer reach into engine-owned display state.
+- Saved orbit points are scrubbed by the UI controller that displayed
+  them.
+- The compatibility scrub path is removed or clearly isolated.
+
+Manual testing:
+
+- Toggle orbit display with `o` and confirm saved orbit points are
+  scrubbed.
+
+### Slice 6: Sound Pending-Key Utilities
 
 Work:
 
@@ -310,8 +400,8 @@ Direct polling or key consumption exists outside `libid/ui` in:
   standard-pixel fallback polling.
 - `libid/engine/solid_guess.cpp`: interrupt checks during block repaint.
 - `libid/engine/soi.cpp`: interrupt checks during recursive scan.
-- `libid/engine/orbit.cpp`: orbit pacing reaches input polling through
-  `wait_until()`.
+- `libid/engine/orbit.cpp`: shared `plot_orbit()` path owns screen orbit
+  display and reaches input polling through `wait_until()`.
 - `libid/engine/sound.cpp`: suppress tone while keys are pending.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
 - `libid/fractals/lorenz.cpp`: orbit interrupt.
