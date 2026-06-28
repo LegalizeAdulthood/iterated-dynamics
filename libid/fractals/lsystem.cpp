@@ -102,9 +102,10 @@ struct LSysTurtleSnapshot
 struct LSysDrawFrame
 {
     LSysCmd *command;
-    LSysTurtleState *turtle;
     LSysCmd **rules;
     int depth;
+    bool restore_turtle;
+    LSysTurtleSnapshot saved_turtle;
 };
 
 } // namespace
@@ -142,11 +143,17 @@ private:
     void reset_turtle_for_drawing();
     void build_draw_commands();
     void draw();
+    bool draw_command_stack(LSysCmd *command);
+    bool push_draw_frame(LSysCmd *command, LSysCmd **rules, int depth);
+    bool push_draw_frame(LSysCmd *command, LSysCmd **rules, int depth, const LSysTurtleSnapshot &saved_turtle);
+    bool push_draw_frame(
+        LSysCmd *command, LSysCmd **rules, int depth, bool restore_turtle, const LSysTurtleSnapshot &saved_turtle);
     void free_commands();
 
     int m_order;
     LSysTurtleState m_turtle{};
     std::vector<LSysCmd *> m_rule_cmds;
+    std::vector<LSysDrawFrame> m_draw_stack;
 };
 
 inline bool is_pow2(const int n)
@@ -893,80 +900,6 @@ static void restore_turtle(LSysTurtleState &turtle, const LSysTurtleSnapshot &sn
     turtle.curr_color = snapshot.curr_color;
 }
 
-static LSysCmd *draw_lsys(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, const int depth)
-{
-    LSysDrawFrame frame{command, ts, rules, depth};
-
-    if (g_overflow)       // integer math routines overflowed
-    {
-        return nullptr;
-    }
-
-    if (stack_avail() < 400)
-    {
-        // leave some margin for calling subroutines
-        frame.turtle->stack_overflow = true;
-        return nullptr;
-    }
-
-    while (frame.command->ch && frame.command->ch != ']')
-    {
-        if (!frame.turtle->counter++)
-        {
-            if (driver_key_pressed())
-            {
-                frame.turtle->counter--;
-                return nullptr;
-            }
-        }
-        bool tran = false;
-        if (frame.depth)
-        {
-            for (LSysCmd **rule_index = frame.rules; *rule_index; rule_index++)
-            {
-                if ((*rule_index)->ch == frame.command->ch)
-                {
-                    tran = true;
-                    if (draw_lsys(*rule_index + 1, frame.turtle, frame.rules, frame.depth - 1) == nullptr)
-                    {
-                        return nullptr;
-                    }
-                }
-            }
-        }
-        if (!frame.depth || !tran)
-        {
-            if (frame.command->f)
-            {
-                switch (frame.command->param_type)
-                {
-                case 4:
-                    frame.turtle->param.n = frame.command->param.n;
-                    break;
-                case 10:
-                    frame.turtle->param.nf = frame.command->param.nf;
-                    break;
-                default:
-                    break;
-                }
-                (*frame.command->f)(frame.turtle);
-            }
-            else if (frame.command->ch == '[')
-            {
-                const LSysTurtleSnapshot branch_turtle{save_turtle(*frame.turtle)};
-                frame.command = draw_lsys(frame.command + 1, frame.turtle, frame.rules, frame.depth);
-                if (frame.command == nullptr)
-                {
-                    return nullptr;
-                }
-                restore_turtle(*frame.turtle, branch_turtle);
-            }
-        }
-        frame.command++;
-    }
-    return frame.command;
-}
-
 LSystem::LSystem() :
     m_order{std::max(static_cast<int>(g_params[0]), 0)}
 {
@@ -1037,7 +970,152 @@ void LSystem::draw()
     {
         m_turtle.curr_color = static_cast<char>(g_colors - 1);
     }
-    draw_lsys(m_rule_cmds[0], &m_turtle, &m_rule_cmds[1], m_order);
+    draw_command_stack(m_rule_cmds[0]);
+}
+
+bool LSystem::draw_command_stack(LSysCmd *command)
+{
+    m_draw_stack.clear();
+    if (!push_draw_frame(command, &m_rule_cmds[1], m_order))
+    {
+        return false;
+    }
+
+    while (!m_draw_stack.empty())
+    {
+        if (g_overflow)       // integer math routines overflowed
+        {
+            return false;
+        }
+
+        LSysDrawFrame &frame = m_draw_stack.back();
+        if (!frame.command->ch || frame.command->ch == ']')
+        {
+            LSysCmd *const return_command = frame.command;
+            const bool restore = frame.restore_turtle;
+            const LSysTurtleSnapshot saved_turtle = frame.saved_turtle;
+            m_draw_stack.pop_back();
+            if (restore)
+            {
+                restore_turtle(m_turtle, saved_turtle);
+                if (!m_draw_stack.empty())
+                {
+                    m_draw_stack.back().command = return_command + 1;
+                }
+            }
+            continue;
+        }
+
+        if (!m_turtle.counter++)
+        {
+            if (driver_key_pressed())
+            {
+                m_turtle.counter--;
+                return false;
+            }
+        }
+
+        bool tran = false;
+        if (frame.depth)
+        {
+            LSysCmd **rule_end = frame.rules;
+            while (*rule_end)
+            {
+                rule_end++;
+            }
+
+            for (LSysCmd **rule_index = frame.rules; rule_index != rule_end; rule_index++)
+            {
+                if ((*rule_index)->ch == frame.command->ch)
+                {
+                    tran = true;
+                    break;
+                }
+            }
+            if (tran)
+            {
+                LSysCmd *const current_command = frame.command++;
+                LSysCmd **const rules = frame.rules;
+                const int depth = frame.depth;
+                for (LSysCmd **rule_index = rule_end; rule_index != rules;)
+                {
+                    rule_index--;
+                    if ((*rule_index)->ch == current_command->ch && !push_draw_frame(*rule_index + 1, rules, depth - 1))
+                    {
+                        return false;
+                    }
+                }
+                continue;
+            }
+        }
+
+        if (frame.command->f)
+        {
+            switch (frame.command->param_type)
+            {
+            case 4:
+                m_turtle.param.n = frame.command->param.n;
+                break;
+            case 10:
+                m_turtle.param.nf = frame.command->param.nf;
+                break;
+            default:
+                break;
+            }
+            (*frame.command->f)(&m_turtle);
+            frame.command++;
+        }
+        else if (frame.command->ch == '[')
+        {
+            const LSysTurtleSnapshot branch_turtle{save_turtle(m_turtle)};
+            if (!push_draw_frame(frame.command + 1, frame.rules, frame.depth, branch_turtle))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            frame.command++;
+        }
+    }
+    return true;
+}
+
+bool LSystem::push_draw_frame(LSysCmd *command, LSysCmd **rules, const int depth)
+{
+    return push_draw_frame(command, rules, depth, false, {});
+}
+
+bool LSystem::push_draw_frame(
+    LSysCmd *command, LSysCmd **rules, const int depth, const LSysTurtleSnapshot &saved_turtle)
+{
+    return push_draw_frame(command, rules, depth, true, saved_turtle);
+}
+
+bool LSystem::push_draw_frame(
+    LSysCmd *command,
+    LSysCmd **rules,
+    const int depth,
+    const bool restore_turtle,
+    const LSysTurtleSnapshot &saved_turtle)
+{
+    if (stack_avail() < 400)
+    {
+        // leave some margin for calling subroutines
+        m_turtle.stack_overflow = true;
+        return false;
+    }
+
+    try
+    {
+        m_draw_stack.push_back({command, rules, depth, restore_turtle, saved_turtle});
+        return true;
+    }
+    catch (const std::bad_alloc &)
+    {
+        m_turtle.stack_overflow = true;
+        return false;
+    }
 }
 
 void LSystem::free_commands()

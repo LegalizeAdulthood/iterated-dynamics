@@ -247,27 +247,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: LSystem Synchronous Command Stack
-
-Work:
-
-- Replace recursive calls in `draw_lsys()` with an explicit command stack
-  owned by `LSystem`.
-- Preserve rule expansion, `[` / `]` branch handling, overflow handling,
-  and the existing key probe.
-- Drive the command stack to completion from the same synchronous
-  `lsystem_type()` path.
-
-Done when:
-
-- The draw path no longer recursively calls `draw_lsys()`.
-- L-system output and interrupt behavior are unchanged.
-
-Manual testing:
-
-- None; this slice does not change user interaction.
-
-### Slice 2: LSystem Iterative Renderer
+### Slice 1: LSystem Iterative Renderer
 
 Work:
 
@@ -285,7 +265,7 @@ Manual testing:
 
 - None; this slice does not change user interaction.
 
-### Slice 3: LSystem UI Wrapper Shell
+### Slice 2: LSystem UI Wrapper Shell
 
 Work:
 
@@ -304,7 +284,7 @@ Manual testing:
 
 - None; this slice does not change user interaction.
 
-### Slice 4: LSystem Keyboard Ownership
+### Slice 3: LSystem Keyboard Ownership
 
 Work:
 
@@ -312,7 +292,7 @@ Work:
   `libid/ui/lsystem.cpp`.
 - Add the `suspend()` or interruption state needed for the UI wrapper to
   stop and later resume `LSystem`.
-- Remove the direct key probe from `draw_lsys()`.
+- Remove the direct key probe from the L-system draw stack.
 
 Done when:
 
@@ -326,7 +306,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 5: Lyapunov Renderer
+### Slice 4: Lyapunov Renderer
 
 Work:
 
@@ -347,7 +327,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 6: Lorenz Photographer Mode
+### Slice 5: Lorenz Photographer Mode
 
 Work:
 
@@ -367,7 +347,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 7: Non-Interrupt Pending-Key Utilities
+### Slice 6: Non-Interrupt Pending-Key Utilities
 
 Work:
 
