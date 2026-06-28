@@ -977,6 +977,10 @@ jobs:
         copyback: true
         envs: VCPKG_GITHUB_CACHE_TOKEN VCPKG_ROOT
         prepare: |
+          /usr/bin/ftp -o xbase.tar.xz \
+            https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.1/amd64/binary/sets/xbase.tar.xz
+          tar -xJpf xbase.tar.xz -C /
+          rm xbase.tar.xz
           /usr/sbin/pkg_add -u \
             bash \
             bison \
@@ -986,7 +990,6 @@ jobs:
             ninja-build \
             patchelf \
             pkgconf \
-            pixman \
             rsync \
             tigervnc
         run: |
@@ -997,8 +1000,7 @@ jobs:
           {
             start_xvnc() {
               echo "Starting Xvnc"
-              LD_LIBRARY_PATH="/usr/pkg/lib:/usr/X11R7/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}" \
-                /usr/pkg/bin/Xvnc :99 -SecurityTypes None -geometry 1024x768 \
+              /usr/pkg/bin/Xvnc :99 -SecurityTypes None -geometry 1024x768 \
                 -depth 24 -ac >xserver.log 2>&1 &
               x_server_pid=$!
               sleep 3
