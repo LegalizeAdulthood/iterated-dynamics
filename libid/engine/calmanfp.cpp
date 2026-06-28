@@ -58,7 +58,7 @@ long mandelbrot_orbit()
     // initparms
     double saved_x = 0;
     double saved_y = 0;
-    g_orbit_save_index = 0;
+    g_orbit_save_flag = false;
     long saved_and = g_first_saved_and;
     int saved_incr = 1;             // start checking the very first time
 
@@ -146,7 +146,7 @@ long mandelbrot_orbit()
     g_color_iter = s_inside_color;
 
 pop_stack:
-    if (g_orbit_save_index)
+    if (g_orbit_save_flag)
     {
         scrub_orbit();
     }

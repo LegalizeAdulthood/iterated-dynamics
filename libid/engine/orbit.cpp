@@ -79,7 +79,7 @@ bool OrbitPlot::done() const
 
 void OrbitPlot::clear_saved_points_if_reset()
 {
-    if (g_orbit_save_index == 0 && !m_saved_orbit.empty())
+    if (!g_orbit_save_flag && !m_saved_orbit.empty())
     {
         m_saved_orbit.clear();
     }
@@ -162,8 +162,7 @@ void OrbitPlot::save_orbit_point(const int x, const int y, const int color)
 
 void OrbitPlot::update_saved_point_count()
 {
-    static constexpr int SAVED_ORBIT_POINT_VALUES{3};
-    g_orbit_save_index = static_cast<int>(m_saved_orbit.size() * SAVED_ORBIT_POINT_VALUES);
+    g_orbit_save_flag = !m_saved_orbit.empty();
 }
 
 void plot_orbit(const double real, const double imag, const int color)
@@ -178,10 +177,10 @@ void plot_orbit(const double real, const double imag, const int color)
 void OrbitPlot::scrub()
 {
     driver_mute();
-    if (g_orbit_save_index == 0 || m_saved_orbit.empty())
+    if (!g_orbit_save_flag || m_saved_orbit.empty())
     {
         m_saved_orbit.clear();
-        g_orbit_save_index = 0;
+        g_orbit_save_flag = false;
         return;
     }
     ValueSaver save_screen_x_offset{g_logical_screen.x_offset, 0};

@@ -209,7 +209,7 @@ std::array<std::string, MAX_PARAMS> g_param_text; // parameter text
 // ORBIT variables
 DComplex g_init_orbit{};                               // initial orbit value
 int g_orbit_color{15};                                 // XOR color
-int g_orbit_save_index{};                              // saved orbit value count
+bool g_orbit_save_flag{};                              // saved orbit value flag
 bool g_show_orbit{};                                   // flag to turn on and off
 bool g_start_show_orbit{};                             // show orbits on at start of fractal
 InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL}; // flag for init orbit
@@ -693,7 +693,7 @@ static void init_calc_fract()
     {
         g_show_orbit = g_start_show_orbit;
     }
-    g_orbit_save_index = 0;
+    g_orbit_save_flag = false;
     g_orbit_color = 15;
     if (g_colors < 16)
     {
@@ -1235,7 +1235,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             m_deriv.y = 0;
             g_magnitude = 0;
         }
-        g_orbit_save_index = 0;
+        g_orbit_save_flag = false;
         g_color_iter = 0;
         if (g_fractal_type == FractalType::JULIA)
         {

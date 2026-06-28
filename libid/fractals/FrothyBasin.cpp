@@ -250,7 +250,7 @@ int FrothyBasin::calc()
 {
     int found_attractor = 0;
 
-    g_orbit_save_index = 0;
+    g_orbit_save_flag = false;
     g_color_iter = 0;
     if (g_show_dot > 0)
     {
