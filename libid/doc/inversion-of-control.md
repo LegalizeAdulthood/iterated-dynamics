@@ -257,31 +257,156 @@ pending key should still wake that delay promptly.  The UI controller
 owns that pacing because the delay exists to make plotted orbit points
 visible, not to advance fractal math.
 
-### Slice 1: Generalized Popcorn Orbit Plot Caller
+Popcorn is not a standard fractal renderer.  It uses screen pixels as
+seed points, iterates a Popcorn map, and plots the produced orbit points
+elsewhere on the screen.  It does not color the seed pixel by orbit
+length, and it does not use StandardPass traversal.  Do not route
+Popcorn presentation state through `StandardFractal`; make `Popcorn` the
+calculation object that owns scan state, orbit state, and pending orbit
+points.
+
+The Popcorn conversion should follow review boundaries, not a guessed
+slice count.  A slice is small enough when it preserves current
+behavior, removes one false dependency, and leaves a reviewable
+intermediate state.
+
+### Slice 1: Orbit Plot Driver Uses Caller-Owned State
 
 Work:
 
-- In `libid/fractals/popcorn.cpp`, split the `plot_orbit()` caller in
-  `popcorn_orbit()` into calculation state and UI presentation.
-- Report the pending orbit point and color to the `ui::Popcorn`
-  controller, then let the controller display, pace, and resume it.
-- Preserve generalized Popcorn and PopcornJulia orbit math.
+- Split the UI orbit plotting helper so the pacing loop can drive an
+  `OrbitPlot` supplied by its caller.
+- Keep the caller responsible for marking its own pending orbit point
+  complete.
+- Preserve the existing `StandardFractal` caller behavior.
 - Do not add per-fractal one-off pacing helpers.
 
 Done when:
 
-- `popcorn_orbit()` no longer calls `plot_orbit()` directly.
-- Generalized Popcorn orbit points are displayed through the UI
-  controller.
-- The synchronous compatibility path remains available for other callers
-  until their slices are complete.
+- The UI orbit plotting helper is not coupled to `StandardFractal`
+  completion.
+- `ui::standard_fractal.cpp` drives and completes
+  `StandardFractal` pending orbit points explicitly.
+- `orbitdelay` pacing and wake-on-key behavior are unchanged.
 
 Manual testing:
 
-- Render a PopcornJulia parameter set with a visible `orbitdelay`.
-- Press a key during orbit delay and confirm the UI responds promptly.
+- `type=mandel showorbit=yes orbitdelay=200`
 
-### Slice 2: FrothyBasin Orbit Plot Caller
+### Slice 2: Popcorn Owns Pending Orbit Points
+
+Work:
+
+- Add pending orbit point state to `fractals::Popcorn`: real, imag,
+  color, and pending/completed accessors.
+- Change `ui::popcorn_type()` to ask `Popcorn` for pending orbit points
+  and drive them from the UI layer.
+- Keep the existing `StandardFractal`-backed pixel calculation in place
+  for this slice; this slice only moves the presentation handoff to the
+  `Popcorn` object.
+- Do not add per-fractal one-off pacing helpers.
+
+Done when:
+
+- `ui::popcorn_type()` no longer calls `Popcorn::standard_fractal()`.
+- `Popcorn` owns the pending orbit point displayed by the UI.
+- Popcorn orbit point display and `orbitdelay` pacing still behave as
+  before.
+
+Manual testing:
+
+- `type=popcorn orbitdelay=200`
+- `type=popcornjul orbitdelay=200`
+
+### Slice 3: Popcorn Owns Map Step Selection
+
+Work:
+
+- Move Popcorn orbit mode selection out of `g_dispatch.orbit_calc()` and
+  into `fractals::Popcorn`.
+- Represent the selected mode explicitly, such as legacy real Popcorn,
+  current real Popcorn, and generalized Popcorn.
+- Move the math from `popcorn_fractal_old()`, `popcorn_fractal()`, and
+  `popcorn_orbit()` behind `Popcorn` methods or local implementation
+  helpers that are invoked by the `Popcorn` object.
+- Preserve `reset=1960`, `DebugFlags::FORCE_REAL_POPCORN`, PopcornJulia,
+  and generalized Popcorn behavior.
+- Keep any needed compatibility wrappers only as thin callers during
+  this slice; they exist only while `StandardFractal` still owns the
+  seed loop.
+- The compatibility wrappers must not call `plot_orbit()` directly.
+
+Done when:
+
+- Popcorn orbit step selection is stored on `Popcorn`.
+- The three Popcorn orbit implementations can be invoked through the
+  `Popcorn` object.
+- Any remaining free Popcorn orbit functions are compatibility wrappers,
+  not owners of rendering control.
+- `popcorn.cpp` has no direct `plot_orbit()` calls.
+
+Manual testing:
+
+- `type=popcorn reset=1960 orbitdelay=200`
+- `type=popcorn debugflags=96 orbitdelay=200`
+- `type=popcornjul orbitdelay=200`
+
+### Slice 4: Popcorn Owns Seed Scanning
+
+Work:
+
+- Replace `Popcorn::m_standard_fractal` and
+  `StandardFractal::calculate_standard_pixel(false)` with a Popcorn-owned
+  seed iteration loop.
+- `Popcorn::iterate()` should:
+  - set up the current seed pixel;
+  - advance the selected Popcorn orbit step;
+  - queue produced orbit points on `Popcorn`;
+  - return to the UI while a point is pending;
+  - resume the same seed after the UI displays the point.
+- Preserve the left-to-right, top-to-bottom seed scan and resume row.
+- Preserve bailout, magnitude limit, legacy compatibility, and
+  PopcornJulia behavior.
+- Keep temporary Popcorn wrappers only if still needed by PopcornJulia.
+
+Done when:
+
+- `type=popcorn` rendering no longer depends on `StandardFractal`.
+- `Popcorn::standard_fractal()` and `Popcorn::m_standard_fractal` are
+  gone.
+- `ui::popcorn_type()` owns the input loop and drives `Popcorn`
+  incrementally.
+
+Manual testing:
+
+- `type=popcorn orbitdelay=200`
+- `type=popcorn reset=1960 orbitdelay=200`
+
+### Slice 5: PopcornJulia Uses Popcorn Renderer
+
+Work:
+
+- Change the `popcornjul` fractal entry to use the Popcorn UI renderer
+  instead of `standard_fractal_type`.
+- Remove Popcorn-specific use of `g_dispatch.orbit_calc()`.
+- Remove temporary Popcorn wrappers that only existed for
+  `StandardFractal`.
+- Preserve PopcornJulia defaults, attractor setup, symmetry, bailout,
+  and generalized map behavior.
+
+Done when:
+
+- `type=popcornjul` rendering no longer depends on `StandardFractal`.
+- `g_dispatch.orbit_calc()` is not used to drive Popcorn-family
+  rendering.
+- No temporary Popcorn compatibility wrappers remain.
+
+Manual testing:
+
+- `type=popcornjul orbitdelay=200`
+- `type=popcornjul reset=1960 orbitdelay=200`
+
+### Slice 6: FrothyBasin Orbit Plot Caller
 
 Work:
 
@@ -304,7 +429,7 @@ Manual testing:
 - Render FrothyBasin with orbit display enabled.
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 3: Standard Orbit Plot Caller
+### Slice 7: Standard Orbit Plot Caller
 
 Work:
 
@@ -330,7 +455,7 @@ Manual testing:
 - Render Mandelbrot with `showorbit=yes` and a visible `orbitdelay`.
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 4: Orbit Scrub Ownership
+### Slice 8: Orbit Scrub Ownership
 
 Work:
 
@@ -352,7 +477,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 5: Sound Pending-Key Utilities
+### Slice 9: Sound Pending-Key Utilities
 
 Work:
 
