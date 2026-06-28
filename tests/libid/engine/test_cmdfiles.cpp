@@ -102,6 +102,11 @@ using namespace testing;
 namespace id::engine
 {
 
+TEST(TestUserData, perturbationDefaultAuto)
+{
+    EXPECT_EQ(PerturbationMode::AUTO, UserData{}.perturbation);
+}
+
 static std::ostream &operator<<(std::ostream &str, const CmdArgFlags value)
 {
     if (value == CmdArgFlags::BAD_ARG)
@@ -2208,11 +2213,76 @@ TEST_F(TestParameterCommand, passesSolidGuess3)
 TEST_F(TestParameterCommand, passesPerturbation)
 {
     ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
+    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::AUTO};
 
     exec_cmd_arg("passes=p", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(CalcMode::PERTURBATION, g_user.std_calc_mode);
+    EXPECT_EQ(PerturbationMode::YES, g_user.perturbation);
+}
+
+TEST_F(TestParameterCommand, perturbationAuto)
+{
+    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::YES};
+
+    exec_cmd_arg("perturbation=auto", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(PerturbationMode::AUTO, g_user.perturbation);
+}
+
+TEST_F(TestParameterCommand, perturbationYes)
+{
+    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::AUTO};
+
+    exec_cmd_arg("perturbation=yes", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(PerturbationMode::YES, g_user.perturbation);
+}
+
+TEST_F(TestParameterCommand, perturbationNo)
+{
+    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::AUTO};
+
+    exec_cmd_arg("perturbation=no", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(PerturbationMode::NO, g_user.perturbation);
+}
+
+TEST_F(TestParameterCommand, perturbationNoOverridesPassesPerturbation)
+{
+    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
+    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::AUTO};
+
+    exec_cmd_arg("passes=p", CmdFile::AT_CMD_LINE);
+    exec_cmd_arg("perturbation=no", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CalcMode::PERTURBATION, g_user.std_calc_mode);
+    EXPECT_EQ(PerturbationMode::NO, g_user.perturbation);
+}
+
+TEST_F(TestParameterCommandError, perturbationInvalidValue)
+{
+    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::YES};
+
+    exec_cmd_arg("perturbation=maybe", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_EQ(PerturbationMode::YES, g_user.perturbation);
+}
+
+TEST_F(TestParameterCommandError, perturbationMissingValue)
+{
+    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::YES};
+
+    exec_cmd_arg("perturbation=", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_EQ(PerturbationMode::YES, g_user.perturbation);
 }
 
 TEST_F(TestParameterCommandError, passesSolidGuessNonNumeric)

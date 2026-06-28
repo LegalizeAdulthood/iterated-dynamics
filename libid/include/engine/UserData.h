@@ -7,12 +7,20 @@
 namespace id::engine
 {
 
+enum class PerturbationMode
+{
+    AUTO = 0,
+    YES = 1,
+    NO = 2
+};
+
 // user_xxx is what the user wants,
 // vs what we may be forced to do
 struct UserData
 {
     int biomorph_value{};            //
     long distance_estimator_value{}; //
+    PerturbationMode perturbation{}; //
     int periodicity_value{};         //
     CalcMode std_calc_mode{};        //
     long bailout_value{};            // user input bailout value

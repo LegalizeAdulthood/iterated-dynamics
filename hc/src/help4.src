@@ -54,8 +54,12 @@
   passes=1|2|3|g|b|d|t|g1..g6|s|o|p  Select single-pass, dual-pass,
                            triple-pass solid-guessing, solid-guessing stop
                            after pass n, boundary-tracing, diffusion,
-                           tesseral, synchronous orbits, orbits, or
-                           perturbation drawing algorithms.
+                           tesseral, synchronous orbits, orbits.  The p
+                           value is accepted for compatibility and requests
+                           perturbation with the default traversal.
+  perturbation=auto|yes|no Select whether supported fractal types use the
+                           perturbation orbit algorithm.  auto uses
+                           perturbation when arbitrary precision is active.
   fillcolor=normal|<nnn>   Sets a block fill color for use with Boundary
                            Tracing and Tesseral options
   symmetry=xxxx            Force symmetry to None, X axis, Y axis, XY axis,

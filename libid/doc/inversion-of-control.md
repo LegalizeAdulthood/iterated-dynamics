@@ -248,36 +248,7 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: Perturbation Selection Setting
-
-Work:
-
-- Add an explicit perturbation selection setting with `auto`, `yes`, and
-  `no` values.  Keep the default as `auto`.
-- Parse `perturbation=auto|yes|no` from command files, parameter files,
-  and the command line.
-- Treat `passes=p` as compatibility syntax for requesting perturbation
-  with the default standard traversal.  It should set the same request
-  path as `perturbation=yes` while leaving later explicit parameters able
-  to override it.
-- In `auto` mode, request perturbation only when the current fractal type
-  supports perturbation and the precision state makes perturbation useful.
-- Keep `StandardFractal` responsible for deciding whether perturbation is
-  active for the current image.  Do not reintroduce setup-time image
-  rendering from fractal setup code.
-- Add command parser tests for valid values, invalid values, default
-  behavior, and `passes=p` compatibility.
-- Update help source for `perturbation=` and for the relationship between
-  `passes=p` and the new setting.
-
-Done when:
-
-- Perturbation can be requested independently of the traversal pass.
-- Existing `passes=p` parameter files still request perturbation.
-- Help text documents `perturbation=`, its default, and compatibility
-  behavior.
-
-### Slice 2: Perturbation Tolerance Setting
+### Slice 1: Perturbation Tolerance Setting
 
 Work:
 
@@ -302,7 +273,7 @@ Done when:
   plumbing tests.
 - Help text documents the default and accepted value range.
 
-### Slice 3: Perturbation X Options and Parameter Output
+### Slice 2: Perturbation X Options and Parameter Output
 
 Work:
 
@@ -335,10 +306,11 @@ Manual testing:
 - Change perturbation tolerance and confirm generated parameter output
   includes it.
 
-### Slice 4: Perturbation Status Display
+### Slice 3: Perturbation Status Display
 
-This is the closing slice for PR #289.  Slices 1-3 add the parameter
-surface; this slice adds the remaining status display from the PR.
+This is the closing slice for PR #289.  Slices 1-2 add the remaining
+parameter surface; this slice adds the remaining status display from the
+PR.
 
 Work:
 
@@ -367,7 +339,7 @@ Manual testing:
 - Render a perturbation image, press <Tab>, and confirm the perturbation
   status line is shown with the reference count.
 
-### Slice 5: LSystem Renderer
+### Slice 4: LSystem Renderer
 
 Work:
 
@@ -391,7 +363,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 6: Lyapunov Renderer
+### Slice 5: Lyapunov Renderer
 
 Work:
 
@@ -412,7 +384,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 7: Lorenz Photographer Mode
+### Slice 6: Lorenz Photographer Mode
 
 Work:
 
@@ -432,7 +404,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 8: Non-Interrupt Pending-Key Utilities
+### Slice 7: Non-Interrupt Pending-Key Utilities
 
 Work:
 

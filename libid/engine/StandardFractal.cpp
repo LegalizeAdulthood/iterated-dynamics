@@ -10,8 +10,10 @@
 #include "engine/orbit.h"
 #include "engine/Potential.h"
 #include "engine/resume.h"
+#include "engine/UserData.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
+#include "math/big.h"
 #include "ui/diskvid.h"
 
 #include <algorithm>
@@ -85,19 +87,36 @@ bool is_standard_pass_display()
     }
 }
 
-bool perturbation_requested(const CalcMode calc_mode)
-{
-    return calc_mode == CalcMode::PERTURBATION;
-}
-
 bool perturbation_supported()
 {
     return bit_set(fractals::g_cur_fractal_specific->flags, fractals::FractalFlags::PERTURB);
 }
 
+bool perturbation_auto_requested()
+{
+    return perturbation_supported() && math::g_bf_math != math::BFMathType::NONE;
+}
+
+bool perturbation_requested(const CalcMode calc_mode)
+{
+    if (!perturbation_supported())
+    {
+        return false;
+    }
+    if (g_user.perturbation == PerturbationMode::NO)
+    {
+        return false;
+    }
+    if (g_user.perturbation == PerturbationMode::YES || calc_mode == CalcMode::PERTURBATION)
+    {
+        return true;
+    }
+    return perturbation_auto_requested();
+}
+
 CalcMode traversal_calc_mode(const CalcMode calc_mode)
 {
-    return perturbation_requested(calc_mode) ? CalcMode::SOLID_GUESS : calc_mode;
+    return calc_mode == CalcMode::PERTURBATION ? CalcMode::SOLID_GUESS : calc_mode;
 }
 
 } // namespace
@@ -134,7 +153,7 @@ void StandardFractal::resume()
     m_phase = Phase::START;
     m_dispatch_saved = false;
     m_perturbation_active = false;
-    m_perturbation_requested = perturbation_requested(m_requested_calc_mode);
+    m_perturbation_requested = false;
     m_perturbation_retry_active = false;
     m_perturbation_retry_index = 0;
     m_perturbation_retry_points.clear();
@@ -266,7 +285,8 @@ void StandardFractal::complete()
         m_perturbation_retry_index = 0;
         m_perturbation_retry_points.clear();
     }
-    if (m_requested_calc_mode == CalcMode::THREE_PASS || m_perturbation_requested)
+    if (m_requested_calc_mode == CalcMode::THREE_PASS || m_requested_calc_mode == CalcMode::PERTURBATION ||
+        m_perturbation_requested)
     {
         g_std_calc_mode = m_requested_calc_mode;
     }
@@ -339,6 +359,7 @@ void StandardFractal::run_current_work_item()
         g_calc_status = CalcStatus::IN_PROGRESS;
 
         fractals::per_image();
+        m_perturbation_requested = perturbation_requested(m_requested_calc_mode);
         setup_standard_fractal_show_dot();
 
         g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));

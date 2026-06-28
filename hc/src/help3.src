@@ -25,6 +25,10 @@ selects one of the single-pass, dual-pass, triple-pass, solid-guessing
 (default), solid-guessing after pass n, boundary tracing, tesseral,
 synchronous orbits, or orbits modes.
 
+The "perturbation=" parameter selects whether supported fractal types use
+the perturbation orbit algorithm.  The default value is "auto", which uses
+perturbation when arbitrary precision is active.
+
 This option applies to most fractal types.
 
 Single-pass mode ("1") draws the screen pixel by pixel.
@@ -85,12 +89,12 @@ visualization even in the slowest fractals.  With "fillcolor=0" (below)
 the squares are not painted and the points are spread over the image
 until all have being calculated (sort of a "fade in").
 
-Perturbation ("p") is a drawing type that is particularly fast when used
+Perturbation is an orbit algorithm that is particularly fast when used
 with deep-zooms of the Mandelbrot set that require arbitrary precision
-arithmetic.  This initial implementation of perturbation does not support
-periodicity checking and only supports a limited number of inside and
-outside coloring algorithms.  Suspend and resume is not supported with
-perturbation.
+arithmetic.  Use "perturbation=yes" to force it on for supported fractal
+types, or "perturbation=no" to force it off.  The "passes=p" value is
+accepted for compatibility and is equivalent to "perturbation=yes" using
+the default solid-guessing traversal.
 
 The "fillcolor=" option in the <X> screen or on the command line sets a
 fixed color to be used by the boundary tracing and tesseral calculations

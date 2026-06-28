@@ -541,6 +541,7 @@ static void init_vars_fractal()
     g_inside_color = 1;                                  // inside color = black (in default colormap)
     g_fill_color = -1;                                   // no special fill color
     g_user.biomorph_value = -1;                          // turn off biomorph flag
+    g_user.perturbation = PerturbationMode::AUTO;        // automatic perturbation selection
     g_outside_method = ColorMethod::ITER;                // outside color = iteration
     g_outside_color = -1;                                // outside color = -1 (not used)
     g_max_iterations = INITIAL_MAX_ITERATIONS;           // initial max iter
@@ -2928,7 +2929,32 @@ static CmdArgFlags cmd_passes(const Command &cmd)
             g_stop_pass = 0;
         }
     }
+    if (cmd.char_val[0] == 'p')
+    {
+        g_user.perturbation = PerturbationMode::YES;
+    }
     g_user.std_calc_mode = static_cast<CalcMode>(cmd.char_val[0]);
+    return CmdArgFlags::FRACTAL_PARAM;
+}
+
+static CmdArgFlags cmd_perturbation(const Command &cmd)
+{
+    if (cmd.value == "auto")
+    {
+        g_user.perturbation = PerturbationMode::AUTO;
+    }
+    else if (cmd.value == "yes")
+    {
+        g_user.perturbation = PerturbationMode::YES;
+    }
+    else if (cmd.value == "no")
+    {
+        g_user.perturbation = PerturbationMode::NO;
+    }
+    else
+    {
+        return cmd.bad_arg();
+    }
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
@@ -3962,7 +3988,7 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 160> s_commands{
+static std::array<CommandHandler, 161> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
@@ -4062,6 +4088,7 @@ static std::array<CommandHandler, 160> s_commands{
     CommandHandler{"passes", cmd_passes},                   //
     CommandHandler{"periodicity", cmd_periodicity},         //
     CommandHandler{"perspective", cmd_perspective},         //
+    CommandHandler{"perturbation", cmd_perturbation},       //
     CommandHandler{"pixelzoom", cmd_pixel_zoom},            //
     CommandHandler{"plotstyle", cmd_deprecated},            // deprecated print parameters
     CommandHandler{"polyphony", cmd_polyphony},             //
