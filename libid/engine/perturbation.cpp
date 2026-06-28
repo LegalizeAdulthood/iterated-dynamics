@@ -43,6 +43,7 @@ void StandardFractal::start_perturbation_frame()
         LDouble magnification_ld{};
         cvt_center_mag_bf(center_bf.x, center_bf.y, magnification_ld, x_mag_factor, rotation, skew);
         neg_bf(center_bf.y, center_bf.y);
+        m_pert_engine.initialize_pixel_strategy();
     }
     else
     {
@@ -52,6 +53,7 @@ void StandardFractal::start_perturbation_frame()
         center.y = -center.y;
         mandel_width = g_image_region.height();
         m_pert_engine.initialize_frame({center.x, center.y}, mandel_width / 2.0);
+        m_pert_engine.initialize_pixel_strategy();
     }
     m_perturbation_active = true;
 }

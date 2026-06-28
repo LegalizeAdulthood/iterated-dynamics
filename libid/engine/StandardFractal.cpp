@@ -133,6 +133,7 @@ void StandardFractal::resume()
     m_dispatch_saved = false;
     m_perturbation_active = false;
     m_perturbation_requested = perturbation_requested(m_requested_calc_mode);
+    m_perturbation_retry_active = false;
     m_standard_pass.reset();
     m_timer_started = false;
     m_work_item_active = false;
@@ -147,11 +148,15 @@ void StandardFractal::suspend()
 {
     m_standard_pass.suspend();
     s_standard_pass_status = m_standard_pass.status();
-    if (m_perturbation_active && !m_pert_engine.done())
+    if (m_perturbation_active)
     {
-        m_pert_engine.suspend();
-        add_work_list(g_start_pt, g_stop_pt, g_begin_pt, g_work_pass, g_work_symmetry);
+        m_pert_engine.finish();
+        if (m_perturbation_retry_active)
+        {
+            add_work_list(g_start_pt, g_stop_pt, g_begin_pt, g_work_pass, g_work_symmetry);
+        }
         m_perturbation_active = false;
+        m_perturbation_retry_active = false;
     }
     if (g_num_work_list > 0)
     {
@@ -247,6 +252,12 @@ void StandardFractal::complete()
     }
     m_standard_pass.reset();
     clear_standard_pixel();
+    if (m_perturbation_active)
+    {
+        m_pert_engine.finish();
+        m_perturbation_active = false;
+        m_perturbation_retry_active = false;
+    }
     if (m_requested_calc_mode == CalcMode::THREE_PASS || m_perturbation_requested)
     {
         g_std_calc_mode = m_requested_calc_mode;
@@ -356,24 +367,15 @@ void StandardFractal::run_current_work_item()
 
 void StandardFractal::run_current_work_item_mode()
 {
-    if (m_perturbation_requested && perturbation_supported())
+    if (m_perturbation_retry_active)
     {
-        if (!m_perturbation_active)
-        {
-            start_perturbation_frame();
-        }
-        m_pert_engine.iterate();
-        if (m_pert_engine.done())
-        {
-            m_perturbation_active = false;
-            g_calc_status = CalcStatus::COMPLETED;
-            complete();
-        }
-        else
-        {
-            m_work_item_yielded = true;
-        }
+        run_perturbation_glitch_retries();
         return;
+    }
+    if (m_perturbation_requested && perturbation_supported() && !m_perturbation_active)
+    {
+        start_perturbation_frame();
+        fractals::g_dispatch.set_calc_type(standard_fractal_type);
     }
 
     m_standard_pass.select(g_std_calc_mode);
@@ -386,7 +388,25 @@ void StandardFractal::run_current_work_item_mode()
     else
     {
         m_standard_pass.reset();
+        if (m_perturbation_active)
+        {
+            run_perturbation_glitch_retries();
+        }
     }
+}
+
+void StandardFractal::run_perturbation_glitch_retries()
+{
+    m_perturbation_retry_active = true;
+    if (!m_pert_engine.iterate_glitches())
+    {
+        m_work_item_yielded = true;
+        return;
+    }
+
+    m_pert_engine.finish();
+    m_perturbation_active = false;
+    m_perturbation_retry_active = false;
 }
 
 void StandardFractal::start_next_pass()

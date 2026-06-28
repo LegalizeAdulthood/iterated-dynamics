@@ -19,6 +19,7 @@
 #include "math/biginit.h"
 #include "math/complex_fn.h"
 #include "misc/id.h"
+#include "ui/video.h"
 
 #include <algorithm>
 #include <cmath>
@@ -28,6 +29,7 @@
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
+using namespace id::ui;
 
 namespace id::engine
 {
@@ -53,6 +55,29 @@ void PertEngine::initialize_frame(const std::complex<double> &center, const doub
     m_center = center;
 }
 
+void PertEngine::initialize_pixel_strategy()
+{
+    if (m_frame_initialized)
+    {
+        return;
+    }
+
+    initialize_pixel_state();
+    m_reference_selected = select_reference_point();
+    m_frame_initialized = true;
+}
+
+int PertEngine::calculate_pixel(const int col, const int row)
+{
+    if (!m_frame_initialized)
+    {
+        initialize_pixel_strategy();
+    }
+
+    const Point pt{col, g_screen_y_dots - 1 - row};
+    return calculate_point(pt, m_magnified_radius, m_window_radius);
+}
+
 // Full frame calculation
 int PertEngine::calculate_one_frame()
 {
@@ -66,6 +91,39 @@ int PertEngine::calculate_one_frame()
 bool PertEngine::done() const
 {
     return m_done;
+}
+
+bool PertEngine::iterate_glitches()
+{
+    if (m_glitch_point_count == 0 && m_remaining_point_count == 0)
+    {
+        return true;
+    }
+    if (m_remaining_point_count == 0)
+    {
+        prepare_glitch_retries();
+        m_reference_selected = false;
+    }
+    if (!m_reference_selected)
+    {
+        if (!needs_reference_point() || !select_reference_point())
+        {
+            return true;
+        }
+        m_reference_selected = true;
+    }
+
+    m_result = calculate_point_chunk();
+    if (m_result < 0)
+    {
+        return true;
+    }
+    if (m_current_point >= m_remaining_point_count)
+    {
+        prepare_glitch_retries();
+        m_reference_selected = false;
+    }
+    return !m_reference_selected && !needs_reference_point();
 }
 
 bool PertEngine::iterate()
@@ -116,6 +174,14 @@ void PertEngine::suspend()
     }
 }
 
+void PertEngine::finish()
+{
+    if (!done())
+    {
+        complete_frame();
+    }
+}
+
 void PertEngine::cleanup()
 {
     if (m_center_stack_saved)
@@ -143,6 +209,14 @@ void PertEngine::complete_frame()
 
 void PertEngine::initialize_frame_state()
 {
+    initialize_pixel_state();
+    m_points_remaining.resize(g_screen_x_dots * g_screen_y_dots);
+    initialize_point_list();
+    m_frame_initialized = true;
+}
+
+void PertEngine::initialize_pixel_state()
+{
     m_reference_points = 0;
     m_glitch_point_count = 0L;
     m_remaining_point_count = 0L;
@@ -151,15 +225,13 @@ void PertEngine::initialize_frame_state()
     m_magnified_radius = m_zoom_radius;
     m_window_radius = std::min(g_screen_x_dots, g_screen_y_dots);
 
-    m_points_remaining.resize(g_screen_x_dots * g_screen_y_dots);
+    m_points_remaining.clear();
     m_glitch_points.resize(g_screen_x_dots * g_screen_y_dots);
     m_perturbation_tolerance_check.resize(g_max_iterations * 2);
     m_xn.resize(g_max_iterations + 1);
 
     pascal_triangle();
-    initialize_point_list();
     allocate_working_values();
-    m_frame_initialized = true;
 }
 
 void PertEngine::initialize_point_list()
@@ -294,6 +366,7 @@ int PertEngine::calculate_point_chunk()
 
 void PertEngine::prepare_glitch_retries()
 {
+    m_points_remaining.resize(m_glitch_point_count);
     std::memcpy(m_points_remaining.data(), m_glitch_points.data(), sizeof(Point) * m_glitch_point_count);
     m_remaining_point_count = m_glitch_point_count;
     m_current_point = 0L;
@@ -520,9 +593,14 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
                 }
             }
         }
-        g_plot(pt.get_x(), g_screen_y_dots - 1 - pt.get_y(), index);
+        g_color = index;
+        g_plot(pt.get_x(), g_screen_y_dots - 1 - pt.get_y(), g_color);
     }
-    return 0;
+    else
+    {
+        g_color = get_color(pt.get_x(), g_screen_y_dots - 1 - pt.get_y());
+    }
+    return g_color;
 }
 
 void PertEngine::reference_zoom_point(const BFComplex &center, const int max_iteration)

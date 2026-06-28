@@ -1116,6 +1116,20 @@ int standard_fractal_type()
 
 int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 {
+    if (m_perturbation_active && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+    {
+        if (yield_to_ui && calc_interrupted())
+        {
+            return -1;
+        }
+        const int color{m_pert_engine.calculate_pixel(g_col, g_row)};
+        if (yield_to_ui && standard_pixel_yield_enabled())
+        {
+            m_standard_pixel_completed_yield = true;
+        }
+        return color;
+    }
+
     if (m_standard_pixel_active && (m_standard_pixel_col != g_col || m_standard_pixel_row != g_row))
     {
         clear_standard_pixel();

@@ -49,6 +49,7 @@ private:
     void restore_dispatch();
     void run_current_work_item();
     void run_current_work_item_mode();
+    void run_perturbation_glitch_retries();
     void start_next_pass();
     void start_perturbation_frame();
     void start_timer();
@@ -85,6 +86,7 @@ private:
     bool m_dispatch_saved{};
     bool m_perturbation_active{};
     bool m_perturbation_requested{};
+    bool m_perturbation_retry_active{};
     bool m_standard_pixel_active{};
     bool m_standard_pixel_completed_yield{};
     bool m_standard_pixel_input_checked{};

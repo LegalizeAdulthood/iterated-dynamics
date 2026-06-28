@@ -17,9 +17,13 @@ class PertEngine
 public:
     math::BFComplex initialize_frame_bf(double zoom_radius);
     void initialize_frame(const std::complex<double> &center, double zoom_radius);
+    void initialize_pixel_strategy();
+    int calculate_pixel(int col, int row);
     int calculate_one_frame();
     bool done() const;
+    bool iterate_glitches();
     bool iterate();
+    void finish();
     void suspend();
 
 private:
@@ -27,6 +31,7 @@ private:
     void complete_frame();
     void initialize_frame_state();
     void initialize_point_list();
+    void initialize_pixel_state();
     void allocate_working_values();
     bool needs_reference_point() const;
     void reset_for_frame(double zoom_radius);

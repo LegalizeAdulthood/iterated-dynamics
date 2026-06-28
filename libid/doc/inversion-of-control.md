@@ -156,11 +156,11 @@ The current code is already part-way through this plan:
 - Orbit mode traversal is owned by the `StandardPass` sticky-orbits
   class; interruption still happens in the orbit plotting helper.
 - Perturbation has a `PertEngine` owned by `StandardFractal`, is
-  initialized and driven from `StandardFractal`, yields to the UI between
-  point chunks, and is selected separately from the active traversal mode.
-  `passes=p` is compatibility syntax that maps traversal to solid
-  guessing for now.  `PertEngine` still owns full-frame traversal and
-  should be moved below the pass layer per issue #180.
+  initialized and driven from `StandardFractal`, and is selected
+  separately from the active traversal mode.  `passes=p` is compatibility
+  syntax that maps traversal to solid guessing for now.  Primary pixels
+  are traversed by `StandardPass`; `PertEngine` still owns glitch retry
+  traversal and should move that below the pass layer per issue #180.
 
 ## Input Rules
 
@@ -247,28 +247,7 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: Perturbation Pixel Strategy
-
-Work:
-
-- Expose the perturbation point calculator as a standard orbit strategy.
-- Have `StandardFractal::calculate_standard_pixel()` use perturbation
-  when perturbation is active and the fractal type supports it.
-- Keep communication through existing pixel globals during this refactor.
-- Leave glitch retry ownership in `PertEngine` until the next slice.
-
-Done when:
-
-- Standard pass traversal chooses the pixels.
-- Perturbation supplies the per-pixel orbit calculation.
-- `passes=p` traverses like the default standard path.
-
-Manual testing:
-
-- Render `type=mandel passes=p`.
-- Interrupt and resume while pixels are being computed.
-
-### Slice 2: Perturbation Glitch Work Items
+### Slice 1: Perturbation Glitch Work Items
 
 Work:
 
@@ -292,7 +271,7 @@ Manual testing:
 - Render a perturbation image that produces glitch retries.
 - Interrupt and resume during glitch retry work.
 
-### Slice 3: LSystem Renderer
+### Slice 2: LSystem Renderer
 
 Work:
 
@@ -316,7 +295,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 4: Lyapunov Renderer
+### Slice 3: Lyapunov Renderer
 
 Work:
 
@@ -337,7 +316,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 5: Lorenz Photographer Mode
+### Slice 4: Lorenz Photographer Mode
 
 Work:
 
@@ -357,7 +336,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 6: Non-Interrupt Pending-Key Utilities
+### Slice 5: Non-Interrupt Pending-Key Utilities
 
 Work:
 
