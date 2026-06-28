@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['f_0',['f',['../da/db4/lsystem_8cpp.html#a64818c4898c1da8fb119990aa049fe82',1,'f:&#160;lsystem.cpp'],['../d7/de2/structid_1_1fractals_1_1MandelbrotMix.html#a29e2f69ec7ade29ddfcfe926ec786ae6',1,'id::fractals::MandelbrotMix::f'],['../da/d12/structid_1_1fractals_1_1PendingOp.html#a551a354cbcac0f587a717382dafcf109',1,'id::fractals::PendingOp::f'],['../d1/d40/structid_1_1fractals_1_1Affine.html#a29a7e740ee5d9f649216a33ec1a98658',1,'id::fractals::Affine::f']]],
+  ['f_0',['f',['../d6/deb/fractals_2lsystem_8cpp.html#a64818c4898c1da8fb119990aa049fe82',1,'f:&#160;lsystem.cpp'],['../d7/de2/structid_1_1fractals_1_1MandelbrotMix.html#a29e2f69ec7ade29ddfcfe926ec786ae6',1,'id::fractals::MandelbrotMix::f'],['../da/d12/structid_1_1fractals_1_1PendingOp.html#a551a354cbcac0f587a717382dafcf109',1,'id::fractals::PendingOp::f'],['../d1/d40/structid_1_1fractals_1_1Affine.html#a29a7e740ee5d9f649216a33ec1a98658',1,'id::fractals::Affine::f']]],
   ['f_5fhist_1',['F_HIST',['../d0/d5f/namespaceid_1_1help.html#ae0b3c16d5e5c8cfba17ff8fc4745b9eaa1b500f5d398e2a951c6c7448760da733',1,'id::help']]],
   ['f_5findex_2',['F_INDEX',['../d0/d5f/namespaceid_1_1help.html#ae0b3c16d5e5c8cfba17ff8fc4745b9eaa3c33fb3a800eab9b1cd6ea4ea3c37dab',1,'id::help']]],
   ['falling_5fparticles_3',['FALLING_PARTICLES',['../d5/d38/namespaceid_1_1fractals.html#a54e7a8821e0605381032363e56a645abaf6f6bc156b33f505d9e05ae9ff86bfb8',1,'id::fractals']]],
@@ -199,7 +199,7 @@ var searchData=
   ['full_5fsquare_5fbn_196',['full_square_bn',['../d0/db0/namespaceid_1_1math.html#a40c5931620259912dab013b502e448af',1,'id::math']]],
   ['fullscreenprompt_197',['FullScreenPrompt',['../df/d14/structid_1_1ui_1_1FullScreenPrompt.html',1,'id::ui']]],
   ['fullscreenvalues_198',['FullScreenValues',['../d8/d84/structid_1_1ui_1_1FullScreenValues.html',1,'id::ui']]],
-  ['function_199',['function',['../d5/d38/namespaceid_1_1fractals.html#aa9e32b95bcbb8cf87f3b04f51848840b',1,'id::fractals::Function'],['../dc/d31/namespaceid_1_1engine.html#a3e962ef5c8c7c9f05ea2e162e14d391da6a72a6a776662a244f82d31e9274a07b',1,'id::engine::FUNCTION']]],
+  ['function_199',['function',['../dc/d31/namespaceid_1_1engine.html#a3e962ef5c8c7c9f05ea2e162e14d391da6a72a6a776662a244f82d31e9274a07b',1,'id::engine::FUNCTION'],['../d5/d38/namespaceid_1_1fractals.html#aa9e32b95bcbb8cf87f3b04f51848840b',1,'id::fractals::Function']]],
   ['functionptr_200',['FunctionPtr',['../d5/d38/namespaceid_1_1fractals.html#ab281b1f4c2bcc740e8108bd3f1a5b51b',1,'id::fractals']]],
   ['functions_201',['Plain Functions',['../d5/d38/md_Style.html#autotoc_md69',1,'']]],
   ['functions_20and_20methods_202',['Functions and Methods',['../d5/d38/md_Style.html#autotoc_md61',1,'']]],

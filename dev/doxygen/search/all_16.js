@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['n_0',['n',['../da/db4/lsystem_8cpp.html#a0a627514f9cfe29006d6bcd8e4ba2b2e',1,'n:&#160;lsystem.cpp'],['../dc/ddd/parser_8cpp.html#a7d46b74409bd32b539089ef4721ea544',1,'n:&#160;parser.cpp']]],
+  ['n_0',['n',['../d6/deb/fractals_2lsystem_8cpp.html#a0a627514f9cfe29006d6bcd8e4ba2b2e',1,'n:&#160;lsystem.cpp'],['../dc/ddd/parser_8cpp.html#a7d46b74409bd32b539089ef4721ea544',1,'n:&#160;parser.cpp']]],
   ['name_1',['name',['../dd/d9e/get__fract__type_8cpp.html#a9b45b3e13bd9167aab02e17e08916231',1,'name:&#160;get_fract_type.cpp'],['../dc/df7/structhc_1_1Link.html#adc8ca29fc07235b14c678ff730fafc8b',1,'hc::Link::name'],['../d4/d6a/structhc_1_1Label.html#a81b9a9a4d51fd466d86e7cfedf6afb68',1,'hc::Label::name'],['../de/d5e/structid_1_1engine_1_1Browse.html#afc9fc3eeadfe513a20295b2564e5bf57',1,'id::engine::Browse::name'],['../d5/d25/structid_1_1engine_1_1NamedTrigFunction.html#ada672253b1bf78e70c7078d40dc1c7df',1,'id::engine::NamedTrigFunction::name'],['../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#ae3280b1ac00ce8f4afd5e201c777fb6d',1,'id::fractals::FractalSpecific::name'],['../d3/d22/structid_1_1fractals_1_1FormulaEntry.html#aa581be46bfdeeef6e5d770b4b21f3a47',1,'id::fractals::FormulaEntry::name'],['../d2/d56/structid_1_1io_1_1FileEntry.html#aee4ef65fc45ce05e18a27161b4dc94a4',1,'id::io::FileEntry::name'],['../d0/d31/structid_1_1ui_1_1GeneBase.html#ada6b187c10931bf3077864a66a47c65f',1,'id::ui::GeneBase::name'],['../df/ddb/structid_1_1engine_1_1CommandHandler.html#a4727e345e3799651b4e17c8d56af2533',1,'id::engine::CommandHandler::name'],['../dd/da1/structid_1_1fractals_1_1OperationName.html#a7156e7915ae2eeb1ba8fe2b55191f116',1,'id::fractals::OperationName::name'],['../d4/d84/structhc_1_1Content.html#a01341fd348de63f6f62b584a7268683d',1,'hc::Content::name']]],
   ['namedtrigfunction_2',['NamedTrigFunction',['../d5/d25/structid_1_1engine_1_1NamedTrigFunction.html',1,'id::engine']]],
   ['names_3',['Names',['../d5/d38/md_Style.html#autotoc_md56',1,'']]],
@@ -24,7 +24,7 @@ var searchData=
   ['next_5fop_21',['next_op',['../dc/ddd/parser_8cpp.html#abdfd12deea3953ce81836317c0edfb69',1,'parser.cpp']]],
   ['next_5fsave_5fname_22',['next_save_name',['../d0/d19/namespaceid_1_1io.html#a6b65fff272fb4878a040ac18b3f4fb92',1,'id::io']]],
   ['next_5ftime_23',['NEXT_TIME',['../d5/d38/namespaceid_1_1fractals.html#ac1b33e51b631f1e51e664220cad9f178a737d98bfd2807a96ebb354a2d2a35c3c',1,'id::fractals']]],
-  ['nf_24',['nf',['../da/db4/lsystem_8cpp.html#aa1452a4d75620c6ac1e77e22fedbff91',1,'lsystem.cpp']]],
+  ['nf_24',['nf',['../d6/deb/fractals_2lsystem_8cpp.html#aa1452a4d75620c6ac1e77e22fedbff91',1,'lsystem.cpp']]],
   ['no_25',['no',['../dc/d31/namespaceid_1_1engine.html#adaafd41ec2af387863b66bbcddd75cf5ac2f3f489a00553e7a01d369c103c7251',1,'id::engine::NO'],['../d5/d38/namespaceid_1_1fractals.html#ac1b33e51b631f1e51e664220cad9f178ac2f3f489a00553e7a01d369c103c7251',1,'id::fractals::NO']]],
   ['no_5fbailout_26',['NO_BAILOUT',['../d5/d38/namespaceid_1_1fractals.html#ad61ed222852503fcd25ccb346b2d2e9ea02467ae8b7781cd4f158600803325371',1,'id::fractals']]],
   ['no_5fbof_27',['no_bof',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a9bf3e416465d93a3f0e0e41e1d7d159a',1,'id::io::FractalInfo']]],

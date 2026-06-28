@@ -31,10 +31,11 @@ var searchData=
   ['lorenz3d4_5forbit_28',['lorenz3d4_orbit',['../d5/d38/namespaceid_1_1fractals.html#a355a3cadc8d461397c38b186348b9115',1,'id::fractals']]],
   ['lorenz3d_5forbit_29',['lorenz3d_orbit',['../d5/d38/namespaceid_1_1fractals.html#ac8fb886d98ad846df50479f1f189a8c6',1,'id::fractals']]],
   ['lowerize_5fparameter_30',['lowerize_parameter',['../dc/d31/namespaceid_1_1engine.html#ab22b7892de58f7ef9b27fd1a46b2ebb1',1,'id::engine']]],
-  ['lsystem_31',['LSystem',['../da/d0d/classid_1_1fractals_1_1LSystem.html#a82b88cf3c8bbe224344be57a7d044a1d',1,'id::fractals::LSystem']]],
+  ['lsystem_31',['lsystem',['../da/d0d/classid_1_1fractals_1_1LSystem.html#a2a80c618dbcb82375dfd70c81ef19d64',1,'id::fractals::LSystem::LSystem(const LSystem &amp;)=delete'],['../da/d0d/classid_1_1fractals_1_1LSystem.html#a82b88cf3c8bbe224344be57a7d044a1d',1,'id::fractals::LSystem::LSystem()'],['../da/d0d/classid_1_1fractals_1_1LSystem.html#a00a2379a3ce8fb76bd6f3b51fdbf4c1c',1,'id::fractals::LSystem::LSystem(LSystem &amp;&amp;)=delete']]],
   ['lsystem_5fload_32',['lsystem_load',['../d5/d38/namespaceid_1_1fractals.html#ac5ee15c8ad5a9c0a908dc94d696be085',1,'id::fractals']]],
-  ['lsystem_5ftype_33',['lsystem_type',['../d5/d38/namespaceid_1_1fractals.html#a5076eb70316e0a4635bc8b2ceba91b97',1,'id::fractals']]],
-  ['lyapunov_5forbit_34',['lyapunov_orbit',['../d5/d38/namespaceid_1_1fractals.html#a96de0fd2f2ebd242f2c38103d31692a0',1,'id::fractals']]],
-  ['lyapunov_5fper_5fimage_35',['lyapunov_per_image',['../d5/d38/namespaceid_1_1fractals.html#a437768d36e1dcc1771beaccf55e8c77c',1,'id::fractals']]],
-  ['lyapunov_5ftype_36',['lyapunov_type',['../d5/d38/namespaceid_1_1fractals.html#ada1e26b168ae8d3343ccce4b84d70e77',1,'id::fractals']]]
+  ['lsystem_5floaded_33',['lsystem_loaded',['../d5/d38/namespaceid_1_1fractals.html#a5f0131bfaa76ff7c9cb4cdad8c3d2cab',1,'id::fractals']]],
+  ['lsystem_5ftype_34',['lsystem_type',['../dc/d76/namespaceid_1_1ui.html#af558c834ea324585f2edbf376f760203',1,'id::ui']]],
+  ['lyapunov_5forbit_35',['lyapunov_orbit',['../d5/d38/namespaceid_1_1fractals.html#a96de0fd2f2ebd242f2c38103d31692a0',1,'id::fractals']]],
+  ['lyapunov_5fper_5fimage_36',['lyapunov_per_image',['../d5/d38/namespaceid_1_1fractals.html#a437768d36e1dcc1771beaccf55e8c77c',1,'id::fractals']]],
+  ['lyapunov_5ftype_37',['lyapunov_type',['../d5/d38/namespaceid_1_1fractals.html#ada1e26b168ae8d3343ccce4b84d70e77',1,'id::fractals']]]
 ];

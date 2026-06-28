@@ -81,7 +81,7 @@ $(function() {
   <div class="headertitle"><div class="title">lsystem.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="../../db/dbe/lsystem_8h_source.html">fractals/lsystem.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="../../d5/d07/fractals_2lsystem_8h_source.html">fractals/lsystem.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d1/dbd/calc__frac__init_8h_source.html">engine/calc_frac_init.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d6/dd9/calcfrac_8h_source.html">engine/calcfrac.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../df/dab/LogicalScreen_8h_source.html">engine/LogicalScreen.h</a>&quot;</code><br />
@@ -103,16 +103,17 @@ $(function() {
 <code>#include &lt;cstdlib&gt;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
 <code>#include &lt;filesystem&gt;</code><br />
+<code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;new&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;string_view&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div>
-<p><a href="../../da/db4/lsystem_8cpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="../../d6/deb/fractals_2lsystem_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/d0d/classid_1_1fractals_1_1LSystem.html">id::fractals::LSystem</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d2a/classid_1_1fractals_1_1LSystem_1_1Impl.html">id::fractals::LSystem::Impl</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -124,10 +125,10 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:af2dbf6cadcca1c3b1a14acff3edd731a" id="r_af2dbf6cadcca1c3b1a14acff3edd731a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#af2dbf6cadcca1c3b1a14acff3edd731a">id::fractals::is_pow2</a> (const int <a class="el" href="../../da/db4/lsystem_8cpp.html#a0a627514f9cfe29006d6bcd8e4ba2b2e">n</a>)</td></tr>
+<tr class="memitem:af2dbf6cadcca1c3b1a14acff3edd731a" id="r_af2dbf6cadcca1c3b1a14acff3edd731a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#af2dbf6cadcca1c3b1a14acff3edd731a">id::fractals::is_pow2</a> (const int <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp.html#a0a627514f9cfe29006d6bcd8e4ba2b2e">n</a>)</td></tr>
 <tr class="separator:af2dbf6cadcca1c3b1a14acff3edd731a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5076eb70316e0a4635bc8b2ceba91b97" id="r_a5076eb70316e0a4635bc8b2ceba91b97"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a5076eb70316e0a4635bc8b2ceba91b97">id::fractals::lsystem_type</a> ()</td></tr>
-<tr class="separator:a5076eb70316e0a4635bc8b2ceba91b97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f0131bfaa76ff7c9cb4cdad8c3d2cab" id="r_a5f0131bfaa76ff7c9cb4cdad8c3d2cab"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a5f0131bfaa76ff7c9cb4cdad8c3d2cab">id::fractals::lsystem_loaded</a> ()</td></tr>
+<tr class="separator:a5f0131bfaa76ff7c9cb4cdad8c3d2cab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5ee15c8ad5a9c0a908dc94d696be085" id="r_ac5ee15c8ad5a9c0a908dc94d696be085"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ac5ee15c8ad5a9c0a908dc94d696be085">id::fractals::lsystem_load</a> ()</td></tr>
 <tr class="separator:ac5ee15c8ad5a9c0a908dc94d696be085"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -144,7 +145,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00063">63</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00064">64</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -160,7 +161,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00071">71</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00072">72</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -176,7 +177,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00088">88</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00089">89</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -192,7 +193,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00104">104</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00105">105</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -208,7 +209,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00063">63</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00064">64</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -224,7 +225,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00066">66</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00067">67</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -240,7 +241,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00066">66</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00067">67</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -256,7 +257,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00106">106</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00107">107</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -272,7 +273,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00066">66</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00067">67</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -292,7 +293,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00081">81</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00082">82</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -308,7 +309,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00066">66</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00067">67</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -324,7 +325,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00074">74</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00075">75</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -340,12 +341,12 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00075">75</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00076">76</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a038796373b1b75302e0ba2417710d553" name="a038796373b1b75302e0ba2417710d553"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a038796373b1b75302e0ba2417710d553">&#9670;&#160;</a></span>[]</h2>
+<a id="a205e5a3a4173749bdaec66e2ce06a1ff" name="a205e5a3a4173749bdaec66e2ce06a1ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a205e5a3a4173749bdaec66e2ce06a1ff">&#9670;&#160;</a></span>[]</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -370,7 +371,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00082">82</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00083">83</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -386,7 +387,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00068">68</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00069">69</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -402,7 +403,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00107">107</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00108">108</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -418,7 +419,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00063">63</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00064">64</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -434,7 +435,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00105">105</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00106">106</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -450,7 +451,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00108">108</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00109">109</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -466,7 +467,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00067">67</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00068">68</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -482,7 +483,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00064">64</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00065">65</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -498,7 +499,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00070">70</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00071">71</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -514,7 +515,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00070">70</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00071">71</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -530,7 +531,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00069">69</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00070">70</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -546,7 +547,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00070">70</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00071">71</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -562,7 +563,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00070">70</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00071">71</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -578,7 +579,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/db4/lsystem_8cpp_source.html#l00069">69</a> of file <a class="el" href="../../da/db4/lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html#l00070">70</a> of file <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp_source.html">lsystem.cpp</a>.</p>
 
 </div>
 </div>
