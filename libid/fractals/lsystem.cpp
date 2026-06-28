@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
+#include <memory>
 #include <new>
 #include <string>
 #include <string_view>
@@ -129,11 +130,11 @@ static bool save_axiom(const char *text);
 static bool save_rule(const char *rule, int index);
 static bool append_rule(const char *rule, int index);
 
-class LSystem
+class LSystem::Impl
 {
 public:
-    LSystem();
-    ~LSystem();
+    Impl();
+    ~Impl();
 
     void start();
     bool done() const;
@@ -905,7 +906,7 @@ static void restore_turtle(LSysTurtleState &turtle, const LSysTurtleSnapshot &sn
     turtle.curr_color = snapshot.curr_color;
 }
 
-LSystem::LSystem() :
+LSystem::Impl::Impl() :
     m_order{std::max(static_cast<int>(g_params[0]), 0)}
 {
     m_turtle.stack_overflow = false;
@@ -913,7 +914,7 @@ LSystem::LSystem() :
     m_turtle.d_max_angle = static_cast<char>(g_max_angle - 1);
 }
 
-LSystem::~LSystem()
+LSystem::Impl::~Impl()
 {
     g_overflow = false;
     free_rules_mem();
@@ -921,7 +922,34 @@ LSystem::~LSystem()
     s_loaded = false;
 }
 
+LSystem::LSystem() :
+    m_impl{std::make_unique<Impl>()}
+{
+}
+
+LSystem::~LSystem() = default;
+
 void LSystem::start()
+{
+    m_impl->start();
+}
+
+bool LSystem::done() const
+{
+    return m_impl->done();
+}
+
+bool LSystem::interrupted() const
+{
+    return m_impl->interrupted();
+}
+
+void LSystem::iterate()
+{
+    m_impl->iterate();
+}
+
+void LSystem::Impl::start()
 {
     build_size_commands();
     lsys_build_trig_table();
@@ -938,17 +966,17 @@ void LSystem::start()
     }
 }
 
-bool LSystem::done() const
+bool LSystem::Impl::done() const
 {
     return m_done;
 }
 
-bool LSystem::interrupted() const
+bool LSystem::Impl::interrupted() const
 {
     return m_interrupted;
 }
 
-void LSystem::build_size_commands()
+void LSystem::Impl::build_size_commands()
 {
     m_rule_cmds.push_back(lsys_size_transform(s_axiom.c_str(), &m_turtle));
     for (const std::string &rule : s_rules)
@@ -958,19 +986,19 @@ void LSystem::build_size_commands()
     m_rule_cmds.push_back(nullptr);
 }
 
-bool LSystem::find_scale()
+bool LSystem::Impl::find_scale()
 {
     return lsys_find_scale(m_rule_cmds[0], &m_turtle, &m_rule_cmds[1], m_order);
 }
 
-void LSystem::reset_turtle_for_drawing()
+void LSystem::Impl::reset_turtle_for_drawing()
 {
     m_turtle.reverse = 0;
     m_turtle.angle = 0;
     m_turtle.real_angle = 0;
 }
 
-void LSystem::build_draw_commands()
+void LSystem::Impl::build_draw_commands()
 {
     m_rule_cmds.push_back(lsys_draw_transform(s_axiom.c_str(), &m_turtle));
     for (const std::string &rule : s_rules)
@@ -980,7 +1008,7 @@ void LSystem::build_draw_commands()
     m_rule_cmds.push_back(nullptr);
 }
 
-void LSystem::start_drawing()
+void LSystem::Impl::start_drawing()
 {
     // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
     m_turtle.curr_color = 15;
@@ -991,13 +1019,13 @@ void LSystem::start_drawing()
     m_interrupted = !start_draw_stack(m_rule_cmds[0]);
 }
 
-bool LSystem::start_draw_stack(LSysCmd *command)
+bool LSystem::Impl::start_draw_stack(LSysCmd *command)
 {
     m_draw_stack.clear();
     return push_draw_frame(command, &m_rule_cmds[1], m_order);
 }
 
-void LSystem::iterate()
+void LSystem::Impl::iterate()
 {
     if (m_done || m_interrupted)
     {
@@ -1111,18 +1139,18 @@ void LSystem::iterate()
     }
 }
 
-bool LSystem::push_draw_frame(LSysCmd *command, LSysCmd **rules, const int depth)
+bool LSystem::Impl::push_draw_frame(LSysCmd *command, LSysCmd **rules, const int depth)
 {
     return push_draw_frame(command, rules, depth, false, {});
 }
 
-bool LSystem::push_draw_frame(
+bool LSystem::Impl::push_draw_frame(
     LSysCmd *command, LSysCmd **rules, const int depth, const LSysTurtleSnapshot &saved_turtle)
 {
     return push_draw_frame(command, rules, depth, true, saved_turtle);
 }
 
-bool LSystem::push_draw_frame(
+bool LSystem::Impl::push_draw_frame(
     LSysCmd *command,
     LSysCmd **rules,
     const int depth,
@@ -1148,7 +1176,7 @@ bool LSystem::push_draw_frame(
     }
 }
 
-void LSystem::free_commands()
+void LSystem::Impl::free_commands()
 {
     for (LSysCmd *cmd : m_rule_cmds)
     {
@@ -1160,20 +1188,9 @@ void LSystem::free_commands()
     m_rule_cmds.clear();
 }
 
-int lsystem_type()
+bool lsystem_loaded()
 {
-    if (!s_loaded && lsystem_load())
-    {
-        return -1;
-    }
-
-    LSystem l_system;
-    l_system.start();
-    while (!l_system.done() && !l_system.interrupted())
-    {
-        l_system.iterate();
-    }
-    return 0;
+    return s_loaded;
 }
 
 bool lsystem_load()

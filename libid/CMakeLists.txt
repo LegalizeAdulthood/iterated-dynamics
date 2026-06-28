@@ -230,6 +230,7 @@ add_library(libid
     include/ui/input_field.h ui/input_field.cpp
     include/ui/KeyboardHandler.h ui/KeyboardHandler.cpp
     include/ui/inverse_julia.h ui/inverse_julia.cpp
+    include/ui/lsystem.h ui/lsystem.cpp
     include/ui/make_batch_file.h ui/make_batch_file.cpp
     include/ui/main_menu.h ui/main_menu.cpp
     include/ui/main_menu_switch.h ui/main_menu_switch.cpp

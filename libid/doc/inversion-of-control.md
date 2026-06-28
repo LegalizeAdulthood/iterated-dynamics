@@ -247,26 +247,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: LSystem UI Wrapper Shell
-
-Work:
-
-- Add `libid/ui/lsystem.cpp`.
-- Move the L-system entry point shape to UI code that constructs or
-  resumes `LSystem` and drives `iterate()`.
-- Keep existing calculation-path key polling for this slice.
-
-Done when:
-
-- L-system rendering has the same UI-wrapper shape as Ant and
-  Bifurcation.
-- L-system output and interrupt behavior are unchanged.
-
-Manual testing:
-
-- None; this slice does not change user interaction.
-
-### Slice 2: LSystem Keyboard Ownership
+### Slice 1: LSystem Keyboard Ownership
 
 Work:
 
@@ -288,7 +269,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 3: Lyapunov Renderer
+### Slice 2: Lyapunov Renderer
 
 Work:
 
@@ -309,7 +290,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 4: Lorenz Photographer Mode
+### Slice 3: Lorenz Photographer Mode
 
 Work:
 
@@ -329,7 +310,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 5: Non-Interrupt Pending-Key Utilities
+### Slice 4: Non-Interrupt Pending-Key Utilities
 
 Work:
 
