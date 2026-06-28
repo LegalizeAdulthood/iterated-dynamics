@@ -7,6 +7,7 @@
 #include "engine/StandardFractal.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
+#include "fractals/lyapunov.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/video.h"
 
@@ -113,7 +114,11 @@ int OneOrTwoPass::standard_calc(const int pass_num, const CalcMode calc_mode)
             }
             if (pass_num == 1 || calc_mode == CalcMode::ONE_PASS || (m_row & 1) != 0 || (m_col & 1) != 0)
             {
-                const int result = calc_type(); // standard_fractal(), calcmand() or calcmandfp()
+                int result{-1};
+                if (g_dispatch.calc_type() != lyapunov_type || !calc_interrupted())
+                {
+                    result = calc_type(); // standard_fractal(), calcmand() or calcmandfp()
+                }
                 m_row = g_row;
                 m_col = g_col;
                 if (result == -1)

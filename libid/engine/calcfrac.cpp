@@ -66,6 +66,7 @@
 #include "ui/diskvid.h"
 #include "ui/find_special_colors.h"
 #include "ui/KeyboardHandler.h"
+#include "ui/lyapunov.h"
 #include "ui/standard_fractal.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
@@ -761,8 +762,12 @@ static bool static_calc_type_uses_standard_engine()
 {
     const CalcType table_calc_type{g_cur_fractal_specific->calc_type};
     return table_calc_type == standard_fractal_type //
-        || table_calc_type == calc_mandelbrot_type  //
-        || table_calc_type == lyapunov_type;
+        || table_calc_type == calc_mandelbrot_type;
+}
+
+static bool static_calc_type_uses_lyapunov_renderer()
+{
+    return g_cur_fractal_specific->calc_type == lyapunov_type;
 }
 
 static void calc_non_standard_fractal()
@@ -829,7 +834,11 @@ static void finish_calc_fract()
 int calc_fract()
 {
     init_calc_fract();
-    if (static_calc_type_uses_standard_engine())
+    if (static_calc_type_uses_lyapunov_renderer())
+    {
+        lyapunov_fractal();
+    }
+    else if (static_calc_type_uses_standard_engine())
     {
         standard_fractal();
     }

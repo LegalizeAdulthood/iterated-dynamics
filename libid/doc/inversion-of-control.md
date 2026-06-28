@@ -247,28 +247,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: Lyapunov Renderer
-
-Work:
-
-- Add a `fractals::Lyapunov` calculation object for per-pixel Lyapunov
-  state.
-- Add `libid/ui/lyapunov.cpp` to own keyboard polling and drive
-  `Lyapunov::iterate()`.
-- Stop treating Lyapunov keyboard ownership as standard-engine detail even
-  if Lyapunov still shares standard pixel-grid setup.
-- Remove the key probe from `lyapunov_type()`.
-
-Done when:
-
-- `lyapunov.cpp` has no direct keyboard polling.
-- Lyapunov rendering has an explicit UI wrapper and calculation object.
-
-Manual testing:
-
-- Render one Lyapunov image and interrupt it.
-
-### Slice 2: Lorenz Photographer Mode
+### Slice 1: Lorenz Photographer Mode
 
 Work:
 
@@ -288,7 +267,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 3: Non-Interrupt Pending-Key Utilities
+### Slice 2: Non-Interrupt Pending-Key Utilities
 
 Work:
 
@@ -322,7 +301,6 @@ Direct polling or key consumption exists outside `libid/ui` in:
 - `libid/engine/sound.cpp`: suppress tone while keys are pending.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
 - `libid/fractals/lorenz.cpp`: orbit interrupt and stereo save prompt.
-- `libid/fractals/lyapunov.cpp`: per-pixel interrupt.
 
 ## Future Event-Driven Work
 

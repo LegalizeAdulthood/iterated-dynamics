@@ -8,6 +8,7 @@
 #include "engine/log_map.h"
 #include "engine/pixel_grid.h"
 #include "engine/random_seed.h"
+#include "engine/StandardFractal.h"
 #include "engine/UserData.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
@@ -15,12 +16,12 @@
 #include "fractals/population.h"
 #include "math/fixed_pt.h"
 #include "misc/debug_flags.h"
-#include "misc/Driver.h"
 #include "misc/version.h"
 #include "ui/stop_msg.h"
 
 #include <algorithm>
 #include <cmath>
+#include <memory>
 
 using namespace id::engine;
 using namespace id::math;
@@ -37,16 +38,12 @@ static int s_lya_rxy[34]{};
 
 static int lyapunov_cycles(long filter_cycles, double a, double b);
 
-// standalone engine for "lyapunov"
+// per-pixel calculation for "lyapunov"
 int lyapunov_type()
 {
     double a;
     double b;
 
-    if (driver_key_pressed())
-    {
-        return -1;
-    }
     g_overflow = false;
     if (g_params[1] == 1)
     {
@@ -86,6 +83,33 @@ int lyapunov_type()
     }
     g_plot(g_col, g_row, g_color);
     return g_color;
+}
+
+Lyapunov::Lyapunov() :
+    m_standard_fractal{std::make_unique<StandardFractal>()}
+{
+}
+
+Lyapunov::~Lyapunov() = default;
+
+void Lyapunov::resume()
+{
+    m_standard_fractal->resume();
+}
+
+void Lyapunov::suspend()
+{
+    m_standard_fractal->suspend();
+}
+
+bool Lyapunov::done() const
+{
+    return m_standard_fractal->done();
+}
+
+void Lyapunov::iterate()
+{
+    m_standard_fractal->iterate();
 }
 
 // This routine sets up the sequence for forcing the Rate parameter

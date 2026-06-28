@@ -405,7 +405,7 @@ double lyapunov_population_from_seed(const int seed)
     ValueSaver saved_population{g_population, 0.25};
 
     g_params[1] = 1.0;
-    EXPECT_CALL(state.driver(), key_pressed()).WillOnce(testing::Return(0));
+    EXPECT_CALL(state.driver(), key_pressed()).Times(0);
 
     EXPECT_TRUE(lyapunov_per_image());
     lyapunov_type();
@@ -537,7 +537,7 @@ TEST(TestSeededFractals, lyapunovExplicitPopulationDoesNotConsumeImageRng)
 
     set_random_seed(SEED);
     g_params[1] = 0.25;
-    EXPECT_CALL(state.driver(), key_pressed()).WillOnce(testing::Return(0));
+    EXPECT_CALL(state.driver(), key_pressed()).Times(0);
 
     EXPECT_TRUE(lyapunov_per_image());
     lyapunov_type();
