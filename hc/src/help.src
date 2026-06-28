@@ -273,6 +273,9 @@ Version 1.5 is an interim release on the way to version 2.0.
 
 New Features in Version 1.5
 
+o The Tab screen now reports the number of reference orbits used for
+  perturbation rendering.
+
 Bugs Fixed in Version 1.5
 
 o Cross-hair cursors now repaint while tracking mouse movement in the
@@ -589,6 +592,9 @@ feature for those overnight, 1024x768 resolution fractal images.  If the
 image is incomplete, it also tells you whether it can be interrupted and
 resumed.  (Any function other than <Tab> and <F1> counts as an
 "interrupt".)
+
+For perturbation images, the Tab screen also shows how many reference
+orbits have been selected.
 
 The Tab screen also includes a pixel-counting function, which will count
 the number of pixels colored in the inside color.  This gives an estimate

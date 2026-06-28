@@ -107,6 +107,11 @@ double PertEngine::glitch_tolerance_threshold(const std::complex<double> &value)
     return mag_squared(value * m_glitch_tolerance);
 }
 
+int PertEngine::reference_count() const
+{
+    return m_reference_points;
+}
+
 std::vector<Point> PertEngine::take_glitch_points()
 {
     std::vector<Point> points;

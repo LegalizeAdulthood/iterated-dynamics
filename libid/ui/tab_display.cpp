@@ -144,6 +144,11 @@ static void put_format(
     driver_put_string(row, col, color, format_text(format, std::forward<Args>(args)...));
 }
 
+std::string perturbation_status_text(const int reference_count)
+{
+    return fmt::format("Perturbation ({:d} reference{:s})", reference_count, reference_count == 1 ? "" : "s");
+}
+
 static void show_str_var(const char *name, const char *var, int *row)
 {
     if (var == nullptr)
@@ -282,6 +287,7 @@ int tab_display() // display the status of the current image
 
 top:
     const StandardPassStatus pass_status{current_standard_pass_status()};
+    const bool calculation_active{g_calc_status == CalcStatus::IN_PROGRESS || g_calc_status == CalcStatus::RESUMABLE};
     // Initialize here so parameter line displays correctly on return
     // from control-tab.
     int k = 0;
@@ -376,7 +382,7 @@ top:
     }
     start_row += 1;
 
-    if (g_calc_status == CalcStatus::IN_PROGRESS || g_calc_status == CalcStatus::RESUMABLE)
+    if (calculation_active)
     {
         if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_RESUME))
         {
@@ -390,8 +396,7 @@ top:
 
     ++start_row;
 
-    if (g_passes != Passes::NONE &&
-        (g_calc_status == CalcStatus::IN_PROGRESS || g_calc_status == CalcStatus::RESUMABLE))
+    if (g_passes != Passes::NONE && calculation_active)
     {
         if (g_passes == Passes::THREE_D)
         {
@@ -407,6 +412,11 @@ top:
                 driver_put_string(start_row++, 2, C_GENERAL_MED, pass_status.detail);
             }
         }
+    }
+    if (pass_status.perturbation_active && calculation_active)
+    {
+        driver_put_string(
+            start_row++, 2, C_GENERAL_HI, perturbation_status_text(pass_status.perturbation_reference_count));
     }
     driver_put_string(start_row, 2, C_GENERAL_MED, "Calculation time:");
     driver_put_string(-1, -1, C_GENERAL_HI, get_calculation_time(g_calc_time));

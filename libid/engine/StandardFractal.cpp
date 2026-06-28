@@ -170,7 +170,7 @@ void StandardFractal::resume()
 void StandardFractal::suspend()
 {
     m_standard_pass.suspend();
-    s_standard_pass_status = m_standard_pass.status();
+    s_standard_pass_status = standard_pass_status();
     if (m_perturbation_active)
     {
         m_pert_engine.finish();
@@ -217,7 +217,10 @@ bool StandardFractal::consume_standard_pixel_yield()
 
 StandardPassStatus StandardFractal::standard_pass_status() const
 {
-    return m_standard_pass.status();
+    StandardPassStatus status{m_standard_pass.status()};
+    status.perturbation_active = m_perturbation_active;
+    status.perturbation_reference_count = m_pert_engine.reference_count();
+    return status;
 }
 
 void StandardFractal::iterate()
@@ -409,7 +412,7 @@ void StandardFractal::run_current_work_item_mode()
 
     m_standard_pass.select(g_std_calc_mode);
     const bool pass_completed{m_standard_pass.iterate()};
-    s_standard_pass_status = m_standard_pass.status();
+    s_standard_pass_status = standard_pass_status();
     if (!pass_completed)
     {
         m_work_item_yielded = true;

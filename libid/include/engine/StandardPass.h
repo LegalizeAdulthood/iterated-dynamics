@@ -22,6 +22,8 @@ struct StandardPassStatus
     std::string title;
     std::string detail;
     float progress_percent{};
+    int perturbation_reference_count{};
+    bool perturbation_active{};
 };
 
 class StandardPass

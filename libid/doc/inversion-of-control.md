@@ -248,40 +248,7 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: Perturbation Status Display
-
-This is the closing slice for PR #289.  The perturbation parameter
-surface and output are now present; this slice adds the remaining status
-display from the PR.
-
-Work:
-
-- Expose perturbation status to the UI through `StandardFractal` or a
-  renderer status object.  Avoid a global free function that reaches into
-  `PertEngine`.
-- Include whether perturbation is active and the number of reference
-  orbits selected so far.
-- Display a tab-screen line such as `Perturbation (N references)` when
-  perturbation is active or resumable for the current image.
-- Add tab-display tests or UI formatting tests for singular and plural
-  reference text.
-- Update help or developer-screen documentation if it describes tab
-  status fields, and add a changelog note for the user-visible status
-  display.
-
-Done when:
-
-- Tab display reports perturbation reference count without knowing
-  `PertEngine` internals.
-- Singular and plural reference text are covered by tests.
-- Documentation mentions the new status display.
-
-Manual testing:
-
-- Render a perturbation image, press <Tab>, and confirm the perturbation
-  status line is shown with the reference count.
-
-### Slice 2: LSystem Renderer
+### Slice 1: LSystem Renderer
 
 Work:
 
@@ -305,7 +272,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 3: Lyapunov Renderer
+### Slice 2: Lyapunov Renderer
 
 Work:
 
@@ -326,7 +293,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 4: Lorenz Photographer Mode
+### Slice 3: Lorenz Photographer Mode
 
 Work:
 
@@ -346,7 +313,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 5: Non-Interrupt Pending-Key Utilities
+### Slice 4: Non-Interrupt Pending-Key Utilities
 
 Work:
 

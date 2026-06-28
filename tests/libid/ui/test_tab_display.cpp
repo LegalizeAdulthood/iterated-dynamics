@@ -98,6 +98,16 @@ protected:
     ValueSaver<UserData> m_saved_user{g_user, UserData{}};
 };
 
+TEST(TestPerturbationStatusText, singularReference)
+{
+    EXPECT_EQ("Perturbation (1 reference)", perturbation_status_text(1));
+}
+
+TEST(TestPerturbationStatusText, pluralReferences)
+{
+    EXPECT_EQ("Perturbation (2 references)", perturbation_status_text(2));
+}
+
 TEST_F(TestTabDisplay, displaysMainStatusScreen)
 {
     std::vector<std::string> output;

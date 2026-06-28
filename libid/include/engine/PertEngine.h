@@ -24,6 +24,7 @@ public:
     bool select_retry_reference(const std::vector<Point> &points);
     void set_glitch_tolerance(double tolerance);
     double glitch_tolerance_threshold(const std::complex<double> &value) const;
+    int reference_count() const;
     std::vector<Point> take_glitch_points();
     void finish();
 
