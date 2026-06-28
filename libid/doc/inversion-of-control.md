@@ -241,28 +241,122 @@ Do not introduce a new progress-result enum unless an individual renderer
 needs more state than the existing `iterate()` and `done()` pattern can
 express.
 
-The next slices are split into two phases.  First, finish the
-`StandardPass` ownership boundary by moving pass state out of globals,
-file statics, stack locals, and recursive frames into the variant
-alternatives.  These ownership slices should preserve synchronous
-behavior and existing polling.  After pass state is owned, later slices
-can change control flow and remove direct input from calculation code.
+The remaining slices should preserve synchronous behavior until the
+UI-wrapper slice for each renderer.  Where a slice only changes renderer
+ownership or command-stack representation, prefer automated rendering
+coverage.  Manual testing is required when keyboard interruption, resume,
+or other user interaction behavior changes.
 
-### Slice 1: LSystem Renderer
+### Slice 1: LSystem Object Shell
 
 Work:
 
-- Add a `fractals::LSystem` calculation object for the renderer state in
+- Add a `fractals::LSystem` calculation object for renderer state in
   `libid/fractals/lsystem.cpp`.
-- Add `libid/ui/lsystem.cpp` to construct or resume `LSystem`, poll
-  keyboard input, call `suspend()`, and drive `iterate()`.
-- Convert the recursive turtle draw path to resumable command-stack state
-  owned by `LSystem`.
-- Remove the key probe from `draw_lsys()`.
+- Move setup and teardown from `lsystem_type()` into `LSystem` methods.
+- Keep `lsystem_type()` as the synchronous entry point that constructs
+  and runs `LSystem`.
+- Keep `draw_lsys()` recursive and keep existing key polling.
 
 Done when:
 
-- `lsystem.cpp` has no direct keyboard polling.
+- `LSystem` owns turtle setup, size-pass command lifetime, draw-pass
+  command lifetime, and renderer cleanup.
+- L-system output and interrupt behavior are unchanged.
+
+Manual testing:
+
+- None; this slice does not change user interaction.
+
+### Slice 2: LSystem Draw State Types
+
+Work:
+
+- Add explicit draw-frame and turtle-snapshot state for
+  `libid/fractals/lsystem.cpp:834-914`.
+- Move the local save and restore variables for `[` handling from
+  `libid/fractals/lsystem.cpp:883-897` into named state.
+- Keep `draw_lsys()` recursive and keep existing key polling.
+
+Done when:
+
+- The recursive draw path uses named state for branch save and restore.
+- L-system output and interrupt behavior are unchanged.
+
+Manual testing:
+
+- None; this slice does not change user interaction.
+
+### Slice 3: LSystem Synchronous Command Stack
+
+Work:
+
+- Replace recursive calls in `draw_lsys()` with an explicit command stack
+  owned by `LSystem`.
+- Preserve rule expansion, `[` / `]` branch handling, overflow handling,
+  and the existing key probe.
+- Drive the command stack to completion from the same synchronous
+  `lsystem_type()` path.
+
+Done when:
+
+- The draw path no longer recursively calls `draw_lsys()`.
+- L-system output and interrupt behavior are unchanged.
+
+Manual testing:
+
+- None; this slice does not change user interaction.
+
+### Slice 4: LSystem Iterative Renderer
+
+Work:
+
+- Add `LSystem::iterate()` and `LSystem::done()` over the command stack.
+- Have `lsystem_type()` synchronously loop over `iterate()` until the
+  renderer is done or interrupted.
+- Keep existing key polling in the calculation path for this slice.
+
+Done when:
+
+- `LSystem` can render incrementally through `iterate()`.
+- L-system output and interrupt behavior are unchanged.
+
+Manual testing:
+
+- None; this slice does not change user interaction.
+
+### Slice 5: LSystem UI Wrapper Shell
+
+Work:
+
+- Add `libid/ui/lsystem.cpp`.
+- Move the L-system entry point shape to UI code that constructs or
+  resumes `LSystem` and drives `iterate()`.
+- Keep existing calculation-path key polling for this slice.
+
+Done when:
+
+- L-system rendering has the same UI-wrapper shape as Ant and
+  Bifurcation.
+- L-system output and interrupt behavior are unchanged.
+
+Manual testing:
+
+- None; this slice does not change user interaction.
+
+### Slice 6: LSystem Keyboard Ownership
+
+Work:
+
+- Move L-system interruption polling from the calculation path into
+  `libid/ui/lsystem.cpp`.
+- Add the `suspend()` or interruption state needed for the UI wrapper to
+  stop and later resume `LSystem`.
+- Remove the direct key probe from `draw_lsys()`.
+
+Done when:
+
+- `libid/fractals/lsystem.cpp` has no direct keyboard polling.
 - L-system rendering follows the same UI/calculation split as Ant and
   Bifurcation.
 
@@ -272,7 +366,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 2: Lyapunov Renderer
+### Slice 7: Lyapunov Renderer
 
 Work:
 
@@ -293,7 +387,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 3: Lorenz Photographer Mode
+### Slice 8: Lorenz Photographer Mode
 
 Work:
 
@@ -313,7 +407,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 4: Non-Interrupt Pending-Key Utilities
+### Slice 9: Non-Interrupt Pending-Key Utilities
 
 Work:
 
