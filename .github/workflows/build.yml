@@ -983,6 +983,7 @@ jobs:
             cmake \
             git \
             gmake \
+            modular-xorg-server \
             ninja-build \
             patchelf \
             pkgconf \
