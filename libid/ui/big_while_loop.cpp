@@ -729,6 +729,8 @@ resumeloop:                             // return here on failed overlays
         context.more_keys = true;
         while (context.more_keys)
         {
+            context.orbits_window_key_pending = false;
+
             // loop through command keys
             if (g_timed_save != TimedSave::NONE)
             {
@@ -870,6 +872,8 @@ resumeloop:                             // return here on failed overlays
             if (mms_value == MainState::IMAGE_START || mms_value == MainState::RESTORE_START ||
                 mms_value == MainState::RESTART)
             {
+                context.orbits_window_active = false;
+                context.orbits_window_key_pending = false;
                 return mms_value;
             }
             if (mms_value == MainState::CONTINUE)
@@ -883,6 +887,15 @@ resumeloop:                             // return here on failed overlays
             if (driver_resize())
             {
                 g_calc_status = CalcStatus::NO_FRACTAL;
+            }
+            if (g_calc_status != CalcStatus::COMPLETED)
+            {
+                context.orbits_window_active = false;
+                context.orbits_window_key_pending = false;
+            }
+            if (context.orbits_window_active && context.more_keys && !context.orbits_window_key_pending)
+            {
+                resume_orbits_window(context);
             }
         }
     }

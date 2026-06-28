@@ -359,18 +359,52 @@ static MainState request_3d_fractal_params(MainContext &context)
     return MainState::NOTHING;
 }
 
-static MainState show_orbit_window(MainContext &/*context*/)
+static bool orbits_window_available()
 {
     // must use standard fractal and have a float variant
-    if ((g_cur_fractal_specific->calc_type == standard_fractal_type //
-            || g_cur_fractal_specific->calc_type == froth_type)     //
-        && g_bf_math == BFMathType::NONE                            // for now no arbitrary precision support
-        && (!g_is_true_color || g_true_mode == TrueColorMode::DEFAULT_COLOR))
+    return (g_cur_fractal_specific->calc_type == standard_fractal_type //
+               || g_cur_fractal_specific->calc_type == froth_type)     //
+        && g_bf_math == BFMathType::NONE                               // for now no arbitrary precision support
+        && (!g_is_true_color || g_true_mode == TrueColorMode::DEFAULT_COLOR);
+}
+
+static void open_orbits_window(MainContext &context)
+{
+    clear_zoom_box();
+    jiim(JIIMType::ORBIT);
+    context.orbits_window_key_pending = true;
+}
+
+static MainState toggle_orbits_window(MainContext &context)
+{
+    if (context.orbits_window_active)
     {
-        clear_zoom_box();
-        jiim(JIIMType::ORBIT);
+        context.orbits_window_active = false;
+        context.orbits_window_key_pending = false;
+        return MainState::NOTHING;
     }
+    if (!orbits_window_available())
+    {
+        return MainState::NOTHING;
+    }
+    context.orbits_window_active = true;
+    open_orbits_window(context);
     return MainState::NOTHING;
+}
+
+void resume_orbits_window(MainContext &context)
+{
+    if (!context.orbits_window_active)
+    {
+        return;
+    }
+    if (!orbits_window_available())
+    {
+        context.orbits_window_active = false;
+        context.orbits_window_key_pending = false;
+        return;
+    }
+    open_orbits_window(context);
 }
 
 static MainState space_command(MainContext &context)
@@ -617,7 +651,7 @@ static MenuHandler s_handlers[]{
     {ID_KEY_CTL_H, main_history},                   //
     {ID_KEY_CTL_ENTER, request_zoom_out},           //
     {ID_KEY_ENTER, request_zoom_in},                //
-    {ID_KEY_CTL_O, show_orbit_window},              //
+    {ID_KEY_CTL_O, toggle_orbits_window},           //
     {ID_KEY_CTL_S, random_dot_stereogram},          //
     {ID_KEY_CTL_X, flip_image},                     //
     {ID_KEY_CTL_Y, flip_image},                     //
@@ -642,7 +676,7 @@ static MenuHandler s_handlers[]{
     {'j', inverse_julia_toggle},                    //
     {'k', random_dot_stereogram},                   //
     {'l', look_for_files},                          //
-    {'o', show_orbit_window},                       //
+    {'o', toggle_orbits_window},                    //
     {'p', prompt_options},                          //
     {'r', restore_from_image},                      //
     {'s', request_save_image},                      //

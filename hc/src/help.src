@@ -280,6 +280,8 @@ Bugs Fixed in Version 1.5
 
 o Cross-hair cursors now repaint while tracking mouse movement in the
   palette editor and Julia point picker.
+o The Orbits Window now toggles on completed images and remains shown
+  after backing out of menus unless it is toggled off.
 o Iterated Dynamics is now built for FreeBSD, OpenBSD and NetBSD
   (Fixes #439, #444, #445)
 
@@ -491,8 +493,8 @@ Commands marked with an '*' are also available at the credits screen.
  * R               Restore a saved (or .GIF) image (<3> or <O> for 3-D)
 
 {Orbits Window}
-   O               Turns on Orbits Window mode after image generation
-   Ctrl+O          Turns on Orbits Window mode
+   O               Toggles Orbits Window mode after image generation
+   Ctrl+O          Toggles Orbits Window mode
 
 {View Window}
  * V               Set view window parameters (reduction, aspect ratio)
@@ -1126,9 +1128,9 @@ To <R>estore and resume a "formula", "lsystem", or "ifs" type fractal your
 ;
 ;
 ~Topic=Orbits Window, Label=HELP_ORBITS
-The <O> key turns on the Orbit mode.  In this mode a cursor appears
-over the fractal.  A window appears showing the orbit used in the
-calculation of the color at the point where the cursor is.  Move the
+The <O> key toggles the Orbit mode.  When this mode is on, a cursor
+appears over the fractal.  A window appears showing the orbit used in
+the calculation of the color at the point where the cursor is.  Move the
 cursor around the fractal using the arrow keys or the mouse and watch
 the orbits change.  Try entering the Orbits mode with View Windows (<V>)
 turned on.  The following keys take effect in Orbits mode.\

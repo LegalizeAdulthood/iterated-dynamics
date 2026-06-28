@@ -167,7 +167,7 @@ MainMenu::MainMenu(const bool full_menu)
                                                                       : "Return to image             ",
             ID_KEY_ENTER);
         add_left_item("Info about image      <Tab> ", ID_KEY_TAB);
-        add_left_item("Orbits window          <O>  ", 'o');
+        add_left_item("Toggle orbits window   <O>  ", 'o');
     }
     add_left_heading("      NEW IMAGE             ");
     add_left_item("Select video mode...  <Del> ", ID_KEY_DELETE);

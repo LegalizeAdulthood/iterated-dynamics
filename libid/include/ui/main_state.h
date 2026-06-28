@@ -20,6 +20,8 @@ struct MainContext
     int key{};          //
     bool from_mandel{}; //
     bool more_keys{};   // continuation variable
+    bool orbits_window_active{};
+    bool orbits_window_key_pending{};
     bool stacked{};     // flag to indicate screen stacked
     bool resume{};      //
 };

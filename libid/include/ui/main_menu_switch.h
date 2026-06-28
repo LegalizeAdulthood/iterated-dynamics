@@ -8,5 +8,6 @@ namespace id::ui
 {
 
 MainState main_menu_switch(MainContext &context);
+void resume_orbits_window(MainContext &context);
 
 } // namespace id::ui
