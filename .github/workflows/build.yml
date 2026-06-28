@@ -994,6 +994,22 @@ jobs:
           mkdir -p .netbsd-copyback
 
           {
+            start_xvnc() {
+              echo "Starting Xvnc"
+              /usr/pkg/bin/Xvnc :99 -SecurityTypes None -geometry 1024x768 \
+                -depth 24 -ac >xserver.log 2>&1 &
+              x_server_pid=$!
+              sleep 3
+              if kill -0 "$x_server_pid" 2>/dev/null; then
+                return 0
+              fi
+
+              echo "Xvnc failed to start"
+              cat xserver.log
+              unset x_server_pid
+              return 1
+            }
+
             status=0
             sh "${{steps.vc.outputs.setup-script}}" || status=$?
             if [ "${status}" -eq 0 ]; then
@@ -1006,24 +1022,9 @@ jobs:
               status=$?
             fi
             if [ "${status}" -eq 0 ]; then
-              if [ -x /usr/X11R7/bin/Xvfb ]; then
-                /usr/X11R7/bin/Xvfb :99 -screen 0 1024x768x24 >xserver.log 2>&1 &
-                x_server_pid=$!
-              elif [ -x /usr/pkg/bin/Xvfb ]; then
-                /usr/pkg/bin/Xvfb :99 -screen 0 1024x768x24 >xserver.log 2>&1 &
-                x_server_pid=$!
-              elif [ -x /usr/pkg/bin/Xvnc ]; then
-                /usr/pkg/bin/Xvnc :99 -SecurityTypes None -geometry 1024x768 -depth 24 -ac >xserver.log 2>&1 &
-                x_server_pid=$!
+              if start_xvnc; then
+                :
               else
-                echo "No headless X server was found"
-                status=1
-              fi
-            fi
-            if [ "${status}" -eq 0 ]; then
-              sleep 3
-              if ! kill -0 "$x_server_pid" 2>/dev/null; then
-                echo "Headless X server failed to start"
                 status=1
               fi
             fi
