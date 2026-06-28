@@ -248,7 +248,126 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: LSystem Renderer
+### Slice 1: Perturbation Selection Setting
+
+Work:
+
+- Add an explicit perturbation selection setting with `auto`, `yes`, and
+  `no` values.  Keep the default as `auto`.
+- Parse `perturbation=auto|yes|no` from command files, parameter files,
+  and the command line.
+- Treat `passes=p` as compatibility syntax for requesting perturbation
+  with the default standard traversal.  It should set the same request
+  path as `perturbation=yes` while leaving later explicit parameters able
+  to override it.
+- In `auto` mode, request perturbation only when the current fractal type
+  supports perturbation and the precision state makes perturbation useful.
+- Keep `StandardFractal` responsible for deciding whether perturbation is
+  active for the current image.  Do not reintroduce setup-time image
+  rendering from fractal setup code.
+- Add command parser tests for valid values, invalid values, default
+  behavior, and `passes=p` compatibility.
+- Update help source for `perturbation=` and for the relationship between
+  `passes=p` and the new setting.
+
+Done when:
+
+- Perturbation can be requested independently of the traversal pass.
+- Existing `passes=p` parameter files still request perturbation.
+- Help text documents `perturbation=`, its default, and compatibility
+  behavior.
+
+### Slice 2: Perturbation Tolerance Setting
+
+Work:
+
+- Add a stored perturbation glitch-tolerance setting with the current
+  hard-coded `1e-6` value as the default.
+- Parse `perturbation-tolerance=<value>` from command files, parameter
+  files, and the command line.
+- Pass the configured value into `PertEngine` so the tolerance used to
+  build `m_perturbation_tolerance_check` no longer comes from the
+  hard-coded `GLITCH_TOLERANCE` constant.
+- Validate invalid or non-positive tolerance values in command parser
+  tests.
+- Add a focused `PertEngine` or standard-renderer test that proves a
+  non-default tolerance reaches the perturbation calculation.
+- Update help source for `perturbation-tolerance=` and describe that it
+  controls perturbation glitch detection.
+
+Done when:
+
+- The configured tolerance changes perturbation glitch detection.
+- `perturbation-tolerance=` is covered by parser and calculation
+  plumbing tests.
+- Help text documents the default and accepted value range.
+
+### Slice 3: Perturbation X Options and Parameter Output
+
+Work:
+
+- Add X-options fields for perturbation mode and perturbation tolerance.
+- Remove perturbation from the interactive drawing-method list only after
+  the explicit perturbation field exists.  Keep `passes=p` accepted by
+  command parsing for compatibility.
+- Write `perturbation=` from generated parameter or batch output when the
+  value is not the default `auto`.
+- Write `perturbation-tolerance=` from generated parameter or batch
+  output when the value is not the default tolerance.
+- Add `make_batch_file` tests for default suppression and non-default
+  output.
+- Update X-options help source so the screen and help text describe the
+  new fields.
+
+Done when:
+
+- The interactive UI can select perturbation without using the passes
+  field.
+- Generated parameter output round-trips non-default perturbation
+  settings.
+- Help text for the X-options screen matches the fields.
+
+Manual testing:
+
+- Open X options, set perturbation to `yes`, and render a supported type.
+- Open X options, set perturbation to `no`, and confirm rendering does
+  not use perturbation.
+- Change perturbation tolerance and confirm generated parameter output
+  includes it.
+
+### Slice 4: Perturbation Status Display
+
+This is the closing slice for PR #289.  Slices 1-3 add the parameter
+surface; this slice adds the remaining status display from the PR.
+
+Work:
+
+- Expose perturbation status to the UI through `StandardFractal` or a
+  renderer status object.  Avoid a global free function that reaches into
+  `PertEngine`.
+- Include whether perturbation is active and the number of reference
+  orbits selected so far.
+- Display a tab-screen line such as `Perturbation (N references)` when
+  perturbation is active or resumable for the current image.
+- Add tab-display tests or UI formatting tests for singular and plural
+  reference text.
+- Update help or developer-screen documentation if it describes tab
+  status fields, and add a changelog note for the user-visible status
+  display.
+
+Done when:
+
+- Tab display reports perturbation reference count without knowing
+  `PertEngine` internals.
+- Singular and plural reference text are covered by tests.
+- Documentation mentions the new status display.
+
+Manual testing:
+
+- Render a perturbation image, press <Tab>, and confirm the perturbation
+  status line is shown with the reference count.
+
+### Slice 5: LSystem Renderer
 
 Work:
 
@@ -272,7 +391,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 2: Lyapunov Renderer
+### Slice 6: Lyapunov Renderer
 
 Work:
 
@@ -293,7 +412,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 3: Lorenz Photographer Mode
+### Slice 7: Lorenz Photographer Mode
 
 Work:
 
@@ -313,7 +432,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 4: Non-Interrupt Pending-Key Utilities
+### Slice 8: Non-Interrupt Pending-Key Utilities
 
 Work:
 
