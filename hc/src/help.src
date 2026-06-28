@@ -280,8 +280,8 @@ Bugs Fixed in Version 1.5
 
 o Cross-hair cursors now repaint while tracking mouse movement in the
   palette editor and Julia point picker.
-o Iterated Dynamics is now built for FreeBSD and NetBSD (Fixes #439,
-  #444)
+o Iterated Dynamics is now built for FreeBSD, OpenBSD and NetBSD
+  (Fixes #439, #444, #445)
 
 Code Cleanup in Version 1.5
 
