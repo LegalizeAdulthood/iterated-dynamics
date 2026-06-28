@@ -157,40 +157,40 @@ TEST(TestVideoMode, keyName)
 
 TEST(TestVideoMode, diskVideoModeAcceptsGifSizedImages)
 {
-    EXPECT_TRUE(is_valid_disk_video_mode({0, 32768, 32768, 256, nullptr, ""}));
-    EXPECT_TRUE(is_valid_disk_video_mode({0, GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}));
+    EXPECT_TRUE(is_valid_disk_video_mode(VideoInfo{0, 32768, 32768, 256, nullptr, ""}));
+    EXPECT_TRUE(is_valid_disk_video_mode(VideoInfo{0, GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}));
 }
 
 TEST(TestVideoMode, diskVideoModeRejectsNonGifSizedImages)
 {
-    EXPECT_FALSE(is_valid_disk_video_mode({0, 0, 480, 256, nullptr, ""}));
-    EXPECT_FALSE(is_valid_disk_video_mode({0, 640, 0, 256, nullptr, ""}));
-    EXPECT_FALSE(is_valid_disk_video_mode({0, GIF_MAX_PIXELS + 1, 480, 256, nullptr, ""}));
-    EXPECT_FALSE(is_valid_disk_video_mode({0, 640, GIF_MAX_PIXELS + 1, 256, nullptr, ""}));
-    EXPECT_FALSE(is_valid_disk_video_mode({0, 640, 480, 16, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{0, 0, 480, 256, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{0, 640, 0, 256, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{0, GIF_MAX_PIXELS + 1, 480, 256, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{0, 640, GIF_MAX_PIXELS + 1, 256, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{0, 640, 480, 16, nullptr, ""}));
 }
 
 TEST(TestVideoMode, displayVideoModeAcceptsLargePhysicalScreens)
 {
-    EXPECT_TRUE(is_valid_display_video_mode({0, 32768, 32768, 256, nullptr, ""}, 32768, 32768));
+    EXPECT_TRUE(is_valid_display_video_mode(VideoInfo{0, 32768, 32768, 256, nullptr, ""}, 32768, 32768));
     EXPECT_TRUE(is_valid_display_video_mode(
-        {0, GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}, GIF_MAX_PIXELS, GIF_MAX_PIXELS));
+        VideoInfo{0, GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}, GIF_MAX_PIXELS, GIF_MAX_PIXELS));
 }
 
 TEST(TestVideoMode, displayVideoModeRejectsInvalidMetadata)
 {
-    EXPECT_FALSE(is_valid_display_video_mode({0, 0, 480, 256, nullptr, ""}, 640, 480));
-    EXPECT_FALSE(is_valid_display_video_mode({0, 640, 0, 256, nullptr, ""}, 640, 480));
-    EXPECT_FALSE(is_valid_display_video_mode({0, 640, 480, 16, nullptr, ""}, 640, 480));
-    EXPECT_FALSE(is_valid_display_video_mode({0, 640, 480, 256, nullptr, ""}, 0, 480));
-    EXPECT_FALSE(is_valid_display_video_mode({0, 640, 480, 256, nullptr, ""}, 640, 0));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 0, 480, 256, nullptr, ""}, 640, 480));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 640, 0, 256, nullptr, ""}, 640, 480));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 640, 480, 16, nullptr, ""}, 640, 480));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 640, 480, 256, nullptr, ""}, 0, 480));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 640, 480, 256, nullptr, ""}, 640, 0));
 }
 
 TEST(TestVideoMode, displayVideoModeRejectsModesLargerThanDisplay)
 {
-    EXPECT_FALSE(is_valid_display_video_mode({0, 1025, 768, 256, nullptr, ""}, 1024, 768));
-    EXPECT_FALSE(is_valid_display_video_mode({0, 1024, 769, 256, nullptr, ""}, 1024, 768));
-    EXPECT_TRUE(is_valid_display_video_mode({0, 1024, 768, 256, nullptr, ""}, 1024, 768));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 1025, 768, 256, nullptr, ""}, 1024, 768));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 1024, 769, 256, nullptr, ""}, 1024, 768));
+    EXPECT_TRUE(is_valid_display_video_mode(VideoInfo{0, 1024, 768, 256, nullptr, ""}, 1024, 768));
 }
 
 } // namespace id::test
