@@ -981,6 +981,10 @@ jobs:
             https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.1/amd64/binary/sets/xbase.tar.xz
           tar -xJpf xbase.tar.xz -C /
           rm xbase.tar.xz
+          /usr/bin/ftp -o xcomp.tar.xz \
+            https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.1/amd64/binary/sets/xcomp.tar.xz
+          tar -xJpf xcomp.tar.xz -C /
+          rm xcomp.tar.xz
           /usr/sbin/pkg_add -u \
             autoconf \
             automake \
