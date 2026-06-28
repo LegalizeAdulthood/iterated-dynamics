@@ -88,6 +88,25 @@ struct LSysCmd
     char ch;
 };
 
+struct LSysTurtleSnapshot
+{
+    char angle;
+    char reverse;
+    LDouble size;
+    LDouble real_angle;
+    LDouble x_pos;
+    LDouble y_pos;
+    char curr_color;
+};
+
+struct LSysDrawFrame
+{
+    LSysCmd *command;
+    LSysTurtleState *turtle;
+    LSysCmd **rules;
+    int depth;
+};
+
 } // namespace
 
 char g_max_angle{};
@@ -850,8 +869,34 @@ static bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rul
     return true;
 }
 
+static LSysTurtleSnapshot save_turtle(const LSysTurtleState &turtle)
+{
+    return {
+        turtle.angle,
+        turtle.reverse,
+        turtle.size,
+        turtle.real_angle,
+        turtle.x_pos,
+        turtle.y_pos,
+        turtle.curr_color,
+    };
+}
+
+static void restore_turtle(LSysTurtleState &turtle, const LSysTurtleSnapshot &snapshot)
+{
+    turtle.angle = snapshot.angle;
+    turtle.reverse = snapshot.reverse;
+    turtle.size = snapshot.size;
+    turtle.real_angle = snapshot.real_angle;
+    turtle.x_pos = snapshot.x_pos;
+    turtle.y_pos = snapshot.y_pos;
+    turtle.curr_color = snapshot.curr_color;
+}
+
 static LSysCmd *draw_lsys(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, const int depth)
 {
+    LSysDrawFrame frame{command, ts, rules, depth};
+
     if (g_overflow)       // integer math routines overflowed
     {
         return nullptr;
@@ -860,78 +905,66 @@ static LSysCmd *draw_lsys(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules
     if (stack_avail() < 400)
     {
         // leave some margin for calling subroutines
-        ts->stack_overflow = true;
+        frame.turtle->stack_overflow = true;
         return nullptr;
     }
 
-    while (command->ch && command->ch != ']')
+    while (frame.command->ch && frame.command->ch != ']')
     {
-        if (!ts->counter++)
+        if (!frame.turtle->counter++)
         {
             if (driver_key_pressed())
             {
-                ts->counter--;
+                frame.turtle->counter--;
                 return nullptr;
             }
         }
         bool tran = false;
-        if (depth)
+        if (frame.depth)
         {
-            for (LSysCmd **rule_index = rules; *rule_index; rule_index++)
+            for (LSysCmd **rule_index = frame.rules; *rule_index; rule_index++)
             {
-                if ((*rule_index)->ch == command->ch)
+                if ((*rule_index)->ch == frame.command->ch)
                 {
                     tran = true;
-                    if (draw_lsys(*rule_index +1, ts, rules, depth-1) == nullptr)
+                    if (draw_lsys(*rule_index + 1, frame.turtle, frame.rules, frame.depth - 1) == nullptr)
                     {
                         return nullptr;
                     }
                 }
             }
         }
-        if (!depth || !tran)
+        if (!frame.depth || !tran)
         {
-            if (command->f)
+            if (frame.command->f)
             {
-                switch (command->param_type)
+                switch (frame.command->param_type)
                 {
                 case 4:
-                    ts->param.n = command->param.n;
+                    frame.turtle->param.n = frame.command->param.n;
                     break;
                 case 10:
-                    ts->param.nf = command->param.nf;
+                    frame.turtle->param.nf = frame.command->param.nf;
                     break;
                 default:
                     break;
                 }
-                (*command->f)(ts);
+                (*frame.command->f)(frame.turtle);
             }
-            else if (command->ch == '[')
+            else if (frame.command->ch == '[')
             {
-                const char save_angle = ts->angle;
-                const char save_reverse = ts->reverse;
-                const LDouble save_size = ts->size;
-                const LDouble save_real_angle = ts->real_angle;
-                const LDouble save_x = ts->x_pos;
-                const LDouble save_y = ts->y_pos;
-                const char save_color = ts->curr_color;
-                command = draw_lsys(command+1, ts, rules, depth);
-                if (command == nullptr)
+                const LSysTurtleSnapshot branch_turtle{save_turtle(*frame.turtle)};
+                frame.command = draw_lsys(frame.command + 1, frame.turtle, frame.rules, frame.depth);
+                if (frame.command == nullptr)
                 {
                     return nullptr;
                 }
-                ts->angle = save_angle;
-                ts->reverse = save_reverse;
-                ts->size = save_size;
-                ts->real_angle = save_real_angle;
-                ts->x_pos = save_x;
-                ts->y_pos = save_y;
-                ts->curr_color = save_color;
+                restore_turtle(*frame.turtle, branch_turtle);
             }
         }
-        command++;
+        frame.command++;
     }
-    return command;
+    return frame.command;
 }
 
 LSystem::LSystem() :

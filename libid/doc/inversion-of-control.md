@@ -247,26 +247,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: LSystem Draw State Types
-
-Work:
-
-- Add explicit draw-frame and turtle-snapshot state for
-  `libid/fractals/lsystem.cpp:853-934`.
-- Move the local save and restore variables for `[` handling from
-  `libid/fractals/lsystem.cpp:911-929` into named state.
-- Keep `draw_lsys()` recursive and keep existing key polling.
-
-Done when:
-
-- The recursive draw path uses named state for branch save and restore.
-- L-system output and interrupt behavior are unchanged.
-
-Manual testing:
-
-- None; this slice does not change user interaction.
-
-### Slice 2: LSystem Synchronous Command Stack
+### Slice 1: LSystem Synchronous Command Stack
 
 Work:
 
@@ -286,7 +267,7 @@ Manual testing:
 
 - None; this slice does not change user interaction.
 
-### Slice 3: LSystem Iterative Renderer
+### Slice 2: LSystem Iterative Renderer
 
 Work:
 
@@ -304,7 +285,7 @@ Manual testing:
 
 - None; this slice does not change user interaction.
 
-### Slice 4: LSystem UI Wrapper Shell
+### Slice 3: LSystem UI Wrapper Shell
 
 Work:
 
@@ -323,7 +304,7 @@ Manual testing:
 
 - None; this slice does not change user interaction.
 
-### Slice 5: LSystem Keyboard Ownership
+### Slice 4: LSystem Keyboard Ownership
 
 Work:
 
@@ -345,7 +326,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 6: Lyapunov Renderer
+### Slice 5: Lyapunov Renderer
 
 Work:
 
@@ -366,7 +347,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 7: Lorenz Photographer Mode
+### Slice 6: Lorenz Photographer Mode
 
 Work:
 
@@ -386,7 +367,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 8: Non-Interrupt Pending-Key Utilities
+### Slice 7: Non-Interrupt Pending-Key Utilities
 
 Work:
 
