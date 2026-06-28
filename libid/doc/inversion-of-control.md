@@ -257,32 +257,7 @@ pending key should still wake that delay promptly.  The UI controller
 owns that pacing because the delay exists to make plotted orbit points
 visible, not to advance fractal math.
 
-### Slice 1: Popcorn Old Orbit Plot Caller
-
-Work:
-
-- In `libid/fractals/popcorn.cpp`, split the `plot_orbit()` caller in
-  `popcorn_fractal_old()` into calculation state and UI presentation.
-- Report the pending orbit point and color to the `ui::Popcorn`
-  controller, then let the controller display, pace, and resume it.
-- Preserve the `reset=1960` compatibility behavior and the no-plot
-  calculation path.
-- Do not add per-fractal one-off pacing helpers.
-
-Done when:
-
-- `popcorn_fractal_old()` no longer calls `plot_orbit()` directly.
-- The old popcorn orbit point is displayed through the UI controller.
-- The synchronous compatibility path remains available for other callers
-  until their slices are complete.
-
-Manual testing:
-
-- Render the 1960-compatibility Popcorn image with a visible
-  `orbitdelay`.
-- Press a key during orbit delay and confirm the UI responds promptly.
-
-### Slice 2: Popcorn Orbit Plot Caller
+### Slice 1: Popcorn Orbit Plot Caller
 
 Work:
 
@@ -306,7 +281,7 @@ Manual testing:
 - Render Popcorn with a visible `orbitdelay`.
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 3: Generalized Popcorn Orbit Plot Caller
+### Slice 2: Generalized Popcorn Orbit Plot Caller
 
 Work:
 
@@ -330,7 +305,7 @@ Manual testing:
 - Render a PopcornJulia parameter set with a visible `orbitdelay`.
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 4: FrothyBasin Orbit Plot Caller
+### Slice 3: FrothyBasin Orbit Plot Caller
 
 Work:
 
@@ -353,7 +328,7 @@ Manual testing:
 - Render FrothyBasin with orbit display enabled.
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 5: Standard Orbit Plot Caller
+### Slice 4: Standard Orbit Plot Caller
 
 Work:
 
@@ -379,7 +354,7 @@ Manual testing:
 - Render Mandelbrot with `showorbit=yes` and a visible `orbitdelay`.
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 6: Orbit Scrub Ownership
+### Slice 5: Orbit Scrub Ownership
 
 Work:
 
@@ -401,7 +376,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 7: Sound Pending-Key Utilities
+### Slice 6: Sound Pending-Key Utilities
 
 Work:
 

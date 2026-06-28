@@ -22,6 +22,7 @@ public:
     int calculate_standard_pixel(bool yield_to_ui);
     bool consume_standard_pixel_yield();
     void complete_pending_orbit_plot();
+    void queue_orbit_plot(double real, double imag, int color, bool mark_standard_orbit_plotted = true);
 
     void resume();
 
@@ -53,7 +54,6 @@ private:
     void complete();
     void finish_work_list();
     void pop_work_list_front();
-    void queue_orbit_plot(double real, double imag, int color);
     void restore_dispatch();
     void run_current_work_item();
     void run_current_work_item_mode();
@@ -91,6 +91,7 @@ private:
     int m_standard_pixel_col{};
     int m_standard_pixel_row{};
     int m_saved_incr{1};
+    int m_standard_pixel_orbit_calc_result{};
     bool m_attracted{};
     bool m_caught_a_cycle{};
     bool m_dispatch_saved{};
@@ -100,10 +101,12 @@ private:
     bool m_standard_pixel_active{};
     bool m_standard_pixel_completed_yield{};
     bool m_standard_pixel_input_checked{};
+    bool m_standard_pixel_orbit_calc_completed{};
     bool m_standard_pixel_iteration_started{};
     bool m_standard_pixel_orbit_plotted{};
     bool m_timer_started{};
     bool m_orbit_plot_pending{};
+    bool m_orbit_plot_marks_standard_orbit{};
     bool m_work_item_active{};
     bool m_work_item_yielded{};
     bool m_work_list_started{};

@@ -1165,6 +1165,8 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         m_standard_pixel_row = g_row;
         m_standard_pixel_active = true;
         m_standard_pixel_input_checked = false;
+        m_standard_pixel_orbit_calc_completed = false;
+        m_standard_pixel_orbit_calc_result = 0;
         m_standard_pixel_orbit_plotted = false;
         m_standard_pixel_iteration_started = false;
 
@@ -1307,6 +1309,8 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         {
             ++g_color_iter;
             m_standard_pixel_input_checked = false;
+            m_standard_pixel_orbit_calc_completed = false;
+            m_standard_pixel_orbit_calc_result = 0;
             if (g_color_iter >= g_max_iterations)
             {
                 break;
@@ -1364,8 +1368,22 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             }
             // if above exit taken, the later test vs dem_delta will place this
             // point on the boundary, because mag(old)<bailout just now
+        }
 
-            if (orbit_calc() || g_overflow)
+        if (!m_standard_pixel_orbit_calc_completed)
+        {
+            m_standard_pixel_orbit_calc_result = orbit_calc();
+            m_standard_pixel_orbit_calc_completed = true;
+            if (m_orbit_plot_pending)
+            {
+                return -1;
+            }
+        }
+        const int orbit_calc_result{m_standard_pixel_orbit_calc_result};
+
+        if (g_distance_estimator)
+        {
+            if (orbit_calc_result || g_overflow)
             {
                 if (g_use_old_distance_estimator)
                 {
@@ -1389,7 +1407,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             g_old_z = g_new_z;
         }
         // the usual case
-        else if ((orbit_calc() && g_inside_method != ColorMethod::STAR_TRAIL) || g_overflow)
+        else if ((orbit_calc_result && g_inside_method != ColorMethod::STAR_TRAIL) || g_overflow)
         {
             break;
         }
@@ -1584,6 +1602,8 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             }
         }
         m_standard_pixel_orbit_plotted = false;
+        m_standard_pixel_orbit_calc_completed = false;
+        m_standard_pixel_orbit_calc_result = 0;
         m_standard_pixel_iteration_started = false;
     }  // end while (g_color_iter++ < maxit)
 

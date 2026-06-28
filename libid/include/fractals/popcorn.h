@@ -29,6 +29,7 @@ public:
     void suspend();
     bool done() const;
     void iterate();
+    engine::StandardFractal &standard_fractal();
 
 private:
     void complete();

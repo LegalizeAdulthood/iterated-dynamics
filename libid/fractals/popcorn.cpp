@@ -20,6 +20,33 @@ using namespace id::math;
 namespace id::fractals
 {
 
+namespace
+{
+
+class ActiveStandardFractalScope
+{
+public:
+    explicit ActiveStandardFractalScope(StandardFractal &standard_fractal) :
+        m_previous{set_active_standard_fractal(&standard_fractal)}
+    {
+    }
+
+    ~ActiveStandardFractalScope()
+    {
+        set_active_standard_fractal(m_previous);
+    }
+
+    ActiveStandardFractalScope(const ActiveStandardFractalScope &) = delete;
+    ActiveStandardFractalScope(ActiveStandardFractalScope &&) = delete;
+    ActiveStandardFractalScope &operator=(const ActiveStandardFractalScope &) = delete;
+    ActiveStandardFractalScope &operator=(ActiveStandardFractalScope &&) = delete;
+
+private:
+    StandardFractal *m_previous{};
+};
+
+} // namespace
+
 Popcorn::Popcorn() :
     m_standard_fractal{std::make_unique<StandardFractal>()}
 {
@@ -74,8 +101,13 @@ void Popcorn::iterate()
     {
         g_reset_periodicity = true;
     }
+    ActiveStandardFractalScope active_standard_fractal{*m_standard_fractal};
     if (m_standard_fractal->calculate_standard_pixel(false) == -1)
     {
+        if (m_standard_fractal->orbit_plot_pending())
+        {
+            return;
+        }
         suspend();
         return;
     }
@@ -96,6 +128,11 @@ void Popcorn::iterate()
             m_col = 0;
         }
     }
+}
+
+StandardFractal &Popcorn::standard_fractal()
+{
+    return *m_standard_fractal;
 }
 
 void Popcorn::complete()
@@ -121,7 +158,14 @@ int popcorn_fractal_old()
     g_new_z.y = g_old_z.y - g_param_z1.x * g_sin_x;
     if (g_plot == no_plot)
     {
-        plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
+        if (StandardFractal *standard_fractal = active_standard_fractal(); standard_fractal != nullptr)
+        {
+            standard_fractal->queue_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors, false);
+        }
+        else
+        {
+            plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
+        }
         g_old_z = g_new_z;
     }
     else

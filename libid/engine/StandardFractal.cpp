@@ -220,7 +220,11 @@ void StandardFractal::complete_pending_orbit_plot()
     assert(m_orbit_plot_pending);
     assert(orbit_plot().done());
     m_orbit_plot_pending = false;
-    m_standard_pixel_orbit_plotted = true;
+    if (m_orbit_plot_marks_standard_orbit)
+    {
+        m_standard_pixel_orbit_plotted = true;
+    }
+    m_orbit_plot_marks_standard_orbit = false;
 }
 
 bool StandardFractal::orbit_plot_pending() const
@@ -282,13 +286,16 @@ void StandardFractal::clear_standard_pixel()
     m_hooper = 0;
     m_standard_pixel_col = 0;
     m_standard_pixel_row = 0;
+    m_standard_pixel_orbit_calc_result = 0;
     m_saved_incr = 1;
     m_attracted = false;
     m_caught_a_cycle = false;
     m_standard_pixel_active = false;
     m_standard_pixel_input_checked = false;
+    m_standard_pixel_orbit_calc_completed = false;
     m_standard_pixel_iteration_started = false;
     m_standard_pixel_orbit_plotted = false;
+    m_orbit_plot_marks_standard_orbit = false;
 }
 
 void StandardFractal::complete()
@@ -343,12 +350,14 @@ void StandardFractal::pop_work_list_front()
     }
 }
 
-void StandardFractal::queue_orbit_plot(const double real, const double imag, const int color)
+void StandardFractal::queue_orbit_plot(
+    const double real, const double imag, const int color, const bool mark_standard_orbit_plotted)
 {
     if (!m_orbit_plot_pending)
     {
         orbit_plot().reset(real, imag, color);
         m_orbit_plot_pending = true;
+        m_orbit_plot_marks_standard_orbit = mark_standard_orbit_plotted;
     }
 }
 

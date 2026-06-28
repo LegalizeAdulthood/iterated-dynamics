@@ -253,6 +253,7 @@ add_library(libid
     include/ui/shell_sort.h ui/shell_sort.cpp
     include/ui/slideshw.h ui/slideshw.cpp
     include/ui/standard_fractal.h ui/standard_fractal.cpp
+    include/ui/standard_orbit_plot.h ui/standard_orbit_plot.cpp
     include/ui/standard_4d.h ui/standard_4d.cpp
     include/ui/starfield.h ui/starfield.cpp
     include/ui/stereo.h ui/stereo.cpp
