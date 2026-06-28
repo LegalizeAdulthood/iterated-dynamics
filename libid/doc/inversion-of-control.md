@@ -249,6 +249,14 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
+Orbit plotting is presentation work done from inside each pixel's orbit
+iteration.  After inversion, preserve user-visible behavior rather than
+the exact old keyboard polling cadence: orbit points should still appear
+during calculation, `orbitdelay` should still pace visible points, and a
+pending key should still wake that delay promptly.  The UI controller
+owns that pacing because the delay exists to make plotted orbit points
+visible, not to advance fractal math.
+
 ### Slice 1: Standard Orbit Plot Controller
 
 Work:
