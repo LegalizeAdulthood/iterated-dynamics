@@ -986,6 +986,7 @@ jobs:
             ninja-build \
             patchelf \
             pkgconf \
+            pixman \
             rsync \
             tigervnc
         run: |
