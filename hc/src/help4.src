@@ -60,6 +60,9 @@
   perturbation=auto|yes|no Select whether supported fractal types use the
                            perturbation orbit algorithm.  auto uses
                            perturbation when arbitrary precision is active.
+  perturbation-tolerance=<n> Sets the glitch-detection tolerance used by the
+                           perturbation algorithm.  The value must be greater
+                           than zero.  The default is 1e-6.
   fillcolor=normal|<nnn>   Sets a block fill color for use with Boundary
                            Tracing and Tesseral options
   symmetry=xxxx            Force symmetry to None, X axis, Y axis, XY axis,

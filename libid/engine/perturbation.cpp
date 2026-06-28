@@ -6,6 +6,7 @@
 #include "engine/fractals.h"
 #include "engine/ImageRegion.h"
 #include "engine/StandardFractal.h"
+#include "engine/UserData.h"
 #include "fractals/fractype.h"
 #include "math/biginit.h"
 
@@ -20,6 +21,8 @@ namespace id::engine
 
 void StandardFractal::start_perturbation_frame()
 {
+    m_pert_engine.set_glitch_tolerance(g_user.perturbation_tolerance);
+
     if (fractals::g_fractal_type == fractals::FractalType::MANDEL_Z_POWER)
     {
         constexpr int MAX_POWER{28};

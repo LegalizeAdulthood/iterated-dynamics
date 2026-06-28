@@ -3,6 +3,7 @@
 #pragma once
 
 #include "engine/Point.h"
+#include "engine/UserData.h"
 #include "math/big.h"
 
 #include <complex>
@@ -21,6 +22,8 @@ public:
     int calculate_pixel(int col, int row);
     bool retry_needed(const std::vector<Point> &points) const;
     bool select_retry_reference(const std::vector<Point> &points);
+    void set_glitch_tolerance(double tolerance);
+    double glitch_tolerance_threshold(const std::complex<double> &value) const;
     std::vector<Point> take_glitch_points();
     void finish();
 
@@ -56,6 +59,7 @@ private:
     bool m_center_stack_saved{};
     bool m_done{true};
     bool m_frame_initialized{};
+    double m_glitch_tolerance{DEFAULT_PERTURBATION_TOLERANCE};
     double m_percent_glitch_tolerance{0.1}; // What percentage of the image is okay to be glitched.
     int m_reference_points{};
     int m_saved_stack{};

@@ -33,10 +33,6 @@ using namespace id::ui;
 namespace id::engine
 {
 
-// Raising this number makes more calculations, but less variation between each calculation (less chance
-// of mis-identifying a glitched point).
-constexpr double GLITCH_TOLERANCE{1e-6};
-
 BFComplex PertEngine::initialize_frame_bf(const double zoom_radius)
 {
     reset_for_frame(zoom_radius);
@@ -99,6 +95,16 @@ bool PertEngine::select_retry_reference(const std::vector<Point> &points)
     const int index{static_cast<int>(random_unit() * points.size())};
     select_reference_point(points[index]);
     return true;
+}
+
+void PertEngine::set_glitch_tolerance(const double tolerance)
+{
+    m_glitch_tolerance = tolerance;
+}
+
+double PertEngine::glitch_tolerance_threshold(const std::complex<double> &value) const
+{
+    return mag_squared(value * m_glitch_tolerance);
 }
 
 std::vector<Point> PertEngine::take_glitch_points()
@@ -496,12 +502,12 @@ void PertEngine::reference_zoom_point(const BFComplex &center, const int max_ite
         c.imag(bf_to_float(z_bf.y));
 
         m_xn[i] = c;
-        // Norm is the squared version of abs and 0.000001 is 10^-3 squared.
+        // Norm is the squared version of abs and the perturbation tolerance is squared.
         // The reason we are storing this into an array is that we need to check the magnitude against this
         // value to see if the value is glitched. We are leaving it squared because otherwise we'd need to do
         // a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 
-        float_to_bf(tmp_bf, GLITCH_TOLERANCE);
+        float_to_bf(tmp_bf, m_glitch_tolerance);
         mult_bf(temp_real_bf, z_bf.x, tmp_bf);
         mult_bf(temp_imag_bf, z_bf.y, tmp_bf);
         std::complex<double> tolerance;
@@ -527,12 +533,12 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, const 
     {
         m_xn[i] = z;
 
-        // Norm is the squared version of abs and 0.000001 is 10^-3 squared.
+        // Norm is the squared version of abs and the perturbation tolerance is squared.
         // The reason we are storing this into an array is that we need to check the magnitude against this
         // value to see if the value is glitched. We are leaving it squared because otherwise we'd need to do
         // a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 
-        m_perturbation_tolerance_check[i] = mag_squared(z * GLITCH_TOLERANCE);
+        m_perturbation_tolerance_check[i] = glitch_tolerance_threshold(z);
 
         if (g_cur_fractal_specific->pert_ref == nullptr)
         {

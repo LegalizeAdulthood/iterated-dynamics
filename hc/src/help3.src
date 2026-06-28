@@ -29,6 +29,9 @@ The "perturbation=" parameter selects whether supported fractal types use
 the perturbation orbit algorithm.  The default value is "auto", which uses
 perturbation when arbitrary precision is active.
 
+The "perturbation-tolerance=" parameter controls perturbation glitch
+detection.  The value must be greater than zero.  The default is 1e-6.
+
 This option applies to most fractal types.
 
 Single-pass mode ("1") draws the screen pixel by pixel.
@@ -95,6 +98,9 @@ arithmetic.  Use "perturbation=yes" to force it on for supported fractal
 types, or "perturbation=no" to force it off.  The "passes=p" value is
 accepted for compatibility and is equivalent to "perturbation=yes" using
 the default solid-guessing traversal.
+
+Use "perturbation-tolerance=<n>" to adjust glitch detection.  Smaller
+values make glitch detection stricter; the default is 1e-6.
 
 The "fillcolor=" option in the <X> screen or on the command line sets a
 fixed color to be used by the boundary tracing and tesseral calculations

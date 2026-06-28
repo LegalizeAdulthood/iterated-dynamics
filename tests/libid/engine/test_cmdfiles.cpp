@@ -107,6 +107,11 @@ TEST(TestUserData, perturbationDefaultAuto)
     EXPECT_EQ(PerturbationMode::AUTO, UserData{}.perturbation);
 }
 
+TEST(TestUserData, perturbationToleranceDefault)
+{
+    EXPECT_DOUBLE_EQ(DEFAULT_PERTURBATION_TOLERANCE, UserData{}.perturbation_tolerance);
+}
+
 static std::ostream &operator<<(std::ostream &str, const CmdArgFlags value)
 {
     if (value == CmdArgFlags::BAD_ARG)
@@ -2283,6 +2288,56 @@ TEST_F(TestParameterCommandError, perturbationMissingValue)
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
     EXPECT_EQ(PerturbationMode::YES, g_user.perturbation);
+}
+
+TEST_F(TestParameterCommand, perturbationTolerance)
+{
+    ValueSaver saved_user_perturbation_tolerance{g_user.perturbation_tolerance, DEFAULT_PERTURBATION_TOLERANCE};
+
+    exec_cmd_arg("perturbation-tolerance=0.001", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_DOUBLE_EQ(0.001, g_user.perturbation_tolerance);
+}
+
+TEST_F(TestParameterCommandError, perturbationToleranceInvalidValue)
+{
+    ValueSaver saved_user_perturbation_tolerance{g_user.perturbation_tolerance, 0.25};
+
+    exec_cmd_arg("perturbation-tolerance=fmeh", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_DOUBLE_EQ(0.25, g_user.perturbation_tolerance);
+}
+
+TEST_F(TestParameterCommandError, perturbationToleranceMissingValue)
+{
+    ValueSaver saved_user_perturbation_tolerance{g_user.perturbation_tolerance, 0.25};
+
+    exec_cmd_arg("perturbation-tolerance=", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_DOUBLE_EQ(0.25, g_user.perturbation_tolerance);
+}
+
+TEST_F(TestParameterCommandError, perturbationToleranceZero)
+{
+    ValueSaver saved_user_perturbation_tolerance{g_user.perturbation_tolerance, 0.25};
+
+    exec_cmd_arg("perturbation-tolerance=0", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_DOUBLE_EQ(0.25, g_user.perturbation_tolerance);
+}
+
+TEST_F(TestParameterCommandError, perturbationToleranceNegative)
+{
+    ValueSaver saved_user_perturbation_tolerance{g_user.perturbation_tolerance, 0.25};
+
+    exec_cmd_arg("perturbation-tolerance=-0.001", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_DOUBLE_EQ(0.25, g_user.perturbation_tolerance);
 }
 
 TEST_F(TestParameterCommandError, passesSolidGuessNonNumeric)

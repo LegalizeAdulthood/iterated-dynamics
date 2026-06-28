@@ -248,32 +248,7 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: Perturbation Tolerance Setting
-
-Work:
-
-- Add a stored perturbation glitch-tolerance setting with the current
-  hard-coded `1e-6` value as the default.
-- Parse `perturbation-tolerance=<value>` from command files, parameter
-  files, and the command line.
-- Pass the configured value into `PertEngine` so the tolerance used to
-  build `m_perturbation_tolerance_check` no longer comes from the
-  hard-coded `GLITCH_TOLERANCE` constant.
-- Validate invalid or non-positive tolerance values in command parser
-  tests.
-- Add a focused `PertEngine` or standard-renderer test that proves a
-  non-default tolerance reaches the perturbation calculation.
-- Update help source for `perturbation-tolerance=` and describe that it
-  controls perturbation glitch detection.
-
-Done when:
-
-- The configured tolerance changes perturbation glitch detection.
-- `perturbation-tolerance=` is covered by parser and calculation
-  plumbing tests.
-- Help text documents the default and accepted value range.
-
-### Slice 2: Perturbation X Options and Parameter Output
+### Slice 1: Perturbation X Options and Parameter Output
 
 Work:
 
@@ -306,11 +281,11 @@ Manual testing:
 - Change perturbation tolerance and confirm generated parameter output
   includes it.
 
-### Slice 3: Perturbation Status Display
+### Slice 2: Perturbation Status Display
 
-This is the closing slice for PR #289.  Slices 1-2 add the remaining
-parameter surface; this slice adds the remaining status display from the
-PR.
+This is the closing slice for PR #289.  Slice 1 adds the remaining
+parameter output surface; this slice adds the remaining status display
+from the PR.
 
 Work:
 
@@ -339,7 +314,7 @@ Manual testing:
 - Render a perturbation image, press <Tab>, and confirm the perturbation
   status line is shown with the reference count.
 
-### Slice 4: LSystem Renderer
+### Slice 3: LSystem Renderer
 
 Work:
 
@@ -363,7 +338,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 5: Lyapunov Renderer
+### Slice 4: Lyapunov Renderer
 
 Work:
 
@@ -384,7 +359,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 6: Lorenz Photographer Mode
+### Slice 5: Lorenz Photographer Mode
 
 Work:
 
@@ -404,7 +379,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 7: Non-Interrupt Pending-Key Utilities
+### Slice 6: Non-Interrupt Pending-Key Utilities
 
 Work:
 

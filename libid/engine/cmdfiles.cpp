@@ -542,6 +542,7 @@ static void init_vars_fractal()
     g_fill_color = -1;                                   // no special fill color
     g_user.biomorph_value = -1;                          // turn off biomorph flag
     g_user.perturbation = PerturbationMode::AUTO;        // automatic perturbation selection
+    g_user.perturbation_tolerance = DEFAULT_PERTURBATION_TOLERANCE;
     g_outside_method = ColorMethod::ITER;                // outside color = iteration
     g_outside_color = -1;                                // outside color = -1 (not used)
     g_max_iterations = INITIAL_MAX_ITERATIONS;           // initial max iter
@@ -883,7 +884,7 @@ Command::Command(const std::string_view cur_arg, const CmdFile a_mode) :
     const std::size_t value_offset{equals == std::string::npos ? arg.size() : equals + 1};
     value = std::string_view{arg}.substr(value_offset);
     int j = static_cast<int>(variable_end);
-    if (j > 20)
+    if (j > 32)
     {
         arg_error(arg.c_str()); // keyword too long
         status = CmdArgFlags::BAD_ARG;
@@ -2958,6 +2959,16 @@ static CmdArgFlags cmd_perturbation(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
+static CmdArgFlags cmd_perturbation_tolerance(const Command &cmd)
+{
+    if (cmd.total_params != 1 || cmd.num_float_params != 1 || cmd.float_vals[0] <= 0.0)
+    {
+        return cmd.bad_arg();
+    }
+    g_user.perturbation_tolerance = cmd.float_vals[0];
+    return CmdArgFlags::FRACTAL_PARAM;
+}
+
 // periodicity=?
 static CmdArgFlags cmd_periodicity(const Command &cmd)
 {
@@ -3988,7 +3999,7 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 161> s_commands{
+static std::array<CommandHandler, 162> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
@@ -4089,6 +4100,7 @@ static std::array<CommandHandler, 161> s_commands{
     CommandHandler{"periodicity", cmd_periodicity},         //
     CommandHandler{"perspective", cmd_perspective},         //
     CommandHandler{"perturbation", cmd_perturbation},       //
+    CommandHandler{"perturbation-tolerance", cmd_perturbation_tolerance}, //
     CommandHandler{"pixelzoom", cmd_pixel_zoom},            //
     CommandHandler{"plotstyle", cmd_deprecated},            // deprecated print parameters
     CommandHandler{"polyphony", cmd_polyphony},             //
