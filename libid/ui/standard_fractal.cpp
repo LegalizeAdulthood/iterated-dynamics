@@ -59,7 +59,10 @@ int standard_fractal()
     {
         if (standard_fractal.orbit_plot_pending())
         {
-            drive_pending_orbit_plot(standard_fractal);
+            if (drive_orbit_plot(standard_fractal.pending_orbit_plot()))
+            {
+                standard_fractal.complete_pending_orbit_plot();
+            }
         }
         else
         {

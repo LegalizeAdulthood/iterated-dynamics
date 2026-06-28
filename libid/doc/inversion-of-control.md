@@ -270,30 +270,7 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Orbit Plot Driver Uses Caller-Owned State
-
-Work:
-
-- Split the UI orbit plotting helper so the pacing loop can drive an
-  `OrbitPlot` supplied by its caller.
-- Keep the caller responsible for marking its own pending orbit point
-  complete.
-- Preserve the existing `StandardFractal` caller behavior.
-- Do not add per-fractal one-off pacing helpers.
-
-Done when:
-
-- The UI orbit plotting helper is not coupled to `StandardFractal`
-  completion.
-- `ui::standard_fractal.cpp` drives and completes
-  `StandardFractal` pending orbit points explicitly.
-- `orbitdelay` pacing and wake-on-key behavior are unchanged.
-
-Manual testing:
-
-- `type=mandel showorbit=yes orbitdelay=200`
-
-### Slice 2: Popcorn Owns Pending Orbit Points
+### Slice 1: Popcorn Owns Pending Orbit Points
 
 Work:
 
@@ -318,7 +295,7 @@ Manual testing:
 - `type=popcorn orbitdelay=200`
 - `type=popcornjul orbitdelay=200`
 
-### Slice 3: Popcorn Owns Map Step Selection
+### Slice 2: Popcorn Owns Map Step Selection
 
 Work:
 
@@ -351,7 +328,7 @@ Manual testing:
 - `type=popcorn debugflags=96 orbitdelay=200`
 - `type=popcornjul orbitdelay=200`
 
-### Slice 4: Popcorn Owns Seed Scanning
+### Slice 3: Popcorn Owns Seed Scanning
 
 Work:
 
@@ -382,7 +359,7 @@ Manual testing:
 - `type=popcorn orbitdelay=200`
 - `type=popcorn reset=1960 orbitdelay=200`
 
-### Slice 5: PopcornJulia Uses Popcorn Renderer
+### Slice 4: PopcornJulia Uses Popcorn Renderer
 
 Work:
 
@@ -406,7 +383,7 @@ Manual testing:
 - `type=popcornjul orbitdelay=200`
 - `type=popcornjul reset=1960 orbitdelay=200`
 
-### Slice 6: FrothyBasin Orbit Plot Caller
+### Slice 5: FrothyBasin Orbit Plot Caller
 
 Work:
 
@@ -429,7 +406,7 @@ Manual testing:
 - Render FrothyBasin with orbit display enabled.
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 7: Standard Orbit Plot Caller
+### Slice 6: Standard Orbit Plot Caller
 
 Work:
 
@@ -455,7 +432,7 @@ Manual testing:
 - Render Mandelbrot with `showorbit=yes` and a visible `orbitdelay`.
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 8: Orbit Scrub Ownership
+### Slice 7: Orbit Scrub Ownership
 
 Work:
 
@@ -477,7 +454,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 9: Sound Pending-Key Utilities
+### Slice 8: Sound Pending-Key Utilities
 
 Work:
 

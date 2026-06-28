@@ -5,14 +5,14 @@
 namespace id::engine
 {
 
-class StandardFractal;
+class OrbitPlot;
 
 }
 
 namespace id::ui
 {
 
-void drive_pending_orbit_plot(engine::StandardFractal &standard_fractal);
+bool drive_orbit_plot(engine::OrbitPlot &orbit_plot);
 void reset_orbit_delay();
 
 } // namespace id::ui

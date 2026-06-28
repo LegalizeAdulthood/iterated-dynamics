@@ -4,7 +4,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/orbit.h"
-#include "engine/StandardFractal.h"
 #include "ui/KeyboardHandler.h"
 
 #include <chrono>
@@ -42,23 +41,14 @@ void wait_for_orbit_delay()
 
 } // namespace
 
-void drive_pending_orbit_plot(StandardFractal &standard_fractal)
+bool drive_orbit_plot(OrbitPlot &orbit_plot)
 {
-    if (!standard_fractal.orbit_plot_pending())
-    {
-        return;
-    }
-
-    OrbitPlot &orbit_plot{standard_fractal.pending_orbit_plot()};
     orbit_plot.iterate_without_delay();
     if (orbit_plot.consume_delay_pending())
     {
         wait_for_orbit_delay();
     }
-    if (orbit_plot.done())
-    {
-        standard_fractal.complete_pending_orbit_plot();
-    }
+    return orbit_plot.done();
 }
 
 void reset_orbit_delay()
