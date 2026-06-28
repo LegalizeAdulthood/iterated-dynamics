@@ -42,7 +42,6 @@ void Popcorn::resume()
     m_standard_fractal = std::make_unique<StandardFractal>();
     m_row = start_row;
     m_col = 0;
-    m_interrupted = false;
     m_done = false;
     if (m_row > g_i_stop_pt.y)
     {
@@ -54,18 +53,12 @@ void Popcorn::suspend()
 {
     alloc_resume(10, 1);
     put_resume(m_row);
-    m_interrupted = true;
     m_done = true;
 }
 
 bool Popcorn::done() const
 {
     return m_done;
-}
-
-bool Popcorn::interrupted() const
-{
-    return m_interrupted;
 }
 
 void Popcorn::iterate()
@@ -109,19 +102,6 @@ void Popcorn::complete()
 {
     g_calc_status = CalcStatus::COMPLETED;
     m_done = true;
-}
-
-// standalone engine for "popcorn"
-// subset of std engine
-int popcorn_type()
-{
-    Popcorn popcorn;
-    popcorn.resume();
-    while (!popcorn.done())
-    {
-        popcorn.iterate();
-    }
-    return popcorn.interrupted() ? -1 : 0;
 }
 
 int popcorn_fractal_old()

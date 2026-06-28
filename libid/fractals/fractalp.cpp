@@ -48,6 +48,7 @@
 #include "ui/lsystem.h"
 #include "ui/orbit2d.h"
 #include "ui/plasma.h"
+#include "ui/popcorn.h"
 #include "ui/standard_4d.h"
 #include "ui/testpt.h"
 

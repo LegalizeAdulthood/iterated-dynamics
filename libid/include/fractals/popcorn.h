@@ -28,7 +28,6 @@ public:
     void resume();
     void suspend();
     bool done() const;
-    bool interrupted() const;
     void iterate();
 
 private:
@@ -38,10 +37,8 @@ private:
     int m_row{};
     int m_col{};
     bool m_done{};
-    bool m_interrupted{};
 };
 
-int popcorn_type();
 int popcorn_fractal_old();
 int popcorn_fractal();
 int popcorn_orbit();

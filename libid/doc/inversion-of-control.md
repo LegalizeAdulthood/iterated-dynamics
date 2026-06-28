@@ -247,36 +247,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: Popcorn UI Wrapper
-
-Work:
-
-- Add `libid/ui/popcorn.h` and `libid/ui/popcorn.cpp`.
-- Move the `type=popcorn` image-level entry point from
-  `libid/fractals/popcorn.cpp` to the UI wrapper.
-- Route the `type=popcorn` table entry in
-  `libid/fractals/fractalp.cpp:666-675` through the UI wrapper.
-- The UI wrapper constructs or resumes `fractals::Popcorn`, owns
-  keyboard interruption through the handler stack, calls
-  `Popcorn::suspend()` on interruption, and calls `Popcorn::iterate()`
-  until `done()` is true.
-- Preserve `g_plot = no_plot`, `g_temp_sqr_x = 0`, and the existing
-  Popcorn traversal order.
-
-Done when:
-
-- `type=popcorn` image control lives in `libid/ui`.
-- `libid/fractals/popcorn.cpp` does not own keyboard interruption or
-  image-level UI policy.
-- Existing `type=popcorn` image output is unchanged.
-
-Manual testing:
-
-- Render `type=popcorn`.
-- Press a key during rendering and confirm it returns to the outer UI
-  handling without losing the key.
-
-### Slice 2: PopcornJul Routing Audit
+### Slice 1: PopcornJul Routing Audit
 
 Work:
 
@@ -301,7 +272,7 @@ Manual testing:
 - None, unless automated image coverage does not exercise
   `type=popcornjul`.
 
-### Slice 3: Orbit Delay Pacing
+### Slice 2: Orbit Delay Pacing
 
 Work:
 
@@ -333,7 +304,7 @@ Manual testing:
 - Press a key during orbit delay and confirm the UI responds promptly
   without losing the key.
 
-### Slice 4: Sound Pending-Key Utilities
+### Slice 3: Sound Pending-Key Utilities
 
 Work:
 

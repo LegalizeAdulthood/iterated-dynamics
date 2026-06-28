@@ -244,6 +244,7 @@ add_library(libid
     include/ui/orbit3d.h ui/orbit3d.cpp
     include/ui/passes_options.h ui/passes_options.cpp
     include/ui/plasma.h ui/plasma.cpp
+    include/ui/popcorn.h ui/popcorn.cpp
     include/ui/put_string_center.h ui/put_string_center.cpp
     include/ui/read_ticker.h ui/read_ticker.cpp
     include/ui/rotate.h ui/rotate.cpp
