@@ -17,7 +17,9 @@ public:
 
     void reset(double real, double imag, int color);
     void iterate();
+    void iterate_without_delay();
     bool done() const;
+    bool consume_delay_pending();
     void scrub();
 
 private:
@@ -37,6 +39,7 @@ private:
     double m_real{};
     double m_imag{};
     int m_color{};
+    bool m_delay_pending{};
     bool m_done{true};
 };
 

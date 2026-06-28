@@ -64,10 +64,20 @@ void OrbitPlot::reset(const double real, const double imag, const int color)
 
 void OrbitPlot::iterate()
 {
+    iterate_without_delay();
+    if (consume_delay_pending())
+    {
+        wait_until(g_orbit_delay);
+    }
+}
+
+void OrbitPlot::iterate_without_delay()
+{
     if (m_done)
     {
         return;
     }
+    m_delay_pending = false;
     plot_d_orbit(m_real - g_image_region.m_min.x, m_imag - g_image_region.m_max.y, m_color);
     m_done = true;
 }
@@ -75,6 +85,13 @@ void OrbitPlot::iterate()
 bool OrbitPlot::done() const
 {
     return m_done;
+}
+
+bool OrbitPlot::consume_delay_pending()
+{
+    const bool delay_pending{m_delay_pending};
+    m_delay_pending = false;
+    return delay_pending;
 }
 
 void OrbitPlot::clear_saved_points_if_reset()
@@ -128,7 +145,7 @@ void OrbitPlot::plot_d_orbit(const double dx, const double dy, const int color)
         }
         else if (g_orbit_delay > 0)
         {
-            wait_until(g_orbit_delay);
+            m_delay_pending = true;
         }
     }
     else
@@ -147,7 +164,7 @@ void OrbitPlot::plot_d_orbit(const double dx, const double dy, const int color)
         }
         else if (g_orbit_delay > 0)
         {
-            wait_until(g_orbit_delay);
+            m_delay_pending = true;
         }
     }
 

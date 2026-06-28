@@ -68,6 +68,21 @@ bool dispatch_keyboard_key(const int key)
     return false;
 }
 
+bool dispatch_pending_keyboard_input()
+{
+    bool key_dispatched = false;
+    while (driver_key_pressed() != 0)
+    {
+        key_dispatched = true;
+        dispatch_keyboard_key(driver_get_key());
+        if (s_calc_interrupted)
+        {
+            break;
+        }
+    }
+    return key_dispatched;
+}
+
 void set_calc_interrupted()
 {
     s_calc_interrupted = true;
@@ -80,14 +95,7 @@ void reset_calc_interrupted()
 
 bool calc_interrupted()
 {
-    while (driver_key_pressed() != 0)
-    {
-        dispatch_keyboard_key(driver_get_key());
-        if (s_calc_interrupted)
-        {
-            break;
-        }
-    }
+    dispatch_pending_keyboard_input();
     return s_calc_interrupted;
 }
 

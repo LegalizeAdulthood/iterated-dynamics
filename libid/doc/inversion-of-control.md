@@ -257,36 +257,7 @@ pending key should still wake that delay promptly.  The UI controller
 owns that pacing because the delay exists to make plotted orbit points
 visible, not to advance fractal math.
 
-### Slice 1: Standard Orbit Plot Controller
-
-Work:
-
-- Update `libid/ui/standard_fractal.cpp` to drive pending orbit plot work
-  from `StandardFractal`.
-- Interleave orbit plot work with the keyboard handler stack.
-- Move orbit-delay pacing for standard-render orbit points into the UI
-  controller.
-- Keep `o` orbit toggling and main-loop key interruption behavior.
-
-Done when:
-
-- Standard rendering yields orbit display work to UI.
-- UI decides when to continue plotting, delay, or interrupt rendering.
-- Standard orbit plotting no longer reaches keyboard polling through
-  `engine/wait_until.cpp`.
-- A pending key still wakes orbit delay promptly and is left for existing
-  UI handling.
-
-Manual testing:
-
-- Enable orbit display with a visible orbit delay.
-- Confirm orbit dots are paced.
-- Press a key during orbit delay and confirm the UI responds promptly
-  without losing the key.
-- Toggle orbit display with `o` and confirm saved orbit points are
-  scrubbed.
-
-### Slice 2: Remaining Orbit Plot Callers
+### Slice 1: Remaining Orbit Plot Callers
 
 Work:
 
@@ -309,7 +280,7 @@ Manual testing:
 - Render FrothyBasin with orbit display enabled.
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 3: Orbit Scrub Ownership
+### Slice 2: Orbit Scrub Ownership
 
 Work:
 
@@ -331,7 +302,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 4: Sound Pending-Key Utilities
+### Slice 3: Sound Pending-Key Utilities
 
 Work:
 

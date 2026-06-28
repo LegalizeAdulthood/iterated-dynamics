@@ -41,6 +41,7 @@ private:
 void push_keyboard_handler(KeyboardHandlerPtr handler);
 void pop_keyboard_handler(const KeyboardHandlerPtr &handler);
 bool dispatch_keyboard_key(int key);
+bool dispatch_pending_keyboard_input();
 
 void set_calc_interrupted();
 void reset_calc_interrupted();
