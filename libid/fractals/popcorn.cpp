@@ -12,6 +12,7 @@
 #include "math/fpu087.h"
 
 #include <cmath>
+#include <memory>
 
 using namespace id::engine;
 using namespace id::math;
@@ -19,9 +20,14 @@ using namespace id::math;
 namespace id::fractals
 {
 
-// standalone engine for "popcorn"
-// subset of std engine
-int popcorn_type()
+Popcorn::Popcorn() :
+    m_standard_fractal{std::make_unique<StandardFractal>()}
+{
+}
+
+Popcorn::~Popcorn() = default;
+
+void Popcorn::resume()
 {
     int start_row = 0;
     if (g_resuming)
@@ -33,22 +39,122 @@ int popcorn_type()
     g_keyboard_check_interval = g_max_keyboard_check_interval;
     g_plot = no_plot;
     g_temp_sqr_x = 0;
-    StandardFractal standard_fractal;
-    for (g_row = start_row; g_row <= g_i_stop_pt.y; g_row++)
+    m_standard_fractal = std::make_unique<StandardFractal>();
+    m_row = start_row;
+    m_col = 0;
+    m_interrupted = false;
+    m_done = false;
+    if (m_row > g_i_stop_pt.y)
+    {
+        complete();
+    }
+}
+
+void Popcorn::suspend()
+{
+    alloc_resume(10, 1);
+    put_resume(m_row);
+    m_interrupted = true;
+    m_done = true;
+}
+
+bool Popcorn::done() const
+{
+    return m_done;
+}
+
+bool Popcorn::interrupted() const
+{
+    return m_interrupted;
+}
+
+void Popcorn::iterate()
+{
+    if (m_done)
+    {
+        return;
+    }
+
+    g_row = m_row;
+    g_col = m_col;
+    if (m_col == 0)
     {
         g_reset_periodicity = true;
-        for (g_col = 0; g_col <= g_i_stop_pt.x; g_col++)
+    }
+    if (m_standard_fractal->calculate_standard_pixel(false) == -1)
+    {
+        suspend();
+        return;
+    }
+    g_reset_periodicity = false;
+
+    ++m_col;
+    g_col = m_col;
+    if (m_col > g_i_stop_pt.x)
+    {
+        ++m_row;
+        g_row = m_row;
+        if (m_row > g_i_stop_pt.y)
         {
-            if (standard_fractal.calculate_standard_pixel(false) == -1) // interrupted
-            {
-                alloc_resume(10, 1);
-                put_resume(g_row);
-                return -1;
-            }
-            g_reset_periodicity = false;
+            complete();
+        }
+        else
+        {
+            m_col = 0;
         }
     }
+}
+
+void Popcorn::complete()
+{
     g_calc_status = CalcStatus::COMPLETED;
+    m_done = true;
+}
+
+// standalone engine for "popcorn"
+// subset of std engine
+int popcorn_type()
+{
+    Popcorn popcorn;
+    popcorn.resume();
+    while (!popcorn.done())
+    {
+        popcorn.iterate();
+    }
+    return popcorn.interrupted() ? -1 : 0;
+}
+
+int popcorn_fractal_old()
+{
+    g_tmp_z = g_old_z;
+    g_tmp_z.x *= 3.0;
+    g_tmp_z.y *= 3.0;
+    sin_cos(g_tmp_z.x, g_sin_x, g_cos_x);
+    double sin_y;
+    double cos_y;
+    sin_cos(g_tmp_z.y, sin_y, cos_y);
+    g_tmp_z.x = g_sin_x / g_cos_x + g_old_z.x;
+    g_tmp_z.y = sin_y / cos_y + g_old_z.y;
+    sin_cos(g_tmp_z.x, g_sin_x, g_cos_x);
+    sin_cos(g_tmp_z.y, sin_y, cos_y);
+    g_new_z.x = g_old_z.x - g_param_z1.x * sin_y;
+    g_new_z.y = g_old_z.y - g_param_z1.x * g_sin_x;
+    if (g_plot == no_plot)
+    {
+        plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
+        g_old_z = g_new_z;
+    }
+    else
+    {
+        g_temp_sqr_x = sqr(g_new_z.x);
+    }
+    g_temp_sqr_y = sqr(g_new_z.y);
+    g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+    if (g_magnitude >= g_magnitude_limit)
+    {
+        return 1;
+    }
+    g_old_z = g_new_z;
     return 0;
 }
 

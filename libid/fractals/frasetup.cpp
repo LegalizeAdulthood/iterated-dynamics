@@ -20,6 +20,7 @@
 #include "fractals/pickover_mandelbrot.h"
 #include "fractals/popcorn.h"
 #include "misc/debug_flags.h"
+#include "misc/version.h"
 #include "ui/editpal.h"
 
 #include <cmath>
@@ -340,7 +341,11 @@ bool julia_per_image()
                 g_symmetry = SymmetryType::ORIGIN;
             }
         }
-        if (default_functions && g_debug_flag == DebugFlags::FORCE_REAL_POPCORN)
+        if (g_version <= parse_legacy_version(1960))
+        {
+            g_dispatch.set_orbit_calc(popcorn_fractal_old);
+        }
+        else if (default_functions && g_debug_flag == DebugFlags::FORCE_REAL_POPCORN)
         {
             g_dispatch.set_orbit_calc(popcorn_fractal);
         }

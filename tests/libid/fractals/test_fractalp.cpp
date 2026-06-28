@@ -26,6 +26,7 @@
 #include <gtest/gtest.h>
 #include <math/big.h>
 #include <misc/debug_flags.h>
+#include <misc/version.h>
 #include <ui/editpal.h>
 
 #include <algorithm>
@@ -458,6 +459,17 @@ TEST(TestFractalDispatch, perImageSelectorsOnlyUpdateDispatch)
         EXPECT_TRUE(julia_per_image());
 
         EXPECT_EQ(popcorn_fractal, g_dispatch.orbit_calc());
+        expect_table_functions(FractalType::POPCORN_JUL, table);
+    }
+
+    {
+        DispatchSelectionState state{FractalType::POPCORN_JUL};
+        const TableFunctions table{table_functions(FractalType::POPCORN_JUL)};
+        ValueSaver<Version> saved_version{g_version, parse_legacy_version(1960)};
+
+        EXPECT_TRUE(julia_per_image());
+
+        EXPECT_EQ(popcorn_fractal_old, g_dispatch.orbit_calc());
         expect_table_functions(FractalType::POPCORN_JUL, table);
     }
 }

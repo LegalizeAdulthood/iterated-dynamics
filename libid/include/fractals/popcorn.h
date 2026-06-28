@@ -2,10 +2,47 @@
 //
 #pragma once
 
+#include <memory>
+
+namespace id::engine
+{
+
+class StandardFractal;
+
+}
+
 namespace id::fractals
 {
 
+class Popcorn
+{
+public:
+    Popcorn();
+    ~Popcorn();
+
+    Popcorn(const Popcorn &) = delete;
+    Popcorn(Popcorn &&) = delete;
+    Popcorn &operator=(const Popcorn &) = delete;
+    Popcorn &operator=(Popcorn &&) = delete;
+
+    void resume();
+    void suspend();
+    bool done() const;
+    bool interrupted() const;
+    void iterate();
+
+private:
+    void complete();
+
+    std::unique_ptr<engine::StandardFractal> m_standard_fractal;
+    int m_row{};
+    int m_col{};
+    bool m_done{};
+    bool m_interrupted{};
+};
+
 int popcorn_type();
+int popcorn_fractal_old();
 int popcorn_fractal();
 int popcorn_orbit();
 

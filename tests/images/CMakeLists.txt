@@ -134,7 +134,7 @@ add_fractal_type_image_test(
     "mandel" "mandel4" "mandelbrotmix4" "mandelcloud" "mandelfn" "mandellambda" "mandphoenix" "mandphoenixclx"
     "manowar" "manowarj" "manzpower" "manzzpwr" "marksjulia" "marksmandel" "marksmandelpwr"
     "newtbasin" "newton"
-    "phoenix" "phoenixcplx"
+    "phoenix" "phoenixcplx" "popcorn"
     "quat" "quatjul"
     "sierpinski" "spider"
     "tetrate" "tim's_error"
@@ -148,6 +148,7 @@ add_random_fractal_type_image_test(
     "plasma"
 )
 add_image_test("cellular" IGNORE_COLORMAP PARAMETERS "type=cellular")
+add_image_test("popcorn-1960" PARAMETERS "reset=1960" "type=popcorn")
 add_image_test("fnz-plus-fnpixel" PARAMETERS "type=fn(z)+fn(pix)")
 add_image_test("fn-zsqr" PARAMETERS "type=fn(z*z)")
 add_image_test("fn-mul-fn" PARAMETERS "type=fn*fn")

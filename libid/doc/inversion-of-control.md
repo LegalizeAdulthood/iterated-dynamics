@@ -247,38 +247,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: Popcorn Renderer Object
-
-Work:
-
-- Add a `fractals::Popcorn` calculation object in
-  `libid/include/fractals/popcorn.h` and
-  `libid/fractals/popcorn.cpp`.
-- Move the image-level loop state from
-  `libid/fractals/popcorn.cpp:22-47` into `Popcorn::resume()`,
-  `Popcorn::suspend()`, `Popcorn::done()`, and
-  `Popcorn::iterate()`.
-- Preserve the current resume behavior: restore the starting row,
-  resume at the saved row, save the current row on suspension, and set
-  `g_calc_status` when the image completes.
-- Keep `popcorn_fractal()` and `popcorn_orbit()` in
-  `libid/fractals/popcorn.cpp:55-128` as per-orbit helpers shared by
-  `type=popcorn` and `type=popcornjul`.
-- Keep this slice mechanical: do not move keyboard polling yet.
-
-Done when:
-
-- `Popcorn` owns the `type=popcorn` image iteration state.
-- `popcorn_type()` is only a thin compatibility wrapper around
-  `Popcorn`.
-- `popcorn_fractal()` and `popcorn_orbit()` remain orbit helpers, not
-  image-level renderers.
-
-Manual testing:
-
-- None.  This slice should be covered by existing image tests.
-
-### Slice 2: Popcorn UI Wrapper
+### Slice 1: Popcorn UI Wrapper
 
 Work:
 
@@ -307,7 +276,7 @@ Manual testing:
 - Press a key during rendering and confirm it returns to the outer UI
   handling without losing the key.
 
-### Slice 3: PopcornJul Routing Audit
+### Slice 2: PopcornJul Routing Audit
 
 Work:
 
@@ -332,7 +301,7 @@ Manual testing:
 - None, unless automated image coverage does not exercise
   `type=popcornjul`.
 
-### Slice 4: Orbit Delay Pacing
+### Slice 3: Orbit Delay Pacing
 
 Work:
 
@@ -364,7 +333,7 @@ Manual testing:
 - Press a key during orbit delay and confirm the UI responds promptly
   without losing the key.
 
-### Slice 5: Sound Pending-Key Utilities
+### Slice 4: Sound Pending-Key Utilities
 
 Work:
 
