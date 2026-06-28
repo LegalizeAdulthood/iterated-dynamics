@@ -247,17 +247,134 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: Non-Interrupt Pending-Key Utilities
+### Slice 1: Popcorn Renderer Object
 
 Work:
 
-- Treat `engine/sound.cpp` and `engine/wait_until.cpp` separately from
-  render interruption.
+- Add a `fractals::Popcorn` calculation object in
+  `libid/include/fractals/popcorn.h` and
+  `libid/fractals/popcorn.cpp`.
+- Move the image-level loop state from
+  `libid/fractals/popcorn.cpp:22-47` into `Popcorn::resume()`,
+  `Popcorn::suspend()`, `Popcorn::done()`, and
+  `Popcorn::iterate()`.
+- Preserve the current resume behavior: restore the starting row,
+  resume at the saved row, save the current row on suspension, and set
+  `g_calc_status` when the image completes.
+- Keep `popcorn_fractal()` and `popcorn_orbit()` in
+  `libid/fractals/popcorn.cpp:55-128` as per-orbit helpers shared by
+  `type=popcorn` and `type=popcornjul`.
+- Keep this slice mechanical: do not move keyboard polling yet.
+
+Done when:
+
+- `Popcorn` owns the `type=popcorn` image iteration state.
+- `popcorn_type()` is only a thin compatibility wrapper around
+  `Popcorn`.
+- `popcorn_fractal()` and `popcorn_orbit()` remain orbit helpers, not
+  image-level renderers.
+
+Manual testing:
+
+- None.  This slice should be covered by existing image tests.
+
+### Slice 2: Popcorn UI Wrapper
+
+Work:
+
+- Add `libid/ui/popcorn.h` and `libid/ui/popcorn.cpp`.
+- Move the `type=popcorn` image-level entry point from
+  `libid/fractals/popcorn.cpp` to the UI wrapper.
+- Route the `type=popcorn` table entry in
+  `libid/fractals/fractalp.cpp:666-675` through the UI wrapper.
+- The UI wrapper constructs or resumes `fractals::Popcorn`, owns
+  keyboard interruption through the handler stack, calls
+  `Popcorn::suspend()` on interruption, and calls `Popcorn::iterate()`
+  until `done()` is true.
+- Preserve `g_plot = no_plot`, `g_temp_sqr_x = 0`, and the existing
+  Popcorn traversal order.
+
+Done when:
+
+- `type=popcorn` image control lives in `libid/ui`.
+- `libid/fractals/popcorn.cpp` does not own keyboard interruption or
+  image-level UI policy.
+- Existing `type=popcorn` image output is unchanged.
+
+Manual testing:
+
+- Render `type=popcorn`.
+- Press a key during rendering and confirm it returns to the outer UI
+  handling without losing the key.
+
+### Slice 3: PopcornJul Routing Audit
+
+Work:
+
+- Verify `type=popcornjul` in `libid/fractals/fractalp.cpp:1154-1163`
+  remains routed through `standard_fractal_type`.
+- Verify `type=popcornjul` is driven by `libid/ui/standard_fractal.cpp`
+  and `engine::StandardFractal`, not by the Popcorn standalone wrapper.
+- Keep `libid/fractals/frasetup.cpp:324-352` as the shared
+  `popcorn_fractal()` / `popcorn_orbit()` orbit-helper selection for
+  both Popcorn types.
+- Document or test any routing distinction that is not already covered by
+  existing image tests.
+
+Done when:
+
+- `type=popcorn` and `type=popcornjul` both have UI-owned image control.
+- The only Popcorn-family `plot_orbit()` issue left is the shared
+  `plot_d_orbit()` pacing path handled by the next slice.
+
+Manual testing:
+
+- None, unless automated image coverage does not exercise
+  `type=popcornjul`.
+
+### Slice 4: Orbit Delay Pacing
+
+Work:
+
+- Treat `libid/engine/orbit.cpp:57-130` separately from generic timing
+  cleanup.
+- `plot_d_orbit()` calls `wait_until()` for orbit-delay pacing in two
+  branches.  Since `wait_until()` wakes on pending keyboard input, this
+  is hidden keyboard I/O in the orbit display path.
+- Split raw timing from input-aware waiting.  Keep
+  `libid/engine/wait_until.cpp` as a pure timing primitive, or add such a
+  primitive, and put the pending-input wake behavior behind a UI-owned
+  orbit pacing helper.
+- Update `plot_d_orbit()` to use the UI-owned orbit pacing helper for
+  `g_orbit_delay`.
+- Preserve scaled-sound and normal orbit-delay behavior.
+
+Done when:
+
+- `plot_d_orbit()` no longer reaches keyboard polling through
+  `wait_until()`.
+- Orbit delay still paces plotted orbit dots.
+- A pending key still wakes the orbit delay promptly and is left for the
+  existing UI handling.
+
+Manual testing:
+
+- Enable orbit display with a visible orbit delay.
+- Confirm orbit dots are paced.
+- Press a key during orbit delay and confirm the UI responds promptly
+  without losing the key.
+
+### Slice 5: Sound Pending-Key Utilities
+
+Work:
+
+- Treat `engine/sound.cpp` separately from render interruption.
 - Preserve the rule that pending input suppresses tone playback.
-- Preserve the rule that delay loops wake when input is pending.
 - Move the direct keyboard polling behind UI-owned timing or sound
   coordination without making calculation code ask whether rendering
   should stop.
+- If the orbit pacing slice has not already done so, remove keyboard
+  polling from `engine/wait_until.cpp`.
 
 Done when:
 
@@ -268,7 +385,7 @@ Done when:
 Manual testing:
 
 - Confirm sound is still suppressed when input is pending.
-- Confirm delay loops still wake when input is pending.
+- Confirm sound delay still wakes promptly when input is pending.
 
 ## Current Direct Input Leaks
 
@@ -278,6 +395,8 @@ Direct polling or key consumption exists outside `libid/ui` in:
   standard-pixel fallback polling.
 - `libid/engine/solid_guess.cpp`: interrupt checks during block repaint.
 - `libid/engine/soi.cpp`: interrupt checks during recursive scan.
+- `libid/engine/orbit.cpp`: orbit pacing reaches input polling through
+  `wait_until()`.
 - `libid/engine/sound.cpp`: suppress tone while keys are pending.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
 - `libid/fractals/lorenz.cpp`: orbit interrupt.
