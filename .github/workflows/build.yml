@@ -982,6 +982,8 @@ jobs:
           tar -xJpf xbase.tar.xz -C /
           rm xbase.tar.xz
           /usr/sbin/pkg_add -u \
+            autoconf \
+            automake \
             bash \
             bison \
             cmake \
