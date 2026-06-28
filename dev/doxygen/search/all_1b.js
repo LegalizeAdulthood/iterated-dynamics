@@ -287,7 +287,7 @@ var searchData=
   ['spindac_2eh_284',['spindac.h',['../df/d7f/spindac_8h.html',1,'']]],
   ['spindirection_285',['SpinDirection',['../dc/d31/namespaceid_1_1engine.html#a9a9437cfd5a0671b6f7785fb0259d527',1,'id::engine']]],
   ['spiral_5fmap_286',['spiral_map',['../dc/d76/namespaceid_1_1ui.html#a111586ed1c22f9b8dab46a41affff521',1,'id::ui']]],
-  ['sqr_287',['sqr',['../dc/d31/namespaceid_1_1engine.html#afb93d78515f158d8ea00d0f408bf9416a18e1c2e0bb7dfbfa5693566c43b15cc7',1,'id::engine::SQR'],['../d0/db0/namespaceid_1_1math.html#a02471359245500457c7e077f3ddf6c01',1,'id::math::sqr()']]],
+  ['sqr_287',['sqr',['../d0/db0/namespaceid_1_1math.html#a02471359245500457c7e077f3ddf6c01',1,'id::math::sqr()'],['../dc/d31/namespaceid_1_1engine.html#afb93d78515f158d8ea00d0f408bf9416a18e1c2e0bb7dfbfa5693566c43b15cc7',1,'id::engine::SQR']]],
   ['sqr_2eh_288',['sqr.h',['../d8/df3/sqr_8h.html',1,'']]],
   ['sqr_5f1_5fover_5ffn_289',['SQR_1_OVER_FN',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca5ddca342544a12e32a4ccf0fad969ff8',1,'id::fractals']]],
   ['sqr_5f1_5fover_5ftrig_5forbit_290',['sqr_1_over_trig_orbit',['../d5/d38/namespaceid_1_1fractals.html#af0de76789b313c17b123e02a7a81d36e',1,'id::fractals']]],

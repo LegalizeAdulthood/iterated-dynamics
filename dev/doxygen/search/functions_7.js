@@ -7,7 +7,7 @@ var searchData=
   ['halley_5forbit_4',['halley_orbit',['../d5/d38/namespaceid_1_1fractals.html#a5e5e6e148d023651bdd30fb36041b7bc',1,'id::fractals']]],
   ['halley_5fper_5fimage_5',['halley_per_image',['../d5/d38/namespaceid_1_1fractals.html#a7aaf05cd96b738243353ec6a86a51589',1,'id::fractals']]],
   ['halley_5fper_5fpixel_6',['halley_per_pixel',['../d5/d38/namespaceid_1_1fractals.html#a1861f3400782d4cb95dd7aff39996f55',1,'id::fractals']]],
-  ['handle_5fkey_7',['handle_key',['../d8/dcf/classid_1_1ui_1_1MainLoopKeyboardHandler.html#a4909acc72973a9c67b7538669d8618bc',1,'id::ui::MainLoopKeyboardHandler::handle_key()'],['../dc/de6/classid_1_1ui_1_1KeyboardHandler.html#aff056be26da8e03b7c16549aa2281c56',1,'id::ui::KeyboardHandler::handle_key()']]],
+  ['handle_5fkey_7',['handle_key',['../d8/dcf/classid_1_1ui_1_1MainLoopKeyboardHandler.html#a4909acc72973a9c67b7538669d8618bc',1,'id::ui::MainLoopKeyboardHandler::handle_key()'],['../d8/d75/classid_1_1ui_1_1LorenzStereoKeyboardHandler.html#a393c0de50d79e5fab89e09c19c6761ce',1,'id::ui::LorenzStereoKeyboardHandler::handle_key()'],['../dc/de6/classid_1_1ui_1_1KeyboardHandler.html#aff056be26da8e03b7c16549aa2281c56',1,'id::ui::KeyboardHandler::handle_key()']]],
   ['handle_5fspecial_5fkeys_8',['handle_special_keys',['../dc/d76/namespaceid_1_1ui.html#a23fa5bf3a85f7a787f57ff046c3528a5',1,'id::ui']]],
   ['has_5fcalc_5ftype_9',['has_calc_type',['../d9/db4/classid_1_1fractals_1_1FractalDispatch.html#a345551ccaa303a1d50d88986d0c7ae21',1,'id::fractals::FractalDispatch']]],
   ['has_5fext_10',['has_ext',['../d0/d19/namespaceid_1_1io.html#abc207d0c907b6c31c3412d51a12c8f65',1,'id::io']]],
@@ -27,7 +27,7 @@ var searchData=
   ['hidden_24',['hidden',['../d6/ddb/classid_1_1ui_1_1CrossHairCursor.html#a53896eab21d7b5d2e56231aa5edd056c',1,'id::ui::CrossHairCursor']]],
   ['hide_25',['hide',['../d6/ddb/classid_1_1ui_1_1CrossHairCursor.html#aee9fb8b13f8860f3aa15b33f15a28628',1,'id::ui::CrossHairCursor']]],
   ['hide_5fcursor_26',['hide_cursor',['../db/de5/classid_1_1misc_1_1WinText.html#aa38ff14da13efb18fb0e28c504e551c3',1,'id::misc::WinText']]],
-  ['hide_5ftext_5fcursor_27',['hide_text_cursor',['../d3/def/classid_1_1misc_1_1Driver.html#a12805e0c4eed4dcdbd69e7365815255b',1,'id::misc::Driver::hide_text_cursor()'],['../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#ac8de8df0fafd838878638b89c431902a',1,'id::misc::Win32BaseDriver::hide_text_cursor()']]],
+  ['hide_5ftext_5fcursor_27',['hide_text_cursor',['../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#ac8de8df0fafd838878638b89c431902a',1,'id::misc::Win32BaseDriver::hide_text_cursor()'],['../d3/def/classid_1_1misc_1_1Driver.html#a12805e0c4eed4dcdbd69e7365815255b',1,'id::misc::Driver::hide_text_cursor()']]],
   ['history_5finit_28',['history_init',['../dc/d76/namespaceid_1_1ui.html#ab186f640e6741b06062a45d09c6dd576',1,'id::ui']]],
   ['hopalong2d_5forbit_29',['hopalong2d_orbit',['../d5/d38/namespaceid_1_1fractals.html#aa1886dda61d142f4a1153cad6775e1ee',1,'id::fractals']]],
   ['hyper_5fcomplex_5forbit_30',['hyper_complex_orbit',['../d5/d38/namespaceid_1_1fractals.html#a7fa6f5b04f0bf209a398efe9c2e6438a',1,'id::fractals']]]

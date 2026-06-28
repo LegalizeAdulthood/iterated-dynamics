@@ -3409,16 +3409,16 @@ MainState color_cycle(MainContext &context)
 libid/ui/slideshw.cpp:133:9: style: Consider using std::find_if algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
-libid/ui/stereo.cpp:297:5: error: Non-local variable 's_data' will use pointer to local variable 'v'. [danglingLifetime]
+libid/ui/stereo.cpp:339:5: error: Non-local variable 's_data' will use pointer to local variable 'v'. [danglingLifetime]
     s_data = &v; // set static vars to stack structure
     ^
-libid/ui/stereo.cpp:297:14: note: Address of variable taken here.
+libid/ui/stereo.cpp:339:14: note: Address of variable taken here.
     s_data = &v; // set static vars to stack structure
              ^
-libid/ui/stereo.cpp:288:16: note: Variable created here.
+libid/ui/stereo.cpp:330:16: note: Variable created here.
     StereoData v;
                ^
-libid/ui/stereo.cpp:297:5: note: Non-local variable 's_data' will use pointer to local variable 'v'.
+libid/ui/stereo.cpp:339:5: note: Non-local variable 's_data' will use pointer to local variable 'v'.
     s_data = &v; // set static vars to stack structure
     ^
 tests/libid/engine/test_cmdfiles.cpp:1363:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
