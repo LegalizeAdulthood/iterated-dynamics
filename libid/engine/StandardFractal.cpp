@@ -215,6 +215,25 @@ bool StandardFractal::consume_standard_pixel_yield()
     return yielded;
 }
 
+void StandardFractal::complete_pending_orbit_plot()
+{
+    assert(m_orbit_plot_pending);
+    assert(orbit_plot().done());
+    m_orbit_plot_pending = false;
+    m_standard_pixel_orbit_plotted = true;
+}
+
+bool StandardFractal::orbit_plot_pending() const
+{
+    return m_orbit_plot_pending;
+}
+
+OrbitPlot &StandardFractal::pending_orbit_plot()
+{
+    assert(m_orbit_plot_pending);
+    return orbit_plot();
+}
+
 StandardPassStatus StandardFractal::standard_pass_status() const
 {
     StandardPassStatus status{m_standard_pass.status()};
@@ -269,6 +288,7 @@ void StandardFractal::clear_standard_pixel()
     m_standard_pixel_active = false;
     m_standard_pixel_input_checked = false;
     m_standard_pixel_iteration_started = false;
+    m_standard_pixel_orbit_plotted = false;
 }
 
 void StandardFractal::complete()
@@ -320,6 +340,15 @@ void StandardFractal::pop_work_list_front()
     for (int i = 0; i < g_num_work_list; ++i)
     {
         g_work_list[i] = g_work_list[i + 1];
+    }
+}
+
+void StandardFractal::queue_orbit_plot(const double real, const double imag, const int color)
+{
+    if (!m_orbit_plot_pending)
+    {
+        orbit_plot().reset(real, imag, color);
+        m_orbit_plot_pending = true;
     }
 }
 

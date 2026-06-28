@@ -40,6 +40,21 @@ public:
     }
 };
 
+void drive_pending_orbit_plot(StandardFractal &standard_fractal)
+{
+    if (!standard_fractal.orbit_plot_pending())
+    {
+        return;
+    }
+
+    OrbitPlot &orbit_plot{standard_fractal.pending_orbit_plot()};
+    orbit_plot.iterate();
+    if (orbit_plot.done())
+    {
+        standard_fractal.complete_pending_orbit_plot();
+    }
+}
+
 } // namespace
 
 int standard_fractal()
@@ -55,7 +70,16 @@ int standard_fractal()
 
     while (!standard_fractal.done())
     {
+        if (standard_fractal.orbit_plot_pending())
+        {
+            drive_pending_orbit_plot(standard_fractal);
+            continue;
+        }
         standard_fractal.iterate();
+        if (standard_fractal.orbit_plot_pending())
+        {
+            continue;
+        }
         if (!standard_fractal.done() && calc_interrupted())
         {
             standard_fractal.suspend();

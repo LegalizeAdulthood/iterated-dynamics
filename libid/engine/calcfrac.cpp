@@ -1165,6 +1165,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         m_standard_pixel_row = g_row;
         m_standard_pixel_active = true;
         m_standard_pixel_input_checked = false;
+        m_standard_pixel_orbit_plotted = false;
         m_standard_pixel_iteration_started = false;
 
         if (g_inside_method == ColorMethod::STAR_TRAIL)
@@ -1393,10 +1394,19 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             break;
         }
 
-        if (g_show_orbit)
+        if (g_show_orbit && !m_standard_pixel_orbit_plotted)
         {
             set_new_z_from_bignum();
-            plot_orbit(g_new_z.x, g_new_z.y, -1);
+            queue_orbit_plot(g_new_z.x, g_new_z.y, -1);
+            if (yield_to_ui && standard_pixel_yield_enabled())
+            {
+                return -1;
+            }
+            while (!pending_orbit_plot().done())
+            {
+                pending_orbit_plot().iterate();
+            }
+            complete_pending_orbit_plot();
         }
 
         if (g_inside_method < ColorMethod::ITER)
@@ -1573,6 +1583,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                 }
             }
         }
+        m_standard_pixel_orbit_plotted = false;
         m_standard_pixel_iteration_started = false;
     }  // end while (g_color_iter++ < maxit)
 

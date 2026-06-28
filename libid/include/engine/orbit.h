@@ -40,6 +40,7 @@ private:
     bool m_done{true};
 };
 
+OrbitPlot &orbit_plot();
 void plot_orbit(double real, double imag, int color);
 void scrub_orbit();
 

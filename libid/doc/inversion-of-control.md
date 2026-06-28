@@ -249,29 +249,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: Orbit Plot Yield State
-
-Work:
-
-- Add state so the standard renderer can yield when an orbit point needs
-  display work.
-- Expose the pending orbit plot work from `engine::StandardFractal`.
-- Preserve the synchronous `plot_orbit()` compatibility path for callers
-  that have not been moved to a UI controller yet.
-- Do not make `plot_orbit()` delegate to a replaceable side-effect
-  service.
-
-Done when:
-
-- `StandardFractal` can report pending orbit plot work to the UI wrapper.
-- The existing synchronous callers still behave as before.
-- No keyboard polling is added to engine code.
-
-Manual testing:
-
-- None.
-
-### Slice 2: Standard Orbit Plot Controller
+### Slice 1: Standard Orbit Plot Controller
 
 Work:
 
@@ -300,7 +278,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 3: Remaining Orbit Plot Callers
+### Slice 2: Remaining Orbit Plot Callers
 
 Work:
 
@@ -323,7 +301,7 @@ Manual testing:
 - Render FrothyBasin with orbit display enabled.
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 4: Orbit Scrub Ownership
+### Slice 3: Orbit Scrub Ownership
 
 Work:
 
@@ -345,7 +323,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 5: Sound Pending-Key Utilities
+### Slice 4: Sound Pending-Key Utilities
 
 Work:
 

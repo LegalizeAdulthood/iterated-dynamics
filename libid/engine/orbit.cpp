@@ -165,12 +165,17 @@ void OrbitPlot::update_saved_point_count()
     g_orbit_save_flag = !m_saved_orbit.empty();
 }
 
+OrbitPlot &orbit_plot()
+{
+    return s_orbit_plot;
+}
+
 void plot_orbit(const double real, const double imag, const int color)
 {
-    s_orbit_plot.reset(real, imag, color);
-    while (!s_orbit_plot.done())
+    orbit_plot().reset(real, imag, color);
+    while (!orbit_plot().done())
     {
-        s_orbit_plot.iterate();
+        orbit_plot().iterate();
     }
 }
 
@@ -196,7 +201,7 @@ void OrbitPlot::scrub()
 
 void scrub_orbit()
 {
-    s_orbit_plot.scrub();
+    orbit_plot().scrub();
 }
 
 } // namespace id::engine
