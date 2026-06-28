@@ -16,7 +16,6 @@ class StandardFractal
 {
 public:
     int calculate_standard_pixel(bool yield_to_ui);
-    bool calculate_perturbation_frame();
     bool consume_standard_pixel_yield();
 
     void resume();
@@ -51,6 +50,7 @@ private:
     void run_current_work_item();
     void run_current_work_item_mode();
     void start_next_pass();
+    void start_perturbation_frame();
     void start_timer();
     void start_work_list();
     bool standard_pixel_yield_enabled() const;

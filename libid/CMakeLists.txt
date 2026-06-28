@@ -49,7 +49,7 @@ add_library(libid
     include/engine/orbit.h engine/orbit.cpp
     include/engine/param_not_used.h engine/param_not_used.cpp
     include/engine/PertEngine.h engine/PertEngine.cpp
-    include/engine/perturbation.h engine/perturbation.cpp
+    engine/perturbation.cpp
     include/engine/pixel_grid.h engine/pixel_grid.cpp
     include/engine/pixel_limits.h
     include/engine/Point.h

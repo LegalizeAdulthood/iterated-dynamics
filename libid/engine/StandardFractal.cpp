@@ -344,6 +344,10 @@ void StandardFractal::run_current_work_item_mode()
     {
         if (bit_set(fractals::g_cur_fractal_specific->flags, fractals::FractalFlags::PERTURB))
         {
+            if (!m_perturbation_active)
+            {
+                start_perturbation_frame();
+            }
             m_pert_engine.iterate();
             if (m_pert_engine.done())
             {

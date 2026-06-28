@@ -362,11 +362,7 @@ bool mandel_per_image_bn()
 
     if (g_std_calc_mode == CalcMode::PERTURBATION && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
-        mandel_perturbation_per_image();
-        // TODO: figure out crash if we don't do this
-        g_std_calc_mode = CalcMode::SOLID_GUESS;
-        g_calc_status = CalcStatus::COMPLETED;
-        return true;
+        return mandel_perturbation_per_image();
     }
 
     g_c_exponent = static_cast<int>(g_params[2]);

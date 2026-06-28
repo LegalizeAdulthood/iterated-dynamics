@@ -2,9 +2,6 @@
 //
 // Thanks to Shirom Makkad fractaltodesktop@gmail.com
 
-#include "engine/perturbation.h"
-
-#include "engine/calcfrac.h"
 #include "engine/convert_center_mag.h"
 #include "engine/ImageRegion.h"
 #include "engine/StandardFractal.h"
@@ -12,14 +9,12 @@
 
 #include <config/port.h>
 
-#include <stdexcept>
-
 using namespace id::math;
 
 namespace id::engine
 {
 
-bool StandardFractal::calculate_perturbation_frame()
+void StandardFractal::start_perturbation_frame()
 {
     double mandel_width{}; // width of display
     double x_mag_factor{};
@@ -49,17 +44,6 @@ bool StandardFractal::calculate_perturbation_frame()
         m_pert_engine.initialize_frame({center.x, center.y}, mandel_width / 2.0);
     }
     m_perturbation_active = true;
-    return false;
-}
-
-bool perturbation()
-{
-    StandardFractal *standard_fractal = active_standard_fractal();
-    if (standard_fractal == nullptr)
-    {
-        throw std::runtime_error("Perturbation requires an active standard fractal");
-    }
-    return standard_fractal->calculate_perturbation_frame();
 }
 
 } // namespace id::engine

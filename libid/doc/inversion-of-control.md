@@ -155,9 +155,10 @@ The current code is already part-way through this plan:
   calculation state is owned by the `StandardPass` SOI class.
 - Orbit mode traversal is owned by the `StandardPass` sticky-orbits
   class; interruption still happens in the orbit plotting helper.
-- Perturbation has a `PertEngine` owned by `StandardFractal`, yields to
-  the UI between point chunks, still computes the full frame from setup,
-  and should be moved below the pass layer per issue #180.
+- Perturbation has a `PertEngine` owned by `StandardFractal`, is
+  initialized and driven from `StandardFractal`, yields to the UI between
+  point chunks, still owns full-frame traversal, and should be moved below
+  the pass layer per issue #180.
 
 ## Input Rules
 
@@ -244,31 +245,7 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: Perturbation Setup Boundary
-
-Work:
-
-- Stop computing the full perturbation image during fractal setup.
-- Let setup select perturbation rendering state and return to the normal
-  standard rendering path.
-- Keep perturbation as a renderer-owned full-frame calculation for this
-  slice.
-- Remove or shrink `perturbation()` once setup no longer needs it as the
-  image-level entry point.
-
-Done when:
-
-- Perturbation no longer computes the full image during fractal setup.
-- Standard rendering owns when perturbation work starts and stops.
-- User-visible `passes=p` behavior is preserved.
-
-Manual testing:
-
-- Start a perturbation-enabled render and interrupt it before any image is
-  complete.
-- Resume the interrupted render.
-
-### Slice 2: Perturbation Compatibility Mode Mapping
+### Slice 1: Perturbation Compatibility Mode Mapping
 
 Work:
 
@@ -289,7 +266,7 @@ Manual testing:
 - Render `type=mandel passes=p`.
 - Confirm the pass display and resume behavior remain sensible.
 
-### Slice 3: Perturbation Pixel Strategy
+### Slice 2: Perturbation Pixel Strategy
 
 Work:
 
@@ -310,7 +287,7 @@ Manual testing:
 - Render `type=mandel passes=p`.
 - Interrupt and resume while pixels are being computed.
 
-### Slice 4: Perturbation Glitch Work Items
+### Slice 3: Perturbation Glitch Work Items
 
 Work:
 
@@ -334,7 +311,7 @@ Manual testing:
 - Render a perturbation image that produces glitch retries.
 - Interrupt and resume during glitch retry work.
 
-### Slice 5: LSystem Renderer
+### Slice 4: LSystem Renderer
 
 Work:
 
@@ -358,7 +335,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 6: Lyapunov Renderer
+### Slice 5: Lyapunov Renderer
 
 Work:
 
@@ -379,7 +356,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 7: Lorenz Photographer Mode
+### Slice 6: Lorenz Photographer Mode
 
 Work:
 
@@ -399,7 +376,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 8: Non-Interrupt Pending-Key Utilities
+### Slice 7: Non-Interrupt Pending-Key Utilities
 
 Work:
 

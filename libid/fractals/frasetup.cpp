@@ -10,7 +10,6 @@
 #include "engine/engine_timer.h"
 #include "engine/fractals.h"
 #include "engine/get_julia_attractor.h"
-#include "engine/perturbation.h"
 #include "engine/sound.h"
 #include "engine/trig_fns.h"
 #include "fractals/fractalp.h"
@@ -58,14 +57,14 @@ bool standalone_per_image()
 
 bool mandel_perturbation_per_image()
 {
-    return perturbation();
+    return false;
 }
 
 bool mandel_z_power_perturbation_per_image()
 {
     constexpr int MAX_POWER{28};
     g_c_exponent = std::min(std::max(g_c_exponent, 2), MAX_POWER);
-    return perturbation();
+    return mandel_perturbation_per_image();
 }
 
 static bool use_calc_mandelbrot()
