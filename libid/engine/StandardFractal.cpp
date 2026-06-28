@@ -146,6 +146,18 @@ StandardFractal *set_active_standard_fractal(StandardFractal *standard_fractal)
     return previous;
 }
 
+void submit_orbit_plot(const double real, const double imag, const int color, const bool mark_as_plotted)
+{
+    if (StandardFractal *standard_fractal = active_standard_fractal(); standard_fractal != nullptr)
+    {
+        standard_fractal->queue_orbit_plot(real, imag, color, mark_as_plotted);
+    }
+    else
+    {
+        plot_orbit(real, imag, color);
+    }
+}
+
 void StandardFractal::resume()
 {
     m_requested_calc_mode = g_std_calc_mode;
@@ -351,13 +363,13 @@ void StandardFractal::pop_work_list_front()
 }
 
 void StandardFractal::queue_orbit_plot(
-    const double real, const double imag, const int color, const bool mark_standard_orbit_plotted)
+    const double real, const double imag, const int color, const bool mark_as_plotted)
 {
     if (!m_orbit_plot_pending)
     {
         orbit_plot().reset(real, imag, color);
         m_orbit_plot_pending = true;
-        m_orbit_plot_marks_standard_orbit = mark_standard_orbit_plotted;
+        m_orbit_plot_marks_standard_orbit = mark_as_plotted;
     }
 }
 

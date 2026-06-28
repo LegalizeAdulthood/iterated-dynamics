@@ -22,7 +22,7 @@ public:
     int calculate_standard_pixel(bool yield_to_ui);
     bool consume_standard_pixel_yield();
     void complete_pending_orbit_plot();
-    void queue_orbit_plot(double real, double imag, int color, bool mark_standard_orbit_plotted = true);
+    void queue_orbit_plot(double real, double imag, int color, bool mark_as_plotted = true);
 
     void resume();
 
@@ -115,5 +115,6 @@ private:
 StandardFractal *active_standard_fractal();
 StandardPassStatus current_standard_pass_status();
 StandardFractal *set_active_standard_fractal(StandardFractal *standard_fractal);
+void submit_orbit_plot(double real, double imag, int color, bool mark_as_plotted = true);
 
 } // namespace id::engine
