@@ -25,11 +25,13 @@ selects one of the single-pass, dual-pass, triple-pass, solid-guessing
 (default), solid-guessing after pass n, boundary tracing, tesseral,
 synchronous orbits, or orbits modes.
 
-The "perturbation=" parameter selects whether supported fractal types use
-the perturbation orbit algorithm.  The default value is "auto", which uses
-perturbation when arbitrary precision is active.
+The "perturbation" option (<X> options screen or "perturbation="
+parameter) selects whether supported fractal types use the perturbation
+orbit algorithm.  The default value is "auto", which uses perturbation
+when arbitrary precision is active.
 
-The "perturbation-tolerance=" parameter controls perturbation glitch
+The "perturbation-tolerance" option (<X> options screen or
+"perturbation-tolerance=" parameter) controls perturbation glitch
 detection.  The value must be greater than zero.  The default is 1e-6.
 
 This option applies to most fractal types.

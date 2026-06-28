@@ -32,6 +32,42 @@ using namespace id::io;
 
 namespace id::ui
 {
+namespace
+{
+
+int perturbation_mode_index(const PerturbationMode mode)
+{
+    switch (mode)
+    {
+    case PerturbationMode::AUTO:
+        return 0;
+
+    case PerturbationMode::YES:
+        return 1;
+
+    case PerturbationMode::NO:
+        return 2;
+    }
+    return 0;
+}
+
+PerturbationMode perturbation_mode_from_index(const int index)
+{
+    switch (index)
+    {
+    default:
+    case 0:
+        return PerturbationMode::AUTO;
+
+    case 1:
+        return PerturbationMode::YES;
+
+    case 2:
+        return PerturbationMode::NO;
+    }
+}
+
+} // namespace
 
 /*
         get_toggles() is called whenever the 'x' key is pressed.
@@ -50,8 +86,9 @@ namespace id::ui
 */
 int get_toggles()
 {
-    ChoiceBuilder<14> choices;
-    const char *calc_modes[] = {"1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o", "p"};
+    ChoiceBuilder<16> choices;
+    const char *calc_modes[] = {"1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o"};
+    const char *perturbation_modes[] = {"auto", "yes", "no"};
     const char *sound_modes[5] = {"off", "beep", "x", "y", "z"};
     const char *inside_modes[] = {
         "numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross", "startrail", "period", "atan", "fmod"};
@@ -72,8 +109,16 @@ int get_toggles()
         : g_user.std_calc_mode == CalcMode::TESSERAL                        ? 12
         : g_user.std_calc_mode == CalcMode::DIFFUSION                       ? 13
         : g_user.std_calc_mode == CalcMode::ORBIT                           ? 14
-                                                                            : /* "p"erturbation */ 15;
+                                                                            : 3;
     CalcMode old_user_std_calc_mode = g_user.std_calc_mode;
+    const CalcMode old_display_std_calc_mode =
+        old_user_std_calc_mode == CalcMode::PERTURBATION ? CalcMode::SOLID_GUESS : old_user_std_calc_mode;
+    const PerturbationMode old_perturbation = g_user.perturbation;
+    const PerturbationMode display_perturbation =
+        old_user_std_calc_mode == CalcMode::PERTURBATION && old_perturbation == PerturbationMode::AUTO
+        ? PerturbationMode::YES
+        : old_perturbation;
+    const double old_perturbation_tolerance = g_user.perturbation_tolerance;
     int old_stop_pass = g_stop_pass;
     long old_max_iterations = g_max_iterations;
 
@@ -165,8 +210,10 @@ int get_toggles()
     const double old_close_proximity = g_close_proximity;
 
     choices
-        .list("Passes (1-3, g[es], b[ound], t[ess], d[iff], o[rbit], p[ert])", std::size(calc_modes), 3, calc_modes,
-            calc_mode)
+        .list("Passes (1-3, g[es], b[ound], t[ess], d[iff], o[rbit])", std::size(calc_modes), 3, calc_modes, calc_mode)
+        .list("Perturbation (auto, yes, no)", std::size(perturbation_modes), 4, perturbation_modes,
+            perturbation_mode_index(display_perturbation))
+        .double_number("Perturbation tolerance (>0)", old_perturbation_tolerance, 14)
         .long_number("Maximum Iterations (2 to 2,147,483,647)", old_max_iterations)
         .int_number("Inside Color (0-# of colors, if Inside=numb)", inside_color)
         .list("Inside (numb,maxit,zmag,bof60,bof61,epscr,star,per,atan,fmod)", std::size(inside_modes), 12,
@@ -218,7 +265,7 @@ int get_toggles()
         g_user.std_calc_mode = old_user_std_calc_mode;
     }
 
-    if (old_user_std_calc_mode != g_user.std_calc_mode)
+    if (old_display_std_calc_mode != g_user.std_calc_mode)
     {
         j++;
     }
@@ -226,6 +273,23 @@ int get_toggles()
     {
         j++;
     }
+
+    g_user.perturbation = perturbation_mode_from_index(choices.read_list());
+    if (g_user.perturbation != display_perturbation)
+    {
+        j++;
+    }
+
+    g_user.perturbation_tolerance = choices.read_double_number();
+    if (g_user.perturbation_tolerance <= 0.0)
+    {
+        g_user.perturbation_tolerance = old_perturbation_tolerance;
+    }
+    if (g_user.perturbation_tolerance != old_perturbation_tolerance)
+    {
+        j++;
+    }
+
     g_max_iterations = choices.read_long_number();
     if (g_max_iterations < 0)
     {

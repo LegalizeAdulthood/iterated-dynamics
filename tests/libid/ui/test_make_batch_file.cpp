@@ -5,6 +5,8 @@
 #include "ColorMapSaver.h"
 #include "engine/calcfrac.h"
 #include "engine/color_utils.h"
+#include "engine/solid_guess.h"
+#include "engine/UserData.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "misc/debug_flags.h"
@@ -85,6 +87,16 @@ class TestPutRdsParams : public testing::Test
 {
 protected:
     WriteBatchData m_data{};
+};
+
+class TestPutCalculationModeParams : public testing::Test
+{
+protected:
+    WriteBatchData m_data{};
+    ValueSaver<CalcMode> m_saved_std_calc_mode{g_user.std_calc_mode, CalcMode::SOLID_GUESS};
+    ValueSaver<int> m_saved_stop_pass{g_stop_pass, 0};
+    ValueSaver<PerturbationMode> m_saved_perturbation{g_user.perturbation, PerturbationMode::AUTO};
+    ValueSaver<double> m_saved_perturbation_tolerance{g_user.perturbation_tolerance, DEFAULT_PERTURBATION_TOLERANCE};
 };
 
 void TestPutEncodedColors::fill_dac_from_values(const int count)
@@ -260,6 +272,58 @@ TEST_F(TestPutFractalParams, antUsesNumericRuleWhenTextIsEmpty)
 
     constexpr std::string_view expected{"params=1100.0/1200000.0/3.0/2.0/0.0/0.0"};
     EXPECT_EQ(expected, m_data.buf);
+}
+
+TEST_F(TestPutCalculationModeParams, suppressesDefaults)
+{
+    put_calculation_mode_params(m_data);
+
+    EXPECT_TRUE(m_data.buf.empty());
+}
+
+TEST_F(TestPutCalculationModeParams, writesPassesWhenNonDefault)
+{
+    g_user.std_calc_mode = CalcMode::ONE_PASS;
+
+    put_calculation_mode_params(m_data);
+
+    EXPECT_EQ("passes=1", m_data.buf);
+}
+
+TEST_F(TestPutCalculationModeParams, writesPerturbationWhenNonDefault)
+{
+    g_user.perturbation = PerturbationMode::YES;
+
+    put_calculation_mode_params(m_data);
+
+    EXPECT_EQ("perturbation=yes", m_data.buf);
+}
+
+TEST_F(TestPutCalculationModeParams, writesPerturbationNo)
+{
+    g_user.perturbation = PerturbationMode::NO;
+
+    put_calculation_mode_params(m_data);
+
+    EXPECT_EQ("perturbation=no", m_data.buf);
+}
+
+TEST_F(TestPutCalculationModeParams, writesToleranceWhenNonDefault)
+{
+    g_user.perturbation_tolerance = 0.001;
+
+    put_calculation_mode_params(m_data);
+
+    EXPECT_EQ("perturbation-tolerance=0.001", m_data.buf);
+}
+
+TEST_F(TestPutCalculationModeParams, writesPerturbationForCompatibilityPassesP)
+{
+    g_user.std_calc_mode = CalcMode::PERTURBATION;
+
+    put_calculation_mode_params(m_data);
+
+    EXPECT_EQ("perturbation=yes", m_data.buf);
 }
 
 TEST_F(TestPutRdsParams, skippedWhenImageIsNotRds)

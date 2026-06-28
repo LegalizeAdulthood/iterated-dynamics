@@ -124,6 +124,22 @@ static char par_key(const int x)
 constexpr int COLOR_SPEC_LEN{13};
 constexpr int VIDEO_MODE_KEY_NAME_LEN{4};
 
+static const char *perturbation_mode_name(const PerturbationMode mode)
+{
+    switch (mode)
+    {
+    case PerturbationMode::AUTO:
+        return "auto";
+
+    case PerturbationMode::YES:
+        return "yes";
+
+    case PerturbationMode::NO:
+        return "no";
+    }
+    return "auto";
+}
+
 template <std::size_t MAX_CHARS>
 std::array<char, MAX_CHARS + 1> prompt_buffer(const std::string_view source)
 {
@@ -840,6 +856,34 @@ void put_encoded_colors(WriteBatchData &wb_data, const int max_color)
     }
 }
 
+void put_calculation_mode_params(WriteBatchData &wb_data)
+{
+    if (g_user.std_calc_mode != CalcMode::SOLID_GUESS && g_user.std_calc_mode != CalcMode::PERTURBATION)
+    {
+        put_param(wb_data, " passes=%c", static_cast<char>(g_user.std_calc_mode));
+    }
+
+    if (g_stop_pass != 0)
+    {
+        put_param(
+            wb_data, " passes=%c%c", static_cast<char>(g_user.std_calc_mode), static_cast<char>(g_stop_pass) + '0');
+    }
+
+    const PerturbationMode mode =
+        g_user.std_calc_mode == CalcMode::PERTURBATION && g_user.perturbation == PerturbationMode::AUTO
+        ? PerturbationMode::YES
+        : g_user.perturbation;
+    if (mode != PerturbationMode::AUTO)
+    {
+        put_param(wb_data, " perturbation=%s", perturbation_mode_name(mode));
+    }
+
+    if (g_user.perturbation_tolerance != DEFAULT_PERTURBATION_TOLERANCE)
+    {
+        put_param(wb_data, " perturbation-tolerance=%.15g", g_user.perturbation_tolerance);
+    }
+}
+
 void put_fractal_params(WriteBatchData &wb_data)
 {
     int i;
@@ -1020,15 +1064,7 @@ static void write_batch_params(
             put_param(param.c_str());
         }
 
-        if (g_user.std_calc_mode != CalcMode::SOLID_GUESS)
-        {
-            put_param(" passes=%c", static_cast<char>(g_user.std_calc_mode));
-        }
-
-        if (g_stop_pass != 0)
-        {
-            put_param(" passes=%c%c", static_cast<char>(g_user.std_calc_mode), static_cast<char>(g_stop_pass) + '0');
-        }
+        put_calculation_mode_params(s_wb_data);
 
         if (g_use_center_mag)
         {

@@ -987,6 +987,8 @@ The <G> command lets you give a startup parameter interactively.
 ; This topic is online context-sensitive only.
 
    Passes - see {Drawing Method}\
+   Perturbation - see {Drawing Method}\
+   Perturbation Tolerance - see {Drawing Method}\
    Fillcolor - see {Drawing Method}\
    Maximum Iterations - see {Image Calculation Parameters}\
    Inside and Outside colors - see {Color Parameters}\

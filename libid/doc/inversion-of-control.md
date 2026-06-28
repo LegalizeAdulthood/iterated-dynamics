@@ -248,44 +248,11 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: Perturbation X Options and Parameter Output
+### Slice 1: Perturbation Status Display
 
-Work:
-
-- Add X-options fields for perturbation mode and perturbation tolerance.
-- Remove perturbation from the interactive drawing-method list only after
-  the explicit perturbation field exists.  Keep `passes=p` accepted by
-  command parsing for compatibility.
-- Write `perturbation=` from generated parameter or batch output when the
-  value is not the default `auto`.
-- Write `perturbation-tolerance=` from generated parameter or batch
-  output when the value is not the default tolerance.
-- Add `make_batch_file` tests for default suppression and non-default
-  output.
-- Update X-options help source so the screen and help text describe the
-  new fields.
-
-Done when:
-
-- The interactive UI can select perturbation without using the passes
-  field.
-- Generated parameter output round-trips non-default perturbation
-  settings.
-- Help text for the X-options screen matches the fields.
-
-Manual testing:
-
-- Open X options, set perturbation to `yes`, and render a supported type.
-- Open X options, set perturbation to `no`, and confirm rendering does
-  not use perturbation.
-- Change perturbation tolerance and confirm generated parameter output
-  includes it.
-
-### Slice 2: Perturbation Status Display
-
-This is the closing slice for PR #289.  Slice 1 adds the remaining
-parameter output surface; this slice adds the remaining status display
-from the PR.
+This is the closing slice for PR #289.  The perturbation parameter
+surface and output are now present; this slice adds the remaining status
+display from the PR.
 
 Work:
 
@@ -314,7 +281,7 @@ Manual testing:
 - Render a perturbation image, press <Tab>, and confirm the perturbation
   status line is shown with the reference count.
 
-### Slice 3: LSystem Renderer
+### Slice 2: LSystem Renderer
 
 Work:
 
@@ -338,7 +305,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 4: Lyapunov Renderer
+### Slice 3: Lyapunov Renderer
 
 Work:
 
@@ -359,7 +326,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 5: Lorenz Photographer Mode
+### Slice 4: Lorenz Photographer Mode
 
 Work:
 
@@ -379,7 +346,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 6: Non-Interrupt Pending-Key Utilities
+### Slice 5: Non-Interrupt Pending-Key Utilities
 
 Work:
 
