@@ -247,35 +247,14 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: LSystem Object Shell
-
-Work:
-
-- Add a `fractals::LSystem` calculation object for renderer state in
-  `libid/fractals/lsystem.cpp`.
-- Move setup and teardown from `lsystem_type()` into `LSystem` methods.
-- Keep `lsystem_type()` as the synchronous entry point that constructs
-  and runs `LSystem`.
-- Keep `draw_lsys()` recursive and keep existing key polling.
-
-Done when:
-
-- `LSystem` owns turtle setup, size-pass command lifetime, draw-pass
-  command lifetime, and renderer cleanup.
-- L-system output and interrupt behavior are unchanged.
-
-Manual testing:
-
-- None; this slice does not change user interaction.
-
-### Slice 2: LSystem Draw State Types
+### Slice 1: LSystem Draw State Types
 
 Work:
 
 - Add explicit draw-frame and turtle-snapshot state for
-  `libid/fractals/lsystem.cpp:834-914`.
+  `libid/fractals/lsystem.cpp:853-934`.
 - Move the local save and restore variables for `[` handling from
-  `libid/fractals/lsystem.cpp:883-897` into named state.
+  `libid/fractals/lsystem.cpp:911-929` into named state.
 - Keep `draw_lsys()` recursive and keep existing key polling.
 
 Done when:
@@ -287,7 +266,7 @@ Manual testing:
 
 - None; this slice does not change user interaction.
 
-### Slice 3: LSystem Synchronous Command Stack
+### Slice 2: LSystem Synchronous Command Stack
 
 Work:
 
@@ -307,7 +286,7 @@ Manual testing:
 
 - None; this slice does not change user interaction.
 
-### Slice 4: LSystem Iterative Renderer
+### Slice 3: LSystem Iterative Renderer
 
 Work:
 
@@ -325,7 +304,7 @@ Manual testing:
 
 - None; this slice does not change user interaction.
 
-### Slice 5: LSystem UI Wrapper Shell
+### Slice 4: LSystem UI Wrapper Shell
 
 Work:
 
@@ -344,7 +323,7 @@ Manual testing:
 
 - None; this slice does not change user interaction.
 
-### Slice 6: LSystem Keyboard Ownership
+### Slice 5: LSystem Keyboard Ownership
 
 Work:
 
@@ -366,7 +345,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 7: Lyapunov Renderer
+### Slice 6: Lyapunov Renderer
 
 Work:
 
@@ -387,7 +366,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 8: Lorenz Photographer Mode
+### Slice 7: Lorenz Photographer Mode
 
 Work:
 
@@ -407,7 +386,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 9: Non-Interrupt Pending-Key Utilities
+### Slice 8: Non-Interrupt Pending-Key Utilities
 
 Work:
 

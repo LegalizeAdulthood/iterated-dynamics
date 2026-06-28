@@ -99,7 +99,6 @@ static std::vector<double> s_cos_table;
 static constexpr LDouble PI_DIV_180{PI / 180.0L};
 static std::string s_axiom;
 static std::vector<std::string> s_rules;
-static std::vector<LSysCmd *> s_rule_cmds;
 static bool s_loaded{};
 
 static LSysCmd *find_size(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth);
@@ -109,7 +108,27 @@ static int rule_present(char symbol);
 static bool save_axiom(const char *text);
 static bool save_rule(const char *rule, int index);
 static bool append_rule(const char *rule, int index);
-static void free_l_cmds();
+
+class LSystem
+{
+public:
+    LSystem();
+    ~LSystem();
+
+    int run();
+
+private:
+    void build_size_commands();
+    bool find_scale();
+    void reset_turtle_for_drawing();
+    void build_draw_commands();
+    void draw();
+    void free_commands();
+
+    int m_order;
+    LSysTurtleState m_turtle{};
+    std::vector<LSysCmd *> m_rule_cmds;
+};
 
 inline bool is_pow2(const int n)
 {
@@ -915,6 +934,91 @@ static LSysCmd *draw_lsys(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules
     return command;
 }
 
+LSystem::LSystem() :
+    m_order{std::max(static_cast<int>(g_params[0]), 0)}
+{
+    m_turtle.stack_overflow = false;
+    m_turtle.max_angle = g_max_angle;
+    m_turtle.d_max_angle = static_cast<char>(g_max_angle - 1);
+}
+
+LSystem::~LSystem()
+{
+    g_overflow = false;
+    free_rules_mem();
+    free_commands();
+    s_loaded = false;
+}
+
+int LSystem::run()
+{
+    build_size_commands();
+    lsys_build_trig_table();
+    if (find_scale())
+    {
+        reset_turtle_for_drawing();
+        free_commands();
+        build_draw_commands();
+        draw();
+    }
+    return 0;
+}
+
+void LSystem::build_size_commands()
+{
+    m_rule_cmds.push_back(lsys_size_transform(s_axiom.c_str(), &m_turtle));
+    for (const std::string &rule : s_rules)
+    {
+        m_rule_cmds.push_back(lsys_size_transform(rule.c_str(), &m_turtle));
+    }
+    m_rule_cmds.push_back(nullptr);
+}
+
+bool LSystem::find_scale()
+{
+    return lsys_find_scale(m_rule_cmds[0], &m_turtle, &m_rule_cmds[1], m_order);
+}
+
+void LSystem::reset_turtle_for_drawing()
+{
+    m_turtle.reverse = 0;
+    m_turtle.angle = 0;
+    m_turtle.real_angle = 0;
+}
+
+void LSystem::build_draw_commands()
+{
+    m_rule_cmds.push_back(lsys_draw_transform(s_axiom.c_str(), &m_turtle));
+    for (const std::string &rule : s_rules)
+    {
+        m_rule_cmds.push_back(lsys_draw_transform(rule.c_str(), &m_turtle));
+    }
+    m_rule_cmds.push_back(nullptr);
+}
+
+void LSystem::draw()
+{
+    // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
+    m_turtle.curr_color = 15;
+    if (m_turtle.curr_color > g_colors)
+    {
+        m_turtle.curr_color = static_cast<char>(g_colors - 1);
+    }
+    draw_lsys(m_rule_cmds[0], &m_turtle, &m_rule_cmds[1], m_order);
+}
+
+void LSystem::free_commands()
+{
+    for (LSysCmd *cmd : m_rule_cmds)
+    {
+        if (cmd != nullptr)
+        {
+            free(cmd);
+        }
+    }
+    m_rule_cmds.clear();
+}
+
 int lsystem_type()
 {
     if (!s_loaded && lsystem_load())
@@ -922,50 +1026,8 @@ int lsystem_type()
         return -1;
     }
 
-    int order = static_cast<int>(g_params[0]);
-    order = std::max(order, 0);
-
-    LSysTurtleState ts;
-
-    ts.stack_overflow = false;
-    ts.max_angle = g_max_angle;
-    ts.d_max_angle = static_cast<char>(g_max_angle - 1);
-
-    s_rule_cmds.push_back(lsys_size_transform(s_axiom.c_str(), &ts));
-    for (const std::string &rule : s_rules)
-    {
-        s_rule_cmds.push_back(lsys_size_transform(rule.c_str(), &ts));
-    }
-    s_rule_cmds.push_back(nullptr);
-
-    lsys_build_trig_table();
-    if (lsys_find_scale(s_rule_cmds[0], &ts, &s_rule_cmds[1], order))
-    {
-        ts.reverse = 0;
-        ts.angle = 0;
-        ts.real_angle = 0;
-
-        free_l_cmds();
-        s_rule_cmds.push_back(lsys_draw_transform(s_axiom.c_str(), &ts));
-        for (const std::string &rule : s_rules)
-        {
-            s_rule_cmds.push_back(lsys_draw_transform(rule.c_str(), &ts));
-        }
-        s_rule_cmds.push_back(nullptr);
-
-        // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
-        ts.curr_color = 15;
-        if (ts.curr_color > g_colors)
-        {
-            ts.curr_color = static_cast<char>(g_colors - 1);
-        }
-        draw_lsys(s_rule_cmds[0], &ts, &s_rule_cmds[1], order);
-    }
-    g_overflow = false;
-    free_rules_mem();
-    free_l_cmds();
-    s_loaded = false;
-    return 0;
+    LSystem l_system;
+    return l_system.run();
 }
 
 bool lsystem_load()
@@ -1044,18 +1106,6 @@ static bool append_rule(const char *rule, const int index)
     {
         return true;
     }
-}
-
-static void free_l_cmds()
-{
-    for (LSysCmd *cmd : s_rule_cmds)
-    {
-        if (cmd != nullptr)
-        {
-            free(cmd);
-        }
-    }
-    s_rule_cmds.clear();
 }
 
 static LSysCmd *find_size(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, const int depth)
