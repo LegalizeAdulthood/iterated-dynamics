@@ -983,11 +983,11 @@ jobs:
             cmake \
             git \
             gmake \
-            modular-xorg-server \
             ninja-build \
             patchelf \
             pkgconf \
-            rsync
+            rsync \
+            tigervnc
         run: |
           set +e
           set -u
@@ -1007,21 +1007,32 @@ jobs:
             fi
             if [ "${status}" -eq 0 ]; then
               if [ -x /usr/X11R7/bin/Xvfb ]; then
-                xvfb=/usr/X11R7/bin/Xvfb
+                /usr/X11R7/bin/Xvfb :99 -screen 0 1024x768x24 >xserver.log 2>&1 &
+                x_server_pid=$!
               elif [ -x /usr/pkg/bin/Xvfb ]; then
-                xvfb=/usr/pkg/bin/Xvfb
+                /usr/pkg/bin/Xvfb :99 -screen 0 1024x768x24 >xserver.log 2>&1 &
+                x_server_pid=$!
+              elif [ -x /usr/pkg/bin/Xvnc ]; then
+                /usr/pkg/bin/Xvnc :99 -SecurityTypes None -geometry 1024x768 -depth 24 -ac >xserver.log 2>&1 &
+                x_server_pid=$!
               else
-                echo "Xvfb was not found"
+                echo "No headless X server was found"
                 status=1
               fi
             fi
             if [ "${status}" -eq 0 ]; then
-              "${xvfb}" :99 -screen 0 1024x768x24 >xvfb.log 2>&1 &
-              xvfb_pid=$!
               sleep 3
+              if ! kill -0 "$x_server_pid" 2>/dev/null; then
+                echo "Headless X server failed to start"
+                status=1
+              fi
+            fi
+            if [ "${status}" -eq 0 ]; then
               DISPLAY=:99 cmake --workflow --preset ci-netbsd-release
               status=$?
-              kill "$xvfb_pid" || true
+            fi
+            if [ -n "${x_server_pid:-}" ]; then
+              kill "$x_server_pid" || true
             fi
             echo "${status}" > build.status
           } 2>&1 | tee build.log
@@ -1034,8 +1045,8 @@ jobs:
             fi
           fi
           cp build.log build.status .netbsd-copyback/
-          if [ -f xvfb.log ]; then
-            cp xvfb.log .netbsd-copyback/
+          if [ -f xserver.log ]; then
+            cp xserver.log .netbsd-copyback/
           fi
           find . -mindepth 1 -maxdepth 1 ! -name .git \
             ! -name .netbsd-copyback -exec rm -rf {} +
