@@ -247,29 +247,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: LSystem Keyboard Ownership
-
-Work:
-
-- Move L-system interruption polling from the calculation path into
-  `libid/ui/lsystem.cpp`.
-- Add the `suspend()` or interruption state needed for the UI wrapper to
-  stop and later resume `LSystem`.
-- Remove the direct key probe from the L-system draw stack.
-
-Done when:
-
-- `libid/fractals/lsystem.cpp` has no direct keyboard polling.
-- L-system rendering follows the same UI/calculation split as Ant and
-  Bifurcation.
-
-Manual testing:
-
-- Render one L-system image and interrupt it.
-- Resume the interrupted render if resume is supported for the selected
-  L-system.
-
-### Slice 2: Lyapunov Renderer
+### Slice 1: Lyapunov Renderer
 
 Work:
 
@@ -290,7 +268,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 3: Lorenz Photographer Mode
+### Slice 2: Lorenz Photographer Mode
 
 Work:
 
@@ -310,7 +288,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 4: Non-Interrupt Pending-Key Utilities
+### Slice 3: Non-Interrupt Pending-Key Utilities
 
 Work:
 
@@ -344,7 +322,6 @@ Direct polling or key consumption exists outside `libid/ui` in:
 - `libid/engine/sound.cpp`: suppress tone while keys are pending.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
 - `libid/fractals/lorenz.cpp`: orbit interrupt and stereo save prompt.
-- `libid/fractals/lsystem.cpp`: draw-stack interrupt.
 - `libid/fractals/lyapunov.cpp`: per-pixel interrupt.
 
 ## Future Event-Driven Work

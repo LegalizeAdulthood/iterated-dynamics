@@ -32,6 +32,7 @@ public:
     bool done() const;
     bool interrupted() const;
     void iterate();
+    void suspend();
 
 private:
     class Impl;

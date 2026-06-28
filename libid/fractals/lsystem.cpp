@@ -140,6 +140,7 @@ public:
     bool done() const;
     bool interrupted() const;
     void iterate();
+    void suspend();
 
 private:
     void build_size_commands();
@@ -949,6 +950,11 @@ void LSystem::iterate()
     m_impl->iterate();
 }
 
+void LSystem::suspend()
+{
+    m_impl->suspend();
+}
+
 void LSystem::Impl::start()
 {
     build_size_commands();
@@ -974,6 +980,11 @@ bool LSystem::Impl::done() const
 bool LSystem::Impl::interrupted() const
 {
     return m_interrupted;
+}
+
+void LSystem::Impl::suspend()
+{
+    m_interrupted = true;
 }
 
 void LSystem::Impl::build_size_commands()
@@ -1061,16 +1072,6 @@ void LSystem::Impl::iterate()
         }
         m_done = m_draw_stack.empty();
         return;
-    }
-
-    if (!m_turtle.counter++)
-    {
-        if (driver_key_pressed())
-        {
-            m_turtle.counter--;
-            m_interrupted = true;
-            return;
-        }
     }
 
     bool tran = false;
