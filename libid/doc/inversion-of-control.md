@@ -247,25 +247,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: LSystem Iterative Renderer
-
-Work:
-
-- Add `LSystem::iterate()` and `LSystem::done()` over the command stack.
-- Have `lsystem_type()` synchronously loop over `iterate()` until the
-  renderer is done or interrupted.
-- Keep existing key polling in the calculation path for this slice.
-
-Done when:
-
-- `LSystem` can render incrementally through `iterate()`.
-- L-system output and interrupt behavior are unchanged.
-
-Manual testing:
-
-- None; this slice does not change user interaction.
-
-### Slice 2: LSystem UI Wrapper Shell
+### Slice 1: LSystem UI Wrapper Shell
 
 Work:
 
@@ -284,7 +266,7 @@ Manual testing:
 
 - None; this slice does not change user interaction.
 
-### Slice 3: LSystem Keyboard Ownership
+### Slice 2: LSystem Keyboard Ownership
 
 Work:
 
@@ -306,7 +288,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 4: Lyapunov Renderer
+### Slice 3: Lyapunov Renderer
 
 Work:
 
@@ -327,7 +309,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 5: Lorenz Photographer Mode
+### Slice 4: Lorenz Photographer Mode
 
 Work:
 
@@ -347,7 +329,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 6: Non-Interrupt Pending-Key Utilities
+### Slice 5: Non-Interrupt Pending-Key Utilities
 
 Work:
 
@@ -381,7 +363,7 @@ Direct polling or key consumption exists outside `libid/ui` in:
 - `libid/engine/sound.cpp`: suppress tone while keys are pending.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
 - `libid/fractals/lorenz.cpp`: orbit interrupt and stereo save prompt.
-- `libid/fractals/lsystem.cpp`: recursive draw interrupt.
+- `libid/fractals/lsystem.cpp`: draw-stack interrupt.
 - `libid/fractals/lyapunov.cpp`: per-pixel interrupt.
 
 ## Future Event-Driven Work

@@ -135,15 +135,18 @@ public:
     LSystem();
     ~LSystem();
 
-    int run();
+    void start();
+    bool done() const;
+    bool interrupted() const;
+    void iterate();
 
 private:
     void build_size_commands();
     bool find_scale();
     void reset_turtle_for_drawing();
     void build_draw_commands();
-    void draw();
-    bool draw_command_stack(LSysCmd *command);
+    void start_drawing();
+    bool start_draw_stack(LSysCmd *command);
     bool push_draw_frame(LSysCmd *command, LSysCmd **rules, int depth);
     bool push_draw_frame(LSysCmd *command, LSysCmd **rules, int depth, const LSysTurtleSnapshot &saved_turtle);
     bool push_draw_frame(
@@ -154,6 +157,8 @@ private:
     LSysTurtleState m_turtle{};
     std::vector<LSysCmd *> m_rule_cmds;
     std::vector<LSysDrawFrame> m_draw_stack;
+    bool m_done{};
+    bool m_interrupted{};
 };
 
 inline bool is_pow2(const int n)
@@ -916,7 +921,7 @@ LSystem::~LSystem()
     s_loaded = false;
 }
 
-int LSystem::run()
+void LSystem::start()
 {
     build_size_commands();
     lsys_build_trig_table();
@@ -925,9 +930,22 @@ int LSystem::run()
         reset_turtle_for_drawing();
         free_commands();
         build_draw_commands();
-        draw();
+        start_drawing();
     }
-    return 0;
+    else
+    {
+        m_done = true;
+    }
+}
+
+bool LSystem::done() const
+{
+    return m_done;
+}
+
+bool LSystem::interrupted() const
+{
+    return m_interrupted;
 }
 
 void LSystem::build_size_commands()
@@ -962,7 +980,7 @@ void LSystem::build_draw_commands()
     m_rule_cmds.push_back(nullptr);
 }
 
-void LSystem::draw()
+void LSystem::start_drawing()
 {
     // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
     m_turtle.curr_color = 15;
@@ -970,115 +988,127 @@ void LSystem::draw()
     {
         m_turtle.curr_color = static_cast<char>(g_colors - 1);
     }
-    draw_command_stack(m_rule_cmds[0]);
+    m_interrupted = !start_draw_stack(m_rule_cmds[0]);
 }
 
-bool LSystem::draw_command_stack(LSysCmd *command)
+bool LSystem::start_draw_stack(LSysCmd *command)
 {
     m_draw_stack.clear();
-    if (!push_draw_frame(command, &m_rule_cmds[1], m_order))
+    return push_draw_frame(command, &m_rule_cmds[1], m_order);
+}
+
+void LSystem::iterate()
+{
+    if (m_done || m_interrupted)
     {
-        return false;
+        return;
     }
 
-    while (!m_draw_stack.empty())
+    if (g_overflow)       // integer math routines overflowed
     {
-        if (g_overflow)       // integer math routines overflowed
-        {
-            return false;
-        }
+        m_interrupted = true;
+        return;
+    }
 
-        LSysDrawFrame &frame = m_draw_stack.back();
-        if (!frame.command->ch || frame.command->ch == ']')
-        {
-            LSysCmd *const return_command = frame.command;
-            const bool restore = frame.restore_turtle;
-            const LSysTurtleSnapshot saved_turtle = frame.saved_turtle;
-            m_draw_stack.pop_back();
-            if (restore)
-            {
-                restore_turtle(m_turtle, saved_turtle);
-                if (!m_draw_stack.empty())
-                {
-                    m_draw_stack.back().command = return_command + 1;
-                }
-            }
-            continue;
-        }
+    if (m_draw_stack.empty())
+    {
+        m_done = true;
+        return;
+    }
 
-        if (!m_turtle.counter++)
+    LSysDrawFrame &frame = m_draw_stack.back();
+    if (!frame.command->ch || frame.command->ch == ']')
+    {
+        LSysCmd *const return_command = frame.command;
+        const bool restore = frame.restore_turtle;
+        const LSysTurtleSnapshot saved_turtle = frame.saved_turtle;
+        m_draw_stack.pop_back();
+        if (restore)
         {
-            if (driver_key_pressed())
+            restore_turtle(m_turtle, saved_turtle);
+            if (!m_draw_stack.empty())
             {
-                m_turtle.counter--;
-                return false;
+                m_draw_stack.back().command = return_command + 1;
             }
         }
+        m_done = m_draw_stack.empty();
+        return;
+    }
 
-        bool tran = false;
-        if (frame.depth)
+    if (!m_turtle.counter++)
+    {
+        if (driver_key_pressed())
         {
-            LSysCmd **rule_end = frame.rules;
-            while (*rule_end)
-            {
-                rule_end++;
-            }
-
-            for (LSysCmd **rule_index = frame.rules; rule_index != rule_end; rule_index++)
-            {
-                if ((*rule_index)->ch == frame.command->ch)
-                {
-                    tran = true;
-                    break;
-                }
-            }
-            if (tran)
-            {
-                LSysCmd *const current_command = frame.command++;
-                LSysCmd **const rules = frame.rules;
-                const int depth = frame.depth;
-                for (LSysCmd **rule_index = rule_end; rule_index != rules;)
-                {
-                    rule_index--;
-                    if ((*rule_index)->ch == current_command->ch && !push_draw_frame(*rule_index + 1, rules, depth - 1))
-                    {
-                        return false;
-                    }
-                }
-                continue;
-            }
-        }
-
-        if (frame.command->f)
-        {
-            switch (frame.command->param_type)
-            {
-            case 4:
-                m_turtle.param.n = frame.command->param.n;
-                break;
-            case 10:
-                m_turtle.param.nf = frame.command->param.nf;
-                break;
-            default:
-                break;
-            }
-            (*frame.command->f)(&m_turtle);
-            frame.command++;
-        }
-        else if (frame.command->ch == '[')
-        {
-            const LSysTurtleSnapshot branch_turtle{save_turtle(m_turtle)};
-            if (!push_draw_frame(frame.command + 1, frame.rules, frame.depth, branch_turtle))
-            {
-                return false;
-            }
-        }
-        else
-        {
-            frame.command++;
+            m_turtle.counter--;
+            m_interrupted = true;
+            return;
         }
     }
-    return true;
+
+    bool tran = false;
+    if (frame.depth)
+    {
+        LSysCmd **rule_end = frame.rules;
+        while (*rule_end)
+        {
+            rule_end++;
+        }
+
+        for (LSysCmd **rule_index = frame.rules; rule_index != rule_end; rule_index++)
+        {
+            if ((*rule_index)->ch == frame.command->ch)
+            {
+                tran = true;
+                break;
+            }
+        }
+        if (tran)
+        {
+            LSysCmd *const current_command = frame.command++;
+            LSysCmd **const rules = frame.rules;
+            const int depth = frame.depth;
+            for (LSysCmd **rule_index = rule_end; rule_index != rules;)
+            {
+                rule_index--;
+                if ((*rule_index)->ch == current_command->ch && !push_draw_frame(*rule_index + 1, rules, depth - 1))
+                {
+                    m_interrupted = true;
+                    return;
+                }
+            }
+            return;
+        }
+    }
+
+    if (frame.command->f)
+    {
+        switch (frame.command->param_type)
+        {
+        case 4:
+            m_turtle.param.n = frame.command->param.n;
+            break;
+        case 10:
+            m_turtle.param.nf = frame.command->param.nf;
+            break;
+        default:
+            break;
+        }
+        (*frame.command->f)(&m_turtle);
+        frame.command++;
+    }
+    else if (frame.command->ch == '[')
+    {
+        const LSysTurtleSnapshot branch_turtle{save_turtle(m_turtle)};
+        if (!push_draw_frame(frame.command + 1, frame.rules, frame.depth, branch_turtle))
+        {
+            m_interrupted = true;
+            return;
+        }
+    }
+    else
+    {
+        frame.command++;
+    }
 }
 
 bool LSystem::push_draw_frame(LSysCmd *command, LSysCmd **rules, const int depth)
@@ -1138,7 +1168,12 @@ int lsystem_type()
     }
 
     LSystem l_system;
-    return l_system.run();
+    l_system.start();
+    while (!l_system.done() && !l_system.interrupted())
+    {
+        l_system.iterate();
+    }
+    return 0;
 }
 
 bool lsystem_load()
