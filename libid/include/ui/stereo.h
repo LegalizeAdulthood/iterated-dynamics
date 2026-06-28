@@ -37,5 +37,6 @@ bool auto_stereo_convert();
 bool auto_stereo_batch_convert(); // convert, save, restore without prompting
 int out_line_stereo(Byte *pixels, int line_len);
 void random_dot_line(Byte *pixels, int line_len);
+void lorenz_stereo_photographer_prompt();
 
 } // namespace id::ui

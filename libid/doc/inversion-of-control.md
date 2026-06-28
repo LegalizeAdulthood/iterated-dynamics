@@ -247,27 +247,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: Lorenz Photographer Mode
-
-Work:
-
-- Add `LorenzStereoKeyboardHandler` in `libid/ui`.
-- Move the photographer-mode `s` / `S` save loop from
-  `libid/fractals/lorenz.cpp:1553-1561` into the UI code that owns the
-  stereo workflow.
-- Preserve repeated `s` / `S` saves before the second image is rendered.
-
-Done when:
-
-- Lorenz calculation code does not consume photographer-mode keys.
-- Photographer-mode save and continue behavior is unchanged.
-
-Manual testing:
-
-- Exercise photographer mode.
-- Press `s` repeatedly before rendering the second image.
-
-### Slice 2: Non-Interrupt Pending-Key Utilities
+### Slice 1: Non-Interrupt Pending-Key Utilities
 
 Work:
 
@@ -300,7 +280,7 @@ Direct polling or key consumption exists outside `libid/ui` in:
 - `libid/engine/soi.cpp`: interrupt checks during recursive scan.
 - `libid/engine/sound.cpp`: suppress tone while keys are pending.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
-- `libid/fractals/lorenz.cpp`: orbit interrupt and stereo save prompt.
+- `libid/fractals/lorenz.cpp`: orbit interrupt.
 
 ## Future Event-Driven Work
 

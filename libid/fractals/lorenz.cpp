@@ -35,6 +35,7 @@
 #include "ui/ifs2d.h"
 #include "ui/ifs3d.h"
 #include "ui/orbit3d.h"
+#include "ui/stereo.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 
@@ -1549,16 +1550,7 @@ int funny_glasses_call(int (*calc)())
     {
         if (g_glasses_type == GlassesType::PHOTO)
         {
-            // photographer's mode
-            stop_msg(StopMsgFlags::INFO_ONLY,
-                "First image (left eye) is ready.  Hit any key to see it,\n"
-                "then hit <s> to save, hit any other key to create second image.");
-            for (int i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key())
-            {
-                save_image(g_save_filename);
-            }
-            // is there a better way to clear the screen in graphics mode?
-            driver_set_video_mode(g_video_entry);
+            lorenz_stereo_photographer_prompt();
         }
         g_which_image = StereoImage::BLUE;
         if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC))

@@ -22,6 +22,7 @@
 #include "ui/find_special_colors.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
+#include "ui/KeyboardHandler.h"
 #include "ui/rotate.h"
 #include "ui/slideshw.h"
 #include "ui/stop_msg.h"
@@ -31,6 +32,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <memory>
 #include <vector>
 
 using namespace id::engine;
@@ -81,6 +83,29 @@ struct StereoData
 using DACBox = Byte (*)[256][3];
 
 static StereoData *s_data{};
+
+class LorenzStereoKeyboardHandler : public KeyboardHandler
+{
+public:
+    bool handle_key(int key) override
+    {
+        if (key == 's' || key == 'S')
+        {
+            save_image(g_save_filename);
+            return true;
+        }
+        m_done = true;
+        return true;
+    }
+
+    bool done() const
+    {
+        return m_done;
+    }
+
+private:
+    bool m_done{};
+};
 
 // TODO: eliminate all these macros for structure access
 
@@ -255,6 +280,23 @@ void random_dot_line(Byte *pixels, const int line_len)
     {
         pixels[i] = static_cast<unsigned char>(random_int(g_colors));
     }
+}
+
+void lorenz_stereo_photographer_prompt()
+{
+    stop_msg(StopMsgFlags::INFO_ONLY,
+        "First image (left eye) is ready.  Hit any key to see it,\n"
+        "then hit <s> to save, hit any other key to create second image.");
+
+    auto handler{std::make_shared<LorenzStereoKeyboardHandler>()};
+    ScopedKeyboardHandler scope{handler};
+    while (!handler->done())
+    {
+        dispatch_keyboard_key(driver_get_key());
+    }
+
+    // Is there a better way to clear the screen in graphics mode?
+    driver_set_video_mode(g_video_entry);
 }
 
 class StereoSaveRestore
