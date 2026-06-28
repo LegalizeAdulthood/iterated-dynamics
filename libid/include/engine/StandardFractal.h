@@ -8,6 +8,8 @@
 #include "fractals/fractalp.h"
 
 #include <array>
+#include <cstddef>
+#include <vector>
 
 namespace id::engine
 {
@@ -61,6 +63,7 @@ private:
     PertEngine m_pert_engine{};
     StandardPass m_standard_pass{};
     std::array<double, 16> m_tan_table{};
+    std::vector<Point> m_perturbation_retry_points{};
     math::DComplex m_deriv{};
     math::DComplex m_dem_new{};
     math::DComplex m_last_z{};
@@ -78,6 +81,7 @@ private:
     long m_saved_color_iter{};
     int m_check_freq{};
     int m_hooper{};
+    std::size_t m_perturbation_retry_index{};
     int m_standard_pixel_col{};
     int m_standard_pixel_row{};
     int m_saved_incr{1};

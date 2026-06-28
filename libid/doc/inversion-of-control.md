@@ -159,8 +159,9 @@ The current code is already part-way through this plan:
   initialized and driven from `StandardFractal`, and is selected
   separately from the active traversal mode.  `passes=p` is compatibility
   syntax that maps traversal to solid guessing for now.  Primary pixels
-  are traversed by `StandardPass`; `PertEngine` still owns glitch retry
-  traversal and should move that below the pass layer per issue #180.
+  are traversed by `StandardPass`, and glitch retry traversal is owned by
+  `StandardFractal`.  `PertEngine` supplies perturbation reference and
+  point calculations below the pass layer.
 
 ## Input Rules
 
@@ -247,31 +248,7 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: Perturbation Glitch Work Items
-
-Work:
-
-- Represent perturbation glitch retries as standard renderer work, not a
-  private full-frame loop.
-- Use the standard work list or an equivalent renderer-owned queue for
-  pixels or regions that need recomputation.
-- Keep the glitch-divergence threshold behavior unchanged.
-- Consider a later `perturbation=epsilon` parameter only after this
-  ownership boundary is correct.
-
-Done when:
-
-- Glitch points that need recomputation are owned by the standard
-  renderer state.
-- `PertEngine` no longer owns image-level traversal.
-- Perturbation is an orbit strategy below the pass layer.
-
-Manual testing:
-
-- Render a perturbation image that produces glitch retries.
-- Interrupt and resume during glitch retry work.
-
-### Slice 2: LSystem Renderer
+### Slice 1: LSystem Renderer
 
 Work:
 
@@ -295,7 +272,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 3: Lyapunov Renderer
+### Slice 2: Lyapunov Renderer
 
 Work:
 
@@ -316,7 +293,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 4: Lorenz Photographer Mode
+### Slice 3: Lorenz Photographer Mode
 
 Work:
 
@@ -336,7 +313,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 5: Non-Interrupt Pending-Key Utilities
+### Slice 4: Non-Interrupt Pending-Key Utilities
 
 Work:
 
