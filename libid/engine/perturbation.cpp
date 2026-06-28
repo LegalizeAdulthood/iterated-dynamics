@@ -3,11 +3,15 @@
 // Thanks to Shirom Makkad fractaltodesktop@gmail.com
 
 #include "engine/convert_center_mag.h"
+#include "engine/fractals.h"
 #include "engine/ImageRegion.h"
 #include "engine/StandardFractal.h"
+#include "fractals/fractype.h"
 #include "math/biginit.h"
 
 #include <config/port.h>
+
+#include <algorithm>
 
 using namespace id::math;
 
@@ -16,6 +20,12 @@ namespace id::engine
 
 void StandardFractal::start_perturbation_frame()
 {
+    if (fractals::g_fractal_type == fractals::FractalType::MANDEL_Z_POWER)
+    {
+        constexpr int MAX_POWER{28};
+        g_c_exponent = std::clamp(g_c_exponent, 2, MAX_POWER);
+    }
+
     double mandel_width{}; // width of display
     double x_mag_factor{};
     double rotation{};
