@@ -249,31 +249,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: Orbit Plot Work Object
-
-Work:
-
-- Do not add a plug-in plotter interface.
-- Introduce a concrete engine orbit plot work object that represents
-  plotting one orbit point and scrubbing saved orbit points.
-- Move the current `plot_d_orbit()` implementation into that object
-  without changing behavior.
-- Keep `plot_orbit()` and `scrub_orbit()` as synchronous compatibility
-  functions that drive the concrete work object to completion.
-- Keep saved-orbit state in the concrete work object for now.
-
-Done when:
-
-- The current orbit display behavior is unchanged.
-- The engine has a concrete unit of orbit plotting work that can later be
-  driven incrementally by UI.
-- No `libid/engine` or `libid/fractals` file adds a `libid/ui` include.
-
-Manual testing:
-
-- None.
-
-### Slice 2: Orbit Plot Yield State
+### Slice 1: Orbit Plot Yield State
 
 Work:
 
@@ -295,7 +271,7 @@ Manual testing:
 
 - None.
 
-### Slice 3: Standard Orbit Plot Controller
+### Slice 2: Standard Orbit Plot Controller
 
 Work:
 
@@ -324,7 +300,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 4: Remaining Orbit Plot Callers
+### Slice 3: Remaining Orbit Plot Callers
 
 Work:
 
@@ -347,7 +323,7 @@ Manual testing:
 - Render FrothyBasin with orbit display enabled.
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 5: Orbit Scrub Ownership
+### Slice 4: Orbit Scrub Ownership
 
 Work:
 
@@ -369,7 +345,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 6: Sound Pending-Key Utilities
+### Slice 5: Sound Pending-Key Utilities
 
 Work:
 

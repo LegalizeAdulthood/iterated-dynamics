@@ -23,14 +23,7 @@ namespace id::engine
 int g_orbit_delay{};
 int g_orbit_skip_points{};
 
-static void plot_d_orbit(double dx, double dy, int color);
-
-enum
-{
-    NUM_SAVE_ORBIT = 1500
-};
-
-static int s_save_orbit[NUM_SAVE_ORBIT]{}; // array to save orbit values
+static OrbitPlot s_orbit_plot;
 
 /* Showing orbit requires converting real co-ords to screen co-ords.
    Define:
@@ -54,12 +47,46 @@ static int s_save_orbit[NUM_SAVE_ORBIT]{}; // array to save orbit values
                       / ((0-delyy2)*W*delxx2*D-Ys*Xs)
   */
 
-static void plot_d_orbit(const double dx, const double dy, const int color)
+OrbitPlot::OrbitPlot()
 {
-    if (g_orbit_save_index >= NUM_SAVE_ORBIT-3)
+    static constexpr int INITIAL_SAVED_ORBIT_POINTS{500};
+    m_saved_orbit.reserve(INITIAL_SAVED_ORBIT_POINTS);
+}
+
+void OrbitPlot::reset(const double real, const double imag, const int color)
+{
+    clear_saved_points_if_reset();
+    m_real = real;
+    m_imag = imag;
+    m_color = color;
+    m_done = false;
+}
+
+void OrbitPlot::iterate()
+{
+    if (m_done)
     {
         return;
     }
+    plot_d_orbit(m_real - g_image_region.m_min.x, m_imag - g_image_region.m_max.y, m_color);
+    m_done = true;
+}
+
+bool OrbitPlot::done() const
+{
+    return m_done;
+}
+
+void OrbitPlot::clear_saved_points_if_reset()
+{
+    if (g_orbit_save_index == 0 && !m_saved_orbit.empty())
+    {
+        m_saved_orbit.clear();
+    }
+}
+
+void OrbitPlot::plot_d_orbit(const double dx, const double dy, const int color)
+{
     int i = static_cast<int>(dy * g_plot_mx1 - dx * g_plot_mx2);
     i += g_logical_screen.x_offset;
     if (i < 0 || i >= g_screen_x_dots)
@@ -79,11 +106,9 @@ static void plot_d_orbit(const double dx, const double dy, const int color)
     // save orbit value
     if (color == -1)
     {
-        s_save_orbit[g_orbit_save_index++] = i;
-        s_save_orbit[g_orbit_save_index++] = j;
         const int c = get_color(i, j);
-        s_save_orbit[g_orbit_save_index++] = c;
-        g_put_color(i, j, c^g_orbit_color);
+        save_orbit_point(i, j, c);
+        g_put_color(i, j, c ^ g_orbit_color);
     }
     else
     {
@@ -93,11 +118,11 @@ static void plot_d_orbit(const double dx, const double dy, const int color)
     g_logical_screen.y_offset = save_screen_y_offset;
     if (g_debug_flag == DebugFlags::FORCE_SCALED_SOUND_FORMULA)
     {
-        if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)   // sound = x
+        if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X) // sound = x
         {
             write_sound(i * 1000 / g_logical_screen.x_dots + g_base_hertz);
         }
-        else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_X)     // sound = y or z
+        else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_X) // sound = y or z
         {
             write_sound(j * 1000 / g_logical_screen.y_dots + g_base_hertz);
         }
@@ -108,15 +133,15 @@ static void plot_d_orbit(const double dx, const double dy, const int color)
     }
     else
     {
-        if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)   // sound = x
+        if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X) // sound = x
         {
             write_sound(i + g_base_hertz);
         }
-        else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Y)     // sound = y
+        else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Y) // sound = y
         {
             write_sound(j + g_base_hertz);
         }
-        else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Z)     // sound = z
+        else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Z) // sound = z
         {
             write_sound(i + j + g_base_hertz);
         }
@@ -129,23 +154,50 @@ static void plot_d_orbit(const double dx, const double dy, const int color)
     // placing sleepms here delays each dot
 }
 
+void OrbitPlot::save_orbit_point(const int x, const int y, const int color)
+{
+    m_saved_orbit.push_back(SavedOrbitPoint{x, y, color});
+    update_saved_point_count();
+}
+
+void OrbitPlot::update_saved_point_count()
+{
+    static constexpr int SAVED_ORBIT_POINT_VALUES{3};
+    g_orbit_save_index = static_cast<int>(m_saved_orbit.size() * SAVED_ORBIT_POINT_VALUES);
+}
+
 void plot_orbit(const double real, const double imag, const int color)
 {
-    plot_d_orbit(real-g_image_region.m_min.x, imag-g_image_region.m_max.y, color);
+    s_orbit_plot.reset(real, imag, color);
+    while (!s_orbit_plot.done())
+    {
+        s_orbit_plot.iterate();
+    }
+}
+
+void OrbitPlot::scrub()
+{
+    driver_mute();
+    if (g_orbit_save_index == 0 || m_saved_orbit.empty())
+    {
+        m_saved_orbit.clear();
+        g_orbit_save_index = 0;
+        return;
+    }
+    ValueSaver save_screen_x_offset{g_logical_screen.x_offset, 0};
+    ValueSaver save_screen_y_offset{g_logical_screen.y_offset, 0};
+    while (!m_saved_orbit.empty())
+    {
+        const SavedOrbitPoint point{m_saved_orbit.back()};
+        m_saved_orbit.pop_back();
+        g_put_color(point.x, point.y, point.color);
+        update_saved_point_count();
+    }
 }
 
 void scrub_orbit()
 {
-    driver_mute();
-    ValueSaver save_screen_x_offset{g_logical_screen.x_offset, 0};
-    ValueSaver save_screen_y_offset{g_logical_screen.y_offset, 0};
-    while (g_orbit_save_index >= 3)
-    {
-        const int c = s_save_orbit[--g_orbit_save_index];
-        const int j = s_save_orbit[--g_orbit_save_index];
-        const int i = s_save_orbit[--g_orbit_save_index];
-        g_put_color(i, j, c);
-    }
+    s_orbit_plot.scrub();
 }
 
 } // namespace id::engine

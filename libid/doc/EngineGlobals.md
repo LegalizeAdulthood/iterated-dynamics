@@ -1,6 +1,9 @@
 # Global Variables in libid/include/engine
 
-This document identifies groups of global variables in the `libid/include/engine` directory that are typically used together. These groupings represent variables that are conceptually related and often accessed together in the fractal calculation and rendering pipeline.
+This document identifies groups of global variables in the
+`libid/include/engine` directory that are typically used together. These
+groupings represent variables that are conceptually related and often
+accessed together in the fractal calculation and rendering pipeline.
 
 ## 1. Screen/Display Dimensions Group
 
@@ -67,12 +70,14 @@ Variables defining the mathematical coordinates of the fractal region:
 
 Variables tracking the overall calculation state and progress:
 
-- `g_calc_status` - calculation status (NO_FRACTAL, PARAMS_CHANGED, IN_PROGRESS, RESUMABLE, NON_RESUMABLE, COMPLETED)
+- `g_calc_status` - calculation status (NO_FRACTAL, PARAMS_CHANGED,
+  IN_PROGRESS, RESUMABLE, NON_RESUMABLE, COMPLETED)
 - `g_calc_time` - time spent calculating (in clock ticks)
 - `g_calc_type` - function pointer to calculation routine
 - `g_std_calc_mode` - current calculation mode
 - `g_old_std_calc_mode` - previous calculation mode
-- `g_passes` - rendering pass mode (NONE, SEQUENTIAL_SCAN, SOLID_GUESS, BOUNDARY_TRACE, etc.)
+- `g_passes` - rendering pass mode (NONE, SEQUENTIAL_SCAN, SOLID_GUESS,
+  BOUNDARY_TRACE, etc.)
 - `g_current_pass` - current pass number
 - `g_total_passes` - total number of passes
 - `g_quick_calc` - quick calculation mode flag
@@ -104,7 +109,8 @@ Variables controlling iteration limits and bailout conditions:
 
 Variables defining bailout test methods:
 
-- `g_bailout_test` - bailout test type (MOD, REAL, IMAG, OR, AND, MANH, MANR)
+- `g_bailout_test` - bailout test type (MOD, REAL, IMAG, OR, AND, MANH,
+  MANR)
 - `g_bailout_float` - function pointer for float bailout test
 - `g_bailout_bignum` - function pointer for bignum bailout test
 - `g_bailout_bigfloat` - function pointer for bigfloat bailout test
@@ -139,7 +145,7 @@ Variables controlling orbit visualization:
 - `g_show_orbit` - flag to turn orbit display on/off
 - `g_start_show_orbit` - show orbits at start of fractal
 - `g_orbit_color` - XOR color for orbit display
-- `g_orbit_save_index` - index into save_orbit array
+- `g_orbit_save_index` - saved orbit value count
 - `g_orbit_delay` - microsecond orbit delay
 
 ## 9. Color/Palette Group
@@ -278,7 +284,8 @@ Variables for circle inversion:
 - `g_inversion.invert` - inversion flag/type
 - `g_inversion.radius` - inversion circle radius
 - `g_inversion.center` - inversion center point (complex)
-- `g_inversion.params[3]` - inversion parameters (radius, x center, y center)
+- `g_inversion.params[3]` - inversion parameters (radius, x center,
+  y center)
 
 ## 19. Resume/Save State Group
 
@@ -309,7 +316,8 @@ Variables for logarithmic color mapping:
 
 Variables for sound output during calculation:
 
-- `g_sound_flag` - sound control flags (OFF, BEEP, X, Y, Z, ORBIT, SPEAKER, OPL3_FM, MIDI, QUANTIZED)
+- `g_sound_flag` - sound control flags (OFF, BEEP, X, Y, Z, ORBIT,
+  SPEAKER, OPL3_FM, MIDI, QUANTIZED)
 - `g_base_hertz` - base frequency in Hertz
 - `g_fm_attack` - FM attack time
 - `g_fm_decay` - FM decay time
@@ -446,7 +454,8 @@ Variables for random number generation:
 
 Variables for showing calculation progress with dots:
 
-- `g_auto_show_dot` - auto show dot mode (NONE, AUTOMATIC, DARK, MEDIUM, BRIGHT)
+- `g_auto_show_dot` - auto show dot mode (NONE, AUTOMATIC, DARK, MEDIUM,
+  BRIGHT)
 - `g_show_dot` - show dot counter/flag
 - `g_size_dot` - size of dot to show
 
@@ -497,26 +506,34 @@ Variables related to color limits:
 
 These variable groups often follow these usage patterns:
 
-1. **Initialization Phase**: Screen dimensions, viewport, and image region variables are set up first.
+1. **Initialization Phase**: Screen dimensions, viewport, and image region
+   variables are set up first.
 
-2. **Calculation Phase**: Iteration/bailout, complex number calculation, and work list variables are actively used.
+2. **Calculation Phase**: Iteration/bailout, complex number calculation,
+   and work list variables are actively used.
 
-3. **Rendering Phase**: Plotting, symmetry, color/palette, and inside/outside coloring variables control output.
+3. **Rendering Phase**: Plotting, symmetry, color/palette, and
+   inside/outside coloring variables control output.
 
-4. **State Management**: Resume, user settings, and calculation state variables maintain program state.
+4. **State Management**: Resume, user settings, and calculation state
+   variables maintain program state.
 
-5. **Special Effects**: Sound, orbit display, and show dot variables add user feedback.
+5. **Special Effects**: Sound, orbit display, and show dot variables add
+   user feedback.
 
 ## Refactoring Considerations
 
 When refactoring to reduce global state, consider:
 
 1. **Screen/Display** variables could become a `DisplayContext` class
-2. **Image Region/Coordinates** variables could become a `FractalRegion` class
+2. **Image Region/Coordinates** variables could become a `FractalRegion`
+   class
 3. **Calculation State** variables could become a `CalculationEngine` class
 4. **Color/Palette** variables could become a `ColorManager` class
 5. **Work List** variables could become a `WorkQueue` class
-6. **Fractal Parameters** could be grouped into a `FractalParameters` structure
+6. **Fractal Parameters** could be grouped into a `FractalParameters`
+   structure
 7. **User Settings** are already partially grouped in `UserData` struct
 
-Many of these groupings suggest natural object-oriented encapsulation boundaries that would improve code organization and reduce coupling.
+Many of these groupings suggest natural object-oriented encapsulation
+boundaries that would improve code organization and reduce coupling.

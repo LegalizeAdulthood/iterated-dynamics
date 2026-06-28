@@ -168,7 +168,7 @@ extern math::DComplex        g_old_z;
 
 extern math::DComplex        g_init_orbit;          // initial orbit value
 extern int                   g_orbit_color;         // XOR color
-extern int                   g_orbit_save_index;    // index into save_orbit array
+extern int                   g_orbit_save_index;    // saved orbit value count
 extern bool                  g_show_orbit;          // flag to turn on and off
 extern bool                  g_start_show_orbit;    // show orbits on at start of fractal
 extern InitOrbitMode         g_use_init_orbit;      // flag for init orbit
