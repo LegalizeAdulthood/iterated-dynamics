@@ -6,5 +6,8 @@
   },
   "overlay-ports": [
     "vcpkg-overlays/tgautils"
+  ],
+  "overlay-triplets": [
+    "vcpkg-overlays/triplets"
   ]
 }

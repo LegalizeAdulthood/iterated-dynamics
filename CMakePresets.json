@@ -52,6 +52,14 @@
       "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
     {
+      "name": "netbsd-vcpkg",
+      "hidden": true,
+      "description": "Configure vcpkg for NetBSD",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-netbsd"
+      }
+    },
+    {
       "name": "debug-config",
       "hidden": true,
       "description": "Configure for Debug build",
@@ -125,6 +133,11 @@
       "inherits": [ "ci-preset-build-dir", "default", "release-config", "run-slow-tests", "require-package-docs" ]
     },
     {
+      "name": "ci-netbsd-release",
+      "displayName": "CI Configure with NetBSD Release settings",
+      "inherits": [ "ci-release", "netbsd-vcpkg" ]
+    },
+    {
       "name": "ci-wx-debug",
       "displayName": "CI Configure with wxWidgets Debug settings",
       "inherits": [ "ci-preset-build-dir", "use-wx", "debug-config", "run-slow-tests", "require-package-docs" ]
@@ -187,6 +200,13 @@
       "name": "ci-release",
       "displayName": "CI Build with Release settings",
       "configurePreset": "ci-release",
+      "configuration": "RelWithDebInfo",
+      "targets": [ "package" ]
+    },
+    {
+      "name": "ci-netbsd-release",
+      "displayName": "CI Build with NetBSD Release settings",
+      "configurePreset": "ci-netbsd-release",
       "configuration": "RelWithDebInfo",
       "targets": [ "package" ]
     },
@@ -300,6 +320,13 @@
       "configuration": "RelWithDebInfo"
     },
     {
+      "name": "ci-netbsd-release",
+      "displayName": "CI Test with NetBSD Release settings",
+      "inherits": [ "settings" ],
+      "configurePreset": "ci-netbsd-release",
+      "configuration": "RelWithDebInfo"
+    },
+    {
       "name": "ci-wx-debug",
       "displayName": "CI Test with wxWidgets Debug settings",
       "inherits": [ "settings", "wx-filter-tests" ],
@@ -343,6 +370,12 @@
       "name": "ci-release",
       "displayName": "CI Package release build",
       "configurePreset": "ci-release",
+      "configurations": [ "RelWithDebInfo" ]
+    },
+    {
+      "name": "ci-netbsd-release",
+      "displayName": "CI Package NetBSD release build",
+      "configurePreset": "ci-netbsd-release",
       "configurations": [ "RelWithDebInfo" ]
     },
     {
@@ -480,6 +513,28 @@
         {
           "type": "package",
           "name": "ci-release"
+        }
+      ]
+    },
+    {
+      "name": "ci-netbsd-release",
+      "displayName": "CI Workflow with NetBSD Release settings: configure, build, test and package",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ci-netbsd-release"
+        },
+        {
+          "type": "build",
+          "name": "ci-netbsd-release"
+        },
+        {
+          "type": "test",
+          "name": "ci-netbsd-release"
+        },
+        {
+          "type": "package",
+          "name": "ci-netbsd-release"
         }
       ]
     },

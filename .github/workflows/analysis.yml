@@ -34,7 +34,7 @@ jobs:
 
       - name: Setup vcpkg package cache
         id: vc
-        uses: LegalizeAdulthood/vcpkg-github-cache@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+        uses: LegalizeAdulthood/vcpkg-github-cache@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
         with:
           token: ${{github.token}}
           bootstrap: "true"
@@ -63,7 +63,7 @@ jobs:
 
       - name: Analyze vcpkg package cache
         if: always()
-        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
         with:
           token: ${{github.token}}
           build-log: build.log
@@ -107,7 +107,7 @@ jobs:
 
       - name: Setup vcpkg package cache
         id: vc
-        uses: LegalizeAdulthood/vcpkg-github-cache@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+        uses: LegalizeAdulthood/vcpkg-github-cache@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
         with:
           token: ${{github.token}}
           bootstrap: "true"
@@ -124,7 +124,7 @@ jobs:
 
       - name: Analyze vcpkg package cache
         if: always()
-        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
         with:
           token: ${{github.token}}
           build-log: build.log
@@ -193,7 +193,7 @@ jobs:
 
       - name: Setup vcpkg package cache
         id: vc
-        uses: LegalizeAdulthood/vcpkg-github-cache@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+        uses: LegalizeAdulthood/vcpkg-github-cache@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
         with:
           token: ${{github.token}}
           bootstrap: "true"
@@ -210,7 +210,7 @@ jobs:
 
       - name: Analyze vcpkg package cache
         if: always()
-        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
         with:
           token: ${{github.token}}
           build-log: build.log

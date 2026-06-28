@@ -42,7 +42,7 @@ jobs:
 
     - name: Setup vcpkg package cache
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
       with:
         token: ${{github.token}}
         bootstrap: "true"
@@ -62,7 +62,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
       with:
         token: ${{github.token}}
         build-log: build.log
@@ -470,7 +470,7 @@ jobs:
 
     - name: Setup vcpkg package cache
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
       with:
         token: ${{github.token}}
         bootstrap: "true"
@@ -530,7 +530,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
       with:
         token: ${{github.token}}
         build-log: build.log
@@ -625,7 +625,7 @@ jobs:
 
     - name: Generate vcpkg cache setup script
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
       with:
         token: ${{github.token}}
         execution-mode: emit-script
@@ -718,7 +718,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
       with:
         token: ${{github.token}}
         build-log: build.log
@@ -787,7 +787,7 @@ jobs:
 
     - name: Generate vcpkg cache setup script
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
       with:
         token: ${{github.token}}
         execution-mode: emit-script
@@ -885,7 +885,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
       with:
         token: ${{github.token}}
         build-log: build.log
@@ -919,11 +919,169 @@ jobs:
       run: gh run cancel ${{github.run_id}} || true
 
   #############################################################################
+  build-netbsd:
+    needs: [ html-docs, pdf-docs ]
+    runs-on: ubuntu-22.04
+    permissions:
+      actions: write
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        fetch-depth: 0
+        submodules: true
+
+    - name: Get prebuilt HTML documentation
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        name: html-docs
+        path: ${{github.workspace}}/build-ci-netbsd-release/hc/src
+
+    - name: Get prebuilt PDF documentation
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        name: pdf-docs
+        path: ${{github.workspace}}/build-ci-netbsd-release/hc/src
+
+    - name: Verify prebuilt documentation
+      run: >
+        cmake -E sha256sum
+        ${{github.workspace}}/build-ci-netbsd-release/hc/src/id.html
+        ${{github.workspace}}/build-ci-netbsd-release/hc/src/id.pdf
+
+    - name: Generate vcpkg cache setup script
+      id: vc
+      uses: LegalizeAdulthood/vcpkg-github-cache@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
+      with:
+        token: ${{github.token}}
+        execution-mode: emit-script
+        target-os: netbsd
+        bootstrap: "true"
+        install-nuget: "true"
+        install-mono: "true"
+        debug: "false"
+        trace: "false"
+
+    - name: Run NetBSD workflow
+      uses: vmactions/netbsd-vm@99816dccf75edf233ed6cd00a159e3a5b85ea373 # v1.4.0
+      env:
+        VCPKG_GITHUB_CACHE_TOKEN: ${{github.token}}
+        VCPKG_ROOT: vcpkg
+      with:
+        release: "10.1"
+        usesh: true
+        sync: rsync
+        copyback: true
+        envs: VCPKG_GITHUB_CACHE_TOKEN VCPKG_ROOT
+        prepare: |
+          /usr/sbin/pkg_add -u \
+            bash \
+            bison \
+            cmake \
+            git \
+            gmake \
+            ninja-build \
+            patchelf \
+            pkgconf \
+            rsync
+        run: |
+          set +e
+          set -u
+          mkdir -p .netbsd-copyback
+
+          {
+            status=0
+            sh "${{steps.vc.outputs.setup-script}}" || status=$?
+            if [ "${status}" -eq 0 ]; then
+              . "${{steps.vc.outputs.setup-env}}" || status=$?
+            fi
+            if [ "${status}" -eq 0 ]; then
+              test -f build-ci-netbsd-release/hc/src/id.html &&
+              test -f build-ci-netbsd-release/hc/src/id.pdf &&
+              cmake --version
+              status=$?
+            fi
+            if [ "${status}" -eq 0 ]; then
+              if [ -x /usr/X11R7/bin/Xvfb ]; then
+                xvfb=/usr/X11R7/bin/Xvfb
+              elif [ -x /usr/pkg/bin/Xvfb ]; then
+                xvfb=/usr/pkg/bin/Xvfb
+              else
+                echo "Xvfb was not found"
+                status=1
+              fi
+            fi
+            if [ "${status}" -eq 0 ]; then
+              "${xvfb}" :99 -screen 0 1024x768x24 >xvfb.log 2>&1 &
+              xvfb_pid=$!
+              sleep 3
+              DISPLAY=:99 cmake --workflow --preset ci-netbsd-release
+              status=$?
+              kill "$xvfb_pid" || true
+            fi
+            echo "${status}" > build.status
+          } 2>&1 | tee build.log
+
+          if [ -f build.status ] && [ "$(cat build.status)" -eq 0 ]; then
+            cp build-ci-netbsd-release/*.tar.gz .netbsd-copyback/
+            copy_status=$?
+            if [ "${copy_status}" -ne 0 ]; then
+              echo "${copy_status}" > build.status
+            fi
+          fi
+          cp build.log build.status .netbsd-copyback/
+          if [ -f xvfb.log ]; then
+            cp xvfb.log .netbsd-copyback/
+          fi
+          find . -mindepth 1 -maxdepth 1 ! -name .git \
+            ! -name .netbsd-copyback -exec rm -rf {} +
+          mv .netbsd-copyback/* .
+          rmdir .netbsd-copyback
+
+    - name: Analyze vcpkg package cache
+      if: always()
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
+      with:
+        token: ${{github.token}}
+        build-log: build.log
+        artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{github.run_attempt}}
+        fail-on: "never"
+        debug: "false"
+        trace: "false"
+
+    - name: Check NetBSD build status
+      if: always()
+      run: |
+        if [ ! -f build.status ]; then
+          echo "build.status was not copied back from the NetBSD VM"
+          exit 1
+        fi
+        exit "$(cat build.status)"
+
+    - name: Upload NetBSD tar.gz package artifacts
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        archive: false
+        name: Tar-netbsd-release
+        path: ${{github.workspace}}/*.tar.gz
+        if-no-files-found: error
+        compression-level: 0
+
+    - name: Cancel workflow after NetBSD build failure
+      if: failure()
+      env:
+        GH_TOKEN: ${{github.token}}
+      run: gh run cancel ${{github.run_id}} || true
+
+  #############################################################################
   # When a tag is pushed, create a draft release from the build assets
   release:
     if: ${{github.event_name == 'push' && github.ref_type == 'tag'}}
     runs-on: ubuntu-22.04
-    needs: [ build, build-freebsd, build-openbsd ]
+    needs: [ build, build-freebsd, build-openbsd, build-netbsd ]
     permissions:
       contents: write
 
@@ -1044,7 +1202,7 @@ jobs:
 
     - name: Setup vcpkg package cache
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
       with:
         token: ${{github.token}}
         bootstrap: "true"
@@ -1063,7 +1221,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@57e80dee31103a4426cb55b0d6d27d7d56117d4c # v1.4.0
       with:
         token: ${{github.token}}
         build-log: build.log
