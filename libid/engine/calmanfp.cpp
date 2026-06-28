@@ -133,7 +133,7 @@ long mandelbrot_orbit()
         // no_periodicity_check_87
         if (g_show_orbit)
         {
-            plot_orbit(x, y, -1);
+            plot_overlay_orbit(x, y);
         }
         // no_show_orbit_87
     } // while (--cx > 0)

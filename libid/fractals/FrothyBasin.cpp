@@ -288,7 +288,7 @@ int FrothyBasin::calc()
 
         if (g_show_orbit)
         {
-            plot_orbit(g_old_z.x, g_old_z.y, -1);
+            plot_overlay_orbit(g_old_z.x, g_old_z.y);
         }
 
         if (std::abs(m_half_a - g_old_z.y) < FROTH_CLOSE && g_old_z.x >= m_top_x1 &&

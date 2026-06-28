@@ -15,7 +15,8 @@ class OrbitPlot
 public:
     OrbitPlot();
 
-    void reset(double real, double imag, int color);
+    void reset_image(double real, double imag, int color);
+    void reset_overlay(double real, double imag);
     void iterate();
     void iterate_without_delay();
     bool done() const;
@@ -23,7 +24,13 @@ public:
     void scrub();
 
 private:
-    struct SavedOrbitPoint
+    enum class PlotMode
+    {
+        IMAGE,
+        OVERLAY
+    };
+
+    struct SavedOverlayPoint
     {
         int x{};
         int y{};
@@ -31,19 +38,26 @@ private:
     };
 
     void clear_saved_points_if_reset();
-    void plot_d_orbit(double dx, double dy, int color);
-    void save_orbit_point(int x, int y, int color);
-    void update_saved_point_count();
+    void plot_d_orbit(double dx, double dy);
+    void plot_image_point(int x, int y);
+    void plot_overlay_point(int x, int y);
+    void reset_plot(double real, double imag, int color, PlotMode mode);
+    void save_overlay_point(int x, int y, int color);
+    void update_orbit_sound(int x, int y);
+    void update_saved_overlay_count();
 
-    std::vector<SavedOrbitPoint> m_saved_orbit;
+    std::vector<SavedOverlayPoint> m_saved_overlay;
     double m_real{};
     double m_imag{};
     int m_color{};
+    PlotMode m_mode{PlotMode::IMAGE};
     bool m_delay_pending{};
     bool m_done{true};
 };
 
 OrbitPlot &orbit_plot();
+void plot_image_orbit(double real, double imag, int color);
+void plot_overlay_orbit(double real, double imag);
 void plot_orbit(double real, double imag, int color);
 void scrub_orbit();
 

@@ -158,7 +158,7 @@ int popcorn_fractal_old()
     g_new_z.y = g_old_z.y - g_param_z1.x * g_sin_x;
     if (g_plot == no_plot)
     {
-        submit_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors, false);
+        submit_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
         g_old_z = g_new_z;
     }
     else
@@ -192,7 +192,7 @@ int popcorn_fractal()
     g_new_z.y = g_old_z.y - g_param_z1.x*g_sin_x;
     if (g_plot == no_plot)
     {
-        submit_orbit_plot(g_new_z.x, g_new_z.y, 1+g_row%g_colors, false);
+        submit_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
         g_old_z = g_new_z;
     }
     g_temp_sqr_x = sqr(g_new_z.x);
@@ -234,7 +234,7 @@ int popcorn_orbit()
 
     if (g_plot == no_plot)
     {
-        plot_orbit(g_new_z.x, g_new_z.y, 1+g_row%g_colors);
+        plot_image_orbit(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
         g_old_z = g_new_z;
     }
 

@@ -146,15 +146,15 @@ StandardFractal *set_active_standard_fractal(StandardFractal *standard_fractal)
     return previous;
 }
 
-void submit_orbit_plot(const double real, const double imag, const int color, const bool mark_as_plotted)
+void submit_image_orbit_plot(const double real, const double imag, const int color)
 {
     if (StandardFractal *standard_fractal = active_standard_fractal(); standard_fractal != nullptr)
     {
-        standard_fractal->queue_orbit_plot(real, imag, color, mark_as_plotted);
+        standard_fractal->queue_image_orbit_plot(real, imag, color);
     }
     else
     {
-        plot_orbit(real, imag, color);
+        plot_image_orbit(real, imag, color);
     }
 }
 
@@ -362,12 +362,22 @@ void StandardFractal::pop_work_list_front()
     }
 }
 
-void StandardFractal::queue_orbit_plot(
+void StandardFractal::queue_image_orbit_plot(
     const double real, const double imag, const int color, const bool mark_as_plotted)
 {
     if (!m_orbit_plot_pending)
     {
-        orbit_plot().reset(real, imag, color);
+        orbit_plot().reset_image(real, imag, color);
+        m_orbit_plot_pending = true;
+        m_orbit_plot_marks_standard_orbit = mark_as_plotted;
+    }
+}
+
+void StandardFractal::queue_overlay_orbit_plot(const double real, const double imag, const bool mark_as_plotted)
+{
+    if (!m_orbit_plot_pending)
+    {
+        orbit_plot().reset_overlay(real, imag);
         m_orbit_plot_pending = true;
         m_orbit_plot_marks_standard_orbit = mark_as_plotted;
     }
