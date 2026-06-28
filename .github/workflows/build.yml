@@ -997,7 +997,8 @@ jobs:
           {
             start_xvnc() {
               echo "Starting Xvnc"
-              /usr/pkg/bin/Xvnc :99 -SecurityTypes None -geometry 1024x768 \
+              LD_LIBRARY_PATH="/usr/pkg/lib:/usr/X11R7/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}" \
+                /usr/pkg/bin/Xvnc :99 -SecurityTypes None -geometry 1024x768 \
                 -depth 24 -ac >xserver.log 2>&1 &
               x_server_pid=$!
               sleep 3
