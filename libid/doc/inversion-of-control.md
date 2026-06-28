@@ -257,6 +257,16 @@ pending key should still wake that delay promptly.  The UI controller
 owns that pacing because the delay exists to make plotted orbit points
 visible, not to advance fractal math.
 
+The current `plot_orbit()` name hides two different behaviors:
+
+- Overlay orbit display draws a temporary orbit over an existing image.
+  It saves covered pixels, uses the legacy `color == -1` convention, and
+  later scrubs the overlay away.  This is the `showorbit=yes` behavior
+  for standard escape-time rendering and FrothyBasin.
+- Image-orbit plotting makes the orbit point part of the rendered
+  image.  It writes an explicit color and must not save or scrub covered
+  pixels.  Popcorn belongs here.
+
 Popcorn is not a standard fractal renderer.  It uses screen pixels as
 seed points, iterates a Popcorn map, and plots the produced orbit points
 elsewhere on the screen.  It does not color the seed pixel by orbit
@@ -270,14 +280,41 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Popcorn Owns Pending Orbit Points
+### Slice 1: Split Overlay and Image-Orbit Plotting
 
 Work:
 
-- Add pending orbit point state to `fractals::Popcorn`: real, imag,
-  color, and pending/completed accessors.
-- Change `ui::popcorn_type()` to ask `Popcorn` for pending orbit points
-  and drive them from the UI layer.
+- Make the orbit plotting API state whether a point is overlay display
+  or image output; do not infer the policy from color values in new code.
+- Keep saved-pixel and scrub behavior only in the overlay path.
+- Add an image-orbit path that maps real and imaginary coordinates to
+  screen pixels and writes an explicit color without saved-pixel state.
+- Preserve the legacy synchronous `plot_orbit()` wrapper only while old
+  callers are being moved.
+
+Done when:
+
+- Standard `showorbit=yes` still uses overlay behavior and can be
+  scrubbed.
+- Image-orbit points can be driven by UI pacing without using overlay
+  save or scrub state.
+- The Popcorn slices have a non-overlay plotting path to target.
+- The FrothyBasin and standard overlay slices have an overlay plotting
+  path to target.
+
+Manual testing:
+
+- `type=mandel showorbit=yes orbitdelay=200`
+- `type=popcorn orbitdelay=200`
+
+### Slice 2: Popcorn Owns Pending Image-Orbit Points
+
+Work:
+
+- Add pending image-orbit point state to `fractals::Popcorn`: real,
+  imag, color, and pending/completed accessors.
+- Change `ui::popcorn_type()` to ask `Popcorn` for pending image-orbit
+  points and drive them from the UI layer.
 - Keep the existing `StandardFractal`-backed pixel calculation in place
   for this slice; this slice only moves the presentation handoff to the
   `Popcorn` object.
@@ -286,7 +323,9 @@ Work:
 Done when:
 
 - `ui::popcorn_type()` no longer calls `Popcorn::standard_fractal()`.
-- `Popcorn` owns the pending orbit point displayed by the UI.
+- `Popcorn` owns the pending image-orbit point displayed by the UI.
+- Popcorn uses the image-orbit plotting path, not overlay save or scrub
+  state.
 - Popcorn orbit point display and `orbitdelay` pacing still behave as
   before.
 
@@ -295,7 +334,7 @@ Manual testing:
 - `type=popcorn orbitdelay=200`
 - `type=popcornjul orbitdelay=200`
 
-### Slice 2: Popcorn Owns Map Step Selection
+### Slice 3: Popcorn Owns Map Step Selection
 
 Work:
 
@@ -328,7 +367,7 @@ Manual testing:
 - `type=popcorn debugflags=96 orbitdelay=200`
 - `type=popcornjul orbitdelay=200`
 
-### Slice 3: Popcorn Owns Seed Scanning
+### Slice 4: Popcorn Owns Seed Scanning
 
 Work:
 
@@ -359,7 +398,7 @@ Manual testing:
 - `type=popcorn orbitdelay=200`
 - `type=popcorn reset=1960 orbitdelay=200`
 
-### Slice 4: PopcornJulia Uses Popcorn Renderer
+### Slice 5: PopcornJulia Uses Popcorn Renderer
 
 Work:
 
@@ -383,69 +422,72 @@ Manual testing:
 - `type=popcornjul orbitdelay=200`
 - `type=popcornjul reset=1960 orbitdelay=200`
 
-### Slice 5: FrothyBasin Orbit Plot Caller
+### Slice 6: FrothyBasin Overlay Orbit Caller
 
 Work:
 
-- In `libid/fractals/FrothyBasin.cpp`, split the `plot_orbit()` caller
+- In `libid/fractals/FrothyBasin.cpp`, split orbit point production
   into calculation state and UI presentation.
-- Report the pending orbit point and color to the FrothyBasin UI
-  controller, then let the controller display, pace, and resume it.
+- Report the pending overlay orbit point to the FrothyBasin UI
+  controller, then let the controller display, pace, scrub, and resume
+  it.
 - Preserve attractor detection and repeat-mapping behavior.
 - Do not add per-fractal one-off pacing helpers.
 
 Done when:
 
 - `FrothyBasin` no longer calls `plot_orbit()` directly.
-- FrothyBasin orbit points are displayed through the UI controller.
-- The synchronous compatibility path remains available for other callers
-  until their slices are complete.
+- FrothyBasin orbit points are displayed through the UI overlay path.
+- FrothyBasin overlay points are scrubbed by the UI controller that
+  displayed them.
 
 Manual testing:
 
-- Render FrothyBasin with orbit display enabled.
+- `type=frothybasin showorbit=yes orbitdelay=200`
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 6: Standard Orbit Plot Caller
+### Slice 7: Standard Overlay Orbit Caller
 
 Work:
 
 - In `libid/engine/calmanfp.cpp`, split the `plot_orbit()` caller into
-  standard orbit calculation state and UI presentation.
+  standard overlay orbit calculation state and UI presentation.
 - Add or extend the `StandardFractal` UI controller first if this caller
   needs a standard-renderer resume point.
-- Report the pending orbit point and color to the UI controller, then let
-  the controller display, pace, and resume it.
+- Report the pending overlay orbit point to the UI controller, then let
+  the controller display, pace, scrub, and resume it.
 - Do not add a `ui` include from `libid/engine` or `libid/fractals`.
 - Do not add per-fractal one-off pacing helpers.
 
 Done when:
 
 - `libid/engine/calmanfp.cpp` no longer calls `plot_orbit()` directly.
-- Standard escape-time orbit points are displayed through the UI
-  controller.
+- Standard escape-time overlay orbit points are displayed through the UI
+  controller and scrubbed as overlay display.
 - No `plot_orbit()` callers remain in `libid/engine` or
   `libid/fractals`.
 
 Manual testing:
 
-- Render Mandelbrot with `showorbit=yes` and a visible `orbitdelay`.
+- `type=mandel showorbit=yes orbitdelay=200`
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 7: Orbit Scrub Ownership
+### Slice 8: Overlay Orbit Scrub Ownership
 
 Work:
 
-- Move saved-orbit scrubbing ownership to the UI controllers once all
-  orbit display paths are controller-driven.
+- Move saved-overlay scrubbing ownership to the UI controllers once all
+  overlay orbit display paths are controller-driven.
 - Remove engine-side callers that scrub display state directly.
 - Keep a compatibility `scrub_orbit()` only while synchronous callers
   still exist.
+- Image-orbit plotting must not use saved-overlay scrub state.
 
 Done when:
 
-- Orbit display callers no longer reach into engine-owned display state.
-- Saved orbit points are scrubbed by the UI controller that displayed
+- Overlay orbit display callers no longer reach into engine-owned
+  display state.
+- Saved overlay points are scrubbed by the UI controller that displayed
   them.
 - The compatibility scrub path is removed or clearly isolated.
 
@@ -454,7 +496,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 8: Sound Pending-Key Utilities
+### Slice 9: Sound Pending-Key Utilities
 
 Work:
 
