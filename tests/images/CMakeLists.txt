@@ -134,7 +134,7 @@ add_fractal_type_image_test(
     "mandel" "mandel4" "mandelbrotmix4" "mandelcloud" "mandelfn" "mandellambda" "mandphoenix" "mandphoenixclx"
     "manowar" "manowarj" "manzpower" "manzzpwr" "marksjulia" "marksmandel" "marksmandelpwr"
     "newtbasin" "newton"
-    "phoenix" "phoenixcplx" "popcorn"
+    "phoenix" "phoenixcplx" "popcorn" "popcornjul"
     "quat" "quatjul"
     "sierpinski" "spider"
     "tetrate" "tim's_error"

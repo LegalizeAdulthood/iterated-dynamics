@@ -247,32 +247,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: PopcornJul Routing Audit
-
-Work:
-
-- Verify `type=popcornjul` in `libid/fractals/fractalp.cpp:1154-1163`
-  remains routed through `standard_fractal_type`.
-- Verify `type=popcornjul` is driven by `libid/ui/standard_fractal.cpp`
-  and `engine::StandardFractal`, not by the Popcorn standalone wrapper.
-- Keep `libid/fractals/frasetup.cpp:324-352` as the shared
-  `popcorn_fractal()` / `popcorn_orbit()` orbit-helper selection for
-  both Popcorn types.
-- Document or test any routing distinction that is not already covered by
-  existing image tests.
-
-Done when:
-
-- `type=popcorn` and `type=popcornjul` both have UI-owned image control.
-- The only Popcorn-family `plot_orbit()` issue left is the shared
-  `plot_d_orbit()` pacing path handled by the next slice.
-
-Manual testing:
-
-- None, unless automated image coverage does not exercise
-  `type=popcornjul`.
-
-### Slice 2: Orbit Delay Pacing
+### Slice 1: Orbit Delay Pacing
 
 Work:
 
@@ -304,7 +279,7 @@ Manual testing:
 - Press a key during orbit delay and confirm the UI responds promptly
   without losing the key.
 
-### Slice 3: Sound Pending-Key Utilities
+### Slice 2: Sound Pending-Key Utilities
 
 Work:
 
