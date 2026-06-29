@@ -5,7 +5,8 @@ var searchData=
   ['s8_2',['S8',['../df/d6d/namespaceid_1_1misc.html#a7801b752519dbbca0440dc5dab21f569',1,'id::misc']]],
   ['slideclock_3',['SlideClock',['../dc/d76/namespaceid_1_1ui.html#a660443d33fe1d397fa38e81ffe1e9526',1,'id::ui']]],
   ['slideduration_4',['SlideDuration',['../dc/d76/namespaceid_1_1ui.html#a2f7c5d976c7a8ea7e91bafef67f269c0',1,'id::ui']]],
-  ['speedprompt_5',['SpeedPrompt',['../dc/d76/namespaceid_1_1ui.html#a60f40e884dc0c32865f718e1abcf08de',1,'id::ui']]],
-  ['stopmsg_6',['StopMsg',['../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#a77a7ead6474fc7d488092c591b3cac05',1,'id::engine::cmd_files_test']]],
-  ['stopmsgfn_7',['StopMsgFn',['../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#a769688215ff166356b98c8e456d18b2d',1,'id::engine::cmd_files_test']]]
+  ['soundinputpendingfn_5',['SoundInputPendingFn',['../dc/d31/namespaceid_1_1engine.html#a8a8f60b8b9a0252595c6a6dd07883a85',1,'id::engine']]],
+  ['speedprompt_6',['SpeedPrompt',['../dc/d76/namespaceid_1_1ui.html#a60f40e884dc0c32865f718e1abcf08de',1,'id::ui']]],
+  ['stopmsg_7',['StopMsg',['../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#a77a7ead6474fc7d488092c591b3cac05',1,'id::engine::cmd_files_test']]],
+  ['stopmsgfn_8',['StopMsgFn',['../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#a769688215ff166356b98c8e456d18b2d',1,'id::engine::cmd_files_test']]]
 ];

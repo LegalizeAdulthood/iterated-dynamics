@@ -118,6 +118,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/df8/classid_1_1engine_1_1OnePass.html">OnePass</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d69/classid_1_1engine_1_1OrbitPlot.html">OrbitPlot</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d58/classid_1_1engine_1_1PertEngine.html">PertEngine</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d94/classid_1_1engine_1_1Point.html">Point</a></td></tr>
@@ -158,6 +160,8 @@ Typedefs</h2></td></tr>
 <tr class="separator:a91a5fb6128400366af75815f567dd22e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad40fbeac521f42bfddebc2e677102a28" id="r_ad40fbeac521f42bfddebc2e677102a28"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#ad40fbeac521f42bfddebc2e677102a28">InversionParams</a> = std::array&lt; double, 3 &gt;</td></tr>
 <tr class="separator:ad40fbeac521f42bfddebc2e677102a28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a8f60b8b9a0252595c6a6dd07883a85" id="r_a8a8f60b8b9a0252595c6a6dd07883a85"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a8a8f60b8b9a0252595c6a6dd07883a85">SoundInputPendingFn</a> = bool(*)()</td></tr>
+<tr class="separator:a8a8f60b8b9a0252595c6a6dd07883a85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -485,19 +489,16 @@ Enumerations</h2></td></tr>
 <br />
  }</td></tr>
 <tr class="separator:a598600a9b24c3ba23463c6072a8550da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3dd237ffa60763c8d49cb12a619babb" id="r_ae3dd237ffa60763c8d49cb12a619babb"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#ae3dd237ffa60763c8d49cb12a619babba62ac380237e60ca482cf993e9f7f1434">NUM_SAVE_ORBIT</a> = 1500
+<tr class="memitem:ae3dd237ffa60763c8d49cb12a619babb" id="r_ae3dd237ffa60763c8d49cb12a619babb"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#ae3dd237ffa60763c8d49cb12a619babba66ab4d7637d22fe9a37f7f49deaf0765">EVERY</a> = 15
+, <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#ae3dd237ffa60763c8d49cb12a619babba793c9eb180f1c8cc653ca6005354a762">BASIN_COLOR</a> = 0
  }</td></tr>
 <tr class="separator:ae3dd237ffa60763c8d49cb12a619babb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8883ff9cda90c81530e3e78d27c60238" id="r_a8883ff9cda90c81530e3e78d27c60238"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a8883ff9cda90c81530e3e78d27c60238a66ab4d7637d22fe9a37f7f49deaf0765">EVERY</a> = 15
-, <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a8883ff9cda90c81530e3e78d27c60238a793c9eb180f1c8cc653ca6005354a762">BASIN_COLOR</a> = 0
+<tr class="memitem:a8883ff9cda90c81530e3e78d27c60238" id="r_a8883ff9cda90c81530e3e78d27c60238"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a8883ff9cda90c81530e3e78d27c60238a87d04e4d1f30d3ce3ca8be123511c894">SCAN</a> = 16
  }</td></tr>
 <tr class="separator:a8883ff9cda90c81530e3e78d27c60238"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81fd432ac8134869a22e349cf8813d6f" id="r_a81fd432ac8134869a22e349cf8813d6f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a81fd432ac8134869a22e349cf8813d6fa87d04e4d1f30d3ce3ca8be123511c894">SCAN</a> = 16
+<tr class="memitem:a81fd432ac8134869a22e349cf8813d6f" id="r_a81fd432ac8134869a22e349cf8813d6f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a81fd432ac8134869a22e349cf8813d6facfe2de761b7cb7f37957a0e4d5aa58fc">INTERLEAVE</a> = 4
  }</td></tr>
 <tr class="separator:a81fd432ac8134869a22e349cf8813d6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd6abeaae949d21cda42b0586262dcce" id="r_afd6abeaae949d21cda42b0586262dcce"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#afd6abeaae949d21cda42b0586262dcceacfe2de761b7cb7f37957a0e4d5aa58fc">INTERLEAVE</a> = 4
- }</td></tr>
-<tr class="separator:afd6abeaae949d21cda42b0586262dcce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -593,10 +594,6 @@ Functions</h2></td></tr>
 <tr class="separator:ac7c14f1350f259a3eca7e51e080cd9bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0403c59fc3e169642ba0b0f0a18976a8" id="r_a0403c59fc3e169642ba0b0f0a18976a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a0403c59fc3e169642ba0b0f0a18976a8">engine_timer</a> (int(*fn)())</td></tr>
 <tr class="separator:a0403c59fc3e169642ba0b0f0a18976a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c363952acc35b045c60a7b9bea263c9" id="r_a1c363952acc35b045c60a7b9bea263c9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a1c363952acc35b045c60a7b9bea263c9">encoder_timer</a> ()</td></tr>
-<tr class="separator:a1c363952acc35b045c60a7b9bea263c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55240ecec983fe7e31bd20dfb8e2d4a0" id="r_a55240ecec983fe7e31bd20dfb8e2d4a0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a55240ecec983fe7e31bd20dfb8e2d4a0">decoder_timer</a> (int <a class="el" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a>)</td></tr>
-<tr class="separator:a55240ecec983fe7e31bd20dfb8e2d4a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9bb4d53b26ba997d6796933261e5f40d" id="r_a9bb4d53b26ba997d6796933261e5f40d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a9bb4d53b26ba997d6796933261e5f40d">find_extra_param</a> (<a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dc">fractals::FractalType</a> <a class="el" href="../../dc/ddd/parser_8cpp.html#ac1a6b8e717172dda4f0bc27962b78b61">type</a>)</td></tr>
 <tr class="separator:a9bb4d53b26ba997d6796933261e5f40d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a827cb0f2e297952dec35d97fa2df62ee" id="r_a827cb0f2e297952dec35d97fa2df62ee"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d0/db0/namespaceid_1_1math.html#a229759bbf81ddead197edb421af2243c">math::DComplex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a827cb0f2e297952dec35d97fa2df62ee">cmplx_bn_to_float</a> (const <a class="el" href="../../d0/db0/namespaceid_1_1math.html#a2c8355930ec6836db1d3f619d9f9fb3f">math::BNComplex</a> &amp;<a class="el" href="../../dc/ddd/parser_8cpp.html#ab87f55bd0280d90925050a4188c14ab5">s</a>)</td></tr>
@@ -729,11 +726,17 @@ Functions</h2></td></tr>
 <tr class="separator:ab22b7892de58f7ef9b27fd1a46b2ebb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a484ca05b9677e92fbe36e9cc9d30adfc" id="r_a484ca05b9677e92fbe36e9cc9d30adfc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a484ca05b9677e92fbe36e9cc9d30adfc">one_or_two_pass</a> ()</td></tr>
 <tr class="separator:a484ca05b9677e92fbe36e9cc9d30adfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8b9763766c304053826f7a293f4f4e9" id="r_ac8b9763766c304053826f7a293f4f4e9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d8/d69/classid_1_1engine_1_1OrbitPlot.html">OrbitPlot</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#ac8b9763766c304053826f7a293f4f4e9">orbit_plot</a> ()</td></tr>
+<tr class="separator:ac8b9763766c304053826f7a293f4f4e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb50a303fb0578f7814013d19c012be3" id="r_aeb50a303fb0578f7814013d19c012be3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#aeb50a303fb0578f7814013d19c012be3">plot_image_orbit</a> (double real, double imag, int color)</td></tr>
+<tr class="separator:aeb50a303fb0578f7814013d19c012be3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a526b7f1ef4acb99b0c7039da9ddceac4" id="r_a526b7f1ef4acb99b0c7039da9ddceac4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a526b7f1ef4acb99b0c7039da9ddceac4">plot_overlay_orbit</a> (double real, double imag)</td></tr>
+<tr class="separator:a526b7f1ef4acb99b0c7039da9ddceac4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3cb048bd3091d5a6e46c0d98aae7afd4" id="r_a3cb048bd3091d5a6e46c0d98aae7afd4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a3cb048bd3091d5a6e46c0d98aae7afd4">plot_orbit</a> (double real, double imag, int color)</td></tr>
 <tr class="separator:a3cb048bd3091d5a6e46c0d98aae7afd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a971176112525e41fde23a54681507718" id="r_a971176112525e41fde23a54681507718"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a971176112525e41fde23a54681507718">scrub_orbit</a> ()</td></tr>
 <tr class="separator:a971176112525e41fde23a54681507718"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81df0f108ece3f5b43488f1af95bacf9" id="r_a81df0f108ece3f5b43488f1af95bacf9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a81df0f108ece3f5b43488f1af95bacf9">param_not_used</a> (int <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp.html#ab925a01bb01a206ee71ea01b1d8cd996">param</a>)</td></tr>
+<tr class="memitem:a81df0f108ece3f5b43488f1af95bacf9" id="r_a81df0f108ece3f5b43488f1af95bacf9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a81df0f108ece3f5b43488f1af95bacf9">param_not_used</a> (int <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp.html#a3c5cddd8af5ef03af198c7b33a3a03b0">param</a>)</td></tr>
 <tr class="separator:a81df0f108ece3f5b43488f1af95bacf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36d319b8772e27c1cf5e9ab3c488f546" id="r_a36d319b8772e27c1cf5e9ab3c488f546"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a36d319b8772e27c1cf5e9ab3c488f546">dx_pixel</a> ()</td></tr>
 <tr class="separator:a36d319b8772e27c1cf5e9ab3c488f546"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -791,6 +794,8 @@ Functions</h2></td></tr>
 <tr class="separator:a446ad87d578d56e2e44a69b7c5a6d4c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95c9f67633beb31669b3919a2bd5f2f7" id="r_a95c9f67633beb31669b3919a2bd5f2f7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a95c9f67633beb31669b3919a2bd5f2f7">sound_open</a> ()</td></tr>
 <tr class="separator:a95c9f67633beb31669b3919a2bd5f2f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c25cb16fa74eec23ddff76687765f29" id="r_a1c25cb16fa74eec23ddff76687765f29"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a8a8f60b8b9a0252595c6a6dd07883a85">SoundInputPendingFn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a1c25cb16fa74eec23ddff76687765f29">set_sound_input_pending</a> (<a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a8a8f60b8b9a0252595c6a6dd07883a85">SoundInputPendingFn</a> input_pending)</td></tr>
+<tr class="separator:a1c25cb16fa74eec23ddff76687765f29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1faf2f917d95b91d03a25a2264dae92e" id="r_a1faf2f917d95b91d03a25a2264dae92e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a1faf2f917d95b91d03a25a2264dae92e">write_sound</a> (int tone)</td></tr>
 <tr class="separator:a1faf2f917d95b91d03a25a2264dae92e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b8254abc32a6a356de62500dd27c38b" id="r_a8b8254abc32a6a356de62500dd27c38b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a8b8254abc32a6a356de62500dd27c38b">sound_time_write</a> ()</td></tr>
@@ -810,6 +815,8 @@ Functions</h2></td></tr>
 <tr class="separator:a04c3a7708be7f5b11e196e9c98afab1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e552293dd7c9273ef7f0a4b34854f34" id="r_a3e552293dd7c9273ef7f0a4b34854f34"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/df4/classid_1_1engine_1_1StandardFractal.html">StandardFractal</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a3e552293dd7c9273ef7f0a4b34854f34">set_active_standard_fractal</a> (<a class="el" href="../../df/df4/classid_1_1engine_1_1StandardFractal.html">StandardFractal</a> *standard_fractal)</td></tr>
 <tr class="separator:a3e552293dd7c9273ef7f0a4b34854f34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b40a9ae8fe210434e028376b338e8b6" id="r_a7b40a9ae8fe210434e028376b338e8b6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a7b40a9ae8fe210434e028376b338e8b6">submit_image_orbit_plot</a> (double real, double imag, int color)</td></tr>
+<tr class="separator:a7b40a9ae8fe210434e028376b338e8b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20235ac9f814fa090c40d57d0ae6bdcd" id="r_a20235ac9f814fa090c40d57d0ae6bdcd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a20235ac9f814fa090c40d57d0ae6bdcd">sticky_orbits</a> ()</td></tr>
 <tr class="separator:a20235ac9f814fa090c40d57d0ae6bdcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a7bbb32df3f1049af563e2de7066bcd" id="r_a7a7bbb32df3f1049af563e2de7066bcd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a7a7bbb32df3f1049af563e2de7066bcd">tesseral</a> ()</td></tr>
@@ -829,9 +836,9 @@ Functions</h2></td></tr>
 <tr class="separator:a3792967dd98d3dade3e0b8a4b99473ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78ec94eb4bdc00a0bdaf464cbce124bb" id="r_a78ec94eb4bdc00a0bdaf464cbce124bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a78ec94eb4bdc00a0bdaf464cbce124bb">restore_trig_functions</a> ()</td></tr>
 <tr class="separator:a78ec94eb4bdc00a0bdaf464cbce124bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7e3ff6d398a0762fa31eb91091981ba" id="r_ac7e3ff6d398a0762fa31eb91091981ba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#ac7e3ff6d398a0762fa31eb91091981ba">type_has_param</a> (<a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dc">fractals::FractalType</a> <a class="el" href="../../dc/ddd/parser_8cpp.html#ac1a6b8e717172dda4f0bc27962b78b61">type</a>, int <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp.html#ab925a01bb01a206ee71ea01b1d8cd996">param</a>, const char **prompt)</td></tr>
+<tr class="memitem:ac7e3ff6d398a0762fa31eb91091981ba" id="r_ac7e3ff6d398a0762fa31eb91091981ba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#ac7e3ff6d398a0762fa31eb91091981ba">type_has_param</a> (<a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dc">fractals::FractalType</a> <a class="el" href="../../dc/ddd/parser_8cpp.html#ac1a6b8e717172dda4f0bc27962b78b61">type</a>, int <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp.html#a3c5cddd8af5ef03af198c7b33a3a03b0">param</a>, const char **prompt)</td></tr>
 <tr class="separator:ac7e3ff6d398a0762fa31eb91091981ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aecd58e56fc2ed67a4518b3e06d2ba532" id="r_aecd58e56fc2ed67a4518b3e06d2ba532"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#aecd58e56fc2ed67a4518b3e06d2ba532">type_has_param</a> (const <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dc">fractals::FractalType</a> <a class="el" href="../../dc/ddd/parser_8cpp.html#ac1a6b8e717172dda4f0bc27962b78b61">type</a>, const int <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp.html#ab925a01bb01a206ee71ea01b1d8cd996">param</a>)</td></tr>
+<tr class="memitem:aecd58e56fc2ed67a4518b3e06d2ba532" id="r_aecd58e56fc2ed67a4518b3e06d2ba532"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#aecd58e56fc2ed67a4518b3e06d2ba532">type_has_param</a> (const <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dc">fractals::FractalType</a> <a class="el" href="../../dc/ddd/parser_8cpp.html#ac1a6b8e717172dda4f0bc27962b78b61">type</a>, const int <a class="el" href="../../d6/deb/fractals_2lsystem_8cpp.html#a3c5cddd8af5ef03af198c7b33a3a03b0">param</a>)</td></tr>
 <tr class="separator:aecd58e56fc2ed67a4518b3e06d2ba532"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69b7deacaadf3bf63d259f830587f350" id="r_a69b7deacaadf3bf63d259f830587f350"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a69b7deacaadf3bf63d259f830587f350">check_vid_mode_key</a> (int key)</td></tr>
 <tr class="separator:a69b7deacaadf3bf63d259f830587f350"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1008,8 +1015,8 @@ Variables</h2></td></tr>
 <tr class="separator:a463a3477e211550fe154071a0aee91b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe535fac1e7d50e309b0bebeb18523e0" id="r_afe535fac1e7d50e309b0bebeb18523e0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#afe535fac1e7d50e309b0bebeb18523e0">g_orbit_color</a> {15}</td></tr>
 <tr class="separator:afe535fac1e7d50e309b0bebeb18523e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab937c099eb6166b2507d0578fdf200dc" id="r_ab937c099eb6166b2507d0578fdf200dc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#ab937c099eb6166b2507d0578fdf200dc">g_orbit_save_index</a> {}</td></tr>
-<tr class="separator:ab937c099eb6166b2507d0578fdf200dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecc45e9a0094ef01c9ec70ab75011266" id="r_aecc45e9a0094ef01c9ec70ab75011266"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#aecc45e9a0094ef01c9ec70ab75011266">g_orbit_save_flag</a> {}</td></tr>
+<tr class="separator:aecc45e9a0094ef01c9ec70ab75011266"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabcbbd8d1c9bd546b902e3c9f432e080" id="r_aabcbbd8d1c9bd546b902e3c9f432e080"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#aabcbbd8d1c9bd546b902e3c9f432e080">g_show_orbit</a> {}</td></tr>
 <tr class="separator:aabcbbd8d1c9bd546b902e3c9f432e080"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5de9bff7b8a37639cb8cac6e52d2e94" id="r_ac5de9bff7b8a37639cb8cac6e52d2e94"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#ac5de9bff7b8a37639cb8cac6e52d2e94">g_start_show_orbit</a> {}</td></tr>
@@ -1356,6 +1363,22 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="a8a8f60b8b9a0252595c6a6dd07883a85" name="a8a8f60b8b9a0252595c6a6dd07883a85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a8f60b8b9a0252595c6a6dd07883a85">&#9670;&#160;</a></span>SoundInputPendingFn</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a8a8f60b8b9a0252595c6a6dd07883a85">id::engine::SoundInputPendingFn</a> = typedef bool (*)()</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../db/dee/engine_2sound_8h_source.html#l00035">35</a> of file <a class="el" href="../../db/dee/engine_2sound_8h_source.html">sound.h</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="ab3e37e9e29147aa9be480e4a0c8dd0d4" name="ab3e37e9e29147aa9be480e4a0c8dd0d4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab3e37e9e29147aa9be480e4a0c8dd0d4">&#9670;&#160;</a></span>anonymous enum</h2>
@@ -1448,10 +1471,11 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ae3dd237ffa60763c8d49cb12a619babba62ac380237e60ca482cf993e9f7f1434" name="ae3dd237ffa60763c8d49cb12a619babba62ac380237e60ca482cf993e9f7f1434"></a>NUM_SAVE_ORBIT&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ae3dd237ffa60763c8d49cb12a619babba66ab4d7637d22fe9a37f7f49deaf0765" name="ae3dd237ffa60763c8d49cb12a619babba66ab4d7637d22fe9a37f7f49deaf0765"></a>EVERY&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ae3dd237ffa60763c8d49cb12a619babba793c9eb180f1c8cc653ca6005354a762" name="ae3dd237ffa60763c8d49cb12a619babba793c9eb180f1c8cc653ca6005354a762"></a>BASIN_COLOR&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="../../d0/dc0/orbit_8cpp_source.html#l00028">28</a> of file <a class="el" href="../../d0/dc0/orbit_8cpp_source.html">orbit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/d47/soi_8cpp_source.html#l00035">35</a> of file <a class="el" href="../../de/d47/soi_8cpp_source.html">soi.cpp</a>.</p>
 
 </div>
 </div>
@@ -1467,11 +1491,10 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a8883ff9cda90c81530e3e78d27c60238a66ab4d7637d22fe9a37f7f49deaf0765" name="a8883ff9cda90c81530e3e78d27c60238a66ab4d7637d22fe9a37f7f49deaf0765"></a>EVERY&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a8883ff9cda90c81530e3e78d27c60238a793c9eb180f1c8cc653ca6005354a762" name="a8883ff9cda90c81530e3e78d27c60238a793c9eb180f1c8cc653ca6005354a762"></a>BASIN_COLOR&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a8883ff9cda90c81530e3e78d27c60238a87d04e4d1f30d3ce3ca8be123511c894" name="a8883ff9cda90c81530e3e78d27c60238a87d04e4d1f30d3ce3ca8be123511c894"></a>SCAN&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d47/soi_8cpp_source.html#l00035">35</a> of file <a class="el" href="../../de/d47/soi_8cpp_source.html">soi.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/d47/soi_8cpp_source.html#l00110">110</a> of file <a class="el" href="../../de/d47/soi_8cpp_source.html">soi.cpp</a>.</p>
 
 </div>
 </div>
@@ -1487,26 +1510,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a81fd432ac8134869a22e349cf8813d6fa87d04e4d1f30d3ce3ca8be123511c894" name="a81fd432ac8134869a22e349cf8813d6fa87d04e4d1f30d3ce3ca8be123511c894"></a>SCAN&#160;</td><td class="fielddoc"></td></tr>
-</table>
-
-<p class="definition">Definition at line <a class="el" href="../../de/d47/soi_8cpp_source.html#l00110">110</a> of file <a class="el" href="../../de/d47/soi_8cpp_source.html">soi.cpp</a>.</p>
-
-</div>
-</div>
-<a id="afd6abeaae949d21cda42b0586262dcce" name="afd6abeaae949d21cda42b0586262dcce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd6abeaae949d21cda42b0586262dcce">&#9670;&#160;</a></span>anonymous enum</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">anonymous enum</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="afd6abeaae949d21cda42b0586262dcceacfe2de761b7cb7f37957a0e4d5aa58fc" name="afd6abeaae949d21cda42b0586262dcceacfe2de761b7cb7f37957a0e4d5aa58fc"></a>INTERLEAVE&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a81fd432ac8134869a22e349cf8813d6facfe2de761b7cb7f37957a0e4d5aa58fc" name="a81fd432ac8134869a22e349cf8813d6facfe2de761b7cb7f37957a0e4d5aa58fc"></a>INTERLEAVE&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="../../de/d47/soi_8cpp_source.html#l00116">116</a> of file <a class="el" href="../../de/d47/soi_8cpp_source.html">soi.cpp</a>.</p>
@@ -2191,7 +2195,7 @@ template&lt;typename T &gt; </div>
 <tr><td class="fieldname"><a id="ae8eb5d27d28a3a14faa287c43101d372a33ce6d4895950793b119e3db54aa9f59" name="ae8eb5d27d28a3a14faa287c43101d372a33ce6d4895950793b119e3db54aa9f59"></a>SOUNDFLAG_MASK&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d88/sound_8h_source.html#l00008">8</a> of file <a class="el" href="../../d9/d88/sound_8h_source.html">sound.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../db/dee/engine_2sound_8h_source.html#l00008">8</a> of file <a class="el" href="../../db/dee/engine_2sound_8h_source.html">sound.h</a>.</p>
 
 </div>
 </div>
@@ -2623,7 +2627,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02523">2523</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02554">2554</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -2756,7 +2760,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/df4/calmanfp_8cpp_source.html#l00027">27</a> of file <a class="el" href="../../d2/df4/calmanfp_8cpp_source.html">calmanfp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/df4/calmanfp_8cpp_source.html#l00026">26</a> of file <a class="el" href="../../d2/df4/calmanfp_8cpp_source.html">calmanfp.cpp</a>.</p>
 
 </div>
 </div>
@@ -2872,7 +2876,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00097">97</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00117">117</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -3737,26 +3741,6 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a55240ecec983fe7e31bd20dfb8e2d4a0" name="a55240ecec983fe7e31bd20dfb8e2d4a0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a55240ecec983fe7e31bd20dfb8e2d4a0">&#9670;&#160;</a></span>decoder_timer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int id::engine::decoder_timer </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>width</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html#l00120">120</a> of file <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html">engine_timer.cpp</a>.</p>
-
-</div>
-</div>
 <a id="ada98ba6fde70e062ceb5ff6c39662ea8" name="ada98ba6fde70e062ceb5ff6c39662ea8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ada98ba6fde70e062ceb5ff6c39662ea8">&#9670;&#160;</a></span>dequeue_float()</h2>
 
@@ -3833,25 +3817,6 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a1c363952acc35b045c60a7b9bea263c9" name="a1c363952acc35b045c60a7b9bea263c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c363952acc35b045c60a7b9bea263c9">&#9670;&#160;</a></span>encoder_timer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int id::engine::encoder_timer </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html#l00115">115</a> of file <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html">engine_timer.cpp</a>.</p>
-
-</div>
-</div>
 <a id="a67a105e77ffd1b0e2ae3a093f17b706e" name="a67a105e77ffd1b0e2ae3a093f17b706e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a67a105e77ffd1b0e2ae3a093f17b706e">&#9670;&#160;</a></span>end_resume()</h2>
 
@@ -3887,7 +3852,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html#l00110">110</a> of file <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html">engine_timer.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html#l00029">29</a> of file <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html">engine_timer.cpp</a>.</p>
 
 </div>
 </div>
@@ -4909,7 +4874,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/df4/calmanfp_8cpp_source.html#l00034">34</a> of file <a class="el" href="../../d2/df4/calmanfp_8cpp_source.html">calmanfp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/df4/calmanfp_8cpp_source.html#l00033">33</a> of file <a class="el" href="../../d2/df4/calmanfp_8cpp_source.html">calmanfp.cpp</a>.</p>
 
 </div>
 </div>
@@ -4993,7 +4958,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02812">2812</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02843">2843</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -5356,6 +5321,25 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="ac8b9763766c304053826f7a293f4f4e9" name="ac8b9763766c304053826f7a293f4f4e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8b9763766c304053826f7a293f4f4e9">&#9670;&#160;</a></span>orbit_plot()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d8/d69/classid_1_1engine_1_1OrbitPlot.html">OrbitPlot</a> &amp; id::engine::orbit_plot </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d0/dc0/orbit_8cpp_source.html#l00210">210</a> of file <a class="el" href="../../d0/dc0/orbit_8cpp_source.html">orbit.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a47fc0e04f86679b77673c314bc00bcb4" name="a47fc0e04f86679b77673c314bc00bcb4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a47fc0e04f86679b77673c314bc00bcb4">&#9670;&#160;</a></span>other_julia_per_pixel()</h2>
 
@@ -5414,6 +5398,42 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="aeb50a303fb0578f7814013d19c012be3" name="aeb50a303fb0578f7814013d19c012be3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb50a303fb0578f7814013d19c012be3">&#9670;&#160;</a></span>plot_image_orbit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void id::engine::plot_image_orbit </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>real</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>imag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>color</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d0/dc0/orbit_8cpp_source.html#l00215">215</a> of file <a class="el" href="../../d0/dc0/orbit_8cpp_source.html">orbit.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a3cb048bd3091d5a6e46c0d98aae7afd4" name="a3cb048bd3091d5a6e46c0d98aae7afd4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3cb048bd3091d5a6e46c0d98aae7afd4">&#9670;&#160;</a></span>plot_orbit()</h2>
 
@@ -5446,7 +5466,37 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d0/dc0/orbit_8cpp_source.html#l00132">132</a> of file <a class="el" href="../../d0/dc0/orbit_8cpp_source.html">orbit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d0/dc0/orbit_8cpp_source.html#l00233">233</a> of file <a class="el" href="../../d0/dc0/orbit_8cpp_source.html">orbit.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a526b7f1ef4acb99b0c7039da9ddceac4" name="a526b7f1ef4acb99b0c7039da9ddceac4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a526b7f1ef4acb99b0c7039da9ddceac4">&#9670;&#160;</a></span>plot_overlay_orbit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void id::engine::plot_overlay_orbit </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>real</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>imag</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d0/dc0/orbit_8cpp_source.html#l00224">224</a> of file <a class="el" href="../../d0/dc0/orbit_8cpp_source.html">orbit.cpp</a>.</p>
 
 </div>
 </div>
@@ -5495,7 +5545,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02018">2018</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02049">2049</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -5883,7 +5933,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d0/dc0/orbit_8cpp_source.html#l00137">137</a> of file <a class="el" href="../../d0/dc0/orbit_8cpp_source.html">orbit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d0/dc0/orbit_8cpp_source.html#l00265">265</a> of file <a class="el" href="../../d0/dc0/orbit_8cpp_source.html">orbit.cpp</a>.</p>
 
 </div>
 </div>
@@ -6004,6 +6054,26 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="a1c25cb16fa74eec23ddff76687765f29" name="a1c25cb16fa74eec23ddff76687765f29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c25cb16fa74eec23ddff76687765f29">&#9670;&#160;</a></span>set_sound_input_pending()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a8a8f60b8b9a0252595c6a6dd07883a85">SoundInputPendingFn</a> id::engine::set_sound_input_pending </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a8a8f60b8b9a0252595c6a6dd07883a85">SoundInputPendingFn</a>&#160;</td>
+          <td class="paramname"><em>input_pending</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00058">58</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a18489ff662f51ee34f7baa79902173ca" name="a18489ff662f51ee34f7baa79902173ca"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a18489ff662f51ee34f7baa79902173ca">&#9670;&#160;</a></span>set_symmetry()</h2>
 
@@ -6030,7 +6100,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02199">2199</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02230">2230</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -6682,7 +6752,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00041">41</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00053">53</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -6701,7 +6771,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00047">47</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00066">66</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -6720,7 +6790,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00088">88</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00108">108</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -6830,6 +6900,42 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="a7b40a9ae8fe210434e028376b338e8b6" name="a7b40a9ae8fe210434e028376b338e8b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b40a9ae8fe210434e028376b338e8b6">&#9670;&#160;</a></span>submit_image_orbit_plot()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void id::engine::submit_image_orbit_plot </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>real</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>imag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>color</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d8/d92/StandardFractal_8cpp_source.html#l00149">149</a> of file <a class="el" href="../../d8/d92/StandardFractal_8cpp_source.html">StandardFractal.cpp</a>.</p>
+
+</div>
+</div>
 <a id="aa87f363ad0fee4728e23e483c9aa8832" name="aa87f363ad0fee4728e23e483c9aa8832"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa87f363ad0fee4728e23e483c9aa8832">&#9670;&#160;</a></span>sym_fill_line()</h2>
 
@@ -6904,7 +7010,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02634">2634</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02665">2665</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -6940,7 +7046,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02644">2644</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02675">2675</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -6976,7 +7082,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02661">2661</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02692">2692</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -7012,7 +7118,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02685">2685</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02716">2716</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -7048,7 +7154,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02739">2739</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02770">2770</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -7084,7 +7190,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02707">2707</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02738">2738</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -7120,7 +7226,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02696">2696</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02727">2727</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -7156,7 +7262,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02719">2719</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02750">2750</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -7192,7 +7298,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02762">2762</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html#l02793">2793</a> of file <a class="el" href="../../d9/da8/calcfrac_8cpp_source.html">calcfrac.cpp</a>.</p>
 
 </div>
 </div>
@@ -7413,7 +7519,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00065">65</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00087">87</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -7743,7 +7849,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00027">27</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00027">27</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -8367,7 +8473,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html#l00027">27</a> of file <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html">engine_timer.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html#l00023">23</a> of file <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html">engine_timer.cpp</a>.</p>
 
 </div>
 </div>
@@ -8463,7 +8569,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00028">28</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00028">28</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -8479,7 +8585,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00029">29</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00029">29</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -8495,7 +8601,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00030">30</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00030">30</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -8511,7 +8617,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00031">31</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00031">31</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -8527,7 +8633,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00032">32</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00032">32</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -8543,7 +8649,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00033">33</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00033">33</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -8623,7 +8729,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00034">34</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00034">34</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -9331,14 +9437,14 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="ab937c099eb6166b2507d0578fdf200dc" name="ab937c099eb6166b2507d0578fdf200dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab937c099eb6166b2507d0578fdf200dc">&#9670;&#160;</a></span>g_orbit_save_index</h2>
+<a id="aecc45e9a0094ef01c9ec70ab75011266" name="aecc45e9a0094ef01c9ec70ab75011266"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aecc45e9a0094ef01c9ec70ab75011266">&#9670;&#160;</a></span>g_orbit_save_flag</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int id::engine::g_orbit_save_index {}</td>
+          <td class="memname">bool id::engine::g_orbit_save_flag {}</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -9683,7 +9789,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00035">35</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00035">35</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -10055,7 +10161,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00036">36</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00036">36</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -10215,7 +10321,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d6/df1/sound_8cpp_source.html#l00037">37</a> of file <a class="el" href="../../d6/df1/sound_8cpp_source.html">sound.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html#l00037">37</a> of file <a class="el" href="../../d8/dd3/engine_2sound_8cpp_source.html">sound.cpp</a>.</p>
 
 </div>
 </div>
@@ -10391,7 +10497,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html#l00026">26</a> of file <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html">engine_timer.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html#l00022">22</a> of file <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html">engine_timer.cpp</a>.</p>
 
 </div>
 </div>
@@ -10407,7 +10513,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html#l00028">28</a> of file <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html">engine_timer.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html#l00024">24</a> of file <a class="el" href="../../d7/df9/engine__timer_8cpp_source.html">engine_timer.cpp</a>.</p>
 
 </div>
 </div>

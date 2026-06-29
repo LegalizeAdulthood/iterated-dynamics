@@ -79,13 +79,13 @@ hc/HelpCompiler.cpp:1578:9: note: First condition
 hc/HelpCompiler.cpp:1582:9: note: Second condition
     if (!g_errors)
         ^
-libid/engine/StandardFractal.cpp:233:32: style: Local variable 'active_standard_fractal' shadows outer function [shadowFunction]
+libid/engine/StandardFractal.cpp:292:32: style: Local variable 'active_standard_fractal' shadows outer function [shadowFunction]
     ActiveStandardFractalScope active_standard_fractal{*this};
                                ^
 libid/engine/StandardFractal.cpp:124:18: note: Shadowed declaration
 StandardFractal *active_standard_fractal()
                  ^
-libid/engine/StandardFractal.cpp:233:32: note: Shadow variable
+libid/engine/StandardFractal.cpp:292:32: note: Shadow variable
     ActiveStandardFractalScope active_standard_fractal{*this};
                                ^
 libid/engine/cmdfiles.cpp:211:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
@@ -115,6 +115,12 @@ libid/engine/cmdfiles.cpp:1688:21: note: Shadowed declaration
 libid/engine/cmdfiles.cpp:1766:24: note: Shadow variable
             for (auto &color : g_dac_box)
                        ^
+libid/engine/engine_timer.cpp:39:19: style: Variable 'out' is assigned a value that is never used. [unreadVariable]
+    const int out = fn();
+                  ^
+libid/engine/sound.cpp:72:23: style: Condition 'path.empty()' is always false [knownConditionTrueFalse]
+        if (path.empty())
+                      ^
 libid/fractals/Ant.cpp:276:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
     return value & high_bit ? result | 1U : result;
                             ^
@@ -3292,13 +3298,13 @@ libid/io/decode_info.cpp:575:43: note: Calling function 'encode_float', 2nd argu
 libid/io/decode_info.cpp:293:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         (*dst)[1] = static_cast<int>(f) & 0xff;
               ^
-libid/io/encoder.cpp:965:28: style: Variable 'save_info->release' is reassigned a value before the old one has been used. [redundantAssignment]
+libid/io/encoder.cpp:958:28: style: Variable 'save_info->release' is reassigned a value before the old one has been used. [redundantAssignment]
         save_info->release = static_cast<std::int16_t>(g_version.major * 100 + g_version.minor);
                            ^
-libid/io/encoder.cpp:918:24: note: save_info->release is assigned
+libid/io/encoder.cpp:911:24: note: save_info->release is assigned
     save_info->release = static_cast<std::int16_t>(20 * 100 + 4);       // legacy FRACTINT 20.04
                        ^
-libid/io/encoder.cpp:965:28: note: save_info->release is overwritten
+libid/io/encoder.cpp:958:28: note: save_info->release is overwritten
         save_info->release = static_cast<std::int16_t>(g_version.major * 100 + g_version.minor);
                            ^
 libid/io/gif_file.cpp:88:19: style: Consider using std::generate algorithm instead of a raw loop. [useStlAlgorithm]
@@ -3430,10 +3436,10 @@ tests/libid/engine/test_cmdfiles.cpp:1355:49: note: 'saved_browse_name' is assig
 tests/libid/engine/test_cmdfiles.cpp:1363:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
-tests/libid/fractals/test_fractalp.cpp:368:20: style: Unused variable: reset_parser [unusedVariable]
+tests/libid/fractals/test_fractalp.cpp:369:20: style: Unused variable: reset_parser [unusedVariable]
     ParserResetter reset_parser;
                    ^
-tests/libid/fractals/test_fractalp.cpp:383:20: style: Unused variable: reset_parser [unusedVariable]
+tests/libid/fractals/test_fractalp.cpp:384:20: style: Unused variable: reset_parser [unusedVariable]
     ParserResetter reset_parser;
                    ^
 tests/tools/image_compare.cpp:54:26: error: The address of local variable 'pixels' is accessed at non-zero index. [objectIndex]

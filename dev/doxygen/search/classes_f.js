@@ -13,7 +13,8 @@ var searchData=
   ['point_10',['Point',['../df/d94/classid_1_1engine_1_1Point.html',1,'id::engine']]],
   ['point2_11',['Point2',['../d2/d31/structid_1_1math_1_1Point2.html',1,'id::math']]],
   ['pointcolort_12',['PointColorT',['../d7/dce/structid_1_1geometry_1_1PointColorT.html',1,'id::geometry']]],
-  ['potential_13',['Potential',['../d8/d74/structid_1_1engine_1_1Potential.html',1,'id::engine']]],
-  ['printdocinfo_14',['PrintDocInfo',['../d3/d78/structhc_1_1PrintDocInfo.html',1,'hc']]],
-  ['processdocumentinfo_15',['ProcessDocumentInfo',['../d2/daa/structid_1_1help_1_1ProcessDocumentInfo.html',1,'id::help']]]
+  ['popcorn_13',['Popcorn',['../d6/d79/classid_1_1fractals_1_1Popcorn.html',1,'id::fractals']]],
+  ['potential_14',['Potential',['../d8/d74/structid_1_1engine_1_1Potential.html',1,'id::engine']]],
+  ['printdocinfo_15',['PrintDocInfo',['../d3/d78/structhc_1_1PrintDocInfo.html',1,'hc']]],
+  ['processdocumentinfo_16',['ProcessDocumentInfo',['../d2/daa/structid_1_1help_1_1ProcessDocumentInfo.html',1,'id::help']]]
 ];

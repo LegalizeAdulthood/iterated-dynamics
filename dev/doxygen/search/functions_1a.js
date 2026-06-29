@@ -35,13 +35,14 @@ var searchData=
   ['_7epaltable_32',['~PalTable',['../d1/d91/classid_1_1ui_1_1PalTable.html#ad1b4a03d5cd8d71a653773572c83b2b8',1,'id::ui::PalTable']]],
   ['_7eplasma_33',['~Plasma',['../d6/dab/classid_1_1fractals_1_1Plasma.html#afc7d9273fe81787b64cbef204f641426',1,'id::fractals::Plasma']]],
   ['_7epoint_34',['~Point',['../df/d94/classid_1_1engine_1_1Point.html#acea5ca153241ff6a02fa8f5e3ec78c77',1,'id::engine::Point']]],
-  ['_7ergbeditor_35',['~RGBEditor',['../df/d5b/classid_1_1ui_1_1RGBEditor.html#a1baec2dd235de2df4ef68a4f4a551047',1,'id::ui::RGBEditor']]],
-  ['_7ergbeditornotification_36',['~RGBEditorNotification',['../de/d5f/classid_1_1ui_1_1RGBEditorNotification.html#a8eff107b36b61a196d6dfc788dee50fe',1,'id::ui::RGBEditorNotification']]],
-  ['_7escopedkeyboardhandler_37',['~ScopedKeyboardHandler',['../d9/d95/classid_1_1ui_1_1ScopedKeyboardHandler.html#ae0d95f6d8c4b6f8627719e2415305035',1,'id::ui::ScopedKeyboardHandler']]],
-  ['_7esolidguess_38',['~SolidGuess',['../d6/d94/classid_1_1engine_1_1SolidGuess.html#a608d428f28ccebae39b51bb07298db99',1,'id::engine::SolidGuess']]],
-  ['_7especialdirectories_39',['~SpecialDirectories',['../df/d81/classid_1_1io_1_1SpecialDirectories.html#a2715b1af239503f54c0fec7b367ef793',1,'id::io::SpecialDirectories']]],
-  ['_7estereosaverestore_40',['~StereoSaveRestore',['../d9/de8/classid_1_1ui_1_1StereoSaveRestore.html#abeda7f3a38e92026ad1a5be7a38e7b66',1,'id::ui::StereoSaveRestore']]],
-  ['_7etestpoint_41',['~TestPoint',['../d8/da3/classid_1_1fractals_1_1TestPoint.html#a3751bf1e411bbffab445f49da38c8f84',1,'id::fractals::TestPoint']]],
-  ['_7evaluesaver_42',['~ValueSaver',['../db/dc9/classid_1_1misc_1_1ValueSaver.html#a1401faa376120532f58d3ce24d32ee13',1,'id::misc::ValueSaver']]],
-  ['_7ewin32basedriver_43',['~Win32BaseDriver',['../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#a5395a71bd227a0a417e4cb4fa8424b0a',1,'id::misc::Win32BaseDriver']]]
+  ['_7epopcorn_35',['~Popcorn',['../d6/d79/classid_1_1fractals_1_1Popcorn.html#ab2f41dd361ba66b6d0d5bd8332b15731',1,'id::fractals::Popcorn']]],
+  ['_7ergbeditor_36',['~RGBEditor',['../df/d5b/classid_1_1ui_1_1RGBEditor.html#a1baec2dd235de2df4ef68a4f4a551047',1,'id::ui::RGBEditor']]],
+  ['_7ergbeditornotification_37',['~RGBEditorNotification',['../de/d5f/classid_1_1ui_1_1RGBEditorNotification.html#a8eff107b36b61a196d6dfc788dee50fe',1,'id::ui::RGBEditorNotification']]],
+  ['_7escopedkeyboardhandler_38',['~ScopedKeyboardHandler',['../d9/d95/classid_1_1ui_1_1ScopedKeyboardHandler.html#ae0d95f6d8c4b6f8627719e2415305035',1,'id::ui::ScopedKeyboardHandler']]],
+  ['_7esolidguess_39',['~SolidGuess',['../d6/d94/classid_1_1engine_1_1SolidGuess.html#a608d428f28ccebae39b51bb07298db99',1,'id::engine::SolidGuess']]],
+  ['_7especialdirectories_40',['~SpecialDirectories',['../df/d81/classid_1_1io_1_1SpecialDirectories.html#a2715b1af239503f54c0fec7b367ef793',1,'id::io::SpecialDirectories']]],
+  ['_7estereosaverestore_41',['~StereoSaveRestore',['../d9/de8/classid_1_1ui_1_1StereoSaveRestore.html#abeda7f3a38e92026ad1a5be7a38e7b66',1,'id::ui::StereoSaveRestore']]],
+  ['_7etestpoint_42',['~TestPoint',['../d8/da3/classid_1_1fractals_1_1TestPoint.html#a3751bf1e411bbffab445f49da38c8f84',1,'id::fractals::TestPoint']]],
+  ['_7evaluesaver_43',['~ValueSaver',['../db/dc9/classid_1_1misc_1_1ValueSaver.html#a1401faa376120532f58d3ce24d32ee13',1,'id::misc::ValueSaver']]],
+  ['_7ewin32basedriver_44',['~Win32BaseDriver',['../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#a5395a71bd227a0a417e4cb4fa8424b0a',1,'id::misc::Win32BaseDriver']]]
 ];

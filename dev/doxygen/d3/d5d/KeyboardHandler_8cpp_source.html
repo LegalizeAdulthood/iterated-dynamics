@@ -165,35 +165,45 @@ $(document).ready(function() { init_codefold(1); });
 </div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
 <div class="foldopen" id="foldopen00071" data-start="{" data-end="}">
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a98023311e694a654472136501fe53317">   71</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a98023311e694a654472136501fe53317">set_calc_interrupted</a>()</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#aec4f8a0cf3576081b8730578776a5041">   71</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#aec4f8a0cf3576081b8730578776a5041">dispatch_pending_keyboard_input</a>()</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>{</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    s_calc_interrupted = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>}</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keywordtype">bool</span> key_dispatched = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordflow">while</span> (<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">driver_key_pressed</a>() != 0)</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    {</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        key_dispatched = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a4360c3db3e584f575977876c6ab7b976">dispatch_keyboard_key</a>(<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ac52f797fd56ee3e32bb756bace47991e">driver_get_key</a>());</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <span class="keywordflow">if</span> (s_calc_interrupted)</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        {</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        }</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    }</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keywordflow">return</span> key_dispatched;</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>}</div>
 </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="foldopen" id="foldopen00076" data-start="{" data-end="}">
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#ae5b1c33ff31d4f266fbdc2c3bfd6aed2">   76</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ae5b1c33ff31d4f266fbdc2c3bfd6aed2">reset_calc_interrupted</a>()</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>{</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    s_calc_interrupted = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>}</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
+<div class="foldopen" id="foldopen00086" data-start="{" data-end="}">
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a98023311e694a654472136501fe53317">   86</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a98023311e694a654472136501fe53317">set_calc_interrupted</a>()</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>{</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    s_calc_interrupted = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>}</div>
 </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="foldopen" id="foldopen00081" data-start="{" data-end="}">
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a538a23a444bdd84a2b88109eb208d32e">   81</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a538a23a444bdd84a2b88109eb208d32e">calc_interrupted</a>()</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>{</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keywordflow">while</span> (<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">driver_key_pressed</a>() != 0)</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    {</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a4360c3db3e584f575977876c6ab7b976">dispatch_keyboard_key</a>(<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ac52f797fd56ee3e32bb756bace47991e">driver_get_key</a>());</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        <span class="keywordflow">if</span> (s_calc_interrupted)</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        {</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>            <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        }</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    }</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keywordflow">return</span> s_calc_interrupted;</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>}</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="foldopen" id="foldopen00091" data-start="{" data-end="}">
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#ae5b1c33ff31d4f266fbdc2c3bfd6aed2">   91</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ae5b1c33ff31d4f266fbdc2c3bfd6aed2">reset_calc_interrupted</a>()</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>{</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    s_calc_interrupted = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>}</div>
 </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
+<div class="foldopen" id="foldopen00096" data-start="{" data-end="}">
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a538a23a444bdd84a2b88109eb208d32e">   96</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a538a23a444bdd84a2b88109eb208d32e">calc_interrupted</a>()</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>{</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#aec4f8a0cf3576081b8730578776a5041">dispatch_pending_keyboard_input</a>();</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordflow">return</span> s_calc_interrupted;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>}</div>
+</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>} <span class="comment">// namespace id::ui</span></div>
 <div class="ttc" id="aDriver_8h_html"><div class="ttname"><a href="../../dd/d3c/Driver_8h.html">Driver.h</a></div></div>
 <div class="ttc" id="aKeyboardHandler_8h_html"><div class="ttname"><a href="../../d9/dec/KeyboardHandler_8h.html">KeyboardHandler.h</a></div></div>
 <div class="ttc" id="aclassid_1_1ui_1_1MainLoopKeyboardHandler_html_a4909acc72973a9c67b7538669d8618bc"><div class="ttname"><a href="../../d8/dcf/classid_1_1ui_1_1MainLoopKeyboardHandler.html#a4909acc72973a9c67b7538669d8618bc">id::ui::MainLoopKeyboardHandler::handle_key</a></div><div class="ttdeci">bool handle_key(int key) override</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00023">KeyboardHandler.cpp:23</a></div></div>
@@ -205,12 +215,13 @@ $(document).ready(function() { init_codefold(1); });
 <div class="ttc" id="anamespaceid_1_1misc_html_ad698e1042eebf4696c125d22bb014c9c"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">id::misc::driver_key_pressed</a></div><div class="ttdeci">int driver_key_pressed()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00220">Driver.h:220</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a4360c3db3e584f575977876c6ab7b976"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a4360c3db3e584f575977876c6ab7b976">id::ui::dispatch_keyboard_key</a></div><div class="ttdeci">bool dispatch_keyboard_key(int key)</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00059">KeyboardHandler.cpp:59</a></div></div>
-<div class="ttc" id="anamespaceid_1_1ui_html_a538a23a444bdd84a2b88109eb208d32e"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a538a23a444bdd84a2b88109eb208d32e">id::ui::calc_interrupted</a></div><div class="ttdeci">bool calc_interrupted()</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00081">KeyboardHandler.cpp:81</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a538a23a444bdd84a2b88109eb208d32e"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a538a23a444bdd84a2b88109eb208d32e">id::ui::calc_interrupted</a></div><div class="ttdeci">bool calc_interrupted()</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00096">KeyboardHandler.cpp:96</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a5e073219250ba8f17eba8e2c3158b864"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a5e073219250ba8f17eba8e2c3158b864">id::ui::KeyboardHandlerPtr</a></div><div class="ttdeci">std::shared_ptr&lt; KeyboardHandler &gt; KeyboardHandlerPtr</div><div class="ttdef"><b>Definition</b> <a href="../../d9/dec/KeyboardHandler_8h_source.html#l00018">KeyboardHandler.h:18</a></div></div>
-<div class="ttc" id="anamespaceid_1_1ui_html_a98023311e694a654472136501fe53317"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a98023311e694a654472136501fe53317">id::ui::set_calc_interrupted</a></div><div class="ttdeci">void set_calc_interrupted()</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00071">KeyboardHandler.cpp:71</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a98023311e694a654472136501fe53317"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a98023311e694a654472136501fe53317">id::ui::set_calc_interrupted</a></div><div class="ttdeci">void set_calc_interrupted()</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00086">KeyboardHandler.cpp:86</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_ac695de5cc58cc14860e6004c8ce9a627"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ac695de5cc58cc14860e6004c8ce9a627">id::ui::pop_keyboard_handler</a></div><div class="ttdeci">void pop_keyboard_handler(const KeyboardHandlerPtr &amp;handler)</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00048">KeyboardHandler.cpp:48</a></div></div>
-<div class="ttc" id="anamespaceid_1_1ui_html_ae5b1c33ff31d4f266fbdc2c3bfd6aed2"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ae5b1c33ff31d4f266fbdc2c3bfd6aed2">id::ui::reset_calc_interrupted</a></div><div class="ttdeci">void reset_calc_interrupted()</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00076">KeyboardHandler.cpp:76</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ae5b1c33ff31d4f266fbdc2c3bfd6aed2"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ae5b1c33ff31d4f266fbdc2c3bfd6aed2">id::ui::reset_calc_interrupted</a></div><div class="ttdeci">void reset_calc_interrupted()</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00091">KeyboardHandler.cpp:91</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_ae6caaf1d9730fa285b3d84310e0a3051"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ae6caaf1d9730fa285b3d84310e0a3051">id::ui::push_keyboard_handler</a></div><div class="ttdeci">void push_keyboard_handler(KeyboardHandlerPtr handler)</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00042">KeyboardHandler.cpp:42</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_aec4f8a0cf3576081b8730578776a5041"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#aec4f8a0cf3576081b8730578776a5041">id::ui::dispatch_pending_keyboard_input</a></div><div class="ttdeci">bool dispatch_pending_keyboard_input()</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00071">KeyboardHandler.cpp:71</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

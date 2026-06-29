@@ -133,8 +133,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a466c3a3eb6f7875d88c7a7e8cb0d41c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04c631dda2180376704e0362f6d708e2" id="r_a04c631dda2180376704e0362f6d708e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a04c631dda2180376704e0362f6d708e2">iterate</a> ()</td></tr>
 <tr class="separator:a04c631dda2180376704e0362f6d708e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8f90d38e10d6ebc23396c3d5565d39d" id="r_ab8f90d38e10d6ebc23396c3d5565d39d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#ab8f90d38e10d6ebc23396c3d5565d39d">calc</a> ()</td></tr>
-<tr class="separator:ab8f90d38e10d6ebc23396c3d5565d39d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaab2ef90916b10a31ee0fa5f05b1f1e3" id="r_aaab2ef90916b10a31ee0fa5f05b1f1e3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#aaab2ef90916b10a31ee0fa5f05b1f1e3">overlay_orbit_point_pending</a> () const</td></tr>
+<tr class="separator:aaab2ef90916b10a31ee0fa5f05b1f1e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0d955623279abea0635a800594bce78" id="r_aa0d955623279abea0635a800594bce78"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d0/db0/namespaceid_1_1math.html#a229759bbf81ddead197edb421af2243c">math::DComplex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#aa0d955623279abea0635a800594bce78">pending_overlay_orbit_point</a> () const</td></tr>
+<tr class="separator:aa0d955623279abea0635a800594bce78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57456d235f62ea405951e33d4ea4b02c" id="r_a57456d235f62ea405951e33d4ea4b02c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a57456d235f62ea405951e33d4ea4b02c">complete_pending_overlay_orbit_point</a> ()</td></tr>
+<tr class="separator:a57456d235f62ea405951e33d4ea4b02c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acafa37a9d976b3e82338a04695be04e5" id="r_acafa37a9d976b3e82338a04695be04e5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#acafa37a9d976b3e82338a04695be04e5">overlay_scrub_pending</a> () const</td></tr>
+<tr class="separator:acafa37a9d976b3e82338a04695be04e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbdf863ae1f156d45957588e71d40995" id="r_abbdf863ae1f156d45957588e71d40995"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#abbdf863ae1f156d45957588e71d40995">complete_overlay_scrub</a> ()</td></tr>
+<tr class="separator:abbdf863ae1f156d45957588e71d40995"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a998401ce07381e303466b4c52fb297f0" id="r_a998401ce07381e303466b4c52fb297f0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a998401ce07381e303466b4c52fb297f0">orbit</a> ()</td></tr>
 <tr class="separator:a998401ce07381e303466b4c52fb297f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -348,7 +356,7 @@ Public Member Functions</h2></td></tr>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="ab8f90d38e10d6ebc23396c3d5565d39d" name="ab8f90d38e10d6ebc23396c3d5565d39d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab8f90d38e10d6ebc23396c3d5565d39d">&#9670;&#160;</a></span>calc() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8f90d38e10d6ebc23396c3d5565d39d">&#9670;&#160;</a></span>calc()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -362,24 +370,45 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00249">249</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00312">312</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
 
 </div>
 </div>
-<a id="ab8f90d38e10d6ebc23396c3d5565d39d" name="ab8f90d38e10d6ebc23396c3d5565d39d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab8f90d38e10d6ebc23396c3d5565d39d">&#9670;&#160;</a></span>calc() <span class="overload">[2/2]</span></h2>
+<a id="abbdf863ae1f156d45957588e71d40995" name="abbdf863ae1f156d45957588e71d40995"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abbdf863ae1f156d45957588e71d40995">&#9670;&#160;</a></span>complete_overlay_scrub()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int id::fractals::FrothyBasin::calc </td>
+          <td class="memname">void id::fractals::FrothyBasin::complete_overlay_scrub </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00266">266</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a57456d235f62ea405951e33d4ea4b02c" name="a57456d235f62ea405951e33d4ea4b02c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57456d235f62ea405951e33d4ea4b02c">&#9670;&#160;</a></span>complete_pending_overlay_orbit_point()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void id::fractals::FrothyBasin::complete_pending_overlay_orbit_point </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00256">256</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
 
 </div>
 </div>
@@ -398,7 +427,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00225">225</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00228">228</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
 
 </div>
 </div>
@@ -434,7 +463,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00230">230</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00233">233</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
 
 </div>
 </div>
@@ -574,7 +603,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00182">182</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00181">181</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
 
 </div>
 </div>
@@ -595,6 +624,63 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="aaab2ef90916b10a31ee0fa5f05b1f1e3" name="aaab2ef90916b10a31ee0fa5f05b1f1e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaab2ef90916b10a31ee0fa5f05b1f1e3">&#9670;&#160;</a></span>overlay_orbit_point_pending()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool id::fractals::FrothyBasin::overlay_orbit_point_pending </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00246">246</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
+
+</div>
+</div>
+<a id="acafa37a9d976b3e82338a04695be04e5" name="acafa37a9d976b3e82338a04695be04e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acafa37a9d976b3e82338a04695be04e5">&#9670;&#160;</a></span>overlay_scrub_pending()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool id::fractals::FrothyBasin::overlay_scrub_pending </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00261">261</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aa0d955623279abea0635a800594bce78" name="aa0d955623279abea0635a800594bce78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0d955623279abea0635a800594bce78">&#9670;&#160;</a></span>pending_overlay_orbit_point()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d0/db0/namespaceid_1_1math.html#a229759bbf81ddead197edb421af2243c">DComplex</a> id::fractals::FrothyBasin::pending_overlay_orbit_point </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00251">251</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a6b5c82129b9e26fcb209b5605ea08b86" name="a6b5c82129b9e26fcb209b5605ea08b86"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6b5c82129b9e26fcb209b5605ea08b86">&#9670;&#160;</a></span>per_image() <span class="overload">[1/2]</span></h2>
 
@@ -610,7 +696,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00085">85</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00084">84</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
 
 </div>
 </div>
@@ -646,7 +732,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00203">203</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00202">202</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
 
 </div>
 </div>
@@ -682,7 +768,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00219">219</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html#l00222">222</a> of file <a class="el" href="../../dd/def/FrothyBasin_8cpp_source.html">FrothyBasin.cpp</a>.</p>
 
 </div>
 </div>
