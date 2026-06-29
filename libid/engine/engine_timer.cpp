@@ -34,7 +34,6 @@ enum class TimerType
 {
     ENGINE = 0,
     DECODER = 1,
-    ENCODER = 2
 };
 
 } // namespace
@@ -54,10 +53,6 @@ static int timer(const TimerType type, int (*fn)(), ...)
     va_start(arg_marker, fn);
 
     bool do_bench = g_timer_flag;   // record time?
-    if (type == TimerType::ENCODER) // encoder, record time only if debug flag set
-    {
-        do_bench = g_debug_flag == DebugFlags::BENCHMARK_ENCODER;
-    }
     if (do_bench)
     {
         fp = std::fopen(get_append_save_path(WriteFile::DEBUG, "id-bench").string().c_str(), "a");
@@ -71,9 +66,6 @@ static int timer(const TimerType type, int (*fn)(), ...)
     case TimerType::DECODER:
         i = va_arg(arg_marker, int);
         out = decoder(i);
-        break;
-    case TimerType::ENCODER:
-        out = encoder();
         break;
     }
     // next assumes CLOCKS_PER_SEC is 10^n, n>=2
@@ -89,9 +81,6 @@ static int timer(const TimerType type, int (*fn)(), ...)
         {
         case TimerType::DECODER:
             fmt::print(fp, "decode ");
-            break;
-        case TimerType::ENCODER:
-            fmt::print(fp, "encode ");
             break;
         default:
             break;
@@ -110,11 +99,6 @@ static int timer(const TimerType type, int (*fn)(), ...)
 void engine_timer(int (*fn)())
 {
     (void) timer(TimerType::ENGINE, fn);
-}
-
-int encoder_timer()
-{
-    return timer(TimerType::ENCODER, nullptr);
 }
 
 int decoder_timer(const int width)

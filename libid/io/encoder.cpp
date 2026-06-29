@@ -246,14 +246,7 @@ restart:
 
     g_busy = true;
 
-    if (g_debug_flag != DebugFlags::BENCHMARK_ENCODER)
-    {
-        interrupted = encoder() ? 1 : 0;
-    }
-    else
-    {
-        interrupted = encoder_timer();     // invoke encoder() via timer
-    }
+    interrupted = encoder() ? 1 : 0;
 
     g_busy = false;
 

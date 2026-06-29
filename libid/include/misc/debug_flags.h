@@ -15,7 +15,6 @@ enum class DebugFlags
     FORCE_REAL_POPCORN                  = 96,
     WRITE_FORMULA_DEBUG_INFORMATION     = 98,
     ALLOW_INIT_COMMANDS_ANYTIME         = 110,
-    BENCHMARK_ENCODER                   = 200,
     PREVENT_MIIM                        = 300,
     SHOW_FORMULA_INFO_AFTER_COMPILE     = 324,
     FORCE_MEMORY_FROM_DISK              = 420,

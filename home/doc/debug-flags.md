@@ -19,7 +19,6 @@ the benchmark timer.
 | 96 | Force the real Popcorn orbit for the old default setup. |
 | 98 | Write formula parser and interpreter debug files. |
 | 110 | Allow startup-only commands after startup. |
-| 200 | Time GIF encoding. |
 | 300 | Prevent modified inverse iteration method (MIIM). |
 | 324 | Leave formula compile information visible. |
 | 420 | Force memory and screen-save allocation to disk. |
