@@ -280,31 +280,7 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: FrothyBasin Overlay Orbit Caller
-
-Work:
-
-- In `libid/fractals/FrothyBasin.cpp`, split orbit point production
-  into calculation state and UI presentation.
-- Report the pending overlay orbit point to the FrothyBasin UI
-  controller, then let the controller display, pace, scrub, and resume
-  it.
-- Preserve attractor detection and repeat-mapping behavior.
-- Do not add per-fractal one-off pacing helpers.
-
-Done when:
-
-- `FrothyBasin` no longer calls `plot_orbit()` directly.
-- FrothyBasin orbit points are displayed through the UI overlay path.
-- FrothyBasin overlay points are scrubbed by the UI controller that
-  displayed them.
-
-Manual testing:
-
-- `type=frothybasin showorbit=yes orbitdelay=200`
-- Press a key during orbit delay and confirm the UI responds promptly.
-
-### Slice 2: Standard Overlay Orbit Caller
+### Slice 1: Standard Overlay Orbit Caller
 
 Work:
 
@@ -330,7 +306,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=200`
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 3: Overlay Orbit Scrub Ownership
+### Slice 2: Overlay Orbit Scrub Ownership
 
 Work:
 
@@ -354,7 +330,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 4: Sound Pending-Key Utilities
+### Slice 3: Sound Pending-Key Utilities
 
 Work:
 

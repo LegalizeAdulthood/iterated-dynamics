@@ -3,13 +3,17 @@
 #include "ui/frothy_basin.h"
 
 #include "engine/calcfrac.h"
+#include "engine/orbit.h"
 #include "fractals/FrothyBasin.h"
-#include "ui/check_key.h"
+#include "misc/Driver.h"
+#include "ui/KeyboardHandler.h"
+#include "ui/standard_orbit_plot.h"
 
-#include <cstdlib>
+#include <memory>
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::misc;
 
 namespace id::ui
 {
@@ -17,44 +21,74 @@ namespace id::ui
 namespace
 {
 
-bool keyboard_check_due()
+class OrbitToggleKeyboardHandler : public KeyboardHandler
 {
-    g_keyboard_check_interval -= std::abs(g_real_color_iter);
-    return g_keyboard_check_interval <= 0;
-}
+public:
+    bool handle_key(int key) override
+    {
+        if (g_show_orbit)
+        {
+            scrub_orbit();
+        }
+        if (key != 'o' && key != 'O')
+        {
+            return false;
+        }
+        if (!driver_is_disk())
+        {
+            g_show_orbit = !g_show_orbit;
+        }
+        return true;
+    }
+};
 
-void keyboard_reset()
+void drive_pending_orbit_point()
 {
-    g_keyboard_check_interval = g_max_keyboard_check_interval;
+    const auto point{g_frothy_basin.pending_overlay_orbit_point()};
+    orbit_plot().reset_overlay(point.x, point.y);
+    if (drive_orbit_plot(orbit_plot()))
+    {
+        g_frothy_basin.complete_pending_overlay_orbit_point();
+    }
 }
 
 } // namespace
 
 int froth_type()
 {
+    reset_calc_interrupted();
+    reset_orbit_delay();
+    auto main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
+    auto orbit_toggle_handler{std::make_shared<OrbitToggleKeyboardHandler>()};
+    ScopedKeyboardHandler main_loop_scope{main_loop_handler};
+    ScopedKeyboardHandler orbit_toggle_scope{orbit_toggle_handler};
+
     if (!g_frothy_basin.per_image())
     {
         return -1;
     }
 
-    keyboard_reset();
     g_frothy_basin.resume();
     while (!g_frothy_basin.done())
     {
-        if (check_key())
+        if (g_frothy_basin.overlay_orbit_point_pending())
+        {
+            drive_pending_orbit_point();
+        }
+        else if (g_frothy_basin.overlay_scrub_pending())
+        {
+            scrub_orbit();
+            g_frothy_basin.complete_overlay_scrub();
+        }
+        else
+        {
+            g_frothy_basin.iterate();
+        }
+        if (!g_frothy_basin.done() && !g_frothy_basin.overlay_orbit_point_pending() &&
+            !g_frothy_basin.overlay_scrub_pending() && calc_interrupted())
         {
             g_frothy_basin.suspend();
             return -1;
-        }
-        g_frothy_basin.iterate();
-        if (keyboard_check_due())
-        {
-            if (check_key())
-            {
-                g_frothy_basin.suspend();
-                return -1;
-            }
-            keyboard_reset();
         }
     }
 

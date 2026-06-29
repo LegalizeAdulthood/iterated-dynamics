@@ -8,7 +8,6 @@
 #include "engine/color_state.h"
 #include "engine/fractals.h"
 #include "engine/Inversion.h"
-#include "engine/orbit.h"
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
 #include "engine/show_dot.h"
@@ -205,6 +204,10 @@ void FrothyBasin::resume()
     g_passes = Passes::SEQUENTIAL_SCAN;
     g_current_pass = 1;
     g_total_passes = 1;
+    m_overlay_orbit_point_pending = false;
+    m_overlay_scrub_completed = false;
+    m_overlay_scrub_pending = false;
+    m_pixel_active = false;
     if (g_resuming)
     {
         start_resume();
@@ -224,20 +227,50 @@ void FrothyBasin::suspend()
 
 bool FrothyBasin::done() const
 {
-    return m_row > g_i_stop_pt.y;
+    return m_row > g_i_stop_pt.y && !m_overlay_orbit_point_pending && !m_overlay_scrub_pending && !m_pixel_active;
 }
 
 void FrothyBasin::iterate()
 {
-    if (done())
+    if (done() || m_overlay_orbit_point_pending || m_overlay_scrub_pending)
     {
         return;
     }
-    g_row = m_row;
-    g_col = m_col;
-    g_current_row = g_row;
-    g_current_column = g_col;
+    if (!m_pixel_active)
+    {
+        start_pixel();
+    }
     calc();
+}
+
+bool FrothyBasin::overlay_orbit_point_pending() const
+{
+    return m_overlay_orbit_point_pending;
+}
+
+DComplex FrothyBasin::pending_overlay_orbit_point() const
+{
+    return m_overlay_orbit_point;
+}
+
+void FrothyBasin::complete_pending_overlay_orbit_point()
+{
+    m_overlay_orbit_point_pending = false;
+}
+
+bool FrothyBasin::overlay_scrub_pending() const
+{
+    return m_overlay_scrub_pending;
+}
+
+void FrothyBasin::complete_overlay_scrub()
+{
+    m_overlay_scrub_pending = false;
+    m_overlay_scrub_completed = true;
+}
+
+void FrothyBasin::advance_pixel()
+{
     ++m_col;
     if (m_col > g_i_stop_pt.x)
     {
@@ -246,10 +279,14 @@ void FrothyBasin::iterate()
     }
 }
 
-int FrothyBasin::calc()
+void FrothyBasin::start_pixel()
 {
-    int found_attractor = 0;
-
+    m_found_attractor = 0;
+    m_overlay_scrub_completed = false;
+    g_row = m_row;
+    g_col = m_col;
+    g_current_row = g_row;
+    g_current_column = g_col;
     g_orbit_save_flag = false;
     g_color_iter = 0;
     if (g_show_dot > 0)
@@ -269,8 +306,12 @@ int FrothyBasin::calc()
 
     g_temp_sqr_x = sqr(g_old_z.x);
     g_temp_sqr_y = sqr(g_old_z.y);
-    while (!found_attractor && g_temp_sqr_x + g_temp_sqr_y < g_magnitude_limit &&
-        g_color_iter < g_max_iterations)
+    m_pixel_active = true;
+}
+
+int FrothyBasin::calc()
+{
+    while (!m_found_attractor && g_temp_sqr_x + g_temp_sqr_y < g_magnitude_limit && g_color_iter < g_max_iterations)
     {
         // simple formula: z = z^2 + conj(z*(-1+ai))
         // but it's the attractor that makes this so interesting
@@ -286,117 +327,123 @@ int FrothyBasin::calc()
 
         g_color_iter++;
 
-        if (g_show_orbit)
+        if (std::abs(m_half_a - g_old_z.y) < FROTH_CLOSE && g_old_z.x >= m_top_x1 && g_old_z.x <= m_top_x2)
         {
-            plot_overlay_orbit(g_old_z.x, g_old_z.y);
-        }
-
-        if (std::abs(m_half_a - g_old_z.y) < FROTH_CLOSE && g_old_z.x >= m_top_x1 &&
-            g_old_z.x <= m_top_x2)
-        {
-            if ((!m_repeat_mapping && m_attractors == 2) ||
-                (m_repeat_mapping && m_attractors == 3))
+            if ((!m_repeat_mapping && m_attractors == 2) || (m_repeat_mapping && m_attractors == 3))
             {
-                found_attractor = 1;
+                m_found_attractor = 1;
             }
             else if (g_old_z.x <= m_top_x3)
             {
-                found_attractor = 1;
+                m_found_attractor = 1;
             }
             else if (g_old_z.x >= m_top_x4)
             {
                 if (!m_repeat_mapping)
                 {
-                    found_attractor = 1;
+                    m_found_attractor = 1;
                 }
                 else
                 {
-                    found_attractor = 2;
+                    m_found_attractor = 2;
                 }
             }
         }
-        else if (std::abs(FROTH_SLOPE * g_old_z.x - m_a - g_old_z.y) < FROTH_CLOSE &&
-            g_old_z.x <= m_right_x1 && g_old_z.x >= m_right_x2)
+        else if (std::abs(FROTH_SLOPE * g_old_z.x - m_a - g_old_z.y) < FROTH_CLOSE && g_old_z.x <= m_right_x1 &&
+            g_old_z.x >= m_right_x2)
         {
             if (!m_repeat_mapping && m_attractors == 2)
             {
-                found_attractor = 2;
+                m_found_attractor = 2;
             }
             else if (m_repeat_mapping && m_attractors == 3)
             {
-                found_attractor = 3;
+                m_found_attractor = 3;
             }
             else if (g_old_z.x >= m_right_x3)
             {
                 if (!m_repeat_mapping)
                 {
-                    found_attractor = 2;
+                    m_found_attractor = 2;
                 }
                 else
                 {
-                    found_attractor = 4;
+                    m_found_attractor = 4;
                 }
             }
             else if (g_old_z.x <= m_right_x4)
             {
                 if (!m_repeat_mapping)
                 {
-                    found_attractor = 3;
+                    m_found_attractor = 3;
                 }
                 else
                 {
-                    found_attractor = 6;
+                    m_found_attractor = 6;
                 }
             }
         }
-        else if (std::abs(-FROTH_SLOPE * g_old_z.x - m_a - g_old_z.y) < FROTH_CLOSE &&
-            g_old_z.x <= m_left_x1 && g_old_z.x >= m_left_x2)
+        else if (std::abs(-FROTH_SLOPE * g_old_z.x - m_a - g_old_z.y) < FROTH_CLOSE && g_old_z.x <= m_left_x1 &&
+            g_old_z.x >= m_left_x2)
         {
             if (!m_repeat_mapping && m_attractors == 2)
             {
-                found_attractor = 2;
+                m_found_attractor = 2;
             }
             else if (m_repeat_mapping && m_attractors == 3)
             {
-                found_attractor = 2;
+                m_found_attractor = 2;
             }
             else if (g_old_z.x >= m_left_x3)
             {
                 if (!m_repeat_mapping)
                 {
-                    found_attractor = 3;
+                    m_found_attractor = 3;
                 }
                 else
                 {
-                    found_attractor = 5;
+                    m_found_attractor = 5;
                 }
             }
             else if (g_old_z.x <= m_left_x4)
             {
                 if (!m_repeat_mapping)
                 {
-                    found_attractor = 2;
+                    m_found_attractor = 2;
                 }
                 else
                 {
-                    found_attractor = 3;
+                    m_found_attractor = 3;
                 }
             }
         }
         g_temp_sqr_x = sqr(g_old_z.x);
         g_temp_sqr_y = sqr(g_old_z.y);
+        if (g_show_orbit)
+        {
+            m_overlay_orbit_point.x = g_old_z.x;
+            m_overlay_orbit_point.y = g_old_z.y;
+            m_overlay_orbit_point_pending = true;
+            return -1;
+        }
     }
-    if (g_show_orbit)
+    if (g_show_orbit && !m_overlay_scrub_completed)
     {
-        scrub_orbit();
+        m_overlay_scrub_pending = true;
+        return -1;
     }
+    finish_pixel();
+    return g_color;
+}
 
+void FrothyBasin::finish_pixel()
+{
     g_real_color_iter = g_color_iter;
 
     // inside - Here's where non-palette based images would be nice.  Instead,
     // we'll use blocks of (colors-1)/3 or (colors-1)/6 and use special froth
     // color maps in attempt to replicate the images of James Alexander.
-    if (found_attractor)
+    if (m_found_attractor)
     {
         if (g_colors >= 256)
         {
@@ -412,7 +459,7 @@ int FrothyBasin::calc()
             {
                 g_color_iter = 1;
             }
-            g_color_iter += m_shades * (found_attractor-1);
+            g_color_iter += m_shades * (m_found_attractor - 1);
         }
         else if (g_colors >= 16)
         {
@@ -444,7 +491,7 @@ int FrothyBasin::calc()
                 {
                     g_color_iter = 5;
                 }
-                g_color_iter += 5 * (found_attractor-1);
+                g_color_iter += 5 * (m_found_attractor - 1);
             }
             else // 6 attractors
             {
@@ -456,12 +503,12 @@ int FrothyBasin::calc()
                 {
                     g_color_iter = 2;
                 }
-                g_color_iter += 2 * (found_attractor-1);
+                g_color_iter += 2 * (m_found_attractor - 1);
             }
         }
         else   // use a color corresponding to the attractor
         {
-            g_color_iter = found_attractor;
+            g_color_iter = m_found_attractor;
         }
         g_old_color_iter = g_color_iter;
     }
@@ -473,8 +520,8 @@ int FrothyBasin::calc()
     g_color = std::abs(g_color_iter);
 
     g_plot(g_col, g_row, g_color);
-
-    return g_color;
+    m_pixel_active = false;
+    advance_pixel();
 }
 
 // These last two froth functions are for the orbit-in-window feature.

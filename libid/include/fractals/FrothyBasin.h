@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include "math/cmplx.h"
+
 namespace id::fractals
 {
 
@@ -20,11 +22,19 @@ public:
     void suspend();
     bool done() const;
     void iterate();
+    bool overlay_orbit_point_pending() const;
+    math::DComplex pending_overlay_orbit_point() const;
+    void complete_pending_overlay_orbit_point();
+    bool overlay_scrub_pending() const;
+    void complete_overlay_scrub();
 
-    int calc();
     int orbit();
 
 private:
+    void advance_pixel();
+    int calc();
+    void finish_pixel();
+    void start_pixel();
     double top_x_mapping(double x);
     void set_froth_palette();
 
@@ -48,6 +58,12 @@ private:
     double m_right_x4{};
     int m_col{};
     int m_row{};
+    int m_found_attractor{};
+    math::DComplex m_overlay_orbit_point{};
+    bool m_overlay_orbit_point_pending{};
+    bool m_overlay_scrub_completed{};
+    bool m_overlay_scrub_pending{};
+    bool m_pixel_active{};
 };
 
 extern FrothyBasin g_frothy_basin;
