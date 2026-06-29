@@ -280,40 +280,7 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Popcorn Owns Map Step Selection
-
-Work:
-
-- Move Popcorn orbit mode selection out of `g_dispatch.orbit_calc()` and
-  into `fractals::Popcorn`.
-- Represent the selected mode explicitly, such as legacy real Popcorn,
-  current real Popcorn, and generalized Popcorn.
-- Move the math from `popcorn_fractal_old()`, `popcorn_fractal()`, and
-  `popcorn_orbit()` behind `Popcorn` methods or local implementation
-  helpers that are invoked by the `Popcorn` object.
-- Preserve `reset=1960`, `DebugFlags::FORCE_REAL_POPCORN`, PopcornJulia,
-  and generalized Popcorn behavior.
-- Keep any needed compatibility wrappers only as thin callers during
-  this slice; they exist only while `StandardFractal` still owns the
-  seed loop.
-- The compatibility wrappers must not call `plot_orbit()` directly.
-
-Done when:
-
-- Popcorn orbit step selection is stored on `Popcorn`.
-- The three Popcorn orbit implementations can be invoked through the
-  `Popcorn` object.
-- Any remaining free Popcorn orbit functions are compatibility wrappers,
-  not owners of rendering control.
-- `popcorn.cpp` has no direct `plot_orbit()` calls.
-
-Manual testing:
-
-- `type=popcorn reset=1960 orbitdelay=200`
-- `type=popcorn debugflags=96 orbitdelay=200`
-- `type=popcornjul orbitdelay=200`
-
-### Slice 2: Popcorn Owns Seed Scanning
+### Slice 1: Popcorn Owns Seed Scanning
 
 Work:
 
@@ -344,7 +311,7 @@ Manual testing:
 - `type=popcorn orbitdelay=200`
 - `type=popcorn reset=1960 orbitdelay=200`
 
-### Slice 3: PopcornJulia Uses Popcorn Renderer
+### Slice 2: PopcornJulia Uses Popcorn Renderer
 
 Work:
 
@@ -368,7 +335,7 @@ Manual testing:
 - `type=popcornjul orbitdelay=200`
 - `type=popcornjul reset=1960 orbitdelay=200`
 
-### Slice 4: FrothyBasin Overlay Orbit Caller
+### Slice 3: FrothyBasin Overlay Orbit Caller
 
 Work:
 
@@ -392,7 +359,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=200`
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 5: Standard Overlay Orbit Caller
+### Slice 4: Standard Overlay Orbit Caller
 
 Work:
 
@@ -418,7 +385,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=200`
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 6: Overlay Orbit Scrub Ownership
+### Slice 5: Overlay Orbit Scrub Ownership
 
 Work:
 
@@ -442,7 +409,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 7: Sound Pending-Key Utilities
+### Slice 6: Sound Pending-Key Utilities
 
 Work:
 

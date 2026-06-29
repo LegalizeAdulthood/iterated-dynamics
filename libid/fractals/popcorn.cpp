@@ -7,9 +7,12 @@
 #include "engine/orbit.h"
 #include "engine/resume.h"
 #include "engine/StandardFractal.h"
+#include "engine/trig_fns.h"
 #include "engine/VideoInfo.h"
 #include "math/arg.h"
 #include "math/fpu087.h"
+#include "misc/debug_flags.h"
+#include "misc/version.h"
 
 #include <cassert>
 #include <cmath>
@@ -17,6 +20,7 @@
 
 using namespace id::engine;
 using namespace id::math;
+using namespace id::misc;
 
 namespace id::fractals
 {
@@ -91,6 +95,17 @@ void submit_popcorn_image_orbit_plot(const double real, const double imag, const
 
 } // namespace
 
+bool popcorn_uses_default_functions()
+{
+    return g_trig_index[0] == TrigFn::SIN       //
+        && g_trig_index[1] == TrigFn::TAN       //
+        && g_trig_index[2] == TrigFn::SIN       //
+        && g_trig_index[3] == TrigFn::TAN       //
+        && std::abs(g_param_z2.x - 3.0) < .0001 //
+        && g_param_z2.y == 0                    //
+        && g_param_z1.y == 0;
+}
+
 Popcorn::Popcorn() :
     m_standard_fractal{std::make_unique<StandardFractal>()}
 {
@@ -110,6 +125,7 @@ void Popcorn::resume()
     g_keyboard_check_interval = g_max_keyboard_check_interval;
     g_plot = no_plot;
     g_temp_sqr_x = 0;
+    m_map_mode = select_map_mode();
     m_standard_fractal = std::make_unique<StandardFractal>();
     m_pending_image_orbit_plot = {};
     m_image_orbit_plot_pending = false;
@@ -212,7 +228,10 @@ void Popcorn::complete()
     m_done = true;
 }
 
-int popcorn_fractal_old()
+namespace
+{
+
+int legacy_real_popcorn_orbit_step()
 {
     g_tmp_z = g_old_z;
     g_tmp_z.x *= 3.0;
@@ -246,7 +265,7 @@ int popcorn_fractal_old()
     return 0;
 }
 
-int popcorn_fractal()
+int current_real_popcorn_orbit_step()
 {
     g_tmp_z = g_old_z;
     g_tmp_z.x *= 3.0;
@@ -255,8 +274,8 @@ int popcorn_fractal()
     double sin_y;
     double cos_y;
     sin_cos(g_tmp_z.y, sin_y, cos_y);
-    g_tmp_z.x = g_sin_x/g_cos_x + g_old_z.x;
-    g_tmp_z.y = sin_y/cos_y + g_old_z.y;
+    g_tmp_z.x = g_sin_x / g_cos_x + g_old_z.x;
+    g_tmp_z.y = sin_y / cos_y + g_old_z.y;
     sin_cos(g_tmp_z.x, g_sin_x, g_cos_x);
     sin_cos(g_tmp_z.y, sin_y, cos_y);
     g_new_z.x = g_old_z.x - g_param_z1.x * sin_y;
@@ -281,7 +300,7 @@ int popcorn_fractal()
 
 // Popcorn generalization
 
-int popcorn_orbit()
+int generalized_popcorn_orbit_step()
 {
     DComplex tmp_x;
     DComplex tmp_y;
@@ -320,6 +339,79 @@ int popcorn_orbit()
     }
     g_old_z = g_new_z;
     return 0;
+}
+
+} // namespace
+
+Popcorn::MapMode Popcorn::select_map_mode()
+{
+    if (g_version <= parse_legacy_version(1960))
+    {
+        return MapMode::LEGACY_REAL;
+    }
+    if (popcorn_uses_default_functions() && g_debug_flag == DebugFlags::FORCE_REAL_POPCORN)
+    {
+        return MapMode::CURRENT_REAL;
+    }
+    return MapMode::GENERALIZED;
+}
+
+int Popcorn::legacy_real_orbit_step()
+{
+    return legacy_real_popcorn_orbit_step();
+}
+
+int Popcorn::current_real_orbit_step()
+{
+    return current_real_popcorn_orbit_step();
+}
+
+int Popcorn::generalized_orbit_step()
+{
+    return generalized_popcorn_orbit_step();
+}
+
+int Popcorn::orbit_step()
+{
+    switch (m_map_mode)
+    {
+    case MapMode::LEGACY_REAL:
+        return legacy_real_orbit_step();
+
+    case MapMode::CURRENT_REAL:
+        return current_real_orbit_step();
+
+    case MapMode::GENERALIZED:
+        return generalized_orbit_step();
+    }
+    return generalized_orbit_step();
+}
+
+int popcorn_fractal_old()
+{
+    if (s_active_popcorn != nullptr)
+    {
+        return s_active_popcorn->orbit_step();
+    }
+    return legacy_real_popcorn_orbit_step();
+}
+
+int popcorn_fractal()
+{
+    if (s_active_popcorn != nullptr)
+    {
+        return s_active_popcorn->orbit_step();
+    }
+    return current_real_popcorn_orbit_step();
+}
+
+int popcorn_orbit()
+{
+    if (s_active_popcorn != nullptr)
+    {
+        return s_active_popcorn->orbit_step();
+    }
+    return generalized_popcorn_orbit_step();
 }
 
 } // namespace id::fractals

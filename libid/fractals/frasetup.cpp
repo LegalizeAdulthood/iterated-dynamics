@@ -23,8 +23,6 @@
 #include "misc/version.h"
 #include "ui/editpal.h"
 
-#include <cmath>
-
 using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
@@ -324,22 +322,16 @@ bool julia_per_image()
         }
         break;
     case FractalType::POPCORN:
+        g_dispatch.set_orbit_calc(popcorn_orbit);
+        get_julia_attractor(0.0, 0.0);    // another attractor?
+        break;
+
     case FractalType::POPCORN_JUL:
     {
-        bool default_functions = false;
-        if (g_trig_index[0] == TrigFn::SIN
-            && g_trig_index[1] == TrigFn::TAN
-            && g_trig_index[2] == TrigFn::SIN
-            && g_trig_index[3] == TrigFn::TAN
-            && std::abs(g_param_z2.x - 3.0) < .0001
-            && g_param_z2.y == 0
-            && g_param_z1.y == 0)
+        const bool default_functions = popcorn_uses_default_functions();
+        if (default_functions)
         {
-            default_functions = true;
-            if (g_fractal_type == FractalType::POPCORN_JUL)
-            {
-                g_symmetry = SymmetryType::ORIGIN;
-            }
+            g_symmetry = SymmetryType::ORIGIN;
         }
         if (g_version <= parse_legacy_version(1960))
         {
