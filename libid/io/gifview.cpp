@@ -314,8 +314,7 @@ int gif_view()
                 g_calc_status = CalcStatus::PARAMS_CHANGED;
             }
             g_busy = true;      // for slideshow CALCWAIT
-            // Call decoder(width) via timer.
-            status = decoder_timer(width);
+            status = decoder(width);
             g_busy = false;      // for slideshow CALCWAIT
             if (g_calc_status == CalcStatus::IN_PROGRESS) // e.g., set by line3d
             {

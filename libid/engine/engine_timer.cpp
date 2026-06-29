@@ -33,15 +33,12 @@ namespace
 enum class TimerType
 {
     ENGINE = 0,
-    DECODER = 1,
 };
 
 } // namespace
 
 /* timer function:
      timer(timer_type::ENGINE,(*fractal)())              fractal engine
-     timer(timer_type::DECODER,nullptr,int width)        decoder
-     timer(timer_type::ENCODER)                          encoder
   */
 static int timer(const TimerType type, int (*fn)(), ...)
 {
@@ -63,10 +60,6 @@ static int timer(const TimerType type, int (*fn)(), ...)
     case TimerType::ENGINE:
         out = fn();
         break;
-    case TimerType::DECODER:
-        i = va_arg(arg_marker, int);
-        out = decoder(i);
-        break;
     }
     // next assumes CLOCKS_PER_SEC is 10^n, n>=2
     g_timer_interval = (std::clock() - g_engine_timer_start) / (CLOCKS_PER_SEC / 100);
@@ -77,14 +70,6 @@ static int timer(const TimerType type, int (*fn)(), ...)
         std::time(&now);
         char *text = std::ctime(&now);
         text[24] = 0; // clobber newline in time string
-        switch (type)
-        {
-        case TimerType::DECODER:
-            fmt::print(fp, "decode ");
-            break;
-        default:
-            break;
-        }
         fmt::print(fp, "{:s} type={:s} resolution = {:d}x{:d} maxiter={:d}", //
             text,                                                     //
             g_cur_fractal_specific->name,                             //
@@ -99,11 +84,6 @@ static int timer(const TimerType type, int (*fn)(), ...)
 void engine_timer(int (*fn)())
 {
     (void) timer(TimerType::ENGINE, fn);
-}
-
-int decoder_timer(const int width)
-{
-    return timer(TimerType::DECODER, nullptr, width);
 }
 
 } // namespace id::engine
