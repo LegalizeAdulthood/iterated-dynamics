@@ -280,28 +280,69 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Sound Pending-Key Utilities
+### Slice 1: Sound Pending-Input Policy
 
 Work:
 
-- Treat `engine/sound.cpp` separately from render interruption.
+- Treat `engine/sound.cpp::write_sound()` separately from render
+  interruption and orbit-delay pacing.
 - Preserve the rule that pending input suppresses tone playback.
-- Move the direct keyboard polling behind UI-owned timing or sound
-  coordination without making calculation code ask whether rendering
-  should stop.
-- If the orbit pacing slice has not already done so, remove keyboard
-  polling from `engine/wait_until.cpp`.
+- Move the direct pending-key check behind UI-owned sound coordination.
+- Do not change sound file output, MIDI output, or sound close/open
+  behavior.
 
 Done when:
 
 - `engine/sound.cpp` has no direct key polling calls.
-- `engine/wait_until.cpp` has no direct key polling calls.
-- Sound and wait behavior are unchanged.
+- `write_sound()` still writes sound output before considering speaker
+  playback.
+- Pending input still suppresses speaker tone playback.
 
 Manual testing:
 
 - Confirm sound is still suppressed when input is pending.
+
+### Slice 2: Wait-Until Input Wake
+
+Work:
+
+- Treat `engine/wait_until.cpp::wait_until()` as delay and input-wake
+  behavior, not sound behavior.
+- Move the direct pending-key check behind UI-owned delay coordination.
+- Update the existing wait tests so they cover the UI-owned polling
+  adapter instead of engine-side driver polling.
+- Preserve the rule that waits wake promptly when input is pending.
+
+Done when:
+
+- `engine/wait_until.cpp` has no direct key polling calls.
+- `wait_until()` callers preserve their current delay cadence.
+- Tests no longer assert direct driver polling from `wait_until()`.
+
+Manual testing:
+
 - Confirm sound delay still wakes promptly when input is pending.
+
+### Slice 3: Wait-Until Cleanup
+
+Work:
+
+- Recheck all remaining `wait_until()` callers after the sound and
+  delay slices.
+- If no caller needs a keyboard-waking engine delay, reduce
+  `wait_until()` to pure timing or remove it.
+- Keep `sleep_orbit_delay()` and `sleep_ms()` separate unless their
+  callers are part of the same review unit.
+
+Done when:
+
+- `wait_until()` is either pure timing or removed.
+- No synchronous compatibility path reaches keyboard polling through
+  orbit plotting.
+
+Manual testing:
+
+- None unless a remaining interactive caller is changed.
 
 ## Current Direct Input Leaks
 
