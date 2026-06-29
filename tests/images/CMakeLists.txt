@@ -147,7 +147,10 @@ add_random_fractal_type_image_test(
     "kamtorus" "kamtorus3d"
     "plasma"
 )
-if(ID_TEST_MACOS_ARM64_GOLD)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(POPCORN_GOLD GOLD "gold-popcorn-linux")
+    set(POPCORN_1960_GOLD GOLD "gold-popcorn-1960-linux")
+elseif(ID_TEST_MACOS_ARM64_GOLD)
     set(POPCORN_GOLD GOLD "gold-popcorn-macOS-arm64")
     set(POPCORNJUL_GOLD GOLD "gold-popcornjul-macOS-arm64")
     set(POPCORN_1960_GOLD GOLD "gold-popcorn-1960-macOS-arm64")
