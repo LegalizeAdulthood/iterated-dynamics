@@ -5,14 +5,10 @@
 #include "engine/LogicalScreen.h"
 #include "fractals/fractalp.h"
 #include "io/check_write_file.h"
-#include "io/decoder.h"
-#include "io/encoder.h"
 #include "io/library.h"
-#include "misc/debug_flags.h"
 
 #include <fmt/format.h>
 
-#include <cstdarg>
 #include <cstdio>
 #include <ctime>
 
@@ -27,27 +23,12 @@ bool g_timer_flag{};         // you didn't see this, either
 long g_engine_timer_start{}; // timer(...) start & total
 long g_timer_interval{};     //
 
-namespace
-{
-
-enum class TimerType
-{
-    ENGINE = 0,
-};
-
-} // namespace
-
 /* timer function:
-     timer(timer_type::ENGINE,(*fractal)())              fractal engine
+     timer((*fractal)())              fractal engine
   */
-static int timer(const TimerType type, int (*fn)(), ...)
+void engine_timer(int (*fn)())
 {
-    std::va_list arg_marker; // variable arg list
     std::FILE *fp = nullptr;
-    int out = 0;
-    int i;
-
-    va_start(arg_marker, fn);
 
     bool do_bench = g_timer_flag;   // record time?
     if (do_bench)
@@ -55,12 +36,7 @@ static int timer(const TimerType type, int (*fn)(), ...)
         fp = std::fopen(get_append_save_path(WriteFile::DEBUG, "id-bench").string().c_str(), "a");
     }
     g_engine_timer_start = std::clock();
-    switch (type)
-    {
-    case TimerType::ENGINE:
-        out = fn();
-        break;
-    }
+    const int out = fn();
     // next assumes CLOCKS_PER_SEC is 10^n, n>=2
     g_timer_interval = (std::clock() - g_engine_timer_start) / (CLOCKS_PER_SEC / 100);
 
@@ -78,12 +54,6 @@ static int timer(const TimerType type, int (*fn)(), ...)
         fmt::print(fp, " time= {:d}.{:02d} secs\n", g_timer_interval / 100, g_timer_interval % 100);
         std::fclose(fp);
     }
-    return out;
-}
-
-void engine_timer(int (*fn)())
-{
-    (void) timer(TimerType::ENGINE, fn);
 }
 
 } // namespace id::engine
