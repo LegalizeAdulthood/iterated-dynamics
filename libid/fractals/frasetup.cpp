@@ -71,6 +71,7 @@ static bool use_calc_mandelbrot()
         && !g_distance_estimator                               //
         && g_decomp[0] == 0                                    //
         && g_biomorph == -1                                    //
+        && !g_show_orbit                                       //
         && g_inside_method >= ColorMethod::ITER                //
         && g_outside_method >= ColorMethod::ATAN               //
         && g_use_init_orbit != InitOrbitMode::VALUE            //

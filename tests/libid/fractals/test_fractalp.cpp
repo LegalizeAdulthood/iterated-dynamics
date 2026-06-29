@@ -493,6 +493,18 @@ TEST(TestFractalDispatch, mandelAndJuliaIneligibleFallBackToStandardCalcType)
     expect_mandel_julia_calc_type_selection(FractalType::JULIA, julia_per_image, false);
 }
 
+TEST(TestFractalDispatch, showOrbitUsesStandardCalcType)
+{
+    MandelJuliaCalcTypeState state{FractalType::MANDEL};
+    ValueSaver saved_show_orbit{g_show_orbit, true};
+    const FractalSpecific &table{*get_fractal_specific(FractalType::MANDEL)};
+
+    ASSERT_TRUE(mandel_per_image());
+
+    EXPECT_EQ(standard_fractal_type, table.calc_type);
+    EXPECT_EQ(standard_fractal_type, g_dispatch.calc_type());
+}
+
 TEST(TestFractalDispatch, showDotWrapperCallsSavedCalcType)
 {
     ValueSaver saved_calls{s_show_dot_calc_type_calls, 0};

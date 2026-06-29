@@ -9,7 +9,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
-#include "engine/orbit.h"
 #include "fractals/fractype.h"
 #include "misc/id.h"
 
@@ -130,12 +129,6 @@ long mandelbrot_orbit()
                 }
             }
         }
-        // no_periodicity_check_87
-        if (g_show_orbit)
-        {
-            plot_overlay_orbit(x, y);
-        }
-        // no_show_orbit_87
     } // while (--cx > 0)
 
     // reached maxit
@@ -146,10 +139,6 @@ long mandelbrot_orbit()
     g_color_iter = s_inside_color;
 
 pop_stack:
-    if (g_orbit_save_flag)
-    {
-        scrub_orbit();
-    }
     return g_color_iter;
 
 over_bailout_87:

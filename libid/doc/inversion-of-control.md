@@ -280,33 +280,7 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Standard Overlay Orbit Caller
-
-Work:
-
-- In `libid/engine/calmanfp.cpp`, split the `plot_orbit()` caller into
-  standard overlay orbit calculation state and UI presentation.
-- Add or extend the `StandardFractal` UI controller first if this caller
-  needs a standard-renderer resume point.
-- Report the pending overlay orbit point to the UI controller, then let
-  the controller display, pace, scrub, and resume it.
-- Do not add a `ui` include from `libid/engine` or `libid/fractals`.
-- Do not add per-fractal one-off pacing helpers.
-
-Done when:
-
-- `libid/engine/calmanfp.cpp` no longer calls `plot_orbit()` directly.
-- Standard escape-time overlay orbit points are displayed through the UI
-  controller and scrubbed as overlay display.
-- No `plot_orbit()` callers remain in `libid/engine` or
-  `libid/fractals`.
-
-Manual testing:
-
-- `type=mandel showorbit=yes orbitdelay=200`
-- Press a key during orbit delay and confirm the UI responds promptly.
-
-### Slice 2: Overlay Orbit Scrub Ownership
+### Slice 1: Overlay Orbit Scrub Ownership
 
 Work:
 
@@ -330,7 +304,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 3: Sound Pending-Key Utilities
+### Slice 2: Sound Pending-Key Utilities
 
 Work:
 
