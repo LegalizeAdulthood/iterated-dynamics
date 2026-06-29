@@ -17,9 +17,9 @@
 #include "ui/diskvid.h"
 
 #include <algorithm>
-#include <cassert>
 #include <cmath>
 #include <ctime>
+#include <stdexcept>
 
 namespace id::engine
 {
@@ -229,14 +229,35 @@ bool StandardFractal::consume_standard_pixel_yield()
 
 void StandardFractal::complete_pending_orbit_plot()
 {
-    assert(m_orbit_plot_pending);
-    assert(orbit_plot().done());
+    if (!m_orbit_plot_pending)
+    {
+        throw std::logic_error{"No pending orbit plot"};
+    }
+    if (!orbit_plot().done())
+    {
+        throw std::logic_error{"Pending orbit plot is not complete"};
+    }
     m_orbit_plot_pending = false;
     if (m_orbit_plot_marks_standard_orbit)
     {
         m_standard_pixel_orbit_plotted = true;
     }
     m_orbit_plot_marks_standard_orbit = false;
+}
+
+void StandardFractal::complete_overlay_scrub()
+{
+    if (!m_overlay_scrub_pending)
+    {
+        throw std::logic_error{"No pending overlay scrub"};
+    }
+    m_overlay_scrub_pending = false;
+    m_standard_pixel_overlay_scrubbed = true;
+}
+
+bool StandardFractal::overlay_scrub_pending() const
+{
+    return m_overlay_scrub_pending;
 }
 
 bool StandardFractal::orbit_plot_pending() const
@@ -246,7 +267,10 @@ bool StandardFractal::orbit_plot_pending() const
 
 OrbitPlot &StandardFractal::pending_orbit_plot()
 {
-    assert(m_orbit_plot_pending);
+    if (!m_orbit_plot_pending)
+    {
+        throw std::logic_error{"No pending orbit plot"};
+    }
     return orbit_plot();
 }
 
@@ -304,10 +328,13 @@ void StandardFractal::clear_standard_pixel()
     m_caught_a_cycle = false;
     m_standard_pixel_active = false;
     m_standard_pixel_input_checked = false;
+    m_standard_pixel_orbit_complete = false;
     m_standard_pixel_orbit_calc_completed = false;
     m_standard_pixel_iteration_started = false;
     m_standard_pixel_orbit_plotted = false;
+    m_standard_pixel_overlay_scrubbed = false;
     m_orbit_plot_marks_standard_orbit = false;
+    m_overlay_scrub_pending = false;
 }
 
 void StandardFractal::complete()
@@ -354,7 +381,10 @@ void StandardFractal::finish_work_list()
 
 void StandardFractal::pop_work_list_front()
 {
-    assert(g_num_work_list > 0);
+    if (g_num_work_list <= 0)
+    {
+        throw std::logic_error{"Cannot pop an empty work list"};
+    }
     --g_num_work_list;
     for (int i = 0; i < g_num_work_list; ++i)
     {
@@ -390,6 +420,25 @@ void StandardFractal::restore_dispatch()
         fractals::g_dispatch = m_saved_dispatch;
         m_dispatch_saved = false;
     }
+}
+
+bool StandardFractal::scrub_overlay_orbit(const bool yield_to_ui)
+{
+    if (!g_show_orbit || m_standard_pixel_overlay_scrubbed)
+    {
+        return false;
+    }
+
+    if (yield_to_ui && standard_pixel_yield_enabled())
+    {
+        m_overlay_scrub_pending = true;
+        return true;
+    }
+
+    // Compatibility path for pass modes that cannot yet yield here.
+    scrub_orbit();
+    m_standard_pixel_overlay_scrubbed = true;
+    return false;
 }
 
 void StandardFractal::run_current_work_item()

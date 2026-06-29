@@ -74,7 +74,6 @@
 #include <fmt/format.h>
 
 #include <algorithm>
-#include <cassert>
 #include <cfloat>
 #include <climits>
 #include <cmath>
@@ -83,6 +82,7 @@
 #include <cstring>
 #include <limits>
 #include <new>
+#include <stdexcept>
 #include <vector>
 
 using namespace id::fractals;
@@ -1114,13 +1114,11 @@ static void set_new_z_from_bignum()
 int standard_fractal_type()
 {
     StandardFractal *standard_fractal = active_standard_fractal();
-    assert(standard_fractal != nullptr);
-    if (standard_fractal != nullptr)
+    if (standard_fractal == nullptr)
     {
-        return standard_fractal->calculate_standard_pixel(true);
+        throw std::logic_error{"standard_fractal_type called without active StandardFractal"};
     }
-
-    return -1;
+    return standard_fractal->calculate_standard_pixel(true);
 }
 
 int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
@@ -1303,7 +1301,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             g_max_iterations = 16;
         }
     }
-    while (true)
+    while (!m_standard_pixel_orbit_complete)
     {
         if (!m_standard_pixel_iteration_started)
         {
@@ -1607,9 +1605,11 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         m_standard_pixel_iteration_started = false;
     }  // end while (g_color_iter++ < maxit)
 
-    if (g_show_orbit)
+    m_standard_pixel_orbit_complete = true;
+
+    if (scrub_overlay_orbit(yield_to_ui))
     {
-        scrub_orbit();
+        return -1;
     }
 
     g_real_color_iter = g_color_iter;           // save this before we start adjusting it
@@ -1815,9 +1815,9 @@ plot_inside: // we're "inside"
             {
                 g_color_iter = g_max_iterations;
             }
-            if (g_show_orbit)
+            if (scrub_overlay_orbit(yield_to_ui))
             {
-                scrub_orbit();
+                return -1;
             }
         }
         else if (g_inside_method == ColorMethod::FMODI)

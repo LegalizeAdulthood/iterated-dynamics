@@ -64,11 +64,17 @@ int standard_fractal()
                 standard_fractal.complete_pending_orbit_plot();
             }
         }
+        else if (standard_fractal.overlay_scrub_pending())
+        {
+            scrub_orbit();
+            standard_fractal.complete_overlay_scrub();
+        }
         else
         {
             standard_fractal.iterate();
         }
-        if (!standard_fractal.done() && !standard_fractal.orbit_plot_pending() && calc_interrupted())
+        if (!standard_fractal.done() && !standard_fractal.orbit_plot_pending() &&
+            !standard_fractal.overlay_scrub_pending() && calc_interrupted())
         {
             standard_fractal.suspend();
             return -1;

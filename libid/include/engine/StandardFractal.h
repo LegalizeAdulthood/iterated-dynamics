@@ -33,6 +33,8 @@ public:
 
     void iterate();
 
+    void complete_overlay_scrub();
+    bool overlay_scrub_pending() const;
     bool orbit_plot_pending() const;
     OrbitPlot &pending_orbit_plot();
     StandardPassStatus standard_pass_status() const;
@@ -56,6 +58,7 @@ private:
     void finish_work_list();
     void pop_work_list_front();
     void restore_dispatch();
+    bool scrub_overlay_orbit(bool yield_to_ui);
     void run_current_work_item();
     void run_current_work_item_mode();
     void run_perturbation_glitch_retries();
@@ -102,12 +105,15 @@ private:
     bool m_standard_pixel_active{};
     bool m_standard_pixel_completed_yield{};
     bool m_standard_pixel_input_checked{};
+    bool m_standard_pixel_orbit_complete{};
     bool m_standard_pixel_orbit_calc_completed{};
     bool m_standard_pixel_iteration_started{};
     bool m_standard_pixel_orbit_plotted{};
+    bool m_standard_pixel_overlay_scrubbed{};
     bool m_timer_started{};
     bool m_orbit_plot_pending{};
     bool m_orbit_plot_marks_standard_orbit{};
+    bool m_overlay_scrub_pending{};
     bool m_work_item_active{};
     bool m_work_item_yielded{};
     bool m_work_list_started{};

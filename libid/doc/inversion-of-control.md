@@ -280,31 +280,7 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Overlay Orbit Scrub Ownership
-
-Work:
-
-- Move saved-overlay scrubbing ownership to the UI controllers once all
-  overlay orbit display paths are controller-driven.
-- Remove engine-side callers that scrub display state directly.
-- Keep a compatibility `scrub_orbit()` only while synchronous callers
-  still exist.
-- Image-orbit plotting must not use saved-overlay scrub state.
-
-Done when:
-
-- Overlay orbit display callers no longer reach into engine-owned
-  display state.
-- Saved overlay points are scrubbed by the UI controller that displayed
-  them.
-- The compatibility scrub path is removed or clearly isolated.
-
-Manual testing:
-
-- Toggle orbit display with `o` and confirm saved orbit points are
-  scrubbed.
-
-### Slice 2: Sound Pending-Key Utilities
+### Slice 1: Sound Pending-Key Utilities
 
 Work:
 
