@@ -6,7 +6,6 @@
 #include "engine/fractals.h"
 #include "engine/orbit.h"
 #include "engine/resume.h"
-#include "engine/StandardFractal.h"
 #include "engine/trig_fns.h"
 #include "engine/VideoInfo.h"
 #include "math/arg.h"
@@ -16,39 +15,23 @@
 
 #include <cassert>
 #include <cmath>
-#include <memory>
 
 using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
+
+namespace id::engine
+{
+
+void submit_image_orbit_plot(double real, double imag, int color);
+
+} // namespace id::engine
 
 namespace id::fractals
 {
 
 namespace
 {
-
-class ActiveStandardFractalScope
-{
-public:
-    explicit ActiveStandardFractalScope(StandardFractal &standard_fractal) :
-        m_previous{set_active_standard_fractal(&standard_fractal)}
-    {
-    }
-
-    ~ActiveStandardFractalScope()
-    {
-        set_active_standard_fractal(m_previous);
-    }
-
-    ActiveStandardFractalScope(const ActiveStandardFractalScope &) = delete;
-    ActiveStandardFractalScope(ActiveStandardFractalScope &&) = delete;
-    ActiveStandardFractalScope &operator=(const ActiveStandardFractalScope &) = delete;
-    ActiveStandardFractalScope &operator=(ActiveStandardFractalScope &&) = delete;
-
-private:
-    StandardFractal *m_previous{};
-};
 
 Popcorn *s_active_popcorn{};
 
@@ -106,10 +89,7 @@ bool popcorn_uses_default_functions()
         && g_param_z1.y == 0;
 }
 
-Popcorn::Popcorn() :
-    m_standard_fractal{std::make_unique<StandardFractal>()}
-{
-}
+Popcorn::Popcorn() = default;
 
 Popcorn::~Popcorn() = default;
 
@@ -126,11 +106,13 @@ void Popcorn::resume()
     g_plot = no_plot;
     g_temp_sqr_x = 0;
     m_map_mode = select_map_mode();
-    m_standard_fractal = std::make_unique<StandardFractal>();
-    m_pending_image_orbit_plot = {};
+    m_color_iter = 0;
+    m_orbit_step_result = 0;
     m_image_orbit_plot_pending = false;
+    m_orbit_step_completed = false;
     m_row = start_row;
     m_col = 0;
+    m_seed_active = false;
     m_done = false;
     if (m_row > g_i_stop_pt.y)
     {
@@ -152,30 +134,62 @@ bool Popcorn::done() const
 
 void Popcorn::iterate()
 {
+    if (m_done || m_image_orbit_plot_pending)
+    {
+        return;
+    }
+
+    if (!m_seed_active)
+    {
+        start_seed();
+    }
     if (m_done)
     {
         return;
     }
 
-    g_row = m_row;
-    g_col = m_col;
-    if (m_col == 0)
+    if (m_orbit_step_completed)
     {
-        g_reset_periodicity = true;
-    }
-    ActiveStandardFractalScope active_standard_fractal{*m_standard_fractal};
-    ActivePopcornScope active_popcorn{*this};
-    if (m_standard_fractal->calculate_standard_pixel(false) == -1)
-    {
-        if (image_orbit_plot_pending())
+        if (m_orbit_step_result != 0)
         {
+            advance_seed();
             return;
         }
-        suspend();
+        m_orbit_step_result = 0;
+        m_orbit_step_completed = false;
+    }
+
+    ++m_color_iter;
+    g_color_iter = m_color_iter;
+    if (g_color_iter >= g_max_iterations)
+    {
+        advance_seed();
         return;
     }
-    g_reset_periodicity = false;
 
+    ActivePopcornScope active_popcorn{*this};
+    m_orbit_step_result = orbit_step();
+    m_orbit_step_completed = true;
+    if (m_image_orbit_plot_pending)
+    {
+        return;
+    }
+    if (m_orbit_step_result != 0)
+    {
+        advance_seed();
+        return;
+    }
+    m_orbit_step_result = 0;
+    m_orbit_step_completed = false;
+}
+
+void Popcorn::advance_seed()
+{
+    g_real_color_iter = m_color_iter;
+    g_reset_periodicity = false;
+    m_seed_active = false;
+    m_orbit_step_completed = false;
+    m_orbit_step_result = 0;
     ++m_col;
     g_col = m_col;
     if (m_col > g_i_stop_pt.x)
@@ -193,6 +207,19 @@ void Popcorn::iterate()
     }
 }
 
+void Popcorn::start_seed()
+{
+    g_row = m_row;
+    g_col = m_col;
+    g_reset_periodicity = m_col == 0;
+    g_color_iter = 0;
+    m_color_iter = 0;
+    m_orbit_step_result = 0;
+    m_orbit_step_completed = false;
+    other_julia_per_pixel();
+    m_seed_active = true;
+}
+
 bool Popcorn::image_orbit_plot_pending() const
 {
     return m_image_orbit_plot_pending;
@@ -201,14 +228,13 @@ bool Popcorn::image_orbit_plot_pending() const
 OrbitPlot &Popcorn::pending_image_orbit_plot()
 {
     assert(m_image_orbit_plot_pending);
-    return m_standard_fractal->pending_orbit_plot();
+    return m_image_orbit_plot;
 }
 
 void Popcorn::complete_pending_image_orbit_plot()
 {
     assert(m_image_orbit_plot_pending);
-    m_standard_fractal->complete_pending_orbit_plot();
-    m_pending_image_orbit_plot = {};
+    assert(m_image_orbit_plot.done());
     m_image_orbit_plot_pending = false;
 }
 
@@ -216,8 +242,7 @@ void Popcorn::queue_image_orbit_plot(const double real, const double imag, const
 {
     if (!m_image_orbit_plot_pending)
     {
-        m_pending_image_orbit_plot = {real, imag, color};
-        m_standard_fractal->queue_image_orbit_plot(real, imag, color);
+        m_image_orbit_plot.reset_image(real, imag, color);
         m_image_orbit_plot_pending = true;
     }
 }

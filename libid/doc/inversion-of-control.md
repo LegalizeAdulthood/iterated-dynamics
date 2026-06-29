@@ -280,38 +280,7 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Popcorn Owns Seed Scanning
-
-Work:
-
-- Replace `Popcorn::m_standard_fractal` and
-  `StandardFractal::calculate_standard_pixel(false)` with a Popcorn-owned
-  seed iteration loop.
-- `Popcorn::iterate()` should:
-  - set up the current seed pixel;
-  - advance the selected Popcorn orbit step;
-  - queue produced orbit points on `Popcorn`;
-  - return to the UI while a point is pending;
-  - resume the same seed after the UI displays the point.
-- Preserve the left-to-right, top-to-bottom seed scan and resume row.
-- Preserve bailout, magnitude limit, legacy compatibility, and
-  PopcornJulia behavior.
-- Keep temporary Popcorn wrappers only if still needed by PopcornJulia.
-
-Done when:
-
-- `type=popcorn` rendering no longer depends on `StandardFractal`.
-- `Popcorn::standard_fractal()` and `Popcorn::m_standard_fractal` are
-  gone.
-- `ui::popcorn_type()` owns the input loop and drives `Popcorn`
-  incrementally.
-
-Manual testing:
-
-- `type=popcorn orbitdelay=200`
-- `type=popcorn reset=1960 orbitdelay=200`
-
-### Slice 2: PopcornJulia Uses Popcorn Renderer
+### Slice 1: PopcornJulia Uses Popcorn Renderer
 
 Work:
 
@@ -335,7 +304,7 @@ Manual testing:
 - `type=popcornjul orbitdelay=200`
 - `type=popcornjul reset=1960 orbitdelay=200`
 
-### Slice 3: FrothyBasin Overlay Orbit Caller
+### Slice 2: FrothyBasin Overlay Orbit Caller
 
 Work:
 
@@ -359,7 +328,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=200`
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 4: Standard Overlay Orbit Caller
+### Slice 3: Standard Overlay Orbit Caller
 
 Work:
 
@@ -385,7 +354,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=200`
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 5: Overlay Orbit Scrub Ownership
+### Slice 4: Overlay Orbit Scrub Ownership
 
 Work:
 
@@ -409,7 +378,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 6: Sound Pending-Key Utilities
+### Slice 5: Sound Pending-Key Utilities
 
 Work:
 
