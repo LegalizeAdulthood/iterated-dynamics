@@ -280,43 +280,112 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Wait-Until Input Wake
+### Slice 1: Ant Delay Pacing
 
 Work:
 
-- Treat `engine/wait_until.cpp::wait_until()` as delay and input-wake
-  behavior, not sound behavior.
-- Move the direct pending-key check behind UI-owned delay coordination.
-- Update the existing wait tests so they cover the UI-owned polling
-  adapter instead of engine-side driver polling.
-- Preserve the rule that waits wake promptly when input is pending.
+- Use the existing `libid/ui/ant.cpp` controller as the owner of ant
+  delay pacing.
+- Restructure `fractals::Ant` so a paced visible ant move yields back to
+  the UI controller instead of sleeping inside `turk_mite1()` or
+  `turk_mite2()`.
+- Keep the unpaced path batched enough to preserve current performance.
+- Remove the `engine/wait_until.h` dependency from `fractals/Ant.cpp`.
 
 Done when:
 
-- `engine/wait_until.cpp` has no direct key polling calls.
-- `wait_until()` callers preserve their current delay cadence.
-- Tests no longer assert direct driver polling from `wait_until()`.
+- `libid/fractals/Ant.cpp` has no wait or sleep call.
+- `libid/ui/ant.cpp` applies the delay after a paced visible move.
+- Step mode and delay adjustment remain UI-owned.
 
 Manual testing:
 
-- Confirm sound delay still wakes promptly when input is pending.
+- `id.bat type=ant orbitdelay=100`
+- `id.bat type=ant orbitdelay=1`
 
-### Slice 2: Wait-Until Cleanup
+### Slice 2: Standard Showdot Pacing
 
 Work:
 
-- Recheck all remaining `wait_until()` callers after the sound and
-  delay slices.
-- If no caller needs a keyboard-waking engine delay, reduce
-  `wait_until()` to pure timing or remove it.
-- Keep `sleep_orbit_delay()` and `sleep_ms()` separate unless their
-  callers are part of the same review unit.
+- Use the existing `libid/ui/standard_fractal.cpp` controller as the
+  owner of `showdot` delay pacing.
+- Split `calc_type_show_dot()` into resumable phases: save/show the dot,
+  yield for UI pacing, run the saved calc type, and restore the area.
+- Keep the orbit calculation in `StandardFractal`; only the wait moves to
+  the UI controller.
+- Remove the `sleep_orbit_delay()` call from `engine/calcfrac.cpp`.
 
 Done when:
 
-- `wait_until()` is either pure timing or removed.
-- No synchronous compatibility path reaches keyboard polling through
-  orbit plotting.
+- `calc_type_show_dot()` no longer waits.
+- `StandardFractal` exposes pending `showdot` pacing to its UI wrapper.
+- Standard rendering still shows the dot and restores the covered area.
+
+Manual testing:
+
+- `id.bat type=mandel showdot=b/20 orbitdelay=100`
+
+### Slice 3: Standard Orbit Plot Pacing
+
+Work:
+
+- Use the existing `libid/ui/standard_fractal.cpp` and
+  `libid/ui/standard_orbit_plot.cpp` controller path as the only delayed
+  standard orbit plotting path.
+- Remove the delayed `OrbitPlot::iterate()` compatibility path.
+- Make engine calculation code queue orbit plotting work and yield to the
+  UI controller instead of driving delayed plotting synchronously.
+- Preserve the distinction between overlay orbit display and image-orbit
+  plotting.
+
+Done when:
+
+- `engine/orbit.cpp` has no `wait_until()` call.
+- Engine code does not loop over delayed `OrbitPlot` work.
+- Standard, FrothyBasin, and Popcorn orbit plotting still use their UI
+  controllers for pacing.
+
+Manual testing:
+
+- `id.bat type=mandel showorbit=yes orbitdelay=30`
+- `id.bat type=frothybasin showorbit=yes orbitdelay=30`
+- `id.bat type=popcorn orbitdelay=30`
+
+### Slice 4: Sound Output Pacing
+
+Work:
+
+- Treat speaker sound as UI presentation, not engine rendering.
+- Move driver speaker calls and sound delay pacing out of
+  `engine/sound.cpp` and into UI-owned sound playback code.
+- Let calculation and orbit code report tone requests without blocking to
+  play them.
+- Preserve sound-file output separately from speaker playback.
+
+Done when:
+
+- `write_sound()` no longer waits.
+- `engine/sound.cpp` no longer includes `engine/wait_until.h`.
+- Rendering an image does not need to wait in order to produce sound.
+
+Manual testing:
+
+- `id.bat @music.par/Music_Fractal-1`
+
+### Slice 5: Wait-Until Cleanup
+
+Work:
+
+- Recheck all remaining `wait_until()`, `reset_wait_until()`, and
+  `sleep_orbit_delay()` callers after the pacing slices.
+- Remove `wait_until()` if no non-UI caller remains.
+- Move any remaining UI timing helper to `libid/ui`.
+
+Done when:
+
+- Code in `libid/engine` and `libid/fractals` does not depend on
+  `engine/wait_until.h`.
+- No rendering path reaches keyboard polling through a wait helper.
 
 Manual testing:
 
