@@ -708,6 +708,10 @@ jobs:
             fi
           fi
           cp build.log build.status .freebsd-copyback/
+          if [ -d build-ci-release/test-artifacts ]; then
+            mkdir -p .freebsd-copyback/build-ci-release
+            cp -R build-ci-release/test-artifacts .freebsd-copyback/build-ci-release/
+          fi
           if [ -f xvfb.log ]; then
             cp xvfb.log .freebsd-copyback/
           fi
@@ -715,6 +719,14 @@ jobs:
             ! -name .freebsd-copyback -exec rm -rf {} +
           mv .freebsd-copyback/* .
           rmdir .freebsd-copyback
+
+    - name: Upload failed image test artifacts
+      if: always()
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: image-test-diagnostics-${{github.job}}-${{github.run_attempt}}
+        if-no-files-found: ignore
+        path: ${{github.workspace}}/build-ci-release/test-artifacts/
 
     - name: Analyze vcpkg package cache
       if: always()
@@ -875,6 +887,10 @@ jobs:
             fi
           fi
           cp build.log build.status .openbsd-copyback/
+          if [ -d build-ci-release/test-artifacts ]; then
+            mkdir -p .openbsd-copyback/build-ci-release
+            cp -R build-ci-release/test-artifacts .openbsd-copyback/build-ci-release/
+          fi
           if [ -f xvfb.log ]; then
             cp xvfb.log .openbsd-copyback/
           fi
@@ -882,6 +898,14 @@ jobs:
             ! -name .openbsd-copyback -exec rm -rf {} +
           mv .openbsd-copyback/* .
           rmdir .openbsd-copyback
+
+    - name: Upload failed image test artifacts
+      if: always()
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: image-test-diagnostics-${{github.job}}-${{github.run_attempt}}
+        if-no-files-found: ignore
+        path: ${{github.workspace}}/build-ci-release/test-artifacts/
 
     - name: Analyze vcpkg package cache
       if: always()
@@ -1058,6 +1082,10 @@ jobs:
             fi
           fi
           cp build.log build.status .netbsd-copyback/
+          if [ -d build-ci-netbsd-release/test-artifacts ]; then
+            mkdir -p .netbsd-copyback/build-ci-netbsd-release
+            cp -R build-ci-netbsd-release/test-artifacts .netbsd-copyback/build-ci-netbsd-release/
+          fi
           if [ -f xserver.log ]; then
             cp xserver.log .netbsd-copyback/
           fi
@@ -1065,6 +1093,14 @@ jobs:
             ! -name .netbsd-copyback -exec rm -rf {} +
           mv .netbsd-copyback/* .
           rmdir .netbsd-copyback
+
+    - name: Upload failed image test artifacts
+      if: always()
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: image-test-diagnostics-${{github.job}}-${{github.run_attempt}}
+        if-no-files-found: ignore
+        path: ${{github.workspace}}/build-ci-netbsd-release/test-artifacts/
 
     - name: Analyze vcpkg package cache
       if: always()
