@@ -4,15 +4,19 @@
 
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
+#include "engine/log_map.h"
 #include "engine/orbit.h"
 #include "engine/resume.h"
 #include "engine/trig_fns.h"
 #include "engine/VideoInfo.h"
+#include "fractals/fractype.h"
 #include "math/arg.h"
+#include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "misc/debug_flags.h"
 #include "misc/version.h"
 
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 
@@ -20,63 +24,8 @@ using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
 
-namespace id::engine
-{
-
-void submit_image_orbit_plot(double real, double imag, int color);
-
-} // namespace id::engine
-
 namespace id::fractals
 {
-
-namespace
-{
-
-Popcorn *s_active_popcorn{};
-
-Popcorn *set_active_popcorn(Popcorn *popcorn)
-{
-    Popcorn *previous{s_active_popcorn};
-    s_active_popcorn = popcorn;
-    return previous;
-}
-
-class ActivePopcornScope
-{
-public:
-    explicit ActivePopcornScope(Popcorn &popcorn) :
-        m_previous{set_active_popcorn(&popcorn)}
-    {
-    }
-
-    ~ActivePopcornScope()
-    {
-        set_active_popcorn(m_previous);
-    }
-
-    ActivePopcornScope(const ActivePopcornScope &) = delete;
-    ActivePopcornScope(ActivePopcornScope &&) = delete;
-    ActivePopcornScope &operator=(const ActivePopcornScope &) = delete;
-    ActivePopcornScope &operator=(ActivePopcornScope &&) = delete;
-
-private:
-    Popcorn *m_previous{};
-};
-
-void submit_popcorn_image_orbit_plot(const double real, const double imag, const int color)
-{
-    if (s_active_popcorn != nullptr)
-    {
-        s_active_popcorn->queue_image_orbit_plot(real, imag, color);
-    }
-    else
-    {
-        submit_image_orbit_plot(real, imag, color);
-    }
-}
-
-} // namespace
 
 bool popcorn_uses_default_functions()
 {
@@ -103,9 +52,13 @@ void Popcorn::resume()
         end_resume();
     }
     g_keyboard_check_interval = g_max_keyboard_check_interval;
-    g_plot = no_plot;
     g_temp_sqr_x = 0;
     m_map_mode = select_map_mode();
+    m_render_mode = select_render_mode();
+    if (m_render_mode == RenderMode::IMAGE_ORBITS)
+    {
+        g_plot = no_plot;
+    }
     m_color_iter = 0;
     m_orbit_step_result = 0;
     m_image_orbit_plot_pending = false;
@@ -167,7 +120,6 @@ void Popcorn::iterate()
         return;
     }
 
-    ActivePopcornScope active_popcorn{*this};
     m_orbit_step_result = orbit_step();
     m_orbit_step_completed = true;
     if (m_image_orbit_plot_pending)
@@ -186,6 +138,10 @@ void Popcorn::iterate()
 void Popcorn::advance_seed()
 {
     g_real_color_iter = m_color_iter;
+    if (m_render_mode == RenderMode::ESCAPE_TIME)
+    {
+        plot_escape_time_seed();
+    }
     g_reset_periodicity = false;
     m_seed_active = false;
     m_orbit_step_completed = false;
@@ -247,16 +203,75 @@ void Popcorn::queue_image_orbit_plot(const double real, const double imag, const
     }
 }
 
+void Popcorn::setup_julia_attractor(const double real, const double imag)
+{
+    if (g_attractor.count == 0 && !g_attractor.enabled)
+    {
+        return;
+    }
+    if (g_attractor.count >= MAX_NUM_ATTRACTORS)
+    {
+        return;
+    }
+
+    Popcorn popcorn;
+    popcorn.m_map_mode = select_map_mode();
+    popcorn.m_render_mode = RenderMode::ESCAPE_TIME;
+
+    const int save_periodicity_check{g_periodicity_check};
+    const long save_max_iterations{g_max_iterations};
+    g_periodicity_check = 0;
+    g_old_z.x = real;
+    g_old_z.y = imag;
+    g_temp_sqr_x = sqr(g_old_z.x);
+    g_temp_sqr_y = sqr(g_old_z.y);
+
+    g_max_iterations = std::max(g_max_iterations, 500L);
+    g_color_iter = 0;
+    g_overflow = false;
+    while (++g_color_iter < g_max_iterations)
+    {
+        if (popcorn.orbit_step() || g_overflow)
+        {
+            break;
+        }
+    }
+    if (g_color_iter >= g_max_iterations)
+    {
+        const DComplex prev_z{g_new_z};
+        for (int i = 0; i < 10; i++)
+        {
+            g_overflow = false;
+            if (!popcorn.orbit_step() && !g_overflow)
+            {
+                if (std::abs(prev_z.x - g_new_z.x) < g_close_enough && std::abs(prev_z.y - g_new_z.y) < g_close_enough)
+                {
+                    g_attractor.z[g_attractor.count] = g_new_z;
+                    g_attractor.period[g_attractor.count] = i + 1;
+                    g_attractor.count++;
+                    break;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    if (g_attractor.count == 0)
+    {
+        g_periodicity_check = save_periodicity_check;
+    }
+    g_max_iterations = save_max_iterations;
+}
+
 void Popcorn::complete()
 {
     g_calc_status = CalcStatus::COMPLETED;
     m_done = true;
 }
 
-namespace
-{
-
-int legacy_real_popcorn_orbit_step()
+int Popcorn::legacy_real_orbit_step()
 {
     g_tmp_z = g_old_z;
     g_tmp_z.x *= 3.0;
@@ -271,9 +286,9 @@ int legacy_real_popcorn_orbit_step()
     sin_cos(g_tmp_z.y, sin_y, cos_y);
     g_new_z.x = g_old_z.x - g_param_z1.x * sin_y;
     g_new_z.y = g_old_z.y - g_param_z1.x * g_sin_x;
-    if (g_plot == no_plot)
+    if (m_render_mode == RenderMode::IMAGE_ORBITS)
     {
-        submit_popcorn_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
+        queue_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
         g_old_z = g_new_z;
     }
     else
@@ -290,7 +305,7 @@ int legacy_real_popcorn_orbit_step()
     return 0;
 }
 
-int current_real_popcorn_orbit_step()
+int Popcorn::current_real_orbit_step()
 {
     g_tmp_z = g_old_z;
     g_tmp_z.x *= 3.0;
@@ -305,17 +320,16 @@ int current_real_popcorn_orbit_step()
     sin_cos(g_tmp_z.y, sin_y, cos_y);
     g_new_z.x = g_old_z.x - g_param_z1.x * sin_y;
     g_new_z.y = g_old_z.y - g_param_z1.x * g_sin_x;
-    if (g_plot == no_plot)
+    if (m_render_mode == RenderMode::IMAGE_ORBITS)
     {
-        submit_popcorn_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
+        queue_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
         g_old_z = g_new_z;
     }
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-    if (g_magnitude >= g_magnitude_limit
-        || std::abs(g_new_z.x) > g_magnitude_limit2
-        || std::abs(g_new_z.y) > g_magnitude_limit2)
+    if (g_magnitude >= g_magnitude_limit || std::abs(g_new_z.x) > g_magnitude_limit2 ||
+        std::abs(g_new_z.y) > g_magnitude_limit2)
     {
         return 1;
     }
@@ -325,7 +339,7 @@ int current_real_popcorn_orbit_step()
 
 // Popcorn generalization
 
-int generalized_popcorn_orbit_step()
+int Popcorn::generalized_orbit_step()
 {
     DComplex tmp_x;
     DComplex tmp_y;
@@ -347,26 +361,23 @@ int generalized_popcorn_orbit_step()
     g_new_z.x = g_old_z.x - tmp_x.x - tmp_y.y;
     g_new_z.y = g_old_z.y - tmp_y.x - tmp_x.y;
 
-    if (g_plot == no_plot)
+    if (m_render_mode == RenderMode::IMAGE_ORBITS)
     {
-        submit_popcorn_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
+        queue_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
         g_old_z = g_new_z;
     }
 
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-    if (g_magnitude >= g_magnitude_limit
-        || std::abs(g_new_z.x) > g_magnitude_limit2
-        || std::abs(g_new_z.y) > g_magnitude_limit2)
+    if (g_magnitude >= g_magnitude_limit || std::abs(g_new_z.x) > g_magnitude_limit2 ||
+        std::abs(g_new_z.y) > g_magnitude_limit2)
     {
         return 1;
     }
     g_old_z = g_new_z;
     return 0;
 }
-
-} // namespace
 
 Popcorn::MapMode Popcorn::select_map_mode()
 {
@@ -381,19 +392,40 @@ Popcorn::MapMode Popcorn::select_map_mode()
     return MapMode::GENERALIZED;
 }
 
-int Popcorn::legacy_real_orbit_step()
+Popcorn::RenderMode Popcorn::select_render_mode()
 {
-    return legacy_real_popcorn_orbit_step();
+    return g_fractal_type == FractalType::POPCORN_JUL ? RenderMode::ESCAPE_TIME : RenderMode::IMAGE_ORBITS;
 }
 
-int Popcorn::current_real_orbit_step()
+void Popcorn::plot_escape_time_seed()
 {
-    return current_real_popcorn_orbit_step();
-}
+    g_color_iter = m_color_iter;
+    if (g_color_iter >= g_max_iterations)
+    {
+        g_color_iter = g_inside_method >= ColorMethod::COLOR ? g_inside_color : g_max_iterations;
+    }
+    else if (g_outside_method >= ColorMethod::COLOR)
+    {
+        g_color_iter = g_outside_color;
+    }
+    else if (!g_log_map_table.empty() || g_log_map_calculate)
+    {
+        g_color_iter = log_table_calc(g_color_iter);
+    }
 
-int Popcorn::generalized_orbit_step()
-{
-    return generalized_popcorn_orbit_step();
+    g_color = std::abs(g_color_iter);
+    if (g_color_iter >= g_colors)
+    {
+        if (g_colors < 16)
+        {
+            g_color = static_cast<int>(g_color_iter & g_and_color);
+        }
+        else
+        {
+            g_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
+        }
+    }
+    g_plot(g_col, g_row, g_color);
 }
 
 int Popcorn::orbit_step()
@@ -410,33 +442,6 @@ int Popcorn::orbit_step()
         return generalized_orbit_step();
     }
     return generalized_orbit_step();
-}
-
-int popcorn_fractal_old()
-{
-    if (s_active_popcorn != nullptr)
-    {
-        return s_active_popcorn->orbit_step();
-    }
-    return legacy_real_popcorn_orbit_step();
-}
-
-int popcorn_fractal()
-{
-    if (s_active_popcorn != nullptr)
-    {
-        return s_active_popcorn->orbit_step();
-    }
-    return current_real_popcorn_orbit_step();
-}
-
-int popcorn_orbit()
-{
-    if (s_active_popcorn != nullptr)
-    {
-        return s_active_popcorn->orbit_step();
-    }
-    return generalized_popcorn_orbit_step();
 }
 
 } // namespace id::fractals

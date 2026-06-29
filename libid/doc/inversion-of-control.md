@@ -280,31 +280,7 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: PopcornJulia Uses Popcorn Renderer
-
-Work:
-
-- Change the `popcornjul` fractal entry to use the Popcorn UI renderer
-  instead of `standard_fractal_type`.
-- Remove Popcorn-specific use of `g_dispatch.orbit_calc()`.
-- Remove temporary Popcorn wrappers that only existed for
-  `StandardFractal`.
-- Preserve PopcornJulia defaults, attractor setup, symmetry, bailout,
-  and generalized map behavior.
-
-Done when:
-
-- `type=popcornjul` rendering no longer depends on `StandardFractal`.
-- `g_dispatch.orbit_calc()` is not used to drive Popcorn-family
-  rendering.
-- No temporary Popcorn compatibility wrappers remain.
-
-Manual testing:
-
-- `type=popcornjul orbitdelay=200`
-- `type=popcornjul reset=1960 orbitdelay=200`
-
-### Slice 2: FrothyBasin Overlay Orbit Caller
+### Slice 1: FrothyBasin Overlay Orbit Caller
 
 Work:
 
@@ -328,7 +304,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=200`
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 3: Standard Overlay Orbit Caller
+### Slice 2: Standard Overlay Orbit Caller
 
 Work:
 
@@ -354,7 +330,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=200`
 - Press a key during orbit delay and confirm the UI responds promptly.
 
-### Slice 4: Overlay Orbit Scrub Ownership
+### Slice 3: Overlay Orbit Scrub Ownership
 
 Work:
 
@@ -378,7 +354,7 @@ Manual testing:
 - Toggle orbit display with `o` and confirm saved orbit points are
   scrubbed.
 
-### Slice 5: Sound Pending-Key Utilities
+### Slice 4: Sound Pending-Key Utilities
 
 Work:
 

@@ -458,18 +458,8 @@ TEST(TestFractalDispatch, perImageSelectorsOnlyUpdateDispatch)
 
         EXPECT_TRUE(julia_per_image());
 
-        EXPECT_EQ(popcorn_fractal, g_dispatch.orbit_calc());
-        expect_table_functions(FractalType::POPCORN_JUL, table);
-    }
-
-    {
-        DispatchSelectionState state{FractalType::POPCORN_JUL};
-        const TableFunctions table{table_functions(FractalType::POPCORN_JUL)};
-        ValueSaver<Version> saved_version{g_version, parse_legacy_version(1960)};
-
-        EXPECT_TRUE(julia_per_image());
-
-        EXPECT_EQ(popcorn_fractal_old, g_dispatch.orbit_calc());
+        EXPECT_EQ(nullptr, g_dispatch.orbit_calc());
+        EXPECT_EQ(SymmetryType::ORIGIN, g_symmetry);
         expect_table_functions(FractalType::POPCORN_JUL, table);
     }
 }

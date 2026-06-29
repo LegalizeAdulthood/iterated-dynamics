@@ -20,7 +20,6 @@
 #include "fractals/pickover_mandelbrot.h"
 #include "fractals/popcorn.h"
 #include "misc/debug_flags.h"
-#include "misc/version.h"
 #include "ui/editpal.h"
 
 using namespace id::engine;
@@ -322,30 +321,14 @@ bool julia_per_image()
         }
         break;
     case FractalType::POPCORN:
-        g_dispatch.set_orbit_calc(popcorn_orbit);
-        get_julia_attractor(0.0, 0.0);    // another attractor?
-        break;
-
     case FractalType::POPCORN_JUL:
     {
         const bool default_functions = popcorn_uses_default_functions();
-        if (default_functions)
+        if (g_fractal_type == FractalType::POPCORN_JUL && default_functions)
         {
             g_symmetry = SymmetryType::ORIGIN;
         }
-        if (g_version <= parse_legacy_version(1960))
-        {
-            g_dispatch.set_orbit_calc(popcorn_fractal_old);
-        }
-        else if (default_functions && g_debug_flag == DebugFlags::FORCE_REAL_POPCORN)
-        {
-            g_dispatch.set_orbit_calc(popcorn_fractal);
-        }
-        else
-        {
-            g_dispatch.set_orbit_calc(popcorn_orbit);
-        }
-        get_julia_attractor(0.0, 0.0);    // another attractor?
+        Popcorn::setup_julia_attractor(0.0, 0.0);
         break;
     }
 

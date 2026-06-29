@@ -22,11 +22,11 @@ public:
     void suspend();
     bool done() const;
     void iterate();
-    int orbit_step();
     bool image_orbit_plot_pending() const;
     engine::OrbitPlot &pending_image_orbit_plot();
     void complete_pending_image_orbit_plot();
     void queue_image_orbit_plot(double real, double imag, int color);
+    static void setup_julia_attractor(double real, double imag);
 
 private:
     enum class MapMode
@@ -36,17 +36,27 @@ private:
         GENERALIZED
     };
 
+    enum class RenderMode
+    {
+        IMAGE_ORBITS,
+        ESCAPE_TIME
+    };
+
     static MapMode select_map_mode();
+    static RenderMode select_render_mode();
 
     void advance_seed();
     int legacy_real_orbit_step();
     int current_real_orbit_step();
     int generalized_orbit_step();
+    int orbit_step();
+    void plot_escape_time_seed();
     void start_seed();
     void complete();
 
     engine::OrbitPlot m_image_orbit_plot{};
     MapMode m_map_mode{MapMode::GENERALIZED};
+    RenderMode m_render_mode{RenderMode::IMAGE_ORBITS};
     long m_color_iter{};
     int m_orbit_step_result{};
     int m_row{};
@@ -58,8 +68,5 @@ private:
 };
 
 bool popcorn_uses_default_functions();
-int popcorn_fractal_old();
-int popcorn_fractal();
-int popcorn_orbit();
 
 } // namespace id::fractals

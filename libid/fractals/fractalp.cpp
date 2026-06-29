@@ -672,7 +672,7 @@ const FractalSpecific g_fractal_specific[] = {
         -3.0F, 3.0F, -2.25F, 2.25F,                                            //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                      //
         SymmetryType::NO_PLOT,                                                 //
-        popcorn_orbit, other_julia_per_pixel, julia_per_image,                 //
+        nullptr, nullptr, julia_per_image,                                     //
         popcorn_type,                                                          //
         STD_BAILOUT                                                            //
     },
@@ -1151,18 +1151,18 @@ const FractalSpecific g_fractal_specific[] = {
     },
 
     {
-        FractalType::POPCORN_JUL,                              //
-        "popcornjul",                                          //
-        {STEP_X, STEP_Y, CONSTANT_X, CONSTANT_Y},              //
-        {0.05, 0, 3.00, 0},                                    //
-        HelpLabels::HT_POPCORN, HelpLabels::HF_POPCORN_JULIA,  //
-        FractalFlags::TRIG4,                                   //
-        -3.0F, 3.0F, -2.25F, 2.25F,                            //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,      //
-        SymmetryType::NONE,                                    //
-        popcorn_orbit, other_julia_per_pixel, julia_per_image, //
-        standard_fractal_type,                                 //
-        STD_BAILOUT                                            //
+        FractalType::POPCORN_JUL,                             //
+        "popcornjul",                                         //
+        {STEP_X, STEP_Y, CONSTANT_X, CONSTANT_Y},             //
+        {0.05, 0, 3.00, 0},                                   //
+        HelpLabels::HT_POPCORN, HelpLabels::HF_POPCORN_JULIA, //
+        FractalFlags::TRIG4,                                  //
+        -3.0F, 3.0F, -2.25F, 2.25F,                           //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,     //
+        SymmetryType::NONE,                                   //
+        nullptr, nullptr, julia_per_image,                    //
+        popcorn_type,                                         //
+        STD_BAILOUT                                           //
     },
 
     {
