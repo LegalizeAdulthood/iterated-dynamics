@@ -391,6 +391,109 @@ Manual testing:
 
 - None unless a remaining interactive caller is changed.
 
+The remaining interrupt slices are grouped by UI controller.  The
+audited non-wait call sites all belong to standard rendering:
+`SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
+traversal are driven from `libid/ui/standard_fractal.cpp`.
+
+### Slice 6: StandardFractal Pixel Interrupts
+
+Work:
+
+- Make `libid/ui/standard_fractal.cpp` the only code that checks for
+  interruption during standard pixel rendering.
+- Reshape `StandardFractal::calculate_standard_pixel()`,
+  `calc_mandelbrot_type()`, and the one/two pass loops so they return
+  after bounded pixel work instead of checking `calc_interrupted()`.
+- Move resume and work-list decisions that currently branch on
+  `calc_interrupted()` into pass suspension state triggered by the UI
+  controller.
+- Keep orbit math and color selection unchanged.
+
+Done when:
+
+- Standard pixel code in `engine/calcfrac.cpp` does not call
+  `calc_interrupted()`.
+- `engine/one_or_two_pass.cpp` does not call `calc_interrupted()`.
+- `ui/standard_fractal.cpp` polls between `StandardFractal` increments
+  and calls `suspend()` when interruption is requested.
+
+Manual testing:
+
+- `id.bat type=mandel passes=1 maxiter=10000`
+- `id.bat type=mandel passes=2 maxiter=10000`
+
+### Slice 7: StandardFractal Solid Guess Interrupts
+
+Work:
+
+- Keep `libid/ui/standard_fractal.cpp` as the only owner of
+  interruption for solid guessing.
+- Convert `SolidGuess` row fill and symmetry repaint work into
+  incremental state owned by `SolidGuess`.
+- Return to `StandardFractal` after bounded repaint work instead of
+  polling the driver inside `SolidGuess::guess_row()`.
+- Preserve current solid-guess resume behavior through pass suspension
+  state.
+
+Done when:
+
+- `engine/solid_guess.cpp` has no driver key polling.
+- `SolidGuess` can yield during row fill and symmetry repaint without
+  losing block state.
+- The standard UI controller handles the interrupt decision.
+
+Manual testing:
+
+- `id.bat type=mandel passes=g maxiter=10000`
+
+### Slice 8: StandardFractal SOI Interrupts
+
+Work:
+
+- Keep `libid/ui/standard_fractal.cpp` as the only owner of
+  interruption for SOI.
+- Convert the `SOI::rhombus_aux()` polling points into incremental SOI
+  work checkpoints.
+- Use SOI-owned state, including an explicit stack if needed, so
+  recursive or scan state survives a UI-triggered suspension.
+- Remove direct driver polling from SOI.
+
+Done when:
+
+- `engine/soi.cpp` has no driver key polling.
+- SOI can yield from recursion and scan work without losing position.
+- The standard UI controller handles the interrupt decision.
+
+Manual testing:
+
+- `id.bat type=mandel passes=s maxiter=10000`
+
+### Slice 9: StandardFractal Sticky-Orbits Interrupts
+
+Work:
+
+- Keep `libid/ui/standard_fractal.cpp` as the only owner of
+  interruption for `passes=o` sticky-orbit rendering.
+- Make `StickyOrbits` own rectangle, line, and function traversal state
+  and return after bounded orbit-point work.
+- Change `plot_orbits2d()` so it plots the current point only; it should
+  not poll the keyboard, mute the driver, allocate resume state, or
+  return an interrupt result.
+- Let `StickyOrbits` and `StandardFractal` record resume state when the
+  UI controller suspends rendering.
+
+Done when:
+
+- `fractals/lorenz.cpp::plot_orbits2d()` has no driver key polling.
+- `plot_orbits2d()` no longer owns interruption or resume setup.
+- Sticky-orbit traversal is incremental and interruptible from the
+  standard UI controller.
+
+Manual testing:
+
+- `id.bat type=lorenz passes=o maxiter=10000`
+
 ## Current Direct Input Leaks
 
 Direct polling or key consumption exists outside `libid/ui` in:
