@@ -280,29 +280,7 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Sound Pending-Input Policy
-
-Work:
-
-- Treat `engine/sound.cpp::write_sound()` separately from render
-  interruption and orbit-delay pacing.
-- Preserve the rule that pending input suppresses tone playback.
-- Move the direct pending-key check behind UI-owned sound coordination.
-- Do not change sound file output, MIDI output, or sound close/open
-  behavior.
-
-Done when:
-
-- `engine/sound.cpp` has no direct key polling calls.
-- `write_sound()` still writes sound output before considering speaker
-  playback.
-- Pending input still suppresses speaker tone playback.
-
-Manual testing:
-
-- Confirm sound is still suppressed when input is pending.
-
-### Slice 2: Wait-Until Input Wake
+### Slice 1: Wait-Until Input Wake
 
 Work:
 
@@ -323,7 +301,7 @@ Manual testing:
 
 - Confirm sound delay still wakes promptly when input is pending.
 
-### Slice 3: Wait-Until Cleanup
+### Slice 2: Wait-Until Cleanup
 
 Work:
 

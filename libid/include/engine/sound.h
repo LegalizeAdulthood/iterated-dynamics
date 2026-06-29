@@ -32,8 +32,11 @@ extern int g_polyphony;      //
 extern int g_scale_map[12];  // array for mapping notes to a (user defined) scale
 extern int g_sound_flag;     // sound control flags
 
+using SoundInputPendingFn = bool (*)();
+
 bool sound_buzzer_enabled();
 bool sound_open();
+SoundInputPendingFn set_sound_input_pending(SoundInputPendingFn input_pending);
 void write_sound(int tone);
 void sound_time_write();
 void close_sound();

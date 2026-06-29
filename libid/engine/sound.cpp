@@ -11,9 +11,9 @@
 
 #include <fmt/format.h>
 
-#include <cassert>
 #include <cstdio>
 #include <ctime>
+#include <stdexcept>
 #include <string>
 
 using namespace id::fractals;
@@ -38,9 +38,28 @@ int g_sound_flag{};
 
 static std::FILE *s_snd_fp{};
 
+namespace
+{
+
+bool no_input_pending()
+{
+    return false;
+}
+
+SoundInputPendingFn s_input_pending{no_input_pending};
+
+} // namespace
+
 bool sound_buzzer_enabled()
 {
     return (g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_BEEP;
+}
+
+SoundInputPendingFn set_sound_input_pending(const SoundInputPendingFn input_pending)
+{
+    const SoundInputPendingFn previous{s_input_pending};
+    s_input_pending = input_pending == nullptr ? no_input_pending : input_pending;
+    return previous;
 }
 
 // open sound file
@@ -50,7 +69,10 @@ bool sound_open()
     if ((g_orbit_save_flags & OSF_MIDI) != 0 && s_snd_fp == nullptr)
     {
         const std::string path{get_checked_save_path(WriteFile::SOUND, sound_name).string()};
-        assert(!path.empty());
+        if (path.empty())
+        {
+            throw std::logic_error{"Sound output path is empty"};
+        }
         s_snd_fp = std::fopen(path.c_str(), "w");
         if (s_snd_fp == nullptr)
         {
@@ -72,10 +94,8 @@ void write_sound(const int tone)
             fmt::print(s_snd_fp, "{:d}\n", tone);
         }
     }
-    if (!driver_key_pressed())
+    if (!s_input_pending())
     {
-        // driver_key_pressed calls driver_sound_off() if TAB or F1 pressed
-        // must not then call driver_sound_off(), else indexes out of synch
         //   if (20 < tone && tone < 15000)  better limits?
         //   if (10 < tone && tone < 5000)  better limits?
         if (driver_sound_on(tone))

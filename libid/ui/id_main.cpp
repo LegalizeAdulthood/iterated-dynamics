@@ -42,6 +42,7 @@
 #include "ui/make_mig_script.h"
 #include "ui/mouse.h"
 #include "ui/select_video_mode.h"
+#include "ui/sound.h"
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
 #include "ui/zoom.h"
@@ -409,6 +410,7 @@ int id_main(int argc, char *argv[])
         init_failure("Sorry, I couldn't find any working video drivers for your system\n");
         std::exit(-1);
     }
+    init_sound_input();
     init_libraries();
     // load id.cfg, match against driver supplied modes
     load_config();
