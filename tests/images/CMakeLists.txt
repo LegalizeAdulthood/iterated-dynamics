@@ -134,7 +134,7 @@ add_fractal_type_image_test(
     "mandel" "mandel4" "mandelbrotmix4" "mandelcloud" "mandelfn" "mandellambda" "mandphoenix" "mandphoenixclx"
     "manowar" "manowarj" "manzpower" "manzzpwr" "marksjulia" "marksmandel" "marksmandelpwr"
     "newtbasin" "newton"
-    "phoenix" "phoenixcplx" "popcorn" "popcornjul"
+    "phoenix" "phoenixcplx"
     "quat" "quatjul"
     "sierpinski" "spider"
     "tetrate" "tim's_error"
@@ -147,8 +147,15 @@ add_random_fractal_type_image_test(
     "kamtorus" "kamtorus3d"
     "plasma"
 )
+if(ID_TEST_MACOS_ARM64_GOLD)
+    set(POPCORN_GOLD GOLD "gold-popcorn-macOS-arm64")
+    set(POPCORNJUL_GOLD GOLD "gold-popcornjul-macOS-arm64")
+    set(POPCORN_1960_GOLD GOLD "gold-popcorn-1960-macOS-arm64")
+endif()
 add_image_test("cellular" IGNORE_COLORMAP PARAMETERS "type=cellular")
-add_image_test("popcorn-1960" PARAMETERS "reset=1960" "type=popcorn")
+add_image_test("popcorn" ${POPCORN_GOLD} PARAMETERS "type=popcorn")
+add_image_test("popcornjul" ${POPCORNJUL_GOLD} PARAMETERS "type=popcornjul")
+add_image_test("popcorn-1960" ${POPCORN_1960_GOLD} PARAMETERS "reset=1960" "type=popcorn")
 add_image_test("fnz-plus-fnpixel" PARAMETERS "type=fn(z)+fn(pix)")
 add_image_test("fn-zsqr" PARAMETERS "type=fn(z*z)")
 add_image_test("fn-mul-fn" PARAMETERS "type=fn*fn")
