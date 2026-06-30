@@ -9,7 +9,9 @@
 #include "ui/KeyboardHandler.h"
 #include "ui/standard_orbit_plot.h"
 
+#include <chrono>
 #include <memory>
+#include <thread>
 
 using namespace id::engine;
 using namespace id::misc;
@@ -41,6 +43,14 @@ public:
     }
 };
 
+void wait_for_show_dot_delay()
+{
+    driver_flush();
+    driver_delay(0);
+    std::this_thread::sleep_for(std::chrono::microseconds(g_orbit_delay * 100));
+    driver_delay(0);
+}
+
 } // namespace
 
 int standard_fractal()
@@ -68,6 +78,12 @@ int standard_fractal()
         {
             scrub_orbit();
             standard_fractal.complete_overlay_scrub();
+        }
+        else if (standard_fractal.show_dot_pacing_pending())
+        {
+            wait_for_show_dot_delay();
+            standard_fractal.complete_show_dot_pacing();
+            continue;
         }
         else
         {

@@ -797,7 +797,7 @@ resumeloop:                             // return here on failed overlays
                         }
                         else if (context.key == 'x' || context.key == 'y'
                             || context.key == 'z' || context.key == 'g'
-                            || context.key == 'v' || context.key == ID_KEY_CTL_B
+                            || context.key == 'p' || context.key == 'v' || context.key == ID_KEY_CTL_B
                             || context.key == ID_KEY_CTL_E || context.key == ID_KEY_CTL_F)
                         {
                             g_from_text = true;

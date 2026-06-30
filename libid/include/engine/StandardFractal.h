@@ -22,8 +22,10 @@ public:
     int calculate_standard_pixel(bool yield_to_ui);
     bool consume_standard_pixel_yield();
     void complete_pending_orbit_plot();
+    void complete_show_dot_pacing();
     void queue_image_orbit_plot(double real, double imag, int color, bool mark_as_plotted = false);
     void queue_overlay_orbit_plot(double real, double imag, bool mark_as_plotted = true);
+    bool queue_show_dot_pacing();
 
     void resume();
 
@@ -36,6 +38,7 @@ public:
     void complete_overlay_scrub();
     bool overlay_scrub_pending() const;
     bool orbit_plot_pending() const;
+    bool show_dot_pacing_pending() const;
     OrbitPlot &pending_orbit_plot();
     StandardPassStatus standard_pass_status() const;
 
@@ -114,6 +117,7 @@ private:
     bool m_orbit_plot_pending{};
     bool m_orbit_plot_marks_standard_orbit{};
     bool m_overlay_scrub_pending{};
+    bool m_show_dot_pacing_pending{};
     bool m_work_item_active{};
     bool m_work_item_yielded{};
     bool m_work_list_started{};

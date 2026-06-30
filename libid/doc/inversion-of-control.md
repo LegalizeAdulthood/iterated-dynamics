@@ -280,29 +280,7 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Standard Showdot Pacing
-
-Work:
-
-- Use the existing `libid/ui/standard_fractal.cpp` controller as the
-  owner of `showdot` delay pacing.
-- Split `calc_type_show_dot()` into resumable phases: save/show the dot,
-  yield for UI pacing, run the saved calc type, and restore the area.
-- Keep the orbit calculation in `StandardFractal`; only the wait moves to
-  the UI controller.
-- Remove the `sleep_orbit_delay()` call from `engine/calcfrac.cpp`.
-
-Done when:
-
-- `calc_type_show_dot()` no longer waits.
-- `StandardFractal` exposes pending `showdot` pacing to its UI wrapper.
-- Standard rendering still shows the dot and restores the covered area.
-
-Manual testing:
-
-- `id.bat type=mandel showdot=b/20 orbitdelay=100`
-
-### Slice 2: Standard Orbit Plot Pacing
+### Slice 1: Standard Orbit Plot Pacing
 
 Work:
 
@@ -328,7 +306,7 @@ Manual testing:
 - `id.bat type=frothybasin showorbit=yes orbitdelay=30`
 - `id.bat type=popcorn orbitdelay=30`
 
-### Slice 3: Sound Output Pacing
+### Slice 2: Sound Output Pacing
 
 Work:
 
@@ -349,12 +327,15 @@ Manual testing:
 
 - `id.bat @music.par/Music_Fractal-1`
 
-### Slice 4: Wait-Until Cleanup
+### Slice 3: Wait-Until Cleanup
 
 Work:
 
 - Recheck all remaining `wait_until()`, `reset_wait_until()`, and
   `sleep_orbit_delay()` callers after the pacing slices.
+- Remove the `showdot` compatibility fallback in
+  `engine/calcfrac.cpp` after the standard pass types that cannot yet
+  yield at a pixel are converted to incremental UI-owned pacing.
 - Remove `wait_until()` if no non-UI caller remains.
 - Move any remaining UI timing helper to `libid/ui`.
 
@@ -373,7 +354,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 5: StandardFractal Pixel Interrupts
+### Slice 4: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -400,7 +381,7 @@ Manual testing:
 - `id.bat type=mandel passes=1 maxiter=10000`
 - `id.bat type=mandel passes=2 maxiter=10000`
 
-### Slice 6: StandardFractal Solid Guess Interrupts
+### Slice 5: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -424,7 +405,7 @@ Manual testing:
 
 - `id.bat type=mandel passes=g maxiter=10000`
 
-### Slice 7: StandardFractal SOI Interrupts
+### Slice 6: StandardFractal SOI Interrupts
 
 Work:
 
@@ -446,7 +427,7 @@ Manual testing:
 
 - `id.bat type=mandel passes=s maxiter=10000`
 
-### Slice 8: StandardFractal Sticky-Orbits Interrupts
+### Slice 7: StandardFractal Sticky-Orbits Interrupts
 
 Work:
 

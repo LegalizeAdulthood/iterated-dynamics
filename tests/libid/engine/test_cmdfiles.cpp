@@ -2634,6 +2634,26 @@ TEST_F(TestParameterCommand, startupUsesTmpDirWhenTmpAndTempUnset)
     EXPECT_EQ(temp_dir.string(), adjust_dir(g_temp_dir.string()));
 }
 
+TEST_F(TestParameterCommand, startupPreservesOrbitDelayAfterShowDot)
+{
+    ValueSaver saved_first_init{g_first_init, true};
+    ValueSaver saved_special_dirs{g_special_dirs,
+        std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
+    CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
+    ValueSaver saved_video_table_len{g_video_table_len, 1};
+    VideoInfo test_mode{};
+    test_mode.key = ID_KEY_F6;
+    ValueSaver saved_video_mode{g_video_table[0], test_mode};
+    ValueSaver saved_orbit_delay{g_orbit_delay, -999};
+    ValueSaver saved_orbit_skip_points{g_orbit_skip_points, -999};
+    const std::vector<std::string> args{"id", "video=F6", "type=mandel", "showdot=b/20", "orbitdelay=100"};
+
+    cmd_files(args);
+
+    EXPECT_EQ(100, g_orbit_delay);
+    EXPECT_EQ(100, g_orbit_skip_points);
+}
+
 TEST_F(TestParameterCommand, workDirExisting)
 {
     fs::path start_dir{ID_TEST_DATA_DIR};

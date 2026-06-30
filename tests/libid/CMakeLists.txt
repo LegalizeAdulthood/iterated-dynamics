@@ -124,6 +124,7 @@ add_executable(test-id
     ui/test_KeyboardHandler.cpp
     ui/test_main_menu_switch.cpp
     ui/test_make_batch_file.cpp
+    ui/test_passes_options.cpp
     ui/test_slideshw.cpp
     ui/test_stereo.cpp
     ui/test_tab_display.cpp

@@ -36,7 +36,6 @@
 #include "io/loadmap.h"
 #include "math/Point.h"
 #include "misc/debug_flags.h"
-#include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/version.h"
 #include "ui/diskvid.h"

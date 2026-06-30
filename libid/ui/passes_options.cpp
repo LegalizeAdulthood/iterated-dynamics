@@ -31,9 +31,9 @@ namespace id::ui
 
 int passes_options()
 {
-    std::array<const char *, 20> choices;
+    std::array<const char *, 20> choices{};
     const char *pass_calc_modes[] = {"rect", "line"};
-    std::array<FullScreenValues, 25> values;
+    std::array<FullScreenValues, 25> values{};
     int i;
 
     const bool old_keep_screen_coords = g_keep_screen_coords;
@@ -51,7 +51,7 @@ pass_option_restart:
 
     choices[++k] = "Orbit delay (0 = none)";
     values[k].type = 'i';
-    int old_orbit_delay = g_orbit_skip_points;
+    int old_orbit_delay = g_orbit_delay;
     values[k].uval.ival = old_orbit_delay;
 
     choices[++k] = "Orbit interval (1 ... 255)";
@@ -101,7 +101,7 @@ pass_option_restart:
 
     g_orbit_delay = values[++k].uval.ival;
     g_orbit_skip_points = g_orbit_delay;
-    if (g_orbit_skip_points != old_orbit_delay)
+    if (g_orbit_delay != old_orbit_delay)
     {
         j = 1;
     }

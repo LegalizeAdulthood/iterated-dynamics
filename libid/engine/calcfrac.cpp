@@ -114,6 +114,16 @@ enum class ShowDotDirection
     UPPER_LEFT = 4
 };
 
+struct ShowDotState
+{
+    ShowDotDirection direction{ShowDotDirection::JUST_A_POINT};
+    int start_x{};
+    int stop_x{};
+    int start_y{};
+    int stop_y{};
+    bool waiting_for_pacing{};
+};
+
 static void decomposition();
 void set_symmetry(SymmetryType sym, bool use_list);
 static bool x_sym_split(int x_axis_row, bool x_axis_between);
@@ -136,6 +146,7 @@ static Byte *s_fill_buff{};           //
 static int s_save_dots_len{};         //
 static int s_show_dot_color{};        //
 static int s_show_dot_width{};        //
+static ShowDotState s_show_dot_state; //
 
 // next has a skip bit for each maxblock unit;
 //   1st pass sets bit  [1]... off only if block's contents guessed;
@@ -464,57 +475,102 @@ static void show_dot_save_restore(
     }
 }
 
-static int calc_type_show_dot()
+static ShowDotState show_dot_region()
 {
-    ShowDotDirection direction = ShowDotDirection::JUST_A_POINT;
-    int stop_x = g_col;
-    int start_x = g_col;
-    int stop_y = g_row;
-    int start_y = g_row;
+    ShowDotState state;
+    state.stop_x = g_col;
+    state.start_x = g_col;
+    state.stop_y = g_row;
+    state.start_y = g_row;
     if (const int width = s_show_dot_width + 1; width > 0)
     {
-        if (g_col+width <= g_i_stop_pt.x && g_row+width <= g_i_stop_pt.y)
+        if (g_col + width <= g_i_stop_pt.x && g_row + width <= g_i_stop_pt.y)
         {
             // preferred show dot shape
-            direction = ShowDotDirection::UPPER_LEFT;
-            start_x = g_col;
-            stop_x  = g_col+width;
-            start_y = g_row+width;
-            stop_y  = g_row+1;
+            state.direction = ShowDotDirection::UPPER_LEFT;
+            state.start_x = g_col;
+            state.stop_x = g_col + width;
+            state.start_y = g_row + width;
+            state.stop_y = g_row + 1;
         }
-        else if (g_col-width >= g_i_start_pt.x && g_row+width <= g_i_stop_pt.y)
+        else if (g_col - width >= g_i_start_pt.x && g_row + width <= g_i_stop_pt.y)
         {
             // second choice
-            direction = ShowDotDirection::UPPER_RIGHT;
-            start_x = g_col-width;
-            stop_x  = g_col;
-            start_y = g_row+width;
-            stop_y  = g_row+1;
+            state.direction = ShowDotDirection::UPPER_RIGHT;
+            state.start_x = g_col - width;
+            state.stop_x = g_col;
+            state.start_y = g_row + width;
+            state.stop_y = g_row + 1;
         }
-        else if (g_col-width >= g_i_start_pt.x && g_row-width >= g_i_start_pt.y)
+        else if (g_col - width >= g_i_start_pt.x && g_row - width >= g_i_start_pt.y)
         {
-            direction = ShowDotDirection::LOWER_RIGHT;
-            start_x = g_col-width;
-            stop_x  = g_col;
-            start_y = g_row-width;
-            stop_y  = g_row-1;
+            state.direction = ShowDotDirection::LOWER_RIGHT;
+            state.start_x = g_col - width;
+            state.stop_x = g_col;
+            state.start_y = g_row - width;
+            state.stop_y = g_row - 1;
         }
-        else if (g_col+width <= g_i_stop_pt.x && g_row-width >= g_i_start_pt.y)
+        else if (g_col + width <= g_i_stop_pt.x && g_row - width >= g_i_start_pt.y)
         {
-            direction = ShowDotDirection::LOWER_LEFT;
-            start_x = g_col;
-            stop_x  = g_col+width;
-            start_y = g_row-width;
-            stop_y  = g_row-1;
+            state.direction = ShowDotDirection::LOWER_LEFT;
+            state.start_x = g_col;
+            state.stop_x = g_col + width;
+            state.start_y = g_row - width;
+            state.stop_y = g_row - 1;
         }
     }
-    show_dot_save_restore(start_x, stop_x, start_y, stop_y, direction, ShowDotAction::SAVE);
-    if (g_orbit_delay > 0)
+    return state;
+}
+
+static void restore_pending_show_dot()
+{
+    if (!s_show_dot_state.waiting_for_pacing)
     {
-        sleep_orbit_delay(g_orbit_delay);
+        return;
+    }
+    show_dot_save_restore(s_show_dot_state.start_x, s_show_dot_state.stop_x, s_show_dot_state.start_y,
+        s_show_dot_state.stop_y, s_show_dot_state.direction, ShowDotAction::RESTORE);
+    s_show_dot_state.waiting_for_pacing = false;
+}
+
+static bool queue_show_dot_pacing()
+{
+    if (StandardFractal *standard_fractal = active_standard_fractal(); standard_fractal != nullptr)
+    {
+        return standard_fractal->queue_show_dot_pacing();
+    }
+    return false;
+}
+
+static void sleep_show_dot_delay()
+{
+    driver_flush();
+    driver_delay(0);
+    sleep_orbit_delay(g_orbit_delay);
+    driver_delay(0);
+}
+
+static int calc_type_show_dot()
+{
+    if (!s_show_dot_state.waiting_for_pacing)
+    {
+        s_show_dot_state = show_dot_region();
+        show_dot_save_restore(s_show_dot_state.start_x, s_show_dot_state.stop_x, s_show_dot_state.start_y,
+            s_show_dot_state.stop_y, s_show_dot_state.direction, ShowDotAction::SAVE);
+        if (g_orbit_delay > 0)
+        {
+            if (queue_show_dot_pacing())
+            {
+                s_show_dot_state.waiting_for_pacing = true;
+                return -1;
+            }
+            sleep_show_dot_delay();
+        }
     }
     const int out = s_calc_type_tmp();
-    show_dot_save_restore(start_x, stop_x, start_y, stop_y, direction, ShowDotAction::RESTORE);
+    show_dot_save_restore(s_show_dot_state.start_x, s_show_dot_state.stop_x, s_show_dot_state.start_y,
+        s_show_dot_state.stop_y, s_show_dot_state.direction, ShowDotAction::RESTORE);
+    s_show_dot_state.waiting_for_pacing = false;
     return out;
 }
 
@@ -1028,6 +1084,7 @@ void setup_standard_fractal_show_dot()
 
 void cleanup_standard_fractal_show_dot()
 {
+    restore_pending_show_dot();
     if (!s_save_dots.empty())
     {
         s_save_dots.clear();

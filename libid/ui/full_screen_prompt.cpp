@@ -520,7 +520,8 @@ void Prompt::display_initial_values()
     for (int i = 0; i < num_prompts; i++)
     {
         driver_put_string(prompt_row + i, prompt_col, C_PROMPT_LO, prompts[i]);
-        const std::string value{prompt_value_string(&values[i])};
+        std::string value{prompt_value_string(&values[i])};
+        value.resize(prompt_display_len(&values[i]), ' ');
         driver_put_string(prompt_row + i, value_col, C_PROMPT_LO, value.c_str());
     }
 }

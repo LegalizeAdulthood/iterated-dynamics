@@ -57,7 +57,7 @@ static int menu_check_key(const int key, int /*choice*/)
     {
         test_key = '@';
     }
-    if (std::strchr("#@2txyzgvir3dj", test_key)
+    if (std::strchr("#@2txyzgpvir3dj", test_key)
         || test_key == ID_KEY_INSERT || test_key == ID_KEY_CTL_B
         || test_key == ID_KEY_ESC || test_key == ID_KEY_DELETE
         || test_key == ID_KEY_CTL_F)
