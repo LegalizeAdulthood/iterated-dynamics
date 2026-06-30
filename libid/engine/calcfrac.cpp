@@ -806,7 +806,10 @@ static void calc_non_standard_fractal()
     }
     else
     {
-        g_calc_status = CalcStatus::COMPLETED; // no key, so assume it completed
+        if (g_calc_status == CalcStatus::IN_PROGRESS)
+        {
+            g_calc_status = CalcStatus::COMPLETED; // no key, so assume it completed
+        }
     }
 }
 

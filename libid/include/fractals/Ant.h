@@ -25,19 +25,23 @@ public:
     Ant &operator=(const Ant &) = delete;
     Ant &operator=(Ant &&) = delete;
 
-    bool iterate(bool step, long wait);
+    bool done() const;
+    bool consume_batch_complete();
+    bool iterate();
 
 private:
     enum
     {
         DIRS = 4,
         MAX_ANTS = 256,
+        INNER_LOOP = 100,
     };
 
     void init_mite1();
-    void turk_mite1(bool step, long wait);
     void init_mite2();
-    void turk_mite2(bool step, long wait);
+    void finish_batch();
+    bool move_mite1(int color);
+    bool move_mite2(int color);
 
     // possible value of idir e relative movement in the 4 directions
     // for x 0, 1, 0, -1
@@ -60,6 +64,7 @@ private:
     unsigned rule_mask{1U};
     long count{};
     long count_end{};
+    bool batch_complete_pending{};
 };
 
 std::string ant_rule_text();

@@ -280,30 +280,7 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Ant Delay Pacing
-
-Work:
-
-- Use the existing `libid/ui/ant.cpp` controller as the owner of ant
-  delay pacing.
-- Restructure `fractals::Ant` so a paced visible ant move yields back to
-  the UI controller instead of sleeping inside `turk_mite1()` or
-  `turk_mite2()`.
-- Keep the unpaced path batched enough to preserve current performance.
-- Remove the `engine/wait_until.h` dependency from `fractals/Ant.cpp`.
-
-Done when:
-
-- `libid/fractals/Ant.cpp` has no wait or sleep call.
-- `libid/ui/ant.cpp` applies the delay after a paced visible move.
-- Step mode and delay adjustment remain UI-owned.
-
-Manual testing:
-
-- `id.bat type=ant orbitdelay=100`
-- `id.bat type=ant orbitdelay=1`
-
-### Slice 2: Standard Showdot Pacing
+### Slice 1: Standard Showdot Pacing
 
 Work:
 
@@ -325,7 +302,7 @@ Manual testing:
 
 - `id.bat type=mandel showdot=b/20 orbitdelay=100`
 
-### Slice 3: Standard Orbit Plot Pacing
+### Slice 2: Standard Orbit Plot Pacing
 
 Work:
 
@@ -351,7 +328,7 @@ Manual testing:
 - `id.bat type=frothybasin showorbit=yes orbitdelay=30`
 - `id.bat type=popcorn orbitdelay=30`
 
-### Slice 4: Sound Output Pacing
+### Slice 3: Sound Output Pacing
 
 Work:
 
@@ -372,7 +349,7 @@ Manual testing:
 
 - `id.bat @music.par/Music_Fractal-1`
 
-### Slice 5: Wait-Until Cleanup
+### Slice 4: Wait-Until Cleanup
 
 Work:
 
@@ -396,7 +373,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 6: StandardFractal Pixel Interrupts
+### Slice 5: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -423,7 +400,7 @@ Manual testing:
 - `id.bat type=mandel passes=1 maxiter=10000`
 - `id.bat type=mandel passes=2 maxiter=10000`
 
-### Slice 7: StandardFractal Solid Guess Interrupts
+### Slice 6: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -447,7 +424,7 @@ Manual testing:
 
 - `id.bat type=mandel passes=g maxiter=10000`
 
-### Slice 8: StandardFractal SOI Interrupts
+### Slice 7: StandardFractal SOI Interrupts
 
 Work:
 
@@ -469,7 +446,7 @@ Manual testing:
 
 - `id.bat type=mandel passes=s maxiter=10000`
 
-### Slice 9: StandardFractal Sticky-Orbits Interrupts
+### Slice 8: StandardFractal Sticky-Orbits Interrupts
 
 Work:
 

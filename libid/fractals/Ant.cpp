@@ -11,7 +11,6 @@
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
 #include "engine/random_seed.h"
-#include "engine/wait_until.h"
 #include "misc/version.h"
 #include "ui/video.h"
 
@@ -61,11 +60,6 @@ std::string ant_numeric_rule_text(const double param)
 
 #define XO (g_logical_screen.x_dots / 2)
 #define YO (g_logical_screen.y_dots / 2)
-
-enum
-{
-    INNER_LOOP = 100
-};
 
 Ant::Ant()
 {
@@ -232,41 +226,12 @@ void Ant::init_mite1()
     }
 }
 
-// turkmite from Scientific American July 1994 page 91
-// Tweaked by Luciano Genero & Fulvio Cappelli
-//
-void Ant::turk_mite1(const bool step, const long wait)
+static unsigned rotate_left_one(unsigned value);
+
+void Ant::finish_batch()
 {
-    for (int i = INNER_LOOP; i; i--)
-    {
-        for (int color = max_ants; color; color--)
-        {
-            // move the various turmites
-            const int x = this->x[color]; // temp vars
-            const int y = this->y[color];
-            int dir = this->dir[color];
-            const int pixel = get_color(x, y);
-            if (wait > 0 && !step)
-            {
-                g_put_color(x, y, 15);
-                sleep_orbit_delay(wait);
-            }
-            g_put_color(x, y, next_col[pixel]);
-            dir += rule[pixel];
-            dir &= 3;
-            if (!wrap)
-            {
-                if ((dir == 0 && y == g_logical_screen.y_dots - 1) || (dir == 1 && x == g_logical_screen.x_dots - 1) ||
-                    (dir == 2 && y == 0) || (dir == 3 && x == 0))
-                {
-                    return;
-                }
-            }
-            this->x[color] = inc_x[dir][x];
-            this->y[color] = inc_y[dir][y];
-            this->dir[color] = dir;
-        }
-    }
+    batch_complete_pending = true;
+    ++count;
 }
 
 static unsigned rotate_left_one(const unsigned value)
@@ -315,70 +280,107 @@ void Ant::init_mite2()
     rule[0] = 0;
 }
 
-// this one ignore the color of the current cell is more like a white ant
-void Ant::turk_mite2(const bool step, const long wait)
+bool Ant::move_mite1(const int color)
 {
-    for (int i = INNER_LOOP; i; i--)
+    const int xx{x[color]};
+    const int yy{y[color]};
+    int direction{dir[color]};
+    const int pixel{get_color(xx, yy)};
+    g_put_color(xx, yy, next_col[pixel]);
+    direction += rule[pixel];
+    direction &= 3;
+    if (!wrap)
     {
-        for (int color = max_ants; color; color--)
+        const bool at_edge = (direction == 0 && yy == g_logical_screen.y_dots - 1) ||
+            (direction == 1 && xx == g_logical_screen.x_dots - 1) || (direction == 2 && yy == 0) ||
+            (direction == 3 && xx == 0);
+        if (at_edge)
         {
-            // move the various turmites
-            const int x = this->x[color]; // temp vars
-            const int y = this->y[color];
-            int dir = this->dir[color];
-            const int pixel = get_color(x, y);
-            g_put_color(x, y, 15);
-
-            if (wait > 0 && !step)
-            {
-                sleep_orbit_delay(wait);
-            }
-
-            if (rule[pixel] & rule_mask)
-            {
-                // turn right
-                dir--;
-                g_put_color(x, y, 0);
-            }
-            else
-            {
-                // turn left
-                dir++;
-                g_put_color(x, y, color);
-            }
-            dir &= 3;
-            if (!wrap)
-            {
-                if ((dir == 0 && y == g_logical_screen.y_dots - 1) || (dir == 1 && x == g_logical_screen.x_dots - 1) ||
-                    (dir == 2 && y == 0) || (dir == 3 && x == 0))
-                {
-                    return;
-                }
-            }
-            this->x[color] = inc_x[dir][x];
-            this->y[color] = inc_y[dir][y];
-            this->dir[color] = dir;
+            return false;
         }
-        rule_mask = rotate_left_one(rule_mask);
     }
+    x[color] = inc_x[direction][xx];
+    y[color] = inc_y[direction][yy];
+    dir[color] = direction;
+    return true;
 }
 
-bool Ant::iterate(const bool step, const long wait)
+bool Ant::move_mite2(const int color)
 {
-    if (count < count_end)
+    const int xx{x[color]};
+    const int yy{y[color]};
+    int direction{dir[color]};
+    const int pixel{get_color(xx, yy)};
+    g_put_color(xx, yy, 15);
+    if (rule[pixel] & rule_mask)
     {
-        switch (type)
-        {
-        case AntType::ONE:
-            turk_mite1(step, wait);
-            break;
-        case AntType::TWO:
-            turk_mite2(step, wait);
-            break;
-        }
-        ++count;
+        --direction;
+        g_put_color(xx, yy, 0);
     }
-    return count < count_end;
+    else
+    {
+        ++direction;
+        g_put_color(xx, yy, color);
+    }
+    direction &= 3;
+    if (!wrap)
+    {
+        const bool at_edge = (direction == 0 && yy == g_logical_screen.y_dots - 1) ||
+            (direction == 1 && xx == g_logical_screen.x_dots - 1) || (direction == 2 && yy == 0) ||
+            (direction == 3 && xx == 0);
+        if (at_edge)
+        {
+            return false;
+        }
+    }
+    x[color] = inc_x[direction][xx];
+    y[color] = inc_y[direction][yy];
+    dir[color] = direction;
+    return true;
+}
+
+bool Ant::done() const
+{
+    return count >= count_end;
+}
+
+bool Ant::consume_batch_complete()
+{
+    const bool batch_complete{batch_complete_pending};
+    batch_complete_pending = false;
+    return batch_complete;
+}
+
+bool Ant::iterate()
+{
+    if (done())
+    {
+        return false;
+    }
+    if (type != AntType::ONE && type != AntType::TWO)
+    {
+        finish_batch();
+        return !done();
+    }
+
+    for (int i = INNER_LOOP; i; --i)
+    {
+        for (int color = max_ants; color; --color)
+        {
+            const bool keep_going{type == AntType::ONE ? move_mite1(color) : move_mite2(color)};
+            if (!keep_going)
+            {
+                finish_batch();
+                return !done();
+            }
+        }
+        if (type == AntType::TWO)
+        {
+            rule_mask = rotate_left_one(rule_mask);
+        }
+    }
+    finish_batch();
+    return !done();
 }
 
 std::string ant_rule_text()
