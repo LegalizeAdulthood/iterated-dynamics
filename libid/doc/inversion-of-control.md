@@ -241,32 +241,35 @@ calculation object
     do not poll keyboard or mouse input
 ```
 
-The next phase applies that same inversion at the image-engine boundary.
-`calc_fract()` still selects renderers and reaches into `libid/ui` for
-standard and Lyapunov rendering.  That is backwards: UI code should
-select the presentation controller, and engine code should own only image
-calculation lifecycle, timing, setup, cleanup, and calculation objects.
+The next phase applies that same inversion at the image-engine boundary,
+but only after the engine side has a real incremental object shape.
+`calc_fract()` still owns image lifecycle and render selection.  Keep that
+work local while refactoring.  First make the local engine object own the
+whole calculation sequence, then extract the object, then let UI code
+drive the object.
 
 Use this top-level shape:
 
 ```text
-ui image dispatcher
-    create an engine image-calculation lifecycle object
-    select the UI controller for the current fractal type
-    poll input for the active UI context
-    drive the controller or calculation object until it is done
-    explicitly finish the engine image-calculation lifecycle
-
-engine image lifecycle
-    initialize calculation globals and resume state
+engine image calculation
+    init calculation globals and resume state
+    iterate the active renderer
+    report done/result state
     own elapsed image calculation time accounting
     perform calculation cleanup
-    never select UI controllers or poll input
+
+ui controller
+    create an engine image calculation object
+    call init()
+    call iterate() until the object reports done
+    poll input and perform UI pacing between iterate() calls
+    call finish()
 ```
 
-Do not hide renderer invocation in lifecycle helpers.  A lifecycle
-operation may initialize or finalize image state only; the active
-renderer call should remain visible at the UI orchestration point.
+Do not move render selection into `libid/ui`.  The UI controller should
+not know whether the current image is standard, Lyapunov, or
+non-standard; it should drive `ImageCalculation`.  Until that object is
+extracted, keep the refactoring local to `calcfrac.{h,cpp}`.
 
 Do not introduce a new progress-result enum unless an individual renderer
 needs more state than the existing `iterate()` and `done()` pattern can
@@ -278,30 +281,106 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: UI Image Dispatcher
+### Slice 1: Local ImageCalculation Iteration Shape
 
 Work:
 
-- Add a UI image dispatcher that replaces `calc_fract()` as the caller
-  used by `libid/ui/big_while_loop.cpp`.
-- The dispatcher creates `engine::ImageCalculation`, calls `start()`,
-  selects the UI controller for the current fractal type, runs it, calls
-  `finish()`, and returns the current success or interruption result.
-- Dispatch standard escape-time types to `standard_fractal()`.
-- Dispatch Lyapunov to `lyapunov_fractal()`.
-- Dispatch remaining types to the non-standard UI controller.
+- Work only in `calcfrac.{h,cpp}`.
+- Rename `ImageCalculation::start()` to `ImageCalculation::init()`.
+- Add `ImageCalculation::iterate()`.
+- Add the minimal query or result method needed for `calc_fract()` to
+  loop until image calculation is done.
+- Move the current renderer selection and whole-renderer call from
+  `calc_fract()` into `ImageCalculation::iterate()`.
+- Keep the first `iterate()` implementation coarse.  It may run the
+  selected renderer synchronously to completion.
+- Keep `ImageCalculation::finish()` explicit.
 
 Done when:
 
-- `libid/ui/big_while_loop.cpp` no longer calls `calc_fract()`.
-- Engine code no longer selects or calls UI render controllers.
-- `calc_fract()` is removed or reduced to engine-only lifecycle support.
+- `calc_fract()` locally drives `ImageCalculation` by calling `init()`,
+  looping over `iterate()`, calling `finish()`, and returning the image
+  result.
+- No UI files change in this slice.
+- Behavior is unchanged.
 
 Manual testing:
 
 - None unless an uncovered interactive path changes.
 
-### Slice 2: Standard Orbit Plot Pacing
+### Slice 2: Local ImageCalculation State Cleanup
+
+Work:
+
+- Keep working only in `calcfrac.{h,cpp}`.
+- Move renderer classification helpers and result calculation behind
+  `ImageCalculation`.
+- Track enough object state to make repeated or out-of-order calls fail
+  clearly.  Throw `std::logic_error` for violated preconditions.
+- Do not add hidden function-static state.
+- Do not extract the object yet.
+
+Done when:
+
+- `calc_fract()` is a small local driver for the object.
+- Renderer selection is part of `ImageCalculation::iterate()`, not
+  loose helper code in `calc_fract()`.
+- The object has the complete local shape needed for extraction:
+  `init()`, `iterate()`, done/result query, and `finish()`.
+
+Manual testing:
+
+- None unless an uncovered interactive path changes.
+
+### Slice 3: Extract ImageCalculation
+
+Work:
+
+- Move `ImageCalculation` declaration and implementation out of
+  `calcfrac.{h,cpp}` after the local object shape is complete.
+- Keep it in `libid/engine`; do not add includes from `libid/ui` to
+  `libid/engine` or `libid/fractals`.
+- Keep `calc_fract()` as the caller of the extracted object for this
+  slice.
+- Preserve the existing public `calc_fract()` entry point.
+
+Done when:
+
+- Extracting the object is a mechanical move with no control-flow
+  change.
+- `calc_fract()` still computes images exactly as before.
+
+Manual testing:
+
+- None unless an uncovered interactive path changes.
+
+### Slice 4: UI Drives ImageCalculation
+
+Work:
+
+- Add a UI controller that owns an `engine::ImageCalculation` object.
+- The controller calls `init()`, loops over `iterate()` until done,
+  handles UI polling and pacing between iterations, and then calls
+  `finish()`.
+- Replace `libid/ui/big_while_loop.cpp` calls to `calc_fract()` with the
+  UI controller.
+- Do not move renderer classification into the UI controller.
+- Remove or reduce `calc_fract()` only after the UI controller drives the
+  extracted object.
+
+Done when:
+
+- `libid/ui/big_while_loop.cpp` no longer calls `calc_fract()`.
+- UI code drives an engine image calculation object instead of selecting
+  renderers itself.
+- Engine code no longer reaches into UI to select presentation
+  controllers.
+
+Manual testing:
+
+- None unless an uncovered interactive path changes.
+
+### Slice 5: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -382,7 +461,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 3: Sound Output Pacing
+### Slice 6: Sound Output Pacing
 
 Work:
 
@@ -403,7 +482,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 4: Wait-Until Cleanup
+### Slice 7: Wait-Until Cleanup
 
 Work:
 
@@ -430,7 +509,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 5: StandardFractal Pixel Interrupts
+### Slice 8: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -457,7 +536,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 6: StandardFractal Solid Guess Interrupts
+### Slice 9: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -481,7 +560,7 @@ Manual testing:
 
 - `type=mandel passes=g maxiter=10000`
 
-### Slice 7: StandardFractal SOI Interrupts
+### Slice 10: StandardFractal SOI Interrupts
 
 Work:
 
@@ -503,7 +582,7 @@ Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 8: StandardFractal Sticky-Orbits Interrupts
+### Slice 11: StandardFractal Sticky-Orbits Interrupts
 
 Work:
 
