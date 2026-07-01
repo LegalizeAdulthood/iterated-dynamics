@@ -2718,6 +2718,10 @@ static CmdArgFlags cmd_old_demm_colors(const Command &cmd)
 
 static CmdArgFlags cmd_orbit_delay(const Command &cmd)
 {
+    if (cmd.total_params != 1 || cmd.num_int_params != 1)
+    {
+        return cmd.bad_arg();
+    }
     g_orbit_delay = cmd.num_val;
     g_orbit_skip_points = cmd.num_val;
     return CmdArgFlags::NONE;

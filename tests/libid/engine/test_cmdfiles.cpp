@@ -4070,6 +4070,18 @@ TEST_F(TestParameterCommand, orbitDelayValue)
     EXPECT_EQ(301, g_orbit_skip_points);
 }
 
+TEST_F(TestParameterCommandError, orbitDelayValueMustBeNumeric)
+{
+    ValueSaver save_orbit_delay{g_orbit_delay, -999};
+    ValueSaver save_orbit_skip_points{g_orbit_skip_points, -999};
+
+    exec_cmd_arg("orbitdelay=100\n");
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_EQ(-999, g_orbit_delay);
+    EXPECT_EQ(-999, g_orbit_skip_points);
+}
+
 TEST_F(TestParameterCommand, orbitIntervalValue)
 {
     ValueSaver save_orbit_interval{g_orbit_interval, -999L};
