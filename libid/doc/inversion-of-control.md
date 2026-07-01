@@ -284,26 +284,7 @@ Before further inversion, remove `engine_timer()` as a function-call
 wrapper.  Image calculation timing remains engine-owned, but the
 calculation call must be visible at the real orchestration point.
 
-### Slice 1: Use Explicit Timer Operations In StandardFractal
-
-Work:
-
-- Replace the duplicated clock logic in `StandardFractal::start_timer()`
-  and `StandardFractal::update_timer()` with the explicit engine timer
-  operations.
-- Keep `StandardFractal` ownership of its `m_timer_started` guard.
-- Do not change standard rendering control flow.
-
-Done when:
-
-- `StandardFractal` uses the shared engine timer operations.
-- Standard rendering still updates `g_timer_interval` as it does now.
-
-Manual testing:
-
-- None.
-
-### Slice 2: Inline Timing Around Non-Standard Dispatch
+### Slice 1: Inline Timing Around Non-Standard Dispatch
 
 Work:
 
@@ -323,7 +304,7 @@ Manual testing:
 
 - None unless an uncovered interactive path changes.
 
-### Slice 3: Inline Timing Around Standalone Per-Image Rendering
+### Slice 2: Inline Timing Around Standalone Per-Image Rendering
 
 Work:
 
@@ -342,7 +323,7 @@ Manual testing:
 
 - None unless an uncovered interactive path changes.
 
-### Slice 4: Inline Timing Around Cellular Per-Image Rendering
+### Slice 3: Inline Timing Around Cellular Per-Image Rendering
 
 Work:
 
@@ -362,7 +343,7 @@ Manual testing:
 
 - None unless an uncovered interactive path changes.
 
-### Slice 5: Inline Timing Around Bifurcation May Per-Image Rendering
+### Slice 4: Inline Timing Around Bifurcation May Per-Image Rendering
 
 Work:
 
@@ -382,7 +363,7 @@ Manual testing:
 
 - None unless an uncovered interactive path changes.
 
-### Slice 6: Delete Engine Timer Wrapper
+### Slice 5: Delete Engine Timer Wrapper
 
 Work:
 
@@ -399,7 +380,7 @@ Manual testing:
 
 - None.
 
-### Slice 7: Standard Orbit Plot Pacing
+### Slice 6: Standard Orbit Plot Pacing
 
 Work:
 
@@ -425,7 +406,7 @@ Manual testing:
 - `id.bat type=frothybasin showorbit=yes orbitdelay=30`
 - `id.bat type=popcorn orbitdelay=30`
 
-### Slice 8: Sound Output Pacing
+### Slice 7: Sound Output Pacing
 
 Work:
 
@@ -446,7 +427,7 @@ Manual testing:
 
 - `id.bat @music.par/Music_Fractal-1`
 
-### Slice 9: Wait-Until Cleanup
+### Slice 8: Wait-Until Cleanup
 
 Work:
 
@@ -473,7 +454,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 10: StandardFractal Pixel Interrupts
+### Slice 9: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -500,7 +481,7 @@ Manual testing:
 - `id.bat type=mandel passes=1 maxiter=10000`
 - `id.bat type=mandel passes=2 maxiter=10000`
 
-### Slice 11: StandardFractal Solid Guess Interrupts
+### Slice 10: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -524,7 +505,7 @@ Manual testing:
 
 - `id.bat type=mandel passes=g maxiter=10000`
 
-### Slice 12: StandardFractal SOI Interrupts
+### Slice 11: StandardFractal SOI Interrupts
 
 Work:
 
@@ -546,7 +527,7 @@ Manual testing:
 
 - `id.bat type=mandel passes=s maxiter=10000`
 
-### Slice 13: StandardFractal Sticky-Orbits Interrupts
+### Slice 12: StandardFractal Sticky-Orbits Interrupts
 
 Work:
 

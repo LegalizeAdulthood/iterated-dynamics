@@ -18,7 +18,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <ctime>
 #include <stdexcept>
 
 namespace id::engine
@@ -636,7 +635,7 @@ void StandardFractal::start_timer()
 {
     if (!m_timer_started)
     {
-        g_engine_timer_start = std::clock();
+        start_calculation_timer();
         m_timer_started = true;
     }
 }
@@ -709,7 +708,7 @@ void StandardFractal::update_timer()
 {
     if (m_timer_started)
     {
-        g_timer_interval = (std::clock() - g_engine_timer_start) / (CLOCKS_PER_SEC / 100);
+        update_calculation_timer();
     }
 }
 
