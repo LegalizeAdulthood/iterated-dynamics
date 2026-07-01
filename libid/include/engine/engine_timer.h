@@ -5,7 +5,6 @@
 namespace id::engine
 {
 
-extern bool                  g_timer_flag;
 extern long                  g_timer_interval;
 extern long                  g_engine_timer_start;
 

@@ -8,7 +8,6 @@ namespace id::misc
 enum class DebugFlags
 {
     NONE                                = 0,
-    BENCHMARK_TIMER                     = 1,
     HISTORY_DUMP_JSON                   = 2,
     FORCE_DISK_RESTORE_NOT_SAVE         = 50,
     FORCE_STANDARD_FRACTAL              = 90,

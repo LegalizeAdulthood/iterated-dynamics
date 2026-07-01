@@ -435,7 +435,6 @@ Variables for image browsing mode:
 
 Variables for timing calculations:
 
-- `g_timer_flag` - timer is enabled
 - `g_timer_interval` - timer interval in milliseconds
 - `g_engine_timer_start` - engine timer start time
 

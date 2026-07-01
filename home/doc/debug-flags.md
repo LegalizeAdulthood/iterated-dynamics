@@ -3,16 +3,8 @@
 `debugflag=nnn` sets developer debugging behavior.  `debug=nnn` is
 accepted as a synonym.
 
-Add one to any even debug value to trigger writing benchmark timing to
-`id-bench`.  This low bit is stripped at startup, so the other debug
-values are even.
-
-Example: `id debug=91` forces standard fractal calculation and turns on
-the benchmark timer.
-
 | Value | Meaning |
 |:--:|----|
-| 1 | Write engine and decoder benchmark timing. |
 | 2 | Append image history values as JSON to `history.json`. |
 | 50 | Compare restored image pixels instead of normal restore. |
 | 90 | Force standard or generic fractal calculation paths. |

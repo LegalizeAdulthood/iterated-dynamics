@@ -12,10 +12,6 @@ Variables for development and debugging:
 
 The `DebugFlags` enum provides a rich set of debugging capabilities:
 
-### Performance and Benchmarking Flags
-- `BENCHMARK_TIMER` (1) - Enable timer benchmarking
-- `BENCHMARK_ENCODER` (200) - Benchmark image encoding
-
 ### Formula and Parser Flags
 - `WRITE_FORMULA_DEBUG_INFORMATION` (98) - Write formula debug info
 - `SHOW_FORMULA_INFO_AFTER_COMPILE` (324) - Display formula information after compilation
@@ -109,12 +105,6 @@ Misc globals interact with all other subsystems:
 The `g_debug_flag` uses bitwise combinations to enable multiple debugging features:
 
 ```cpp
-// Example usage:
-if (g_debug_flag == DebugFlags::BENCHMARK_TIMER)
-{
-    // enable timer benchmarking
-}
-
 if ((g_debug_flag & DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) != DebugFlags::NONE)
 {
     // force arbitrary precision mode
@@ -271,12 +261,6 @@ The helpers make the global `g_driver` slightly less coupled to calling code.
 Common debug flag usage patterns:
 
 ```cpp
-// Test for specific flag
-if (g_debug_flag == DebugFlags::BENCHMARK_TIMER)
-{
-    start_timer();
-}
-
 // Test for flag category
 if ((+g_debug_flag >= +DebugFlags::FORCE_PRECISION_0_DIGITS) &&
     (+g_debug_flag <= +DebugFlags::FORCE_PRECISION_20_DIGITS))

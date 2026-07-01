@@ -505,7 +505,6 @@ static void init_vars_restart() // <ins> key init
     g_orbit_skip_points = 0;                           // skip no orbit points
     g_orbit_interval = 1;                              // plot all orbits
     g_debug_flag = DebugFlags::NONE;                   // debugging flag(s) are off
-    g_timer_flag = false;                              // timer flags are off
     g_formula_filename = "id.frm";                     // default formula file
     g_formula_name.clear();                            //
     g_l_system_filename = "id.l";                      //
@@ -1991,8 +1990,6 @@ static CmdArgFlags cmd_debug_flag(const Command &cmd)
 {
     // internal use only
     g_debug_flag = static_cast<DebugFlags>(cmd.num_val);
-    g_timer_flag = (g_debug_flag & DebugFlags::BENCHMARK_TIMER) != DebugFlags::NONE; // separate timer flag
-    g_debug_flag &= ~DebugFlags::BENCHMARK_TIMER;
     return CmdArgFlags::NONE;
 }
 
