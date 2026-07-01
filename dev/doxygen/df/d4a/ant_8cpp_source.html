@@ -92,154 +92,276 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment">//</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="../../de/d4f/ant_8h.html">ui/ant.h</a>&quot;</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="../../db/dc6/orbit_8h.html">engine/orbit.h</a>&quot;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;<a class="code" href="../../da/d4d/Ant_8h.html">fractals/Ant.h</a>&quot;</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;helpdefs.h&quot;</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d3c/Driver_8h.html">misc/Driver.h</a>&quot;</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;<a class="code" href="../../d3/d59/ValueSaver_8h.html">misc/ValueSaver.h</a>&quot;</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &quot;<a class="code" href="../../db/df1/help_8h.html">ui/help.h</a>&quot;</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;<a class="code" href="../../d7/de4/id__keys_8h.html">ui/id_keys.h</a>&quot;</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;<a class="code" href="../../d8/dfb/temp__msg_8h.html">ui/temp_msg.h</a>&quot;</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;sstream&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="../../d6/dd9/calcfrac_8h.html">engine/calcfrac.h</a>&quot;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;<a class="code" href="../../db/dc6/orbit_8h.html">engine/orbit.h</a>&quot;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;<a class="code" href="../../da/d4d/Ant_8h.html">fractals/Ant.h</a>&quot;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;helpdefs.h&quot;</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d3c/Driver_8h.html">misc/Driver.h</a>&quot;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &quot;<a class="code" href="../../d3/d59/ValueSaver_8h.html">misc/ValueSaver.h</a>&quot;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;<a class="code" href="../../db/df1/help_8h.html">ui/help.h</a>&quot;</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;<a class="code" href="../../d7/de4/id__keys_8h.html">ui/id_keys.h</a>&quot;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &quot;<a class="code" href="../../d3/d37/main__menu__switch_8h.html">ui/main_menu_switch.h</a>&quot;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &quot;<a class="code" href="../../d8/dfb/temp__msg_8h.html">ui/temp_msg.h</a>&quot;</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d0/d5f/namespaceid_1_1help.html">id::help</a>;</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a>;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>{</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;chrono&gt;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;sstream&gt;</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d0/d5f/namespaceid_1_1help.html">id::help</a>;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a>;</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">static</span> <span class="keywordtype">long</span> change_wait(<span class="keywordtype">long</span> wait)</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>{</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">while</span> (<span class="keyword">true</span>)</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    {</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        std::ostringstream msg;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        msg &lt;&lt; <span class="stringliteral">&quot;Delay &quot;</span> &lt;&lt; std::setw(4) &lt;&lt; wait &lt;&lt; <span class="stringliteral">&quot;     &quot;</span>;</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a1cdd9f0d2c2daeed70c4e99d5fd07376">show_temp_msg</a>(msg.str());</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        <span class="keywordflow">switch</span> (<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ac52f797fd56ee3e32bb756bace47991e">driver_get_key</a>())</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        {</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a53cb567170d3ddf70ed59e76fbc4843f">ID_KEY_CTL_RIGHT_ARROW</a>:</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a474b9ea64c102df9a19cb560e3b322cf">ID_KEY_CTL_UP_ARROW</a>:</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            wait += 100;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9acf633f4c4e31eea03bb2ef156661f727">ID_KEY_RIGHT_ARROW</a>:</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a489f1cc92a87c20eab233dc23ca24212">ID_KEY_UP_ARROW</a>:</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>            wait += 10;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>            <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a6c357aa1086fe1323d3f9b6604fae13c">ID_KEY_CTL_DOWN_ARROW</a>:</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a91015c8522ba241e21cf1381b4bcdb06">ID_KEY_CTL_LEFT_ARROW</a>:</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            wait -= 100;</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>            <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a05ee3a7d0ad395d308c22054375e3bab">ID_KEY_LEFT_ARROW</a>:</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a216db0d76848b237f0ff96b9c8b428ce">ID_KEY_DOWN_ARROW</a>:</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>            wait -= 10;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>            <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        <span class="keywordflow">default</span>:</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>            <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ae244029e3288a29c7a4294b1aa36e79a">clear_temp_msg</a>();</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>            <span class="keywordflow">return</span> wait;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        }</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        wait = std::max(wait, 0L);</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    }</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>}</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="keyword">static</span> <span class="keywordtype">bool</span> ant_key(<span class="keywordtype">bool</span> &amp;step, <span class="keywordtype">long</span> &amp;wait)</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>{</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="comment">// check for a key only every inner_loop times</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordtype">int</span> key = <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">driver_key_pressed</a>();</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keywordflow">if</span> (key || step)</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    {</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <span class="keywordflow">if</span> (key == 0)</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        {</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>            key = <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ac52f797fd56ee3e32bb756bace47991e">driver_get_key</a>();</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        }</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        <span class="keywordflow">switch</span> (key)</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        {</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9aae54dd6485226299fd9f8f256658510c">ID_KEY_SPACE</a>:</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            step = !step;</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>            <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a61d44b4cf97282a906fb8e6db9550c51">ID_KEY_ESC</a>:</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9acf633f4c4e31eea03bb2ef156661f727">ID_KEY_RIGHT_ARROW</a>:</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a489f1cc92a87c20eab233dc23ca24212">ID_KEY_UP_ARROW</a>:</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a216db0d76848b237f0ff96b9c8b428ce">ID_KEY_DOWN_ARROW</a>:</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a05ee3a7d0ad395d308c22054375e3bab">ID_KEY_LEFT_ARROW</a>:</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a53cb567170d3ddf70ed59e76fbc4843f">ID_KEY_CTL_RIGHT_ARROW</a>:</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a474b9ea64c102df9a19cb560e3b322cf">ID_KEY_CTL_UP_ARROW</a>:</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a6c357aa1086fe1323d3f9b6604fae13c">ID_KEY_CTL_DOWN_ARROW</a>:</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a91015c8522ba241e21cf1381b4bcdb06">ID_KEY_CTL_LEFT_ARROW</a>:</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>            wait = change_wait(wait);</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>            <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9aed7c2c7c32f0ff771d64ee69b8947229">ID_KEY_ENTER</a>:</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">namespace</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>{</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">using </span>Clock = std::chrono::steady_clock;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> ANT_DELAY_SLEEP_CHUNK = std::chrono::milliseconds{1};</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keywordtype">void</span> wait_for_ant_delay(<span class="keyword">const</span> <span class="keywordtype">long</span> delay_100us)</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>{</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keyword">const</span> <span class="keyword">auto</span> deadline = Clock::now() + std::chrono::microseconds{delay_100us * 100};</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a98cd75d9bbb463185caf8a29e6831ce7">driver_flush</a>();</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keyword">auto</span> now = Clock::now();</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordflow">while</span> (now &lt; deadline)</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    {</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keyword">const</span> <span class="keyword">auto</span> remaining = deadline - now;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="keywordflow">if</span> (remaining &gt; ANT_DELAY_SLEEP_CHUNK)</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        {</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>            <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#aec930f07bf3e7fb00b8a400a1acf2806">driver_delay</a>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ANT_DELAY_SLEEP_CHUNK.count()));</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        }</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        {</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>            <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#aec930f07bf3e7fb00b8a400a1acf2806">driver_delay</a>(0);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        }</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        now = Clock::now();</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    }</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>}</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="keywordtype">int</span> normalize_menu_key(<span class="keyword">const</span> <span class="keywordtype">int</span> key)</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>{</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">if</span> (key &gt;= <span class="charliteral">&#39;A&#39;</span> &amp;&amp; key &lt;= <span class="charliteral">&#39;Z&#39;</span>)</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    {</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="keywordflow">return</span> key - <span class="charliteral">&#39;A&#39;</span> + <span class="charliteral">&#39;a&#39;</span>;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    }</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordflow">return</span> key;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>}</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="keywordtype">bool</span> key_opens_options_menu(<span class="keyword">const</span> <span class="keywordtype">int</span> key)</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>{</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keywordflow">switch</span> (normalize_menu_key(key))</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    {</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9ae9c024792973a23d60287525fd5abcf0">ID_KEY_CTL_B</a>:</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a304d02daa78b7a55ddbc34d559b280ae">ID_KEY_CTL_E</a>:</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a534249a95ce1f76a15df2ffabbef7950">ID_KEY_CTL_F</a>:</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <span class="keywordflow">case</span> <span class="charliteral">&#39;g&#39;</span>:</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="keywordflow">case</span> <span class="charliteral">&#39;p&#39;</span>:</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keywordflow">case</span> <span class="charliteral">&#39;v&#39;</span>:</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    <span class="keywordflow">case</span> <span class="charliteral">&#39;x&#39;</span>:</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="keywordflow">case</span> <span class="charliteral">&#39;y&#39;</span>:</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordflow">case</span> <span class="charliteral">&#39;z&#39;</span>:</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keywordflow">default</span>:</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    }</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>}</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="keywordtype">bool</span> run_options_menu(<span class="keyword">const</span> <span class="keywordtype">int</span> key)</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>{</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    MainContext context;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    context.key = normalize_menu_key(key);</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    context.more_keys = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <span class="keywordflow">default</span>:</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        }</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">driver_key_pressed</a>())</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        {</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>            <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ac52f797fd56ee3e32bb756bace47991e">driver_get_key</a>();</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        }</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    }</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>}</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
-<div class="foldopen" id="foldopen00105" data-start="{" data-end="}">
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a680369182a0b5182d6daedcd85c6caab">  105</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a680369182a0b5182d6daedcd85c6caab">ant_type</a>()</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>{</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <a class="code hl_class" href="../../db/dc9/classid_1_1misc_1_1ValueSaver.html">ValueSaver</a> saved_help_mode(<a class="code hl_variable" href="../../d0/d5f/namespaceid_1_1help.html#ad0b971ac3cf639a418a3972f67014ded">g_help_mode</a>, HelpLabels::HELP_ANT_COMMANDS);</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <a class="code hl_class" href="../../d7/dfe/classid_1_1fractals_1_1Ant.html">fractals::Ant</a> ant;</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keywordtype">long</span> wait = std::abs(<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a845f7c90c5728b59e7f4443a2d731183">g_orbit_delay</a>);</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keywordtype">bool</span> step = wait == 1;</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    <span class="keywordflow">if</span> (step)</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    {</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        wait = 0;</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    }</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <span class="keywordflow">while</span> (ant.<a class="code hl_function" href="../../d7/dfe/classid_1_1fractals_1_1Ant.html#a5ce4064f928926dd7ffb0af248d972c0">iterate</a>(step, wait))</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    {</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        <span class="keywordflow">if</span> (ant_key(step, wait))</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        {</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>            <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        }</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    }</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>}</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keyword">const</span> <a class="code hl_enumeration" href="../../dc/d31/namespaceid_1_1engine.html#a2b1fcb2bc05404b2573598b4b3330b0a">CalcStatus</a> saved_status{<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a9793dc2f74ef1d7f6bc56f9e60b796e8">g_calc_status</a>};</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keyword">const</span> <a class="code hl_enumeration" href="../../dc/d76/namespaceid_1_1ui.html#ad33b7b3fa99f680abe13ec0053a38b1a">MainState</a> state{<a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a8ea6f91a6979c6025d6836f30f619518">main_menu_switch</a>(context)};</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keywordflow">return</span> state == <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#ad33b7b3fa99f680abe13ec0053a38b1aabaf1e257ce509e726bd72def35527de2">MainState::IMAGE_START</a> || state == <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#ad33b7b3fa99f680abe13ec0053a38b1aa4d6f37948613c3b6b77b66072c5110a0">MainState::RESTORE_START</a> || state == <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#ad33b7b3fa99f680abe13ec0053a38b1aa1104c54a9ec6549e4ef9562b687596fb">MainState::RESTART</a> ||</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        !context.more_keys || <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a9793dc2f74ef1d7f6bc56f9e60b796e8">g_calc_status</a> != saved_status;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>}</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="keywordtype">bool</span> stop_ant(<span class="keyword">const</span> <span class="keywordtype">int</span> key, <span class="keyword">const</span> <span class="keywordtype">bool</span> key_peeked)</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>{</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a9793dc2f74ef1d7f6bc56f9e60b796e8">g_calc_status</a> = CalcStatus::NON_RESUMABLE;</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <span class="keywordflow">if</span> (!key_peeked)</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    {</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a9ffcdb3db06fe90eb1498cc2e0b7dd41">driver_unget_key</a>(key);</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    }</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>}</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>} <span class="comment">// namespace</span></div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span><span class="keyword">static</span> <span class="keywordtype">long</span> change_wait(<span class="keywordtype">long</span> wait)</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>{</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <span class="keywordflow">while</span> (<span class="keyword">true</span>)</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    {</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        std::ostringstream msg;</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        msg &lt;&lt; <span class="stringliteral">&quot;Delay &quot;</span> &lt;&lt; std::setw(4) &lt;&lt; wait &lt;&lt; <span class="stringliteral">&quot;     &quot;</span>;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a1cdd9f0d2c2daeed70c4e99d5fd07376">show_temp_msg</a>(msg.str());</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        <span class="keywordflow">switch</span> (<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ac52f797fd56ee3e32bb756bace47991e">driver_get_key</a>())</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        {</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a53cb567170d3ddf70ed59e76fbc4843f">ID_KEY_CTL_RIGHT_ARROW</a>:</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a474b9ea64c102df9a19cb560e3b322cf">ID_KEY_CTL_UP_ARROW</a>:</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>            wait += 100;</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9acf633f4c4e31eea03bb2ef156661f727">ID_KEY_RIGHT_ARROW</a>:</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a489f1cc92a87c20eab233dc23ca24212">ID_KEY_UP_ARROW</a>:</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>            wait += 10;</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a6c357aa1086fe1323d3f9b6604fae13c">ID_KEY_CTL_DOWN_ARROW</a>:</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a91015c8522ba241e21cf1381b4bcdb06">ID_KEY_CTL_LEFT_ARROW</a>:</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>            wait -= 100;</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a05ee3a7d0ad395d308c22054375e3bab">ID_KEY_LEFT_ARROW</a>:</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a216db0d76848b237f0ff96b9c8b428ce">ID_KEY_DOWN_ARROW</a>:</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>            wait -= 10;</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>        <span class="keywordflow">default</span>:</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>            <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ae244029e3288a29c7a4294b1aa36e79a">clear_temp_msg</a>();</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>            <span class="keywordflow">return</span> wait;</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>        }</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>        wait = std::max(wait, 0L);</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    }</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>}</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span> </div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span><span class="keyword">static</span> <span class="keywordtype">bool</span> ant_key(<span class="keywordtype">bool</span> &amp;step, <span class="keywordtype">long</span> &amp;wait)</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>{</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    <span class="comment">// check for a key only every inner_loop times</span></div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    <span class="keywordtype">int</span> key = <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">driver_key_pressed</a>();</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    <span class="keyword">const</span> <span class="keywordtype">bool</span> key_peeked{key != 0};</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    <span class="keywordflow">if</span> (key || step)</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    {</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>        <span class="keywordflow">if</span> (key == 0)</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        {</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>            key = <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ac52f797fd56ee3e32bb756bace47991e">driver_get_key</a>();</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        }</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        <span class="keywordflow">switch</span> (key)</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        {</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9aae54dd6485226299fd9f8f256658510c">ID_KEY_SPACE</a>:</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>            step = !step;</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a61d44b4cf97282a906fb8e6db9550c51">ID_KEY_ESC</a>:</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>            <span class="keywordflow">return</span> stop_ant(key, key_peeked);</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span> </div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9acf633f4c4e31eea03bb2ef156661f727">ID_KEY_RIGHT_ARROW</a>:</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a489f1cc92a87c20eab233dc23ca24212">ID_KEY_UP_ARROW</a>:</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a216db0d76848b237f0ff96b9c8b428ce">ID_KEY_DOWN_ARROW</a>:</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a05ee3a7d0ad395d308c22054375e3bab">ID_KEY_LEFT_ARROW</a>:</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a53cb567170d3ddf70ed59e76fbc4843f">ID_KEY_CTL_RIGHT_ARROW</a>:</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a474b9ea64c102df9a19cb560e3b322cf">ID_KEY_CTL_UP_ARROW</a>:</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a6c357aa1086fe1323d3f9b6604fae13c">ID_KEY_CTL_DOWN_ARROW</a>:</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a91015c8522ba241e21cf1381b4bcdb06">ID_KEY_CTL_LEFT_ARROW</a>:</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>            wait = change_wait(wait);</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span> </div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9aed7c2c7c32f0ff771d64ee69b8947229">ID_KEY_ENTER</a>:</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9aba98d91eac710097157c2e673be59360">ID_KEY_ENTER_2</a>:</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>        <span class="keywordflow">default</span>:</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>            <span class="keywordflow">if</span> (key_opens_options_menu(key))</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>            {</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>                <span class="keywordflow">if</span> (key_peeked)</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>                {</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>                    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ac52f797fd56ee3e32bb756bace47991e">driver_get_key</a>();</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>                }</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>                <span class="keywordflow">return</span> run_options_menu(key);</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>            }</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>            <span class="keywordflow">return</span> stop_ant(key, key_peeked);</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        }</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>        <span class="keywordflow">if</span> (key_peeked)</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        {</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ac52f797fd56ee3e32bb756bace47991e">driver_get_key</a>();</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        }</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>    }</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>}</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span> </div>
+<div class="foldopen" id="foldopen00198" data-start="{" data-end="}">
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a680369182a0b5182d6daedcd85c6caab">  198</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a680369182a0b5182d6daedcd85c6caab">ant_type</a>()</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>{</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>    <a class="code hl_class" href="../../db/dc9/classid_1_1misc_1_1ValueSaver.html">ValueSaver</a> saved_help_mode(<a class="code hl_variable" href="../../d0/d5f/namespaceid_1_1help.html#ad0b971ac3cf639a418a3972f67014ded">g_help_mode</a>, HelpLabels::HELP_ANT_COMMANDS);</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    <a class="code hl_class" href="../../d7/dfe/classid_1_1fractals_1_1Ant.html">fractals::Ant</a> ant;</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    <span class="keywordtype">long</span> wait = std::abs(<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a845f7c90c5728b59e7f4443a2d731183">g_orbit_delay</a>);</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span> </div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    <span class="keywordtype">bool</span> step = wait == 1;</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    <span class="keywordflow">if</span> (step)</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    {</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        wait = 0;</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    }</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="keywordflow">while</span> (!ant.<a class="code hl_function" href="../../d7/dfe/classid_1_1fractals_1_1Ant.html#a0e29bb50e4054325e2ad918c8ced93ff">done</a>())</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    {</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>        ant.<a class="code hl_function" href="../../d7/dfe/classid_1_1fractals_1_1Ant.html#a9adde3e435581fd7a5b9a970b3f1d6c2">iterate</a>();</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> batch_complete{ant.<a class="code hl_function" href="../../d7/dfe/classid_1_1fractals_1_1Ant.html#a65adbc9449e1995e8a223233e8ecb0d7">consume_batch_complete</a>()};</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        <span class="keywordflow">if</span> (!ant.<a class="code hl_function" href="../../d7/dfe/classid_1_1fractals_1_1Ant.html#a0e29bb50e4054325e2ad918c8ced93ff">done</a>() &amp;&amp; batch_complete &amp;&amp; wait &gt; 0 &amp;&amp; !step)</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>        {</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>            wait_for_ant_delay(wait);</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        }</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        <span class="keywordflow">if</span> (!ant.<a class="code hl_function" href="../../d7/dfe/classid_1_1fractals_1_1Ant.html#a0e29bb50e4054325e2ad918c8ced93ff">done</a>() &amp;&amp; batch_complete &amp;&amp; step)</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>        {</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>            <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a98cd75d9bbb463185caf8a29e6831ce7">driver_flush</a>();</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>            <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#aec930f07bf3e7fb00b8a400a1acf2806">driver_delay</a>(0);</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        }</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>        <span class="keywordflow">if</span> (!ant.<a class="code hl_function" href="../../d7/dfe/classid_1_1fractals_1_1Ant.html#a0e29bb50e4054325e2ad918c8ced93ff">done</a>() &amp;&amp; batch_complete &amp;&amp; ant_key(step, wait))</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>        {</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        }</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    }</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>}</div>
 </div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span> </div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>} <span class="comment">// namespace id::ui</span></div>
 <div class="ttc" id="aAnt_8h_html"><div class="ttname"><a href="../../da/d4d/Ant_8h.html">Ant.h</a></div></div>
 <div class="ttc" id="aDriver_8h_html"><div class="ttname"><a href="../../dd/d3c/Driver_8h.html">Driver.h</a></div></div>
 <div class="ttc" id="aValueSaver_8h_html"><div class="ttname"><a href="../../d3/d59/ValueSaver_8h.html">ValueSaver.h</a></div></div>
 <div class="ttc" id="aant_8h_html"><div class="ttname"><a href="../../de/d4f/ant_8h.html">ant.h</a></div></div>
+<div class="ttc" id="acalcfrac_8h_html"><div class="ttname"><a href="../../d6/dd9/calcfrac_8h.html">calcfrac.h</a></div></div>
 <div class="ttc" id="aclassid_1_1fractals_1_1Ant_html"><div class="ttname"><a href="../../d7/dfe/classid_1_1fractals_1_1Ant.html">id::fractals::Ant</a></div><div class="ttdef"><b>Definition</b> <a href="../../da/d4d/Ant_8h_source.html#l00018">Ant.h:19</a></div></div>
-<div class="ttc" id="aclassid_1_1fractals_1_1Ant_html_a5ce4064f928926dd7ffb0af248d972c0"><div class="ttname"><a href="../../d7/dfe/classid_1_1fractals_1_1Ant.html#a5ce4064f928926dd7ffb0af248d972c0">id::fractals::Ant::iterate</a></div><div class="ttdeci">bool iterate(bool step, long wait)</div><div class="ttdef"><b>Definition</b> <a href="../../d9/db6/Ant_8cpp_source.html#l00366">Ant.cpp:366</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1Ant_html_a0e29bb50e4054325e2ad918c8ced93ff"><div class="ttname"><a href="../../d7/dfe/classid_1_1fractals_1_1Ant.html#a0e29bb50e4054325e2ad918c8ced93ff">id::fractals::Ant::done</a></div><div class="ttdeci">bool done() const</div><div class="ttdef"><b>Definition</b> <a href="../../d9/db6/Ant_8cpp_source.html#l00342">Ant.cpp:342</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1Ant_html_a65adbc9449e1995e8a223233e8ecb0d7"><div class="ttname"><a href="../../d7/dfe/classid_1_1fractals_1_1Ant.html#a65adbc9449e1995e8a223233e8ecb0d7">id::fractals::Ant::consume_batch_complete</a></div><div class="ttdeci">bool consume_batch_complete()</div><div class="ttdef"><b>Definition</b> <a href="../../d9/db6/Ant_8cpp_source.html#l00347">Ant.cpp:347</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1Ant_html_a9adde3e435581fd7a5b9a970b3f1d6c2"><div class="ttname"><a href="../../d7/dfe/classid_1_1fractals_1_1Ant.html#a9adde3e435581fd7a5b9a970b3f1d6c2">id::fractals::Ant::iterate</a></div><div class="ttdeci">bool iterate()</div><div class="ttdef"><b>Definition</b> <a href="../../d9/db6/Ant_8cpp_source.html#l00354">Ant.cpp:354</a></div></div>
 <div class="ttc" id="aclassid_1_1misc_1_1ValueSaver_html"><div class="ttname"><a href="../../db/dc9/classid_1_1misc_1_1ValueSaver.html">id::misc::ValueSaver</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d59/ValueSaver_8h_source.html#l00011">ValueSaver.h:12</a></div></div>
 <div class="ttc" id="ahelp_8h_html"><div class="ttname"><a href="../../db/df1/help_8h.html">help.h</a></div></div>
 <div class="ttc" id="aid__keys_8h_html"><div class="ttname"><a href="../../d7/de4/id__keys_8h.html">id_keys.h</a></div></div>
+<div class="ttc" id="amain__menu__switch_8h_html"><div class="ttname"><a href="../../d3/d37/main__menu__switch_8h.html">main_menu_switch.h</a></div></div>
 <div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a2b1fcb2bc05404b2573598b4b3330b0a"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a2b1fcb2bc05404b2573598b4b3330b0a">id::engine::CalcStatus</a></div><div class="ttdeci">CalcStatus</div><div class="ttdef"><b>Definition</b> <a href="../../d6/dd9/calcfrac_8h_source.html#l00114">calcfrac.h:115</a></div></div>
 <div class="ttc" id="anamespaceid_1_1engine_html_a845f7c90c5728b59e7f4443a2d731183"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a845f7c90c5728b59e7f4443a2d731183">id::engine::g_orbit_delay</a></div><div class="ttdeci">int g_orbit_delay</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dc0/orbit_8cpp_source.html#l00023">orbit.cpp:23</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a9793dc2f74ef1d7f6bc56f9e60b796e8"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a9793dc2f74ef1d7f6bc56f9e60b796e8">id::engine::g_calc_status</a></div><div class="ttdeci">CalcStatus g_calc_status</div><div class="ttdef"><b>Definition</b> <a href="../../d9/da8/calcfrac_8cpp_source.html#l00182">calcfrac.cpp:182</a></div></div>
 <div class="ttc" id="anamespaceid_1_1help_html"><div class="ttname"><a href="../../d0/d5f/namespaceid_1_1help.html">id::help</a></div><div class="ttdef"><b>Definition</b> <a href="../../db/df1/help_8h_source.html#l00005">help.h:6</a></div></div>
 <div class="ttc" id="anamespaceid_1_1help_html_ad0b971ac3cf639a418a3972f67014ded"><div class="ttname"><a href="../../d0/d5f/namespaceid_1_1help.html#ad0b971ac3cf639a418a3972f67014ded">id::help::g_help_mode</a></div><div class="ttdeci">HelpLabels g_help_mode</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dff/help_8cpp_source.html#l00043">help.cpp:43</a></div></div>
 <div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a98cd75d9bbb463185caf8a29e6831ce7"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a98cd75d9bbb463185caf8a29e6831ce7">id::misc::driver_flush</a></div><div class="ttdeci">void driver_flush()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00355">Driver.h:355</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a9ffcdb3db06fe90eb1498cc2e0b7dd41"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a9ffcdb3db06fe90eb1498cc2e0b7dd41">id::misc::driver_unget_key</a></div><div class="ttdeci">void driver_unget_key(const int key)</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00230">Driver.h:230</a></div></div>
 <div class="ttc" id="anamespaceid_1_1misc_html_ac52f797fd56ee3e32bb756bace47991e"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ac52f797fd56ee3e32bb756bace47991e">id::misc::driver_get_key</a></div><div class="ttdeci">int driver_get_key()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00195">Driver.h:195</a></div></div>
 <div class="ttc" id="anamespaceid_1_1misc_html_ad698e1042eebf4696c125d22bb014c9c"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">id::misc::driver_key_pressed</a></div><div class="ttdeci">int driver_key_pressed()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00220">Driver.h:220</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_aec930f07bf3e7fb00b8a400a1acf2806"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#aec930f07bf3e7fb00b8a400a1acf2806">id::misc::driver_delay</a></div><div class="ttdeci">void driver_delay(const int ms)</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00345">Driver.h:345</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a1cdd9f0d2c2daeed70c4e99d5fd07376"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a1cdd9f0d2c2daeed70c4e99d5fd07376">id::ui::show_temp_msg</a></div><div class="ttdeci">bool show_temp_msg(const char *msg)</div><div class="ttdef"><b>Definition</b> <a href="../../de/d52/temp__msg_8cpp_source.html#l00048">temp_msg.cpp:48</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9a05ee3a7d0ad395d308c22054375e3bab"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a05ee3a7d0ad395d308c22054375e3bab">id::ui::ID_KEY_LEFT_ARROW</a></div><div class="ttdeci">@ ID_KEY_LEFT_ARROW</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00049">id_keys.h:49</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9a216db0d76848b237f0ff96b9c8b428ce"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a216db0d76848b237f0ff96b9c8b428ce">id::ui::ID_KEY_DOWN_ARROW</a></div><div class="ttdeci">@ ID_KEY_DOWN_ARROW</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00053">id_keys.h:53</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9a304d02daa78b7a55ddbc34d559b280ae"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a304d02daa78b7a55ddbc34d559b280ae">id::ui::ID_KEY_CTL_E</a></div><div class="ttdeci">@ ID_KEY_CTL_E</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00013">id_keys.h:13</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9a474b9ea64c102df9a19cb560e3b322cf"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a474b9ea64c102df9a19cb560e3b322cf">id::ui::ID_KEY_CTL_UP_ARROW</a></div><div class="ttdeci">@ ID_KEY_CTL_UP_ARROW</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00100">id_keys.h:100</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9a489f1cc92a87c20eab233dc23ca24212"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a489f1cc92a87c20eab233dc23ca24212">id::ui::ID_KEY_UP_ARROW</a></div><div class="ttdeci">@ ID_KEY_UP_ARROW</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00047">id_keys.h:47</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9a534249a95ce1f76a15df2ffabbef7950"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a534249a95ce1f76a15df2ffabbef7950">id::ui::ID_KEY_CTL_F</a></div><div class="ttdeci">@ ID_KEY_CTL_F</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00014">id_keys.h:14</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9a53cb567170d3ddf70ed59e76fbc4843f"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a53cb567170d3ddf70ed59e76fbc4843f">id::ui::ID_KEY_CTL_RIGHT_ARROW</a></div><div class="ttdeci">@ ID_KEY_CTL_RIGHT_ARROW</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00088">id_keys.h:88</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9a61d44b4cf97282a906fb8e6db9550c51"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a61d44b4cf97282a906fb8e6db9550c51">id::ui::ID_KEY_ESC</a></div><div class="ttdeci">@ ID_KEY_ESC</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00028">id_keys.h:28</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9a6c357aa1086fe1323d3f9b6604fae13c"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a6c357aa1086fe1323d3f9b6604fae13c">id::ui::ID_KEY_CTL_DOWN_ARROW</a></div><div class="ttdeci">@ ID_KEY_CTL_DOWN_ARROW</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00104">id_keys.h:104</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9a91015c8522ba241e21cf1381b4bcdb06"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9a91015c8522ba241e21cf1381b4bcdb06">id::ui::ID_KEY_CTL_LEFT_ARROW</a></div><div class="ttdeci">@ ID_KEY_CTL_LEFT_ARROW</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00087">id_keys.h:87</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9aae54dd6485226299fd9f8f256658510c"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9aae54dd6485226299fd9f8f256658510c">id::ui::ID_KEY_SPACE</a></div><div class="ttdeci">@ ID_KEY_SPACE</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00030">id_keys.h:30</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9aba98d91eac710097157c2e673be59360"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9aba98d91eac710097157c2e673be59360">id::ui::ID_KEY_ENTER_2</a></div><div class="ttdeci">@ ID_KEY_ENTER_2</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00032">id_keys.h:32</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9acf633f4c4e31eea03bb2ef156661f727"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9acf633f4c4e31eea03bb2ef156661f727">id::ui::ID_KEY_RIGHT_ARROW</a></div><div class="ttdeci">@ ID_KEY_RIGHT_ARROW</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00051">id_keys.h:51</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9ae9c024792973a23d60287525fd5abcf0"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9ae9c024792973a23d60287525fd5abcf0">id::ui::ID_KEY_CTL_B</a></div><div class="ttdeci">@ ID_KEY_CTL_B</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00012">id_keys.h:12</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a563d59eed724289ba649c0d689898ca9aed7c2c7c32f0ff771d64ee69b8947229"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a563d59eed724289ba649c0d689898ca9aed7c2c7c32f0ff771d64ee69b8947229">id::ui::ID_KEY_ENTER</a></div><div class="ttdeci">@ ID_KEY_ENTER</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00020">id_keys.h:20</a></div></div>
-<div class="ttc" id="anamespaceid_1_1ui_html_a680369182a0b5182d6daedcd85c6caab"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a680369182a0b5182d6daedcd85c6caab">id::ui::ant_type</a></div><div class="ttdeci">int ant_type()</div><div class="ttdef"><b>Definition</b> <a href="../../df/d4a/ant_8cpp_source.html#l00105">ant.cpp:105</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a680369182a0b5182d6daedcd85c6caab"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a680369182a0b5182d6daedcd85c6caab">id::ui::ant_type</a></div><div class="ttdeci">int ant_type()</div><div class="ttdef"><b>Definition</b> <a href="../../df/d4a/ant_8cpp_source.html#l00198">ant.cpp:198</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a8ea6f91a6979c6025d6836f30f619518"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a8ea6f91a6979c6025d6836f30f619518">id::ui::main_menu_switch</a></div><div class="ttdeci">MainState main_menu_switch(MainContext &amp;context)</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d8f/main__menu__switch_8cpp_source.html#l00718">main_menu_switch.cpp:718</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ad33b7b3fa99f680abe13ec0053a38b1a"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ad33b7b3fa99f680abe13ec0053a38b1a">id::ui::MainState</a></div><div class="ttdeci">MainState</div><div class="ttdef"><b>Definition</b> <a href="../../d2/d03/main__state_8h_source.html#l00008">main_state.h:9</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ad33b7b3fa99f680abe13ec0053a38b1aa1104c54a9ec6549e4ef9562b687596fb"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ad33b7b3fa99f680abe13ec0053a38b1aa1104c54a9ec6549e4ef9562b687596fb">id::ui::MainState::RESTART</a></div><div class="ttdeci">@ RESTART</div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ad33b7b3fa99f680abe13ec0053a38b1aa4d6f37948613c3b6b77b66072c5110a0"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ad33b7b3fa99f680abe13ec0053a38b1aa4d6f37948613c3b6b77b66072c5110a0">id::ui::MainState::RESTORE_START</a></div><div class="ttdeci">@ RESTORE_START</div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ad33b7b3fa99f680abe13ec0053a38b1aabaf1e257ce509e726bd72def35527de2"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ad33b7b3fa99f680abe13ec0053a38b1aabaf1e257ce509e726bd72def35527de2">id::ui::MainState::IMAGE_START</a></div><div class="ttdeci">@ IMAGE_START</div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_ae244029e3288a29c7a4294b1aa36e79a"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ae244029e3288a29c7a4294b1aa36e79a">id::ui::clear_temp_msg</a></div><div class="ttdeci">void clear_temp_msg()</div><div class="ttdef"><b>Definition</b> <a href="../../de/d52/temp__msg_8cpp_source.html#l00096">temp_msg.cpp:96</a></div></div>
 <div class="ttc" id="aorbit_8h_html"><div class="ttname"><a href="../../db/dc6/orbit_8h.html">orbit.h</a></div></div>
 <div class="ttc" id="atemp__msg_8h_html"><div class="ttname"><a href="../../d8/dfb/temp__msg_8h.html">temp_msg.h</a></div></div>

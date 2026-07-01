@@ -79,49 +79,46 @@ hc/HelpCompiler.cpp:1578:9: note: First condition
 hc/HelpCompiler.cpp:1582:9: note: Second condition
     if (!g_errors)
         ^
-libid/engine/StandardFractal.cpp:292:32: style: Local variable 'active_standard_fractal' shadows outer function [shadowFunction]
+libid/engine/StandardFractal.cpp:306:32: style: Local variable 'active_standard_fractal' shadows outer function [shadowFunction]
     ActiveStandardFractalScope active_standard_fractal{*this};
                                ^
 libid/engine/StandardFractal.cpp:124:18: note: Shadowed declaration
 StandardFractal *active_standard_fractal()
                  ^
-libid/engine/StandardFractal.cpp:292:32: note: Shadow variable
+libid/engine/StandardFractal.cpp:306:32: note: Shadow variable
     ActiveStandardFractalScope active_standard_fractal{*this};
                                ^
 libid/engine/cmdfiles.cpp:211:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3725:28: style: Condition 'value.empty()' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3726:28: style: Condition 'value.empty()' is always false [knownConditionTrueFalse]
             if (value.empty())
                            ^
-libid/engine/cmdfiles.cpp:3799:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3800:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:4215:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4216:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
-libid/engine/cmdfiles.cpp:4318:20: style: Condition 'cmd.size()>29' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4319:20: style: Condition 'cmd.size()>29' is always false [knownConditionTrueFalse]
     if (cmd.size() > 29)
                    ^
-libid/engine/cmdfiles.cpp:4322:9: style: Condition '!cmd.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4323:9: style: Condition '!cmd.empty()' is always true [knownConditionTrueFalse]
     if (!cmd.empty())
         ^
-libid/engine/cmdfiles.cpp:1766:24: style: Local variable 'color' shadows outer variable [shadowVariable]
+libid/engine/cmdfiles.cpp:1765:24: style: Local variable 'color' shadows outer variable [shadowVariable]
             for (auto &color : g_dac_box)
                        ^
-libid/engine/cmdfiles.cpp:1688:21: note: Shadowed declaration
+libid/engine/cmdfiles.cpp:1687:21: note: Shadowed declaration
         const char *color{colors.c_str()};
                     ^
-libid/engine/cmdfiles.cpp:1766:24: note: Shadow variable
+libid/engine/cmdfiles.cpp:1765:24: note: Shadow variable
             for (auto &color : g_dac_box)
                        ^
-libid/engine/engine_timer.cpp:39:19: style: Variable 'out' is assigned a value that is never used. [unreadVariable]
-    const int out = fn();
-                  ^
 libid/engine/sound.cpp:72:23: style: Condition 'path.empty()' is always false [knownConditionTrueFalse]
         if (path.empty())
                       ^
-libid/fractals/Ant.cpp:276:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
+libid/fractals/Ant.cpp:241:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
     return value & high_bit ? result | 1U : result;
                             ^
 libid/fractals/Cellular.cpp:110:15: style: Condition 't>16' is always false [knownConditionTrueFalse]

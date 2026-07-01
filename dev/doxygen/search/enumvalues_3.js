@@ -5,7 +5,7 @@ var searchData=
   ['debug_2',['DEBUG',['../d0/d19/namespaceid_1_1io.html#afef8aa2e895599e54fa155d399d514f4adc30ec20708ef7b0f641ef78b7880a15',1,'id::io']]],
   ['debug_5fjson_3',['DEBUG_JSON',['../d0/d19/namespaceid_1_1io.html#afef8aa2e895599e54fa155d399d514f4a0a226977e6e68411c9c9b465456e172d',1,'id::io']]],
   ['default_5fcolor_4',['DEFAULT_COLOR',['../dc/d31/namespaceid_1_1engine.html#ad12521cfa0a188fd51546a1ffa7923c7a90ba3bd6d59970327061e7f889839c35',1,'id::engine']]],
-  ['default_5ffilter_5',['DEFAULT_FILTER',['../d5/d38/namespaceid_1_1fractals.html#a27c931b4a1f61366c7dcfce408b54a51acb85a0108d1d66a533e0c92a531573a1',1,'id::fractals']]],
+  ['default_5ffilter_5',['DEFAULT_FILTER',['../d5/d38/namespaceid_1_1fractals.html#a8069398e21e45ca1f641e15cdc9a0256acb85a0108d1d66a533e0c92a531573a1',1,'id::fractals']]],
   ['default_5fmap_6',['DEFAULT_MAP',['../dc/d31/namespaceid_1_1engine.html#a207dda9b1e9fbf1acd1bd8b8ee50ed78ae6f91bb7b18982ecbfdcc86c6c5b2526',1,'id::engine']]],
   ['delete_7',['DELETE',['../d9/dcc/namespacehc.html#a0bf96c9ff7ac5b68a1c5e9c7cd0918cea32f68a60cef40faedbc6af20298c1a1e',1,'hc']]],
   ['depth_5ffirst_8',['DEPTH_FIRST',['../d5/d38/namespaceid_1_1fractals.html#af63f6dcecb7dc8e41bfc273d0660d0e6a9fca5f9126fc3ac7e2c0c33fafa60153',1,'id::fractals']]],
@@ -20,7 +20,7 @@ var searchData=
   ['dot_17',['DOT',['../d0/d19/namespaceid_1_1io.html#a4b3ff89f8f933adcbe67154ea39c839ba40679521b5da0954b705341a2859f782',1,'id::io']]],
   ['dot_5fdot_18',['DOT_DOT',['../d0/d19/namespaceid_1_1io.html#a4b3ff89f8f933adcbe67154ea39c839bad55bbc8bd3dac814a7ca51e7989af78c',1,'id::io']]],
   ['double_19',['DOUBLE',['../dc/d76/namespaceid_1_1ui.html#a3866d1342c4dd9900f26f13724369290afd3e4ece78a7d422280d5ed379482229',1,'id::ui']]],
-  ['draw_5finterval_20',['DRAW_INTERVAL',['../df/d6d/namespaceid_1_1misc.html#a5c45d433edada3f216e2ea3033ac2398ad8aa434725abe9601afe151fa193ae6c',1,'id::misc']]],
+  ['draw_5finterval_20',['DRAW_INTERVAL',['../df/d6d/namespaceid_1_1misc.html#a9ed0fddad399899aae84ad0119db4ec6ad8aa434725abe9601afe151fa193ae6c',1,'id::misc']]],
   ['dxf_21',['DXF',['../d6/daa/namespaceid_1_1geometry.html#a75b93a745d0e367e938aed7f2b72e5cba95382e19cba08e260c9981e453eda8d0',1,'id::geometry']]],
   ['dynamic_22',['DYNAMIC',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca0fcc90da4811c877ba9f9c12f7d60bc9',1,'id::fractals']]]
 ];

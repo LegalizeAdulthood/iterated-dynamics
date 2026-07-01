@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['h_5fsize_0',['H_SIZE',['../d0/d19/namespaceid_1_1io.html#a9597b8383792015d40fc9251a44df92ca8c7b8e5d11b61166f033be05ddfd78fc',1,'id::io']]],
+  ['h_5fsize_0',['H_SIZE',['../d0/d19/namespaceid_1_1io.html#a07d53cf4e75e42bfd2549775163c4237a8c7b8e5d11b61166f033be05ddfd78fc',1,'id::io']]],
   ['halley_1',['HALLEY',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca83bfde3202faec1be9b4dceb65625619',1,'id::fractals']]],
-  ['hash_5fsize_2',['HASH_SIZE',['../dc/d76/namespaceid_1_1ui.html#a132273fc344169963bc1abdcdfa240a4aa08fbaa6d3c4fe1d694bb69be5dec5e1',1,'id::ui']]],
+  ['hash_5fsize_2',['HASH_SIZE',['../dc/d76/namespaceid_1_1ui.html#a7dd8240a29f6c4742e6e84c49660bf0eaa08fbaa6d3c4fe1d694bb69be5dec5e1',1,'id::ui']]],
   ['help_3',['HELP',['../dc/d76/namespaceid_1_1ui.html#a9f7061365fdd422f042ac348be5d5b32a4fc963e213bba362778f5c175eb4d5ff',1,'id::ui']]],
-  ['help_5fsig_4',['HELP_SIG',['../d0/d5f/namespaceid_1_1help.html#a9f03e0e6a83c8e7ec2bc0a020884ac6eaef5f919ec9aa32007629b30bc5a4a85d',1,'id::help']]],
+  ['help_5fsig_4',['HELP_SIG',['../d0/d5f/namespaceid_1_1help.html#a91fb6fd5fc5e6b72128678a0dd02fd62aef5f919ec9aa32007629b30bc5a4a85d',1,'id::help']]],
   ['henon_5',['HENON',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca35d89d836b4d5a1fe0a121ef087905aa',1,'id::fractals']]],
   ['hidden_6',['HIDDEN',['../dc/d31/namespaceid_1_1engine.html#ae9558f7cb0768644cedc31fe170573aca347e628a8f72626a0611ef842fe9d304',1,'id::engine']]],
   ['history_5fdump_5fjson_7',['HISTORY_DUMP_JSON',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0ebaec7ea9886188647f515892e57ada4818',1,'id::misc']]],

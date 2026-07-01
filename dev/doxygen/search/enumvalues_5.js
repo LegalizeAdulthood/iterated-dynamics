@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['f_5fhist_0',['F_HIST',['../d0/d5f/namespaceid_1_1help.html#ad69e20d0bf44858de412334c7cd35ab5a1b500f5d398e2a951c6c7448760da733',1,'id::help']]],
-  ['f_5findex_1',['F_INDEX',['../d0/d5f/namespaceid_1_1help.html#ad69e20d0bf44858de412334c7cd35ab5a3c33fb3a800eab9b1cd6ea4ea3c37dab',1,'id::help']]],
+  ['f_5fhist_0',['F_HIST',['../d0/d5f/namespaceid_1_1help.html#a77e2e92ad1e40c1be5cc6609fce9339fa1b500f5d398e2a951c6c7448760da733',1,'id::help']]],
+  ['f_5findex_1',['F_INDEX',['../d0/d5f/namespaceid_1_1help.html#a77e2e92ad1e40c1be5cc6609fce9339fa3c33fb3a800eab9b1cd6ea4ea3c37dab',1,'id::help']]],
   ['falling_5fparticles_2',['FALLING_PARTICLES',['../d5/d38/namespaceid_1_1fractals.html#a54e7a8821e0605381032363e56a645abaf6f6bc156b33f505d9e05ae9ff86bfb8',1,'id::fractals']]],
-  ['far_5freserve_3',['FAR_RESERVE',['../dc/d76/namespaceid_1_1ui.html#a35529115bd48072696ad6a872760f122ab5f02aedec35d8859c5ee1ef67f59ffe',1,'id::ui']]],
+  ['far_5freserve_3',['FAR_RESERVE',['../dc/d76/namespaceid_1_1ui.html#ae5cd06c91ad1b1258bc4e0dfe9c50459ab5f02aedec35d8859c5ee1ef67f59ffe',1,'id::ui']]],
   ['field_5fmap_4',['FIELD_MAP',['../dc/d76/namespaceid_1_1ui.html#a1b2e6fb4d63c6958cfcaab2e0715c89da22d14be3bfffe323c1710fa91db89bd8',1,'id::ui']]],
   ['files_5',['FILES',['../d0/d19/namespaceid_1_1io.html#a4b3ff89f8f933adcbe67154ea39c839bac935a4e21742b5a03a15b05834e2d82c',1,'id::io']]],
   ['final_6',['FINAL',['../d0/d19/namespaceid_1_1io.html#a5ea2c93d03124f2cbb9ecb4f26e671b0a6c8361dc2036c0559376fe4957699f69',1,'id::io']]],
@@ -18,7 +18,7 @@ var searchData=
   ['fn_5fplus_5ffn_5fpix_15',['FN_PLUS_FN_PIX',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca8925a56c38c8b39a56a2df528d5a2593',1,'id::fractals']]],
   ['fn_5ftimes_5ffn_16',['FN_TIMES_FN',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dcaf1500c812b661ed6efc0fed4d98c30de',1,'id::fractals']]],
   ['fn_5fz_5fsqr_17',['FN_Z_SQR',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca44e0e7ceb5b1f5a44bace96e3caf5c9f',1,'id::fractals']]],
-  ['font_5fdepth_18',['FONT_DEPTH',['../dc/d76/namespaceid_1_1ui.html#a35529115bd48072696ad6a872760f122a282808c8e3d41eff23eb5d19c9945133',1,'id::ui']]],
+  ['font_5fdepth_18',['FONT_DEPTH',['../dc/d76/namespaceid_1_1ui.html#ae5cd06c91ad1b1258bc4e0dfe9c50459a282808c8e3d41eff23eb5d19c9945133',1,'id::ui']]],
   ['force_5farbitrary_5fprecision_5fmath_19',['FORCE_ARBITRARY_PRECISION_MATH',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0eba973fa3759648af68ec09288f4f479b3a',1,'id::misc']]],
   ['force_5fboundary_5ftrace_5ferror_20',['FORCE_BOUNDARY_TRACE_ERROR',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0ebadaebc5df79491eac0c5e8a61efa7922f',1,'id::misc']]],
   ['force_5fcomplex_5fpower_21',['FORCE_COMPLEX_POWER',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0ebaac70fe4257e8b6a38e7e54f4bfcabdf3',1,'id::misc']]],
@@ -38,8 +38,8 @@ var searchData=
   ['fractal_5finfo_5fversion_35',['FRACTAL_INFO_VERSION',['../d0/d19/namespaceid_1_1io.html#a67e09ba59a6cf0e0b6e0089d9a18775fa172e2be924a7cb434a15d1b19c9ca338',1,'id::io']]],
   ['fractal_5finfo_5fversion_5flegacy_5f20_5f4_36',['FRACTAL_INFO_VERSION_LEGACY_20_4',['../d0/d19/namespaceid_1_1io.html#a67e09ba59a6cf0e0b6e0089d9a18775fa503beb69a273e48e559da08fdf14cfa3',1,'id::io']]],
   ['fractal_5fparam_37',['FRACTAL_PARAM',['../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16ab929b79c4a95187e08e4ee1ca326a14b',1,'id::engine']]],
-  ['free_5fmem_38',['FREE_MEM',['../dc/d76/namespaceid_1_1ui.html#a132273fc344169963bc1abdcdfa240a4a10e4e017c53c21f596329b636b8a3e04',1,'id::ui']]],
-  ['froth_5fbailout_39',['FROTH_BAILOUT',['../d5/d38/namespaceid_1_1fractals.html#ad9245a24cedc9e845bd2e3fd2347c638a0679caf46dbac9619401b5346480f822',1,'id::fractals']]],
+  ['free_5fmem_38',['FREE_MEM',['../dc/d76/namespaceid_1_1ui.html#a7dd8240a29f6c4742e6e84c49660bf0ea10e4e017c53c21f596329b636b8a3e04',1,'id::ui']]],
+  ['froth_5fbailout_39',['FROTH_BAILOUT',['../d5/d38/namespaceid_1_1fractals.html#a5651443abb7f85e3890e683008ff5ec1a0679caf46dbac9619401b5346480f822',1,'id::fractals']]],
   ['frothy_5fbasin_40',['FROTHY_BASIN',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca631db2cca65b992efeac252999bc3ffd',1,'id::fractals']]],
   ['full_5fscreen_41',['FULL_SCREEN',['../dc/d31/namespaceid_1_1engine.html#ae9558f7cb0768644cedc31fe170573acae1a502139199d41bcd8f603a6d579b70',1,'id::engine']]],
   ['function_42',['FUNCTION',['../dc/d31/namespaceid_1_1engine.html#a3e962ef5c8c7c9f05ea2e162e14d391da6a72a6a776662a244f82d31e9274a07b',1,'id::engine']]]
