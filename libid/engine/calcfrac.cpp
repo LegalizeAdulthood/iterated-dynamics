@@ -826,7 +826,13 @@ static bool static_calc_type_uses_lyapunov_renderer()
     return g_cur_fractal_specific->calc_type == lyapunov_type;
 }
 
-static void calc_non_standard_fractal()
+class NonStandardFractal
+{
+public:
+    void iterate();
+};
+
+void NonStandardFractal::iterate()
 {
     g_dispatch.init_calc_type(*g_cur_fractal_specific);
     // per_image can override
@@ -856,6 +862,13 @@ static void calc_non_standard_fractal()
         calc_type(); // non-standard fractal engine
         update_calculation_timer();
     }
+}
+
+static void calc_non_standard_fractal()
+{
+    NonStandardFractal non_standard_fractal;
+    non_standard_fractal.iterate();
+
     if (check_key())
     {
         if (g_calc_status == CalcStatus::IN_PROGRESS)  // calctype didn't set this itself,
