@@ -35,7 +35,10 @@ int bifurc_may_orbit()
 bool bifurc_may_per_image()
 {
     set_bifurc_may_beta(g_params[2]);
-    engine_timer(g_dispatch.calc_type());
+    const CalcType calc_type{g_dispatch.calc_type()};
+    start_calculation_timer();
+    calc_type();
+    update_calculation_timer();
     return false;
 }
 
