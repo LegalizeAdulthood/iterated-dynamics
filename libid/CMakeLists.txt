@@ -240,6 +240,7 @@ add_library(libid
     include/ui/menu_handler.h ui/menu_handler.cpp
     include/ui/mouse.h ui/mouse.cpp
     include/ui/not_disk_msg.h ui/not_disk_msg.cpp
+    include/ui/non_standard_fractal.h ui/non_standard_fractal.cpp
     include/ui/orbit2d.h ui/orbit2d.cpp
     include/ui/orbit3d.h ui/orbit3d.cpp
     include/ui/passes_options.h ui/passes_options.cpp

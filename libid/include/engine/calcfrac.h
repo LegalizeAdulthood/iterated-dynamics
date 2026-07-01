@@ -215,6 +215,12 @@ public:
     void finish();
 };
 
+class NonStandardFractal
+{
+public:
+    void iterate();
+};
+
 int calc_fract();
 int calc_mandelbrot_type();
 int standard_fractal_type();

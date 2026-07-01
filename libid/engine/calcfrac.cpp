@@ -62,11 +62,11 @@
 #include "misc/id.h"
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
-#include "ui/check_key.h"
 #include "ui/diskvid.h"
 #include "ui/find_special_colors.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/lyapunov.h"
+#include "ui/non_standard_fractal.h"
 #include "ui/standard_fractal.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
@@ -826,12 +826,6 @@ static bool static_calc_type_uses_lyapunov_renderer()
     return g_cur_fractal_specific->calc_type == lyapunov_type;
 }
 
-class NonStandardFractal
-{
-public:
-    void iterate();
-};
-
 void NonStandardFractal::iterate()
 {
     g_dispatch.init_calc_type(*g_cur_fractal_specific);
@@ -861,27 +855,6 @@ void NonStandardFractal::iterate()
         start_calculation_timer();
         calc_type(); // non-standard fractal engine
         update_calculation_timer();
-    }
-}
-
-static void calc_non_standard_fractal()
-{
-    NonStandardFractal non_standard_fractal;
-    non_standard_fractal.iterate();
-
-    if (check_key())
-    {
-        if (g_calc_status == CalcStatus::IN_PROGRESS)  // calctype didn't set this itself,
-        {
-            g_calc_status = CalcStatus::NON_RESUMABLE; // so mark it interrupted, non-resumable
-        }
-    }
-    else
-    {
-        if (g_calc_status == CalcStatus::IN_PROGRESS)
-        {
-            g_calc_status = CalcStatus::COMPLETED; // no key, so assume it completed
-        }
     }
 }
 
@@ -920,7 +893,7 @@ int calc_fract()
     }
     else
     {
-        calc_non_standard_fractal();
+        non_standard_fractal();
     }
     image.finish();
 
