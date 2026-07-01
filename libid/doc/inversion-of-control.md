@@ -2,15 +2,17 @@
 SPDX-License-Identifier: GPL-3.0-only
 -->
 
-# Standard Fractal Polling I/O Plan
+# Engine Polling I/O Inversion Plan
 
-Goal: move keyboard and mouse interaction out of engine calculation code
-and into `libid/ui`, preserving the current polling behavior.
+Goal: invert rendering control so `libid/ui` drives presentation
+controllers while engine and fractal code own calculation state,
+lifecycle, timing, setup, and cleanup.
 
-This is not the full event-driven inversion-of-control design.  It is the
-intermediate polling refactor for release 1.5.  The immediate target is a
-clean directory boundary: only `libid/ui` interacts directly with keyboard
-and mouse input.
+This is true inversion of control for the existing polling renderer.  It
+is not yet the later worker-thread or event-driven GUI design.  The
+release 1.5 target is a clean directory boundary: only `libid/ui`
+interacts directly with keyboard and mouse input, and engine code never
+selects UI controllers.
 
 The standard escape-time renderer should follow the same shape as the
 calculation types that have already been split into UI coordination code
@@ -239,6 +241,33 @@ calculation object
     do not poll keyboard or mouse input
 ```
 
+The next phase applies that same inversion at the image-engine boundary.
+`calc_fract()` still selects renderers and reaches into `libid/ui` for
+standard and Lyapunov rendering.  That is backwards: UI code should
+select the presentation controller, and engine code should own only image
+calculation lifecycle, timing, setup, cleanup, and calculation objects.
+
+Use this top-level shape:
+
+```text
+ui image dispatcher
+    create an engine image-calculation lifecycle object
+    select the UI controller for the current fractal type
+    poll input for the active UI context
+    drive the controller or calculation object until it is done
+    explicitly finish the engine image-calculation lifecycle
+
+engine image lifecycle
+    initialize calculation globals and resume state
+    own elapsed image calculation time accounting
+    perform calculation cleanup
+    never select UI controllers or poll input
+```
+
+Do not hide renderer invocation in lifecycle helpers.  A lifecycle
+operation may initialize or finalize image state only; the active
+renderer call should remain visible at the UI orchestration point.
+
 Do not introduce a new progress-result enum unless an individual renderer
 needs more state than the existing `iterate()` and `done()` pattern can
 express.
@@ -249,13 +278,145 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-Orbit plotting is presentation work done from inside each pixel's orbit
-iteration.  After inversion, preserve user-visible behavior rather than
-the exact old keyboard polling cadence: orbit points should still appear
-during calculation, `orbitdelay` should still pace visible points, and a
-pending key should still wake that delay promptly.  The UI controller
-owns that pacing because the delay exists to make plotted orbit points
-visible, not to advance fractal math.
+### Slice 1: Image Calculation Lifecycle Start
+
+Work:
+
+- Add an `engine::ImageCalculation` class in
+  `include/engine/ImageCalculation.h` and `engine/ImageCalculation.cpp`.
+- Move the current `init_calc_fract()` lifecycle work behind an explicit
+  `ImageCalculation::start()` operation.
+- Keep renderer selection and renderer calls in the current location for
+  this slice.
+- Keep image calculation timing engine-owned.
+- Do not add any include from `libid/ui` to `libid/engine` or
+  `libid/fractals`.
+
+Done when:
+
+- Image calculation initialization can be invoked through an engine-owned
+  lifecycle object.
+- `calc_fract()` still behaves as it does now, but no longer owns the
+  start lifecycle body directly.
+
+Manual testing:
+
+- None.
+
+### Slice 2: Image Calculation Lifecycle Finish
+
+Work:
+
+- Move the current `finish_calc_fract()` lifecycle work behind an
+  explicit `ImageCalculation::finish()` operation.
+- Keep `finish()` explicit; do not rely on a destructor for required
+  image finalization side effects.
+- Preserve `g_calc_time` accounting, work-area cleanup, sound cleanup, and
+  true-color disk cleanup.
+- Keep renderer selection and renderer calls in the current location for
+  this slice.
+
+Done when:
+
+- Image calculation finalization can be invoked through the engine-owned
+  lifecycle object.
+- `calc_fract()` still behaves as it does now, but no longer owns the
+  finish lifecycle body directly.
+
+Manual testing:
+
+- None.
+
+### Slice 3: Non-Standard Calculation Object
+
+Work:
+
+- Move the engine-side work in `calc_non_standard_fractal()` into an
+  engine calculation object, such as `NonStandardFractal`.
+- The object owns dispatch initialization, default bounds setup,
+  non-standard distance-estimator suppression, per-image setup, symmetry
+  setup, explicit timer calls, and the selected calc function call.
+- The object must not call `check_key()`, `driver_key_pressed()`, or any
+  other UI input function.
+- Preserve the current synchronous behavior; this object may complete in
+  one `iterate()` call until individual renderers are converted.
+
+Done when:
+
+- Non-standard engine setup and calculation can be run without direct UI
+  input checks in `libid/engine`.
+- The post-render key/status decision is no longer part of the engine
+  calculation object.
+
+Manual testing:
+
+- None unless an uncovered interactive path changes.
+
+### Slice 4: Non-Standard UI Controller
+
+Work:
+
+- Add a UI controller for non-standard rendering.
+- Let the controller instantiate and drive the non-standard calculation
+  object.
+- Move the current post-render `check_key()` and `g_calc_status`
+  interruption decision into the UI controller.
+- Keep existing synchronous renderers synchronous for this slice.
+
+Done when:
+
+- `libid/engine/calcfrac.cpp` no longer includes `ui/check_key.h`.
+- Non-standard interruption policy is owned by `libid/ui`.
+- Non-standard engine calculation code no longer polls keyboard input.
+
+Manual testing:
+
+- None unless an uncovered interactive path changes.
+
+### Slice 5: UI Image Dispatcher
+
+Work:
+
+- Add a UI image dispatcher that replaces `calc_fract()` as the caller
+  used by `libid/ui/big_while_loop.cpp`.
+- The dispatcher creates `engine::ImageCalculation`, calls `start()`,
+  selects the UI controller for the current fractal type, runs it, calls
+  `finish()`, and returns the current success or interruption result.
+- Dispatch standard escape-time types to `standard_fractal()`.
+- Dispatch Lyapunov to `lyapunov_fractal()`.
+- Dispatch remaining types to the non-standard UI controller.
+
+Done when:
+
+- `libid/ui/big_while_loop.cpp` no longer calls `calc_fract()`.
+- Engine code no longer selects or calls UI render controllers.
+- `calc_fract()` is removed or reduced to engine-only lifecycle support.
+
+Manual testing:
+
+- None unless an uncovered interactive path changes.
+
+### Slice 6: Standard Orbit Plot Pacing
+
+Orbit plotting is engine work done from inside each pixel's orbit
+iteration.  The UI layer must not plot or scrub orbit points.  After
+inversion, preserve user-visible behavior rather than the exact old
+keyboard polling cadence: orbit points should still appear during
+calculation, `orbitdelay` should still pace visible points, and a
+pending key should still wake that delay promptly.
+
+The engine owns the plot and scrub operations.  The UI controller owns
+only the delay between engine-owned plot steps because the delay exists
+to make plotted orbit points visible, not to advance fractal math.
+The required inversion is to make engine orbit plotting incremental so
+it can yield back to the UI controller between plot steps.
+
+The delay mechanism must follow the timing constraints in
+[orbit-delay-timer.md](orbit-delay-timer.md).  Tiny values such as
+`orbitdelay=1` need a high-resolution deadline, such as
+`QueryPerformanceCounter()` on Win32.  The message or event queue is not
+the timer; it is only the responsiveness mechanism that lets a pending
+keypress wake the delay.
 
 The current `plot_orbit()` name hides two different behaviors:
 
@@ -263,9 +424,9 @@ The current `plot_orbit()` name hides two different behaviors:
   It saves covered pixels, uses the legacy `color == -1` convention, and
   later scrubs the overlay away.  This is the `showorbit=yes` behavior
   for standard escape-time rendering and FrothyBasin.
-- Image-orbit plotting makes the orbit point part of the rendered
-  image.  It writes an explicit color and must not save or scrub covered
-  pixels.  Popcorn belongs here.
+- Image-orbit plotting makes the orbit point part of the rendered image.
+  It writes an explicit color and must not save or scrub covered pixels.
+  Popcorn belongs here.
 
 Popcorn is not a standard fractal renderer.  It uses screen pixels as
 seed points, iterates a Popcorn map, and plots the produced orbit points
@@ -276,37 +437,47 @@ calculation object that owns scan state, orbit state, and pending orbit
 points.
 
 The Popcorn conversion should follow review boundaries, not a guessed
-slice count.  A slice is small enough when it preserves current
-behavior, removes one false dependency, and leaves a reviewable
-intermediate state.
-
-### Slice 1: Standard Orbit Plot Pacing
+slice count.  A slice is small enough when it preserves current behavior,
+removes one false dependency, and leaves a reviewable intermediate state.
 
 Work:
 
-- Use the existing `libid/ui/standard_fractal.cpp` and
-  `libid/ui/standard_orbit_plot.cpp` controller path as the only delayed
-  standard orbit plotting path.
-- Remove the delayed `OrbitPlot::iterate()` compatibility path.
-- Make engine calculation code queue orbit plotting work and yield to the
-  UI controller instead of driving delayed plotting synchronously.
+- Keep orbit plotting and overlay scrubbing in engine or fractal
+  calculation objects.
+- Reshape orbit plotting so the engine performs bounded incremental
+  plot work and yields back to the UI controller.
+- Remove the delayed `OrbitPlot::iterate()` compatibility path that
+  hides waiting inside engine orbit plotting.
+- Make engine calculation code record pending orbit pacing and yield to
+  the UI controller after plotting a visible orbit point.
+- Let the UI controller perform only message-aware delay pacing before
+  resuming engine calculation work.
+- Implement the delay through a driver or UI timing primitive that uses a
+  high-resolution deadline for tiny delays and pumps the platform message
+  or event queue enough to notice keypresses.
+- On Win32, use `QueryPerformanceCounter()` for the delay deadline.
+  `PeekMessage()` or a message-aware wait may be used to pump messages or
+  wake on input, but must not be treated as the delay clock.
 - Preserve the distinction between overlay orbit display and image-orbit
   plotting.
 
 Done when:
 
 - `engine/orbit.cpp` has no `wait_until()` call.
-- Engine code does not loop over delayed `OrbitPlot` work.
-- Standard, FrothyBasin, and Popcorn orbit plotting still use their UI
-  controllers for pacing.
+- Engine code does not perform delay loops around orbit plotting.
+- UI code does not perform orbit plot or overlay scrub operations.
+- Standard, FrothyBasin, and Popcorn keep orbit plotting in engine or
+  fractal calculation objects and use UI only for pacing delay.
+- `orbitdelay=1` uses a high-resolution deadline instead of scheduler
+  sleep granularity, and pending key input wakes the delay promptly.
 
 Manual testing:
 
-- `id.bat type=mandel showorbit=yes orbitdelay=30`
-- `id.bat type=frothybasin showorbit=yes orbitdelay=30`
-- `id.bat type=popcorn orbitdelay=30`
+- `type=mandel showorbit=yes orbitdelay=30`
+- `type=frothybasin showorbit=yes orbitdelay=30`
+- `type=popcorn orbitdelay=30`
 
-### Slice 2: Sound Output Pacing
+### Slice 7: Sound Output Pacing
 
 Work:
 
@@ -325,9 +496,9 @@ Done when:
 
 Manual testing:
 
-- `id.bat @music.par/Music_Fractal-1`
+- `@music.par/Music_Fractal-1`
 
-### Slice 3: Wait-Until Cleanup
+### Slice 8: Wait-Until Cleanup
 
 Work:
 
@@ -335,7 +506,7 @@ Work:
   `sleep_orbit_delay()` callers after the pacing slices.
 - Remove the `showdot` compatibility fallback in
   `engine/calcfrac.cpp` after the standard pass types that cannot yet
-  yield at a pixel are converted to incremental UI-owned pacing.
+  yield at a pixel are converted to incremental UI-owned delay pacing.
 - Remove `wait_until()` if no non-UI caller remains.
 - Move any remaining UI timing helper to `libid/ui`.
 
@@ -354,7 +525,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 4: StandardFractal Pixel Interrupts
+### Slice 9: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -378,10 +549,10 @@ Done when:
 
 Manual testing:
 
-- `id.bat type=mandel passes=1 maxiter=10000`
-- `id.bat type=mandel passes=2 maxiter=10000`
+- `type=mandel passes=1 maxiter=10000`
+- `type=mandel passes=2 maxiter=10000`
 
-### Slice 5: StandardFractal Solid Guess Interrupts
+### Slice 10: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -403,9 +574,9 @@ Done when:
 
 Manual testing:
 
-- `id.bat type=mandel passes=g maxiter=10000`
+- `type=mandel passes=g maxiter=10000`
 
-### Slice 6: StandardFractal SOI Interrupts
+### Slice 11: StandardFractal SOI Interrupts
 
 Work:
 
@@ -425,9 +596,9 @@ Done when:
 
 Manual testing:
 
-- `id.bat type=mandel passes=s maxiter=10000`
+- `type=mandel passes=s maxiter=10000`
 
-### Slice 7: StandardFractal Sticky-Orbits Interrupts
+### Slice 12: StandardFractal Sticky-Orbits Interrupts
 
 Work:
 
@@ -450,14 +621,15 @@ Done when:
 
 Manual testing:
 
-- `id.bat type=lorenz passes=o maxiter=10000`
+- `type=lorenz passes=o maxiter=10000`
 
 ## Current Direct Input Leaks
 
 Direct polling or key consumption exists outside `libid/ui` in:
 
-- `libid/engine/calcfrac.cpp`: non-standard wrapper polling and direct
-  standard-pixel fallback polling.
+- `libid/engine/calcfrac.cpp`: top-level renderer selection calls UI
+  controllers, non-standard wrapper polling, and direct standard-pixel
+  fallback polling.
 - `libid/engine/solid_guess.cpp`: interrupt checks during block repaint.
 - `libid/engine/soi.cpp`: interrupt checks during recursive scan.
 - `libid/engine/orbit.cpp`: shared `plot_orbit()` path owns screen orbit
@@ -504,10 +676,14 @@ calls are moved behind `libid/ui`.
 
 ## Exit Criteria
 
+- Top-level image rendering is invoked through `libid/ui`, not through an
+  engine function that selects UI controllers.
 - Standard escape-time rendering is driven by a UI wrapper around
   `StandardFractal`.
 - `StandardFractal` owns standard renderer iteration, mode dispatch, and
   resume state.
+- `libid/engine` and `libid/fractals` do not include headers from
+  `libid/ui`.
 - `rg "driver_(get_key|key_pressed|wait_key_pressed|unget_key)" \
   libid/engine libid/fractals libid/geometry libid/io libid/math \
   libid/misc` returns no matches.
