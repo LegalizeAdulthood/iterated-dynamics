@@ -208,6 +208,12 @@ extern int                   g_inside_color;
 extern ColorMethod           g_outside_method;
 extern int                   g_outside_color;
 
+class ImageCalculation
+{
+public:
+    void start();
+};
+
 int calc_fract();
 int calc_mandelbrot_type();
 int standard_fractal_type();

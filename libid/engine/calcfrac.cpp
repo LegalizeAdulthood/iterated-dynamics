@@ -588,7 +588,7 @@ static void fix_inversion(double *x) // make double converted from string look o
     *x = std::atof(fmt::format("{:<1.15Lg}", *x).c_str());
 }
 
-static void init_calc_fract()
+void ImageCalculation::start()
 {
     const bool resuming{g_calc_status == CalcStatus::RESUMABLE};
 
@@ -895,7 +895,8 @@ static void finish_calc_fract()
 // calc_fract - the top level routine for generating an image
 int calc_fract()
 {
-    init_calc_fract();
+    ImageCalculation image;
+    image.start();
     if (static_calc_type_uses_lyapunov_renderer())
     {
         lyapunov_fractal();
