@@ -362,7 +362,7 @@ bool mandel_per_image_bn()
 
     if (g_std_calc_mode == CalcMode::PERTURBATION && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
-        return mandel_perturbation_per_image();
+        return false;
     }
 
     g_c_exponent = static_cast<int>(g_params[2]);
@@ -478,7 +478,7 @@ bool mandel_per_image_bf()
         if (g_std_calc_mode == CalcMode::PERTURBATION &&
             bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
-            return mandel_perturbation_per_image();
+            return false;
         }
         break;
 
@@ -498,7 +498,7 @@ bool mandel_per_image_bf()
             }
             else if (degree == 2)  // NOLINT(readability-else-after-return)
             {
-                return mandel_perturbation_per_image();
+                return false;
             }
         }
 

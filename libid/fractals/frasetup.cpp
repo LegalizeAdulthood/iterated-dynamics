@@ -40,7 +40,7 @@ bool burning_ship_per_image()
     if (g_std_calc_mode == CalcMode::PERTURBATION &&
         bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
-        return mandel_perturbation_per_image();
+        return false;
     }
     // use the main processing loop
     g_dispatch.set_calc_type(standard_fractal_type);
@@ -53,16 +53,11 @@ bool standalone_per_image()
     return false;               // effectively disable solid-guessing
 }
 
-bool mandel_perturbation_per_image()
-{
-    return false;
-}
-
 bool mandel_z_power_perturbation_per_image()
 {
     constexpr int MAX_POWER{28};
     g_c_exponent = std::min(std::max(g_c_exponent, 2), MAX_POWER);
-    return mandel_perturbation_per_image();
+    return false;
 }
 
 static bool use_calc_mandelbrot()
@@ -111,7 +106,7 @@ bool mandel_per_image()
         if (g_std_calc_mode == CalcMode::PERTURBATION &&
             bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
-            return mandel_perturbation_per_image();
+            return false;
         }
         if (use_calc_mandelbrot())
         {
@@ -131,7 +126,7 @@ bool mandel_per_image()
         {
             if (g_c_exponent == 2)
             {
-                return mandel_perturbation_per_image();
+                return false;
             }
             if (g_c_exponent > 2)
             {
