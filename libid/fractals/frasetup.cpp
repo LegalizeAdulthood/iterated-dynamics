@@ -49,8 +49,11 @@ bool burning_ship_per_image()
 
 bool standalone_per_image()
 {
-    engine_timer(g_dispatch.calc_type());
-    return false;               // effectively disable solid-guessing
+    const CalcType calc_type{g_dispatch.calc_type()};
+    start_calculation_timer();
+    calc_type();
+    update_calculation_timer();
+    return false; // effectively disable solid-guessing
 }
 
 bool mandel_z_power_perturbation_per_image()
