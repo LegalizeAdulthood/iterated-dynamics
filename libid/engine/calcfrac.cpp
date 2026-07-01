@@ -851,7 +851,10 @@ static void calc_non_standard_fractal()
         // next two lines in case periodicity changed
         g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
         set_symmetry(g_symmetry, false);
-        engine_timer(g_dispatch.calc_type()); // non-standard fractal engine
+        const CalcType calc_type{g_dispatch.calc_type()};
+        start_calculation_timer();
+        calc_type(); // non-standard fractal engine
+        update_calculation_timer();
     }
     if (check_key())
     {

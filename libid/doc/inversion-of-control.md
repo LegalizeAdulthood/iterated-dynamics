@@ -284,27 +284,7 @@ Before further inversion, remove `engine_timer()` as a function-call
 wrapper.  Image calculation timing remains engine-owned, but the
 calculation call must be visible at the real orchestration point.
 
-### Slice 1: Inline Timing Around Non-Standard Dispatch
-
-Work:
-
-- Replace `engine_timer(g_dispatch.calc_type())` in
-  `calc_non_standard_fractal()` with an explicit calc function call.
-- Start image calculation timing before the calc function call.
-- Refresh `g_timer_interval` after the calc function call.
-- Preserve the existing `per_image()`, `check_key()`, and
-  `g_calc_status` handling.
-
-Done when:
-
-- `calc_non_standard_fractal()` no longer calls `engine_timer()`.
-- The selected calc function call is visible in `calcfrac.cpp`.
-
-Manual testing:
-
-- None unless an uncovered interactive path changes.
-
-### Slice 2: Inline Timing Around Standalone Per-Image Rendering
+### Slice 1: Inline Timing Around Standalone Per-Image Rendering
 
 Work:
 
@@ -323,7 +303,7 @@ Manual testing:
 
 - None unless an uncovered interactive path changes.
 
-### Slice 3: Inline Timing Around Cellular Per-Image Rendering
+### Slice 2: Inline Timing Around Cellular Per-Image Rendering
 
 Work:
 
@@ -343,7 +323,7 @@ Manual testing:
 
 - None unless an uncovered interactive path changes.
 
-### Slice 4: Inline Timing Around Bifurcation May Per-Image Rendering
+### Slice 3: Inline Timing Around Bifurcation May Per-Image Rendering
 
 Work:
 
@@ -363,7 +343,7 @@ Manual testing:
 
 - None unless an uncovered interactive path changes.
 
-### Slice 5: Delete Engine Timer Wrapper
+### Slice 4: Delete Engine Timer Wrapper
 
 Work:
 
@@ -380,7 +360,7 @@ Manual testing:
 
 - None.
 
-### Slice 6: Standard Orbit Plot Pacing
+### Slice 5: Standard Orbit Plot Pacing
 
 Work:
 
@@ -406,7 +386,7 @@ Manual testing:
 - `id.bat type=frothybasin showorbit=yes orbitdelay=30`
 - `id.bat type=popcorn orbitdelay=30`
 
-### Slice 7: Sound Output Pacing
+### Slice 6: Sound Output Pacing
 
 Work:
 
@@ -427,7 +407,7 @@ Manual testing:
 
 - `id.bat @music.par/Music_Fractal-1`
 
-### Slice 8: Wait-Until Cleanup
+### Slice 7: Wait-Until Cleanup
 
 Work:
 
@@ -454,7 +434,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 9: StandardFractal Pixel Interrupts
+### Slice 8: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -481,7 +461,7 @@ Manual testing:
 - `id.bat type=mandel passes=1 maxiter=10000`
 - `id.bat type=mandel passes=2 maxiter=10000`
 
-### Slice 10: StandardFractal Solid Guess Interrupts
+### Slice 9: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -505,7 +485,7 @@ Manual testing:
 
 - `id.bat type=mandel passes=g maxiter=10000`
 
-### Slice 11: StandardFractal SOI Interrupts
+### Slice 10: StandardFractal SOI Interrupts
 
 Work:
 
@@ -527,7 +507,7 @@ Manual testing:
 
 - `id.bat type=mandel passes=s maxiter=10000`
 
-### Slice 12: StandardFractal Sticky-Orbits Interrupts
+### Slice 11: StandardFractal Sticky-Orbits Interrupts
 
 Work:
 
