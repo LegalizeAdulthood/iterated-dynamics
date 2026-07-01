@@ -284,27 +284,7 @@ Before further inversion, remove `engine_timer()` as a function-call
 wrapper.  Image calculation timing remains engine-owned, but the
 calculation call must be visible at the real orchestration point.
 
-### Slice 1: Inline Timing Around Cellular Per-Image Rendering
-
-Work:
-
-- Replace `engine_timer(g_dispatch.calc_type())` in
-  `cellular_per_image()` with an explicit calc function call.
-- Preserve the existing `g_cellular_next_screen` initialization.
-- Start image calculation timing before the calc function call.
-- Refresh `g_timer_interval` after the calc function call.
-- Keep returning `false`.
-
-Done when:
-
-- `cellular_per_image()` no longer calls `engine_timer()`.
-- Cellular setup and rendering behavior are otherwise unchanged.
-
-Manual testing:
-
-- None unless an uncovered interactive path changes.
-
-### Slice 2: Inline Timing Around Bifurcation May Per-Image Rendering
+### Slice 1: Inline Timing Around Bifurcation May Per-Image Rendering
 
 Work:
 
@@ -324,7 +304,7 @@ Manual testing:
 
 - None unless an uncovered interactive path changes.
 
-### Slice 3: Delete Engine Timer Wrapper
+### Slice 2: Delete Engine Timer Wrapper
 
 Work:
 
@@ -341,7 +321,7 @@ Manual testing:
 
 - None.
 
-### Slice 4: Standard Orbit Plot Pacing
+### Slice 3: Standard Orbit Plot Pacing
 
 Work:
 
@@ -367,7 +347,7 @@ Manual testing:
 - `id.bat type=frothybasin showorbit=yes orbitdelay=30`
 - `id.bat type=popcorn orbitdelay=30`
 
-### Slice 5: Sound Output Pacing
+### Slice 4: Sound Output Pacing
 
 Work:
 
@@ -388,7 +368,7 @@ Manual testing:
 
 - `id.bat @music.par/Music_Fractal-1`
 
-### Slice 6: Wait-Until Cleanup
+### Slice 5: Wait-Until Cleanup
 
 Work:
 
@@ -415,7 +395,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 7: StandardFractal Pixel Interrupts
+### Slice 6: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -442,7 +422,7 @@ Manual testing:
 - `id.bat type=mandel passes=1 maxiter=10000`
 - `id.bat type=mandel passes=2 maxiter=10000`
 
-### Slice 8: StandardFractal Solid Guess Interrupts
+### Slice 7: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -466,7 +446,7 @@ Manual testing:
 
 - `id.bat type=mandel passes=g maxiter=10000`
 
-### Slice 9: StandardFractal SOI Interrupts
+### Slice 8: StandardFractal SOI Interrupts
 
 Work:
 
@@ -488,7 +468,7 @@ Manual testing:
 
 - `id.bat type=mandel passes=s maxiter=10000`
 
-### Slice 10: StandardFractal Sticky-Orbits Interrupts
+### Slice 9: StandardFractal Sticky-Orbits Interrupts
 
 Work:
 

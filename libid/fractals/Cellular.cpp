@@ -447,7 +447,10 @@ bool cellular_per_image()
     {
         g_cellular_next_screen = false; // initialize flag
     }
-    engine_timer(g_dispatch.calc_type());
+    const CalcType calc_type{g_dispatch.calc_type()};
+    start_calculation_timer();
+    calc_type();
+    update_calculation_timer();
     return false;
 }
 
