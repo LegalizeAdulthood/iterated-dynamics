@@ -280,7 +280,148 @@ slice count.  A slice is small enough when it preserves current
 behavior, removes one false dependency, and leaves a reviewable
 intermediate state.
 
-### Slice 1: Standard Orbit Plot Pacing
+Before further inversion, remove `engine_timer()` as a function-call
+wrapper.  Image calculation timing remains engine-owned, but the
+calculation call must be visible at the real orchestration point.
+
+### Slice 1: Add Explicit Engine Timer Operations
+
+Work:
+
+- Add explicit engine timer operations in `engine/engine_timer.cpp` and
+  `include/engine/engine_timer.h`.
+- Keep the current globals and elapsed-time units.
+- Add one operation that starts image calculation timing.
+- Add one operation that refreshes `g_timer_interval` from the current
+  start time.
+- Do not change any call sites yet.
+
+Done when:
+
+- Timer state can be updated without passing a function pointer to the
+  timer helper.
+- The existing `engine_timer()` wrapper still exists for current callers.
+
+Manual testing:
+
+- None.
+
+### Slice 2: Use Explicit Timer Operations In StandardFractal
+
+Work:
+
+- Replace the duplicated clock logic in `StandardFractal::start_timer()`
+  and `StandardFractal::update_timer()` with the explicit engine timer
+  operations.
+- Keep `StandardFractal` ownership of its `m_timer_started` guard.
+- Do not change standard rendering control flow.
+
+Done when:
+
+- `StandardFractal` uses the shared engine timer operations.
+- Standard rendering still updates `g_timer_interval` as it does now.
+
+Manual testing:
+
+- None.
+
+### Slice 3: Inline Timing Around Non-Standard Dispatch
+
+Work:
+
+- Replace `engine_timer(g_dispatch.calc_type())` in
+  `calc_non_standard_fractal()` with an explicit calc function call.
+- Start image calculation timing before the calc function call.
+- Refresh `g_timer_interval` after the calc function call.
+- Preserve the existing `per_image()`, `check_key()`, and
+  `g_calc_status` handling.
+
+Done when:
+
+- `calc_non_standard_fractal()` no longer calls `engine_timer()`.
+- The selected calc function call is visible in `calcfrac.cpp`.
+
+Manual testing:
+
+- None unless an uncovered interactive path changes.
+
+### Slice 4: Inline Timing Around Standalone Per-Image Rendering
+
+Work:
+
+- Replace `engine_timer(g_dispatch.calc_type())` in
+  `standalone_per_image()` with an explicit calc function call.
+- Start image calculation timing before the calc function call.
+- Refresh `g_timer_interval` after the calc function call.
+- Keep returning `false`.
+
+Done when:
+
+- `standalone_per_image()` no longer calls `engine_timer()`.
+- Standalone per-image behavior is otherwise unchanged.
+
+Manual testing:
+
+- None unless an uncovered interactive path changes.
+
+### Slice 5: Inline Timing Around Cellular Per-Image Rendering
+
+Work:
+
+- Replace `engine_timer(g_dispatch.calc_type())` in
+  `cellular_per_image()` with an explicit calc function call.
+- Preserve the existing `g_cellular_next_screen` initialization.
+- Start image calculation timing before the calc function call.
+- Refresh `g_timer_interval` after the calc function call.
+- Keep returning `false`.
+
+Done when:
+
+- `cellular_per_image()` no longer calls `engine_timer()`.
+- Cellular setup and rendering behavior are otherwise unchanged.
+
+Manual testing:
+
+- None unless an uncovered interactive path changes.
+
+### Slice 6: Inline Timing Around Bifurcation May Per-Image Rendering
+
+Work:
+
+- Replace `engine_timer(g_dispatch.calc_type())` in
+  `bifurc_may_per_image()` with an explicit calc function call.
+- Preserve the existing `set_bifurc_may_beta()` call.
+- Start image calculation timing before the calc function call.
+- Refresh `g_timer_interval` after the calc function call.
+- Keep returning `false`.
+
+Done when:
+
+- `bifurc_may_per_image()` no longer calls `engine_timer()`.
+- Bifurcation May setup and rendering behavior are otherwise unchanged.
+
+Manual testing:
+
+- None unless an uncovered interactive path changes.
+
+### Slice 7: Delete Engine Timer Wrapper
+
+Work:
+
+- Delete the `engine_timer(int (*fn)())` declaration and definition.
+- Keep the engine timer globals and explicit timer operations.
+- Leave any file rename for a later cleanup slice.
+
+Done when:
+
+- No code calls `engine_timer()`.
+- The engine still owns elapsed image calculation timing.
+
+Manual testing:
+
+- None.
+
+### Slice 8: Standard Orbit Plot Pacing
 
 Work:
 
@@ -306,7 +447,7 @@ Manual testing:
 - `id.bat type=frothybasin showorbit=yes orbitdelay=30`
 - `id.bat type=popcorn orbitdelay=30`
 
-### Slice 2: Sound Output Pacing
+### Slice 9: Sound Output Pacing
 
 Work:
 
@@ -327,7 +468,7 @@ Manual testing:
 
 - `id.bat @music.par/Music_Fractal-1`
 
-### Slice 3: Wait-Until Cleanup
+### Slice 10: Wait-Until Cleanup
 
 Work:
 
@@ -354,7 +495,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 4: StandardFractal Pixel Interrupts
+### Slice 11: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -381,7 +522,7 @@ Manual testing:
 - `id.bat type=mandel passes=1 maxiter=10000`
 - `id.bat type=mandel passes=2 maxiter=10000`
 
-### Slice 5: StandardFractal Solid Guess Interrupts
+### Slice 12: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -405,7 +546,7 @@ Manual testing:
 
 - `id.bat type=mandel passes=g maxiter=10000`
 
-### Slice 6: StandardFractal SOI Interrupts
+### Slice 13: StandardFractal SOI Interrupts
 
 Work:
 
@@ -427,7 +568,7 @@ Manual testing:
 
 - `id.bat type=mandel passes=s maxiter=10000`
 
-### Slice 7: StandardFractal Sticky-Orbits Interrupts
+### Slice 14: StandardFractal Sticky-Orbits Interrupts
 
 Work:
 
