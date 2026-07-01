@@ -212,6 +212,7 @@ class ImageCalculation
 {
 public:
     void start();
+    void finish();
 };
 
 int calc_fract();

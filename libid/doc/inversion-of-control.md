@@ -278,31 +278,7 @@ ownership or command-stack representation, prefer automated rendering
 coverage.  Manual testing is required when keyboard interruption, resume,
 or other user interaction behavior changes.
 
-### Slice 1: Image Calculation Lifecycle Finish
-
-Work:
-
-- Move the current `finish_calc_fract()` lifecycle work behind an
-  explicit `ImageCalculation::finish()` operation.
-- Keep `finish()` explicit; do not rely on a destructor for required
-  image finalization side effects.
-- Preserve `g_calc_time` accounting, work-area cleanup, sound cleanup, and
-  true-color disk cleanup.
-- Keep renderer selection and renderer calls in the current location for
-  this slice.
-
-Done when:
-
-- Image calculation finalization can be invoked through the engine-owned
-  lifecycle object.
-- `calc_fract()` still behaves as it does now, but no longer owns the
-  finish lifecycle body directly.
-
-Manual testing:
-
-- None.
-
-### Slice 2: Non-Standard Calculation Object
+### Slice 1: Non-Standard Calculation Object
 
 Work:
 
@@ -327,7 +303,7 @@ Manual testing:
 
 - None unless an uncovered interactive path changes.
 
-### Slice 3: Non-Standard UI Controller
+### Slice 2: Non-Standard UI Controller
 
 Work:
 
@@ -348,7 +324,7 @@ Manual testing:
 
 - None unless an uncovered interactive path changes.
 
-### Slice 4: UI Image Dispatcher
+### Slice 3: UI Image Dispatcher
 
 Work:
 
@@ -371,7 +347,7 @@ Manual testing:
 
 - None unless an uncovered interactive path changes.
 
-### Slice 5: Standard Orbit Plot Pacing
+### Slice 4: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -452,7 +428,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 6: Sound Output Pacing
+### Slice 5: Sound Output Pacing
 
 Work:
 
@@ -473,7 +449,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 7: Wait-Until Cleanup
+### Slice 6: Wait-Until Cleanup
 
 Work:
 
@@ -500,7 +476,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 8: StandardFractal Pixel Interrupts
+### Slice 7: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -527,7 +503,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 9: StandardFractal Solid Guess Interrupts
+### Slice 8: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -551,7 +527,7 @@ Manual testing:
 
 - `type=mandel passes=g maxiter=10000`
 
-### Slice 10: StandardFractal SOI Interrupts
+### Slice 9: StandardFractal SOI Interrupts
 
 Work:
 
@@ -573,7 +549,7 @@ Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 11: StandardFractal Sticky-Orbits Interrupts
+### Slice 10: StandardFractal Sticky-Orbits Interrupts
 
 Work:
 

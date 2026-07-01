@@ -872,7 +872,7 @@ static void calc_non_standard_fractal()
     }
 }
 
-static void finish_calc_fract()
+void ImageCalculation::finish()
 {
     g_calc_time += g_timer_interval;
 
@@ -909,7 +909,7 @@ int calc_fract()
     {
         calc_non_standard_fractal();
     }
-    finish_calc_fract();
+    image.finish();
 
     return g_calc_status == CalcStatus::COMPLETED ? 0 : -1;
 }
