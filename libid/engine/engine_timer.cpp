@@ -21,11 +21,4 @@ void update_calculation_timer()
     g_timer_interval = (std::clock() - g_engine_timer_start) / (CLOCKS_PER_SEC / 100);
 }
 
-void engine_timer(int (*fn)())
-{
-    start_calculation_timer();
-    fn();
-    update_calculation_timer();
-}
-
 } // namespace id::engine
