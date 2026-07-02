@@ -4,15 +4,27 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # Engine Polling I/O Inversion Plan
 
-Goal: invert rendering control so `libid/ui` drives presentation
-controllers while engine and fractal code own calculation state,
-lifecycle, timing, setup, and cleanup.
+Goal: invert rendering control so input and presentation code decide when
+to ask for another bounded unit of work, while engine and fractal code own
+calculation state, lifecycle, timing, setup, and cleanup.
 
 This is true inversion of control for the existing polling renderer.  It
 is not yet the later worker-thread or event-driven GUI design.  The
 release 1.5 target is a clean directory boundary: only `libid/ui`
 interacts directly with keyboard and mouse input, and engine code never
-selects UI controllers.
+selects UI control paths.
+
+Inversion is not achieved by moving a call to a new function, class,
+callback table, adapter, or wrapper while the same synchronous control
+flow remains hidden inside it.  A slice counts as inversion only when it
+changes who owns a decision or return point:
+
+- input polling and key meaning move outward to `libid/ui`;
+- waiting and presentation pacing move outward to `libid/ui`;
+- calculation work becomes explicit, bounded, and resumable;
+- calculation code returns to its caller instead of polling input or
+  waiting internally;
+- application phase and command effect are represented separately.
 
 The standard escape-time renderer should follow the same shape as the
 calculation types that have already been split into UI coordination code
@@ -44,7 +56,7 @@ libid/ui/<type>.cpp
     construct or resume the calculation object
     poll keyboard input for this UI context
     suspend or exit when the UI context decides work should stop
-    call iterate() until the calculation object is done
+    call bounded iterate() steps until the calculation object is done
 
 libid/fractals/<Type>.cpp or libid/engine/<Type>.cpp
     own calculation state
@@ -94,16 +106,17 @@ globals is separate work.
 
 A practical implementation is a non-virtual `StandardPass` router that
 holds a `std::variant` of concrete pass classes.  `StandardPass` exposes
-one small interface, such as `resume()`, `suspend()`, `done()`, and
+one small public surface, such as `resume()`, `suspend()`, `done()`, and
 `iterate()`, and delegates to the active variant alternative.
 
 Empty pass placeholders may start in `StandardPass.h`, but they should not
 grow there.  As each pass slice is implemented, move that placeholder into
 its own pass header and implementation file.  The pass class owns the
 state and operation methods.  `StandardPass` includes that header, stores
-the concrete class in the variant, and routes calls to it.  Thin
-compatibility wrappers for the old free functions may remain during the
-transition.
+the concrete class in the variant, and routes calls to it.  Temporary
+compatibility functions may remain only as call adapters around new
+stateful implementations.  They are not evidence of inversion by
+themselves.
 
 `StandardFractal` also owns the standard-mode dispatch currently selected
 by `g_std_calc_mode`, including synchronous orbit, Tesseral, boundary
@@ -119,16 +132,16 @@ syntax, but should select perturbation orbit calculation while using the
 default standard traversal.  For traversal purposes, `passes=p` is
 synonymous with the default solid-guessing path.
 
-The UI wrapper owns input policy.  It constructs or resumes
+The UI polling loop owns input policy.  It constructs or resumes
 `StandardFractal`, polls input through the active UI context, asks the
-object to suspend when work is interrupted, and calls `iterate()` until
-`done()` is true.
+object to suspend when work is interrupted, and calls bounded `iterate()`
+steps until `done()` is true.
 
 The standard pixel kernels are calculation details.  They should not
 double as image-level UI entry points.  If the current names are kept for
 compatibility during the refactor, the final shape should still separate:
 
-- image-level UI wrapper
+- image-level UI polling loop
 - standard calculation object
 - per-pixel escape-time helpers
 - per-orbit helper functions
@@ -180,14 +193,15 @@ The current code is already part-way through this plan:
   an include from `libid/ui`.
 - Calculation code reports progress, completion, suspension state, and
   calculation decisions.  It does not interpret keys.
-- Keep behavior first.  Rename and reshape after calls are moved.
+- Keep behavior first.  Pure call relocation is not a completed slice; the
+  owning state, decision, or return point must become clearer.
 - End each slice that changes calculation control flow with manual testing
   steps only for user interaction paths not covered by automated tests.
 
 ## Keyboard Handler Stack
 
 The handler stack is UI input plumbing.  It supports the standard UI
-wrapper; it is not the calculation-side architecture.
+polling loop; it is not the calculation-side architecture.
 
 Handlers decide what a key means in a UI context:
 
@@ -223,17 +237,84 @@ them to the active handler stack from top to bottom.  The first handler
 that returns `true` stops propagation.  If no handler consumes the key,
 the key is discarded.
 
+## Application Phase and Command Effects
+
+The next architectural split is separating application phase from command
+effect.  `MainState` currently does both jobs.  It was hacked out of the
+old if/then/else control flow, so menu handlers now return values that
+are partly application phase and partly "what must happen next".
+
+Keep the existing `id_main` application-phase switch at first, but stop
+making menu handlers report application phases.  Menu and input handlers
+should report command effects.  A single boundary then maps command
+effects onto the existing `MainState` transitions and local-loop behavior.
+
+Input is the outer loop after control is inverted.  Keyboard, mouse,
+command-file, command-line, and batch input are all command sources.  The
+engine should construct into a default, well-defined render model, but no
+image can be generated until a display target exists.  Selecting a video
+mode supplies the image dimensions; after that, default parameters such
+as `type=mandel` and `passes=g` are enough to begin rendering.
+
+The control inputs should be separated from coarsest to finest:
+
+- Application phase: no display target, configured idle, rendering, image
+  complete, restoring or loading, and exiting.
+- Fractal identity: changing `type=` rebuilds dispatch, resets
+  type-specific state, and invalidates the image, but is not a full
+  restart.  `<Insert>` is the full reset path and resets the active type
+  back to `mandel`.
+- Render invalidation: changing passes, bailout, corners, maxiter,
+  inside/outside color modes, precision, or similar values requires pixel
+  orbits to be recomputed.
+- Presentation invalidation: changing the orbit window, palette or
+  colormap, tab display, or other display-only state does not require
+  pixel orbits to be recomputed.
+- Local UI or no-op: menu navigation, help, cancelled dialogs, save,
+  shell, and other actions that do not require an application phase
+  change.
+
+Current menu handlers communicate these effects through a mixture of
+`MainState`, `g_calc_status`, and `MainContext::more_keys`.
+`MainState::CONTINUE` is loop mechanics, not a semantic command effect.
+`MainState::NOTHING` is overloaded: it can mean ignored, handled locally,
+presentation changed, or render parameters changed through side effects.
+
+The first safe implementation split is:
+
+- Add a menu/input command-result enum.
+- Convert `MenuHandler` callbacks to return that enum.
+- Keep the existing `MainState` switch in `id_main`.
+- Add one mapping point near `big_while_loop()` that translates command
+  results into existing `MainState` transitions and local-loop behavior.
+- Preserve the current `g_calc_status` and `MainContext::more_keys`
+  side effects initially.
+
+The audited command-result categories are:
+
+- ignored
+- handled locally
+- presentation changed
+- display target changed
+- resumable render state changed
+- render parameters changed
+- fractal type changed
+- interaction mode changed
+- restore requested
+- full reset requested
+- exit requested
+
 ## Remaining Inversion-of-Control Slices
 
 These slices use the existing pattern from `libid/ui/ant.cpp`,
 `libid/ui/bifurcation.cpp`, `libid/ui/cellular.cpp`, and similar files:
 
 ```text
-ui wrapper
+ui polling loop
     construct or resume renderer
     poll keyboard input for the active UI context
     call suspend() or exit when the UI decides to stop
-    call iterate() until the renderer reports no more work
+    call bounded iterate() steps until the renderer reports no more work
 
 calculation object
     own calculation state
@@ -241,146 +322,86 @@ calculation object
     do not poll keyboard or mouse input
 ```
 
-The next phase applies that same inversion at the image-engine boundary,
-but only after the engine side has a real incremental object shape.
-`calc_fract()` still owns image lifecycle and render selection.  Keep that
-work local while refactoring.  First make the local engine object own the
-whole calculation sequence, then extract the object, then let UI code
-drive the object.
+Before changing image calculation ownership again, split menu command
+effects from application phase.  This is the next control-flow slice.  It
+does not move rendering code.
 
-Use this top-level shape:
-
-```text
-engine image calculation
-    init calculation globals and resume state
-    iterate the active renderer
-    report done/result state
-    own elapsed image calculation time accounting
-    perform calculation cleanup
-
-ui controller
-    create an engine image calculation object
-    call init()
-    call iterate() until the object reports done
-    poll input and perform UI pacing between iterate() calls
-    call finish()
-```
-
-Do not move render selection into `libid/ui`.  The UI controller should
-not know whether the current image is standard, Lyapunov, or
-non-standard; it should drive `ImageCalculation`.  Until that object is
-extracted, keep the refactoring local to `calcfrac.{h,cpp}`.
-
-Do not introduce a new progress-result enum unless an individual renderer
-needs more state than the existing `iterate()` and `done()` pattern can
-express.
-
-The remaining slices should preserve synchronous behavior until the
-UI-wrapper slice for each renderer.  Where a slice only changes renderer
-ownership or command-stack representation, prefer automated rendering
-coverage.  Manual testing is required when keyboard interruption, resume,
-or other user interaction behavior changes.
-
-### Slice 1: Local ImageCalculation Iteration Shape
+### Slice 1: Menu Command Result Split
 
 Work:
 
-- Work only in `calcfrac.{h,cpp}`.
-- Rename `ImageCalculation::start()` to `ImageCalculation::init()`.
-- Add `ImageCalculation::iterate()`.
-- Add the minimal query or result method needed for `calc_fract()` to
-  loop until image calculation is done.
-- Move the current renderer selection and whole-renderer call from
-  `calc_fract()` into `ImageCalculation::iterate()`.
-- Keep the first `iterate()` implementation coarse.  It may run the
-  selected renderer synchronously to completion.
-- Keep `ImageCalculation::finish()` explicit.
+- Add a menu/input command-result enum for the audited categories above.
+- Convert `MenuHandler` callbacks and shared menu helpers to return that
+  enum instead of `MainState`.
+- Keep the existing `MainState` switch in `id_main`.
+- Add one mapping point near `big_while_loop()` that translates command
+  results into existing `MainState` transitions and local-loop behavior.
+- Preserve current `g_calc_status` and `MainContext::more_keys` side
+  effects initially.
+- Do not move rendering code in this slice.
 
 Done when:
 
-- `calc_fract()` locally drives `ImageCalculation` by calling `init()`,
-  looping over `iterate()`, calling `finish()`, and returning the image
-  result.
-- No UI files change in this slice.
-- Behavior is unchanged.
+- Menu handlers no longer return `MainState`.
+- `id_main` still owns the existing application-phase switch.
+- `big_while_loop()` is the only place that maps menu command effects to
+  `MainState`.
+- `MainState::CONTINUE` is no longer part of the menu handler contract.
 
 Manual testing:
 
-- None unless an uncovered interactive path changes.
+- `video=F6 type=mandel`
 
-### Slice 2: Local ImageCalculation State Cleanup
+After that, apply the same rule at the image-engine boundary.  Do not
+create an `ImageCalculation` facade whose first `iterate()` call still
+runs the old whole-image function to completion.  Do not move renderer
+classification into `libid/ui`.  Do not add an interface, callback table,
+or adapter merely to let the old control flow call through a new name.
+
+The target is one active render operation selected from engine state and
+dispatch data.  The operation owns render setup, bounded calculation
+work, suspend/resume state, completion state, image timing, and cleanup.
+Shared setup and teardown may use an implementation hierarchy, but the
+base must own real common behavior rather than hide another synchronous
+renderer call.
+
+The input and presentation side starts, resumes, cancels, or paces the
+active operation.  It does not classify standard versus Lyapunov versus
+non-standard renderers, and it does not own orbit math, pass traversal,
+or pixel plotting.
+
+Before more image-boundary code changes, the next plan revision must name
+the concrete render operation objects and the common setup/teardown they
+own.  A valid implementation slice must make at least one decision or
+return point explicit; pure relocation is not enough.
+
+### Slice 2: Render Operation Boundary Audit
 
 Work:
 
-- Keep working only in `calcfrac.{h,cpp}`.
-- Move renderer classification helpers and result calculation behind
-  `ImageCalculation`.
-- Track enough object state to make repeated or out-of-order calls fail
-  clearly.  Throw `std::logic_error` for violated preconditions.
-- Do not add hidden function-static state.
-- Do not extract the object yet.
+- Audit the current `calc_fract()`, `standard_fractal()`,
+  `lyapunov_fractal()`, and `non_standard_fractal()` ownership split.
+- Identify the concrete render operation object for each selected
+  renderer.
+- Identify setup and teardown code that belongs in shared render
+  operation behavior.
+- Identify setup and teardown code that belongs in a specific render
+  operation.
+- Revise the next implementation slices from that audit before making
+  image-boundary code changes.
 
 Done when:
 
-- `calc_fract()` is a small local driver for the object.
-- Renderer selection is part of `ImageCalculation::iterate()`, not
-  loose helper code in `calc_fract()`.
-- The object has the complete local shape needed for extraction:
-  `init()`, `iterate()`, done/result query, and `finish()`.
+- The plan names each render operation object.
+- The plan states which code moves into shared setup/teardown and which
+  code remains renderer-specific.
+- No slice asks for a facade over the current whole-image call.
 
 Manual testing:
 
-- None unless an uncovered interactive path changes.
+- None; this is a plan-refinement slice.
 
-### Slice 3: Extract ImageCalculation
-
-Work:
-
-- Move `ImageCalculation` declaration and implementation out of
-  `calcfrac.{h,cpp}` after the local object shape is complete.
-- Keep it in `libid/engine`; do not add includes from `libid/ui` to
-  `libid/engine` or `libid/fractals`.
-- Keep `calc_fract()` as the caller of the extracted object for this
-  slice.
-- Preserve the existing public `calc_fract()` entry point.
-
-Done when:
-
-- Extracting the object is a mechanical move with no control-flow
-  change.
-- `calc_fract()` still computes images exactly as before.
-
-Manual testing:
-
-- None unless an uncovered interactive path changes.
-
-### Slice 4: UI Drives ImageCalculation
-
-Work:
-
-- Add a UI controller that owns an `engine::ImageCalculation` object.
-- The controller calls `init()`, loops over `iterate()` until done,
-  handles UI polling and pacing between iterations, and then calls
-  `finish()`.
-- Replace `libid/ui/big_while_loop.cpp` calls to `calc_fract()` with the
-  UI controller.
-- Do not move renderer classification into the UI controller.
-- Remove or reduce `calc_fract()` only after the UI controller drives the
-  extracted object.
-
-Done when:
-
-- `libid/ui/big_while_loop.cpp` no longer calls `calc_fract()`.
-- UI code drives an engine image calculation object instead of selecting
-  renderers itself.
-- Engine code no longer reaches into UI to select presentation
-  controllers.
-
-Manual testing:
-
-- None unless an uncovered interactive path changes.
-
-### Slice 5: Standard Orbit Plot Pacing
+### Slice 3: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -389,11 +410,11 @@ keyboard polling cadence: orbit points should still appear during
 calculation, `orbitdelay` should still pace visible points, and a
 pending key should still wake that delay promptly.
 
-The engine owns the plot and scrub operations.  The UI controller owns
+The engine owns the plot and scrub operations.  The UI pacing loop owns
 only the delay between engine-owned plot steps because the delay exists
 to make plotted orbit points visible, not to advance fractal math.
 The required inversion is to make engine orbit plotting incremental so
-it can yield back to the UI controller between plot steps.
+it can return to the UI pacing loop between plot steps.
 
 The delay mechanism must follow the timing constraints in
 [orbit-delay-timer.md](orbit-delay-timer.md).  Tiny values such as
@@ -429,12 +450,12 @@ Work:
 - Keep orbit plotting and overlay scrubbing in engine or fractal
   calculation objects.
 - Reshape orbit plotting so the engine performs bounded incremental
-  plot work and yields back to the UI controller.
+  plot work and returns to the UI pacing loop.
 - Remove the delayed `OrbitPlot::iterate()` compatibility path that
   hides waiting inside engine orbit plotting.
 - Make engine calculation code record pending orbit pacing and yield to
-  the UI controller after plotting a visible orbit point.
-- Let the UI controller perform only message-aware delay pacing before
+  the UI pacing loop after plotting a visible orbit point.
+- Let the UI pacing loop perform only message-aware delay pacing before
   resuming engine calculation work.
 - Implement the delay through a driver or UI timing primitive that uses a
   high-resolution deadline for tiny delays and pumps the platform message
@@ -461,13 +482,13 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 6: Sound Output Pacing
+### Slice 4: Sound Output Pacing
 
 Work:
 
 - Treat speaker sound as UI presentation, not engine rendering.
-- Move driver speaker calls and sound delay pacing out of
-  `engine/sound.cpp` and into UI-owned sound playback code.
+- Make driver speaker calls and sound delay pacing UI-owned instead of
+  engine-owned.
 - Let calculation and orbit code report tone requests without blocking to
   play them.
 - Preserve sound-file output separately from speaker playback.
@@ -482,7 +503,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 7: Wait-Until Cleanup
+### Slice 5: Wait-Until Cleanup
 
 Work:
 
@@ -504,12 +525,12 @@ Manual testing:
 
 - None unless a remaining interactive caller is changed.
 
-The remaining interrupt slices are grouped by UI controller.  The
+The remaining interrupt slices are grouped by UI polling loop.  The
 audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 8: StandardFractal Pixel Interrupts
+### Slice 6: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -520,7 +541,7 @@ Work:
   after bounded pixel work instead of checking `calc_interrupted()`.
 - Move resume and work-list decisions that currently branch on
   `calc_interrupted()` into pass suspension state triggered by the UI
-  controller.
+  polling loop.
 - Keep orbit math and color selection unchanged.
 
 Done when:
@@ -536,7 +557,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 9: StandardFractal Solid Guess Interrupts
+### Slice 7: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -554,13 +575,13 @@ Done when:
 - `engine/solid_guess.cpp` has no driver key polling.
 - `SolidGuess` can yield during row fill and symmetry repaint without
   losing block state.
-- The standard UI controller handles the interrupt decision.
+- The standard UI polling loop handles the interrupt decision.
 
 Manual testing:
 
 - `type=mandel passes=g maxiter=10000`
 
-### Slice 10: StandardFractal SOI Interrupts
+### Slice 8: StandardFractal SOI Interrupts
 
 Work:
 
@@ -576,13 +597,13 @@ Done when:
 
 - `engine/soi.cpp` has no driver key polling.
 - SOI can yield from recursion and scan work without losing position.
-- The standard UI controller handles the interrupt decision.
+- The standard UI polling loop handles the interrupt decision.
 
 Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 11: StandardFractal Sticky-Orbits Interrupts
+### Slice 9: StandardFractal Sticky-Orbits Interrupts
 
 Work:
 
@@ -594,14 +615,14 @@ Work:
   not poll the keyboard, mute the driver, allocate resume state, or
   return an interrupt result.
 - Let `StickyOrbits` and `StandardFractal` record resume state when the
-  UI controller suspends rendering.
+  UI polling loop suspends rendering.
 
 Done when:
 
 - `fractals/lorenz.cpp::plot_orbits2d()` has no driver key polling.
 - `plot_orbits2d()` no longer owns interruption or resume setup.
 - Sticky-orbit traversal is incremental and interruptible from the
-  standard UI controller.
+  standard UI polling loop.
 
 Manual testing:
 
@@ -612,7 +633,7 @@ Manual testing:
 Direct polling or key consumption exists outside `libid/ui` in:
 
 - `libid/engine/calcfrac.cpp`: top-level renderer selection calls UI
-  controllers, non-standard wrapper polling, and direct standard-pixel
+  control paths, non-standard polling path, and direct standard-pixel
   fallback polling.
 - `libid/engine/solid_guess.cpp`: interrupt checks during block repaint.
 - `libid/engine/soi.cpp`: interrupt checks during recursive scan.
@@ -660,9 +681,9 @@ calls are moved behind `libid/ui`.
 
 ## Exit Criteria
 
-- Top-level image rendering is invoked through `libid/ui`, not through an
-  engine function that selects UI controllers.
-- Standard escape-time rendering is driven by a UI wrapper around
+- Top-level image rendering is requested through `libid/ui`, not through
+  an engine function that selects UI control paths.
+- Standard escape-time rendering is driven by a UI polling loop around
   `StandardFractal`.
 - `StandardFractal` owns standard renderer iteration, mode dispatch, and
   resume state.
