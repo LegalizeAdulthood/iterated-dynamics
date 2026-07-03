@@ -321,11 +321,11 @@ calculation object
     do not poll keyboard or mouse input
 ```
 
-Apply the same rule at the image-engine boundary.  Do not
-create an `ImageCalculation` facade whose first `iterate()` call still
-runs the old whole-image function to completion.  Do not move renderer
-classification into `libid/ui`.  Do not add an interface, callback table,
-or adapter merely to let the old control flow call through a new name.
+Apply the same rule at the image-engine boundary.  Do not create an
+`ImageCalculation` facade whose first `iterate()` call still runs the old
+whole-image function to completion.  Do not move renderer classification
+into `libid/ui`.  Do not add an interface, callback table, or adapter
+merely to let the old control flow call through a new name.
 
 The target is one active render operation selected from engine state and
 dispatch data.  The operation owns render setup, bounded calculation
@@ -334,43 +334,44 @@ Shared setup and teardown may use an implementation hierarchy, but the
 base must own real common behavior rather than hide another synchronous
 renderer call.
 
+The current common lifecycle behavior is `ImageCalculation::start()` and
+`ImageCalculation::finish()` in `engine/calcfrac.cpp`.  That behavior is
+real shared render setup and teardown, not a renderer facade.  It owns
+true-color setup and teardown, parser setup, wait reset, log-map setup
+and cleanup, orbit display defaults, inversion setup, resume cleanup,
+calculation-time accounting, work-area cleanup, sound close, and disk
+image cleanup.
+
+The concrete render operation objects are:
+
+- `engine::StandardFractal`: owns standard escape-time traversal,
+  `StandardPass`, standard pixel state, perturbation, pass dispatch,
+  standard orbit-plot requests, show-dot pacing requests, and standard
+  suspend/resume state.
+- `fractals::Lyapunov`: owns Lyapunov render state by containing an
+  `engine::StandardFractal`; Lyapunov-specific per-image setup remains in
+  `lyapunov_per_image()` below the dispatch layer.
+- `engine::NonStandardFractal`: owns non-standard dispatch setup,
+  symmetry defaults, plot defaults, `per_image()` invocation, calculation
+  timing around the selected `CalcType`, and final status interpretation.
+  It is still synchronous and must grow a real operation shape before it
+  can participate in outer-loop control.
+
 The input and presentation side starts, resumes, cancels, or paces the
 active operation.  It does not classify standard versus Lyapunov versus
 non-standard renderers, and it does not own orbit math, pass traversal,
 or pixel plotting.
 
-Before more image-boundary code changes, the next plan revision must name
-the concrete render operation objects and the common setup/teardown they
-own.  A valid implementation slice must make at least one decision or
-return point explicit; pure relocation is not enough.
+The current wrong boundary is `engine::calc_fract()` calling UI entry
+points: `standard_fractal()`, `lyapunov_fractal()`, and
+`non_standard_fractal()`.  Fixing that requires render operations that
+return control after bounded work.  It is not fixed by moving those calls
+behind another engine wrapper.
 
-### Slice 1: Render Operation Boundary Audit
+The near-term implementation slices continue closing specific
+unbounded/waiting paths before top-level image rendering is inverted.
 
-Work:
-
-- Audit the current `calc_fract()`, `standard_fractal()`,
-  `lyapunov_fractal()`, and `non_standard_fractal()` ownership split.
-- Identify the concrete render operation object for each selected
-  renderer.
-- Identify setup and teardown code that belongs in shared render
-  operation behavior.
-- Identify setup and teardown code that belongs in a specific render
-  operation.
-- Revise the next implementation slices from that audit before making
-  image-boundary code changes.
-
-Done when:
-
-- The plan names each render operation object.
-- The plan states which code moves into shared setup/teardown and which
-  code remains renderer-specific.
-- No slice asks for a facade over the current whole-image call.
-
-Manual testing:
-
-- None; this is a plan-refinement slice.
-
-### Slice 2: Standard Orbit Plot Pacing
+### Slice 1: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -451,7 +452,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 3: Sound Output Pacing
+### Slice 2: Sound Output Pacing
 
 Work:
 
@@ -472,7 +473,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 4: Wait-Until Cleanup
+### Slice 3: Wait-Until Cleanup
 
 Work:
 
@@ -499,7 +500,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 5: StandardFractal Pixel Interrupts
+### Slice 4: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -526,7 +527,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 6: StandardFractal Solid Guess Interrupts
+### Slice 5: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -550,7 +551,7 @@ Manual testing:
 
 - `type=mandel passes=g maxiter=10000`
 
-### Slice 7: StandardFractal SOI Interrupts
+### Slice 6: StandardFractal SOI Interrupts
 
 Work:
 
@@ -572,7 +573,7 @@ Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 8: StandardFractal Sticky-Orbits Interrupts
+### Slice 7: StandardFractal Sticky-Orbits Interrupts
 
 Work:
 
