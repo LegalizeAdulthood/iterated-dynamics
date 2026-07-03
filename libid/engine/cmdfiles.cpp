@@ -2939,6 +2939,7 @@ static CmdArgFlags cmd_passes(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
+// perturabation=[auto|yes|no]
 static CmdArgFlags cmd_perturbation(const Command &cmd)
 {
     if (cmd.value == "auto")

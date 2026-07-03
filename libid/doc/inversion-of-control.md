@@ -717,6 +717,37 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
+### Slice 12: Perturbation Pass-Switch Tests
+
+Work:
+
+- Add tests after perturbation no longer owns traversal order.
+- Cover switching standard pass algorithms while arbitrary precision
+  selects perturbation automatically.
+- Include the case that currently fails manually: start from a
+  BoundaryTrace render where perturbation is temporarily disabled, switch
+  to solid guessing, and verify perturbation is used correctly for the
+  new traversal.
+- Ensure pass switching resets or preserves only the perturbation state
+  that is valid for the new traversal.
+- Include a `perturbation=no` comparison case to prove failures are in
+  perturbation/pass interaction, not in arbitrary precision rendering.
+- Prefer image or autokey coverage over source-grep tests.
+
+Done when:
+
+- Switching from `passes=b` to `passes=g` under arbitrary precision
+  renders a correct image with perturbation enabled.
+- The same scenario with `perturbation=no` still renders correctly.
+- No stale reference, retry, or traversal state from the previous pass
+  affects the next pass algorithm.
+
+Manual testing:
+
+- Deep zoom with `type=mandel passes=b`, then switch to `passes=g`
+- Deep zoom with `type=mandel passes=b perturbation=no`, then switch to
+  `passes=g`
+
 ## Current Direct Input Leaks
 
 Direct polling or key consumption exists outside `libid/ui` in:
