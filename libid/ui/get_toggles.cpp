@@ -4,7 +4,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/log_map.h"
-#include "engine/solid_guess.h"
+#include "engine/SolidGuess.h"
 #include "engine/sound.h"
 #include "engine/UserData.h"
 #include "engine/VideoInfo.h"

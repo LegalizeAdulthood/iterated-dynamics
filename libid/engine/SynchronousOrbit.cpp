@@ -11,7 +11,7 @@
  * <http://www.cs.tu-berlin.de/~rms/AlmondBread>.
  *
  */
-#include "engine/soi.h"
+#include "engine/SynchronousOrbit.h"
 
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
@@ -149,7 +149,7 @@ static inline double interpolate(const double x0, const double x1, const double 
 //
 // iter       : current number of iterations
 
-bool SOI::rhombus2(const double cre1, const double cre2, const double cim1, const double cim2, //
+bool SynchronousOrbit::rhombus2(const double cre1, const double cre2, const double cim1, const double cim2, //
     const int x1, const int x2, const int y1, const int y2,                                    //
     const double zre1, const double zim1, const double zre2, const double zim2,                //
     const double zre3, const double zim3, const double zre4, const double zim4,                //
@@ -179,7 +179,7 @@ bool SOI::rhombus2(const double cre1, const double cre2, const double cim1, cons
     return rhombus(cre1, cre2, cim1, cim2, x1, x2, y1, y2, iter);
 }
 
-bool SOI::rhombus2(const double cre1, const double cre2, const double cim1, const double cim2, //
+bool SynchronousOrbit::rhombus2(const double cre1, const double cre2, const double cim1, const double cim2, //
     const int x1, const int x2, const int y1, const int y2,                                    //
     const DComplex z1, const DComplex z2,                                            //
     const DComplex z3, const DComplex z4,                                            //
@@ -198,7 +198,7 @@ bool SOI::rhombus2(const double cre1, const double cre2, const double cim1, cons
         iter);
 }
 
-void SOI::soi_orbit(DComplex &z, DComplex &rq, const double cr, const double ci, bool &esc)
+void SynchronousOrbit::orbit(DComplex &z, DComplex &rq, const double cr, const double ci, bool &esc)
 {
     z.y = (z.y + z.y) * z.x + ci;
     z.x = rq.x - rq.y + cr;
@@ -207,7 +207,7 @@ void SOI::soi_orbit(DComplex &z, DComplex &rq, const double cr, const double ci,
     esc = rq.x + rq.y > 16.0;
 }
 
-bool SOI::rhombus_aux(const double c_re1, const double c_re2, const double c_im1, const double c_im2, //
+bool SynchronousOrbit::rhombus_aux(const double c_re1, const double c_re2, const double c_im1, const double c_im2, //
     const int x1, const int x2, const int y1, const int y2, long iter)
 {
     // The following variables do not need their values saved
@@ -415,63 +415,63 @@ scan:
         std::copy(std::begin(m_zi), std::end(m_zi), std::begin(s));
 
         // iterate key values
-        soi_orbit(m_zi[0], m_rq[0], c_re1, c_im1, m_esc[0]);
+        orbit(m_zi[0], m_rq[0], c_re1, c_im1, m_esc[0]);
         /*
               zim1=(zim1+zim1)*zre1+c_im1;
               zre1=rq1-iq1+c_re1;
               rq1=zre1*zre1;
               iq1=zim1*zim1;
         */
-        soi_orbit(m_zi[1], m_rq[1], c_re2, c_im1, m_esc[1]);
+        orbit(m_zi[1], m_rq[1], c_re2, c_im1, m_esc[1]);
         /*
               zim2=(zim2+zim2)*zre2+c_im1;
               zre2=rq2-iq2+c_re2;
               rq2=zre2*zre2;
               iq2=zim2*zim2;
         */
-        soi_orbit(m_zi[2], m_rq[2], c_re1, c_im2, m_esc[2]);
+        orbit(m_zi[2], m_rq[2], c_re1, c_im2, m_esc[2]);
         /*
               zim3=(zim3+zim3)*zre3+c_im2;
               zre3=rq3-iq3+c_re1;
               rq3=zre3*zre3;
               iq3=zim3*zim3;
         */
-        soi_orbit(m_zi[3], m_rq[3], c_re2, c_im2, m_esc[3]);
+        orbit(m_zi[3], m_rq[3], c_re2, c_im2, m_esc[3]);
         /*
               zim4=(zim4+zim4)*zre4+c_im2;
               zre4=rq4-iq4+c_re2;
               rq4=zre4*zre4;
               iq4=zim4*zim4;
         */
-        soi_orbit(m_zi[4], m_rq[4], mid_r, c_im1, m_esc[4]);
+        orbit(m_zi[4], m_rq[4], mid_r, c_im1, m_esc[4]);
         /*
               zim5=(zim5+zim5)*zre5+c_im1;
               zre5=rq5-iq5+mid_r;
               rq5=zre5*zre5;
               iq5=zim5*zim5;
         */
-        soi_orbit(m_zi[5], m_rq[5], c_re1, mid_i, m_esc[5]);
+        orbit(m_zi[5], m_rq[5], c_re1, mid_i, m_esc[5]);
         /*
               zim6=(zim6+zim6)*zre6+mid_i;
               zre6=rq6-iq6+c_re1;
               rq6=zre6*zre6;
               iq6=zim6*zim6;
         */
-        soi_orbit(m_zi[6], m_rq[6], c_re2, mid_i, m_esc[6]);
+        orbit(m_zi[6], m_rq[6], c_re2, mid_i, m_esc[6]);
         /*
               zim7=(zim7+zim7)*zre7+mid_i;
               zre7=rq7-iq7+c_re2;
               rq7=zre7*zre7;
               iq7=zim7*zim7;
         */
-        soi_orbit(m_zi[7], m_rq[7], mid_r, c_im2, m_esc[7]);
+        orbit(m_zi[7], m_rq[7], mid_r, c_im2, m_esc[7]);
         /*
               zim8=(zim8+zim8)*zre8+c_im2;
               zre8=rq8-iq8+mid_r;
               rq8=zre8*zre8;
               iq8=zim8*zim8;
         */
-        soi_orbit(m_zi[8], m_rq[8], mid_r, mid_i, m_esc[8]);
+        orbit(m_zi[8], m_rq[8], mid_r, mid_i, m_esc[8]);
         /*
               zim9=(zim9+zim9)*zre9+mid_i;
               zre9=rq9-iq9+mid_r;
@@ -479,7 +479,7 @@ scan:
               iq9=zim9*zim9;
         */
         // iterate test point
-        soi_orbit(m_tz[0], m_tq[0], m_corner[0].x, m_corner[0].y, m_t_esc[0]);
+        orbit(m_tz[0], m_tq[0], m_corner[0].x, m_corner[0].y, m_t_esc[0]);
         /*
               tzi1=(tzi1+tzi1)*tzr1+ci1;
               tzr1=trq1-tiq1+cr1;
@@ -487,21 +487,21 @@ scan:
               tiq1=tzi1*tzi1;
         */
 
-        soi_orbit(m_tz[1], m_tq[1], m_corner[1].x, m_corner[0].y, m_t_esc[1]);
+        orbit(m_tz[1], m_tq[1], m_corner[1].x, m_corner[0].y, m_t_esc[1]);
         /*
               tzi2=(tzi2+tzi2)*tzr2+ci1;
               tzr2=trq2-tiq2+cr2;
               trq2=tzr2*tzr2;
               tiq2=tzi2*tzi2;
         */
-        soi_orbit(m_tz[2], m_tq[2], m_corner[0].x, m_corner[1].y, m_t_esc[2]);
+        orbit(m_tz[2], m_tq[2], m_corner[0].x, m_corner[1].y, m_t_esc[2]);
         /*
               tzi3=(tzi3+tzi3)*tzr3+ci2;
               tzr3=trq3-tiq3+cr1;
               trq3=tzr3*tzr3;
               tiq3=tzi3*tzi3;
         */
-        soi_orbit(m_tz[3], m_tq[3], m_corner[1].x, m_corner[1].y, m_t_esc[3]);
+        orbit(m_tz[3], m_tq[3], m_corner[1].x, m_corner[1].y, m_t_esc[3]);
         /*
               tzi4=(tzi4+tzi4)*tzr4+ci2;
               tzr4=trq4-tiq4+cr2;
@@ -702,7 +702,7 @@ scan:
     return status;
 }
 
-bool SOI::rhombus(const double c_re1, const double c_re2, const double c_im1, const double c_im2, //
+bool SynchronousOrbit::rhombus(const double c_re1, const double c_re2, const double c_im1, const double c_im2, //
     const int x1, const int x2, const int y1, const int y2,                                       //
     const long iter)
 {
@@ -712,7 +712,7 @@ bool SOI::rhombus(const double c_re1, const double c_re2, const double c_im1, co
     return result;
 }
 
-void SOI::calculate()
+void SynchronousOrbit::calculate()
 {
     // cppcheck-suppress unreadVariable
     constexpr double TOLERANCE = 0.1;
@@ -757,16 +757,10 @@ void SOI::calculate()
         1);
 }
 
-bool SOI::iterate()
+bool SynchronousOrbit::iterate()
 {
     calculate();
     return true;
-}
-
-void soi()
-{
-    SOI soi_calculation;
-    soi_calculation.iterate();
 }
 
 } // namespace id::engine

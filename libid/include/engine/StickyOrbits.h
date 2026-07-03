@@ -27,6 +27,4 @@ private:
     int draw_rectangle();
 };
 
-int sticky_orbits();
-
 } // namespace id::engine

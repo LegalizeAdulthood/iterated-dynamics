@@ -12,7 +12,7 @@ extern int g_rhombus_stack[];
 extern int g_soi_min_stack;
 extern int g_soi_min_stack_available;
 
-class SOI
+class SynchronousOrbit
 {
 public:
     void calculate();
@@ -37,7 +37,7 @@ private:
         double zre5, double zim5, double zre6, double zim6,                  //
         double zre7, double zim7, double zre8, double zim8,                  //
         double zre9, double zim9, long iter);
-    void soi_orbit(math::DComplex &z, math::DComplex &rq, double cr, double ci, bool &esc);
+    void orbit(math::DComplex &z, math::DComplex &rq, double cr, double ci, bool &esc);
 
     math::DComplex m_zi[9]{};
     bool m_esc[9]{};
@@ -59,7 +59,5 @@ private:
     double m_equal{};
     int m_rhombus_depth{-1};
 };
-
-void soi();
 
 } // namespace id::engine

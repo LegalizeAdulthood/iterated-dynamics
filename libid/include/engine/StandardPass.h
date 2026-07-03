@@ -2,13 +2,13 @@
 //
 #pragma once
 
-#include "engine/boundary_trace.h"
+#include "engine/BoundaryTrace.h"
 #include "engine/calcfrac.h"
 #include "engine/Diffusion.h"
-#include "engine/one_or_two_pass.h"
-#include "engine/soi.h"
-#include "engine/solid_guess.h"
-#include "engine/sticky_orbits.h"
+#include "engine/ScanlinePass.h"
+#include "engine/SynchronousOrbit.h"
+#include "engine/SolidGuess.h"
+#include "engine/StickyOrbits.h"
 #include "engine/tesseral.h"
 
 #include <string>
@@ -62,7 +62,7 @@ private:
     };
 
     using State =
-        std::variant<NoPass, OnePass, TwoPass, SOI, BoundaryTrace, SolidGuess, Diffusion, Tesseral, StickyOrbits>;
+        std::variant<NoPass, OnePass, TwoPass, SynchronousOrbit, BoundaryTrace, SolidGuess, Diffusion, Tesseral, StickyOrbits>;
 
     State m_state{NoPass{}};
 };

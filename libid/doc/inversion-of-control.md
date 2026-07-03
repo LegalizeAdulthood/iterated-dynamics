@@ -104,33 +104,30 @@ this refactor, that communication may remain indirect through existing
 globals such as `g_row`, `g_col`, `g_color`, and `g_plot`.  Removing those
 globals is separate work.
 
-A practical implementation is a non-virtual `StandardPass` router that
-holds a `std::variant` of concrete pass classes.  `StandardPass` exposes
-one small public surface, such as `resume()`, `suspend()`, `done()`, and
-`iterate()`, and delegates to the active variant alternative.
+A practical implementation is the current non-virtual `StandardPass`
+router.  It holds a `std::variant` of concrete pass classes.
+`StandardPass` exposes one small public surface, such as `reset()`,
+`select()`, `iterate()`, `status()`, and `suspend()`, and delegates to
+the active variant alternative.
 
-Empty pass placeholders may start in `StandardPass.h`, but they should not
-grow there.  As each pass slice is implemented, move that placeholder into
-its own pass header and implementation file.  The pass class owns the
-state and operation methods.  `StandardPass` includes that header, stores
-the concrete class in the variant, and routes calls to it.  Temporary
-compatibility functions may remain only as call adapters around new
-stateful implementations.  They are not evidence of inversion by
-themselves.
+Each concrete pass owns its state and operation methods in its own class:
+`BoundaryTrace`, `Diffusion`, `OnePass`, `TwoPass`, `SolidGuess`,
+`SynchronousOrbit`, `Tesseral`, and `StickyOrbits`.  `OnePass` and
+`TwoPass` share `ScanlinePass`.  `StandardPass` includes the matching
+pass headers, stores the concrete class in the variant, and routes calls
+to it.  Old free-function pass traversal entry points have been removed;
+do not reintroduce them as call adapters.
 
 `StandardFractal` also owns the standard-mode dispatch currently selected
-by `g_std_calc_mode`, including synchronous orbit, Tesseral, boundary
-trace, solid guessing, diffusion scan, orbit mode, and the one-pass and
-two-pass paths.
+by `g_std_calc_mode`, including `SynchronousOrbit`, `Tesseral`,
+`BoundaryTrace`, `SolidGuess`, `Diffusion`, `StickyOrbits`, and the
+`OnePass` and `TwoPass` paths.
 
-Perturbation is not a standard pass.  GitHub issue #180 records that the
-current implementation computes the full image during fractal setup, which
-is the wrong layer.  Perturbation is an alternate way to compute an
-escape-time orbit for a pixel.  It belongs below the pass layer as a
-standard orbit strategy.  `passes=p` should remain as compatibility
-syntax, but should select perturbation orbit calculation while using the
-default standard traversal.  For traversal purposes, `passes=p` is
-synonymous with the default solid-guessing path.
+Perturbation is an alternate way to compute an escape-time orbit for a
+pixel.  It belongs below `StandardPass` as an orbit strategy selected by
+`StandardFractal`, separately from traversal.  `passes=p` remains
+compatibility syntax that selects perturbation orbit calculation while
+using the default standard traversal.
 
 The UI polling loop owns input policy.  It constructs or resumes
 `StandardFractal`, polls input through the active UI context, asks the
@@ -154,29 +151,31 @@ The current code is already part-way through this plan:
   polling through the handler stack.
 - `StandardFractal::run_current_work_item_mode()` is already a thin
   explicit `CalcMode` dispatch.
-- Tesseral is closest to the target shape.  `StandardFractal` owns a
-  `Tesseral`, and `Tesseral` has `iterate()`, `done()`, and `suspend()`.
-- The one-pass and two-pass paths preserve scan position in the
-  `StandardPass` object and yield standard pixel work back to the UI.
-  They still communicate active pixel position through `g_row` and
-  `g_col`.
-- Boundary trace is still a monolithic function with static trail state
-  and work-list resume on pixel interruption.
-- Diffusion scan traversal state is owned by the `StandardPass`
-  diffusion class.
-- Solid guessing has a concrete `SolidGuess` class, but it is stack-local
-  inside `solid_guess()` and still probes keyboard input.
-- SOI still uses recursive control flow plus direct key polling, but its
-  calculation state is owned by the `StandardPass` SOI class.
-- Orbit mode traversal is owned by the `StandardPass` sticky-orbits
-  class; interruption still happens in the orbit plotting helper.
+- Tesseral is a concrete `StandardPass` alternative.  `Tesseral` has
+  `iterate()`, `done()`, and `suspend()`.
+- The `OnePass` and `TwoPass` paths share `ScanlinePass`; they preserve
+  scan position in the concrete pass object and yield standard pixel work
+  back to the UI.  They still communicate active pixel position through
+  `g_row` and `g_col`.
+- `BoundaryTrace` is a concrete `StandardPass` alternative and owns its
+  trail state.
+- `Diffusion` is a concrete `StandardPass` alternative and owns diffusion
+  scan traversal state.
+- `SolidGuess` is a concrete `StandardPass` alternative and still probes
+  keyboard input while filling guessed rows.
+- `SynchronousOrbit` still uses recursive control flow plus direct key
+  polling, but its calculation state is owned by the concrete pass
+  object.
+- `StickyOrbits` is a concrete `StandardPass` alternative; interruption
+  still happens in the orbit plotting helper.
 - Perturbation has a `PertEngine` owned by `StandardFractal`, is
   initialized and driven from `StandardFractal`, and is selected
   separately from the active traversal mode.  `passes=p` is compatibility
-  syntax that maps traversal to solid guessing for now.  Primary pixels
-  are traversed by `StandardPass`, and glitch retry traversal is owned by
-  `StandardFractal`.  `PertEngine` supplies perturbation reference and
-  point calculations below the pass layer.
+  syntax that selects perturbation without making perturbation a
+  `StandardPass` traversal.  Primary pixels are traversed by
+  `StandardPass`, and glitch retry traversal is owned by `StandardFractal`.
+  `PertEngine` supplies perturbation reference and point calculations
+  below the pass layer.
 
 ## Input Rules
 
@@ -497,7 +496,7 @@ Manual testing:
 
 The remaining interrupt slices are grouped by UI polling loop.  The
 audited non-wait call sites all belong to standard rendering:
-`SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
+`SolidGuess`, `SynchronousOrbit`, `ScanlinePass`, and `StickyOrbits`
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
 ### Slice 4: StandardFractal Pixel Interrupts
@@ -518,7 +517,7 @@ Done when:
 
 - Standard pixel code in `engine/calcfrac.cpp` does not call
   `calc_interrupted()`.
-- `engine/one_or_two_pass.cpp` does not call `calc_interrupted()`.
+- `engine/ScanlinePass.cpp` does not call `calc_interrupted()`.
 - `ui/standard_fractal.cpp` polls between `StandardFractal` increments
   and calls `suspend()` when interruption is requested.
 
@@ -542,7 +541,7 @@ Work:
 
 Done when:
 
-- `engine/solid_guess.cpp` has no driver key polling.
+- `engine/SolidGuess.cpp` has no driver key polling.
 - `SolidGuess` can yield during row fill and symmetry repaint without
   losing block state.
 - The standard UI polling loop handles the interrupt decision.
@@ -551,34 +550,35 @@ Manual testing:
 
 - `type=mandel passes=g maxiter=10000`
 
-### Slice 6: StandardFractal SOI Interrupts
+### Slice 6: StandardFractal SynchronousOrbit Interrupts
 
 Work:
 
 - Keep `libid/ui/standard_fractal.cpp` as the only owner of
-  interruption for SOI.
-- Convert the `SOI::rhombus_aux()` polling points into incremental SOI
-  work checkpoints.
-- Use SOI-owned state, including an explicit stack if needed, so
-  recursive or scan state survives a UI-triggered suspension.
-- Remove direct driver polling from SOI.
+  interruption for synchronous orbit traversal.
+- Convert the `SynchronousOrbit::rhombus_aux()` polling points into
+  incremental synchronous-orbit work checkpoints.
+- Use `SynchronousOrbit`-owned state, including an explicit stack if
+  needed, so recursive or scan state survives a UI-triggered suspension.
+- Remove direct driver polling from `SynchronousOrbit`.
 
 Done when:
 
-- `engine/soi.cpp` has no driver key polling.
-- SOI can yield from recursion and scan work without losing position.
+- `engine/SynchronousOrbit.cpp` has no driver key polling.
+- `SynchronousOrbit` can yield from recursion and scan work without
+  losing position.
 - The standard UI polling loop handles the interrupt decision.
 
 Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 7: StandardFractal Sticky-Orbits Interrupts
+### Slice 7: StandardFractal StickyOrbits Interrupts
 
 Work:
 
 - Keep `libid/ui/standard_fractal.cpp` as the only owner of
-  interruption for `passes=o` sticky-orbit rendering.
+  interruption for `passes=o` StickyOrbits rendering.
 - Make `StickyOrbits` own rectangle, line, and function traversal state
   and return after bounded orbit-point work.
 - Change `plot_orbits2d()` so it plots the current point only; it should
@@ -605,8 +605,9 @@ Direct polling or key consumption exists outside `libid/ui` in:
 - `libid/engine/calcfrac.cpp`: top-level renderer selection calls UI
   control paths, non-standard polling path, and direct standard-pixel
   fallback polling.
-- `libid/engine/solid_guess.cpp`: interrupt checks during block repaint.
-- `libid/engine/soi.cpp`: interrupt checks during recursive scan.
+- `libid/engine/SolidGuess.cpp`: interrupt checks during block repaint.
+- `libid/engine/SynchronousOrbit.cpp`: interrupt checks during recursive
+  scan.
 - `libid/engine/orbit.cpp`: shared `plot_orbit()` path owns screen orbit
   display and reaches input polling through `wait_until()`.
 - `libid/engine/sound.cpp`: suppress tone while keys are pending.

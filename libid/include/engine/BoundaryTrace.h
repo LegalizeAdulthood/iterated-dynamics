@@ -34,6 +34,4 @@ private:
     std::array<Byte, 4096> m_stack{};
 };
 
-int boundary_trace();
-
 } // namespace id::engine

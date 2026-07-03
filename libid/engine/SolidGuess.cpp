@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/solid_guess.h"
+#include "engine/SolidGuess.h"
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
@@ -690,13 +690,6 @@ void SolidGuess::plot_block(const int build_row, const int x, int y, const int c
             g_plot(i, y, color);
         }
     }
-}
-
-int solid_guess()
-{
-    SolidGuess sg;
-
-    return sg.scan();
 }
 
 } // namespace id::engine

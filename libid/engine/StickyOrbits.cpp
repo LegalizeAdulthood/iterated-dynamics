@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/sticky_orbits.h"
+#include "engine/StickyOrbits.h"
 
 #include "engine/calcfrac.h"
 #include "engine/convert_center_mag.h"
@@ -249,12 +249,6 @@ int StickyOrbits::scan()
     case OrbitDrawMode::FUNCTION:
         return draw_function();
     }
-}
-
-int sticky_orbits()
-{
-    StickyOrbits sticky_orbits;
-    return sticky_orbits.scan();
 }
 
 } // namespace id::engine

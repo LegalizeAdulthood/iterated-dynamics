@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/one_or_two_pass.h"
+#include "engine/ScanlinePass.h"
 
 #include "engine/calcfrac.h"
 #include "engine/resume.h"
@@ -80,7 +80,7 @@ int TwoPass::run()
     return 0;
 }
 
-int OneOrTwoPass::standard_calc(const int pass_num, const CalcMode calc_mode)
+int ScanlinePass::standard_calc(const int pass_num, const CalcMode calc_mode)
 {
     g_passes = Passes::SEQUENTIAL_SCAN;
     m_current_pass = pass_num;
@@ -167,7 +167,7 @@ int OneOrTwoPass::standard_calc(const int pass_num, const CalcMode calc_mode)
     return 0;
 }
 
-int OneOrTwoPass::stop_row_for_resume() const
+int ScanlinePass::stop_row_for_resume() const
 {
     int stop_row = g_stop_pt.y;
     if (g_i_stop_pt.y != g_stop_pt.y) // must be due to symmetry
@@ -175,18 +175,6 @@ int OneOrTwoPass::stop_row_for_resume() const
         stop_row -= m_resume_row - g_i_start_pt.y;
     }
     return stop_row;
-}
-
-int one_or_two_pass()
-{
-    if (g_std_calc_mode == CalcMode::TWO_PASS)
-    {
-        TwoPass pass;
-        return pass.run();
-    }
-
-    OnePass pass;
-    return pass.run();
 }
 
 } // namespace id::engine

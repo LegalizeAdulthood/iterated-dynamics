@@ -12,7 +12,7 @@
 #include "engine/LogicalScreen.h"
 #include "engine/Potential.h"
 #include "engine/resume.h"
-#include "engine/solid_guess.h"
+#include "engine/SolidGuess.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"

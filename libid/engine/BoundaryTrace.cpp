@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/boundary_trace.h"
+#include "engine/BoundaryTrace.h"
 
 #include "engine/calcfrac.h"
 #include "engine/show_dot.h"
@@ -256,12 +256,6 @@ int BoundaryTrace::run()
         }
     }
     return 0;
-}
-
-int boundary_trace()
-{
-    BoundaryTrace trace;
-    return trace.run();
 }
 
 } // namespace id::engine

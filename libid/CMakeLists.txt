@@ -20,7 +20,7 @@ endif()
 add_library(libid
     include/engine/bailout_formula.h engine/bailout_formula.cpp
     include/engine/Browse.h engine/Browse.cpp
-    include/engine/boundary_trace.h engine/boundary_trace.cpp
+    include/engine/BoundaryTrace.h engine/BoundaryTrace.cpp
     include/engine/calc_frac_init.h engine/calc_frac_init.cpp
     include/engine/calcfrac.h engine/calcfrac.cpp
     include/engine/calmanfp.h engine/calmanfp.cpp
@@ -31,7 +31,6 @@ add_library(libid
     include/engine/convert_center_mag.h engine/convert_center_mag.cpp
     include/engine/convert_corners.h engine/convert_corners.cpp
     include/engine/Diffusion.h engine/Diffusion.cpp
-    include/engine/diffusion_scan.h engine/diffusion_scan.cpp
     include/engine/engine_timer.h engine/engine_timer.cpp
     include/engine/find_extra_param.h engine/find_extra_param.cpp
     include/engine/fractalb.h engine/fractalb.cpp
@@ -45,7 +44,7 @@ add_library(libid
     include/engine/LogicalScreen.h engine/LogicalScreen.cpp
     include/engine/log_map.h engine/log_map.cpp
     include/engine/lowerize_parameter.h engine/lowerize_parameter.cpp
-    include/engine/one_or_two_pass.h engine/one_or_two_pass.cpp
+    include/engine/ScanlinePass.h engine/ScanlinePass.cpp
     include/engine/orbit.h engine/orbit.cpp
     include/engine/param_not_used.h engine/param_not_used.cpp
     include/engine/PertEngine.h engine/PertEngine.cpp
@@ -57,13 +56,13 @@ add_library(libid
     include/engine/random_seed.h engine/random_seed.cpp
     include/engine/resume.h engine/resume.cpp
     include/engine/show_dot.h engine/show_dot.cpp
-    include/engine/soi.h engine/soi.cpp
-    include/engine/solid_guess.h engine/solid_guess.cpp
+    include/engine/SynchronousOrbit.h engine/SynchronousOrbit.cpp
+    include/engine/SolidGuess.h engine/SolidGuess.cpp
     include/engine/sound.h engine/sound.cpp
     include/engine/spindac.h engine/spindac.cpp
     include/engine/StandardFractal.h engine/StandardFractal.cpp
     include/engine/StandardPass.h engine/StandardPass.cpp
-    include/engine/sticky_orbits.h engine/sticky_orbits.cpp
+    include/engine/StickyOrbits.h engine/StickyOrbits.cpp
     include/engine/tesseral.h engine/tesseral.cpp
     include/engine/text_color.h engine/text_color.cpp
     include/engine/trig_fns.h engine/trig_fns.cpp

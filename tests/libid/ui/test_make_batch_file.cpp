@@ -5,7 +5,7 @@
 #include "ColorMapSaver.h"
 #include "engine/calcfrac.h"
 #include "engine/color_utils.h"
-#include "engine/solid_guess.h"
+#include "engine/SolidGuess.h"
 #include "engine/UserData.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"

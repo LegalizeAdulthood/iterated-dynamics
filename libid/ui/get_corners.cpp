@@ -6,7 +6,7 @@
 #include "engine/convert_center_mag.h"
 #include "engine/convert_corners.h"
 #include "engine/ImageRegion.h"
-#include "engine/sticky_orbits.h"
+#include "engine/StickyOrbits.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"

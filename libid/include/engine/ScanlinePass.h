@@ -7,7 +7,7 @@
 namespace id::engine
 {
 
-class OneOrTwoPass
+class ScanlinePass
 {
 protected:
     int standard_calc(int pass_num, CalcMode calc_mode);
@@ -21,20 +21,18 @@ protected:
     bool m_standard_calc_active{};
 };
 
-class OnePass : private OneOrTwoPass
+class OnePass : ScanlinePass
 {
 public:
     bool iterate();
     int run();
 };
 
-class TwoPass : private OneOrTwoPass
+class TwoPass : ScanlinePass
 {
 public:
     bool iterate();
     int run();
 };
-
-int one_or_two_pass();
 
 } // namespace id::engine

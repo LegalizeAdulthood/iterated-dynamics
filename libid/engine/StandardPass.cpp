@@ -126,7 +126,7 @@ bool StandardPass::iterate()
     switch (m_state.index())
     {
     case SYNCHRONOUS_ORBIT:
-        return std::get<SOI>(m_state).iterate();
+        return std::get<SynchronousOrbit>(m_state).iterate();
 
     case BOUNDARY_TRACE:
         return std::get<BoundaryTrace>(m_state).iterate();
@@ -179,7 +179,7 @@ void StandardPass::select(const CalcMode calc_mode)
         break;
 
     case CalcMode::SYNCHRONOUS_ORBIT:
-        m_state.emplace<SOI>();
+        m_state.emplace<SynchronousOrbit>();
         break;
 
     case CalcMode::BOUNDARY_TRACE:
