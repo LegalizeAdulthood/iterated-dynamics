@@ -42,6 +42,7 @@ private:
     void save_resume_work() const;
     void step_col_row();
     bool trace_outline();
+    bool trace_outline_step();
 
     PixelPhase m_pixel_phase{PixelPhase::SCAN};
     Direction m_going_to{};

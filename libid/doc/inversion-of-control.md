@@ -373,30 +373,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: BoundaryTrace Outline State
-
-Work:
-
-- Convert the current `BoundaryTrace::trace_outline()` helper from one
-  monolithic loop into bounded outline steps.
-- Keep using the existing outline seed, trail, `coming_from`,
-  `matches_found`, current direction, and loop-continuation members.
-- Return to `StandardPass` after bounded outline work instead of running
-  the whole outline trace in one helper call.
-- Preserve current pixel calculation and color behavior.
-
-Done when:
-
-- Outline tracing can return to the UI polling loop between bounded
-  trace steps without losing direction or match state.
-- BoundaryTrace no longer has a monolithic outline trace loop.
-- Existing boundary-trace image output is unchanged.
-
-Manual testing:
-
-- `type=mandel passes=b maxiter=10000`
-
-### Slice 2: BoundaryTrace Fill State
+### Slice 1: BoundaryTrace Fill State
 
 Work:
 
@@ -421,7 +398,7 @@ Manual testing:
 
 - `type=mandel passes=b maxiter=10000`
 
-### Slice 3: Standard Orbit Plot Pacing
+### Slice 2: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -502,7 +479,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 4: Sound Output Pacing
+### Slice 3: Sound Output Pacing
 
 Work:
 
@@ -523,7 +500,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 5: Wait-Until Cleanup
+### Slice 4: Wait-Until Cleanup
 
 Work:
 
@@ -550,7 +527,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SynchronousOrbit`, `ScanlinePass`, and `StickyOrbits`
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 6: StandardFractal Pixel Interrupts
+### Slice 5: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -577,7 +554,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 7: StandardFractal Solid Guess Interrupts
+### Slice 6: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -601,7 +578,7 @@ Manual testing:
 
 - `type=mandel passes=g maxiter=10000`
 
-### Slice 8: StandardFractal SynchronousOrbit Interrupts
+### Slice 7: StandardFractal SynchronousOrbit Interrupts
 
 Work:
 
@@ -624,7 +601,7 @@ Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 9: StandardFractal StickyOrbits Interrupts
+### Slice 8: StandardFractal StickyOrbits Interrupts
 
 Work:
 
@@ -649,7 +626,7 @@ Manual testing:
 
 - `type=lorenz passes=o maxiter=10000`
 
-### Slice 10: Perturbation Traversal Ownership
+### Slice 9: Perturbation Traversal Ownership
 
 Work:
 
@@ -692,7 +669,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 11: Perturbation Pass-Switch Tests
+### Slice 10: Perturbation Pass-Switch Tests
 
 Work:
 

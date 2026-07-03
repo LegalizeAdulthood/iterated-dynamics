@@ -21,6 +21,7 @@ namespace id::engine
 
 // boundary trace method
 constexpr int BK_COLOR{};
+constexpr int BOUNDARY_TRACE_OUTLINE_CHUNK{512};
 constexpr int BOUNDARY_TRACE_SCAN_CHUNK{512};
 
 bool BoundaryTrace::iterate()
@@ -338,58 +339,71 @@ void BoundaryTrace::step_col_row()
 
 bool BoundaryTrace::trace_outline()
 {
-    do
+    for (int processed = 0; processed < BOUNDARY_TRACE_OUTLINE_CHUNK; ++processed)
     {
-        bool candidate_in_bounds = true;
-        if (m_calculation_pending)
+        if (!trace_outline_step())
         {
-            g_row = m_pending_row;
-            g_col = m_pending_col;
-            if (!calculate_current_pixel())
+            return false;
+        }
+        if (!m_continue_loop || (g_col == m_seed_col && g_row == m_seed_row))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool BoundaryTrace::trace_outline_step()
+{
+    bool candidate_in_bounds = true;
+    if (m_calculation_pending)
+    {
+        g_row = m_pending_row;
+        g_col = m_pending_col;
+        if (!calculate_current_pixel())
+        {
+            return false;
+        }
+    }
+    else
+    {
+        step_col_row();
+        candidate_in_bounds =
+            g_row >= m_seed_row && g_col >= g_i_start_pt.x && g_col <= g_i_stop_pt.x && g_row <= g_i_stop_pt.y;
+        if (candidate_in_bounds)
+        {
+            g_color = get_color(g_col, g_row);
+            if (g_color == BK_COLOR && !calculate_current_pixel())
             {
                 return false;
             }
         }
-        else
-        {
-            step_col_row();
-            candidate_in_bounds =
-                g_row >= m_seed_row && g_col >= g_i_start_pt.x && g_col <= g_i_stop_pt.x && g_row <= g_i_stop_pt.y;
-            if (candidate_in_bounds)
-            {
-                g_color = get_color(g_col, g_row);
-                if (g_color == BK_COLOR && !calculate_current_pixel())
-                {
-                    return false;
-                }
-            }
-        }
+    }
 
-        if (candidate_in_bounds)
+    if (candidate_in_bounds)
+    {
+        if (g_color == m_trail_color)
         {
-            if (g_color == m_trail_color)
+            if (m_matches_found < 4) // to keep it from overflowing
             {
-                if (m_matches_found < 4) // to keep it from overflowing
-                {
-                    ++m_matches_found;
-                }
-                m_trail_row = g_row;
-                m_trail_col = g_col;
-                m_going_to = advance(m_going_to, -1);
-                m_coming_from = advance(m_going_to, -1);
+                ++m_matches_found;
             }
-            else
-            {
-                m_going_to = advance(m_going_to, 1);
-                m_continue_loop = m_going_to != m_coming_from || m_matches_found > 0;
-            }
+            m_trail_row = g_row;
+            m_trail_col = g_col;
+            m_going_to = advance(m_going_to, -1);
+            m_coming_from = advance(m_going_to, -1);
         }
         else
         {
             m_going_to = advance(m_going_to, 1);
             m_continue_loop = m_going_to != m_coming_from || m_matches_found > 0;
         }
-    } while (m_continue_loop && (g_col != m_seed_col || g_row != m_seed_row));
+    }
+    else
+    {
+        m_going_to = advance(m_going_to, 1);
+        m_continue_loop = m_going_to != m_coming_from || m_matches_found > 0;
+    }
     return true;
 }
 
