@@ -96,9 +96,20 @@ bool perturbation_auto_requested()
     return perturbation_supported() && math::g_bf_math != math::BFMathType::NONE;
 }
 
+bool perturbation_traversal_supported(const CalcMode calc_mode)
+{
+    // BoundaryTrace uses rendered pixels as memoized orbit colors, while
+    // perturbation can defer glitched pixels for retry.
+    return calc_mode != CalcMode::BOUNDARY_TRACE;
+}
+
 bool perturbation_requested(const CalcMode calc_mode)
 {
     if (!perturbation_supported())
+    {
+        return false;
+    }
+    if (!perturbation_traversal_supported(calc_mode))
     {
         return false;
     }
