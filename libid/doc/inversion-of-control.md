@@ -157,8 +157,11 @@ The current code is already part-way through this plan:
   scan position in the concrete pass object and yield standard pixel work
   back to the UI.  They still communicate active pixel position through
   `g_row` and `g_col`.
-- `BoundaryTrace` is a concrete `StandardPass` alternative and owns its
-  trail state.
+- `BoundaryTrace` is a concrete `StandardPass` alternative, but
+  `iterate()` still runs the old monolithic traversal.  It owns only
+  trail direction and fill-buffer state, has no suspend path, and relies
+  on coarse work-list restart when a pixel calculation reports
+  interruption.
 - `Diffusion` is a concrete `StandardPass` alternative and owns diffusion
   scan traversal state.
 - `SolidGuess` is a concrete `StandardPass` alternative and still probes
@@ -370,7 +373,110 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Standard Orbit Plot Pacing
+### Slice 1: BoundaryTrace Scan State
+
+Work:
+
+- Keep `libid/ui/standard_fractal.cpp` as the only owner of
+  interruption for boundary tracing.
+- Split `BoundaryTrace::run()` into explicit initialization and scan
+  phases owned by `BoundaryTrace`.
+- Move the `cur_row` and `cur_col` loops into members initialized from
+  `g_i_start_pt`, `g_i_stop_pt`, and `g_begin_pt`.
+- Update `g_current_row` and `g_current_column` from the BoundaryTrace
+  scan cursor for status display.
+- Make `iterate()` return after bounded scan work and report completion
+  through its return value.
+- Keep outline tracing and region filling as old helper phases for this
+  slice.
+
+Done when:
+
+- `BoundaryTrace::iterate()` no longer calls `run()` as one unbounded
+  operation.
+- BoundaryTrace can return to `StandardPass` during scan work without
+  restarting from the top of the active work-list block.
+- BoundaryTrace status display uses BoundaryTrace-owned progress.
+
+Manual testing:
+
+- `type=mandel passes=b maxiter=10000`
+
+### Slice 2: BoundaryTrace Pixel Yield State
+
+Work:
+
+- Stop treating every `calc_type() == -1` result inside BoundaryTrace as
+  an immediate work-list suspension.
+- Preserve the active BoundaryTrace scan, seed pixel, and trace position
+  when a standard pixel calculation returns before producing a color.
+- Let `StandardFractal` distinguish UI presentation work from calculation
+  interruption, then resume BoundaryTrace at the same state when
+  rendering continues.
+- Keep legacy work-list restart only for real UI interruption.
+
+Done when:
+
+- Show-dot or orbit presentation pacing does not force BoundaryTrace to
+  abandon its current traversal state.
+- BoundaryTrace still records a resumable work-list item when the UI
+  actually interrupts calculation.
+- No keyboard polling or UI include is added to BoundaryTrace.
+
+Manual testing:
+
+- `type=mandel passes=b showdot=b/20 orbitdelay=30 maxiter=10000`
+
+### Slice 3: BoundaryTrace Outline State
+
+Work:
+
+- Convert the first clockwise outline-tracing loop into explicit
+  BoundaryTrace state.
+- Move the trail start, `coming_from`, `matches_found`, current
+  direction, and loop-continuation state into members.
+- Return to `StandardPass` after bounded outline work instead of running
+  the whole outline trace in one `do` loop.
+- Preserve current pixel calculation and color behavior.
+
+Done when:
+
+- Outline tracing can return to the UI polling loop between bounded
+  trace steps without losing direction or match state.
+- BoundaryTrace no longer has a monolithic outline trace loop.
+- Existing boundary-trace image output is unchanged.
+
+Manual testing:
+
+- `type=mandel passes=b maxiter=10000`
+
+### Slice 4: BoundaryTrace Fill State
+
+Work:
+
+- Convert the second clockwise region-fill loop into explicit
+  BoundaryTrace state.
+- Move fill direction, `coming_from`, line-search position,
+  `last_fill_color_used`, and `max_put_line_length` into members.
+- Keep `sym_fill_line()` as the engine-owned plotting operation.
+- Return to `StandardPass` after bounded fill work instead of filling the
+  whole region in one nested loop.
+- Add `BoundaryTrace::suspend()` and have `StandardPass::suspend()`
+  forward to it when BoundaryTrace is active.
+
+Done when:
+
+- BoundaryTrace fill work can be suspended and resumed without losing
+  active fill state.
+- `StandardPass::suspend()` forwards to BoundaryTrace.
+- `BoundaryTrace::run()` is removed or is only a temporary adapter around
+  the incremental implementation.
+
+Manual testing:
+
+- `type=mandel passes=b maxiter=10000`
+
+### Slice 5: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -451,7 +557,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 2: Sound Output Pacing
+### Slice 6: Sound Output Pacing
 
 Work:
 
@@ -472,7 +578,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 3: Wait-Until Cleanup
+### Slice 7: Wait-Until Cleanup
 
 Work:
 
@@ -499,7 +605,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SynchronousOrbit`, `ScanlinePass`, and `StickyOrbits`
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 4: StandardFractal Pixel Interrupts
+### Slice 8: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -526,7 +632,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 5: StandardFractal Solid Guess Interrupts
+### Slice 9: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -550,7 +656,7 @@ Manual testing:
 
 - `type=mandel passes=g maxiter=10000`
 
-### Slice 6: StandardFractal SynchronousOrbit Interrupts
+### Slice 10: StandardFractal SynchronousOrbit Interrupts
 
 Work:
 
@@ -573,7 +679,7 @@ Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 7: StandardFractal StickyOrbits Interrupts
+### Slice 11: StandardFractal StickyOrbits Interrupts
 
 Work:
 
