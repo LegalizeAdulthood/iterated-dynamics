@@ -674,6 +674,49 @@ Manual testing:
 
 - `type=lorenz passes=o maxiter=10000`
 
+### Slice 11: Perturbation Traversal Ownership
+
+Work:
+
+- Remove pass-era assumptions from `PertEngine`: perturbation must not
+  own the order in which primary pixels are evaluated.
+- Treat perturbation as an orbit calculation strategy used by the active
+  `StandardPass` traversal, not as a traversal or pass algorithm.
+- Replace the current deferred-pixel model with an interface that always
+  computes and returns the color for the requested pixel.
+- Make `PertEngine` maintain a list of reference points instead of a
+  single active reference point for the whole image.
+- When a pixel has too much error for the current reference point, select
+  a closer existing reference point and retry that same pixel.
+- If the current reference point is already the closest reference, create
+  a new reference point at the current pixel, add it to the list, and
+  retry that same pixel.
+- Use that current-pixel reference insertion as the first implementation;
+  leave more elaborate reference-selection heuristics for later
+  experiments.
+- Make BoundaryTrace compatible with perturbation by ensuring every
+  evaluated pixel gets a stable memoized color before BoundaryTrace uses
+  the image as its orbit-result cache.
+- Remove the temporary BoundaryTrace perturbation exclusion once
+  perturbation always computes the requested pixel immediately.
+
+Done when:
+
+- `passes=p` still selects perturbation orbit calculation as compatibility
+  syntax without making perturbation a `StandardPass` traversal.
+- `PertEngine` does not decide primary pixel order.
+- `PertEngine::calculate_pixel()` returns a stable color for the requested
+  pixel, selecting or adding reference points internally as needed.
+- Glitch handling does not leave BoundaryTrace-visible pixels uncolored
+  or indistinguishable from uncomputed background pixels.
+- BoundaryTrace can use perturbation without crashing or recomputing
+  already-computed pixel orbits.
+
+Manual testing:
+
+- Deep zoom with `type=mandel passes=b`
+- `type=mandel passes=p`
+
 ## Current Direct Input Leaks
 
 Direct polling or key consumption exists outside `libid/ui` in:
