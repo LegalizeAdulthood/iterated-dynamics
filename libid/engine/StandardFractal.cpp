@@ -185,6 +185,7 @@ void StandardFractal::resume()
     m_work_item_yielded = false;
     m_work_list_started = false;
     m_standard_pixel_completed_yield = false;
+    m_incomplete_standard_pixel_yield = false;
     s_standard_pass_status = {};
     clear_standard_pixel();
 }
@@ -327,6 +328,13 @@ void StandardFractal::iterate()
     update_timer();
 }
 
+bool StandardFractal::consume_incomplete_standard_pixel_yield()
+{
+    const bool yielded{m_incomplete_standard_pixel_yield};
+    m_incomplete_standard_pixel_yield = false;
+    return yielded;
+}
+
 void StandardFractal::clear_standard_pixel()
 {
     m_tan_table.fill(0.0);
@@ -353,6 +361,7 @@ void StandardFractal::clear_standard_pixel()
     m_standard_pixel_active = false;
     m_standard_pixel_input_checked = false;
     m_standard_pixel_orbit_complete = false;
+    m_incomplete_standard_pixel_yield = false;
     m_standard_pixel_orbit_calc_completed = false;
     m_standard_pixel_iteration_started = false;
     m_standard_pixel_orbit_plotted = false;
@@ -445,6 +454,7 @@ bool StandardFractal::queue_show_dot_pacing()
         return false;
     }
     m_show_dot_pacing_pending = true;
+    m_incomplete_standard_pixel_yield = true;
     return true;
 }
 
@@ -467,6 +477,7 @@ bool StandardFractal::scrub_overlay_orbit(const bool yield_to_ui)
     if (yield_to_ui && standard_pixel_yield_enabled())
     {
         m_overlay_scrub_pending = true;
+        m_incomplete_standard_pixel_yield = true;
         return true;
     }
 
@@ -712,7 +723,7 @@ void StandardFractal::start_work_list()
 bool StandardFractal::standard_pixel_yield_enabled() const
 {
     const CalcMode calc_mode{m_standard_pass.calc_mode()};
-    return calc_mode == CalcMode::ONE_PASS || calc_mode == CalcMode::TWO_PASS;
+    return calc_mode == CalcMode::ONE_PASS || calc_mode == CalcMode::TWO_PASS || calc_mode == CalcMode::BOUNDARY_TRACE;
 }
 
 void StandardFractal::update_timer()

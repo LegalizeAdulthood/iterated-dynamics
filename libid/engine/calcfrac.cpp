@@ -1380,6 +1380,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                 }
                 if (standard_pixel_yield_enabled())
                 {
+                    m_incomplete_standard_pixel_yield = true;
                     return -1;
                 }
             }
@@ -1424,6 +1425,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             m_standard_pixel_orbit_calc_completed = true;
             if (m_orbit_plot_pending)
             {
+                m_incomplete_standard_pixel_yield = true;
                 return -1;
             }
         }
@@ -1466,6 +1468,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             queue_overlay_orbit_plot(g_new_z.x, g_new_z.y);
             if (yield_to_ui && standard_pixel_yield_enabled())
             {
+                m_incomplete_standard_pixel_yield = true;
                 return -1;
             }
             while (!pending_orbit_plot().done())

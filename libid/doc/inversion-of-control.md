@@ -373,41 +373,16 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: BoundaryTrace Pixel Yield State
+### Slice 1: BoundaryTrace Outline State
 
 Work:
 
-- Stop treating every `calc_type() == -1` result inside BoundaryTrace as
-  an immediate work-list suspension.
-- Preserve the active BoundaryTrace scan, seed pixel, and trace position
-  when a standard pixel calculation returns before producing a color.
-- Let `StandardFractal` distinguish UI presentation work from calculation
-  interruption, then resume BoundaryTrace at the same state when
-  rendering continues.
-- Keep legacy work-list restart only for real UI interruption.
-
-Done when:
-
-- Show-dot or orbit presentation pacing does not force BoundaryTrace to
-  abandon its current traversal state.
-- BoundaryTrace still records a resumable work-list item when the UI
-  actually interrupts calculation.
-- No keyboard polling or UI include is added to BoundaryTrace.
-
-Manual testing:
-
-- `type=mandel passes=b showdot=b/20 orbitdelay=30 maxiter=10000`
-
-### Slice 2: BoundaryTrace Outline State
-
-Work:
-
-- Convert the first clockwise outline-tracing loop into explicit
-  BoundaryTrace state.
-- Move the trail start, `coming_from`, `matches_found`, current
-  direction, and loop-continuation state into members.
+- Convert the current `BoundaryTrace::trace_outline()` helper from one
+  monolithic loop into bounded outline steps.
+- Keep using the existing outline seed, trail, `coming_from`,
+  `matches_found`, current direction, and loop-continuation members.
 - Return to `StandardPass` after bounded outline work instead of running
-  the whole outline trace in one `do` loop.
+  the whole outline trace in one helper call.
 - Preserve current pixel calculation and color behavior.
 
 Done when:
@@ -421,7 +396,7 @@ Manual testing:
 
 - `type=mandel passes=b maxiter=10000`
 
-### Slice 3: BoundaryTrace Fill State
+### Slice 2: BoundaryTrace Fill State
 
 Work:
 
@@ -446,7 +421,7 @@ Manual testing:
 
 - `type=mandel passes=b maxiter=10000`
 
-### Slice 4: Standard Orbit Plot Pacing
+### Slice 3: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -527,7 +502,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 5: Sound Output Pacing
+### Slice 4: Sound Output Pacing
 
 Work:
 
@@ -548,7 +523,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 6: Wait-Until Cleanup
+### Slice 5: Wait-Until Cleanup
 
 Work:
 
@@ -575,7 +550,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SynchronousOrbit`, `ScanlinePass`, and `StickyOrbits`
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 7: StandardFractal Pixel Interrupts
+### Slice 6: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -602,7 +577,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 8: StandardFractal Solid Guess Interrupts
+### Slice 7: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -626,7 +601,7 @@ Manual testing:
 
 - `type=mandel passes=g maxiter=10000`
 
-### Slice 9: StandardFractal SynchronousOrbit Interrupts
+### Slice 8: StandardFractal SynchronousOrbit Interrupts
 
 Work:
 
@@ -649,7 +624,7 @@ Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 10: StandardFractal StickyOrbits Interrupts
+### Slice 9: StandardFractal StickyOrbits Interrupts
 
 Work:
 
@@ -674,7 +649,7 @@ Manual testing:
 
 - `type=lorenz passes=o maxiter=10000`
 
-### Slice 11: Perturbation Traversal Ownership
+### Slice 10: Perturbation Traversal Ownership
 
 Work:
 
@@ -717,7 +692,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 12: Perturbation Pass-Switch Tests
+### Slice 11: Perturbation Pass-Switch Tests
 
 Work:
 

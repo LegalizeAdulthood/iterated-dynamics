@@ -35,6 +35,7 @@ public:
 
     void iterate();
 
+    bool consume_incomplete_standard_pixel_yield();
     void complete_overlay_scrub();
     bool overlay_scrub_pending() const;
     bool orbit_plot_pending() const;
@@ -107,6 +108,7 @@ private:
     bool m_perturbation_retry_active{};
     bool m_standard_pixel_active{};
     bool m_standard_pixel_completed_yield{};
+    bool m_incomplete_standard_pixel_yield{};
     bool m_standard_pixel_input_checked{};
     bool m_standard_pixel_orbit_complete{};
     bool m_standard_pixel_orbit_calc_completed{};
