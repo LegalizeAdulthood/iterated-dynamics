@@ -37,12 +37,12 @@ using namespace id::ui;
 namespace id::ui
 {
 
-static MainState save_evolver_image(MainContext &/*context*/)
+static CommandResult save_evolver_image(MainContext & /*context*/)
 {
     if (driver_is_disk() && g_disk_targa)
     {
         // disk video and targa, nothing to save
-        return MainState::NOTHING;
+        return CommandResult::IGNORED;
     }
 
     GeneBase gene[NUM_GENES];
@@ -64,10 +64,10 @@ static MainState save_evolver_image(MainContext &/*context*/)
         fiddle_params(gene, unspiral_map());
     }
     copy_genes_to_bank(gene);
-    return MainState::CONTINUE;
+    return CommandResult::SCREEN_UPDATED;
 }
 
-static MainState prompt_evolver_options(MainContext &context)
+static CommandResult prompt_evolver_options(MainContext &context)
 {
     clear_zoom_box();
     if (g_from_text)
@@ -114,21 +114,22 @@ static MainState prompt_evolver_options(MainContext &context)
         save_param_history();
         context.more_keys = false;
         g_calc_status = CalcStatus::PARAMS_CHANGED;
+        return CommandResult::RENDER_PARAMS_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::HANDLED;
 }
 
-static MainState exit_evolver(MainContext &context)
+static CommandResult exit_evolver(MainContext &context)
 {
     g_evolving = EvolutionModeFlags::NONE;
     g_viewport.enabled = false;
     save_param_history();
     context.more_keys = false;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
-    return MainState::NOTHING;
+    return CommandResult::INTERACTION_MODE_CHANGED;
 }
 
-static MainState move_evolver_selection(MainContext &context)
+static CommandResult move_evolver_selection(MainContext &context)
 {
     if (!g_box_count)
     {
@@ -185,10 +186,10 @@ static MainState move_evolver_selection(MainContext &context)
         draw_param_box(0);
     }
     copy_genes_to_bank(gene);
-    return MainState::NOTHING;
+    return CommandResult::PRESENTATION_CHANGED;
 }
 
-static MainState evolve_param_zoom_decrease(MainContext &/*context*/)
+static CommandResult evolve_param_zoom_decrease(MainContext & /*context*/)
 {
     if (g_evolve_param_box_count)
     {
@@ -196,11 +197,12 @@ static MainState evolve_param_zoom_decrease(MainContext &/*context*/)
         g_evolve_param_zoom = std::max(g_evolve_param_zoom, 1.0);
         draw_param_box(0);
         set_evolve_ranges();
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-static MainState evolve_param_zoom_increase(MainContext &/*context*/)
+static CommandResult evolve_param_zoom_increase(MainContext & /*context*/)
 {
     if (g_evolve_param_box_count)
     {
@@ -208,11 +210,12 @@ static MainState evolve_param_zoom_increase(MainContext &/*context*/)
         g_evolve_param_zoom = std::min(g_evolve_param_zoom, g_evolve_image_grid_size / 2.0);
         draw_param_box(0);
         set_evolve_ranges();
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-static MainState evolver_zoom_in(MainContext &/*context*/)
+static CommandResult evolver_zoom_in(MainContext & /*context*/)
 {
     if (g_zoom_enabled)
     {
@@ -245,11 +248,12 @@ static MainState evolver_zoom_in(MainContext &/*context*/)
         {
             resize_box(0 - key_count(ID_KEY_PAGE_UP));
         }
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-static MainState evolver_zoom_out(MainContext &/*context*/)
+static CommandResult evolver_zoom_out(MainContext & /*context*/)
 {
     if (g_box_count)
     {
@@ -267,11 +271,12 @@ static MainState evolver_zoom_out(MainContext &/*context*/)
         {
             resize_box(key_count(ID_KEY_PAGE_DOWN));
         }
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-static MainState halve_mutation_params(MainContext &context)
+static CommandResult halve_mutation_params(MainContext &context)
 {
     g_evolve_max_random_mutation = g_evolve_max_random_mutation / 2;
     g_evolve_x_parameter_range = g_evolve_x_parameter_range / 2;
@@ -280,10 +285,10 @@ static MainState halve_mutation_params(MainContext &context)
     g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
     context.more_keys = false;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
-    return MainState::NOTHING;
+    return CommandResult::RENDER_PARAMS_CHANGED;
 }
 
-static MainState double_mutation_params(MainContext &context)
+static CommandResult double_mutation_params(MainContext &context)
 {
     g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
     const double center_x = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
@@ -294,10 +299,10 @@ static MainState double_mutation_params(MainContext &context)
     g_evolve_new_y_parameter_offset = center_y - g_evolve_y_parameter_range / 2;
     context.more_keys = false;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
-    return MainState::NOTHING;
+    return CommandResult::RENDER_PARAMS_CHANGED;
 }
 
-static MainState decrease_grid_size(MainContext &context)
+static CommandResult decrease_grid_size(MainContext &context)
 {
     if (g_evolve_image_grid_size > 3)
     {
@@ -305,22 +310,24 @@ static MainState decrease_grid_size(MainContext &context)
         g_evolve_image_grid_size -= 2;
         context.more_keys = false;
         g_calc_status = CalcStatus::PARAMS_CHANGED;
+        return CommandResult::RENDER_PARAMS_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-static MainState increase_grid_size(MainContext &context)
+static CommandResult increase_grid_size(MainContext &context)
 {
     if (g_evolve_image_grid_size < g_screen_x_dots / (MIN_PIXELS << 1))
     {
         g_evolve_image_grid_size += 2;
         context.more_keys = false;
         g_calc_status = CalcStatus::PARAMS_CHANGED;
+        return CommandResult::RENDER_PARAMS_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-static MainState toggle_gene_variation(MainContext &context)
+static CommandResult toggle_gene_variation(MainContext &context)
 {
     for (GeneBase &gene : g_gene_bank)
     {
@@ -336,10 +343,10 @@ static MainState toggle_gene_variation(MainContext &context)
     }
     context.more_keys = false;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
-    return MainState::NOTHING;
+    return CommandResult::RENDER_PARAMS_CHANGED;
 }
 
-static MainState request_mutation_level(MainContext &context)
+static CommandResult request_mutation_level(MainContext &context)
 {
     int mutation_level;
     if (context.key >= ID_KEY_ALT_1 && context.key <= ID_KEY_ALT_7)
@@ -359,19 +366,19 @@ static MainState request_mutation_level(MainContext &context)
     restore_param_history();
     context.more_keys = false;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
-    return MainState::NOTHING;
+    return CommandResult::RENDER_PARAMS_CHANGED;
 }
 
-static MainState turn_off_evolving(MainContext &context)
+static CommandResult turn_off_evolving(MainContext &context)
 {
     g_evolving = EvolutionModeFlags::NONE;
     g_viewport.enabled = false;
     context.more_keys = false;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
-    return MainState::NOTHING;
+    return CommandResult::INTERACTION_MODE_CHANGED;
 }
 
-static MainState evolver_get_history(MainContext &context)
+static CommandResult evolver_get_history(MainContext &context)
 {
     return get_history(context.key);
 }
@@ -442,7 +449,7 @@ static const MenuHandler HANDLERS[]{
     {ID_KEY_CTL_DEL, zoom_box_decrease_color},          //
 };
 
-MainState evolver_menu_switch(MainContext &context)
+CommandResult evolver_menu_switch(MainContext &context)
 {
     assert(std::is_sorted(std::begin(HANDLERS), std::end(HANDLERS)));
     if (const auto it = std::lower_bound(std::cbegin(HANDLERS), std::cend(HANDLERS), context.key);

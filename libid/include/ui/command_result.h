@@ -1,0 +1,25 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
+#pragma once
+
+namespace id::ui
+{
+
+enum class CommandResult
+{
+    IGNORED = 0,
+    HANDLED,
+    SCREEN_UPDATED,
+    PRESENTATION_CHANGED,
+    DISPLAY_TARGET_CHANGED,
+    RENDER_REQUESTED,
+    RENDER_RESUME_CHANGED,
+    RENDER_PARAMS_CHANGED,
+    FRACTAL_TYPE_CHANGED,
+    INTERACTION_MODE_CHANGED,
+    RESTORE_REQUESTED,
+    FULL_RESET_REQUESTED,
+    EXIT_REQUESTED
+};
+
+} // namespace id::ui

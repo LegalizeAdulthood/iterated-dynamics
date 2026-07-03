@@ -185,6 +185,7 @@ add_library(libid
     include/ui/cellular.h ui/cellular.cpp
     include/ui/check_key.h ui/check_key.cpp
     include/ui/ChoiceBuilder.h
+    include/ui/command_result.h
     include/ui/comments.h ui/comments.cpp
     include/ui/diffusion.h ui/diffusion.cpp
     include/ui/diskvid.h ui/diskvid.cpp

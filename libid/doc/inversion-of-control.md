@@ -280,14 +280,13 @@ Current menu handlers communicate these effects through a mixture of
 `MainState::NOTHING` is overloaded: it can mean ignored, handled locally,
 presentation changed, or render parameters changed through side effects.
 
-The first safe implementation split is:
+The menu command-result split keeps this boundary:
 
-- Add a menu/input command-result enum.
-- Convert `MenuHandler` callbacks to return that enum.
+- `MenuHandler` callbacks return `CommandResult`.
 - Keep the existing `MainState` switch in `id_main`.
-- Add one mapping point near `big_while_loop()` that translates command
-  results into existing `MainState` transitions and local-loop behavior.
-- Preserve the current `g_calc_status` and `MainContext::more_keys`
+- One mapping point near `big_while_loop()` translates command results
+  into existing `MainState` transitions and local-loop behavior.
+- The current `g_calc_status` and `MainContext::more_keys`
   side effects initially.
 
 The audited command-result categories are:
@@ -322,37 +321,7 @@ calculation object
     do not poll keyboard or mouse input
 ```
 
-Before changing image calculation ownership again, split menu command
-effects from application phase.  This is the next control-flow slice.  It
-does not move rendering code.
-
-### Slice 1: Menu Command Result Split
-
-Work:
-
-- Add a menu/input command-result enum for the audited categories above.
-- Convert `MenuHandler` callbacks and shared menu helpers to return that
-  enum instead of `MainState`.
-- Keep the existing `MainState` switch in `id_main`.
-- Add one mapping point near `big_while_loop()` that translates command
-  results into existing `MainState` transitions and local-loop behavior.
-- Preserve current `g_calc_status` and `MainContext::more_keys` side
-  effects initially.
-- Do not move rendering code in this slice.
-
-Done when:
-
-- Menu handlers no longer return `MainState`.
-- `id_main` still owns the existing application-phase switch.
-- `big_while_loop()` is the only place that maps menu command effects to
-  `MainState`.
-- `MainState::CONTINUE` is no longer part of the menu handler contract.
-
-Manual testing:
-
-- `video=F6 type=mandel`
-
-After that, apply the same rule at the image-engine boundary.  Do not
+Apply the same rule at the image-engine boundary.  Do not
 create an `ImageCalculation` facade whose first `iterate()` call still
 runs the old whole-image function to completion.  Do not move renderer
 classification into `libid/ui`.  Do not add an interface, callback table,
@@ -375,7 +344,7 @@ the concrete render operation objects and the common setup/teardown they
 own.  A valid implementation slice must make at least one decision or
 return point explicit; pure relocation is not enough.
 
-### Slice 2: Render Operation Boundary Audit
+### Slice 1: Render Operation Boundary Audit
 
 Work:
 
@@ -401,7 +370,7 @@ Manual testing:
 
 - None; this is a plan-refinement slice.
 
-### Slice 3: Standard Orbit Plot Pacing
+### Slice 2: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -482,7 +451,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 4: Sound Output Pacing
+### Slice 3: Sound Output Pacing
 
 Work:
 
@@ -503,7 +472,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 5: Wait-Until Cleanup
+### Slice 4: Wait-Until Cleanup
 
 Work:
 
@@ -530,7 +499,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SOI`, one/two pass standard pixels, and sticky-orbit
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 6: StandardFractal Pixel Interrupts
+### Slice 5: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -557,7 +526,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 7: StandardFractal Solid Guess Interrupts
+### Slice 6: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -581,7 +550,7 @@ Manual testing:
 
 - `type=mandel passes=g maxiter=10000`
 
-### Slice 8: StandardFractal SOI Interrupts
+### Slice 7: StandardFractal SOI Interrupts
 
 Work:
 
@@ -603,7 +572,7 @@ Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 9: StandardFractal Sticky-Orbits Interrupts
+### Slice 8: StandardFractal Sticky-Orbits Interrupts
 
 Work:
 

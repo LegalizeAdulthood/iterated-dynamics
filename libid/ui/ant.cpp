@@ -92,9 +92,10 @@ bool run_options_menu(const int key)
     context.more_keys = true;
 
     const CalcStatus saved_status{g_calc_status};
-    const MainState state{main_menu_switch(context)};
-    return state == MainState::IMAGE_START || state == MainState::RESTORE_START || state == MainState::RESTART ||
-        !context.more_keys || g_calc_status != saved_status;
+    const CommandResult result{main_menu_switch(context)};
+    return result == CommandResult::FRACTAL_TYPE_CHANGED || result == CommandResult::RENDER_REQUESTED ||
+        result == CommandResult::RESTORE_REQUESTED || result == CommandResult::FULL_RESET_REQUESTED ||
+        result == CommandResult::EXIT_REQUESTED || !context.more_keys || g_calc_status != saved_status;
 }
 
 bool stop_ant(const int key, const bool key_peeked)

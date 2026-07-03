@@ -291,6 +291,38 @@ void ZoomMouseNotification::button_down(const int x, const int y, bool &flag)
     m_down_y = y;
 }
 
+MainState command_result_to_main_state(const CommandResult result)
+{
+    switch (result)
+    {
+    case CommandResult::DISPLAY_TARGET_CHANGED:
+    case CommandResult::SCREEN_UPDATED:
+        return MainState::CONTINUE;
+
+    case CommandResult::FRACTAL_TYPE_CHANGED:
+    case CommandResult::RENDER_REQUESTED:
+        return MainState::IMAGE_START;
+
+    case CommandResult::RESTORE_REQUESTED:
+        return MainState::RESTORE_START;
+
+    case CommandResult::FULL_RESET_REQUESTED:
+        return MainState::RESTART;
+
+    case CommandResult::EXIT_REQUESTED:
+        return MainState::NOTHING;
+
+    case CommandResult::HANDLED:
+    case CommandResult::IGNORED:
+    case CommandResult::INTERACTION_MODE_CHANGED:
+    case CommandResult::PRESENTATION_CHANGED:
+    case CommandResult::RENDER_PARAMS_CHANGED:
+    case CommandResult::RENDER_RESUME_CHANGED:
+        return MainState::NOTHING;
+    }
+    return MainState::NOTHING;
+}
+
 } // namespace
 
 MainState big_while_loop(MainContext &context)
@@ -849,14 +881,9 @@ resumeloop:                             // return here on failed overlays
             }
 
             context.key = std::tolower(context.key);
-            if (g_evolving != EvolutionModeFlags::NONE)
-            {
-                mms_value = evolver_menu_switch(context);
-            }
-            else
-            {
-                mms_value = main_menu_switch(context);
-            }
+            const CommandResult command_result{
+                g_evolving != EvolutionModeFlags::NONE ? evolver_menu_switch(context) : main_menu_switch(context)};
+            mms_value = command_result_to_main_state(command_result);
             if (g_quick_calc
                 && (mms_value == MainState::IMAGE_START
                     || mms_value == MainState::RESTORE_START

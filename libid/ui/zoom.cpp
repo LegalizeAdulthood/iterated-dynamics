@@ -1007,7 +1007,7 @@ void clear_zoom_box()
 }
 
 // do all pending movement at once for smooth mouse diagonal moves
-MainState move_zoom_box(MainContext &context)
+CommandResult move_zoom_box(MainContext &context)
 {
     int horizontal{};
     int vertical{};
@@ -1056,8 +1056,9 @@ MainState move_zoom_box(MainContext &context)
     if (g_box_count)
     {
         move_box(static_cast<double>(horizontal) /g_logical_screen.x_size_dots, static_cast<double>(vertical) /g_logical_screen.y_size_dots);
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
 void reset_zoom_corners()
@@ -1074,30 +1075,33 @@ void reset_zoom_corners()
     }
 }
 
-MainState request_zoom_in(MainContext &context)
+CommandResult request_zoom_in(MainContext &context)
 {
+    bool changed{};
     if (g_zoom_box_width != 0.0)
     {
         // do a zoom
         init_pan_or_recalc(false);
         context.more_keys = false;
+        changed = true;
     }
     if (g_calc_status != CalcStatus::COMPLETED) // don't restart if image complete
     {
         context.more_keys = false;
+        changed = true;
     }
-    return MainState::NOTHING;
+    return changed ? CommandResult::RENDER_PARAMS_CHANGED : CommandResult::IGNORED;
 }
 
-MainState request_zoom_out(MainContext &context)
+CommandResult request_zoom_out(MainContext &context)
 {
     init_pan_or_recalc(true);
     context.more_keys = false;
     zoom_out(); // calc corners for zooming out
-    return MainState::NOTHING;
+    return CommandResult::RENDER_PARAMS_CHANGED;
 }
 
-MainState skew_zoom_left(MainContext &/*context*/)
+CommandResult skew_zoom_left(MainContext & /*context*/)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
@@ -1106,11 +1110,12 @@ MainState skew_zoom_left(MainContext &/*context*/)
         {
             g_zoom_box_skew = -0.48;
         }
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-MainState skew_zoom_right(MainContext &/*context*/)
+CommandResult skew_zoom_right(MainContext & /*context*/)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
@@ -1119,29 +1124,32 @@ MainState skew_zoom_right(MainContext &/*context*/)
         {
             g_zoom_box_skew = 0.48;
         }
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-MainState decrease_zoom_aspect(MainContext &/*context*/)
+CommandResult decrease_zoom_aspect(MainContext & /*context*/)
 {
     if (g_box_count)
     {
         change_box(0, -2 * key_count(ID_KEY_CTL_PAGE_UP));
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-MainState increase_zoom_aspect(MainContext &/*context*/)
+CommandResult increase_zoom_aspect(MainContext & /*context*/)
 {
     if (g_box_count)
     {
         change_box(0, 2 * key_count(ID_KEY_CTL_PAGE_DOWN));
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-MainState zoom_box_in(MainContext &/*context*/)
+CommandResult zoom_box_in(MainContext & /*context*/)
 {
     if (g_zoom_enabled)
     {
@@ -1164,11 +1172,12 @@ MainState zoom_box_in(MainContext &/*context*/)
         {
             resize_box(0 - key_count(ID_KEY_PAGE_UP));
         }
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-MainState zoom_box_out(MainContext &/*context*/)
+CommandResult zoom_box_out(MainContext & /*context*/)
 {
     if (g_box_count)
     {
@@ -1181,38 +1190,41 @@ MainState zoom_box_out(MainContext &/*context*/)
         {
             resize_box(key_count(ID_KEY_PAGE_DOWN));
         }
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-MainState zoom_box_increase_rotation(MainContext &/*context*/)
+CommandResult zoom_box_increase_rotation(MainContext & /*context*/)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
         g_zoom_box_rotation += key_count(ID_KEY_CTL_MINUS);
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-MainState zoom_box_decrease_rotation(MainContext &/*context*/)
+CommandResult zoom_box_decrease_rotation(MainContext & /*context*/)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
         g_zoom_box_rotation -= key_count(ID_KEY_CTL_PLUS);
+        return CommandResult::PRESENTATION_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-MainState zoom_box_increase_color(MainContext &/*context*/)
+CommandResult zoom_box_increase_color(MainContext & /*context*/)
 {
     g_box_color += key_count(ID_KEY_CTL_INSERT);
-    return MainState::NOTHING;
+    return CommandResult::PRESENTATION_CHANGED;
 }
 
-MainState zoom_box_decrease_color(MainContext &/*context*/)
+CommandResult zoom_box_decrease_color(MainContext & /*context*/)
 {
     g_box_color -= key_count(ID_KEY_CTL_DEL);
-    return MainState::NOTHING;
+    return CommandResult::PRESENTATION_CHANGED;
 }
 
 } // namespace id::ui

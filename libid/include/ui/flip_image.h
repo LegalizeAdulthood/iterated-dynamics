@@ -2,11 +2,12 @@
 //
 #pragma once
 
+#include "ui/command_result.h"
 #include "ui/main_state.h"
 
 namespace id::ui
 {
 
-MainState flip_image(MainContext &context);
+CommandResult flip_image(MainContext &context);
 
 } // namespace id::ui

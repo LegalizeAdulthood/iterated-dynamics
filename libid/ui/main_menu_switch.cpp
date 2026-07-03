@@ -228,7 +228,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
     }
 }
 
-static MainState prompt_options(MainContext &context)
+static CommandResult prompt_options(MainContext &context)
 {
     const long old_max_iterations = g_max_iterations;
     clear_zoom_box();
@@ -304,6 +304,7 @@ static MainState prompt_options(MainContext &context)
         g_user.std_calc_mode = CalcMode::ONE_PASS;
         context.more_keys = false;
         g_calc_status = CalcStatus::RESUMABLE;
+        return CommandResult::RENDER_RESUME_CHANGED;
     }
     else if (i > 0)
     {
@@ -312,11 +313,12 @@ static MainState prompt_options(MainContext &context)
         save_param_history();
         context.more_keys = false;
         g_calc_status = CalcStatus::PARAMS_CHANGED;
+        return CommandResult::RENDER_PARAMS_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::HANDLED;
 }
 
-static MainState begin_ant(MainContext &/*context*/)
+static CommandResult begin_ant(MainContext & /*context*/)
 {
     clear_zoom_box();
     double old_param[MAX_PARAMS];
@@ -346,17 +348,18 @@ static MainState begin_ant(MainContext &/*context*/)
     {
         g_params[j] = old_param[j];
     }
-    return err >= 0 ? MainState::CONTINUE : MainState::NOTHING;
+    return err >= 0 ? CommandResult::SCREEN_UPDATED : CommandResult::IGNORED;
 }
 
-static MainState request_3d_fractal_params(MainContext &context)
+static CommandResult request_3d_fractal_params(MainContext &context)
 {
     if (get_fract3d_params() >= 0) // get the parameters
     {
         g_calc_status = CalcStatus::PARAMS_CHANGED;
         context.more_keys = false; // time to redraw
+        return CommandResult::RENDER_PARAMS_CHANGED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
 static bool orbits_window_available()
@@ -375,21 +378,21 @@ static void open_orbits_window(MainContext &context)
     context.orbits_window_key_pending = true;
 }
 
-static MainState toggle_orbits_window(MainContext &context)
+static CommandResult toggle_orbits_window(MainContext &context)
 {
     if (context.orbits_window_active)
     {
         context.orbits_window_active = false;
         context.orbits_window_key_pending = false;
-        return MainState::NOTHING;
+        return CommandResult::PRESENTATION_CHANGED;
     }
     if (!orbits_window_available())
     {
-        return MainState::NOTHING;
+        return CommandResult::IGNORED;
     }
     context.orbits_window_active = true;
     open_orbits_window(context);
-    return MainState::NOTHING;
+    return CommandResult::PRESENTATION_CHANGED;
 }
 
 void resume_orbits_window(MainContext &context)
@@ -407,11 +410,11 @@ void resume_orbits_window(MainContext &context)
     open_orbits_window(context);
 }
 
-static MainState space_command(MainContext &context)
+static CommandResult space_command(MainContext &context)
 {
     if (g_bf_math != BFMathType::NONE || g_evolving != EvolutionModeFlags::NONE)
     {
-        return MainState::NOTHING;
+        return CommandResult::IGNORED;
     }
 
     if (g_fractal_type == FractalType::CELLULAR)
@@ -419,16 +422,20 @@ static MainState space_command(MainContext &context)
         g_cellular_next_screen = !g_cellular_next_screen;
         g_calc_status = CalcStatus::RESUMABLE;
         context.more_keys = false;
-    }
-    else
-    {
-        toggle_mandelbrot_julia(context);
+        return CommandResult::RENDER_RESUME_CHANGED;
     }
 
-    return MainState::NOTHING;
+    const CalcStatus old_status{g_calc_status};
+    const bool old_more_keys{context.more_keys};
+    toggle_mandelbrot_julia(context);
+    if (g_calc_status != old_status || context.more_keys != old_more_keys)
+    {
+        return CommandResult::RENDER_PARAMS_CHANGED;
+    }
+    return CommandResult::HANDLED;
 }
 
-static MainState inverse_julia_toggle(MainContext &context)
+static CommandResult inverse_julia_toggle(MainContext &context)
 {
     // if the inverse types proliferate, something more elegant will be needed
     if (g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::INVERSE_JULIA)
@@ -449,19 +456,20 @@ static MainState inverse_julia_toggle(MainContext &context)
         g_zoom_enabled = true;
         g_calc_status = CalcStatus::PARAMS_CHANGED;
         context.more_keys = false;
+        return CommandResult::RENDER_PARAMS_CHANGED;
     }
     else
     {
         driver_buzzer(Buzzer::PROBLEM);
+        return CommandResult::IGNORED;
     }
-    return MainState::NOTHING;
 }
 
-static MainState unstack_file(bool &stacked)
+static CommandResult unstack_file(bool &stacked)
 {
     if (g_browse.stack.empty())
     {
-        return MainState::NOTHING;
+        return CommandResult::IGNORED;
     }
 
     // go back one file if somewhere to go (i.e. browsing)
@@ -477,35 +485,35 @@ static MainState unstack_file(bool &stacked)
         driver_stack_screen(); // save graphics image
         stacked = true;
     }
-    return MainState::RESTORE_START;
+    return CommandResult::RESTORE_REQUESTED;
 }
 
-static MainState main_history(MainContext &context)
+static CommandResult main_history(MainContext &context)
 {
-    if (const MainState result = unstack_file(context.stacked); result != MainState::NOTHING)
+    if (const CommandResult result = unstack_file(context.stacked); result != CommandResult::IGNORED)
     {
         return result;
     }
-    if (const MainState result = get_history(context.key); result != MainState::NOTHING)
+    if (const CommandResult result = get_history(context.key); result != CommandResult::IGNORED)
     {
         return result;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-static MainState request_shell(MainContext &/*context*/)
+static CommandResult request_shell(MainContext & /*context*/)
 {
     driver_stack_screen();
     driver_shell();
     driver_unstack_screen();
-    return MainState::NOTHING;
+    return CommandResult::HANDLED;
 }
 
-static MainState request_save_image(MainContext &/*context*/)
+static CommandResult request_save_image(MainContext & /*context*/)
 {
     if (driver_is_disk() && g_disk_targa)
     {
-        return MainState::CONTINUE; // disk video and targa, nothing to save
+        return CommandResult::SCREEN_UPDATED; // disk video and targa, nothing to save
     }
     if (g_init_batch != BatchMode::NONE && g_auto_stereo_batch)
     {
@@ -513,13 +521,13 @@ static MainState request_save_image(MainContext &/*context*/)
         {
             g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE;
         }
-        return MainState::CONTINUE;
+        return CommandResult::SCREEN_UPDATED;
     }
     save_image(g_save_filename);
-    return MainState::CONTINUE;
+    return CommandResult::SCREEN_UPDATED;
 }
 
-static MainState look_for_files(MainContext &context)
+static CommandResult look_for_files(MainContext &context)
 {
     if (g_zoom_box_width != 0 || driver_is_disk())
     {
@@ -528,19 +536,19 @@ static MainState look_for_files(MainContext &context)
     }
     else if (look(context))
     {
-        return MainState::RESTORE_START;
+        return CommandResult::RESTORE_REQUESTED;
     }
-    return MainState::NOTHING;
+    return CommandResult::HANDLED;
 }
 
-static MainState request_make_batch_file(MainContext &/*context*/)
+static CommandResult request_make_batch_file(MainContext & /*context*/)
 {
     make_batch_file();
     g_save_rds_params = false;
-    return MainState::NOTHING;
+    return CommandResult::HANDLED;
 }
 
-static MainState start_evolution(MainContext &context)
+static CommandResult start_evolution(MainContext &context)
 {
     g_evolving = EvolutionModeFlags::FIELD_MAP;
     g_viewport.enabled = true;
@@ -548,10 +556,10 @@ static MainState start_evolution(MainContext &context)
     save_param_history();
     context.more_keys = false;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
-    return MainState::NOTHING;
+    return CommandResult::INTERACTION_MODE_CHANGED;
 }
 
-static MainState restore_from_3d(MainContext &context)
+static CommandResult restore_from_3d(MainContext &context)
 {
     if (g_overlay_3d)
     {
@@ -564,14 +572,14 @@ static MainState restore_from_3d(MainContext &context)
     return restore_from_image(context);
 }
 
-static MainState request_3d_overlay(MainContext &context)
+static CommandResult request_3d_overlay(MainContext &context)
 {
     clear_zoom_box();
     g_overlay_3d = true;
     return restore_from_3d(context);
 }
 
-static MainState execute_commands(MainContext &context)
+static CommandResult execute_commands(MainContext &context)
 {
     driver_stack_screen();
     int i = +get_commands();
@@ -607,15 +615,16 @@ static MainState execute_commands(MainContext &context)
         driver_discard_screen();
         context.more_keys = false;
         g_calc_status = CalcStatus::PARAMS_CHANGED;
+        return CommandResult::RENDER_PARAMS_CHANGED;
     }
     else
     {
         driver_unstack_screen();
     }
-    return MainState::NOTHING;
+    return CommandResult::HANDLED;
 }
 
-static MainState random_dot_stereogram(MainContext &/*context*/)
+static CommandResult random_dot_stereogram(MainContext & /*context*/)
 {
     clear_zoom_box();
     if (get_rds_params() >= 0)
@@ -624,12 +633,12 @@ static MainState random_dot_stereogram(MainContext &/*context*/)
         {
             g_calc_status = CalcStatus::PARAMS_CHANGED;
         }
-        return MainState::CONTINUE;
+        return CommandResult::SCREEN_UPDATED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
-static MainState request_star_field_params(MainContext &/*context*/)
+static CommandResult request_star_field_params(MainContext & /*context*/)
 {
     clear_zoom_box();
     if (get_star_field_params() >= 0)
@@ -638,9 +647,9 @@ static MainState request_star_field_params(MainContext &/*context*/)
         {
             g_calc_status = CalcStatus::PARAMS_CHANGED;
         }
-        return MainState::CONTINUE;
+        return CommandResult::SCREEN_UPDATED;
     }
-    return MainState::NOTHING;
+    return CommandResult::IGNORED;
 }
 
 static MenuHandler s_handlers[]{
@@ -715,7 +724,7 @@ static MenuHandler s_handlers[]{
     {ID_KEY_CTL_DEL, zoom_box_decrease_color},      //
 };
 
-MainState main_menu_switch(MainContext &context)
+CommandResult main_menu_switch(MainContext &context)
 {
     if (g_quick_calc && g_calc_status == CalcStatus::COMPLETED)
     {

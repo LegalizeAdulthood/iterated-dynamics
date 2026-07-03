@@ -2,6 +2,7 @@
 //
 #pragma once
 
+#include "ui/command_result.h"
 #include "ui/main_state.h"
 
 namespace id::ui
@@ -38,20 +39,20 @@ void add_box(Coord point);
 void clear_box();
 void display_box();
 void clear_zoom_box();
-MainState move_zoom_box(MainContext &context);
+CommandResult move_zoom_box(MainContext &context);
 void reset_zoom_corners();
 
-MainState request_zoom_in(MainContext &context);
-MainState request_zoom_out(MainContext &context);
-MainState skew_zoom_left(MainContext &context);
-MainState skew_zoom_right(MainContext &context);
-MainState decrease_zoom_aspect(MainContext &context);
-MainState increase_zoom_aspect(MainContext &context);
-MainState zoom_box_in(MainContext &context);
-MainState zoom_box_out(MainContext &context);
-MainState zoom_box_increase_rotation(MainContext &context);
-MainState zoom_box_decrease_rotation(MainContext &context);
-MainState zoom_box_increase_color(MainContext &context);
-MainState zoom_box_decrease_color(MainContext &context);
+CommandResult request_zoom_in(MainContext &context);
+CommandResult request_zoom_out(MainContext &context);
+CommandResult skew_zoom_left(MainContext &context);
+CommandResult skew_zoom_right(MainContext &context);
+CommandResult decrease_zoom_aspect(MainContext &context);
+CommandResult increase_zoom_aspect(MainContext &context);
+CommandResult zoom_box_in(MainContext &context);
+CommandResult zoom_box_out(MainContext &context);
+CommandResult zoom_box_increase_rotation(MainContext &context);
+CommandResult zoom_box_decrease_rotation(MainContext &context);
+CommandResult zoom_box_increase_color(MainContext &context);
+CommandResult zoom_box_decrease_color(MainContext &context);
 
 } // namespace id::ui

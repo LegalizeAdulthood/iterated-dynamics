@@ -22,7 +22,7 @@ namespace id::ui
    or both. Refuses to work if calculation in progress or if fractal
    non-resumable. Clears zoombox if any. Resets corners so resulting fractal
    is still valid. */
-MainState flip_image(MainContext &context)
+CommandResult flip_image(MainContext &context)
 {
     int temp_dot;
 
@@ -31,7 +31,7 @@ MainState flip_image(MainContext &context)
         || g_calc_status == CalcStatus::IN_PROGRESS              //
         || g_calc_status == CalcStatus::RESUMABLE)
     {
-        return MainState::NOTHING;
+        return CommandResult::IGNORED;
     }
     if (g_bf_math != BFMathType::NONE)
     {
@@ -137,7 +137,7 @@ MainState flip_image(MainContext &context)
     }
     reset_zoom_corners();
     g_calc_status = CalcStatus::PARAMS_CHANGED;
-    return MainState::NOTHING;
+    return CommandResult::RENDER_PARAMS_CHANGED;
 }
 
 } // namespace id::ui
