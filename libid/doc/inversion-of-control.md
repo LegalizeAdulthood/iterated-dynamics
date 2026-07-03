@@ -157,11 +157,11 @@ The current code is already part-way through this plan:
   scan position in the concrete pass object and yield standard pixel work
   back to the UI.  They still communicate active pixel position through
   `g_row` and `g_col`.
-- `BoundaryTrace` is a concrete `StandardPass` alternative, but
-  `iterate()` still runs the old monolithic traversal.  It owns only
-  trail direction and fill-buffer state, has no suspend path, and relies
-  on coarse work-list restart when a pixel calculation reports
-  interruption.
+- `BoundaryTrace` is a concrete `StandardPass` alternative.  It owns the
+  outer scan cursor and reports scan progress, but outline tracing and
+  region filling still run as monolithic helper phases.  It has no
+  suspend path and still relies on coarse work-list restart when a pixel
+  calculation reports interruption.
 - `Diffusion` is a concrete `StandardPass` alternative and owns diffusion
   scan traversal state.
 - `SolidGuess` is a concrete `StandardPass` alternative and still probes
@@ -373,36 +373,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: BoundaryTrace Scan State
-
-Work:
-
-- Keep `libid/ui/standard_fractal.cpp` as the only owner of
-  interruption for boundary tracing.
-- Split `BoundaryTrace::run()` into explicit initialization and scan
-  phases owned by `BoundaryTrace`.
-- Move the `cur_row` and `cur_col` loops into members initialized from
-  `g_i_start_pt`, `g_i_stop_pt`, and `g_begin_pt`.
-- Update `g_current_row` and `g_current_column` from the BoundaryTrace
-  scan cursor for status display.
-- Make `iterate()` return after bounded scan work and report completion
-  through its return value.
-- Keep outline tracing and region filling as old helper phases for this
-  slice.
-
-Done when:
-
-- `BoundaryTrace::iterate()` no longer calls `run()` as one unbounded
-  operation.
-- BoundaryTrace can return to `StandardPass` during scan work without
-  restarting from the top of the active work-list block.
-- BoundaryTrace status display uses BoundaryTrace-owned progress.
-
-Manual testing:
-
-- `type=mandel passes=b maxiter=10000`
-
-### Slice 2: BoundaryTrace Pixel Yield State
+### Slice 1: BoundaryTrace Pixel Yield State
 
 Work:
 
@@ -427,7 +398,7 @@ Manual testing:
 
 - `type=mandel passes=b showdot=b/20 orbitdelay=30 maxiter=10000`
 
-### Slice 3: BoundaryTrace Outline State
+### Slice 2: BoundaryTrace Outline State
 
 Work:
 
@@ -450,7 +421,7 @@ Manual testing:
 
 - `type=mandel passes=b maxiter=10000`
 
-### Slice 4: BoundaryTrace Fill State
+### Slice 3: BoundaryTrace Fill State
 
 Work:
 
@@ -469,14 +440,13 @@ Done when:
 - BoundaryTrace fill work can be suspended and resumed without losing
   active fill state.
 - `StandardPass::suspend()` forwards to BoundaryTrace.
-- `BoundaryTrace::run()` is removed or is only a temporary adapter around
-  the incremental implementation.
+- BoundaryTrace no longer has monolithic fill helper loops.
 
 Manual testing:
 
 - `type=mandel passes=b maxiter=10000`
 
-### Slice 5: Standard Orbit Plot Pacing
+### Slice 4: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -557,7 +527,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 6: Sound Output Pacing
+### Slice 5: Sound Output Pacing
 
 Work:
 
@@ -578,7 +548,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 7: Wait-Until Cleanup
+### Slice 6: Wait-Until Cleanup
 
 Work:
 
@@ -605,7 +575,7 @@ audited non-wait call sites all belong to standard rendering:
 `SolidGuess`, `SynchronousOrbit`, `ScanlinePass`, and `StickyOrbits`
 traversal are driven from `libid/ui/standard_fractal.cpp`.
 
-### Slice 8: StandardFractal Pixel Interrupts
+### Slice 7: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -632,7 +602,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 9: StandardFractal Solid Guess Interrupts
+### Slice 8: StandardFractal Solid Guess Interrupts
 
 Work:
 
@@ -656,7 +626,7 @@ Manual testing:
 
 - `type=mandel passes=g maxiter=10000`
 
-### Slice 10: StandardFractal SynchronousOrbit Interrupts
+### Slice 9: StandardFractal SynchronousOrbit Interrupts
 
 Work:
 
@@ -679,7 +649,7 @@ Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 11: StandardFractal StickyOrbits Interrupts
+### Slice 10: StandardFractal StickyOrbits Interrupts
 
 Work:
 
