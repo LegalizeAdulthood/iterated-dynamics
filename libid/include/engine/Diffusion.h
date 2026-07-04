@@ -29,6 +29,7 @@ private:
     static void count_to_int(unsigned long counter, int &x, int &y, int dif_offset);
 
     int engine();
+    void initialize();
     void plot_block(int x, int y, int size, int color);
     void plot_block_lim(int x, int y, int size, int color);
 
@@ -36,6 +37,13 @@ private:
     unsigned int m_bits{};
     unsigned long m_counter{};
     unsigned long m_limit{};
+    int m_dif_offset{};
+    int m_nx{};
+    int m_ny{};
+    int m_rem_x{};
+    int m_rem_y{};
+    int m_size{};
+    bool m_initialized{};
 };
 
 } // namespace id::engine
