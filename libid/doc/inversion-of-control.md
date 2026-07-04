@@ -376,31 +376,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: SolidGuess Repaint And Suspend
-
-Work:
-
-- Move fast `write_span()` row fill and symmetry repaint loops into
-  bounded state owned by `SolidGuess`.
-- Remove direct driver polling from `SolidGuess`; the standard UI polling
-  loop owns the interrupt decision and calls `suspend()`.
-- Preserve current solid-guess work-list resume behavior at row and pass
-  boundaries.
-
-Done when:
-
-- `engine/SolidGuess.cpp` has no driver key polling.
-- `SolidGuess::iterate()` returns after bounded row, block, or repaint
-  work without losing block state.
-- `StandardPass::suspend()` delegates to `SolidGuess`.
-- `passes=g` and `passes=g3` preserve current render behavior.
-
-Manual testing:
-
-- `type=mandel passes=g maxiter=10000`
-- `type=mandel passes=g3 maxiter=10000`
-
-### Slice 2: SynchronousOrbit Frame Stack
+### Slice 1: SynchronousOrbit Frame Stack
 
 Work:
 
@@ -425,7 +401,7 @@ Manual testing:
 
 - None.
 
-### Slice 3: SynchronousOrbit Scan State
+### Slice 2: SynchronousOrbit Scan State
 
 Work:
 
@@ -448,7 +424,7 @@ Manual testing:
 
 - None.
 
-### Slice 4: SynchronousOrbit Polling And Suspend
+### Slice 3: SynchronousOrbit Polling And Suspend
 
 Work:
 
@@ -468,7 +444,7 @@ Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 5: StickyOrbits Seed Traversal
+### Slice 4: StickyOrbits Seed Traversal
 
 Work:
 
@@ -496,7 +472,7 @@ Manual testing:
 
 - None.
 
-### Slice 6: StickyOrbits Orbit State
+### Slice 5: StickyOrbits Orbit State
 
 Work:
 
@@ -519,7 +495,7 @@ Manual testing:
 
 - `type=lorenz passes=o maxiter=10000`
 
-### Slice 7: Tesseral Initialization State
+### Slice 6: Tesseral Initialization State
 
 Work:
 
@@ -542,7 +518,7 @@ Manual testing:
 
 - None.
 
-### Slice 8: Tesseral Edge Probe State
+### Slice 7: Tesseral Edge Probe State
 
 Work:
 
@@ -565,7 +541,7 @@ Manual testing:
 
 - None.
 
-### Slice 9: Tesseral Fill And Suspend
+### Slice 8: Tesseral Fill And Suspend
 
 Work:
 
@@ -586,7 +562,7 @@ Manual testing:
 - `type=mandel passes=t maxiter=10000`
 - `type=mandel passes=t fillcolor=1 maxiter=10000`
 
-### Slice 10: Standard Orbit Plot Pacing
+### Slice 9: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -667,7 +643,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 11: Sound Output Pacing
+### Slice 10: Sound Output Pacing
 
 Work:
 
@@ -688,7 +664,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 12: Wait-Until Cleanup
+### Slice 11: Wait-Until Cleanup
 
 Work:
 
@@ -715,7 +691,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 13: StandardFractal Pixel Interrupts
+### Slice 12: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -742,7 +718,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 14: Perturbation Traversal Ownership
+### Slice 13: Perturbation Traversal Ownership
 
 Work:
 
@@ -785,7 +761,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 15: Perturbation Pass-Switch Tests
+### Slice 14: Perturbation Pass-Switch Tests
 
 Work:
 

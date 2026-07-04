@@ -220,6 +220,11 @@ void StandardPass::suspend()
         std::get<Diffusion>(m_state).suspend();
         return;
     }
+    if (m_state.index() == SOLID_GUESS)
+    {
+        std::get<SolidGuess>(m_state).suspend();
+        return;
+    }
 
     if (m_state.index() != TESSERAL)
     {

@@ -8,7 +8,6 @@
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
 #include "misc/debug_flags.h"
-#include "misc/Driver.h"
 #include "ui/video.h"
 
 #include <algorithm>
@@ -88,6 +87,37 @@ bool SolidGuess::iterate()
 {
     scan();
     return done();
+}
+
+void SolidGuess::suspend()
+{
+    if (done())
+    {
+        return;
+    }
+
+    switch (m_phase)
+    {
+    case Phase::FIRST_PASS_TOP_ROW:
+        add_work_list(g_start_pt.x, g_start_pt.y, //
+            g_stop_pt.x, g_stop_pt.y,             //
+            g_begin_pt.x, g_begin_pt.y,           //
+            0, g_work_symmetry);
+        break;
+
+    case Phase::FIRST_PASS_ROWS:
+        save_resume_work(m_current_y, 0);
+        break;
+
+    case Phase::REMAINING_ROWS:
+        save_resume_work(m_current_y, g_work_pass);
+        break;
+
+    default:
+        save_deferred_work(g_work_pass);
+        break;
+    }
+    m_phase = Phase::DONE;
 }
 
 // Timothy Wegner invented this solid guessing idea and implemented it in
@@ -727,10 +757,6 @@ bool SolidGuess::finish_guess_row()
         {
             write_span(j, g_start_pt.x, g_i_stop_pt.x, &m_stack[g_start_pt.x + m_stack_row_offset]);
         }
-        if (driver_key_pressed())
-        {
-            return true;
-        }
     }
     if (g_plot != g_put_color)    // symmetry, just vertical & origin the fast way
     {
@@ -759,10 +785,6 @@ bool SolidGuess::finish_guess_row()
             if (j > g_i_stop_pt.y && j < g_logical_screen.y_dots)
             {
                 write_span(j, g_start_pt.x, g_i_stop_pt.x, &m_stack[g_start_pt.x + m_stack_row_offset]);
-            }
-            if (driver_key_pressed())
-            {
-                return true;
             }
         }
     }

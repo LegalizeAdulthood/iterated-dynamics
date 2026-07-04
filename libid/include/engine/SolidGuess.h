@@ -21,6 +21,7 @@ public:
 
     bool iterate();
     int scan();
+    void suspend();
     static int block_size();
 
 private:
