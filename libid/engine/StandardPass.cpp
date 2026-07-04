@@ -210,11 +210,16 @@ void StandardPass::select(const CalcMode calc_mode)
 
 void StandardPass::suspend()
 {
+    if (m_state.index() == BOUNDARY_TRACE)
+    {
+        std::get<BoundaryTrace>(m_state).suspend();
+        return;
+    }
+
     if (m_state.index() != TESSERAL)
     {
         return;
     }
-
     Tesseral &tesseral{std::get<Tesseral>(m_state)};
     if (!tesseral.done())
     {

@@ -21,6 +21,7 @@ namespace id::engine
 
 // boundary trace method
 constexpr int BK_COLOR{};
+constexpr int BOUNDARY_TRACE_FILL_CHUNK{512};
 constexpr int BOUNDARY_TRACE_OUTLINE_CHUNK{512};
 constexpr int BOUNDARY_TRACE_SCAN_CHUNK{512};
 
@@ -39,11 +40,9 @@ bool BoundaryTrace::iterate()
         return true;
     }
 
-    int last_fill_color_used = -1;
-    int max_put_line_length = 0; // reset max_putline_length
     for (int processed = 0; processed < BOUNDARY_TRACE_SCAN_CHUNK && !m_done; ++processed)
     {
-        if (!process_current_pixel(last_fill_color_used, max_put_line_length))
+        if (!process_current_pixel())
         {
             return false;
         }
@@ -55,6 +54,14 @@ bool BoundaryTrace::iterate()
         }
     }
     return m_done;
+}
+
+void BoundaryTrace::suspend()
+{
+    if (!m_done)
+    {
+        save_resume_work();
+    }
 }
 
 BoundaryTrace::Direction BoundaryTrace::advance(const Direction dir, const int increment)
@@ -81,6 +88,24 @@ void BoundaryTrace::advance_scan_cursor()
     reset_row_state();
 }
 
+void BoundaryTrace::begin_fill_trace()
+{
+    m_trail_row = m_seed_row;
+    m_trail_col = m_seed_col;
+    m_coming_from = Direction::WEST;
+    m_going_to = Direction::EAST;
+    m_last_fill_color_used = -1;
+    m_max_put_line_length = 0;
+    m_fill_started = false;
+    m_pixel_phase = PixelPhase::FILL_TRACE;
+}
+
+void BoundaryTrace::begin_line_fill()
+{
+    m_fill_right = m_fill_match_col;
+    m_pixel_phase = PixelPhase::FILL_RIGHT_EDGE;
+}
+
 void BoundaryTrace::begin_outline_trace(const int cur_row, const int cur_col, const int trail_color)
 {
     m_seed_row = cur_row;
@@ -104,6 +129,136 @@ bool BoundaryTrace::calculate_current_pixel()
         return true;
     }
     return stop_for_calculation_return();
+}
+
+void BoundaryTrace::fill_line()
+{
+    if (m_fill_right == m_fill_left) // only one hole
+    {
+        g_plot(m_fill_left, m_fill_match_row, m_fill_color_used);
+        return;
+    }
+
+    // fill the line to the left
+    const int length = m_fill_right - m_fill_left + 1;
+    if (m_fill_color_used != m_last_fill_color_used || length > m_max_put_line_length)
+    {
+        // only reset dstack if necessary
+        std::memset(m_stack.data(), m_fill_color_used, length);
+        m_last_fill_color_used = m_fill_color_used;
+        m_max_put_line_length = length;
+    }
+    sym_fill_line(m_fill_match_row, m_fill_left, m_fill_right, m_stack.data());
+}
+
+bool BoundaryTrace::fill_line_left_step()
+{
+    if (get_color(--m_fill_left, m_fill_match_row) == BK_COLOR)
+    {
+        return true;
+    }
+    ++m_fill_left; // one pixel too far
+    fill_line();
+    finish_fill_match();
+    return true;
+}
+
+bool BoundaryTrace::fill_line_right_step()
+{
+    --m_fill_right;
+    if (m_fill_right >= g_i_start_pt.x)
+    {
+        g_color = get_color(m_fill_right, m_fill_match_row);
+        if (g_color == m_trail_color)
+        {
+            return true;
+        }
+        if (g_color == BK_COLOR)
+        {
+            m_fill_left = m_fill_right;
+            m_pixel_phase = PixelPhase::FILL_LEFT_EDGE;
+            return true;
+        }
+    }
+    finish_fill_match();
+    return true;
+}
+
+bool BoundaryTrace::fill_region()
+{
+    for (int processed = 0; processed < BOUNDARY_TRACE_FILL_CHUNK; ++processed)
+    {
+        if (!fill_region_step())
+        {
+            return false;
+        }
+        if (m_fill_started && m_pixel_phase == PixelPhase::FILL_TRACE && m_trail_col == m_seed_col &&
+            m_trail_row == m_seed_row)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool BoundaryTrace::fill_region_step()
+{
+    switch (m_pixel_phase)
+    {
+    case PixelPhase::FILL_TRACE:
+        return fill_trace_step();
+
+    case PixelPhase::FILL_RIGHT_EDGE:
+        return fill_line_right_step();
+
+    case PixelPhase::FILL_LEFT_EDGE:
+        return fill_line_left_step();
+
+    default:
+        return true;
+    }
+}
+
+bool BoundaryTrace::fill_trace_step()
+{
+    step_col_row();
+    if (g_row >= m_seed_row                          //
+        && g_col >= g_i_start_pt.x                   //
+        && g_col <= g_i_stop_pt.x                    //
+        && g_row <= g_i_stop_pt.y                    //
+        && get_color(g_col, g_row) == m_trail_color) // getcolor() must be last
+    {
+        m_fill_match_row = g_row;
+        m_fill_match_col = g_col;
+        if (m_going_to == Direction::SOUTH || (m_going_to == Direction::WEST && m_coming_from != Direction::EAST))
+        {
+            begin_line_fill();
+            return true;
+        }
+        finish_fill_match();
+        return true;
+    }
+
+    m_going_to = advance(m_going_to, 1);
+    if (m_going_to == m_coming_from)
+    {
+        // next one has to be a match
+        step_col_row();
+        m_fill_match_row = g_row;
+        m_fill_match_col = g_col;
+        finish_fill_match();
+    }
+    return true;
+}
+
+void BoundaryTrace::finish_fill_match()
+{
+    m_trail_row = m_fill_match_row;
+    m_trail_col = m_fill_match_col;
+    m_going_to = advance(m_going_to, -1);
+    m_coming_from = advance(m_going_to, -1);
+    m_fill_started = true;
+    m_pixel_phase = PixelPhase::FILL_TRACE;
 }
 
 bool BoundaryTrace::stop_for_calculation_return()
@@ -155,10 +310,11 @@ void BoundaryTrace::initialize()
     {
         m_current_col = g_i_start_pt.x;
     }
+    m_resume_saved = false;
     reset_row_state();
 }
 
-bool BoundaryTrace::process_current_pixel(int &last_fill_color_used, int &max_put_line_length)
+bool BoundaryTrace::process_current_pixel()
 {
     if (m_pixel_phase == PixelPhase::SCAN)
     {
@@ -192,95 +348,28 @@ bool BoundaryTrace::process_current_pixel(int &last_fill_color_used, int &max_pu
         begin_outline_trace(m_seed_row, m_seed_col, g_color);
     }
 
-    if (!trace_outline())
+    if (m_pixel_phase == PixelPhase::TRACE_OUTLINE)
+    {
+        if (!trace_outline())
+        {
+            return false;
+        }
+
+        if (m_matches_found <= 3)
+        {
+            // no hole
+            reset_row_state();
+            m_pixel_phase = PixelPhase::SCAN;
+            return true;
+        }
+
+        begin_fill_trace();
+    }
+
+    if (!fill_region())
     {
         return false;
     }
-
-    if (m_matches_found <= 3)
-    {
-        // no hole
-        reset_row_state();
-        m_pixel_phase = PixelPhase::SCAN;
-        return true;
-    }
-
-    // Fill in region by looping around again, filling lines to the left
-    // whenever going_to is South or West
-    m_trail_row = m_seed_row;
-    m_trail_col = m_seed_col;
-    Direction coming_from = Direction::WEST;
-    m_going_to = Direction::EAST;
-    do
-    {
-        bool match_found = false;
-        do
-        {
-            step_col_row();
-            if (g_row >= m_seed_row                          //
-                && g_col >= g_i_start_pt.x                   //
-                && g_col <= g_i_stop_pt.x                    //
-                && g_row <= g_i_stop_pt.y                    //
-                && get_color(g_col, g_row) == m_trail_color) // getcolor() must be last
-            {
-                if (m_going_to == Direction::SOUTH || (m_going_to == Direction::WEST && coming_from != Direction::EAST))
-                {
-                    // fill a row, but only once
-                    int right = g_col;
-                    while (--right >= g_i_start_pt.x && (g_color = get_color(right, g_row)) == m_trail_color)
-                    {
-                        // do nothing
-                    }
-                    if (g_color == BK_COLOR) // check last color
-                    {
-                        int left = right;
-                        while (get_color(--left, g_row) == BK_COLOR)
-                        {
-                            // Should NOT be possible for left < g_i_start_pt.x
-                            // do nothing
-                        }
-                        left++;            // one pixel too far
-                        if (right == left) // only one hole
-                        {
-                            g_plot(left, g_row, m_fill_color_used);
-                        }
-                        else
-                        {
-                            // fill the line to the left
-                            if (const int length = right - left + 1;
-                                m_fill_color_used != last_fill_color_used || length > max_put_line_length)
-                            {
-                                // only reset dstack if necessary
-                                std::memset(m_stack.data(), m_fill_color_used, length);
-                                last_fill_color_used = m_fill_color_used;
-                                max_put_line_length = length;
-                            }
-                            sym_fill_line(g_row, left, right, m_stack.data());
-                        }
-                    } // end of fill line
-                }
-                m_trail_row = g_row;
-                m_trail_col = g_col;
-                m_going_to = advance(m_going_to, -1);
-                coming_from = advance(m_going_to, -1);
-                match_found = true;
-            }
-            else
-            {
-                m_going_to = advance(m_going_to, 1);
-            }
-        } while (!match_found && m_going_to != coming_from);
-
-        if (!match_found)
-        {
-            // next one has to be a match
-            step_col_row();
-            m_trail_row = g_row;
-            m_trail_col = g_col;
-            m_going_to = advance(m_going_to, -1);
-            coming_from = advance(m_going_to, -1);
-        }
-    } while (m_trail_col != m_seed_col || m_trail_row != m_seed_row);
     reset_row_state();
     m_pixel_phase = PixelPhase::SCAN;
     return true;
@@ -299,8 +388,12 @@ void BoundaryTrace::reset_row_state()
     record_progress();
 }
 
-void BoundaryTrace::save_resume_work() const
+void BoundaryTrace::save_resume_work()
 {
+    if (m_resume_saved)
+    {
+        return;
+    }
     if (g_show_dot != BK_COLOR) // remove show dot pixel
     {
         g_plot(g_col, g_row, BK_COLOR);
@@ -311,6 +404,7 @@ void BoundaryTrace::save_resume_work() const
     }
     add_work_list(g_start_pt.x, m_current_row, g_stop_pt.x, g_i_stop_pt.y, m_current_col, m_current_row, 0,
         g_work_symmetry);
+    m_resume_saved = true;
 }
 
 // take one step in the direction of going_to
