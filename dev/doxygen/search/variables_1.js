@@ -25,10 +25,13 @@ var searchData=
   ['bof_5fmatch_5fbook_5fimages_22',['bof_match_book_images',['../d1/d3e/history_8cpp.html#adbe6f899b7e5dc916e86fb873300721e',1,'history.cpp']]],
   ['bot_5fleft_23',['bot_left',['../db/d7d/file__get__window_8cpp.html#a398163da45bd6643735491181ed239a7',1,'file_get_window.cpp']]],
   ['bot_5fright_24',['bot_right',['../db/d7d/file__get__window_8cpp.html#af8f30c554f43b2ae555fdc976e112742',1,'file_get_window.cpp']]],
-  ['box_5fcount_25',['box_count',['../db/d7d/file__get__window_8cpp.html#ab0ceb59cf1023256275abc572df0bf34',1,'file_get_window.cpp']]],
-  ['browsing_26',['browsing',['../de/d5e/structid_1_1engine_1_1Browse.html#a1478bd14aee0d4a90c17973267d1f0d4',1,'id::engine::Browse']]],
-  ['buf_27',['buf',['../d9/d9b/structid_1_1ui_1_1WriteBatchData.html#a756ebd3a32a58f88b909cecee65998a1',1,'id::ui::WriteBatchData']]],
-  ['buffer_28',['buffer',['../db/dec/structhc_1_1HelpSource.html#a9f97a42707cec7638b1a57e6450f5f69',1,'hc::HelpSource::buffer'],['../d0/dff/help_8cpp.html#a32f93b88bc29ff5bb4f19b516c6824ee',1,'buffer:&#160;help.cpp']]],
-  ['buffer_5fsize_29',['BUFFER_SIZE',['../d9/dcc/namespacehc.html#a2745d09753b22c5b334487559ac07635',1,'hc']]],
-  ['bx_30',['bx',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a9454ea00920b5931789be45058f843bf',1,'id::io::FractalInfo']]]
+  ['boundary_5ftrace_5ffill_5fchunk_25',['BOUNDARY_TRACE_FILL_CHUNK',['../dc/d31/namespaceid_1_1engine.html#aa08d3edea378e622efb7535960914a85',1,'id::engine']]],
+  ['boundary_5ftrace_5foutline_5fchunk_26',['BOUNDARY_TRACE_OUTLINE_CHUNK',['../dc/d31/namespaceid_1_1engine.html#aed29b7e9882b50c02f1ac4d350062125',1,'id::engine']]],
+  ['boundary_5ftrace_5fscan_5fchunk_27',['BOUNDARY_TRACE_SCAN_CHUNK',['../dc/d31/namespaceid_1_1engine.html#aed6e38c86b75347a58001041df1f225f',1,'id::engine']]],
+  ['box_5fcount_28',['box_count',['../db/d7d/file__get__window_8cpp.html#ab0ceb59cf1023256275abc572df0bf34',1,'file_get_window.cpp']]],
+  ['browsing_29',['browsing',['../de/d5e/structid_1_1engine_1_1Browse.html#a1478bd14aee0d4a90c17973267d1f0d4',1,'id::engine::Browse']]],
+  ['buf_30',['buf',['../d9/d9b/structid_1_1ui_1_1WriteBatchData.html#a756ebd3a32a58f88b909cecee65998a1',1,'id::ui::WriteBatchData']]],
+  ['buffer_31',['buffer',['../d0/dff/help_8cpp.html#a32f93b88bc29ff5bb4f19b516c6824ee',1,'buffer:&#160;help.cpp'],['../db/dec/structhc_1_1HelpSource.html#a9f97a42707cec7638b1a57e6450f5f69',1,'hc::HelpSource::buffer']]],
+  ['buffer_5fsize_32',['BUFFER_SIZE',['../d9/dcc/namespacehc.html#a2745d09753b22c5b334487559ac07635',1,'hc']]],
+  ['bx_33',['bx',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a9454ea00920b5931789be45058f843bf',1,'id::io::FractalInfo']]]
 ];

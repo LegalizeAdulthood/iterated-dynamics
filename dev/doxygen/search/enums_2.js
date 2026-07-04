@@ -8,5 +8,6 @@ var searchData=
   ['cmdfile_5',['CmdFile',['../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160',1,'id::engine']]],
   ['colormethod_6',['ColorMethod',['../dc/d31/namespaceid_1_1engine.html#ad509286bccbad45bd562c53aebc7a6a5',1,'id::engine']]],
   ['colorstate_7',['ColorState',['../dc/d31/namespaceid_1_1engine.html#a207dda9b1e9fbf1acd1bd8b8ee50ed78',1,'id::engine']]],
-  ['configstatus_8',['ConfigStatus',['../d0/d19/namespaceid_1_1io.html#ae40bcd1edfb057e006f531a4c9654c90',1,'id::io']]]
+  ['commandresult_8',['CommandResult',['../dc/d76/namespaceid_1_1ui.html#a63c57e8cba8752d224ccbe62197de228',1,'id::ui']]],
+  ['configstatus_9',['ConfigStatus',['../d0/d19/namespaceid_1_1io.html#ae40bcd1edfb057e006f531a4c9654c90',1,'id::io']]]
 ];

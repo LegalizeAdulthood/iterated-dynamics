@@ -27,7 +27,7 @@ var searchData=
   ['to_5fpar_5fstring_24',['to_par_string',['../df/d6d/namespaceid_1_1misc.html#acfa45cef2e950cc301d3d8101f440a2f',1,'id::misc']]],
   ['to_5fstring_25',['to_string',['../df/d6d/namespaceid_1_1misc.html#a8a2069fada317d6497c806dcf6be49c0',1,'id::misc::to_string()'],['../d5/d38/namespaceid_1_1fractals.html#a3016098fa9bc8194c6b6c1be5cd1d46a',1,'id::fractals::to_string(const Minor value)'],['../d5/d38/namespaceid_1_1fractals.html#af36688903a0eb846c43fa3c014c7bbae',1,'id::fractals::to_string(const Major value)'],['../d5/d38/namespaceid_1_1fractals.html#aa707c55ad86890bf84de920375691808',1,'id::fractals::to_string(const Julibrot3DMode value)']]],
   ['toggle_5fcircle_5fmode_26',['toggle_circle_mode',['../d7/d08/classid_1_1engine_1_1InverseJuliaKeyboardContext.html#ab5ff0f66cd53da939125d0007d3f1e74',1,'id::engine::InverseJuliaKeyboardContext']]],
-  ['toggle_5ffloat_27',['toggle_float',['../dc/d76/namespaceid_1_1ui.html#af1a25668dbffe37004384dbf14b865a8',1,'id::ui']]],
+  ['toggle_5ffloat_27',['toggle_float',['../dc/d76/namespaceid_1_1ui.html#add79c17cbb4fda990920a1cdacf09a37',1,'id::ui']]],
   ['toggle_5fhidden_5ffractal_28',['toggle_hidden_fractal',['../d7/d08/classid_1_1engine_1_1InverseJuliaKeyboardContext.html#a1e36ad3c5411219d5b2e5c127e373e49',1,'id::engine::InverseJuliaKeyboardContext']]],
   ['toggle_5fline_5fmode_29',['toggle_line_mode',['../d7/d08/classid_1_1engine_1_1InverseJuliaKeyboardContext.html#ac2d1341a7067ae4f2c81accc07f76113',1,'id::engine::InverseJuliaKeyboardContext']]],
   ['toggle_5fnumbers_30',['toggle_numbers',['../d7/d08/classid_1_1engine_1_1InverseJuliaKeyboardContext.html#a932fc608cc41b46c3cdee1c458be8977',1,'id::engine::InverseJuliaKeyboardContext']]],

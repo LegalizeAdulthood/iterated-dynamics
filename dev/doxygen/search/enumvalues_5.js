@@ -33,14 +33,16 @@ var searchData=
   ['force_5fscaled_5fsound_5fformula_30',['FORCE_SCALED_SOUND_FORMULA',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0ebac3f9565439750657d89e359f2c80a89c',1,'id::misc']]],
   ['force_5fsolid_5fguess_5ferror_31',['FORCE_SOLID_GUESS_ERROR',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0ebaad9a1d36f6b177cd652bc031209d0382',1,'id::misc']]],
   ['force_5fstandard_5ffractal_32',['FORCE_STANDARD_FRACTAL',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0ebae13b5ed7c04f781b421c97ce9c431dbd',1,'id::misc']]],
-  ['formula_33',['formula',['../d0/d19/namespaceid_1_1io.html#a2cf8b633dbb325b1d506fde8398fb96baadc4995cd52208dde39433fb069ddd61',1,'id::io::FORMULA'],['../d0/d19/namespaceid_1_1io.html#afef8aa2e895599e54fa155d399d514f4aadc4995cd52208dde39433fb069ddd61',1,'id::io::FORMULA'],['../d0/d19/namespaceid_1_1io.html#a07d66610715e8efc55a90c6ae53000adaadc4995cd52208dde39433fb069ddd61',1,'id::io::FORMULA'],['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dcaadc4995cd52208dde39433fb069ddd61',1,'id::fractals::FORMULA']]],
+  ['formula_33',['formula',['../d0/d19/namespaceid_1_1io.html#afef8aa2e895599e54fa155d399d514f4aadc4995cd52208dde39433fb069ddd61',1,'id::io::FORMULA'],['../d0/d19/namespaceid_1_1io.html#a2cf8b633dbb325b1d506fde8398fb96baadc4995cd52208dde39433fb069ddd61',1,'id::io::FORMULA'],['../d0/d19/namespaceid_1_1io.html#a07d66610715e8efc55a90c6ae53000adaadc4995cd52208dde39433fb069ddd61',1,'id::io::FORMULA'],['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dcaadc4995cd52208dde39433fb069ddd61',1,'id::fractals::FORMULA']]],
   ['forward_34',['FORWARD',['../dc/d31/namespaceid_1_1engine.html#a9a9437cfd5a0671b6f7785fb0259d527abfec72bb37910c61f36b6c29a1f7ec31',1,'id::engine']]],
   ['fractal_5finfo_5fversion_35',['FRACTAL_INFO_VERSION',['../d0/d19/namespaceid_1_1io.html#a67e09ba59a6cf0e0b6e0089d9a18775fa172e2be924a7cb434a15d1b19c9ca338',1,'id::io']]],
   ['fractal_5finfo_5fversion_5flegacy_5f20_5f4_36',['FRACTAL_INFO_VERSION_LEGACY_20_4',['../d0/d19/namespaceid_1_1io.html#a67e09ba59a6cf0e0b6e0089d9a18775fa503beb69a273e48e559da08fdf14cfa3',1,'id::io']]],
   ['fractal_5fparam_37',['FRACTAL_PARAM',['../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16ab929b79c4a95187e08e4ee1ca326a14b',1,'id::engine']]],
-  ['free_5fmem_38',['FREE_MEM',['../dc/d76/namespaceid_1_1ui.html#a7dd8240a29f6c4742e6e84c49660bf0ea10e4e017c53c21f596329b636b8a3e04',1,'id::ui']]],
-  ['froth_5fbailout_39',['FROTH_BAILOUT',['../d5/d38/namespaceid_1_1fractals.html#a5651443abb7f85e3890e683008ff5ec1a0679caf46dbac9619401b5346480f822',1,'id::fractals']]],
-  ['frothy_5fbasin_40',['FROTHY_BASIN',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca631db2cca65b992efeac252999bc3ffd',1,'id::fractals']]],
-  ['full_5fscreen_41',['FULL_SCREEN',['../dc/d31/namespaceid_1_1engine.html#ae9558f7cb0768644cedc31fe170573acae1a502139199d41bcd8f603a6d579b70',1,'id::engine']]],
-  ['function_42',['FUNCTION',['../dc/d31/namespaceid_1_1engine.html#a3e962ef5c8c7c9f05ea2e162e14d391da6a72a6a776662a244f82d31e9274a07b',1,'id::engine']]]
+  ['fractal_5ftype_5fchanged_38',['FRACTAL_TYPE_CHANGED',['../dc/d76/namespaceid_1_1ui.html#a63c57e8cba8752d224ccbe62197de228a49bf84c86653c02c34a5e0ee5e557ca6',1,'id::ui']]],
+  ['free_5fmem_39',['FREE_MEM',['../dc/d76/namespaceid_1_1ui.html#a7dd8240a29f6c4742e6e84c49660bf0ea10e4e017c53c21f596329b636b8a3e04',1,'id::ui']]],
+  ['froth_5fbailout_40',['FROTH_BAILOUT',['../d5/d38/namespaceid_1_1fractals.html#a5651443abb7f85e3890e683008ff5ec1a0679caf46dbac9619401b5346480f822',1,'id::fractals']]],
+  ['frothy_5fbasin_41',['FROTHY_BASIN',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca631db2cca65b992efeac252999bc3ffd',1,'id::fractals']]],
+  ['full_5freset_5frequested_42',['FULL_RESET_REQUESTED',['../dc/d76/namespaceid_1_1ui.html#a63c57e8cba8752d224ccbe62197de228a02d5afbc8a00d3c14351149b073d1e03',1,'id::ui']]],
+  ['full_5fscreen_43',['FULL_SCREEN',['../dc/d31/namespaceid_1_1engine.html#ae9558f7cb0768644cedc31fe170573acae1a502139199d41bcd8f603a6d579b70',1,'id::engine']]],
+  ['function_44',['FUNCTION',['../dc/d31/namespaceid_1_1engine.html#a3e962ef5c8c7c9f05ea2e162e14d391da6a72a6a776662a244f82d31e9274a07b',1,'id::engine']]]
 ];

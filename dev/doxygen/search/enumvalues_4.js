@@ -11,5 +11,6 @@ var searchData=
   ['every_8',['EVERY',['../dc/d31/namespaceid_1_1engine.html#ae3dd237ffa60763c8d49cb12a619babba66ab4d7637d22fe9a37f7f49deaf0765',1,'id::engine']]],
   ['evolve_5fmax_5fgrid_5fsize_9',['EVOLVE_MAX_GRID_SIZE',['../dc/d76/namespaceid_1_1ui.html#a35529115bd48072696ad6a872760f122ab0650ab67148d4b7a40febd8fe7559d4',1,'id::ui']]],
   ['exit_10',['EXIT',['../dc/d76/namespaceid_1_1ui.html#aae45742c0c439b12efabc426735bdcf8aa42b2fb0e720a080e79a92f4ca97d927',1,'id::ui']]],
-  ['exp_11',['EXP',['../dc/d31/namespaceid_1_1engine.html#afb93d78515f158d8ea00d0f408bf9416a8c670f8c37b95e1ed14a0ce414b049c7',1,'id::engine']]]
+  ['exit_5frequested_11',['EXIT_REQUESTED',['../dc/d76/namespaceid_1_1ui.html#a63c57e8cba8752d224ccbe62197de228a0f67e2c955ba4e385a97c2b8390f99c9',1,'id::ui']]],
+  ['exp_12',['EXP',['../dc/d31/namespaceid_1_1engine.html#afb93d78515f158d8ea00d0f408bf9416a8c670f8c37b95e1ed14a0ce414b049c7',1,'id::engine']]]
 ];

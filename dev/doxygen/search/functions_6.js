@@ -35,7 +35,7 @@ var searchData=
   ['get_5fgdi_5fdriver_32',['get_gdi_driver',['../df/d6d/namespaceid_1_1misc.html#aa7fc03c3ce154252c71ed541fd49f34e',1,'id::misc']]],
   ['get_5fgoodbye_33',['get_goodbye',['../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#af345d65deb161669deeba6c4ebe417a4',1,'id::engine::cmd_files_test']]],
   ['get_5fheight_34',['get_height',['../d4/d08/structid_1_1misc_1_1Plot.html#a411c6b5428a46f22d940ddbe56487665',1,'id::misc::Plot::get_height()'],['../d0/d59/classid_1_1misc_1_1Frame.html#a0eec6faf23984978333cb7019e223cae',1,'id::misc::Frame::get_height()']]],
-  ['get_5fhistory_35',['get_history',['../dc/d76/namespaceid_1_1ui.html#a747379696a40c618cad705e1230231e8',1,'id::ui']]],
+  ['get_5fhistory_35',['get_history',['../dc/d76/namespaceid_1_1ui.html#a1caa013d3acf23547217b93edf288f4c',1,'id::ui']]],
   ['get_5fifs_5ftoken_36',['get_ifs_token',['../d5/d38/namespaceid_1_1fractals.html#a4565b64f200c055d214c0ec50152b05a',1,'id::fractals']]],
   ['get_5fint_37',['get_int',['../d0/d5f/namespaceid_1_1help.html#a80e2ffc3625ceb917e4417f54e111cf8',1,'id::help']]],
   ['get_5fiteration_38',['get_iteration',['../df/d94/classid_1_1engine_1_1Point.html#ab9ca67a263de8021c46d62fc16a509ed',1,'id::engine::Point']]],

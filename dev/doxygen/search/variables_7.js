@@ -1,7 +1,7 @@
 var searchData=
 [
   ['h_0',['h',['../d7/de2/structid_1_1fractals_1_1MandelbrotMix.html#a41be0936080682e4edc89f1f7beec384',1,'id::fractals::MandelbrotMix']]],
-  ['handler_1',['handler',['../dd/d66/structid_1_1ui_1_1MenuHandler.html#a91cec3c30457162d9e79882d1a468f6a',1,'id::ui::MenuHandler::handler'],['../df/ddb/structid_1_1engine_1_1CommandHandler.html#a239b03f1cd85809f0835e05a10a69455',1,'id::engine::CommandHandler::handler']]],
+  ['handler_1',['handler',['../dd/d66/structid_1_1ui_1_1MenuHandler.html#a455428458063dac03ae9f56518be1f79',1,'id::ui::MenuHandler::handler'],['../df/ddb/structid_1_1engine_1_1CommandHandler.html#a239b03f1cd85809f0835e05a10a69455',1,'id::engine::CommandHandler::handler']]],
   ['has_5fval_2',['has_val',['../da/d3b/structid_1_1engine_1_1Command.html#aea690563735338019895973d9046bd25',1,'id::engine::Command']]],
   ['hash_5flink_3',['hash_link',['../d7/da9/diskvid_8cpp.html#a0465703e584f27ffd39b349ca3b7fb87',1,'diskvid.cpp']]],
   ['haze_4',['haze',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a92735e5470fe06f0bd3939f9e189e843',1,'id::io::FractalInfo::haze'],['../d1/d3e/history_8cpp.html#a7e26c9e896f9713639dbd32de99e731e',1,'haze:&#160;history.cpp']]],

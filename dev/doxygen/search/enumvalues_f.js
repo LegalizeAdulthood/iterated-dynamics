@@ -47,10 +47,11 @@ var searchData=
   ['popcorn_44',['POPCORN',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca16ce04fbf69baaecc7ec136883c26f5b',1,'id::fractals']]],
   ['popcorn_5fjul_45',['POPCORN_JUL',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca877762e5c2df7e6b8e2295e8ea9cb6fe',1,'id::fractals']]],
   ['position_46',['POSITION',['../dc/d76/namespaceid_1_1ui.html#af2cd118f0b25d48a16b72102e4ed450fa90b4ba73224408e82ade8a072a3712c1',1,'id::ui']]],
-  ['prevent_5farbitrary_5fprecision_5fmath_47',['PREVENT_ARBITRARY_PRECISION_MATH',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0ebab31b300cffaf1267392ed032979b2986',1,'id::misc']]],
-  ['prevent_5fmiim_48',['PREVENT_MIIM',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0eba734a5691ec6e05d4873533bf3a92d536',1,'id::misc']]],
-  ['prevent_5fplasma_5frandom_49',['PREVENT_PLASMA_RANDOM',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0eba5bd2dfc4e3da31858444d2a7f289550e',1,'id::misc']]],
-  ['print_50',['PRINT',['../d9/dcc/namespacehc.html#a0bf96c9ff7ac5b68a1c5e9c7cd0918ceaf96eee4e48ee90430f17fb3a8388507b',1,'hc']]],
-  ['print_5fbuffer_5fsize_51',['PRINT_BUFFER_SIZE',['../d0/d5f/namespaceid_1_1help.html#a77e2e92ad1e40c1be5cc6609fce9339faade36f090d213ad42bdf7e96119481ee',1,'id::help']]],
-  ['problem_52',['PROBLEM',['../df/d6d/namespaceid_1_1misc.html#a6fc6aa7c69be33597385b939c6d19b22ad9645597ac6e6550ac9945b3e61a6447',1,'id::misc']]]
+  ['presentation_5fchanged_47',['PRESENTATION_CHANGED',['../dc/d76/namespaceid_1_1ui.html#a63c57e8cba8752d224ccbe62197de228a2585962b9fe21b6aeaf3581d39694039',1,'id::ui']]],
+  ['prevent_5farbitrary_5fprecision_5fmath_48',['PREVENT_ARBITRARY_PRECISION_MATH',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0ebab31b300cffaf1267392ed032979b2986',1,'id::misc']]],
+  ['prevent_5fmiim_49',['PREVENT_MIIM',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0eba734a5691ec6e05d4873533bf3a92d536',1,'id::misc']]],
+  ['prevent_5fplasma_5frandom_50',['PREVENT_PLASMA_RANDOM',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0eba5bd2dfc4e3da31858444d2a7f289550e',1,'id::misc']]],
+  ['print_51',['PRINT',['../d9/dcc/namespacehc.html#a0bf96c9ff7ac5b68a1c5e9c7cd0918ceaf96eee4e48ee90430f17fb3a8388507b',1,'hc']]],
+  ['print_5fbuffer_5fsize_52',['PRINT_BUFFER_SIZE',['../d0/d5f/namespaceid_1_1help.html#a77e2e92ad1e40c1be5cc6609fce9339faade36f090d213ad42bdf7e96119481ee',1,'id::help']]],
+  ['problem_53',['PROBLEM',['../df/d6d/namespaceid_1_1misc.html#a6fc6aa7c69be33597385b939c6d19b22ad9645597ac6e6550ac9945b3e61a6447',1,'id::misc']]]
 ];

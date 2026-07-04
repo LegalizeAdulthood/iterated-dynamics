@@ -34,5 +34,6 @@ var searchData=
   ['unspiral_5fmap_31',['unspiral_map',['../dc/d76/namespaceid_1_1ui.html#a59f4f14fa724559157bfd0c8d86d261e',1,'id::ui']]],
   ['unstack_5fscreen_32',['unstack_screen',['../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#a7de1d6da2b68908086346c903a2a91f5',1,'id::misc::Win32BaseDriver::unstack_screen()'],['../d3/def/classid_1_1misc_1_1Driver.html#aad09347f17d892b2c0d7689726ceedc7',1,'id::misc::Driver::unstack_screen()']]],
   ['update_33',['update',['../df/d5b/classid_1_1ui_1_1RGBEditor.html#ab22b89ec1df0f21827f4f6cd6409ef8b',1,'id::ui::RGBEditor']]],
-  ['update_5fsave_5fname_34',['update_save_name',['../d0/d19/namespaceid_1_1io.html#aedae33ff080f49a192e3ec047513aea7',1,'id::io::update_save_name(std::string &amp;filename)'],['../d0/d19/namespaceid_1_1io.html#a32c2e165bbd1156e24424405b6866e1b',1,'id::io::update_save_name(std::filesystem::path &amp;filename)']]]
+  ['update_5fcalculation_5ftimer_34',['update_calculation_timer',['../dc/d31/namespaceid_1_1engine.html#a1c87ffcb0e8c2b74dc75ac4786849574',1,'id::engine']]],
+  ['update_5fsave_5fname_35',['update_save_name',['../d0/d19/namespaceid_1_1io.html#aedae33ff080f49a192e3ec047513aea7',1,'id::io::update_save_name(std::string &amp;filename)'],['../d0/d19/namespaceid_1_1io.html#a32c2e165bbd1156e24424405b6866e1b',1,'id::io::update_save_name(std::filesystem::path &amp;filename)']]]
 ];
