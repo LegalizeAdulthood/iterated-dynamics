@@ -24,25 +24,44 @@ public:
     bool iterate();
     unsigned long limit() const;
     int scan();
+    void suspend();
 
 private:
+    enum class Phase
+    {
+        FIRST_HALF,
+        SECOND_HALF,
+        DONE
+    };
+
     static void count_to_int(unsigned long counter, int &x, int &y, int dif_offset);
 
-    int engine();
+    bool calculate_current_pixel();
+    bool done() const;
     void initialize();
+    bool process_counter();
+    bool process_dither_counter();
+    bool process_fill_counter();
+    bool process_point_counter();
     void plot_block(int x, int y, int size, int color);
     void plot_block_lim(int x, int y, int size, int color);
+    void update_phase();
 
     std::array<Byte, 4096> m_stack{};
+    Phase m_phase{Phase::FIRST_HALF};
     unsigned int m_bits{};
     unsigned long m_counter{};
     unsigned long m_limit{};
     int m_dif_offset{};
     int m_nx{};
     int m_ny{};
+    int m_orig_col{};
+    int m_orig_row{};
     int m_rem_x{};
     int m_rem_y{};
     int m_size{};
+    int m_tile_x{};
+    int m_tile_y{};
     bool m_initialized{};
 };
 

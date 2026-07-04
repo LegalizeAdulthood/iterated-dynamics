@@ -215,6 +215,11 @@ void StandardPass::suspend()
         std::get<BoundaryTrace>(m_state).suspend();
         return;
     }
+    if (m_state.index() == DIFFUSION)
+    {
+        std::get<Diffusion>(m_state).suspend();
+        return;
+    }
 
     if (m_state.index() != TESSERAL)
     {

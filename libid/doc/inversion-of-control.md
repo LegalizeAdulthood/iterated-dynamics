@@ -376,38 +376,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Diffusion Counter Iteration
-
-Work:
-
-- Replace the one-shot `Diffusion::engine()` path with explicit
-  object-owned traversal phases.
-- Store the current phase, counter, tile indexes, and remainder-edge
-  state that currently live on the stack inside `Diffusion::engine()`.
-- Return from `iterate()` after bounded diffusion counter work instead of
-  running the whole diffusion traversal under one call.
-- Advance `m_counter` only after all tile and remainder work for that
-  counter is complete.
-- Add `Diffusion::suspend()` and route it through
-  `StandardPass::suspend()` so UI interruption records a valid resume
-  point.
-- Preserve the existing high/low-word work-list encoding for diffusion
-  resume.  If only counter-boundary resume is supported in the first
-  pass, make the bounded return point a counter boundary.
-
-Done when:
-
-- Re-entry into `Diffusion::iterate()` resumes the same phase and counter
-  without recomputing earlier traversal state.
-- `Diffusion::scan()` no longer hides a full image traversal.
-- `StandardPass::suspend()` delegates to `Diffusion`.
-- Diffusion output remains compatible with existing renders.
-
-Manual testing:
-
-- None.
-
-### Slice 2: SolidGuess Scan Phases
+### Slice 1: SolidGuess Scan Phases
 
 Work:
 
@@ -435,7 +404,7 @@ Manual testing:
 
 - None.
 
-### Slice 3: SolidGuess Block State
+### Slice 2: SolidGuess Block State
 
 Work:
 
@@ -460,7 +429,7 @@ Manual testing:
 
 - None.
 
-### Slice 4: SolidGuess Repaint And Suspend
+### Slice 3: SolidGuess Repaint And Suspend
 
 Work:
 
@@ -484,7 +453,7 @@ Manual testing:
 - `type=mandel passes=g maxiter=10000`
 - `type=mandel passes=g3 maxiter=10000`
 
-### Slice 5: SynchronousOrbit Frame Stack
+### Slice 4: SynchronousOrbit Frame Stack
 
 Work:
 
@@ -509,7 +478,7 @@ Manual testing:
 
 - None.
 
-### Slice 6: SynchronousOrbit Scan State
+### Slice 5: SynchronousOrbit Scan State
 
 Work:
 
@@ -532,7 +501,7 @@ Manual testing:
 
 - None.
 
-### Slice 7: SynchronousOrbit Polling And Suspend
+### Slice 6: SynchronousOrbit Polling And Suspend
 
 Work:
 
@@ -552,7 +521,7 @@ Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 8: StickyOrbits Seed Traversal
+### Slice 7: StickyOrbits Seed Traversal
 
 Work:
 
@@ -580,7 +549,7 @@ Manual testing:
 
 - None.
 
-### Slice 9: StickyOrbits Orbit State
+### Slice 8: StickyOrbits Orbit State
 
 Work:
 
@@ -603,7 +572,7 @@ Manual testing:
 
 - `type=lorenz passes=o maxiter=10000`
 
-### Slice 10: Tesseral Initialization State
+### Slice 9: Tesseral Initialization State
 
 Work:
 
@@ -626,7 +595,7 @@ Manual testing:
 
 - None.
 
-### Slice 11: Tesseral Edge Probe State
+### Slice 10: Tesseral Edge Probe State
 
 Work:
 
@@ -649,7 +618,7 @@ Manual testing:
 
 - None.
 
-### Slice 12: Tesseral Fill And Suspend
+### Slice 11: Tesseral Fill And Suspend
 
 Work:
 
@@ -670,7 +639,7 @@ Manual testing:
 - `type=mandel passes=t maxiter=10000`
 - `type=mandel passes=t fillcolor=1 maxiter=10000`
 
-### Slice 13: Standard Orbit Plot Pacing
+### Slice 12: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -751,7 +720,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 14: Sound Output Pacing
+### Slice 13: Sound Output Pacing
 
 Work:
 
@@ -772,7 +741,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 15: Wait-Until Cleanup
+### Slice 14: Wait-Until Cleanup
 
 Work:
 
@@ -799,7 +768,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 16: StandardFractal Pixel Interrupts
+### Slice 15: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -826,7 +795,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 17: Perturbation Traversal Ownership
+### Slice 16: Perturbation Traversal Ownership
 
 Work:
 
@@ -869,7 +838,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 18: Perturbation Pass-Switch Tests
+### Slice 17: Perturbation Pass-Switch Tests
 
 Work:
 
