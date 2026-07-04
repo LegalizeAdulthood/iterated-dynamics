@@ -87,7 +87,7 @@ SolidGuess::SolidGuess() :
 bool SolidGuess::iterate()
 {
     scan();
-    return true;
+    return done();
 }
 
 // Timothy Wegner invented this solid guessing idea and implemented it in
@@ -98,169 +98,273 @@ bool SolidGuess::iterate()
 // faster, but is also more accurate. Harrumph!
 int SolidGuess::scan()
 {
-    if (g_work_pass == 0) // otherwise first pass already done
-    {
-        // first pass, calc every blocksize**2 pixel, quarter result & paint it
-        g_current_pass = 1;
-        if (g_i_start_pt.y <= g_start_pt.y) // first time for this window, init it
-        {
-            g_current_row = 0;
-            fill_prefix_plane(1, 0); // noskip flags off
-            g_reset_periodicity = true;
-            g_row = g_i_start_pt.y;
-            for (g_col = g_i_start_pt.x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
-            {
-                // calc top row
-                if (calc_type() == -1)
-                {
-                    add_work_list(g_start_pt.x, g_start_pt.y, //
-                        g_stop_pt.x, g_stop_pt.y,             //
-                        g_begin_pt.x, g_begin_pt.y,           //
-                        0, g_work_symmetry);
-                    return 0;
-                }
-                g_reset_periodicity = false;
-            }
-        }
-        else
-        {
-            fill_prefix_plane(1, ~0U); // noskip flags on
-        }
-        for (int y = g_i_start_pt.y; y <= g_i_stop_pt.y; y += m_block_size)
-        {
-            g_current_row = y;
-            int i = 0;
-            if (y+m_block_size <= g_i_stop_pt.y)
-            {
-                // calc the row below
-                g_row = y+m_block_size;
-                g_reset_periodicity = true;
-                for (g_col = g_i_start_pt.x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
-                {
-                    i = calc_type();
-                    if (i == -1)
-                    {
-                        break;
-                    }
-                    g_reset_periodicity = false;
-                }
-            }
-            g_reset_periodicity = false;
-            if (i == -1 || guess_row(true, y, m_block_size)) // interrupted?
-            {
-                y = std::max(y, g_start_pt.y);
-                add_work_list(g_start_pt.x, g_start_pt.y,                //
-                    g_stop_pt.x, g_stop_pt.y,                            //
-                    g_start_pt.x, y,                                     //
-                    0, g_work_symmetry);
-                return 0;
-            }
-        }
-
-        if (g_num_work_list) // work list not empty, just do 1st pass
-        {
-            add_work_list(g_start_pt.x, g_start_pt.y, //
-                g_stop_pt.x, g_stop_pt.y,             //
-                g_start_pt.x, g_start_pt.y,           //
-                1, g_work_symmetry);
-            return 0;
-        }
-        ++g_work_pass;
-        g_i_start_pt.y = g_start_pt.y & -1 - (m_max_block - 1);
-
-        // calculate skip flags for skippable blocks
-        const int x_lim = (g_i_stop_pt.x + m_max_block) / m_max_block + 1;
-        const int y_lim = ((g_i_stop_pt.y + m_max_block) / m_max_block + 15) / 16 + 1;
-        if (!m_right_guess)         // no right edge guessing, zap border
-        {
-            for (int y = 0; y <= y_lim; ++y)
-            {
-                m_prefix[1][y][x_lim] = 0xffff;
-            }
-        }
-        if (!m_bottom_guess)      // no bottom edge guessing, zap border
-        {
-            int i = (g_i_stop_pt.y + m_max_block) / m_max_block + 1;
-            const int y = i/16+1;
-            i = 1 << (i&15);
-            for (int x = 0; x <= x_lim; ++x)
-            {
-                m_prefix[1][y][x] |= i;
-            }
-        }
-        // set each bit in tprefix[0] to OR of it & surrounding 8 in tprefix[1]
-        for (int y = 0; ++y < y_lim;)
-        {
-            unsigned int *pfx_p0 = &m_prefix[0][y][0];
-            const unsigned int *pfx_p1 = &m_prefix[1][y][0];
-            for (int x = 0; ++x < x_lim;)
-            {
-                ++pfx_p1;
-                const unsigned int u = *(pfx_p1 - 1) | *pfx_p1 | *(pfx_p1 + 1);
-                *++pfx_p0 = u| u >> 1 | u << 1
-                             |
-                    (*(pfx_p1 - (MAX_X_BLK + 1)) | *(pfx_p1 - MAX_X_BLK) | *(pfx_p1 - (MAX_X_BLK - 1))) >>
-                        15
-                             |
-                    (*(pfx_p1 + (MAX_X_BLK - 1)) | *(pfx_p1 + MAX_X_BLK) | *(pfx_p1 + (MAX_X_BLK + 1))) << 15;
-            }
-        }
-    }
-    else   // first pass already done
-    {
-        fill_prefix_plane(0, ~0U); // noskip flags on
-    }
-    if (g_three_pass)
-    {
-        return 0;
-    }
-
-    // remaining pass(es), halve blocksize & quarter each blocksize**2
-    int i = g_work_pass;
-    while (--i > 0)   // allow for already done passes
-    {
-        m_block_size /= 2;
-    }
-    g_reset_periodicity = false;
-    while ((m_block_size = m_block_size >> 1) >= 2)
-    {
-        if (g_stop_pass > 0 && g_work_pass >= g_stop_pass)
-        {
-            return 0;
-        }
-        g_current_pass = g_work_pass + 1;
-        for (int y = g_i_start_pt.y; y <= g_i_stop_pt.y; y += m_block_size)
-        {
-            g_current_row = y;
-            if (guess_row(false, y, m_block_size))
-            {
-                y = std::max(y, g_start_pt.y);
-                add_work_list(g_start_pt.x, g_start_pt.y, //
-                    g_stop_pt.x, g_stop_pt.y,             //
-                    g_start_pt.x, y,                      //
-                    g_work_pass, g_work_symmetry);
-                return 0;
-            }
-        }
-        ++g_work_pass;
-        if (g_num_work_list // work list not empty, do one pass at a time
-            && m_block_size > 2) // if 2, we just did last pass
-        {
-            add_work_list(g_start_pt.x, g_start_pt.y, //
-                g_stop_pt.x, g_stop_pt.y,             //
-                g_start_pt.x, g_start_pt.y,           //
-                g_work_pass, g_work_symmetry);
-            return 0;
-        }
-        g_i_start_pt.y = g_start_pt.y & -1 - (m_max_block - 1);
-    }
-
+    process_step();
     return 0;
 }
 
 void SolidGuess::fill_prefix_plane(const int plane, const unsigned int value)
 {
     std::fill_n(&m_prefix[plane][0][0], MAX_Y_BLK * MAX_X_BLK, value);
+}
+
+bool SolidGuess::done() const
+{
+    return m_phase == Phase::DONE;
+}
+
+void SolidGuess::initialize_scan()
+{
+    if (g_work_pass == 0)
+    {
+        m_phase = g_i_start_pt.y <= g_start_pt.y ? Phase::FIRST_PASS_TOP_ROW : Phase::FIRST_PASS_ROWS;
+        if (m_phase == Phase::FIRST_PASS_ROWS)
+        {
+            fill_prefix_plane(1, ~0U); // noskip flags on
+        }
+        m_current_y = g_i_start_pt.y;
+        return;
+    }
+
+    fill_prefix_plane(0, ~0U); // noskip flags on
+    m_phase = Phase::REMAINING_SETUP;
+}
+
+void SolidGuess::process_first_pass_top_row()
+{
+    // first pass, calc every blocksize**2 pixel, quarter result & paint it
+    g_current_pass = 1;
+    g_current_row = 0;
+    fill_prefix_plane(1, 0); // noskip flags off
+    g_reset_periodicity = true;
+    g_row = g_i_start_pt.y;
+    for (g_col = g_i_start_pt.x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
+    {
+        // calc top row
+        if (calc_type() == -1)
+        {
+            add_work_list(g_start_pt.x, g_start_pt.y, //
+                g_stop_pt.x, g_stop_pt.y,             //
+                g_begin_pt.x, g_begin_pt.y,           //
+                0, g_work_symmetry);
+            m_phase = Phase::DONE;
+            return;
+        }
+        g_reset_periodicity = false;
+    }
+    m_current_y = g_i_start_pt.y;
+    m_phase = Phase::FIRST_PASS_ROWS;
+}
+
+void SolidGuess::process_first_pass_rows()
+{
+    if (m_current_y > g_i_stop_pt.y)
+    {
+        if (g_num_work_list) // work list not empty, just do 1st pass
+        {
+            save_deferred_work(1);
+            m_phase = Phase::DONE;
+            return;
+        }
+        ++g_work_pass;
+        g_i_start_pt.y = g_start_pt.y & -1 - (m_max_block - 1);
+        m_phase = Phase::PREFIX_BORDER_SETUP;
+        return;
+    }
+
+    g_current_pass = 1;
+    g_current_row = m_current_y;
+    int i = 0;
+    if (m_current_y + m_block_size <= g_i_stop_pt.y)
+    {
+        // calc the row below
+        g_row = m_current_y + m_block_size;
+        g_reset_periodicity = true;
+        for (g_col = g_i_start_pt.x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
+        {
+            i = calc_type();
+            if (i == -1)
+            {
+                break;
+            }
+            g_reset_periodicity = false;
+        }
+    }
+    g_reset_periodicity = false;
+    if (i == -1 || guess_row(true, m_current_y, m_block_size)) // interrupted?
+    {
+        save_resume_work(m_current_y, 0);
+        m_phase = Phase::DONE;
+        return;
+    }
+    m_current_y += m_block_size;
+}
+
+void SolidGuess::process_prefix_border_setup()
+{
+    // calculate skip flags for skippable blocks
+    m_prefix_x_lim = (g_i_stop_pt.x + m_max_block) / m_max_block + 1;
+    m_prefix_y_lim = ((g_i_stop_pt.y + m_max_block) / m_max_block + 15) / 16 + 1;
+    if (!m_right_guess) // no right edge guessing, zap border
+    {
+        for (int y = 0; y <= m_prefix_y_lim; ++y)
+        {
+            m_prefix[1][y][m_prefix_x_lim] = 0xffff;
+        }
+    }
+    if (!m_bottom_guess) // no bottom edge guessing, zap border
+    {
+        int i = (g_i_stop_pt.y + m_max_block) / m_max_block + 1;
+        const int y = i / 16 + 1;
+        i = 1 << (i & 15);
+        for (int x = 0; x <= m_prefix_x_lim; ++x)
+        {
+            m_prefix[1][y][x] |= i;
+        }
+    }
+    m_prefix_or_y = 0;
+    m_phase = Phase::PREFIX_OR_SETUP;
+}
+
+void SolidGuess::process_prefix_or_setup()
+{
+    // set each bit in tprefix[0] to OR of it & surrounding 8 in tprefix[1]
+    if (++m_prefix_or_y >= m_prefix_y_lim)
+    {
+        m_phase = Phase::REMAINING_SETUP;
+        return;
+    }
+
+    unsigned int *pfx_p0 = &m_prefix[0][m_prefix_or_y][0];
+    const unsigned int *pfx_p1 = &m_prefix[1][m_prefix_or_y][0];
+    for (int x = 0; ++x < m_prefix_x_lim;)
+    {
+        ++pfx_p1;
+        const unsigned int u = *(pfx_p1 - 1) | *pfx_p1 | *(pfx_p1 + 1);
+        *++pfx_p0 = u | u >> 1 | u << 1 |
+            (*(pfx_p1 - (MAX_X_BLK + 1)) | *(pfx_p1 - MAX_X_BLK) | *(pfx_p1 - (MAX_X_BLK - 1))) >> 15 |
+            (*(pfx_p1 + (MAX_X_BLK - 1)) | *(pfx_p1 + MAX_X_BLK) | *(pfx_p1 + (MAX_X_BLK + 1))) << 15;
+    }
+}
+
+void SolidGuess::process_remaining_setup()
+{
+    if (g_three_pass)
+    {
+        m_phase = Phase::DONE;
+        return;
+    }
+
+    // remaining pass(es), halve blocksize & quarter each blocksize**2
+    int i = g_work_pass;
+    while (--i > 0) // allow for already done passes
+    {
+        m_block_size /= 2;
+    }
+    g_reset_periodicity = false;
+    m_phase = Phase::REMAINING_PASS_START;
+}
+
+void SolidGuess::process_remaining_pass_start()
+{
+    m_block_size >>= 1;
+    if (m_block_size < 2)
+    {
+        m_phase = Phase::DONE;
+        return;
+    }
+    if (g_stop_pass > 0 && g_work_pass >= g_stop_pass)
+    {
+        m_phase = Phase::DONE;
+        return;
+    }
+    g_current_pass = g_work_pass + 1;
+    m_current_y = g_i_start_pt.y;
+    m_phase = Phase::REMAINING_ROWS;
+}
+
+void SolidGuess::process_remaining_rows()
+{
+    if (m_current_y > g_i_stop_pt.y)
+    {
+        ++g_work_pass;
+        if (g_num_work_list      // work list not empty, do one pass at a time
+            && m_block_size > 2) // if 2, we just did last pass
+        {
+            save_deferred_work(g_work_pass);
+            m_phase = Phase::DONE;
+            return;
+        }
+        g_i_start_pt.y = g_start_pt.y & -1 - (m_max_block - 1);
+        m_phase = Phase::REMAINING_PASS_START;
+        return;
+    }
+
+    g_current_pass = g_work_pass + 1;
+    g_current_row = m_current_y;
+    if (guess_row(false, m_current_y, m_block_size))
+    {
+        save_resume_work(m_current_y, g_work_pass);
+        m_phase = Phase::DONE;
+        return;
+    }
+    m_current_y += m_block_size;
+}
+
+void SolidGuess::process_step()
+{
+    switch (m_phase)
+    {
+    case Phase::START:
+        initialize_scan();
+        break;
+
+    case Phase::FIRST_PASS_TOP_ROW:
+        process_first_pass_top_row();
+        break;
+
+    case Phase::FIRST_PASS_ROWS:
+        process_first_pass_rows();
+        break;
+
+    case Phase::PREFIX_BORDER_SETUP:
+        process_prefix_border_setup();
+        break;
+
+    case Phase::PREFIX_OR_SETUP:
+        process_prefix_or_setup();
+        break;
+
+    case Phase::REMAINING_SETUP:
+        process_remaining_setup();
+        break;
+
+    case Phase::REMAINING_PASS_START:
+        process_remaining_pass_start();
+        break;
+
+    case Phase::REMAINING_ROWS:
+        process_remaining_rows();
+        break;
+
+    case Phase::DONE:
+        break;
+    }
+}
+
+void SolidGuess::save_deferred_work(const int pass)
+{
+    add_work_list(g_start_pt.x, g_start_pt.y, //
+        g_stop_pt.x, g_stop_pt.y,             //
+        g_start_pt.x, g_start_pt.y,           //
+        pass, g_work_symmetry);
+}
+
+void SolidGuess::save_resume_work(const int y, const int pass)
+{
+    add_work_list(g_start_pt.x, g_start_pt.y,    //
+        g_stop_pt.x, g_stop_pt.y,                //
+        g_start_pt.x, std::max(y, g_start_pt.y), //
+        pass, g_work_symmetry);
 }
 
 static int calc_a_dot(const int x, const int y)
