@@ -152,25 +152,28 @@ The current code is already part-way through this plan:
 - `StandardFractal::run_current_work_item_mode()` is already a thin
   explicit `CalcMode` dispatch.
 - Tesseral is a concrete `StandardPass` alternative.  `Tesseral` has
-  `iterate()`, `done()`, and `suspend()`.
+  `iterate()`, `done()`, and `suspend()`, and owns its box stack.  Edge
+  probing and box filling still run as unbounded helper loops inside one
+  `iterate()` call.
 - The `OnePass` and `TwoPass` paths share `ScanlinePass`; they preserve
   scan position in the concrete pass object and yield standard pixel work
   back to the UI.  They still communicate active pixel position through
   `g_row` and `g_col`.
 - `BoundaryTrace` is a concrete `StandardPass` alternative.  It owns the
-  outer scan cursor and reports scan progress, but outline tracing and
-  region filling still run as monolithic helper phases.  It has no
-  suspend path and still relies on coarse work-list restart when a pixel
-  calculation reports interruption.
-- `Diffusion` is a concrete `StandardPass` alternative and owns diffusion
-  scan traversal state.
-- `SolidGuess` is a concrete `StandardPass` alternative and still probes
+  outer scan cursor, outline tracing state, region filling state, and
+  suspend path.
+- `Diffusion` is a concrete `StandardPass` alternative.  It preserves the
+  diffusion counter, but tile-local traversal state still lives on the
+  stack inside `Diffusion::engine()`.
+- `SolidGuess` is a concrete `StandardPass` alternative.  First-pass row
+  traversal, remaining pass traversal, `guess_row()` block state, and
+  fast row repaint state still live on the stack.  It still probes
   keyboard input while filling guessed rows.
-- `SynchronousOrbit` still uses recursive control flow plus direct key
-  polling, but its calculation state is owned by the concrete pass
-  object.
-- `StickyOrbits` is a concrete `StandardPass` alternative; interruption
-  still happens in the orbit plotting helper.
+- `SynchronousOrbit` still uses recursive control flow, stack-local scan
+  state, `goto scan`, and direct key polling.
+- `StickyOrbits` is a concrete `StandardPass` alternative.  Rectangle,
+  line, and function traversal state still live on the stack, and
+  interruption still happens in the orbit plotting helper.
 - Perturbation has a `PertEngine` owned by `StandardFractal`, is
   initialized and driven from `StandardFractal`, and is selected
   separately from the active traversal mode.  `passes=p` is compatibility
@@ -373,7 +376,328 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Standard Orbit Plot Pacing
+### Slice 1: Diffusion Setup State
+
+Work:
+
+- Keep `Diffusion` as the concrete `StandardPass` implementation for
+  `passes=d`.
+- Move `Diffusion::scan()` setup into object-owned initialization state:
+  `m_bits`, `m_limit`, square size, tile counts, remainder sizes, and
+  `dif_offset`.
+- Decode the existing diffusion resume counter once during
+  initialization.
+- Keep the current full traversal behavior after initialization.  Do not
+  change pixel order in this slice.
+- Leave `Diffusion::engine()` as the remaining unbounded traversal target
+  for the next slice.
+
+Done when:
+
+- `Diffusion::iterate()` initializes diffusion geometry once.
+- Re-entry into `Diffusion::iterate()` does not recompute setup state.
+- Diffusion status reporting uses object-owned setup values.
+- Diffusion output remains compatible with existing renders.
+
+Manual testing:
+
+- None.
+
+### Slice 2: Diffusion Counter Iteration
+
+Work:
+
+- Replace the one-shot `Diffusion::engine()` path with explicit
+  object-owned traversal phases.
+- Store the current phase, counter, tile indexes, and remainder-edge
+  state that currently live on the stack inside `Diffusion::engine()`.
+- Return from `iterate()` after bounded diffusion counter work instead of
+  running the whole diffusion traversal under one call.
+- Advance `m_counter` only after all tile and remainder work for that
+  counter is complete.
+- Add `Diffusion::suspend()` and route it through
+  `StandardPass::suspend()` so UI interruption records a valid resume
+  point.
+- Preserve the existing high/low-word work-list encoding for diffusion
+  resume.  If only counter-boundary resume is supported in the first
+  pass, make the bounded return point a counter boundary.
+
+Done when:
+
+- Re-entry into `Diffusion::iterate()` resumes the same phase and counter
+  without recomputing earlier traversal state.
+- `Diffusion::scan()` no longer hides a full image traversal.
+- `StandardPass::suspend()` delegates to `Diffusion`.
+- Diffusion output remains compatible with existing renders.
+
+Manual testing:
+
+- None.
+
+### Slice 3: SolidGuess Scan Phases
+
+Work:
+
+- Keep `SolidGuess` as the concrete `StandardPass` implementation for
+  `passes=g`.
+- Refactor `SolidGuess::scan()` into explicit phases: first-pass top
+  row, first-pass row traversal, prefix border setup, prefix OR setup,
+  remaining pass setup, remaining row traversal, stop-pass handling, and
+  work-list deferral.
+- Preserve the existing call to `guess_row()` as the row work unit for
+  now.  Do not move block-local state in this slice.
+- Preserve current work-list deferral and stop-pass behavior.
+
+Done when:
+
+- `SolidGuess::iterate()` advances pass-level scan phases through object
+  state.
+- Restarting `SolidGuess::iterate()` preserves current pass, row, and
+  setup phase.
+- `guess_row()` remains the only unbounded row helper left for the next
+  slice.
+- `passes=g` and `passes=g3` preserve current render behavior.
+
+Manual testing:
+
+- None.
+
+### Slice 4: SolidGuess Block State
+
+Work:
+
+- Move `SolidGuess::guess_row()` block-local state into `SolidGuess`:
+  current `x`, prefix pointer and mask, neighboring colors, guessed
+  flags, fixup flags, and the active block phase.
+- Return from `iterate()` after bounded block work instead of completing
+  the whole row under one call.
+- Preserve first-pass and remaining-pass color decisions exactly.
+- Leave fast row repaint and symmetry repaint loops as the remaining
+  unbounded target for the next slice.
+
+Done when:
+
+- `SolidGuess::guess_row()` no longer depends on stack-local state to
+  resume row traversal.
+- `SolidGuess::iterate()` can yield between guessed blocks without losing
+  block state.
+- `passes=g` and `passes=g3` preserve current render behavior.
+
+Manual testing:
+
+- None.
+
+### Slice 5: SolidGuess Repaint And Suspend
+
+Work:
+
+- Move fast `write_span()` row fill and symmetry repaint loops into
+  bounded state owned by `SolidGuess`.
+- Remove direct driver polling from `SolidGuess`; the standard UI polling
+  loop owns the interrupt decision and calls `suspend()`.
+- Preserve current solid-guess work-list resume behavior at row and pass
+  boundaries.
+
+Done when:
+
+- `engine/SolidGuess.cpp` has no driver key polling.
+- `SolidGuess::iterate()` returns after bounded row, block, or repaint
+  work without losing block state.
+- `StandardPass::suspend()` delegates to `SolidGuess`.
+- `passes=g` and `passes=g3` preserve current render behavior.
+
+Manual testing:
+
+- `type=mandel passes=g maxiter=10000`
+- `type=mandel passes=g3 maxiter=10000`
+
+### Slice 6: SynchronousOrbit Frame Stack
+
+Work:
+
+- Keep `SynchronousOrbit` as the concrete `StandardPass` implementation
+  for `passes=s`.
+- Replace recursive `rhombus()` and `rhombus_aux()` control flow with a
+  `SynchronousOrbit`-owned work stack.
+- Store each rhombus frame's rectangle, corner values, iteration value,
+  saved key values, child index, and current phase.
+- Preserve the current synchronous scan path as the leaf-frame work unit.
+  Do not move scan-path locals in this slice.
+- Replace child recursion with explicit frame push and pop operations.
+
+Done when:
+
+- SOI subdivision no longer relies on C++ call-stack depth.
+- `SynchronousOrbit::iterate()` owns the active frame stack.
+- Leaf scan work remains the next unbounded target.
+- SOI render output remains compatible with current behavior.
+
+Manual testing:
+
+- None.
+
+### Slice 7: SynchronousOrbit Scan State
+
+Work:
+
+- Move scan-path locals into the active frame or object state: scan row,
+  interleave column, backfill column, saved color, helper color, and
+  interpolation coefficients needed to resume scanning.
+- Replace the `goto scan` path with an explicit frame phase.
+- Return from `iterate()` after bounded scan work instead of completing a
+  whole leaf rectangle under one call.
+- Preserve interpolation and color decisions exactly.
+
+Done when:
+
+- `SynchronousOrbit::iterate()` can yield from leaf scan work without
+  losing scan position.
+- The old `goto scan` path is represented by explicit frame state.
+- SOI render output remains compatible with current behavior.
+
+Manual testing:
+
+- None.
+
+### Slice 8: SynchronousOrbit Polling And Suspend
+
+Work:
+
+- Remove direct driver polling from `SynchronousOrbit`; the standard UI
+  polling loop owns the interrupt decision and calls `suspend()`.
+- Add a `SynchronousOrbit::suspend()` path and route it through
+  `StandardPass::suspend()`.
+
+Done when:
+
+- `engine/SynchronousOrbit.cpp` has no direct driver key polling.
+- `SynchronousOrbit::iterate()` can return from recursive and scan work
+  without losing position.
+- `StandardPass::suspend()` delegates to `SynchronousOrbit`.
+
+Manual testing:
+
+- `type=mandel passes=s maxiter=10000`
+
+### Slice 9: StickyOrbits Seed Traversal
+
+Work:
+
+- Keep `StickyOrbits` as the concrete `StandardPass` implementation for
+  `passes=o`.
+- Run `plot_orbits2d_setup()` once when `StickyOrbits` is initialized or
+  resumed, not on every `iterate()` call.
+- Move rectangle traversal state into `StickyOrbits`: current row and
+  column.
+- Move line traversal state into `StickyOrbits`: current row and column,
+  final coordinate, Bresenham accumulator, increments, and slope mode.
+- Move function traversal state into `StickyOrbits`: current angle,
+  rotation limit, center, magnification, factors, and transform setup.
+- Preserve the existing whole-orbit `plot_orbits2d()` call as the seed
+  work unit for now.
+
+Done when:
+
+- `StickyOrbits::iterate()` advances rectangle, line, and function seed
+  traversal through object state.
+- Re-entry into `StickyOrbits::iterate()` resumes at the same seed point.
+- `plot_orbits2d()` remains the next unbounded orbit helper.
+
+Manual testing:
+
+- None.
+
+### Slice 10: StickyOrbits Orbit State
+
+Work:
+
+- Split the Lorenz orbit plotting helper so the current seed's orbit can
+  be advanced incrementally without polling input, muting the driver, or
+  allocating resume state.
+- Let `StickyOrbits` and `StandardFractal` record resume state when the
+  UI polling loop suspends rendering.
+
+Done when:
+
+- `StickyOrbits::iterate()` advances bounded seed or orbit work and can
+  resume rectangle, line, and function modes.
+- `fractals/lorenz.cpp::plot_orbits2d()` has no direct driver key
+  polling.
+- `plot_orbits2d()` no longer owns interruption or resume allocation.
+- `StandardPass::suspend()` delegates to `StickyOrbits`.
+
+Manual testing:
+
+- `type=lorenz passes=o maxiter=10000`
+
+### Slice 11: Tesseral Initialization State
+
+Work:
+
+- Keep `Tesseral` as the concrete `StandardPass` implementation for
+  `passes=t`.
+- Make `Tesseral` construction initialize state only; move top, bottom,
+  left, and right edge calculation into bounded initialization phases.
+- Preserve the existing row and column probe helpers as the edge work
+  unit for now.
+
+Done when:
+
+- `Tesseral` construction does not call `calc_type()`.
+- `Tesseral::iterate()` owns initial top, bottom, left, and right edge
+  phase progression.
+- Existing edge probe helpers remain the next unbounded target.
+- Tesseral render output remains compatible with existing image tests.
+
+Manual testing:
+
+- None.
+
+### Slice 12: Tesseral Edge Probe State
+
+Work:
+
+- Replace `tess_row()` and `tess_col()` one-shot helpers with
+  `Tesseral`-owned edge probe state: edge kind, fixed coordinate,
+  current coordinate, first color, and current edge color.
+- Make `split_needed()` and `split_box()` drive edge probes through the
+  active probe state instead of calculating a whole row or column before
+  returning.
+- Preserve box filling as the remaining unbounded target for the next
+  slice.
+
+Done when:
+
+- No single `Tesseral::iterate()` call sweeps a whole edge.
+- `split_needed()` and `split_box()` resume incomplete edge probes.
+- Tesseral render output remains compatible with existing image tests.
+
+Manual testing:
+
+- None.
+
+### Slice 13: Tesseral Fill And Suspend
+
+Work:
+
+- Move `fill_box()` plot and `write_span()` loops into bounded fill state
+  so a large filled box can yield between rows.
+- Ensure `Tesseral::suspend()` records a valid resume point for box,
+  edge-probe, and fill phases.
+
+Done when:
+
+- No single `Tesseral::iterate()` call sweeps a whole filled box.
+- `Tesseral::suspend()` is valid for initialization, edge probing,
+  splitting, and filling.
+- Tesseral render output remains compatible with existing image tests.
+
+Manual testing:
+
+- `type=mandel passes=t maxiter=10000`
+- `type=mandel passes=t fillcolor=1 maxiter=10000`
+
+### Slice 14: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -454,7 +778,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 2: Sound Output Pacing
+### Slice 15: Sound Output Pacing
 
 Work:
 
@@ -475,7 +799,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 3: Wait-Until Cleanup
+### Slice 16: Wait-Until Cleanup
 
 Work:
 
@@ -497,12 +821,12 @@ Manual testing:
 
 - None unless a remaining interactive caller is changed.
 
-The remaining interrupt slices are grouped by UI polling loop.  The
-audited non-wait call sites all belong to standard rendering:
-`SolidGuess`, `SynchronousOrbit`, `ScanlinePass`, and `StickyOrbits`
-traversal are driven from `libid/ui/standard_fractal.cpp`.
+The remaining direct interrupt checks are grouped by UI polling loop.
+After the pass-state slices, the audited non-wait call sites that should
+remain are the standard pixel and scanline checks driven from
+`libid/ui/standard_fractal.cpp`.
 
-### Slice 4: StandardFractal Pixel Interrupts
+### Slice 17: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -529,79 +853,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 5: StandardFractal Solid Guess Interrupts
-
-Work:
-
-- Keep `libid/ui/standard_fractal.cpp` as the only owner of
-  interruption for solid guessing.
-- Convert `SolidGuess` row fill and symmetry repaint work into
-  incremental state owned by `SolidGuess`.
-- Return to `StandardFractal` after bounded repaint work instead of
-  polling the driver inside `SolidGuess::guess_row()`.
-- Preserve current solid-guess resume behavior through pass suspension
-  state.
-
-Done when:
-
-- `engine/SolidGuess.cpp` has no driver key polling.
-- `SolidGuess` can yield during row fill and symmetry repaint without
-  losing block state.
-- The standard UI polling loop handles the interrupt decision.
-
-Manual testing:
-
-- `type=mandel passes=g maxiter=10000`
-
-### Slice 6: StandardFractal SynchronousOrbit Interrupts
-
-Work:
-
-- Keep `libid/ui/standard_fractal.cpp` as the only owner of
-  interruption for synchronous orbit traversal.
-- Convert the `SynchronousOrbit::rhombus_aux()` polling points into
-  incremental synchronous-orbit work checkpoints.
-- Use `SynchronousOrbit`-owned state, including an explicit stack if
-  needed, so recursive or scan state survives a UI-triggered suspension.
-- Remove direct driver polling from `SynchronousOrbit`.
-
-Done when:
-
-- `engine/SynchronousOrbit.cpp` has no driver key polling.
-- `SynchronousOrbit` can yield from recursion and scan work without
-  losing position.
-- The standard UI polling loop handles the interrupt decision.
-
-Manual testing:
-
-- `type=mandel passes=s maxiter=10000`
-
-### Slice 7: StandardFractal StickyOrbits Interrupts
-
-Work:
-
-- Keep `libid/ui/standard_fractal.cpp` as the only owner of
-  interruption for `passes=o` StickyOrbits rendering.
-- Make `StickyOrbits` own rectangle, line, and function traversal state
-  and return after bounded orbit-point work.
-- Change `plot_orbits2d()` so it plots the current point only; it should
-  not poll the keyboard, mute the driver, allocate resume state, or
-  return an interrupt result.
-- Let `StickyOrbits` and `StandardFractal` record resume state when the
-  UI polling loop suspends rendering.
-
-Done when:
-
-- `fractals/lorenz.cpp::plot_orbits2d()` has no driver key polling.
-- `plot_orbits2d()` no longer owns interruption or resume setup.
-- Sticky-orbit traversal is incremental and interruptible from the
-  standard UI polling loop.
-
-Manual testing:
-
-- `type=lorenz passes=o maxiter=10000`
-
-### Slice 8: Perturbation Traversal Ownership
+### Slice 18: Perturbation Traversal Ownership
 
 Work:
 
@@ -644,7 +896,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 9: Perturbation Pass-Switch Tests
+### Slice 19: Perturbation Pass-Switch Tests
 
 Work:
 
@@ -685,11 +937,14 @@ Direct polling or key consumption exists outside `libid/ui` in:
 - `libid/engine/SolidGuess.cpp`: interrupt checks during block repaint.
 - `libid/engine/SynchronousOrbit.cpp`: interrupt checks during recursive
   scan.
+- `libid/engine/StickyOrbits.cpp`: reaches direct input polling through
+  `plot_orbits2d()`.
 - `libid/engine/orbit.cpp`: shared `plot_orbit()` path owns screen orbit
   display and reaches input polling through `wait_until()`.
 - `libid/engine/sound.cpp`: suppress tone while keys are pending.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
-- `libid/fractals/lorenz.cpp`: orbit interrupt.
+- `libid/fractals/lorenz.cpp`: sticky-orbit plotting polls the driver and
+  owns resume allocation.
 
 ## Future Event-Driven Work
 
