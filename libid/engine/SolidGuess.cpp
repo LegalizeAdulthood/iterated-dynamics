@@ -430,15 +430,18 @@ bool SolidGuess::guess_row(const bool first_pass, const int y, const int block_s
     {
         initialize_guess_row(first_pass, y, block_size);
     }
-    if (m_guess_row_done)
+    while (!m_guess_row_done)
     {
-        return false;
+        if (m_guess_x > g_i_stop_pt.x)
+        {
+            return finish_guess_row();
+        }
+        if (process_guess_block())
+        {
+            return true;
+        }
     }
-    if (m_guess_x > g_i_stop_pt.x)
-    {
-        return finish_guess_row();
-    }
-    return process_guess_block();
+    return false;
 }
 
 bool SolidGuess::process_guess_block()
