@@ -19,6 +19,13 @@ using namespace id::fractals;
 namespace id::engine
 {
 
+namespace
+{
+
+constexpr int TESSERAL_BOX_CHUNK{512};
+
+} // namespace
+
 static int tess_check_col(int x, int y1, int y2);
 static int tess_check_row(int x1, int x2, int y);
 static int tess_col(int x, int y1, int y2);
@@ -118,13 +125,22 @@ bool Tesseral::iterate()
         return initialize_edges();
     }
 
-    next_box();
-    if (split_needed())
+    for (int boxes = 0; boxes < TESSERAL_BOX_CHUNK && !done(); ++boxes)
     {
-        return !split_box();
+        next_box();
+        if (split_needed())
+        {
+            if (split_box())
+            {
+                return false;
+            }
+        }
+        else
+        {
+            fill_box();
+        }
     }
 
-    fill_box();
     return true;
 }
 
