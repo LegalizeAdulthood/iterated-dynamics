@@ -378,7 +378,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Standard Orbit Plot Pacing
+## Orbit Display Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -404,8 +404,9 @@ The required inversion is to make engine orbit plotting incremental so
 it can return to the UI pacing loop between plot steps.
 
 The display delay mechanism comes from the portable orbit delay timer
-primitive.  This slice changes orbit plotting ownership while preserving
-the 72 Hz display policy already implemented in the UI orbit pacing path.
+primitive.  The remaining orbit-display slices change orbit plotting
+ownership while preserving the 72 Hz display policy already implemented
+in the UI orbit pacing path.
 
 The current `plot_orbit()` name hides two different behaviors:
 
@@ -429,37 +430,111 @@ The Popcorn conversion should follow review boundaries, not a guessed
 slice count.  A slice is small enough when it preserves current behavior,
 removes one false dependency, and leaves a reviewable intermediate state.
 
+### Slice 1: Standard Overlay Orbit Ownership
+
 Work:
 
-- Keep orbit plotting and overlay scrubbing in engine or fractal
-  calculation objects.
-- Reshape orbit plotting so the engine performs bounded incremental
-  plot work and returns to the UI pacing loop.
+- Move standard overlay point plotting from `libid/ui/standard_fractal.cpp`
+  into `engine::StandardFractal`.
+- Let `StandardFractal` perform one pending overlay plot step and record
+  whether UI display pacing is needed.
+- Route the standard orbit-toggle scrub path through `StandardFractal`
+  state instead of calling `scrub_orbit()` directly from the UI handler.
+- Keep the existing UI orbit delay policy: values below `orbitdelay=139`
+  run full-speed, and keyboard polling during orbit display remains at
+  72 Hz cadence.
+- Do not add any `libid/ui` include from `libid/engine`.
+
+Done when:
+
+- `libid/ui/standard_fractal.cpp` does not call
+  `pending_orbit_plot()`, `complete_pending_orbit_plot()`, or
+  `scrub_orbit()` for standard overlay orbit display.
+- Standard overlay point plotting and overlay scrubbing are owned by
+  `StandardFractal`.
+- The UI standard render loop only observes whether display pacing or
+  interruption handling is needed before asking `StandardFractal` for
+  more work.
+
+Manual testing:
+
+- `type=mandel passes=1 showorbit=yes orbitdelay=1`
+- `type=mandel passes=1 showorbit=yes orbitdelay=138`
+- `type=mandel passes=1 showorbit=yes orbitdelay=139`
+
+### Slice 2: FrothyBasin Overlay Orbit Ownership
+
+Work:
+
+- Move FrothyBasin overlay point plotting out of
+  `libid/ui/frothy_basin.cpp` and into the FrothyBasin calculation
+  object.
+- Move FrothyBasin overlay scrub execution out of the UI controller.
+- Let the FrothyBasin object record whether UI display pacing is needed
+  after it plots a visible overlay point.
+- Keep the UI controller responsible only for pacing and interruption.
+- Do not add any `libid/ui` include from `libid/fractals`.
+
+Done when:
+
+- `libid/ui/frothy_basin.cpp` does not call `orbit_plot()`,
+  `drive_orbit_plot()`, or `scrub_orbit()` for FrothyBasin overlay
+  display.
+- FrothyBasin keeps overlay plotting and scrubbing in its calculation
+  object and exposes only bounded work/pacing state to the UI.
+- The 72 Hz display pacing policy is unchanged.
+
+Manual testing:
+
+- `type=frothybasin showorbit=yes orbitdelay=1`
+- `type=frothybasin showorbit=yes orbitdelay=138`
+- `type=frothybasin showorbit=yes orbitdelay=139`
+
+### Slice 3: Popcorn Image-Orbit Ownership
+
+Work:
+
+- Move Popcorn image-orbit point plotting out of `libid/ui/popcorn.cpp`
+  and into the Popcorn calculation object.
+- Keep Popcorn separate from standard overlay orbit display: Popcorn
+  plots image pixels and does not save or scrub covered pixels.
+- Let Popcorn record whether UI display pacing is needed after it plots
+  a visible image-orbit point.
+- Keep the UI controller responsible only for pacing and interruption.
+- Do not route Popcorn through `StandardFractal`.
+- Do not add any `libid/ui` include from `libid/fractals`.
+
+Done when:
+
+- `libid/ui/popcorn.cpp` does not call `drive_orbit_plot()` or receive
+  an `OrbitPlot` reference from Popcorn.
+- Popcorn owns its scan state, orbit state, and image-orbit plotting.
+- The 72 Hz display pacing policy is unchanged.
+
+Manual testing:
+
+- `type=popcorn orbitdelay=1`
+- `type=popcorn orbitdelay=138`
+- `type=popcorn orbitdelay=139`
+
+### Slice 4: OrbitPlot Wait Cleanup
+
+Work:
+
 - Remove the delayed `OrbitPlot::iterate()` compatibility path that
   hides waiting inside engine orbit plotting.
-- Make engine calculation code record pending orbit pacing and yield to
-  the UI pacing loop after plotting a visible orbit point.
-- Let the UI pacing loop perform only message-aware delay pacing before
-  resuming engine calculation work.
-- Use the existing orbit delay timer primitive for display pacing at or
-  above the 72 Hz threshold.
-- Keep keyboard polling during orbit display at display-refresh cadence;
-  do not poll the driver once per plotted orbit point.
-- Preserve the distinction between overlay orbit display and image-orbit
-  plotting.
+- Remove the `engine/wait_until.h` include from `libid/engine/orbit.cpp`.
+- Replace or remove any remaining helper that loops through
+  `OrbitPlot::iterate()` so it cannot wait from engine code.
+- Keep any remaining non-paced compatibility helper explicitly no-delay.
 
 Done when:
 
 - `engine/orbit.cpp` has no `wait_until()` call.
 - Engine code does not perform delay loops around orbit plotting.
-- UI code does not perform orbit plot or overlay scrub operations.
-- Standard, FrothyBasin, and Popcorn keep orbit plotting in engine or
-  fractal calculation objects and use UI only for pacing delay.
-- Standard orbit plotting uses the orbit delay timer primitive for values
-  at or above `orbitdelay=139`, and smaller positive values run
-  full-speed.
-- Orbit display input polling is not more frequent than the 72 Hz display
-  cadence.
+- The only visible orbit display pacing path is the UI orbit pacing path.
+- Any helper named `plot_orbit`, `plot_overlay_orbit`, or
+  `plot_image_orbit` is either removed or clearly no-delay.
 
 Manual testing:
 
@@ -467,7 +542,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=139`
 - `type=popcorn orbitdelay=139`
 
-### Slice 2: Sound Output Pacing
+### Slice 5: Sound Output Pacing
 
 Work:
 
@@ -491,7 +566,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 3: Wait-Until Cleanup
+### Slice 6: Wait-Until Cleanup
 
 Work:
 
@@ -518,7 +593,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 4: StandardFractal Pixel Interrupts
+### Slice 7: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -545,7 +620,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 5: Perturbation Traversal Ownership
+### Slice 8: Perturbation Traversal Ownership
 
 Work:
 
@@ -588,7 +663,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 6: Perturbation Pass-Switch Tests
+### Slice 9: Perturbation Pass-Switch Tests
 
 Work:
 
