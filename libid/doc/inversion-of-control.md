@@ -172,9 +172,9 @@ The current code is already part-way through this plan:
 - `SynchronousOrbit` owns an explicit rhombus frame stack and explicit
   leaf scan state.  It suspends through `StandardPass`.
 - `StickyOrbits` is a concrete `StandardPass` alternative.  It owns
-  rectangle, line, and function seed traversal state and suspends through
-  `StandardPass`.  Interruption still happens in the orbit plotting
-  helper.
+  rectangle, line, and function seed traversal state, current orbit
+  progress, and current orbit color.  It suspends through
+  `StandardPass`.
 - Perturbation has a `PertEngine` owned by `StandardFractal`, is
   initialized and driven from `StandardFractal`, and is selected
   separately from the active traversal mode.  `passes=p` is compatibility
@@ -377,30 +377,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: StickyOrbits Orbit State
-
-Work:
-
-- Split the Lorenz orbit plotting helper so the current seed's orbit can
-  be advanced incrementally without polling input, muting the driver, or
-  allocating resume state.
-- Preserve the seed traversal state already owned by `StickyOrbits`.
-- Move current orbit color, resume payload, and orbit-loop position into
-  state owned by `StickyOrbits` or a helper owned by it.
-
-Done when:
-
-- `StickyOrbits::iterate()` advances bounded orbit work for the current
-  seed and can resume rectangle, line, and function modes.
-- `fractals/lorenz.cpp::plot_orbits2d()` has no direct driver key
-  polling.
-- `plot_orbits2d()` no longer owns interruption or resume allocation.
-
-Manual testing:
-
-- `type=lorenz passes=o maxiter=10000`
-
-### Slice 2: Tesseral Initialization State
+### Slice 1: Tesseral Initialization State
 
 Work:
 
@@ -423,7 +400,7 @@ Manual testing:
 
 - None.
 
-### Slice 3: Tesseral Edge Probe State
+### Slice 2: Tesseral Edge Probe State
 
 Work:
 
@@ -446,7 +423,7 @@ Manual testing:
 
 - None.
 
-### Slice 4: Tesseral Fill And Suspend
+### Slice 3: Tesseral Fill And Suspend
 
 Work:
 
@@ -467,7 +444,7 @@ Manual testing:
 - `type=mandel passes=t maxiter=10000`
 - `type=mandel passes=t fillcolor=1 maxiter=10000`
 
-### Slice 5: Standard Orbit Plot Pacing
+### Slice 4: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -548,7 +525,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 6: Sound Output Pacing
+### Slice 5: Sound Output Pacing
 
 Work:
 
@@ -569,7 +546,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 7: Wait-Until Cleanup
+### Slice 6: Wait-Until Cleanup
 
 Work:
 
@@ -596,7 +573,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 8: StandardFractal Pixel Interrupts
+### Slice 7: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -623,7 +600,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 9: Perturbation Traversal Ownership
+### Slice 8: Perturbation Traversal Ownership
 
 Work:
 
@@ -666,7 +643,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 10: Perturbation Pass-Switch Tests
+### Slice 9: Perturbation Pass-Switch Tests
 
 Work:
 
@@ -705,14 +682,10 @@ Direct polling or key consumption exists outside `libid/ui` in:
   control paths, non-standard polling path, and direct standard-pixel
   fallback polling.
 - `libid/engine/SolidGuess.cpp`: interrupt checks during block repaint.
-- `libid/engine/StickyOrbits.cpp`: reaches direct input polling through
-  `plot_orbits2d()`.
 - `libid/engine/orbit.cpp`: shared `plot_orbit()` path owns screen orbit
   display and reaches input polling through `wait_until()`.
 - `libid/engine/sound.cpp`: suppress tone while keys are pending.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
-- `libid/fractals/lorenz.cpp`: sticky-orbit plotting polls the driver and
-  owns resume allocation.
 
 ## Future Event-Driven Work
 

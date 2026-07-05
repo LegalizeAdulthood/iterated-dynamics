@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include "fractals/lorenz.h"
+
 namespace id::engine
 {
 
@@ -53,17 +55,31 @@ private:
         double y_factor{};
     };
 
+    struct OrbitState
+    {
+        fractals::Affine screen_convert{};
+        long count{};
+        int color{1};
+        bool active{};
+        bool seed_color_selected{};
+    };
+
+    void advance_after_seed();
     void advance_line();
+    bool advance_orbit();
     bool done() const;
     bool draw_function();
     bool draw_line();
     bool draw_rectangle();
+    int encoded_orbit_color() const;
     void initialize();
     void initialize_function();
     void initialize_line();
     void initialize_rectangle();
     bool line_done() const;
     void save_current_work();
+    void select_orbit_color();
+    void start_orbit();
 
     bool m_initialized{};
     bool m_interrupted{};
@@ -72,6 +88,7 @@ private:
     int m_col{};
     LineState m_line{};
     FunctionState m_function{};
+    OrbitState m_orbit{};
 };
 
 } // namespace id::engine

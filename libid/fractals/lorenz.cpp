@@ -130,9 +130,6 @@ static bool s_euler{};       // use implicit euler approximation for dynamic sys
 static int s_waste{100};     // waste this many points before plotting
 static int s_projection{2};  // projection plane - default is to plot x-y
 
-static Affine s_o_cvt{};
-static int s_o_color{};
-
 static double s_orbit{};
 
 static double &s_cos_b{s_dx};
@@ -1408,129 +1405,40 @@ static int setup_orbits_to_screen(Affine *scrn_cnvt)
     return 0;
 }
 
-int plot_orbits2d_setup()
+bool plot_orbits2d_setup(Affine *scrn_cnvt)
 {
     per_image();
 
     // setup affine screen coord conversion
     if (g_keep_screen_coords)
     {
-        if (setup_orbits_to_screen(&s_o_cvt))
+        if (setup_orbits_to_screen(scrn_cnvt))
         {
-            return -1;
+            return false;
         }
     }
     else
     {
-        if (setup_convert_to_screen(&s_o_cvt))
+        if (setup_convert_to_screen(scrn_cnvt))
         {
-            return -1;
+            return false;
         }
     }
     // set so truncation to int rounds to nearest
-    s_o_cvt.e += 0.5;
-    s_o_cvt.f += 0.5;
+    scrn_cnvt->e += 0.5;
+    scrn_cnvt->f += 0.5;
 
     if (g_orbit_skip_points >= g_max_iterations) // make sure we get an image
     {
         g_orbit_skip_points = static_cast<int>(g_max_iterations - 1);
     }
 
-    s_o_color = 1;
-
     if (g_outside_method == ColorMethod::SUM)
     {
         g_plot = plot_hist;
     }
 
-    return 1;
-}
-
-int plot_orbits2d()
-{
-    if (driver_key_pressed())
-    {
-        driver_mute();
-        alloc_resume(100, 1);
-        put_resume(s_o_color);
-        return -1;
-    }
-
-    const double x = 0.0;
-    const double y = 0.0;
-    const double z = 0.0;
-    const double *sound_var = nullptr;
-    if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)
-    {
-        sound_var = &x;
-    }
-    else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Y)
-    {
-        sound_var = &y;
-    }
-    else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Z)
-    {
-        sound_var = &z;
-    }
-
-    if (g_resuming)
-    {
-        start_resume();
-        get_resume(s_o_color);
-        end_resume();
-    }
-
-    if (g_inside_method > ColorMethod::COLOR)
-    {
-        s_o_color = g_inside_color;
-    }
-    else
-    {
-        // inside <= 0
-        s_o_color++;
-        if (s_o_color >= g_colors) // another color to switch to?
-        {
-            s_o_color = 1;         // (don't use the background color)
-        }
-    }
-
-    per_pixel(); // initialize the calculations
-
-    for (long count = 0; count < g_max_iterations; count++)
-    {
-        if (orbit_calc() == 1 && g_periodicity_check)
-        {
-            continue; // bailed out, don't plot
-        }
-
-        if (count < g_orbit_skip_points || count % g_orbit_interval)
-        {
-            continue; // don't plot it
-        }
-
-        // else count >= g_orbit_skip_points, and we want to plot it
-        const int col = static_cast<int>(s_o_cvt.a * g_new_z.x + s_o_cvt.b * g_new_z.y + s_o_cvt.e);
-        const int row = static_cast<int>(s_o_cvt.c * g_new_z.x + s_o_cvt.d * g_new_z.y + s_o_cvt.f);
-        if (col > 0 && col < g_logical_screen.x_dots && row > 0 && row < g_logical_screen.y_dots)
-        {
-            // plot if on the screen
-            if (sound_var && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
-            {
-                write_sound(static_cast<int>(*sound_var * 100 + g_base_hertz));
-            }
-
-            g_plot(col, row, s_o_color % g_colors);
-        }
-        else
-        {
-            // off-screen, don't continue unless periodicity=0
-            if (g_periodicity_check)
-            {
-                return 0; // skip to next pixel
-            }
-        }
-    }
-    return 0;
+    return true;
 }
 
 // this function's only purpose is to manage funnyglasses related
