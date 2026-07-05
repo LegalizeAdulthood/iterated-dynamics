@@ -178,32 +178,48 @@ void SynchronousOrbit::push_rhombus(const RhombusInput &input)
     m_frame_stack.push_back(frame);
 }
 
-bool SynchronousOrbit::process_next_frame()
+SynchronousOrbit::FrameResult SynchronousOrbit::process_next_frame()
 {
     if (m_frame_stack.empty())
     {
-        return true;
+        return FrameResult::DONE;
     }
 
     RhombusFrame &frame = m_frame_stack.back();
+    if (frame.phase == RhombusPhase::SCAN)
+    {
+        if (process_scan(frame) == RhombusStep::COMPLETE)
+        {
+            m_frame_stack.pop_back();
+            return m_frame_stack.empty() ? FrameResult::DONE : FrameResult::CONTINUE;
+        }
+        return FrameResult::YIELDED;
+    }
+
     if (frame.phase == RhombusPhase::CHILDREN)
     {
         if (frame.child_index >= static_cast<int>(frame.children.size()))
         {
             m_frame_stack.pop_back();
-            return m_frame_stack.empty();
+            return m_frame_stack.empty() ? FrameResult::DONE : FrameResult::CONTINUE;
         }
 
         const RhombusInput child{frame.children[frame.child_index++]};
         push_rhombus(child);
-        return false;
+        return FrameResult::CONTINUE;
     }
 
-    if (process_rhombus(frame) == RhombusStep::COMPLETE)
+    const RhombusStep step{process_rhombus(frame)};
+    if (step == RhombusStep::COMPLETE)
     {
         m_frame_stack.pop_back();
+        return m_frame_stack.empty() ? FrameResult::DONE : FrameResult::CONTINUE;
     }
-    return m_frame_stack.empty();
+    if (step == RhombusStep::INCOMPLETE)
+    {
+        return FrameResult::YIELDED;
+    }
+    return FrameResult::CONTINUE;
 }
 
 void SynchronousOrbit::orbit(DComplex &z, DComplex &rq, const double cr, const double ci, bool &esc)
@@ -213,6 +229,178 @@ void SynchronousOrbit::orbit(DComplex &z, DComplex &rq, const double cr, const d
     rq.x = z.x * z.x;
     rq.y = z.y * z.y;
     esc = rq.x + rq.y > 16.0;
+}
+
+void SynchronousOrbit::begin_scan(RhombusFrame &frame)
+{
+    const RhombusInput &input = frame.input;
+    ScanState &scan = frame.scan;
+    const double mid_r = (input.c_re1 + input.c_re2) / 2;
+    const double mid_i = (input.c_im1 + input.c_im2) / 2;
+
+    interpolate(input.c_re1, mid_r, input.c_re2, input.zi[0].x, input.zi[4].x, input.zi[1].x, scan.b1[0].x,
+        scan.b1[1].x, scan.b1[2].x);
+    interpolate(input.c_re1, mid_r, input.c_re2, input.zi[5].x, input.zi[8].x, input.zi[6].x, scan.b2[0].x,
+        scan.b2[1].x, scan.b2[2].x);
+    interpolate(input.c_re1, mid_r, input.c_re2, input.zi[2].x, input.zi[7].x, input.zi[3].x, scan.b3[0].x,
+        scan.b3[1].x, scan.b3[2].x);
+
+    interpolate(input.c_im1, mid_i, input.c_im2, input.zi[0].y, input.zi[5].y, input.zi[2].y, scan.b1[0].y,
+        scan.b1[1].y, scan.b1[2].y);
+    interpolate(input.c_im1, mid_i, input.c_im2, input.zi[4].y, input.zi[8].y, input.zi[7].y, scan.b2[0].y,
+        scan.b2[1].y, scan.b2[2].y);
+    interpolate(input.c_im1, mid_i, input.c_im2, input.zi[1].y, input.zi[6].y, input.zi[3].y, scan.b3[0].y,
+        scan.b3[1].y, scan.b3[2].y);
+
+    scan.step.x = (input.c_re2 - input.c_re1) / (input.x2 - input.x1);
+    scan.step.y = (input.c_im2 - input.c_im1) / (input.y2 - input.y1);
+    scan.interleave_step = INTERLEAVE * scan.step.x;
+    scan.y = input.y1;
+    scan.z_value.y = input.c_im1;
+    scan.phase = ScanPhase::ROW_START;
+    frame.phase = RhombusPhase::SCAN;
+}
+
+double SynchronousOrbit::scan_real(const RhombusFrame &frame, const double re, const double im) const
+{
+    const RhombusInput &input = frame.input;
+    const ScanState &scan = frame.scan;
+    const double mid_i = (input.c_im1 + input.c_im2) / 2;
+    return interpolate(input.c_im1, mid_i, input.c_im2,
+        evaluate(input.c_re1, (input.c_re1 + input.c_re2) / 2, scan.b1[0].x, scan.b1[1].x, scan.b1[2].x, re),
+        evaluate(input.c_re1, (input.c_re1 + input.c_re2) / 2, scan.b2[0].x, scan.b2[1].x, scan.b2[2].x, re),
+        evaluate(input.c_re1, (input.c_re1 + input.c_re2) / 2, scan.b3[0].x, scan.b3[1].x, scan.b3[2].x, re), im);
+}
+
+double SynchronousOrbit::scan_imag(const RhombusFrame &frame, const double re, const double im) const
+{
+    const RhombusInput &input = frame.input;
+    const ScanState &scan = frame.scan;
+    const double mid_r = (input.c_re1 + input.c_re2) / 2;
+    return interpolate(input.c_re1, mid_r, input.c_re2,
+        evaluate(input.c_im1, (input.c_im1 + input.c_im2) / 2, scan.b1[0].y, scan.b1[1].y, scan.b1[2].y, im),
+        evaluate(input.c_im1, (input.c_im1 + input.c_im2) / 2, scan.b2[0].y, scan.b2[1].y, scan.b2[2].y, im),
+        evaluate(input.c_im1, (input.c_im1 + input.c_im2) / 2, scan.b3[0].y, scan.b3[1].y, scan.b3[2].y, im), re);
+}
+
+SynchronousOrbit::RhombusStep SynchronousOrbit::process_scan(RhombusFrame &frame)
+{
+    const RhombusInput &input = frame.input;
+    ScanState &scan = frame.scan;
+    while (scan.y < input.y2)
+    {
+        switch (scan.phase)
+        {
+        case ScanPhase::ROW_START:
+            if (driver_key_pressed())
+            {
+                return RhombusStep::COMPLETE;
+            }
+            scan.scan_z.x = scan_real(frame, input.c_re1, scan.z_value.y);
+            scan.scan_z.y = scan_imag(frame, input.c_re1, scan.z_value.y);
+            scan.save_color = iteration(input.c_re1, scan.z_value.y, scan.scan_z.x, scan.scan_z.y, input.iter);
+            if (scan.save_color < 0)
+            {
+                return RhombusStep::COMPLETE;
+            }
+            scan.save_x = input.x1;
+            scan.x = input.x1 + INTERLEAVE;
+            scan.z_value.x = input.c_re1 + scan.interleave_step;
+            scan.phase = ScanPhase::INTERLEAVE;
+            break;
+
+        case ScanPhase::INTERLEAVE:
+            if (scan.x >= input.x2)
+            {
+                scan.z = input.x2 - 1;
+                scan.help_real = input.c_re2 - scan.step.x;
+                scan.phase = ScanPhase::ROW_END_BACKFILL;
+                break;
+            }
+            scan.scan_z.x = scan_real(frame, scan.z_value.x, scan.z_value.y);
+            scan.scan_z.y = scan_imag(frame, scan.z_value.x, scan.z_value.y);
+            scan.color = iteration(scan.z_value.x, scan.z_value.y, scan.scan_z.x, scan.scan_z.y, input.iter);
+            if (scan.color < 0)
+            {
+                return RhombusStep::COMPLETE;
+            }
+            if (scan.color == scan.save_color)
+            {
+                scan.x += INTERLEAVE;
+                scan.z_value.x += scan.interleave_step;
+                break;
+            }
+            scan.z = scan.x - 1;
+            scan.help_real = scan.z_value.x - scan.step.x;
+            scan.phase = ScanPhase::INTERLEAVE_BACKFILL;
+            break;
+
+        case ScanPhase::INTERLEAVE_BACKFILL:
+            while (scan.z > scan.x - INTERLEAVE)
+            {
+                scan.scan_z.x = scan_real(frame, scan.help_real, scan.z_value.y);
+                scan.scan_z.y = scan_imag(frame, scan.help_real, scan.z_value.y);
+                scan.help_color = iteration(scan.help_real, scan.z_value.y, scan.scan_z.x, scan.scan_z.y, input.iter);
+                if (scan.help_color < 0)
+                {
+                    return RhombusStep::COMPLETE;
+                }
+                if (scan.help_color == scan.save_color)
+                {
+                    break;
+                }
+                g_plot(scan.z, scan.y, static_cast<int>(scan.help_color & 255));
+                --scan.z;
+                scan.help_real -= scan.step.x;
+            }
+            if (scan.save_x < scan.z)
+            {
+                put_hor_line(scan.save_x, scan.y, scan.z, static_cast<int>(scan.save_color & 255));
+            }
+            else
+            {
+                g_plot(scan.save_x, scan.y, static_cast<int>(scan.save_color & 255));
+            }
+            scan.save_x = scan.x;
+            scan.save_color = scan.color;
+            scan.x += INTERLEAVE;
+            scan.z_value.x += scan.interleave_step;
+            scan.phase = ScanPhase::INTERLEAVE;
+            break;
+
+        case ScanPhase::ROW_END_BACKFILL:
+            while (scan.z > scan.save_x)
+            {
+                scan.scan_z.x = scan_real(frame, scan.help_real, scan.z_value.y);
+                scan.scan_z.y = scan_imag(frame, scan.help_real, scan.z_value.y);
+                scan.help_color = iteration(scan.help_real, scan.z_value.y, scan.scan_z.x, scan.scan_z.y, input.iter);
+                if (scan.help_color < 0)
+                {
+                    return RhombusStep::COMPLETE;
+                }
+                if (scan.help_color == scan.save_color)
+                {
+                    break;
+                }
+                g_plot(scan.z, scan.y, static_cast<int>(scan.help_color & 255));
+                --scan.z;
+                scan.help_real -= scan.step.x;
+            }
+            if (scan.save_x < scan.z)
+            {
+                put_hor_line(scan.save_x, scan.y, scan.z, static_cast<int>(scan.save_color & 255));
+            }
+            else
+            {
+                g_plot(scan.save_x, scan.y, static_cast<int>(scan.save_color & 255));
+            }
+            ++scan.y;
+            scan.z_value.y += scan.step.y;
+            scan.phase = ScanPhase::ROW_START;
+            return scan.y >= input.y2 ? RhombusStep::COMPLETE : RhombusStep::INCOMPLETE;
+        }
+    }
+    return RhombusStep::COMPLETE;
 }
 
 SynchronousOrbit::RhombusStep SynchronousOrbit::process_rhombus(RhombusFrame &frame)
@@ -229,16 +417,6 @@ SynchronousOrbit::RhombusStep SynchronousOrbit::process_rhombus(RhombusFrame &fr
     long iter = input.iter;
     m_rhombus_depth = input.depth;
     std::copy(input.zi.begin(), input.zi.end(), std::begin(m_zi));
-
-    // The following variables do not need their values saved
-    // used in scanning
-    long save_color{};
-    long color{};
-    long help_color{};
-    int x{};
-    int y{};
-    int z{};
-    int save_x{};
 
     // number of iterations before SOI iteration cycle
     long before{};
@@ -271,123 +449,8 @@ SynchronousOrbit::RhombusStep SynchronousOrbit::process_rhombus(RhombusFrame &fr
 
     if (y2 - y1 <= SCAN || avail < g_soi_min_stack)
     {
-        // finish up the image by scanning the rectangle
-scan:
-        interpolate(c_re1, mid_r, c_re2, m_zi[0].x, m_zi[4].x, m_zi[1].x, m_b1[0].x, m_b1[1].x, m_b1[2].x);
-        interpolate(c_re1, mid_r, c_re2, m_zi[5].x, m_zi[8].x, m_zi[6].x, m_b2[0].x, m_b2[1].x, m_b2[2].x);
-        interpolate(c_re1, mid_r, c_re2, m_zi[2].x, m_zi[7].x, m_zi[3].x, m_b3[0].x, m_b3[1].x, m_b3[2].x);
-
-        interpolate(c_im1, mid_i, c_im2, m_zi[0].y, m_zi[5].y, m_zi[2].y, m_b1[0].y, m_b1[1].y, m_b1[2].y);
-        interpolate(c_im1, mid_i, c_im2, m_zi[4].y, m_zi[8].y, m_zi[7].y, m_b2[0].y, m_b2[1].y, m_b2[2].y);
-        interpolate(c_im1, mid_i, c_im2, m_zi[1].y, m_zi[6].y, m_zi[3].y, m_b3[0].y, m_b3[1].y, m_b3[2].y);
-
-        m_step.x = (c_re2 - c_re1) / (x2 - x1);
-        m_step.y = (c_im2 - c_im1) / (y2 - y1);
-        m_interleave_step = INTERLEAVE * m_step.x;
-
-        /* compute the value of the interpolation polynomial at (x,y)
-           during scanning. Here, key values do not change, so we can precompute
-           coefficients in one direction and simply evaluate the polynomial
-           during scanning. */
-        const auto get_scan_real{[=](const double re, const double im)
-            {
-                return interpolate(c_im1, mid_i, c_im2, evaluate(c_re1, mid_r, m_b1[0].x, m_b1[1].x, m_b1[2].x, re),
-                    evaluate(c_re1, mid_r, m_b2[0].x, m_b2[1].x, m_b2[2].x, re),
-                    evaluate(c_re1, mid_r, m_b3[0].x, m_b3[1].x, m_b3[2].x, re), im);
-            }};
-        const auto get_scan_imag{[=](const double re, const double im)
-            {
-                return interpolate(c_re1, mid_r, c_re2, evaluate(c_im1, mid_i, m_b1[0].y, m_b1[1].y, m_b1[2].y, im),
-                    evaluate(c_im1, mid_i, m_b2[0].y, m_b2[1].y, m_b2[2].y, im),
-                    evaluate(c_im1, mid_i, m_b3[0].y, m_b3[1].y, m_b3[2].y, im), re);
-            }};
-        for (y = y1, m_z.y = c_im1; y < y2; y++, m_z.y += m_step.y)
-        {
-            if (driver_key_pressed())
-            {
-                return RhombusStep::COMPLETE;
-            }
-            m_scan_z.x = get_scan_real(c_re1, m_z.y);
-            m_scan_z.y = get_scan_imag(c_re1, m_z.y);
-            save_color = iteration(c_re1, m_z.y, m_scan_z.x, m_scan_z.y, iter);
-            if (save_color < 0)
-            {
-                return RhombusStep::COMPLETE;
-            }
-            save_x = x1;
-            for (x = x1 + INTERLEAVE, m_z.x = c_re1 + m_interleave_step; x < x2;
-                x += INTERLEAVE, m_z.x += m_interleave_step)
-            {
-                m_scan_z.x = get_scan_real(m_z.x, m_z.y);
-                m_scan_z.y = get_scan_imag(m_z.x, m_z.y);
-
-                color = iteration(m_z.x, m_z.y, m_scan_z.x, m_scan_z.y, iter);
-                if (color < 0)
-                {
-                    return RhombusStep::COMPLETE;
-                }
-                if (color == save_color)
-                {
-                    continue;
-                }
-
-                for (z = x - 1, m_help_real = m_z.x - m_step.x; z > x - INTERLEAVE; z--, m_help_real -= m_step.x)
-                {
-                    m_scan_z.x = get_scan_real(m_help_real, m_z.y);
-                    m_scan_z.y = get_scan_imag(m_help_real, m_z.y);
-                    help_color = iteration(m_help_real, m_z.y, m_scan_z.x, m_scan_z.y, iter);
-                    if (help_color < 0)
-                    {
-                        return RhombusStep::COMPLETE;
-                    }
-                    if (help_color == save_color)
-                    {
-                        break;
-                    }
-                    g_plot(z, y, static_cast<int>(help_color & 255));
-                }
-
-                if (save_x < z)
-                {
-                    put_hor_line(save_x, y, z, static_cast<int>(save_color & 255));
-                }
-                else
-                {
-                    g_plot(save_x, y, static_cast<int>(save_color & 255));
-                }
-
-                save_x = x;
-                save_color = color;
-            }
-
-            for (z = x2 - 1, m_help_real = c_re2 - m_step.x; z > save_x; z--, m_help_real -= m_step.x)
-            {
-                m_scan_z.x = get_scan_real(m_help_real, m_z.y);
-                m_scan_z.y = get_scan_imag(m_help_real, m_z.y);
-                help_color = iteration(m_help_real, m_z.y, m_scan_z.x, m_scan_z.y, iter);
-                if (help_color < 0)
-                {
-                    return RhombusStep::COMPLETE;
-                }
-                if (help_color == save_color)
-                {
-                    break;
-                }
-
-                g_plot(z, y, static_cast<int>(help_color & 255));
-            }
-
-            if (save_x < z)
-            {
-                put_hor_line(save_x, y, z, static_cast<int>(save_color & 255));
-            }
-            else
-            {
-                g_plot(save_x, y, static_cast<int>(save_color & 255));
-            }
-        }
-
-        return RhombusStep::COMPLETE;
+        begin_scan(frame);
+        return process_scan(frame);
     }
 
     std::transform(std::begin(m_zi), std::end(m_zi), std::begin(m_rq), z_sqr);
@@ -608,8 +671,10 @@ scan:
     // this is a little heuristic I tried to improve performance.
     if (iter - before < 10)
     {
-        std::copy(std::begin(s), std::end(s), std::begin(m_zi));
-        goto scan;
+        std::copy(std::begin(s), std::end(s), frame.input.zi.begin());
+        frame.input.iter = iter;
+        begin_scan(frame);
+        return process_scan(frame);
     }
 
     // compute key values for subsequent rectangles
@@ -703,7 +768,7 @@ scan:
     return RhombusStep::CHILDREN;
 }
 
-void SynchronousOrbit::calculate()
+void SynchronousOrbit::start()
 {
     // cppcheck-suppress unreadVariable
     constexpr double TOLERANCE = 0.1;
@@ -714,6 +779,8 @@ void SynchronousOrbit::calculate()
     g_soi_min_stack_available = 30000;
     m_frame_stack.clear();
     g_max_rhombus_depth = 0;
+    m_done = false;
+    m_started = true;
     if (g_bf_math != BFMathType::NONE)
     {
         xx_min_l = static_cast<double>(bf_to_float(g_bf_x_min));
@@ -744,15 +811,28 @@ void SynchronousOrbit::calculate()
         DComplex{(xx_max_l + xx_min_l) / 2, yy_min_l},                  //
         DComplex{(xx_min_l + xx_max_l) / 2, (yy_max_l + yy_min_l) / 2}, //
         1, 0));
-    while (!process_next_frame())
-    {
-    }
 }
 
 bool SynchronousOrbit::iterate()
 {
-    calculate();
-    return true;
+    if (!m_started)
+    {
+        start();
+    }
+    while (!m_done)
+    {
+        const FrameResult result{process_next_frame()};
+        if (result == FrameResult::DONE)
+        {
+            m_done = true;
+            break;
+        }
+        if (result == FrameResult::YIELDED)
+        {
+            break;
+        }
+    }
+    return m_done;
 }
 
 } // namespace id::engine

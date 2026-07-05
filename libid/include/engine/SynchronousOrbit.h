@@ -18,10 +18,37 @@ extern int g_soi_min_stack_available;
 class SynchronousOrbit
 {
 public:
-    void calculate();
     bool iterate();
 
 private:
+    enum class ScanPhase
+    {
+        ROW_START,
+        INTERLEAVE,
+        INTERLEAVE_BACKFILL,
+        ROW_END_BACKFILL
+    };
+
+    struct ScanState
+    {
+        ScanPhase phase{ScanPhase::ROW_START};
+        std::array<math::DComplex, 3> b1{};
+        std::array<math::DComplex, 3> b2{};
+        std::array<math::DComplex, 3> b3{};
+        math::DComplex step{};
+        math::DComplex z_value{};
+        math::DComplex scan_z{};
+        double interleave_step{};
+        double help_real{};
+        int y{};
+        int x{};
+        int z{};
+        int save_x{};
+        long save_color{};
+        long color{};
+        long help_color{};
+    };
+
     struct RhombusInput
     {
         double c_re1{};
@@ -40,13 +67,22 @@ private:
     enum class RhombusPhase
     {
         START,
+        SCAN,
         CHILDREN
     };
 
     enum class RhombusStep
     {
         COMPLETE,
-        CHILDREN
+        CHILDREN,
+        INCOMPLETE
+    };
+
+    enum class FrameResult
+    {
+        CONTINUE,
+        YIELDED,
+        DONE
     };
 
     struct RhombusFrame
@@ -54,6 +90,7 @@ private:
         RhombusInput input{};
         RhombusPhase phase{RhombusPhase::START};
         std::array<RhombusInput, 4> children{};
+        ScanState scan{};
         int child_index{};
     };
 
@@ -63,22 +100,19 @@ private:
         math::DComplex z5, math::DComplex z6, math::DComplex z7, math::DComplex z8,                //
         math::DComplex z9, long iter, int depth);
     void push_rhombus(const RhombusInput &input);
-    bool process_next_frame();
+    FrameResult process_next_frame();
     RhombusStep process_rhombus(RhombusFrame &frame);
+    void start();
+    void begin_scan(RhombusFrame &frame);
+    RhombusStep process_scan(RhombusFrame &frame);
+    double scan_real(const RhombusFrame &frame, double re, double im) const;
+    double scan_imag(const RhombusFrame &frame, double re, double im) const;
     void orbit(math::DComplex &z, math::DComplex &rq, double cr, double ci, bool &esc);
 
     std::vector<RhombusFrame> m_frame_stack{};
     math::DComplex m_zi[9]{};
     bool m_esc[9]{};
     bool m_t_esc[4]{};
-    math::DComplex m_z{};
-    math::DComplex m_step{};
-    double m_interleave_step{};
-    double m_help_real{};
-    math::DComplex m_scan_z{};
-    math::DComplex m_b1[3]{};
-    math::DComplex m_b2[3]{};
-    math::DComplex m_b3[3]{};
     math::DComplex m_limit{};
     math::DComplex m_rq[9]{};
     math::DComplex m_corner[2]{};
@@ -87,6 +121,8 @@ private:
     double m_t_width{};
     double m_equal{};
     int m_rhombus_depth{-1};
+    bool m_started{};
+    bool m_done{};
 };
 
 } // namespace id::engine
