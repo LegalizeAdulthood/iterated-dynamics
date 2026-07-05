@@ -463,36 +463,7 @@ The Popcorn conversion should follow review boundaries, not a guessed
 slice count.  A slice is small enough when it preserves current behavior,
 removes one false dependency, and leaves a reviewable intermediate state.
 
-### Slice 1: OrbitPlot Overlay-Only Cleanup
-
-Work:
-
-- Remove `OrbitPlot::reset_image()`, `PlotMode::IMAGE`, and
-  `OrbitPlot::plot_image_point()`.
-- Remove image color state from `OrbitPlot` if overlay mode no longer
-  needs it.
-- Make `OrbitPlot` model only temporary overlay display: reset overlay,
-  bounded plot work, delay-pending reporting, and scrub.
-- Keep `OrbitPlot` focused on `showorbit` overlay behavior for standard
-  escape-time rendering and FrothyBasin.
-- Do not choose a new `orbitdelay` display policy in this slice.
-
-Done when:
-
-- `rg "reset_image|PlotMode::IMAGE|plot_image_point" libid` finds no
-  remaining code references.
-- `OrbitPlot` cannot be used for Popcorn or image rendering.
-- Standard and FrothyBasin overlay callers still use bounded
-  `OrbitPlot` work.
-
-Manual testing:
-
-- `type=mandel showorbit=yes`: while rendering, press `x`, then `Esc`;
-  rendering resumes and overlay display still works.
-- `type=frothybasin showorbit=yes`: while rendering, press `x`, then
-  `Esc`; rendering resumes and overlay display still works.
-
-### Slice 2: Orbit Show Input Inversion
+### Slice 1: Orbit Show Input Inversion
 
 Work:
 
@@ -519,7 +490,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes`: while rendering, press `x`, then
   `Esc`; rendering resumes and input is handled by the UI controller.
 
-### Slice 3: Sound Output Pacing
+### Slice 2: Sound Output Pacing
 
 Work:
 
@@ -543,7 +514,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 4: Wait-Until Cleanup
+### Slice 3: Wait-Until Cleanup
 
 Work:
 
@@ -571,7 +542,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 5: StandardFractal Pixel Interrupts
+### Slice 4: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -600,7 +571,7 @@ Manual testing:
 - `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
   then `Esc`; rendering resumes.
 
-### Slice 6: Perturbation Traversal Ownership
+### Slice 5: Perturbation Traversal Ownership
 
 Work:
 
@@ -643,7 +614,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`: rendering completes without a
   perturbation crash or hang.
 
-### Slice 7: Perturbation Pass-Switch Tests
+### Slice 6: Perturbation Pass-Switch Tests
 
 Work:
 

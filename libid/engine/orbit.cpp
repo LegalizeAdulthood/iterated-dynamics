@@ -53,23 +53,14 @@ OrbitPlot::OrbitPlot()
     m_saved_overlay.reserve(INITIAL_SAVED_OVERLAY_POINTS);
 }
 
-void OrbitPlot::reset_image(const double real, const double imag, const int color)
+void OrbitPlot::reset(const double real, const double imag)
 {
-    reset_plot(real, imag, color, PlotMode::IMAGE);
-}
-
-void OrbitPlot::reset_overlay(const double real, const double imag)
-{
-    clear_saved_points_if_reset();
-    reset_plot(real, imag, -1, PlotMode::OVERLAY);
-}
-
-void OrbitPlot::reset_plot(const double real, const double imag, const int color, const PlotMode mode)
-{
+    if (!g_orbit_save_flag && !m_saved_overlay.empty())
+    {
+        m_saved_overlay.clear();
+    }
     m_real = real;
     m_imag = imag;
-    m_color = color;
-    m_mode = mode;
     m_done = false;
 }
 
@@ -89,7 +80,7 @@ void OrbitPlot::iterate_without_delay()
         return;
     }
     m_delay_pending = false;
-    plot_d_orbit(m_real - g_image_region.m_min.x, m_imag - g_image_region.m_max.y);
+    plot(m_real - g_image_region.m_min.x, m_imag - g_image_region.m_max.y);
     m_done = true;
 }
 
@@ -105,15 +96,7 @@ bool OrbitPlot::consume_delay_pending()
     return delay_pending;
 }
 
-void OrbitPlot::clear_saved_points_if_reset()
-{
-    if (!g_orbit_save_flag && !m_saved_overlay.empty())
-    {
-        m_saved_overlay.clear();
-    }
-}
-
-void OrbitPlot::plot_d_orbit(const double dx, const double dy)
+void OrbitPlot::plot(const double dx, const double dy)
 {
     int i = static_cast<int>(dy * g_plot_mx1 - dx * g_plot_mx2);
     i += g_logical_screen.x_offset;
@@ -130,26 +113,12 @@ void OrbitPlot::plot_d_orbit(const double dx, const double dy)
     {
         ValueSaver save_screen_x_offset{g_logical_screen.x_offset, 0};
         ValueSaver save_screen_y_offset{g_logical_screen.y_offset, 0};
-        switch (m_mode)
-        {
-        case PlotMode::IMAGE:
-            plot_image_point(i, j);
-            break;
-
-        case PlotMode::OVERLAY:
-            plot_overlay_point(i, j);
-            break;
-        }
+        plot(i, j);
     }
     update_orbit_sound(i, j);
 }
 
-void OrbitPlot::plot_image_point(const int x, const int y)
-{
-    g_put_color(x, y, m_color);
-}
-
-void OrbitPlot::plot_overlay_point(const int x, const int y)
+void OrbitPlot::plot(const int x, const int y)
 {
     const int color = get_color(x, y);
     save_overlay_point(x, y, color);
@@ -199,10 +168,10 @@ void OrbitPlot::update_orbit_sound(const int x, const int y)
 void OrbitPlot::save_overlay_point(const int x, const int y, const int color)
 {
     m_saved_overlay.push_back(SavedOverlayPoint{x, y, color});
-    update_saved_overlay_count();
+    update_orbit_save_flag();
 }
 
-void OrbitPlot::update_saved_overlay_count()
+void OrbitPlot::update_orbit_save_flag()
 {
     g_orbit_save_flag = !m_saved_overlay.empty();
 }
@@ -228,8 +197,8 @@ void OrbitPlot::scrub()
         const SavedOverlayPoint point{m_saved_overlay.back()};
         m_saved_overlay.pop_back();
         g_put_color(point.x, point.y, point.color);
-        update_saved_overlay_count();
     }
+    update_orbit_save_flag();
 }
 
 } // namespace id::engine

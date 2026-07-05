@@ -303,7 +303,7 @@ void FrothyBasin::advance_pixel()
 
 void FrothyBasin::run_pending_overlay_orbit_point()
 {
-    orbit_plot().reset_overlay(m_overlay_orbit_point.x, m_overlay_orbit_point.y);
+    orbit_plot().reset(m_overlay_orbit_point.x, m_overlay_orbit_point.y);
     orbit_plot().iterate_without_delay();
     if (orbit_plot().consume_delay_pending())
     {
