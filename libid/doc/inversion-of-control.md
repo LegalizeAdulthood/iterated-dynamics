@@ -153,9 +153,9 @@ The current code is already part-way through this plan:
   explicit `CalcMode` dispatch.
 - Tesseral is a concrete `StandardPass` alternative.  `Tesseral` has
   `iterate()`, `done()`, and `suspend()`, and owns its box stack.
-  Initial edge setup runs through bounded phases.  Later edge probing
-  and box filling still run as unbounded helper loops inside one
-  `iterate()` call.
+  Initial edge setup and later edge probes run through bounded,
+  resumable state.  Box filling still runs as an unbounded helper loop
+  inside one `iterate()` call.
 - The `OnePass` and `TwoPass` paths share `ScanlinePass`; they preserve
   scan position in the concrete pass object and yield standard pixel work
   back to the UI.  They still communicate active pixel position through
@@ -378,30 +378,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Tesseral Edge Probe State
-
-Work:
-
-- Replace `tess_row()` and `tess_col()` one-shot helpers with
-  `Tesseral`-owned edge probe state: edge kind, fixed coordinate,
-  current coordinate, first color, and current edge color.
-- Make `split_needed()` and `split_box()` drive edge probes through the
-  active probe state instead of calculating a whole row or column before
-  returning.
-- Preserve box filling as the remaining unbounded target for the next
-  slice.
-
-Done when:
-
-- No single `Tesseral::iterate()` call sweeps a whole edge.
-- `split_needed()` and `split_box()` resume incomplete edge probes.
-- Tesseral render output remains compatible with existing image tests.
-
-Manual testing:
-
-- None.
-
-### Slice 2: Tesseral Fill And Suspend
+### Slice 1: Tesseral Fill And Suspend
 
 Work:
 
@@ -422,7 +399,7 @@ Manual testing:
 - `type=mandel passes=t maxiter=10000`
 - `type=mandel passes=t fillcolor=1 maxiter=10000`
 
-### Slice 3: Standard Orbit Plot Pacing
+### Slice 2: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -503,7 +480,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 4: Sound Output Pacing
+### Slice 3: Sound Output Pacing
 
 Work:
 
@@ -524,7 +501,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 5: Wait-Until Cleanup
+### Slice 4: Wait-Until Cleanup
 
 Work:
 
@@ -551,7 +528,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 6: StandardFractal Pixel Interrupts
+### Slice 5: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -578,7 +555,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 7: Perturbation Traversal Ownership
+### Slice 6: Perturbation Traversal Ownership
 
 Work:
 
@@ -621,7 +598,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 8: Perturbation Pass-Switch Tests
+### Slice 7: Perturbation Pass-Switch Tests
 
 Work:
 

@@ -22,14 +22,13 @@ namespace id::engine
 namespace
 {
 
+constexpr int TESSERAL_EDGE_CHUNK{512};
 constexpr int TESSERAL_BOX_CHUNK{512};
 
 } // namespace
 
 static int tess_check_col(int x, int y1, int y2);
 static int tess_check_row(int x1, int x2, int y);
-static int tess_col(int x, int y1, int y2);
-static int tess_row(int x1, int x2, int y);
 
 Tesseral::Tesseral() :
     m_guess_plot(g_plot != g_put_color && g_plot != sym_plot2),
@@ -128,11 +127,25 @@ bool Tesseral::iterate()
     for (int boxes = 0; boxes < TESSERAL_BOX_CHUNK && !done(); ++boxes)
     {
         next_box();
-        if (split_needed())
+        if (m_split_box_active)
         {
-            if (split_box())
+            if (!split_box())
             {
-                return false;
+                return !m_interrupted;
+            }
+            continue;
+        }
+
+        bool split{false};
+        if (!split_needed(split))
+        {
+            return !m_interrupted;
+        }
+        if (split)
+        {
+            if (!split_box())
+            {
+                return !m_interrupted;
             }
         }
         else
@@ -144,40 +157,162 @@ bool Tesseral::iterate()
     return true;
 }
 
+bool Tesseral::probe_active() const
+{
+    return m_edge_probe.kind != EdgeProbeKind::NONE;
+}
+
+void Tesseral::reset_edge_probe()
+{
+    m_edge_probe = {};
+}
+
+void Tesseral::start_row_probe(const int x1, const int x2, const int y)
+{
+    m_edge_probe.kind = EdgeProbeKind::ROW;
+    m_edge_probe.fixed = y;
+    m_edge_probe.current = x1;
+    m_edge_probe.final = x2;
+    m_edge_probe.color = 0;
+    m_edge_probe.started = false;
+}
+
+void Tesseral::start_column_probe(const int x, const int y1, const int y2)
+{
+    m_edge_probe.kind = EdgeProbeKind::COLUMN;
+    m_edge_probe.fixed = x;
+    m_edge_probe.current = y1;
+    m_edge_probe.final = y2;
+    m_edge_probe.color = 0;
+    m_edge_probe.started = false;
+}
+
+bool Tesseral::advance_edge_probe()
+{
+    for (int count = 0; probe_active() && count < TESSERAL_EDGE_CHUNK; ++count)
+    {
+        if (m_edge_probe.kind == EdgeProbeKind::ROW)
+        {
+            g_col = m_edge_probe.current;
+            g_row = m_edge_probe.fixed;
+        }
+        else
+        {
+            g_col = m_edge_probe.fixed;
+            g_row = m_edge_probe.current;
+        }
+
+        if (!m_edge_probe.started)
+        {
+            g_reset_periodicity = true;
+        }
+        const int color = calc_type();
+        if (!m_edge_probe.started)
+        {
+            g_reset_periodicity = false;
+        }
+        if (color < 0)
+        {
+            m_edge_probe.color = -3;
+            return true;
+        }
+        if (!m_edge_probe.started)
+        {
+            m_edge_probe.color = color;
+            m_edge_probe.started = true;
+        }
+        else if (m_edge_probe.color != -1 && color != m_edge_probe.color)
+        {
+            m_edge_probe.color = -1;
+        }
+
+        ++m_edge_probe.current;
+        if (m_edge_probe.current > m_edge_probe.final)
+        {
+            return true;
+        }
+    }
+
+    return !probe_active();
+}
+
+bool Tesseral::finish_edge_probe(int &color)
+{
+    if (!advance_edge_probe())
+    {
+        return false;
+    }
+
+    color = m_edge_probe.color;
+    reset_edge_probe();
+    if (color == -3)
+    {
+        m_interrupted = true;
+        return false;
+    }
+    return true;
+}
+
 bool Tesseral::initialize_edges()
 {
+    if (probe_active())
+    {
+        int color;
+        if (!finish_edge_probe(color))
+        {
+            return !m_interrupted;
+        }
+        switch (m_init_phase)
+        {
+        case InitPhase::TOP:
+            m_tp->top = color;
+            m_init_phase = InitPhase::BOTTOM;
+            break;
+
+        case InitPhase::BOTTOM:
+            m_tp->bot = color;
+            m_init_phase = InitPhase::LEFT;
+            break;
+
+        case InitPhase::LEFT:
+            m_tp->lft = color;
+            m_init_phase = InitPhase::RIGHT;
+            break;
+
+        case InitPhase::RIGHT:
+            m_tp->rgt = color;
+            m_init_phase = InitPhase::COMPLETE;
+            break;
+
+        case InitPhase::COMPLETE:
+        default:
+            break;
+        }
+    }
+
     switch (m_init_phase)
     {
     case InitPhase::TOP:
-        m_tp->top = tess_row(g_i_start_pt.x, g_i_stop_pt.x, g_i_start_pt.y);
-        m_init_phase = InitPhase::BOTTOM;
-        break;
+        start_row_probe(g_i_start_pt.x, g_i_stop_pt.x, g_i_start_pt.y);
+        return initialize_edges();
 
     case InitPhase::BOTTOM:
-        m_tp->bot = tess_row(g_i_start_pt.x, g_i_stop_pt.x, g_i_stop_pt.y);
-        m_init_phase = InitPhase::LEFT;
-        break;
+        start_row_probe(g_i_start_pt.x, g_i_stop_pt.x, g_i_stop_pt.y);
+        return initialize_edges();
 
     case InitPhase::LEFT:
-        m_tp->lft = tess_col(g_i_start_pt.x, g_i_start_pt.y + 1, g_i_stop_pt.y - 1);
-        m_init_phase = InitPhase::RIGHT;
-        break;
+        start_column_probe(g_i_start_pt.x, g_i_start_pt.y + 1, g_i_stop_pt.y - 1);
+        return initialize_edges();
 
     case InitPhase::RIGHT:
-        m_tp->rgt = tess_col(g_i_stop_pt.x, g_i_start_pt.y + 1, g_i_stop_pt.y - 1);
-        m_init_phase = InitPhase::COMPLETE;
-        break;
+        start_column_probe(g_i_stop_pt.x, g_i_start_pt.y + 1, g_i_stop_pt.y - 1);
+        return initialize_edges();
 
     case InitPhase::COMPLETE:
     default:
         break;
     }
 
-    if (m_tp->top == -3 || m_tp->bot == -3 || m_tp->lft == -3 || m_tp->rgt == -3)
-    {
-        m_interrupted = true;
-        return false;
-    }
     return true;
 }
 
@@ -188,68 +323,138 @@ void Tesseral::next_box()
     g_current_row = m_tp->y1;
 }
 
-bool Tesseral::split_needed()
+void Tesseral::reset_split_check()
 {
-    if (m_tp->top == -1 || m_tp->bot == -1 || m_tp->lft == -1 || m_tp->rgt == -1)
+    m_split_check_phase = SplitCheckPhase::START;
+}
+
+bool Tesseral::split_needed(bool &needed)
+{
+    needed = false;
+    if (probe_active())
     {
+        int color;
+        if (!finish_edge_probe(color))
+        {
+            return false;
+        }
+        switch (m_split_check_phase)
+        {
+        case SplitCheckPhase::TOP:
+            m_tp->top = color;
+            break;
+
+        case SplitCheckPhase::BOTTOM:
+            m_tp->bot = color;
+            break;
+
+        case SplitCheckPhase::LEFT:
+            m_tp->lft = color;
+            break;
+
+        case SplitCheckPhase::RIGHT:
+            m_tp->rgt = color;
+            break;
+
+        case SplitCheckPhase::MIDDLE:
+            needed = color != m_tp->top;
+            reset_split_check();
+            return true;
+
+        case SplitCheckPhase::START:
+        default:
+            break;
+        }
+    }
+
+    if (m_split_check_phase == SplitCheckPhase::START &&
+        (m_tp->top == -1 || m_tp->bot == -1 || m_tp->lft == -1 || m_tp->rgt == -1))
+    {
+        needed = true;
+        reset_split_check();
         return true;
     }
+
     // for any edge whose color is unknown, set it
-    if (m_tp->top == -2)
+    if (m_split_check_phase == SplitCheckPhase::START)
     {
-        m_tp->top = tess_check_row(m_tp->x1, m_tp->x2, m_tp->y1);
+        m_split_check_phase = SplitCheckPhase::TOP;
+    }
+    if (m_split_check_phase == SplitCheckPhase::TOP)
+    {
+        if (m_tp->top == -2)
+        {
+            m_tp->top = tess_check_row(m_tp->x1, m_tp->x2, m_tp->y1);
+        }
+        m_split_check_phase = SplitCheckPhase::BOTTOM;
     }
     if (m_tp->top == -1)
     {
+        needed = true;
+        reset_split_check();
         return true;
     }
-    if (m_tp->bot == -2)
+    if (m_split_check_phase == SplitCheckPhase::BOTTOM)
     {
-        m_tp->bot = tess_check_row(m_tp->x1, m_tp->x2, m_tp->y2);
+        if (m_tp->bot == -2)
+        {
+            m_tp->bot = tess_check_row(m_tp->x1, m_tp->x2, m_tp->y2);
+        }
+        m_split_check_phase = SplitCheckPhase::LEFT;
     }
     if (m_tp->bot != m_tp->top)
     {
+        needed = true;
+        reset_split_check();
         return true;
     }
-    if (m_tp->lft == -2)
+    if (m_split_check_phase == SplitCheckPhase::LEFT)
     {
-        m_tp->lft = tess_check_col(m_tp->x1, m_tp->y1, m_tp->y2);
+        if (m_tp->lft == -2)
+        {
+            m_tp->lft = tess_check_col(m_tp->x1, m_tp->y1, m_tp->y2);
+        }
+        m_split_check_phase = SplitCheckPhase::RIGHT;
     }
     if (m_tp->lft != m_tp->top)
     {
+        needed = true;
+        reset_split_check();
         return true;
     }
-    if (m_tp->rgt == -2)
+    if (m_split_check_phase == SplitCheckPhase::RIGHT)
     {
-        m_tp->rgt = tess_check_col(m_tp->x2, m_tp->y1, m_tp->y2);
+        if (m_tp->rgt == -2)
+        {
+            m_tp->rgt = tess_check_col(m_tp->x2, m_tp->y1, m_tp->y2);
+        }
+        m_split_check_phase = SplitCheckPhase::MIDDLE;
     }
     if (m_tp->rgt != m_tp->top)
     {
+        needed = true;
+        reset_split_check();
         return true;
     }
 
-    if (m_tp->x2 - m_tp->x1 > m_tp->y2 - m_tp->y1)
+    if (m_split_check_phase == SplitCheckPhase::MIDDLE)
     {
-        // divide down the middle
-        const int mid = (m_tp->x1 + m_tp->x2) >> 1;                      // Find mid-point
-        const int mid_color = tess_col(mid, m_tp->y1 + 1, m_tp->y2 - 1); // Do mid column
-        if (mid_color != m_tp->top)
+        if (m_tp->x2 - m_tp->x1 > m_tp->y2 - m_tp->y1)
         {
-            return true;
+            // divide down the middle
+            const int mid = (m_tp->x1 + m_tp->x2) >> 1; // Find mid-point
+            start_column_probe(mid, m_tp->y1 + 1, m_tp->y2 - 1);
         }
-    }
-    else
-    {
-        // divide across the middle
-        const int mid = (m_tp->y1 + m_tp->y2) >> 1;                      // Find mid-point
-        const int mid_color = tess_row(m_tp->x1 + 1, m_tp->x2 - 1, mid); // Do mid row
-        if (mid_color != m_tp->top)
+        else
         {
-            return true;
+            // divide across the middle
+            const int mid = (m_tp->y1 + m_tp->y2) >> 1; // Find mid-point
+            start_row_probe(m_tp->x1 + 1, m_tp->x2 - 1, mid);
         }
+        return split_needed(needed);
     }
-
-    return false;
+    reset_split_check();
+    return true;
 }
 
 void Tesseral::fill_box()
@@ -295,19 +500,40 @@ void Tesseral::fill_box()
 bool Tesseral::split_box()
 {
     // box not surrounded by same color, subdivide
-    int mid;
-    int mid_color;
-    Tess *tp2;
-    if (m_tp->x2 - m_tp->x1 > m_tp->y2 - m_tp->y1)
+    if (!m_split_box_active)
     {
-        // divide down the middle
-        mid = (m_tp->x1 + m_tp->x2) >> 1;                      // Find mid-point
-        mid_color = tess_col(mid, m_tp->y1 + 1, m_tp->y2 - 1); // Do mid column
-        if (mid_color == -3)
+        m_split_box_vertical = m_tp->x2 - m_tp->x1 > m_tp->y2 - m_tp->y1;
+        if (m_split_box_vertical)
         {
-            return true;
+            // divide down the middle
+            m_split_box_mid = (m_tp->x1 + m_tp->x2) >> 1; // Find mid-point
+            start_column_probe(m_split_box_mid, m_tp->y1 + 1, m_tp->y2 - 1);
         }
-        if (m_tp->x2 - mid > 1)
+        else
+        {
+            // divide across the middle
+            m_split_box_mid = (m_tp->y1 + m_tp->y2) >> 1; // Find mid-point
+            start_row_probe(m_tp->x1 + 1, m_tp->x2 - 1, m_split_box_mid);
+        }
+        m_split_box_active = true;
+    }
+
+    int mid_color;
+    if (!finish_edge_probe(mid_color))
+    {
+        return false;
+    }
+    m_split_box_active = false;
+    if (mid_color == -3)
+    {
+        m_interrupted = true;
+        return false;
+    }
+
+    Tess *tp2;
+    if (m_split_box_vertical)
+    {
+        if (m_tp->x2 - m_split_box_mid > 1)
         {
             // right part >= 1 column
             if (m_tp->top == -1)
@@ -319,14 +545,14 @@ bool Tesseral::split_box()
                 m_tp->bot = -2;
             }
             tp2 = m_tp;
-            if (mid - m_tp->x1 > 1)
+            if (m_split_box_mid - m_tp->x1 > 1)
             {
                 // left part >= 1 col, stack right
                 *++m_tp = *tp2; // copy current box
-                m_tp->x2 = mid;
+                m_tp->x2 = m_split_box_mid;
                 m_tp->rgt = mid_color;
             }
-            tp2->x1 = mid;
+            tp2->x1 = m_split_box_mid;
             tp2->lft = mid_color;
         }
         else
@@ -336,14 +562,7 @@ bool Tesseral::split_box()
     }
     else
     {
-        // divide across the middle
-        mid = (m_tp->y1 + m_tp->y2) >> 1;                      // Find mid-point
-        mid_color = tess_row(m_tp->x1 + 1, m_tp->x2 - 1, mid); // Do mid row
-        if (mid_color == -3)
-        {
-            return true;
-        }
-        if (m_tp->y2 - mid > 1)
+        if (m_tp->y2 - m_split_box_mid > 1)
         {
             // bottom part >= 1 column
             if (m_tp->lft == -1)
@@ -355,14 +574,14 @@ bool Tesseral::split_box()
                 m_tp->rgt = -2;
             }
             tp2 = m_tp;
-            if (mid - m_tp->y1 > 1)
+            if (m_split_box_mid - m_tp->y1 > 1)
             {
                 // top also >= 1 col, stack bottom
                 *++m_tp = *tp2; // copy current box
-                m_tp->y2 = mid;
+                m_tp->y2 = m_split_box_mid;
                 m_tp->bot = mid_color;
             }
-            tp2->y1 = mid;
+            tp2->y1 = m_split_box_mid;
             tp2->top = mid_color;
         }
         else
@@ -370,7 +589,7 @@ bool Tesseral::split_box()
             --m_tp;
         }
     }
-    return false;
+    return true;
 }
 
 void Tesseral::suspend()
@@ -440,62 +659,6 @@ static int tess_check_row(const int x1, int x2, const int y)
         --x2;
     }
     return i;
-}
-
-static int tess_col(const int x, const int y1, const int y2)
-{
-    g_col = x;
-    g_row = y1;
-    g_reset_periodicity = true;
-    int col_color = calc_type();
-    // cppcheck-suppress redundantAssignment
-    g_reset_periodicity = false;
-    if (col_color < 0)
-    {
-        return -3;
-    }
-    while (++g_row <= y2)
-    {
-        // generate the column
-        const int i = calc_type();
-        if (i < 0)
-        {
-            return -3;
-        }
-        if (i != col_color)
-        {
-            col_color = -1;
-        }
-    }
-    return col_color;
-}
-
-static int tess_row(const int x1, const int x2, const int y)
-{
-    g_row = y;
-    g_col = x1;
-    g_reset_periodicity = true;
-    int row_color = calc_type();
-    // cppcheck-suppress redundantAssignment
-    g_reset_periodicity = false;
-    if (row_color < 0)
-    {
-        return -3;
-    }
-    while (++g_col <= x2)
-    {
-        // generate the row
-        const int i = calc_type();
-        if (i < 0)
-        {
-            return -3;
-        }
-        if (i != row_color)
-        {
-            row_color = -1;
-        }
-    }
-    return row_color;
 }
 
 } // namespace id::engine
