@@ -378,7 +378,182 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Standard Orbit Plot Pacing
+### Slice 1: Orbit Delay Timer Interface
+
+The orbit-pacing inversion depends on a usable high-resolution delay
+primitive.  Define the portable UI-owned surface first, without changing
+ownership of orbit plotting or overlay scrubbing.
+
+Work:
+
+- Add a UI-owned orbit delay timer interface based on
+  [orbit-delay-timer.md](orbit-delay-timer.md).
+- Accept delay values in `orbitdelay` units: 100 us per unit.
+- Keep input policy outside the timer.  The timer may receive a small
+  callback that lets the current UI context pump or test input, but it
+  must not decide what a key means.
+- Use a hybrid policy: avoid scheduler oversleep near tiny deadlines,
+  but avoid burning CPU for long delays.
+- Define the common reset and wait API needed by the current standard
+  orbit display path.
+- Keep platform-specific clock and sleep details behind the timer API.
+- Do not move orbit plotting, overlay scrubbing, sound output, or engine
+  wait helpers in this slice.
+
+Done when:
+
+- The timer API exists in `libid/ui` or a lower platform-neutral layer
+  callable from `libid/ui`.
+- The API accepts a UI-owned input callback without depending on driver
+  keyboard polling directly.
+- Platform-specific timing code is isolated behind the API.
+
+Manual testing:
+
+- None.
+
+### Slice 2: Win32 Orbit Delay Timer
+
+Work:
+
+- Implement the Win32 timer backend for the orbit delay timer API.
+- Add this backend source to the CMake platform source selection for
+  Win32.
+- Do not use preprocessor `#ifdef` branches in timer code to select this
+  backend.
+- Use `QueryPerformanceCounter()` for deadline measurement instead of
+  scheduler sleep granularity.
+- Allow message pumping or message-aware waits to wake on input, but do
+  not use the message queue as the delay clock.
+- Preserve the shared hybrid sleep/spin policy.
+- Build this backend only when CMake configures a Win32 target.
+
+Done when:
+
+- Win32 `orbitdelay=1` is measured against a
+  `QueryPerformanceCounter()` deadline.
+- CMake selects this backend at configure time for Win32 targets.
+- Pending input can still wake the delay promptly.
+- The backend does not interpret keys.
+
+Manual testing:
+
+- `type=mandel showorbit=yes orbitdelay=1`
+- `type=mandel showorbit=yes orbitdelay=30`
+
+### Slice 3: Linux Orbit Delay Timer
+
+Work:
+
+- Implement or validate the Linux timer backend for the orbit delay timer
+  API.
+- Add this backend source to the CMake platform source selection for
+  Linux.
+- Do not use preprocessor `#ifdef` branches in timer code to select this
+  backend.
+- Use a monotonic high-resolution deadline source such as
+  `clock_gettime(CLOCK_MONOTONIC, ...)`.
+- Use Linux sleep or yield mechanisms only while far enough from the
+  deadline that scheduler latency is acceptable.
+- Keep input pumping in the UI callback supplied to the timer.
+- Build this backend only when CMake configures a Linux target.
+
+Done when:
+
+- Linux builds use a monotonic deadline clock for orbit delay pacing.
+- CMake selects this backend at configure time for Linux targets.
+- The implementation does not depend on Win32 APIs or assumptions.
+- Pending input can still wake the delay promptly.
+
+Manual testing:
+
+- `type=mandel showorbit=yes orbitdelay=1`
+- `type=mandel showorbit=yes orbitdelay=30`
+
+### Slice 4: macOS Orbit Delay Timer
+
+Work:
+
+- Implement or validate the macOS timer backend for the orbit delay timer
+  API.
+- Add this backend source to the CMake platform source selection for
+  macOS.
+- Do not use preprocessor `#ifdef` branches in timer code to select this
+  backend.
+- Use a monotonic high-resolution deadline source, such as
+  `std::chrono::steady_clock` when verified suitable, or Mach absolute
+  time if explicit platform control is needed.
+- Avoid assuming sub-millisecond scheduler sleeps are precise.
+- Keep input pumping in the UI callback supplied to the timer.
+- Build this backend only when CMake configures a macOS target.
+
+Done when:
+
+- macOS builds use a monotonic deadline clock for orbit delay pacing.
+- CMake selects this backend at configure time for macOS targets.
+- The implementation does not depend on Win32 or Linux-only APIs.
+- Pending input can still wake the delay promptly.
+
+Manual testing:
+
+- `type=mandel showorbit=yes orbitdelay=1`
+- `type=mandel showorbit=yes orbitdelay=30`
+
+### Slice 5: BSD Orbit Delay Timer
+
+Work:
+
+- Implement or validate the BSD timer backend for the orbit delay timer
+  API.
+- Add this backend source to the CMake platform source selection for BSD
+  targets.
+- Do not use preprocessor `#ifdef` branches in timer code to select this
+  backend.
+- Use portable BSD timing first, such as
+  `clock_gettime(CLOCK_MONOTONIC, ...)`.
+- Avoid relying on BSD-specific fast clock variants unless guarded and
+  optional.
+- Verify the implementation across FreeBSD, OpenBSD, and NetBSD CI.
+- Keep input pumping in the UI callback supplied to the timer.
+- Build this backend only when CMake configures a BSD target.
+
+Done when:
+
+- FreeBSD, OpenBSD, and NetBSD builds use a monotonic deadline clock for
+  orbit delay pacing.
+- CMake selects this backend at configure time for BSD targets.
+- The implementation does not depend on Win32, Linux-only, or
+  single-BSD APIs.
+- Pending input can still wake the delay promptly.
+
+Manual testing:
+
+- `type=mandel showorbit=yes orbitdelay=1`
+- `type=mandel showorbit=yes orbitdelay=30`
+
+### Slice 6: Wire Orbit Delay Timer
+
+Work:
+
+- Replace the current sleep-based delay in
+  `libid/ui/standard_orbit_plot.cpp` with the portable orbit delay timer
+  API.
+- Keep the existing orbit plotting and overlay scrubbing ownership.
+- Pass the current UI keyboard pumping callback into the timer.
+- Do not move sound output or engine wait helpers in this slice.
+
+Done when:
+
+- The standard UI orbit display path uses the timer primitive.
+- `engine/wait_until.cpp` remains unchanged for later cleanup.
+- Standard orbit delay behavior is otherwise unchanged.
+
+Manual testing:
+
+- `type=mandel showorbit=yes orbitdelay=1`
+- `type=mandel showorbit=yes orbitdelay=30`
+
+### Slice 7: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -393,12 +568,9 @@ to make plotted orbit points visible, not to advance fractal math.
 The required inversion is to make engine orbit plotting incremental so
 it can return to the UI pacing loop between plot steps.
 
-The delay mechanism must follow the timing constraints in
-[orbit-delay-timer.md](orbit-delay-timer.md).  Tiny values such as
-`orbitdelay=1` need a high-resolution deadline, such as
-`QueryPerformanceCounter()` on Win32.  The message or event queue is not
-the timer; it is only the responsiveness mechanism that lets a pending
-keypress wake the delay.
+The delay mechanism comes from the portable orbit delay timer primitive.
+This slice changes orbit plotting ownership; it must not also invent
+timing policy.
 
 The current `plot_orbit()` name hides two different behaviors:
 
@@ -434,12 +606,7 @@ Work:
   the UI pacing loop after plotting a visible orbit point.
 - Let the UI pacing loop perform only message-aware delay pacing before
   resuming engine calculation work.
-- Implement the delay through a driver or UI timing primitive that uses a
-  high-resolution deadline for tiny delays and pumps the platform message
-  or event queue enough to notice keypresses.
-- On Win32, use `QueryPerformanceCounter()` for the delay deadline.
-  `PeekMessage()` or a message-aware wait may be used to pump messages or
-  wake on input, but must not be treated as the delay clock.
+- Use the existing orbit delay timer primitive for pacing.
 - Preserve the distinction between overlay orbit display and image-orbit
   plotting.
 
@@ -450,8 +617,8 @@ Done when:
 - UI code does not perform orbit plot or overlay scrub operations.
 - Standard, FrothyBasin, and Popcorn keep orbit plotting in engine or
   fractal calculation objects and use UI only for pacing delay.
-- `orbitdelay=1` uses a high-resolution deadline instead of scheduler
-  sleep granularity, and pending key input wakes the delay promptly.
+- Standard orbit plotting uses the orbit delay timer primitive, and
+  pending key input wakes the delay promptly.
 
 Manual testing:
 
@@ -459,7 +626,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 2: Sound Output Pacing
+### Slice 8: Sound Output Pacing
 
 Work:
 
@@ -480,7 +647,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 3: Wait-Until Cleanup
+### Slice 9: Wait-Until Cleanup
 
 Work:
 
@@ -507,7 +674,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 4: StandardFractal Pixel Interrupts
+### Slice 10: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -534,7 +701,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 5: Perturbation Traversal Ownership
+### Slice 11: Perturbation Traversal Ownership
 
 Work:
 
@@ -577,7 +744,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 6: Perturbation Pass-Switch Tests
+### Slice 12: Perturbation Pass-Switch Tests
 
 Work:
 
