@@ -7,7 +7,7 @@
 #include "engine/engine_timer.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "engine/Potential.h"
 #include "engine/resume.h"
 #include "engine/UserData.h"

@@ -2,7 +2,7 @@
 //
 #include "engine/sound.h"
 
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "engine/wait_until.h"
 #include "fractals/lorenz.h"
 #include "io/check_write_file.h"

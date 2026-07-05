@@ -22,7 +22,7 @@
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
 #include "engine/lowerize_parameter.h"
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
 #include "engine/show_dot.h"

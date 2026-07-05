@@ -8,7 +8,7 @@
 #include "engine/color_state.h"
 #include "engine/fractals.h"
 #include "engine/Inversion.h"
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
 #include "engine/show_dot.h"

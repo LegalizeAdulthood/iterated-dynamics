@@ -3,7 +3,7 @@
 #include "ui/get_sound_params.h"
 
 #include "engine/calcfrac.h"
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "engine/sound.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"

@@ -5,7 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/convert_center_mag.h"
 #include "engine/LogicalScreen.h"
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "engine/sound.h"
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"

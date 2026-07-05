@@ -13,7 +13,7 @@
 #include "engine/ImageRegion.h"
 #include "engine/jiim.h"
 #include "engine/LogicalScreen.h"
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/sound.h"

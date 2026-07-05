@@ -9,7 +9,7 @@
 #include "ui/ant.h"
 
 #include "engine/calcfrac.h"
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "fractals/Ant.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"

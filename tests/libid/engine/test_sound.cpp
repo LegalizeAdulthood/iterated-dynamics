@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <engine/orbit.h>
+#include <engine/OrbitPlot.h>
 #include <engine/sound.h>
 
 #include "MockDriver.h"

@@ -27,7 +27,7 @@
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
 #include "engine/ScanlinePass.h"
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "engine/pixel_grid.h"
 #include "engine/Potential.h"
 #include "engine/resume.h"

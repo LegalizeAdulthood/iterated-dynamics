@@ -17,7 +17,7 @@
 #include "engine/color_state.h"
 #include "engine/engine_timer.h"
 #include "engine/LogicalScreen.h"
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "engine/pixel_limits.h"
 #include "engine/Potential.h"
 #include "engine/sound.h"

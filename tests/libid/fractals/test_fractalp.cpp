@@ -8,7 +8,7 @@
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
 #include <engine/fractals.h>
-#include <engine/orbit.h>
+#include <engine/OrbitPlot.h>
 #include <engine/show_dot.h>
 #include <engine/sound.h>
 #include <engine/trig_fns.h>

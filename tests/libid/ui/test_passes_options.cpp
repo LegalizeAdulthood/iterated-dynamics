@@ -4,7 +4,7 @@
 
 #include "MockDriver.h"
 
-#include <engine/orbit.h>
+#include <engine/OrbitPlot.h>
 #include <engine/StickyOrbits.h>
 #include <engine/UserData.h>
 #include <fractals/lorenz.h>

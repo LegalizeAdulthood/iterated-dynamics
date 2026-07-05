@@ -4,7 +4,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/jiim.h"
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "engine/resume.h"
 #include "fractals/fractalp.h"
 #include "misc/Driver.h"

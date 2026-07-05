@@ -3,7 +3,7 @@
 #include "ui/standard_fractal.h"
 
 #include "engine/calcfrac.h"
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "engine/StandardFractal.h"
 #include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"

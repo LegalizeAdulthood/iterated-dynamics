@@ -61,7 +61,7 @@ add_library(libid
     include/engine/log_map.h engine/log_map.cpp
     include/engine/lowerize_parameter.h engine/lowerize_parameter.cpp
     include/engine/ScanlinePass.h engine/ScanlinePass.cpp
-    include/engine/orbit.h engine/orbit.cpp
+    include/engine/OrbitPlot.h engine/OrbitPlot.cpp
     include/engine/param_not_used.h engine/param_not_used.cpp
     include/engine/PertEngine.h engine/PertEngine.cpp
     engine/perturbation.cpp

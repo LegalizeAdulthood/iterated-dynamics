@@ -3,7 +3,7 @@
 #include "ui/standard_orbit_plot.h"
 
 #include "engine/calcfrac.h"
-#include "engine/orbit.h"
+#include "engine/OrbitPlot.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/OrbitDelayTimer.h"
 
