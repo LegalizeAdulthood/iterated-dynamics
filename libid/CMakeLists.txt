@@ -242,6 +242,7 @@ add_library(libid
     include/ui/non_standard_fractal.h ui/non_standard_fractal.cpp
     include/ui/orbit2d.h ui/orbit2d.cpp
     include/ui/orbit3d.h ui/orbit3d.cpp
+    include/ui/OrbitDelayTimer.h
     include/ui/passes_options.h ui/passes_options.cpp
     include/ui/plasma.h ui/plasma.cpp
     include/ui/popcorn.h ui/popcorn.cpp

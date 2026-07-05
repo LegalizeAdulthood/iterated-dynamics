@@ -378,41 +378,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Orbit Delay Timer Interface
-
-The orbit-pacing inversion depends on a usable high-resolution delay
-primitive.  Define the portable UI-owned surface first, without changing
-ownership of orbit plotting or overlay scrubbing.
-
-Work:
-
-- Add a UI-owned orbit delay timer interface based on
-  [orbit-delay-timer.md](orbit-delay-timer.md).
-- Accept delay values in `orbitdelay` units: 100 us per unit.
-- Keep input policy outside the timer.  The timer may receive a small
-  callback that lets the current UI context pump or test input, but it
-  must not decide what a key means.
-- Use a hybrid policy: avoid scheduler oversleep near tiny deadlines,
-  but avoid burning CPU for long delays.
-- Define the common reset and wait API needed by the current standard
-  orbit display path.
-- Keep platform-specific clock and sleep details behind the timer API.
-- Do not move orbit plotting, overlay scrubbing, sound output, or engine
-  wait helpers in this slice.
-
-Done when:
-
-- The timer API exists in `libid/ui` or a lower platform-neutral layer
-  callable from `libid/ui`.
-- The API accepts a UI-owned input callback without depending on driver
-  keyboard polling directly.
-- Platform-specific timing code is isolated behind the API.
-
-Manual testing:
-
-- None.
-
-### Slice 2: Win32 Orbit Delay Timer
+### Slice 1: Win32 Orbit Delay Timer
 
 Work:
 
@@ -441,7 +407,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=1`
 - `type=mandel showorbit=yes orbitdelay=30`
 
-### Slice 3: Linux Orbit Delay Timer
+### Slice 2: Linux Orbit Delay Timer
 
 Work:
 
@@ -470,7 +436,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=1`
 - `type=mandel showorbit=yes orbitdelay=30`
 
-### Slice 4: macOS Orbit Delay Timer
+### Slice 3: macOS Orbit Delay Timer
 
 Work:
 
@@ -499,7 +465,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=1`
 - `type=mandel showorbit=yes orbitdelay=30`
 
-### Slice 5: BSD Orbit Delay Timer
+### Slice 4: BSD Orbit Delay Timer
 
 Work:
 
@@ -531,7 +497,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=1`
 - `type=mandel showorbit=yes orbitdelay=30`
 
-### Slice 6: Wire Orbit Delay Timer
+### Slice 5: Wire Orbit Delay Timer
 
 Work:
 
@@ -553,7 +519,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=1`
 - `type=mandel showorbit=yes orbitdelay=30`
 
-### Slice 7: Standard Orbit Plot Pacing
+### Slice 6: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -626,7 +592,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 8: Sound Output Pacing
+### Slice 7: Sound Output Pacing
 
 Work:
 
@@ -647,7 +613,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 9: Wait-Until Cleanup
+### Slice 8: Wait-Until Cleanup
 
 Work:
 
@@ -674,7 +640,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 10: StandardFractal Pixel Interrupts
+### Slice 9: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -701,7 +667,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 11: Perturbation Traversal Ownership
+### Slice 10: Perturbation Traversal Ownership
 
 Work:
 
@@ -744,7 +710,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 12: Perturbation Pass-Switch Tests
+### Slice 11: Perturbation Pass-Switch Tests
 
 Work:
 
