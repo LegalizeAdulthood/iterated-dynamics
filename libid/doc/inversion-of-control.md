@@ -610,16 +610,100 @@ Manual testing:
 
 ## Current Direct Input Leaks
 
-Direct polling or key consumption exists outside `libid/ui` in:
+Direct polling or key-sensitive waiting exists outside `libid/ui` in:
 
-- `libid/engine/calcfrac.cpp`: top-level renderer selection calls UI
-  control paths, non-standard polling path, and direct standard-pixel
-  fallback polling.
-- `libid/engine/SolidGuess.cpp`: interrupt checks during block repaint.
-- `libid/engine/orbit.cpp`: shared `plot_orbit()` path owns screen orbit
-  display and reaches input polling through `wait_until()`.
-- `libid/engine/sound.cpp`: suppress tone while keys are pending.
+- `libid/engine/calcfrac.cpp`: standard pixel calculation still calls
+  `calc_interrupted()`, and show-dot fallback pacing still uses
+  engine-side delay helpers.
+- `libid/engine/ScanlinePass.cpp`: one-pass and two-pass traversal still
+  calls `calc_interrupted()` while deciding whether to suspend work.
+- `libid/engine/orbit.cpp`: shared orbit plotting still reaches input
+  polling indirectly through `wait_until()`.
+- `libid/engine/sound.cpp`: speaker output still waits through
+  `wait_until()` and suppresses speaker tones through an input-pending
+  callback.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
+- `libid/engine/cmdfiles.cpp`: comments document indirect startup and
+  error-message paths that may call UI key-waiting code through
+  `init_msg()`.
+
+The remaining slices cover the first five items.  The `cmdfiles.cpp`
+case is not a direct polling call, but it marks a remaining mixed
+engine/UI boundary to keep visible.
+
+## Keyboard Polling Still Outside `id_main`
+
+The current release 1.5 boundary is narrower than the final
+event-driven design.  For release 1.5, the key rule is that only
+`libid/ui` talks directly to keyboard and mouse I/O.  The stricter
+future target is that `id_main` or the top application loop is the only
+code that polls the driver key queue.
+
+To reach the stricter target, split keyboard dispatch from keyboard
+polling:
+
+- `KeyboardHandler.cpp` should hold the handler stack and interruption
+  state, and dispatch keys that are passed to it.
+- `KeyboardHandler.cpp` should not call `driver_key_pressed()` or
+  `driver_get_key()`.
+- The top application loop should read driver keys and feed them to the
+  handler stack.
+- Render controllers should become resumable phases that do bounded work
+  when the top loop asks them to advance.
+
+Simple render controllers that already wrap calculation objects but
+still poll the driver queue directly:
+
+- `libid/ui/bifurcation.cpp`
+- `libid/ui/cellular.cpp`
+- `libid/ui/dynamic2d.cpp`
+- `libid/ui/ifs2d.cpp`
+- `libid/ui/ifs3d.cpp`
+- `libid/ui/lsystem.cpp`
+- `libid/ui/orbit2d.cpp`
+- `libid/ui/orbit3d.cpp`
+- `libid/ui/plasma.cpp`
+- `libid/ui/standard_4d.cpp`
+- `libid/ui/testpt.cpp`
+
+Controllers with bespoke interaction or partial handler-stack use that
+still read or write the driver queue directly:
+
+- `libid/ui/ant.cpp`
+- `libid/ui/inverse_julia.cpp`
+- `libid/ui/non_standard_fractal.cpp`
+- `libid/ui/stereo.cpp`
+
+Handler-based render controllers that still rely on
+`KeyboardHandler.cpp` polling internally:
+
+- `libid/ui/diffusion.cpp`
+- `libid/ui/frothy_basin.cpp`
+- `libid/ui/lyapunov.cpp`
+- `libid/ui/popcorn.cpp`
+- `libid/ui/standard_fractal.cpp`
+- `libid/ui/standard_orbit_plot.cpp`
+
+Blocking text screens, modal prompts, and utility UI paths also poll
+directly.  They can remain for the release 1.5 directory boundary, but
+must become application phases or dialogs before `id_main` can be the
+only keyboard poller:
+
+- `libid/ui/big_while_loop.cpp`
+- `libid/ui/do_pause.cpp`
+- `libid/ui/editpal.cpp`
+- `libid/ui/file_get_window.cpp`
+- `libid/ui/full_screen_choice.cpp`
+- `libid/ui/full_screen_prompt.cpp`
+- `libid/ui/get_key_no_help.cpp`
+- `libid/ui/help.cpp`
+- `libid/ui/intro.cpp`
+- `libid/ui/main_menu.cpp`
+- `libid/ui/main_menu_switch.cpp`
+- `libid/ui/rotate.cpp`
+- `libid/ui/stop_msg.cpp`
+- `libid/ui/temp_msg.cpp`
+- `libid/ui/zoom.cpp`
 
 ## Future Event-Driven Work
 
