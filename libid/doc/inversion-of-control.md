@@ -378,7 +378,150 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Standard Orbit Plot Pacing
+### Slice 1: Diffusion Render Keyboard Handler
+
+`libid/ui/diffusion.cpp` already has the desired UI controller shape:
+it constructs `fractals::Diffusion`, polls between `iterate()` calls,
+and calls `suspend()` when the UI decides to stop.
+
+Work:
+
+- Add a `DiffusionKeyboardHandler` or equivalent local render handler for
+  `libid/ui/diffusion.cpp`.
+- Move the behavior used from `libid/ui/check_key.cpp:15-31` into that
+  handler: `o` and `O` toggle orbit display without interrupting, and
+  any other key requests interruption.
+- Replace `check_key()` in `libid/ui/diffusion.cpp:19` with a pure
+  context-state check set by the handler.
+- Remove the `ui/check_key.h` include from `libid/ui/diffusion.cpp`.
+
+Done when:
+
+- `libid/ui/diffusion.cpp` does not include `ui/check_key.h`.
+- `libid/ui/diffusion.cpp` does not call `check_key()`.
+- Diffusion still suspends on non-orbit keys.
+- Orbit toggle behavior is preserved for the diffusion UI context.
+
+Manual testing:
+
+- `type=diffusion`
+
+### Slice 2: Inverse Julia Orbit Keyboard Handler
+
+`libid/ui/inverse_julia.cpp` already has keyboard handler plumbing for
+the JIIM cursor path.  The older `inverse_julia_fractal_type()` loop
+still calls the generic `check_key()` helper.
+
+Work:
+
+- Add a small inverse-Julia orbit-render keyboard handler or context for
+  `inverse_julia_fractal_type()`.
+- Move the behavior used from `libid/ui/check_key.cpp:15-31` into that
+  handler: `o` and `O` toggle orbit display without interrupting, and
+  any other key requests loop exit.
+- Replace `check_key()` in `libid/ui/inverse_julia.cpp:301` with the
+  state set by that handler.
+- Remove the `ui/check_key.h` include from
+  `libid/ui/inverse_julia.cpp`.
+- Do not fold this path into the JIIM crosshair cursor handler unless the
+  state being shared is actually the same.
+
+Done when:
+
+- `libid/ui/inverse_julia.cpp` does not include `ui/check_key.h`.
+- `libid/ui/inverse_julia.cpp` does not call `check_key()`.
+- The old inverse-Julia orbit loop exits on non-orbit keys and still
+  frees its queue.
+- Existing JIIM keyboard behavior is unchanged.
+
+Manual testing:
+
+- `type=mandel`, then `J`
+
+### Slice 3: Non-Standard Render Result Ownership
+
+`libid/ui/non_standard_fractal.cpp` is only a thin UI wrapper around a
+synchronous `engine::NonStandardFractal::iterate()` call.  Before
+replacing its `check_key()` call, make the render result explicit so the
+UI wrapper does not infer completion from scattered status side effects.
+
+Work:
+
+- Add a small result/status surface to `engine::NonStandardFractal`.
+- Keep `NonStandardFractal::iterate()` synchronous for this slice.
+- Move the "if still `IN_PROGRESS`, mark completed" logic from
+  `libid/ui/non_standard_fractal.cpp:23-26` into the engine object or a
+  clearly named engine method.
+- Preserve current final return behavior from
+  `libid/ui/non_standard_fractal.cpp`.
+
+Done when:
+
+- `libid/ui/non_standard_fractal.cpp` no longer decides that an
+  `IN_PROGRESS` non-standard calculation means completed.
+- No keyboard behavior changes in this slice.
+- The non-standard renderer remains behavior-compatible.
+
+Manual testing:
+
+- None.
+
+### Slice 4: Non-Standard Render Keyboard Handler
+
+After non-standard render result ownership is explicit, replace the
+remaining `check_key()` use in its UI wrapper.
+
+Work:
+
+- Add a non-standard render keyboard handler or context state for
+  `libid/ui/non_standard_fractal.cpp`.
+- Move the behavior used from `libid/ui/check_key.cpp:15-31` into that
+  handler: `o` and `O` toggle orbit display without interrupting, and
+  any other key requests interruption.
+- Replace `check_key()` in `libid/ui/non_standard_fractal.cpp:18` with
+  the state set by that handler.
+- Preserve the existing non-resumable interruption result when a
+  non-orbit key is pending after the synchronous calculation returns.
+- Remove the `ui/check_key.h` include from
+  `libid/ui/non_standard_fractal.cpp`.
+
+Done when:
+
+- `libid/ui/non_standard_fractal.cpp` does not include `ui/check_key.h`.
+- `libid/ui/non_standard_fractal.cpp` does not call `check_key()`.
+- Non-standard render completion and interruption status stay compatible
+  with the old wrapper behavior.
+
+Manual testing:
+
+- `type=lorenz3d`
+
+### Slice 5: Remove Generic Check-Key Helper
+
+The generic helper mixed unrelated UI contexts behind one polling
+function.  After its real callers are gone, remove it instead of keeping
+it as a new wrapper name.
+
+Work:
+
+- Delete `libid/ui/check_key.cpp`.
+- Delete `libid/include/ui/check_key.h`.
+- Remove the source from build files.
+- Verify remaining `check_key` names are unrelated local callback
+  functions such as menu or prompt callbacks.
+
+Done when:
+
+- `rg "\"ui/check_key.h\"|check_key\\(\\)" libid/ui libid/engine
+  libid/fractals` finds no generic helper use.
+- Any remaining `check_key` matches are local callback names and not
+  includes or calls to the deleted helper.
+
+Manual testing:
+
+- None.
+
+### Slice 6: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -459,7 +602,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 2: Sound Output Pacing
+### Slice 7: Sound Output Pacing
 
 Work:
 
@@ -480,7 +623,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 3: Wait-Until Cleanup
+### Slice 8: Wait-Until Cleanup
 
 Work:
 
@@ -507,7 +650,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 4: StandardFractal Pixel Interrupts
+### Slice 9: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -534,7 +677,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 5: Perturbation Traversal Ownership
+### Slice 10: Perturbation Traversal Ownership
 
 Work:
 
@@ -577,7 +720,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 6: Perturbation Pass-Switch Tests
+### Slice 11: Perturbation Pass-Switch Tests
 
 Work:
 
