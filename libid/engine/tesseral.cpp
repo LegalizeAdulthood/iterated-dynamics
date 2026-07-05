@@ -28,16 +28,6 @@ Tesseral::Tesseral() :
     m_guess_plot(g_plot != g_put_color && g_plot != sym_plot2),
     m_tp(&m_stack[0])
 {
-    auto interrupted = [this](const int color)
-    {
-        if (color == -3)
-        {
-            m_interrupted = true;
-            return true;
-        }
-        return false;
-    };
-
     m_tp->x1 = g_i_start_pt.x; // set up initial box
     m_tp->x2 = g_i_stop_pt.x;
     m_tp->y1 = g_i_start_pt.y;
@@ -45,26 +35,7 @@ Tesseral::Tesseral() :
 
     if (g_work_pass == 0)                                                    // not resuming
     {
-        m_tp->top = tess_row(g_i_start_pt.x, g_i_stop_pt.x, g_i_start_pt.y); // Do top row
-        if (interrupted(m_tp->top))
-        {
-            return;
-        }
-        m_tp->bot = tess_row(g_i_start_pt.x, g_i_stop_pt.x, g_i_stop_pt.y); // Do bottom row
-        if (interrupted(m_tp->bot))
-        {
-            return;
-        }
-        m_tp->lft = tess_col(g_i_start_pt.x, g_i_start_pt.y + 1, g_i_stop_pt.y - 1); // Do left column
-        if (interrupted(m_tp->lft))
-        {
-            return;
-        }
-        m_tp->rgt = tess_col(g_i_stop_pt.x, g_i_start_pt.y + 1, g_i_stop_pt.y - 1); // Do right column
-        if (interrupted(m_tp->rgt))
-        {
-            return;
-        }
+        m_init_phase = InitPhase::TOP;
     }
     else // resuming, rebuild work stack
     {
@@ -142,6 +113,10 @@ bool Tesseral::iterate()
     {
         return true;
     }
+    if (m_init_phase != InitPhase::COMPLETE)
+    {
+        return initialize_edges();
+    }
 
     next_box();
     if (split_needed())
@@ -150,6 +125,43 @@ bool Tesseral::iterate()
     }
 
     fill_box();
+    return true;
+}
+
+bool Tesseral::initialize_edges()
+{
+    switch (m_init_phase)
+    {
+    case InitPhase::TOP:
+        m_tp->top = tess_row(g_i_start_pt.x, g_i_stop_pt.x, g_i_start_pt.y);
+        m_init_phase = InitPhase::BOTTOM;
+        break;
+
+    case InitPhase::BOTTOM:
+        m_tp->bot = tess_row(g_i_start_pt.x, g_i_stop_pt.x, g_i_stop_pt.y);
+        m_init_phase = InitPhase::LEFT;
+        break;
+
+    case InitPhase::LEFT:
+        m_tp->lft = tess_col(g_i_start_pt.x, g_i_start_pt.y + 1, g_i_stop_pt.y - 1);
+        m_init_phase = InitPhase::RIGHT;
+        break;
+
+    case InitPhase::RIGHT:
+        m_tp->rgt = tess_col(g_i_stop_pt.x, g_i_start_pt.y + 1, g_i_stop_pt.y - 1);
+        m_init_phase = InitPhase::COMPLETE;
+        break;
+
+    case InitPhase::COMPLETE:
+    default:
+        break;
+    }
+
+    if (m_tp->top == -3 || m_tp->bot == -3 || m_tp->lft == -3 || m_tp->rgt == -3)
+    {
+        m_interrupted = true;
+        return false;
+    }
     return true;
 }
 
