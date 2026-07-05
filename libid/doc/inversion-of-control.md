@@ -378,36 +378,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: macOS Orbit Delay Timer
-
-Work:
-
-- Implement or validate the macOS timer backend for the orbit delay timer
-  API.
-- Add this backend source to the CMake platform source selection for
-  macOS.
-- Do not use preprocessor `#ifdef` branches in timer code to select this
-  backend.
-- Use a monotonic high-resolution deadline source, such as
-  `std::chrono::steady_clock` when verified suitable, or Mach absolute
-  time if explicit platform control is needed.
-- Avoid assuming sub-millisecond scheduler sleeps are precise.
-- Keep input pumping in the UI callback supplied to the timer.
-- Build this backend only when CMake configures a macOS target.
-
-Done when:
-
-- macOS builds use a monotonic deadline clock for orbit delay pacing.
-- CMake selects this backend at configure time for macOS targets.
-- The implementation does not depend on Win32 or Linux-only APIs.
-- Pending input can still wake the delay promptly.
-
-Manual testing:
-
-- None.  The backend is not used by the render path until the timer
-  wiring slice.
-
-### Slice 2: BSD Orbit Delay Timer
+### Slice 1: BSD Orbit Delay Timer
 
 Work:
 
@@ -439,7 +410,7 @@ Manual testing:
 - None.  The backend is not used by the render path until the timer
   wiring slice.
 
-### Slice 3: Wire Orbit Delay Timer
+### Slice 2: Wire Orbit Delay Timer
 
 Work:
 
@@ -461,7 +432,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=1`
 - `type=mandel showorbit=yes orbitdelay=30`
 
-### Slice 4: Standard Orbit Plot Pacing
+### Slice 3: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -534,7 +505,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 5: Sound Output Pacing
+### Slice 4: Sound Output Pacing
 
 Work:
 
@@ -555,7 +526,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 6: Wait-Until Cleanup
+### Slice 5: Wait-Until Cleanup
 
 Work:
 
@@ -582,7 +553,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 7: StandardFractal Pixel Interrupts
+### Slice 6: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -609,7 +580,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 8: Perturbation Traversal Ownership
+### Slice 7: Perturbation Traversal Ownership
 
 Work:
 
@@ -652,7 +623,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 9: Perturbation Pass-Switch Tests
+### Slice 8: Perturbation Pass-Switch Tests
 
 Work:
 
