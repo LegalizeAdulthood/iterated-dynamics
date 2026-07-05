@@ -463,41 +463,7 @@ The Popcorn conversion should follow review boundaries, not a guessed
 slice count.  A slice is small enough when it preserves current behavior,
 removes one false dependency, and leaves a reviewable intermediate state.
 
-### Slice 1: Popcorn Direct Image Plotting
-
-Work:
-
-- Remove Popcorn's `OrbitPlot` member and public pending image-orbit
-  API.
-- Add a private Popcorn image-point plot helper that uses the current
-  real-to-screen projection used by `OrbitPlot` image mode.
-- Plot directly with `g_put_color()` after projection and bounds checks.
-- Do not save pixels, scrub pixels, wait for `orbitdelay`, or trigger
-  sound from Popcorn image plotting.
-- Simplify `libid/ui/popcorn.cpp` to call `Popcorn::iterate()` and poll
-  interruption between increments.
-- Remove `drive_orbit_plot()` and `reset_orbit_delay()` use from the
-  Popcorn UI controller.
-- Do not route Popcorn through `StandardFractal`.
-- Do not add any `libid/ui` include from `libid/fractals`.
-- Do not introduce a shared projection abstraction in this slice.
-
-Done when:
-
-- `libid/ui/popcorn.cpp` does not call `drive_orbit_plot()` or receive
-  an `OrbitPlot` reference from Popcorn.
-- Popcorn owns its scan state, orbit state, and image-orbit plotting.
-- `libid/fractals/popcorn.cpp` and `libid/include/fractals/popcorn.h`
-  do not include `engine/orbit.h`.
-- `OrbitPlot` image mode is unused, but may still exist until the next
-  slice removes it.
-
-Manual testing:
-
-- None.  Ordinary Popcorn and PopcornJul renders are covered by image
-  tests.
-
-### Slice 2: OrbitPlot Overlay-Only Cleanup
+### Slice 1: OrbitPlot Overlay-Only Cleanup
 
 Work:
 
@@ -526,7 +492,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes`: while rendering, press `x`, then
   `Esc`; rendering resumes and overlay display still works.
 
-### Slice 3: Orbit Show Input Inversion
+### Slice 2: Orbit Show Input Inversion
 
 Work:
 
@@ -553,7 +519,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes`: while rendering, press `x`, then
   `Esc`; rendering resumes and input is handled by the UI controller.
 
-### Slice 4: Sound Output Pacing
+### Slice 3: Sound Output Pacing
 
 Work:
 
@@ -577,7 +543,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 5: Wait-Until Cleanup
+### Slice 4: Wait-Until Cleanup
 
 Work:
 
@@ -605,7 +571,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 6: StandardFractal Pixel Interrupts
+### Slice 5: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -634,7 +600,7 @@ Manual testing:
 - `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
   then `Esc`; rendering resumes.
 
-### Slice 7: Perturbation Traversal Ownership
+### Slice 6: Perturbation Traversal Ownership
 
 Work:
 
@@ -677,7 +643,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`: rendering completes without a
   perturbation crash or hang.
 
-### Slice 8: Perturbation Pass-Switch Tests
+### Slice 7: Perturbation Pass-Switch Tests
 
 Work:
 

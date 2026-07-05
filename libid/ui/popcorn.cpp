@@ -4,7 +4,6 @@
 
 #include "fractals/popcorn.h"
 #include "ui/KeyboardHandler.h"
-#include "ui/standard_orbit_plot.h"
 
 #include <memory>
 
@@ -20,28 +19,14 @@ int popcorn_type()
     ScopedKeyboardHandler main_loop_scope{main_loop_handler};
 
     Popcorn popcorn;
-    reset_orbit_delay();
     popcorn.resume();
 
     while (!popcorn.done())
     {
-        bool check_interrupted = true;
-        if (popcorn.image_orbit_plot_pending())
+        popcorn.iterate();
+        if (!popcorn.done())
         {
-            if (drive_orbit_plot(popcorn.pending_image_orbit_plot()))
-            {
-                popcorn.complete_pending_image_orbit_plot();
-            }
-            check_interrupted = false;
-        }
-        else
-        {
-            popcorn.iterate();
-        }
-        if (!popcorn.done() && !popcorn.image_orbit_plot_pending())
-        {
-            const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
-            if (interrupted)
+            if (calc_interrupted())
             {
                 popcorn.suspend();
                 return -1;

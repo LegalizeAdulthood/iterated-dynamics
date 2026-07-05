@@ -2,10 +2,12 @@
 //
 #include "fractals/popcorn.h"
 
+#include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
+#include "engine/ImageRegion.h"
 #include "engine/log_map.h"
-#include "engine/orbit.h"
+#include "engine/LogicalScreen.h"
 #include "engine/resume.h"
 #include "engine/trig_fns.h"
 #include "engine/VideoInfo.h"
@@ -17,7 +19,6 @@
 #include "misc/version.h"
 
 #include <algorithm>
-#include <cassert>
 #include <cmath>
 
 using namespace id::engine;
@@ -61,7 +62,6 @@ void Popcorn::resume()
     }
     m_color_iter = 0;
     m_orbit_step_result = 0;
-    m_image_orbit_plot_pending = false;
     m_orbit_step_completed = false;
     m_row = start_row;
     m_col = 0;
@@ -87,7 +87,7 @@ bool Popcorn::done() const
 
 void Popcorn::iterate()
 {
-    if (m_done || m_image_orbit_plot_pending)
+    if (m_done)
     {
         return;
     }
@@ -122,10 +122,6 @@ void Popcorn::iterate()
 
     m_orbit_step_result = orbit_step();
     m_orbit_step_completed = true;
-    if (m_image_orbit_plot_pending)
-    {
-        return;
-    }
     if (m_orbit_step_result != 0)
     {
         advance_seed();
@@ -174,33 +170,6 @@ void Popcorn::start_seed()
     m_orbit_step_completed = false;
     other_julia_per_pixel();
     m_seed_active = true;
-}
-
-bool Popcorn::image_orbit_plot_pending() const
-{
-    return m_image_orbit_plot_pending;
-}
-
-OrbitPlot &Popcorn::pending_image_orbit_plot()
-{
-    assert(m_image_orbit_plot_pending);
-    return m_image_orbit_plot;
-}
-
-void Popcorn::complete_pending_image_orbit_plot()
-{
-    assert(m_image_orbit_plot_pending);
-    assert(m_image_orbit_plot.done());
-    m_image_orbit_plot_pending = false;
-}
-
-void Popcorn::queue_image_orbit_plot(const double real, const double imag, const int color)
-{
-    if (!m_image_orbit_plot_pending)
-    {
-        m_image_orbit_plot.reset_image(real, imag, color);
-        m_image_orbit_plot_pending = true;
-    }
 }
 
 void Popcorn::setup_julia_attractor(const double real, const double imag)
@@ -288,7 +257,7 @@ int Popcorn::legacy_real_orbit_step()
     g_new_z.y = g_old_z.y - g_param_z1.x * g_sin_x;
     if (m_render_mode == RenderMode::IMAGE_ORBITS)
     {
-        queue_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
+        plot_image_orbit_point(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
         g_old_z = g_new_z;
     }
     else
@@ -322,7 +291,7 @@ int Popcorn::current_real_orbit_step()
     g_new_z.y = g_old_z.y - g_param_z1.x * g_sin_x;
     if (m_render_mode == RenderMode::IMAGE_ORBITS)
     {
-        queue_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
+        plot_image_orbit_point(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
         g_old_z = g_new_z;
     }
     g_temp_sqr_x = sqr(g_new_z.x);
@@ -363,7 +332,7 @@ int Popcorn::generalized_orbit_step()
 
     if (m_render_mode == RenderMode::IMAGE_ORBITS)
     {
-        queue_image_orbit_plot(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
+        plot_image_orbit_point(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
         g_old_z = g_new_z;
     }
 
@@ -426,6 +395,27 @@ void Popcorn::plot_escape_time_seed()
         }
     }
     g_plot(g_col, g_row, g_color);
+}
+
+void Popcorn::plot_image_orbit_point(const double real, const double imag, const int color)
+{
+    const double dx{real - g_image_region.m_min.x};
+    const double dy{imag - g_image_region.m_max.y};
+    const int x{static_cast<int>(dy * g_plot_mx1 - dx * g_plot_mx2)};
+    const int physical_x{x + g_logical_screen.x_offset};
+    if (physical_x < 0 || physical_x >= g_screen_x_dots)
+    {
+        return;
+    }
+
+    const int y{static_cast<int>(dx * g_plot_my1 - dy * g_plot_my2)};
+    const int physical_y{y + g_logical_screen.y_offset};
+    if (physical_y < 0 || physical_y >= g_screen_y_dots)
+    {
+        return;
+    }
+
+    g_put_color(x, y, color);
 }
 
 int Popcorn::orbit_step()
