@@ -378,35 +378,48 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-## Orbit Display Pacing
+## Orbit Display And Delay Policy
 
 Orbit plotting is engine work done from inside each pixel's orbit
-iteration.  The UI layer must not plot or scrub orbit points.  After
-inversion, preserve user-visible behavior rather than the exact old
-keyboard polling cadence: orbit points should still appear during
-calculation, `orbitdelay` should still pace visible points at visible
-display rates, and keyboard input should be checked at display-refresh
-cadence while orbit display pacing is active.
+iteration.  The UI layer must not plot or scrub orbit points.  The
+inversion work is to remove keyboard and mouse polling buried inside
+orbit display mechanics by making the engine return after bounded
+plot or scrub work.  The UI controller owns input polling and any
+presentation delay between those engine increments.
 
-Exact FRACTINT microsecond compatibility is not the display goal.
-`orbitdelay` has two separate meanings:
+Do not settle `orbitdelay` display semantics as part of the mechanical
+inversion slices.  The old DOS delay model may not fit a windowed
+application, and exact FRACTINT microsecond compatibility is not
+necessarily the right goal.  Revisit the entire policy before adding
+new display-delay implementation slices.
 
-- for visible orbit display, values below one 72 Hz frame are full-speed
-  display, and `orbitdelay=139` is the first value that requests visible
-  pacing;
-- for sound, `orbitdelay` is tone-duration data to be used by audio
-  output buffering or scheduling after sound generation is restored.
+The policy review must cover every relevant overlay or orbit-inspection
+use:
 
-The engine owns the plot and scrub operations.  The UI pacing loop owns
-only the delay between engine-owned plot steps because the delay exists
-to make plotted orbit points visible, not to advance fractal math.
-The required inversion is to make engine orbit plotting incremental so
-it can return to the UI pacing loop between plot steps.
+- standard escape-time overlay display from `showorbit=yes`;
+- FrothyBasin overlay display;
+- Lorenz and other 2D or 3D orbit plotting paths;
+- any remaining fractal type that uses `g_orbit_delay`, `plot_orbit`,
+  visible point pacing, or sound output timing.
 
-The display delay mechanism comes from the portable orbit delay timer
-primitive.  The remaining orbit-display slices change orbit plotting
-ownership while preserving the 72 Hz display policy already implemented
-in the UI orbit pacing path.
+Questions to answer:
+
+- Is `orbitdelay` still a compatibility parameter, a UI presentation
+  cadence, or a legacy value that should be mapped to modern behavior?
+- What should `orbitdelay=0`, small positive values, and large values
+  mean for windowed display?
+- Should visible orbit display use per-point delay, frame-rate-limited
+  sampled presentation, single-step mode, or a separate animation UI?
+- Should batch or headless rendering ignore visible orbit delay?
+- How should sound timing use `orbitdelay` once sound is restored?
+
+Done when:
+
+- the chosen policy is documented before implementation;
+- each affected fractal type has command-line manual test arguments and
+  expected observations;
+- new implementation slices separate engine plot work from UI polling,
+  without mixing in unresolved delay-policy decisions.
 
 The current `plot_orbit()` name hides two different behaviors:
 
@@ -426,6 +439,26 @@ Popcorn presentation state through `StandardFractal`; make `Popcorn` the
 calculation object that owns scan state, orbit state, and pending orbit
 points.
 
+Popcorn and PopcornJul are not part of the standard overlay-orbit
+policy.  They hijacked the old orbit plotting machinery to draw image
+pixels, but they are not showing temporary escape-time orbit overlays.
+Their work item is a dependency cleanup: remove the false dependency on
+`OrbitPlot` without treating Popcorn as an orbit-inspection feature.
+
+The running orbit overlay may eventually be superseded by an orbit tool
+window with an interactive cursor in the main image.  That tool would
+let the UI request orbit calculation for a selected image point, then
+animate, pause, single-step, or play sound independently of image
+rendering.  In that future shape, `showorbit=yes` can become
+compatibility syntax that opens or enables the orbit tool instead of
+forcing rendering to draw, delay, and scrub temporary overlay points.
+
+That direction reinforces the current inversion boundary: image
+rendering should not own input polling or UI pacing, and the UI should
+not own fractal orbit math.  The engine supplies bounded orbit work; the
+UI decides when to request it, how to present it, and how to handle user
+input while it is visible.
+
 The Popcorn conversion should follow review boundaries, not a guessed
 slice count.  A slice is small enough when it preserves current behavior,
 removes one false dependency, and leaves a reviewable intermediate state.
@@ -438,9 +471,8 @@ Work:
   and into the Popcorn calculation object.
 - Keep Popcorn separate from standard overlay orbit display: Popcorn
   plots image pixels and does not save or scrub covered pixels.
-- Let Popcorn record whether UI display pacing is needed after it plots
-  a visible image-orbit point.
-- Keep the UI controller responsible only for pacing and interruption.
+- Keep the UI controller responsible only for interruption and
+  presentation timing.
 - Do not route Popcorn through `StandardFractal`.
 - Do not add any `libid/ui` include from `libid/fractals`.
 
@@ -449,38 +481,42 @@ Done when:
 - `libid/ui/popcorn.cpp` does not call `drive_orbit_plot()` or receive
   an `OrbitPlot` reference from Popcorn.
 - Popcorn owns its scan state, orbit state, and image-orbit plotting.
-- The 72 Hz display pacing policy is unchanged.
+- Any presentation pacing needed by Popcorn is recorded for the
+  Popcorn UI/rendering policy, not decided in this slice.
 
 Manual testing:
 
-- `type=popcorn orbitdelay=1`
-- `type=popcorn orbitdelay=138`
-- `type=popcorn orbitdelay=139`
+- None.  Ordinary Popcorn and PopcornJul renders are covered by image
+  tests.
 
-### Slice 2: OrbitPlot Wait Cleanup
+### Slice 2: Orbit Show Input Inversion
 
 Work:
 
-- Remove the delayed `OrbitPlot::iterate()` compatibility path that
-  hides waiting inside engine orbit plotting.
+- Remove keyboard and mouse polling that is reached indirectly through
+  overlay orbit display mechanics.
+- Make `OrbitPlot` expose bounded plot and scrub work that returns to
+  the caller instead of waiting internally.
 - Remove the `engine/wait_until.h` include from `libid/engine/orbit.cpp`.
-- Replace or remove any remaining helper that loops through
-  `OrbitPlot::iterate()` so it cannot wait from engine code.
-- Keep any remaining non-paced compatibility helper explicitly no-delay.
+- Let the UI controller call the bounded engine orbit work and poll for
+  input between increments.
+- Do not choose a new `orbitdelay` display policy in this slice.
 
 Done when:
 
 - `engine/orbit.cpp` has no `wait_until()` call.
-- Engine code does not perform delay loops around orbit plotting.
-- The only visible orbit display pacing path is the UI orbit pacing path.
+- Engine code does not poll input or perform delay loops around orbit
+  display.
+- The only visible orbit input polling path is the UI controller.
 - Any helper named `plot_orbit`, `plot_overlay_orbit`, or
-  `plot_image_orbit` is either removed or clearly no-delay.
+  `plot_image_orbit` is either removed or clearly bounded and no-delay.
 
 Manual testing:
 
-- `type=mandel showorbit=yes orbitdelay=139`
-- `type=frothybasin showorbit=yes orbitdelay=139`
-- `type=popcorn orbitdelay=139`
+- `type=mandel showorbit=yes`: while rendering, press `x`, then `Esc`;
+  rendering resumes and input is handled by the UI controller.
+- `type=frothybasin showorbit=yes`: while rendering, press `x`, then
+  `Esc`; rendering resumes and input is handled by the UI controller.
 
 ### Slice 3: Sound Output Pacing
 
@@ -511,10 +547,11 @@ Manual testing:
 Work:
 
 - Recheck all remaining `wait_until()`, `reset_wait_until()`, and
-  `sleep_orbit_delay()` callers after the pacing slices.
+  `sleep_orbit_delay()` callers after the orbit display and sound
+  input-inversion slices.
 - Remove the `showdot` compatibility fallback in
   `engine/calcfrac.cpp` after the standard pass types that cannot yet
-  yield at a pixel are converted to incremental UI-owned delay pacing.
+  yield at a pixel are converted to incremental UI-owned presentation.
 - Remove `wait_until()` if no non-UI caller remains.
 - Move any remaining UI timing helper to `libid/ui`.
 
@@ -557,8 +594,10 @@ Done when:
 
 Manual testing:
 
-- `type=mandel passes=1 maxiter=10000`
-- `type=mandel passes=2 maxiter=10000`
+- `type=mandel passes=1 maxiter=10000`: while rendering, press `x`,
+  then `Esc`; rendering resumes.
+- `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
+  then `Esc`; rendering resumes.
 
 ### Slice 6: Perturbation Traversal Ownership
 
@@ -600,8 +639,8 @@ Done when:
 
 Manual testing:
 
-- Deep zoom with `type=mandel passes=b`
-- `type=mandel passes=p`
+- Deep zoom with `type=mandel passes=b`: rendering completes without a
+  perturbation crash or hang.
 
 ### Slice 7: Perturbation Pass-Switch Tests
 
