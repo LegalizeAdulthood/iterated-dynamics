@@ -21,11 +21,12 @@ class StandardFractal
 public:
     int calculate_standard_pixel(bool yield_to_ui);
     bool consume_standard_pixel_yield();
-    void complete_pending_orbit_plot();
+    void complete_orbit_display_pacing();
     void complete_show_dot_pacing();
     void queue_image_orbit_plot(double real, double imag, int color, bool mark_as_plotted = false);
     void queue_overlay_orbit_plot(double real, double imag, bool mark_as_plotted = true);
     bool queue_show_dot_pacing();
+    void scrub_overlay();
 
     void resume();
 
@@ -36,11 +37,8 @@ public:
     void iterate();
 
     bool consume_incomplete_standard_pixel_yield();
-    void complete_overlay_scrub();
-    bool overlay_scrub_pending() const;
-    bool orbit_plot_pending() const;
+    bool orbit_display_pacing_pending() const;
     bool show_dot_pacing_pending() const;
-    OrbitPlot &pending_orbit_plot();
     StandardPassStatus standard_pass_status() const;
 
 private:
@@ -59,9 +57,12 @@ private:
 
     void clear_standard_pixel();
     void complete();
+    void complete_pending_orbit_plot();
     void finish_work_list();
+    OrbitPlot &pending_orbit_plot();
     void pop_work_list_front();
     void restore_dispatch();
+    void run_pending_orbit_plot();
     bool scrub_overlay_orbit(bool yield_to_ui);
     void run_current_work_item();
     void run_current_work_item_mode();
@@ -118,6 +119,7 @@ private:
     bool m_timer_started{};
     bool m_orbit_plot_pending{};
     bool m_orbit_plot_marks_standard_orbit{};
+    bool m_orbit_display_pacing_pending{};
     bool m_overlay_scrub_pending{};
     bool m_show_dot_pacing_pending{};
     bool m_work_item_active{};

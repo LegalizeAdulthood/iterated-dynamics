@@ -41,7 +41,14 @@ bool dispatch_orbit_input_if_due()
     return dispatch_pending_keyboard_input();
 }
 
-void wait_for_current_orbit_delay()
+} // namespace
+
+unsigned long display_orbit_delay_units(const unsigned long delay_100us)
+{
+    return delay_100us < MIN_DISPLAY_DELAY_UNITS ? 0 : delay_100us;
+}
+
+void pace_orbit_display()
 {
     if (g_orbit_delay <= 0)
     {
@@ -59,19 +66,12 @@ void wait_for_current_orbit_delay()
     }
 }
 
-} // namespace
-
-unsigned long display_orbit_delay_units(const unsigned long delay_100us)
-{
-    return delay_100us < MIN_DISPLAY_DELAY_UNITS ? 0 : delay_100us;
-}
-
 bool drive_orbit_plot(OrbitPlot &orbit_plot)
 {
     orbit_plot.iterate_without_delay();
     if (orbit_plot.consume_delay_pending())
     {
-        wait_for_current_orbit_delay();
+        pace_orbit_display();
     }
     return orbit_plot.done();
 }

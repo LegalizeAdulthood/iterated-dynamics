@@ -256,6 +256,15 @@ void StandardFractal::complete_pending_orbit_plot()
     m_orbit_plot_marks_standard_orbit = false;
 }
 
+void StandardFractal::complete_orbit_display_pacing()
+{
+    if (!m_orbit_display_pacing_pending)
+    {
+        throw std::logic_error{"No pending orbit display pacing"};
+    }
+    m_orbit_display_pacing_pending = false;
+}
+
 void StandardFractal::complete_show_dot_pacing()
 {
     if (!m_show_dot_pacing_pending)
@@ -265,24 +274,9 @@ void StandardFractal::complete_show_dot_pacing()
     m_show_dot_pacing_pending = false;
 }
 
-void StandardFractal::complete_overlay_scrub()
+bool StandardFractal::orbit_display_pacing_pending() const
 {
-    if (!m_overlay_scrub_pending)
-    {
-        throw std::logic_error{"No pending overlay scrub"};
-    }
-    m_overlay_scrub_pending = false;
-    m_standard_pixel_overlay_scrubbed = true;
-}
-
-bool StandardFractal::overlay_scrub_pending() const
-{
-    return m_overlay_scrub_pending;
-}
-
-bool StandardFractal::orbit_plot_pending() const
-{
-    return m_orbit_plot_pending;
+    return m_orbit_display_pacing_pending;
 }
 
 bool StandardFractal::show_dot_pacing_pending() const
@@ -311,6 +305,20 @@ void StandardFractal::iterate()
 {
     if (done())
     {
+        return;
+    }
+    if (m_orbit_display_pacing_pending)
+    {
+        return;
+    }
+    if (m_orbit_plot_pending)
+    {
+        run_pending_orbit_plot();
+        return;
+    }
+    if (m_overlay_scrub_pending)
+    {
+        scrub_overlay();
         return;
     }
 
@@ -368,6 +376,7 @@ void StandardFractal::clear_standard_pixel()
     m_standard_pixel_overlay_scrubbed = false;
     m_show_dot_pacing_pending = false;
     m_orbit_plot_marks_standard_orbit = false;
+    m_orbit_display_pacing_pending = false;
     m_overlay_scrub_pending = false;
 }
 
@@ -467,6 +476,26 @@ void StandardFractal::restore_dispatch()
     }
 }
 
+void StandardFractal::run_pending_orbit_plot()
+{
+    pending_orbit_plot().iterate_without_delay();
+    if (pending_orbit_plot().consume_delay_pending())
+    {
+        m_orbit_display_pacing_pending = true;
+    }
+    if (pending_orbit_plot().done())
+    {
+        complete_pending_orbit_plot();
+    }
+}
+
+void StandardFractal::scrub_overlay()
+{
+    scrub_orbit();
+    m_overlay_scrub_pending = false;
+    m_standard_pixel_overlay_scrubbed = true;
+}
+
 bool StandardFractal::scrub_overlay_orbit(const bool yield_to_ui)
 {
     if (!g_show_orbit || m_standard_pixel_overlay_scrubbed)
@@ -482,8 +511,7 @@ bool StandardFractal::scrub_overlay_orbit(const bool yield_to_ui)
     }
 
     // Compatibility path for pass modes that cannot yet yield here.
-    scrub_orbit();
-    m_standard_pixel_overlay_scrubbed = true;
+    scrub_overlay();
     return false;
 }
 

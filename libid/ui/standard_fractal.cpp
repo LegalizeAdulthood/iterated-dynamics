@@ -25,11 +25,16 @@ namespace
 class OrbitToggleKeyboardHandler : public KeyboardHandler
 {
 public:
+    explicit OrbitToggleKeyboardHandler(StandardFractal &standard_fractal) :
+        m_standard_fractal{standard_fractal}
+    {
+    }
+
     bool handle_key(int key) override
     {
         if (g_show_orbit)
         {
-            scrub_orbit();
+            m_standard_fractal.scrub_overlay();
         }
         if (key != 'o' && key != 'O')
         {
@@ -41,6 +46,9 @@ public:
         }
         return true;
     }
+
+private:
+    StandardFractal &m_standard_fractal;
 };
 
 void wait_for_show_dot_delay()
@@ -57,29 +65,22 @@ int standard_fractal()
 {
     reset_calc_interrupted();
     reset_orbit_delay();
+    StandardFractal standard_fractal;
     auto main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
-    auto orbit_toggle_handler{std::make_shared<OrbitToggleKeyboardHandler>()};
+    auto orbit_toggle_handler{std::make_shared<OrbitToggleKeyboardHandler>(standard_fractal)};
     ScopedKeyboardHandler main_loop_scope{main_loop_handler};
     ScopedKeyboardHandler orbit_toggle_scope{orbit_toggle_handler};
 
-    StandardFractal standard_fractal;
     standard_fractal.resume();
 
     while (!standard_fractal.done())
     {
         bool check_interrupted = true;
-        if (standard_fractal.orbit_plot_pending())
+        if (standard_fractal.orbit_display_pacing_pending())
         {
-            if (drive_orbit_plot(standard_fractal.pending_orbit_plot()))
-            {
-                standard_fractal.complete_pending_orbit_plot();
-            }
+            pace_orbit_display();
+            standard_fractal.complete_orbit_display_pacing();
             check_interrupted = false;
-        }
-        else if (standard_fractal.overlay_scrub_pending())
-        {
-            scrub_orbit();
-            standard_fractal.complete_overlay_scrub();
         }
         else if (standard_fractal.show_dot_pacing_pending())
         {
@@ -91,8 +92,7 @@ int standard_fractal()
         {
             standard_fractal.iterate();
         }
-        if (!standard_fractal.done() && !standard_fractal.orbit_plot_pending() &&
-            !standard_fractal.overlay_scrub_pending())
+        if (!standard_fractal.done() && !standard_fractal.orbit_display_pacing_pending())
         {
             const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
             if (interrupted)

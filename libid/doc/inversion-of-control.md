@@ -430,39 +430,7 @@ The Popcorn conversion should follow review boundaries, not a guessed
 slice count.  A slice is small enough when it preserves current behavior,
 removes one false dependency, and leaves a reviewable intermediate state.
 
-### Slice 1: Standard Overlay Orbit Ownership
-
-Work:
-
-- Move standard overlay point plotting from `libid/ui/standard_fractal.cpp`
-  into `engine::StandardFractal`.
-- Let `StandardFractal` perform one pending overlay plot step and record
-  whether UI display pacing is needed.
-- Route the standard orbit-toggle scrub path through `StandardFractal`
-  state instead of calling `scrub_orbit()` directly from the UI handler.
-- Keep the existing UI orbit delay policy: values below `orbitdelay=139`
-  run full-speed, and keyboard polling during orbit display remains at
-  72 Hz cadence.
-- Do not add any `libid/ui` include from `libid/engine`.
-
-Done when:
-
-- `libid/ui/standard_fractal.cpp` does not call
-  `pending_orbit_plot()`, `complete_pending_orbit_plot()`, or
-  `scrub_orbit()` for standard overlay orbit display.
-- Standard overlay point plotting and overlay scrubbing are owned by
-  `StandardFractal`.
-- The UI standard render loop only observes whether display pacing or
-  interruption handling is needed before asking `StandardFractal` for
-  more work.
-
-Manual testing:
-
-- `type=mandel passes=1 showorbit=yes orbitdelay=1`
-- `type=mandel passes=1 showorbit=yes orbitdelay=138`
-- `type=mandel passes=1 showorbit=yes orbitdelay=139`
-
-### Slice 2: FrothyBasin Overlay Orbit Ownership
+### Slice 1: FrothyBasin Overlay Orbit Ownership
 
 Work:
 
@@ -490,7 +458,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=138`
 - `type=frothybasin showorbit=yes orbitdelay=139`
 
-### Slice 3: Popcorn Image-Orbit Ownership
+### Slice 2: Popcorn Image-Orbit Ownership
 
 Work:
 
@@ -517,7 +485,7 @@ Manual testing:
 - `type=popcorn orbitdelay=138`
 - `type=popcorn orbitdelay=139`
 
-### Slice 4: OrbitPlot Wait Cleanup
+### Slice 3: OrbitPlot Wait Cleanup
 
 Work:
 
@@ -542,7 +510,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=139`
 - `type=popcorn orbitdelay=139`
 
-### Slice 5: Sound Output Pacing
+### Slice 4: Sound Output Pacing
 
 Work:
 
@@ -566,7 +534,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 6: Wait-Until Cleanup
+### Slice 5: Wait-Until Cleanup
 
 Work:
 
@@ -593,7 +561,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 7: StandardFractal Pixel Interrupts
+### Slice 6: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -620,7 +588,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 8: Perturbation Traversal Ownership
+### Slice 7: Perturbation Traversal Ownership
 
 Work:
 
@@ -663,7 +631,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 9: Perturbation Pass-Switch Tests
+### Slice 8: Perturbation Pass-Switch Tests
 
 Work:
 
