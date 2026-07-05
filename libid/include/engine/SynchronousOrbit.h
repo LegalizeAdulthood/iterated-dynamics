@@ -19,6 +19,7 @@ class SynchronousOrbit
 {
 public:
     bool iterate();
+    void suspend();
 
 private:
     enum class ScanPhase

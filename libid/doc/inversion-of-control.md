@@ -170,7 +170,7 @@ The current code is already part-way through this plan:
   fast row repaint state still live on the stack.  It still probes
   keyboard input while filling guessed rows.
 - `SynchronousOrbit` owns an explicit rhombus frame stack and explicit
-  leaf scan state.  It still polls keys directly.
+  leaf scan state.  It suspends through `StandardPass`.
 - `StickyOrbits` is a concrete `StandardPass` alternative.  Rectangle,
   line, and function traversal state still live on the stack, and
   interruption still happens in the orbit plotting helper.
@@ -376,27 +376,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: SynchronousOrbit Polling And Suspend
-
-Work:
-
-- Remove direct driver polling from `SynchronousOrbit`; the standard UI
-  polling loop owns the interrupt decision and calls `suspend()`.
-- Add a `SynchronousOrbit::suspend()` path and route it through
-  `StandardPass::suspend()`.
-
-Done when:
-
-- `engine/SynchronousOrbit.cpp` has no direct driver key polling.
-- `SynchronousOrbit::iterate()` can return from recursive and scan work
-  without losing position.
-- `StandardPass::suspend()` delegates to `SynchronousOrbit`.
-
-Manual testing:
-
-- `type=mandel passes=s maxiter=10000`
-
-### Slice 2: StickyOrbits Seed Traversal
+### Slice 1: StickyOrbits Seed Traversal
 
 Work:
 
@@ -424,7 +404,7 @@ Manual testing:
 
 - None.
 
-### Slice 3: StickyOrbits Orbit State
+### Slice 2: StickyOrbits Orbit State
 
 Work:
 
@@ -447,7 +427,7 @@ Manual testing:
 
 - `type=lorenz passes=o maxiter=10000`
 
-### Slice 4: Tesseral Initialization State
+### Slice 3: Tesseral Initialization State
 
 Work:
 
@@ -470,7 +450,7 @@ Manual testing:
 
 - None.
 
-### Slice 5: Tesseral Edge Probe State
+### Slice 4: Tesseral Edge Probe State
 
 Work:
 
@@ -493,7 +473,7 @@ Manual testing:
 
 - None.
 
-### Slice 6: Tesseral Fill And Suspend
+### Slice 5: Tesseral Fill And Suspend
 
 Work:
 
@@ -514,7 +494,7 @@ Manual testing:
 - `type=mandel passes=t maxiter=10000`
 - `type=mandel passes=t fillcolor=1 maxiter=10000`
 
-### Slice 7: Standard Orbit Plot Pacing
+### Slice 6: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -595,7 +575,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 8: Sound Output Pacing
+### Slice 7: Sound Output Pacing
 
 Work:
 
@@ -616,7 +596,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 9: Wait-Until Cleanup
+### Slice 8: Wait-Until Cleanup
 
 Work:
 
@@ -643,7 +623,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 10: StandardFractal Pixel Interrupts
+### Slice 9: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -670,7 +650,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 11: Perturbation Traversal Ownership
+### Slice 10: Perturbation Traversal Ownership
 
 Work:
 
@@ -713,7 +693,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 12: Perturbation Pass-Switch Tests
+### Slice 11: Perturbation Pass-Switch Tests
 
 Work:
 
@@ -752,7 +732,6 @@ Direct polling or key consumption exists outside `libid/ui` in:
   control paths, non-standard polling path, and direct standard-pixel
   fallback polling.
 - `libid/engine/SolidGuess.cpp`: interrupt checks during block repaint.
-- `libid/engine/SynchronousOrbit.cpp`: interrupt checks during SOI scan.
 - `libid/engine/StickyOrbits.cpp`: reaches direct input polling through
   `plot_orbits2d()`.
 - `libid/engine/orbit.cpp`: shared `plot_orbit()` path owns screen orbit

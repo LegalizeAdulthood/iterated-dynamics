@@ -17,8 +17,8 @@
 #include "engine/fractals.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
+#include "engine/work_list.h"
 #include "fractals/fractalp.h"
-#include "misc/Driver.h"
 #include "misc/stack_avail.h"
 
 #include <algorithm>
@@ -292,10 +292,6 @@ SynchronousOrbit::RhombusStep SynchronousOrbit::process_scan(RhombusFrame &frame
         switch (scan.phase)
         {
         case ScanPhase::ROW_START:
-            if (driver_key_pressed())
-            {
-                return RhombusStep::COMPLETE;
-            }
             scan.scan_z.x = scan_real(frame, input.c_re1, scan.z_value.y);
             scan.scan_z.y = scan_imag(frame, input.c_re1, scan.z_value.y);
             scan.save_color = iteration(input.c_re1, scan.z_value.y, scan.scan_z.x, scan.scan_z.y, input.iter);
@@ -437,10 +433,6 @@ SynchronousOrbit::RhombusStep SynchronousOrbit::process_rhombus(RhombusFrame &fr
         g_rhombus_stack[m_rhombus_depth] = avail;
     }
 
-    if (driver_key_pressed())
-    {
-        return RhombusStep::COMPLETE;
-    }
     if (iter > g_max_iterations)
     {
         put_box(x1, y1, x2, y2, 0);
@@ -833,6 +825,16 @@ bool SynchronousOrbit::iterate()
         }
     }
     return m_done;
+}
+
+void SynchronousOrbit::suspend()
+{
+    if (!m_started || m_done)
+    {
+        return;
+    }
+    add_work_list(g_start_pt, g_stop_pt, g_begin_pt, g_work_pass, g_work_symmetry);
+    m_done = true;
 }
 
 } // namespace id::engine

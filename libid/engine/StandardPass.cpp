@@ -210,6 +210,11 @@ void StandardPass::select(const CalcMode calc_mode)
 
 void StandardPass::suspend()
 {
+    if (m_state.index() == SYNCHRONOUS_ORBIT)
+    {
+        std::get<SynchronousOrbit>(m_state).suspend();
+        return;
+    }
     if (m_state.index() == BOUNDARY_TRACE)
     {
         std::get<BoundaryTrace>(m_state).suspend();
