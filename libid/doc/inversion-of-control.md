@@ -385,7 +385,17 @@ iteration.  The UI layer must not plot or scrub orbit points.  After
 inversion, preserve user-visible behavior rather than the exact old
 keyboard polling cadence: orbit points should still appear during
 calculation, `orbitdelay` should still pace visible points at visible
-display rates, and a pending key should still wake that delay promptly.
+display rates, and keyboard input should be checked at display-refresh
+cadence while orbit display pacing is active.
+
+Exact FRACTINT microsecond compatibility is not the display goal.
+`orbitdelay` has two separate meanings:
+
+- for visible orbit display, values below one 72 Hz frame are full-speed
+  display, and `orbitdelay=139` is the first value that requests visible
+  pacing;
+- for sound, `orbitdelay` is tone-duration data to be used by audio
+  output buffering or scheduling after sound generation is restored.
 
 The engine owns the plot and scrub operations.  The UI pacing loop owns
 only the delay between engine-owned plot steps because the delay exists
@@ -393,9 +403,9 @@ to make plotted orbit points visible, not to advance fractal math.
 The required inversion is to make engine orbit plotting incremental so
 it can return to the UI pacing loop between plot steps.
 
-The delay mechanism comes from the portable orbit delay timer primitive.
-This slice changes orbit plotting ownership; it must not also invent
-timing policy.
+The display delay mechanism comes from the portable orbit delay timer
+primitive.  This slice changes orbit plotting ownership while preserving
+the 72 Hz display policy already implemented in the UI orbit pacing path.
 
 The current `plot_orbit()` name hides two different behaviors:
 
@@ -431,7 +441,10 @@ Work:
   the UI pacing loop after plotting a visible orbit point.
 - Let the UI pacing loop perform only message-aware delay pacing before
   resuming engine calculation work.
-- Use the existing orbit delay timer primitive for pacing.
+- Use the existing orbit delay timer primitive for display pacing at or
+  above the 72 Hz threshold.
+- Keep keyboard polling during orbit display at display-refresh cadence;
+  do not poll the driver once per plotted orbit point.
 - Preserve the distinction between overlay orbit display and image-orbit
   plotting.
 
@@ -442,8 +455,11 @@ Done when:
 - UI code does not perform orbit plot or overlay scrub operations.
 - Standard, FrothyBasin, and Popcorn keep orbit plotting in engine or
   fractal calculation objects and use UI only for pacing delay.
-- Standard orbit plotting uses the orbit delay timer primitive, and
-  pending key input wakes the delay promptly.
+- Standard orbit plotting uses the orbit delay timer primitive for values
+  at or above `orbitdelay=139`, and smaller positive values run
+  full-speed.
+- Orbit display input polling is not more frequent than the 72 Hz display
+  cadence.
 
 Manual testing:
 
@@ -458,8 +474,11 @@ Work:
 - Treat speaker sound as UI presentation, not engine rendering.
 - Make driver speaker calls and sound delay pacing UI-owned instead of
   engine-owned.
-- Let calculation and orbit code report tone requests without blocking to
-  play them.
+- Let calculation and orbit code report tone requests and `orbitdelay`
+  duration data without blocking to play them.
+- Use `orbitdelay` as audio duration when constructing or scheduling
+  sound output; do not reuse the visible-orbit display threshold for
+  sound.
 - Preserve sound-file output separately from speaker playback.
 
 Done when:
