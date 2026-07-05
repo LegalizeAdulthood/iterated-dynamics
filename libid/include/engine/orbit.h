@@ -56,9 +56,9 @@ private:
 };
 
 OrbitPlot &orbit_plot();
-void plot_image_orbit(double real, double imag, int color);
-void plot_overlay_orbit(double real, double imag);
-void plot_orbit(double real, double imag, int color);
-void scrub_orbit();
+inline void scrub_orbit()
+{
+    orbit_plot().scrub();
+}
 
 } // namespace id::engine

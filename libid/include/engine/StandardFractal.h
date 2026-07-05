@@ -23,7 +23,6 @@ public:
     bool consume_standard_pixel_yield();
     void complete_orbit_display_pacing();
     void complete_show_dot_pacing();
-    void queue_image_orbit_plot(double real, double imag, int color, bool mark_as_plotted = false);
     void queue_overlay_orbit_plot(double real, double imag, bool mark_as_plotted = true);
     bool queue_show_dot_pacing();
     void scrub_overlay();
@@ -130,6 +129,5 @@ private:
 StandardFractal *active_standard_fractal();
 StandardPassStatus current_standard_pass_status();
 StandardFractal *set_active_standard_fractal(StandardFractal *standard_fractal);
-void submit_image_orbit_plot(double real, double imag, int color);
 
 } // namespace id::engine

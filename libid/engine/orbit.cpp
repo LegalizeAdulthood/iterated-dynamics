@@ -212,36 +212,6 @@ OrbitPlot &orbit_plot()
     return s_orbit_plot;
 }
 
-void plot_image_orbit(const double real, const double imag, const int color)
-{
-    orbit_plot().reset_image(real, imag, color);
-    while (!orbit_plot().done())
-    {
-        orbit_plot().iterate();
-    }
-}
-
-void plot_overlay_orbit(const double real, const double imag)
-{
-    orbit_plot().reset_overlay(real, imag);
-    while (!orbit_plot().done())
-    {
-        orbit_plot().iterate();
-    }
-}
-
-void plot_orbit(const double real, const double imag, const int color)
-{
-    if (color == -1)
-    {
-        plot_overlay_orbit(real, imag);
-    }
-    else
-    {
-        plot_image_orbit(real, imag, color);
-    }
-}
-
 void OrbitPlot::scrub()
 {
     driver_mute();
@@ -260,11 +230,6 @@ void OrbitPlot::scrub()
         g_put_color(point.x, point.y, point.color);
         update_saved_overlay_count();
     }
-}
-
-void scrub_orbit()
-{
-    orbit_plot().scrub();
 }
 
 } // namespace id::engine
