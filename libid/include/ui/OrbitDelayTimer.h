@@ -5,11 +5,11 @@
 namespace id::ui
 {
 
-using OrbitDelayInputPendingFn = bool (*)();
+using OrbitDelayInputPendingFn = bool();
 
 constexpr unsigned long ORBIT_DELAY_UNIT_MICROSECONDS = 100;
 
 void reset_orbit_delay_timer();
-bool wait_for_orbit_delay(unsigned long delay_100us, OrbitDelayInputPendingFn input_pending);
+bool wait_for_orbit_delay(unsigned long delay_100us, OrbitDelayInputPendingFn &input_pending);
 
 } // namespace id::ui

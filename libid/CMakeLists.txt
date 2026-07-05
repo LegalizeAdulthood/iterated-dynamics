@@ -10,6 +10,13 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(ID_MAKE_MIG_SCRIPT_SOURCE ui/make_mig_script_windows.cpp)
 endif()
 
+set(ID_ORBIT_DELAY_TIMER_SOURCE)
+set_property(GLOBAL PROPERTY ID_ORBIT_DELAY_TIMER_AVAILABLE FALSE)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(ID_ORBIT_DELAY_TIMER_SOURCE ui/OrbitDelayTimerWin32.cpp)
+    set_property(GLOBAL PROPERTY ID_ORBIT_DELAY_TIMER_AVAILABLE TRUE)
+endif()
+
 set(ID_SPECIAL_DIRECTORIES_SOURCE io/SpecialDirectoriesLinux.cpp)
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(ID_SPECIAL_DIRECTORIES_SOURCE io/SpecialDirectoriesWin.cpp)
@@ -242,7 +249,7 @@ add_library(libid
     include/ui/non_standard_fractal.h ui/non_standard_fractal.cpp
     include/ui/orbit2d.h ui/orbit2d.cpp
     include/ui/orbit3d.h ui/orbit3d.cpp
-    include/ui/OrbitDelayTimer.h
+    include/ui/OrbitDelayTimer.h ${ID_ORBIT_DELAY_TIMER_SOURCE}
     include/ui/passes_options.h ui/passes_options.cpp
     include/ui/plasma.h ui/plasma.cpp
     include/ui/popcorn.h ui/popcorn.cpp

@@ -378,36 +378,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Win32 Orbit Delay Timer
-
-Work:
-
-- Implement the Win32 timer backend for the orbit delay timer API.
-- Add this backend source to the CMake platform source selection for
-  Win32.
-- Do not use preprocessor `#ifdef` branches in timer code to select this
-  backend.
-- Use `QueryPerformanceCounter()` for deadline measurement instead of
-  scheduler sleep granularity.
-- Allow message pumping or message-aware waits to wake on input, but do
-  not use the message queue as the delay clock.
-- Preserve the shared hybrid sleep/spin policy.
-- Build this backend only when CMake configures a Win32 target.
-
-Done when:
-
-- Win32 `orbitdelay=1` is measured against a
-  `QueryPerformanceCounter()` deadline.
-- CMake selects this backend at configure time for Win32 targets.
-- Pending input can still wake the delay promptly.
-- The backend does not interpret keys.
-
-Manual testing:
-
-- `type=mandel showorbit=yes orbitdelay=1`
-- `type=mandel showorbit=yes orbitdelay=30`
-
-### Slice 2: Linux Orbit Delay Timer
+### Slice 1: Linux Orbit Delay Timer
 
 Work:
 
@@ -433,10 +404,10 @@ Done when:
 
 Manual testing:
 
-- `type=mandel showorbit=yes orbitdelay=1`
-- `type=mandel showorbit=yes orbitdelay=30`
+- None.  The backend is not used by the render path until the timer
+  wiring slice.
 
-### Slice 3: macOS Orbit Delay Timer
+### Slice 2: macOS Orbit Delay Timer
 
 Work:
 
@@ -462,10 +433,10 @@ Done when:
 
 Manual testing:
 
-- `type=mandel showorbit=yes orbitdelay=1`
-- `type=mandel showorbit=yes orbitdelay=30`
+- None.  The backend is not used by the render path until the timer
+  wiring slice.
 
-### Slice 4: BSD Orbit Delay Timer
+### Slice 3: BSD Orbit Delay Timer
 
 Work:
 
@@ -494,10 +465,10 @@ Done when:
 
 Manual testing:
 
-- `type=mandel showorbit=yes orbitdelay=1`
-- `type=mandel showorbit=yes orbitdelay=30`
+- None.  The backend is not used by the render path until the timer
+  wiring slice.
 
-### Slice 5: Wire Orbit Delay Timer
+### Slice 4: Wire Orbit Delay Timer
 
 Work:
 
@@ -519,7 +490,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=1`
 - `type=mandel showorbit=yes orbitdelay=30`
 
-### Slice 6: Standard Orbit Plot Pacing
+### Slice 5: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -592,7 +563,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 7: Sound Output Pacing
+### Slice 6: Sound Output Pacing
 
 Work:
 
@@ -613,7 +584,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 8: Wait-Until Cleanup
+### Slice 7: Wait-Until Cleanup
 
 Work:
 
@@ -640,7 +611,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 9: StandardFractal Pixel Interrupts
+### Slice 8: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -667,7 +638,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 10: Perturbation Traversal Ownership
+### Slice 9: Perturbation Traversal Ownership
 
 Work:
 
@@ -710,7 +681,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 11: Perturbation Pass-Switch Tests
+### Slice 10: Perturbation Pass-Switch Tests
 
 Work:
 
