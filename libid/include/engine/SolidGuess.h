@@ -86,6 +86,8 @@ private:
     bool m_guess_row_active{};
     bool m_guess_row_done{};
     bool m_guess_row_first_pass{};
+    bool m_row_below_active{};
+    bool m_top_row_active{};
     int m_max_block{};
     int m_half_block{};
     unsigned int m_prefix[2][MAX_Y_BLK][MAX_X_BLK]{};
@@ -96,6 +98,7 @@ private:
     int m_stack_row_offset{};
     std::vector<Byte> m_stack;
     int m_block_size{};
+    int m_current_x{};
     int m_guess_row_y{};
     int m_guess_row_block_size{};
     int m_guess_x{};

@@ -28,7 +28,7 @@ class StandardFractal
 {
 public:
     int calculate_standard_pixel(bool yield_to_ui);
-    bool consume_standard_pixel_yield();
+    bool consume_traversal_yield();
     bool presentation_pending() const;
     void queue_overlay_orbit_plot(double real, double imag, bool mark_as_plotted = true);
     bool queue_show_dot_pacing();
@@ -43,7 +43,6 @@ public:
 
     void iterate();
 
-    bool consume_incomplete_standard_pixel_yield();
     StandardPassStatus standard_pass_status() const;
 
 private:
@@ -78,6 +77,7 @@ private:
     void start_perturbation_frame();
     void start_timer();
     void start_work_list();
+    bool standard_presentation_yield_enabled() const;
     bool standard_pixel_yield_enabled() const;
     void update_timer();
 

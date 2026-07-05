@@ -219,10 +219,11 @@ bool StandardFractal::done() const
     return m_phase == Phase::COMPLETE;
 }
 
-bool StandardFractal::consume_standard_pixel_yield()
+bool StandardFractal::consume_traversal_yield()
 {
-    const bool yielded{m_standard_pixel_completed_yield};
+    const bool yielded{m_standard_pixel_completed_yield || m_incomplete_standard_pixel_yield || presentation_pending()};
     m_standard_pixel_completed_yield = false;
+    m_incomplete_standard_pixel_yield = false;
     return yielded;
 }
 
@@ -344,13 +345,6 @@ void StandardFractal::iterate()
     update_timer();
 }
 
-bool StandardFractal::consume_incomplete_standard_pixel_yield()
-{
-    const bool yielded{m_incomplete_standard_pixel_yield};
-    m_incomplete_standard_pixel_yield = false;
-    return yielded;
-}
-
 void StandardFractal::clear_standard_pixel()
 {
     m_tan_table.fill(0.0);
@@ -455,7 +449,7 @@ void StandardFractal::queue_overlay_orbit_plot(const double real, const double i
 
 bool StandardFractal::queue_show_dot_pacing()
 {
-    if (!standard_pixel_yield_enabled())
+    if (!standard_presentation_yield_enabled())
     {
         return false;
     }
@@ -500,7 +494,7 @@ bool StandardFractal::scrub_overlay_orbit(const bool yield_to_ui)
         return false;
     }
 
-    if (yield_to_ui && standard_pixel_yield_enabled())
+    if (yield_to_ui && standard_presentation_yield_enabled())
     {
         m_overlay_scrub_pending = true;
         m_incomplete_standard_pixel_yield = true;
@@ -749,6 +743,25 @@ bool StandardFractal::standard_pixel_yield_enabled() const
 {
     const CalcMode calc_mode{m_standard_pass.calc_mode()};
     return calc_mode == CalcMode::ONE_PASS || calc_mode == CalcMode::TWO_PASS || calc_mode == CalcMode::BOUNDARY_TRACE;
+}
+
+bool StandardFractal::standard_presentation_yield_enabled() const
+{
+    switch (m_standard_pass.calc_mode())
+    {
+    case CalcMode::ONE_PASS:
+    case CalcMode::TWO_PASS:
+    case CalcMode::SYNCHRONOUS_ORBIT:
+    case CalcMode::BOUNDARY_TRACE:
+    case CalcMode::SOLID_GUESS:
+    case CalcMode::DIFFUSION:
+    case CalcMode::TESSERAL:
+    case CalcMode::ORBIT:
+        return true;
+
+    default:
+        return false;
+    }
 }
 
 void StandardFractal::update_timer()

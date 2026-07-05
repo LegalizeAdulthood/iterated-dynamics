@@ -3,6 +3,7 @@
 #include "engine/Diffusion.h"
 
 #include "engine/calcfrac.h"
+#include "engine/StandardFractal.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
 
@@ -52,6 +53,12 @@ constexpr int DIF_LB[] =
 // clang-format on
 constexpr double LOG2{0.69314718055994530942};
 constexpr int DIFFUSION_COUNTERS_PER_CHUNK{512};
+
+bool consume_standard_traversal_yield()
+{
+    StandardFractal *standard_fractal{active_standard_fractal()};
+    return standard_fractal != nullptr && standard_fractal->consume_traversal_yield();
+}
 
 } // namespace
 
@@ -112,6 +119,10 @@ bool Diffusion::calculate_current_pixel()
     g_reset_periodicity = true;
     if (calc_type() == -1)
     {
+        if (consume_standard_traversal_yield())
+        {
+            return false;
+        }
         return false;
     }
     g_reset_periodicity = false;

@@ -48,7 +48,7 @@ bool BoundaryTrace::iterate()
         }
         advance_scan_cursor();
         if (StandardFractal *standard_fractal = active_standard_fractal();
-            standard_fractal != nullptr && standard_fractal->consume_standard_pixel_yield())
+            standard_fractal != nullptr && standard_fractal->consume_traversal_yield())
         {
             return false;
         }
@@ -264,7 +264,7 @@ void BoundaryTrace::finish_fill_match()
 bool BoundaryTrace::stop_for_calculation_return()
 {
     StandardFractal *standard_fractal{active_standard_fractal()};
-    if (standard_fractal != nullptr && standard_fractal->consume_incomplete_standard_pixel_yield())
+    if (standard_fractal != nullptr && standard_fractal->consume_traversal_yield())
     {
         m_pending_row = g_row;
         m_pending_col = g_col;

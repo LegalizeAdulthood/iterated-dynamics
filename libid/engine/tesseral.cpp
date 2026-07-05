@@ -6,6 +6,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
+#include "engine/StandardFractal.h"
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
@@ -26,6 +27,12 @@ constexpr int TESSERAL_EDGE_CHUNK{512};
 constexpr int TESSERAL_BOX_CHUNK{512};
 constexpr int TESSERAL_PIXEL_FILL_CHUNK{8192};
 constexpr int TESSERAL_SPAN_FILL_CHUNK{64};
+
+bool consume_standard_traversal_yield()
+{
+    StandardFractal *standard_fractal{active_standard_fractal()};
+    return standard_fractal != nullptr && standard_fractal->consume_traversal_yield();
+}
 
 } // namespace
 
@@ -227,6 +234,10 @@ bool Tesseral::advance_edge_probe()
         }
         if (color < 0)
         {
+            if (consume_standard_traversal_yield())
+            {
+                return false;
+            }
             m_edge_probe.color = -3;
             return true;
         }

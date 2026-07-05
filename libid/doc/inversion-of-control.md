@@ -463,38 +463,7 @@ The Popcorn conversion should follow review boundaries, not a guessed
 slice count.  A slice is small enough when it preserves current behavior,
 removes one false dependency, and leaves a reviewable intermediate state.
 
-### Slice 1: Standard Pass Presentation Yield
-
-Work:
-
-- Make standard pass traversal stop after a standard calculation step
-  when StandardFractal has pending presentation work.
-- Apply this generically to all standard pass implementations that call
-  `calc_type()` or helpers wrapping `calc_type()`, including SolidGuess.
-- Treat presentation yield as resumable traversal, not interruption.
-- Do not add work-list resume entries merely because presentation is
-  pending.
-- Do not add pass-specific showorbit/showdot logic.
-- Preserve the pass role: choose pixel traversal order and use completed
-  orbit/color results.
-
-Done when:
-
-- `passes=g showorbit=yes orbitdelay=184` returns to the UI controller
-  for orbit pacing instead of plotting and scrubbing before the UI can
-  delay.
-- Pass traversal does not conflate presentation yield with `-1`
-  interruption.
-- Existing pass image tests still pass.
-
-Manual testing:
-
-- `type=mandel passes=g showorbit=yes orbitdelay=184`: orbit points are
-  visible during rendering and the delay is observable.
-- `type=mandel passes=1 showorbit=yes orbitdelay=184`: same expected
-  behavior.
-
-### Slice 2: Orbit Show Input Inversion
+### Slice 1: Orbit Show Input Inversion
 
 Work:
 
@@ -523,7 +492,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes`: while rendering, press `x`, then
   `Esc`; rendering resumes and input is handled by the UI controller.
 
-### Slice 3: Sound Output Pacing
+### Slice 2: Sound Output Pacing
 
 Work:
 
@@ -547,7 +516,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 4: Wait-Until Cleanup
+### Slice 3: Wait-Until Cleanup
 
 Work:
 
@@ -575,7 +544,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 5: StandardFractal Pixel Interrupts
+### Slice 4: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -604,7 +573,7 @@ Manual testing:
 - `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
   then `Esc`; rendering resumes.
 
-### Slice 6: Perturbation Traversal Ownership
+### Slice 5: Perturbation Traversal Ownership
 
 Work:
 
@@ -647,7 +616,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`: rendering completes without a
   perturbation crash or hang.
 
-### Slice 7: Perturbation Pass-Switch Tests
+### Slice 6: Perturbation Pass-Switch Tests
 
 Work:
 

@@ -123,6 +123,11 @@ int ScanlinePass::standard_calc(const int pass_num, const CalcMode calc_mode)
                 m_col = g_col;
                 if (result == -1)
                 {
+                    if (StandardFractal *standard_fractal = active_standard_fractal();
+                        standard_fractal != nullptr && standard_fractal->consume_traversal_yield())
+                    {
+                        return -1;
+                    }
                     m_resume_row = m_row;
                     m_resume_col = m_col;
                     return -1;      // interrupted
@@ -149,7 +154,7 @@ int ScanlinePass::standard_calc(const int pass_num, const CalcMode calc_mode)
             }
             ++m_col;
             if (StandardFractal *standard_fractal = active_standard_fractal();
-                standard_fractal != nullptr && standard_fractal->consume_standard_pixel_yield())
+                standard_fractal != nullptr && standard_fractal->consume_traversal_yield())
             {
                 return -1;
             }

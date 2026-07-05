@@ -1480,7 +1480,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         {
             set_new_z_from_bignum();
             queue_overlay_orbit_plot(g_new_z.x, g_new_z.y);
-            if (yield_to_ui && standard_pixel_yield_enabled())
+            if (yield_to_ui && standard_presentation_yield_enabled())
             {
                 m_incomplete_standard_pixel_yield = true;
                 return -1;

@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
+#include "engine/StandardFractal.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
 #include "misc/debug_flags.h"
@@ -23,6 +24,17 @@ namespace id::engine
 {
 
 int g_stop_pass{}; // stop at this guessing pass early
+
+namespace
+{
+
+bool consume_standard_traversal_yield()
+{
+    StandardFractal *standard_fractal{active_standard_fractal()};
+    return standard_fractal != nullptr && standard_fractal->consume_traversal_yield();
+}
+
+} // namespace
 
 int ssg_block_size()
 {
@@ -162,16 +174,25 @@ void SolidGuess::initialize_scan()
 void SolidGuess::process_first_pass_top_row()
 {
     // first pass, calc every blocksize**2 pixel, quarter result & paint it
-    g_current_pass = 1;
-    g_current_row = 0;
-    fill_prefix_plane(1, 0); // noskip flags off
-    g_reset_periodicity = true;
+    if (!m_top_row_active)
+    {
+        g_current_pass = 1;
+        g_current_row = 0;
+        fill_prefix_plane(1, 0); // noskip flags off
+        g_reset_periodicity = true;
+        m_current_x = g_i_start_pt.x;
+        m_top_row_active = true;
+    }
     g_row = g_i_start_pt.y;
-    for (g_col = g_i_start_pt.x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
+    for (g_col = m_current_x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
     {
         // calc top row
         if (calc_type() == -1)
         {
+            if (consume_standard_traversal_yield())
+            {
+                return;
+            }
             add_work_list(g_start_pt.x, g_start_pt.y, //
                 g_stop_pt.x, g_stop_pt.y,             //
                 g_begin_pt.x, g_begin_pt.y,           //
@@ -180,7 +201,9 @@ void SolidGuess::process_first_pass_top_row()
             return;
         }
         g_reset_periodicity = false;
+        m_current_x = g_col + m_max_block;
     }
+    m_top_row_active = false;
     m_current_y = g_i_start_pt.y;
     m_phase = Phase::FIRST_PASS_ROWS;
 }
@@ -207,9 +230,14 @@ void SolidGuess::process_first_pass_rows()
     if (!m_guess_row_active && m_current_y + m_block_size <= g_i_stop_pt.y)
     {
         // calc the row below
+        if (!m_row_below_active)
+        {
+            m_current_x = g_i_start_pt.x;
+            m_row_below_active = true;
+        }
         g_row = m_current_y + m_block_size;
         g_reset_periodicity = true;
-        for (g_col = g_i_start_pt.x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
+        for (g_col = m_current_x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
         {
             i = calc_type();
             if (i == -1)
@@ -217,11 +245,27 @@ void SolidGuess::process_first_pass_rows()
                 break;
             }
             g_reset_periodicity = false;
+            m_current_x = g_col + m_max_block;
         }
+        if (i == -1)
+        {
+            if (consume_standard_traversal_yield())
+            {
+                return;
+            }
+            save_resume_work(m_current_y, 0);
+            m_phase = Phase::DONE;
+            return;
+        }
+        m_row_below_active = false;
     }
     g_reset_periodicity = false;
-    if (i == -1 || guess_row(true, m_current_y, m_block_size)) // interrupted?
+    if (guess_row(true, m_current_y, m_block_size)) // interrupted?
     {
+        if (consume_standard_traversal_yield())
+        {
+            return;
+        }
         save_resume_work(m_current_y, 0);
         m_phase = Phase::DONE;
         return;
@@ -337,6 +381,10 @@ void SolidGuess::process_remaining_rows()
     g_current_row = m_current_y;
     if (guess_row(false, m_current_y, m_block_size))
     {
+        if (consume_standard_traversal_yield())
+        {
+            return;
+        }
         save_resume_work(m_current_y, g_work_pass);
         m_phase = Phase::DONE;
         return;
