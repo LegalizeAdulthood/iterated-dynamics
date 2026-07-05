@@ -378,32 +378,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Remove Generic Check-Key Helper
-
-The generic helper mixed unrelated UI contexts behind one polling
-function.  After its real callers are gone, remove it instead of keeping
-it as a new wrapper name.
-
-Work:
-
-- Delete `libid/ui/check_key.cpp`.
-- Delete `libid/include/ui/check_key.h`.
-- Remove the source from build files.
-- Verify remaining `check_key` names are unrelated local callback
-  functions such as menu or prompt callbacks.
-
-Done when:
-
-- `rg "\"ui/check_key.h\"|check_key\\(\\)" libid/ui libid/engine
-  libid/fractals` finds no generic helper use.
-- Any remaining `check_key` matches are local callback names and not
-  includes or calls to the deleted helper.
-
-Manual testing:
-
-- None.
-
-### Slice 2: Standard Orbit Plot Pacing
+### Slice 1: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -484,7 +459,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 3: Sound Output Pacing
+### Slice 2: Sound Output Pacing
 
 Work:
 
@@ -505,7 +480,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 4: Wait-Until Cleanup
+### Slice 3: Wait-Until Cleanup
 
 Work:
 
@@ -532,7 +507,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 5: StandardFractal Pixel Interrupts
+### Slice 4: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -559,7 +534,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 6: Perturbation Traversal Ownership
+### Slice 5: Perturbation Traversal Ownership
 
 Work:
 
@@ -602,7 +577,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 7: Perturbation Pass-Switch Tests
+### Slice 6: Perturbation Pass-Switch Tests
 
 Work:
 

@@ -182,7 +182,6 @@ add_library(libid
     include/ui/bifurcation.h ui/bifurcation.cpp
     include/ui/big_while_loop.h ui/big_while_loop.cpp
     include/ui/cellular.h ui/cellular.cpp
-    include/ui/check_key.h ui/check_key.cpp
     include/ui/ChoiceBuilder.h
     include/ui/command_result.h
     include/ui/comments.h ui/comments.cpp
