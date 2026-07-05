@@ -2,12 +2,13 @@
 //
 #include "ui/inverse_julia.h"
 
+#include "engine/calcfrac.h"
 #include "engine/jiim.h"
+#include "engine/orbit.h"
 #include "engine/resume.h"
 #include "fractals/fractalp.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "ui/check_key.h"
 #include "ui/editpal.h"
 #include "ui/get_a_number.h"
 #include "ui/id_keys.h"
@@ -229,6 +230,39 @@ private:
     InverseJuliaKeyboardContext &m_context;
 };
 
+class InverseJuliaOrbitKeyboardHandler : public KeyboardHandler
+{
+public:
+    bool handle_key(const int key) override
+    {
+        if (g_show_orbit)
+        {
+            scrub_orbit();
+        }
+        if (key == 'o' || key == 'O')
+        {
+            if (!driver_is_disk())
+            {
+                g_show_orbit = !g_show_orbit;
+            }
+            return true;
+        }
+
+        driver_unget_key(key);
+        set_calc_interrupted();
+        m_interrupted = true;
+        return true;
+    }
+
+    bool interrupted() const
+    {
+        return m_interrupted;
+    }
+
+private:
+    bool m_interrupted{};
+};
+
 } // namespace
 
 class InverseJuliaMouseScope::Impl
@@ -296,9 +330,14 @@ int inverse_julia_fractal_type()
         return -1;
     }
 
+    reset_calc_interrupted();
+    auto keyboard_handler{std::make_shared<InverseJuliaOrbitKeyboardHandler>()};
+    ScopedKeyboardHandler keyboard_scope{keyboard_handler};
+
     while (color >= 0)       // generate points
     {
-        if (check_key())
+        dispatch_pending_keyboard_input();
+        if (keyboard_handler->interrupted())
         {
             free_queue();
             return -1;

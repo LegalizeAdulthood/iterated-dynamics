@@ -378,39 +378,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Inverse Julia Orbit Keyboard Handler
-
-`libid/ui/inverse_julia.cpp` already has keyboard handler plumbing for
-the JIIM cursor path.  The older `inverse_julia_fractal_type()` loop
-still calls the generic `check_key()` helper.
-
-Work:
-
-- Add a small inverse-Julia orbit-render keyboard handler or context for
-  `inverse_julia_fractal_type()`.
-- Move the behavior used from `libid/ui/check_key.cpp:15-31` into that
-  handler: `o` and `O` toggle orbit display without interrupting, and
-  any other key requests loop exit.
-- Replace `check_key()` in `libid/ui/inverse_julia.cpp:301` with the
-  state set by that handler.
-- Remove the `ui/check_key.h` include from
-  `libid/ui/inverse_julia.cpp`.
-- Do not fold this path into the JIIM crosshair cursor handler unless the
-  state being shared is actually the same.
-
-Done when:
-
-- `libid/ui/inverse_julia.cpp` does not include `ui/check_key.h`.
-- `libid/ui/inverse_julia.cpp` does not call `check_key()`.
-- The old inverse-Julia orbit loop exits on non-orbit keys and still
-  frees its queue.
-- Existing JIIM keyboard behavior is unchanged.
-
-Manual testing:
-
-- `type=mandel`, then `J`
-
-### Slice 2: Non-Standard Render Result Ownership
+### Slice 1: Non-Standard Render Result Ownership
 
 `libid/ui/non_standard_fractal.cpp` is only a thin UI wrapper around a
 synchronous `engine::NonStandardFractal::iterate()` call.  Before
@@ -438,7 +406,7 @@ Manual testing:
 
 - None.
 
-### Slice 3: Non-Standard Render Keyboard Handler
+### Slice 2: Non-Standard Render Keyboard Handler
 
 After non-standard render result ownership is explicit, replace the
 remaining `check_key()` use in its UI wrapper.
@@ -468,7 +436,7 @@ Manual testing:
 
 - `type=lorenz3d`
 
-### Slice 4: Remove Generic Check-Key Helper
+### Slice 3: Remove Generic Check-Key Helper
 
 The generic helper mixed unrelated UI contexts behind one polling
 function.  After its real callers are gone, remove it instead of keeping
@@ -493,7 +461,7 @@ Manual testing:
 
 - None.
 
-### Slice 5: Standard Orbit Plot Pacing
+### Slice 4: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -574,7 +542,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 6: Sound Output Pacing
+### Slice 5: Sound Output Pacing
 
 Work:
 
@@ -595,7 +563,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 7: Wait-Until Cleanup
+### Slice 6: Wait-Until Cleanup
 
 Work:
 
@@ -622,7 +590,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 8: StandardFractal Pixel Interrupts
+### Slice 7: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -649,7 +617,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 9: Perturbation Traversal Ownership
+### Slice 8: Perturbation Traversal Ownership
 
 Work:
 
@@ -692,7 +660,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 10: Perturbation Pass-Switch Tests
+### Slice 9: Perturbation Pass-Switch Tests
 
 Work:
 
