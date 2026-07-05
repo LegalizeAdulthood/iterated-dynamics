@@ -171,9 +171,10 @@ The current code is already part-way through this plan:
   keyboard input while filling guessed rows.
 - `SynchronousOrbit` owns an explicit rhombus frame stack and explicit
   leaf scan state.  It suspends through `StandardPass`.
-- `StickyOrbits` is a concrete `StandardPass` alternative.  Rectangle,
-  line, and function traversal state still live on the stack, and
-  interruption still happens in the orbit plotting helper.
+- `StickyOrbits` is a concrete `StandardPass` alternative.  It owns
+  rectangle, line, and function seed traversal state and suspends through
+  `StandardPass`.  Interruption still happens in the orbit plotting
+  helper.
 - Perturbation has a `PertEngine` owned by `StandardFractal`, is
   initialized and driven from `StandardFractal`, and is selected
   separately from the active traversal mode.  `passes=p` is compatibility
@@ -376,58 +377,30 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: StickyOrbits Seed Traversal
-
-Work:
-
-- Keep `StickyOrbits` as the concrete `StandardPass` implementation for
-  `passes=o`.
-- Run `plot_orbits2d_setup()` once when `StickyOrbits` is initialized or
-  resumed, not on every `iterate()` call.
-- Move rectangle traversal state into `StickyOrbits`: current row and
-  column.
-- Move line traversal state into `StickyOrbits`: current row and column,
-  final coordinate, Bresenham accumulator, increments, and slope mode.
-- Move function traversal state into `StickyOrbits`: current angle,
-  rotation limit, center, magnification, factors, and transform setup.
-- Preserve the existing whole-orbit `plot_orbits2d()` call as the seed
-  work unit for now.
-
-Done when:
-
-- `StickyOrbits::iterate()` advances rectangle, line, and function seed
-  traversal through object state.
-- Re-entry into `StickyOrbits::iterate()` resumes at the same seed point.
-- `plot_orbits2d()` remains the next unbounded orbit helper.
-
-Manual testing:
-
-- None.
-
-### Slice 2: StickyOrbits Orbit State
+### Slice 1: StickyOrbits Orbit State
 
 Work:
 
 - Split the Lorenz orbit plotting helper so the current seed's orbit can
   be advanced incrementally without polling input, muting the driver, or
   allocating resume state.
-- Let `StickyOrbits` and `StandardFractal` record resume state when the
-  UI polling loop suspends rendering.
+- Preserve the seed traversal state already owned by `StickyOrbits`.
+- Move current orbit color, resume payload, and orbit-loop position into
+  state owned by `StickyOrbits` or a helper owned by it.
 
 Done when:
 
-- `StickyOrbits::iterate()` advances bounded seed or orbit work and can
-  resume rectangle, line, and function modes.
+- `StickyOrbits::iterate()` advances bounded orbit work for the current
+  seed and can resume rectangle, line, and function modes.
 - `fractals/lorenz.cpp::plot_orbits2d()` has no direct driver key
   polling.
 - `plot_orbits2d()` no longer owns interruption or resume allocation.
-- `StandardPass::suspend()` delegates to `StickyOrbits`.
 
 Manual testing:
 
 - `type=lorenz passes=o maxiter=10000`
 
-### Slice 3: Tesseral Initialization State
+### Slice 2: Tesseral Initialization State
 
 Work:
 
@@ -450,7 +423,7 @@ Manual testing:
 
 - None.
 
-### Slice 4: Tesseral Edge Probe State
+### Slice 3: Tesseral Edge Probe State
 
 Work:
 
@@ -473,7 +446,7 @@ Manual testing:
 
 - None.
 
-### Slice 5: Tesseral Fill And Suspend
+### Slice 4: Tesseral Fill And Suspend
 
 Work:
 
@@ -494,7 +467,7 @@ Manual testing:
 - `type=mandel passes=t maxiter=10000`
 - `type=mandel passes=t fillcolor=1 maxiter=10000`
 
-### Slice 6: Standard Orbit Plot Pacing
+### Slice 5: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -575,7 +548,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 7: Sound Output Pacing
+### Slice 6: Sound Output Pacing
 
 Work:
 
@@ -596,7 +569,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 8: Wait-Until Cleanup
+### Slice 7: Wait-Until Cleanup
 
 Work:
 
@@ -623,7 +596,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 9: StandardFractal Pixel Interrupts
+### Slice 8: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -650,7 +623,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 10: Perturbation Traversal Ownership
+### Slice 9: Perturbation Traversal Ownership
 
 Work:
 
@@ -693,7 +666,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 11: Perturbation Pass-Switch Tests
+### Slice 10: Perturbation Pass-Switch Tests
 
 Work:
 

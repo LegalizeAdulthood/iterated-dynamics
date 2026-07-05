@@ -230,6 +230,11 @@ void StandardPass::suspend()
         std::get<SolidGuess>(m_state).suspend();
         return;
     }
+    if (m_state.index() == ORBIT)
+    {
+        std::get<StickyOrbits>(m_state).suspend();
+        return;
+    }
 
     if (m_state.index() != TESSERAL)
     {
