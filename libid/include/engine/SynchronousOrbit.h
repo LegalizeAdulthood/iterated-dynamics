@@ -4,6 +4,9 @@
 
 #include "math/cmplx.h"
 
+#include <array>
+#include <vector>
+
 namespace id::engine
 {
 
@@ -19,26 +22,52 @@ public:
     bool iterate();
 
 private:
-    bool rhombus(double c_re1, double c_re2, double c_im1, double c_im2,     //
-        int x1, int x2, int y1, int y2, long iter);
-    bool rhombus_aux(double c_re1, double c_re2, double c_im1, double c_im2, //
-        int x1, int x2, int y1, int y2, long iter);
-    bool rhombus2(double cre1, double cre2, double cim1, double cim2,        //
-        int x1, int x2, int y1, int y2,                                      //
-        double zre1, double zim1, double zre2, double zim2,                  //
-        double zre3, double zim3, double zre4, double zim4,                  //
-        double zre5, double zim5, double zre6, double zim6,                  //
-        double zre7, double zim7, double zre8, double zim8,                  //
-        double zre9, double zim9, long iter);
-    bool rhombus2(double cre1, double cre2, double cim1, double cim2,        //
-        int x1, int x2, int y1, int y2,                                      //
-        math::DComplex z1, math::DComplex z2,                                //
-        math::DComplex z3, math::DComplex z4,                                //
-        double zre5, double zim5, double zre6, double zim6,                  //
-        double zre7, double zim7, double zre8, double zim8,                  //
-        double zre9, double zim9, long iter);
+    struct RhombusInput
+    {
+        double c_re1{};
+        double c_re2{};
+        double c_im1{};
+        double c_im2{};
+        int x1{};
+        int x2{};
+        int y1{};
+        int y2{};
+        long iter{};
+        int depth{};
+        std::array<math::DComplex, 9> zi{};
+    };
+
+    enum class RhombusPhase
+    {
+        START,
+        CHILDREN
+    };
+
+    enum class RhombusStep
+    {
+        COMPLETE,
+        CHILDREN
+    };
+
+    struct RhombusFrame
+    {
+        RhombusInput input{};
+        RhombusPhase phase{RhombusPhase::START};
+        std::array<RhombusInput, 4> children{};
+        int child_index{};
+    };
+
+    static RhombusInput make_rhombus_input(double c_re1, double c_re2, double c_im1, double c_im2, //
+        int x1, int x2, int y1, int y2,                                                            //
+        math::DComplex z1, math::DComplex z2, math::DComplex z3, math::DComplex z4,                //
+        math::DComplex z5, math::DComplex z6, math::DComplex z7, math::DComplex z8,                //
+        math::DComplex z9, long iter, int depth);
+    void push_rhombus(const RhombusInput &input);
+    bool process_next_frame();
+    RhombusStep process_rhombus(RhombusFrame &frame);
     void orbit(math::DComplex &z, math::DComplex &rq, double cr, double ci, bool &esc);
 
+    std::vector<RhombusFrame> m_frame_stack{};
     math::DComplex m_zi[9]{};
     bool m_esc[9]{};
     bool m_t_esc[4]{};

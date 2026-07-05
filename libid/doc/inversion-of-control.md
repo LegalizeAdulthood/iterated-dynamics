@@ -169,8 +169,9 @@ The current code is already part-way through this plan:
   traversal, remaining pass traversal, `guess_row()` block state, and
   fast row repaint state still live on the stack.  It still probes
   keyboard input while filling guessed rows.
-- `SynchronousOrbit` still uses recursive control flow, stack-local scan
-  state, `goto scan`, and direct key polling.
+- `SynchronousOrbit` owns an explicit rhombus frame stack.  Leaf scan
+  state still lives on the stack, uses `goto scan`, and polls keys
+  directly.
 - `StickyOrbits` is a concrete `StandardPass` alternative.  Rectangle,
   line, and function traversal state still live on the stack, and
   interruption still happens in the orbit plotting helper.
@@ -376,32 +377,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: SynchronousOrbit Frame Stack
-
-Work:
-
-- Keep `SynchronousOrbit` as the concrete `StandardPass` implementation
-  for `passes=s`.
-- Replace recursive `rhombus()` and `rhombus_aux()` control flow with a
-  `SynchronousOrbit`-owned work stack.
-- Store each rhombus frame's rectangle, corner values, iteration value,
-  saved key values, child index, and current phase.
-- Preserve the current synchronous scan path as the leaf-frame work unit.
-  Do not move scan-path locals in this slice.
-- Replace child recursion with explicit frame push and pop operations.
-
-Done when:
-
-- SOI subdivision no longer relies on C++ call-stack depth.
-- `SynchronousOrbit::iterate()` owns the active frame stack.
-- Leaf scan work remains the next unbounded target.
-- SOI render output remains compatible with current behavior.
-
-Manual testing:
-
-- None.
-
-### Slice 2: SynchronousOrbit Scan State
+### Slice 1: SynchronousOrbit Scan State
 
 Work:
 
@@ -424,7 +400,7 @@ Manual testing:
 
 - None.
 
-### Slice 3: SynchronousOrbit Polling And Suspend
+### Slice 2: SynchronousOrbit Polling And Suspend
 
 Work:
 
@@ -444,7 +420,7 @@ Manual testing:
 
 - `type=mandel passes=s maxiter=10000`
 
-### Slice 4: StickyOrbits Seed Traversal
+### Slice 3: StickyOrbits Seed Traversal
 
 Work:
 
@@ -472,7 +448,7 @@ Manual testing:
 
 - None.
 
-### Slice 5: StickyOrbits Orbit State
+### Slice 4: StickyOrbits Orbit State
 
 Work:
 
@@ -495,7 +471,7 @@ Manual testing:
 
 - `type=lorenz passes=o maxiter=10000`
 
-### Slice 6: Tesseral Initialization State
+### Slice 5: Tesseral Initialization State
 
 Work:
 
@@ -518,7 +494,7 @@ Manual testing:
 
 - None.
 
-### Slice 7: Tesseral Edge Probe State
+### Slice 6: Tesseral Edge Probe State
 
 Work:
 
@@ -541,7 +517,7 @@ Manual testing:
 
 - None.
 
-### Slice 8: Tesseral Fill And Suspend
+### Slice 7: Tesseral Fill And Suspend
 
 Work:
 
@@ -562,7 +538,7 @@ Manual testing:
 - `type=mandel passes=t maxiter=10000`
 - `type=mandel passes=t fillcolor=1 maxiter=10000`
 
-### Slice 9: Standard Orbit Plot Pacing
+### Slice 8: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -643,7 +619,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 10: Sound Output Pacing
+### Slice 9: Sound Output Pacing
 
 Work:
 
@@ -664,7 +640,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 11: Wait-Until Cleanup
+### Slice 10: Wait-Until Cleanup
 
 Work:
 
@@ -691,7 +667,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 12: StandardFractal Pixel Interrupts
+### Slice 11: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -718,7 +694,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 13: Perturbation Traversal Ownership
+### Slice 12: Perturbation Traversal Ownership
 
 Work:
 
@@ -761,7 +737,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 14: Perturbation Pass-Switch Tests
+### Slice 13: Perturbation Pass-Switch Tests
 
 Work:
 
