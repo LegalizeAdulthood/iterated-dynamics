@@ -262,14 +262,34 @@ void StandardFractal::complete_show_dot_pacing()
     m_show_dot_pacing_pending = false;
 }
 
-bool StandardFractal::orbit_display_pacing_pending() const
+bool StandardFractal::presentation_pending() const
 {
-    return m_orbit_display_pacing_pending;
+    return m_orbit_display_pacing_pending || m_show_dot_pacing_pending;
 }
 
-bool StandardFractal::show_dot_pacing_pending() const
+bool StandardFractal::run_pending_presentation(const StandardPresentationActions &actions)
 {
-    return m_show_dot_pacing_pending;
+    if (m_orbit_display_pacing_pending)
+    {
+        if (actions.pace_with_input == nullptr)
+        {
+            throw std::logic_error{"No presentation pacing action"};
+        }
+        actions.pace_with_input();
+        complete_orbit_display_pacing();
+        return false;
+    }
+    if (m_show_dot_pacing_pending)
+    {
+        if (actions.pace_without_input == nullptr)
+        {
+            throw std::logic_error{"No presentation pacing action"};
+        }
+        actions.pace_without_input();
+        complete_show_dot_pacing();
+        return true;
+    }
+    throw std::logic_error{"No pending presentation work"};
 }
 
 OrbitPlot &StandardFractal::pending_orbit_plot()
@@ -295,7 +315,7 @@ void StandardFractal::iterate()
     {
         return;
     }
-    if (m_orbit_display_pacing_pending)
+    if (presentation_pending())
     {
         return;
     }

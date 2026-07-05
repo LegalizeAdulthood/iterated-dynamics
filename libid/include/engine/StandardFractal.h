@@ -16,15 +16,23 @@ namespace id::engine
 
 class OrbitPlot;
 
+using StandardPresentationAction = void (*)();
+
+struct StandardPresentationActions
+{
+    StandardPresentationAction pace_with_input{};
+    StandardPresentationAction pace_without_input{};
+};
+
 class StandardFractal
 {
 public:
     int calculate_standard_pixel(bool yield_to_ui);
     bool consume_standard_pixel_yield();
-    void complete_orbit_display_pacing();
-    void complete_show_dot_pacing();
+    bool presentation_pending() const;
     void queue_overlay_orbit_plot(double real, double imag, bool mark_as_plotted = true);
     bool queue_show_dot_pacing();
+    bool run_pending_presentation(const StandardPresentationActions &actions);
     void scrub_overlay();
 
     void resume();
@@ -36,8 +44,6 @@ public:
     void iterate();
 
     bool consume_incomplete_standard_pixel_yield();
-    bool orbit_display_pacing_pending() const;
-    bool show_dot_pacing_pending() const;
     StandardPassStatus standard_pass_status() const;
 
 private:
@@ -56,7 +62,9 @@ private:
 
     void clear_standard_pixel();
     void complete();
+    void complete_orbit_display_pacing();
     void complete_pending_orbit_plot();
+    void complete_show_dot_pacing();
     void finish_work_list();
     OrbitPlot &pending_orbit_plot();
     void pop_work_list_front();

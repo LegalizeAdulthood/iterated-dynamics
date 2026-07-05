@@ -463,35 +463,7 @@ The Popcorn conversion should follow review boundaries, not a guessed
 slice count.  A slice is small enough when it preserves current behavior,
 removes one false dependency, and leaves a reviewable intermediate state.
 
-### Slice 1: Standard Presentation State
-
-Work:
-
-- Add a neutral StandardFractal presentation-yield state for UI work
-  requested while standard orbit calculation is running.
-- Keep presentation causes private to StandardFractal: overlay plot,
-  overlay scrub, showdot pacing, and later sound pacing.
-- Do not expose `showorbit` or `showdot` decisions to pass algorithms.
-- Do not model this as an incomplete pixel result.  Pixel traversal and
-  presentation are separate concerns.
-- Separate presentation yield from interruption.  A key interrupt still
-  means cancellation or suspension; presentation yield only means the UI
-  controller should run pending presentation work before more rendering.
-
-Done when:
-
-- StandardFractal has a generic way for the UI controller to observe and
-  complete pending presentation work.
-- Existing orbit-display and showdot pacing flags are either folded into
-  that generic state or are private implementation details behind it.
-- No pass algorithm contains showorbit/showdot-specific checks.
-
-Manual testing:
-
-- None.  This slice should only introduce and route state; interaction is
-  tested after the pass traversal uses it.
-
-### Slice 2: Standard Pass Presentation Yield
+### Slice 1: Standard Pass Presentation Yield
 
 Work:
 
@@ -522,7 +494,7 @@ Manual testing:
 - `type=mandel passes=1 showorbit=yes orbitdelay=184`: same expected
   behavior.
 
-### Slice 3: Orbit Show Input Inversion
+### Slice 2: Orbit Show Input Inversion
 
 Work:
 
@@ -551,7 +523,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes`: while rendering, press `x`, then
   `Esc`; rendering resumes and input is handled by the UI controller.
 
-### Slice 4: Sound Output Pacing
+### Slice 3: Sound Output Pacing
 
 Work:
 
@@ -575,7 +547,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 5: Wait-Until Cleanup
+### Slice 4: Wait-Until Cleanup
 
 Work:
 
@@ -603,7 +575,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 6: StandardFractal Pixel Interrupts
+### Slice 5: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -632,7 +604,7 @@ Manual testing:
 - `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
   then `Esc`; rendering resumes.
 
-### Slice 7: Perturbation Traversal Ownership
+### Slice 6: Perturbation Traversal Ownership
 
 Work:
 
@@ -675,7 +647,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`: rendering completes without a
   perturbation crash or hang.
 
-### Slice 8: Perturbation Pass-Switch Tests
+### Slice 7: Perturbation Pass-Switch Tests
 
 Work:
 
