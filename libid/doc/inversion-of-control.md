@@ -378,37 +378,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Non-Standard Render Keyboard Handler
-
-After non-standard render result ownership is explicit, replace the
-remaining `check_key()` use in its UI wrapper.
-
-Work:
-
-- Add a non-standard render keyboard handler or context state for
-  `libid/ui/non_standard_fractal.cpp`.
-- Move the behavior used from `libid/ui/check_key.cpp:15-31` into that
-  handler: `o` and `O` toggle orbit display without interrupting, and
-  any other key requests interruption.
-- Replace `check_key()` in `libid/ui/non_standard_fractal.cpp:18` with
-  the state set by that handler.
-- Preserve the existing non-resumable interruption result when a
-  non-orbit key is pending after the synchronous calculation returns.
-- Remove the `ui/check_key.h` include from
-  `libid/ui/non_standard_fractal.cpp`.
-
-Done when:
-
-- `libid/ui/non_standard_fractal.cpp` does not include `ui/check_key.h`.
-- `libid/ui/non_standard_fractal.cpp` does not call `check_key()`.
-- Non-standard render completion and interruption status stay compatible
-  with the old wrapper behavior.
-
-Manual testing:
-
-- `type=lorenz3d`
-
-### Slice 2: Remove Generic Check-Key Helper
+### Slice 1: Remove Generic Check-Key Helper
 
 The generic helper mixed unrelated UI contexts behind one polling
 function.  After its real callers are gone, remove it instead of keeping
@@ -433,7 +403,7 @@ Manual testing:
 
 - None.
 
-### Slice 3: Standard Orbit Plot Pacing
+### Slice 2: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -514,7 +484,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 4: Sound Output Pacing
+### Slice 3: Sound Output Pacing
 
 Work:
 
@@ -535,7 +505,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 5: Wait-Until Cleanup
+### Slice 4: Wait-Until Cleanup
 
 Work:
 
@@ -562,7 +532,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 6: StandardFractal Pixel Interrupts
+### Slice 5: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -589,7 +559,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 7: Perturbation Traversal Ownership
+### Slice 6: Perturbation Traversal Ownership
 
 Work:
 
@@ -632,7 +602,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 8: Perturbation Pass-Switch Tests
+### Slice 7: Perturbation Pass-Switch Tests
 
 Work:
 
