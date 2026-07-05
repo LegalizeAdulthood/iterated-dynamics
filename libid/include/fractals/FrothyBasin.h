@@ -22,18 +22,18 @@ public:
     void suspend();
     bool done() const;
     void iterate();
-    bool overlay_orbit_point_pending() const;
-    math::DComplex pending_overlay_orbit_point() const;
-    void complete_pending_overlay_orbit_point();
-    bool overlay_scrub_pending() const;
-    void complete_overlay_scrub();
+    bool orbit_display_pacing_pending() const;
+    void complete_orbit_display_pacing();
+    void scrub_overlay();
 
     int orbit();
 
 private:
     void advance_pixel();
     int calc();
+    void complete_pending_overlay_orbit_point();
     void finish_pixel();
+    void run_pending_overlay_orbit_point();
     void start_pixel();
     double top_x_mapping(double x);
     void set_froth_palette();
@@ -61,6 +61,7 @@ private:
     int m_found_attractor{};
     math::DComplex m_overlay_orbit_point{};
     bool m_overlay_orbit_point_pending{};
+    bool m_orbit_display_pacing_pending{};
     bool m_overlay_scrub_completed{};
     bool m_overlay_scrub_pending{};
     bool m_pixel_active{};

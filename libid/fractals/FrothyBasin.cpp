@@ -8,6 +8,7 @@
 #include "engine/color_state.h"
 #include "engine/fractals.h"
 #include "engine/Inversion.h"
+#include "engine/orbit.h"
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
 #include "engine/show_dot.h"
@@ -19,6 +20,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 
 using namespace id::engine;
 using namespace id::io;
@@ -205,6 +207,7 @@ void FrothyBasin::resume()
     g_current_pass = 1;
     g_total_passes = 1;
     m_overlay_orbit_point_pending = false;
+    m_orbit_display_pacing_pending = false;
     m_overlay_scrub_completed = false;
     m_overlay_scrub_pending = false;
     m_pixel_active = false;
@@ -227,13 +230,24 @@ void FrothyBasin::suspend()
 
 bool FrothyBasin::done() const
 {
-    return m_row > g_i_stop_pt.y && !m_overlay_orbit_point_pending && !m_overlay_scrub_pending && !m_pixel_active;
+    return m_row > g_i_stop_pt.y && !m_overlay_orbit_point_pending && !m_orbit_display_pacing_pending &&
+        !m_overlay_scrub_pending && !m_pixel_active;
 }
 
 void FrothyBasin::iterate()
 {
-    if (done() || m_overlay_orbit_point_pending || m_overlay_scrub_pending)
+    if (done() || m_orbit_display_pacing_pending)
     {
+        return;
+    }
+    if (m_overlay_orbit_point_pending)
+    {
+        run_pending_overlay_orbit_point();
+        return;
+    }
+    if (m_overlay_scrub_pending)
+    {
+        scrub_overlay();
         return;
     }
     if (!m_pixel_active)
@@ -241,16 +255,28 @@ void FrothyBasin::iterate()
         start_pixel();
     }
     calc();
+    if (m_overlay_orbit_point_pending)
+    {
+        run_pending_overlay_orbit_point();
+    }
+    if (m_overlay_scrub_pending)
+    {
+        scrub_overlay();
+    }
 }
 
-bool FrothyBasin::overlay_orbit_point_pending() const
+bool FrothyBasin::orbit_display_pacing_pending() const
 {
-    return m_overlay_orbit_point_pending;
+    return m_orbit_display_pacing_pending;
 }
 
-DComplex FrothyBasin::pending_overlay_orbit_point() const
+void FrothyBasin::complete_orbit_display_pacing()
 {
-    return m_overlay_orbit_point;
+    if (!m_orbit_display_pacing_pending)
+    {
+        throw std::logic_error{"No pending orbit display pacing"};
+    }
+    m_orbit_display_pacing_pending = false;
 }
 
 void FrothyBasin::complete_pending_overlay_orbit_point()
@@ -258,13 +284,9 @@ void FrothyBasin::complete_pending_overlay_orbit_point()
     m_overlay_orbit_point_pending = false;
 }
 
-bool FrothyBasin::overlay_scrub_pending() const
+void FrothyBasin::scrub_overlay()
 {
-    return m_overlay_scrub_pending;
-}
-
-void FrothyBasin::complete_overlay_scrub()
-{
+    scrub_orbit();
     m_overlay_scrub_pending = false;
     m_overlay_scrub_completed = true;
 }
@@ -276,6 +298,20 @@ void FrothyBasin::advance_pixel()
     {
         m_col = g_i_start_pt.x;
         ++m_row;
+    }
+}
+
+void FrothyBasin::run_pending_overlay_orbit_point()
+{
+    orbit_plot().reset_overlay(m_overlay_orbit_point.x, m_overlay_orbit_point.y);
+    orbit_plot().iterate_without_delay();
+    if (orbit_plot().consume_delay_pending())
+    {
+        m_orbit_display_pacing_pending = true;
+    }
+    if (orbit_plot().done())
+    {
+        complete_pending_overlay_orbit_point();
     }
 }
 

@@ -430,35 +430,7 @@ The Popcorn conversion should follow review boundaries, not a guessed
 slice count.  A slice is small enough when it preserves current behavior,
 removes one false dependency, and leaves a reviewable intermediate state.
 
-### Slice 1: FrothyBasin Overlay Orbit Ownership
-
-Work:
-
-- Move FrothyBasin overlay point plotting out of
-  `libid/ui/frothy_basin.cpp` and into the FrothyBasin calculation
-  object.
-- Move FrothyBasin overlay scrub execution out of the UI controller.
-- Let the FrothyBasin object record whether UI display pacing is needed
-  after it plots a visible overlay point.
-- Keep the UI controller responsible only for pacing and interruption.
-- Do not add any `libid/ui` include from `libid/fractals`.
-
-Done when:
-
-- `libid/ui/frothy_basin.cpp` does not call `orbit_plot()`,
-  `drive_orbit_plot()`, or `scrub_orbit()` for FrothyBasin overlay
-  display.
-- FrothyBasin keeps overlay plotting and scrubbing in its calculation
-  object and exposes only bounded work/pacing state to the UI.
-- The 72 Hz display pacing policy is unchanged.
-
-Manual testing:
-
-- `type=frothybasin showorbit=yes orbitdelay=1`
-- `type=frothybasin showorbit=yes orbitdelay=138`
-- `type=frothybasin showorbit=yes orbitdelay=139`
-
-### Slice 2: Popcorn Image-Orbit Ownership
+### Slice 1: Popcorn Image-Orbit Ownership
 
 Work:
 
@@ -485,7 +457,7 @@ Manual testing:
 - `type=popcorn orbitdelay=138`
 - `type=popcorn orbitdelay=139`
 
-### Slice 3: OrbitPlot Wait Cleanup
+### Slice 2: OrbitPlot Wait Cleanup
 
 Work:
 
@@ -510,7 +482,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=139`
 - `type=popcorn orbitdelay=139`
 
-### Slice 4: Sound Output Pacing
+### Slice 3: Sound Output Pacing
 
 Work:
 
@@ -534,7 +506,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 5: Wait-Until Cleanup
+### Slice 4: Wait-Until Cleanup
 
 Work:
 
@@ -561,7 +533,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 6: StandardFractal Pixel Interrupts
+### Slice 5: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -588,7 +560,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 7: Perturbation Traversal Ownership
+### Slice 6: Perturbation Traversal Ownership
 
 Work:
 
@@ -631,7 +603,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 8: Perturbation Pass-Switch Tests
+### Slice 7: Perturbation Pass-Switch Tests
 
 Work:
 

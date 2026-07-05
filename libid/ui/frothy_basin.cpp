@@ -3,7 +3,6 @@
 #include "ui/frothy_basin.h"
 
 #include "engine/calcfrac.h"
-#include "engine/orbit.h"
 #include "fractals/FrothyBasin.h"
 #include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"
@@ -24,11 +23,16 @@ namespace
 class OrbitToggleKeyboardHandler : public KeyboardHandler
 {
 public:
+    explicit OrbitToggleKeyboardHandler(FrothyBasin &frothy_basin) :
+        m_frothy_basin{frothy_basin}
+    {
+    }
+
     bool handle_key(int key) override
     {
         if (g_show_orbit)
         {
-            scrub_orbit();
+            m_frothy_basin.scrub_overlay();
         }
         if (key != 'o' && key != 'O')
         {
@@ -40,17 +44,10 @@ public:
         }
         return true;
     }
-};
 
-void drive_pending_orbit_point()
-{
-    const auto point{g_frothy_basin.pending_overlay_orbit_point()};
-    orbit_plot().reset_overlay(point.x, point.y);
-    if (drive_orbit_plot(orbit_plot()))
-    {
-        g_frothy_basin.complete_pending_overlay_orbit_point();
-    }
-}
+private:
+    FrothyBasin &m_frothy_basin;
+};
 
 } // namespace
 
@@ -58,8 +55,8 @@ int froth_type()
 {
     reset_calc_interrupted();
     reset_orbit_delay();
-    auto main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
-    auto orbit_toggle_handler{std::make_shared<OrbitToggleKeyboardHandler>()};
+    KeyboardHandlerPtr main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
+    KeyboardHandlerPtr orbit_toggle_handler{std::make_shared<OrbitToggleKeyboardHandler>(g_frothy_basin)};
     ScopedKeyboardHandler main_loop_scope{main_loop_handler};
     ScopedKeyboardHandler orbit_toggle_scope{orbit_toggle_handler};
 
@@ -72,22 +69,17 @@ int froth_type()
     while (!g_frothy_basin.done())
     {
         bool check_interrupted = true;
-        if (g_frothy_basin.overlay_orbit_point_pending())
+        if (g_frothy_basin.orbit_display_pacing_pending())
         {
-            drive_pending_orbit_point();
+            pace_orbit_display();
+            g_frothy_basin.complete_orbit_display_pacing();
             check_interrupted = false;
-        }
-        else if (g_frothy_basin.overlay_scrub_pending())
-        {
-            scrub_orbit();
-            g_frothy_basin.complete_overlay_scrub();
         }
         else
         {
             g_frothy_basin.iterate();
         }
-        if (!g_frothy_basin.done() && !g_frothy_basin.overlay_orbit_point_pending() &&
-            !g_frothy_basin.overlay_scrub_pending())
+        if (!g_frothy_basin.done() && !g_frothy_basin.orbit_display_pacing_pending())
         {
             const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
             if (interrupted)
