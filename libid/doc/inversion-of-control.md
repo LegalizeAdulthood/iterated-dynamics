@@ -463,7 +463,66 @@ The Popcorn conversion should follow review boundaries, not a guessed
 slice count.  A slice is small enough when it preserves current behavior,
 removes one false dependency, and leaves a reviewable intermediate state.
 
-### Slice 1: Orbit Show Input Inversion
+### Slice 1: Standard Presentation State
+
+Work:
+
+- Add a neutral StandardFractal presentation-yield state for UI work
+  requested while standard orbit calculation is running.
+- Keep presentation causes private to StandardFractal: overlay plot,
+  overlay scrub, showdot pacing, and later sound pacing.
+- Do not expose `showorbit` or `showdot` decisions to pass algorithms.
+- Do not model this as an incomplete pixel result.  Pixel traversal and
+  presentation are separate concerns.
+- Separate presentation yield from interruption.  A key interrupt still
+  means cancellation or suspension; presentation yield only means the UI
+  controller should run pending presentation work before more rendering.
+
+Done when:
+
+- StandardFractal has a generic way for the UI controller to observe and
+  complete pending presentation work.
+- Existing orbit-display and showdot pacing flags are either folded into
+  that generic state or are private implementation details behind it.
+- No pass algorithm contains showorbit/showdot-specific checks.
+
+Manual testing:
+
+- None.  This slice should only introduce and route state; interaction is
+  tested after the pass traversal uses it.
+
+### Slice 2: Standard Pass Presentation Yield
+
+Work:
+
+- Make standard pass traversal stop after a standard calculation step
+  when StandardFractal has pending presentation work.
+- Apply this generically to all standard pass implementations that call
+  `calc_type()` or helpers wrapping `calc_type()`, including SolidGuess.
+- Treat presentation yield as resumable traversal, not interruption.
+- Do not add work-list resume entries merely because presentation is
+  pending.
+- Do not add pass-specific showorbit/showdot logic.
+- Preserve the pass role: choose pixel traversal order and use completed
+  orbit/color results.
+
+Done when:
+
+- `passes=g showorbit=yes orbitdelay=184` returns to the UI controller
+  for orbit pacing instead of plotting and scrubbing before the UI can
+  delay.
+- Pass traversal does not conflate presentation yield with `-1`
+  interruption.
+- Existing pass image tests still pass.
+
+Manual testing:
+
+- `type=mandel passes=g showorbit=yes orbitdelay=184`: orbit points are
+  visible during rendering and the delay is observable.
+- `type=mandel passes=1 showorbit=yes orbitdelay=184`: same expected
+  behavior.
+
+### Slice 3: Orbit Show Input Inversion
 
 Work:
 
@@ -471,26 +530,28 @@ Work:
   overlay orbit display mechanics.
 - Make `OrbitPlot` expose bounded plot and scrub work that returns to
   the caller instead of waiting internally.
-- Remove the `engine/wait_until.h` include from `libid/engine/orbit.cpp`.
+- Remove the `engine/wait_until.h` include from
+  `libid/engine/OrbitPlot.cpp`.
 - Let the UI controller call the bounded engine orbit work and poll for
   input between increments.
 - Do not choose a new `orbitdelay` display policy in this slice.
 
 Done when:
 
-- `engine/orbit.cpp` has no `wait_until()` call.
+- `engine/OrbitPlot.cpp` has no `wait_until()` call.
 - Engine code does not poll input or perform delay loops around orbit
   display.
 - The only visible orbit input polling path is the UI controller.
 
 Manual testing:
 
-- `type=mandel showorbit=yes`: while rendering, press `x`, then `Esc`;
-  rendering resumes and input is handled by the UI controller.
+- `type=mandel passes=g showorbit=yes orbitdelay=184`: orbit points are
+  visible and delayed; while rendering, press `x`, then `Esc`; rendering
+  resumes and input is handled by the UI controller.
 - `type=frothybasin showorbit=yes`: while rendering, press `x`, then
   `Esc`; rendering resumes and input is handled by the UI controller.
 
-### Slice 2: Sound Output Pacing
+### Slice 4: Sound Output Pacing
 
 Work:
 
@@ -514,7 +575,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 3: Wait-Until Cleanup
+### Slice 5: Wait-Until Cleanup
 
 Work:
 
@@ -542,7 +603,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 4: StandardFractal Pixel Interrupts
+### Slice 6: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -571,7 +632,7 @@ Manual testing:
 - `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
   then `Esc`; rendering resumes.
 
-### Slice 5: Perturbation Traversal Ownership
+### Slice 7: Perturbation Traversal Ownership
 
 Work:
 
@@ -614,7 +675,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`: rendering completes without a
   perturbation crash or hang.
 
-### Slice 6: Perturbation Pass-Switch Tests
+### Slice 8: Perturbation Pass-Switch Tests
 
 Work:
 
@@ -654,7 +715,7 @@ Direct polling or key-sensitive waiting exists outside `libid/ui` in:
   engine-side delay helpers.
 - `libid/engine/ScanlinePass.cpp`: one-pass and two-pass traversal still
   calls `calc_interrupted()` while deciding whether to suspend work.
-- `libid/engine/orbit.cpp`: shared orbit plotting still reaches input
+- `libid/engine/OrbitPlot.cpp`: shared orbit plotting still reaches input
   polling indirectly through `wait_until()`.
 - `libid/engine/sound.cpp`: speaker output still waits through
   `wait_until()` and suppresses speaker tones through an input-pending
