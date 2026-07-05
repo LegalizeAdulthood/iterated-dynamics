@@ -218,6 +218,8 @@ public:
 class NonStandardFractal
 {
 public:
+    bool completed() const;
+    void finish(bool interrupted);
     void iterate();
 };
 

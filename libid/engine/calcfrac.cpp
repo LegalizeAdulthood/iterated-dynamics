@@ -858,6 +858,20 @@ void NonStandardFractal::iterate()
     }
 }
 
+bool NonStandardFractal::completed() const
+{
+    return g_calc_status == CalcStatus::COMPLETED;
+}
+
+void NonStandardFractal::finish(const bool interrupted)
+{
+    if (g_calc_status != CalcStatus::IN_PROGRESS)
+    {
+        return;
+    }
+    g_calc_status = interrupted ? CalcStatus::NON_RESUMABLE : CalcStatus::COMPLETED;
+}
+
 void ImageCalculation::finish()
 {
     g_calc_time += g_timer_interval;

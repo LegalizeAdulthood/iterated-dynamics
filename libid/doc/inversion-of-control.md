@@ -378,35 +378,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Non-Standard Render Result Ownership
-
-`libid/ui/non_standard_fractal.cpp` is only a thin UI wrapper around a
-synchronous `engine::NonStandardFractal::iterate()` call.  Before
-replacing its `check_key()` call, make the render result explicit so the
-UI wrapper does not infer completion from scattered status side effects.
-
-Work:
-
-- Add a small result/status surface to `engine::NonStandardFractal`.
-- Keep `NonStandardFractal::iterate()` synchronous for this slice.
-- Move the "if still `IN_PROGRESS`, mark completed" logic from
-  `libid/ui/non_standard_fractal.cpp:23-26` into the engine object or a
-  clearly named engine method.
-- Preserve current final return behavior from
-  `libid/ui/non_standard_fractal.cpp`.
-
-Done when:
-
-- `libid/ui/non_standard_fractal.cpp` no longer decides that an
-  `IN_PROGRESS` non-standard calculation means completed.
-- No keyboard behavior changes in this slice.
-- The non-standard renderer remains behavior-compatible.
-
-Manual testing:
-
-- None.
-
-### Slice 2: Non-Standard Render Keyboard Handler
+### Slice 1: Non-Standard Render Keyboard Handler
 
 After non-standard render result ownership is explicit, replace the
 remaining `check_key()` use in its UI wrapper.
@@ -436,7 +408,7 @@ Manual testing:
 
 - `type=lorenz3d`
 
-### Slice 3: Remove Generic Check-Key Helper
+### Slice 2: Remove Generic Check-Key Helper
 
 The generic helper mixed unrelated UI contexts behind one polling
 function.  After its real callers are gone, remove it instead of keeping
@@ -461,7 +433,7 @@ Manual testing:
 
 - None.
 
-### Slice 4: Standard Orbit Plot Pacing
+### Slice 3: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -542,7 +514,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 5: Sound Output Pacing
+### Slice 4: Sound Output Pacing
 
 Work:
 
@@ -563,7 +535,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 6: Wait-Until Cleanup
+### Slice 5: Wait-Until Cleanup
 
 Work:
 
@@ -590,7 +562,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 7: StandardFractal Pixel Interrupts
+### Slice 6: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -617,7 +589,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 8: Perturbation Traversal Ownership
+### Slice 7: Perturbation Traversal Ownership
 
 Work:
 
@@ -660,7 +632,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 9: Perturbation Pass-Switch Tests
+### Slice 8: Perturbation Pass-Switch Tests
 
 Work:
 
