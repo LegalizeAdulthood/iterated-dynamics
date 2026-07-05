@@ -45,6 +45,7 @@ bool dispatch_pending_keyboard_input();
 
 void set_calc_interrupted();
 void reset_calc_interrupted();
+bool calc_interrupt_requested();
 bool calc_interrupted();
 
 } // namespace id::ui

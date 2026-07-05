@@ -282,6 +282,8 @@ o Cross-hair cursors now repaint while tracking mouse movement in the
   palette editor and Julia point picker.
 o The Orbits Window now toggles on completed images and remains shown
   after backing out of menus unless it is toggled off.
+o Orbit display pacing now treats small orbitdelay= values as full-speed
+  display, and throttles input polling to display-refresh cadence.
 o Iterated Dynamics is now built for FreeBSD, OpenBSD and NetBSD
   (Fixes #439, #444, #445)
 

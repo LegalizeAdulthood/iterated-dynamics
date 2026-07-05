@@ -134,6 +134,15 @@ TEST_F(TestKeyboardHandler, handlerRequestsCalculationInterruption)
     EXPECT_THAT(events, ElementsAre(Pair(1, 31)));
 }
 
+TEST_F(TestKeyboardHandler, calcInterruptRequestedDoesNotPoll)
+{
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+
+    set_calc_interrupted();
+
+    EXPECT_TRUE(calc_interrupt_requested());
+}
+
 TEST_F(TestKeyboardHandler, mainLoopHandlerRequeuesKeyAndInterrupts)
 {
     InSequence sequence;

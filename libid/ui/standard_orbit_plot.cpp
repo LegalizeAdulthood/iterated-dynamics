@@ -5,9 +5,9 @@
 #include "engine/calcfrac.h"
 #include "engine/orbit.h"
 #include "ui/KeyboardHandler.h"
+#include "ui/OrbitDelayTimer.h"
 
 #include <chrono>
-#include <thread>
 
 using namespace id::engine;
 
@@ -17,43 +17,69 @@ namespace id::ui
 namespace
 {
 
+constexpr unsigned long DISPLAY_REFRESH_HZ = 72;
+constexpr unsigned long MICROSECONDS_PER_SECOND = 1000000;
+constexpr unsigned long MIN_DISPLAY_DELAY_UNITS =
+    (MICROSECONDS_PER_SECOND + DISPLAY_REFRESH_HZ * ORBIT_DELAY_UNIT_MICROSECONDS - 1) /
+    (DISPLAY_REFRESH_HZ * ORBIT_DELAY_UNIT_MICROSECONDS);
+
 using Clock = std::chrono::steady_clock;
 
-constexpr auto KEY_POLL_INTERVAL = std::chrono::milliseconds{1};
+constexpr std::chrono::microseconds INPUT_POLL_INTERVAL{MIN_DISPLAY_DELAY_UNITS * ORBIT_DELAY_UNIT_MICROSECONDS};
 
-Clock::time_point s_next_orbit_delay_time{};
+Clock::time_point s_next_input_poll_time{};
 
-void wait_for_orbit_delay()
+bool dispatch_orbit_input_if_due()
 {
-    auto now = Clock::now();
-    while (now < s_next_orbit_delay_time)
+    const Clock::time_point now{Clock::now()};
+    if (s_next_input_poll_time != Clock::time_point{} && now < s_next_input_poll_time)
     {
-        if (dispatch_pending_keyboard_input())
-        {
-            break;
-        }
-        const auto remaining = s_next_orbit_delay_time - now;
-        std::this_thread::sleep_for(remaining < KEY_POLL_INTERVAL ? remaining : Clock::duration{KEY_POLL_INTERVAL});
-        now = Clock::now();
+        return false;
     }
-    s_next_orbit_delay_time = now + std::chrono::microseconds(g_orbit_delay * 100);
+
+    s_next_input_poll_time = now + INPUT_POLL_INTERVAL;
+    return dispatch_pending_keyboard_input();
+}
+
+void wait_for_current_orbit_delay()
+{
+    if (g_orbit_delay <= 0)
+    {
+        return;
+    }
+
+    const unsigned long delay_100us{display_orbit_delay_units(static_cast<unsigned long>(g_orbit_delay))};
+    if (delay_100us != 0)
+    {
+        wait_for_orbit_delay(delay_100us, dispatch_orbit_input_if_due);
+    }
+    else
+    {
+        dispatch_orbit_input_if_due();
+    }
 }
 
 } // namespace
+
+unsigned long display_orbit_delay_units(const unsigned long delay_100us)
+{
+    return delay_100us < MIN_DISPLAY_DELAY_UNITS ? 0 : delay_100us;
+}
 
 bool drive_orbit_plot(OrbitPlot &orbit_plot)
 {
     orbit_plot.iterate_without_delay();
     if (orbit_plot.consume_delay_pending())
     {
-        wait_for_orbit_delay();
+        wait_for_current_orbit_delay();
     }
     return orbit_plot.done();
 }
 
 void reset_orbit_delay()
 {
-    s_next_orbit_delay_time = {};
+    reset_orbit_delay_timer();
+    s_next_input_poll_time = {};
 }
 
 } // namespace id::ui

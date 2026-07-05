@@ -12,6 +12,7 @@ class OrbitPlot;
 namespace id::ui
 {
 
+unsigned long display_orbit_delay_units(unsigned long delay_100us);
 bool drive_orbit_plot(engine::OrbitPlot &orbit_plot);
 void reset_orbit_delay();
 

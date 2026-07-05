@@ -85,20 +85,24 @@ bool wait_for_orbit_delay(const unsigned long delay_100us, OrbitDelayInputPendin
 
     while (now < s_next_deadline)
     {
+        const long long remaining{s_next_deadline - now};
+        if (remaining <= spin_window)
+        {
+            do
+            {
+                YieldProcessor();
+                now = current_ticks();
+            } while (now < s_next_deadline);
+            break;
+        }
+
         if (input_is_pending(input_pending))
         {
             interrupted = true;
             break;
         }
 
-        if (s_next_deadline - now > spin_window)
-        {
-            MsgWaitForMultipleObjectsEx(0, nullptr, MESSAGE_WAIT_MILLISECONDS, QS_ALLINPUT, MWMO_INPUTAVAILABLE);
-        }
-        else
-        {
-            YieldProcessor();
-        }
+        MsgWaitForMultipleObjectsEx(0, nullptr, MESSAGE_WAIT_MILLISECONDS, QS_ALLINPUT, MWMO_INPUTAVAILABLE);
         now = current_ticks();
     }
 

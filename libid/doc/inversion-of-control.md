@@ -378,36 +378,14 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Wire Orbit Delay Timer
-
-Work:
-
-- Replace the current sleep-based delay in
-  `libid/ui/standard_orbit_plot.cpp` with the portable orbit delay timer
-  API.
-- Keep the existing orbit plotting and overlay scrubbing ownership.
-- Pass the current UI keyboard pumping callback into the timer.
-- Do not move sound output or engine wait helpers in this slice.
-
-Done when:
-
-- The standard UI orbit display path uses the timer primitive.
-- `engine/wait_until.cpp` remains unchanged for later cleanup.
-- Standard orbit delay behavior is otherwise unchanged.
-
-Manual testing:
-
-- `type=mandel showorbit=yes orbitdelay=1`
-- `type=mandel showorbit=yes orbitdelay=30`
-
-### Slice 2: Standard Orbit Plot Pacing
+### Slice 1: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
 inversion, preserve user-visible behavior rather than the exact old
 keyboard polling cadence: orbit points should still appear during
-calculation, `orbitdelay` should still pace visible points, and a
-pending key should still wake that delay promptly.
+calculation, `orbitdelay` should still pace visible points at visible
+display rates, and a pending key should still wake that delay promptly.
 
 The engine owns the plot and scrub operations.  The UI pacing loop owns
 only the delay between engine-owned plot steps because the delay exists
@@ -469,11 +447,11 @@ Done when:
 
 Manual testing:
 
-- `type=mandel showorbit=yes orbitdelay=30`
-- `type=frothybasin showorbit=yes orbitdelay=30`
-- `type=popcorn orbitdelay=30`
+- `type=mandel showorbit=yes orbitdelay=139`
+- `type=frothybasin showorbit=yes orbitdelay=139`
+- `type=popcorn orbitdelay=139`
 
-### Slice 3: Sound Output Pacing
+### Slice 2: Sound Output Pacing
 
 Work:
 
@@ -494,7 +472,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 4: Wait-Until Cleanup
+### Slice 3: Wait-Until Cleanup
 
 Work:
 
@@ -521,7 +499,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 5: StandardFractal Pixel Interrupts
+### Slice 4: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -548,7 +526,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 6: Perturbation Traversal Ownership
+### Slice 5: Perturbation Traversal Ownership
 
 Work:
 
@@ -591,7 +569,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 7: Perturbation Pass-Switch Tests
+### Slice 6: Perturbation Pass-Switch Tests
 
 Work:
 

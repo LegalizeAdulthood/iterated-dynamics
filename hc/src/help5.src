@@ -1686,11 +1686,10 @@ POLYPHONY=nn\
 This controls how many different note are allowed to sound at once, voices are
 assigned cyclically as notes are played: i.e. after the first orbit is
 calculated a frequency is assigned to the first voice and that note is
-triggered on.  Id then waits for one orbitdelay period, calculates the
-next orbit, assigns a frequency to the second voice, and triggers it on.
-This continues until the number of voices sounding is equal to the polyphony
-value whereupon the first selected voice is triggered off and the note allowed
-to decay.
+triggered on.  The orbitdelay value controls how long the tone lasts when
+sound output is restored.  This continues until the number of voices sounding
+is equal to the polyphony value whereupon the first selected voice is
+triggered off and the note allowed to decay.
 That probably all sounds horrendously complex but just think of it as playing
 the organ, holding down each new note for as long as possible but with the
 polyphony value controlling how many fingers you have.

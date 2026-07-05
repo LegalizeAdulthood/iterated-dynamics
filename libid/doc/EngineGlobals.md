@@ -146,7 +146,7 @@ Variables controlling orbit visualization:
 - `g_start_show_orbit` - show orbits at start of fractal
 - `g_orbit_color` - XOR color for orbit display
 - `g_orbit_save_index` - saved orbit value count
-- `g_orbit_delay` - microsecond orbit delay
+- `g_orbit_delay` - orbit display and sound delay units
 
 ## 9. Color/Palette Group
 

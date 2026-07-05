@@ -93,6 +93,11 @@ void reset_calc_interrupted()
     s_calc_interrupted = false;
 }
 
+bool calc_interrupt_requested()
+{
+    return s_calc_interrupted;
+}
+
 bool calc_interrupted()
 {
     dispatch_pending_keyboard_input();

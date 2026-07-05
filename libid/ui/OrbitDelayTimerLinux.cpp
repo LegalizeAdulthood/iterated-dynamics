@@ -86,17 +86,23 @@ bool wait_for_orbit_delay(const unsigned long delay_100us, OrbitDelayInputPendin
 
     while (now < s_next_deadline)
     {
+        const long long remaining{s_next_deadline - now};
+        if (remaining <= spin_window)
+        {
+            do
+            {
+                now = current_nanoseconds();
+            } while (now < s_next_deadline);
+            break;
+        }
+
         if (input_is_pending(input_pending))
         {
             interrupted = true;
             break;
         }
 
-        const long long remaining{s_next_deadline - now};
-        if (remaining > spin_window)
-        {
-            sleep_for_nanoseconds(std::min(remaining - spin_window, MAX_SLEEP_NANOSECONDS));
-        }
+        sleep_for_nanoseconds(std::min(remaining - spin_window, MAX_SLEEP_NANOSECONDS));
         now = current_nanoseconds();
     }
 

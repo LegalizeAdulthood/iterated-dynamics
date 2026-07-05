@@ -4,28 +4,48 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # Orbit Delay Timer
 
-This note records the timing behavior behind `orbitdelay` and the
-possible directions for making it closer to DOS FRACTINT.  It does not
-choose an implementation.
+This note records the timing behavior behind `orbitdelay`.  Exact
+microsecond compatibility with DOS FRACTINT is no longer the display goal.
+The useful behavior is visible orbit plotting and responsive input.
 
 ## User-Visible Meaning
 
-The `orbitdelay` parameter is documented by FRACTINT as a delay in
-1/10000 second units.
+FRACTINT documented `orbitdelay` in 1/10000 second units.
 
 ```text
-orbitdelay=1 -> 100 microseconds -> 100000 nanoseconds
+orbitdelay=1 -> 100 microseconds
 ```
 
-The delay is applied per displayed orbit point, not once for the entire
-orbit.  During `showorbit=yes`, that can mean many small delays per
-pixel.
+Id keeps that numeric scale for values large enough to create visible
+display pacing.  For orbit display:
 
-## FRACTINT Behavior
+- `orbitdelay=0` means no display pacing.
+- `orbitdelay=1` through `orbitdelay=138` run as fast as practical.
+- `orbitdelay=139` is the first value that requests visible pacing.
+- `orbitdelay=139` and higher are interpreted in 1/10000 second units per
+  displayed orbit point.
 
-DOS FRACTINT uses a microsecond timer and a busy deadline loop.
+The threshold comes from a 72 Hz display refresh rate:
 
-The relevant shape is:
+```text
+1 / 72 seconds = 13.888... milliseconds
+139 * 100 microseconds = 13.9 milliseconds
+```
+
+Input polling during orbit display is also throttled to that display
+cadence.  Polling the keyboard more frequently than visible presentation
+does not improve interaction and can dominate the cost of plotting.
+
+Sound uses `orbitdelay` differently.  It is a tone-duration control, not a
+reason for rendering to block.  When sound output is restored, the value
+should be applied while constructing or scheduling audio output, such as a
+WAV buffer, instead of sleeping inside the renderer.
+
+## Historical FRACTINT Behavior
+
+DOS FRACTINT used a microsecond timer and a busy deadline loop.
+
+The relevant shape was:
 
 ```text
 wait_until(index, orbit_delay):
@@ -35,188 +55,56 @@ wait_until(index, orbit_delay):
     next_time[index] = now + orbit_delay * 100
 ```
 
-The DOS `usec_clock()` implementation reads the BIOS tick count and the
-8253 timer.  It does not yield the thread while waiting.  That makes
-small values such as `orbitdelay=1` behave like a CPU-burning 100 us
-deadline wait.
+The DOS `usec_clock()` implementation read the BIOS tick count and the
+8253 timer.  It did not yield the thread while waiting.  That made small
+values such as `orbitdelay=1` behave like a CPU-burning 100 us deadline
+wait.
 
-FRACTINT also retains an older calibrated delay-loop implementation
-behind `debug=4020`.  The default code path is the microsecond timer.
+That behavior was useful on old hardware, but it is not a good target for
+modern windowed display.  Modern GUI presentation, message pumping, and
+input dispatch overhead can cost more than those tiny delays.
 
 ## Current Id Behavior
 
-Id currently has two related delay paths.
+The UI orbit display path in `libid/ui/standard_orbit_plot.cpp` applies
+the display policy:
 
-The UI orbit display path in `libid/ui/standard_orbit_plot.cpp` uses:
+- convert `orbitdelay` to zero when it is below the 72 Hz threshold;
+- use the orbit delay timer for values at or above that threshold;
+- dispatch pending keyboard input at most once per 72 Hz interval while
+  orbit display pacing is active.
 
-```text
-std::chrono::steady_clock
-std::this_thread::sleep_for()
-dispatch_pending_keyboard_input()
-```
+The platform timer implementations are selected by CMake:
 
-The older engine helper in `libid/engine/wait_until.cpp` uses:
+- Windows uses `QueryPerformanceCounter()` for deadline measurement.
+- Linux uses `clock_gettime(CLOCK_MONOTONIC, ...)`.
+- BSD uses `clock_gettime(CLOCK_MONOTONIC, ...)`.
+- macOS uses `std::chrono::steady_clock`.
 
-```text
-std::chrono::steady_clock
-std::this_thread::sleep_for()
-driver_key_pressed()
-```
+The current implementations still include high-resolution deadline support
+from the earlier compatibility attempt.  With the new display semantics,
+busy-spin precision is no longer important for orbit display and can be
+simplified later.
 
-The driver is used only for input polling in the older path.  The timing
-itself is not driver-owned.
-
-On Windows, `sleep_for(100us)` should not be treated as a precise
-100 us delay.  It yields to the OS scheduler and resumes after timer and
-scheduling latency.  The actual wait can be closer to milliseconds than
-microseconds.  Because orbit delay is applied per displayed point, that
-rounding can multiply into very large render-time differences.
-
-POSIX platforms can show the same class of problem with `nanosleep()` or
-`clock_nanosleep()`: the argument may be tiny, but the actual wake-up is
-still scheduler-limited.
+Older delay paths remain until the remaining inversion-of-control slices
+remove engine-side waiting.
 
 ## Timing Goals
 
-Any replacement should preserve these properties:
+Orbit display pacing should preserve these properties:
 
-- `orbitdelay=1` means a nominal 100 us cadence.
-- pending keyboard input wakes the delay promptly.
-- delay is applied per displayed orbit point.
-- larger delays do not needlessly burn CPU.
-- the timing mechanism is isolated from fractal calculation code.
-- platform-specific timing code is not buried in renderer control flow.
+- small positive values run at full practical display speed;
+- `orbitdelay=139` is the first deliberate visible display delay;
+- larger values scale in the documented 1/10000 second units;
+- pending keyboard input is noticed at display-refresh cadence;
+- display pacing policy remains in `libid/ui`;
+- fractal calculation code does not sleep or poll input for display;
+- sound timing is handled by audio output code, not render blocking.
 
-## Platform Clocks
+## Remaining Work
 
-Windows:
-
-- `QueryPerformanceCounter()` is the usual high-resolution monotonic
-  clock for deadline measurement.
-- `CreateWaitableTimerEx()` with
-  `CREATE_WAITABLE_TIMER_HIGH_RESOLUTION` may improve sleeping waits, but
-  wake-up still depends on scheduler behavior.
-- `timeBeginPeriod(1)` can improve coarse timer resolution, but it does
-  not make 100 us sleeps reliable and has system-wide cost.
-
-Linux:
-
-- `clock_gettime(CLOCK_MONOTONIC, ...)` is the portable monotonic clock.
-- `CLOCK_MONOTONIC_RAW` can avoid some clock adjustments, but is less
-  portable.
-- `clock_nanosleep()` can sleep until an absolute deadline, but wake-up
-  is still scheduler-limited.
-
-BSD:
-
-- `clock_gettime(CLOCK_MONOTONIC, ...)` is the portable monotonic clock.
-- `CLOCK_MONOTONIC_FAST` or similar variants may exist on specific BSDs,
-  but they are not portable across all BSD targets.
-- `nanosleep()` or `clock_nanosleep()` availability and precision vary by
-  platform.
-
-macOS:
-
-- `std::chrono::steady_clock` is typically backed by a monotonic system
-  clock suitable for measuring deadlines.
-- Native code can also use Mach absolute time APIs if a platform layer
-  needs explicit control.
-- Sleeping for sub-millisecond intervals is still scheduler-limited.
-
-## Alternative Designs
-
-### Pure Sleep
-
-Use `sleep_for()`, `nanosleep()`, waitable timers, or similar APIs for
-every delay.
-
-Advantages:
-
-- simple
-- low CPU use
-- friendly to multitasking and battery life
-
-Disadvantages:
-
-- poor match for DOS FRACTINT at small delays
-- `orbitdelay=1` can become millisecond-scale
-- performance differs strongly by OS and timer settings
-
-### Pure Busy Deadline
-
-Measure time with the platform high-resolution monotonic clock and spin
-until the deadline, polling input while waiting.
-
-Advantages:
-
-- closest match to DOS FRACTINT
-- good behavior for `orbitdelay=1`
-- avoids scheduler oversleep
-
-Disadvantages:
-
-- burns CPU while waiting
-- bad for long delays
-- can affect responsiveness of other processes
-
-### Hybrid Sleep And Spin
-
-Sleep or yield while far from the deadline, then busy-wait for the final
-short interval.
-
-Example policy:
-
-```text
-if remaining > spin_window:
-    sleep or yield briefly
-else:
-    poll input and busy-wait
-```
-
-Advantages:
-
-- keeps small delays close to DOS behavior
-- avoids burning CPU for large delays
-- can be tuned per platform
-
-Disadvantages:
-
-- more complicated
-- requires choosing a spin window
-- platform differences still matter
-
-### Driver Or Platform Timing Service
-
-Move deadline timing behind a small platform service, possibly adjacent
-to the driver layer.
-
-Possible interface:
-
-```text
-reset_orbit_delay_timer()
-wait_for_orbit_delay(units_100us, poll_input_callback)
-```
-
-Advantages:
-
-- isolates platform-specific timing
-- keeps UI render controllers readable
-- gives Windows, Linux, BSD, and macOS separate implementations if needed
-- preserves the current direction where UI owns input policy
-
-Disadvantages:
-
-- adds an abstraction
-- still needs policy decisions for sleep, spin, and input polling
-
-## Open Questions
-
-- Should the spin window be fixed or platform-specific?
-- Should small delays always busy-wait, or only `orbitdelay` values below
-  a threshold?
-- Should the platform timing service be part of the driver layer or a
-  separate OS timing layer?
-- Should the older engine `wait_until()` path be migrated to the same
-  timing service before or after remaining orbit-display inversion work?
-- Should sound delay and orbit-display delay share the same timer service
-  or keep separate policies?
+- Remove busy-spin behavior from orbit display timer implementations once
+  all callers follow the 72 Hz display policy.
+- Remove `wait_until()` from engine and fractal rendering paths.
+- Keep sound timing separate from orbit display pacing when sound output is
+  restored.

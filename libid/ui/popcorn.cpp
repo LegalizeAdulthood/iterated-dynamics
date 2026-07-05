@@ -25,21 +25,27 @@ int popcorn_type()
 
     while (!popcorn.done())
     {
+        bool check_interrupted = true;
         if (popcorn.image_orbit_plot_pending())
         {
             if (drive_orbit_plot(popcorn.pending_image_orbit_plot()))
             {
                 popcorn.complete_pending_image_orbit_plot();
             }
+            check_interrupted = false;
         }
         else
         {
             popcorn.iterate();
         }
-        if (!popcorn.done() && !popcorn.image_orbit_plot_pending() && calc_interrupted())
+        if (!popcorn.done() && !popcorn.image_orbit_plot_pending())
         {
-            popcorn.suspend();
-            return -1;
+            const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
+            if (interrupted)
+            {
+                popcorn.suspend();
+                return -1;
+            }
         }
     }
     return 0;

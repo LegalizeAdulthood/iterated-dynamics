@@ -67,12 +67,14 @@ int standard_fractal()
 
     while (!standard_fractal.done())
     {
+        bool check_interrupted = true;
         if (standard_fractal.orbit_plot_pending())
         {
             if (drive_orbit_plot(standard_fractal.pending_orbit_plot()))
             {
                 standard_fractal.complete_pending_orbit_plot();
             }
+            check_interrupted = false;
         }
         else if (standard_fractal.overlay_scrub_pending())
         {
@@ -90,10 +92,14 @@ int standard_fractal()
             standard_fractal.iterate();
         }
         if (!standard_fractal.done() && !standard_fractal.orbit_plot_pending() &&
-            !standard_fractal.overlay_scrub_pending() && calc_interrupted())
+            !standard_fractal.overlay_scrub_pending())
         {
-            standard_fractal.suspend();
-            return -1;
+            const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
+            if (interrupted)
+            {
+                standard_fractal.suspend();
+                return -1;
+            }
         }
     }
     return 0;

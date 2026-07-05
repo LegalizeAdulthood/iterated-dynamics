@@ -119,19 +119,25 @@ bool wait_for_orbit_delay(const unsigned long delay_100us, OrbitDelayInputPendin
 
     while (now < s_next_deadline)
     {
+        const std::uint64_t remaining{s_next_deadline - now};
+        if (remaining <= spin_window)
+        {
+            do
+            {
+                now = current_ticks();
+            } while (now < s_next_deadline);
+            break;
+        }
+
         if (input_is_pending(input_pending))
         {
             interrupted = true;
             break;
         }
 
-        const std::uint64_t remaining{s_next_deadline - now};
-        if (remaining > spin_window)
-        {
-            const long long sleep_nanoseconds{
-                std::min(nanoseconds_for_ticks(remaining - spin_window), MAX_SLEEP_NANOSECONDS)};
-            sleep_for_nanoseconds(sleep_nanoseconds);
-        }
+        const long long sleep_nanoseconds{
+            std::min(nanoseconds_for_ticks(remaining - spin_window), MAX_SLEEP_NANOSECONDS)};
+        sleep_for_nanoseconds(sleep_nanoseconds);
         now = current_ticks();
     }
 

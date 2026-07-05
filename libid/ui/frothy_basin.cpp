@@ -71,9 +71,11 @@ int froth_type()
     g_frothy_basin.resume();
     while (!g_frothy_basin.done())
     {
+        bool check_interrupted = true;
         if (g_frothy_basin.overlay_orbit_point_pending())
         {
             drive_pending_orbit_point();
+            check_interrupted = false;
         }
         else if (g_frothy_basin.overlay_scrub_pending())
         {
@@ -85,10 +87,14 @@ int froth_type()
             g_frothy_basin.iterate();
         }
         if (!g_frothy_basin.done() && !g_frothy_basin.overlay_orbit_point_pending() &&
-            !g_frothy_basin.overlay_scrub_pending() && calc_interrupted())
+            !g_frothy_basin.overlay_scrub_pending())
         {
-            g_frothy_basin.suspend();
-            return -1;
+            const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
+            if (interrupted)
+            {
+                g_frothy_basin.suspend();
+                return -1;
+            }
         }
     }
 
