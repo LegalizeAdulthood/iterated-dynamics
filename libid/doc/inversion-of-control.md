@@ -436,8 +436,8 @@ seed points, iterates a Popcorn map, and plots the produced orbit points
 elsewhere on the screen.  It does not color the seed pixel by orbit
 length, and it does not use StandardPass traversal.  Do not route
 Popcorn presentation state through `StandardFractal`; make `Popcorn` the
-calculation object that owns scan state, orbit state, and pending orbit
-points.
+calculation object that owns scan state, orbit state, and image point
+plotting.
 
 Popcorn and PopcornJul are not part of the standard overlay-orbit
 policy.  They hijacked the old orbit plotting machinery to draw image
@@ -463,33 +463,70 @@ The Popcorn conversion should follow review boundaries, not a guessed
 slice count.  A slice is small enough when it preserves current behavior,
 removes one false dependency, and leaves a reviewable intermediate state.
 
-### Slice 1: Popcorn Image-Orbit Ownership
+### Slice 1: Popcorn Direct Image Plotting
 
 Work:
 
-- Move Popcorn image-orbit point plotting out of `libid/ui/popcorn.cpp`
-  and into the Popcorn calculation object.
-- Keep Popcorn separate from standard overlay orbit display: Popcorn
-  plots image pixels and does not save or scrub covered pixels.
-- Keep the UI controller responsible only for interruption and
-  presentation timing.
+- Remove Popcorn's `OrbitPlot` member and public pending image-orbit
+  API.
+- Add a private Popcorn image-point plot helper that uses the current
+  real-to-screen projection used by `OrbitPlot` image mode.
+- Plot directly with `g_put_color()` after projection and bounds checks.
+- Do not save pixels, scrub pixels, wait for `orbitdelay`, or trigger
+  sound from Popcorn image plotting.
+- Simplify `libid/ui/popcorn.cpp` to call `Popcorn::iterate()` and poll
+  interruption between increments.
+- Remove `drive_orbit_plot()` and `reset_orbit_delay()` use from the
+  Popcorn UI controller.
 - Do not route Popcorn through `StandardFractal`.
 - Do not add any `libid/ui` include from `libid/fractals`.
+- Do not introduce a shared projection abstraction in this slice.
 
 Done when:
 
 - `libid/ui/popcorn.cpp` does not call `drive_orbit_plot()` or receive
   an `OrbitPlot` reference from Popcorn.
 - Popcorn owns its scan state, orbit state, and image-orbit plotting.
-- Any presentation pacing needed by Popcorn is recorded for the
-  Popcorn UI/rendering policy, not decided in this slice.
+- `libid/fractals/popcorn.cpp` and `libid/include/fractals/popcorn.h`
+  do not include `engine/orbit.h`.
+- `OrbitPlot` image mode is unused, but may still exist until the next
+  slice removes it.
 
 Manual testing:
 
 - None.  Ordinary Popcorn and PopcornJul renders are covered by image
   tests.
 
-### Slice 2: Orbit Show Input Inversion
+### Slice 2: OrbitPlot Overlay-Only Cleanup
+
+Work:
+
+- Remove `OrbitPlot::reset_image()`, `PlotMode::IMAGE`, and
+  `OrbitPlot::plot_image_point()`.
+- Remove image color state from `OrbitPlot` if overlay mode no longer
+  needs it.
+- Make `OrbitPlot` model only temporary overlay display: reset overlay,
+  bounded plot work, delay-pending reporting, and scrub.
+- Keep `OrbitPlot` focused on `showorbit` overlay behavior for standard
+  escape-time rendering and FrothyBasin.
+- Do not choose a new `orbitdelay` display policy in this slice.
+
+Done when:
+
+- `rg "reset_image|PlotMode::IMAGE|plot_image_point" libid` finds no
+  remaining code references.
+- `OrbitPlot` cannot be used for Popcorn or image rendering.
+- Standard and FrothyBasin overlay callers still use bounded
+  `OrbitPlot` work.
+
+Manual testing:
+
+- `type=mandel showorbit=yes`: while rendering, press `x`, then `Esc`;
+  rendering resumes and overlay display still works.
+- `type=frothybasin showorbit=yes`: while rendering, press `x`, then
+  `Esc`; rendering resumes and overlay display still works.
+
+### Slice 3: Orbit Show Input Inversion
 
 Work:
 
@@ -508,8 +545,6 @@ Done when:
 - Engine code does not poll input or perform delay loops around orbit
   display.
 - The only visible orbit input polling path is the UI controller.
-- Any helper named `plot_orbit`, `plot_overlay_orbit`, or
-  `plot_image_orbit` is either removed or clearly bounded and no-delay.
 
 Manual testing:
 
@@ -518,7 +553,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes`: while rendering, press `x`, then
   `Esc`; rendering resumes and input is handled by the UI controller.
 
-### Slice 3: Sound Output Pacing
+### Slice 4: Sound Output Pacing
 
 Work:
 
@@ -542,7 +577,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 4: Wait-Until Cleanup
+### Slice 5: Wait-Until Cleanup
 
 Work:
 
@@ -570,7 +605,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 5: StandardFractal Pixel Interrupts
+### Slice 6: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -599,7 +634,7 @@ Manual testing:
 - `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
   then `Esc`; rendering resumes.
 
-### Slice 6: Perturbation Traversal Ownership
+### Slice 7: Perturbation Traversal Ownership
 
 Work:
 
@@ -642,7 +677,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`: rendering completes without a
   perturbation crash or hang.
 
-### Slice 7: Perturbation Pass-Switch Tests
+### Slice 8: Perturbation Pass-Switch Tests
 
 Work:
 
