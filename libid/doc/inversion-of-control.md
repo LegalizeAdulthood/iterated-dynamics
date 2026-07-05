@@ -378,39 +378,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: BSD Orbit Delay Timer
-
-Work:
-
-- Implement or validate the BSD timer backend for the orbit delay timer
-  API.
-- Add this backend source to the CMake platform source selection for BSD
-  targets.
-- Do not use preprocessor `#ifdef` branches in timer code to select this
-  backend.
-- Use portable BSD timing first, such as
-  `clock_gettime(CLOCK_MONOTONIC, ...)`.
-- Avoid relying on BSD-specific fast clock variants unless guarded and
-  optional.
-- Verify the implementation across FreeBSD, OpenBSD, and NetBSD CI.
-- Keep input pumping in the UI callback supplied to the timer.
-- Build this backend only when CMake configures a BSD target.
-
-Done when:
-
-- FreeBSD, OpenBSD, and NetBSD builds use a monotonic deadline clock for
-  orbit delay pacing.
-- CMake selects this backend at configure time for BSD targets.
-- The implementation does not depend on Win32, Linux-only, or
-  single-BSD APIs.
-- Pending input can still wake the delay promptly.
-
-Manual testing:
-
-- None.  The backend is not used by the render path until the timer
-  wiring slice.
-
-### Slice 2: Wire Orbit Delay Timer
+### Slice 1: Wire Orbit Delay Timer
 
 Work:
 
@@ -432,7 +400,7 @@ Manual testing:
 - `type=mandel showorbit=yes orbitdelay=1`
 - `type=mandel showorbit=yes orbitdelay=30`
 
-### Slice 3: Standard Orbit Plot Pacing
+### Slice 2: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -505,7 +473,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 4: Sound Output Pacing
+### Slice 3: Sound Output Pacing
 
 Work:
 
@@ -526,7 +494,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 5: Wait-Until Cleanup
+### Slice 4: Wait-Until Cleanup
 
 Work:
 
@@ -553,7 +521,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 6: StandardFractal Pixel Interrupts
+### Slice 5: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -580,7 +548,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 7: Perturbation Traversal Ownership
+### Slice 6: Perturbation Traversal Ownership
 
 Work:
 
@@ -623,7 +591,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 8: Perturbation Pass-Switch Tests
+### Slice 7: Perturbation Pass-Switch Tests
 
 Work:
 
