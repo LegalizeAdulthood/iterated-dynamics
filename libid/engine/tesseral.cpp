@@ -24,6 +24,8 @@ namespace
 
 constexpr int TESSERAL_EDGE_CHUNK{512};
 constexpr int TESSERAL_BOX_CHUNK{512};
+constexpr int TESSERAL_PIXEL_FILL_CHUNK{8192};
+constexpr int TESSERAL_SPAN_FILL_CHUNK{64};
 
 } // namespace
 
@@ -127,6 +129,15 @@ bool Tesseral::iterate()
     for (int boxes = 0; boxes < TESSERAL_BOX_CHUNK && !done(); ++boxes)
     {
         next_box();
+        if (m_fill.mode != FillMode::NONE)
+        {
+            if (!fill_box())
+            {
+                return true;
+            }
+            continue;
+        }
+
         if (m_split_box_active)
         {
             if (!split_box())
@@ -150,7 +161,10 @@ bool Tesseral::iterate()
         }
         else
         {
-            fill_box();
+            if (!fill_box())
+            {
+                return true;
+            }
         }
     }
 
@@ -457,44 +471,100 @@ bool Tesseral::split_needed(bool &needed)
     return true;
 }
 
-void Tesseral::fill_box()
+void Tesseral::start_fill_box()
+{
+    if (g_fill_color == 0)
+    {
+        finish_fill_box();
+        return;
+    }
+    if (g_fill_color > 0)
+    {
+        m_tp->top = g_fill_color % g_colors;
+    }
+
+    const int columns = m_tp->x2 - m_tp->x1 - 1;
+    if (m_guess_plot || columns < 2)
+    {
+        m_fill.mode = FillMode::PIXEL;
+        m_fill.col = m_tp->x1 + 1;
+        m_fill.row = m_tp->y1 + 1;
+        return;
+    }
+
+    m_fill.mode = FillMode::SPAN;
+    m_fill.row = m_tp->y1 + 1;
+    m_fill.pixels.assign(columns, static_cast<Byte>(m_tp->top));
+}
+
+void Tesseral::finish_fill_box()
+{
+    m_fill.mode = FillMode::NONE;
+    m_fill.col = 0;
+    m_fill.row = 0;
+    --m_tp;
+}
+
+bool Tesseral::fill_box()
 {
     // all 4 edges are the same color, fill in
-    if (g_fill_color != 0)
+    if (m_fill.mode == FillMode::NONE)
     {
-        if (g_fill_color > 0)
-        {
-            m_tp->top = g_fill_color % g_colors;
-        }
-        if (const int j = m_tp->x2 - m_tp->x1 - 1; m_guess_plot || j < 2)
-        {
-            for (g_col = m_tp->x1 + 1; g_col < m_tp->x2; g_col++)
-            {
-                for (g_row = m_tp->y1 + 1; g_row < m_tp->y2; g_row++)
-                {
-                    g_plot(g_col, g_row, m_tp->top);
-                }
-            }
-        }
-        else
-        {
-            // use write_span for speed
-            const std::vector pixels(j, static_cast<Byte>(m_tp->top));
-            for (g_row = m_tp->y1 + 1; g_row < m_tp->y2; g_row++)
-            {
-                write_span(g_row, m_tp->x1 + 1, m_tp->x2 - 1, pixels.data());
-                if (g_plot != g_put_color) // symmetry
-                {
-                    if (const int k = g_stop_pt.y - (g_row - g_start_pt.y);
-                        k > g_i_stop_pt.y && k < g_logical_screen.y_dots)
-                    {
-                        write_span(k, m_tp->x1 + 1, m_tp->x2 - 1, pixels.data());
-                    }
-                }
-            }
-        }
+        start_fill_box();
     }
-    --m_tp;
+    if (m_fill.mode == FillMode::NONE)
+    {
+        return true;
+    }
+
+    if (m_fill.mode == FillMode::PIXEL)
+    {
+        if (m_fill.col >= m_tp->x2 || m_fill.row >= m_tp->y2)
+        {
+            finish_fill_box();
+            return true;
+        }
+        for (int count = 0; count < TESSERAL_PIXEL_FILL_CHUNK && m_fill.col < m_tp->x2; ++count)
+        {
+            g_col = m_fill.col;
+            g_row = m_fill.row;
+            g_plot(g_col, g_row, m_tp->top);
+
+            ++m_fill.row;
+            if (m_fill.row >= m_tp->y2)
+            {
+                m_fill.row = m_tp->y1 + 1;
+                ++m_fill.col;
+            }
+        }
+        if (m_fill.col >= m_tp->x2)
+        {
+            finish_fill_box();
+            return true;
+        }
+        return false;
+    }
+
+    for (int count = 0; count < TESSERAL_SPAN_FILL_CHUNK && m_fill.row < m_tp->y2; ++count)
+    {
+        // use write_span for speed
+        g_row = m_fill.row;
+        write_span(g_row, m_tp->x1 + 1, m_tp->x2 - 1, m_fill.pixels.data());
+        if (g_plot != g_put_color) // symmetry
+        {
+            if (const int k = g_stop_pt.y - (g_row - g_start_pt.y); k > g_i_stop_pt.y && k < g_logical_screen.y_dots)
+            {
+                write_span(k, m_tp->x1 + 1, m_tp->x2 - 1, m_fill.pixels.data());
+            }
+        }
+        ++m_fill.row;
+    }
+    if (m_fill.row >= m_tp->y2)
+    {
+        finish_fill_box();
+        return true;
+    }
+    return false;
 }
 
 bool Tesseral::split_box()
@@ -594,6 +664,13 @@ bool Tesseral::split_box()
 
 void Tesseral::suspend()
 {
+    if (m_init_phase != InitPhase::COMPLETE)
+    {
+        add_work_list(
+            g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_start_pt.x, g_start_pt.y, 0, g_work_symmetry);
+        return;
+    }
+
     // didn't complete
     int y_size = 1;
     int x_size = 1;

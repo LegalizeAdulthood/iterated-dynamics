@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 
 namespace id::engine
 {
@@ -43,6 +44,13 @@ private:
         MIDDLE,
     };
 
+    enum class FillMode
+    {
+        NONE,
+        PIXEL,
+        SPAN,
+    };
+
     struct Tess
     {
         int x1{};
@@ -65,14 +73,24 @@ private:
         bool started{};
     };
 
+    struct FillState
+    {
+        FillMode mode{FillMode::NONE};
+        int col{};
+        int row{};
+        std::vector<unsigned char> pixels{};
+    };
+
     bool advance_edge_probe();
-    void fill_box();
+    bool fill_box();
+    void finish_fill_box();
     bool finish_edge_probe(int &color);
     bool initialize_edges();
     void next_box();
     bool probe_active() const;
     void reset_edge_probe();
     void reset_split_check();
+    void start_fill_box();
     void start_column_probe(int x, int y1, int y2);
     void start_row_probe(int x1, int x2, int y);
     bool split_box();
@@ -86,6 +104,7 @@ private:
     InitPhase m_init_phase{InitPhase::COMPLETE};
     SplitCheckPhase m_split_check_phase{SplitCheckPhase::START};
     EdgeProbe m_edge_probe{};
+    FillState m_fill{};
     std::array<Tess, 4096 / sizeof(Tess)> m_stack{};
     Tess *m_tp{};
 };

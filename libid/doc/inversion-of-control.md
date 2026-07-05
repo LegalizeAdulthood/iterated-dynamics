@@ -153,9 +153,9 @@ The current code is already part-way through this plan:
   explicit `CalcMode` dispatch.
 - Tesseral is a concrete `StandardPass` alternative.  `Tesseral` has
   `iterate()`, `done()`, and `suspend()`, and owns its box stack.
-  Initial edge setup and later edge probes run through bounded,
-  resumable state.  Box filling still runs as an unbounded helper loop
-  inside one `iterate()` call.
+  Initial edge setup, later edge probes, and box filling run through
+  bounded, resumable state.  Tesseral suspend records the active box and
+  restarts initial edge setup if interruption happens during that phase.
 - The `OnePass` and `TwoPass` paths share `ScanlinePass`; they preserve
   scan position in the concrete pass object and yield standard pixel work
   back to the UI.  They still communicate active pixel position through
@@ -378,28 +378,7 @@ behind another engine wrapper.
 The near-term implementation slices continue closing specific
 unbounded/waiting paths before top-level image rendering is inverted.
 
-### Slice 1: Tesseral Fill And Suspend
-
-Work:
-
-- Move `fill_box()` plot and `write_span()` loops into bounded fill state
-  so a large filled box can yield between rows.
-- Ensure `Tesseral::suspend()` records a valid resume point for box,
-  edge-probe, and fill phases.
-
-Done when:
-
-- No single `Tesseral::iterate()` call sweeps a whole filled box.
-- `Tesseral::suspend()` is valid for initialization, edge probing,
-  splitting, and filling.
-- Tesseral render output remains compatible with existing image tests.
-
-Manual testing:
-
-- `type=mandel passes=t maxiter=10000`
-- `type=mandel passes=t fillcolor=1 maxiter=10000`
-
-### Slice 2: Standard Orbit Plot Pacing
+### Slice 1: Standard Orbit Plot Pacing
 
 Orbit plotting is engine work done from inside each pixel's orbit
 iteration.  The UI layer must not plot or scrub orbit points.  After
@@ -480,7 +459,7 @@ Manual testing:
 - `type=frothybasin showorbit=yes orbitdelay=30`
 - `type=popcorn orbitdelay=30`
 
-### Slice 3: Sound Output Pacing
+### Slice 2: Sound Output Pacing
 
 Work:
 
@@ -501,7 +480,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 4: Wait-Until Cleanup
+### Slice 3: Wait-Until Cleanup
 
 Work:
 
@@ -528,7 +507,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 5: StandardFractal Pixel Interrupts
+### Slice 4: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -555,7 +534,7 @@ Manual testing:
 - `type=mandel passes=1 maxiter=10000`
 - `type=mandel passes=2 maxiter=10000`
 
-### Slice 6: Perturbation Traversal Ownership
+### Slice 5: Perturbation Traversal Ownership
 
 Work:
 
@@ -598,7 +577,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`
 - `type=mandel passes=p`
 
-### Slice 7: Perturbation Pass-Switch Tests
+### Slice 6: Perturbation Pass-Switch Tests
 
 Work:
 
