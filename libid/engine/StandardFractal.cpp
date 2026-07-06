@@ -227,6 +227,11 @@ bool StandardFractal::consume_traversal_yield()
     return yielded;
 }
 
+bool StandardFractal::overlay_scrub_pending() const
+{
+    return m_overlay_scrub_pending;
+}
+
 void StandardFractal::complete_pending_orbit_plot()
 {
     if (!m_orbit_plot_pending)
@@ -469,8 +474,7 @@ void StandardFractal::restore_dispatch()
 
 void StandardFractal::run_pending_orbit_plot()
 {
-    pending_orbit_plot().iterate();
-    if (pending_orbit_plot().flush_delay())
+    if (pending_orbit_plot().iterate())
     {
         m_orbit_display_pacing_pending = true;
     }

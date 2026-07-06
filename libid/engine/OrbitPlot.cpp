@@ -63,15 +63,14 @@ void OrbitPlot::reset(const double real, const double imag)
     m_done = false;
 }
 
-void OrbitPlot::iterate()
+bool OrbitPlot::iterate()
 {
     if (m_done)
     {
-        return;
+        return false;
     }
-    m_delay_pending = false;
-    plot(m_real - g_image_region.m_min.x, m_imag - g_image_region.m_max.y);
     m_done = true;
+    return plot(m_real - g_image_region.m_min.x, m_imag - g_image_region.m_max.y);
 }
 
 bool OrbitPlot::done() const
@@ -79,26 +78,19 @@ bool OrbitPlot::done() const
     return m_done;
 }
 
-bool OrbitPlot::flush_delay()
-{
-    const bool delay_pending{m_delay_pending};
-    m_delay_pending = false;
-    return delay_pending;
-}
-
-void OrbitPlot::plot(const double dx, const double dy)
+bool OrbitPlot::plot(const double dx, const double dy)
 {
     int i = static_cast<int>(dy * g_plot_mx1 - dx * g_plot_mx2);
     i += g_logical_screen.x_offset;
     if (i < 0 || i >= g_screen_x_dots)
     {
-        return;
+        return false;
     }
     int j = static_cast<int>(dx * g_plot_my1 - dy * g_plot_my2);
     j += g_logical_screen.y_offset;
     if (j < 0 || j >= g_screen_y_dots)
     {
-        return;
+        return false;
     }
     {
         ValueSaver save_screen_x_offset{g_logical_screen.x_offset, 0};
@@ -106,6 +98,7 @@ void OrbitPlot::plot(const double dx, const double dy)
         plot(i, j);
     }
     update_orbit_sound(i, j);
+    return true;
 }
 
 void OrbitPlot::plot(const int x, const int y)
@@ -127,10 +120,6 @@ void OrbitPlot::update_orbit_sound(const int x, const int y)
         {
             write_sound(y * 1000 / g_logical_screen.y_dots + g_base_hertz);
         }
-        else if (g_orbit_delay > 0)
-        {
-            m_delay_pending = true;
-        }
     }
     else
     {
@@ -146,13 +135,7 @@ void OrbitPlot::update_orbit_sound(const int x, const int y)
         {
             write_sound(x + y + g_base_hertz);
         }
-        else if (g_orbit_delay > 0)
-        {
-            m_delay_pending = true;
-        }
     }
-
-    // placing sleepms here delays each dot
 }
 
 void OrbitPlot::save_overlay_point(const int x, const int y, const int color)
@@ -173,7 +156,6 @@ OrbitPlot &orbit_plot()
 
 void OrbitPlot::scrub()
 {
-    driver_mute();
     if (!g_orbit_save_flag || m_saved_overlay.empty())
     {
         m_saved_overlay.clear();

@@ -16,9 +16,8 @@ public:
     OrbitPlot();
 
     void reset(double real, double imag);
-    void iterate();
+    bool iterate();
     bool done() const;
-    bool flush_delay();
     void scrub();
 
 private:
@@ -29,7 +28,7 @@ private:
         int color{};
     };
 
-    void plot(double dx, double dy);
+    bool plot(double dx, double dy);
     void plot(int x, int y);
     void save_overlay_point(int x, int y, int color);
     void update_orbit_sound(int x, int y);
@@ -38,11 +37,11 @@ private:
     std::vector<SavedOverlayPoint> m_saved_overlay;
     double m_real{};
     double m_imag{};
-    bool m_delay_pending{};
     bool m_done{true};
 };
 
 OrbitPlot &orbit_plot();
+
 inline void scrub_orbit()
 {
     orbit_plot().scrub();

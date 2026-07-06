@@ -32,6 +32,7 @@ public:
     {
         if (g_show_orbit)
         {
+            mute_orbit_display();
             m_frothy_basin.scrub_overlay();
         }
         if (key != 'o' && key != 'O')
@@ -77,6 +78,10 @@ int froth_type()
         }
         else
         {
+            if (g_frothy_basin.overlay_scrub_pending())
+            {
+                mute_orbit_display();
+            }
             g_frothy_basin.iterate();
         }
         if (!g_frothy_basin.done() && !g_frothy_basin.orbit_display_pacing_pending())

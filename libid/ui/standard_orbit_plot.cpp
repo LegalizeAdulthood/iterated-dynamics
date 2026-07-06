@@ -4,12 +4,15 @@
 
 #include "engine/calcfrac.h"
 #include "engine/OrbitPlot.h"
+#include "engine/sound.h"
+#include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/OrbitDelayTimer.h"
 
 #include <chrono>
 
 using namespace id::engine;
+using namespace id::misc;
 
 namespace id::ui
 {
@@ -41,6 +44,11 @@ bool dispatch_orbit_input_if_due()
     return dispatch_pending_keyboard_input();
 }
 
+bool orbit_display_delay_enabled()
+{
+    return g_orbit_delay > 0 && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) <= SOUNDFLAG_BEEP;
+}
+
 } // namespace
 
 unsigned long display_orbit_delay_units(const unsigned long delay_100us)
@@ -68,18 +76,28 @@ void pace_orbit_display()
 
 bool drive_orbit_plot(OrbitPlot &orbit_plot)
 {
-    orbit_plot.iterate();
-    if (orbit_plot.flush_delay())
+    if (orbit_plot.iterate() && orbit_display_delay_enabled())
     {
         pace_orbit_display();
     }
     return orbit_plot.done();
 }
 
+void mute_orbit_display()
+{
+    driver_mute();
+}
+
 void reset_orbit_delay()
 {
     reset_orbit_delay_timer();
     s_next_input_poll_time = {};
+}
+
+void scrub_orbit_display()
+{
+    mute_orbit_display();
+    scrub_orbit();
 }
 
 } // namespace id::ui

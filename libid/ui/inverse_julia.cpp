@@ -4,7 +4,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/jiim.h"
-#include "engine/OrbitPlot.h"
 #include "engine/resume.h"
 #include "fractals/fractalp.h"
 #include "misc/Driver.h"
@@ -13,6 +12,7 @@
 #include "ui/get_a_number.h"
 #include "ui/id_keys.h"
 #include "ui/mouse.h"
+#include "ui/standard_orbit_plot.h"
 
 #include <memory>
 
@@ -237,7 +237,7 @@ public:
     {
         if (g_show_orbit)
         {
-            scrub_orbit();
+            scrub_orbit_display();
         }
         if (key == 'o' || key == 'O')
         {

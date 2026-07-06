@@ -259,10 +259,6 @@ void FrothyBasin::iterate()
     {
         flush_overlay_orbit_point();
     }
-    if (m_overlay_scrub_pending)
-    {
-        scrub_overlay();
-    }
 }
 
 void FrothyBasin::complete_orbit_display_pacing()
@@ -294,8 +290,7 @@ void FrothyBasin::advance_pixel()
 void FrothyBasin::flush_overlay_orbit_point()
 {
     orbit_plot().reset(m_overlay_orbit_point.x, m_overlay_orbit_point.y);
-    orbit_plot().iterate();
-    if (orbit_plot().flush_delay())
+    if (orbit_plot().iterate())
     {
         m_orbit_display_pacing_pending = true;
     }

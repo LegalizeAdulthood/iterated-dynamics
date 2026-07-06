@@ -3,10 +3,10 @@
 #include "ui/diffusion.h"
 
 #include "engine/calcfrac.h"
-#include "engine/OrbitPlot.h"
 #include "fractals/Diffusion.h"
 #include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"
+#include "ui/standard_orbit_plot.h"
 
 #include <memory>
 
@@ -27,7 +27,7 @@ public:
     {
         if (g_show_orbit)
         {
-            scrub_orbit();
+            scrub_orbit_display();
         }
         if (key == 'o' || key == 'O')
         {

@@ -23,7 +23,8 @@ public:
     bool done() const;
     void iterate();
     // clang-format off
-    bool orbit_display_pacing_pending() const { return m_orbit_display_pacing_pending };
+    bool orbit_display_pacing_pending() const { return m_orbit_display_pacing_pending; }
+    bool overlay_scrub_pending() const { return m_overlay_scrub_pending; }
     // clang-format on
     void complete_orbit_display_pacing();
     void scrub_overlay();

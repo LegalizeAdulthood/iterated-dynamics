@@ -34,6 +34,7 @@ public:
     {
         if (g_show_orbit)
         {
+            mute_orbit_display();
             m_standard_fractal.scrub_overlay();
         }
         if (key != 'o' && key != 'O')
@@ -87,6 +88,10 @@ int standard_fractal()
         }
         else
         {
+            if (standard_fractal.overlay_scrub_pending())
+            {
+                mute_orbit_display();
+            }
             standard_fractal.iterate();
         }
         if (!standard_fractal.done() && !standard_fractal.presentation_pending())
