@@ -463,40 +463,273 @@ The Popcorn conversion should follow review boundaries, not a guessed
 slice count.  A slice is small enough when it preserves current behavior,
 removes one false dependency, and leaves a reviewable intermediate state.
 
-### Slice 1: Sound Output Pacing
+## Current Presentation Leaks
+
+The remaining UI-concept leaks outside `libid/ui` are:
+
+- `libid/engine/OrbitPlot.cpp`: owns `m_delay_pending`,
+  `flush_delay()`, sound mapping, `write_sound()` calls, and
+  `driver_mute()` in `scrub()`.
+- `libid/include/engine/StandardFractal.h` and
+  `libid/engine/StandardFractal.cpp`: use `StandardPresentationActions`,
+  `pace_with_input`, `pace_without_input`, `queue_show_dot_pacing()`,
+  `m_orbit_display_pacing_pending`, and
+  `m_show_dot_pacing_pending`.
+- `libid/include/fractals/FrothyBasin.h` and
+  `libid/fractals/FrothyBasin.cpp`: use
+  `m_orbit_display_pacing_pending` and consume orbit-plot delay state.
+- `libid/engine/calcfrac.cpp`: show-dot fallback pacing calls
+  `driver_flush()`, `driver_delay()`, and `sleep_orbit_delay()`;
+  standard calculation also writes sound time markers and closes sound
+  output.
+- `libid/engine/sound.cpp`: owns speaker/file output, calls
+  `driver_sound_on()`, waits through `wait_until()`, and accepts an
+  input-pending callback.
+- `libid/engine/StickyOrbits.cpp` and `libid/fractals/lorenz.cpp`:
+  call `write_sound()` directly from rendering iteration.
+- `libid/fractals/lorenz.cpp`: calls `driver_mute()` from orbit
+  renderer constructors, destructors, `done()`, and `suspend()`.
+- `libid/engine/spindac.cpp`: includes palette rotation delay via
+  `driver_delay()`.
+- `libid/engine/wait_until.cpp`: implements a key-sensitive delay loop.
+
+These are not all keyboard polling sites, but they are presentation
+ownership leaks.  The engine and fractal classes may expose bounded
+rendering facts such as "overlay point was drawn" or "scrub restored
+pixels"; the UI controller decides whether that causes delay, sound,
+mute, input polling, or no presentation work.
+
+Every presentation-cleanup slice must move behavior to a named UI
+controller or UI-owned helper before removing the engine-side leak.  Do
+not make a slice that merely deletes delay, pacing, sound, mute, or
+input behavior from the engine.
+
+### Slice 1: OrbitPlot Display Result
 
 Work:
 
-- Treat speaker sound as UI presentation, not engine rendering.
-- Make driver speaker calls and sound delay pacing UI-owned instead of
-  engine-owned.
-- Let calculation and orbit code report tone requests and `orbitdelay`
-  duration data without blocking to play them.
-- Use `orbitdelay` as audio duration when constructing or scheduling
-  sound output; do not reuse the visible-orbit display threshold for
-  sound.
-- Preserve sound-file output separately from speaker playback.
+- Make bounded orbit plotting return a neutral display result, such as
+  whether an on-screen overlay point was drawn.
+- Move orbit-display delay decisions to `ui/standard_orbit_plot.cpp`
+  based on that display result.
+- Move mute decisions for orbit scrubbing to the UI controllers that
+  call `scrub_overlay()` or `scrub_orbit()`.
+- After the UI has those responsibilities, remove `m_delay_pending`,
+  `flush_delay()`, and `driver_mute()` from `OrbitPlot`.
+- Leave `update_orbit_sound()`, `engine/sound.h`, `g_sound_flag`, and
+  `write_sound()` use in `OrbitPlot` for this slice; Slice 5 moves that
+  sound behavior to a UI owner.
 
 Done when:
 
-- `write_sound()` no longer waits.
-- `engine/sound.cpp` no longer includes `engine/wait_until.h`.
-- Rendering an image does not need to wait in order to produce sound.
+- `libid/engine/OrbitPlot.cpp` contains no delay, pacing, or mute
+  logic.
+- `OrbitPlot` reports only display facts, not presentation policy.
+- Existing sound behavior has not been removed merely to simplify the
+  display-result split.
+
+Manual testing:
+
+- `type=mandel passes=g showorbit=yes orbitdelay=184`: orbit points are
+  visible; while rendering, press `x`, then `Esc`; rendering resumes.
+- `type=frothybasin showorbit=yes orbitdelay=184`: orbit points are
+  visible; while rendering, press `x`, then `Esc`; rendering resumes.
+
+### Slice 2: Standard Orbit Display Controller
+
+Work:
+
+- Move standard-fractal orbit display pacing decisions from
+  `StandardFractal` to `libid/ui/standard_fractal.cpp`.
+- Add UI-owned standard orbit display state in
+  `libid/ui/standard_fractal.cpp`.
+- Let `StandardFractal` expose neutral pending work/results for orbit
+  overlay plot and scrub work.
+- Let the UI controller decide when a displayed overlay point causes
+  `pace_orbit_display()` and keyboard dispatch.
+- After the UI owns that state, remove `StandardPresentationActions`,
+  `pace_with_input`, `m_orbit_display_pacing_pending`, and
+  `complete_orbit_display_pacing()` from `StandardFractal`.
+
+Done when:
+
+- `StandardFractal` has no `orbit_display_pacing` members or methods.
+- `ui/standard_fractal.cpp` owns the decision to pace after standard
+  orbit overlay display work.
+
+Manual testing:
+
+- `type=mandel passes=g showorbit=yes orbitdelay=184`: while rendering,
+  press `x`, then `Esc`; rendering resumes.
+- `type=mandel passes=1 showorbit=yes orbitdelay=184`: while rendering,
+  press `x`, then `Esc`; rendering resumes.
+
+### Slice 3: FrothyBasin Orbit Display Controller
+
+Work:
+
+- Move FrothyBasin orbit display pacing decisions from
+  `FrothyBasin` to `libid/ui/frothy_basin.cpp`.
+- Add UI-owned FrothyBasin orbit display state in
+  `libid/ui/frothy_basin.cpp`.
+- Let `FrothyBasin` expose neutral pending overlay point and scrub work.
+- Let the UI controller decide when a displayed overlay point causes
+  `pace_orbit_display()` and keyboard dispatch.
+- After the UI owns that state, remove `m_orbit_display_pacing_pending`,
+  `orbit_display_pacing_pending()`, and
+  `complete_orbit_display_pacing()` from `FrothyBasin`.
+
+Done when:
+
+- `FrothyBasin` has no `pacing` members or methods.
+- `ui/frothy_basin.cpp` owns the decision to pace after FrothyBasin
+  overlay display work.
+
+Manual testing:
+
+- `type=frothybasin showorbit=yes orbitdelay=184`: while rendering,
+  press `x`, then `Esc`; rendering resumes.
+
+### Slice 4: Show-Dot Display Controller
+
+Work:
+
+- Move show-dot delay decisions from `libid/engine/calcfrac.cpp` to
+  `libid/ui/standard_fractal.cpp`.
+- Add UI-owned show-dot display state in `ui/standard_fractal.cpp` for
+  the saved region, delay, and restore flow.
+- Replace `waiting_for_pacing`, `queue_show_dot_pacing()`, and
+  `m_show_dot_pacing_pending` with neutral state describing the saved
+  show-dot region and pending restore work.
+- After the UI owns that flow, remove `driver_flush()`,
+  `driver_delay()`, and `sleep_orbit_delay()` from `calcfrac.cpp`.
+- Preserve show-dot save/restore behavior and pixel calculation order.
+
+Done when:
+
+- `calcfrac.cpp` has no show-dot delay calls.
+- `StandardFractal` has no `show_dot_pacing` members or methods.
+- `ui/standard_fractal.cpp` owns show-dot display delay and input
+  dispatch decisions.
+
+Manual testing:
+
+- `type=mandel showdot=b/20 orbitdelay=184`: show-dot display still
+  appears during rendering; pressing `x`, then `Esc`, resumes rendering.
+
+### Slice 5: Standard Orbit Sound Ownership
+
+Work:
+
+- Move sound decisions for standard orbit overlay and sticky orbit
+  rendering into the UI controller layer.
+- Do not make calculation code report sound notifications.
+- Let the UI derive sound, if enabled, from UI-owned display data such as
+  the plotted overlay screen coordinate.
+- Add the UI sound handling needed to preserve current standard orbit
+  overlay behavior before removing `update_orbit_sound()`,
+  `engine/sound.h`, `g_sound_flag`, and `write_sound()` use from
+  `OrbitPlot`.
+- Move sticky-orbit sound behavior to the UI owner before removing
+  `write_sound()` calls from `StickyOrbits`.
+- Move standard sound-file time marker and close decisions to the UI
+  controller before removing those calls from `calcfrac.cpp`.
+
+Done when:
+
+- `OrbitPlot` no longer owns sound decisions because the UI controller
+  has the equivalent behavior.
+- Standard engine code does not call `write_sound()`,
+  `sound_time_write()`, or `close_sound()`.
+- Sound is produced only from UI-owned presentation state.
+
+Manual testing:
+
+- `type=mandel sound=x showorbit=yes orbitdelay=184`
+- `type=mandel passes=o sound=x`
+
+### Slice 6: Lorenz Orbit Sound Ownership
+
+Work:
+
+- Move sound and mute decisions for 2D, 3D, and dynamic orbit renderers
+  from `libid/fractals/lorenz.cpp` to their UI controllers.
+- Add the UI-owned sound and mute behavior to `ui/orbit2d.cpp`,
+  `ui/orbit3d.cpp`, and the dynamic-orbit UI controller first.
+- Remove `m_sound_var` from the fractal classes, or replace it with a
+  neutral exposed orbit value that the UI may use.
+- After the UI owns those behaviors, remove direct `write_sound()` and
+  `driver_mute()` calls from `lorenz.cpp`.
+- Keep orbit math, plotting, save-file output, and resume state
+  unchanged.
+
+Done when:
+
+- `libid/fractals/lorenz.cpp` does not call `write_sound()` or
+  `driver_mute()`.
+- `ui/orbit2d.cpp`, `ui/orbit3d.cpp`, and the dynamic-orbit UI
+  controller own sound and mute behavior.
+
+Manual testing:
+
+- `type=lorenz3d sound=x`
+- `type=lorenz sound=x`
+
+### Slice 7: Sound Backend UI Ownership
+
+Work:
+
+- Move speaker output and sound-file output ownership out of
+  `libid/engine/sound.cpp` and into a UI-owned module.
+- Add the UI-owned sound backend first, including speaker output,
+  sound-file output, audio duration, and input dispatch integration.
+- After the UI backend owns those behaviors, remove
+  `engine/wait_until.h` from the sound backend.
+- Remove the sound input-pending callback only after UI callers no longer
+  need engine sound code to poll input.
+- Keep sound parameter parsing and compatibility globals in place until
+  broader state ownership is addressed.
+- Use `orbitdelay` as audio duration only inside the UI sound backend.
+
+Done when:
+
+- No code in `libid/engine` or `libid/fractals` calls driver speaker
+  functions.
+- No sound output path waits through `engine/wait_until.cpp`.
+- Sound-file output is opened, written, and closed by UI-owned code.
 
 Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 2: Wait-Until Cleanup
+### Slice 8: Palette Spin Delay Boundary
+
+Work:
+
+- Split palette rotation state changes from presentation delay in
+  `libid/engine/spindac.cpp`.
+- Add palette cycling delay to UI callers such as rotate, menus, and
+  palette editing.
+- After UI callers own that delay, remove `driver_delay()` for palette
+  cycling from `libid/engine/spindac.cpp`.
+- Preserve existing palette index and DAC update behavior.
+
+Done when:
+
+- `libid/engine/spindac.cpp` does not call `driver_delay()`.
+- UI callers own palette animation timing.
+
+Manual testing:
+
+- Use palette rotation from the main UI and palette editor.
+
+### Slice 9: Wait-Until Cleanup
 
 Work:
 
 - Recheck all remaining `wait_until()`, `reset_wait_until()`, and
-  `sleep_orbit_delay()` callers after the orbit display and sound
-  input-inversion slices.
-- Remove the `showdot` compatibility fallback in
-  `engine/calcfrac.cpp` after the standard pass types that cannot yet
-  yield at a pixel are converted to incremental UI-owned presentation.
+  `sleep_orbit_delay()` callers after presentation ownership has moved to
+  UI controllers.
 - Remove `wait_until()` if no non-UI caller remains.
 - Move any remaining UI timing helper to `libid/ui`.
 
@@ -515,7 +748,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 3: StandardFractal Pixel Interrupts
+### Slice 10: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -544,7 +777,7 @@ Manual testing:
 - `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
   then `Esc`; rendering resumes.
 
-### Slice 4: Perturbation Traversal Ownership
+### Slice 11: Perturbation Traversal Ownership
 
 Work:
 
@@ -587,7 +820,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`: rendering completes without a
   perturbation crash or hang.
 
-### Slice 5: Perturbation Pass-Switch Tests
+### Slice 12: Perturbation Pass-Switch Tests
 
 Work:
 
@@ -627,8 +860,6 @@ Direct polling or key-sensitive waiting exists outside `libid/ui` in:
   engine-side delay helpers.
 - `libid/engine/ScanlinePass.cpp`: one-pass and two-pass traversal still
   calls `calc_interrupted()` while deciding whether to suspend work.
-- `libid/engine/OrbitPlot.cpp`: shared orbit plotting still reaches input
-  polling indirectly through `wait_until()`.
 - `libid/engine/sound.cpp`: speaker output still waits through
   `wait_until()` and suppresses speaker tones through an input-pending
   callback.
@@ -637,9 +868,11 @@ Direct polling or key-sensitive waiting exists outside `libid/ui` in:
   error-message paths that may call UI key-waiting code through
   `init_msg()`.
 
-The remaining slices cover the first five items.  The `cmdfiles.cpp`
+The remaining slices cover the first four items.  The `cmdfiles.cpp`
 case is not a direct polling call, but it marks a remaining mixed
-engine/UI boundary to keep visible.
+engine/UI boundary to keep visible.  The `OrbitPlot` wait loop has
+already been removed, but its delay and sound presentation state remains
+tracked under current presentation leaks.
 
 ## Keyboard Polling Still Outside `id_main`
 
