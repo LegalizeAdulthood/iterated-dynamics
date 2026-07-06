@@ -1488,6 +1488,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             while (!pending_orbit_plot().done())
             {
                 pending_orbit_plot().iterate();
+                pending_orbit_plot().flush_delay();
             }
             complete_pending_orbit_plot();
         }

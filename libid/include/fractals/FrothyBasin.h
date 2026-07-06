@@ -22,18 +22,22 @@ public:
     void suspend();
     bool done() const;
     void iterate();
-    bool orbit_display_pacing_pending() const;
+    // clang-format off
+    bool orbit_display_pacing_pending() const { return m_orbit_display_pacing_pending };
+    // clang-format on
     void complete_orbit_display_pacing();
     void scrub_overlay();
 
     int orbit();
 
 private:
+    // clang-format off
+    void complete_pending_overlay_orbit_point() { m_overlay_orbit_point_pending = false; }
+    // clang-format on
     void advance_pixel();
     int calc();
-    void complete_pending_overlay_orbit_point();
     void finish_pixel();
-    void run_pending_overlay_orbit_point();
+    void flush_overlay_orbit_point();
     void start_pixel();
     double top_x_mapping(double x);
     void set_froth_palette();

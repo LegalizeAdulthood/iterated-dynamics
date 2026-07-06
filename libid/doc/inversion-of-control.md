@@ -463,36 +463,7 @@ The Popcorn conversion should follow review boundaries, not a guessed
 slice count.  A slice is small enough when it preserves current behavior,
 removes one false dependency, and leaves a reviewable intermediate state.
 
-### Slice 1: Orbit Show Input Inversion
-
-Work:
-
-- Remove keyboard and mouse polling that is reached indirectly through
-  overlay orbit display mechanics.
-- Make `OrbitPlot` expose bounded plot and scrub work that returns to
-  the caller instead of waiting internally.
-- Remove the `engine/wait_until.h` include from
-  `libid/engine/OrbitPlot.cpp`.
-- Let the UI controller call the bounded engine orbit work and poll for
-  input between increments.
-- Do not choose a new `orbitdelay` display policy in this slice.
-
-Done when:
-
-- `engine/OrbitPlot.cpp` has no `wait_until()` call.
-- Engine code does not poll input or perform delay loops around orbit
-  display.
-- The only visible orbit input polling path is the UI controller.
-
-Manual testing:
-
-- `type=mandel passes=g showorbit=yes orbitdelay=184`: orbit points are
-  visible and delayed; while rendering, press `x`, then `Esc`; rendering
-  resumes and input is handled by the UI controller.
-- `type=frothybasin showorbit=yes`: while rendering, press `x`, then
-  `Esc`; rendering resumes and input is handled by the UI controller.
-
-### Slice 2: Sound Output Pacing
+### Slice 1: Sound Output Pacing
 
 Work:
 
@@ -516,7 +487,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 3: Wait-Until Cleanup
+### Slice 2: Wait-Until Cleanup
 
 Work:
 
@@ -544,7 +515,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 4: StandardFractal Pixel Interrupts
+### Slice 3: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -573,7 +544,7 @@ Manual testing:
 - `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
   then `Esc`; rendering resumes.
 
-### Slice 5: Perturbation Traversal Ownership
+### Slice 4: Perturbation Traversal Ownership
 
 Work:
 
@@ -616,7 +587,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`: rendering completes without a
   perturbation crash or hang.
 
-### Slice 6: Perturbation Pass-Switch Tests
+### Slice 5: Perturbation Pass-Switch Tests
 
 Work:
 

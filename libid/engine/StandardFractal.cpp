@@ -469,8 +469,8 @@ void StandardFractal::restore_dispatch()
 
 void StandardFractal::run_pending_orbit_plot()
 {
-    pending_orbit_plot().iterate_without_delay();
-    if (pending_orbit_plot().consume_delay_pending())
+    pending_orbit_plot().iterate();
+    if (pending_orbit_plot().flush_delay())
     {
         m_orbit_display_pacing_pending = true;
     }

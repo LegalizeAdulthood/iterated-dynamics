@@ -242,7 +242,7 @@ void FrothyBasin::iterate()
     }
     if (m_overlay_orbit_point_pending)
     {
-        run_pending_overlay_orbit_point();
+        flush_overlay_orbit_point();
         return;
     }
     if (m_overlay_scrub_pending)
@@ -257,17 +257,12 @@ void FrothyBasin::iterate()
     calc();
     if (m_overlay_orbit_point_pending)
     {
-        run_pending_overlay_orbit_point();
+        flush_overlay_orbit_point();
     }
     if (m_overlay_scrub_pending)
     {
         scrub_overlay();
     }
-}
-
-bool FrothyBasin::orbit_display_pacing_pending() const
-{
-    return m_orbit_display_pacing_pending;
 }
 
 void FrothyBasin::complete_orbit_display_pacing()
@@ -277,11 +272,6 @@ void FrothyBasin::complete_orbit_display_pacing()
         throw std::logic_error{"No pending orbit display pacing"};
     }
     m_orbit_display_pacing_pending = false;
-}
-
-void FrothyBasin::complete_pending_overlay_orbit_point()
-{
-    m_overlay_orbit_point_pending = false;
 }
 
 void FrothyBasin::scrub_overlay()
@@ -301,11 +291,11 @@ void FrothyBasin::advance_pixel()
     }
 }
 
-void FrothyBasin::run_pending_overlay_orbit_point()
+void FrothyBasin::flush_overlay_orbit_point()
 {
     orbit_plot().reset(m_overlay_orbit_point.x, m_overlay_orbit_point.y);
-    orbit_plot().iterate_without_delay();
-    if (orbit_plot().consume_delay_pending())
+    orbit_plot().iterate();
+    if (orbit_plot().flush_delay())
     {
         m_orbit_display_pacing_pending = true;
     }

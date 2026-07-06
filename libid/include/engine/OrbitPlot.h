@@ -17,9 +17,8 @@ public:
 
     void reset(double real, double imag);
     void iterate();
-    void iterate_without_delay();
     bool done() const;
-    bool consume_delay_pending();
+    bool flush_delay();
     void scrub();
 
 private:

@@ -68,8 +68,8 @@ void pace_orbit_display()
 
 bool drive_orbit_plot(OrbitPlot &orbit_plot)
 {
-    orbit_plot.iterate_without_delay();
-    if (orbit_plot.consume_delay_pending())
+    orbit_plot.iterate();
+    if (orbit_plot.flush_delay())
     {
         pace_orbit_display();
     }

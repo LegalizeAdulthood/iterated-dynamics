@@ -8,7 +8,6 @@
 #include "engine/LogicalScreen.h"
 #include "engine/sound.h"
 #include "engine/VideoInfo.h"
-#include "engine/wait_until.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
@@ -66,15 +65,6 @@ void OrbitPlot::reset(const double real, const double imag)
 
 void OrbitPlot::iterate()
 {
-    iterate_without_delay();
-    if (consume_delay_pending())
-    {
-        wait_until(g_orbit_delay);
-    }
-}
-
-void OrbitPlot::iterate_without_delay()
-{
     if (m_done)
     {
         return;
@@ -89,7 +79,7 @@ bool OrbitPlot::done() const
     return m_done;
 }
 
-bool OrbitPlot::consume_delay_pending()
+bool OrbitPlot::flush_delay()
 {
     const bool delay_pending{m_delay_pending};
     m_delay_pending = false;
