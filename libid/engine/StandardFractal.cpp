@@ -438,7 +438,7 @@ void StandardFractal::queue_overlay_orbit_plot(const double real, const double i
 
 bool StandardFractal::queue_show_dot_pacing()
 {
-    if (!standard_presentation_yield_enabled())
+    if (!standard_pixel_yield_enabled())
     {
         return false;
     }
