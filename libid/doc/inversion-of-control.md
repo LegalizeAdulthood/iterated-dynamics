@@ -472,9 +472,6 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - `libid/include/engine/StandardFractal.h` and
   `libid/engine/StandardFractal.cpp`: expose show-dot pacing through
   `queue_show_dot_pacing()` and `m_show_dot_pacing_pending`.
-- `libid/include/fractals/FrothyBasin.h` and
-  `libid/fractals/FrothyBasin.cpp`: use
-  `m_orbit_display_pacing_pending` and consume orbit-plot delay state.
 - `libid/engine/calcfrac.cpp`: show-dot fallback pacing calls
   `driver_flush()`, `driver_delay()`, and `sleep_orbit_delay()`;
   standard calculation also writes sound time markers and closes sound
@@ -512,33 +509,7 @@ with this comment immediately before it:
 The later slice must remove the marked wart.  Permanent interfaces must
 not use this marker.
 
-### Slice 1: FrothyBasin Orbit Display Controller
-
-Work:
-
-- Move FrothyBasin orbit display pacing decisions from
-  `FrothyBasin` to `libid/ui/frothy_basin.cpp`.
-- Add UI-owned FrothyBasin orbit display state in
-  `libid/ui/frothy_basin.cpp`.
-- Let `FrothyBasin` expose neutral pending overlay point and scrub work.
-- Let the UI controller decide when a displayed overlay point causes
-  `pace_orbit_display()` and keyboard dispatch.
-- After the UI owns that state, remove `m_orbit_display_pacing_pending`,
-  `orbit_display_pacing_pending()`, and
-  `complete_orbit_display_pacing()` from `FrothyBasin`.
-
-Done when:
-
-- `FrothyBasin` has no `pacing` members or methods.
-- `ui/frothy_basin.cpp` owns the decision to pace after FrothyBasin
-  overlay display work.
-
-Manual testing:
-
-- `type=frothybasin showorbit=yes orbitdelay=184`: while rendering,
-  press `x`, then `Esc`; rendering resumes.
-
-### Slice 2: Show-Dot Display Controller
+### Slice 1: Show-Dot Display Controller
 
 Work:
 
@@ -565,7 +536,7 @@ Manual testing:
 - `type=mandel showdot=b/20 orbitdelay=184`: show-dot display still
   appears during rendering; pressing `x`, then `Esc`, resumes rendering.
 
-### Slice 3: Standard Orbit Sound Ownership
+### Slice 2: Standard Orbit Sound Ownership
 
 Work:
 
@@ -596,7 +567,7 @@ Manual testing:
 - `type=mandel sound=x showorbit=yes orbitdelay=184`
 - `type=mandel passes=o sound=x`
 
-### Slice 4: Lorenz Orbit Sound Ownership
+### Slice 3: Lorenz Orbit Sound Ownership
 
 Work:
 
@@ -623,7 +594,7 @@ Manual testing:
 - `type=lorenz3d sound=x`
 - `type=lorenz sound=x`
 
-### Slice 5: Sound Backend UI Ownership
+### Slice 4: Sound Backend UI Ownership
 
 Work:
 
@@ -650,7 +621,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 6: Palette Spin Delay Boundary
+### Slice 5: Palette Spin Delay Boundary
 
 Work:
 
@@ -671,7 +642,7 @@ Manual testing:
 
 - Use palette rotation from the main UI and palette editor.
 
-### Slice 7: Wait-Until Cleanup
+### Slice 6: Wait-Until Cleanup
 
 Work:
 
@@ -696,7 +667,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 8: StandardFractal Pixel Interrupts
+### Slice 7: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -725,7 +696,7 @@ Manual testing:
 - `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
   then `Esc`; rendering resumes.
 
-### Slice 9: Perturbation Traversal Ownership
+### Slice 8: Perturbation Traversal Ownership
 
 Work:
 
@@ -768,7 +739,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`: rendering completes without a
   perturbation crash or hang.
 
-### Slice 10: Perturbation Pass-Switch Tests
+### Slice 9: Perturbation Pass-Switch Tests
 
 Work:
 

@@ -257,6 +257,7 @@ void StandardFractal::complete_pending_orbit_plot()
     m_orbit_plot_marks_standard_orbit = false;
 }
 
+// TODO: removed later
 void StandardFractal::complete_show_dot_pacing()
 {
     if (!m_show_dot_pacing_pending)
@@ -271,6 +272,7 @@ bool StandardFractal::presentation_pending() const
     return m_show_dot_pacing_pending;
 }
 
+// TODO: removed later
 bool StandardFractal::show_dot_pacing_pending() const
 {
     return m_show_dot_pacing_pending;

@@ -26,8 +26,10 @@ public:
     bool presentation_pending() const;
     void queue_overlay_orbit_plot(double real, double imag, bool mark_as_plotted = true);
     bool queue_show_dot_pacing();
+    // TODO: removed later
     bool show_dot_pacing_pending() const;
     void scrub_overlay();
+    // TODO: removed later
     void complete_show_dot_pacing();
 
     void resume();

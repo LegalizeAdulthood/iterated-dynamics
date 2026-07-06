@@ -22,11 +22,10 @@ public:
     void suspend();
     bool done() const;
     void iterate();
+    bool consume_orbit_overlay_displayed();
     // clang-format off
-    bool orbit_display_pacing_pending() const { return m_orbit_display_pacing_pending; }
     bool overlay_scrub_pending() const { return m_overlay_scrub_pending; }
     // clang-format on
-    void complete_orbit_display_pacing();
     void scrub_overlay();
 
     int orbit();
@@ -66,7 +65,7 @@ private:
     int m_found_attractor{};
     math::DComplex m_overlay_orbit_point{};
     bool m_overlay_orbit_point_pending{};
-    bool m_orbit_display_pacing_pending{};
+    bool m_orbit_overlay_displayed{};
     bool m_overlay_scrub_completed{};
     bool m_overlay_scrub_pending{};
     bool m_pixel_active{};

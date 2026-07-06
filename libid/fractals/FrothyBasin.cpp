@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <stdexcept>
 
 using namespace id::engine;
 using namespace id::io;
@@ -207,7 +206,7 @@ void FrothyBasin::resume()
     g_current_pass = 1;
     g_total_passes = 1;
     m_overlay_orbit_point_pending = false;
-    m_orbit_display_pacing_pending = false;
+    m_orbit_overlay_displayed = false;
     m_overlay_scrub_completed = false;
     m_overlay_scrub_pending = false;
     m_pixel_active = false;
@@ -230,13 +229,13 @@ void FrothyBasin::suspend()
 
 bool FrothyBasin::done() const
 {
-    return m_row > g_i_stop_pt.y && !m_overlay_orbit_point_pending && !m_orbit_display_pacing_pending &&
+    return m_row > g_i_stop_pt.y && !m_overlay_orbit_point_pending && !m_orbit_overlay_displayed &&
         !m_overlay_scrub_pending && !m_pixel_active;
 }
 
 void FrothyBasin::iterate()
 {
-    if (done() || m_orbit_display_pacing_pending)
+    if (done() || m_orbit_overlay_displayed)
     {
         return;
     }
@@ -261,13 +260,11 @@ void FrothyBasin::iterate()
     }
 }
 
-void FrothyBasin::complete_orbit_display_pacing()
+bool FrothyBasin::consume_orbit_overlay_displayed()
 {
-    if (!m_orbit_display_pacing_pending)
-    {
-        throw std::logic_error{"No pending orbit display pacing"};
-    }
-    m_orbit_display_pacing_pending = false;
+    const bool displayed{m_orbit_overlay_displayed};
+    m_orbit_overlay_displayed = false;
+    return displayed;
 }
 
 void FrothyBasin::scrub_overlay()
@@ -292,7 +289,7 @@ void FrothyBasin::flush_overlay_orbit_point()
     orbit_plot().reset(m_overlay_orbit_point.x, m_overlay_orbit_point.y);
     if (orbit_plot().iterate())
     {
-        m_orbit_display_pacing_pending = true;
+        m_orbit_overlay_displayed = true;
     }
     if (orbit_plot().done())
     {
