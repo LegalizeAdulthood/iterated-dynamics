@@ -258,24 +258,24 @@ void StandardFractal::complete_pending_orbit_plot()
 }
 
 // TODO: removed later
-void StandardFractal::complete_show_dot_pacing()
+void StandardFractal::complete_show_dot_display()
 {
-    if (!m_show_dot_pacing_pending)
+    if (!m_show_dot_display_pending)
     {
-        throw std::logic_error{"No pending showdot pacing"};
+        throw std::logic_error{"No pending showdot display"};
     }
-    m_show_dot_pacing_pending = false;
+    m_show_dot_display_pending = false;
 }
 
 bool StandardFractal::presentation_pending() const
 {
-    return m_show_dot_pacing_pending;
+    return m_show_dot_display_pending;
 }
 
 // TODO: removed later
-bool StandardFractal::show_dot_pacing_pending() const
+bool StandardFractal::show_dot_display_pending() const
 {
-    return m_show_dot_pacing_pending;
+    return m_show_dot_display_pending;
 }
 
 OrbitPlot &StandardFractal::pending_orbit_plot()
@@ -365,7 +365,7 @@ void StandardFractal::clear_standard_pixel()
     m_standard_pixel_iteration_started = false;
     m_standard_pixel_orbit_plotted = false;
     m_standard_pixel_overlay_scrubbed = false;
-    m_show_dot_pacing_pending = false;
+    m_show_dot_display_pending = false;
     m_orbit_plot_marks_standard_orbit = false;
     m_orbit_overlay_displayed = false;
     m_overlay_scrub_pending = false;
@@ -436,13 +436,14 @@ void StandardFractal::queue_overlay_orbit_plot(const double real, const double i
     }
 }
 
-bool StandardFractal::queue_show_dot_pacing()
+// TODO: removed later
+bool StandardFractal::queue_show_dot_display()
 {
     if (!standard_pixel_yield_enabled())
     {
         return false;
     }
-    m_show_dot_pacing_pending = true;
+    m_show_dot_display_pending = true;
     m_incomplete_standard_pixel_yield = true;
     return true;
 }

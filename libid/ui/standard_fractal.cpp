@@ -77,10 +77,10 @@ int standard_fractal()
     while (!standard_fractal.done())
     {
         bool check_interrupted = true;
-        if (standard_fractal.show_dot_pacing_pending())
+        if (standard_fractal.show_dot_display_pending())
         {
             wait_for_show_dot_delay();
-            standard_fractal.complete_show_dot_pacing();
+            standard_fractal.complete_show_dot_display();
             continue;
         }
         else
@@ -96,7 +96,7 @@ int standard_fractal()
                 check_interrupted = false;
             }
         }
-        if (!standard_fractal.done() && !standard_fractal.show_dot_pacing_pending())
+        if (!standard_fractal.done() && !standard_fractal.show_dot_display_pending())
         {
             const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
             if (interrupted)

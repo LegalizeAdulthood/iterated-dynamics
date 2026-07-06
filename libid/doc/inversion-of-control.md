@@ -353,8 +353,8 @@ The concrete render operation objects are:
 
 - `engine::StandardFractal`: owns standard escape-time traversal,
   `StandardPass`, standard pixel state, perturbation, pass dispatch,
-  standard orbit-plot requests, show-dot pacing requests, and standard
-  suspend/resume state.
+  standard orbit-plot requests, the temporary show-dot display bridge,
+  and standard suspend/resume state.
 - `fractals::Lyapunov`: owns Lyapunov render state by containing an
   `engine::StandardFractal`; Lyapunov-specific per-image setup remains in
   `lyapunov_per_image()` below the dispatch layer.
@@ -470,12 +470,12 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - `libid/engine/OrbitPlot.cpp`: owns sound mapping and `write_sound()`
   calls.
 - `libid/include/engine/StandardFractal.h` and
-  `libid/engine/StandardFractal.cpp`: expose show-dot pacing through
-  `queue_show_dot_pacing()` and `m_show_dot_pacing_pending`.
-- `libid/engine/calcfrac.cpp`: show-dot fallback pacing calls
-  `driver_flush()`, `driver_delay()`, and `sleep_orbit_delay()`;
-  standard calculation also writes sound time markers and closes sound
-  output.
+  `libid/engine/StandardFractal.cpp`: expose the temporary show-dot
+  display bridge that will be removed when show-dot presentation moves
+  fully into the UI controller.
+- `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
+  state.  Standard calculation also writes sound time markers and closes
+  sound output.
 - `libid/engine/sound.cpp`: owns speaker/file output, calls
   `driver_sound_on()`, waits through `wait_until()`, and accepts an
   input-pending callback.
@@ -509,34 +509,7 @@ with this comment immediately before it:
 The later slice must remove the marked wart.  Permanent interfaces must
 not use this marker.
 
-### Slice 1: Show-Dot Display Controller
-
-Work:
-
-- Move show-dot delay decisions from `libid/engine/calcfrac.cpp` to
-  `libid/ui/standard_fractal.cpp`.
-- Add UI-owned show-dot display state in `ui/standard_fractal.cpp` for
-  the saved region, delay, and restore flow.
-- Replace `waiting_for_pacing`, `queue_show_dot_pacing()`, and
-  `m_show_dot_pacing_pending` with neutral state describing the saved
-  show-dot region and pending restore work.
-- After the UI owns that flow, remove `driver_flush()`,
-  `driver_delay()`, and `sleep_orbit_delay()` from `calcfrac.cpp`.
-- Preserve show-dot save/restore behavior and pixel calculation order.
-
-Done when:
-
-- `calcfrac.cpp` has no show-dot delay calls.
-- `StandardFractal` has no `show_dot_pacing` members or methods.
-- `ui/standard_fractal.cpp` owns show-dot display delay and input
-  dispatch decisions.
-
-Manual testing:
-
-- `type=mandel showdot=b/20 orbitdelay=184`: show-dot display still
-  appears during rendering; pressing `x`, then `Esc`, resumes rendering.
-
-### Slice 2: Standard Orbit Sound Ownership
+### Slice 1: Standard Orbit Sound Ownership
 
 Work:
 
@@ -567,7 +540,7 @@ Manual testing:
 - `type=mandel sound=x showorbit=yes orbitdelay=184`
 - `type=mandel passes=o sound=x`
 
-### Slice 3: Lorenz Orbit Sound Ownership
+### Slice 2: Lorenz Orbit Sound Ownership
 
 Work:
 
@@ -594,7 +567,7 @@ Manual testing:
 - `type=lorenz3d sound=x`
 - `type=lorenz sound=x`
 
-### Slice 4: Sound Backend UI Ownership
+### Slice 3: Sound Backend UI Ownership
 
 Work:
 
@@ -621,7 +594,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 5: Palette Spin Delay Boundary
+### Slice 4: Palette Spin Delay Boundary
 
 Work:
 
@@ -642,7 +615,7 @@ Manual testing:
 
 - Use palette rotation from the main UI and palette editor.
 
-### Slice 6: Wait-Until Cleanup
+### Slice 5: Wait-Until Cleanup
 
 Work:
 
@@ -667,7 +640,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 7: StandardFractal Pixel Interrupts
+### Slice 6: StandardFractal Pixel Interrupts
 
 Work:
 
@@ -696,7 +669,7 @@ Manual testing:
 - `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
   then `Esc`; rendering resumes.
 
-### Slice 8: Perturbation Traversal Ownership
+### Slice 7: Perturbation Traversal Ownership
 
 Work:
 
@@ -739,7 +712,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`: rendering completes without a
   perturbation crash or hang.
 
-### Slice 9: Perturbation Pass-Switch Tests
+### Slice 8: Perturbation Pass-Switch Tests
 
 Work:
 
@@ -775,8 +748,7 @@ Manual testing:
 Direct polling or key-sensitive waiting exists outside `libid/ui` in:
 
 - `libid/engine/calcfrac.cpp`: standard pixel calculation still calls
-  `calc_interrupted()`, and show-dot fallback pacing still uses
-  engine-side delay helpers.
+  `calc_interrupted()`.
 - `libid/engine/ScanlinePass.cpp`: one-pass and two-pass traversal still
   calls `calc_interrupted()` while deciding whether to suspend work.
 - `libid/engine/sound.cpp`: speaker output still waits through

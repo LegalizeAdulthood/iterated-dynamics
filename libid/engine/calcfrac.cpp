@@ -121,7 +121,7 @@ struct ShowDotState
     int stop_x{};
     int start_y{};
     int stop_y{};
-    bool waiting_for_pacing{};
+    bool restore_pending{};
 };
 
 static void decomposition();
@@ -524,53 +524,42 @@ static ShowDotState show_dot_region()
 
 static void restore_pending_show_dot()
 {
-    if (!s_show_dot_state.waiting_for_pacing)
+    if (!s_show_dot_state.restore_pending)
     {
         return;
     }
     show_dot_save_restore(s_show_dot_state.start_x, s_show_dot_state.stop_x, s_show_dot_state.start_y,
         s_show_dot_state.stop_y, s_show_dot_state.direction, ShowDotAction::RESTORE);
-    s_show_dot_state.waiting_for_pacing = false;
+    s_show_dot_state.restore_pending = false;
 }
 
-static bool queue_show_dot_pacing()
+// TODO: removed later
+static bool queue_show_dot_display()
 {
     if (StandardFractal *standard_fractal = active_standard_fractal(); standard_fractal != nullptr)
     {
-        return standard_fractal->queue_show_dot_pacing();
+        return standard_fractal->queue_show_dot_display();
     }
     return false;
 }
 
-static void sleep_show_dot_delay()
-{
-    driver_flush();
-    driver_delay(0);
-    sleep_orbit_delay(g_orbit_delay);
-    driver_delay(0);
-}
-
 static int calc_type_show_dot()
 {
-    if (!s_show_dot_state.waiting_for_pacing)
+    if (!s_show_dot_state.restore_pending)
     {
         s_show_dot_state = show_dot_region();
         show_dot_save_restore(s_show_dot_state.start_x, s_show_dot_state.stop_x, s_show_dot_state.start_y,
             s_show_dot_state.stop_y, s_show_dot_state.direction, ShowDotAction::SAVE);
-        if (g_orbit_delay > 0)
+        s_show_dot_state.restore_pending = true;
+        if (g_orbit_delay > 0 && queue_show_dot_display())
         {
-            if (queue_show_dot_pacing())
-            {
-                s_show_dot_state.waiting_for_pacing = true;
-                return -1;
-            }
-            sleep_show_dot_delay();
+            return -1;
         }
     }
     const int out = s_calc_type_tmp();
     show_dot_save_restore(s_show_dot_state.start_x, s_show_dot_state.stop_x, s_show_dot_state.start_y,
         s_show_dot_state.stop_y, s_show_dot_state.direction, ShowDotAction::RESTORE);
-    s_show_dot_state.waiting_for_pacing = false;
+    s_show_dot_state.restore_pending = false;
     return out;
 }
 

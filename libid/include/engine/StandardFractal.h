@@ -25,12 +25,13 @@ public:
     bool overlay_scrub_pending() const;
     bool presentation_pending() const;
     void queue_overlay_orbit_plot(double real, double imag, bool mark_as_plotted = true);
-    bool queue_show_dot_pacing();
     // TODO: removed later
-    bool show_dot_pacing_pending() const;
+    bool queue_show_dot_display();
+    // TODO: removed later
+    bool show_dot_display_pending() const;
     void scrub_overlay();
     // TODO: removed later
-    void complete_show_dot_pacing();
+    void complete_show_dot_display();
 
     void resume();
 
@@ -123,7 +124,8 @@ private:
     bool m_orbit_plot_marks_standard_orbit{};
     bool m_orbit_overlay_displayed{};
     bool m_overlay_scrub_pending{};
-    bool m_show_dot_pacing_pending{};
+    // TODO: removed later
+    bool m_show_dot_display_pending{};
     bool m_work_item_active{};
     bool m_work_item_yielded{};
     bool m_work_list_started{};
