@@ -71,20 +71,17 @@ int standard_fractal()
     auto orbit_toggle_handler{std::make_shared<OrbitToggleKeyboardHandler>(standard_fractal)};
     ScopedKeyboardHandler main_loop_scope{main_loop_handler};
     ScopedKeyboardHandler orbit_toggle_scope{orbit_toggle_handler};
-    const StandardPresentationActions presentation_actions{pace_orbit_display, wait_for_show_dot_delay};
 
     standard_fractal.resume();
 
     while (!standard_fractal.done())
     {
         bool check_interrupted = true;
-        if (standard_fractal.presentation_pending())
+        if (standard_fractal.show_dot_pacing_pending())
         {
-            if (standard_fractal.run_pending_presentation(presentation_actions))
-            {
-                continue;
-            }
-            check_interrupted = false;
+            wait_for_show_dot_delay();
+            standard_fractal.complete_show_dot_pacing();
+            continue;
         }
         else
         {
@@ -93,8 +90,13 @@ int standard_fractal()
                 mute_orbit_display();
             }
             standard_fractal.iterate();
+            if (standard_fractal.consume_orbit_overlay_displayed())
+            {
+                pace_orbit_display();
+                check_interrupted = false;
+            }
         }
-        if (!standard_fractal.done() && !standard_fractal.presentation_pending())
+        if (!standard_fractal.done() && !standard_fractal.show_dot_pacing_pending())
         {
             const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
             if (interrupted)
