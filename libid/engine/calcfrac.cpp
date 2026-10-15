@@ -557,6 +557,10 @@ static int calc_type_show_dot()
         }
     }
     const int out = s_calc_type_tmp();
+    if (out == -1)
+    {
+        return out;
+    }
     show_dot_save_restore(s_show_dot_state.start_x, s_show_dot_state.stop_x, s_show_dot_state.start_y,
         s_show_dot_state.stop_y, s_show_dot_state.direction, ShowDotAction::RESTORE);
     s_show_dot_state.restore_pending = false;
