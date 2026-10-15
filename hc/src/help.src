@@ -279,6 +279,8 @@ o The image random number maximum constant no longer conflicts with system
   headers that define RANDOM_MAX.  (Fixes #433)
 o Runtime dependency scanning is only used when installing Windows builds.
   (Fixes #434)
+o The "Z" parameter screen now shows all function selectors for fractal
+  types such as fn+fn.  (Fixes #447)
 
 Code Cleanup in Version 1.4.2
 
