@@ -102,6 +102,7 @@ struct ImageHistory
     bool disk_16_bit;
     Version version;
     Version file_version;
+    bool legacy_float;
     Display3DMode display_3d;
     std::array<int, 2> transparent_color_3d;
     int ambient;
@@ -199,6 +200,7 @@ bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
         && lhs.disk_16_bit == rhs.disk_16_bit                                                           //
         && lhs.version == rhs.version                                                                   //
         && lhs.file_version == rhs.file_version                                                         //
+        && lhs.legacy_float == rhs.legacy_float                                                         //
         && lhs.display_3d == rhs.display_3d                                                             //
         && std::equal(std::begin(lhs.transparent_color_3d), std::end(lhs.transparent_color_3d),
                std::begin(rhs.transparent_color_3d))                                                    //
@@ -500,6 +502,7 @@ std::ostream &operator<<(std::ostream &str, const ImageHistory &value)
     str << R"json("disk_16_bit":)json" << value.disk_16_bit << ',';
     str << R"json("version":)json" << JsonVersion(value.version) << ',';
     str << R"json("file_version":)json" << JsonVersion(value.file_version) << ',';
+    str << R"json("legacy_float":)json" << value.legacy_float << ',';
     str << R"json("display_3d":)json" << value.display_3d << ',';
     str << R"json("transparent_color_3d":)json" << JsonArray(value.transparent_color_3d) << ',';
     str << R"json("ambient":)json" << value.ambient << ',';
@@ -639,6 +642,7 @@ void save_history_info()
     current.disk_16_bit = g_disk_16_bit;
     current.version = g_version;
     current.file_version = g_file_version;
+    current.legacy_float = g_user.legacy_float;
     current.display_3d = g_display_3d;
     current.ambient = g_ambient;
     current.randomize_3d = g_randomize_3d;
@@ -810,6 +814,7 @@ void restore_history_info(const int i)
     g_disk_16_bit = last.disk_16_bit;
     g_version = last.version;
     g_file_version = last.file_version;
+    g_user.legacy_float = last.legacy_float;
     g_display_3d = last.display_3d;
     g_ambient = last.ambient;
     g_randomize_3d = last.randomize_3d;

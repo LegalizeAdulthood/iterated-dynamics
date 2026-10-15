@@ -16,6 +16,7 @@ struct UserData
     int periodicity_value{};         //
     CalcMode std_calc_mode{};        //
     long bailout_value{};            // user input bailout value
+    bool legacy_float{};             // legacy float= intent for compatibility
 };
 
 extern UserData g_user;

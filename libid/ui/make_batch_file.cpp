@@ -963,6 +963,11 @@ static void write_batch_params(
         put_param(" reset=%s", to_par_string(g_version).c_str());
         put_param(" type=%s", g_cur_fractal_specific->name);
 
+        if (g_user.legacy_float)
+        {
+            put_param(" float=y");
+        }
+
         if (g_fractal_type == FractalType::JULIBROT)
         {
             put_param(" julibrotfromto=%.15g/%.15g/%.15g/%.15g", //

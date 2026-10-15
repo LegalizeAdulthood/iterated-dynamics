@@ -478,6 +478,7 @@ static void backwards_info3(const FractalInfo &read_info)
 
 static void backwards_info4(const FractalInfo &read_info)
 {
+    g_user.legacy_float = read_info.info_version < 4 || read_info.float_flag != 0;
     if (read_info.info_version > 3)
     {
         g_image_region.m_3rd.x = read_info.x3rd;
@@ -1778,6 +1779,7 @@ void backwards_legacy_v18()
     }
     if (g_file_version < 1800                                                                     //
         && (g_fractal_type == FractalType::MANDEL_FN || g_fractal_type == FractalType::LAMBDA_FN) //
+        && g_user.legacy_float                                                                    //
         && g_user.bailout_value == 0)
     {
         g_user.bailout_value = 2500;

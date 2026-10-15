@@ -300,6 +300,7 @@ protected:
     ValueSaver<bool> saved_potential_flag{g_potential.flag};
     ValueSaver<int> saved_user_biomorph_value{g_user.biomorph_value};
     ValueSaver<long> saved_user_distance_estimator_value{g_user.distance_estimator_value};
+    ValueSaver<bool> saved_legacy_float{g_user.legacy_float};
     ValueSaver<long> saved_calc_time{g_calc_time};
     ValueSaver<CalcStatus> saved_calc_status{g_calc_status};
     ValueSaver<bool> saved_potential_16bit{g_potential.store_16bit};
@@ -365,6 +366,17 @@ TEST_F(TestLoadFile, randomSeedRestored)
     EXPECT_EQ(0, result);
     EXPECT_EQ(info.random_seed, g_random_seed);
     EXPECT_EQ(info.random_seed_flag != 0, g_random_seed_flag);
+}
+
+TEST_F(TestLoadFile, legacyFloatRestored)
+{
+    ValueSaver saved_read_filename{g_read_filename, ID_TEST_GIF_MANDELFN_INT};
+    g_user.legacy_float = true;
+
+    const int result{read_overlay()};
+
+    EXPECT_EQ(0, result);
+    EXPECT_FALSE(g_user.legacy_float);
 }
 
 static FileFractalType s_int_types[]{

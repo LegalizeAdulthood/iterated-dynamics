@@ -809,6 +809,19 @@ TEST_F(TestCommandMakePar, makeParWritesLegacyResetFromCompatibilityVersion)
     EXPECT_THAT(read_file_contents(path), HasSubstr("  reset=1730 type=mandel"));
 }
 
+TEST_F(TestCommandMakePar, makeParPreservesLegacyFloat)
+{
+    const fs::path path{par_path("legacy-float.par")};
+    fs::remove(path);
+    g_version = parse_legacy_version(1730);
+    ValueSaver saved_legacy_float{g_user.legacy_float, true};
+
+    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
+
+    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_THAT(read_file_contents(path), HasSubstr(" reset=1730 type=mandel float=y"));
+}
+
 TEST_F(TestCommandMakePar, makeParWritesIdResetFromCompatibilityVersion)
 {
     const fs::path path{par_path("id-reset.par")};
@@ -898,6 +911,7 @@ TEST_F(TestParameterCommand, resetNoArg)
 {
     ValueSaver saved_version{g_version, Version{1, 2, 0, 0, false}};
     ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
+    ValueSaver saved_legacy_float{g_user.legacy_float, true};
 
     exec_cmd_arg("reset");
 
@@ -912,6 +926,7 @@ TEST_F(TestParameterCommand, resetNoArg)
     EXPECT_EQ(0, g_file_version.patch);
     EXPECT_EQ(0, g_file_version.tweak);
     EXPECT_TRUE(g_file_version.legacy);
+    EXPECT_FALSE(g_user.legacy_float);
 }
 
 TEST_F(TestParameterCommand, resetZero)
@@ -3365,16 +3380,81 @@ TEST_F(TestParameterCommand, ramVideoIgnored)
 
 TEST_F(TestParameterCommand, floatYes)
 {
+    ValueSaver saved_legacy_float{g_user.legacy_float, false};
+
     exec_cmd_arg("float=y");
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_TRUE(g_user.legacy_float);
 }
 
 TEST_F(TestParameterCommand, floatNo)
 {
+    ValueSaver saved_legacy_float{g_user.legacy_float, true};
+
     exec_cmd_arg("float=n");
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_FALSE(g_user.legacy_float);
+}
+
+TEST_F(TestParameterCommandError, floatBadArg)
+{
+    ValueSaver saved_legacy_float{g_user.legacy_float, true};
+
+    exec_cmd_arg("float=!");
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_TRUE(g_user.legacy_float);
+}
+
+TEST_F(TestParameterCommand, legacyFloatControlsTrigBailout)
+{
+    ValueSaver saved_user{g_user};
+    ValueSaver saved_version{g_version};
+    ValueSaver saved_file_version{g_file_version};
+    ValueSaver saved_fractal_type{g_fractal_type};
+    ValueSaver saved_fractal_specific{g_cur_fractal_specific};
+
+    struct Case
+    {
+        const char *params;
+        long bailout;
+        bool legacy_float;
+    };
+
+    const Case cases[]{
+        {"reset", 0, false},
+        {"reset float=n", 0, false},
+        {"reset float=y", 2500, true},
+        {"reset float=y float=n", 0, false},
+        {"reset float=n float=y", 2500, true},
+        {"reset float=y bailout=64", 64, true},
+        {"reset float=n bailout=100", 100, false},
+        {"reset=1799 float=y", 2500, true},
+        {"reset=1800 float=y", 0, true},
+        {"reset=2004 float=y", 0, true},
+        {"reset=1/4 float=y", 0, true},
+    };
+    for (const char *type : {"mandelfn", "lambdafn"})
+    {
+        for (const Case &test_case : cases)
+        {
+            const std::string params{std::string{"{ "} + test_case.params + " type=" + type + " function=ident }"};
+            SCOPED_TRACE(params);
+            std::FILE *file{std::tmpfile()};
+            ASSERT_NE(nullptr, file);
+            std::fputs(params.c_str(), file);
+            std::rewind(file);
+            g_user.legacy_float = true;
+
+            const CmdArgFlags result{load_commands(file)};
+
+            EXPECT_NE(CmdArgFlags::BAD_ARG, result);
+            EXPECT_EQ(test_case.bailout, g_user.bailout_value);
+            EXPECT_EQ(test_case.legacy_float, g_user.legacy_float);
+        }
+    }
 }
 
 TEST_F(TestParameterCommand, fastRestoreYes)

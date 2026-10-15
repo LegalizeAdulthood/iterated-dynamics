@@ -3,6 +3,7 @@
 #include <io/encoder.h>
 
 #include <engine/pixel_limits.h>
+#include <engine/UserData.h>
 #include <io/gif_extensions.h>
 #include <io/loadfile.h>
 #include <misc/ValueSaver.h>
@@ -54,6 +55,32 @@ TEST(TestEncoder, saveInfoPreservesActiveLegacyCompatibilityVersion)
 class TestGifUint16 : public testing::TestWithParam<int>
 {
 };
+
+TEST(TestEncoder, saveInfoPreservesLegacyFloat)
+{
+    ValueSaver saved_version{g_version, parse_legacy_version(1730)};
+    ValueSaver saved_legacy_float{g_user.legacy_float};
+    for (const bool legacy_float : {false, true})
+    {
+        g_user.legacy_float = legacy_float;
+        FractalInfo info{};
+
+        setup_save_info(&info);
+
+        EXPECT_EQ(legacy_float ? 1 : 0, info.float_flag);
+    }
+}
+
+TEST(TestEncoder, saveInfoUsesFloatForModernId)
+{
+    ValueSaver saved_version{g_version, Version{1, 4, 0, 0, false}};
+    ValueSaver saved_legacy_float{g_user.legacy_float, false};
+    FractalInfo info{};
+
+    setup_save_info(&info);
+
+    EXPECT_EQ(1, info.float_flag);
+}
 
 TEST_P(TestGifUint16, writesLittleEndianBytes)
 {

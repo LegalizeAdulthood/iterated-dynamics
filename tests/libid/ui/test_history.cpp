@@ -5,6 +5,7 @@
 #include "MockDriver.h"
 #include "test_data.h"
 
+#include <engine/UserData.h>
 #include <fractals/fractalp.h>
 #include <io/CurrentPathSaver.h>
 #include <io/library.h>
@@ -102,6 +103,25 @@ TEST_F(TestHistory, dumpsVersionAndFileVersion)
     EXPECT_THAT(text, HasSubstr(R"json("version":{"major":1,"minor":2,"patch":3,"tweak":4,"legacy":0})json"));
     EXPECT_THAT(text, HasSubstr(R"json("file_version":{"major":20,"minor":4,"patch":0,"tweak":0,"legacy":1})json"));
     EXPECT_THAT(text, Not(HasSubstr(R"json("release":)json")));
+}
+
+TEST_F(TestHistory, restoresLegacyFloat)
+{
+    ValueSaver saved_legacy_float{g_user.legacy_float};
+    for (const bool legacy_float : {false, true})
+    {
+        g_history_ptr = -1;
+        g_user.legacy_float = legacy_float;
+        save_history_info();
+        g_user.legacy_float = !legacy_float;
+
+        EXPECT_CALL(m_driver, write_palette());
+        EXPECT_CALL(m_driver, delay(255));
+
+        restore_history_info(g_history_ptr);
+
+        EXPECT_EQ(legacy_float, g_user.legacy_float);
+    }
 }
 
 } // namespace id::test
