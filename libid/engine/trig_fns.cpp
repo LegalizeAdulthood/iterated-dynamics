@@ -95,11 +95,11 @@ std::string trig_details()
     int num_fn;
     if (g_fractal_type == FractalType::JULIBROT)
     {
-        num_fn = +get_fractal_specific(g_new_orbit_type)->flags >> 6 & 7;
+        num_fn = num_trig_fns(get_fractal_specific(g_new_orbit_type)->flags);
     }
     else
     {
-        num_fn = +g_cur_fractal_specific->flags >> 6 & 7;
+        num_fn = num_trig_fns(g_cur_fractal_specific->flags);
     }
     if (g_fractal_type == FractalType::FORMULA)
     {

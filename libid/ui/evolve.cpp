@@ -398,7 +398,7 @@ static int get_the_rest()
 
     copy_genes_from_bank(gene);
 
-    int num_trig = +g_cur_fractal_specific->flags >> 6 & 7;
+    int num_trig = num_trig_fns(g_cur_fractal_specific->flags);
     if (g_fractal_type == FractalType::FORMULA)
     {
         num_trig = g_formula.max_function;

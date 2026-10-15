@@ -818,7 +818,7 @@ static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info)
     }
     if (info->fractal_type == +g_fractal_type || g_fractal_type == migrate_integer_types(info->fractal_type))
     {
-        num_fn = +g_cur_fractal_specific->flags >> 6 & 7;
+        num_fn = num_trig_fns(g_cur_fractal_specific->flags);
         if (num_fn > 0)
         {
             return function_ok(info, num_fn);

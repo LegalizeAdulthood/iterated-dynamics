@@ -41,9 +41,9 @@ enum class FractalFlags
     NO_ROTATE   = 0x00'00'08,   // zoom box rotate/stretch not allowed
     NO_RESUME   = 0x00'00'10,   // can't interrupt and resume
     INF_CALC    = 0x00'00'20,   // this type calculates forever
-    TRIG1       = 0x00'00'30,   // number of trig functions in formula
-    TRIG2       = 0x00'00'40,   //
-    TRIG3       = 0x00'00'80,   //
+    TRIG1       = 0x00'00'40,   // number of trig functions in formula
+    TRIG2       = 0x00'00'80,   //
+    TRIG3       = 0x00'00'C0,   //
     TRIG4       = 0x00'01'00,   //
     PARAMS_3D   = 0x00'04'00,   // uses 3d parameters
     OK_JB       = 0x00'08'00,   // works with Julibrot
@@ -59,6 +59,12 @@ inline int operator+(const FractalFlags value)
 {
     return static_cast<int>(value);
 }
+
+inline int num_trig_fns(const FractalFlags flags)
+{
+    return +flags >> 6 & 7;
+}
+
 inline FractalFlags operator|(const FractalFlags lhs, const FractalFlags rhs)
 {
     return static_cast<FractalFlags>(+lhs | +rhs);
