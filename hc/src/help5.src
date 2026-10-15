@@ -1853,12 +1853,14 @@ the code has been rebranded Iterated Dynamics, or Id for short, throughout.
 ; RELEASE HISTORY INSERT
 Version 1.4.2 is a bug fix release for version 1.4.0.
 
-Bugs Fixes in Version 1.4.2
+Bugs Fixed in Version 1.4.2
 
 o The image random number maximum constant no longer conflicts with system
   headers that define RANDOM_MAX.  (Fixes #433)
 o Runtime dependency scanning is only used when installing Windows builds.
   (Fixes #434)
+o The "Z" parameter screen now shows all function selectors for fractal
+  types such as fn+fn.  (Fixes #447)
 
 Version 1.4.1 is a bug fix release for version 1.4.0.
 
