@@ -892,7 +892,7 @@ void setup_save_info(FractalInfo *save_info)
         g_three_pass && g_std_calc_mode == CalcMode::THREE_PASS ? 127 : static_cast<char>(g_std_calc_mode);
     save_info->dist_est_old =
         static_cast<std::int16_t>(g_distance_estimator <= 32000 ? g_distance_estimator : 32000);
-    save_info->float_flag = static_cast<std::int16_t>(1);
+    save_info->float_flag = static_cast<std::int16_t>(!g_version.legacy || g_user.legacy_float);
     save_info->bailout_old = static_cast<std::int16_t>(
         g_user.bailout_value >= 4 && g_user.bailout_value <= 32000 ? g_user.bailout_value : 0);
     save_info->calc_time = static_cast<std::int32_t>(g_calc_time);

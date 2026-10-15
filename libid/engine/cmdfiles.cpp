@@ -554,6 +554,7 @@ static void init_vars_fractal()
     set_fractal_type(FractalType::MANDEL);               // initial fractal type
     init_param_flags();                                  //
     g_user.bailout_value = 0;                            // no user-entered bailout
+    g_user.legacy_float = false;                         // DOS defaults to integer math
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images
     g_use_init_orbit = InitOrbitMode::NORMAL;            //
     std::fill_n(g_params, MAX_PARAMS, 0.0);              // initial parameter values
@@ -2134,14 +2135,15 @@ static CmdArgFlags cmd_fin_attract(const Command &cmd)
 }
 
 // float=?
-// deprecated, validate argument and swallow value
+// Preserve the legacy request for compatibility; calculations use floating point.
 static CmdArgFlags cmd_float(const Command &cmd)
 {
     if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    return CmdArgFlags::NONE;
+    g_user.legacy_float = cmd.yes_no_val[0] != 0;
+    return CmdArgFlags::FRACTAL_PARAM;
 }
 
 // formulafile=?
