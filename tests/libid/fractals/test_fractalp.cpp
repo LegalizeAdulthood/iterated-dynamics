@@ -172,6 +172,32 @@ public:
     }
 };
 
+struct NumTrigFnsParam
+{
+    FractalFlags flags;
+    int expected;
+};
+
+class TestNumTrigFns : public TestWithParam<NumTrigFnsParam>
+{
+};
+
+TEST_P(TestNumTrigFns, countsFunctions)
+{
+    EXPECT_EQ(GetParam().expected, num_trig_fns(GetParam().flags));
+}
+
+INSTANTIATE_TEST_SUITE_P(Flags, TestNumTrigFns,
+    Values(NumTrigFnsParam{FractalFlags::NONE, 0}, NumTrigFnsParam{FractalFlags::NO_ZOOM, 0},
+        NumTrigFnsParam{FractalFlags::NO_GUESS, 0}, NumTrigFnsParam{FractalFlags::NO_TRACE, 0},
+        NumTrigFnsParam{FractalFlags::NO_ROTATE, 0}, NumTrigFnsParam{FractalFlags::NO_RESUME, 0},
+        NumTrigFnsParam{FractalFlags::INF_CALC, 0}, NumTrigFnsParam{FractalFlags::TRIG1, 1},
+        NumTrigFnsParam{FractalFlags::TRIG2, 2}, NumTrigFnsParam{FractalFlags::TRIG3, 3},
+        NumTrigFnsParam{FractalFlags::TRIG4, 4}, NumTrigFnsParam{FractalFlags::PARAMS_3D, 0},
+        NumTrigFnsParam{FractalFlags::OK_JB, 0}, NumTrigFnsParam{FractalFlags::MORE, 0},
+        NumTrigFnsParam{FractalFlags::BAIL_TEST, 0}, NumTrigFnsParam{FractalFlags::BF_MATH, 0},
+        NumTrigFnsParam{FractalFlags::LD_MATH, 0}, NumTrigFnsParam{FractalFlags::PERTURB, 0}));
+
 TEST(TestFractalSpecific, perturbationFlagRequiresPerturbationFunctions)
 {
     for (int i = 0; i < g_num_fractal_types; ++i)
