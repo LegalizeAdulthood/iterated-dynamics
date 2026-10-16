@@ -18,6 +18,8 @@
 #include <engine/VideoInfo.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
+#include <io/gif_extensions.h>
+#include <io/loadfile.h>
 #include <math/fixed_pt.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
@@ -27,12 +29,15 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <cstdint>
 #include <limits>
 #include <ostream>
+#include <string>
 #include <tuple>
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
@@ -720,6 +725,137 @@ INSTANTIATE_TEST_SUITE_P(ResetVersions, TestIterationColorBoundaryTrace,
                 IterationColorVersion{current_id_version(), false}),
         Values(IterationPalette{8, 0}, IterationPalette{16, 1}, IterationPalette{256, 2}),
         Values(ColorEngine::STANDARD, ColorEngine::FAST)));
+
+enum class OutsideVersionSource
+{
+    PAR_RESET,
+    GIF_METADATA
+};
+
+void PrintTo(const OutsideVersionSource value, std::ostream *str)
+{
+    *str << (value == OutsideVersionSource::PAR_RESET ? "PAR reset" : "GIF metadata");
+}
+
+struct OutsideRoundingCase
+{
+    ColorMethod method;
+    DComplex julia_seed;
+    DComplex escaped;
+    long iterations;
+    long legacy;
+    long modern;
+};
+
+void PrintTo(const OutsideRoundingCase &value, std::ostream *str)
+{
+    *str << +value.method << ", seed: " << value.julia_seed.x << ", " << value.julia_seed.y;
+}
+
+class TestOutsideRounding
+    : public TestIterationColor,
+      public WithParamInterface<
+          std::tuple<IterationColorVersion, OutsideRoundingCase, FractalType, ColorEngine, OutsideVersionSource>>
+{
+private:
+    ValueSaver<Version> m_saved_file_version{g_file_version};
+    ValueSaver<bool> m_saved_bad_outside{g_bad_outside};
+    ValueSaver<bool> m_saved_bifurcation_functions{g_new_bifurcation_functions_loaded};
+};
+
+TEST_P(TestOutsideRounding, usesDosHalfUnitAdjustmentOnlyOnLegacyFastPath)
+{
+    const auto &[version, sample, type, engine, source] = GetParam();
+    if (source == OutsideVersionSource::PAR_RESET)
+    {
+        ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET,
+            cmd_arg("reset=" + to_par_string(version.version), CmdFile::AT_AFTER_STARTUP));
+    }
+    else
+    {
+        FractalInfo info{};
+        info.info_version = FRACTAL_INFO_VERSION;
+        if (version.version.legacy)
+        {
+            info.release = static_cast<std::int16_t>(100 * version.version.major + version.version.minor);
+        }
+        else
+        {
+            info.version_major = version.version.major;
+            info.version_minor = version.version.minor;
+            info.version_patch = version.version.patch;
+            info.version_tweak = version.version.tweak;
+        }
+        g_file_version = fractal_info_version(info);
+        g_version = g_file_version;
+    }
+    g_fractal_type = type;
+    g_cur_fractal_specific = &m_fractal;
+    g_outside_method = sample.method;
+    g_inside_method = ColorMethod::COLOR;
+    g_inside_color = 0;
+    g_max_iterations = 64;
+    g_magnitude_limit = sample.iterations == 2 ? 0.3 : 4.0;
+    g_new_bifurcation_functions_loaded = true;
+    g_bad_outside = !version.legacy;
+    backwards_legacy_v20();
+    ASSERT_EQ(version.version, g_version);
+    ASSERT_EQ(version.legacy, g_bad_outside);
+
+    // With c = -seed^2, Julia's preliminary step and Mandel's shifted
+    // seed are both zero. Their first counted step is c.
+    const DComplex c{sample.julia_seed.y * sample.julia_seed.y - sample.julia_seed.x * sample.julia_seed.x,
+        -2.0 * sample.julia_seed.x * sample.julia_seed.y};
+    const DComplex pixel = type == FractalType::JULIA ? sample.julia_seed : c;
+    g_param_z1 = type == FractalType::JULIA ? c : DComplex{-c.x, -c.y};
+    g_image_region = ImageRegion{
+        DComplex{pixel.x, pixel.y - 1.0}, DComplex{pixel.x + 1.0, pixel.y}, DComplex{pixel.x, pixel.y - 1.0}};
+    fill_pixel_grid();
+    m_fractal.orbit_calc = []
+    {
+        const auto &sample = std::get<1>(GetParam());
+        g_new_z = sample.escaped;
+        return g_color_iter == sample.iterations ? 1 : 0;
+    };
+    const long expected = version.legacy && engine == ColorEngine::FAST ? sample.legacy : sample.modern;
+
+    EXPECT_EQ(expected, calculate(engine));
+
+    EXPECT_EQ(expected, g_color_iter);
+    EXPECT_EQ(sample.iterations, g_real_color_iter);
+    EXPECT_DOUBLE_EQ(sample.escaped.x, g_new_z.x);
+    EXPECT_DOUBLE_EQ(sample.escaped.y, g_new_z.y);
+}
+
+// Golden colors follow DOS's trunc(value - 0.5), not round(value).
+// C/Xfractint and newer DOS releases truncate value directly.
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestOutsideRounding,
+    Combine(Values(IterationColorVersion{parse_legacy_version(1960), true},
+                IterationColorVersion{parse_legacy_version(1961), false},
+                IterationColorVersion{current_id_version(), false}),
+        Values(OutsideRoundingCase{ColorMethod::REAL, {-1.0, 1.5}, {1.25, 3.0}, 1, 8, 9},
+            OutsideRoundingCase{ColorMethod::REAL, {1.0, 1.5}, {1.25, -3.0}, 1, 8, 9},
+            OutsideRoundingCase{ColorMethod::REAL, {0.5, 1.5}, {2.0, -1.5}, 1, 9, 10},
+            OutsideRoundingCase{ColorMethod::REAL, {1.75, 0.5}, {-2.8125, -1.75}, 1, 5, 6},
+            OutsideRoundingCase{ColorMethod::REAL, {1.75, -0.5}, {-2.8125, 1.75}, 1, 5, 6},
+            OutsideRoundingCase{ColorMethod::REAL, {1.5, -1.0}, {-1.25, 3.0}, 1, 7, 7},
+            OutsideRoundingCase{ColorMethod::IMAG, {0.5, 1.5}, {2.0, -1.5}, 1, 6, 7},
+            OutsideRoundingCase{ColorMethod::IMAG, {0.5, 2.5}, {6.0, -2.5}, 1, 5, 6},
+            OutsideRoundingCase{ColorMethod::IMAG, {-1.0, 1.5}, {1.25, 3.0}, 1, 10, 11},
+            OutsideRoundingCase{ColorMethod::IMAG, {-1.75, 0.5}, {-2.8125, 1.75}, 1, 9, 9},
+            OutsideRoundingCase{ColorMethod::IMAG, {1.75, 0.5}, {-2.8125, -1.75}, 1, 6, 7},
+            OutsideRoundingCase{ColorMethod::IMAG, {1.5, 1.0}, {-1.25, -3.0}, 1, 5, 5},
+            OutsideRoundingCase{ColorMethod::MULT, {-0.5, 2.5}, {6.0, 2.5}, 1, 1, 2},
+            OutsideRoundingCase{ColorMethod::MULT, {2.25, 0.5}, {-4.8125, -2.25}, 1, 1, 2},
+            OutsideRoundingCase{ColorMethod::MULT, {0.0, 2.0}, {4.0, 0.0}, 1, 1, 1},
+            OutsideRoundingCase{ColorMethod::MULT, {-0.25, 2.0}, {3.9375, 1.0}, 1, 3, 3},
+            OutsideRoundingCase{ColorMethod::SUM, {-1.0, 1.5}, {1.25, 3.0}, 1, 4, 5},
+            OutsideRoundingCase{ColorMethod::SUM, {0.0, 2.0}, {4.0, 0.0}, 1, 4, 5},
+            OutsideRoundingCase{ColorMethod::SUM, {1.5, -1.0}, {-1.25, 3.0}, 1, 2, 2},
+            OutsideRoundingCase{ColorMethod::SUM, {0.5, 1.5}, {2.0, -1.5}, 1, 1, 1},
+            OutsideRoundingCase{ColorMethod::SUM, {0.5, 0.5}, {-0.25, -0.5}, 2, 1, 2}),
+        Values(FractalType::MANDEL, FractalType::JULIA), Values(ColorEngine::STANDARD, ColorEngine::FAST),
+        Values(OutsideVersionSource::PAR_RESET, OutsideVersionSource::GIF_METADATA)));
 
 } // namespace
 } // namespace id::test

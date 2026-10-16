@@ -5,18 +5,22 @@
 // This file Copyright 1992 Ken Shirriff.  It may be used according to the
 // fractint license conditions, blah blah blah.
 //
+// Copyright (C) 2026 Richard Thomson.
+//
 #include "engine/calmanfp.h"
 
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/orbit.h"
 #include "fractals/fractype.h"
+#include "io/loadfile.h"
 #include "misc/id.h"
 
 #include <algorithm>
 #include <cmath>
 
 using namespace id::fractals;
+using namespace id::io;
 
 namespace id::engine
 {
@@ -29,6 +33,12 @@ void calc_mandelbrot_init()
     s_inside_color = g_inside_method < ColorMethod::COLOR ? g_max_iterations : g_inside_color;
     s_periodicity_color = g_periodicity_check < 0 ? 7 : s_inside_color;
     g_old_color_iter = 0;
+}
+
+static long convert_outside_color(const double value)
+{
+    // Legacy DOS subtracts 0.5 with truncation toward zero, even for negatives.
+    return static_cast<long>(g_bad_outside ? value - 0.5 : value);
 }
 
 long mandelbrot_orbit()
@@ -185,19 +195,19 @@ over_bailout_87:
         // special_outside
         if (g_outside_method == ColorMethod::REAL)
         {
-            g_color_iter += static_cast<long>(g_new_z.x) + 7;
+            g_color_iter += convert_outside_color(g_new_z.x) + 7;
         }
         else if (g_outside_method == ColorMethod::IMAG)
         {
-            g_color_iter += static_cast<long>(g_new_z.y) + 7;
+            g_color_iter += convert_outside_color(g_new_z.y) + 7;
         }
         else if (g_outside_method == ColorMethod::MULT && g_new_z.y != 0.0)
         {
-            g_color_iter = static_cast<long>(static_cast<double>(g_color_iter) * (g_new_z.x / g_new_z.y));
+            g_color_iter = convert_outside_color(static_cast<double>(g_color_iter) * (g_new_z.x / g_new_z.y));
         }
         else if (g_outside_method == ColorMethod::SUM)
         {
-            g_color_iter += static_cast<long>(g_new_z.x + g_new_z.y);
+            g_color_iter += convert_outside_color(g_new_z.x + g_new_z.y);
         }
         else if (g_outside_method == ColorMethod::ATAN)
         {
