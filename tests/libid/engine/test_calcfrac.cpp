@@ -4,6 +4,7 @@
 
 #include "MockDriver.h"
 
+#include <engine/bailout_formula.h>
 #include <engine/calc_frac_init.h>
 #include <engine/calmanfp.h>
 #include <engine/cmdfiles.h>
@@ -726,20 +727,20 @@ INSTANTIATE_TEST_SUITE_P(ResetVersions, TestIterationColorBoundaryTrace,
         Values(IterationPalette{8, 0}, IterationPalette{16, 1}, IterationPalette{256, 2}),
         Values(ColorEngine::STANDARD, ColorEngine::FAST)));
 
-enum class OutsideVersionSource
+enum class CompatibilityVersionSource
 {
     PAR_RESET,
     GIF_METADATA
 };
 
-void PrintTo(const OutsideVersionSource value, std::ostream *str)
+void PrintTo(const CompatibilityVersionSource value, std::ostream *str)
 {
-    *str << (value == OutsideVersionSource::PAR_RESET ? "PAR reset" : "GIF metadata");
+    *str << (value == CompatibilityVersionSource::PAR_RESET ? "PAR reset" : "GIF metadata");
 }
 
-CmdArgFlags load_outside_version(const Version &version, const OutsideVersionSource source)
+CmdArgFlags load_compatibility_version(const Version &version, const CompatibilityVersionSource source)
 {
-    if (source == OutsideVersionSource::PAR_RESET)
+    if (source == CompatibilityVersionSource::PAR_RESET)
     {
         return cmd_arg("reset=" + to_par_string(version), CmdFile::AT_AFTER_STARTUP);
     }
@@ -787,14 +788,14 @@ void PrintTo(const OutsideRoundingCase &value, std::ostream *str)
 class TestOutsideRounding
     : public TestOutsideColor,
       public WithParamInterface<
-          std::tuple<IterationColorVersion, OutsideRoundingCase, FractalType, ColorEngine, OutsideVersionSource>>
+          std::tuple<IterationColorVersion, OutsideRoundingCase, FractalType, ColorEngine, CompatibilityVersionSource>>
 {
 };
 
 TEST_P(TestOutsideRounding, usesDosHalfUnitAdjustmentOnlyOnLegacyFastPath)
 {
     const auto &[version, sample, type, engine, source] = GetParam();
-    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, load_outside_version(version.version, source));
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, load_compatibility_version(version.version, source));
     g_fractal_type = type;
     g_cur_fractal_specific = &m_fractal;
     g_outside_method = sample.method;
@@ -861,7 +862,7 @@ INSTANTIATE_TEST_SUITE_P(ResetVersions, TestOutsideRounding,
             OutsideRoundingCase{ColorMethod::SUM, {0.5, 1.5}, {2.0, -1.5}, 1, 1, 1},
             OutsideRoundingCase{ColorMethod::SUM, {0.5, 0.5}, {-0.25, -0.5}, 2, 1, 2}),
         Values(FractalType::MANDEL, FractalType::JULIA), Values(ColorEngine::STANDARD, ColorEngine::FAST),
-        Values(OutsideVersionSource::PAR_RESET, OutsideVersionSource::GIF_METADATA)));
+        Values(CompatibilityVersionSource::PAR_RESET, CompatibilityVersionSource::GIF_METADATA)));
 
 struct OutsideClampCase
 {
@@ -883,7 +884,7 @@ void PrintTo(const OutsideClampCase &value, std::ostream *str)
 class TestOutsideClamping
     : public TestOutsideColor,
       public WithParamInterface<
-          std::tuple<IterationColorVersion, OutsideClampCase, FractalType, ColorEngine, OutsideVersionSource>>
+          std::tuple<IterationColorVersion, OutsideClampCase, FractalType, ColorEngine, CompatibilityVersionSource>>
 {
 private:
     ValueSaver<int> m_saved_atan_colors{g_atan_colors, 180};
@@ -892,7 +893,7 @@ private:
 TEST_P(TestOutsideClamping, clampsSpecialColorsAtCompatibleRelease)
 {
     const auto &[version, sample, type, engine, source] = GetParam();
-    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, load_outside_version(version.version, source));
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, load_compatibility_version(version.version, source));
     g_fractal_type = type;
     g_cur_fractal_specific = &m_fractal;
     g_outside_method = sample.method;
@@ -963,7 +964,7 @@ INSTANTIATE_TEST_SUITE_P(ResetVersions, TestOutsideClamping,
             OutsideClampCase{ColorMethod::COLOR, {0.0, 2.0}, 8, 0, 0, 0, 0},
             OutsideClampCase{ColorMethod::COLOR, {0.0, 2.0}, 8, 16, 16, 16, 16}),
         Values(FractalType::MANDEL, FractalType::JULIA), Values(ColorEngine::STANDARD, ColorEngine::FAST),
-        Values(OutsideVersionSource::PAR_RESET, OutsideVersionSource::GIF_METADATA)));
+        Values(CompatibilityVersionSource::PAR_RESET, CompatibilityVersionSource::GIF_METADATA)));
 
 class TestOutsideClampBoundaryTrace : public TestOutsideColor,
                                       public WithParamInterface<std::tuple<IterationColorVersion, ColorEngine>>
@@ -996,6 +997,114 @@ INSTANTIATE_TEST_SUITE_P(ResetVersions, TestOutsideClampBoundaryTrace,
                 IterationColorVersion{parse_legacy_version(1961), false},
                 IterationColorVersion{current_id_version(), false}),
         Values(ColorEngine::STANDARD, ColorEngine::FAST)));
+
+enum class FmodColoring
+{
+    INSIDE,
+    OUTSIDE,
+    BOTH
+};
+
+void PrintTo(const FmodColoring value, std::ostream *str)
+{
+    *str << (value == FmodColoring::INSIDE ? "inside" : value == FmodColoring::OUTSIDE ? "outside" : "both");
+}
+
+struct FmodMetric
+{
+    Bailout type;
+    const char *name;
+};
+
+void PrintTo(const FmodMetric &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+struct FmodOrbitCase
+{
+    DComplex value;
+    std::array<int, 7> colors;
+};
+
+void PrintTo(const FmodOrbitCase &value, std::ostream *str)
+{
+    *str << value.value.x << ", " << value.value.y;
+}
+
+struct FmodMagnitudeCase
+{
+    double cached;
+    bool calculate;
+    int modulus_color;
+};
+
+void PrintTo(const FmodMagnitudeCase &value, std::ostream *str)
+{
+    *str << "cached: " << value.cached << ", recalculate: " << value.calculate;
+}
+
+class TestFmodColor : public TestIterationColor,
+                      public WithParamInterface<std::tuple<IterationColorVersion, FmodMetric, FmodOrbitCase,
+                          FmodMagnitudeCase, FmodColoring, CompatibilityVersionSource>>
+{
+private:
+    ValueSaver<Version> m_saved_file_version{g_file_version};
+    ValueSaver<Bailout> m_saved_bailout{g_bailout_test};
+    ValueSaver<bool> m_saved_magnitude_calc{g_magnitude_calc};
+    ValueSaver<double> m_saved_magnitude{g_magnitude};
+    ValueSaver<double> m_saved_close_proximity{g_close_proximity};
+};
+
+TEST_P(TestFmodColor, usesCompatibleMetricAndMagnitudeCache)
+{
+    const auto &[version, metric, orbit, magnitude, coloring, source] = GetParam();
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, load_compatibility_version(version.version, source));
+    g_cur_fractal_specific = &m_fractal;
+    g_inside_method = coloring == FmodColoring::OUTSIDE ? ColorMethod::COLOR : ColorMethod::FMODI;
+    g_inside_color = 0;
+    g_outside_method = coloring == FmodColoring::INSIDE ? ColorMethod::ITER : ColorMethod::FMOD;
+    g_max_iterations = 3;
+    g_bailout_test = metric.type;
+    g_magnitude_calc = magnitude.calculate;
+    g_close_proximity = 1.0;
+    m_fractal.orbit_calc = []
+    {
+        const auto &[version, metric, orbit, magnitude, coloring, source] = GetParam();
+        g_new_z = orbit.value;
+        g_magnitude = magnitude.cached;
+        return coloring != FmodColoring::INSIDE && g_color_iter == 2 ? 1 : 0;
+    };
+    const int selected_color =
+        metric.type == Bailout::MOD ? magnitude.modulus_color : orbit.colors[static_cast<int>(metric.type)];
+    const int expected = version.legacy && coloring != FmodColoring::OUTSIDE ? magnitude.modulus_color : selected_color;
+
+    EXPECT_EQ(expected, calculate(ColorEngine::STANDARD));
+
+    EXPECT_EQ(expected, g_color);
+    EXPECT_EQ(expected, g_color_iter);
+    EXPECT_EQ(coloring == FmodColoring::INSIDE ? 3 : 2, g_real_color_iter);
+    EXPECT_DOUBLE_EQ(orbit.value.x, g_new_z.x);
+    EXPECT_DOUBLE_EQ(orbit.value.y, g_new_z.y);
+    EXPECT_DOUBLE_EQ(magnitude.cached, g_magnitude);
+}
+
+// At proximity 1 and 256 colors, squared modulus 0.3125 gives color 80.
+// Columns follow MOD, REAL, IMAG, OR, AND, MANH, MANR. A retained cache
+// of 0.125 gives color 32; a cache at the threshold leaves color zero.
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestFmodColor,
+    Combine(Values(IterationColorVersion{parse_legacy_version(2000), true},
+                IterationColorVersion{parse_legacy_version(2001), false},
+                IterationColorVersion{current_id_version(), false}),
+        Values(FmodMetric{Bailout::MOD, "mod"}, FmodMetric{Bailout::REAL, "real"}, FmodMetric{Bailout::IMAG, "imag"},
+            FmodMetric{Bailout::OR, "or"}, FmodMetric{Bailout::AND, "and"}, FmodMetric{Bailout::MANH, "manh"},
+            FmodMetric{Bailout::MANR, "manr"}),
+        Values(FmodOrbitCase{{0.25, -0.5}, {80, 16, 64, 64, 80, 144, 16}},
+            FmodOrbitCase{{-0.5, 0.25}, {80, 64, 16, 64, 80, 144, 16}}),
+        Values(FmodMagnitudeCase{0.125, false, 32}, FmodMagnitudeCase{0.125, true, 80},
+            FmodMagnitudeCase{0.0, false, 80}, FmodMagnitudeCase{1.0, false, 0}),
+        Values(FmodColoring::INSIDE, FmodColoring::OUTSIDE, FmodColoring::BOTH),
+        Values(CompatibilityVersionSource::PAR_RESET, CompatibilityVersionSource::GIF_METADATA)));
 
 } // namespace
 } // namespace id::test

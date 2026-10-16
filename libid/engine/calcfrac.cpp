@@ -224,16 +224,14 @@ static double fmod_test_bailout_or()
     return tmp_y;
 }
 
-// Makes the test condition for the FMOD coloring type
-//   that of the current bailout method. 'or' and 'and'
-//   methods are not used - in these cases a normal
-//   modulus test is used
-//
+// FMOD uses the selected bailout metric, except legacy inside coloring,
+// which always uses squared modulus.
 static double fmod_test()
 {
     double result;
 
-    switch (g_bailout_test)
+    const Bailout test = g_inside_method == ColorMethod::FMODI && g_version <= 2000 ? Bailout::MOD : g_bailout_test;
+    switch (test)
     {
     case Bailout::MOD:
         if (g_magnitude == 0.0 || g_magnitude_calc)
