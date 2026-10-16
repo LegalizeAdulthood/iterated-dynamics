@@ -65,6 +65,7 @@ add_executable(test-id
     "include/test_library.h.in"
     "include/test_migrate_gif.h.in"
     expected_map.cpp
+    engine/test_calcfrac.cpp
     engine/test_color_utils.cpp
     engine/test_cmdfiles.cpp
     engine/test_get_prec_big_float.cpp

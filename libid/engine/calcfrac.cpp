@@ -993,7 +993,7 @@ static void perform_work_list()
         const double del_xx2 = del2.x / d_y_size;
         const double del_yy2 = del2.y / d_x_size;
 
-        g_use_old_distance_estimator = false;
+        g_use_old_distance_estimator = g_version < 1827;
         g_magnitude_limit = s_rq_lim_save; // just in case changed to DEM_BAILOUT earlier
         if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
         {
@@ -1491,7 +1491,7 @@ int standard_fractal_type()
                     break;
                 }
             }
-            else
+            else if (g_version > 1950)
             {
                 if (std::max(std::abs(deriv.x), std::abs(deriv.y)) > s_dem_too_big)
                 {
@@ -1501,7 +1501,7 @@ int standard_fractal_type()
             // if above exit taken, the later test vs dem_delta will place this
             // point on the boundary, because mag(old)<bailout just now
 
-            if (g_cur_fractal_specific->orbit_calc() || g_overflow)
+            if (g_cur_fractal_specific->orbit_calc() || (g_overflow && g_version > 1826))
             {
                 if (g_use_old_distance_estimator)
                 {
