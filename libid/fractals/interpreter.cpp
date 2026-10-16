@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
+//
 #include "fractals/interpreter.h"
 
 #include "engine/calcfrac.h"
@@ -154,10 +157,10 @@ static bool check_denom(const double denom)
 
 static DComplex formula_power(const DComplex &base, const DComplex &exponent)
 {
-    if (base.x == 0.0 && base.y == 0.0 && !(g_version < 1900))
+    if (base.x == 0.0 && base.y == 0.0)
     {
-        g_overflow = true;
-        return {};
+        // DOS's old log(0) path produces exp(0); the newer guard returns zero.
+        return g_version < 1900 ? DComplex{1.0, 0.0} : DComplex{};
     }
     if (exponent.y == 0.0)
     {

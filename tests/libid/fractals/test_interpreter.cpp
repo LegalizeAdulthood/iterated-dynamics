@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
 //
 #include "fractals/interpreter.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/random_seed.h"
 #include "fractals/formula.h"
 #include "fractals/parser.h"
+#include "io/gif_extensions.h"
+#include "io/loadfile.h"
 #include "math/arg.h"
 #include "math/fixed_pt.h"
 #include "misc/ValueSaver.h"
@@ -15,10 +19,12 @@
 
 #include <cfloat>
 #include <cmath>
+#include <cstdint>
 #include <ostream>
 #include <tuple>
 
 using namespace id::fractals;
+using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::engine;
@@ -33,19 +39,6 @@ struct TestInterpreter : testing::Test
     ValueSaver<bool> saved_overflow{g_overflow};
     ValueSaver<Version> saved_version{g_version};
 };
-
-static DComplex stack_power(const DComplex &base, const DComplex &exponent)
-{
-    Arg stack[2]{};
-    stack[0].d = base;
-    stack[1].d = exponent;
-    g_arg2 = &stack[0];
-    g_arg1 = &stack[1];
-
-    d_stk_pwr();
-
-    return stack[0].d;
-}
 
 static DComplex formula_rand_from_seed(const int seed)
 {
@@ -77,49 +70,140 @@ static DComplex formula_rand_from_srand(const int image_seed)
     return g_formula.vars[7].a.d;
 }
 
-TEST_F(TestInterpreter, pre1900ZeroBasePowerDoesNotOverflow)
+struct FormulaPowerCase
 {
-    g_version = parse_legacy_version(1899);
+    DComplex base;
+    DComplex exponent;
+    DComplex expected_old;
+    DComplex expected_new;
+};
+
+void PrintTo(const FormulaPowerCase &value, std::ostream *str)
+{
+    *str << '(' << value.base.x << ", " << value.base.y << ")^(" << value.exponent.x << ", " << value.exponent.y << ')';
+}
+
+// DOS FPUcplxlog(0) returns zero, so the old power path returns exp(0).
+static const FormulaPowerCase FORMULA_POWERS[]{
+    {{0.0, 0.0}, {7.0, 0.0}, {1.0, 0.0}, {0.0, 0.0}},
+    {{0.0, 0.0}, {1.0, 0.0}, {1.0, 0.0}, {0.0, 0.0}},
+    {{0.0, 0.0}, {0.0, 0.0}, {1.0, 0.0}, {0.0, 0.0}},
+    {{0.0, 0.0}, {-2.0, 0.0}, {1.0, 0.0}, {0.0, 0.0}},
+    {{0.0, 0.0}, {2.0, 3.0}, {1.0, 0.0}, {0.0, 0.0}},
+    {{0.0, 0.0}, {0.0, 3.0}, {1.0, 0.0}, {0.0, 0.0}},
+    {{2.0, 0.0}, {3.0, 0.0}, {8.0, 0.0}, {8.0, 0.0}},
+    {{3.0, 4.0}, {0.0, 0.0}, {1.0, 0.0}, {1.0, 0.0}},
+    {{3.0, 4.0}, {1.0, 0.0}, {3.0, 4.0}, {3.0, 4.0}},
+    {{3.0, 4.0}, {2.0, 0.0}, {-7.0, 24.0}, {-7.0, 24.0}},
+};
+
+class TestInterpreterPower : public TestInterpreter,
+                             public testing::WithParamInterface<std::tuple<Version, FormulaPowerCase, bool>>
+{
+};
+
+TEST_P(TestInterpreterPower, preservesCompatibleResultStackAndOverflow)
+{
+    const auto &[version, power, overflow] = GetParam();
+    g_version = version;
+    g_overflow = overflow;
+    const DComplex expected = version < 1900 ? power.expected_old : power.expected_new;
+    Arg stack[3]{{{17.0, 19.0}}, {power.base}, {power.exponent}};
+    g_arg2 = &stack[1];
+    g_arg1 = &stack[2];
+
+    d_stk_pwr();
+
+    EXPECT_NEAR(expected.x, stack[1].d.x, 1e-13);
+    EXPECT_NEAR(expected.y, stack[1].d.y, 1e-13);
+    EXPECT_EQ((DComplex{17.0, 19.0}), stack[0].d);
+    EXPECT_EQ(&stack[1], g_arg1);
+    EXPECT_EQ(&stack[0], g_arg2);
+    EXPECT_EQ(overflow, g_overflow);
+}
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestInterpreterPower,
+    testing::Combine(testing::Values(parse_legacy_version(1899), parse_legacy_version(1900), current_id_version()),
+        testing::ValuesIn(FORMULA_POWERS), testing::Bool()));
+
+enum class FormulaPowerVersionSource
+{
+    PAR_RESET,
+    GIF_METADATA
+};
+
+void PrintTo(const FormulaPowerVersionSource value, std::ostream *str)
+{
+    *str << (value == FormulaPowerVersionSource::PAR_RESET ? "PAR reset" : "GIF metadata");
+}
+
+class TestFormulaPowerOrbit
+    : public TestInterpreter,
+      public testing::WithParamInterface<std::tuple<Version, FormulaPowerCase, FormulaPowerVersionSource>>
+{
+};
+
+TEST_P(TestFormulaPowerOrbit, loadedVersionAllowsSubsequentIterations)
+{
+    const auto &[version, power, source] = GetParam();
+    ValueSaver saved_file_version{g_file_version};
+    ValueSaver saved_formula{g_formula, CompiledFormula{}};
+    ValueSaver saved_runtime{g_runtime, RuntimeState{}};
+    ValueSaver saved_name{g_formula_name, std::string{"PowerCompatibility"}};
+    ValueSaver saved_old_z{g_old_z};
+    ValueSaver saved_new_z{g_new_z};
+    if (source == FormulaPowerVersionSource::PAR_RESET)
+    {
+        ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET,
+            cmd_arg("reset=" + to_par_string(version), CmdFile::AT_AFTER_STARTUP));
+    }
+    else
+    {
+        FractalInfo info{};
+        info.info_version = FRACTAL_INFO_VERSION;
+        if (version.legacy)
+        {
+            info.release = static_cast<std::int16_t>(100 * version.major + version.minor);
+        }
+        else
+        {
+            info.version_major = version.major;
+            info.version_minor = version.minor;
+            info.version_patch = version.patch;
+            info.version_tweak = version.tweak;
+        }
+        g_file_version = fractal_info_version(info);
+        g_version = g_file_version;
+    }
+    ASSERT_EQ(version, g_version);
     g_overflow = false;
+    g_formula_name = "PowerCompatibility";
+    Arg base{power.base};
+    Arg exponent{power.exponent};
+    Arg increment{{1.0, 0.0}};
+    Arg keep_iterating{{1.0, 0.0}};
+    g_formula.vars.resize(5);
+    g_formula.store = {&g_formula.vars[3].a};
+    g_formula.load = {&g_formula.vars[3].a, &base, &exponent, &increment, &keep_iterating};
+    g_formula.fns = {stk_lod, stk_lod, stk_lod, d_stk_pwr, d_stk_add, stk_lod, d_stk_add, stk_sto, stk_clr, stk_lod};
+    g_formula.op_count = static_cast<int>(g_formula.fns.size());
+    const DComplex expected = version < 1900 ? power.expected_old : power.expected_new;
 
-    const DComplex result{stack_power({0.0, 0.0}, {7.0, 0.0})};
+    ASSERT_EQ(0, formula_orbit());
 
-    EXPECT_EQ((DComplex{0.0, 0.0}), result);
+    EXPECT_NEAR(expected.x + 1.0, g_new_z.x, 1e-13);
+    EXPECT_NEAR(expected.y, g_new_z.y, 1e-13);
+    EXPECT_FALSE(g_overflow);
+    ASSERT_EQ(0, formula_orbit());
+    EXPECT_NEAR(2.0 * (expected.x + 1.0), g_new_z.x, 2e-13);
+    EXPECT_NEAR(2.0 * expected.y, g_new_z.y, 2e-13);
     EXPECT_FALSE(g_overflow);
 }
 
-TEST_F(TestInterpreter, reset1900ZeroBasePowerSetsOverflow)
-{
-    g_version = parse_legacy_version(1900);
-    g_overflow = false;
-
-    const DComplex result{stack_power({0.0, 0.0}, {7.0, 0.0})};
-
-    EXPECT_EQ((DComplex{0.0, 0.0}), result);
-    EXPECT_TRUE(g_overflow);
-}
-
-TEST_F(TestInterpreter, pre1900ZeroBaseZeroExponentReturnsOne)
-{
-    g_version = parse_legacy_version(1899);
-    g_overflow = false;
-
-    const DComplex result{stack_power({0.0, 0.0}, {0.0, 0.0})};
-
-    EXPECT_EQ((DComplex{1.0, 0.0}), result);
-    EXPECT_FALSE(g_overflow);
-}
-
-TEST_F(TestInterpreter, reset1900ZeroBaseZeroExponentSetsOverflow)
-{
-    g_version = parse_legacy_version(1900);
-    g_overflow = false;
-
-    const DComplex result{stack_power({0.0, 0.0}, {0.0, 0.0})};
-
-    EXPECT_EQ((DComplex{0.0, 0.0}), result);
-    EXPECT_TRUE(g_overflow);
-}
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestFormulaPowerOrbit,
+    testing::Combine(testing::Values(parse_legacy_version(1899), parse_legacy_version(1900), current_id_version()),
+        testing::ValuesIn(FORMULA_POWERS),
+        testing::Values(FormulaPowerVersionSource::PAR_RESET, FormulaPowerVersionSource::GIF_METADATA)));
 
 TEST_F(TestInterpreter, formulaRandRepeatsWithFixedRandomSeed)
 {
