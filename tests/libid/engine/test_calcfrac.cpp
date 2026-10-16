@@ -5,9 +5,11 @@
 #include "MockDriver.h"
 
 #include <engine/calc_frac_init.h>
+#include <engine/calmanfp.h>
 #include <engine/cmdfiles.h>
 #include <engine/fractals.h>
 #include <engine/ImageRegion.h>
+#include <engine/Inversion.h>
 #include <engine/LogicalScreen.h>
 #include <engine/pixel_grid.h>
 #include <engine/Potential.h>
@@ -479,6 +481,245 @@ INSTANTIATE_TEST_SUITE_P(ResetVersions, TestTwoWayDecomposition,
             DecompositionColorCase{DComplex{0.0, -4.0}, 1, 2, 0, 2},
             DecompositionColorCase{DComplex{0.0, 0.0}, 0, 1, 1, 1}),
         Values(2, 256)));
+
+enum class ColorEngine
+{
+    STANDARD,
+    FAST
+};
+
+void PrintTo(const ColorEngine value, std::ostream *str)
+{
+    *str << (value == ColorEngine::STANDARD ? "standard" : "fast");
+}
+
+class TestIterationColor : public TestStandardFractal
+{
+protected:
+    void SetUp() override;
+    int calculate(ColorEngine engine);
+
+private:
+    ValueSaver<Inversion> m_saved_inversion{g_inversion, Inversion{}};
+    ValueSaver<DComplex> m_saved_param_z1{g_param_z1, DComplex{}};
+    ValueSaver<FiniteAttractor> m_saved_attractor{g_attractor, FiniteAttractor{}};
+    ValueSaver<int> m_saved_col{g_col, 0};
+    ValueSaver<int> m_saved_row{g_row, 0};
+    ValueSaver<int> m_saved_outside_color{g_outside_color};
+    ValueSaver<int> m_saved_keyboard_interval{g_keyboard_check_interval, 1000000};
+    ValueSaver<void (*)(int, int, int)> m_saved_plot{g_plot};
+};
+
+void TestIterationColor::SetUp()
+{
+    TestStandardFractal::SetUp();
+    g_plot = [](int, int, int) {};
+    g_image_region = ImageRegion{{2.0, 2.0}, {3.0, 3.0}, {2.0, 2.0}};
+    fill_pixel_grid();
+    g_outside_method = ColorMethod::COLOR;
+    m_fractal.orbit_calc = []
+    {
+        g_new_z = DComplex{3.0, 4.0};
+        return 1;
+    };
+}
+
+int TestIterationColor::calculate(const ColorEngine engine)
+{
+    if (engine == ColorEngine::FAST)
+    {
+        calc_mandelbrot_init();
+        return calc_mandelbrot_type();
+    }
+    return standard_fractal_type();
+}
+
+struct IterationColorVersion
+{
+    Version version;
+    bool legacy;
+};
+
+void PrintTo(const IterationColorVersion &value, std::ostream *str)
+{
+    *str << to_par_string(value.version) << ", legacy: " << value.legacy;
+}
+
+struct IterationPalette
+{
+    int colors;
+    int index;
+};
+
+void PrintTo(const IterationPalette &value, std::ostream *str)
+{
+    *str << value.colors << " colors";
+}
+
+struct IterationColorCase
+{
+    long value;
+    std::array<int, 3> legacy;
+    std::array<int, 3> modern;
+};
+
+void PrintTo(const IterationColorCase &value, std::ostream *str)
+{
+    *str << value.value;
+}
+
+static const IterationColorCase ITERATION_COLORS[]{
+    {0, {0, 0, 0}, {0, 0, 0}},
+    {7, {7, 7, 7}, {7, 7, 7}},
+    {8, {0, 8, 8}, {0, 8, 8}},
+    {16, {0, 1, 16}, {0, 1, 16}},
+    {32766, {6, 6, 126}, {6, 6, 126}},
+    {32767, {7, 7, 127}, {7, 7, 127}},
+    {32768, {0, 8, 128}, {0, 8, 128}},
+    {32769, {7, 7, 127}, {1, 9, 129}},
+    {65534, {2, 2, 2}, {6, 14, 254}},
+    {65535, {1, 1, 1}, {7, 15, 255}},
+    {65536, {0, 0, 0}, {0, 1, 1}},
+    {65537, {1, 1, 1}, {1, 2, 2}},
+    {98304, {0, 8, 128}, {0, 9, 129}},
+    {2147483647, {1, 1, 1}, {7, 7, 127}},
+};
+
+class TestIterationColorWrapping
+    : public TestIterationColor,
+      public WithParamInterface<std::tuple<IterationColorVersion, IterationColorCase, IterationPalette, ColorEngine>>
+{
+};
+
+TEST_P(TestIterationColorWrapping, usesCompatibleColorWidthBeforePaletteWrapping)
+{
+    const auto &[version, color, palette, engine] = GetParam();
+    g_version = version.version;
+    g_outside_color = static_cast<int>(color.value);
+    g_colors = palette.colors;
+    g_and_color = palette.colors - 1;
+    const int expected = (version.legacy ? color.legacy : color.modern)[palette.index];
+
+    EXPECT_EQ(expected, calculate(engine));
+
+    EXPECT_EQ(expected, g_color);
+    EXPECT_EQ(color.value, g_color_iter);
+    EXPECT_EQ(1, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestIterationColorWrapping,
+    Combine(Values(IterationColorVersion{parse_legacy_version(1950), true},
+                IterationColorVersion{parse_legacy_version(1951), false},
+                IterationColorVersion{current_id_version(), false}),
+        ValuesIn(ITERATION_COLORS), Values(IterationPalette{8, 0}, IterationPalette{16, 1}, IterationPalette{256, 2}),
+        Values(ColorEngine::STANDARD, ColorEngine::FAST)));
+
+class TestIterationColorIterations
+    : public TestIterationColor,
+      public WithParamInterface<std::tuple<IterationColorVersion, IterationColorCase, IterationPalette, ColorEngine>>
+{
+};
+
+TEST_P(TestIterationColorIterations, wrapsActualInteriorIterationCounts)
+{
+    const auto &[version, color, palette, engine] = GetParam();
+    g_version = version.version;
+    g_max_iterations = color.value;
+    g_inside_method = ColorMethod::ITER;
+    g_colors = palette.colors;
+    g_and_color = palette.colors - 1;
+    g_image_region = ImageRegion{};
+    fill_pixel_grid();
+    m_fractal.orbit_calc = []
+    {
+        g_new_z = DComplex{};
+        return 0;
+    };
+    const int expected = (version.legacy ? color.legacy : color.modern)[palette.index];
+
+    EXPECT_EQ(expected, calculate(engine));
+
+    EXPECT_EQ(color.value, g_color_iter);
+    EXPECT_EQ(color.value, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestIterationColorIterations,
+    Combine(Values(IterationColorVersion{parse_legacy_version(1950), true},
+                IterationColorVersion{parse_legacy_version(1951), false},
+                IterationColorVersion{current_id_version(), false}),
+        Values(IterationColorCase{32768, {0, 8, 128}, {0, 8, 128}}, IterationColorCase{65535, {1, 1, 1}, {7, 15, 255}},
+            IterationColorCase{65536, {0, 0, 0}, {0, 1, 1}}),
+        Values(IterationPalette{8, 0}, IterationPalette{16, 1}, IterationPalette{256, 2}),
+        Values(ColorEngine::STANDARD, ColorEngine::FAST)));
+
+struct SignedIterationColor
+{
+    int value;
+    int legacy;
+    int modern;
+};
+
+void PrintTo(const SignedIterationColor &value, std::ostream *str)
+{
+    *str << value.value;
+}
+
+class TestIterationColorSigned
+    : public TestIterationColor,
+      public WithParamInterface<std::tuple<IterationColorVersion, SignedIterationColor, bool>>
+{
+};
+
+TEST_P(TestIterationColorSigned, preservesDosSignedConversionAndAbsoluteValue)
+{
+    const auto &[version, color, boundary_trace] = GetParam();
+    g_version = version.version;
+    g_outside_color = color.value;
+    g_std_calc_mode = boundary_trace ? CalcMode::BOUNDARY_TRACE : CalcMode::ONE_PASS;
+    const int unadjusted = version.legacy ? color.legacy : color.modern;
+    const int expected = boundary_trace && unadjusted <= 0 ? 1 : unadjusted;
+
+    EXPECT_EQ(expected, calculate(ColorEngine::STANDARD));
+
+    EXPECT_EQ(color.value, g_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestIterationColorSigned,
+    Combine(Values(IterationColorVersion{parse_legacy_version(1950), true},
+                IterationColorVersion{parse_legacy_version(1951), false},
+                IterationColorVersion{current_id_version(), false}),
+        Values(SignedIterationColor{-1, 1, 1}, SignedIterationColor{-32767, 32767, 32767},
+            SignedIterationColor{-32768, -32768, 32768}, SignedIterationColor{-32769, 32767, 32769},
+            SignedIterationColor{-65535, 1, 65535}, SignedIterationColor{-65536, 0, 65536},
+            SignedIterationColor{-2147483647, 1, 2147483647}),
+        Bool()));
+
+class TestIterationColorBoundaryTrace
+    : public TestIterationColor,
+      public WithParamInterface<std::tuple<IterationColorVersion, IterationPalette, ColorEngine>>
+{
+};
+
+TEST_P(TestIterationColorBoundaryTrace, repairsZeroAfterPaletteWrapping)
+{
+    const auto &[version, palette, engine] = GetParam();
+    g_version = version.version;
+    g_outside_color = 65536;
+    g_colors = palette.colors;
+    g_and_color = palette.colors - 1;
+    g_std_calc_mode = CalcMode::BOUNDARY_TRACE;
+
+    EXPECT_EQ(1, calculate(engine));
+
+    EXPECT_EQ(65536, g_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestIterationColorBoundaryTrace,
+    Combine(Values(IterationColorVersion{parse_legacy_version(1950), true},
+                IterationColorVersion{parse_legacy_version(1951), false},
+                IterationColorVersion{current_id_version(), false}),
+        Values(IterationPalette{8, 0}, IterationPalette{16, 1}, IterationPalette{256, 2}),
+        Values(ColorEngine::STANDARD, ColorEngine::FAST)));
 
 } // namespace
 } // namespace id::test

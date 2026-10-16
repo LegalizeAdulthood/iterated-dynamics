@@ -76,6 +76,7 @@
 #include <cfloat>
 #include <climits>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -1222,6 +1223,45 @@ static void perform_work_list()
     }
 }
 
+static int iteration_color()
+{
+    if (g_version <= 1950)
+    {
+        // Reproduce DOS 16-bit int narrowing and wrapped abs(-32768).
+        int color = static_cast<std::uint16_t>(g_color_iter);
+        if (color >= 0x8000)
+        {
+            color -= 0x10000;
+        }
+        if (color < 0 && color != -0x8000)
+        {
+            color = -color;
+        }
+        if (g_color_iter >= g_colors)
+        {
+            if (g_colors < 16)
+            {
+                color &= g_and_color;
+            }
+            else
+            {
+                // DOS color - 1 wraps before taking the remainder.
+                const int previous = color == -0x8000 ? 0x7fff : color - 1;
+                color = previous % g_and_color + 1;
+            }
+        }
+        return color;
+    }
+
+    if (g_color_iter >= g_colors)
+    {
+        // Don't use color 0 unless from inside/outside.
+        return g_colors < 16 ? static_cast<int>(g_color_iter & g_and_color)
+                             : static_cast<int>((g_color_iter - 1) % g_and_color + 1);
+    }
+    return static_cast<int>(std::abs(g_color_iter));
+}
+
 // fast per pixel 1/2/b/g, called with row & col set
 // can also handle invert, any rqlim, potflag, zmag, epsilon cross,
 // and all the current outside options
@@ -1267,19 +1307,7 @@ int calc_mandelbrot_type()
         {
             g_color_iter = log_table_calc(g_color_iter);
         }
-        g_color = std::abs(g_color_iter);
-        if (g_color_iter >= g_colors)
-        {
-            // don't use color 0 unless from inside/outside
-            if (g_colors < 16)
-            {
-                g_color = static_cast<int>(g_color_iter & g_and_color);
-            }
-            else
-            {
-                g_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
-            }
-        }
+        g_color = iteration_color();
         if (g_debug_flag != DebugFlags::FORCE_BOUNDARY_TRACE_ERROR)
         {
             if (g_color == 0 && g_std_calc_mode == CalcMode::BOUNDARY_TRACE)
@@ -1963,19 +1991,7 @@ plot_inside: // we're "inside"
 
 plot_pixel:
 
-    g_color = std::abs(g_color_iter);
-    if (g_color_iter >= g_colors)
-    {
-        // don't use color 0 unless from inside/outside
-        if (g_colors < 16)
-        {
-            g_color = static_cast<int>(g_color_iter & g_and_color);
-        }
-        else
-        {
-            g_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
-        }
-    }
+    g_color = iteration_color();
     if (g_debug_flag != DebugFlags::FORCE_BOUNDARY_TRACE_ERROR)
     {
         if (g_color <= 0 && g_std_calc_mode == CalcMode::BOUNDARY_TRACE)
