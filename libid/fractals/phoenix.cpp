@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
 //
 #include "fractals/phoenix.h"
 
@@ -11,9 +12,11 @@
 #include "fractals/newton.h"
 #include "math/cmplx.h"
 #include "math/fpu087.h"
+#include "misc/version.h"
 
 using namespace id::engine;
 using namespace id::math;
+using namespace id::misc;
 
 namespace id::fractals
 {
@@ -149,7 +152,10 @@ int mand_phoenix_per_pixel()
     else
     {
         g_init.x = dx_pixel();
-        g_init.y = dy_pixel();
+        if (g_version > 2003)
+        {
+            g_init.y = dy_pixel();
+        }
     }
 
     if (g_use_init_orbit == InitOrbitMode::VALUE)

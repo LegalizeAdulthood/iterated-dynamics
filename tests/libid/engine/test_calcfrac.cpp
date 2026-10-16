@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
 //
 #include <engine/calcfrac.h>
 
@@ -19,6 +20,7 @@
 #include <engine/VideoInfo.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
+#include <fractals/peterson_variations.h>
 #include <io/gif_extensions.h>
 #include <io/loadfile.h>
 #include <math/fixed_pt.h>
@@ -1104,6 +1106,130 @@ INSTANTIATE_TEST_SUITE_P(ResetVersions, TestFmodColor,
         Values(FmodMagnitudeCase{0.125, false, 32}, FmodMagnitudeCase{0.125, true, 80},
             FmodMagnitudeCase{0.0, false, 80}, FmodMagnitudeCase{1.0, false, 0}),
         Values(FmodColoring::INSIDE, FmodColoring::OUTSIDE, FmodColoring::BOTH),
+        Values(CompatibilityVersionSource::PAR_RESET, CompatibilityVersionSource::GIF_METADATA)));
+
+struct PixelInitializerCase
+{
+    FractalType type;
+    bool adds_parameter;
+    bool caches_squares;
+    int iterations;
+};
+
+void PrintTo(const PixelInitializerCase &value, std::ostream *str)
+{
+    *str << get_fractal_specific(value.type)->name;
+}
+
+const PixelInitializerCase PIXEL_INITIALIZERS[]{
+    {FractalType::MANDEL, true, true, 1},
+    {FractalType::MANDEL_Z_POWER, true, false, 1},
+    {FractalType::MARKS_MANDEL, true, true, 1},
+    {FractalType::COMPLEX_MARKS_MAND, true, true, 1},
+    {FractalType::HALLEY, false, false, 0},
+    {FractalType::MAND_PHOENIX, true, true, 1},
+};
+
+class TestPixelInitializer
+    : public TestOutsideColor,
+      public WithParamInterface<std::tuple<IterationColorVersion, PixelInitializerCase, CompatibilityVersionSource>>
+{
+protected:
+    void configure(FractalType type);
+    void expect_seed(const PixelInitializerCase &initializer, DComplex pixel);
+
+private:
+    ValueSaver<DComplex> m_saved_init{g_init};
+    ValueSaver<DComplex> m_saved_old{g_old_z};
+    ValueSaver<DComplex> m_saved_new{g_new_z};
+    ValueSaver<DComplex> m_saved_tmp{g_tmp_z};
+    ValueSaver<double> m_saved_sqr_x{g_temp_sqr_x};
+    ValueSaver<double> m_saved_sqr_y{g_temp_sqr_y};
+    ValueSaver<int> m_saved_exponent{g_c_exponent, 2};
+    ValueSaver<DComplex> m_saved_power{g_power_z, DComplex{2.0, 0.0}};
+    ValueSaver<DComplex> m_saved_coefficient{g_marks_coefficient};
+};
+
+void TestPixelInitializer::configure(const FractalType type)
+{
+    g_fractal_type = type;
+    g_cur_fractal_specific = &m_fractal;
+    m_fractal.per_pixel = get_fractal_specific(type)->per_pixel;
+    g_image_region = ImageRegion{{2.0, 2.0}, {3.0, 3.0}, {2.0, 2.0}};
+    fill_pixel_grid();
+    g_inversion = Inversion{};
+    g_param_z1 = {0.125, -0.25};
+    g_use_init_orbit = InitOrbitMode::NORMAL;
+    g_row = 0;
+    g_col = 0;
+    // The orbit viewer supplies an exact coordinate before per_pixel().
+    g_init = {2.125, 2.75};
+}
+
+void TestPixelInitializer::expect_seed(const PixelInitializerCase &initializer, const DComplex pixel)
+{
+    const DComplex seed = initializer.adds_parameter ? pixel + g_param_z1 : pixel;
+    EXPECT_DOUBLE_EQ(pixel.x, g_init.x);
+    EXPECT_DOUBLE_EQ(pixel.y, g_init.y);
+    EXPECT_DOUBLE_EQ(seed.x, g_old_z.x);
+    EXPECT_DOUBLE_EQ(seed.y, g_old_z.y);
+    if (initializer.caches_squares)
+    {
+        EXPECT_DOUBLE_EQ(seed.x * seed.x, g_temp_sqr_x);
+        EXPECT_DOUBLE_EQ(seed.y * seed.y, g_temp_sqr_y);
+    }
+}
+
+TEST_P(TestPixelInitializer, preservesCallerYBeforeReset2004)
+{
+    const auto &[version, initializer, source] = GetParam();
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, load_compatibility_version(version.version, source));
+    configure(initializer.type);
+
+    EXPECT_EQ(initializer.iterations, per_pixel());
+
+    expect_seed(initializer, {2.0, version.legacy ? 2.75 : 3.0});
+}
+
+TEST_P(TestPixelInitializer, standardRenderingPreloadsGridYForEveryReset)
+{
+    const auto &[version, initializer, source] = GetParam();
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, load_compatibility_version(version.version, source));
+    configure(initializer.type);
+    g_max_iterations = 100;
+    g_outside_method = ColorMethod::IMAG;
+    m_fractal.orbit_calc = []
+    {
+        g_new_z = g_old_z;
+        return 1;
+    };
+    const int expected_color = initializer.adds_parameter ? 10 : 11;
+
+    EXPECT_EQ(expected_color, calculate(ColorEngine::STANDARD));
+
+    expect_seed(initializer, {2.0, 3.0});
+    EXPECT_EQ(expected_color, g_color);
+    EXPECT_EQ(1, g_real_color_iter);
+}
+
+TEST_P(TestPixelInitializer, inversionSamplesBothCoordinatesForEveryReset)
+{
+    const auto &[version, initializer, source] = GetParam();
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, load_compatibility_version(version.version, source));
+    configure(initializer.type);
+    g_inversion.invert = 1;
+    g_inversion.radius = 26.0;
+
+    EXPECT_EQ(initializer.iterations, per_pixel());
+
+    expect_seed(initializer, {4.0, 6.0});
+}
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestPixelInitializer,
+    Combine(Values(IterationColorVersion{parse_legacy_version(2003), true},
+                IterationColorVersion{parse_legacy_version(2004), false},
+                IterationColorVersion{current_id_version(), false}),
+        ValuesIn(PIXEL_INITIALIZERS),
         Values(CompatibilityVersionSource::PAR_RESET, CompatibilityVersionSource::GIF_METADATA)));
 
 } // namespace

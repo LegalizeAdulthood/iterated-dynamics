@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
 //
 #include "fractals/halley.h"
 
@@ -9,12 +10,14 @@
 #include "fractals/fractype.h"
 #include "fractals/newton.h"
 #include "math/fpu087.h"
+#include "misc/version.h"
 
 #include <algorithm>
 #include <cmath>
 
 using namespace id::engine;
 using namespace id::math;
+using namespace id::misc;
 
 namespace id::fractals
 {
@@ -110,7 +113,10 @@ int halley_per_pixel()
     else
     {
         g_init.x = dx_pixel();
-        g_init.y = dy_pixel();
+        if (g_version > 2003)
+        {
+            g_init.y = dy_pixel();
+        }
     }
 
     g_old_z = g_init;

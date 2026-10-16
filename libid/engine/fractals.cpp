@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
 //
 /*
 Actually calculate the fractal images (well, SOMEBODY had to do it!).
@@ -51,12 +52,14 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "fractals/newton.h"
 #include "math/arg.h"
 #include "math/biginit.h"
+#include "misc/version.h"
 
 #include <cfloat>
 #include <cmath>
 
 using namespace id::fractals;
 using namespace id::math;
+using namespace id::misc;
 
 namespace id::engine
 {
@@ -155,7 +158,10 @@ int mandel_per_pixel()
     else
     {
         g_init.x = dx_pixel();
-        g_init.y = dy_pixel();
+        if (g_version > 2003)
+        {
+            g_init.y = dy_pixel();
+        }
     }
     switch (g_fractal_type)
     {
@@ -282,7 +288,10 @@ int other_mandel_per_pixel()
     else
     {
         g_init.x = dx_pixel();
-        g_init.y = dy_pixel();
+        if (g_version > 2003)
+        {
+            g_init.y = dy_pixel();
+        }
     }
 
     if (g_use_init_orbit == InitOrbitMode::VALUE)

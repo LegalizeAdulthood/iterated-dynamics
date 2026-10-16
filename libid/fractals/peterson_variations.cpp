@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
 //
 #include "fractals/peterson_variations.h"
 
@@ -11,11 +12,13 @@
 #include "fractals/newton.h"
 #include "math/arg.h"
 #include "math/fpu087.h"
+#include "misc/version.h"
 
 #include <algorithm>
 
 using namespace id::engine;
 using namespace id::math;
+using namespace id::misc;
 
 namespace id::fractals
 {
@@ -117,7 +120,10 @@ int marks_mandel_per_pixel()
     else
     {
         g_init.x = dx_pixel();
-        g_init.y = dy_pixel();
+        if (g_version > 2003)
+        {
+            g_init.y = dy_pixel();
+        }
     }
 
     if (g_use_init_orbit == InitOrbitMode::VALUE)
@@ -175,7 +181,10 @@ int marks_cplx_mand_per_pixel()
     else
     {
         g_init.x = dx_pixel();
-        g_init.y = dy_pixel();
+        if (g_version > 2003)
+        {
+            g_init.y = dy_pixel();
+        }
     }
     g_old_z.x = g_init.x + g_param_z1.x; // initial perturbation of parameters set
     g_old_z.y = g_init.y + g_param_z1.y;
