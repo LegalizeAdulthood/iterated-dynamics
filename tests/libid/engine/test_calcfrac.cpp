@@ -17,6 +17,7 @@
 #include <engine/Potential.h>
 #include <engine/show_dot.h>
 #include <engine/sound.h>
+#include <engine/UserData.h>
 #include <engine/VideoInfo.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
@@ -1230,6 +1231,112 @@ INSTANTIATE_TEST_SUITE_P(ResetVersions, TestPixelInitializer,
                 IterationColorVersion{parse_legacy_version(2004), false},
                 IterationColorVersion{current_id_version(), false}),
         ValuesIn(PIXEL_INITIALIZERS),
+        Values(CompatibilityVersionSource::PAR_RESET, CompatibilityVersionSource::GIF_METADATA)));
+
+struct PeriodicityColoring
+{
+    ColorMethod inside;
+    ColorMethod outside;
+};
+
+void PrintTo(const PeriodicityColoring &value, std::ostream *str)
+{
+    *str << "inside: " << +value.inside << ", outside: " << +value.outside;
+}
+
+class TestInsideAtanPeriodicity
+    : public TestOutsideColor,
+      public WithParamInterface<std::tuple<IterationColorVersion, int, PeriodicityColoring, CompatibilityVersionSource>>
+{
+protected:
+    void initialize(int periodicity, const PeriodicityColoring &coloring);
+
+private:
+    ValueSaver<UserData> m_saved_user{g_user};
+    ValueSaver<DComplex> m_saved_init{g_init};
+    ValueSaver<DComplex> m_saved_old{g_old_z};
+    ValueSaver<DComplex> m_saved_new{g_new_z};
+    ValueSaver<long> m_saved_old_color{g_old_color_iter};
+    ValueSaver<long> m_saved_first_saved_and{g_first_saved_and};
+    ValueSaver<int> m_saved_saved_incr{g_periodicity_next_saved_incr};
+    ValueSaver<bool> m_saved_reset_periodicity{g_reset_periodicity};
+    ValueSaver<double> m_saved_close_enough{g_close_enough};
+    ValueSaver<int> m_saved_atan_colors{g_atan_colors};
+};
+
+void TestInsideAtanPeriodicity::initialize(const int periodicity, const PeriodicityColoring &coloring)
+{
+    g_fractal_type = FractalType::MANDEL;
+    g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
+    g_user = UserData{-1, 0, periodicity, CalcMode::ONE_PASS, 4, false};
+    g_inside_method = coloring.inside;
+    g_outside_method = coloring.outside;
+    g_inside_color = 5;
+    g_image_region = ImageRegion{{0.0, 0.0}, {1.0, 1.0}, {0.0, 0.0}};
+    g_potential = Potential{};
+    EXPECT_CALL(m_driver, check_memory()).Times(1);
+
+    calc_frac_init();
+
+    g_cur_fractal_specific = &m_fractal;
+}
+
+TEST_P(TestInsideAtanPeriodicity, appliesVersionGateWithoutChangingRequestedPeriodicity)
+{
+    const auto &[version, periodicity, coloring, source] = GetParam();
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, load_compatibility_version(version.version, source));
+    const int expected = coloring.inside == ColorMethod::ATANI && !version.legacy ? 0 : periodicity;
+
+    initialize(periodicity, coloring);
+
+    EXPECT_EQ(expected, g_periodicity_check);
+    EXPECT_EQ(periodicity, g_user.periodicity_value);
+}
+
+TEST_P(TestInsideAtanPeriodicity, colorsCyclingOrbitAtCompatibleStoppingPoint)
+{
+    const auto &[version, periodicity, coloring, source] = GetParam();
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, load_compatibility_version(version.version, source));
+    initialize(periodicity, coloring);
+    g_max_iterations = 10;
+    g_use_init_orbit = InitOrbitMode::VALUE;
+    g_init_orbit = {1.0, 0.0};
+    g_old_color_iter = 0;
+    g_first_saved_and = 1;
+    g_periodicity_next_saved_incr = 4;
+    g_reset_periodicity = false;
+    g_close_enough = 0.0001;
+    g_atan_colors = 256;
+    m_fractal.orbit_calc = []
+    {
+        g_new_z = {g_old_z.y, g_old_z.x};
+        g_old_z = g_new_z;
+        return 0;
+    };
+    // Cycle detection stops at (1, 0); full iteration ends at (0, 1).
+    const bool detects_cycle = periodicity != 0 && (version.legacy || coloring.inside != ColorMethod::ATANI);
+    const int expected_color = detects_cycle && periodicity < 0 ? 7
+        : coloring.inside == ColorMethod::COLOR                 ? 5
+        : coloring.inside == ColorMethod::ATANI                 ? detects_cycle ? 0 : 128
+                                                                : 10;
+
+    EXPECT_EQ(expected_color, calculate(ColorEngine::STANDARD));
+
+    EXPECT_EQ(expected_color, g_color);
+    EXPECT_DOUBLE_EQ(detects_cycle ? 1.0 : 0.0, g_new_z.x);
+    EXPECT_DOUBLE_EQ(detects_cycle ? 0.0 : 1.0, g_new_z.y);
+    EXPECT_EQ(periodicity, g_user.periodicity_value);
+}
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestInsideAtanPeriodicity,
+    Combine(Values(IterationColorVersion{parse_legacy_version(2003), true},
+                IterationColorVersion{parse_legacy_version(2004), false},
+                IterationColorVersion{current_id_version(), false}),
+        Values(0, 1, -1, 24, -24),
+        Values(PeriodicityColoring{ColorMethod::ATANI, ColorMethod::ITER},
+            PeriodicityColoring{ColorMethod::COLOR, ColorMethod::ITER},
+            PeriodicityColoring{ColorMethod::ITER, ColorMethod::ITER},
+            PeriodicityColoring{ColorMethod::ITER, ColorMethod::ATAN}),
         Values(CompatibilityVersionSource::PAR_RESET, CompatibilityVersionSource::GIF_METADATA)));
 
 } // namespace

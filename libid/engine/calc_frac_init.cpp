@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
 //
 #include "engine/calc_frac_init.h"
 
@@ -21,6 +22,7 @@
 #include "math/sign.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
+#include "misc/version.h"
 #include "ui/stop_msg.h"
 #include "ui/zoom.h"
 
@@ -205,6 +207,10 @@ init_restart:
     g_periodicity_check  = g_user.periodicity_value;
     g_distance_estimator = g_user.distance_estimator_value;
     g_biomorph           = g_user.biomorph_value;
+    if (g_inside_method == ColorMethod::ATANI && g_version > 2003)
+    {
+        g_periodicity_check = 0;
+    }
 
     g_potential.flag = false;
     if (g_potential.params[0] != 0.0                                   //
