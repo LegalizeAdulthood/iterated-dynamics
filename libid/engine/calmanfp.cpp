@@ -15,6 +15,7 @@
 #include "fractals/fractype.h"
 #include "io/loadfile.h"
 #include "misc/id.h"
+#include "misc/version.h"
 
 #include <algorithm>
 #include <cmath>
@@ -216,7 +217,7 @@ over_bailout_87:
         // check_color
         if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_method != ColorMethod::FMOD)
         {
-            g_color_iter = 1;
+            g_color_iter = misc::g_version < 1961 ? 0 : 1;
         }
     }
 

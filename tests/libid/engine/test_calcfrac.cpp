@@ -737,6 +737,38 @@ void PrintTo(const OutsideVersionSource value, std::ostream *str)
     *str << (value == OutsideVersionSource::PAR_RESET ? "PAR reset" : "GIF metadata");
 }
 
+CmdArgFlags load_outside_version(const Version &version, const OutsideVersionSource source)
+{
+    if (source == OutsideVersionSource::PAR_RESET)
+    {
+        return cmd_arg("reset=" + to_par_string(version), CmdFile::AT_AFTER_STARTUP);
+    }
+    FractalInfo info{};
+    info.info_version = FRACTAL_INFO_VERSION;
+    if (version.legacy)
+    {
+        info.release = static_cast<std::int16_t>(100 * version.major + version.minor);
+    }
+    else
+    {
+        info.version_major = version.major;
+        info.version_minor = version.minor;
+        info.version_patch = version.patch;
+        info.version_tweak = version.tweak;
+    }
+    g_file_version = fractal_info_version(info);
+    g_version = g_file_version;
+    return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET;
+}
+
+class TestOutsideColor : public TestIterationColor
+{
+private:
+    ValueSaver<Version> m_saved_file_version{g_file_version};
+    ValueSaver<bool> m_saved_bad_outside{g_bad_outside};
+    ValueSaver<bool> m_saved_bifurcation_functions{g_new_bifurcation_functions_loaded};
+};
+
 struct OutsideRoundingCase
 {
     ColorMethod method;
@@ -753,42 +785,16 @@ void PrintTo(const OutsideRoundingCase &value, std::ostream *str)
 }
 
 class TestOutsideRounding
-    : public TestIterationColor,
+    : public TestOutsideColor,
       public WithParamInterface<
           std::tuple<IterationColorVersion, OutsideRoundingCase, FractalType, ColorEngine, OutsideVersionSource>>
 {
-private:
-    ValueSaver<Version> m_saved_file_version{g_file_version};
-    ValueSaver<bool> m_saved_bad_outside{g_bad_outside};
-    ValueSaver<bool> m_saved_bifurcation_functions{g_new_bifurcation_functions_loaded};
 };
 
 TEST_P(TestOutsideRounding, usesDosHalfUnitAdjustmentOnlyOnLegacyFastPath)
 {
     const auto &[version, sample, type, engine, source] = GetParam();
-    if (source == OutsideVersionSource::PAR_RESET)
-    {
-        ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET,
-            cmd_arg("reset=" + to_par_string(version.version), CmdFile::AT_AFTER_STARTUP));
-    }
-    else
-    {
-        FractalInfo info{};
-        info.info_version = FRACTAL_INFO_VERSION;
-        if (version.version.legacy)
-        {
-            info.release = static_cast<std::int16_t>(100 * version.version.major + version.version.minor);
-        }
-        else
-        {
-            info.version_major = version.version.major;
-            info.version_minor = version.version.minor;
-            info.version_patch = version.version.patch;
-            info.version_tweak = version.version.tweak;
-        }
-        g_file_version = fractal_info_version(info);
-        g_version = g_file_version;
-    }
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, load_outside_version(version.version, source));
     g_fractal_type = type;
     g_cur_fractal_specific = &m_fractal;
     g_outside_method = sample.method;
@@ -856,6 +862,140 @@ INSTANTIATE_TEST_SUITE_P(ResetVersions, TestOutsideRounding,
             OutsideRoundingCase{ColorMethod::SUM, {0.5, 0.5}, {-0.25, -0.5}, 2, 1, 2}),
         Values(FractalType::MANDEL, FractalType::JULIA), Values(ColorEngine::STANDARD, ColorEngine::FAST),
         Values(OutsideVersionSource::PAR_RESET, OutsideVersionSource::GIF_METADATA)));
+
+struct OutsideClampCase
+{
+    ColorMethod method;
+    DComplex julia_seed;
+    long max_iterations;
+    long legacy_standard;
+    long legacy_fast;
+    long modern;
+    int outside_color{};
+};
+
+void PrintTo(const OutsideClampCase &value, std::ostream *str)
+{
+    *str << +value.method << ", seed: " << value.julia_seed.x << ", " << value.julia_seed.y
+         << ", maxit: " << value.max_iterations << ", outside color: " << value.outside_color;
+}
+
+class TestOutsideClamping
+    : public TestOutsideColor,
+      public WithParamInterface<
+          std::tuple<IterationColorVersion, OutsideClampCase, FractalType, ColorEngine, OutsideVersionSource>>
+{
+private:
+    ValueSaver<int> m_saved_atan_colors{g_atan_colors, 180};
+};
+
+TEST_P(TestOutsideClamping, clampsSpecialColorsAtCompatibleRelease)
+{
+    const auto &[version, sample, type, engine, source] = GetParam();
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, load_outside_version(version.version, source));
+    g_fractal_type = type;
+    g_cur_fractal_specific = &m_fractal;
+    g_outside_method = sample.method;
+    g_outside_color = sample.outside_color;
+    g_inside_method = ColorMethod::COLOR;
+    g_inside_color = 0;
+    g_max_iterations = sample.max_iterations;
+    g_magnitude_limit = 0.01;
+    g_new_bifurcation_functions_loaded = true;
+    backwards_legacy_v20();
+    ASSERT_EQ(version.version, g_version);
+
+    const DComplex c{sample.julia_seed.y * sample.julia_seed.y - sample.julia_seed.x * sample.julia_seed.x,
+        -2.0 * sample.julia_seed.x * sample.julia_seed.y};
+    const DComplex pixel = type == FractalType::JULIA ? sample.julia_seed : c;
+    g_param_z1 = type == FractalType::JULIA ? c : DComplex{-c.x, -c.y};
+    g_image_region = ImageRegion{
+        DComplex{pixel.x, pixel.y - 1.0}, DComplex{pixel.x + 1.0, pixel.y}, DComplex{pixel.x, pixel.y - 1.0}};
+    fill_pixel_grid();
+    m_fractal.orbit_calc = []
+    {
+        const DComplex seed = std::get<1>(GetParam()).julia_seed;
+        g_new_z = DComplex{seed.y * seed.y - seed.x * seed.x, -2.0 * seed.x * seed.y};
+        return g_color_iter == 1 ? 1 : 0;
+    };
+    const long legacy = engine == ColorEngine::FAST ? sample.legacy_fast : sample.legacy_standard;
+    const long expected = version.legacy ? legacy : sample.modern;
+
+    EXPECT_EQ(expected, calculate(engine));
+
+    EXPECT_EQ(expected, g_color);
+    EXPECT_EQ(expected, g_color_iter);
+    EXPECT_EQ(1, g_real_color_iter);
+}
+
+// Use the float-only C reference's signed bounds check. DOS's wordwise
+// comparison differs for large colors, such as the seed (0, 256).
+// Separate old fast colors account for DOS's half-unit adjustment.
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestOutsideClamping,
+    Combine(Values(IterationColorVersion{parse_legacy_version(1960), true},
+                IterationColorVersion{parse_legacy_version(1961), false},
+                IterationColorVersion{current_id_version(), false}),
+        Values(OutsideClampCase{ColorMethod::REAL, {3.0, 1.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::REAL, {3.25, 1.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::REAL, {0.5, 1.5}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::REAL, {4.0, 3.0}, 8, 1, 1, 1},
+            OutsideClampCase{ColorMethod::REAL, {1.0, 1.0}, 8, 8, 8, 8},
+            OutsideClampCase{ColorMethod::REAL, {0.0, 256.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::IMAG, {2.0, 2.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::IMAG, {1.5, 3.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::IMAG, {-2.0, 2.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::IMAG, {1.0, 3.5}, 8, 1, 1, 1},
+            OutsideClampCase{ColorMethod::IMAG, {0.0, 2.0}, 8, 8, 8, 8},
+            OutsideClampCase{ColorMethod::MULT, {2.0, 2.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::MULT, {0.5, 2.5}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::MULT, {-0.0625, 2.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::MULT, {-0.5, 2.0}, 8, 1, 1, 1},
+            OutsideClampCase{ColorMethod::MULT, {0.0, 3.0}, 8, 1, 1, 1},
+            OutsideClampCase{ColorMethod::SUM, {1.0, 0.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::SUM, {2.0, 0.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::SUM, {0.0, 3.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::SUM, {-0.5, 0.5}, 8, 1, 1, 1},
+            OutsideClampCase{ColorMethod::SUM, {0.0, 2.0}, 4, 0, 4, 1},
+            OutsideClampCase{ColorMethod::SUM, {0.5, 0.5}, 8, 1, 0, 1},
+            OutsideClampCase{ColorMethod::ATAN, {0.0, 2.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::ATAN, {2.0, 2.0}, 8, 0, 0, 1},
+            OutsideClampCase{ColorMethod::ITER, {0.0, 2.0}, 8, 1, 1, 1},
+            OutsideClampCase{ColorMethod::COLOR, {0.0, 2.0}, 8, 0, 0, 0, 0},
+            OutsideClampCase{ColorMethod::COLOR, {0.0, 2.0}, 8, 16, 16, 16, 16}),
+        Values(FractalType::MANDEL, FractalType::JULIA), Values(ColorEngine::STANDARD, ColorEngine::FAST),
+        Values(OutsideVersionSource::PAR_RESET, OutsideVersionSource::GIF_METADATA)));
+
+class TestOutsideClampBoundaryTrace : public TestOutsideColor,
+                                      public WithParamInterface<std::tuple<IterationColorVersion, ColorEngine>>
+{
+};
+
+TEST_P(TestOutsideClampBoundaryTrace, repairsLegacyZeroOnlyAfterClamping)
+{
+    const auto &[version, engine] = GetParam();
+    g_version = version.version;
+    g_outside_method = ColorMethod::ATAN;
+    g_max_iterations = 8;
+    g_std_calc_mode = CalcMode::BOUNDARY_TRACE;
+    g_image_region = ImageRegion{{2.0, -1.0}, {3.0, 0.0}, {2.0, -1.0}};
+    fill_pixel_grid();
+    m_fractal.orbit_calc = []
+    {
+        g_new_z = DComplex{6.0, 0.0};
+        return 1;
+    };
+
+    EXPECT_EQ(1, calculate(engine));
+
+    EXPECT_EQ(version.legacy ? 0 : 1, g_color_iter);
+    EXPECT_EQ(1, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestOutsideClampBoundaryTrace,
+    Combine(Values(IterationColorVersion{parse_legacy_version(1960), true},
+                IterationColorVersion{parse_legacy_version(1961), false},
+                IterationColorVersion{current_id_version(), false}),
+        Values(ColorEngine::STANDARD, ColorEngine::FAST)));
 
 } // namespace
 } // namespace id::test
