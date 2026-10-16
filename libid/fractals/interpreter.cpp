@@ -143,7 +143,10 @@ static bool check_denom(const double denom)
 {
     if (std::abs(denom) <= DBL_MIN)
     {
-        g_overflow = true;
+        if (g_version > 1920)
+        {
+            g_overflow = true;
+        }
         return true;
     }
     return false;
@@ -673,7 +676,13 @@ void d_stk_neg()
 void d_stk_div()
 {
     debug_trace_operation("DIV", g_arg1, g_arg2);
+    const bool saved_overflow = g_overflow;
     fpu_cmplx_div(g_arg2->d, g_arg1->d, g_arg2->d);
+    // Preserve the optimized parser's old overflow policy.
+    if (g_version <= 1920)
+    {
+        g_overflow = saved_overflow;
+    }
     g_arg1--;
     g_arg2--;
     debug_trace_stack_state();
