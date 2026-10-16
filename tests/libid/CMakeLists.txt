@@ -68,6 +68,7 @@ add_executable(test-id
     engine/test_calcfrac.cpp
     engine/test_color_utils.cpp
     engine/test_cmdfiles.cpp
+    engine/test_fractal_type.cpp
     engine/test_get_prec_big_float.cpp
     engine/test_log_map.cpp
     engine/test_lowerize_parameter.cpp
@@ -118,6 +119,7 @@ add_executable(test-id
     ui/test_double_to_string.cpp
     ui/test_file_item.cpp
     ui/test_full_screen_prompt.cpp
+    ui/test_get_fract_type.cpp
     ui/test_history.cpp
     ui/test_input_field.cpp
     ui/test_main_menu_switch.cpp

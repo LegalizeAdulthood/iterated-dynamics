@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
 //
 #include "ui/get_fract_type.h"
 
 #include "engine/bailout_formula.h"
+#include "engine/fractal_type.h"
 #include "engine/Inversion.h"
 #include "engine/param_not_used.h"
 #include "engine/Potential.h"
@@ -113,10 +115,7 @@ int get_fract_type()
             break;
         }
     }
-    if (!accepted)
-    {
-        set_fractal_type(old_fract_type);
-    }
+    complete_fractal_type_selection(old_fract_type, accepted);
     return accepted ? 0 : -1;
 }
 

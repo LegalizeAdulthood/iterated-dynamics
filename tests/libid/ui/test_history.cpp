@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
 //
 #include <ui/history.h>
 
 #include "MockDriver.h"
 #include "test_data.h"
 
+#include <engine/fractal_type.h>
 #include <engine/UserData.h>
 #include <fractals/fractalp.h>
 #include <io/CurrentPathSaver.h>
@@ -77,8 +79,10 @@ TEST_F(TestHistory, restoresVersionAndFileVersion)
     g_version = parse_legacy_version(1730);
     g_file_version = parse_legacy_version(2004);
     save_history_info();
-    g_version = current_id_version();
-    g_file_version = current_id_version();
+    set_fractal_type(FractalType::POPCORN);
+    complete_fractal_type_selection(FractalType::MANDEL, true);
+    ASSERT_EQ(current_id_version(), g_version);
+    ASSERT_EQ(current_id_version(), g_file_version);
 
     EXPECT_CALL(m_driver, write_palette());
     EXPECT_CALL(m_driver, delay(255));
@@ -87,6 +91,7 @@ TEST_F(TestHistory, restoresVersionAndFileVersion)
 
     EXPECT_EQ(parse_legacy_version(1730), g_version);
     EXPECT_EQ(parse_legacy_version(2004), g_file_version);
+    EXPECT_EQ(FractalType::MANDEL, g_fractal_type);
 }
 
 TEST_F(TestHistory, dumpsVersionAndFileVersion)

@@ -33,6 +33,7 @@ add_library(libid
     include/engine/diffusion_scan.h engine/diffusion_scan.cpp
     include/engine/engine_timer.h engine/engine_timer.cpp
     include/engine/find_extra_param.h engine/find_extra_param.cpp
+    include/engine/fractal_type.h engine/fractal_type.cpp
     include/engine/fractalb.h engine/fractalb.cpp
     include/engine/fractals.h engine/fractals.cpp
     include/engine/get_julia_attractor.h engine/get_julia_attractor.cpp
