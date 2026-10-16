@@ -6,6 +6,7 @@
 #include "test_migrate_gif.h"
 
 #include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>
 #include <engine/Inversion.h>
 #include <engine/Potential.h>
@@ -17,6 +18,7 @@
 #include <fractals/fractype.h>
 #include <io/gif_extensions.h>
 #include <misc/ValueSaver.h>
+#include <misc/version.h>
 #include <ui/big_while_loop.h>
 #include <ui/get_video_mode.h>
 #include <ui/history.h>
@@ -28,6 +30,7 @@
 #include <array>
 #include <filesystem>
 #include <iostream>
+#include <tuple>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -87,6 +90,112 @@ static std::array<Byte, 13> make_gif_header(const int width, const int height)
     header[9] = static_cast<Byte>(height >> 8);
     return header;
 }
+
+class TestBackwardsLegacyV19 : public Test
+{
+protected:
+    ValueSaver<Version> m_file_version{g_file_version, parse_legacy_version(1825)};
+    ValueSaver<FractalType> m_fractal_type{g_fractal_type, FractalType::MANDEL_FN};
+    ValueSaver<FractalSpecific *> m_fractal_specific{
+        g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL_FN)};
+    ValueSaver<ColorMethod> m_inside_method{g_inside_method};
+    ValueSaver<bool> m_magnitude_calc{g_magnitude_calc};
+    ValueSaver<bool> m_old_periodicity{g_use_old_periodicity};
+    ValueSaver<bool> m_old_distance_estimator{g_use_old_distance_estimator};
+    ValueSaver<long> m_distance_estimator{g_distance_estimator, 0};
+};
+
+struct BofCompatibilityCase
+{
+    Version version;
+    FractalType type;
+    bool magnitude_calc;
+    bool old_periodicity;
+};
+
+void PrintTo(const BofCompatibilityCase &value, std::ostream *str)
+{
+    *str << to_par_string(value.version) << ", " << value.type << ", " << value.magnitude_calc << ", "
+         << value.old_periodicity;
+}
+
+class TestBackwardsLegacyV19Bof : public TestBackwardsLegacyV19,
+                                  public WithParamInterface<std::tuple<BofCompatibilityCase, ColorMethod>>
+{
+};
+
+TEST_P(TestBackwardsLegacyV19Bof, bofCompatibilityByVersionAndEngine)
+{
+    const auto &[test_case, inside] = GetParam();
+    g_file_version = test_case.version;
+    g_fractal_type = test_case.type;
+    g_cur_fractal_specific = get_fractal_specific(test_case.type);
+    g_inside_method = inside;
+    g_magnitude_calc = !test_case.magnitude_calc;
+    g_use_old_periodicity = !test_case.old_periodicity;
+
+    backwards_legacy_v19();
+
+    EXPECT_EQ(test_case.magnitude_calc, g_magnitude_calc);
+    EXPECT_EQ(test_case.old_periodicity, g_use_old_periodicity);
+}
+
+INSTANTIATE_TEST_SUITE_P(InsideMethods, TestBackwardsLegacyV19Bof,
+    Combine(Values(BofCompatibilityCase{parse_legacy_version(1825), FractalType::MANDEL_FN, false, true},
+                BofCompatibilityCase{parse_legacy_version(1825), FractalType::FORMULA, false, true},
+                BofCompatibilityCase{parse_legacy_version(1825), FractalType::MANDEL, true, true},
+                BofCompatibilityCase{parse_legacy_version(1825), FractalType::PLASMA, true, true},
+                BofCompatibilityCase{parse_legacy_version(1826), FractalType::MANDEL_FN, true, false},
+                BofCompatibilityCase{parse_legacy_version(1826), FractalType::FORMULA, true, false},
+                BofCompatibilityCase{parse_legacy_version(1826), FractalType::MANDEL, true, false},
+                BofCompatibilityCase{parse_legacy_version(1826), FractalType::PLASMA, true, false},
+                BofCompatibilityCase{current_id_version(), FractalType::MANDEL_FN, true, false},
+                BofCompatibilityCase{current_id_version(), FractalType::FORMULA, true, false},
+                BofCompatibilityCase{current_id_version(), FractalType::MANDEL, true, false},
+                BofCompatibilityCase{current_id_version(), FractalType::PLASMA, true, false}),
+        Values(ColorMethod::BOF60, ColorMethod::BOF61)));
+
+class TestBackwardsLegacyV19BofFormula : public TestBackwardsLegacyV19, public WithParamInterface<ColorMethod>
+{
+};
+
+TEST_P(TestBackwardsLegacyV19BofFormula, oldBofFormulaOverridesBailTestRestriction)
+{
+    FractalSpecific formula{*get_fractal_specific(FractalType::FORMULA)};
+    formula.flags = formula.flags | FractalFlags::BAIL_TEST;
+    g_fractal_type = FractalType::FORMULA;
+    g_cur_fractal_specific = &formula;
+    g_inside_method = GetParam();
+    g_magnitude_calc = true;
+    g_use_old_periodicity = false;
+
+    backwards_legacy_v19();
+
+    EXPECT_FALSE(g_magnitude_calc);
+    EXPECT_TRUE(g_use_old_periodicity);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    InsideMethods, TestBackwardsLegacyV19BofFormula, Values(ColorMethod::BOF60, ColorMethod::BOF61));
+
+class TestBackwardsLegacyV19OtherInside : public TestBackwardsLegacyV19, public WithParamInterface<ColorMethod>
+{
+};
+
+TEST_P(TestBackwardsLegacyV19OtherInside, otherInsideMethodsClearLegacyBofSettings)
+{
+    g_inside_method = GetParam();
+    g_magnitude_calc = false;
+    g_use_old_periodicity = true;
+
+    backwards_legacy_v19();
+
+    EXPECT_TRUE(g_magnitude_calc);
+    EXPECT_FALSE(g_use_old_periodicity);
+}
+
+INSTANTIATE_TEST_SUITE_P(InsideMethods, TestBackwardsLegacyV19OtherInside,
+    Values(ColorMethod::ZMAG, ColorMethod::EPS_CROSS, ColorMethod::ITER, ColorMethod::COLOR));
 
 TEST(TestBackwardsLegacyV20, oldMandelOutsideRealSetsBadOutside)
 {

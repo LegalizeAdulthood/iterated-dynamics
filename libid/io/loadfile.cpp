@@ -1838,12 +1838,15 @@ void backwards_legacy_v20()
 
 static bool fix_bof()
 {
-    return false;
+    return fix_period_bof() &&
+        ((g_cur_fractal_specific->calc_type == standard_fractal_type &&
+             bit_clear(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST)) ||
+            g_fractal_type == FractalType::FORMULA);
 }
 
 static bool fix_period_bof()
 {
-    return false;
+    return g_file_version < 1826 && (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61);
 }
 
 } // namespace id::io
