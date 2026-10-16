@@ -6,6 +6,7 @@
 
 #include <engine/calc_frac_init.h>
 #include <engine/cmdfiles.h>
+#include <engine/fractals.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
 #include <engine/pixel_grid.h>
@@ -24,6 +25,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <limits>
 #include <ostream>
 #include <tuple>
 
@@ -47,7 +49,7 @@ int escaping_dem_orbit()
     return g_magnitude >= g_magnitude_limit;
 }
 
-class TestDistanceEstimator : public Test
+class TestStandardFractal : public Test
 {
 protected:
     void SetUp() override;
@@ -76,7 +78,7 @@ private:
     ValueSaver<CalcStatus> m_saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
     ValueSaver<SymmetryType> m_saved_symmetry{g_force_symmetry, SymmetryType::NOT_FORCED};
     ValueSaver<long> m_saved_max_iterations{g_max_iterations, 3};
-    ValueSaver<long> m_saved_distance_estimator{g_distance_estimator, 1};
+    ValueSaver<long> m_saved_distance_estimator{g_distance_estimator, 0};
     ValueSaver<int> m_saved_dem_width{g_distance_estimator_width_factor, 1};
     ValueSaver<int> m_saved_dem_x{g_distance_estimator_x_dots, 0};
     ValueSaver<int> m_saved_dem_y{g_distance_estimator_y_dots, 0};
@@ -101,7 +103,7 @@ private:
     ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
 };
 
-void TestDistanceEstimator::SetUp()
+void TestStandardFractal::SetUp()
 {
     m_fractal.calc_type = standard_fractal_type;
     m_fractal.symmetry = SymmetryType::NONE;
@@ -119,7 +121,7 @@ void TestDistanceEstimator::SetUp()
     fill_pixel_grid();
 }
 
-void TestDistanceEstimator::TearDown()
+void TestStandardFractal::TearDown()
 {
     free_pixel_grid();
 }
@@ -147,7 +149,7 @@ void PrintTo(const DemColorCase &value, std::ostream *str)
     *str << "mode: " << value.mode << ", colors: " << value.old_color << ", " << value.new_color;
 }
 
-class TestDistanceEstimatorCompatibility : public TestDistanceEstimator,
+class TestDistanceEstimatorCompatibility : public TestStandardFractal,
                                            public WithParamInterface<std::tuple<DemVersionCase, DemColorCase, int>>
 {
 };
@@ -194,7 +196,7 @@ void PrintTo(const DemIterationCase &value, std::ostream *str)
     *str << to_par_string(value.version) << ", iterations: " << value.iterations;
 }
 
-class TestDistanceEstimatorDerivativeBound : public TestDistanceEstimator,
+class TestDistanceEstimatorDerivativeBound : public TestStandardFractal,
                                              public WithParamInterface<std::tuple<DemIterationCase, DComplex, long>>
 {
 };
@@ -224,7 +226,7 @@ INSTANTIATE_TEST_SUITE_P(ResetVersions, TestDistanceEstimatorDerivativeBound,
         Values(DComplex{1.0e8, 0.0}, DComplex{0.0, 1.0e8}, DComplex{1.0e308, 0.0}, DComplex{0.0, 1.0e308}),
         Values(1L, 4L)));
 
-class TestDistanceEstimatorOverflow : public TestDistanceEstimator,
+class TestDistanceEstimatorOverflow : public TestStandardFractal,
                                       public WithParamInterface<std::tuple<DemIterationCase, long, int>>
 {
 };
@@ -255,6 +257,158 @@ INSTANTIATE_TEST_SUITE_P(ResetVersions, TestDistanceEstimatorOverflow,
     Combine(Values(DemIterationCase{parse_legacy_version(1826), 3}, DemIterationCase{parse_legacy_version(1827), 1},
                 DemIterationCase{current_id_version(), 1}),
         Values(-7L, 1L, 4L), Values(2, 256)));
+
+constexpr double STAR_TRAIL_LIMIT{std::numeric_limits<float>::max()};
+
+class TestStarTrail : public TestStandardFractal
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<double> m_saved_sqr_x{g_temp_sqr_x};
+    ValueSaver<double> m_saved_sqr_y{g_temp_sqr_y};
+    ValueSaver<double> m_saved_magnitude{g_magnitude};
+};
+
+void TestStarTrail::SetUp()
+{
+    TestStandardFractal::SetUp();
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    g_max_iterations = 32;
+    m_fractal.per_pixel = []
+    {
+        g_old_z = DComplex{7.0, 11.0};
+        g_temp_sqr_x = 11.0;
+        g_temp_sqr_y = 13.0;
+        g_magnitude = 17.0;
+        return 0;
+    };
+}
+
+struct StarTrailVersionCase
+{
+    Version version;
+    bool updated;
+};
+
+void PrintTo(const StarTrailVersionCase &value, std::ostream *str)
+{
+    *str << to_par_string(value.version) << ", updated: " << value.updated;
+}
+
+class TestStarTrailIterationLimit : public TestStarTrail,
+                                    public WithParamInterface<std::tuple<StarTrailVersionCase, long>>
+{
+};
+
+TEST_P(TestStarTrailIterationLimit, usesCompatibleLimitAndRestoresUserLimit)
+{
+    const auto &[version, max_iterations] = GetParam();
+    g_version = version.version;
+    g_max_iterations = max_iterations;
+    m_fractal.orbit_calc = []
+    {
+        g_new_z = DComplex{1.0, 0.0};
+        return 1; // Star trails continue after the ordinary orbit bailout.
+    };
+    EXPECT_CALL(m_driver, write_pixel(_, _, 1)).Times(4);
+
+    ASSERT_EQ(0, calc_fract());
+
+    EXPECT_EQ(version.updated ? 16 : max_iterations, g_real_color_iter);
+    EXPECT_EQ(max_iterations, g_max_iterations);
+}
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestStarTrailIterationLimit,
+    Combine(
+        Values(StarTrailVersionCase{parse_legacy_version(1824), false},
+            StarTrailVersionCase{parse_legacy_version(1825), true}, StarTrailVersionCase{current_id_version(), true}),
+        Values(8L, 16L, 32L)));
+
+struct StarTrailOrbitCase
+{
+    DComplex value;
+    DComplex clamped;
+};
+
+void PrintTo(const StarTrailOrbitCase &value, std::ostream *str)
+{
+    *str << '(' << value.value.x << ", " << value.value.y << ')';
+}
+
+class TestStarTrailOrbitState : public TestStarTrail,
+                                public WithParamInterface<std::tuple<StarTrailVersionCase, StarTrailOrbitCase>>
+{
+};
+
+TEST_P(TestStarTrailOrbitState, appliesCompatibleClampAndStateUpdates)
+{
+    const auto &[version, orbit] = GetParam();
+    g_version = version.version;
+    g_init_orbit = orbit.value;
+    m_fractal.orbit_calc = []
+    {
+        g_new_z = g_init_orbit;
+        return 0;
+    };
+    EXPECT_CALL(m_driver, write_pixel(_, _, 1)).Times(4);
+
+    ASSERT_EQ(0, calc_fract());
+
+    const DComplex expected_new = version.updated ? orbit.clamped : orbit.value;
+    const DComplex expected_old = version.updated ? orbit.clamped : DComplex{7.0, 11.0};
+    const double expected_sqr_x = version.updated ? orbit.clamped.x * orbit.clamped.x : 11.0;
+    const double expected_sqr_y = version.updated ? orbit.clamped.y * orbit.clamped.y : 13.0;
+    EXPECT_EQ(expected_new, g_new_z);
+    EXPECT_EQ(expected_old, g_old_z);
+    EXPECT_DOUBLE_EQ(expected_sqr_x, g_temp_sqr_x);
+    EXPECT_DOUBLE_EQ(expected_sqr_y, g_temp_sqr_y);
+    EXPECT_DOUBLE_EQ(version.updated ? expected_sqr_x + expected_sqr_y : 17.0, g_magnitude);
+}
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestStarTrailOrbitState,
+    Combine(
+        Values(StarTrailVersionCase{parse_legacy_version(1824), false},
+            StarTrailVersionCase{parse_legacy_version(1825), true}, StarTrailVersionCase{current_id_version(), true}),
+        Values(StarTrailOrbitCase{DComplex{2 * STAR_TRAIL_LIMIT, 4 * STAR_TRAIL_LIMIT},
+                   DComplex{STAR_TRAIL_LIMIT, STAR_TRAIL_LIMIT}},
+            StarTrailOrbitCase{
+                DComplex{-2 * STAR_TRAIL_LIMIT, -4 * STAR_TRAIL_LIMIT}, DComplex{-STAR_TRAIL_LIMIT, -STAR_TRAIL_LIMIT}},
+            StarTrailOrbitCase{DComplex{2.0, 3.0}, DComplex{2.0, 3.0}})));
+
+class TestStarTrailColor : public TestStarTrail, public WithParamInterface<StarTrailVersionCase>
+{
+};
+
+TEST_P(TestStarTrailColor, usesCompatibleOrbitSlopesForColor)
+{
+    const StarTrailVersionCase &version = GetParam();
+    g_version = version.version;
+    m_fractal.orbit_calc = []
+    {
+        if (g_color_iter == 1)
+        {
+            g_new_z = DComplex{2 * STAR_TRAIL_LIMIT, 4 * STAR_TRAIL_LIMIT};
+        }
+        else
+        {
+            g_new_z = DComplex{1.0, g_color_iter == 2 ? 1.0 : 3.0};
+        }
+        return 0;
+    };
+    // Clamping changes the first slope from 2 to 1, matching the second.
+    const int expected_color = version.updated ? 1 : 0;
+    EXPECT_CALL(m_driver, write_pixel(_, _, expected_color)).Times(4);
+
+    ASSERT_EQ(0, calc_fract());
+
+    EXPECT_EQ(expected_color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestStarTrailColor,
+    Values(StarTrailVersionCase{parse_legacy_version(1824), false},
+        StarTrailVersionCase{parse_legacy_version(1825), true}, StarTrailVersionCase{current_id_version(), true}));
 
 } // namespace
 } // namespace id::test

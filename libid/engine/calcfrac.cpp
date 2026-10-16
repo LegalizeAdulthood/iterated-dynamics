@@ -1330,7 +1330,10 @@ int standard_fractal_type()
     if (g_inside_method == ColorMethod::STAR_TRAIL)
     {
         std::fill(std::begin(tan_table), std::end(tan_table), 0.0);
-        g_max_iterations = 16;
+        if (g_version > 1824)
+        {
+            g_max_iterations = 16;
+        }
     }
     if (g_periodicity_check == 0 || g_inside_method == ColorMethod::ZMAG || g_inside_method == ColorMethod::STAR_TRAIL)
     {
@@ -1543,14 +1546,17 @@ int standard_fractal_type()
             {
                 if (0 < g_color_iter && g_color_iter < 16)
                 {
-                    g_new_z.x = std::min<double>(g_new_z.x, STAR_TRAIL_MAX);
-                    g_new_z.x = std::max<double>(g_new_z.x, STAR_TRAIL_MIN);
-                    g_new_z.y = std::min<double>(g_new_z.y, STAR_TRAIL_MAX);
-                    g_new_z.y = std::max<double>(g_new_z.y, STAR_TRAIL_MIN);
-                    g_temp_sqr_x = g_new_z.x * g_new_z.x;
-                    g_temp_sqr_y = g_new_z.y * g_new_z.y;
-                    g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-                    g_old_z = g_new_z;
+                    if (g_version > 1824)
+                    {
+                        g_new_z.x = std::min<double>(g_new_z.x, STAR_TRAIL_MAX);
+                        g_new_z.x = std::max<double>(g_new_z.x, STAR_TRAIL_MIN);
+                        g_new_z.y = std::min<double>(g_new_z.y, STAR_TRAIL_MAX);
+                        g_new_z.y = std::max<double>(g_new_z.y, STAR_TRAIL_MIN);
+                        g_temp_sqr_x = g_new_z.x * g_new_z.x;
+                        g_temp_sqr_y = g_new_z.y * g_new_z.y;
+                        g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+                        g_old_z = g_new_z;
+                    }
                     {
                         const int tmp_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
                         tan_table[tmp_color-1] = g_new_z.y/(g_new_z.x+.000001);
