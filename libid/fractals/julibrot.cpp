@@ -15,6 +15,7 @@
 #include "math/sqr.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
+#include "misc/version.h"
 #include "ui/get_3d_params.h"
 #include "ui/starfield.h"
 #include "ui/stop_msg.h"
@@ -207,7 +208,7 @@ static void z_line(const double x, const double y)
     for (s_z_pixel = 0; s_z_pixel < g_julibrot_z_dots; s_z_pixel++)
     {
         // Special initialization for Mandelbrot types
-        if (g_new_orbit_type == FractalType::QUAT || g_new_orbit_type == FractalType::HYPER_CMPLX)
+        if ((g_new_orbit_type == FractalType::QUAT || g_new_orbit_type == FractalType::HYPER_CMPLX) && g_version > 2002)
         {
             g_old_z.x = 0.0;
             g_old_z.y = 0.0;
