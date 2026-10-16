@@ -1861,6 +1861,8 @@ o Runtime dependency scanning is only used when installing Windows builds.
   (Fixes #434)
 o The "Z" parameter screen now shows all function selectors for fractal
   types such as fn+fn.  (Fixes #447)
+o Legacy mandelfn and lambdafn parameter sets now honor float= when
+  selecting the pre-18 bailout, correcting Stripes rendering.  (Fixes #448)
 
 Version 1.4.1 is a bug fix release for version 1.4.0.
 
