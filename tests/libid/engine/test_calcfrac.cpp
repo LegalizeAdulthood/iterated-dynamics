@@ -410,5 +410,75 @@ INSTANTIATE_TEST_SUITE_P(ResetVersions, TestStarTrailColor,
     Values(StarTrailVersionCase{parse_legacy_version(1824), false},
         StarTrailVersionCase{parse_legacy_version(1825), true}, StarTrailVersionCase{current_id_version(), true}));
 
+struct DecompositionVersionCase
+{
+    Version version;
+    bool legacy;
+};
+
+void PrintTo(const DecompositionVersionCase &value, std::ostream *str)
+{
+    *str << to_par_string(value.version) << ", legacy: " << value.legacy;
+}
+
+struct DecompositionColorCase
+{
+    DComplex point;
+    int legacy_two_colors;
+    int legacy_many_colors;
+    int modern_two_colors;
+    int modern_many_colors;
+};
+
+void PrintTo(const DecompositionColorCase &value, std::ostream *str)
+{
+    *str << '(' << value.point.x << ", " << value.point.y << ')';
+}
+
+class TestTwoWayDecomposition
+    : public TestStandardFractal,
+      public WithParamInterface<std::tuple<DecompositionVersionCase, DecompositionColorCase, int>>
+{
+};
+
+TEST_P(TestTwoWayDecomposition, usesCompatibleQuadrantMappingAndPaletteOffset)
+{
+    const auto &[version, point, colors] = GetParam();
+    g_version = version.version;
+    g_init_orbit = point.point;
+    g_decomp[0] = 2;
+    g_colors = colors;
+    g_and_color = colors - 1;
+    m_fractal.orbit_calc = []
+    {
+        g_new_z = g_init_orbit;
+        return 1;
+    };
+    const int expected_color = version.legacy ? colors == 2 ? point.legacy_two_colors : point.legacy_many_colors
+        : colors == 2                         ? point.modern_two_colors
+                                              : point.modern_many_colors;
+    EXPECT_CALL(m_driver, write_pixel(_, _, expected_color)).Times(4);
+
+    ASSERT_EQ(0, calc_fract());
+
+    EXPECT_EQ(expected_color, g_color);
+    EXPECT_EQ(1, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestTwoWayDecomposition,
+    Combine(Values(DecompositionVersionCase{parse_legacy_version(1826), true},
+                DecompositionVersionCase{parse_legacy_version(1827), false},
+                DecompositionVersionCase{current_id_version(), false}),
+        Values(DecompositionColorCase{DComplex{3.0, 4.0}, 0, 1, 1, 1},
+            DecompositionColorCase{DComplex{-3.0, 4.0}, 1, 2, 1, 1},
+            DecompositionColorCase{DComplex{-3.0, -4.0}, 0, 1, 0, 2},
+            DecompositionColorCase{DComplex{3.0, -4.0}, 1, 2, 0, 2},
+            DecompositionColorCase{DComplex{3.0, 0.0}, 0, 1, 1, 1},
+            DecompositionColorCase{DComplex{-3.0, 0.0}, 1, 2, 1, 1},
+            DecompositionColorCase{DComplex{0.0, 4.0}, 0, 1, 1, 1},
+            DecompositionColorCase{DComplex{0.0, -4.0}, 1, 2, 0, 2},
+            DecompositionColorCase{DComplex{0.0, 0.0}, 0, 1, 1, 1}),
+        Values(2, 256)));
+
 } // namespace
 } // namespace id::test

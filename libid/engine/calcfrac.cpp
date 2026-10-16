@@ -2028,7 +2028,7 @@ static void decomposition()
         ++temp;
         g_new_z.x = -g_new_z.x;
     }
-    if (g_decomp[0] == 2)
+    if (g_decomp[0] == 2 && !(g_version < 1827))
     {
         save_temp = temp;
         if (temp == 2)
@@ -2116,7 +2116,11 @@ static void decomposition()
         }
         temp >>= 1;
     }
-    if (g_decomp[0] == 2)
+    if (g_decomp[0] == 2 && g_version < 1827)
+    {
+        g_color_iter &= 1;
+    }
+    else if (g_decomp[0] == 2)
     {
         if (save_temp & 2)
         {
