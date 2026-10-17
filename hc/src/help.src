@@ -1,4 +1,5 @@
 ; SPDX-License-Identifier: GPL-3.0-only
+; Copyright (C) 2026 Richard Thomson.
 ;
 ; help.src
 ;
@@ -281,8 +282,44 @@ o Runtime dependency scanning is only used when installing Windows builds.
   (Fixes #434)
 o The "Z" parameter screen now shows all function selectors for fractal
   types such as fn+fn.  (Fixes #447)
-o Legacy mandelfn and lambdafn parameter sets now honor float= when
-  selecting the pre-18 bailout, correcting Stripes rendering.  (Fixes #448)
+o Legacy float= preferences are now preserved in parameter files,
+  GIF metadata, and image history.  (Fixes #448)
+o Inside=bof60 and inside=bof61 now honor legacy reset behavior for
+  magnitude updates and periodicity checking.  (Fixes #449)
+o Distance-estimator rendering now honors legacy reset versions for
+  algorithm selection, derivative bounds, and overflow handling.
+  (Fixes #450)
+o Inside=startrail now preserves legacy iteration limits and orbit
+  behavior through reset=1824.  (Fixes #451)
+o Two-color decomposition now uses the legacy quadrant mapping before
+  reset=1827.  (Fixes #452)
+o Formula denominator errors now preserve legacy results and overflow
+  behavior through reset=1920.  (Fixes #453)
+o Iteration colors now use legacy DOS 16-bit wrapping through reset=1950
+  on both fast and standard rendering paths.  (Fixes #454)
+o Fast Mandelbrot and Julia rendering now uses legacy DOS rounding for
+  outside=real, outside=imag, outside=mult, and outside=sum through
+  reset=1960.  (Fixes #455)
+o Fast Mandelbrot and Julia rendering now maps invalid special outside
+  colors to 0 before reset=1961 and 1 thereafter.  (Fixes #456)
+o Inside=fmod now uses squared modulus through reset=2000, regardless of
+  the selected bailout test.  (Fixes #457)
+o Quaternion and hypercomplex Julibrot orbits now use legacy seeds and
+  constants through reset=2002.  (Fixes #458)
+o The orbit viewer now preserves explicitly entered Y coordinates in
+  affected fractal initializers through reset=2003.  (Fixes #459)
+o Inside=atan now disables periodicity checking from reset=2004 onward,
+  including modern Id versions.  (Fixes #460)
+o Accepting a new fractal type now resets the compatibility version to
+  the current release. Canceling preserves the previous type and version.
+  (Fixes #461)
+o Formula powers with a zero base now return one before reset=1900 and
+  zero thereafter, without adding overflow.  (Fixes #462)
+o Legacy mandelfn and lambdafn now retain their default bailout of 64
+  regardless of float=, while honoring explicit bailout overrides.
+  (Fixes #463)
+o Image history now records changed states instead of duplicates.
+  (Fixes #464)
 
 Code Cleanup in Version 1.4.2
 
