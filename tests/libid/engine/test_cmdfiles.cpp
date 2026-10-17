@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
 //
 #include <engine/cmdfiles_test.h>
 
@@ -49,6 +50,7 @@
 #include <io/check_write_file.h>
 #include <io/CurrentPathSaver.h>
 #include <io/encoder.h>
+#include <io/gif_extensions.h>
 #include <io/gifview.h>
 #include <io/library.h>
 #include <io/loadfile.h>
@@ -73,14 +75,17 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <ostream>
 #include <sstream>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -3408,54 +3413,140 @@ TEST_F(TestParameterCommandError, floatBadArg)
     EXPECT_TRUE(g_user.legacy_float);
 }
 
-TEST_F(TestParameterCommand, legacyFloatControlsTrigBailout)
+struct LegacyTrigVersion
 {
+    std::string reset;
+    Version version;
+};
+
+void PrintTo(const LegacyTrigVersion &value, std::ostream *str)
+{
+    *str << value.reset;
+}
+
+struct LegacyTrigType
+{
+    const char *name;
+    FractalType type;
+};
+
+void PrintTo(const LegacyTrigType &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+struct LegacyFloatChoice
+{
+    const char *params;
+    bool legacy_float;
+};
+
+void PrintTo(const LegacyFloatChoice &value, std::ostream *str)
+{
+    *str << (*value.params ? value.params : "float omitted");
+}
+
+enum class LegacyTrigVersionSource
+{
+    PAR_FILE,
+    GIF_METADATA
+};
+
+void PrintTo(const LegacyTrigVersionSource value, std::ostream *str)
+{
+    *str << (value == LegacyTrigVersionSource::PAR_FILE ? "PAR file" : "GIF metadata");
+}
+
+class TestLegacyTrigBailout
+    : public TestParameterCommand,
+      public WithParamInterface<
+          std::tuple<LegacyTrigVersion, LegacyTrigType, LegacyFloatChoice, long, LegacyTrigVersionSource>>
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+};
+
+void TestLegacyTrigBailout::SetUp()
+{
+    TestParameterCommand::SetUp();
+    save_trig_functions();
+}
+
+void TestLegacyTrigBailout::TearDown()
+{
+    restore_trig_functions();
+    TestParameterCommand::TearDown();
+}
+
+TEST_P(TestLegacyTrigBailout, floatPreferencePreservesDefaultAndExplicitBailouts)
+{
+    const auto &[version, type, choice, bailout, source] = GetParam();
     ValueSaver saved_user{g_user};
     ValueSaver saved_version{g_version};
     ValueSaver saved_file_version{g_file_version};
     ValueSaver saved_fractal_type{g_fractal_type};
     ValueSaver saved_fractal_specific{g_cur_fractal_specific};
-
-    struct Case
+    ValueSaver saved_bifurcation_functions{g_new_bifurcation_functions_loaded, true};
+    if (source == LegacyTrigVersionSource::PAR_FILE)
     {
-        const char *params;
-        long bailout;
-        bool legacy_float;
-    };
-
-    const Case cases[]{
-        {"reset", 0, false},
-        {"reset float=n", 0, false},
-        {"reset float=y", 2500, true},
-        {"reset float=y float=n", 0, false},
-        {"reset float=n float=y", 2500, true},
-        {"reset float=y bailout=64", 64, true},
-        {"reset float=n bailout=100", 100, false},
-        {"reset=1799 float=y", 2500, true},
-        {"reset=1800 float=y", 0, true},
-        {"reset=2004 float=y", 0, true},
-        {"reset=1/4 float=y", 0, true},
-    };
-    for (const char *type : {"mandelfn", "lambdafn"})
-    {
-        for (const Case &test_case : cases)
+        std::string params{
+            std::string{"{ "} + version.reset + " type=" + type.name + " function=ident " + choice.params};
+        if (bailout != 0)
         {
-            const std::string params{std::string{"{ "} + test_case.params + " type=" + type + " function=ident }"};
-            SCOPED_TRACE(params);
-            std::FILE *file{std::tmpfile()};
-            ASSERT_NE(nullptr, file);
-            std::fputs(params.c_str(), file);
-            std::rewind(file);
-            g_user.legacy_float = true;
-
-            const CmdArgFlags result{load_commands(file)};
-
-            EXPECT_NE(CmdArgFlags::BAD_ARG, result);
-            EXPECT_EQ(test_case.bailout, g_user.bailout_value);
-            EXPECT_EQ(test_case.legacy_float, g_user.legacy_float);
+            params += " bailout=" + std::to_string(bailout);
         }
+        params += " }";
+        std::FILE *file{std::tmpfile()};
+        ASSERT_NE(nullptr, file);
+        std::fputs(params.c_str(), file);
+        std::rewind(file);
+        g_user.legacy_float = true;
+
+        ASSERT_NE(CmdArgFlags::BAD_ARG, load_commands(file));
     }
+    else
+    {
+        FractalInfo info{};
+        info.info_version = FRACTAL_INFO_VERSION;
+        if (version.version.legacy)
+        {
+            info.release = static_cast<std::int16_t>(100 * version.version.major + version.version.minor);
+        }
+        else
+        {
+            info.version_major = version.version.major;
+            info.version_minor = version.version.minor;
+            info.version_patch = version.version.patch;
+            info.version_tweak = version.version.tweak;
+        }
+        g_file_version = fractal_info_version(info);
+        g_version = g_file_version;
+        g_fractal_type = type.type;
+        g_cur_fractal_specific = get_fractal_specific(type.type);
+        g_user.legacy_float = choice.legacy_float;
+        g_user.bailout_value = bailout;
+
+        backwards_legacy_v18();
+    }
+
+    EXPECT_EQ(version.version, g_file_version);
+    EXPECT_EQ(version.version, g_version);
+    EXPECT_EQ(type.type, g_fractal_type);
+    EXPECT_EQ(bailout, g_user.bailout_value);
+    EXPECT_EQ(choice.legacy_float, g_user.legacy_float);
+    EXPECT_EQ(64, g_cur_fractal_specific->orbit_bailout);
 }
+
+INSTANTIATE_TEST_SUITE_P(ResetVersions, TestLegacyTrigBailout,
+    Combine(Values(LegacyTrigVersion{"reset", parse_legacy_version(1730)},
+                LegacyTrigVersion{"reset=1799", parse_legacy_version(1799)},
+                LegacyTrigVersion{"reset=1800", parse_legacy_version(1800)},
+                LegacyTrigVersion{"reset=" + to_par_string(current_id_version()), current_id_version()}),
+        Values(LegacyTrigType{"mandelfn", FractalType::MANDEL_FN}, LegacyTrigType{"lambdafn", FractalType::LAMBDA_FN}),
+        Values(LegacyFloatChoice{"", false}, LegacyFloatChoice{"float=n", false}, LegacyFloatChoice{"float=y", true},
+            LegacyFloatChoice{"float=y float=n", false}, LegacyFloatChoice{"float=n float=y", true}),
+        Values(0L, 64L, 100L), Values(LegacyTrigVersionSource::PAR_FILE, LegacyTrigVersionSource::GIF_METADATA)));
 
 TEST_F(TestParameterCommand, fastRestoreYes)
 {

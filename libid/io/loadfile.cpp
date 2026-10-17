@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
 //
 /*
         load an existing fractal image, control level
@@ -1776,13 +1777,6 @@ void backwards_legacy_v18()
     if (!g_new_bifurcation_functions_loaded)
     {
         set_if_old_bif(); // old bifs need function set
-    }
-    if (g_file_version < 1800                                                                     //
-        && (g_fractal_type == FractalType::MANDEL_FN || g_fractal_type == FractalType::LAMBDA_FN) //
-        && g_user.legacy_float                                                                    //
-        && g_user.bailout_value == 0)
-    {
-        g_user.bailout_value = 2500;
     }
 }
 
