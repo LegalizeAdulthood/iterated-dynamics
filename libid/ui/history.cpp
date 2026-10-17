@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Richard Thomson.
 //
 #include "ui/history.h"
 
@@ -578,8 +579,6 @@ void save_history_info()
     {
         return;
     }
-    ImageHistory last = s_history[s_save_ptr];
-
     ImageHistory current{};
     current.image_fractal_type = g_fractal_type;
     current.image_region = g_image_region;
@@ -715,7 +714,7 @@ void save_history_info()
     {
         g_history_flag = false;            // coming from user history command, don't save
     }
-    else if (current == last)
+    else if (!(current == s_history[s_save_ptr]))
     {
         if (++s_save_ptr >= g_max_image_history)    // back to beginning of circular buffer
         {
