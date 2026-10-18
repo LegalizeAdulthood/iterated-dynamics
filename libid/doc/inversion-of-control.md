@@ -250,16 +250,22 @@ does not count as an implementation slice for a reverse call.
 - Keep image plotting and pixel access in calculation or storage code.
   Extract misplaced backend work from `libid/ui`; do not move rendering
   algorithms into UI to eliminate an include.
+- Calculation may submit numerical data to the application-supplied
+  `SoundOutput` port.  Its implementations must not poll input or wait
+  inside a submission.  The UI coordinates playback backpressure with
+  bounded calculation; this is not a callback into UI control flow.
 - Keep behavior first.  Pure call relocation is not a completed slice; the
   owning state, decision, or return point must become clearer.
 - Preserve the existing synchronization cadence.  A new resumable state
   must not force input dispatch or display refresh for every orbit point,
   pixel, or internal state transition.
-- End each slice that changes calculation control flow with manual testing
-  steps only for user interaction paths not covered by automated tests.
+- Validate changed calculation control flow with automated tests first.
+  Require manual testing only for a specific changed interaction or native
+  display behavior that those tests do not exercise.  Missing coverage of
+  deterministic state transitions calls for a new automated regression.
 - Trace each changed interaction before giving manual instructions.  Give
-  arguments and expected actions or observations; defer fixture selection
-  until that trace is available.  Reuse image tests for rendering coverage.
+  arguments, actions, expected observations, and the automated coverage
+  gap.  Reuse image tests instead of manually checking rendered results.
 
 ## Keyboard Handler Stack
 
@@ -386,6 +392,10 @@ whole-image function to completion.  Do not move renderer classification
 into `libid/ui`.  Do not add an interface, callback table, or adapter
 merely to let the old control flow call through a new name.
 
+An output port is a different boundary.  `SoundOutput` accepts calculated
+data, like pixel output, without calling a controller or hiding a wait.
+Do not reject that design merely because its interface is virtual.
+
 The target is one active render operation selected from engine state and
 dispatch data.  The operation owns render setup, bounded calculation
 work, suspend/resume state, completion state, image timing, and cleanup.
@@ -436,8 +446,48 @@ does not eliminate those nested UI calls.
 The implementation order closes calculation-side input and presentation
 paths first, then extracts misplaced backend helpers, and finally makes
 the outer UI controller drive a selected engine operation.  Retain the
-existing sound, wait, interrupt, and perturbation slices; the fresh audit
-adds controller-specific follow-up slices after them.
+wait, interrupt, and perturbation work after the sound-port slices;
+controller-specific audit follow-ups remain after that work.
+
+## [Sound Output Port](sound.md)
+
+The separate design artifact defines `SoundOutput`, numerical samples,
+session ownership, backpressure, and coordinated interactive playback.
+Calculation submits directly to an output sink.  Do not thread plotted
+coordinates upward through pass and renderer results solely for sound,
+or add sound-notification mailboxes to calculation objects.
+
+Follow the [dependency-injection contract](sound.md#dependency-injection):
+`SoundOutputPtr` aliases `std::shared_ptr<SoundOutput>`.  The application
+installs one shared instance in `g_sound`; calculation calls that
+active port directly and UI services the same instance.  Do not thread
+sound parameters through calculation call chains, add constructor
+injection to every calculation object, or introduce per-pass sound fields
+and forwarding functions.  Tests replace and restore this same binding.
+
+Interactive plotting and audio proceed at the slower rate.  The engine
+returns when output cannot accept the next coordinated unit; UI owns
+waiting and input.  Silent output and recording without device playback
+do not acquire playback waits.  Preserve normal synchronization cadence
+when the sink is ready.
+
+The UI services non-blocking `SoundOutput::update()` during rendering,
+playback waits, and completion.  The implementation releases due voices;
+calculation does not call soundoff or service playback.  Normal release
+preserves other voices and release tails, whereas explicit `mute()`
+immediately silences all voices and resets playback state.  Normal
+completion drains release tails rather than muting them away.
+
+No multimedia library has been selected.  Implement the port first with
+one driver-backed implementation that optionally records each accepted
+tone under `OSF_MIDI` before attempting playback.  These sequential
+behaviors are not two port implementations or a composite.  Private file
+helpers need not implement `SoundOutput`.
+
+Do not promise audible continuous sound on drivers that currently return
+`false`.  Preserve optional recording regardless of driver capability.
+Future audio-file-only output, new audio libraries, WAV encoding, and
+changed sound mappings are separate work.
 
 ## Orbit Display And Delay Policy
 
@@ -472,13 +522,15 @@ Questions to answer:
 - Should visible orbit display use per-point delay, frame-rate-limited
   sampled presentation, single-step mode, or a separate animation UI?
 - Should batch or headless rendering ignore visible orbit delay?
-- How should sound timing use `orbitdelay` once sound is restored?
+- What future sound-duration controls or `orbitdelay` compatibility
+  mapping should replace the interim driver adapter's duration setting?
 
 Done when:
 
 - the chosen policy is documented before implementation;
-- each affected fractal type has command-line manual test arguments and
-  expected observations;
+- automated tests specify the chosen timing and state behavior; manual
+  arguments and observations cover only remaining native display or input
+  gaps, not every affected fractal type;
 - new implementation slices separate engine plot work from UI polling,
   without mixing in unresolved delay-policy decisions.
 
@@ -544,6 +596,10 @@ The remaining UI-concept leaks outside `libid/ui` are:
   call `write_sound()` directly from rendering iteration.
 - `libid/fractals/lorenz.cpp`: calls `driver_mute()` from orbit
   renderer constructors, destructors, `done()`, and `suspend()`.
+- `libid/io/gifview.cpp`: `put_sound_line()` plots a whole decoded line
+  while calling `sleep_orbit_delay()` and `write_sound()`;
+  `sound_line()` also calls `driver_mute()`.  Decoder and file traversal
+  must return incrementally before UI can coordinate this output.
 - `libid/engine/spindac.cpp`: includes palette rotation delay via
   `driver_delay()`.
 - `libid/engine/wait_until.cpp`: implements a key-sensitive delay loop.
@@ -572,13 +628,15 @@ The remaining UI-concept leaks outside `libid/ui` are:
 These are not all keyboard polling sites, but they are presentation
 ownership leaks.  The engine and fractal classes may expose bounded
 rendering facts such as "overlay point was drawn" or "scrub restored
-pixels"; the UI controller decides whether that causes delay, sound,
-mute, input polling, or no presentation work.
+pixels"; the UI controller decides whether that causes display delay or
+input handling.  Sound samples go directly to `SoundOutput`; they are
+not another reason to add UI-consumed flags to calculation objects.
 
 Every presentation-cleanup slice must move behavior to a named UI
-controller or UI-owned helper before removing the engine-side leak.  Do
-not make a slice that merely deletes delay, pacing, sound, mute, or
-input behavior from the engine.
+controller, output adapter, or appropriately owned backend before
+removing the engine-side leak.  Do not merely delete delay, pacing,
+sound, mute, or input behavior.  The sound-port slices preserve
+`OSF_MIDI` and driver delegation, not the old DOS polling/wait mechanism.
 
 When a slice adds a temporary interface, method, member, or helper only
 as a bridge to a later slice, mark the added declaration or definition
@@ -602,94 +660,479 @@ calculation, while focused failure and interaction tests protect changed
 control flow.  A grep-based test is not a substitute for exercising a
 callback path.  Source searches remain audit tools, not repository tests.
 
+## Validation Audit
+
+Existing coverage does not imply coverage of live interaction:
+
+- `tests/cmake/AddImageTest.cmake` runs images with `batch=yes` and
+  `sound=off`.  Pass, cellular, orbit, IFS, and restoration fixtures
+  protect output, not calculation input, transient markers, or playback.
+  `ImageTest.rotate` tests geometric rotation, not palette cycling.
+- `tests/autokey/CMakeLists.txt` defines only parameter/MIG generation,
+  3D-look Targa output, and random-dot stereogram scripts.  None exercises
+  standard-render menu interruption, palette cycling, JIIM, show-dot, or
+  the stereo photographer prompt.
+- Keyboard-handler tests cover dispatch, interruption flags, and key
+  requeueing, not a rendering controller's suspension and resumption.
+  Thinking-screen tests cover text and spinner updates, not cellular or
+  L-system phase transitions.  Add controller tests for those transitions.
+- Perturbation unit tests cover tolerance values, not deep-zoom rendering
+  or switching passes.  The perturbation slices must add those automated
+  regressions; existing images do not suffice.
+- `TestStereo` covers random-line generation, not PHOTO-mode decisions.
+  Add prompt/save/continue/cancel coverage in the stereo controller slice.
+- Show-dot dispatch and parameter tests do not cover marker restoration.
+  Add lifecycle tests; final images cannot verify transient presentation.
+- Mock drivers and timer callbacks do not exercise a real window's event
+  queue, physical mouse tracking, or visible refresh cadence.  Current
+  Win32 and X11 drivers do not support continuous tone playback; require
+  fake-port, mock-driver, and tone-log tests, not audible manual checks.
+
+The validation requirements in each slice include tests still to be
+implemented, not a claim that those tests already exist.  In particular,
+automate menu results, preparation-screen lifetime, pass switching, and
+failure cleanup rather than assigning them unspecified manual checks.
+
+Only four slices retain required manual checks: palette cycling, JIIM
+cursor presentation, show-dot presentation, and native input during busy
+rendering.  Their instructions below identify the uncovered observation.
+If a slice adds automation for that same observation, remove the manual
+requirement.  Do not repeat it for an unchanged caller or each fractal.
+
 ## Implementation Slices
 
-### 1. Standard Orbit Sound Ownership
+### 1. SoundOutput Contract
+
+Source: new `engine/SoundOutput.h` and matching implementation; design:
+[sound.md](sound.md).
 
 Work:
 
-- Move sound decisions for standard orbit overlay and sticky orbit
-  rendering into the UI controller layer.
-- Do not make calculation code report sound notifications.
-- Let the UI derive sound, if enabled, from UI-owned display data such as
-  the plotted overlay screen coordinate.
-- Add the UI sound handling needed to preserve current standard orbit
-  overlay behavior before removing `update_orbit_sound()`,
-  `engine/sound.h`, `g_sound_flag`, and `write_sound()` use from
-  `OrbitPlot`.
-- Move sticky-orbit sound behavior to the UI owner before removing
-  `write_sound()` calls from `StickyOrbits`.
-- Move standard sound-file time marker and close decisions to the UI
-  controller before removing those calls from `calcfrac.cpp`.
+- Define non-blocking `play(sample)`, `update()`, readiness,
+  orbit-boundary, mute, and incremental completion operations without
+  driver or UI dependencies.  Keep `ready()` a query.
+- Specify normal voice release as internal playback lifecycle serviced
+  through `update()`, distinct from immediate all-voice mute.  Do not add
+  a calculation-facing soundoff operation.
+- Add `NullSoundOutput` and a recording test implementation that can
+  refuse samples until explicitly made ready.
+- Define `SoundOutputPtr = std::shared_ptr<SoundOutput>` and the active
+  `g_sound` binding, initialized to `NullSoundOutput`.
+- Follow [the injection design](sound.md#dependency-injection); test
+  scoped replacement/restoration of the shared instance.  Do not add
+  calculation constructor parameters or migrate production producers in
+  this prerequisite slice.
 
 Done when:
 
-- `OrbitPlot` no longer owns sound decisions because the UI controller
-  has the equivalent behavior.
-- Standard engine code does not call `write_sound()`,
-  `sound_time_write()`, or `close_sound()`.
-- Sound is produced only from UI-owned presentation state.
+- Acceptance and backpressure have precise, testable meaning without
+  selecting an audio library or changing the current rendering path.
 
-Manual testing:
+Validation: test accepted-once ordering, rejection without side effects,
+updates, readiness, orbit boundaries, release versus mute, and repeated
+completion.  No manual test; this does not change interactive control flow.
 
-- `type=mandel sound=x showorbit=yes orbitdelay=184`
-- `type=mandel passes=o sound=x`
+### 2. Driver-Backed SoundOutput
 
-### 2. Lorenz Orbit Sound Ownership
+Source: sound mapping, file recording, and device output in
+`engine/sound.cpp`; new `ui/DriverSoundOutput.h` and matching
+implementation.
 
 Work:
 
-- Move sound and mute decisions for 2D, 3D, and dynamic orbit renderers
-  from `libid/fractals/lorenz.cpp` to their UI controllers.
-- Add the UI-owned sound and mute behavior to `ui/orbit2d.cpp`,
-  `ui/orbit3d.cpp`, and the dynamic-orbit UI controller first.
-- Remove `m_sound_var` from the fractal classes, or replace it with a
-  neutral exposed orbit value that the UI may use.
-- After the UI owns those behaviors, remove direct `write_sound()` and
-  `driver_mute()` calls from `lorenz.cpp`.
-- Keep orbit math, plotting, save-file output, and resume state
-  unchanged.
+- Implement one concrete `SoundOutput` with instance-owned file and
+  playback state.  Preserve the sequential output operation: optionally
+  log the accepted tone, then attempt driver playback.
+- Keep source-specific mapping in this implementation, including overlay
+  debug scaling and restored-image palette indices.  Map each accepted
+  sample once for both recording and playback.
+- Preserve `OSF_MIDI`/`orbitsave=s`, checked save paths, lazy
+  `sound001.txt` creation, integer records, and `time=...` records.
+  A private file helper is permitted, not another port implementation.
+- Check readiness before acceptance so refused samples leave no record
+  or device side effect.  Report file errors without modal UI.
+- Delegate device operations to `driver_sound_on()`, `driver_sound_off()`,
+  and `driver_mute()` without choosing a multimedia dependency.
+- In UI-serviced `update()`, release due voices with
+  `driver_sound_off()`.  Reserve `driver_mute()` for explicit immediate
+  silence; do not use it for normal note completion.
+- Keep configuration and interim tone duration in the implementation.
+  Track readiness with instance-owned time state.
+- Return promptly from submission, update, and completion operations.
+  Do not call `wait_until()`, poll keys, or hide a playback loop.
+- Make repeated updates idempotent for released voices, and clear stale
+  deadlines on mute before later playback.  Normal completion waits for
+  release progression through updates, not by blocking or muting.
+- Treat a driver refusing continuous sound as immediately ready; do not
+  impose fake audio delays, suppress recording, or reject the sample.
+- Leave production producers on the legacy path until their migration.
 
 Done when:
 
-- `libid/fractals/lorenz.cpp` does not call `write_sound()` or
-  `driver_mute()`.
-- `ui/orbit2d.cpp`, `ui/orbit3d.cpp`, and the dynamic-orbit UI
-  controller own sound and mute behavior.
+- Optional recording and playback are sequential behaviors of one output
+  implementation, without `LegacySoundFileOutput` or a device/file
+  composite port.
+- Driver acceptance and refusal work without input I/O or a hidden wait;
+  requested recording survives either device outcome.
+- Normal release, immediate silence, and final drain have distinct driver
+  calls and testable lifecycle behavior.
 
-Manual testing:
+Validation: use a mock driver, controlled clock, and temporary files for
+recording enabled/disabled with driver acceptance/refusal.  Verify log
+before playback, retry without duplication, naming, boundary records,
+file failures, release, mute, and closure.  No real speaker or sleep is
+required; production control flow is unchanged in this slice.
 
-- `type=lorenz3d sound=x`
-- `type=lorenz sound=x`
+### 3. UI Sound Session Coordination
 
-### 3. Sound Backend UI Ownership
+Source: `ui/sound.cpp` and the UI owner of the supplied `SoundOutput`.
 
 Work:
 
-- Move speaker output and sound-file output ownership out of
-  `libid/engine/sound.cpp` and into a UI-owned module.
-- Add the UI-owned sound backend first, including speaker output,
-  sound-file output, audio duration, and input dispatch integration.
-- After the UI backend owns those behaviors, remove
-  `engine/wait_until.h` from the sound backend.
-- Remove the sound input-pending callback only after UI callers no longer
-  need engine sound code to poll input.
-- Keep sound parameter parsing and compatibility globals in place until
-  broader state ownership is addressed.
-- Use `orbitdelay` as audio duration only inside the UI sound backend.
+- Configure the driver-backed implementation, including optional
+  `OSF_MIDI` recording, from application settings.  Select the no-op sink
+  only when neither playback nor recording is requested.
+- Install the selected `SoundOutputPtr` in `g_sound` and retain
+  shared ownership for the render operation, including nested
+  controllers.  Producers use the binding directly; do not pass the
+  pointer down dispatch or calculation call chains.
+- Do not create `InteractiveSoundOutput`, compose separate file/device
+  sinks, or add a speculative file-only mode for the legacy tone log.
+- Have the UI controller call `update()` during rendering, playback
+  waits, and completion, including when no new sample is submitted.
+  Service the supplied implementation directly.
+- Provide readiness waiting, explicit mute on interruption, and normal
+  completion using the existing keyboard context.  Drain normal voice
+  releases and tails instead of muting to finish.  Keep plotting below UI.
+- Do not add producer-specific upward result plumbing, unbounded queues,
+  a new input queue, or a replacement sound library.
 
 Done when:
 
-- No code in `libid/engine` or `libid/fractals` calls driver speaker
-  functions.
-- No sound output path waits through `engine/wait_until.cpp`.
-- Sound-file output is opened, written, and closed by UI-owned code.
+- A controller can advance bounded work at the slower of calculation and
+  playback rates while continuing input handling between increments.
+- Unsupported device output still permits optional tone recording
+  without playback waits.  Batch mode does not implicitly enable logging.
 
-Manual testing:
+Validation: exercise the supplied sink, optional recording with no device
+playback, servicing without new samples, interrupted waiting, and final
+release-tail completion with fakes.  Producer integration follows in the
+next slices; no multimedia library is selected here.
 
-- `@music.par/Music_Fractal-1`
+### 4. Standard And FrothyBasin Overlay Sound Port
 
-### 4. Palette Spin Delay Boundary
+Source: `OrbitPlot`, standard overlay continuation in `calcfrac.cpp`,
+and `FrothyBasin::flush_overlay_orbit_point()`; UI owners:
+`ui/standard_fractal.cpp` and `ui/frothy_basin.cpp`.
+
+Work:
+
+- Submit numerical coordinates through the injected active binding at
+  the overlay producer, without a constructor parameter or sound member.
+  Move frequency formulas out of `OrbitPlot` into adapter mapping; do
+  not bubble coordinates to a UI sound handler.
+- Handle refusal before committing a plotted point.  Preserve the
+  candidate and return through the existing calculation continuation;
+  retry without repeating orbit math, plotting, or sample acceptance.
+- Integrate both overlay consumers together because they share
+  `OrbitPlot`.  Cover synchronous compatibility paths as well as the
+  normal pending-overlay path; no path may spin on output readiness.
+- Replace the standard pixel's `sound_time_write()` with the port's
+  orbit-boundary operation so the migrated file path has one owner.
+- Let each controller service `update()` and coordinate readiness,
+  normal completion, and explicit mute through its session.  Preserve
+  show-dot fixes and leave overlay-delay policy unchanged.
+
+Done when:
+
+- Standard and FrothyBasin overlay output uses the port directly, without
+  legacy sound calls, sound-mode checks, or frequency mapping in plotting.
+- Neither consumer loses sound-file output or plots ahead of a rejected
+  sample.  Unconverted producers retain their legacy path separately.
+
+Validation: record sample/plot order, clipped points, boundary records,
+refusal/retry, and suspension for both consumers.  Add controller tests
+for overlay toggling and menu interruption/resumption with a fake port;
+existing handler tests alone do not cover these paths.  Reuse image
+tests for pixels.  No audible or duplicate manual rendering check.
+
+### 5. Sticky Orbit Sound Port
+
+Source: `StickyOrbits::advance_orbit()` and its `StandardPass` route;
+UI owner: `ui/standard_fractal.cpp`.
+
+Work:
+
+- Replace `write_sound(g_base_hertz)` with sample submission at the
+  producer.  Preserve the initial constant-frequency adapter mapping.
+- Retain an unaccepted point before plotting, then return to the existing
+  controller.  Keep orbit count, seed state, and traversal resumable.
+- Preserve the current 2,048-iteration chunk when output remains ready.
+  Do not make every sample require key dispatch or a pass result field.
+
+Done when:
+
+- Sticky orbits use the same sound session without direct sound I/O or
+  waiting.  Backpressure cannot skip or duplicate a plotted point.
+
+Validation: exercise rectangle/line traversal, refusal across chunk and
+seed boundaries, suspension, and tone recording when the driver refuses
+playback.  Add fake-port controller tests for interruption/resumption;
+existing image tests protect rendered results.  No manual test required.
+
+### 6. Orbit2D Sound Port
+
+Source: `Orbit2D` in `fractals/lorenz.cpp`; UI owner: `ui/orbit2d.cpp`.
+
+Work:
+
+- Submit numerical orbit values through the injected active binding.
+  Do not add a sound constructor parameter or member to `Orbit2D`.
+- Move `m_sound_var` selection and frequency mapping to the adapter.
+  Preserve projection, connected-line plotting, and raw orbit-save data.
+- Retain a pending output point on refusal.  Remove mute from `done()`
+  and `suspend()`; UI services normal release/completion with `update()`
+  and requests mute explicitly on interruption.
+
+Done when:
+
+- `Orbit2D` neither calls legacy sound/driver functions nor waits for
+  playback.  Resumption preserves sample and plot ordering.
+
+Validation: test pending-point continuation, completion, mute on menu
+interruption, and file records with the controller and a fake port.
+Reuse orbit image and data tests for output.  No manual test required.
+
+### 7. Orbit3D Sound Port
+
+Source: `Orbit3D` in `fractals/lorenz.cpp`; UI owner: `ui/orbit3d.cpp`.
+
+Work:
+
+- Submit transformed numerical orbit values to the supplied port instead
+  of computing tones or calling `write_sound()`.
+- Preserve projection and stereo eye ordering when a sample is refused;
+  do not recompute an orbit or draw one eye twice on continuation.
+- Move mute decisions to UI.  Service normal release/completion with
+  `update()` instead of muting on completion; mute on interruption.
+  Do not combine this with the later stereo-photographer refactor.
+
+Done when:
+
+- `Orbit3D` outputs through the port with correct stereo continuation
+  and no device calls or playback waiting in calculation code.
+
+Validation: cover transformed sample values, eye ordering, refusal,
+completion, and interruption with fake-port controller tests.  Use
+existing image coverage for output; automate stereo sequencing in its
+own slice.  No manual test required.
+
+### 8. Dynamic Orbit Sound Port
+
+Source: `Dynamic2D` in `fractals/lorenz.cpp`; UI owner:
+`ui/dynamic2d.cpp`.
+
+Work:
+
+- Submit numerical samples directly and move sound mapping to the sink.
+- Preserve its loop, seed, iteration, and pending-point state across
+  backpressure without increasing normal synchronization cadence.
+- Remove mute from `done()` and `suspend()`.  UI services normal release
+  with `update()` and uses explicit mute for interruption, not completion.
+
+Done when:
+
+- Dynamic rendering has no `m_sound_var`, legacy sound calls, driver
+  mute, or playback wait inside its calculation loop.
+
+Validation: cover refusal before and after seed changes and its existing
+iteration boundary with fake-port controller tests, including suspension
+and resumption.  Reuse dynamic orbit-data and image tests for output.
+No manual test required.
+
+### 9. Restored Image Sound Traversal State
+
+Source: `put_sound_line()` and `sound_line()` in `io/gifview.cpp`, and
+decoder line ownership where `g_out_line` selects sound restoration.
+
+Work:
+
+- Represent the active decoded line and column as resumable output state
+  rather than assuming the callback can plot and sound the whole line.
+  Name the calculation object `RestoredImageOutput` and its files after
+  the class.
+- Own any decoded data needed after the callback returns.  Preserve
+  width wrapping and row accounting without retaining borrowed buffers.
+- Establish a bounded return boundary before port integration.  Mark a
+  temporary synchronous drain for removal in Restored Image Sound
+  Controller, after its decoder and file-lifetime prerequisites.
+
+Done when:
+
+- Restored-image output can retain an uncommitted pixel between calls
+  without decoding or plotting it twice.
+
+Validation: cover wrapped lines, buffer lifetime, partial progress, and
+normal restored output.  This prerequisite needs no manual image test.
+
+### 10. GIF Decoder State Encapsulation
+
+Source: `decoder()` and LZW bit, dictionary, stack, and line state in
+`io/decoder.cpp`; new `io/GifDecoder.h` and `io/GifDecoder.cpp`.
+
+Work:
+
+- Move decoder locals and mutable static state into `GifDecoder`, with
+  explicit initialization and lifetime.
+- Preserve the synchronous caller for this isolated change.  Mark its
+  drain as temporary, removed by Restored Image Sound Controller.
+- Keep prefix expansion, clear/end codes, skip factors, and malformed
+  input behavior unchanged; do not add audio or UI decisions here.
+
+Done when:
+
+- Decoder continuation can retain all state without its old stack frame.
+
+Validation: reuse codec tests and cover independent decoder instances,
+clear/end codes, and cleanup after malformed input.  No manual test.
+
+### 11. GIF Decoder Incremental Lines
+
+Source: line completion and pending prefix expansion in the encapsulated
+GIF decoder.
+
+Work:
+
+- Return a decoded line to the caller instead of invoking `g_out_line`
+  from inside a whole-image decode loop.
+- Preserve a partially expanded code across a line boundary and keep the
+  line buffer valid until its consumer has finished with it.
+- Retain the marked synchronous compatibility drain for existing callers
+  until Restored Image Sound Controller removes it from the sound path.
+
+Done when:
+
+- A caller can stop between lines without losing dictionary, bitstream,
+  or expansion state.  Decoding itself never waits for sound output.
+
+Validation: test code expansions crossing line boundaries, skipped rows,
+end-of-image handling, and equivalent decoded pixels.  No manual test.
+
+### 12. GIF Restore File Lifecycle
+
+Source: `gif_view()` in `io/gifview.cpp`, especially file, GIF block, byte
+buffer, and image-data state surrounding its `decoder()` call; new
+`io/GifRestore.h` and `io/GifRestore.cpp`.
+
+Work:
+
+- Encapsulate file traversal in `GifRestore` and own the byte buffer
+  across bounded decode calls.  Separate setup, decoding, and cleanup.
+- Keep file/format decisions and data below UI.  Make completion and
+  failure return to the caller without draining all remaining lines.
+- Preserve the old synchronous entry for other restore consumers as a
+  marked bridge; Image Loading UI Decisions removes that remaining path.
+
+Done when:
+
+- Sound restoration can retain a decoder and input file while returning
+  to UI between output units, without nesting the old `gif_view()` loop.
+
+Validation: cover normal end-of-file, GIF extensions, truncated input,
+buffer lifetime, and cleanup; reuse codec images.  No manual image test.
+
+### 13. Restored Image Sound Controller
+
+Source: restored-image pixel, decoder, and file traversal prerequisites;
+UI owner: the sound-restoration branch in `ui/big_while_loop.cpp`.
+
+Work:
+
+- Submit pixel-value samples directly from the bounded I/O operation.
+  Keep palette-index frequency mapping in the adapter.
+- Have UI advance that operation only as playback permits and handle
+  interruption outside the decoder/output callback.  Service `update()`
+  while rendering and waiting; finish with normal release, not mute.
+- Remove temporary pixel/decoder drains from the sound path plus
+  `sleep_orbit_delay()`, `write_sound()`, and direct mute calls.  Keep
+  marked compatibility paths for other restore consumers separate.
+
+Done when:
+
+- Sound restoration cannot wait for playback inside line decoding or
+  pixel output, and refused pixels remain uncommitted until accepted.
+
+Validation: cover restoration refusal, line continuation, interruption,
+and legacy file records with a fake port and decoder/controller tests.
+Exercise sound-restore selection through its UI entry as well as the
+traversal object.  Do not repeat image-restoration tests manually.
+
+### 14. Sound Session Lifecycle Ownership
+
+Source: `ImageCalculation::finish()`, remaining sound-file lifecycle
+calls, render controllers, and both `calc_fract()` call sites in
+`ui/big_while_loop.cpp`, including evolution rendering.
+
+Work:
+
+- Consolidate output lifetime at the UI render-operation owner.  Keep
+  nested controllers from opening or closing a second sound file.
+- Retain the same `SoundOutputPtr` used by the active binding throughout
+  the operation.  Shared ownership does not replace explicit completion,
+  and no producer-specific ownership or parameter plumbing is needed.
+- Keep servicing `update()` while `finish()` reports pending playback or
+  release tails.  Normal completion must not invoke mute to force a drain.
+- Mute promptly on interruption, cancelling pending audible playback and
+  stale release deadlines while preserving accepted file records.  Then
+  finish or retain the session as its owner decides.
+- Remove `close_sound()` from common engine teardown after all producers
+  use the port.  Keep image timing and calculation cleanup in the engine.
+- Preserve legacy orbit-boundary records without putting wall-clock
+  reads or sound-file policy back into pixel calculation.
+
+Done when:
+
+- Completion, cancellation, failure, and evolution transitions close each
+  sound session correctly without an engine-owned file or modal error.
+
+Validation: exercise nested controllers, multiple evolution cells, late
+playback/release-tail completion, errors, and accepted-once boundary
+records.  Verify completion without mute and interruption without stale
+release of later voices through fake-port controller tests.  No manual
+test required; unsupported drivers cannot verify audible voice behavior.
+
+### 15. Remove Legacy Sound Control Paths
+
+Source: output routines in `engine/sound.cpp`, `SoundInputPendingFn`,
+`init_sound_input()`, and any temporary production migration bridges.
+
+Work:
+
+- Remove unused `write_sound()`, `sound_open()`, `sound_time_write()`,
+  `close_sound()`, and the input-pending callback after port migration.
+- Remove legacy sound waits and polling, not the driver-backed output
+  implementation or its optional recording.
+  Keep parameter compatibility and completion-buzzer settings in scope.
+- Remove temporary bridge declarations and TODO markers from the sound
+  output paths.  Marked non-sound GIF compatibility drains remain for
+  Image Loading UI Decisions.  Do not add a global forwarding API around
+  `SoundOutput`.
+- Recheck every migrated producer and failure path for direct driver
+  sound calls, input polling, and indirect playback waits.
+
+Done when:
+
+- Calculation uses the port; the concrete implementation owns optional
+  recording and driver output; UI owns coordination and input.
+  `OSF_MIDI` still works.
+- No calculation sound path depends on `engine/wait_until.h` or a
+  multimedia library selected speculatively for this refactor.
+
+Validation: replace obsolete input-suppression tests with port/adapter
+contract tests and run the full `rt-default` workflow.  Rendering and
+legacy file output must remain valid with unsupported driver sound.
+
+### 16. Palette Spin Delay Boundary
 
 Work:
 
@@ -706,11 +1149,20 @@ Done when:
 - `libid/engine/spindac.cpp` does not call `driver_delay()`.
 - UI callers own palette animation timing.
 
-Manual testing:
+Validation: add mock-driver tests for palette index changes, DAC writes,
+and UI delay selection.  A plain palette refresh must not acquire a
+cycling delay.  Existing image tests do not test palette animation.
 
-- Use palette rotation from the main UI and palette editor.
+Manual testing, for visible cadence and physical input only:
 
-### 5. Wait-Until Cleanup
+- Arguments: `video=F6 type=mandel`.
+- After rendering, press `+` to cycle the palette.  Use Down/Up to slow
+  down/speed up, Space to pause/resume, and Esc to exit.  Verify visible
+  cadence changes and responsive input.  Do not compare image pixels.
+- The palette editor calls the same `rotate()` loop; do not repeat this
+  test there unless its entry or return path changes in the slice.
+
+### 17. Wait-Until Cleanup
 
 Work:
 
@@ -726,16 +1178,16 @@ Done when:
   `engine/wait_until.h`.
 - No rendering path reaches keyboard polling through a wait helper.
 
-Manual testing:
-
-- None unless a remaining interactive caller is changed.
+Validation: retain timer and controller coverage for any remaining
+callers.  Pure helper removal needs no manual test; a newly discovered
+caller must have its actual behavior covered before removal.
 
 The remaining direct interrupt checks are grouped by UI polling loop.
 After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### 6. StandardFractal Pixel Interrupts
+### 18. StandardFractal Pixel Interrupts
 
 Work:
 
@@ -757,14 +1209,13 @@ Done when:
 - `ui/standard_fractal.cpp` polls between `StandardFractal` increments
   and calls `suspend()` when interruption is requested.
 
-Manual testing:
+Validation: retain one/two-pass image tests and add injected-key
+controller or autokey regressions for suspension, `x` followed by Esc,
+and resumption without skipped or repeated pixels in both passes.
+Existing handler tests do not cover the controller path.  These are
+deterministic transitions; no additional manual rendering check.
 
-- `type=mandel passes=1 maxiter=10000`: while rendering, press `x`,
-  then `Esc`; rendering resumes.
-- `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
-  then `Esc`; rendering resumes.
-
-### 7. Perturbation Traversal Ownership
+### 19. Perturbation Traversal Ownership
 
 Work:
 
@@ -802,12 +1253,13 @@ Done when:
 - BoundaryTrace can use perturbation without crashing or recomputing
   already-computed pixel orbits.
 
-Manual testing:
+Validation: add a deterministic deep-zoom BoundaryTrace regression that
+exercises reference failure and replacement, completes without a hang,
+and checks computed colors and traversal ownership.  Existing tolerance
+tests and ordinary perturbation images do not cover this case.  Use an
+automated engine or batch-render test, not a manual completion check.
 
-- Deep zoom with `type=mandel passes=b`: rendering completes without a
-  perturbation crash or hang.
-
-### 8. Perturbation Pass-Switch Tests
+### 20. Perturbation Pass-Switch Tests
 
 Work:
 
@@ -832,13 +1284,13 @@ Done when:
 - No stale reference, retry, or traversal state from the previous pass
   affects the next pass algorithm.
 
-Manual testing:
+Validation: add controller or autokey coverage for the actual deep-zoom
+`passes=b` to `passes=g` transition, asserting the selected perturbation
+strategy and rendered result.  Include the `perturbation=no` control.
+Separate renders do not prove transition correctness.  These new tests
+replace the two manual pass-switch checks; no duplicate manual test.
 
-- Deep zoom with `type=mandel passes=b`, then switch to `passes=g`
-- Deep zoom with `type=mandel passes=b perturbation=no`, then switch to
-  `passes=g`
-
-### 9. Cellular Preparation Presentation
+### 21. Cellular Preparation Presentation
 
 Source: `Cellular::iterate()` and `Cellular::suspend()` in
 `libid/fractals/Cellular.cpp`; UI owner: `libid/ui/cellular.cpp`.
@@ -858,10 +1310,13 @@ Done when:
   on every exit path.
 
 Validation: retain cellular image coverage; exercise preparation-phase
-interruption and error cleanup.  Manual checks cover only the thinking
-display and interruption, using traced starting-row arguments.
+interruption and error cleanup in new controller tests.  Verify thinking
+screen entry, updates, and exactly-once cleanup on completion,
+interruption, and failure.  Existing thinking-helper tests do not cover
+phase ownership; extend automation instead of requiring a manual
+preparation-screen check.
 
-### 10. L-System Sizing Traversal State
+### 22. L-System Sizing Traversal State
 
 Source: `find_size()`, `lsys_find_scale()`, and `LSystem::Impl` in
 `libid/fractals/lsystem.cpp`.
@@ -883,7 +1338,7 @@ Validation: compare sizing extrema, scale, and turtle semantics, using the
 approach in [test-lsystem.md](test-lsystem.md).  Do not require image golds
 for floating-point line rasterization.  No new manual interaction test.
 
-### 11. L-System Sizing UI Controller
+### 23. L-System Sizing UI Controller
 
 Source: `LSystem::Impl::start()`, `find_scale()`, and sizing traversal;
 UI owner: `libid/ui/lsystem.cpp`.
@@ -902,11 +1357,12 @@ Done when:
 - Setup, sizing, and drawing return to the UI controller without polling
   input or interpreting pending keys inside calculation code.
 
-Validation: cover sizing suspension and completion semantically.  Trace a
-built-in L-system and order that keep sizing active before giving manual
-arguments for thinking-screen cancellation and transition to drawing.
+Validation: cover sizing suspension and completion semantically.  Add
+controller tests for thinking-screen entry, updates, cancellation, cleanup,
+and transition to drawing, using a controlled sizing workload.  Existing
+thinking-helper tests do not cover this integration.  No manual test.
 
-### 12. JIIM Calculation And Tool State
+### 24. JIIM Calculation And Tool State
 
 Source: `InverseJulia`, `s_cursor`, window state, and coordinate display
 state in `libid/engine/jiim.cpp`.
@@ -925,11 +1381,12 @@ Done when:
 - One calculation increment can run with explicit calculation inputs and
   no cursor or key-processing work mixed into it.
 
-Validation: preserve current JIIM and orbit-window behavior.  Only cursor,
-selection, and window-interaction paths need manual checks; trace their
-actual entry commands before giving instructions.
+Validation: add state tests for inverse-orbit increments and independent
+tool state, including continuation and selected coordinates.  This local
+refactor does not change the UI loop.  The next slice's native cursor
+check covers the ownership change; no separate manual test here.
 
-### 13. JIIM UI Interaction Controller
+### 25. JIIM UI Interaction Controller
 
 Source: `InverseJulia::process()`, `iterate()`, `finish()`,
 `process_inverse_julia_keyboard()`, and `requeue_inverse_julia_key()`.
@@ -952,10 +1409,23 @@ Done when:
 - No engine method invokes UI key processing, cursor waits, mouse scopes,
   or key requeue helpers.
 
-Validation: exercise cursor movement, exact-point entry, selection,
-window toggles, and return to the main loop through the traced UI paths.
+Validation: add controller tests for key and mouse notifications,
+exact-point entry, selection, window toggles, handler lifetime, and return
+to the main loop.  No existing JIIM controller tests cover these paths.
 
-### 14. Standard Pixel Boundary
+Manual testing, for native cursor tracking and transient display only:
+
+- Arguments: `video=F6 type=mandel`.
+- After rendering, press Space for the Julia picker.  Move the mouse
+  without pressing keys, then use arrow keys.  Verify the crosshair tracks
+  both smoothly and blinks.  Press `x`, then Esc to close the options
+  screen; verify the restored Mandelbrot image has no stale cursor pixels.
+- On the Mandelbrot image, use `o` for the orbit window and move the
+  cursor.  Press `o` again to close it; verify cursor placement and display
+  restoration.  Mock notifications do not cover native mouse delivery or
+  visible cursor restoration; do not recheck orbit image correctness.
+
+### 26. Standard Pixel Boundary
 
 Source: `StandardFractal`, `StandardPass`, and the show-dot wrapper in
 `libid/engine/calcfrac.cpp`.
@@ -983,7 +1453,7 @@ Validation: cover selection and continuation across the standard pass
 algorithms with existing images and focused state tests.  No manual
 image test duplicates automated pass coverage.
 
-### 15. UI Show-Dot Marker Ownership
+### 27. UI Show-Dot Marker Ownership
 
 Source: `ShowDotState`, `show_dot_region()`, and save/restore operations
 in `engine/calcfrac.cpp`; UI owner: `ShowDotController` used by
@@ -1005,14 +1475,23 @@ Done when:
 - Show-dot state and presentation decisions are UI-owned, and all
   standard traversal uses the same marker lifecycle.
 
-Manual testing:
+Validation: add controller tests for marker save/restore order, symmetry,
+right-edge continuation, menu cancellation, and parameter-driven restart.
+Existing show-dot tests cover dispatch and parsing, not marker lifecycle.
 
-- `type=mandel showdot=b/20 orbitdelay=20`: verify right-edge progress,
-  then `x` and `Esc` resume rendering without a stranded marker.
-- `type=mandel showdot=b/20 orbitdelay=139`: increase max iterations on
-  the `x` screen and verify resumed calculation leaves no marker trails.
+Manual testing, for transient native marker presentation only:
 
-### 16. Remove Show-Dot Transitional Wrappers
+- Arguments: `video=F6 type=mandel passes=1 showdot=b/20 orbitdelay=20`.
+- Watch the marker reach the right edge and continue onto the next row.
+  During rendering, press `x`, then Esc; verify no stranded marker.  Open
+  `x` again, increase Maximum Iterations, and accept; verify the moving
+  marker leaves no trails.  Do not wait for or compare the completed image.
+- Explicit one-pass mode exercises the current show-dot yield path.  The
+  old values 20 and 139 use the same show-dot delay branch; repeating the
+  interaction at both values adds no coverage.  This check concerns live
+  presentation, which final-image comparisons cannot observe.
+
+### 28. Remove Show-Dot Transitional Wrappers
 
 Source: `calc_type_show_dot()`, `wrap_show_dot_calc_type()`, standard
 show-dot setup/cleanup, and the temporary `StandardFractal` display API.
@@ -1033,7 +1512,7 @@ Done when:
 Validation: exercise actual marker lifecycle and interrupted/restarted
 calculation.  Do not add source-grep tests or repeat image tests manually.
 
-### 17. Standard Render Validation Diagnostics
+### 29. Standard Render Validation Diagnostics
 
 Source: validation and allocation diagnostics in `engine/calcfrac.cpp`,
 `engine/calc_frac_init.cpp`, and `BoundaryTrace::initialize()`.
@@ -1055,7 +1534,7 @@ Done when:
 Validation: cover invalid pass options and setup failure paths with a
 mock UI owner; preserve batch diagnostics and calculation status.
 
-### 18. IFS Definition Diagnostics
+### 30. IFS Definition Diagnostics
 
 Source: `ifs_load()` and shared file-entry lookup; UI owners:
 `ui/get_file_entry.cpp` and the IFS render controller.
@@ -1076,7 +1555,7 @@ Done when:
 Validation: exercise malformed and missing definitions through loader and
 UI-entry tests.  No manual rendering test duplicates existing IFS images.
 
-### 19. L-System Definition Diagnostics
+### 31. L-System Definition Diagnostics
 
 Source: definition parsing in `fractals/lsystem.cpp` and file-entry
 lookup; UI owners: `ui/lsystem.cpp` and `ui/get_file_entry.cpp`.
@@ -1095,7 +1574,7 @@ Done when:
 Validation: reuse the parser-test direction in
 [test-lsystem.md](test-lsystem.md), including retry after invalid input.
 
-### 20. Formula Parser Diagnostics
+### 32. Formula Parser Diagnostics
 
 Source: file reading, prescan, compilation, and error reporting in
 `libid/fractals/parser.cpp`.
@@ -1116,7 +1595,7 @@ Done when:
 Validation: exercise malformed input, missing files, failed compilation,
 and successful retry through existing parser and UI-entry tests.
 
-### 21. Fractal Setup Validation Diagnostics
+### 33. Fractal Setup Validation Diagnostics
 
 Source: `lyapunov_per_image()` and `julibrot_per_image()`.
 UI owners: the Lyapunov and standard-4D controllers.
@@ -1136,7 +1615,7 @@ Done when:
 Validation: cover both invalid configurations and the successful setup
 paths.  Normal image coverage needs no duplicate manual checks.
 
-### 22. Palette Definition Diagnostics
+### 34. Palette Definition Diagnostics
 
 Source: color-map loading and validation in `libid/io/loadmap.cpp`;
 UI owners: palette selection and render-setup controllers.
@@ -1156,7 +1635,7 @@ Done when:
 Validation: cover missing and malformed maps, retained prior state, and
 successful retry through loader and UI-choice tests.
 
-### 23. 3D Output Diagnostics
+### 35. 3D Output Diagnostics
 
 Source: Targa output failures and interactive debug diagnostics in
 `libid/geometry/line3d.cpp`; UI owners: 3D restore and stereo controllers.
@@ -1177,7 +1656,7 @@ Done when:
 Validation: cover output failure and cleanup plus existing 3D rendering
 tests.  No new manual rendering comparison is needed.
 
-### 24. Arbitrary-Precision Failure Ownership
+### 36. Arbitrary-Precision Failure Ownership
 
 Source: precision allocation and `alloc_stack()` in `math/biginit.cpp`.
 UI owner: the controller requesting precision setup or rendering.
@@ -1198,7 +1677,7 @@ Done when:
 Validation: exercise allocation-limit and stack-limit failures, cleanup,
 and a subsequent valid precision request.
 
-### 25. Precision Debug Display Ownership
+### 37. Precision Debug Display Ownership
 
 Source: `show_var_bn()`, `show_corners_*()`, and related debug displays
 in `libid/engine/fractalb.cpp`.
@@ -1218,7 +1697,7 @@ Done when:
 Validation: exercise collected diagnostic data and UI handling without
 requiring a manual pixel comparison.
 
-### 26. Memory Failure And Recovery Ownership
+### 38. Memory Failure And Recovery Ownership
 
 Source: allocation, move validation, disk-memory recovery, debug messages,
 and shutdown calls in `libid/misc/memory.cpp`.
@@ -1240,7 +1719,7 @@ Done when:
 Validation: exercise allocation failure, invalid operations, retry,
 cancellation, and cleanup through focused failure-path tests.
 
-### 27. Pixel Access Layer Ownership
+### 39. Pixel Access Layer Ownership
 
 Source: `get_color()`, pixel/span operations, and their backend selection
 in `libid/ui/video.cpp`, plus non-UI callers and headers.
@@ -1262,7 +1741,7 @@ Validation: use existing image and codec tests.  This is a dependency
 correction, not by itself inversion of an input loop; no new interface
 or callback table is required merely to relocate the backend.
 
-### 28. Disk Storage Backend State
+### 40. Disk Storage Backend State
 
 Source: cache, allocation, disk pixel access, Targa backing, and memory
 queue storage in `libid/ui/diskvid.cpp`.
@@ -1283,7 +1762,7 @@ Done when:
 Validation: use existing disk-video, memory, potential, and image tests;
 add focused failure coverage only where the split changes recovery.
 
-### 29. Disk Storage UI Decisions
+### 41. Disk Storage UI Decisions
 
 Source: `pot_start_disk()`, `common_start_disk()`, `dvid_status()`, and
 storage setup callers in StandardFractal, Plasma, JIIM, and image I/O.
@@ -1304,9 +1783,11 @@ Done when:
 - Non-UI code no longer needs `ui/diskvid.h` for backend operations.
 
 Validation: exercise setup failure, cancellation, and normal storage
-completion.  Trace any manual disk-video interaction before giving args.
+completion with injected storage failures and mock UI decisions.  Existing
+disk-video tests cover normal memory/disk selection, not failure prompts;
+add those cases.  No manual storage or rendering check required.
 
-### 30. Image Loading UI Decisions
+### 42. Image Loading UI Decisions
 
 Source: `read_overlay()` and related coordination in `io/loadfile.cpp`;
 UI owner: the existing image-load/restore path in `ui/big_while_loop.cpp`.
@@ -1318,6 +1799,9 @@ Work:
 - Return the loaded requirements to the UI owner, which gathers choices
   before starting or resuming decoder/render operations.
 - Preserve cancelled-load cleanup, batch defaults, and prior-image state.
+- Drive the bounded GIF restoration objects from the sound prerequisites
+  for other restore consumers, then remove their marked synchronous
+  compatibility drains.  Split distinct consumer conversions if needed.
 
 Done when:
 
@@ -1327,7 +1811,7 @@ Done when:
 Validation: cover cancelled selection, invalid metadata, and successful
 load through existing codec tests and focused UI-choice tests.
 
-### 31. Image Saving UI Decisions
+### 43. Image Saving UI Decisions
 
 Source: save coordination around `encoder()` in `io/encoder.cpp`;
 UI owners: manual save and autosave paths in `ui/big_while_loop.cpp`.
@@ -1350,7 +1834,7 @@ Validation: exercise partial saves for new and existing files, both user
 choices, write failures, and autosave completion.  Use codec tests for
 file contents instead of manual image comparisons.
 
-### 32. Command Parsing Diagnostics
+### 44. Command Parsing Diagnostics
 
 Source: `arg_error()`, `init_msg()`, `s_stop_msg`, and `s_goodbye` in
 `engine/cmdfiles.cpp`; UI owners: startup and command-entry controllers.
@@ -1370,7 +1854,7 @@ Done when:
 Validation: preserve command-parser tests; exercise malformed startup
 arguments, interactive command errors, and batch failure behavior.
 
-### 33. Command Actions And Application Effects
+### 45. Command Actions And Application Effects
 
 Source: help-document generation, parameter-file generation, comments,
 and application-exit branches in `engine/cmdfiles.cpp`.
@@ -1392,7 +1876,7 @@ Validation: retain generated-output tests and cover command effects at
 their caller.  Do not conflate this with the completed `CommandResult`
 split for interactive menu handlers.
 
-### 34. Common Engine Render Lifecycle
+### 46. Common Engine Render Lifecycle
 
 Source: `ImageCalculation::start()` and `finish()`, `StandardFractal`,
 `Lyapunov`, and `NonStandardFractal`.
@@ -1416,7 +1900,7 @@ Done when:
 Validation: cover normal completion, suspension/resume, failure cleanup,
 and calculation-time accounting.  Existing images protect render results.
 
-### 35. Standalone Engine Operation Selection
+### 47. Standalone Engine Operation Selection
 
 Source: `NonStandardFractal`, `FractalDispatch`, `FractalSpecific`, and
 the already incremental standalone calculation classes.
@@ -1441,7 +1925,7 @@ Done when:
 Validation: drive selected operations to completion and suspension in
 engine tests; reuse existing standalone image and semantic coverage.
 
-### 36. Remove Per-Image Renderer Reentry
+### 48. Remove Per-Image Renderer Reentry
 
 Source: `standalone_per_image()` in `fractals/frasetup.cpp`,
 `cellular_per_image()`, full-renderer entries in `fractals/fractalp.cpp`,
@@ -1465,7 +1949,7 @@ Done when:
 Validation: cover cellular and other standalone selection through the
 real dispatch path, including setup failure and resume behavior.
 
-### 37. IFS Front-End Calculation Selection
+### 49. IFS Front-End Calculation Selection
 
 Source: `ifs_type()` and the `ifs3d()` front end in
 `libid/fractals/lorenz.cpp`; UI owners: `ui/ifs2d.cpp` and `ui/ifs3d.cpp`.
@@ -1484,10 +1968,10 @@ Done when:
 
 - IFS front-end calculation code never invokes a UI render loop.
 
-Validation: use existing 2D and 3D IFS rendering tests.  No manual image
-comparison unless a changed interaction lacks automated coverage.
+Validation: use existing 2D and 3D IFS rendering tests and add operation
+selection tests.  This selection change needs no manual image comparison.
 
-### 38. Stereo Rendering UI Sequence
+### 50. Stereo Rendering UI Sequence
 
 Source: `funny_glasses_call()`, `orbit3d_type()`, and stereo IFS setup in
 `fractals/lorenz.cpp`; UI owner: `StereoController` in `ui/stereo.cpp`.
@@ -1508,11 +1992,13 @@ Done when:
 - Stereo calculation never waits for a photographer's response or chooses
   a UI controller.  Each eye's rendering remains calculation work.
 
-Validation: retain stereo image coverage; trace PHOTO-mode entry and give
-manual arguments for the between-eye prompt, save, continue, and cancel
-paths that lack automated coverage.
+Validation: retain stereo image coverage and add mock-controller or
+autokey tests through PHOTO-mode entry for the between-eye prompt, save,
+continue, cancel, and display restoration.  Current random-line tests and
+3D-look autokey coverage do not exercise that prompt.  These deterministic
+UI decisions require new automated coverage, not a manual checklist.
 
-### 39. Orbit Renderer Operation Selection
+### 51. Orbit Renderer Operation Selection
 
 Source: orbit, dynamic, IFS, inverse-Julia, and standard-4D renderer
 entries in `fractals/fractalp.cpp` and front ends in `fractals/lorenz.cpp`.
@@ -1537,7 +2023,7 @@ Done when:
 Validation: cover selected operation identity, setup, suspension, and
 completion; reuse orbit, IFS, and standard-4D rendering tests.
 
-### 40. Outer UI Render Operation Control
+### 52. Outer UI Render Operation Control
 
 Source: `calc_fract()`, the render branches in `ui/big_while_loop.cpp`,
 and standard, Lyapunov, and non-standard UI controllers.
@@ -1562,11 +2048,23 @@ Done when:
 - No new wrapper retains the old nested engine/UI render call chain.
 
 Validation: run the full `rt-default` workflow and cover batch completion,
-save, exit, and interruption.  Manual instructions cover menu escape,
-parameter changes, and presentation toggles only after tracing the changed
-paths and excluding interaction coverage already provided by automation.
+save, exit, and interruption.  Add controller or autokey tests for menu
+cancellation, parameter changes, and presentation toggles through the
+outer application phases.  Existing autokey scripts do not cover these
+transitions; do not substitute a manual retest of every menu or renderer.
 
-### 41. Remaining Data-Only UI Dependencies
+Manual testing, for physical input during CPU-bound rendering only:
+
+- Arguments:
+  `video=F6 type=mandel passes=1 maxiter=1000000 periodicity=0`.
+- While rendering, press `x` physically; verify the options screen opens
+  responsively.  Press Esc and verify rendering resumes and the window
+  continues repainting.  Do not wait for completion or compare pixels.
+- Mock-driver and autokey tests bypass physical input delivery.  Unlike
+  the show-dot check, this path has no marker delay pumping window events
+  that could hide a missing outer-loop event pump.
+
+### 53. Remaining Data-Only UI Dependencies
 
 Source: remaining `ui/*` includes in calculation code after the concrete
 control-flow and backend ownership slices.
@@ -1603,6 +2101,9 @@ these direct and indirect paths:
 - `libid/engine/sound.cpp`: speaker output still waits through
   `wait_until()` and suppresses speaker tones through an input-pending
   callback.
+- `libid/io/gifview.cpp`: restored-image output reaches that legacy
+  sound wait from within synchronous decoder callbacks.  Its separate
+  pixel delay also needs a bounded return to the UI owner.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
 - `libid/fractals/Cellular.cpp`: `iterate()` calls `thinking()`, which
   polls the driver queue.  Completion, failure, and suspension also call
@@ -1779,6 +2280,17 @@ calls are moved behind `libid/ui`.
   bounded calculation operations.
 - Pixel plotting, image storage, and calculation timing stay below UI;
   their backend operations do not own input or presentation decisions.
+- Calculation may submit numerical samples directly to `SoundOutput`.
+  The application injects one `SoundOutputPtr` through the active output
+  binding, not through calculation call-chain parameters or per-pass
+  fields; UI services that same instance.
+  One concrete implementation preserves optional `OSF_MIDI` recording
+  followed by driver output, without key polling or playback waits inside
+  the port.  Interactive UI advances plotting and audio together at the
+  slower rate; driver refusal does not delay or suppress recording.
+- UI services non-blocking `update()` while rendering, waiting, and
+  completing.  Normal voice release and release-tail completion do not
+  use mute; interruption explicitly silences and resets playback.
 - Show-dot marker state and all temporary display bridge methods have
   been removed from calculation code.
 - Audit source calls and reachable dispatch targets in both release and
