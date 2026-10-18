@@ -701,37 +701,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 1. SoundOutput Contract
-
-Source: new `engine/SoundOutput.h` and matching implementation; design:
-[sound.md](sound.md).
-
-Work:
-
-- Define non-blocking `play(sample)`, `update()`, readiness,
-  orbit-boundary, mute, and incremental completion operations without
-  driver or UI dependencies.  Keep `ready()` a query.
-- Specify normal voice release as internal playback lifecycle serviced
-  through `update()`, distinct from immediate all-voice mute.  Do not add
-  a calculation-facing soundoff operation.
-- Add `NullSoundOutput` and a recording test implementation that can
-  refuse samples until explicitly made ready.
-- Define `SoundOutputPtr = std::shared_ptr<SoundOutput>` and the active
-  `g_sound` binding, initialized to `NullSoundOutput`.
-- Follow [the injection design](sound.md#dependency-injection); test
-  scoped replacement/restoration of the shared instance.  Do not add
-  calculation constructor parameters or migrate production producers in
-  this prerequisite slice.
-
-Done when:
-
-- Acceptance and backpressure have precise, testable meaning without
-  selecting an audio library or changing the current rendering path.
-
-Validation: test accepted-once ordering, rejection without side effects,
-updates, readiness, orbit boundaries, release versus mute, and repeated
-completion.  No manual test; this does not change interactive control flow.
-
 ### 2. Driver-Backed SoundOutput
 
 Source: sound mapping, file recording, and device output in

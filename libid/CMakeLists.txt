@@ -60,6 +60,7 @@ add_library(libid
     include/engine/LogicalScreen.h engine/LogicalScreen.cpp
     include/engine/log_map.h engine/log_map.cpp
     include/engine/lowerize_parameter.h engine/lowerize_parameter.cpp
+    include/engine/NullSoundOutput.h engine/NullSoundOutput.cpp
     include/engine/ScanlinePass.h engine/ScanlinePass.cpp
     include/engine/OrbitPlot.h engine/OrbitPlot.cpp
     include/engine/param_not_used.h engine/param_not_used.cpp
@@ -75,6 +76,7 @@ add_library(libid
     include/engine/SynchronousOrbit.h engine/SynchronousOrbit.cpp
     include/engine/SolidGuess.h engine/SolidGuess.cpp
     include/engine/sound.h engine/sound.cpp
+    include/engine/SoundOutput.h engine/SoundOutput.cpp
     include/engine/spindac.h engine/spindac.cpp
     include/engine/StandardFractal.h engine/StandardFractal.cpp
     include/engine/StandardPass.h engine/StandardPass.cpp
