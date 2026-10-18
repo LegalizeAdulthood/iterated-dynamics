@@ -32,7 +32,8 @@ and calculation objects.
 
 ## Existing Shape
 
-These files already show the desired structure:
+These files show the calculation-object and UI-controller structure.
+The audit below records the remaining reverse calls inside that structure:
 
 - `libid/ui/ant.cpp` drives `libid/fractals/Ant.cpp`.
 - `libid/ui/bifurcation.cpp` drives
@@ -64,12 +65,17 @@ libid/fractals/<Type>.cpp or libid/engine/<Type>.cpp
     do not poll keyboard or mouse input
 ```
 
-`libid/ui/inverse_julia.cpp` is close, but JIIM still has engine-side
-keyboard and mouse ownership.
+Cellular still calls the polling `thinking()` UI helper during initial
+generation.  L-system drawing is incremental, but sizing still runs
+recursively inside `start()` and polls through `thinking()`.
+
+JIIM still owns the outer interaction loop, cursor, and UI keyboard and
+mouse scopes in `libid/engine/jiim.cpp`.  Extracting its input helpers into
+`libid/ui/inverse_julia.cpp` has not inverted that control flow.
 
 ## Target Shape
 
-Add a standard escape-time calculation object:
+The standard escape-time calculation object already has this lifecycle:
 
 ```cpp
 namespace id::engine
@@ -162,14 +168,15 @@ The current code is already part-way through this plan:
   `g_row` and `g_col`.
 - `BoundaryTrace` is a concrete `StandardPass` alternative.  It owns the
   outer scan cursor, outline tracing state, region filling state, and
-  suspend path.
-- `Diffusion` is a concrete `StandardPass` alternative.  It preserves the
-  diffusion counter, but tile-local traversal state still lives on the
-  stack inside `Diffusion::engine()`.
-- `SolidGuess` is a concrete `StandardPass` alternative.  First-pass row
-  traversal, remaining pass traversal, `guess_row()` block state, and
-  fast row repaint state still live on the stack.  It still probes
-  keyboard input while filling guessed rows.
+  suspend path.  Invalid options still invoke a modal `stop_msg()` from
+  pass initialization.
+- `Diffusion` owns its counter, tile traversal, and fill state.  Its
+  explicit phases advance in bounded counter chunks and suspend through
+  `StandardPass`.
+- `SolidGuess` owns first-pass row traversal, remaining pass traversal,
+  `guess_row()` block state, and row repaint state.  Its explicit phases
+  yield at row boundaries without polling keyboard input.  Preserve the
+  restored interaction cadence when changing these paths.
 - `SynchronousOrbit` owns an explicit rhombus frame stack and explicit
   leaf scan state.  It suspends through `StandardPass`.
 - `StickyOrbits` is a concrete `StandardPass` alternative.  It owns
@@ -184,6 +191,43 @@ The current code is already part-way through this plan:
   `StandardPass`, and glitch retry traversal is owned by `StandardFractal`.
   `PertEngine` supplies perturbation reference and point calculations
   below the pass layer.
+- `CommandResult` already separates menu command effects from the
+  `MainState` application-phase switch.  Some effects still travel through
+  `g_calc_status` and `MainContext::more_keys` side effects.
+- `engine_timer` and benchmarking machinery have been removed.  Explicit
+  engine timing still owns total image calculation time, including
+  suspension and completion accounting through `g_calc_time`.
+- Show-dot delay is UI-owned.  Marker save and restore state and a
+  temporary display bridge still live in the standard engine.  The
+  right-edge hang restriction and saved-state preservation across pixel
+  yields are compatibility requirements for later cleanup.
+
+The fresh reverse-call audit also found these live paths:
+
+- `LSystem::start()` calls recursive sizing, which calls `thinking()`;
+  `Cellular::iterate()` also calls `thinking()`.  That UI helper polls the
+  driver queue.  Both types also end the thinking display from calculation
+  code.
+- `InverseJulia::iterate()` calls `process_inverse_julia_keyboard()`;
+  `InverseJulia::process()` owns the handler scope, mouse scope, and loop.
+- `calc_fract()` calls UI render controllers directly.
+  `NonStandardFractal::iterate()`, `standalone_per_image()`, and
+  `cellular_per_image()` also reach UI render loops through dispatch
+  function pointers stored in `FractalSpecific`.
+- `ifs_type()` selects UI renderers, while `orbit3d_type()` and the IFS3D
+  path pass UI render functions to `funny_glasses_call()`.  That function
+  also invokes photographer prompts between stereo images.
+- Validation, parsing, memory, and precision failures can invoke modal
+  `stop_msg()` or application shutdown through `goodbye()`.
+- Pixel, span, and disk-storage functions used by calculation code live
+  under `libid/ui`.  Disk storage mixes backend work with progress text
+  and modal errors.  Pixel access itself remains calculation work.
+- Image loading, image saving, and command parsing still select UI
+  prompts, display status, or exit the application from non-UI modules.
+
+The numbered slices below cover these paths explicitly.  A controller
+listing, a future-direction paragraph, or a generic no-UI-includes rule
+does not count as an implementation slice for a reverse call.
 
 ## Input Rules
 
@@ -200,10 +244,22 @@ The current code is already part-way through this plan:
   an include from `libid/ui`.
 - Calculation code reports progress, completion, suspension state, and
   calculation decisions.  It does not interpret keys.
+- Apply that rule to setup, sizing, completion, errors, and cleanup as
+  well as `iterate()`.  Audit indirect calls through `thinking()`, modal
+  diagnostics, dispatch pointers, cursor helpers, and storage setup.
+- Keep image plotting and pixel access in calculation or storage code.
+  Extract misplaced backend work from `libid/ui`; do not move rendering
+  algorithms into UI to eliminate an include.
 - Keep behavior first.  Pure call relocation is not a completed slice; the
   owning state, decision, or return point must become clearer.
+- Preserve the existing synchronization cadence.  A new resumable state
+  must not force input dispatch or display refresh for every orbit point,
+  pixel, or internal state transition.
 - End each slice that changes calculation control flow with manual testing
   steps only for user interaction paths not covered by automated tests.
+- Trace each changed interaction before giving manual instructions.  Give
+  arguments and expected actions or observations; defer fixture selection
+  until that trace is available.  Reuse image tests for rendering coverage.
 
 ## Keyboard Handler Stack
 
@@ -246,15 +302,11 @@ the key is discarded.
 
 ## Application Phase and Command Effects
 
-The next architectural split is separating application phase from command
-effect.  `MainState` currently does both jobs.  It was hacked out of the
-old if/then/else control flow, so menu handlers now return values that
-are partly application phase and partly "what must happen next".
-
-Keep the existing `id_main` application-phase switch at first, but stop
-making menu handlers report application phases.  Menu and input handlers
-should report command effects.  A single boundary then maps command
-effects onto the existing `MainState` transitions and local-loop behavior.
+The menu command-result split has been implemented.  `MenuHandler`
+callbacks return `CommandResult`; the boundary near `big_while_loop()`
+maps those effects onto the existing `MainState` application-phase switch
+and local-loop behavior.  Keep that distinction as the outer application
+loop is inverted.
 
 Input is the outer loop after control is inverted.  Keyboard, mouse,
 command-file, command-line, and batch input are all command sources.  The
@@ -281,11 +333,11 @@ The control inputs should be separated from coarsest to finest:
   shell, and other actions that do not require an application phase
   change.
 
-Current menu handlers communicate these effects through a mixture of
-`MainState`, `g_calc_status`, and `MainContext::more_keys`.
-`MainState::CONTINUE` is loop mechanics, not a semantic command effect.
-`MainState::NOTHING` is overloaded: it can mean ignored, handled locally,
-presentation changed, or render parameters changed through side effects.
+Current handlers communicate command effects through `CommandResult`,
+with remaining `g_calc_status` and `MainContext::more_keys` side effects.
+`MainState::CONTINUE` remains loop mechanics, not a semantic command
+effect.  Preserve the explicit command-effect mapping as the outer
+application loop learns to drive render increments.
 
 The menu command-result split keeps this boundary:
 
@@ -293,8 +345,8 @@ The menu command-result split keeps this boundary:
 - Keep the existing `MainState` switch in `id_main`.
 - One mapping point near `big_while_loop()` translates command results
   into existing `MainState` transitions and local-loop behavior.
-- The current `g_calc_status` and `MainContext::more_keys`
-  side effects initially.
+- Retain the current `g_calc_status` and `MainContext::more_keys` side
+  effects until a focused slice replaces each with an explicit effect.
 
 The audited command-result categories are:
 
@@ -375,8 +427,17 @@ points: `standard_fractal()`, `lyapunov_fractal()`, and
 return control after bounded work.  It is not fixed by moving those calls
 behind another engine wrapper.
 
-The near-term implementation slices continue closing specific
-unbounded/waiting paths before top-level image rendering is inverted.
+The indirect paths also belong to that boundary.  `FractalSpecific`
+contains UI renderer pointers, `standalone_per_image()` and
+`cellular_per_image()` invoke those pointers, and IFS and 3D front ends
+call UI controllers from `fractals/lorenz.cpp`.  A top-level-only change
+does not eliminate those nested UI calls.
+
+The implementation order closes calculation-side input and presentation
+paths first, then extracts misplaced backend helpers, and finally makes
+the outer UI controller drive a selected engine operation.  Retain the
+existing sound, wait, interrupt, and perturbation slices; the fresh audit
+adds controller-specific follow-up slices after them.
 
 ## Orbit Display And Delay Policy
 
@@ -486,6 +547,27 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - `libid/engine/spindac.cpp`: includes palette rotation delay via
   `driver_delay()`.
 - `libid/engine/wait_until.cpp`: implements a key-sensitive delay loop.
+- `libid/fractals/Cellular.cpp`: starts, updates, and ends the thinking
+  screen from generation, error, and suspend paths.
+- `libid/fractals/lsystem.cpp`: recursive sizing owns the thinking screen
+  and decides whether a pending key aborts sizing.
+- `libid/engine/jiim.cpp`: owns cursor state, coordinate messages, the
+  interaction loop, UI handler and mouse scopes, and calls into UI input
+  processing and key requeue helpers.
+- `libid/fractals/lorenz.cpp`: IFS and 3D front ends invoke UI renderers;
+  stereo orchestration invokes photographer prompts between images.
+- Calculation setup, fractal loaders, formula parsing, precision math,
+  debug displays, and memory helpers invoke `stop_msg()` and sometimes
+  `goodbye()`.  These are input and application-control leaks even when
+  they are reachable only on failure or in debug builds.
+- Calculation code calls pixel/span functions in `ui/video.cpp` and
+  storage functions in `ui/diskvid.cpp`.  Storage also displays progress
+  text and modal errors.  Backend extraction must retain plotting below
+  the UI layer while returning status and failures to UI owners.
+- `libid/io/loadfile.cpp`, `libid/io/encoder.cpp`, and
+  `libid/engine/cmdfiles.cpp`: select prompts, display status, make
+  continue/cancel decisions, or shut down the application from non-UI
+  coordination code.
 
 These are not all keyboard polling sites, but they are presentation
 ownership leaks.  The engine and fractal classes may expose bounded
@@ -509,7 +591,20 @@ with this comment immediately before it:
 The later slice must remove the marked wart.  Permanent interfaces must
 not use this marker.
 
-### Slice 1: Standard Orbit Sound Ownership
+Each slice must fit a focused commit.  Split prerequisite state changes
+from ownership changes when either needs independent review.  Do not
+combine all diagnostics, all renderer families, or all backend extraction
+into one cleanup commit.  Every temporary bridge must name the later
+slice that removes it in the plan.
+
+Validation has two parts: existing image or semantic tests protect
+calculation, while focused failure and interaction tests protect changed
+control flow.  A grep-based test is not a substitute for exercising a
+callback path.  Source searches remain audit tools, not repository tests.
+
+## Implementation Slices
+
+### 1. Standard Orbit Sound Ownership
 
 Work:
 
@@ -540,7 +635,7 @@ Manual testing:
 - `type=mandel sound=x showorbit=yes orbitdelay=184`
 - `type=mandel passes=o sound=x`
 
-### Slice 2: Lorenz Orbit Sound Ownership
+### 2. Lorenz Orbit Sound Ownership
 
 Work:
 
@@ -567,7 +662,7 @@ Manual testing:
 - `type=lorenz3d sound=x`
 - `type=lorenz sound=x`
 
-### Slice 3: Sound Backend UI Ownership
+### 3. Sound Backend UI Ownership
 
 Work:
 
@@ -594,7 +689,7 @@ Manual testing:
 
 - `@music.par/Music_Fractal-1`
 
-### Slice 4: Palette Spin Delay Boundary
+### 4. Palette Spin Delay Boundary
 
 Work:
 
@@ -615,7 +710,7 @@ Manual testing:
 
 - Use palette rotation from the main UI and palette editor.
 
-### Slice 5: Wait-Until Cleanup
+### 5. Wait-Until Cleanup
 
 Work:
 
@@ -640,7 +735,7 @@ After the pass-state slices, the audited non-wait call sites that should
 remain are the standard pixel and scanline checks driven from
 `libid/ui/standard_fractal.cpp`.
 
-### Slice 6: StandardFractal Pixel Interrupts
+### 6. StandardFractal Pixel Interrupts
 
 Work:
 
@@ -669,7 +764,7 @@ Manual testing:
 - `type=mandel passes=2 maxiter=10000`: while rendering, press `x`,
   then `Esc`; rendering resumes.
 
-### Slice 7: Perturbation Traversal Ownership
+### 7. Perturbation Traversal Ownership
 
 Work:
 
@@ -712,7 +807,7 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b`: rendering completes without a
   perturbation crash or hang.
 
-### Slice 8: Perturbation Pass-Switch Tests
+### 8. Perturbation Pass-Switch Tests
 
 Work:
 
@@ -743,9 +838,763 @@ Manual testing:
 - Deep zoom with `type=mandel passes=b perturbation=no`, then switch to
   `passes=g`
 
-## Current Direct Input Leaks
+### 9. Cellular Preparation Presentation
 
-Direct polling or key-sensitive waiting exists outside `libid/ui` in:
+Source: `Cellular::iterate()` and `Cellular::suspend()` in
+`libid/fractals/Cellular.cpp`; UI owner: `libid/ui/cellular.cpp`.
+
+Work:
+
+- Let the calculation object expose its initial-generation phase as
+  calculation state, without thinking-screen flags or UI callbacks.
+- Have the existing UI controller own `thinking()` and `thinking_end()`,
+  including interruption, phase completion, and exception cleanup.
+- Keep each generation's calculation and pixel output in `Cellular`.
+
+Done when:
+
+- `Cellular` never invokes a UI presentation or input helper.
+- The UI controller polls during preparation and ends its thinking screen
+  on every exit path.
+
+Validation: retain cellular image coverage; exercise preparation-phase
+interruption and error cleanup.  Manual checks cover only the thinking
+display and interruption, using traced starting-row arguments.
+
+### 10. L-System Sizing Traversal State
+
+Source: `find_size()`, `lsys_find_scale()`, and `LSystem::Impl` in
+`libid/fractals/lsystem.cpp`.
+
+Work:
+
+- Replace sizing recursion with an explicit frame stack owned by
+  `LSystem::Impl`, following the existing drawing-stack pattern.
+- Preserve rule order, branch turtle save/restore, extrema, overflow, and
+  failure behavior.  Keep sizing synchronous for this isolated change.
+- Mark any synchronous drain retained for the next slice as temporary.
+
+Done when:
+
+- Sizing traversal survives between calls without depending on recursive
+  local state.  The next slice can advance it in bounded chunks.
+
+Validation: compare sizing extrema, scale, and turtle semantics, using the
+approach in [test-lsystem.md](test-lsystem.md).  Do not require image golds
+for floating-point line rasterization.  No new manual interaction test.
+
+### 11. L-System Sizing UI Controller
+
+Source: `LSystem::Impl::start()`, `find_scale()`, and sizing traversal;
+UI owner: `libid/ui/lsystem.cpp`.
+
+Work:
+
+- Make sizing an explicit calculation phase advanced by bounded
+  `iterate()` calls.  `start()` must not expand the whole sizing tree.
+- Let the UI controller own the thinking display and interruption for
+  sizing as well as drawing.  Keep sizing math in `LSystem`.
+- Remove sizing's `thinking()` and `thinking_end()` calls and the
+  temporary synchronous drain from the preceding slice.
+
+Done when:
+
+- Setup, sizing, and drawing return to the UI controller without polling
+  input or interpreting pending keys inside calculation code.
+
+Validation: cover sizing suspension and completion semantically.  Trace a
+built-in L-system and order that keep sizing active before giving manual
+arguments for thinking-screen cancellation and transition to drawing.
+
+### 12. JIIM Calculation And Tool State
+
+Source: `InverseJulia`, `s_cursor`, window state, and coordinate display
+state in `libid/engine/jiim.cpp`.
+
+Work:
+
+- Separate inverse-orbit calculation and queue state from cursor,
+  window-layout, coordinate-message, last-key, and interaction state.
+- Refactor locally first so the calculation increment does not need a
+  `CrossHairCursor`, keyboard context, or mouse subscription.
+- Mark the local tool-state holder as temporary; the next slice moves
+  its ownership and the interaction loop into UI.
+
+Done when:
+
+- One calculation increment can run with explicit calculation inputs and
+  no cursor or key-processing work mixed into it.
+
+Validation: preserve current JIIM and orbit-window behavior.  Only cursor,
+selection, and window-interaction paths need manual checks; trace their
+actual entry commands before giving instructions.
+
+### 13. JIIM UI Interaction Controller
+
+Source: `InverseJulia::process()`, `iterate()`, `finish()`,
+`process_inverse_julia_keyboard()`, and `requeue_inverse_julia_key()`.
+UI owner: `InverseJuliaController` in `libid/ui/inverse_julia.cpp`.
+
+Work:
+
+- Move the outer loop, tool-state holder, cursor presentation, coordinate
+  messages, handler lifetime, and mouse scope into the UI controller.
+- Keep `InverseJuliaKeyboardHandler` and its keyboard context in UI.
+  The controller applies selected coordinates to calculation state.
+- Let UI poll or wait for input, call bounded engine increments, and
+  decide when to finish and requeue a main-loop key.
+- Remove calculation-to-UI input callbacks and the temporary holder left
+  by the preceding slice.
+
+Done when:
+
+- `jiim.cpp` owns inverse-orbit work and queues, not an interaction loop.
+- No engine method invokes UI key processing, cursor waits, mouse scopes,
+  or key requeue helpers.
+
+Validation: exercise cursor movement, exact-point entry, selection,
+window toggles, and return to the main loop through the traced UI paths.
+
+### 14. Standard Pixel Boundary
+
+Source: `StandardFractal`, `StandardPass`, and the show-dot wrapper in
+`libid/engine/calcfrac.cpp`.
+
+Work:
+
+- Expose a UI-neutral boundary between selecting a pixel for orbit work
+  and computing it.  Preserve the pass's selected pixel and continuation
+  state when returning to the controller.
+- Keep that boundary common to standard traversal; do not add show-dot
+  logic or feature flags to individual pass algorithms.
+- Preserve complete pixel results and calculation order.  Presentation
+  must not pretend a completed pixel is incomplete or use its color as
+  a UI request.
+- Keep ordinary rendering's interaction cadence.  Split pass-protocol
+  prerequisites into focused commits if the common boundary cannot be
+  introduced without changing several independent traversal mechanisms.
+
+Done when:
+
+- UI can observe the selected pixel around calculation without show-dot
+  methods, consume flags, or a UI callback from a calculation function.
+
+Validation: cover selection and continuation across the standard pass
+algorithms with existing images and focused state tests.  No manual
+image test duplicates automated pass coverage.
+
+### 15. UI Show-Dot Marker Ownership
+
+Source: `ShowDotState`, `show_dot_region()`, and save/restore operations
+in `engine/calcfrac.cpp`; UI owner: `ShowDotController` used by
+`libid/ui/standard_fractal.cpp`.
+
+Work:
+
+- Move marker geometry, saved pixels, drawing, restoring, and delay
+  decisions into the UI controller around the neutral pixel boundary.
+- Restore the marker before calculation or pass work can use its pixels
+  as image data.  Keep symmetry handling and incomplete-calculation
+  continuation correct across suspension and menu-driven recalculation.
+- Preserve current delay behavior; do not settle `orbitdelay` policy here.
+- Keep the right-edge hang fix until the old wrapper is removed.  Never
+  widen its yield eligibility as a shortcut to support more passes.
+
+Done when:
+
+- Show-dot state and presentation decisions are UI-owned, and all
+  standard traversal uses the same marker lifecycle.
+
+Manual testing:
+
+- `type=mandel showdot=b/20 orbitdelay=20`: verify right-edge progress,
+  then `x` and `Esc` resume rendering without a stranded marker.
+- `type=mandel showdot=b/20 orbitdelay=139`: increase max iterations on
+  the `x` screen and verify resumed calculation leaves no marker trails.
+
+### 16. Remove Show-Dot Transitional Wrappers
+
+Source: `calc_type_show_dot()`, `wrap_show_dot_calc_type()`, standard
+show-dot setup/cleanup, and the temporary `StandardFractal` display API.
+
+Work:
+
+- Remove show-dot dispatch wrapping and the temporary display bridge once
+  the UI controller owns its complete lifecycle.
+- Replace wrapper-specific tests with UI-controller save/restore and
+  suspension tests, retaining startup parameter coverage.
+- Remove all temporary show-dot declarations and their TODO comments.
+
+Done when:
+
+- Engine code has no show-dot marker state, display mailbox, or dispatch
+  wrapper.  Parameter compatibility remains intact.
+
+Validation: exercise actual marker lifecycle and interrupted/restarted
+calculation.  Do not add source-grep tests or repeat image tests manually.
+
+### 17. Standard Render Validation Diagnostics
+
+Source: validation and allocation diagnostics in `engine/calcfrac.cpp`,
+`engine/calc_frac_init.cpp`, and `BoundaryTrace::initialize()`.
+UI owner: the standard-render controller.
+
+Work:
+
+- Return validation failures or recoverable warnings to the controller
+  using calculation results or exceptions, rather than modal messages.
+- Let UI display the diagnostic and decide whether to continue, retry,
+  or return to parameter entry.  Retain engine-owned constraint checks.
+- Replace show-dot buffer precondition message/exit paths with
+  `std::logic_error` if those paths remain after show-dot extraction.
+
+Done when:
+
+- Standard setup and pass initialization cannot enter `stop_msg()`.
+
+Validation: cover invalid pass options and setup failure paths with a
+mock UI owner; preserve batch diagnostics and calculation status.
+
+### 18. IFS Definition Diagnostics
+
+Source: `ifs_load()` and shared file-entry lookup; UI owners:
+`ui/get_file_entry.cpp` and the IFS render controller.
+
+Work:
+
+- Return malformed, empty, oversized, or unavailable definition failures
+  as loader diagnostics without invoking `stop_msg()`.
+- Let each UI entry point display its loader failure once and decide
+  whether to retry selection or abandon rendering.
+- Keep parsing and transform validation independent of the display.
+
+Done when:
+
+- IFS definition loading cannot wait for keyboard input, including through
+  shared file-entry error helpers.
+
+Validation: exercise malformed and missing definitions through loader and
+UI-entry tests.  No manual rendering test duplicates existing IFS images.
+
+### 19. L-System Definition Diagnostics
+
+Source: definition parsing in `fractals/lsystem.cpp` and file-entry
+lookup; UI owners: `ui/lsystem.cpp` and `ui/get_file_entry.cpp`.
+
+Work:
+
+- Return parser and lookup diagnostics to the UI owners instead of
+  displaying modal errors from L-system code.
+- Preserve rule-loading failure state and ensure sizing never begins
+  after an invalid definition.
+
+Done when:
+
+- L-system loading, sizing, and drawing cannot invoke UI error handling.
+
+Validation: reuse the parser-test direction in
+[test-lsystem.md](test-lsystem.md), including retry after invalid input.
+
+### 20. Formula Parser Diagnostics
+
+Source: file reading, prescan, compilation, and error reporting in
+`libid/fractals/parser.cpp`.
+
+Work:
+
+- Preserve diagnostic text and parse locations as parser results or
+  errors.  Remove direct `stop_msg()` calls from those operations.
+- Let formula selection and render-setup UI owners decide how to display
+  errors and whether another definition is requested.
+- Keep parser cleanup correct when parsing stops early.
+
+Done when:
+
+- Formula parsing and compilation can run without a UI driver and cannot
+  open a modal message from calculation setup.
+
+Validation: exercise malformed input, missing files, failed compilation,
+and successful retry through existing parser and UI-entry tests.
+
+### 21. Fractal Setup Validation Diagnostics
+
+Source: `lyapunov_per_image()` and `julibrot_per_image()`.
+UI owners: the Lyapunov and standard-4D controllers.
+
+Work:
+
+- Return unsupported inside-method and video-mode diagnostics to the UI
+  owners rather than invoking `stop_msg()` from per-image setup.
+- Preserve setup success/failure meaning and avoid starting calculation
+  after validation failed.
+
+Done when:
+
+- These calculation setup routines cannot wait for input or choose an
+  error-screen interaction.
+
+Validation: cover both invalid configurations and the successful setup
+paths.  Normal image coverage needs no duplicate manual checks.
+
+### 22. Palette Definition Diagnostics
+
+Source: color-map loading and validation in `libid/io/loadmap.cpp`;
+UI owners: palette selection and render-setup controllers.
+
+Work:
+
+- Return missing-file and malformed-map diagnostics without `stop_msg()`
+  from loader code, including loads initiated during Julibrot setup.
+- Let UI decide whether to retry, retain the prior palette, or abandon
+  the requested operation.
+- Preserve parsing, compatibility, and palette data below UI.
+
+Done when:
+
+- Palette loading cannot enter a modal screen from calculation setup.
+
+Validation: cover missing and malformed maps, retained prior state, and
+successful retry through loader and UI-choice tests.
+
+### 23. 3D Output Diagnostics
+
+Source: Targa output failures and interactive debug diagnostics in
+`libid/geometry/line3d.cpp`; UI owners: 3D restore and stereo controllers.
+
+Work:
+
+- Return rendering and output-file diagnostics to the requesting owner.
+- Remove modal `stop_msg()` calls from geometry and file-output helpers,
+  including debug-only paths.
+- Keep projection, line plotting, file output, and cleanup in calculation
+  or I/O code; UI owns display, continuation, and abandonment decisions.
+
+Done when:
+
+- 3D transformation and output cannot invoke a UI prompt while advancing
+  geometry or writing an image.
+
+Validation: cover output failure and cleanup plus existing 3D rendering
+tests.  No new manual rendering comparison is needed.
+
+### 24. Arbitrary-Precision Failure Ownership
+
+Source: precision allocation and `alloc_stack()` in `math/biginit.cpp`.
+UI owner: the controller requesting precision setup or rendering.
+
+Work:
+
+- Report unsupported precision and exhausted arena failures without
+  `stop_msg()` or `goodbye()` in math code.
+- Keep precision constraints, arena state, and cleanup in math code; let
+  the UI owner choose parameter correction or application exit.
+- Preserve batch error reporting and exit status through the outer owner.
+
+Done when:
+
+- Arbitrary-precision math can fail without polling input or terminating
+  the application from the math layer.
+
+Validation: exercise allocation-limit and stack-limit failures, cleanup,
+and a subsequent valid precision request.
+
+### 25. Precision Debug Display Ownership
+
+Source: `show_var_bn()`, `show_corners_*()`, and related debug displays
+in `libid/engine/fractalb.cpp`.
+
+Work:
+
+- Keep formatting or collection of numeric debug data independent of UI.
+- Move interactive display and cancellation/exit handling into the UI
+  owner that requests the debug inspection.
+- Audit debug-only call paths as well as release paths.
+
+Done when:
+
+- Debug math and calculation helpers no longer call modal UI or
+  `goodbye()`.  Debug builds satisfy the same dependency boundary.
+
+Validation: exercise collected diagnostic data and UI handling without
+requiring a manual pixel comparison.
+
+### 26. Memory Failure And Recovery Ownership
+
+Source: allocation, move validation, disk-memory recovery, debug messages,
+and shutdown calls in `libid/misc/memory.cpp`.
+
+Work:
+
+- Return failure information from memory operations without modal
+  `stop_msg()`, buzzer output, or `goodbye()`.
+- Let requesting UI controllers own any retry/cancel choice and resume
+  or abandon the operation after the choice.
+- Keep allocation and resource cleanup below UI.  Do not replace direct
+  prompts with callbacks that still block inside a memory operation.
+
+Done when:
+
+- Memory operations and their failure paths never require an input queue
+  or select application shutdown.
+
+Validation: exercise allocation failure, invalid operations, retry,
+cancellation, and cleanup through focused failure-path tests.
+
+### 27. Pixel Access Layer Ownership
+
+Source: `get_color()`, pixel/span operations, and their backend selection
+in `libid/ui/video.cpp`, plus non-UI callers and headers.
+
+Work:
+
+- Move image pixel access and storage routing into an appropriate engine
+  or I/O module, following existing backend behavior.
+- Leave display-target activation and UI commands with their UI owners.
+- Update callers in passes, fractal classes, geometry, and codecs without
+  moving their plotting algorithms into UI.
+
+Done when:
+
+- Calculation code does not include `ui/video.h` for pixel access.
+- Pixel access is calculation/storage work, not a UI callback.
+
+Validation: use existing image and codec tests.  This is a dependency
+correction, not by itself inversion of an input loop; no new interface
+or callback table is required merely to relocate the backend.
+
+### 28. Disk Storage Backend State
+
+Source: cache, allocation, disk pixel access, Targa backing, and memory
+queue storage in `libid/ui/diskvid.cpp`.
+
+Work:
+
+- Separate backend storage state and operations from disk-video status
+  screens and modal failure decisions.
+- Put backend operations in an I/O-owned module used by calculation and
+  UI alike.  Preserve potential, plasma, Targa, and MIIM storage behavior.
+- Return storage progress and failures as data.  Mark any remaining
+  presentation bridge for removal in the next slice.
+
+Done when:
+
+- The backing-store lifetime and cache state are owned below UI.
+
+Validation: use existing disk-video, memory, potential, and image tests;
+add focused failure coverage only where the split changes recovery.
+
+### 29. Disk Storage UI Decisions
+
+Source: `pot_start_disk()`, `common_start_disk()`, `dvid_status()`, and
+storage setup callers in StandardFractal, Plasma, JIIM, and image I/O.
+UI owner: disk-video presentation and the requesting controller.
+
+Work:
+
+- Let UI own disk-video progress text and error decisions around backend
+  setup and bounded render work.
+- Remove backend calls into status screens and modal errors, including
+  indirect input through failed allocation.
+- Remove temporary bridges from the preceding slice.  Preserve storage
+  cleanup and headless/batch operation without requiring a text screen.
+
+Done when:
+
+- A calculation-side storage operation cannot call UI or wait for input.
+- Non-UI code no longer needs `ui/diskvid.h` for backend operations.
+
+Validation: exercise setup failure, cancellation, and normal storage
+completion.  Trace any manual disk-video interaction before giving args.
+
+### 30. Image Loading UI Decisions
+
+Source: `read_overlay()` and related coordination in `io/loadfile.cpp`;
+UI owner: the existing image-load/restore path in `ui/big_while_loop.cpp`.
+
+Work:
+
+- Separate metadata reading and validation from video-mode selection,
+  3D-parameter prompts, and UI history decisions.
+- Return the loaded requirements to the UI owner, which gathers choices
+  before starting or resuming decoder/render operations.
+- Preserve cancelled-load cleanup, batch defaults, and prior-image state.
+
+Done when:
+
+- Image-loading code does not invoke `get_video_mode()`,
+  `get_3d_params()`, or modal diagnostics from inside decoding setup.
+
+Validation: cover cancelled selection, invalid metadata, and successful
+load through existing codec tests and focused UI-choice tests.
+
+### 31. Image Saving UI Decisions
+
+Source: save coordination around `encoder()` in `io/encoder.cpp`;
+UI owners: manual save and autosave paths in `ui/big_while_loop.cpp`.
+
+Work:
+
+- Return write results and partial-save state to the UI owner before
+  asking whether to retain, replace, or discard partial output.
+- Let UI own saved/interrupted messages, completion sounds, and any
+  save-then-exit decision.
+- Keep encoding, file replacement mechanics, and resource cleanup in I/O;
+  the selected UI decision determines when those mechanics run.
+
+Done when:
+
+- Encoding and save-file operations cannot open prompts or terminate the
+  application.  Existing partial-file retention choices remain available.
+
+Validation: exercise partial saves for new and existing files, both user
+choices, write failures, and autosave completion.  Use codec tests for
+file contents instead of manual image comparisons.
+
+### 32. Command Parsing Diagnostics
+
+Source: `arg_error()`, `init_msg()`, `s_stop_msg`, and `s_goodbye` in
+`engine/cmdfiles.cpp`; UI owners: startup and command-entry controllers.
+
+Work:
+
+- Collect parse errors and startup warnings as data for the caller.
+- Let UI choose startup presentation, deferred pause, retry, and exit.
+  Preserve batch logs and exit status without modal interaction.
+- Remove production UI calls hidden behind test-hook callbacks; do not
+  replace them with another parser-to-UI callback interface.
+
+Done when:
+
+- Command parsing cannot call `stop_msg()`, `do_pause()`, or `goodbye()`.
+
+Validation: preserve command-parser tests; exercise malformed startup
+arguments, interactive command errors, and batch failure behavior.
+
+### 33. Command Actions And Application Effects
+
+Source: help-document generation, parameter-file generation, comments,
+and application-exit branches in `engine/cmdfiles.cpp`.
+
+Work:
+
+- Make parsing report requested actions and settings to its outer owner.
+- Let UI/application coordination run help/status screens, batch-file
+  generation, and exit decisions after parsing returns.
+- Keep content generation and parameter interpretation below UI where
+  appropriate; classify data-only helpers separately from UI decisions.
+
+Done when:
+
+- A command parser no longer selects a screen or exits the application
+  while interpreting an argument.
+
+Validation: retain generated-output tests and cover command effects at
+their caller.  Do not conflate this with the completed `CommandResult`
+split for interactive menu handlers.
+
+### 34. Common Engine Render Lifecycle
+
+Source: `ImageCalculation::start()` and `finish()`, `StandardFractal`,
+`Lyapunov`, and `NonStandardFractal`.
+
+Work:
+
+- Integrate common calculation setup, image timing, suspension, and
+  cleanup into the selected calculation object's lifecycle.
+- Use shared implementation only for real common setup and teardown.
+  Retain `g_calc_time` ownership in engine code and account for the whole
+  image exactly once.
+- Expose initialization, bounded iteration, completion, suspension, and
+  finish operations without invoking a UI controller inside them.
+
+Done when:
+
+- Standard and Lyapunov rendering have complete engine-owned lifecycles
+  that an outer UI controller can advance directly.
+- Common lifecycle operations do not hide a whole-image render call.
+
+Validation: cover normal completion, suspension/resume, failure cleanup,
+and calculation-time accounting.  Existing images protect render results.
+
+### 35. Standalone Engine Operation Selection
+
+Source: `NonStandardFractal`, `FractalDispatch`, `FractalSpecific`, and
+the already incremental standalone calculation classes.
+
+Work:
+
+- Select a concrete calculation object from engine state and dispatch
+  data.  Keep fractal classification and type-specific initialization
+  below UI; UI receives the already-selected operation.
+- Bind existing standalone calculation lifecycles into that selection
+  using simple explicit routing consistent with `StandardPass`.
+- Convert any remaining whole-render operation into bounded calculation
+  phases before binding it.  Split that family's conversion into its own
+  prerequisite slice if it is more than a mechanical binding.
+- Do not create an operation whose `iterate()` calls a UI renderer.
+
+Done when:
+
+- A selected standalone operation performs calculation increments without
+  invoking a UI loop through its dispatch entry.
+
+Validation: drive selected operations to completion and suspension in
+engine tests; reuse existing standalone image and semantic coverage.
+
+### 36. Remove Per-Image Renderer Reentry
+
+Source: `standalone_per_image()` in `fractals/frasetup.cpp`,
+`cellular_per_image()`, full-renderer entries in `fractals/fractalp.cpp`,
+and `NonStandardFractal::iterate()` in `engine/calcfrac.cpp`.
+
+Work:
+
+- Replace full-renderer UI function pointers with selection of the
+  standalone calculation operations prepared in the preceding slice.
+- Make per-image routines perform setup only.  Remove nested full-render
+  calls and their timer brackets; preserve actual setup-result meaning.
+- Keep the fractal table const and runtime dispatch changes explicit.
+- Remove corresponding UI includes and transitional renderer-call
+  bridges once their calculation operation owns the work.
+
+Done when:
+
+- Neither `per_image()` nor its setup callbacks can enter a UI render
+  loop through a saved function pointer.
+
+Validation: cover cellular and other standalone selection through the
+real dispatch path, including setup failure and resume behavior.
+
+### 37. IFS Front-End Calculation Selection
+
+Source: `ifs_type()` and the `ifs3d()` front end in
+`libid/fractals/lorenz.cpp`; UI owners: `ui/ifs2d.cpp` and `ui/ifs3d.cpp`.
+
+Work:
+
+- Keep IFS loading, dimension selection, transforms, and calculation
+  state in engine or fractal code.
+- Expose the selected IFS calculation object to the UI controller, which
+  advances its existing `iterate()` operation.
+- Remove `ifs_type()` calling `ifs2d()` or `ifs3d()` as UI functions from
+  fractal code.  Do not move dimension-based renderer classification
+  into the UI controller.
+
+Done when:
+
+- IFS front-end calculation code never invokes a UI render loop.
+
+Validation: use existing 2D and 3D IFS rendering tests.  No manual image
+comparison unless a changed interaction lacks automated coverage.
+
+### 38. Stereo Rendering UI Sequence
+
+Source: `funny_glasses_call()`, `orbit3d_type()`, and stereo IFS setup in
+`fractals/lorenz.cpp`; UI owner: `StereoController` in `ui/stereo.cpp`.
+
+Work:
+
+- Make eye selection, projection setup, and rendering engine operations
+  that can be started and incrementally driven for each eye.
+- Let the UI controller sequence rendering and photographer prompts,
+  including save, continue, cancellation, and final display restoration.
+- Remove engine calls to `lorenz_stereo_photographer_prompt()` and the
+  second-image `stop_msg()`, plus callbacks to UI render functions.
+- Do not replace `funny_glasses_call()` with another synchronous wrapper
+  that invokes whole UI render loops.
+
+Done when:
+
+- Stereo calculation never waits for a photographer's response or chooses
+  a UI controller.  Each eye's rendering remains calculation work.
+
+Validation: retain stereo image coverage; trace PHOTO-mode entry and give
+manual arguments for the between-eye prompt, save, continue, and cancel
+paths that lack automated coverage.
+
+### 39. Orbit Renderer Operation Selection
+
+Source: orbit, dynamic, IFS, inverse-Julia, and standard-4D renderer
+entries in `fractals/fractalp.cpp` and front ends in `fractals/lorenz.cpp`.
+
+Work:
+
+- Bind these remaining renderer families to engine-selected calculation
+  operations using the earlier IFS and stereo separation.
+- Keep projection, dimension selection, orbit setup, and calculation
+  state in their calculation objects; controllers own input and prompts.
+- Remove UI renderer function pointers from the remaining table entries
+  and remove `ui/*` includes from `fractals/fractalp.cpp` and calculation
+  front ends.
+- Split any family needing new calculation-state work into a separate
+  prerequisite; do not hide it in a generic UI-callback operation.
+
+Done when:
+
+- Calculation dispatch can select every renderer without naming a UI
+  renderer function or calling back into a controller.
+
+Validation: cover selected operation identity, setup, suspension, and
+completion; reuse orbit, IFS, and standard-4D rendering tests.
+
+### 40. Outer UI Render Operation Control
+
+Source: `calc_fract()`, the render branches in `ui/big_while_loop.cpp`,
+and standard, Lyapunov, and non-standard UI controllers.
+
+Work:
+
+- Have the outer UI render context obtain the engine-selected operation,
+  initialize it, poll input, advance bounded work, and finish or suspend.
+- Retain application-phase handling and command-effect mapping at their
+  existing boundary.  Preserve render completion, save, and exit in batch
+  mode, including user interruption while batch rendering.
+- Remove engine calls to `standard_fractal()`, `lyapunov_fractal()`, and
+  `non_standard_fractal()`, then remove obsolete `calc_fract()` dispatch
+  scaffolding.  Do not duplicate renderer classification in UI.
+- Reuse UI contexts for presentation while the engine operation owns
+  calculation state, timing, and resource cleanup.
+
+Done when:
+
+- Rendering begins from UI/application coordination; engine code never
+  selects or invokes a UI controller.
+- No new wrapper retains the old nested engine/UI render call chain.
+
+Validation: run the full `rt-default` workflow and cover batch completion,
+save, exit, and interruption.  Manual instructions cover menu escape,
+parameter changes, and presentation toggles only after tracing the changed
+paths and excluding interaction coverage already provided by automation.
+
+### 41. Remaining Data-Only UI Dependencies
+
+Source: remaining `ui/*` includes in calculation code after the concrete
+control-flow and backend ownership slices.
+
+Work:
+
+- Classify each remaining dependency as data, calculation, backend work,
+  or actual UI control.  Move shared constants, types, and pure helpers
+  to their owning non-UI module when calculation requires them.
+- Include palette-analysis helpers, projection/palette constants, video
+  metadata, and UI-context flags still used by calculation setup.
+- Keep actual UI decisions with controllers.  Any newly discovered
+  callback needs its own focused inversion slice, not a renamed include
+  or a forwarding function that hides the dependency.
+
+Done when:
+
+- Engine and fractal headers and implementations no longer need UI
+  headers, including through data-only dependencies.
+
+Validation: build the affected configurations and reuse existing data and
+image tests.  This dependency correction does not introduce a new input
+mechanism or a source-grep test.
+
+## Current Direct And Indirect Input Leaks
+
+Calculation code can still reach polling or key-sensitive waiting through
+these direct and indirect paths:
 
 - `libid/engine/calcfrac.cpp`: standard pixel calculation still calls
   `calc_interrupted()`.
@@ -755,15 +1604,41 @@ Direct polling or key-sensitive waiting exists outside `libid/ui` in:
   `wait_until()` and suppresses speaker tones through an input-pending
   callback.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
-- `libid/engine/cmdfiles.cpp`: comments document indirect startup and
-  error-message paths that may call UI key-waiting code through
-  `init_msg()`.
+- `libid/fractals/Cellular.cpp`: `iterate()` calls `thinking()`, which
+  polls the driver queue.  Completion, failure, and suspension also call
+  UI screen cleanup.
+- `libid/fractals/lsystem.cpp`: recursive `find_size()` calls
+  `thinking()` from inside `start()` and interprets pending input as
+  sizing failure.  UI polling around drawing does not cover this phase.
+- `libid/engine/jiim.cpp`: `iterate()` calls
+  `process_inverse_julia_keyboard()`, which may wait through the cursor.
+  `process()` owns the keyboard handler, mouse scope, and interaction loop;
+  `finish()` requeues a key through a UI helper.
+- `libid/fractals/lorenz.cpp`: `funny_glasses_call()` enters a blocking
+  photographer prompt and second-image modal message.  IFS and orbit
+  front ends also invoke complete UI render loops.
+- `libid/engine/calcfrac.cpp`, `fractals/frasetup.cpp`,
+  `fractals/Cellular.cpp`, and renderer table entries in
+  `fractals/fractalp.cpp`: reach UI render loops through direct calls or
+  dispatch pointers, including from per-image setup.
+- Calculation validation, definition loaders, formula parsing, math
+  allocation, debug displays, and memory operations: `stop_msg()` polls
+  and waits inside these callers, and some failures invoke `goodbye()`.
+- Storage setup and disk-video progress can invoke modal failure screens
+  from calculation code through `ui/diskvid.cpp` and memory allocation.
+- `libid/io/loadfile.cpp` and `io/encoder.cpp`: enter mode/parameter
+  selection or partial-save prompts from loading and saving operations.
+- `libid/engine/cmdfiles.cpp`: `arg_error()` calls UI through
+  `s_stop_msg` and `s_goodbye`; `init_msg()` displays startup errors and
+  schedules `do_pause()`.  Other command branches generate UI output or
+  exit.  These are live behaviors, not merely comments about old code.
 
-The remaining slices cover the first four items.  The `cmdfiles.cpp`
-case is not a direct polling call, but it marks a remaining mixed
-engine/UI boundary to keep visible.  The `OrbitPlot` wait loop and delay
-state have already been removed, but its sound presentation state
-remains tracked under current presentation leaks.
+The numbered slices cover all these ownership gaps.  The source audit
+must trace UI helper and dispatch-pointer calls as well as raw driver
+calls; an empty raw-key search alone does not establish inversion.
+
+The `OrbitPlot` wait loop and delay state have been removed.  Its sound
+presentation state remains tracked under current presentation leaks.
 
 ## Keyboard Polling Still Outside `id_main`
 
@@ -895,6 +1770,20 @@ calls are moved behind `libid/ui`.
   libid/engine libid/fractals libid/geometry libid/io libid/math \
   libid/misc` returns no matches.
 - `libid/ui` is the only libid layer with direct keyboard and mouse I/O.
+- Calculation setup, sizing, iteration, suspension, completion, and error
+  handling cannot reach UI polling indirectly through `thinking()`,
+  cursor waits, modal messages, or renderer dispatch pointers.
+- Calculation and backend operations return failures and warnings to UI
+  owners without selecting prompts or calling `goodbye()`.
+- JIIM and stereo interaction are driven from UI controllers around
+  bounded calculation operations.
+- Pixel plotting, image storage, and calculation timing stay below UI;
+  their backend operations do not own input or presentation decisions.
+- Show-dot marker state and all temporary display bridge methods have
+  been removed from calculation code.
+- Audit source calls and reachable dispatch targets in both release and
+  debug configurations.  Ignore comment-only search matches; do not add
+  grep-based tests that merely enforce source spelling.
 - Calculation code reports interruption or decisions without owning input.
 - Current behavior is preserved while longer-term architecture stays out
   of scope.
