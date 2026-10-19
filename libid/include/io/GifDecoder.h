@@ -22,6 +22,19 @@ public:
     GifDecoder &operator=(const GifDecoder &) = delete;
     GifDecoder &operator=(GifDecoder &&) = delete;
 
+    // A returned line remains valid until the next next_line() call.
+    bool next_line();
+
+    const std::vector<Byte> &line() const
+    {
+        return m_line;
+    }
+
+    int result() const
+    {
+        return m_result;
+    }
+
     // TODO: removed later
     int decode();
 
@@ -29,6 +42,7 @@ private:
     static constexpr int MAX_CODES{4095};
 
     int initialize();
+    bool expand_next_code();
     short get_next_code();
 
     std::FILE *m_input;
@@ -64,7 +78,6 @@ private:
     int m_y_skip{};
     int m_bad_code_count{};
     int m_result{};
-    bool m_fast_loop{};
     bool m_done{};
 };
 

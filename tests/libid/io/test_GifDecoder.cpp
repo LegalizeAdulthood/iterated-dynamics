@@ -189,6 +189,129 @@ TEST_F(TestGifDecoder, skipFactorsRetainOriginalRowAccounting)
     EXPECT_EQ(expected, m_lines);
 }
 
+TEST_F(TestGifDecoder, returnsOneLineAtATimeWithoutCallingLegacyOutput)
+{
+    const File file{make_file(image_data({{4, 3}, {0, 3}, {1, 3}, {4, 3}, {2, 3}, {3, 3}, {5, 3}}))};
+    GifDecoder decoder{file.get(), 2};
+
+    EXPECT_TRUE(decoder.next_line());
+    EXPECT_EQ((std::vector<Byte>{0, 1}), decoder.line());
+    EXPECT_TRUE(m_lines.empty());
+
+    EXPECT_TRUE(decoder.next_line());
+    EXPECT_EQ((std::vector<Byte>{2, 3}), decoder.line());
+    EXPECT_FALSE(decoder.next_line());
+    const long position{std::ftell(file.get())};
+    EXPECT_FALSE(decoder.next_line());
+    EXPECT_EQ(position, std::ftell(file.get()));
+    EXPECT_EQ(0, decoder.result());
+    EXPECT_EQ(0, std::getc(file.get()));
+    EXPECT_TRUE(m_lines.empty());
+}
+
+TEST_F(TestGifDecoder, retainsExpansionAcrossFastAndStackLineBoundaries)
+{
+    const File file{make_file(image_data({{4, 3}, {0, 3}, {1, 3}, {6, 3}, {8, 4}, {7, 4}, {5, 4}}, 1))};
+    GifDecoder decoder{file.get(), 3};
+
+    const std::vector<std::vector<Byte>> expected{{0, 1, 0}, {1, 0, 1}, {0, 1, 0}};
+    for (const std::vector<Byte> &line : expected)
+    {
+        EXPECT_TRUE(decoder.next_line());
+        EXPECT_EQ(line, decoder.line());
+    }
+    EXPECT_FALSE(decoder.next_line());
+    EXPECT_EQ(0, decoder.result());
+    EXPECT_TRUE(m_lines.empty());
+}
+
+TEST_F(TestGifDecoder, incrementalAndSynchronousLinesMatchForWidthsAndSkipFactors)
+{
+    const std::vector<Byte> pixels{0, 1, 0, 1, 0, 1, 0, 1, 0};
+    const std::vector<Byte> data{image_data({{4, 3}, {0, 3}, {1, 3}, {6, 3}, {8, 4}, {7, 4}, {5, 4}})};
+    for (const int width : {1, 2, 3, 4, 5, 9})
+    {
+        for (const int skip_x : {0, 1, 2})
+        {
+            for (const int skip_y : {0, 1, 2})
+            {
+                SCOPED_TRACE(Message() << "width=" << width << " skip_x=" << skip_x << " skip_y=" << skip_y);
+                std::vector<std::vector<Byte>> expected;
+                for (int row = 0; row < static_cast<int>(pixels.size()) / width; row += skip_y + 1)
+                {
+                    std::vector<Byte> line;
+                    for (int col = 0; col < width; col += skip_x + 1)
+                    {
+                        line.push_back(pixels[row * width + col]);
+                    }
+                    expected.push_back(line);
+                }
+
+                m_lines.clear();
+                const File file{make_file(data)};
+                GifDecoder decoder{file.get(), width, skip_x, skip_y};
+                std::vector<std::vector<Byte>> lines;
+                while (decoder.next_line())
+                {
+                    lines.push_back(decoder.line());
+                }
+                EXPECT_EQ(expected, lines);
+                EXPECT_EQ(0, decoder.result());
+                EXPECT_TRUE(m_lines.empty());
+
+                const File synchronous_file{make_file(data)};
+                GifDecoder synchronous{synchronous_file.get(), width, skip_x, skip_y};
+                EXPECT_EQ(0, synchronous.decode());
+                EXPECT_EQ(expected, m_lines);
+            }
+        }
+    }
+}
+
+TEST_F(TestGifDecoder, interleavedInstancesKeepPendingPixelsAndReturnedLineValid)
+{
+    const File outer_file{make_file(image_data({{4, 3}, {0, 3}, {6, 3}, {7, 3}, {5, 4}}))};
+    const File inner_file{make_file(image_data({{4, 3}, {2, 3}, {3, 3}, {5, 3}}))};
+    GifDecoder outer{outer_file.get(), 1};
+    GifDecoder inner{inner_file.get(), 1};
+
+    EXPECT_TRUE(outer.next_line());
+    EXPECT_TRUE(outer.next_line());
+    const std::vector<Byte> &line{outer.line()};
+    const Byte *pixels{line.data()};
+    EXPECT_TRUE(inner.next_line());
+    EXPECT_EQ((std::vector<Byte>{2}), inner.line());
+    EXPECT_TRUE(inner.next_line());
+    EXPECT_EQ((std::vector<Byte>{3}), inner.line());
+    EXPECT_FALSE(inner.next_line());
+    EXPECT_EQ((std::vector<Byte>{0}), line);
+    EXPECT_EQ(pixels, line.data());
+
+    for (int row = 2; row < 6; ++row)
+    {
+        EXPECT_TRUE(outer.next_line());
+        EXPECT_EQ((std::vector<Byte>{0}), outer.line());
+    }
+    EXPECT_FALSE(outer.next_line());
+    EXPECT_EQ(0, outer.result());
+    EXPECT_EQ(0, inner.result());
+    EXPECT_TRUE(m_lines.empty());
+}
+
+TEST_F(TestGifDecoder, endingDiscardsPartialLineAfterCompletedLine)
+{
+    const File file{make_file(image_data({{4, 3}, {0, 3}, {1, 3}, {2, 3}, {5, 4}}))};
+    GifDecoder decoder{file.get(), 2};
+
+    EXPECT_TRUE(decoder.next_line());
+    EXPECT_EQ((std::vector<Byte>{0, 1}), decoder.line());
+    EXPECT_FALSE(decoder.next_line());
+    EXPECT_FALSE(decoder.next_line());
+    EXPECT_EQ(0, decoder.result());
+    EXPECT_EQ(0, std::getc(file.get()));
+    EXPECT_TRUE(m_lines.empty());
+}
+
 TEST_F(TestGifDecoder, nestedInstancesKeepIndependentInputDictionaryStackAndLineBuffers)
 {
     const File outer_file{make_file(image_data({{4, 3}, {0, 3}, {6, 3}, {7, 3}, {5, 4}}))};
@@ -265,6 +388,8 @@ TEST_F(TestGifDecoder, rejectsInvalidWidthWithoutReadingInput)
         const File file{make_file(image_data({{4, 3}, {5, 3}}))};
         GifDecoder decoder{file.get(), width};
 
+        EXPECT_FALSE(decoder.next_line());
+        EXPECT_EQ(-2, decoder.result());
         EXPECT_EQ(-2, decoder.decode());
         EXPECT_EQ(2, std::getc(file.get()));
     }
@@ -278,6 +403,8 @@ TEST_F(TestGifDecoder, rejectsInvalidCodeSize)
         const File file{make_file({static_cast<Byte>(size)})};
         GifDecoder decoder{file.get(), 1};
 
+        EXPECT_FALSE(decoder.next_line());
+        EXPECT_EQ(-20, decoder.result());
         EXPECT_EQ(-20, decoder.decode());
         EXPECT_EQ(-20, decoder.decode());
     }
@@ -300,11 +427,15 @@ TEST_F(TestGifDecoder, missingHeaderAndTruncatedDataDoNotContaminateNextInstance
     {
         const File file{make_file({})};
         GifDecoder decoder{file.get(), 1};
+        EXPECT_FALSE(decoder.next_line());
+        EXPECT_EQ(EOF, decoder.result());
         EXPECT_EQ(EOF, decoder.decode());
     }
     {
         const File file{make_file({2})};
         GifDecoder decoder{file.get(), 1};
+        EXPECT_FALSE(decoder.next_line());
+        EXPECT_EQ(0, decoder.result());
         EXPECT_EQ(0, decoder.decode());
     }
     EXPECT_TRUE(m_lines.empty());
@@ -325,6 +456,8 @@ TEST_F(TestGifDecoder, callbackFailureStopsDecodingAndPreservesErrorResult)
         GifDecoder decoder{file.get(), 1};
         EXPECT_EQ(-73, decoder.decode());
         EXPECT_EQ(-73, decoder.decode());
+        EXPECT_FALSE(decoder.next_line());
+        EXPECT_EQ(-73, decoder.result());
     }
     const File next_file{make_file(image_data({{4, 3}, {2, 3}, {5, 3}}))};
     GifDecoder next{next_file.get(), 1};
@@ -333,6 +466,17 @@ TEST_F(TestGifDecoder, callbackFailureStopsDecodingAndPreservesErrorResult)
 
     const std::vector<std::vector<Byte>> expected{{2}};
     EXPECT_EQ(expected, m_lines);
+}
+
+TEST_F(TestGifDecoder, positiveCallbackResultDoesNotChangeSuccessfulDecodeResult)
+{
+    ValueSaver<LineHandler> saved_handler{s_line_handler, [](Byte *, int) { return 17; }};
+    const File file{make_file(image_data({{4, 3}, {0, 3}, {1, 3}, {5, 3}}))};
+    GifDecoder decoder{file.get(), 1};
+
+    EXPECT_EQ(0, decoder.decode());
+    EXPECT_EQ(0, decoder.decode());
+    EXPECT_EQ(0, decoder.result());
 }
 
 TEST_F(TestGifDecoder, rejectsMissingFileAndInvalidSkipConfiguration)

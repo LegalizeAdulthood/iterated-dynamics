@@ -71,145 +71,145 @@ int GifDecoder::initialize()
     return 0;
 }
 
-// TODO: removed later
-int GifDecoder::decode()
+bool GifDecoder::next_line()
 {
     if (m_done)
     {
-        return m_result;
+        return false;
     }
 
-    // Expand prefix strings into the line buffer or the reverse-output stack.
-    while ((m_current_code = get_next_code()) != m_ending)
+    do
     {
-        if (m_current_code < 0)
+        m_line.resize(m_line_width);
+        m_line_offset = 0;
+        m_buffer_count = m_line_width;
+        m_x_skip = 0;
+        while (m_buffer_count > 0)
         {
-            // Preserve the legacy result for a mid-stream read error.
+            if (m_stack_size == 0 && !expand_next_code())
+            {
+                m_done = true;
+                return false;
+            }
+            // One expansion can leave pixels for later lines on the stack.
+            while (m_stack_size > 0 && m_buffer_count > 0)
+            {
+                --m_stack_size;
+                if (--m_x_skip < 0)
+                {
+                    m_x_skip = m_skip_x;
+                    m_line[m_line_offset++] = m_stack[m_stack_size];
+                }
+                --m_buffer_count;
+            }
+        }
+    } while (--m_y_skip >= 0);
+    m_y_skip = m_skip_y;
+    m_line.resize(m_line_offset);
+    return true;
+}
+
+// TODO: removed later
+int GifDecoder::decode()
+{
+    while (next_line())
+    {
+        const int result{g_out_line(m_line.data(), static_cast<int>(m_line.size()))};
+        if (result < 0)
+        {
+            m_result = result;
             m_done = true;
-            return 0;
-        }
-        if (m_current_code == m_clear)
-        {
-            m_current_size = static_cast<short>(m_size + 1);
-            m_slot = m_new_codes;
-            m_string_size[m_slot] = 0;
-            m_top_slot = static_cast<short>(1 << m_current_size);
-            do
-            {
-                m_current_code = get_next_code();
-            } while (m_current_code == m_clear);
-            if (m_current_code == m_ending)
-            {
-                break;
-            }
-            if (m_current_code >= m_slot)
-            {
-                m_current_code = 0;
-            }
-            m_old_code = m_current_code;
-            m_out_value = static_cast<Byte>(m_old_code);
-            m_stack[m_stack_size++] = static_cast<Byte>(m_current_code);
-        }
-        else
-        {
-            m_code = m_current_code;
-            if (m_code >= m_slot)
-            {
-                if (m_code > m_slot)
-                {
-                    ++m_bad_code_count;
-                    m_current_code = m_slot;
-                }
-                m_code = m_old_code;
-                m_stack[m_stack_size++] = m_out_value;
-            }
-            m_fast_loop = false;
-            while (m_code >= m_new_codes)
-            {
-                int size = m_string_size[m_code];
-                short remaining = static_cast<short>(size);
-                if (size > 0 && m_buffer_count - size > 0 && m_skip_x == 0)
-                {
-                    m_fast_loop = true;
-                    do
-                    {
-                        m_line[m_line_offset + remaining] = m_suffix[m_code];
-                        m_code = m_prefix[m_code];
-                    } while (--remaining > 0);
-                    m_line[m_line_offset] = static_cast<Byte>(m_code);
-                    m_line_offset += ++size;
-                    m_buffer_count -= size;
-                    if (m_buffer_count == 0)
-                    {
-                        if (--m_y_skip < 0)
-                        {
-                            const int result{g_out_line(m_line.data(), m_line_offset)};
-                            if (result < 0)
-                            {
-                                m_result = result;
-                                m_done = true;
-                                return result;
-                            }
-                            m_y_skip = m_skip_y;
-                        }
-                        m_line_offset = 0;
-                        m_buffer_count = m_line_width;
-                        m_x_skip = 0;
-                    }
-                }
-                else
-                {
-                    m_stack[m_stack_size++] = m_suffix[m_code];
-                    m_code = m_prefix[m_code];
-                }
-            }
-            if (!m_fast_loop)
-            {
-                m_stack[m_stack_size++] = static_cast<Byte>(m_code);
-            }
-            if (m_slot < m_top_slot)
-            {
-                m_string_size[m_slot] = static_cast<short>(m_string_size[m_old_code] + 1);
-                m_out_value = static_cast<Byte>(m_code);
-                m_suffix[m_slot] = m_out_value;
-                m_prefix[m_slot++] = m_old_code;
-                m_old_code = m_current_code;
-            }
-            if (m_slot >= m_top_slot && m_current_size < 12)
-            {
-                m_top_slot <<= 1;
-                ++m_current_size;
-            }
-        }
-        while (m_stack_size > 0)
-        {
-            --m_stack_size;
-            if (--m_x_skip < 0)
-            {
-                m_x_skip = m_skip_x;
-                m_line[m_line_offset++] = m_stack[m_stack_size];
-            }
-            if (--m_buffer_count == 0)
-            {
-                if (--m_y_skip < 0)
-                {
-                    const int result{g_out_line(m_line.data(), m_line_offset)};
-                    if (result < 0)
-                    {
-                        m_result = result;
-                        m_done = true;
-                        return result;
-                    }
-                    m_y_skip = m_skip_y;
-                }
-                m_line_offset = 0;
-                m_buffer_count = m_line_width;
-                m_x_skip = 0;
-            }
+            break;
         }
     }
-    m_done = true;
-    return 0;
+    return m_result;
+}
+
+bool GifDecoder::expand_next_code()
+{
+    m_current_code = get_next_code();
+    if (m_current_code < 0 || m_current_code == m_ending)
+    {
+        // Preserve the legacy success result for a mid-stream read error.
+        return false;
+    }
+    if (m_current_code == m_clear)
+    {
+        m_current_size = static_cast<short>(m_size + 1);
+        m_slot = m_new_codes;
+        m_string_size[m_slot] = 0;
+        m_top_slot = static_cast<short>(1 << m_current_size);
+        do
+        {
+            m_current_code = get_next_code();
+        } while (m_current_code == m_clear);
+        if (m_current_code == m_ending)
+        {
+            return false;
+        }
+        if (m_current_code >= m_slot)
+        {
+            m_current_code = 0;
+        }
+        m_old_code = m_current_code;
+        m_out_value = static_cast<Byte>(m_old_code);
+        m_stack[m_stack_size++] = static_cast<Byte>(m_current_code);
+    }
+    else
+    {
+        m_code = m_current_code;
+        if (m_code >= m_slot)
+        {
+            if (m_code > m_slot)
+            {
+                ++m_bad_code_count;
+                m_current_code = m_slot;
+            }
+            m_code = m_old_code;
+            m_stack[m_stack_size++] = m_out_value;
+        }
+        bool fast_loop{};
+        while (m_code >= m_new_codes)
+        {
+            int size = m_string_size[m_code];
+            short remaining = static_cast<short>(size);
+            if (size > 0 && m_buffer_count - size > 0 && m_skip_x == 0)
+            {
+                fast_loop = true;
+                do
+                {
+                    m_line[m_line_offset + remaining] = m_suffix[m_code];
+                    m_code = m_prefix[m_code];
+                } while (--remaining > 0);
+                m_line[m_line_offset] = static_cast<Byte>(m_code);
+                m_line_offset += ++size;
+                m_buffer_count -= size;
+            }
+            else
+            {
+                m_stack[m_stack_size++] = m_suffix[m_code];
+                m_code = m_prefix[m_code];
+            }
+        }
+        if (!fast_loop)
+        {
+            m_stack[m_stack_size++] = static_cast<Byte>(m_code);
+        }
+        if (m_slot < m_top_slot)
+        {
+            m_string_size[m_slot] = static_cast<short>(m_string_size[m_old_code] + 1);
+            m_out_value = static_cast<Byte>(m_code);
+            m_suffix[m_slot] = m_out_value;
+            m_prefix[m_slot++] = m_old_code;
+            m_old_code = m_current_code;
+        }
+        if (m_slot >= m_top_slot && m_current_size < 12)
+        {
+            m_top_slot <<= 1;
+            ++m_current_size;
+        }
+    }
+    return true;
 }
 
 short GifDecoder::get_next_code()

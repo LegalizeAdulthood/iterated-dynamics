@@ -596,9 +596,10 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - `libid/io/gifview.cpp`: `sound_line()` still drains a whole decoded
   line with `sleep_orbit_delay()`, `write_sound()`, and `driver_mute()`.
   `RestoredImageOutput` owns the decoded bytes and cursor and plots one
-  pixel per step.  `GifDecoder` owns LZW state and buffers but still
-  drains synchronously.  Decoder and file traversal must also become
-  incremental before the UI can replace the marked compatibility drain.
+  pixel per step.  `GifDecoder` returns one decoded line per call and
+  retains pending expansion state.  Its marked `decode()` method still
+  drains through legacy line callbacks.  File traversal must become
+  incremental before the UI can replace these compatibility drains.
 - `libid/engine/spindac.cpp`: includes palette rotation delay via
   `driver_delay()`.
 - `libid/engine/wait_until.cpp`: implements a key-sensitive delay loop.
@@ -699,28 +700,6 @@ If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
-
-### 11. GIF Decoder Incremental Lines
-
-Source: line completion and pending prefix expansion in the encapsulated
-GIF decoder.
-
-Work:
-
-- Return a decoded line to the caller instead of invoking `g_out_line`
-  from inside a whole-image decode loop.
-- Preserve a partially expanded code across a line boundary and keep the
-  line buffer valid until its consumer has finished with it.
-- Retain the marked synchronous compatibility drain for existing callers
-  until Restored Image Sound Controller removes it from the sound path.
-
-Done when:
-
-- A caller can stop between lines without losing dictionary, bitstream,
-  or expansion state.  Decoding itself never waits for sound output.
-
-Validation: test code expansions crossing line boundaries, skipped rows,
-end-of-image handling, and equivalent decoded pixels.  No manual test.
 
 ### 12. GIF Restore File Lifecycle
 
