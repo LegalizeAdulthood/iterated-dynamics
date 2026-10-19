@@ -174,7 +174,7 @@ TEST_F(TestGifRestore, separatesHeaderImageLinesAndCompletion)
     EXPECT_TRUE(std::filesystem::remove(path));
 }
 
-TEST_F(TestGifRestore, extensionAdvancesOneSubBlockPerStep)
+TEST_F(TestGifRestore, skipsExtensionSubBlocksBeforeDecodingImage)
 {
     std::vector<Byte> data{gif_header()};
     data.insert(data.end(), {'!', 0xFE, 3, 'a', 'b', 'c', 2, 'd', 'e', 0});
@@ -182,12 +182,9 @@ TEST_F(TestGifRestore, extensionAdvancesOneSubBlockPerStep)
     data.push_back(';');
     GifRestore restore{write_file(data)};
 
-    for (int step = 0; step < 3; ++step)
-    {
-        restore.iterate();
-        EXPECT_EQ(GifRestore::State::EXTENSION, restore.state());
-        EXPECT_TRUE(restore.line().empty());
-    }
+    restore.iterate();
+    EXPECT_EQ(GifRestore::State::EXTENSION, restore.state());
+    EXPECT_TRUE(restore.line().empty());
     restore.iterate();
     EXPECT_EQ(GifRestore::State::BLOCK, restore.state());
     restore.iterate();
@@ -290,6 +287,20 @@ TEST_F(TestGifRestore, splitsPotentialRowsIntoColorsThenLowBytes)
     EXPECT_EQ((std::array<Byte, 3>{255, 0, 15}), restore.palette().back());
 }
 
+TEST_F(TestGifRestore, subsamplingKeepsPotentialColorAndLowBytePairs)
+{
+    const std::filesystem::path path{write_image({
+        {0, 1, 2, 3, 8, 9, 10, 11},
+        {4, 5, 6, 7, 12, 13, 14, 15},
+        {3, 2, 1, 0, 11, 10, 9, 8},
+    })};
+    GifRestore restore{path, 1, 1, true};
+    const std::vector<std::vector<Byte>> expected{{0, 2}, {8, 10}, {3, 1}, {11, 9}};
+
+    EXPECT_EQ(expected, drain(restore));
+    EXPECT_EQ(0, restore.result());
+}
+
 TEST_F(TestGifRestore, independentRestoresRetainInputAndLineBuffers)
 {
     GifRestore first{write_file(gif_data())};
@@ -352,7 +363,8 @@ TEST_F(TestGifRestore, truncatedFileFailsAndClosesAtEveryByteBoundary)
 
 TEST_F(TestGifRestore, rejectsInvalidHeadersDescriptorsAndDataTerminators)
 {
-    for (const int offset : {0, 3, 4, 5, 10, 19, 24, 29, 34})
+    // giflib checks the GIF signature, not the old decoder's version range.
+    for (const int offset : {0, 10, 19, 24, 29, 34})
     {
         SCOPED_TRACE(Message() << "offset=" << offset);
         std::vector<Byte> data{gif_data()};
@@ -379,6 +391,29 @@ TEST_F(TestGifRestore, truncatedExtensionAndLocalPaletteFailAndClose)
         EXPECT_EQ(-1, restore.result());
         EXPECT_TRUE(std::filesystem::remove(path));
     }
+}
+
+TEST_F(TestGifRestore, rejectsNineBitMinimumCodeSize)
+{
+    std::vector<Byte> data{gif_data()};
+    // The custom decoder accepted 9; giflib requires at most 8.
+    data[29] = 9;
+    const std::filesystem::path path{write_file(data)};
+    GifRestore restore{path};
+
+    EXPECT_TRUE(drain(restore).empty());
+    EXPECT_EQ(-1, restore.result());
+    EXPECT_TRUE(std::filesystem::remove(path));
+}
+
+TEST_F(TestGifRestore, discardedRowsStillValidateCompressedDataTermination)
+{
+    std::vector<Byte> data{gif_data()};
+    data.resize(data.size() - 2);
+    GifRestore restore{write_file(data), 0, 10};
+
+    EXPECT_EQ((std::vector<std::vector<Byte>>{{0, 1}}), drain(restore));
+    EXPECT_EQ(-1, restore.result());
 }
 
 TEST_F(TestGifRestore, missingFileReportsFailureAndNegativeSkipFactorsThrow)

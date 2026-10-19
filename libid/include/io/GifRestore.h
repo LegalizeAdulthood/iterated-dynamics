@@ -2,13 +2,14 @@
 //
 #pragma once
 
-#include "io/GifDecoder.h"
+#include <config/port.h>
 
 #include <array>
-#include <cstdio>
 #include <filesystem>
 #include <memory>
 #include <vector>
+
+struct GifFileType;
 
 namespace id::io
 {
@@ -41,7 +42,7 @@ public:
     GifRestore &operator=(const GifRestore &) = delete;
     GifRestore &operator=(GifRestore &&) = delete;
 
-    // Advance one format block, extension sub-block, or decoded line.
+    // Advance one record or decoded scanline; callers finish the whole file.
     void iterate();
 
     State state() const
@@ -96,11 +97,10 @@ private:
     void read_extension();
     void read_image();
     void decode_line();
-    bool read_bytes(Byte *buffer, std::size_t size);
     void finish(int result);
+    static void close_file(GifFileType *gif);
 
-    std::unique_ptr<std::FILE, decltype(&std::fclose)> m_input{nullptr, std::fclose};
-    std::unique_ptr<GifDecoder> m_decoder;
+    std::unique_ptr<GifFileType, decltype(&close_file)> m_input{nullptr, close_file};
     int m_skip_x;
     int m_skip_y;
     bool m_potential_16bit;
@@ -110,6 +110,9 @@ private:
     int m_height{};
     std::vector<std::array<Byte, 3>> m_palette;
     Image m_image;
+    int m_row{};
+    bool m_low_byte{};
+    std::vector<Byte> m_decoded_line;
     std::vector<Byte> m_line;
 };
 

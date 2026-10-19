@@ -275,7 +275,6 @@ add_library(libid
     include/ui/set_default_params.h ui/set_default_params.cpp
     include/ui/shell_sort.h ui/shell_sort.cpp
     include/ui/slideshw.h ui/slideshw.cpp
-    include/ui/sound.h ui/sound.cpp
     include/ui/SoundSession.h ui/SoundSession.cpp
     include/ui/standard_fractal.h ui/standard_fractal.cpp
     include/ui/standard_orbit_plot.h ui/standard_orbit_plot.cpp

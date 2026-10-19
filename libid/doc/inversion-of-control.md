@@ -634,24 +634,21 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
   state and closes legacy sound output for unconverted producers.
 - `libid/engine/sound.cpp`: owns speaker/file output, calls
-  `driver_sound_on()`, waits through `wait_until()`, and accepts an
-  input-pending callback.
+  `driver_sound_on()`, and waits through non-polling `wait_until()`.
 - `libid/io/gifview.cpp`: `sound_line()` still drains a whole decoded
   line with `sleep_orbit_delay()`, `write_sound()`, and `driver_mute()`.
   `RestoredImageOutput` owns the decoded bytes and cursor and plots one
-  pixel per step.  `GifDecoder` returns one decoded line per call and
-  retains pending expansion state.  `GifRestore` owns the file and
-  advances by format block, extension sub-block, or line without output
-  callbacks.  The marked `gif_view()` bridge still drains it through
-  legacy callbacks.  `GifDecoder::decode()` is now test-only and is
-  removed by GIF Custom Decoder Removal, before the sound-controller
-  slice.  The giflib conversion replaces this polling-oriented file
-  traversal with atomic, scanline-based loading.  The UI owner processes
-  each decoded line for pixel/sound feedback without keyboard polling
-  before requesting the next line.
+  pixel per step.  `GifRestore` owns a giflib handle and exposes decoded
+  scanlines without output callbacks.  `gif_view()` completes the whole
+  file through non-polling line callbacks, processing pixel/sound feedback
+  before requesting the next line.  The unused `GifDecoder` and its
+  test-only `decode()` are removed by GIF Custom Decoder Removal.
+  The remaining sound-controller slice moves playback coordination into
+  UI without changing the atomic file operation.
 - `libid/engine/spindac.cpp`: includes palette rotation delay via
   `driver_delay()`.
-- `libid/engine/wait_until.cpp`: implements a key-sensitive delay loop.
+- `libid/engine/wait_until.cpp`: owns legacy sound-delay state without
+  polling input; sound-controller migration removes this wait.
 - `libid/fractals/Cellular.cpp`: starts, updates, and ends the thinking
   screen from generation, error, and suspend paths.
 - `libid/fractals/lsystem.cpp`: recursive sizing owns the thinking screen
@@ -749,78 +746,6 @@ If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
-
-### 12.2. GIF Restore giflib Backend
-
-Source: `io/GifRestore.h`, `io/GifRestore.cpp`, and the already linked
-giflib dependency; shared extension handling in `io/gif_file.cpp`.
-The production entry point reads the file as one atomic operation.
-
-Work:
-
-- Replace manual file parsing and custom decompression inside
-  `GifRestore` with an owned giflib handle and its sequential API.
-  Do not use `DGifSlurp()` or require a full-raster buffer or second pass
-  for sound-on-restore feedback.
-- Use record and image-header reads, `DGifGetLine()`, and extension
-  sub-block reads internally.  Expose decoded scanlines to the UI owner,
-  which processes feedback and continues until the file is read and
-  closed before returning to input handling.  Keep ownership, completion,
-  failures, and cleanup explicit and below UI; retain scanline access,
-  not LZW implementation steps or keyboard-driven decoder suspension.
-- Remove keyboard checks and user-cancellation returns from the entire
-  load path, including indirect line/output callbacks.  Do not replace
-  them with controller polling between rows or giflib records.
-- Feed each decoded scanline to the existing pixel-output operation,
-  including sound and image-transformation consumers.  Let the UI owner
-  coordinate feedback outside the codec, without checking input.  Finish
-  the current line before reusing its buffer or reading the next; do not
-  defer sound until file closure or add a full-image replay stage.
-- Where extension data is needed, collect giflib extension blocks for
-  the existing `get_*_info()` readers.  Do not add field decoding to
-  `GifRestore` or copy the metadata parser from `loadfile.cpp`.  Metadata
-  discovery before restoration is migrated separately in 12.2.1.
-- Preserve metadata, line-buffer lifetime, image boundaries, and
-  `gif_view()` caller-visible success/failure behavior.  A synchronous
-  whole-file entry is intentional, not a temporary drain to remove for
-  inversion.  UI-owned scanline feedback does not change that command
-  boundary.  Remove TODO markers promising keyboard-driven codec steps.
-- Apply subsampling after decompression in `GifRestore`, separately
-  from giflib.  Decode discarded data to advance the stream correctly.
-  Retain both oversized-image fitting and reduced-view-window loading;
-  their eventual wxWidgets replacement is not part of this change.
-- Preserve 16-bit potential color/low-byte line grouping before applying
-  skip factors.  giflib accepts requested pixel counts shorter than a
-  stored row, so this does not require custom LZW handling.
-- Let giflib consume compressed image termination, including the empty
-  data sub-block.  Remove the corresponding manual byte read.  Account
-  for its final pixel read flushing remaining compressed sub-blocks;
-  do not promise a strict byte budget inside a library call.
-- Preserve current palette selection, MIG placement, and non-interlaced
-  restore behavior.  Do not combine new GIF rendering features with the
-  decoder replacement.
-- Review malformed-input differences explicitly.  The custom decoder
-  accepts minimum LZW code size 9; the bundled giflib rejects values
-  above 8.  Do not reproduce this or other fallback behavior solely to
-  preserve synthetic tests.  Establish a real-file requirement before
-  adding any compatibility workaround, and document intentional changes
-  in the affected tests.
-- Keep genuine success and failure reporting compatible with callers;
-  translate giflib results without moving diagnostic UI into the parser.
-  Leave the unused custom decoder for the following removal slice.
-- Test a complete load with pending input using the mock driver: no
-  keyboard operation is called, no key is consumed, and decoded output
-  is complete.  Cover indirect output paths as well as the codec itself.
-
-Done when:
-
-- Production GIF reading uses giflib atomically, without direct or
-  indirect keyboard polling, and retains the two reduction features.
-- Pixel output and optional sound consume each scanline during loading,
-  before the next is read; no full-image replay buffer is required.
-
-Validation: run the existing restore compatibility, focused failure and
-lifetime tests, and the full `rt-default` workflow.  No manual test.
 
 ### 12.2.1. Production GIF Metadata Reader Integration
 
@@ -1190,14 +1115,15 @@ test required; unsupported drivers cannot verify audible voice behavior.
 
 ### 15. Remove Legacy Sound Control Paths
 
-Source: output routines in `engine/sound.cpp`, `SoundInputPendingFn`,
-`init_sound_input()`, and any temporary production migration bridges.
+Source: output routines in `engine/sound.cpp` and any temporary
+production migration bridges.
 
 Work:
 
 - Remove unused `write_sound()`, `sound_open()`, `sound_time_write()`,
-  `close_sound()`, and the input-pending callback after port migration.
-- Remove legacy sound waits and polling, not the driver-backed output
+  `close_sound()` after port migration.  The input-pending callback and
+  its UI installation were removed with atomic GIF restoration.
+- Remove legacy sound waits, not the driver-backed output
   implementation or its optional recording.
   Keep parameter compatibility and completion-buzzer settings in scope.
 - Remove temporary bridge declarations and TODO markers from the sound
@@ -1215,8 +1141,8 @@ Done when:
 - No calculation sound path depends on `engine/wait_until.h` or a
   multimedia library selected speculatively for this refactor.
 
-Validation: replace obsolete input-suppression tests with port/adapter
-contract tests and run the full `rt-default` workflow.  Rendering and
+Validation: retain port/adapter contract coverage and run the full
+`rt-default` workflow.  Rendering and
 legacy file output must remain valid with unsupported driver sound.
 
 ### 16. Palette Spin Delay Boundary
@@ -2206,16 +2132,6 @@ these direct and indirect paths:
   `calc_interrupted()`.
 - `libid/engine/ScanlinePass.cpp`: one-pass and two-pass traversal still
   calls `calc_interrupted()` while deciding whether to suspend work.
-- `libid/engine/sound.cpp`: speaker output still waits through
-  `wait_until()` and suppresses speaker tones through an input-pending
-  callback.
-- `libid/io/gifview.cpp`: restored-image output reaches that legacy
-  sound wait from synchronous compatibility line callbacks.  Bounded
-  file traversal currently exists through `GifRestore`; the giflib
-  slices replace polling-oriented file traversal with atomic loading.
-  The UI owner coordinates pixel/sound feedback on each decoded scanline
-  during that command, without codec-side waits or keyboard polling.
-- `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
 - `libid/fractals/Cellular.cpp`: `iterate()` calls `thinking()`, which
   polls the driver queue.  Completion, failure, and suspension also call
   UI screen cleanup.

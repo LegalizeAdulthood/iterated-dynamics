@@ -10,6 +10,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <chrono>
+
 using namespace id::engine;
 using namespace id::misc;
 using namespace id::misc::test;
@@ -32,14 +34,18 @@ TEST_F(TestWaitUntil, firstCallSchedulesNextWaitWithoutPollingKeyboard)
     wait_until(1000);
 }
 
-TEST_F(TestWaitUntil, pendingWaitPollsKeyboard)
+TEST_F(TestWaitUntil, pendingWaitCompletesWithoutPollingKeyboard)
 {
     reset_wait_until();
-    wait_until(1000);
+    ON_CALL(m_driver, key_pressed()).WillByDefault(Return('x'));
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    const std::chrono::steady_clock::time_point start{std::chrono::steady_clock::now()};
 
-    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(1));
+    wait_until(20);
+    wait_until(0);
 
-    wait_until(1000);
+    EXPECT_GE(std::chrono::steady_clock::now() - start, std::chrono::milliseconds{2});
 }
 
 TEST_F(TestWaitUntil, resetClearsPendingWait)

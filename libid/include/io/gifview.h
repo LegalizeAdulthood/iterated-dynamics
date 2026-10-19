@@ -11,7 +11,6 @@ extern bool                  g_dither_flag; // true if we want to dither GIFs
 extern unsigned int          g_height;
 extern unsigned              g_num_colors;
 
-// TODO: removed later
 int gif_view();
 int pot_line(Byte *pixels, int line_len);
 int sound_line(Byte *pixels, int line_len);

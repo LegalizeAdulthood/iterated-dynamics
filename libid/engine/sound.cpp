@@ -38,28 +38,9 @@ int g_sound_flag{};
 
 static std::FILE *s_snd_fp{};
 
-namespace
-{
-
-bool no_input_pending()
-{
-    return false;
-}
-
-SoundInputPendingFn s_input_pending{no_input_pending};
-
-} // namespace
-
 bool sound_buzzer_enabled()
 {
     return (g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_BEEP;
-}
-
-SoundInputPendingFn set_sound_input_pending(const SoundInputPendingFn input_pending)
-{
-    const SoundInputPendingFn previous{s_input_pending};
-    s_input_pending = input_pending == nullptr ? no_input_pending : input_pending;
-    return previous;
 }
 
 // open sound file
@@ -94,14 +75,9 @@ void write_sound(const int tone)
             fmt::print(s_snd_fp, "{:d}\n", tone);
         }
     }
-    if (!s_input_pending())
+    if (driver_sound_on(tone))
     {
-        //   if (20 < tone && tone < 15000)  better limits?
-        //   if (10 < tone && tone < 5000)  better limits?
-        if (driver_sound_on(tone))
-        {
-            wait_until(g_orbit_delay);
-        }
+        wait_until(g_orbit_delay);
     }
 }
 

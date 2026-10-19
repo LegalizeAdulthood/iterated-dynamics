@@ -2,6 +2,7 @@
 //
 #include <engine/OrbitPlot.h>
 #include <engine/sound.h>
+#include <engine/wait_until.h>
 
 #include "MockDriver.h"
 
@@ -21,50 +22,37 @@ using namespace testing;
 namespace id::test
 {
 
-namespace
-{
-
-bool input_pending()
-{
-    return true;
-}
-
-bool input_not_pending()
-{
-    return false;
-}
-
-} // namespace
-
 class TestSound : public Test
 {
 protected:
-    void TearDown() override
-    {
-        set_sound_input_pending(m_saved_input_pending);
-    }
-
     MockDriver m_driver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<int> m_saved_orbit_save_flags{g_orbit_save_flags, 0};
     ValueSaver<int> m_saved_orbit_delay{g_orbit_delay, 0};
-    SoundInputPendingFn m_saved_input_pending{set_sound_input_pending(nullptr)};
 };
 
-TEST_F(TestSound, pendingInputSuppressesSpeakerTone)
+TEST_F(TestSound, pendingInputDoesNotSuppressSpeakerTone)
 {
-    set_sound_input_pending(input_pending);
+    ON_CALL(m_driver, key_pressed()).WillByDefault(Return('x'));
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    EXPECT_CALL(m_driver, sound_on(440)).WillOnce(Return(false));
 
     write_sound(440);
 }
 
-TEST_F(TestSound, noPendingInputPlaysSpeakerTone)
+TEST_F(TestSound, supportedSoundWaitDoesNotPollInput)
 {
-    set_sound_input_pending(input_not_pending);
-
-    EXPECT_CALL(m_driver, sound_on(440)).WillOnce(Return(false));
+    g_orbit_delay = 20;
+    reset_wait_until();
+    ON_CALL(m_driver, key_pressed()).WillByDefault(Return('x'));
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    EXPECT_CALL(m_driver, sound_on(440)).Times(2).WillRepeatedly(Return(true));
 
     write_sound(440);
+    write_sound(440);
+    reset_wait_until();
 }
 
 } // namespace id::test

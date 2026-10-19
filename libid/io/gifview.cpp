@@ -70,7 +70,6 @@ static std::vector<char> s_dither_buf;
 
 // Main entry decoder
 
-// TODO: removed later
 int gif_view()
 {
     g_row_count = 0;
@@ -136,7 +135,6 @@ int gif_view()
 
     int status{};
     bool image_active{};
-    // TODO: removed later
     while (!restore.done())
     {
         restore.iterate();
@@ -146,12 +144,12 @@ int gif_view()
             g_height = image.height;
             // adjustments for handling MIGs
             s_gif_view_image_top = image.top;
-            if (g_skip_x_dots > 0)
+            if (g_skip_y_dots > 0)
             {
                 s_gif_view_image_top /= g_skip_y_dots + 1;
             }
             s_gif_view_image_left = image.left;
-            if (g_skip_y_dots > 0)
+            if (g_skip_x_dots > 0)
             {
                 s_gif_view_image_left /= g_skip_x_dots + 1;
             }
