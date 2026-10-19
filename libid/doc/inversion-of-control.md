@@ -747,41 +747,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 12.2.1. Production GIF Metadata Reader Integration
-
-Source: `find_fractal_info()`, `load_ext_blk()`, and `skip_ext_blk()` in
-`io/loadfile.cpp`; the shared extension readers in `io/gif_file.cpp`.
-
-Work:
-
-- Retain the `find_fractal_info()` caller contract while replacing its
-  raw extension parsing and packed-structure decoding with the existing
-  `get_*_info()` readers, including `get_resume_info()`.  Use
-  `has_gif_extension()` to distinguish absent and empty optional records.
-- Use giflib record reads to collect metadata before pixel restoration.
-  Skip compressed image sub-blocks without decoding or buffering the
-  raster; do not use `DGifSlurp()` merely to obtain metadata.  Run this
-  metadata operation to completion without keyboard polling as well.
-- Map the decoded values into the existing load results, preserving
-  optional-block presence, plain-GIF defaults, older-record defaults,
-  dimensions, palette requirements, and existing version migrations.
-  Keep UI choices and applying loaded engine settings outside the codec.
-- Share extension collection with the restore backend where needed;
-  neither path may implement another field decoder.  Keep file and
-  extension-buffer ownership explicit and release them on every exit.
-- Remove the replaced raw parsing helpers when unused.  Retain byte-order
-  helpers still used by the old writer until its conversion; do not
-  preserve a second metadata reader as a runtime fallback or test oracle.
-
-Done when:
-
-- Production metadata loading and the existing giflib utilities use the
-  same extension readers without requiring full raster decompression.
-
-Validation: run extension, metadata-loader, and restore compatibility
-tests, including older Fractint fixtures, and the full `rt-default`
-workflow.  No manual test.
-
 ### 12.3. GIF Custom Decoder Removal
 
 Source: `io/GifDecoder.cpp`, `io/GifDecoder.h`,
@@ -866,7 +831,7 @@ Work:
   sub-block boundary.  Verify `tot_extend_len` against the actual encoded
   extension layout, including identifiers and terminators.
 - Read saved files through `find_fractal_info()` using the shared
-  extension readers from 12.2.1, and inspect giflib extension records.
+  extension readers, and inspect giflib extension records.
   Preserve the layout required by older readers' backward metadata
   search even though production loading no longer depends on that search.
 

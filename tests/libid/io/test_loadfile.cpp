@@ -11,6 +11,7 @@
 #include <engine/Inversion.h>
 #include <engine/Potential.h>
 #include <engine/random_seed.h>
+#include <engine/spindac.h>
 #include <engine/UserData.h>
 #include <engine/VideoInfo.h>
 #include <engine/Viewport.h>
@@ -18,6 +19,7 @@
 #include <fractals/fractype.h>
 #include <io/gif_extensions.h>
 #include <io/gif_file.h>
+#include <io/GifRestore.h>
 #include <misc/ValueSaver.h>
 #include <ui/big_while_loop.h>
 #include <ui/get_video_mode.h>
@@ -28,12 +30,15 @@
 #include <gif_lib.h>
 #include <gtest/gtest.h>
 
-#include <array>
+#include <algorithm>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <iterator>
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -79,27 +84,32 @@ void PrintTo(const FileFractalType &value, std::ostream *str)
     *str << value;
 }
 
-static std::array<Byte, 13> make_gif_header(const int width, const int height)
-{
-    std::array<Byte, 13> header{};
-    header[0] = 'G';
-    header[1] = 'I';
-    header[2] = 'F';
-    header[3] = '8';
-    header[4] = '9';
-    header[5] = 'a';
-    header[6] = static_cast<Byte>(width & 0xff);
-    header[7] = static_cast<Byte>(width >> 8);
-    header[8] = static_cast<Byte>(height & 0xff);
-    header[9] = static_cast<Byte>(height >> 8);
-    return header;
-}
-
 static void check_gif_write(const int result)
 {
     if (result == GIF_ERROR)
     {
         throw std::runtime_error("Can't write metadata test input");
+    }
+}
+
+static void write_gif_extensions(GifFileType *output, const GifFileType *metadata)
+{
+    for (int i = 0; i < metadata->ExtensionBlockCount; ++i)
+    {
+        const ExtensionBlock &block{metadata->ExtensionBlocks[i]};
+        if (block.Function != CONTINUE_EXT_FUNC_CODE)
+        {
+            if (i > 0)
+            {
+                check_gif_write(EGifPutExtensionTrailer(output));
+            }
+            check_gif_write(EGifPutExtensionLeader(output, block.Function));
+        }
+        check_gif_write(EGifPutExtensionBlock(output, block.ByteCount, block.Bytes));
+    }
+    if (metadata->ExtensionBlockCount > 0)
+    {
+        check_gif_write(EGifPutExtensionTrailer(output));
     }
 }
 
@@ -208,53 +218,6 @@ TEST(TestFractalInfoVersion, legacyInvalidReleaseFallsBackToFractintFourteenTen)
     EXPECT_EQ(parse_legacy_version(1410), fractal_info_version(info));
 }
 
-class TestGifScreenDimensions : public TestWithParam<int>
-{
-};
-
-TEST_P(TestGifScreenDimensions, readsUnsignedDimension)
-{
-    const int size{GetParam()};
-    const auto header{make_gif_header(size, size)};
-    int width{};
-    int height{};
-
-    EXPECT_TRUE(read_gif_screen_dimensions(header.data(), width, height));
-
-    EXPECT_EQ(size, width);
-    EXPECT_EQ(size, height);
-}
-
-INSTANTIATE_TEST_SUITE_P(UnsignedBounds, TestGifScreenDimensions, Values(32767, 32768, 65535));
-
-TEST(TestGifScreenDimensions, rejectsNonGifHeader)
-{
-    auto header{make_gif_header(800, 600)};
-    header[0] = 'B';
-    int width{};
-    int height{};
-
-    EXPECT_FALSE(read_gif_screen_dimensions(header.data(), width, height));
-}
-
-TEST(TestGifScreenDimensions, rejectsZeroWidth)
-{
-    const auto header{make_gif_header(0, 600)};
-    int width{};
-    int height{};
-
-    EXPECT_FALSE(read_gif_screen_dimensions(header.data(), width, height));
-}
-
-TEST(TestGifScreenDimensions, rejectsZeroHeight)
-{
-    const auto header{make_gif_header(800, 0)};
-    int width{};
-    int height{};
-
-    EXPECT_FALSE(read_gif_screen_dimensions(header.data(), width, height));
-}
-
 class TestGetVideoMode : public Test
 {
 protected:
@@ -342,6 +305,8 @@ class TestFindFractalInfo : public Test
 {
 protected:
     std::filesystem::path write_file(bool legacy_formula);
+    std::filesystem::path write_small_file(bool extensions_first = false);
+    void add_main_record();
     bool read_file(const std::filesystem::path &path);
     void expect_no_optional_blocks() const;
     void TearDown() override;
@@ -358,6 +323,7 @@ protected:
     ExtBlock5 m_block_5{};
     ExtBlock6 m_block_6{};
     ExtBlock7 m_block_7{};
+    GifFileType m_extensions{};
     std::filesystem::path m_path;
 };
 
@@ -414,25 +380,55 @@ std::filesystem::path TestFindFractalInfo::write_file(const bool legacy_formula)
         info.tot_extend_len = MAIN_SIZE + (MAIN_SIZE + 254) / 255 + 15 + sizeof(formula.form_name) + 16;
         put_fractal_info(output.get(), info);
     }
-    for (int i = 0; i < output->ExtensionBlockCount; ++i)
-    {
-        const ExtensionBlock &block{output->ExtensionBlocks[i]};
-        if (block.Function != CONTINUE_EXT_FUNC_CODE)
+    write_gif_extensions(output.get(), output.get());
+    check_gif_write(EGifCloseFile(output.release(), &error));
+    return m_path;
+}
+
+std::filesystem::path TestFindFractalInfo::write_small_file(const bool extensions_first)
+{
+    const std::string name{UnitTest::GetInstance()->current_test_info()->name()};
+    m_path = std::filesystem::temp_directory_path() / ("id-find-fractal-info-" + name + ".gif");
+    int error{};
+    std::unique_ptr<GifFileType, void (*)(GifFileType *)> output{
+        EGifOpenFileName(m_path.string().c_str(), false, &error), [](GifFileType *gif)
         {
-            if (i > 0)
-            {
-                check_gif_write(EGifPutExtensionTrailer(output.get()));
-            }
-            check_gif_write(EGifPutExtensionLeader(output.get(), block.Function));
-        }
-        check_gif_write(EGifPutExtensionBlock(output.get(), block.ByteCount, block.Bytes));
-    }
-    if (output->ExtensionBlockCount > 0)
+            int close_error{};
+            EGifCloseFile(gif, &close_error);
+        }};
+    const GifColorType colors[2]{{255, 0, 0}, {0, 255, 0}};
+    std::unique_ptr<ColorMapObject, decltype(&GifFreeMapObject)> palette{GifMakeMapObject(2, colors), GifFreeMapObject};
+    if (!output || !palette)
     {
-        check_gif_write(EGifPutExtensionTrailer(output.get()));
+        throw std::runtime_error("Can't create small metadata test input");
+    }
+    EGifSetGifVersion(output.get(), true);
+    check_gif_write(EGifPutScreenDesc(output.get(), 2, 2, 1, 0, palette.get()));
+    if (extensions_first)
+    {
+        write_gif_extensions(output.get(), &m_extensions);
+    }
+    check_gif_write(EGifPutImageDesc(output.get(), 0, 0, 2, 2, false, nullptr));
+    Byte row[2]{0, 1};
+    check_gif_write(EGifPutLine(output.get(), row, 2));
+    check_gif_write(EGifPutLine(output.get(), row, 2));
+    if (!extensions_first)
+    {
+        write_gif_extensions(output.get(), &m_extensions);
     }
     check_gif_write(EGifCloseFile(output.release(), &error));
     return m_path;
+}
+
+void TestFindFractalInfo::add_main_record()
+{
+    FractalInfo info{};
+    std::copy_n(INFO_ID, sizeof(info.info_id), info.info_id);
+    info.info_version = FRACTAL_INFO_VERSION;
+    info.fractal_type = +FractalType::MANDEL;
+    info.iterations_old = INITIAL_MAX_ITERATIONS;
+    info.iterations = INITIAL_MAX_ITERATIONS;
+    put_fractal_info(&m_extensions, info);
 }
 
 bool TestFindFractalInfo::read_file(const std::filesystem::path &path)
@@ -453,6 +449,7 @@ void TestFindFractalInfo::expect_no_optional_blocks() const
 
 void TestFindFractalInfo::TearDown()
 {
+    GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
     if (!m_path.empty())
     {
         std::filesystem::remove(m_path);
@@ -518,6 +515,256 @@ TEST_F(TestFindFractalInfo, legacyNameOnlyRecordUsesDefaultFormulaFlags)
     EXPECT_FALSE(m_block_5.got_data);
     EXPECT_FALSE(m_block_6.got_data);
     EXPECT_FALSE(m_block_7.got_data);
+}
+
+TEST_F(TestFindFractalInfo, readsLegacyOptionalRecords)
+{
+    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT2_FILE));
+    ASSERT_TRUE(m_block_2.got_data);
+    EXPECT_EQ(196, m_block_2.length);
+    ASSERT_EQ(196, m_block_2.resume_data.size());
+    const std::vector<Byte> resume_prefix{2, 0, 1, 0, 0, 0, 63, 6, 0, 0, 175, 4, 128, 2, 0, 0};
+    EXPECT_EQ(resume_prefix,
+        (std::vector<Byte>{m_block_2.resume_data.begin(), m_block_2.resume_data.begin() + resume_prefix.size()}));
+
+    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT3_FILE));
+    ASSERT_TRUE(m_block_3.got_data);
+    EXPECT_EQ(66, m_block_3.length);
+    EXPECT_STREQ("Mandel3", m_block_3.form_name);
+    EXPECT_EQ(0, m_block_3.uses_p1);
+    EXPECT_EQ(1, m_block_3.ismand);
+
+    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT4_FILE));
+    ASSERT_TRUE(m_block_4.got_data);
+    EXPECT_EQ(5, m_block_4.length);
+    EXPECT_EQ((std::vector<int>{10, 20, 30, 40, 50}), m_block_4.range_data);
+
+    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT5_FILE));
+    ASSERT_TRUE(m_block_5.got_data);
+    EXPECT_EQ(396, m_block_5.apm_data.size());
+
+    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT6_FILE));
+    ASSERT_TRUE(m_block_6.got_data);
+    EXPECT_EQ(200, m_block_6.length);
+    EXPECT_EQ(1, m_block_6.evolving);
+    EXPECT_EQ(9, m_block_6.image_grid_size);
+    EXPECT_EQ(20596, m_block_6.this_generation_random_seed);
+    EXPECT_DOUBLE_EQ(4.0, m_block_6.x_parameter_range);
+    EXPECT_DOUBLE_EQ(3.0, m_block_6.y_parameter_range);
+    EXPECT_DOUBLE_EQ(-2.0, m_block_6.x_parameter_offset);
+    EXPECT_DOUBLE_EQ(-1.5, m_block_6.y_parameter_offset);
+    EXPECT_EQ(4, m_block_6.px);
+    EXPECT_EQ(4, m_block_6.py);
+    EXPECT_EQ(640, m_block_6.x_dots);
+    EXPECT_EQ(480, m_block_6.y_dots);
+    EXPECT_EQ(81, m_block_6.e_count);
+    EXPECT_EQ(5, m_block_6.mutate[0]);
+
+    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT7_FILE));
+    ASSERT_TRUE(m_block_7.got_data);
+    EXPECT_EQ(200, m_block_7.length);
+    EXPECT_DOUBLE_EQ(-1.0, m_block_7.ox_min);
+    EXPECT_DOUBLE_EQ(1.0, m_block_7.ox_max);
+    EXPECT_DOUBLE_EQ(-1.0, m_block_7.oy_min);
+    EXPECT_DOUBLE_EQ(1.0, m_block_7.oy_max);
+    EXPECT_DOUBLE_EQ(-1.0, m_block_7.ox_3rd);
+    EXPECT_DOUBLE_EQ(-1.0, m_block_7.oy_3rd);
+    EXPECT_EQ(1, m_block_7.keep_screen_coords);
+    EXPECT_EQ('r', m_block_7.draw_mode);
+}
+
+TEST_F(TestFindFractalInfo, extensionsBeforeImageRetainEmptyOptionalRecords)
+{
+    add_main_record();
+    put_resume_info(&m_extensions, {});
+    put_ranges_info(&m_extensions, {});
+    put_extended_param_info(&m_extensions, {});
+
+    ASSERT_FALSE(read_file(write_small_file(true)));
+
+    EXPECT_STREQ(INFO_ID, m_info.info_id);
+    EXPECT_TRUE(m_block_2.got_data);
+    EXPECT_EQ(0, m_block_2.length);
+    EXPECT_TRUE(m_block_2.resume_data.empty());
+    EXPECT_TRUE(m_block_4.got_data);
+    EXPECT_EQ(0, m_block_4.length);
+    EXPECT_TRUE(m_block_4.range_data.empty());
+    EXPECT_TRUE(m_block_5.got_data);
+    EXPECT_TRUE(m_block_5.apm_data.empty());
+    EXPECT_FALSE(m_block_3.got_data);
+    EXPECT_FALSE(m_block_6.got_data);
+    EXPECT_FALSE(m_block_7.got_data);
+}
+
+TEST_F(TestFindFractalInfo, readsMultiBlockPayloadsWithoutPollingPendingInput)
+{
+    MockDriver driver;
+    ValueSaver<Driver *> saved_driver{g_driver, &driver};
+    ON_CALL(driver, key_pressed()).WillByDefault(Return('x'));
+    EXPECT_CALL(driver, key_pressed()).Times(0);
+    EXPECT_CALL(driver, get_key()).Times(0);
+    const std::vector<Byte> resume(511, 0xA5);
+    const std::vector<char> parameters(256, 'a');
+    const std::vector<int> ranges{-1, 128, 255, 32767, -32768};
+    put_resume_info(&m_extensions, resume);
+    put_ranges_info(&m_extensions, ranges);
+    put_extended_param_info(&m_extensions, parameters);
+    add_main_record();
+    const std::filesystem::path path{write_small_file()};
+
+    ASSERT_FALSE(read_file(path));
+
+    EXPECT_EQ(511, m_block_2.length);
+    EXPECT_EQ(resume, m_block_2.resume_data);
+    EXPECT_EQ(5, m_block_4.length);
+    EXPECT_EQ(ranges, m_block_4.range_data);
+    EXPECT_EQ(parameters, m_block_5.apm_data);
+    EXPECT_TRUE(std::filesystem::remove(path));
+    EXPECT_EQ(resume, m_block_2.resume_data);
+}
+
+TEST_F(TestFindFractalInfo, skipsInvalidLzwPixelsWhenReadingMetadata)
+{
+    add_main_record();
+    const std::filesystem::path path{write_small_file()};
+    {
+        std::fstream file{path, std::ios::in | std::ios::out | std::ios::binary};
+        // First compressed byte, after the descriptor and block length.
+        file.seekp(31);
+        file.put('\xFF');
+    }
+    GifRestore restore{path};
+    while (!restore.done())
+    {
+        restore.iterate();
+    }
+    ASSERT_LT(restore.result(), 0);
+
+    ASSERT_FALSE(read_file(path));
+
+    EXPECT_STREQ(INFO_ID, m_info.info_id);
+    EXPECT_EQ(FRACTAL_INFO_VERSION, m_info.info_version);
+}
+
+TEST_F(TestFindFractalInfo, plainGifUsesUnsignedHeaderDimensionsAspectAndPalette)
+{
+    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75f};
+    ValueSaver saved_red_0{g_dac_box[0][0]};
+    ValueSaver saved_green_0{g_dac_box[0][1]};
+    ValueSaver saved_blue_0{g_dac_box[0][2]};
+    ValueSaver saved_red_1{g_dac_box[1][0]};
+    ValueSaver saved_green_1{g_dac_box[1][1]};
+    ValueSaver saved_blue_1{g_dac_box[1][2]};
+    g_make_parameter_file = true;
+    const std::filesystem::path path{write_small_file()};
+    {
+        std::fstream file{path, std::ios::in | std::ios::out | std::ios::binary};
+        file.seekp(6);
+        const char dimensions[]{'\xFF', '\xFF', 0, '\x80'};
+        file.write(dimensions, sizeof(dimensions));
+        file.seekp(12);
+        file.put(49);
+    }
+
+    ASSERT_FALSE(read_file(path));
+
+    EXPECT_EQ(65535, g_file_x_dots);
+    EXPECT_EQ(32768, g_file_y_dots);
+    EXPECT_EQ(65535, m_info.x_dots);
+    EXPECT_EQ(32768, m_info.y_dots);
+    EXPECT_FLOAT_EQ(32768.0f / 65535.0f, g_file_aspect_ratio);
+    EXPECT_EQ(2, g_file_colors);
+    EXPECT_EQ(255, g_dac_box[0][0]);
+    EXPECT_EQ(0, g_dac_box[0][1]);
+    EXPECT_EQ(0, g_dac_box[0][2]);
+    EXPECT_EQ(0, g_dac_box[1][0]);
+    EXPECT_EQ(255, g_dac_box[1][1]);
+    EXPECT_EQ(0, g_dac_box[1][2]);
+}
+
+TEST_F(TestFindFractalInfo, readsUnsignedHeaderDimensionBoundaries)
+{
+    for (const int size : {32767, 32768, 65535})
+    {
+        SCOPED_TRACE(size);
+        const std::filesystem::path path{write_small_file()};
+        {
+            std::fstream file{path, std::ios::in | std::ios::out | std::ios::binary};
+            const Byte dimensions[]{static_cast<Byte>(size), static_cast<Byte>(size >> 8), static_cast<Byte>(size),
+                static_cast<Byte>(size >> 8)};
+            file.seekp(6);
+            file.write(reinterpret_cast<const char *>(dimensions), sizeof(dimensions));
+        }
+
+        ASSERT_FALSE(read_file(path));
+
+        EXPECT_EQ(size, g_file_x_dots);
+        EXPECT_EQ(size, g_file_y_dots);
+        EXPECT_EQ(size, m_info.x_dots);
+        EXPECT_EQ(size, m_info.y_dots);
+    }
+}
+
+TEST_F(TestFindFractalInfo, invalidHeaderOrMissingFileReportsFailure)
+{
+    for (const int offset : {0, 6, 8})
+    {
+        SCOPED_TRACE(offset);
+        const std::filesystem::path path{write_small_file()};
+        {
+            std::fstream file{path, std::ios::in | std::ios::out | std::ios::binary};
+            file.seekp(offset);
+            file.put(0);
+        }
+
+        EXPECT_TRUE(read_file(path));
+        EXPECT_TRUE(std::filesystem::remove(path));
+    }
+    EXPECT_TRUE(read_file(m_path));
+}
+
+TEST_F(TestFindFractalInfo, truncatedFilesReportFailureAndCloseAtEveryByteBoundary)
+{
+    add_main_record();
+    const std::filesystem::path path{write_small_file()};
+    std::ifstream input{path, std::ios::binary};
+    const std::vector<char> bytes{std::istreambuf_iterator<char>{input}, std::istreambuf_iterator<char>{}};
+    input.close();
+    for (std::size_t size = 0; size < bytes.size(); ++size)
+    {
+        SCOPED_TRACE(size);
+        {
+            std::ofstream output{path, std::ios::binary | std::ios::trunc};
+            output.write(bytes.data(), static_cast<std::streamsize>(size));
+        }
+        EXPECT_TRUE(read_file(path));
+        EXPECT_TRUE(std::filesystem::remove(path));
+    }
+    EXPECT_FALSE(read_file(write_small_file()));
+}
+
+TEST_F(TestFindFractalInfo, malformedFixedRecordReportsFailureAndClosesFile)
+{
+    add_main_record();
+    FormulaInfo formula{};
+    put_formula_info(&m_extensions, formula);
+    m_extensions.ExtensionBlocks[m_extensions.ExtensionBlockCount - 1].ByteCount = 65;
+    const std::filesystem::path path{write_small_file()};
+
+    EXPECT_TRUE(read_file(path));
+
+    EXPECT_TRUE(std::filesystem::remove(path));
+}
+
+TEST_F(TestFindFractalInfo, nonApplicationExtensionDoesNotSupplyResumeData)
+{
+    put_resume_info(&m_extensions, {1, 2, 3});
+    m_extensions.ExtensionBlocks[0].Function = COMMENT_EXT_FUNC_CODE;
+    add_main_record();
+
+    ASSERT_FALSE(read_file(write_small_file()));
+
+    expect_no_optional_blocks();
 }
 
 class TestLoadFile : public TestWithParam<FileFractalType>

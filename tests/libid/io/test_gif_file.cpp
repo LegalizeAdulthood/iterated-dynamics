@@ -562,6 +562,7 @@ TEST_P(TestGIFResumeRoundTrip, preservesOpaqueBytesAndSubBlockBoundaries)
 
     EXPECT_TRUE(has_gif_extension(&m_gif, "fractint002"));
     EXPECT_EQ(expected, get_resume_info(&m_gif));
+    EXPECT_EQ(size, get_gif_extension_length(&m_gif, "fractint002"));
     EXPECT_EQ(1 + (size + 254) / 255, m_gif.ExtensionBlockCount);
     ASSERT_GT(m_gif.ExtensionBlockCount, 0);
     EXPECT_EQ(APPLICATION_EXT_FUNC_CODE, m_gif.ExtensionBlocks[0].Function);
@@ -578,6 +579,7 @@ INSTANTIATE_TEST_SUITE_P(SubBlockSizes, TestGIFResumeRoundTrip, testing::Values(
 TEST_F(TestGIFExtensions, distinguishesAbsentAndEmptyOptionalRecords)
 {
     EXPECT_FALSE(has_gif_extension(&m_gif, "fractint002"));
+    EXPECT_EQ(0, get_gif_extension_length(&m_gif, "fractint002"));
     EXPECT_TRUE(get_resume_info(&m_gif).empty());
     EXPECT_FALSE(has_gif_extension(&m_gif, "fractint004"));
     EXPECT_TRUE(get_ranges_info(&m_gif).empty());
@@ -590,6 +592,7 @@ TEST_F(TestGIFExtensions, distinguishesAbsentAndEmptyOptionalRecords)
 
     EXPECT_TRUE(has_gif_extension(&m_gif, "fractint002"));
     EXPECT_TRUE(get_resume_info(&m_gif).empty());
+    EXPECT_EQ(0, get_gif_extension_length(&m_gif, "fractint002"));
     EXPECT_TRUE(has_gif_extension(&m_gif, "fractint004"));
     EXPECT_TRUE(get_ranges_info(&m_gif).empty());
     EXPECT_TRUE(has_gif_extension(&m_gif, "fractint005"));

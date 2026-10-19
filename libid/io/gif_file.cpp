@@ -14,6 +14,7 @@
 #include <array>
 #include <cstdint>
 #include <iterator>
+#include <limits>
 #include <new>
 #include <stdexcept>
 #include <string>
@@ -55,6 +56,27 @@ static int find_gif_extension(const GifFileType *gif, const char *name)
 bool has_gif_extension(const GifFileType *gif, const char *name)
 {
     return find_gif_extension(gif, name) >= 0;
+}
+
+int get_gif_extension_length(const GifFileType *gif, const char *name)
+{
+    const int index{find_gif_extension(gif, name)};
+    if (index < 0)
+    {
+        return 0;
+    }
+    int length{};
+    for (int ext = index + 1;
+        ext < gif->ExtensionBlockCount && gif->ExtensionBlocks[ext].Function == CONTINUE_EXT_FUNC_CODE; ++ext)
+    {
+        const int count{gif->ExtensionBlocks[ext].ByteCount};
+        if (count > std::numeric_limits<int>::max() - length)
+        {
+            throw std::runtime_error("GIF extension is too large");
+        }
+        length += count;
+    }
+    return length;
 }
 
 static std::vector<Byte> get_gif_extension(const GifFileType *gif, const char *name)

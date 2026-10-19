@@ -36,9 +36,8 @@
 #include "geometry/3d.h"
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
-#include "io/decode_info.h"
-#include "io/encoder.h"
 #include "io/gif_extensions.h"
+#include "io/gif_file.h"
 #include "io/library.h"
 #include "math/biginit.h"
 #include "math/round_float_double.h"
@@ -51,15 +50,15 @@
 #include "ui/stop_msg.h"
 
 #include <fmt/format.h>
+#include <gif_lib.h>
 
 #include <algorithm>
 #include <cmath>
-#include <cstdio>
-#include <cstdlib>
 #include <cstring>
 #include <iterator>
+#include <memory>
+#include <stdexcept>
 #include <string>
-#include <system_error>
 #include <vector>
 
 using namespace id::engine;
@@ -104,30 +103,12 @@ struct DeprecatedFractalType
     };
 };
 
-struct GifExtensionId
-{
-    enum
-    {
-        FRACTAL_INFO = 1,
-        RESUME_INFO = 2,
-        FORMULA_INFO = 3,
-        RANGES_INFO = 4,
-        EXTENDED_PRECISION = 5,
-        EVOLVER_INFO = 6,
-        ORBITS_INFO = 7,
-    };
-};
-
 } // namespace
 
 // prototypes
-static void load_ext_blk(char *load_ptr, int load_len);
-static void skip_ext_blk(int *block_len, int *data_len);
 static void backwards_compat(const FractalInfo &info);
 static bool fix_bof();
 static bool fix_period_bof();
-
-static std::FILE *s_fp{};
 
 bool g_fast_restore{}; // true - reset viewwindows prior to a restore and
                        // do not display warnings when video mode changes during restore
@@ -153,22 +134,6 @@ static bool within_eps(const float lhs, const float rhs)
 static bool within_eps(const double lhs, const double rhs)
 {
     return std::abs(lhs - rhs) < 1.0e-6f;
-}
-
-int read_gif_uint16(const Byte *data)
-{
-    return static_cast<int>(data[0]) | (static_cast<int>(data[1]) << 8);
-}
-
-bool read_gif_screen_dimensions(const Byte *header, int &width, int &height)
-{
-    if (header == nullptr || std::strncmp(reinterpret_cast<const char *>(header), "GIF", 3) != 0)
-    {
-        return false;
-    }
-    width = read_gif_uint16(&header[6]);
-    height = read_gif_uint16(&header[8]);
-    return width > 0 && height > 0;
 }
 
 template <size_t N, typename T>
@@ -1241,11 +1206,64 @@ int read_overlay()      // read overlay/3D files, if required
     return 0;
 }
 
-static void file_read(void *ptr, const size_t size, const size_t num, std::FILE *stream)
+// Read descriptors and extensions without decompressing or storing image pixels.
+static bool read_gif_extensions(GifFileType *gif)
 {
-    if (std::fread(ptr, size, num, stream) != num)
+    while (true)
     {
-        throw std::system_error(errno, std::system_category(), "failed fread");
+        GifRecordType record{};
+        if (DGifGetRecordType(gif, &record) == GIF_ERROR)
+        {
+            return false;
+        }
+        switch (record)
+        {
+        case TERMINATE_RECORD_TYPE:
+            return true;
+        case IMAGE_DESC_RECORD_TYPE:
+        {
+            if (DGifGetImageDesc(gif) == GIF_ERROR)
+            {
+                return false;
+            }
+            int code_size{};
+            GifByteType *block{};
+            if (DGifGetCode(gif, &code_size, &block) == GIF_ERROR)
+            {
+                return false;
+            }
+            while (block != nullptr)
+            {
+                if (DGifGetCodeNext(gif, &block) == GIF_ERROR)
+                {
+                    return false;
+                }
+            }
+            break;
+        }
+        case EXTENSION_RECORD_TYPE:
+        {
+            int function{};
+            GifByteType *block{};
+            if (DGifGetExtension(gif, &function, &block) == GIF_ERROR)
+            {
+                return false;
+            }
+            while (block != nullptr)
+            {
+                if (GifAddExtensionBlock(
+                        &gif->ExtensionBlockCount, &gif->ExtensionBlocks, function, block[0], block + 1) == GIF_ERROR ||
+                    DGifGetExtensionNext(gif, &block) == GIF_ERROR)
+                {
+                    return false;
+                }
+                function = CONTINUE_EXT_FUNC_CODE;
+            }
+            break;
+        }
+        default:
+            return false;
+        }
     }
 }
 
@@ -1254,368 +1272,164 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     ExtBlock2 *blk_2_info, ExtBlock3 *blk_3_info, ExtBlock4 *blk_4_info, //
     ExtBlock5 *blk_5_info, ExtBlock6 *blk_6_info, ExtBlock7 *blk_7_info)
 {
-    Byte gif_start[18];
-    char temp1[81];
-    int block_len;
-    int data_len;
-    int hdr_offset;
-    FormulaInfo formula_info{};
-    EvolutionInfo evolution_info;
-    OrbitsInfo orbits_info;
+    *info = {};
+    *blk_2_info = {};
+    *blk_3_info = {};
+    *blk_4_info = {};
+    *blk_5_info = {};
+    *blk_6_info = {};
+    *blk_7_info = {};
 
-    blk_2_info->got_data = false;
-    blk_3_info->got_data = false;
-    blk_4_info->got_data = false;
-    blk_5_info->got_data = false;
-    blk_6_info->got_data = false;
-    blk_7_info->got_data = false;
-
-    s_fp = std::fopen(gif_file.c_str(), "rb");
-    if (s_fp == nullptr)
+    int error{};
+    std::unique_ptr<GifFileType, void (*)(GifFileType *)> input{DGifOpenFileName(gif_file.c_str(), &error),
+        [](GifFileType *gif)
+        {
+            int close_error{};
+            DGifCloseFile(gif, &close_error);
+        }};
+    if (!input || input->SWidth <= 0 || input->SHeight <= 0 || input->SColorMap == nullptr ||
+        !read_gif_extensions(input.get()))
     {
         return true;
     }
-    file_read(gif_start, 13, 1, s_fp);
-    if (!read_gif_screen_dimensions(gif_start, g_file_x_dots, g_file_y_dots))
-    {
-        // not GIF, maybe old .tga?
-        std::fclose(s_fp);
-        return true;
-    }
 
-    g_file_colors = 2 << (gif_start[10] & 7);
+    g_file_x_dots = input->SWidth;
+    g_file_y_dots = input->SHeight;
+    g_file_colors = input->SColorMap->ColorCount;
     g_file_aspect_ratio = 0; // unknown
-    if (gif_start[12])
+    if (input->AspectByte != 0)
     {
-        // calc reasonably close value from gif header
-        g_file_aspect_ratio = static_cast<float>(
-            64.0 / (static_cast<double>(gif_start[12]) + 15.0) * static_cast<double>(g_file_y_dots) / static_cast<double>(g_file_x_dots));
-        if (g_file_aspect_ratio > g_screen_aspect-0.03
-            && g_file_aspect_ratio < g_screen_aspect+0.03)
+        g_file_aspect_ratio =
+            static_cast<float>(64.0 / (static_cast<double>(input->AspectByte) + 15.0) * g_file_y_dots / g_file_x_dots);
+        if (g_file_aspect_ratio > g_screen_aspect - 0.03 && g_file_aspect_ratio < g_screen_aspect + 0.03)
         {
             g_file_aspect_ratio = g_screen_aspect;
         }
     }
-    else if (g_file_y_dots * 4 == g_file_x_dots * 3)   // assume the common square pixels
+    else if (g_file_y_dots * 4 == g_file_x_dots * 3)
     {
         g_file_aspect_ratio = g_screen_aspect;
     }
 
-    if (g_make_parameter_file && (gif_start[10] & 0x80) != 0)
+    if (g_make_parameter_file)
     {
-        for (int i = 0; i < g_file_colors; i++)
+        for (int i = 0; i < g_file_colors; ++i)
         {
-            int k = 0;
-            for (int j = 0; j < 3; j++)
-            {
-                k = std::getc(s_fp);
-                if (k < 0)
-                {
-                    break;
-                }
-                g_dac_box[i][j] = static_cast<Byte>(k);
-            }
-            if (k < 0)
-            {
-                break;
-            }
+            const GifColorType &color{input->SColorMap->Colors[i]};
+            g_dac_box[i][0] = color.Red;
+            g_dac_box[i][1] = color.Green;
+            g_dac_box[i][2] = color.Blue;
         }
     }
 
-    /* Format of .gif extension blocks is:
-           1 byte    '!', extension block identifier
-           1 byte    extension block number, 255
-           1 byte    length of id, 11
-          11 bytes   alpha id, "fractintNNN" with fractint, NNN is secondary id
-        n * {
-           1 byte    length of block info in bytes
-           x bytes   block info
-            }
-           1 byte    0, extension terminator
-       To scan extension blocks, we first look in file at length of FractalInfo
-       (the main extension block) from end of file, looking for a literal known
-       to be at start of our block info.  Then we scan forward a bit, in case
-       the file is from an earlier fractint vsn with shorter FractalInfo.
-       If FractalInfo is found and is from vsn>=14, it includes the total length
-       of all extension blocks; we then scan them all first to last to load
-       any optional ones which are present.
-       Defined extension blocks:
-         fractint001     header, always present
-         fractint002     resume info for interrupted resumable image
-         fractint003     additional formula type info
-         fractint004     ranges info
-         fractint005     extended precision parameters
-         fractint006     evolver params
-         fractint007     orbits info
-    */
-
-    std::memset(info, 0, sizeof(FractalInfo));
-    constexpr int FRACTAL_INFO_LEN = sizeof(FractalInfo) + (sizeof(FractalInfo) + 254) / 255;
-    std::fseek(s_fp, -1 - FRACTAL_INFO_LEN, SEEK_END);
-    /* TODO: revise this to read members one at a time so we get natural alignment
-       of fields within the FractalInfo structure for the platform */
-    file_read(info, 1, sizeof(FractalInfo), s_fp);
-    if (std::strcmp(INFO_ID, info->info_id) == 0)
+    if (has_gif_extension(input.get(), "fractint001"))
     {
-        decode_fractal_info(*info);
-        hdr_offset = -1-FRACTAL_INFO_LEN;
+        try
+        {
+            *info = get_fractal_info(input.get());
+            if (std::memcmp(info->info_id, INFO_ID, sizeof(info->info_id)) != 0)
+            {
+                return true;
+            }
+            if (has_gif_extension(input.get(), "fractint002"))
+            {
+                blk_2_info->resume_data = get_resume_info(input.get());
+                blk_2_info->length = get_gif_extension_length(input.get(), "fractint002");
+                blk_2_info->got_data = true;
+            }
+            if (has_gif_extension(input.get(), "fractint003"))
+            {
+                const FormulaInfo formula{get_formula_info(input.get())};
+                std::copy_n(formula.form_name, sizeof(blk_3_info->form_name), blk_3_info->form_name);
+                blk_3_info->length = get_gif_extension_length(input.get(), "fractint003");
+                blk_3_info->uses_p1 = formula.uses_p1;
+                blk_3_info->uses_p2 = formula.uses_p2;
+                blk_3_info->uses_p3 = formula.uses_p3;
+                blk_3_info->uses_ismand = formula.uses_ismand;
+                blk_3_info->ismand = formula.ismand;
+                blk_3_info->uses_p4 = formula.uses_p4;
+                blk_3_info->uses_p5 = formula.uses_p5;
+                blk_3_info->got_data = true;
+            }
+            if (has_gif_extension(input.get(), "fractint004"))
+            {
+                blk_4_info->range_data = get_ranges_info(input.get());
+                blk_4_info->length = static_cast<int>(blk_4_info->range_data.size());
+                blk_4_info->got_data = true;
+            }
+            if (has_gif_extension(input.get(), "fractint005"))
+            {
+                blk_5_info->apm_data = get_extended_param_info(input.get());
+                blk_5_info->got_data = true;
+            }
+            if (has_gif_extension(input.get(), "fractint006"))
+            {
+                const EvolutionInfo evolution{get_evolution_info(input.get())};
+                blk_6_info->length = get_gif_extension_length(input.get(), "fractint006");
+                blk_6_info->x_parameter_range = evolution.x_parameter_range;
+                blk_6_info->y_parameter_range = evolution.y_parameter_range;
+                blk_6_info->x_parameter_offset = evolution.x_parameter_offset;
+                blk_6_info->y_parameter_offset = evolution.y_parameter_offset;
+                blk_6_info->discrete_x_parameter_offset = static_cast<char>(evolution.discrete_x_parameter_offset);
+                blk_6_info->discrete_y_parameter_offset = static_cast<char>(evolution.discrete_y_parameter_offset);
+                blk_6_info->px = evolution.px;
+                blk_6_info->py = evolution.py;
+                blk_6_info->sx_offs = evolution.screen_x_offset;
+                blk_6_info->sy_offs = evolution.screen_y_offset;
+                blk_6_info->x_dots = evolution.x_dots;
+                blk_6_info->y_dots = evolution.y_dots;
+                blk_6_info->image_grid_size = evolution.image_grid_size;
+                blk_6_info->evolving = evolution.evolving;
+                blk_6_info->this_generation_random_seed = evolution.this_generation_random_seed;
+                blk_6_info->max_random_mutation = evolution.max_random_mutation;
+                blk_6_info->e_count = evolution.count;
+                std::copy_n(evolution.mutate, NUM_GENES, blk_6_info->mutate);
+                blk_6_info->got_data = true;
+            }
+            if (has_gif_extension(input.get(), "fractint007"))
+            {
+                const OrbitsInfo orbits{get_orbits_info(input.get())};
+                blk_7_info->length = get_gif_extension_length(input.get(), "fractint007");
+                blk_7_info->ox_min = orbits.orbit_corner_min_x;
+                blk_7_info->ox_max = orbits.orbit_corner_max_x;
+                blk_7_info->oy_min = orbits.orbit_corner_min_y;
+                blk_7_info->oy_max = orbits.orbit_corner_max_y;
+                blk_7_info->ox_3rd = orbits.orbit_corner_3rd_x;
+                blk_7_info->oy_3rd = orbits.orbit_corner_3rd_y;
+                blk_7_info->keep_screen_coords = orbits.keep_screen_coords;
+                blk_7_info->draw_mode = orbits.draw_mode;
+                blk_7_info->got_data = true;
+            }
+        }
+        catch (const std::runtime_error &)
+        {
+            return true;
+        }
+        g_file_aspect_ratio = g_screen_aspect;
     }
     else
     {
-        // didn't work 1st try, maybe an older vsn, maybe junk at eof, scan:
-        char tmp_buff[110];
-        hdr_offset = 0;
-        int offset = 80; // don't even check last 80 bytes of file for id
-        while (offset < FRACTAL_INFO_LEN+513)
-        {
-            // allow 512 garbage at eof
-            offset += 100; // go back 100 bytes at a time
-            std::fseek(s_fp, 0 - offset, SEEK_END);
-            file_read(tmp_buff, 1, 110, s_fp); // read 10 extra for string compare
-            for (int i = 0; i < 100; ++i)
-            {
-                if (std::strcmp(INFO_ID, &tmp_buff[i]) == 0)
-                {
-                    // found header?
-                    static_assert(sizeof(INFO_ID) == sizeof(info->info_id));
-                    std::copy_n(INFO_ID, sizeof(info->info_id), info->info_id);
-                    std::fseek(s_fp, hdr_offset = i - offset, SEEK_END);
-                    /* TODO: revise this to read members one at a time so we get natural alignment
-                        of fields within the FractalInfo structure for the platform */
-                    file_read(info, 1, sizeof(FractalInfo), s_fp);
-                    decode_fractal_info(*info);
-                    offset = 10000; // force exit from outer loop
-                    break;
-                }
-            }
-        }
+        static constexpr char GIF_FILE_ID[]{"GIFFILE"};
+        static_assert(sizeof(GIF_FILE_ID) == sizeof(info->info_id));
+        std::copy_n(GIF_FILE_ID, sizeof(info->info_id), info->info_id);
+        info->iterations = INITIAL_MAX_ITERATIONS;
+        info->iterations_old = INITIAL_MAX_ITERATIONS;
+        info->fractal_type = static_cast<short>(FractalType::PLASMA);
+        info->x_min = -1;
+        info->x_max = 1;
+        info->y_min = -1;
+        info->y_max = 1;
+        info->x3rd = -1;
+        info->y3rd = -1;
+        info->ax = 255;
+        info->bx = 255;
+        info->cx = 255;
+        info->dx = 255;
+        info->x_dots = static_cast<std::uint16_t>(g_file_x_dots);
+        info->y_dots = static_cast<std::uint16_t>(g_file_y_dots);
+        info->colors = static_cast<short>(g_file_colors);
     }
-
-    if (hdr_offset)
-    {
-        // we found INFO_ID
-
-        if (info->info_version >= 4)
-        {
-            /* first reload main extension block, reasons:
-                 might be over 255 chars, and thus earlier load might be bad
-                 find exact endpoint, so scan back to start of ext blks works
-               */
-            std::fseek(s_fp, hdr_offset - 15, SEEK_END);
-            int scan_extend = 1;
-            while (scan_extend)
-            {
-                if (std::fgetc(s_fp) != '!' // if not what we expect just give up
-                    || std::fread(temp1, 1, 13, s_fp) != 13
-                    || std::strncmp(&temp1[2], "fractint", 8) != 0)
-                {
-                    break;
-                }
-                temp1[13] = 0;
-                switch (std::atoi(&temp1[10]))   // e.g. "fractint002"
-                {
-                case GifExtensionId::FRACTAL_INFO: // "fractint001", the main extension block
-                    if (scan_extend == 2)
-                    {
-                        // we've been here before, done now
-                        scan_extend = 0;
-                        break;
-                    }
-                    load_ext_blk(reinterpret_cast<char *>(info), sizeof(FractalInfo));
-                    decode_fractal_info(*info);
-                    scan_extend = 2;
-                    // now we know total extension len, back up to first block
-                    std::fseek(s_fp, 0L-info->tot_extend_len, SEEK_CUR);
-                    break;
-
-                case GifExtensionId::RESUME_INFO: // "fractint002", resume info
-                    skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    blk_2_info->resume_data.resize(data_len);
-                    std::fseek(s_fp, 0 - block_len, SEEK_CUR);
-                    load_ext_blk(reinterpret_cast<char *>(g_block), data_len);
-                    // resume data is assumed to be platform native; no need to decode
-                    std::copy(&g_block[0], &g_block[data_len], blk_2_info->resume_data.data());
-                    blk_2_info->length = data_len;
-                    blk_2_info->got_data = true;
-                    break;
-
-                case GifExtensionId::FORMULA_INFO: // "fractint003", formula info
-                    skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    // check data_len for backward compatibility
-                    std::fseek(s_fp, 0 - block_len, SEEK_CUR);
-                    load_ext_blk(reinterpret_cast<char *>(&formula_info), data_len);
-                    // TODO: decode formula info?
-                    static_assert(sizeof(formula_info.form_name) == sizeof(blk_3_info->form_name));
-                    std::copy_n(formula_info.form_name, sizeof(blk_3_info->form_name), blk_3_info->form_name);
-                    blk_3_info->length = data_len;
-                    blk_3_info->got_data = true;
-                    if (data_len < sizeof(formula_info))
-                    {
-                        // must be old GIF
-                        blk_3_info->uses_p1 = 1;
-                        blk_3_info->uses_p2 = 1;
-                        blk_3_info->uses_p3 = 1;
-                        blk_3_info->uses_ismand = 0;
-                        blk_3_info->ismand = 1;
-                        blk_3_info->uses_p4 = 0;
-                        blk_3_info->uses_p5 = 0;
-                    }
-                    else
-                    {
-                        blk_3_info->uses_p1 = formula_info.uses_p1;
-                        blk_3_info->uses_p2 = formula_info.uses_p2;
-                        blk_3_info->uses_p3 = formula_info.uses_p3;
-                        blk_3_info->uses_ismand = formula_info.uses_ismand;
-                        blk_3_info->ismand = formula_info.ismand;
-                        blk_3_info->uses_p4 = formula_info.uses_p4;
-                        blk_3_info->uses_p5 = formula_info.uses_p5;
-                    }
-                    break;
-
-                case GifExtensionId::RANGES_INFO: // "fractint004", ranges info
-                    skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    assert(data_len % 2 == 0);  // should specify an integral number of 16-bit ints
-                    blk_4_info->length = data_len/2;
-                    blk_4_info->range_data.resize(blk_4_info->length);
-                    std::fseek(s_fp, -block_len, SEEK_CUR);
-                    {
-                        std::vector<char> buffer(data_len, 0);
-                        load_ext_blk(buffer.data(), data_len);
-                        for (int i = 0; i < blk_4_info->length; ++i)
-                        {
-                            // int16 stored in little-endian byte order
-                            blk_4_info->range_data[i] = buffer[i*2 + 0] | buffer[i * 2 + 1] << 8;
-                        }
-                    }
-                    blk_4_info->got_data = true;
-                    break;
-
-                case GifExtensionId::EXTENDED_PRECISION: // "fractint005", extended precision parameters
-                    skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    blk_5_info->apm_data.resize(data_len);
-                    std::fseek(s_fp, 0 - block_len, SEEK_CUR);
-                    load_ext_blk(blk_5_info->apm_data.data(), data_len);
-                    // TODO: decode extended precision parameters?
-                    blk_5_info->got_data = true;
-                    break;
-
-                case GifExtensionId::EVOLVER_INFO: // "fractint006", evolver params
-                    skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    std::fseek(s_fp, 0 - block_len, SEEK_CUR);
-                    load_ext_blk(reinterpret_cast<char *>(&evolution_info), data_len);
-                    decode_evolver_info(evolution_info);
-                    blk_6_info->length = data_len;
-                    blk_6_info->got_data = true;
-                    blk_6_info->x_parameter_range = evolution_info.x_parameter_range;
-                    blk_6_info->y_parameter_range = evolution_info.y_parameter_range;
-                    blk_6_info->x_parameter_offset = evolution_info.x_parameter_offset;
-                    blk_6_info->y_parameter_offset = evolution_info.y_parameter_offset;
-                    blk_6_info->discrete_x_parameter_offset = static_cast<char>(evolution_info.discrete_x_parameter_offset);
-                    blk_6_info->discrete_y_parameter_offset = static_cast<char>(evolution_info.discrete_y_parameter_offset);
-                    blk_6_info->px              = evolution_info.px;
-                    blk_6_info->py              = evolution_info.py;
-                    blk_6_info->sx_offs          = evolution_info.screen_x_offset;
-                    blk_6_info->sy_offs          = evolution_info.screen_y_offset;
-                    blk_6_info->x_dots           = evolution_info.x_dots;
-                    blk_6_info->y_dots           = evolution_info.y_dots;
-                    blk_6_info->image_grid_size = evolution_info.image_grid_size;
-                    blk_6_info->evolving        = evolution_info.evolving;
-                    blk_6_info->this_generation_random_seed = evolution_info.this_generation_random_seed;
-                    blk_6_info->max_random_mutation = evolution_info.max_random_mutation;
-                    blk_6_info->e_count          = evolution_info.count;
-                    for (int i = 0; i < NUM_GENES; i++)
-                    {
-                        blk_6_info->mutate[i]    = evolution_info.mutate[i];
-                    }
-                    break;
-
-                case GifExtensionId::ORBITS_INFO: // "fractint007", orbits parameters
-                    skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    std::fseek(s_fp, 0 - block_len, SEEK_CUR);
-                    load_ext_blk(reinterpret_cast<char *>(&orbits_info), data_len);
-                    decode_orbits_info(orbits_info);
-                    blk_7_info->length = data_len;
-                    blk_7_info->got_data = true;
-                    blk_7_info->ox_min           = orbits_info.orbit_corner_min_x;
-                    blk_7_info->ox_max           = orbits_info.orbit_corner_max_x;
-                    blk_7_info->oy_min           = orbits_info.orbit_corner_min_y;
-                    blk_7_info->oy_max           = orbits_info.orbit_corner_max_y;
-                    blk_7_info->ox_3rd           = orbits_info.orbit_corner_3rd_x;
-                    blk_7_info->oy_3rd           = orbits_info.orbit_corner_3rd_y;
-                    blk_7_info->keep_screen_coords= orbits_info.keep_screen_coords;
-                    blk_7_info->draw_mode        = orbits_info.draw_mode;
-                    break;
-
-                default:
-                    skip_ext_blk(&block_len, &data_len);
-                }
-            }
-        }
-
-        std::fclose(s_fp);
-        g_file_aspect_ratio = g_screen_aspect; // if not >= v15, this is correct
-        return false;
-    }
-
-    static constexpr char GIF_FILE_ID[]{"GIFFILE"};
-    static_assert(sizeof(GIF_FILE_ID) == sizeof(info->info_id));
-    std::copy_n(GIF_FILE_ID, sizeof(info->info_id), info->info_id);
-    info->iterations = INITIAL_MAX_ITERATIONS;
-    info->iterations_old = INITIAL_MAX_ITERATIONS;
-    info->fractal_type = static_cast<short>(FractalType::PLASMA);
-    info->x_min = -1;
-    info->x_max = 1;
-    info->y_min = -1;
-    info->y_max = 1;
-    info->x3rd = -1;
-    info->y3rd = -1;
-    info->c_real = 0;
-    info->c_imag = 0;
-    info->ax = 255;
-    info->bx = 255;
-    info->cx = 255;
-    info->dx = 255;
-    info->dot_mode = 0;
-    info->x_dots = static_cast<std::uint16_t>(g_file_x_dots);
-    info->y_dots = static_cast<std::uint16_t>(g_file_y_dots);
-    info->colors = static_cast<short>(g_file_colors);
-    info->info_version = 0; // this forces lots more init at calling end too
-
-    // zero means we won
-    std::fclose(s_fp);
-    return false;
-}
-
-static void load_ext_blk(char *load_ptr, int load_len)
-{
-    int len;
-    while ((len = std::fgetc(s_fp)) > 0)
-    {
-        while (--len >= 0)
-        {
-            if (--load_len >= 0)
-            {
-                *load_ptr++ = static_cast<char>(std::fgetc(s_fp));
-            }
-            else
-            {
-                std::fgetc(s_fp); // discard excess characters
-            }
-        }
-    }
-}
-
-static void skip_ext_blk(int *block_len, int *data_len)
-{
-    int len;
-    *data_len = 0;
-    *block_len = 1;
-    while ((len = std::fgetc(s_fp)) > 0)
-    {
-        std::fseek(s_fp, len, SEEK_CUR);
-        *data_len += len;
-        *block_len += len + 1;
-    }
+    return DGifCloseFile(input.release(), &error) == GIF_ERROR;
 }
 
 // switch obsolete fractal types to new generalizations

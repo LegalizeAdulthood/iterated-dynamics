@@ -25,6 +25,7 @@ enum
 // Read helpers return owned values. Put helpers append blocks owned by gif;
 // closing gif or calling GifFreeExtensions releases those blocks.
 bool has_gif_extension(const GifFileType *gif, const char *name);
+int get_gif_extension_length(const GifFileType *gif, const char *name);
 
 FractalInfo get_fractal_info(GifFileType *gif);
 void put_fractal_info(GifFileType *gif, const FractalInfo &info);

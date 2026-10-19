@@ -60,8 +60,6 @@ extern std::filesystem::path g_read_filename;
 extern ShowFile              g_show_file;           // LOAD_IMAGE if file display pending
 
 int read_overlay();
-int read_gif_uint16(const Byte *data);
-bool read_gif_screen_dimensions(const Byte *header, int &width, int &height);
 void set_if_old_bif();
 void set_function_param_defaults();
 void backwards_legacy_v18();
