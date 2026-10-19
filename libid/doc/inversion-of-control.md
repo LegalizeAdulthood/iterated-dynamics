@@ -746,47 +746,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 12.6. giflib Writer Operations
-
-Source: new `io/GifWriter.h` and `io/GifWriter.cpp`; giflib output APIs
-and extension helpers in `io/gif_file.cpp`; new focused writer tests.
-
-Work:
-
-- Introduce `GifWriter` to own an output handle and its lifecycle.  Its
-  operations accept dimensions, palette data, pixel rows, and extension
-  blocks assembled by the existing `put_*_info()` helpers.  It must not
-  read engine/UI globals or introduce another metadata serializer.
-- Use giflib screen/image descriptors, `EGifPutLine()`, and extension
-  leader/block/trailer operations.  Do not use `EGifSpew()` or collect an
-  entire raster before writing it.
-- The existing `put_*_info()` helpers append to giflib's in-memory
-  `ExtensionBlocks`; they do not write a file.  Emit those blocks with
-  sequential giflib operations, preserving application/continuation
-  grouping and terminating each extension once.  Reuse their identifiers
-  and chunking rather than splitting raw payloads a second time.
-- Preserve the tested GIF89a header and palette fields, including the
-  aspect byte.  Keep payload serialization in `gif_file.cpp`; the writer
-  owns only file framing, output, and lifecycle.
-- Permit row-sized pixel writes, including the two half-row writes used
-  for potential output, without embedding pixel-source or disk-video
-  traversal policy in the writer.
-- Make finish and cleanup explicit.  giflib owns GIF termination and
-  handle closure; do not write a second trailer or close a handle twice.
-  Report open, row, extension, finalization, and close failures.  Row
-  completion permits UI-owned feedback, not keyboard polling or dispatch.
-- Test deterministic write failures and early destruction as well as
-  successful files.  Keep prompts, progress markers, input polling,
-  completion sounds, and file-retention choices out of this class.
-
-Done when:
-
-- A giflib-backed writer can produce and finalize rows and application
-  records independently of the synchronous application save loop.
-
-Validation: read produced files with giflib and the existing metadata
-loader; test resource lifetime and failure paths.  No manual test.
-
 ### 12.7. Production GIF Writer Integration
 
 Source: `save_image()`, `encoder()`, `compress()`, and extension emission
