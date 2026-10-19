@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <iterator>
 #include <numeric>
+#include <stdexcept>
 #include <string>
 
 using namespace id::engine;
@@ -515,6 +516,155 @@ private:
     int m_gif_error{};
 };
 
+class TestGIFExtensions : public testing::Test
+{
+protected:
+    void add_extension(const char *name, std::vector<Byte> bytes);
+    void TearDown() override;
+
+    GifFileType m_gif{};
+};
+
+void TestGIFExtensions::add_extension(const char *name, std::vector<Byte> bytes)
+{
+    std::string identifier{name};
+    ASSERT_EQ(GIF_OK,
+        GifAddExtensionBlock(&m_gif.ExtensionBlockCount, &m_gif.ExtensionBlocks, APPLICATION_EXT_FUNC_CODE, 11,
+            reinterpret_cast<Byte *>(identifier.data())));
+    for (std::size_t offset = 0; offset < bytes.size(); offset += 255)
+    {
+        const unsigned int count{static_cast<unsigned int>(std::min<std::size_t>(255, bytes.size() - offset))};
+        ASSERT_EQ(GIF_OK,
+            GifAddExtensionBlock(&m_gif.ExtensionBlockCount, &m_gif.ExtensionBlocks, CONTINUE_EXT_FUNC_CODE, count,
+                bytes.data() + offset));
+    }
+}
+
+void TestGIFExtensions::TearDown()
+{
+    GifFreeExtensions(&m_gif.ExtensionBlockCount, &m_gif.ExtensionBlocks);
+}
+
+class TestGIFResumeRoundTrip : public TestGIFExtensions, public testing::WithParamInterface<int>
+{
+};
+
+TEST_P(TestGIFResumeRoundTrip, preservesOpaqueBytesAndSubBlockBoundaries)
+{
+    const int size{GetParam()};
+    std::vector<Byte> expected(size);
+    for (int i = 0; i < size; ++i)
+    {
+        expected[i] = static_cast<Byte>(i * 37 + 129);
+    }
+
+    put_resume_info(&m_gif, expected);
+
+    EXPECT_TRUE(has_gif_extension(&m_gif, "fractint002"));
+    EXPECT_EQ(expected, get_resume_info(&m_gif));
+    EXPECT_EQ(1 + (size + 254) / 255, m_gif.ExtensionBlockCount);
+    ASSERT_GT(m_gif.ExtensionBlockCount, 0);
+    EXPECT_EQ(APPLICATION_EXT_FUNC_CODE, m_gif.ExtensionBlocks[0].Function);
+    EXPECT_EQ(11, m_gif.ExtensionBlocks[0].ByteCount);
+    for (int i = 1; i < m_gif.ExtensionBlockCount; ++i)
+    {
+        EXPECT_EQ(CONTINUE_EXT_FUNC_CODE, m_gif.ExtensionBlocks[i].Function);
+        EXPECT_EQ(std::min(255, size - (i - 1) * 255), m_gif.ExtensionBlocks[i].ByteCount);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(SubBlockSizes, TestGIFResumeRoundTrip, testing::Values(0, 1, 254, 255, 256, 510, 511));
+
+TEST_F(TestGIFExtensions, distinguishesAbsentAndEmptyOptionalRecords)
+{
+    EXPECT_FALSE(has_gif_extension(&m_gif, "fractint002"));
+    EXPECT_TRUE(get_resume_info(&m_gif).empty());
+    EXPECT_FALSE(has_gif_extension(&m_gif, "fractint004"));
+    EXPECT_TRUE(get_ranges_info(&m_gif).empty());
+    EXPECT_FALSE(has_gif_extension(&m_gif, "fractint005"));
+    EXPECT_TRUE(get_extended_param_info(&m_gif).empty());
+
+    put_resume_info(&m_gif, {});
+    put_ranges_info(&m_gif, {});
+    put_extended_param_info(&m_gif, {});
+
+    EXPECT_TRUE(has_gif_extension(&m_gif, "fractint002"));
+    EXPECT_TRUE(get_resume_info(&m_gif).empty());
+    EXPECT_TRUE(has_gif_extension(&m_gif, "fractint004"));
+    EXPECT_TRUE(get_ranges_info(&m_gif).empty());
+    EXPECT_TRUE(has_gif_extension(&m_gif, "fractint005"));
+    EXPECT_TRUE(get_extended_param_info(&m_gif).empty());
+}
+
+TEST_F(TestGIFExtensions, presenceRequiresMatchingApplicationIdentifier)
+{
+    put_resume_info(&m_gif, {0, 128, 255});
+    EXPECT_FALSE(has_gif_extension(&m_gif, "fractint003"));
+    m_gif.ExtensionBlocks[0].Function = COMMENT_EXT_FUNC_CODE;
+    EXPECT_FALSE(has_gif_extension(&m_gif, "fractint002"));
+    EXPECT_TRUE(get_resume_info(&m_gif).empty());
+    m_gif.ExtensionBlocks[0].Function = APPLICATION_EXT_FUNC_CODE;
+    m_gif.ExtensionBlocks[0].ByteCount = 10;
+    EXPECT_FALSE(has_gif_extension(&m_gif, "fractint002"));
+}
+
+TEST_F(TestGIFExtensions, resumeDataStopsAtNextApplicationAndOwnsItsBytes)
+{
+    const std::vector<Byte> expected(300, 255);
+    put_resume_info(&m_gif, expected);
+    put_extended_param_info(&m_gif, {'x', 'y'});
+
+    const std::vector<Byte> actual{get_resume_info(&m_gif)};
+
+    EXPECT_EQ(expected, actual);
+    EXPECT_EQ((std::vector<char>{'x', 'y'}), get_extended_param_info(&m_gif));
+    GifFreeExtensions(&m_gif.ExtensionBlockCount, &m_gif.ExtensionBlocks);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(TestGIFExtensions, nameOnlyFormulaRecordUsesLegacyDefaults)
+{
+    std::vector<Byte> bytes(40, 0);
+    std::copy_n("Mandel3", 7, bytes.begin());
+    add_extension("fractint003", bytes);
+
+    const FormulaInfo info{get_formula_info(&m_gif)};
+
+    EXPECT_EQ("Mandel3", trim(info.form_name));
+    EXPECT_EQ(1, info.uses_p1);
+    EXPECT_EQ(1, info.uses_p2);
+    EXPECT_EQ(1, info.uses_p3);
+    EXPECT_EQ(0, info.uses_ismand);
+    EXPECT_EQ(1, info.ismand);
+    EXPECT_EQ(0, info.uses_p4);
+    EXPECT_EQ(0, info.uses_p5);
+}
+
+TEST_F(TestGIFExtensions, rejectsOtherTruncatedOrOversizedFormulaRecords)
+{
+    for (const int size : {0, 39, 41, 65, 67})
+    {
+        SCOPED_TRACE(size);
+        GifFreeExtensions(&m_gif.ExtensionBlockCount, &m_gif.ExtensionBlocks);
+        add_extension("fractint003", std::vector<Byte>(size, 0));
+
+        EXPECT_THROW(get_formula_info(&m_gif), std::runtime_error);
+    }
+}
+
+TEST_F(TestGIFExtensions, rejectsMissingTruncatedAndOversizedFixedRecords)
+{
+    EXPECT_THROW(get_fractal_info(&m_gif), std::runtime_error);
+    for (const int size : {0, 503, 505})
+    {
+        SCOPED_TRACE(size);
+        GifFreeExtensions(&m_gif.ExtensionBlockCount, &m_gif.ExtensionBlocks);
+        add_extension("fractint001", std::vector<Byte>(size, 0));
+
+        EXPECT_THROW(get_fractal_info(&m_gif), std::runtime_error);
+    }
+}
+
 TEST(TestCompareFractalInfo, futureFieldsAreIgnored)
 {
     const FractalInfo lhs{};
@@ -764,6 +914,15 @@ TEST_F(TestGIFResumeInfoExtension, check)
     EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(5, 7));
 }
 
+TEST_F(TestGIFResumeInfoExtension, decode)
+{
+    const std::vector<Byte> bytes{get_resume_info(m_gif)};
+    const std::vector<Byte> expected_prefix{2, 0, 1, 0, 0, 0, 63, 6, 0, 0, 175, 4, 128, 2, 0, 0};
+
+    ASSERT_EQ(GIF_EXTENSION2_RESUME_INFO_LENGTH, bytes.size());
+    EXPECT_EQ(expected_prefix, (std::vector<Byte>{bytes.begin(), bytes.begin() + expected_prefix.size()}));
+}
+
 TEST_F(TestGIFItemNameInfoExtension, check)
 {
     EXPECT_NE(GIF_ERROR, m_result);
@@ -866,7 +1025,7 @@ TEST_F(TestGIFBigNumParametersExtension, encode)
 
     put_extended_param_info(out, info);
 
-    const std::vector info2{get_extended_param_info(m_gif)};
+    const std::vector info2{get_extended_param_info(out)};
     EXPECT_EQ(info, info2);
 }
 

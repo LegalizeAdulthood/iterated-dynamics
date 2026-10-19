@@ -14,6 +14,7 @@
 #include <array>
 #include <cstdint>
 #include <iterator>
+#include <new>
 #include <stdexcept>
 #include <string>
 
@@ -39,17 +40,60 @@ static bool is_fractint_extension(const ExtensionBlock &block, const char *name)
         && std::string(reinterpret_cast<const char *>(block.Bytes), 11) == name; //
 }
 
-static void add_gif_extension(GifFileType *gif, const char *name, unsigned char *bytes, const int length)
+static int find_gif_extension(const GifFileType *gif, const char *name)
 {
-    GifAddExtensionBlock(&gif->ExtensionBlockCount, &gif->ExtensionBlocks, APPLICATION_EXT_FUNC_CODE, //
-        11, reinterpret_cast<unsigned char *>(const_cast<char *>(name)));
-    unsigned int count{static_cast<unsigned int>(length)};
-    unsigned int offset{};
+    for (int i = 0; i < gif->ExtensionBlockCount; ++i)
+    {
+        if (is_fractint_extension(gif->ExtensionBlocks[i], name))
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+bool has_gif_extension(const GifFileType *gif, const char *name)
+{
+    return find_gif_extension(gif, name) >= 0;
+}
+
+static std::vector<Byte> get_gif_extension(const GifFileType *gif, const char *name)
+{
+    std::vector<Byte> bytes;
+    const int index{find_gif_extension(gif, name)};
+    if (index < 0)
+    {
+        return bytes;
+    }
+    for (int ext = index + 1;
+        ext < gif->ExtensionBlockCount && gif->ExtensionBlocks[ext].Function == CONTINUE_EXT_FUNC_CODE; ++ext)
+    {
+        const ExtensionBlock &block{gif->ExtensionBlocks[ext]};
+        if (block.ByteCount > 0)
+        {
+            bytes.insert(bytes.end(), block.Bytes, block.Bytes + block.ByteCount);
+        }
+    }
+    return bytes;
+}
+
+static void add_gif_extension(GifFileType *gif, const char *name, const Byte *bytes, const std::size_t length)
+{
+    if (GifAddExtensionBlock(&gif->ExtensionBlockCount, &gif->ExtensionBlocks, APPLICATION_EXT_FUNC_CODE, //
+            11, reinterpret_cast<unsigned char *>(const_cast<char *>(name))) == GIF_ERROR)
+    {
+        throw std::bad_alloc();
+    }
+    std::size_t count{length};
+    std::size_t offset{};
     while (count > 0)
     {
-        const unsigned int chunk{count > 255 ? 255 : count};
-        GifAddExtensionBlock(&gif->ExtensionBlockCount, &gif->ExtensionBlocks, CONTINUE_EXT_FUNC_CODE, //
-            chunk, bytes + offset);
+        const unsigned int chunk{count > 255 ? 255 : static_cast<unsigned int>(count)};
+        if (GifAddExtensionBlock(&gif->ExtensionBlockCount, &gif->ExtensionBlocks, CONTINUE_EXT_FUNC_CODE, //
+                chunk, const_cast<Byte *>(bytes + offset)) == GIF_ERROR)
+        {
+            throw std::bad_alloc();
+        }
         count -= chunk;
         offset += chunk;
     }
@@ -59,7 +103,12 @@ template <int Size>
 class ExtensionDeserializer
 {
 public:
-    ExtensionDeserializer(const GifFileType *gif, const char *name);
+    ExtensionDeserializer(const GifFileType *gif, const char *name, int legacy_size = Size);
+
+    int size() const
+    {
+        return m_data_size;
+    }
 
     template <int N>
     void extract_chars(char (&dest)[N])
@@ -183,43 +232,21 @@ private:
 
     int m_offset{};
     int m_count{Size};
+    int m_data_size{};
     std::array<std::uint8_t, Size> m_bytes{};
 };
 
 template <int Size>
-ExtensionDeserializer<Size>::ExtensionDeserializer(const GifFileType *gif, const char *name)
+ExtensionDeserializer<Size>::ExtensionDeserializer(const GifFileType *gif, const char *name, const int legacy_size)
 {
-    int count{Size};
-    for (int i = 0; i < gif->ExtensionBlockCount; ++i)
+    const std::vector<Byte> bytes{get_gif_extension(gif, name)};
+    if (bytes.size() > m_bytes.size() ||
+        (bytes.size() != m_bytes.size() && bytes.size() != static_cast<std::size_t>(legacy_size)))
     {
-        const ExtensionBlock &block{gif->ExtensionBlocks[i]};
-        if (is_fractint_extension(block, name))
-        {
-            int ext{i + 1};
-            int offset{};
-            while (count > 0                                                     //
-                && ext < gif->ExtensionBlockCount                                //
-                && gif->ExtensionBlocks[ext].Function == CONTINUE_EXT_FUNC_CODE) //
-            {
-                const ExtensionBlock &src = gif->ExtensionBlocks[ext];
-                std::copy_n(src.Bytes, src.ByteCount, m_bytes.begin() + offset);
-                offset += src.ByteCount;
-                count -= src.ByteCount;
-                ++ext;
-            }
-            if (count != 0)
-            {
-                throw std::runtime_error("Expected " + std::to_string(Size) + " bytes, got overflow of " +
-                    std::to_string(-count) + " bytes");
-            }
-            break;
-        }
+        throw std::runtime_error("Unexpected length for " + std::string{name} + ": " + std::to_string(bytes.size()));
     }
-    if (count != 0)
-    {
-        throw std::runtime_error(
-            "Expected " + std::to_string(Size) + " bytes, got only " + std::to_string(Size - count) + " bytes");
-    }
+    std::copy(bytes.begin(), bytes.end(), m_bytes.begin());
+    m_data_size = static_cast<int>(bytes.size());
 }
 
 FractalInfo get_fractal_info(GifFileType *gif)
@@ -515,7 +542,7 @@ public:
 
     void add_extension(GifFileType *gif, const char *name)
     {
-        add_gif_extension(gif, name, m_bytes.data(), static_cast<int>(m_bytes.size()));
+        add_gif_extension(gif, name, m_bytes.data(), m_bytes.size());
     }
 
 private:
@@ -668,11 +695,30 @@ void put_fractal_info(GifFileType *gif, const FractalInfo &info)
     ser.add_extension(gif, "fractint001");
 }
 
+std::vector<Byte> get_resume_info(const GifFileType *gif)
+{
+    return get_gif_extension(gif, "fractint002");
+}
+
+void put_resume_info(GifFileType *gif, const std::vector<Byte> &info)
+{
+    add_gif_extension(gif, "fractint002", info.data(), info.size());
+}
+
 FormulaInfo get_formula_info(const GifFileType *gif)
 {
     FormulaInfo result{};
-    ExtensionDeserializer<GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH> deser(gif, "fractint003");
+    const int name_size{static_cast<int>(sizeof(result.form_name))};
+    ExtensionDeserializer<GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH> deser(gif, "fractint003", name_size);
     deser.extract_chars(result.form_name);
+    if (deser.size() == name_size)
+    {
+        result.uses_p1 = 1;
+        result.uses_p2 = 1;
+        result.uses_p3 = 1;
+        result.ismand = 1;
+        return result;
+    }
     result.uses_p1 = deser.extract_int16();
     result.uses_p2 = deser.extract_int16();
     result.uses_p3 = deser.extract_int16();
@@ -704,23 +750,7 @@ void put_formula_info(GifFileType *gif, const FormulaInfo &info)
 
 std::vector<int> get_ranges_info(const GifFileType *gif)
 {
-    std::vector<Byte> bytes;
-    for (int i = 0; i < gif->ExtensionBlockCount; ++i)
-    {
-        const ExtensionBlock &block{gif->ExtensionBlocks[i]};
-        if (is_fractint_extension(block, "fractint004"))
-        {
-            int ext{i + 1};
-            while (ext < gif->ExtensionBlockCount                                //
-                && gif->ExtensionBlocks[ext].Function == CONTINUE_EXT_FUNC_CODE) //
-            {
-                const ExtensionBlock &src = gif->ExtensionBlocks[ext];
-                std::copy_n(src.Bytes, src.ByteCount, std::back_inserter(bytes));
-                ++ext;
-            }
-            break;
-        }
-    }
+    const std::vector<Byte> bytes{get_gif_extension(gif, "fractint004")};
 
     if (bytes.size() % 2 != 0)
     {
@@ -748,28 +778,12 @@ void put_ranges_info(GifFileType *gif, const std::vector<int> &info)
         insert_int16(dest, static_cast<std::int16_t>(value));
         dest += sizeof(std::int16_t);
     }
-    add_gif_extension(gif, "fractint004", bytes.data(), static_cast<int>(bytes.size()));
+    add_gif_extension(gif, "fractint004", bytes.data(), bytes.size());
 }
 
 std::vector<char> get_extended_param_info(const GifFileType *gif)
 {
-    std::vector<Byte> bytes;
-    for (int i = 0; i < gif->ExtensionBlockCount; ++i)
-    {
-        const ExtensionBlock &block{gif->ExtensionBlocks[i]};
-        if (is_fractint_extension(block, "fractint005"))
-        {
-            int ext{i + 1};
-            while (ext < gif->ExtensionBlockCount                                //
-                && gif->ExtensionBlocks[ext].Function == CONTINUE_EXT_FUNC_CODE) //
-            {
-                const ExtensionBlock &src = gif->ExtensionBlocks[ext];
-                std::copy_n(src.Bytes, src.ByteCount, std::back_inserter(bytes));
-                ++ext;
-            }
-            break;
-        }
-    }
+    const std::vector<Byte> bytes{get_gif_extension(gif, "fractint005")};
 
     std::vector<char> parameters;
     parameters.resize(bytes.size());
@@ -779,8 +793,7 @@ std::vector<char> get_extended_param_info(const GifFileType *gif)
 
 void put_extended_param_info(GifFileType *gif, const std::vector<char> &params)
 {
-    add_gif_extension(gif, "fractint005", //
-        reinterpret_cast<unsigned char *>(const_cast<char *>(params.data())), static_cast<int>(params.size()));
+    add_gif_extension(gif, "fractint005", reinterpret_cast<const Byte *>(params.data()), params.size());
 }
 
 EvolutionInfo get_evolution_info(const GifFileType *gif)

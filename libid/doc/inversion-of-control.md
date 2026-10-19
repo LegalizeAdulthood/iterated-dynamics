@@ -750,38 +750,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 12.1.1. Shared GIF Extension Compatibility
-
-Source: `io/gif_file.h`, `io/gif_file.cpp`, their existing extension tests,
-and metadata compatibility cases in `tests/libid/io/test_loadfile.cpp`.
-
-Work:
-
-- Make the existing `get_*_info()` and `put_*_info()` functions the shared
-  payload implementation for reading and writing blocks 001 and 003-007.
-  Retain their field serialization, byte order, and existing tests.
-- Extend the existing readers only where the production loader supports
-  valid older records that they cannot yet read.  Preserve versioned
-  defaults and optional-block detection; do not silently accept arbitrary
-  truncation or maintain a separate legacy field decoder.
-- Add the missing resume-data read/write helpers for `fractint002`
-  alongside the existing helpers.  Treat its payload as opaque bytes;
-  do not invent a portable resume format in this conversion.
-- Reuse `add_gif_extension()` and giflib's `ExtensionBlocks` representation
-  for application identifiers and sub-block splitting.  Define ownership
-  and cleanup for collected blocks; no separate payload serializer or
-  replacement extension container is needed.
-- Add only missing legacy-record and resume-data cases.  Keep the
-  existing field-level round-trip tests rather than duplicating them.
-
-Done when:
-
-- The existing extension helpers support the metadata compatibility
-  required by production reading and writing, including resume data.
-
-Validation: run existing extension tests and the added compatibility and
-resume-data cases.  No manual test; these are deterministic format checks.
-
 ### 12.2. GIF Restore giflib Backend
 
 Source: `io/GifRestore.h`, `io/GifRestore.cpp`, and the already linked
@@ -863,7 +831,8 @@ Work:
 
 - Retain the `find_fractal_info()` caller contract while replacing its
   raw extension parsing and packed-structure decoding with the existing
-  `get_*_info()` readers, including the resume-data helper from 12.1.1.
+  `get_*_info()` readers, including `get_resume_info()`.  Use
+  `has_gif_extension()` to distinguish absent and empty optional records.
 - Use giflib record reads to collect metadata before pixel restoration.
   Skip compressed image sub-blocks without decoding or buffering the
   raster; do not use `DGifSlurp()` merely to obtain metadata.  Run this
@@ -1046,7 +1015,7 @@ Work:
   assembly from current settings, but serialize it with the existing
   `put_fractal_info()`, `put_formula_info()`, `put_ranges_info()`,
   `put_extended_param_info()`, `put_evolution_info()`, and
-  `put_orbits_info()`, plus the resume-data helper from 12.1.1.
+  `put_orbits_info()`, plus `put_resume_info()` for opaque resume data.
 - Replace the legacy writer's packed-structure encoding and raw payload
   handling with those shared helpers.  Do not retain that second
   serialization path behind `GifWriter` or copy it into the new class.
