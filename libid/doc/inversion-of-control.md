@@ -597,9 +597,11 @@ The remaining UI-concept leaks outside `libid/ui` are:
   line with `sleep_orbit_delay()`, `write_sound()`, and `driver_mute()`.
   `RestoredImageOutput` owns the decoded bytes and cursor and plots one
   pixel per step.  `GifDecoder` returns one decoded line per call and
-  retains pending expansion state.  Its marked `decode()` method still
-  drains through legacy line callbacks.  File traversal must become
-  incremental before the UI can replace these compatibility drains.
+  retains pending expansion state.  `GifRestore` owns the file and
+  advances by format block, extension sub-block, or line without output
+  callbacks.  The marked `gif_view()` bridge still drains it through
+  legacy callbacks.  `GifDecoder::decode()` is now test-only and is
+  removed with the remaining sound-path compatibility cleanup.
 - `libid/engine/spindac.cpp`: includes palette rotation delay via
   `driver_delay()`.
 - `libid/engine/wait_until.cpp`: implements a key-sensitive delay loop.
@@ -701,33 +703,9 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 12. GIF Restore File Lifecycle
-
-Source: `gif_view()` in `io/gifview.cpp`, especially file, GIF block, and
-image-data state surrounding its `GifDecoder::decode()` call; new
-`io/GifRestore.h` and `io/GifRestore.cpp`.
-
-Work:
-
-- Encapsulate file traversal in `GifRestore` and retain its input file
-  and `GifDecoder` across bounded calls.  The decoder owns its byte
-  buffer.  Separate setup, decoding, and cleanup.
-- Keep file/format decisions and data below UI.  Make completion and
-  failure return to the caller without draining all remaining lines.
-- Preserve the old synchronous entry for other restore consumers as a
-  marked bridge; Image Loading UI Decisions removes that remaining path.
-
-Done when:
-
-- Sound restoration can retain a decoder and input file while returning
-  to UI between output units, without nesting the old `gif_view()` loop.
-
-Validation: cover normal end-of-file, GIF extensions, truncated input,
-buffer lifetime, and cleanup; reuse codec images.  No manual image test.
-
 ### 13. Restored Image Sound Controller
 
-Source: restored-image pixel, decoder, and file traversal prerequisites;
+Source: `GifRestore` and `RestoredImageOutput`;
 UI owner: the sound-restoration branch in `ui/big_while_loop.cpp`.
 
 Work:
@@ -737,11 +715,15 @@ Work:
 - Have UI advance that operation only as playback permits and handle
   interruption outside the decoder/output callback.  Service `update()`
   while rendering and waiting; finish with normal release, not mute.
+  Drive `GifRestore::iterate()` and retain the pixel output operation
+  between calls; do not enter the `gif_view()` compatibility drain.
 - Remove `RestoredImageOutput::pending_color()` and the temporary pixel
   and decoder drains from the sound path, plus `sleep_orbit_delay()`,
   `write_sound()`, and direct mute calls.  Submit the retained pixel's
   sample inside `RestoredImageOutput::iterate()` before plotting it.
   Keep marked compatibility paths for other restore consumers separate.
+- Remove the now test-only `GifDecoder::decode()` compatibility method
+  and migrate its remaining tests to incremental decoding.
 
 Done when:
 
@@ -1788,8 +1770,9 @@ these direct and indirect paths:
   `wait_until()` and suppresses speaker tones through an input-pending
   callback.
 - `libid/io/gifview.cpp`: restored-image output reaches that legacy
-  sound wait from within synchronous decoder callbacks.  Its separate
-  pixel delay also needs a bounded return to the UI owner.
+  sound wait from synchronous compatibility line callbacks.  Bounded
+  file traversal is available through `GifRestore`; sound and pixel
+  delay still need to return control to the UI owner.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
 - `libid/fractals/Cellular.cpp`: `iterate()` calls `thinking()`, which
   polls the driver queue.  Completion, failure, and suspension also call

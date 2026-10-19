@@ -27,7 +27,7 @@
 #include "fractals/lorenz.h"
 #include "geometry/plot3d.h"
 #include "io/decoder.h"
-#include "io/GifDecoder.h"
+#include "io/GifRestore.h"
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
@@ -41,9 +41,7 @@
 
 #include <config/path_limits.h>
 
-#include <cstdio>
 #include <cstdlib>
-#include <cstring>
 #include <filesystem>
 #include <vector>
 
@@ -56,56 +54,30 @@ using namespace id::ui;
 namespace id::io
 {
 
-enum
-{
-    MAX_COLORS = 256
-};
-
 constexpr const char *ALTERNATE_FRACTAL_TYPE{".fra"};
 
 bool g_dither_flag{};                           // true if we want to dither GIFs
 unsigned int g_height{};
 unsigned int g_num_colors{};
 
-static void close_file();
 static int out_line_dither(Byte *pixels, int line_len);
 static int out_line_migs(Byte *pixels, int line_len);
 
-static std::FILE *s_fp_in{};
 static int s_col_count{};                       // keeps track of current column for wide images
 static unsigned int s_gif_view_image_top{};     // (for migs)
 static unsigned int s_gif_view_image_left{};    // (for migs)
-static unsigned int s_gif_view_image_width{};   // (for migs)
 static std::vector<char> s_dither_buf;
-
-int get_byte()
-{
-    return std::getc(s_fp_in); // EOF is -1, as desired
-}
 
 // Main entry decoder
 
+// TODO: removed later
 int gif_view()
 {
-    Byte buffer[16];
-    unsigned top;
-    unsigned left;
-    std::filesystem::path input_file;
-    int status = 0;
-
-    // initialize the col and row count for write-lines
     g_row_count = 0;
     s_col_count = 0;
 
-    // Open the file
-    if (g_out_line == out_line_stereo)
-    {
-        input_file = g_stereo_texture_filename;
-    }
-    else
-    {
-        input_file = g_read_filename;
-    }
+    std::filesystem::path input_file{
+        g_out_line == out_line_stereo ? std::filesystem::path{g_stereo_texture_filename} : g_read_filename};
     if (!input_file.has_extension())
     {
         input_file.replace_extension(DEFAULT_FRACTAL_TYPE);
@@ -120,63 +92,25 @@ int gif_view()
     {
         return -1;
     }
-    s_fp_in = std::fopen(input_file.string().c_str(), "rb");
-    if (s_fp_in == nullptr)
+
+    GifRestore restore{input_file, g_skip_x_dots, g_skip_y_dots, g_potential.store_16bit};
+    if (restore.done())
     {
-        return -1;
+        return restore.result();
     }
-
-    // Get the screen description
-    for (int i = 0; i < 13; i++)
-    {
-        const int tmp = get_byte();
-        buffer[i] = static_cast<Byte>(tmp);
-        if (tmp < 0)
-        {
-            close_file();
-            return -1;
-        }
-    }
-
-    if (std::strncmp(reinterpret_cast<char *>(buffer), "GIF87a", 3) != 0 // use updated GIF specs
-        || buffer[3] < '0' || buffer[3] > '9'
-        || buffer[4] < '0' || buffer[4] > '9'
-        || buffer[5] < 'A' || buffer[5] > 'z')
-    {
-        close_file();
-        return -1;
-    }
-
-    int width = read_gif_uint16(&buffer[6]);
-    g_height = read_gif_uint16(&buffer[8]);
-    int planes = (buffer[10] & 0x0F) + 1;
-    s_gif_view_image_width = width;
-
-    if ((buffer[10] & 0x80) == 0)    // color map (better be!)
-    {
-        close_file();
-        return -1;
-    }
-    g_num_colors = 1 << planes;
-
+    g_height = restore.height();
+    g_num_colors = static_cast<unsigned int>(restore.palette().size());
     if (g_dither_flag && g_num_colors > 2 && g_colors == 2 && g_out_line == out_line)
     {
         g_out_line = out_line_dither;
     }
-
-    for (int i = 0; i < static_cast<int>(g_num_colors); i++)
+    if ((g_display_3d == Display3DMode::NONE || !glasses_alternating_or_superimpose()) && g_read_color)
     {
-        for (int j = 0; j < 3; j++)
+        for (unsigned int i = 0; i < g_num_colors; ++i)
         {
-            const int k = get_byte();
-            if (k < 0)
+            for (int j = 0; j < 3; ++j)
             {
-                close_file();
-                return -1;
-            }
-            if ((g_display_3d == Display3DMode::NONE || !glasses_alternating_or_superimpose()) && g_read_color)
-            {
-                g_dac_box[i][j] = static_cast<Byte>(k);
+                g_dac_box[i][j] = restore.palette()[i][j];
             }
         }
     }
@@ -196,141 +130,67 @@ int gif_view()
     if (driver_is_disk())
     {
         // disk-video
-        dvid_status(1, "restoring " + std::filesystem::path(input_file).filename().string());
+        dvid_status(1, "restoring " + input_file.filename().string());
     }
     g_read_color = true;
 
-    // Now display one or more GIF objects
-    bool finished = false;
-    while (!finished)
+    int status{};
+    bool image_active{};
+    // TODO: removed later
+    while (!restore.done())
     {
-        switch (get_byte())
+        restore.iterate();
+        if (restore.state() == GifRestore::State::IMAGE)
         {
-        case ';':
-            // End of the GIF dataset
-            finished = true;
-            status = 0;
-            break;
-
-        case '!':                               // GIF Extension Block
-            get_byte();                     // read (and ignore) the ID
-            {
-                int i;
-                while ((i = get_byte()) > 0)      // get the data length
-                {
-                    for (int j = 0; j < i; j++)
-                    {
-                        get_byte();     // flush the data
-                    }
-                }
-            }
-            break;
-        case ',':
-            /*
-             * Start of an image object. Read the image description.
-             */
-
-            for (int i = 0; i < 9; i++)
-            {
-                const int tmp = get_byte();
-                buffer[i] = static_cast<Byte>(tmp);
-                if (tmp < 0)
-                {
-                    status = -1;
-                    break;
-                }
-            }
-            if (status < 0)
-            {
-                finished = true;
-                break;
-            }
-
-            left   = buffer[0] | buffer[1] << 8;
-            top    = buffer[2] | buffer[3] << 8;
-            width = read_gif_uint16(&buffer[4]);
-            g_height = read_gif_uint16(&buffer[6]);
-
+            const GifRestore::Image &image{restore.image()};
+            g_height = image.height;
             // adjustments for handling MIGs
-            s_gif_view_image_top  = top;
+            s_gif_view_image_top = image.top;
             if (g_skip_x_dots > 0)
             {
                 s_gif_view_image_top /= g_skip_y_dots + 1;
             }
-            s_gif_view_image_left = left;
+            s_gif_view_image_left = image.left;
             if (g_skip_y_dots > 0)
             {
                 s_gif_view_image_left /= g_skip_x_dots + 1;
             }
-            if (g_out_line == out_line)
+            if (g_out_line == out_line && (image.width != restore.width() || image.top != 0))
             {
-                // what about continuous potential????
-                if (width != s_gif_view_image_width || top != 0)
-                {
-                    // we're using normal decoding and we have a MIG
-                    g_out_line = out_line_migs;
-                }
+                g_out_line = out_line_migs;
             }
-
-            if (g_potential.store_16bit)
-            {
-                width >>= 1;
-            }
-
-            // Skip local color palette
-            if ((buffer[8] & 0x80) == 0x80)
-            {
-                // local map?
-                // make this local
-                planes = (buffer[8] & 0x0F) + 1;
-                const int num_colors = 1 << planes;
-                // skip local map
-                for (int i = 0; i < num_colors; i++)
-                {
-                    for (int j = 0; j < 3; j++)
-                    {
-                        if (get_byte() < 0)
-                        {
-                            close_file();
-                            return -1;
-                        }
-                    }
-                }
-            }
-
-            // initialize the row count for write-lines
             g_row_count = 0;
-
-            if (g_calc_status == CalcStatus::IN_PROGRESS)   // should never be so, but make sure
+            if (g_calc_status == CalcStatus::IN_PROGRESS)
             {
                 g_calc_status = CalcStatus::PARAMS_CHANGED;
             }
-            g_busy = true;      // for slideshow CALCWAIT
-            {
-                GifDecoder decoder{s_fp_in, width, g_skip_x_dots, g_skip_y_dots};
-                // TODO: removed later
-                status = decoder.decode();
-            }
-            g_busy = false;      // for slideshow CALCWAIT
+            g_busy = true; // for slideshow CALCWAIT
+            image_active = true;
+        }
+        else if (restore.state() == GifRestore::State::LINE)
+        {
+            std::vector<Byte> &pixels{restore.line()};
+            status = g_out_line(pixels.data(), static_cast<int>(pixels.size()));
+        }
+        if (image_active && (restore.state() == GifRestore::State::IMAGE_END || restore.done() || status < 0))
+        {
+            g_busy = false;
+            image_active = false;
             if (g_calc_status == CalcStatus::IN_PROGRESS) // e.g., set by line3d
             {
-                g_calc_time = g_timer_interval;           // note how long it took
-                g_calc_status = CalcStatus::COMPLETED;    // complete
+                g_calc_time = g_timer_interval;
+                g_calc_status = CalcStatus::COMPLETED;
             }
-            // Hey! the decoder doesn't read the last (0-length) block!!
-            if (get_byte() != 0)
-            {
-                status = -1;
-                finished = true;
-            }
-            break;
-        default:
-            status = -1;
-            finished = true;
+        }
+        if (status < 0)
+        {
             break;
         }
     }
-    close_file();
+    if (status >= 0)
+    {
+        status = restore.result();
+    }
     if (driver_is_disk())
     {
         // disk-video
@@ -339,12 +199,6 @@ int gif_view()
     }
 
     return status;
-}
-
-static void close_file()
-{
-    std::fclose(s_fp_in);
-    s_fp_in = nullptr;
 }
 
 // routine for MIGS that generates partial output lines

@@ -186,6 +186,38 @@ TEST_P(TestGifViewLineWidth, decodesSingleLineAtFullWidth)
     EXPECT_EQ(width, s_line_lengths[0]);
 }
 
+TEST_P(TestGifViewLineWidth, callbackFailureClosesFileAndClearsBusyState)
+{
+    const int width{GetParam()};
+    const TestGifOutputFile gif{
+        std::filesystem::temp_directory_path() / ("id-gifview-error-" + std::to_string(width) + ".gif"), width};
+    MockDriver driver;
+    ValueSaver<Driver *> saved_driver{g_driver, &driver};
+    ValueSaver saved_read_filename{g_read_filename, gif.path()};
+    ValueSaver<decltype(g_out_line)> saved_out_line{g_out_line, [](Byte *, int)
+        {
+            EXPECT_TRUE(g_busy);
+            return -73;
+        }};
+    ValueSaver saved_read_color{g_read_color, true};
+    ValueSaver saved_color_state{g_color_state, ColorState::DEFAULT_MAP};
+    ValueSaver saved_display_3d{g_display_3d, Display3DMode::NONE};
+    ValueSaver saved_map_set{g_map_set, false};
+    ValueSaver saved_colors{g_colors, 256};
+    ValueSaver saved_dither_flag{g_dither_flag, false};
+    ValueSaver saved_potential_16bit{g_potential.store_16bit, false};
+    ValueSaver saved_skip_x_dots{g_skip_x_dots, 0};
+    ValueSaver saved_skip_y_dots{g_skip_y_dots, 0};
+    ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
+    ValueSaver saved_busy{g_busy, false};
+    EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
+
+    EXPECT_EQ(-73, gif_view());
+
+    EXPECT_FALSE(g_busy);
+    EXPECT_TRUE(std::filesystem::remove(gif.path()));
+}
+
 INSTANTIATE_TEST_SUITE_P(Widths, TestGifViewLineWidth, Values(640, MAX_PIXELS, MAX_PIXELS + 1, GIF_MAX_PIXELS));
 
 TEST(TestGifViewSound, restoresDecodedPixelsAcrossDisplayRows)
