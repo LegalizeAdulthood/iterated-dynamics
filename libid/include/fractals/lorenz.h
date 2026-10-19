@@ -143,11 +143,11 @@ private:
     double *m_p0{};
     double *m_p1{};
     double *m_p2{};
-    const double *m_sound_var{};
     int m_color{};
     int m_old_row{-1};
     int m_old_col{-1};
     int m_count{};
+    bool m_point_pending{};
     bool m_bailout{};
     bool m_unbounded{};
 };

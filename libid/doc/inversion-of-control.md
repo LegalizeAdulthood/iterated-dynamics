@@ -589,10 +589,10 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - `libid/engine/sound.cpp`: owns speaker/file output, calls
   `driver_sound_on()`, waits through `wait_until()`, and accepts an
   input-pending callback.
-- `libid/fractals/lorenz.cpp`: calls `write_sound()` directly from
-  rendering iteration.
-- `libid/fractals/lorenz.cpp`: calls `driver_mute()` from orbit
-  renderer constructors, destructors, `done()`, and `suspend()`.
+- `libid/fractals/lorenz.cpp`: `Orbit3D` and `Dynamic2D` call
+  `write_sound()` directly from rendering iteration and `driver_mute()`
+  from their lifecycle methods.  `Orbit2D` now submits numerical samples
+  through `g_sound`; its UI controller owns release and interruption.
 - `libid/io/gifview.cpp`: `put_sound_line()` plots a whole decoded line
   while calling `sleep_orbit_delay()` and `write_sound()`;
   `sound_line()` also calls `driver_mute()`.  Decoder and file traversal
@@ -697,29 +697,6 @@ If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
-
-### 6. Orbit2D Sound Port
-
-Source: `Orbit2D` in `fractals/lorenz.cpp`; UI owner: `ui/orbit2d.cpp`.
-
-Work:
-
-- Submit numerical orbit values through the injected active binding.
-  Do not add a sound constructor parameter or member to `Orbit2D`.
-- Move `m_sound_var` selection and frequency mapping to the adapter.
-  Preserve projection, connected-line plotting, and raw orbit-save data.
-- Retain a pending output point on refusal.  Remove mute from `done()`
-  and `suspend()`; UI services normal release/completion with `update()`
-  and requests mute explicitly on interruption.
-
-Done when:
-
-- `Orbit2D` neither calls legacy sound/driver functions nor waits for
-  playback.  Resumption preserves sample and plot ordering.
-
-Validation: test pending-point continuation, completion, mute on menu
-interruption, and file records with the controller and a fake port.
-Reuse orbit image and data tests for output.  No manual test required.
 
 ### 7. Orbit3D Sound Port
 

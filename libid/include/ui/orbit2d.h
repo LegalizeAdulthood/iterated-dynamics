@@ -5,6 +5,9 @@
 namespace id::ui
 {
 
+class SoundSession;
+
 int orbit2d_type();
+int orbit2d_type(SoundSession &sound);
 
 } // namespace id::ui

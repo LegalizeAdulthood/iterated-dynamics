@@ -17,6 +17,7 @@
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/sound.h"
+#include "engine/SoundOutput.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
@@ -942,19 +943,6 @@ Orbit2D::Orbit2D() :
         break;
     }
 
-    switch (g_sound_flag & SOUNDFLAG_ORBIT_MASK)
-    {
-    case SOUNDFLAG_X:
-        m_sound_var = &m_x;
-        break;
-    case SOUNDFLAG_Y:
-        m_sound_var = &m_y;
-        break;
-    case SOUNDFLAG_Z:
-        m_sound_var = &m_z;
-        break;
-    }
-
     if (g_inside_method > ColorMethod::COLOR)
     {
         m_color = g_inside_color;
@@ -986,49 +974,56 @@ Orbit2D::~Orbit2D()
 
 void Orbit2D::resume()
 {
-    start_resume();
+    const int version{start_resume()};
     get_resume(m_count, m_color, m_old_row, m_old_col, m_x, m_y, m_z, s_t, s_orbit, g_color_iter);
+    if (version >= 2)
+    {
+        get_resume(m_point_pending);
+    }
     end_resume();
 }
 
 void Orbit2D::suspend()
 {
-    driver_mute();
-    alloc_resume(100, 1);
+    alloc_resume(100, 2);
     put_resume(m_count, m_color, m_old_row, m_old_col, m_x, m_y, m_z, s_t, s_orbit, g_color_iter);
+    put_resume(m_point_pending);
 }
 
 bool Orbit2D::done() const
 {
     // loop until orbit bails out, orbit unbounded or max iteration exceeded
-    if (m_bailout || m_unbounded || g_color_iter > g_max_count)
-    {
-        driver_mute();
-        return true;
-    }
-    return false;
+    return !m_point_pending && (m_bailout || m_unbounded || g_color_iter > g_max_count);
 }
 
 void Orbit2D::iterate()
 {
-    ++g_color_iter;
-    if (++m_count > 1000)
+    if (done())
     {
-        // time to switch colors?
-        m_count = 0;
-        if (++m_color >= g_colors) // another color to switch to?
+        return;
+    }
+    if (!m_point_pending)
+    {
+        ++g_color_iter;
+        if (++m_count > 1000)
         {
-            m_color = 1;           // (don't use the background color)
+            // time to switch colors?
+            m_count = 0;
+            if (++m_color >= g_colors) // another color to switch to?
+            {
+                m_color = 1;           // (don't use the background color)
+            }
         }
+        m_point_pending = true;
     }
 
     const int col = static_cast<int>(m_cvt.a * m_x + m_cvt.b * m_y + m_cvt.e);
     const int row = static_cast<int>(m_cvt.c * m_x + m_cvt.d * m_y + m_cvt.f);
     if (col >= 0 && col < g_logical_screen.x_dots && row >= 0 && row < g_logical_screen.y_dots)
     {
-        if (m_sound_var && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
+        if (!g_sound->play({m_x, m_y, m_z}))
         {
-            write_sound(static_cast<int>(*m_sound_var * 100 + g_base_hertz));
+            return;
         }
         if (g_fractal_type != FractalType::ICON && g_fractal_type != FractalType::LATOO)
         {
@@ -1056,6 +1051,7 @@ void Orbit2D::iterate()
     }
     else if (static_cast<long>(std::abs(row)) + static_cast<long>(std::abs(col)) > BAD_PIXEL) // sanity check
     {
+        m_point_pending = false;
         m_unbounded = true;
         return;
     }
@@ -1065,6 +1061,7 @@ void Orbit2D::iterate()
         m_old_row = -1;
     }
 
+    m_point_pending = false;
     if (orbit(m_p0, m_p1, m_p2))
     {
         m_bailout = true;
