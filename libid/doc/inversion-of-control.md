@@ -596,7 +596,8 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - `libid/io/gifview.cpp`: `sound_line()` still drains a whole decoded
   line with `sleep_orbit_delay()`, `write_sound()`, and `driver_mute()`.
   `RestoredImageOutput` owns the decoded bytes and cursor and plots one
-  pixel per step.  Decoder and file traversal must also become
+  pixel per step.  `GifDecoder` owns LZW state and buffers but still
+  drains synchronously.  Decoder and file traversal must also become
   incremental before the UI can replace the marked compatibility drain.
 - `libid/engine/spindac.cpp`: includes palette rotation delay via
   `driver_delay()`.
@@ -699,27 +700,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 10. GIF Decoder State Encapsulation
-
-Source: `decoder()` and LZW bit, dictionary, stack, and line state in
-`io/decoder.cpp`; new `io/GifDecoder.h` and `io/GifDecoder.cpp`.
-
-Work:
-
-- Move decoder locals and mutable static state into `GifDecoder`, with
-  explicit initialization and lifetime.
-- Preserve the synchronous caller for this isolated change.  Mark its
-  drain as temporary, removed by Restored Image Sound Controller.
-- Keep prefix expansion, clear/end codes, skip factors, and malformed
-  input behavior unchanged; do not add audio or UI decisions here.
-
-Done when:
-
-- Decoder continuation can retain all state without its old stack frame.
-
-Validation: reuse codec tests and cover independent decoder instances,
-clear/end codes, and cleanup after malformed input.  No manual test.
-
 ### 11. GIF Decoder Incremental Lines
 
 Source: line completion and pending prefix expansion in the encapsulated
@@ -744,14 +724,15 @@ end-of-image handling, and equivalent decoded pixels.  No manual test.
 
 ### 12. GIF Restore File Lifecycle
 
-Source: `gif_view()` in `io/gifview.cpp`, especially file, GIF block, byte
-buffer, and image-data state surrounding its `decoder()` call; new
+Source: `gif_view()` in `io/gifview.cpp`, especially file, GIF block, and
+image-data state surrounding its `GifDecoder::decode()` call; new
 `io/GifRestore.h` and `io/GifRestore.cpp`.
 
 Work:
 
-- Encapsulate file traversal in `GifRestore` and own the byte buffer
-  across bounded decode calls.  Separate setup, decoding, and cleanup.
+- Encapsulate file traversal in `GifRestore` and retain its input file
+  and `GifDecoder` across bounded calls.  The decoder owns its byte
+  buffer.  Separate setup, decoding, and cleanup.
 - Keep file/format decisions and data below UI.  Make completion and
   failure return to the caller without draining all remaining lines.
 - Preserve the old synchronous entry for other restore consumers as a

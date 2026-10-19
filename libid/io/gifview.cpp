@@ -27,6 +27,7 @@
 #include "fractals/lorenz.h"
 #include "geometry/plot3d.h"
 #include "io/decoder.h"
+#include "io/GifDecoder.h"
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
@@ -82,11 +83,6 @@ int get_byte()
     return std::getc(s_fp_in); // EOF is -1, as desired
 }
 
-int get_bytes(Byte *where, const int how_many)
-{
-    return static_cast<int>(std::fread(where, 1, how_many, s_fp_in)); // EOF is -1, as desired
-}
-
 // Main entry decoder
 
 int gif_view()
@@ -95,11 +91,6 @@ int gif_view()
     unsigned top;
     unsigned left;
     std::filesystem::path input_file;
-    Byte byte_buf[257]; // for decoder
-
-    // using stack for decoder byte buf rather than static mem
-    set_byte_buff(byte_buf);
-
     int status = 0;
 
     // initialize the col and row count for write-lines
@@ -315,7 +306,11 @@ int gif_view()
                 g_calc_status = CalcStatus::PARAMS_CHANGED;
             }
             g_busy = true;      // for slideshow CALCWAIT
-            status = decoder(width);
+            {
+                GifDecoder decoder{s_fp_in, width, g_skip_x_dots, g_skip_y_dots};
+                // TODO: removed later
+                status = decoder.decode();
+            }
             g_busy = false;      // for slideshow CALCWAIT
             if (g_calc_status == CalcStatus::IN_PROGRESS) // e.g., set by line3d
             {
