@@ -641,10 +641,9 @@ The remaining UI-concept leaks outside `libid/ui` are:
   pixel per step.  `GifRestore` owns a giflib handle and exposes decoded
   scanlines without output callbacks.  `gif_view()` completes the whole
   file through non-polling line callbacks, processing pixel/sound feedback
-  before requesting the next line.  The unused `GifDecoder` and its
-  test-only `decode()` are removed by GIF Custom Decoder Removal.
-  The remaining sound-controller slice moves playback coordination into
-  UI without changing the atomic file operation.
+  before requesting the next line.  The remaining sound-controller slice
+  moves playback coordination into UI without changing the atomic file
+  operation.
 - `libid/engine/spindac.cpp`: includes palette rotation delay via
   `driver_delay()`.
 - `libid/engine/wait_until.cpp`: owns legacy sound-delay state without
@@ -746,35 +745,6 @@ If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
-
-### 12.3. GIF Custom Decoder Removal
-
-Source: `io/GifDecoder.cpp`, `io/GifDecoder.h`,
-`tests/libid/io/test_GifDecoder.cpp`, and their CMake registrations.
-
-Work:
-
-- Remove `GifDecoder`, its test-only synchronous `decode()` drain, and
-  the custom bit reader, dictionary, and prefix-expansion implementation.
-  Remove their source and test registrations from CMake.
-- Retain or migrate externally observable compatibility cases into
-  `TestGifRestore`, reusing its existing coverage.  Remove tests whose
-  only purpose is checking implementation details of the old LZW code.
-- Do not keep an unused decoder facade or fallback merely to satisfy
-  old tests.  Retain `g_out_line` and its declarations while the
-  non-polling `gif_view()` consumers still need them; remove obsolete
-  public step/drain interfaces that have no remaining production use.
-- Remove stale custom-decoder references from the remaining plan.  Keep
-  sound-controller work and the general image-loading UI split separate.
-
-Done when:
-
-- No custom GIF decompression implementation or test-only compatibility
-  entry remains; restore behavior is covered at the giflib-backed
-  `GifRestore` boundary.
-
-Validation: run focused restore tests and the full `rt-default` workflow.
-No manual test.
 
 ### 12.4. GIF Writer Raster Compatibility Coverage
 

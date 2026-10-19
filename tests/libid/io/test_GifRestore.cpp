@@ -174,6 +174,19 @@ TEST_F(TestGifRestore, separatesHeaderImageLinesAndCompletion)
     EXPECT_TRUE(std::filesystem::remove(path));
 }
 
+TEST_F(TestGifRestore, restoresScanlinesAcrossCompressedDataSubBlocks)
+{
+    std::vector<Byte> data{gif_data()};
+    // Split the three-byte compressed block into single-byte sub-blocks.
+    data.erase(data.begin() + 30, data.begin() + 34);
+    data.insert(data.begin() + 30, {1, 0x44, 1, 0x18, 1, 0x14});
+    GifRestore restore{write_file(data)};
+    const std::vector<std::vector<Byte>> expected{{0, 1}, {1, 0}};
+
+    EXPECT_EQ(expected, drain(restore));
+    EXPECT_EQ(0, restore.result());
+}
+
 TEST_F(TestGifRestore, skipsExtensionSubBlocksBeforeDecodingImage)
 {
     std::vector<Byte> data{gif_header()};

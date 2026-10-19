@@ -152,7 +152,6 @@ add_library(libid
     include/io/file_item.h io/file_item.cpp
     include/io/find_file.h io/find_file.cpp
     include/io/find_path.h io/find_path.cpp
-    include/io/GifDecoder.h io/GifDecoder.cpp
     include/io/GifRestore.h io/GifRestore.cpp
     include/io/gifview.h io/gifview.cpp
     include/io/gif_extensions.h

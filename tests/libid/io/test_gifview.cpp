@@ -49,10 +49,10 @@ namespace
 std::vector<int> s_line_lengths;
 std::vector<std::array<int, 3>> s_sound_pixels;
 
-int capture_out_line(Byte *, const int line_len)
+int capture_positive_out_line(Byte *, const int line_len)
 {
     s_line_lengths.push_back(line_len);
-    return 0;
+    return 17;
 }
 
 void capture_sound_pixel(const int col, const int row, const int color)
@@ -158,7 +158,7 @@ class TestGifViewLineWidth : public TestWithParam<int>
 {
 };
 
-TEST_P(TestGifViewLineWidth, decodesSingleLineAtFullWidth)
+TEST_P(TestGifViewLineWidth, positiveCallbackResultPreservesFullWidthAndSuccessfulRestore)
 {
     const int width{GetParam()};
     const TestGifOutputFile gif{
@@ -166,7 +166,7 @@ TEST_P(TestGifViewLineWidth, decodesSingleLineAtFullWidth)
     MockDriver driver;
     ValueSaver<Driver *> saved_driver{g_driver, &driver};
     ValueSaver saved_read_filename{g_read_filename, gif.path()};
-    ValueSaver<int (*)(Byte *, int)> saved_out_line{g_out_line, capture_out_line};
+    ValueSaver<int (*)(Byte *, int)> saved_out_line{g_out_line, capture_positive_out_line};
     ValueSaver saved_read_color{g_read_color, true};
     ValueSaver saved_color_state{g_color_state, ColorState::DEFAULT_MAP};
     ValueSaver saved_display_3d{g_display_3d, Display3DMode::NONE};
@@ -188,6 +188,8 @@ TEST_P(TestGifViewLineWidth, decodesSingleLineAtFullWidth)
 
     ASSERT_EQ(1, s_line_lengths.size());
     EXPECT_EQ(width, s_line_lengths[0]);
+    EXPECT_FALSE(g_busy);
+    EXPECT_TRUE(std::filesystem::remove(gif.path()));
 }
 
 TEST_P(TestGifViewLineWidth, callbackFailureClosesFileAndClearsBusyState)

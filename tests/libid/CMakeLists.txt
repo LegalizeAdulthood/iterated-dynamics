@@ -93,7 +93,6 @@ add_executable(test-id
     io/test_find_file.txt.in
     io/test_find_path.cpp
     io/test_encoder.cpp
-    io/test_GifDecoder.cpp
     io/test_GifRestore.cpp
     io/test_gif_file.cpp
     io/test_gifview.cpp
