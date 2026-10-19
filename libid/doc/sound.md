@@ -195,14 +195,16 @@ initial implementation must accommodate the existing sources:
   the existing constant base-frequency output.
 - Two-dimensional, three-dimensional, and dynamic orbit renderers supply
   their numerical orbit or transformed values rather than `m_sound_var`.
-- Image restoration supplies the pixel value used for its existing
-  palette-index-to-frequency mapping.
+- Image restoration supplies each scanline's pixel values for the
+  existing palette-index-to-frequency mapping.  Process pixel/sound
+  output for that scanline before decoding the next; the GIF remains
+  open during feedback.  A scanline does not become a single tone.
 
 Source mappings are adapter policy, not reasons to bubble plotted
 coordinates through `StandardPass` and `StandardFractal`.  A no-op sink
 does not require calculation to test sound-mode flags at every point.
 
-The first migration preserves the existing sample sites and mappings.
+The first migration preserves the existing sample sources and mappings.
 Longer term, sound need not depend on whether an overlay is enabled or a
 point lies on screen.  Expanding those sites is a separate behavior
 change, not an implicit consequence of adding the port.
@@ -212,6 +214,14 @@ change, not an implicit consequence of adding the port.
 Interactive rendering and playback are coordinated views of the same
 sequence.  They advance at the slower of the calculation and audio rates.
 Rendering must not race ahead while the user hears an older sequence.
+
+GIF loading uses scanline-based decoding and feedback in one atomic,
+run-to-completion command.  The UI owner reads a scanline and coordinates
+its pixel output and sound before requesting the next.  It services
+`update()` and playback readiness outside the codec, but does not poll or
+dispatch keyboard input, including during playback waits.  Retain the
+current line and pixel until accepted and plotted; no full-image buffer,
+second traversal, or playback stage after file closure is required.
 
 The calculation object computes a candidate output unit.  If the sink
 cannot accept its sample, the object retains that calculation state and
@@ -223,7 +233,8 @@ The UI controller calls `update()`, checks output readiness, and advances
 bounded work when the sink permits it.  It continues servicing `update()`
 while waiting for playback and while draining normal completion, not just
 when submitting another sample.  It handles input and can suspend
-calculation or enter a menu.  It does not perform the engine's plotting.
+calculation or enter a menu during ordinary rendering, but not during an
+atomic GIF load/save command.  It does not perform the engine's plotting.
 Calculation code may test output readiness, but it must return on
 backpressure rather than spin or wait.  It does not service playback or
 release voices itself.

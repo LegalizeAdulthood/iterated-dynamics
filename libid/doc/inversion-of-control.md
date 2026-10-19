@@ -453,6 +453,49 @@ the outer UI controller drive a selected engine operation.  Retain the
 wait, interrupt, and perturbation work after the sound-port slices;
 controller-specific audit follow-ups remain after that work.
 
+## GIF File Operation Policy
+
+Treat reading or writing a GIF as one atomic, run-to-completion I/O
+operation.  Old DOS keyboard polling compensated for slow LZW work; it is
+not a behavior to preserve when replacing the codecs with giflib.
+
+- Remove direct and indirect keyboard polling, pending-input callbacks,
+  and user-interruption results from GIF load/save during the conversion.
+  Pending keys remain for the outer input loop to handle later.
+- Use giflib's scanline APIs for both reading and writing.  The UI owner
+  coordinates scanline feedback while completing the entire load/save
+  command, without polling or dispatching keyboard input between lines.
+  Atomic means non-interruptible by input, not feedback-free.
+- During loading, process each decoded scanline for pixel output and
+  optional sound before reading the next.  Keep per-pixel sound mapping
+  and coordinated plotting; do not replace it with one tone per line.
+  No full-image buffer, second traversal, or post-close playback stage
+  is required.
+- During saving, update on-screen progress after each completed scanline
+  and call `driver_flush()` before writing the next.  This is a display
+  flush, not a per-scanline disk flush.  Preserve progress restoration
+  without modifying pixels that have not yet been saved.
+- Keep codec work, pixel traversal, and pixel output below UI.  The UI
+  owner services sound through `g_sound`, handles playback backpressure,
+  and draws/flushes save feedback between scanlines.  The codecs do not
+  poll input, service audio, or invoke UI feedback callbacks.
+- Keep mode selection, overwrite decisions, busy-state setup/cleanup,
+  error reporting, and completion notifications around file I/O.  Neither
+  a codec nor scanline feedback may enter a modal UI or pump input during
+  the operation.  Sound servicing may pace loading without making it
+  keyboard-interruptible.
+- Preserve I/O-error handling, resource cleanup, and temporary-file
+  replacement rules.  Atomic here describes control flow, not new
+  transactional filesystem guarantees.  Remove keyboard-interrupted
+  save/keep-partial choices, not actual read/write failure reporting.
+- Preserve saving an incompletely rendered image and its resume metadata.
+  An interrupted calculation is not an interrupted GIF write.
+
+The giflib replacement slices must establish this boundary, not leave
+codec polling for the later general load/save UI-ownership cleanup.
+Scanline feedback is part of the run-to-completion command; it is not a
+reason to restore the old keyboard polling.
+
 ## [Sound Output Port](sound.md)
 
 The separate design artifact defines `SoundOutput`, numerical samples,
@@ -601,7 +644,11 @@ The remaining UI-concept leaks outside `libid/ui` are:
   advances by format block, extension sub-block, or line without output
   callbacks.  The marked `gif_view()` bridge still drains it through
   legacy callbacks.  `GifDecoder::decode()` is now test-only and is
-  removed with the remaining sound-path compatibility cleanup.
+  removed by GIF Custom Decoder Removal, before the sound-controller
+  slice.  The giflib conversion replaces this polling-oriented file
+  traversal with atomic, scanline-based loading.  The UI owner processes
+  each decoded line for pixel/sound feedback without keyboard polling
+  before requesting the next line.
 - `libid/engine/spindac.cpp`: includes palette rotation delay via
   `driver_delay()`.
 - `libid/engine/wait_until.cpp`: implements a key-sensitive delay loop.
@@ -703,37 +750,481 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
+### 12.1. GIF Restore Compatibility Coverage
+
+Source: `tests/libid/io/test_GifRestore.cpp`,
+`tests/libid/io/test_gifview.cpp`, `tests/libid/io/test_gif_file.cpp`,
+`tests/libid/io/test_loadfile.cpp`, existing codec fixtures, and the
+restore reduction paths in `ui/get_video_mode.cpp`.
+
+Work:
+
+- Add missing assertions for observable restore behavior, reusing
+  existing fixtures rather than adding redundant image smoke tests.
+- Cover ordinary GIFs, MIG image boundaries and placement, palette
+  handling, and full-width decoded lines.
+- Cover actual 16-bit potential layout: each double-width stored row
+  produces a color line followed by a low-byte line.  Check line order
+  and pixel values, not merely dimensions.
+- Cover unequal horizontal and vertical skip factors and their two
+  current uses: fitting an oversized image to the selected video mode
+  and loading into a reduced view window.  Reuse existing selection
+  tests where available; add missing deterministic coverage.
+- Keep truncated input, independent instances, and read/output failure
+  cleanup covered through the existing tests.  Incremental decoder
+  mechanics are not a production interface to preserve.
+- Capture metadata compatibility through the production loader: older
+  short records and their defaults, missing optional blocks, and plain
+  GIFs without Fractint metadata.  Reuse the existing extension tests for
+  field values rather than duplicating their serializer coverage.
+- Separate valid-file compatibility expectations from tests that merely
+  characterize the custom LZW implementation or malformed-input quirks.
+- Identify old keyboard-interruption expectations for replacement in
+  12.2.  The new contract completes a load despite pending input and
+  leaves that input untouched; do not freeze DOS cancellation behavior.
+
+Done when:
+
+- The current backend passes tests that define the restore behavior the
+  giflib replacement must retain, without depending on LZW internals.
+
+Validation: run focused restore tests against the current backend.  No
+manual test; image output and deterministic selection are automated.
+
+### 12.1.1. Shared GIF Extension Compatibility
+
+Source: `io/gif_file.h`, `io/gif_file.cpp`, their existing extension tests,
+and the metadata compatibility cases captured in 12.1.
+
+Work:
+
+- Make the existing `get_*_info()` and `put_*_info()` functions the shared
+  payload implementation for reading and writing blocks 001 and 003-007.
+  Retain their field serialization, byte order, and existing tests.
+- Extend the existing readers only where the production loader supports
+  valid older records that they cannot yet read.  Preserve versioned
+  defaults and optional-block detection; do not silently accept arbitrary
+  truncation or maintain a separate legacy field decoder.
+- Add the missing resume-data read/write helpers for `fractint002`
+  alongside the existing helpers.  Treat its payload as opaque bytes;
+  do not invent a portable resume format in this conversion.
+- Reuse `add_gif_extension()` and giflib's `ExtensionBlocks` representation
+  for application identifiers and sub-block splitting.  Define ownership
+  and cleanup for collected blocks; no separate payload serializer or
+  replacement extension container is needed.
+- Add only missing legacy-record and resume-data cases.  Keep the
+  existing field-level round-trip tests rather than duplicating them.
+
+Done when:
+
+- The existing extension helpers support the metadata compatibility
+  required by production reading and writing, including resume data.
+
+Validation: run existing extension tests and the added compatibility and
+resume-data cases.  No manual test; these are deterministic format checks.
+
+### 12.2. GIF Restore giflib Backend
+
+Source: `io/GifRestore.h`, `io/GifRestore.cpp`, and the already linked
+giflib dependency; shared extension handling in `io/gif_file.cpp`.
+The production entry point reads the file as one atomic operation.
+
+Work:
+
+- Replace manual file parsing and custom decompression inside
+  `GifRestore` with an owned giflib handle and its sequential API.
+  Do not use `DGifSlurp()` or require a full-raster buffer or second pass
+  for sound-on-restore feedback.
+- Use record and image-header reads, `DGifGetLine()`, and extension
+  sub-block reads internally.  Expose decoded scanlines to the UI owner,
+  which processes feedback and continues until the file is read and
+  closed before returning to input handling.  Keep ownership, completion,
+  failures, and cleanup explicit and below UI; retain scanline access,
+  not LZW implementation steps or keyboard-driven decoder suspension.
+- Remove keyboard checks and user-cancellation returns from the entire
+  load path, including indirect line/output callbacks.  Do not replace
+  them with controller polling between rows or giflib records.
+- Feed each decoded scanline to the existing pixel-output operation,
+  including sound and image-transformation consumers.  Let the UI owner
+  coordinate feedback outside the codec, without checking input.  Finish
+  the current line before reusing its buffer or reading the next; do not
+  defer sound until file closure or add a full-image replay stage.
+- Where extension data is needed, collect giflib extension blocks for
+  the existing `get_*_info()` readers.  Do not add field decoding to
+  `GifRestore` or copy the metadata parser from `loadfile.cpp`.  Metadata
+  discovery before restoration is migrated separately in 12.2.1.
+- Preserve metadata, line-buffer lifetime, image boundaries, and
+  `gif_view()` caller-visible success/failure behavior.  A synchronous
+  whole-file entry is intentional, not a temporary drain to remove for
+  inversion.  UI-owned scanline feedback does not change that command
+  boundary.  Remove TODO markers promising keyboard-driven codec steps.
+- Apply subsampling after decompression in `GifRestore`, separately
+  from giflib.  Decode discarded data to advance the stream correctly.
+  Retain both oversized-image fitting and reduced-view-window loading;
+  their eventual wxWidgets replacement is not part of this change.
+- Preserve 16-bit potential color/low-byte line grouping before applying
+  skip factors.  giflib accepts requested pixel counts shorter than a
+  stored row, so this does not require custom LZW handling.
+- Let giflib consume compressed image termination, including the empty
+  data sub-block.  Remove the corresponding manual byte read.  Account
+  for its final pixel read flushing remaining compressed sub-blocks;
+  do not promise a strict byte budget inside a library call.
+- Preserve current palette selection, MIG placement, and non-interlaced
+  restore behavior.  Do not combine new GIF rendering features with the
+  decoder replacement.
+- Review malformed-input differences explicitly.  The custom decoder
+  accepts minimum LZW code size 9; the bundled giflib rejects values
+  above 8.  Do not reproduce this or other fallback behavior solely to
+  preserve synthetic tests.  Establish a real-file requirement before
+  adding any compatibility workaround, and document intentional changes
+  in the affected tests.
+- Keep genuine success and failure reporting compatible with callers;
+  translate giflib results without moving diagnostic UI into the parser.
+  Leave the unused custom decoder for the following removal slice.
+- Test a complete load with pending input using the mock driver: no
+  keyboard operation is called, no key is consumed, and decoded output
+  is complete.  Cover indirect output paths as well as the codec itself.
+
+Done when:
+
+- Production GIF reading uses giflib atomically, without direct or
+  indirect keyboard polling, and retains the two reduction features.
+- Pixel output and optional sound consume each scanline during loading,
+  before the next is read; no full-image replay buffer is required.
+
+Validation: run the compatibility coverage from 12.1, focused failure and
+lifetime tests, and the full `rt-default` workflow.  No manual test.
+
+### 12.2.1. Production GIF Metadata Reader Integration
+
+Source: `find_fractal_info()`, `load_ext_blk()`, and `skip_ext_blk()` in
+`io/loadfile.cpp`; the shared extension readers in `io/gif_file.cpp`.
+
+Work:
+
+- Retain the `find_fractal_info()` caller contract while replacing its
+  raw extension parsing and packed-structure decoding with the existing
+  `get_*_info()` readers, including the resume-data helper from 12.1.1.
+- Use giflib record reads to collect metadata before pixel restoration.
+  Skip compressed image sub-blocks without decoding or buffering the
+  raster; do not use `DGifSlurp()` merely to obtain metadata.  Run this
+  metadata operation to completion without keyboard polling as well.
+- Map the decoded values into the existing load results, preserving
+  optional-block presence, plain-GIF defaults, older-record defaults,
+  dimensions, palette requirements, and existing version migrations.
+  Keep UI choices and applying loaded engine settings outside the codec.
+- Share extension collection with the restore backend where needed;
+  neither path may implement another field decoder.  Keep file and
+  extension-buffer ownership explicit and release them on every exit.
+- Remove the replaced raw parsing helpers when unused.  Retain byte-order
+  helpers still used by the old writer until its conversion; do not
+  preserve a second metadata reader as a runtime fallback or test oracle.
+
+Done when:
+
+- Production metadata loading and the existing giflib utilities use the
+  same extension readers without requiring full raster decompression.
+
+Validation: run extension, metadata-loader, and restore compatibility
+tests, including older Fractint fixtures, and the full `rt-default`
+workflow.  No manual test.
+
+### 12.3. GIF Custom Decoder Removal
+
+Source: `io/GifDecoder.cpp`, `io/GifDecoder.h`,
+`tests/libid/io/test_GifDecoder.cpp`, and their CMake registrations.
+
+Work:
+
+- Remove `GifDecoder`, its test-only synchronous `decode()` drain, and
+  the custom bit reader, dictionary, and prefix-expansion implementation.
+  Remove their source and test registrations from CMake.
+- Retain or migrate externally observable compatibility cases into
+  `TestGifRestore`, reusing the coverage from 12.1.  Remove tests whose
+  only purpose is checking implementation details of the old LZW code.
+- Do not keep an unused decoder facade or fallback merely to satisfy
+  old tests.  Retain `g_out_line` and its declarations while the
+  non-polling `gif_view()` consumers still need them; remove obsolete
+  public step/drain interfaces that have no remaining production use.
+- Remove stale custom-decoder references from the remaining plan.  Keep
+  sound-controller work and the general image-loading UI split separate.
+
+Done when:
+
+- No custom GIF decompression implementation or test-only compatibility
+  entry remains; restore behavior is covered at the giflib-backed
+  `GifRestore` boundary.
+
+Validation: run focused restore tests and the full `rt-default` workflow.
+No manual test.
+
+### 12.4. GIF Writer Raster Compatibility Coverage
+
+Source: `tests/libid/io/test_encoder.cpp`, existing save/image fixtures,
+and raster, palette, and descriptor output in `io/encoder.cpp`.
+
+Work:
+
+- Exercise the current production save path with deterministic pixel
+  sources.  Reuse existing image coverage and add only missing cases.
+- Identify old keyboard-interruption cases for replacement in 12.7,
+  where pending input must not stop encoding or consume a key.  Add the
+  changed-behavior assertions with that conversion, not as failing tests
+  against the current backend.  Keep genuine I/O-error coverage here.
+- Check decoded pixel indices, logical screen and image dimensions,
+  GIF89a version, background index, color resolution, and aspect byte.
+- Cover 2-, 4-, 16-, and 256-color palette selection, including fixed
+  fallback palettes and the active DAC palette where applicable.
+- Cover unsigned dimensions above 32767 and existing GIF size limits.
+  Check rejection of an unrepresentable doubled potential width.
+- Cover 16-bit potential output with distinct color and low-byte data:
+  each stored row has double width, with colors followed by low bytes.
+- Compare decoded content and metadata, not compressed LZW bytes, file
+  sizes, or compression ratios.  Do not replace gold images to conceal
+  a codec-induced pixel difference.
+
+Done when:
+
+- The existing writer passes backend-independent raster and header
+  compatibility tests suitable for the giflib replacement.
+
+Validation: run focused writer tests against the current implementation
+and reuse existing image tests.  No manual image comparison.
+
+### 12.5. GIF Writer Extension Compatibility Coverage
+
+Source: `encoder()`, `put_extend_blk()`, `extend_blk_len()`, and
+`store_item_name()` in `io/encoder.cpp`; the shared `get_*_info()` and
+`put_*_info()` helpers in `io/gif_file.cpp`, their existing tests, and
+production metadata loading in `io/loadfile.cpp`.
+
+Work:
+
+- Test extensions emitted by the production save path, reusing existing
+  payload serializer tests rather than duplicating every field check.
+  Keep known fixture expectations as well as round trips through the
+  shared readers; a matching reader/writer mistake must not pass unnoticed.
+- Cover the main fractal record, resume data, formula/L-system/IFS names
+  and flags, iteration ranges, arbitrary-precision parameters, evolution
+  state, and orbit settings.  Verify omission when a block is inapplicable.
+- Preserve application identifiers, little-endian payload encoding,
+  block order, and the final placement of `fractint001`.
+- Check empty payload handling and lengths around the 255-byte
+  sub-block boundary.  Verify `tot_extend_len` against the actual encoded
+  extension layout, including identifiers and terminators.
+- Read saved files through `find_fractal_info()` using the shared
+  extension readers from 12.2.1, and inspect giflib extension records.
+  Preserve the layout required by older readers' backward metadata
+  search even though production loading no longer depends on that search.
+
+Done when:
+
+- Application-specific save metadata is covered independently of the
+  custom GIF framing and compression implementation.
+
+Validation: run focused writer, extension, and metadata-loader tests.
+No manual test; these are deterministic file-format checks.
+
+### 12.6. giflib Writer Operations
+
+Source: new `io/GifWriter.h` and `io/GifWriter.cpp`; giflib output APIs
+and extension helpers in `io/gif_file.cpp`; new focused writer tests.
+
+Work:
+
+- Introduce `GifWriter` to own an output handle and its lifecycle.  Its
+  operations accept dimensions, palette data, pixel rows, and extension
+  blocks assembled by the existing `put_*_info()` helpers.  It must not
+  read engine/UI globals or introduce another metadata serializer.
+- Use giflib screen/image descriptors, `EGifPutLine()`, and extension
+  leader/block/trailer operations.  Do not use `EGifSpew()` or collect an
+  entire raster before writing it.
+- The existing `put_*_info()` helpers append to giflib's in-memory
+  `ExtensionBlocks`; they do not write a file.  Emit those blocks with
+  sequential giflib operations, preserving application/continuation
+  grouping and terminating each extension once.  Reuse their identifiers
+  and chunking rather than splitting raw payloads a second time.
+- Preserve the tested GIF89a header and palette fields, including the
+  aspect byte.  Keep payload serialization in `gif_file.cpp`; the writer
+  owns only file framing, output, and lifecycle.
+- Permit row-sized pixel writes, including the two half-row writes used
+  for potential output, without embedding pixel-source or disk-video
+  traversal policy in the writer.
+- Make finish and cleanup explicit.  giflib owns GIF termination and
+  handle closure; do not write a second trailer or close a handle twice.
+  Report open, row, extension, finalization, and close failures.  Row
+  completion permits UI-owned feedback, not keyboard polling or dispatch.
+- Test deterministic write failures and early destruction as well as
+  successful files.  Keep prompts, progress markers, input polling,
+  completion sounds, and file-retention choices out of this class.
+
+Done when:
+
+- A giflib-backed writer can produce and finalize rows and application
+  records independently of the synchronous application save loop.
+
+Validation: read produced files with giflib and the existing metadata
+loader; test resource lifetime and failure paths.  No manual test.
+
+### 12.7. Production GIF Writer Integration
+
+Source: `save_image()`, `encoder()`, `compress()`, and extension emission
+in `io/encoder.cpp`; `GifWriter` from 12.6 and shared `put_*_info()`
+helpers in `io/gif_file.cpp`.
+
+Work:
+
+- Route production saves through one `GifWriter`.  Replace manual GIF
+  headers, palettes, image descriptors, LZW output, extension framing,
+  and termination with its operations.  The caller performs one atomic
+  save through file finalization and closure, coordinating feedback per
+  completed scanline without yielding to keyboard input.
+- Remove keyboard polling, pending-key callbacks, and user-interruption
+  returns throughout encoding and its output path.  Do not preserve a
+  keep/delete-partial prompt for a keypress during GIF writing.
+- Retain existing pixel-source traversal and potential color/low-byte
+  ordering while submitting rows to the writer.  Preserve metadata
+  assembly from current settings, but serialize it with the existing
+  `put_fractal_info()`, `put_formula_info()`, `put_ranges_info()`,
+  `put_extended_param_info()`, `put_evolution_info()`, and
+  `put_orbits_info()`, plus the resume-data helper from 12.1.1.
+- Replace the legacy writer's packed-structure encoding and raw payload
+  handling with those shared helpers.  Do not retain that second
+  serialization path behind `GifWriter` or copy it into the new class.
+- Preserve application identifiers, extension ordering, and accurate
+  `tot_extend_len`, calculated from the assembled extension blocks and
+  their framing.  Set the final main record's length before serializing
+  it.  Let giflib emit the blocks; do not mix raw writes with its output.
+- Establish one owner for the output handle.  Remove overlapping
+  `fopen()`/`fclose()` ownership.  Return write and close failures before
+  a temporary save replaces an original.  Do not introduce an active
+  global writer or raw-file bypass.
+- Keep filename selection, overwrite rules, temporary-file replacement,
+  autosave, and genuine I/O-error results compatible.  Saving a partial
+  calculation must still write a complete GIF with its resume metadata;
+  this does not justify interruptible encoding or synthetic padding.
+- Preserve existing save progress geometry, drawing/restoration, and
+  busy-state behavior through UI-owned scanline feedback, not inside
+  `GifWriter`.  Capture/write that scanline's pixels before drawing its
+  progress marks so feedback cannot corrupt saved data.
+- After each completed scanline, draw progress and call `driver_flush()`
+  before advancing to the next scanline.  For potential output, preserve
+  the color/low-byte grouping and advance progress once the stored row
+  is complete.  Do not add a disk flush or input poll to this display
+  update.  Restore progress marks and flush on completion or failure.
+- Do not label the synchronous whole-file save as a temporary drain or
+  treat scanline feedback as permission to poll input.  Mark only any
+  remaining misplaced prompt/notification bridges for removal in Image
+  Saving UI Decisions; the atomic command boundary is permanent.
+- Leave unused custom compression code for the following removal slice;
+  do not retain it as a runtime fallback.  Retain `s_outfile` only if
+  those unused definitions still need it to compile, mark it temporary,
+  and remove it in 12.8; it must not own a production output file.
+- Verify with pending input and mock drivers that all pixels and metadata
+  are written without keyboard calls.  Cover success, write failure,
+  close failure, autosave, and saving a resumable calculation.
+- Test scanline-write, progress-draw, and display-flush ordering, including
+  potential output and progress restoration on success/failure.  Check
+  that progress cannot change the encoded pixels or consume pending keys.
+
+Done when:
+
+- Every production image save uses giflib while retaining the tested
+  raster, metadata, file-management behavior, and per-scanline on-screen
+  progress with a display flush, without polling input or returning a
+  keyboard-interruption status from encoding.
+
+Validation: run 12.4/12.5 coverage, writer failure/lifetime tests, existing
+save/autosave coverage, and the full `rt-default` workflow.  No manual
+image comparison; add deterministic tests for uncovered changed paths.
+
+### 12.8. GIF Custom Encoder Removal
+
+Source: unused compressor state and `compress()`, `output()`,
+`cl_block()`, `char_out()`, and `flush_char()` in `io/encoder.cpp`;
+obsolete framing helpers and tests; `hc/src/help.src`.
+
+Work:
+
+- Remove the unused custom LZW encoder, hash/code tables, bit packing,
+  byte accumulator, `s_outfile`, and obsolete GIF framing helpers and
+  declarations.
+- Remove `write_gif_uint16()` and its implementation-specific tests if
+  it has no remaining callers; retain dimension-boundary coverage at
+  `GifWriter` and production save boundaries.
+- Keep the shared extension serializers in `gif_file.cpp` and helpers
+  still required for metadata lengths.  Remove the superseded packed
+  structure encode/decode helpers, tests, and registrations only after
+  verifying that no callers remain on either the read or write path.
+- Audit `g_block` after the metadata-reader conversion and remove it if
+  unused.  Do not retain it merely because the old loader once used it,
+  or delete application data that still has another caller.
+- Remove stale custom-writer references and migration bridges that are
+  no longer called.  Keep the atomic save command and UI-owned scanline
+  feedback; later UI cleanup must not reintroduce keyboard polling.
+  Do not leave test-only compressor facades, obsolete interruption flags,
+  partial-encoding prompts, or key-polling test expectations.
+- Add a current-release code-cleanup changelog item covering the giflib
+  reader/writer conversion.  Do not alter historical release notes.
+
+Done when:
+
+- Neither production GIF reading nor writing uses a custom LZW codec.
+  Both use the existing shared extension readers/writers, with no
+  duplicate payload codec or keyboard polling.  Whole-file I/O is atomic;
+  metadata, resumable images, and reduction features remain supported.
+- This completes the reader/writer conversion requested by
+  [issue #270][270].
+
+Validation: run focused writer/restore/metadata tests and the full
+`rt-default` workflow.  No manual test.
+
+[270]: https://github.com/LegalizeAdulthood/iterated-dynamics/issues/270
+
 ### 13. Restored Image Sound Controller
 
-Source: `GifRestore` and `RestoredImageOutput`;
+Source: scanlines from `GifRestore` and `RestoredImageOutput`.
 UI owner: the sound-restoration branch in `ui/big_while_loop.cpp`.
 
 Work:
 
-- Submit pixel-value samples directly from the bounded I/O operation.
-  Keep palette-index frequency mapping in the adapter.
-- Have UI advance that operation only as playback permits and handle
-  interruption outside the decoder/output callback.  Service `update()`
-  while rendering and waiting; finish with normal release, not mute.
-  Drive `GifRestore::iterate()` and retain the pixel output operation
-  between calls; do not enter the `gif_view()` compatibility drain.
+- Have the UI owner read one scanline, process its pixel/sound output,
+  then request the next until the entire GIF is loaded and closed.  Keep
+  the current line valid until its output completes; do not buffer the
+  full image or add a second playback traversal after file closure.
+- Submit the current line's pixel-value samples from
+  `RestoredImageOutput`.  Keep palette-index frequency mapping in the
+  adapter and the existing pixel order; scanline feedback does not mean
+  reducing a line to one tone.
+- Have UI advance pixel output as playback permits, servicing `update()`
+  while presenting and waiting.  Retain a refused pixel until accepted,
+  then plot it exactly once before advancing.  Keep sound waits outside
+  the codec and pixel-output operation.
+- Complete this scanline loop without keyboard polling, key consumption,
+  or dispatch, including while waiting for sound readiness.  The file can
+  remain open during sound feedback; loading is still one atomic command
+  with respect to input.  Finish with normal release, not mute.
 - Remove `RestoredImageOutput::pending_color()` and the temporary pixel
-  and decoder drains from the sound path, plus `sleep_orbit_delay()`,
-  `write_sound()`, and direct mute calls.  Submit the retained pixel's
-  sample inside `RestoredImageOutput::iterate()` before plotting it.
-  Keep marked compatibility paths for other restore consumers separate.
-- Remove the now test-only `GifDecoder::decode()` compatibility method
-  and migrate its remaining tests to incremental decoding.
+  drains from the sound path, plus `sleep_orbit_delay()`, `write_sound()`,
+  and direct mute calls.  Submit the retained pixel's sample inside
+  `RestoredImageOutput::iterate()` before plotting it.
+  Keep any remaining UI-ownership compatibility paths separate from the
+  permanent atomic file operation.
 
 Done when:
 
-- Sound restoration cannot wait for playback inside line decoding or
-  pixel output, and refused pixels remain uncommitted until accepted.
+- Sound restoration processes each decoded scanline while loading, with
+  plotting and sound coordinated and refused pixels retained until
+  accepted.  The codec and pixel-output operation do not wait on playback;
+  their UI owner does not poll input during the atomic load.
 
-Validation: cover restoration refusal, line continuation, interruption,
-and legacy file records with a fake port and decoder/controller tests.
-Exercise sound-restore selection through its UI entry as well as the
-traversal object.  Do not repeat image-restoration tests manually.
+Validation: cover sample refusal, line continuation, read/output failure,
+and legacy sound-file records with fake-port/controller tests.  Verify
+each line's pixel/sound output completes before the next decode, no
+sample or plot is repeated, and pending input neither interrupts loading
+nor is consumed.  Exercise sound-restore selection through its UI entry
+as well as the traversal object.  Do not repeat image-restoration tests
+manually.
 
 ### 14. Sound Session Lifecycle Ownership
 
@@ -782,9 +1273,9 @@ Work:
   implementation or its optional recording.
   Keep parameter compatibility and completion-buzzer settings in scope.
 - Remove temporary bridge declarations and TODO markers from the sound
-  output paths.  Marked non-sound GIF compatibility drains remain for
-  Image Loading UI Decisions.  Do not add a global forwarding API around
-  `SoundOutput`.
+  output paths.  Remaining GIF UI-ownership bridges are handled by Image
+  Loading UI Decisions, without making file I/O incremental again.
+  Do not add a global forwarding API around `SoundOutput`.
 - Recheck every migrated producer and failure path for direct driver
   sound calls, input polling, and indirect playback waits.
 
@@ -1465,42 +1956,63 @@ Work:
 - Separate metadata reading and validation from video-mode selection,
   3D-parameter prompts, and UI history decisions.
 - Return the loaded requirements to the UI owner, which gathers choices
-  before starting or resuming decoder/render operations.
-- Preserve cancelled-load cleanup, batch defaults, and prior-image state.
-- Drive the bounded GIF restoration objects from the sound prerequisites
-  for other restore consumers, then remove their marked synchronous
-  compatibility drains.  Split distinct consumer conversions if needed.
+  before invoking atomic GIF reading or subsequent render operations.
+- Preserve cancellation of setup dialogs, batch defaults, and prior-image
+  state on setup/read failure.  There is no mid-file keyboard cancellation.
+- Remove remaining UI calls and ownership bridges around whole-file
+  reading.  Do not replace the atomic operation with a keyboard-polling
+  controller around decoder records or rows.
+- Coordinate existing pixel/transformation output and optional sound for
+  each decoded scanline before requesting the next.  Keep that feedback
+  outside the codec, but within the atomic load command; do not require
+  full-image retention or post-close playback.  Split distinct consumer
+  conversions if needed without reintroducing keyboard polling.
 
 Done when:
 
 - Image-loading code does not invoke `get_video_mode()`,
   `get_3d_params()`, or modal diagnostics from inside decoding setup.
+- The UI completes scanline-based loading and feedback as one atomic
+  command, without load-time input polling or a second image traversal.
 
 Validation: cover cancelled selection, invalid metadata, and successful
 load through existing codec tests and focused UI-choice tests.
 
 ### 43. Image Saving UI Decisions
 
-Source: save coordination around `encoder()` in `io/encoder.cpp`;
+Source: remaining UI decisions around `save_image()`/`encoder()` in
+`io/encoder.cpp` and the giflib-backed `GifWriter` from 12.6-12.8;
 UI owners: manual save and autosave paths in `ui/big_while_loop.cpp`.
 
 Work:
 
-- Return write results and partial-save state to the UI owner before
-  asking whether to retain, replace, or discard partial output.
-- Let UI own saved/interrupted messages, completion sounds, and any
+- Return completed-write or I/O-failure results to the UI owner before
+  displaying diagnostics or making any applicable file-retention choice.
+  Do not recreate the removed keyboard-interrupted save/partial prompt.
+- Let UI own saved/error messages, completion sounds, and any
   save-then-exit decision.
+- Keep save progress drawing/restoration and busy-state presentation in
+  UI.  Retain the scanline feedback established by the giflib conversion:
+  after a scanline is written, update progress and call `driver_flush()`
+  before writing the next.  Flush restored feedback on completion or
+  failure as well; a display flush must not poll or dispatch input.
+- Remove remaining marked prompt/notification bridges, not the permanent
+  synchronous command or its scanline feedback.  Keep pixel-source
+  traversal and encoding below UI; no per-row disk flush is required.
 - Keep encoding, file replacement mechanics, and resource cleanup in I/O;
   the selected UI decision determines when those mechanics run.
 
 Done when:
 
 - Encoding and save-file operations cannot open prompts or terminate the
-  application.  Existing partial-file retention choices remain available.
+  application.  Whole-file writing remains atomic and reports real I/O
+  failures; it cannot be interrupted by pending keyboard input.
 
-Validation: exercise partial saves for new and existing files, both user
-choices, write failures, and autosave completion.  Use codec tests for
-file contents instead of manual image comparisons.
+Validation: exercise saving incomplete/resumable calculations, overwrite
+and failure cleanup for new/existing files, write/close failures, and
+autosave completion.  Use codec tests for file contents and pending-key
+behavior and mock-driver tests for per-scanline progress/flush ordering
+instead of manual image comparisons.
 
 ### 44. Command Parsing Diagnostics
 
@@ -1771,8 +2283,10 @@ these direct and indirect paths:
   callback.
 - `libid/io/gifview.cpp`: restored-image output reaches that legacy
   sound wait from synchronous compatibility line callbacks.  Bounded
-  file traversal is available through `GifRestore`; sound and pixel
-  delay still need to return control to the UI owner.
+  file traversal currently exists through `GifRestore`; the giflib
+  slices replace polling-oriented file traversal with atomic loading.
+  The UI owner coordinates pixel/sound feedback on each decoded scanline
+  during that command, without codec-side waits or keyboard polling.
 - `libid/engine/wait_until.cpp`: delay loop wakes on pending key.
 - `libid/fractals/Cellular.cpp`: `iterate()` calls `thinking()`, which
   polls the driver queue.  Completion, failure, and suspension also call
@@ -1798,6 +2312,8 @@ these direct and indirect paths:
   from calculation code through `ui/diskvid.cpp` and memory allocation.
 - `libid/io/loadfile.cpp` and `io/encoder.cpp`: enter mode/parameter
   selection or partial-save prompts from loading and saving operations.
+  The giflib slices remove codec polling and keyboard-interrupted saves;
+  later UI cleanup moves the remaining surrounding decisions outward.
 - `libid/engine/cmdfiles.cpp`: `arg_error()` calls UI through
   `s_stop_msg` and `s_goodbye`; `init_msg()` displays startup errors and
   schedules `do_pause()`.  Other command branches generate UI output or
