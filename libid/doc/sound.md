@@ -70,6 +70,26 @@ test-only injection path or a new singleton/service lookup framework.
 This binding does not introduce worker threads or synchronization for
 every sample.
 
+### Polling UI Session
+
+`ui::SoundSession` selects the configured output, retains shared
+ownership, installs it in `g_sound`, and restores the previous binding
+on scope exit.  An owning render controller creates the session; nested
+controllers use the installed binding without independently finishing it.
+An application-supplied implementation uses the same session and binding.
+
+The controller calls `wait_until_ready()` between bounded calculation
+increments.  It services `update()` even without a new sample.  Ready
+output adds no input polling or delay; backpressure waits through the
+existing keyboard-handler context.  Calculation and plotting remain
+outside the session.
+
+Explicit `finish()` services playback until normal release and tails
+complete.  Interruption or explicit `cancel()` mutes before finalizing;
+output errors propagate to the owner.  An abandoned scope only mutes as
+a safety measure.  Normal completion and cancellation remain explicit so
+file-finalization failures can be reported outside a destructor.
+
 ## SoundOutput Interface
 
 `SoundOutput` has a virtual destructor and a small output/lifecycle

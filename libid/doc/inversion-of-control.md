@@ -701,42 +701,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 3. UI Sound Session Coordination
-
-Source: `ui/sound.cpp` and the UI owner of the supplied `SoundOutput`.
-
-Work:
-
-- Configure the driver-backed implementation, including optional
-  `OSF_MIDI` recording, from application settings.  Select the no-op sink
-  only when neither playback nor recording is requested.
-- Install the selected `SoundOutputPtr` in `g_sound` and retain
-  shared ownership for the render operation, including nested
-  controllers.  Producers use the binding directly; do not pass the
-  pointer down dispatch or calculation call chains.
-- Do not create `InteractiveSoundOutput`, compose separate file/device
-  sinks, or add a speculative file-only mode for the legacy tone log.
-- Have the UI controller call `update()` during rendering, playback
-  waits, and completion, including when no new sample is submitted.
-  Service the supplied implementation directly.
-- Provide readiness waiting, explicit mute on interruption, and normal
-  completion using the existing keyboard context.  Drain normal voice
-  releases and tails instead of muting to finish.  Keep plotting below UI.
-- Do not add producer-specific upward result plumbing, unbounded queues,
-  a new input queue, or a replacement sound library.
-
-Done when:
-
-- A controller can advance bounded work at the slower of calculation and
-  playback rates while continuing input handling between increments.
-- Unsupported device output still permits optional tone recording
-  without playback waits.  Batch mode does not implicitly enable logging.
-
-Validation: exercise the supplied sink, optional recording with no device
-playback, servicing without new samples, interrupted waiting, and final
-release-tail completion with fakes.  Producer integration follows in the
-next slices; no multimedia library is selected here.
-
 ### 4. Standard And FrothyBasin Overlay Sound Port
 
 Source: `OrbitPlot`, standard overlay continuation in `calcfrac.cpp`,

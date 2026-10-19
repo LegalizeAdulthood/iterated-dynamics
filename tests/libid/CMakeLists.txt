@@ -128,6 +128,7 @@ add_executable(test-id
     ui/test_make_batch_file.cpp
     ui/test_passes_options.cpp
     ui/test_slideshw.cpp
+    ui/test_SoundSession.cpp
     ui/test_stereo.cpp
     ui/test_tab_display.cpp
     ui/test_thinking.cpp
