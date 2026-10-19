@@ -271,6 +271,7 @@ add_library(libid
     include/ui/put_string_center.h ui/put_string_center.cpp
     include/ui/read_ticker.h ui/read_ticker.cpp
     include/ui/rotate.h ui/rotate.cpp
+    include/ui/SaveImageProgress.h ui/SaveImageProgress.cpp
     include/ui/select_video_mode.h ui/select_video_mode.cpp
     include/ui/set_default_params.h ui/set_default_params.cpp
     include/ui/shell_sort.h ui/shell_sort.cpp

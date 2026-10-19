@@ -40,6 +40,7 @@
 #include "io/decode_info.h"
 #include "io/gif_extensions.h"
 #include "io/gif_file.h"
+#include "io/GifWriter.h"
 #include "io/is_writeable.h"
 #include "io/library.h"
 #include "io/loadfile.h"
@@ -48,12 +49,14 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
+#include "misc/ValueSaver.h"
 #include "misc/version.h"
 #include "ui/big_while_loop.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
 #include "ui/goodbye.h"
 #include "ui/slideshw.h"
+#include "ui/SaveImageProgress.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
@@ -62,7 +65,6 @@
 #include <gif_lib.h>
 
 #include <algorithm>
-#include <cassert>
 #include <climits>
 #include <cstdio>
 #include <cstring>
@@ -70,6 +72,7 @@
 #include <iterator>
 #include <limits>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 
@@ -85,13 +88,14 @@ namespace id::io
 
 std::filesystem::path g_save_filename{"fract001"};
 
-static bool compress(int row_limit);
-static int shift_write(const Byte *color, int num_colors);
+[[maybe_unused]] static bool compress(int row_limit);
+[[maybe_unused]] static int shift_write(const Byte *color, int num_colors);
 static int extend_blk_len(int data_len);
-static int put_extend_blk(int block_id, int block_len, const char *block_data);
-static int store_item_name(std::string_view name);
+[[maybe_unused]] static int put_extend_blk(int block_id, int block_len, const char *block_data);
+static void store_item_name(GifFileType &extensions, std::string_view name);
 
 static int s_num_saves{}; // For adjusting 'save-to-disk' filenames
+// TODO: removed later
 static std::FILE *s_outfile{};
 static int s_last_color_bar{};
 static bool s_save_16bit{};
@@ -166,433 +170,181 @@ bool write_gif_uint16(std::FILE *file, const int value)
 //
 //
 
-// save-to-disk routine
-int save_image(std::filesystem::path &filename)
+static GifWriter::Screen save_screen()
 {
-    std::filesystem::path open_file;
-    std::string open_file_ext;
-    std::filesystem::path tmp_file;
-    bool new_file;
-    int interrupted;
-
-restart:
-    s_save_16bit = g_disk_16_bit;
-    open_file = filename;                  // decode and open the filename
-    open_file_ext = DEFAULT_FRACTAL_TYPE; // determine the file extension
-    if (s_save_16bit)
+    int aspect{};
+    if (g_viewport.enabled && (g_viewport.x_dots == 0 || g_viewport.y_dots == 0))
     {
-        open_file_ext = ".pot";
-    }
-
-    if (open_file.has_extension())
-    {
-        open_file_ext = open_file.extension().string();
-        open_file.replace_extension();
-    }
-    if (g_resave_flag != TimedSave::STARTED)
-    {
-        update_save_name(filename); // for next time
-    }
-
-    open_file.replace_extension(open_file_ext);
-
-    open_file = get_save_path(WriteFile::IMAGE, open_file.string());
-    assert(!open_file.empty());
-    tmp_file = open_file;
-    if (!std::filesystem::exists(open_file))  // file doesn't exist
-    {
-        new_file = true;
+        aspect =
+            static_cast<int>(static_cast<double>(g_screen_y_dots) / g_screen_x_dots * 64.0 / g_screen_aspect - 14.5);
     }
     else
     {
-        // file already exists
+        aspect = static_cast<int>(static_cast<double>(g_logical_screen.y_dots) / g_logical_screen.x_dots /
+                g_viewport.final_aspect_ratio * 64.0 -
+            14.5);
+    }
+    return {g_logical_screen.x_dots * (g_disk_16_bit ? 2 : 1), g_logical_screen.y_dots, 8, 0,
+        static_cast<Byte>(std::clamp(aspect, 1, 255))};
+}
+
+static GifWriter::Palette save_palette()
+{
+    const Byte *colors{g_colors == 2 ? s_palette_bw
+            : g_colors == 4          ? s_palette_cga
+            : g_got_real_dac         ? &g_dac_box[0][0]
+                                     : s_palette_ega};
+    GifWriter::Palette palette;
+    palette.reserve(g_colors);
+    for (int i = 0; i < g_colors; ++i)
+    {
+        const int color{g_colors > 4 && !g_got_real_dac ? i % 16 : i};
+        palette.push_back({colors[3 * color], colors[3 * color + 1], colors[3 * color + 2]});
+    }
+    return palette;
+}
+
+int save_image(std::filesystem::path &filename)
+{
+    const bool potential{g_disk_16_bit};
+    std::filesystem::path open_file;
+    std::filesystem::path tmp_file;
+    bool new_file{};
+    while (true)
+    {
+        open_file = filename;
+        if (!open_file.has_extension())
+        {
+            open_file.replace_extension(potential ? ".pot" : DEFAULT_FRACTAL_TYPE);
+        }
+        if (g_resave_flag != TimedSave::STARTED)
+        {
+            update_save_name(filename);
+        }
+        open_file = get_save_path(WriteFile::IMAGE, open_file.string());
+        if (open_file.empty())
+        {
+            throw std::logic_error("Empty image save path");
+        }
+        tmp_file = open_file;
+        new_file = !std::filesystem::exists(open_file);
+        if (new_file)
+        {
+            break;
+        }
         if (!g_overwrite_file)
         {
             if (g_resave_flag == TimedSave::NONE)
             {
-                goto restart;
+                continue;
             }
             if (!g_started_resaves)
             {
-                // first save of a savetime set
                 update_save_name(filename);
-                goto restart;
+                continue;
             }
         }
         if (!is_writeable(open_file))
         {
-            stop_msg(std::string{"Can't write "} + open_file.string());
+            // TODO: removed later
+            stop_msg("Can't write " + open_file.string());
             return -1;
         }
-        new_file = false;
         tmp_file.replace_filename("id.tmp");
+        break;
     }
-
     g_started_resaves = g_resave_flag == TimedSave::STARTED;
-    if (g_resave_flag == TimedSave::FINAL)          // final save of savetime set?
+    if (g_resave_flag == TimedSave::FINAL)
     {
         g_resave_flag = TimedSave::NONE;
     }
 
-    s_outfile = std::fopen(tmp_file.string().c_str(), "wb");
-    if (s_outfile == nullptr)
+    bool saved{};
+    int error{};
+    if (g_logical_screen.x_dots > 0 && g_logical_screen.y_dots > 0 &&
+        g_logical_screen.x_dots <= GIF_MAX_PIXELS / (potential ? 2 : 1) && g_logical_screen.y_dots <= GIF_MAX_PIXELS)
     {
-        stop_msg("Can't create " + tmp_file.string());
-        return -1;
+        ValueSaver busy{g_busy, true};
+        GifWriter writer{tmp_file, save_screen(), save_palette()};
+        error = writer.error();
+        saved = encoder(writer, open_file);
     }
-
-    if (driver_is_disk())
+    if (!saved)
     {
-        // disk-video
-        dvid_status(1, "Saving " + open_file.filename().string());
-    }
-
-    g_busy = true;
-
-    interrupted = encoder() ? 1 : 0;
-
-    g_busy = false;
-
-    std::fclose(s_outfile);
-
-    if (interrupted)
-    {
-        std::string buf{"Save of "};
-        buf += open_file.string();
-        buf += " interrupted.\nCancel to ";
-        if (new_file)
-        {
-            buf += "delete the file,\ncontinue to keep the partial image.";
-        }
-        else
-        {
-            buf += "retain the original file,\ncontinue to replace original with new partial image.";
-        }
-        interrupted = 1;
-        if (stop_msg(StopMsgFlags::CANCEL, buf))
-        {
-            interrupted = -1;
-            std::filesystem::remove(tmp_file);
-        }
-    }
-
-    if (!new_file && interrupted >= 0)
-    {
-        // replace the real file
-        std::filesystem::remove(open_file);          // success assumed since we checked
-        std::filesystem::rename(tmp_file, open_file); // earlier with access
-    }
-
-    if (!driver_is_disk())
-    {
-        // supress this on disk-video
-        int out_color1 = s_out_color_1s;
-        int out_color2 = s_out_color_2s;
-        for (int j = 0; j <= s_last_color_bar; j++)
-        {
-            if ((j & 4) == 0)
-            {
-                if (++out_color1 >= g_colors)
-                {
-                    out_color1 = 0;
-                }
-                if (++out_color2 >= g_colors)
-                {
-                    out_color2 = 0;
-                }
-            }
-            for (int i = 0; 250*i < g_logical_screen.x_dots; i++)
-            {
-                // clear vert status bars
-                g_put_color(i, j, get_color(i, j) ^ out_color1);
-                g_put_color(g_logical_screen.x_dots - 1 - i, j,
-                         get_color(g_logical_screen.x_dots - 1 - i, j) ^ out_color2);
-            }
-        }
-    }
-    else                           // disk-video
-    {
-        dvid_status(1, "");
-    }
-
-    if (interrupted)
-    {
-        text_temp_msg(" *interrupted* save ");
+        std::filesystem::remove(tmp_file);
+        // TODO: removed later
+        stop_msg(error == E_GIF_ERR_OPEN_FAILED ? "Can't create " + tmp_file.string()
+                                                : "Error writing image to " + tmp_file.string());
         if (g_init_batch >= BatchMode::NORMAL)
         {
-            g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE;         // if batch mode, set error level
+            g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE;
         }
         return -1;
+    }
+    if (!new_file)
+    {
+        std::filesystem::remove(open_file);
+        std::filesystem::rename(tmp_file, open_file);
     }
     if (g_timed_save == TimedSave::NONE)
     {
+        // TODO: removed later
         driver_buzzer(Buzzer::COMPLETE);
         if (g_init_batch == BatchMode::NONE)
         {
+            // TODO: removed later
             text_temp_msg((" File saved as " + open_file.filename().string() + ' ').c_str());
         }
     }
     if (g_save_time_interval < 0)
     {
+        // TODO: removed later
         goodbye();
     }
     return 0;
 }
 
-bool encoder()
+static void setup_save_extensions(GifFileType &extensions)
 {
-    bool interrupted;
-    int width;
-    int row_limit;
-    Byte bits_per_pixel;
-    Byte x;
-    FractalInfo save_info;
-
+    FractalInfo save_info{};
     setup_save_info(&save_info);
-
-    bits_per_pixel = 0;            // calculate bits / pixel
-    for (int i = g_colors; i >= 2; i /= 2)
+    if (!g_resume_data.empty() && g_calc_status == CalcStatus::RESUMABLE)
     {
-        bits_per_pixel++;
-    }
-
-    s_start_bits = bits_per_pixel + 1;// start coding with this many bits
-    if (g_colors == 2)
-    {
-        s_start_bits++;    // B&W Klooge
-    }
-
-    int i = 0;
-    if (std::fputs("GIF89a", s_outfile) < 0)
-    {
-        goto oops; // new GIF Signature
-    }
-
-    width = g_logical_screen.x_dots;
-    row_limit = g_logical_screen.y_dots;
-    if (s_save_16bit)
-    {
-        // pot16bit info is stored as: file:    double width rows, right side
-        // of row is low 8 bits diskvid: ydots rows of colors followed by ydots
-        // rows of low 8 bits decoder: returns (row of color info then row of
-        // low 8 bits) * ydots
-        if (width > GIF_MAX_PIXELS / 2 || row_limit > std::numeric_limits<int>::max() / 2)
+        if (g_resume_len < 0 || static_cast<std::size_t>(g_resume_len) > g_resume_data.size())
         {
-            goto oops;
+            throw std::logic_error("Invalid image resume length");
         }
-        row_limit *= 2;
-        width *= 2;
+        put_resume_info(&extensions, {g_resume_data.begin(), g_resume_data.begin() + g_resume_len});
     }
-    if (!write_gif_uint16(s_outfile, width))
-    {
-        goto oops;                // screen descriptor
-    }
-    if (!write_gif_uint16(s_outfile, g_logical_screen.y_dots))
-    {
-        goto oops;
-    }
-    static constexpr int COLOR_RESOLUTION{8};
-    x = static_cast<Byte>(128 + ((COLOR_RESOLUTION - 1) << 4) + (bits_per_pixel - 1));
-    if (std::fwrite(&x, 1, 1, s_outfile) != 1)
-
-    {
-        goto oops;
-    }
-    if (std::fputc(0, s_outfile) != 0)
-    {
-        goto oops;                // background color
-    }
-
-    // TODO: pixel aspect ratio should be 1:1?
-    if (g_viewport.enabled                                     // less than full screen?
-        && (g_viewport.x_dots == 0 || g_viewport.y_dots == 0)) // and we picked the dots?
-    {
-        i = static_cast<int>(static_cast<double>(g_screen_y_dots) / static_cast<double>(g_screen_x_dots) *
-                64.0 / g_screen_aspect -
-            14.5);
-    }
-    else       // must risk loss of precision if numbers low
-    {
-        i = static_cast<int>(static_cast<double>(g_logical_screen.y_dots) /
-                static_cast<double>(g_logical_screen.x_dots) / g_viewport.final_aspect_ratio * 64 -
-            14.5);
-    }
-    i = std::max(i, 1);
-    i = std::min(i, 255);
-    if (std::fputc(i, s_outfile) != i)
-    {
-        goto oops;                // pixel aspect ratio
-    }
-
-    if (g_colors == 256)
-    {
-        // write out the 256-color palette
-        if (g_got_real_dac)
-        {
-            // got a DAC - must be a VGA
-            if (!shift_write(reinterpret_cast<Byte *>(g_dac_box), g_colors))
-            {
-                goto oops;
-            }
-        }
-        else
-        {
-            // uh oh - better fake it
-            for (int j = 0; j < 256; j += 16)
-            {
-                if (!shift_write(s_palette_ega, 16))
-                {
-                    goto oops;
-                }
-            }
-        }
-    }
-    if (g_colors == 2)
-    {
-        // write out the B&W palette
-        if (!shift_write(s_palette_bw, g_colors))
-        {
-            goto oops;
-        }
-    }
-    if (g_colors == 4)
-    {
-        // write out the CGA palette
-        if (!shift_write(s_palette_cga, g_colors))
-        {
-            goto oops;
-        }
-    }
-    if (g_colors == 16)
-    {
-        // Either EGA or VGA
-        if (g_got_real_dac)
-        {
-            if (!shift_write(reinterpret_cast<Byte *>(g_dac_box), g_colors))
-            {
-                goto oops;
-            }
-        }
-        else
-        {
-            // no DAC - must be an EGA
-            if (!shift_write(s_palette_ega, g_colors))
-            {
-                goto oops;
-            }
-        }
-    }
-
-    if (std::fputs(",", s_outfile) < 0)
-    {
-        goto oops;                // Image Descriptor
-    }
-    i = 0;
-    if (!write_gif_uint16(s_outfile, i))
-    {
-        goto oops;
-    }
-    if (!write_gif_uint16(s_outfile, i))
-    {
-        goto oops;
-    }
-    if (!write_gif_uint16(s_outfile, width))
-    {
-        goto oops;
-    }
-    if (!write_gif_uint16(s_outfile, g_logical_screen.y_dots))
-    {
-        goto oops;
-    }
-    if (std::fwrite(&i, 1, 1, s_outfile) != 1)
-    {
-        goto oops;
-    }
-
-    bits_per_pixel = static_cast<Byte>(s_start_bits - 1);
-
-    if (std::fwrite(&bits_per_pixel, 1, 1, s_outfile) != 1)
-    {
-        goto oops;
-    }
-
-    interrupted = compress(row_limit);
-
-    if (std::ferror(s_outfile))
-    {
-        goto oops;
-    }
-
-    if (std::fputc(0, s_outfile) != 0)
-    {
-        goto oops;
-    }
-
-    // store non-standard fractal info
-    // loadfile has notes about extension block structure
-    if (interrupted)
-    {
-        save_info.calc_status = static_cast<short>(CalcStatus::PARAMS_CHANGED); // partial save is not resumable
-    }
-    save_info.tot_extend_len = 0;
-    if (!g_resume_data.empty() && save_info.calc_status == static_cast<short>(CalcStatus::RESUMABLE))
-    {
-        // resume info block, 002
-        save_info.tot_extend_len += extend_blk_len(g_resume_len);
-        std::copy(g_resume_data.data(), &g_resume_data[g_resume_len], &g_block[0]);
-        if (!put_extend_blk(2, g_resume_len, reinterpret_cast<char *>(g_block)))
-        {
-            goto oops;
-        }
-    }
-    // save_info.fractal_type gets modified in setup_save_info() in float only version, so we need to use fractype.
     if (g_fractal_type == FractalType::FORMULA)
     {
-        save_info.tot_extend_len += store_item_name(g_formula_name);
+        store_item_name(extensions, g_formula_name);
     }
-    //    if (save_info.fractal_type == LSYSTEM)
     if (g_fractal_type == FractalType::L_SYSTEM)
     {
-        save_info.tot_extend_len += store_item_name(g_l_system_name);
+        store_item_name(extensions, g_l_system_name);
     }
-    //    if (save_info.fractal_type == IFS || save_info.fractal_type == IFS3D)
     if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
     {
-        save_info.tot_extend_len += store_item_name(g_ifs_name);
+        store_item_name(extensions, g_ifs_name);
     }
     if (g_display_3d <= Display3DMode::NONE && !g_iteration_ranges.empty())
     {
-        // ranges block, 004
-        const int num_bytes = g_iteration_ranges.size() * 2;
-        save_info.tot_extend_len += extend_blk_len(num_bytes);
-        std::vector<char> buffer;
-        for (int range : g_iteration_ranges)
-        {
-            // ranges are stored as 16-bit ints in little-endian byte order
-            buffer.push_back(range & 0xFF);
-            buffer.push_back(static_cast<unsigned>(range & 0xFFFF) >> 8);
-        }
-        if (!put_extend_blk(4, num_bytes, buffer.data()))
-        {
-            goto oops;
-        }
+        put_ranges_info(&extensions, g_iteration_ranges);
     }
-    // Extended parameters block 005
     if (g_bf_math != BFMathType::NONE)
     {
-        save_info.tot_extend_len += extend_blk_len(22 * (g_bf_length + 2));
-        // note: this assumes variables allocated in order starting with
-        // g_bf_x_min in init_bf_2() in BIGNUM.C
-        if (!put_extend_blk(5, 22 * (g_bf_length + 2), reinterpret_cast<char *>(g_bf_x_min)))
+        if (g_bf_x_min == nullptr || g_bf_length < 0 || g_bf_length > std::numeric_limits<int>::max() / 22 - 2)
         {
-            goto oops;
+            throw std::logic_error("Invalid arbitrary precision save parameters");
         }
+        // The saved corners and parameters occupy consecutive big-float slots.
+        const char *parameters{reinterpret_cast<const char *>(g_bf_x_min)};
+        put_extended_param_info(&extensions, {parameters, parameters + 22 * (g_bf_length + 2)});
     }
-
-    // Extended parameters block 006
     if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
     {
-        EvolutionInfo evolution_info;
+        EvolutionInfo evolution_info{};
         if (!g_have_evolve_info || g_calc_status == CalcStatus::COMPLETED)
         {
             evolution_info.x_parameter_range = g_evolve_x_parameter_range;
@@ -601,112 +353,107 @@ bool encoder()
             evolution_info.y_parameter_offset = g_evolve_y_parameter_offset;
             evolution_info.discrete_x_parameter_offset =
                 static_cast<std::int16_t>(g_evolve_discrete_x_parameter_offset);
-            evolution_info.discrete_y_parameter_offset = static_cast<std::int16_t>(g_evolve_discrete_y_parameter_offset);
-            evolution_info.px              = static_cast<std::int16_t>(g_evolve_param_grid_x);
-            evolution_info.py              = static_cast<std::int16_t>(g_evolve_param_grid_y);
-            evolution_info.screen_x_offset          = static_cast<std::int16_t>(g_logical_screen.x_offset);
-            evolution_info.screen_y_offset          = static_cast<std::int16_t>(g_logical_screen.y_offset);
+            evolution_info.discrete_y_parameter_offset =
+                static_cast<std::int16_t>(g_evolve_discrete_y_parameter_offset);
+            evolution_info.px = static_cast<std::int16_t>(g_evolve_param_grid_x);
+            evolution_info.py = static_cast<std::int16_t>(g_evolve_param_grid_y);
+            evolution_info.screen_x_offset = static_cast<std::int16_t>(g_logical_screen.x_offset);
+            evolution_info.screen_y_offset = static_cast<std::int16_t>(g_logical_screen.y_offset);
             evolution_info.x_dots = static_cast<std::uint16_t>(g_logical_screen.x_dots);
             evolution_info.y_dots = static_cast<std::uint16_t>(g_logical_screen.y_dots);
             evolution_info.image_grid_size = static_cast<std::int16_t>(g_evolve_image_grid_size);
-            evolution_info.evolving        = static_cast<std::int16_t>(+g_evolving);
+            evolution_info.evolving = static_cast<std::int16_t>(+g_evolving);
             evolution_info.this_generation_random_seed =
                 static_cast<std::uint16_t>(g_evolve_this_generation_random_seed);
             evolution_info.max_random_mutation = g_evolve_max_random_mutation;
-            evolution_info.count          =
-                static_cast<std::int16_t>(g_evolve_image_grid_size * g_evolve_image_grid_size); // flag for done
+            evolution_info.count = static_cast<std::int16_t>(g_evolve_image_grid_size * g_evolve_image_grid_size);
         }
         else
         {
-            // we will need the resuming information
-            evolution_info.x_parameter_range = g_evolve_info.x_parameter_range;
-            evolution_info.y_parameter_range = g_evolve_info.y_parameter_range;
-            evolution_info.x_parameter_offset = g_evolve_info.x_parameter_offset;
-            evolution_info.y_parameter_offset = g_evolve_info.y_parameter_offset;
-            evolution_info.discrete_x_parameter_offset = g_evolve_info.discrete_x_parameter_offset;
-            evolution_info.discrete_y_parameter_offset = g_evolve_info.discrete_y_parameter_offset;
-            evolution_info.px = g_evolve_info.px;
-            evolution_info.py = g_evolve_info.py;
-            evolution_info.screen_x_offset = g_evolve_info.screen_x_offset;
-            evolution_info.screen_y_offset = g_evolve_info.screen_y_offset;
-            evolution_info.x_dots = g_evolve_info.x_dots;
-            evolution_info.y_dots = g_evolve_info.y_dots;
-            evolution_info.image_grid_size = g_evolve_info.image_grid_size;
-            evolution_info.evolving = g_evolve_info.evolving;
-            evolution_info.this_generation_random_seed = g_evolve_info.this_generation_random_seed;
-            evolution_info.max_random_mutation = g_evolve_info.max_random_mutation;
-            evolution_info.count = g_evolve_info.count;
+            evolution_info = g_evolve_info;
         }
-        for (int j = 0; j < NUM_GENES; j++)
+        for (int i = 0; i < NUM_GENES; ++i)
         {
-            evolution_info.mutate[j] = static_cast<std::int16_t>(g_gene_bank[j].mutate);
+            evolution_info.mutate[i] = static_cast<std::int16_t>(g_gene_bank[i].mutate);
         }
-
-        for (int j = 0; j < sizeof(evolution_info.future) / sizeof(std::int16_t); j++)  // NOLINT(modernize-loop-convert)
-        {
-            evolution_info.future[j] = 0;
-        }
-
-        // TODO: removed later when GifWriter emits the shared extension blocks.
-        std::unique_ptr<GifFileType, void (*)(GifFileType *)> extensions{new GifFileType{}, [](GifFileType *gif)
-            {
-                GifFreeExtensions(&gif->ExtensionBlockCount, &gif->ExtensionBlocks);
-                delete gif;
-            }};
-        put_evolution_info(extensions.get(), evolution_info);
-        // evolution info block, 006
-        save_info.tot_extend_len += extend_blk_len(GIF_EXTENSION6_EVOLVER_INFO_LENGTH);
-        if (!put_extend_blk(
-                6, GIF_EXTENSION6_EVOLVER_INFO_LENGTH, reinterpret_cast<char *>(extensions->ExtensionBlocks[1].Bytes)))
-        {
-            goto oops;
-        }
+        put_evolution_info(&extensions, evolution_info);
     }
-
-    // Extended parameters block 007
     if (g_std_calc_mode == CalcMode::ORBIT)
     {
         OrbitsInfo orbits_info{};
-        orbits_info.orbit_corner_min_x     = g_orbit_corner.m_min.x;
-        orbits_info.orbit_corner_max_x     = g_orbit_corner.m_max.x;
-        orbits_info.orbit_corner_min_y     = g_orbit_corner.m_min.y;
-        orbits_info.orbit_corner_max_y     = g_orbit_corner.m_max.y;
-        orbits_info.orbit_corner_3rd_x     = g_orbit_corner.m_3rd.x;
-        orbits_info.orbit_corner_3rd_y     = g_orbit_corner.m_3rd.y;
+        orbits_info.orbit_corner_min_x = g_orbit_corner.m_min.x;
+        orbits_info.orbit_corner_max_x = g_orbit_corner.m_max.x;
+        orbits_info.orbit_corner_min_y = g_orbit_corner.m_min.y;
+        orbits_info.orbit_corner_max_y = g_orbit_corner.m_max.y;
+        orbits_info.orbit_corner_3rd_x = g_orbit_corner.m_3rd.x;
+        orbits_info.orbit_corner_3rd_y = g_orbit_corner.m_3rd.y;
         orbits_info.keep_screen_coords = static_cast<std::int16_t>(g_keep_screen_coords);
         orbits_info.draw_mode = static_cast<char>(g_draw_mode);
-        encode_orbits_info(orbits_info);
-        // orbits info block, 007
-        save_info.tot_extend_len += extend_blk_len(sizeof(orbits_info));
-        if (!put_extend_blk(7, sizeof(orbits_info), reinterpret_cast<char *>(&orbits_info)))
+        put_orbits_info(&extensions, orbits_info);
+    }
+    std::int64_t length{extend_blk_len(GIF_EXTENSION1_FRACTAL_INFO_LENGTH)};
+    for (int i = 0; i < extensions.ExtensionBlockCount; ++i)
+    {
+        const ExtensionBlock &block{extensions.ExtensionBlocks[i]};
+        length += block.ByteCount + 1;
+        if (block.Function != CONTINUE_EXT_FUNC_CODE)
         {
-            goto oops;
+            length += 3;
         }
     }
-
-    // main and last block, 001
-    save_info.tot_extend_len += extend_blk_len(sizeof(FractalInfo));
-    encode_fractal_info(save_info);
-    if (!put_extend_blk(1, sizeof(FractalInfo), reinterpret_cast<char *>(&save_info)))
+    if (length > std::numeric_limits<std::int32_t>::max())
     {
-        goto oops;
+        throw std::logic_error("Image extensions exceed the saved length field");
     }
-
-    if (std::fputs(";", s_outfile) < 0)
-    {
-        goto oops;                // GIF Terminator
-    }
-
-    return interrupted;
-
-oops:
-    {
-        fflush(s_outfile);
-        stop_msg("Error Writing to disk (Disk full?)");
-        return true;
-    }
+    save_info.tot_extend_len = static_cast<std::int32_t>(length);
+    put_fractal_info(&extensions, save_info);
 }
 
+bool encoder(GifWriter &writer, const std::filesystem::path &filename)
+{
+    if (writer.error() != 0)
+    {
+        return writer.finish();
+    }
+    std::unique_ptr<GifFileType, void (*)(GifFileType *)> extensions{new GifFileType{}, [](GifFileType *gif)
+        {
+            GifFreeExtensions(&gif->ExtensionBlockCount, &gif->ExtensionBlocks);
+            delete gif;
+        }};
+    setup_save_extensions(*extensions);
+    SaveImageProgress progress{filename};
+    std::vector<Byte> pixels(g_logical_screen.x_dots);
+    bool saved{true};
+    for (int row = 0; row < g_logical_screen.y_dots && saved; ++row)
+    {
+        for (int col = 0; col < g_logical_screen.x_dots; ++col)
+        {
+            pixels[col] = static_cast<Byte>(get_color(col, row));
+        }
+        saved = writer.write_pixels(pixels);
+        if (saved && g_disk_16_bit)
+        {
+            for (int col = 0; col < g_logical_screen.x_dots; ++col)
+            {
+                pixels[col] = static_cast<Byte>(disk_read_pixel(
+                    col + g_logical_screen.x_offset, row + g_logical_screen.y_dots + g_logical_screen.y_offset));
+            }
+            saved = writer.write_pixels(pixels);
+        }
+        if (saved)
+        {
+            progress.advance(row);
+        }
+    }
+    if (saved)
+    {
+        saved = writer.write_extensions(*extensions);
+    }
+    const bool finished{writer.finish()};
+    return saved && finished;
+}
+
+// TODO: removed later
 // shift IBM colors to GIF
 static int shift_write(const Byte *color, const int num_colors)
 {
@@ -763,7 +510,7 @@ static int put_extend_blk(const int block_id, int block_len, const char *block_d
     return 1;
 }
 
-static int store_item_name(const std::string_view name)
+static void store_item_name(GifFileType &extensions, const std::string_view name)
 {
     FormulaInfo formula_info{};
     const std::size_t name_len{std::min(name.size(), std::size(formula_info.form_name) - 1)};
@@ -778,20 +525,7 @@ static int store_item_name(const std::string_view name)
         formula_info.uses_ismand = static_cast<std::int16_t>(g_formula.uses_ismand);
         formula_info.ismand = static_cast<std::int16_t>(g_frm_is_mandelbrot);
     }
-    else
-    {
-        formula_info.uses_p1 = 0;
-        formula_info.uses_p2 = 0;
-        formula_info.uses_p3 = 0;
-        formula_info.uses_ismand = 0;
-        formula_info.ismand = 0;
-        formula_info.uses_p4 = 0;
-        formula_info.uses_p5 = 0;
-    }
-
-    // formula/lsys/ifs info block, 003
-    put_extend_blk(3, sizeof(formula_info), reinterpret_cast<char *>(&formula_info));
-    return extend_blk_len(sizeof(formula_info));
+    put_formula_info(&extensions, formula_info);
 }
 
 void setup_save_info(FractalInfo *save_info)
