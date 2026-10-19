@@ -90,6 +90,11 @@ output errors propagate to the owner.  An abandoned scope only mutes as
 a safety measure.  Normal completion and cancellation remain explicit so
 file-finalization failures can be reported outside a destructor.
 
+Atomic GIF controllers pass `SoundSession::InputPolicy::ATOMIC` to
+`wait_until_ready()` and `finish()`.  These calls service playback without
+polling input or acting on a calculation-interrupt flag.  Ordinary render
+controllers retain the default interruptible policy.
+
 ## SoundOutput Interface
 
 `SoundOutput` has a virtual destructor and a small output/lifecycle

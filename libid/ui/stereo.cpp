@@ -17,6 +17,7 @@
 #include "io/decoder.h"
 #include "io/encoder.h"
 #include "io/gifview.h"
+#include "ui/restore_image.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/find_special_colors.h"
@@ -396,7 +397,7 @@ static bool convert_stereo_image(const bool interactive)
             g_out_line = out_line_stereo;
             while (Y < g_logical_screen.y_dots)
             {
-                if (gif_view())
+                if (restore_image())
                 {
                     return true;
                 }

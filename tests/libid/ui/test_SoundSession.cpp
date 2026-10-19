@@ -262,6 +262,30 @@ TEST_F(TestSoundSession, completionDrainsReleaseTailsWithoutNewSamplesOrMuting)
     EXPECT_TRUE(session.finish());
 }
 
+TEST_F(TestSoundSession, atomicOutputWaitsAndFinishesWithoutPollingOrCancelling)
+{
+    set_calc_interrupted();
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    EXPECT_CALL(*m_output, mute()).Times(0);
+    InSequence sequence;
+    EXPECT_CALL(*m_output, update());
+    EXPECT_CALL(*m_output, ready()).WillOnce(Return(false));
+    EXPECT_CALL(m_driver, delay(1));
+    EXPECT_CALL(*m_output, update());
+    EXPECT_CALL(*m_output, ready()).WillOnce(Return(true));
+    EXPECT_CALL(*m_output, update());
+    EXPECT_CALL(*m_output, finish()).WillOnce(Return(false));
+    EXPECT_CALL(m_driver, delay(1));
+    EXPECT_CALL(*m_output, update());
+    EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
+    SoundSession session{m_output};
+
+    EXPECT_TRUE(session.wait_until_ready(SoundSession::InputPolicy::ATOMIC));
+    EXPECT_TRUE(session.finish(SoundSession::InputPolicy::ATOMIC));
+    EXPECT_TRUE(calc_interrupt_requested());
+}
+
 TEST_F(TestSoundSession, interruptionWhileWaitingUsesTheExistingKeyboardHandler)
 {
     InSequence sequence;

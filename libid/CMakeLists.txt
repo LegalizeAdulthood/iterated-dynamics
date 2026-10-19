@@ -269,6 +269,7 @@ add_library(libid
     include/ui/popcorn.h ui/popcorn.cpp
     include/ui/put_string_center.h ui/put_string_center.cpp
     include/ui/read_ticker.h ui/read_ticker.cpp
+    include/ui/restore_image.h ui/restore_image.cpp
     include/ui/rotate.h ui/rotate.cpp
     include/ui/SaveImageProgress.h ui/SaveImageProgress.cpp
     include/ui/select_video_mode.h ui/select_video_mode.cpp

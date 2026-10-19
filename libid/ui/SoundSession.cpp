@@ -53,7 +53,7 @@ SoundSession::~SoundSession()
     }
 }
 
-bool SoundSession::wait_until_ready()
+bool SoundSession::wait_until_ready(const InputPolicy input)
 {
     if (m_state == State::CANCELLED)
     {
@@ -63,7 +63,7 @@ bool SoundSession::wait_until_ready()
     {
         throw std::logic_error("Sound session is finished");
     }
-    if (calc_interrupt_requested())
+    if (input == InputPolicy::INTERRUPTIBLE && calc_interrupt_requested())
     {
         cancel();
         return false;
@@ -72,7 +72,7 @@ bool SoundSession::wait_until_ready()
     m_sound->update();
     while (!m_sound->ready())
     {
-        if (!wait())
+        if (!wait(input))
         {
             return false;
         }
@@ -81,13 +81,13 @@ bool SoundSession::wait_until_ready()
     return true;
 }
 
-bool SoundSession::finish()
+bool SoundSession::finish(const InputPolicy input)
 {
     if (m_state != State::ACTIVE)
     {
         return m_state == State::FINISHED;
     }
-    if (calc_interrupt_requested())
+    if (input == InputPolicy::INTERRUPTIBLE && calc_interrupt_requested())
     {
         cancel();
         return false;
@@ -109,7 +109,7 @@ bool SoundSession::finish()
             m_state = State::CANCELLED;
             throw;
         }
-        if (!wait())
+        if (!wait(input))
         {
             return false;
         }
@@ -129,15 +129,15 @@ void SoundSession::cancel()
     }
 }
 
-bool SoundSession::wait()
+bool SoundSession::wait(const InputPolicy input)
 {
-    if (calc_interrupted())
+    if (input == InputPolicy::INTERRUPTIBLE && calc_interrupted())
     {
         cancel();
         return false;
     }
     driver_delay(1);
-    if (calc_interrupt_requested())
+    if (input == InputPolicy::INTERRUPTIBLE && calc_interrupt_requested())
     {
         cancel();
         return false;

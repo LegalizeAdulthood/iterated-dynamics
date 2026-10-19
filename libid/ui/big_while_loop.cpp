@@ -37,6 +37,7 @@
 #include "ui/main_menu.h"
 #include "ui/main_menu_switch.h"
 #include "ui/mouse.h"
+#include "ui/restore_image.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
@@ -540,16 +541,11 @@ MainState big_while_loop(MainContext &context)
                 }
                 g_out_line = pot_line;
             }
-            else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP &&
-                g_evolving == EvolutionModeFlags::NONE) // regular gif/fra input file
-            {
-                g_out_line = sound_line;      // sound decoding
-            }
             else
             {
                 g_out_line = out_line;        // regular decoding
             }
-            i = funny_glasses_call(gif_view);
+            i = funny_glasses_call(restore_image);
             if (g_out_line_cleanup)              // cleanup routine defined?
             {
                 g_out_line_cleanup();

@@ -34,9 +34,6 @@ public:
         return m_column;
     }
 
-    // TODO: removed later
-    Byte pending_color() const;
-
 private:
     int m_width;
     int m_row;

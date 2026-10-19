@@ -13,6 +13,12 @@ namespace id::ui
 class SoundSession
 {
 public:
+    enum class InputPolicy
+    {
+        INTERRUPTIBLE,
+        ATOMIC,
+    };
+
     explicit SoundSession(DriverSoundOutput::Source source);
     explicit SoundSession(engine::SoundOutputPtr sound);
     ~SoundSession();
@@ -22,9 +28,9 @@ public:
     SoundSession &operator=(const SoundSession &) = delete;
     SoundSession &operator=(SoundSession &&) = delete;
 
-    bool wait_until_ready();
+    bool wait_until_ready(InputPolicy input = InputPolicy::INTERRUPTIBLE);
     // Drain playback normally; return false if input interrupts completion.
-    bool finish();
+    bool finish(InputPolicy input = InputPolicy::INTERRUPTIBLE);
     void cancel();
 
 private:
@@ -35,7 +41,7 @@ private:
         CANCELLED,
     };
 
-    bool wait();
+    bool wait(InputPolicy input);
 
     engine::SoundOutputPtr m_sound;
     misc::ValueSaver<engine::SoundOutputPtr> m_saved_sound;

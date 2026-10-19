@@ -14,13 +14,13 @@
 #include <engine/sound.h>
 #include <engine/spindac.h>
 #include <engine/VideoInfo.h>
-#include <engine/wait_until.h>
 #include <fractals/lorenz.h>
 #include <io/decoder.h>
 #include <io/gifview.h>
 #include <misc/Driver.h>
 #include <misc/ValueSaver.h>
 #include <ui/slideshw.h>
+#include <ui/restore_image.h>
 #include <ui/video.h>
 
 #include <gif_lib.h>
@@ -184,7 +184,7 @@ TEST_P(TestGifViewLineWidth, positiveCallbackResultPreservesFullWidthAndSuccessf
     EXPECT_CALL(driver, key_pressed()).Times(0);
     EXPECT_CALL(driver, get_key()).Times(0);
 
-    EXPECT_EQ(0, gif_view());
+    EXPECT_EQ(0, restore_image());
 
     ASSERT_EQ(1, s_line_lengths.size());
     EXPECT_EQ(width, s_line_lengths[0]);
@@ -218,7 +218,7 @@ TEST_P(TestGifViewLineWidth, callbackFailureClosesFileAndClearsBusyState)
     ValueSaver saved_busy{g_busy, false};
     EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
 
-    EXPECT_EQ(-73, gif_view());
+    EXPECT_EQ(-73, restore_image());
 
     EXPECT_FALSE(g_busy);
     EXPECT_TRUE(std::filesystem::remove(gif.path()));
@@ -239,7 +239,8 @@ TEST_P(TestGifViewSound, restoresDecodedPixelsAcrossDisplayRowsWithoutPollingInp
     MockDriver driver;
     ValueSaver<Driver *> saved_driver{g_driver, &driver};
     ValueSaver saved_read_filename{g_read_filename, gif.path()};
-    ValueSaver<decltype(g_out_line)> saved_out_line{g_out_line, sound_line};
+    ValueSaver<decltype(g_out_line)> saved_out_line{g_out_line, out_line};
+    ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_X};
     ValueSaver<decltype(g_put_color)> saved_put_color{g_put_color, capture_sound_pixel};
     ValueSaver saved_screen{g_logical_screen, LogicalScreen{4, 2, 0, 0, 3.0, 1.0}};
     ValueSaver saved_row_count{g_row_count};
@@ -254,26 +255,25 @@ TEST_P(TestGifViewSound, restoresDecodedPixelsAcrossDisplayRowsWithoutPollingInp
     ValueSaver saved_skip_y_dots{g_skip_y_dots, 0};
     ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
     ValueSaver saved_busy{g_busy, false};
-    ValueSaver saved_orbit_delay{g_orbit_delay, 20};
+    ValueSaver saved_orbit_delay{g_orbit_delay, 0};
     ValueSaver saved_orbit_flags{g_orbit_save_flags, 0};
     ValueSaver saved_base_hertz{g_base_hertz, 220};
     s_sound_pixels.clear();
-    reset_wait_until();
     EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
     EXPECT_CALL(driver, sound_on(220)).Times(8).WillRepeatedly(Return(supported));
-    EXPECT_CALL(driver, mute()).Times(1);
+    EXPECT_CALL(driver, sound_off()).Times(supported ? 8 : 0);
+    EXPECT_CALL(driver, mute()).Times(0);
     EXPECT_CALL(driver, delay(_)).Times(0);
     ON_CALL(driver, key_pressed()).WillByDefault(Return('x'));
     EXPECT_CALL(driver, key_pressed()).Times(0);
     EXPECT_CALL(driver, get_key()).Times(0);
 
-    EXPECT_EQ(0, gif_view());
+    EXPECT_EQ(0, restore_image());
 
     const std::vector<std::array<int, 3>> expected{
         {0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {3, 0, 0}, {0, 1, 0}, {1, 1, 0}, {2, 1, 0}, {3, 1, 0}};
     EXPECT_EQ(expected, s_sound_pixels);
     EXPECT_EQ(2, g_row_count);
-    reset_wait_until();
 }
 
 INSTANTIATE_TEST_SUITE_P(DriverSound, TestGifViewSound, Bool());
@@ -320,7 +320,7 @@ TEST_P(TestGifViewMigs, reducesImageOffsetsAlongTheirOwnAxisWithoutPollingInput)
         EXPECT_CALL(driver, write_pixel(col, top, 0));
     }
 
-    EXPECT_EQ(0, gif_view());
+    EXPECT_EQ(0, restore_image());
 
     EXPECT_EQ(1, g_row_count);
     set_null_video();

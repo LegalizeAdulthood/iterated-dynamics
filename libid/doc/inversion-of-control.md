@@ -205,6 +205,12 @@ The current code is already part-way through this plan:
   `g_sound`.  Their UI controllers service playback, finish normal
   output, and mute on interruption.  Pending points retain calculation
   state without changing ready-output polling cadence.
+- `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
+  through `SoundSession` with atomic input policy.  `RestoredImageOutput`
+  submits each pixel value through `g_sound`, retaining refused pixels
+  and plotting accepted pixels once.  Each line's playback completes
+  before the next decode; loading and normal completion do not poll input
+  or mute.  Pixel helpers remain in `io/gifview.cpp`.
 
 The fresh reverse-call audit also found these live paths:
 
@@ -632,22 +638,14 @@ The remaining UI-concept leaks outside `libid/ui` are:
   display bridge that will be removed when show-dot presentation moves
   fully into the UI controller.
 - `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
-  state and closes legacy sound output for unconverted producers.
-- `libid/engine/sound.cpp`: owns speaker/file output, calls
-  `driver_sound_on()`, and waits through non-polling `wait_until()`.
-- `libid/io/gifview.cpp`: `sound_line()` still drains a whole decoded
-  line with `sleep_orbit_delay()`, `write_sound()`, and `driver_mute()`.
-  `RestoredImageOutput` owns the decoded bytes and cursor and plots one
-  pixel per step.  `GifRestore` owns a giflib handle and exposes decoded
-  scanlines without output callbacks.  `gif_view()` completes the whole
-  file through non-polling line callbacks, processing pixel/sound feedback
-  before requesting the next line.  The remaining sound-controller slice
-  moves playback coordination into UI without changing the atomic file
-  operation.
+  state and still calls `close_sound()` in common engine teardown.
+- `libid/engine/sound.cpp`: retains unused legacy speaker/file producers.
+  All producers now use the output port; the session-lifecycle and legacy
+  cleanup slices remove the remaining engine-owned sound paths.
 - `libid/engine/spindac.cpp`: includes palette rotation delay via
   `driver_delay()`.
-- `libid/engine/wait_until.cpp`: owns legacy sound-delay state without
-  polling input; sound-controller migration removes this wait.
+- `libid/engine/wait_until.cpp`: retains legacy delay helpers for unused
+  sound code; cleanup follows session-lifecycle migration.
 - `libid/fractals/Cellular.cpp`: starts, updates, and ends the thinking
   screen from generation, error, and suspend paths.
 - `libid/fractals/lsystem.cpp`: recursive sizing owns the thinking screen
@@ -745,51 +743,6 @@ If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
-
-### 13. Restored Image Sound Controller
-
-Source: scanlines from `GifRestore` and `RestoredImageOutput`.
-UI owner: the sound-restoration branch in `ui/big_while_loop.cpp`.
-
-Work:
-
-- Have the UI owner read one scanline, process its pixel/sound output,
-  then request the next until the entire GIF is loaded and closed.  Keep
-  the current line valid until its output completes; do not buffer the
-  full image or add a second playback traversal after file closure.
-- Submit the current line's pixel-value samples from
-  `RestoredImageOutput`.  Keep palette-index frequency mapping in the
-  adapter and the existing pixel order; scanline feedback does not mean
-  reducing a line to one tone.
-- Have UI advance pixel output as playback permits, servicing `update()`
-  while presenting and waiting.  Retain a refused pixel until accepted,
-  then plot it exactly once before advancing.  Keep sound waits outside
-  the codec and pixel-output operation.
-- Complete this scanline loop without keyboard polling, key consumption,
-  or dispatch, including while waiting for sound readiness.  The file can
-  remain open during sound feedback; loading is still one atomic command
-  with respect to input.  Finish with normal release, not mute.
-- Remove `RestoredImageOutput::pending_color()` and the temporary pixel
-  drains from the sound path, plus `sleep_orbit_delay()`, `write_sound()`,
-  and direct mute calls.  Submit the retained pixel's sample inside
-  `RestoredImageOutput::iterate()` before plotting it.
-  Keep any remaining UI-ownership compatibility paths separate from the
-  permanent atomic file operation.
-
-Done when:
-
-- Sound restoration processes each decoded scanline while loading, with
-  plotting and sound coordinated and refused pixels retained until
-  accepted.  The codec and pixel-output operation do not wait on playback;
-  their UI owner does not poll input during the atomic load.
-
-Validation: cover sample refusal, line continuation, read/output failure,
-and legacy sound-file records with fake-port/controller tests.  Verify
-each line's pixel/sound output completes before the next decode, no
-sample or plot is repeated, and pending input neither interrupts loading
-nor is consumed.  Exercise sound-restore selection through its UI entry
-as well as the traversal object.  Do not repeat image-restoration tests
-manually.
 
 ### 14. Sound Session Lifecycle Ownership
 

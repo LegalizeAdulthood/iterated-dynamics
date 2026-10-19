@@ -6,6 +6,7 @@
 #include <engine/LogicalScreen.h>
 #include <engine/OrbitPlot.h>
 #include <engine/sound.h>
+#include <engine/SoundOutput.h>
 #include <engine/VideoInfo.h>
 #include <fractals/lorenz.h>
 #include <io/gifview.h>
@@ -17,6 +18,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <memory>
 #include <stdexcept>
 #include <vector>
 
@@ -33,6 +35,17 @@ namespace id::test
 
 namespace
 {
+
+class MockRestoredSound : public SoundOutput
+{
+public:
+    MOCK_METHOD(bool, play, (const SoundSample &), (override));
+    MOCK_METHOD(void, update, (), (override));
+    MOCK_METHOD(bool, ready, (), (const, override));
+    MOCK_METHOD(void, begin_orbit, (), (override));
+    MOCK_METHOD(void, mute, (), (override));
+    MOCK_METHOD(bool, finish, (), (override));
+};
 
 std::vector<std::array<int, 3>> s_pixels;
 
@@ -51,6 +64,8 @@ protected:
     void drain(RestoredImageOutput &output);
 
     MockDriver m_driver;
+    std::shared_ptr<StrictMock<MockRestoredSound>> m_sound{std::make_shared<StrictMock<MockRestoredSound>>()};
+    ValueSaver<SoundOutputPtr> m_saved_sound{g_sound, m_sound};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, capture_restored_pixel};
     ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen, LogicalScreen{4, 4, 0, 0, 3.0, 3.0}};
@@ -64,6 +79,7 @@ protected:
 void TestRestoredImageOutput::SetUp()
 {
     s_pixels.clear();
+    EXPECT_CALL(*m_sound, play(_)).WillRepeatedly(Return(true));
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, sound_on(_)).Times(0);
     EXPECT_CALL(m_driver, mute()).Times(0);
@@ -95,8 +111,6 @@ TEST_F(TestRestoredImageOutput, iterationCommitsExactlyOnePixel)
     output.set_line(pixels, 3);
 
     EXPECT_FALSE(output.done());
-    EXPECT_EQ(3, output.pending_color());
-    EXPECT_EQ(3, output.pending_color());
     EXPECT_TRUE(s_pixels.empty());
     output.iterate();
 
@@ -105,13 +119,11 @@ TEST_F(TestRestoredImageOutput, iterationCommitsExactlyOnePixel)
     EXPECT_FALSE(output.done());
     EXPECT_EQ(0, output.row());
     EXPECT_EQ(1, output.column());
-    EXPECT_EQ(5, output.pending_color());
     drain(output);
     EXPECT_TRUE(output.done());
     EXPECT_EQ(3, output.column());
     output.iterate();
     EXPECT_EQ(3U, s_pixels.size());
-    EXPECT_THROW(output.pending_color(), std::logic_error);
 }
 
 TEST_F(TestRestoredImageOutput, ownsPixelsAfterCallerReusesAndReleasesBuffer)
@@ -237,46 +249,62 @@ TEST_F(TestRestoredImageOutput, instancesKeepIndependentBuffersAndPositions)
     EXPECT_EQ(6, second.row());
 }
 
-TEST_F(TestRestoredImageOutput, legacySoundCallbackPreservesWrappingMappingAndOrder)
+TEST_F(TestRestoredImageOutput, refusalRetainsThePixelAndItsPositionUntilAccepted)
 {
-    g_row_count = 5;
-    std::vector<int> tones;
-    EXPECT_CALL(m_driver, sound_on(_))
-        .WillRepeatedly(Invoke(
-            [&tones](int tone)
-            {
-                EXPECT_EQ(tones.size() + 1, s_pixels.size());
-                EXPECT_EQ(s_pixels.back()[2] * 3000 / g_colors + g_base_hertz, tone);
-                tones.push_back(tone);
-                return false;
-            }));
-    EXPECT_CALL(m_driver, mute()).Times(2);
-    Byte first[]{1, 2, 3, 4, 5, 6};
-    Byte second[]{7, 8, 9, 10, 11, 12};
+    RestoredImageOutput output{4, 2, 1};
+    const Byte pixels[]{3, 5};
+    output.set_line(pixels, 2);
+    EXPECT_CALL(*m_sound, play(FieldsAre(3.0, 0.0, 0.0)))
+        .WillOnce(Return(false))
+        .WillOnce(Return(false))
+        .WillOnce(Return(true));
+    EXPECT_CALL(*m_sound, play(FieldsAre(5.0, 0.0, 0.0))).WillOnce(Return(true));
 
-    EXPECT_EQ(0, sound_line(first, 6));
-    EXPECT_EQ(6, g_row_count);
-    EXPECT_EQ(0, sound_line(second, 6));
-
-    std::vector<std::array<int, 3>> expected;
-    for (int i = 0; i < 12; ++i)
-    {
-        expected.push_back({i % 4, 5 + i / 4, i + 1});
-    }
-    EXPECT_EQ(expected, s_pixels);
-    EXPECT_EQ(12U, tones.size());
-    EXPECT_EQ(8, g_row_count);
-}
-
-TEST_F(TestRestoredImageOutput, legacyEmptyLineDoesNotPlotOrAdvance)
-{
-    g_row_count = 3;
-    EXPECT_CALL(m_driver, mute()).Times(1);
-
-    EXPECT_EQ(0, sound_line(nullptr, 0));
+    output.iterate();
+    output.iterate();
 
     EXPECT_TRUE(s_pixels.empty());
-    EXPECT_EQ(3, g_row_count);
+    EXPECT_EQ(2, output.row());
+    EXPECT_EQ(1, output.column());
+    EXPECT_FALSE(output.done());
+    drain(output);
+    EXPECT_THAT(s_pixels, ElementsAre(std::array{1, 2, 3}, std::array{2, 2, 5}));
+}
+
+TEST_F(TestRestoredImageOutput, acceptsEachSampleBeforePlottingWithoutServicingPlayback)
+{
+    RestoredImageOutput output{4};
+    const Byte pixels[]{3, 5};
+    output.set_line(pixels, 2);
+    int samples{};
+    EXPECT_CALL(*m_sound, play(_))
+        .WillRepeatedly(
+            [&samples](const SoundSample &sample)
+            {
+                EXPECT_EQ(samples, s_pixels.size());
+                EXPECT_EQ(samples == 0 ? 3.0 : 5.0, sample.x);
+                ++samples;
+                return true;
+            });
+
+    drain(output);
+
+    EXPECT_EQ(2, samples);
+    EXPECT_EQ(2U, s_pixels.size());
+}
+
+TEST_F(TestRestoredImageOutput, soundFailureDoesNotAdvanceOrPlotThePendingPixel)
+{
+    RestoredImageOutput output{4};
+    const Byte pixels[]{3};
+    output.set_line(pixels, 1);
+    EXPECT_CALL(*m_sound, play(_)).WillOnce(Throw(std::runtime_error("Sound output failed")));
+
+    EXPECT_THROW(output.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(s_pixels.empty());
+    EXPECT_EQ(0, output.column());
+    EXPECT_FALSE(output.done());
 }
 
 } // namespace id::test

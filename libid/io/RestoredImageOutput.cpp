@@ -3,6 +3,7 @@
 #include "io/RestoredImageOutput.h"
 
 #include "engine/calcfrac.h"
+#include "engine/SoundOutput.h"
 
 #include <stdexcept>
 
@@ -49,23 +50,18 @@ void RestoredImageOutput::iterate()
     {
         return;
     }
-    g_put_color(m_column, m_row, m_pixels[m_offset]);
+    const Byte color{m_pixels[m_offset]};
+    if (!g_sound->play({static_cast<double>(color)}))
+    {
+        return;
+    }
+    g_put_color(m_column, m_row, color);
     ++m_offset;
     if (++m_column == m_width)
     {
         m_column = 0;
         ++m_row;
     }
-}
-
-// TODO: removed later
-Byte RestoredImageOutput::pending_color() const
-{
-    if (done())
-    {
-        throw std::logic_error("Restored-image output has no pending pixel");
-    }
-    return m_pixels[m_offset];
 }
 
 } // namespace id::io
