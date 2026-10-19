@@ -127,6 +127,7 @@ add_executable(test-id
     ui/test_main_menu_switch.cpp
     ui/test_make_batch_file.cpp
     ui/test_Orbit2DSound.cpp
+    ui/test_Orbit3DSound.cpp
     ui/test_OverlaySound.cpp
     ui/test_passes_options.cpp
     ui/test_slideshw.cpp

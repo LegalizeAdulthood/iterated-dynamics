@@ -1100,88 +1100,96 @@ Orbit3D::~Orbit3D()
         std::fclose(m_fp);
         m_fp = nullptr;
     }
-    driver_mute();
 }
 
 // loop until unbounded or max count
 bool Orbit3D::done() const
 {
-    return m_unbounded || g_color_iter > g_max_count;
+    return !m_point_pending && (m_unbounded || g_color_iter > g_max_count);
 }
 
 void Orbit3D::iterate()
 {
-    ++g_color_iter;
-
-    // calc goes here
-    if (++m_count > 1000)
+    if (done())
     {
-        // time to switch colors?
-        m_count = 0;
-        if (++m_color >= g_colors) // another color to switch to?
+        return;
+    }
+    if (!m_point_pending)
+    {
+        ++g_color_iter;
+        if (++m_count > 1000)
         {
-            m_color = 1;           // (don't use the background color)
+            // time to switch colors?
+            m_count = 0;
+            if (++m_color >= g_colors) // another color to switch to?
+            {
+                m_color = 1;           // (don't use the background color)
+            }
+        }
+
+        orbit(&m_inf.orbit[0], &m_inf.orbit[1], &m_inf.orbit[2]);
+        if (m_fp)
+        {
+            fmt::print(m_fp, "{:g} {:g} {:g} 15\n", m_inf.orbit[0], m_inf.orbit[1], m_inf.orbit[2]);
+        }
+        if (!float_view_transf3d(&m_inf))
+        {
+            return;
+        }
+        m_point_pending = true;
+    }
+
+    // plot if inside window
+    if (m_inf.col >= 0)
+    {
+        if (s_real_time)
+        {
+            g_which_image = StereoImage::RED;
+        }
+        if (!g_sound->play({m_inf.view_vect[0], m_inf.view_vect[1], m_inf.view_vect[2]}))
+        {
+            return;
+        }
+        if (m_old_col != -1 && s_connect)
+        {
+            driver_draw_line(m_inf.col, m_inf.row, m_old_col, m_old_row, m_color % g_colors);
+        }
+        else
+        {
+            g_plot(m_inf.col, m_inf.row, m_color % g_colors);
         }
     }
-
-    orbit(&m_inf.orbit[0], &m_inf.orbit[1], &m_inf.orbit[2]);
-    if (m_fp)
+    else if (m_inf.col == -2)
     {
-        fmt::print(m_fp, "{:g} {:g} {:g} 15\n", m_inf.orbit[0], m_inf.orbit[1], m_inf.orbit[2]);
+        m_point_pending = false;
+        m_unbounded = true;
+        return;
     }
-    if (float_view_transf3d(&m_inf))
+    m_old_col = m_inf.col;
+    m_old_row = m_inf.row;
+    m_point_pending = false;
+    if (s_real_time)
     {
+        g_which_image = StereoImage::BLUE;
         // plot if inside window
-        if (m_inf.col >= 0)
+        if (m_inf.col1 >= 0)
         {
-            if (s_real_time)
+            if (m_old_col1 != -1 && s_connect)
             {
-                g_which_image = StereoImage::RED;
-            }
-            if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
-            {
-                write_sound(static_cast<int>(
-                    m_inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBIT_MASK) - SOUNDFLAG_X)] * 100 + g_base_hertz));
-            }
-            if (m_old_col != -1 && s_connect)
-            {
-                driver_draw_line(m_inf.col, m_inf.row, m_old_col, m_old_row, m_color % g_colors);
+                driver_draw_line(m_inf.col1, m_inf.row1, m_old_col1, m_old_row1, m_color % g_colors);
             }
             else
             {
-                g_plot(m_inf.col, m_inf.row, m_color % g_colors);
+                g_plot(m_inf.col1, m_inf.row1, m_color % g_colors);
             }
         }
-        else if (m_inf.col == -2)
+        else if (m_inf.col1 == -2)
         {
             m_unbounded = true;
             return;
         }
-        m_old_col = m_inf.col;
-        m_old_row = m_inf.row;
-        if (s_real_time)
-        {
-            g_which_image = StereoImage::BLUE;
-            // plot if inside window
-            if (m_inf.col1 >= 0)
-            {
-                if (m_old_col1 != -1 && s_connect)
-                {
-                    driver_draw_line(m_inf.col1, m_inf.row1, m_old_col1, m_old_row1, m_color % g_colors);
-                }
-                else
-                {
-                    g_plot(m_inf.col1, m_inf.row1, m_color % g_colors);
-                }
-            }
-            else if (m_inf.col1 == -2)
-            {
-                m_unbounded = true;
-                return;
-            }
-            m_old_col1 = m_inf.col1;
-            m_old_row1 = m_inf.row1;
-        }
+        m_old_col1 = m_inf.col1;
+        m_old_row1 = m_inf.row1;
     }
 }
 

@@ -589,10 +589,10 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - `libid/engine/sound.cpp`: owns speaker/file output, calls
   `driver_sound_on()`, waits through `wait_until()`, and accepts an
   input-pending callback.
-- `libid/fractals/lorenz.cpp`: `Orbit3D` and `Dynamic2D` call
-  `write_sound()` directly from rendering iteration and `driver_mute()`
-  from their lifecycle methods.  `Orbit2D` now submits numerical samples
-  through `g_sound`; its UI controller owns release and interruption.
+- `libid/fractals/lorenz.cpp`: `Dynamic2D` calls `write_sound()` from
+  rendering iteration and `driver_mute()` from its lifecycle methods.
+  `Orbit2D` and `Orbit3D` submit numerical samples through `g_sound`;
+  their UI controllers own release and interruption.
 - `libid/io/gifview.cpp`: `put_sound_line()` plots a whole decoded line
   while calling `sleep_orbit_delay()` and `write_sound()`;
   `sound_line()` also calls `driver_mute()`.  Decoder and file traversal
@@ -697,30 +697,6 @@ If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
-
-### 7. Orbit3D Sound Port
-
-Source: `Orbit3D` in `fractals/lorenz.cpp`; UI owner: `ui/orbit3d.cpp`.
-
-Work:
-
-- Submit transformed numerical orbit values to the supplied port instead
-  of computing tones or calling `write_sound()`.
-- Preserve projection and stereo eye ordering when a sample is refused;
-  do not recompute an orbit or draw one eye twice on continuation.
-- Move mute decisions to UI.  Service normal release/completion with
-  `update()` instead of muting on completion; mute on interruption.
-  Do not combine this with the later stereo-photographer refactor.
-
-Done when:
-
-- `Orbit3D` outputs through the port with correct stereo continuation
-  and no device calls or playback waiting in calculation code.
-
-Validation: cover transformed sample values, eye ordering, refusal,
-completion, and interruption with fake-port controller tests.  Use
-existing image coverage for output; automate stereo sequencing in its
-own slice.  No manual test required.
 
 ### 8. Dynamic Orbit Sound Port
 

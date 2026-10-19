@@ -174,6 +174,7 @@ private:
     int m_old_col{-1};
     int m_old_row1{-1};
     int m_old_col1{-1};
+    bool m_point_pending{};
     bool m_unbounded{};
 };
 
