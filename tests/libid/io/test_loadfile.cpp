@@ -3,6 +3,7 @@
 #include <io/loadfile.h>
 
 #include "MockDriver.h"
+#include "test_data.h"
 #include "test_migrate_gif.h"
 
 #include <engine/calc_frac_init.h>
@@ -16,6 +17,7 @@
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
 #include <io/gif_extensions.h>
+#include <io/gif_file.h>
 #include <misc/ValueSaver.h>
 #include <ui/big_while_loop.h>
 #include <ui/get_video_mode.h>
@@ -23,11 +25,15 @@
 #include <ui/id_keys.h>
 #include <ui/make_batch_file.h>
 
+#include <gif_lib.h>
 #include <gtest/gtest.h>
 
 #include <array>
 #include <filesystem>
 #include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -35,6 +41,7 @@ using namespace id::io;
 using namespace id::misc;
 using namespace id::misc::test;
 using namespace id::test::migrate_gif;
+using namespace id::test::data;
 using namespace id::ui;
 using namespace testing;
 
@@ -86,6 +93,14 @@ static std::array<Byte, 13> make_gif_header(const int width, const int height)
     header[8] = static_cast<Byte>(height & 0xff);
     header[9] = static_cast<Byte>(height >> 8);
     return header;
+}
+
+static void check_gif_write(const int result)
+{
+    if (result == GIF_ERROR)
+    {
+        throw std::runtime_error("Can't write metadata test input");
+    }
 }
 
 TEST(TestBackwardsLegacyV20, oldMandelOutsideRealSetsBadOutside)
@@ -240,41 +255,269 @@ TEST(TestGifScreenDimensions, rejectsZeroHeight)
     EXPECT_FALSE(read_gif_screen_dimensions(header.data(), width, height));
 }
 
-TEST(TestGetVideoMode, reducesLargeGifView)
+class TestGetVideoMode : public Test
 {
-    ValueSaver saved_init_mode{g_init_mode};
-    ValueSaver saved_init_batch{g_init_batch, BatchMode::NORMAL};
-    ValueSaver saved_ask_video{g_ask_video, false};
-    ValueSaver saved_make_parameter_file{g_make_parameter_file, false};
-    ValueSaver saved_fast_restore{g_fast_restore, false};
-    ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
-    ValueSaver saved_viewport{g_viewport, Viewport{}};
-    ValueSaver saved_video_entry{g_video_entry};
-    ValueSaver saved_video_table_len{g_video_table_len, 1};
-    ValueSaver saved_video_key{g_video_table[0].key, ID_KEY_F2};
-    ValueSaver saved_video_width{g_video_table[0].x_dots, 800};
-    ValueSaver saved_video_height{g_video_table[0].y_dots, 600};
-    ValueSaver saved_video_colors{g_video_table[0].colors, 256};
-    ValueSaver saved_video_driver{g_video_table[0].driver, static_cast<Driver *>(nullptr)};
-    ValueSaver saved_file_x_dots{g_file_x_dots, 65535};
-    ValueSaver saved_file_y_dots{g_file_y_dots, 65535};
-    ValueSaver saved_file_colors{g_file_colors, 256};
-    ValueSaver saved_file_aspect_ratio{g_file_aspect_ratio, 0.0f};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75f};
-    ValueSaver saved_skip_x_dots{g_skip_x_dots, 0};
-    ValueSaver saved_skip_y_dots{g_skip_y_dots, 0};
-    FractalInfo info{};
-    info.x_dots = 800;
-    info.y_dots = 600;
-    info.colors = 256;
-    ExtBlock3 block_3_info{};
+protected:
+    void SetUp() override;
 
-    EXPECT_EQ(0, get_video_mode(&info, &block_3_info));
+    ValueSaver<int> saved_init_mode{g_init_mode};
+    ValueSaver<BatchMode> saved_init_batch{g_init_batch, BatchMode::NORMAL};
+    ValueSaver<bool> saved_ask_video{g_ask_video, false};
+    ValueSaver<bool> saved_make_parameter_file{g_make_parameter_file, false};
+    ValueSaver<bool> saved_fast_restore{g_fast_restore, false};
+    ValueSaver<CalcStatus> saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
+    ValueSaver<Viewport> saved_viewport{g_viewport, Viewport{}};
+    ValueSaver<VideoInfo> saved_video_entry{g_video_entry};
+    ValueSaver<int> saved_video_table_len{g_video_table_len, 1};
+    ValueSaver<VideoInfo> saved_video_mode{g_video_table[0]};
+    ValueSaver<int> saved_file_x_dots{g_file_x_dots, 65535};
+    ValueSaver<int> saved_file_y_dots{g_file_y_dots, 65535};
+    ValueSaver<int> saved_file_colors{g_file_colors, 256};
+    ValueSaver<float> saved_file_aspect_ratio{g_file_aspect_ratio, 0.0f};
+    ValueSaver<float> saved_screen_aspect{g_screen_aspect, 0.75f};
+    ValueSaver<int> saved_skip_x_dots{g_skip_x_dots, 0};
+    ValueSaver<int> saved_skip_y_dots{g_skip_y_dots, 0};
+    FractalInfo m_info{};
+    ExtBlock3 m_block_3_info{};
+};
+
+void TestGetVideoMode::SetUp()
+{
+    g_video_table[0].key = ID_KEY_F2;
+    g_video_table[0].x_dots = 800;
+    g_video_table[0].y_dots = 600;
+    g_video_table[0].colors = 256;
+    g_video_table[0].driver = nullptr;
+    m_info.x_dots = 800;
+    m_info.y_dots = 600;
+    m_info.colors = 256;
+}
+
+TEST_F(TestGetVideoMode, reducesLargeGifView)
+{
+    EXPECT_EQ(0, get_video_mode(&m_info, &m_block_3_info));
 
     EXPECT_EQ(596, g_file_x_dots);
     EXPECT_EQ(596, g_file_y_dots);
     EXPECT_EQ(109, g_skip_x_dots);
     EXPECT_EQ(109, g_skip_y_dots);
+}
+
+TEST_F(TestGetVideoMode, fitsOversizedGifWithUnequalSkipFactors)
+{
+    g_file_x_dots = 1600;
+    g_file_y_dots = 1800;
+    g_file_aspect_ratio = 0.75f;
+    g_calc_status = CalcStatus::RESUMABLE;
+
+    ASSERT_EQ(0, get_video_mode(&m_info, &m_block_3_info));
+
+    EXPECT_EQ(800, g_file_x_dots);
+    EXPECT_EQ(600, g_file_y_dots);
+    EXPECT_EQ(1, g_skip_x_dots);
+    EXPECT_EQ(2, g_skip_y_dots);
+    EXPECT_EQ(CalcStatus::PARAMS_CHANGED, g_calc_status);
+}
+
+TEST_F(TestGetVideoMode, reducesMatchingGifIntoExplicitViewWindow)
+{
+    g_file_x_dots = 800;
+    g_file_y_dots = 600;
+    g_viewport.enabled = true;
+    g_viewport.x_dots = 200;
+    g_calc_status = CalcStatus::RESUMABLE;
+
+    ASSERT_EQ(0, get_video_mode(&m_info, &m_block_3_info));
+
+    EXPECT_TRUE(g_viewport.enabled);
+    EXPECT_FLOAT_EQ(4.0f, g_viewport.reduction);
+    EXPECT_EQ(0, g_viewport.x_dots);
+    EXPECT_EQ(0, g_viewport.y_dots);
+    EXPECT_EQ(3, g_skip_x_dots);
+    EXPECT_EQ(3, g_skip_y_dots);
+    EXPECT_EQ(CalcStatus::PARAMS_CHANGED, g_calc_status);
+}
+
+class TestFindFractalInfo : public Test
+{
+protected:
+    std::filesystem::path write_file(bool legacy_formula);
+    bool read_file(const std::filesystem::path &path);
+    void expect_no_optional_blocks() const;
+    void TearDown() override;
+
+    ValueSaver<int> saved_file_x_dots{g_file_x_dots};
+    ValueSaver<int> saved_file_y_dots{g_file_y_dots};
+    ValueSaver<int> saved_file_colors{g_file_colors};
+    ValueSaver<float> saved_file_aspect_ratio{g_file_aspect_ratio};
+    ValueSaver<bool> saved_make_parameter_file{g_make_parameter_file, false};
+    FractalInfo m_info{};
+    ExtBlock2 m_block_2{};
+    ExtBlock3 m_block_3{};
+    ExtBlock4 m_block_4{};
+    ExtBlock5 m_block_5{};
+    ExtBlock6 m_block_6{};
+    ExtBlock7 m_block_7{};
+    std::filesystem::path m_path;
+};
+
+std::filesystem::path TestFindFractalInfo::write_file(const bool legacy_formula)
+{
+    const std::string name{UnitTest::GetInstance()->current_test_info()->name()};
+    m_path = std::filesystem::temp_directory_path() / ("id-find-fractal-info-" + name + ".gif");
+    int error{};
+    std::unique_ptr<GifFileType, void (*)(GifFileType *)> input{DGifOpenFileName(ID_TEST_GIF_EXT3_FILE, &error),
+        [](GifFileType *gif)
+        {
+            int close_error{};
+            DGifCloseFile(gif, &close_error);
+        }};
+    if (!input || DGifSlurp(input.get()) == GIF_ERROR)
+    {
+        throw std::runtime_error("Can't read metadata test fixture");
+    }
+    std::unique_ptr<GifFileType, void (*)(GifFileType *)> output{
+        EGifOpenFileName(m_path.string().c_str(), false, &error), [](GifFileType *gif)
+        {
+            int close_error{};
+            EGifCloseFile(gif, &close_error);
+        }};
+    if (!output)
+    {
+        throw std::runtime_error("Can't create metadata test input");
+    }
+    EGifSetGifVersion(output.get(), true);
+    check_gif_write(EGifPutScreenDesc(output.get(), input->SWidth, input->SHeight, input->SColorResolution,
+        input->SBackGroundColor, input->SColorMap));
+    for (int i = 0; i < input->ImageCount; ++i)
+    {
+        SavedImage &image{input->SavedImages[i]};
+        const GifImageDesc &desc{image.ImageDesc};
+        check_gif_write(
+            EGifPutImageDesc(output.get(), desc.Left, desc.Top, desc.Width, desc.Height, false, desc.ColorMap));
+        for (int row = 0; row < desc.Height; ++row)
+        {
+            check_gif_write(EGifPutLine(output.get(), image.RasterBits + row * desc.Width, desc.Width));
+        }
+    }
+    if (legacy_formula)
+    {
+        // Name-only records predate the formula usage flags.
+        FormulaInfo formula{get_formula_info(input.get())};
+        char identifier[]{"fractint003"};
+        check_gif_write(GifAddExtensionBlock(&output->ExtensionBlockCount, &output->ExtensionBlocks,
+            APPLICATION_EXT_FUNC_CODE, 11, reinterpret_cast<Byte *>(identifier)));
+        check_gif_write(GifAddExtensionBlock(&output->ExtensionBlockCount, &output->ExtensionBlocks,
+            CONTINUE_EXT_FUNC_CODE, sizeof(formula.form_name), reinterpret_cast<Byte *>(formula.form_name)));
+        FractalInfo info{get_fractal_info(input.get())};
+        constexpr int MAIN_SIZE{GIF_EXTENSION1_FRACTAL_INFO_LENGTH};
+        info.tot_extend_len = MAIN_SIZE + (MAIN_SIZE + 254) / 255 + 15 + sizeof(formula.form_name) + 16;
+        put_fractal_info(output.get(), info);
+    }
+    for (int i = 0; i < output->ExtensionBlockCount; ++i)
+    {
+        const ExtensionBlock &block{output->ExtensionBlocks[i]};
+        if (block.Function != CONTINUE_EXT_FUNC_CODE)
+        {
+            if (i > 0)
+            {
+                check_gif_write(EGifPutExtensionTrailer(output.get()));
+            }
+            check_gif_write(EGifPutExtensionLeader(output.get(), block.Function));
+        }
+        check_gif_write(EGifPutExtensionBlock(output.get(), block.ByteCount, block.Bytes));
+    }
+    if (output->ExtensionBlockCount > 0)
+    {
+        check_gif_write(EGifPutExtensionTrailer(output.get()));
+    }
+    check_gif_write(EGifCloseFile(output.release(), &error));
+    return m_path;
+}
+
+bool TestFindFractalInfo::read_file(const std::filesystem::path &path)
+{
+    return find_fractal_info(
+        path.string(), &m_info, &m_block_2, &m_block_3, &m_block_4, &m_block_5, &m_block_6, &m_block_7);
+}
+
+void TestFindFractalInfo::expect_no_optional_blocks() const
+{
+    EXPECT_FALSE(m_block_2.got_data);
+    EXPECT_FALSE(m_block_3.got_data);
+    EXPECT_FALSE(m_block_4.got_data);
+    EXPECT_FALSE(m_block_5.got_data);
+    EXPECT_FALSE(m_block_6.got_data);
+    EXPECT_FALSE(m_block_7.got_data);
+}
+
+void TestFindFractalInfo::TearDown()
+{
+    if (!m_path.empty())
+    {
+        std::filesystem::remove(m_path);
+    }
+}
+
+TEST_F(TestFindFractalInfo, readsMainRecordWithoutOptionalBlocks)
+{
+    m_block_2.got_data = true;
+    m_block_3.got_data = true;
+    m_block_4.got_data = true;
+    m_block_5.got_data = true;
+    m_block_6.got_data = true;
+    m_block_7.got_data = true;
+
+    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT1_FILE));
+
+    EXPECT_STREQ("Fractal", m_info.info_id);
+    EXPECT_EQ(17, m_info.info_version);
+    EXPECT_EQ(0, m_info.fractal_type);
+    EXPECT_EQ(640, g_file_x_dots);
+    EXPECT_EQ(480, g_file_y_dots);
+    EXPECT_EQ(256, g_file_colors);
+    expect_no_optional_blocks();
+}
+
+TEST_F(TestFindFractalInfo, plainGifReceivesNonFractalDefaults)
+{
+    ASSERT_FALSE(read_file(write_file(false)));
+
+    EXPECT_STREQ("GIFFILE", m_info.info_id);
+    EXPECT_EQ(0, m_info.info_version);
+    EXPECT_EQ(+FractalType::PLASMA, m_info.fractal_type);
+    EXPECT_EQ(INITIAL_MAX_ITERATIONS, m_info.iterations);
+    EXPECT_EQ(INITIAL_MAX_ITERATIONS, m_info.iterations_old);
+    EXPECT_DOUBLE_EQ(-1.0, m_info.x_min);
+    EXPECT_DOUBLE_EQ(1.0, m_info.x_max);
+    EXPECT_DOUBLE_EQ(-1.0, m_info.y_min);
+    EXPECT_DOUBLE_EQ(1.0, m_info.y_max);
+    EXPECT_EQ(g_file_x_dots, m_info.x_dots);
+    EXPECT_EQ(g_file_y_dots, m_info.y_dots);
+    EXPECT_EQ(g_file_colors, m_info.colors);
+    expect_no_optional_blocks();
+}
+
+TEST_F(TestFindFractalInfo, legacyNameOnlyRecordUsesDefaultFormulaFlags)
+{
+    ASSERT_FALSE(read_file(write_file(true)));
+
+    EXPECT_STREQ("Fractal", m_info.info_id);
+    ASSERT_TRUE(m_block_3.got_data);
+    EXPECT_EQ(40, m_block_3.length);
+    EXPECT_STREQ("Mandel3", m_block_3.form_name);
+    EXPECT_EQ(1, m_block_3.uses_p1);
+    EXPECT_EQ(1, m_block_3.uses_p2);
+    EXPECT_EQ(1, m_block_3.uses_p3);
+    EXPECT_EQ(0, m_block_3.uses_ismand);
+    EXPECT_EQ(1, m_block_3.ismand);
+    EXPECT_EQ(0, m_block_3.uses_p4);
+    EXPECT_EQ(0, m_block_3.uses_p5);
+    EXPECT_FALSE(m_block_2.got_data);
+    EXPECT_FALSE(m_block_4.got_data);
+    EXPECT_FALSE(m_block_5.got_data);
+    EXPECT_FALSE(m_block_6.got_data);
+    EXPECT_FALSE(m_block_7.got_data);
 }
 
 class TestLoadFile : public TestWithParam<FileFractalType>

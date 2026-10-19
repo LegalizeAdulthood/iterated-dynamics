@@ -750,51 +750,10 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 12.1. GIF Restore Compatibility Coverage
-
-Source: `tests/libid/io/test_GifRestore.cpp`,
-`tests/libid/io/test_gifview.cpp`, `tests/libid/io/test_gif_file.cpp`,
-`tests/libid/io/test_loadfile.cpp`, existing codec fixtures, and the
-restore reduction paths in `ui/get_video_mode.cpp`.
-
-Work:
-
-- Add missing assertions for observable restore behavior, reusing
-  existing fixtures rather than adding redundant image smoke tests.
-- Cover ordinary GIFs, MIG image boundaries and placement, palette
-  handling, and full-width decoded lines.
-- Cover actual 16-bit potential layout: each double-width stored row
-  produces a color line followed by a low-byte line.  Check line order
-  and pixel values, not merely dimensions.
-- Cover unequal horizontal and vertical skip factors and their two
-  current uses: fitting an oversized image to the selected video mode
-  and loading into a reduced view window.  Reuse existing selection
-  tests where available; add missing deterministic coverage.
-- Keep truncated input, independent instances, and read/output failure
-  cleanup covered through the existing tests.  Incremental decoder
-  mechanics are not a production interface to preserve.
-- Capture metadata compatibility through the production loader: older
-  short records and their defaults, missing optional blocks, and plain
-  GIFs without Fractint metadata.  Reuse the existing extension tests for
-  field values rather than duplicating their serializer coverage.
-- Separate valid-file compatibility expectations from tests that merely
-  characterize the custom LZW implementation or malformed-input quirks.
-- Identify old keyboard-interruption expectations for replacement in
-  12.2.  The new contract completes a load despite pending input and
-  leaves that input untouched; do not freeze DOS cancellation behavior.
-
-Done when:
-
-- The current backend passes tests that define the restore behavior the
-  giflib replacement must retain, without depending on LZW internals.
-
-Validation: run focused restore tests against the current backend.  No
-manual test; image output and deterministic selection are automated.
-
 ### 12.1.1. Shared GIF Extension Compatibility
 
 Source: `io/gif_file.h`, `io/gif_file.cpp`, their existing extension tests,
-and the metadata compatibility cases captured in 12.1.
+and metadata compatibility cases in `tests/libid/io/test_loadfile.cpp`.
 
 Work:
 
@@ -892,7 +851,7 @@ Done when:
 - Pixel output and optional sound consume each scanline during loading,
   before the next is read; no full-image replay buffer is required.
 
-Validation: run the compatibility coverage from 12.1, focused failure and
+Validation: run the existing restore compatibility, focused failure and
 lifetime tests, and the full `rt-default` workflow.  No manual test.
 
 ### 12.2.1. Production GIF Metadata Reader Integration
@@ -940,7 +899,7 @@ Work:
   the custom bit reader, dictionary, and prefix-expansion implementation.
   Remove their source and test registrations from CMake.
 - Retain or migrate externally observable compatibility cases into
-  `TestGifRestore`, reusing the coverage from 12.1.  Remove tests whose
+  `TestGifRestore`, reusing its existing coverage.  Remove tests whose
   only purpose is checking implementation details of the old LZW code.
 - Do not keep an unused decoder facade or fallback merely to satisfy
   old tests.  Retain `g_out_line` and its declarations while the

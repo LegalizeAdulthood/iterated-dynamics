@@ -2,10 +2,12 @@
 //
 #include <io/GifRestore.h>
 
+#include <gif_lib.h>
 #include <gtest/gtest.h>
 
 #include <filesystem>
 #include <fstream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -64,6 +66,7 @@ class TestGifRestore : public Test
 {
 protected:
     std::filesystem::path write_file(const std::vector<Byte> &data);
+    std::filesystem::path write_image(const std::vector<std::vector<Byte>> &rows);
     void TearDown() override;
 
     std::vector<std::filesystem::path> m_paths;
@@ -84,6 +87,47 @@ std::filesystem::path TestGifRestore::write_file(const std::vector<Byte> &data)
     if (!output)
     {
         throw std::runtime_error("Can't create GIF restore test input");
+    }
+    return path;
+}
+
+std::filesystem::path TestGifRestore::write_image(const std::vector<std::vector<Byte>> &rows)
+{
+    const std::filesystem::path path{write_file({})};
+    int error{};
+    std::unique_ptr<GifFileType, void (*)(GifFileType *)> output{EGifOpenFileName(path.string().c_str(), false, &error),
+        [](GifFileType *gif)
+        {
+            int close_error{};
+            EGifCloseFile(gif, &close_error);
+        }};
+    std::unique_ptr<ColorMapObject, decltype(&GifFreeMapObject)> palette{
+        GifMakeMapObject(16, nullptr), GifFreeMapObject};
+    if (!output || !palette)
+    {
+        throw std::runtime_error("Can't create GIF restore test image");
+    }
+    for (int i = 0; i < palette->ColorCount; ++i)
+    {
+        palette->Colors[i] = {static_cast<Byte>(i * 17), static_cast<Byte>(255 - i * 17), static_cast<Byte>(i)};
+    }
+    const int width{static_cast<int>(rows.front().size())};
+    const int height{static_cast<int>(rows.size())};
+    if (EGifPutScreenDesc(output.get(), width, height, 4, 0, palette.get()) == GIF_ERROR ||
+        EGifPutImageDesc(output.get(), 0, 0, width, height, false, nullptr) == GIF_ERROR)
+    {
+        throw std::runtime_error("Can't write GIF restore test image header");
+    }
+    for (std::vector<Byte> row : rows)
+    {
+        if (EGifPutLine(output.get(), row.data(), width) == GIF_ERROR)
+        {
+            throw std::runtime_error("Can't write GIF restore test image row");
+        }
+    }
+    if (EGifCloseFile(output.release(), &error) == GIF_ERROR)
+    {
+        throw std::runtime_error("Can't close GIF restore test image");
     }
     return path;
 }
@@ -156,6 +200,8 @@ TEST_F(TestGifRestore, extensionAdvancesOneSubBlockPerStep)
 TEST_F(TestGifRestore, retainsImageBoundariesPositionsAndGlobalPalette)
 {
     std::vector<Byte> data{gif_header()};
+    data[6] = 5;
+    data[8] = 6;
     append_image(data);
     data.insert(data.end(), {'!', 0xFE, 1, 'x', 0});
     append_image(data, 3, 4, true);
@@ -185,13 +231,63 @@ TEST_F(TestGifRestore, retainsImageBoundariesPositionsAndGlobalPalette)
     EXPECT_EQ(0, restore.result());
     EXPECT_EQ(2, endings);
     ASSERT_EQ(2, images.size());
+    EXPECT_EQ(5, restore.width());
+    EXPECT_EQ(6, restore.height());
     EXPECT_EQ(0, images[0].left);
     EXPECT_EQ(0, images[0].top);
+    EXPECT_EQ(2, images[0].width);
+    EXPECT_EQ(2, images[0].height);
     EXPECT_EQ(3, images[1].left);
     EXPECT_EQ(4, images[1].top);
+    EXPECT_EQ(2, images[1].width);
+    EXPECT_EQ(2, images[1].height);
     EXPECT_EQ((std::array<Byte, 3>{255, 0, 0}), restore.palette()[0]);
     const std::vector<std::vector<Byte>> expected{{0, 1}, {1, 0}, {0, 1}, {1, 0}};
     EXPECT_EQ(expected, lines);
+}
+
+TEST_F(TestGifRestore, preservesPixelsWithUnequalSkipFactors)
+{
+    const std::filesystem::path path{write_image({
+        {0, 1, 2, 3, 4, 5, 6},
+        {7, 8, 9, 10, 11, 12, 13},
+        {14, 15, 0, 1, 2, 3, 4},
+        {5, 6, 7, 8, 9, 10, 11},
+        {12, 13, 14, 15, 0, 1, 2},
+    })};
+    GifRestore wider_skip{path, 2, 1};
+    const std::vector<std::vector<Byte>> expected_wider{{0, 3, 6}, {14, 1, 4}, {12, 15, 2}};
+
+    EXPECT_EQ(expected_wider, drain(wider_skip));
+    EXPECT_EQ(0, wider_skip.result());
+
+    GifRestore taller_skip{path, 1, 2};
+    const std::vector<std::vector<Byte>> expected_taller{{0, 2, 4, 6}, {5, 7, 9, 11}};
+    EXPECT_EQ(expected_taller, drain(taller_skip));
+    EXPECT_EQ(0, taller_skip.result());
+}
+
+TEST_F(TestGifRestore, splitsPotentialRowsIntoColorsThenLowBytes)
+{
+    const std::filesystem::path path{write_image({
+        {0, 1, 2, 3, 8, 9, 10, 11},
+        {4, 5, 6, 7, 12, 13, 14, 15},
+        {3, 2, 1, 0, 11, 10, 9, 8},
+    })};
+    GifRestore restore{path, 0, 0, true};
+    const std::vector<std::vector<Byte>> expected{
+        {0, 1, 2, 3}, {8, 9, 10, 11}, {4, 5, 6, 7}, {12, 13, 14, 15}, {3, 2, 1, 0}, {11, 10, 9, 8}};
+
+    EXPECT_EQ(expected, drain(restore));
+
+    EXPECT_EQ(0, restore.result());
+    EXPECT_EQ(8, restore.width());
+    EXPECT_EQ(3, restore.height());
+    EXPECT_EQ(8, restore.image().width);
+    EXPECT_EQ(3, restore.image().height);
+    ASSERT_EQ(16, restore.palette().size());
+    EXPECT_EQ((std::array<Byte, 3>{0, 255, 0}), restore.palette().front());
+    EXPECT_EQ((std::array<Byte, 3>{255, 0, 15}), restore.palette().back());
 }
 
 TEST_F(TestGifRestore, independentRestoresRetainInputAndLineBuffers)
