@@ -746,40 +746,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 12.5. GIF Writer Extension Compatibility Coverage
-
-Source: `encoder()`, `put_extend_blk()`, `extend_blk_len()`, and
-`store_item_name()` in `io/encoder.cpp`; the shared `get_*_info()` and
-`put_*_info()` helpers in `io/gif_file.cpp`, their existing tests, and
-production metadata loading in `io/loadfile.cpp`.
-
-Work:
-
-- Test extensions emitted by the production save path, reusing existing
-  payload serializer tests rather than duplicating every field check.
-  Keep known fixture expectations as well as round trips through the
-  shared readers; a matching reader/writer mistake must not pass unnoticed.
-- Cover the main fractal record, resume data, formula/L-system/IFS names
-  and flags, iteration ranges, arbitrary-precision parameters, evolution
-  state, and orbit settings.  Verify omission when a block is inapplicable.
-- Preserve application identifiers, little-endian payload encoding,
-  block order, and the final placement of `fractint001`.
-- Check empty payload handling and lengths around the 255-byte
-  sub-block boundary.  Verify `tot_extend_len` against the actual encoded
-  extension layout, including identifiers and terminators.
-- Read saved files through `find_fractal_info()` using the shared
-  extension readers, and inspect giflib extension records.
-  Preserve the layout required by older readers' backward metadata
-  search even though production loading no longer depends on that search.
-
-Done when:
-
-- Application-specific save metadata is covered independently of the
-  custom GIF framing and compression implementation.
-
-Validation: run focused writer, extension, and metadata-loader tests.
-No manual test; these are deterministic file-format checks.
-
 ### 12.6. giflib Writer Operations
 
 Source: new `io/GifWriter.h` and `io/GifWriter.cpp`; giflib output APIs
@@ -851,6 +817,9 @@ Work:
 - Replace the legacy writer's packed-structure encoding and raw payload
   handling with those shared helpers.  Do not retain that second
   serialization path behind `GifWriter` or copy it into the new class.
+- Remove the temporary `put_evolution_info()` to `put_extend_blk()`
+  bridge added for the evolution layout fix.  Emit its shared extension
+  blocks directly with the other records.
 - Preserve application identifiers, extension ordering, and accurate
   `tot_extend_len`, calculated from the assembled extension blocks and
   their framing.  Set the final main record's length before serializing

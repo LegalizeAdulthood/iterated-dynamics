@@ -39,6 +39,7 @@
 #include "io/check_write_file.h"
 #include "io/decode_info.h"
 #include "io/gif_extensions.h"
+#include "io/gif_file.h"
 #include "io/is_writeable.h"
 #include "io/library.h"
 #include "io/loadfile.h"
@@ -58,6 +59,7 @@
 #include "ui/video.h"
 
 #include <fmt/format.h>
+#include <gif_lib.h>
 
 #include <algorithm>
 #include <cassert>
@@ -67,6 +69,7 @@
 #include <filesystem>
 #include <iterator>
 #include <limits>
+#include <memory>
 #include <string>
 #include <string_view>
 
@@ -644,10 +647,17 @@ bool encoder()
             evolution_info.future[j] = 0;
         }
 
-        encode_evolver_info(evolution_info);
+        // TODO: removed later when GifWriter emits the shared extension blocks.
+        std::unique_ptr<GifFileType, void (*)(GifFileType *)> extensions{new GifFileType{}, [](GifFileType *gif)
+            {
+                GifFreeExtensions(&gif->ExtensionBlockCount, &gif->ExtensionBlocks);
+                delete gif;
+            }};
+        put_evolution_info(extensions.get(), evolution_info);
         // evolution info block, 006
-        save_info.tot_extend_len += extend_blk_len(sizeof(evolution_info));
-        if (!put_extend_blk(6, sizeof(evolution_info), reinterpret_cast<char *>(&evolution_info)))
+        save_info.tot_extend_len += extend_blk_len(GIF_EXTENSION6_EVOLVER_INFO_LENGTH);
+        if (!put_extend_blk(
+                6, GIF_EXTENSION6_EVOLVER_INFO_LENGTH, reinterpret_cast<char *>(extensions->ExtensionBlocks[1].Bytes)))
         {
             goto oops;
         }

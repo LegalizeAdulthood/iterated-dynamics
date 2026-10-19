@@ -284,6 +284,8 @@ o The Orbits Window now toggles on completed images and remains shown
   after backing out of menus unless it is toggled off.
 o Orbit display pacing now treats small orbitdelay= values as full-speed
   display, and throttles input polling to display-refresh cadence.
+o Saved evolver images now preserve evolution settings and progress
+  without corrupting the GIF metadata with native structure padding.
 o Iterated Dynamics is now built for FreeBSD, OpenBSD and NetBSD
   (Fixes #439, #444, #445)
 

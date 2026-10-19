@@ -8,16 +8,24 @@
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>
 #include <engine/fractals.h>
+#include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
 #include <engine/pixel_limits.h>
 #include <engine/resume.h>
 #include <engine/spindac.h>
+#include <engine/StickyOrbits.h>
 #include <engine/UserData.h>
 #include <engine/VideoInfo.h>
 #include <engine/Viewport.h>
 #include <fractals/fractype.h>
+#include <fractals/formula.h>
+#include <fractals/ifs.h>
+#include <fractals/lorenz.h>
+#include <fractals/lsystem.h>
+#include <fractals/parser.h>
 #include <io/check_write_file.h>
 #include <io/gif_extensions.h>
+#include <io/gif_file.h>
 #include <io/library.h>
 #include <io/loadfile.h>
 #include <io/save_timer.h>
@@ -29,7 +37,9 @@
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 #include <ui/diskvid.h>
+#include <ui/big_while_loop.h>
 #include <ui/evolve.h>
+#include <ui/make_batch_file.h>
 #include <ui/slideshw.h>
 #include <ui/temp_msg.h>
 #include <ui/video.h>
@@ -549,6 +559,507 @@ TEST_F(TestGifWriterRaster, reportsOutputOpenFailure)
 
     EXPECT_FALSE(std::filesystem::exists(filename));
     EXPECT_FALSE(g_busy);
+}
+
+class TestGifWriterExtensions : public TestGifWriterRaster
+{
+protected:
+    bool read_metadata();
+    void expect_layout(GifFileType *gif, const std::vector<std::string> &identifiers) const;
+    std::vector<Byte> payload(const GifFileType *gif, const std::string &identifier) const;
+
+    FractalInfo m_info{};
+    ExtBlock2 m_resume{};
+    ExtBlock3 m_formula{};
+    ExtBlock4 m_ranges{};
+    ExtBlock5 m_parameters{};
+    ExtBlock6 m_evolution{};
+    ExtBlock7 m_orbits{};
+    ValueSaver<std::vector<Byte>> m_saved_resume{g_resume_data, std::vector<Byte>{}};
+    ValueSaver<int> m_saved_resume_len{g_resume_len, 0};
+    ValueSaver<std::vector<int>> m_saved_ranges{g_iteration_ranges, std::vector<int>{}};
+    ValueSaver<Display3DMode> m_saved_display_3d{g_display_3d, Display3DMode::NONE};
+    ValueSaver<CompiledFormula> m_saved_formula{g_formula};
+    ValueSaver<int> m_saved_file_width{g_file_x_dots};
+    ValueSaver<int> m_saved_file_height{g_file_y_dots};
+    ValueSaver<int> m_saved_file_colors{g_file_colors};
+    ValueSaver<float> m_saved_file_aspect{g_file_aspect_ratio};
+    ValueSaver<bool> m_saved_make_parameter_file{g_make_parameter_file, false};
+};
+
+bool TestGifWriterExtensions::read_metadata()
+{
+    return find_fractal_info(
+        m_path.string(), &m_info, &m_resume, &m_formula, &m_ranges, &m_parameters, &m_evolution, &m_orbits);
+}
+
+void TestGifWriterExtensions::expect_layout(GifFileType *gif, const std::vector<std::string> &identifiers) const
+{
+    ASSERT_EQ(1, gif->ImageCount);
+    EXPECT_EQ(0, gif->SavedImages[0].ExtensionBlockCount);
+    std::vector<std::string> actual;
+    int encoded_length{};
+    for (int i = 0; i < gif->ExtensionBlockCount; ++i)
+    {
+        const ExtensionBlock &block{gif->ExtensionBlocks[i]};
+        if (block.Function == APPLICATION_EXT_FUNC_CODE)
+        {
+            ASSERT_EQ(11, block.ByteCount);
+            actual.emplace_back(reinterpret_cast<const char *>(block.Bytes), block.ByteCount);
+            encoded_length += 3; // Introducer, function code, and terminator.
+        }
+        else
+        {
+            EXPECT_EQ(CONTINUE_EXT_FUNC_CODE, block.Function);
+            EXPECT_GT(block.ByteCount, 0);
+            EXPECT_LE(block.ByteCount, 255);
+        }
+        encoded_length += 1 + block.ByteCount;
+    }
+    EXPECT_EQ(identifiers, actual);
+    EXPECT_EQ(encoded_length, get_fractal_info(gif).tot_extend_len);
+
+    // Older readers find the final main record at this fixed trailer offset.
+    std::ifstream input{m_path, std::ios::binary};
+    std::array<char, 14> header{};
+    input.seekg(-encoded_length - 1, std::ios::end);
+    input.read(header.data(), header.size());
+    EXPECT_EQ((std::array<char, 3>{'!', static_cast<char>(0xFF), 11}),
+        (std::array<char, 3>{header[0], header[1], header[2]}));
+    ASSERT_FALSE(identifiers.empty());
+    EXPECT_EQ(identifiers.front(), (std::string{header.data() + 3, 11}));
+    input.seekg(-522, std::ios::end);
+    input.read(header.data(), header.size());
+    EXPECT_EQ("fractint001", (std::string{header.data() + 3, 11}));
+    input.seekg(-1, std::ios::end);
+    EXPECT_EQ(';', input.get());
+}
+
+std::vector<Byte> TestGifWriterExtensions::payload(const GifFileType *gif, const std::string &identifier) const
+{
+    bool found{};
+    std::vector<Byte> bytes;
+    for (int i = 0; i < gif->ExtensionBlockCount; ++i)
+    {
+        const ExtensionBlock &block{gif->ExtensionBlocks[i]};
+        if (block.Function == APPLICATION_EXT_FUNC_CODE)
+        {
+            if (found)
+            {
+                break;
+            }
+            found = std::string{reinterpret_cast<const char *>(block.Bytes),
+                        static_cast<std::size_t>(block.ByteCount)} == identifier;
+        }
+        else if (found)
+        {
+            bytes.insert(bytes.end(), block.Bytes, block.Bytes + block.ByteCount);
+        }
+    }
+    return bytes;
+}
+
+TEST_F(TestGifWriterExtensions, savesMainRecordWithoutInapplicableOptionalRecords)
+{
+    ValueSaver saved_iterations{g_max_iterations, 0x123456L};
+    ValueSaver saved_time{g_calc_time, 0x12345678L};
+    ValueSaver saved_version{g_version, Version{1, 5, 2, 3, false}};
+    ValueSaver saved_region{g_image_region, ImageRegion{{-2.5, -1.5}, {1.5, 1.5}, {-2.5, -1.5}}};
+
+    ASSERT_EQ(0, save());
+
+    const GifFilePtr gif{read_saved_gif()};
+    expect_layout(gif.get(), {"fractint001"});
+    const std::vector<Byte> bytes{payload(gif.get(), "fractint001")};
+    ASSERT_EQ(504, bytes.size());
+    EXPECT_EQ((std::vector<Byte>{'F', 'r', 'a', 'c', 't', 'a', 'l', 0, 0xFF, 0x7F, 4, 0}),
+        (std::vector<Byte>{bytes.begin(), bytes.begin() + 12}));
+    EXPECT_EQ(
+        (std::vector<Byte>{0, 0, 0, 0, 0, 0, 4, 0xC0}), (std::vector<Byte>{bytes.begin() + 12, bytes.begin() + 20}));
+    ASSERT_FALSE(read_metadata());
+    EXPECT_STREQ("Fractal", m_info.info_id);
+    EXPECT_EQ(FRACTAL_INFO_VERSION, m_info.info_version);
+    EXPECT_EQ(0x123456, m_info.iterations);
+    EXPECT_EQ(32767, m_info.iterations_old);
+    EXPECT_EQ(0x12345678, m_info.calc_time);
+    EXPECT_EQ((Version{1, 5, 2, 3, false}), fractal_info_version(m_info));
+    EXPECT_EQ(8, m_info.x_dots);
+    EXPECT_EQ(6, m_info.y_dots);
+    EXPECT_EQ(256, m_info.colors);
+    EXPECT_EQ(8, g_file_x_dots);
+    EXPECT_EQ(6, g_file_y_dots);
+    EXPECT_EQ(256, g_file_colors);
+    EXPECT_FALSE(m_resume.got_data);
+    EXPECT_FALSE(m_formula.got_data);
+    EXPECT_FALSE(m_ranges.got_data);
+    EXPECT_FALSE(m_parameters.got_data);
+    EXPECT_FALSE(m_evolution.got_data);
+    EXPECT_FALSE(m_orbits.got_data);
+}
+
+class TestGifWriterResume : public TestGifWriterExtensions, public WithParamInterface<int>
+{
+};
+
+TEST_P(TestGifWriterResume, savesOnlyUsedResumeBytesWithLegacySubBlocks)
+{
+    const int size{GetParam()};
+    std::vector<Byte> expected(size);
+    for (int i = 0; i < size; ++i)
+    {
+        expected[i] = static_cast<Byte>(i * 37 + 129);
+    }
+    g_resume_data = expected;
+    g_resume_data.push_back(0x5A); // Allocated capacity beyond the used prefix is not saved.
+    g_resume_len = size;
+    g_calc_status = CalcStatus::RESUMABLE;
+
+    ASSERT_EQ(0, save());
+
+    const GifFilePtr gif{read_saved_gif()};
+    expect_layout(gif.get(), {"fractint002", "fractint001"});
+    EXPECT_TRUE(has_gif_extension(gif.get(), "fractint002"));
+    EXPECT_EQ(expected, get_resume_info(gif.get()));
+    const int chunks{(size + 254) / 255};
+    ASSERT_EQ(chunks + 4, gif->ExtensionBlockCount);
+    for (int i = 0; i < chunks; ++i)
+    {
+        EXPECT_EQ(CONTINUE_EXT_FUNC_CODE, gif->ExtensionBlocks[i + 1].Function);
+        EXPECT_EQ(std::min(255, size - i * 255), gif->ExtensionBlocks[i + 1].ByteCount);
+    }
+    EXPECT_EQ(521 + 15 + size + chunks, get_fractal_info(gif.get()).tot_extend_len);
+    ASSERT_FALSE(read_metadata());
+    EXPECT_EQ(static_cast<int>(CalcStatus::RESUMABLE), m_info.calc_status);
+    EXPECT_TRUE(m_resume.got_data);
+    EXPECT_EQ(size, m_resume.length);
+    EXPECT_EQ(expected, m_resume.resume_data);
+}
+
+INSTANTIATE_TEST_SUITE_P(SubBlockSizes, TestGifWriterResume, Values(0, 1, 254, 255, 256, 510, 511));
+
+TEST_F(TestGifWriterExtensions, omitsResumeRecordForCompletedImageOrEmptyStorage)
+{
+    g_resume_data = {0x12, 0x34};
+    g_resume_len = 2;
+    ASSERT_EQ(0, save());
+    {
+        const GifFilePtr completed{read_saved_gif()};
+        expect_layout(completed.get(), {"fractint001"});
+    }
+
+    g_resume_data.clear();
+    g_resume_len = 0;
+    g_calc_status = CalcStatus::RESUMABLE;
+    ASSERT_EQ(0, save());
+    const GifFilePtr empty{read_saved_gif()};
+    expect_layout(empty.get(), {"fractint001"});
+    ASSERT_FALSE(read_metadata());
+    EXPECT_FALSE(m_resume.got_data);
+}
+
+class TestGifWriterName : public TestGifWriterExtensions, public WithParamInterface<FractalType>
+{
+};
+
+TEST_P(TestGifWriterName, savesSelectedItemNameAndOnlyFormulaUsageFlags)
+{
+    g_fractal_type = GetParam();
+    ValueSaver saved_formula_name{g_formula_name, std::string{"SavedFormula"}};
+    ValueSaver saved_l_system_name{g_l_system_name, std::string{"SavedLSystem"}};
+    ValueSaver saved_ifs_name{g_ifs_name, std::string{"SavedIFS"}};
+    ValueSaver saved_ismand{g_frm_is_mandelbrot, false};
+    g_formula.uses_p1 = true;
+    g_formula.uses_p2 = false;
+    g_formula.uses_p3 = true;
+    g_formula.uses_p4 = false;
+    g_formula.uses_p5 = true;
+    g_formula.uses_ismand = true;
+    const std::string name{g_fractal_type == FractalType::FORMULA ? "SavedFormula"
+            : g_fractal_type == FractalType::L_SYSTEM             ? "SavedLSystem"
+                                                                  : "SavedIFS"};
+    const bool formula{g_fractal_type == FractalType::FORMULA};
+
+    ASSERT_EQ(0, save());
+
+    const GifFilePtr gif{read_saved_gif()};
+    expect_layout(gif.get(), {"fractint003", "fractint001"});
+    FormulaInfo expected{};
+    std::copy(name.begin(), name.end(), expected.form_name);
+    expected.uses_p1 = formula;
+    expected.uses_p3 = formula;
+    expected.uses_ismand = formula;
+    expected.uses_p5 = formula;
+    EXPECT_EQ(expected, get_formula_info(gif.get()));
+    const std::vector<Byte> bytes{payload(gif.get(), "fractint003")};
+    ASSERT_EQ(66, bytes.size());
+    EXPECT_EQ(name, (std::string{bytes.begin(), bytes.begin() + name.size()}));
+    const Byte flag{static_cast<Byte>(formula)};
+    EXPECT_EQ((std::vector<Byte>{flag, 0, 0, 0, flag, 0, flag, 0, 0, 0, 0, 0, flag, 0}),
+        (std::vector<Byte>{bytes.begin() + 40, bytes.begin() + 54}));
+    ASSERT_FALSE(read_metadata());
+    EXPECT_TRUE(m_formula.got_data);
+    EXPECT_EQ(66, m_formula.length);
+    EXPECT_EQ(name, m_formula.form_name);
+    EXPECT_EQ(formula, m_formula.uses_p1);
+    EXPECT_EQ(formula, m_formula.uses_p3);
+    EXPECT_EQ(formula, m_formula.uses_ismand);
+    EXPECT_EQ(0, m_formula.uses_p2);
+    EXPECT_EQ(0, m_formula.uses_p4);
+    EXPECT_EQ(formula, m_formula.uses_p5);
+    EXPECT_EQ(0, m_formula.ismand);
+}
+
+INSTANTIATE_TEST_SUITE_P(ItemTypes, TestGifWriterName,
+    Values(FractalType::FORMULA, FractalType::L_SYSTEM, FractalType::IFS, FractalType::IFS_3D));
+
+TEST_F(TestGifWriterExtensions, terminatesTruncatedItemNamesAndPreservesEmptyNames)
+{
+    g_fractal_type = FractalType::L_SYSTEM;
+    ValueSaver saved_name{g_l_system_name};
+    for (const std::string name : {std::string(60, 'A'), std::string{}})
+    {
+        SCOPED_TRACE(name);
+        g_l_system_name = name;
+        ASSERT_EQ(0, save());
+        const GifFilePtr gif{read_saved_gif()};
+        expect_layout(gif.get(), {"fractint003", "fractint001"});
+        const FormulaInfo info{get_formula_info(gif.get())};
+        EXPECT_EQ(name.substr(0, 39), info.form_name);
+        EXPECT_EQ(0, info.form_name[39]);
+        ASSERT_FALSE(read_metadata());
+        EXPECT_TRUE(m_formula.got_data);
+        EXPECT_EQ(name.substr(0, 39), m_formula.form_name);
+    }
+}
+
+TEST_F(TestGifWriterExtensions, savesSignedIterationRangesInLittleEndianOrder)
+{
+    g_iteration_ranges = {-1, 0x1234, -32768, 32767};
+
+    ASSERT_EQ(0, save());
+
+    const GifFilePtr gif{read_saved_gif()};
+    expect_layout(gif.get(), {"fractint004", "fractint001"});
+    EXPECT_EQ((std::vector<Byte>{0xFF, 0xFF, 0x34, 0x12, 0, 0x80, 0xFF, 0x7F}), payload(gif.get(), "fractint004"));
+    EXPECT_EQ(g_iteration_ranges, get_ranges_info(gif.get()));
+    ASSERT_FALSE(read_metadata());
+    EXPECT_TRUE(m_ranges.got_data);
+    EXPECT_EQ(4, m_ranges.length);
+    EXPECT_EQ(g_iteration_ranges, m_ranges.range_data);
+}
+
+TEST_F(TestGifWriterExtensions, omitsIterationRangesForThreeDimensionalDisplay)
+{
+    g_iteration_ranges = {16, 32};
+    g_display_3d = Display3DMode::YES;
+
+    ASSERT_EQ(0, save());
+
+    const GifFilePtr gif{read_saved_gif()};
+    expect_layout(gif.get(), {"fractint001"});
+    ASSERT_FALSE(read_metadata());
+    EXPECT_FALSE(m_ranges.got_data);
+}
+
+TEST_F(TestGifWriterExtensions, preservesOpaqueArbitraryPrecisionParameters)
+{
+    std::vector<Byte> parameters(22 * (16 + 2));
+    for (std::size_t i = 0; i < parameters.size(); ++i)
+    {
+        parameters[i] = static_cast<Byte>(i * 53 + 157);
+    }
+    ValueSaver saved_bf_length{g_bf_length, 16};
+    ValueSaver saved_bn_length{g_bn_length, 12};
+    ValueSaver saved_min{g_bf_x_min, parameters.data()};
+    g_bf_math = BFMathType::BIG_FLT;
+
+    ASSERT_EQ(0, save());
+
+    const GifFilePtr gif{read_saved_gif()};
+    expect_layout(gif.get(), {"fractint005", "fractint001"});
+    const std::vector<char> expected{parameters.begin(), parameters.end()};
+    EXPECT_EQ(parameters, payload(gif.get(), "fractint005"));
+    EXPECT_EQ(expected, get_extended_param_info(gif.get()));
+    ASSERT_FALSE(read_metadata());
+    EXPECT_EQ(static_cast<int>(BFMathType::BIG_FLT), m_info.bf_math);
+    EXPECT_EQ(12, m_info.bf_length);
+    EXPECT_TRUE(m_parameters.got_data);
+    EXPECT_EQ(expected, m_parameters.apm_data);
+}
+
+class TestGifWriterEvolution : public TestGifWriterExtensions, public WithParamInterface<bool>
+{
+};
+
+TEST_P(TestGifWriterEvolution, savesLiveEvolutionStateWhenNoResumeOrCalculationComplete)
+{
+    const bool completed{GetParam()};
+    g_evolving = EvolutionModeFlags::FIELD_MAP;
+    g_calc_status = completed ? CalcStatus::COMPLETED : CalcStatus::RESUMABLE;
+    ValueSaver saved_have_info{g_have_evolve_info, completed};
+    ValueSaver saved_grid{g_evolve_image_grid_size, 3};
+    ValueSaver saved_seed{g_evolve_this_generation_random_seed, 0xABCDU};
+    ValueSaver saved_mutation{g_evolve_max_random_mutation, 0.25};
+    ValueSaver saved_x_range{g_evolve_x_parameter_range, 4.0};
+    ValueSaver saved_y_range{g_evolve_y_parameter_range, 3.0};
+    ValueSaver saved_x_offset{g_evolve_x_parameter_offset, -2.0};
+    ValueSaver saved_y_offset{g_evolve_y_parameter_offset, -1.5};
+    ValueSaver saved_px{g_evolve_param_grid_x, 1};
+    ValueSaver saved_py{g_evolve_param_grid_y, 2};
+    ValueSaver saved_gene{g_gene_bank[2].mutate, Variations::Y};
+
+    ASSERT_EQ(0, save());
+
+    const GifFilePtr gif{read_saved_gif()};
+    expect_layout(gif.get(), {"fractint006", "fractint001"});
+    const EvolutionInfo info{get_evolution_info(gif.get())};
+    EXPECT_EQ(1, info.evolving);
+    EXPECT_EQ(3, info.image_grid_size);
+    EXPECT_EQ(0xABCD, info.this_generation_random_seed);
+    EXPECT_EQ(9, info.count);
+    EXPECT_EQ(0.25, info.max_random_mutation);
+    EXPECT_EQ(4.0, info.x_parameter_range);
+    EXPECT_EQ(3.0, info.y_parameter_range);
+    EXPECT_EQ(-2.0, info.x_parameter_offset);
+    EXPECT_EQ(-1.5, info.y_parameter_offset);
+    EXPECT_EQ(1, info.px);
+    EXPECT_EQ(2, info.py);
+    EXPECT_EQ(8, info.x_dots);
+    EXPECT_EQ(6, info.y_dots);
+    EXPECT_EQ(static_cast<int>(Variations::Y), info.mutate[2]);
+    const std::vector<Byte> bytes{payload(gif.get(), "fractint006")};
+    ASSERT_EQ(200, bytes.size());
+    EXPECT_EQ((std::vector<Byte>{1, 0, 3, 0, 0xCD, 0xAB}), (std::vector<Byte>{bytes.begin(), bytes.begin() + 6}));
+    ASSERT_FALSE(read_metadata());
+    EXPECT_TRUE(m_evolution.got_data);
+    EXPECT_EQ(200, m_evolution.length);
+    EXPECT_EQ(0xABCD, m_evolution.this_generation_random_seed);
+    EXPECT_EQ(9, m_evolution.e_count);
+    EXPECT_EQ(-2.0, m_evolution.x_parameter_offset);
+    EXPECT_EQ(static_cast<int>(Variations::Y), m_evolution.mutate[2]);
+}
+
+INSTANTIATE_TEST_SUITE_P(Completion, TestGifWriterEvolution, Bool());
+
+TEST_F(TestGifWriterExtensions, savesCachedEvolutionStateForResumableCalculation)
+{
+    g_evolving = EvolutionModeFlags::FIELD_MAP;
+    g_calc_status = CalcStatus::RESUMABLE;
+    ValueSaver saved_have_info{g_have_evolve_info, true};
+    ValueSaver saved_info{g_evolve_info, EvolutionInfo{}};
+    ValueSaver saved_gene{g_gene_bank[1].mutate, Variations::RANDOM};
+    g_evolve_info.image_grid_size = 5;
+    g_evolve_info.evolving = 1;
+    g_evolve_info.this_generation_random_seed = 0x9876;
+    g_evolve_info.max_random_mutation = 0.5;
+    g_evolve_info.x_parameter_range = 8;
+    g_evolve_info.y_parameter_range = 6;
+    g_evolve_info.x_parameter_offset = -4;
+    g_evolve_info.y_parameter_offset = -3;
+    g_evolve_info.discrete_x_parameter_offset = -7;
+    g_evolve_info.discrete_y_parameter_offset = 9;
+    g_evolve_info.px = 3;
+    g_evolve_info.py = 4;
+    g_evolve_info.screen_x_offset = 2;
+    g_evolve_info.screen_y_offset = 1;
+    g_evolve_info.x_dots = 4;
+    g_evolve_info.y_dots = 3;
+    g_evolve_info.count = 17;
+    EvolutionInfo expected{g_evolve_info};
+    for (int i = 0; i < NUM_GENES; ++i)
+    {
+        expected.mutate[i] = static_cast<std::int16_t>(g_gene_bank[i].mutate);
+    }
+
+    ASSERT_EQ(0, save());
+
+    const GifFilePtr gif{read_saved_gif()};
+    expect_layout(gif.get(), {"fractint006", "fractint001"});
+    EXPECT_EQ(expected, get_evolution_info(gif.get()));
+    ASSERT_FALSE(read_metadata());
+    EXPECT_TRUE(m_evolution.got_data);
+    EXPECT_EQ(17, m_evolution.e_count);
+    EXPECT_EQ(5, m_evolution.image_grid_size);
+    EXPECT_EQ(4, m_evolution.x_dots);
+    EXPECT_EQ(3, m_evolution.y_dots);
+    EXPECT_EQ(-7, m_evolution.discrete_x_parameter_offset);
+    EXPECT_EQ(static_cast<int>(Variations::RANDOM), m_evolution.mutate[1]);
+}
+
+TEST_F(TestGifWriterExtensions, savesOrbitSettingsOnlyForOrbitPass)
+{
+    ValueSaver saved_corner{g_orbit_corner, ImageRegion{{-2.5, -1.5}, {1.5, 1.5}, {-2.0, -1.0}}};
+    ValueSaver saved_keep{g_keep_screen_coords, true};
+    ValueSaver saved_draw{g_draw_mode, OrbitDrawMode::LINE};
+    g_std_calc_mode = CalcMode::ORBIT;
+
+    ASSERT_EQ(0, save());
+
+    GifFilePtr gif{read_saved_gif()};
+    expect_layout(gif.get(), {"fractint007", "fractint001"});
+    const OrbitsInfo info{get_orbits_info(gif.get())};
+    EXPECT_EQ(-2.5, info.orbit_corner_min_x);
+    EXPECT_EQ(1.5, info.orbit_corner_max_x);
+    EXPECT_EQ(-1.5, info.orbit_corner_min_y);
+    EXPECT_EQ(1.5, info.orbit_corner_max_y);
+    EXPECT_EQ(-2.0, info.orbit_corner_3rd_x);
+    EXPECT_EQ(-1.0, info.orbit_corner_3rd_y);
+    EXPECT_EQ(1, info.keep_screen_coords);
+    EXPECT_EQ('l', info.draw_mode);
+    const std::vector<Byte> bytes{payload(gif.get(), "fractint007")};
+    ASSERT_EQ(200, bytes.size());
+    EXPECT_EQ((std::vector<Byte>{0, 0, 0, 0, 0, 0, 4, 0xC0}), (std::vector<Byte>{bytes.begin(), bytes.begin() + 8}));
+    EXPECT_EQ((std::vector<Byte>{1, 0, 'l', 0}), (std::vector<Byte>{bytes.begin() + 48, bytes.begin() + 52}));
+    ASSERT_FALSE(read_metadata());
+    EXPECT_TRUE(m_orbits.got_data);
+    EXPECT_EQ(200, m_orbits.length);
+    EXPECT_EQ(-2.5, m_orbits.ox_min);
+    EXPECT_EQ(-1.0, m_orbits.oy_3rd);
+    EXPECT_EQ(1, m_orbits.keep_screen_coords);
+    EXPECT_EQ('l', m_orbits.draw_mode);
+
+    gif.reset();
+    g_std_calc_mode = CalcMode::ONE_PASS;
+    ASSERT_EQ(0, save());
+    const GifFilePtr other_pass{read_saved_gif()};
+    expect_layout(other_pass.get(), {"fractint001"});
+    ASSERT_FALSE(read_metadata());
+    EXPECT_FALSE(m_orbits.got_data);
+}
+
+TEST_F(TestGifWriterExtensions, preservesCompleteRecordOrderingAndTotalEncodedLength)
+{
+    g_fractal_type = FractalType::FORMULA;
+    ValueSaver saved_name{g_formula_name, std::string{"AllRecords"}};
+    g_resume_data = {0x12, 0x34, 0x56};
+    g_resume_len = 2;
+    g_calc_status = CalcStatus::RESUMABLE;
+    g_iteration_ranges = {16, 32};
+    std::vector<Byte> parameters(22 * (16 + 2), 0xA5);
+    ValueSaver saved_bf_length{g_bf_length, 16};
+    ValueSaver saved_min{g_bf_x_min, parameters.data()};
+    g_bf_math = BFMathType::BIG_FLT;
+    g_evolving = EvolutionModeFlags::FIELD_MAP;
+    ValueSaver saved_have_info{g_have_evolve_info, true};
+    ValueSaver saved_evolution{g_evolve_info, EvolutionInfo{}};
+    g_std_calc_mode = CalcMode::ORBIT;
+
+    ASSERT_EQ(0, save());
+
+    const GifFilePtr gif{read_saved_gif()};
+    expect_layout(gif.get(),
+        {"fractint002", "fractint003", "fractint004", "fractint005", "fractint006", "fractint007", "fractint001"});
+    ASSERT_FALSE(read_metadata());
+    EXPECT_TRUE(m_resume.got_data);
+    EXPECT_TRUE(m_formula.got_data);
+    EXPECT_TRUE(m_ranges.got_data);
+    EXPECT_TRUE(m_parameters.got_data);
+    EXPECT_TRUE(m_evolution.got_data);
+    EXPECT_TRUE(m_orbits.got_data);
+    EXPECT_EQ((std::vector<Byte>{0x12, 0x34}), m_resume.resume_data);
+    EXPECT_EQ("AllRecords", std::string{m_formula.form_name});
+    EXPECT_EQ((std::vector<int>{16, 32}), m_ranges.range_data);
+    EXPECT_EQ((std::vector<char>{parameters.begin(), parameters.end()}), m_parameters.apm_data);
 }
 
 } // namespace id::test
