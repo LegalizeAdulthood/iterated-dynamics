@@ -701,57 +701,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 2. Driver-Backed SoundOutput
-
-Source: sound mapping, file recording, and device output in
-`engine/sound.cpp`; new `ui/DriverSoundOutput.h` and matching
-implementation.
-
-Work:
-
-- Implement one concrete `SoundOutput` with instance-owned file and
-  playback state.  Preserve the sequential output operation: optionally
-  log the accepted tone, then attempt driver playback.
-- Keep source-specific mapping in this implementation, including overlay
-  debug scaling and restored-image palette indices.  Map each accepted
-  sample once for both recording and playback.
-- Preserve `OSF_MIDI`/`orbitsave=s`, checked save paths, lazy
-  `sound001.txt` creation, integer records, and `time=...` records.
-  A private file helper is permitted, not another port implementation.
-- Check readiness before acceptance so refused samples leave no record
-  or device side effect.  Report file errors without modal UI.
-- Delegate device operations to `driver_sound_on()`, `driver_sound_off()`,
-  and `driver_mute()` without choosing a multimedia dependency.
-- In UI-serviced `update()`, release due voices with
-  `driver_sound_off()`.  Reserve `driver_mute()` for explicit immediate
-  silence; do not use it for normal note completion.
-- Keep configuration and interim tone duration in the implementation.
-  Track readiness with instance-owned time state.
-- Return promptly from submission, update, and completion operations.
-  Do not call `wait_until()`, poll keys, or hide a playback loop.
-- Make repeated updates idempotent for released voices, and clear stale
-  deadlines on mute before later playback.  Normal completion waits for
-  release progression through updates, not by blocking or muting.
-- Treat a driver refusing continuous sound as immediately ready; do not
-  impose fake audio delays, suppress recording, or reject the sample.
-- Leave production producers on the legacy path until their migration.
-
-Done when:
-
-- Optional recording and playback are sequential behaviors of one output
-  implementation, without `LegacySoundFileOutput` or a device/file
-  composite port.
-- Driver acceptance and refusal work without input I/O or a hidden wait;
-  requested recording survives either device outcome.
-- Normal release, immediate silence, and final drain have distinct driver
-  calls and testable lifecycle behavior.
-
-Validation: use a mock driver, controlled clock, and temporary files for
-recording enabled/disabled with driver acceptance/refusal.  Verify log
-before playback, retry without duplication, naming, boundary records,
-file failures, release, mute, and closure.  No real speaker or sleep is
-required; production control flow is unchanged in this slice.
-
 ### 3. UI Sound Session Coordination
 
 Source: `ui/sound.cpp` and the UI owner of the supplied `SoundOutput`.
