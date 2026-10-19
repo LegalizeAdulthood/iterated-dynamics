@@ -4,17 +4,28 @@
 
 #include "engine/resume.h"
 #include "fractals/lorenz.h"
-#include "misc/Driver.h"
+#include "ui/KeyboardHandler.h"
+#include "ui/SoundSession.h"
+
+#include <memory>
 
 using namespace id::engine;
 using namespace id::fractals;
-using namespace id::misc;
 
 namespace id::ui
 {
 
 int dynamic2d_type()
 {
+    SoundSession sound{DriverSoundOutput::Source::ORBIT};
+    return dynamic2d_type(sound);
+}
+
+int dynamic2d_type(SoundSession &sound)
+{
+    reset_calc_interrupted();
+    KeyboardHandlerPtr main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
+    ScopedKeyboardHandler main_loop_scope{main_loop_handler};
     Dynamic2D d2d;
 
     if (g_resuming)
@@ -24,8 +35,9 @@ int dynamic2d_type()
 
     while (!d2d.done())
     {
-        if (driver_key_pressed())
+        if (!sound.wait_until_ready() || calc_interrupted())
         {
+            sound.cancel();
             d2d.suspend();
             return -1;
         }
@@ -33,7 +45,7 @@ int dynamic2d_type()
         d2d.iterate();
     }
 
-    return 0;
+    return sound.finish() ? 0 : -1;
 }
 
 } // namespace id::ui

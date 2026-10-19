@@ -102,10 +102,8 @@ private:
     Affine m_cvt;
     double m_x{};
     double m_y{};
-    double m_z{};
     double *m_p0{&m_x};
     double *m_p1{&m_y};
-    const double *m_sound_var{};
     long m_count{-1};
     int m_color{};
     int m_old_row{-1};

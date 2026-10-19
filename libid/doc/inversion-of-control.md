@@ -201,6 +201,10 @@ The current code is already part-way through this plan:
   temporary display bridge still live in the standard engine.  The
   right-edge hang restriction and saved-state preservation across pixel
   yields are compatibility requirements for later cleanup.
+- `Orbit2D`, `Orbit3D`, and `Dynamic2D` submit numerical samples through
+  `g_sound`.  Their UI controllers service playback, finish normal
+  output, and mute on interruption.  Pending points retain calculation
+  state without changing ready-output polling cadence.
 
 The fresh reverse-call audit also found these live paths:
 
@@ -589,10 +593,6 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - `libid/engine/sound.cpp`: owns speaker/file output, calls
   `driver_sound_on()`, waits through `wait_until()`, and accepts an
   input-pending callback.
-- `libid/fractals/lorenz.cpp`: `Dynamic2D` calls `write_sound()` from
-  rendering iteration and `driver_mute()` from its lifecycle methods.
-  `Orbit2D` and `Orbit3D` submit numerical samples through `g_sound`;
-  their UI controllers own release and interruption.
 - `libid/io/gifview.cpp`: `put_sound_line()` plots a whole decoded line
   while calling `sleep_orbit_delay()` and `write_sound()`;
   `sound_line()` also calls `driver_mute()`.  Decoder and file traversal
@@ -697,29 +697,6 @@ If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
-
-### 8. Dynamic Orbit Sound Port
-
-Source: `Dynamic2D` in `fractals/lorenz.cpp`; UI owner:
-`ui/dynamic2d.cpp`.
-
-Work:
-
-- Submit numerical samples directly and move sound mapping to the sink.
-- Preserve its loop, seed, iteration, and pending-point state across
-  backpressure without increasing normal synchronization cadence.
-- Remove mute from `done()` and `suspend()`.  UI services normal release
-  with `update()` and uses explicit mute for interruption, not completion.
-
-Done when:
-
-- Dynamic rendering has no `m_sound_var`, legacy sound calls, driver
-  mute, or playback wait inside its calculation loop.
-
-Validation: cover refusal before and after seed changes and its existing
-iteration boundary with fake-port controller tests, including suspension
-and resumption.  Reuse dynamic orbit-data and image tests for output.
-No manual test required.
 
 ### 9. Restored Image Sound Traversal State
 

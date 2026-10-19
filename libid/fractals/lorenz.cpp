@@ -16,7 +16,6 @@
 #include "engine/OrbitPlot.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
-#include "engine/sound.h"
 #include "engine/SoundOutput.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
@@ -1235,19 +1234,6 @@ Dynamic2D::Dynamic2D() :
     // setup affine screen coord conversion
     setup_convert_to_screen(&m_cvt);
 
-    if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)
-    {
-        m_sound_var = &m_x;
-    }
-    else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Y)
-    {
-        m_sound_var = &m_y;
-    }
-    else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Z)
-    {
-        m_sound_var = &m_z;
-    }
-
     if (g_inside_method > ColorMethod::COLOR)
     {
         m_color = g_inside_color;
@@ -1268,30 +1254,34 @@ Dynamic2D::~Dynamic2D()
 
 void Dynamic2D::resume()
 {
-    start_resume();
+    const int version{start_resume()};
     get_resume(m_count, m_color, m_old_row, m_old_col, m_x, m_y, m_x_step, m_y_step);
+    m_keep_going = false;
+    if (version >= 2)
+    {
+        get_resume(m_keep_going);
+    }
     end_resume();
 }
 
 void Dynamic2D::suspend()
 {
-    driver_mute();
-    alloc_resume(100, 1);
+    alloc_resume(100, 2);
     put_resume(m_count, m_color, m_old_row, m_old_col, m_x, m_y, m_x_step, m_y_step);
+    put_resume(m_keep_going);
 }
 
 bool Dynamic2D::done() const
 {
-    if (m_unbounded || m_y_step > s_d)
-    {
-        driver_mute();
-        return true;
-    }
-    return false;
+    return m_unbounded || m_y_step > s_d;
 }
 
 void Dynamic2D::iterate()
 {
+    if (done())
+    {
+        return;
+    }
     if (m_count == -1)
     {
         ++m_x_step;
@@ -1333,15 +1323,13 @@ void Dynamic2D::iterate()
             m_keep_going = true;
             return;
         }
-        m_keep_going = false;
-
         const int col = static_cast<int>(m_cvt.a * m_x + m_cvt.b * m_y + m_cvt.e);
         const int row = static_cast<int>(m_cvt.c * m_x + m_cvt.d * m_y + m_cvt.f);
         if (col >= 0 && col < g_logical_screen.x_dots && row >= 0 && row < g_logical_screen.y_dots)
         {
-            if (m_sound_var && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
+            if (!g_sound->play({m_x, m_y, 0.0}))
             {
-                write_sound(static_cast<int>(*m_sound_var * 100 + g_base_hertz));
+                return;
             }
 
             if (m_count >= g_orbit_skip_points)
@@ -1369,6 +1357,7 @@ void Dynamic2D::iterate()
             m_old_row = -1;
         }
 
+        m_keep_going = false;
         if (orbit(m_p0, m_p1))
         {
             break;

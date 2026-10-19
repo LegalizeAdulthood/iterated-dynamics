@@ -5,6 +5,9 @@
 namespace id::ui
 {
 
+class SoundSession;
+
 int dynamic2d_type();
+int dynamic2d_type(SoundSession &sound);
 
 } // namespace id::ui

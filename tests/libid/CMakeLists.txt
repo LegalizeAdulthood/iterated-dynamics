@@ -119,6 +119,7 @@ add_executable(test-id
     ui/test_diskvid.cpp
     ui/test_double_to_string.cpp
     ui/test_DriverSoundOutput.cpp
+    ui/test_DynamicSound.cpp
     ui/test_file_item.cpp
     ui/test_full_screen_prompt.cpp
     ui/test_history.cpp
