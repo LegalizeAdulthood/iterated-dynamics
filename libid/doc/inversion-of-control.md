@@ -589,8 +589,8 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - `libid/engine/sound.cpp`: owns speaker/file output, calls
   `driver_sound_on()`, waits through `wait_until()`, and accepts an
   input-pending callback.
-- `libid/engine/StickyOrbits.cpp` and `libid/fractals/lorenz.cpp`:
-  call `write_sound()` directly from rendering iteration.
+- `libid/fractals/lorenz.cpp`: calls `write_sound()` directly from
+  rendering iteration.
 - `libid/fractals/lorenz.cpp`: calls `driver_mute()` from orbit
   renderer constructors, destructors, `done()`, and `suspend()`.
 - `libid/io/gifview.cpp`: `put_sound_line()` plots a whole decoded line
@@ -697,30 +697,6 @@ If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
-
-### 5. Sticky Orbit Sound Port
-
-Source: `StickyOrbits::advance_orbit()` and its `StandardPass` route;
-UI owner: `ui/standard_fractal.cpp`.
-
-Work:
-
-- Replace `write_sound(g_base_hertz)` with sample submission at the
-  producer.  Preserve the initial constant-frequency adapter mapping.
-- Retain an unaccepted point before plotting, then return to the existing
-  controller.  Keep orbit count, seed state, and traversal resumable.
-- Preserve the current 2,048-iteration chunk when output remains ready.
-  Do not make every sample require key dispatch or a pass result field.
-
-Done when:
-
-- Sticky orbits use the same sound session without direct sound I/O or
-  waiting.  Backpressure cannot skip or duplicate a plotted point.
-
-Validation: exercise rectangle/line traversal, refusal across chunk and
-seed boundaries, suspension, and tone recording when the driver refuses
-playback.  Add fake-port controller tests for interruption/resumption;
-existing image tests protect rendered results.  No manual test required.
 
 ### 6. Orbit2D Sound Port
 

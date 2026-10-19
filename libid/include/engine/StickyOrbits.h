@@ -21,8 +21,9 @@ class StickyOrbits
 {
 public:
     bool iterate();
-    int scan();
     void suspend();
+    void save_resume() const;
+    void restore_resume();
 
 private:
     enum class Traversal
@@ -59,9 +60,14 @@ private:
     {
         fractals::Affine screen_convert{};
         long count{};
+        long resume_count{};
+        math::DComplex point{};
+        int col{};
+        int row{};
         int color{1};
         bool active{};
         bool seed_color_selected{};
+        bool point_pending{};
     };
 
     void advance_after_seed();
@@ -82,7 +88,6 @@ private:
     void start_orbit();
 
     bool m_initialized{};
-    bool m_interrupted{};
     Traversal m_traversal{Traversal::START};
     int m_row{};
     int m_col{};

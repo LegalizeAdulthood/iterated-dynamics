@@ -6,7 +6,8 @@
 #include "engine/convert_center_mag.h"
 #include "engine/LogicalScreen.h"
 #include "engine/OrbitPlot.h"
-#include "engine/sound.h"
+#include "engine/resume.h"
+#include "engine/SoundOutput.h"
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
@@ -16,6 +17,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <stdexcept>
 
 using namespace id::fractals;
 
@@ -126,7 +128,6 @@ void StickyOrbits::initialize()
     if (!plot_orbits2d_setup(&m_orbit.screen_convert))
     {
         g_std_calc_mode = CalcMode::SOLID_GUESS;
-        m_interrupted = true;
         m_traversal = Traversal::DONE;
         return;
     }
@@ -257,6 +258,7 @@ void StickyOrbits::start_orbit()
     per_pixel();
     m_orbit.count = 0;
     m_orbit.active = true;
+    m_orbit.point_pending = false;
 }
 
 bool StickyOrbits::advance_orbit()
@@ -269,34 +271,43 @@ bool StickyOrbits::advance_orbit()
     const long stop_count = std::min(g_max_iterations, m_orbit.count + ORBIT_ITERATION_CHUNK);
     for (; m_orbit.count < stop_count; ++m_orbit.count)
     {
-        if (orbit_calc() == 1 && g_periodicity_check)
+        if (!m_orbit.point_pending)
         {
-            continue;
-        }
-
-        if (m_orbit.count < g_orbit_skip_points || m_orbit.count % g_orbit_interval)
-        {
-            continue;
-        }
-
-        const int col = static_cast<int>(
-            m_orbit.screen_convert.a * g_new_z.x + m_orbit.screen_convert.b * g_new_z.y + m_orbit.screen_convert.e);
-        const int row = static_cast<int>(
-            m_orbit.screen_convert.c * g_new_z.x + m_orbit.screen_convert.d * g_new_z.y + m_orbit.screen_convert.f);
-        if (col > 0 && col < g_logical_screen.x_dots && row > 0 && row < g_logical_screen.y_dots)
-        {
-            if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
+            if (orbit_calc() == 1 && g_periodicity_check)
             {
-                write_sound(g_base_hertz);
+                continue;
             }
 
-            g_plot(col, row, m_orbit.color % g_colors);
+            if (m_orbit.count < m_orbit.resume_count || m_orbit.count < g_orbit_skip_points ||
+                m_orbit.count % g_orbit_interval)
+            {
+                continue;
+            }
+
+            m_orbit.col = static_cast<int>(
+                m_orbit.screen_convert.a * g_new_z.x + m_orbit.screen_convert.b * g_new_z.y + m_orbit.screen_convert.e);
+            m_orbit.row = static_cast<int>(
+                m_orbit.screen_convert.c * g_new_z.x + m_orbit.screen_convert.d * g_new_z.y + m_orbit.screen_convert.f);
+            if (m_orbit.col <= 0 || m_orbit.col >= g_logical_screen.x_dots || m_orbit.row <= 0 ||
+                m_orbit.row >= g_logical_screen.y_dots)
+            {
+                if (g_periodicity_check)
+                {
+                    m_orbit.active = false;
+                    m_orbit.resume_count = 0;
+                    return true;
+                }
+                continue;
+            }
+            m_orbit.point = g_new_z;
+            m_orbit.point_pending = true;
         }
-        else if (g_periodicity_check)
+        if (!g_sound->play({m_orbit.point.x, m_orbit.point.y, 0.0}))
         {
-            m_orbit.active = false;
-            return true;
+            return false;
         }
+        g_plot(m_orbit.col, m_orbit.row, m_orbit.color % g_colors);
+        m_orbit.point_pending = false;
     }
 
     if (m_orbit.count < g_max_iterations)
@@ -305,6 +316,7 @@ bool StickyOrbits::advance_orbit()
     }
 
     m_orbit.active = false;
+    m_orbit.resume_count = 0;
     return true;
 }
 
@@ -403,15 +415,6 @@ bool StickyOrbits::iterate()
     }
 }
 
-int StickyOrbits::scan()
-{
-    while (!iterate())
-    {
-    }
-
-    return m_interrupted ? -1 : 0;
-}
-
 int StickyOrbits::encoded_orbit_color() const
 {
     const int color = m_orbit.color + 1;
@@ -420,23 +423,30 @@ int StickyOrbits::encoded_orbit_color() const
 
 void StickyOrbits::save_current_work()
 {
-    const int pass = encoded_orbit_color();
+    WorkList work{g_start_pt, g_stop_pt, {m_col, m_row}, g_work_symmetry, encoded_orbit_color()};
     switch (m_traversal)
     {
     case Traversal::RECTANGLE:
     case Traversal::LINE:
-        add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, m_col, m_row, pass, g_work_symmetry);
         break;
 
     case Traversal::FUNCTION:
-        add_work_list(m_function.angle, 0, 0, 0, 0, 0, pass, g_work_symmetry);
+        work.begin = {m_function.angle, 0};
         break;
 
     case Traversal::START:
     case Traversal::DONE:
     default:
-        break;
+        return;
     }
+    if (g_num_work_list >= MAX_CALC_WORK)
+    {
+        throw std::logic_error{"No room to suspend sticky orbit work"};
+    }
+    // The resume count belongs to this seed, before any other queued work.
+    std::move_backward(g_work_list, g_work_list + g_num_work_list, g_work_list + g_num_work_list + 1);
+    g_work_list[0] = work;
+    ++g_num_work_list;
 }
 
 void StickyOrbits::suspend()
@@ -447,8 +457,23 @@ void StickyOrbits::suspend()
     }
 
     save_current_work();
+    m_orbit.resume_count = m_orbit.active ? std::max(m_orbit.resume_count, m_orbit.count) : 0;
     m_traversal = Traversal::DONE;
     m_orbit.active = false;
+}
+
+void StickyOrbits::save_resume() const
+{
+    put_resume(m_orbit.resume_count);
+}
+
+void StickyOrbits::restore_resume()
+{
+    get_resume(m_orbit.resume_count);
+    if (m_orbit.resume_count < 0)
+    {
+        throw std::logic_error{"Invalid sticky orbit resume count"};
+    }
 }
 
 } // namespace id::engine

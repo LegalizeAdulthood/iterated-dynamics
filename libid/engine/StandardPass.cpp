@@ -247,4 +247,21 @@ void StandardPass::suspend()
     }
 }
 
+void StandardPass::save_resume() const
+{
+    if (m_state.index() == ORBIT)
+    {
+        std::get<StickyOrbits>(m_state).save_resume();
+    }
+}
+
+void StandardPass::restore_resume(const CalcMode calc_mode)
+{
+    if (calc_mode == CalcMode::ORBIT)
+    {
+        select(calc_mode);
+        std::get<StickyOrbits>(m_state).restore_resume();
+    }
+}
+
 } // namespace id::engine

@@ -42,6 +42,8 @@ public:
     void select(CalcMode calc_mode);
     StandardPassStatus status() const;
     void suspend();
+    void save_resume() const;
+    void restore_resume(CalcMode calc_mode);
 
 private:
     enum StateIndex
