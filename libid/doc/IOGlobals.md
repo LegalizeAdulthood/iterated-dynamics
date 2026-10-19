@@ -29,7 +29,6 @@ Variables for loading fractal images and managing file state:
 
 Variables for saving fractal images:
 
-- `g_block[]` - buffer for encoder block data
 - `g_save_filename` - path to file for saving
 
 ## 3. Color Map/Palette Group
@@ -106,7 +105,7 @@ These variable groups follow typical I/O operation patterns:
 
 2. **File Saving Flow**:
    - Set `g_save_filename`
-   - Use `g_block[]` buffer for encoding
+   - Write scanlines and metadata through `GifWriter`
    - Respect `g_save_time_interval` for auto-saves
    - Update `g_timed_save` and `g_resave_flag` status
 
@@ -217,7 +216,6 @@ These state variables control flow through complex I/O operations and would bene
 
 Some I/O globals are performance-sensitive:
 
-- `g_block[]` is a buffer used during encoding; its size affects encoding performance
 - `g_out_line` function pointer enables fast line-by-line GIF decoding without virtual dispatch
 - `g_skip_x_dots` and `g_skip_y_dots` enable fast preview loading by skipping pixels
 - `g_dither_flag` trades quality for speed in GIF display

@@ -37,7 +37,6 @@
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
 #include "io/check_write_file.h"
-#include "io/decode_info.h"
 #include "io/gif_extensions.h"
 #include "io/gif_file.h"
 #include "io/GifWriter.h"
@@ -61,13 +60,9 @@
 #include "ui/temp_msg.h"
 #include "ui/video.h"
 
-#include <fmt/format.h>
 #include <gif_lib.h>
 
 #include <algorithm>
-#include <climits>
-#include <cstdio>
-#include <cstring>
 #include <filesystem>
 #include <iterator>
 #include <limits>
@@ -88,20 +83,8 @@ namespace id::io
 
 std::filesystem::path g_save_filename{"fract001"};
 
-[[maybe_unused]] static bool compress(int row_limit);
-[[maybe_unused]] static int shift_write(const Byte *color, int num_colors);
 static int extend_blk_len(int data_len);
-[[maybe_unused]] static int put_extend_blk(int block_id, int block_len, const char *block_data);
 static void store_item_name(GifFileType &extensions, std::string_view name);
-
-static int s_num_saves{}; // For adjusting 'save-to-disk' filenames
-// TODO: removed later
-static std::FILE *s_outfile{};
-static int s_last_color_bar{};
-static bool s_save_16bit{};
-static int s_out_color_1s{};
-static int s_out_color_2s{};
-static int s_start_bits{};
 
 // B&W palette
 static constexpr Byte s_palette_bw[]{
@@ -136,39 +119,6 @@ static constexpr Byte s_palette_ega[]{
     63, 63, 21, //
     63, 63, 63, //
 };
-
-bool write_gif_uint16(std::FILE *file, const int value)
-{
-    if (file == nullptr || value < 0 || value > GIF_MAX_PIXELS)
-    {
-        return false;
-    }
-    const auto dimension{static_cast<std::uint16_t>(value)};
-    const Byte bytes[]{static_cast<Byte>(dimension & 0xFF), static_cast<Byte>(dimension >> 8)};
-    return std::fwrite(bytes, sizeof(bytes), 1, file) == 1;
-}
-
-//                        Save-To-Disk Routines (GIF)
-//
-// The following routines perform the GIF encoding when the 's' key is pressed.
-//
-// The compression logic in this file has been replaced by the classic
-// UNIX compress code. We have extensively modified the sources to fit
-// our needs, but have left the original credits where they
-// appear. Thanks to the original authors for making available these
-// classic and reliable sources. Of course, they are not responsible for
-// all the changes we have made to integrate their sources into this program.
-//
-// MEMORY ALLOCATION
-//
-// There are two large arrays:
-//
-//    long htab[HSIZE]              (5003*4 = 20012 bytes)
-//    unsigned short codetab[HSIZE] (5003*2 = 10006 bytes)
-//
-// At the moment these arrays reuse extraseg and strlocn, respectively.
-//
-//
 
 static GifWriter::Screen save_screen()
 {
@@ -453,61 +403,10 @@ bool encoder(GifWriter &writer, const std::filesystem::path &filename)
     return saved && finished;
 }
 
-// TODO: removed later
-// shift IBM colors to GIF
-static int shift_write(const Byte *color, const int num_colors)
-{
-    for (int i = 0; i < num_colors; i++)
-    {
-        for (int j = 0; j < 3; j++)
-        {
-            Byte this_color = color[3 * i + j];
-            if (std::fputc(this_color, s_outfile) != static_cast<int>(this_color))
-            {
-                return 0;
-            }
-        }
-    }
-    return 1;
-}
-
 static int extend_blk_len(const int data_len)
 {
     return data_len + (data_len + 254) / 255 + 15;
     // data   +     1.per.block   + 14 for id + 1 for null at end
-}
-
-static int put_extend_blk(const int block_id, int block_len, const char *block_data)
-{
-    int j;
-    if (block_id < 0 || block_id > 999)
-    {
-        return 0;
-    }
-    char header[15]{"!\377\013fractint"};
-    fmt::format_to_n(&header[11], 3, "{:03}", block_id);
-    if (std::fwrite(header, 14, 1, s_outfile) != 1)
-    {
-        return 0;
-    }
-    int i = (block_len + 254) / 255;
-    while (--i >= 0)
-    {
-        block_len -= j = std::min(block_len, 255);
-        if (std::fputc(j, s_outfile) != j)
-        {
-            return 0;
-        }
-        while (--j >= 0)
-        {
-            std::fputc(*block_data++, s_outfile);
-        }
-    }
-    if (std::fputc(0, s_outfile) != 0)
-    {
-        return 0;
-    }
-    return 1;
 }
 
 static void store_item_name(GifFileType &extensions, const std::string_view name)
@@ -717,362 +616,6 @@ void setup_save_info(FractalInfo *save_info)
     for (int i = 0; i < static_cast<int>(std::size(save_info->future)); ++i) // NOLINT(modernize-loop-convert)
     {
         save_info->future[i] = 0;
-    }
-}
-
-//
-//  GIFENCOD.C       - GIF Image compression routines
-//
-//  Lempel-Ziv compression based on 'compress'.  GIF modifications by
-//  David Rowley (mgardi@watdcsu.waterloo.edu).
-//  Thoroughly massaged by the Stone Soup team for our purposes.
-//
-//
-
-enum
-{
-    BITS_F = 12,
-    H_SIZE = 5003            // 80% occupancy
-};
-
-// GIF Image compression - modified 'compress'
-//
-// Based on: compress.c - File compression ala IEEE Computer, June 1984.
-//
-// By Authors:  Spencer W. Thomas
-//              Jim McKie
-//              Steve Davies
-//              Ken Turkowski
-//              James A. Woods
-//              Joe Orost
-//
-
-// prototypes
-
-static void output(int code);
-static void char_out(int c);
-static void flush_char();
-static void cl_block();
-
-static int s_n_bits{};                     // number of bits/code
-static int s_max_bits{BITS_F};               // user settable max # bits/code
-static int s_max_code{};                    // maximum code, given n_bits
-static int s_max_max_cde{1 << BITS_F}; // should NEVER generate this code
-
-constexpr static int max_code(const int n_bits)
-{
-    return (1 << n_bits) - 1;
-}
-
-Byte g_block[4096]{};
-
-static long s_h_tab[H_SIZE]{};
-static unsigned short s_code_tab[10240]{};
-
-static int s_free_ent{};                  // first unused entry
-
-// block compression parameters -- after all codes are used up,
-// and compression rate changes, start over.
-static bool s_clear_flag{};
-
-//
-// compress stdin to stdout
-//
-// Algorithm:  use open addressing double hashing (no chaining) on the
-// prefix code / next character combination.  We do a variant of Knuth's
-// algorithm D (vol. 3, sec. 6.4) along with G. Knott's relatively-prime
-// secondary probe.  Here, the modular division first probe is gives way
-// to a faster exclusive-or manipulation.  Also do block compression with
-// an adaptive reset, whereby the code table is cleared when the compression
-// ratio decreases, but after the table fills.  The variable-length output
-// codes are re-sized at this point, and a special CLEAR code is generated
-// for the decompressor.  Late addition:  construct the table according to
-// file size for noticeable speed improvement on small files.  Please direct
-// questions about this implementation to ames!jaw.
-//
-
-static int s_clear_code{};
-static int s_eof_code{};
-static int s_a_count{}; // Number of characters so far in this 'packet'
-static unsigned long s_cur_accum{};
-static int s_cur_bits{};
-
-//
-// Define the storage for the packet accumulator
-//
-static char s_accum[256]{};
-
-static bool compress(const int row_limit)
-{
-    int color;
-    int in_count = 0;
-    // TODO: why does this remain if it's never changed?
-    const bool interrupted = false;
-
-    int out_color1 = 0;               // use these colors to show progress
-    int out_color2 = 1;               // (this has nothing to do with GIF)
-
-    if (g_colors > 2)
-    {
-        out_color1 = 2;
-        out_color2 = 3;
-    }
-    if ((++s_num_saves & 1) == 0)
-    {
-        // reverse the colors on alt saves
-        int i = out_color1;
-        out_color1 = out_color2;
-        out_color2 = i;
-    }
-    s_out_color_1s = out_color1;
-    s_out_color_2s = out_color2;
-
-    // Set up the necessary values
-    s_cur_accum = 0;
-    s_cur_bits = 0;
-    s_clear_flag = false;
-    int ent = 0;
-    s_n_bits = s_start_bits;
-    s_max_code = max_code(s_n_bits);
-
-    s_clear_code = 1 << (s_start_bits - 1);
-    s_eof_code = s_clear_code + 1;
-    s_free_ent = s_clear_code + 2;
-
-    s_a_count = 0;
-    int h_shift = 0;
-    for (long f_code = H_SIZE;  f_code < 65536L; f_code *= 2L)
-    {
-        h_shift++;
-    }
-    h_shift = 8 - h_shift;                // set hash code range bound
-
-    std::memset(s_h_tab, 0xff, static_cast<unsigned>(H_SIZE) *sizeof(long));
-
-    output(s_clear_code);
-
-    for (int row_num = 0; row_num < g_logical_screen.y_dots; row_num++)
-    {
-        // scan through the dots
-        for (int y_dot = row_num; y_dot < row_limit; y_dot += g_logical_screen.y_dots)
-        {
-            for (int x_dot = 0; x_dot < g_logical_screen.x_dots; x_dot++)
-            {
-                if (s_save_16bit == 0 || y_dot < g_logical_screen.y_dots)
-                {
-                    color = get_color(x_dot, y_dot);
-                }
-                else
-                {
-                    color = disk_read_pixel(x_dot + g_logical_screen.x_offset, y_dot + g_logical_screen.y_offset);
-                }
-                if (in_count == 0)
-                {
-                    in_count = 1;
-                    ent = color;
-                    continue;
-                }
-                const long f_code = (static_cast<long>(color) << s_max_bits) + ent;
-                int i = color << h_shift ^ ent;    // xor hashing
-                int disp{};
-
-                if (s_h_tab[i] == f_code)
-                {
-                    ent = s_code_tab[i];
-                    continue;
-                }
-                if (s_h_tab[i] < 0) // empty slot
-                {
-                    goto no_match;
-                }
-                disp = H_SIZE - i;           // secondary hash (after G. Knott)
-                if (i == 0)
-                {
-                    disp = 1;
-                }
-probe:
-                if ((i -= disp) < 0)
-                {
-                    i += H_SIZE;
-                }
-
-                if (s_h_tab[i] == f_code)
-                {
-                    ent = s_code_tab[i];
-                    continue;
-                }
-                if (s_h_tab[i] > 0)
-                {
-                    goto probe;
-                }
-no_match:
-                output(ent);
-                ent = color;
-                if (s_free_ent < s_max_max_cde)
-                {
-                    // code -> hashtable
-                    s_code_tab[i] = static_cast<unsigned short>(s_free_ent++);
-                    s_h_tab[i] = f_code;
-                }
-                else
-                {
-                    cl_block();
-                }
-            } // end for xdot
-            if (! driver_is_disk()       // supress this on disk-video
-                && y_dot == row_num)
-            {
-                if ((y_dot & 4) == 0)
-                {
-                    if (++out_color1 >= g_colors)
-                    {
-                        out_color1 = 0;
-                    }
-                    if (++out_color2 >= g_colors)
-                    {
-                        out_color2 = 0;
-                    }
-                }
-                for (int i = 0; 250*i < g_logical_screen.x_dots; i++)
-                {
-                    // display vert status bars
-                    // (this is NOT GIF-related)
-                    g_put_color(i, y_dot, get_color(i, y_dot) ^ out_color1);
-                    g_put_color(g_logical_screen.x_dots - 1 - i, y_dot,
-                             get_color(g_logical_screen.x_dots - 1 - i, y_dot) ^ out_color2);
-                }
-                s_last_color_bar = y_dot;
-            } // end if !driver_diskp()
-        } // end for ydot
-    } // end for rownum
-
-    // Put out the final code.
-    output(ent);
-    output(s_eof_code);
-    return interrupted;
-}
-
-//****************************************************************
-// TAG(output)
-//
-// Output the given code.
-// Inputs:
-//      code:   A n_bits-bit integer.  If == -1, then EOF.  This assumes
-//              that n_bits =< (long)wordsize - 1.
-// Outputs:
-//      Outputs code to the file.
-// Assumptions:
-//      Chars are 8 bits long.
-// Algorithm:
-//      Maintain a BITSF character long buffer (so that 8 codes will
-// fit in it exactly).  Use the VAX insv instruction to insert each
-// code in turn.  When the buffer fills up empty it and start over.
-//
-
-static void output(const int code)
-{
-    static unsigned long masks[] =
-    {
-        0x0000, 0x0001, 0x0003, 0x0007, 0x000F,
-        0x001F, 0x003F, 0x007F, 0x00FF,
-        0x01FF, 0x03FF, 0x07FF, 0x0FFF,
-        0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF
-    };
-
-    s_cur_accum &= masks[ s_cur_bits ];
-
-    if (s_cur_bits > 0)
-    {
-        s_cur_accum |= static_cast<long>(code) << s_cur_bits;
-    }
-    else
-    {
-        s_cur_accum = code;
-    }
-
-    s_cur_bits += s_n_bits;
-
-    while (s_cur_bits >= 8)
-    {
-        char_out(static_cast<unsigned int>(s_cur_accum & 0xff));
-        s_cur_accum >>= 8;
-        s_cur_bits -= 8;
-    }
-
-    // If the next entry is going to be too big for the code size,
-    // then increase it, if possible.
-    if (s_free_ent > s_max_code || s_clear_flag)
-    {
-        if (s_clear_flag)
-        {
-            s_n_bits = s_start_bits;
-            s_max_code = max_code(s_n_bits);
-            s_clear_flag = false;
-        }
-        else
-        {
-            s_n_bits++;
-            if (s_n_bits == s_max_bits)
-            {
-                s_max_code = s_max_max_cde;
-            }
-            else
-            {
-                s_max_code = max_code(s_n_bits);
-            }
-        }
-    }
-
-    if (code == s_eof_code)
-    {
-        // At EOF, write the rest of the buffer.
-        while (s_cur_bits > 0)
-        {
-            char_out(static_cast<unsigned int>(s_cur_accum & 0xff));
-            s_cur_accum >>= 8;
-            s_cur_bits -= 8;
-        }
-
-        flush_char();
-
-        fflush(s_outfile);
-    }
-}
-
-//
-// Clear out the hash table
-//
-static void cl_block()             // table clear for block compress
-{
-    std::memset(s_h_tab, 0xff, static_cast<unsigned>(H_SIZE) *sizeof(long));
-    s_free_ent = s_clear_code + 2;
-    s_clear_flag = true;
-    output(s_clear_code);
-}
-
-//
-// Add a character to the end of the current packet, and if it is 254
-// characters, flush the packet to disk.
-//
-static void char_out(const int c)
-{
-    s_accum[ s_a_count++ ] = static_cast<char>(c);
-    if (s_a_count >= 254)
-    {
-        flush_char();
-    }
-}
-
-//
-// Flush the packet to disk, and reset the accumulator
-//
-static void flush_char()
-{
-    if (s_a_count > 0)
-    {
-        std::fputc(s_a_count, s_outfile);
-        std::fwrite(s_accum, 1, s_a_count, s_outfile);
-        s_a_count = 0;
     }
 }
 

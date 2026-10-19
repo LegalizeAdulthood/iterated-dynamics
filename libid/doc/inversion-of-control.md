@@ -746,49 +746,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 12.8. GIF Custom Encoder Removal
-
-Source: unused compressor state and `compress()`, `output()`,
-`cl_block()`, `char_out()`, and `flush_char()` in `io/encoder.cpp`;
-obsolete framing helpers and tests; `hc/src/help.src`.
-
-Work:
-
-- Remove the unused custom LZW encoder, hash/code tables, bit packing,
-  byte accumulator, `s_outfile`, and obsolete GIF framing helpers and
-  declarations.
-- Remove `write_gif_uint16()` and its implementation-specific tests if
-  it has no remaining callers; retain dimension-boundary coverage at
-  `GifWriter` and production save boundaries.
-- Keep the shared extension serializers in `gif_file.cpp` and helpers
-  still required for metadata lengths.  Remove the superseded packed
-  structure encode/decode helpers, tests, and registrations only after
-  verifying that no callers remain on either the read or write path.
-- Audit `g_block` after the metadata-reader conversion and remove it if
-  unused.  Do not retain it merely because the old loader once used it,
-  or delete application data that still has another caller.
-- Remove stale custom-writer references and migration bridges that are
-  no longer called.  Keep the atomic save command and UI-owned scanline
-  feedback; later UI cleanup must not reintroduce keyboard polling.
-  Do not leave test-only compressor facades, obsolete interruption flags,
-  partial-encoding prompts, or key-polling test expectations.
-- Add a current-release code-cleanup changelog item covering the giflib
-  reader/writer conversion.  Do not alter historical release notes.
-
-Done when:
-
-- Neither production GIF reading nor writing uses a custom LZW codec.
-  Both use the existing shared extension readers/writers, with no
-  duplicate payload codec or keyboard polling.  Whole-file I/O is atomic;
-  metadata, resumable images, and reduction features remain supported.
-- This completes the reader/writer conversion requested by
-  [issue #270][270].
-
-Validation: run focused writer/restore/metadata tests and the full
-`rt-default` workflow.  No manual test.
-
-[270]: https://github.com/LegalizeAdulthood/iterated-dynamics/issues/270
-
 ### 13. Restored Image Sound Controller
 
 Source: scanlines from `GifRestore` and `RestoredImageOutput`.

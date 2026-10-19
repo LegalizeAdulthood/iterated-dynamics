@@ -15,9 +15,8 @@ namespace id::io
 #define INFO_ID         "Fractal"
 
 /*
- * Note: because big endian machines store structures differently, we have
- * to do special processing of the FractalInfo structure in decode_info.cpp.
- * Make sure changes to the structure here get reflected there.
+ * GIF metadata is serialized field by field in io/gif_file.cpp.
+ * Keep those serializers and record lengths consistent with changes here.
  */
 enum
 {
@@ -27,7 +26,6 @@ enum
     // increment this EVERY time the fractal_info structure changes
 };
 
-// TODO: instead of hacking the padding here, adjust the code that reads this structure
 #if defined(_WIN32)
 #pragma pack(push, 1)
 #define ID_PACKED
@@ -252,9 +250,8 @@ struct ExtBlock7
 };
 
 /*
- * Note: because big endian machines store structures differently, we have
- * to do special processing of the OrbitsInfo structure in decode_info.cpp.
- * Make sure changes to the structure here get reflected there.
+ * OrbitsInfo is serialized field by field in io/gif_file.cpp.
+ * Keep those serializers and record lengths consistent with changes here.
  */
 struct OrbitsInfo      // for saving orbits data in a GIF file
 {

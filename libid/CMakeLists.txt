@@ -143,7 +143,6 @@ add_library(libid
     include/io/check_write_file.h io/check_write_file.cpp
     include/io/CurrentPathSaver.h
     include/io/decoder.h io/decoder.cpp
-    include/io/decode_info.h io/decode_info.cpp
     include/io/dir_file.h
     include/io/encoder.h io/encoder.cpp
     include/io/ends_with_slash.h io/ends_with_slash.cpp
@@ -315,10 +314,6 @@ source_group_subdir("UI" "ui")
 
 target_compile_definitions(libid PUBLIC
     ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
-# TODO: Figure out a better way to deal with converting packed structs on big-endian machines
-set_source_files_properties(io/decode_info.cpp
-    PROPERTIES
-        COMPILE_FLAGS $<$<CXX_COMPILER_ID:GNU>:-Wno-address-of-packed-member>)
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PUBLIC include)
 prefer_vcpkg_gif_includes(libid)

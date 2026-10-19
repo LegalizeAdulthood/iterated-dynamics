@@ -36,10 +36,9 @@ enum
 };
 
 /*
- * Note: because big-endian machines store structures differently, we have
- * to do special processing of the EVOLUTION_INFO structure as it is stored
- * in little-endian format.  If this structure changes, change the big-endian
- * marshalling routines in io/decode_info.h.
+ * EvolutionInfo is serialized field by field in io/gif_file.cpp.
+ * Keep those serializers and the 200-byte record length consistent with
+ * changes here; native structure padding is not part of the file format.
  */
 struct EvolutionInfo      // for saving evolution data in a GIF file
 {
@@ -61,7 +60,7 @@ struct EvolutionInfo      // for saving evolution data in a GIF file
     std::uint16_t y_dots;
     std::int16_t mutate[NUM_GENES];
     std::int16_t count; // count of how many images have been calc'ed so far
-    std::int16_t future[66 - NUM_GENES];      // total of 200 bytes
+    std::int16_t future[66 - NUM_GENES]; // reserved fields in the 200-byte record
 };
 
 bool operator==(const EvolutionInfo &lhs, const EvolutionInfo &rhs);
