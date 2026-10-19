@@ -10,6 +10,7 @@
 #include "engine/OrbitPlot.h"
 #include "engine/Potential.h"
 #include "engine/resume.h"
+#include "engine/SoundOutput.h"
 #include "engine/UserData.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
@@ -232,11 +233,6 @@ bool StandardFractal::consume_orbit_overlay_displayed()
     const bool displayed{m_orbit_overlay_displayed};
     m_orbit_overlay_displayed = false;
     return displayed;
-}
-
-bool StandardFractal::overlay_scrub_pending() const
-{
-    return m_overlay_scrub_pending;
 }
 
 void StandardFractal::complete_pending_orbit_plot()
@@ -472,6 +468,12 @@ void StandardFractal::run_pending_orbit_plot()
 void StandardFractal::scrub_overlay()
 {
     scrub_orbit();
+    if (m_orbit_plot_pending)
+    {
+        m_standard_pixel_orbit_plotted = m_orbit_plot_marks_standard_orbit;
+        m_orbit_plot_pending = false;
+        m_orbit_plot_marks_standard_orbit = false;
+    }
     m_overlay_scrub_pending = false;
     m_standard_pixel_overlay_scrubbed = true;
 }
@@ -483,7 +485,7 @@ bool StandardFractal::scrub_overlay_orbit(const bool yield_to_ui)
         return false;
     }
 
-    if (yield_to_ui && standard_presentation_yield_enabled())
+    if (!g_sound->ready() || (yield_to_ui && standard_presentation_yield_enabled()))
     {
         m_overlay_scrub_pending = true;
         m_incomplete_standard_pixel_yield = true;

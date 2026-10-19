@@ -22,7 +22,6 @@ public:
     int calculate_standard_pixel(bool yield_to_ui);
     bool consume_traversal_yield();
     bool consume_orbit_overlay_displayed();
-    bool overlay_scrub_pending() const;
     bool presentation_pending() const;
     void queue_overlay_orbit_plot(double real, double imag, bool mark_as_plotted = true);
     // TODO: removed later

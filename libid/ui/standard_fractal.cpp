@@ -4,9 +4,11 @@
 
 #include "engine/calcfrac.h"
 #include "engine/OrbitPlot.h"
+#include "engine/SoundOutput.h"
 #include "engine/StandardFractal.h"
 #include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"
+#include "ui/SoundSession.h"
 #include "ui/standard_orbit_plot.h"
 
 #include <chrono>
@@ -34,7 +36,7 @@ public:
     {
         if (g_show_orbit)
         {
-            mute_orbit_display();
+            g_sound->mute();
             m_standard_fractal.scrub_overlay();
         }
         if (key != 'o' && key != 'O')
@@ -64,11 +66,17 @@ void wait_for_show_dot_delay()
 
 int standard_fractal()
 {
+    SoundSession sound{DriverSoundOutput::Source::OVERLAY};
+    return standard_fractal(sound);
+}
+
+int standard_fractal(SoundSession &sound)
+{
     reset_calc_interrupted();
     reset_orbit_delay();
     StandardFractal standard_fractal;
-    auto main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
-    auto orbit_toggle_handler{std::make_shared<OrbitToggleKeyboardHandler>(standard_fractal)};
+    KeyboardHandlerPtr main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
+    KeyboardHandlerPtr orbit_toggle_handler{std::make_shared<OrbitToggleKeyboardHandler>(standard_fractal)};
     ScopedKeyboardHandler main_loop_scope{main_loop_handler};
     ScopedKeyboardHandler orbit_toggle_scope{orbit_toggle_handler};
 
@@ -76,6 +84,12 @@ int standard_fractal()
 
     while (!standard_fractal.done())
     {
+        if (!sound.wait_until_ready())
+        {
+            standard_fractal.scrub_overlay();
+            standard_fractal.suspend();
+            return -1;
+        }
         bool check_interrupted = true;
         if (standard_fractal.show_dot_display_pending())
         {
@@ -85,10 +99,6 @@ int standard_fractal()
         }
         else
         {
-            if (standard_fractal.overlay_scrub_pending())
-            {
-                mute_orbit_display();
-            }
             standard_fractal.iterate();
             if (standard_fractal.consume_orbit_overlay_displayed())
             {
@@ -101,12 +111,14 @@ int standard_fractal()
             const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
             if (interrupted)
             {
+                sound.cancel();
+                standard_fractal.scrub_overlay();
                 standard_fractal.suspend();
                 return -1;
             }
         }
     }
-    return 0;
+    return sound.finish() ? 0 : -1;
 }
 
 } // namespace id::ui

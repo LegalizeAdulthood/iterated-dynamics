@@ -6,10 +6,8 @@
 #include "engine/calcfrac.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
-#include "engine/sound.h"
+#include "engine/SoundOutput.h"
 #include "engine/VideoInfo.h"
-#include "misc/debug_flags.h"
-#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/video.h"
 
@@ -69,7 +67,6 @@ bool OrbitPlot::iterate()
     {
         return false;
     }
-    m_done = true;
     return plot(m_real - g_image_region.m_min.x, m_imag - g_image_region.m_max.y);
 }
 
@@ -84,11 +81,17 @@ bool OrbitPlot::plot(const double dx, const double dy)
     i += g_logical_screen.x_offset;
     if (i < 0 || i >= g_screen_x_dots)
     {
+        m_done = true;
         return false;
     }
     int j = static_cast<int>(dx * g_plot_my1 - dy * g_plot_my2);
     j += g_logical_screen.y_offset;
     if (j < 0 || j >= g_screen_y_dots)
+    {
+        m_done = true;
+        return false;
+    }
+    if (!g_sound->play({static_cast<double>(i), static_cast<double>(j), 0.0}))
     {
         return false;
     }
@@ -97,7 +100,7 @@ bool OrbitPlot::plot(const double dx, const double dy)
         ValueSaver save_screen_y_offset{g_logical_screen.y_offset, 0};
         plot(i, j);
     }
-    update_orbit_sound(i, j);
+    m_done = true;
     return true;
 }
 
@@ -106,36 +109,6 @@ void OrbitPlot::plot(const int x, const int y)
     const int color = get_color(x, y);
     save_overlay_point(x, y, color);
     g_put_color(x, y, color ^ g_orbit_color);
-}
-
-void OrbitPlot::update_orbit_sound(const int x, const int y)
-{
-    if (g_debug_flag == DebugFlags::FORCE_SCALED_SOUND_FORMULA)
-    {
-        if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X) // sound = x
-        {
-            write_sound(x * 1000 / g_logical_screen.x_dots + g_base_hertz);
-        }
-        else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_X) // sound = y or z
-        {
-            write_sound(y * 1000 / g_logical_screen.y_dots + g_base_hertz);
-        }
-    }
-    else
-    {
-        if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X) // sound = x
-        {
-            write_sound(x + g_base_hertz);
-        }
-        else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Y) // sound = y
-        {
-            write_sound(y + g_base_hertz);
-        }
-        else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Z) // sound = z
-        {
-            write_sound(x + y + g_base_hertz);
-        }
-    }
 }
 
 void OrbitPlot::save_overlay_point(const int x, const int y, const int color)

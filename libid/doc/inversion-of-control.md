@@ -580,15 +580,12 @@ removes one false dependency, and leaves a reviewable intermediate state.
 
 The remaining UI-concept leaks outside `libid/ui` are:
 
-- `libid/engine/OrbitPlot.cpp`: owns sound mapping and `write_sound()`
-  calls.
 - `libid/include/engine/StandardFractal.h` and
   `libid/engine/StandardFractal.cpp`: expose the temporary show-dot
   display bridge that will be removed when show-dot presentation moves
   fully into the UI controller.
 - `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
-  state.  Standard calculation also writes sound time markers and closes
-  sound output.
+  state and closes legacy sound output for unconverted producers.
 - `libid/engine/sound.cpp`: owns speaker/file output, calls
   `driver_sound_on()`, waits through `wait_until()`, and accepts an
   input-pending callback.
@@ -700,43 +697,6 @@ If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
-
-### 4. Standard And FrothyBasin Overlay Sound Port
-
-Source: `OrbitPlot`, standard overlay continuation in `calcfrac.cpp`,
-and `FrothyBasin::flush_overlay_orbit_point()`; UI owners:
-`ui/standard_fractal.cpp` and `ui/frothy_basin.cpp`.
-
-Work:
-
-- Submit numerical coordinates through the injected active binding at
-  the overlay producer, without a constructor parameter or sound member.
-  Move frequency formulas out of `OrbitPlot` into adapter mapping; do
-  not bubble coordinates to a UI sound handler.
-- Handle refusal before committing a plotted point.  Preserve the
-  candidate and return through the existing calculation continuation;
-  retry without repeating orbit math, plotting, or sample acceptance.
-- Integrate both overlay consumers together because they share
-  `OrbitPlot`.  Cover synchronous compatibility paths as well as the
-  normal pending-overlay path; no path may spin on output readiness.
-- Replace the standard pixel's `sound_time_write()` with the port's
-  orbit-boundary operation so the migrated file path has one owner.
-- Let each controller service `update()` and coordinate readiness,
-  normal completion, and explicit mute through its session.  Preserve
-  show-dot fixes and leave overlay-delay policy unchanged.
-
-Done when:
-
-- Standard and FrothyBasin overlay output uses the port directly, without
-  legacy sound calls, sound-mode checks, or frequency mapping in plotting.
-- Neither consumer loses sound-file output or plots ahead of a rejected
-  sample.  Unconverted producers retain their legacy path separately.
-
-Validation: record sample/plot order, clipped points, boundary records,
-refusal/retry, and suspension for both consumers.  Add controller tests
-for overlay toggling and menu interruption/resumption with a fake port;
-existing handler tests alone do not cover these paths.  Reuse image
-tests for pixels.  No audible or duplicate manual rendering check.
 
 ### 5. Sticky Orbit Sound Port
 
@@ -2020,8 +1980,9 @@ The numbered slices cover all these ownership gaps.  The source audit
 must trace UI helper and dispatch-pointer calls as well as raw driver
 calls; an empty raw-key search alone does not establish inversion.
 
-The `OrbitPlot` wait loop and delay state have been removed.  Its sound
-presentation state remains tracked under current presentation leaks.
+The `OrbitPlot` wait loop, delay state, and sound mapping have been
+removed.  It submits numerical samples through `g_sound`; standard and
+FrothyBasin UI controllers own sound servicing and session completion.
 
 ## Keyboard Polling Still Outside `id_main`
 

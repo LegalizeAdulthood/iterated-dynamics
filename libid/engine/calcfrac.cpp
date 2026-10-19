@@ -35,6 +35,7 @@
 #include "engine/SynchronousOrbit.h"
 #include "engine/SolidGuess.h"
 #include "engine/sound.h"
+#include "engine/SoundOutput.h"
 #include "engine/spindac.h"
 #include "engine/StandardFractal.h"
 #include "engine/StickyOrbits.h"
@@ -1348,7 +1349,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 
         if (g_show_orbit)
         {
-            sound_time_write();
+            g_sound->begin_orbit();
         }
     }
     else
@@ -1393,7 +1394,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             }
         }
 
-        if (g_distance_estimator)
+        if (g_distance_estimator && !m_standard_pixel_orbit_calc_completed)
         {
             double f_temp;
             // Distance estimator for points near Mandelbrot set
@@ -1478,9 +1479,11 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                 m_incomplete_standard_pixel_yield = true;
                 return -1;
             }
-            while (!pending_orbit_plot().done())
+            static_cast<void>(pending_orbit_plot().iterate());
+            if (!pending_orbit_plot().done())
             {
-                static_cast<void>(pending_orbit_plot().iterate());
+                m_incomplete_standard_pixel_yield = true;
+                return -1;
             }
             complete_pending_orbit_plot();
         }

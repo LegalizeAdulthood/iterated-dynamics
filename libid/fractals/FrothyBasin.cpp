@@ -12,6 +12,7 @@
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
 #include "engine/show_dot.h"
+#include "engine/SoundOutput.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "fractals/newton.h"
@@ -270,6 +271,7 @@ bool FrothyBasin::consume_orbit_overlay_displayed()
 void FrothyBasin::scrub_overlay()
 {
     scrub_orbit();
+    m_overlay_orbit_point_pending = false;
     m_overlay_scrub_pending = false;
     m_overlay_scrub_completed = true;
 }
@@ -325,6 +327,10 @@ void FrothyBasin::start_pixel()
     g_temp_sqr_x = sqr(g_old_z.x);
     g_temp_sqr_y = sqr(g_old_z.y);
     m_pixel_active = true;
+    if (g_show_orbit)
+    {
+        g_sound->begin_orbit();
+    }
 }
 
 int FrothyBasin::calc()

@@ -3,9 +3,11 @@
 #include "ui/frothy_basin.h"
 
 #include "engine/calcfrac.h"
+#include "engine/SoundOutput.h"
 #include "fractals/FrothyBasin.h"
 #include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"
+#include "ui/SoundSession.h"
 #include "ui/standard_orbit_plot.h"
 
 #include <memory>
@@ -32,7 +34,7 @@ public:
     {
         if (g_show_orbit)
         {
-            mute_orbit_display();
+            g_sound->mute();
             m_frothy_basin.scrub_overlay();
         }
         if (key != 'o' && key != 'O')
@@ -54,6 +56,12 @@ private:
 
 int froth_type()
 {
+    SoundSession sound{DriverSoundOutput::Source::OVERLAY};
+    return froth_type(sound);
+}
+
+int froth_type(SoundSession &sound)
+{
     reset_calc_interrupted();
     reset_orbit_delay();
     KeyboardHandlerPtr main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
@@ -63,17 +71,20 @@ int froth_type()
 
     if (!g_frothy_basin.per_image())
     {
+        sound.cancel();
         return -1;
     }
 
     g_frothy_basin.resume();
     while (!g_frothy_basin.done())
     {
-        bool check_interrupted = true;
-        if (g_frothy_basin.overlay_scrub_pending())
+        if (!sound.wait_until_ready())
         {
-            mute_orbit_display();
+            g_frothy_basin.scrub_overlay();
+            g_frothy_basin.suspend();
+            return -1;
         }
+        bool check_interrupted = true;
         g_frothy_basin.iterate();
         if (g_frothy_basin.consume_orbit_overlay_displayed())
         {
@@ -85,13 +96,15 @@ int froth_type()
             const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
             if (interrupted)
             {
+                sound.cancel();
+                g_frothy_basin.scrub_overlay();
                 g_frothy_basin.suspend();
                 return -1;
             }
         }
     }
 
-    return 0;
+    return sound.finish() ? 0 : -1;
 }
 
 } // namespace id::ui

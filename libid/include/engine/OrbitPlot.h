@@ -31,7 +31,6 @@ private:
     bool plot(double dx, double dy);
     void plot(int x, int y);
     void save_overlay_point(int x, int y, int color);
-    void update_orbit_sound(int x, int y);
     void update_orbit_save_flag();
 
     std::vector<SavedOverlayPoint> m_saved_overlay;
