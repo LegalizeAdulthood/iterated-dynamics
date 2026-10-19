@@ -746,39 +746,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 12.4. GIF Writer Raster Compatibility Coverage
-
-Source: `tests/libid/io/test_encoder.cpp`, existing save/image fixtures,
-and raster, palette, and descriptor output in `io/encoder.cpp`.
-
-Work:
-
-- Exercise the current production save path with deterministic pixel
-  sources.  Reuse existing image coverage and add only missing cases.
-- Identify old keyboard-interruption cases for replacement in 12.7,
-  where pending input must not stop encoding or consume a key.  Add the
-  changed-behavior assertions with that conversion, not as failing tests
-  against the current backend.  Keep genuine I/O-error coverage here.
-- Check decoded pixel indices, logical screen and image dimensions,
-  GIF89a version, background index, color resolution, and aspect byte.
-- Cover 2-, 4-, 16-, and 256-color palette selection, including fixed
-  fallback palettes and the active DAC palette where applicable.
-- Cover unsigned dimensions above 32767 and existing GIF size limits.
-  Check rejection of an unrepresentable doubled potential width.
-- Cover 16-bit potential output with distinct color and low-byte data:
-  each stored row has double width, with colors followed by low bytes.
-- Compare decoded content and metadata, not compressed LZW bytes, file
-  sizes, or compression ratios.  Do not replace gold images to conceal
-  a codec-induced pixel difference.
-
-Done when:
-
-- The existing writer passes backend-independent raster and header
-  compatibility tests suitable for the giflib replacement.
-
-Validation: run focused writer tests against the current implementation
-and reuse existing image tests.  No manual image comparison.
-
 ### 12.5. GIF Writer Extension Compatibility Coverage
 
 Source: `encoder()`, `put_extend_blk()`, `extend_blk_len()`, and
@@ -859,6 +826,11 @@ loader; test resource lifetime and failure paths.  No manual test.
 Source: `save_image()`, `encoder()`, `compress()`, and extension emission
 in `io/encoder.cpp`; `GifWriter` from 12.6 and shared `put_*_info()`
 helpers in `io/gif_file.cpp`.
+
+Audit: `compress()` already has no keyboard polling; its interruption
+flag is always false.  `save_image()` still treats encoder errors as
+interruptions and can prompt or wait for input.  Pending-input coverage
+below remains required when replacing this path.
 
 Work:
 
