@@ -30,6 +30,7 @@
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
+#include "io/RestoredImageOutput.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/diskvid.h"
@@ -395,50 +396,22 @@ static int out_line_dither(Byte *pixels, const int line_len)
     return out_line(pixels, line_len);
 }
 
-static bool put_sound_line(const int row, const int col_start, const int col_stop, const Byte *pixels)
+int sound_line(Byte *pixels, const int line_len)
 {
-    for (int col = col_start; col <= col_stop; col++)
+    RestoredImageOutput output{g_logical_screen.x_dots, g_row_count, s_col_count};
+    output.set_line(pixels, line_len);
+    // TODO: removed later
+    while (!output.done())
     {
-        g_put_color(col, row, *pixels);
+        const int color{output.pending_color()};
+        output.iterate();
         if (g_orbit_delay > 0)
         {
             sleep_orbit_delay(g_orbit_delay);
         }
-        write_sound(static_cast<int>(*pixels++) * 3000 / g_colors + g_base_hertz);
-    }
-    return false;
-}
-
-int sound_line(Byte *pixels, int line_len)
-{
-    const int width = g_logical_screen.x_dots;
-    while (line_len > 0)
-    {
-        int extra = s_col_count + line_len - width;
-        if (extra > 0) // line wraps
-        {
-            if (put_sound_line(g_row_count, s_col_count, width-1, pixels))
-            {
-                break;
-            }
-            pixels += width-s_col_count;
-            line_len -= width-s_col_count;
-            s_col_count = width;
-        }
-        else
-        {
-            if (put_sound_line(g_row_count, s_col_count, s_col_count+line_len-1, pixels))
-            {
-                break;
-            }
-            s_col_count += line_len;
-            line_len = 0;
-        }
-        if (s_col_count >= width)
-        {
-            s_col_count = 0;
-            g_row_count++;
-        }
+        write_sound(color * 3000 / g_colors + g_base_hertz);
+        g_row_count = output.row();
+        s_col_count = output.column();
     }
     driver_mute();
 

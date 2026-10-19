@@ -164,6 +164,7 @@ add_library(libid
     include/io/load_entry_text.h io/load_entry_text.cpp
     include/io/make_mig.h io/make_mig.cpp
     include/io/path_match.h io/path_match.cpp
+    include/io/RestoredImageOutput.h io/RestoredImageOutput.cpp
     include/io/save_timer.h io/save_timer.cpp
     include/io/search_path.h io/search_path.cpp
     include/io/special_dirs.h io/special_dirs.cpp

@@ -593,10 +593,11 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - `libid/engine/sound.cpp`: owns speaker/file output, calls
   `driver_sound_on()`, waits through `wait_until()`, and accepts an
   input-pending callback.
-- `libid/io/gifview.cpp`: `put_sound_line()` plots a whole decoded line
-  while calling `sleep_orbit_delay()` and `write_sound()`;
-  `sound_line()` also calls `driver_mute()`.  Decoder and file traversal
-  must return incrementally before UI can coordinate this output.
+- `libid/io/gifview.cpp`: `sound_line()` still drains a whole decoded
+  line with `sleep_orbit_delay()`, `write_sound()`, and `driver_mute()`.
+  `RestoredImageOutput` owns the decoded bytes and cursor and plots one
+  pixel per step.  Decoder and file traversal must also become
+  incremental before the UI can replace the marked compatibility drain.
 - `libid/engine/spindac.cpp`: includes palette rotation delay via
   `driver_delay()`.
 - `libid/engine/wait_until.cpp`: implements a key-sensitive delay loop.
@@ -698,31 +699,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 9. Restored Image Sound Traversal State
-
-Source: `put_sound_line()` and `sound_line()` in `io/gifview.cpp`, and
-decoder line ownership where `g_out_line` selects sound restoration.
-
-Work:
-
-- Represent the active decoded line and column as resumable output state
-  rather than assuming the callback can plot and sound the whole line.
-  Name the calculation object `RestoredImageOutput` and its files after
-  the class.
-- Own any decoded data needed after the callback returns.  Preserve
-  width wrapping and row accounting without retaining borrowed buffers.
-- Establish a bounded return boundary before port integration.  Mark a
-  temporary synchronous drain for removal in Restored Image Sound
-  Controller, after its decoder and file-lifetime prerequisites.
-
-Done when:
-
-- Restored-image output can retain an uncommitted pixel between calls
-  without decoding or plotting it twice.
-
-Validation: cover wrapped lines, buffer lifetime, partial progress, and
-normal restored output.  This prerequisite needs no manual image test.
-
 ### 10. GIF Decoder State Encapsulation
 
 Source: `decoder()` and LZW bit, dictionary, stack, and line state in
@@ -801,9 +777,11 @@ Work:
 - Have UI advance that operation only as playback permits and handle
   interruption outside the decoder/output callback.  Service `update()`
   while rendering and waiting; finish with normal release, not mute.
-- Remove temporary pixel/decoder drains from the sound path plus
-  `sleep_orbit_delay()`, `write_sound()`, and direct mute calls.  Keep
-  marked compatibility paths for other restore consumers separate.
+- Remove `RestoredImageOutput::pending_color()` and the temporary pixel
+  and decoder drains from the sound path, plus `sleep_orbit_delay()`,
+  `write_sound()`, and direct mute calls.  Submit the retained pixel's
+  sample inside `RestoredImageOutput::iterate()` before plotting it.
+  Keep marked compatibility paths for other restore consumers separate.
 
 Done when:
 

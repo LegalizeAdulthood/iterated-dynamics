@@ -7,8 +7,11 @@
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>
 #include <engine/color_state.h>
+#include <engine/LogicalScreen.h>
+#include <engine/OrbitPlot.h>
 #include <engine/pixel_limits.h>
 #include <engine/Potential.h>
+#include <engine/sound.h>
 #include <engine/spindac.h>
 #include <engine/VideoInfo.h>
 #include <fractals/lorenz.h>
@@ -17,10 +20,12 @@
 #include <misc/Driver.h>
 #include <misc/ValueSaver.h>
 #include <ui/slideshw.h>
+#include <ui/video.h>
 
 #include <gif_lib.h>
 #include <gtest/gtest.h>
 
+#include <array>
 #include <filesystem>
 #include <stdexcept>
 #include <string>
@@ -41,11 +46,17 @@ namespace
 {
 
 std::vector<int> s_line_lengths;
+std::vector<std::array<int, 3>> s_sound_pixels;
 
 int capture_out_line(Byte *, const int line_len)
 {
     s_line_lengths.push_back(line_len);
     return 0;
+}
+
+void capture_sound_pixel(const int col, const int row, const int color)
+{
+    s_sound_pixels.push_back({col, row, color});
 }
 
 class TestGifOutputFile
@@ -176,5 +187,43 @@ TEST_P(TestGifViewLineWidth, decodesSingleLineAtFullWidth)
 }
 
 INSTANTIATE_TEST_SUITE_P(Widths, TestGifViewLineWidth, Values(640, MAX_PIXELS, MAX_PIXELS + 1, GIF_MAX_PIXELS));
+
+TEST(TestGifViewSound, restoresDecodedPixelsAcrossDisplayRows)
+{
+    const TestGifOutputFile gif{std::filesystem::temp_directory_path() / "id-gifview-sound.gif", 8};
+    MockDriver driver;
+    ValueSaver<Driver *> saved_driver{g_driver, &driver};
+    ValueSaver saved_read_filename{g_read_filename, gif.path()};
+    ValueSaver<decltype(g_out_line)> saved_out_line{g_out_line, sound_line};
+    ValueSaver<decltype(g_put_color)> saved_put_color{g_put_color, capture_sound_pixel};
+    ValueSaver saved_screen{g_logical_screen, LogicalScreen{4, 2, 0, 0, 3.0, 1.0}};
+    ValueSaver saved_row_count{g_row_count};
+    ValueSaver saved_read_color{g_read_color, true};
+    ValueSaver saved_color_state{g_color_state, ColorState::DEFAULT_MAP};
+    ValueSaver saved_display_3d{g_display_3d, Display3DMode::NONE};
+    ValueSaver saved_map_set{g_map_set, false};
+    ValueSaver saved_colors{g_colors, 256};
+    ValueSaver saved_dither_flag{g_dither_flag, false};
+    ValueSaver saved_potential_16bit{g_potential.store_16bit, false};
+    ValueSaver saved_skip_x_dots{g_skip_x_dots, 0};
+    ValueSaver saved_skip_y_dots{g_skip_y_dots, 0};
+    ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
+    ValueSaver saved_busy{g_busy, false};
+    ValueSaver saved_orbit_delay{g_orbit_delay, 0};
+    ValueSaver saved_orbit_flags{g_orbit_save_flags, 0};
+    ValueSaver saved_base_hertz{g_base_hertz, 220};
+    s_sound_pixels.clear();
+    EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
+    EXPECT_CALL(driver, sound_on(220)).Times(8).WillRepeatedly(Return(false));
+    EXPECT_CALL(driver, mute()).Times(1);
+    EXPECT_CALL(driver, delay(_)).Times(0);
+
+    EXPECT_EQ(0, gif_view());
+
+    const std::vector<std::array<int, 3>> expected{
+        {0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {3, 0, 0}, {0, 1, 0}, {1, 1, 0}, {2, 1, 0}, {3, 1, 0}};
+    EXPECT_EQ(expected, s_sound_pixels);
+    EXPECT_EQ(2, g_row_count);
+}
 
 } // namespace id::test
