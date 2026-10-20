@@ -8,6 +8,7 @@
 #include <engine/calcfrac.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/resume.h>
 #include <engine/StandardFractal.h>
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
@@ -63,6 +64,13 @@ int calculate_requested_pixel()
     return s_pixel_engine->calculate_pixel(g_col, g_row);
 }
 
+int calculate_control_pixel()
+{
+    s_requested_pixels.push_back({g_col, g_row});
+    g_plot(g_col, g_row, 7);
+    return 7;
+}
+
 } // namespace
 
 class TestPerturbationPixels : public Test
@@ -71,12 +79,14 @@ protected:
     void SetUp() override;
     void TearDown() override;
     void initialize_deep_frame();
+    void check_pass_switch(PerturbationMode mode);
 
     PertEngine m_engine;
     MockDriver m_driver;
     FractalSpecific m_specific{*get_fractal_specific(FractalType::MANDEL)};
     std::array<int, WIDTH * HEIGHT> m_pixels{};
     std::vector<Point2i> m_plots;
+    std::vector<StandardPassStatus> m_plot_statuses;
     bool m_big_float{};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<PertEngine *> m_saved_engine{s_pixel_engine, &m_engine};
@@ -119,6 +129,10 @@ void TestPerturbationPixels::SetUp()
             {
                 m_pixels.at(row * WIDTH + col) = color;
                 m_plots.push_back({col, row});
+                if (const StandardFractal *calculation{active_standard_fractal()})
+                {
+                    m_plot_statuses.push_back(calculation->standard_pass_status());
+                }
             }));
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, get_key()).Times(0);
@@ -252,6 +266,84 @@ TEST_F(TestPerturbationPixels, standardFractalEnablesPerturbationForBoundaryTrac
     EXPECT_TRUE(calculation.done());
     EXPECT_TRUE(used_replacement_reference);
     EXPECT_THAT(m_pixels, Each(7));
+}
+
+void TestPerturbationPixels::check_pass_switch(const PerturbationMode mode)
+{
+    ValueSaver saved_user{g_user, UserData{}};
+    ValueSaver saved_status{g_calc_status};
+    ValueSaver saved_resuming{g_resuming, false};
+    ValueSaver saved_region{
+        g_image_region, ImageRegion{{0.25 - 1e-10, -1e-10}, {0.25 + 1e-10, 1e-10}, {0.25 - 1e-10, -1e-10}}};
+    init_bf_dec(60);
+    m_big_float = true;
+    float_to_bf(g_bf_x_min, g_image_region.m_min.x);
+    float_to_bf(g_bf_x_max, g_image_region.m_max.x);
+    float_to_bf(g_bf_y_min, g_image_region.m_min.y);
+    float_to_bf(g_bf_y_max, g_image_region.m_max.y);
+    copy_bf(g_bf_x_3rd, g_bf_x_min);
+    copy_bf(g_bf_y_3rd, g_bf_y_min);
+    g_user.perturbation = mode;
+    g_user.perturbation_tolerance = 2.0;
+    m_specific.calc_type = calculate_control_pixel;
+    m_specific.symmetry = SymmetryType::NONE;
+    g_dispatch = FractalDispatch{m_specific};
+    const int initial_stack{save_stack()};
+    StandardFractal calculation;
+
+    for (const CalcMode pass : {CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS, CalcMode::BOUNDARY_TRACE})
+    {
+        SCOPED_TRACE(static_cast<char>(pass));
+        g_bf_math = BFMathType::BIG_NUM;
+        g_std_calc_mode = pass;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
+        m_pixels.fill(0);
+        m_plot_statuses.clear();
+        s_requested_pixels.clear();
+        calculation.resume();
+        EXPECT_FALSE(calculation.standard_pass_status().perturbation_active);
+        EXPECT_EQ(0, calculation.standard_pass_status().perturbation_reference_count);
+
+        for (int increments = 0; increments < 100 && !calculation.done(); ++increments)
+        {
+            calculation.iterate();
+        }
+
+        ASSERT_TRUE(calculation.done());
+        EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+        EXPECT_EQ(pass, g_std_calc_mode);
+        EXPECT_EQ(BFMathType::BIG_NUM, g_bf_math);
+        EXPECT_THAT(m_pixels, Each(7));
+        ASSERT_FALSE(m_plot_statuses.empty());
+        for (const StandardPassStatus &status : m_plot_statuses)
+        {
+            EXPECT_EQ(mode == PerturbationMode::AUTO, status.perturbation_active);
+        }
+        if (mode == PerturbationMode::AUTO)
+        {
+            EXPECT_TRUE(s_requested_pixels.empty());
+            EXPECT_EQ(2, m_plot_statuses.front().perturbation_reference_count);
+        }
+        else
+        {
+            EXPECT_FALSE(s_requested_pixels.empty());
+            EXPECT_EQ(0, m_plot_statuses.front().perturbation_reference_count);
+        }
+        EXPECT_FALSE(calculation.standard_pass_status().perturbation_active);
+        EXPECT_EQ(0, calculation.standard_pass_status().perturbation_reference_count);
+        EXPECT_EQ(initial_stack, save_stack());
+        EXPECT_EQ(calculate_control_pixel, g_dispatch.calc_type());
+    }
+}
+
+TEST_F(TestPerturbationPixels, passSwitchAutomaticallySelectsPerturbationAndClearsReferences)
+{
+    check_pass_switch(PerturbationMode::AUTO);
+}
+
+TEST_F(TestPerturbationPixels, passSwitchRespectsDisabledPerturbation)
+{
+    check_pass_switch(PerturbationMode::NO);
 }
 
 } // namespace id::test

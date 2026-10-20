@@ -722,13 +722,17 @@ Existing coverage does not imply coverage of live interaction:
   protect output, not calculation input, transient markers, or playback.
   `ImageTest.rotate` tests geometric rotation, not palette cycling.
 - `tests/autokey/CMakeLists.txt` covers parameter/MIG generation, 3D-look
-  Targa output, random-dot stereograms, palette cycling, and standard
-  one/two-pass interruption.  Standard scripts save a resumable checkpoint,
-  invoke `x` and Esc, then compare completed pixels exactly with an
-  uninterrupted control for optimized and general Mandelbrot paths.
+  Targa output, random-dot stereograms, palette cycling, standard
+  one/two-pass interruption, and arbitrary-precision pass switching.
+  Standard scripts save a resumable checkpoint, invoke `x` and Esc, then
+  compare completed pixels exactly with an uninterrupted control for
+  optimized and general Mandelbrot paths.
   Palette scripts verify cycling-context saves, single stepping, and
-  return to the image.  These scripts do not exercise JIIM, show-dot, or
-  the stereo photographer prompt.
+  return to the image.  Pass-switch scripts select BoundaryTrace and
+  solid guessing through `x`, verify saved pass and precision metadata,
+  and compare pixels exactly with fresh renders for `perturbation=auto`
+  and `no`.  These scripts do not exercise JIIM, show-dot, or the stereo
+  photographer prompt.
 - Keyboard-handler tests cover dispatch, interruption flags, and key
   requeueing.  Standard controller tests also cover mid-orbit suspension,
   continuation, scanline resume positions, and perturbation/Lyapunov gates.
@@ -739,8 +743,15 @@ Existing coverage does not imply coverage of live interaction:
 - Perturbation tests cover reference failure, cached-reference reuse,
   caller-selected pixel order, deep-zoom BoundaryTrace completion, and
   palette-color consistency.  They also verify BoundaryTrace strategy
-  selection.  Menu-driven pass switching remains a separate slice;
-  ordinary perturbation images do not cover that transition.
+  selection.  Pass-switch tests verify automatic strategy selection,
+  disabled perturbation, fresh reference caches, dispatcher restoration,
+  and big-number stack cleanup between traversals.
+  A separate numerical follow-up remains: with
+  `center-mag=-2/0/1e20 maxiter=300 periodicity=0 inside=7`, automatic
+  perturbation produced a uniform image while `perturbation=no` did not.
+  The reference orbit lands exactly on the default bailout boundary.
+  The pass-switch fixture instead uses `center-mag=0/1/1e20`; it does not
+  cover that numerical edge case.
 - `TestStereo` covers random-line generation, not PHOTO-mode decisions.
   Add autokey prompt/save/continue/cancel coverage and controller tests for
   eye sequencing and cleanup in the stereo controller slice.
@@ -805,38 +816,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 20. Perturbation Pass-Switch Tests
-
-Work:
-
-- Add tests after perturbation no longer owns traversal order.
-- Cover switching standard pass algorithms while arbitrary precision
-  selects perturbation automatically.
-- Cover the previously failing BoundaryTrace-to-solid-guess transition,
-  now with perturbation available to both traversals, and verify the
-  strategy is selected correctly after switching.
-- Ensure pass switching resets or preserves only the perturbation state
-  that is valid for the new traversal.
-- Include a `perturbation=no` comparison case to prove failures are in
-  perturbation/pass interaction, not in arbitrary precision rendering.
-- Use autokey for the actual menu-driven switch, with rendered-result
-  verification and focused strategy-state tests, not source-grep tests.
-
-Done when:
-
-- Switching from `passes=b` to `passes=g` under arbitrary precision
-  renders a correct image with perturbation enabled.
-- The same scenario with `perturbation=no` still renders correctly.
-- No stale reference or traversal state from the previous pass
-  affects the next pass algorithm.
-
-Validation: add an autokey test switching from `passes=b` to `passes=g`
-through the real options UI at arbitrary precision, then save and verify
-the result.  Include the `perturbation=no` control.  Verify strategy
-selection through UI/harness observations or focused controller tests.
-Separate renders do not prove transition correctness.  These tests replace
-the manual pass-switch checks; no duplicate manual test.
 
 ### 21. Cellular Preparation Presentation
 

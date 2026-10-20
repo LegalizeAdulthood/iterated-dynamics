@@ -22,6 +22,10 @@ add_executable(check-standard-resume check_standard_resume.cpp)
 target_link_libraries(check-standard-resume PRIVATE image-tool libid)
 target_folder(check-standard-resume "Tests/Tools")
 
+add_executable(check-pass-switch check_pass_switch.cpp)
+target_link_libraries(check-pass-switch PRIVATE image-tool libid)
+target_folder(check-pass-switch "Tests/Tools")
+
 if(WIN32)
     add_executable(dump-dpi dump_dpi.cpp)
     target_link_libraries(dump-dpi "Shcore.lib" "User32.lib")

@@ -111,3 +111,19 @@ foreach(passes IN ITEMS 1 2)
             PROPERTIES LABELS "autokey;ui;passes" TIMEOUT 250)
     endforeach()
 endforeach()
+
+foreach(perturbation IN ITEMS auto no)
+    set(name "perturbation-pass-switch-${perturbation}")
+    id_make_test_home("${name}" PERTURBATION_PASS_SWITCH_HOME
+        KEYS perturbation_pass_switch.key)
+    add_test(NAME "AutoKeyTest.${name}"
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DCHECK_SWITCH=$<SHELL_PATH:$<TARGET_FILE:check-pass-switch>>"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+            "-DPERTURBATION=${perturbation}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/perturbation_pass_switch_test.cmake"
+        WORKING_DIRECTORY "${PERTURBATION_PASS_SWITCH_HOME}")
+    set_tests_properties("AutoKeyTest.${name}"
+        PROPERTIES LABELS "autokey;ui;passes;perturbation" TIMEOUT 250)
+endforeach()
