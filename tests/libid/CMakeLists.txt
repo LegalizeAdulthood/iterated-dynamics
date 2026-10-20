@@ -134,6 +134,7 @@ add_executable(test-id
     ui/test_OverlaySound.cpp
     ui/test_RestoredImageSound.cpp
     ui/test_passes_options.cpp
+    ui/test_rotate.cpp
     ui/test_slideshw.cpp
     ui/test_SoundSession.cpp
     ui/test_StickyOrbitSound.cpp

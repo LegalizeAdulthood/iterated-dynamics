@@ -296,6 +296,10 @@ void rotate(SpinDirection direction)
                     step = old_step;
                 }
                 spin_dac(direction, step);
+                if (!g_is_true_color || g_true_mode == TrueColorMode::DEFAULT_COLOR)
+                {
+                    driver_delay(g_colors - g_dac_count - 1);
+                }
             }
         }
         if (step >= rotate_size)
@@ -421,6 +425,10 @@ void rotate(SpinDirection direction)
             }
             f_key = 0;
             spin_dac(direction, 1);
+            if (!g_is_true_color || g_true_mode == TrueColorMode::DEFAULT_COLOR)
+            {
+                driver_delay(g_colors - g_dac_count - 1);
+            }
             if (! s_paused)
             {
                 pause_rotate();
@@ -481,11 +489,9 @@ static void pause_rotate()               // pause-the-rotate routine
     }
 
     // else set border, wait for a key
-    int old_dac_count = g_dac_count; // saved dac-count value goes here
     Byte old_dac0 = g_dac_box[0][0];
     Byte old_dac1 = g_dac_box[0][1];
     Byte old_dac2 = g_dac_box[0][2];
-    g_dac_count = 256;
     g_dac_box[0][0] = 48;
     g_dac_box[0][1] = 48;
     g_dac_box[0][2] = 48;
@@ -504,7 +510,6 @@ static void pause_rotate()               // pause-the-rotate routine
     g_dac_box[0][1] = old_dac1;
     g_dac_box[0][2] = old_dac2;
     refresh_dac(); // show black border
-    g_dac_count = old_dac_count;
     s_paused = true;
 }
 

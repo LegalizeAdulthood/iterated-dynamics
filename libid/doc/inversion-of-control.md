@@ -211,6 +211,9 @@ The current code is already part-way through this plan:
   calls continuous-tone driver methods.  Orbit cleanup mutes the bound
   output port without closing it; sound parameters and completion-buzzer
   settings retain their existing behavior.
+- `engine/spindac.cpp` rotates and writes the palette without delaying.
+  `ui/rotate.cpp` owns delay after cycling and single-step operations;
+  ordinary refreshes and pause-border updates do not acquire that delay.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -645,8 +648,6 @@ The remaining UI-concept leaks outside `libid/ui` are:
   fully into the UI controller.
 - `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
   state.
-- `libid/engine/spindac.cpp`: includes palette rotation delay via
-  `driver_delay()`.
 - `libid/engine/wait_until.cpp`: retains unused orbit-delay helpers and a
   legacy reset from image setup.  `ui/stop_msg.cpp` still uses its
   millisecond sleep helper; Wait-Until Cleanup removes that engine/UI
@@ -717,10 +718,13 @@ Existing coverage does not imply coverage of live interaction:
   `sound=off`.  Pass, cellular, orbit, IFS, and restoration fixtures
   protect output, not calculation input, transient markers, or playback.
   `ImageTest.rotate` tests geometric rotation, not palette cycling.
-- `tests/autokey/CMakeLists.txt` defines only parameter/MIG generation,
-  3D-look Targa output, and random-dot stereogram scripts.  None exercises
-  standard-render menu interruption, palette cycling, JIIM, show-dot, or
-  the stereo photographer prompt.
+- `tests/autokey/CMakeLists.txt` covers parameter/MIG generation, 3D-look
+  Targa output, random-dot stereograms, and palette cycling.  The palette
+  script verifies cycling-context saves, a single-step palette change,
+  and return to the main image; mock-driver tests verify speed and pause
+  state without timing assumptions.  These scripts do not exercise
+  standard-render menu interruption, JIIM, show-dot, or the stereo
+  photographer prompt.
 - Keyboard-handler tests cover dispatch, interruption flags, and key
   requeueing, not a rendering controller's suspension and resumption.
   Thinking-screen tests cover text and spinner updates, not cellular or
@@ -744,9 +748,9 @@ implemented, not a claim that those tests already exist.  In particular,
 automate menu results, preparation-screen lifetime, pass switching, and
 failure cleanup rather than assigning them unspecified manual checks.
 
-Only four slices retain required manual checks: palette cycling, JIIM
-cursor presentation, show-dot presentation, and native input during busy
-rendering.  Their instructions below identify the uncovered observation.
+Only three slices retain required manual checks: JIIM cursor presentation,
+show-dot presentation, and native input during busy rendering.  Their
+instructions below identify the uncovered observation.
 If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
@@ -784,7 +788,7 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   Use semantic results for L-systems and other drift-sensitive types;
   do not add unstable image golds to test keyboard behavior.
 - Scripts exercise injected keys, not native keyboard delivery, mouse
-  tracking, blinking, refresh cadence, or responsiveness.  Keep the four
+  tracking, blinking, refresh cadence, or responsiveness.  Keep the
   narrowly scoped manual observations above.  Do not assert exact poll
   counts, elapsed render times, or the old location of an input check.
 - Keep calculation/codec tests and injected-error controller tests where
@@ -793,38 +797,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 16. Palette Spin Delay Boundary
-
-Work:
-
-- Split palette rotation state changes from presentation delay in
-  `libid/engine/spindac.cpp`.
-- Add palette cycling delay to UI callers such as rotate, menus, and
-  palette editing.
-- After UI callers own that delay, remove `driver_delay()` for palette
-  cycling from `libid/engine/spindac.cpp`.
-- Preserve existing palette index and DAC update behavior.
-
-Done when:
-
-- `libid/engine/spindac.cpp` does not call `driver_delay()`.
-- UI callers own palette animation timing.
-
-Validation: add an autokey workflow entering palette cycling, changing
-speed, pausing/resuming, and returning to the main image.  Verify control
-state through UI/harness observations, not elapsed time or a final image.
-Retain mock-driver tests for palette index changes, DAC writes, and UI
-delay selection; a plain refresh must not acquire a cycling delay.
-
-Manual testing, for visible cadence and physical input only:
-
-- Arguments: `video=F6 type=mandel`.
-- After rendering, press `+` to cycle the palette.  Use Down/Up to slow
-  down/speed up, Space to pause/resume, and Esc to exit.  Verify visible
-  cadence changes and responsive input.  Do not compare image pixels.
-- The palette editor calls the same `rotate()` loop; do not repeat this
-  test there unless its entry or return path changes in the slice.
 
 ### 17. Wait-Until Cleanup
 

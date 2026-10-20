@@ -81,7 +81,7 @@ TEST_F(TestHistory, restoresVersionAndFileVersion)
     g_file_version = current_id_version();
 
     EXPECT_CALL(m_driver, write_palette());
-    EXPECT_CALL(m_driver, delay(255));
+    EXPECT_CALL(m_driver, delay(_)).Times(0);
 
     restore_history_info(g_history_ptr);
 
@@ -116,7 +116,7 @@ TEST_F(TestHistory, restoresLegacyFloat)
         g_user.legacy_float = !legacy_float;
 
         EXPECT_CALL(m_driver, write_palette());
-        EXPECT_CALL(m_driver, delay(255));
+        EXPECT_CALL(m_driver, delay(_)).Times(0);
 
         restore_history_info(g_history_ptr);
 

@@ -815,7 +815,7 @@ void TestLoadFile::SetUp()
 {
     EXPECT_CALL(m_driver, check_memory);
     EXPECT_CALL(m_driver, write_palette);
-    EXPECT_CALL(m_driver, delay(_));
+    EXPECT_CALL(m_driver, delay(_)).Times(0);
     history_init();
     save_history_info();
 }

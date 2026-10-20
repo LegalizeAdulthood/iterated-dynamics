@@ -68,7 +68,6 @@ void spin_dac(const SpinDirection dir, const int inc)
         }
     }
     driver_write_palette();
-    driver_delay(g_colors - g_dac_count - 1);
 }
 
 } // namespace id::engine

@@ -365,7 +365,7 @@ top:
 
     if (g_help_mode == HelpLabels::HELP_CYCLING)
     {
-        driver_put_string(start_row + 1, 45, C_GENERAL_HI, "You are in color-cycling mode");
+        put_format(start_row + 1, 45, C_GENERAL_HI, "Color-cycling mode, speed {:d}", g_dac_count);
     }
     ++start_row;
     // if (g_bf_math == bf_math_type::NONE)

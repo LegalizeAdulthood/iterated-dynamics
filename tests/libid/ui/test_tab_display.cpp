@@ -3,6 +3,7 @@
 #include <ui/tab_display.h>
 
 #include "MockDriver.h"
+#include "helpdefs.h"
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
@@ -10,6 +11,7 @@
 #include <engine/ImageRegion.h>
 #include <engine/Inversion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/spindac.h>
 #include <engine/UserData.h>
 #include <engine/VideoInfo.h>
 #include <fractals/fractalp.h>
@@ -18,6 +20,7 @@
 #include <io/encoder.h>
 #include <math/big.h>
 #include <misc/ValueSaver.h>
+#include <ui/help.h>
 #include <ui/id_keys.h>
 
 #include <gmock/gmock.h>
@@ -31,6 +34,7 @@
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::help;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
@@ -61,6 +65,8 @@ private:
 class TestTabDisplay : public Test
 {
 protected:
+    std::vector<std::string> display_status();
+
     void SetUp() override
     {
         std::fill(&g_params[0], &g_params[MAX_PARAMS], 0.0);
@@ -76,6 +82,8 @@ protected:
     const std::string m_driver_description{"test driver"};
     TabDisplayParamSaver m_param_saver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
+    ValueSaver<HelpLabels> m_saved_help_mode{g_help_mode, HelpLabels::NONE};
+    ValueSaver<int> m_saved_dac_count{g_dac_count, 250};
     ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::MANDEL};
     ValueSaver<const FractalSpecific *> m_saved_fractal_specific{
         g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
@@ -108,7 +116,7 @@ TEST(TestPerturbationStatusText, pluralReferences)
     EXPECT_EQ("Perturbation (2 references)", perturbation_status_text(2));
 }
 
-TEST_F(TestTabDisplay, displaysMainStatusScreen)
+std::vector<std::string> TestTabDisplay::display_status()
 {
     std::vector<std::string> output;
 
@@ -126,6 +134,13 @@ TEST_F(TestTabDisplay, displaysMainStatusScreen)
 
     EXPECT_EQ(0, tab_display());
 
+    return output;
+}
+
+TEST_F(TestTabDisplay, displaysMainStatusScreen)
+{
+    const std::vector<std::string> output{display_status()};
+
     EXPECT_THAT(output, Contains(StrEq("Fractal type:")));
     EXPECT_THAT(output, Contains(StrEq("Image completed")));
     EXPECT_THAT(output, Contains(StrEq("Savename: ")));
@@ -134,6 +149,16 @@ TEST_F(TestTabDisplay, displaysMainStatusScreen)
     EXPECT_THAT(output, Contains(StrEq("Current (Max) Iteration: ")));
     EXPECT_THAT(output, Contains(StrEq("12 (150)")));
     EXPECT_THAT(output, Contains(StrEq("4.000000")));
+    EXPECT_THAT(output, Not(Contains(HasSubstr("Color-cycling mode"))));
+}
+
+TEST_F(TestTabDisplay, displaysPaletteCyclingSpeed)
+{
+    g_help_mode = HelpLabels::HELP_CYCLING;
+
+    const std::vector<std::string> output{display_status()};
+
+    EXPECT_THAT(output, Contains(StrEq("Color-cycling mode, speed 250")));
 }
 
 } // namespace id::test

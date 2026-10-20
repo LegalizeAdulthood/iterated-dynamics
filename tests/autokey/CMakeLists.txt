@@ -80,3 +80,15 @@ add_test(NAME AutoKeyTest.rds-random
 )
 set_tests_properties(AutoKeyTest.rds-random
     PROPERTIES LABELS "autokey;ui;rds")
+
+id_make_test_home(palette-cycle PALETTE_CYCLE_HOME
+    KEYS palette_cycle.key)
+add_test(NAME AutoKeyTest.palette-cycle
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/palette_cycle_test.cmake"
+    WORKING_DIRECTORY "${PALETTE_CYCLE_HOME}"
+)
+set_tests_properties(AutoKeyTest.palette-cycle
+    PROPERTIES LABELS "autokey;ui;colormap" TIMEOUT 90)
