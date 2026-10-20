@@ -8,6 +8,7 @@ namespace id::ui
 {
 
 bool thinking(std::string_view msg);
+bool thinking_active();
 
 void thinking_end();
 

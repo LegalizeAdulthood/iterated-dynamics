@@ -27,6 +27,11 @@ static const char *const s_wheel[]{"-", "\\", "|", "/"};
 static int s_think_col{};
 static int s_think_count{};
 
+bool thinking_active()
+{
+    return s_think_state >= 0;
+}
+
 void thinking_end()
 {
     if (s_think_state >= 0)

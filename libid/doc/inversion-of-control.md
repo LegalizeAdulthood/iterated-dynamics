@@ -65,9 +65,10 @@ libid/fractals/<Type>.cpp or libid/engine/<Type>.cpp
     do not poll keyboard or mouse input
 ```
 
-Cellular still calls the polling `thinking()` UI helper during initial
-generation.  L-system drawing is incremental, but sizing still runs
-recursively inside `start()` and polls through `thinking()`.
+Cellular exposes initial-generation preparation as calculation state;
+its UI controller owns thinking-screen updates and cleanup.  L-system
+drawing is incremental, but sizing still runs recursively inside `start()`
+and polls through `thinking()`.
 
 JIIM still owns the outer interaction loop, cursor, and UI keyboard and
 mouse scopes in `libid/engine/jiim.cpp`.  Extracting its input helpers into
@@ -230,10 +231,10 @@ The current code is already part-way through this plan:
 
 The fresh reverse-call audit also found these live paths:
 
-- `LSystem::start()` calls recursive sizing, which calls `thinking()`;
-  `Cellular::iterate()` also calls `thinking()`.  That UI helper polls the
-  driver queue.  Both types also end the thinking display from calculation
-  code.
+- `LSystem::start()` calls recursive sizing, which calls `thinking()` and
+  polls the driver queue.  Calculation code also ends its thinking
+  display.  Cellular's equivalent presentation now belongs to its UI
+  controller.
 - `InverseJulia::iterate()` calls `process_inverse_julia_keyboard()`;
   `InverseJulia::process()` owns the handler scope, mouse scope, and loop.
 - `calc_fract()` calls UI render controllers directly.
@@ -655,8 +656,6 @@ The remaining UI-concept leaks outside `libid/ui` are:
   fully into the UI controller.
 - `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
   state.
-- `libid/fractals/Cellular.cpp`: starts, updates, and ends the thinking
-  screen from generation, error, and suspend paths.
 - `libid/fractals/lsystem.cpp`: recursive sizing owns the thinking screen
   and decides whether a pending key aborts sizing.
 - `libid/engine/jiim.cpp`: owns cursor state, coordinate messages, the
@@ -733,13 +732,18 @@ Existing coverage does not imply coverage of live interaction:
   and compare pixels exactly with fresh renders for `perturbation=auto`
   and `no`.  These scripts do not exercise JIIM, show-dot, or the stereo
   photographer prompt.
+  The cellular script delivers its interrupt only while the preparation
+  thinking screen is active, saves a non-resumable checkpoint, then
+  starts generation-zero rendering and compares it with a fresh image.
 - Keyboard-handler tests cover dispatch, interruption flags, and key
   requeueing.  Standard controller tests also cover mid-orbit suspension,
   continuation, scanline resume positions, and perturbation/Lyapunov gates.
   Palette controller tests verify speed and pause state without timing.
-  Thinking-screen tests cover text and spinner updates, not cellular or
-  L-system phase transitions.  Add autokey workflows and controller tests
-  for the distinct application and phase-lifecycle observations.
+  Thinking-screen tests cover text, spinner updates, and active state.
+  Cellular controller tests cover preparation, transition to pixel
+  output, exactly-once cleanup, interruption, and injected failure.
+  L-system phase transitions still need the distinct application and
+  lifecycle tests specified below.
 - Perturbation tests cover reference failure, cached-reference reuse,
   caller-selected pixel order, deep-zoom BoundaryTrace completion, and
   palette-color consistency.  They also verify BoundaryTrace strategy
@@ -792,11 +796,12 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   or preparation phase when the key is handled, the menu/cancel result,
   and the subsequent continuation or restart.  Use controller tests for
   exact yield points, resume bookkeeping, and handler lifetime as well.
-- `CALCWAIT` waits for completion; the current script format has no phase
-  assertion command.  If an intermediate observation is unavailable,
-  add narrowly scoped UI/harness test support in a separate prerequisite
-  commit, or keep that assertion in a controller test and limit the
-  script's claim accordingly.  Do not assume such support already exists.
+- `CALCWAIT` waits for completion.  `THINKWAIT <key>` emits a character or
+  named key only while a thinking screen is active; it does not assert
+  arbitrary calculation phases.  If another intermediate observation is
+  unavailable, add narrowly scoped UI/harness test support in a separate
+  prerequisite commit, or keep that assertion in a controller test and
+  limit the script's claim accordingly.
 - Prefer `CALCWAIT` for completion.  Fixed `WAIT` delays, a large workload,
   or a slow CI machine do not prove that input arrived during work.
   Give scripts bounded process timeouts so lost keys or hangs fail.
@@ -816,32 +821,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 21. Cellular Preparation Presentation
-
-Source: `Cellular::iterate()` and `Cellular::suspend()` in
-`libid/fractals/Cellular.cpp`; UI owner: `libid/ui/cellular.cpp`.
-
-Work:
-
-- Let the calculation object expose its initial-generation phase as
-  calculation state, without thinking-screen flags or UI callbacks.
-- Have the existing UI controller own `thinking()` and `thinking_end()`,
-  including interruption, phase completion, and exception cleanup.
-- Keep each generation's calculation and pixel output in `Cellular`.
-
-Done when:
-
-- `Cellular` never invokes a UI presentation or input helper.
-- The UI controller polls during preparation and ends its thinking screen
-  on every exit path.
-
-Validation: add an autokey workflow interrupting initial-generation
-preparation, returning to the outer UI, and starting a valid calculation
-again.  Observe the preparation phase rather than relying on a timed key.
-Retain cellular images and controller tests for thinking-screen entry,
-updates, and exactly-once cleanup on completion, interruption, and injected
-failure.  Do not assume preparation is resumable.  No manual check.
 
 ### 22. L-System Sizing Traversal State
 
@@ -1695,9 +1674,6 @@ mechanism or a source-grep test.
 Calculation code can still reach polling or key-sensitive waiting through
 these direct and indirect paths:
 
-- `libid/fractals/Cellular.cpp`: `iterate()` calls `thinking()`, which
-  polls the driver queue.  Completion, failure, and suspension also call
-  UI screen cleanup.
 - `libid/fractals/lsystem.cpp`: recursive `find_size()` calls
   `thinking()` from inside `start()` and interprets pending input as
   sizing failure.  UI polling around drawing does not cover this phase.

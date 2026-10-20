@@ -12,7 +12,6 @@
 #include "engine/spindac.h"
 #include "fractals/fractalp.h"
 #include "io/loadmap.h"
-#include "ui/thinking.h"
 #include "ui/video.h"
 
 #include <fmt/format.h>
@@ -212,6 +211,11 @@ Cellular::Cellular()
     g_row = start_row;
 }
 
+bool Cellular::preparing() const
+{
+    return m_last_screen_flag && g_row < static_cast<int>(line_num);
+}
+
 // This section does all the work
 bool Cellular::iterate()
 {
@@ -222,7 +226,6 @@ bool Cellular::iterate()
     {
         if (g_row < static_cast<int>(line_num))
         {
-            thinking("Cellular thinking (higher start row takes longer)");
             if (g_random_seed_flag || rand_param == 0 || rand_param == -1)
             {
                 // Use a random border
@@ -250,7 +253,6 @@ bool Cellular::iterate()
             }
             if (t > m_rule_digits || t < 0)
             {
-                thinking_end();
                 throw CellularError(*this, BAD_T, t);
             }
             m_cell_array[not_filled][m_s_r] = static_cast<Byte>(cell_table[t]);
@@ -262,7 +264,6 @@ bool Cellular::iterate()
                 t = static_cast<S16>(t + m_cell_array[filled][g_col + m_s_r] - m_cell_array[filled][g_col - m_s_r - 1]);
                 if (t > m_rule_digits || t < 0)
                 {
-                    thinking_end();
                     throw CellularError(*this, BAD_T, t);
                 }
                 m_cell_array[not_filled][g_col] = static_cast<Byte>(cell_table[t]);
@@ -274,7 +275,7 @@ bool Cellular::iterate()
             return true;
         }
         start_row = 0;
-        thinking_end();
+        g_row = start_row;
         m_last_screen_flag = false;
     }
 
@@ -307,7 +308,6 @@ bool Cellular::iterate()
         }
         if (t > m_rule_digits || t < 0)
         {
-            thinking_end();
             throw CellularError(*this, BAD_T, t);
         }
         m_cell_array[not_filled][m_s_r] = static_cast<Byte>(cell_table[t]);
@@ -319,7 +319,6 @@ bool Cellular::iterate()
             t = static_cast<S16>(t + m_cell_array[filled][g_col + m_s_r] - m_cell_array[filled][g_col - m_s_r - 1]);
             if (t > m_rule_digits || t < 0)
             {
-                thinking_end();
                 throw CellularError(*this, BAD_T, t);
             }
             m_cell_array[not_filled][g_col] = static_cast<Byte>(cell_table[t]);
@@ -346,7 +345,7 @@ void Cellular::suspend()
 {
     if (m_last_screen_flag)
     {
-        thinking_end();
+        g_calc_status = CalcStatus::NON_RESUMABLE;
         throw CellularError(*this, INTERRUPT);
     }
     alloc_resume(10, 1);

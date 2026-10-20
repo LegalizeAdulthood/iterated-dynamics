@@ -116,6 +116,7 @@ add_executable(test-id
     misc/test_ValueSaver.cpp
     misc/test_version.cpp
     ui/test_ChoiceBuilder.cpp
+    ui/test_cellular.cpp
     ui/test_comments.cpp
     ui/test_diskvid.cpp
     ui/test_double_to_string.cpp

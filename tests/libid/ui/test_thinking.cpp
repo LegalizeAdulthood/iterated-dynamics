@@ -47,10 +47,13 @@ TEST_F(TestThinking, displaysPaddedMessage)
 {
     expect_initial_display("  Cellular thinking    ");
 
+    EXPECT_FALSE(thinking_active());
     EXPECT_FALSE(thinking("Cellular thinking"));
+    EXPECT_TRUE(thinking_active());
 
     EXPECT_CALL(m_driver, unstack_screen());
     thinking_end();
+    EXPECT_FALSE(thinking_active());
 }
 
 TEST_F(TestThinking, updatesSpinnerAfterDelay)

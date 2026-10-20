@@ -26,6 +26,7 @@ public:
     Cellular &operator=(Cellular &&) = delete;
 
     bool iterate();
+    bool preparing() const;
     void suspend();
 
     std::string error(int err, int t = 0) const;

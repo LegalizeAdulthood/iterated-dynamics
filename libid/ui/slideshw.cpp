@@ -19,6 +19,7 @@
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
 #include "ui/temp_msg.h"
+#include "ui/thinking.h"
 
 #include <algorithm>
 #include <array>
@@ -100,6 +101,7 @@ static SlideDuration s_delay{};
 static int s_slow_count{};
 static bool s_quotes{};
 static bool s_calc_wait{};
+static int s_thinking_key{};
 static int s_repeats{};
 static int s_last1{};
 
@@ -182,6 +184,17 @@ int slide_show()
 {
     int out;
     char buffer[81];
+    if (s_thinking_key != 0)
+    {
+        if (!thinking_active())
+        {
+            return 0;
+        }
+        const int key{s_thinking_key};
+        s_thinking_key = 0;
+        s_last1 = key;
+        return key;
+    }
     if (s_calc_wait)
     {
         if (g_calc_status == CalcStatus::IN_PROGRESS || g_busy) // restart timer - process not done
@@ -361,6 +374,30 @@ start:
         out = 0;
         s_slow_count = 0;
     }
+    else if (std::strcmp("THINKWAIT", buffer) == 0)
+    {
+        out = 0;
+        if (std::fscanf(s_slide_show_file, "%80s", buffer) != 1)
+        {
+            slide_show_err("THINKWAIT needs a key");
+        }
+        else
+        {
+            const int key{buffer[1] == 0 ? static_cast<unsigned char>(buffer[0]) : get_slide_show_key_code(buffer)};
+            if (key <= 0)
+            {
+                slide_show_err("THINKWAIT needs a character or named key");
+            }
+            else if (thinking_active())
+            {
+                out = key;
+            }
+            else
+            {
+                s_thinking_key = key;
+            }
+        }
+    }
     else if (std::strcmp("CALCWAIT", buffer) == 0) // wait for calc to finish
     {
         s_calc_wait = true;
@@ -390,6 +427,7 @@ SlidesMode start_slide_show()
     s_delay = SlideDuration::zero();
     s_quotes = false;
     s_calc_wait = false;
+    s_thinking_key = 0;
     s_slow_count = 0;
     return g_slides;
 }
@@ -401,6 +439,7 @@ void stop_slide_show()
         std::fclose(s_slide_show_file);
     }
     s_slide_show_file = nullptr;
+    s_thinking_key = 0;
     s_record_time = {};
     g_slides = SlidesMode::OFF;
 }

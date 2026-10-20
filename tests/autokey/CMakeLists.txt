@@ -93,6 +93,18 @@ add_test(NAME AutoKeyTest.palette-cycle
 set_tests_properties(AutoKeyTest.palette-cycle
     PROPERTIES LABELS "autokey;ui;colormap" TIMEOUT 90)
 
+id_make_test_home(cellular-preparation CELLULAR_PREPARATION_HOME
+    KEYS cellular_preparation.key)
+add_test(NAME AutoKeyTest.cellular-preparation
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCHECK_PREPARATION=$<SHELL_PATH:$<TARGET_FILE:check-cellular-preparation>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cellular_preparation_test.cmake"
+    WORKING_DIRECTORY "${CELLULAR_PREPARATION_HOME}")
+set_tests_properties(AutoKeyTest.cellular-preparation
+    PROPERTIES LABELS "autokey;ui;cellular" TIMEOUT 130)
+
 foreach(passes IN ITEMS 1 2)
     foreach(pixel IN ITEMS optimized general)
         set(name "standard-interrupt-${passes}-${pixel}")

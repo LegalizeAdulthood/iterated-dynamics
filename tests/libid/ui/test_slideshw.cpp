@@ -14,6 +14,7 @@
 #include <misc/Driver.h>
 #include <misc/ValueSaver.h>
 #include <ui/text_screen.h>
+#include <ui/thinking.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -143,6 +144,54 @@ TEST(TestSlideShow, slideShowGotoResumesAtTarget)
 
     EXPECT_EQ(ID_KEY_ENTER, slide_show());
 
+    stop_slide_show();
+}
+
+TEST(TestSlideShow, thinkingWaitDeliversKeyOnlyWhileThinkingIsActive)
+{
+    TempDir temp_dir;
+    const fs::path input_path{temp_dir.path() / "thinking.key"};
+    write_text_file(input_path, "THINKWAIT x\n");
+    MockDriver driver;
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
+    ValueSaver saved_auto_name{g_auto_name, input_path};
+    stop_slide_show();
+    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
+    EXPECT_CALL(driver, set_keyboard_timeout(_));
+    EXPECT_CALL(driver, stack_screen());
+    EXPECT_CALL(driver, set_clear());
+    EXPECT_CALL(driver, put_string(_, _, _, _)).Times(2);
+    EXPECT_CALL(driver, unstack_screen());
+
+    EXPECT_EQ(0, slide_show());
+    EXPECT_EQ(0, slide_show());
+    thinking("preparation");
+    EXPECT_EQ('x', slide_show());
+
+    thinking_end();
+    stop_slide_show();
+}
+
+TEST(TestSlideShow, thinkingWaitAcceptsNamedKeyWhenThinkingIsAlreadyActive)
+{
+    TempDir temp_dir;
+    const fs::path input_path{temp_dir.path() / "thinking.key"};
+    write_text_file(input_path, "THINKWAIT ENTER\n");
+    MockDriver driver;
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
+    ValueSaver saved_auto_name{g_auto_name, input_path};
+    stop_slide_show();
+    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
+    EXPECT_CALL(driver, set_keyboard_timeout(_));
+    EXPECT_CALL(driver, stack_screen());
+    EXPECT_CALL(driver, set_clear());
+    EXPECT_CALL(driver, put_string(_, _, _, _)).Times(2);
+    EXPECT_CALL(driver, unstack_screen());
+
+    thinking("preparation");
+    EXPECT_EQ(ID_KEY_ENTER, slide_show());
+
+    thinking_end();
     stop_slide_show();
 }
 

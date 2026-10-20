@@ -26,6 +26,10 @@ add_executable(check-pass-switch check_pass_switch.cpp)
 target_link_libraries(check-pass-switch PRIVATE image-tool libid)
 target_folder(check-pass-switch "Tests/Tools")
 
+add_executable(check-cellular-preparation check_cellular_preparation.cpp)
+target_link_libraries(check-cellular-preparation PRIVATE image-tool libid)
+target_folder(check-cellular-preparation "Tests/Tools")
+
 if(WIN32)
     add_executable(dump-dpi dump_dpi.cpp)
     target_link_libraries(dump-dpi "Shcore.lib" "User32.lib")
