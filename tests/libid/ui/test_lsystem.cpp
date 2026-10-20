@@ -247,4 +247,16 @@ TEST_F(TestLSystemController, initializationFailureDoesNotOpenThinking)
     EXPECT_EQ(0, m_lines);
 }
 
+TEST_F(TestLSystemController, definitionFailureDoesNotStartSizingOrDrawing)
+{
+    g_l_system_name = "missing";
+
+    EXPECT_THROW(render(), std::runtime_error);
+
+    EXPECT_FALSE(lsystem_loaded());
+    EXPECT_EQ(0, m_thinking_entries);
+    EXPECT_EQ(0, m_thinking_exits);
+    EXPECT_EQ(0, m_lines);
+}
+
 } // namespace id::test

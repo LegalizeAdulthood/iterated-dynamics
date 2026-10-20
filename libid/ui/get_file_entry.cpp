@@ -425,8 +425,24 @@ long get_file_entry(ItemType type, std::filesystem::path &path, std::string &ent
 
     case ItemType::L_SYSTEM:
     {
-        const long entry_pointer{get_file_entry(type, "L-System", "*.l", path, entry_name)};
-        return entry_pointer >= 0 ? (lsystem_load() == 0 ? 0 : entry_pointer) : entry_pointer;
+        while (true)
+        {
+            const long entry_pointer{get_file_entry(type, "L-System", "*.l", path, entry_name)};
+            if (entry_pointer < 0)
+            {
+                return entry_pointer;
+            }
+            try
+            {
+                lsystem_load();
+            }
+            catch (const std::runtime_error &error)
+            {
+                stop_msg(error.what());
+                continue;
+            }
+            return 0;
+        }
     }
 
     case ItemType::IFS:

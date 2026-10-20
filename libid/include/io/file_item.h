@@ -32,7 +32,7 @@ bool search_for_entry(std::FILE *infile, const std::string &item_name);
 bool find_file_item(std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type,
     std::string &diagnostic);
 // TODO: removed later
-// Slices 31, 32, and 44 migrate the remaining non-UI diagnostic callers.
+// Slices 32 and 44 migrate the remaining non-UI diagnostic callers.
 bool find_file_item(
     std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type);
 

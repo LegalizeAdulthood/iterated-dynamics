@@ -262,7 +262,7 @@ static bool check_parameter_file(
 }
 
 // TODO: removed later
-// Slices 31, 32, and 44 replace this legacy UI-reporting overload.
+// Slices 32 and 44 replace this legacy UI-reporting overload.
 bool find_file_item(
     std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, const ItemType item_type)
 {

@@ -119,6 +119,21 @@ add_test(NAME AutoKeyTest.lsystem-sizing
 set_tests_properties(AutoKeyTest.lsystem-sizing
     PROPERTIES LABELS "autokey;ui;lsystem" TIMEOUT 70)
 
+id_make_test_home(lsystem-validation LSYSTEM_VALIDATION_HOME
+    KEYS lsystem_validation.key)
+configure_file(lsystem_validation.l
+    "${LSYSTEM_VALIDATION_HOME}/lsystem/validation.l" COPYONLY)
+add_test(NAME AutoKeyTest.lsystem-validation
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCHECK_LSYSTEM=$<SHELL_PATH:$<TARGET_FILE:check-lsystem-validation>>"
+        "-DLSYSTEM_FILE=${LSYSTEM_VALIDATION_HOME}/lsystem/validation.l"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/lsystem_validation_test.cmake"
+    WORKING_DIRECTORY "${LSYSTEM_VALIDATION_HOME}")
+set_tests_properties(AutoKeyTest.lsystem-validation
+    PROPERTIES LABELS "autokey;ui;lsystem" TIMEOUT 100)
+
 id_make_test_home(ifs-validation IFS_VALIDATION_HOME
     KEYS ifs_validation.key)
 configure_file(ifs_validation.ifs "${IFS_VALIDATION_HOME}/ifs/validation.ifs" COPYONLY)

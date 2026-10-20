@@ -19,7 +19,9 @@
 
 #include <array>
 #include <filesystem>
+#include <fstream>
 #include <initializer_list>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -52,7 +54,7 @@ protected:
     {
         g_l_system_name = name;
         g_params[0] = order;
-        ASSERT_FALSE(lsystem_load());
+        ASSERT_NO_THROW(lsystem_load());
         char stack_top{};
         const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
         LSystem system;
@@ -191,7 +193,7 @@ TEST_F(TestLSystem, startInitializesSizingWithoutTraversing)
 {
     g_l_system_name = "Koch1";
     g_params[0] = 9;
-    ASSERT_FALSE(lsystem_load());
+    ASSERT_NO_THROW(lsystem_load());
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
     LSystem system;
@@ -214,7 +216,7 @@ TEST_F(TestLSystem, sizingEndsBeforeDrawingStarts)
 {
     g_l_system_name = "SizingBox";
     g_params[0] = 0;
-    ASSERT_FALSE(lsystem_load());
+    ASSERT_NO_THROW(lsystem_load());
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
     LSystem system;
@@ -242,7 +244,7 @@ TEST_F(TestLSystem, suspensionStopsSizing)
 {
     g_l_system_name = "Koch1";
     g_params[0] = 9;
-    ASSERT_FALSE(lsystem_load());
+    ASSERT_NO_THROW(lsystem_load());
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
     LSystem system;
@@ -262,7 +264,7 @@ TEST_F(TestLSystem, overflowDuringSizingStopsBeforeDrawing)
 {
     g_l_system_name = "Koch1";
     g_params[0] = 9;
-    ASSERT_FALSE(lsystem_load());
+    ASSERT_NO_THROW(lsystem_load());
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
     LSystem system;
@@ -276,6 +278,165 @@ TEST_F(TestLSystem, overflowDuringSizingStopsBeforeDrawing)
     EXPECT_FALSE(system.sizing());
     EXPECT_FALSE(system.interrupted());
     EXPECT_TRUE(m_lines.empty());
+}
+
+class TestLSystemLoad : public TestLSystem
+{
+protected:
+    void SetUp() override
+    {
+        TestLSystem::SetUp();
+        m_path = std::filesystem::path{data::ID_TEST_DATA_DIR} /
+            ("lsystem-" + std::string{UnitTest::GetInstance()->current_test_info()->name()} + ".l");
+        g_l_system_filename = m_path;
+        g_l_system_name = "entry";
+        EXPECT_CALL(m_driver, key_pressed()).Times(0);
+        EXPECT_CALL(m_driver, get_key()).Times(0);
+        EXPECT_CALL(m_driver, stack_screen()).Times(0);
+    }
+
+    void TearDown() override
+    {
+        LSystem cleanup;
+        std::error_code ignored;
+        std::filesystem::remove(m_path, ignored);
+    }
+
+    void write_definition(const std::string &text)
+    {
+        std::ofstream out{m_path};
+        ASSERT_TRUE(out);
+        out << text;
+    }
+
+    void expect_failure(const char *message)
+    {
+        try
+        {
+            lsystem_load();
+            FAIL() << "Expected a loader diagnostic";
+        }
+        catch (const std::runtime_error &error)
+        {
+            EXPECT_THAT(error.what(), HasSubstr(message));
+        }
+        EXPECT_FALSE(lsystem_loaded());
+        EXPECT_EQ(0, g_max_angle);
+        LSystem system;
+        EXPECT_THROW(system.start(), std::logic_error);
+        EXPECT_TRUE(system.done());
+        EXPECT_FALSE(system.sizing());
+        EXPECT_TRUE(m_lines.empty());
+    }
+
+    std::filesystem::path m_path;
+};
+
+TEST_F(TestLSystemLoad, reportsMissingFileWithoutUI)
+{
+    expect_failure("'entry' file entry item not found");
+}
+
+TEST_F(TestLSystemLoad, reportsMissingEntryWithoutUI)
+{
+    write_definition("other {\naxiom f\nangle 4\n}\n");
+
+    expect_failure("'entry' file entry item not found");
+}
+
+TEST_F(TestLSystemLoad, reportsEmptyEntryNameWithoutUI)
+{
+    g_l_system_name.clear();
+
+    expect_failure("File entry item name is empty");
+}
+
+TEST_F(TestLSystemLoad, rejectsMissingAxiom)
+{
+    write_definition("entry {\nangle 4\n}\n");
+
+    expect_failure("Error:  no axiom");
+}
+
+TEST_F(TestLSystemLoad, rejectsMissingAxiomValue)
+{
+    write_definition("entry {\naxiom\nangle 4\n}\n");
+
+    expect_failure("Error:  no axiom");
+}
+
+TEST_F(TestLSystemLoad, rejectsMissingAngle)
+{
+    write_definition("entry {\naxiom f\n}\n");
+
+    expect_failure("Error:  illegal or missing angle");
+}
+
+TEST_F(TestLSystemLoad, rejectsInvalidAngle)
+{
+    for (const char *angle : {"", "two", "4junk", "2", "51", "260", "-4", "99999999999999999999"})
+    {
+        SCOPED_TRACE(angle);
+        write_definition("entry {\naxiom f\nangle " + std::string{angle} + "\n}\n");
+
+        expect_failure("Error:  illegal or missing angle");
+    }
+}
+
+TEST_F(TestLSystemLoad, rejectsRedefinedReservedSymbol)
+{
+    write_definition("entry {\naxiom f\nangle 4\n+ = f\n}\n");
+
+    expect_failure("Redefined reserved symbol +");
+}
+
+TEST_F(TestLSystemLoad, rejectsExtraText)
+{
+    write_definition("entry {\naxiom f extra\nangle 4\n}\n");
+
+    expect_failure("Extra text after command line 2: extra");
+}
+
+TEST_F(TestLSystemLoad, rejectsMalformedCommand)
+{
+    write_definition("entry {\naxiom f\nangle 4\n=\n}\n");
+
+    expect_failure("missing command");
+}
+
+TEST_F(TestLSystemLoad, rejectsUnknownCommand)
+{
+    write_definition("entry {\naxiom f\nangle 4\nunknown f\n}\n");
+
+    expect_failure("Syntax error line 4: unknown");
+}
+
+TEST_F(TestLSystemLoad, rejectsUnterminatedDefinition)
+{
+    write_definition("entry {\naxiom f\nangle 4\n");
+
+    expect_failure("'entry' file entry item not found");
+}
+
+TEST_F(TestLSystemLoad, failedReloadCannotReusePreviousAxiom)
+{
+    write_definition("entry {\naxiom f\nangle 4\nf = ff\n}\n");
+    ASSERT_NO_THROW(lsystem_load());
+    ASSERT_TRUE(lsystem_loaded());
+    write_definition("entry {\nangle 4\n}\n");
+
+    expect_failure("Error:  no axiom");
+}
+
+TEST_F(TestLSystemLoad, validDefinitionAfterFailureCanSizeAndDraw)
+{
+    write_definition("entry {\naxiom f\nangle 2\n}\n");
+    expect_failure("Error:  illegal or missing angle");
+    write_definition("entry {\naxiom f\nangle 4\n}\n");
+
+    render("entry");
+
+    EXPECT_EQ(1U, m_lines.size());
 }
 
 } // namespace id::test

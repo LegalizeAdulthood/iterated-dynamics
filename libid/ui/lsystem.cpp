@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/lsystem.h"
 
@@ -62,9 +63,9 @@ void LSystemThinkingScreen::clear()
 
 int lsystem_type()
 {
-    if (!lsystem_loaded() && lsystem_load())
+    if (!lsystem_loaded())
     {
-        return -1;
+        lsystem_load();
     }
 
     LSystem l_system;

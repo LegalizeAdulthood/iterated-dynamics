@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "fractals/lsystem.h"
 
@@ -12,7 +13,6 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/stack_avail.h"
-#include "ui/stop_msg.h"
 
 #include <config/string_lower.h>
 
@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <charconv>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -27,6 +28,7 @@
 #include <filesystem>
 #include <memory>
 #include <new>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -42,7 +44,6 @@ using namespace id::engine;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::fractals
 {
@@ -122,7 +123,7 @@ static std::string s_axiom;
 static std::vector<std::string> s_rules;
 static bool s_loaded{};
 
-static bool read_lsystem_file(const char *str);
+static void read_lsystem_file(const char *str);
 static void free_rules_mem();
 static int rule_present(char symbol);
 static bool save_axiom(const char *text);
@@ -230,23 +231,25 @@ static LDouble get_number(const char **str)
     return ret;
 }
 
-static bool read_lsystem_file(const char *str)
+static void read_lsystem_file(const char *str)
 {
     int err = 0;
     char inline1[MAX_LSYS_LINE_LEN+1];
-    std::FILE *infile;
+    std::FILE *infile{};
+    std::string diagnostic;
 
-    if (find_file_item(g_l_system_filename, str, &infile, ItemType::L_SYSTEM))
+    if (find_file_item(g_l_system_filename, str, &infile, ItemType::L_SYSTEM, diagnostic))
     {
-        return true;
+        throw std::runtime_error{diagnostic};
     }
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{infile, std::fclose};
     {
         int c;
         while ((c = std::fgetc(infile)) != '{')
         {
             if (c == EOF)
             {
-                return true;
+                throw std::runtime_error{"Error:  missing L-system definition body"};
             }
         }
     }
@@ -289,9 +292,19 @@ static bool read_lsystem_file(const char *str)
         {
             bool check = false;
             word = std::strtok(inline1, " =\t\n");
+            if (word == nullptr)
+            {
+                append_error(fmt::format("Syntax error line {:d}: missing command", line_num));
+                continue;
+            }
             if (std::strcmp(word, "axiom") == 0)
             {
-                if (save_axiom(std::strtok(nullptr, " \t\n")))
+                const char *axiom{std::strtok(nullptr, " \t\n")};
+                if (axiom == nullptr)
+                {
+                    append_error("Error:  no axiom");
+                }
+                else if (save_axiom(axiom))
                 {
                     append_error("Error:  out of memory\n");
                     break;
@@ -300,7 +313,18 @@ static bool read_lsystem_file(const char *str)
             }
             else if (std::strcmp(word, "angle") == 0)
             {
-                g_max_angle = static_cast<char>(std::atoi(std::strtok(nullptr, " \t\n")));
+                const char *angle{std::strtok(nullptr, " \t\n")};
+                int value{};
+                g_max_angle = 0;
+                if (angle != nullptr)
+                {
+                    const char *end{angle + std::strlen(angle)};
+                    const std::from_chars_result parsed{std::from_chars(angle, end, value)};
+                    if (parsed.ec == std::errc{} && parsed.ptr == end && value >= 3 && value <= 50)
+                    {
+                        g_max_angle = static_cast<char>(value);
+                    }
+                }
                 check = true;
             }
             else if (std::strcmp(word, "}") == 0)
@@ -356,7 +380,6 @@ static bool read_lsystem_file(const char *str)
             }
         }
     }
-    std::fclose(infile);
     if (s_axiom.empty() && err < 6)
     {
         append_error("Error:  no axiom\n");
@@ -368,10 +391,8 @@ static bool read_lsystem_file(const char *str)
     if (err)
     {
         msg_buff.pop_back(); // strip trailing \n
-        stop_msg(msg_buff);
-        return true;
+        throw std::runtime_error{msg_buff};
     }
-    return false;
 }
 
 static void lsys_build_trig_table()
@@ -953,6 +974,11 @@ void LSystem::suspend()
 
 void LSystem::Impl::start()
 {
+    if (!s_loaded)
+    {
+        m_phase = Phase::DONE;
+        throw std::logic_error{"L-system definition is not loaded"};
+    }
     build_size_commands();
     lsys_build_trig_table();
     m_turtle.aspect = g_screen_aspect * g_logical_screen.x_dots / g_logical_screen.y_dots;
@@ -1332,21 +1358,27 @@ bool lsystem_loaded()
     return s_loaded;
 }
 
-bool lsystem_load()
+void lsystem_load()
 {
-    if (read_lsystem_file(g_l_system_name.c_str()))
+    s_loaded = false;
+    free_rules_mem();
+    g_max_angle = 0;
+    try
     {
-        // error occurred
+        read_lsystem_file(g_l_system_name.c_str());
+    }
+    catch (...)
+    {
         free_rules_mem();
-        s_loaded = false;
-        return true;
+        g_max_angle = 0;
+        throw;
     }
     s_loaded = true;
-    return false;
 }
 
 static void free_rules_mem()
 {
+    s_axiom.clear();
     for (std::string &rule : s_rules)
     {
         rule.clear();

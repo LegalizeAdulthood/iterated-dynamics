@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 //      Header file for L-system code.
 //
@@ -42,6 +43,7 @@ private:
 };
 
 bool lsystem_loaded();
-bool lsystem_load();
+// Throws a diagnostic on failure and leaves no definition loaded.
+void lsystem_load();
 
 } // namespace id::fractals

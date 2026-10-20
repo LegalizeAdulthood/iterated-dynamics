@@ -266,7 +266,12 @@ The current code is already part-way through this plan:
   Selection reports the failure once and retries locally; rendering
   reports it through the outer UI diagnostic boundary.  IFS lookup uses
   the non-interactive `find_file_item()` overload.  The legacy reporting
-  overload remains for slices 31, 32, and 44.
+  overload remains for slices 32 and 44.
+- `lsystem_load()` throws parser and lookup diagnostics without UI and
+  closes definition files on failure.  A failed load clears cached rules
+  and the axiom, and sizing refuses to start without a valid definition.
+  Selection reports errors and retries; render failures use the outer UI
+  diagnostic boundary without starting sizing or drawing.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -766,6 +771,12 @@ Existing coverage does not imply coverage of live interaction:
   starts generation-zero rendering and compares it with a fresh image.
   The L-system script interrupts the sizing thinking screen, returns
   through the outer menu, and starts a completed drawing at a new order.
+  Its validation script rejects an invalid definition, acknowledges the
+  error, selects a valid definition, and verifies completed drawing.
+  Cancelling another invalid selection preserves that completed image.
+  Batch checks require one diagnostic and no saved image for rejected
+  definitions.  These checks use metadata and blank/nonblank output,
+  not drift-sensitive line goldens.
   The IFS script acknowledges a missing definition, rejects malformed
   selection, chooses a valid definition, and preserves the completed
   image when another invalid selection is cancelled.  Batch checks
@@ -783,9 +794,12 @@ Existing coverage does not imply coverage of live interaction:
   Cellular controller tests cover preparation, transition to pixel
   output, exactly-once cleanup, interruption, and injected failure.
   L-system calculation tests cover bounded sizing, suspension, and
-  transition to drawing without UI calls.  Controller tests cover
-  thinking-screen entry, updates, exactly-once cleanup, interruption,
-  initialization failure, and injected calculation/presentation failure.
+  transition to drawing without UI calls.  Parser tests cover missing
+  definitions, malformed commands, missing axiom and angle operands,
+  invalid angles, stale-definition cleanup, and successful reload after
+  failure.  Controller tests cover thinking-screen entry, updates,
+  exactly-once cleanup, interruption, initialization failure, and injected
+  calculation/presentation failure.
 - Perturbation tests cover reference failure, cached-reference reuse,
   caller-selected pixel order, deep-zoom BoundaryTrace completion, and
   palette-color consistency.  They also verify BoundaryTrace strategy
@@ -865,30 +879,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 31. L-System Definition Diagnostics
-
-Source: definition parsing in `fractals/lsystem.cpp` and file-entry
-lookup; UI owners: `ui/lsystem.cpp` and `ui/get_file_entry.cpp`.
-
-Work:
-
-- Return parser and lookup diagnostics to the UI owners instead of
-  displaying modal errors from L-system code.
-- Use the non-interactive `find_file_item()` diagnostic overload for
-  L-system definition lookup.
-- Preserve rule-loading failure state and ensure sizing never begins
-  after an invalid definition.
-
-Done when:
-
-- L-system loading, sizing, and drawing cannot invoke UI error handling.
-
-Validation: reuse the parser-test direction in
-[test-lsystem.md](test-lsystem.md).  Add autokey coverage for rejecting an
-invalid definition, acknowledging the error, and selecting a valid one.
-Assert the selected definition and successful sizing/drawing transition,
-not drift-sensitive line pixels.
 
 ### 32. Formula Parser Diagnostics
 

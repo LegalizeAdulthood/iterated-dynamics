@@ -47,6 +47,10 @@ add_executable(check-lsystem-sizing check_lsystem_sizing.cpp)
 target_link_libraries(check-lsystem-sizing PRIVATE image-tool libid)
 target_folder(check-lsystem-sizing "Tests/Tools")
 
+add_executable(check-lsystem-validation check_lsystem_validation.cpp)
+target_link_libraries(check-lsystem-validation PRIVATE image-tool libid fmt::fmt-header-only)
+target_folder(check-lsystem-validation "Tests/Tools")
+
 add_executable(check-jiim check_jiim.cpp)
 target_link_libraries(check-jiim PRIVATE image-tool libid)
 target_folder(check-jiim "Tests/Tools")
