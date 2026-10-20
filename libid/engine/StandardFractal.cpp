@@ -190,6 +190,14 @@ void StandardFractal::suspend()
     complete();
 }
 
+void StandardFractal::abort()
+{
+    complete();
+    g_num_work_list = 0;
+    end_resume();
+    g_calc_status = CalcStatus::NON_RESUMABLE;
+}
+
 bool StandardFractal::done() const
 {
     return m_phase == Phase::COMPLETE;

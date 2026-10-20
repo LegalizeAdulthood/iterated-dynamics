@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/big_while_loop.h"
 
@@ -27,6 +28,7 @@
 #include "io/save_timer.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
+#include "ui/calculate_image.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
 #include "ui/evolver_menu_switch.h"
@@ -687,7 +689,7 @@ MainState big_while_loop(MainContext &context)
                     restore_param_history();
                     fiddle_params(gene, count);
                     calc_frac_init();
-                    i = calc_fract();
+                    i = calculate_image();
                     if (i == -1)
                     {
                         break;
@@ -733,7 +735,7 @@ MainState big_while_loop(MainContext &context)
             else
             {
                 sound.emplace();
-                i = calc_fract();       // draw the fractal using "C"
+                i = calculate_image();
             }
 
             if (i == 0)

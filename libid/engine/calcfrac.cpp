@@ -66,7 +66,6 @@
 #include "ui/lyapunov.h"
 #include "ui/non_standard_fractal.h"
 #include "ui/standard_fractal.h"
-#include "ui/stop_msg.h"
 #include "ui/video.h"
 
 #include <fmt/format.h>
@@ -325,8 +324,10 @@ static void fix_inversion(double *x) // make double converted from string look o
     *x = std::atof(fmt::format("{:<1.15Lg}", *x).c_str());
 }
 
-void ImageCalculation::start()
+std::vector<std::string> ImageCalculation::start()
 {
+    std::vector<std::string> warnings;
+    m_started = false;
     const bool resuming{g_calc_status == CalcStatus::RESUMABLE};
 
     g_attractor.count = 0; // default to no known finite attractors
@@ -366,7 +367,7 @@ void ImageCalculation::start()
 
     if (g_log_map_flag && g_colors < 16)
     {
-        stop_msg("Need at least 16 colors to use logmap");
+        warnings.emplace_back("Need at least 16 colors to use logmap");
         g_log_map_flag = 0;
     }
 
@@ -424,11 +425,11 @@ void ImageCalculation::start()
         {
             if (!g_iteration_ranges.empty() || g_log_map_fly_calculate == LogMapCalculate::USE_LOG_TABLE)
             {
-                stop_msg("Insufficient memory for logmap/ranges with this maxiter");
+                throw std::runtime_error{"Insufficient memory for logmap/ranges with this maxiter"};
             }
             else
             {
-                stop_msg("Insufficient memory for logTable, using on-the-fly routine");
+                warnings.emplace_back("Insufficient memory for logTable, using on-the-fly routine");
                 g_log_map_fly_calculate = LogMapCalculate::ON_THE_FLY;
                 g_log_map_calculate = true; // calculate on the fly
                 setup_log_table();
@@ -548,6 +549,8 @@ void ImageCalculation::start()
         }
         g_calc_time = 0;
     }
+    m_started = true;
+    return warnings;
 }
 
 static bool static_calc_type_uses_standard_engine()
@@ -610,7 +613,11 @@ void NonStandardFractal::finish(const bool interrupted)
 
 void ImageCalculation::finish()
 {
-    g_calc_time += g_timer_interval;
+    if (m_started)
+    {
+        g_calc_time += g_timer_interval;
+        m_started = false;
+    }
 
     if (!g_log_map_table.empty() && !g_log_map_calculate)
     {
@@ -618,17 +625,21 @@ void ImageCalculation::finish()
     }
     free_work_area();
 
+    if (g_calc_status == CalcStatus::NON_RESUMABLE)
+    {
+        g_num_work_list = 0;
+        end_resume();
+    }
+
     if (g_true_color)
     {
         end_disk();
     }
 }
 
-// calc_fract - the top level routine for generating an image
+// Legacy renderer dispatch; the UI owns the common ImageCalculation lifecycle.
 int calc_fract()
 {
-    ImageCalculation image;
-    image.start();
     if (static_calc_type_uses_lyapunov_renderer())
     {
         lyapunov_fractal();
@@ -641,8 +652,6 @@ int calc_fract()
     {
         non_standard_fractal();
     }
-    image.finish();
-
     return g_calc_status == CalcStatus::COMPLETED ? 0 : -1;
 }
 

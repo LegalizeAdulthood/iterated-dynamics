@@ -4,6 +4,7 @@
 #include "ui/lyapunov.h"
 
 #include "engine/calcfrac.h"
+#include "engine/StandardFractal.h"
 #include "fractals/lyapunov.h"
 #include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"
@@ -57,21 +58,31 @@ int lyapunov_fractal()
     ShowDotController marker;
     lyapunov.resume();
 
-    while (!lyapunov.done())
+    try
     {
-        if (marker.enabled())
+        while (!lyapunov.done())
         {
-            marker.iterate(lyapunov.calculation());
+            if (marker.enabled())
+            {
+                marker.iterate(lyapunov.calculation());
+            }
+            else
+            {
+                lyapunov.iterate();
+            }
+            if (!lyapunov.done() && calc_interrupted())
+            {
+                lyapunov.suspend();
+                return -1;
+            }
         }
-        else
-        {
-            lyapunov.iterate();
-        }
-        if (!lyapunov.done() && calc_interrupted())
-        {
-            lyapunov.suspend();
-            return -1;
-        }
+    }
+    catch (...)
+    {
+        marker.restore();
+        scrub_orbit_display();
+        lyapunov.calculation().abort();
+        throw;
     }
     return 0;
 }

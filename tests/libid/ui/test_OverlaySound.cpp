@@ -6,9 +6,11 @@
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
 #include <engine/calmanfp.h>
+#include <engine/cmdfiles.h>
 #include <engine/color_state.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/log_map.h>
 #include <engine/OrbitPlot.h>
 #include <engine/PertEngine.h>
 #include <engine/pixel_grid.h>
@@ -18,14 +20,18 @@
 #include <engine/SoundOutput.h>
 #include <engine/StandardPass.h>
 #include <engine/VideoInfo.h>
+#include <engine/work_list.h>
 #include <fractals/fractalp.h>
 #include <fractals/FrothyBasin.h>
 #include <fractals/lorenz.h>
 #include <fractals/lyapunov.h>
 #include <io/library.h>
 #include <misc/ValueSaver.h>
+#include <misc/debug_flags.h>
+#include <ui/calculate_image.h>
 #include <ui/frothy_basin.h>
 #include <ui/KeyboardHandler.h>
+#include <ui/id_keys.h>
 #include <ui/SoundSession.h>
 #include <ui/standard_fractal.h>
 #include <ui/standard_orbit_plot.h>
@@ -39,6 +45,8 @@
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <new>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -475,6 +483,94 @@ TEST_F(TestOverlaySound, lyapunovScanlineYieldsCompletedPixelWithoutPolling)
     EXPECT_EQ(2, m_plots);
     calculation.suspend();
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+}
+
+TEST_F(TestOverlaySound, imageSetupReturnsLogMapWarningWithoutPolling)
+{
+    g_colors = 2;
+    ValueSaver saved_log_map{g_log_map_flag, 1L};
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    ImageCalculation image;
+
+    EXPECT_THAT(image.start(), ElementsAre("Need at least 16 colors to use logmap"));
+
+    EXPECT_EQ(0, g_log_map_flag);
+    image.finish();
+}
+
+TEST_F(TestOverlaySound, failedImageSetupClearsResumeStateWithoutChargingThePreviousTimer)
+{
+    ValueSaver saved_time{g_calc_time, 123L};
+    g_calc_status = CalcStatus::NON_RESUMABLE;
+    g_num_work_list = 1;
+    g_resume_data = {1, 2, 3};
+    ImageCalculation image;
+
+    image.finish();
+
+    EXPECT_EQ(123L, g_calc_time);
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_TRUE(g_resume_data.empty());
+}
+
+class TestStandardRenderDiagnostic : public TestOverlaySound
+{
+protected:
+    void expect_diagnostic(const char *message)
+    {
+        EXPECT_CALL(m_driver, stack_screen());
+        EXPECT_CALL(m_driver, unstack_screen());
+        EXPECT_CALL(m_driver, move_cursor(_, _));
+        EXPECT_CALL(m_driver, hide_text_cursor());
+        EXPECT_CALL(m_driver, set_attr(_, _, _, _));
+        EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
+        EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(AnyNumber());
+        EXPECT_CALL(m_driver, put_string(_, _, _, StrEq(message)));
+        EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+        EXPECT_CALL(*m_output, mute());
+    }
+
+    ValueSaver<bool> m_saved_first_init{g_first_init, false};
+    ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
+    ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
+    ValueSaver<bool> m_saved_start_orbit{g_start_show_orbit, false};
+};
+
+TEST_F(TestStandardRenderDiagnostic, boundaryValidationReturnsToUiAndAllowsCorrection)
+{
+    g_std_calc_mode = CalcMode::BOUNDARY_TRACE;
+    g_inside_method = ColorMethod::COLOR;
+    ValueSaver saved_inside_color{g_inside_color, 0};
+    const FractalDispatch dispatch{g_dispatch};
+    expect_diagnostic("Boundary tracing cannot be used with inside=0 or outside=0");
+
+    EXPECT_EQ(-1, calculate_image());
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_EQ(0, m_plots);
+    EXPECT_EQ(dispatch.calc_type(), g_dispatch.calc_type());
+    EXPECT_EQ(dispatch.per_image(), g_dispatch.per_image());
+    g_inside_method = ColorMethod::ITER;
+    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+}
+
+TEST_F(TestStandardRenderDiagnostic, allocationFailureDiscardsWorkAndReportsToUi)
+{
+    g_dispatch.set_per_image([]() -> bool { throw std::bad_alloc{}; });
+    const FractalDispatch dispatch{g_dispatch};
+    expect_diagnostic("Insufficient free memory for calculation");
+
+    EXPECT_EQ(-1, calculate_image());
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_EQ(0, m_plots);
+    EXPECT_EQ(dispatch.calc_type(), g_dispatch.calc_type());
+    EXPECT_EQ(dispatch.per_image(), g_dispatch.per_image());
+    EXPECT_TRUE(g_log_map_table.empty());
 }
 
 TEST_F(TestOverlaySound, pendingStandardOverlayRetainsRejectedCandidate)

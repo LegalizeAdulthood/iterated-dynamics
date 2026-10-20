@@ -75,39 +75,50 @@ int standard_fractal(SoundSession &sound)
 
     standard_fractal.resume();
 
-    while (!standard_fractal.done())
+    try
     {
-        if (!sound.wait_until_ready())
+        while (!standard_fractal.done())
         {
-            standard_fractal.scrub_overlay();
-            standard_fractal.suspend();
-            return -1;
-        }
-        bool check_interrupted = true;
-        if (marker.enabled())
-        {
-            marker.iterate(standard_fractal);
-        }
-        else
-        {
-            standard_fractal.iterate();
-        }
-        if (standard_fractal.consume_orbit_overlay_displayed())
-        {
-            pace_orbit_display();
-            check_interrupted = false;
-        }
-        if (!standard_fractal.done())
-        {
-            const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
-            if (interrupted)
+            if (!sound.wait_until_ready())
             {
-                sound.cancel();
                 standard_fractal.scrub_overlay();
                 standard_fractal.suspend();
                 return -1;
             }
+            bool check_interrupted = true;
+            if (marker.enabled())
+            {
+                marker.iterate(standard_fractal);
+            }
+            else
+            {
+                standard_fractal.iterate();
+            }
+            if (standard_fractal.consume_orbit_overlay_displayed())
+            {
+                pace_orbit_display();
+                check_interrupted = false;
+            }
+            if (!standard_fractal.done())
+            {
+                const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
+                if (interrupted)
+                {
+                    sound.cancel();
+                    standard_fractal.scrub_overlay();
+                    standard_fractal.suspend();
+                    return -1;
+                }
+            }
         }
+    }
+    catch (...)
+    {
+        marker.restore();
+        sound.cancel();
+        standard_fractal.scrub_overlay();
+        standard_fractal.abort();
+        throw;
     }
     return sound.finish() ? 0 : -1;
 }

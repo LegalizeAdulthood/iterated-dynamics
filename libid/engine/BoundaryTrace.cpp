@@ -6,7 +6,6 @@
 #include "engine/calcfrac.h"
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"
-#include "ui/stop_msg.h"
 #include "ui/video.h"
 
 #include <cstring>
@@ -307,21 +306,17 @@ void BoundaryTrace::finish_fill_match()
 
 void BoundaryTrace::initialize()
 {
-    m_initialized = true;
     if ((g_inside_method == ColorMethod::COLOR && g_inside_color == 0) ||
         (g_outside_method == ColorMethod::COLOR && g_outside_color == 0))
     {
-        stop_msg("Boundary tracing cannot be used with inside=0 or outside=0");
-        m_done = true;
-        return;
+        throw std::runtime_error{"Boundary tracing cannot be used with inside=0 or outside=0"};
     }
     if (g_colors < 16)
     {
-        stop_msg("Boundary tracing cannot be used with < 16 colors");
-        m_done = true;
-        return;
+        throw std::runtime_error{"Boundary tracing cannot be used with < 16 colors"};
     }
 
+    m_initialized = true;
     g_passes = Passes::BOUNDARY_TRACE;
     if (g_i_start_pt.x > g_i_stop_pt.x || g_i_start_pt.y > g_i_stop_pt.y)
     {

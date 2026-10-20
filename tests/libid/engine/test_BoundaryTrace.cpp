@@ -343,6 +343,41 @@ TEST_F(TestBoundaryTrace, suspensionOfOutlineWorkRestartsAtItsScanCursor)
     EXPECT_THAT(m_pixels, Each(7));
 }
 
+TEST_F(TestBoundaryTrace, invalidColorsReportFailureWithoutCompletingOrPolling)
+{
+    ValueSaver saved_inside_color{g_inside_color, 0};
+    ValueSaver saved_outside_color{g_outside_color, 0};
+    for (const bool inside : {true, false})
+    {
+        g_inside_method = inside ? ColorMethod::COLOR : ColorMethod::ITER;
+        g_outside_method = inside ? ColorMethod::ITER : ColorMethod::COLOR;
+        BoundaryTrace pass;
+
+        EXPECT_THROW(pass.select_pixel(), std::runtime_error);
+        EXPECT_FALSE(pass.done());
+        EXPECT_TRUE(m_plots.empty());
+        EXPECT_TRUE(s_calculated.empty());
+
+        g_inside_method = ColorMethod::ITER;
+        g_outside_method = ColorMethod::ITER;
+        EXPECT_TRUE(pass.select_pixel());
+    }
+}
+
+TEST_F(TestBoundaryTrace, insufficientColorsReportFailureWithoutCompletingOrPolling)
+{
+    g_colors = 2;
+    BoundaryTrace pass;
+
+    EXPECT_THROW(pass.select_pixel(), std::runtime_error);
+    EXPECT_FALSE(pass.done());
+    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(s_calculated.empty());
+
+    g_colors = 16;
+    EXPECT_TRUE(pass.select_pixel());
+}
+
 TEST_F(TestBoundaryTrace, completionRequiresASelection)
 {
     BoundaryTrace pass;

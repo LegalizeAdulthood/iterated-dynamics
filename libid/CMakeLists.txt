@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
+# Copyright 2026 Richard Thomson.
 #
 find_package(boost_endian CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
@@ -200,6 +201,7 @@ add_library(libid
     include/ui/ant.h ui/ant.cpp
     include/ui/bifurcation.h ui/bifurcation.cpp
     include/ui/big_while_loop.h ui/big_while_loop.cpp
+    include/ui/calculate_image.h ui/calculate_image.cpp
     include/ui/cellular.h ui/cellular.cpp
     include/ui/ChoiceBuilder.h
     include/ui/command_result.h

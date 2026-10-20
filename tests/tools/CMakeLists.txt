@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
+# Copyright 2026 Richard Thomson.
 #
 find_package(fmt CONFIG REQUIRED)
 find_package(PNG REQUIRED)
@@ -25,6 +26,10 @@ target_folder(check-standard-resume "Tests/Tools")
 add_executable(check-show-dot check_show_dot.cpp)
 target_link_libraries(check-show-dot PRIVATE image-tool libid fmt::fmt-header-only)
 target_folder(check-show-dot "Tests/Tools")
+
+add_executable(check-standard-validation check_standard_validation.cpp)
+target_link_libraries(check-standard-validation PRIVATE image-tool libid fmt::fmt-header-only)
+target_folder(check-standard-validation "Tests/Tools")
 
 add_executable(check-pass-switch check_pass_switch.cpp)
 target_link_libraries(check-pass-switch PRIVATE image-tool libid)

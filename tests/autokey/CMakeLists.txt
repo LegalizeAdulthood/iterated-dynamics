@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
+# Copyright 2026 Richard Thomson.
 #
 
 include(IdTestHome)
@@ -117,6 +118,18 @@ add_test(NAME AutoKeyTest.lsystem-sizing
     WORKING_DIRECTORY "${LSYSTEM_SIZING_HOME}")
 set_tests_properties(AutoKeyTest.lsystem-sizing
     PROPERTIES LABELS "autokey;ui;lsystem" TIMEOUT 70)
+
+id_make_test_home(standard-validation STANDARD_VALIDATION_HOME
+    KEYS standard_validation.key)
+add_test(NAME AutoKeyTest.standard-validation
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCHECK_VALIDATION=$<SHELL_PATH:$<TARGET_FILE:check-standard-validation>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/standard_validation_test.cmake"
+    WORKING_DIRECTORY "${STANDARD_VALIDATION_HOME}")
+set_tests_properties(AutoKeyTest.standard-validation
+    PROPERTIES LABELS "autokey;ui;passes" TIMEOUT 90)
 
 id_make_test_home(show-dot SHOW_DOT_HOME KEYS show_dot.key)
 add_test(NAME AutoKeyTest.show-dot

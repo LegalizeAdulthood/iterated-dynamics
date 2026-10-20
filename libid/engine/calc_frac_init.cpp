@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "engine/calc_frac_init.h"
 
@@ -21,7 +22,6 @@
 #include "math/sign.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
-#include "ui/stop_msg.h"
 #include "ui/zoom.h"
 
 #include <config/port.h>
@@ -310,10 +310,6 @@ expand_retry:
                by using the magnification.  */
             if (++tries < 2) // for safety
             {
-                if (tries > 1)
-                {
-                    stop_msg("precision-detection error");
-                }
                 /* Previously there were four tests of distortions in the
                    zoom box used to detect precision limitations. In some
                    cases of rotated/skewed zoom boxes, this causes the algorithm

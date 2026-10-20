@@ -30,6 +30,7 @@ public:
     void resume();
 
     void suspend();
+    void abort();
 
     bool done() const;
 

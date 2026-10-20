@@ -255,6 +255,12 @@ The current code is already part-way through this plan:
   ordinary refreshes and pause-border updates do not acquire that delay.
 - `ui/stop_msg.cpp` owns the startup-error display's ten-second hold.
   Legacy engine wait helpers and the image-setup timer reset are gone.
+- Standard image setup returns recoverable log-map warnings and throws
+  on required-table allocation failure.  BoundaryTrace validation throws
+  without polling or completing an invalid pass.  The UI reports these
+  diagnostics; failed standard and Lyapunov operations discard work and
+  restore dispatch.  Invalid batch renders report failure without saving.
+  The temporary `ui/calculate_image.cpp` boundary remains for slice 52.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -460,9 +466,9 @@ renderer call.
 The current common lifecycle behavior is `ImageCalculation::start()` and
 `ImageCalculation::finish()` in `engine/calcfrac.cpp`.  That behavior is
 real shared render setup and teardown, not a renderer facade.  It owns
-true-color setup and teardown, parser setup, wait reset, log-map setup
+true-color setup and teardown, parser setup, log-map setup
 and cleanup, orbit display defaults, inversion setup, resume cleanup,
-calculation-time accounting, work-area cleanup, sound close, and disk
+calculation-time accounting, work-area cleanup, and disk
 image cleanup.
 
 The concrete render operation objects are:
@@ -849,28 +855,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 29. Standard Render Validation Diagnostics
-
-Source: validation and allocation diagnostics in `engine/calcfrac.cpp`,
-`engine/calc_frac_init.cpp`, and `BoundaryTrace::initialize()`.
-UI owner: the standard-render controller.
-
-Work:
-
-- Return validation failures or recoverable warnings to the controller
-  using calculation results or exceptions, rather than modal messages.
-- Let UI display the diagnostic and decide whether to continue, retry,
-  or return to parameter entry.  Retain engine-owned constraint checks.
-
-Done when:
-
-- Standard setup and pass initialization cannot enter `stop_msg()`.
-
-Validation: add autokey coverage for invalid pass-option diagnostics,
-acknowledgement, correction through the options UI, and a valid render.
-Use controller tests for precise setup failures and injected allocation
-errors; preserve batch diagnostics and calculation status separately.
 
 ### 30. IFS Definition Diagnostics
 
@@ -1420,7 +1404,8 @@ or continuation.  Reuse orbit, IFS, and standard-4D rendering fixtures.
 ### 52. Outer UI Render Operation Control
 
 Source: `calc_fract()`, the render branches in `ui/big_while_loop.cpp`,
-and standard, Lyapunov, and non-standard UI controllers.
+`ui/calculate_image.cpp`, and standard, Lyapunov, and non-standard UI
+controllers.
 
 Work:
 
@@ -1432,6 +1417,9 @@ Work:
 - Remove engine calls to `standard_fractal()`, `lyapunov_fractal()`, and
   `non_standard_fractal()`, then remove obsolete `calc_fract()` dispatch
   scaffolding.  Do not duplicate renderer classification in UI.
+- Remove the temporary `calculate_image()` diagnostic bridge.  Preserve
+  setup warnings, fatal-error cleanup, and batch failure status while
+  the outer UI context invokes the engine operation directly.
 - Reuse UI contexts for presentation while the engine operation owns
   calculation state, timing, and resource cleanup.
 

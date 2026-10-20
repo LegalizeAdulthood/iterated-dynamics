@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -211,8 +212,11 @@ extern int                   g_outside_color;
 class ImageCalculation
 {
 public:
-    void start();
+    std::vector<std::string> start();
     void finish();
+
+private:
+    bool m_started{};
 };
 
 class NonStandardFractal
