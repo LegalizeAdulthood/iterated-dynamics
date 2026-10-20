@@ -18,7 +18,6 @@
 #include "math/fixed_pt.h"
 #include "misc/debug_flags.h"
 #include "misc/version.h"
-#include "ui/stop_msg.h"
 
 #include <algorithm>
 #include <cmath>
@@ -27,7 +26,6 @@
 using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::fractals
 {
@@ -98,9 +96,12 @@ StandardFractal &Lyapunov::calculation()
     return *m_standard_fractal;
 }
 
-void Lyapunov::resume()
+std::string Lyapunov::resume()
 {
     m_standard_fractal->resume();
+    return g_inside_method < ColorMethod::COLOR
+        ? "Sorry, inside options other than inside=nnn are not supported by the lyapunov"
+        : "";
 }
 
 void Lyapunov::suspend()
@@ -204,7 +205,6 @@ bool lyapunov_per_image()
     }
     if (g_inside_method < ColorMethod::COLOR)
     {
-        stop_msg("Sorry, inside options other than inside=nnn are not supported by the lyapunov");
         g_inside_method = ColorMethod::COLOR;
         g_inside_color = 1;
     }

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "fractals/julibrot.h"
 
@@ -18,9 +19,9 @@
 #include "misc/ValueSaver.h"
 #include "ui/get_3d_params.h"
 #include "ui/starfield.h"
-#include "ui/stop_msg.h"
 
 #include <algorithm>
+#include <stdexcept>
 
 using namespace id::engine;
 using namespace id::io;
@@ -123,8 +124,7 @@ bool julibrot_per_image()
 
     if (g_colors < 255)
     {
-        stop_msg("Sorry, but Julibrots require a 256-color video mode");
-        return false;
+        throw std::runtime_error{"Sorry, but Julibrots require a 256-color video mode"};
     }
 
     s_jb.x_offset = g_image_region.center_x();     // Calculate average

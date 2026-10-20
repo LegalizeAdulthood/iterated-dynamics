@@ -5,6 +5,7 @@
 
 #include <array>
 #include <memory>
+#include <string>
 
 namespace id::engine
 {
@@ -33,7 +34,8 @@ public:
     Lyapunov &operator=(const Lyapunov &) = delete;
     Lyapunov &operator=(Lyapunov &&) = delete;
 
-    void resume();
+    // Returns a warning for options that per-image setup will normalize.
+    std::string resume();
     void suspend();
     bool done() const;
     void iterate();

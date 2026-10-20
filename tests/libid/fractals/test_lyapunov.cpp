@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <fractals/lyapunov.h>
 
 #include <engine/calcfrac.h>
 #include <engine/UserData.h>
 #include <misc/debug_flags.h>
+#include <misc/Driver.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 
@@ -89,6 +91,70 @@ TEST_F(TestLyapunov, legacy1730KeepsExplicitInsideColor)
     EXPECT_TRUE(lyapunov_per_image());
 
     EXPECT_EQ(2, g_inside_color);
+}
+
+struct TestLyapunovSetup : TestLyapunov
+{
+    ValueSaver<Driver *> saved_driver{g_driver, nullptr};
+    ValueSaver<long> saved_iterations{g_max_iterations, 25L};
+    ValueSaver<ColorMethod> saved_method{g_inside_method, ColorMethod::COLOR};
+    ValueSaver<int> saved_color{g_inside_color, 5};
+    ValueSaver<CalcMode> saved_user_mode{g_user.std_calc_mode, CalcMode::ONE_PASS};
+    ValueSaver<CalcMode> saved_mode{g_std_calc_mode, CalcMode::ONE_PASS};
+    ValueSaver<DebugFlags> saved_debug{g_debug_flag, DebugFlags::NONE};
+    ValueSaver<double> saved_order{g_params[0], 65.0};
+    ValueSaver<double> saved_seed{g_params[1], 0.05};
+    ValueSaver<double> saved_filter{g_params[2], 0.0};
+};
+
+TEST_F(TestLyapunovSetup, numericInsideNeedsNoWarning)
+{
+    Lyapunov lyapunov;
+
+    EXPECT_TRUE(lyapunov.resume().empty());
+    EXPECT_TRUE(lyapunov_per_image());
+
+    EXPECT_EQ(ColorMethod::COLOR, g_inside_method);
+    EXPECT_EQ(5, g_inside_color);
+}
+
+TEST_F(TestLyapunovSetup, unsupportedInsideReturnsWarningWithoutUI)
+{
+    Lyapunov lyapunov;
+    for (const ColorMethod method : {ColorMethod::ITER, ColorMethod::BOF60, ColorMethod::EPS_CROSS})
+    {
+        g_inside_method = method;
+
+        EXPECT_EQ("Sorry, inside options other than inside=nnn are not supported by the lyapunov", lyapunov.resume());
+        EXPECT_EQ(method, g_inside_method);
+        EXPECT_TRUE(lyapunov_per_image());
+
+        EXPECT_EQ(ColorMethod::COLOR, g_inside_method);
+        EXPECT_EQ(1, g_inside_color);
+    }
+}
+
+TEST_F(TestLyapunovSetup, legacyUnsupportedInsideStillFallsBackToOne)
+{
+    g_version = parse_legacy_version(1730);
+    g_inside_method = ColorMethod::BOF60;
+    Lyapunov lyapunov;
+
+    EXPECT_FALSE(lyapunov.resume().empty());
+    EXPECT_TRUE(lyapunov_per_image());
+
+    EXPECT_EQ(ColorMethod::COLOR, g_inside_method);
+    EXPECT_EQ(1, g_inside_color);
+}
+
+TEST_F(TestLyapunovSetup, correctedInsideDoesNotRepeatWarning)
+{
+    g_inside_method = ColorMethod::BOF60;
+    Lyapunov lyapunov;
+    ASSERT_FALSE(lyapunov.resume().empty());
+    ASSERT_TRUE(lyapunov_per_image());
+
+    EXPECT_TRUE(lyapunov.resume().empty());
 }
 
 } // namespace id::test

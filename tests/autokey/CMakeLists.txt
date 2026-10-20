@@ -163,6 +163,18 @@ add_test(NAME AutoKeyTest.ifs-validation
 set_tests_properties(AutoKeyTest.ifs-validation
     PROPERTIES LABELS "autokey;ui;ifs" TIMEOUT 100)
 
+id_make_test_home(lyapunov-setup LYAPUNOV_SETUP_HOME
+    KEYS lyapunov_setup.key)
+add_test(NAME AutoKeyTest.lyapunov-setup
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCHECK_SETUP=$<SHELL_PATH:$<TARGET_FILE:check-lyapunov-setup>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/lyapunov_setup_test.cmake"
+    WORKING_DIRECTORY "${LYAPUNOV_SETUP_HOME}")
+set_tests_properties(AutoKeyTest.lyapunov-setup
+    PROPERTIES LABELS "autokey;ui;lyapunov" TIMEOUT 90)
+
 id_make_test_home(standard-validation STANDARD_VALIDATION_HOME
     KEYS standard_validation.key)
 add_test(NAME AutoKeyTest.standard-validation

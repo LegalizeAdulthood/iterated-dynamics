@@ -91,6 +91,7 @@ add_executable(test-id
     fractals/test_get_ifs_token.cpp
     fractals/test_ifs.cpp
     fractals/test_interpreter.cpp
+    fractals/test_julibrot.cpp
     fractals/test_lsystem.cpp
     fractals/test_lyapunov.cpp
     fractals/test_parser.cpp

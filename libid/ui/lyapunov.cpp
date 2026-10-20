@@ -10,6 +10,7 @@
 #include "ui/KeyboardHandler.h"
 #include "ui/ShowDotController.h"
 #include "ui/standard_orbit_plot.h"
+#include "ui/stop_msg.h"
 
 #include <memory>
 
@@ -56,7 +57,10 @@ int lyapunov_fractal()
 
     Lyapunov lyapunov;
     ShowDotController marker;
-    lyapunov.resume();
+    if (const std::string warning{lyapunov.resume()}; !warning.empty())
+    {
+        stop_msg(warning);
+    }
 
     try
     {

@@ -55,6 +55,10 @@ add_executable(check-lsystem-validation check_lsystem_validation.cpp)
 target_link_libraries(check-lsystem-validation PRIVATE image-tool libid fmt::fmt-header-only)
 target_folder(check-lsystem-validation "Tests/Tools")
 
+add_executable(check-lyapunov-setup check_lyapunov_setup.cpp)
+target_link_libraries(check-lyapunov-setup PRIVATE image-tool libid fmt::fmt-header-only)
+target_folder(check-lyapunov-setup "Tests/Tools")
+
 add_executable(check-jiim check_jiim.cpp)
 target_link_libraries(check-jiim PRIVATE image-tool libid)
 target_folder(check-jiim "Tests/Tools")

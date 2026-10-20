@@ -279,6 +279,12 @@ The current code is already part-way through this plan:
   place.  Selection displays diagnostics and retries locally; parameter
   inspection and render setup report through their UI owners.  Open
   definition and debug files close on early failure.
+- `Lyapunov::resume()` returns the unsupported-inside warning to its UI
+  controller before iteration.  Per-image setup still applies the same
+  numeric-color fallback after legacy option normalization.  Julibrot's
+  low-color check throws before initialization; the outer UI diagnostic
+  boundary reports the failure without starting the 4D renderer.  Palette
+  loading during Julibrot setup remains for slice 34.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -793,6 +799,10 @@ Existing coverage does not imply coverage of live interaction:
   syntax, selects a valid formula, and preserves the completed image
   when another invalid selection is cancelled.  Batch checks reject
   missing, malformed, and empty formulas without saving an image.
+  The Lyapunov setup script dismisses the inside-method warning with a
+  key that would otherwise open options, verifies completed rendering
+  with the substituted numeric color, then changes the inside color and
+  compares the restarted image with a fresh calculation.
   The JIIM script checks picker movement and exact-point selection through
   saved Julia parameters, then reopens the orbit window around a menu and
   verifies restored Mandelbrot pixels.  It is the baseline for moving
@@ -815,6 +825,11 @@ Existing coverage does not imply coverage of live interaction:
   caret diagnostics, syntax and jump failures, recoverable symmetry
   warnings, file cleanup, failed-program cleanup, successful recompilation,
   and parameter inspection.
+- Lyapunov and Julibrot setup tests run without a UI driver.  They cover
+  supported options, warning delivery, legacy normalization order, and
+  rejection before Julibrot initialization.  Current display and disk
+  drivers accept only 256-color modes, so Julibrot's low-color failure is
+  covered directly rather than through an unreachable autokey path.
 - Perturbation tests cover reference failure, cached-reference reuse,
   caller-selected pixel order, deep-zoom BoundaryTrace completion, and
   palette-color consistency.  They also verify BoundaryTrace strategy
@@ -894,28 +909,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 33. Fractal Setup Validation Diagnostics
-
-Source: `lyapunov_per_image()` and `julibrot_per_image()`.
-UI owners: the Lyapunov and standard-4D controllers.
-
-Work:
-
-- Return unsupported inside-method and video-mode diagnostics to the UI
-  owners rather than invoking `stop_msg()` from per-image setup.
-- Preserve setup success/failure meaning and avoid starting calculation
-  after validation failed.
-
-Done when:
-
-- These calculation setup routines cannot wait for input or choose an
-  error-screen interaction.
-
-Validation: cover both invalid configurations and successful setup in
-unit tests.  Use autokey for reachable setup diagnostics, acknowledgement,
-parameter correction, and subsequent rendering through the actual owning
-UI context.  Reuse normal images; no duplicate manual checks.
 
 ### 34. Palette Definition Diagnostics
 
