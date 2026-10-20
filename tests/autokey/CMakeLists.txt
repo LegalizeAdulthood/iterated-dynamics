@@ -105,6 +105,19 @@ add_test(NAME AutoKeyTest.cellular-preparation
 set_tests_properties(AutoKeyTest.cellular-preparation
     PROPERTIES LABELS "autokey;ui;cellular" TIMEOUT 130)
 
+id_make_test_home(lsystem-sizing LSYSTEM_SIZING_HOME
+    KEYS lsystem_sizing.key)
+add_test(NAME AutoKeyTest.lsystem-sizing
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCHECK_SIZING=$<SHELL_PATH:$<TARGET_FILE:check-lsystem-sizing>>"
+        "-DLSYSTEM_FILE=${CMAKE_SOURCE_DIR}/home/lsystem/id.l"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/lsystem_sizing_test.cmake"
+    WORKING_DIRECTORY "${LSYSTEM_SIZING_HOME}")
+set_tests_properties(AutoKeyTest.lsystem-sizing
+    PROPERTIES LABELS "autokey;ui;lsystem" TIMEOUT 70)
+
 foreach(passes IN ITEMS 1 2)
     foreach(pixel IN ITEMS optimized general)
         set(name "standard-interrupt-${passes}-${pixel}")

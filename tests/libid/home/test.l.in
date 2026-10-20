@@ -6,3 +6,65 @@ Koch1 { ; Adrian Mariano
    Axiom F--F--F
    F=F+F--F+F
 }
+
+SizingBox {
+   Angle 4
+   Axiom f+f+f+f
+}
+
+SizingHorizontal {
+   Angle 4
+   Axiom ff
+}
+
+SizingBranches {
+   Angle 4
+   Axiom f[+@2f[-@0.5f]f]f
+}
+
+SizingBranchRule {
+   Angle 4
+   Axiom a
+   a=f[+@2f[-@0.5f]f]f
+}
+
+SizingReverse {
+   Angle 4
+   Axiom f[!+f]f+f
+}
+
+SizingRealAngle {
+   Angle 4
+   Axiom d[/90@2d]d
+}
+
+SizingMove {
+   Angle 4
+   Axiom m@2d
+}
+
+SizingExpansion {
+   Angle 4
+   Axiom a
+   a=f+b
+   b=ff
+}
+
+SizingRules {
+   Angle 4
+   Axiom a
+   a=f
+   a=+f
+}
+
+SizingEmptyRule {
+   Angle 4
+   Axiom a+f
+   a=
+}
+
+SizingDeep {
+   Angle 4
+   Axiom f
+   f=f
+}

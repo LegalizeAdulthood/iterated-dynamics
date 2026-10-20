@@ -100,7 +100,7 @@ struct LSysTurtleSnapshot
     char curr_color;
 };
 
-struct LSysDrawFrame
+struct LSysFrame
 {
     LSysCmd *command;
     LSysCmd **rules;
@@ -122,7 +122,6 @@ static std::string s_axiom;
 static std::vector<std::string> s_rules;
 static bool s_loaded{};
 
-static LSysCmd *find_size(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth);
 static bool read_lsystem_file(const char *str);
 static void free_rules_mem();
 static int rule_present(char symbol);
@@ -145,6 +144,9 @@ public:
 private:
     void build_size_commands();
     bool find_scale();
+    bool iterate_size();
+    bool push_size_frame(LSysCmd *command, LSysCmd **rules, int depth, bool restore_turtle = false,
+        const LSysTurtleSnapshot &saved_turtle = {});
     void reset_turtle_for_drawing();
     void build_draw_commands();
     void start_drawing();
@@ -158,7 +160,8 @@ private:
     int m_order;
     LSysTurtleState m_turtle{};
     std::vector<LSysCmd *> m_rule_cmds;
-    std::vector<LSysDrawFrame> m_draw_stack;
+    std::vector<LSysFrame> m_size_stack;
+    std::vector<LSysFrame> m_draw_stack;
     bool m_done{};
     bool m_interrupted{};
 };
@@ -818,27 +821,34 @@ static LSysCmd *lsys_size_transform(const char *s, LSysTurtleState *ts)
     return doubled;
 }
 
-static bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, const int depth)
+bool LSystem::Impl::find_scale()
 {
-    ts->aspect = g_screen_aspect*g_logical_screen.x_dots/g_logical_screen.y_dots;
-    ts->y_min = 0;
-    ts->y_max = 0;
-    ts->x_max = 0;
-    ts->x_min = 0;
-    ts->y_pos = 0;
-    ts->x_pos = 0;
-    ts->counter = 0;
-    ts->reverse = 0;
-    ts->angle = 0;
-    ts->real_angle = 0;
-    ts->size = 1;
-    const LSysCmd *f_s_ret = find_size(command, ts, rules, depth);
+    m_turtle.aspect = g_screen_aspect * g_logical_screen.x_dots / g_logical_screen.y_dots;
+    m_turtle.y_min = 0;
+    m_turtle.y_max = 0;
+    m_turtle.x_max = 0;
+    m_turtle.x_min = 0;
+    m_turtle.y_pos = 0;
+    m_turtle.x_pos = 0;
+    m_turtle.counter = 0;
+    m_turtle.reverse = 0;
+    m_turtle.angle = 0;
+    m_turtle.real_angle = 0;
+    m_turtle.size = 1;
+    m_size_stack.clear();
+    bool sized = !g_overflow && push_size_frame(m_rule_cmds[0], &m_rule_cmds[1], m_order);
+    // TODO: removed later
+    while (sized && !m_size_stack.empty())
+    {
+        sized = iterate_size();
+    }
     thinking_end(); // erase thinking message if any
-    const LDouble x_min = ts->x_min;
-    const LDouble x_max = ts->x_max;
-    const LDouble y_min = ts->y_min;
-    const LDouble y_max = ts->y_max;
-    if (f_s_ret == nullptr)
+    m_size_stack.clear();
+    const LDouble x_min = m_turtle.x_min;
+    const LDouble x_max = m_turtle.x_max;
+    const LDouble y_min = m_turtle.y_min;
+    const LDouble y_max = m_turtle.y_max;
+    if (!sized)
     {
         return false;
     }
@@ -864,21 +874,21 @@ static bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rul
 
     if (horiz == LSYS_SCALE_SENTINEL)
     {
-        ts->x_pos = g_logical_screen.x_dots / 2;
+        m_turtle.x_pos = g_logical_screen.x_dots / 2;
     }
     else
     {
-        ts->x_pos = (g_logical_screen.x_dots - local_size * (x_max + x_min)) / 2;
+        m_turtle.x_pos = (g_logical_screen.x_dots - local_size * (x_max + x_min)) / 2;
     }
     if (vert == LSYS_SCALE_SENTINEL)
     {
-        ts->y_pos = g_logical_screen.y_dots/2;
+        m_turtle.y_pos = g_logical_screen.y_dots / 2;
     }
     else
     {
-        ts->y_pos = (g_logical_screen.y_dots-local_size*(y_max+y_min))/2;
+        m_turtle.y_pos = (g_logical_screen.y_dots - local_size * (y_max + y_min)) / 2;
     }
-    ts->size = local_size;
+    m_turtle.size = local_size;
 
     return true;
 }
@@ -997,9 +1007,118 @@ void LSystem::Impl::build_size_commands()
     m_rule_cmds.push_back(nullptr);
 }
 
-bool LSystem::Impl::find_scale()
+bool LSystem::Impl::iterate_size()
 {
-    return lsys_find_scale(m_rule_cmds[0], &m_turtle, &m_rule_cmds[1], m_order);
+    if (g_overflow)
+    {
+        return false;
+    }
+
+    LSysFrame &frame = m_size_stack.back();
+    if (!frame.command->ch || frame.command->ch == ']')
+    {
+        LSysCmd *const return_command = frame.command;
+        const bool restore = frame.restore_turtle;
+        const LSysTurtleSnapshot saved_turtle = frame.saved_turtle;
+        m_size_stack.pop_back();
+        if (restore)
+        {
+            restore_turtle(m_turtle, saved_turtle);
+            if (!m_size_stack.empty())
+            {
+                m_size_stack.back().command = return_command + 1;
+            }
+        }
+        return true;
+    }
+
+    if (!m_turtle.counter++)
+    {
+        if (thinking("L-System thinking (higher orders take longer)"))
+        {
+            m_turtle.counter--;
+            return false;
+        }
+    }
+
+    if (frame.depth)
+    {
+        LSysCmd **rule_end = frame.rules;
+        while (*rule_end)
+        {
+            ++rule_end;
+        }
+        bool translated = false;
+        for (LSysCmd **rule = frame.rules; rule != rule_end; ++rule)
+        {
+            if ((*rule)->ch == frame.command->ch)
+            {
+                translated = true;
+                break;
+            }
+        }
+        if (translated)
+        {
+            LSysCmd *const command = frame.command++;
+            LSysCmd **const rules = frame.rules;
+            const int depth = frame.depth;
+            for (LSysCmd **rule = rule_end; rule != rules;)
+            {
+                --rule;
+                if ((*rule)->ch == command->ch && !push_size_frame(*rule + 1, rules, depth - 1))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    if (frame.command->f)
+    {
+        switch (frame.command->param_type)
+        {
+        case 4:
+            m_turtle.param.n = frame.command->param.n;
+            break;
+        case 10:
+            m_turtle.param.nf = frame.command->param.nf;
+            break;
+        default:
+            break;
+        }
+        (*frame.command->f)(&m_turtle);
+        ++frame.command;
+    }
+    else if (frame.command->ch == '[')
+    {
+        return push_size_frame(frame.command + 1, frame.rules, frame.depth, true, save_turtle(m_turtle));
+    }
+    else
+    {
+        ++frame.command;
+    }
+    return true;
+}
+
+bool LSystem::Impl::push_size_frame(LSysCmd *command, LSysCmd **rules, const int depth, const bool restore_turtle,
+    const LSysTurtleSnapshot &saved_turtle)
+{
+    if (stack_avail() < 400)
+    {
+        m_turtle.stack_overflow = true;
+        return false;
+    }
+    try
+    {
+        m_size_stack.push_back({command, rules, depth, restore_turtle, saved_turtle});
+        return true;
+    }
+    catch (const std::bad_alloc &)
+    {
+        m_turtle.stack_overflow = true;
+        return false;
+    }
 }
 
 void LSystem::Impl::reset_turtle_for_drawing()
@@ -1055,7 +1174,7 @@ void LSystem::Impl::iterate()
         return;
     }
 
-    LSysDrawFrame &frame = m_draw_stack.back();
+    LSysFrame &frame = m_draw_stack.back();
     if (!frame.command->ch || frame.command->ch == ']')
     {
         LSysCmd *const return_command = frame.command;
@@ -1270,89 +1389,6 @@ static bool append_rule(const char *rule, const int index)
     {
         return true;
     }
-}
-
-static LSysCmd *find_size(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, const int depth)
-{
-    if (g_overflow)       // integer math routines overflowed
-    {
-        return nullptr;
-    }
-
-    if (stack_avail() < 400)
-    {
-        // leave some margin for calling subrtns
-        ts->stack_overflow = true;
-        return nullptr;
-    }
-
-    while (command->ch && command->ch != ']')
-    {
-        if (!ts->counter++)
-        {
-            // let user know we're not dead
-            if (thinking("L-System thinking (higher orders take longer)"))
-            {
-                ts->counter--;
-                return nullptr;
-            }
-        }
-        bool tran = false;
-        if (depth)
-        {
-            for (LSysCmd **rule_index = rules; *rule_index; rule_index++)
-            {
-                if ((*rule_index)->ch == command->ch)
-                {
-                    tran = true;
-                    if (find_size(*rule_index +1, ts, rules, depth-1) == nullptr)
-                    {
-                        return nullptr;
-                    }
-                }
-            }
-        }
-        if (!depth || !tran)
-        {
-            if (command->f)
-            {
-                switch (command->param_type)
-                {
-                case 4:
-                    ts->param.n = command->param.n;
-                    break;
-                case 10:
-                    ts->param.nf = command->param.nf;
-                    break;
-                default:
-                    break;
-                }
-                (*command->f)(ts);
-            }
-            else if (command->ch == '[')
-            {
-                const char save_angle = ts->angle;
-                const char save_reverse = ts->reverse;
-                const LDouble save_size = ts->size;
-                const LDouble save_real_angle = ts->real_angle;
-                const LDouble save_x = ts->x_pos;
-                const LDouble save_y = ts->y_pos;
-                command = find_size(command+1, ts, rules, depth);
-                if (command == nullptr)
-                {
-                    return nullptr;
-                }
-                ts->angle = save_angle;
-                ts->reverse = save_reverse;
-                ts->size = save_size;
-                ts->real_angle = save_real_angle;
-                ts->x_pos = save_x;
-                ts->y_pos = save_y;
-            }
-        }
-        command++;
-    }
-    return command;
 }
 
 } // namespace id::fractals

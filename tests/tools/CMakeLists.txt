@@ -30,6 +30,10 @@ add_executable(check-cellular-preparation check_cellular_preparation.cpp)
 target_link_libraries(check-cellular-preparation PRIVATE image-tool libid)
 target_folder(check-cellular-preparation "Tests/Tools")
 
+add_executable(check-lsystem-sizing check_lsystem_sizing.cpp)
+target_link_libraries(check-lsystem-sizing PRIVATE image-tool libid)
+target_folder(check-lsystem-sizing "Tests/Tools")
+
 if(WIN32)
     add_executable(dump-dpi dump_dpi.cpp)
     target_link_libraries(dump-dpi "Shcore.lib" "User32.lib")

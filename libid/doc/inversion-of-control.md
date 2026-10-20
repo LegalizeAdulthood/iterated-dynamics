@@ -67,8 +67,8 @@ libid/fractals/<Type>.cpp or libid/engine/<Type>.cpp
 
 Cellular exposes initial-generation preparation as calculation state;
 its UI controller owns thinking-screen updates and cleanup.  L-system
-drawing is incremental, but sizing still runs recursively inside `start()`
-and polls through `thinking()`.
+sizing and drawing use explicit frame stacks, but sizing still drains
+synchronously inside `start()` and polls through `thinking()`.
 
 JIIM still owns the outer interaction loop, cursor, and UI keyboard and
 mouse scopes in `libid/engine/jiim.cpp`.  Extracting its input helpers into
@@ -231,7 +231,7 @@ The current code is already part-way through this plan:
 
 The fresh reverse-call audit also found these live paths:
 
-- `LSystem::start()` calls recursive sizing, which calls `thinking()` and
+- `LSystem::start()` drains sizing, which calls `thinking()` and
   polls the driver queue.  Calculation code also ends its thinking
   display.  Cellular's equivalent presentation now belongs to its UI
   controller.
@@ -656,7 +656,7 @@ The remaining UI-concept leaks outside `libid/ui` are:
   fully into the UI controller.
 - `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
   state.
-- `libid/fractals/lsystem.cpp`: recursive sizing owns the thinking screen
+- `libid/fractals/lsystem.cpp`: synchronous sizing owns the thinking screen
   and decides whether a pending key aborts sizing.
 - `libid/engine/jiim.cpp`: owns cursor state, coordinate messages, the
   interaction loop, UI handler and mouse scopes, and calls into UI input
@@ -822,30 +822,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 22. L-System Sizing Traversal State
-
-Source: `find_size()`, `lsys_find_scale()`, and `LSystem::Impl` in
-`libid/fractals/lsystem.cpp`.
-
-Work:
-
-- Replace sizing recursion with an explicit frame stack owned by
-  `LSystem::Impl`, following the existing drawing-stack pattern.
-- Preserve rule order, branch turtle save/restore, extrema, overflow, and
-  failure behavior.  Keep sizing synchronous for this isolated change.
-- Mark any synchronous drain retained for the next slice as temporary.
-
-Done when:
-
-- Sizing traversal survives between calls without depending on recursive
-  local state.  The next slice can advance it in bounded chunks.
-
-Validation: compare sizing extrema, scale, and turtle semantics, using the
-approach in [test-lsystem.md](test-lsystem.md).  Do not require image golds
-for floating-point line rasterization.  Establish the sizing-cancellation
-autokey baseline described in the next slice before changing traversal,
-and reuse it for the UI ownership change.  No manual interaction test.
-
 ### 23. L-System Sizing UI Controller
 
 Source: `LSystem::Impl::start()`, `find_scale()`, and sizing traversal;
@@ -865,12 +841,14 @@ Done when:
 - Setup, sizing, and drawing return to the UI controller without polling
   input or interpreting pending keys inside calculation code.
 
-Validation: reuse the sizing autokey baseline for cancellation, return to
-the outer UI, restart, and progression from sizing to drawing.  Observe
-the sizing phase when testing cancellation.  Use semantic calculation
-tests and controller tests for thinking-screen entry, updates, cleanup,
-and phase transitions, including failure.  Do not compare rasterized
-L-system lines or duplicate the interaction manually.
+Validation: reuse `AutoKeyTest.lsystem-sizing` for cancellation, return to
+the outer UI, restart, and progression from sizing to drawing.  Its
+`THINKWAIT` gate observes sizing before interruption; saved metadata and
+blank/nonblank checks verify cancellation and completed drawing without
+comparing rasterized lines.  Use semantic calculation tests and
+controller tests for thinking-screen entry, updates, cleanup, and phase
+transitions, including failure.  Do not compare rasterized L-system lines
+or duplicate the interaction manually.
 
 ### 24. JIIM Calculation And Tool State
 
@@ -1674,9 +1652,10 @@ mechanism or a source-grep test.
 Calculation code can still reach polling or key-sensitive waiting through
 these direct and indirect paths:
 
-- `libid/fractals/lsystem.cpp`: recursive `find_size()` calls
-  `thinking()` from inside `start()` and interprets pending input as
-  sizing failure.  UI polling around drawing does not cover this phase.
+- `libid/fractals/lsystem.cpp`: the temporary sizing drain in
+  `find_scale()` calls `thinking()` from inside `start()` and interprets
+  pending input as sizing failure.  UI polling around drawing does not
+  cover this phase.
 - `libid/engine/jiim.cpp`: `iterate()` calls
   `process_inverse_julia_keyboard()`, which may wait through the cursor.
   `process()` owns the keyboard handler, mouse scope, and interaction loop;
