@@ -74,6 +74,7 @@ add_executable(test-id
     engine/test_lowerize_parameter.cpp
     engine/test_random_seed.cpp
     engine/test_resume.cpp
+    engine/test_ScanlinePass.cpp
     engine/test_SoundOutput.cpp
     engine/test_trig_fns.cpp
     fractals/test_ant.cpp

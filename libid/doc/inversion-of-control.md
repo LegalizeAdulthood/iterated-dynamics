@@ -172,7 +172,12 @@ The current code is already part-way through this plan:
   cursor.  Standard pixel kernels no longer poll for interruption;
   optimized Mandelbrot and general pixel work yield at existing work
   checkpoints, while Lyapunov returns between scanline pixels.  They
-  still communicate active pixel position through `g_row` and `g_col`.
+  expose separate `select_pixel()`, `selected_pixel()`, and
+  `complete_pixel(color)` operations.  Selection retains coordinates
+  without calculating or plotting; completion advances traversal and
+  copies sparse first-pass results.  The temporary `iterate()` bridge
+  still calculates through dispatch at the original yield checkpoints;
+  slice 26.8 removes that bridge after the other pass prerequisites.
 - `BoundaryTrace` is a concrete `StandardPass` alternative.  It owns the
   outer scan cursor, outline tracing state, region filling state, and
   suspend path.  Invalid options still invoke a modal `stop_msg()` from
@@ -823,33 +828,143 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 26. Standard Pixel Boundary
+### 26.2. Boundary-Trace Pixel Selection And Completion
 
-Source: `StandardFractal`, `StandardPass`, and the show-dot wrapper in
-`libid/engine/calcfrac.cpp`.
+Source: `BoundaryTrace::calculate_current_pixel()`, outer scanning,
+outline tracing, and hole-filling phases.
 
 Work:
 
-- Expose a UI-neutral boundary between selecting a pixel for orbit work
-  and computing it.  Preserve the pass's selected pixel and continuation
-  state when returning to the controller.
-- Keep that boundary common to standard traversal; do not add show-dot
-  logic or feature flags to individual pass algorithms.
-- Preserve complete pixel results and calculation order.  Presentation
-  must not pretend a completed pixel is incomplete or use its color as
-  a UI request.
-- Keep ordinary rendering's interaction cadence.  Split pass-protocol
-  prerequisites into focused commits if the common boundary cannot be
-  introduced without changing several independent traversal mechanisms.
+- Expose selection, selected coordinates, and color completion separately
+  from orbit calculation, following `ScanlinePass`.
+- Retain the exact pending scan, trace, or fill continuation until the
+  selected pixel has a completed color.  Cached image lookups and fills
+  remain pass work; they do not become calculation requests.
+- Keep the existing batched calculation entry point temporarily, using
+  these operations without changing its current yield checkpoints.
+  Mark the bridge for removal in slice 26.8.
 
 Done when:
 
-- UI can observe the selected pixel around calculation without show-dot
-  methods, consume flags, or a UI callback from a calculation function.
+- A caller can select and complete boundary-trace pixels without
+  `BoundaryTrace` invoking calculation or treating a color as a UI signal.
 
-Validation: cover selection and continuation across the standard pass
-algorithms with existing images and focused state tests.  No manual
-image test duplicates automated pass coverage.
+Validation: focused selection/continuation tests for scan, trace, and
+fill paths, including suspension before calculation; reuse boundary-trace
+images and existing autokey interruption coverage.  No manual image test.
+
+### 26.3. Solid-Guess Seed-Row Pixel Selection
+
+Source: `SolidGuess::process_first_pass_top_row()` and
+`process_first_pass_rows()` seed-row calculations.
+
+Work:
+
+- Separate seed-coordinate selection from supplying each completed color.
+  Retain the active top-row or lower-row cursor across the boundary.
+- Keep prefix initialization, block spacing, deferred work, and row
+  advancement in `SolidGuess`.
+- Retain a marked temporary batched bridge until slice 26.8.  Do not
+  increase the existing row-level synchronization cadence.
+
+Validation: focused seed-order and continuation tests, including deferred
+work and suspension; reuse solid-guess images.  No manual test.
+
+### 26.4. Solid-Guess Block-Probe Pixel Selection
+
+Source: `SolidGuess::process_guess_block()`, `guess_row()`, and the
+remaining block-probe calculation helper.
+
+Work:
+
+- Extend selection/completion to block probes, retaining the active probe
+  and all neighboring colors until its selected pixel is completed.
+- Apply the completed color once before making subsequent guess or fill
+  decisions.  Keep repainting and prefix updates in the pass.
+- Use the same protocol as seed rows; do not add per-probe UI callbacks,
+  show-dot flags, or extra returns from the batched bridge.
+
+Validation: focused probe, fill, and retained-state tests; reuse
+solid-guess images and ordinary-render chunk tests.  No manual test.
+
+### 26.5. Diffusion Pixel Selection And Completion
+
+Source: `Diffusion::calculate_current_pixel()`, counter phases, and tile
+continuation.
+
+Work:
+
+- Separate selected coordinates from calculation and color completion.
+  Do not advance the diffusion counter or tile until completion.
+- Keep inferred block coloring and tile traversal in `Diffusion`.
+- Retain a marked temporary bridge through slice 26.8, preserving the
+  existing counter-chunk cadence.
+
+Validation: focused counter/tile ordering, completion, and suspension
+tests; reuse diffusion images.  No manual test.
+
+### 26.6. Tesseral Pixel Selection And Completion
+
+Source: `Tesseral::advance_edge_probe()`, edge setup, and box continuation.
+
+Work:
+
+- Separate edge-probe selection from supplying its completed color.
+  Retain probe orientation, coordinate, and accumulated edge color.
+- Complete each probe once before advancing the edge or box stack.
+  Keep constant-color fills and subdivision in `Tesseral`.
+- Retain a marked temporary bridge until slice 26.8.  Preserve bounded
+  edge chunks and the restored tesseral performance.
+
+Validation: focused row/column probe ordering, box continuation, and
+suspension tests; reuse tesseral images.  No manual test.
+
+### 26.7. StandardPass Pixel Protocol Routing
+
+Source: `StandardPass` and its concrete pass alternatives.
+
+Work:
+
+- Route selection, selected coordinates, and color completion to the
+  active pixel-traversal implementation through the existing variant.
+- Keep calculation dispatch out of these new routing operations.
+- Keep synchronous and sticky orbit work on their existing incremental
+  paths; do not invent per-pixel requests for orbit algorithms that do
+  not call the standard pixel calculator.
+- Retain the old batched entry point until slice 26.8.  Routing alone
+  does not complete inversion of control.
+
+Validation: focused routing and retained-selection tests for all pixel
+passes; reuse existing images.  No manual test.
+
+### 26.8. StandardFractal Pixel Boundary
+
+Source: `StandardFractal`, `StandardPass`, and their transitional
+calculation bridges.
+
+Work:
+
+- Expose selection and calculation as distinct engine operations.
+  Preserve the selected coordinate and pass continuation while control
+  returns to the caller, then deliver a completed color to the pass.
+- Keep orbit strategy selection, complete pixel calculation, and pass
+  work in the engine.  UI may observe coordinates around calculation;
+  it does not choose kernels or plot image pixels.
+- Remove the temporary per-pass calculation bridges and their TODO
+  comments.  Retain the old show-dot wrapper until slices 27 and 28.
+- Keep ordinary rendering batched at its existing work checkpoints.
+  The neutral boundary does not require polling or display updates for
+  every selected pixel.
+
+Done when:
+
+- The controller can observe a selected pixel before calculation without
+  show-dot methods, consume flags, or a calculation-to-UI callback.
+- Passes receive completed colors, not presentation sentinel values.
+
+Validation: selection and continuation tests through `StandardFractal`
+across pixel passes, plus existing images, overlay/sound tests, and
+autokey interruption coverage.  No manual image test.
 
 ### 27. UI Show-Dot Marker Ownership
 
