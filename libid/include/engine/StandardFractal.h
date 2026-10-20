@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -39,6 +40,11 @@ public:
 
     bool done() const;
 
+    // False ends this work chunk; done() distinguishes image completion.
+    bool select_pixel();
+    math::Point2i selected_pixel() const;
+    // False retains the selected pixel for continuation.
+    bool calculate_pixel();
     void iterate();
 
     StandardPassStatus standard_pass_status() const;
@@ -63,11 +69,11 @@ private:
     void finish_work_list();
     OrbitPlot &pending_orbit_plot();
     void pop_work_list_front();
+    bool prepare_work_item();
+    void finish_work_item();
     void restore_dispatch();
     void run_pending_orbit_plot();
     bool scrub_overlay_orbit(bool yield_to_ui);
-    void run_current_work_item();
-    void run_current_work_item_mode();
     void start_next_pass();
     void start_perturbation_frame();
     void start_timer();
@@ -123,7 +129,6 @@ private:
     // TODO: removed later
     bool m_show_dot_display_pending{};
     bool m_work_item_active{};
-    bool m_work_item_yielded{};
     bool m_work_list_started{};
 };
 

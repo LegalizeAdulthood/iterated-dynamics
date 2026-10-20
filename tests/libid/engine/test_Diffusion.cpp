@@ -320,22 +320,6 @@ TEST_F(TestDiffusionPass, selectionChunkCountsCountersInsteadOfTiles)
     EXPECT_TRUE(s_calculated.empty());
 }
 
-TEST_F(TestDiffusionPass, iterateKeepsTheExistingCounterChunkSize)
-{
-    set_frame(64, 32);
-    Diffusion pass;
-
-    EXPECT_FALSE(pass.iterate());
-
-    EXPECT_EQ(512UL, pass.counter());
-    EXPECT_EQ(1024U, s_calculated.size());
-    EXPECT_EQ(Passes::DIFFUSION, g_passes);
-    EXPECT_TRUE(pass.iterate());
-    EXPECT_EQ(1024UL, pass.counter());
-    EXPECT_EQ(2048U, s_calculated.size());
-    EXPECT_THAT(m_pixels, Each(7));
-}
-
 TEST_F(TestDiffusionPass, suspensionKeepsTheExistingCounterResumeFormat)
 {
     set_frame(11, 6);
@@ -388,29 +372,6 @@ TEST_F(TestDiffusionPass, suspensionPreservesBothCounterWords)
     EXPECT_EQ(65543UL, resumed.counter());
     EXPECT_EQ(pending, resumed.selected_pixel());
     EXPECT_TRUE(s_calculated.empty());
-}
-
-TEST_F(TestDiffusionPass, interruptedCalculationDoesNotRestartCompletedTiles)
-{
-    set_frame(11, 6);
-    s_interrupt_after = 2;
-    Diffusion pass;
-
-    EXPECT_EQ(-1, pass.scan());
-
-    EXPECT_EQ(0UL, pass.counter());
-    EXPECT_EQ((Point2i{4, 0}), pass.selected_pixel());
-    EXPECT_THAT(s_calculated, ElementsAre(Point2i{0, 0}, Point2i{0, 4}));
-    s_interrupt_after = -1;
-    EXPECT_EQ(0, pass.scan());
-    EXPECT_TRUE(pass.done());
-    ASSERT_EQ(m_pixels.size(), s_calculated.size());
-    std::vector<int> visits(m_pixels.size(), 0);
-    for (const Point2i &point : s_calculated)
-    {
-        EXPECT_EQ(0, visits.at(point.y * m_width + point.x)++);
-    }
-    EXPECT_THAT(m_pixels, Each(7));
 }
 
 TEST_F(TestDiffusionPass, completionRequiresASelection)

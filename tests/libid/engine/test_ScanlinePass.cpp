@@ -253,36 +253,14 @@ TEST_F(TestScanlinePass, periodicityResetsAtRowBoundaries)
     EXPECT_EQ((Point2i{0, 1}), pass.selected_pixel());
 }
 
-TEST_F(TestScanlinePass, iterateKeepsOrdinaryCalculationBatched)
+TEST_F(TestScanlinePass, completionPreservesLegacySignedColors)
 {
-    OnePass pass;
-
-    EXPECT_TRUE(pass.iterate());
-    EXPECT_FALSE(g_reset_periodicity);
-
-    EXPECT_THAT(s_calculated,
-        ElementsAre(Point2i{0, 0}, Point2i{1, 0}, Point2i{2, 0}, Point2i{3, 0}, Point2i{0, 1}, Point2i{1, 1},
-            Point2i{2, 1}, Point2i{3, 1}, Point2i{0, 2}, Point2i{1, 2}, Point2i{2, 2}, Point2i{3, 2}));
-}
-
-TEST_F(TestScanlinePass, calculationReturnKeepsPixelSelected)
-{
-    s_interrupt_once = true;
-    OnePass pass;
-
-    EXPECT_FALSE(pass.iterate());
-    EXPECT_EQ((Point2i{0, 0}), pass.selected_pixel());
-    EXPECT_TRUE(pass.iterate());
-    ASSERT_EQ(13U, s_calculated.size());
-    EXPECT_EQ(s_calculated[0], s_calculated[1]);
-}
-
-TEST_F(TestScanlinePass, iteratePreservesLegacySignedColors)
-{
-    s_color = -2;
     TwoPass pass;
 
-    EXPECT_TRUE(pass.iterate());
+    while (pass.select_pixel())
+    {
+        pass.complete_pixel(-2);
+    }
 
     EXPECT_EQ(-2, g_color);
     ASSERT_FALSE(s_plotted.empty());

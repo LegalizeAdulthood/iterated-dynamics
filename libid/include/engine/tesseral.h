@@ -17,13 +17,11 @@ public:
     Tesseral();
 
     bool done() const;
+    void begin_chunk();
     // False ends this work chunk; done() distinguishes completion.
     bool select_pixel();
     math::Point2i selected_pixel() const;
     void complete_pixel(int color);
-    // TODO: removed later
-    // Slice 26.8 moves calculation to the common StandardFractal boundary.
-    bool iterate();
     void suspend();
 
 private:
@@ -108,9 +106,6 @@ private:
     bool split_needed(bool &needed);
 
     bool m_guess_plot{};
-    // TODO: removed later
-    // Slice 26.8 removes the legacy calculation-interruption flag.
-    bool m_interrupted{};
     bool m_pixel_selected{};
     int m_boxes_processed{};
     bool m_split_box_active{};
@@ -123,7 +118,5 @@ private:
     std::array<Tess, 4096 / sizeof(Tess)> m_stack{};
     Tess *m_tp{};
 };
-
-int tesseral();
 
 } // namespace id::engine

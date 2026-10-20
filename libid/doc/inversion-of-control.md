@@ -159,22 +159,25 @@ The current code is already part-way through this plan:
 
 - `libid/ui/standard_fractal.cpp` already owns standard-render keyboard
   polling through the handler stack.
-- `StandardFractal::run_current_work_item_mode()` is already a thin
-  explicit `CalcMode` dispatch.
+- `StandardFractal` exposes separate `select_pixel()`, `selected_pixel()`,
+  and `calculate_pixel()` operations.  It owns calculation dispatch and
+  retains an unfinished pixel without delivering a sentinel to the pass.
+  `iterate()` batches those operations at existing work checkpoints;
+  callers may also observe selected coordinates before calculation.
 - `StandardPass` routes pixel selection, selected coordinates, and color
   completion through its existing variant without calculation dispatch.
   Synchronous and sticky orbit work retain their incremental paths.  The
-  old batched pixel entry points remain until slice 26.8 connects the
-  common `StandardFractal` pixel boundary.
+  pixel passes expose chunk preparation and completion state, not
+  calculation bridges.  Standard and orbit strategy selection stay in
+  `StandardFractal`.
 - Tesseral is a concrete `StandardPass` alternative.  `Tesseral` has
   `iterate()`, `done()`, and `suspend()`, and owns its box stack.
   Initial edge setup, later edge probes, and box filling run through
   bounded, resumable state.  Tesseral suspend records the active box and
   restarts initial edge setup if interruption happens during that phase.
   Selection retains probe orientation, coordinates, and accumulated color
-  until completion.  The temporary `iterate()` bridge keeps the existing
-  edge, box, and fill chunks until slice 26.8; its return value still
-  reports calculation success, with `done()` reporting completion.
+  until completion.  Existing edge, box, and fill chunks are retained
+  through the common `StandardFractal` pixel boundary.
 - The `OnePass` and `TwoPass` paths share `ScanlinePass`; they preserve
   scan position in the concrete pass object and yield standard pixel work
   back to the UI.  Their `suspend()` records resume work at the retained
@@ -184,23 +187,22 @@ The current code is already part-way through this plan:
   expose separate `select_pixel()`, `selected_pixel()`, and
   `complete_pixel(color)` operations.  Selection retains coordinates
   without calculating or plotting; completion advances traversal and
-  copies sparse first-pass results.  The temporary `iterate()` bridge
-  still calculates through dispatch at the original yield checkpoints;
-  slice 26.8 removes that bridge after the other pass prerequisites.
+  copies sparse first-pass results.  `StandardFractal` performs batched
+  calculation at the original yield checkpoints.
 - `BoundaryTrace` is a concrete `StandardPass` alternative.  It owns the
   outer scan cursor, outline tracing state, region filling state, and
   suspend path.  Selection retains scan or outline coordinates until
   color completion; cached lookups and region fills do not request orbit
   calculation.  Scan and outline chunk counters persist across requests.
-  Its temporary `iterate()` bridge retains the existing calculation and
-  yield checkpoints until slice 26.8.  Invalid options still invoke a
-  modal `stop_msg()` from pass initialization.
+  `StandardFractal` performs calculation and retains the scan and outline
+  yield checkpoints.  Invalid options still invoke a modal `stop_msg()`
+  from pass initialization.
 - `Diffusion` owns its counter, tile traversal, and fill state.  Its
   explicit phases advance in bounded counter chunks and suspend through
   `StandardPass`.  Selection retains the active tile coordinate until
   color completion; completion plots the point or inferred block before
-  advancing the tile and counter.  The temporary `scan()` bridge keeps
-  the existing 512-counter chunks until slice 26.8.  Saved resume work
+  advancing the tile and counter.  `StandardFractal` keeps calculation
+  batched in the existing 512-counter chunks.  Saved resume work
   still restarts the retained counter's tile group.
 - `SolidGuess` owns first-pass row traversal, remaining pass traversal,
   `guess_row()` block state, and row repaint state.  Its explicit phases
@@ -208,8 +210,8 @@ The current code is already part-way through this plan:
   block probes expose selection and color completion, retaining pending
   coordinates, neighboring colors, and repair continuation.  Completed
   colors drive guessing, prefix updates, and repainting once.  Selection
-  does not calculate pixels.  The temporary `scan()` bridge batches
-  calculations at the existing row boundaries until slice 26.8.
+  does not calculate pixels.  `StandardFractal` batches calculations at
+  the existing row boundaries.
 - `SynchronousOrbit` owns an explicit rhombus frame stack and explicit
   leaf scan state.  It suspends through `StandardPass`.
 - `StickyOrbits` is a concrete `StandardPass` alternative.  It owns
@@ -848,35 +850,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 26.8. StandardFractal Pixel Boundary
-
-Source: `StandardFractal`, `StandardPass`, and their transitional
-calculation bridges.
-
-Work:
-
-- Expose selection and calculation as distinct engine operations.
-  Preserve the selected coordinate and pass continuation while control
-  returns to the caller, then deliver a completed color to the pass.
-- Keep orbit strategy selection, complete pixel calculation, and pass
-  work in the engine.  UI may observe coordinates around calculation;
-  it does not choose kernels or plot image pixels.
-- Remove the temporary per-pass calculation bridges and their TODO
-  comments.  Retain the old show-dot wrapper until slices 27 and 28.
-- Keep ordinary rendering batched at its existing work checkpoints.
-  The neutral boundary does not require polling or display updates for
-  every selected pixel.
-
-Done when:
-
-- The controller can observe a selected pixel before calculation without
-  show-dot methods, consume flags, or a calculation-to-UI callback.
-- Passes receive completed colors, not presentation sentinel values.
-
-Validation: selection and continuation tests through `StandardFractal`
-across pixel passes, plus existing images, overlay/sound tests, and
-autokey interruption coverage.  No manual image test.
 
 ### 27. UI Show-Dot Marker Ownership
 

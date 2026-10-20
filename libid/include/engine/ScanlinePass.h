@@ -11,13 +11,12 @@ namespace id::engine
 class ScanlinePass
 {
 public:
+    void begin_chunk();
     // A selection remains current until complete_pixel() accepts its color.
     bool select_pixel();
     math::Point2i selected_pixel() const;
     void complete_pixel(int color);
-    // TODO: removed later
-    // Slice 26.8 moves calculation to the common StandardFractal boundary.
-    bool iterate();
+    bool done() const;
     void suspend();
 
 protected:

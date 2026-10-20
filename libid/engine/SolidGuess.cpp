@@ -6,9 +6,7 @@
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
-#include "engine/StandardFractal.h"
 #include "engine/work_list.h"
-#include "fractals/fractalp.h"
 #include "misc/debug_flags.h"
 #include "ui/video.h"
 
@@ -20,23 +18,11 @@
 
 using namespace id::misc;
 using namespace id::ui;
-using namespace id::fractals;
 
 namespace id::engine
 {
 
 int g_stop_pass{}; // stop at this guessing pass early
-
-namespace
-{
-
-bool consume_standard_traversal_yield()
-{
-    StandardFractal *standard_fractal{active_standard_fractal()};
-    return standard_fractal != nullptr && standard_fractal->consume_traversal_yield();
-}
-
-} // namespace
 
 int ssg_block_size()
 {
@@ -95,12 +81,6 @@ SolidGuess::SolidGuess() :
     g_i_start_pt.y &= -1 - (m_max_block - 1);
 
     g_passes = Passes::SOLID_GUESS;
-}
-
-bool SolidGuess::iterate()
-{
-    scan();
-    return done();
 }
 
 bool SolidGuess::select_pixel()
@@ -219,28 +199,12 @@ void SolidGuess::suspend()
 // Pieter Branderhorst has totally rewritten this routine, incorporating
 // a *MUCH* more sophisticated algorithm.  His revised code is not only
 // faster, but is also more accurate. Harrumph!
-// TODO: removed later
-// Slice 26.8 moves calculation to the common StandardFractal boundary.
-int SolidGuess::scan()
+void SolidGuess::begin_chunk()
 {
     if (m_row_below_active)
     {
         g_reset_periodicity = true;
     }
-    while (select_pixel())
-    {
-        const int color{calc_type()};
-        if (color == -1)
-        {
-            if (!consume_standard_traversal_yield())
-            {
-                suspend();
-            }
-            return 0;
-        }
-        complete_pixel(m_pixel_target == PixelTarget::SEED ? g_color : color);
-    }
-    return 0;
 }
 
 void SolidGuess::fill_prefix_plane(const int plane, const unsigned int value)

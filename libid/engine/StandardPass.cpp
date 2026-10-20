@@ -214,43 +214,84 @@ void StandardPass::complete_pixel(const int color)
     }
 }
 
+void StandardPass::begin_chunk()
+{
+    switch (m_state.index())
+    {
+    case ONE_PASS:
+        std::get<OnePass>(m_state).begin_chunk();
+        break;
+
+    case TWO_PASS:
+        std::get<TwoPass>(m_state).begin_chunk();
+        break;
+
+    case BOUNDARY_TRACE:
+        std::get<BoundaryTrace>(m_state).begin_chunk();
+        break;
+
+    case SOLID_GUESS:
+        std::get<SolidGuess>(m_state).begin_chunk();
+        break;
+
+    case DIFFUSION:
+        std::get<Diffusion>(m_state).begin_chunk();
+        break;
+
+    case TESSERAL:
+        std::get<Tesseral>(m_state).begin_chunk();
+        break;
+
+    default:
+        throw std::logic_error{"The active standard pass does not select pixels"};
+    }
+}
+
+bool StandardPass::done() const
+{
+    switch (m_state.index())
+    {
+    case NO_PASS:
+        return true;
+
+    case ONE_PASS:
+        return std::get<OnePass>(m_state).done();
+
+    case TWO_PASS:
+        return std::get<TwoPass>(m_state).done();
+
+    case BOUNDARY_TRACE:
+        return std::get<BoundaryTrace>(m_state).done();
+
+    case SOLID_GUESS:
+        return std::get<SolidGuess>(m_state).done();
+
+    case DIFFUSION:
+        return std::get<Diffusion>(m_state).done();
+
+    case TESSERAL:
+        return std::get<Tesseral>(m_state).done();
+
+    default:
+        throw std::logic_error{"The active standard pass is an orbit algorithm"};
+    }
+}
+
 bool StandardPass::iterate()
 {
     switch (m_state.index())
     {
-    case SYNCHRONOUS_ORBIT:
-        return std::get<SynchronousOrbit>(m_state).iterate();
-
-    case BOUNDARY_TRACE:
-        return std::get<BoundaryTrace>(m_state).iterate();
-
-    case SOLID_GUESS:
-        if (g_calc_status != CalcStatus::COMPLETED)
-        {
-            return std::get<SolidGuess>(m_state).iterate();
-        }
+    case NO_PASS:
         return true;
 
-    case DIFFUSION:
-        return std::get<Diffusion>(m_state).iterate();
-
-    case TESSERAL:
-    {
-        Tesseral &tesseral{std::get<Tesseral>(m_state)};
-        return tesseral.iterate() && tesseral.done();
-    }
+    case SYNCHRONOUS_ORBIT:
+        return std::get<SynchronousOrbit>(m_state).iterate();
 
     case ORBIT:
         return std::get<StickyOrbits>(m_state).iterate();
 
-    case ONE_PASS:
-        return std::get<OnePass>(m_state).iterate();
-
-    case TWO_PASS:
-        return std::get<TwoPass>(m_state).iterate();
-
     default:
-        return true;
+        throw std::logic_error{"Pixel calculation belongs to StandardFractal"};
     }
 }
 

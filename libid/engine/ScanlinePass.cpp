@@ -5,16 +5,12 @@
 
 #include "engine/calcfrac.h"
 #include "engine/resume.h"
-#include "engine/StandardFractal.h"
 #include "engine/work_list.h"
-#include "fractals/fractalp.h"
-#include "fractals/lyapunov.h"
 #include "ui/video.h"
 
 #include <stdexcept>
 
 using namespace id::ui;
-using namespace id::fractals;
 
 namespace id::engine
 {
@@ -194,35 +190,17 @@ void ScanlinePass::complete_pixel(const int color)
     m_pixel_selected = false;
 }
 
-// TODO: removed later
-// Slice 26.8 moves calculation to the common StandardFractal boundary.
-bool ScanlinePass::iterate()
+void ScanlinePass::begin_chunk()
 {
     if (m_standard_calc_active)
     {
         g_reset_periodicity = true;
     }
-    while (select_pixel())
-    {
-        const int result{calc_type()};
-        m_row = g_row;
-        m_col = g_col;
-        if (result == -1)
-        {
-            if (StandardFractal *standard_fractal = active_standard_fractal(); standard_fractal != nullptr)
-            {
-                static_cast<void>(standard_fractal->consume_traversal_yield());
-            }
-            return false;
-        }
-        complete_pixel(g_color);
-        if (StandardFractal *standard_fractal = active_standard_fractal(); g_dispatch.calc_type() == lyapunov_type ||
-            (standard_fractal != nullptr && standard_fractal->consume_traversal_yield()))
-        {
-            return false;
-        }
-    }
-    return true;
+}
+
+bool ScanlinePass::done() const
+{
+    return m_done;
 }
 
 int ScanlinePass::stop_row_for_resume() const

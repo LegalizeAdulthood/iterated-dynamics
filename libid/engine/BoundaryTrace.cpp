@@ -5,10 +5,8 @@
 
 #include "engine/calcfrac.h"
 #include "engine/show_dot.h"
-#include "engine/StandardFractal.h"
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"
-#include "fractals/fractalp.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 
@@ -16,7 +14,6 @@
 #include <stdexcept>
 
 using namespace id::ui;
-using namespace id::fractals;
 
 namespace id::engine
 {
@@ -60,12 +57,6 @@ bool BoundaryTrace::select_pixel()
             return false;
         }
         advance_scan_cursor();
-        if (StandardFractal *standard_fractal = active_standard_fractal();
-            standard_fractal != nullptr && standard_fractal->consume_traversal_yield())
-        {
-            m_scan_steps = 0;
-            return false;
-        }
     }
     m_scan_steps = 0;
     return false;
@@ -99,21 +90,10 @@ bool BoundaryTrace::done() const
     return m_done;
 }
 
-// TODO: removed later
-// Slice 26.8 moves calculation to the common StandardFractal boundary.
-bool BoundaryTrace::iterate()
+void BoundaryTrace::begin_chunk()
 {
-    while (select_pixel())
-    {
-        if (calc_type() == -1)
-        {
-            m_scan_steps = 0;
-            m_outline_steps = 0;
-            return stop_for_calculation_return();
-        }
-        complete_pixel(g_color);
-    }
-    return m_done;
+    m_scan_steps = 0;
+    m_outline_steps = 0;
 }
 
 void BoundaryTrace::suspend()
@@ -324,20 +304,6 @@ void BoundaryTrace::finish_fill_match()
     m_coming_from = advance(m_going_to, -1);
     m_fill_started = true;
     m_pixel_phase = PixelPhase::FILL_TRACE;
-}
-
-bool BoundaryTrace::stop_for_calculation_return()
-{
-    StandardFractal *standard_fractal{active_standard_fractal()};
-    if (standard_fractal != nullptr && standard_fractal->consume_traversal_yield())
-    {
-        m_pending_row = g_row;
-        m_pending_col = g_col;
-        return false;
-    }
-    m_pixel_selected = false;
-    save_resume_work();
-    return false;
 }
 
 void BoundaryTrace::initialize()

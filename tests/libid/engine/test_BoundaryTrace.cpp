@@ -274,18 +274,6 @@ TEST_F(TestBoundaryTrace, scanSelectionKeepsTheExistingChunkSize)
     EXPECT_TRUE(pass.done());
 }
 
-TEST_F(TestBoundaryTrace, iterateKeepsScanCalculationBatched)
-{
-    set_frame(600, 1);
-    s_checkerboard = true;
-    BoundaryTrace pass;
-
-    EXPECT_FALSE(pass.iterate());
-    EXPECT_EQ(512U, s_calculated.size());
-    EXPECT_TRUE(pass.iterate());
-    EXPECT_EQ(600U, s_calculated.size());
-}
-
 TEST_F(TestBoundaryTrace, outlineSelectionKeepsTheExistingChunkSize)
 {
     set_frame(600, 2);
@@ -297,15 +285,6 @@ TEST_F(TestBoundaryTrace, outlineSelectionKeepsTheExistingChunkSize)
 
     EXPECT_TRUE(pass.done());
     EXPECT_THAT(m_pixels, Each(7));
-}
-
-TEST_F(TestBoundaryTrace, iterateKeepsOutlineCalculationBatched)
-{
-    set_frame(600, 2);
-    BoundaryTrace pass;
-
-    EXPECT_FALSE(pass.iterate());
-    EXPECT_EQ(258U, s_calculated.size());
 }
 
 TEST_F(TestBoundaryTrace, suspensionRetainsAnUncomputedScanPixel)

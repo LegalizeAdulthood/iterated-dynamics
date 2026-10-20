@@ -135,7 +135,7 @@ protected:
     {
         for (int chunks = 0; chunks < 100 && !pass.done(); ++chunks)
         {
-            pass.iterate();
+            selection_chunk(pass);
         }
         EXPECT_TRUE(pass.done());
     }
@@ -273,27 +273,6 @@ TEST_F(TestSolidGuess, lowerRowCompletionContinuesToTheNextSeedRow)
     EXPECT_THAT(m_pixels, Each(7));
 }
 
-TEST_F(TestSolidGuess, iterateKeepsSeedCalculationsBatchedByRow)
-{
-    SolidGuess pass;
-    EXPECT_FALSE(pass.iterate()); // initialize the scan
-    EXPECT_TRUE(s_calculated.empty());
-
-    EXPECT_FALSE(pass.iterate());
-
-    EXPECT_THAT(s_calculated, ElementsAre(Point2i{0, 0}, Point2i{4, 0}, Point2i{8, 0}, Point2i{12, 0}));
-    s_calculated.clear();
-    EXPECT_FALSE(pass.iterate());
-    EXPECT_THAT(s_calculated,
-        ElementsAre(Point2i{0, 4}, Point2i{4, 4}, Point2i{8, 4}, Point2i{12, 4}, Point2i{14, 2}, Point2i{14, 0}));
-    EXPECT_EQ(0, g_current_row);
-    s_calculated.clear();
-    EXPECT_FALSE(pass.iterate());
-    EXPECT_THAT(s_calculated,
-        ElementsAre(Point2i{0, 8}, Point2i{4, 8}, Point2i{8, 8}, Point2i{12, 8}, Point2i{14, 6}, Point2i{14, 4}));
-    EXPECT_EQ(4, g_current_row);
-}
-
 TEST_F(TestSolidGuess, firstPassDefersRefinementWhenOtherWorkIsQueued)
 {
     add_work_list(100, 100, 110, 110, 100, 100, 0, 0);
@@ -361,21 +340,6 @@ TEST_F(TestSolidGuess, suspensionOfLowerRowRetainsItsFirstPassResumePosition)
     EXPECT_EQ((Point2i{0, 8}), resumed.selected_pixel());
     finish(resumed);
     EXPECT_THAT(m_pixels, Each(7));
-}
-
-TEST_F(TestSolidGuess, interruptedSeedUsesTheExistingSuspendPath)
-{
-    s_interrupt_after = 2;
-    SolidGuess pass;
-    ASSERT_FALSE(pass.iterate());
-
-    EXPECT_TRUE(pass.iterate());
-
-    EXPECT_TRUE(pass.done());
-    EXPECT_THAT(s_calculated, ElementsAre(Point2i{0, 0}, Point2i{4, 0}));
-    EXPECT_EQ((Point2i{8, 0}), pass.selected_pixel());
-    ASSERT_EQ(1, g_num_work_list);
-    EXPECT_EQ(g_start_pt, g_work_list[0].begin);
 }
 
 TEST_F(TestSolidGuess, completionRequiresASelection)
@@ -537,23 +501,6 @@ TEST_F(TestSolidGuess, refinementSuspensionRetainsTheActiveRowAndPass)
     finish_selection(resumed);
     EXPECT_THAT(m_pixels, Each(7));
     EXPECT_TRUE(s_calculated.empty());
-}
-
-TEST_F(TestSolidGuess, interruptedBlockProbeUsesTheExistingSuspendPath)
-{
-    s_interrupt_after = 8;
-    SolidGuess pass;
-    ASSERT_FALSE(pass.iterate());
-    ASSERT_FALSE(pass.iterate());
-
-    EXPECT_TRUE(pass.iterate());
-
-    EXPECT_TRUE(pass.done());
-    EXPECT_EQ((Point2i{14, 2}), pass.selected_pixel());
-    EXPECT_EQ(8U, s_calculated.size());
-    ASSERT_EQ(1, g_num_work_list);
-    EXPECT_EQ((Point2i{0, 0}), g_work_list[0].begin);
-    EXPECT_EQ(0, g_work_list[0].pass);
 }
 
 } // namespace id::test

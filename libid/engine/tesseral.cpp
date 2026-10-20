@@ -7,17 +7,14 @@
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
-#include "engine/StandardFractal.h"
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"
-#include "fractals/fractalp.h"
 #include "ui/video.h"
 
 #include <stdexcept>
 #include <vector>
 
 using namespace id::ui;
-using namespace id::fractals;
 
 namespace id::engine
 {
@@ -29,12 +26,6 @@ constexpr int TESSERAL_EDGE_CHUNK{512};
 constexpr int TESSERAL_BOX_CHUNK{512};
 constexpr int TESSERAL_PIXEL_FILL_CHUNK{8192};
 constexpr int TESSERAL_SPAN_FILL_CHUNK{64};
-
-bool consume_standard_traversal_yield()
-{
-    StandardFractal *standard_fractal{active_standard_fractal()};
-    return standard_fractal != nullptr && standard_fractal->consume_traversal_yield();
-}
 
 } // namespace
 
@@ -122,7 +113,7 @@ bool Tesseral::done() const
 
 bool Tesseral::select_pixel()
 {
-    if (m_interrupted || done())
+    if (done())
     {
         return false;
     }
@@ -176,31 +167,10 @@ void Tesseral::complete_pixel(const int color)
     m_pixel_selected = false;
 }
 
-// TODO: removed later
-// Slice 26.8 moves calculation to the common StandardFractal boundary.
-bool Tesseral::iterate()
+void Tesseral::begin_chunk()
 {
     m_boxes_processed = 0;
     m_edge_probe.processed = 0;
-    while (select_pixel())
-    {
-        const int color{calc_type()};
-        if (!m_edge_probe.started)
-        {
-            g_reset_periodicity = false;
-        }
-        if (color < 0)
-        {
-            if (consume_standard_traversal_yield())
-            {
-                return true;
-            }
-            m_interrupted = true;
-            return false;
-        }
-        complete_pixel(color);
-    }
-    return !m_interrupted;
 }
 
 void Tesseral::advance()
@@ -732,27 +702,6 @@ void Tesseral::suspend()
     }
     add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_start_pt.x,
         (y_size << 12) + m_tp->y1, (x_size << 12) + m_tp->x1, g_work_symmetry);
-}
-
-int tesseral()
-{
-    Tesseral tess;
-
-    while (!tess.done())
-    {
-        if (!tess.iterate())
-        {
-            break;
-        }
-    }
-
-    if (!tess.done())
-    {
-        tess.suspend();
-        return -1;
-    }
-
-    return 0;
 }
 
 static int tess_check_col(const int x, int y1, int y2)

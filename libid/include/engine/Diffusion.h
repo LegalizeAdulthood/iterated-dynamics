@@ -24,16 +24,13 @@ public:
 
     unsigned int bits() const;
     unsigned long counter() const;
+    void begin_chunk();
     // False ends this work chunk; done() distinguishes completion.
     bool select_pixel();
     math::Point2i selected_pixel() const;
     void complete_pixel(int color);
     bool done() const;
-    bool iterate();
     unsigned long limit() const;
-    // TODO: removed later
-    // Slice 26.8 moves calculation to the common StandardFractal boundary.
-    int scan();
     void suspend();
 
 private:

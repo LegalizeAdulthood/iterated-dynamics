@@ -22,15 +22,12 @@ public:
     SolidGuess &operator=(const SolidGuess &) = delete;
     SolidGuess &operator=(SolidGuess &&) = delete;
 
+    void begin_chunk();
     // False ends this work chunk; done() distinguishes completion.
     bool select_pixel();
     math::Point2i selected_pixel() const;
     void complete_pixel(int color);
     bool done() const;
-    bool iterate();
-    // TODO: removed later
-    // Slice 26.8 moves calculation to the common StandardFractal boundary.
-    int scan();
     void suspend();
     static int block_size();
 

@@ -311,24 +311,6 @@ TEST_F(TestTesseral, columnProbesKeepTheirExistingChunkSize)
     EXPECT_TRUE(s_calculated.empty());
 }
 
-TEST_F(TestTesseral, iterateKeepsBatchedEdgesAndItsSuccessContract)
-{
-    set_frame(600, 4);
-    Tesseral pass;
-
-    EXPECT_TRUE(pass.iterate());
-    EXPECT_EQ(512U, s_calculated.size());
-    EXPECT_FALSE(pass.done());
-    EXPECT_TRUE(pass.iterate());
-    EXPECT_EQ(1112U, s_calculated.size());
-    EXPECT_TRUE(pass.iterate());
-    EXPECT_EQ(1204U, s_calculated.size());
-    EXPECT_FALSE(pass.done());
-    EXPECT_TRUE(pass.iterate());
-    EXPECT_TRUE(pass.done());
-    EXPECT_THAT(m_pixels, Each(7));
-}
-
 TEST_F(TestTesseral, boxTraversalKeepsItsExistingChunkSize)
 {
     set_frame(128, 128);
@@ -439,22 +421,6 @@ TEST_F(TestTesseral, suspensionDuringSplitPreservesTheActiveBox)
         }
     }
     EXPECT_TRUE(s_calculated.empty());
-}
-
-TEST_F(TestTesseral, interruptedKernelKeepsTheExistingFailureContract)
-{
-    s_interrupt_after = 3;
-    Tesseral pass;
-
-    EXPECT_FALSE(pass.iterate());
-
-    EXPECT_FALSE(pass.done());
-    EXPECT_EQ((Point2i{3, 0}), pass.selected_pixel());
-    EXPECT_THAT(s_calculated, ElementsAre(Point2i{0, 0}, Point2i{1, 0}, Point2i{2, 0}));
-    EXPECT_FALSE(pass.select_pixel());
-    pass.suspend();
-    ASSERT_EQ(1, g_num_work_list);
-    EXPECT_EQ(0, g_work_list[0].pass);
 }
 
 TEST_F(TestTesseral, narrowEdgesKeepTheirExistingSingleSample)

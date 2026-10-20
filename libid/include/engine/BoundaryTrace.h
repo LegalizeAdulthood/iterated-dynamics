@@ -15,14 +15,12 @@ namespace id::engine
 class BoundaryTrace
 {
 public:
+    void begin_chunk();
     // False ends this work chunk; done() distinguishes completion.
     bool select_pixel();
     math::Point2i selected_pixel() const;
     void complete_pixel(int color);
     bool done() const;
-    // TODO: removed later
-    // Slice 26.8 moves calculation to the common StandardFractal boundary.
-    bool iterate();
     void suspend();
 
 private:
@@ -57,7 +55,6 @@ private:
     bool fill_region_step();
     bool fill_trace_step();
     void finish_fill_match();
-    bool stop_for_calculation_return();
     void initialize();
     bool process_current_pixel();
     void record_progress() const;

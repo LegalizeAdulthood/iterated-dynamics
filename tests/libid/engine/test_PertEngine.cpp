@@ -208,14 +208,17 @@ TEST_F(TestPerturbationPixels, deepZoomBoundaryTraceCompletesWithoutDeferredOrRe
     m_specific.calc_type = calculate_requested_pixel;
     g_dispatch = FractalDispatch{m_specific};
     BoundaryTrace trace;
-    bool done{};
 
-    for (int increments = 0; increments < 100 && !done; ++increments)
+    for (int increments = 0; increments < 100 && !trace.done(); ++increments)
     {
-        done = trace.iterate();
+        trace.begin_chunk();
+        while (trace.select_pixel())
+        {
+            trace.complete_pixel(calculate_requested_pixel());
+        }
     }
 
-    ASSERT_TRUE(done);
+    ASSERT_TRUE(trace.done());
     EXPECT_GT(m_engine.reference_count(), 1);
     EXPECT_THAT(m_pixels, Each(7));
     std::array<int, WIDTH * HEIGHT> visits{};

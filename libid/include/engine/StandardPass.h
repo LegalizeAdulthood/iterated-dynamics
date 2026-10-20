@@ -39,11 +39,13 @@ public:
     StandardPass &operator=(StandardPass &&) = delete;
 
     CalcMode calc_mode() const;
+    void begin_chunk();
+    bool done() const;
     // Pixel passes only: false ends a work chunk or marks completion.
     bool select_pixel();
     math::Point2i selected_pixel() const;
     void complete_pixel(int color);
-    bool iterate();
+    bool iterate(); // Synchronous and sticky orbit work only.
     void reset();
     void select(CalcMode calc_mode);
     StandardPassStatus status() const;

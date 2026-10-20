@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "engine/StandardFractal.h"
 
@@ -14,6 +15,7 @@
 #include "engine/UserData.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
+#include "fractals/lyapunov.h"
 #include "math/big.h"
 #include "ui/diskvid.h"
 
@@ -156,7 +158,6 @@ void StandardFractal::resume()
     m_standard_pass.reset();
     m_timer_started = false;
     m_work_item_active = false;
-    m_work_item_yielded = false;
     m_work_list_started = false;
     m_standard_pixel_completed_yield = false;
     m_incomplete_standard_pixel_yield = false;
@@ -271,17 +272,64 @@ StandardPassStatus StandardFractal::standard_pass_status() const
     return status;
 }
 
+bool StandardFractal::select_pixel()
+{
+    if (done() || m_orbit_overlay_displayed || presentation_pending())
+    {
+        return false;
+    }
+    if (m_orbit_plot_pending)
+    {
+        run_pending_orbit_plot();
+        return false;
+    }
+    if (m_overlay_scrub_pending)
+    {
+        scrub_overlay();
+        return false;
+    }
+
+    start_timer();
+    if (!prepare_work_item())
+    {
+        return false;
+    }
+    if (m_standard_pass.select_pixel())
+    {
+        return true;
+    }
+    s_standard_pass_status = standard_pass_status();
+    if (m_standard_pass.done())
+    {
+        finish_work_item();
+    }
+    update_timer();
+    return false;
+}
+
+math::Point2i StandardFractal::selected_pixel() const
+{
+    return m_standard_pass.selected_pixel();
+}
+
+bool StandardFractal::calculate_pixel()
+{
+    const math::Point2i point{selected_pixel()};
+    g_col = point.x;
+    g_row = point.y;
+    ActiveStandardFractalScope active_standard_fractal{*this};
+    const int color{fractals::calc_type()};
+    if (color == -1)
+    {
+        return false;
+    }
+    m_standard_pass.complete_pixel(color);
+    return true;
+}
+
 void StandardFractal::iterate()
 {
-    if (done())
-    {
-        return;
-    }
-    if (m_orbit_overlay_displayed)
-    {
-        return;
-    }
-    if (presentation_pending())
+    if (done() || m_orbit_overlay_displayed || presentation_pending())
     {
         return;
     }
@@ -296,16 +344,43 @@ void StandardFractal::iterate()
         return;
     }
 
-    ActiveStandardFractalScope active_standard_fractal{*this};
-    m_work_item_yielded = false;
     start_timer();
-    if (m_phase == Phase::START)
+    if (!prepare_work_item())
     {
-        start_next_pass();
+        return;
     }
-    if (m_phase == Phase::WORK_LIST)
+    const CalcMode mode{m_standard_pass.calc_mode()};
+    if (mode == CalcMode::SYNCHRONOUS_ORBIT || mode == CalcMode::ORBIT)
     {
-        run_current_work_item();
+        ActiveStandardFractalScope active_standard_fractal{*this};
+        const bool completed{m_standard_pass.iterate()};
+        s_standard_pass_status = standard_pass_status();
+        if (completed)
+        {
+            finish_work_item();
+        }
+    }
+    else
+    {
+        m_standard_pass.begin_chunk();
+        while (select_pixel())
+        {
+            if (!calculate_pixel())
+            {
+                static_cast<void>(consume_traversal_yield());
+                break;
+            }
+            if (consume_traversal_yield() ||
+                ((mode == CalcMode::ONE_PASS || mode == CalcMode::TWO_PASS) &&
+                    fractals::g_dispatch.calc_type() == fractals::lyapunov_type))
+            {
+                break;
+            }
+        }
+        if (m_work_item_active)
+        {
+            s_standard_pass_status = standard_pass_status();
+        }
     }
     update_timer();
 }
@@ -478,8 +553,12 @@ bool StandardFractal::scrub_overlay_orbit(const bool yield_to_ui)
     return false;
 }
 
-void StandardFractal::run_current_work_item()
+bool StandardFractal::prepare_work_item()
 {
+    if (m_phase == Phase::START)
+    {
+        start_next_pass();
+    }
     if (!m_work_list_started)
     {
         start_work_list();
@@ -487,7 +566,7 @@ void StandardFractal::run_current_work_item()
     if (!m_work_item_active && g_num_work_list <= 0)
     {
         finish_work_list();
-        return;
+        return false;
     }
 
     if (!m_work_item_active)
@@ -522,48 +601,27 @@ void StandardFractal::run_current_work_item()
             setup_log_table();
         }
         m_work_item_active = true;
+        if (m_perturbation_requested && perturbation_supported())
+        {
+            if (!m_perturbation_active)
+            {
+                start_perturbation_frame();
+            }
+            fractals::g_dispatch.set_calc_type(standard_fractal_type);
+        }
+        m_standard_pass.select(g_std_calc_mode);
     }
+    return true;
+}
 
-    run_current_work_item_mode();
-
-    if (done())
-    {
-        return;
-    }
-    if (m_work_item_yielded)
-    {
-        return;
-    }
+void StandardFractal::finish_work_item()
+{
     cleanup_standard_fractal_show_dot();
     m_standard_pass.reset();
     m_work_item_active = false;
     if (g_num_work_list == 0)
     {
         finish_work_list();
-    }
-}
-
-void StandardFractal::run_current_work_item_mode()
-{
-    if (m_perturbation_requested && perturbation_supported())
-    {
-        if (!m_perturbation_active)
-        {
-            start_perturbation_frame();
-        }
-        fractals::g_dispatch.set_calc_type(standard_fractal_type);
-    }
-
-    m_standard_pass.select(g_std_calc_mode);
-    const bool pass_completed{m_standard_pass.iterate()};
-    s_standard_pass_status = standard_pass_status();
-    if (!pass_completed)
-    {
-        m_work_item_yielded = true;
-    }
-    else
-    {
-        m_standard_pass.reset();
     }
 }
 

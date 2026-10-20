@@ -4,9 +4,7 @@
 #include "engine/Diffusion.h"
 
 #include "engine/calcfrac.h"
-#include "engine/StandardFractal.h"
 #include "engine/work_list.h"
-#include "fractals/fractalp.h"
 
 #include <algorithm>
 #include <cmath>
@@ -15,8 +13,6 @@
 
 namespace id::engine
 {
-
-using namespace id::fractals;
 
 namespace
 {
@@ -56,12 +52,6 @@ constexpr int DIF_LB[] =
 constexpr double LOG2{0.69314718055994530942};
 constexpr int DIFFUSION_COUNTERS_PER_CHUNK{512};
 
-bool consume_standard_traversal_yield()
-{
-    StandardFractal *standard_fractal{active_standard_fractal()};
-    return standard_fractal != nullptr && standard_fractal->consume_traversal_yield();
-}
-
 } // namespace
 
 unsigned int Diffusion::bits() const
@@ -72,12 +62,6 @@ unsigned int Diffusion::bits() const
 unsigned long Diffusion::counter() const
 {
     return m_counter;
-}
-
-bool Diffusion::iterate()
-{
-    scan();
-    return done();
 }
 
 unsigned long Diffusion::limit() const
@@ -164,21 +148,9 @@ void Diffusion::complete_pixel(const int color)
     }
 }
 
-// TODO: removed later
-// Slice 26.8 moves calculation to the common StandardFractal boundary.
-int Diffusion::scan()
+void Diffusion::begin_chunk()
 {
     m_counters_processed = 0;
-    while (select_pixel())
-    {
-        if (calc_type() == -1)
-        {
-            consume_standard_traversal_yield();
-            return -1;
-        }
-        complete_pixel(g_color);
-    }
-    return 0;
 }
 
 void Diffusion::suspend()
