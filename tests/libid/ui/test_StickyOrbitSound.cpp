@@ -523,7 +523,9 @@ TEST_P(TestStickyOrbitSound, driverRefusalStillRecordsConstantFrequencyWithoutWa
     EXPECT_CALL(m_driver, delay(_)).Times(0);
     EXPECT_CALL(m_driver, mute()).Times(0);
 
+    SoundSession owner;
     EXPECT_EQ(0, standard_fractal());
+    EXPECT_TRUE(owner.finish());
 
     std::ifstream file{m_directory / "sound/sound001.txt"};
     ASSERT_TRUE(file.good());

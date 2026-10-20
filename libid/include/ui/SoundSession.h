@@ -19,8 +19,15 @@ public:
         ATOMIC,
     };
 
+    enum class Ownership
+    {
+        OWNED,
+        BORROWED,
+    };
+
+    SoundSession();
     explicit SoundSession(DriverSoundOutput::Source source);
-    explicit SoundSession(engine::SoundOutputPtr sound);
+    explicit SoundSession(engine::SoundOutputPtr sound, Ownership ownership = Ownership::OWNED);
     ~SoundSession();
 
     SoundSession(const SoundSession &) = delete;
@@ -45,6 +52,7 @@ private:
 
     engine::SoundOutputPtr m_sound;
     misc::ValueSaver<engine::SoundOutputPtr> m_saved_sound;
+    Ownership m_ownership{Ownership::OWNED};
     State m_state{State::ACTIVE};
 };
 

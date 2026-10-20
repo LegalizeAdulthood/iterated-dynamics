@@ -464,7 +464,9 @@ TEST_P(TestOrbit3DSound, stereoRefusalPreservesSamplesAndEyeOrder)
         }
     };
 
+    SoundSession owner;
     EXPECT_EQ(0, orbit3d_type());
+    EXPECT_TRUE(owner.finish());
 
     EXPECT_EQ(103, s_math_calls);
     EXPECT_THAT(m_eyes,
@@ -489,7 +491,9 @@ TEST_P(TestOrbit3DSound, clippedRedEyeDoesNotAddSoundForVisibleBlueEye)
     EXPECT_CALL(m_driver, mute()).Times(0);
     s_on_orbit = [] { g_xx_adjust = 100; };
 
+    SoundSession owner;
     EXPECT_EQ(0, orbit3d_type());
+    EXPECT_TRUE(owner.finish());
 
     EXPECT_EQ(103, s_math_calls);
     EXPECT_THAT(m_eyes, ElementsAre(StereoImage::BLUE, StereoImage::BLUE, StereoImage::BLUE));

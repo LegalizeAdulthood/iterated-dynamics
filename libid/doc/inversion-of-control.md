@@ -202,9 +202,11 @@ The current code is already part-way through this plan:
   right-edge hang restriction and saved-state preservation across pixel
   yields are compatibility requirements for later cleanup.
 - `Orbit2D`, `Orbit3D`, and `Dynamic2D` submit numerical samples through
-  `g_sound`.  Their UI controllers service playback, finish normal
-  output, and mute on interruption.  Pending points retain calculation
-  state without changing ready-output polling cadence.
+  `g_sound`.  Their UI controllers service playback and mute on
+  interruption.  Nested producer scopes borrow the same output; the UI
+  render-operation owner finishes it once across evolution cells and
+  stereo views.  Engine teardown no longer closes sound.  Pending points
+  retain calculation state without changing ready-output polling cadence.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -638,14 +640,14 @@ The remaining UI-concept leaks outside `libid/ui` are:
   display bridge that will be removed when show-dot presentation moves
   fully into the UI controller.
 - `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
-  state and still calls `close_sound()` in common engine teardown.
+  state.
 - `libid/engine/sound.cpp`: retains unused legacy speaker/file producers.
-  All producers now use the output port; the session-lifecycle and legacy
-  cleanup slices remove the remaining engine-owned sound paths.
+  All producers now use the output port; legacy cleanup removes these
+  remaining engine-owned sound paths.
 - `libid/engine/spindac.cpp`: includes palette rotation delay via
   `driver_delay()`.
 - `libid/engine/wait_until.cpp`: retains legacy delay helpers for unused
-  sound code; cleanup follows session-lifecycle migration.
+  sound code; cleanup follows removal of the unused producers.
 - `libid/fractals/Cellular.cpp`: starts, updates, and ends the thinking
   screen from generation, error, and suspend paths.
 - `libid/fractals/lsystem.cpp`: recursive sizing owns the thinking screen
@@ -743,40 +745,6 @@ If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
-
-### 14. Sound Session Lifecycle Ownership
-
-Source: `ImageCalculation::finish()`, remaining sound-file lifecycle
-calls, render controllers, and both `calc_fract()` call sites in
-`ui/big_while_loop.cpp`, including evolution rendering.
-
-Work:
-
-- Consolidate output lifetime at the UI render-operation owner.  Keep
-  nested controllers from opening or closing a second sound file.
-- Retain the same `SoundOutputPtr` used by the active binding throughout
-  the operation.  Shared ownership does not replace explicit completion,
-  and no producer-specific ownership or parameter plumbing is needed.
-- Keep servicing `update()` while `finish()` reports pending playback or
-  release tails.  Normal completion must not invoke mute to force a drain.
-- Mute promptly on interruption, cancelling pending audible playback and
-  stale release deadlines while preserving accepted file records.  Then
-  finish or retain the session as its owner decides.
-- Remove `close_sound()` from common engine teardown after all producers
-  use the port.  Keep image timing and calculation cleanup in the engine.
-- Preserve legacy orbit-boundary records without putting wall-clock
-  reads or sound-file policy back into pixel calculation.
-
-Done when:
-
-- Completion, cancellation, failure, and evolution transitions close each
-  sound session correctly without an engine-owned file or modal error.
-
-Validation: exercise nested controllers, multiple evolution cells, late
-playback/release-tail completion, errors, and accepted-once boundary
-records.  Verify completion without mute and interruption without stale
-release of later voices through fake-port controller tests.  No manual
-test required; unsupported drivers cannot verify audible voice behavior.
 
 ### 15. Remove Legacy Sound Control Paths
 

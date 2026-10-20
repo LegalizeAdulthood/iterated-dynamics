@@ -19,6 +19,11 @@ using namespace id::misc;
 namespace id::ui
 {
 
+SoundSession::SoundSession() :
+    SoundSession(DriverSoundOutput::Source::RENDER)
+{
+}
+
 SoundSession::SoundSession(const DriverSoundOutput::Source source) :
     m_saved_sound{g_sound}
 {
@@ -33,9 +38,10 @@ SoundSession::SoundSession(const DriverSoundOutput::Source source) :
     g_sound = m_sound;
 }
 
-SoundSession::SoundSession(SoundOutputPtr sound) :
+SoundSession::SoundSession(SoundOutputPtr sound, const Ownership ownership) :
     m_sound{std::move(sound)},
-    m_saved_sound{g_sound}
+    m_saved_sound{g_sound},
+    m_ownership{ownership}
 {
     if (m_sound == nullptr)
     {
@@ -46,10 +52,16 @@ SoundSession::SoundSession(SoundOutputPtr sound) :
 
 SoundSession::~SoundSession()
 {
-    // Explicit finish/cancel reports file errors; abandoned playback only mutes.
-    if (m_state == State::ACTIVE)
+    // Explicit completion reports errors; unwinding still closes owned output.
+    if (m_ownership == Ownership::OWNED && m_state == State::ACTIVE)
     {
-        m_sound->mute();
+        try
+        {
+            cancel();
+        }
+        catch (...)
+        {
+        }
     }
 }
 
@@ -87,6 +99,15 @@ bool SoundSession::finish(const InputPolicy input)
     {
         return m_state == State::FINISHED;
     }
+    if (m_ownership == Ownership::BORROWED)
+    {
+        if (!wait_until_ready(input))
+        {
+            return false;
+        }
+        m_state = State::FINISHED;
+        return true;
+    }
     if (input == InputPolicy::INTERRUPTIBLE && calc_interrupt_requested())
     {
         cancel();
@@ -120,9 +141,9 @@ void SoundSession::cancel()
 {
     if (m_state == State::ACTIVE)
     {
-        m_sound->mute();
         m_state = State::CANCELLED;
-        if (!m_sound->finish())
+        m_sound->mute();
+        if (m_ownership == Ownership::OWNED && !m_sound->finish())
         {
             throw std::logic_error("Muted sound output still has pending playback");
         }

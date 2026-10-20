@@ -8,6 +8,7 @@
 
 #include <memory>
 
+using namespace id::engine;
 using namespace id::fractals;
 
 namespace id::ui
@@ -15,7 +16,7 @@ namespace id::ui
 
 int orbit3d_calc()
 {
-    SoundSession sound{DriverSoundOutput::Source::ORBIT};
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
     return orbit3d_calc(sound);
 }
 

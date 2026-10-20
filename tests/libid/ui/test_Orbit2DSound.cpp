@@ -460,7 +460,9 @@ TEST_P(TestOrbit2DSound, driverRefusalStillRecordsMappedFrequenciesWithoutWaitin
     EXPECT_CALL(m_driver, delay(_)).Times(0);
     EXPECT_CALL(m_driver, mute()).Times(0);
 
+    SoundSession owner;
     EXPECT_EQ(0, orbit2d_type());
+    EXPECT_TRUE(owner.finish());
 
     EXPECT_EQ(GetParam() == FractalType::LORENZ ? "320\n520\n720\n" : "320\n620\n920\n",
         read_text(m_directory / "sound/sound001.txt"));

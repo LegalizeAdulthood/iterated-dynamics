@@ -3,14 +3,18 @@
 #include <ui/DriverSoundOutput.h>
 
 #include <engine/LogicalScreen.h>
+#include <engine/calcfrac.h>
 #include <engine/OrbitPlot.h>
 #include <engine/sound.h>
 #include <engine/VideoInfo.h>
 #include <fractals/lorenz.h>
+#include <fractals/fractalp.h>
 #include <io/check_write_file.h>
 #include <misc/debug_flags.h>
 #include <misc/Driver.h>
 #include <ui/OrbitDelayTimer.h>
+#include <ui/dynamic2d.h>
+#include <ui/orbit2d.h>
 
 #include <fmt/format.h>
 
@@ -34,6 +38,20 @@ namespace
 long long sound_time_ms()
 {
     return static_cast<long long>(std::clock()) * 1000 / CLOCKS_PER_SEC;
+}
+
+DriverSoundOutput::Source image_sound_source()
+{
+    const CalcType calc_type{g_cur_fractal_specific->calc_type};
+    if (calc_type == orbit2d_type || calc_type == orbit3d_type || calc_type == dynamic2d_type)
+    {
+        return DriverSoundOutput::Source::ORBIT;
+    }
+    if ((calc_type == standard_fractal_type || calc_type == calc_mandelbrot_type) && g_std_calc_mode == CalcMode::ORBIT)
+    {
+        return DriverSoundOutput::Source::STICKY_ORBIT;
+    }
+    return DriverSoundOutput::Source::OVERLAY;
 }
 
 } // namespace
@@ -88,6 +106,14 @@ bool DriverSoundOutput::play(const SoundSample &sample)
         return true;
     }
 
+    if (m_source == Source::RENDER)
+    {
+        m_source = image_sound_source();
+        if (m_source == Source::OVERLAY && m_scaled && (m_x_dots <= 0 || m_y_dots <= 0))
+        {
+            throw std::logic_error("Sound output requires valid image dimensions");
+        }
+    }
     const int tone{frequency(sample)};
     if (m_record)
     {

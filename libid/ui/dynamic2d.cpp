@@ -17,7 +17,7 @@ namespace id::ui
 
 int dynamic2d_type()
 {
-    SoundSession sound{DriverSoundOutput::Source::ORBIT};
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
     return dynamic2d_type(sound);
 }
 

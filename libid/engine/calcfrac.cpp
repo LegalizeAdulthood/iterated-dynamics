@@ -876,10 +876,6 @@ void ImageCalculation::finish()
     }
     free_work_area();
 
-    if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)   // close sound write file
-    {
-        close_sound();
-    }
     if (g_true_color)
     {
         end_disk();

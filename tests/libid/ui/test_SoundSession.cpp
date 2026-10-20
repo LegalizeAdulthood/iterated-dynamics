@@ -8,6 +8,7 @@
 #include <engine/NullSoundOutput.h>
 #include <engine/OrbitPlot.h>
 #include <engine/sound.h>
+#include <fractals/fractalp.h>
 #include <fractals/lorenz.h>
 #include <io/check_write_file.h>
 #include <io/library.h>
@@ -173,6 +174,55 @@ TEST_F(TestSoundSession, batchModeDoesNotEnableRecording)
     EXPECT_FALSE(fs::exists(m_directory / "sound"));
 }
 
+TEST_F(TestSoundSession, renderOwnerSelectsTheProducerMapping)
+{
+    ValueSaver saved_specific{g_cur_fractal_specific};
+    ValueSaver saved_mode{g_std_calc_mode};
+    g_sound_flag = SOUNDFLAG_X;
+
+    struct MappingCase
+    {
+        FractalType type;
+        CalcMode mode;
+        int frequency;
+    };
+
+    const MappingCase cases[]{
+        {FractalType::MANDEL, CalcMode::ONE_PASS, 230},
+        {FractalType::MANDEL, CalcMode::ORBIT, 220},
+        {FractalType::FROTHY_BASIN, CalcMode::ORBIT, 230},
+        {FractalType::HENON, CalcMode::ONE_PASS, 1220},
+        {FractalType::LORENZ_3D, CalcMode::ONE_PASS, 1220},
+        {FractalType::DYNAMIC, CalcMode::ONE_PASS, 1220},
+    };
+    for (const MappingCase &test : cases)
+    {
+        g_cur_fractal_specific = get_fractal_specific(test.type);
+        g_std_calc_mode = test.mode;
+        EXPECT_CALL(m_driver, sound_on(test.frequency)).WillOnce(Return(false));
+        SoundSession owner;
+
+        EXPECT_TRUE(g_sound->play({10, 20, 30}));
+        EXPECT_TRUE(owner.finish());
+    }
+}
+
+TEST_F(TestSoundSession, renderMappingUsesTheModeAfterImageSetupAndThenRemainsFixed)
+{
+    ValueSaver saved_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
+    ValueSaver saved_mode{g_std_calc_mode, CalcMode::ORBIT};
+    g_sound_flag = SOUNDFLAG_X;
+    SoundSession owner;
+    EXPECT_CALL(m_driver, sound_on(230)).Times(2).WillRepeatedly(Return(false));
+
+    // Image setup can force one-pass traversal, for example for true color.
+    g_std_calc_mode = CalcMode::ONE_PASS;
+    EXPECT_TRUE(g_sound->play({10, 20, 30}));
+    g_std_calc_mode = CalcMode::ORBIT;
+    EXPECT_TRUE(g_sound->play({10, 20, 30}));
+    EXPECT_TRUE(owner.finish());
+}
+
 TEST_F(TestSoundSession, retainsAndRestoresTheSharedBinding)
 {
     const SoundOutputPtr previous{g_sound};
@@ -194,18 +244,58 @@ TEST_F(TestSoundSession, retainsAndRestoresTheSharedBinding)
 TEST_F(TestSoundSession, nestedControllerUsesTheInstalledOutputWithoutTakingItsLifecycle)
 {
     EXPECT_CALL(*m_output, play(FieldsAre(1.0, 2.0, 3.0))).WillOnce(Return(true));
-    EXPECT_CALL(*m_output, update());
+    EXPECT_CALL(*m_output, update()).Times(2);
+    EXPECT_CALL(*m_output, ready()).WillOnce(Return(true));
     EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
     SoundSession session{m_output};
 
     []
     {
-        const SoundOutputPtr nested_output{g_sound};
-        EXPECT_TRUE(nested_output->play({1, 2, 3}));
+        SoundSession nested{g_sound, SoundSession::Ownership::BORROWED};
+        EXPECT_TRUE(g_sound->play({1, 2, 3}));
+        EXPECT_TRUE(nested.finish());
+        EXPECT_TRUE(nested.finish());
     }();
 
     EXPECT_EQ(m_output, g_sound);
     EXPECT_TRUE(session.finish());
+}
+
+TEST_F(TestSoundSession, borrowedCancellationMutesBeforeTheOwnerCloses)
+{
+    InSequence sequence;
+    EXPECT_CALL(*m_output, mute());
+    EXPECT_CALL(*m_output, mute());
+    EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
+    SoundSession owner{m_output};
+    {
+        SoundSession nested{g_sound, SoundSession::Ownership::BORROWED};
+        nested.cancel();
+        EXPECT_FALSE(nested.finish());
+    }
+    EXPECT_EQ(m_output, g_sound);
+    owner.cancel();
+}
+
+TEST_F(TestSoundSession, producerFailureClosesTheOwnedOutputDuringUnwinding)
+{
+    const SoundOutputPtr previous{g_sound};
+    InSequence sequence;
+    EXPECT_CALL(*m_output, mute());
+    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("close failed")));
+
+    try
+    {
+        SoundSession owner{m_output};
+        SoundSession nested{g_sound, SoundSession::Ownership::BORROWED};
+        throw std::logic_error("calculation failed");
+    }
+    catch (const std::logic_error &error)
+    {
+        EXPECT_STREQ("calculation failed", error.what());
+    }
+
+    EXPECT_EQ(previous, g_sound);
 }
 
 TEST_F(TestSoundSession, servicesReadyOutputWithoutPollingInputOrDelaying)
@@ -374,10 +464,11 @@ TEST_F(TestSoundSession, interruptionRequestedDuringDelayPreventsAnotherUpdate)
     EXPECT_FALSE(session.wait_until_ready());
 }
 
-TEST_F(TestSoundSession, abandonedScopeMutesAndRestoresTheBinding)
+TEST_F(TestSoundSession, abandonedOwnerMutesClosesAndRestoresTheBinding)
 {
     const SoundOutputPtr previous{g_sound};
     EXPECT_CALL(*m_output, mute());
+    EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
     {
         SoundSession session{m_output};
     }

@@ -34,10 +34,12 @@
 #include "ui/goodbye.h"
 #include "ui/history.h"
 #include "ui/id_keys.h"
+#include "ui/KeyboardHandler.h"
 #include "ui/main_menu.h"
 #include "ui/main_menu_switch.h"
 #include "ui/mouse.h"
 #include "ui/restore_image.h"
+#include "ui/SoundSession.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
@@ -54,6 +56,8 @@
 #include <cstring>
 #include <ctime>
 #include <filesystem>
+#include <memory>
+#include <optional>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -606,6 +610,7 @@ MainState big_while_loop(MainContext &context)
         else
         {
             // draw an image
+            std::optional<SoundSession> sound;
             if (g_save_time_interval != 0 // autosave and resumable?
                 && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_RESUME))
             {
@@ -672,6 +677,8 @@ MainState big_while_loop(MainContext &context)
                 const int tmp_x_dots = g_logical_screen.x_dots + grout;
                 const int tmp_y_dots = g_logical_screen.y_dots + grout;
                 const int grid_sqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
+                sound.emplace();
+                i = 0;
                 while (count < grid_sqr)
                 {
                     spiral_map(count); // sets px & py
@@ -680,20 +687,15 @@ MainState big_while_loop(MainContext &context)
                     restore_param_history();
                     fiddle_params(gene, count);
                     calc_frac_init();
-                    if (calc_fract() == -1)
+                    i = calc_fract();
+                    if (i == -1)
                     {
-                        goto done;
+                        break;
                     }
                     count ++;
                 }
-done:
                 driver_check_memory();
-                if (count == grid_sqr)
-                {
-                    i = 0;
-                    driver_buzzer(Buzzer::COMPLETE); // finished!!
-                }
-                else
+                if (count != grid_sqr)
                 {
                     g_evolve_info.x_parameter_range = g_evolve_x_parameter_range;
                     g_evolve_info.y_parameter_range = g_evolve_y_parameter_range;
@@ -730,11 +732,25 @@ done:
             // end of evolution loop
             else
             {
+                sound.emplace();
                 i = calc_fract();       // draw the fractal using "C"
-                if (i == 0)
+            }
+
+            if (i == 0)
+            {
+                ScopedKeyboardHandler keyboard_scope{std::make_shared<MainLoopKeyboardHandler>()};
+                if (!sound->finish())
                 {
-                    driver_buzzer(Buzzer::COMPLETE); // finished!!
+                    i = -1;
                 }
+            }
+            else
+            {
+                sound->cancel();
+            }
+            if (i == 0)
+            {
+                driver_buzzer(Buzzer::COMPLETE); // finished!!
             }
 
             stop_save_timer();

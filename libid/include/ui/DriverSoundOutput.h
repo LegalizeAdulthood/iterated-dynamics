@@ -18,6 +18,8 @@ class DriverSoundOutput : public engine::SoundOutput
 public:
     enum class Source
     {
+        // Resolve after image setup, when the first sample is submitted.
+        RENDER,
         OVERLAY,
         STICKY_ORBIT,
         ORBIT,

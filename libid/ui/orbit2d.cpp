@@ -22,7 +22,7 @@ namespace id::ui
 
 int orbit2d_type()
 {
-    SoundSession sound{DriverSoundOutput::Source::ORBIT};
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
     return orbit2d_type(sound);
 }
 

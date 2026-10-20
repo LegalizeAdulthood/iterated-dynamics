@@ -56,7 +56,7 @@ private:
 
 int froth_type()
 {
-    SoundSession sound{DriverSoundOutput::Source::OVERLAY};
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
     return froth_type(sound);
 }
 

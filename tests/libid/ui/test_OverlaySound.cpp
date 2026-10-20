@@ -386,6 +386,34 @@ TEST_P(TestOverlaySoundController, normalCompletionFinishesWithoutMuting)
     EXPECT_FALSE(g_orbit_save_flag);
 }
 
+TEST_P(TestOverlaySoundController, evolutionCellsShareOneOutputUntilTheOwnerFinishes)
+{
+    SoundSession owner{m_output};
+    int completed_cells{};
+    EXPECT_CALL(*m_output, mute()).Times(0);
+    EXPECT_CALL(*m_output, finish())
+        .WillOnce(Invoke(
+            [&completed_cells]
+            {
+                EXPECT_EQ(2, completed_cells);
+                return true;
+            }));
+
+    for (; completed_cells < 2; ++completed_cells)
+    {
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
+        g_resuming = false;
+
+        EXPECT_EQ(0, GetParam() ? froth_type() : standard_fractal());
+
+        EXPECT_EQ(m_output, g_sound);
+        EXPECT_EQ((completed_cells + 1) * 4, std::count(m_events.begin(), m_events.end(), "boundary"));
+    }
+
+    EXPECT_EQ(GetParam() ? 16U : 8U, m_samples.size());
+    EXPECT_TRUE(owner.finish());
+}
+
 TEST_P(TestOverlaySoundController, servicesBackpressureBeforePlottingNextPoint)
 {
     SoundSession sound{m_output};
@@ -500,8 +528,14 @@ TEST_P(TestOverlaySoundController, recordsBoundariesAndSamplesWhenDriverDoesNotS
         SoundOutputPtr output{std::make_shared<DriverSoundOutput>(
             DriverSoundOutput::Source::OVERLAY, [] { return DriverSoundOutput::Clock::time_point{}; },
             [] { return 1234LL; })};
-        SoundSession sound{output};
-        EXPECT_EQ(0, render(sound));
+        SoundSession owner{output};
+        for (int cell = 0; cell < 2; ++cell)
+        {
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
+            g_resuming = false;
+            EXPECT_EQ(0, GetParam() ? froth_type() : standard_fractal());
+        }
+        EXPECT_TRUE(owner.finish());
     }
 
     std::ifstream file{m_directory / "sound/sound001.txt"};
@@ -519,7 +553,7 @@ TEST_P(TestOverlaySoundController, recordsBoundariesAndSamplesWhenDriverDoesNotS
             recorded_tones.push_back(std::stoi(line));
         }
     }
-    EXPECT_GT(boundaries, 0);
+    EXPECT_EQ(8, boundaries);
     EXPECT_FALSE(tones.empty());
     EXPECT_EQ(tones, recorded_tones);
 }

@@ -66,9 +66,7 @@ void wait_for_show_dot_delay()
 
 int standard_fractal()
 {
-    const DriverSoundOutput::Source source{g_std_calc_mode == CalcMode::ORBIT ? DriverSoundOutput::Source::STICKY_ORBIT
-                                                                              : DriverSoundOutput::Source::OVERLAY};
-    SoundSession sound{source};
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
     return standard_fractal(sound);
 }
 
