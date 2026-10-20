@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "engine/StandardPass.h"
 
 #include "engine/UserData.h"
 
 #include <fmt/format.h>
+
+#include <stdexcept>
 
 namespace id::engine
 {
@@ -119,6 +122,96 @@ StandardPassStatus StandardPass::status() const
     }
     status.detail += fmt::format("at row {:d} col {:d}", g_current_row, g_col);
     return status;
+}
+
+bool StandardPass::select_pixel()
+{
+    switch (m_state.index())
+    {
+    case NO_PASS:
+        return false;
+
+    case ONE_PASS:
+        return std::get<OnePass>(m_state).select_pixel();
+
+    case TWO_PASS:
+        return std::get<TwoPass>(m_state).select_pixel();
+
+    case BOUNDARY_TRACE:
+        return std::get<BoundaryTrace>(m_state).select_pixel();
+
+    case SOLID_GUESS:
+        return std::get<SolidGuess>(m_state).select_pixel();
+
+    case DIFFUSION:
+        return std::get<Diffusion>(m_state).select_pixel();
+
+    case TESSERAL:
+        return std::get<Tesseral>(m_state).select_pixel();
+
+    default:
+        throw std::logic_error{"The active standard pass does not select pixels"};
+    }
+}
+
+math::Point2i StandardPass::selected_pixel() const
+{
+    switch (m_state.index())
+    {
+    case ONE_PASS:
+        return std::get<OnePass>(m_state).selected_pixel();
+
+    case TWO_PASS:
+        return std::get<TwoPass>(m_state).selected_pixel();
+
+    case BOUNDARY_TRACE:
+        return std::get<BoundaryTrace>(m_state).selected_pixel();
+
+    case SOLID_GUESS:
+        return std::get<SolidGuess>(m_state).selected_pixel();
+
+    case DIFFUSION:
+        return std::get<Diffusion>(m_state).selected_pixel();
+
+    case TESSERAL:
+        return std::get<Tesseral>(m_state).selected_pixel();
+
+    default:
+        throw std::logic_error{"The active standard pass has no selected pixel"};
+    }
+}
+
+void StandardPass::complete_pixel(const int color)
+{
+    switch (m_state.index())
+    {
+    case ONE_PASS:
+        std::get<OnePass>(m_state).complete_pixel(color);
+        break;
+
+    case TWO_PASS:
+        std::get<TwoPass>(m_state).complete_pixel(color);
+        break;
+
+    case BOUNDARY_TRACE:
+        std::get<BoundaryTrace>(m_state).complete_pixel(color);
+        break;
+
+    case SOLID_GUESS:
+        std::get<SolidGuess>(m_state).complete_pixel(color);
+        break;
+
+    case DIFFUSION:
+        std::get<Diffusion>(m_state).complete_pixel(color);
+        break;
+
+    case TESSERAL:
+        std::get<Tesseral>(m_state).complete_pixel(color);
+        break;
+
+    default:
+        throw std::logic_error{"The active standard pass has no pixel to complete"};
+    }
 }
 
 bool StandardPass::iterate()

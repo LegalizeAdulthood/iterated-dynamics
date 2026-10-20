@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -10,6 +11,7 @@
 #include "engine/SolidGuess.h"
 #include "engine/StickyOrbits.h"
 #include "engine/tesseral.h"
+#include "math/Point.h"
 
 #include <string>
 #include <variant>
@@ -37,6 +39,10 @@ public:
     StandardPass &operator=(StandardPass &&) = delete;
 
     CalcMode calc_mode() const;
+    // Pixel passes only: false ends a work chunk or marks completion.
+    bool select_pixel();
+    math::Point2i selected_pixel() const;
+    void complete_pixel(int color);
     bool iterate();
     void reset();
     void select(CalcMode calc_mode);

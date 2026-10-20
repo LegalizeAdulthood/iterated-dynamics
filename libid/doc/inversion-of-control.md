@@ -161,6 +161,11 @@ The current code is already part-way through this plan:
   polling through the handler stack.
 - `StandardFractal::run_current_work_item_mode()` is already a thin
   explicit `CalcMode` dispatch.
+- `StandardPass` routes pixel selection, selected coordinates, and color
+  completion through its existing variant without calculation dispatch.
+  Synchronous and sticky orbit work retain their incremental paths.  The
+  old batched pixel entry points remain until slice 26.8 connects the
+  common `StandardFractal` pixel boundary.
 - Tesseral is a concrete `StandardPass` alternative.  `Tesseral` has
   `iterate()`, `done()`, and `suspend()`, and owns its box stack.
   Initial edge setup, later edge probes, and box filling run through
@@ -843,24 +848,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 26.7. StandardPass Pixel Protocol Routing
-
-Source: `StandardPass` and its concrete pass alternatives.
-
-Work:
-
-- Route selection, selected coordinates, and color completion to the
-  active pixel-traversal implementation through the existing variant.
-- Keep calculation dispatch out of these new routing operations.
-- Keep synchronous and sticky orbit work on their existing incremental
-  paths; do not invent per-pixel requests for orbit algorithms that do
-  not call the standard pixel calculator.
-- Retain the old batched entry point until slice 26.8.  Routing alone
-  does not complete inversion of control.
-
-Validation: focused routing and retained-selection tests for all pixel
-passes; reuse existing images.  No manual test.
 
 ### 26.8. StandardFractal Pixel Boundary
 
