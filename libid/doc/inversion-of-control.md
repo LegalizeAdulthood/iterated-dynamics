@@ -207,6 +207,10 @@ The current code is already part-way through this plan:
   render-operation owner finishes it once across evolution cells and
   stereo views.  Engine teardown no longer closes sound.  Pending points
   retain calculation state without changing ready-output polling cadence.
+- Legacy speaker/file routines are gone.  Only `ui/DriverSoundOutput.cpp`
+  calls continuous-tone driver methods.  Orbit cleanup mutes the bound
+  output port without closing it; sound parameters and completion-buzzer
+  settings retain their existing behavior.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -641,13 +645,12 @@ The remaining UI-concept leaks outside `libid/ui` are:
   fully into the UI controller.
 - `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
   state.
-- `libid/engine/sound.cpp`: retains unused legacy speaker/file producers.
-  All producers now use the output port; legacy cleanup removes these
-  remaining engine-owned sound paths.
 - `libid/engine/spindac.cpp`: includes palette rotation delay via
   `driver_delay()`.
-- `libid/engine/wait_until.cpp`: retains legacy delay helpers for unused
-  sound code; cleanup follows removal of the unused producers.
+- `libid/engine/wait_until.cpp`: retains unused orbit-delay helpers and a
+  legacy reset from image setup.  `ui/stop_msg.cpp` still uses its
+  millisecond sleep helper; Wait-Until Cleanup removes that engine/UI
+  timing dependency.
 - `libid/fractals/Cellular.cpp`: starts, updates, and ends the thinking
   screen from generation, error, and suspend paths.
 - `libid/fractals/lsystem.cpp`: recursive sizing owns the thinking screen
@@ -745,38 +748,6 @@ If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
-
-### 15. Remove Legacy Sound Control Paths
-
-Source: output routines in `engine/sound.cpp` and any temporary
-production migration bridges.
-
-Work:
-
-- Remove unused `write_sound()`, `sound_open()`, `sound_time_write()`,
-  `close_sound()` after port migration.  The input-pending callback and
-  its UI installation were removed with atomic GIF restoration.
-- Remove legacy sound waits, not the driver-backed output
-  implementation or its optional recording.
-  Keep parameter compatibility and completion-buzzer settings in scope.
-- Remove temporary bridge declarations and TODO markers from the sound
-  output paths.  Remaining GIF UI-ownership bridges are handled by Image
-  Loading UI Decisions, without making file I/O incremental again.
-  Do not add a global forwarding API around `SoundOutput`.
-- Recheck every migrated producer and failure path for direct driver
-  sound calls, input polling, and indirect playback waits.
-
-Done when:
-
-- Calculation uses the port; the concrete implementation owns optional
-  recording and driver output; UI owns coordination and input.
-  `OSF_MIDI` still works.
-- No calculation sound path depends on `engine/wait_until.h` or a
-  multimedia library selected speculatively for this refactor.
-
-Validation: retain port/adapter contract coverage and run the full
-`rt-default` workflow.  Rendering and
-legacy file output must remain valid with unsupported driver sound.
 
 ### 16. Palette Spin Delay Boundary
 

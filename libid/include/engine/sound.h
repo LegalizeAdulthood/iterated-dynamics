@@ -33,9 +33,5 @@ extern int g_scale_map[12];  // array for mapping notes to a (user defined) scal
 extern int g_sound_flag;     // sound control flags
 
 bool sound_buzzer_enabled();
-bool sound_open();
-void write_sound(int tone);
-void sound_time_write();
-void close_sound();
 
 } // namespace id::engine

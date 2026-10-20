@@ -2,25 +2,6 @@
 //
 #include "engine/sound.h"
 
-#include "engine/OrbitPlot.h"
-#include "engine/wait_until.h"
-#include "fractals/lorenz.h"
-#include "io/check_write_file.h"
-#include "misc/Driver.h"
-#include "ui/stop_msg.h"
-
-#include <fmt/format.h>
-
-#include <cstdio>
-#include <ctime>
-#include <stdexcept>
-#include <string>
-
-using namespace id::fractals;
-using namespace id::io;
-using namespace id::misc;
-using namespace id::ui;
-
 namespace id::engine
 {
 
@@ -36,67 +17,9 @@ int g_polyphony{};
 int g_scale_map[12]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 int g_sound_flag{};
 
-static std::FILE *s_snd_fp{};
-
 bool sound_buzzer_enabled()
 {
     return (g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_BEEP;
-}
-
-// open sound file
-bool sound_open()
-{
-    std::string sound_name{"sound001.txt"};
-    if ((g_orbit_save_flags & OSF_MIDI) != 0 && s_snd_fp == nullptr)
-    {
-        const std::string path{get_checked_save_path(WriteFile::SOUND, sound_name).string()};
-        if (path.empty())
-        {
-            throw std::logic_error{"Sound output path is empty"};
-        }
-        s_snd_fp = std::fopen(path.c_str(), "w");
-        if (s_snd_fp == nullptr)
-        {
-            stop_msg(fmt::format("Can't open {:s} for writing.", sound_name));
-        }
-    }
-    return s_snd_fp != nullptr;
-}
-
-/* This routine plays a tone in the speaker and optionally writes a file
-   if the orbitsave variable is turned on */
-void write_sound(const int tone)
-{
-    if ((g_orbit_save_flags & OSF_MIDI) != 0)
-    {
-        // cppcheck-suppress leakNoVarFunctionCall
-        if (sound_open())
-        {
-            fmt::print(s_snd_fp, "{:d}\n", tone);
-        }
-    }
-    if (driver_sound_on(tone))
-    {
-        wait_until(g_orbit_delay);
-    }
-}
-
-void sound_time_write()
-{
-    // cppcheck-suppress leakNoVarFunctionCall
-    if (sound_open())
-    {
-        fmt::print(s_snd_fp, "time={}\n", std::clock() * 1000 / CLOCKS_PER_SEC);
-    }
-}
-
-void close_sound()
-{
-    if (s_snd_fp)
-    {
-        std::fclose(s_snd_fp);
-    }
-    s_snd_fp = nullptr;
 }
 
 } // namespace id::engine

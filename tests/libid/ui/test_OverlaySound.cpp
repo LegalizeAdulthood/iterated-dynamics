@@ -25,6 +25,7 @@
 #include <ui/KeyboardHandler.h>
 #include <ui/SoundSession.h>
 #include <ui/standard_fractal.h>
+#include <ui/standard_orbit_plot.h>
 #include <ui/video.h>
 
 #include <gmock/gmock.h>
@@ -231,6 +232,24 @@ TEST_F(TestOverlaySound, acceptsVisibleSampleBeforePlotAndDoesNotResubmitComplet
     EXPECT_EQ(1.0, m_samples[0].y);
     EXPECT_EQ(0.0, m_samples[0].z);
     plot.scrub();
+}
+
+TEST_F(TestOverlaySound, scrubbingDisplayMutesTheBoundOutputBeforeRestoringPixels)
+{
+    OrbitPlot &plot{orbit_plot()};
+    plot.reset(1.0, 1.0);
+    ASSERT_TRUE(plot.iterate());
+    ASSERT_TRUE(g_orbit_save_flag);
+    EXPECT_CALL(m_driver, mute()).Times(0);
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    EXPECT_CALL(*m_output, finish()).Times(0);
+    EXPECT_CALL(*m_output, mute()).WillOnce(Invoke([this] { m_events.emplace_back("mute"); }));
+
+    scrub_orbit_display();
+
+    EXPECT_FALSE(g_orbit_save_flag);
+    EXPECT_THAT(m_events, ElementsAre("sample", "plot", "mute", "plot"));
 }
 
 TEST_F(TestOverlaySound, clipsPointsBeforeSubmittingSound)
