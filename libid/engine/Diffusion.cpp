@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "engine/Diffusion.h"
 
@@ -10,6 +11,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <stdexcept>
 
 namespace id::engine
 {
@@ -83,7 +85,7 @@ unsigned long Diffusion::limit() const
     return m_limit;
 }
 
-int Diffusion::scan()
+bool Diffusion::select_pixel()
 {
     g_passes = Passes::DIFFUSION;
     if (!m_initialized)
@@ -91,14 +93,91 @@ int Diffusion::scan()
         initialize();
     }
 
-    for (int processed = 0; processed < DIFFUSION_COUNTERS_PER_CHUNK && !done(); ++processed)
+    if (done())
     {
-        if (!process_counter())
+        return false;
+    }
+    if (!m_pixel_selected)
+    {
+        if (m_counters_processed == DIFFUSION_COUNTERS_PER_CHUNK)
         {
-            return -1;
+            m_counters_processed = 0;
+            return false;
+        }
+        if (m_tile_x == 0 && m_tile_y == 0)
+        {
+            initialize_counter();
+        }
+        m_selected_pixel = {
+            g_i_start_pt.x + m_orig_col + m_tile_x * m_size, g_i_start_pt.y + m_orig_row + m_tile_y * m_size};
+        m_pixel_selected = true;
+    }
+    g_col = m_selected_pixel.x;
+    g_row = m_selected_pixel.y;
+    g_reset_periodicity = true;
+    return true;
+}
+
+math::Point2i Diffusion::selected_pixel() const
+{
+    if (!m_pixel_selected)
+    {
+        throw std::logic_error{"No selected diffusion pixel"};
+    }
+    return m_selected_pixel;
+}
+
+void Diffusion::complete_pixel(const int color)
+{
+    if (!m_pixel_selected)
+    {
+        throw std::logic_error{"No selected diffusion pixel to complete"};
+    }
+    g_col = m_selected_pixel.x;
+    g_row = m_selected_pixel.y;
+    g_color = color;
+    g_reset_periodicity = false;
+    if (m_fill_size == 0)
+    {
+        g_plot(g_col, g_row, color);
+    }
+    else if (m_tile_x == m_nx || m_tile_y == m_ny)
+    {
+        plot_block_lim(g_col, g_row, m_fill_size, color);
+    }
+    else
+    {
+        plot_block(g_col, g_row, m_fill_size, color);
+    }
+    m_pixel_selected = false;
+
+    if (++m_tile_y == m_ny + (m_orig_row < m_rem_y ? 1 : 0))
+    {
+        m_tile_y = 0;
+        if (++m_tile_x == m_nx + (m_orig_col < m_rem_x ? 1 : 0))
+        {
+            m_tile_x = 0;
+            ++m_counter;
+            ++m_counters_processed;
+            update_phase();
         }
     }
+}
 
+// TODO: removed later
+// Slice 26.8 moves calculation to the common StandardFractal boundary.
+int Diffusion::scan()
+{
+    m_counters_processed = 0;
+    while (select_pixel())
+    {
+        if (calc_type() == -1)
+        {
+            consume_standard_traversal_yield();
+            return -1;
+        }
+        complete_pixel(g_color);
+    }
     return 0;
 }
 
@@ -112,21 +191,6 @@ void Diffusion::suspend()
         static_cast<int>(m_counter >> 16),    // high,
         static_cast<int>(m_counter & 0xffff), // low order words
         g_work_symmetry);
-}
-
-bool Diffusion::calculate_current_pixel()
-{
-    g_reset_periodicity = true;
-    if (calc_type() == -1)
-    {
-        if (consume_standard_traversal_yield())
-        {
-            return false;
-        }
-        return false;
-    }
-    g_reset_periodicity = false;
-    return true;
 }
 
 bool Diffusion::done() const
@@ -210,224 +274,14 @@ void Diffusion::count_to_int(const unsigned long counter, int &x, int &y, const 
     y >>= dif_offset;
 }
 
-bool Diffusion::process_counter()
-{
-    update_phase();
-    if (done())
-    {
-        return true;
-    }
-
-    bool completed{};
-    if (m_phase == Phase::SECOND_HALF)
-    {
-        completed = process_point_counter();
-    }
-    else if (g_fill_color == 0)
-    {
-        completed = process_dither_counter();
-    }
-    else
-    {
-        completed = process_fill_counter();
-    }
-    if (!completed)
-    {
-        return false;
-    }
-
-    ++m_counter;
-    update_phase();
-    return true;
-}
-
-bool Diffusion::process_dither_counter()
+void Diffusion::initialize_counter()
 {
     count_to_int(m_counter, m_orig_col, m_orig_row, m_dif_offset);
-
-    m_tile_x = 0;
-    g_col = g_i_start_pt.x + m_orig_col; // get the right tiles
-    do
+    m_fill_size = 0;
+    if (m_phase == Phase::FIRST_HALF && g_fill_color != 0)
     {
-        m_tile_y = 0;
-        g_row = g_i_start_pt.y + m_orig_row;
-        do
-        {
-            if (!calculate_current_pixel())
-            {
-                return false;
-            }
-            g_plot(g_col, g_row, g_color);
-            ++m_tile_y;
-            g_row += m_size; // next tile
-        } while (m_tile_y < m_ny);
-        // in the last y tile we may not need to plot the point
-        if (m_orig_row < m_rem_y)
-        {
-            if (!calculate_current_pixel())
-            {
-                return false;
-            }
-            g_plot(g_col, g_row, g_color);
-        }
-        ++m_tile_x;
-        g_col += m_size;
-    } while (m_tile_x < m_nx);
-    // in the last x tiles we may not need to plot the point
-    if (m_orig_col < m_rem_x)
-    {
-        g_row = g_i_start_pt.y + m_orig_row;
-        m_tile_y = 0;
-        do
-        {
-            if (!calculate_current_pixel())
-            {
-                return false;
-            }
-            g_plot(g_col, g_row, g_color);
-            ++m_tile_y;
-            g_row += m_size; // next tile
-        } while (m_tile_y < m_ny);
-        if (m_orig_row < m_rem_y)
-        {
-            if (!calculate_current_pixel())
-            {
-                return false;
-            }
-            g_plot(g_col, g_row, g_color);
-        }
+        m_fill_size = 1 << (static_cast<int>(m_bits - static_cast<int>(std::log(m_counter + 0.5) / LOG2) - 1) / 2);
     }
-    return true;
-}
-
-bool Diffusion::process_fill_counter()
-{
-    // size of the block being filled
-    const int sq_size = 1 << (static_cast<int>(m_bits - static_cast<int>(std::log(m_counter + 0.5) / LOG2) - 1) / 2);
-
-    count_to_int(m_counter, m_orig_col, m_orig_row, m_dif_offset);
-
-    m_tile_x = 0;
-    do
-    {
-        m_tile_y = 0;
-        do
-        {
-            g_col = g_i_start_pt.x + m_orig_col + m_tile_x * m_size; // get the right tiles
-            g_row = g_i_start_pt.y + m_orig_row + m_tile_y * m_size;
-
-            if (!calculate_current_pixel())
-            {
-                return false;
-            }
-            plot_block(g_col, g_row, sq_size, g_color);
-            ++m_tile_y;
-        } while (m_tile_y < m_ny);
-        // in the last tile we may not need to plot the point
-        if (m_orig_row < m_rem_y)
-        {
-            g_row = g_i_start_pt.y + m_orig_row + m_ny * m_size;
-
-            if (!calculate_current_pixel())
-            {
-                return false;
-            }
-            plot_block_lim(g_col, g_row, sq_size, g_color);
-        }
-        ++m_tile_x;
-    } while (m_tile_x < m_nx);
-    // in the last tile we may not need to plot the point
-    if (m_orig_col < m_rem_x)
-    {
-        g_col = g_i_start_pt.x + m_orig_col + m_nx * m_size;
-        m_tile_y = 0;
-        do
-        {
-            g_row = g_i_start_pt.y + m_orig_row + m_tile_y * m_size; // get the right tiles
-
-            if (!calculate_current_pixel())
-            {
-                return false;
-            }
-            plot_block_lim(g_col, g_row, sq_size, g_color);
-            ++m_tile_y;
-        } while (m_tile_y < m_ny);
-        // in the last tile we may nnt need to plot the point
-        if (m_orig_row < m_rem_y)
-        {
-            g_row = g_i_start_pt.y + m_orig_row + m_ny * m_size;
-
-            if (!calculate_current_pixel())
-            {
-                return false;
-            }
-            plot_block_lim(g_col, g_row, sq_size, g_color);
-        }
-    }
-    return true;
-}
-
-bool Diffusion::process_point_counter()
-{
-    count_to_int(m_counter, m_orig_col, m_orig_row, m_dif_offset);
-
-    m_tile_x = 0;
-    do
-    {
-        m_tile_y = 0;
-        do
-        {
-            g_col = g_i_start_pt.x + m_orig_col + m_tile_x * m_size; // get the right tiles
-            g_row = g_i_start_pt.y + m_orig_row + m_tile_y * m_size;
-
-            if (!calculate_current_pixel())
-            {
-                return false;
-            }
-            g_plot(g_col, g_row, g_color);
-            ++m_tile_y;
-        } while (m_tile_y < m_ny);
-        // in the last tile we may not need to plot the point
-        if (m_orig_row < m_rem_y)
-        {
-            g_row = g_i_start_pt.y + m_orig_row + m_ny * m_size;
-
-            if (!calculate_current_pixel())
-            {
-                return false;
-            }
-            g_plot(g_col, g_row, g_color);
-        }
-        ++m_tile_x;
-    } while (m_tile_x < m_nx);
-    // in the last tile we may not need to plot the point
-    if (m_orig_col < m_rem_x)
-    {
-        g_col = g_i_start_pt.x + m_orig_col + m_nx * m_size;
-        m_tile_y = 0;
-        do
-        {
-            g_row = g_i_start_pt.y + m_orig_row + m_tile_y * m_size; // get the right tiles
-
-            if (!calculate_current_pixel())
-            {
-                return false;
-            }
-            g_plot(g_col, g_row, g_color);
-            ++m_tile_y;
-        } while (m_tile_y < m_ny);
-        if (m_orig_row < m_rem_y)
-        {
-            g_row = g_i_start_pt.y + m_orig_row + m_ny * m_size;
-
-            if (!calculate_current_pixel())
-            {
-                return false;
-            }
-            g_plot(g_col, g_row, g_color);
-        }
-    }
-    return true;
 }
 
 void Diffusion::update_phase()

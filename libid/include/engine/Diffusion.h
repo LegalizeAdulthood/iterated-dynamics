@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
+
+#include "math/Point.h"
 
 #include <config/port.h>
 
@@ -21,8 +24,15 @@ public:
 
     unsigned int bits() const;
     unsigned long counter() const;
+    // False ends this work chunk; done() distinguishes completion.
+    bool select_pixel();
+    math::Point2i selected_pixel() const;
+    void complete_pixel(int color);
+    bool done() const;
     bool iterate();
     unsigned long limit() const;
+    // TODO: removed later
+    // Slice 26.8 moves calculation to the common StandardFractal boundary.
     int scan();
     void suspend();
 
@@ -36,13 +46,8 @@ private:
 
     static void count_to_int(unsigned long counter, int &x, int &y, int dif_offset);
 
-    bool calculate_current_pixel();
-    bool done() const;
     void initialize();
-    bool process_counter();
-    bool process_dither_counter();
-    bool process_fill_counter();
-    bool process_point_counter();
+    void initialize_counter();
     void plot_block(int x, int y, int size, int color);
     void plot_block_lim(int x, int y, int size, int color);
     void update_phase();
@@ -62,6 +67,10 @@ private:
     int m_size{};
     int m_tile_x{};
     int m_tile_y{};
+    int m_fill_size{};
+    int m_counters_processed{};
+    math::Point2i m_selected_pixel{};
+    bool m_pixel_selected{};
     bool m_initialized{};
 };
 

@@ -188,7 +188,11 @@ The current code is already part-way through this plan:
   modal `stop_msg()` from pass initialization.
 - `Diffusion` owns its counter, tile traversal, and fill state.  Its
   explicit phases advance in bounded counter chunks and suspend through
-  `StandardPass`.
+  `StandardPass`.  Selection retains the active tile coordinate until
+  color completion; completion plots the point or inferred block before
+  advancing the tile and counter.  The temporary `scan()` bridge keeps
+  the existing 512-counter chunks until slice 26.8.  Saved resume work
+  still restarts the retained counter's tile group.
 - `SolidGuess` owns first-pass row traversal, remaining pass traversal,
   `guess_row()` block state, and row repaint state.  Its explicit phases
   yield at row boundaries without polling keyboard input.  Seed rows and
@@ -835,22 +839,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 26.5. Diffusion Pixel Selection And Completion
-
-Source: `Diffusion::calculate_current_pixel()`, counter phases, and tile
-continuation.
-
-Work:
-
-- Separate selected coordinates from calculation and color completion.
-  Do not advance the diffusion counter or tile until completion.
-- Keep inferred block coloring and tile traversal in `Diffusion`.
-- Retain a marked temporary bridge through slice 26.8, preserving the
-  existing counter-chunk cadence.
-
-Validation: focused counter/tile ordering, completion, and suspension
-tests; reuse diffusion images.  No manual test.
 
 ### 26.6. Tesseral Pixel Selection And Completion
 
