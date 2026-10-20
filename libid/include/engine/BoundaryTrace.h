@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
+
+#include "math/Point.h"
 
 #include <config/port.h>
 
@@ -12,6 +15,13 @@ namespace id::engine
 class BoundaryTrace
 {
 public:
+    // False ends this work chunk; done() distinguishes completion.
+    bool select_pixel();
+    math::Point2i selected_pixel() const;
+    void complete_pixel(int color);
+    bool done() const;
+    // TODO: removed later
+    // Slice 26.8 moves calculation to the common StandardFractal boundary.
     bool iterate();
     void suspend();
 
@@ -39,7 +49,7 @@ private:
     void begin_fill_trace();
     void begin_line_fill();
     void begin_outline_trace(int cur_row, int cur_col, int trail_color);
-    bool calculate_current_pixel();
+    bool load_pixel_color();
     void fill_line();
     bool fill_line_left_step();
     bool fill_line_right_step();
@@ -67,6 +77,9 @@ private:
     int m_seed_trail_color{};
     int m_pending_row{};
     int m_pending_col{};
+    int m_pixel_color{};
+    int m_scan_steps{};
+    int m_outline_steps{};
     int m_fill_left{};
     int m_fill_right{};
     int m_fill_match_row{};
@@ -78,7 +91,8 @@ private:
     int m_last_fill_color_used{-1};
     int m_max_put_line_length{};
     unsigned int m_matches_found{};
-    bool m_calculation_pending{};
+    bool m_pixel_selected{};
+    bool m_color_ready{};
     bool m_continue_loop{};
     bool m_done{};
     bool m_fill_started{};

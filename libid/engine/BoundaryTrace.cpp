@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "engine/BoundaryTrace.h"
 
@@ -12,6 +13,7 @@
 #include "ui/video.h"
 
 #include <cstring>
+#include <stdexcept>
 
 using namespace id::ui;
 using namespace id::fractals;
@@ -25,10 +27,16 @@ constexpr int BOUNDARY_TRACE_FILL_CHUNK{512};
 constexpr int BOUNDARY_TRACE_OUTLINE_CHUNK{512};
 constexpr int BOUNDARY_TRACE_SCAN_CHUNK{512};
 
-bool BoundaryTrace::iterate()
+bool BoundaryTrace::select_pixel()
 {
     if (m_done)
     {
+        return false;
+    }
+    if (m_pixel_selected)
+    {
+        g_row = m_pending_row;
+        g_col = m_pending_col;
         return true;
     }
     if (!m_initialized)
@@ -37,21 +45,73 @@ bool BoundaryTrace::iterate()
     }
     if (m_done)
     {
-        return true;
+        return false;
     }
 
-    for (int processed = 0; processed < BOUNDARY_TRACE_SCAN_CHUNK && !m_done; ++processed)
+    for (; m_scan_steps < BOUNDARY_TRACE_SCAN_CHUNK && !m_done; ++m_scan_steps)
     {
         if (!process_current_pixel())
         {
+            if (m_pixel_selected)
+            {
+                return true;
+            }
+            m_scan_steps = 0;
             return false;
         }
         advance_scan_cursor();
         if (StandardFractal *standard_fractal = active_standard_fractal();
             standard_fractal != nullptr && standard_fractal->consume_traversal_yield())
         {
+            m_scan_steps = 0;
             return false;
         }
+    }
+    m_scan_steps = 0;
+    return false;
+}
+
+math::Point2i BoundaryTrace::selected_pixel() const
+{
+    if (!m_pixel_selected)
+    {
+        throw std::logic_error{"No selected boundary-trace pixel"};
+    }
+    return {m_pending_col, m_pending_row};
+}
+
+void BoundaryTrace::complete_pixel(const int color)
+{
+    if (!m_pixel_selected)
+    {
+        throw std::logic_error{"No selected boundary-trace pixel to complete"};
+    }
+    g_col = m_pending_col;
+    g_row = m_pending_row;
+    g_color = color;
+    m_pixel_color = color;
+    m_color_ready = true;
+    m_pixel_selected = false;
+}
+
+bool BoundaryTrace::done() const
+{
+    return m_done;
+}
+
+// TODO: removed later
+// Slice 26.8 moves calculation to the common StandardFractal boundary.
+bool BoundaryTrace::iterate()
+{
+    while (select_pixel())
+    {
+        if (calc_type() == -1)
+        {
+            m_scan_steps = 0;
+            m_outline_steps = 0;
+            return stop_for_calculation_return();
+        }
+        complete_pixel(g_color);
     }
     return m_done;
 }
@@ -108,6 +168,7 @@ void BoundaryTrace::begin_line_fill()
 
 void BoundaryTrace::begin_outline_trace(const int cur_row, const int cur_col, const int trail_color)
 {
+    m_outline_steps = 0;
     m_seed_row = cur_row;
     m_seed_col = cur_col;
     m_trail_row = cur_row;
@@ -121,14 +182,18 @@ void BoundaryTrace::begin_outline_trace(const int cur_row, const int cur_col, co
     m_pixel_phase = PixelPhase::TRACE_OUTLINE;
 }
 
-bool BoundaryTrace::calculate_current_pixel()
+bool BoundaryTrace::load_pixel_color()
 {
-    if (calc_type() != -1) // g_color, g_row, g_col are global
+    if (m_color_ready)
     {
-        m_calculation_pending = false;
+        g_color = m_pixel_color;
+        m_color_ready = false;
         return true;
     }
-    return stop_for_calculation_return();
+    m_pending_row = g_row;
+    m_pending_col = g_col;
+    m_pixel_selected = true;
+    return false;
 }
 
 void BoundaryTrace::fill_line()
@@ -268,10 +333,9 @@ bool BoundaryTrace::stop_for_calculation_return()
     {
         m_pending_row = g_row;
         m_pending_col = g_col;
-        m_calculation_pending = true;
         return false;
     }
-    m_calculation_pending = false;
+    m_pixel_selected = false;
     save_resume_work();
     return false;
 }
@@ -319,7 +383,7 @@ bool BoundaryTrace::process_current_pixel()
     if (m_pixel_phase == PixelPhase::SCAN)
     {
         record_progress();
-        if (!m_calculation_pending)
+        if (!m_color_ready)
         {
             m_seed_row = m_current_row;
             m_seed_col = m_current_col;
@@ -332,7 +396,7 @@ bool BoundaryTrace::process_current_pixel()
 
         g_row = m_seed_row;
         g_col = m_seed_col;
-        if (!calculate_current_pixel())
+        if (!load_pixel_color())
         {
             return false;
         }
@@ -433,7 +497,7 @@ void BoundaryTrace::step_col_row()
 
 bool BoundaryTrace::trace_outline()
 {
-    for (int processed = 0; processed < BOUNDARY_TRACE_OUTLINE_CHUNK; ++processed)
+    for (; m_outline_steps < BOUNDARY_TRACE_OUTLINE_CHUNK; ++m_outline_steps)
     {
         if (!trace_outline_step())
         {
@@ -441,20 +505,22 @@ bool BoundaryTrace::trace_outline()
         }
         if (!m_continue_loop || (g_col == m_seed_col && g_row == m_seed_row))
         {
+            m_outline_steps = 0;
             return true;
         }
     }
+    m_outline_steps = 0;
     return false;
 }
 
 bool BoundaryTrace::trace_outline_step()
 {
     bool candidate_in_bounds = true;
-    if (m_calculation_pending)
+    if (m_color_ready)
     {
         g_row = m_pending_row;
         g_col = m_pending_col;
-        if (!calculate_current_pixel())
+        if (!load_pixel_color())
         {
             return false;
         }
@@ -467,7 +533,7 @@ bool BoundaryTrace::trace_outline_step()
         if (candidate_in_bounds)
         {
             g_color = get_color(g_col, g_row);
-            if (g_color == BK_COLOR && !calculate_current_pixel())
+            if (g_color == BK_COLOR && !load_pixel_color())
             {
                 return false;
             }

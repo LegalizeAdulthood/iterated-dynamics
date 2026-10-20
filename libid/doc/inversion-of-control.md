@@ -180,8 +180,12 @@ The current code is already part-way through this plan:
   slice 26.8 removes that bridge after the other pass prerequisites.
 - `BoundaryTrace` is a concrete `StandardPass` alternative.  It owns the
   outer scan cursor, outline tracing state, region filling state, and
-  suspend path.  Invalid options still invoke a modal `stop_msg()` from
-  pass initialization.
+  suspend path.  Selection retains scan or outline coordinates until
+  color completion; cached lookups and region fills do not request orbit
+  calculation.  Scan and outline chunk counters persist across requests.
+  Its temporary `iterate()` bridge retains the existing calculation and
+  yield checkpoints until slice 26.8.  Invalid options still invoke a
+  modal `stop_msg()` from pass initialization.
 - `Diffusion` owns its counter, tile traversal, and fill state.  Its
   explicit phases advance in bounded counter chunks and suspend through
   `StandardPass`.
@@ -827,31 +831,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 26.2. Boundary-Trace Pixel Selection And Completion
-
-Source: `BoundaryTrace::calculate_current_pixel()`, outer scanning,
-outline tracing, and hole-filling phases.
-
-Work:
-
-- Expose selection, selected coordinates, and color completion separately
-  from orbit calculation, following `ScanlinePass`.
-- Retain the exact pending scan, trace, or fill continuation until the
-  selected pixel has a completed color.  Cached image lookups and fills
-  remain pass work; they do not become calculation requests.
-- Keep the existing batched calculation entry point temporarily, using
-  these operations without changing its current yield checkpoints.
-  Mark the bridge for removal in slice 26.8.
-
-Done when:
-
-- A caller can select and complete boundary-trace pixels without
-  `BoundaryTrace` invoking calculation or treating a color as a UI signal.
-
-Validation: focused selection/continuation tests for scan, trace, and
-fill paths, including suspension before calculation; reuse boundary-trace
-images and existing autokey interruption coverage.  No manual image test.
 
 ### 26.3. Solid-Guess Seed-Row Pixel Selection
 
