@@ -118,6 +118,17 @@ add_test(NAME AutoKeyTest.lsystem-sizing
 set_tests_properties(AutoKeyTest.lsystem-sizing
     PROPERTIES LABELS "autokey;ui;lsystem" TIMEOUT 70)
 
+id_make_test_home(jiim JIIM_HOME KEYS jiim.key)
+add_test(NAME AutoKeyTest.jiim
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCHECK_JIIM=$<SHELL_PATH:$<TARGET_FILE:check-jiim>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/jiim_test.cmake"
+    WORKING_DIRECTORY "${JIIM_HOME}")
+set_tests_properties(AutoKeyTest.jiim
+    PROPERTIES LABELS "autokey;ui;jiim" TIMEOUT 70)
+
 foreach(passes IN ITEMS 1 2)
     foreach(pixel IN ITEMS optimized general)
         set(name "standard-interrupt-${passes}-${pixel}")

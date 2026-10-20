@@ -34,6 +34,10 @@ add_executable(check-lsystem-sizing check_lsystem_sizing.cpp)
 target_link_libraries(check-lsystem-sizing PRIVATE image-tool libid)
 target_folder(check-lsystem-sizing "Tests/Tools")
 
+add_executable(check-jiim check_jiim.cpp)
+target_link_libraries(check-jiim PRIVATE image-tool libid)
+target_folder(check-jiim "Tests/Tools")
+
 if(WIN32)
     add_executable(dump-dpi dump_dpi.cpp)
     target_link_libraries(dump-dpi "Shcore.lib" "User32.lib")

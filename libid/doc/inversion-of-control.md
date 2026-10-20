@@ -71,9 +71,10 @@ sizing and drawing use explicit frame stacks and advance incrementally.
 Its UI controller owns the thinking screen and interruption in both
 phases; sizing and drawing do not poll input.
 
-JIIM still owns the outer interaction loop, cursor, and UI keyboard and
-mouse scopes in `libid/engine/jiim.cpp`.  Extracting its input helpers into
-`libid/ui/inverse_julia.cpp` has not inverted that control flow.
+JIIM's `InverseJulia` calculation owns orbit state and accepts explicit
+point and plot inputs.  The temporary `InverseJuliaTool` still owns the
+outer interaction loop, cursor, and UI keyboard and mouse scopes in
+`libid/engine/jiim.cpp`; the next JIIM slice moves that owner into UI.
 
 ## Target Shape
 
@@ -232,8 +233,9 @@ The current code is already part-way through this plan:
 
 The fresh reverse-call audit also found these live paths:
 
-- `InverseJulia::iterate()` calls `process_inverse_julia_keyboard()`;
-  `InverseJulia::process()` owns the handler scope, mouse scope, and loop.
+- `InverseJuliaTool::iterate()` calls `process_inverse_julia_keyboard()`;
+  `InverseJuliaTool::process()` owns the handler, mouse scope, and loop.
+  `InverseJulia::iterate()` itself does calculation and plotting only.
 - `calc_fract()` calls UI render controllers directly.
   `NonStandardFractal::iterate()`, `standalone_per_image()`, and
   `cellular_per_image()` also reach UI render loops through dispatch
@@ -725,7 +727,7 @@ Existing coverage does not imply coverage of live interaction:
   return to the image.  Pass-switch scripts select BoundaryTrace and
   solid guessing through `x`, verify saved pass and precision metadata,
   and compare pixels exactly with fresh renders for `perturbation=auto`
-  and `no`.  These scripts do not exercise JIIM, show-dot, or the stereo
+  and `no`.  These scripts do not exercise show-dot or the stereo
   photographer prompt.
   The cellular script delivers its interrupt only while the preparation
   thinking screen is active, saves a non-resumable checkpoint, then
@@ -733,6 +735,10 @@ Existing coverage does not imply coverage of live interaction:
   The L-system script interrupts the sizing thinking screen, returns
   through the outer menu, and starts a completed drawing at a new order.
   It verifies metadata and blank/nonblank output, not rasterized lines.
+  The JIIM script checks picker movement and exact-point selection through
+  saved Julia parameters, then reopens the orbit window around a menu and
+  verifies restored Mandelbrot pixels.  It is the baseline for moving
+  the temporary tool owner into UI, not a native cursor presentation test.
 - Keyboard-handler tests cover dispatch, interruption flags, and key
   requeueing.  Standard controller tests also cover mid-orbit suspension,
   continuation, scanline resume positions, and perturbation/Lyapunov gates.
@@ -822,34 +828,9 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 24. JIIM Calculation And Tool State
-
-Source: `InverseJulia`, `s_cursor`, window state, and coordinate display
-state in `libid/engine/jiim.cpp`.
-
-Work:
-
-- Separate inverse-orbit calculation and queue state from cursor,
-  window-layout, coordinate-message, last-key, and interaction state.
-- Refactor locally first so the calculation increment does not need a
-  `CrossHairCursor`, keyboard context, or mouse subscription.
-- Mark the local tool-state holder as temporary; the next slice moves
-  its ownership and the interaction loop into UI.
-
-Done when:
-
-- One calculation increment can run with explicit calculation inputs and
-  no cursor or key-processing work mixed into it.
-
-Validation: add state tests for inverse-orbit increments and independent
-tool state, including continuation and selected coordinates.  Establish
-the next slice's JIIM keyboard autokey baseline before this local split;
-reuse it when moving the UI loop.  The next slice's native cursor check
-covers presentation; no separate manual test here.
-
 ### 25. JIIM UI Interaction Controller
 
-Source: `InverseJulia::process()`, `iterate()`, `finish()`,
+Source: `InverseJuliaTool::process()`, `iterate()`, `finish()`,
 `process_inverse_julia_keyboard()`, and `requeue_inverse_julia_key()`.
 UI owner: `InverseJuliaController` in `libid/ui/inverse_julia.cpp`.
 
@@ -857,6 +838,10 @@ Work:
 
 - Move the outer loop, tool-state holder, cursor presentation, coordinate
   messages, handler lifetime, and mouse scope into the UI controller.
+- Keep `InverseJulia`, numerical `InverseJuliaPlot` inputs, queue work,
+  clipping, and orbit point/circle/line plotting in the engine.  Move the
+  temporary `InverseJuliaTool` and its mode preferences, not calculation
+  plotting, into `InverseJuliaController`.
 - Keep `InverseJuliaKeyboardHandler` and its keyboard context in UI.
   The controller applies selected coordinates to calculation state.
 - Let UI poll or wait for input, call bounded engine increments, and
@@ -870,8 +855,9 @@ Done when:
 - No engine method invokes UI key processing, cursor waits, mouse scopes,
   or key requeue helpers.
 
-Validation: use autokey for picker entry, keyboard cursor movement,
-exact-point entry, selection, window toggles, and return to the main loop.
+Validation: reuse `AutoKeyTest.jiim` for picker entry, keyboard cursor
+movement, exact-point entry, selection, window toggles, and return to the
+main loop.
 Verify selected coordinates and tool/UI state, not just the final image.
 Retain controller tests for mouse notifications, handler lifetime, key
 requeueing, and cleanup.  Autokey cannot validate native cursor tracking
@@ -1624,7 +1610,7 @@ mechanism or a source-grep test.
 Calculation code can still reach polling or key-sensitive waiting through
 these direct and indirect paths:
 
-- `libid/engine/jiim.cpp`: `iterate()` calls
+- `libid/engine/jiim.cpp`: `InverseJuliaTool::iterate()` calls
   `process_inverse_julia_keyboard()`, which may wait through the cursor.
   `process()` owns the keyboard handler, mouse scope, and interaction loop;
   `finish()` requeues a key through a UI helper.

@@ -68,6 +68,7 @@ add_executable(test-id
     engine/test_color_utils.cpp
     engine/test_cmdfiles.cpp
     engine/test_get_prec_big_float.cpp
+    engine/test_InverseJulia.cpp
     engine/test_log_map.cpp
     engine/test_PertEngine.cpp
     engine/test_lowerize_parameter.cpp

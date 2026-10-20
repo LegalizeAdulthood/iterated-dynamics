@@ -19,6 +19,59 @@ extern bool g_has_inverse;                  //
 extern math::DComplex g_julia_c;            //
 extern math::DComplex g_save_c;             //
 
+struct InverseJuliaPlot
+{
+    int corner_x;
+    int corner_y;
+    int width;
+    int height;
+    int x_factor;
+    int y_factor;
+    int x_offset;
+    int y_offset;
+    int bottom;
+    bool protect_image;
+    float zoom;
+    double aspect;
+    bool circles;
+    bool lines;
+    int secret_mode;
+};
+
+class InverseJulia
+{
+public:
+    explicit InverseJulia(JIIMType which);
+
+    void reset(math::DComplex point, bool use_miim);
+    // Returns false when no inverse point is available for this increment.
+    bool iterate(const InverseJuliaPlot &plot);
+    bool active() const;
+
+private:
+    bool iterate_jiim(const InverseJuliaPlot &plot);
+    void iterate_orbit(const InverseJuliaPlot &plot);
+
+    JIIMType m_which;
+    math::DComplex m_c{};
+    math::DComplex m_init{};
+    math::DComplex m_old_z{};
+    math::DComplex m_new_z{};
+    int m_count{};
+    double m_r{};
+    int m_x{};
+    int m_y{};
+    long m_iter{1};
+    int m_color{};
+    int m_old_x{-1};
+    int m_old_y{-1};
+    int m_max_hits{1};
+    int m_ran_dir{};
+    int m_ran_cnt{};
+    bool m_use_miim{};
+    bool m_actively_computing{true};
+};
+
 class InverseJuliaKeyboardContext
 {
 public:
