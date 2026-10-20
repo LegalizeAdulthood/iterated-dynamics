@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // tesseral pass algorithm by Chris Taylor
 
@@ -12,6 +13,7 @@
 #include "fractals/fractalp.h"
 #include "ui/video.h"
 
+#include <stdexcept>
 #include <vector>
 
 using namespace id::ui;
@@ -118,30 +120,107 @@ bool Tesseral::done() const
     return m_tp < &m_stack[0];
 }
 
-bool Tesseral::iterate()
+bool Tesseral::select_pixel()
 {
-    if (m_interrupted)
+    if (m_interrupted || done())
     {
         return false;
     }
-    if (done())
+    if (!m_pixel_selected)
     {
-        return true;
+        advance();
     }
+    if (!m_pixel_selected)
+    {
+        m_boxes_processed = 0;
+        return false;
+    }
+    const math::Point2i point{selected_pixel()};
+    g_col = point.x;
+    g_row = point.y;
+    if (!m_edge_probe.started)
+    {
+        g_reset_periodicity = true;
+    }
+    return true;
+}
+
+math::Point2i Tesseral::selected_pixel() const
+{
+    if (!m_pixel_selected)
+    {
+        throw std::logic_error{"No selected tesseral pixel"};
+    }
+    return m_edge_probe.kind == EdgeProbeKind::ROW ? math::Point2i{m_edge_probe.current, m_edge_probe.fixed}
+                                                   : math::Point2i{m_edge_probe.fixed, m_edge_probe.current};
+}
+
+void Tesseral::complete_pixel(const int color)
+{
+    const math::Point2i point{selected_pixel()};
+    g_col = point.x;
+    g_row = point.y;
+    g_color = color;
+    if (!m_edge_probe.started)
+    {
+        g_reset_periodicity = false;
+        m_edge_probe.color = color;
+        m_edge_probe.started = true;
+    }
+    else if (m_edge_probe.color != -1 && color != m_edge_probe.color)
+    {
+        m_edge_probe.color = -1;
+    }
+    ++m_edge_probe.current;
+    ++m_edge_probe.processed;
+    m_pixel_selected = false;
+}
+
+// TODO: removed later
+// Slice 26.8 moves calculation to the common StandardFractal boundary.
+bool Tesseral::iterate()
+{
+    m_boxes_processed = 0;
+    m_edge_probe.processed = 0;
+    while (select_pixel())
+    {
+        const int color{calc_type()};
+        if (!m_edge_probe.started)
+        {
+            g_reset_periodicity = false;
+        }
+        if (color < 0)
+        {
+            if (consume_standard_traversal_yield())
+            {
+                return true;
+            }
+            m_interrupted = true;
+            return false;
+        }
+        complete_pixel(color);
+    }
+    return !m_interrupted;
+}
+
+void Tesseral::advance()
+{
     if (m_init_phase != InitPhase::COMPLETE)
     {
-        return initialize_edges();
+        initialize_edges();
+        return;
     }
 
-    for (int boxes = 0; boxes < TESSERAL_BOX_CHUNK && !done(); ++boxes)
+    while (m_boxes_processed < TESSERAL_BOX_CHUNK && !done())
     {
         next_box();
         if (m_fill.mode != FillMode::NONE)
         {
             if (!fill_box())
             {
-                return true;
+                return;
             }
+            ++m_boxes_processed;
             continue;
         }
 
@@ -149,33 +228,33 @@ bool Tesseral::iterate()
         {
             if (!split_box())
             {
-                return !m_interrupted;
+                return;
             }
+            ++m_boxes_processed;
             continue;
         }
 
         bool split{false};
         if (!split_needed(split))
         {
-            return !m_interrupted;
+            return;
         }
         if (split)
         {
             if (!split_box())
             {
-                return !m_interrupted;
+                return;
             }
         }
         else
         {
             if (!fill_box())
             {
-                return true;
+                return;
             }
         }
+        ++m_boxes_processed;
     }
-
-    return true;
 }
 
 bool Tesseral::probe_active() const
@@ -195,6 +274,7 @@ void Tesseral::start_row_probe(const int x1, const int x2, const int y)
     m_edge_probe.current = x1;
     m_edge_probe.final = x2;
     m_edge_probe.color = 0;
+    m_edge_probe.processed = 0;
     m_edge_probe.started = false;
 }
 
@@ -205,60 +285,23 @@ void Tesseral::start_column_probe(const int x, const int y1, const int y2)
     m_edge_probe.current = y1;
     m_edge_probe.final = y2;
     m_edge_probe.color = 0;
+    m_edge_probe.processed = 0;
     m_edge_probe.started = false;
 }
 
 bool Tesseral::advance_edge_probe()
 {
-    for (int count = 0; probe_active() && count < TESSERAL_EDGE_CHUNK; ++count)
+    if (!probe_active() || (m_edge_probe.started && m_edge_probe.current > m_edge_probe.final))
     {
-        if (m_edge_probe.kind == EdgeProbeKind::ROW)
-        {
-            g_col = m_edge_probe.current;
-            g_row = m_edge_probe.fixed;
-        }
-        else
-        {
-            g_col = m_edge_probe.fixed;
-            g_row = m_edge_probe.current;
-        }
-
-        if (!m_edge_probe.started)
-        {
-            g_reset_periodicity = true;
-        }
-        const int color = calc_type();
-        if (!m_edge_probe.started)
-        {
-            g_reset_periodicity = false;
-        }
-        if (color < 0)
-        {
-            if (consume_standard_traversal_yield())
-            {
-                return false;
-            }
-            m_edge_probe.color = -3;
-            return true;
-        }
-        if (!m_edge_probe.started)
-        {
-            m_edge_probe.color = color;
-            m_edge_probe.started = true;
-        }
-        else if (m_edge_probe.color != -1 && color != m_edge_probe.color)
-        {
-            m_edge_probe.color = -1;
-        }
-
-        ++m_edge_probe.current;
-        if (m_edge_probe.current > m_edge_probe.final)
-        {
-            return true;
-        }
+        return true;
     }
-
-    return !probe_active();
+    if (m_edge_probe.processed == TESSERAL_EDGE_CHUNK)
+    {
+        m_edge_probe.processed = 0;
+        return false;
+    }
+    m_pixel_selected = true;
+    return false;
 }
 
 bool Tesseral::finish_edge_probe(int &color)
@@ -270,11 +313,6 @@ bool Tesseral::finish_edge_probe(int &color)
 
     color = m_edge_probe.color;
     reset_edge_probe();
-    if (color == -3)
-    {
-        m_interrupted = true;
-        return false;
-    }
     return true;
 }
 
@@ -285,7 +323,7 @@ bool Tesseral::initialize_edges()
         int color;
         if (!finish_edge_probe(color))
         {
-            return !m_interrupted;
+            return false;
         }
         switch (m_init_phase)
         {
@@ -605,11 +643,6 @@ bool Tesseral::split_box()
         return false;
     }
     m_split_box_active = false;
-    if (mid_color == -3)
-    {
-        m_interrupted = true;
-        return false;
-    }
 
     Tess *tp2;
     if (m_split_box_vertical)

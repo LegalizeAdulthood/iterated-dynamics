@@ -166,6 +166,10 @@ The current code is already part-way through this plan:
   Initial edge setup, later edge probes, and box filling run through
   bounded, resumable state.  Tesseral suspend records the active box and
   restarts initial edge setup if interruption happens during that phase.
+  Selection retains probe orientation, coordinates, and accumulated color
+  until completion.  The temporary `iterate()` bridge keeps the existing
+  edge, box, and fill chunks until slice 26.8; its return value still
+  reports calculation success, with `done()` reporting completion.
 - The `OnePass` and `TwoPass` paths share `ScanlinePass`; they preserve
   scan position in the concrete pass object and yield standard pixel work
   back to the UI.  Their `suspend()` records resume work at the retained
@@ -839,22 +843,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 26.6. Tesseral Pixel Selection And Completion
-
-Source: `Tesseral::advance_edge_probe()`, edge setup, and box continuation.
-
-Work:
-
-- Separate edge-probe selection from supplying its completed color.
-  Retain probe orientation, coordinate, and accumulated edge color.
-- Complete each probe once before advancing the edge or box stack.
-  Keep constant-color fills and subdivision in `Tesseral`.
-- Retain a marked temporary bridge until slice 26.8.  Preserve bounded
-  edge chunks and the restored tesseral performance.
-
-Validation: focused row/column probe ordering, box continuation, and
-suspension tests; reuse tesseral images.  No manual test.
 
 ### 26.7. StandardPass Pixel Protocol Routing
 

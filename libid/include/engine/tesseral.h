@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
+
+#include "math/Point.h"
 
 #include <array>
 #include <vector>
@@ -14,6 +17,12 @@ public:
     Tesseral();
 
     bool done() const;
+    // False ends this work chunk; done() distinguishes completion.
+    bool select_pixel();
+    math::Point2i selected_pixel() const;
+    void complete_pixel(int color);
+    // TODO: removed later
+    // Slice 26.8 moves calculation to the common StandardFractal boundary.
     bool iterate();
     void suspend();
 
@@ -70,6 +79,7 @@ private:
         int current{};
         int final{};
         int color{};
+        int processed{};
         bool started{};
     };
 
@@ -81,6 +91,7 @@ private:
         std::vector<unsigned char> pixels{};
     };
 
+    void advance();
     bool advance_edge_probe();
     bool fill_box();
     void finish_fill_box();
@@ -97,7 +108,11 @@ private:
     bool split_needed(bool &needed);
 
     bool m_guess_plot{};
+    // TODO: removed later
+    // Slice 26.8 removes the legacy calculation-interruption flag.
     bool m_interrupted{};
+    bool m_pixel_selected{};
+    int m_boxes_processed{};
     bool m_split_box_active{};
     bool m_split_box_vertical{};
     int m_split_box_mid{};
