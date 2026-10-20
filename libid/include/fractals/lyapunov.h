@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -36,6 +37,8 @@ public:
     void suspend();
     bool done() const;
     void iterate();
+
+    engine::StandardFractal &calculation();
 
 private:
     std::unique_ptr<engine::StandardFractal> m_standard_fractal;

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <ui/slideshw.h>
 
@@ -192,6 +193,51 @@ TEST(TestSlideShow, thinkingWaitAcceptsNamedKeyWhenThinkingIsAlreadyActive)
     EXPECT_EQ(ID_KEY_ENTER, slide_show());
 
     thinking_end();
+    stop_slide_show();
+}
+
+TEST(TestSlideShow, rowWaitDeliversKeyOnlyAfterRenderingReachesTheRow)
+{
+    TempDir temp_dir;
+    const fs::path input_path{temp_dir.path() / "row.key"};
+    write_text_file(input_path, "ROWWAIT 2 x\n");
+    MockDriver driver;
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
+    ValueSaver saved_auto_name{g_auto_name, input_path};
+    ValueSaver saved_row{g_current_row, 0};
+    ValueSaver saved_status{g_calc_status, CalcStatus::IN_PROGRESS};
+    stop_slide_show();
+    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
+    EXPECT_CALL(driver, set_keyboard_timeout(_));
+
+    EXPECT_EQ(0, slide_show());
+    g_current_row = 1;
+    EXPECT_EQ(0, slide_show());
+    g_current_row = 2;
+    g_calc_status = CalcStatus::RESUMABLE;
+    EXPECT_EQ(0, slide_show());
+    g_calc_status = CalcStatus::IN_PROGRESS;
+    EXPECT_EQ('x', slide_show());
+
+    stop_slide_show();
+}
+
+TEST(TestSlideShow, rowWaitAcceptsANamedKeyAtTheCurrentRow)
+{
+    TempDir temp_dir;
+    const fs::path input_path{temp_dir.path() / "row.key"};
+    write_text_file(input_path, "ROWWAIT 1 ENTER\n");
+    MockDriver driver;
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
+    ValueSaver saved_auto_name{g_auto_name, input_path};
+    ValueSaver saved_row{g_current_row, 1};
+    ValueSaver saved_status{g_calc_status, CalcStatus::IN_PROGRESS};
+    stop_slide_show();
+    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
+    EXPECT_CALL(driver, set_keyboard_timeout(_));
+
+    EXPECT_EQ(ID_KEY_ENTER, slide_show());
+
     stop_slide_show();
 }
 

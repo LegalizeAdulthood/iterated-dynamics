@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/lyapunov.h"
 
@@ -6,6 +7,7 @@
 #include "fractals/lyapunov.h"
 #include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"
+#include "ui/ShowDotController.h"
 #include "ui/standard_orbit_plot.h"
 
 #include <memory>
@@ -52,11 +54,19 @@ int lyapunov_fractal()
     ScopedKeyboardHandler orbit_toggle_scope{orbit_toggle_handler};
 
     Lyapunov lyapunov;
+    ShowDotController marker;
     lyapunov.resume();
 
     while (!lyapunov.done())
     {
-        lyapunov.iterate();
+        if (marker.enabled())
+        {
+            marker.iterate(lyapunov.calculation());
+        }
+        else
+        {
+            lyapunov.iterate();
+        }
         if (!lyapunov.done() && calc_interrupted())
         {
             lyapunov.suspend();

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // Contains the high level ("engine") code for calculating the
 // fractal images (well, SOMEBODY had to do it!).
@@ -63,7 +64,6 @@
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
 #include "ui/diskvid.h"
-#include "ui/find_special_colors.h"
 #include "ui/lyapunov.h"
 #include "ui/non_standard_fractal.h"
 #include "ui/standard_fractal.h"
@@ -98,40 +98,13 @@ constexpr double DEM_BAILOUT{535.5};
 constexpr double STAR_TRAIL_MAX{std::numeric_limits<float>::max()}; // just a convenient large number
 constexpr double STAR_TRAIL_MIN{-STAR_TRAIL_MAX};
 
-enum class ShowDotAction
-{
-    SAVE = 1,
-    RESTORE = 2
-};
-
-enum class ShowDotDirection
-{
-    JUST_A_POINT = 0,
-    LOWER_RIGHT = 1,
-    UPPER_RIGHT = 2,
-    LOWER_LEFT = 3,
-    UPPER_LEFT = 4
-};
-
-struct ShowDotState
-{
-    ShowDotDirection direction{ShowDotDirection::JUST_A_POINT};
-    int start_x{};
-    int stop_x{};
-    int start_y{};
-    int stop_y{};
-    bool restore_pending{};
-};
-
 static void decomposition();
 void set_symmetry(SymmetryType sym, bool use_list);
 static bool x_sym_split(int x_axis_row, bool x_axis_between);
 static bool y_sym_split(int y_axis_col, bool y_axis_between);
 static void put_true_color_disk(int x, int y, int color);
 long auto_log_map();
-void cleanup_standard_fractal_show_dot();
 void setup_standard_fractal_distance_estimator();
-void setup_standard_fractal_show_dot();
 
 static DComplex s_saved{};            //
 static double s_rq_lim_save{};        //
@@ -140,12 +113,6 @@ static double s_dem_delta{};          //
 static double s_dem_width{};          // distance estimator variables
 static double s_dem_too_big{};        //
 static bool s_dem_mandel{};           //
-static std::vector<Byte> s_save_dots; //
-static Byte *s_fill_buff{};           //
-static int s_save_dots_len{};         //
-static int s_show_dot_color{};        //
-static int s_show_dot_width{};        //
-static ShowDotState s_show_dot_state; //
 
 // next has a skip bit for each maxblock unit;
 //   1st pass sets bit  [1]... off only if block's contents guessed;
@@ -355,221 +322,17 @@ void sym_fill_line(const int row, const int left, const int right, const Byte *s
     }
 }
 
-// The sym_put_line() routine is the symmetry-aware version of put_line().
-// It only works efficiently in the no symmetry or X_AXIS symmetry case,
-// otherwise it just writes the pixels one-by-one.
-static void sym_put_line(const int row, const int left, const int right, const Byte *str)
+// TODO: removed later
+// Slice 28 removes the obsolete show-dot dispatch compatibility wrapper.
+static int calc_type_show_dot()
 {
-    const int length = right-left+1;
-    write_span(row, left, right, str);
-    if (g_plot == g_put_color)
-    {
-        g_keyboard_check_interval -= length >> 4; // seems like a reasonable value
-    }
-    else if (g_plot == sym_plot2)   // X-axis symmetry
-    {
-        if (const int i = g_stop_pt.y - (row - g_start_pt.y);
-            i > g_i_stop_pt.y && i < g_logical_screen.y_dots)
-        {
-            write_span(i, left, right, str);
-        }
-        g_keyboard_check_interval -= length >> 3;
-    }
-    else
-    {
-        for (int i = left; i <= right; i++)
-        {
-            g_plot(i, row, str[i-left]);
-        }
-        g_keyboard_check_interval -= length >> 1;
-    }
-}
-
-static void show_dot_save_restore(
-    int start_x, int stop_x, const int start_y, const int stop_y,
-    const ShowDotDirection direction, const ShowDotAction action)
-{
-    int ct = 0;
-    if (direction != ShowDotDirection::JUST_A_POINT)
-    {
-        if (s_save_dots.empty())
-        {
-            stop_msg("savedots empty");
-            std::exit(0);
-        }
-        if (s_fill_buff == nullptr)
-        {
-            stop_msg("fillbuff NULL");
-            std::exit(0);
-        }
-    }
-    switch (direction)
-    {
-    case ShowDotDirection::LOWER_RIGHT:
-        for (int j = start_y; j <= stop_y; start_x++, j++)
-        {
-            if (action == ShowDotAction::SAVE)
-            {
-                read_span(j, start_x, stop_x, s_save_dots.data() + ct);
-                sym_fill_line(j, start_x, stop_x, s_fill_buff);
-            }
-            else
-            {
-                sym_put_line(j, start_x, stop_x, s_save_dots.data() + ct);
-            }
-            ct += stop_x-start_x+1;
-        }
-        break;
-    case ShowDotDirection::UPPER_RIGHT:
-        for (int j = start_y; j >= stop_y; start_x++, j--)
-        {
-            if (action == ShowDotAction::SAVE)
-            {
-                read_span(j, start_x, stop_x, s_save_dots.data() + ct);
-                sym_fill_line(j, start_x, stop_x, s_fill_buff);
-            }
-            else
-            {
-                sym_put_line(j, start_x, stop_x, s_save_dots.data() + ct);
-            }
-            ct += stop_x-start_x+1;
-        }
-        break;
-    case ShowDotDirection::LOWER_LEFT:
-        for (int j = start_y; j <= stop_y; stop_x--, j++)
-        {
-            if (action == ShowDotAction::SAVE)
-            {
-                read_span(j, start_x, stop_x, s_save_dots.data() + ct);
-                sym_fill_line(j, start_x, stop_x, s_fill_buff);
-            }
-            else
-            {
-                sym_put_line(j, start_x, stop_x, s_save_dots.data() + ct);
-            }
-            ct += stop_x-start_x+1;
-        }
-        break;
-    case ShowDotDirection::UPPER_LEFT:
-        for (int j = start_y; j >= stop_y; stop_x--, j--)
-        {
-            if (action == ShowDotAction::SAVE)
-            {
-                read_span(j, start_x, stop_x, s_save_dots.data() + ct);
-                sym_fill_line(j, start_x, stop_x, s_fill_buff);
-            }
-            else
-            {
-                sym_put_line(j, start_x, stop_x, s_save_dots.data() + ct);
-            }
-            ct += stop_x-start_x+1;
-        }
-        break;
-    case ShowDotDirection::JUST_A_POINT:
-        break;
-    }
-    if (action == ShowDotAction::SAVE)
-    {
-        g_plot(g_col, g_row, s_show_dot_color);
-    }
-}
-
-static ShowDotState show_dot_region()
-{
-    ShowDotState state;
-    state.stop_x = g_col;
-    state.start_x = g_col;
-    state.stop_y = g_row;
-    state.start_y = g_row;
-    if (const int width = s_show_dot_width + 1; width > 0)
-    {
-        if (g_col + width <= g_i_stop_pt.x && g_row + width <= g_i_stop_pt.y)
-        {
-            // preferred show dot shape
-            state.direction = ShowDotDirection::UPPER_LEFT;
-            state.start_x = g_col;
-            state.stop_x = g_col + width;
-            state.start_y = g_row + width;
-            state.stop_y = g_row + 1;
-        }
-        else if (g_col - width >= g_i_start_pt.x && g_row + width <= g_i_stop_pt.y)
-        {
-            // second choice
-            state.direction = ShowDotDirection::UPPER_RIGHT;
-            state.start_x = g_col - width;
-            state.stop_x = g_col;
-            state.start_y = g_row + width;
-            state.stop_y = g_row + 1;
-        }
-        else if (g_col - width >= g_i_start_pt.x && g_row - width >= g_i_start_pt.y)
-        {
-            state.direction = ShowDotDirection::LOWER_RIGHT;
-            state.start_x = g_col - width;
-            state.stop_x = g_col;
-            state.start_y = g_row - width;
-            state.stop_y = g_row - 1;
-        }
-        else if (g_col + width <= g_i_stop_pt.x && g_row - width >= g_i_start_pt.y)
-        {
-            state.direction = ShowDotDirection::LOWER_LEFT;
-            state.start_x = g_col;
-            state.stop_x = g_col + width;
-            state.start_y = g_row - width;
-            state.stop_y = g_row - 1;
-        }
-    }
-    return state;
-}
-
-static void restore_pending_show_dot()
-{
-    if (!s_show_dot_state.restore_pending)
-    {
-        return;
-    }
-    show_dot_save_restore(s_show_dot_state.start_x, s_show_dot_state.stop_x, s_show_dot_state.start_y,
-        s_show_dot_state.stop_y, s_show_dot_state.direction, ShowDotAction::RESTORE);
-    s_show_dot_state.restore_pending = false;
+    return s_calc_type_tmp();
 }
 
 // TODO: removed later
-static bool queue_show_dot_display()
+// Slice 28 removes the obsolete show-dot dispatch compatibility wrapper.
+CalcType wrap_show_dot_calc_type(const int /*show_dot_width*/, const int /*show_dot_color*/)
 {
-    if (StandardFractal *standard_fractal = active_standard_fractal(); standard_fractal != nullptr)
-    {
-        return standard_fractal->queue_show_dot_display();
-    }
-    return false;
-}
-
-static int calc_type_show_dot()
-{
-    if (!s_show_dot_state.restore_pending)
-    {
-        s_show_dot_state = show_dot_region();
-        show_dot_save_restore(s_show_dot_state.start_x, s_show_dot_state.stop_x, s_show_dot_state.start_y,
-            s_show_dot_state.stop_y, s_show_dot_state.direction, ShowDotAction::SAVE);
-        s_show_dot_state.restore_pending = true;
-        if (g_orbit_delay > 0 && queue_show_dot_display())
-        {
-            return -1;
-        }
-    }
-    const int out = s_calc_type_tmp();
-    if (out == -1)
-    {
-        return out;
-    }
-    show_dot_save_restore(s_show_dot_state.start_x, s_show_dot_state.stop_x, s_show_dot_state.start_y,
-        s_show_dot_state.stop_y, s_show_dot_state.direction, ShowDotAction::RESTORE);
-    s_show_dot_state.restore_pending = false;
-    return out;
-}
-
-CalcType wrap_show_dot_calc_type(const int show_dot_width, const int show_dot_color)
-{
-    s_show_dot_width = show_dot_width;
-    s_show_dot_color = show_dot_color;
     s_calc_type_tmp = g_dispatch.calc_type();
     g_dispatch.set_calc_type(calc_type_show_dot);
     return s_calc_type_tmp;
@@ -996,90 +759,6 @@ void setup_standard_fractal_distance_estimator()
     else
     {
         s_dem_too_big = std::abs(f_temp) * std::abs(f_temp2) * 2 / std::sqrt(s_dem_delta);
-    }
-}
-
-void setup_standard_fractal_show_dot()
-{
-    if (g_show_dot < 0)
-    {
-        return;
-    }
-    find_special_colors();
-    switch (g_auto_show_dot)
-    {
-    case AutoShowDot::DARK:
-        s_show_dot_color = g_color_dark % g_colors;
-        break;
-    case AutoShowDot::MEDIUM:
-        s_show_dot_color = g_color_medium % g_colors;
-        break;
-    case AutoShowDot::BRIGHT:
-    case AutoShowDot::AUTOMATIC:
-        s_show_dot_color = g_color_bright % g_colors;
-        break;
-    case AutoShowDot::NONE:
-        s_show_dot_color = g_show_dot % g_colors;
-        break;
-    }
-    if (g_size_dot <= 0)
-    {
-        s_show_dot_width = -1;
-    }
-    else
-    {
-        if (const double width = static_cast<double>(g_size_dot) * g_logical_screen.x_dots / 1024.0; width > 150.0)
-        {
-            s_show_dot_width = 150;
-        }
-        else if (width > 0.0)
-        {
-            s_show_dot_width = static_cast<int>(width);
-        }
-        else
-        {
-            s_show_dot_width = -1;
-        }
-    }
-    while (s_show_dot_width >= 0)
-    {
-        while ((s_save_dots_len = sqr(s_show_dot_width) + 5 * s_show_dot_width + 4) > 1000)
-        {
-            s_show_dot_width--;
-        }
-        bool resized = false;
-        try
-        {
-            s_save_dots.resize(s_save_dots_len);
-            resized = true;
-        }
-        catch (const std::bad_alloc &)
-        {
-        }
-
-        if (resized)
-        {
-            s_save_dots_len /= 2;
-            s_fill_buff = s_save_dots.data() + s_save_dots_len;
-            std::memset(s_fill_buff, s_show_dot_color, s_save_dots_len);
-            break;
-        }
-        s_show_dot_width--;
-    }
-    if (s_save_dots.empty())
-    {
-        s_show_dot_width = -1;
-    }
-    wrap_show_dot_calc_type(s_show_dot_width, s_show_dot_color);
-}
-
-void cleanup_standard_fractal_show_dot()
-{
-    restore_pending_show_dot();
-    if (!s_save_dots.empty())
-    {
-        s_save_dots.clear();
-        s_fill_buff = nullptr;
     }
 }
 

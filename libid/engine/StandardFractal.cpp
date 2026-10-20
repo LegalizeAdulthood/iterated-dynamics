@@ -27,10 +27,8 @@ namespace id::engine
 {
 
 long auto_log_map();
-void cleanup_standard_fractal_show_dot();
 void set_symmetry(SymmetryType sym, bool use_list);
 void setup_standard_fractal_distance_estimator();
-void setup_standard_fractal_show_dot();
 
 namespace
 {
@@ -185,11 +183,7 @@ void StandardFractal::suspend()
     {
         g_calc_status = CalcStatus::COMPLETED;
     }
-    if (m_work_item_active)
-    {
-        cleanup_standard_fractal_show_dot();
-        m_work_item_active = false;
-    }
+    m_work_item_active = false;
     m_standard_pass.reset();
     clear_standard_pixel();
     m_perturbation_active = false;
@@ -294,6 +288,19 @@ bool StandardFractal::select_pixel()
     {
         return false;
     }
+    const CalcMode mode{m_standard_pass.calc_mode()};
+    if (mode == CalcMode::SYNCHRONOUS_ORBIT || mode == CalcMode::ORBIT)
+    {
+        ActiveStandardFractalScope active_standard_fractal{*this};
+        const bool completed{m_standard_pass.iterate()};
+        s_standard_pass_status = standard_pass_status();
+        if (completed)
+        {
+            finish_work_item();
+        }
+        update_timer();
+        return false;
+    }
     if (m_standard_pass.select_pixel())
     {
         return true;
@@ -324,7 +331,31 @@ bool StandardFractal::calculate_pixel()
         return false;
     }
     m_standard_pass.complete_pixel(color);
+    const CalcMode mode{m_standard_pass.calc_mode()};
+    if ((mode == CalcMode::ONE_PASS || mode == CalcMode::TWO_PASS) &&
+        fractals::g_dispatch.calc_type() == fractals::lyapunov_type)
+    {
+        m_standard_pixel_completed_yield = true;
+    }
     return true;
+}
+
+void StandardFractal::begin_chunk()
+{
+    if (done() || m_orbit_overlay_displayed || presentation_pending() || m_orbit_plot_pending ||
+        m_overlay_scrub_pending)
+    {
+        return;
+    }
+    start_timer();
+    if (prepare_work_item())
+    {
+        const CalcMode mode{m_standard_pass.calc_mode()};
+        if (mode != CalcMode::SYNCHRONOUS_ORBIT && mode != CalcMode::ORBIT)
+        {
+            m_standard_pass.begin_chunk();
+        }
+    }
 }
 
 void StandardFractal::iterate()
@@ -344,43 +375,22 @@ void StandardFractal::iterate()
         return;
     }
 
-    start_timer();
-    if (!prepare_work_item())
+    begin_chunk();
+    while (select_pixel())
     {
-        return;
+        if (!calculate_pixel())
+        {
+            static_cast<void>(consume_traversal_yield());
+            break;
+        }
+        if (consume_traversal_yield())
+        {
+            break;
+        }
     }
-    const CalcMode mode{m_standard_pass.calc_mode()};
-    if (mode == CalcMode::SYNCHRONOUS_ORBIT || mode == CalcMode::ORBIT)
+    if (m_work_item_active)
     {
-        ActiveStandardFractalScope active_standard_fractal{*this};
-        const bool completed{m_standard_pass.iterate()};
         s_standard_pass_status = standard_pass_status();
-        if (completed)
-        {
-            finish_work_item();
-        }
-    }
-    else
-    {
-        m_standard_pass.begin_chunk();
-        while (select_pixel())
-        {
-            if (!calculate_pixel())
-            {
-                static_cast<void>(consume_traversal_yield());
-                break;
-            }
-            if (consume_traversal_yield() ||
-                ((mode == CalcMode::ONE_PASS || mode == CalcMode::TWO_PASS) &&
-                    fractals::g_dispatch.calc_type() == fractals::lyapunov_type))
-            {
-                break;
-            }
-        }
-        if (m_work_item_active)
-        {
-            s_standard_pass_status = standard_pass_status();
-        }
     }
     update_timer();
 }
@@ -428,11 +438,7 @@ void StandardFractal::clear_standard_pixel()
 
 void StandardFractal::complete()
 {
-    if (m_work_item_active)
-    {
-        cleanup_standard_fractal_show_dot();
-        m_work_item_active = false;
-    }
+    m_work_item_active = false;
     m_standard_pass.reset();
     clear_standard_pixel();
     if (m_perturbation_active)
@@ -571,6 +577,7 @@ bool StandardFractal::prepare_work_item()
 
     if (!m_work_item_active)
     {
+        ActiveStandardFractalScope active_standard_fractal{*this};
         fractals::g_dispatch.init_calc_type(*fractals::g_cur_fractal_specific); // per_image can override
         g_symmetry = fractals::g_cur_fractal_specific->symmetry;                // table symmetry
         g_plot = g_put_color; // defaults when set symmetry not called or does nothing
@@ -588,7 +595,6 @@ bool StandardFractal::prepare_work_item()
 
         fractals::per_image();
         m_perturbation_requested = perturbation_requested(m_requested_calc_mode);
-        setup_standard_fractal_show_dot();
 
         g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
         g_keyboard_check_interval = g_max_keyboard_check_interval;
@@ -616,7 +622,6 @@ bool StandardFractal::prepare_work_item()
 
 void StandardFractal::finish_work_item()
 {
-    cleanup_standard_fractal_show_dot();
     m_standard_pass.reset();
     m_work_item_active = false;
     if (g_num_work_list == 0)

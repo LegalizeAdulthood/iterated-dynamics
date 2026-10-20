@@ -234,10 +234,12 @@ The current code is already part-way through this plan:
 - `engine_timer` and benchmarking machinery have been removed.  Explicit
   engine timing still owns total image calculation time, including
   suspension and completion accounting through `g_calc_time`.
-- Show-dot delay is UI-owned.  Marker save and restore state and a
-  temporary display bridge still live in the standard engine.  The
-  right-edge hang restriction and saved-state preservation across pixel
-  yields are compatibility requirements for later cleanup.
+- `ShowDotController` owns marker geometry, saved pixels, symmetry
+  copies, restoration, and delay in the standard and Lyapunov UI
+  controllers.  It restores the image before calculation or traversal
+  continues, and does not repeat marker display for an unfinished pixel.
+  Zero-delay work retains calculation batches.  The unused legacy
+  dispatch wrapper and display bridge remain for slice 28.
 - `Orbit2D`, `Orbit3D`, and `Dynamic2D` submit numerical samples through
   `g_sound`.  Their UI controllers service playback and mute on
   interruption.  Nested producer scopes borrow the same output; the UI
@@ -677,10 +679,11 @@ The remaining UI-concept leaks outside `libid/ui` are:
 
 - `libid/include/engine/StandardFractal.h` and
   `libid/engine/StandardFractal.cpp`: expose the temporary show-dot
-  display bridge that will be removed when show-dot presentation moves
-  fully into the UI controller.
-- `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
-  state.
+  display bridge, now unused by rendering and awaiting slice 28.
+- `libid/engine/calcfrac.cpp`: retains the obsolete show-dot dispatch
+  wrapper and a marker-specific orbit work-frequency condition.
+  `BoundaryTrace::save_resume_work()` retains obsolete marker clearing.
+  Slice 28 removes these remaining marker dependencies.
 - `libid/fractals/lorenz.cpp`: IFS and 3D front ends invoke UI renderers;
   stereo orchestration invokes photographer prompts between images.
 - Calculation setup, fractal loaders, formula parsing, precision math,
@@ -750,8 +753,10 @@ Existing coverage does not imply coverage of live interaction:
   return to the image.  Pass-switch scripts select BoundaryTrace and
   solid guessing through `x`, verify saved pass and precision metadata,
   and compare pixels exactly with fresh renders for `perturbation=auto`
-  and `no`.  These scripts do not exercise show-dot or the stereo
-  photographer prompt.
+  and `no`.  The show-dot script uses `ROWWAIT` to cross row boundaries,
+  saves interrupted checkpoints around menu cancellation, and verifies
+  the Maximum Iterations restart against a fresh render.  These scripts
+  do not exercise the stereo photographer prompt.
   The cellular script delivers its interrupt only while the preparation
   thinking screen is active, saves a non-resumable checkpoint, then
   starts generation-zero rendering and compares it with a fresh image.
@@ -788,8 +793,10 @@ Existing coverage does not imply coverage of live interaction:
 - `TestStereo` covers random-line generation, not PHOTO-mode decisions.
   Add autokey prompt/save/continue/cancel coverage and controller tests for
   eye sequencing and cleanup in the stereo controller slice.
-- Show-dot dispatch and parameter tests do not cover marker restoration.
-  Add lifecycle tests; final images cannot verify transient presentation.
+- `TestShowDotController` covers exact point and triangle restoration,
+  symmetry copies, unfinished pixels, zero-delay batches, menu suspension,
+  and restart.  Autokey verifies row progress and checkpoint contents;
+  neither establishes transient native marker presentation.
 - Mock drivers and timer callbacks do not exercise a real window's event
   queue, physical mouse tracking, or visible refresh cadence.  Current
   Win32 and X11 drivers do not support continuous tone playback; require
@@ -800,9 +807,9 @@ implemented, not a claim that those tests already exist.  In particular,
 automate menu results, preparation-screen lifetime, pass switching, and
 failure cleanup rather than assigning them unspecified manual checks.
 
-Only three slices retain required manual checks: JIIM cursor presentation,
-show-dot presentation, and native input during busy rendering.  Their
-instructions below identify the uncovered observation.
+Manual checks are reserved for JIIM cursor presentation, show-dot
+presentation, and native input during busy rendering.  Report any
+still-required check when completing the corresponding slice.
 If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
 
@@ -851,57 +858,19 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 27. UI Show-Dot Marker Ownership
-
-Source: `ShowDotState`, `show_dot_region()`, and save/restore operations
-in `engine/calcfrac.cpp`; UI owner: `ShowDotController` used by
-`libid/ui/standard_fractal.cpp`.
-
-Work:
-
-- Move marker geometry, saved pixels, drawing, restoring, and delay
-  decisions into the UI controller around the neutral pixel boundary.
-- Restore the marker before calculation or pass work can use its pixels
-  as image data.  Keep symmetry handling and incomplete-calculation
-  continuation correct across suspension and menu-driven recalculation.
-- Preserve current delay behavior; do not settle `orbitdelay` policy here.
-- Keep the right-edge hang fix until the old wrapper is removed.  Never
-  widen its yield eligibility as a shortcut to support more passes.
-
-Done when:
-
-- Show-dot state and presentation decisions are UI-owned, and all
-  standard traversal uses the same marker lifecycle.
-
-Validation: add an autokey workflow with show-dot enabled that crosses a
-row boundary, opens `x`, backs out with Esc, changes Maximum Iterations,
-and completes a restarted render.  Observe the intermediate transitions;
-final pixels alone cannot prove absence of transient trails.  Retain
-controller tests for marker save/restore order, symmetry, right-edge
-continuation, menu cancellation, and parameter-driven restart.  The
-native marker-presentation check below is not replaced by the script.
-
-Manual testing, for transient native marker presentation only:
-
-- Arguments: `video=F6 type=mandel passes=1 showdot=b/20 orbitdelay=20`.
-- Watch the marker reach the right edge and continue onto the next row.
-  During rendering, press `x`, then Esc; verify no stranded marker.  Open
-  `x` again, increase Maximum Iterations, and accept; verify the moving
-  marker leaves no trails.  Do not wait for or compare the completed image.
-- Explicit one-pass mode exercises the current show-dot yield path.  The
-  old values 20 and 139 use the same show-dot delay branch; repeating the
-  interaction at both values adds no coverage.  This check concerns live
-  presentation, which final-image comparisons cannot observe.
-
 ### 28. Remove Show-Dot Transitional Wrappers
 
-Source: `calc_type_show_dot()`, `wrap_show_dot_calc_type()`, standard
-show-dot setup/cleanup, and the temporary `StandardFractal` display API.
+Source: `calc_type_show_dot()`, `wrap_show_dot_calc_type()`, the temporary
+`StandardFractal` display API, the marker-specific `m_check_freq` choice
+in `calculate_standard_pixel()`, and `BoundaryTrace::save_resume_work()`.
 
 Work:
 
-- Remove show-dot dispatch wrapping and the temporary display bridge once
-  the UI controller owns its complete lifecycle.
+- Remove unused show-dot dispatch wrapping and the temporary display
+  bridge; `ShowDotController` now owns the complete marker lifecycle.
+- Remove the marker-specific resume clearing and work-frequency test.
+  Preserve neutral calculation work checkpoints and sound behavior;
+  marker presentation must not determine engine scheduling.
 - Replace wrapper-specific tests with UI-controller save/restore and
   suspension tests, retaining startup parameter coverage.
 - Remove all temporary show-dot declarations and their TODO comments.
@@ -927,8 +896,6 @@ Work:
   using calculation results or exceptions, rather than modal messages.
 - Let UI display the diagnostic and decide whether to continue, retry,
   or return to parameter entry.  Retain engine-owned constraint checks.
-- Replace show-dot buffer precondition message/exit paths with
-  `std::logic_error` if those paths remain after show-dot extraction.
 
 Done when:
 

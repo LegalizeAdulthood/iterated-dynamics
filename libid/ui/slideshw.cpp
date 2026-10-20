@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 //*********************************************************************
 // These routines are called by driver_get_key to allow keystrokes that
@@ -102,6 +103,8 @@ static int s_slow_count{};
 static bool s_quotes{};
 static bool s_calc_wait{};
 static int s_thinking_key{};
+static int s_row_wait_key{};
+static int s_row_wait_target{};
 static int s_repeats{};
 static int s_last1{};
 
@@ -184,6 +187,17 @@ int slide_show()
 {
     int out;
     char buffer[81];
+    if (s_row_wait_key != 0)
+    {
+        if (g_calc_status != CalcStatus::IN_PROGRESS || g_current_row < s_row_wait_target)
+        {
+            return 0;
+        }
+        const int key{s_row_wait_key};
+        s_row_wait_key = 0;
+        s_last1 = key;
+        return key;
+    }
     if (s_thinking_key != 0)
     {
         if (!thinking_active())
@@ -398,6 +412,32 @@ start:
             }
         }
     }
+    else if (std::strcmp("ROWWAIT", buffer) == 0)
+    {
+        int row{};
+        out = 0;
+        if (std::fscanf(s_slide_show_file, "%d %80s", &row, buffer) != 2 || row < 0)
+        {
+            slide_show_err("ROWWAIT needs a nonnegative row and a key");
+        }
+        else
+        {
+            const int key{buffer[1] == 0 ? static_cast<unsigned char>(buffer[0]) : get_slide_show_key_code(buffer)};
+            if (key <= 0)
+            {
+                slide_show_err("ROWWAIT needs a character or named key");
+            }
+            else if (g_calc_status == CalcStatus::IN_PROGRESS && g_current_row >= row)
+            {
+                out = key;
+            }
+            else
+            {
+                s_row_wait_key = key;
+                s_row_wait_target = row;
+            }
+        }
+    }
     else if (std::strcmp("CALCWAIT", buffer) == 0) // wait for calc to finish
     {
         s_calc_wait = true;
@@ -428,6 +468,8 @@ SlidesMode start_slide_show()
     s_quotes = false;
     s_calc_wait = false;
     s_thinking_key = 0;
+    s_row_wait_key = 0;
+    s_row_wait_target = 0;
     s_slow_count = 0;
     return g_slides;
 }
@@ -440,6 +482,8 @@ void stop_slide_show()
     }
     s_slide_show_file = nullptr;
     s_thinking_key = 0;
+    s_row_wait_key = 0;
+    s_row_wait_target = 0;
     s_record_time = {};
     g_slides = SlidesMode::OFF;
 }

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "fractals/lyapunov.h"
 
@@ -91,6 +92,11 @@ Lyapunov::Lyapunov() :
 }
 
 Lyapunov::~Lyapunov() = default;
+
+StandardFractal &Lyapunov::calculation()
+{
+    return *m_standard_fractal;
+}
 
 void Lyapunov::resume()
 {

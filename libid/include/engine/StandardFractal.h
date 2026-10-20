@@ -40,6 +40,7 @@ public:
 
     bool done() const;
 
+    void begin_chunk();
     // False ends this work chunk; done() distinguishes image completion.
     bool select_pixel();
     math::Point2i selected_pixel() const;

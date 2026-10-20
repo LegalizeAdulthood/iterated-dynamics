@@ -204,6 +204,11 @@ line.  Autokey files can contain the following:
   command - it should be added by hand to the autokey file whenever there
   is a process that should be allowed to run to completion.
 
+  ROWWAIT <row> <key> -- wait for an active calculation to reach the
+  zero-based row, then send a character or named key.  Use with sequential
+  passes to interrupt at a row checkpoint without a machine-dependent
+  delay.  Other pass algorithms may visit rows out of order.
+
   GOTO target -- The autokey file continues to be read from the label
   "target".  The label can be any word that does not duplicate a key word.
   It must be present somewhere in the autokey file with a colon after it.

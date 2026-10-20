@@ -118,6 +118,17 @@ add_test(NAME AutoKeyTest.lsystem-sizing
 set_tests_properties(AutoKeyTest.lsystem-sizing
     PROPERTIES LABELS "autokey;ui;lsystem" TIMEOUT 70)
 
+id_make_test_home(show-dot SHOW_DOT_HOME KEYS show_dot.key)
+add_test(NAME AutoKeyTest.show-dot
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCHECK_SHOW_DOT=$<SHELL_PATH:$<TARGET_FILE:check-show-dot>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/show_dot_test.cmake"
+    WORKING_DIRECTORY "${SHOW_DOT_HOME}")
+set_tests_properties(AutoKeyTest.show-dot
+    PROPERTIES LABELS "autokey;ui;passes" TIMEOUT 220)
+
 id_make_test_home(jiim JIIM_HOME KEYS jiim.key)
 add_test(NAME AutoKeyTest.jiim
     COMMAND ${CMAKE_COMMAND}
