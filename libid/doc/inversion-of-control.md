@@ -214,6 +214,8 @@ The current code is already part-way through this plan:
 - `engine/spindac.cpp` rotates and writes the palette without delaying.
   `ui/rotate.cpp` owns delay after cycling and single-step operations;
   ordinary refreshes and pause-border updates do not acquire that delay.
+- `ui/stop_msg.cpp` owns the startup-error display's ten-second hold.
+  Legacy engine wait helpers and the image-setup timer reset are gone.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -648,10 +650,6 @@ The remaining UI-concept leaks outside `libid/ui` are:
   fully into the UI controller.
 - `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
   state.
-- `libid/engine/wait_until.cpp`: retains unused orbit-delay helpers and a
-  legacy reset from image setup.  `ui/stop_msg.cpp` still uses its
-  millisecond sleep helper; Wait-Until Cleanup removes that engine/UI
-  timing dependency.
 - `libid/fractals/Cellular.cpp`: starts, updates, and ends the thinking
   screen from generation, error, and suspend paths.
 - `libid/fractals/lsystem.cpp`: recursive sizing owns the thinking screen
@@ -797,31 +795,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 17. Wait-Until Cleanup
-
-Work:
-
-- Recheck all remaining `wait_until()`, `reset_wait_until()`, and
-  `sleep_orbit_delay()` callers after presentation ownership has moved to
-  UI controllers.
-- Remove `wait_until()` if no non-UI caller remains.
-- Move any remaining UI timing helper to `libid/ui`.
-
-Done when:
-
-- Code in `libid/engine` and `libid/fractals` does not depend on
-  `engine/wait_until.h`.
-- No rendering path reaches keyboard polling through a wait helper.
-
-Validation: retain timer and controller coverage for any remaining
-callers.  Pure helper removal needs no manual test; a newly discovered
-caller must have its actual behavior covered before removal.
-
-The remaining direct interrupt checks are grouped by UI polling loop.
-After the pass-state slices, the audited non-wait call sites that should
-remain are the standard pixel and scanline checks driven from
-`libid/ui/standard_fractal.cpp`.
 
 ### 18. StandardFractal Pixel Interrupts
 

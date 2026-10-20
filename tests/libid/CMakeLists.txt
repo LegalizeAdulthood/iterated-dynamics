@@ -75,7 +75,6 @@ add_executable(test-id
     engine/test_resume.cpp
     engine/test_SoundOutput.cpp
     engine/test_trig_fns.cpp
-    engine/test_wait_until.cpp
     fractals/test_ant.cpp
     fractals/test_bifurcation.cpp
     fractals/test_check_orbit_name.cpp

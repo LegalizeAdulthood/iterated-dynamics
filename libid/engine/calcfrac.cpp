@@ -42,7 +42,6 @@
 #include "engine/tesseral.h"
 #include "engine/UserData.h"
 #include "engine/VideoInfo.h"
-#include "engine/wait_until.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
@@ -613,7 +612,6 @@ void ImageCalculation::start()
     }
 
     init_misc(); // set up some variables in parser.c
-    reset_wait_until();
 
     // following delta values useful only for types with rotation disabled
     // currently used only by bifurcation

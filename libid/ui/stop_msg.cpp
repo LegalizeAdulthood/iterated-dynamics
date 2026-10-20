@@ -4,7 +4,6 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/text_color.h"
-#include "engine/wait_until.h"
 #include "io/check_write_file.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
@@ -14,10 +13,12 @@
 #include "ui/mouse.h"
 #include "ui/text_screen.h"
 
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
+#include <thread>
 
 using namespace id::engine;
 using namespace id::io;
@@ -76,7 +77,7 @@ bool stop_msg(const StopMsgFlags flags, const std::string &msg)
         driver_put_string(0, 0, 15, "*** Error during startup:");
         driver_put_string(2, 0, 15, msg);
         driver_move_cursor(8, 0);
-        sleep_ms(10000);
+        std::this_thread::sleep_for(std::chrono::seconds{10});
         close_drivers();
         std::exit(1);
     }

@@ -89,7 +89,6 @@ add_library(libid
     include/engine/video_mode.h engine/video_mode.cpp
     include/engine/VideoInfo.h engine/VideoInfo.cpp
     include/engine/Viewport.h engine/Viewport.cpp
-    include/engine/wait_until.h engine/wait_until.cpp
     include/engine/work_list.h engine/work_list.cpp
 
     include/fractals/Ant.h fractals/Ant.cpp
