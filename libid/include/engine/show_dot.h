@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
-
-#include "fractals/fractalp.h"
 
 namespace id::engine
 {
@@ -19,7 +18,5 @@ enum class AutoShowDot
 extern AutoShowDot           g_auto_show_dot;
 extern int                   g_show_dot;
 extern int                   g_size_dot;
-
-fractals::CalcType wrap_show_dot_calc_type(int show_dot_width, int show_dot_color);
 
 } // namespace id::engine

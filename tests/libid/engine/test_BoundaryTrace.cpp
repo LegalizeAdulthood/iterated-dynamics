@@ -302,6 +302,24 @@ TEST_F(TestBoundaryTrace, suspensionRetainsAnUncomputedScanPixel)
     EXPECT_TRUE(m_plots.empty());
 }
 
+TEST_F(TestBoundaryTrace, suspensionPreservesCompletedPixelsWithShowDotEnabled)
+{
+    g_show_dot = 15;
+    BoundaryTrace pass;
+    ASSERT_TRUE(pass.select_pixel());
+    provide_pixel(pass);
+    ASSERT_TRUE(pass.select_pixel());
+    provide_pixel(pass);
+    const std::vector<int> pixels{m_pixels};
+    const std::vector<Point2i> plots{m_plots};
+
+    pass.suspend();
+
+    EXPECT_EQ(pixels, m_pixels);
+    EXPECT_EQ(plots, m_plots);
+    EXPECT_EQ(1, g_num_work_list);
+}
+
 TEST_F(TestBoundaryTrace, suspensionOfOutlineWorkRestartsAtItsScanCursor)
 {
     BoundaryTrace pass;

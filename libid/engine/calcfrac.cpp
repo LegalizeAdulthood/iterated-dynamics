@@ -32,7 +32,6 @@
 #include "engine/pixel_grid.h"
 #include "engine/Potential.h"
 #include "engine/resume.h"
-#include "engine/show_dot.h"
 #include "engine/SynchronousOrbit.h"
 #include "engine/SolidGuess.h"
 #include "engine/sound.h"
@@ -108,7 +107,6 @@ void setup_standard_fractal_distance_estimator();
 
 static DComplex s_saved{};            //
 static double s_rq_lim_save{};        //
-static CalcType s_calc_type_tmp{};    //
 static double s_dem_delta{};          //
 static double s_dem_width{};          // distance estimator variables
 static double s_dem_too_big{};        //
@@ -320,22 +318,6 @@ void sym_fill_line(const int row, const int left, const int right, const Byte *s
         }
         g_keyboard_check_interval -= length >> 1;
     }
-}
-
-// TODO: removed later
-// Slice 28 removes the obsolete show-dot dispatch compatibility wrapper.
-static int calc_type_show_dot()
-{
-    return s_calc_type_tmp();
-}
-
-// TODO: removed later
-// Slice 28 removes the obsolete show-dot dispatch compatibility wrapper.
-CalcType wrap_show_dot_calc_type(const int /*show_dot_width*/, const int /*show_dot_color*/)
-{
-    s_calc_type_tmp = g_dispatch.calc_type();
-    g_dispatch.set_calc_type(calc_type_show_dot);
-    return s_calc_type_tmp;
 }
 
 static void fix_inversion(double *x) // make double converted from string look ok
@@ -1015,7 +997,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         }
 
         const bool orbit_sound = (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP;
-        if ((orbit_sound || g_show_dot >= 0) && g_orbit_delay > 0)
+        if (orbit_sound && g_orbit_delay > 0)
         {
             m_check_freq = 16;
         }

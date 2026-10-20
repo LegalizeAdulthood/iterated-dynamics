@@ -238,8 +238,8 @@ The current code is already part-way through this plan:
   copies, restoration, and delay in the standard and Lyapunov UI
   controllers.  It restores the image before calculation or traversal
   continues, and does not repeat marker display for an unfinished pixel.
-  Zero-delay work retains calculation batches.  The unused legacy
-  dispatch wrapper and display bridge remain for slice 28.
+  Zero-delay work retains calculation batches.  Engine code has no marker
+  display bridge, dispatch wrapper, or marker-specific work scheduling.
 - `Orbit2D`, `Orbit3D`, and `Dynamic2D` submit numerical samples through
   `g_sound`.  Their UI controllers service playback and mute on
   interruption.  Nested producer scopes borrow the same output; the UI
@@ -469,8 +469,7 @@ The concrete render operation objects are:
 
 - `engine::StandardFractal`: owns standard escape-time traversal,
   `StandardPass`, standard pixel state, perturbation, pass dispatch,
-  standard orbit-plot requests, the temporary show-dot display bridge,
-  and standard suspend/resume state.
+  standard orbit-plot requests, and standard suspend/resume state.
 - `fractals::Lyapunov`: owns Lyapunov render state by containing an
   `engine::StandardFractal`; Lyapunov-specific per-image setup remains in
   `lyapunov_per_image()` below the dispatch layer.
@@ -677,13 +676,6 @@ removes one false dependency, and leaves a reviewable intermediate state.
 
 The remaining UI-concept leaks outside `libid/ui` are:
 
-- `libid/include/engine/StandardFractal.h` and
-  `libid/engine/StandardFractal.cpp`: expose the temporary show-dot
-  display bridge, now unused by rendering and awaiting slice 28.
-- `libid/engine/calcfrac.cpp`: retains the obsolete show-dot dispatch
-  wrapper and a marker-specific orbit work-frequency condition.
-  `BoundaryTrace::save_resume_work()` retains obsolete marker clearing.
-  Slice 28 removes these remaining marker dependencies.
 - `libid/fractals/lorenz.cpp`: IFS and 3D front ends invoke UI renderers;
   stereo orchestration invokes photographer prompts between images.
 - Calculation setup, fractal loaders, formula parsing, precision math,
@@ -857,32 +849,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 28. Remove Show-Dot Transitional Wrappers
-
-Source: `calc_type_show_dot()`, `wrap_show_dot_calc_type()`, the temporary
-`StandardFractal` display API, the marker-specific `m_check_freq` choice
-in `calculate_standard_pixel()`, and `BoundaryTrace::save_resume_work()`.
-
-Work:
-
-- Remove unused show-dot dispatch wrapping and the temporary display
-  bridge; `ShowDotController` now owns the complete marker lifecycle.
-- Remove the marker-specific resume clearing and work-frequency test.
-  Preserve neutral calculation work checkpoints and sound behavior;
-  marker presentation must not determine engine scheduling.
-- Replace wrapper-specific tests with UI-controller save/restore and
-  suspension tests, retaining startup parameter coverage.
-- Remove all temporary show-dot declarations and their TODO comments.
-
-Done when:
-
-- Engine code has no show-dot marker state, display mailbox, or dispatch
-  wrapper.  Parameter compatibility remains intact.
-
-Validation: reuse the preceding slice's show-dot autokey workflow and
-controller lifecycle tests for interrupted/restarted calculation.  Do not
-add duplicate scripts, source-grep tests, or manual image comparisons.
 
 ### 29. Standard Render Validation Diagnostics
 

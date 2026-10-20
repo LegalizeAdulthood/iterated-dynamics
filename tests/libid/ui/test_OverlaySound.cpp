@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "MockDriver.h"
 
@@ -305,7 +306,10 @@ TEST_F(TestOverlaySound, synchronousStandardPixelReturnsOnRefusalWithoutRepeatin
 TEST_F(TestOverlaySound, standardOrbitYieldsWithoutPollingOrRepeatingIterationWork)
 {
     g_show_orbit = false;
+    g_show_dot = 15;
+    g_orbit_delay = 20;
     g_max_iterations = 2050;
+    ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_BEEP};
     StandardFractal calculation;
     calculation.m_standard_pass.select(CalcMode::ONE_PASS);
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
@@ -318,6 +322,27 @@ TEST_F(TestOverlaySound, standardOrbitYieldsWithoutPollingOrRepeatingIterationWo
     EXPECT_GE(calculation.calculate_standard_pixel(true), 0);
 
     EXPECT_EQ(2049, s_orbit_calls);
+    EXPECT_EQ(1, s_pixel_calls);
+}
+
+TEST_F(TestOverlaySound, standardOrbitRetainsSoundWorkFrequency)
+{
+    g_show_orbit = false;
+    g_orbit_delay = 20;
+    g_max_iterations = 18;
+    ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_X};
+    StandardFractal calculation;
+    calculation.m_standard_pass.select(CalcMode::ONE_PASS);
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+
+    EXPECT_EQ(-1, calculation.calculate_standard_pixel(true));
+    EXPECT_TRUE(calculation.consume_traversal_yield());
+    EXPECT_EQ(16, g_color_iter);
+    EXPECT_EQ(15, s_orbit_calls);
+    EXPECT_GE(calculation.calculate_standard_pixel(true), 0);
+
+    EXPECT_EQ(17, s_orbit_calls);
     EXPECT_EQ(1, s_pixel_calls);
 }
 

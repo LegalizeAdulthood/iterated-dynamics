@@ -4,7 +4,6 @@
 #include "engine/BoundaryTrace.h"
 
 #include "engine/calcfrac.h"
-#include "engine/show_dot.h"
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"
 #include "ui/stop_msg.h"
@@ -423,10 +422,6 @@ void BoundaryTrace::save_resume_work()
     if (m_resume_saved)
     {
         return;
-    }
-    if (g_show_dot != BK_COLOR) // remove show dot pixel
-    {
-        g_plot(g_col, g_row, BK_COLOR);
     }
     if (g_i_stop_pt.y != g_stop_pt.y)
     {

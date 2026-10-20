@@ -24,15 +24,8 @@ public:
     int calculate_standard_pixel(bool yield_to_ui);
     bool consume_traversal_yield();
     bool consume_orbit_overlay_displayed();
-    bool presentation_pending() const;
     void queue_overlay_orbit_plot(double real, double imag, bool mark_as_plotted = true);
-    // TODO: removed later
-    bool queue_show_dot_display();
-    // TODO: removed later
-    bool show_dot_display_pending() const;
     void scrub_overlay();
-    // TODO: removed later
-    void complete_show_dot_display();
 
     void resume();
 
@@ -127,8 +120,6 @@ private:
     bool m_orbit_plot_marks_standard_orbit{};
     bool m_orbit_overlay_displayed{};
     bool m_overlay_scrub_pending{};
-    // TODO: removed later
-    bool m_show_dot_display_pending{};
     bool m_work_item_active{};
     bool m_work_list_started{};
 };

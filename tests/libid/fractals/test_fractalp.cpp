@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "test_data.h"
 #include <fractals/fractalp.h>
@@ -9,7 +10,6 @@
 #include <engine/calcfrac.h>
 #include <engine/fractals.h>
 #include <engine/OrbitPlot.h>
-#include <engine/show_dot.h>
 #include <engine/sound.h>
 #include <engine/trig_fns.h>
 #include <fractals/formula.h>
@@ -64,18 +64,6 @@ static bool test_per_image()
 static int test_calc_type()
 {
     return 31;
-}
-
-static int s_show_dot_calc_type_calls{};
-
-static int test_show_dot_calc_type()
-{
-    ++s_show_dot_calc_type_calls;
-    return 47;
-}
-
-static void test_show_dot_plot(int, int, int)
-{
 }
 
 struct TableFunctions
@@ -529,38 +517,6 @@ TEST(TestFractalDispatch, showOrbitUsesStandardCalcType)
 
     EXPECT_EQ(standard_fractal_type, table.calc_type);
     EXPECT_EQ(standard_fractal_type, g_dispatch.calc_type());
-}
-
-TEST(TestFractalDispatch, showDotWrapperCallsSavedCalcType)
-{
-    ValueSaver saved_calls{s_show_dot_calc_type_calls, 0};
-    ValueSaver saved_dispatch{g_dispatch};
-    ValueSaver saved_plot{g_plot, test_show_dot_plot};
-    ValueSaver saved_orbit_delay{g_orbit_delay, 0};
-    ValueSaver saved_col{g_col, 0};
-    ValueSaver saved_row{g_row, 0};
-
-    g_dispatch.set_calc_type(test_show_dot_calc_type);
-
-    EXPECT_EQ(test_show_dot_calc_type, wrap_show_dot_calc_type(-1, 7));
-    EXPECT_EQ(47, calc_type());
-    EXPECT_EQ(1, s_show_dot_calc_type_calls);
-}
-
-TEST(TestFractalDispatch, showDotWrapsOptimizedMandelCalcType)
-{
-    MandelJuliaCalcTypeState state{FractalType::MANDEL};
-    const FractalSpecific &table{*get_fractal_specific(FractalType::MANDEL)};
-
-    ASSERT_TRUE(mandel_per_image());
-    ASSERT_EQ(calc_mandelbrot_type, g_dispatch.calc_type());
-
-    EXPECT_EQ(calc_mandelbrot_type, wrap_show_dot_calc_type(-1, 7));
-    EXPECT_NE(calc_mandelbrot_type, g_dispatch.calc_type());
-
-    ASSERT_TRUE(mandel_per_image());
-    EXPECT_EQ(calc_mandelbrot_type, g_dispatch.calc_type());
-    EXPECT_EQ(standard_fractal_type, table.calc_type);
 }
 
 TEST(TestFractalDispatch, julibrotOrbitDispatchUsesSecondaryType)
