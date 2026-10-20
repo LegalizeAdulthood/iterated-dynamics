@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "engine/SolidGuess.h"
 
@@ -14,6 +15,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
+#include <stdexcept>
 #include <vector>
 
 using namespace id::misc;
@@ -101,6 +103,47 @@ bool SolidGuess::iterate()
     return done();
 }
 
+bool SolidGuess::select_pixel()
+{
+    if (done())
+    {
+        return false;
+    }
+    if (!m_pixel_selected)
+    {
+        process_step();
+    }
+    if (m_pixel_selected)
+    {
+        g_col = m_selected_pixel.x;
+        g_row = m_selected_pixel.y;
+    }
+    return m_pixel_selected;
+}
+
+math::Point2i SolidGuess::selected_pixel() const
+{
+    if (!m_pixel_selected)
+    {
+        throw std::logic_error{"No selected solid-guess pixel"};
+    }
+    return m_selected_pixel;
+}
+
+void SolidGuess::complete_pixel(const int color)
+{
+    if (!m_pixel_selected)
+    {
+        throw std::logic_error{"No selected solid-guess pixel to complete"};
+    }
+    g_col = m_selected_pixel.x;
+    g_row = m_selected_pixel.y;
+    g_color = color;
+    g_reset_periodicity = false;
+    m_current_x = m_selected_pixel.x + m_max_block;
+    m_pixel_selected = false;
+}
+
 void SolidGuess::suspend()
 {
     if (done())
@@ -138,9 +181,26 @@ void SolidGuess::suspend()
 // Pieter Branderhorst has totally rewritten this routine, incorporating
 // a *MUCH* more sophisticated algorithm.  His revised code is not only
 // faster, but is also more accurate. Harrumph!
+// TODO: removed later
+// Slice 26.8 moves calculation to the common StandardFractal boundary.
 int SolidGuess::scan()
 {
-    process_step();
+    if (m_row_below_active)
+    {
+        g_reset_periodicity = true;
+    }
+    while (select_pixel())
+    {
+        if (calc_type() == -1)
+        {
+            if (!consume_standard_traversal_yield())
+            {
+                suspend();
+            }
+            return 0;
+        }
+        complete_pixel(g_color);
+    }
     return 0;
 }
 
@@ -183,25 +243,9 @@ void SolidGuess::process_first_pass_top_row()
         m_current_x = g_i_start_pt.x;
         m_top_row_active = true;
     }
-    g_row = g_i_start_pt.y;
-    for (g_col = m_current_x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
+    if (select_seed_pixel(g_i_start_pt.y))
     {
-        // calc top row
-        if (calc_type() == -1)
-        {
-            if (consume_standard_traversal_yield())
-            {
-                return;
-            }
-            add_work_list(g_start_pt.x, g_start_pt.y, //
-                g_stop_pt.x, g_stop_pt.y,             //
-                g_begin_pt.x, g_begin_pt.y,           //
-                0, g_work_symmetry);
-            m_phase = Phase::DONE;
-            return;
-        }
-        g_reset_periodicity = false;
-        m_current_x = g_col + m_max_block;
+        return;
     }
     m_top_row_active = false;
     m_current_y = g_i_start_pt.y;
@@ -226,7 +270,6 @@ void SolidGuess::process_first_pass_rows()
 
     g_current_pass = 1;
     g_current_row = m_current_y;
-    int i = 0;
     if (!m_guess_row_active && m_current_y + m_block_size <= g_i_stop_pt.y)
     {
         // calc the row below
@@ -234,27 +277,10 @@ void SolidGuess::process_first_pass_rows()
         {
             m_current_x = g_i_start_pt.x;
             m_row_below_active = true;
+            g_reset_periodicity = true;
         }
-        g_row = m_current_y + m_block_size;
-        g_reset_periodicity = true;
-        for (g_col = m_current_x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
+        if (select_seed_pixel(m_current_y + m_block_size))
         {
-            i = calc_type();
-            if (i == -1)
-            {
-                break;
-            }
-            g_reset_periodicity = false;
-            m_current_x = g_col + m_max_block;
-        }
-        if (i == -1)
-        {
-            if (consume_standard_traversal_yield())
-            {
-                return;
-            }
-            save_resume_work(m_current_y, 0);
-            m_phase = Phase::DONE;
             return;
         }
         m_row_below_active = false;
@@ -275,6 +301,19 @@ void SolidGuess::process_first_pass_rows()
         return;
     }
     m_current_y += m_block_size;
+}
+
+bool SolidGuess::select_seed_pixel(const int row)
+{
+    g_row = row;
+    g_col = m_current_x;
+    if (m_current_x > g_i_stop_pt.x)
+    {
+        return false;
+    }
+    m_selected_pixel = {m_current_x, row};
+    m_pixel_selected = true;
+    return true;
 }
 
 void SolidGuess::process_prefix_border_setup()

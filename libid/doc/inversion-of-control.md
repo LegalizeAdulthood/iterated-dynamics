@@ -191,8 +191,11 @@ The current code is already part-way through this plan:
   `StandardPass`.
 - `SolidGuess` owns first-pass row traversal, remaining pass traversal,
   `guess_row()` block state, and row repaint state.  Its explicit phases
-  yield at row boundaries without polling keyboard input.  Preserve the
-  restored interaction cadence when changing these paths.
+  yield at row boundaries without polling keyboard input.  Seed rows now
+  expose selection and color completion, retaining their pending
+  coordinates and cursor.  Block probes still calculate internally until
+  slice 26.4.  The temporary `scan()` bridge batches seed calculations at
+  the existing row boundaries until slice 26.8.
 - `SynchronousOrbit` owns an explicit rhombus frame stack and explicit
   leaf scan state.  It suspends through `StandardPass`.
 - `StickyOrbits` is a concrete `StandardPass` alternative.  It owns
@@ -831,23 +834,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 26.3. Solid-Guess Seed-Row Pixel Selection
-
-Source: `SolidGuess::process_first_pass_top_row()` and
-`process_first_pass_rows()` seed-row calculations.
-
-Work:
-
-- Separate seed-coordinate selection from supplying each completed color.
-  Retain the active top-row or lower-row cursor across the boundary.
-- Keep prefix initialization, block spacing, deferred work, and row
-  advancement in `SolidGuess`.
-- Retain a marked temporary batched bridge until slice 26.8.  Do not
-  increase the existing row-level synchronization cadence.
-
-Validation: focused seed-order and continuation tests, including deferred
-work and suspension; reuse solid-guess images.  No manual test.
 
 ### 26.4. Solid-Guess Block-Probe Pixel Selection
 

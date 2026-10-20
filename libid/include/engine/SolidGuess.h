@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
+
+#include "math/Point.h"
 
 #include <config/port.h>
 
@@ -19,7 +22,16 @@ public:
     SolidGuess &operator=(const SolidGuess &) = delete;
     SolidGuess &operator=(SolidGuess &&) = delete;
 
+    // False ends this work chunk; done() distinguishes completion.
+    // TODO: removed later
+    // Slice 26.4 extends selection from seed rows to block probes.
+    bool select_pixel();
+    math::Point2i selected_pixel() const;
+    void complete_pixel(int color);
+    bool done() const;
     bool iterate();
+    // TODO: removed later
+    // Slice 26.8 moves calculation to the common StandardFractal boundary.
     int scan();
     void suspend();
     static int block_size();
@@ -59,7 +71,6 @@ private:
     void fill_prefix_plane(int plane, unsigned int value);
     bool finish_guess_row();
     bool guess_row(bool first_pass, int y, int block_size);
-    bool done() const;
     void fill_d_stack(int x1, int x2, Byte value);
     void initialize_scan();
     void initialize_guess_row(bool first_pass, int y, int block_size);
@@ -75,6 +86,7 @@ private:
     void plot_block(int build_row, int x, int y, int color);
     void save_deferred_work(int pass);
     void save_resume_work(int y, int pass);
+    bool select_seed_pixel(int row);
     void skip_guess_block();
     void step_guess_block();
 
@@ -88,6 +100,8 @@ private:
     bool m_guess_row_first_pass{};
     bool m_row_below_active{};
     bool m_top_row_active{};
+    bool m_pixel_selected{};
+    math::Point2i m_selected_pixel{};
     int m_max_block{};
     int m_half_block{};
     unsigned int m_prefix[2][MAX_Y_BLK][MAX_X_BLK]{};
