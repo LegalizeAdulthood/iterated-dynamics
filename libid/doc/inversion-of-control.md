@@ -72,9 +72,10 @@ Its UI controller owns the thinking screen and interruption in both
 phases; sizing and drawing do not poll input.
 
 JIIM's `InverseJulia` calculation owns orbit state and accepts explicit
-point and plot inputs.  The temporary `InverseJuliaTool` still owns the
-outer interaction loop, cursor, and UI keyboard and mouse scopes in
-`libid/engine/jiim.cpp`; the next JIIM slice moves that owner into UI.
+point and plot inputs.  `InverseJuliaController` in
+`libid/ui/inverse_julia.cpp` owns the outer interaction loop, cursor,
+coordinate messages, mode preferences, and keyboard and mouse scopes.
+`InverseJulia::iterate()` only calculates and plots bounded orbit work.
 
 ## Target Shape
 
@@ -233,9 +234,6 @@ The current code is already part-way through this plan:
 
 The fresh reverse-call audit also found these live paths:
 
-- `InverseJuliaTool::iterate()` calls `process_inverse_julia_keyboard()`;
-  `InverseJuliaTool::process()` owns the handler, mouse scope, and loop.
-  `InverseJulia::iterate()` itself does calculation and plotting only.
 - `calc_fract()` calls UI render controllers directly.
   `NonStandardFractal::iterate()`, `standalone_per_image()`, and
   `cellular_per_image()` also reach UI render loops through dispatch
@@ -655,9 +653,6 @@ The remaining UI-concept leaks outside `libid/ui` are:
   fully into the UI controller.
 - `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
   state.
-- `libid/engine/jiim.cpp`: owns cursor state, coordinate messages, the
-  interaction loop, UI handler and mouse scopes, and calls into UI input
-  processing and key requeue helpers.
 - `libid/fractals/lorenz.cpp`: IFS and 3D front ends invoke UI renderers;
   stereo orchestration invokes photographer prompts between images.
 - Calculation setup, fractal loaders, formula parsing, precision math,
@@ -827,53 +822,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 25. JIIM UI Interaction Controller
-
-Source: `InverseJuliaTool::process()`, `iterate()`, `finish()`,
-`process_inverse_julia_keyboard()`, and `requeue_inverse_julia_key()`.
-UI owner: `InverseJuliaController` in `libid/ui/inverse_julia.cpp`.
-
-Work:
-
-- Move the outer loop, tool-state holder, cursor presentation, coordinate
-  messages, handler lifetime, and mouse scope into the UI controller.
-- Keep `InverseJulia`, numerical `InverseJuliaPlot` inputs, queue work,
-  clipping, and orbit point/circle/line plotting in the engine.  Move the
-  temporary `InverseJuliaTool` and its mode preferences, not calculation
-  plotting, into `InverseJuliaController`.
-- Keep `InverseJuliaKeyboardHandler` and its keyboard context in UI.
-  The controller applies selected coordinates to calculation state.
-- Let UI poll or wait for input, call bounded engine increments, and
-  decide when to finish and requeue a main-loop key.
-- Remove calculation-to-UI input callbacks and the temporary holder left
-  by the preceding slice.
-
-Done when:
-
-- `jiim.cpp` owns inverse-orbit work and queues, not an interaction loop.
-- No engine method invokes UI key processing, cursor waits, mouse scopes,
-  or key requeue helpers.
-
-Validation: reuse `AutoKeyTest.jiim` for picker entry, keyboard cursor
-movement, exact-point entry, selection, window toggles, and return to the
-main loop.
-Verify selected coordinates and tool/UI state, not just the final image.
-Retain controller tests for mouse notifications, handler lifetime, key
-requeueing, and cleanup.  Autokey cannot validate native cursor tracking
-or blinking; the manual observations below remain necessary.
-
-Manual testing, for native cursor tracking and transient display only:
-
-- Arguments: `video=F6 type=mandel`.
-- After rendering, press Space for the Julia picker.  Move the mouse
-  without pressing keys, then use arrow keys.  Verify the crosshair tracks
-  both smoothly and blinks.  Press `x`, then Esc to close the options
-  screen; verify the restored Mandelbrot image has no stale cursor pixels.
-- On the Mandelbrot image, use `o` for the orbit window and move the
-  cursor.  Press `o` again to close it; verify cursor placement and display
-  restoration.  Mock notifications do not cover native mouse delivery or
-  visible cursor restoration; do not recheck orbit image correctness.
 
 ### 26. Standard Pixel Boundary
 
@@ -1610,10 +1558,6 @@ mechanism or a source-grep test.
 Calculation code can still reach polling or key-sensitive waiting through
 these direct and indirect paths:
 
-- `libid/engine/jiim.cpp`: `InverseJuliaTool::iterate()` calls
-  `process_inverse_julia_keyboard()`, which may wait through the cursor.
-  `process()` owns the keyboard handler, mouse scope, and interaction loop;
-  `finish()` requeues a key through a UI helper.
 - `libid/fractals/lorenz.cpp`: `funny_glasses_call()` enters a blocking
   photographer prompt and second-image modal message.  IFS and orbit
   front ends also invoke complete UI render loops.

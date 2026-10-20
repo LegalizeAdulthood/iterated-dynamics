@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/main_menu_switch.h"
 
@@ -43,6 +44,7 @@
 #include "ui/get_view_params.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
+#include "ui/inverse_julia.h"
 #include "ui/make_batch_file.h"
 #include "ui/menu_handler.h"
 #include "ui/passes_options.h"
