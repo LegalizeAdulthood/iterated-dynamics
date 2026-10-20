@@ -703,10 +703,11 @@ combine all diagnostics, all renderer families, or all backend extraction
 into one cleanup commit.  Every temporary bridge must name the later
 slice that removes it in the plan.
 
-Validation has two parts: existing image or semantic tests protect
-calculation, while focused failure and interaction tests protect changed
-control flow.  A grep-based test is not a substitute for exercising a
-callback path.  Source searches remain audit tools, not repository tests.
+Validation has three complementary layers: image or semantic tests protect
+calculation, autokey scripts protect real application interaction, and
+controller tests cover precise transitions and injected failures.  A
+grep-based test is not a substitute for exercising a callback path.
+Source searches remain audit tools, not repository tests.
 
 ## Validation Audit
 
@@ -723,12 +724,14 @@ Existing coverage does not imply coverage of live interaction:
 - Keyboard-handler tests cover dispatch, interruption flags, and key
   requeueing, not a rendering controller's suspension and resumption.
   Thinking-screen tests cover text and spinner updates, not cellular or
-  L-system phase transitions.  Add controller tests for those transitions.
+  L-system phase transitions.  Add autokey workflows and controller tests
+  for the distinct application and phase-lifecycle observations.
 - Perturbation unit tests cover tolerance values, not deep-zoom rendering
   or switching passes.  The perturbation slices must add those automated
   regressions; existing images do not suffice.
 - `TestStereo` covers random-line generation, not PHOTO-mode decisions.
-  Add prompt/save/continue/cancel coverage in the stereo controller slice.
+  Add autokey prompt/save/continue/cancel coverage and controller tests for
+  eye sequencing and cleanup in the stereo controller slice.
 - Show-dot dispatch and parameter tests do not cover marker restoration.
   Add lifecycle tests; final images cannot verify transient presentation.
 - Mock drivers and timer callbacks do not exercise a real window's event
@@ -746,6 +749,48 @@ cursor presentation, show-dot presentation, and native input during busy
 rendering.  Their instructions below identify the uncovered observation.
 If a slice adds automation for that same observation, remove the manual
 requirement.  Do not repeat it for an unchanged caller or each fractal.
+
+### Autokey Regression Rules
+
+- Use `tests/autokey` for real application journeys through the driver-key
+  interface, active handlers, menus, and render controllers.  Establish
+  the relevant baseline script before changing its control flow, then
+  retain it as a regression.  Record known defects separately; a test
+  must not silently redefine the intended behavior around an old bug.
+- Trace the actual context and key bindings before writing a script.
+  Do not assume a control supported by one fractal applies to another.
+  Reuse scenarios across slices; add cases for distinct interaction paths,
+  not every fractal sharing the same controller or unchanged image test.
+- Assert meaningful outcomes: selected parameters, generated files,
+  completion, return to the outer UI, and relevant intermediate state.
+  A correct final image alone does not prove a menu opened during work;
+  its keys might have been processed only after calculation completed.
+- For an in-progress interruption claim, observe the active calculation
+  or preparation phase when the key is handled, the menu/cancel result,
+  and the subsequent continuation or restart.  Use controller tests for
+  exact yield points, resume bookkeeping, and handler lifetime as well.
+- `CALCWAIT` waits for completion; the current script format has no phase
+  assertion command.  If an intermediate observation is unavailable,
+  add narrowly scoped UI/harness test support in a separate prerequisite
+  commit, or keep that assertion in a controller test and limit the
+  script's claim accordingly.  Do not assume such support already exists.
+- Prefer `CALCWAIT` for completion.  Fixed `WAIT` delays, a large workload,
+  or a slow CI machine do not prove that input arrived during work.
+  Give scripts bounded process timeouts so lost keys or hangs fail.
+  Do not increase polling or yield frequency to make a script pass.
+- Use isolated test homes, explicit save locations, deterministic inputs,
+  and fresh artifacts.  Compare resumed output with an uninterrupted
+  control where pixels are stable, reusing existing golds when suitable.
+  Use semantic results for L-systems and other drift-sensitive types;
+  do not add unstable image golds to test keyboard behavior.
+- Scripts exercise injected keys, not native keyboard delivery, mouse
+  tracking, blinking, refresh cadence, or responsiveness.  Keep the four
+  narrowly scoped manual observations above.  Do not assert exact poll
+  counts, elapsed render times, or the old location of an input check.
+- Keep calculation/codec tests and injected-error controller tests where
+  a script cannot reliably exercise resource exhaustion or cleanup.
+  GIF load/save remains atomic; autokey may test surrounding choices,
+  not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
 
@@ -766,9 +811,11 @@ Done when:
 - `libid/engine/spindac.cpp` does not call `driver_delay()`.
 - UI callers own palette animation timing.
 
-Validation: add mock-driver tests for palette index changes, DAC writes,
-and UI delay selection.  A plain palette refresh must not acquire a
-cycling delay.  Existing image tests do not test palette animation.
+Validation: add an autokey workflow entering palette cycling, changing
+speed, pausing/resuming, and returning to the main image.  Verify control
+state through UI/harness observations, not elapsed time or a final image.
+Retain mock-driver tests for palette index changes, DAC writes, and UI
+delay selection; a plain refresh must not acquire a cycling delay.
 
 Manual testing, for visible cadence and physical input only:
 
@@ -826,11 +873,14 @@ Done when:
 - `ui/standard_fractal.cpp` polls between `StandardFractal` increments
   and calls `suspend()` when interruption is requested.
 
-Validation: retain one/two-pass image tests and add injected-key
-controller or autokey regressions for suspension, `x` followed by Esc,
-and resumption without skipped or repeated pixels in both passes.
-Existing handler tests do not cover the controller path.  These are
-deterministic transitions; no additional manual rendering check.
+Validation: establish autokey regressions for `x`, Esc, continued
+rendering, and saving through the real application.  Cover one/two-pass
+traversal and the optimized Mandelbrot and general standard-pixel paths.
+Observe interruption during work before claiming that coverage; compare
+resumed output with an uninterrupted control.  Use controller tests for
+within-orbit yields, perturbation/Lyapunov gates, and resume bookkeeping
+without skipped or repeated pixels.  Retain existing images; no manual
+rendering check or assertion of exact polling frequency.
 
 ### 19. Perturbation Traversal Ownership
 
@@ -891,7 +941,8 @@ Work:
   that is valid for the new traversal.
 - Include a `perturbation=no` comparison case to prove failures are in
   perturbation/pass interaction, not in arbitrary precision rendering.
-- Prefer image or autokey coverage over source-grep tests.
+- Use autokey for the actual menu-driven switch, with rendered-result
+  verification and focused strategy-state tests, not source-grep tests.
 
 Done when:
 
@@ -901,11 +952,12 @@ Done when:
 - No stale reference, retry, or traversal state from the previous pass
   affects the next pass algorithm.
 
-Validation: add controller or autokey coverage for the actual deep-zoom
-`passes=b` to `passes=g` transition, asserting the selected perturbation
-strategy and rendered result.  Include the `perturbation=no` control.
-Separate renders do not prove transition correctness.  These new tests
-replace the two manual pass-switch checks; no duplicate manual test.
+Validation: add an autokey test switching from `passes=b` to `passes=g`
+through the real options UI at arbitrary precision, then save and verify
+the result.  Include the `perturbation=no` control.  Verify strategy
+selection through UI/harness observations or focused controller tests.
+Separate renders do not prove transition correctness.  These tests replace
+the manual pass-switch checks; no duplicate manual test.
 
 ### 21. Cellular Preparation Presentation
 
@@ -926,12 +978,12 @@ Done when:
 - The UI controller polls during preparation and ends its thinking screen
   on every exit path.
 
-Validation: retain cellular image coverage; exercise preparation-phase
-interruption and error cleanup in new controller tests.  Verify thinking
-screen entry, updates, and exactly-once cleanup on completion,
-interruption, and failure.  Existing thinking-helper tests do not cover
-phase ownership; extend automation instead of requiring a manual
-preparation-screen check.
+Validation: add an autokey workflow interrupting initial-generation
+preparation, returning to the outer UI, and starting a valid calculation
+again.  Observe the preparation phase rather than relying on a timed key.
+Retain cellular images and controller tests for thinking-screen entry,
+updates, and exactly-once cleanup on completion, interruption, and injected
+failure.  Do not assume preparation is resumable.  No manual check.
 
 ### 22. L-System Sizing Traversal State
 
@@ -953,7 +1005,9 @@ Done when:
 
 Validation: compare sizing extrema, scale, and turtle semantics, using the
 approach in [test-lsystem.md](test-lsystem.md).  Do not require image golds
-for floating-point line rasterization.  No new manual interaction test.
+for floating-point line rasterization.  Establish the sizing-cancellation
+autokey baseline described in the next slice before changing traversal,
+and reuse it for the UI ownership change.  No manual interaction test.
 
 ### 23. L-System Sizing UI Controller
 
@@ -974,10 +1028,12 @@ Done when:
 - Setup, sizing, and drawing return to the UI controller without polling
   input or interpreting pending keys inside calculation code.
 
-Validation: cover sizing suspension and completion semantically.  Add
-controller tests for thinking-screen entry, updates, cancellation, cleanup,
-and transition to drawing, using a controlled sizing workload.  Existing
-thinking-helper tests do not cover this integration.  No manual test.
+Validation: reuse the sizing autokey baseline for cancellation, return to
+the outer UI, restart, and progression from sizing to drawing.  Observe
+the sizing phase when testing cancellation.  Use semantic calculation
+tests and controller tests for thinking-screen entry, updates, cleanup,
+and phase transitions, including failure.  Do not compare rasterized
+L-system lines or duplicate the interaction manually.
 
 ### 24. JIIM Calculation And Tool State
 
@@ -999,9 +1055,10 @@ Done when:
   no cursor or key-processing work mixed into it.
 
 Validation: add state tests for inverse-orbit increments and independent
-tool state, including continuation and selected coordinates.  This local
-refactor does not change the UI loop.  The next slice's native cursor
-check covers the ownership change; no separate manual test here.
+tool state, including continuation and selected coordinates.  Establish
+the next slice's JIIM keyboard autokey baseline before this local split;
+reuse it when moving the UI loop.  The next slice's native cursor check
+covers presentation; no separate manual test here.
 
 ### 25. JIIM UI Interaction Controller
 
@@ -1026,9 +1083,12 @@ Done when:
 - No engine method invokes UI key processing, cursor waits, mouse scopes,
   or key requeue helpers.
 
-Validation: add controller tests for key and mouse notifications,
-exact-point entry, selection, window toggles, handler lifetime, and return
-to the main loop.  No existing JIIM controller tests cover these paths.
+Validation: use autokey for picker entry, keyboard cursor movement,
+exact-point entry, selection, window toggles, and return to the main loop.
+Verify selected coordinates and tool/UI state, not just the final image.
+Retain controller tests for mouse notifications, handler lifetime, key
+requeueing, and cleanup.  Autokey cannot validate native cursor tracking
+or blinking; the manual observations below remain necessary.
 
 Manual testing, for native cursor tracking and transient display only:
 
@@ -1092,9 +1152,13 @@ Done when:
 - Show-dot state and presentation decisions are UI-owned, and all
   standard traversal uses the same marker lifecycle.
 
-Validation: add controller tests for marker save/restore order, symmetry,
-right-edge continuation, menu cancellation, and parameter-driven restart.
-Existing show-dot tests cover dispatch and parsing, not marker lifecycle.
+Validation: add an autokey workflow with show-dot enabled that crosses a
+row boundary, opens `x`, backs out with Esc, changes Maximum Iterations,
+and completes a restarted render.  Observe the intermediate transitions;
+final pixels alone cannot prove absence of transient trails.  Retain
+controller tests for marker save/restore order, symmetry, right-edge
+continuation, menu cancellation, and parameter-driven restart.  The
+native marker-presentation check below is not replaced by the script.
 
 Manual testing, for transient native marker presentation only:
 
@@ -1126,8 +1190,9 @@ Done when:
 - Engine code has no show-dot marker state, display mailbox, or dispatch
   wrapper.  Parameter compatibility remains intact.
 
-Validation: exercise actual marker lifecycle and interrupted/restarted
-calculation.  Do not add source-grep tests or repeat image tests manually.
+Validation: reuse the preceding slice's show-dot autokey workflow and
+controller lifecycle tests for interrupted/restarted calculation.  Do not
+add duplicate scripts, source-grep tests, or manual image comparisons.
 
 ### 29. Standard Render Validation Diagnostics
 
@@ -1148,8 +1213,10 @@ Done when:
 
 - Standard setup and pass initialization cannot enter `stop_msg()`.
 
-Validation: cover invalid pass options and setup failure paths with a
-mock UI owner; preserve batch diagnostics and calculation status.
+Validation: add autokey coverage for invalid pass-option diagnostics,
+acknowledgement, correction through the options UI, and a valid render.
+Use controller tests for precise setup failures and injected allocation
+errors; preserve batch diagnostics and calculation status separately.
 
 ### 30. IFS Definition Diagnostics
 
@@ -1169,8 +1236,10 @@ Done when:
 - IFS definition loading cannot wait for keyboard input, including through
   shared file-entry error helpers.
 
-Validation: exercise malformed and missing definitions through loader and
-UI-entry tests.  No manual rendering test duplicates existing IFS images.
+Validation: use autokey for malformed/missing definition selection,
+diagnostic acknowledgement, and choosing a valid definition afterward.
+Retain loader tests for each parse failure and cleanup.  Reuse IFS image
+coverage; no manual rendering test.
 
 ### 31. L-System Definition Diagnostics
 
@@ -1189,7 +1258,10 @@ Done when:
 - L-system loading, sizing, and drawing cannot invoke UI error handling.
 
 Validation: reuse the parser-test direction in
-[test-lsystem.md](test-lsystem.md), including retry after invalid input.
+[test-lsystem.md](test-lsystem.md).  Add autokey coverage for rejecting an
+invalid definition, acknowledging the error, and selecting a valid one.
+Assert the selected definition and successful sizing/drawing transition,
+not drift-sensitive line pixels.
 
 ### 32. Formula Parser Diagnostics
 
@@ -1209,8 +1281,10 @@ Done when:
 - Formula parsing and compilation can run without a UI driver and cannot
   open a modal message from calculation setup.
 
-Validation: exercise malformed input, missing files, failed compilation,
-and successful retry through existing parser and UI-entry tests.
+Validation: retain parser tests for malformed input, missing files, and
+failed compilation.  Use autokey for formula selection, error dismissal,
+and retry with a valid definition through the real UI.  Verify the chosen
+definition and successful calculation, not merely process exit.
 
 ### 33. Fractal Setup Validation Diagnostics
 
@@ -1229,8 +1303,10 @@ Done when:
 - These calculation setup routines cannot wait for input or choose an
   error-screen interaction.
 
-Validation: cover both invalid configurations and the successful setup
-paths.  Normal image coverage needs no duplicate manual checks.
+Validation: cover both invalid configurations and successful setup in
+unit tests.  Use autokey for reachable setup diagnostics, acknowledgement,
+parameter correction, and subsequent rendering through the actual owning
+UI context.  Reuse normal images; no duplicate manual checks.
 
 ### 34. Palette Definition Diagnostics
 
@@ -1249,8 +1325,10 @@ Done when:
 
 - Palette loading cannot enter a modal screen from calculation setup.
 
-Validation: cover missing and malformed maps, retained prior state, and
-successful retry through loader and UI-choice tests.
+Validation: retain loader tests for missing/malformed maps and prior-state
+preservation.  Use autokey for interactive palette-selection failure,
+acknowledgement, and retry with a valid map; verify the selected palette
+and return to the image.  Startup-only failures remain process tests.
 
 ### 35. 3D Output Diagnostics
 
@@ -1433,8 +1511,11 @@ Done when:
 - The UI completes scanline-based loading and feedback as one atomic
   command, without load-time input polling or a second image traversal.
 
-Validation: cover cancelled selection, invalid metadata, and successful
-load through existing codec tests and focused UI-choice tests.
+Validation: use autokey for cancelling video-mode/3D setup choices before
+loading, preserving the prior image, and a successful load afterward.
+Retain codec tests for invalid metadata and decoded output, plus controller
+tests for exact choice and failure cleanup.  Loading and scanline sound
+feedback remain atomic; do not script a mid-file cancellation.
 
 ### 43. Image Saving UI Decisions
 
@@ -1468,9 +1549,12 @@ Done when:
 
 Validation: exercise saving incomplete/resumable calculations, overwrite
 and failure cleanup for new/existing files, write/close failures, and
-autosave completion.  Use codec tests for file contents and pending-key
-behavior and mock-driver tests for per-scanline progress/flush ordering
-instead of manual image comparisons.
+autosave completion.  Add autokey coverage for manual save from an
+interrupted calculation, saved resumable metadata, and return to rendering,
+including the existing overwrite UI policy.  Use codec tests for contents
+and pending-key behavior, injected failures for write/close cleanup, and
+mock-driver tests for progress/flush ordering and controlled autosave
+timing.  Do not restore the removed keyboard-interrupted save prompt.
 
 ### 44. Command Parsing Diagnostics
 
@@ -1490,7 +1574,9 @@ Done when:
 - Command parsing cannot call `stop_msg()`, `do_pause()`, or `goodbye()`.
 
 Validation: preserve command-parser tests; exercise malformed startup
-arguments, interactive command errors, and batch failure behavior.
+arguments and batch failure behavior with process tests.  Use autokey for
+interactive command-entry errors, acknowledgement, and a valid command
+retry, verifying its applied settings and return to the outer UI.
 
 ### 45. Command Actions And Application Effects
 
@@ -1511,8 +1597,10 @@ Done when:
   while interpreting an argument.
 
 Validation: retain generated-output tests and cover command effects at
-their caller.  Do not conflate this with the completed `CommandResult`
-split for interactive menu handlers.
+their caller.  Reuse the parameter/MIG autokey script for its interactive
+entry path; add a script only for a distinct uncovered UI action.  Startup
+generation and exit actions remain process tests.  Do not conflate this
+with the completed `CommandResult` split for interactive menu handlers.
 
 ### 46. Common Engine Render Lifecycle
 
@@ -1536,7 +1624,10 @@ Done when:
 - Common lifecycle operations do not hide a whole-image render call.
 
 Validation: cover normal completion, suspension/resume, failure cleanup,
-and calculation-time accounting.  Existing images protect render results.
+and calculation-time accounting in engine tests.  Run the established
+autokey interruption/resume scenarios across this lifecycle refactor;
+existing images protect render results.  Do not time scripts to test
+`g_calc_time` or add duplicate keyboard cases for an unchanged UI path.
 
 ### 47. Standalone Engine Operation Selection
 
@@ -1584,8 +1675,11 @@ Done when:
 - Neither `per_image()` nor its setup callbacks can enter a UI render
   loop through a saved function pointer.
 
-Validation: cover cellular and other standalone selection through the
-real dispatch path, including setup failure and resume behavior.
+Validation: reuse cellular and representative standalone autokey workflows
+through the real dispatch path, including menu return, continuation or
+restart as supported, and saving.  Retain operation-selection and injected
+setup-failure tests; passing a script alone does not establish the absence
+of nested UI callbacks.
 
 ### 49. IFS Front-End Calculation Selection
 
@@ -1606,8 +1700,11 @@ Done when:
 
 - IFS front-end calculation code never invokes a UI render loop.
 
-Validation: use existing 2D and 3D IFS rendering tests and add operation
-selection tests.  This selection change needs no manual image comparison.
+Validation: add autokey journeys selecting 2D and 3D IFS through the UI,
+entering/leaving a render-time menu, and completing/saving afterward.
+Observe interruption before claiming it and use deterministic seeds with
+existing rendering fixtures.  Retain operation-selection tests.  No
+manual image comparison.
 
 ### 50. Stereo Rendering UI Sequence
 
@@ -1630,11 +1727,13 @@ Done when:
 - Stereo calculation never waits for a photographer's response or chooses
   a UI controller.  Each eye's rendering remains calculation work.
 
-Validation: retain stereo image coverage and add mock-controller or
-autokey tests through PHOTO-mode entry for the between-eye prompt, save,
-continue, cancel, and display restoration.  Current random-line tests and
-3D-look autokey coverage do not exercise that prompt.  These deterministic
-UI decisions require new automated coverage, not a manual checklist.
+Validation: add autokey scripts through actual PHOTO-mode entry for the
+between-eye prompt, save, continue, cancel, and return to the main UI.
+Verify prompt/eye sequencing and resulting saved artifacts, with controller
+tests for exact phase transitions, display restoration, and failure
+cleanup.
+Retain stereo images.  Current random-line and 3D-look scripts do not cover
+this prompt; no duplicate manual checklist.
 
 ### 51. Orbit Renderer Operation Selection
 
@@ -1659,7 +1758,10 @@ Done when:
   renderer function or calling back into a controller.
 
 Validation: cover selected operation identity, setup, suspension, and
-completion; reuse orbit, IFS, and standard-4D rendering tests.
+completion in engine tests.  Reuse family autokey scripts established by
+earlier slices; add a journey for any newly selected keyboard context not
+yet covered.  Verify selection, return from menus, and supported completion
+or continuation.  Reuse orbit, IFS, and standard-4D rendering fixtures.
 
 ### 52. Outer UI Render Operation Control
 
@@ -1686,10 +1788,13 @@ Done when:
 - No new wrapper retains the old nested engine/UI render call chain.
 
 Validation: run the full `rt-default` workflow and cover batch completion,
-save, exit, and interruption.  Add controller or autokey tests for menu
-cancellation, parameter changes, and presentation toggles through the
-outer application phases.  Existing autokey scripts do not cover these
-transitions; do not substitute a manual retest of every menu or renderer.
+save, and exit with process tests, plus autokey for supported batch-key
+interruption.  Reuse and extend autokey workflows for menu cancellation,
+fractal/parameter changes that regenerate an image, and display-only
+toggles through the outer application phases.  Assert intermediate phase
+and command effects as well as final results.  Retain controller tests for
+precise phase mapping, handler lifetime, and cleanup.  Do not substitute
+fixed waits or a manual retest of every menu or renderer.
 
 Manual testing, for physical input during CPU-bound rendering only:
 
@@ -1930,6 +2035,10 @@ calls are moved behind `libid/ui`.
 - Audit source calls and reachable dispatch targets in both release and
   debug configurations.  Ignore comment-only search matches; do not add
   grep-based tests that merely enforce source spelling.
+- Autokey regressions protect changed keyboard journeys through the real
+  application.  In-progress claims have intermediate evidence; controller
+  tests cover precise transitions and failure cleanup, while native input
+  and transient presentation retain their narrow manual observations.
 - Calculation code reports interruption or decisions without owning input.
 - Current behavior is preserved while longer-term architecture stays out
   of scope.
