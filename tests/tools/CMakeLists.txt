@@ -18,6 +18,10 @@ add_executable(colormap-compare colormap_compare.cpp)
 target_link_libraries(colormap-compare PUBLIC image-tool)
 target_folder(colormap-compare "Tests/Tools")
 
+add_executable(check-standard-resume check_standard_resume.cpp)
+target_link_libraries(check-standard-resume PRIVATE image-tool libid)
+target_folder(check-standard-resume "Tests/Tools")
+
 if(WIN32)
     add_executable(dump-dpi dump_dpi.cpp)
     target_link_libraries(dump-dpi "Shcore.lib" "User32.lib")

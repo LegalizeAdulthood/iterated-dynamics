@@ -64,7 +64,6 @@
 #include "misc/version.h"
 #include "ui/diskvid.h"
 #include "ui/find_special_colors.h"
-#include "ui/KeyboardHandler.h"
 #include "ui/lyapunov.h"
 #include "ui/non_standard_fractal.h"
 #include "ui/standard_fractal.h"
@@ -1089,6 +1088,16 @@ void cleanup_standard_fractal_show_dot()
 // and all the current outside options
 int calc_mandelbrot_type()
 {
+    StandardFractal *standard_fractal{active_standard_fractal()};
+    if (standard_fractal == nullptr)
+    {
+        throw std::logic_error{"calc_mandelbrot_type called without active StandardFractal"};
+    }
+    return standard_fractal->calculate_mandelbrot_pixel();
+}
+
+int StandardFractal::calculate_mandelbrot_pixel()
+{
     if (g_inversion.invert != 0)
     {
         invertz2(&g_init);
@@ -1098,16 +1107,11 @@ int calc_mandelbrot_type()
         g_init.x = dx_pixel();
         g_init.y = dy_pixel();
     }
-    g_keyboard_check_interval--; // Only check interruption sometimes
-    if (g_keyboard_check_interval < 0)
+    --g_keyboard_check_interval;
+    const bool chunk_complete{g_keyboard_check_interval < 0};
+    if (chunk_complete)
     {
         g_keyboard_check_interval = 1000;
-        if (calc_interrupted())
-        {
-            g_color_iter = -1;
-            g_color = -1;
-            return -1;
-        }
     }
     if (mandelbrot_orbit() >= 0)
     {
@@ -1147,6 +1151,10 @@ int calc_mandelbrot_type()
     {
         g_color = static_cast<int>(g_color_iter);
     }
+    if (chunk_complete && standard_pixel_yield_enabled())
+    {
+        m_standard_pixel_completed_yield = true;
+    }
     return g_color;
 }
 
@@ -1177,10 +1185,6 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 {
     if (m_perturbation_active && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
-        if (yield_to_ui && calc_interrupted())
-        {
-            return -1;
-        }
         const int color{m_pert_engine.calculate_pixel(g_col, g_row)};
         if (yield_to_ui && standard_pixel_yield_enabled())
         {
@@ -1214,7 +1218,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         m_standard_pixel_col = g_col;
         m_standard_pixel_row = g_row;
         m_standard_pixel_active = true;
-        m_standard_pixel_input_checked = false;
+        m_standard_pixel_iteration_yielded = false;
         m_standard_pixel_orbit_calc_completed = false;
         m_standard_pixel_orbit_calc_result = 0;
         m_standard_pixel_orbit_plotted = false;
@@ -1358,7 +1362,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         if (!m_standard_pixel_iteration_started)
         {
             ++g_color_iter;
-            m_standard_pixel_input_checked = false;
+            m_standard_pixel_iteration_yielded = false;
             m_standard_pixel_orbit_calc_completed = false;
             m_standard_pixel_orbit_calc_result = 0;
             if (g_color_iter >= g_max_iterations)
@@ -1369,23 +1373,12 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         }
         // calculation of one orbit goes here
         // input in "old" -- output in "new"
-        if (!m_standard_pixel_input_checked && g_color_iter % m_check_freq == 0)
+        if (!m_standard_pixel_iteration_yielded && g_color_iter % m_check_freq == 0 && yield_to_ui &&
+            standard_pixel_yield_enabled())
         {
-            m_standard_pixel_input_checked = true;
-            if (yield_to_ui)
-            {
-                if (calc_interrupted())
-                {
-                    clear_standard_pixel();
-                    g_max_iterations = m_save_max_it;
-                    return -1;
-                }
-                if (standard_pixel_yield_enabled())
-                {
-                    m_incomplete_standard_pixel_yield = true;
-                    return -1;
-                }
-            }
+            m_standard_pixel_iteration_yielded = true;
+            m_incomplete_standard_pixel_yield = true;
+            return -1;
         }
 
         if (g_distance_estimator && !m_standard_pixel_orbit_calc_completed)
@@ -1936,10 +1929,6 @@ plot_pixel:
     if ((g_keyboard_check_interval -= std::abs(g_real_color_iter)) <= 0)
     {
         g_keyboard_check_interval = g_max_keyboard_check_interval;
-        if (yield_to_ui && calc_interrupted())
-        {
-            return -1;
-        }
         if (yield_to_ui && standard_pixel_yield_enabled())
         {
             m_standard_pixel_completed_yield = true;

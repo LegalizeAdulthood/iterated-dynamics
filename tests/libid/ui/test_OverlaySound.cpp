@@ -4,6 +4,7 @@
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
+#include <engine/calmanfp.h>
 #include <engine/color_state.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
@@ -19,6 +20,7 @@
 #include <fractals/fractalp.h>
 #include <fractals/FrothyBasin.h>
 #include <fractals/lorenz.h>
+#include <fractals/lyapunov.h>
 #include <io/library.h>
 #include <misc/ValueSaver.h>
 #include <ui/frothy_basin.h>
@@ -71,6 +73,7 @@ public:
 
 int s_orbit_calls{};
 int s_pixel_calls{};
+std::vector<Point2i> s_pixel_positions;
 
 int calculate_overlay_orbit()
 {
@@ -83,6 +86,7 @@ int calculate_overlay_orbit()
 int initialize_overlay_pixel()
 {
     ++s_pixel_calls;
+    s_pixel_positions.push_back({g_col, g_row});
     g_old_z = {};
     return 0;
 }
@@ -157,6 +161,7 @@ void TestOverlaySound::SetUp()
     reset_calc_interrupted();
     s_orbit_calls = 0;
     s_pixel_calls = 0;
+    s_pixel_positions.clear();
     m_specific.flags = FractalFlags::NONE;
     m_specific.symmetry = SymmetryType::NONE;
     m_specific.orbit_calc = calculate_overlay_orbit;
@@ -295,6 +300,156 @@ TEST_F(TestOverlaySound, synchronousStandardPixelReturnsOnRefusalWithoutRepeatin
     EXPECT_EQ(1, s_orbit_calls);
     EXPECT_EQ(1, s_pixel_calls);
     EXPECT_EQ(1, std::count(m_events.begin(), m_events.end(), "boundary"));
+}
+
+TEST_F(TestOverlaySound, standardOrbitYieldsWithoutPollingOrRepeatingIterationWork)
+{
+    g_show_orbit = false;
+    g_max_iterations = 2050;
+    StandardFractal calculation;
+    calculation.m_standard_pass.select(CalcMode::ONE_PASS);
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+
+    EXPECT_EQ(-1, calculation.calculate_standard_pixel(true));
+    EXPECT_TRUE(calculation.consume_traversal_yield());
+    EXPECT_EQ(2048, g_color_iter);
+    EXPECT_EQ(2047, s_orbit_calls);
+    EXPECT_GE(calculation.calculate_standard_pixel(true), 0);
+
+    EXPECT_EQ(2049, s_orbit_calls);
+    EXPECT_EQ(1, s_pixel_calls);
+}
+
+TEST_F(TestOverlaySound, standardPixelKeepsNonIncrementalTraversalGate)
+{
+    g_show_orbit = false;
+    g_max_iterations = 2050;
+    StandardFractal calculation;
+    calculation.m_standard_pass.select(CalcMode::SOLID_GUESS);
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+
+    EXPECT_GE(calculation.calculate_standard_pixel(true), 0);
+
+    EXPECT_FALSE(calculation.consume_traversal_yield());
+    EXPECT_EQ(2049, s_orbit_calls);
+}
+
+TEST_F(TestOverlaySound, controllerSuspendsWithinAnOrbitAndResumesUnfinishedPixel)
+{
+    g_show_orbit = false;
+    g_max_iterations = 2050;
+    m_key = 'x';
+    EXPECT_CALL(m_driver, unget_key('x'));
+    EXPECT_CALL(*m_output, mute());
+
+    EXPECT_EQ(-1, standard_fractal());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_EQ(2047, s_orbit_calls);
+    EXPECT_EQ(0, m_plots);
+
+    g_resuming = true;
+
+    EXPECT_EQ(0, standard_fractal());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(4, m_plots);
+    EXPECT_EQ(5, s_pixel_calls);
+}
+
+TEST_F(TestOverlaySound, optimizedPixelYieldsCompletedWorkWithoutPolling)
+{
+    g_show_orbit = false;
+    g_keyboard_check_interval = 0;
+    calc_mandelbrot_init();
+    StandardFractal calculation;
+    calculation.m_standard_pass.select(CalcMode::ONE_PASS);
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+
+    EXPECT_GE(calculation.calculate_mandelbrot_pixel(), 0);
+
+    EXPECT_TRUE(calculation.consume_traversal_yield());
+}
+
+TEST_F(TestOverlaySound, scanlineSuspensionRetainsTheNextPixelInBothPassModes)
+{
+    g_show_orbit = false;
+    g_max_keyboard_check_interval = 1;
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+
+    for (const int primary_pixels : {1, 2})
+    {
+        for (const CalcMode mode : {CalcMode::ONE_PASS, CalcMode::TWO_PASS})
+        {
+            g_std_calc_mode = mode;
+            g_resuming = false;
+            s_pixel_positions.clear();
+            StandardFractal calculation;
+            calculation.resume();
+            for (int increments = 0; increments < primary_pixels; ++increments)
+            {
+                calculation.iterate();
+            }
+            ASSERT_EQ(primary_pixels, s_pixel_positions.size());
+            calculation.suspend();
+            ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+
+            g_resuming = true;
+            StandardFractal resumed;
+            resumed.resume();
+            for (int increments = 0; increments < 20 && !resumed.done(); ++increments)
+            {
+                resumed.iterate();
+            }
+            ASSERT_TRUE(resumed.done());
+            ASSERT_EQ(4U, s_pixel_positions.size());
+            EXPECT_EQ((Point2i{0, 0}), s_pixel_positions[0]);
+            EXPECT_EQ((Point2i{1, 0}), s_pixel_positions[1]);
+            EXPECT_EQ((Point2i{0, 1}), s_pixel_positions[2]);
+            EXPECT_EQ((Point2i{1, 1}), s_pixel_positions[3]);
+        }
+    }
+}
+
+TEST_F(TestOverlaySound, perturbationPixelRetainsTraversalYieldGateWithoutPolling)
+{
+    m_specific.flags = FractalFlags::PERTURB;
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+
+    for (const CalcMode mode : {CalcMode::ONE_PASS, CalcMode::SOLID_GUESS})
+    {
+        StandardFractal calculation;
+        calculation.m_standard_pass.select(mode);
+        calculation.m_perturbation_active = true;
+        calculation.m_pert_engine.initialize_frame({0.0, 0.0}, 1.0);
+
+        EXPECT_GE(calculation.calculate_standard_pixel(true), 0);
+
+        EXPECT_EQ(mode == CalcMode::ONE_PASS, calculation.consume_traversal_yield());
+        calculation.m_pert_engine.finish();
+    }
+}
+
+TEST_F(TestOverlaySound, lyapunovScanlineYieldsCompletedPixelWithoutPolling)
+{
+    g_show_orbit = false;
+    g_params[1] = 0.5;
+    m_specific.calc_type = lyapunov_type;
+    m_specific.per_image = lyapunov_per_image;
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    StandardFractal calculation;
+    calculation.resume();
+
+    calculation.iterate();
+
+    EXPECT_FALSE(calculation.done());
+    EXPECT_EQ(2, m_plots);
+    calculation.suspend();
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
 }
 
 TEST_F(TestOverlaySound, pendingStandardOverlayRetainsRejectedCandidate)

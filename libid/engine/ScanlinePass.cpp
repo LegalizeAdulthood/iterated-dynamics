@@ -8,7 +8,6 @@
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
 #include "fractals/lyapunov.h"
-#include "ui/KeyboardHandler.h"
 #include "ui/video.h"
 
 using namespace id::ui;
@@ -19,68 +18,51 @@ namespace id::engine
 
 bool OnePass::iterate()
 {
-    return run() != -1;
-}
-
-int OnePass::run()
-{
     g_total_passes = 1;
-    if (standard_calc(2, CalcMode::ONE_PASS) == -1)
-    {
-        if (calc_interrupted())
-        {
-            add_work_list(g_start_pt.x, m_resume_row, g_stop_pt.x, stop_row_for_resume(), m_resume_col, m_resume_row,
-                g_work_pass, g_work_symmetry);
-        }
-        return -1;
-    }
-    return 0;
+    return standard_calc(2, CalcMode::ONE_PASS);
 }
 
 bool TwoPass::iterate()
 {
-    return run() != -1;
-}
-
-int TwoPass::run()
-{
     g_total_passes = 2;
     if (g_work_pass == 0) // do 1st pass of two
     {
-        if (standard_calc(1, CalcMode::TWO_PASS) == -1)
+        if (!standard_calc(1, CalcMode::TWO_PASS))
         {
-            if (calc_interrupted())
-            {
-                add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, m_resume_col, m_resume_row, 0,
-                    g_work_symmetry);
-            }
-            return -1;
+            return false;
         }
         if (g_num_work_list > 0) // worklist not empty, defer 2nd pass
         {
             add_work_list(
                 g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_start_pt.x, g_start_pt.y, 1, g_work_symmetry);
-            return 0;
+            return true;
         }
         g_work_pass = 1;
         g_begin_pt.x = g_start_pt.x;
         g_begin_pt.y = g_start_pt.y;
     }
     // second or only pass
-    if (standard_calc(2, CalcMode::TWO_PASS) == -1)
-    {
-        if (calc_interrupted())
-        {
-            add_work_list(g_start_pt.x, m_resume_row, g_stop_pt.x, stop_row_for_resume(), m_resume_col, m_resume_row,
-                g_work_pass, g_work_symmetry);
-        }
-        return -1;
-    }
-
-    return 0;
+    return standard_calc(2, CalcMode::TWO_PASS);
 }
 
-int ScanlinePass::standard_calc(const int pass_num, const CalcMode calc_mode)
+void ScanlinePass::suspend()
+{
+    if (!m_standard_calc_active)
+    {
+        return;
+    }
+    if (m_current_pass == 1)
+    {
+        add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, m_col, m_row, 0, g_work_symmetry);
+    }
+    else
+    {
+        add_work_list(
+            g_start_pt.x, m_row, g_stop_pt.x, stop_row_for_resume(), m_col, m_row, g_work_pass, g_work_symmetry);
+    }
+}
+
+bool ScanlinePass::standard_calc(const int pass_num, const CalcMode calc_mode)
 {
     g_passes = Passes::SEQUENTIAL_SCAN;
     m_current_pass = pass_num;
@@ -114,23 +96,16 @@ int ScanlinePass::standard_calc(const int pass_num, const CalcMode calc_mode)
             }
             if (pass_num == 1 || calc_mode == CalcMode::ONE_PASS || (m_row & 1) != 0 || (m_col & 1) != 0)
             {
-                int result{-1};
-                if (g_dispatch.calc_type() != lyapunov_type || !calc_interrupted())
-                {
-                    result = calc_type(); // standard_fractal(), calcmand() or calcmandfp()
-                }
+                const int result{calc_type()};
                 m_row = g_row;
                 m_col = g_col;
                 if (result == -1)
                 {
-                    if (StandardFractal *standard_fractal = active_standard_fractal();
-                        standard_fractal != nullptr && standard_fractal->consume_traversal_yield())
+                    if (StandardFractal *standard_fractal = active_standard_fractal(); standard_fractal != nullptr)
                     {
-                        return -1;
+                        static_cast<void>(standard_fractal->consume_traversal_yield());
                     }
-                    m_resume_row = m_row;
-                    m_resume_col = m_col;
-                    return -1;      // interrupted
+                    return false;
                 }
                 g_resuming = false; // reset so quick_calc works
                 g_reset_periodicity = false;
@@ -154,9 +129,10 @@ int ScanlinePass::standard_calc(const int pass_num, const CalcMode calc_mode)
             }
             ++m_col;
             if (StandardFractal *standard_fractal = active_standard_fractal();
-                standard_fractal != nullptr && standard_fractal->consume_traversal_yield())
+                g_dispatch.calc_type() == lyapunov_type ||
+                (standard_fractal != nullptr && standard_fractal->consume_traversal_yield()))
             {
-                return -1;
+                return false;
             }
         }
         m_col = g_i_start_pt.x;
@@ -169,7 +145,7 @@ int ScanlinePass::standard_calc(const int pass_num, const CalcMode calc_mode)
     g_row = m_row;
     g_col = m_col;
     m_standard_calc_active = false;
-    return 0;
+    return true;
 }
 
 int ScanlinePass::stop_row_for_resume() const
@@ -177,7 +153,7 @@ int ScanlinePass::stop_row_for_resume() const
     int stop_row = g_stop_pt.y;
     if (g_i_stop_pt.y != g_stop_pt.y) // must be due to symmetry
     {
-        stop_row -= m_resume_row - g_i_start_pt.y;
+        stop_row -= m_row - g_i_start_pt.y;
     }
     return stop_row;
 }

@@ -334,6 +334,10 @@ void StandardFractal::iterate()
 
 void StandardFractal::clear_standard_pixel()
 {
+    if (m_standard_pixel_active)
+    {
+        g_max_iterations = m_save_max_it;
+    }
     m_tan_table.fill(0.0);
     m_deriv = {};
     m_dem_new = {};
@@ -356,7 +360,7 @@ void StandardFractal::clear_standard_pixel()
     m_attracted = false;
     m_caught_a_cycle = false;
     m_standard_pixel_active = false;
-    m_standard_pixel_input_checked = false;
+    m_standard_pixel_iteration_yielded = false;
     m_standard_pixel_orbit_complete = false;
     m_incomplete_standard_pixel_yield = false;
     m_standard_pixel_orbit_calc_completed = false;

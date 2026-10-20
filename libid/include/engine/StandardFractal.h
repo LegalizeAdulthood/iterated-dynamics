@@ -19,6 +19,7 @@ class OrbitPlot;
 class StandardFractal
 {
 public:
+    int calculate_mandelbrot_pixel();
     int calculate_standard_pixel(bool yield_to_ui);
     bool consume_traversal_yield();
     bool consume_orbit_overlay_displayed();
@@ -112,7 +113,7 @@ private:
     bool m_standard_pixel_active{};
     bool m_standard_pixel_completed_yield{};
     bool m_incomplete_standard_pixel_yield{};
-    bool m_standard_pixel_input_checked{};
+    bool m_standard_pixel_iteration_yielded{};
     bool m_standard_pixel_orbit_complete{};
     bool m_standard_pixel_orbit_calc_completed{};
     bool m_standard_pixel_iteration_started{};

@@ -164,8 +164,11 @@ The current code is already part-way through this plan:
   restarts initial edge setup if interruption happens during that phase.
 - The `OnePass` and `TwoPass` paths share `ScanlinePass`; they preserve
   scan position in the concrete pass object and yield standard pixel work
-  back to the UI.  They still communicate active pixel position through
-  `g_row` and `g_col`.
+  back to the UI.  Their `suspend()` records resume work at the retained
+  cursor.  Standard pixel kernels no longer poll for interruption;
+  optimized Mandelbrot and general pixel work yield at existing work
+  checkpoints, while Lyapunov returns between scanline pixels.  They
+  still communicate active pixel position through `g_row` and `g_col`.
 - `BoundaryTrace` is a concrete `StandardPass` alternative.  It owns the
   outer scan cursor, outline tracing state, region filling state, and
   suspend path.  Invalid options still invoke a modal `stop_msg()` from
@@ -717,14 +720,17 @@ Existing coverage does not imply coverage of live interaction:
   protect output, not calculation input, transient markers, or playback.
   `ImageTest.rotate` tests geometric rotation, not palette cycling.
 - `tests/autokey/CMakeLists.txt` covers parameter/MIG generation, 3D-look
-  Targa output, random-dot stereograms, and palette cycling.  The palette
-  script verifies cycling-context saves, a single-step palette change,
-  and return to the main image; mock-driver tests verify speed and pause
-  state without timing assumptions.  These scripts do not exercise
-  standard-render menu interruption, JIIM, show-dot, or the stereo
-  photographer prompt.
+  Targa output, random-dot stereograms, palette cycling, and standard
+  one/two-pass interruption.  Standard scripts save a resumable checkpoint,
+  invoke `x` and Esc, then compare completed pixels exactly with an
+  uninterrupted control for optimized and general Mandelbrot paths.
+  Palette scripts verify cycling-context saves, single stepping, and
+  return to the image.  These scripts do not exercise JIIM, show-dot, or
+  the stereo photographer prompt.
 - Keyboard-handler tests cover dispatch, interruption flags, and key
-  requeueing, not a rendering controller's suspension and resumption.
+  requeueing.  Standard controller tests also cover mid-orbit suspension,
+  continuation, scanline resume positions, and perturbation/Lyapunov gates.
+  Palette controller tests verify speed and pause state without timing.
   Thinking-screen tests cover text and spinner updates, not cellular or
   L-system phase transitions.  Add autokey workflows and controller tests
   for the distinct application and phase-lifecycle observations.
@@ -795,37 +801,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 18. StandardFractal Pixel Interrupts
-
-Work:
-
-- Make `libid/ui/standard_fractal.cpp` the only code that checks for
-  interruption during standard pixel rendering.
-- Reshape `StandardFractal::calculate_standard_pixel()`,
-  `calc_mandelbrot_type()`, and the one/two pass loops so they return
-  after bounded pixel work instead of checking `calc_interrupted()`.
-- Move resume and work-list decisions that currently branch on
-  `calc_interrupted()` into pass suspension state triggered by the UI
-  polling loop.
-- Keep orbit math and color selection unchanged.
-
-Done when:
-
-- Standard pixel code in `engine/calcfrac.cpp` does not call
-  `calc_interrupted()`.
-- `engine/ScanlinePass.cpp` does not call `calc_interrupted()`.
-- `ui/standard_fractal.cpp` polls between `StandardFractal` increments
-  and calls `suspend()` when interruption is requested.
-
-Validation: establish autokey regressions for `x`, Esc, continued
-rendering, and saving through the real application.  Cover one/two-pass
-traversal and the optimized Mandelbrot and general standard-pixel paths.
-Observe interruption during work before claiming that coverage; compare
-resumed output with an uninterrupted control.  Use controller tests for
-within-orbit yields, perturbation/Lyapunov gates, and resume bookkeeping
-without skipped or repeated pixels.  Retain existing images; no manual
-rendering check or assertion of exact polling frequency.
 
 ### 19. Perturbation Traversal Ownership
 
@@ -1782,10 +1757,6 @@ mechanism or a source-grep test.
 Calculation code can still reach polling or key-sensitive waiting through
 these direct and indirect paths:
 
-- `libid/engine/calcfrac.cpp`: standard pixel calculation still calls
-  `calc_interrupted()`.
-- `libid/engine/ScanlinePass.cpp`: one-pass and two-pass traversal still
-  calls `calc_interrupted()` while deciding whether to suspend work.
 - `libid/fractals/Cellular.cpp`: `iterate()` calls `thinking()`, which
   polls the driver queue.  Completion, failure, and suspension also call
   UI screen cleanup.

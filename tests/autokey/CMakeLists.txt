@@ -92,3 +92,22 @@ add_test(NAME AutoKeyTest.palette-cycle
 )
 set_tests_properties(AutoKeyTest.palette-cycle
     PROPERTIES LABELS "autokey;ui;colormap" TIMEOUT 90)
+
+foreach(passes IN ITEMS 1 2)
+    foreach(pixel IN ITEMS optimized general)
+        set(name "standard-interrupt-${passes}-${pixel}")
+        id_make_test_home("${name}" STANDARD_INTERRUPT_HOME
+            KEYS standard_interrupt.key)
+        add_test(NAME "AutoKeyTest.${name}"
+            COMMAND ${CMAKE_COMMAND}
+                "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+                "-DCHECK_RESUME=$<SHELL_PATH:$<TARGET_FILE:check-standard-resume>>"
+                "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+                "-DPASSES=${passes}"
+                "-DGENERAL_PIXEL=$<STREQUAL:${pixel},general>"
+                -P "${CMAKE_CURRENT_SOURCE_DIR}/standard_interrupt_test.cmake"
+            WORKING_DIRECTORY "${STANDARD_INTERRUPT_HOME}")
+        set_tests_properties("AutoKeyTest.${name}"
+            PROPERTIES LABELS "autokey;ui;passes" TIMEOUT 250)
+    endforeach()
+endforeach()

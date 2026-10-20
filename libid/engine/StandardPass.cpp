@@ -210,6 +210,16 @@ void StandardPass::select(const CalcMode calc_mode)
 
 void StandardPass::suspend()
 {
+    if (m_state.index() == ONE_PASS)
+    {
+        std::get<OnePass>(m_state).suspend();
+        return;
+    }
+    if (m_state.index() == TWO_PASS)
+    {
+        std::get<TwoPass>(m_state).suspend();
+        return;
+    }
     if (m_state.index() == SYNCHRONOUS_ORBIT)
     {
         std::get<SynchronousOrbit>(m_state).suspend();
