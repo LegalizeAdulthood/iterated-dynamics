@@ -13,14 +13,11 @@
 #include <math/fixed_pt.h>
 #include <misc/stack_avail.h>
 #include <misc/ValueSaver.h>
-#include <ui/text_screen.h>
-#include <ui/thinking.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <array>
-#include <cstring>
 #include <filesystem>
 #include <initializer_list>
 #include <string>
@@ -31,7 +28,6 @@ using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
-using namespace id::ui;
 using namespace testing;
 
 namespace id::test
@@ -48,17 +44,8 @@ protected:
             .WillRepeatedly(Invoke(
                 [this](int x0, int y0, int x1, int y1, int color)
                 {
-                    EXPECT_FALSE(thinking_active());
                     m_lines.push_back({x0, y0, x1, y1, color});
                 }));
-        EXPECT_CALL(m_driver, stack_screen()).Times(AnyNumber());
-        EXPECT_CALL(m_driver, set_clear()).Times(AnyNumber());
-        EXPECT_CALL(m_driver, put_string(_, _, _, _))
-            .WillRepeatedly(Invoke(
-                [](int, int col, int, const char *text) { g_text_col = col + static_cast<int>(std::strlen(text)); }));
-        EXPECT_CALL(m_driver, hide_text_cursor()).Times(AnyNumber());
-        EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Invoke([this] { return m_cancel ? 'x' : 0; }));
-        EXPECT_CALL(m_driver, unstack_screen()).WillRepeatedly(Invoke([this] { ++m_thinking_exits; }));
     }
 
     void render(const char *name, const int order = 0)
@@ -76,7 +63,6 @@ protected:
         }
         EXPECT_TRUE(system.done());
         EXPECT_FALSE(system.interrupted());
-        EXPECT_FALSE(thinking_active());
     }
 
     void expect_lines(const std::initializer_list<Line> expected)
@@ -107,8 +93,6 @@ protected:
         g_l_system_filename, std::filesystem::path{data::ID_TEST_LSYSTEM_DIR} / data::ID_TEST_LSYSTEM_FILE};
     ValueSaver<std::string> m_saved_name{g_l_system_name};
     std::vector<Line> m_lines;
-    bool m_cancel{};
-    int m_thinking_exits{};
 };
 
 TEST_F(TestLSystem, fitsBothAxes)
@@ -201,17 +185,97 @@ TEST_F(TestLSystem, stopsBeforeDrawingOnOverflow)
     render("SizingBox");
 
     EXPECT_TRUE(m_lines.empty());
-    EXPECT_EQ(0, m_thinking_exits);
 }
 
-TEST_F(TestLSystem, cancelsSizingAndRestoresThinkingScreen)
+TEST_F(TestLSystem, startInitializesSizingWithoutTraversing)
 {
-    m_cancel = true;
+    g_l_system_name = "Koch1";
+    g_params[0] = 9;
+    ASSERT_FALSE(lsystem_load());
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    LSystem system;
 
-    render("Koch1", 9);
+    system.start();
 
+    EXPECT_TRUE(system.sizing());
+    EXPECT_FALSE(system.done());
+    EXPECT_FALSE(system.interrupted());
+    for (int i = 0; i < 1024; ++i)
+    {
+        system.iterate();
+    }
+    EXPECT_TRUE(system.sizing());
+    EXPECT_FALSE(system.done());
     EXPECT_TRUE(m_lines.empty());
-    EXPECT_EQ(1, m_thinking_exits);
+}
+
+TEST_F(TestLSystem, sizingEndsBeforeDrawingStarts)
+{
+    g_l_system_name = "SizingBox";
+    g_params[0] = 0;
+    ASSERT_FALSE(lsystem_load());
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    LSystem system;
+    system.start();
+
+    for (int i = 0; i < 100 && system.sizing(); ++i)
+    {
+        system.iterate();
+        EXPECT_TRUE(m_lines.empty());
+    }
+
+    EXPECT_FALSE(system.sizing());
+    EXPECT_FALSE(system.done());
+    system.iterate();
+    EXPECT_EQ(1U, m_lines.size());
+    for (int i = 0; i < 100 && !system.done(); ++i)
+    {
+        system.iterate();
+    }
+    EXPECT_TRUE(system.done());
+    EXPECT_FALSE(system.sizing());
+}
+
+TEST_F(TestLSystem, suspensionStopsSizing)
+{
+    g_l_system_name = "Koch1";
+    g_params[0] = 9;
+    ASSERT_FALSE(lsystem_load());
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    LSystem system;
+    system.start();
+    system.iterate();
+
+    system.suspend();
+    system.iterate();
+
+    EXPECT_TRUE(system.interrupted());
+    EXPECT_FALSE(system.done());
+    EXPECT_TRUE(system.sizing());
+    EXPECT_TRUE(m_lines.empty());
+}
+
+TEST_F(TestLSystem, overflowDuringSizingStopsBeforeDrawing)
+{
+    g_l_system_name = "Koch1";
+    g_params[0] = 9;
+    ASSERT_FALSE(lsystem_load());
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    LSystem system;
+    system.start();
+    system.iterate();
+
+    g_overflow = true;
+    system.iterate();
+
+    EXPECT_TRUE(system.done());
+    EXPECT_FALSE(system.sizing());
+    EXPECT_FALSE(system.interrupted());
+    EXPECT_TRUE(m_lines.empty());
 }
 
 } // namespace id::test

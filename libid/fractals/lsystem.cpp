@@ -13,7 +13,6 @@
 #include "misc/id.h"
 #include "misc/stack_avail.h"
 #include "ui/stop_msg.h"
-#include "ui/thinking.h"
 
 #include <config/string_lower.h>
 
@@ -58,10 +57,11 @@ enum
 constexpr int MAX_LSYS_ERROR_LINES = 6;
 constexpr std::size_t MAX_LSYS_ERROR_LINE_LEN = 80;
 constexpr float LSYS_SCALE_SENTINEL = 1.0e37F;
+constexpr int SIZING_STEPS_PER_ITERATION = 256;
 
 struct LSysTurtleState
 {
-    char counter, angle, reverse;
+    char angle, reverse;
     bool stack_overflow;
     // dmaxangle is maxangle - 1
     char max_angle, d_max_angle, curr_color, dummy;  // dummy ensures longword alignment
@@ -136,14 +136,22 @@ public:
     ~Impl();
 
     void start();
+    bool sizing() const;
     bool done() const;
     bool interrupted() const;
     void iterate();
     void suspend();
 
 private:
+    enum class Phase
+    {
+        SIZING,
+        DRAWING,
+        DONE
+    };
+
     void build_size_commands();
-    bool find_scale();
+    void find_scale();
     bool iterate_size();
     bool push_size_frame(LSysCmd *command, LSysCmd **rules, int depth, bool restore_turtle = false,
         const LSysTurtleSnapshot &saved_turtle = {});
@@ -162,7 +170,7 @@ private:
     std::vector<LSysCmd *> m_rule_cmds;
     std::vector<LSysFrame> m_size_stack;
     std::vector<LSysFrame> m_draw_stack;
-    bool m_done{};
+    Phase m_phase{Phase::SIZING};
     bool m_interrupted{};
 };
 
@@ -821,37 +829,12 @@ static LSysCmd *lsys_size_transform(const char *s, LSysTurtleState *ts)
     return doubled;
 }
 
-bool LSystem::Impl::find_scale()
+void LSystem::Impl::find_scale()
 {
-    m_turtle.aspect = g_screen_aspect * g_logical_screen.x_dots / g_logical_screen.y_dots;
-    m_turtle.y_min = 0;
-    m_turtle.y_max = 0;
-    m_turtle.x_max = 0;
-    m_turtle.x_min = 0;
-    m_turtle.y_pos = 0;
-    m_turtle.x_pos = 0;
-    m_turtle.counter = 0;
-    m_turtle.reverse = 0;
-    m_turtle.angle = 0;
-    m_turtle.real_angle = 0;
-    m_turtle.size = 1;
-    m_size_stack.clear();
-    bool sized = !g_overflow && push_size_frame(m_rule_cmds[0], &m_rule_cmds[1], m_order);
-    // TODO: removed later
-    while (sized && !m_size_stack.empty())
-    {
-        sized = iterate_size();
-    }
-    thinking_end(); // erase thinking message if any
-    m_size_stack.clear();
     const LDouble x_min = m_turtle.x_min;
     const LDouble x_max = m_turtle.x_max;
     const LDouble y_min = m_turtle.y_min;
     const LDouble y_max = m_turtle.y_max;
-    if (!sized)
-    {
-        return false;
-    }
     float horiz;
     if (x_max == x_min)
     {
@@ -889,8 +872,6 @@ bool LSystem::Impl::find_scale()
         m_turtle.y_pos = (g_logical_screen.y_dots - local_size * (y_max + y_min)) / 2;
     }
     m_turtle.size = local_size;
-
-    return true;
 }
 
 static LSysTurtleSnapshot save_turtle(const LSysTurtleState &turtle)
@@ -945,6 +926,11 @@ void LSystem::start()
     m_impl->start();
 }
 
+bool LSystem::sizing() const
+{
+    return m_impl->sizing();
+}
+
 bool LSystem::done() const
 {
     return m_impl->done();
@@ -969,22 +955,32 @@ void LSystem::Impl::start()
 {
     build_size_commands();
     lsys_build_trig_table();
-    if (find_scale())
+    m_turtle.aspect = g_screen_aspect * g_logical_screen.x_dots / g_logical_screen.y_dots;
+    m_turtle.y_min = 0;
+    m_turtle.y_max = 0;
+    m_turtle.x_max = 0;
+    m_turtle.x_min = 0;
+    m_turtle.y_pos = 0;
+    m_turtle.x_pos = 0;
+    m_turtle.reverse = 0;
+    m_turtle.angle = 0;
+    m_turtle.real_angle = 0;
+    m_turtle.size = 1;
+    m_size_stack.clear();
+    if (g_overflow || m_turtle.stack_overflow || !push_size_frame(m_rule_cmds[0], &m_rule_cmds[1], m_order))
     {
-        reset_turtle_for_drawing();
-        free_commands();
-        build_draw_commands();
-        start_drawing();
+        m_phase = Phase::DONE;
     }
-    else
-    {
-        m_done = true;
-    }
+}
+
+bool LSystem::Impl::sizing() const
+{
+    return m_phase == Phase::SIZING;
 }
 
 bool LSystem::Impl::done() const
 {
-    return m_done;
+    return m_phase == Phase::DONE;
 }
 
 bool LSystem::Impl::interrupted() const
@@ -1030,15 +1026,6 @@ bool LSystem::Impl::iterate_size()
             }
         }
         return true;
-    }
-
-    if (!m_turtle.counter++)
-    {
-        if (thinking("L-System thinking (higher orders take longer)"))
-        {
-            m_turtle.counter--;
-            return false;
-        }
     }
 
     if (frame.depth)
@@ -1157,8 +1144,37 @@ bool LSystem::Impl::start_draw_stack(LSysCmd *command)
 
 void LSystem::Impl::iterate()
 {
-    if (m_done || m_interrupted)
+    if (done() || m_interrupted)
     {
+        return;
+    }
+
+    if (sizing())
+    {
+        for (int step = 0; step < SIZING_STEPS_PER_ITERATION; ++step)
+        {
+            if (!iterate_size())
+            {
+                m_size_stack.clear();
+                m_phase = Phase::DONE;
+                return;
+            }
+            if (m_size_stack.empty())
+            {
+                find_scale();
+                reset_turtle_for_drawing();
+                free_commands();
+                build_draw_commands();
+                m_phase = Phase::DRAWING;
+                if (m_turtle.stack_overflow)
+                {
+                    m_interrupted = true;
+                    return;
+                }
+                start_drawing();
+                return;
+            }
+        }
         return;
     }
 
@@ -1170,7 +1186,7 @@ void LSystem::Impl::iterate()
 
     if (m_draw_stack.empty())
     {
-        m_done = true;
+        m_phase = Phase::DONE;
         return;
     }
 
@@ -1189,7 +1205,10 @@ void LSystem::Impl::iterate()
                 m_draw_stack.back().command = return_command + 1;
             }
         }
-        m_done = m_draw_stack.empty();
+        if (m_draw_stack.empty())
+        {
+            m_phase = Phase::DONE;
+        }
         return;
     }
 

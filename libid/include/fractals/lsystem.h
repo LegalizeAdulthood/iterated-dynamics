@@ -29,6 +29,7 @@ public:
     LSystem &operator=(LSystem &&) = delete;
 
     void start();
+    bool sizing() const;
     bool done() const;
     bool interrupted() const;
     void iterate();

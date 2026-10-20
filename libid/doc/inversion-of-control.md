@@ -67,8 +67,9 @@ libid/fractals/<Type>.cpp or libid/engine/<Type>.cpp
 
 Cellular exposes initial-generation preparation as calculation state;
 its UI controller owns thinking-screen updates and cleanup.  L-system
-sizing and drawing use explicit frame stacks, but sizing still drains
-synchronously inside `start()` and polls through `thinking()`.
+sizing and drawing use explicit frame stacks and advance incrementally.
+Its UI controller owns the thinking screen and interruption in both
+phases; sizing and drawing do not poll input.
 
 JIIM still owns the outer interaction loop, cursor, and UI keyboard and
 mouse scopes in `libid/engine/jiim.cpp`.  Extracting its input helpers into
@@ -231,10 +232,6 @@ The current code is already part-way through this plan:
 
 The fresh reverse-call audit also found these live paths:
 
-- `LSystem::start()` drains sizing, which calls `thinking()` and
-  polls the driver queue.  Calculation code also ends its thinking
-  display.  Cellular's equivalent presentation now belongs to its UI
-  controller.
 - `InverseJulia::iterate()` calls `process_inverse_julia_keyboard()`;
   `InverseJulia::process()` owns the handler scope, mouse scope, and loop.
 - `calc_fract()` calls UI render controllers directly.
@@ -656,8 +653,6 @@ The remaining UI-concept leaks outside `libid/ui` are:
   fully into the UI controller.
 - `libid/engine/calcfrac.cpp`: owns show-dot marker save and restore
   state.
-- `libid/fractals/lsystem.cpp`: synchronous sizing owns the thinking screen
-  and decides whether a pending key aborts sizing.
 - `libid/engine/jiim.cpp`: owns cursor state, coordinate messages, the
   interaction loop, UI handler and mouse scopes, and calls into UI input
   processing and key requeue helpers.
@@ -735,6 +730,9 @@ Existing coverage does not imply coverage of live interaction:
   The cellular script delivers its interrupt only while the preparation
   thinking screen is active, saves a non-resumable checkpoint, then
   starts generation-zero rendering and compares it with a fresh image.
+  The L-system script interrupts the sizing thinking screen, returns
+  through the outer menu, and starts a completed drawing at a new order.
+  It verifies metadata and blank/nonblank output, not rasterized lines.
 - Keyboard-handler tests cover dispatch, interruption flags, and key
   requeueing.  Standard controller tests also cover mid-orbit suspension,
   continuation, scanline resume positions, and perturbation/Lyapunov gates.
@@ -742,8 +740,10 @@ Existing coverage does not imply coverage of live interaction:
   Thinking-screen tests cover text, spinner updates, and active state.
   Cellular controller tests cover preparation, transition to pixel
   output, exactly-once cleanup, interruption, and injected failure.
-  L-system phase transitions still need the distinct application and
-  lifecycle tests specified below.
+  L-system calculation tests cover bounded sizing, suspension, and
+  transition to drawing without UI calls.  Controller tests cover
+  thinking-screen entry, updates, exactly-once cleanup, interruption,
+  initialization failure, and injected calculation/presentation failure.
 - Perturbation tests cover reference failure, cached-reference reuse,
   caller-selected pixel order, deep-zoom BoundaryTrace completion, and
   palette-color consistency.  They also verify BoundaryTrace strategy
@@ -821,34 +821,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 23. L-System Sizing UI Controller
-
-Source: `LSystem::Impl::start()`, `find_scale()`, and sizing traversal;
-UI owner: `libid/ui/lsystem.cpp`.
-
-Work:
-
-- Make sizing an explicit calculation phase advanced by bounded
-  `iterate()` calls.  `start()` must not expand the whole sizing tree.
-- Let the UI controller own the thinking display and interruption for
-  sizing as well as drawing.  Keep sizing math in `LSystem`.
-- Remove sizing's `thinking()` and `thinking_end()` calls and the
-  temporary synchronous drain from the preceding slice.
-
-Done when:
-
-- Setup, sizing, and drawing return to the UI controller without polling
-  input or interpreting pending keys inside calculation code.
-
-Validation: reuse `AutoKeyTest.lsystem-sizing` for cancellation, return to
-the outer UI, restart, and progression from sizing to drawing.  Its
-`THINKWAIT` gate observes sizing before interruption; saved metadata and
-blank/nonblank checks verify cancellation and completed drawing without
-comparing rasterized lines.  Use semantic calculation tests and
-controller tests for thinking-screen entry, updates, cleanup, and phase
-transitions, including failure.  Do not compare rasterized L-system lines
-or duplicate the interaction manually.
 
 ### 24. JIIM Calculation And Tool State
 
@@ -1652,10 +1624,6 @@ mechanism or a source-grep test.
 Calculation code can still reach polling or key-sensitive waiting through
 these direct and indirect paths:
 
-- `libid/fractals/lsystem.cpp`: the temporary sizing drain in
-  `find_scale()` calls `thinking()` from inside `start()` and interprets
-  pending input as sizing failure.  UI polling around drawing does not
-  cover this phase.
 - `libid/engine/jiim.cpp`: `iterate()` calls
   `process_inverse_julia_keyboard()`, which may wait through the cursor.
   `process()` owns the keyboard handler, mouse scope, and interaction loop;
