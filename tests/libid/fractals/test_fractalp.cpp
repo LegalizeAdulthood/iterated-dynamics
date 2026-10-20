@@ -387,7 +387,7 @@ TEST(TestFractalDispatch, formulaParseFailureOnlyUpdatesDispatch)
 
     fs::path path{"unused.frm"};
 
-    EXPECT_TRUE(parse_formula(path, g_formula_name, true));
+    EXPECT_THROW(parse_formula(path, g_formula_name), std::runtime_error);
     EXPECT_EQ(bad_formula, g_dispatch.orbit_calc());
     EXPECT_EQ(bad_formula, g_dispatch.per_pixel());
     expect_table_functions(FractalType::FORMULA, table);
@@ -402,7 +402,7 @@ TEST(TestFractalDispatch, formulaParseSuccessOnlyUpdatesDispatch)
 
     fs::path path{fs::path{ID_TEST_FRM_DIR} / ID_TEST_FRM_FILE};
 
-    EXPECT_FALSE(parse_formula(path, g_formula_name, true));
+    EXPECT_TRUE(parse_formula(path, g_formula_name).empty());
     EXPECT_EQ(formula_orbit, g_dispatch.orbit_calc());
     EXPECT_EQ(formula_per_pixel, g_dispatch.per_pixel());
     expect_table_functions(FractalType::FORMULA, table);

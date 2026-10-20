@@ -266,12 +266,19 @@ The current code is already part-way through this plan:
   Selection reports the failure once and retries locally; rendering
   reports it through the outer UI diagnostic boundary.  IFS lookup uses
   the non-interactive `find_file_item()` overload.  The legacy reporting
-  overload remains for slices 32 and 44.
+  overload remains for slice 44.
 - `lsystem_load()` throws parser and lookup diagnostics without UI and
   closes definition files on failure.  A failed load clears cached rules
   and the axiom, and sizing refuses to start without a valid definition.
   Selection reports errors and retries; render failures use the outer UI
   diagnostic boundary without starting sizing or drawing.
+- Formula lookup, parameter inspection, prescan, and compilation throw
+  diagnostics without UI.  Source lines, expressions, and carets remain
+  in parser errors; recoverable warnings are returned to the caller.
+  Failed compilation clears the program and leaves safe dispatch in
+  place.  Selection displays diagnostics and retries locally; parameter
+  inspection and render setup report through their UI owners.  Open
+  definition and debug files close on early failure.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -695,8 +702,8 @@ The remaining UI-concept leaks outside `libid/ui` are:
 
 - `libid/fractals/lorenz.cpp`: IFS and 3D front ends invoke UI renderers;
   stereo orchestration invokes photographer prompts between images.
-- Calculation setup, fractal loaders, formula parsing, precision math,
-  debug displays, and memory helpers invoke `stop_msg()` and sometimes
+- Calculation setup, palette loading, precision math, debug displays,
+  and memory helpers invoke `stop_msg()` and sometimes
   `goodbye()`.  These are input and application-control leaks even when
   they are reachable only on failure or in debug builds.
 - Calculation code calls pixel/span functions in `ui/video.cpp` and
@@ -782,6 +789,10 @@ Existing coverage does not imply coverage of live interaction:
   image when another invalid selection is cancelled.  Batch checks
   require one diagnostic and no saved image for each rejected definition.
   It verifies metadata and blank/nonblank output, not rasterized lines.
+  The formula script acknowledges a missing definition, rejects invalid
+  syntax, selects a valid formula, and preserves the completed image
+  when another invalid selection is cancelled.  Batch checks reject
+  missing, malformed, and empty formulas without saving an image.
   The JIIM script checks picker movement and exact-point selection through
   saved Julia parameters, then reopens the orbit window around a menu and
   verifies restored Mandelbrot pixels.  It is the baseline for moving
@@ -800,6 +811,10 @@ Existing coverage does not imply coverage of live interaction:
   failure.  Controller tests cover thinking-screen entry, updates,
   exactly-once cleanup, interruption, initialization failure, and injected
   calculation/presentation failure.
+- Formula parser tests run without a UI driver.  They cover source and
+  caret diagnostics, syntax and jump failures, recoverable symmetry
+  warnings, file cleanup, failed-program cleanup, successful recompilation,
+  and parameter inspection.
 - Perturbation tests cover reference failure, cached-reference reuse,
   caller-selected pixel order, deep-zoom BoundaryTrace completion, and
   palette-color consistency.  They also verify BoundaryTrace strategy
@@ -879,31 +894,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 32. Formula Parser Diagnostics
-
-Source: file reading, prescan, compilation, and error reporting in
-`libid/fractals/parser.cpp`.
-
-Work:
-
-- Preserve diagnostic text and parse locations as parser results or
-  errors.  Remove direct `stop_msg()` calls from those operations.
-- Use the non-interactive `find_file_item()` diagnostic overload for
-  formula lookup and parameter inspection.
-- Let formula selection and render-setup UI owners decide how to display
-  errors and whether another definition is requested.
-- Keep parser cleanup correct when parsing stops early.
-
-Done when:
-
-- Formula parsing and compilation can run without a UI driver and cannot
-  open a modal message from calculation setup.
-
-Validation: retain parser tests for malformed input, missing files, and
-failed compilation.  Use autokey for formula selection, error dismissal,
-and retry with a valid definition through the real UI.  Verify the chosen
-definition and successful calculation, not merely process exit.
 
 ### 33. Fractal Setup Validation Diagnostics
 
@@ -1471,8 +1461,8 @@ these direct and indirect paths:
   `fractals/Cellular.cpp`, and renderer table entries in
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or
   dispatch pointers, including from per-image setup.
-- Calculation validation, definition loaders, formula parsing, math
-  allocation, debug displays, and memory operations: `stop_msg()` polls
+- Calculation validation, palette loading, math allocation, debug displays,
+  and memory operations: `stop_msg()` polls
   and waits inside these callers, and some failures invoke `goodbye()`.
 - Storage setup and disk-video progress can invoke modal failure screens
   from calculation code through `ui/diskvid.cpp` and memory allocation.

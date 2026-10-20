@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /* (C) 1990, Mark C. Peterson
    All rights reserved.
@@ -35,7 +36,6 @@
 #include "math/fpu087.h"
 #include "misc/debug_flags.h"
 #include "misc/id.h"
-#include "ui/stop_msg.h"
 
 #include <config/string_case_compare.h>
 
@@ -52,6 +52,7 @@
 #include <cstring>
 #include <ctime>
 #include <functional>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -65,7 +66,6 @@ using namespace id::engine;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::fractals
 {
@@ -382,14 +382,13 @@ private:
 } // namespace
 
 // forward declarations
-static bool frm_prescan(Reader &reader);
+static void frm_prescan(Reader &reader);
 static void parser_allocate();
 
 CompiledFormula g_formula;
 static ParserState s_parser;
 
 static constexpr std::array<std::string_view, 4> JUMP_LIST{"if", "elseif", "else", "endif"};
-static FormulaEntry s_formula_entry;
 constexpr int MAX_FORMULA_ERRORS{3};
 constexpr std::size_t MAX_FORMULA_TOKEN_TEXT{32};
 constexpr std::size_t MAX_TOKEN_TEXT{79};
@@ -837,7 +836,7 @@ static void push_pending_op(const FunctionPtr f, const int p)
     assert(g_formula.op_index == g_formula.ops.size());
 }
 
-static bool parse_formula_text(const std::string &text)
+static void parse_formula_text(const std::string &text)
 {
     int mod_flag = 999;
     int len;
@@ -1115,7 +1114,6 @@ static bool parse_formula_text(const std::string &text)
             g_formula.op_count--;
         }
     }
-    return false;
 }
 
 static int fill_if_group(const int endif_index, JumpPtrs *jump_data)
@@ -1841,9 +1839,9 @@ CASE_TERMINATOR:
     }
 }
 
-int frm_get_param_stuff(std::filesystem::path &path, const char *name)
+void frm_get_param_stuff(std::filesystem::path &path, const char *name)
 {
-    std::FILE *debug_token = nullptr;
+    std::unique_ptr<std::FILE, decltype(&std::fclose)> debug_file{nullptr, std::fclose};
     int c;
     Token current_token;
     std::FILE *entry_file{};
@@ -1855,41 +1853,36 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
     g_formula.uses_p5 = false;
     g_formula.max_function = 0;
 
-    if (g_formula_name.empty())
+    std::string diagnostic;
+    if (find_file_item(path, name, &entry_file, ItemType::FORMULA, diagnostic))
     {
-        return 0;  //  and don't reset the pointers
+        throw std::runtime_error{diagnostic};
     }
-    if (find_file_item(path, name, &entry_file, ItemType::FORMULA))
-    {
-        stop_msg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
-        return 0;
-    }
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{entry_file, std::fclose};
     FileReader reader{entry_file};
     while ((c = frm_get_char(reader)) != '{' && c != EOF)
     {
     }
     if (c != '{')
     {
-        stop_msg(parse_error_text(ParseError::UNEXPECTED_EOF));
-        std::fclose(entry_file);
-        return 0;
+        throw std::runtime_error{parse_error_text(ParseError::UNEXPECTED_EOF)};
     }
 
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
         const std::filesystem::path debug_path{get_append_save_path(WriteFile::DEBUG, "frmtokens")};
         assert(!debug_path.empty());
-        debug_token = std::fopen(debug_path.string().c_str(), "at");
-        if (debug_token != nullptr)
+        debug_file.reset(std::fopen(debug_path.string().c_str(), "at"));
+        if (debug_file != nullptr)
         {
-            fmt::print(debug_token, "{:s}\n", name);
+            fmt::print(debug_file.get(), "{:s}\n", name);
         }
     }
     while (frm_get_token(reader, &current_token))
     {
-        if (debug_token != nullptr)
+        if (debug_file != nullptr)
         {
-            fmt::print(debug_token,
+            fmt::print(debug_file.get(),
                 "{:s}\n"
                 "token_type is {:d}\n"
                 "token_id is {:d}\n",
@@ -1899,13 +1892,12 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
             if (current_token.type == FormulaTokenType::REAL_CONSTANT ||
                 current_token.type == FormulaTokenType::COMPLEX_CONSTANT)
             {
-                fmt::print(debug_token,
+                fmt::print(debug_file.get(),
                     "Real value is {:f}\n"
                     "Imag value is {:f}\n",
-                    current_token.constant.x,
-                    current_token.constant.y);
+                    current_token.constant.x, current_token.constant.y);
             }
-            fmt::print(debug_token, "\n");
+            fmt::print(debug_file.get(), "\n");
         }
         switch (current_token.type)
         {
@@ -1945,11 +1937,6 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
             break;
         }
     }
-    std::fclose(entry_file);
-    if (debug_token)
-    {
-        std::fclose(debug_token);
-    }
     if (current_token.type != FormulaTokenType::END_OF_FORMULA)
     {
         g_formula.uses_ismand = false;
@@ -1959,9 +1946,8 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
         g_formula.uses_p4 = false;
         g_formula.uses_p5 = false;
         g_formula.max_function = 0;
-        return 0;
+        throw std::runtime_error{fmt::format("Invalid formula token: {}", current_token.text)};
     }
-    return 1;
 }
 
 static std::string get_formula_name(std::FILE *open_file, int &c, GetFormulaError &err)
@@ -2158,11 +2144,12 @@ static std::string to_string(GetFormulaError err)
 
 /// @brief Performs error checking on the formula name and symmetry up to the open brace on the first line.
 /// @param reader Pointer to the open file containing the formula.
-/// @param report_bad_sym Boolean flag indicating whether to report invalid symmetry.
-/// @return true on success, false if errors are found that should prevent formula execution.
+/// @return A warning for invalid symmetry, or an empty string.
+/// @throws std::runtime_error if the header prevents formula execution.
 ///
-static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
+static std::string frm_check_name_and_sym(Reader &reader)
 {
+    std::string warning;
     const size_t file_pos = reader.tell();
     int c;
     bool at_end_of_name = false;
@@ -2176,12 +2163,10 @@ static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
         switch (c)
         {
         case EOF:
-            stop_msg(parse_error_text(ParseError::UNEXPECTED_EOF));
-            return false;
+            throw std::runtime_error{parse_error_text(ParseError::UNEXPECTED_EOF)};
         case '\r':
         case '\n':
-            stop_msg(parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
-            return false;
+            throw std::runtime_error{parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE)};
         case ' ':
         case '\t':
             at_end_of_name = true;
@@ -2208,8 +2193,7 @@ static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
         {
             msg_buff += static_cast<char>(reader.get_char());
         }
-        stop_msg(msg_buff);
-        return false;
+        throw std::runtime_error{msg_buff};
     }
     // get symmetry
     g_symmetry = SymmetryType::NONE;
@@ -2224,15 +2208,12 @@ static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
             switch (c)
             {
             case EOF:
-                stop_msg(parse_error_text(ParseError::UNEXPECTED_EOF));
-                return false;
+                throw std::runtime_error{parse_error_text(ParseError::UNEXPECTED_EOF)};
             case '\r':
             case '\n':
-                stop_msg(parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
-                return false;
+                throw std::runtime_error{parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE)};
             case '{':
-                stop_msg(parse_error_text(ParseError::NO_MATCH_RIGHT_PAREN));
-                return false;
+                throw std::runtime_error{parse_error_text(ParseError::NO_MATCH_RIGHT_PAREN)};
             case ' ':
             case '\t':
                 break;
@@ -2257,12 +2238,12 @@ static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
                 break;
             }
         }
-        if (i == num_names && report_bad_sym)
+        if (i == num_names)
         {
             std::string msg_buff{parse_error_text(ParseError::INVALID_SYM_USING_NOSYM)};
             msg_buff += ":\n   ";
             msg_buff += sym_buf;
-            stop_msg(msg_buff);
+            warning = msg_buff;
         }
     }
     if (c != '{')
@@ -2274,12 +2255,10 @@ static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
             switch (c)
             {
             case EOF:
-                stop_msg(parse_error_text(ParseError::UNEXPECTED_EOF));
-                return false;
+                throw std::runtime_error{parse_error_text(ParseError::UNEXPECTED_EOF)};
             case '\r':
             case '\n':
-                stop_msg(parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
-                return false;
+                throw std::runtime_error{parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE)};
             case '{':
                 done = true;
                 break;
@@ -2288,7 +2267,7 @@ static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
             }
         }
     }
-    return true;
+    return warning;
 }
 
 /// @brief Sets the symmetry and converts a formula into a string with no spaces.
@@ -2299,47 +2278,42 @@ static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
 /// letter of the name of the formula to be prepared.
 ///
 /// @param reader The open file containing the formula.
-/// @param report_bad_sym Boolean flag indicating whether to report invalid symmetry.
-/// @return A string containing the prepared formula, or an empty string on error.
+/// @param warnings Recoverable header diagnostics.
+/// @return A string containing the prepared formula.
+/// @throws std::runtime_error if the formula cannot be prepared.
 ///
-static std::string prepare_formula(Reader &reader, const bool report_bad_sym)
+static std::string prepare_formula(Reader &reader, std::vector<std::string> &warnings)
 {
-    const long file_pos{reader.tell()};
+    ReaderPositionSaver saved_pos{reader};
 
     // Test for a repeat
-    if (!frm_check_name_and_sym(reader, report_bad_sym))
+    if (const std::string warning{frm_check_name_and_sym(reader)}; !warning.empty())
     {
-        reader.seek(file_pos);
-        return {};
+        warnings.push_back(warning);
     }
-    if (!frm_prescan(reader))
-    {
-        reader.seek(file_pos);
-        return {};
-    }
+    frm_prescan(reader);
 
     if (s_parser.chars_in_formula > 8190)
     {
-        reader.seek(file_pos);
-        return {};
+        throw std::runtime_error{parse_error_text(ParseError::FORMULA_TOO_LARGE)};
     }
 
-    std::FILE *debug_fp{};
+    std::unique_ptr<std::FILE, decltype(&std::fclose)> debug_file{nullptr, std::fclose};
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
         const std::filesystem::path path{get_append_save_path(WriteFile::DEBUG, "debugfrm")};
         assert(!path.empty());
-        debug_fp = std::fopen(path.string().c_str(), "at");
-        if (debug_fp != nullptr)
+        debug_file.reset(std::fopen(path.string().c_str(), "at"));
+        if (debug_file != nullptr)
         {
-            fmt::print(debug_fp, "{:s}\n", g_formula_name);
+            fmt::print(debug_file.get(), "{:s}\n", g_formula_name);
             if (g_symmetry != SymmetryType::NONE)
             {
                 const auto it = std::find_if(std::begin(SYMMETRY_NAMES), std::end(SYMMETRY_NAMES),
                     [](const SymmetryName &item) { return item.n == g_symmetry; });
                 if (it != std::end(SYMMETRY_NAMES))
                 {
-                    fmt::print(debug_fp, "{:s}\n", it->s);
+                    fmt::print(debug_file.get(), "{:s}\n", it->s);
                 }
             }
         }
@@ -2356,23 +2330,11 @@ static std::string prepare_formula(Reader &reader, const bool report_bad_sym)
         frm_get_token(reader, &temp_tok);
         if (temp_tok.type == FormulaTokenType::NOT_A_TOKEN)
         {
-            stop_msg("Unexpected token error in PrepareFormula\n");
-            reader.seek(file_pos);
-            if (debug_fp != nullptr)
-            {
-                std::fclose(debug_fp);
-            }
-            return {};
+            throw std::runtime_error{"Unexpected token error in PrepareFormula"};
         }
         if (temp_tok.type == FormulaTokenType::END_OF_FORMULA)
         {
-            stop_msg("Formula has no executable instructions\n");
-            reader.seek(file_pos);
-            if (debug_fp != nullptr)
-            {
-                std::fclose(debug_fp);
-            }
-            return {};
+            throw std::runtime_error{"Formula has no executable instructions"};
         }
         if (temp_tok.text[0] != ',')
         {
@@ -2388,16 +2350,9 @@ static std::string prepare_formula(Reader &reader, const bool report_bad_sym)
         switch (temp_tok.type)
         {
         case FormulaTokenType::NOT_A_TOKEN:
-            stop_msg("Unexpected token error in prepare_formula\n");
-            reader.seek(file_pos);
-            if (debug_fp != nullptr)
-            {
-                std::fclose(debug_fp);
-            }
-            return {};
+            throw std::runtime_error{"Unexpected token error in prepare_formula"};
         case FormulaTokenType::END_OF_FORMULA:
             done = true;
-            reader.seek(file_pos);
             break;
         default:
             formula_text += temp_tok.text;
@@ -2405,59 +2360,43 @@ static std::string prepare_formula(Reader &reader, const bool report_bad_sym)
         }
     }
 
-    if (debug_fp != nullptr)
+    if (debug_file != nullptr)
     {
         if (!formula_text.empty())
         {
-            fmt::print(debug_fp, "   {:s}\n", formula_text);
+            fmt::print(debug_file.get(), "   {:s}\n", formula_text);
         }
-        std::fclose(debug_fp);
     }
 
     return formula_text;
 }
 
-//  returns true if an error occurred
-bool parse_formula(std::filesystem::path &path, const std::string &name, const bool report_bad_sym)
+std::vector<std::string> parse_formula(std::filesystem::path &path, const std::string &name)
 {
     //  first set the pointers so they point to a fn which always returns 1
-    assert(g_cur_fractal_specific == get_fractal_specific(FractalType::FORMULA));
+    if (g_cur_fractal_specific != get_fractal_specific(FractalType::FORMULA))
+    {
+        throw std::logic_error{"Formula parsing requires the formula fractal type"};
+    }
     g_dispatch.set_per_pixel(bad_formula);
     g_dispatch.set_orbit_calc(bad_formula);
-
-    if (g_formula_name.empty())
-    {
-        return true;  //  and don't reset the pointers
-    }
+    g_formula = {};
 
     std::FILE *entry_file{};
-    if (find_file_item(path, name, &entry_file, ItemType::FORMULA))
+    std::string diagnostic;
+    if (find_file_item(path, name, &entry_file, ItemType::FORMULA, diagnostic))
     {
-        stop_msg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
-        return true;
+        throw std::runtime_error{diagnostic};
     }
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{entry_file, std::fclose};
 
+    GetFormulaError err{};
+    const FormulaEntry entry{get_formula_entry(entry_file, err)};
+    if (err != GetFormulaError::NONE)
     {
-        FileReader reader{entry_file};
-        ReaderPositionSaver saved_pos{reader};
-        GetFormulaError err{};
-        s_formula_entry = get_formula_entry(entry_file, err);
-        if (err != GetFormulaError::NONE)
-        {
-            stop_msg(to_string(err));
-            return true;
-        }
+        throw std::runtime_error{to_string(err)};
     }
-    std::fclose(entry_file);
-
-    const bool result{parse_formula(s_formula_entry, report_bad_sym)};
-    if (result)
-    {
-        // all parses succeeded so set the pointers back to good functions
-        g_dispatch.set_per_pixel(formula_per_pixel);
-        g_dispatch.set_orbit_calc(formula_orbit);
-    }
-    return !result;
+    return parse_formula(entry);
 }
 
 void init_misc()
@@ -2491,12 +2430,10 @@ static void parser_allocate()
     g_formula.load.resize(MAX_LOADS);
     g_formula.vars.resize(g_formula.max_args);
 
-    if (!parse_formula_text(g_formula.formula))
-    {
-        // per Chuck Ebbert, fudge these up a little
-        g_formula.max_ops = g_formula.op_index + 4;
-        g_formula.max_args = g_formula.var_index + 4;
-    }
+    parse_formula_text(g_formula.formula);
+    // per Chuck Ebbert, fudge these up a little
+    g_formula.max_ops = g_formula.op_index + 4;
+    g_formula.max_args = g_formula.var_index + 4;
     g_formula.uses_p1 = false;
     g_formula.uses_p2 = false;
     g_formula.uses_p3 = false;
@@ -2512,7 +2449,7 @@ void free_work_area()
     g_formula.fns.clear();
 }
 
-static void frm_error(Reader &reader, const long begin_frm)
+static std::string frm_error(Reader &reader, const long begin_frm)
 {
     constexpr int STOP_MSG_SCREEN_ROWS{25};
     constexpr int STOP_MSG_SCREEN_COLUMNS{80};
@@ -2561,10 +2498,7 @@ static void frm_error(Reader &reader, const long begin_frm)
             }
             else if (i == EOF || i == '}')
             {
-                stop_msg("Unexpected EOF or end-of-formula in error function.\n");
-                reader.seek(s_errors[j].error_pos);
-                frm_get_token(reader, &tok); // reset file to end of error token
-                return;
+                throw std::runtime_error{"Unexpected EOF or end-of-formula in error function."};
             }
         }
         append_line(fmt::format("Error({:d}) at line {:d}:  {:s}", //
@@ -2644,7 +2578,7 @@ static void frm_error(Reader &reader, const long begin_frm)
         }
         append_line(caret_line);
     }
-    stop_msg(msg_buff);
+    return msg_buff;
 }
 
 /// @brief Parses the formula from an open file for syntax errors and accumulates data for memory allocation.
@@ -2654,10 +2588,11 @@ static void frm_error(Reader &reader, const long begin_frm)
 /// to be done later.
 ///
 /// @param reader Pointer to the open file containing the formula.
-/// @return true if parsing succeeds (no errors found), false if errors are found.
+/// @throws std::runtime_error with source locations if parsing fails.
 ///
-static bool frm_prescan(Reader &reader)
+static void frm_prescan(Reader &reader)
 {
+    ReaderPositionSaver saved_pos{reader};
     long file_pos{};
     bool done{};
     Token this_token{};
@@ -2706,9 +2641,7 @@ static bool frm_prescan(Reader &reader)
             switch (this_token.id)
             {
             case TokenId::END_OF_FILE:
-                stop_msg(parse_error_text(ParseError::UNEXPECTED_EOF));
-                reader.seek(orig_pos);
-                return false;
+                throw std::runtime_error{parse_error_text(ParseError::UNEXPECTED_EOF)};
             case TokenId::ILLEGAL_CHARACTER:
                 record_error(ParseError::ILLEGAL_CHAR);
                 break;
@@ -2737,9 +2670,7 @@ static bool frm_prescan(Reader &reader)
                 record_error(ParseError::INVALID_CONST);
                 break;
             default:
-                stop_msg("Unexpected arrival at default case in prescan()");
-                reader.seek(orig_pos);
-                return false;
+                throw std::runtime_error{"Unexpected arrival at default case in prescan()"};
             }
             break;
         case FormulaTokenType::PARENS:
@@ -3109,13 +3040,8 @@ static bool frm_prescan(Reader &reader)
     }
     if (s_errors[0].start_pos)
     {
-        frm_error(reader, orig_pos);
-        reader.seek(orig_pos);
-        return false;
+        throw std::runtime_error{frm_error(reader, orig_pos)};
     }
-    reader.seek(orig_pos);
-
-    return true;
 }
 
 struct OperationName
@@ -3395,32 +3321,33 @@ std::string get_parser_state()
     return oss.str();
 }
 
-// returns false on failure
-bool parse_formula(const FormulaEntry &formula_entry, const bool report_bad_sym)
+std::vector<std::string> parse_formula(const FormulaEntry &formula_entry)
 {
+    g_dispatch.set_per_pixel(bad_formula);
+    g_dispatch.set_orbit_calc(bad_formula);
+    g_formula = {};
+    std::vector<std::string> warnings;
+    try
     {
         const std::string entry{to_string(formula_entry)};
         StringReader reader{entry};
-        g_formula.formula = prepare_formula(reader, report_bad_sym);
+        g_formula.formula = prepare_formula(reader, warnings);
+        parser_allocate();
+        parse_formula_text(g_formula.formula);
+        if (g_formula.uses_jump && fill_jump_struct())
+        {
+            throw std::runtime_error{parse_error_text(ParseError::ERROR_IN_PARSING_JUMP_STATEMENTS)};
+        }
     }
-
-    if (g_formula.formula.empty()) //  No errors while making string
+    catch (...)
     {
-        return false;              // error in making string
+        g_formula = {};
+        s_parser = {};
+        throw;
     }
-
-    parser_allocate();             //  parse_formula_text() will test if this alloc worked
-    if (parse_formula_text(g_formula.formula))
-    {
-        return false;              //  parse failed, don't change fn pointers
-    }
-    if (g_formula.uses_jump && fill_jump_struct())
-    {
-        stop_msg(parse_error_text(ParseError::ERROR_IN_PARSING_JUMP_STATEMENTS));
-        return false;
-    }
-
-    return true;
+    g_dispatch.set_per_pixel(formula_per_pixel);
+    g_dispatch.set_orbit_calc(formula_orbit);
+    return warnings;
 }
 
 void parser_reset()

@@ -419,8 +419,27 @@ long get_file_entry(ItemType type, std::filesystem::path &path, std::string &ent
 
     case ItemType::FORMULA:
     {
-        const long entry_pointer{get_file_entry(type, "Formula", "*.frm", path, entry_name)};
-        return entry_pointer >= 0 ? (parse_formula(g_formula_filename, entry_name, true) ? entry_pointer : 0) : entry_pointer;
+        while (true)
+        {
+            const long entry_pointer{get_file_entry(type, "Formula", "*.frm", path, entry_name)};
+            if (entry_pointer < 0)
+            {
+                return entry_pointer;
+            }
+            try
+            {
+                for (const std::string &warning : parse_formula(path, entry_name))
+                {
+                    stop_msg(warning);
+                }
+            }
+            catch (const std::runtime_error &error)
+            {
+                stop_msg(error.what());
+                continue;
+            }
+            return 0;
+        }
     }
 
     case ItemType::L_SYSTEM:

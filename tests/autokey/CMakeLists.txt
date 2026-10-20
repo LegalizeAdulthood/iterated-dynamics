@@ -134,6 +134,21 @@ add_test(NAME AutoKeyTest.lsystem-validation
 set_tests_properties(AutoKeyTest.lsystem-validation
     PROPERTIES LABELS "autokey;ui;lsystem" TIMEOUT 100)
 
+id_make_test_home(formula-validation FORMULA_VALIDATION_HOME
+    KEYS formula_validation.key)
+configure_file(formula_validation.frm
+    "${FORMULA_VALIDATION_HOME}/formula/validation.frm" COPYONLY)
+add_test(NAME AutoKeyTest.formula-validation
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCHECK_FORMULA=$<SHELL_PATH:$<TARGET_FILE:check-formula-validation>>"
+        "-DFORMULA_FILE=${FORMULA_VALIDATION_HOME}/formula/validation.frm"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/formula_validation_test.cmake"
+    WORKING_DIRECTORY "${FORMULA_VALIDATION_HOME}")
+set_tests_properties(AutoKeyTest.formula-validation
+    PROPERTIES LABELS "autokey;ui;formula" TIMEOUT 140)
+
 id_make_test_home(ifs-validation IFS_VALIDATION_HOME
     KEYS ifs_validation.key)
 configure_file(ifs_validation.ifs "${IFS_VALIDATION_HOME}/ifs/validation.ifs" COPYONLY)

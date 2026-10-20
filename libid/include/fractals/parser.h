@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -80,8 +81,9 @@ struct CompiledFormula
 
 extern CompiledFormula       g_formula;
 
-int frm_get_param_stuff(std::filesystem::path &path, const char *name);
-bool parse_formula(std::filesystem::path &path, const std::string &name, bool report_bad_sym);
+void frm_get_param_stuff(std::filesystem::path &path, const char *name);
+// Returns recoverable warnings; throws diagnostics on failure without UI.
+std::vector<std::string> parse_formula(std::filesystem::path &path, const std::string &name);
 void init_misc();
 void free_work_area();
 
@@ -95,8 +97,8 @@ struct FormulaEntry
     std::string body;
 };
 
-/// Parse formula for testing without executing
-bool parse_formula(const FormulaEntry &formula_entry, bool report_bad_sym);
+/// Compile without executing; return warnings or throw a diagnostic.
+std::vector<std::string> parse_formula(const FormulaEntry &formula_entry);
 
 // Reset parser state
 void parser_reset();

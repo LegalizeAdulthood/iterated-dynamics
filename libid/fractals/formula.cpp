@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "fractals/formula.h"
 
@@ -33,12 +34,16 @@ int bad_formula()
 bool formula_per_image()
 {
     reset_formula_random();
-    const bool result = !parse_formula(g_formula_filename, g_formula_name, false);
-    if (!result)
+    try
+    {
+        parse_formula(g_formula_filename, g_formula_name);
+    }
+    catch (...)
     {
         debug_trace_close();
+        throw;
     }
-    return result; // run_formula() returns true for failure
+    return true;
 }
 
 int formula_per_pixel()

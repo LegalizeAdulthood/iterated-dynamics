@@ -1,20 +1,32 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
+//
 #include "fractals/formula.h"
 #include "misc/ValueSaver.h"
 #include "test_data.h"
 
 #include <engine/cmdfiles.h>
+#include <engine/calcfrac.h>
 #include <engine/ImageRegion.h>
 #include <fractals/fractalp.h>
 #include <fractals/parser.h>
+#include <io/library.h>
+#include <misc/Driver.h>
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
+
+#include <fstream>
+#include <stdexcept>
 
 namespace fs = std::filesystem;
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::io;
 using namespace id::misc;
 using namespace id::test::data;
+using namespace testing;
 
 // clang-format off
 const FormulaEntry s_moe{"moe", "",
@@ -151,11 +163,45 @@ class ParserTest : public ::testing::Test
 {
 protected:
     void TearDown() override;
+    void expect_failure(const FormulaEntry &entry, const char *message);
+    void expect_no_program();
+
+    ValueSaver<Driver *> m_driver{g_driver, nullptr};
+    ValueSaver<FractalDispatch> m_dispatch{g_dispatch};
+    ValueSaver<const FractalSpecific *> m_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::FORMULA)};
+    ValueSaver<std::string> m_name{g_formula_name, "entry"};
 };
 
 void ParserTest::TearDown()
 {
     parser_reset();
+}
+
+void ParserTest::expect_no_program()
+{
+    EXPECT_TRUE(g_formula.formula.empty());
+    EXPECT_TRUE(g_formula.fns.empty());
+    EXPECT_TRUE(g_formula.vars.empty());
+    EXPECT_TRUE(g_formula.load.empty());
+    EXPECT_TRUE(g_formula.store.empty());
+    EXPECT_TRUE(g_formula.ops.empty());
+    EXPECT_TRUE(g_formula.jump_control.empty());
+    EXPECT_EQ(bad_formula, g_dispatch.per_pixel());
+    EXPECT_EQ(bad_formula, g_dispatch.orbit_calc());
+}
+
+void ParserTest::expect_failure(const FormulaEntry &entry, const char *message)
+{
+    try
+    {
+        parse_formula(entry);
+        FAIL() << "Expected a parser diagnostic";
+    }
+    catch (const std::runtime_error &error)
+    {
+        EXPECT_THAT(error.what(), HasSubstr(message));
+    }
+    expect_no_program();
 }
 
 } // namespace
@@ -168,7 +214,7 @@ TEST_F(ParserTest, moe)
     ValueSaver saved_image_region{
         g_image_region, ImageRegion{{-2.0, -1.5}, {1.0, 1.5}, {-2.0, -1.5}}};
 
-    ASSERT_TRUE(parse_formula(s_moe, true)) << "Should have parsed formula";
+    ASSERT_TRUE(parse_formula(s_moe).empty());
 
     EXPECT_EQ("s=exp(1.,0.),z=pixel,c=fn1(pixel),if(real(p1)<=0),"
               "test=100,else,test=real(p1),endif:z=fn2(z)^s+c,|z|<=test",
@@ -183,8 +229,192 @@ TEST_F(ParserTest, inlineFormulaIsUsedWhenFormulaFileIsMissing)
     ValueSaver saved_formula_name{g_formula_name, "Fractint"};
     ValueSaver saved_cur_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::FORMULA)};
 
-    const bool error{parse_formula(path, g_formula_name, true)};
+    const std::vector<std::string> warnings{parse_formula(path, g_formula_name)};
 
-    EXPECT_FALSE(error);
+    EXPECT_TRUE(warnings.empty());
     EXPECT_EQ(g_parameter_file, path);
+}
+
+TEST_F(ParserTest, rejectsEmptyFormulaWithoutUI)
+{
+    expect_failure({"empty", "", ""}, "Formula has no executable instructions");
+}
+
+TEST_F(ParserTest, preservesErrorLocationExpressionAndCaret)
+{
+    try
+    {
+        parse_formula({"bad", "", "\nz = *pixel\n"});
+        FAIL() << "Expected a parser diagnostic";
+    }
+    catch (const std::runtime_error &error)
+    {
+        EXPECT_THAT(error.what(), HasSubstr("at line 2:  Should be an Argument"));
+        EXPECT_THAT(error.what(), HasSubstr("z=*pixel"));
+        EXPECT_THAT(error.what(), HasSubstr("^"));
+    }
+    expect_no_program();
+}
+
+TEST_F(ParserTest, rejectsUndefinedFunction)
+{
+    expect_failure({"bad", "", "z = unknown(pixel)"}, "Undefined Function");
+}
+
+TEST_F(ParserTest, rejectsUnmatchedJump)
+{
+    expect_failure({"bad", "", "if (pixel)\nz = pixel"}, "has no matching \"endif\"");
+}
+
+TEST_F(ParserTest, rejectsOverlongToken)
+{
+    expect_failure({"bad", "", std::string(80, 'z') + "=pixel"}, "32 character limit");
+}
+
+TEST_F(ParserTest, rejectsOversizedName)
+{
+    expect_failure({std::string(100, 'a'), "", "z=pixel"}, "Formula name has too many characters");
+}
+
+TEST_F(ParserTest, returnsRecoverableSymmetryWarningWithoutUI)
+{
+    const std::vector<std::string> warnings{parse_formula({"warning", "INVALID", "z=pixel"})};
+
+    ASSERT_EQ(1U, warnings.size());
+    EXPECT_THAT(warnings[0], HasSubstr("Symmetry below is invalid, will use NOSYM"));
+    EXPECT_THAT(warnings[0], HasSubstr("INVALID"));
+    EXPECT_EQ(SymmetryType::NONE, g_symmetry);
+    EXPECT_FALSE(g_formula.fns.empty());
+}
+
+TEST_F(ParserTest, failedCompilationDiscardsPreviousProgram)
+{
+    ASSERT_TRUE(parse_formula(s_moe).empty());
+    ASSERT_FALSE(g_formula.fns.empty());
+
+    expect_failure({"bad", "", "z = *pixel"}, "Should be an Argument");
+}
+
+TEST_F(ParserTest, successfulCompilationAfterFailureRestoresDispatch)
+{
+    expect_failure({"bad", "", "z = *pixel"}, "Should be an Argument");
+
+    EXPECT_TRUE(parse_formula(s_moe).empty());
+    EXPECT_EQ(formula_per_pixel, g_dispatch.per_pixel());
+    EXPECT_EQ(formula_orbit, g_dispatch.orbit_calc());
+    EXPECT_FALSE(g_formula.fns.empty());
+}
+
+namespace
+{
+
+class FormulaLoadTest : public ParserTest
+{
+protected:
+    void SetUp() override
+    {
+        m_path = fs::path{ID_TEST_DATA_DIR} /
+            ("formula-" + std::string{UnitTest::GetInstance()->current_test_info()->name()} + ".frm");
+    }
+
+    void TearDown() override
+    {
+        ParserTest::TearDown();
+        std::error_code ignored;
+        fs::remove(m_path, ignored);
+    }
+
+    void write_definition(const std::string &text)
+    {
+        std::ofstream file{m_path};
+        ASSERT_TRUE(file);
+        file << text;
+    }
+
+    void expect_load_failure(const char *message)
+    {
+        try
+        {
+            parse_formula(m_path, g_formula_name);
+            FAIL() << "Expected a lookup or parser diagnostic";
+        }
+        catch (const std::runtime_error &error)
+        {
+            EXPECT_THAT(error.what(), HasSubstr(message));
+        }
+        expect_no_program();
+    }
+
+    fs::path m_path;
+    ValueSaver<fs::path> m_parameter_file{g_parameter_file, fs::path{}};
+    ValueSaver<bool> m_search_current{g_check_cur_dir, false};
+};
+
+} // namespace
+
+TEST_F(FormulaLoadTest, reportsMissingFileWithoutUI)
+{
+    expect_load_failure("'entry' file entry item not found");
+}
+
+TEST_F(FormulaLoadTest, reportsMissingEntryWithoutUI)
+{
+    write_definition("other { z=pixel }\n");
+
+    expect_load_failure("'entry' file entry item not found");
+}
+
+TEST_F(FormulaLoadTest, rejectsEmptyName)
+{
+    g_formula_name.clear();
+
+    expect_load_failure("File entry item name is empty");
+}
+
+TEST_F(FormulaLoadTest, closesFileAfterHeaderFailure)
+{
+    write_definition("entry (INVALID) { z=pixel }\n");
+    expect_load_failure("Symmetry below is invalid");
+
+    EXPECT_TRUE(fs::remove(m_path));
+    write_definition("entry { z=pixel }\n");
+    EXPECT_TRUE(parse_formula(m_path, g_formula_name).empty());
+}
+
+TEST_F(FormulaLoadTest, closesFileAfterPrescanFailure)
+{
+    write_definition("entry { z=*pixel }\n");
+    expect_load_failure("Should be an Argument");
+
+    EXPECT_TRUE(fs::remove(m_path));
+    write_definition("entry { z=pixel }\n");
+    EXPECT_TRUE(parse_formula(m_path, g_formula_name).empty());
+}
+
+TEST_F(FormulaLoadTest, inspectionReportsMissingDefinitionWithoutUI)
+{
+    EXPECT_THROW(frm_get_param_stuff(m_path, g_formula_name.c_str()), std::runtime_error);
+    EXPECT_FALSE(g_formula.uses_p1);
+}
+
+TEST_F(FormulaLoadTest, inspectionClearsParametersAfterInvalidToken)
+{
+    write_definition("entry { z=p1+fn2(pixel)+ismand, z=~ }\n");
+
+    EXPECT_THROW(frm_get_param_stuff(m_path, g_formula_name.c_str()), std::runtime_error);
+
+    EXPECT_FALSE(g_formula.uses_p1);
+    EXPECT_FALSE(g_formula.uses_ismand);
+    EXPECT_EQ(0, g_formula.max_function);
+}
+
+TEST_F(FormulaLoadTest, inspectionFindsParametersAndFunctions)
+{
+    write_definition("entry { z=p1+fn2(pixel)+ismand }\n");
+
+    EXPECT_NO_THROW(frm_get_param_stuff(m_path, g_formula_name.c_str()));
+
+    EXPECT_TRUE(g_formula.uses_p1);
+    EXPECT_TRUE(g_formula.uses_ismand);
+    EXPECT_EQ(2, g_formula.max_function);
 }

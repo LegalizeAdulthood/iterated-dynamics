@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/get_fract_type.h"
 
@@ -464,13 +465,27 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
                     "Invalid help label " + std::to_string(static_cast<int>(label)) + " for find_file_item");
             }
         };
-        if (find_file_item(item_path(help), entry_name, &entry_file, item_for_help(help)) == 0)
+        std::string diagnostic;
+        if (find_file_item(item_path(help), entry_name, &entry_file, item_for_help(help), diagnostic))
+        {
+            stop_msg(diagnostic);
+            return -1;
+        }
+        else
         {
             load_entry_text(entry_file, s_tmp_stack, 17, 0, 0);
             std::fclose(entry_file);
             if (g_fractal_type == FractalType::FORMULA)
             {
-                frm_get_param_stuff(g_formula_filename, entry_name); // no error check, should be okay, from above
+                try
+                {
+                    frm_get_param_stuff(g_formula_filename, entry_name);
+                }
+                catch (const std::runtime_error &error)
+                {
+                    stop_msg(error.what());
+                    return -1;
+                }
             }
         }
     }
