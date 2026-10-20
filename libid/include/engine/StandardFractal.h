@@ -68,7 +68,6 @@ private:
     bool scrub_overlay_orbit(bool yield_to_ui);
     void run_current_work_item();
     void run_current_work_item_mode();
-    void run_perturbation_glitch_retries();
     void start_next_pass();
     void start_perturbation_frame();
     void start_timer();
@@ -81,7 +80,6 @@ private:
     PertEngine m_pert_engine{};
     StandardPass m_standard_pass{};
     std::array<double, 16> m_tan_table{};
-    std::vector<Point> m_perturbation_retry_points{};
     math::DComplex m_deriv{};
     math::DComplex m_dem_new{};
     math::DComplex m_last_z{};
@@ -99,7 +97,6 @@ private:
     long m_saved_color_iter{};
     int m_check_freq{};
     int m_hooper{};
-    std::size_t m_perturbation_retry_index{};
     int m_standard_pixel_col{};
     int m_standard_pixel_row{};
     int m_saved_incr{1};
@@ -109,7 +106,6 @@ private:
     bool m_dispatch_saved{};
     bool m_perturbation_active{};
     bool m_perturbation_requested{};
-    bool m_perturbation_retry_active{};
     bool m_standard_pixel_active{};
     bool m_standard_pixel_completed_yield{};
     bool m_incomplete_standard_pixel_yield{};

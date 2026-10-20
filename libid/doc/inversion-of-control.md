@@ -190,10 +190,12 @@ The current code is already part-way through this plan:
   initialized and driven from `StandardFractal`, and is selected
   separately from the active traversal mode.  `passes=p` is compatibility
   syntax that selects perturbation without making perturbation a
-  `StandardPass` traversal.  Primary pixels are traversed by
-  `StandardPass`, and glitch retry traversal is owned by `StandardFractal`.
-  `PertEngine` supplies perturbation reference and point calculations
-  below the pass layer.
+  `StandardPass` traversal.  `StandardPass` owns all pixel traversal.
+  `PertEngine` always computes the requested pixel, using cached reference
+  orbits.  On reference failure it selects a closer cached reference or
+  adds one at that pixel.  No deferred-pixel queue or retry traversal
+  remains.  BoundaryTrace can use perturbation and receives the same
+  nonzero palette color that is stored in its image cache.
 - `CommandResult` already separates menu command effects from the
   `MainState` application-phase switch.  Some effects still travel through
   `g_calc_status` and `MainContext::more_keys` side effects.
@@ -734,9 +736,11 @@ Existing coverage does not imply coverage of live interaction:
   Thinking-screen tests cover text and spinner updates, not cellular or
   L-system phase transitions.  Add autokey workflows and controller tests
   for the distinct application and phase-lifecycle observations.
-- Perturbation unit tests cover tolerance values, not deep-zoom rendering
-  or switching passes.  The perturbation slices must add those automated
-  regressions; existing images do not suffice.
+- Perturbation tests cover reference failure, cached-reference reuse,
+  caller-selected pixel order, deep-zoom BoundaryTrace completion, and
+  palette-color consistency.  They also verify BoundaryTrace strategy
+  selection.  Menu-driven pass switching remains a separate slice;
+  ordinary perturbation images do not cover that transition.
 - `TestStereo` covers random-line generation, not PHOTO-mode decisions.
   Add autokey prompt/save/continue/cancel coverage and controller tests for
   eye sequencing and cleanup in the stereo controller slice.
@@ -802,50 +806,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 19. Perturbation Traversal Ownership
-
-Work:
-
-- Remove pass-era assumptions from `PertEngine`: perturbation must not
-  own the order in which primary pixels are evaluated.
-- Treat perturbation as an orbit calculation strategy used by the active
-  `StandardPass` traversal, not as a traversal or pass algorithm.
-- Replace the current deferred-pixel model with an interface that always
-  computes and returns the color for the requested pixel.
-- Make `PertEngine` maintain a list of reference points instead of a
-  single active reference point for the whole image.
-- When a pixel has too much error for the current reference point, select
-  a closer existing reference point and retry that same pixel.
-- If the current reference point is already the closest reference, create
-  a new reference point at the current pixel, add it to the list, and
-  retry that same pixel.
-- Use that current-pixel reference insertion as the first implementation;
-  leave more elaborate reference-selection heuristics for later
-  experiments.
-- Make BoundaryTrace compatible with perturbation by ensuring every
-  evaluated pixel gets a stable memoized color before BoundaryTrace uses
-  the image as its orbit-result cache.
-- Remove the temporary BoundaryTrace perturbation exclusion once
-  perturbation always computes the requested pixel immediately.
-
-Done when:
-
-- `passes=p` still selects perturbation orbit calculation as compatibility
-  syntax without making perturbation a `StandardPass` traversal.
-- `PertEngine` does not decide primary pixel order.
-- `PertEngine::calculate_pixel()` returns a stable color for the requested
-  pixel, selecting or adding reference points internally as needed.
-- Glitch handling does not leave BoundaryTrace-visible pixels uncolored
-  or indistinguishable from uncomputed background pixels.
-- BoundaryTrace can use perturbation without crashing or recomputing
-  already-computed pixel orbits.
-
-Validation: add a deterministic deep-zoom BoundaryTrace regression that
-exercises reference failure and replacement, completes without a hang,
-and checks computed colors and traversal ownership.  Existing tolerance
-tests and ordinary perturbation images do not cover this case.  Use an
-automated engine or batch-render test, not a manual completion check.
-
 ### 20. Perturbation Pass-Switch Tests
 
 Work:
@@ -853,10 +813,9 @@ Work:
 - Add tests after perturbation no longer owns traversal order.
 - Cover switching standard pass algorithms while arbitrary precision
   selects perturbation automatically.
-- Include the case that currently fails manually: start from a
-  BoundaryTrace render where perturbation is temporarily disabled, switch
-  to solid guessing, and verify perturbation is used correctly for the
-  new traversal.
+- Cover the previously failing BoundaryTrace-to-solid-guess transition,
+  now with perturbation available to both traversals, and verify the
+  strategy is selected correctly after switching.
 - Ensure pass switching resets or preserves only the perturbation state
   that is valid for the new traversal.
 - Include a `perturbation=no` comparison case to prove failures are in
@@ -869,7 +828,7 @@ Done when:
 - Switching from `passes=b` to `passes=g` under arbitrary precision
   renders a correct image with perturbation enabled.
 - The same scenario with `perturbation=no` still renders correctly.
-- No stale reference, retry, or traversal state from the previous pass
+- No stale reference or traversal state from the previous pass
   affects the next pass algorithm.
 
 Validation: add an autokey test switching from `passes=b` to `passes=g`

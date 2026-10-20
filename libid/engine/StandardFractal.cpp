@@ -35,7 +35,6 @@ namespace
 
 StandardFractal *s_active_standard_fractal{};
 StandardPassStatus s_standard_pass_status{};
-constexpr std::size_t PERTURBATION_RETRY_POINTS_PER_CHUNK{1000};
 
 class ActiveStandardFractalScope
 {
@@ -97,20 +96,9 @@ bool perturbation_auto_requested()
     return perturbation_supported() && math::g_bf_math != math::BFMathType::NONE;
 }
 
-bool perturbation_traversal_supported(const CalcMode calc_mode)
-{
-    // BoundaryTrace uses rendered pixels as memoized orbit colors, while
-    // perturbation can defer glitched pixels for retry.
-    return calc_mode != CalcMode::BOUNDARY_TRACE;
-}
-
 bool perturbation_requested(const CalcMode calc_mode)
 {
     if (!perturbation_supported())
-    {
-        return false;
-    }
-    if (!perturbation_traversal_supported(calc_mode))
     {
         return false;
     }
@@ -165,9 +153,6 @@ void StandardFractal::resume()
     m_dispatch_saved = false;
     m_perturbation_active = false;
     m_perturbation_requested = false;
-    m_perturbation_retry_active = false;
-    m_perturbation_retry_index = 0;
-    m_perturbation_retry_points.clear();
     m_standard_pass.reset();
     m_timer_started = false;
     m_work_item_active = false;
@@ -186,14 +171,7 @@ void StandardFractal::suspend()
     if (m_perturbation_active)
     {
         m_pert_engine.finish();
-        if (m_perturbation_retry_active || !m_perturbation_retry_points.empty())
-        {
-            add_work_list(g_start_pt, g_stop_pt, g_begin_pt, g_work_pass, g_work_symmetry);
-        }
         m_perturbation_active = false;
-        m_perturbation_retry_active = false;
-        m_perturbation_retry_index = 0;
-        m_perturbation_retry_points.clear();
     }
     if (g_num_work_list > 0)
     {
@@ -386,9 +364,6 @@ void StandardFractal::complete()
     {
         m_pert_engine.finish();
         m_perturbation_active = false;
-        m_perturbation_retry_active = false;
-        m_perturbation_retry_index = 0;
-        m_perturbation_retry_points.clear();
     }
     if (m_requested_calc_mode == CalcMode::THREE_PASS || m_requested_calc_mode == CalcMode::PERTURBATION ||
         m_perturbation_requested)
@@ -570,14 +545,12 @@ void StandardFractal::run_current_work_item()
 
 void StandardFractal::run_current_work_item_mode()
 {
-    if (m_perturbation_retry_active || !m_perturbation_retry_points.empty())
+    if (m_perturbation_requested && perturbation_supported())
     {
-        run_perturbation_glitch_retries();
-        return;
-    }
-    if (m_perturbation_requested && perturbation_supported() && !m_perturbation_active)
-    {
-        start_perturbation_frame();
+        if (!m_perturbation_active)
+        {
+            start_perturbation_frame();
+        }
         fractals::g_dispatch.set_calc_type(standard_fractal_type);
     }
 
@@ -591,55 +564,7 @@ void StandardFractal::run_current_work_item_mode()
     else
     {
         m_standard_pass.reset();
-        if (m_perturbation_active)
-        {
-            m_perturbation_retry_points = m_pert_engine.take_glitch_points();
-            m_perturbation_retry_index = 0;
-            run_perturbation_glitch_retries();
-        }
     }
-}
-
-void StandardFractal::run_perturbation_glitch_retries()
-{
-    if (!m_perturbation_retry_active)
-    {
-        if (!m_pert_engine.select_retry_reference(m_perturbation_retry_points))
-        {
-            m_pert_engine.finish();
-            m_perturbation_active = false;
-            m_perturbation_retry_index = 0;
-            m_perturbation_retry_points.clear();
-            return;
-        }
-        m_perturbation_retry_active = true;
-    }
-
-    const std::size_t stop_index{
-        std::min(m_perturbation_retry_index + PERTURBATION_RETRY_POINTS_PER_CHUNK, m_perturbation_retry_points.size())};
-    for (; m_perturbation_retry_index < stop_index; ++m_perturbation_retry_index)
-    {
-        m_pert_engine.calculate_pixel(m_perturbation_retry_points[m_perturbation_retry_index]);
-    }
-
-    if (m_perturbation_retry_index < m_perturbation_retry_points.size())
-    {
-        m_work_item_yielded = true;
-        return;
-    }
-
-    m_perturbation_retry_points = m_pert_engine.take_glitch_points();
-    m_perturbation_retry_index = 0;
-    m_perturbation_retry_active = false;
-    if (m_pert_engine.retry_needed(m_perturbation_retry_points))
-    {
-        m_work_item_yielded = true;
-        return;
-    }
-
-    m_pert_engine.finish();
-    m_perturbation_active = false;
-    m_perturbation_retry_points.clear();
 }
 
 void StandardFractal::start_next_pass()
