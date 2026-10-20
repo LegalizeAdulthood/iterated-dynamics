@@ -140,7 +140,45 @@ void SolidGuess::complete_pixel(const int color)
     g_row = m_selected_pixel.y;
     g_color = color;
     g_reset_periodicity = false;
-    m_current_x = m_selected_pixel.x + m_max_block;
+    bool repaint{};
+    switch (m_pixel_target)
+    {
+    case PixelTarget::SEED:
+        m_current_x = m_selected_pixel.x + m_max_block;
+        break;
+    case PixelTarget::C33:
+        m_c33 = color;
+        m_guessed33 = 0;
+        break;
+    case PixelTarget::C32:
+        m_c32 = color;
+        m_guessed32 = 0;
+        break;
+    case PixelTarget::C23:
+        m_c23 = color;
+        m_guessed23 = 0;
+        break;
+    case PixelTarget::C21:
+        m_c21 = color;
+        repaint = true;
+        break;
+    case PixelTarget::C31:
+        m_c31 = color;
+        repaint = true;
+        break;
+    case PixelTarget::C12:
+        m_c12 = color;
+        repaint = true;
+        break;
+    case PixelTarget::C13:
+        m_c13 = color;
+        repaint = true;
+        break;
+    }
+    if (repaint && m_half_block > 1 && color != m_c22)
+    {
+        plot_block(-1, m_selected_pixel.x, m_selected_pixel.y, color);
+    }
     m_pixel_selected = false;
 }
 
@@ -191,7 +229,8 @@ int SolidGuess::scan()
     }
     while (select_pixel())
     {
-        if (calc_type() == -1)
+        const int color{calc_type()};
+        if (color == -1)
         {
             if (!consume_standard_traversal_yield())
             {
@@ -199,7 +238,7 @@ int SolidGuess::scan()
             }
             return 0;
         }
-        complete_pixel(g_color);
+        complete_pixel(m_pixel_target == PixelTarget::SEED ? g_color : color);
     }
     return 0;
 }
@@ -286,14 +325,8 @@ void SolidGuess::process_first_pass_rows()
         m_row_below_active = false;
     }
     g_reset_periodicity = false;
-    if (guess_row(true, m_current_y, m_block_size)) // interrupted?
+    if (guess_row(true, m_current_y, m_block_size))
     {
-        if (consume_standard_traversal_yield())
-        {
-            return;
-        }
-        save_resume_work(m_current_y, 0);
-        m_phase = Phase::DONE;
         return;
     }
     if (!m_guess_row_done)
@@ -311,9 +344,15 @@ bool SolidGuess::select_seed_pixel(const int row)
     {
         return false;
     }
-    m_selected_pixel = {m_current_x, row};
-    m_pixel_selected = true;
+    select_pixel_at(m_current_x, row, PixelTarget::SEED);
     return true;
+}
+
+void SolidGuess::select_pixel_at(const int col, const int row, const PixelTarget target)
+{
+    m_selected_pixel = {col, row};
+    m_pixel_target = target;
+    m_pixel_selected = true;
 }
 
 void SolidGuess::process_prefix_border_setup()
@@ -420,12 +459,6 @@ void SolidGuess::process_remaining_rows()
     g_current_row = m_current_y;
     if (guess_row(false, m_current_y, m_block_size))
     {
-        if (consume_standard_traversal_yield())
-        {
-            return;
-        }
-        save_resume_work(m_current_y, g_work_pass);
-        m_phase = Phase::DONE;
         return;
     }
     if (!m_guess_row_done)
@@ -492,13 +525,6 @@ void SolidGuess::save_resume_work(const int y, const int pass)
         pass, g_work_symmetry);
 }
 
-static int calc_a_dot(const int x, const int y)
-{
-    g_col = x;
-    g_row = y;
-    return calc_type();
-}
-
 void SolidGuess::initialize_guess_row(const bool first_pass, const int y, const int block_size)
 {
     m_guess_row_active = true;
@@ -561,9 +587,8 @@ bool SolidGuess::guess_row(const bool first_pass, const int y, const int block_s
     return false;
 }
 
-bool SolidGuess::process_guess_block()
+bool SolidGuess::initialize_guess_block()
 {
-    m_guess_block_phase = GuessBlockPhase::SKIP_CHECK;
     if ((m_guess_x & (m_max_block - 1)) == 0)                          // time for skip flag stuff
     {
         ++m_pfx_ptr;
@@ -579,7 +604,6 @@ bool SolidGuess::process_guess_block()
         plot_block(0, m_guess_x, m_guess_row_y, m_c22);
     }
 
-    m_guess_block_phase = GuessBlockPhase::SETUP;
     m_x_plus_half = m_guess_x + m_half_block;
     m_x_plus_block = m_x_plus_half + m_half_block;
     if (m_x_plus_half > g_i_stop_pt.x)
@@ -613,7 +637,6 @@ bool SolidGuess::process_guess_block()
         m_c44 = m_bottom_guess ? m_c42 : -1;
     }
 
-    m_guess_block_phase = GuessBlockPhase::GUESS;
     m_guessed33 = 1;
     m_guessed32 = 1;
     m_guessed23 = 1;
@@ -641,50 +664,88 @@ bool SolidGuess::process_guess_block()
         m_guessed33 = -1;
         m_guessed32 = -1;
     }
-    while (true) // go around till none of 23,32,33 change anymore
+    m_guess_block_phase = GuessBlockPhase::GUESS;
+    return true;
+}
+
+bool SolidGuess::process_guess_block()
+{
+    if (m_guess_block_phase == GuessBlockPhase::START && !initialize_guess_block())
     {
+        return false;
+    }
+    if (m_guess_block_phase == GuessBlockPhase::GUESS)
+    {
+        // Revisit the remaining guesses after each completion.
         if (m_guessed33 > 0 && (m_c33 != m_c44 || m_c33 != m_c42 || m_c33 != m_c24 || m_c33 != m_c32 || m_c33 != m_c23))
         {
-            m_c33 = calc_a_dot(m_x_plus_half, m_y_plus_half);
-            if (m_c33 == -1)
-            {
-                return true;
-            }
-            m_guessed33 = 0;
+            select_pixel_at(m_x_plus_half, m_y_plus_half, PixelTarget::C33);
+            return true;
         }
         if (m_guessed32 > 0 &&
             (m_c32 != m_c33 || m_c32 != m_c42 || m_c32 != m_c31 || m_c32 != m_c21 || m_c32 != m_c41 || m_c32 != m_c23))
         {
-            m_c32 = calc_a_dot(m_x_plus_half, m_guess_row_y);
-            if (m_c32 == -1)
-            {
-                return true;
-            }
-            m_guessed32 = 0;
-            continue;
+            select_pixel_at(m_x_plus_half, m_guess_row_y, PixelTarget::C32);
+            return true;
         }
         if (m_guessed23 > 0 && (m_c23 != m_c33 || m_c23 != m_c24 || m_c23 != m_c13 || m_c23 != m_c12 || m_c23 != m_c32))
         {
-            m_c23 = calc_a_dot(m_guess_x, m_y_plus_half);
-            if (m_c23 == -1)
-            {
-                return true;
-            }
-            m_guessed23 = 0;
-            continue;
+            select_pixel_at(m_guess_x, m_y_plus_half, PixelTarget::C23);
+            return true;
         }
-        break;
-    }
-
-    if (m_guess_row_first_pass) // note whether any of block's contents were calculated
-    {
-        if (m_guessed23 == 0 || m_guessed32 == 0 || m_guessed33 == 0)
+        if (m_guess_row_first_pass && (m_guessed23 == 0 || m_guessed32 == 0 || m_guessed33 == 0))
         {
             *m_pfx_ptr |= m_pfx_mask;
         }
+        m_guess_block_phase = GuessBlockPhase::DISPLAY;
     }
+    if (m_guess_block_phase == GuessBlockPhase::DISPLAY)
+    {
+        display_guess_block();
+        m_guess_block_phase = GuessBlockPhase::FIX21;
+    }
+    if (m_guess_block_phase == GuessBlockPhase::FIX21)
+    {
+        m_guess_block_phase = GuessBlockPhase::FIX31;
+        if (m_fix21)
+        {
+            select_pixel_at(m_guess_x, m_y_less_half, PixelTarget::C21);
+            return true;
+        }
+    }
+    if (m_guess_block_phase == GuessBlockPhase::FIX31)
+    {
+        m_guess_block_phase = GuessBlockPhase::FIX12;
+        if (m_fix31)
+        {
+            select_pixel_at(m_x_plus_half, m_y_less_half, PixelTarget::C31);
+            return true;
+        }
+    }
+    if (m_guess_block_phase == GuessBlockPhase::FIX12)
+    {
+        m_guess_block_phase = GuessBlockPhase::FIX13;
+        if (m_c23 != m_c22 && m_guessed12)
+        {
+            select_pixel_at(m_guess_x - m_half_block, m_guess_row_y, PixelTarget::C12);
+            return true;
+        }
+    }
+    if (m_guess_block_phase == GuessBlockPhase::FIX13)
+    {
+        m_guess_block_phase = GuessBlockPhase::ADVANCE;
+        if (m_c23 != m_c22 && m_guessed13)
+        {
+            select_pixel_at(m_guess_x - m_half_block, m_y_plus_half, PixelTarget::C13);
+            return true;
+        }
+    }
+    step_guess_block();
+    return false;
+}
 
-    m_guess_block_phase = GuessBlockPhase::DISPLAY;
+void SolidGuess::display_guess_block()
+{
     if (m_half_block > 1)
     {
         // not last pass, check if something to display
@@ -726,7 +787,6 @@ bool SolidGuess::process_guess_block()
         }
     }
 
-    m_guess_block_phase = GuessBlockPhase::FIXUP;
     // check if some calcs in this block mean earlier guesses need fixing
     m_fix21 = (m_c22 != m_c12 || m_c22 != m_c32) && m_c21 == m_c22 && m_c21 == m_c31 && m_c21 == m_prev11 &&
         m_guess_row_y > 0 &&
@@ -738,59 +798,6 @@ bool SolidGuess::process_guess_block()
         (m_x_plus_block > g_i_stop_pt.x || m_c31 == get_color(m_x_plus_block, m_y_less_block)) &&
         m_c31 == get_color(m_guess_x, m_y_less_block);
     m_prev11 = m_c31; // for next time around
-    if (m_fix21)
-    {
-        m_c21 = calc_a_dot(m_guess_x, m_y_less_half);
-        if (m_c21 == -1)
-        {
-            return true;
-        }
-        if (m_half_block > 1 && m_c21 != m_c22)
-        {
-            plot_block(-1, m_guess_x, m_y_less_half, m_c21);
-        }
-    }
-    if (m_fix31)
-    {
-        m_c31 = calc_a_dot(m_x_plus_half, m_y_less_half);
-        if (m_c31 == -1)
-        {
-            return true;
-        }
-        if (m_half_block > 1 && m_c31 != m_c22)
-        {
-            plot_block(-1, m_x_plus_half, m_y_less_half, m_c31);
-        }
-    }
-    if (m_c23 != m_c22)
-    {
-        if (m_guessed12)
-        {
-            m_c12 = calc_a_dot(m_guess_x - m_half_block, m_guess_row_y);
-            if (m_c12 == -1)
-            {
-                return true;
-            }
-            if (m_half_block > 1 && m_c12 != m_c22)
-            {
-                plot_block(-1, m_guess_x - m_half_block, m_guess_row_y, m_c12);
-            }
-        }
-        if (m_guessed13)
-        {
-            m_c13 = calc_a_dot(m_guess_x - m_half_block, m_y_plus_half);
-            if (m_c13 == -1)
-            {
-                return true;
-            }
-            if (m_half_block > 1 && m_c13 != m_c22)
-            {
-                plot_block(-1, m_guess_x - m_half_block, m_y_plus_half, m_c13);
-            }
-        }
-    }
-    step_guess_block();
-    return false;
 }
 
 void SolidGuess::skip_guess_block()
@@ -804,12 +811,11 @@ void SolidGuess::skip_guess_block()
     m_prev11 = m_c22;
     m_guessed13 = 0;
     m_guessed12 = 0;
-    m_guess_block_phase = GuessBlockPhase::DONE;
+    m_guess_block_phase = GuessBlockPhase::START;
 }
 
 void SolidGuess::step_guess_block()
 {
-    m_guess_block_phase = GuessBlockPhase::ADVANCE;
     m_c22 = m_c42;
     m_c24 = m_c44;
     m_c13 = m_c33;
@@ -819,7 +825,7 @@ void SolidGuess::step_guess_block()
     m_guessed12 = m_guessed32;
     m_guessed13 = m_guessed33;
     m_guess_x += m_guess_row_block_size;
-    m_guess_block_phase = GuessBlockPhase::DONE;
+    m_guess_block_phase = GuessBlockPhase::START;
 }
 
 bool SolidGuess::finish_guess_row()

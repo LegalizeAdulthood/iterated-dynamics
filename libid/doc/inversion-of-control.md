@@ -191,11 +191,12 @@ The current code is already part-way through this plan:
   `StandardPass`.
 - `SolidGuess` owns first-pass row traversal, remaining pass traversal,
   `guess_row()` block state, and row repaint state.  Its explicit phases
-  yield at row boundaries without polling keyboard input.  Seed rows now
-  expose selection and color completion, retaining their pending
-  coordinates and cursor.  Block probes still calculate internally until
-  slice 26.4.  The temporary `scan()` bridge batches seed calculations at
-  the existing row boundaries until slice 26.8.
+  yield at row boundaries without polling keyboard input.  Seed rows and
+  block probes expose selection and color completion, retaining pending
+  coordinates, neighboring colors, and repair continuation.  Completed
+  colors drive guessing, prefix updates, and repainting once.  Selection
+  does not calculate pixels.  The temporary `scan()` bridge batches
+  calculations at the existing row boundaries until slice 26.8.
 - `SynchronousOrbit` owns an explicit rhombus frame stack and explicit
   leaf scan state.  It suspends through `StandardPass`.
 - `StickyOrbits` is a concrete `StandardPass` alternative.  It owns
@@ -834,23 +835,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 26.4. Solid-Guess Block-Probe Pixel Selection
-
-Source: `SolidGuess::process_guess_block()`, `guess_row()`, and the
-remaining block-probe calculation helper.
-
-Work:
-
-- Extend selection/completion to block probes, retaining the active probe
-  and all neighboring colors until its selected pixel is completed.
-- Apply the completed color once before making subsequent guess or fill
-  decisions.  Keep repainting and prefix updates in the pass.
-- Use the same protocol as seed rows; do not add per-probe UI callbacks,
-  show-dot flags, or extra returns from the batched bridge.
-
-Validation: focused probe, fill, and retained-state tests; reuse
-solid-guess images and ordinary-render chunk tests.  No manual test.
 
 ### 26.5. Diffusion Pixel Selection And Completion
 

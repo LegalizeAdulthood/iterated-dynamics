@@ -39,7 +39,7 @@ namespace
 std::vector<Point2i> s_calculated;
 int s_interrupt_after{-1};
 
-int calculate_seed()
+int calculate_pixel()
 {
     if (static_cast<int>(s_calculated.size()) == s_interrupt_after)
     {
@@ -69,13 +69,18 @@ protected:
         g_i_start_pt = g_start_pt;
         g_i_stop_pt = g_stop_pt;
         g_begin_pt = g_start_pt;
-        g_dispatch.set_calc_type(calculate_seed);
+        g_dispatch.set_calc_type(calculate_pixel);
         set_normal_dot();
         set_normal_span();
         EXPECT_CALL(m_driver, read_pixel(_, _))
             .WillRepeatedly(Invoke([this](int col, int row) { return m_pixels.at(row * 16 + col); }));
         EXPECT_CALL(m_driver, write_pixel(_, _, _))
-            .WillRepeatedly(Invoke([this](int col, int row, int color) { m_pixels.at(row * 16 + col) = color; }));
+            .WillRepeatedly(Invoke(
+                [this](int col, int row, int color)
+                {
+                    m_pixels.at(row * 16 + col) = color;
+                    m_plots.push_back({col, row});
+                }));
         EXPECT_CALL(m_driver, key_pressed()).Times(0);
         EXPECT_CALL(m_driver, get_key()).Times(0);
     }
@@ -85,11 +90,30 @@ protected:
         std::copy(m_saved_work.begin(), m_saved_work.end(), g_work_list);
     }
 
-    void provide_pixel(SolidGuess &pass)
+    void provide_pixel(SolidGuess &pass, const int color = 7)
     {
         const Point2i point{pass.selected_pixel()};
-        g_plot(point.x, point.y, 7);
-        pass.complete_pixel(7);
+        g_plot(point.x, point.y, color);
+        pass.complete_pixel(color);
+    }
+
+    void complete_seed_row(SolidGuess &pass, const Point2i changed = {-1, -1})
+    {
+        for (int seed = 0; seed < 4; ++seed)
+        {
+            ASSERT_TRUE(pass.select_pixel());
+            provide_pixel(pass, pass.selected_pixel() == changed ? 8 : 7);
+        }
+    }
+
+    void expect_probe(SolidGuess &pass, const Point2i point, const int color)
+    {
+        ASSERT_TRUE(pass.select_pixel());
+        EXPECT_EQ(point, pass.selected_pixel());
+        provide_pixel(pass, color);
+        g_color = 99;
+        g_col = 99;
+        g_row = 99;
     }
 
     std::vector<Point2i> selection_chunk(SolidGuess &pass)
@@ -116,6 +140,18 @@ protected:
         EXPECT_TRUE(pass.done());
     }
 
+    std::vector<Point2i> finish_selection(SolidGuess &pass)
+    {
+        std::vector<Point2i> selected;
+        for (int chunks = 0; chunks < 100 && !pass.done(); ++chunks)
+        {
+            const std::vector<Point2i> chunk{selection_chunk(pass)};
+            selected.insert(selected.end(), chunk.begin(), chunk.end());
+        }
+        EXPECT_TRUE(pass.done());
+        return selected;
+    }
+
     MockDriver m_driver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen};
@@ -138,6 +174,7 @@ protected:
     ValueSaver<int> m_saved_work_pass{g_work_pass, 0};
     ValueSaver<int> m_saved_symmetry{g_work_symmetry, 0};
     ValueSaver<int> m_saved_stop_pass{g_stop_pass, 0};
+    ValueSaver<bool> m_saved_three_pass{g_three_pass, false};
     ValueSaver<bool> m_saved_periodicity{g_reset_periodicity};
     ValueSaver<Passes> m_saved_passes{g_passes};
     ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
@@ -146,6 +183,7 @@ protected:
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
     std::array<WorkList, MAX_CALC_WORK> m_saved_work{};
     std::vector<int> m_pixels = std::vector<int>(16 * 12, 0);
+    std::vector<Point2i> m_plots;
 };
 
 TEST_F(TestSolidGuess, selectionRetainsTopRowSeedWithoutCalculation)
@@ -225,7 +263,9 @@ TEST_F(TestSolidGuess, lowerRowCompletionContinuesToTheNextSeedRow)
     ASSERT_FALSE(pass.select_pixel());
     selection_chunk(pass);
 
-    EXPECT_THAT(selection_chunk(pass), ElementsAre(Point2i{0, 4}, Point2i{4, 4}, Point2i{8, 4}, Point2i{12, 4}));
+    EXPECT_THAT(selection_chunk(pass),
+        ElementsAre(Point2i{0, 4}, Point2i{4, 4}, Point2i{8, 4}, Point2i{12, 4}, Point2i{14, 2}, Point2i{14, 0}));
+    EXPECT_TRUE(s_calculated.empty());
 
     ASSERT_TRUE(pass.select_pixel());
     EXPECT_EQ((Point2i{0, 8}), pass.selected_pixel());
@@ -244,15 +284,13 @@ TEST_F(TestSolidGuess, iterateKeepsSeedCalculationsBatchedByRow)
     EXPECT_THAT(s_calculated, ElementsAre(Point2i{0, 0}, Point2i{4, 0}, Point2i{8, 0}, Point2i{12, 0}));
     s_calculated.clear();
     EXPECT_FALSE(pass.iterate());
-    ASSERT_GE(s_calculated.size(), 4U);
-    EXPECT_THAT(std::vector<Point2i>(s_calculated.begin(), s_calculated.begin() + 4),
-        ElementsAre(Point2i{0, 4}, Point2i{4, 4}, Point2i{8, 4}, Point2i{12, 4}));
+    EXPECT_THAT(s_calculated,
+        ElementsAre(Point2i{0, 4}, Point2i{4, 4}, Point2i{8, 4}, Point2i{12, 4}, Point2i{14, 2}, Point2i{14, 0}));
     EXPECT_EQ(0, g_current_row);
     s_calculated.clear();
     EXPECT_FALSE(pass.iterate());
-    ASSERT_GE(s_calculated.size(), 4U);
-    EXPECT_THAT(std::vector<Point2i>(s_calculated.begin(), s_calculated.begin() + 4),
-        ElementsAre(Point2i{0, 8}, Point2i{4, 8}, Point2i{8, 8}, Point2i{12, 8}));
+    EXPECT_THAT(s_calculated,
+        ElementsAre(Point2i{0, 8}, Point2i{4, 8}, Point2i{8, 8}, Point2i{12, 8}, Point2i{14, 6}, Point2i{14, 4}));
     EXPECT_EQ(4, g_current_row);
 }
 
@@ -352,6 +390,170 @@ TEST_F(TestSolidGuess, completionRequiresASelection)
 
     EXPECT_THROW(pass.selected_pixel(), std::logic_error);
     EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
+}
+
+TEST_F(TestSolidGuess, blockProbeRetainsSelectionEvenAfterItsPixelWasPlotted)
+{
+    SolidGuess pass;
+    ASSERT_FALSE(pass.select_pixel());
+    selection_chunk(pass); // top row
+    complete_seed_row(pass, {4, 4});
+    ASSERT_TRUE(pass.select_pixel());
+    const Point2i pending{2, 2};
+    EXPECT_EQ(pending, pass.selected_pixel());
+    g_plot(pending.x, pending.y, 9);
+    const std::size_t plots{m_plots.size()};
+    g_color = 99;
+    g_col = 99;
+    g_row = 99;
+
+    ASSERT_TRUE(pass.select_pixel());
+    ASSERT_TRUE(pass.select_pixel());
+
+    EXPECT_EQ(pending, pass.selected_pixel());
+    EXPECT_EQ(2, g_col);
+    EXPECT_EQ(2, g_row);
+    EXPECT_EQ(plots, m_plots.size());
+    EXPECT_TRUE(s_calculated.empty());
+    pass.complete_pixel(9);
+    ASSERT_TRUE(pass.select_pixel());
+    EXPECT_EQ((Point2i{2, 0}), pass.selected_pixel());
+}
+
+TEST_F(TestSolidGuess, completedProbeColorsDriveTheNextProbeAndBlockFill)
+{
+    SolidGuess pass;
+    ASSERT_FALSE(pass.select_pixel());
+    selection_chunk(pass);
+    complete_seed_row(pass, {4, 4});
+
+    expect_probe(pass, {2, 2}, 9);
+    EXPECT_THROW(pass.complete_pixel(9), std::logic_error);
+    expect_probe(pass, {2, 0}, 10);
+    expect_probe(pass, {0, 2}, 11);
+    ASSERT_TRUE(pass.select_pixel());      // finish this block before selecting the next
+
+    EXPECT_EQ((Point2i{6, 2}), pass.selected_pixel());
+    EXPECT_EQ(0, m_pixels.at(3 * 16 + 3)); // fills stay buffered until the row is complete
+    selection_chunk(pass);
+    EXPECT_EQ(9, m_pixels.at(3 * 16 + 3));
+    EXPECT_EQ(10, m_pixels.at(1 * 16 + 3));
+    EXPECT_EQ(11, m_pixels.at(3 * 16 + 1));
+    EXPECT_TRUE(s_calculated.empty());
+}
+
+TEST_F(TestSolidGuess, repairsRetainThePreviousBlocksTopAndCenterColors)
+{
+    SolidGuess pass;
+    ASSERT_FALSE(pass.select_pixel());
+    selection_chunk(pass);
+    complete_seed_row(pass, {8, 4});
+
+    expect_probe(pass, {6, 2}, 9);
+    expect_probe(pass, {6, 0}, 7);
+    expect_probe(pass, {4, 2}, 9);
+    expect_probe(pass, {2, 0}, 11);
+    const std::size_t plots{m_plots.size()};
+    ASSERT_TRUE(pass.select_pixel());
+    EXPECT_EQ((Point2i{2, 2}), pass.selected_pixel());
+    ASSERT_TRUE(pass.select_pixel());
+    EXPECT_EQ(plots, m_plots.size());
+    provide_pixel(pass, 12);
+
+    EXPECT_EQ(11, m_pixels.at(1 * 16 + 3));
+    EXPECT_EQ(12, m_pixels.at(3 * 16 + 3));
+    EXPECT_TRUE(s_calculated.empty());
+    EXPECT_THROW(pass.complete_pixel(12), std::logic_error);
+}
+
+TEST_F(TestSolidGuess, repairsRetainTheUpperRowColors)
+{
+    SolidGuess pass;
+    ASSERT_FALSE(pass.select_pixel());
+    selection_chunk(pass);
+    selection_chunk(pass); // row y=0 is filled before the next seed row
+    complete_seed_row(pass, {4, 8});
+
+    expect_probe(pass, {2, 6}, 9);
+    expect_probe(pass, {2, 4}, 10);
+    expect_probe(pass, {0, 6}, 9);
+    expect_probe(pass, {2, 2}, 11);
+    expect_probe(pass, {6, 6}, 7);
+    expect_probe(pass, {4, 6}, 7);
+    const std::size_t plots{m_plots.size()};
+    ASSERT_TRUE(pass.select_pixel());
+    EXPECT_EQ((Point2i{4, 2}), pass.selected_pixel());
+    ASSERT_TRUE(pass.select_pixel());
+    EXPECT_EQ(plots, m_plots.size());
+    provide_pixel(pass, 12);
+
+    EXPECT_EQ(11, m_pixels.at(3 * 16 + 3));
+    EXPECT_EQ(12, m_pixels.at(3 * 16 + 5));
+    EXPECT_TRUE(s_calculated.empty());
+}
+
+TEST_F(TestSolidGuess, fillsAndRefinementUseSelectionWithoutCalculating)
+{
+    SolidGuess pass;
+
+    const std::vector<Point2i> selected{finish_selection(pass)};
+
+    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_LT(selected.size(), m_pixels.size());
+    EXPECT_GT(m_plots.size(), selected.size());
+    EXPECT_TRUE(s_calculated.empty());
+}
+
+TEST_F(TestSolidGuess, refinementSuspensionRetainsTheActiveRowAndPass)
+{
+    SolidGuess pass;
+    bool selected{};
+    for (int requests = 0; requests < 1000 && !pass.done(); ++requests)
+    {
+        if (pass.select_pixel())
+        {
+            if (g_work_pass > 0)
+            {
+                selected = true;
+                break;
+            }
+            provide_pixel(pass);
+        }
+    }
+    ASSERT_TRUE(selected);
+    const int row{g_current_row};
+    const int work_pass{g_work_pass};
+
+    pass.suspend();
+    pass.suspend();
+
+    ASSERT_EQ(1, g_num_work_list);
+    EXPECT_EQ((Point2i{0, row}), g_work_list[0].begin);
+    EXPECT_EQ(work_pass, g_work_list[0].pass);
+    g_begin_pt = g_work_list[0].begin;
+    g_work_pass = g_work_list[0].pass;
+    g_num_work_list = 0;
+    SolidGuess resumed;
+    finish_selection(resumed);
+    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_TRUE(s_calculated.empty());
+}
+
+TEST_F(TestSolidGuess, interruptedBlockProbeUsesTheExistingSuspendPath)
+{
+    s_interrupt_after = 8;
+    SolidGuess pass;
+    ASSERT_FALSE(pass.iterate());
+    ASSERT_FALSE(pass.iterate());
+
+    EXPECT_TRUE(pass.iterate());
+
+    EXPECT_TRUE(pass.done());
+    EXPECT_EQ((Point2i{14, 2}), pass.selected_pixel());
+    EXPECT_EQ(8U, s_calculated.size());
+    ASSERT_EQ(1, g_num_work_list);
+    EXPECT_EQ((Point2i{0, 0}), g_work_list[0].begin);
+    EXPECT_EQ(0, g_work_list[0].pass);
 }
 
 } // namespace id::test
