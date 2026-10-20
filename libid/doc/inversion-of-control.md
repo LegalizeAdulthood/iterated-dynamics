@@ -261,6 +261,12 @@ The current code is already part-way through this plan:
   diagnostics; failed standard and Lyapunov operations discard work and
   restore dispatch.  Invalid batch renders report failure without saving.
   The temporary `ui/calculate_image.cpp` boundary remains for slice 52.
+- `ifs_load()` throws diagnostics without UI, closes rejected files,
+  and publishes coefficients only after validating the definition.
+  Selection reports the failure once and retries locally; rendering
+  reports it through the outer UI diagnostic boundary.  IFS lookup uses
+  the non-interactive `find_file_item()` overload.  The legacy reporting
+  overload remains for slices 31, 32, and 44.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -760,6 +766,10 @@ Existing coverage does not imply coverage of live interaction:
   starts generation-zero rendering and compares it with a fresh image.
   The L-system script interrupts the sizing thinking screen, returns
   through the outer menu, and starts a completed drawing at a new order.
+  The IFS script acknowledges a missing definition, rejects malformed
+  selection, chooses a valid definition, and preserves the completed
+  image when another invalid selection is cancelled.  Batch checks
+  require one diagnostic and no saved image for each rejected definition.
   It verifies metadata and blank/nonblank output, not rasterized lines.
   The JIIM script checks picker movement and exact-point selection through
   saved Julia parameters, then reopens the orbit window around a menu and
@@ -856,29 +866,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 30. IFS Definition Diagnostics
-
-Source: `ifs_load()` and shared file-entry lookup; UI owners:
-`ui/get_file_entry.cpp` and the IFS render controller.
-
-Work:
-
-- Return malformed, empty, oversized, or unavailable definition failures
-  as loader diagnostics without invoking `stop_msg()`.
-- Let each UI entry point display its loader failure once and decide
-  whether to retry selection or abandon rendering.
-- Keep parsing and transform validation independent of the display.
-
-Done when:
-
-- IFS definition loading cannot wait for keyboard input, including through
-  shared file-entry error helpers.
-
-Validation: use autokey for malformed/missing definition selection,
-diagnostic acknowledgement, and choosing a valid definition afterward.
-Retain loader tests for each parse failure and cleanup.  Reuse IFS image
-coverage; no manual rendering test.
-
 ### 31. L-System Definition Diagnostics
 
 Source: definition parsing in `fractals/lsystem.cpp` and file-entry
@@ -888,6 +875,8 @@ Work:
 
 - Return parser and lookup diagnostics to the UI owners instead of
   displaying modal errors from L-system code.
+- Use the non-interactive `find_file_item()` diagnostic overload for
+  L-system definition lookup.
 - Preserve rule-loading failure state and ensure sizing never begins
   after an invalid definition.
 
@@ -910,6 +899,8 @@ Work:
 
 - Preserve diagnostic text and parse locations as parser results or
   errors.  Remove direct `stop_msg()` calls from those operations.
+- Use the non-interactive `find_file_item()` diagnostic overload for
+  formula lookup and parameter inspection.
 - Let formula selection and render-setup UI owners decide how to display
   errors and whether another definition is requested.
 - Keep parser cleanup correct when parsing stops early.
@@ -1206,6 +1197,10 @@ Work:
   Preserve batch logs and exit status without modal interaction.
 - Remove production UI calls hidden behind test-hook callbacks; do not
   replace them with another parser-to-UI callback interface.
+- Migrate command-file and remaining UI-preview lookup callers to the
+  diagnostic `find_file_item()` overload, with UI owners displaying
+  failures.  Remove the legacy UI-reporting overload once its callers
+  have been migrated.
 
 Done when:
 

@@ -31,6 +31,10 @@ add_executable(check-standard-validation check_standard_validation.cpp)
 target_link_libraries(check-standard-validation PRIVATE image-tool libid fmt::fmt-header-only)
 target_folder(check-standard-validation "Tests/Tools")
 
+add_executable(check-ifs-validation check_ifs_validation.cpp)
+target_link_libraries(check-ifs-validation PRIVATE image-tool libid fmt::fmt-header-only)
+target_folder(check-ifs-validation "Tests/Tools")
+
 add_executable(check-pass-switch check_pass_switch.cpp)
 target_link_libraries(check-pass-switch PRIVATE image-tool libid)
 target_folder(check-pass-switch "Tests/Tools")

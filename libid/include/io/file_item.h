@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -27,6 +28,11 @@ struct FileEntry
 
 int scan_entries(std::FILE *infile, FileEntry *choices);
 bool search_for_entry(std::FILE *infile, const std::string &item_name);
+// True means failure; this overload returns diagnostic text without UI.
+bool find_file_item(std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type,
+    std::string &diagnostic);
+// TODO: removed later
+// Slices 31, 32, and 44 migrate the remaining non-UI diagnostic callers.
 bool find_file_item(
     std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type);
 

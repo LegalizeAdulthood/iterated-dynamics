@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/get_file_entry.h"
 
@@ -430,14 +431,26 @@ long get_file_entry(ItemType type, std::filesystem::path &path, std::string &ent
 
     case ItemType::IFS:
     {
-        const long entry_pointer{get_file_entry(type, "IFS", "*.ifs", path, entry_name)};
-        if (entry_pointer >= 0 && ifs_load() == 0)
+        while (true)
         {
+            const long entry_pointer{get_file_entry(type, "IFS", "*.ifs", path, entry_name)};
+            if (entry_pointer < 0)
+            {
+                return entry_pointer;
+            }
+            try
+            {
+                ifs_load();
+            }
+            catch (const std::runtime_error &error)
+            {
+                stop_msg(error.what());
+                continue;
+            }
             set_fractal_type(g_ifs_dim == IFSDimension::TWO ? FractalType::IFS : FractalType::IFS_3D);
             set_default_params(); // to correct them if 3d
             return 0;
         }
-        return entry_pointer;
     }
     }
     throw std::runtime_error("Unknown item type " + std::to_string(static_cast<int>(type)));

@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "io/library.h"
 
 #include "test_data.h"
 #include "test_library.h"
+#include "MockDriver.h"
 
 #include <engine/cmdfiles.h>
 #include <io/CurrentPathSaver.h>
@@ -11,6 +13,7 @@
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <cctype>
 #include <string>
@@ -144,6 +147,48 @@ TEST_F(TestFindFileItem, lindenmayerSystemEntryNameCaseVariant)
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
     EXPECT_EQ(fs::path{data::ID_TEST_LSYSTEM_DIR} / data::ID_TEST_LSYSTEM_FILE, m_path);
+}
+
+TEST_F(TestFindFileItem, diagnosticLookupRejectsEmptyNameWithoutPolling)
+{
+    id::misc::test::MockDriver driver;
+    ValueSaver saved_driver{g_driver, &driver};
+    EXPECT_CALL(driver, key_pressed()).Times(0);
+    EXPECT_CALL(driver, get_key()).Times(0);
+    std::string diagnostic;
+    m_path = fs::path{data::ID_TEST_IFS_DIR} / data::ID_TEST_IFS_FILE;
+
+    EXPECT_TRUE(find_file_item(m_path, "", &m_file, ItemType::IFS, diagnostic));
+
+    EXPECT_EQ("File entry item name is empty", diagnostic);
+    EXPECT_EQ(nullptr, m_file);
+}
+
+TEST_F(TestFindFileItem, diagnosticLookupReportsMissingEntryWithoutPolling)
+{
+    id::misc::test::MockDriver driver;
+    ValueSaver saved_driver{g_driver, &driver};
+    EXPECT_CALL(driver, key_pressed()).Times(0);
+    EXPECT_CALL(driver, get_key()).Times(0);
+    std::string diagnostic;
+    m_path = fs::path{data::ID_TEST_IFS_DIR} / data::ID_TEST_IFS_FILE;
+
+    EXPECT_TRUE(find_file_item(m_path, "missing-test-entry", &m_file, ItemType::IFS, diagnostic));
+
+    EXPECT_EQ("'missing-test-entry' file entry item not found", diagnostic);
+    EXPECT_EQ(nullptr, m_file);
+}
+
+TEST_F(TestFindFileItem, diagnosticLookupClearsOldErrorAndReturnsPositionedFile)
+{
+    std::string diagnostic{"previous failure"};
+    m_path = fs::path{data::ID_TEST_IFS_DIR} / data::ID_TEST_IFS_FILE;
+
+    EXPECT_FALSE(find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS, diagnostic));
+
+    EXPECT_TRUE(diagnostic.empty());
+    ASSERT_NE(nullptr, m_file);
+    EXPECT_EQ(data::ID_TEST_FIRST_IFS_NAME[0], std::fgetc(m_file));
 }
 
 TEST_F(TestFindFileItem, emptyItemName)

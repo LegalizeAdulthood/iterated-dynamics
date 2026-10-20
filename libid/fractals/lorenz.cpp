@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /*
    This file contains two 3-dimensional orbit-type fractal
@@ -1687,9 +1688,9 @@ void IFS2D::iterate()
 
 int ifs_type() // front-end for ifs2d and ifs3d
 {
-    if (g_ifs_definition.empty() && ifs_load() < 0)
+    if (g_ifs_definition.empty())
     {
-        return -1;
+        ifs_load();
     }
     return g_ifs_dim == IFSDimension::TWO ? ifs2d() : ifs3d();
 }

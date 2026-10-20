@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "io/file_item.h"
 
@@ -260,12 +261,31 @@ static bool check_parameter_file(
     return found;
 }
 
+// TODO: removed later
+// Slices 31, 32, and 44 replace this legacy UI-reporting overload.
 bool find_file_item(
     std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, const ItemType item_type)
 {
+    std::string diagnostic;
+    const bool failed{find_file_item(path, item_name, file_ptr, item_type, diagnostic)};
+    if (failed)
+    {
+        stop_msg(diagnostic);
+    }
+    return failed;
+}
+
+bool find_file_item(std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr,
+    const ItemType item_type, std::string &diagnostic)
+{
+    diagnostic.clear();
+    if (file_ptr != nullptr)
+    {
+        *file_ptr = nullptr;
+    }
     if (item_name.empty())
     {
-        stop_msg("File entry item name is empty");
+        diagnostic = "File entry item name is empty";
         return true;
     }
 
@@ -322,7 +342,7 @@ bool find_file_item(
 
     if (!found)
     {
-        stop_msg(fmt::format("'{:s}' file entry item not found", item_name));
+        diagnostic = fmt::format("'{:s}' file entry item not found", item_name);
         return true;
     }
 

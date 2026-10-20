@@ -119,6 +119,20 @@ add_test(NAME AutoKeyTest.lsystem-sizing
 set_tests_properties(AutoKeyTest.lsystem-sizing
     PROPERTIES LABELS "autokey;ui;lsystem" TIMEOUT 70)
 
+id_make_test_home(ifs-validation IFS_VALIDATION_HOME
+    KEYS ifs_validation.key)
+configure_file(ifs_validation.ifs "${IFS_VALIDATION_HOME}/ifs/validation.ifs" COPYONLY)
+add_test(NAME AutoKeyTest.ifs-validation
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCHECK_IFS=$<SHELL_PATH:$<TARGET_FILE:check-ifs-validation>>"
+        "-DIFS_FILE=${IFS_VALIDATION_HOME}/ifs/validation.ifs"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/ifs_validation_test.cmake"
+    WORKING_DIRECTORY "${IFS_VALIDATION_HOME}")
+set_tests_properties(AutoKeyTest.ifs-validation
+    PROPERTIES LABELS "autokey;ui;ifs" TIMEOUT 100)
+
 id_make_test_home(standard-validation STANDARD_VALIDATION_HOME
     KEYS standard_validation.key)
 add_test(NAME AutoKeyTest.standard-validation

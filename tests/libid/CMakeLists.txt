@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
+# Copyright 2026 Richard Thomson.
 #
 include(GoogleTest)
 
@@ -88,6 +89,7 @@ add_executable(test-id
     fractals/test_frothy_basin.cpp
     fractals/test_fractalp.cpp
     fractals/test_get_ifs_token.cpp
+    fractals/test_ifs.cpp
     fractals/test_interpreter.cpp
     fractals/test_lsystem.cpp
     fractals/test_lyapunov.cpp

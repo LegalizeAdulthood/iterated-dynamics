@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -32,6 +33,7 @@ extern IFSDimension          g_ifs_dim;
 char *get_ifs_token(char *buf, std::FILE *ifs_file);
 char *get_next_ifs_token(char *buf, std::FILE *ifs_file);
 
-int ifs_load();
+// Failed loads clear definition state and throw std::runtime_error.
+void ifs_load();
 
 } // namespace id::fractals
