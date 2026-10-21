@@ -293,6 +293,32 @@ foreach(type IN ITEMS popcorn popcornjul)
         PROPERTIES LABELS "autokey;ui;popcorn" TIMEOUT 80)
 endforeach()
 
+foreach(type IN ITEMS 1 2)
+    set(name "ant-step-menu-${type}")
+    id_make_test_home("${name}" ANT_STEP_MENU_HOME KEYS ant_step_menu.key)
+    add_test(NAME "AutoKeyTest.${name}"
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+            "-DANT_TYPE=${type}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/ant_step_menu_test.cmake"
+        WORKING_DIRECTORY "${ANT_STEP_MENU_HOME}")
+    set_tests_properties("AutoKeyTest.${name}"
+        PROPERTIES LABELS "autokey;ui;ant" TIMEOUT 80)
+endforeach()
+
+id_make_test_home(ant-on-image ANT_ON_IMAGE_HOME KEYS ant_on_image.key)
+add_test(NAME AutoKeyTest.ant-on-image
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/ant_on_image_test.cmake"
+    WORKING_DIRECTORY "${ANT_ON_IMAGE_HOME}")
+set_tests_properties(AutoKeyTest.ant-on-image
+    PROPERTIES LABELS "autokey;ui;ant" TIMEOUT 80)
+
 foreach(mode IN ITEMS 0 1 2)
     set(name "diffusion-interrupt-${mode}")
     id_make_test_home("${name}" DIFFUSION_INTERRUPT_HOME

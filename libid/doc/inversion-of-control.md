@@ -586,11 +586,13 @@ The concrete render operation objects are:
   status interpretation.  It shares common image setup, timing, and
   cleanup, but its marked dispatch still enters whole UI render loops.
   Its bounded operation router owns bifurcation, Popcorn, standalone
-  Diffusion, and TestPoint state without renderer callbacks.  Their UI
+  Diffusion, TestPoint, and Ant state without renderer callbacks.  Their UI
   controllers advance selected objects; setup, resume, and finish stay
   below UI.  Popcorn's Julia setup and symmetry selection also stay below
-  UI.  The remaining 47.x slices bind other standalone families before
-  slice 48 removes per-image reentry.
+  UI.  Ant's Ctrl+A entry selects an operation on the existing image,
+  without restarting common image setup, timing, or resource cleanup.
+  The remaining 47.x slices bind other standalone families before slice
+  48 removes per-image reentry.
 
 The input and presentation side starts, resumes, cancels, or paces the
 active operation.  It does not classify standard versus Lyapunov versus
@@ -997,20 +999,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 47.5. Ant Operation Binding
-
-Source: `fractals/Ant.cpp`, `ui/ant.cpp`, and `NonStandardFractal`.
-
-- Select and own `Ant` below UI, including construction from engine state.
-- Keep batch-completion facts available to its UI controller, which
-  retains delay, stepping, help, and option-menu policy.
-- Preserve current iteration batches and stop/restart behavior.
-
-Done when: Ant's UI advances the engine-selected object.
-
-Validation: reuse Ant's autokey stepping and menu workflows, calculation
-tests, and images.  No duplicate manual keyboard checklist.
 
 ### 47.6. Cellular Operation Binding
 

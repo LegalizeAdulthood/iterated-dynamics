@@ -10,6 +10,7 @@
 #include <engine/fractals.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/OrbitPlot.h>
 #include <engine/pixel.h>
 #include <engine/pixel_grid.h>
 #include <engine/random_seed.h>
@@ -23,7 +24,12 @@
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 #include <ui/calculate_image.h>
+#include <ui/ant.h>
+#include <ui/help.h>
+#include <ui/id_keys.h>
 #include <ui/video.h>
+
+#include <helpdefs.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -174,6 +180,7 @@ TEST_F(TestNonStandardFractal, noOperationRequiresExplicitSetupAndSelection)
     EXPECT_TRUE(calculation.done());
     EXPECT_THROW(calculation.select(), std::logic_error);
     EXPECT_THROW(calculation.iterate(), std::logic_error);
+    EXPECT_THROW(calculation.consume_batch_complete(), std::logic_error);
     EXPECT_THROW(calculation.suspend(), std::logic_error);
     EXPECT_EQ(0, s_orbit_calls);
     EXPECT_TRUE(m_columns.empty());
@@ -856,5 +863,200 @@ TEST_P(TestStandaloneTestPoint, completedResumeDoesNotComputeAnotherPixel)
 INSTANTIATE_TEST_SUITE_P(TestPointModes, TestStandaloneTestPoint, Values(CalcMode::ONE_PASS, CalcMode::TWO_PASS),
     [](const TestParamInfo<CalcMode> &info) -> std::string
     { return info.param == CalcMode::ONE_PASS ? "OnePass" : "TwoPass"; });
+
+class TestSelectedAnt : public TestNonStandardFractal, public WithParamInterface<AntType>
+{
+protected:
+    void SetUp() override
+    {
+        TestNonStandardFractal::SetUp();
+        select_type(FractalType::ANT);
+        g_params[0] = 1100;
+        g_param_text[0] = "1100";
+        g_params[1] = 400;
+        g_params[2] = 2;
+        g_params[3] = static_cast<int>(GetParam());
+        g_params[4] = 1;
+        g_params[5] = 12345;
+        EXPECT_CALL(m_driver, read_pixel(_, _))
+            .WillRepeatedly(Invoke([this](int x, int y) { return m_pixels.at(y * WIDTH + x); }));
+    }
+
+    std::vector<std::array<int, WIDTH * HEIGHT>> reference_frames()
+    {
+        std::vector<std::array<int, WIDTH * HEIGHT>> result;
+        Ant ant;
+        while (!ant.done())
+        {
+            ant.iterate();
+            result.push_back(m_pixels);
+        }
+        m_pixels.fill(0);
+        m_columns.clear();
+        return result;
+    }
+
+    ValueSaver<double> m_saved_param3{g_params[3]};
+    ValueSaver<double> m_saved_param4{g_params[4]};
+    ValueSaver<double> m_saved_param5{g_params[5]};
+    ValueSaver<std::string> m_saved_rule{g_param_text[0]};
+    ValueSaver<int> m_saved_seed{g_random_seed, 12345};
+    ValueSaver<bool> m_saved_fixed_seed{g_random_seed_flag, true};
+    ValueSaver<int> m_saved_delay{g_orbit_delay, 0};
+};
+
+TEST_P(TestSelectedAnt, selectionPreservesIterationBatchesWithoutRendererCallbacks)
+{
+    const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
+    const int next_random{random15()};
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+
+    EXPECT_TRUE(m_columns.empty());
+    EXPECT_FALSE(calculation.done());
+    EXPECT_FALSE(calculation.consume_batch_complete());
+    for (size_t batch = 0; batch < expected.size(); ++batch)
+    {
+        calculation.iterate();
+        EXPECT_EQ(expected[batch], m_pixels);
+        EXPECT_EQ((batch + 1) * (GetParam() == AntType::ONE ? 200 : 400), m_columns.size());
+        EXPECT_EQ(batch + 1 == expected.size(), calculation.done());
+        EXPECT_TRUE(calculation.consume_batch_complete());
+        EXPECT_FALSE(calculation.consume_batch_complete());
+    }
+    EXPECT_EQ(next_random, random15());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    const size_t writes{m_columns.size()};
+    calculation.iterate();
+    EXPECT_EQ(writes, m_columns.size());
+    EXPECT_FALSE(calculation.consume_batch_complete());
+    calculation.finish(false);
+}
+
+TEST_P(TestSelectedAnt, interruptedAntRestartsInsteadOfSavingResumeState)
+{
+    const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    calculation.iterate();
+
+    calculation.suspend();
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(g_resume_data.empty());
+    m_pixels.fill(0);
+    NonStandardFractal restarted;
+    restarted.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, restarted.select());
+    complete(restarted);
+    EXPECT_EQ(expected.back(), m_pixels);
+}
+
+TEST_P(TestSelectedAnt, drawingOnExistingImagePreservesImageLifecycle)
+{
+    alloc_resume(20, 1);
+    put_resume(42);
+    const std::vector<Byte> resume{g_resume_data};
+    g_calc_time = 1234;
+    g_timer_interval = 5678;
+    m_pixels.fill(3);
+    NonStandardFractal calculation;
+
+    calculation.select_ant_on_image();
+
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_EQ(1234, g_calc_time);
+    EXPECT_TRUE(m_columns.empty());
+    for (int batch = 0; batch < 4; ++batch)
+    {
+        calculation.iterate();
+        EXPECT_TRUE(calculation.consume_batch_complete());
+    }
+    ASSERT_TRUE(calculation.done());
+    EXPECT_FALSE(m_columns.empty());
+    calculation.finish(false);
+
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_EQ(1234, g_calc_time);
+    EXPECT_EQ(5678, g_timer_interval);
+    EXPECT_EQ(resume, g_resume_data);
+}
+
+TEST_P(TestSelectedAnt, existingImageEntryRejectsActiveImageCalculation)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+
+    EXPECT_THROW(calculation.select_ant_on_image(), std::logic_error);
+
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    EXPECT_THROW(calculation.select_ant_on_image(), std::logic_error);
+}
+
+TEST_P(TestSelectedAnt, zeroBatchesCompletesWithoutInputOrPixelOutput)
+{
+    g_params[1] = 0;
+    NonStandardFractal calculation;
+    calculation.start();
+
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+
+    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(calculation.completed());
+    calculation.iterate();
+    EXPECT_FALSE(calculation.consume_batch_complete());
+    EXPECT_TRUE(m_columns.empty());
+}
+
+TEST_P(TestSelectedAnt, uiStepsTheSelectedObjectAtExistingBatchBoundaries)
+{
+    const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
+    const help::HelpLabels previous_help{help::g_help_mode};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    EXPECT_CALL(m_driver, flush()).Times(2);
+    EXPECT_CALL(m_driver, delay(0)).Times(2);
+    {
+        InSequence keys;
+        EXPECT_CALL(m_driver, key_pressed())
+            .WillOnce(Invoke(
+                [&]
+                {
+                    EXPECT_EQ(expected[0], m_pixels);
+                    EXPECT_EQ(help::HelpLabels::HELP_ANT_COMMANDS, help::g_help_mode);
+                    return ID_KEY_SPACE;
+                }));
+        EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_SPACE));
+        EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
+        EXPECT_CALL(m_driver, get_key())
+            .WillOnce(Invoke(
+                [&]
+                {
+                    EXPECT_EQ(expected[1], m_pixels);
+                    return ID_KEY_ENTER;
+                }));
+        EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
+        EXPECT_CALL(m_driver, get_key())
+            .WillOnce(Invoke(
+                [&]
+                {
+                    EXPECT_EQ(expected[2], m_pixels);
+                    return ID_KEY_ENTER_2;
+                }));
+    }
+
+    EXPECT_EQ(0, ant_type(calculation));
+
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(expected.back(), m_pixels);
+    EXPECT_EQ(previous_help, help::g_help_mode);
+}
+
+INSTANTIATE_TEST_SUITE_P(AntVariants, TestSelectedAnt, Values(AntType::ONE, AntType::TWO));
 
 } // namespace id::test

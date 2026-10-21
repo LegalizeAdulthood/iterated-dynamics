@@ -10,6 +10,7 @@
 #include "engine/jiim.h"
 #include "engine/load_params.h"
 #include "engine/log_map.h"
+#include "engine/NonStandardFractal.h"
 #include "engine/sound.h"
 #include "engine/spindac.h"
 #include "engine/UserData.h"
@@ -342,9 +343,15 @@ static CommandResult begin_ant(MainContext & /*context*/)
     g_from_text = false;
     const int err = get_fract_params(true);
     driver_unstack_screen();
-    if (err >= 0 && ant_type() >= 0)
+    if (err >= 0)
     {
-        g_calc_status = CalcStatus::PARAMS_CHANGED;
+        NonStandardFractal calculation;
+        calculation.select_ant_on_image();
+        if (ant_type(calculation) >= 0)
+        {
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
+        }
+        calculation.finish(false);
     }
     set_fractal_type(old_type);
     for (int j = 0; j < MAX_PARAMS; ++j)

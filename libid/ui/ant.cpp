@@ -11,7 +11,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/OrbitPlot.h"
-#include "fractals/Ant.h"
+#include "engine/NonStandardFractal.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
@@ -198,10 +198,9 @@ static bool ant_key(bool &step, long &wait)
     return false;
 }
 
-int ant_type()
+int ant_type(NonStandardFractal &calculation)
 {
     ValueSaver saved_help_mode(g_help_mode, HelpLabels::HELP_ANT_COMMANDS);
-    fractals::Ant ant;
     long wait = std::abs(g_orbit_delay);
 
     bool step = wait == 1;
@@ -209,24 +208,24 @@ int ant_type()
     {
         wait = 0;
     }
-    while (!ant.done())
+    while (!calculation.done())
     {
-        ant.iterate();
-        const bool batch_complete{ant.consume_batch_complete()};
+        calculation.iterate();
+        const bool batch_complete{calculation.consume_batch_complete()};
         if (batch_complete)
         {
             display_disk_storage_progress();
         }
-        if (!ant.done() && batch_complete && wait > 0 && !step)
+        if (!calculation.done() && batch_complete && wait > 0 && !step)
         {
             wait_for_ant_delay(wait);
         }
-        if (!ant.done() && batch_complete && step)
+        if (!calculation.done() && batch_complete && step)
         {
             driver_flush();
             driver_delay(0);
         }
-        if (!ant.done() && batch_complete && ant_key(step, wait))
+        if (!calculation.done() && batch_complete && ant_key(step, wait))
         {
             break;
         }

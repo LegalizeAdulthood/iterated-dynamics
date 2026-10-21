@@ -118,9 +118,29 @@ NonStandardFractal::Operation NonStandardFractal::select()
         return Operation::TEST_POINT;
     }
 
+    case FractalType::ANT:
+        start_timer();
+        prepare();
+        m_done = m_state.emplace<ANT>().done();
+        if (m_done)
+        {
+            g_calc_status = CalcStatus::COMPLETED;
+        }
+        update_timer();
+        return Operation::ANT;
+
     default:
         return Operation::LEGACY;
     }
+}
+
+void NonStandardFractal::select_ant_on_image()
+{
+    if (started() || m_state.index() != NO_OPERATION || g_fractal_type != FractalType::ANT)
+    {
+        throw std::logic_error("Ant drawing requires an existing image and no active operation");
+    }
+    m_done = m_state.emplace<ANT>().done();
 }
 
 bool NonStandardFractal::done() const
@@ -179,9 +199,31 @@ void NonStandardFractal::iterate()
         }
         return;
 
+    case ANT:
+        if (!m_done)
+        {
+            Ant &ant{std::get<ANT>(m_state)};
+            ant.iterate();
+            m_done = ant.done();
+            if (m_done && started())
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
+}
+
+bool NonStandardFractal::consume_batch_complete()
+{
+    if (m_state.index() != ANT)
+    {
+        throw std::logic_error("No Ant calculation operation is selected");
+    }
+    return std::get<ANT>(m_state).consume_batch_complete();
 }
 
 void NonStandardFractal::suspend()
@@ -221,6 +263,13 @@ void NonStandardFractal::suspend()
         }
         return;
 
+    case ANT:
+        if (!m_done)
+        {
+            finish(true);
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -237,17 +286,20 @@ void NonStandardFractal::finish(const bool interrupted)
     {
         std::get<TEST_POINT>(m_state).finish();
     }
-    if (g_calc_status == CalcStatus::IN_PROGRESS)
+    if (started() && g_calc_status == CalcStatus::IN_PROGRESS)
     {
         g_calc_status = interrupted ? CalcStatus::NON_RESUMABLE : CalcStatus::COMPLETED;
     }
     m_state.emplace<NO_OPERATION>();
     m_done = true;
-    ImageCalculation::finish();
+    if (started())
+    {
+        ImageCalculation::finish();
+    }
 }
 
 // TODO: removed later
-// Slices 47.5-51 replace remaining renderer calls with selected operations.
+// Slices 47.6-51 replace remaining renderer calls with selected operations.
 void NonStandardFractal::render_legacy()
 {
     start_timer();

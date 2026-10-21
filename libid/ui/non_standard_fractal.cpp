@@ -6,6 +6,7 @@
 #include "engine/NonStandardFractal.h"
 #include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"
+#include "ui/ant.h"
 #include "ui/bifurcation.h"
 #include "ui/calculate_image.h"
 #include "ui/diffusion.h"
@@ -82,6 +83,10 @@ int non_standard_fractal()
 
         case NonStandardFractal::Operation::TEST_POINT:
             test_type(non_standard_fractal);
+            break;
+
+        case NonStandardFractal::Operation::ANT:
+            ant_type(non_standard_fractal);
             break;
 
         case NonStandardFractal::Operation::LEGACY:
