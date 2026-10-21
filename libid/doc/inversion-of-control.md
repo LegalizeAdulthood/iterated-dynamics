@@ -369,7 +369,7 @@ The current code is already part-way through this plan:
 The fresh reverse-call audit also found these live paths:
 
 - `calc_fract()` calls UI render controllers directly.
-  `NonStandardFractal::iterate()`, `standalone_per_image()`, and
+  `NonStandardFractal::render_legacy()`, `standalone_per_image()`, and
   `cellular_per_image()` also reach UI render loops through dispatch
   function pointers stored in `FractalSpecific`.
 - `ifs_type()` selects UI renderers, while `orbit3d_type()` and the IFS3D
@@ -585,8 +585,11 @@ The concrete render operation objects are:
   symmetry defaults, plot defaults, `per_image()` invocation, and final
   status interpretation.  It shares common image setup, timing, and
   cleanup, but its marked dispatch still enters whole UI render loops.
-  Slices 47-48 replace that bridge with bounded calculation operations
-  before it can participate in outer-loop control.
+  Its bounded operation router now owns bifurcation state without invoking
+  per-image or renderer callbacks.  The UI still uses the marked legacy
+  entry until slice 47.1 connects the selected operation.  The remaining
+  47.x slices bind other standalone families before slice 48 removes
+  per-image reentry.
 
 The input and presentation side starts, resumes, cancels, or paces the
 active operation.  It does not classify standard versus Lyapunov versus
@@ -994,36 +997,151 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 47. Standalone Engine Operation Selection
+### 47.1. Bifurcation UI Operation Ownership
 
-Source: `NonStandardFractal`, `FractalDispatch`, `FractalSpecific`, and
-the already incremental standalone calculation classes.
+Source: `ui/bifurcation.cpp`, `ui/non_standard_fractal.cpp`, and the
+selected bifurcation operation in `engine/NonStandardFractal.cpp`.
 
-Work:
+- Let the UI drive the already-selected operation instead of constructing
+  another `Bifurcation` or entering it through a renderer callback.
+- Preserve per-column polling and saved-column resume behavior.
+- Route unsupported families through the marked legacy entry until their
+  own bindings are implemented.  Keep classification below UI.
 
-- Select a concrete calculation object from engine state and dispatch
-  data.  Keep fractal classification and type-specific initialization
-  below UI; UI receives the already-selected operation.
-- Bind existing standalone calculation lifecycles into that selection
-  using simple explicit routing consistent with `StandardPass`.
-- Convert any remaining whole-render operation into bounded calculation
-  phases before binding it.  Split that family's conversion into its own
-  prerequisite slice if it is more than a mechanical binding.
-- Do not create an operation whose `iterate()` calls a UI renderer.
+Done when: all six builtin bifurcation types use the bounded operation
+through their real UI entry path.
 
-Done when:
+Validation: retain operation-selection, suspension/resume, and semantic
+bifurcation tests.  Add an autokey menu/continuation journey if the
+existing scripts do not cover this entry.  Do not restore pixel golds.
 
-- A selected standalone operation performs calculation increments without
-  invoking a UI loop through its dispatch entry.
+### 47.2. Popcorn Operation Binding
 
-Validation: drive selected operations to completion and suspension in
-engine tests; reuse existing standalone image and semantic coverage.
+Source: `fractals/popcorn.cpp`, `ui/popcorn.cpp`, and
+`NonStandardFractal`.
+
+- Add `Popcorn` directly to the operation variant and move its existing
+  setup/resume into engine selection.
+- Let the UI advance that selected object with its existing handler and
+  work checkpoints.  Do not call a UI renderer from `iterate()`.
+
+Done when: popcorn and popcornjul use the selected calculation object.
+
+Validation: reuse their image tests and interruption/resume coverage.
+Add an entry-path autokey case only if that path is uncovered.
+
+### 47.3. Diffusion Operation Binding
+
+Source: `fractals/Diffusion.cpp`, `ui/diffusion.cpp`, and
+`NonStandardFractal`.  This is the standalone fractal, not the pass.
+
+- Own `fractals::Diffusion` in the operation variant.
+- Preserve its boolean iteration and resume semantics through the router.
+- Keep keyboard handling in its UI controller; preserve current chunks.
+
+Done when: the standalone diffusion UI drives the selected object.
+
+Validation: reuse diffusion image and suspend/resume tests.  Exercise the
+real handler entry through autokey if existing coverage does not.
+
+### 47.4. TestPoint Operation Binding
+
+Source: `fractals/TestPoint.cpp`, `ui/testpt.cpp`, and
+`NonStandardFractal`.
+
+- Own `TestPoint` in the operation variant and retain its setup,
+  iteration, completion, suspend/resume, and finish operations.
+- Let its UI controller advance the selected object without recreating
+  it or changing its per-pixel polling cadence.
+
+Done when: TestPoint enters bounded work through engine selection.
+
+Validation: drive completion and resume in engine tests; reuse image
+coverage and any existing entry-path autokey coverage.
+
+### 47.5. Ant Operation Binding
+
+Source: `fractals/Ant.cpp`, `ui/ant.cpp`, and `NonStandardFractal`.
+
+- Select and own `Ant` below UI, including construction from engine state.
+- Keep batch-completion facts available to its UI controller, which
+  retains delay, stepping, help, and option-menu policy.
+- Preserve current iteration batches and stop/restart behavior.
+
+Done when: Ant's UI advances the engine-selected object.
+
+Validation: reuse Ant's autokey stepping and menu workflows, calculation
+tests, and images.  No duplicate manual keyboard checklist.
+
+### 47.6. Cellular Operation Binding
+
+Source: `fractals/Cellular.cpp`, `ui/cellular.cpp`, and
+`NonStandardFractal`.
+
+- Select and own `Cellular` below UI.  Retain initial-generation
+  preparation as bounded calculation state.
+- Keep thinking-screen updates, diagnostics, and input in the controller.
+- Preserve next-screen initialization and supported continuation.
+
+Done when: the selected cellular operation replaces nested rendering.
+
+Validation: reuse cellular's preparation, failure, and menu/continuation
+tests through the actual selection entry, plus existing images.
+
+### 47.7. Plasma Operation Binding
+
+Source: `fractals/Plasma.cpp`, `ui/plasma.cpp`, and
+`NonStandardFractal`.
+
+- Select and own `Plasma` below UI, including its color validation and
+  initialization with the reported potential-storage availability.
+- Keep storage preparation and diagnostic presentation in the controller.
+- Preserve existing iteration chunks and non-resumable interruption.
+
+Done when: Plasma's UI advances the selected calculation object.
+
+Validation: reuse storage success/cancellation and controller-error
+tests, plus plasma images.  Cover selection identity in engine tests.
+
+### 47.8. L-System Operation Binding
+
+Source: `fractals/lsystem.cpp`, `ui/lsystem.cpp`, and
+`NonStandardFractal`.
+
+- Select and own `LSystem`; retain definition loading and calculation
+  start below UI.
+- Keep sizing and drawing incremental.  Expose sizing and terminal
+  calculation facts without moving thinking-screen or polling policy.
+- Let the existing controller drive that selected instance.
+
+Done when: L-system rendering never reenters UI through setup/dispatch.
+
+Validation: reuse semantic tests and sizing/drawing autokey interruption
+coverage.  Keep thinking-screen cleanup and failure tests.
+
+### 47.9. FrothyBasin Operation Binding
+
+Source: `fractals/FrothyBasin.cpp`, `ui/frothy_basin.cpp`, and
+`NonStandardFractal`.
+
+- Bind the existing incremental FrothyBasin calculation into selection.
+  Keep palette decisions and orbit calculation below UI.
+- Retain controller ownership of palette diagnostics, overlay
+  interaction, sound servicing, and cancellation.
+- Preserve existing orbit and pixel work checkpoints; add no pacing
+  state or callbacks to calculation objects.
+
+Done when: the FrothyBasin controller drives the selected operation.
+
+Validation: reuse its image, overlay/sound, cancellation, and resume
+coverage through the real selection entry.  No new pacing-policy tests.
 
 ### 48. Remove Per-Image Renderer Reentry
 
 Source: `standalone_per_image()` in `fractals/frasetup.cpp`,
 `cellular_per_image()`, full-renderer entries in `fractals/fractalp.cpp`,
-and `NonStandardFractal::iterate()` in `engine/calcfrac.cpp`.
+and `NonStandardFractal::render_legacy()` in
+`engine/NonStandardFractal.cpp`.
 
 Work:
 
@@ -1034,6 +1152,10 @@ Work:
 - Keep the fractal table const and runtime dispatch changes explicit.
 - Remove corresponding UI includes and transitional renderer-call
   bridges once their calculation operation owns the work.
+- Remove obsolete entry points left by the 47.x family bindings.  Keep
+  the explicitly marked legacy dispatch for IFS, stereo, and orbit
+  families until slices 49-51 replace those paths.  No bounded
+  `iterate()` may fall back to that legacy entry.
 
 Done when:
 
@@ -1209,7 +1331,8 @@ these direct and indirect paths:
 - `libid/fractals/lorenz.cpp`: `funny_glasses_call()` enters a blocking
   photographer prompt and second-image modal message.  IFS and orbit
   front ends also invoke complete UI render loops.
-- `libid/engine/calcfrac.cpp`, `fractals/frasetup.cpp`,
+- `libid/engine/calcfrac.cpp`, `engine/NonStandardFractal.cpp`,
+  `fractals/frasetup.cpp`,
   `fractals/Cellular.cpp`, and renderer table entries in
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or
   dispatch pointers, including from per-image setup.

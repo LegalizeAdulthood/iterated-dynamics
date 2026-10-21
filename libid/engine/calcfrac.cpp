@@ -625,54 +625,6 @@ static bool static_calc_type_uses_lyapunov_renderer()
     return g_cur_fractal_specific->calc_type == lyapunov_type;
 }
 
-// TODO: removed later
-// Slices 47-48 replace this whole-render dispatch with incremental operations.
-void NonStandardFractal::iterate()
-{
-    start_timer();
-    g_dispatch.init_calc_type(*g_cur_fractal_specific);
-    // per_image can override
-    g_symmetry = g_cur_fractal_specific->symmetry; // table symmetry
-    g_plot = g_put_color;                          // defaults when setsymmetry not called or does nothing
-    g_begin_pt.x = 0;
-    g_begin_pt.y = 0;
-    g_start_pt.x = 0;
-    g_start_pt.y = 0;
-    g_i_start_pt.x = 0;
-    g_i_start_pt.y = 0;
-    g_stop_pt.y = g_logical_screen.y_dots - 1;
-    g_i_stop_pt.y = g_logical_screen.y_dots - 1;
-    g_stop_pt.x = g_logical_screen.x_dots - 1;
-    g_i_stop_pt.x = g_logical_screen.x_dots - 1;
-    g_calc_status = CalcStatus::IN_PROGRESS; // mark as in-progress
-    g_distance_estimator = 0;                // only standard escape time engine supports distest
-    // per_image routine is run here
-    if (per_image())
-    {
-        // not a stand-alone
-        // next two lines in case periodicity changed
-        g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
-        set_symmetry(g_symmetry, false);
-        const CalcType calc_type{g_dispatch.calc_type()};
-        calc_type(); // non-standard fractal engine
-    }
-    update_timer();
-}
-
-bool NonStandardFractal::completed() const
-{
-    return g_calc_status == CalcStatus::COMPLETED;
-}
-
-void NonStandardFractal::finish(const bool interrupted)
-{
-    if (g_calc_status == CalcStatus::IN_PROGRESS)
-    {
-        g_calc_status = interrupted ? CalcStatus::NON_RESUMABLE : CalcStatus::COMPLETED;
-    }
-    ImageCalculation::finish();
-}
-
 void ImageCalculation::finish()
 {
     if (!m_targa_storage.header.empty())

@@ -62,6 +62,7 @@ add_library(libid
     include/engine/log_map.h engine/log_map.cpp
     include/engine/lowerize_parameter.h engine/lowerize_parameter.cpp
     include/engine/NullSoundOutput.h engine/NullSoundOutput.cpp
+    include/engine/NonStandardFractal.h engine/NonStandardFractal.cpp
     include/engine/ScanlinePass.h engine/ScanlinePass.cpp
     include/engine/OrbitPlot.h engine/OrbitPlot.cpp
     include/engine/param_not_used.h engine/param_not_used.cpp

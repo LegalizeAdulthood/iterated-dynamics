@@ -71,6 +71,7 @@ add_executable(test-id
     engine/test_cmdfiles.cpp
     engine/test_Diffusion.cpp
     engine/test_get_prec_big_float.cpp
+    engine/test_NonStandardFractal.cpp
     engine/test_InverseJulia.cpp
     engine/test_log_map.cpp
     engine/test_PertEngine.cpp

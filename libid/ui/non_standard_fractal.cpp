@@ -3,7 +3,7 @@
 //
 #include "ui/non_standard_fractal.h"
 
-#include "engine/calcfrac.h"
+#include "engine/NonStandardFractal.h"
 #include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/calculate_image.h"
@@ -62,7 +62,7 @@ int non_standard_fractal()
     try
     {
         complete_image_setup(non_standard_fractal, non_standard_fractal.start());
-        non_standard_fractal.iterate();
+        non_standard_fractal.render_legacy();
 
         if (driver_key_pressed() != 0)
         {
