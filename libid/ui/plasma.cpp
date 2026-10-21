@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/plasma.h"
 
@@ -6,6 +7,7 @@
 
 #include "engine/VideoInfo.h"
 #include "misc/Driver.h"
+#include "ui/diskvid.h"
 #include "ui/stop_msg.h"
 
 using namespace id::engine;
@@ -32,6 +34,7 @@ int plasma_type()
         }
 
         plasma.iterate();
+        display_disk_storage_progress();
     }
 
     return 0;

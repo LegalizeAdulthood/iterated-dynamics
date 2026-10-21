@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /*
    This file contains two 3-dimensional orbit-type fractal
@@ -9,6 +10,7 @@
 
 #include "engine/resume.h"
 #include "fractals/lorenz.h"
+#include "ui/diskvid.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/SoundSession.h"
 
@@ -48,6 +50,7 @@ int orbit2d_type(SoundSession &sound)
         }
 
         o2d.iterate();
+        display_disk_storage_progress();
     }
     return sound.finish() ? 0 : -1;
 }

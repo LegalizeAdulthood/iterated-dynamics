@@ -7,6 +7,7 @@
 #include "engine/StandardFractal.h"
 #include "fractals/lyapunov.h"
 #include "misc/Driver.h"
+#include "ui/diskvid.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/ShowDotController.h"
 #include "ui/standard_orbit_plot.h"
@@ -74,6 +75,7 @@ int lyapunov_fractal()
             {
                 lyapunov.iterate();
             }
+            display_disk_storage_progress();
             if (!lyapunov.done() && calc_interrupted())
             {
                 lyapunov.suspend();

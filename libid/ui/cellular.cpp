@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 //****************** standalone engine for "cellular" *******************
 
@@ -7,6 +8,7 @@
 #include "engine/calcfrac.h"
 #include "fractals/Cellular.h"
 #include "misc/Driver.h"
+#include "ui/diskvid.h"
 #include "ui/stop_msg.h"
 #include "ui/thinking.h"
 
@@ -76,6 +78,7 @@ int cellular_type()
         while (true)
         {
             thinking_screen.update(cellular.preparing());
+            display_disk_storage_progress();
             if (!cellular.iterate())
             {
                 break;

@@ -1423,7 +1423,7 @@ int targa_color(const int x, const int y, const int color)
 
     // Now write the color triple to its transformed location
     // on the disk.
-    targa_write_disk(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset, rgb[0], rgb[1], rgb[2]);
+    write_targa_pixel(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset, rgb[0], rgb[1], rgb[2]);
 
     return static_cast<int>(255 - val);
 }

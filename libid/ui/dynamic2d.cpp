@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/dynamic2d.h"
 
 #include "engine/resume.h"
 #include "fractals/lorenz.h"
+#include "ui/diskvid.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/SoundSession.h"
 
@@ -43,6 +45,7 @@ int dynamic2d_type(SoundSession &sound)
         }
 
         d2d.iterate();
+        display_disk_storage_progress();
     }
 
     return sound.finish() ? 0 : -1;

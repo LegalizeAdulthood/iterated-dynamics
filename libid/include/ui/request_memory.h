@@ -9,7 +9,7 @@ namespace id::ui
 {
 
 // TODO: removed later
-// Slice 41 moves storage recovery to the outer requesting controller.
+// Slice 41.2 moves allocation decisions into storage UI setup.
 misc::MemoryHandle request_memory(
     misc::U16 size, std::uint64_t count, misc::MemoryLocation location, const std::filesystem::path &backing_file = {});
 

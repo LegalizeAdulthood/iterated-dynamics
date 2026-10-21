@@ -491,7 +491,7 @@ TEST_F(TestGifWriterRaster, savesPotentialRowsAsColorsThenLowBytes)
         for (int col = 0; col < 5; ++col)
         {
             const Byte low{static_cast<Byte>(201 - row * 13 - col * 7)};
-            disk_write_pixel(col + 2, row + 3 + 1, low);
+            write_disk_pixel(col + 2, row + 3 + 1, low);
             stored.push_back(low);
         }
     }
@@ -503,7 +503,7 @@ TEST_F(TestGifWriterRaster, savesPotentialRowsAsColorsThenLowBytes)
                 m_frame.at(static_cast<std::size_t>(y) * m_frame_width + x) = static_cast<Byte>(color);
                 for (int col = 0; col < 5; ++col)
                 {
-                    disk_write_pixel(col + 2, y - g_logical_screen.y_offset + 3 + 1, 0);
+                    write_disk_pixel(col + 2, y - g_logical_screen.y_offset + 3 + 1, 0);
                 }
             });
     EXPECT_CALL(m_driver, flush()).Times(4);

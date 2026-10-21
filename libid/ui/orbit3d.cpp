@@ -4,6 +4,7 @@
 #include "ui/orbit3d.h"
 
 #include "fractals/lorenz.h"
+#include "ui/diskvid.h"
 #include "ui/stereo.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/SoundSession.h"
@@ -39,6 +40,7 @@ int orbit3d_calc(SoundSession &sound)
         }
 
         o3d.iterate();
+        display_disk_storage_progress();
     }
 
     return sound.finish() ? 0 : -1;

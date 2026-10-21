@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/bifurcation.h"
 
 #include "engine/resume.h"
 #include "fractals/Bifurcation.h"
 #include "misc/Driver.h"
+#include "ui/diskvid.h"
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -22,6 +24,7 @@ int bifurcation_type()
     }
     while (bif.iterate())
     {
+        display_disk_storage_progress();
         if (driver_key_pressed())
         {
             bif.suspend();

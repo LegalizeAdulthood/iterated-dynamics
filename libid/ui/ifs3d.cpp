@@ -4,6 +4,7 @@
 #include "ui/ifs3d.h"
 
 #include "fractals/lorenz.h"
+#include "ui/diskvid.h"
 #include "ui/stereo.h"
 #include "misc/Driver.h"
 
@@ -25,6 +26,7 @@ int ifs3d_calc()
             return -1;
         }
         ifs.iterate();
+        display_disk_storage_progress();
     }
     return 0;
 }

@@ -4,10 +4,11 @@
 #include "ui/video.h"
 
 #include "engine/pixel.h"
+#include "io/disk_storage.h"
 #include "misc/Driver.h"
-#include "ui/diskvid.h"
 
 using namespace id::engine;
+using namespace id::io;
 using namespace id::misc;
 
 namespace id::ui
@@ -25,7 +26,7 @@ void set_normal_dot()
 
 void set_disk_dot()
 {
-    set_pixel_functions(disk_write_pixel, disk_read_pixel);
+    set_pixel_functions(write_disk_pixel, read_disk_pixel);
 }
 
 static void null_write_pixel(int, int, int)

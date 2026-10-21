@@ -7,6 +7,7 @@
 #include "engine/SoundOutput.h"
 #include "fractals/FrothyBasin.h"
 #include "misc/Driver.h"
+#include "ui/diskvid.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/SoundSession.h"
 #include "ui/standard_orbit_plot.h"
@@ -92,6 +93,7 @@ int froth_type(SoundSession &sound)
         }
         bool check_interrupted = true;
         g_frothy_basin.iterate();
+        display_disk_storage_progress();
         if (g_frothy_basin.consume_orbit_overlay_displayed())
         {
             pace_orbit_display();

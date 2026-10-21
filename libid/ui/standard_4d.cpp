@@ -7,6 +7,7 @@
 #include "fractals/julibrot.h"
 #include "io/loadmap.h"
 #include "misc/Driver.h"
+#include "ui/diskvid.h"
 #include "ui/get_3d_params.h"
 #include "ui/starfield.h"
 #include "ui/stop_msg.h"
@@ -49,6 +50,7 @@ int standard_4d_type()
 
     while (s4d.iterate())
     {
+        display_disk_storage_progress();
         if (driver_key_pressed())
         {
             return -1;

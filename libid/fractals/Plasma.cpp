@@ -12,6 +12,7 @@
 #include "engine/random_seed.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
+#include "io/disk_storage.h"
 #include "io/loadmap.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
@@ -88,9 +89,9 @@ static void put_pot(const int x, const int y, U16 color)
           was already a "writedisk" in that case */
     if (!driver_is_disk())
     {
-        disk_write_pixel(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset, color >> 8);   // upper 8 bits
+        write_disk_pixel(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset, color >> 8);   // upper 8 bits
     }
-    disk_write_pixel(
+    write_disk_pixel(
         x + g_logical_screen.x_offset, y + g_screen_y_dots + g_logical_screen.y_offset, color & 255); // lower 8 bits
 }
 
@@ -117,10 +118,10 @@ static void put_color_border(const int x, const int y, int color)
 
 static U16 get_pot(const int x, const int y)
 {
-    U16 color = static_cast<U16>(disk_read_pixel(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset));
+    U16 color = static_cast<U16>(read_disk_pixel(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset));
     color = static_cast<U16>((color << 8) +
         static_cast<U16>(
-            disk_read_pixel(x + g_logical_screen.x_offset, y + g_screen_y_dots + g_logical_screen.y_offset)));
+            read_disk_pixel(x + g_logical_screen.x_offset, y + g_screen_y_dots + g_logical_screen.y_offset)));
     return color;
 }
 

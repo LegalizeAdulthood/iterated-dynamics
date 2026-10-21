@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/diffusion.h"
 
 #include "engine/calcfrac.h"
 #include "fractals/Diffusion.h"
 #include "misc/Driver.h"
+#include "ui/diskvid.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/standard_orbit_plot.h"
 
@@ -64,6 +66,7 @@ int diffusion_type()
 
     while (d.iterate())
     {
+        display_disk_storage_progress();
         dispatch_pending_keyboard_input();
         if (keyboard_handler->interrupted())
         {

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // The Ant Automaton is based on an article in Scientific American, July 1994.
 // The original Fractint implementation was by Tim Wegner in Fractint 19.0.
@@ -14,6 +15,7 @@
 #include "helpdefs.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
+#include "ui/diskvid.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/main_menu_switch.h"
@@ -211,6 +213,10 @@ int ant_type()
     {
         ant.iterate();
         const bool batch_complete{ant.consume_batch_complete()};
+        if (batch_complete)
+        {
+            display_disk_storage_progress();
+        }
         if (!ant.done() && batch_complete && wait > 0 && !step)
         {
             wait_for_ant_delay(wait);

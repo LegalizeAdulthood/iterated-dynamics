@@ -93,7 +93,11 @@ void SaveImageProgress::advance(const int row)
     {
         throw std::logic_error("GIF save progress rows must be sequential");
     }
-    if (!m_disk)
+    if (m_disk)
+    {
+        display_disk_storage_progress();
+    }
+    else
     {
         next_colors(row, m_color1, m_color2);
         toggle_row(row, m_color1, m_color2);

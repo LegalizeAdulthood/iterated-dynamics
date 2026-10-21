@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/testpt.h"
 
 #include "engine/resume.h"
 #include "fractals/TestPoint.h"
 #include "misc/Driver.h"
+#include "ui/diskvid.h"
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -34,6 +36,7 @@ int test_type()
             return -1;
         }
         test.iterate();
+        display_disk_storage_progress();
     }
     test.finish();
     return 0;

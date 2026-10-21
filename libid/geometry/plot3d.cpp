@@ -14,7 +14,7 @@
 #include "fractals/fractype.h"
 #include "geometry/line3d.h"
 #include "io/decoder.h"
-#include "ui/diskvid.h"
+#include "io/disk_storage.h"
 
 #include <config/port.h>
 
@@ -23,7 +23,6 @@
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
-using namespace id::ui;
 
 namespace id::geometry
 {
@@ -252,7 +251,7 @@ static void plot3d_superimpose256(const int x, const int y, int color)
                 }
                 else
                 {
-                    targa_write_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, t_c, 0, 0);
+                    write_targa_pixel(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, t_c, 0, 0);
                 }
             }
         }
@@ -272,8 +271,9 @@ static void plot3d_superimpose256(const int x, const int y, int color)
                 }
                 else
                 {
-                    targa_read_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, &s_t_red, reinterpret_cast<Byte *>(&tmp), reinterpret_cast<Byte *>(&tmp));
-                    targa_write_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, s_t_red, 0, t_c);
+                    read_targa_pixel(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset, &s_t_red,
+                        reinterpret_cast<Byte *>(&tmp), reinterpret_cast<Byte *>(&tmp));
+                    write_targa_pixel(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset, s_t_red, 0, t_c);
                 }
             }
         }
@@ -308,7 +308,7 @@ static void plot_ifs3d_superimpose256(const int x, const int y, int color)
                 }
                 else
                 {
-                    targa_write_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, t_c, 0, 0);
+                    write_targa_pixel(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, t_c, 0, 0);
                 }
             }
         }
@@ -327,8 +327,9 @@ static void plot_ifs3d_superimpose256(const int x, const int y, int color)
                 }
                 else
                 {
-                    targa_read_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, &s_t_red, reinterpret_cast<Byte *>(&tmp), reinterpret_cast<Byte *>(&tmp));
-                    targa_write_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, s_t_red, 0, t_c);
+                    read_targa_pixel(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset, &s_t_red,
+                        reinterpret_cast<Byte *>(&tmp), reinterpret_cast<Byte *>(&tmp));
+                    write_targa_pixel(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset, s_t_red, 0, t_c);
                 }
             }
         }
@@ -356,7 +357,7 @@ static void plot3d_alternate(const int x, const int y, int color)
                 }
                 else
                 {
-                    targa_write_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, t_c, 0, 0);
+                    write_targa_pixel(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, t_c, 0, 0);
                 }
             }
         }
@@ -374,7 +375,7 @@ static void plot3d_alternate(const int x, const int y, int color)
                 }
                 else
                 {
-                    targa_write_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, s_t_red, 0, t_c);
+                    write_targa_pixel(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, s_t_red, 0, t_c);
                 }
             }
         }

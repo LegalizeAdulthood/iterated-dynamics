@@ -64,7 +64,6 @@
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
 #include "io/disk_storage.h"
-#include "ui/diskvid.h"
 #include "ui/lyapunov.h"
 #include "ui/non_standard_fractal.h"
 #include "ui/standard_fractal.h"
@@ -1828,9 +1827,9 @@ int potential(const double mag, const long iterations)
     {
         if (!driver_is_disk())   // if putcolor won't be doing it for us
         {
-            disk_write_pixel(g_col+g_logical_screen.x_offset, g_row+g_logical_screen.y_offset, i_pot);
+            write_disk_pixel(g_col+g_logical_screen.x_offset, g_row+g_logical_screen.y_offset, i_pot);
         }
-        disk_write_pixel(g_col+g_logical_screen.x_offset, g_row+g_screen_y_dots+g_logical_screen.y_offset, static_cast<int>(l_pot));
+        write_disk_pixel(g_col+g_logical_screen.x_offset, g_row+g_screen_y_dots+g_logical_screen.y_offset, static_cast<int>(l_pot));
     }
 
     return i_pot;

@@ -8,7 +8,6 @@
 #include "engine/VideoInfo.h"
 #include "io/disk_storage.h"
 #include "io/encoder.h"
-#include "math/big.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"
 #include "ui/help_title.h"
@@ -28,7 +27,6 @@
 
 using namespace id::engine;
 using namespace id::io;
-using namespace id::math;
 using namespace id::misc;
 
 namespace id::ui
@@ -42,11 +40,10 @@ constexpr int BOX_COL{11};
 constexpr int BOX_WIDTH{57};
 constexpr int BOX_DEPTH{12};
 
-int s_time_to_display{};
 std::chrono::time_point<std::chrono::high_resolution_clock> s_last_status{};
 
 // TODO: removed later
-// Slice 41 moves backend setup decisions to the requesting controller.
+// Slices 41.3-41.7 move setup decisions to requesting controllers.
 int start_disk_video(
     const std::int64_t row_size, const std::int64_t col_size, const int colors, const std::vector<Byte> &header)
 {
@@ -123,7 +120,6 @@ int start_disk_video(
         g_good_mode = false;
         return -1;
     }
-    s_time_to_display = g_bf_math != BFMathType::NONE ? 10 : 1000;
     if (driver_is_disk())
     {
         driver_put_string(BOX_ROW + 2, BOX_COL + 23, C_DVID_LO,
@@ -131,24 +127,6 @@ int start_disk_video(
         dvid_status(0, "");
     }
     return 0;
-}
-
-// TODO: removed later
-// Slice 41 services storage progress from the outer UI controller.
-void update_disk_video_status()
-{
-    const DiskStorageProgress progress{disk_storage_progress()};
-    if (--s_time_to_display < 0)
-    {
-        if (driver_is_disk())
-        {
-            dvid_status(0,
-                fmt::format(" {} line {:4d}", progress.operation == DiskStorageOperation::READ ? "reading" : "writing",
-                    progress.row >= g_screen_y_dots ? progress.row - g_screen_y_dots : progress.row));
-        }
-        s_time_to_display =
-            progress.operation == DiskStorageOperation::READ && g_bf_math != BFMathType::NONE ? 10 : 1000;
-    }
 }
 
 } // namespace
@@ -161,7 +139,7 @@ int start_disk()
 }
 
 // TODO: removed later
-// Slice 41 moves potential-storage setup to the requesting controller.
+// Slices 41.3, 41.4, and 41.6 move setup to requesting controllers.
 int pot_start_disk()
 {
     if (driver_is_disk())
@@ -182,7 +160,7 @@ int pot_start_disk()
 }
 
 // TODO: removed later
-// Slice 41 moves Targa-storage setup to the requesting controller.
+// Slice 41.7 moves Targa-storage setup to the restore controller.
 int targa_start_disk(std::FILE *file, const int overhead)
 {
     const std::filesystem::path path{targa_disk_path()};
@@ -206,48 +184,29 @@ int targa_start_disk(std::FILE *file, const int overhead)
 }
 
 // TODO: removed later
-// Slice 41 moves storage setup to the requesting controller.
+// Slices 41.3-41.7 move storage setup to requesting controllers.
 int common_start_disk(const std::int64_t row_size, const std::int64_t col_size, const int colors)
 {
     return start_disk_video(row_size, col_size, colors, {});
 }
 
-// TODO: removed later
-// Slice 41 replaces this bridge with controller-owned progress display.
-int disk_read_pixel(const int col, const int row)
+void display_disk_storage_progress()
 {
-    const int color{read_disk_pixel(col, row)};
-    update_disk_video_status();
-    return color;
-}
-
-// TODO: removed later
-// Slice 41 replaces this bridge with controller-owned progress display.
-void disk_write_pixel(const int col, const int row, const int color)
-{
-    write_disk_pixel(col, row, color);
-    update_disk_video_status();
-}
-
-// TODO: removed later
-// Slice 41 replaces this bridge with controller-owned progress display.
-void targa_read_disk(const unsigned int col, const unsigned int row, Byte *red, Byte *green, Byte *blue)
-{
-    read_targa_pixel(col, row, red, green, blue);
-    for (int i = 0; i < 3; ++i)
+    if (!g_disk_flag)
     {
-        update_disk_video_status();
+        return;
     }
-}
-
-// TODO: removed later
-// Slice 41 replaces this bridge with controller-owned progress display.
-void targa_write_disk(const unsigned int col, const unsigned int row, const Byte red, const Byte green, const Byte blue)
-{
-    write_targa_pixel(col, row, red, green, blue);
-    for (int i = 0; i < 3; ++i)
+    using namespace std::literals::chrono_literals;
+    if (std::chrono::high_resolution_clock::now() - s_last_status < 100ms)
     {
-        update_disk_video_status();
+        return;
+    }
+    const DiskStorageProgress progress{disk_storage_progress()};
+    if (progress.operation != DiskStorageOperation::NONE && driver_is_disk())
+    {
+        dvid_status(0,
+            fmt::format(" {} line {:4d}", progress.operation == DiskStorageOperation::READ ? "reading" : "writing",
+                progress.row >= g_screen_y_dots ? progress.row - g_screen_y_dots : progress.row));
     }
 }
 

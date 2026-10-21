@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/popcorn.h"
 
 #include "fractals/popcorn.h"
+#include "ui/diskvid.h"
 #include "ui/KeyboardHandler.h"
 
 #include <memory>
@@ -24,6 +26,7 @@ int popcorn_type()
     while (!popcorn.done())
     {
         popcorn.iterate();
+        display_disk_storage_progress();
         if (!popcorn.done())
         {
             if (calc_interrupted())

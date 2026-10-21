@@ -9,6 +9,7 @@
 #include "engine/SoundOutput.h"
 #include "engine/StandardFractal.h"
 #include "misc/Driver.h"
+#include "ui/diskvid.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/goodbye.h"
 #include "ui/precision_diagnostics.h"
@@ -101,6 +102,7 @@ int standard_fractal(SoundSession &sound)
             {
                 standard_fractal.iterate();
             }
+            display_disk_storage_progress();
             if (!g_precision_diagnostics.empty() && show_precision_diagnostics())
             {
                 goodbye();

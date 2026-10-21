@@ -5,6 +5,7 @@
 
 #include "fractals/lsystem.h"
 #include "misc/Driver.h"
+#include "ui/diskvid.h"
 #include "ui/thinking.h"
 
 using namespace id::fractals;
@@ -80,10 +81,14 @@ int lsystem_type()
             l_system.suspend();
             return 0;
         }
-        if (!sizing && poll_counter++ == 0 && driver_key_pressed())
+        if (!sizing && poll_counter++ == 0)
         {
-            l_system.suspend();
-            return 0;
+            display_disk_storage_progress();
+            if (driver_key_pressed())
+            {
+                l_system.suspend();
+                return 0;
+            }
         }
         l_system.iterate();
     }

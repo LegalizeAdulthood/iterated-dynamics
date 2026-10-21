@@ -297,7 +297,7 @@ The current code is already part-way through this plan:
   returns diagnostics; image setup retains palette-rendering fallback.
   Rejected overlays close their sources and cannot trigger replacement
   of the original without a completed temporary copy.  Shared disk-cache
-  setup and progress bridges remain for slice 41.
+  setup bridges and mapping-line status remain for slice 41.7.
 - `math/biginit.cpp` reports precision and arena exhaustion through
   `PrecisionError`, without input or application shutdown.  Rejected
   precision requests preserve the active arena; failed stack requests
@@ -314,8 +314,8 @@ The current code is already part-way through this plan:
   It owns allocation, backing paths, and cleanup without UI callbacks.
   `exit_check()` returns diagnostics after releasing resources; shutdown
   displays them.  Temporary UI helper `request_memory()` owns allocation
-  retry/cancel and debug statistics until slice 41 moves these decisions
-  to the requesting controller.  Disk cleanup releases resources before
+  retry/cancel and debug statistics until slice 41.2 moves these decisions
+  into storage UI setup.  Disk cleanup releases resources before
   propagating a transfer failure.  Targa allocations include cache padding
   after the header, preserving bounded backing-store transfers.
 - `engine/pixel.cpp` owns pixel/span access, coordinate offsets, color
@@ -323,15 +323,18 @@ The current code is already part-way through this plan:
   driver, disk, or null target.  Spans use those pixel functions directly,
   without separate initialization.  `io/decoder.cpp` owns `out_line()`
   and its row counter.  Calculation and codec callers no longer include
-  `ui/video.h` for pixel access; storage UI bridges remain for slice 41.
+  `ui/video.h` for pixel access.  Disk targets select I/O pixel operations
+  directly, without per-pixel UI progress callbacks.
 - `io/disk_storage.cpp` owns cache state, packed pixel and byte access,
   backing handles, Targa headers, and cleanup.  Backend operations have
   no UI or driver calls; they report read/write progress as data and
   propagate failures.  Failed setup releases backing resources before
   returning to UI.  Active Targa backing paths are retained independently
-  of the next requested filename.  Temporary setup and per-access status
-  bridges remain in `ui/diskvid.cpp` for slice 41; allocation retry still
-  uses the marked `request_memory()` helper.
+  of the next requested filename.  Pixel and Targa callers use the I/O
+  operations directly.  UI controllers service progress at existing work
+  checkpoints, retaining the status throttle without adding yields or
+  input polling.  Temporary setup bridges remain for slices 41.2 through
+  41.7; allocation retry still uses the marked `request_memory()` helper.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -350,10 +353,10 @@ The fresh reverse-call audit also found these live paths:
   also invokes photographer prompts between stereo images.
 - Storage setup and command validation can still invoke modal
   `stop_msg()` or application shutdown through `goodbye()`.
-- Calculation code still enters disk-storage setup and per-access status
-  bridges under `libid/ui`.  Cache and backing operations now belong to
-  I/O; UI owns their status display and modal errors.  Slice 41 removes
-  these remaining reverse calls.
+- Calculation code still enters disk-storage setup bridges under
+  `libid/ui`.  Cache and backing operations belong to I/O; controllers
+  now service progress between existing work chunks.  Slices 41.2 through
+  41.7 remove the remaining setup reverse calls and mapping-line status.
 - Image loading, image saving, and command parsing still select UI
   prompts, display status, or exit the application from non-UI modules.
 
@@ -760,10 +763,11 @@ The remaining UI-concept leaks outside `libid/ui` are:
   and sometimes `goodbye()`.  These are input and application-control
   leaks even when reachable only on failure or in debug builds.  Memory
   operations now report failures without UI or shutdown callbacks.
-- Calculation code still calls setup and per-access status bridges in
-  `ui/diskvid.cpp`.  Cache and backing operations are I/O-owned and return
-  progress and failures without UI callbacks.  Slice 41 moves setup
-  decisions and progress servicing to the requesting UI controllers.
+- Calculation code still calls setup bridges in `ui/diskvid.cpp`, and
+  `geometry/line3d.cpp` still reports mapping-line status.  Pixel access
+  and progress snapshots are I/O-owned; controllers service storage
+  progress between existing work chunks.  Slices 41.2 through 41.7 move
+  the remaining setup decisions and mapping status to requesting UI.
 - `libid/io/loadfile.cpp`, `libid/io/encoder.cpp`, and
   `libid/engine/cmdfiles.cpp`: select prompts, display status, make
   continue/cancel decisions, or shut down the application from non-UI
@@ -962,42 +966,161 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 41. Disk Storage UI Decisions
+### 41.2. Disk Storage Allocation Decisions
 
-Source: `pot_start_disk()`, `common_start_disk()`, `dvid_status()`, and
-storage setup callers in StandardFractal, Plasma, JIIM, and image I/O.
-UI owner: disk-video presentation and the requesting controller.
+Source: `ui/request_memory.cpp` and `start_disk_video()` in
+`ui/diskvid.cpp`.  UI owner: disk-storage setup.
 
 Work:
 
-- Let UI own disk-video progress text and error decisions around backend
-  setup and bounded render work.
-- Remove backend calls into status screens and modal errors, including
-  indirect input through failed allocation.
-- Remove temporary bridges from the preceding slice.  Preserve storage
-  cleanup and headless/batch operation without requiring a text screen.
-- Replace the marked `disk_read_pixel()`, `disk_write_pixel()`,
-  `targa_read_disk()`, and `targa_write_disk()` UI bridges with their
-  I/O-owned read/write operations.  Remove `update_disk_video_status()`;
-  controllers inspect `disk_storage_progress()` between bounded work
-  increments and own status text, throttling, and driver access.
-- Remove the marked `start_disk_video()`, `common_start_disk()`,
-  `pot_start_disk()`, and `targa_start_disk()` reverse-call bridges.
-  Requesting controllers prepare storage and retain each caller's
-  retry, cancellation, fallback, and cleanup policy around backend setup.
-- Remove the temporary `request_memory()` declaration and implementation
-  from slice 38.  Its requesting UI controller must own allocation
-  retry/cancel and debug statistics around backend setup.
+- Put allocation retry/cancel and memory debug statistics in the UI
+  storage-setup operation.  Remove the temporary `request_memory()`
+  declaration, implementation, and general-purpose forwarding boundary.
+- Preserve retry after allocation failure, Escape and batch cancellation,
+  actual memory/disk selection, and cleanup before reporting failure.
+- Keep backend setup non-interactive.  This prepares the requesting
+  controller conversions below; it does not claim those reverse calls
+  have already been inverted.
 
 Done when:
 
-- A calculation-side storage operation cannot call UI or wait for input.
-- Non-UI code no longer needs `ui/diskvid.h` for backend operations.
+- The storage UI owns allocation decisions directly, without
+  `request_memory()`.  Remaining setup callers stay explicitly marked
+  for slices 41.3 through 41.7.
 
-Validation: exercise setup failure, cancellation, and normal storage
-completion with injected storage failures and mock UI decisions.  Existing
-disk-video tests cover normal memory/disk selection, not failure prompts;
-add those cases.  No manual storage or rendering check required.
+Validation: injected allocation failure followed by retry, Escape,
+batch cancellation, successful fallback, and debug statistics.  Reuse the
+existing storage tests.  No manual check required.
+
+### 41.3. Standard Potential Storage Preparation
+
+Source: `StandardFractal::start_work_list()` and `ui/standard_fractal.cpp`.
+UI owner: the standard render controller.
+
+Work:
+
+- Expose the potential-storage requirement at an explicit initialization
+  boundary after per-image option normalization and before work-list
+  traversal.  The calculation must return before storage UI is entered.
+- Let the controller prepare storage and supply the setup outcome before
+  calculation continues.  Keep pass selection, one-pass normalization,
+  and failure fallback in the calculation object.
+- Preserve resume behavior, potential flags, prior pass restoration on
+  setup failure, and storage cleanup.  Supply output-target facts to
+  `potential()` in `calcfrac.cpp` instead of querying the disk driver to
+  avoid duplicate high-byte writes.  Remove the calculation's
+  `pot_start_disk()` call; do not replace it with a UI callback.
+
+Done when:
+
+- Standard initialization cannot invoke storage presentation or allocation
+  prompts through its call chain.
+
+Validation: setup success, failure fallback, and resume through
+controller tests; existing potential image tests cover pixels.
+No manual check required.
+
+### 41.4. Plasma Potential Storage Preparation
+
+Source: `Plasma::Plasma()`, potential pixel helpers, and `ui/plasma.cpp`.
+UI owner: the Plasma controller.
+
+Work:
+
+- Separate calculation configuration from initialization that requires
+  potential storage.  Return the requirement to the controller before
+  allocation, then continue calculation with the setup outcome.
+- Preserve normalized parameters, 16-bit fallback, plot selection, and
+  restoration of saved potential state.
+- Remove `pot_start_disk()` and disk-driver queries from Plasma.
+  Pixel helpers use I/O storage directly; the controller supplies the
+  output-target facts needed to avoid duplicate high-byte writes.
+
+Done when:
+
+- Constructing or advancing Plasma cannot enter storage UI.
+
+Validation: normal and failed 16-bit setup, fallback parameters, and
+cleanup; reuse Plasma and potential image coverage.
+No manual check required.
+
+### 41.5. Inverse Julia Queue Storage Preparation
+
+Source: `init_queue()` in `engine/jiim.cpp`, InverseJulia setup in
+`fractals/lorenz.cpp`, and `ui/inverse_julia.cpp`.
+UI owner: each inverse-Julia requesting controller.
+
+Work:
+
+- Keep queue indices, byte transfers, and cleanup in calculation code.
+  Queue initialization accepts prepared storage without invoking UI.
+- Make storage preparation explicit before the calculation starts queue
+  work.  Controllers own disk-video rejection, allocation retries with
+  smaller queues, cancellation, and random-walk fallback diagnostics.
+- Remove `common_start_disk()`, `driver_is_disk()`, and modal messages
+  from calculation-side queue setup.
+
+Done when:
+
+- Queue construction and calculation cannot enter allocation prompts or
+  select a UI fallback path.
+
+Validation: successful queue use, reduced allocation, cancellation,
+disk-video rejection, and random-walk fallback with mocked UI decisions.
+Reuse inverse-Julia interaction coverage; no manual check required.
+
+### 41.6. Potential Image Restore Storage Preparation
+
+Source: `pot_line()` in `io/gifview.cpp` and the UI restore path.
+UI owner: image restoration.
+
+Work:
+
+- Prepare potential storage in the restore controller before delivering
+  the first scanline.  Remove the duplicate first-line setup in
+  `pot_line()`; keep setup failure handling and restore cleanup in UI.
+- Keep high/low plane output and coordinate offsets in the I/O consumer.
+  Supply output-target facts without querying the driver in that consumer.
+- Preserve atomic scanline loading, failure fallback, and batch behavior.
+
+Done when:
+
+- Potential scanline output neither prepares interactive storage nor
+  enters UI to inspect the output target.
+
+Validation: potential restore, failed setup, and cleanup through
+controller tests and existing GIF round trips.  No manual check required.
+
+### 41.7. Targa Storage Preparation And Bridge Removal
+
+Source: Targa setup and status in `geometry/line3d.cpp`, its
+`call_line3d()` UI adapter, and the remaining setup bridges in
+`ui/diskvid.cpp`.  UI owner: 3D image restoration and disk-video setup.
+
+Work:
+
+- Give 3D initialization an explicit storage-preparation boundary before
+  rendering lines.  File/header validation and rendering stay below UI;
+  the restore controller owns allocation, retry/cancel, and diagnostics.
+- Preserve overlay source ownership, temporary copies, palette fallback,
+  persistent backing paths, and failure cleanup before reporting errors.
+- Move the mapping-line status out of `line3d()` to the restore
+  controller.  Storage progress already comes from UI checkpoints,
+  not pixel callbacks.
+- Remove `targa_start_disk()`, `pot_start_disk()`,
+  `common_start_disk()`, and `start_disk_video()` after their requesting
+  controllers use explicit setup.  Disk-driver activation remains a UI
+  operation, not a calculation callback.
+- Remove the remaining temporary setup declarations and comments.
+
+Done when:
+
+- Calculation-side storage operations cannot call UI or wait for input.
+- Non-UI code no longer needs `ui/diskvid.h` for storage operations.
+
+Validation: failed Targa setup, overlay rejection and cleanup, normal
+storage completion, existing Targa golds, and the 3D autokey journey.
+No manual storage or rendering check required.
 
 ### 42. Image Loading UI Decisions
 
@@ -1369,8 +1492,8 @@ these direct and indirect paths:
   `fractals/Cellular.cpp`, and renderer table entries in
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or
   dispatch pointers, including from per-image setup.
-- Storage setup and disk-video progress can invoke modal failure screens
-  from calculation code through `ui/diskvid.cpp` and `request_memory()`.
+- Storage setup can invoke modal failure screens from calculation code
+  through `ui/diskvid.cpp` and `request_memory()`.
   Memory operations themselves no longer poll or invoke UI callbacks.
 - `libid/io/loadfile.cpp` and `io/encoder.cpp`: enter mode/parameter
   selection or partial-save prompts from loading and saving operations.

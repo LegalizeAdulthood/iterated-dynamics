@@ -187,6 +187,7 @@ int restore_image_impl(SoundSession *sound)
                               : g_out_line(pixels.data(), static_cast<int>(pixels.size()));
             }
         }
+        display_disk_storage_progress();
         if (image_active && (restore.state() == GifRestore::State::IMAGE_END || restore.done() || status < 0))
         {
             g_busy = false;

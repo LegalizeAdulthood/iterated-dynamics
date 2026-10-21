@@ -54,7 +54,6 @@
 #include "misc/version.h"
 #include "ui/big_while_loop.h"
 #include "io/disk_storage.h"
-#include "ui/diskvid.h"
 #include "ui/evolve.h"
 #include "ui/goodbye.h"
 #include "ui/slideshw.h"
@@ -387,7 +386,7 @@ bool encoder(GifWriter &writer, const std::filesystem::path &filename)
         {
             for (int col = 0; col < g_logical_screen.x_dots; ++col)
             {
-                pixels[col] = static_cast<Byte>(disk_read_pixel(
+                pixels[col] = static_cast<Byte>(read_disk_pixel(
                     col + g_logical_screen.x_offset, row + g_logical_screen.y_dots + g_logical_screen.y_offset));
             }
             saved = writer.write_pixels(pixels);

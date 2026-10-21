@@ -11,6 +11,7 @@
 #include "engine/Potential.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
+#include "io/disk_storage.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
 
@@ -97,7 +98,7 @@ int pot_line(Byte *pixels, const int line_len)
     }
     for (int col = 0; col < g_logical_screen.x_dots; ++col)
     {
-        disk_write_pixel(col+g_logical_screen.x_offset, row+g_logical_screen.y_offset, *(pixels+col));
+        write_disk_pixel(col+g_logical_screen.x_offset, row+g_logical_screen.y_offset, *(pixels+col));
     }
     g_row_count = save_row_count + 1;
     return 0;

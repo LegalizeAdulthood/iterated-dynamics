@@ -4,7 +4,10 @@
 //
 #include "MockDriver.h"
 
+#include <engine/calcfrac.h>
+#include <engine/pixel.h>
 #include <engine/pixel_limits.h>
+#include <engine/text_color.h>
 #include <engine/LogicalScreen.h>
 #include <engine/VideoInfo.h>
 #include <io/special_dirs.h>
@@ -14,6 +17,7 @@
 #include <misc/ValueSaver.h>
 #include <io/disk_storage.h>
 #include <ui/diskvid.h>
+#include <ui/video.h>
 
 #include <gtest/gtest.h>
 
@@ -24,6 +28,7 @@
 #include <fstream>
 #include <filesystem>
 #include <limits>
+#include <thread>
 
 using namespace id::engine;
 using namespace id::io;
@@ -107,8 +112,8 @@ TEST(TestDiskVideo, commonStartDiskUsesMemoryWhenAvailable)
 
     EXPECT_TRUE(g_disk_flag);
     EXPECT_EQ(MemoryLocation::MEMORY, disk_video_memory_type());
-    disk_write_pixel(15, 15, 77);
-    EXPECT_EQ(77, disk_read_pixel(15, 15));
+    write_disk_pixel(15, 15, 77);
+    EXPECT_EQ(77, read_disk_pixel(15, 15));
 }
 
 TEST(TestDiskVideo, commonStartDiskUsesDiskWhenForced)
@@ -121,9 +126,9 @@ TEST(TestDiskVideo, commonStartDiskUsesDiskWhenForced)
 
     EXPECT_TRUE(g_disk_flag);
     EXPECT_EQ(MemoryLocation::DISK, disk_video_memory_type());
-    disk_write_pixel(63, 63, 99);
-    EXPECT_EQ(0, disk_read_pixel(0, 0));
-    EXPECT_EQ(99, disk_read_pixel(63, 63));
+    write_disk_pixel(63, 63, 99);
+    EXPECT_EQ(0, read_disk_pixel(0, 0));
+    EXPECT_EQ(99, read_disk_pixel(63, 63));
 }
 
 TEST(TestDiskVideo, targaCachePreservesHeaderAndPixelsAcrossBackingBlocks)
@@ -143,8 +148,8 @@ TEST(TestDiskVideo, targaCachePreservesHeaderAndPixelsAcrossBackingBlocks)
     set_targa_disk_path(path);
     ASSERT_EQ(0, targa_start_disk(file, static_cast<int>(header.size())));
 
-    targa_write_disk(0, 0, 10, 20, 30);
-    targa_write_disk(1, 1, 40, 50, 60);
+    write_targa_pixel(0, 0, 10, 20, 30);
+    write_targa_pixel(1, 1, 40, 50, 60);
     end_disk();
 
     EXPECT_EQ(30U, std::filesystem::file_size(path));
@@ -161,6 +166,80 @@ TEST(TestDiskVideo, targaCachePreservesHeaderAndPixelsAcrossBackingBlocks)
     EXPECT_EQ(40, bytes[29]);
     input.close();
     std::filesystem::remove(path);
+}
+
+TEST(TestDiskVideo, diskPixelTargetDoesNotCallUi)
+{
+    MockDriver driver;
+    DiskVideoState state{&driver, DebugFlags::NONE};
+    ValueSaver screen{g_logical_screen, LogicalScreen{16, 16, 0, 0, 1.0, 1.0}};
+    ValueSaver width{g_screen_x_dots, 16};
+    ValueSaver height{g_screen_y_dots, 16};
+    ValueSaver mask{g_and_color, 255};
+    start_disk_storage(16, 16, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
+    set_disk_dot();
+
+    for (int i = 0; i < 2048; ++i)
+    {
+        const int color{i % 256};
+        put_color_a(5, 7, color);
+        EXPECT_EQ(color, get_color(5, 7));
+    }
+
+    set_null_video();
+}
+
+TEST(TestDiskVideo, controllerDisplaysPotentialWriteProgress)
+{
+    MockDriver driver;
+    DiskVideoState state{&driver, DebugFlags::NONE};
+    ValueSaver height{g_screen_y_dots, 16};
+    start_disk_storage(16, 32, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
+    write_disk_pixel(3, 20, 77);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds{110});
+    EXPECT_CALL(driver, is_disk()).WillOnce(Return(true));
+    EXPECT_CALL(driver, put_string(16, 23, C_DVID_HI, testing::StartsWith(" writing line    4")));
+    EXPECT_CALL(driver, hide_text_cursor());
+
+    display_disk_storage_progress();
+}
+
+TEST(TestDiskVideo, controllerDisplaysReadProgress)
+{
+    MockDriver driver;
+    DiskVideoState state{&driver, DebugFlags::NONE};
+    ValueSaver height{g_screen_y_dots, 16};
+    start_disk_storage(16, 16, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
+    EXPECT_EQ(0, read_disk_pixel(3, 7));
+
+    std::this_thread::sleep_for(std::chrono::milliseconds{110});
+    EXPECT_CALL(driver, is_disk()).WillOnce(Return(true));
+    EXPECT_CALL(driver, put_string(16, 23, C_DVID_HI, testing::StartsWith(" reading line    7")));
+    EXPECT_CALL(driver, hide_text_cursor());
+
+    display_disk_storage_progress();
+}
+
+TEST(TestDiskVideo, controllerDoesNotDisplayStorageProgressOnScreenDriver)
+{
+    MockDriver driver;
+    DiskVideoState state{&driver, DebugFlags::NONE};
+    start_disk_storage(16, 16, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
+    write_disk_pixel(3, 7, 77);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds{110});
+    EXPECT_CALL(driver, is_disk()).WillOnce(Return(false));
+
+    display_disk_storage_progress();
+}
+
+TEST(TestDiskVideo, inactiveStorageDoesNotCallUi)
+{
+    MockDriver driver;
+    DiskVideoState state{&driver, DebugFlags::NONE};
+
+    display_disk_storage_progress();
 }
 
 } // namespace id::test
