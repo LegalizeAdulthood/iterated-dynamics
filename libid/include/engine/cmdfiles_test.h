@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
 #include "engine/cmdfiles.h"
-#include "ui/stop_msg.h"
 
 #include <functional>
 
@@ -11,11 +11,8 @@ namespace id::engine::cmd_files_test
 {
 
 // To facilitate testing
-using StopMsg = bool(ui::StopMsgFlags flags, const std::string &msg);
-using StopMsgFn = std::function<StopMsg>;
-StopMsgFn get_stop_msg();
-void set_stop_msg(const StopMsgFn &fn);
-
+// TODO: removed later
+// Slice 45 moves command-generation actions and their exit decisions to UI.
 using Goodbye = void();
 using GoodbyeFn = std::function<Goodbye>;
 GoodbyeFn get_goodbye();

@@ -23,7 +23,7 @@
 #include "misc/memory.h"
 #include "misc/ValueSaver.h"
 #include "ui/big_while_loop.h"
-#include "ui/do_pause.h"
+#include "ui/command_diagnostics.h"
 #include "ui/evolve.h"
 #include "ui/get_3d_params.h"
 #include "ui/get_browse_params.h"
@@ -138,13 +138,22 @@ static void main_restart(const std::vector<std::string> &args, MainContext &cont
     g_save_dac = SaveDAC::NO;                       // don't save the VGA DAC
 
     const bool first_init{g_first_init};
-    for (const std::string &diagnostic : cmd_files(args))
+    const CommandDiagnostics diagnostics{cmd_files(args)};
+    if (first_init || g_init_batch != BatchMode::NONE)
     {
-        ValueSaver saved_first_init{g_first_init, first_init};
-        stop_msg(diagnostic);
+        if (!show_startup_command_diagnostics(diagnostics))
+        {
+            if (!diagnostics.errors.empty())
+            {
+                g_init_batch = BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE;
+            }
+            goodbye();
+        }
     }
-    do_pause(0);                  // pause for error msg if not batch
-    init_msg("", nullptr, CmdFile::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
+    else
+    {
+        show_command_diagnostics(diagnostics);
+    }
 
     history_init();
 

@@ -6,7 +6,6 @@
 #include "engine/cmdfiles.h"
 #include "io/library.h"
 #include "misc/id.h"
-#include "ui/stop_msg.h"
 
 #include <config/string_case_compare.h>
 #include <fmt/format.h>
@@ -16,7 +15,6 @@
 using namespace id::config;
 using namespace id::engine;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::io
 {
@@ -53,7 +51,7 @@ static int skip_comment(std::FILE *infile, long *file_offset)
     return c;
 }
 
-static int scan_entries(std::FILE *infile, FileEntry *choices, const char *item_name)
+static int scan_entries(std::FILE *infile, FileEntry *choices, const char *item_name, std::string *diagnostic)
 {
     // returns the number of entries found; if a
     // specific entry is being looked for, returns -1 if
@@ -181,7 +179,10 @@ top:
                     choices[num_entries].point = name_offset;
                     if (++num_entries >= MAX_ENTRIES)
                     {
-                        stop_msg(fmt::format("Too many entries in file, first {:d} used", MAX_ENTRIES));
+                        if (diagnostic != nullptr)
+                        {
+                            *diagnostic = fmt::format("Too many entries in file, first {:d} used", MAX_ENTRIES);
+                        }
                         break;
                     }
                 }
@@ -195,14 +196,15 @@ top:
     return num_entries;
 }
 
-int scan_entries(std::FILE *infile, FileEntry *choices)
+int scan_entries(std::FILE *infile, FileEntry *choices, std::string &diagnostic)
 {
-    return scan_entries(infile, choices, nullptr);
+    diagnostic.clear();
+    return scan_entries(infile, choices, nullptr, &diagnostic);
 }
 
 bool search_for_entry(std::FILE *infile, const std::string &item_name)
 {
-    return scan_entries(infile, nullptr, item_name.c_str()) == -1;
+    return scan_entries(infile, nullptr, item_name.c_str(), nullptr) == -1;
 }
 
 static bool check_path(const std::filesystem::path &path, std::FILE **infile, const std::string &item_name)
@@ -259,20 +261,6 @@ static bool check_parameter_file(
         path = g_parameter_file;
     }
     return found;
-}
-
-// TODO: removed later
-// Slice 44 replaces this legacy UI-reporting overload.
-bool find_file_item(
-    std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, const ItemType item_type)
-{
-    std::string diagnostic;
-    const bool failed{find_file_item(path, item_name, file_ptr, item_type, diagnostic)};
-    if (failed)
-    {
-        stop_msg(diagnostic);
-    }
-    return failed;
 }
 
 bool find_file_item(std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr,
@@ -358,4 +346,4 @@ bool find_file_item(std::filesystem::path &path, const std::string &item_name, s
     return false;
 }
 
-} // namespace id::ui
+} // namespace id::io

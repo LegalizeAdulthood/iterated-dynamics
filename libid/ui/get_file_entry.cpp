@@ -303,7 +303,12 @@ retry:
 
     help_title(); // to display a clue when file big and next is slow
 
-    const int num_entries = scan_entries(s_gfe.file, &storage[0]);
+    std::string diagnostic;
+    const int num_entries{scan_entries(s_gfe.file, &storage[0], diagnostic)};
+    if (!diagnostic.empty())
+    {
+        stop_msg(diagnostic);
+    }
     if (num_entries == 0)
     {
         stop_msg("File doesn't contain any valid entries");

@@ -10,7 +10,7 @@
 #include "misc/ValueSaver.h"
 #include "ui/field_prompt.h"
 #include "ui/help.h"
-#include "ui/stop_msg.h"
+#include "ui/command_diagnostics.h"
 
 #include <vector>
 
@@ -37,12 +37,9 @@ int get_cmd_string()
     int i = field_prompt("Enter command string to use.", nullptr, cmd_buf, 60, nullptr);
     if (i >= 0 && cmd_buf[0] != 0)
     {
-        std::vector<std::string> diagnostics;
+        CommandDiagnostics diagnostics;
         i = +cmd_arg(cmd_buf, CmdFile::AT_AFTER_STARTUP, &diagnostics);
-        for (const std::string &diagnostic : diagnostics)
-        {
-            stop_msg(diagnostic);
-        }
+        show_command_diagnostics(diagnostics);
         if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
         {
             backwards_legacy_v18();

@@ -26,14 +26,10 @@ struct FileEntry
     long point; // points to the ( or the { following the name
 };
 
-int scan_entries(std::FILE *infile, FileEntry *choices);
+int scan_entries(std::FILE *infile, FileEntry *choices, std::string &diagnostic);
 bool search_for_entry(std::FILE *infile, const std::string &item_name);
-// True means failure; this overload returns diagnostic text without UI.
+// True means failure; returns diagnostic text without UI.
 bool find_file_item(std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type,
     std::string &diagnostic);
-// TODO: removed later
-// Slice 44 migrates the remaining non-UI diagnostic callers.
-bool find_file_item(
-    std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type);
 
 } // namespace id::io

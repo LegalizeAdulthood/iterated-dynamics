@@ -67,7 +67,6 @@
 #include <ui/make_batch_file.h>
 #include <ui/slideshw.h>
 #include <ui/stereo.h>
-#include <ui/stop_msg.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -184,6 +183,7 @@ protected:
     void exec_cmd_arg(const std::string &cur_arg, CmdFile mode = CmdFile::AT_AFTER_STARTUP);
 
     CmdArgFlags m_result{};
+    CommandDiagnostics m_diagnostics;
 };
 
 void TestParameterCommand::SetUp()
@@ -201,7 +201,8 @@ void TestParameterCommand::TearDown()
 
 void TestParameterCommand::exec_cmd_arg(const std::string &cur_arg, const CmdFile mode)
 {
-    m_result = cmd_arg(cur_arg, mode);
+    m_diagnostics = {};
+    m_result = cmd_arg(cur_arg, mode, &m_diagnostics);
 }
 
 class TestNextCommand : public Test
@@ -236,7 +237,7 @@ protected:
 
     int read_next(const CmdFile mode = CmdFile::AT_CMD_LINE)
     {
-        return next_command(m_command, m_file, m_line_buf, m_line, mode);
+        return next_command(m_command, m_file, m_line_buf, m_line, mode, &m_diagnostics);
     }
 
     std::string command() const
@@ -254,32 +255,12 @@ protected:
         return fs::temp_directory_path() / (name + ".tmp");
     }
 
+    CommandDiagnostics m_diagnostics;
     std::string m_command;
     std::string m_line_buf;
     std::string_view m_line;
     fs::path m_input_path;
     std::FILE *m_file{};
-};
-
-class TestNextCommandError : public TestNextCommand
-{
-protected:
-    void SetUp() override
-    {
-        TestNextCommand::SetUp();
-        m_prev_stop_msg = cmd_files_test::get_stop_msg();
-        cmd_files_test::set_stop_msg(m_stop_msg.AsStdFunction());
-        EXPECT_CALL(m_stop_msg, Call(StopMsgFlags::NONE, _)).WillOnce(Return(false));
-    }
-
-    void TearDown() override
-    {
-        cmd_files_test::set_stop_msg(m_prev_stop_msg);
-        TestNextCommand::TearDown();
-    }
-
-    cmd_files_test::StopMsgFn m_prev_stop_msg;
-    StrictMock<MockFunction<cmd_files_test::StopMsg>> m_stop_msg;
 };
 
 TEST_F(TestNextCommand, readsCommandsAcrossLines)
@@ -369,11 +350,13 @@ TEST_F(TestNextCommand, sstoolsSkipsNonIdSections)
     EXPECT_EQ("bar", command());
 }
 
-TEST_F(TestNextCommandError, returnsErrorForMissingContinuationLine)
+TEST_F(TestNextCommand, returnsErrorForMissingContinuationLine)
 {
     open_input("alpha\\");
 
     EXPECT_EQ(-1, read_next());
+    ASSERT_EQ(1U, m_diagnostics.errors.size());
+    EXPECT_THAT(m_diagnostics.errors.front(), HasSubstr("alpha"));
 }
 
 static fs::path home_file(const char *subdir, const char *filename)
@@ -448,29 +431,42 @@ private:
 
 class TestParameterCommandError : public TestParameterCommand
 {
-public:
-    ~TestParameterCommandError() override = default;
-
 protected:
-    void SetUp() override;
     void TearDown() override;
-
-    cmd_files_test::StopMsgFn m_prev_stop_msg;
-    StrictMock<MockFunction<cmd_files_test::StopMsg>> m_stop_msg;
 };
-
-void TestParameterCommandError::SetUp()
-{
-    TestParameterCommand::SetUp();
-    m_prev_stop_msg = cmd_files_test::get_stop_msg();
-    cmd_files_test::set_stop_msg(m_stop_msg.AsStdFunction());
-    EXPECT_CALL(m_stop_msg, Call(StopMsgFlags::NONE, _)).WillOnce(Return(false));
-}
 
 void TestParameterCommandError::TearDown()
 {
-    cmd_files_test::set_stop_msg(m_prev_stop_msg);
+    EXPECT_EQ(1U, m_diagnostics.errors.size());
+    EXPECT_TRUE(m_diagnostics.warnings.empty());
     TestParameterCommand::TearDown();
+}
+
+TEST_F(TestParameterCommand, invalidArgumentReturnsDiagnosticWithoutUiOrBatchMutation)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    ValueSaver saved_batch{g_init_batch, BatchMode::NORMAL};
+
+    exec_cmd_arg("maxiter=bad");
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    ASSERT_EQ(1U, m_diagnostics.errors.size());
+    EXPECT_THAT(m_diagnostics.errors.front(), HasSubstr("maxiter=bad"));
+    EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
+}
+
+TEST_F(TestParameterCommand, missingFileReturnsWarningWithoutUi)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    const fs::path original{g_l_system_filename};
+    ValueSaver saved_filename{g_l_system_filename};
+
+    exec_cmd_arg("lfile=missing-command-lsystem.l");
+
+    EXPECT_TRUE(m_diagnostics.errors.empty());
+    ASSERT_EQ(1U, m_diagnostics.warnings.size());
+    EXPECT_EQ("Can't find lfile=missing-command-lsystem.l, please check PAR file", m_diagnostics.warnings.front());
+    EXPECT_EQ(original, g_l_system_filename);
 }
 
 TEST_F(TestParameterCommandError, parameterTooLong)
@@ -577,32 +573,6 @@ void TestParameterGoodbye::TearDown()
 {
     cmd_files_test::set_goodbye(m_prev_goodbye);
     TestParameterCommand::TearDown();
-}
-
-class TestParameterCommandBatchError : public TestParameterCommandError
-{
-public:
-    ~TestParameterCommandBatchError() override = default;
-
-protected:
-    void SetUp() override;
-    void TearDown() override;
-
-    StrictMock<MockFunction<cmd_files_test::Goodbye>> m_goodbye;
-    cmd_files_test::GoodbyeFn m_prev_goodbye;
-};
-
-void TestParameterCommandBatchError::SetUp()
-{
-    TestParameterCommandError::SetUp();
-    m_prev_goodbye = cmd_files_test::get_goodbye();
-    cmd_files_test::set_goodbye(m_goodbye.AsStdFunction());
-}
-
-void TestParameterCommandBatchError::TearDown()
-{
-    cmd_files_test::set_goodbye(m_prev_goodbye);
-    TestParameterCommandError::TearDown();
 }
 
 class TestParameterCommandMakeDoc : public TestParameterGoodbye
@@ -1514,15 +1484,15 @@ TEST_F(TestParameterCommand, missingMapReturnsDiagnosticAndPreservesMapName)
     ValueSaver saved_map_name{g_map_name, std::string{"previous.map"}};
     ValueSaver saved_specified{g_map_specified, false};
     ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    std::vector<std::string> diagnostics;
+    CommandDiagnostics diagnostics;
 
     const CmdArgFlags result{cmd_arg("map=missing-palette.map", CmdFile::AT_AFTER_STARTUP, &diagnostics)};
 
     EXPECT_EQ(CmdArgFlags::NONE, result);
     EXPECT_EQ("previous.map", g_map_name);
     EXPECT_FALSE(g_map_specified);
-    ASSERT_EQ(1U, diagnostics.size());
-    EXPECT_EQ("Could not load color map missing-palette.map", diagnostics.front());
+    ASSERT_EQ(1U, diagnostics.errors.size());
+    EXPECT_EQ("Could not load color map missing-palette.map", diagnostics.errors.front());
 }
 
 TEST_F(TestParameterCommand, missingPaletteStopsCommandFileWithoutLosingEarlierChangeFlags)
@@ -1533,14 +1503,14 @@ TEST_F(TestParameterCommand, missingPaletteStopsCommandFileWithoutLosingEarlierC
     ASSERT_NE(nullptr, file);
     std::fputs("test { maxiter=321 colors=@missing-command-palette.map maxiter=654 }", file);
     std::rewind(file);
-    std::vector<std::string> diagnostics;
+    CommandDiagnostics diagnostics;
 
     const CmdArgFlags result{load_commands(file, &diagnostics)};
 
     EXPECT_TRUE(bit_set(result, CmdArgFlags::FRACTAL_PARAM));
     EXPECT_EQ(321, g_max_iterations);
-    ASSERT_EQ(1U, diagnostics.size());
-    EXPECT_EQ("Could not load color map missing-command-palette.map", diagnostics.front());
+    ASSERT_EQ(1U, diagnostics.errors.size());
+    EXPECT_EQ("Could not load color map missing-command-palette.map", diagnostics.errors.front());
 }
 
 TEST_F(TestParameterCommandError, recordColorsInvalidValue)
@@ -2694,6 +2664,36 @@ TEST_F(TestParameterCommand, startupPreservesOrbitDelayAfterShowDot)
 
     EXPECT_EQ(100, g_orbit_delay);
     EXPECT_EQ(100, g_orbit_skip_points);
+}
+
+TEST_F(TestParameterCommand, startupCollectsErrorsBeforeLaterBatchArgument)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    ValueSaver saved_first_init{g_first_init, true};
+    ValueSaver saved_special_dirs{g_special_dirs,
+        std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
+    CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
+
+    const CommandDiagnostics diagnostics{cmd_files({"id", "maxiter=bad", "batch=yes"})};
+
+    ASSERT_EQ(1U, diagnostics.errors.size());
+    EXPECT_THAT(diagnostics.errors.front(), HasSubstr("maxiter=bad"));
+    EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
+}
+
+TEST_F(TestParameterCommand, startupCollectsMissingFileWarningsWithoutUi)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    ValueSaver saved_first_init{g_first_init, true};
+    ValueSaver saved_special_dirs{g_special_dirs,
+        std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
+    CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
+
+    const CommandDiagnostics diagnostics{cmd_files({"id", "lfile=missing-startup-lsystem.l"})};
+
+    EXPECT_TRUE(diagnostics.errors.empty());
+    ASSERT_EQ(1U, diagnostics.warnings.size());
+    EXPECT_THAT(diagnostics.warnings.front(), HasSubstr("please check command line"));
 }
 
 TEST_F(TestParameterCommand, workDirExisting)

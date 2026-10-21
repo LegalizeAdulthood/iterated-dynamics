@@ -270,8 +270,8 @@ The current code is already part-way through this plan:
   and publishes coefficients only after validating the definition.
   Selection reports the failure once and retries locally; rendering
   reports it through the outer UI diagnostic boundary.  IFS lookup uses
-  the non-interactive `find_file_item()` overload.  The legacy reporting
-  overload remains for slice 44.
+  non-interactive `find_file_item()`.  Entry lookup and scanning return
+  diagnostics; UI selection and preview callers own their presentation.
 - `lsystem_load()` throws parser and lookup diagnostics without UI and
   closes definition files on failure.  A failed load clears cached rules
   and the axiom, and sizing refuses to start without a valid definition.
@@ -778,12 +778,14 @@ The remaining UI-concept leaks outside `libid/ui` are:
 
 - `libid/fractals/lorenz.cpp`: IFS and 3D front ends invoke UI renderers;
   stereo orchestration invokes photographer prompts between images.
-- Calculation setup and command validation still invoke `stop_msg()`
-  and sometimes `goodbye()`.  These are input and application-control
-  leaks even when reachable only on failure or in debug builds.  Memory
-  operations now report failures without UI or shutdown callbacks.
-- `libid/engine/cmdfiles.cpp`: selects prompts, displays startup errors,
-  and can shut down the application from non-UI coordination code.
+- Calculation setup still invokes `stop_msg()` and sometimes `goodbye()`.
+  These are input and application-control leaks even when reachable only
+  on failure or in debug builds.  Memory operations and command
+  diagnostics now report failures without UI or shutdown callbacks.
+- `libid/engine/cmdfiles.cpp`: command-generation actions and initial
+  file-entry selection still invoke UI code or shut down the application.
+  Parse errors and file warnings are returned as `CommandDiagnostics`;
+  UI callers own acknowledgement, batch logging, and error exits.
   Image-save feedback and policy now live in `ui/save_image.cpp`, which
   drives scanline encoding through `io/ImageSave`.  Image-load setup
   choices live in `ui/restore_image.cpp`.  Video selection, 3D settings,
@@ -983,42 +985,24 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 44. Command Parsing Diagnostics
-
-Source: `arg_error()`, `init_msg()`, `s_stop_msg`, and `s_goodbye` in
-`engine/cmdfiles.cpp`; UI owners: startup and command-entry controllers.
-
-Work:
-
-- Collect parse errors and startup warnings as data for the caller.
-- Let UI choose startup presentation, deferred pause, retry, and exit.
-  Preserve batch logs and exit status without modal interaction.
-- Remove production UI calls hidden behind test-hook callbacks; do not
-  replace them with another parser-to-UI callback interface.
-- Migrate command-file and remaining UI-preview lookup callers to the
-  diagnostic `find_file_item()` overload, with UI owners displaying
-  failures.  Remove the legacy UI-reporting overload once its callers
-  have been migrated.
-
-Done when:
-
-- Command parsing cannot call `stop_msg()`, `do_pause()`, or `goodbye()`.
-
-Validation: preserve command-parser tests; exercise malformed startup
-arguments and batch failure behavior with process tests.  Use autokey for
-interactive command-entry errors, acknowledgement, and a valid command
-retry, verifying its applied settings and return to the outer UI.
-
 ### 45. Command Actions And Application Effects
 
 Source: help-document generation, parameter-file generation, comments,
-and application-exit branches in `engine/cmdfiles.cpp`.
+`resolve_startup_file_entry()`, and application-exit branches in
+`engine/cmdfiles.cpp`.
 
 Work:
 
 - Make parsing report requested actions and settings to its outer owner.
 - Let UI/application coordination run help/status screens, batch-file
   generation, and exit decisions after parsing returns.
+- Move initial file-entry selection and cancellation/reset decisions out
+  of `resolve_startup_file_entry()`.  Return the need for selection to
+  the UI owner instead of calling `select_fractal_file_entry()` while
+  parsing.
+- Remove the marked `s_goodbye` test hook and the temporary action guard
+  in `cmd_arg()`.  Pending parse errors must still prevent generation or
+  exit actions from bypassing diagnostic presentation.
 - Keep content generation and parameter interpretation below UI where
   appropriate; classify data-only helpers separately from UI decisions.
 
@@ -1284,10 +1268,11 @@ these direct and indirect paths:
   UI-owned; `io/ImageSave` owns encoding and file cleanup.  Image-load
   setup choices and cancellation are UI-owned and do not commit pending
   image parameters.
-- `libid/engine/cmdfiles.cpp`: `arg_error()` calls UI through
-  `s_stop_msg` and `s_goodbye`; `init_msg()` displays startup errors and
-  schedules `do_pause()`.  Other command branches generate UI output or
-  exit.  These are live behaviors, not merely comments about old code.
+- `libid/engine/cmdfiles.cpp`: diagnostic paths return errors and warnings
+  without UI calls.  Command-generation actions still enter UI output
+  and exit through the marked `s_goodbye` hook; initial file-entry
+  selection still invokes its UI chooser.  Slice 45 removes these
+  remaining actions and their temporary pending-error guard.
 
 The numbered slices cover all these ownership gaps.  The source audit
 must trace UI helper and dispatch-pointer calls as well as raw driver

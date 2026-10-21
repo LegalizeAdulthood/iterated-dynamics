@@ -87,11 +87,17 @@ extern BatchMode             g_init_batch;
 extern bool                  g_read_color;
 extern RecordColorsMode      g_record_colors;
 
-std::vector<std::string> cmd_files(const std::vector<std::string> &args);
-CmdArgFlags load_commands(std::FILE *infile, std::vector<std::string> *diagnostics = nullptr);
+struct CommandDiagnostics
+{
+    std::vector<std::string> errors;
+    std::vector<std::string> warnings;
+};
+
+CommandDiagnostics cmd_files(const std::vector<std::string> &args);
+CmdArgFlags load_commands(std::FILE *infile, CommandDiagnostics *diagnostics = nullptr);
 void set_3d_defaults();
-int init_msg(const char *cmd_str, const char *bad_filename, CmdFile mode);
-CmdArgFlags cmd_arg(std::string_view cur_arg, CmdFile mode, std::vector<std::string> *diagnostics = nullptr);
-int next_command(std::string &cmd, std::FILE *handle, std::string &line_buf, std::string_view &line, CmdFile mode);
+CmdArgFlags cmd_arg(std::string_view cur_arg, CmdFile mode, CommandDiagnostics *diagnostics = nullptr);
+int next_command(std::string &cmd, std::FILE *handle, std::string &line_buf, std::string_view &line, CmdFile mode,
+    CommandDiagnostics *diagnostics = nullptr);
 
 } // namespace id::engine

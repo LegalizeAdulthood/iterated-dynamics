@@ -17,6 +17,7 @@
 
 #include <cctype>
 #include <string>
+#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -49,6 +50,7 @@ protected:
 
     std::FILE *m_file{};
     fs::path m_path;
+    std::string m_diagnostic;
     ValueSaver<bool> saved_check_cur_dir_false{g_check_cur_dir, false};
 };
 
@@ -62,12 +64,32 @@ void TestFindFileItem::TearDown()
     Test::TearDown();
 }
 
+TEST_F(TestFindFileItem, entryLimitReturnsWarningWithoutUi)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    m_file = std::tmpfile();
+    ASSERT_NE(nullptr, m_file);
+    for (int entry = 0; entry < 2001; ++entry)
+    {
+        const std::string text{"entry" + std::to_string(entry) + " { }\n"};
+        std::fputs(text.c_str(), m_file);
+    }
+    std::rewind(m_file);
+    std::vector<FileEntry> choices(2001);
+
+    EXPECT_EQ(2000, scan_entries(m_file, choices.data(), m_diagnostic));
+
+    EXPECT_EQ("Too many entries in file, first 2000 used", m_diagnostic);
+    EXPECT_STREQ("entry1999", choices[1999].name);
+    EXPECT_EQ(0, choices[2000].name[0]);
+}
+
 TEST_F(TestFindFileItem, formula)
 {
     m_path = data::ID_TEST_FRM_DIR;
     m_path /= data::ID_TEST_FRM_FILE;
 
-    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA)};
+    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -79,7 +101,7 @@ TEST_F(TestFindFileItem, formulaEntryNameCaseVariant)
     m_path = data::ID_TEST_FRM_DIR;
     m_path /= data::ID_TEST_FRM_FILE;
 
-    const bool result{find_file_item(m_path, "fractINT", &m_file, ItemType::FORMULA)};
+    const bool result{find_file_item(m_path, "fractINT", &m_file, ItemType::FORMULA, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -93,7 +115,7 @@ TEST_F(TestFindFileItem, parameterFileCaseVariantDoesNotHideFormulaPath)
     const fs::path case_variant{m_path.parent_path() / to_upper_copy(m_path.filename().string())};
     ValueSaver<fs::path> saved_parameter_file{g_parameter_file, case_variant};
 
-    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA)};
+    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -106,7 +128,7 @@ TEST_F(TestFindFileItem, ifs)
     m_path = data::ID_TEST_IFS_DIR;
     m_path /= data::ID_TEST_IFS_FILE;
 
-    const bool result{find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS)};
+    const bool result{find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -118,7 +140,7 @@ TEST_F(TestFindFileItem, ifsEntryNameCaseVariant)
     m_path = data::ID_TEST_IFS_DIR;
     m_path /= data::ID_TEST_IFS_FILE;
 
-    const bool result{find_file_item(m_path, "BINARY", &m_file, ItemType::IFS)};
+    const bool result{find_file_item(m_path, "BINARY", &m_file, ItemType::IFS, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -130,7 +152,7 @@ TEST_F(TestFindFileItem, lindenmayerSystem)
     m_path = data::ID_TEST_LSYSTEM_DIR;
     m_path /= data::ID_TEST_LSYSTEM_FILE;
 
-    const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM)};
+    const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -142,7 +164,7 @@ TEST_F(TestFindFileItem, lindenmayerSystemEntryNameCaseVariant)
     m_path = data::ID_TEST_LSYSTEM_DIR;
     m_path /= data::ID_TEST_LSYSTEM_FILE;
 
-    const bool result{find_file_item(m_path, "koch1", &m_file, ItemType::L_SYSTEM)};
+    const bool result{find_file_item(m_path, "koch1", &m_file, ItemType::L_SYSTEM, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -198,7 +220,7 @@ TEST_F(TestFindFileItem, emptyItemName)
     m_path = data::ID_TEST_LSYSTEM_DIR;
     m_path /= data::ID_TEST_LSYSTEM_FILE;
 
-    const bool result{find_file_item(m_path, "", &m_file, ItemType::L_SYSTEM)};
+    const bool result{find_file_item(m_path, "", &m_file, ItemType::L_SYSTEM, m_diagnostic)};
 
     EXPECT_TRUE(result);
     EXPECT_EQ(nullptr, m_file);
@@ -223,7 +245,7 @@ TEST_F(TestFindFileItemParFile, formula)
 {
     m_path = "missing.frm";
 
-    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA)};
+    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -235,7 +257,7 @@ TEST_F(TestFindFileItemParFile, formulaUsesExistingFileBeforeParameterFile)
     m_path = data::ID_TEST_FRM_DIR;
     m_path /= data::ID_TEST_FRM_FILE;
 
-    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA)};
+    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -246,7 +268,7 @@ TEST_F(TestFindFileItemParFile, ifs)
 {
     m_path = "missing.ifs";
 
-    const bool result{find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS)};
+    const bool result{find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -257,7 +279,7 @@ TEST_F(TestFindFileItemParFile, lindenmayerSystem)
 {
     m_path = "missing.l";
 
-    const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM)};
+    const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -289,7 +311,7 @@ TEST_F(TestFindFileItemCurrentDir, formula)
     CurrentPathSaver cur_dir{data::ID_TEST_FRM_DIR};
     m_path /= data::ID_TEST_FRM_FILE;
 
-    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA)};
+    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -302,7 +324,7 @@ TEST_F(TestFindFileItemCurrentDir, ifs)
     CurrentPathSaver cur_dir{data::ID_TEST_IFS_DIR};
     m_path /= data::ID_TEST_IFS_FILE;
 
-    const bool result{find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS)};
+    const bool result{find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -315,7 +337,7 @@ TEST_F(TestFindFileItemCurrentDir, lindenmayerSystem)
     CurrentPathSaver cur_dir{data::ID_TEST_LSYSTEM_DIR};
     m_path /= data::ID_TEST_LSYSTEM_FILE;
 
-    const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM)};
+    const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -352,7 +374,7 @@ TEST_F(TestFindFileItemLibrary, formula)
     m_path = library::ID_TEST_LIBRARY_DIR;
     m_path /= library::ID_TEST_FORMULA_FILE2;
 
-    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA)};
+    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -364,7 +386,7 @@ TEST_F(TestFindFileItemLibrary, ifs)
     m_path = library::ID_TEST_LIBRARY_DIR;
     m_path /= library::ID_TEST_IFS_FILE2;
 
-    const bool result{find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS)};
+    const bool result{find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
@@ -376,7 +398,7 @@ TEST_F(TestFindFileItemLibrary, lindenmayerSystem)
     m_path = library::ID_TEST_LIBRARY_DIR;
     m_path /= library::ID_TEST_LSYSTEM_FILE2;
 
-    const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM)};
+    const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);

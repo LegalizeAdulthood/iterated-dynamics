@@ -68,7 +68,6 @@
 #include "misc/version.h"
 #include "ui/big_while_loop.h"
 #include "ui/comments.h"
-#include "ui/do_pause.h"
 #include "ui/get_fract_type.h"
 #include "ui/goodbye.h"
 #include "ui/help_title.h"
@@ -76,7 +75,6 @@
 #include "ui/make_batch_file.h"
 #include "ui/slideshw.h"
 #include "ui/stereo.h"
-#include "ui/stop_msg.h"
 #include <algos/string_algorithms.h>
 
 #include <config/path_limits.h>
@@ -122,9 +120,9 @@ using namespace id::ui;
 namespace id::engine
 {
 
-static CmdArgFlags command_file(std::FILE *handle, CmdFile mode, std::vector<std::string> *diagnostics);
+static CmdArgFlags command_file(std::FILE *handle, CmdFile mode, CommandDiagnostics *diagnostics);
 static bool next_line(std::FILE *handle, std::string &line_buf, CmdFile mode);
-static void arg_error(const char *bad_arg);
+static void arg_error(const char *bad_arg, CommandDiagnostics *diagnostics);
 static void init_vars_run();
 static void init_vars_restart();
 static void init_vars_fractal();
@@ -132,8 +130,8 @@ static void init_vars3d();
 static void reset_ifs_definition();
 static bool type_needs_file_entry();
 static bool type_has_file_entry();
-static void reset_startup_commands(std::vector<std::string> *diagnostics);
-static void resolve_startup_file_entry(std::vector<std::string> *diagnostics);
+static void reset_startup_commands(CommandDiagnostics *diagnostics);
+static void resolve_startup_file_entry(CommandDiagnostics *diagnostics);
 static int get_bf(BigFloat bf, const char *cur_arg);
 static bool is_a_big_float(const char *str);
 static bool parse_command_number(std::string_view text, long &value);
@@ -208,7 +206,7 @@ static bool parse_command_number(std::string_view text, double &value)
 // it also processes the 'sstools.ini' file and any
 // indirect files ('id @myfile')
 
-static void process_sstools_ini(std::vector<std::string> *diagnostics)
+static void process_sstools_ini(CommandDiagnostics *diagnostics)
 {
     const std::string sstools_ini{find_file(ReadFile::ID_CONFIG, "sstools.ini").string()}; // look for SSTOOLS.INI
     if (sstools_ini.empty())
@@ -244,14 +242,14 @@ static bool type_has_file_entry()
     }
 }
 
-static void reset_startup_commands(std::vector<std::string> *diagnostics)
+static void reset_startup_commands(CommandDiagnostics *diagnostics)
 {
     init_vars_restart();
     init_vars_fractal();
     process_sstools_ini(diagnostics);
 }
 
-static void process_simple_command(char *cur_arg, std::vector<std::string> *diagnostics)
+static void process_simple_command(char *cur_arg, CommandDiagnostics *diagnostics)
 {
     bool processed{};
     if (std::strchr(cur_arg, '=') == nullptr)
@@ -296,7 +294,7 @@ static void process_simple_command(char *cur_arg, std::vector<std::string> *diag
 }
 
 static bool process_file_set_name(
-    const std::string &filename, const std::string &param_name, std::vector<std::string> *diagnostics)
+    const std::string &filename, const std::string &param_name, CommandDiagnostics *diagnostics)
 {
     const std::filesystem::path saved_path{g_parameter_file};
     const std::string saved_name{g_parameter_set_name};
@@ -313,18 +311,23 @@ static bool process_file_set_name(
     g_parameter_file = path;
     g_parameter_set_name = param_name;
     std::FILE *init_file = nullptr;
-    if (find_file_item(g_parameter_file, g_parameter_set_name, &init_file, ItemType::PAR_SET) ||
+    std::string diagnostic;
+    if (find_file_item(g_parameter_file, g_parameter_set_name, &init_file, ItemType::PAR_SET, diagnostic) ||
         init_file == nullptr)
     {
         g_parameter_file = saved_path;
         g_parameter_set_name = saved_name;
+        if (diagnostics != nullptr && !diagnostic.empty())
+        {
+            diagnostics->errors.push_back(diagnostic);
+        }
         return false;
     }
     command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME, diagnostics);
     return true;
 }
 
-static void process_file(char *cur_arg, std::vector<std::string> *diagnostics)
+static void process_file(char *cur_arg, CommandDiagnostics *diagnostics)
 {
     fs::path path{&cur_arg[1]};
     if (!path.has_extension())
@@ -334,21 +337,21 @@ static void process_file(char *cur_arg, std::vector<std::string> *diagnostics)
     path = find_file(ReadFile::PARAMETER, path.string());
     if (path.empty())
     {
-        arg_error(cur_arg);
+        arg_error(cur_arg, diagnostics);
         return;
     }
 
     std::FILE *init_file = std::fopen(path.string().c_str(), "r");
     if (init_file == nullptr)
     {
-        arg_error(cur_arg);
+        arg_error(cur_arg, diagnostics);
         return;
     }
 
     command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME, diagnostics);
 }
 
-static void resolve_startup_file_entry(std::vector<std::string> *diagnostics)
+static void resolve_startup_file_entry(CommandDiagnostics *diagnostics)
 {
     if (!type_needs_file_entry() || type_has_file_entry())
     {
@@ -360,14 +363,14 @@ static void resolve_startup_file_entry(std::vector<std::string> *diagnostics)
         switch (g_fractal_type)
         {
         case FractalType::FORMULA:
-            arg_error("type=formula requires formulaname=");
+            arg_error("type=formula requires formulaname=", diagnostics);
             break;
         case FractalType::L_SYSTEM:
-            arg_error("type=lsystem requires lname=");
+            arg_error("type=lsystem requires lname=", diagnostics);
             break;
         case FractalType::IFS:
         case FractalType::IFS_3D:
-            arg_error("type=ifs requires ifs=");
+            arg_error("type=ifs requires ifs=", diagnostics);
             break;
         default:
             break;
@@ -381,9 +384,9 @@ static void resolve_startup_file_entry(std::vector<std::string> *diagnostics)
     }
 }
 
-std::vector<std::string> cmd_files(const std::vector<std::string> &args)
+CommandDiagnostics cmd_files(const std::vector<std::string> &args)
 {
-    std::vector<std::string> diagnostics;
+    CommandDiagnostics diagnostics;
     if (g_first_init)
     {
         init_vars_run();                 // once per run initialization
@@ -411,7 +414,7 @@ std::vector<std::string> cmd_files(const std::vector<std::string> &args)
         {
             if (!process_file_set_name(std::string{cur_arg.data() + 1, slash}, slash + 1, &diagnostics))
             {
-                arg_error(cur_arg.c_str());
+                arg_error(cur_arg.c_str(), &diagnostics);
             }
         }
         // @filename
@@ -420,15 +423,16 @@ std::vector<std::string> cmd_files(const std::vector<std::string> &args)
             process_file(cur_arg.data(), &diagnostics);
         }
     }
-    resolve_startup_file_entry(&diagnostics);
+    if (diagnostics.errors.empty())
+    {
+        resolve_startup_file_entry(&diagnostics);
+    }
 
     if (!g_first_init)
     {
         g_init_mode = -1;                         // don't set video when <ins> key used
         g_show_file = ShowFile::IMAGE_LOADED;     // nor startup image file
     }
-
-    init_msg("", nullptr, CmdFile::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
 
     if (g_debug_flag != DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME)
     {
@@ -449,7 +453,7 @@ static void init_param_flags()
 
 // when called, file is open in binary mode, positioned at the
 // '(' or '{' following the desired parameter set's name
-CmdArgFlags load_commands(std::FILE *infile, std::vector<std::string> *diagnostics)
+CmdArgFlags load_commands(std::FILE *infile, CommandDiagnostics *diagnostics)
 {
     init_param_flags(); // reset flags for type=
     const CmdArgFlags ret = command_file(infile, CmdFile::AT_AFTER_STARTUP, diagnostics);
@@ -676,7 +680,7 @@ static void reset_ifs_definition()
 //        AT_CMD_LINE_SET_NAME  command line @filename/setname
 // note that cmdfile could be open as text OR as binary.
 // binary is used in @ command processing for reasonable speed note/point
-static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode, std::vector<std::string> *diagnostics)
+static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode, CommandDiagnostics *diagnostics)
 {
     const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{handle, std::fclose};
     if (mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME)
@@ -692,7 +696,7 @@ static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode, std::vect
     std::string line_buf;
     std::string_view line;
     CmdArgFlags change_flag{}; // &1 fractal stuff chgd, &2 3d stuff chgd
-    while (next_command(cmd, handle, line_buf, line, mode) > 0)
+    while (next_command(cmd, handle, line_buf, line, mode, diagnostics) > 0)
     {
         if ((mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME) && cmd == "}")
         {
@@ -715,7 +719,7 @@ static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode, std::vect
     return change_flag;
 }
 
-int next_command(std::string &cmd, std::FILE *handle, std::string &line_buf, std::string_view &line, const CmdFile mode)
+int next_command(std::string &cmd, std::FILE *handle, std::string &line_buf, std::string_view &line, const CmdFile mode, CommandDiagnostics *diagnostics)
 {
     cmd.clear();
     while (true)
@@ -774,7 +778,7 @@ int next_command(std::string &cmd, std::FILE *handle, std::string &line_buf, std
         {
             if (next_line(handle, line_buf, mode))
             {
-                arg_error(cmd.c_str()); // missing continuation
+                arg_error(cmd.c_str(), diagnostics); // missing continuation
                 return -1;
             }
             line = line_buf;
@@ -818,19 +822,10 @@ enum
 namespace cmd_files_test
 {
 
-static StopMsgFn s_stop_msg{static_cast<StopMsg *>(stop_msg)};
+// TODO: removed later
+// Slice 45 moves command-generation actions and their exit decisions to UI.
 static GoodbyeFn s_goodbye{goodbye};
 static PrintDocFn s_print_document{print_document};
-
-StopMsgFn get_stop_msg()
-{
-    return s_stop_msg;
-}
-
-void set_stop_msg(const StopMsgFn &fn)
-{
-    s_stop_msg = fn;
-}
 
 GoodbyeFn get_goodbye()
 {
@@ -856,9 +851,9 @@ void set_print_document(const PrintDocFn &fn)
 
 struct Command
 {
-    Command(std::string_view cur_arg, CmdFile a_mode, std::vector<std::string> *diagnostics);
+    Command(std::string_view cur_arg, CmdFile a_mode, CommandDiagnostics *diagnostics);
     CmdArgFlags bad_arg() const;
-    void init_msg() const;
+    void warn_missing_file() const;
     std::string_view string_val(int index) const;
 
     std::string arg;
@@ -878,10 +873,10 @@ struct Command
     const char *string_vals[16]{};    // pointers to all string vals
     int string_val_lens[16]{};        // string value lengths
     CmdArgFlags status{CmdArgFlags::NONE};
-    std::vector<std::string> *diagnostics{};
+    CommandDiagnostics *diagnostics{};
 };
 
-Command::Command(const std::string_view cur_arg, const CmdFile a_mode, std::vector<std::string> *a_diagnostics) :
+Command::Command(const std::string_view cur_arg, const CmdFile a_mode, CommandDiagnostics *a_diagnostics) :
     arg(cur_arg),
     mode(a_mode),
     diagnostics(a_diagnostics)
@@ -894,7 +889,7 @@ Command::Command(const std::string_view cur_arg, const CmdFile a_mode, std::vect
     int j = static_cast<int>(variable_end);
     if (j > 32)
     {
-        arg_error(arg.c_str()); // keyword too long
+        arg_error(arg.c_str(), diagnostics); // keyword too long
         status = CmdArgFlags::BAD_ARG;
         return;
     }
@@ -1012,13 +1007,18 @@ std::string_view Command::string_val(const int index) const
 
 CmdArgFlags Command::bad_arg() const
 {
-    arg_error(arg.c_str());
+    arg_error(arg.c_str(), diagnostics);
     return CmdArgFlags::BAD_ARG;
 }
 
-void Command::init_msg() const
+void Command::warn_missing_file() const
 {
-    engine::init_msg(variable.c_str(), value.data(), mode);
+    if (diagnostics != nullptr)
+    {
+        static constexpr const char *MODE_NAMES[]{"command line", "sstools.ini", "PAR file", "PAR file"};
+        diagnostics->warnings.push_back("Can't find " + variable.substr(0, 29) + '=' + std::string{value} +
+            ", please check " + MODE_NAMES[static_cast<int>(mode)]);
+    }
 }
 
 struct CommandHandler
@@ -1177,9 +1177,11 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
         }
         catch (const std::runtime_error &error)
         {
-            cmd_files_test::get_stop_msg()(StopMsgFlags::NONE, error.what());
-            cmd_files_test::s_goodbye();
-            return CmdArgFlags::GOODBYE;
+            if (cmd.diagnostics != nullptr)
+            {
+                cmd.diagnostics->errors.push_back(error.what());
+            }
+            return CmdArgFlags::BAD_ARG;
         }
     }
     else if (!g_map_name.empty())
@@ -1684,7 +1686,7 @@ static CmdArgFlags parse_colors(const Command &cmd)
         const PaletteLoadResult result{validate_luts(path.empty() ? map_name : path.string())};
         if (cmd.diagnostics != nullptr && !result.diagnostic.empty())
         {
-            cmd.diagnostics->push_back(result.diagnostic);
+            (result.failed ? cmd.diagnostics->errors : cmd.diagnostics->warnings).push_back(result.diagnostic);
         }
         if (result.failed)
         {
@@ -2113,7 +2115,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
     }
     else
     {
-        cmd.init_msg();
+        cmd.warn_missing_file();
     }
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
@@ -2276,7 +2278,7 @@ static CmdArgFlags cmd_ifs_file(const Command &cmd)
         reset_ifs_definition();
         return CmdArgFlags::FRACTAL_PARAM;
     }
-    cmd.init_msg();
+    cmd.warn_missing_file();
     return CmdArgFlags::NONE;
 }
 
@@ -2455,7 +2457,7 @@ static CmdArgFlags cmd_l_file(const Command &cmd)
         g_l_system_filename = path;
         return CmdArgFlags::FRACTAL_PARAM;
     }
-    cmd.init_msg();
+    cmd.warn_missing_file();
     return CmdArgFlags::NONE;
 }
 
@@ -2592,7 +2594,7 @@ static CmdArgFlags cmd_map(const Command &cmd)
     const PaletteLoadResult result{set_color_palette_name(map_name)};
     if (cmd.diagnostics != nullptr && !result.diagnostic.empty())
     {
-        cmd.diagnostics->push_back(result.diagnostic);
+        (result.failed ? cmd.diagnostics->errors : cmd.diagnostics->warnings).push_back(result.diagnostic);
     }
     if (!result.failed)
     {
@@ -2935,7 +2937,7 @@ static CmdArgFlags cmd_parm_file(const Command &cmd)
         g_parameter_file = path;
         return CmdArgFlags::FRACTAL_PARAM;
     }
-    cmd.init_msg();
+    cmd.warn_missing_file();
     return CmdArgFlags::NONE;
 }
 
@@ -4220,7 +4222,7 @@ static std::optional<CmdArgFlags> handle_command(const std::array<CommandHandler
 //      | 4 means 3d=yes specified
 //      | 8 means reset specified
 //
-CmdArgFlags cmd_arg(const std::string_view cur_arg, const CmdFile mode, std::vector<std::string> *diagnostics)
+CmdArgFlags cmd_arg(const std::string_view cur_arg, const CmdFile mode, CommandDiagnostics *diagnostics)
 {
     Command cmd{cur_arg, mode, diagnostics};
     if (cmd.status != CmdArgFlags::NONE)
@@ -4228,6 +4230,13 @@ CmdArgFlags cmd_arg(const std::string_view cur_arg, const CmdFile mode, std::vec
         return cmd.status;
     }
 
+    // TODO: removed later
+    // Slice 45 defers these actions; until then, do not bypass pending errors.
+    if (diagnostics != nullptr && !diagnostics->errors.empty() &&
+        (cmd.variable == "makedoc" || cmd.variable == "makepar" || cmd.variable == "makemig"))
+    {
+        return CmdArgFlags::NONE;
+    }
     if (mode != CmdFile::AT_AFTER_STARTUP || g_debug_flag == DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME)
     {
         if (const std::optional handled{handle_command(s_startup_commands, cmd)}; handled.has_value())
@@ -4244,7 +4253,7 @@ CmdArgFlags cmd_arg(const std::string_view cur_arg, const CmdFile mode, std::vec
     return cmd.bad_arg();
 }
 
-static void arg_error(const char *bad_arg)      // oops. couldn't decode this
+static void arg_error(const char *bad_arg, CommandDiagnostics *diagnostics)
 {
     std::string spillover{bad_arg};
     if (spillover.length() > 70)
@@ -4261,11 +4270,9 @@ static void arg_error(const char *bad_arg)      // oops. couldn't decode this
                "(see the Startup Help screens or documentation for a complete\n"
                " argument list with descriptions)";
     }
-    cmd_files_test::s_stop_msg(StopMsgFlags::NONE, msg);
-    if (g_init_batch != BatchMode::NONE)
+    if (diagnostics != nullptr)
     {
-        g_init_batch = BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE;
-        cmd_files_test::s_goodbye();
+        diagnostics->errors.push_back(msg);
     }
 }
 
@@ -4321,70 +4328,6 @@ static int get_bf(BigFloat bf, const char *cur_arg)
     else
     {
         str_to_bf(bf, cur_arg);
-    }
-    return 0;
-}
-
-static std::string to_string(CmdFile value)
-{
-    static constexpr const char *const mode_str[4] = {"command line", "sstools.ini", "PAR file", "PAR file"};
-    return mode_str[static_cast<int>(value)];
-}
-
-// mode = 0 command line @filename
-//        1 sstools.ini
-//        2 <@> command after startup
-//        3 command line @filename/setname
-// this is like stopmsg() but can be used in cmdfiles()
-// call with NULL for badfilename to get pause for driver_get_key()
-int init_msg(const char *cmd_str, const char *bad_filename, const CmdFile mode)
-{
-    static int row = 1;
-
-    if (g_init_batch == BatchMode::NORMAL)
-    {
-        // in batch mode
-        if (bad_filename)
-        {
-            return -1;
-        }
-    }
-    std::string cmd{cmd_str};
-    if (cmd.size() > 29)
-    {
-        cmd.resize(29);
-    }
-    if (!cmd.empty())
-    {
-        cmd += '=';
-    }
-    std::string msg;
-    if (bad_filename)
-    {
-        msg = std::string {"Can't find "} + cmd + bad_filename + ", please check " + to_string(mode);
-    }
-    if (g_first_init)
-    {
-        // & cmdfiles hasn't finished 1st try
-        if (row == 1 && bad_filename)
-        {
-            driver_set_for_text();
-            driver_put_string(0, 0, 15, "Id found the following problems when parsing commands: ");
-        }
-        if (bad_filename)
-        {
-            driver_put_string(row++, 0, 7, msg);
-        }
-        else if (row > 1)
-        {
-            driver_put_string(++row, 0, 15, "Press Escape to abort, any other key to continue");
-            driver_move_cursor(row+1, 0);
-            do_pause(2);  // defer getakeynohelp until after parsing
-        }
-    }
-    else if (bad_filename)
-    {
-        stop_msg(msg);
     }
     return 0;
 }

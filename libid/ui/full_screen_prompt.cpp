@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/full_screen_prompt.h"
 
@@ -20,6 +21,7 @@
 #include "ui/input_field.h"
 #include "ui/mouse.h"
 #include "ui/put_string_center.h"
+#include "ui/stop_msg.h"
 #include "ui/text_screen.h"
 
 #include <fmt/format.h>
@@ -157,21 +159,25 @@ void Prompt::init_scroll_file()
         */
     if (extra_info && *extra_info)
     {
+        std::string diagnostic;
         if (g_fractal_type == FractalType::FORMULA)
         {
-            find_file_item(g_formula_filename, g_formula_name, &scroll_file, ItemType::FORMULA);
-            in_scrolling_mode = true;
-            scroll_file_start = std::ftell(scroll_file);
+            find_file_item(g_formula_filename, g_formula_name, &scroll_file, ItemType::FORMULA, diagnostic);
         }
         else if (g_fractal_type == FractalType::L_SYSTEM)
         {
-            find_file_item(g_l_system_filename, g_l_system_name, &scroll_file, ItemType::L_SYSTEM);
-            in_scrolling_mode = true;
-            scroll_file_start = std::ftell(scroll_file);
+            find_file_item(g_l_system_filename, g_l_system_name, &scroll_file, ItemType::L_SYSTEM, diagnostic);
         }
         else if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
         {
-            find_file_item(g_ifs_filename, g_ifs_name, &scroll_file, ItemType::IFS);
+            find_file_item(g_ifs_filename, g_ifs_name, &scroll_file, ItemType::IFS, diagnostic);
+        }
+        if (!diagnostic.empty())
+        {
+            stop_msg(diagnostic);
+        }
+        if (scroll_file != nullptr)
+        {
             in_scrolling_mode = true;
             scroll_file_start = std::ftell(scroll_file);
         }

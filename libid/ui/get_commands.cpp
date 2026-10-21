@@ -8,7 +8,7 @@
 #include "io/file_item.h"
 #include "ui/get_file_entry.h"
 #include "ui/help.h"
-#include "ui/stop_msg.h"
+#include "ui/command_diagnostics.h"
 
 #include <cstdio>
 #include <vector>
@@ -31,12 +31,9 @@ CmdArgFlags get_commands()
     if (point >= 0 && (param_file = std::fopen(g_parameter_file.string().c_str(), "rb")) != nullptr)
     {
         std::fseek(param_file, point, SEEK_SET);
-        std::vector<std::string> diagnostics;
+        CommandDiagnostics diagnostics;
         ret = load_commands(param_file, &diagnostics);
-        for (const std::string &diagnostic : diagnostics)
-        {
-            stop_msg(diagnostic);
-        }
+        show_command_diagnostics(diagnostics);
     }
     return ret;
 }

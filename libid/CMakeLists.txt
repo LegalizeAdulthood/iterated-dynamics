@@ -208,11 +208,11 @@ add_library(libid
     include/ui/cellular.h ui/cellular.cpp
     include/ui/ChoiceBuilder.h
     include/ui/command_result.h
+    include/ui/command_diagnostics.h ui/command_diagnostics.cpp
     include/ui/comments.h ui/comments.cpp
     include/ui/diffusion.h ui/diffusion.cpp
     include/ui/diskvid.h ui/diskvid.cpp
     include/ui/double_to_string.h ui/double_to_string.cpp
-    include/ui/do_pause.h ui/do_pause.cpp
     include/ui/DriverSoundOutput.h ui/DriverSoundOutput.cpp
     include/ui/dynamic2d.h ui/dynamic2d.cpp
     include/ui/editpal.h ui/editpal.cpp
