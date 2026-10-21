@@ -28,6 +28,8 @@ public:
     void scrub_overlay();
 
     void resume();
+    bool potential_storage_required() const;
+    void complete_potential_storage(bool available);
 
     void suspend();
     void abort();
@@ -48,6 +50,8 @@ private:
     enum class Phase
     {
         START,
+        START_WORK_LIST,
+        POTENTIAL_STORAGE,
         WORK_LIST,
         COMPLETE
     };
@@ -62,6 +66,7 @@ private:
     void complete();
     void complete_pending_orbit_plot();
     void finish_work_list();
+    void initialize_work_list();
     OrbitPlot &pending_orbit_plot();
     void pop_work_list_front();
     bool prepare_work_item();
@@ -122,7 +127,6 @@ private:
     bool m_orbit_overlay_displayed{};
     bool m_overlay_scrub_pending{};
     bool m_work_item_active{};
-    bool m_work_list_started{};
 };
 
 StandardFractal *active_standard_fractal();

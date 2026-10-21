@@ -12,6 +12,7 @@
 #include <engine/LogicalScreen.h>
 #include <engine/log_map.h>
 #include <engine/OrbitPlot.h>
+#include <engine/Potential.h>
 #include <engine/PertEngine.h>
 #include <engine/pixel.h>
 #include <engine/pixel_grid.h>
@@ -28,6 +29,8 @@
 #include <fractals/lorenz.h>
 #include <fractals/lyapunov.h>
 #include <io/library.h>
+#include <io/disk_storage.h>
+#include <io/special_dirs.h>
 #include <io/check_write_file.h>
 #include <geometry/line3d.h>
 #include <math/biginit.h>
@@ -35,6 +38,7 @@
 #include <misc/memory.h>
 #include <misc/debug_flags.h>
 #include <ui/calculate_image.h>
+#include <ui/diskvid.h>
 #include <ui/frothy_basin.h>
 #include <ui/KeyboardHandler.h>
 #include <ui/id_keys.h>
@@ -535,6 +539,87 @@ TEST_F(TestOverlaySound, failedImageSetupClearsResumeStateWithoutChargingThePrev
     EXPECT_EQ(123L, g_calc_time);
     EXPECT_EQ(0, g_num_work_list);
     EXPECT_TRUE(g_resume_data.empty());
+}
+
+class TestStandardPotentialStorage : public TestOverlaySound
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    ValueSaver<Potential> m_saved_potential{g_potential, Potential{{20.0, 5.0, 4.0}, true, true}};
+    ValueSaver<bool> m_saved_first_init{g_first_init, false};
+    ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
+    ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
+    ValueSaver<bool> m_saved_overlay{g_show_orbit, false};
+    ValueSaver<bool> m_saved_good_mode{g_good_mode, true};
+    ValueSaver<std::filesystem::path> m_saved_temp{g_temp_dir};
+};
+
+void TestStandardPotentialStorage::SetUp()
+{
+    TestOverlaySound::SetUp();
+    end_disk();
+    init_memory();
+    m_directory = std::filesystem::temp_directory_path() /
+        ("id-standard-potential-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+    std::filesystem::create_directory(m_directory);
+    g_temp_dir = m_directory / "missing";
+    set_save_library(m_directory);
+    EXPECT_CALL(m_driver, display_string(_, _, _, _, StrEq("clearing 16bit pot work area")));
+    EXPECT_CALL(m_driver, flush());
+}
+
+void TestStandardPotentialStorage::TearDown()
+{
+    end_disk();
+    EXPECT_TRUE(exit_check().empty());
+    TestOverlaySound::TearDown();
+}
+
+TEST_F(TestStandardPotentialStorage, controllerPreparesStorageBeforePixelCalculation)
+{
+    g_std_calc_mode = CalcMode::SOLID_GUESS;
+
+    EXPECT_EQ(0, standard_fractal());
+
+    EXPECT_TRUE(g_disk_flag);
+    EXPECT_TRUE(g_disk_16_bit);
+    EXPECT_TRUE(g_potential.store_16bit);
+    EXPECT_EQ(CalcMode::ONE_PASS, g_std_calc_mode);
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(4, s_pixel_calls);
+}
+
+TEST_F(TestStandardPotentialStorage, controllerContinuesWithRequestedPassAfterStorageCancellation)
+{
+    g_std_calc_mode = CalcMode::TWO_PASS;
+    g_debug_flag = DebugFlags::FORCE_MEMORY_FROM_DISK;
+    EXPECT_CALL(m_driver, stack_screen());
+    EXPECT_CALL(m_driver, unstack_screen());
+    EXPECT_CALL(m_driver, move_cursor(_, _));
+    EXPECT_CALL(m_driver, hide_text_cursor());
+    EXPECT_CALL(m_driver, set_attr(_, _, _, _));
+    EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
+    EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(AnyNumber());
+    EXPECT_CALL(m_driver, get_key())
+        .WillOnce(Invoke(
+            []
+            {
+                EXPECT_EQ(0, s_pixel_calls);
+                EXPECT_FALSE(g_disk_flag);
+                EXPECT_TRUE(exit_check().empty());
+                return ID_KEY_ESC;
+            }));
+
+    EXPECT_EQ(0, standard_fractal());
+
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_FALSE(g_disk_16_bit);
+    EXPECT_FALSE(g_potential.store_16bit);
+    EXPECT_EQ(CalcMode::TWO_PASS, g_std_calc_mode);
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(4, s_pixel_calls);
 }
 
 class TestStandardRenderDiagnostic : public TestOverlaySound

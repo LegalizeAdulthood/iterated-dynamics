@@ -1825,7 +1825,7 @@ int potential(const double mag, const long iterations)
 
     if (g_potential.store_16bit)
     {
-        if (!driver_is_disk())   // if putcolor won't be doing it for us
+        if (!disk_pixel_output())   // if putcolor won't be doing it for us
         {
             write_disk_pixel(g_col+g_logical_screen.x_offset, g_row+g_logical_screen.y_offset, i_pot);
         }

@@ -5,7 +5,9 @@
 
 #include <engine/calcfrac.h>
 #include <engine/LogicalScreen.h>
+#include <engine/Potential.h>
 #include <engine/VideoInfo.h>
+#include <io/disk_storage.h>
 #include <misc/ValueSaver.h>
 
 #include <gmock/gmock.h>
@@ -126,6 +128,75 @@ TEST_F(TestPixel, invalidPixelWritesDoNotAccessTheBackend)
     EXPECT_THROW(put_color_a(0, 7, 1), std::logic_error);
 
     EXPECT_TRUE(s_writes.empty());
+}
+
+TEST_F(TestPixel, diskOutputDependsOnTheSelectedPixelWriter)
+{
+    EXPECT_FALSE(disk_pixel_output());
+
+    set_pixel_functions(id::io::write_disk_pixel, id::io::read_disk_pixel);
+
+    EXPECT_TRUE(disk_pixel_output());
+    EXPECT_THROW(set_pixel_functions(nullptr, read_pixel), std::logic_error);
+    EXPECT_TRUE(disk_pixel_output());
+    set_pixel_functions(write_pixel, read_pixel);
+    EXPECT_FALSE(disk_pixel_output());
+}
+
+class TestPotentialPixel : public TestPixel
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    ValueSaver<Potential> m_saved_potential{g_potential};
+    ValueSaver<long> m_saved_max_iterations{g_max_iterations, 150};
+    ValueSaver<ColorMethod> m_saved_inside{g_inside_method, ColorMethod::COLOR};
+    ValueSaver<int> m_saved_inside_color{g_inside_color, 7};
+    ValueSaver<int> m_saved_colors{g_colors, 16};
+    ValueSaver<int> m_saved_col{g_col, 1};
+    ValueSaver<int> m_saved_row{g_row, 1};
+};
+
+void TestPotentialPixel::SetUp()
+{
+    TestPixel::SetUp();
+    id::io::end_disk();
+    init_memory();
+    id::io::start_disk_storage(10, 18, 256, memory_alloc(id::io::DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
+    g_potential.store_16bit = true;
+}
+
+void TestPotentialPixel::TearDown()
+{
+    id::io::end_disk();
+    EXPECT_TRUE(exit_check().empty());
+}
+
+TEST_F(TestPotentialPixel, separatePixelOutputStoresBothPotentialBytesWithoutADriver)
+{
+    id::io::write_disk_pixel(3, 13, 99);
+
+    EXPECT_EQ(7, potential(4.0, 150));
+
+    EXPECT_EQ(7, id::io::read_disk_pixel(3, 4));
+    EXPECT_EQ(0, id::io::read_disk_pixel(3, 13));
+    EXPECT_TRUE(s_writes.empty());
+}
+
+TEST_F(TestPotentialPixel, diskPixelOutputLeavesHighByteForPlotting)
+{
+    set_pixel_functions(id::io::write_disk_pixel, id::io::read_disk_pixel);
+    id::io::write_disk_pixel(3, 4, 99);
+    id::io::write_disk_pixel(3, 13, 99);
+
+    const int color{potential(4.0, 150)};
+
+    EXPECT_EQ(7, color);
+    EXPECT_EQ(99, id::io::read_disk_pixel(3, 4));
+    EXPECT_EQ(0, id::io::read_disk_pixel(3, 13));
+    put_color_a(1, 1, color);
+    EXPECT_EQ(7, id::io::read_disk_pixel(3, 4));
 }
 
 } // namespace id::test

@@ -170,6 +170,11 @@ The current code is already part-way through this plan:
   pixel passes expose chunk preparation and completion state, not
   calculation bridges.  Standard and orbit strategy selection stay in
   `StandardFractal`.
+- Standard potential initialization returns a storage requirement before
+  creating the work list.  The standard UI controller prepares storage
+  and reports availability; the calculation retains one-pass selection
+  and failure fallback.  Resume reuses its existing storage.  Potential
+  high-byte output uses the selected pixel backend, not a driver query.
 - Tesseral is a concrete `StandardPass` alternative.  `Tesseral` has
   `iterate()`, `done()`, and `suspend()`, and owns its box stack.
   Initial edge setup, later edge probes, and box filling run through
@@ -333,7 +338,7 @@ The current code is already part-way through this plan:
   of the next requested filename.  Pixel and Targa callers use the I/O
   operations directly.  UI controllers service progress at existing work
   checkpoints, retaining the status throttle without adding yields or
-  input polling.  Temporary setup bridges remain for slices 41.3 through
+  input polling.  Temporary setup bridges remain for slices 41.4 through
   41.7; allocation retry/cancel belongs to the storage UI operation.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
@@ -355,7 +360,7 @@ The fresh reverse-call audit also found these live paths:
   `stop_msg()` or application shutdown through `goodbye()`.
 - Calculation code still enters disk-storage setup bridges under
   `libid/ui`.  Cache and backing operations belong to I/O; controllers
-  now service progress between existing work chunks.  Slices 41.3 through
+  now service progress between existing work chunks.  Slices 41.4 through
   41.7 remove the remaining setup reverse calls and mapping-line status.
 - Image loading, image saving, and command parsing still select UI
   prompts, display status, or exit the application from non-UI modules.
@@ -766,7 +771,7 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - Calculation code still calls setup bridges in `ui/diskvid.cpp`, and
   `geometry/line3d.cpp` still reports mapping-line status.  Pixel access
   and progress snapshots are I/O-owned; controllers service storage
-  progress between existing work chunks.  Slices 41.3 through 41.7 move
+  progress between existing work chunks.  Slices 41.4 through 41.7 move
   the remaining setup decisions and mapping status to requesting UI.
 - `libid/io/loadfile.cpp`, `libid/io/encoder.cpp`, and
   `libid/engine/cmdfiles.cpp`: select prompts, display status, make
@@ -965,34 +970,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 41.3. Standard Potential Storage Preparation
-
-Source: `StandardFractal::start_work_list()` and `ui/standard_fractal.cpp`.
-UI owner: the standard render controller.
-
-Work:
-
-- Expose the potential-storage requirement at an explicit initialization
-  boundary after per-image option normalization and before work-list
-  traversal.  The calculation must return before storage UI is entered.
-- Let the controller prepare storage and supply the setup outcome before
-  calculation continues.  Keep pass selection, one-pass normalization,
-  and failure fallback in the calculation object.
-- Preserve resume behavior, potential flags, prior pass restoration on
-  setup failure, and storage cleanup.  Supply output-target facts to
-  `potential()` in `calcfrac.cpp` instead of querying the disk driver to
-  avoid duplicate high-byte writes.  Remove the calculation's
-  `pot_start_disk()` call; do not replace it with a UI callback.
-
-Done when:
-
-- Standard initialization cannot invoke storage presentation or allocation
-  prompts through its call chain.
-
-Validation: setup success, failure fallback, and resume through
-controller tests; existing potential image tests cover pixels.
-No manual check required.
 
 ### 41.4. Plasma Potential Storage Preparation
 

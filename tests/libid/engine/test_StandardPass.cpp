@@ -16,6 +16,7 @@
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
+#include <io/disk_storage.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 #include <ui/video.h>
@@ -32,6 +33,7 @@
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
@@ -569,6 +571,173 @@ TEST_F(TestStandardFractal, tesseralKeepsBatchedEdges)
     calculation.iterate();
     EXPECT_TRUE(calculation.done());
     EXPECT_THAT(m_pixels, Each(7));
+}
+
+class TestStandardPotential : public TestStandardFractal
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void open_storage();
+};
+
+void TestStandardPotential::SetUp()
+{
+    TestStandardFractal::SetUp();
+    end_disk();
+    init_memory();
+    g_potential.flag = true;
+    g_potential.store_16bit = true;
+}
+
+void TestStandardPotential::TearDown()
+{
+    end_disk();
+    EXPECT_TRUE(exit_check().empty());
+    TestStandardFractal::TearDown();
+}
+
+void TestStandardPotential::open_storage()
+{
+    start_disk_storage(8, 16, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
+    g_disk_16_bit = true;
+}
+
+TEST_F(TestStandardPotential, storageRequirementStopsBeforeWorkOrInput)
+{
+    g_std_calc_mode = CalcMode::SOLID_GUESS;
+    StandardFractal calculation;
+    calculation.resume();
+
+    calculation.iterate();
+
+    EXPECT_TRUE(calculation.potential_storage_required());
+    EXPECT_FALSE(calculation.done());
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_EQ(CalcMode::SOLID_GUESS, g_std_calc_mode);
+    EXPECT_TRUE(s_calculated.empty());
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_EQ(0, m_plot_count);
+    calculation.iterate();
+    EXPECT_FALSE(calculation.select_pixel());
+    EXPECT_TRUE(s_calculated.empty());
+    calculation.abort();
+}
+
+TEST_F(TestStandardPotential, availableStorageSelectsOnePassBeforeCalculating)
+{
+    g_std_calc_mode = CalcMode::SOLID_GUESS;
+    StandardFractal calculation;
+    calculation.resume();
+    calculation.iterate();
+    ASSERT_TRUE(calculation.potential_storage_required());
+    open_storage();
+
+    calculation.complete_potential_storage(true);
+
+    EXPECT_FALSE(calculation.potential_storage_required());
+    EXPECT_EQ(CalcMode::ONE_PASS, g_std_calc_mode);
+    EXPECT_TRUE(g_potential.store_16bit);
+    EXPECT_TRUE(s_calculated.empty());
+    calculation.iterate();
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(64U, s_calculated.size());
+}
+
+TEST_F(TestStandardPotential, unavailableStorageRetainsRequestedTraversal)
+{
+    g_std_calc_mode = CalcMode::TWO_PASS;
+    StandardFractal calculation;
+    calculation.resume();
+    calculation.iterate();
+    ASSERT_TRUE(calculation.potential_storage_required());
+
+    calculation.complete_potential_storage(false);
+
+    EXPECT_FALSE(calculation.potential_storage_required());
+    EXPECT_EQ(CalcMode::TWO_PASS, g_std_calc_mode);
+    EXPECT_TRUE(g_potential.flag);
+    EXPECT_FALSE(g_potential.store_16bit);
+    calculation.iterate();
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(64U, s_calculated.size());
+}
+
+TEST_F(TestStandardPotential, resumeKeepsExistingStorageAndContinuesAtSavedPixel)
+{
+    StandardFractal calculation;
+    calculation.resume();
+    calculation.iterate();
+    ASSERT_TRUE(calculation.potential_storage_required());
+    open_storage();
+    write_disk_pixel(3, 11, 123);
+    calculation.complete_potential_storage(true);
+    ASSERT_TRUE(calculation.select_pixel());
+    ASSERT_TRUE(calculation.calculate_pixel());
+    calculation.suspend();
+    ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    g_resuming = true;
+    StandardFractal resumed;
+    resumed.resume();
+
+    resumed.iterate();
+
+    EXPECT_FALSE(resumed.potential_storage_required());
+    EXPECT_TRUE(resumed.done());
+    EXPECT_EQ(64U, s_calculated.size());
+    ASSERT_GE(s_calculated.size(), 2U);
+    EXPECT_EQ((Point2i{0, 0}), s_calculated[0]);
+    EXPECT_EQ((Point2i{1, 0}), s_calculated[1]);
+    EXPECT_EQ(123, read_disk_pixel(3, 11));
+    EXPECT_TRUE(g_disk_16_bit);
+}
+
+TEST_F(TestStandardPotential, threePassFollowupRequestsFreshStorage)
+{
+    g_std_calc_mode = CalcMode::THREE_PASS;
+    StandardFractal calculation;
+    calculation.resume();
+    calculation.iterate();
+    ASSERT_TRUE(calculation.potential_storage_required());
+    open_storage();
+    calculation.complete_potential_storage(true);
+    calculation.iterate();
+    calculation.iterate();
+
+    ASSERT_TRUE(calculation.potential_storage_required());
+    EXPECT_EQ(64U, s_calculated.size());
+    calculation.complete_potential_storage(true);
+    calculation.iterate();
+
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(128U, s_calculated.size());
+}
+
+TEST_F(TestStandardPotential, storageCompletionRequiresAnOutstandingRequest)
+{
+    StandardFractal calculation;
+    EXPECT_THROW(calculation.complete_potential_storage(false), std::logic_error);
+    calculation.resume();
+    calculation.iterate();
+    ASSERT_TRUE(calculation.potential_storage_required());
+    calculation.complete_potential_storage(false);
+
+    EXPECT_THROW(calculation.complete_potential_storage(true), std::logic_error);
+
+    calculation.abort();
+}
+
+TEST_F(TestStandardFractal, inactivePotentialDoesNotRequestStorage)
+{
+    g_potential.store_16bit = true;
+    StandardFractal calculation;
+    calculation.resume();
+
+    calculation.iterate();
+
+    EXPECT_FALSE(calculation.potential_storage_required());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(64U, s_calculated.size());
 }
 
 } // namespace id::test

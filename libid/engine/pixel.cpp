@@ -6,6 +6,7 @@
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
 #include "engine/VideoInfo.h"
+#include "io/disk_storage.h"
 
 #include <stdexcept>
 
@@ -28,6 +29,11 @@ void set_pixel_functions(const WritePixel write_pixel, const ReadPixel read_pixe
     }
     s_write_pixel = write_pixel;
     s_read_pixel = read_pixel;
+}
+
+bool disk_pixel_output()
+{
+    return s_write_pixel == io::write_disk_pixel;
 }
 
 int get_color(const int x, const int y)

@@ -14,13 +14,13 @@ extern bool g_good_mode;
 
 int start_disk();
 // TODO: removed later
-// Slices 41.3, 41.4, and 41.6 move setup to requesting controllers.
+// Slices 41.4 and 41.6 move the remaining setup calls to UI controllers.
 int pot_start_disk();
 // TODO: removed later
 // Slice 41.7 moves Targa-storage setup to the restore controller.
 int targa_start_disk(std::FILE *file, int overhead);
 // TODO: removed later
-// Slices 41.3-41.7 move storage setup to requesting controllers.
+// Slices 41.4-41.7 move storage setup to requesting controllers.
 int common_start_disk(std::int64_t row_size, std::int64_t col_size, int colors);
 void display_disk_storage_progress();
 void dvid_status(int line, const char *msg);

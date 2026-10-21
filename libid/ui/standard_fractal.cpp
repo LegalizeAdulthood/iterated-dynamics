@@ -102,6 +102,11 @@ int standard_fractal(SoundSession &sound)
             {
                 standard_fractal.iterate();
             }
+            if (standard_fractal.potential_storage_required())
+            {
+                standard_fractal.complete_potential_storage(pot_start_disk() >= 0);
+                continue;
+            }
             display_disk_storage_progress();
             if (!g_precision_diagnostics.empty() && show_precision_diagnostics())
             {

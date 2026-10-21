@@ -17,7 +17,6 @@
 #include "fractals/fractalp.h"
 #include "fractals/lyapunov.h"
 #include "math/big.h"
-#include "ui/diskvid.h"
 
 #include <algorithm>
 #include <cmath>
@@ -156,11 +155,25 @@ void StandardFractal::resume()
     m_standard_pass.reset();
     m_timer_started = false;
     m_work_item_active = false;
-    m_work_list_started = false;
     m_standard_pixel_completed_yield = false;
     m_incomplete_standard_pixel_yield = false;
     s_standard_pass_status = {};
     clear_standard_pixel();
+}
+
+bool StandardFractal::potential_storage_required() const
+{
+    return m_phase == Phase::POTENTIAL_STORAGE;
+}
+
+void StandardFractal::complete_potential_storage(const bool available)
+{
+    if (!potential_storage_required())
+    {
+        throw std::logic_error{"Potential storage was not requested"};
+    }
+    g_potential.store_16bit = available;
+    initialize_work_list();
 }
 
 void StandardFractal::suspend()
@@ -449,8 +462,7 @@ void StandardFractal::finish_work_list()
         g_std_calc_mode = followup_calc_mode();
         g_three_pass = false;
         m_after_work_list = AfterWorkList::COMPLETE;
-        m_work_list_started = false;
-        m_phase = Phase::WORK_LIST;
+        m_phase = Phase::START_WORK_LIST;
         return;
     }
     complete();
@@ -538,9 +550,13 @@ bool StandardFractal::prepare_work_item()
     {
         start_next_pass();
     }
-    if (!m_work_list_started)
+    if (m_phase == Phase::START_WORK_LIST)
     {
         start_work_list();
+    }
+    if (potential_storage_required())
+    {
+        return false;
     }
     if (!m_work_item_active && g_num_work_list <= 0)
     {
@@ -626,8 +642,7 @@ void StandardFractal::start_next_pass()
         m_after_work_list = AfterWorkList::COMPLETE;
     }
 
-    m_work_list_started = false;
-    m_phase = Phase::WORK_LIST;
+    m_phase = Phase::START_WORK_LIST;
 }
 
 void StandardFractal::start_timer()
@@ -648,19 +663,19 @@ void StandardFractal::start_work_list()
     }
     select_alternate_math_dispatch();
 
+    if (g_potential.flag && g_potential.store_16bit && !g_resuming)
+    {
+        m_phase = Phase::POTENTIAL_STORAGE;
+        return;
+    }
+    initialize_work_list();
+}
+
+void StandardFractal::initialize_work_list()
+{
     if (g_potential.flag && g_potential.store_16bit)
     {
-        const CalcMode tmp_calc_mode = g_std_calc_mode;
-
         g_std_calc_mode = CalcMode::ONE_PASS;
-        if (!g_resuming)
-        {
-            if (ui::pot_start_disk() < 0)
-            {
-                g_potential.store_16bit = false;
-                g_std_calc_mode = tmp_calc_mode;
-            }
-        }
     }
     if (g_std_calc_mode == CalcMode::BOUNDARY_TRACE &&
         bit_set(fractals::g_cur_fractal_specific->flags, fractals::FractalFlags::NO_TRACE))
@@ -698,7 +713,7 @@ void StandardFractal::start_work_list()
     {
         setup_standard_fractal_distance_estimator();
     }
-    m_work_list_started = true;
+    m_phase = Phase::WORK_LIST;
 }
 
 bool StandardFractal::standard_pixel_yield_enabled() const
