@@ -27,7 +27,7 @@
 #include "misc/Driver.h"
 #include "ui/ant.h"
 #include "ui/big_while_loop.h"
-#include "ui/diskvid.h"
+#include "io/disk_storage.h"
 #include "ui/evolve.h"
 #include "ui/file_get_window.h"
 #include "ui/flip_image.h"

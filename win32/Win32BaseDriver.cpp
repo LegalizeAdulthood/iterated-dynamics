@@ -19,6 +19,7 @@
 #include "engine/VideoInfo.h"
 #include "io/CurrentPathSaver.h"
 #include "io/save_timer.h"
+#include "io/disk_storage.h"
 #include "ui/diskvid.h"
 #include "ui/id_keys.h"
 #include "ui/read_ticker.h"

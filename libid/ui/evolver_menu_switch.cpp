@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/evolver_menu_switch.h"
 
@@ -12,7 +13,7 @@
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/big_while_loop.h"
-#include "ui/diskvid.h"
+#include "io/disk_storage.h"
 #include "ui/evolve.h"
 #include "ui/find_special_colors.h"
 #include "ui/get_cmd_string.h"

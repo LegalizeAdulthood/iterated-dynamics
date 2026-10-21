@@ -19,6 +19,7 @@
 #include <io/path_match.h>
 #include <io/save_timer.h>
 #include <io/trim_filename.h>
+#include <io/disk_storage.h>
 #include <ui/diskvid.h>
 #include <ui/full_screen_choice.h>
 #include <ui/id_keys.h>
@@ -44,6 +45,7 @@
 
 using namespace id::config;
 using namespace id::engine;
+using namespace id::io;
 using namespace id::ui;
 
 namespace id::engine

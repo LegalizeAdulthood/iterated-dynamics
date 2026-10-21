@@ -63,6 +63,7 @@
 #include "misc/id.h"
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
+#include "io/disk_storage.h"
 #include "ui/diskvid.h"
 #include "ui/lyapunov.h"
 #include "ui/non_standard_fractal.h"

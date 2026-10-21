@@ -53,6 +53,7 @@
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
 #include "ui/big_while_loop.h"
+#include "io/disk_storage.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
 #include "ui/goodbye.h"

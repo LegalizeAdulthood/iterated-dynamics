@@ -14,12 +14,14 @@
 #include "fractals/lorenz.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
+#include "io/disk_storage.h"
 #include "ui/diskvid.h"
 #include "ui/stop_msg.h"
 
 #include <cmath>
 #include <stdexcept>
 
+using namespace id::io;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;

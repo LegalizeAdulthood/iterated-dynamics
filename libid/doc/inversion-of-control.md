@@ -297,7 +297,7 @@ The current code is already part-way through this plan:
   returns diagnostics; image setup retains palette-rendering fallback.
   Rejected overlays close their sources and cannot trigger replacement
   of the original without a completed temporary copy.  Shared disk-cache
-  failure callbacks remain for slices 40-41.
+  setup and progress bridges remain for slice 41.
 - `math/biginit.cpp` reports precision and arena exhaustion through
   `PrecisionError`, without input or application shutdown.  Rejected
   precision requests preserve the active arena; failed stack requests
@@ -323,7 +323,15 @@ The current code is already part-way through this plan:
   driver, disk, or null target.  Spans use those pixel functions directly,
   without separate initialization.  `io/decoder.cpp` owns `out_line()`
   and its row counter.  Calculation and codec callers no longer include
-  `ui/video.h` for pixel access; disk storage remains for slices 40-41.
+  `ui/video.h` for pixel access; storage UI bridges remain for slice 41.
+- `io/disk_storage.cpp` owns cache state, packed pixel and byte access,
+  backing handles, Targa headers, and cleanup.  Backend operations have
+  no UI or driver calls; they report read/write progress as data and
+  propagate failures.  Failed setup releases backing resources before
+  returning to UI.  Active Targa backing paths are retained independently
+  of the next requested filename.  Temporary setup and per-access status
+  bridges remain in `ui/diskvid.cpp` for slice 41; allocation retry still
+  uses the marked `request_memory()` helper.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -342,9 +350,10 @@ The fresh reverse-call audit also found these live paths:
   also invokes photographer prompts between stereo images.
 - Storage setup and command validation can still invoke modal
   `stop_msg()` or application shutdown through `goodbye()`.
-- Disk-storage functions used by calculation code still live under
-  `libid/ui`.  Disk storage mixes backend work with progress text and
-  modal errors.  Pixel/span access now belongs to the engine.
+- Calculation code still enters disk-storage setup and per-access status
+  bridges under `libid/ui`.  Cache and backing operations now belong to
+  I/O; UI owns their status display and modal errors.  Slice 41 removes
+  these remaining reverse calls.
 - Image loading, image saving, and command parsing still select UI
   prompts, display status, or exit the application from non-UI modules.
 
@@ -751,10 +760,10 @@ The remaining UI-concept leaks outside `libid/ui` are:
   and sometimes `goodbye()`.  These are input and application-control
   leaks even when reachable only on failure or in debug builds.  Memory
   operations now report failures without UI or shutdown callbacks.
-- Calculation code still calls storage functions in `ui/diskvid.cpp`.
-  Storage also displays progress text and modal errors.  Backend
-  extraction must retain storage below the UI layer while returning
-  status and failures to UI owners.  Pixel/span access is engine-owned.
+- Calculation code still calls setup and per-access status bridges in
+  `ui/diskvid.cpp`.  Cache and backing operations are I/O-owned and return
+  progress and failures without UI callbacks.  Slice 41 moves setup
+  decisions and progress servicing to the requesting UI controllers.
 - `libid/io/loadfile.cpp`, `libid/io/encoder.cpp`, and
   `libid/engine/cmdfiles.cpp`: select prompts, display status, make
   continue/cancel decisions, or shut down the application from non-UI
@@ -953,27 +962,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 40. Disk Storage Backend State
-
-Source: cache, allocation, disk pixel access, Targa backing, and memory
-queue storage in `libid/ui/diskvid.cpp`.
-
-Work:
-
-- Separate backend storage state and operations from disk-video status
-  screens and modal failure decisions.
-- Put backend operations in an I/O-owned module used by calculation and
-  UI alike.  Preserve potential, plasma, Targa, and MIIM storage behavior.
-- Return storage progress and failures as data.  Mark any remaining
-  presentation bridge for removal in the next slice.
-
-Done when:
-
-- The backing-store lifetime and cache state are owned below UI.
-
-Validation: use existing disk-video, memory, potential, and image tests;
-add focused failure coverage only where the split changes recovery.
-
 ### 41. Disk Storage UI Decisions
 
 Source: `pot_start_disk()`, `common_start_disk()`, `dvid_status()`, and
@@ -988,6 +976,15 @@ Work:
   indirect input through failed allocation.
 - Remove temporary bridges from the preceding slice.  Preserve storage
   cleanup and headless/batch operation without requiring a text screen.
+- Replace the marked `disk_read_pixel()`, `disk_write_pixel()`,
+  `targa_read_disk()`, and `targa_write_disk()` UI bridges with their
+  I/O-owned read/write operations.  Remove `update_disk_video_status()`;
+  controllers inspect `disk_storage_progress()` between bounded work
+  increments and own status text, throttling, and driver access.
+- Remove the marked `start_disk_video()`, `common_start_disk()`,
+  `pot_start_disk()`, and `targa_start_disk()` reverse-call bridges.
+  Requesting controllers prepare storage and retain each caller's
+  retry, cancellation, fallback, and cleanup policy around backend setup.
 - Remove the temporary `request_memory()` declaration and implementation
   from slice 38.  Its requesting UI controller must own allocation
   retry/cancel and debug statistics around backend setup.

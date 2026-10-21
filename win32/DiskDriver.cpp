@@ -18,11 +18,13 @@
 #include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
+#include "io/disk_storage.h"
 #include "ui/diskvid.h"
 #include "ui/video.h"
 #include "ui/zoom.h"
 
 using namespace id::engine;
+using namespace id::io;
 using namespace id::geometry;
 using namespace id::ui;
 

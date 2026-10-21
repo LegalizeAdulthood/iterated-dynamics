@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/history.h"
 
@@ -38,7 +39,7 @@
 #include "misc/debug_flags.h"
 #include "misc/id.h"
 #include "misc/version.h"
-#include "ui/diskvid.h"
+#include "io/disk_storage.h"
 
 #include <config/port.h>
 

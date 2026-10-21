@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/get_toggles2.h"
 
@@ -12,7 +13,7 @@
 #include "helpdefs.h"
 #include "misc/Driver.h"
 #include "ui/ChoiceBuilder.h"
-#include "ui/diskvid.h"
+#include "io/disk_storage.h"
 #include "ui/help.h"
 
 #include <fmt/format.h>
@@ -22,6 +23,7 @@
 #include <string>
 
 using namespace id::engine;
+using namespace id::io;
 using namespace id::help;
 using namespace id::misc;
 

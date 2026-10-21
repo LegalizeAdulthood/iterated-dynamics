@@ -10,7 +10,7 @@
 #include "helpcom.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"
-#include "ui/diskvid.h"
+#include "io/disk_storage.h"
 #include "ui/evolve.h"
 #include "ui/make_batch_file.h"
 #include "ui/slideshw.h"
@@ -23,6 +23,7 @@
 #endif
 
 using namespace id::engine;
+using namespace id::io;
 using namespace id::fractals;
 using namespace id::help;
 using namespace id::misc;

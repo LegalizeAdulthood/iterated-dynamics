@@ -12,6 +12,7 @@
 #include <misc/Driver.h>
 #include <misc/memory.h>
 #include <misc/ValueSaver.h>
+#include <io/disk_storage.h>
 #include <ui/diskvid.h>
 
 #include <gtest/gtest.h>

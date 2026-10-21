@@ -144,6 +144,7 @@ add_library(libid
     include/io/check_write_file.h io/check_write_file.cpp
     include/io/CurrentPathSaver.h
     include/io/decoder.h io/decoder.cpp
+    include/io/disk_storage.h io/disk_storage.cpp
     include/io/dir_file.h
     include/io/encoder.h io/encoder.cpp
     include/io/ends_with_slash.h io/ends_with_slash.cpp

@@ -17,6 +17,7 @@
 #include "engine/spindac.h"
 #include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
+#include "io/disk_storage.h"
 #include "ui/diskvid.h"
 #include "ui/video.h"
 #include "ui/zoom.h"
@@ -24,6 +25,7 @@
 #include <array> // for std::size
 
 using namespace id::engine;
+using namespace id::io;
 using namespace id::ui;
 
 namespace id::misc

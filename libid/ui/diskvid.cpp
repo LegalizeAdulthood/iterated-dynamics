@@ -1,18 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-// "Disk-Video" routines
-//
-// Caution when modifying any code in here:  bugs are possible which
-// slow the cache substantially but don't cause incorrect results.
-// Do timing tests for a variety of situations after any change.
-//
-//
 #include "ui/diskvid.h"
 
 #include "engine/LogicalScreen.h"
 #include "engine/text_color.h"
 #include "engine/VideoInfo.h"
+#include "io/disk_storage.h"
 #include "io/encoder.h"
 #include "math/big.h"
 #include "misc/Driver.h"
@@ -25,16 +19,10 @@
 
 #include <fmt/format.h>
 
-#include <array>
-#include <cassert>
 #include <chrono>
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <filesystem>
-#include <exception>
 #include <limits>
+#include <new>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -46,225 +34,45 @@ using namespace id::misc;
 namespace id::ui
 {
 
-enum
-{
-    BOX_ROW = 6,
-    BOX_COL = 11,
-    BOX_WIDTH = 57,
-    BOX_DEPTH = 12,
-    BLOCK_LEN = 2048, // must be a power of 2, must match next
-    BLOCK_SHIFT = 11, // must match above
-    CACHE_MIN = 64,   // minimum cache size in Kbytes
-    CACHE_MAX = 4096, // maximum cache size in Kbytes
-    FREE_MEM = 33,    // try to leave this much memory unallocated
-    HASH_SIZE = 2048  // power of 2, near CACHEMAX/(BLOCKLEN+8)
-};
-
 namespace
 {
 
-using DiskOffset = std::int64_t;
+constexpr int BOX_ROW{6};
+constexpr int BOX_COL{11};
+constexpr int BOX_WIDTH{57};
+constexpr int BOX_DEPTH{12};
 
-// structure of each cache entry
-struct Cache
+int s_time_to_display{};
+std::chrono::time_point<std::chrono::high_resolution_clock> s_last_status{};
+
+// TODO: removed later
+// Slice 41 moves backend setup decisions to the requesting controller.
+int start_disk_video(
+    const std::int64_t row_size, const std::int64_t col_size, const int colors, const std::vector<Byte> &header)
 {
-    DiskOffset offset;      // pixel offset in image
-    Byte pixel[BLOCK_LEN];  // one pixel per byte
-    unsigned int hash_link; // ptr to next cache entry with same hash
-    bool dirty;             // changed since read?
-    bool lru;               // recently used?
-};
-
-} // namespace
-
-bool g_disk_16_bit{}; // storing 16 bit values for continuous potential
-bool g_disk_targa{};  //
-bool g_disk_flag{};   //
-bool g_good_mode{};   // if non-zero, OK to read/write pixels
-
-static int s_time_to_display{};             //
-static std::FILE *s_fp{};                   //
-static Cache *s_cache_end{};                //
-static Cache *s_cache_lru{};                //
-static Cache *s_cur_cache{};                //
-static Cache *s_cache_start{};              //
-static DiskOffset s_high_offset{};          // highwater mark of writes
-static DiskOffset s_seek_offset{};          // what we'll get next if we don't seek
-static DiskOffset s_cur_offset{};           // offset of last block referenced
-static int s_cur_row{};                     //
-static DiskOffset s_cur_row_base{};         //
-static unsigned int s_hash_ptr[HASH_SIZE]{}; //
-static int s_pixel_shift{};                 //
-static int s_header_length{};               //
-static int s_row_size{};                    // doubles as a disk video not ok flag
-static int s_col_size{};                    // sydots, *2 when pot16bit
-static std::vector<Byte> s_mem_buf;         //
-static MemoryHandle s_dv_handle{};          //
-static std::filesystem::path s_targa_disk_path;
-static std::uint64_t s_mem_offset{};         //
-static std::uint64_t s_old_mem_offset{};     //
-static Byte *s_mem_buf_ptr{};               //
-
-static int get_pixel_shift(int colors);
-static DiskOffset block_offset(DiskOffset offset);
-static int block_index(DiskOffset offset);
-static unsigned int hash_index(DiskOffset offset);
-static void find_load_cache(DiskOffset offset);
-static Cache *find_cache(DiskOffset offset);
-static void write_cache_lru();
-static void mem_putc(Byte c);
-static Byte mem_getc();
-static void mem_seek(std::uint64_t offset);
-
-int start_disk()
-{
-    s_header_length = 0;
-    g_disk_targa = false;
-    return common_start_disk(g_screen_x_dots, g_screen_y_dots, g_colors);
-}
-
-int pot_start_disk()
-{
-    if (driver_is_disk())         // ditch the original disk file
-    {
-        end_disk();
-    }
-    else
-    {
-        show_temp_msg("clearing 16bit pot work area");
-    }
-    s_header_length = 0;
-    g_disk_targa = false;
-    const int i = common_start_disk(g_screen_x_dots, g_screen_y_dots << 1, g_colors);
-    clear_temp_msg();
-    if (i == 0)
-    {
-        g_disk_16_bit = true;
-    }
-
-    return i;
-}
-
-int targa_start_disk(std::FILE *targa_fp, const int overhead)
-{
-    if (driver_is_disk()) // ditch the original file, make just the targa
-    {
-        end_disk();      // close the 'screen'
-        set_null_video(); // set read_pixel and write_pixel routines to do nothing
-    }
-    s_header_length = overhead;
-    s_fp = targa_fp;
-    g_disk_targa = true;
-    const int i = common_start_disk(g_logical_screen.x_dots * 3, g_logical_screen.y_dots, g_colors);
-    s_high_offset = 100000000; // targa not necessarily init'd to zeros
-
-    return i;
-}
-
-void set_targa_disk_path(const std::filesystem::path &path)
-{
-    s_targa_disk_path = path;
-}
-
-const std::filesystem::path &targa_disk_path()
-{
-    return s_targa_disk_path;
-}
-
-static int get_pixel_shift(const int colors)
-{
-    int pixel_shift = 3;
-    int color_count = 2;
-    while (color_count < colors && pixel_shift > 0)
-    {
-        color_count *= color_count;
-        --pixel_shift;
-    }
-    return pixel_shift;
-}
-
-static DiskOffset block_offset(const DiskOffset offset)
-{
-    return offset & ~(static_cast<DiskOffset>(BLOCK_LEN) - 1);
-}
-
-static int block_index(const DiskOffset offset)
-{
-    return static_cast<int>(offset & (BLOCK_LEN - 1));
-}
-
-static unsigned int hash_index(const DiskOffset offset)
-{
-    return static_cast<unsigned int>((static_cast<std::uint64_t>(offset) >> BLOCK_SHIFT) & (HASH_SIZE - 1));
-}
-
-bool disk_video_memory_blocks(const std::int64_t row_size, const std::int64_t col_size, const int colors,
-    const int header_length, std::uint64_t &blocks)
-{
-    blocks = 0;
-    if (row_size <= 0 || col_size <= 0 || colors < 2 || header_length < 0)
-    {
-        return false;
-    }
-    const auto unsigned_row_size = static_cast<std::uint64_t>(row_size);
-    const auto unsigned_col_size = static_cast<std::uint64_t>(col_size);
-    if (unsigned_row_size > std::numeric_limits<std::uint64_t>::max() / unsigned_col_size)
-    {
-        return false;
-    }
-    std::uint64_t storage_bytes = unsigned_row_size * unsigned_col_size;
-    const int pixel_shift = get_pixel_shift(colors);
-    if (pixel_shift > 0)
-    {
-        const std::uint64_t packed_pixels = (std::uint64_t{1} << pixel_shift) - 1;
-        if (storage_bytes > std::numeric_limits<std::uint64_t>::max() - packed_pixels)
-        {
-            return false;
-        }
-        storage_bytes = (storage_bytes + packed_pixels) >> pixel_shift;
-    }
-    if (storage_bytes > std::numeric_limits<std::uint64_t>::max() - (BLOCK_LEN - 1))
-    {
-        return false;
-    }
-    // Cache transfers include the padding after the last image byte.
-    storage_bytes = (storage_bytes + BLOCK_LEN - 1) / BLOCK_LEN * BLOCK_LEN;
-    if (storage_bytes > std::numeric_limits<std::uint64_t>::max() - static_cast<std::uint64_t>(header_length))
-    {
-        return false;
-    }
-    storage_bytes += static_cast<std::uint64_t>(header_length);
-    if (storage_bytes > std::numeric_limits<std::uint64_t>::max() - (BLOCK_LEN - 1))
-    {
-        return false;
-    }
-    blocks = (storage_bytes + BLOCK_LEN - 1) / BLOCK_LEN;
-    return blocks > 0;
-}
-
-MemoryLocation disk_video_memory_type()
-{
-    return s_dv_handle ? memory_type(s_dv_handle) : MemoryLocation::NOWHERE;
-}
-
-int common_start_disk(const std::int64_t new_row_size, const std::int64_t new_col_size, const int colors)
-{
+    const bool targa{!header.empty()};
+    const std::filesystem::path backing_path{targa ? targa_disk_path() : std::filesystem::path{}};
     if (g_disk_flag)
     {
         end_disk();
     }
-    if (driver_is_disk()) // otherwise, real screen also in use, don't hit it
+    g_disk_targa = targa;
+    if (targa)
+    {
+        set_targa_disk_path(backing_path);
+    }
+    if (driver_is_disk())
     {
         help_title();
-        driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  // init rest to background
+        driver_set_attr(1, 0, C_DVID_BKGRD, 24 * 80);
         for (int i = 0; i < BOX_DEPTH; ++i)
         {
-            driver_set_attr(BOX_ROW+i, BOX_COL, C_DVID_LO, BOX_WIDTH);  // init box
+            driver_set_attr(BOX_ROW + i, BOX_COL, C_DVID_LO, BOX_WIDTH);
         }
-        driver_put_string(BOX_ROW+2, BOX_COL+4, C_DVID_HI, "'Disk-Video' mode");
+        driver_put_string(BOX_ROW + 2, BOX_COL + 4, C_DVID_HI, "'Disk-Video' mode");
         driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO,
             fmt::format("Screen resolution: {:d} x {:d}", g_screen_x_dots, g_screen_y_dots));
-        if (g_disk_targa)
+        if (targa)
         {
             driver_put_string(-1, -1, C_DVID_LO, "  24 bit Targa");
         }
@@ -273,586 +81,189 @@ int common_start_disk(const std::int64_t new_row_size, const std::int64_t new_co
             driver_put_string(-1, -1, C_DVID_LO, "  Colors: ");
             driver_put_string(-1, -1, C_DVID_LO, std::to_string(colors));
         }
-        driver_put_string(BOX_ROW+8, BOX_COL+4, C_DVID_LO, "Save name: " + g_save_filename.string());
-        driver_put_string(BOX_ROW+10, BOX_COL+4, C_DVID_LO, "Status:");
+        driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO, "Save name: " + g_save_filename.string());
+        driver_put_string(BOX_ROW + 10, BOX_COL + 4, C_DVID_LO, "Status:");
         dvid_status(0, "allocating the 'screen'");
     }
-    if (new_row_size > std::numeric_limits<int>::max() || new_col_size > std::numeric_limits<int>::max())
+    if (row_size > std::numeric_limits<int>::max() || col_size > std::numeric_limits<int>::max())
     {
         stop_msg("*** disk video dimensions are too large ***");
         return -1;
     }
-    s_high_offset = -1;
-    s_seek_offset = s_high_offset;
-    s_cur_offset = s_seek_offset;
-    s_cur_row    = -1;
-    s_mem_offset = 0;
-    s_old_mem_offset = 0;
-    s_pixel_shift = g_disk_targa ? 0 : get_pixel_shift(colors);
-    s_time_to_display = g_bf_math != BFMathType::NONE ? 10 : 1000;  // time-to-g_driver-status counter
-    std::uint64_t memory_size = 0;
-    if (!disk_video_memory_blocks(
-            new_row_size, new_col_size, g_disk_targa ? 256 : colors, s_header_length, memory_size))
+    std::uint64_t blocks{};
+    if (!disk_video_memory_blocks(row_size, col_size, targa ? 256 : colors, static_cast<int>(header.size()), blocks))
     {
         stop_msg("*** disk video dimensions overflow allocation size ***");
         return -1;
     }
-
-    constexpr unsigned int CACHE_SIZE{CACHE_MAX};
-    const std::size_t cache_bytes{static_cast<std::size_t>(CACHE_SIZE) << 10};
-    s_cache_start = static_cast<Cache *>(std::malloc(cache_bytes));
-    if (s_cache_start == nullptr)
-    {
-        stop_msg("*** insufficient free memory for cache buffers ***");
-        return -1;
-    }
-    s_cache_lru = s_cache_start;
-    s_cache_end = s_cache_lru + cache_bytes/sizeof(*s_cache_start);
-    s_mem_buf.resize(BLOCK_LEN);
-    const auto release_cache = []
-    {
-        std::free(s_cache_start);
-        s_cache_start = nullptr;
-        s_cache_lru = nullptr;
-        s_cache_end = nullptr;
-        s_mem_buf.clear();
-    };
     if (driver_is_disk())
     {
-        driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, fmt::format("Cache size: {:d}K", CACHE_SIZE));
+        driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, fmt::format("Cache size: {:d}K", DISK_STORAGE_CACHE_KB));
     }
-
-    // preset cache to all invalid entries so we don't need free list logic
-    for (unsigned int &elem : s_hash_ptr)
-    {
-        elem = 0xffff; // 0xffff marks the end of a hash chain
-    }
-    DiskOffset long_tmp = 100000000;
-    for (Cache *ptr1 = s_cache_start; ptr1 < s_cache_end; ++ptr1)
-    {
-        ptr1->dirty = false;
-        ptr1->lru = false;
-        long_tmp += BLOCK_LEN;
-        unsigned int *fwd_link = &s_hash_ptr[hash_index(long_tmp)];
-        ptr1->offset = long_tmp;
-        ptr1->hash_link = *fwd_link;
-        *fwd_link = static_cast<int>(reinterpret_cast<char *>(ptr1) - reinterpret_cast<char *>(s_cache_start));
-    }
-
-    g_disk_flag = true;
-    s_row_size = static_cast<int>(new_row_size);
-    s_col_size = static_cast<int>(new_col_size);
-
-    if (g_disk_targa)
-    {
-        // Retrieve the header information first
-        std::fseek(s_fp, 0L, SEEK_SET);
-        for (int i = 0; i < s_header_length; i++)
-        {
-            s_mem_buf[i] = static_cast<Byte>(std::fgetc(s_fp));
-        }
-        std::fclose(s_fp);
-        s_fp = nullptr;
-        s_dv_handle = request_memory(BLOCK_LEN, memory_size, MemoryLocation::DISK, targa_disk_path());
-    }
-    else
-    {
-        s_dv_handle = request_memory(BLOCK_LEN, memory_size, MemoryLocation::MEMORY);
-    }
-    if (!s_dv_handle)
+    const MemoryHandle backing{request_memory(
+        DISK_STORAGE_BLOCK_SIZE, blocks, targa ? MemoryLocation::DISK : MemoryLocation::MEMORY, backing_path)};
+    if (!backing)
     {
         g_good_mode = false;
-        s_row_size = 0;
-        s_col_size = 0;
-        g_disk_flag = false;
-        release_cache();
         return -1;
     }
-
+    try
+    {
+        start_disk_storage(row_size, col_size, colors, backing, header);
+    }
+    catch (const std::bad_alloc &)
+    {
+        stop_msg("*** insufficient free memory for cache buffers ***");
+        g_good_mode = false;
+        return -1;
+    }
+    catch (const MemoryError &error)
+    {
+        stop_msg(error.what());
+        g_good_mode = false;
+        return -1;
+    }
+    s_time_to_display = g_bf_math != BFMathType::NONE ? 10 : 1000;
     if (driver_is_disk())
     {
-        driver_put_string(BOX_ROW+2, BOX_COL+23, C_DVID_LO,
-                          memory_type(s_dv_handle) == MemoryLocation::DISK ? "Using your Disk Drive" : "Using your memory");
-    }
-
-    s_mem_buf_ptr = s_mem_buf.data();
-
-    if (g_disk_targa)
-    {
-        // Put header information in the file
-        s_dv_handle.from_memory(s_mem_buf.data(), static_cast<U16>(s_header_length), 1L, 0);
-    }
-
-    if (driver_is_disk())
-    {
+        driver_put_string(BOX_ROW + 2, BOX_COL + 23, C_DVID_LO,
+            disk_video_memory_type() == MemoryLocation::DISK ? "Using your Disk Drive" : "Using your memory");
         dvid_status(0, "");
     }
     return 0;
 }
 
-void end_disk()
+// TODO: removed later
+// Slice 41 services storage progress from the outer UI controller.
+void update_disk_video_status()
 {
-    const bool trim_targa{g_disk_targa && !s_targa_disk_path.empty()};
-    const std::uintmax_t targa_size{
-        static_cast<std::uintmax_t>(s_header_length)
-        + static_cast<std::uintmax_t>(s_row_size) * static_cast<std::uintmax_t>(s_col_size)};
-
-    std::exception_ptr failure;
-    if (g_disk_targa && s_cache_start != nullptr)
-    {
-        try
-        {
-            for (s_cache_lru = s_cache_start; s_cache_lru < s_cache_end; ++s_cache_lru)
-            {
-                if (s_cache_lru->dirty)
-                {
-                    write_cache_lru();
-                }
-            }
-        }
-        catch (...)
-        {
-            failure = std::current_exception();
-        }
-    }
-
-    if (s_fp != nullptr)
-    {
-        std::fclose(s_fp);
-        s_fp = nullptr;
-    }
-
-    if (s_dv_handle)
-    {
-        memory_release(s_dv_handle);
-        s_dv_handle = MemoryHandle{};
-    }
-    if (trim_targa)
-    {
-        std::error_code ignore;
-        std::filesystem::resize_file(s_targa_disk_path, targa_size, ignore);
-    }
-    if (s_cache_start != nullptr)
-    {
-        free(s_cache_start);
-        s_cache_start = nullptr;
-    }
-    s_mem_buf.clear();
-    s_targa_disk_path.clear();
-    g_disk_flag = false;
-    s_row_size = 0;
-    g_disk_16_bit = false;
-    if (failure)
-    {
-        std::rethrow_exception(failure);
-    }
-}
-
-int disk_read_pixel(const int col, int row)
-{
-    if (--s_time_to_display < 0)  // time to g_driver status?
+    const DiskStorageProgress progress{disk_storage_progress()};
+    if (--s_time_to_display < 0)
     {
         if (driver_is_disk())
         {
             dvid_status(0,
-                fmt::format(" reading line {:4d}",
-                    row >= g_screen_y_dots ? row - g_screen_y_dots : row)); // adjust when potfile
+                fmt::format(" {} line {:4d}", progress.operation == DiskStorageOperation::READ ? "reading" : "writing",
+                    progress.row >= g_screen_y_dots ? progress.row - g_screen_y_dots : progress.row));
         }
-        if (g_bf_math != BFMathType::NONE)
-        {
-            s_time_to_display = 10;  // time-to-g_driver-status counter
-        }
-        else
-        {
-            s_time_to_display = 1000;  // time-to-g_driver-status counter
-        }
-    }
-    if (row != s_cur_row) // try to avoid ghastly code generated for multiply
-    {
-        if (row < 0 || row >= s_col_size) // while we're at it avoid this test if not needed
-        {
-            return 0;
-        }
-        s_cur_row = row;
-        s_cur_row_base = static_cast<DiskOffset>(s_cur_row) * s_row_size;
-    }
-    if (col < 0 || col >= s_row_size)
-    {
-        return 0;
-    }
-    const DiskOffset offset = s_cur_row_base + col;
-    const int col_index = block_index(offset); // offset within cache entry
-    if (s_cur_offset != block_offset(offset)) // same entry as last ref?
-    {
-        find_load_cache(block_offset(offset));
-    }
-    return s_cur_cache->pixel[col_index];
-}
-
-bool from_mem_disk(const std::int64_t offset, const int size, void *dest)
-{
-    if (offset < 0 || size < 0)
-    {
-        return false;
-    }
-    const int col_index = block_index(offset);
-    if (col_index + size > BLOCK_LEN)            // access violates  a
-    {
-        return false;                                 //   cache boundary
-    }
-    if (s_cur_offset != block_offset(offset)) // same entry as last ref?
-    {
-        find_load_cache(block_offset(offset));
-    }
-    std::memcpy(dest, &s_cur_cache->pixel[col_index], size);
-    s_cur_cache->dirty = false;
-    return true;
-}
-
-void targa_read_disk(unsigned int col, const unsigned int row, Byte *red, Byte *green, Byte *blue)
-{
-    col *= 3;
-    *blue  = static_cast<Byte>(disk_read_pixel(col, row));
-    *green = static_cast<Byte>(disk_read_pixel(++col, row));
-    *red   = static_cast<Byte>(disk_read_pixel(col + 1, row));
-}
-
-void disk_write_pixel(const int col, int row, const int color)
-{
-    if (--s_time_to_display < 0)  // time to display status?
-    {
-        if (driver_is_disk())
-        {
-            dvid_status(0,
-                fmt::format(" writing line {:4d}",
-                    row >= g_screen_y_dots ? row - g_screen_y_dots : row)); // adjust when potfile
-        }
-        s_time_to_display = 1000;
-    }
-    if (row != s_cur_row)     // try to avoid ghastly code generated for multiply
-    {
-        if (row < 0 || row >= s_col_size) // while we're at it avoid this test if not needed
-        {
-            return;
-        }
-        s_cur_row = row;
-        s_cur_row_base = static_cast<DiskOffset>(s_cur_row) * s_row_size;
-    }
-    if (col < 0 || col >= s_row_size)
-    {
-        return;
-    }
-    const DiskOffset offset = s_cur_row_base + col;
-    const int col_index = block_index(offset);
-    if (s_cur_offset != block_offset(offset)) // same entry as last ref?
-    {
-        find_load_cache(block_offset(offset));
-    }
-    if (s_cur_cache->pixel[col_index] != (color & 0xff))
-    {
-        s_cur_cache->pixel[col_index] = static_cast<Byte>(color);
-        s_cur_cache->dirty = true;
+        s_time_to_display =
+            progress.operation == DiskStorageOperation::READ && g_bf_math != BFMathType::NONE ? 10 : 1000;
     }
 }
 
-bool to_mem_disk(const std::int64_t offset, const int size, const void *src)
+} // namespace
+
+bool g_good_mode{};
+
+int start_disk()
 {
-    if (offset < 0 || size < 0)
-    {
-        return false;
-    }
-    const int col_index = block_index(offset);
-
-    if (col_index + size > BLOCK_LEN)           // access violates  a
-    {
-        return false;                           //   cache boundary
-    }
-
-    if (s_cur_offset != block_offset(offset)) // same entry as last ref?
-    {
-        find_load_cache(block_offset(offset));
-    }
-
-    std::memcpy(&s_cur_cache->pixel[col_index], src, size);
-    s_cur_cache->dirty = true;
-    return true;
+    return common_start_disk(g_screen_x_dots, g_screen_y_dots, g_colors);
 }
 
-void targa_write_disk(unsigned int col, const unsigned int row, const Byte red, const Byte green, const Byte blue)
+// TODO: removed later
+// Slice 41 moves potential-storage setup to the requesting controller.
+int pot_start_disk()
 {
-    disk_write_pixel(col *= 3, row, blue);
-    disk_write_pixel(++col, row, green);
-    disk_write_pixel(col+1, row, red);
-}
-
-static void find_load_cache(const DiskOffset offset) // used by read/write
-{
-    s_cur_offset = offset; // note this for next reference
-    // check if required entry is in cache - lookup by hash
-    unsigned int tbl_offset = s_hash_ptr[hash_index(offset)];
-    while (tbl_offset != 0xffff)  // follow the hash chain
+    if (driver_is_disk())
     {
-        s_cur_cache = reinterpret_cast<Cache *>(reinterpret_cast<char *>(s_cache_start) + tbl_offset);
-        if (s_cur_cache->offset == offset)  // great, it is in the cache
-        {
-            s_cur_cache->lru = true;
-            return;
-        }
-        tbl_offset = s_cur_cache->hash_link;
-    }
-    // must load the cache entry from backing store
-    while (true)  // look around for something not recently used
-    {
-        if (++s_cache_lru >= s_cache_end)
-        {
-            s_cache_lru = s_cache_start;
-        }
-        if (!s_cache_lru->lru)
-        {
-            break;
-        }
-        s_cache_lru->lru = false;
-    }
-    if (s_cache_lru->dirty) // must write this block before reusing it
-    {
-        write_cache_lru();
-    }
-    // remove block at cache_lru from its hash chain
-    unsigned int *fwd_link = &s_hash_ptr[hash_index(s_cache_lru->offset)];
-    tbl_offset = static_cast<int>(reinterpret_cast<char *>(s_cache_lru) - reinterpret_cast<char *>(s_cache_start));
-    while (*fwd_link != tbl_offset)
-    {
-        fwd_link = &reinterpret_cast<Cache *>(reinterpret_cast<char *>(s_cache_start) + *fwd_link)->hash_link;
-    }
-    *fwd_link = s_cache_lru->hash_link;
-    // load block
-    s_cache_lru->dirty  = false;
-    s_cache_lru->lru    = true;
-    s_cache_lru->offset = offset;
-    Byte *pixel_ptr = &s_cache_lru->pixel[0];
-    if (offset > s_high_offset)  // never been this high before, just clear it
-    {
-        s_high_offset = offset;
-        std::memset(pixel_ptr, 0, BLOCK_LEN);
+        end_disk();
     }
     else
     {
-        if (offset != s_seek_offset)
-        {
-            mem_seek(static_cast<std::uint64_t>(offset) >> s_pixel_shift);
-        }
-        s_seek_offset = offset + BLOCK_LEN;
-        switch (s_pixel_shift)
-        {
-        case 0:
-            for (int i = 0; i < BLOCK_LEN; ++i)
-            {
-                *pixel_ptr++ = mem_getc();
-            }
-            break;
-
-        case 1:
-            for (int i = 0; i < BLOCK_LEN/2; ++i)
-            {
-                const Byte tmp_char = mem_getc();
-                *pixel_ptr++ = static_cast<Byte>(tmp_char >> 4);
-                *pixel_ptr++ = static_cast<Byte>(tmp_char & 15);
-            }
-            break;
-        case 2:
-            for (int i = 0; i < BLOCK_LEN/4; ++i)
-            {
-                const Byte tmp_char = mem_getc();
-                for (int j = 6; j >= 0; j -= 2)
-                {
-                    *pixel_ptr++ = static_cast<Byte>(tmp_char >> j & 3);
-                }
-            }
-            break;
-        case 3:
-            for (int i = 0; i < BLOCK_LEN/8; ++i)
-            {
-                const Byte tmp_char = mem_getc();
-                for (int j = 7; j >= 0; --j)
-                {
-                    *pixel_ptr++ = static_cast<Byte>(tmp_char >> j & 1);
-                }
-            }
-            break;
-        }
+        show_temp_msg("clearing 16bit pot work area");
     }
-    // add new block to its hash chain
-    fwd_link = &s_hash_ptr[hash_index(offset)];
-    s_cache_lru->hash_link = *fwd_link;
-    *fwd_link = static_cast<int>(reinterpret_cast<char *>(s_cache_lru) - reinterpret_cast<char *>(s_cache_start));
-    s_cur_cache = s_cache_lru;
+    const int result{common_start_disk(g_screen_x_dots, static_cast<std::int64_t>(g_screen_y_dots) * 2, g_colors)};
+    clear_temp_msg();
+    if (result == 0)
+    {
+        g_disk_16_bit = true;
+    }
+    return result;
 }
 
-// lookup for write_cache_lru
-static Cache *find_cache(const DiskOffset offset)
+// TODO: removed later
+// Slice 41 moves Targa-storage setup to the requesting controller.
+int targa_start_disk(std::FILE *file, const int overhead)
 {
-    unsigned int tbl_offset = s_hash_ptr[hash_index(offset)];
-    while (tbl_offset != 0xffff)
+    const std::filesystem::path path{targa_disk_path()};
+    if (driver_is_disk())
     {
-        Cache *ptr1 = reinterpret_cast<Cache *>(reinterpret_cast<char *>(s_cache_start) + tbl_offset);
-        if (ptr1->offset == offset)
-        {
-            return ptr1;
-        }
-        tbl_offset = ptr1->hash_link;
+        end_disk();
+        set_null_video();
+        set_targa_disk_path(path);
     }
-    return nullptr;
+    try
+    {
+        const std::vector<Byte> header{read_targa_header(file, overhead)};
+        return start_disk_video(
+            static_cast<std::int64_t>(g_logical_screen.x_dots) * 3, g_logical_screen.y_dots, g_colors, header);
+    }
+    catch (const MemoryError &error)
+    {
+        stop_msg(error.what());
+        return -1;
+    }
 }
 
-enum
+// TODO: removed later
+// Slice 41 moves storage setup to the requesting controller.
+int common_start_disk(const std::int64_t row_size, const std::int64_t col_size, const int colors)
 {
-    WRITE_GAP = 4 // 1 for no gaps
-};
-
-static void  write_cache_lru()
-{
-    Byte tmp_char = 0;
-    // scan back to also write any preceding dirty blocks, skipping small gaps
-    Cache *ptr1 = s_cache_lru;
-    DiskOffset offset = ptr1->offset;
-    int i = 0;
-    while (++i <= WRITE_GAP)
-    {
-        offset -= BLOCK_LEN;
-        Cache *ptr2 = find_cache(offset);
-        if (ptr2 != nullptr && ptr2->dirty)
-        {
-            ptr1 = ptr2;
-            i = 0;
-        }
-    }
-    // write all consecutive dirty blocks (often whole cache in 1pass modes)
-    // keep going past small gaps
-
-write_seek:
-    mem_seek(static_cast<std::uint64_t>(ptr1->offset) >> s_pixel_shift);
-
-write_stuff:
-    const Byte *pixel_ptr = &ptr1->pixel[0];
-    switch (s_pixel_shift)
-    {
-    case 0:
-        for (int j = 0; j < BLOCK_LEN; ++j)
-        {
-            mem_putc(*pixel_ptr++);
-        }
-        break;
-    case 1:
-        for (int j = 0; j < BLOCK_LEN/2; ++j)
-        {
-            tmp_char = static_cast<Byte>(*pixel_ptr++ << 4);
-            tmp_char = static_cast<Byte>(tmp_char + *pixel_ptr++);
-            mem_putc(tmp_char);
-        }
-        break;
-    case 2:
-        for (int j = 0; j < BLOCK_LEN/4; ++j)
-        {
-            for (int k = 6; k >= 0; k -= 2)
-            {
-                tmp_char = static_cast<Byte>((tmp_char << 2) + *pixel_ptr++);
-            }
-            mem_putc(tmp_char);
-        }
-        break;
-    case 3:
-        for (int j = 0; j < BLOCK_LEN/8; ++j)
-        {
-            // clang-format off
-            mem_putc(static_cast<Byte>(((((((*pixel_ptr << 1
-                    | *(pixel_ptr + 1)) << 1
-                    | *(pixel_ptr + 2)) << 1
-                    | *(pixel_ptr + 3)) << 1
-                    | *(pixel_ptr + 4)) << 1
-                    | *(pixel_ptr + 5)) << 1
-                    | *(pixel_ptr + 6)) << 1
-                    | *(pixel_ptr + 7)));
-            // clang-format on
-            pixel_ptr += 8;
-        }
-        break;
-    }
-    ptr1->dirty = false;
-    offset = ptr1->offset + BLOCK_LEN;
-    ptr1 = find_cache(offset);
-    if (ptr1 != nullptr && ptr1->dirty)
-    {
-        goto write_stuff;
-    }
-    i = 1;
-    while (++i <= WRITE_GAP)
-    {
-        offset += BLOCK_LEN;
-        ptr1 = find_cache(offset);
-        if (ptr1 != nullptr && ptr1->dirty)
-        {
-            goto write_seek;
-        }
-    }
-    s_seek_offset = -1; // force a seek before next read
+    return start_disk_video(row_size, col_size, colors, {});
 }
 
-// Seek, mem_getc, mem_putc routines follow.
-// Note that the calling logic always separates mem_getc and mem_putc
-// sequences with a seek between them.  A mem_getc is never followed by
-// a mem_putc nor v.v. without a seek between them.
-//
-static void mem_seek(std::uint64_t offset)        // mem seek
+// TODO: removed later
+// Slice 41 replaces this bridge with controller-owned progress display.
+int disk_read_pixel(const int col, const int row)
 {
-    offset += static_cast<std::uint64_t>(s_header_length);
-    s_mem_offset = offset >> BLOCK_SHIFT;
-    if (s_mem_offset != s_old_mem_offset)
-    {
-        s_dv_handle.from_memory(s_mem_buf.data(), BLOCK_LEN, 1L, s_old_mem_offset);
-        s_dv_handle.to_memory(s_mem_buf.data(), BLOCK_LEN, 1L, s_mem_offset);
-    }
-    s_old_mem_offset = s_mem_offset;
-    s_mem_buf_ptr = s_mem_buf.data() + (offset & BLOCK_LEN - 1);
+    const int color{read_disk_pixel(col, row)};
+    update_disk_video_status();
+    return color;
 }
 
-static Byte  mem_getc()                     // memory get_char
+// TODO: removed later
+// Slice 41 replaces this bridge with controller-owned progress display.
+void disk_write_pixel(const int col, const int row, const int color)
 {
-    if (s_mem_buf_ptr - s_mem_buf.data() >= BLOCK_LEN)
-    {
-        s_dv_handle.from_memory(s_mem_buf.data(), BLOCK_LEN, 1L, s_mem_offset);
-        s_mem_offset++;
-        s_dv_handle.to_memory(s_mem_buf.data(), BLOCK_LEN, 1L, s_mem_offset);
-        s_mem_buf_ptr = s_mem_buf.data();
-        s_old_mem_offset = s_mem_offset;
-    }
-    return *s_mem_buf_ptr++;
+    write_disk_pixel(col, row, color);
+    update_disk_video_status();
 }
 
-static void mem_putc(const Byte c)     // memory get_char
+// TODO: removed later
+// Slice 41 replaces this bridge with controller-owned progress display.
+void targa_read_disk(const unsigned int col, const unsigned int row, Byte *red, Byte *green, Byte *blue)
 {
-    if (s_mem_buf_ptr - s_mem_buf.data() >= BLOCK_LEN)
+    read_targa_pixel(col, row, red, green, blue);
+    for (int i = 0; i < 3; ++i)
     {
-        s_dv_handle.from_memory(s_mem_buf.data(), BLOCK_LEN, 1L, s_mem_offset);
-        s_mem_offset++;
-        s_dv_handle.to_memory(s_mem_buf.data(), BLOCK_LEN, 1L, s_mem_offset);
-        s_mem_buf_ptr = s_mem_buf.data();
-        s_old_mem_offset = s_mem_offset;
+        update_disk_video_status();
     }
-    *s_mem_buf_ptr++ = c;
+}
+
+// TODO: removed later
+// Slice 41 replaces this bridge with controller-owned progress display.
+void targa_write_disk(const unsigned int col, const unsigned int row, const Byte red, const Byte green, const Byte blue)
+{
+    write_targa_pixel(col, row, red, green, blue);
+    for (int i = 0; i < 3; ++i)
+    {
+        update_disk_video_status();
+    }
 }
 
 void dvid_status(int line, const char *msg)
 {
     using namespace std::literals::chrono_literals;
-    static std::chrono::time_point<std::chrono::high_resolution_clock> last{};
     const std::chrono::time_point now{std::chrono::high_resolution_clock::now()};
-    if (now - last < 100ms)
+    if (now - s_last_status < 100ms)
     {
         return;
     }
-    last = now;
-
-    assert(msg != nullptr);
+    s_last_status = now;
+    if (msg == nullptr)
+    {
+        throw std::logic_error("Disk video status text must be present");
+    }
     const std::string buff = (msg + std::string(40, ' ')).substr(0, 40);
     int attrib = C_DVID_HI;
     if (line >= 100)
@@ -860,7 +271,7 @@ void dvid_status(int line, const char *msg)
         line -= 100;
         attrib = C_STOP_ERR;
     }
-    driver_put_string(BOX_ROW+10+line, BOX_COL+12, attrib, buff);
+    driver_put_string(BOX_ROW + 10 + line, BOX_COL + 12, attrib, buff);
     driver_hide_text_cursor();
 }
 
