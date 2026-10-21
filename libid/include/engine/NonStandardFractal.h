@@ -8,6 +8,7 @@
 #include "fractals/Bifurcation.h"
 #include "fractals/Cellular.h"
 #include "fractals/Diffusion.h"
+#include "fractals/lsystem.h"
 #include "fractals/Plasma.h"
 #include "fractals/popcorn.h"
 #include "fractals/TestPoint.h"
@@ -30,7 +31,8 @@ public:
         TEST_POINT,
         ANT,
         CELLULAR,
-        PLASMA
+        PLASMA,
+        L_SYSTEM
     };
 
     NonStandardFractal() = default;
@@ -40,6 +42,7 @@ public:
     void select_ant_on_image();
     bool done() const;
     bool preparing() const;
+    bool sizing() const;
     bool potential_storage_required() const;
     void complete_potential_storage(bool available);
     void iterate();
@@ -49,7 +52,7 @@ public:
     void finish(bool interrupted);
 
     // TODO: removed later
-    // Slices 47.8-51 replace remaining renderer calls with selected operations.
+    // Slices 47.9-51 replace remaining renderer calls with selected operations.
     void render_legacy();
 
 private:
@@ -62,7 +65,8 @@ private:
         TEST_POINT,
         ANT,
         CELLULAR,
-        PLASMA
+        PLASMA,
+        L_SYSTEM
     };
 
     struct NoOperation
@@ -72,7 +76,7 @@ private:
     void prepare();
 
     std::variant<NoOperation, fractals::Bifurcation, fractals::Popcorn, fractals::Diffusion, fractals::TestPoint,
-        fractals::Ant, fractals::Cellular, fractals::Plasma>
+        fractals::Ant, fractals::Cellular, fractals::Plasma, fractals::LSystem>
         m_state{NoOperation{}};
     bool m_done{true};
 };

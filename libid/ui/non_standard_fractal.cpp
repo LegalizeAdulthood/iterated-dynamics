@@ -11,6 +11,7 @@
 #include "ui/calculate_image.h"
 #include "ui/cellular.h"
 #include "ui/diffusion.h"
+#include "ui/lsystem.h"
 #include "ui/plasma.h"
 #include "ui/popcorn.h"
 #include "ui/standard_orbit_plot.h"
@@ -97,6 +98,10 @@ int non_standard_fractal()
 
         case NonStandardFractal::Operation::PLASMA:
             plasma_type(non_standard_fractal);
+            break;
+
+        case NonStandardFractal::Operation::L_SYSTEM:
+            lsystem_type(non_standard_fractal);
             break;
 
         case NonStandardFractal::Operation::LEGACY:

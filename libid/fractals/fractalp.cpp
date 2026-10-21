@@ -42,7 +42,6 @@
 #include "ui/dynamic2d.h"
 #include "ui/frothy_basin.h"
 #include "ui/inverse_julia.h"
-#include "ui/lsystem.h"
 #include "ui/orbit2d.h"
 #include "ui/standard_4d.h"
 
@@ -1169,8 +1168,8 @@ const FractalSpecific g_fractal_specific[] = {
         -1.0F, 1.0F, -1.0F, 1.0F,                                                                          //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                  //
         SymmetryType::NONE,                                                                                //
-        nullptr, nullptr, standalone_per_image,                                                            //
-        lsystem_type,                                                                                      //
+        nullptr, nullptr, nullptr,                                                                         //
+        nullptr,                                                                                           //
         NO_BAILOUT                                                                                         //
     },
 

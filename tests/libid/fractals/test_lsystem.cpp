@@ -9,7 +9,10 @@
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
 #include <engine/LogicalScreen.h>
+#include <engine/NonStandardFractal.h>
+#include <engine/resume.h>
 #include <engine/VideoInfo.h>
+#include <fractals/fractalp.h>
 #include <math/fixed_pt.h>
 #include <misc/stack_avail.h>
 #include <misc/ValueSaver.h>
@@ -35,6 +38,21 @@ using namespace testing;
 namespace id::test
 {
 
+namespace
+{
+
+int unexpected_renderer()
+{
+    throw std::logic_error("L-system selection entered a renderer callback");
+}
+
+bool unexpected_setup()
+{
+    throw std::logic_error("L-system selection entered legacy per-image setup");
+}
+
+} // namespace
+
 class TestLSystem : public Test
 {
 protected:
@@ -42,6 +60,9 @@ protected:
 
     void SetUp() override
     {
+        m_specific.calc_type = unexpected_renderer;
+        m_specific.per_image = unexpected_setup;
+        g_dispatch = FractalDispatch{m_specific};
         EXPECT_CALL(m_driver, draw_line(_, _, _, _, _))
             .WillRepeatedly(Invoke(
                 [this](int x0, int y0, int x1, int y1, int color)
@@ -54,17 +75,18 @@ protected:
     {
         g_l_system_name = name;
         g_params[0] = order;
-        ASSERT_NO_THROW(lsystem_load());
         char stack_top{};
         const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-        LSystem system;
-        system.start();
-        for (int i = 0; i < 50000 && !system.done() && !system.interrupted(); ++i)
+        NonStandardFractal calculation;
+        ASSERT_TRUE(calculation.start().empty());
+        ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+        for (int i = 0; i < 50000 && !calculation.done(); ++i)
         {
-            system.iterate();
+            calculation.iterate();
         }
-        EXPECT_TRUE(system.done());
-        EXPECT_FALSE(system.interrupted());
+        EXPECT_TRUE(calculation.done());
+        EXPECT_TRUE(calculation.completed());
+        calculation.finish(false);
     }
 
     void expect_lines(const std::initializer_list<Line> expected)
@@ -84,8 +106,15 @@ protected:
     }
 
     MockDriver m_driver;
+    FractalSpecific m_specific{*get_fractal_specific(FractalType::L_SYSTEM)};
+    ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::L_SYSTEM};
+    ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific, &m_specific};
+    ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen, LogicalScreen{110, 106, 0, 0, 109.0, 105.0}};
+    ValueSaver<int> m_saved_width{g_screen_x_dots, 110};
+    ValueSaver<int> m_saved_height{g_screen_y_dots, 106};
     ValueSaver<float> m_saved_aspect{g_screen_aspect, 106.0F / 110.0F};
     ValueSaver<int> m_saved_colors{g_colors, 256};
     ValueSaver<bool> m_saved_overflow{g_overflow, false};
@@ -278,6 +307,111 @@ TEST_F(TestLSystem, overflowDuringSizingStopsBeforeDrawing)
     EXPECT_FALSE(system.sizing());
     EXPECT_FALSE(system.interrupted());
     EXPECT_TRUE(m_lines.empty());
+}
+
+TEST_F(TestLSystem, selectedOperationPreservesSizingAndDrawingIncrements)
+{
+    struct WorkState
+    {
+        bool sizing;
+        bool done;
+        std::size_t lines;
+    };
+
+    g_l_system_name = "Koch1";
+    g_params[0] = 3;
+    lsystem_load();
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    EXPECT_CALL(m_driver, stack_screen()).Times(0);
+    std::vector<WorkState> expected;
+    {
+        LSystem system;
+        system.start();
+        for (int i = 0; i < 5000 && !system.done() && !system.interrupted(); ++i)
+        {
+            system.iterate();
+            expected.push_back({system.sizing(), system.done(), m_lines.size()});
+        }
+        ASSERT_TRUE(system.done());
+        ASSERT_FALSE(system.interrupted());
+    }
+    const std::vector<Line> expected_lines{m_lines};
+    m_lines.clear();
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+
+    EXPECT_TRUE(calculation.sizing());
+    EXPECT_FALSE(calculation.done());
+    EXPECT_TRUE(m_lines.empty());
+    for (const WorkState &work : expected)
+    {
+        calculation.iterate();
+        EXPECT_EQ(work.sizing, calculation.sizing());
+        EXPECT_EQ(work.done, calculation.done());
+        EXPECT_EQ(work.lines, m_lines.size());
+    }
+    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(expected_lines, m_lines);
+    calculation.iterate();
+    EXPECT_EQ(expected_lines, m_lines);
+    calculation.finish(false);
+    EXPECT_FALSE(lsystem_loaded());
+}
+
+TEST_F(TestLSystem, selectionUsesAnAlreadyLoadedDefinition)
+{
+    g_l_system_name = "SizingBox";
+    lsystem_load();
+    g_l_system_filename.replace_filename("missing.l");
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    calculation.start();
+
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+
+    EXPECT_TRUE(calculation.sizing());
+    EXPECT_FALSE(calculation.done());
+    EXPECT_TRUE(m_lines.empty());
+    calculation.suspend();
+    EXPECT_TRUE(calculation.done());
+    EXPECT_FALSE(lsystem_loaded());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+}
+
+TEST_F(TestLSystem, drawingOverflowTerminatesTheSelectedOperation)
+{
+    g_l_system_name = "Koch1";
+    g_params[0] = 0;
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    for (int i = 0; i < 100 && calculation.sizing(); ++i)
+    {
+        calculation.iterate();
+    }
+    ASSERT_FALSE(calculation.sizing());
+    ASSERT_FALSE(calculation.done());
+    g_overflow = true;
+
+    calculation.iterate();
+
+    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(m_lines.empty());
+    calculation.iterate();
+    EXPECT_TRUE(m_lines.empty());
+    calculation.finish(false);
+    EXPECT_FALSE(lsystem_loaded());
+    EXPECT_FALSE(g_overflow);
 }
 
 class TestLSystemLoad : public TestLSystem

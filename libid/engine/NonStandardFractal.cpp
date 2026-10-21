@@ -160,6 +160,25 @@ NonStandardFractal::Operation NonStandardFractal::select()
         return Operation::PLASMA;
     }
 
+    case FractalType::L_SYSTEM:
+    {
+        start_timer();
+        prepare();
+        if (!lsystem_loaded())
+        {
+            lsystem_load();
+        }
+        LSystem &system{m_state.emplace<L_SYSTEM>()};
+        system.start();
+        m_done = system.done() || system.interrupted();
+        if (m_done)
+        {
+            g_calc_status = CalcStatus::COMPLETED;
+        }
+        update_timer();
+        return Operation::L_SYSTEM;
+    }
+
     default:
         return Operation::LEGACY;
     }
@@ -186,6 +205,15 @@ bool NonStandardFractal::preparing() const
         throw std::logic_error("No cellular calculation operation is selected");
     }
     return std::get<CELLULAR>(m_state).preparing();
+}
+
+bool NonStandardFractal::sizing() const
+{
+    if (m_state.index() != L_SYSTEM)
+    {
+        throw std::logic_error("No L-system calculation operation is selected");
+    }
+    return std::get<L_SYSTEM>(m_state).sizing();
 }
 
 bool NonStandardFractal::potential_storage_required() const
@@ -290,6 +318,19 @@ void NonStandardFractal::iterate()
         }
         return;
 
+    case L_SYSTEM:
+        if (!m_done)
+        {
+            LSystem &system{std::get<L_SYSTEM>(m_state)};
+            system.iterate();
+            m_done = system.done() || system.interrupted();
+            if (m_done)
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -357,6 +398,14 @@ void NonStandardFractal::suspend()
         }
         return;
 
+    case L_SYSTEM:
+        if (!m_done)
+        {
+            std::get<L_SYSTEM>(m_state).suspend();
+            finish(true);
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -386,7 +435,7 @@ void NonStandardFractal::finish(const bool interrupted)
 }
 
 // TODO: removed later
-// Slices 47.8-51 replace remaining renderer calls with selected operations.
+// Slices 47.9-51 replace remaining renderer calls with selected operations.
 void NonStandardFractal::render_legacy()
 {
     start_timer();

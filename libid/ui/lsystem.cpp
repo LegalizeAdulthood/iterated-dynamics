@@ -3,12 +3,12 @@
 //
 #include "ui/lsystem.h"
 
-#include "fractals/lsystem.h"
+#include "engine/NonStandardFractal.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
 #include "ui/thinking.h"
 
-using namespace id::fractals;
+using namespace id::engine;
 using namespace id::misc;
 
 namespace id::ui
@@ -62,23 +62,16 @@ void LSystemThinkingScreen::clear()
 
 } // namespace
 
-int lsystem_type()
+int lsystem_type(NonStandardFractal &calculation)
 {
-    if (!lsystem_loaded())
-    {
-        lsystem_load();
-    }
-
-    LSystem l_system;
-    l_system.start();
     LSystemThinkingScreen thinking_screen;
     unsigned char poll_counter{};
-    while (!l_system.done() && !l_system.interrupted())
+    while (!calculation.done())
     {
-        const bool sizing{l_system.sizing()};
+        const bool sizing{calculation.sizing()};
         if (thinking_screen.update(sizing))
         {
-            l_system.suspend();
+            calculation.suspend();
             return 0;
         }
         if (!sizing && poll_counter++ == 0)
@@ -86,11 +79,11 @@ int lsystem_type()
             display_disk_storage_progress();
             if (driver_key_pressed())
             {
-                l_system.suspend();
+                calculation.suspend();
                 return 0;
             }
         }
-        l_system.iterate();
+        calculation.iterate();
     }
     return 0;
 }

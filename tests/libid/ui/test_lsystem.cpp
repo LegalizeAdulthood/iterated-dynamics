@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include <ui/lsystem.h>
+#include <ui/non_standard_fractal.h>
 
 #include "MockDriver.h"
 #include "test_data.h"
@@ -9,8 +9,11 @@
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
 #include <engine/LogicalScreen.h>
+#include <engine/NonStandardFractal.h>
+#include <engine/resume.h>
 #include <engine/VideoInfo.h>
 #include <fractals/lsystem.h>
+#include <fractals/fractalp.h>
 #include <math/fixed_pt.h>
 #include <misc/stack_avail.h>
 #include <misc/ValueSaver.h>
@@ -24,6 +27,7 @@
 #include <filesystem>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -36,6 +40,21 @@ using namespace testing;
 namespace id::test
 {
 
+namespace
+{
+
+int unexpected_renderer()
+{
+    throw std::logic_error("L-system selection entered a renderer callback");
+}
+
+bool unexpected_setup()
+{
+    throw std::logic_error("L-system selection entered legacy per-image setup");
+}
+
+} // namespace
+
 class TestLSystemController : public Test
 {
 protected:
@@ -44,8 +63,15 @@ protected:
     int render();
 
     MockDriver m_driver;
+    FractalSpecific m_specific{*get_fractal_specific(FractalType::L_SYSTEM)};
+    ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::L_SYSTEM};
+    ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific, &m_specific};
+    ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen, LogicalScreen{110, 106, 0, 0, 109.0, 105.0}};
+    ValueSaver<int> m_saved_width{g_screen_x_dots, 110};
+    ValueSaver<int> m_saved_height{g_screen_y_dots, 106};
     ValueSaver<float> m_saved_aspect{g_screen_aspect, 106.0F / 110.0F};
     ValueSaver<int> m_saved_colors{g_colors, 256};
     ValueSaver<bool> m_saved_overflow{g_overflow, false};
@@ -59,6 +85,7 @@ protected:
     int m_thinking_exits{};
     int m_spinner_updates{};
     int m_lines{};
+    int m_pending_key{};
     bool m_visible{};
     bool m_cancel_sizing{};
     bool m_cancel_drawing{};
@@ -70,6 +97,9 @@ protected:
 
 void TestLSystemController::SetUp()
 {
+    m_specific.calc_type = unexpected_renderer;
+    m_specific.per_image = unexpected_setup;
+    g_dispatch = FractalDispatch{m_specific};
     EXPECT_CALL(m_driver, stack_screen()).WillRepeatedly(Invoke([this] { ++m_thinking_entries; }));
     EXPECT_CALL(m_driver, set_clear()).Times(AnyNumber());
     EXPECT_CALL(m_driver, unstack_screen())
@@ -111,8 +141,14 @@ void TestLSystemController::SetUp()
                 {
                     throw std::runtime_error{"injected input failure"};
                 }
-                return (m_visible && m_cancel_sizing) || (!m_visible && m_cancel_drawing && m_lines > 0) ? 'x' : 0;
+                if ((m_visible && m_cancel_sizing) || (!m_visible && m_cancel_drawing && m_lines > 0))
+                {
+                    m_pending_key = 'x';
+                }
+                return m_pending_key;
             }));
+    EXPECT_CALL(m_driver, get_key()).WillRepeatedly(Invoke([this] { return std::exchange(m_pending_key, 0); }));
+    EXPECT_CALL(m_driver, unget_key('x')).WillRepeatedly(Invoke([this](int key) { m_pending_key = key; }));
     EXPECT_CALL(m_driver, draw_line(_, _, _, _, _))
         .WillRepeatedly(Invoke(
             [this](int, int, int, int, int)
@@ -137,7 +173,7 @@ int TestLSystemController::render()
 {
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    return lsystem_type();
+    return non_standard_fractal();
 }
 
 TEST_F(TestLSystemController, closesThinkingBeforeFirstLine)
@@ -167,13 +203,16 @@ TEST_F(TestLSystemController, sizingInterruptionClosesThinkingWithoutConsumingKe
     g_params[0] = 9;
     m_cancel_sizing = true;
 
-    EXPECT_EQ(0, render());
+    EXPECT_EQ(-1, render());
 
     EXPECT_EQ(1, m_thinking_entries);
     EXPECT_EQ(1, m_thinking_exits);
     EXPECT_GT(m_spinner_updates, 0);
     EXPECT_EQ(0, m_lines);
     EXPECT_FALSE(lsystem_loaded());
+    EXPECT_EQ('x', m_pending_key);
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
 }
 
 TEST_F(TestLSystemController, drawingInterruptionDoesNotCloseThinkingTwice)
@@ -181,12 +220,15 @@ TEST_F(TestLSystemController, drawingInterruptionDoesNotCloseThinkingTwice)
     g_params[0] = 3;
     m_cancel_drawing = true;
 
-    EXPECT_EQ(0, render());
+    EXPECT_EQ(-1, render());
 
     EXPECT_EQ(1, m_thinking_entries);
     EXPECT_EQ(1, m_thinking_exits);
     EXPECT_GT(m_lines, 0);
     EXPECT_LT(m_lines, 192);
+    EXPECT_EQ('x', m_pending_key);
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
 }
 
 TEST_F(TestLSystemController, inputExceptionClosesThinking)

@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
+
+namespace id::engine
+{
+class NonStandardFractal;
+}
 
 namespace id::ui
 {
 
-int lsystem_type();
+int lsystem_type(engine::NonStandardFractal &calculation);
 
 } // namespace id::ui

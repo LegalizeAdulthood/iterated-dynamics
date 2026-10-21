@@ -588,11 +588,13 @@ The concrete render operation objects are:
   status interpretation.  It shares common image setup, timing, and
   cleanup, but its marked dispatch still enters whole UI render loops.
   Its bounded operation router owns bifurcation, Popcorn, standalone
-  Diffusion, TestPoint, Ant, Cellular, and Plasma state without renderer
-  callbacks.  Their UI controllers advance selected objects; setup,
-  resume, and finish stay below UI.  Plasma's controller reports storage
-  availability before engine initialization.  Cellular retains
-  generation-sized preparation and
+  Diffusion, TestPoint, Ant, Cellular, Plasma, and L-system state without
+  renderer callbacks.  Their UI controllers advance selected objects;
+  setup, resume, and finish stay below UI.  L-system definition loading,
+  startup, and terminal interpretation stay below UI; its controller
+  retains thinking-screen handling and the drawing poll throttle.
+  Plasma's controller reports storage availability before engine
+  initialization.  Cellular retains generation-sized preparation and
   next-screen initialization below UI; its thinking-screen display stays
   in the controller.  Popcorn's Julia setup and symmetry selection also
   stay below UI.  Ant's Ctrl+A entry selects an operation on the existing
@@ -1006,22 +1008,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 47.8. L-System Operation Binding
-
-Source: `fractals/lsystem.cpp`, `ui/lsystem.cpp`, and
-`NonStandardFractal`.
-
-- Select and own `LSystem`; retain definition loading and calculation
-  start below UI.
-- Keep sizing and drawing incremental.  Expose sizing and terminal
-  calculation facts without moving thinking-screen or polling policy.
-- Let the existing controller drive that selected instance.
-
-Done when: L-system rendering never reenters UI through setup/dispatch.
-
-Validation: reuse semantic tests and sizing/drawing autokey interruption
-coverage.  Keep thinking-screen cleanup and failure tests.
 
 ### 47.9. FrothyBasin Operation Binding
 
