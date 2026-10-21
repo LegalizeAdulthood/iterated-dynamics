@@ -26,6 +26,7 @@
 #include <fractals/population.h>
 #include <geometry/line3d.h>
 #include <geometry/plot3d.h>
+#include <io/decoder.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 #include <ui/calculate_image.h>
@@ -623,6 +624,43 @@ TEST_F(TestSelectedIFS, stereoPairRestoresFullScreenOnCompletionOrSuspension)
             calculation.finish(false);
         }
 
+        EXPECT_EQ(WIDTH * 2, g_logical_screen.x_dots);
+        EXPECT_EQ(HEIGHT, g_logical_screen.y_dots);
+        EXPECT_EQ(0, g_logical_screen.x_offset);
+        EXPECT_EQ(0, g_logical_screen.y_offset);
+        EXPECT_FALSE(g_viewport.enabled);
+    }
+}
+
+TEST_F(TestSelectedIFS, stereoPairRestoresFullScreenAfterCalculationFailure)
+{
+    const ValueSaver saved_row_count{io::g_row_count, 0};
+    g_image_region = ImageRegion{{-1.0, -1.0}, {1.0, 1.0}, {-1.0, -1.0}};
+    for (const bool second_eye : {false, true})
+    {
+        select_dimension(IFSDimension::THREE);
+        g_glasses_type = GlassesType::STEREO_PAIR;
+        g_screen_x_dots = WIDTH * 2;
+        g_logical_screen = {WIDTH, HEIGHT, 0, 0, WIDTH - 1.0, HEIGHT - 1.0};
+        g_viewport.enabled = true;
+        EXPECT_THROW(
+            {
+                NonStandardFractal calculation;
+                calculation.start();
+                calculation.select();
+                if (second_eye)
+                {
+                    complete_view(calculation);
+                    calculation.next_view();
+                }
+                EXPECT_CALL(m_driver, write_pixel(_, _, _))
+                    .WillOnce(Throw(std::runtime_error("Pixel output failed")))
+                    .RetiresOnSaturation();
+                complete_view(calculation);
+            },
+            std::runtime_error);
+
+        EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
         EXPECT_EQ(WIDTH * 2, g_logical_screen.x_dots);
         EXPECT_EQ(HEIGHT, g_logical_screen.y_dots);
         EXPECT_EQ(0, g_logical_screen.x_offset);

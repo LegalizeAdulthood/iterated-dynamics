@@ -8,13 +8,10 @@
 #include "engine/LogicalScreen.h"
 #include "engine/resume.h"
 #include "engine/VideoInfo.h"
-#include "engine/Viewport.h"
 #include "fractals/bif_may.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
 #include "fractals/ifs.h"
-#include "geometry/line3d.h"
-#include "geometry/plot3d.h"
 
 #include <cmath>
 #include <stdexcept>
@@ -211,7 +208,10 @@ NonStandardFractal::Operation NonStandardFractal::select()
             update_timer();
             return Operation::IFS_2D;
         }
-        start_ifs3d_view(false);
+        g_display_3d = Display3DMode::MINUS_ONE;
+        m_stereo_view.start();
+        m_state.emplace<IFS_3D>(m_stereo_view.both_eyes());
+        m_done = false;
         update_timer();
         return Operation::IFS_3D;
 
@@ -234,18 +234,6 @@ bool NonStandardFractal::done() const
     return m_done;
 }
 
-void NonStandardFractal::start_ifs3d_view(const bool second)
-{
-    g_display_3d = Display3DMode::MINUS_ONE;
-    g_which_image = second                    ? StereoImage::BLUE
-        : g_glasses_type != GlassesType::NONE ? StereoImage::RED
-                                              : StereoImage::NONE;
-    plot_setup();
-    g_plot = g_standard_plot;
-    m_state.emplace<IFS_3D>(glasses_alternating_or_superimpose());
-    m_done = false;
-}
-
 bool NonStandardFractal::view_done() const
 {
     if (m_state.index() != IFS_3D)
@@ -255,19 +243,15 @@ bool NonStandardFractal::view_done() const
     return std::get<IFS_3D>(m_state).done();
 }
 
-bool NonStandardFractal::next_view_required() const
-{
-    return g_which_image == StereoImage::RED && g_glasses_type >= GlassesType::PHOTO &&
-        g_display_3d != Display3DMode::NONE;
-}
-
 void NonStandardFractal::next_view()
 {
-    if (!view_done() || !next_view_required())
+    if (!view_done() || !m_stereo_view.next_view_required())
     {
         throw std::logic_error("The next IFS view requires a completed first eye");
     }
-    start_ifs3d_view(true);
+    m_stereo_view.next_view();
+    m_state.emplace<IFS_3D>(m_stereo_view.both_eyes());
+    m_done = false;
 }
 
 bool NonStandardFractal::preparing() const
@@ -465,7 +449,7 @@ void NonStandardFractal::iterate()
                 throw std::logic_error("The completed IFS view must advance before more iteration");
             }
             ifs.iterate();
-            m_done = ifs.done() && !next_view_required();
+            m_done = ifs.done() && !m_stereo_view.next_view_required();
             if (m_done)
             {
                 g_calc_status = CalcStatus::COMPLETED;
@@ -570,15 +554,7 @@ bool NonStandardFractal::completed() const
 
 void NonStandardFractal::finish(const bool interrupted)
 {
-    if (m_state.index() == IFS_3D && g_glasses_type == GlassesType::STEREO_PAIR &&
-        g_screen_x_dots >= 2 * g_logical_screen.x_dots)
-    {
-        g_logical_screen.x_offset = 0;
-        g_logical_screen.y_offset = 0;
-        g_logical_screen.x_dots = g_screen_x_dots;
-        g_logical_screen.y_dots = g_screen_y_dots;
-        g_viewport.enabled = false;
-    }
+    m_stereo_view.finish();
     if (m_state.index() == TEST_POINT && !m_done)
     {
         std::get<TEST_POINT>(m_state).finish();

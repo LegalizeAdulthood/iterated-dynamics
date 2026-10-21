@@ -611,8 +611,10 @@ The concrete render operation objects are:
   `type=ifs3d` remains compatibility syntax for `type=ifs`.  IFS retains
   unsymmetrized plotting and non-resumable interruption.  The 3D object
   owns combined-eye state; the operation exposes completed views and
-  explicit next-view initialization.  Its UI owns photographer prompts
-  and palette setup; engine finish restores stereo-pair dimensions.
+  explicit next-view initialization.  `geometry::StereoView` owns eye
+  selection, projection setup, and full-screen stereo-pair restoration,
+  including failure cleanup.  Its UI owns photographer prompts and
+  palette setup.
   Bounded operations cannot enter that legacy rendering entry.
 
 The input and presentation side starts, resumes, cancels, or paces the
@@ -1044,36 +1046,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 50.2. Shared Stereo View Calculation State
-
-Source: selected IFS view operations in `engine/NonStandardFractal.cpp`
-and view setup/restoration in `funny_glasses_call()` in
-`fractals/lorenz.cpp`.
-
-Work:
-
-- Put shared eye selection, projection setup, combined-eye mode, and
-  stereo-pair restoration in a non-virtual `geometry::StereoView` class
-  in `geometry/StereoView.h` and `geometry/StereoView.cpp`.
-- Use that state for the selected IFS operation's first view, explicit
-  next view, and finish or interruption.  Preserve its existing bounded
-  calculation and non-resumable interruption.
-- Retain the existing full-screen restoration policy for stereo pairs,
-  including cleanup after failure.  Do not replace it with an unrelated
-  viewport snapshot policy.
-- Keep input, palette loading, prompts, and rendering loops out of this
-  calculation class.  It must not accept renderer callbacks.
-
-Done when:
-
-- IFS stereo lifecycle has shared calculation-owned view state without
-  introducing a new engine-to-UI call.
-
-Validation: retain IFS selection and stereo transition tests; add direct
-view lifecycle tests for setup, advancement, restoration, and failure
-cleanup.  Reuse the PHOTO-mode baseline from 50.1 and IFS image fixtures.
-No manual image comparison or duplicate photographer checklist.
 
 ### 50.3. Selected 3D Orbit Calculation And Stereo UI Control
 

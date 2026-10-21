@@ -14,6 +14,7 @@
 #include "fractals/Plasma.h"
 #include "fractals/popcorn.h"
 #include "fractals/TestPoint.h"
+#include "geometry/StereoView.h"
 
 #include <variant>
 
@@ -87,9 +88,8 @@ private:
     };
 
     void prepare();
-    void start_ifs3d_view(bool second);
-    bool next_view_required() const;
 
+    geometry::StereoView m_stereo_view;
     std::variant<NoOperation, fractals::Bifurcation, fractals::Popcorn, fractals::Diffusion, fractals::TestPoint,
         fractals::Ant, fractals::Cellular, fractals::Plasma, fractals::LSystem, fractals::FrothyBasin, fractals::IFS2D,
         fractals::IFS3D>
