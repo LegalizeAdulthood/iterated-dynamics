@@ -179,6 +179,18 @@ NonStandardFractal::Operation NonStandardFractal::select()
         return Operation::L_SYSTEM;
     }
 
+    case FractalType::FROTHY_BASIN:
+    {
+        start_timer();
+        prepare();
+        FrothyBasin &froth{m_state.emplace<FROTHY_BASIN>()};
+        froth.per_image();
+        froth.resume();
+        m_done = froth.done();
+        update_timer();
+        return Operation::FROTHY_BASIN;
+    }
+
     default:
         return Operation::LEGACY;
     }
@@ -214,6 +226,33 @@ bool NonStandardFractal::sizing() const
         throw std::logic_error("No L-system calculation operation is selected");
     }
     return std::get<L_SYSTEM>(m_state).sizing();
+}
+
+std::string NonStandardFractal::prepare_palette()
+{
+    if (m_state.index() != FROTHY_BASIN)
+    {
+        throw std::logic_error("No FrothyBasin calculation operation is selected");
+    }
+    return std::get<FROTHY_BASIN>(m_state).set_froth_palette();
+}
+
+bool NonStandardFractal::consume_orbit_overlay_displayed()
+{
+    if (m_state.index() != FROTHY_BASIN)
+    {
+        throw std::logic_error("No FrothyBasin calculation operation is selected");
+    }
+    return std::get<FROTHY_BASIN>(m_state).consume_orbit_overlay_displayed();
+}
+
+void NonStandardFractal::scrub_overlay()
+{
+    if (m_state.index() != FROTHY_BASIN)
+    {
+        throw std::logic_error("No FrothyBasin calculation operation is selected");
+    }
+    std::get<FROTHY_BASIN>(m_state).scrub_overlay();
 }
 
 bool NonStandardFractal::potential_storage_required() const
@@ -331,6 +370,19 @@ void NonStandardFractal::iterate()
         }
         return;
 
+    case FROTHY_BASIN:
+        if (!m_done)
+        {
+            FrothyBasin &froth{std::get<FROTHY_BASIN>(m_state)};
+            froth.iterate();
+            m_done = froth.done();
+            if (m_done)
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -406,6 +458,14 @@ void NonStandardFractal::suspend()
         }
         return;
 
+    case FROTHY_BASIN:
+        if (!m_done)
+        {
+            std::get<FROTHY_BASIN>(m_state).suspend();
+            finish(true);
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -435,7 +495,7 @@ void NonStandardFractal::finish(const bool interrupted)
 }
 
 // TODO: removed later
-// Slices 47.9-51 replace remaining renderer calls with selected operations.
+// Slices 48-51 replace remaining renderer calls with selected operations.
 void NonStandardFractal::render_legacy()
 {
     start_timer();

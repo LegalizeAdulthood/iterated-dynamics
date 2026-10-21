@@ -76,6 +76,7 @@ private:
 
 extern FrothyBasin g_frothy_basin;
 
+bool froth_per_image();
 int froth_orbit();
 int froth_per_pixel();
 

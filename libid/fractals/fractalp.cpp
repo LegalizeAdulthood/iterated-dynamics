@@ -40,7 +40,6 @@
 #include "fractals/unity.h"
 #include "fractals/volterra_lotka.h"
 #include "ui/dynamic2d.h"
-#include "ui/frothy_basin.h"
 #include "ui/inverse_julia.h"
 #include "ui/orbit2d.h"
 #include "ui/standard_4d.h"
@@ -1641,8 +1640,8 @@ const FractalSpecific g_fractal_specific[] = {
         -2.8F, 2.8F, -2.355F, 1.845F,                     //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
-        froth_orbit, froth_per_pixel, standalone_per_image, //
-        froth_type,                                       //
+        froth_orbit, froth_per_pixel, froth_per_image,      //
+        nullptr,                                          //
         FROTH_BAILOUT                                     //
     },
 

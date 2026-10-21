@@ -11,6 +11,7 @@
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
 #include <engine/log_map.h>
+#include <engine/NonStandardFractal.h>
 #include <engine/OrbitPlot.h>
 #include <engine/Potential.h>
 #include <engine/PertEngine.h>
@@ -40,6 +41,7 @@
 #include <ui/calculate_image.h>
 #include <ui/diskvid.h>
 #include <ui/frothy_basin.h>
+#include <ui/non_standard_fractal.h>
 #include <ui/KeyboardHandler.h>
 #include <ui/id_keys.h>
 #include <ui/SoundSession.h>
@@ -115,6 +117,16 @@ bool initialize_overlay_image()
     return true;
 }
 
+int unexpected_froth_renderer()
+{
+    throw std::logic_error("FrothyBasin selection entered a renderer callback");
+}
+
+bool unexpected_froth_setup()
+{
+    throw std::logic_error("FrothyBasin selection entered legacy per-image setup");
+}
+
 } // namespace
 
 class TestOverlaySound : public Test
@@ -122,6 +134,7 @@ class TestOverlaySound : public Test
 protected:
     void SetUp() override;
     void TearDown() override;
+    void select_froth();
 
     MockDriver m_driver;
     std::shared_ptr<StrictMock<MockOverlaySound>> m_output{std::make_shared<StrictMock<MockOverlaySound>>()};
@@ -224,6 +237,15 @@ void TestOverlaySound::SetUp()
     EXPECT_CALL(*m_output, update()).Times(AnyNumber());
     EXPECT_CALL(*m_output, ready()).WillRepeatedly(Invoke([this] { return m_ready; }));
     EXPECT_CALL(*m_output, finish()).WillRepeatedly(Return(true));
+}
+
+void TestOverlaySound::select_froth()
+{
+    g_fractal_type = FractalType::FROTHY_BASIN;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    m_specific.calc_type = unexpected_froth_renderer;
+    m_specific.per_image = unexpected_froth_setup;
+    g_dispatch = FractalDispatch{m_specific};
 }
 
 void TestOverlaySound::TearDown()
@@ -881,16 +903,147 @@ TEST_F(TestOverlaySound, frothyBasinRetriesWithoutAdvancingOrbitOrRepeatingBound
     EXPECT_EQ(1, std::count(m_events.begin(), m_events.end(), "boundary"));
 }
 
+TEST_F(TestOverlaySound, selectedFrothyBasinPreservesOrbitAndPixelWorkIncrements)
+{
+    struct WorkState
+    {
+        int row;
+        int col;
+        long iteration;
+        int plots;
+        std::size_t samples;
+        bool displayed;
+        bool done;
+    };
+
+    ValueSaver saved_start_orbit{g_start_show_orbit, true};
+    std::vector<WorkState> expected;
+    {
+        FrothyBasin control;
+        ASSERT_TRUE(control.per_image());
+        control.resume();
+        for (int step = 0; step < 100 && !control.done(); ++step)
+        {
+            control.iterate();
+            const bool displayed{control.consume_orbit_overlay_displayed()};
+            expected.push_back({g_row, g_col, g_color_iter, m_plots, m_samples.size(), displayed, control.done()});
+        }
+        ASSERT_TRUE(control.done());
+    }
+    const std::vector<std::string> expected_events{m_events};
+    const std::vector<SoundSample> expected_samples{m_samples};
+    m_events.clear();
+    m_samples.clear();
+    m_plots = 0;
+    select_froth();
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, calculation.select());
+    EXPECT_FALSE(calculation.done());
+    EXPECT_TRUE(m_events.empty());
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+
+    for (const WorkState &work : expected)
+    {
+        calculation.iterate();
+        EXPECT_EQ(work.displayed, calculation.consume_orbit_overlay_displayed());
+        EXPECT_EQ(work.row, g_row);
+        EXPECT_EQ(work.col, g_col);
+        EXPECT_EQ(work.iteration, g_color_iter);
+        EXPECT_EQ(work.plots, m_plots);
+        EXPECT_EQ(work.samples, m_samples.size());
+        EXPECT_EQ(work.done, calculation.done());
+    }
+
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(expected_events, m_events);
+    ASSERT_EQ(expected_samples.size(), m_samples.size());
+    for (std::size_t i = 0; i < m_samples.size(); ++i)
+    {
+        EXPECT_EQ(expected_samples[i].x, m_samples[i].x);
+        EXPECT_EQ(expected_samples[i].y, m_samples[i].y);
+    }
+    calculation.iterate();
+    EXPECT_EQ(expected_events, m_events);
+    calculation.finish(false);
+    EXPECT_FALSE(g_orbit_save_flag);
+}
+
+TEST_F(TestOverlaySound, selectedFrothyBasinResumesAtTheNextUnfinishedPixel)
+{
+    ValueSaver saved_start_orbit{g_start_show_orbit, false};
+    g_show_orbit = false;
+    std::vector<Point2i> pixels;
+    EXPECT_CALL(m_driver, write_pixel(_, _, _))
+        .WillRepeatedly(Invoke([&pixels](int x, int y, int) { pixels.push_back({x, y}); }));
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    select_froth();
+    {
+        NonStandardFractal calculation;
+        ASSERT_TRUE(calculation.start().empty());
+        ASSERT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, calculation.select());
+        calculation.iterate();
+        ASSERT_THAT(pixels, ElementsAre(Point2i{0, 0}));
+
+        calculation.suspend();
+
+        EXPECT_TRUE(calculation.done());
+        EXPECT_THROW(calculation.select(), std::logic_error);
+        ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+        ASSERT_FALSE(g_resume_data.empty());
+        int row{-1};
+        int col{-1};
+        EXPECT_EQ(1, start_resume());
+        get_resume(row, col);
+        EXPECT_EQ(0, row);
+        EXPECT_EQ(1, col);
+    }
+    g_resuming = true;
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, calculation.select());
+    for (int step = 0; step < 4 && !calculation.done(); ++step)
+    {
+        calculation.iterate();
+    }
+    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_THAT(pixels, ElementsAre(Point2i{0, 0}, Point2i{1, 0}, Point2i{0, 1}, Point2i{1, 1}));
+    calculation.finish(false);
+    EXPECT_TRUE(g_resume_data.empty());
+}
+
 class TestOverlaySoundController : public TestOverlaySound, public WithParamInterface<bool>
 {
 protected:
+    void SetUp() override;
     int render(SoundSession &sound);
     ValueSaver<bool> m_saved_start_orbit{g_start_show_orbit, true};
 };
 
+void TestOverlaySoundController::SetUp()
+{
+    TestOverlaySound::SetUp();
+    if (GetParam())
+    {
+        select_froth();
+    }
+}
+
 int TestOverlaySoundController::render(SoundSession &sound)
 {
-    return GetParam() ? froth_type(sound) : standard_fractal(sound);
+    if (!GetParam())
+    {
+        return standard_fractal(sound);
+    }
+    NonStandardFractal calculation;
+    complete_image_setup(calculation, calculation.start());
+    EXPECT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, calculation.select());
+    const int result{froth_type(calculation, sound)};
+    calculation.finish(result < 0);
+    return result;
 }
 
 TEST_P(TestOverlaySoundController, normalCompletionFinishesWithoutMuting)
@@ -923,7 +1076,7 @@ TEST_P(TestOverlaySoundController, evolutionCellsShareOneOutputUntilTheOwnerFini
         g_calc_status = CalcStatus::PARAMS_CHANGED;
         g_resuming = false;
 
-        EXPECT_EQ(0, GetParam() ? froth_type() : standard_fractal());
+        EXPECT_EQ(0, GetParam() ? non_standard_fractal() : standard_fractal());
 
         EXPECT_EQ(m_output, g_sound);
         EXPECT_EQ((completed_cells + 1) * 4, std::count(m_events.begin(), m_events.end(), "boundary"));
@@ -1052,7 +1205,7 @@ TEST_P(TestOverlaySoundController, recordsBoundariesAndSamplesWhenDriverDoesNotS
         {
             g_calc_status = CalcStatus::PARAMS_CHANGED;
             g_resuming = false;
-            EXPECT_EQ(0, GetParam() ? froth_type() : standard_fractal());
+            EXPECT_EQ(0, GetParam() ? non_standard_fractal() : standard_fractal());
         }
         EXPECT_TRUE(owner.finish());
     }

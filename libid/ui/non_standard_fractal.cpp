@@ -11,6 +11,7 @@
 #include "ui/calculate_image.h"
 #include "ui/cellular.h"
 #include "ui/diffusion.h"
+#include "ui/frothy_basin.h"
 #include "ui/lsystem.h"
 #include "ui/plasma.h"
 #include "ui/popcorn.h"
@@ -102,6 +103,10 @@ int non_standard_fractal()
 
         case NonStandardFractal::Operation::L_SYSTEM:
             lsystem_type(non_standard_fractal);
+            break;
+
+        case NonStandardFractal::Operation::FROTHY_BASIN:
+            froth_type(non_standard_fractal);
             break;
 
         case NonStandardFractal::Operation::LEGACY:

@@ -551,10 +551,15 @@ void FrothyBasin::finish_pixel()
     advance_pixel();
 }
 
-// These last two froth functions are for the orbit-in-window feature.
+// These froth callbacks are for the orbit-in-window feature.
 // Normally, this feature requires standard_fractal, but since it is the
 // attractor that makes the frothybasin type so unique, it is worth
 // putting in as a stand-alone.
+
+bool froth_per_image()
+{
+    return g_frothy_basin.per_image();
+}
 
 int froth_per_pixel()
 {

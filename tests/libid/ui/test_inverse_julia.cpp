@@ -24,9 +24,11 @@
 #include <misc/memory.h>
 #include <misc/ValueSaver.h>
 #include <ui/editpal.h>
+#include <ui/big_while_loop.h>
 #include <ui/help.h>
 #include <ui/id_keys.h>
 #include <ui/mouse.h>
+#include <ui/main_menu_switch.h>
 #include <ui/video.h>
 
 #include <gmock/gmock.h>
@@ -159,6 +161,27 @@ TEST_F(TestInverseJuliaController, menuExitRestoresControllerState)
 
     EXPECT_DOUBLE_EQ(JULIA_C_NOT_SET, g_julia_c.x);
     EXPECT_DOUBLE_EQ(JULIA_C_NOT_SET, g_julia_c.y);
+    EXPECT_THAT(m_pixels, Each(3));
+    EXPECT_TRUE(g_line_buff.empty());
+    EXPECT_FALSE(dispatch_keyboard_key(ID_KEY_LEFT_ARROW));
+}
+
+TEST_F(TestInverseJuliaController, frothyBasinOrbitWindowUsesSetupWithoutARenderer)
+{
+    ValueSaver saved_mapping{g_params[0], 1.0};
+    ValueSaver saved_shading{g_params[1], 0.0};
+    ValueSaver saved_a{g_params[2], 1.02871376822};
+    set_fractal_type(FractalType::FROTHY_BASIN);
+    ASSERT_EQ(nullptr, g_cur_fractal_specific->calc_type);
+    expect_exit_key('x');
+    MainContext context{};
+    context.key = 'o';
+
+    EXPECT_EQ(CommandResult::PRESENTATION_CHANGED, main_menu_switch(context));
+
+    EXPECT_TRUE(context.orbits_window_active);
+    EXPECT_TRUE(context.orbits_window_key_pending);
+    EXPECT_TRUE(m_key_read);
     EXPECT_THAT(m_pixels, Each(3));
     EXPECT_TRUE(g_line_buff.empty());
     EXPECT_FALSE(dispatch_keyboard_key(ID_KEY_LEFT_ARROW));

@@ -3,9 +3,8 @@
 //
 #include "ui/frothy_basin.h"
 
-#include "engine/calcfrac.h"
+#include "engine/NonStandardFractal.h"
 #include "engine/SoundOutput.h"
-#include "fractals/FrothyBasin.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
 #include "ui/KeyboardHandler.h"
@@ -16,7 +15,6 @@
 #include <memory>
 
 using namespace id::engine;
-using namespace id::fractals;
 using namespace id::misc;
 
 namespace id::ui
@@ -28,8 +26,8 @@ namespace
 class OrbitToggleKeyboardHandler : public KeyboardHandler
 {
 public:
-    explicit OrbitToggleKeyboardHandler(FrothyBasin &frothy_basin) :
-        m_frothy_basin{frothy_basin}
+    explicit OrbitToggleKeyboardHandler(NonStandardFractal &calculation) :
+        m_calculation{calculation}
     {
     }
 
@@ -38,7 +36,7 @@ public:
         if (g_show_orbit)
         {
             g_sound->mute();
-            m_frothy_basin.scrub_overlay();
+            m_calculation.scrub_overlay();
         }
         if (key != 'o' && key != 'O')
         {
@@ -52,61 +50,54 @@ public:
     }
 
 private:
-    FrothyBasin &m_frothy_basin;
+    NonStandardFractal &m_calculation;
 };
 
 } // namespace
 
-int froth_type()
+int froth_type(NonStandardFractal &calculation)
 {
     SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
-    return froth_type(sound);
+    return froth_type(calculation, sound);
 }
 
-int froth_type(SoundSession &sound)
+int froth_type(NonStandardFractal &calculation, SoundSession &sound)
 {
     reset_calc_interrupted();
     reset_orbit_delay();
     KeyboardHandlerPtr main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
-    KeyboardHandlerPtr orbit_toggle_handler{std::make_shared<OrbitToggleKeyboardHandler>(g_frothy_basin)};
+    KeyboardHandlerPtr orbit_toggle_handler{std::make_shared<OrbitToggleKeyboardHandler>(calculation)};
     ScopedKeyboardHandler main_loop_scope{main_loop_handler};
     ScopedKeyboardHandler orbit_toggle_scope{orbit_toggle_handler};
 
-    if (!g_frothy_basin.per_image())
-    {
-        sound.cancel();
-        return -1;
-    }
-
-    if (const std::string diagnostic{g_frothy_basin.set_froth_palette()}; !diagnostic.empty())
+    if (const std::string diagnostic{calculation.prepare_palette()}; !diagnostic.empty())
     {
         stop_msg(diagnostic);
     }
-    g_frothy_basin.resume();
-    while (!g_frothy_basin.done())
+    while (!calculation.done())
     {
         if (!sound.wait_until_ready())
         {
-            g_frothy_basin.scrub_overlay();
-            g_frothy_basin.suspend();
+            calculation.scrub_overlay();
+            calculation.suspend();
             return -1;
         }
         bool check_interrupted = true;
-        g_frothy_basin.iterate();
+        calculation.iterate();
         display_disk_storage_progress();
-        if (g_frothy_basin.consume_orbit_overlay_displayed())
+        if (calculation.consume_orbit_overlay_displayed())
         {
             pace_orbit_display();
             check_interrupted = false;
         }
-        if (!g_frothy_basin.done())
+        if (!calculation.done())
         {
             const bool interrupted{check_interrupted ? calc_interrupted() : calc_interrupt_requested()};
             if (interrupted)
             {
                 sound.cancel();
-                g_frothy_basin.scrub_overlay();
-                g_frothy_basin.suspend();
+                calculation.scrub_overlay();
+                calculation.suspend();
                 return -1;
             }
         }

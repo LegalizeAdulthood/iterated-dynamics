@@ -8,6 +8,7 @@
 #include "fractals/Bifurcation.h"
 #include "fractals/Cellular.h"
 #include "fractals/Diffusion.h"
+#include "fractals/FrothyBasin.h"
 #include "fractals/lsystem.h"
 #include "fractals/Plasma.h"
 #include "fractals/popcorn.h"
@@ -32,7 +33,8 @@ public:
         ANT,
         CELLULAR,
         PLASMA,
-        L_SYSTEM
+        L_SYSTEM,
+        FROTHY_BASIN
     };
 
     NonStandardFractal() = default;
@@ -43,6 +45,9 @@ public:
     bool done() const;
     bool preparing() const;
     bool sizing() const;
+    std::string prepare_palette();
+    bool consume_orbit_overlay_displayed();
+    void scrub_overlay();
     bool potential_storage_required() const;
     void complete_potential_storage(bool available);
     void iterate();
@@ -52,7 +57,7 @@ public:
     void finish(bool interrupted);
 
     // TODO: removed later
-    // Slices 47.9-51 replace remaining renderer calls with selected operations.
+    // Slices 48-51 replace remaining renderer calls with selected operations.
     void render_legacy();
 
 private:
@@ -66,7 +71,8 @@ private:
         ANT,
         CELLULAR,
         PLASMA,
-        L_SYSTEM
+        L_SYSTEM,
+        FROTHY_BASIN
     };
 
     struct NoOperation
@@ -76,7 +82,7 @@ private:
     void prepare();
 
     std::variant<NoOperation, fractals::Bifurcation, fractals::Popcorn, fractals::Diffusion, fractals::TestPoint,
-        fractals::Ant, fractals::Cellular, fractals::Plasma, fractals::LSystem>
+        fractals::Ant, fractals::Cellular, fractals::Plasma, fractals::LSystem, fractals::FrothyBasin>
         m_state{NoOperation{}};
     bool m_done{true};
 };

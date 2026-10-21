@@ -23,7 +23,6 @@
 #include "misc/ValueSaver.h"
 #include "ui/editpal.h"
 #include "ui/find_special_colors.h"
-#include "ui/frothy_basin.h"
 #include "ui/get_a_number.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
@@ -965,7 +964,7 @@ static bool static_calc_type_allows_jiim()
     const CalcType table_calc_type{g_cur_fractal_specific->calc_type};
     return table_calc_type == standard_fractal_type //
         || table_calc_type == calc_mandelbrot_type  //
-        || table_calc_type == static_cast<CalcType>(froth_type);
+        || g_fractal_type == FractalType::FROTHY_BASIN;
 }
 
 void jiim(const JIIMType which)

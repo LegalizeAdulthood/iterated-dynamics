@@ -588,11 +588,16 @@ The concrete render operation objects are:
   status interpretation.  It shares common image setup, timing, and
   cleanup, but its marked dispatch still enters whole UI render loops.
   Its bounded operation router owns bifurcation, Popcorn, standalone
-  Diffusion, TestPoint, Ant, Cellular, Plasma, and L-system state without
-  renderer callbacks.  Their UI controllers advance selected objects;
-  setup, resume, and finish stay below UI.  L-system definition loading,
-  startup, and terminal interpretation stay below UI; its controller
-  retains thinking-screen handling and the drawing poll throttle.
+  Diffusion, TestPoint, Ant, Cellular, Plasma, L-system, and FrothyBasin
+  state without renderer callbacks.  Their UI controllers advance
+  selected objects; setup, resume, and finish stay below UI.  L-system
+  definition loading, startup, and terminal interpretation stay below
+  UI; its controller retains thinking-screen handling and the drawing
+  poll throttle.  FrothyBasin retains its orbit and pixel checkpoints,
+  palette selection, and resume coordinates below UI; its controller
+  owns palette diagnostics, overlay interaction, and sound servicing.
+  The completed-image orbit tool uses setup-only FrothyBasin callbacks,
+  independently of the selected image calculation's lifetime.
   Plasma's controller reports storage availability before engine
   initialization.  Cellular retains generation-sized preparation and
   next-screen initialization below UI; its thinking-screen display stays
@@ -600,8 +605,8 @@ The concrete render operation objects are:
   stay below UI.  Ant's Ctrl+A entry selects an operation on the existing
   image, without restarting common image setup, timing, or resource
   cleanup.
-  The remaining 47.x slices bind other standalone families before slice
-  48 removes per-image reentry.
+  Slice 48 removes obsolete standalone per-image reentry before the
+  remaining renderer-family bindings.
 
 The input and presentation side starts, resumes, cancels, or paces the
 active operation.  It does not classify standard versus Lyapunov versus
@@ -1008,23 +1013,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 47.9. FrothyBasin Operation Binding
-
-Source: `fractals/FrothyBasin.cpp`, `ui/frothy_basin.cpp`, and
-`NonStandardFractal`.
-
-- Bind the existing incremental FrothyBasin calculation into selection.
-  Keep palette decisions and orbit calculation below UI.
-- Retain controller ownership of palette diagnostics, overlay
-  interaction, sound servicing, and cancellation.
-- Preserve existing orbit and pixel work checkpoints; add no pacing
-  state or callbacks to calculation objects.
-
-Done when: the FrothyBasin controller drives the selected operation.
-
-Validation: reuse its image, overlay/sound, cancellation, and resume
-coverage through the real selection entry.  No new pacing-policy tests.
 
 ### 48. Remove Per-Image Renderer Reentry
 
