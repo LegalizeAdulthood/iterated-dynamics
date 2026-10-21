@@ -885,6 +885,7 @@ class TestOverlaySoundController : public TestOverlaySound, public WithParamInte
 {
 protected:
     int render(SoundSession &sound);
+    ValueSaver<bool> m_saved_start_orbit{g_start_show_orbit, true};
 };
 
 int TestOverlaySoundController::render(SoundSession &sound)

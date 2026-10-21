@@ -337,6 +337,7 @@ void TestPerturbationPixels::check_pass_switch(const PerturbationMode mode)
         EXPECT_EQ(0, calculation.standard_pass_status().perturbation_reference_count);
         EXPECT_EQ(initial_stack, save_stack());
         EXPECT_EQ(calculate_control_pixel, g_dispatch.calc_type());
+        calculation.finish();
     }
 }
 

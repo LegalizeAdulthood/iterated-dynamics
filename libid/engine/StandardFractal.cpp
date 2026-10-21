@@ -5,7 +5,6 @@
 
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
-#include "engine/engine_timer.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
 #include "engine/OrbitPlot.h"
@@ -144,8 +143,17 @@ StandardFractal *set_active_standard_fractal(StandardFractal *standard_fractal)
     return previous;
 }
 
-void StandardFractal::resume()
+StandardFractal::~StandardFractal()
 {
+    if (started())
+    {
+        finish();
+    }
+}
+
+std::vector<std::string> StandardFractal::resume()
+{
+    std::vector<std::string> warnings{ImageCalculation::start()};
     m_requested_calc_mode = g_std_calc_mode;
     m_after_work_list = AfterWorkList::COMPLETE;
     m_phase = Phase::START;
@@ -153,12 +161,12 @@ void StandardFractal::resume()
     m_perturbation_active = false;
     m_perturbation_requested = false;
     m_standard_pass.reset();
-    m_timer_started = false;
     m_work_item_active = false;
     m_standard_pixel_completed_yield = false;
     m_incomplete_standard_pixel_yield = false;
     s_standard_pass_status = {};
     clear_standard_pixel();
+    return warnings;
 }
 
 bool StandardFractal::potential_storage_required() const
@@ -201,14 +209,24 @@ void StandardFractal::suspend()
     clear_standard_pixel();
     m_perturbation_active = false;
     complete();
+    finish();
+}
+
+void StandardFractal::finish()
+{
+    if (!done())
+    {
+        abort();
+        return;
+    }
+    ImageCalculation::finish();
 }
 
 void StandardFractal::abort()
 {
     complete();
-    g_num_work_list = 0;
-    end_resume();
     g_calc_status = CalcStatus::NON_RESUMABLE;
+    ImageCalculation::finish();
 }
 
 bool StandardFractal::done() const
@@ -621,6 +639,7 @@ void StandardFractal::finish_work_item()
 
 void StandardFractal::start_next_pass()
 {
+    m_requested_calc_mode = g_std_calc_mode;
     if (m_requested_calc_mode == CalcMode::THREE_PASS)
     {
         if (!g_resuming || g_three_pass)
@@ -643,15 +662,6 @@ void StandardFractal::start_next_pass()
     }
 
     m_phase = Phase::START_WORK_LIST;
-}
-
-void StandardFractal::start_timer()
-{
-    if (!m_timer_started)
-    {
-        start_calculation_timer();
-        m_timer_started = true;
-    }
 }
 
 void StandardFractal::start_work_list()
@@ -738,14 +748,6 @@ bool StandardFractal::standard_presentation_yield_enabled() const
 
     default:
         return false;
-    }
-}
-
-void StandardFractal::update_timer()
-{
-    if (m_timer_started)
-    {
-        update_calculation_timer();
     }
 }
 

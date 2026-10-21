@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/non_standard_fractal.h"
 
 #include "engine/calcfrac.h"
 #include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"
+#include "ui/calculate_image.h"
 #include "ui/standard_orbit_plot.h"
 
 #include <memory>
@@ -57,13 +59,23 @@ int non_standard_fractal()
     ScopedKeyboardHandler keyboard_scope{keyboard_handler};
 
     NonStandardFractal non_standard_fractal;
-    non_standard_fractal.iterate();
-
-    if (driver_key_pressed() != 0)
+    try
     {
-        dispatch_keyboard_key(driver_get_key());
+        complete_image_setup(non_standard_fractal, non_standard_fractal.start());
+        non_standard_fractal.iterate();
+
+        if (driver_key_pressed() != 0)
+        {
+            dispatch_keyboard_key(driver_get_key());
+        }
+        non_standard_fractal.finish(keyboard_handler->interrupted());
     }
-    non_standard_fractal.finish(keyboard_handler->interrupted());
+    catch (...)
+    {
+        g_calc_status = CalcStatus::NON_RESUMABLE;
+        non_standard_fractal.finish(true);
+        throw;
+    }
 
     return non_standard_fractal.completed() ? 0 : -1;
 }

@@ -96,12 +96,19 @@ StandardFractal &Lyapunov::calculation()
     return *m_standard_fractal;
 }
 
-std::string Lyapunov::resume()
+std::vector<std::string> Lyapunov::resume()
 {
-    m_standard_fractal->resume();
-    return g_inside_method < ColorMethod::COLOR
-        ? "Sorry, inside options other than inside=nnn are not supported by the lyapunov"
-        : "";
+    std::vector<std::string> warnings{m_standard_fractal->resume()};
+    if (g_inside_method < ColorMethod::COLOR)
+    {
+        warnings.emplace_back("Sorry, inside options other than inside=nnn are not supported by the lyapunov");
+    }
+    return warnings;
+}
+
+void Lyapunov::finish()
+{
+    m_standard_fractal->finish();
 }
 
 void Lyapunov::suspend()

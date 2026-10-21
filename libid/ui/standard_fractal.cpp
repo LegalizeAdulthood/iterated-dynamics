@@ -10,6 +10,7 @@
 #include "engine/StandardFractal.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
+#include "ui/calculate_image.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/goodbye.h"
 #include "ui/precision_diagnostics.h"
@@ -77,14 +78,13 @@ int standard_fractal(SoundSession &sound)
     ScopedKeyboardHandler main_loop_scope{main_loop_handler};
     ScopedKeyboardHandler orbit_toggle_scope{orbit_toggle_handler};
 
-    standard_fractal.resume();
-    if (show_precision_diagnostics())
-    {
-        goodbye();
-    }
-
     try
     {
+        complete_image_setup(standard_fractal, standard_fractal.resume());
+        if (show_precision_diagnostics())
+        {
+            goodbye();
+        }
         while (!standard_fractal.done())
         {
             if (!sound.wait_until_ready())
@@ -129,6 +129,9 @@ int standard_fractal(SoundSession &sound)
                 }
             }
         }
+        const bool completed{sound.finish()};
+        standard_fractal.finish();
+        return completed ? 0 : -1;
     }
     catch (...)
     {
@@ -138,7 +141,6 @@ int standard_fractal(SoundSession &sound)
         standard_fractal.abort();
         throw;
     }
-    return sound.finish() ? 0 : -1;
 }
 
 } // namespace id::ui

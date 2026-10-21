@@ -120,12 +120,14 @@ TEST_F(TestLyapunovSetup, numericInsideNeedsNoWarning)
 
 TEST_F(TestLyapunovSetup, unsupportedInsideReturnsWarningWithoutUI)
 {
-    Lyapunov lyapunov;
     for (const ColorMethod method : {ColorMethod::ITER, ColorMethod::BOF60, ColorMethod::EPS_CROSS})
     {
+        Lyapunov lyapunov;
         g_inside_method = method;
 
-        EXPECT_EQ("Sorry, inside options other than inside=nnn are not supported by the lyapunov", lyapunov.resume());
+        EXPECT_EQ(
+            (std::vector<std::string>{"Sorry, inside options other than inside=nnn are not supported by the lyapunov"}),
+            lyapunov.resume());
         EXPECT_EQ(method, g_inside_method);
         EXPECT_TRUE(lyapunov_per_image());
 
@@ -153,6 +155,7 @@ TEST_F(TestLyapunovSetup, correctedInsideDoesNotRepeatWarning)
     Lyapunov lyapunov;
     ASSERT_FALSE(lyapunov.resume().empty());
     ASSERT_TRUE(lyapunov_per_image());
+    lyapunov.finish();
 
     EXPECT_TRUE(lyapunov.resume().empty());
 }

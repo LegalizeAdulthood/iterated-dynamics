@@ -87,8 +87,9 @@ namespace id::engine
 class StandardFractal
 {
 public:
-    void resume();
+    std::vector<std::string> resume();
     void suspend();
+    void finish();
     bool done() const;
     void iterate();
 };
@@ -562,8 +563,15 @@ The current common lifecycle behavior is `ImageCalculation::start()` and
 real shared render setup and teardown, not a renderer facade.  It owns
 true-color setup and teardown, parser setup, log-map setup
 and cleanup, orbit display defaults, inversion setup, resume cleanup,
-calculation-time accounting, work-area cleanup, and disk
-image cleanup.
+calculation-time accounting, work-area cleanup, and disk image cleanup.
+
+`StandardFractal` and the legacy `NonStandardFractal` use that shared
+implementation directly.  Lyapunov uses it through its contained standard
+calculation.  Standard resume performs common setup; bounded traversal
+retains its existing return points.  Suspension, completion, and failure
+cleanup finalize each elapsed interval once.  UI controllers acknowledge
+setup warnings and prepare requested storage without owning calculation
+setup, timing, or cleanup.
 
 The concrete render operation objects are:
 
@@ -574,10 +582,11 @@ The concrete render operation objects are:
   `engine::StandardFractal`; Lyapunov-specific per-image setup remains in
   `lyapunov_per_image()` below the dispatch layer.
 - `engine::NonStandardFractal`: owns non-standard dispatch setup,
-  symmetry defaults, plot defaults, `per_image()` invocation, calculation
-  timing around the selected `CalcType`, and final status interpretation.
-  It is still synchronous and must grow a real operation shape before it
-  can participate in outer-loop control.
+  symmetry defaults, plot defaults, `per_image()` invocation, and final
+  status interpretation.  It shares common image setup, timing, and
+  cleanup, but its marked dispatch still enters whole UI render loops.
+  Slices 47-48 replace that bridge with bounded calculation operations
+  before it can participate in outer-loop control.
 
 The input and presentation side starts, resumes, cancels, or paces the
 active operation.  It does not classify standard versus Lyapunov versus
@@ -984,33 +993,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 46. Common Engine Render Lifecycle
-
-Source: `ImageCalculation::start()` and `finish()`, `StandardFractal`,
-`Lyapunov`, and `NonStandardFractal`.
-
-Work:
-
-- Integrate common calculation setup, image timing, suspension, and
-  cleanup into the selected calculation object's lifecycle.
-- Use shared implementation only for real common setup and teardown.
-  Retain `g_calc_time` ownership in engine code and account for the whole
-  image exactly once.
-- Expose initialization, bounded iteration, completion, suspension, and
-  finish operations without invoking a UI controller inside them.
-
-Done when:
-
-- Standard and Lyapunov rendering have complete engine-owned lifecycles
-  that an outer UI controller can advance directly.
-- Common lifecycle operations do not hide a whole-image render call.
-
-Validation: cover normal completion, suspension/resume, failure cleanup,
-and calculation-time accounting in engine tests.  Run the established
-autokey interruption/resume scenarios across this lifecycle refactor;
-existing images protect render results.  Do not time scripts to test
-`g_calc_time` or add duplicate keyboard cases for an unchanged UI path.
 
 ### 47. Standalone Engine Operation Selection
 

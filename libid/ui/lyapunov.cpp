@@ -8,10 +8,10 @@
 #include "fractals/lyapunov.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
+#include "ui/calculate_image.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/ShowDotController.h"
 #include "ui/standard_orbit_plot.h"
-#include "ui/stop_msg.h"
 
 #include <memory>
 
@@ -58,13 +58,9 @@ int lyapunov_fractal()
 
     Lyapunov lyapunov;
     ShowDotController marker;
-    if (const std::string warning{lyapunov.resume()}; !warning.empty())
-    {
-        stop_msg(warning);
-    }
-
     try
     {
+        complete_image_setup(lyapunov.calculation(), lyapunov.resume());
         while (!lyapunov.done())
         {
             if (marker.enabled())
@@ -82,6 +78,7 @@ int lyapunov_fractal()
                 return -1;
             }
         }
+        lyapunov.finish();
     }
     catch (...)
     {

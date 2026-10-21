@@ -324,10 +324,46 @@ static void fix_inversion(double *x) // make double converted from string look o
     *x = std::atof(fmt::format("{:<1.15Lg}", *x).c_str());
 }
 
+ImageCalculation::~ImageCalculation()
+{
+    if (m_started)
+    {
+        finish();
+    }
+}
+
+bool ImageCalculation::started() const
+{
+    return m_started;
+}
+
+void ImageCalculation::start_timer()
+{
+    if (!m_timer_started)
+    {
+        start_calculation_timer();
+        g_timer_interval = 0;
+        m_timer_started = true;
+    }
+}
+
+void ImageCalculation::update_timer()
+{
+    if (m_timer_started)
+    {
+        update_calculation_timer();
+    }
+}
+
 std::vector<std::string> ImageCalculation::start()
 {
+    if (m_started)
+    {
+        throw std::logic_error("Image calculation is already started");
+    }
+    m_started = true;
+    m_timer_started = false;
     std::vector<std::string> warnings;
-    m_started = false;
     m_targa_storage = {};
     const bool resuming{g_calc_status == CalcStatus::RESUMABLE};
 
@@ -545,7 +581,6 @@ std::vector<std::string> ImageCalculation::start()
         }
         g_calc_time = 0;
     }
-    m_started = true;
     return warnings;
 }
 
@@ -590,8 +625,11 @@ static bool static_calc_type_uses_lyapunov_renderer()
     return g_cur_fractal_specific->calc_type == lyapunov_type;
 }
 
+// TODO: removed later
+// Slices 47-48 replace this whole-render dispatch with incremental operations.
 void NonStandardFractal::iterate()
 {
+    start_timer();
     g_dispatch.init_calc_type(*g_cur_fractal_specific);
     // per_image can override
     g_symmetry = g_cur_fractal_specific->symmetry; // table symmetry
@@ -616,10 +654,9 @@ void NonStandardFractal::iterate()
         g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
         set_symmetry(g_symmetry, false);
         const CalcType calc_type{g_dispatch.calc_type()};
-        start_calculation_timer();
         calc_type(); // non-standard fractal engine
-        update_calculation_timer();
     }
+    update_timer();
 }
 
 bool NonStandardFractal::completed() const
@@ -629,11 +666,11 @@ bool NonStandardFractal::completed() const
 
 void NonStandardFractal::finish(const bool interrupted)
 {
-    if (g_calc_status != CalcStatus::IN_PROGRESS)
+    if (g_calc_status == CalcStatus::IN_PROGRESS)
     {
-        return;
+        g_calc_status = interrupted ? CalcStatus::NON_RESUMABLE : CalcStatus::COMPLETED;
     }
-    g_calc_status = interrupted ? CalcStatus::NON_RESUMABLE : CalcStatus::COMPLETED;
+    ImageCalculation::finish();
 }
 
 void ImageCalculation::finish()
@@ -645,11 +682,13 @@ void ImageCalculation::finish()
         m_targa_storage = {};
         g_true_color = false;
     }
-    if (m_started)
+    if (m_timer_started)
     {
+        update_timer();
         g_calc_time += g_timer_interval;
-        m_started = false;
+        m_timer_started = false;
     }
+    m_started = false;
 
     if (!g_log_map_table.empty() && !g_log_map_calculate)
     {
@@ -669,7 +708,8 @@ void ImageCalculation::finish()
     }
 }
 
-// Legacy renderer dispatch; the UI owns the common ImageCalculation lifecycle.
+// TODO: removed later
+// Slice 52 replaces legacy UI dispatch with outer control of calculation objects.
 int calc_fract()
 {
     if (static_calc_type_uses_lyapunov_renderer())

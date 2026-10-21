@@ -18,34 +18,36 @@ using namespace id::engine;
 namespace id::ui
 {
 
+void complete_image_setup(ImageCalculation &image, const std::vector<std::string> &warnings)
+{
+    for (const std::string &warning : warnings)
+    {
+        stop_msg(warning);
+    }
+    if (!image.targa_storage().header.empty())
+    {
+        const std::string warning{image.complete_targa_storage(prepare_targa_storage(image.targa_storage()))};
+        if (!warning.empty())
+        {
+            stop_msg(warning);
+        }
+    }
+}
+
 // TODO: removed later
 // Slice 52 replaces this diagnostic boundary and calc_fract dispatch with
 // outer UI ownership of the selected incremental render operation.
 int calculate_image()
 {
-    ImageCalculation image;
     std::string failure;
     int result{-1};
     try
     {
-        for (const std::string &warning : image.start())
-        {
-            stop_msg(warning);
-        }
-        if (!image.targa_storage().header.empty())
-        {
-            const std::string warning{image.complete_targa_storage(prepare_targa_storage(image.targa_storage()))};
-            if (!warning.empty())
-            {
-                stop_msg(warning);
-            }
-        }
         result = calc_fract();
     }
     catch (const math::PrecisionError &)
     {
         g_calc_status = CalcStatus::NON_RESUMABLE;
-        image.finish();
         throw;
     }
     catch (const std::bad_alloc &)
@@ -59,10 +61,6 @@ int calculate_image()
     if (!failure.empty())
     {
         g_calc_status = CalcStatus::NON_RESUMABLE;
-    }
-    image.finish();
-    if (!failure.empty())
-    {
         stop_msg(failure);
         if (g_init_batch != BatchMode::NONE)
         {

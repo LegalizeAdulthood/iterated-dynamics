@@ -17,9 +17,11 @@ namespace id::engine
 
 class OrbitPlot;
 
-class StandardFractal
+class StandardFractal : public ImageCalculation
 {
 public:
+    ~StandardFractal();
+
     int calculate_mandelbrot_pixel();
     int calculate_standard_pixel(bool yield_to_ui);
     bool consume_traversal_yield();
@@ -27,11 +29,12 @@ public:
     void queue_overlay_orbit_plot(double real, double imag, bool mark_as_plotted = true);
     void scrub_overlay();
 
-    void resume();
+    std::vector<std::string> resume();
     bool potential_storage_required() const;
     void complete_potential_storage(bool available);
 
     void suspend();
+    void finish();
     void abort();
 
     bool done() const;
@@ -76,11 +79,9 @@ private:
     bool scrub_overlay_orbit(bool yield_to_ui);
     void start_next_pass();
     void start_perturbation_frame();
-    void start_timer();
     void start_work_list();
     bool standard_presentation_yield_enabled() const;
     bool standard_pixel_yield_enabled() const;
-    void update_timer();
 
     fractals::FractalDispatch m_saved_dispatch{};
     PertEngine m_pert_engine{};
@@ -121,7 +122,6 @@ private:
     bool m_standard_pixel_iteration_started{};
     bool m_standard_pixel_orbit_plotted{};
     bool m_standard_pixel_overlay_scrubbed{};
-    bool m_timer_started{};
     bool m_orbit_plot_pending{};
     bool m_orbit_plot_marks_standard_orbit{};
     bool m_orbit_overlay_displayed{};

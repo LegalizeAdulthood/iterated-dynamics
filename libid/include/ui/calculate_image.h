@@ -3,9 +3,18 @@
 //
 #pragma once
 
+#include <string>
+#include <vector>
+
+namespace id::engine
+{
+class ImageCalculation;
+}
+
 namespace id::ui
 {
 
+void complete_image_setup(engine::ImageCalculation &image, const std::vector<std::string> &warnings);
 int calculate_image();
 
 } // namespace id::ui

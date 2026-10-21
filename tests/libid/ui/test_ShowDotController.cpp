@@ -365,7 +365,7 @@ TEST_F(TestShowDotController, parameterRestartUsesFreshMarkerState)
     ASSERT_EQ(-1, standard_fractal());
     EXPECT_THAT(m_pixels, Each(Ne(15)));
     clear_image();
-    g_resuming = false;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
     g_size_dot = 128;
     ValueSaver saved_iterations{g_max_iterations, 300L};
 

@@ -213,17 +213,31 @@ extern int                   g_outside_color;
 class ImageCalculation
 {
 public:
+    ImageCalculation() = default;
+    ~ImageCalculation();
+
+    ImageCalculation(const ImageCalculation &) = delete;
+    ImageCalculation(ImageCalculation &&) = delete;
+    ImageCalculation &operator=(const ImageCalculation &) = delete;
+    ImageCalculation &operator=(ImageCalculation &&) = delete;
+
     std::vector<std::string> start();
     const io::TargaStorageRequest &targa_storage() const;
     std::string complete_targa_storage(bool available);
     void finish();
 
+protected:
+    bool started() const;
+    void start_timer();
+    void update_timer();
+
 private:
     bool m_started{};
+    bool m_timer_started{};
     io::TargaStorageRequest m_targa_storage;
 };
 
-class NonStandardFractal
+class NonStandardFractal : public ImageCalculation
 {
 public:
     bool completed() const;

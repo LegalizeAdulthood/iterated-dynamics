@@ -7,15 +7,18 @@
 #include "MockDriver.h"
 
 #include <engine/calc_frac_init.h>
+#include <engine/engine_timer.h>
 #include <engine/LogicalScreen.h>
 #include <engine/log_map.h>
 #include <engine/Potential.h>
 #include <engine/resume.h>
 #include <engine/show_dot.h>
+#include <engine/spindac.h>
 #include <engine/StandardFractal.h>
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
+#include <fractals/lyapunov.h>
 #include <io/disk_storage.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
@@ -26,6 +29,7 @@
 
 #include <algorithm>
 #include <array>
+#include <ctime>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -377,6 +381,186 @@ protected:
     ValueSaver<bool> m_saved_overlay{g_show_orbit, false};
     ValueSaver<int> m_saved_check_interval{g_keyboard_check_interval};
 };
+
+class TestRenderLifecycle : public TestStandardFractal
+{
+protected:
+    ValueSaver<long> m_saved_time{g_calc_time, 0};
+    ValueSaver<long> m_saved_timer_start{g_engine_timer_start, 0};
+    ValueSaver<long> m_saved_interval{g_timer_interval, 0};
+    ValueSaver<bool> m_saved_start_orbit{g_start_show_orbit, false};
+    ValueSaver<bool> m_saved_true_color{g_true_color, false};
+};
+
+TEST_F(TestRenderLifecycle, completionAccountsForElapsedImageTimeOnce)
+{
+    StandardFractal calculation;
+    EXPECT_TRUE(calculation.resume().empty());
+    ASSERT_TRUE(select_next(calculation));
+    EXPECT_TRUE(calculation.calculate_pixel());
+    g_engine_timer_start = static_cast<long>(std::clock() - CLOCKS_PER_SEC);
+    for (int chunks = 0; chunks < 100 && !calculation.done(); ++chunks)
+    {
+        calculation.iterate();
+    }
+    ASSERT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+
+    calculation.finish();
+
+    EXPECT_GE(g_calc_time, 100L);
+    const long completed_time{g_calc_time};
+    calculation.finish();
+    EXPECT_EQ(completed_time, g_calc_time);
+    EXPECT_EQ(64U, s_calculated.size());
+}
+
+TEST_F(TestRenderLifecycle, suspensionAndResumeAccumulateDistinctIntervals)
+{
+    StandardFractal calculation;
+    EXPECT_TRUE(calculation.resume().empty());
+    ASSERT_TRUE(select_next(calculation));
+    EXPECT_TRUE(calculation.calculate_pixel());
+    g_engine_timer_start = static_cast<long>(std::clock() - CLOCKS_PER_SEC);
+
+    calculation.suspend();
+
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_GE(g_calc_time, 100L);
+    const long suspended_time{g_calc_time};
+    calculation.finish();
+    EXPECT_EQ(suspended_time, g_calc_time);
+
+    StandardFractal resumed;
+    EXPECT_TRUE(resumed.resume().empty());
+    EXPECT_EQ(suspended_time, g_calc_time);
+    ASSERT_TRUE(select_next(resumed));
+    g_engine_timer_start = static_cast<long>(std::clock() - 2 * CLOCKS_PER_SEC);
+    EXPECT_TRUE(resumed.calculate_pixel());
+    for (int chunks = 0; chunks < 100 && !resumed.done(); ++chunks)
+    {
+        resumed.iterate();
+    }
+    ASSERT_TRUE(resumed.done());
+    resumed.finish();
+
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_GE(g_calc_time, suspended_time + 200);
+    EXPECT_EQ(64U, s_calculated.size());
+}
+
+TEST_F(TestRenderLifecycle, parameterChangeDiscardsSuspendedTraversalAndTiming)
+{
+    StandardFractal calculation;
+    calculation.resume();
+    ASSERT_TRUE(select_next(calculation));
+    calculation.calculate_pixel();
+    calculation.suspend();
+    ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    ASSERT_FALSE(g_resume_data.empty());
+    g_calc_time = 123;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    s_calculated.clear();
+
+    StandardFractal restarted;
+    restarted.resume();
+
+    EXPECT_FALSE(g_resuming);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(0L, g_calc_time);
+    ASSERT_TRUE(select_next(restarted));
+    EXPECT_EQ((Point2i{0, 0}), restarted.selected_pixel());
+    restarted.abort();
+}
+
+TEST_F(TestRenderLifecycle, abandoningSetupDoesNotChargeAStaleTimer)
+{
+    g_timer_interval = 12345;
+    {
+        StandardFractal calculation;
+        EXPECT_TRUE(calculation.resume().empty());
+    }
+
+    EXPECT_EQ(0L, g_calc_time);
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_TRUE(g_resume_data.empty());
+}
+
+TEST_F(TestRenderLifecycle, finishingUnfinishedWorkRestoresDispatchAndDiscardsResumeData)
+{
+    StandardFractal calculation;
+    calculation.resume();
+    ASSERT_TRUE(select_next(calculation));
+    EXPECT_TRUE(calculation.calculate_pixel());
+
+    calculation.finish();
+
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(calculate_selected_pixel, g_dispatch.calc_type());
+}
+
+TEST_F(TestRenderLifecycle, failureRestoresDispatchAndDiscardsPartialWork)
+{
+    g_dispatch.set_per_image(
+        []() -> bool
+        {
+            g_engine_timer_start = static_cast<long>(std::clock() - CLOCKS_PER_SEC);
+            throw std::runtime_error("Calculation setup failed");
+        });
+    const FractalDispatch dispatch{g_dispatch};
+
+    EXPECT_THROW(
+        {
+            StandardFractal calculation;
+            calculation.resume();
+            calculation.iterate();
+        },
+        std::runtime_error);
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_TRUE(g_log_map_table.empty());
+    EXPECT_EQ(dispatch.calc_type(), g_dispatch.calc_type());
+    EXPECT_EQ(dispatch.per_image(), g_dispatch.per_image());
+    EXPECT_GE(g_calc_time, 100L);
+}
+
+TEST_F(TestRenderLifecycle, lyapunovUsesTheCommonSetupAndCleanup)
+{
+    g_colors = 2;
+    g_log_map_flag = 1;
+    g_inside_method = ColorMethod::COLOR;
+    Lyapunov calculation;
+
+    EXPECT_THAT(calculation.resume(), ElementsAre("Need at least 16 colors to use logmap"));
+    EXPECT_EQ(0L, g_log_map_flag);
+    for (int chunks = 0; chunks < 100 && !calculation.done(); ++chunks)
+    {
+        calculation.iterate();
+    }
+    ASSERT_TRUE(calculation.done());
+    g_engine_timer_start = static_cast<long>(std::clock() - CLOCKS_PER_SEC);
+    calculation.finish();
+
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_GE(g_calc_time, 100L);
+    EXPECT_EQ(64U, s_calculated.size());
+}
+
+TEST_F(TestRenderLifecycle, activeCalculationCannotBeStartedAgain)
+{
+    StandardFractal calculation;
+    calculation.resume();
+
+    EXPECT_THROW(calculation.resume(), std::logic_error);
+
+    calculation.abort();
+}
 
 class TestStandardFractalPixel : public TestStandardFractal, public WithParamInterface<PixelPassCase>
 {
