@@ -7,14 +7,21 @@
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
+#include <engine/cmdfiles.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
 #include <engine/pixel.h>
 #include <engine/pixel_grid.h>
+#include <engine/resume.h>
 #include <engine/spindac.h>
 #include <engine/VideoInfo.h>
 #include <fractals/fractalp.h>
+#include <fractals/lorenz.h>
+#include <io/disk_storage.h>
+#include <io/library.h>
+#include <io/special_dirs.h>
 #include <misc/debug_flags.h>
+#include <misc/memory.h>
 #include <misc/ValueSaver.h>
 #include <ui/editpal.h>
 #include <ui/help.h>
@@ -25,11 +32,15 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <chrono>
+#include <cmath>
+#include <filesystem>
 #include <vector>
 
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::help;
+using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
@@ -173,6 +184,211 @@ TEST_F(TestInverseJuliaController, mouseScopeTracksCursorAndUnsubscribes)
     EXPECT_EQ(31, cursor.get_y());
     EXPECT_EQ(MouseLook::IGNORE_MOUSE, g_look_at_mouse);
     EXPECT_FALSE(g_cursor_mouse_tracking);
+}
+
+class TestInverseJuliaQueue : public TestInverseJuliaController
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void expect_dialog();
+
+    ValueSaver<bool> m_saved_first_init{g_first_init, false};
+    ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
+    ValueSaver<std::filesystem::path> m_saved_temp{g_temp_dir};
+    ValueSaver<Major> m_saved_major{g_major_method, Major::BREADTH_FIRST};
+    ValueSaver<bool> m_saved_resuming{g_resuming, false};
+    ValueSaver<bool> m_saved_show_orbit{g_show_orbit, false};
+    ValueSaver<double> m_saved_param0{g_params[0], -1.0};
+    ValueSaver<double> m_saved_param1{g_params[1], 0.0};
+    ValueSaver<double> m_saved_param2{g_params[2], 4.0};
+    ValueSaver<double> m_saved_param3{g_params[3], 1024.0};
+    std::filesystem::path m_directory;
+};
+
+void TestInverseJuliaQueue::SetUp()
+{
+    TestInverseJuliaController::SetUp();
+    free_queue();
+    init_memory();
+    reset_calc_interrupted();
+    g_debug_flag = DebugFlags::NONE;
+    m_directory = std::filesystem::temp_directory_path() /
+        ("id-inverse-queue-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+    std::filesystem::create_directory(m_directory);
+    g_temp_dir = m_directory / "missing";
+    set_save_library(m_directory);
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+}
+
+void TestInverseJuliaQueue::TearDown()
+{
+    free_queue();
+    EXPECT_TRUE(exit_check().empty());
+    reset_calc_interrupted();
+    clear_save_library();
+    std::error_code ignored;
+    std::filesystem::remove_all(m_directory, ignored);
+    TestInverseJuliaController::TearDown();
+}
+
+void TestInverseJuliaQueue::expect_dialog()
+{
+    EXPECT_CALL(m_driver, stack_screen()).Times(AnyNumber());
+    EXPECT_CALL(m_driver, unstack_screen()).Times(AnyNumber());
+    EXPECT_CALL(m_driver, move_cursor(_, _)).Times(AnyNumber());
+    EXPECT_CALL(m_driver, hide_text_cursor()).Times(AnyNumber());
+    EXPECT_CALL(m_driver, set_attr(_, _, _, _)).Times(AnyNumber());
+    EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(AnyNumber());
+}
+
+TEST_F(TestInverseJuliaQueue, successfulPreparationLeavesAnEmptyUsableQueue)
+{
+    ASSERT_TRUE(prepare_inverse_julia_queue(8192));
+
+    EXPECT_EQ(8192UL, queue_capacity());
+    EXPECT_TRUE(queue_empty());
+    EXPECT_EQ(1, enqueue_float(1.0F, 2.0F));
+    EXPECT_EQ((DComplex{1.0, 2.0}), dequeue_float());
+}
+
+TEST_F(TestInverseJuliaQueue, retryUsesASmallerQueue)
+{
+    g_debug_flag = DebugFlags::FORCE_MEMORY_FROM_DISK;
+    expect_dialog();
+    EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
+    EXPECT_CALL(m_driver, get_key())
+        .WillOnce(Invoke(
+            [this]
+            {
+                EXPECT_EQ(0UL, queue_capacity());
+                EXPECT_FALSE(g_disk_flag);
+                EXPECT_TRUE(exit_check().empty());
+                g_temp_dir = m_directory;
+                return ID_KEY_ENTER;
+            }));
+
+    ASSERT_TRUE(prepare_inverse_julia_queue(8192));
+
+    EXPECT_EQ(4096UL, queue_capacity());
+    EXPECT_EQ(MemoryLocation::DISK, disk_video_memory_type());
+    EXPECT_EQ(1, enqueue_float(3.0F, 4.0F));
+    EXPECT_EQ((DComplex{3.0, 4.0}), dequeue_float());
+}
+
+TEST_F(TestInverseJuliaQueue, cancellationDoesNotRetryAnotherQueueSize)
+{
+    g_debug_flag = DebugFlags::FORCE_MEMORY_FROM_DISK;
+    expect_dialog();
+    EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
+
+    EXPECT_FALSE(prepare_inverse_julia_queue(8192));
+
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_TRUE(exit_check().empty());
+}
+
+TEST_F(TestInverseJuliaQueue, retriesStopAtTheMinimumQueueSize)
+{
+    g_debug_flag = DebugFlags::FORCE_MEMORY_FROM_DISK;
+    expect_dialog();
+    EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+
+    EXPECT_FALSE(prepare_inverse_julia_queue(2048));
+
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_FALSE(g_disk_flag);
+}
+
+TEST_F(TestInverseJuliaQueue, diskVideoRejectionPreservesTheDisplayStorage)
+{
+    start_disk_storage(16, 16, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
+    write_disk_pixel(3, 4, 123);
+    EXPECT_CALL(m_driver, is_disk()).WillOnce(Return(true));
+    expect_dialog();
+    EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
+    EXPECT_CALL(m_driver, put_string(_, _, _, StrEq("Don't try this in disk video mode, kids...\n")));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+
+    EXPECT_FALSE(prepare_inverse_julia_queue(8192));
+
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_TRUE(g_disk_flag);
+    EXPECT_EQ(123, read_disk_pixel(3, 4));
+}
+
+TEST_F(TestInverseJuliaQueue, standaloneControllerSeedsThenReleasesThePreparedQueue)
+{
+    set_fractal_type(FractalType::INVERSE_JULIA);
+    ASSERT_TRUE(orbit3d_per_image());
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillOnce(Invoke(
+            []
+            {
+                EXPECT_EQ(32768UL, queue_capacity());
+                EXPECT_NEAR((1 + std::sqrt(5.0)) / 2, dequeue_float().x, 1e-6);
+                return 'x';
+            }))
+        .WillRepeatedly(Return(0));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return('x'));
+    EXPECT_CALL(m_driver, unget_key('x'));
+
+    EXPECT_EQ(-1, inverse_julia_fractal_type());
+
+    EXPECT_EQ(Major::BREADTH_FIRST, g_major_method);
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_TRUE(exit_check().empty());
+}
+
+TEST_F(TestInverseJuliaQueue, standaloneControllerOwnsTheRandomWalkFallback)
+{
+    set_fractal_type(FractalType::INVERSE_JULIA);
+    ASSERT_TRUE(orbit3d_per_image());
+    g_debug_flag = DebugFlags::FORCE_MEMORY_FROM_DISK;
+    expect_dialog();
+    EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
+    EXPECT_CALL(m_driver, put_string(_, _, _, StrEq("Not enough memory: switching to random walk.\n")));
+    int pending_key{};
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Invoke([&pending_key] { return pending_key; }));
+    EXPECT_CALL(m_driver, get_key())
+        .WillOnce(Return(ID_KEY_ESC))
+        .WillOnce(Invoke(
+            [&pending_key]
+            {
+                pending_key = 'x';
+                return ID_KEY_ENTER;
+            }))
+        .WillOnce(Invoke(
+            [&pending_key]
+            {
+                EXPECT_EQ(Major::RANDOM_WALK, g_major_method);
+                EXPECT_GT(g_new_z.x, 1.0);
+                pending_key = 0;
+                return 'x';
+            }));
+    EXPECT_CALL(m_driver, unget_key('x'));
+
+    EXPECT_EQ(-1, inverse_julia_fractal_type());
+
+    EXPECT_EQ(Major::RANDOM_WALK, g_major_method);
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_FALSE(g_disk_flag);
+}
+
+TEST_F(TestInverseJuliaQueue, jiimControllerReleasesItsQueueAndRestoresTheImage)
+{
+    expect_exit_key(ID_KEY_SPACE);
+
+    jiim(JIIMType::JIIM);
+
+    EXPECT_THAT(m_pixels, Each(3));
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_TRUE(exit_check().empty());
 }
 
 } // namespace id::test

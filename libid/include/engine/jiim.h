@@ -4,6 +4,7 @@
 #pragma once
 
 #include "math/cmplx.h"
+#include "misc/memory.h"
 
 namespace id::engine
 {
@@ -75,7 +76,9 @@ private:
 
 math::DComplex pop_float();
 math::DComplex dequeue_float();
-bool init_queue(unsigned long request);
+// Takes ownership of backing when storage initialization begins.
+void init_queue(unsigned long capacity, misc::MemoryHandle backing);
+unsigned long queue_capacity();
 void free_queue();
 void   clear_queue();
 int    queue_empty();

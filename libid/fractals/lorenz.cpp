@@ -45,6 +45,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdio>
+#include <stdexcept>
 #include <vector>
 
 using namespace id::engine;
@@ -157,12 +158,6 @@ static int orbit(double *x, double *y, double *z)
 static int orbit(double *x, double *y)
 {
     return orbit(x, y, nullptr);
-}
-
-static void fallback_to_random_walk()
-{
-    stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Not enough memory: switching to random walk.\n");
-    g_major_method = Major::RANDOM_WALK;
 }
 
 //****************************************************************
@@ -415,59 +410,6 @@ bool orbit3d_per_image()
         g_params[2] = s_max_hits;
 
         setup_convert_to_screen(&s_cvt);
-
-        // find fixed points: guaranteed to be in the set
-        const DComplex s = sqrt(1 - 4 * s_cx, -4 * s_cy);
-        switch (g_major_method)
-        {
-        case Major::BREADTH_FIRST:
-            if (!init_queue(32 * 1024UL))
-            {
-                // can't get queue memory: fall back to random walk
-                fallback_to_random_walk();
-                goto random_walk;
-            }
-            enqueue_float(static_cast<float>((1 + s.x) / 2), static_cast<float>(s.y / 2));
-            enqueue_float(static_cast<float>((1 - s.x) / 2), static_cast<float>(-s.y / 2));
-            break;
-        case Major::DEPTH_FIRST: // depth first (choose direction)
-            if (!init_queue(32 * 1024UL))
-            {
-                // can't get queue memory: fall back to random walk
-                fallback_to_random_walk();
-                goto random_walk;
-            }
-            switch (g_inverse_julia_minor_method)
-            {
-            case Minor::LEFT_FIRST:
-                push_float(static_cast<float>((1 + s.x) / 2), static_cast<float>(s.y / 2));
-                push_float(static_cast<float>((1 - s.x) / 2), static_cast<float>(-s.y / 2));
-                break;
-            case Minor::RIGHT_FIRST:
-                push_float(static_cast<float>((1 - s.x) / 2), static_cast<float>(-s.y / 2));
-                push_float(static_cast<float>((1 + s.x) / 2), static_cast<float>(s.y / 2));
-                break;
-            }
-            break;
-        case Major::RANDOM_WALK:
-random_walk:
-            s_init_orbit[0] = 1 + s.x / 2;
-            g_new_z.x = s_init_orbit[0];
-            s_init_orbit[1] = s.y / 2;
-            g_new_z.y = s_init_orbit[1];
-            break;
-        case Major::RANDOM_RUN: // random run, choose intervals
-            g_major_method = Major::RANDOM_RUN;
-            s_init_orbit[0] = 1 + s.x / 2;
-            g_new_z.x = s_init_orbit[0];
-            s_init_orbit[1] = s.y / 2;
-            g_new_z.y = s_init_orbit[1];
-            break;
-        }
-        if (g_major_method == Major::RANDOM_WALK || g_major_method == Major::RANDOM_RUN)
-        {
-            set_random_seed();
-        }
     }
     else
     {
@@ -483,6 +425,53 @@ random_walk:
     s_cdt = s_c * s_dt;
 
     return true;
+}
+
+void init_inverse_julia()
+{
+    if ((g_major_method == Major::BREADTH_FIRST || g_major_method == Major::DEPTH_FIRST) && queue_capacity() == 0)
+    {
+        throw std::logic_error("Inverse Julia requires an initialized queue");
+    }
+    // find fixed points: guaranteed to be in the set
+    const DComplex s = sqrt(1 - 4 * s_cx, -4 * s_cy);
+    switch (g_major_method)
+    {
+    case Major::BREADTH_FIRST:
+        enqueue_float(static_cast<float>((1 + s.x) / 2), static_cast<float>(s.y / 2));
+        enqueue_float(static_cast<float>((1 - s.x) / 2), static_cast<float>(-s.y / 2));
+        break;
+    case Major::DEPTH_FIRST: // depth first (choose direction)
+        switch (g_inverse_julia_minor_method)
+        {
+        case Minor::LEFT_FIRST:
+            push_float(static_cast<float>((1 + s.x) / 2), static_cast<float>(s.y / 2));
+            push_float(static_cast<float>((1 - s.x) / 2), static_cast<float>(-s.y / 2));
+            break;
+        case Minor::RIGHT_FIRST:
+            push_float(static_cast<float>((1 - s.x) / 2), static_cast<float>(-s.y / 2));
+            push_float(static_cast<float>((1 + s.x) / 2), static_cast<float>(s.y / 2));
+            break;
+        }
+        break;
+    case Major::RANDOM_WALK:
+        s_init_orbit[0] = 1 + s.x / 2;
+        g_new_z.x = s_init_orbit[0];
+        s_init_orbit[1] = s.y / 2;
+        g_new_z.y = s_init_orbit[1];
+        break;
+    case Major::RANDOM_RUN: // random run, choose intervals
+        g_major_method = Major::RANDOM_RUN;
+        s_init_orbit[0] = 1 + s.x / 2;
+        g_new_z.x = s_init_orbit[0];
+        s_init_orbit[1] = s.y / 2;
+        g_new_z.y = s_init_orbit[1];
+        break;
+    }
+    if (g_major_method == Major::RANDOM_WALK || g_major_method == Major::RANDOM_RUN)
+    {
+        set_random_seed();
+    }
 }
 
 //****************************************************************

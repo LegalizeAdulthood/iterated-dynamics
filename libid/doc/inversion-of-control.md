@@ -338,13 +338,18 @@ The current code is already part-way through this plan:
   of the next requested filename.  Pixel and Targa callers use the I/O
   operations directly.  UI controllers service progress at existing work
   checkpoints, retaining the status throttle without adding yields or
-  input polling.  Temporary setup bridges remain for slices 41.5 through
+  input polling.  Temporary setup bridges remain for slices 41.6 through
   41.7; allocation retry/cancel belongs to the storage UI operation.
 - Plasma construction normalizes configuration without allocating storage
   or plotting pixels.  Its UI controller prepares potential storage, then
   calls `init()` with the outcome.  Calculation retains border handling,
   8-bit fallback, and saved potential-state restoration; pixel output
   identifies disk targets without querying the driver.
+- Inverse-Julia queue initialization accepts prepared backing memory.
+  Both requesting UI controllers own disk-video rejection, smaller-queue
+  retries, cancellation, and fallback.  Standalone setup separates
+  parameter normalization from queue seeding; calculation code retains
+  byte transfers, queue indices, orbit math, and cleanup without prompts.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -365,7 +370,7 @@ The fresh reverse-call audit also found these live paths:
   `stop_msg()` or application shutdown through `goodbye()`.
 - Calculation code still enters disk-storage setup bridges under
   `libid/ui`.  Cache and backing operations belong to I/O; controllers
-  now service progress between existing work chunks.  Slices 41.5 through
+  now service progress between existing work chunks.  Slices 41.6 through
   41.7 remove the remaining setup reverse calls and mapping-line status.
 - Image loading, image saving, and command parsing still select UI
   prompts, display status, or exit the application from non-UI modules.
@@ -776,7 +781,7 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - Calculation code still calls setup bridges in `ui/diskvid.cpp`, and
   `geometry/line3d.cpp` still reports mapping-line status.  Pixel access
   and progress snapshots are I/O-owned; controllers service storage
-  progress between existing work chunks.  Slices 41.5 through 41.7 move
+  progress between existing work chunks.  Slices 41.6 through 41.7 move
   the remaining setup decisions and mapping status to requesting UI.
 - `libid/io/loadfile.cpp`, `libid/io/encoder.cpp`, and
   `libid/engine/cmdfiles.cpp`: select prompts, display status, make
@@ -975,31 +980,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 41.5. Inverse Julia Queue Storage Preparation
-
-Source: `init_queue()` in `engine/jiim.cpp`, InverseJulia setup in
-`fractals/lorenz.cpp`, and `ui/inverse_julia.cpp`.
-UI owner: each inverse-Julia requesting controller.
-
-Work:
-
-- Keep queue indices, byte transfers, and cleanup in calculation code.
-  Queue initialization accepts prepared storage without invoking UI.
-- Make storage preparation explicit before the calculation starts queue
-  work.  Controllers own disk-video rejection, allocation retries with
-  smaller queues, cancellation, and random-walk fallback diagnostics.
-- Remove `common_start_disk()`, `driver_is_disk()`, and modal messages
-  from calculation-side queue setup.
-
-Done when:
-
-- Queue construction and calculation cannot enter allocation prompts or
-  select a UI fallback path.
-
-Validation: successful queue use, reduced allocation, cancellation,
-disk-video rejection, and random-walk fallback with mocked UI decisions.
-Reuse inverse-Julia interaction coverage; no manual check required.
 
 ### 41.6. Potential Image Restore Storage Preparation
 

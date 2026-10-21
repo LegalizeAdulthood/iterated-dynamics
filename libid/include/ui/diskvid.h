@@ -20,7 +20,7 @@ int pot_start_disk();
 // Slice 41.7 moves Targa-storage setup to the restore controller.
 int targa_start_disk(std::FILE *file, int overhead);
 // TODO: removed later
-// Slices 41.5-41.7 move storage setup to requesting controllers.
+// Slices 41.6-41.7 move storage setup to requesting controllers.
 int common_start_disk(std::int64_t row_size, std::int64_t col_size, int colors);
 void display_disk_storage_progress();
 void dvid_status(int line, const char *msg);

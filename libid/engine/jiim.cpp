@@ -15,17 +15,15 @@
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "io/disk_storage.h"
-#include "ui/diskvid.h"
-#include "ui/stop_msg.h"
 
 #include <cmath>
+#include <limits>
 #include <stdexcept>
 
 using namespace id::io;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::engine
 {
@@ -210,36 +208,20 @@ void clear_queue()
 }
 
 // Queue functions for MIIM julia:
-bool init_queue(const unsigned long request)
+void init_queue(const unsigned long capacity, const MemoryHandle backing)
 {
-    if (driver_is_disk())
+    if (capacity < 2 || capacity > static_cast<unsigned long>(std::numeric_limits<int>::max() / 8))
     {
-        stop_msg("Don't try this in disk video mode, kids...\n");
-        s_list_size = 0;
-        return false;
+        throw std::logic_error("Invalid inverse-Julia queue capacity");
     }
+    start_disk_storage(static_cast<std::int64_t>(capacity) * 8, 1, 256, backing);
+    s_list_size = static_cast<long>(capacity);
+    clear_queue();
+}
 
-    for (s_list_size = request; s_list_size > 1024; s_list_size /= 2)
-    {
-        switch (common_start_disk(s_list_size * 8, 1, 256))
-        {
-        case 0:                        // success
-            s_list_back = 0;
-            s_list_front = 0;
-            s_l_max = 0;
-            s_l_size = 0;
-            return true;
-        case -1:
-            continue;                   // try smaller queue size
-        case -2:
-            s_list_size = 0;               // cancelled by user
-            return false;
-        }
-    }
-
-    // failed to get memory for MIIM Queue
-    s_list_size = 0;
-    return false;
+unsigned long queue_capacity()
+{
+    return static_cast<unsigned long>(s_list_size);
 }
 
 void free_queue()

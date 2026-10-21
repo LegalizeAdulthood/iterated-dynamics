@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -261,6 +262,7 @@ constexpr const char *to_string(const Minor value)
 }
 
 bool orbit3d_per_image();
+void init_inverse_julia();
 int lorenz3d1_orbit(double *x, double *y, double *z);
 int lorenz3d_orbit(double *x, double *y, double *z);
 int lorenz3d3_orbit(double *x, double *y, double *z);

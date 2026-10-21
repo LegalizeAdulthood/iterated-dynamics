@@ -651,6 +651,7 @@ TEST(TestSeededFractals, inverseJuliaRandomWalkSeedsImageRng)
     set_random_seed(LOW_RANDOM_SEED);
 
     EXPECT_TRUE(orbit3d_per_image());
+    init_inverse_julia();
 
     EXPECT_EQ(FIRST_RANDOM15, random15());
 }

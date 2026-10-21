@@ -16,8 +16,10 @@
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
+#include "io/disk_storage.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
+#include "misc/memory.h"
 #include "misc/ValueSaver.h"
 #include "ui/editpal.h"
 #include "ui/find_special_colors.h"
@@ -27,6 +29,7 @@
 #include "ui/id_keys.h"
 #include "ui/mouse.h"
 #include "ui/standard_orbit_plot.h"
+#include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
 
@@ -34,13 +37,17 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <memory>
+#include <new>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::help;
+using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 
@@ -243,7 +250,7 @@ void InverseJuliaController::start()
     m_ok_to_miim = false;
     if (m_which == JIIMType::JIIM && g_debug_flag != DebugFlags::PREVENT_MIIM)
     {
-        m_ok_to_miim = init_queue(8 * 1024UL); // Queue Set-up Successful?
+        m_ok_to_miim = prepare_inverse_julia_queue(8 * 1024UL);
     }
     if (m_which == JIIMType::JIIM && !m_ok_to_miim)
     {
@@ -867,7 +874,10 @@ bool InverseJuliaController::iterate()
 
 void InverseJuliaController::finish()
 {
-    free_queue();
+    if (m_ok_to_miim)
+    {
+        free_queue();
+    }
 
     if (m_key != 's' && m_key != 'S')
     {
@@ -970,6 +980,48 @@ void jiim(const JIIMType which)
     tool.process();
 }
 
+bool prepare_inverse_julia_queue(const unsigned long request)
+{
+    if (request > static_cast<unsigned long>(std::numeric_limits<int>::max() / 8))
+    {
+        throw std::logic_error("Invalid inverse-Julia queue capacity");
+    }
+    if (driver_is_disk())
+    {
+        stop_msg("Don't try this in disk video mode, kids...\n");
+        return false;
+    }
+    free_queue();
+    for (unsigned long capacity = request; capacity > 1024; capacity /= 2)
+    {
+        std::uint64_t blocks{};
+        const std::int64_t bytes{static_cast<std::int64_t>(capacity) * 8};
+        if (!disk_video_memory_blocks(bytes, 1, 256, 0, blocks))
+        {
+            throw std::logic_error("Invalid inverse-Julia queue storage size");
+        }
+        std::string error;
+        try
+        {
+            init_queue(capacity, memory_alloc(DISK_STORAGE_BLOCK_SIZE, blocks, MemoryLocation::MEMORY));
+            return true;
+        }
+        catch (const MemoryError &failure)
+        {
+            error = failure.what();
+        }
+        catch (const std::bad_alloc &)
+        {
+            error = "Insufficient free memory for inverse-Julia queue";
+        }
+        if (stop_msg(StopMsgFlags::CANCEL, error + "\nPress a key to retry with a smaller queue."))
+        {
+            return false;
+        }
+    }
+    return false;
+}
+
 int inverse_julia_fractal_type()
 {
     int color = 0;
@@ -979,8 +1031,18 @@ int inverse_julia_fractal_type()
         return -1;
     }
 
+    const bool needs_queue{g_major_method == Major::BREADTH_FIRST || g_major_method == Major::DEPTH_FIRST};
+    const bool has_queue{needs_queue && prepare_inverse_julia_queue(32 * 1024UL)};
+    if (needs_queue && !has_queue)
+    {
+        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Not enough memory: switching to random walk.\n");
+        g_major_method = Major::RANDOM_WALK;
+    }
+    init_inverse_julia();
+
     reset_calc_interrupted();
-    auto keyboard_handler{std::make_shared<InverseJuliaOrbitKeyboardHandler>()};
+    std::shared_ptr<InverseJuliaOrbitKeyboardHandler> keyboard_handler{
+        std::make_shared<InverseJuliaOrbitKeyboardHandler>()};
     ScopedKeyboardHandler keyboard_scope{keyboard_handler};
 
     while (color >= 0)       // generate points
@@ -988,13 +1050,19 @@ int inverse_julia_fractal_type()
         dispatch_pending_keyboard_input();
         if (keyboard_handler->interrupted())
         {
-            free_queue();
+            if (has_queue)
+            {
+                free_queue();
+            }
             return -1;
         }
         color = orbit_calc();
         g_old_z = g_new_z;
     }
-    free_queue();
+    if (has_queue)
+    {
+        free_queue();
+    }
     return 0;
 }
 
