@@ -338,8 +338,8 @@ The current code is already part-way through this plan:
   of the next requested filename.  Pixel and Targa callers use the I/O
   operations directly.  UI controllers service progress at existing work
   checkpoints, retaining the status throttle without adding yields or
-  input polling.  Temporary setup bridges remain for slices 41.6 through
-  41.7; allocation retry/cancel belongs to the storage UI operation.
+  input polling.  Slice 41.7 removes the remaining temporary setup
+  bridges; allocation retry/cancel belongs to the storage UI operation.
 - Plasma construction normalizes configuration without allocating storage
   or plotting pixels.  Its UI controller prepares potential storage, then
   calls `init()` with the outcome.  Calculation retains border handling,
@@ -350,6 +350,11 @@ The current code is already part-way through this plan:
   retries, cancellation, and fallback.  Standalone setup separates
   parameter normalization from queue seeding; calculation code retains
   byte transfers, queue indices, orbit math, and cleanup without prompts.
+- Potential-image restoration prepares storage once in its existing UI
+  path, retaining setup-failure fallback there.  `pot_line()` requires
+  prepared storage and writes high/low planes with the existing offsets;
+  it neither allocates storage nor queries the display driver.  UI owns
+  output-target selection and storage cleanup.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -370,8 +375,8 @@ The fresh reverse-call audit also found these live paths:
   `stop_msg()` or application shutdown through `goodbye()`.
 - Calculation code still enters disk-storage setup bridges under
   `libid/ui`.  Cache and backing operations belong to I/O; controllers
-  now service progress between existing work chunks.  Slices 41.6 through
-  41.7 remove the remaining setup reverse calls and mapping-line status.
+  now service progress between existing work chunks.  Slice 41.7 removes
+  the remaining Targa setup reverse call and mapping-line status.
 - Image loading, image saving, and command parsing still select UI
   prompts, display status, or exit the application from non-UI modules.
 
@@ -781,8 +786,8 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - Calculation code still calls setup bridges in `ui/diskvid.cpp`, and
   `geometry/line3d.cpp` still reports mapping-line status.  Pixel access
   and progress snapshots are I/O-owned; controllers service storage
-  progress between existing work chunks.  Slices 41.6 through 41.7 move
-  the remaining setup decisions and mapping status to requesting UI.
+  progress between existing work chunks.  Slice 41.7 moves remaining
+  Targa setup decisions and mapping status to requesting UI.
 - `libid/io/loadfile.cpp`, `libid/io/encoder.cpp`, and
   `libid/engine/cmdfiles.cpp`: select prompts, display status, make
   continue/cancel decisions, or shut down the application from non-UI
@@ -980,28 +985,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 41.6. Potential Image Restore Storage Preparation
-
-Source: `pot_line()` in `io/gifview.cpp` and the UI restore path.
-UI owner: image restoration.
-
-Work:
-
-- Prepare potential storage in the restore controller before delivering
-  the first scanline.  Remove the duplicate first-line setup in
-  `pot_line()`; keep setup failure handling and restore cleanup in UI.
-- Keep high/low plane output and coordinate offsets in the I/O consumer.
-  Supply output-target facts without querying the driver in that consumer.
-- Preserve atomic scanline loading, failure fallback, and batch behavior.
-
-Done when:
-
-- Potential scanline output neither prepares interactive storage nor
-  enters UI to inspect the output target.
-
-Validation: potential restore, failed setup, and cleanup through
-controller tests and existing GIF round trips.  No manual check required.
 
 ### 41.7. Targa Storage Preparation And Bridge Removal
 

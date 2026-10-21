@@ -44,7 +44,7 @@ constexpr int BOX_DEPTH{12};
 std::chrono::time_point<std::chrono::high_resolution_clock> s_last_status{};
 
 // TODO: removed later
-// Slices 41.6-41.7 move setup decisions to requesting controllers.
+// Slice 41.7 moves Targa setup decisions to the restore controller.
 int start_disk_video(
     const std::int64_t row_size, const std::int64_t col_size, const int colors, const std::vector<Byte> &header)
 {
@@ -168,7 +168,7 @@ int start_disk()
 }
 
 // TODO: removed later
-// Slice 41.6 moves the remaining potential-restore setup call to UI.
+// Slice 41.7 replaces this temporary storage setup bridge.
 int pot_start_disk()
 {
     if (driver_is_disk())
@@ -213,7 +213,7 @@ int targa_start_disk(std::FILE *file, const int overhead)
 }
 
 // TODO: removed later
-// Slices 41.6-41.7 move storage setup to requesting controllers.
+// Slice 41.7 removes the remaining storage setup bridge.
 int common_start_disk(const std::int64_t row_size, const std::int64_t col_size, const int colors)
 {
     return start_disk_video(row_size, col_size, colors, {});

@@ -12,16 +12,13 @@
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "io/disk_storage.h"
-#include "misc/Driver.h"
-#include "ui/diskvid.h"
 
 #include <cstdlib>
 #include <algorithm>
+#include <stdexcept>
 #include <vector>
 
 using namespace id::engine;
-using namespace id::misc;
-using namespace id::ui;
 
 namespace id::io
 {
@@ -78,12 +75,9 @@ int out_line_dither(Byte *pixels, const int line_len)
 
 int pot_line(Byte *pixels, const int line_len)
 {
-    if (g_row_count == 0)
+    if (!g_disk_flag || !g_disk_16_bit)
     {
-        if (pot_start_disk() < 0)
-        {
-            return -1;
-        }
+        throw std::logic_error("Potential scanline output requires prepared storage");
     }
     int save_row_count = g_row_count;
     g_row_count >>= 1;
@@ -92,7 +86,7 @@ int pot_line(Byte *pixels, const int line_len)
     {
         row += g_logical_screen.y_dots;
     }
-    else if (!driver_is_disk())     // even line - display the line too
+    else if (!disk_pixel_output()) // even line - display the line too
     {
         out_line(pixels, line_len);
     }
