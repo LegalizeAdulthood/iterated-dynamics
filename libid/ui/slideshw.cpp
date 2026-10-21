@@ -105,6 +105,8 @@ static bool s_calc_wait{};
 static int s_thinking_key{};
 static int s_row_wait_key{};
 static int s_row_wait_target{};
+static int s_iteration_wait_key{};
+static long s_iteration_wait_target{};
 static int s_repeats{};
 static int s_last1{};
 
@@ -187,6 +189,17 @@ int slide_show()
 {
     int out;
     char buffer[81];
+    if (s_iteration_wait_key != 0)
+    {
+        if (g_calc_status != CalcStatus::IN_PROGRESS || g_color_iter < s_iteration_wait_target)
+        {
+            return 0;
+        }
+        const int key{s_iteration_wait_key};
+        s_iteration_wait_key = 0;
+        s_last1 = key;
+        return key;
+    }
     if (s_row_wait_key != 0)
     {
         if (g_calc_status != CalcStatus::IN_PROGRESS || g_current_row < s_row_wait_target)
@@ -438,6 +451,32 @@ start:
             }
         }
     }
+    else if (std::strcmp("ITERWAIT", buffer) == 0)
+    {
+        long iteration{};
+        out = 0;
+        if (std::fscanf(s_slide_show_file, "%ld %80s", &iteration, buffer) != 2 || iteration < 0)
+        {
+            slide_show_err("ITERWAIT needs a nonnegative iteration and a key");
+        }
+        else
+        {
+            const int key{buffer[1] == 0 ? static_cast<unsigned char>(buffer[0]) : get_slide_show_key_code(buffer)};
+            if (key <= 0)
+            {
+                slide_show_err("ITERWAIT needs a character or named key");
+            }
+            else if (g_calc_status == CalcStatus::IN_PROGRESS && g_color_iter >= iteration)
+            {
+                out = key;
+            }
+            else
+            {
+                s_iteration_wait_key = key;
+                s_iteration_wait_target = iteration;
+            }
+        }
+    }
     else if (std::strcmp("CALCWAIT", buffer) == 0) // wait for calc to finish
     {
         s_calc_wait = true;
@@ -470,6 +509,8 @@ SlidesMode start_slide_show()
     s_thinking_key = 0;
     s_row_wait_key = 0;
     s_row_wait_target = 0;
+    s_iteration_wait_key = 0;
+    s_iteration_wait_target = 0;
     s_slow_count = 0;
     return g_slides;
 }
@@ -484,6 +525,8 @@ void stop_slide_show()
     s_thinking_key = 0;
     s_row_wait_key = 0;
     s_row_wait_target = 0;
+    s_iteration_wait_key = 0;
+    s_iteration_wait_target = 0;
     s_record_time = {};
     g_slides = SlidesMode::OFF;
 }

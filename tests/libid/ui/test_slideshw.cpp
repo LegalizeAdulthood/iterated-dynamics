@@ -241,6 +241,74 @@ TEST(TestSlideShow, rowWaitAcceptsANamedKeyAtTheCurrentRow)
     stop_slide_show();
 }
 
+TEST(TestSlideShow, iterationWaitDeliversKeyOnlyDuringCalculationAtTheTargetIteration)
+{
+    TempDir temp_dir;
+    const fs::path input_path{temp_dir.path() / "iteration.key"};
+    write_text_file(input_path, "ITERWAIT 512 x\n");
+    MockDriver driver;
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
+    ValueSaver saved_auto_name{g_auto_name, input_path};
+    ValueSaver saved_iteration{g_color_iter, 0L};
+    ValueSaver saved_status{g_calc_status, CalcStatus::IN_PROGRESS};
+    stop_slide_show();
+    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
+    EXPECT_CALL(driver, set_keyboard_timeout(_));
+
+    EXPECT_EQ(0, slide_show());
+    g_color_iter = 511;
+    EXPECT_EQ(0, slide_show());
+    g_color_iter = 512;
+    g_calc_status = CalcStatus::COMPLETED;
+    EXPECT_EQ(0, slide_show());
+    g_calc_status = CalcStatus::IN_PROGRESS;
+    EXPECT_EQ('x', slide_show());
+
+    stop_slide_show();
+}
+
+TEST(TestSlideShow, iterationWaitAcceptsANamedKeyAtTheCurrentIteration)
+{
+    TempDir temp_dir;
+    const fs::path input_path{temp_dir.path() / "iteration.key"};
+    write_text_file(input_path, "ITERWAIT 512 ENTER\n");
+    MockDriver driver;
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
+    ValueSaver saved_auto_name{g_auto_name, input_path};
+    ValueSaver saved_iteration{g_color_iter, 512L};
+    ValueSaver saved_status{g_calc_status, CalcStatus::IN_PROGRESS};
+    stop_slide_show();
+    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
+    EXPECT_CALL(driver, set_keyboard_timeout(_));
+
+    EXPECT_EQ(ID_KEY_ENTER, slide_show());
+
+    stop_slide_show();
+}
+
+TEST(TestSlideShow, stoppingSlideShowDiscardsThePendingIterationWait)
+{
+    TempDir temp_dir;
+    const fs::path input_path{temp_dir.path() / "iteration.key"};
+    write_text_file(input_path, "ITERWAIT 512 x\n");
+    MockDriver driver;
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
+    ValueSaver saved_auto_name{g_auto_name, input_path};
+    ValueSaver saved_iteration{g_color_iter, 0L};
+    ValueSaver saved_status{g_calc_status, CalcStatus::IN_PROGRESS};
+    stop_slide_show();
+    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
+    EXPECT_CALL(driver, set_keyboard_timeout(_)).Times(2);
+
+    EXPECT_EQ(0, slide_show());
+    stop_slide_show();
+    write_text_file(input_path, "ENTER\n");
+    g_slides = SlidesMode::PLAY;
+    EXPECT_EQ(ID_KEY_ENTER, slide_show());
+
+    stop_slide_show();
+}
+
 TEST(TestSlideShow, slideShowMessageDisplaysLineAfterSecondsArgument)
 {
     TempDir temp_dir;

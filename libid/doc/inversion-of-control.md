@@ -899,6 +899,13 @@ Existing coverage does not imply coverage of live interaction:
   image when another invalid selection is cancelled.  Batch checks
   require one diagnostic and no saved image for each rejected definition.
   It verifies metadata and blank/nonblank output, not rasterized lines.
+  The 2D and 3D IFS interruption scripts select the definition and type
+  through the command UI, deliver `x` after 512 IFS iterations during
+  active rendering, cancel the menu, and save a non-resumable checkpoint.
+  Changing the iteration limit restarts calculation; saved parameters,
+  completion state, and pixels are checked against a fresh seeded image.
+  This is the 49.1 interaction baseline, before calculation ownership
+  changes.  IFS does not support calculation resume.
   The formula script acknowledges a missing definition, rejects invalid
   syntax, selects a valid formula, and preserves the completed image
   when another invalid selection is cancelled.  Batch checks reject
@@ -993,10 +1000,13 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   exact yield points, resume bookkeeping, and handler lifetime as well.
 - `CALCWAIT` waits for completion.  `THINKWAIT <key>` emits a character or
   named key only while a thinking screen is active; it does not assert
-  arbitrary calculation phases.  If another intermediate observation is
-  unavailable, add narrowly scoped UI/harness test support in a separate
-  prerequisite commit, or keep that assertion in a controller test and
-  limit the script's claim accordingly.
+  arbitrary calculation phases.  `ITERWAIT <iteration> <key>` requires
+  active calculation and the type-specific `g_color_iter` threshold;
+  IFS increments that counter for each generated point.  Do not assume
+  it counts image progress for other types.  If another intermediate
+  observation is unavailable, add narrowly scoped UI/harness support in
+  a separate prerequisite commit, or keep that assertion in a controller
+  test and limit the script's claim accordingly.
 - Prefer `CALCWAIT` for completion.  Fixed `WAIT` delays, a large workload,
   or a slow CI machine do not prove that input arrived during work.
   Give scripts bounded process timeouts so lost keys or hangs fail.
@@ -1017,7 +1027,7 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 49. IFS Front-End Calculation Selection
+### 49.2. IFS Front-End Calculation Selection
 
 Source: `ifs_type()` and the `ifs3d()` front end in
 `libid/fractals/lorenz.cpp`; UI owners: `ui/ifs2d.cpp` and `ui/ifs3d.cpp`.
@@ -1026,21 +1036,32 @@ Work:
 
 - Keep IFS loading, dimension selection, transforms, and calculation
   state in engine or fractal code.
+  `type=ifs3d` is compatibility syntax for `type=ifs`; the loaded
+  definition header selects 2D or 3D.  Do not select dimensions from
+  `FractalType` alone or change saved type metadata for that alias.
 - Expose the selected IFS calculation object to the UI controller, which
   advances its existing `iterate()` operation.
 - Remove `ifs_type()` calling `ifs2d()` or `ifs3d()` as UI functions from
   fractal code.  Do not move dimension-based renderer classification
   into the UI controller.
+- Account for the existing 3D stereo coupling: `ifs3d()` initializes
+  `s_real_time`, then `funny_glasses_call()` controls eye setup and calls
+  the UI renderer.  IFS3D and `float_view_transf3d()` use `s_real_time`
+  for combined red/blue plotting.  PHOTO and stereo-pair modes calculate
+  separate views.  Preserve those paths through selected calculation
+  work and UI prompt ownership; do not copy the synchronous callback
+  wrapper into UI or silently fall back to it from `iterate()`.
 
 Done when:
 
 - IFS front-end calculation code never invokes a UI render loop.
 
-Validation: add autokey journeys selecting 2D and 3D IFS through the UI,
-entering/leaving a render-time menu, and completing/saving afterward.
-Observe interruption before claiming it and use deterministic seeds with
-existing rendering fixtures.  Retain operation-selection tests.  No
-manual image comparison.
+Validation: reuse `AutoKeyTest.ifs-interrupt-ifs` and
+`AutoKeyTest.ifs-interrupt-ifs3d`, established in 49.1, plus existing IFS
+validation and rendering fixtures.  Keep actual in-progress interruption
+and non-resumable restart semantics.  Add operation-selection tests for
+loaded definition dimensions, cached definitions, and setup failure.
+No manual image comparison.
 
 ### 50. Stereo Rendering UI Sequence
 

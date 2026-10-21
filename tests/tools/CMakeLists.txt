@@ -51,6 +51,10 @@ add_executable(check-ifs-validation check_ifs_validation.cpp)
 target_link_libraries(check-ifs-validation PRIVATE image-tool libid fmt::fmt-header-only)
 target_folder(check-ifs-validation "Tests/Tools")
 
+add_executable(check-ifs-interrupt check_ifs_interrupt.cpp)
+target_link_libraries(check-ifs-interrupt PRIVATE image-tool libid fmt::fmt-header-only)
+target_folder(check-ifs-interrupt "Tests/Tools")
+
 add_executable(check-formula-validation check_formula_validation.cpp)
 target_link_libraries(check-formula-validation PRIVATE image-tool libid fmt::fmt-header-only)
 target_folder(check-formula-validation "Tests/Tools")

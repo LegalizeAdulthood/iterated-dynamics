@@ -213,6 +213,29 @@ add_test(NAME AutoKeyTest.ifs-validation
 set_tests_properties(AutoKeyTest.ifs-validation
     PROPERTIES LABELS "autokey;ui;ifs" TIMEOUT 100)
 
+foreach(IFS_TYPE IN ITEMS ifs ifs3d)
+    if(IFS_TYPE STREQUAL "ifs")
+        set(IFS_NAME "dragon")
+    else()
+        set(IFS_NAME "3dfern")
+    endif()
+    set(name "ifs-interrupt-${IFS_TYPE}")
+    id_make_test_home("${name}" IFS_INTERRUPT_HOME)
+    file(MAKE_DIRECTORY "${IFS_INTERRUPT_HOME}/key")
+    configure_file(ifs_interrupt.key.in "${IFS_INTERRUPT_HOME}/key/ifs_interrupt.key" @ONLY)
+    add_test(NAME "AutoKeyTest.${name}"
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DCHECK_IFS=$<SHELL_PATH:$<TARGET_FILE:check-ifs-interrupt>>"
+            "-DIFS_FILE=${CMAKE_SOURCE_DIR}/home/ifs/id.ifs"
+            "-DIFS_TYPE=${IFS_TYPE}" "-DIFS_NAME=${IFS_NAME}"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/ifs_interrupt_test.cmake"
+        WORKING_DIRECTORY "${IFS_INTERRUPT_HOME}")
+    set_tests_properties("AutoKeyTest.${name}"
+        PROPERTIES LABELS "autokey;ui;ifs" TIMEOUT 80)
+endforeach()
+
 id_make_test_home(lyapunov-setup LYAPUNOV_SETUP_HOME
     KEYS lyapunov_setup.key)
 add_test(NAME AutoKeyTest.lyapunov-setup
