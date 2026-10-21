@@ -48,7 +48,6 @@
 #include "ui/orbit2d.h"
 #include "ui/plasma.h"
 #include "ui/standard_4d.h"
-#include "ui/testpt.h"
 
 #include <algorithm>
 #include <array>
@@ -352,8 +351,8 @@ const FractalSpecific g_fractal_specific[] = {
         -2.0F, 2.0F, -1.5F, 1.5F,                         //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
-        nullptr, nullptr, standalone_per_image,           //
-        test_type,                                        //
+        nullptr, nullptr, nullptr,                        //
+        nullptr,                                          //
         STD_BAILOUT                                       //
     },
 

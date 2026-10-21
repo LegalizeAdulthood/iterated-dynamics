@@ -7,6 +7,7 @@
 #include "fractals/Bifurcation.h"
 #include "fractals/Diffusion.h"
 #include "fractals/popcorn.h"
+#include "fractals/TestPoint.h"
 
 #include <variant>
 
@@ -22,7 +23,8 @@ public:
         LEGACY,
         BIFURCATION,
         POPCORN,
-        DIFFUSION
+        DIFFUSION,
+        TEST_POINT
     };
 
     NonStandardFractal() = default;
@@ -36,7 +38,7 @@ public:
     void finish(bool interrupted);
 
     // TODO: removed later
-    // Slices 47.4-51 replace remaining renderer calls with selected operations.
+    // Slices 47.5-51 replace remaining renderer calls with selected operations.
     void render_legacy();
 
 private:
@@ -45,7 +47,8 @@ private:
         NO_OPERATION,
         BIFURCATION,
         POPCORN,
-        DIFFUSION
+        DIFFUSION,
+        TEST_POINT
     };
 
     struct NoOperation
@@ -54,7 +57,8 @@ private:
 
     void prepare();
 
-    std::variant<NoOperation, fractals::Bifurcation, fractals::Popcorn, fractals::Diffusion> m_state{NoOperation{}};
+    std::variant<NoOperation, fractals::Bifurcation, fractals::Popcorn, fractals::Diffusion, fractals::TestPoint>
+        m_state{NoOperation{}};
     bool m_done{true};
 };
 

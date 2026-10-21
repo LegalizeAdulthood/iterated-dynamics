@@ -3,42 +3,29 @@
 //
 #include "ui/testpt.h"
 
-#include "engine/resume.h"
-#include "fractals/TestPoint.h"
+#include "engine/NonStandardFractal.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
 
 using namespace id::engine;
-using namespace id::fractals;
 using namespace id::misc;
 
 namespace id::ui
 {
 
 // standalone engine for "test"
-int test_type()
+int test_type(NonStandardFractal &calculation)
 {
-    TestPoint test;
-
-    if (g_resuming)
-    {
-        test.resume();
-    }
-    if (test.start())   // assume it was stand-alone, doesn't want passes logic
-    {
-        return 0;
-    }
-    while (!test.done())
+    while (!calculation.done())
     {
         if (driver_key_pressed())
         {
-            test.suspend();
+            calculation.suspend();
             return -1;
         }
-        test.iterate();
+        calculation.iterate();
         display_disk_storage_progress();
     }
-    test.finish();
     return 0;
 }
 

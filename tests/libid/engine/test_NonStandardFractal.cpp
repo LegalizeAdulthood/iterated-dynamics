@@ -33,6 +33,7 @@
 #include <cmath>
 #include <ostream>
 #include <stdexcept>
+#include <utility>
 #include <vector>
 
 using namespace id::engine;
@@ -670,5 +671,190 @@ TEST_P(TestStandaloneDiffusion, suspensionRestoresTheExistingBoundsRecord)
 }
 
 INSTANTIATE_TEST_SUITE_P(DiffusionModes, TestStandaloneDiffusion, Values(0, 1, 2));
+
+class TestStandaloneTestPoint : public TestNonStandardFractal, public WithParamInterface<CalcMode>
+{
+protected:
+    void SetUp() override
+    {
+        TestNonStandardFractal::SetUp();
+        select_type(FractalType::TEST);
+        g_std_calc_mode = GetParam();
+        g_params[0] = 0;
+        g_params[1] = 0;
+        g_params[2] = 0;
+        g_image_region = ImageRegion{{-2.0, -1.5}, {1.0, 1.5}, {-2.0, -1.5}};
+        g_delta_x = 3.0 / (WIDTH - 1);
+        g_delta_y = 3.0 / (HEIGHT - 1);
+        g_param_z1 = {};
+        g_i_stop_pt = {WIDTH - 1, HEIGHT - 1};
+        g_plot = put_color_a;
+        alloc_pixel_grid();
+        fill_pixel_grid();
+    }
+
+    void TearDown() override
+    {
+        free_pixel_grid();
+        TestNonStandardFractal::TearDown();
+    }
+
+    void complete(NonStandardFractal &calculation)
+    {
+        for (int chunks = 0; chunks < MAX_CHUNKS && !calculation.done(); ++chunks)
+        {
+            calculation.iterate();
+        }
+        ASSERT_TRUE(calculation.done());
+        EXPECT_TRUE(calculation.completed());
+        calculation.finish(false);
+    }
+
+    static constexpr int MAX_CHUNKS{2 * (WIDTH + 1) * (HEIGHT + 1)};
+    ValueSaver<CalcMode> m_saved_mode{g_std_calc_mode};
+    ValueSaver<LDouble> m_saved_dx2{g_delta_x2, 0};
+    ValueSaver<LDouble> m_saved_dy2{g_delta_y2, 0};
+    ValueSaver<int> m_saved_inside_color{g_inside_color, 7};
+    ValueSaver<decltype(g_plot)> m_saved_plot{g_plot};
+};
+
+TEST_P(TestStandaloneTestPoint, selectionStartsWithoutRenderingOrLegacyCallbacks)
+{
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+
+    EXPECT_EQ(NonStandardFractal::Operation::TEST_POINT, calculation.select());
+
+    EXPECT_FALSE(calculation.done());
+    EXPECT_EQ(0, g_col);
+    EXPECT_EQ(0, g_row);
+    EXPECT_TRUE(m_columns.empty());
+    EXPECT_EQ(0, s_orbit_calls);
+}
+
+TEST_P(TestStandaloneTestPoint, incrementsMatchDirectPixelTraversal)
+{
+    TestPoint reference;
+    ASSERT_FALSE(reference.start());
+    int expected_chunks{};
+    while (expected_chunks < MAX_CHUNKS && !reference.done())
+    {
+        reference.iterate();
+        ++expected_chunks;
+    }
+    ASSERT_TRUE(reference.done());
+    reference.finish();
+    const std::array<int, WIDTH * HEIGHT> expected_pixels{m_pixels};
+    const std::vector<int> expected_columns{m_columns};
+    m_pixels.fill(0);
+    m_columns.clear();
+
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::TEST_POINT, calculation.select());
+    calculation.iterate();
+    EXPECT_FALSE(calculation.done());
+    EXPECT_EQ(1, g_col);
+    EXPECT_EQ(0, g_row);
+    EXPECT_EQ(GetParam() == CalcMode::ONE_PASS ? 1U : 2U, m_columns.size());
+    int actual_chunks{1};
+    while (actual_chunks < MAX_CHUNKS && !calculation.done())
+    {
+        calculation.iterate();
+        ++actual_chunks;
+    }
+
+    ASSERT_TRUE(calculation.done());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(expected_chunks, actual_chunks);
+    EXPECT_EQ(expected_pixels, m_pixels);
+    EXPECT_EQ(expected_columns, m_columns);
+    calculation.finish(false);
+    const long completed_time{g_calc_time};
+    calculation.finish(false);
+    EXPECT_EQ(completed_time, g_calc_time);
+}
+
+TEST_P(TestStandaloneTestPoint, suspensionRestartsSavedRowAndPassWithSameFinalPixels)
+{
+    NonStandardFractal control;
+    control.start();
+    ASSERT_EQ(NonStandardFractal::Operation::TEST_POINT, control.select());
+    complete(control);
+    const std::array<int, WIDTH * HEIGHT> expected{m_pixels};
+    m_pixels.fill(0);
+    m_columns.clear();
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::TEST_POINT, calculation.select());
+    const int row{GetParam() == CalcMode::ONE_PASS ? 2 : 1};
+    for (int chunks = 0; chunks < MAX_CHUNKS && (g_row != row || g_col != 2); ++chunks)
+    {
+        calculation.iterate();
+    }
+    ASSERT_FALSE(calculation.done());
+    ASSERT_EQ(row, g_row);
+    ASSERT_EQ(2, g_col);
+    calculation.suspend();
+    ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    ASSERT_EQ(1, start_resume());
+    int saved_row{};
+    int saved_pass{};
+    get_resume(saved_row, saved_pass);
+    EXPECT_EQ(row, saved_row);
+    EXPECT_EQ(GetParam() == CalcMode::ONE_PASS ? 0 : 1, saved_pass);
+
+    NonStandardFractal resumed;
+    resumed.start();
+    ASSERT_EQ(NonStandardFractal::Operation::TEST_POINT, resumed.select());
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(row, g_row);
+    EXPECT_EQ(0, g_col);
+    complete(resumed);
+
+    EXPECT_EQ(expected, m_pixels);
+}
+
+TEST_P(TestStandaloneTestPoint, uiChecksInputBeforeComputingFirstPixel)
+{
+    int pending_key{'x'};
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Invoke([&pending_key] { return pending_key; }));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Invoke([&pending_key] { return std::exchange(pending_key, 0); }));
+    EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([&pending_key](int key) { pending_key = key; }));
+
+    EXPECT_EQ(-1, calculate_image());
+
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+    EXPECT_TRUE(m_columns.empty());
+    EXPECT_EQ('x', pending_key);
+    pending_key = 0;
+
+    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_FALSE(m_columns.empty());
+}
+
+TEST_P(TestStandaloneTestPoint, completedResumeDoesNotComputeAnotherPixel)
+{
+    alloc_resume(20, 1);
+    put_resume(HEIGHT, GetParam() == CalcMode::ONE_PASS ? 1 : 2);
+    NonStandardFractal calculation;
+    calculation.start();
+
+    ASSERT_EQ(NonStandardFractal::Operation::TEST_POINT, calculation.select());
+
+    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(calculation.completed());
+    calculation.iterate();
+    EXPECT_TRUE(m_columns.empty());
+    calculation.finish(false);
+}
+
+INSTANTIATE_TEST_SUITE_P(TestPointModes, TestStandaloneTestPoint, Values(CalcMode::ONE_PASS, CalcMode::TWO_PASS),
+    [](const TestParamInfo<CalcMode> &info) -> std::string
+    { return info.param == CalcMode::ONE_PASS ? "OnePass" : "TwoPass"; });
 
 } // namespace id::test

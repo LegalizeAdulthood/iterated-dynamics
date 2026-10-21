@@ -310,6 +310,22 @@ foreach(mode IN ITEMS 0 1 2)
 endforeach()
 
 foreach(passes IN ITEMS 1 2)
+    set(name "testpt-interrupt-${passes}")
+    id_make_test_home("${name}" TESTPT_INTERRUPT_HOME
+        KEYS standard_interrupt.key)
+    add_test(NAME "AutoKeyTest.${name}"
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DCHECK_RESUME=$<SHELL_PATH:$<TARGET_FILE:check-standard-resume>>"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+            "-DPASSES=${passes}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/testpt_interrupt_test.cmake"
+        WORKING_DIRECTORY "${TESTPT_INTERRUPT_HOME}")
+    set_tests_properties("AutoKeyTest.${name}"
+        PROPERTIES LABELS "autokey;ui;testpt" TIMEOUT 80)
+endforeach()
+
+foreach(passes IN ITEMS 1 2)
     foreach(pixel IN ITEMS optimized general)
         set(name "standard-interrupt-${passes}-${pixel}")
         id_make_test_home("${name}" STANDARD_INTERRUPT_HOME

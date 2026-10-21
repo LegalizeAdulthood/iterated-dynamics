@@ -95,6 +95,29 @@ NonStandardFractal::Operation NonStandardFractal::select()
         update_timer();
         return Operation::DIFFUSION;
 
+    case FractalType::TEST:
+    {
+        start_timer();
+        prepare();
+        TestPoint &test{m_state.emplace<TEST_POINT>()};
+        if (g_resuming)
+        {
+            test.resume();
+        }
+        const bool standalone{test.start()};
+        m_done = standalone || test.done();
+        if (m_done)
+        {
+            if (!standalone)
+            {
+                test.finish();
+            }
+            g_calc_status = CalcStatus::COMPLETED;
+        }
+        update_timer();
+        return Operation::TEST_POINT;
+    }
+
     default:
         return Operation::LEGACY;
     }
@@ -142,6 +165,20 @@ void NonStandardFractal::iterate()
         }
         return;
 
+    case TEST_POINT:
+        if (!m_done)
+        {
+            TestPoint &test{std::get<TEST_POINT>(m_state)};
+            test.iterate();
+            m_done = test.done();
+            if (m_done)
+            {
+                test.finish();
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -175,6 +212,15 @@ void NonStandardFractal::suspend()
         }
         return;
 
+    case TEST_POINT:
+        if (!m_done)
+        {
+            std::get<TEST_POINT>(m_state).suspend();
+            m_done = true;
+            finish(true);
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -187,6 +233,10 @@ bool NonStandardFractal::completed() const
 
 void NonStandardFractal::finish(const bool interrupted)
 {
+    if (m_state.index() == TEST_POINT && !m_done)
+    {
+        std::get<TEST_POINT>(m_state).finish();
+    }
     if (g_calc_status == CalcStatus::IN_PROGRESS)
     {
         g_calc_status = interrupted ? CalcStatus::NON_RESUMABLE : CalcStatus::COMPLETED;
@@ -197,7 +247,7 @@ void NonStandardFractal::finish(const bool interrupted)
 }
 
 // TODO: removed later
-// Slices 47.4-51 replace remaining renderer calls with selected operations.
+// Slices 47.5-51 replace remaining renderer calls with selected operations.
 void NonStandardFractal::render_legacy()
 {
     start_timer();

@@ -11,6 +11,7 @@
 #include "ui/diffusion.h"
 #include "ui/popcorn.h"
 #include "ui/standard_orbit_plot.h"
+#include "ui/testpt.h"
 
 #include <memory>
 
@@ -77,6 +78,10 @@ int non_standard_fractal()
 
         case NonStandardFractal::Operation::DIFFUSION:
             diffusion_type(non_standard_fractal);
+            break;
+
+        case NonStandardFractal::Operation::TEST_POINT:
+            test_type(non_standard_fractal);
             break;
 
         case NonStandardFractal::Operation::LEGACY:
