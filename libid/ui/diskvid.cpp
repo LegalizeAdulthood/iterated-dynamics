@@ -8,10 +8,11 @@
 #include "engine/VideoInfo.h"
 #include "io/disk_storage.h"
 #include "io/encoder.h"
+#include "io/get_disk_space.h"
+#include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"
 #include "ui/help_title.h"
-#include "ui/request_memory.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
@@ -97,12 +98,40 @@ int start_disk_video(
     {
         driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, fmt::format("Cache size: {:d}K", DISK_STORAGE_CACHE_KB));
     }
-    const MemoryHandle backing{request_memory(
-        DISK_STORAGE_BLOCK_SIZE, blocks, targa ? MemoryLocation::DISK : MemoryLocation::MEMORY, backing_path)};
-    if (!backing)
+    const MemoryLocation location{targa ? MemoryLocation::DISK : MemoryLocation::MEMORY};
+    MemoryHandle backing;
+    for (;;)
     {
-        g_good_mode = false;
-        return -1;
+        try
+        {
+            backing = memory_alloc(DISK_STORAGE_BLOCK_SIZE, blocks, location, backing_path);
+            break;
+        }
+        catch (const MemoryError &error)
+        {
+            if (stop_msg(StopMsgFlags::CANCEL, std::string{error.what()} + "\nPress a key to retry."))
+            {
+                g_good_mode = false;
+                return -1;
+            }
+        }
+    }
+    try
+    {
+        const MemoryLocation actual{memory_type(backing)};
+        if (location != actual && g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
+        {
+            stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER,
+                fmt::format("Asked for {}, allocated {} bytes of {}, handle = {}.",
+                    location == MemoryLocation::MEMORY ? "memory" : "disk", backing.size(),
+                    actual == MemoryLocation::MEMORY ? "memory" : "disk", backing.index));
+            stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, fmt::format("disk={}", get_disk_space()));
+        }
+    }
+    catch (...)
+    {
+        memory_release(backing);
+        throw;
     }
     try
     {

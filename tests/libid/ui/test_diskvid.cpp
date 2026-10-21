@@ -5,11 +5,13 @@
 #include "MockDriver.h"
 
 #include <engine/calcfrac.h>
+#include <engine/cmdfiles.h>
 #include <engine/pixel.h>
 #include <engine/pixel_limits.h>
 #include <engine/text_color.h>
 #include <engine/LogicalScreen.h>
 #include <engine/VideoInfo.h>
+#include <io/library.h>
 #include <io/special_dirs.h>
 #include <misc/debug_flags.h>
 #include <misc/Driver.h>
@@ -17,6 +19,7 @@
 #include <misc/ValueSaver.h>
 #include <io/disk_storage.h>
 #include <ui/diskvid.h>
+#include <ui/id_keys.h>
 #include <ui/video.h>
 
 #include <gtest/gtest.h>
@@ -27,7 +30,9 @@
 #include <cstdio>
 #include <fstream>
 #include <filesystem>
+#include <iterator>
 #include <limits>
+#include <string>
 #include <thread>
 
 using namespace id::engine;
@@ -240,6 +245,163 @@ TEST(TestDiskVideo, inactiveStorageDoesNotCallUi)
     DiskVideoState state{&driver, DebugFlags::NONE};
 
     display_disk_storage_progress();
+}
+
+class TestDiskVideoSetup : public testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        end_disk();
+        init_memory();
+        m_directory = std::filesystem::temp_directory_path() /
+            ("id-disk-video-setup-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+        std::filesystem::create_directory(m_directory);
+        g_temp_dir = m_directory / "missing";
+        set_save_library(m_directory);
+        EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
+    }
+
+    void TearDown() override
+    {
+        EXPECT_NO_THROW(end_disk());
+        EXPECT_TRUE(exit_check().empty());
+        clear_save_library();
+        std::filesystem::remove_all(m_directory);
+    }
+
+    void expect_errors(const int count)
+    {
+        EXPECT_CALL(m_driver, stack_screen()).Times(count);
+        EXPECT_CALL(m_driver, unstack_screen()).Times(count);
+        EXPECT_CALL(m_driver, move_cursor(testing::_, testing::_)).Times(count);
+        EXPECT_CALL(m_driver, hide_text_cursor()).Times(count);
+        EXPECT_CALL(m_driver, set_attr(testing::_, testing::_, testing::_, testing::_)).Times(count);
+        EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM)).Times(count);
+        EXPECT_CALL(m_driver, put_string(testing::_, testing::_, testing::_, testing::_)).Times(testing::AnyNumber());
+        EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    }
+
+    MockDriver m_driver;
+    ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
+    ValueSaver<bool> m_saved_first_init{g_first_init, false};
+    ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
+    ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::FORCE_MEMORY_FROM_DISK};
+    ValueSaver<bool> m_saved_good_mode{g_good_mode, true};
+    ValueSaver<std::filesystem::path> m_saved_temp{g_temp_dir};
+    std::filesystem::path m_directory;
+};
+
+TEST_F(TestDiskVideoSetup, retryAllocatesStorageAfterUiCorrectsTheFailure)
+{
+    expect_errors(1);
+    EXPECT_CALL(m_driver, get_key())
+        .WillOnce(testing::Invoke(
+            []
+            {
+                EXPECT_FALSE(g_disk_flag);
+                EXPECT_TRUE(exit_check().empty());
+                std::filesystem::create_directory(g_temp_dir);
+                return ID_KEY_ENTER;
+            }));
+
+    EXPECT_EQ(0, common_start_disk(64, 64, 256));
+
+    EXPECT_TRUE(g_disk_flag);
+    EXPECT_TRUE(g_good_mode);
+    EXPECT_EQ(MemoryLocation::DISK, disk_video_memory_type());
+    write_disk_pixel(63, 63, 77);
+    EXPECT_EQ(77, read_disk_pixel(63, 63));
+    end_disk();
+    EXPECT_TRUE(std::filesystem::is_empty(g_temp_dir));
+}
+
+TEST_F(TestDiskVideoSetup, failureCanBeRetriedMoreThanOnce)
+{
+    expect_errors(2);
+    EXPECT_CALL(m_driver, get_key())
+        .WillOnce(Return(ID_KEY_ENTER))
+        .WillOnce(testing::Invoke(
+            []
+            {
+                EXPECT_FALSE(g_disk_flag);
+                EXPECT_TRUE(exit_check().empty());
+                std::filesystem::create_directory(g_temp_dir);
+                return ID_KEY_ENTER;
+            }));
+
+    EXPECT_EQ(0, common_start_disk(64, 64, 256));
+
+    EXPECT_TRUE(g_disk_flag);
+    EXPECT_EQ(MemoryLocation::DISK, disk_video_memory_type());
+}
+
+TEST_F(TestDiskVideoSetup, cancellationLeavesNoStorageAndAllowsLaterSetup)
+{
+    expect_errors(1);
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
+
+    EXPECT_EQ(-1, common_start_disk(64, 64, 256));
+
+    EXPECT_FALSE(g_good_mode);
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_EQ(MemoryLocation::NOWHERE, disk_video_memory_type());
+    EXPECT_TRUE(exit_check().empty());
+    std::filesystem::create_directory(g_temp_dir);
+    EXPECT_EQ(0, common_start_disk(64, 64, 256));
+    EXPECT_TRUE(g_disk_flag);
+    EXPECT_EQ(MemoryLocation::DISK, disk_video_memory_type());
+}
+
+TEST_F(TestDiskVideoSetup, failedReplacementReleasesPreviousStorageBeforePrompting)
+{
+    g_debug_flag = DebugFlags::NONE;
+    ASSERT_EQ(0, common_start_disk(16, 16, 256));
+    write_disk_pixel(3, 7, 77);
+    g_debug_flag = DebugFlags::FORCE_MEMORY_FROM_DISK;
+    expect_errors(1);
+    EXPECT_CALL(m_driver, get_key())
+        .WillOnce(testing::Invoke(
+            []
+            {
+                EXPECT_FALSE(g_disk_flag);
+                EXPECT_EQ(MemoryLocation::NOWHERE, disk_video_memory_type());
+                EXPECT_TRUE(exit_check().empty());
+                return ID_KEY_ESC;
+            }));
+
+    EXPECT_EQ(-1, common_start_disk(64, 64, 256));
+
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_FALSE(g_good_mode);
+}
+
+TEST_F(TestDiskVideoSetup, batchFailureReportsAndCancelsWithoutInput)
+{
+    g_init_batch = BatchMode::NORMAL;
+
+    EXPECT_EQ(-1, common_start_disk(64, 64, 256));
+
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_FALSE(g_good_mode);
+    EXPECT_EQ(MemoryLocation::NOWHERE, disk_video_memory_type());
+    EXPECT_TRUE(exit_check().empty());
+    EXPECT_EQ(BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE, g_init_batch);
+    std::ifstream file{m_directory / "debug/stopmsg.txt"};
+    ASSERT_TRUE(file.good());
+    const std::string message{std::istreambuf_iterator<char>{file}, std::istreambuf_iterator<char>{}};
+    EXPECT_THAT(message, testing::HasSubstr("Allocating 4096 bytes of disk failed"));
+}
+
+TEST_F(TestDiskVideoSetup, matchingAllocationDoesNotDisplayDebugStatistics)
+{
+    g_debug_flag = DebugFlags::DISPLAY_MEMORY_STATISTICS;
+
+    EXPECT_EQ(0, common_start_disk(64, 64, 256));
+
+    EXPECT_TRUE(g_disk_flag);
+    EXPECT_EQ(MemoryLocation::MEMORY, disk_video_memory_type());
+    EXPECT_FALSE(std::filesystem::exists(m_directory / "debug/stopmsg.txt"));
 }
 
 } // namespace id::test

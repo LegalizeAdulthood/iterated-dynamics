@@ -313,11 +313,11 @@ The current code is already part-way through this plan:
   `MemoryError`; invalid requests and transfers throw `std::logic_error`.
   It owns allocation, backing paths, and cleanup without UI callbacks.
   `exit_check()` returns diagnostics after releasing resources; shutdown
-  displays them.  Temporary UI helper `request_memory()` owns allocation
-  retry/cancel and debug statistics until slice 41.2 moves these decisions
-  into storage UI setup.  Disk cleanup releases resources before
-  propagating a transfer failure.  Targa allocations include cache padding
-  after the header, preserving bounded backing-store transfers.
+  displays them.  Storage setup in `ui/diskvid.cpp` owns allocation
+  retry/cancel and debug statistics directly; the temporary
+  `request_memory()` helper is gone.  Disk cleanup releases resources
+  before propagating a transfer failure.  Targa allocations include cache
+  padding after the header, preserving bounded backing-store transfers.
 - `engine/pixel.cpp` owns pixel/span access, coordinate offsets, color
   masking, and the selected pixel functions.  UI owns activation of the
   driver, disk, or null target.  Spans use those pixel functions directly,
@@ -333,8 +333,8 @@ The current code is already part-way through this plan:
   of the next requested filename.  Pixel and Targa callers use the I/O
   operations directly.  UI controllers service progress at existing work
   checkpoints, retaining the status throttle without adding yields or
-  input polling.  Temporary setup bridges remain for slices 41.2 through
-  41.7; allocation retry still uses the marked `request_memory()` helper.
+  input polling.  Temporary setup bridges remain for slices 41.3 through
+  41.7; allocation retry/cancel belongs to the storage UI operation.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -355,7 +355,7 @@ The fresh reverse-call audit also found these live paths:
   `stop_msg()` or application shutdown through `goodbye()`.
 - Calculation code still enters disk-storage setup bridges under
   `libid/ui`.  Cache and backing operations belong to I/O; controllers
-  now service progress between existing work chunks.  Slices 41.2 through
+  now service progress between existing work chunks.  Slices 41.3 through
   41.7 remove the remaining setup reverse calls and mapping-line status.
 - Image loading, image saving, and command parsing still select UI
   prompts, display status, or exit the application from non-UI modules.
@@ -766,7 +766,7 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - Calculation code still calls setup bridges in `ui/diskvid.cpp`, and
   `geometry/line3d.cpp` still reports mapping-line status.  Pixel access
   and progress snapshots are I/O-owned; controllers service storage
-  progress between existing work chunks.  Slices 41.2 through 41.7 move
+  progress between existing work chunks.  Slices 41.3 through 41.7 move
   the remaining setup decisions and mapping status to requesting UI.
 - `libid/io/loadfile.cpp`, `libid/io/encoder.cpp`, and
   `libid/engine/cmdfiles.cpp`: select prompts, display status, make
@@ -965,32 +965,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 41.2. Disk Storage Allocation Decisions
-
-Source: `ui/request_memory.cpp` and `start_disk_video()` in
-`ui/diskvid.cpp`.  UI owner: disk-storage setup.
-
-Work:
-
-- Put allocation retry/cancel and memory debug statistics in the UI
-  storage-setup operation.  Remove the temporary `request_memory()`
-  declaration, implementation, and general-purpose forwarding boundary.
-- Preserve retry after allocation failure, Escape and batch cancellation,
-  actual memory/disk selection, and cleanup before reporting failure.
-- Keep backend setup non-interactive.  This prepares the requesting
-  controller conversions below; it does not claim those reverse calls
-  have already been inverted.
-
-Done when:
-
-- The storage UI owns allocation decisions directly, without
-  `request_memory()`.  Remaining setup callers stay explicitly marked
-  for slices 41.3 through 41.7.
-
-Validation: injected allocation failure followed by retry, Escape,
-batch cancellation, successful fallback, and debug statistics.  Reuse the
-existing storage tests.  No manual check required.
 
 ### 41.3. Standard Potential Storage Preparation
 
@@ -1493,7 +1467,7 @@ these direct and indirect paths:
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or
   dispatch pointers, including from per-image setup.
 - Storage setup can invoke modal failure screens from calculation code
-  through `ui/diskvid.cpp` and `request_memory()`.
+  through `ui/diskvid.cpp`.
   Memory operations themselves no longer poll or invoke UI callbacks.
 - `libid/io/loadfile.cpp` and `io/encoder.cpp`: enter mode/parameter
   selection or partial-save prompts from loading and saving operations.

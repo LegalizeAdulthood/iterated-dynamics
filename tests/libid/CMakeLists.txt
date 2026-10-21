@@ -151,7 +151,6 @@ add_executable(test-id
     ui/test_RestoredImageSound.cpp
     ui/test_passes_options.cpp
     ui/test_precision_diagnostics.cpp
-    ui/test_request_memory.cpp
     ui/test_rotate.cpp
     ui/test_ShowDotController.cpp
     ui/test_slideshw.cpp
