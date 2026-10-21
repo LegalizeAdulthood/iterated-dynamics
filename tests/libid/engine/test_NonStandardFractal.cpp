@@ -181,6 +181,8 @@ TEST_F(TestNonStandardFractal, noOperationRequiresExplicitSetupAndSelection)
     EXPECT_THROW(calculation.select(), std::logic_error);
     EXPECT_THROW(calculation.iterate(), std::logic_error);
     EXPECT_THROW(calculation.preparing(), std::logic_error);
+    EXPECT_FALSE(calculation.potential_storage_required());
+    EXPECT_THROW(calculation.complete_potential_storage(false), std::logic_error);
     EXPECT_THROW(calculation.consume_batch_complete(), std::logic_error);
     EXPECT_THROW(calculation.suspend(), std::logic_error);
     EXPECT_EQ(0, s_orbit_calls);

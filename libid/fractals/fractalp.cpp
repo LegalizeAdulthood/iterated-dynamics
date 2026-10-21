@@ -44,7 +44,6 @@
 #include "ui/inverse_julia.h"
 #include "ui/lsystem.h"
 #include "ui/orbit2d.h"
-#include "ui/plasma.h"
 #include "ui/standard_4d.h"
 
 #include <algorithm>
@@ -299,8 +298,8 @@ const FractalSpecific g_fractal_specific[] = {
         -2.0F, 2.0F, -1.5F, 1.5F,                                                                          //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                  //
         SymmetryType::NONE,                                                                                //
-        nullptr, nullptr, standalone_per_image,                                                            //
-        plasma_type,                                                                                       //
+        nullptr, nullptr, nullptr,                                                                         //
+        nullptr,                                                                                           //
         NO_BAILOUT                                                                                         //
     },
 

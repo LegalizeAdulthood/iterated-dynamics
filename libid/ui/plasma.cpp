@@ -3,39 +3,31 @@
 //
 #include "ui/plasma.h"
 
-#include "fractals/Plasma.h"
-
-#include "engine/VideoInfo.h"
+#include "engine/NonStandardFractal.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
-#include "ui/stop_msg.h"
 
 using namespace id::engine;
-using namespace id::fractals;
 using namespace id::misc;
 
 namespace id::ui
 {
 
-int plasma_type()
+int plasma_type(NonStandardFractal &calculation)
 {
-    if (g_colors < 4)
+    if (calculation.potential_storage_required())
     {
-        stop_msg("Plasma Clouds requires 4 or more color video");
-        return -1;
+        calculation.complete_potential_storage(prepare_potential_storage());
     }
-
-    Plasma plasma;
-    const bool potential_storage_available{plasma.potential_storage_required() && prepare_potential_storage()};
-    plasma.init(potential_storage_available);
-    while (!plasma.done())
+    while (!calculation.done())
     {
         if (driver_key_pressed())
         {
+            calculation.suspend();
             return 1;
         }
 
-        plasma.iterate();
+        calculation.iterate();
         display_disk_storage_progress();
     }
 

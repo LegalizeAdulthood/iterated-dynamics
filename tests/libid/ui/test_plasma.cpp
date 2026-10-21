@@ -7,11 +7,14 @@
 #include <engine/cmdfiles.h>
 #include <engine/fractals.h>
 #include <engine/LogicalScreen.h>
+#include <engine/NonStandardFractal.h>
 #include <engine/pixel.h>
 #include <engine/Potential.h>
 #include <engine/random_seed.h>
+#include <engine/resume.h>
 #include <engine/VideoInfo.h>
 #include <fractals/Plasma.h>
+#include <fractals/fractalp.h>
 #include <io/disk_storage.h>
 #include <io/loadmap.h>
 #include <io/special_dirs.h>
@@ -20,7 +23,7 @@
 #include <misc/ValueSaver.h>
 #include <ui/diskvid.h>
 #include <ui/id_keys.h>
-#include <ui/plasma.h>
+#include <ui/calculate_image.h>
 #include <ui/video.h>
 
 #include <gmock/gmock.h>
@@ -31,6 +34,8 @@
 #include <chrono>
 #include <filesystem>
 #include <stdexcept>
+#include <utility>
+#include <vector>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -44,6 +49,21 @@ using namespace testing;
 namespace id::test
 {
 
+namespace
+{
+
+int unexpected_renderer()
+{
+    throw std::logic_error("Plasma selection entered a renderer callback");
+}
+
+bool unexpected_setup()
+{
+    throw std::logic_error("Plasma selection entered legacy per-image setup");
+}
+
+} // namespace
+
 class TestPlasma : public Test
 {
 protected:
@@ -52,6 +72,12 @@ protected:
     void prepare_storage();
 
     MockDriver m_driver;
+    FractalSpecific m_specific{*get_fractal_specific(FractalType::PLASMA)};
+    ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::PLASMA};
+    ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific, &m_specific};
+    ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
+    ValueSaver<bool> m_saved_resuming{g_resuming, false};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen, LogicalScreen{5, 5, 1, 1, 4.0, 4.0}};
     ValueSaver<int> m_saved_width{g_screen_x_dots, 7};
@@ -80,6 +106,9 @@ void TestPlasma::SetUp()
     end_disk();
     init_memory();
     set_normal_dot();
+    m_specific.calc_type = unexpected_renderer;
+    m_specific.per_image = unexpected_setup;
+    g_dispatch = FractalDispatch{m_specific};
     EXPECT_CALL(m_driver, read_pixel(_, _))
         .WillRepeatedly(Invoke(
             [this](const int x, const int y) { return x >= 0 && x < 7 && y >= 0 && y < 7 ? m_pixels[y * 7 + x] : 0; }));
@@ -212,6 +241,8 @@ protected:
     void SetUp() override;
     void TearDown() override;
 
+    void expect_error(const char *message);
+
     ValueSaver<bool> m_saved_first_init{g_first_init, false};
     ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
     ValueSaver<bool> m_saved_good_mode{g_good_mode, true};
@@ -249,7 +280,7 @@ TEST_F(TestPlasmaStorage, controllerPreparesPotentialStorageBeforePlotting)
             }));
     EXPECT_CALL(m_driver, flush());
 
-    EXPECT_EQ(0, plasma_type());
+    EXPECT_EQ(0, calculate_image());
 
     EXPECT_TRUE(g_disk_flag);
     EXPECT_TRUE(g_disk_16_bit);
@@ -281,7 +312,7 @@ TEST_F(TestPlasmaStorage, cancelledStorageFallsBackBeforeCalculation)
                 return ID_KEY_ESC;
             }));
 
-    EXPECT_EQ(0, plasma_type());
+    EXPECT_EQ(0, calculate_image());
 
     EXPECT_FALSE(g_disk_flag);
     EXPECT_FALSE(g_disk_16_bit);
@@ -296,11 +327,141 @@ TEST_F(TestPlasmaStorage, normalColorSkipsPotentialStorage)
 {
     g_params[3] = 0.5;
 
-    EXPECT_EQ(0, plasma_type());
+    EXPECT_EQ(0, calculate_image());
 
     EXPECT_FALSE(g_disk_flag);
     EXPECT_EQ(0.5, g_params[3]);
     EXPECT_GT(m_pixels[8], 0);
 }
+
+void TestPlasmaStorage::expect_error(const char *message)
+{
+    EXPECT_CALL(m_driver, stack_screen());
+    EXPECT_CALL(m_driver, unstack_screen());
+    EXPECT_CALL(m_driver, move_cursor(_, _));
+    EXPECT_CALL(m_driver, hide_text_cursor());
+    EXPECT_CALL(m_driver, set_attr(_, _, _, _));
+    EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
+    EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(AnyNumber());
+    EXPECT_CALL(m_driver, put_string(_, _, _, StrEq(message)));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+}
+
+TEST_F(TestPlasmaStorage, selectionReportsUnsupportedColorsWithoutPlotting)
+{
+    g_colors = 2;
+    EXPECT_CALL(m_driver, read_pixel(_, _)).Times(0);
+    EXPECT_CALL(m_driver, write_pixel(_, _, _)).Times(0);
+    expect_error("Plasma Clouds requires 4 or more color video");
+
+    EXPECT_EQ(-1, calculate_image());
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_TRUE(g_resume_data.empty());
+}
+
+TEST_F(TestPlasmaStorage, pendingInputInterruptsBeforeTheFirstSubdivision)
+{
+    g_params[3] = 0;
+    int pending{'x'};
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Invoke([&pending] { return pending; }));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Invoke([&pending] { return std::exchange(pending, 0); }));
+    EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([&pending](int key) { pending = key; }));
+
+    EXPECT_EQ(-1, calculate_image());
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ('x', pending);
+    EXPECT_EQ(4, std::count_if(m_pixels.begin(), m_pixels.end(), [](int color) { return color != 0; }));
+    EXPECT_EQ(g_put_color, g_plot);
+    EXPECT_TRUE(g_potential.flag);
+    EXPECT_TRUE(g_potential.store_16bit);
+}
+
+TEST_F(TestPlasmaStorage, calculationFailureRestoresPlottingBeforeReportingError)
+{
+    g_params[3] = 0;
+    EXPECT_CALL(m_driver, read_pixel(_, _)).WillOnce(Throw(std::runtime_error("injected plasma failure")));
+    expect_error("injected plasma failure");
+
+    EXPECT_EQ(-1, calculate_image());
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(g_put_color, g_plot);
+    EXPECT_TRUE(g_potential.flag);
+    EXPECT_TRUE(g_potential.store_16bit);
+}
+
+TEST_F(TestPlasma, selectedOperationWaitsForStorageAvailability)
+{
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+
+    ASSERT_EQ(NonStandardFractal::Operation::PLASMA, calculation.select());
+
+    EXPECT_TRUE(calculation.potential_storage_required());
+    EXPECT_FALSE(calculation.done());
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_TRUE(std::all_of(m_pixels.begin(), m_pixels.end(), [](int color) { return color == 0; }));
+    EXPECT_THROW(calculation.iterate(), std::logic_error);
+    calculation.complete_potential_storage(false);
+    EXPECT_FALSE(calculation.potential_storage_required());
+    EXPECT_EQ(0, g_params[3]);
+    EXPECT_GT(m_pixels[8], 0);
+    EXPECT_THROW(calculation.complete_potential_storage(false), std::logic_error);
+}
+
+class TestSelectedPlasma : public TestPlasma, public WithParamInterface<int>
+{
+};
+
+TEST_P(TestSelectedPlasma, selectedOperationPreservesSubdivisionChunksAndPixels)
+{
+    g_params[1] = GetParam();
+    g_params[3] = 0;
+    g_debug_flag = DebugFlags::NONE;
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    std::vector<std::array<int, 49>> expected;
+    std::array<int, 49> initial{};
+    {
+        Plasma plasma;
+        plasma.init(false);
+        initial = m_pixels;
+        for (int chunks = 0; chunks < 256 && !plasma.done(); ++chunks)
+        {
+            plasma.iterate();
+            expected.push_back(m_pixels);
+        }
+        ASSERT_TRUE(plasma.done());
+    }
+    const int next_random{random15()};
+    ASSERT_FALSE(expected.empty());
+    m_pixels.fill(0);
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::PLASMA, calculation.select());
+    EXPECT_FALSE(calculation.potential_storage_required());
+    EXPECT_EQ(initial, m_pixels);
+    EXPECT_FALSE(calculation.done());
+
+    for (size_t chunk = 0; chunk < expected.size(); ++chunk)
+    {
+        calculation.iterate();
+        EXPECT_EQ(expected[chunk], m_pixels);
+        EXPECT_EQ(chunk + 1 == expected.size(), calculation.done());
+    }
+
+    EXPECT_EQ(next_random, random15());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    calculation.iterate();
+    EXPECT_EQ(expected.back(), m_pixels);
+    calculation.finish(false);
+    EXPECT_EQ(g_put_color, g_plot);
+}
+
+INSTANTIATE_TEST_SUITE_P(Algorithms, TestSelectedPlasma, Values(0, 1));
 
 } // namespace id::test

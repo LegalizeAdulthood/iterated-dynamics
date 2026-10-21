@@ -345,10 +345,12 @@ The current code is already part-way through this plan:
   the temporary setup bridges are gone.  Prepared Targa requests carry
   the file path, header, and dimensions without invoking storage UI.
 - Plasma construction normalizes configuration without allocating storage
-  or plotting pixels.  Its UI controller prepares potential storage, then
-  calls `init()` with the outcome.  Calculation retains border handling,
-  8-bit fallback, and saved potential-state restoration; pixel output
-  identifies disk targets without querying the driver.
+  or plotting pixels.  `NonStandardFractal` selects and owns the object;
+  its UI controller prepares requested potential storage and reports
+  availability through `complete_potential_storage()`.  Calculation
+  retains initialization, border handling, 8-bit fallback, and saved
+  potential-state restoration; pixel output identifies disk targets
+  without querying the driver.
 - Inverse-Julia queue initialization accepts prepared backing memory.
   Both requesting UI controllers own disk-video rejection, smaller-queue
   retries, cancellation, and fallback.  Standalone setup separates
@@ -586,9 +588,11 @@ The concrete render operation objects are:
   status interpretation.  It shares common image setup, timing, and
   cleanup, but its marked dispatch still enters whole UI render loops.
   Its bounded operation router owns bifurcation, Popcorn, standalone
-  Diffusion, TestPoint, Ant, and Cellular state without renderer callbacks.
-  Their UI controllers advance selected objects; setup, resume, and finish
-  stay below UI.  Cellular retains generation-sized preparation and
+  Diffusion, TestPoint, Ant, Cellular, and Plasma state without renderer
+  callbacks.  Their UI controllers advance selected objects; setup,
+  resume, and finish stay below UI.  Plasma's controller reports storage
+  availability before engine initialization.  Cellular retains
+  generation-sized preparation and
   next-screen initialization below UI; its thinking-screen display stays
   in the controller.  Popcorn's Julia setup and symmetry selection also
   stay below UI.  Ant's Ctrl+A entry selects an operation on the existing
@@ -1002,21 +1006,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 47.7. Plasma Operation Binding
-
-Source: `fractals/Plasma.cpp`, `ui/plasma.cpp`, and
-`NonStandardFractal`.
-
-- Select and own `Plasma` below UI, including its color validation and
-  initialization with the reported potential-storage availability.
-- Keep storage preparation and diagnostic presentation in the controller.
-- Preserve existing iteration chunks and non-resumable interruption.
-
-Done when: Plasma's UI advances the selected calculation object.
-
-Validation: reuse storage success/cancellation and controller-error
-tests, plus plasma images.  Cover selection identity in engine tests.
 
 ### 47.8. L-System Operation Binding
 

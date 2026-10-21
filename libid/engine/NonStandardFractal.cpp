@@ -7,6 +7,7 @@
 #include "engine/fractals.h"
 #include "engine/LogicalScreen.h"
 #include "engine/resume.h"
+#include "engine/VideoInfo.h"
 #include "fractals/bif_may.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
@@ -141,6 +142,24 @@ NonStandardFractal::Operation NonStandardFractal::select()
         update_timer();
         return Operation::CELLULAR;
 
+    case FractalType::PLASMA:
+    {
+        start_timer();
+        prepare();
+        if (g_colors < 4)
+        {
+            throw std::runtime_error("Plasma Clouds requires 4 or more color video");
+        }
+        Plasma &plasma{m_state.emplace<PLASMA>()};
+        m_done = false;
+        if (!plasma.potential_storage_required())
+        {
+            plasma.init(false);
+        }
+        update_timer();
+        return Operation::PLASMA;
+    }
+
     default:
         return Operation::LEGACY;
     }
@@ -167,6 +186,20 @@ bool NonStandardFractal::preparing() const
         throw std::logic_error("No cellular calculation operation is selected");
     }
     return std::get<CELLULAR>(m_state).preparing();
+}
+
+bool NonStandardFractal::potential_storage_required() const
+{
+    return m_state.index() == PLASMA && std::get<PLASMA>(m_state).potential_storage_required();
+}
+
+void NonStandardFractal::complete_potential_storage(const bool available)
+{
+    if (!potential_storage_required())
+    {
+        throw std::logic_error("Potential storage was not requested");
+    }
+    std::get<PLASMA>(m_state).init(available);
 }
 
 void NonStandardFractal::iterate()
@@ -244,6 +277,19 @@ void NonStandardFractal::iterate()
         }
         return;
 
+    case PLASMA:
+        if (!m_done)
+        {
+            Plasma &plasma{std::get<PLASMA>(m_state)};
+            plasma.iterate();
+            m_done = plasma.done();
+            if (m_done)
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -296,6 +342,7 @@ void NonStandardFractal::suspend()
         return;
 
     case ANT:
+    case PLASMA:
         if (!m_done)
         {
             finish(true);
@@ -339,7 +386,7 @@ void NonStandardFractal::finish(const bool interrupted)
 }
 
 // TODO: removed later
-// Slices 47.7-51 replace remaining renderer calls with selected operations.
+// Slices 47.8-51 replace remaining renderer calls with selected operations.
 void NonStandardFractal::render_legacy()
 {
     start_timer();
