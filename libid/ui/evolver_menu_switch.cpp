@@ -23,6 +23,7 @@
 #include "ui/id_keys.h"
 #include "ui/menu_handler.h"
 #include "ui/passes_options.h"
+#include "ui/save_image.h"
 #include "ui/select_video_mode.h"
 #include "ui/zoom.h"
 

@@ -29,6 +29,7 @@
 #include <io/gif_extensions.h>
 #include <io/gif_file.h>
 #include <io/GifWriter.h>
+#include <io/ImageSave.h>
 #include <io/library.h>
 #include <io/loadfile.h>
 #include <io/save_timer.h>
@@ -46,6 +47,7 @@
 #include <ui/make_batch_file.h>
 #include <ui/slideshw.h>
 #include <ui/temp_msg.h>
+#include <ui/save_image.h>
 #include <ui/video.h>
 
 #include <gif_lib.h>
@@ -556,6 +558,120 @@ TEST_F(TestGifWriterRaster, reportsOutputOpenFailure)
     EXPECT_FALSE(g_busy);
 }
 
+TEST_F(TestGifWriterRaster, incrementalSaveDoesNotPresentUiOrChangeBusyState)
+{
+    configure_image(8, 3, 256);
+    const std::vector<Byte> pixels{image_pixels()};
+    EXPECT_CALL(m_driver, is_disk()).Times(0);
+    EXPECT_CALL(m_driver, flush()).Times(0);
+    EXPECT_CALL(m_driver, write_pixel(_, _, _)).Times(0);
+    EXPECT_CALL(m_driver, read_pixel(_, _))
+        .WillRepeatedly(
+            [this](const int x, const int y)
+            {
+                EXPECT_FALSE(g_busy);
+                return m_frame.at(static_cast<std::size_t>(y) * m_frame_width + x);
+            });
+    ImageSave image{m_path};
+    for (int row = 0; row < 3; ++row)
+    {
+        EXPECT_FALSE(image.done());
+        image.iterate();
+        EXPECT_EQ(row + 1, image.rows_written());
+    }
+    EXPECT_FALSE(image.done());
+
+    image.iterate();
+
+    EXPECT_TRUE(image.done());
+    EXPECT_TRUE(image.succeeded());
+    EXPECT_TRUE(image.diagnostic().empty());
+    EXPECT_FALSE(g_busy);
+    const GifFilePtr gif{read_saved_gif()};
+    expect_raster(*gif, pixels, 8, 3);
+    EXPECT_EQ(pixels, image_pixels());
+    EXPECT_THROW(image.iterate(), std::logic_error);
+}
+
+TEST_F(TestGifWriterRaster, unfinishedSaveRemovesItsPartialFileWithoutUi)
+{
+    EXPECT_CALL(m_driver, is_disk()).Times(0);
+    EXPECT_CALL(m_driver, flush()).Times(0);
+    {
+        ImageSave image{m_path};
+        image.iterate();
+        EXPECT_TRUE(std::filesystem::exists(m_path));
+        EXPECT_FALSE(image.done());
+    }
+
+    EXPECT_FALSE(std::filesystem::exists(m_path));
+    EXPECT_FALSE(g_busy);
+}
+
+TEST_F(TestGifWriterRaster, existingTemporaryDestinationIsNotDeleted)
+{
+    ASSERT_EQ(0, save());
+    const std::vector<Byte> pixels{image_pixels()};
+    const std::filesystem::path temporary{m_directory / "id.tmp"};
+    std::filesystem::create_directory(temporary);
+    EXPECT_CALL(m_driver, is_disk()).Times(0);
+    EXPECT_CALL(m_driver, flush()).Times(0);
+    {
+        ImageSave image{m_path};
+        EXPECT_TRUE(image.done());
+        EXPECT_FALSE(image.succeeded());
+        EXPECT_THAT(image.diagnostic(), HasSubstr("Can't create"));
+    }
+
+    EXPECT_TRUE(std::filesystem::is_directory(temporary));
+    const GifFilePtr gif{read_saved_gif()};
+    expect_raster(*gif, pixels, 8, 6);
+}
+
+TEST_F(TestGifWriterRaster, replacementFailurePreservesOriginalAndExistingBackup)
+{
+    ASSERT_EQ(0, save());
+    const std::vector<Byte> pixels{image_pixels()};
+    const std::filesystem::path backup{m_directory / "id.tmp.bak"};
+    {
+        std::ofstream reserved{backup};
+        reserved << "reserved";
+    }
+    m_frame[0] = 123;
+    EXPECT_CALL(m_driver, is_disk()).Times(0);
+    EXPECT_CALL(m_driver, flush()).Times(0);
+    ImageSave image{m_path};
+    while (!image.done())
+    {
+        image.iterate();
+    }
+
+    EXPECT_FALSE(image.succeeded());
+    EXPECT_THAT(image.diagnostic(), HasSubstr("Can't replace"));
+    EXPECT_TRUE(std::filesystem::exists(backup));
+    EXPECT_FALSE(std::filesystem::exists(m_directory / "id.tmp"));
+    const GifFilePtr gif{read_saved_gif()};
+    expect_raster(*gif, pixels, 8, 6);
+}
+
+TEST_F(TestGifWriterRaster, notificationFollowsProgressRestorationAndFileClosure)
+{
+    g_timed_save = TimedSave::NONE;
+    const std::vector<Byte> pixels{image_pixels()};
+    EXPECT_CALL(m_driver, buzzer(Buzzer::COMPLETE))
+        .WillOnce(
+            [this, &pixels](Buzzer)
+            {
+                EXPECT_FALSE(g_busy);
+                EXPECT_EQ(pixels, image_pixels());
+                const std::filesystem::path renamed{m_directory / "closed.gif"};
+                EXPECT_NO_THROW(std::filesystem::rename(m_path, renamed));
+                EXPECT_NO_THROW(std::filesystem::rename(renamed, m_path));
+            });
+
+    EXPECT_EQ(0, save());
+}
+
 TEST_F(TestGifWriterRaster, savesWithoutConsumingPendingInput)
 {
     ON_CALL(m_driver, key_pressed()).WillByDefault(Return('x'));
@@ -633,7 +749,7 @@ TEST_F(TestGifWriterRaster, restoresProgressAfterScanlineWriteFailure)
     const std::vector<Byte> pixels{image_pixels()};
     FailingSaveBuffer buffer;
     std::ostream output{&buffer};
-    GifWriter writer{output, {600, 12}, GifWriter::Palette(256)};
+    ImageSave image{output, m_path};
     int flushes{};
     EXPECT_CALL(m_driver, flush())
         .WillRepeatedly(
@@ -643,13 +759,14 @@ TEST_F(TestGifWriterRaster, restoresProgressAfterScanlineWriteFailure)
                 buffer.remaining = 0;
             });
 
-    EXPECT_FALSE(encoder(writer, m_path));
+    EXPECT_FALSE(write_image(image));
 
-    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, writer.error());
+    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, image.error());
     EXPECT_GE(flushes, 2);
     EXPECT_LT(flushes, 13);
     EXPECT_EQ(pixels, image_pixels());
-    EXPECT_FALSE(writer.finish());
+    EXPECT_TRUE(image.done());
+    EXPECT_FALSE(image.succeeded());
 }
 
 TEST_F(TestGifWriterRaster, restoresProgressAndReportsCloseFailure)
@@ -657,15 +774,16 @@ TEST_F(TestGifWriterRaster, restoresProgressAndReportsCloseFailure)
     const std::vector<Byte> pixels{image_pixels()};
     FailingSaveBuffer buffer;
     std::ostream output{&buffer};
-    GifWriter writer{output, {8, 6}, GifWriter::Palette(256)};
+    ImageSave image{output, m_path};
     buffer.fail_sync = true;
     EXPECT_CALL(m_driver, flush()).Times(7);
 
-    EXPECT_FALSE(encoder(writer, m_path));
+    EXPECT_FALSE(write_image(image));
 
-    EXPECT_EQ(E_GIF_ERR_CLOSE_FAILED, writer.error());
+    EXPECT_EQ(E_GIF_ERR_CLOSE_FAILED, image.error());
     EXPECT_EQ(pixels, image_pixels());
-    EXPECT_FALSE(writer.finish());
+    EXPECT_TRUE(image.done());
+    EXPECT_FALSE(image.succeeded());
 }
 
 TEST_F(TestGifWriterRaster, failedReplacementPreservesOriginalAndRemovesTemporaryFile)

@@ -147,6 +147,7 @@ add_library(libid
     include/io/disk_storage.h io/disk_storage.cpp
     include/io/dir_file.h
     include/io/encoder.h io/encoder.cpp
+    include/io/ImageSave.h io/ImageSave.cpp
     include/io/ends_with_slash.h io/ends_with_slash.cpp
     include/io/get_disk_space.h io/get_disk_space.cpp
     include/io/file_gets.h io/file_gets.cpp
@@ -277,6 +278,7 @@ add_library(libid
     include/ui/restore_image.h ui/restore_image.cpp
     include/ui/rotate.h ui/rotate.cpp
     include/ui/SaveImageProgress.h ui/SaveImageProgress.cpp
+    include/ui/save_image.h ui/save_image.cpp
     include/ui/select_video_mode.h ui/select_video_mode.cpp
     include/ui/set_default_params.h ui/set_default_params.cpp
     include/ui/shell_sort.h ui/shell_sort.cpp

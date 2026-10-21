@@ -48,6 +48,7 @@
 #include "ui/make_batch_file.h"
 #include "ui/menu_handler.h"
 #include "ui/passes_options.h"
+#include "ui/save_image.h"
 #include "ui/select_video_mode.h"
 #include "ui/starfield.h"
 #include "ui/stereo.h"

@@ -782,11 +782,12 @@ The remaining UI-concept leaks outside `libid/ui` are:
   and sometimes `goodbye()`.  These are input and application-control
   leaks even when reachable only on failure or in debug builds.  Memory
   operations now report failures without UI or shutdown callbacks.
-- `libid/io/encoder.cpp` and `libid/engine/cmdfiles.cpp`: select prompts,
-  display status, make continue/cancel decisions, or shut down the
-  application from non-UI coordination code.  Image-load setup choices
-  now live in `ui/restore_image.cpp`.  Video selection, 3D settings, and
-  Tab information use pending values; the active image and stacked
+- `libid/engine/cmdfiles.cpp`: selects prompts, displays startup errors,
+  and can shut down the application from non-UI coordination code.
+  Image-save feedback and policy now live in `ui/save_image.cpp`, which
+  drives scanline encoding through `io/ImageSave`.  Image-load setup
+  choices live in `ui/restore_image.cpp`.  Video selection, 3D settings,
+  and Tab information use pending values; the active image and stacked
   screen remain unchanged when setup is cancelled.
 
 These are not all keyboard polling sites, but they are presentation
@@ -981,45 +982,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 43. Image Saving UI Decisions
-
-Source: remaining UI decisions around `save_image()`/`encoder()` in
-`io/encoder.cpp` and the giflib-backed `GifWriter` from 12.6-12.8;
-UI owners: manual save and autosave paths in `ui/big_while_loop.cpp`.
-
-Work:
-
-- Return completed-write or I/O-failure results to the UI owner before
-  displaying diagnostics or making any applicable file-retention choice.
-  Do not recreate the removed keyboard-interrupted save/partial prompt.
-- Let UI own saved/error messages, completion sounds, and any
-  save-then-exit decision.
-- Keep save progress drawing/restoration and busy-state presentation in
-  UI.  Retain the scanline feedback established by the giflib conversion:
-  after a scanline is written, update progress and call `driver_flush()`
-  before writing the next.  Flush restored feedback on completion or
-  failure as well; a display flush must not poll or dispatch input.
-- Remove remaining marked prompt/notification bridges, not the permanent
-  synchronous command or its scanline feedback.  Keep pixel-source
-  traversal and encoding below UI; no per-row disk flush is required.
-- Keep encoding, file replacement mechanics, and resource cleanup in I/O;
-  the selected UI decision determines when those mechanics run.
-
-Done when:
-
-- Encoding and save-file operations cannot open prompts or terminate the
-  application.  Whole-file writing remains atomic and reports real I/O
-  failures; it cannot be interrupted by pending keyboard input.
-
-Validation: exercise saving incomplete/resumable calculations, overwrite
-and failure cleanup for new/existing files, write/close failures, and
-autosave completion.  Add autokey coverage for manual save from an
-interrupted calculation, saved resumable metadata, and return to rendering,
-including the existing overwrite UI policy.  Use codec tests for contents
-and pending-key behavior, injected failures for write/close cleanup, and
-mock-driver tests for progress/flush ordering and controlled autosave
-timing.  Do not restore the removed keyboard-interrupted save prompt.
 
 ### 44. Command Parsing Diagnostics
 
@@ -1317,10 +1279,11 @@ these direct and indirect paths:
   `fractals/Cellular.cpp`, and renderer table entries in
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or
   dispatch pointers, including from per-image setup.
-- `libid/io/encoder.cpp`: still enters surrounding save prompts and
-  notifications.  GIF codec operations no longer poll input or support
-  keyboard-interrupted saves.  Image-load setup choices and
-  cancellation are UI-owned and do not commit pending image parameters.
+- GIF codec operations do not poll input or support keyboard-interrupted
+  saves.  Image-save progress, notifications, and exit policy are
+  UI-owned; `io/ImageSave` owns encoding and file cleanup.  Image-load
+  setup choices and cancellation are UI-owned and do not commit pending
+  image parameters.
 - `libid/engine/cmdfiles.cpp`: `arg_error()` calls UI through
   `s_stop_msg` and `s_goodbye`; `init_msg()` displays startup errors and
   schedules `do_pause()`.  Other command branches generate UI output or

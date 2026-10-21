@@ -29,6 +29,7 @@
 #include "ui/id_keys.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/rotate.h"
+#include "ui/save_image.h"
 #include "ui/slideshw.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
