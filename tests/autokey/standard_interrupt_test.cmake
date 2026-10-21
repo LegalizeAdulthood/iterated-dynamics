@@ -4,7 +4,8 @@
 file(MAKE_DIRECTORY image)
 file(REMOVE image/render000.gif image/render001.gif image/control.gif debug/stopmsg.txt)
 set(PARAMETERS "video=F6" "askvideo=no" "type=mandel" "passes=${PASSES}"
-    "maxiter=5000" "periodicity=0" "sound=off" "savedir=." "exitnoask=yes")
+    "viewwindows=1/0.75/no/64/48" "maxiter=128" "periodicity=0"
+    "sound=off" "savedir=." "exitnoask=yes")
 if(GENERAL_PIXEL)
     list(APPEND PARAMETERS "inside=zmag")
 endif()
