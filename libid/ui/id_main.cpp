@@ -473,6 +473,11 @@ int id_main(int argc, char *argv[])
         stop_msg(error.what());
         goodbye();
     }
+    catch (const MemoryError &error)
+    {
+        stop_msg(error.what());
+        goodbye();
+    }
 
     return 0;
 }

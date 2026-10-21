@@ -1,100 +1,76 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // Memory allocation routines.
 //
 #include "misc/memory.h"
 
-#include "io/dir_file.h"
-#include "io/get_disk_space.h"
 #include "io/special_dirs.h"
 #include "misc/debug_flags.h"
-#include "misc/Driver.h"
-#include "misc/stack_avail.h"
-#include "ui/diskvid.h"
-#include "ui/goodbye.h"
-#include "ui/stop_msg.h"
 
 #include <config/getpid.h>
 
 #include <fmt/format.h>
 
-#include <cinttypes>
-#include <climits>
-#include <cstdint>
+#include <algorithm>
+#include <array>
+#include <cerrno>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <filesystem>
 #include <limits>
 #if !defined(_WIN32)
 #include <sys/types.h>
 #endif
 
-using namespace id::engine;
 using namespace id::io;
-using namespace id::ui;
 
 namespace id::misc
 {
 
-enum
-{
-    MAX_HANDLES = 256       // disk memory: arbitrary #, suitably big
-};
-
-constexpr std::uint64_t DISK_WRITE_LEN = 2048; // max disk memory transfer length
-
 namespace
 {
 
-struct LinearMemory
-{
-    Byte *memory;
-};
-
-struct Disk
-{
-    std::FILE *file;
-};
+constexpr U16 MAX_HANDLES{256};
+constexpr size_t DISK_WRITE_LEN{2048};
 
 struct Memory
 {
-    MemoryLocation stored_at;
-    std::uint64_t size;
-    LinearMemory linear;
-    Disk disk;
+    MemoryLocation stored_at{MemoryLocation::NOWHERE};
+    std::uint64_t size{};
+    Byte *memory{};
+    std::FILE *file{};
+    std::filesystem::path path;
+    bool temporary{};
 };
 
-} // namespace
+std::array<Memory, MAX_HANDLES> s_handles;
 
-// Routines in this module
-static bool check_disk_space(std::uint64_t size);
-static MemoryLocation check_for_mem(MemoryLocation where, std::uint64_t size);
-static U16 next_handle();
-static int check_bounds(std::uint64_t start, std::uint64_t length, U16 handle);
-static void which_disk_error(int status);
-static void display_error(MemoryLocation stored_at, std::uint64_t how_much);
-static void display_handle(U16 handle);
-static bool seek_file(std::FILE *file, std::uint64_t offset);
-
-static int s_num_total_handles{};
-static constexpr const char *const MEMORY_NAMES[3]{"nowhere", "memory", "disk"};
-static Memory s_handles[MAX_HANDLES];
-
-// Memory handling support routines
-
-static bool check_disk_space(const std::uint64_t size)
+const char *memory_name(const MemoryLocation location)
 {
-    const std::filesystem::space_info space{std::filesystem::space(g_temp_dir)};
-    return space.free >= size;
+    switch (location)
+    {
+    case MemoryLocation::NOWHERE:
+        return "nowhere";
+    case MemoryLocation::MEMORY:
+        return "memory";
+    case MemoryLocation::DISK:
+        return "disk";
+    }
+    throw std::logic_error("Invalid memory location");
 }
 
-static const char *memory_type(MemoryLocation where)
+Memory &get_memory(const MemoryHandle handle)
 {
-    return MEMORY_NAMES[static_cast<int>(where)];
+    if (handle.index == 0 || handle.index >= s_handles.size() ||
+        s_handles[handle.index].stored_at == MemoryLocation::NOWHERE)
+    {
+        throw std::logic_error(fmt::format("Invalid memory handle {}", handle.index));
+    }
+    return s_handles[handle.index];
 }
 
-static bool seek_file(std::FILE *file, const std::uint64_t offset)
+bool seek_file(std::FILE *file, const std::uint64_t offset)
 {
 #if defined(_WIN32)
     if (offset > static_cast<std::uint64_t>(std::numeric_limits<__int64>::max()))
@@ -111,548 +87,267 @@ static bool seek_file(std::FILE *file, const std::uint64_t offset)
 #endif
 }
 
-static void which_disk_error(const int status)
+MemoryError disk_error(const char *operation, const std::filesystem::path &path, const int error)
 {
-    // Set status == 1 after a file create, status == 2 after a file set value
-    // Set status == 3 after a file write, status == 4 after a file read
-    if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
+    return MemoryError{fmt::format(
+        "{} file error: {}: {}", operation, path.string(), error == 0 ? "Incomplete transfer" : std::strerror(error))};
+}
+
+std::uint64_t transfer_start(
+    const Memory &memory, const U16 size, const std::uint64_t count, const std::uint64_t offset)
+{
+    if (size == 0 || count == 0 || count > std::numeric_limits<std::uint64_t>::max() / size ||
+        offset > std::numeric_limits<std::uint64_t>::max() / size)
     {
-        const char *names[4]{"Create", "Set", "Write", "Read"};
-        if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER,
-                fmt::format("{:s} file error {:d}:  {:s}",
-                    names[status >= 1 && status <= 4 ? status - 1 : 0], errno, std::strerror(errno))))
-        {
-            goodbye(); // bailout if ESC
-        }
+        throw std::logic_error("Invalid memory transfer size");
+    }
+    const std::uint64_t start{offset * size};
+    if (start > memory.size || count * size > memory.size - start)
+    {
+        throw std::logic_error("Memory reference out of bounds");
+    }
+    return start;
+}
+
+void seek_transfer(Memory &memory, const std::uint64_t start)
+{
+    std::clearerr(memory.file);
+    errno = 0;
+    if (!seek_file(memory.file, start))
+    {
+        throw disk_error("Seek", memory.path, errno);
     }
 }
 
-// buffer is a pointer to local memory
-// Always start moving from the beginning of buffer
-// offset is the number of units from the start of the allocated "Memory"
-// to start moving the contents of buffer to
-// size is the size of the unit, count is the number of units to move
-// Returns true if successful, false if failure
-bool MemoryHandle::from_memory(
-    const Byte *buffer, const U16 size, const std::uint64_t count, const std::uint64_t offset)
+void write_disk(Memory &memory, const Byte *buffer, const size_t length)
 {
-    Byte disk_buff[DISK_WRITE_LEN];
-    std::size_t num_written;
-    if (count > std::numeric_limits<std::uint64_t>::max() / size
-        || offset > std::numeric_limits<std::uint64_t>::max() / size)
+    errno = 0;
+    if (std::fwrite(buffer, 1, length, memory.file) != length)
     {
-        return false;
+        throw disk_error("Write", memory.path, errno);
     }
-    const std::uint64_t start = offset * size; // offset to first location to move to
-    std::uint64_t to_move = count * size; // number of bytes to move
-    if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
-    {
-        if (check_bounds(start, to_move, index))
-        {
-            return false; // out of bounds, don't do it
-        }
-    }
-    bool success = false;
-    switch (s_handles[index].stored_at)
-    {
-    case MemoryLocation::NOWHERE: // MoveToMemory
-        display_handle(index);
-        break;
-
-    case MemoryLocation::MEMORY: // MoveToMemory
-#if defined(_WIN32)
-        _ASSERTE(s_handles[index].size >= size * count + start);
-#endif
-        std::memcpy(s_handles[index].linear.memory + start, buffer, static_cast<std::size_t>(to_move));
-        success = true; // No way to gauge success or failure
-        break;
-
-    case MemoryLocation::DISK: // MoveToMemory
-        if (!seek_file(s_handles[index].disk.file, start))
-        {
-            which_disk_error(3);
-            break;
-        }
-        while (to_move > DISK_WRITE_LEN)
-        {
-            std::memcpy(disk_buff, buffer, static_cast<std::size_t>(DISK_WRITE_LEN));
-            num_written = std::fwrite(disk_buff, static_cast<std::size_t>(DISK_WRITE_LEN), 1,
-                s_handles[index].disk.file);
-            if (num_written != 1)
-            {
-                which_disk_error(3);
-                goto disk_error;
-            }
-            to_move -= DISK_WRITE_LEN;
-            buffer += DISK_WRITE_LEN;
-        }
-        std::memcpy(disk_buff, buffer, static_cast<std::size_t>(to_move));
-        num_written = std::fwrite(disk_buff, static_cast<std::size_t>(to_move), 1, s_handles[index].disk.file);
-        if (num_written != 1)
-        {
-            which_disk_error(3);
-            break;
-        }
-        success = true;
-disk_error:
-        break;
-    } // end of switch
-    if (!success && g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
-    {
-        display_handle(index);
-    }
-    return success;
 }
 
-// buffer points is the location to move the data to
-// offset is the number of units from the beginning of buffer to start moving
-// size is the size of the unit, count is the number of units to move
-// Returns true if successful, false if failure
-bool MemoryHandle::to_memory(Byte *buffer, const U16 size, const std::uint64_t count, const std::uint64_t offset)
+} // namespace
+
+void MemoryHandle::from_memory(
+    const Byte *buffer, const U16 unit_size, const std::uint64_t count, const std::uint64_t offset) const
 {
-    Byte disk_buff[DISK_WRITE_LEN];
-    std::size_t num_read;
-    if (count > std::numeric_limits<std::uint64_t>::max() / size
-        || offset > std::numeric_limits<std::uint64_t>::max() / size)
+    Memory &memory{get_memory(*this)};
+    const std::uint64_t start{transfer_start(memory, unit_size, count, offset)};
+    std::uint64_t remaining{count * unit_size};
+    if (buffer == nullptr)
     {
-        return false;
+        throw std::logic_error("Null memory transfer buffer");
     }
-    std::uint64_t start = offset * size;// first location to move
-    std::uint64_t to_move = count * size; // number of bytes to move
-    if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
+    if (memory.stored_at == MemoryLocation::MEMORY)
     {
-        if (check_bounds(start, to_move, index))
-        {
-            return false; // out of bounds, don't do it
-        }
+        std::memcpy(memory.memory + start, buffer, static_cast<size_t>(remaining));
+        return;
     }
-    bool success = false;
-    switch (s_handles[index].stored_at)
+    seek_transfer(memory, start);
+    while (remaining != 0)
     {
-    case MemoryLocation::NOWHERE: // MoveFromMemory
-        display_handle(index);
-        break;
-
-    case MemoryLocation::MEMORY: // MoveFromMemory
-        std::memcpy(buffer, s_handles[index].linear.memory + start, static_cast<std::size_t>(to_move));
-        success = true; // No way to gauge success or failure
-        break;
-
-    case MemoryLocation::DISK: // MoveFromMemory
-        if (!seek_file(s_handles[index].disk.file, start))
-        {
-            which_disk_error(4);
-            break;
-        }
-        while (to_move > DISK_WRITE_LEN)
-        {
-            num_read =
-                std::fread(disk_buff, static_cast<std::size_t>(DISK_WRITE_LEN), 1, s_handles[index].disk.file);
-            if (num_read != 1 && !std::feof(s_handles[index].disk.file))
-            {
-                which_disk_error(4);
-                goto disk_error;
-            }
-            std::memcpy(buffer, disk_buff, static_cast<std::size_t>(DISK_WRITE_LEN));
-            to_move -= DISK_WRITE_LEN;
-            buffer += DISK_WRITE_LEN;
-        }
-        num_read = std::fread(disk_buff, static_cast<std::size_t>(to_move), 1, s_handles[index].disk.file);
-        if (num_read != 1 && !std::feof(s_handles[index].disk.file))
-        {
-            which_disk_error(4);
-            break;
-        }
-        std::memcpy(buffer, disk_buff, static_cast<std::size_t>(to_move));
-        success = true;
-disk_error:
-        break;
-    } // end of switch
-    if (!success && g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
-    {
-        display_handle(index);
+        const size_t length{static_cast<size_t>(std::min<std::uint64_t>(remaining, DISK_WRITE_LEN))};
+        write_disk(memory, buffer, length);
+        buffer += length;
+        remaining -= length;
     }
-    return success;
 }
 
-
-// value is the value to set memory to
-// offset is the number of units from the start of allocated memory
-// size is the size of the unit, count is the number of units to set
-// Returns true if successful, false if failure
-bool MemoryHandle::set(const int value, const U16 size, const std::uint64_t count, const std::uint64_t offset)
+void MemoryHandle::to_memory(
+    Byte *buffer, const U16 unit_size, const std::uint64_t count, const std::uint64_t offset) const
 {
-    Byte disk_buff[DISK_WRITE_LEN];
-    std::size_t num_written;
-    if (count > std::numeric_limits<std::uint64_t>::max() / size
-        || offset > std::numeric_limits<std::uint64_t>::max() / size)
+    Memory &memory{get_memory(*this)};
+    const std::uint64_t start{transfer_start(memory, unit_size, count, offset)};
+    std::uint64_t remaining{count * unit_size};
+    if (buffer == nullptr)
     {
-        return false;
+        throw std::logic_error("Null memory transfer buffer");
     }
-    const std::uint64_t start = offset * size; // first location to set
-    std::uint64_t to_move = count * size; // number of bytes to set
-    if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
+    if (memory.stored_at == MemoryLocation::MEMORY)
     {
-        if (check_bounds(start, to_move, index))
+        std::memcpy(buffer, memory.memory + start, static_cast<size_t>(remaining));
+        return;
+    }
+    seek_transfer(memory, start);
+    while (remaining != 0)
+    {
+        const size_t length{static_cast<size_t>(std::min<std::uint64_t>(remaining, DISK_WRITE_LEN))};
+        errno = 0;
+        if (std::fread(buffer, 1, length, memory.file) != length)
         {
-            return false; // out of bounds, don't do it
+            throw disk_error("Read", memory.path, errno);
         }
+        buffer += length;
+        remaining -= length;
     }
-    bool success = false;
-    switch (s_handles[index].stored_at)
-    {
-    case MemoryLocation::NOWHERE: // SetMemory
-        display_handle(index);
-        break;
+}
 
-    case MemoryLocation::MEMORY: // SetMemory
-        std::memset(s_handles[index].linear.memory + start, value, static_cast<std::size_t>(to_move));
-        success = true; // No way to gauge success or failure
-        break;
-
-    case MemoryLocation::DISK: // SetMemory
-        std::memset(disk_buff, value, static_cast<std::size_t>(DISK_WRITE_LEN));
-        if (!seek_file(s_handles[index].disk.file, start))
-        {
-            which_disk_error(2);
-            break;
-        }
-        while (to_move > DISK_WRITE_LEN)
-        {
-            num_written = std::fwrite(disk_buff, static_cast<std::size_t>(DISK_WRITE_LEN), 1,
-                s_handles[index].disk.file);
-            if (num_written != 1)
-            {
-                which_disk_error(2);
-                goto disk_error;
-            }
-            to_move -= DISK_WRITE_LEN;
-        }
-        num_written = std::fwrite(disk_buff, static_cast<std::size_t>(to_move), 1, s_handles[index].disk.file);
-        if (num_written != 1)
-        {
-            which_disk_error(2);
-            break;
-        }
-        success = true;
-disk_error:
-        break;
-    } // end of switch
-    if (!success && g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
+void MemoryHandle::set(
+    const int value, const U16 unit_size, const std::uint64_t count, const std::uint64_t offset) const
+{
+    Memory &memory{get_memory(*this)};
+    const std::uint64_t start{transfer_start(memory, unit_size, count, offset)};
+    std::uint64_t remaining{count * unit_size};
+    if (memory.stored_at == MemoryLocation::MEMORY)
     {
-        display_handle(index);
+        std::memset(memory.memory + start, value, static_cast<size_t>(remaining));
+        return;
     }
-    return success;
+    std::array<Byte, DISK_WRITE_LEN> buffer;
+    buffer.fill(static_cast<Byte>(value));
+    seek_transfer(memory, start);
+    while (remaining != 0)
+    {
+        const size_t length{static_cast<size_t>(std::min<std::uint64_t>(remaining, buffer.size()))};
+        write_disk(memory, buffer.data(), length);
+        remaining -= length;
+    }
+}
+
+std::uint64_t MemoryHandle::size() const
+{
+    return get_memory(*this).size;
 }
 
 MemoryLocation memory_type(const MemoryHandle handle)
 {
-    return s_handles[handle.index].stored_at;
-}
-
-static void display_error(const MemoryLocation stored_at, const std::uint64_t how_much)
-{
-    // This routine is used to display an error message when the requested
-    // memory type cannot be allocated due to insufficient memory, AND there
-    // is also insufficient disk space to use as memory.
-    stop_msg(fmt::format("Allocating {:d} Bytes of {:s} memory failed.\n"
-                         "Alternate disk space is also insufficient.",
-        how_much, memory_type(stored_at)));
-}
-
-// This function returns an adjusted stored_at value.
-// This is where the memory requested can be allocated.
-static MemoryLocation check_for_mem(MemoryLocation where, const std::uint64_t size)
-{
-    if (g_debug_flag == DebugFlags::FORCE_MEMORY_FROM_DISK)
-    {
-        where = MemoryLocation::DISK;
-    }
-    if (g_debug_flag == DebugFlags::FORCE_MEMORY_FROM_MEMORY)
-    {
-        where = MemoryLocation::MEMORY;
-    }
-
-    MemoryLocation result{MemoryLocation::NOWHERE};
-    switch (where)
-    {
-    case MemoryLocation::MEMORY:
-        if (void *temp = std::malloc(size); temp != nullptr)
-        {
-            std::free(temp);
-            result = MemoryLocation::MEMORY;
-            break;
-        }
-        // failed, fall through, not enough heap available
-
-    case MemoryLocation::DISK: // NOLINT(clang-diagnostic-implicit-fallthrough)
-        if (check_disk_space(size))
-        {
-            result = MemoryLocation::DISK;
-            break;
-        }
-        // failed, fall through, no memory available
-
-    case MemoryLocation::NOWHERE:  // NOLINT(clang-diagnostic-implicit-fallthrough)
-        result = MemoryLocation::NOWHERE;
-        break;
-    }
-
-    return result;
-}
-
-static U16 next_handle()
-{
-    U16 counter = 1; // don't use handle 0
-
-    while (s_handles[counter].stored_at != MemoryLocation::NOWHERE && counter < MAX_HANDLES)
-    {
-        counter++;
-    }
-    return counter;
-}
-
-static int check_bounds(const std::uint64_t start, const std::uint64_t length, const U16 handle)
-{
-    if (start > s_handles[handle].size || length > s_handles[handle].size - start)
-    {
-        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Memory reference out of bounds.");
-        display_handle(handle);
-        return 1;
-    }
-    if (length > std::numeric_limits<unsigned short>::max())
-    {
-        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Tried to move > 65,535 bytes.");
-        display_handle(handle);
-        return 1;
-    }
-    if (s_handles[handle].stored_at == MemoryLocation::DISK && stack_avail() <= DISK_WRITE_LEN)
-    {
-        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Stack space insufficient for disk memory.");
-        display_handle(handle);
-        return 1;
-    }
-    if (length == 0)
-    {
-        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Zero length.");
-        display_handle(handle);
-        return 1;
-    }
-    return 0;
-}
-
-static void display_memory()
-{
-    stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, fmt::format("disk={:d}", get_disk_space()));
-}
-
-static void display_handle(U16 handle)
-{
-    if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER,
-            fmt::format("Handle {:d}, type {:s}, size {:d}", //
-                handle, memory_type(s_handles[handle].stored_at), s_handles[handle].size)))
-    {
-        goodbye(); // bailout if ESC, it's messy, but should work
-    }
+    return handle ? get_memory(handle).stored_at : MemoryLocation::NOWHERE;
 }
 
 void init_memory()
 {
-    s_num_total_handles = 0;
-    for (Memory &elem : s_handles)
+    for (U16 i = 1; i < MAX_HANDLES; ++i)
     {
-        elem.stored_at = MemoryLocation::NOWHERE;
-        elem.size = 0;
+        memory_release(MemoryHandle{i});
     }
 }
 
-void exit_check()
+std::vector<std::string> exit_check()
 {
-    if (s_num_total_handles == 0)
-    {
-        return;
-    }
-
-    stop_msg("Error - not all memory released, I'll get it.");
-    for (U16 i = 1; i < MAX_HANDLES; i++)
+    std::vector<std::string> diagnostics;
+    for (U16 i = 1; i < MAX_HANDLES; ++i)
     {
         if (s_handles[i].stored_at == MemoryLocation::NOWHERE)
         {
             continue;
         }
-
-        stop_msg(fmt::format(
-            "Memory type {:s} still allocated.  Handle = {:d}.", memory_type(s_handles[i].stored_at), i));
+        if (diagnostics.empty())
+        {
+            diagnostics.emplace_back("Error - not all memory released, I'll get it.");
+        }
+        diagnostics.push_back(
+            fmt::format("Memory type {} still allocated.  Handle = {}.", memory_name(s_handles[i].stored_at), i));
         memory_release(MemoryHandle{i});
     }
+    return diagnostics;
 }
 
-static std::string mem_filename(U16 handle)
+MemoryHandle memory_alloc(
+    const U16 size, const std::uint64_t count, MemoryLocation requested, const std::filesystem::path &backing_file)
 {
-    return fmt::format("id.{:d}.{:d}.tmp", getpid(), handle);
-}
-
-// * * * *
-// Memory handling routines
-
-// Returns handle number if successful, 0 or nullptr if failure
-MemoryHandle memory_alloc(const U16 size, const std::uint64_t count, const MemoryLocation stored_at)
-{
-    if (count > std::numeric_limits<std::uint64_t>::max() / size)
+    if (size == 0 || count == 0 || count > std::numeric_limits<std::uint64_t>::max() / size)
     {
-        display_error(stored_at, std::numeric_limits<std::uint64_t>::max());
-        return {};
+        throw std::logic_error("Invalid memory allocation size");
     }
-    std::uint64_t to_allocate = count * size;
-
-    /* check structure for requested memory type (add em up) to see if
-       sufficient amount is available to grant request */
-
-    MemoryLocation use_this_type = check_for_mem(stored_at, to_allocate);
-    if (use_this_type == MemoryLocation::NOWHERE)
+    const std::uint64_t bytes{count * size};
+    if (requested == MemoryLocation::NOWHERE)
     {
-        display_error(stored_at, to_allocate);
-        return {};
+        throw std::logic_error("Cannot allocate memory at nowhere");
     }
-
-    // get next available handle
-
-    U16 handle = next_handle();
-
-    if (handle >= MAX_HANDLES || handle == 0)
+    memory_name(requested);
+    if (g_debug_flag == DebugFlags::FORCE_MEMORY_FROM_DISK || !backing_file.empty())
     {
-        display_handle(handle);
-        return {};
-        // Oops, do something about this! ?????
+        requested = MemoryLocation::DISK;
     }
-
-    // attempt to allocate requested memory type
-    bool success = false;
-    switch (use_this_type)
+    else if (g_debug_flag == DebugFlags::FORCE_MEMORY_FROM_MEMORY)
     {
-    default:
-    case MemoryLocation::NOWHERE: // MemoryAlloc
-        use_this_type = MemoryLocation::NOWHERE; // in case nonsense value is passed
-        break;
-
-    case MemoryLocation::MEMORY: // MemoryAlloc
-        // Availability of memory checked in check_for_mem()
-        s_handles[handle].linear.memory = static_cast<Byte *>(std::calloc(static_cast<std::size_t>(to_allocate), 1));
-        if (s_handles[handle].linear.memory == nullptr)
-        {
-            break;
-        }
-        s_handles[handle].size = to_allocate;
-        s_handles[handle].stored_at = MemoryLocation::MEMORY;
-        s_num_total_handles++;
-        success = true;
-        break;
-
-    case MemoryLocation::DISK: // MemoryAlloc
-        if (g_disk_targa)
-        {
-            s_handles[handle].disk.file = std::fopen(targa_disk_path().string().c_str(), "r+b");
-        }
-        else
-        {
-            s_handles[handle].disk.file = dir_fopen(g_temp_dir, mem_filename(handle), "w+b");
-        }
-        if (s_handles[handle].disk.file == nullptr || !seek_file(s_handles[handle].disk.file, 0))
-        {
-            if (s_handles[handle].disk.file != nullptr)
-            {
-                std::fclose(s_handles[handle].disk.file);
-            }
-            s_handles[handle].disk.file = nullptr;
-        }
-        bool extend_file = true;
-        if (g_disk_targa)
-        {
-            std::error_code ignore;
-            extend_file = std::filesystem::file_size(targa_disk_path(), ignore) < to_allocate;
-        }
-        if (s_handles[handle].disk.file != nullptr && to_allocate > 0 && extend_file
-            && (!seek_file(s_handles[handle].disk.file, to_allocate - 1)
-                || std::fputc(0, s_handles[handle].disk.file) == EOF))
-        {
-            std::fclose(s_handles[handle].disk.file);
-            s_handles[handle].disk.file = nullptr;
-        }
-        if (s_handles[handle].disk.file == nullptr)
-        {
-            s_handles[handle].stored_at = MemoryLocation::NOWHERE;
-            use_this_type = MemoryLocation::NOWHERE;
-            which_disk_error(1);
-            display_memory();
-            driver_buzzer(Buzzer::PROBLEM);
-            break;
-        }
-        s_num_total_handles++;
-        success = true;
-        std::fclose(s_handles[handle].disk.file); // so clusters aren't lost if we crash while running
-        s_handles[handle].disk.file = g_disk_targa ?
-            std::fopen(targa_disk_path().string().c_str(), "r+b") :
-            dir_fopen(g_temp_dir, mem_filename(handle), "r+b");
-        if (s_handles[handle].disk.file == nullptr)
-        {
-            s_handles[handle].stored_at = MemoryLocation::NOWHERE;
-            use_this_type = MemoryLocation::NOWHERE;
-            which_disk_error(1);
-            display_memory();
-            driver_buzzer(Buzzer::PROBLEM);
-            break;
-        }
-        // cppcheck-suppress useClosedFile
-        seek_file(s_handles[handle].disk.file, 0);
-        s_handles[handle].size = to_allocate;
-        s_handles[handle].stored_at = MemoryLocation::DISK;
-        use_this_type = MemoryLocation::DISK;
-        break;
-    } // end of switch
-
-    if (stored_at != use_this_type && g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
-    {
-        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER,
-            fmt::format("Asked for {:s}, allocated {:d} bytes of {:s}, handle = {:d}.", //
-                memory_type(stored_at), to_allocate, memory_type(use_this_type), handle));
-        display_memory();
+        requested = MemoryLocation::MEMORY;
     }
-
-    if (success)
+    U16 index{1};
+    while (index < MAX_HANDLES && s_handles[index].stored_at != MemoryLocation::NOWHERE)
     {
-        return {handle};
+        ++index;
     }
-    return {};
+    if (index == MAX_HANDLES)
+    {
+        throw MemoryError("No memory handles available");
+    }
+    Memory &memory{s_handles[index]};
+    if (requested == MemoryLocation::MEMORY && bytes <= std::numeric_limits<size_t>::max())
+    {
+        memory.memory = static_cast<Byte *>(std::calloc(static_cast<size_t>(bytes), 1));
+        if (memory.memory != nullptr)
+        {
+            memory.size = bytes;
+            memory.stored_at = MemoryLocation::MEMORY;
+            return {index};
+        }
+    }
+    const bool temporary{backing_file.empty()};
+    std::filesystem::path path{temporary ? g_temp_dir / fmt::format("id.{}.{}.tmp", getpid(), index) : backing_file};
+    std::error_code error;
+    const std::filesystem::space_info space{
+        std::filesystem::space(path.has_parent_path() ? path.parent_path() : std::filesystem::path{"."}, error)};
+    if (error || space.available < bytes)
+    {
+        throw MemoryError(fmt::format("Allocating {} bytes of {} failed: {}", bytes, memory_name(requested),
+            error ? error.message() : "insufficient disk space"));
+    }
+    std::FILE *file{std::fopen(path.string().c_str(), temporary ? "w+b" : "r+b")};
+    if (file == nullptr)
+    {
+        throw disk_error("Create", path, errno);
+    }
+    std::error_code size_error;
+    const bool extend{temporary || std::filesystem::file_size(path, size_error) < bytes};
+    if (size_error)
+    {
+        std::fclose(file);
+        throw MemoryError(fmt::format("Cannot inspect backing file {}: {}", path.string(), size_error.message()));
+    }
+    errno = 0;
+    if ((extend && (!seek_file(file, bytes - 1) || std::fputc(0, file) == EOF || std::fflush(file) != 0)) ||
+        !seek_file(file, 0))
+    {
+        const int failure{errno};
+        std::fclose(file);
+        if (temporary)
+        {
+            std::filesystem::remove(path, error);
+        }
+        throw disk_error("Create", path, failure);
+    }
+    memory.path.swap(path);
+    memory.file = file;
+    memory.temporary = temporary;
+    memory.size = bytes;
+    memory.stored_at = MemoryLocation::DISK;
+    return {index};
 }
 
 void memory_release(const MemoryHandle handle)
 {
-    const U16 index{handle.index};
-    switch (s_handles[index].stored_at)
+    if (handle.index >= MAX_HANDLES)
     {
-    case MemoryLocation::NOWHERE: // MemoryRelease
-        break;
-
-    case MemoryLocation::MEMORY: // MemoryRelease
-        free(s_handles[index].linear.memory);
-        s_handles[index].linear.memory = nullptr;
-        s_handles[index].size = 0;
-        s_handles[index].stored_at = MemoryLocation::NOWHERE;
-        s_num_total_handles--;
-        break;
-
-    case MemoryLocation::DISK: // MemoryRelease
-        std::fclose(s_handles[index].disk.file);
-        if (!g_disk_targa)
+        throw std::logic_error("Invalid memory handle");
+    }
+    Memory &memory{s_handles[handle.index]};
+    if (memory.stored_at == MemoryLocation::MEMORY)
+    {
+        std::free(memory.memory);
+    }
+    else if (memory.stored_at == MemoryLocation::DISK)
+    {
+        std::fclose(memory.file);
+        if (memory.temporary)
         {
-            dir_remove(g_temp_dir, mem_filename(index));
+            std::error_code ignore;
+            std::filesystem::remove(memory.path, ignore);
         }
-        s_handles[index].disk.file = nullptr;
-        s_handles[index].size = 0;
-        s_handles[index].stored_at = MemoryLocation::NOWHERE;
-        s_num_total_handles--;
-        break;
-    } // end of switch
+    }
+    memory = Memory{};
 }
 
 } // namespace id::misc

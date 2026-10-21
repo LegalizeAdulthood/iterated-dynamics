@@ -124,6 +124,7 @@ add_executable(test-id
     math/test_round_float_double.cpp
     misc/driver_types.cpp
     misc/test_driver.cpp
+    misc/test_memory.cpp
     misc/test_ValueSaver.cpp
     misc/test_version.cpp
     ui/test_ChoiceBuilder.cpp
@@ -148,6 +149,7 @@ add_executable(test-id
     ui/test_RestoredImageSound.cpp
     ui/test_passes_options.cpp
     ui/test_precision_diagnostics.cpp
+    ui/test_request_memory.cpp
     ui/test_rotate.cpp
     ui/test_ShowDotController.cpp
     ui/test_slideshw.cpp

@@ -5,6 +5,8 @@
 #include "MockDriver.h"
 
 #include <engine/pixel_limits.h>
+#include <engine/LogicalScreen.h>
+#include <engine/VideoInfo.h>
 #include <io/special_dirs.h>
 #include <misc/debug_flags.h>
 #include <misc/Driver.h>
@@ -15,6 +17,10 @@
 #include <gtest/gtest.h>
 
 #include <cstdint>
+#include <array>
+#include <chrono>
+#include <cstdio>
+#include <fstream>
 #include <filesystem>
 #include <limits>
 
@@ -78,6 +84,18 @@ TEST(TestDiskVideo, memoryBlocksRejectInvalidSizes)
     EXPECT_FALSE(disk_video_memory_blocks(std::numeric_limits<std::int64_t>::max(), 2, 256, 0, blocks));
 }
 
+TEST(TestDiskVideo, memoryBlocksIncludeHeaderAndCachePadding)
+{
+    std::uint64_t blocks{};
+
+    ASSERT_TRUE(disk_video_memory_blocks(6, 2, 256, 18, blocks));
+    EXPECT_EQ(2U, blocks);
+    ASSERT_TRUE(disk_video_memory_blocks(2048, 1, 256, 18, blocks));
+    EXPECT_EQ(2U, blocks);
+    ASSERT_TRUE(disk_video_memory_blocks(2049, 1, 256, 18, blocks));
+    EXPECT_EQ(3U, blocks);
+}
+
 TEST(TestDiskVideo, commonStartDiskUsesMemoryWhenAvailable)
 {
     MockDriver driver;
@@ -105,6 +123,43 @@ TEST(TestDiskVideo, commonStartDiskUsesDiskWhenForced)
     disk_write_pixel(63, 63, 99);
     EXPECT_EQ(0, disk_read_pixel(0, 0));
     EXPECT_EQ(99, disk_read_pixel(63, 63));
+}
+
+TEST(TestDiskVideo, targaCachePreservesHeaderAndPixelsAcrossBackingBlocks)
+{
+    MockDriver driver;
+    DiskVideoState state{&driver, DebugFlags::NONE};
+    ValueSaver screen{g_logical_screen, LogicalScreen{2, 2, 0, 0, 1.0, 1.0}};
+    ValueSaver colors{g_colors, 256};
+    EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
+    const std::filesystem::path path{std::filesystem::temp_directory_path() /
+        ("id-targa-cache-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()) + ".tga")};
+    std::FILE *file{std::fopen(path.string().c_str(), "w+b")};
+    ASSERT_NE(nullptr, file);
+    std::array<Byte, 18> header{};
+    header.fill(13);
+    ASSERT_EQ(header.size(), std::fwrite(header.data(), 1, header.size(), file));
+    set_targa_disk_path(path);
+    ASSERT_EQ(0, targa_start_disk(file, static_cast<int>(header.size())));
+
+    targa_write_disk(0, 0, 10, 20, 30);
+    targa_write_disk(1, 1, 40, 50, 60);
+    end_disk();
+
+    EXPECT_EQ(30U, std::filesystem::file_size(path));
+    std::ifstream input{path, std::ios::binary};
+    std::array<Byte, 30> bytes{};
+    input.read(reinterpret_cast<char *>(bytes.data()), bytes.size());
+    EXPECT_EQ(13, bytes[0]);
+    EXPECT_EQ(13, bytes[17]);
+    EXPECT_EQ(30, bytes[18]);
+    EXPECT_EQ(20, bytes[19]);
+    EXPECT_EQ(10, bytes[20]);
+    EXPECT_EQ(60, bytes[27]);
+    EXPECT_EQ(50, bytes[28]);
+    EXPECT_EQ(40, bytes[29]);
+    input.close();
+    std::filesystem::remove(path);
 }
 
 } // namespace id::test

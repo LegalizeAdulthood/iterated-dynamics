@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // "Disk-Video" routines
 //
@@ -17,6 +18,7 @@
 #include "misc/Driver.h"
 #include "misc/memory.h"
 #include "ui/help_title.h"
+#include "ui/request_memory.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
@@ -31,6 +33,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
+#include <exception>
 #include <limits>
 #include <string>
 #include <vector>
@@ -220,6 +223,12 @@ bool disk_video_memory_blocks(const std::int64_t row_size, const std::int64_t co
         }
         storage_bytes = (storage_bytes + packed_pixels) >> pixel_shift;
     }
+    if (storage_bytes > std::numeric_limits<std::uint64_t>::max() - (BLOCK_LEN - 1))
+    {
+        return false;
+    }
+    // Cache transfers include the padding after the last image byte.
+    storage_bytes = (storage_bytes + BLOCK_LEN - 1) / BLOCK_LEN * BLOCK_LEN;
     if (storage_bytes > std::numeric_limits<std::uint64_t>::max() - static_cast<std::uint64_t>(header_length))
     {
         return false;
@@ -282,7 +291,8 @@ int common_start_disk(const std::int64_t new_row_size, const std::int64_t new_co
     s_pixel_shift = g_disk_targa ? 0 : get_pixel_shift(colors);
     s_time_to_display = g_bf_math != BFMathType::NONE ? 10 : 1000;  // time-to-g_driver-status counter
     std::uint64_t memory_size = 0;
-    if (!disk_video_memory_blocks(new_row_size, new_col_size, colors, s_header_length, memory_size))
+    if (!disk_video_memory_blocks(
+            new_row_size, new_col_size, g_disk_targa ? 256 : colors, s_header_length, memory_size))
     {
         stop_msg("*** disk video dimensions overflow allocation size ***");
         return -1;
@@ -343,15 +353,14 @@ int common_start_disk(const std::int64_t new_row_size, const std::int64_t new_co
         }
         std::fclose(s_fp);
         s_fp = nullptr;
-        s_dv_handle = memory_alloc(BLOCK_LEN, memory_size, MemoryLocation::DISK);
+        s_dv_handle = request_memory(BLOCK_LEN, memory_size, MemoryLocation::DISK, targa_disk_path());
     }
     else
     {
-        s_dv_handle = memory_alloc(BLOCK_LEN, memory_size, MemoryLocation::MEMORY);
+        s_dv_handle = request_memory(BLOCK_LEN, memory_size, MemoryLocation::MEMORY);
     }
     if (!s_dv_handle)
     {
-        stop_msg("*** insufficient free memory/disk space ***");
         g_good_mode = false;
         s_row_size = 0;
         s_col_size = 0;
@@ -388,14 +397,22 @@ void end_disk()
         static_cast<std::uintmax_t>(s_header_length)
         + static_cast<std::uintmax_t>(s_row_size) * static_cast<std::uintmax_t>(s_col_size)};
 
+    std::exception_ptr failure;
     if (g_disk_targa && s_cache_start != nullptr)
     {
-        for (s_cache_lru = s_cache_start; s_cache_lru < s_cache_end; ++s_cache_lru)
+        try
         {
-            if (s_cache_lru->dirty)
+            for (s_cache_lru = s_cache_start; s_cache_lru < s_cache_end; ++s_cache_lru)
             {
-                write_cache_lru();
+                if (s_cache_lru->dirty)
+                {
+                    write_cache_lru();
+                }
             }
+        }
+        catch (...)
+        {
+            failure = std::current_exception();
         }
     }
 
@@ -425,6 +442,10 @@ void end_disk()
     g_disk_flag = false;
     s_row_size = 0;
     g_disk_16_bit = false;
+    if (failure)
+    {
+        std::rethrow_exception(failure);
+    }
 }
 
 int disk_read_pixel(const int col, int row)

@@ -31,6 +31,7 @@
 #include <geometry/line3d.h>
 #include <math/biginit.h>
 #include <misc/ValueSaver.h>
+#include <misc/memory.h>
 #include <misc/debug_flags.h>
 #include <ui/calculate_image.h>
 #include <ui/frothy_basin.h>
@@ -607,6 +608,22 @@ TEST_F(TestStandardRenderDiagnostic, precisionFailureCleansUpBeforeReachingOuter
     EXPECT_CALL(*m_output, mute());
 
     EXPECT_THROW(calculate_image(), PrecisionError);
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(0, m_plots);
+    g_dispatch.set_per_image(initialize_overlay_image);
+    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+}
+
+TEST_F(TestStandardRenderDiagnostic, backingMemoryFailureReportsToUiAfterCleanup)
+{
+    g_dispatch.set_per_image([]() -> bool { throw MemoryError{"Read file error"}; });
+    expect_diagnostic("Read file error");
+
+    EXPECT_EQ(-1, calculate_image());
 
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(0, g_num_work_list);

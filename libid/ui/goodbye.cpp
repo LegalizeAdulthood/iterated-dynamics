@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/goodbye.h"
 
@@ -13,6 +14,7 @@
 #include "ui/evolve.h"
 #include "ui/make_batch_file.h"
 #include "ui/slideshw.h"
+#include "ui/stop_msg.h"
 
 #include <cstdlib>
 
@@ -38,8 +40,18 @@ namespace id::ui
         g_ifs_definition.clear();
     }
     free_pixel_grid();
-    end_disk();
-    exit_check();
+    try
+    {
+        end_disk();
+    }
+    catch (const MemoryError &error)
+    {
+        stop_msg(error.what());
+    }
+    for (const std::string &diagnostic : exit_check())
+    {
+        stop_msg(diagnostic);
+    }
     if (!g_make_parameter_file)
     {
         driver_set_for_text();

@@ -297,7 +297,7 @@ The current code is already part-way through this plan:
   returns diagnostics; image setup retains palette-rendering fallback.
   Rejected overlays close their sources and cannot trigger replacement
   of the original without a completed temporary copy.  Shared disk-cache
-  and memory failure callbacks remain for slices 38-41.
+  failure callbacks remain for slices 40-41.
 - `math/biginit.cpp` reports precision and arena exhaustion through
   `PrecisionError`, without input or application shutdown.  Rejected
   precision requests preserve the active arena; failed stack requests
@@ -309,6 +309,15 @@ The current code is already part-way through this plan:
   `id_main()`, image setup, and the standard render controller own their
   display and Escape-to-exit decision.  The conversion round-trip check
   restores the image corners before UI inspection, including on failure.
+- `misc/memory.cpp` reports resource and backing-file failures through
+  `MemoryError`; invalid requests and transfers throw `std::logic_error`.
+  It owns allocation, backing paths, and cleanup without UI callbacks.
+  `exit_check()` returns diagnostics after releasing resources; shutdown
+  displays them.  Temporary UI helper `request_memory()` owns allocation
+  retry/cancel and debug statistics until slice 41 moves these decisions
+  to the requesting controller.  Disk cleanup releases resources before
+  propagating a transfer failure.  Targa allocations include cache padding
+  after the header, preserving bounded backing-store transfers.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -325,7 +334,7 @@ The fresh reverse-call audit also found these live paths:
 - `ifs_type()` selects UI renderers, while `orbit3d_type()` and the IFS3D
   path pass UI render functions to `funny_glasses_call()`.  That function
   also invokes photographer prompts between stereo images.
-- Validation, parsing, and memory failures can invoke modal
+- Storage setup and command validation can still invoke modal
   `stop_msg()` or application shutdown through `goodbye()`.
 - Pixel, span, and disk-storage functions used by calculation code live
   under `libid/ui`.  Disk storage mixes backend work with progress text
@@ -732,9 +741,10 @@ The remaining UI-concept leaks outside `libid/ui` are:
 
 - `libid/fractals/lorenz.cpp`: IFS and 3D front ends invoke UI renderers;
   stereo orchestration invokes photographer prompts between images.
-- Calculation setup and memory helpers invoke `stop_msg()` and sometimes
-  `goodbye()`.  These are input and application-control leaks even when
-  they are reachable only on failure or in debug builds.
+- Calculation setup and command validation still invoke `stop_msg()`
+  and sometimes `goodbye()`.  These are input and application-control
+  leaks even when reachable only on failure or in debug builds.  Memory
+  operations now report failures without UI or shutdown callbacks.
 - Calculation code calls pixel/span functions in `ui/video.cpp` and
   storage functions in `ui/diskvid.cpp`.  Storage also displays progress
   text and modal errors.  Backend extraction must retain plotting below
@@ -937,28 +947,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 38. Memory Failure And Recovery Ownership
-
-Source: allocation, move validation, disk-memory recovery, debug messages,
-and shutdown calls in `libid/misc/memory.cpp`.
-
-Work:
-
-- Return failure information from memory operations without modal
-  `stop_msg()`, buzzer output, or `goodbye()`.
-- Let requesting UI controllers own any retry/cancel choice and resume
-  or abandon the operation after the choice.
-- Keep allocation and resource cleanup below UI.  Do not replace direct
-  prompts with callbacks that still block inside a memory operation.
-
-Done when:
-
-- Memory operations and their failure paths never require an input queue
-  or select application shutdown.
-
-Validation: exercise allocation failure, invalid operations, retry,
-cancellation, and cleanup through focused failure-path tests.
-
 ### 39. Pixel Access Layer Ownership
 
 Source: `get_color()`, pixel/span operations, and their backend selection
@@ -1016,6 +1004,9 @@ Work:
   indirect input through failed allocation.
 - Remove temporary bridges from the preceding slice.  Preserve storage
   cleanup and headless/batch operation without requiring a text screen.
+- Remove the temporary `request_memory()` declaration and implementation
+  from slice 38.  Its requesting UI controller must own allocation
+  retry/cancel and debug statistics around backend setup.
 
 Done when:
 
@@ -1397,11 +1388,9 @@ these direct and indirect paths:
   `fractals/Cellular.cpp`, and renderer table entries in
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or
   dispatch pointers, including from per-image setup.
-- Calculation validation, math allocation, debug displays,
-  and memory operations: `stop_msg()` polls
-  and waits inside these callers, and some failures invoke `goodbye()`.
 - Storage setup and disk-video progress can invoke modal failure screens
-  from calculation code through `ui/diskvid.cpp` and memory allocation.
+  from calculation code through `ui/diskvid.cpp` and `request_memory()`.
+  Memory operations themselves no longer poll or invoke UI callbacks.
 - `libid/io/loadfile.cpp` and `io/encoder.cpp`: enter mode/parameter
   selection or partial-save prompts from loading and saving operations.
   The giflib slices remove codec polling and keyboard-interrupted saves;
