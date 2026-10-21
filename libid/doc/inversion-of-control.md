@@ -298,6 +298,12 @@ The current code is already part-way through this plan:
   Rejected overlays close their sources and cannot trigger replacement
   of the original without a completed temporary copy.  Shared disk-cache
   and memory failure callbacks remain for slices 38-41.
+- `math/biginit.cpp` reports precision and arena exhaustion through
+  `PrecisionError`, without input or application shutdown.  Rejected
+  precision requests preserve the active arena; failed stack requests
+  leave its allocation state unchanged.  Render cleanup runs before the
+  failure reaches `id_main()`, which owns the existing fatal diagnostic
+  and batch exit status.  Freed arenas can be initialized again.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -314,7 +320,7 @@ The fresh reverse-call audit also found these live paths:
 - `ifs_type()` selects UI renderers, while `orbit3d_type()` and the IFS3D
   path pass UI render functions to `funny_glasses_call()`.  That function
   also invokes photographer prompts between stereo images.
-- Validation, parsing, memory, and precision failures can invoke modal
+- Validation, parsing, and memory failures can invoke modal
   `stop_msg()` or application shutdown through `goodbye()`.
 - Pixel, span, and disk-storage functions used by calculation code live
   under `libid/ui`.  Disk storage mixes backend work with progress text
@@ -721,7 +727,7 @@ The remaining UI-concept leaks outside `libid/ui` are:
 
 - `libid/fractals/lorenz.cpp`: IFS and 3D front ends invoke UI renderers;
   stereo orchestration invokes photographer prompts between images.
-- Calculation setup, precision math, debug displays,
+- Calculation setup, precision debug displays,
   and memory helpers invoke `stop_msg()` and sometimes
   `goodbye()`.  These are input and application-control leaks even when
   they are reachable only on failure or in debug builds.
@@ -926,27 +932,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 36. Arbitrary-Precision Failure Ownership
-
-Source: precision allocation and `alloc_stack()` in `math/biginit.cpp`.
-UI owner: the controller requesting precision setup or rendering.
-
-Work:
-
-- Report unsupported precision and exhausted arena failures without
-  `stop_msg()` or `goodbye()` in math code.
-- Keep precision constraints, arena state, and cleanup in math code; let
-  the UI owner choose parameter correction or application exit.
-- Preserve batch error reporting and exit status through the outer owner.
-
-Done when:
-
-- Arbitrary-precision math can fail without polling input or terminating
-  the application from the math layer.
-
-Validation: exercise allocation-limit and stack-limit failures, cleanup,
-and a subsequent valid precision request.
 
 ### 37. Precision Debug Display Ownership
 

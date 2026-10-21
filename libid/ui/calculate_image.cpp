@@ -5,6 +5,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
+#include "math/biginit.h"
 #include "ui/stop_msg.h"
 
 #include <new>
@@ -31,6 +32,12 @@ int calculate_image()
             stop_msg(warning);
         }
         result = calc_fract();
+    }
+    catch (const math::PrecisionError &)
+    {
+        g_calc_status = CalcStatus::NON_RESUMABLE;
+        image.finish();
+        throw;
     }
     catch (const std::bad_alloc &)
     {

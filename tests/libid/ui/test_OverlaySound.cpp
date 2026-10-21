@@ -29,6 +29,7 @@
 #include <io/library.h>
 #include <io/check_write_file.h>
 #include <geometry/line3d.h>
+#include <math/biginit.h>
 #include <misc/ValueSaver.h>
 #include <misc/debug_flags.h>
 #include <ui/calculate_image.h>
@@ -592,6 +593,28 @@ TEST_F(TestStandardRenderDiagnostic, allocationFailureDiscardsWorkAndReportsToUi
     EXPECT_EQ(dispatch.calc_type(), g_dispatch.calc_type());
     EXPECT_EQ(dispatch.per_image(), g_dispatch.per_image());
     EXPECT_TRUE(g_log_map_table.empty());
+}
+
+TEST_F(TestStandardRenderDiagnostic, precisionFailureCleansUpBeforeReachingOuterUi)
+{
+    ValueSaver saved_digits{g_bf_digits, 0};
+    g_dispatch.set_per_image(
+        []
+        {
+            init_bf_dec(2000);
+            return true;
+        });
+    EXPECT_CALL(*m_output, mute());
+
+    EXPECT_THROW(calculate_image(), PrecisionError);
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(0, m_plots);
+    g_dispatch.set_per_image(initialize_overlay_image);
+    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
 }
 
 TEST_F(TestOverlaySound, pendingStandardOverlayRetainsRejectedCandidate)

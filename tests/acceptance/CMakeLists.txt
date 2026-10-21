@@ -9,6 +9,17 @@ else()
 endif()
 
 include(PlatformArgs)
+include(IdTestHome)
+
+id_make_test_home(precision-failure PRECISION_FAILURE_HOME)
+add_test(NAME AcceptanceTest.precision-failure
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/precision_failure_test.cmake"
+    WORKING_DIRECTORY "${PRECISION_FAILURE_HOME}")
+set_tests_properties(AcceptanceTest.precision-failure
+    PROPERTIES LABELS "acceptance;precision" TIMEOUT 60)
 
 add_test(NAME AcceptanceTest.makepar-from-any-directory
     COMMAND ${CMAKE_COMMAND}

@@ -1,13 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
 #include "math/big.h"
 
 #include <stddef.h>
+#include <stdexcept>
 
 namespace id::math
 {
+
+class PrecisionError : public std::runtime_error
+{
+public:
+    using std::runtime_error::runtime_error;
+};
 
 extern int g_bf_digits;                 // digits to use (force) for g_bf_math
 extern int g_bf_save_len;

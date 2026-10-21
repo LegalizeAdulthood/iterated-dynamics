@@ -17,6 +17,7 @@
 #include "io/load_config.h"
 #include "io/loadfile.h"
 #include "io/special_dirs.h"
+#include "math/biginit.h"
 #include "math/fixed_pt.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"
@@ -424,40 +425,48 @@ int id_main(int argc, char *argv[])
     MainState state{MainState::RESTART};
     MainContext context;
     bool done{};
-    while (!done)
+    try
     {
-        driver_check_memory();
-        switch (state)
+        while (!done)
         {
-        case MainState::RESTART:
-            // insert key re-starts here
-            main_restart(args, context);
-            state = MainState::RESTORE_START;
-            break;
-
-        case MainState::RESTORE_START:
-            state = main_restore_start(context) ? MainState::RESUME_LOOP : MainState::IMAGE_START;
-            break;
-
-        case MainState::IMAGE_START:
-            state = main_image_start(context);
-            if (state != MainState::RESTORE_START && state != MainState::IMAGE_START &&
-                state != MainState::RESTART)
+            driver_check_memory();
+            switch (state)
             {
-                state = MainState::RESUME_LOOP;
+            case MainState::RESTART:
+                // insert key re-starts here
+                main_restart(args, context);
+                state = MainState::RESTORE_START;
+                break;
+
+            case MainState::RESTORE_START:
+                state = main_restore_start(context) ? MainState::RESUME_LOOP : MainState::IMAGE_START;
+                break;
+
+            case MainState::IMAGE_START:
+                state = main_image_start(context);
+                if (state != MainState::RESTORE_START && state != MainState::IMAGE_START && state != MainState::RESTART)
+                {
+                    state = MainState::RESUME_LOOP;
+                }
+                break;
+
+            case MainState::RESUME_LOOP:
+                save_param_history();
+                state = big_while_loop(context);
+                break;
+
+            case MainState::CONTINUE:
+            case MainState::NOTHING:
+                done = true;
+                break;
             }
-            break;
-
-        case MainState::RESUME_LOOP:
-            save_param_history();
-            state = big_while_loop(context);
-            break;
-
-        case MainState::CONTINUE:
-        case MainState::NOTHING:
-            done = true;
-            break;
         }
+    }
+    catch (const PrecisionError &error)
+    {
+        free_bf_vars();
+        stop_msg(error.what());
+        goodbye();
     }
 
     return 0;

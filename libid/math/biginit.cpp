@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // C routines for bignumbers
 
@@ -14,16 +15,14 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include "engine/UserData.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
-#include "ui/goodbye.h"
-#include "ui/stop_msg.h"
+
+#include <fmt/format.h>
 
 #include <algorithm>
 #include <cstring>
-#include <string>
 
 using namespace id::engine;
 using namespace id::fractals;
-using namespace id::ui;
 
 namespace id::math
 {
@@ -159,42 +158,61 @@ long g_start_stack{};
 long g_max_stack{};
 int g_bf_save_len{};
 
-static void init_bf2()
+static void init_bf2(const int bn_length, const int int_length, const int decimals)
 {
-    long ptr;
-    save_bf_vars(); // copy corners values for conversion
-
-    calc_lengths();
-
-    s_bn_root = reinterpret_cast<BigFloat>(&s_storage[0]);
-
+    BFMathType math{BFMathType::BIG_NUM};
     /* at present time one call would suffice, but this logic allows
        multiple kinds of alternate math e.g. long double */
     if (int i = find_alternate_math(g_fractal_type, BFMathType::BIG_NUM); i > -1)
     {
-        g_bf_math = g_alternate_math[i].math;
+        math = g_alternate_math[i].math;
     }
     else
     {
         i = find_alternate_math(g_fractal_type, BFMathType::BIG_FLT);
         if (i > -1)
         {
-            g_bf_math = g_alternate_math[i].math;
-        }
-        else
-        {
-            g_bf_math = BFMathType::BIG_NUM; // maybe called from cmdfiles.c and g_fractal_type not set
+            math = g_alternate_math[i].math;
         }
     }
 
+    if (bn_length <= 0 || bn_length > BIGNUM_ARENA_SIZE)
+    {
+        throw PrecisionError(fmt::format("Requested precision of {} too high", decimals));
+    }
+    const int rounded_length{(bn_length + 3) / 4 * 4};
+    const int padding{rounded_length == 4 ? 4 : 8};
+    const int bf_length{rounded_length + 4};
+    const int r_length{rounded_length + padding};
+    const int r_bf_length{bf_length + padding};
+    // Check scratch globals, persistent values, and temporary stack space
+    // before saving or changing the active precision and arena.
+    long required{10 * r_length + 10 * (r_bf_length + 2)};
+    required +=
+        math == BFMathType::BIG_NUM ? 15 * rounded_length + 7 * r_length : 10 * (bf_length + 2) + 7 * (r_bf_length + 2);
+    required += static_cast<int>((bf_length - 2) * LOG10_256) + 4;
+    required = (required + 1) & ~1L;
+    if (required + NUM_VARS * (bf_length + 2) > BIGNUM_ARENA_SIZE - 22 * (bf_length + 2))
+    {
+        throw PrecisionError(fmt::format("Requested precision of {} too high", decimals));
+    }
+
+    save_bf_vars(); // copy corners values for conversion
+    g_bn_length = bn_length;
+    g_int_length = int_length;
+    g_decimals = decimals;
+    calc_lengths();
+    g_bf_math = math;
+    s_bn_root = reinterpret_cast<BigFloat>(&s_storage[0]);
+
     // Now split up the memory among the pointers
+    long ptr{};
     const auto alloc_size = [&ptr](const int size)
     {
         BigNum result = s_bn_root + ptr;
         ptr += size;
         return result;
     };
-    ptr        = 0;
     g_bn_tmp1 = alloc_size(g_r_length);
     g_bn_tmp2 = alloc_size(g_r_length);
     g_bn_tmp3 = alloc_size(g_r_length);
@@ -271,15 +289,6 @@ static void init_bf2()
     // max stack offset from s_bn_root
     g_max_stack = BIGNUM_ARENA_SIZE - (g_bf_length + 2) * 22;
 
-    // sanity check
-    // leave room for NUMVARS variables allocated from stack
-    // also leave room for the safe area at top of segment
-    if (ptr + NUM_VARS*(g_bf_length+2) > g_max_stack)
-    {
-        stop_msg("Requested precision of " + std::to_string(g_decimals) + " too high, aborting");
-        goodbye();
-    }
-
     // room for 6 corners + 6 save corners + 10 params at top of extraseg
     // this area is safe - use for variables that are used outside fractal
     // generation - e.g. zoom box variables
@@ -306,7 +315,11 @@ static void init_bf2()
     // good citizens initialize variables
     if (g_bf_save_len > 0)    // leave save area
     {
-        std::memset(s_bn_root+(g_bf_save_len+2)*22, 0, static_cast<unsigned>(g_start_stack - (g_bf_save_len + 2) * 22));
+        const long saved_size{(g_bf_save_len + 2) * 22};
+        if (g_start_stack > saved_size)
+        {
+            std::memset(s_bn_root + saved_size, 0, static_cast<size_t>(g_start_stack - saved_size));
+        }
     }
     else   // first time through - nothing saved
     {
@@ -389,6 +402,11 @@ static int restore_bf_vars()
 // free corners and parameters save memory
 void free_bf_vars()
 {
+    s_bn_root = nullptr;
+    s_stack_ptr = nullptr;
+    g_start_stack = 0;
+    g_max_stack = 0;
+    g_bignum_max_stack_addr = 0;
     g_bf_save_len = 0;
     g_bf_math = BFMathType::NONE;
     g_bn_step = 0;
@@ -409,18 +427,16 @@ void free_bf_vars()
 // Allocates a BigNum variable on stack
 BigNum alloc_stack(const size_t size)
 {
-    if (g_bf_math == BFMathType::NONE)
+    if (g_bf_math == BFMathType::NONE || s_bn_root == nullptr || s_stack_ptr == nullptr)
     {
-        stop_msg("alloc_stack called with g_bf_math==0");
-        return nullptr;
+        throw std::logic_error("alloc_stack called without initialized arbitrary precision");
     }
-    const long stack_addr = static_cast<long>(s_stack_ptr - s_bn_root + size); // part of s_bn_root
-
-    if (stack_addr > g_max_stack)
+    const long current_addr{static_cast<long>(s_stack_ptr - s_bn_root)};
+    if (size > static_cast<size_t>(g_max_stack - current_addr))
     {
-        stop_msg("Aborting, Out of Bignum Stack Space");
-        goodbye();
+        throw PrecisionError("Out of Bignum Stack Space");
     }
+    const long stack_addr{current_addr + static_cast<long>(size)};
     // keep track of max ptr
     g_bignum_max_stack_addr = std::max(stack_addr, g_bignum_max_stack_addr);
     s_stack_ptr += size;   // increment stack pointer
@@ -431,7 +447,7 @@ BigNum alloc_stack(const size_t size)
 // Returns stack pointer offset so it can be saved.
 int save_stack()
 {
-    return static_cast<int>(s_stack_ptr - s_bn_root);
+    return s_bn_root == nullptr ? 0 : static_cast<int>(s_stack_ptr - s_bn_root);
 }
 
 /************************************************************************/
@@ -439,38 +455,25 @@ int save_stack()
 //    allocated since save_stack()
 void restore_stack(const int old_offset)
 {
-    s_stack_ptr  = s_bn_root+old_offset;
+    s_stack_ptr = s_bn_root == nullptr ? nullptr : s_bn_root + old_offset;
 }
 
 /************************************************************************/
 // Memory allocator routines end here.
 /************************************************************************/
 
-/************************************************************************/
-// initialize bignumber global variables
-//   dec = decimal places after decimal point
-//   intl = bytes for integer part (1, 2, or 4)
-
-void init_bf_dec(const int dec)
+static int integer_length()
 {
-    if (g_bf_digits > 0)
-    {
-        g_decimals = g_bf_digits;   // blindly force
-    }
-    else
-    {
-        g_decimals = dec;
-    }
     if (g_user.bailout_value > 10)      // arbitrary value
     {
         // using 2 doesn't gain much and requires another test
-        g_int_length = 4;
+        return 4;
     }
     else if (g_fractal_type == FractalType::MANDEL_Z_POWER //
         || g_fractal_type == FractalType::JULIA_Z_POWER    //
         || g_fractal_type == FractalType::DIVIDE_BROT5)
     {
-        g_int_length = 4; // 2 leaves artifacts in the center of the lakes
+        return 4;                                          // 2 leaves artifacts in the center of the lakes
     }
     // the bailout tests need greater dynamic range
     else if (g_bailout_test == Bailout::REAL //
@@ -478,15 +481,21 @@ void init_bf_dec(const int dec)
         || g_bailout_test == Bailout::AND    //
         || g_bailout_test == Bailout::MANR)
     {
-        g_int_length = 2;
+        return 2;
     }
-    else
-    {
-        g_int_length = 1;
-    }
+    return 1;
+}
+
+/************************************************************************/
+// initialize bignumber global variables
+//   dec = decimal places after decimal point
+void init_bf_dec(const int dec)
+{
+    const int decimals{g_bf_digits > 0 ? g_bf_digits : dec};
+    const int int_length{integer_length()};
     // conservative estimate
-    g_bn_length = g_int_length + static_cast<int>(g_decimals / LOG10_256) + 1; // round up
-    init_bf2();
+    const int bn_length{int_length + static_cast<int>(decimals / LOG10_256) + 1}; // round up
+    init_bf2(bn_length, int_length, decimals);
 }
 
 /************************************************************************/
@@ -495,34 +504,14 @@ void init_bf_dec(const int dec)
 //   intl = bytes for integer part (1, 2, or 4)
 void init_bf_length(const int bnl)
 {
-    g_bn_length = bnl;
-
-    if (g_user.bailout_value > 10)      // arbitrary value
+    if (bnl <= 0 || bnl > BIGNUM_ARENA_SIZE)
     {
-        // using 2 doesn't gain much and requires another test
-        g_int_length = 4;
+        throw PrecisionError(fmt::format("Requested bignumber length of {} is unsupported", bnl));
     }
-    else if (g_fractal_type == FractalType::MANDEL_Z_POWER //
-        || g_fractal_type == FractalType::JULIA_Z_POWER    //
-        || g_fractal_type == FractalType::DIVIDE_BROT5)
-    {
-        g_int_length = 4; // 2 leaves artifacts in the center of the lakes
-    }
-    // the bailout tests need greater dynamic range
-    else if (g_bailout_test == Bailout::REAL //
-        || g_bailout_test == Bailout::IMAG   //
-        || g_bailout_test == Bailout::AND    //
-        || g_bailout_test == Bailout::MANR)
-    {
-        g_int_length = 2;
-    }
-    else
-    {
-        g_int_length = 1;
-    }
+    const int int_length{integer_length()};
     // conservative estimate
-    g_decimals = static_cast<int>((g_bn_length - g_int_length) * LOG10_256);
-    init_bf2();
+    const int decimals{static_cast<int>((bnl - int_length) * LOG10_256)};
+    init_bf2(bnl, int_length, decimals);
 }
 
 void init_big_pi()
