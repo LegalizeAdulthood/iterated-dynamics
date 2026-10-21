@@ -374,7 +374,7 @@ const FractalSpecific g_fractal_specific[] = {
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                   //
         SymmetryType::NONE,                                                                                 //
         nullptr, nullptr, nullptr,                                                                          //
-        ifs_type,                                                                                           //
+        nullptr,                                                                                            //
         NO_BAILOUT                                                                                          //
     },
 
@@ -390,7 +390,7 @@ const FractalSpecific g_fractal_specific[] = {
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
         nullptr, nullptr, nullptr,                        //
-        ifs_type,                                         //
+        nullptr,                                          //
         NO_BAILOUT                                        //
     },
 

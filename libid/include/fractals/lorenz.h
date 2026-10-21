@@ -208,7 +208,7 @@ private:
 class IFS3D
 {
 public:
-    IFS3D();
+    explicit IFS3D(bool both_eyes = false);
     IFS3D(const IFS3D &rhs) = delete;
     IFS3D(IFS3D &&rhs) = delete;
     ~IFS3D();
@@ -227,6 +227,7 @@ private:
     ViewTransform3D m_inf{};
     IFSColorMethod m_color_method{};
     bool m_unbounded{};
+    bool m_both_eyes{};
 };
 
 extern Display3DMode         g_display_3d;                  // 3D display flag: NONE (0) = OFF
@@ -279,7 +280,6 @@ int quadrup_two2d_orbit(double *x, double *y, double *z);
 int three_ply2d_orbit(double *x, double *y, double *z);
 int martin2d_orbit(double *x, double *y, double *z);
 int funny_glasses_call(int (*calc)());
-int ifs_type();
 int orbit3d_type();
 int icon_orbit(double *x, double *y, double *z);
 int latoo_orbit(double *x, double *y, double *z);

@@ -12,6 +12,8 @@
 #include "ui/cellular.h"
 #include "ui/diffusion.h"
 #include "ui/frothy_basin.h"
+#include "ui/ifs2d.h"
+#include "ui/ifs3d.h"
 #include "ui/lsystem.h"
 #include "ui/plasma.h"
 #include "ui/popcorn.h"
@@ -107,6 +109,14 @@ int non_standard_fractal()
 
         case NonStandardFractal::Operation::FROTHY_BASIN:
             froth_type(non_standard_fractal);
+            break;
+
+        case NonStandardFractal::Operation::IFS_2D:
+            ifs2d(non_standard_fractal);
+            break;
+
+        case NonStandardFractal::Operation::IFS_3D:
+            ifs3d_calc(non_standard_fractal);
             break;
 
         case NonStandardFractal::Operation::LEGACY:

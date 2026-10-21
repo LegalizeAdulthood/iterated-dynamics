@@ -34,8 +34,6 @@
 #include "math/cmplx.h"
 #include "math/sign.h"
 #include "misc/Driver.h"
-#include "ui/ifs2d.h"
-#include "ui/ifs3d.h"
 #include "ui/orbit3d.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
@@ -87,9 +85,8 @@ enum
 
 } // namespace
 
-static int ifs3d();
 static void setup_matrix(Matrix double_mat);
-static bool float_view_transf3d(ViewTransform3D *inf);
+static bool float_view_transf3d(ViewTransform3D *inf, bool both_eyes);
 static std::FILE *open_orbit_save();
 static void plot_hist(int x, int y, int color);
 
@@ -1121,7 +1118,7 @@ void Orbit3D::iterate()
         {
             fmt::print(m_fp, "{:g} {:g} {:g} 15\n", m_inf.orbit[0], m_inf.orbit[1], m_inf.orbit[2]);
         }
-        if (!float_view_transf3d(&m_inf))
+        if (!float_view_transf3d(&m_inf, s_real_time))
         {
             return;
         }
@@ -1426,7 +1423,7 @@ bool plot_orbits2d_setup(Affine *scrn_cnvt)
 }
 
 // this function's only purpose is to manage funnyglasses related
-// stuff so the code is not duplicated for ifs3d() and lorenz3d()
+// stuff for the remaining legacy lorenz3d() renderer
 int funny_glasses_call(int (*calc)())
 {
     g_which_image = g_glasses_type != GlassesType::NONE ? StereoImage::RED : StereoImage::NONE;
@@ -1475,9 +1472,10 @@ done:
     return status;
 }
 
-IFS3D::IFS3D() :
+IFS3D::IFS3D(const bool both_eyes) :
     m_fp(open_orbit_save()),
-    m_color_method(g_params[0] == 0.0 ? IFSColorMethod::INCREMENT_PIXEL : IFSColorMethod::TRANSFORM_INDEX)
+    m_color_method(g_params[0] == 0.0 ? IFSColorMethod::INCREMENT_PIXEL : IFSColorMethod::TRANSFORM_INDEX),
+    m_both_eyes(both_eyes)
 {
     // setup affine screen coord conversion
     setup_convert_to_screen(&m_inf.cvt);
@@ -1541,7 +1539,7 @@ void IFS3D::iterate()
     {
         fmt::print(m_fp, "{:g} {:g} {:g} 15\n", m_new_x, m_new_y, m_new_z);
     }
-    if (!float_view_transf3d(&m_inf))
+    if (!float_view_transf3d(&m_inf, m_both_eyes))
     {
         return;
     }
@@ -1549,7 +1547,7 @@ void IFS3D::iterate()
     // plot if inside window
     if (m_inf.col >= 0)
     {
-        if (s_real_time)
+        if (m_both_eyes)
         {
             g_which_image = StereoImage::RED;
         }
@@ -1573,7 +1571,7 @@ void IFS3D::iterate()
         return;
     }
 
-    if (s_real_time)
+    if (m_both_eyes)
     {
         g_which_image = StereoImage::BLUE;
         // plot if inside window
@@ -1675,15 +1673,6 @@ void IFS2D::iterate()
     }
 }
 
-int ifs_type() // front-end for ifs2d and ifs3d
-{
-    if (g_ifs_definition.empty())
-    {
-        ifs_load();
-    }
-    return g_ifs_dim == IFSDimension::TWO ? ifs2d() : ifs3d();
-}
-
 static void setup_matrix(Matrix double_mat)
 {
     // build transformation matrix
@@ -1705,15 +1694,7 @@ int orbit3d_type()
     return funny_glasses_call(orbit3d_calc);
 }
 
-static int ifs3d()
-{
-    g_display_3d = Display3DMode::MINUS_ONE;
-
-    s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;
-    return funny_glasses_call(ifs3d_calc);
-}
-
-static bool float_view_transf3d(ViewTransform3D *inf)
+static bool float_view_transf3d(ViewTransform3D *inf, const bool both_eyes)
 {
     if (g_color_iter == 1) // initialize on first call
     {
@@ -1723,7 +1704,7 @@ static bool float_view_transf3d(ViewTransform3D *inf)
             inf->max_vals[i] = -100000.0;
         }
         setup_matrix(inf->double_mat);
-        if (s_real_time)
+        if (both_eyes)
         {
             setup_matrix(inf->double_mat1);
         }
@@ -1731,7 +1712,7 @@ static bool float_view_transf3d(ViewTransform3D *inf)
 
     // 3D VIEWING TRANSFORM
     vec_mat_mul(inf->orbit, inf->double_mat, inf->view_vect);
-    if (s_real_time)
+    if (both_eyes)
     {
         vec_mat_mul(inf->orbit, inf->double_mat1, inf->view_vect1);
     }
@@ -1769,7 +1750,7 @@ static bool float_view_transf3d(ViewTransform3D *inf)
             double tmp_z = -inf->max_vals[2];
             trans(tmp_x, tmp_y, tmp_z, inf->double_mat);
 
-            if (s_real_time)
+            if (both_eyes)
             {
                 // center image on origin
                 tmp_x = (-inf->min_vals[0] - inf->max_vals[0]) / 2.0; // center x
@@ -1788,7 +1769,7 @@ static bool float_view_transf3d(ViewTransform3D *inf)
     if (g_viewer_z)
     {
         perspective(inf->view_vect);
-        if (s_real_time)
+        if (both_eyes)
         {
             perspective(inf->view_vect1);
         }
@@ -1810,7 +1791,7 @@ static bool float_view_transf3d(ViewTransform3D *inf)
             inf->col = -1;
         }
     }
-    if (s_real_time)
+    if (both_eyes)
     {
         inf->row1 = static_cast<int>(
             inf->cvt.c * inf->view_vect1[0] + inf->cvt.d * inf->view_vect1[1] + inf->cvt.f + g_yy_adjust1);

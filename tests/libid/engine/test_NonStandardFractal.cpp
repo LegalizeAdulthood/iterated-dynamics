@@ -4,6 +4,7 @@
 #include <engine/NonStandardFractal.h>
 
 #include "MockDriver.h"
+#include "test_data.h"
 
 #include <engine/calc_frac_init.h>
 #include <engine/engine_timer.h>
@@ -17,10 +18,14 @@
 #include <engine/resume.h>
 #include <engine/trig_fns.h>
 #include <engine/VideoInfo.h>
+#include <engine/Viewport.h>
 #include <engine/work_list.h>
 #include <fractals/bif_may.h>
 #include <fractals/fractalp.h>
+#include <fractals/ifs.h>
 #include <fractals/population.h>
+#include <geometry/line3d.h>
+#include <geometry/plot3d.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 #include <ui/calculate_image.h>
@@ -37,6 +42,8 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <filesystem>
+#include <fstream>
 #include <ostream>
 #include <stdexcept>
 #include <utility>
@@ -44,6 +51,7 @@
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::geometry;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
@@ -181,6 +189,8 @@ TEST_F(TestNonStandardFractal, noOperationRequiresExplicitSetupAndSelection)
 
     EXPECT_TRUE(calculation.done());
     EXPECT_THROW(calculation.select(), std::logic_error);
+    EXPECT_THROW(calculation.view_done(), std::logic_error);
+    EXPECT_THROW(calculation.next_view(), std::logic_error);
     EXPECT_THROW(calculation.iterate(), std::logic_error);
     EXPECT_THROW(calculation.preparing(), std::logic_error);
     EXPECT_THROW(calculation.sizing(), std::logic_error);
@@ -224,36 +234,9 @@ TEST_F(TestNonStandardFractal, activeOperationCannotBeReplaced)
     EXPECT_FALSE(calculation.done());
 }
 
-TEST_F(TestNonStandardFractal, ifsLegacyRenderingWithoutSetupRunsExactlyOnce)
-{
-    const ValueSaver saved_force_symmetry{g_force_symmetry, SymmetryType::X_AXIS};
-    for (const FractalType type : {FractalType::IFS, FractalType::IFS_3D})
-    {
-        select_type(type);
-        m_specific.per_image = get_fractal_specific(type)->per_image;
-        ASSERT_EQ(nullptr, m_specific.per_image);
-        m_specific.calc_type = stable_population;
-        g_dispatch = FractalDispatch{m_specific};
-        NonStandardFractal calculation;
-        ASSERT_TRUE(calculation.start().empty());
-        ASSERT_EQ(NonStandardFractal::Operation::LEGACY, calculation.select());
-        EXPECT_EQ(0, s_orbit_calls);
-        EXPECT_THROW(calculation.iterate(), std::logic_error);
-
-        calculation.render_legacy();
-
-        EXPECT_EQ(1, s_orbit_calls);
-        EXPECT_EQ(SymmetryType::NONE, g_symmetry);
-        EXPECT_TRUE(m_columns.empty());
-        calculation.finish(false);
-        EXPECT_TRUE(calculation.completed());
-        s_orbit_calls = 0;
-    }
-}
-
 TEST_F(TestNonStandardFractal, legacySetupSelectsRuntimeRendererBeforeRendering)
 {
-    select_type(FractalType::IFS);
+    select_type(FractalType::LORENZ_3D);
     m_specific.per_image = []
     {
         ++s_setup_calls;
@@ -277,7 +260,7 @@ TEST_F(TestNonStandardFractal, legacySetupSelectsRuntimeRendererBeforeRendering)
 
 TEST_F(TestNonStandardFractal, legacySetupFalsePreventsRendererInvocation)
 {
-    select_type(FractalType::IFS);
+    select_type(FractalType::LORENZ_3D);
     m_specific.per_image = []
     {
         ++s_setup_calls;
@@ -298,7 +281,7 @@ TEST_F(TestNonStandardFractal, legacySetupFalsePreventsRendererInvocation)
 
 TEST_F(TestNonStandardFractal, failedLegacySetupDiscardsWorkWithoutCallingRenderer)
 {
-    select_type(FractalType::IFS);
+    select_type(FractalType::LORENZ_3D);
     m_specific.calc_type = stable_population;
     g_dispatch = FractalDispatch{m_specific};
 
@@ -370,6 +353,282 @@ TEST_F(TestNonStandardFractal, failedIncrementCleansUpInsteadOfEnteringUi)
     EXPECT_EQ(0, g_num_work_list);
     EXPECT_TRUE(g_resume_data.empty());
     EXPECT_TRUE(m_columns.empty());
+}
+
+class TestSelectedIFS : public TestNonStandardFractal
+{
+protected:
+    void SetUp() override
+    {
+        TestNonStandardFractal::SetUp();
+        g_max_iterations = 1;
+        g_params[0] = 1;
+        select_dimension(IFSDimension::TWO);
+        EXPECT_CALL(m_driver, read_pixel(_, _))
+            .WillRepeatedly(Invoke([this](int x, int y) { return m_pixels.at(y * WIDTH + x); }));
+        m_path = std::filesystem::path{data::ID_TEST_DATA_DIR} /
+            ("selected-ifs-" + std::string{UnitTest::GetInstance()->current_test_info()->name()} + ".ifs");
+        g_ifs_filename = m_path;
+        g_ifs_name = "entry";
+    }
+
+    void TearDown() override
+    {
+        std::error_code ignored;
+        std::filesystem::remove(m_path, ignored);
+        TestNonStandardFractal::TearDown();
+    }
+
+    void select_dimension(IFSDimension dimension)
+    {
+        select_type(FractalType::IFS);
+        g_ifs_dim = dimension;
+        g_num_affine_transforms = 1;
+        g_ifs_definition = dimension == IFSDimension::TWO
+            ? std::vector<float>{0, 0, 0, 0, 3, 0.5f, 1}
+            : std::vector<float>{0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0.5f, 0, 1};
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
+    }
+
+    void complete_view(NonStandardFractal &calculation)
+    {
+        for (int point = 0; point < 1025; ++point)
+        {
+            calculation.iterate();
+        }
+        EXPECT_EQ(1025L, g_color_iter);
+    }
+
+    ValueSaver<std::filesystem::path> m_saved_filename{g_ifs_filename};
+    ValueSaver<std::string> m_saved_name{g_ifs_name};
+    ValueSaver<std::vector<float>> m_saved_definition{g_ifs_definition};
+    ValueSaver<int> m_saved_count{g_num_affine_transforms};
+    ValueSaver<IFSDimension> m_saved_dimension{g_ifs_dim};
+    ValueSaver<int> m_saved_seed{g_random_seed, 12345};
+    ValueSaver<bool> m_saved_fixed_seed{g_random_seed_flag, true};
+    ValueSaver<int> m_saved_orbit_save{g_orbit_save_flags, 0};
+    ValueSaver<GlassesType> m_saved_glasses{g_glasses_type, GlassesType::NONE};
+    ValueSaver<StereoImage> m_saved_eye{g_which_image, StereoImage::NONE};
+    ValueSaver<Display3DMode> m_saved_display{g_display_3d, Display3DMode::NONE};
+    ValueSaver<Viewport> m_saved_viewport{g_viewport};
+    ValueSaver<WritePixel> m_saved_plot{g_plot};
+    ValueSaver<WritePixel> m_saved_standard_plot{g_standard_plot};
+    ValueSaver<int> m_saved_x_shift{g_x_shift};
+    ValueSaver<int> m_saved_y_shift{g_y_shift};
+    ValueSaver<int> m_saved_x_shift1{g_x_shift1};
+    ValueSaver<int> m_saved_y_shift1{g_y_shift1};
+    ValueSaver<int> m_saved_xx_adjust{g_xx_adjust};
+    ValueSaver<int> m_saved_yy_adjust{g_yy_adjust};
+    ValueSaver<int> m_saved_xx_adjust1{g_xx_adjust1};
+    ValueSaver<int> m_saved_yy_adjust1{g_yy_adjust1};
+    std::filesystem::path m_path;
+};
+
+TEST_F(TestSelectedIFS, cachedDefinitionSelectsDimensionsWithoutLegacyCallbacks)
+{
+    for (const IFSDimension dimension : {IFSDimension::TWO, IFSDimension::THREE})
+    {
+        for (const FractalType type : {FractalType::IFS, FractalType::IFS_3D})
+        {
+            select_dimension(dimension);
+            select_type(type);
+            const ValueSaver saved_force_symmetry{g_force_symmetry, SymmetryType::X_AXIS};
+            NonStandardFractal calculation;
+            ASSERT_TRUE(calculation.start().empty());
+
+            EXPECT_EQ(dimension == IFSDimension::TWO ? NonStandardFractal::Operation::IFS_2D
+                                                     : NonStandardFractal::Operation::IFS_3D,
+                calculation.select());
+
+            EXPECT_FALSE(calculation.done());
+            EXPECT_EQ(0L, g_color_iter);
+            EXPECT_EQ(SymmetryType::NONE, g_symmetry);
+            EXPECT_TRUE(m_columns.empty());
+            EXPECT_THROW(calculation.render_legacy(), std::logic_error);
+            EXPECT_EQ(0, s_orbit_calls);
+            EXPECT_EQ(type, g_fractal_type);
+            calculation.suspend();
+        }
+    }
+}
+
+TEST_F(TestSelectedIFS, loadingDefinitionSelectsItsHeaderDimensions)
+{
+    for (const IFSDimension dimension : {IFSDimension::TWO, IFSDimension::THREE})
+    {
+        {
+            std::ofstream file{m_path};
+            ASSERT_TRUE(file);
+            file << (dimension == IFSDimension::TWO ? "entry {\n0 0 0 0 3 0.5 1\n}\n"
+                                                    : "entry (3d) {\n0 0 0 0 0 0 0 0 0 3 0.5 0 1\n}\n");
+        }
+        g_ifs_definition.clear();
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
+        NonStandardFractal calculation;
+        calculation.start();
+
+        EXPECT_EQ(dimension == IFSDimension::TWO ? NonStandardFractal::Operation::IFS_2D
+                                                 : NonStandardFractal::Operation::IFS_3D,
+            calculation.select());
+
+        EXPECT_EQ(dimension, g_ifs_dim);
+        EXPECT_EQ(1, g_num_affine_transforms);
+        EXPECT_EQ(0L, g_color_iter);
+        calculation.suspend();
+    }
+}
+
+TEST_F(TestSelectedIFS, missingDefinitionUnwindsWithoutRenderingOrPolling)
+{
+    g_ifs_definition.clear();
+
+    EXPECT_THROW(
+        {
+            NonStandardFractal calculation;
+            calculation.start();
+            calculation.select();
+        },
+        std::runtime_error);
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_ifs_definition.empty());
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_EQ(0, s_orbit_calls);
+    EXPECT_TRUE(m_columns.empty());
+}
+
+TEST_F(TestSelectedIFS, incrementalCalculationCompletesWithoutInput)
+{
+    for (const IFSDimension dimension : {IFSDimension::TWO, IFSDimension::THREE})
+    {
+        select_dimension(dimension);
+        NonStandardFractal calculation;
+        calculation.start();
+        calculation.select();
+
+        calculation.iterate();
+        EXPECT_EQ(1L, g_color_iter);
+        EXPECT_FALSE(calculation.done());
+        for (int point = 1; point < 1025; ++point)
+        {
+            calculation.iterate();
+        }
+
+        EXPECT_TRUE(calculation.done());
+        EXPECT_TRUE(calculation.completed());
+        calculation.iterate();
+        EXPECT_EQ(1025L, g_color_iter);
+        calculation.finish(false);
+        EXPECT_EQ(0, s_orbit_calls);
+    }
+}
+
+TEST_F(TestSelectedIFS, suspensionIsNonResumableAndTheNextSelectionRestarts)
+{
+    for (const IFSDimension dimension : {IFSDimension::TWO, IFSDimension::THREE})
+    {
+        select_dimension(dimension);
+        NonStandardFractal calculation;
+        calculation.start();
+        calculation.select();
+        calculation.iterate();
+
+        calculation.suspend();
+
+        EXPECT_TRUE(calculation.done());
+        EXPECT_THROW(calculation.select(), std::logic_error);
+        EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+        EXPECT_TRUE(g_resume_data.empty());
+        NonStandardFractal restarted;
+        restarted.start();
+        restarted.select();
+        EXPECT_EQ(0L, g_color_iter);
+        EXPECT_FALSE(restarted.done());
+    }
+}
+
+TEST_F(TestSelectedIFS, separateStereoViewsWaitForExplicitAdvance)
+{
+    for (const GlassesType glasses : {GlassesType::PHOTO, GlassesType::STEREO_PAIR})
+    {
+        select_dimension(IFSDimension::THREE);
+        g_glasses_type = glasses;
+        NonStandardFractal calculation;
+        calculation.start();
+        ASSERT_EQ(NonStandardFractal::Operation::IFS_3D, calculation.select());
+        EXPECT_EQ(StereoImage::RED, g_which_image);
+        EXPECT_FALSE(calculation.view_done());
+        EXPECT_THROW(calculation.next_view(), std::logic_error);
+
+        complete_view(calculation);
+
+        EXPECT_TRUE(calculation.view_done());
+        EXPECT_FALSE(calculation.done());
+        EXPECT_EQ(CalcStatus::IN_PROGRESS, g_calc_status);
+        EXPECT_THROW(calculation.iterate(), std::logic_error);
+        calculation.next_view();
+        EXPECT_EQ(StereoImage::BLUE, g_which_image);
+        EXPECT_EQ(0L, g_color_iter);
+        EXPECT_FALSE(calculation.view_done());
+        complete_view(calculation);
+        EXPECT_TRUE(calculation.done());
+        EXPECT_TRUE(calculation.completed());
+        EXPECT_THROW(calculation.next_view(), std::logic_error);
+        calculation.finish(false);
+    }
+}
+
+TEST_F(TestSelectedIFS, combinedStereoCompletesBothEyesInOneView)
+{
+    for (const GlassesType glasses : {GlassesType::ALTERNATING, GlassesType::SUPERIMPOSE})
+    {
+        select_dimension(IFSDimension::THREE);
+        g_glasses_type = glasses;
+        NonStandardFractal calculation;
+        calculation.start();
+        calculation.select();
+
+        complete_view(calculation);
+
+        EXPECT_TRUE(calculation.done());
+        EXPECT_TRUE(calculation.completed());
+        EXPECT_THROW(calculation.next_view(), std::logic_error);
+        calculation.finish(false);
+    }
+}
+
+TEST_F(TestSelectedIFS, stereoPairRestoresFullScreenOnCompletionOrSuspension)
+{
+    for (const bool interrupted : {false, true})
+    {
+        select_dimension(IFSDimension::THREE);
+        g_glasses_type = GlassesType::STEREO_PAIR;
+        g_screen_x_dots = WIDTH * 2;
+        g_logical_screen = {WIDTH, HEIGHT, 0, 0, WIDTH - 1.0, HEIGHT - 1.0};
+        g_viewport.enabled = true;
+        NonStandardFractal calculation;
+        calculation.start();
+        calculation.select();
+        if (interrupted)
+        {
+            calculation.suspend();
+        }
+        else
+        {
+            complete_view(calculation);
+            calculation.next_view();
+            EXPECT_EQ(WIDTH, g_logical_screen.x_offset);
+            complete_view(calculation);
+            calculation.finish(false);
+        }
+
+        EXPECT_EQ(WIDTH * 2, g_logical_screen.x_dots);
+        EXPECT_EQ(HEIGHT, g_logical_screen.y_dots);
+        EXPECT_EQ(0, g_logical_screen.x_offset);
+        EXPECT_EQ(0, g_logical_screen.y_offset);
+        EXPECT_FALSE(g_viewport.enabled);
+    }
 }
 
 class TestStandaloneBifurcation : public TestNonStandardFractal, public WithParamInterface<BifurcationCase>

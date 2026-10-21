@@ -375,9 +375,9 @@ The fresh reverse-call audit also found these live paths:
   through dispatch function pointers stored in `FractalSpecific`.
   Per-image callbacks perform setup only; their renderer-call bridge
   and nested timer brackets have been removed.
-- `ifs_type()` selects UI renderers, while `orbit3d_type()` and the IFS3D
-  path pass UI render functions to `funny_glasses_call()`.  That function
-  also invokes photographer prompts between stereo images.
+- `orbit3d_type()` passes a UI render function to
+  `funny_glasses_call()`, which also invokes photographer prompts between
+  stereo images.  IFS no longer enters that legacy sequence.
 - Command validation can still invoke modal `stop_msg()` or application
   shutdown through `goodbye()`.
 - Image loading, image saving, and command parsing still select UI
@@ -589,8 +589,8 @@ The concrete render operation objects are:
   status interpretation.  It shares common image setup, timing, and
   cleanup, but its marked dispatch still enters whole UI render loops.
   Its bounded operation router owns bifurcation, Popcorn, standalone
-  Diffusion, TestPoint, Ant, Cellular, Plasma, L-system, and FrothyBasin
-  state without renderer callbacks.  Their UI controllers advance
+  Diffusion, TestPoint, Ant, Cellular, Plasma, L-system, FrothyBasin, and
+  IFS state without renderer callbacks.  Their UI controllers advance
   selected objects; setup, resume, and finish stay below UI.  L-system
   definition loading, startup, and terminal interpretation stay below
   UI; its controller retains thinking-screen handling and the drawing
@@ -606,9 +606,13 @@ The concrete render operation objects are:
   stay below UI.  Ant's Ctrl+A entry selects an operation on the existing
   image, without restarting common image setup, timing, or resource
   cleanup.
-  Per-image callbacks no longer invoke renderers.  IFS has no per-image
-  callback; the marked legacy entry calls its renderer once without
-  applying standard symmetry, and stereo skips absent second-eye setup.
+  Per-image callbacks no longer invoke renderers.  IFS selects 2D or 3D
+  from loaded definition dimensions, including cached definitions;
+  `type=ifs3d` remains compatibility syntax for `type=ifs`.  IFS retains
+  unsymmetrized plotting and non-resumable interruption.  The 3D object
+  owns combined-eye state; the operation exposes completed views and
+  explicit next-view initialization.  Its UI owns photographer prompts
+  and palette setup; engine finish restores stereo-pair dimensions.
   Bounded operations cannot enter that legacy rendering entry.
 
 The input and presentation side starts, resumes, cancels, or paces the
@@ -624,7 +628,7 @@ behind another engine wrapper.
 
 The indirect paths also belong to that boundary.  `FractalSpecific`
 still contains UI renderer pointers used by the marked legacy entry;
-IFS and 3D front ends call UI controllers from `fractals/lorenz.cpp`.
+the remaining 3D orbit front end calls UI from `fractals/lorenz.cpp`.
 Per-image callbacks no longer invoke those renderers.  A top-level-only
 change does not eliminate the remaining nested UI calls.
 
@@ -808,7 +812,8 @@ removes one false dependency, and leaves a reviewable intermediate state.
 
 The remaining UI-concept leaks outside `libid/ui` are:
 
-- `libid/fractals/lorenz.cpp`: IFS and 3D front ends invoke UI renderers;
+- `libid/fractals/lorenz.cpp`: the 3D orbit front end invokes a UI
+  renderer;
   stereo orchestration invokes photographer prompts between images.
 - Calculation setup still invokes `stop_msg()` and sometimes `goodbye()`.
   These are input and application-control leaks even when reachable only
@@ -1027,51 +1032,21 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 49.2. IFS Front-End Calculation Selection
-
-Source: `ifs_type()` and the `ifs3d()` front end in
-`libid/fractals/lorenz.cpp`; UI owners: `ui/ifs2d.cpp` and `ui/ifs3d.cpp`.
-
-Work:
-
-- Keep IFS loading, dimension selection, transforms, and calculation
-  state in engine or fractal code.
-  `type=ifs3d` is compatibility syntax for `type=ifs`; the loaded
-  definition header selects 2D or 3D.  Do not select dimensions from
-  `FractalType` alone or change saved type metadata for that alias.
-- Expose the selected IFS calculation object to the UI controller, which
-  advances its existing `iterate()` operation.
-- Remove `ifs_type()` calling `ifs2d()` or `ifs3d()` as UI functions from
-  fractal code.  Do not move dimension-based renderer classification
-  into the UI controller.
-- Account for the existing 3D stereo coupling: `ifs3d()` initializes
-  `s_real_time`, then `funny_glasses_call()` controls eye setup and calls
-  the UI renderer.  IFS3D and `float_view_transf3d()` use `s_real_time`
-  for combined red/blue plotting.  PHOTO and stereo-pair modes calculate
-  separate views.  Preserve those paths through selected calculation
-  work and UI prompt ownership; do not copy the synchronous callback
-  wrapper into UI or silently fall back to it from `iterate()`.
-
-Done when:
-
-- IFS front-end calculation code never invokes a UI render loop.
-
-Validation: reuse `AutoKeyTest.ifs-interrupt-ifs` and
-`AutoKeyTest.ifs-interrupt-ifs3d`, established in 49.1, plus existing IFS
-validation and rendering fixtures.  Keep actual in-progress interruption
-and non-resumable restart semantics.  Add operation-selection tests for
-loaded definition dimensions, cached definitions, and setup failure.
-No manual image comparison.
-
 ### 50. Stereo Rendering UI Sequence
 
-Source: `funny_glasses_call()`, `orbit3d_type()`, and stereo IFS setup in
-`fractals/lorenz.cpp`; UI owner: `StereoController` in `ui/stereo.cpp`.
+Source: `funny_glasses_call()` and `orbit3d_type()` in
+`fractals/lorenz.cpp`, plus the selected IFS view operations in
+`engine/NonStandardFractal.cpp`; UI owner: `StereoController` in
+`ui/stereo.cpp`.
 
 Work:
 
 - Make eye selection, projection setup, and rendering engine operations
   that can be started and incrementally driven for each eye.
+  Reuse the explicit completed-view and next-view boundaries already
+  used by IFS; share stereo setup and restoration with the orbit path.
+  IFS already keeps combined-eye state in its calculation object and
+  photographer prompts in `ui/ifs3d.cpp`; preserve that separation.
 - Let the UI controller sequence rendering and photographer prompts,
   including save, continue, cancellation, and final display restoration.
 - Remove engine calls to `lorenz_stereo_photographer_prompt()` and the
@@ -1199,8 +1174,8 @@ Calculation code can still reach polling or key-sensitive waiting through
 these direct and indirect paths:
 
 - `libid/fractals/lorenz.cpp`: `funny_glasses_call()` enters a blocking
-  photographer prompt and second-image modal message.  IFS and orbit
-  front ends also invoke complete UI render loops.
+  photographer prompt and second-image modal message for the remaining
+  3D orbit front end, which also invokes a complete UI render loop.
 - `libid/engine/calcfrac.cpp`, `engine/NonStandardFractal.cpp`,
   and remaining renderer table entries in
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or

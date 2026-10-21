@@ -8,14 +8,19 @@
 #include "engine/LogicalScreen.h"
 #include "engine/resume.h"
 #include "engine/VideoInfo.h"
+#include "engine/Viewport.h"
 #include "fractals/bif_may.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
+#include "fractals/ifs.h"
+#include "geometry/line3d.h"
+#include "geometry/plot3d.h"
 
 #include <cmath>
 #include <stdexcept>
 
 using namespace id::fractals;
+using namespace id::geometry;
 
 namespace id::engine
 {
@@ -191,6 +196,25 @@ NonStandardFractal::Operation NonStandardFractal::select()
         return Operation::FROTHY_BASIN;
     }
 
+    case FractalType::IFS:
+    case FractalType::IFS_3D:
+        start_timer();
+        prepare();
+        if (g_ifs_definition.empty())
+        {
+            ifs_load();
+        }
+        if (g_ifs_dim == IFSDimension::TWO)
+        {
+            m_state.emplace<IFS_2D>();
+            m_done = false;
+            update_timer();
+            return Operation::IFS_2D;
+        }
+        start_ifs3d_view(false);
+        update_timer();
+        return Operation::IFS_3D;
+
     default:
         return Operation::LEGACY;
     }
@@ -208,6 +232,42 @@ void NonStandardFractal::select_ant_on_image()
 bool NonStandardFractal::done() const
 {
     return m_done;
+}
+
+void NonStandardFractal::start_ifs3d_view(const bool second)
+{
+    g_display_3d = Display3DMode::MINUS_ONE;
+    g_which_image = second                    ? StereoImage::BLUE
+        : g_glasses_type != GlassesType::NONE ? StereoImage::RED
+                                              : StereoImage::NONE;
+    plot_setup();
+    g_plot = g_standard_plot;
+    m_state.emplace<IFS_3D>(glasses_alternating_or_superimpose());
+    m_done = false;
+}
+
+bool NonStandardFractal::view_done() const
+{
+    if (m_state.index() != IFS_3D)
+    {
+        throw std::logic_error("No 3D IFS calculation operation is selected");
+    }
+    return std::get<IFS_3D>(m_state).done();
+}
+
+bool NonStandardFractal::next_view_required() const
+{
+    return g_which_image == StereoImage::RED && g_glasses_type >= GlassesType::PHOTO &&
+        g_display_3d != Display3DMode::NONE;
+}
+
+void NonStandardFractal::next_view()
+{
+    if (!view_done() || !next_view_required())
+    {
+        throw std::logic_error("The next IFS view requires a completed first eye");
+    }
+    start_ifs3d_view(true);
 }
 
 bool NonStandardFractal::preparing() const
@@ -383,6 +443,36 @@ void NonStandardFractal::iterate()
         }
         return;
 
+    case IFS_2D:
+        if (!m_done)
+        {
+            IFS2D &ifs{std::get<IFS_2D>(m_state)};
+            ifs.iterate();
+            m_done = ifs.done();
+            if (m_done)
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
+    case IFS_3D:
+        if (!m_done)
+        {
+            IFS3D &ifs{std::get<IFS_3D>(m_state)};
+            if (ifs.done())
+            {
+                throw std::logic_error("The completed IFS view must advance before more iteration");
+            }
+            ifs.iterate();
+            m_done = ifs.done() && !next_view_required();
+            if (m_done)
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -436,6 +526,8 @@ void NonStandardFractal::suspend()
 
     case ANT:
     case PLASMA:
+    case IFS_2D:
+    case IFS_3D:
         if (!m_done)
         {
             finish(true);
@@ -478,6 +570,15 @@ bool NonStandardFractal::completed() const
 
 void NonStandardFractal::finish(const bool interrupted)
 {
+    if (m_state.index() == IFS_3D && g_glasses_type == GlassesType::STEREO_PAIR &&
+        g_screen_x_dots >= 2 * g_logical_screen.x_dots)
+    {
+        g_logical_screen.x_offset = 0;
+        g_logical_screen.y_offset = 0;
+        g_logical_screen.x_dots = g_screen_x_dots;
+        g_logical_screen.y_dots = g_screen_y_dots;
+        g_viewport.enabled = false;
+    }
     if (m_state.index() == TEST_POINT && !m_done)
     {
         std::get<TEST_POINT>(m_state).finish();
@@ -495,7 +596,7 @@ void NonStandardFractal::finish(const bool interrupted)
 }
 
 // TODO: removed later
-// Slices 49-51 replace the remaining IFS, stereo, and orbit renderer calls.
+// Slices 50-51 replace the remaining stereo and orbit renderer calls.
 void NonStandardFractal::render_legacy()
 {
     if (!started() || m_state.index() != NO_OPERATION)
@@ -507,7 +608,6 @@ void NonStandardFractal::render_legacy()
     const PerImage setup{g_dispatch.per_image()};
     if (setup == nullptr || setup())
     {
-        // IFS has no per-image setup and retains unsymmetrized plotting.
         if (setup != nullptr)
         {
             g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));

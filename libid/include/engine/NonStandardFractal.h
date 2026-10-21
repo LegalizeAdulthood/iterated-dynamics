@@ -9,6 +9,7 @@
 #include "fractals/Cellular.h"
 #include "fractals/Diffusion.h"
 #include "fractals/FrothyBasin.h"
+#include "fractals/lorenz.h"
 #include "fractals/lsystem.h"
 #include "fractals/Plasma.h"
 #include "fractals/popcorn.h"
@@ -34,7 +35,9 @@ public:
         CELLULAR,
         PLASMA,
         L_SYSTEM,
-        FROTHY_BASIN
+        FROTHY_BASIN,
+        IFS_2D,
+        IFS_3D
     };
 
     NonStandardFractal() = default;
@@ -43,6 +46,8 @@ public:
     Operation select();
     void select_ant_on_image();
     bool done() const;
+    bool view_done() const;
+    void next_view();
     bool preparing() const;
     bool sizing() const;
     std::string prepare_palette();
@@ -57,7 +62,7 @@ public:
     void finish(bool interrupted);
 
     // TODO: removed later
-    // Slices 49-51 replace the remaining IFS, stereo, and orbit renderer calls.
+    // Slices 50-51 replace the remaining stereo and orbit renderer calls.
     void render_legacy();
 
 private:
@@ -72,7 +77,9 @@ private:
         CELLULAR,
         PLASMA,
         L_SYSTEM,
-        FROTHY_BASIN
+        FROTHY_BASIN,
+        IFS_2D,
+        IFS_3D
     };
 
     struct NoOperation
@@ -80,9 +87,12 @@ private:
     };
 
     void prepare();
+    void start_ifs3d_view(bool second);
+    bool next_view_required() const;
 
     std::variant<NoOperation, fractals::Bifurcation, fractals::Popcorn, fractals::Diffusion, fractals::TestPoint,
-        fractals::Ant, fractals::Cellular, fractals::Plasma, fractals::LSystem, fractals::FrothyBasin>
+        fractals::Ant, fractals::Cellular, fractals::Plasma, fractals::LSystem, fractals::FrothyBasin, fractals::IFS2D,
+        fractals::IFS3D>
         m_state{NoOperation{}};
     bool m_done{true};
 };
