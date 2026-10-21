@@ -48,6 +48,19 @@ add_test(NAME AutoKeyTest.makepar-mig-pieces
 set_tests_properties(AutoKeyTest.makepar-mig-pieces
     PROPERTIES LABELS "${MAKEPAR_MIG_LABELS}")
 
+id_make_test_home(restore-cancel RESTORE_CANCEL_HOME
+    KEYS restore_cancel.key restore_accept.key)
+add_test(NAME AutoKeyTest.restore-cancel
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
+        "-DCHECK_RESTORE=$<SHELL_PATH:$<TARGET_FILE:check-image-restore>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/restore_cancel_test.cmake"
+    WORKING_DIRECTORY "${RESTORE_CANCEL_HOME}")
+set_tests_properties(AutoKeyTest.restore-cancel
+    PROPERTIES LABELS "autokey;ui;restore" TIMEOUT 110)
+
 id_make_test_home(3dlook-targa THREE_D_LOOK_TARGA_HOME
     IMAGES gold-3dlook01.pot=potntial.pot
     KEYS 3dlook_targa.key

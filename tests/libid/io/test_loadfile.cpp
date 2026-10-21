@@ -9,6 +9,7 @@
 
 #include <engine/calc_frac_init.h>
 #include <engine/cmdfiles.h>
+#include <engine/color_state.h>
 #include <engine/Inversion.h>
 #include <engine/Potential.h>
 #include <engine/random_seed.h>
@@ -18,12 +19,14 @@
 #include <engine/Viewport.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
+#include <fractals/lorenz.h>
 #include <io/gif_extensions.h>
 #include <io/gif_file.h>
 #include <io/GifRestore.h>
 #include <misc/ValueSaver.h>
 #include <ui/big_while_loop.h>
 #include <ui/get_video_mode.h>
+#include <ui/get_3d_params.h>
 #include <ui/history.h>
 #include <ui/id_keys.h>
 #include <ui/make_batch_file.h>
@@ -224,6 +227,7 @@ class TestGetVideoMode : public Test
 {
 protected:
     void SetUp() override;
+    ImageMetadata metadata() const;
 
     ValueSaver<int> saved_init_mode{g_init_mode};
     ValueSaver<BatchMode> saved_init_batch{g_init_batch, BatchMode::NORMAL};
@@ -258,14 +262,31 @@ void TestGetVideoMode::SetUp()
     m_info.colors = 256;
 }
 
+ImageMetadata TestGetVideoMode::metadata() const
+{
+    ImageMetadata data;
+    data.fractal = m_info;
+    data.fractal.info_version = 4;
+    data.fractal.calc_status = static_cast<short>(g_calc_status);
+    data.width = g_file_x_dots;
+    data.height = g_file_y_dots;
+    data.colors = g_file_colors;
+    data.aspect_ratio = g_file_aspect_ratio;
+    return data;
+}
+
 TEST_F(TestGetVideoMode, reducesLargeGifView)
 {
-    EXPECT_EQ(0, get_video_mode(&m_info, &m_block_3_info));
+    const std::optional<ImageVideoMode> setup{get_video_mode(metadata(), g_viewport)};
 
-    EXPECT_EQ(596, g_file_x_dots);
-    EXPECT_EQ(596, g_file_y_dots);
-    EXPECT_EQ(109, g_skip_x_dots);
-    EXPECT_EQ(109, g_skip_y_dots);
+    ASSERT_TRUE(setup);
+    EXPECT_EQ(596, setup->width);
+    EXPECT_EQ(596, setup->height);
+    EXPECT_EQ(109, setup->skip_x);
+    EXPECT_EQ(109, setup->skip_y);
+    EXPECT_EQ(65535, g_file_x_dots);
+    EXPECT_EQ(65535, g_file_y_dots);
+    EXPECT_EQ(0, g_skip_x_dots);
 }
 
 TEST_F(TestGetVideoMode, fitsOversizedGifWithUnequalSkipFactors)
@@ -275,13 +296,15 @@ TEST_F(TestGetVideoMode, fitsOversizedGifWithUnequalSkipFactors)
     g_file_aspect_ratio = 0.75f;
     g_calc_status = CalcStatus::RESUMABLE;
 
-    ASSERT_EQ(0, get_video_mode(&m_info, &m_block_3_info));
+    const std::optional<ImageVideoMode> setup{get_video_mode(metadata(), g_viewport)};
 
-    EXPECT_EQ(800, g_file_x_dots);
-    EXPECT_EQ(600, g_file_y_dots);
-    EXPECT_EQ(1, g_skip_x_dots);
-    EXPECT_EQ(2, g_skip_y_dots);
-    EXPECT_EQ(CalcStatus::PARAMS_CHANGED, g_calc_status);
+    ASSERT_TRUE(setup);
+    EXPECT_EQ(800, setup->width);
+    EXPECT_EQ(600, setup->height);
+    EXPECT_EQ(1, setup->skip_x);
+    EXPECT_EQ(2, setup->skip_y);
+    EXPECT_EQ(CalcStatus::PARAMS_CHANGED, setup->calc_status);
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
 }
 
 TEST_F(TestGetVideoMode, reducesMatchingGifIntoExplicitViewWindow)
@@ -292,15 +315,18 @@ TEST_F(TestGetVideoMode, reducesMatchingGifIntoExplicitViewWindow)
     g_viewport.x_dots = 200;
     g_calc_status = CalcStatus::RESUMABLE;
 
-    ASSERT_EQ(0, get_video_mode(&m_info, &m_block_3_info));
+    const std::optional<ImageVideoMode> setup{get_video_mode(metadata(), g_viewport)};
 
-    EXPECT_TRUE(g_viewport.enabled);
-    EXPECT_FLOAT_EQ(4.0f, g_viewport.reduction);
-    EXPECT_EQ(0, g_viewport.x_dots);
-    EXPECT_EQ(0, g_viewport.y_dots);
-    EXPECT_EQ(3, g_skip_x_dots);
-    EXPECT_EQ(3, g_skip_y_dots);
-    EXPECT_EQ(CalcStatus::PARAMS_CHANGED, g_calc_status);
+    ASSERT_TRUE(setup);
+    EXPECT_TRUE(setup->viewport.enabled);
+    EXPECT_FLOAT_EQ(4.0f, setup->viewport.reduction);
+    EXPECT_EQ(0, setup->viewport.x_dots);
+    EXPECT_EQ(0, setup->viewport.y_dots);
+    EXPECT_EQ(3, setup->skip_x);
+    EXPECT_EQ(3, setup->skip_y);
+    EXPECT_EQ(CalcStatus::PARAMS_CHANGED, setup->calc_status);
+    EXPECT_EQ(200, g_viewport.x_dots);
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
 }
 
 class TestFindFractalInfo : public Test
@@ -949,6 +975,89 @@ TEST_F(TestLoadFile, legacyFloatRestored)
 
     EXPECT_EQ(0, result);
     EXPECT_FALSE(g_user.legacy_float);
+}
+
+TEST_F(TestLoadFile, videoCancellationKeepsActiveImage)
+{
+    ValueSaver filename{g_read_filename, ID_TEST_GIF_MANDEL_INT};
+    ValueSaver ask{g_ask_video, true};
+    ValueSaver batch{g_init_batch, BatchMode::NONE};
+    ValueSaver mode_driver{g_video_table[0].driver, &m_driver};
+    ValueSaver status{g_calc_status, CalcStatus::COMPLETED};
+    ValueSaver iterations{g_max_iterations, 1234L};
+    ValueSaver width{g_file_x_dots, 987};
+    ValueSaver viewport{g_viewport, Viewport{}};
+    const std::string description{"mock"};
+    EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
+    EXPECT_CALL(m_driver, get_description()).WillRepeatedly(ReturnRef(description));
+    EXPECT_CALL(m_driver, set_clear()).Times(AnyNumber());
+    EXPECT_CALL(m_driver, set_attr(_, _, _, _)).Times(AnyNumber());
+    EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(AnyNumber());
+    EXPECT_CALL(m_driver, hide_text_cursor()).Times(AnyNumber());
+    EXPECT_CALL(m_driver, wait_key_pressed(false)).WillOnce(Return(1));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
+
+    EXPECT_EQ(-1, prepare_image_restore());
+
+    EXPECT_EQ(FractalType::JULIA, g_fractal_type);
+    EXPECT_EQ(1234, g_max_iterations);
+    EXPECT_EQ(987, g_file_x_dots);
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(-1, g_init_mode);
+
+    EXPECT_CALL(m_driver, check_memory());
+    EXPECT_CALL(m_driver, wait_key_pressed(false)).WillOnce(Return(1));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+    EXPECT_EQ(0, prepare_image_restore());
+    EXPECT_EQ(FractalType::MANDEL, g_fractal_type);
+    EXPECT_EQ(ShowFile::LOAD_IMAGE, g_show_file);
+    EXPECT_NE(1234, g_max_iterations);
+}
+
+TEST_F(TestLoadFile, threeDCancellationKeepsActiveImage)
+{
+    ValueSaver filename{g_read_filename, ID_TEST_GIF_MANDEL_INT};
+    ValueSaver display{g_display_3d, Display3DMode::YES};
+    ValueSaver batch{g_init_batch, BatchMode::NONE};
+    ValueSaver status{g_calc_status, CalcStatus::COMPLETED};
+    ValueSaver iterations{g_max_iterations, 1234L};
+    ValueSaver width{g_file_x_dots, 987};
+    const ThreeDSettings before;
+    EXPECT_CALL(m_driver, set_clear()).Times(AnyNumber());
+    EXPECT_CALL(m_driver, set_attr(_, _, _, _)).Times(AnyNumber());
+    EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(AnyNumber());
+    EXPECT_CALL(m_driver, hide_text_cursor()).Times(AnyNumber());
+    EXPECT_CALL(m_driver, key_cursor(_, _)).WillOnce(Return(ID_KEY_ESC));
+
+    EXPECT_EQ(-1, prepare_image_restore());
+
+    EXPECT_EQ(FractalType::JULIA, g_fractal_type);
+    EXPECT_EQ(1234, g_max_iterations);
+    EXPECT_EQ(987, g_file_x_dots);
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(before.x_rot, id::geometry::g_x_rot);
+    EXPECT_EQ(before.sphere, id::geometry::g_sphere);
+    EXPECT_EQ(-1, g_init_mode);
+}
+
+TEST(TestThreeDSettings, editsRemainPendingUntilApplied)
+{
+    ValueSaver rotation{id::geometry::g_x_rot, 60};
+    ValueSaver preview{id::geometry::g_preview, false};
+    ValueSaver color_state{g_color_state, ColorState::DEFAULT_MAP};
+    ThreeDSettings pending;
+
+    pending.x_rot = 75;
+    pending.preview = true;
+    pending.color_state = ColorState::MAP_FILE;
+
+    EXPECT_EQ(60, id::geometry::g_x_rot);
+    EXPECT_FALSE(id::geometry::g_preview);
+    EXPECT_EQ(ColorState::DEFAULT_MAP, g_color_state);
+    pending.apply();
+    EXPECT_EQ(75, id::geometry::g_x_rot);
+    EXPECT_TRUE(id::geometry::g_preview);
+    EXPECT_EQ(ColorState::MAP_FILE, g_color_state);
 }
 
 static FileFractalType s_int_types[]{

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <ui/tab_display.h>
 
@@ -18,6 +19,7 @@
 #include <fractals/fractype.h>
 #include <fractals/lorenz.h>
 #include <io/encoder.h>
+#include <io/loadfile.h>
 #include <math/big.h>
 #include <misc/ValueSaver.h>
 #include <ui/help.h>
@@ -135,6 +137,38 @@ std::vector<std::string> TestTabDisplay::display_status()
     EXPECT_EQ(0, tab_display());
 
     return output;
+}
+
+TEST_F(TestTabDisplay, pendingMetadataDoesNotChangeActiveImage)
+{
+    ImageMetadata metadata;
+    metadata.fractal.fractal_type = +FractalType::JULIA;
+    metadata.fractal.info_version = 10;
+    metadata.fractal.iterations = 777;
+    metadata.fractal.x_min = -1.5;
+    metadata.width = 123;
+    metadata.height = 456;
+    metadata.colors = 256;
+    ValueSaver pending{g_tab_metadata, std::make_shared<const ImageMetadata>(metadata)};
+    std::vector<std::string> output;
+    EXPECT_CALL(m_driver, stack_screen());
+    EXPECT_CALL(m_driver, set_clear()).Times(AnyNumber());
+    EXPECT_CALL(m_driver, set_attr(_, _, _, _)).Times(AnyNumber());
+    EXPECT_CALL(m_driver, put_string(_, _, _, _))
+        .Times(AnyNumber())
+        .WillRepeatedly(Invoke([&output](int, int, int, const char *text) { output.emplace_back(text); }));
+    EXPECT_CALL(m_driver, hide_text_cursor()).Times(2);
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_CTL_TAB)).WillOnce(Return(ID_KEY_ESC));
+    EXPECT_CALL(m_driver, unstack_screen());
+
+    EXPECT_EQ(0, tab_display());
+
+    EXPECT_THAT(output, Contains(HasSubstr("Fractal type: julia")));
+    EXPECT_THAT(output, Contains(HasSubstr("Image dimensions: 123 x 456 x 256")));
+    EXPECT_THAT(output, Contains(HasSubstr("Maximum iterations: 777")));
+    EXPECT_THAT(output, Contains(HasSubstr("Saved calculation options")));
+    EXPECT_EQ(FractalType::MANDEL, g_fractal_type);
+    EXPECT_EQ(150, g_max_iterations);
 }
 
 TEST_F(TestTabDisplay, displaysMainStatusScreen)

@@ -215,20 +215,16 @@ static bool main_restore_start(MainContext &context)
             g_browse.stack.push_back(g_read_filename);
         }
 
-        g_evolving = EvolutionModeFlags::NONE;
-        g_viewport.enabled = false;
         g_show_file = ShowFile::LOAD_IMAGE;
         g_help_mode = HelpLabels::NONE;
         g_tab_enabled = true;
-        if (context.stacked)
-        {
-            driver_discard_screen();
-            driver_set_for_text();
-            context.stacked = false;
-        }
         if (prepare_image_restore() == 0) // read hdr, get video mode
         {
             break; // got it, exit
+        }
+        if (context.stacked || (g_overlay_3d && g_init_batch == BatchMode::NONE))
+        {
+            break;
         }
         if (g_browse.browsing) // break out of infinite loop, but lose your mind
         {
@@ -249,10 +245,6 @@ static bool main_restore_start(MainContext &context)
         context.stacked = false;
         g_overlay_3d = false; // forget overlays
         g_display_3d = Display3DMode::NONE;
-        if (g_calc_status == CalcStatus::NON_RESUMABLE)
-        {
-            g_calc_status = CalcStatus::PARAMS_CHANGED;
-        }
         context.resume = true;
         return true;
     }

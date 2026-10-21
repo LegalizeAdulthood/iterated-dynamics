@@ -19,6 +19,10 @@ add_executable(colormap-compare colormap_compare.cpp)
 target_link_libraries(colormap-compare PUBLIC image-tool)
 target_folder(colormap-compare "Tests/Tools")
 
+add_executable(check-image-restore check_image_restore.cpp)
+target_link_libraries(check-image-restore PRIVATE libid fmt::fmt-header-only)
+target_folder(check-image-restore "Tests/Tools")
+
 add_executable(check-standard-resume check_standard_resume.cpp)
 target_link_libraries(check-standard-resume PRIVATE image-tool libid)
 target_folder(check-standard-resume "Tests/Tools")

@@ -1,20 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
-/*
-    subroutine of which sets up video (mode, screen size).
-
-    get_video_mode should return with:
-      return code 0 for ok, -1 for error or cancelled by user
-      video parameters setup for the mainline, in the dos case this means
-        setting g_init_mode to video mode, based on this code will set up
-        for and call setvideomode
-      set viewwindow true if file going to be loaded into a view smaller than
-        physical screen, in this case also set viewreduction, viewxdots,
-        viewydots, and finalaspectratio
-      set skipxdots and skipydots, to 0 if all pixels are to be loaded,
-        to 1 for every 2nd pixel, 2 for every 3rd, etc.
-
-*/
+// Select a pending image's video mode and scaling without changing it.
 #include "ui/get_video_mode.h"
 
 #include "engine/calc_frac_init.h"
@@ -87,7 +74,7 @@ static std::vector<VideoModeChoice> s_video_choices;
 static void format_item(int choice, char *buf);
 static int    check_mode_key(int key, int /*choice*/);
 static void   format_video_choice(int i, const char *err, char *buf);
-static double video_aspect(int try_x_dots, int try_y_dots);
+static double video_aspect(const VideoInfo &video, int try_x_dots, int try_y_dots);
 
 static bool video_choice_less(const VideoModeChoice &lhs, const VideoModeChoice &rhs)
 {
@@ -116,20 +103,19 @@ static bool video_choice_less(const VideoModeChoice &lhs, const VideoModeChoice 
 
 static void format_video_choice(const int i, const char *err, char *buf)
 {
-    g_video_entry = g_video_table[i];
-    std::string key_name = vid_mode_key_name(g_video_entry.key);
+    const VideoInfo &video{g_video_table[i]};
+    std::string key_name = vid_mode_key_name(video.key);
     *fmt::format_to(buf, "{:<5s} {:<16s} {:<4s} {:5d} {:5d} {:3d} {:<25s}", // 67 chars
-        key_name, g_video_entry.driver->get_description(), err,             //
-        g_video_entry.x_dots, g_video_entry.y_dots,                         //
-        g_video_entry.colors, g_video_entry.comment) = '\0';
-    g_video_entry.x_dots = 0;                                               // so tab_display knows to display nothing
+        key_name, video.driver->get_description(), err,                     //
+        video.x_dots, video.y_dots,                                         //
+        video.colors, video.comment) = '\0';
 }
 
-static double video_aspect(const int try_x_dots, const int try_y_dots)
+static double video_aspect(const VideoInfo &video, const int try_x_dots, const int try_y_dots)
 {
     // calc resulting aspect ratio for specified dots in current mode
     return static_cast<double>(try_y_dots) / static_cast<double>(try_x_dots)
-           * static_cast<double>(g_video_entry.x_dots) / static_cast<double>(g_video_entry.y_dots)
+           * static_cast<double>(video.x_dots) / static_cast<double>(video.y_dots)
            * g_screen_aspect;
 }
 
@@ -142,8 +128,8 @@ static std::string heading_detail(const FractalInfo *info, const ExtBlock3 *blk_
     }
     else
     {
-        const char *name_ptr = g_cur_fractal_specific->name;
-        if (g_display_3d != Display3DMode::NONE)
+        const char *name_ptr = get_fractal_specific(migrate_integer_types(info->fractal_type))->name;
+        if (info->info_version > 4 && info->display_3d > 0)
         {
             name_ptr = "3D Transform";
         }
@@ -158,21 +144,36 @@ static std::string heading_detail(const FractalInfo *info, const ExtBlock3 *blk_
     return result.str();
 }
 
-int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
+std::optional<ImageVideoMode> get_video_mode(const ImageMetadata &metadata, const Viewport &viewport)
 {
+    const FractalInfo *info{&metadata.fractal};
+    const ExtBlock3 *blk_3_info{&metadata.formula};
+    ImageVideoMode setup;
+    setup.viewport = viewport;
+    setup.width = metadata.width;
+    setup.height = metadata.height;
+    setup.aspect_ratio = metadata.aspect_ratio;
+    setup.calc_status =
+        info->info_version > 3 ? static_cast<CalcStatus>(info->calc_status) : CalcStatus::PARAMS_CHANGED;
+    if (info->info_version > 4)
+    {
+        if (info->pot16bit)
+        {
+            setup.width >>= 1;
+        }
+        setup.aspect_ratio = info->final_aspect_ratio < 0.01f ? g_screen_aspect : info->final_aspect_ratio;
+    }
     double f_temp;
-
-    g_init_mode = -1;
 
     // try to find exact match for vid mode: first look for non-disk video
     const VideoInfo *begin = g_video_table;
     const VideoInfo *end = g_video_table + g_video_table_len;
-    auto it = std::find_if(begin, end,
+    const VideoInfo *it = std::find_if(begin, end,
         [=](const VideoInfo &mode)
         {
             return info->x_dots == mode.x_dots    //
                 && info->y_dots == mode.y_dots    //
-                && g_file_colors == mode.colors //
+                && metadata.colors == mode.colors //
                 && mode.driver != nullptr       //
                 && !mode.driver->is_disk();
         });
@@ -183,67 +184,66 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
             {
                 return info->x_dots == mode.x_dots //
                     && info->y_dots == mode.y_dots //
-                    && g_file_colors == mode.colors;
+                    && metadata.colors == mode.colors;
             });
     }
     if (it != end)
     {
-        g_init_mode = static_cast<int>(it - begin);
+        setup.mode = static_cast<int>(it - begin);
     }
 
     // exit in makepar mode if no exact match of video mode in file
-    if (g_make_parameter_file && g_init_mode == -1)
+    if (g_make_parameter_file && setup.mode == -1)
     {
-        return 0;
+        return setup;
     }
 
     // setup table entry for each vid mode, flagged for how well it matches
     s_video_choices.resize(g_video_table_len);
     for (int i = 0; i < g_video_table_len; ++i)
     {
-        g_video_entry = g_video_table[i];
+        setup.video = g_video_table[i];
         unsigned tmp_flags = VI_EXACT;
-        if (g_video_entry.driver != nullptr && g_video_entry.driver->is_disk())
+        if (setup.video.driver != nullptr && setup.video.driver->is_disk())
         {
             tmp_flags |= VI_DISK;
         }
-        if (g_video_entry.key == 0)
+        if (setup.video.key == 0)
         {
             tmp_flags |= VI_NO_KEY;
         }
-        if (info->x_dots > g_video_entry.x_dots || info->y_dots > g_video_entry.y_dots)
+        if (info->x_dots > setup.video.x_dots || info->y_dots > setup.video.y_dots)
         {
             tmp_flags |= VI_SCREEN_SMALLER;
         }
-        else if (info->x_dots < g_video_entry.x_dots || info->y_dots < g_video_entry.y_dots)
+        else if (info->x_dots < setup.video.x_dots || info->y_dots < setup.video.y_dots)
         {
             tmp_flags |= VI_SCREEN_BIGGER;
         }
-        if (g_file_x_dots > g_video_entry.x_dots || g_file_y_dots > g_video_entry.y_dots)
+        if (setup.width > setup.video.x_dots || setup.height > setup.video.y_dots)
         {
             tmp_flags |= VI_VIEW_SMALLER;
         }
-        else if (g_file_x_dots < g_video_entry.x_dots || g_file_y_dots < g_video_entry.y_dots)
+        else if (setup.width < setup.video.x_dots || setup.height < setup.video.y_dots)
         {
             tmp_flags |= VI_VIEW_BIGGER;
         }
-        if (g_file_colors > g_video_entry.colors)
+        if (metadata.colors > setup.video.colors)
         {
             tmp_flags |= VI_COLORS_SMALLER;
         }
-        if (g_file_colors < g_video_entry.colors)
+        if (metadata.colors < setup.video.colors)
         {
             tmp_flags |= VI_COLORS_BIGGER;
         }
-        if (i == g_init_mode)
+        if (i == setup.mode)
         {
             tmp_flags -= VI_EXACT;
         }
-        if (g_file_aspect_ratio != 0.0f && (tmp_flags & VI_VIEW_SMALLER) == 0)
+        if (setup.aspect_ratio != 0.0f && (tmp_flags & VI_VIEW_SMALLER) == 0)
         {
-            f_temp = video_aspect(g_file_x_dots, g_file_y_dots);
-            if (f_temp < g_file_aspect_ratio * 0.98
-                || f_temp > g_file_aspect_ratio * 1.02)
+            f_temp = video_aspect(setup.video, setup.width, setup.height);
+            if (f_temp < setup.aspect_ratio * 0.98 || f_temp > setup.aspect_ratio * 1.02)
             {
                 tmp_flags |= VI_BAD_ASPECT;
             }
@@ -255,11 +255,11 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
 
     if (g_fast_restore  && !g_ask_video)
     {
-        g_init_mode = g_adapter;
+        setup.mode = g_adapter;
     }
 
     bool got_real_mode = false;
-    if ((g_init_mode < 0 || (g_ask_video && g_init_batch == BatchMode::NONE)) && !g_make_parameter_file)
+    if ((setup.mode < 0 || (g_ask_video && g_init_batch == BatchMode::NONE)) && !g_make_parameter_file)
     {
         // no exact match or (askvideo=yes and batch=no), and not in makepar mode, talk to user
         std::sort(s_video_choices.begin(), s_video_choices.end(), video_choice_less);
@@ -270,7 +270,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         std::string heading{fmt::format("File: {:<44s}  {:d} x {:d} x {:d}\n"
                                         "{:<52s}",
             trim_filename(g_read_filename, 44),          //
-            g_file_x_dots, g_file_y_dots, g_file_colors, //
+            setup.width, setup.height, metadata.colors, //
             heading_detail(info, blk_3_info))};
         if (info->info_id[0] != 'G')
         {
@@ -278,23 +278,23 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
             {
                 heading += "Id       ";
             }
-            heading += to_display_string(g_file_version);
+            heading += to_display_string(fractal_info_version(*info));
         }
         heading += '\n';
         if (info->info_id[0] != 'G' && info->system == +SaveSystem::DOS)
         {
-            if (g_init_mode < 0)
+            if (setup.mode < 0)
             {
                 heading += "Saved in unknown video mode.";
             }
             else
             {
                 char buff[80];
-                format_video_choice(g_init_mode, "", buff);
+                format_video_choice(setup.mode, "", buff);
                 heading += buff;
             }
         }
-        if (g_file_aspect_ratio != 0 && g_file_aspect_ratio != g_screen_aspect)
+        if (setup.aspect_ratio != 0 && setup.aspect_ratio != g_screen_aspect)
         {
             heading += "\n"
                        "WARNING: non-standard aspect ratio; loading will change your <v>iew settings";
@@ -320,91 +320,90 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         }
         if (i == -1)
         {
-            return -1;
+            return std::nullopt;
         }
         if (i < 0)  // returned -100 - g_video_table entry number
         {
-            g_init_mode = -100 - i;
+            setup.mode = -100 - i;
             got_real_mode = true;
         }
         else
         {
-            g_init_mode = s_video_choices[i].entry_num;
+            setup.mode = s_video_choices[i].entry_num;
         }
     }
 
+    const VideoInfo selected{g_video_table[setup.mode]};
     if (!got_real_mode)  // translate from temp table to permanent
     {
-        int i = g_init_mode;
+        int i = setup.mode;
         int j = g_video_table[i].key;
         if (j != 0)
         {
-            for (g_init_mode = 0; g_init_mode < MAX_VIDEO_MODES-1; ++g_init_mode)
+            for (setup.mode = 0; setup.mode < MAX_VIDEO_MODES-1; ++setup.mode)
             {
-                if (g_video_table[g_init_mode].key == j)
+                if (g_video_table[setup.mode].key == j)
                 {
                     break;
                 }
             }
-            if (g_init_mode >= MAX_VIDEO_MODES-1)
+            if (setup.mode >= MAX_VIDEO_MODES-1)
             {
                 j = 0;
             }
         }
         if (j == 0) // mode has no key, add to reserved slot at end
         {
-            std::memcpy(
-                &g_video_table[g_init_mode = MAX_VIDEO_MODES - 1],
-                   &g_video_table[i], sizeof(*g_video_table));
+            setup.mode = MAX_VIDEO_MODES - 1;
         }
     }
 
     // ok, we're going to return with a video mode
-    g_video_entry = g_video_table[g_init_mode];
+    setup.video = selected;
 
-    if (g_viewport.enabled                       //
-        && g_file_x_dots == g_video_entry.x_dots //
-        && g_file_y_dots == g_video_entry.y_dots)
+    if (setup.viewport.enabled               //
+        && setup.width == setup.video.x_dots //
+        && setup.height == setup.video.y_dots)
     {
         // pull image into a view window
-        if (g_calc_status != CalcStatus::COMPLETED) // if not complete
+        if (setup.calc_status != CalcStatus::COMPLETED) // if not complete
         {
-            g_calc_status = CalcStatus::PARAMS_CHANGED;  // can't resume anyway
+            setup.calc_status = CalcStatus::PARAMS_CHANGED;  // can't resume anyway
         }
-        if (g_viewport.x_dots)
+        if (setup.viewport.x_dots)
         {
-            g_viewport.reduction = static_cast<float>(g_video_entry.x_dots / g_viewport.x_dots);
-            g_viewport.y_dots = 0;
-            g_viewport.x_dots = 0; // easier to use auto reduction
+            setup.viewport.reduction = static_cast<float>(setup.video.x_dots / setup.viewport.x_dots);
+            setup.viewport.y_dots = 0;
+            setup.viewport.x_dots = 0;                                   // easier to use auto reduction
         }
-        g_viewport.reduction = std::round(g_viewport.reduction); // need integer value
-        g_skip_y_dots = static_cast<int>(g_viewport.reduction - 1);
-        g_skip_x_dots = static_cast<int>(g_viewport.reduction - 1);
-        return 0;
+        setup.viewport.reduction = std::round(setup.viewport.reduction); // need integer value
+        setup.skip_y = static_cast<int>(setup.viewport.reduction - 1);
+        setup.skip_x = static_cast<int>(setup.viewport.reduction - 1);
+        return setup;
     }
 
-    g_skip_y_dots = 0;
-    g_skip_x_dots = 0; // set for no reduction
-    if (g_file_aspect_ratio == 0)
+    setup.skip_y = 0;
+    setup.skip_x = 0; // set for no reduction
+    if (setup.aspect_ratio == 0)
     {
-        g_file_aspect_ratio = static_cast<float>(video_aspect(g_file_x_dots, g_file_y_dots));
+        setup.aspect_ratio = static_cast<float>(video_aspect(setup.video, setup.width, setup.height));
     }
-    if (g_video_entry.x_dots < g_file_x_dots || g_video_entry.y_dots < g_file_y_dots)
+    if (setup.video.x_dots < setup.width || setup.video.y_dots < setup.height)
     {
         // set up to load only every nth pixel to make image fit
-        if (g_calc_status != CalcStatus::COMPLETED) // if not complete
+        if (setup.calc_status != CalcStatus::COMPLETED) // if not complete
         {
-            g_calc_status = CalcStatus::PARAMS_CHANGED;  // can't resume anyway
+            setup.calc_status = CalcStatus::PARAMS_CHANGED;  // can't resume anyway
         }
-        g_skip_y_dots = 1;
-        g_skip_x_dots = 1;
-        while (g_skip_x_dots * g_video_entry.x_dots < g_file_x_dots)
+        setup.skip_y = 1;
+        setup.skip_x = 1;
+        while (setup.skip_x * setup.video.x_dots < setup.width)
         {
-            ++g_skip_x_dots;
+            ++setup.skip_x;
         }
-        while (g_skip_y_dots * g_video_entry.y_dots < g_file_y_dots)
+        while (setup.skip_y * setup.video.y_dots < setup.height)
         {
-            ++g_skip_y_dots;
+            ++setup.skip_y;
         }
         int i = 0;
         int j = 0;
@@ -412,23 +411,23 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         int tmp_y_dots;
         while (true)
         {
-            tmp_x_dots = (g_file_x_dots + g_skip_x_dots - 1) / g_skip_x_dots;
-            tmp_y_dots = (g_file_y_dots + g_skip_y_dots - 1) / g_skip_y_dots;
+            tmp_x_dots = (setup.width + setup.skip_x - 1) / setup.skip_x;
+            tmp_y_dots = (setup.height + setup.skip_y - 1) / setup.skip_y;
             // reduce further if that improves aspect
-            f_temp = video_aspect(tmp_x_dots, tmp_y_dots);
-            if (f_temp > g_file_aspect_ratio)
+            f_temp = video_aspect(setup.video, tmp_x_dots, tmp_y_dots);
+            if (f_temp > setup.aspect_ratio)
             {
                 if (j)
                 {
                     break; // already reduced x, don't reduce y
                 }
-                const double f_temp2 = video_aspect(tmp_x_dots, (g_file_y_dots+g_skip_y_dots)/(g_skip_y_dots+1));
-                if (f_temp2 < g_file_aspect_ratio
-                    && f_temp/g_file_aspect_ratio *0.9 <= g_file_aspect_ratio/f_temp2)
+                const double f_temp2 =
+                    video_aspect(setup.video, tmp_x_dots, (setup.height + setup.skip_y) / (setup.skip_y + 1));
+                if (f_temp2 < setup.aspect_ratio && f_temp / setup.aspect_ratio * 0.9 <= setup.aspect_ratio / f_temp2)
                 {
                     break; // further y reduction is worse
                 }
-                ++g_skip_y_dots;
+                ++setup.skip_y;
                 ++i;
             }
             else
@@ -437,87 +436,86 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
                 {
                     break; // already reduced y, don't reduce x
                 }
-                const double f_temp2 = video_aspect((g_file_x_dots+g_skip_x_dots)/(g_skip_x_dots+1), tmp_y_dots);
-                if (f_temp2 > g_file_aspect_ratio
-                    && g_file_aspect_ratio/f_temp *0.9 <= f_temp2/g_file_aspect_ratio)
+                const double f_temp2 =
+                    video_aspect(setup.video, (setup.width + setup.skip_x) / (setup.skip_x + 1), tmp_y_dots);
+                if (f_temp2 > setup.aspect_ratio && setup.aspect_ratio / f_temp * 0.9 <= f_temp2 / setup.aspect_ratio)
                 {
                     break; // further x reduction is worse
                 }
-                ++g_skip_x_dots;
+                ++setup.skip_x;
                 ++j;
             }
         }
-        g_file_x_dots = tmp_x_dots;
-        g_file_y_dots = tmp_y_dots;
-        --g_skip_x_dots;
-        --g_skip_y_dots;
+        setup.width = tmp_x_dots;
+        setup.height = tmp_y_dots;
+        --setup.skip_x;
+        --setup.skip_y;
     }
 
-    g_viewport.final_aspect_ratio = g_file_aspect_ratio;
-    if (g_viewport.final_aspect_ratio == 0) // assume display correct
+    setup.viewport.final_aspect_ratio = setup.aspect_ratio;
+    if (setup.viewport.final_aspect_ratio == 0) // assume display correct
     {
-        g_viewport.final_aspect_ratio = static_cast<float>(video_aspect(g_file_x_dots, g_file_y_dots));
+        setup.viewport.final_aspect_ratio = static_cast<float>(video_aspect(setup.video, setup.width, setup.height));
     }
-    if (g_viewport.final_aspect_ratio >= g_screen_aspect-0.02
-        && g_viewport.final_aspect_ratio <= g_screen_aspect+0.02)
+    if (setup.viewport.final_aspect_ratio >= g_screen_aspect - 0.02 &&
+        setup.viewport.final_aspect_ratio <= g_screen_aspect + 0.02)
     {
-        g_viewport.final_aspect_ratio = g_screen_aspect;
+        setup.viewport.final_aspect_ratio = g_screen_aspect;
     }
     {
-        int i = static_cast<int>(g_viewport.final_aspect_ratio * 1000.0 + 0.5);
-        g_viewport.final_aspect_ratio = static_cast<float>(i / 1000.0); // chop precision to 3 decimals
+        int i = static_cast<int>(setup.viewport.final_aspect_ratio * 1000.0 + 0.5);
+        setup.viewport.final_aspect_ratio = static_cast<float>(i / 1000.0); // chop precision to 3 decimals
     }
 
     // setup view window stuff
-    g_viewport.enabled = false;
-    g_viewport.x_dots = 0;
-    g_viewport.y_dots = 0;
-    if (g_file_x_dots != g_video_entry.x_dots || g_file_y_dots != g_video_entry.y_dots)
+    setup.viewport.enabled = false;
+    setup.viewport.x_dots = 0;
+    setup.viewport.y_dots = 0;
+    if (setup.width != setup.video.x_dots || setup.height != setup.video.y_dots)
     {
         // image not exactly same size as screen
-        g_viewport.enabled = true;
-        f_temp = g_viewport.final_aspect_ratio
-                * static_cast<double>(g_video_entry.y_dots) / static_cast<double>(g_video_entry.x_dots)
-                / g_screen_aspect;
+        setup.viewport.enabled = true;
+        f_temp = setup.viewport.final_aspect_ratio * static_cast<double>(setup.video.y_dots) /
+            static_cast<double>(setup.video.x_dots) / g_screen_aspect;
         float tmp_reduce;
         int i;
         int j;
-        if (g_viewport.final_aspect_ratio <= g_screen_aspect)
+        if (setup.viewport.final_aspect_ratio <= g_screen_aspect)
         {
             i = static_cast<int>(std::lround(
-                static_cast<double>(g_video_entry.x_dots) / static_cast<double>(g_file_x_dots) * 20.0));
+                static_cast<double>(setup.video.x_dots) / static_cast<double>(setup.width) * 20.0));
             tmp_reduce = static_cast<float>(i / 20.0); // chop precision to nearest .05
-            i = static_cast<int>(std::lround(static_cast<double>(g_video_entry.x_dots) / tmp_reduce));
+            i = static_cast<int>(std::lround(static_cast<double>(setup.video.x_dots) / tmp_reduce));
             j = static_cast<int>(std::lround(static_cast<double>(i) * f_temp));
         }
         else
         {
             i = static_cast<int>(std::lround(
-                static_cast<double>(g_video_entry.y_dots) / static_cast<double>(g_file_y_dots) * 20.0));
+                static_cast<double>(setup.video.y_dots) / static_cast<double>(setup.height) * 20.0));
             tmp_reduce = static_cast<float>(i / 20.0); // chop precision to nearest .05
-            j = static_cast<int>(std::lround(static_cast<double>(g_video_entry.y_dots) / tmp_reduce));
+            j = static_cast<int>(std::lround(static_cast<double>(setup.video.y_dots) / tmp_reduce));
             i = static_cast<int>(std::lround(static_cast<double>(j) / f_temp));
         }
-        if (i != g_file_x_dots || j != g_file_y_dots)  // too bad, must be explicit
+        if (i != setup.width || j != setup.height)  // too bad, must be explicit
         {
-            g_viewport.x_dots = g_file_x_dots;
-            g_viewport.y_dots = g_file_y_dots;
+            setup.viewport.x_dots = setup.width;
+            setup.viewport.y_dots = setup.height;
         }
         else
         {
-            g_viewport.reduction = tmp_reduce; // ok, this works
+            setup.viewport.reduction = tmp_reduce; // ok, this works
         }
     }
     if (!g_make_parameter_file
         && !g_fast_restore
         && g_init_batch == BatchMode::NONE
-        && (std::abs(g_viewport.final_aspect_ratio - g_screen_aspect) > .00001 || g_viewport.x_dots != 0))
+        && (std::abs(setup.viewport.final_aspect_ratio - g_screen_aspect) > .00001 || setup.viewport.x_dots != 0))
     {
         stop_msg(StopMsgFlags::NO_BUZZER,
             "Warning: <V>iew parameters are being set to non-standard values.\n"
             "Remember to reset them when finished with this image!");
     }
-    return 0;
+    return setup;
 }
 
 static std::string video_choice_error_flags(const unsigned flags)

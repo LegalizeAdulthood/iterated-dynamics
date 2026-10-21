@@ -35,6 +35,7 @@
 #include "ui/SoundSession.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
+#include "ui/tab_display.h"
 
 #include <filesystem>
 #include <stdexcept>
@@ -54,10 +55,6 @@ int prepare_image_restore()
 {
     g_show_file = ShowFile::IMAGE_LOADED;
     g_init_mode = -1;
-    if (g_fast_restore)
-    {
-        g_viewport.enabled = false;
-    }
     if (!g_read_filename.has_extension())
     {
         g_read_filename.replace_extension(".gif");
@@ -74,47 +71,62 @@ int prepare_image_restore()
         stop_msg(error.what());
         return -1;
     }
-    // TODO: removed later
-    // Slice 42.1 defers this commit until setup succeeds.
-    apply_image_parameters(metadata);
-
+    ValueSaver pending_tab{g_tab_metadata, std::make_shared<const ImageMetadata>(metadata)};
+    std::optional<ImageVideoMode> video;
+    ThreeDSettings three_d;
     if (g_overlay_3d)
     {
-        g_init_mode = g_adapter; // use previous adapter mode for overlays
-        if (g_file_x_dots > g_logical_screen.x_dots || g_file_y_dots > g_logical_screen.y_dots)
+        const int width{
+            metadata.fractal.info_version > 4 && metadata.fractal.pot16bit ? metadata.width / 2 : metadata.width};
+        if (width > g_logical_screen.x_dots || metadata.height > g_logical_screen.y_dots)
         {
             stop_msg("Can't overlay with a larger image");
-            g_init_mode = -1;
             return -1;
         }
     }
     else
     {
-        const Display3DMode old_display_ed = g_display_3d;
-        g_display_3d = g_loaded_3d ? Display3DMode::YES : Display3DMode::NONE; // for <tab> display during next
-        const int i = get_video_mode(&metadata.fractal, &metadata.formula);
+        Viewport viewport{g_viewport};
+        viewport.enabled = false;
+        video = get_video_mode(metadata, viewport);
         driver_check_memory();
-        g_display_3d = old_display_ed;
-        if (i)
+        if (!video)
         {
-            g_init_mode = -1;
             return -1;
         }
     }
+    if (g_display_3d != Display3DMode::NONE && g_init_batch == BatchMode::NONE && get_3d_params(three_d) < 0)
+    {
+        return -1;
+    }
 
+    apply_image_parameters(metadata);
+    if (video)
+    {
+        g_init_mode = video->mode;
+        g_video_entry = video->video;
+        if (g_init_mode == MAX_VIDEO_MODES - 1)
+        {
+            g_video_table[g_init_mode] = video->video;
+        }
+        g_viewport = video->viewport;
+        g_file_x_dots = video->width;
+        g_file_y_dots = video->height;
+        g_file_aspect_ratio = video->aspect_ratio;
+        g_skip_x_dots = video->skip_x;
+        g_skip_y_dots = video->skip_y;
+        g_calc_status = video->calc_status;
+    }
+    else
+    {
+        g_init_mode = g_adapter;
+    }
     if (g_display_3d != Display3DMode::NONE)
     {
+        three_d.apply();
         g_calc_status = CalcStatus::PARAMS_CHANGED;
         set_fractal_type(FractalType::PLASMA);
         g_params[0] = 0;
-        if (g_init_batch == BatchMode::NONE)
-        {
-            if (get_3d_params() < 0)
-            {
-                g_init_mode = -1;
-                return -1;
-            }
-        }
     }
 
     apply_image_extensions(metadata);

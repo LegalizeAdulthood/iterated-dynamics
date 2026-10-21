@@ -225,6 +225,7 @@ add_library(libid
     include/ui/full_screen_choice.h ui/full_screen_choice.cpp
     include/ui/full_screen_prompt.h ui/full_screen_prompt.cpp
     include/ui/get_3d_params.h ui/get_3d_params.cpp
+    include/ui/ThreeDSettings.h ui/ThreeDSettings.cpp
     include/ui/get_a_number.h ui/get_a_number.cpp
     include/ui/get_browse_params.h ui/get_browse_params.cpp
     include/ui/get_calculation_time.h ui/get_calculation_time.cpp

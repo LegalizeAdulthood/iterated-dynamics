@@ -35,6 +35,7 @@
 #include "math/biginit.h"
 #include "misc/Driver.h"
 #include "misc/version.h"
+#include "misc/ValueSaver.h"
 #include "ui/get_calculation_time.h"
 #include "ui/get_key_no_help.h"
 #include "ui/help.h"
@@ -49,6 +50,8 @@
 #include <algorithm>
 #include <cmath>
 #include <ctime>
+#include <iterator>
+#include <vector>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -65,6 +68,7 @@ namespace id::ui
 {
 
 bool g_tab_enabled{true};
+std::shared_ptr<const ImageMetadata> g_tab_metadata;
 
 static void area();
 
@@ -250,8 +254,79 @@ static bool tab_display2()
     return key != ID_KEY_ESC;
 }
 
+static int metadata_tab_display(const ImageMetadata &metadata)
+{
+    const FractalInfo &info{metadata.fractal};
+    const FractalType type{migrate_integer_types(info.fractal_type)};
+    const long iterations{info.info_version > 9 ? info.iterations : info.iterations_old};
+    const std::vector<std::string> pages{
+        fmt::format("Fractal type: {}\n"
+                    "Saved version: {}\n"
+                    "Image dimensions: {} x {} x {}\n"
+                    "Calculation status: {}    Time: {:.2f} seconds\n\n"
+                    "Corners              X                       Y\n"
+                    "Top-left   {:22.15g}  {:22.15g}\n"
+                    "Bottom-right {:20.15g}  {:22.15g}\n"
+                    "Third      {:22.15g}  {:22.15g}\n\n"
+                    "Maximum iterations: {}\n"
+                    "Parameters 1, 2: {:.15g}, {:.15g}\n"
+                    "Parameters 3, 4: {:.15g}, {:.15g}\n"
+                    "Parameters 5, 6: {:.15g}, {:.15g}\n"
+                    "Parameters 7, 8: {:.15g}, {:.15g}\n"
+                    "Parameters 9, 10: {:.15g}, {:.15g}\n"
+                    "Item: {}\n",
+            get_fractal_specific(type)->name, to_display_string(fractal_info_version(info)), metadata.width,
+            metadata.height, metadata.colors, info.calc_status, info.calc_time / 100.0, info.x_min, info.y_max,
+            info.x_max, info.y_min, info.x3rd, info.y3rd, iterations, info.c_real, info.c_imag,
+            info.info_version > 6 ? info.d_param3 : info.param3, info.info_version > 6 ? info.d_param4 : info.param4,
+            info.d_param5, info.d_param6, info.d_param7, info.d_param8, info.d_param9, info.d_param10,
+            std::string{metadata.formula.form_name,
+                std::find(std::begin(metadata.formula.form_name), std::end(metadata.formula.form_name), '\0')}),
+        fmt::format("Saved calculation options\n\n"
+                    "Pass: {}    Bailout: {}    Bailout test: {}\n"
+                    "Inside: {}    Outside: {}\n"
+                    "Periodicity: {}    Symmetry: {}\n"
+                    "Potential: {}, {}, {}    16-bit: {}\n"
+                    "Decomposition: {}, {}    Biomorph: {}\n"
+                    "Random seed: {}    Fixed: {}\n"
+                    "Inversion: {}, {}, {}\n"
+                    "Orbit delay: {}    Interval: {}\n"
+                    "Resume data: {} bytes\n"
+                    "Arbitrary precision data: {} bytes\n"
+                    "Evolution data: {}\n",
+            (info.std_calc_mode ? info.std_calc_mode : '-'), info.info_version > 9 ? info.bailout : info.bailout_old,
+            info.bailout_test, info.inside, info.outside, info.periodicity, info.symmetry, info.potential[0],
+            info.potential[1], info.potential[2], info.pot16bit, info.decomp[0], info.decomp[1], info.biomorph,
+            info.random_seed, info.random_seed_flag, info.invert[0], info.invert[1], info.invert[2], info.orbit_delay,
+            info.orbit_interval, metadata.resume.resume_data.size(), metadata.extended.apm_data.size(),
+            metadata.evolution.got_data)};
+    ValueSaver tab_mode{g_tab_enabled, false};
+    driver_stack_screen();
+    std::size_t page{};
+    while (true)
+    {
+        help_title();
+        driver_set_attr(1, 0, C_GENERAL_MED, 24 * 80);
+        driver_put_string(2, 2, C_GENERAL_HI, pages[page]);
+        put_string_center(24, 0, 80, C_GENERAL_LO, "Press any key to continue, Ctrl+Tab for next page");
+        driver_hide_text_cursor();
+        const int key{get_a_key_no_help()};
+        if (key != ID_KEY_CTL_TAB && key != ID_KEY_SHF_TAB && key != ID_KEY_F7)
+        {
+            break;
+        }
+        page = (page + 1) % pages.size();
+    }
+    driver_unstack_screen();
+    return 0;
+}
+
 int tab_display() // display the status of the current image
 {
+    if (g_tab_metadata)
+    {
+        return metadata_tab_display(*g_tab_metadata);
+    }
     int add_row = 0;
     BigFloat bf_x_ctr = nullptr;
     BigFloat bf_y_ctr = nullptr;
