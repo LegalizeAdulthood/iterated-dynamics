@@ -965,7 +965,7 @@ static bool static_calc_type_allows_jiim()
     const CalcType table_calc_type{g_cur_fractal_specific->calc_type};
     return table_calc_type == standard_fractal_type //
         || table_calc_type == calc_mandelbrot_type  //
-        || table_calc_type == froth_type;
+        || table_calc_type == static_cast<CalcType>(froth_type);
 }
 
 void jiim(const JIIMType which)

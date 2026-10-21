@@ -375,9 +375,9 @@ static CommandResult request_3d_fractal_params(MainContext &context)
 static bool orbits_window_available()
 {
     // must use standard fractal and have a float variant
-    return (g_cur_fractal_specific->calc_type == standard_fractal_type //
-               || g_cur_fractal_specific->calc_type == froth_type)     //
-        && g_bf_math == BFMathType::NONE                               // for now no arbitrary precision support
+    return (g_cur_fractal_specific->calc_type == standard_fractal_type                    //
+               || g_cur_fractal_specific->calc_type == static_cast<CalcType>(froth_type)) //
+        && g_bf_math == BFMathType::NONE // for now no arbitrary precision support
         && (!g_is_true_color || g_true_mode == TrueColorMode::DEFAULT_COLOR);
 }
 
