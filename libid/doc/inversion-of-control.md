@@ -338,8 +338,13 @@ The current code is already part-way through this plan:
   of the next requested filename.  Pixel and Targa callers use the I/O
   operations directly.  UI controllers service progress at existing work
   checkpoints, retaining the status throttle without adding yields or
-  input polling.  Temporary setup bridges remain for slices 41.4 through
+  input polling.  Temporary setup bridges remain for slices 41.5 through
   41.7; allocation retry/cancel belongs to the storage UI operation.
+- Plasma construction normalizes configuration without allocating storage
+  or plotting pixels.  Its UI controller prepares potential storage, then
+  calls `init()` with the outcome.  Calculation retains border handling,
+  8-bit fallback, and saved potential-state restoration; pixel output
+  identifies disk targets without querying the driver.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -360,7 +365,7 @@ The fresh reverse-call audit also found these live paths:
   `stop_msg()` or application shutdown through `goodbye()`.
 - Calculation code still enters disk-storage setup bridges under
   `libid/ui`.  Cache and backing operations belong to I/O; controllers
-  now service progress between existing work chunks.  Slices 41.4 through
+  now service progress between existing work chunks.  Slices 41.5 through
   41.7 remove the remaining setup reverse calls and mapping-line status.
 - Image loading, image saving, and command parsing still select UI
   prompts, display status, or exit the application from non-UI modules.
@@ -771,7 +776,7 @@ The remaining UI-concept leaks outside `libid/ui` are:
 - Calculation code still calls setup bridges in `ui/diskvid.cpp`, and
   `geometry/line3d.cpp` still reports mapping-line status.  Pixel access
   and progress snapshots are I/O-owned; controllers service storage
-  progress between existing work chunks.  Slices 41.4 through 41.7 move
+  progress between existing work chunks.  Slices 41.5 through 41.7 move
   the remaining setup decisions and mapping status to requesting UI.
 - `libid/io/loadfile.cpp`, `libid/io/encoder.cpp`, and
   `libid/engine/cmdfiles.cpp`: select prompts, display status, make
@@ -970,30 +975,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 41.4. Plasma Potential Storage Preparation
-
-Source: `Plasma::Plasma()`, potential pixel helpers, and `ui/plasma.cpp`.
-UI owner: the Plasma controller.
-
-Work:
-
-- Separate calculation configuration from initialization that requires
-  potential storage.  Return the requirement to the controller before
-  allocation, then continue calculation with the setup outcome.
-- Preserve normalized parameters, 16-bit fallback, plot selection, and
-  restoration of saved potential state.
-- Remove `pot_start_disk()` and disk-driver queries from Plasma.
-  Pixel helpers use I/O storage directly; the controller supplies the
-  output-target facts needed to avoid duplicate high-byte writes.
-
-Done when:
-
-- Constructing or advancing Plasma cannot enter storage UI.
-
-Validation: normal and failed 16-bit setup, fallback parameters, and
-cleanup; reuse Plasma and potential image coverage.
-No manual check required.
 
 ### 41.5. Inverse Julia Queue Storage Preparation
 

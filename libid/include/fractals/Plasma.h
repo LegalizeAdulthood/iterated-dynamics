@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -19,6 +20,8 @@ public:
     Plasma();
     ~Plasma();
 
+    bool potential_storage_required() const;
+    void init(bool potential_storage_available);
     bool done() const;
     void iterate();
 
@@ -56,6 +59,7 @@ private:
     U16 m_rnd[4]{};
     ValueSaver<bool> m_saved_potential_flag;
     ValueSaver<bool> m_saved_potential_16_bit;
+    bool m_initialized{};
     bool m_done{};
     Algorithm m_algo{Algorithm::OLD};
     int m_level{};

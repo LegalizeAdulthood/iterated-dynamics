@@ -15,16 +15,14 @@
 #include "io/disk_storage.h"
 #include "io/loadmap.h"
 #include "misc/debug_flags.h"
-#include "misc/Driver.h"
 #include "misc/sized_types.h"
-#include "ui/diskvid.h"
 
 #include <algorithm>
+#include <stdexcept>
 
 using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::fractals
 {
@@ -85,9 +83,8 @@ static void put_pot(const int x, const int y, U16 color)
 {
     color = std::max<U16>(color, 1U);
     g_put_color(x, y, color >> 8 ? color >> 8 : 1); // don't write 0
-    /* we don't write this if driver_diskp() because the above putcolor
-          was already a "writedisk" in that case */
-    if (!driver_is_disk())
+    // Disk pixel output already wrote the high byte.
+    if (!disk_pixel_output())
     {
         write_disk_pixel(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset, color >> 8);   // upper 8 bits
     }
@@ -155,36 +152,36 @@ Plasma::Plasma() :
         g_random_seed = static_cast<int>(g_params[2]);
     }
     m_max_plasma = static_cast<U16>(g_params[3]); // max_plasma is used as a flag for potential
+}
 
+bool Plasma::potential_storage_required() const
+{
+    return !m_initialized && m_max_plasma != 0;
+}
+
+void Plasma::init(const bool potential_storage_available)
+{
+    if (m_initialized)
+    {
+        throw std::logic_error("Plasma is already initialized");
+    }
+    if (m_max_plasma != 0 && !potential_storage_available)
+    {
+        m_max_plasma = 0;
+        g_params[3] = 0;
+    }
     if (m_max_plasma != 0)
     {
-        if (pot_start_disk() >= 0)
+        m_max_plasma = 0xFFFF;
+        if (g_outside_method >= ColorMethod::COLOR)
         {
-            m_max_plasma = 0xFFFF;
-            if (g_outside_method >= ColorMethod::COLOR)
-            {
-                g_plot = plot_cast(put_pot_border);
-            }
-            else
-            {
-                g_plot = plot_cast(put_pot);
-            }
-            m_get_pix = get_pot;
+            g_plot = plot_cast(put_pot_border);
         }
         else
         {
-            m_max_plasma = 0; // can't do potential (startdisk failed)
-            g_params[3] = 0;
-            if (g_outside_method >= ColorMethod::COLOR)
-            {
-                g_plot = put_color_border;
-            }
-            else
-            {
-                g_plot = g_put_color;
-            }
-            m_get_pix = GET_COLOR;
+            g_plot = plot_cast(put_pot);
         }
+        m_get_pix = get_pot;
     }
     else
     {
@@ -263,6 +260,7 @@ Plasma::Plasma() :
     }
 
     m_subdivs.push_back(Subdivision{0, 0, g_logical_screen.x_dots - 1, g_logical_screen.y_dots - 1, 0});
+    m_initialized = true;
 }
 
 Plasma::~Plasma()
@@ -453,6 +451,10 @@ void Plasma::subdivide_new(const int x1, const int y1, const int x2, const int y
 
 void Plasma::iterate()
 {
+    if (!m_initialized)
+    {
+        throw std::logic_error("Plasma is not initialized");
+    }
     if (m_algo == Algorithm::OLD)
     {
         subdivide();

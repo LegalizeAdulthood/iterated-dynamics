@@ -567,6 +567,7 @@ TEST(TestSeededFractals, plasmaReuseLastRandomPreservesGeneratedSeed)
     g_params[2] = 1.0;
 
     Plasma plasma;
+    plasma.init(false);
 
     EXPECT_EQ(SEED, g_random_seed);
 }
