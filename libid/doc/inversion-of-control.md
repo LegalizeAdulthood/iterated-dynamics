@@ -304,6 +304,11 @@ The current code is already part-way through this plan:
   leave its allocation state unchanged.  Render cleanup runs before the
   failure reaches `id_main()`, which owns the existing fatal diagnostic
   and batch exit status.  Freed arenas can be initialized again.
+- `engine/fractalb.cpp` formats precision debug text without modal UI.
+  Debug checks collect snapshots before returning to their callers;
+  `id_main()`, image setup, and the standard render controller own their
+  display and Escape-to-exit decision.  The conversion round-trip check
+  restores the image corners before UI inspection, including on failure.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -727,8 +732,7 @@ The remaining UI-concept leaks outside `libid/ui` are:
 
 - `libid/fractals/lorenz.cpp`: IFS and 3D front ends invoke UI renderers;
   stereo orchestration invokes photographer prompts between images.
-- Calculation setup, precision debug displays,
-  and memory helpers invoke `stop_msg()` and sometimes
+- Calculation setup and memory helpers invoke `stop_msg()` and sometimes
   `goodbye()`.  These are input and application-control leaks even when
   they are reachable only on failure or in debug builds.
 - Calculation code calls pixel/span functions in `ui/video.cpp` and
@@ -932,26 +936,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 37. Precision Debug Display Ownership
-
-Source: `show_var_bn()`, `show_corners_*()`, and related debug displays
-in `libid/engine/fractalb.cpp`.
-
-Work:
-
-- Keep formatting or collection of numeric debug data independent of UI.
-- Move interactive display and cancellation/exit handling into the UI
-  owner that requests the debug inspection.
-- Audit debug-only call paths as well as release paths.
-
-Done when:
-
-- Debug math and calculation helpers no longer call modal UI or
-  `goodbye()`.  Debug builds satisfy the same dependency boundary.
-
-Validation: exercise collected diagnostic data and UI handling without
-requiring a manual pixel comparison.
 
 ### 38. Memory Failure And Recovery Ownership
 

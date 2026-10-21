@@ -44,6 +44,7 @@
 #include "ui/main_state.h"
 #include "ui/make_mig_script.h"
 #include "ui/mouse.h"
+#include "ui/precision_diagnostics.h"
 #include "ui/select_video_mode.h"
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
@@ -459,6 +460,10 @@ int id_main(int argc, char *argv[])
             case MainState::NOTHING:
                 done = true;
                 break;
+            }
+            if (show_precision_diagnostics())
+            {
+                goodbye();
             }
         }
     }

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // This file contains the "big number" high precision versions of the
 // fractal routines.
@@ -17,8 +18,6 @@
 #include "fractals/frasetup.h"
 #include "math/biginit.h"
 #include "math/fixed_pt.h"
-#include "ui/goodbye.h"
-#include "ui/stop_msg.h"
 
 #include <fmt/format.h>
 
@@ -32,7 +31,6 @@
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::math
 {
@@ -42,184 +40,164 @@ BFMathType g_bf_math{};
 namespace id::engine
 {
 
-#ifndef NDEBUG
+std::vector<std::string> g_precision_diagnostics;
+
 //********************************************************************
-void show_var_bn(const char *s, BigNum n)
+std::string format_var_bn(const char *s, BigNum n)
 {
     std::string msg{s};
     msg += ' ' + math::bn_to_string(n, 40);
-    msg.erase(79); // limit to 79 characters
-    stop_msg(msg);
+    msg.resize(std::min(msg.size(), size_t{79}));
+    return msg;
 }
 
-void show_corners_dbl(const char *s)
+std::string format_corners_dbl(const char *s)
 {
-    if (stop_msg(fmt::format("{:s}\n"                                 //
-                             "   x_min= {:.20f}    x_max= {:.20f}\n"  //
-                             "   y_min= {:.20f}    y_max= {:.20f}\n"  //
-                             "   x_3rd= {:.20f}    y_3rd= {:.20f}\n"  //
-                             " delta_x= {:.20Lf} delta_y= {:.20Lf}\n" //
-                             "delta_x2= {:.20Lf} delta_y2= {:.20Lf}", //
-            s,                                                        //
-            g_image_region.m_min.x, g_image_region.m_max.x,           //
-            g_image_region.m_min.y, g_image_region.m_max.y,           //
-            g_image_region.m_3rd.x, g_image_region.m_3rd.y,           //
-            g_delta_x, g_delta_y,                                     //
-            g_delta_x2, g_delta_y2)))
-    {
-        goodbye();
-    }
+    return fmt::format("{:s}\n"                                 //
+                       "   x_min= {:.20f}    x_max= {:.20f}\n"  //
+                       "   y_min= {:.20f}    y_max= {:.20f}\n"  //
+                       "   x_3rd= {:.20f}    y_3rd= {:.20f}\n"  //
+                       " delta_x= {:.20Lf} delta_y= {:.20Lf}\n" //
+                       "delta_x2= {:.20Lf} delta_y2= {:.20Lf}", //
+        s,                                                      //
+        g_image_region.m_min.x, g_image_region.m_max.x,         //
+        g_image_region.m_min.y, g_image_region.m_max.y,         //
+        g_image_region.m_3rd.x, g_image_region.m_3rd.y,         //
+        g_delta_x, g_delta_y,                                   //
+        g_delta_x2, g_delta_y2);
 }
 
 // show floating point and bignumber corners
-void show_corners_bn(const char *s)
+std::string format_corners_bn(const char *s)
 {
-    if (constexpr int dec = 20; //
-        stop_msg(fmt::format("{:s}\n"
-                             "x_min_bn={:s}\n"
-                             "x_min   ={:.20f}\n"
-                             "\n"
-                             "x_max_bn={:s}\n"
-                             "x_max   ={:.20f}\n"
-                             "\n"
-                             "y_min_bn={:s}\n"
-                             "y_min   ={:.20f}\n"
-                             "\n"
-                             "y_max_bn={:s}\n"
-                             "y_max   ={:.20f}\n"
-                             "\n"
-                             "x_3rd_bn={:s}\n"
-                             "x_3rd   ={:.20f}\n"
-                             "\n"
-                             "y_3rd_bn={:s}\n"
-                             "y_3rd   ={:.20f}\n"
-                             "\n",
-            s,                                                           //
-            math::bn_to_string(g_x_min_bn, dec), g_image_region.m_min.x, //
-            math::bn_to_string(g_x_max_bn, dec), g_image_region.m_max.x, //
-            math::bn_to_string(g_y_min_bn, dec), g_image_region.m_min.y, //
-            math::bn_to_string(g_y_max_bn, dec), g_image_region.m_max.y, //
-            math::bn_to_string(g_x_3rd_bn, dec), g_image_region.m_3rd.x, //
-            math::bn_to_string(g_y_3rd_bn, dec), g_image_region.m_3rd.y)))
-    {
-        goodbye();
-    }
+    constexpr int dec{20};
+    return fmt::format("{:s}\n"
+                       "x_min_bn={:s}\n"
+                       "x_min   ={:.20f}\n"
+                       "\n"
+                       "x_max_bn={:s}\n"
+                       "x_max   ={:.20f}\n"
+                       "\n"
+                       "y_min_bn={:s}\n"
+                       "y_min   ={:.20f}\n"
+                       "\n"
+                       "y_max_bn={:s}\n"
+                       "y_max   ={:.20f}\n"
+                       "\n"
+                       "x_3rd_bn={:s}\n"
+                       "x_3rd   ={:.20f}\n"
+                       "\n"
+                       "y_3rd_bn={:s}\n"
+                       "y_3rd   ={:.20f}\n"
+                       "\n",
+        s,                                                           //
+        math::bn_to_string(g_x_min_bn, dec), g_image_region.m_min.x, //
+        math::bn_to_string(g_x_max_bn, dec), g_image_region.m_max.x, //
+        math::bn_to_string(g_y_min_bn, dec), g_image_region.m_min.y, //
+        math::bn_to_string(g_y_max_bn, dec), g_image_region.m_max.y, //
+        math::bn_to_string(g_x_3rd_bn, dec), g_image_region.m_3rd.x, //
+        math::bn_to_string(g_y_3rd_bn, dec), g_image_region.m_3rd.y);
 }
 
 // show globals
-void show_globals_bf(const char *s)
+std::string format_globals_bf(const char *s)
 {
-    if (stop_msg(fmt::format("{:s}\n"                                                                   //
-                             "bn_step={:d} bn_length={:d} int_length={:d} r_length={:d} padding={:d}\n" //
-                             "shift_factor={:d} decimals={:d} bf_length={:d} r_bf_length={:d}\n"        //
-                             "bf_decimals={:d} ",                                                       //
-            s,                                                                                          //
-            g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding,                                //
-            g_shift_factor, g_decimals, g_bf_length, g_r_bf_length,                                     //
-            g_bf_decimals)))
-    {
-        goodbye();
-    }
+    return fmt::format("{:s}\n"                                                                   //
+                       "bn_step={:d} bn_length={:d} int_length={:d} r_length={:d} padding={:d}\n" //
+                       "shift_factor={:d} decimals={:d} bf_length={:d} r_bf_length={:d}\n"        //
+                       "bf_decimals={:d} ",                                                       //
+        s,                                                                                        //
+        g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding,                              //
+        g_shift_factor, g_decimals, g_bf_length, g_r_bf_length,                                   //
+        g_bf_decimals);
 }
 
-void show_corners_bf(const char *s)
+std::string format_corners_bf(const char *s)
 {
-    if (const int dec = std::min(g_decimals, 20); //
-        stop_msg(fmt::format("{:s}\n"
-                             "bf_x_min={:s}\n"
-                             "x_min= {:.20f} decimals {:d} g_bf_length {:d}\n"
-                             "\n"
-                             "bf_x_max={:s}\n"
-                             "x_max= {:.20f}\n"
-                             "\n"
-                             "bf_y_min={:s}\n"
-                             "y_min= {:.20f}\n"
-                             "\n"
-                             "bf_y_max={:s}\n"
-                             "y_max= {:.20f}\n"
-                             "\n"
-                             "bf_x_3rd={:s}\n"
-                             "xx_3rd= {:.20f}\n"
-                             "\n"
-                             "bf_y_3rd={:s}\n"
-                             "y_3rd= {:.20f}\n"
-                             "\n",
-            s,                                                     //
-            bf_to_string(g_bf_x_min, dec),                         //
-            g_image_region.m_min.x, g_decimals, g_bf_length,       //
-            bf_to_string(g_bf_x_max, dec), g_image_region.m_max.x, //
-            bf_to_string(g_bf_y_min, dec), g_image_region.m_min.y, //
-            bf_to_string(g_bf_y_max, dec), g_image_region.m_max.y, //
-            bf_to_string(g_bf_x_3rd, dec), g_image_region.m_3rd.x, //
-            bf_to_string(g_bf_y_3rd, dec), g_image_region.m_3rd.y)))
-    {
-        goodbye();
-    }
+    const int dec{std::min(g_decimals, 20)};
+    return fmt::format("{:s}\n"
+                       "bf_x_min={:s}\n"
+                       "x_min= {:.20f} decimals {:d} g_bf_length {:d}\n"
+                       "\n"
+                       "bf_x_max={:s}\n"
+                       "x_max= {:.20f}\n"
+                       "\n"
+                       "bf_y_min={:s}\n"
+                       "y_min= {:.20f}\n"
+                       "\n"
+                       "bf_y_max={:s}\n"
+                       "y_max= {:.20f}\n"
+                       "\n"
+                       "bf_x_3rd={:s}\n"
+                       "xx_3rd= {:.20f}\n"
+                       "\n"
+                       "bf_y_3rd={:s}\n"
+                       "y_3rd= {:.20f}\n"
+                       "\n",
+        s,                                                     //
+        bf_to_string(g_bf_x_min, dec),                         //
+        g_image_region.m_min.x, g_decimals, g_bf_length,       //
+        bf_to_string(g_bf_x_max, dec), g_image_region.m_max.x, //
+        bf_to_string(g_bf_y_min, dec), g_image_region.m_min.y, //
+        bf_to_string(g_bf_y_max, dec), g_image_region.m_max.y, //
+        bf_to_string(g_bf_x_3rd, dec), g_image_region.m_3rd.x, //
+        bf_to_string(g_bf_y_3rd, dec), g_image_region.m_3rd.y);
 }
 
-void show_corners_bf_save(const char *s)
+std::string format_corners_bf_save(const char *s)
 {
-    if (constexpr int dec = 20; //
-        stop_msg(fmt::format("{:s}\n"
-                             "bf_save_x_min={:s}\n"
-                             "x_min= {:.20f}\n"
-                             "\n"
-                             "bf_save_x_max={:s}\n"
-                             "x_max= {:.20f}\n"
-                             "\n"
-                             "bf_save_y_min={:s}\n"
-                             "y_min= {:.20f}\n"
-                             "\n"
-                             "bf_save_y_max={:s}\n"
-                             "y_max= {:.20f}\n"
-                             "\n"
-                             "bf_save_x_3rd={:s}\n"
-                             "x_3rd= {:.20f}\n"
-                             "\n"
-                             "bf_save_y_3rd={:s}\n"
-                             "y_3rd= {:.20f}\n"
-                             "\n",
-            s,                                                          //
-            bf_to_string(g_bf_save_x_min, dec), g_image_region.m_min.x, //
-            bf_to_string(g_bf_save_x_max, dec), g_image_region.m_max.x, //
-            bf_to_string(g_bf_save_y_min, dec), g_image_region.m_min.y, //
-            bf_to_string(g_bf_save_y_max, dec), g_image_region.m_max.y, //
-            bf_to_string(g_bf_save_x_3rd, dec), g_image_region.m_3rd.x, //
-            bf_to_string(g_bf_save_y_3rd, dec), g_image_region.m_3rd.y)))
-    {
-        goodbye();
-    }
+    constexpr int dec{20};
+    return fmt::format("{:s}\n"
+                       "bf_save_x_min={:s}\n"
+                       "x_min= {:.20f}\n"
+                       "\n"
+                       "bf_save_x_max={:s}\n"
+                       "x_max= {:.20f}\n"
+                       "\n"
+                       "bf_save_y_min={:s}\n"
+                       "y_min= {:.20f}\n"
+                       "\n"
+                       "bf_save_y_max={:s}\n"
+                       "y_max= {:.20f}\n"
+                       "\n"
+                       "bf_save_x_3rd={:s}\n"
+                       "x_3rd= {:.20f}\n"
+                       "\n"
+                       "bf_save_y_3rd={:s}\n"
+                       "y_3rd= {:.20f}\n"
+                       "\n",
+        s,                                                          //
+        bf_to_string(g_bf_save_x_min, dec), g_image_region.m_min.x, //
+        bf_to_string(g_bf_save_x_max, dec), g_image_region.m_max.x, //
+        bf_to_string(g_bf_save_y_min, dec), g_image_region.m_min.y, //
+        bf_to_string(g_bf_save_y_max, dec), g_image_region.m_max.y, //
+        bf_to_string(g_bf_save_x_3rd, dec), g_image_region.m_3rd.x, //
+        bf_to_string(g_bf_save_y_3rd, dec), g_image_region.m_3rd.y);
 }
 
-void show_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat t2, const int digits)
+std::string format_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat t2, const int digits)
 {
-    if (stop_msg(fmt::format("\n"
-                             "{:s}->{:s}\n"
-                             "{:s}->{:s}",
-            s1, bf_to_string_e(t1, digits), //
-            s2, bf_to_string_e(t2, digits))))
-    {
-        goodbye();
-    }
+    return fmt::format("\n"
+                       "{:s}->{:s}\n"
+                       "{:s}->{:s}",
+        s1, bf_to_string_e(t1, digits), //
+        s2, bf_to_string_e(t2, digits));
 }
 
-void show_three_bf(
+std::string format_three_bf(
     const char *s1, BigFloat t1, const char *s2, BigFloat t2, const char *s3, BigFloat t3, const int digits)
 {
-    if (stop_msg(fmt::format("\n"
-                             "{:s}->{:s}\n"
-                             "{:s}->{:s}\n"
-                             "{:s}->{:s}",
-            s1, bf_to_string_e(t1, digits), //
-            s2, bf_to_string_e(t2, digits), //
-            s3, bf_to_string_e(t3, digits))))
-    {
-        goodbye();
-    }
+    return fmt::format("\n"
+                       "{:s}->{:s}\n"
+                       "{:s}->{:s}\n"
+                       "{:s}->{:s}",
+        s1, bf_to_string_e(t1, digits), //
+        s2, bf_to_string_e(t2, digits), //
+        s3, bf_to_string_e(t3, digits));
 }
 
 // for aspect ratio debugging
-void show_aspect(const char *s)
+std::string format_aspect(const char *s)
 {
     BigStackSaver saved;
     BigFloat bt1 = alloc_stack(g_r_bf_length + 2);
@@ -228,61 +206,48 @@ void show_aspect(const char *s)
     sub_bf(bt1, g_bf_x_max, g_bf_x_min);
     sub_bf(bt2, g_bf_y_max, g_bf_y_min);
     div_bf(aspect, bt2, bt1);
-    if (stop_msg(fmt::format("aspect {:s}\n"
-                             "float  {:13.10f}\n"
-                             "bf     {:s}\n"
-                             "\n",
-            s,                                         //
-            g_image_region.height() / g_image_region.width(), //
-            bf_to_string(aspect, 10))))
-    {
-        goodbye();
-    }
+    return fmt::format("aspect {:s}\n"
+                       "float  {:13.10f}\n"
+                       "bf     {:s}\n"
+                       "\n",
+        s,                                                //
+        g_image_region.height() / g_image_region.width(), //
+        bf_to_string(aspect, 10));
 }
 
 // compare a double and bignumber
-void compare_values(const char *s, const LDouble x, BigNum bnx)
+std::string format_compare_values(const char *s, const LDouble x, BigNum bnx)
 {
-    if (constexpr int dec = 40; //
-        stop_msg(fmt::format("{:s}\n"
-                             "bignum={:s}\n"
-                             "double={:.20Lf}\n"
-                             "\n",
-            s,                            //
-            math::bn_to_string(bnx, dec), //
-            x)))
-    {
-        goodbye();
-    }
+    constexpr int dec{40};
+    return fmt::format("{:s}\n"
+                       "bignum={:s}\n"
+                       "double={:.20Lf}\n"
+                       "\n",
+        s,                            //
+        math::bn_to_string(bnx, dec), //
+        x);
 }
 
 // compare a double and bignumber
-void compare_values_bf(const char *s, const LDouble x, BigFloat bfx)
+std::string format_compare_values_bf(const char *s, const LDouble x, BigFloat bfx)
 {
-    if (constexpr int dec = 40; //
-        stop_msg(fmt::format("{:s}\n"
-                             "bignum={:s}\n"
-                             "double={:.20Lf}\n"
-                             "\n",
-            s,                        //
-            bf_to_string_e(bfx, dec), //
-            x)))
-    {
-        goodbye();
-    }
+    constexpr int dec{40};
+    return fmt::format("{:s}\n"
+                       "bignum={:s}\n"
+                       "double={:.20Lf}\n"
+                       "\n",
+        s,                        //
+        bf_to_string_e(bfx, dec), //
+        x);
 }
 
 //********************************************************************
-void show_var_bf(const char *s, BigFloat n)
+std::string format_var_bf(const char *, BigFloat n)
 {
     std::string msg{bf_to_string_e(n, 40)};
-    msg.erase(79);
-    if (stop_msg(msg))
-    {
-        goodbye();
-    }
+    msg.resize(std::min(msg.size(), size_t{79}));
+    return msg;
 }
-#endif
 
 void bf_corners_to_float()
 {

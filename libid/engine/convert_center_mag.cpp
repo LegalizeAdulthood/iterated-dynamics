@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "engine/convert_center_mag.h"
 
@@ -11,6 +12,7 @@
 #include "math/sqr.h"
 #include "misc/debug_flags.h"
 #include "misc/id.h"
+#include "misc/ValueSaver.h"
 
 #include <cmath>
 
@@ -94,6 +96,7 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_fa
     }
 #ifndef NDEBUG
     {
+        ValueSaver saved_region{g_image_region};
         const double t_x_min = g_image_region.m_min.x;
         const double t_x_max = g_image_region.m_max.x;
         const double t_x_3rd = g_image_region.m_3rd.x;
@@ -109,14 +112,8 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_fa
             + sqr(t_y_3rd - g_image_region.m_3rd.y);               //
         if (error > .001)
         {
-            show_corners_dbl("cvtcentermag problem");
+            g_precision_diagnostics.push_back(format_corners_dbl("cvtcentermag problem"));
         }
-        g_image_region.m_min.x = t_x_min;
-        g_image_region.m_max.x = t_x_max;
-        g_image_region.m_3rd.x = t_x_3rd;
-        g_image_region.m_min.y = t_y_min;
-        g_image_region.m_max.y = t_y_max;
-        g_image_region.m_3rd.y = t_y_3rd;
     }
 #endif
 }

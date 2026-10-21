@@ -268,6 +268,7 @@ add_library(libid
     include/ui/passes_options.h ui/passes_options.cpp
     include/ui/plasma.h ui/plasma.cpp
     include/ui/popcorn.h ui/popcorn.cpp
+    include/ui/precision_diagnostics.h ui/precision_diagnostics.cpp
     include/ui/put_string_center.h ui/put_string_center.cpp
     include/ui/read_ticker.h ui/read_ticker.cpp
     include/ui/restore_image.h ui/restore_image.cpp

@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
 #include "math/big.h"
 
 #include <config/port.h>
+
+#include <string>
+#include <vector>
 
 namespace id::engine
 {
@@ -45,22 +49,21 @@ math::BFComplex *cmplx_mul_bf(math::BFComplex *t, math::BFComplex *x, math::BFCo
 math::BFComplex *cmplx_div_bf(math::BFComplex *t, math::BFComplex *x, math::BFComplex *y);
 math::BFComplex *cmplx_pow_bf(math::BFComplex *t, math::BFComplex *xx, math::BFComplex *yy);
 
-// Helper routines for debugging
-#ifndef NDEBUG
-void show_var_bn(const char *s, math::BigNum n);
-void show_corners_dbl(const char *s);
-void show_corners_bn(const char *s);
-void show_globals_bf(const char *s);
-void show_corners_bf(const char *s);
-void show_corners_bf_save(const char *s);
-void show_two_bf(const char *s1, math::BigFloat t1, const char *s2, math::BigFloat t2, int digits);
-void show_three_bf(
-    const char *s1, math::BigFloat t1, const char *s2, math::BigFloat t2, const char *s3,
+// Numeric snapshots collected by debug checks and reported by UI owners.
+extern std::vector<std::string> g_precision_diagnostics;
+
+std::string format_var_bn(const char *s, math::BigNum n);
+std::string format_corners_dbl(const char *s);
+std::string format_corners_bn(const char *s);
+std::string format_globals_bf(const char *s);
+std::string format_corners_bf(const char *s);
+std::string format_corners_bf_save(const char *s);
+std::string format_two_bf(const char *s1, math::BigFloat t1, const char *s2, math::BigFloat t2, int digits);
+std::string format_three_bf(const char *s1, math::BigFloat t1, const char *s2, math::BigFloat t2, const char *s3,
     math::BigFloat t3, int digits);
-void show_aspect(const char *s);
-void compare_values(const char *s, LDouble x, math::BigNum bnx);
-void compare_values_bf(const char *s, LDouble x, math::BigFloat bfx);
-void show_var_bf(const char *s, math::BigFloat n);
-#endif
+std::string format_aspect(const char *s);
+std::string format_compare_values(const char *s, LDouble x, math::BigNum bnx);
+std::string format_compare_values_bf(const char *s, LDouble x, math::BigFloat bfx);
+std::string format_var_bf(const char *s, math::BigFloat n);
 
 } // namespace id::engine

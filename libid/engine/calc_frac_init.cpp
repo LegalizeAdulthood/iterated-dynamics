@@ -92,7 +92,7 @@ static int get_prec_dbl(const ResolutionFlag flag)
     if (del1 == 0)
     {
 #ifndef NDEBUG
-        show_corners_dbl("getprecdbl");
+        g_precision_diagnostics.push_back(format_corners_dbl("getprecdbl"));
 #endif
         return -1;
     }

@@ -40,6 +40,7 @@
 #include "ui/main_menu.h"
 #include "ui/main_menu_switch.h"
 #include "ui/mouse.h"
+#include "ui/precision_diagnostics.h"
 #include "ui/restore_image.h"
 #include "ui/SoundSession.h"
 #include "ui/stop_msg.h"
@@ -599,6 +600,10 @@ MainState big_while_loop(MainContext &context)
         if (g_evolving == EvolutionModeFlags::NONE)
         {
             calc_frac_init();
+            if (show_precision_diagnostics())
+            {
+                goodbye();
+            }
         }
         driver_schedule_alarm(1);
 
@@ -708,6 +713,10 @@ MainState big_while_loop(MainContext &context)
                     restore_param_history();
                     fiddle_params(gene, count);
                     calc_frac_init();
+                    if (show_precision_diagnostics())
+                    {
+                        goodbye();
+                    }
                     i = calculate_image();
                     if (i == -1)
                     {
@@ -794,6 +803,10 @@ resumeloop:                             // return here on failed overlays
         context.more_keys = true;
         while (context.more_keys)
         {
+            if (show_precision_diagnostics())
+            {
+                goodbye();
+            }
             context.orbits_window_key_pending = false;
 
             // loop through command keys

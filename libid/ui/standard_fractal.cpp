@@ -4,11 +4,14 @@
 #include "ui/standard_fractal.h"
 
 #include "engine/calcfrac.h"
+#include "engine/fractalb.h"
 #include "engine/OrbitPlot.h"
 #include "engine/SoundOutput.h"
 #include "engine/StandardFractal.h"
 #include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"
+#include "ui/goodbye.h"
+#include "ui/precision_diagnostics.h"
 #include "ui/ShowDotController.h"
 #include "ui/SoundSession.h"
 #include "ui/standard_orbit_plot.h"
@@ -74,6 +77,10 @@ int standard_fractal(SoundSession &sound)
     ScopedKeyboardHandler orbit_toggle_scope{orbit_toggle_handler};
 
     standard_fractal.resume();
+    if (show_precision_diagnostics())
+    {
+        goodbye();
+    }
 
     try
     {
@@ -93,6 +100,10 @@ int standard_fractal(SoundSession &sound)
             else
             {
                 standard_fractal.iterate();
+            }
+            if (!g_precision_diagnostics.empty() && show_precision_diagnostics())
+            {
+                goodbye();
             }
             if (standard_fractal.consume_orbit_overlay_displayed())
             {
