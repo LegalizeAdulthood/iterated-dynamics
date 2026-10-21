@@ -277,6 +277,22 @@ foreach(type IN ITEMS bifurcation biflambda bif+sinpi bif=sinpi bifstewart bifma
         PROPERTIES LABELS "autokey;ui;bifurcation" TIMEOUT 80)
 endforeach()
 
+foreach(type IN ITEMS popcorn popcornjul)
+    set(name "popcorn-interrupt-${type}")
+    id_make_test_home("${name}" POPCORN_INTERRUPT_HOME
+        KEYS standard_interrupt.key)
+    add_test(NAME "AutoKeyTest.${name}"
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DCHECK_RESUME=$<SHELL_PATH:$<TARGET_FILE:check-standard-resume>>"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+            "-DFRACTAL_TYPE=${type}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/popcorn_interrupt_test.cmake"
+        WORKING_DIRECTORY "${POPCORN_INTERRUPT_HOME}")
+    set_tests_properties("AutoKeyTest.${name}"
+        PROPERTIES LABELS "autokey;ui;popcorn" TIMEOUT 80)
+endforeach()
+
 foreach(passes IN ITEMS 1 2)
     foreach(pixel IN ITEMS optimized general)
         set(name "standard-interrupt-${passes}-${pixel}")

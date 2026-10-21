@@ -9,6 +9,7 @@
 #include "engine/resume.h"
 #include "fractals/bif_may.h"
 #include "fractals/fractalp.h"
+#include "fractals/frasetup.h"
 
 #include <cmath>
 #include <stdexcept>
@@ -42,7 +43,7 @@ void NonStandardFractal::prepare()
     g_distance_estimator = 0;
 }
 
-bool NonStandardFractal::select()
+NonStandardFractal::Operation NonStandardFractal::select()
 {
     if (!started())
     {
@@ -71,10 +72,23 @@ bool NonStandardFractal::select()
             std::get<BIFURCATION>(m_state).resume();
         }
         m_done = false;
-        return true;
+        return Operation::BIFURCATION;
+
+    case FractalType::POPCORN:
+    case FractalType::POPCORN_JUL:
+        start_timer();
+        prepare();
+        julia_per_image();
+        g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
+        set_symmetry(g_symmetry, false);
+        m_state.emplace<POPCORN>();
+        std::get<POPCORN>(m_state).resume();
+        m_done = std::get<POPCORN>(m_state).done();
+        update_timer();
+        return Operation::POPCORN;
 
     default:
-        return false;
+        return Operation::LEGACY;
     }
 }
 
@@ -100,6 +114,15 @@ void NonStandardFractal::iterate()
         }
         return;
 
+    case POPCORN:
+        if (!m_done)
+        {
+            Popcorn &popcorn{std::get<POPCORN>(m_state)};
+            popcorn.iterate();
+            m_done = popcorn.done();
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -113,6 +136,14 @@ void NonStandardFractal::suspend()
         if (!m_done)
         {
             std::get<BIFURCATION>(m_state).suspend();
+            finish(true);
+        }
+        return;
+
+    case POPCORN:
+        if (!m_done)
+        {
+            std::get<POPCORN>(m_state).suspend();
             finish(true);
         }
         return;
@@ -139,7 +170,7 @@ void NonStandardFractal::finish(const bool interrupted)
 }
 
 // TODO: removed later
-// Slices 47.1-51 replace remaining renderer calls with selected operations.
+// Slices 47.3-51 replace remaining renderer calls with selected operations.
 void NonStandardFractal::render_legacy()
 {
     start_timer();

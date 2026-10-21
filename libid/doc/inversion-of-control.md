@@ -585,11 +585,12 @@ The concrete render operation objects are:
   symmetry defaults, plot defaults, `per_image()` invocation, and final
   status interpretation.  It shares common image setup, timing, and
   cleanup, but its marked dispatch still enters whole UI render loops.
-  Its bounded operation router now owns bifurcation state without invoking
-  per-image or renderer callbacks.  All six builtin bifurcation types now
-  use that selected operation through their UI controller.  The remaining
-  47.x slices bind other standalone families before slice 48 removes
-  per-image reentry.
+  Its bounded operation router owns bifurcation and Popcorn state without
+  renderer callbacks.  All six builtin bifurcation types, popcorn, and
+  popcornjul use selected operations through their UI controllers.
+  Popcorn's Julia setup and symmetry selection stay below UI.  The
+  remaining 47.x slices bind other standalone families before slice 48
+  removes per-image reentry.
 
 The input and presentation side starts, resumes, cancels, or paces the
 active operation.  It does not classify standard versus Lyapunov versus
@@ -996,25 +997,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 47.2. Popcorn Operation Binding
-
-Source: `fractals/popcorn.cpp`, `ui/popcorn.cpp`, and
-`NonStandardFractal`.
-
-- Add `Popcorn` directly to the operation variant and move its existing
-  setup/resume into engine selection.
-- Let the UI advance that selected object with its existing handler and
-  work checkpoints.  Do not call a UI renderer from `iterate()`.
-- Replace the marked temporary bifurcation-only branch in
-  `ui/non_standard_fractal.cpp` with selected-family controller routing.
-  Keep family selection below UI and unsupported families on the marked
-  legacy path.
-
-Done when: popcorn and popcornjul use the selected calculation object.
-
-Validation: reuse their image tests and interruption/resume coverage.
-Add an entry-path autokey case only if that path is uncovered.
 
 ### 47.3. Diffusion Operation Binding
 

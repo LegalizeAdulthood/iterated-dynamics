@@ -7,16 +7,20 @@
 
 #include <engine/calc_frac_init.h>
 #include <engine/engine_timer.h>
+#include <engine/fractals.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
 #include <engine/pixel.h>
+#include <engine/pixel_grid.h>
 #include <engine/resume.h>
+#include <engine/trig_fns.h>
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/bif_may.h>
 #include <fractals/fractalp.h>
 #include <fractals/population.h>
 #include <misc/ValueSaver.h>
+#include <misc/version.h>
 #include <ui/calculate_image.h>
 #include <ui/video.h>
 
@@ -179,7 +183,7 @@ TEST_F(TestNonStandardFractal, unsupportedTypeDoesNotInvokeItsRenderer)
     NonStandardFractal calculation;
     ASSERT_TRUE(calculation.start().empty());
 
-    EXPECT_FALSE(calculation.select());
+    EXPECT_EQ(NonStandardFractal::Operation::LEGACY, calculation.select());
 
     EXPECT_TRUE(calculation.done());
     EXPECT_EQ(0, s_orbit_calls);
@@ -190,7 +194,7 @@ TEST_F(TestNonStandardFractal, activeOperationCannotBeReplaced)
 {
     NonStandardFractal calculation;
     calculation.start();
-    ASSERT_TRUE(calculation.select());
+    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
 
     EXPECT_THROW(calculation.select(), std::logic_error);
 
@@ -209,7 +213,7 @@ TEST_F(TestNonStandardFractal, maySelectionInitializesBetaWithoutLegacySetup)
         NonStandardFractal calculation;
         calculation.start();
 
-        ASSERT_TRUE(calculation.select());
+        ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
 
         const double exponent{std::max(beta, 2.0)};
         EXPECT_EQ(exponent, g_params[2]);
@@ -226,7 +230,7 @@ TEST_F(TestNonStandardFractal, abandonedOperationDiscardsWorkWithoutChargingAnOl
     {
         NonStandardFractal calculation;
         calculation.start();
-        ASSERT_TRUE(calculation.select());
+        ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
     }
 
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
@@ -241,7 +245,7 @@ TEST_F(TestNonStandardFractal, failedIncrementCleansUpInsteadOfEnteringUi)
         {
             NonStandardFractal calculation;
             calculation.start();
-            ASSERT_TRUE(calculation.select());
+            ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
             g_dispatch.set_orbit_calc([]() -> int { throw std::runtime_error("Orbit failed"); });
             calculation.iterate();
         },
@@ -268,7 +272,7 @@ TEST_P(TestStandaloneBifurcation, selectionDoesNoIterationAndOneIncrementCompute
     NonStandardFractal calculation;
     ASSERT_TRUE(calculation.start().empty());
 
-    ASSERT_TRUE(calculation.select());
+    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
 
     EXPECT_FALSE(calculation.done());
     EXPECT_EQ(0, s_orbit_calls);
@@ -283,7 +287,7 @@ TEST_P(TestStandaloneBifurcation, selectedOperationCompletesWithoutRendererCallb
 {
     NonStandardFractal calculation;
     calculation.start();
-    ASSERT_TRUE(calculation.select());
+    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
 
     complete(calculation);
 
@@ -299,7 +303,7 @@ TEST_P(TestStandaloneBifurcation, suspensionResumesAtTheNextUncomputedColumn)
 {
     NonStandardFractal control;
     control.start();
-    ASSERT_TRUE(control.select());
+    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, control.select());
     complete(control);
     const std::array<int, WIDTH * HEIGHT> expected{m_pixels};
     m_pixels.fill(0);
@@ -309,7 +313,7 @@ TEST_P(TestStandaloneBifurcation, suspensionResumesAtTheNextUncomputedColumn)
 
     NonStandardFractal calculation;
     calculation.start();
-    ASSERT_TRUE(calculation.select());
+    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
     calculation.iterate();
     calculation.suspend();
     ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
@@ -319,7 +323,7 @@ TEST_P(TestStandaloneBifurcation, suspensionResumesAtTheNextUncomputedColumn)
     NonStandardFractal resumed;
     resumed.start();
     EXPECT_EQ(suspended_time, g_calc_time);
-    ASSERT_TRUE(resumed.select());
+    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, resumed.select());
     EXPECT_TRUE(g_resume_data.empty());
     complete(resumed);
 
@@ -398,5 +402,130 @@ TEST_P(TestStandaloneBifurcation, uiInterruptionLeavesMenuKeyPendingAndResumesAt
 
 INSTANTIATE_TEST_SUITE_P(Bifurcations, TestStandaloneBifurcation, ValuesIn(BIFURCATION_CASES),
     [](const TestParamInfo<BifurcationCase> &info) -> std::string { return info.param.name; });
+
+class TestStandalonePopcorn : public TestNonStandardFractal, public WithParamInterface<FractalType>
+{
+protected:
+    void SetUp() override
+    {
+        TestNonStandardFractal::SetUp();
+        select_type(GetParam());
+        g_params[0] = 0.05;
+        g_params[1] = 0;
+        g_params[2] = 3;
+        g_params[3] = 0;
+        g_image_region = ImageRegion{{-0.5, -0.5}, {0.5, 0.5}, {-0.5, -0.5}};
+        g_delta_x = 1.0 / (WIDTH - 1);
+        g_delta_y = 1.0 / (HEIGHT - 1);
+        alloc_pixel_grid();
+        fill_pixel_grid();
+        save_trig_functions();
+        set_trig_array(0, "sin");
+        set_trig_array(1, "tan");
+        set_trig_array(2, "sin");
+        set_trig_array(3, "tan");
+    }
+
+    void TearDown() override
+    {
+        restore_trig_functions();
+        free_pixel_grid();
+        TestNonStandardFractal::TearDown();
+    }
+
+    void complete(NonStandardFractal &calculation)
+    {
+        for (long chunks = 0; chunks <= WIDTH * HEIGHT * g_max_iterations && !calculation.done(); ++chunks)
+        {
+            calculation.iterate();
+        }
+        ASSERT_TRUE(calculation.done());
+        EXPECT_TRUE(calculation.completed());
+        calculation.finish(false);
+    }
+
+    ValueSaver<double> m_saved_param_3{g_params[3]};
+    ValueSaver<double> m_saved_bailout{g_magnitude_limit, 4.0};
+    ValueSaver<LDouble> m_saved_dx2{g_delta_x2, 0};
+    ValueSaver<LDouble> m_saved_dy2{g_delta_y2, 0};
+    ValueSaver<double> m_saved_mx1{g_plot_mx1, 0};
+    ValueSaver<double> m_saved_mx2{g_plot_mx2, -(WIDTH - 1.0)};
+    ValueSaver<double> m_saved_my1{g_plot_my1, 0};
+    ValueSaver<double> m_saved_my2{g_plot_my2, HEIGHT - 1.0};
+    ValueSaver<SymmetryType> m_saved_forced_symmetry{g_force_symmetry, SymmetryType::NONE};
+    ValueSaver<FiniteAttractor> m_saved_attractor{g_attractor, FiniteAttractor{}};
+    ValueSaver<Version> m_saved_version{g_version, current_id_version()};
+};
+
+TEST_P(TestStandalonePopcorn, selectionInitializesWithoutRenderingOrLegacyCallbacks)
+{
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+
+    EXPECT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+
+    EXPECT_FALSE(calculation.done());
+    EXPECT_EQ(&g_param_z1, g_float_param);
+    EXPECT_EQ(0, s_orbit_calls);
+    EXPECT_TRUE(m_columns.empty());
+}
+
+TEST_P(TestStandalonePopcorn, incrementalOperationCompletesWithoutInput)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+
+    calculation.iterate();
+
+    EXPECT_FALSE(calculation.done());
+    EXPECT_EQ(0, g_row);
+    EXPECT_EQ(0, g_col);
+    EXPECT_EQ(1L, g_color_iter);
+    complete(calculation);
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_FALSE(m_columns.empty());
+    EXPECT_EQ(0, s_orbit_calls);
+}
+
+TEST_P(TestStandalonePopcorn, suspensionRestartsSavedRowWithSameFinalPixels)
+{
+    NonStandardFractal control;
+    control.start();
+    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, control.select());
+    complete(control);
+    const std::array<int, WIDTH * HEIGHT> expected{m_pixels};
+    m_pixels.fill(0);
+    m_columns.clear();
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    for (long chunks = 0; chunks < (WIDTH + 1) * g_max_iterations; ++chunks)
+    {
+        calculation.iterate();
+    }
+    ASSERT_EQ(1, g_row);
+    ASSERT_EQ(1, g_col);
+    calculation.suspend();
+    ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    ASSERT_FALSE(g_resume_data.empty());
+
+    NonStandardFractal resumed;
+    resumed.start();
+    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, resumed.select());
+    EXPECT_TRUE(g_resume_data.empty());
+    resumed.iterate();
+    EXPECT_EQ(1, g_row);
+    EXPECT_EQ(0, g_col);
+    complete(resumed);
+
+    EXPECT_EQ(expected, m_pixels);
+}
+
+INSTANTIATE_TEST_SUITE_P(PopcornTypes, TestStandalonePopcorn, Values(FractalType::POPCORN, FractalType::POPCORN_JUL),
+    [](const TestParamInfo<FractalType> &info) -> std::string
+    { return info.param == FractalType::POPCORN ? "Popcorn" : "PopcornJulia"; });
 
 } // namespace id::test

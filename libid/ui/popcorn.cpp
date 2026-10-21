@@ -3,35 +3,32 @@
 //
 #include "ui/popcorn.h"
 
-#include "fractals/popcorn.h"
+#include "engine/NonStandardFractal.h"
 #include "ui/diskvid.h"
 #include "ui/KeyboardHandler.h"
 
 #include <memory>
 
-using namespace id::fractals;
+using namespace id::engine;
 
 namespace id::ui
 {
 
-int popcorn_type()
+int popcorn_type(NonStandardFractal &calculation)
 {
     reset_calc_interrupted();
     auto main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
     ScopedKeyboardHandler main_loop_scope{main_loop_handler};
 
-    Popcorn popcorn;
-    popcorn.resume();
-
-    while (!popcorn.done())
+    while (!calculation.done())
     {
-        popcorn.iterate();
+        calculation.iterate();
         display_disk_storage_progress();
-        if (!popcorn.done())
+        if (!calculation.done())
         {
             if (calc_interrupted())
             {
-                popcorn.suspend();
+                calculation.suspend();
                 return -1;
             }
         }

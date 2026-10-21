@@ -8,6 +8,7 @@
 #include "ui/KeyboardHandler.h"
 #include "ui/bifurcation.h"
 #include "ui/calculate_image.h"
+#include "ui/popcorn.h"
 #include "ui/standard_orbit_plot.h"
 
 #include <memory>
@@ -63,15 +64,19 @@ int non_standard_fractal()
     try
     {
         complete_image_setup(non_standard_fractal, non_standard_fractal.start());
-        // TODO: removed later
-        // Slice 47.2 adds controller routing for further selected operations.
-        if (non_standard_fractal.select())
+        switch (non_standard_fractal.select())
         {
+        case NonStandardFractal::Operation::BIFURCATION:
             bifurcation_type(non_standard_fractal);
-        }
-        else
-        {
+            break;
+
+        case NonStandardFractal::Operation::POPCORN:
+            popcorn_type(non_standard_fractal);
+            break;
+
+        case NonStandardFractal::Operation::LEGACY:
             non_standard_fractal.render_legacy();
+            break;
         }
 
         if (driver_key_pressed() != 0)

@@ -48,7 +48,6 @@
 #include "ui/lsystem.h"
 #include "ui/orbit2d.h"
 #include "ui/plasma.h"
-#include "ui/popcorn.h"
 #include "ui/standard_4d.h"
 #include "ui/testpt.h"
 
@@ -673,7 +672,7 @@ const FractalSpecific g_fractal_specific[] = {
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                      //
         SymmetryType::NO_PLOT,                                                 //
         nullptr, nullptr, julia_per_image,                                     //
-        popcorn_type,                                                          //
+        nullptr,                                                               //
         STD_BAILOUT                                                            //
     },
 
@@ -1161,7 +1160,7 @@ const FractalSpecific g_fractal_specific[] = {
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,     //
         SymmetryType::NONE,                                   //
         nullptr, nullptr, julia_per_image,                    //
-        popcorn_type,                                         //
+        nullptr,                                              //
         STD_BAILOUT                                           //
     },
 
