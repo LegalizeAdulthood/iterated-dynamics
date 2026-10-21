@@ -31,6 +31,14 @@ struct DiskStorageProgress
     int row{};
 };
 
+struct TargaStorageRequest
+{
+    std::filesystem::path path;
+    std::vector<Byte> header;
+    int width{};
+    int height{};
+};
+
 extern bool g_disk_16_bit;
 extern bool g_disk_flag;
 extern bool g_disk_targa;

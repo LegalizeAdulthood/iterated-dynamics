@@ -4,6 +4,7 @@
 #pragma once
 
 #include "geometry/3d.h"
+#include "io/disk_storage.h"
 
 #include <config/port.h>
 
@@ -58,10 +59,11 @@ struct Line3DResult
     std::vector<std::string> warnings;
 };
 
+io::TargaStorageRequest prepare_line3d();
 Line3DResult line3d(Byte *pixels, unsigned line_len);
 int targa_color(int x, int y, int color);
 // Empty diagnostic means success; source remains owned by the caller.
-std::string start_targa_overlay(const std::string &path, std::FILE *source);
-std::string start_targa(const std::string &path);
+std::string start_targa_overlay(const std::string &path, std::FILE *source, io::TargaStorageRequest &storage);
+std::string start_targa(const std::string &path, io::TargaStorageRequest &storage);
 
 } // namespace id::geometry

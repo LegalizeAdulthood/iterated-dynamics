@@ -301,8 +301,10 @@ The current code is already part-way through this plan:
   cleanup before failure display, and batch abandonment.  Targa setup
   returns diagnostics; image setup retains palette-rendering fallback.
   Rejected overlays close their sources and cannot trigger replacement
-  of the original without a completed temporary copy.  Shared disk-cache
-  setup bridges and mapping-line status remain for slice 41.7.
+  of the original without a completed temporary copy.  File preparation
+  returns a Targa storage request before rendering.  Restore and image UI
+  controllers prepare backing storage; true-color setup completes with
+  that outcome.  Mapping-line status belongs to the restore adapter.
 - `math/biginit.cpp` reports precision and arena exhaustion through
   `PrecisionError`, without input or application shutdown.  Rejected
   precision requests preserve the active arena; failed stack requests
@@ -338,8 +340,9 @@ The current code is already part-way through this plan:
   of the next requested filename.  Pixel and Targa callers use the I/O
   operations directly.  UI controllers service progress at existing work
   checkpoints, retaining the status throttle without adding yields or
-  input polling.  Slice 41.7 removes the remaining temporary setup
-  bridges; allocation retry/cancel belongs to the storage UI operation.
+  input polling.  UI storage preparation owns allocation retry/cancel;
+  the temporary setup bridges are gone.  Prepared Targa requests carry
+  the file path, header, and dimensions without invoking storage UI.
 - Plasma construction normalizes configuration without allocating storage
   or plotting pixels.  Its UI controller prepares potential storage, then
   calls `init()` with the outcome.  Calculation retains border handling,
@@ -371,12 +374,8 @@ The fresh reverse-call audit also found these live paths:
 - `ifs_type()` selects UI renderers, while `orbit3d_type()` and the IFS3D
   path pass UI render functions to `funny_glasses_call()`.  That function
   also invokes photographer prompts between stereo images.
-- Storage setup and command validation can still invoke modal
-  `stop_msg()` or application shutdown through `goodbye()`.
-- Calculation code still enters disk-storage setup bridges under
-  `libid/ui`.  Cache and backing operations belong to I/O; controllers
-  now service progress between existing work chunks.  Slice 41.7 removes
-  the remaining Targa setup reverse call and mapping-line status.
+- Command validation can still invoke modal `stop_msg()` or application
+  shutdown through `goodbye()`.
 - Image loading, image saving, and command parsing still select UI
   prompts, display status, or exit the application from non-UI modules.
 
@@ -783,11 +782,6 @@ The remaining UI-concept leaks outside `libid/ui` are:
   and sometimes `goodbye()`.  These are input and application-control
   leaks even when reachable only on failure or in debug builds.  Memory
   operations now report failures without UI or shutdown callbacks.
-- Calculation code still calls setup bridges in `ui/diskvid.cpp`, and
-  `geometry/line3d.cpp` still reports mapping-line status.  Pixel access
-  and progress snapshots are I/O-owned; controllers service storage
-  progress between existing work chunks.  Slice 41.7 moves remaining
-  Targa setup decisions and mapping status to requesting UI.
 - `libid/io/loadfile.cpp`, `libid/io/encoder.cpp`, and
   `libid/engine/cmdfiles.cpp`: select prompts, display status, make
   continue/cancel decisions, or shut down the application from non-UI
@@ -985,37 +979,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 41.7. Targa Storage Preparation And Bridge Removal
-
-Source: Targa setup and status in `geometry/line3d.cpp`, its
-`call_line3d()` UI adapter, and the remaining setup bridges in
-`ui/diskvid.cpp`.  UI owner: 3D image restoration and disk-video setup.
-
-Work:
-
-- Give 3D initialization an explicit storage-preparation boundary before
-  rendering lines.  File/header validation and rendering stay below UI;
-  the restore controller owns allocation, retry/cancel, and diagnostics.
-- Preserve overlay source ownership, temporary copies, palette fallback,
-  persistent backing paths, and failure cleanup before reporting errors.
-- Move the mapping-line status out of `line3d()` to the restore
-  controller.  Storage progress already comes from UI checkpoints,
-  not pixel callbacks.
-- Remove `targa_start_disk()`, `pot_start_disk()`,
-  `common_start_disk()`, and `start_disk_video()` after their requesting
-  controllers use explicit setup.  Disk-driver activation remains a UI
-  operation, not a calculation callback.
-- Remove the remaining temporary setup declarations and comments.
-
-Done when:
-
-- Calculation-side storage operations cannot call UI or wait for input.
-- Non-UI code no longer needs `ui/diskvid.h` for storage operations.
-
-Validation: failed Targa setup, overlay rejection and cleanup, normal
-storage completion, existing Targa golds, and the 3D autokey journey.
-No manual storage or rendering check required.
 
 ### 42. Image Loading UI Decisions
 
@@ -1387,9 +1350,6 @@ these direct and indirect paths:
   `fractals/Cellular.cpp`, and renderer table entries in
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or
   dispatch pointers, including from per-image setup.
-- Storage setup can invoke modal failure screens from calculation code
-  through `ui/diskvid.cpp`.
-  Memory operations themselves no longer poll or invoke UI callbacks.
 - `libid/io/loadfile.cpp` and `io/encoder.cpp`: enter mode/parameter
   selection or partial-save prompts from loading and saving operations.
   The giflib slices remove codec polling and keyboard-interrupted saves;

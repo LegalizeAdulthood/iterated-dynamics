@@ -23,6 +23,7 @@
 #include <engine/Potential.h>
 #include <engine/random_seed.h>
 #include <engine/resume.h>
+#include <engine/spindac.h>
 #include <engine/VideoInfo.h>
 #include <geometry/3d.h>
 #include <geometry/line3d.h>
@@ -504,6 +505,7 @@ std::vector<int> line3d_colors_for_current_seed(const int randomize)
 
     g_randomize_3d = randomize;
 
+    EXPECT_TRUE(prepare_line3d().header.empty());
     EXPECT_EQ(0, line3d(pixels.data(), static_cast<unsigned>(pixels.size())).status);
 
     return s_plotted_colors;
@@ -721,7 +723,8 @@ TEST(TestLine3DDiagnostics, outputOpenFailureReturnsDiagnosticWithoutUI)
     const std::string path{files.path("blocked.tga").string()};
     std::filesystem::create_directory(path);
 
-    EXPECT_EQ("OOPS, couldn't open  < " + path + " >", start_targa(path));
+    TargaStorageRequest storage;
+    EXPECT_EQ("OOPS, couldn't open  < " + path + " >", start_targa(path, storage));
 
     EXPECT_TRUE(std::filesystem::is_directory(path));
 }
@@ -735,7 +738,8 @@ TEST(TestLine3DDiagnostics, failedOverlayDestinationDoesNotCloseBorrowedSource)
     const std::unique_ptr<std::FILE, decltype(&std::fclose)> source{std::tmpfile(), std::fclose};
     ASSERT_NE(nullptr, source);
 
-    EXPECT_EQ("OOPS, couldn't open  < " + path + " >", start_targa_overlay(path, source.get()));
+    TargaStorageRequest storage;
+    EXPECT_EQ("OOPS, couldn't open  < " + path + " >", start_targa_overlay(path, source.get(), storage));
 
     EXPECT_NE(EOF, std::fputc(42, source.get()));
     std::rewind(source.get());
@@ -744,7 +748,57 @@ TEST(TestLine3DDiagnostics, failedOverlayDestinationDoesNotCloseBorrowedSource)
 
 TEST(TestLine3DDiagnostics, overlayRequiresASource)
 {
-    EXPECT_THROW(start_targa_overlay("unused.tga", nullptr), std::logic_error);
+    TargaStorageRequest storage;
+    EXPECT_THROW(start_targa_overlay("unused.tga", nullptr, storage), std::logic_error);
+}
+
+TEST(TestLine3DDiagnostics, preparedTargaFileDoesNotAllocateStorageOrUseADriver)
+{
+    Line3DState state;
+    TargaTestFiles files;
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    ValueSaver saved_true_color{g_true_color, false};
+    TargaStorageRequest storage;
+    const std::string path{files.path("prepared.tga").string()};
+
+    ASSERT_TRUE(start_targa(path, storage).empty());
+
+    EXPECT_EQ(path, storage.path.string());
+    EXPECT_EQ(18U, storage.header.size());
+    EXPECT_EQ(8, storage.width);
+    EXPECT_EQ(8, storage.height);
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_EQ(18U + 8U * 8U * 3U, std::filesystem::file_size(path));
+    EXPECT_TRUE(std::filesystem::remove(path));
+}
+
+TEST(TestLine3DDiagnostics, preparedOverlayCanBeDiscardedBeforeAllocationWithoutChangingTheSource)
+{
+    Line3DState state;
+    TargaTestFiles files;
+    const std::filesystem::path path{files.write_overlay(24)};
+    {
+        std::ofstream output{path, std::ios::binary | std::ios::app};
+        const std::array<Byte, 8 * 8 * 3> pixels{};
+        output.write(reinterpret_cast<const char *>(pixels.data()), pixels.size());
+    }
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    ValueSaver saved_light_name{g_light_name, path.string()};
+    ValueSaver saved_debug{g_debug_flag, DebugFlags::NONE};
+    g_targa_out = true;
+    g_targa_overlay = true;
+
+    const TargaStorageRequest storage{prepare_line3d()};
+
+    EXPECT_EQ(files.path("fractemp.tga"), storage.path);
+    EXPECT_EQ(18U, storage.header.size());
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_EQ(std::filesystem::file_size(path), std::filesystem::file_size(storage.path));
+    ASSERT_NE(nullptr, g_out_line_cleanup);
+    g_out_line_cleanup();
+    g_out_line_cleanup = nullptr;
+    EXPECT_FALSE(std::filesystem::exists(storage.path));
+    EXPECT_TRUE(std::filesystem::remove(path));
 }
 
 TEST(TestLine3DDiagnostics, invalidOverlayClosesSourceAndCleanupRetainsOriginal)
@@ -757,11 +811,10 @@ TEST(TestLine3DDiagnostics, invalidOverlayClosesSourceAndCleanupRetainsOriginal)
     ValueSaver saved_debug{g_debug_flag, DebugFlags::NONE};
     g_targa_out = true;
     g_targa_overlay = true;
-    std::array<Byte, 8> pixels{};
 
     try
     {
-        line3d(pixels.data(), pixels.size());
+        prepare_line3d();
         FAIL() << "Expected an unsupported-overlay diagnostic";
     }
     catch (const std::runtime_error &error)
@@ -788,9 +841,8 @@ TEST(TestLine3DDiagnostics, truncatedOverlayDiscardsPartialCopyAndRetainsOrigina
     ValueSaver saved_debug{g_debug_flag, DebugFlags::NONE};
     g_targa_out = true;
     g_targa_overlay = true;
-    std::array<Byte, 8> pixels{};
 
-    EXPECT_THROW(line3d(pixels.data(), pixels.size()), std::runtime_error);
+    EXPECT_THROW(prepare_line3d(), std::runtime_error);
     ASSERT_NE(nullptr, g_out_line_cleanup);
     g_out_line_cleanup();
     g_out_line_cleanup = nullptr;
@@ -807,9 +859,8 @@ TEST(TestLine3DDiagnostics, rayOutputOpenFailureStopsBeforePlottingWithoutUI)
     ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
     ValueSaver saved_filename{g_raytrace_filename, files.path("missing/output.ray").string()};
     g_raytrace_format = RayTraceFormat::DKB_POVRAY;
-    std::array<Byte, 8> pixels{};
 
-    EXPECT_THROW(line3d(pixels.data(), pixels.size()), std::runtime_error);
+    EXPECT_THROW(prepare_line3d(), std::runtime_error);
     ASSERT_NE(nullptr, g_out_line_cleanup);
     g_out_line_cleanup();
     g_out_line_cleanup = nullptr;
@@ -827,11 +878,10 @@ TEST(TestLine3DDiagnostics, unavailableSaveDirectoryReportsOutputFailureWithoutU
     ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
     ValueSaver saved_light_name{g_light_name, std::string{"output.tga"}};
     g_targa_out = true;
-    std::array<Byte, 8> pixels{};
 
     try
     {
-        line3d(pixels.data(), pixels.size());
+        prepare_line3d();
         FAIL() << "Expected an output-directory diagnostic";
     }
     catch (const std::runtime_error &error)
@@ -856,11 +906,10 @@ TEST(TestLine3DDiagnostics, unavailableOverlayCopyDirectoryRetainsOriginal)
     ValueSaver saved_debug{g_debug_flag, DebugFlags::NONE};
     g_targa_out = true;
     g_targa_overlay = true;
-    std::array<Byte, 8> pixels{};
 
     try
     {
-        line3d(pixels.data(), pixels.size());
+        prepare_line3d();
         FAIL() << "Expected an overlay-directory diagnostic";
     }
     catch (const std::runtime_error &error)
@@ -885,6 +934,7 @@ TEST(TestLine3DDiagnostics, degenerateNormalsReturnWarningsWithoutPolling)
     std::array<Byte, 8> pixels{};
     pixels.fill(20);
 
+    EXPECT_TRUE(prepare_line3d().header.empty());
     EXPECT_EQ(0, line3d(pixels.data(), pixels.size()).status);
     const Line3DResult result{line3d(pixels.data(), pixels.size())};
 

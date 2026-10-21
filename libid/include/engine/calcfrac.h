@@ -6,6 +6,7 @@
 #include "math/cmplx.h"
 #include "math/big.h"
 #include "math/Point.h"
+#include "io/disk_storage.h"
 
 #include <config/port.h>
 
@@ -213,10 +214,13 @@ class ImageCalculation
 {
 public:
     std::vector<std::string> start();
+    const io::TargaStorageRequest &targa_storage() const;
+    std::string complete_targa_storage(bool available);
     void finish();
 
 private:
     bool m_started{};
+    io::TargaStorageRequest m_targa_storage;
 };
 
 class NonStandardFractal

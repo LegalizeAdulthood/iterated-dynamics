@@ -26,7 +26,7 @@ int plasma_type()
     }
 
     Plasma plasma;
-    const bool potential_storage_available{plasma.potential_storage_required() && pot_start_disk() >= 0};
+    const bool potential_storage_available{plasma.potential_storage_required() && prepare_potential_storage()};
     plasma.init(potential_storage_available);
     while (!plasma.done())
     {

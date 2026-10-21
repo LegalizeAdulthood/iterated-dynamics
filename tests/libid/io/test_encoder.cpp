@@ -482,7 +482,7 @@ TEST_F(TestGifWriterRaster, savesPotentialRowsAsColorsThenLowBytes)
     const std::vector<Byte> pixels{image_pixels()};
     init_memory();
     m_memory_initialized = true;
-    ASSERT_EQ(0, common_start_disk(g_screen_x_dots, g_screen_y_dots * 2, 256));
+    ASSERT_TRUE(prepare_disk_storage(g_screen_x_dots, g_screen_y_dots * 2, 256));
     g_disk_16_bit = true;
     std::vector<Byte> stored;
     for (int row = 0; row < 3; ++row)

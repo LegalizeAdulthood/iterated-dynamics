@@ -221,7 +221,7 @@ TEST_F(TestPotentialRestore, uiPreparesStorageOnceBeforeRestoringAllScanlines)
 {
     EXPECT_CALL(m_driver, display_string(_, _, _, _, StrEq("clearing 16bit pot work area")));
     EXPECT_CALL(m_driver, flush());
-    ASSERT_EQ(0, pot_start_disk());
+    ASSERT_TRUE(prepare_potential_storage());
     write_disk_pixel(4, 7, 171);
 
     EXPECT_EQ(0, restore_image());
@@ -248,7 +248,7 @@ TEST_F(TestPotentialRestore, failedUiSetupCannotBeRetriedInsideScanlineOutput)
     EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(AnyNumber());
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
     EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
-    ASSERT_EQ(-1, pot_start_disk());
+    ASSERT_FALSE(prepare_potential_storage());
     EXPECT_CALL(m_driver, is_disk()).Times(0);
     std::array<Byte, 3> pixels{12, 34, 56};
 

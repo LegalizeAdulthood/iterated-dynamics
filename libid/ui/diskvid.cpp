@@ -43,13 +43,12 @@ constexpr int BOX_DEPTH{12};
 
 std::chrono::time_point<std::chrono::high_resolution_clock> s_last_status{};
 
-// TODO: removed later
-// Slice 41.7 moves Targa setup decisions to the restore controller.
-int start_disk_video(
-    const std::int64_t row_size, const std::int64_t col_size, const int colors, const std::vector<Byte> &header)
+} // namespace
+
+bool prepare_disk_storage(const std::int64_t row_size, const std::int64_t col_size, const int colors,
+    const std::vector<Byte> &header, const std::filesystem::path &backing_path)
 {
     const bool targa{!header.empty()};
-    const std::filesystem::path backing_path{targa ? targa_disk_path() : std::filesystem::path{}};
     if (g_disk_flag)
     {
         end_disk();
@@ -86,13 +85,13 @@ int start_disk_video(
     if (row_size > std::numeric_limits<int>::max() || col_size > std::numeric_limits<int>::max())
     {
         stop_msg("*** disk video dimensions are too large ***");
-        return -1;
+        return false;
     }
     std::uint64_t blocks{};
     if (!disk_video_memory_blocks(row_size, col_size, targa ? 256 : colors, static_cast<int>(header.size()), blocks))
     {
         stop_msg("*** disk video dimensions overflow allocation size ***");
-        return -1;
+        return false;
     }
     if (driver_is_disk())
     {
@@ -112,7 +111,7 @@ int start_disk_video(
             if (stop_msg(StopMsgFlags::CANCEL, std::string{error.what()} + "\nPress a key to retry."))
             {
                 g_good_mode = false;
-                return -1;
+                return false;
             }
         }
     }
@@ -141,13 +140,13 @@ int start_disk_video(
     {
         stop_msg("*** insufficient free memory for cache buffers ***");
         g_good_mode = false;
-        return -1;
+        return false;
     }
     catch (const MemoryError &error)
     {
         stop_msg(error.what());
         g_good_mode = false;
-        return -1;
+        return false;
     }
     if (driver_is_disk())
     {
@@ -155,21 +154,17 @@ int start_disk_video(
             disk_video_memory_type() == MemoryLocation::DISK ? "Using your Disk Drive" : "Using your memory");
         dvid_status(0, "");
     }
-    return 0;
+    return true;
 }
-
-} // namespace
 
 bool g_good_mode{};
 
 int start_disk()
 {
-    return common_start_disk(g_screen_x_dots, g_screen_y_dots, g_colors);
+    return prepare_disk_storage(g_screen_x_dots, g_screen_y_dots, g_colors) ? 0 : -1;
 }
 
-// TODO: removed later
-// Slice 41.7 replaces this temporary storage setup bridge.
-int pot_start_disk()
+bool prepare_potential_storage()
 {
     if (driver_is_disk())
     {
@@ -179,44 +174,28 @@ int pot_start_disk()
     {
         show_temp_msg("clearing 16bit pot work area");
     }
-    const int result{common_start_disk(g_screen_x_dots, static_cast<std::int64_t>(g_screen_y_dots) * 2, g_colors)};
+    const bool available{prepare_disk_storage(g_screen_x_dots, static_cast<std::int64_t>(g_screen_y_dots) * 2, g_colors)};
     clear_temp_msg();
-    if (result == 0)
+    if (available)
     {
         g_disk_16_bit = true;
     }
-    return result;
+    return available;
 }
 
-// TODO: removed later
-// Slice 41.7 moves Targa-storage setup to the restore controller.
-int targa_start_disk(std::FILE *file, const int overhead)
+bool prepare_targa_storage(const TargaStorageRequest &request)
 {
-    const std::filesystem::path path{targa_disk_path()};
+    if (request.path.empty() || request.header.empty() || request.width <= 0 || request.height <= 0)
+    {
+        throw std::logic_error("Targa storage requires a prepared file");
+    }
     if (driver_is_disk())
     {
         end_disk();
         set_null_video();
-        set_targa_disk_path(path);
     }
-    try
-    {
-        const std::vector<Byte> header{read_targa_header(file, overhead)};
-        return start_disk_video(
-            static_cast<std::int64_t>(g_logical_screen.x_dots) * 3, g_logical_screen.y_dots, g_colors, header);
-    }
-    catch (const MemoryError &error)
-    {
-        stop_msg(error.what());
-        return -1;
-    }
-}
-
-// TODO: removed later
-// Slice 41.7 removes the remaining storage setup bridge.
-int common_start_disk(const std::int64_t row_size, const std::int64_t col_size, const int colors)
-{
-    return start_disk_video(row_size, col_size, colors, {});
+    return prepare_disk_storage(
+        static_cast<std::int64_t>(request.width) * 3, request.height, 256, request.header, request.path);
 }
 
 void display_disk_storage_progress()

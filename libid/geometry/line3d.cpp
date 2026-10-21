@@ -27,7 +27,6 @@
 #include "misc/version.h"
 #include "ui/big_while_loop.h"
 #include "io/disk_storage.h"
-#include "ui/diskvid.h"
 #include "ui/stereo.h"
 
 #include <fmt/format.h>
@@ -103,7 +102,7 @@ static void triangle_bounds(float pt_t[3][3]);
 static void transparent_clip_color(int x, int y, int color);
 static void vec_draw_line(const double *v1, const double *v2, int color);
 static std::string file_error(const std::string &filename, FileError error);
-static std::string targa_validate(const std::string &filename);
+static std::string targa_validate(const std::string &filename, TargaStorageRequest &storage);
 
 // static variables
 static void (*s_fill_plot)(int x, int y, int color){};   //
@@ -240,6 +239,10 @@ Line3DResult line3d(Byte *pixels, unsigned line_len)
     //**********************************************************************
     if (g_row_count++ == 0)
     {
+        if (g_targa_out && (!g_disk_flag || !g_disk_targa))
+        {
+            throw std::logic_error("3D Targa output requires prepared storage");
+        }
         int err = first_time(line_len, v);
         if (err != 0)
         {
@@ -332,10 +335,6 @@ Line3DResult line3d(Byte *pixels, unsigned line_len)
     {
         // Get init geometry in lightsource modes
         goto really_the_bottom; // skip over most of the line3d calcs
-    }
-    if (driver_is_disk())
-    {
-        dvid_status(1, "mapping to 3d, reading line " + std::to_string(g_current_row));
     }
 
     if (!col && g_raytrace_format != RayTraceFormat::NONE && g_current_row != 0)
@@ -1499,7 +1498,8 @@ static std::string file_error(const std::string &filename, const FileError error
 //
 // *********************************************************************
 
-static std::string start_targa_overlay(const std::string &path, std::FILE *source, const bool overlay)
+static std::string start_targa_overlay(
+    const std::string &path, std::FILE *source, const bool overlay, TargaStorageRequest &storage)
 {
     if (overlay && source == nullptr)
     {
@@ -1603,30 +1603,34 @@ static std::string start_targa_overlay(const std::string &path, std::FILE *sourc
         std::filesystem::remove(path, ignore);
         return file_error(path, FileError::DISK_FULL);
     }
-    set_targa_disk_path(path);
-    if (targa_start_disk(output.release(), s_targa_header_24) != 0)
+    try
     {
-        end_disk();
-        std::error_code ec;
-        std::filesystem::remove(path, ec);
-        return file_error(path, FileError::DISK_FULL);
+        storage = {path, read_targa_header(output.release(), s_targa_header_24), g_logical_screen.x_dots,
+            g_logical_screen.y_dots};
+    }
+    catch (...)
+    {
+        output.reset();
+        std::error_code ignore;
+        std::filesystem::remove(path, ignore);
+        throw;
     }
     return {};
 }
 
-std::string start_targa_overlay(const std::string &path, std::FILE *source)
+std::string start_targa_overlay(const std::string &path, std::FILE *source, TargaStorageRequest &storage)
 {
-    return start_targa_overlay(path, source, true);
+    return start_targa_overlay(path, source, true, storage);
 }
 
-std::string start_targa(const std::string &path)
+std::string start_targa(const std::string &path, TargaStorageRequest &storage)
 {
     s_targa_header_24 = 18;
     set_upr_lwr();
-    return start_targa_overlay(path, nullptr, false);
+    return start_targa_overlay(path, nullptr, false, storage);
 }
 
-static std::string targa_validate(const std::string &filename)
+static std::string targa_validate(const std::string &filename, TargaStorageRequest &storage)
 {
     // Attempt to open source file for reading
     const std::filesystem::path path{find_file(ReadFile::IMAGE, filename)};
@@ -1694,7 +1698,7 @@ static std::string targa_validate(const std::string &filename)
     {
         return file_error(s_targa_temp, FileError::OPEN_FAILED);
     }
-    if (const std::string error{start_targa_overlay(temp_path.string(), fp)}; !error.empty())
+    if (const std::string error{start_targa_overlay(temp_path.string(), fp, storage)}; !error.empty())
     {
         return error;
     }
@@ -2429,21 +2433,10 @@ static void set_upr_lwr()
     s_line_length1 = 3 * g_logical_screen.x_dots;    // line length @ 3 bytes per pixel
 }
 
-static int first_time(const int line_len, Vector v)
+TargaStorageRequest prepare_line3d()
 {
-    Matrix light_mat;               // m w/no trans, keeps obj. on screen
-                   // rotation values
-    // corners of transformed xdotx by ydots x colors box
-    double x_min;
-    double y_min;
-    double z_min;
-    double x_max;
-    double y_max;
-    double z_max;
-    Vector direct;
-    // current,start,stop latitude
-    // current start,stop longitude
-    // increment of latitude
+    TargaStorageRequest storage;
+    g_current_row = 0;
     g_out_line_cleanup = line3d_cleanup;
 
     s_even_odd_row = 0;
@@ -2486,7 +2479,7 @@ static int first_time(const int line_len, Vector v)
         if (g_targa_overlay)
         {
             // Make sure target file is a supportable Targa File
-            if (const std::string error{targa_validate(g_light_name)}; !error.empty())
+            if (const std::string error{targa_validate(g_light_name, storage)}; !error.empty())
             {
                 throw std::runtime_error{error};
             }
@@ -2498,13 +2491,31 @@ static int first_time(const int line_len, Vector v)
             {
                 throw std::runtime_error{file_error(g_light_name, FileError::OPEN_FAILED)};
             }
-            if (const std::string error{start_targa(path)}; !error.empty())
+            if (const std::string error{start_targa(path, storage)}; !error.empty())
             {
                 throw std::runtime_error{error};
             }
         }
     }
 
+    return storage;
+}
+
+static int first_time(const int line_len, Vector v)
+{
+    Matrix light_mat; // m w/no trans, keeps obj. on screen
+                      // rotation values
+    // corners of transformed xdotx by ydots x colors box
+    double x_min;
+    double y_min;
+    double z_min;
+    double x_max;
+    double y_max;
+    double z_max;
+    Vector direct;
+    // current,start,stop latitude
+    // current start,stop longitude
+    // increment of latitude
     s_rand_factor = 14 - g_randomize_3d;
     if (g_randomize_3d != 0)
     {

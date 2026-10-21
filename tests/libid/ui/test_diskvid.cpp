@@ -107,13 +107,13 @@ TEST(TestDiskVideo, memoryBlocksIncludeHeaderAndCachePadding)
     EXPECT_EQ(3U, blocks);
 }
 
-TEST(TestDiskVideo, commonStartDiskUsesMemoryWhenAvailable)
+TEST(TestDiskVideo, preparedStorageUsesMemoryWhenAvailable)
 {
     MockDriver driver;
     DiskVideoState state{&driver, DebugFlags::NONE};
     EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
 
-    EXPECT_EQ(0, common_start_disk(16, 16, 256));
+    EXPECT_TRUE(prepare_disk_storage(16, 16, 256));
 
     EXPECT_TRUE(g_disk_flag);
     EXPECT_EQ(MemoryLocation::MEMORY, disk_video_memory_type());
@@ -121,13 +121,13 @@ TEST(TestDiskVideo, commonStartDiskUsesMemoryWhenAvailable)
     EXPECT_EQ(77, read_disk_pixel(15, 15));
 }
 
-TEST(TestDiskVideo, commonStartDiskUsesDiskWhenForced)
+TEST(TestDiskVideo, preparedStorageUsesDiskWhenForced)
 {
     MockDriver driver;
     DiskVideoState state{&driver, DebugFlags::FORCE_MEMORY_FROM_DISK};
     EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
 
-    EXPECT_EQ(0, common_start_disk(64, 64, 256));
+    EXPECT_TRUE(prepare_disk_storage(64, 64, 256));
 
     EXPECT_TRUE(g_disk_flag);
     EXPECT_EQ(MemoryLocation::DISK, disk_video_memory_type());
@@ -151,7 +151,8 @@ TEST(TestDiskVideo, targaCachePreservesHeaderAndPixelsAcrossBackingBlocks)
     header.fill(13);
     ASSERT_EQ(header.size(), std::fwrite(header.data(), 1, header.size(), file));
     set_targa_disk_path(path);
-    ASSERT_EQ(0, targa_start_disk(file, static_cast<int>(header.size())));
+    const TargaStorageRequest request{path, read_targa_header(file, static_cast<int>(header.size())), 2, 2};
+    ASSERT_TRUE(prepare_targa_storage(request));
 
     write_targa_pixel(0, 0, 10, 20, 30);
     write_targa_pixel(1, 1, 40, 50, 60);
@@ -305,7 +306,7 @@ TEST_F(TestDiskVideoSetup, retryAllocatesStorageAfterUiCorrectsTheFailure)
                 return ID_KEY_ENTER;
             }));
 
-    EXPECT_EQ(0, common_start_disk(64, 64, 256));
+    EXPECT_TRUE(prepare_disk_storage(64, 64, 256));
 
     EXPECT_TRUE(g_disk_flag);
     EXPECT_TRUE(g_good_mode);
@@ -330,7 +331,7 @@ TEST_F(TestDiskVideoSetup, failureCanBeRetriedMoreThanOnce)
                 return ID_KEY_ENTER;
             }));
 
-    EXPECT_EQ(0, common_start_disk(64, 64, 256));
+    EXPECT_TRUE(prepare_disk_storage(64, 64, 256));
 
     EXPECT_TRUE(g_disk_flag);
     EXPECT_EQ(MemoryLocation::DISK, disk_video_memory_type());
@@ -341,14 +342,14 @@ TEST_F(TestDiskVideoSetup, cancellationLeavesNoStorageAndAllowsLaterSetup)
     expect_errors(1);
     EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
 
-    EXPECT_EQ(-1, common_start_disk(64, 64, 256));
+    EXPECT_FALSE(prepare_disk_storage(64, 64, 256));
 
     EXPECT_FALSE(g_good_mode);
     EXPECT_FALSE(g_disk_flag);
     EXPECT_EQ(MemoryLocation::NOWHERE, disk_video_memory_type());
     EXPECT_TRUE(exit_check().empty());
     std::filesystem::create_directory(g_temp_dir);
-    EXPECT_EQ(0, common_start_disk(64, 64, 256));
+    EXPECT_TRUE(prepare_disk_storage(64, 64, 256));
     EXPECT_TRUE(g_disk_flag);
     EXPECT_EQ(MemoryLocation::DISK, disk_video_memory_type());
 }
@@ -356,7 +357,7 @@ TEST_F(TestDiskVideoSetup, cancellationLeavesNoStorageAndAllowsLaterSetup)
 TEST_F(TestDiskVideoSetup, failedReplacementReleasesPreviousStorageBeforePrompting)
 {
     g_debug_flag = DebugFlags::NONE;
-    ASSERT_EQ(0, common_start_disk(16, 16, 256));
+    ASSERT_TRUE(prepare_disk_storage(16, 16, 256));
     write_disk_pixel(3, 7, 77);
     g_debug_flag = DebugFlags::FORCE_MEMORY_FROM_DISK;
     expect_errors(1);
@@ -370,7 +371,7 @@ TEST_F(TestDiskVideoSetup, failedReplacementReleasesPreviousStorageBeforePrompti
                 return ID_KEY_ESC;
             }));
 
-    EXPECT_EQ(-1, common_start_disk(64, 64, 256));
+    EXPECT_FALSE(prepare_disk_storage(64, 64, 256));
 
     EXPECT_FALSE(g_disk_flag);
     EXPECT_FALSE(g_good_mode);
@@ -380,7 +381,7 @@ TEST_F(TestDiskVideoSetup, batchFailureReportsAndCancelsWithoutInput)
 {
     g_init_batch = BatchMode::NORMAL;
 
-    EXPECT_EQ(-1, common_start_disk(64, 64, 256));
+    EXPECT_FALSE(prepare_disk_storage(64, 64, 256));
 
     EXPECT_FALSE(g_disk_flag);
     EXPECT_FALSE(g_good_mode);
@@ -397,11 +398,24 @@ TEST_F(TestDiskVideoSetup, matchingAllocationDoesNotDisplayDebugStatistics)
 {
     g_debug_flag = DebugFlags::DISPLAY_MEMORY_STATISTICS;
 
-    EXPECT_EQ(0, common_start_disk(64, 64, 256));
+    EXPECT_TRUE(prepare_disk_storage(64, 64, 256));
 
     EXPECT_TRUE(g_disk_flag);
     EXPECT_EQ(MemoryLocation::MEMORY, disk_video_memory_type());
     EXPECT_FALSE(std::filesystem::exists(m_directory / "debug/stopmsg.txt"));
+}
+
+TEST_F(TestDiskVideoSetup, cancelledTargaPreparationLeavesNoClaimedBacking)
+{
+    const TargaStorageRequest request{m_directory / "missing" / "image.tga", std::vector<Byte>(18), 2, 2};
+    expect_errors(1);
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
+
+    EXPECT_FALSE(prepare_targa_storage(request));
+
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_FALSE(g_good_mode);
+    EXPECT_TRUE(exit_check().empty());
 }
 
 } // namespace id::test

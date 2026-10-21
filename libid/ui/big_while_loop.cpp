@@ -540,7 +540,7 @@ MainState big_while_loop(MainContext &context)
             else if (g_potential.store_16bit)
             {
                 // .pot format input file
-                if (pot_start_disk() < 0)
+                if (!prepare_potential_storage())
                 {
                     // pot file failed?
                     g_show_file = ShowFile::IMAGE_LOADED;
@@ -980,7 +980,21 @@ static int call_line3d(Byte *pixels, const int line_len)
     std::string failure;
     try
     {
+        if (g_row_count == 0)
+        {
+            const TargaStorageRequest storage{prepare_line3d()};
+            if (!storage.header.empty() && !prepare_targa_storage(storage))
+            {
+                std::error_code ignore;
+                std::filesystem::remove(storage.path, ignore);
+                throw std::runtime_error("OOPS, ran out of disk space. < " + storage.path.string() + " >");
+            }
+        }
         result = line3d(pixels, line_len);
+        if (driver_is_disk())
+        {
+            dvid_status(1, "mapping to 3d, reading line " + std::to_string(g_current_row));
+        }
     }
     catch (const std::bad_alloc &)
     {

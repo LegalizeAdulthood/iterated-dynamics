@@ -104,7 +104,7 @@ int standard_fractal(SoundSession &sound)
             }
             if (standard_fractal.potential_storage_required())
             {
-                standard_fractal.complete_potential_storage(pot_start_disk() >= 0);
+                standard_fractal.complete_potential_storage(prepare_potential_storage());
                 continue;
             }
             display_disk_storage_progress();

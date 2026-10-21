@@ -7,6 +7,7 @@
 #include "engine/cmdfiles.h"
 #include "math/biginit.h"
 #include "ui/stop_msg.h"
+#include "ui/diskvid.h"
 
 #include <new>
 #include <stdexcept>
@@ -30,6 +31,14 @@ int calculate_image()
         for (const std::string &warning : image.start())
         {
             stop_msg(warning);
+        }
+        if (!image.targa_storage().header.empty())
+        {
+            const std::string warning{image.complete_targa_storage(prepare_targa_storage(image.targa_storage()))};
+            if (!warning.empty())
+            {
+                stop_msg(warning);
+            }
         }
         result = calc_fract();
     }

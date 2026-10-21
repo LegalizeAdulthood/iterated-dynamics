@@ -328,6 +328,7 @@ std::vector<std::string> ImageCalculation::start()
 {
     std::vector<std::string> warnings;
     m_started = false;
+    m_targa_storage = {};
     const bool resuming{g_calc_status == CalcStatus::RESUMABLE};
 
     g_attractor.count = 0; // default to no known finite attractors
@@ -343,15 +344,8 @@ std::vector<std::string> ImageCalculation::start()
     if (g_true_color)
     {
         const std::string light_path{get_checked_save_path(WriteFile::IMAGE, g_light_name).string()};
-        const std::string error{start_targa(light_path)};
-        if (error.empty())
-        {
-            // Have to force passes = 1
-            g_std_calc_mode = CalcMode::ONE_PASS;
-            g_user.std_calc_mode = g_std_calc_mode;
-            g_put_color = put_true_color_disk;
-        }
-        else
+        const std::string error{start_targa(light_path, m_targa_storage)};
+        if (!error.empty())
         {
             g_true_color = false;
             warnings.push_back(error);
@@ -555,6 +549,35 @@ std::vector<std::string> ImageCalculation::start()
     return warnings;
 }
 
+const TargaStorageRequest &ImageCalculation::targa_storage() const
+{
+    return m_targa_storage;
+}
+
+std::string ImageCalculation::complete_targa_storage(const bool available)
+{
+    if (m_targa_storage.header.empty())
+    {
+        throw std::logic_error("Image calculation has no pending Targa storage");
+    }
+    std::string warning;
+    if (available)
+    {
+        g_std_calc_mode = CalcMode::ONE_PASS;
+        g_user.std_calc_mode = g_std_calc_mode;
+        g_put_color = put_true_color_disk;
+    }
+    else
+    {
+        g_true_color = false;
+        warning = "OOPS, ran out of disk space. < " + m_targa_storage.path.string() + " >";
+        std::error_code ignore;
+        std::filesystem::remove(m_targa_storage.path, ignore);
+    }
+    m_targa_storage = {};
+    return warning;
+}
+
 static bool static_calc_type_uses_standard_engine()
 {
     const CalcType table_calc_type{g_cur_fractal_specific->calc_type};
@@ -615,6 +638,13 @@ void NonStandardFractal::finish(const bool interrupted)
 
 void ImageCalculation::finish()
 {
+    if (!m_targa_storage.header.empty())
+    {
+        std::error_code ignore;
+        std::filesystem::remove(m_targa_storage.path, ignore);
+        m_targa_storage = {};
+        g_true_color = false;
+    }
     if (m_started)
     {
         g_calc_time += g_timer_interval;

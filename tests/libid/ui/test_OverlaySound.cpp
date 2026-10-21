@@ -541,6 +541,83 @@ TEST_F(TestOverlaySound, failedImageSetupClearsResumeStateWithoutChargingThePrev
     EXPECT_TRUE(g_resume_data.empty());
 }
 
+class TestTrueColorStorage : public TestOverlaySound
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    ValueSaver<bool> m_saved_true_color{g_true_color, true};
+    ValueSaver<bool> m_saved_start_orbit{g_start_show_orbit, false};
+    ValueSaver<std::string> m_saved_name{geometry::g_light_name, std::string{"truecolor.tga"}};
+};
+
+void TestTrueColorStorage::SetUp()
+{
+    TestOverlaySound::SetUp();
+    end_disk();
+    init_memory();
+    m_directory = std::filesystem::temp_directory_path() /
+        ("id-truecolor-storage-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+    std::filesystem::create_directory(m_directory);
+    set_save_library(m_directory);
+}
+
+void TestTrueColorStorage::TearDown()
+{
+    end_disk();
+    EXPECT_TRUE(exit_check().empty());
+    TestOverlaySound::TearDown();
+}
+
+TEST_F(TestTrueColorStorage, imageSetupReturnsStorageRequirementsWithoutEnteringUi)
+{
+    EXPECT_CALL(m_driver, is_disk()).Times(0);
+    ImageCalculation image;
+
+    EXPECT_TRUE(image.start().empty());
+
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_EQ(22U, image.targa_storage().header.size());
+    EXPECT_EQ(2, image.targa_storage().width);
+    EXPECT_EQ(2, image.targa_storage().height);
+    EXPECT_EQ(put_color_a, g_put_color);
+    const std::filesystem::path path{image.targa_storage().path};
+    EXPECT_TRUE(std::filesystem::exists(path));
+    const std::string warning{image.complete_targa_storage(false)};
+    EXPECT_THAT(warning, HasSubstr(path.string()));
+    EXPECT_FALSE(g_true_color);
+    EXPECT_FALSE(std::filesystem::exists(path));
+    EXPECT_TRUE(image.targa_storage().header.empty());
+    EXPECT_EQ(put_color_a, g_put_color);
+    EXPECT_THROW(image.complete_targa_storage(false), std::logic_error);
+    image.finish();
+}
+
+TEST_F(TestTrueColorStorage, finishingAbandonedSetupDiscardsThePreparedFile)
+{
+    ImageCalculation image;
+    ASSERT_TRUE(image.start().empty());
+    const std::filesystem::path path{image.targa_storage().path};
+
+    image.finish();
+
+    EXPECT_FALSE(std::filesystem::exists(path));
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_FALSE(g_true_color);
+}
+
+TEST_F(TestTrueColorStorage, controllerPreparesStorageAndFinishesTheTargaImage)
+{
+    EXPECT_EQ(0, calculate_image());
+
+    EXPECT_TRUE(g_true_color);
+    EXPECT_EQ(CalcMode::ONE_PASS, g_std_calc_mode);
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_TRUE(exit_check().empty());
+    EXPECT_EQ(22U + 2U * 2U * 3U, std::filesystem::file_size(m_directory / "image" / "truecolor.tga"));
+}
+
 class TestStandardPotentialStorage : public TestOverlaySound
 {
 protected:
