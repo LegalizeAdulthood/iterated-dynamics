@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "fractals/frasetup.h"
 
@@ -7,7 +8,6 @@
 #include "engine/calcfrac.h"
 #include "engine/calmanfp.h"
 #include "engine/cmdfiles.h"
-#include "engine/engine_timer.h"
 #include "engine/fractals.h"
 #include "engine/get_julia_attractor.h"
 #include "engine/sound.h"
@@ -45,15 +45,6 @@ bool burning_ship_per_image()
     // use the main processing loop
     g_dispatch.set_calc_type(standard_fractal_type);
     return true;
-}
-
-bool standalone_per_image()
-{
-    const CalcType calc_type{g_dispatch.calc_type()};
-    start_calculation_timer();
-    calc_type();
-    update_calculation_timer();
-    return false; // effectively disable solid-guessing
 }
 
 bool mandel_z_power_perturbation_per_image()

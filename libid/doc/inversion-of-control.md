@@ -371,9 +371,10 @@ The current code is already part-way through this plan:
 The fresh reverse-call audit also found these live paths:
 
 - `calc_fract()` calls UI render controllers directly.
-  `NonStandardFractal::render_legacy()` and `standalone_per_image()` also
-  reach UI render loops through dispatch function pointers stored in
-  `FractalSpecific`.
+  `NonStandardFractal::render_legacy()` also reaches UI render loops
+  through dispatch function pointers stored in `FractalSpecific`.
+  Per-image callbacks perform setup only; their renderer-call bridge
+  and nested timer brackets have been removed.
 - `ifs_type()` selects UI renderers, while `orbit3d_type()` and the IFS3D
   path pass UI render functions to `funny_glasses_call()`.  That function
   also invokes photographer prompts between stereo images.
@@ -605,8 +606,10 @@ The concrete render operation objects are:
   stay below UI.  Ant's Ctrl+A entry selects an operation on the existing
   image, without restarting common image setup, timing, or resource
   cleanup.
-  Slice 48 removes obsolete standalone per-image reentry before the
-  remaining renderer-family bindings.
+  Per-image callbacks no longer invoke renderers.  IFS has no per-image
+  callback; the marked legacy entry calls its renderer once without
+  applying standard symmetry, and stereo skips absent second-eye setup.
+  Bounded operations cannot enter that legacy rendering entry.
 
 The input and presentation side starts, resumes, cancels, or paces the
 active operation.  It does not classify standard versus Lyapunov versus
@@ -620,10 +623,10 @@ return control after bounded work.  It is not fixed by moving those calls
 behind another engine wrapper.
 
 The indirect paths also belong to that boundary.  `FractalSpecific`
-contains UI renderer pointers, `standalone_per_image()` invokes those
-pointers, and IFS and 3D front ends call UI controllers from
-`fractals/lorenz.cpp`.  A top-level-only change
-does not eliminate those nested UI calls.
+still contains UI renderer pointers used by the marked legacy entry;
+IFS and 3D front ends call UI controllers from `fractals/lorenz.cpp`.
+Per-image callbacks no longer invoke those renderers.  A top-level-only
+change does not eliminate the remaining nested UI calls.
 
 The implementation order closes calculation-side input and presentation
 paths first, then extracts misplaced backend helpers, and finally makes
@@ -1014,38 +1017,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 48. Remove Per-Image Renderer Reentry
-
-Source: `standalone_per_image()` in `fractals/frasetup.cpp`, full-renderer
-entries in `fractals/fractalp.cpp`, and
-`NonStandardFractal::render_legacy()` in
-`engine/NonStandardFractal.cpp`.
-
-Work:
-
-- Replace full-renderer UI function pointers with selection of the
-  standalone calculation operations prepared in the preceding slice.
-- Make per-image routines perform setup only.  Remove nested full-render
-  calls and their timer brackets; preserve actual setup-result meaning.
-- Keep the fractal table const and runtime dispatch changes explicit.
-- Remove corresponding UI includes and transitional renderer-call
-  bridges once their calculation operation owns the work.
-- Remove obsolete entry points left by the 47.x family bindings.  Keep
-  the explicitly marked legacy dispatch for IFS, stereo, and orbit
-  families until slices 49-51 replace those paths.  No bounded
-  `iterate()` may fall back to that legacy entry.
-
-Done when:
-
-- Neither `per_image()` nor its setup callbacks can enter a UI render
-  loop through a saved function pointer.
-
-Validation: reuse cellular and representative standalone autokey workflows
-through the real dispatch path, including menu return, continuation or
-restart as supported, and saving.  Retain operation-selection and injected
-setup-failure tests; passing a script alone does not establish the absence
-of nested UI callbacks.
-
 ### 49. IFS Front-End Calculation Selection
 
 Source: `ifs_type()` and the `ifs3d()` front end in
@@ -1210,10 +1181,10 @@ these direct and indirect paths:
   photographer prompt and second-image modal message.  IFS and orbit
   front ends also invoke complete UI render loops.
 - `libid/engine/calcfrac.cpp`, `engine/NonStandardFractal.cpp`,
-  `fractals/frasetup.cpp`,
-  `fractals/Cellular.cpp`, and renderer table entries in
+  and remaining renderer table entries in
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or
-  dispatch pointers, including from per-image setup.
+  dispatch pointers.  Per-image setup no longer enters renderers;
+  Cellular is already an engine-owned incremental operation.
 - GIF codec operations do not poll input or support keyboard-interrupted
   saves.  Image-save progress, notifications, and exit policy are
   UI-owned; `io/ImageSave` owns encoding and file cleanup.  Image-load

@@ -495,15 +495,24 @@ void NonStandardFractal::finish(const bool interrupted)
 }
 
 // TODO: removed later
-// Slices 48-51 replace remaining renderer calls with selected operations.
+// Slices 49-51 replace the remaining IFS, stereo, and orbit renderer calls.
 void NonStandardFractal::render_legacy()
 {
+    if (!started() || m_state.index() != NO_OPERATION)
+    {
+        throw std::logic_error("Legacy rendering requires image setup and no selected calculation operation");
+    }
     start_timer();
     prepare();
-    if (per_image())
+    const PerImage setup{g_dispatch.per_image()};
+    if (setup == nullptr || setup())
     {
-        g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
-        set_symmetry(g_symmetry, false);
+        // IFS has no per-image setup and retains unsymmetrized plotting.
+        if (setup != nullptr)
+        {
+            g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
+            set_symmetry(g_symmetry, false);
+        }
         const CalcType calc_type{g_dispatch.calc_type()};
         calc_type();
     }

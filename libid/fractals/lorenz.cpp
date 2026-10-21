@@ -1445,7 +1445,7 @@ int funny_glasses_call(int (*calc)())
             lorenz_stereo_photographer_prompt();
         }
         g_which_image = StereoImage::BLUE;
-        if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC))
+        if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC) && g_dispatch.per_image() != nullptr)
         {
             per_image(); // reset for 2nd image
         }

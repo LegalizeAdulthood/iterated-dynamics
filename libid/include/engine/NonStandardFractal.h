@@ -57,7 +57,7 @@ public:
     void finish(bool interrupted);
 
     // TODO: removed later
-    // Slices 48-51 replace remaining renderer calls with selected operations.
+    // Slices 49-51 replace the remaining IFS, stereo, and orbit renderer calls.
     void render_legacy();
 
 private:

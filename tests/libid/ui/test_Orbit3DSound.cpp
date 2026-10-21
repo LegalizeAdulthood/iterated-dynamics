@@ -438,6 +438,29 @@ TEST_P(TestOrbit3DSound, menuInterruptionMutesWithoutCommittingRefusedPoint)
     EXPECT_TRUE(m_plots.empty());
 }
 
+TEST_P(TestOrbit3DSound, stereoIfsWithoutPerImageSetupRendersEachEyeOnce)
+{
+    g_fractal_type = FractalType::IFS_3D;
+    g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
+    g_dispatch = FractalDispatch{*g_cur_fractal_specific};
+    ASSERT_EQ(nullptr, g_dispatch.per_image());
+    g_glasses_type = GlassesType::STEREO_PAIR;
+    g_display_3d = Display3DMode::MINUS_ONE;
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+
+    EXPECT_EQ(0,
+        funny_glasses_call(
+            []
+            {
+                ++s_math_calls;
+                EXPECT_EQ(s_math_calls == 1 ? StereoImage::RED : StereoImage::BLUE, g_which_image);
+                return 0;
+            }));
+
+    EXPECT_EQ(2, s_math_calls);
+}
+
 TEST_P(TestOrbit3DSound, stereoRefusalPreservesSamplesAndEyeOrder)
 {
     create_save_directory();

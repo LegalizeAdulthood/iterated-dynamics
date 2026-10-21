@@ -11,7 +11,6 @@
 #include "fractals/bif_may.h"
 #include "fractals/Bifurcation.h"
 #include "fractals/burning_ship.h"
-#include "fractals/Cellular.h"
 #include "fractals/circle_pattern.h"
 #include "fractals/divide_brot.h"
 #include "fractals/escher.h"
@@ -24,7 +23,6 @@
 #include "fractals/julibrot.h"
 #include "fractals/lambda_fn.h"
 #include "fractals/lorenz.h"
-#include "fractals/lsystem.h"
 #include "fractals/lyapunov.h"
 #include "fractals/magnet.h"
 #include "fractals/mandelbrot_mix.h"
@@ -32,7 +30,6 @@
 #include "fractals/peterson_variations.h"
 #include "fractals/phoenix.h"
 #include "fractals/pickover_mandelbrot.h"
-#include "fractals/popcorn.h"
 #include "fractals/quartic_mandelbrot.h"
 #include "fractals/quaternion_mandelbrot.h"
 #include "fractals/sierpinski_gasket.h"
@@ -376,7 +373,7 @@ const FractalSpecific g_fractal_specific[] = {
         -8.0F, 8.0F, -1.0F, 11.0F,                                                                          //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                   //
         SymmetryType::NONE,                                                                                 //
-        nullptr, nullptr, standalone_per_image,                                                             //
+        nullptr, nullptr, nullptr,                                                                          //
         ifs_type,                                                                                           //
         NO_BAILOUT                                                                                          //
     },
@@ -392,7 +389,7 @@ const FractalSpecific g_fractal_specific[] = {
         -11.0F, 11.0F, -11.0F, 11.0F,                     //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
-        nullptr, nullptr, standalone_per_image,           //
+        nullptr, nullptr, nullptr,                        //
         ifs_type,                                         //
         NO_BAILOUT                                        //
     },
