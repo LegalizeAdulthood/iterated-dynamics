@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <ui/DriverSoundOutput.h>
 
@@ -9,6 +10,7 @@
 #include <engine/sound.h>
 #include <engine/VideoInfo.h>
 #include <fractals/lorenz.h>
+#include <fractals/fractalp.h>
 #include <io/check_write_file.h>
 #include <io/library.h>
 #include <misc/debug_flags.h>
@@ -381,6 +383,25 @@ TEST_F(TestDriverSoundOutput, overwriteReusesExistingName)
 
     EXPECT_EQ("230\n", read_text(m_directory / "sound/sound001.txt"));
     EXPECT_FALSE(fs::exists(m_directory / "sound/sound002.txt"));
+}
+
+TEST_F(TestDriverSoundOutput, renderSourceRecognizesSelected3dOrbitsWithoutRendererPointers)
+{
+    const ValueSaver saved_type{g_fractal_type};
+    const ValueSaver saved_specific{g_cur_fractal_specific};
+    EXPECT_CALL(m_driver, sound_on(320)).Times(8).WillRepeatedly(Return(false));
+    for (const FractalType type :
+        {FractalType::KAM_3D, FractalType::LORENZ_3D, FractalType::ROSSLER, FractalType::PICKOVER,
+            FractalType::LORENZ_3D1, FractalType::LORENZ_3D3, FractalType::LORENZ_3D4, FractalType::ICON_3D})
+    {
+        g_fractal_type = type;
+        g_cur_fractal_specific = get_fractal_specific(type);
+        EXPECT_EQ(nullptr, g_cur_fractal_specific->calc_type);
+        DriverSoundOutput output{Source::RENDER, m_now, m_timestamp};
+
+        EXPECT_TRUE(output.play({1, 2, 3}));
+        EXPECT_TRUE(output.finish());
+    }
 }
 
 TEST_F(TestDriverSoundOutput, instancesKeepSeparateRecordingFiles)

@@ -38,7 +38,8 @@ public:
         L_SYSTEM,
         FROTHY_BASIN,
         IFS_2D,
-        IFS_3D
+        IFS_3D,
+        ORBIT_3D
     };
 
     NonStandardFractal() = default;
@@ -63,7 +64,7 @@ public:
     void finish(bool interrupted);
 
     // TODO: removed later
-    // Slices 50-51 replace the remaining stereo and orbit renderer calls.
+    // Slice 51 replaces the remaining orbit renderer calls.
     void render_legacy();
 
 private:
@@ -80,7 +81,8 @@ private:
         L_SYSTEM,
         FROTHY_BASIN,
         IFS_2D,
-        IFS_3D
+        IFS_3D,
+        ORBIT_3D
     };
 
     struct NoOperation
@@ -92,7 +94,7 @@ private:
     geometry::StereoView m_stereo_view;
     std::variant<NoOperation, fractals::Bifurcation, fractals::Popcorn, fractals::Diffusion, fractals::TestPoint,
         fractals::Ant, fractals::Cellular, fractals::Plasma, fractals::LSystem, fractals::FrothyBasin, fractals::IFS2D,
-        fractals::IFS3D>
+        fractals::IFS3D, fractals::Orbit3D>
         m_state{NoOperation{}};
     bool m_done{true};
 };

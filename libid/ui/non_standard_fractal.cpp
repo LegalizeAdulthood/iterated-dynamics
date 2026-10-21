@@ -13,11 +13,12 @@
 #include "ui/diffusion.h"
 #include "ui/frothy_basin.h"
 #include "ui/ifs2d.h"
-#include "ui/ifs3d.h"
 #include "ui/lsystem.h"
 #include "ui/plasma.h"
 #include "ui/popcorn.h"
 #include "ui/standard_orbit_plot.h"
+#include "ui/SoundSession.h"
+#include "ui/StereoController.h"
 #include "ui/testpt.h"
 
 #include <memory>
@@ -116,8 +117,13 @@ int non_standard_fractal()
             break;
 
         case NonStandardFractal::Operation::IFS_3D:
-            ifs3d_calc(non_standard_fractal);
+        case NonStandardFractal::Operation::ORBIT_3D:
+        {
+            SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+            StereoController controller{non_standard_fractal, sound};
+            controller.run();
             break;
+        }
 
         case NonStandardFractal::Operation::LEGACY:
             non_standard_fractal.render_legacy();

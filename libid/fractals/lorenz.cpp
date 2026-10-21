@@ -34,7 +34,6 @@
 #include "math/cmplx.h"
 #include "math/sign.h"
 #include "misc/Driver.h"
-#include "ui/orbit3d.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
 
@@ -90,7 +89,6 @@ static bool float_view_transf3d(ViewTransform3D *inf, bool both_eyes);
 static std::FILE *open_orbit_save();
 static void plot_hist(int x, int y, int color);
 
-static bool s_real_time{};
 static int s_t{};
 
 static long s_l_d{};
@@ -1059,9 +1057,10 @@ void Orbit2D::iterate()
     }
 }
 
-Orbit3D::Orbit3D() :
+Orbit3D::Orbit3D(const bool both_eyes) :
     m_color(g_colors <= 2 ? 1 : 2),
-    m_fp(open_orbit_save())
+    m_fp(open_orbit_save()),
+    m_both_eyes(both_eyes)
 {
     setup_convert_to_screen(&m_inf.cvt); // setup affine screen coord conversion
     m_inf.orbit[0] = s_init_orbit[0];
@@ -1118,7 +1117,7 @@ void Orbit3D::iterate()
         {
             fmt::print(m_fp, "{:g} {:g} {:g} 15\n", m_inf.orbit[0], m_inf.orbit[1], m_inf.orbit[2]);
         }
-        if (!float_view_transf3d(&m_inf, s_real_time))
+        if (!float_view_transf3d(&m_inf, m_both_eyes))
         {
             return;
         }
@@ -1128,7 +1127,7 @@ void Orbit3D::iterate()
     // plot if inside window
     if (m_inf.col >= 0)
     {
-        if (s_real_time)
+        if (m_both_eyes)
         {
             g_which_image = StereoImage::RED;
         }
@@ -1154,7 +1153,7 @@ void Orbit3D::iterate()
     m_old_col = m_inf.col;
     m_old_row = m_inf.row;
     m_point_pending = false;
-    if (s_real_time)
+    if (m_both_eyes)
     {
         g_which_image = StereoImage::BLUE;
         // plot if inside window
@@ -1422,19 +1421,14 @@ bool plot_orbits2d_setup(Affine *scrn_cnvt)
     return true;
 }
 
-// this function's only purpose is to manage funnyglasses related
-// stuff for the remaining legacy lorenz3d() renderer
+// TODO: removed later
+// Slice 50.4 replaces the remaining GIF restoration wrapper.
 int funny_glasses_call(int (*calc)())
 {
     g_which_image = g_glasses_type != GlassesType::NONE ? StereoImage::RED : StereoImage::NONE;
     plot_setup();
     g_plot = g_standard_plot;
     int status = calc();
-    if (s_real_time && g_glasses_type < GlassesType::PHOTO)
-    {
-        s_real_time = false;
-        goto done;
-    }
     if (g_glasses_type != GlassesType::NONE && status == 0 && g_display_3d != Display3DMode::NONE)
     {
         if (g_glasses_type == GlassesType::PHOTO)
@@ -1450,16 +1444,11 @@ int funny_glasses_call(int (*calc)())
         g_plot = g_standard_plot;
         // is there a better way to clear the graphics screen ?
         status = calc();
-        if (status != 0)
-        {
-            goto done;
-        }
-        if (g_glasses_type == GlassesType::PHOTO) // photographer's mode
+        if (status == 0 && g_glasses_type == GlassesType::PHOTO) // photographer's mode
         {
             stop_msg(StopMsgFlags::INFO_ONLY, "Second image (right eye) is ready");
         }
     }
-done:
     if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2 * g_logical_screen.x_dots)
     {
         // turn off view windows so will save properly
@@ -1687,11 +1676,23 @@ static void setup_matrix(Matrix double_mat)
     //   scale((double)g_x_scale/100.0,(double)g_y_scale/100.0,(double)ROUGH/100.0,doublemat);
 }
 
-int orbit3d_type()
+bool is_orbit3d(const FractalType type)
 {
-    g_display_3d = Display3DMode::MINUS_ONE;
-    s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;
-    return funny_glasses_call(orbit3d_calc);
+    switch (type)
+    {
+    case FractalType::KAM_3D:
+    case FractalType::LORENZ_3D:
+    case FractalType::ROSSLER:
+    case FractalType::PICKOVER:
+    case FractalType::LORENZ_3D1:
+    case FractalType::LORENZ_3D3:
+    case FractalType::LORENZ_3D4:
+    case FractalType::ICON_3D:
+        return true;
+
+    default:
+        return false;
+    }
 }
 
 static bool float_view_transf3d(ViewTransform3D *inf, const bool both_eyes)

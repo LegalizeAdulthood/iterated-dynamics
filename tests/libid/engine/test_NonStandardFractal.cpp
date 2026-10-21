@@ -237,7 +237,7 @@ TEST_F(TestNonStandardFractal, activeOperationCannotBeReplaced)
 
 TEST_F(TestNonStandardFractal, legacySetupSelectsRuntimeRendererBeforeRendering)
 {
-    select_type(FractalType::LORENZ_3D);
+    select_type(FractalType::LORENZ);
     m_specific.per_image = []
     {
         ++s_setup_calls;
@@ -261,7 +261,7 @@ TEST_F(TestNonStandardFractal, legacySetupSelectsRuntimeRendererBeforeRendering)
 
 TEST_F(TestNonStandardFractal, legacySetupFalsePreventsRendererInvocation)
 {
-    select_type(FractalType::LORENZ_3D);
+    select_type(FractalType::LORENZ);
     m_specific.per_image = []
     {
         ++s_setup_calls;
@@ -282,7 +282,7 @@ TEST_F(TestNonStandardFractal, legacySetupFalsePreventsRendererInvocation)
 
 TEST_F(TestNonStandardFractal, failedLegacySetupDiscardsWorkWithoutCallingRenderer)
 {
-    select_type(FractalType::LORENZ_3D);
+    select_type(FractalType::LORENZ);
     m_specific.calc_type = stable_population;
     g_dispatch = FractalDispatch{m_specific};
 

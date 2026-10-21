@@ -252,7 +252,6 @@ add_library(libid
     include/ui/id_keys.h
     include/ui/id_main.h ui/id_main.cpp
     include/ui/ifs2d.h ui/ifs2d.cpp
-    include/ui/ifs3d.h ui/ifs3d.cpp
     include/ui/init_failure.h
     include/ui/intro.h ui/intro.cpp
     include/ui/input_field.h ui/input_field.cpp
@@ -270,7 +269,6 @@ add_library(libid
     include/ui/not_disk_msg.h ui/not_disk_msg.cpp
     include/ui/non_standard_fractal.h ui/non_standard_fractal.cpp
     include/ui/orbit2d.h ui/orbit2d.cpp
-    include/ui/orbit3d.h ui/orbit3d.cpp
     include/ui/OrbitDelayTimer.h ${ID_ORBIT_DELAY_TIMER_SOURCE}
     include/ui/passes_options.h ui/passes_options.cpp
     include/ui/plasma.h ui/plasma.cpp
@@ -288,6 +286,7 @@ add_library(libid
     include/ui/ShowDotController.h ui/ShowDotController.cpp
     include/ui/slideshw.h ui/slideshw.cpp
     include/ui/SoundSession.h ui/SoundSession.cpp
+    include/ui/StereoController.h ui/StereoController.cpp
     include/ui/standard_fractal.h ui/standard_fractal.cpp
     include/ui/standard_orbit_plot.h ui/standard_orbit_plot.cpp
     include/ui/standard_4d.h ui/standard_4d.cpp

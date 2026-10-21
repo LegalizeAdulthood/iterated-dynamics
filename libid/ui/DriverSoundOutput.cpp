@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <ui/DriverSoundOutput.h>
 
@@ -43,7 +44,7 @@ long long sound_time_ms()
 DriverSoundOutput::Source image_sound_source()
 {
     const CalcType calc_type{g_cur_fractal_specific->calc_type};
-    if (calc_type == static_cast<CalcType>(orbit2d_type) || calc_type == orbit3d_type ||
+    if (calc_type == static_cast<CalcType>(orbit2d_type) || is_orbit3d(g_cur_fractal_specific->type) ||
         calc_type == static_cast<CalcType>(dynamic2d_type))
     {
         return DriverSoundOutput::Source::ORBIT;

@@ -403,7 +403,7 @@ first-slice feature set.
 The 2D and 3D IFS entry points are:
 
 - `ifs2d()`
-- `ifs3d_calc()`
+- `StereoController::run()` for selected 3D IFS work
 - `IFS2D::iterate()`
 - `IFS3D::iterate()`
 

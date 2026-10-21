@@ -6,13 +6,17 @@
 #include <engine/calcfrac.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/NonStandardFractal.h>
 #include <engine/OrbitPlot.h>
 #include <engine/pixel.h>
+#include <engine/resume.h>
 #include <engine/sound.h>
 #include <engine/SoundOutput.h>
 #include <engine/spindac.h>
 #include <engine/VideoInfo.h>
+#include <engine/Viewport.h>
 #include <fractals/fractalp.h>
+#include <fractals/ifs.h>
 #include <fractals/lorenz.h>
 #include <geometry/3d.h>
 #include <geometry/line3d.h>
@@ -21,8 +25,8 @@
 #include <io/library.h>
 #include <misc/ValueSaver.h>
 #include <ui/KeyboardHandler.h>
-#include <ui/orbit3d.h>
 #include <ui/SoundSession.h>
+#include <ui/StereoController.h>
 #include <ui/video.h>
 
 #include <gmock/gmock.h>
@@ -35,6 +39,7 @@
 #include <fstream>
 #include <functional>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -62,6 +67,12 @@ public:
     MOCK_METHOD(void, begin_orbit, (), (override));
     MOCK_METHOD(void, mute, (), (override));
     MOCK_METHOD(bool, finish, (), (override));
+};
+
+class MockStereoOuterHandler : public KeyboardHandler
+{
+public:
+    MOCK_METHOD(bool, handle_key, (int), (override));
 };
 
 long s_math_calls{};
@@ -96,6 +107,7 @@ protected:
     void SetUp() override;
     void TearDown() override;
     void run(Orbit3D &calculation);
+    int render(SoundSession &sound);
     void create_save_directory();
 
     MockDriver m_driver;
@@ -235,6 +247,115 @@ void TestOrbit3DSound::create_save_directory()
     set_save_library(m_directory);
 }
 
+int TestOrbit3DSound::render(SoundSession &sound)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    if (calculation.select() != NonStandardFractal::Operation::ORBIT_3D)
+    {
+        throw std::logic_error("Expected a selected 3D orbit operation");
+    }
+    StereoController controller{calculation, sound};
+    const int result{controller.run()};
+    calculation.finish(result != 0);
+    return result;
+}
+
+TEST_P(TestOrbit3DSound, selectsEvery3dOrbitWithoutRenderingOrPolling)
+{
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    for (const FractalType type :
+        {FractalType::KAM_3D, FractalType::LORENZ_3D, FractalType::ROSSLER, FractalType::PICKOVER,
+            FractalType::LORENZ_3D1, FractalType::LORENZ_3D3, FractalType::LORENZ_3D4, FractalType::ICON_3D})
+    {
+        g_fractal_type = type;
+        g_cur_fractal_specific = get_fractal_specific(type);
+        g_dispatch = FractalDispatch{*g_cur_fractal_specific};
+        EXPECT_EQ(nullptr, g_cur_fractal_specific->calc_type);
+        NonStandardFractal calculation;
+        calculation.start();
+
+        EXPECT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
+
+        EXPECT_FALSE(calculation.done());
+        EXPECT_FALSE(calculation.view_done());
+        EXPECT_THROW(calculation.render_legacy(), std::logic_error);
+        EXPECT_EQ(0, g_color_iter);
+        EXPECT_EQ(0, s_math_calls);
+        EXPECT_TRUE(m_plots.empty());
+        EXPECT_TRUE(m_samples.empty());
+        calculation.suspend();
+        EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    }
+}
+
+TEST_P(TestOrbit3DSound, selectedViewsRequireExplicitAdvanceAndRestartOrbitState)
+{
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    for (const GlassesType glasses : {GlassesType::PHOTO, GlassesType::STEREO_PAIR})
+    {
+        g_glasses_type = glasses;
+        NonStandardFractal calculation;
+        calculation.start();
+        ASSERT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
+        EXPECT_EQ(StereoImage::RED, g_which_image);
+        EXPECT_THROW(calculation.next_view(), std::logic_error);
+        for (int point = 0; point < 103; ++point)
+        {
+            calculation.iterate();
+        }
+
+        ASSERT_TRUE(calculation.view_done());
+        EXPECT_FALSE(calculation.done());
+        EXPECT_EQ(CalcStatus::IN_PROGRESS, g_calc_status);
+        EXPECT_THROW(calculation.iterate(), std::logic_error);
+        calculation.next_view();
+
+        EXPECT_EQ(StereoImage::BLUE, g_which_image);
+        EXPECT_EQ(0, g_color_iter);
+        EXPECT_FALSE(calculation.view_done());
+        for (int point = 0; point < 103; ++point)
+        {
+            calculation.iterate();
+        }
+        EXPECT_TRUE(calculation.done());
+        EXPECT_TRUE(calculation.completed());
+        EXPECT_THROW(calculation.next_view(), std::logic_error);
+        calculation.finish(false);
+    }
+}
+
+TEST_P(TestOrbit3DSound, selectedInterruptionIsNonResumableInEitherView)
+{
+    g_glasses_type = GlassesType::PHOTO;
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    for (const bool second_eye : {false, true})
+    {
+        NonStandardFractal calculation;
+        calculation.start();
+        calculation.select();
+        if (second_eye)
+        {
+            for (int point = 0; point < 103; ++point)
+            {
+                calculation.iterate();
+            }
+            calculation.next_view();
+        }
+        calculation.iterate();
+
+        calculation.suspend();
+
+        EXPECT_TRUE(calculation.done());
+        EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+        EXPECT_TRUE(g_resume_data.empty());
+        EXPECT_THROW(calculation.view_done(), std::logic_error);
+    }
+}
+
 TEST_P(TestOrbit3DSound, submitsTransformedValuesOnlyAfterBoundsAreEstablished)
 {
     Orbit3D calculation;
@@ -362,16 +483,21 @@ TEST_P(TestOrbit3DSound, rawOrbitDataIsNotDuplicatedOnRefusal)
 
 TEST_P(TestOrbit3DSound, controllerPreservesReadyOutputPollingCadenceAndFinishesWithoutMute)
 {
+    const std::shared_ptr<StrictMock<MockStereoOuterHandler>> outer{
+        std::make_shared<StrictMock<MockStereoOuterHandler>>()};
+    const ScopedKeyboardHandler scope{outer};
     SoundSession sound{m_output};
     EXPECT_CALL(m_driver, key_pressed()).Times(103).WillRepeatedly(Return(0));
     EXPECT_CALL(*m_output, mute()).Times(0);
     EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
 
-    EXPECT_EQ(0, orbit3d_calc(sound));
+    EXPECT_EQ(0, render(sound));
 
     EXPECT_EQ(103, s_math_calls);
     EXPECT_EQ(3U, m_samples.size());
     EXPECT_EQ(3U, m_plots.size());
+    EXPECT_CALL(*outer, handle_key('?')).WillOnce(Return(true));
+    EXPECT_TRUE(dispatch_keyboard_key('?'));
 }
 
 TEST_P(TestOrbit3DSound, controllerServicesRefusalWithoutRepeatedMath)
@@ -392,7 +518,7 @@ TEST_P(TestOrbit3DSound, controllerServicesRefusalWithoutRepeatedMath)
             }));
     EXPECT_CALL(*m_output, update()).WillRepeatedly(Invoke([this] { m_ready = true; }));
 
-    EXPECT_EQ(0, orbit3d_calc(sound));
+    EXPECT_EQ(0, render(sound));
 
     EXPECT_GT(refused, 0);
     EXPECT_EQ(103, s_math_calls);
@@ -411,7 +537,7 @@ TEST_P(TestOrbit3DSound, completionDrainsReleaseTailWithoutAdditionalPlottingOrM
     }
     EXPECT_CALL(*m_output, mute()).Times(0);
 
-    EXPECT_EQ(0, orbit3d_calc(sound));
+    EXPECT_EQ(0, render(sound));
 
     EXPECT_EQ(103, s_math_calls);
     EXPECT_EQ(3U, m_plots.size());
@@ -431,11 +557,35 @@ TEST_P(TestOrbit3DSound, menuInterruptionMutesWithoutCommittingRefusedPoint)
     EXPECT_CALL(*m_output, mute()).WillOnce(Invoke([this] { m_ready = true; }));
     SoundSession sound{m_output};
 
-    EXPECT_EQ(-1, orbit3d_calc(sound));
+    EXPECT_EQ(-1, render(sound));
 
     EXPECT_EQ('x', m_key);
     EXPECT_EQ(101, s_math_calls);
     EXPECT_TRUE(m_plots.empty());
+}
+
+TEST_P(TestOrbit3DSound, controllerFailureRestoresScreenAndOuterKeyboardHandler)
+{
+    const ValueSaver saved_viewport{g_viewport};
+    g_viewport.enabled = true;
+    g_glasses_type = GlassesType::STEREO_PAIR;
+    g_screen_x_dots = 40;
+    const std::shared_ptr<StrictMock<MockStereoOuterHandler>> outer{
+        std::make_shared<StrictMock<MockStereoOuterHandler>>()};
+    const ScopedKeyboardHandler scope{outer};
+    EXPECT_CALL(*m_output, play(_)).WillOnce(Throw(std::runtime_error("Sound output failed")));
+    EXPECT_CALL(*m_output, mute()).Times(1);
+    SoundSession sound{m_output};
+
+    EXPECT_THROW(render(sound), std::runtime_error);
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(40, g_logical_screen.x_dots);
+    EXPECT_EQ(20, g_logical_screen.y_dots);
+    EXPECT_EQ(0, g_logical_screen.x_offset);
+    EXPECT_FALSE(g_viewport.enabled);
+    EXPECT_CALL(*outer, handle_key('?')).WillOnce(Return(true));
+    EXPECT_TRUE(dispatch_keyboard_key('?'));
 }
 
 TEST_P(TestOrbit3DSound, stereoIfsWithoutPerImageSetupRendersEachEyeOnce)
@@ -445,20 +595,34 @@ TEST_P(TestOrbit3DSound, stereoIfsWithoutPerImageSetupRendersEachEyeOnce)
     g_dispatch = FractalDispatch{*g_cur_fractal_specific};
     ASSERT_EQ(nullptr, g_dispatch.per_image());
     g_glasses_type = GlassesType::STEREO_PAIR;
-    g_display_3d = Display3DMode::MINUS_ONE;
-    EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    EXPECT_CALL(m_driver, get_key()).Times(0);
-
-    EXPECT_EQ(0,
-        funny_glasses_call(
-            []
+    const ValueSaver saved_definition{g_ifs_definition, std::vector<float>{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}};
+    const ValueSaver saved_dimension{g_ifs_dim, IFSDimension::THREE};
+    const ValueSaver saved_transforms{g_num_affine_transforms, 1};
+    std::vector<StereoImage> views;
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillRepeatedly(Invoke(
+            [&views]
             {
-                ++s_math_calls;
-                EXPECT_EQ(s_math_calls == 1 ? StereoImage::RED : StereoImage::BLUE, g_which_image);
+                if (views.empty() || views.back() != g_which_image)
+                {
+                    views.push_back(g_which_image);
+                }
                 return 0;
             }));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::IFS_3D, calculation.select());
+    SoundSession sound{m_output};
+    StereoController controller{calculation, sound};
 
-    EXPECT_EQ(2, s_math_calls);
+    EXPECT_EQ(0, controller.run());
+
+    EXPECT_THAT(views, ElementsAre(StereoImage::RED, StereoImage::BLUE));
+    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(1025, g_color_iter);
+    EXPECT_EQ(0, s_math_calls);
+    calculation.finish(false);
 }
 
 TEST_P(TestOrbit3DSound, stereoRefusalPreservesSamplesAndEyeOrder)
@@ -490,7 +654,8 @@ TEST_P(TestOrbit3DSound, stereoRefusalPreservesSamplesAndEyeOrder)
     };
 
     SoundSession owner;
-    EXPECT_EQ(0, orbit3d_type());
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    EXPECT_EQ(0, render(sound));
     EXPECT_TRUE(owner.finish());
 
     EXPECT_EQ(103, s_math_calls);
@@ -517,7 +682,8 @@ TEST_P(TestOrbit3DSound, clippedRedEyeDoesNotAddSoundForVisibleBlueEye)
     s_on_orbit = [] { g_xx_adjust = 100; };
 
     SoundSession owner;
-    EXPECT_EQ(0, orbit3d_type());
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    EXPECT_EQ(0, render(sound));
     EXPECT_TRUE(owner.finish());
 
     EXPECT_EQ(103, s_math_calls);

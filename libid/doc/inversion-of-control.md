@@ -42,9 +42,9 @@ The audit below records the remaining reverse calls inside that structure:
 - `libid/ui/diffusion.cpp` drives `libid/fractals/Diffusion.cpp`.
 - `libid/ui/dynamic2d.cpp` drives `libid/fractals/lorenz.cpp`.
 - `libid/ui/ifs2d.cpp` drives `libid/fractals/lorenz.cpp`.
-- `libid/ui/ifs3d.cpp` drives `libid/fractals/lorenz.cpp`.
+- `libid/ui/StereoController.cpp` drives selected 3D IFS and orbit work
+  owned by `libid/engine/NonStandardFractal.cpp`.
 - `libid/ui/orbit2d.cpp` drives `libid/fractals/lorenz.cpp`.
-- `libid/ui/orbit3d.cpp` drives `libid/fractals/lorenz.cpp`.
 - `libid/ui/plasma.cpp` drives `libid/fractals/Plasma.cpp`.
 - `libid/ui/standard_4d.cpp` drives
   `libid/fractals/julibrot.cpp`.
@@ -375,9 +375,9 @@ The fresh reverse-call audit also found these live paths:
   through dispatch function pointers stored in `FractalSpecific`.
   Per-image callbacks perform setup only; their renderer-call bridge
   and nested timer brackets have been removed.
-- `orbit3d_type()` passes a UI render function to
-  `funny_glasses_call()`, which also invokes photographer prompts between
-  stereo images.  IFS no longer enters that legacy sequence.
+- `funny_glasses_call()` still invokes photographer prompts during GIF
+  restoration.  Calculated IFS and 3D orbits no longer enter that legacy
+  sequence or invoke a UI controller.
 - Command validation can still invoke modal `stop_msg()` or application
   shutdown through `goodbye()`.
 - Image loading, image saving, and command parsing still select UI
@@ -609,12 +609,15 @@ The concrete render operation objects are:
   Per-image callbacks no longer invoke renderers.  IFS selects 2D or 3D
   from loaded definition dimensions, including cached definitions;
   `type=ifs3d` remains compatibility syntax for `type=ifs`.  IFS retains
-  unsymmetrized plotting and non-resumable interruption.  The 3D object
-  owns combined-eye state; the operation exposes completed views and
-  explicit next-view initialization.  `geometry::StereoView` owns eye
+  unsymmetrized plotting and non-resumable interruption.  Selected 3D
+  IFS and orbit objects own combined-eye state; their operations expose
+  completed views and explicit next-view initialization.
+  `geometry::StereoView` owns eye
   selection, projection setup, and full-screen stereo-pair restoration,
-  including failure cleanup.  Its UI owns photographer prompts and
-  palette setup.
+  including failure cleanup.  `ui::StereoController` drives both families
+  and owns input, photographer prompts, palette setup, and sound
+  servicing.  Engine selection and sound-source classification do not
+  depend on 3D orbit renderer pointers.
   Bounded operations cannot enter that legacy rendering entry.
 
 The input and presentation side starts, resumes, cancels, or paces the
@@ -814,9 +817,8 @@ removes one false dependency, and leaves a reviewable intermediate state.
 
 The remaining UI-concept leaks outside `libid/ui` are:
 
-- `libid/fractals/lorenz.cpp`: the 3D orbit front end invokes a UI
-  renderer;
-  stereo orchestration invokes photographer prompts between images.
+- `libid/fractals/lorenz.cpp`: legacy GIF restoration orchestration
+  invokes photographer prompts between images.
 - Calculation setup still invokes `stop_msg()` and sometimes `goodbye()`.
   These are input and application-control leaks even when reachable only
   on failure or in debug builds.  Memory operations and command
@@ -1047,47 +1049,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 50.3. Selected 3D Orbit Calculation And Stereo UI Control
-
-Source: `orbit3d_type()`, `Orbit3D`, and `funny_glasses_call()` in
-`fractals/lorenz.cpp`; selected operation routing in
-`engine/NonStandardFractal.cpp`; UI owners: `ui/orbit3d.cpp`,
-`ui/ifs3d.cpp`, and `ui/stereo.cpp`.
-
-Work:
-
-- Select an engine-owned `Orbit3D` through `NonStandardFractal`, retaining
-  per-eye orbit setup, sound backpressure, and bounded `iterate()` work.
-- Use shared stereo view state for first/next-eye setup and cleanup.
-  Give `Orbit3D` its own combined-eye flag instead of `s_real_time`.
-- Let `StereoController` in `ui/StereoController.h` and
-  `ui/StereoController.cpp` drive the selected calculation incrementally
-  for both IFS and 3D orbits.  It owns polling, sound servicing, palette
-  setup, photographer prompts, and return to the main UI.
-- Preserve left-eye saving and any-key advancement in the photographer
-  handler.  Interrupting right-eye calculation cancels that calculation;
-  do not silently turn Escape at the photographer prompt into a new
-  cancellation command.
-- Remove `orbit3d_type()` and its renderer pointers from the affected
-  fractal table entries.  Keep renderer-family classification below UI;
-  preserve the sound port's orbit-source interpretation after removing
-  those pointers.
-- Remove calculation-side photographer calls.  The legacy stereo
-  wrapper may remain only for GIF restoration until 50.4, with the
-  required temporary-code comment.
-
-Done when:
-
-- Stereo orbit calculation never waits for a photographer or chooses a
-  UI controller.  Its calculation object returns after bounded work;
-  no callback hides an entire UI rendering loop.
-
-Validation: reuse the IFS and Lorenz PHOTO-mode scripts from 50.1 for
-left-eye save, continuation, second-eye interruption, and return to UI.
-Retain orbit sound refusal/eye-order tests and rendering fixtures.
-Add selected-operation and controller tests for exact view transitions,
-handler lifetime, and failure cleanup.  No duplicate manual checklist.
-
 ### 50.4. Stereo GIF Restoration UI Ownership
 
 Source: `funny_glasses_call(restore_image)` in `ui/big_while_loop.cpp`,
@@ -1098,6 +1059,8 @@ Work:
 - Have UI explicitly start each restoration view using the shared
   calculation-owned projection/view operations, invoke atomic GIF
   restoration, and decide whether to prompt or advance to another eye.
+- Retain separate restoration calls for alternating and superimposed
+  glasses; restoring their two views is not combined-eye calculation.
 - Preserve restore return status, scanline cleanup, batch diagnostics,
   palette handling, and stereo-pair full-screen restoration on success
   or failure.
@@ -1117,8 +1080,9 @@ keyboard delivery is unchanged; no manual image comparison.
 
 ### 51. Orbit Renderer Operation Selection
 
-Source: orbit, dynamic, IFS, inverse-Julia, and standard-4D renderer
-entries in `fractals/fractalp.cpp` and front ends in `fractals/lorenz.cpp`.
+Source: remaining 2D orbit, dynamic, inverse-Julia, and standard-4D
+renderer entries in `fractals/fractalp.cpp` and front ends in
+`fractals/lorenz.cpp`.
 
 Work:
 
@@ -1222,8 +1186,9 @@ Calculation code can still reach polling or key-sensitive waiting through
 these direct and indirect paths:
 
 - `libid/fractals/lorenz.cpp`: `funny_glasses_call()` enters a blocking
-  photographer prompt and second-image modal message for the remaining
-  3D orbit front end, which also invokes a complete UI render loop.
+  photographer prompt and second-image modal message during GIF
+  restoration only.  Calculated stereo operations return after bounded
+  work to their UI controller.
 - `libid/engine/calcfrac.cpp`, `engine/NonStandardFractal.cpp`,
   and remaining renderer table entries in
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or
@@ -1274,10 +1239,8 @@ still poll the driver queue directly:
 - `libid/ui/cellular.cpp`
 - `libid/ui/dynamic2d.cpp`
 - `libid/ui/ifs2d.cpp`
-- `libid/ui/ifs3d.cpp`
 - `libid/ui/lsystem.cpp`
 - `libid/ui/orbit2d.cpp`
-- `libid/ui/orbit3d.cpp`
 - `libid/ui/plasma.cpp`
 - `libid/ui/standard_4d.cpp`
 - `libid/ui/testpt.cpp`
@@ -1299,6 +1262,7 @@ Handler-based render controllers that still rely on
 - `libid/ui/popcorn.cpp`
 - `libid/ui/standard_fractal.cpp`
 - `libid/ui/standard_orbit_plot.cpp`
+- `libid/ui/StereoController.cpp`
 
 Blocking text screens, modal prompts, and utility UI paths also poll
 directly.  They can remain for the release 1.5 directory boundary, but

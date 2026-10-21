@@ -56,6 +56,20 @@ NonStandardFractal::Operation NonStandardFractal::select()
     {
         throw std::logic_error("Non-standard calculation is still active");
     }
+    if (is_orbit3d(g_fractal_type))
+    {
+        start_timer();
+        prepare();
+        orbit3d_per_image();
+        g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
+        set_symmetry(g_symmetry, false);
+        g_display_3d = Display3DMode::MINUS_ONE;
+        m_stereo_view.start();
+        m_state.emplace<ORBIT_3D>(m_stereo_view.both_eyes());
+        m_done = false;
+        update_timer();
+        return Operation::ORBIT_3D;
+    }
     switch (g_fractal_type)
     {
     case FractalType::BIFURCATION:
@@ -236,21 +250,38 @@ bool NonStandardFractal::done() const
 
 bool NonStandardFractal::view_done() const
 {
-    if (m_state.index() != IFS_3D)
+    switch (m_state.index())
     {
-        throw std::logic_error("No 3D IFS calculation operation is selected");
+    case IFS_3D:
+        return std::get<IFS_3D>(m_state).done();
+
+    case ORBIT_3D:
+        return std::get<ORBIT_3D>(m_state).done();
+
+    default:
+        throw std::logic_error("No stereo calculation operation is selected");
     }
-    return std::get<IFS_3D>(m_state).done();
 }
 
 void NonStandardFractal::next_view()
 {
     if (!view_done() || !m_stereo_view.next_view_required())
     {
-        throw std::logic_error("The next IFS view requires a completed first eye");
+        throw std::logic_error("The next stereo view requires a completed first eye");
+    }
+    if (m_state.index() == ORBIT_3D && bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC))
+    {
+        orbit3d_per_image();
     }
     m_stereo_view.next_view();
-    m_state.emplace<IFS_3D>(m_stereo_view.both_eyes());
+    if (m_state.index() == IFS_3D)
+    {
+        m_state.emplace<IFS_3D>(m_stereo_view.both_eyes());
+    }
+    else
+    {
+        m_state.emplace<ORBIT_3D>(m_stereo_view.both_eyes());
+    }
     m_done = false;
 }
 
@@ -457,6 +488,23 @@ void NonStandardFractal::iterate()
         }
         return;
 
+    case ORBIT_3D:
+        if (!m_done)
+        {
+            Orbit3D &orbit{std::get<ORBIT_3D>(m_state)};
+            if (orbit.done())
+            {
+                throw std::logic_error("The completed orbit view must advance before more iteration");
+            }
+            orbit.iterate();
+            m_done = orbit.done() && !m_stereo_view.next_view_required();
+            if (m_done)
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -512,6 +560,7 @@ void NonStandardFractal::suspend()
     case PLASMA:
     case IFS_2D:
     case IFS_3D:
+    case ORBIT_3D:
         if (!m_done)
         {
             finish(true);
@@ -572,7 +621,7 @@ void NonStandardFractal::finish(const bool interrupted)
 }
 
 // TODO: removed later
-// Slices 50-51 replace the remaining stereo and orbit renderer calls.
+// Slice 51 replaces the remaining orbit renderer calls.
 void NonStandardFractal::render_legacy()
 {
     if (!started() || m_state.index() != NO_OPERATION)

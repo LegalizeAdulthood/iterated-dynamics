@@ -4,6 +4,7 @@
 #pragma once
 
 #include "engine/ImageRegion.h"
+#include "fractals/fractype.h"
 #include "geometry/3d.h"
 
 #include <cstdio>
@@ -154,7 +155,7 @@ private:
 class Orbit3D
 {
 public:
-    Orbit3D();
+    explicit Orbit3D(bool both_eyes = false);
     Orbit3D(const Orbit3D &rhs) = delete;
     Orbit3D(Orbit3D &&rhs) = delete;
     ~Orbit3D();
@@ -173,6 +174,7 @@ private:
     int m_old_col{-1};
     int m_old_row1{-1};
     int m_old_col1{-1};
+    bool m_both_eyes{};
     bool m_point_pending{};
     bool m_unbounded{};
 };
@@ -263,6 +265,7 @@ constexpr const char *to_string(const Minor value)
 }
 
 bool orbit3d_per_image();
+bool is_orbit3d(FractalType type);
 void init_inverse_julia();
 int lorenz3d1_orbit(double *x, double *y, double *z);
 int lorenz3d_orbit(double *x, double *y, double *z);
@@ -279,8 +282,9 @@ int chip2d_orbit(double *x, double *y, double *z);
 int quadrup_two2d_orbit(double *x, double *y, double *z);
 int three_ply2d_orbit(double *x, double *y, double *z);
 int martin2d_orbit(double *x, double *y, double *z);
+// TODO: removed later
+// Slice 50.4 replaces the remaining GIF restoration wrapper.
 int funny_glasses_call(int (*calc)());
-int orbit3d_type();
 int icon_orbit(double *x, double *y, double *z);
 int latoo_orbit(double *x, double *y, double *z);
 bool setup_convert_to_screen(Affine *scrn_cnvt);
