@@ -241,6 +241,29 @@ TEST(TestSlideShow, rowWaitAcceptsANamedKeyAtTheCurrentRow)
     stop_slide_show();
 }
 
+TEST(TestSlideShow, fastInputDoesNotApplyTypingDelaysAfterWaitCommands)
+{
+    TempDir temp_dir;
+    const fs::path input_path{temp_dir.path() / "fast.key"};
+    write_text_file(input_path, "FAST\nWAIT 0\nCALCWAIT\nENTER\nENTER\n");
+    MockDriver driver;
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
+    ValueSaver saved_auto_name{g_auto_name, input_path};
+    ValueSaver saved_status{g_calc_status, CalcStatus::COMPLETED};
+    ValueSaver saved_busy{g_busy, false};
+    stop_slide_show();
+    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
+    EXPECT_CALL(driver, set_keyboard_timeout(_)).Times(AnyNumber());
+
+    EXPECT_EQ(0, slide_show());
+    EXPECT_EQ(0, slide_show());
+    EXPECT_EQ(0, slide_show());
+    EXPECT_EQ(ID_KEY_ENTER, slide_show());
+    EXPECT_EQ(ID_KEY_ENTER, slide_show());
+
+    stop_slide_show();
+}
+
 TEST(TestSlideShow, iterationWaitDeliversKeyOnlyDuringCalculationAtTheTargetIteration)
 {
     TempDir temp_dir;

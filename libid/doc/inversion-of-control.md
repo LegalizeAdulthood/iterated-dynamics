@@ -911,6 +911,13 @@ Existing coverage does not imply coverage of live interaction:
   completion state, and pixels are checked against a fresh seeded image.
   This is the 49.1 interaction baseline, before calculation ownership
   changes.  IFS does not support calculation resume.
+  The PHOTO-mode IFS and Lorenz 3D scripts form the 50.1 baseline.
+  They reach the first completed eye, acknowledge its notice, save from
+  the photographer handler, and continue to the right eye.  Separate
+  journeys complete or interrupt that eye after 512 iterations, cancel
+  the options screen, and return to image commands.  Checkpoints verify
+  type, PHOTO mode, iteration limit, status, dimensions, and nonblank
+  output.  They do not compare drift-sensitive orbit pixels.
   The formula script acknowledges a missing definition, rejects invalid
   syntax, selects a valid formula, and preserves the completed image
   when another invalid selection is cancelled.  Batch checks reject
@@ -1015,6 +1022,12 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 - Prefer `CALCWAIT` for completion.  Fixed `WAIT` delays, a large workload,
   or a slow CI machine do not prove that input arrived during work.
   Give scripts bounded process timeouts so lost keys or hangs fail.
+- `FAST` disables autokey's visual typing delay for the active script,
+  including after `WAIT` or `CALCWAIT`.  Use it before phase-gated input
+  so typing delays cannot defer an interruption until work has finished.
+  It returns no key; a directive at a modal boundary also ends keyahead
+  flushing before the script acknowledges the notice.  Normal scripts
+  retain their existing typing delays unless they request `FAST`.
   Do not increase polling or yield frequency to make a script pass.
 - Use isolated test homes, explicit save locations, deterministic inputs,
   and fresh artifacts.  Compare resumed output with an uninterrupted
@@ -1032,40 +1045,103 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 50. Stereo Rendering UI Sequence
+### 50.2. Shared Stereo View Calculation State
 
-Source: `funny_glasses_call()` and `orbit3d_type()` in
-`fractals/lorenz.cpp`, plus the selected IFS view operations in
-`engine/NonStandardFractal.cpp`; UI owner: `StereoController` in
-`ui/stereo.cpp`.
+Source: selected IFS view operations in `engine/NonStandardFractal.cpp`
+and view setup/restoration in `funny_glasses_call()` in
+`fractals/lorenz.cpp`.
 
 Work:
 
-- Make eye selection, projection setup, and rendering engine operations
-  that can be started and incrementally driven for each eye.
-  Reuse the explicit completed-view and next-view boundaries already
-  used by IFS; share stereo setup and restoration with the orbit path.
-  IFS already keeps combined-eye state in its calculation object and
-  photographer prompts in `ui/ifs3d.cpp`; preserve that separation.
-- Let the UI controller sequence rendering and photographer prompts,
-  including save, continue, cancellation, and final display restoration.
-- Remove engine calls to `lorenz_stereo_photographer_prompt()` and the
-  second-image `stop_msg()`, plus callbacks to UI render functions.
-- Do not replace `funny_glasses_call()` with another synchronous wrapper
-  that invokes whole UI render loops.
+- Put shared eye selection, projection setup, combined-eye mode, and
+  stereo-pair restoration in a non-virtual `geometry::StereoView` class
+  in `geometry/StereoView.h` and `geometry/StereoView.cpp`.
+- Use that state for the selected IFS operation's first view, explicit
+  next view, and finish or interruption.  Preserve its existing bounded
+  calculation and non-resumable interruption.
+- Retain the existing full-screen restoration policy for stereo pairs,
+  including cleanup after failure.  Do not replace it with an unrelated
+  viewport snapshot policy.
+- Keep input, palette loading, prompts, and rendering loops out of this
+  calculation class.  It must not accept renderer callbacks.
 
 Done when:
 
-- Stereo calculation never waits for a photographer's response or chooses
-  a UI controller.  Each eye's rendering remains calculation work.
+- IFS stereo lifecycle has shared calculation-owned view state without
+  introducing a new engine-to-UI call.
 
-Validation: add autokey scripts through actual PHOTO-mode entry for the
-between-eye prompt, save, continue, cancel, and return to the main UI.
-Verify prompt/eye sequencing and resulting saved artifacts, with controller
-tests for exact phase transitions, display restoration, and failure
-cleanup.
-Retain stereo images.  Current random-line and 3D-look scripts do not cover
-this prompt; no duplicate manual checklist.
+Validation: retain IFS selection and stereo transition tests; add direct
+view lifecycle tests for setup, advancement, restoration, and failure
+cleanup.  Reuse the PHOTO-mode baseline from 50.1 and IFS image fixtures.
+No manual image comparison or duplicate photographer checklist.
+
+### 50.3. Selected 3D Orbit Calculation And Stereo UI Control
+
+Source: `orbit3d_type()`, `Orbit3D`, and `funny_glasses_call()` in
+`fractals/lorenz.cpp`; selected operation routing in
+`engine/NonStandardFractal.cpp`; UI owners: `ui/orbit3d.cpp`,
+`ui/ifs3d.cpp`, and `ui/stereo.cpp`.
+
+Work:
+
+- Select an engine-owned `Orbit3D` through `NonStandardFractal`, retaining
+  per-eye orbit setup, sound backpressure, and bounded `iterate()` work.
+- Use shared stereo view state for first/next-eye setup and cleanup.
+  Give `Orbit3D` its own combined-eye flag instead of `s_real_time`.
+- Let `StereoController` in `ui/StereoController.h` and
+  `ui/StereoController.cpp` drive the selected calculation incrementally
+  for both IFS and 3D orbits.  It owns polling, sound servicing, palette
+  setup, photographer prompts, and return to the main UI.
+- Preserve left-eye saving and any-key advancement in the photographer
+  handler.  Interrupting right-eye calculation cancels that calculation;
+  do not silently turn Escape at the photographer prompt into a new
+  cancellation command.
+- Remove `orbit3d_type()` and its renderer pointers from the affected
+  fractal table entries.  Keep renderer-family classification below UI;
+  preserve the sound port's orbit-source interpretation after removing
+  those pointers.
+- Remove calculation-side photographer calls.  The legacy stereo
+  wrapper may remain only for GIF restoration until 50.4, with the
+  required temporary-code comment.
+
+Done when:
+
+- Stereo orbit calculation never waits for a photographer or chooses a
+  UI controller.  Its calculation object returns after bounded work;
+  no callback hides an entire UI rendering loop.
+
+Validation: reuse the IFS and Lorenz PHOTO-mode scripts from 50.1 for
+left-eye save, continuation, second-eye interruption, and return to UI.
+Retain orbit sound refusal/eye-order tests and rendering fixtures.
+Add selected-operation and controller tests for exact view transitions,
+handler lifetime, and failure cleanup.  No duplicate manual checklist.
+
+### 50.4. Stereo GIF Restoration UI Ownership
+
+Source: `funny_glasses_call(restore_image)` in `ui/big_while_loop.cpp`,
+the remaining wrapper in `fractals/lorenz.cpp`, and `ui/stereo.cpp`.
+
+Work:
+
+- Have UI explicitly start each restoration view using the shared
+  calculation-owned projection/view operations, invoke atomic GIF
+  restoration, and decide whether to prompt or advance to another eye.
+- Preserve restore return status, scanline cleanup, batch diagnostics,
+  palette handling, and stereo-pair full-screen restoration on success
+  or failure.
+- Delete `funny_glasses_call()` and its remaining declaration.  Do not
+  move the callback wrapper to a UI file or reintroduce keyboard polling
+  during atomic GIF decode.
+
+Done when:
+
+- Neither calculated stereo images nor restored stereo views use a
+  synchronous calculation wrapper that invokes UI callbacks.
+
+Validation: add autokey coverage for PHOTO-mode restoration choices and
+saved views; retain restore, stereo, and 3D-look fixtures.  Use injected
+restore failures to verify cleanup and display restoration.  Native
+keyboard delivery is unchanged; no manual image comparison.
 
 ### 51. Orbit Renderer Operation Selection
 

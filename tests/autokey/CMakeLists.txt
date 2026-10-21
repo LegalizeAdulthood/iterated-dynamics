@@ -236,6 +236,33 @@ foreach(IFS_TYPE IN ITEMS ifs ifs3d)
         PROPERTIES LABELS "autokey;ui;ifs" TIMEOUT 80)
 endforeach()
 
+foreach(PHOTO_TYPE IN ITEMS ifs lorenz3d)
+    foreach(PHOTO_RESULT IN ITEMS complete cancel)
+        if(PHOTO_RESULT STREQUAL "cancel")
+            set(PHOTO_END "ITERWAIT 512 x\nESC")
+        elseif(PHOTO_TYPE STREQUAL "ifs")
+            set(PHOTO_END "CALCWAIT\nFAST\nENTER\nCALCWAIT")
+        else()
+            set(PHOTO_END "ITERWAIT 65537 ENTER\nFAST\nENTER\nCALCWAIT")
+        endif()
+        set(name "stereo-photo-${PHOTO_TYPE}-${PHOTO_RESULT}")
+        id_make_test_home("${name}" PHOTO_HOME)
+        file(MAKE_DIRECTORY "${PHOTO_HOME}/key")
+        configure_file(stereo_photo.key.in "${PHOTO_HOME}/key/stereo_photo.key" @ONLY)
+        add_test(NAME "AutoKeyTest.${name}"
+            COMMAND ${CMAKE_COMMAND}
+                "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+                "-DCHECK_STEREO=$<SHELL_PATH:$<TARGET_FILE:check-stereo-photo>>"
+                "-DIFS_FILE=${CMAKE_SOURCE_DIR}/home/ifs/id.ifs"
+                "-DPHOTO_TYPE=${PHOTO_TYPE}" "-DPHOTO_RESULT=${PHOTO_RESULT}"
+                "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+                -P "${CMAKE_CURRENT_SOURCE_DIR}/stereo_photo_test.cmake"
+            WORKING_DIRECTORY "${PHOTO_HOME}")
+        set_tests_properties("AutoKeyTest.${name}"
+            PROPERTIES LABELS "autokey;ui;stereo" TIMEOUT 50)
+    endforeach()
+endforeach()
+
 id_make_test_home(lyapunov-setup LYAPUNOV_SETUP_HOME
     KEYS lyapunov_setup.key)
 add_test(NAME AutoKeyTest.lyapunov-setup

@@ -102,6 +102,7 @@ static SlideDuration s_delay{};
 static int s_slow_count{};
 static bool s_quotes{};
 static bool s_calc_wait{};
+static bool s_fast_input{};
 static int s_thinking_key{};
 static int s_row_wait_key{};
 static int s_row_wait_target{};
@@ -252,7 +253,7 @@ int slide_show()
     constexpr int SLOW_INITIAL_CHAR_COUNT = 5;
     constexpr std::chrono::milliseconds SLOW_INITIAL_DELAY{100};
     constexpr std::chrono::milliseconds SLOW_FAST_DELAY{50};
-    if (++s_slow_count <= SLOW_ADJUST_CHAR_COUNT)
+    if (!s_fast_input && ++s_slow_count <= SLOW_ADJUST_CHAR_COUNT)
     {
         s_start_time = now;
         s_delay = SLOW_INITIAL_DELAY; // a slight delay so keystrokes are visible
@@ -384,6 +385,12 @@ start:
     {
         out = i;
     }
+    else if (std::strcmp("FAST", buffer) == 0)
+    {
+        s_fast_input = true;
+        s_delay = SlideDuration::zero();
+        out = 0;
+    }
     else if (std::strcmp("WAIT", buffer) == 0)
     {
         float seconds;
@@ -506,6 +513,7 @@ SlidesMode start_slide_show()
     s_delay = SlideDuration::zero();
     s_quotes = false;
     s_calc_wait = false;
+    s_fast_input = false;
     s_thinking_key = 0;
     s_row_wait_key = 0;
     s_row_wait_target = 0;
@@ -522,6 +530,7 @@ void stop_slide_show()
         std::fclose(s_slide_show_file);
     }
     s_slide_show_file = nullptr;
+    s_fast_input = false;
     s_thinking_key = 0;
     s_row_wait_key = 0;
     s_row_wait_target = 0;
