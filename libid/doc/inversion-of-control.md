@@ -369,9 +369,9 @@ The current code is already part-way through this plan:
 The fresh reverse-call audit also found these live paths:
 
 - `calc_fract()` calls UI render controllers directly.
-  `NonStandardFractal::render_legacy()`, `standalone_per_image()`, and
-  `cellular_per_image()` also reach UI render loops through dispatch
-  function pointers stored in `FractalSpecific`.
+  `NonStandardFractal::render_legacy()` and `standalone_per_image()` also
+  reach UI render loops through dispatch function pointers stored in
+  `FractalSpecific`.
 - `ifs_type()` selects UI renderers, while `orbit3d_type()` and the IFS3D
   path pass UI render functions to `funny_glasses_call()`.  That function
   also invokes photographer prompts between stereo images.
@@ -586,11 +586,14 @@ The concrete render operation objects are:
   status interpretation.  It shares common image setup, timing, and
   cleanup, but its marked dispatch still enters whole UI render loops.
   Its bounded operation router owns bifurcation, Popcorn, standalone
-  Diffusion, TestPoint, and Ant state without renderer callbacks.  Their UI
-  controllers advance selected objects; setup, resume, and finish stay
-  below UI.  Popcorn's Julia setup and symmetry selection also stay below
-  UI.  Ant's Ctrl+A entry selects an operation on the existing image,
-  without restarting common image setup, timing, or resource cleanup.
+  Diffusion, TestPoint, Ant, and Cellular state without renderer callbacks.
+  Their UI controllers advance selected objects; setup, resume, and finish
+  stay below UI.  Cellular retains generation-sized preparation and
+  next-screen initialization below UI; its thinking-screen display stays
+  in the controller.  Popcorn's Julia setup and symmetry selection also
+  stay below UI.  Ant's Ctrl+A entry selects an operation on the existing
+  image, without restarting common image setup, timing, or resource
+  cleanup.
   The remaining 47.x slices bind other standalone families before slice
   48 removes per-image reentry.
 
@@ -606,9 +609,9 @@ return control after bounded work.  It is not fixed by moving those calls
 behind another engine wrapper.
 
 The indirect paths also belong to that boundary.  `FractalSpecific`
-contains UI renderer pointers, `standalone_per_image()` and
-`cellular_per_image()` invoke those pointers, and IFS and 3D front ends
-call UI controllers from `fractals/lorenz.cpp`.  A top-level-only change
+contains UI renderer pointers, `standalone_per_image()` invokes those
+pointers, and IFS and 3D front ends call UI controllers from
+`fractals/lorenz.cpp`.  A top-level-only change
 does not eliminate those nested UI calls.
 
 The implementation order closes calculation-side input and presentation
@@ -1000,21 +1003,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 47.6. Cellular Operation Binding
-
-Source: `fractals/Cellular.cpp`, `ui/cellular.cpp`, and
-`NonStandardFractal`.
-
-- Select and own `Cellular` below UI.  Retain initial-generation
-  preparation as bounded calculation state.
-- Keep thinking-screen updates, diagnostics, and input in the controller.
-- Preserve next-screen initialization and supported continuation.
-
-Done when: the selected cellular operation replaces nested rendering.
-
-Validation: reuse cellular's preparation, failure, and menu/continuation
-tests through the actual selection entry, plus existing images.
-
 ### 47.7. Plasma Operation Binding
 
 Source: `fractals/Plasma.cpp`, `ui/plasma.cpp`, and
@@ -1065,9 +1053,9 @@ coverage through the real selection entry.  No new pacing-policy tests.
 
 ### 48. Remove Per-Image Renderer Reentry
 
-Source: `standalone_per_image()` in `fractals/frasetup.cpp`,
-`cellular_per_image()`, full-renderer entries in `fractals/fractalp.cpp`,
-and `NonStandardFractal::render_legacy()` in
+Source: `standalone_per_image()` in `fractals/frasetup.cpp`, full-renderer
+entries in `fractals/fractalp.cpp`, and
+`NonStandardFractal::render_legacy()` in
 `engine/NonStandardFractal.cpp`.
 
 Work:

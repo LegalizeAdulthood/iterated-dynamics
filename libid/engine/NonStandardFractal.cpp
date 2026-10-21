@@ -129,6 +129,18 @@ NonStandardFractal::Operation NonStandardFractal::select()
         update_timer();
         return Operation::ANT;
 
+    case FractalType::CELLULAR:
+        start_timer();
+        prepare();
+        if (!g_resuming)
+        {
+            g_cellular_next_screen = false;
+        }
+        m_state.emplace<CELLULAR>();
+        m_done = false;
+        update_timer();
+        return Operation::CELLULAR;
+
     default:
         return Operation::LEGACY;
     }
@@ -146,6 +158,15 @@ void NonStandardFractal::select_ant_on_image()
 bool NonStandardFractal::done() const
 {
     return m_done;
+}
+
+bool NonStandardFractal::preparing() const
+{
+    if (m_state.index() != CELLULAR)
+    {
+        throw std::logic_error("No cellular calculation operation is selected");
+    }
+    return std::get<CELLULAR>(m_state).preparing();
 }
 
 void NonStandardFractal::iterate()
@@ -212,6 +233,17 @@ void NonStandardFractal::iterate()
         }
         return;
 
+    case CELLULAR:
+        if (!m_done)
+        {
+            m_done = !std::get<CELLULAR>(m_state).iterate();
+            if (m_done)
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -270,6 +302,14 @@ void NonStandardFractal::suspend()
         }
         return;
 
+    case CELLULAR:
+        if (!m_done)
+        {
+            std::get<CELLULAR>(m_state).suspend();
+            finish(true);
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -299,7 +339,7 @@ void NonStandardFractal::finish(const bool interrupted)
 }
 
 // TODO: removed later
-// Slices 47.6-51 replace remaining renderer calls with selected operations.
+// Slices 47.7-51 replace remaining renderer calls with selected operations.
 void NonStandardFractal::render_legacy()
 {
     start_timer();

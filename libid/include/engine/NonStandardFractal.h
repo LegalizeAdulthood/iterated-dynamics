@@ -6,6 +6,7 @@
 #include "engine/calcfrac.h"
 #include "fractals/Ant.h"
 #include "fractals/Bifurcation.h"
+#include "fractals/Cellular.h"
 #include "fractals/Diffusion.h"
 #include "fractals/popcorn.h"
 #include "fractals/TestPoint.h"
@@ -26,7 +27,8 @@ public:
         POPCORN,
         DIFFUSION,
         TEST_POINT,
-        ANT
+        ANT,
+        CELLULAR
     };
 
     NonStandardFractal() = default;
@@ -35,6 +37,7 @@ public:
     Operation select();
     void select_ant_on_image();
     bool done() const;
+    bool preparing() const;
     void iterate();
     bool consume_batch_complete();
     void suspend();
@@ -42,7 +45,7 @@ public:
     void finish(bool interrupted);
 
     // TODO: removed later
-    // Slices 47.6-51 replace remaining renderer calls with selected operations.
+    // Slices 47.7-51 replace remaining renderer calls with selected operations.
     void render_legacy();
 
 private:
@@ -53,7 +56,8 @@ private:
         POPCORN,
         DIFFUSION,
         TEST_POINT,
-        ANT
+        ANT,
+        CELLULAR
     };
 
     struct NoOperation
@@ -63,7 +67,7 @@ private:
     void prepare();
 
     std::variant<NoOperation, fractals::Bifurcation, fractals::Popcorn, fractals::Diffusion, fractals::TestPoint,
-        fractals::Ant>
+        fractals::Ant, fractals::Cellular>
         m_state{NoOperation{}};
     bool m_done{true};
 };

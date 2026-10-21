@@ -180,6 +180,7 @@ TEST_F(TestNonStandardFractal, noOperationRequiresExplicitSetupAndSelection)
     EXPECT_TRUE(calculation.done());
     EXPECT_THROW(calculation.select(), std::logic_error);
     EXPECT_THROW(calculation.iterate(), std::logic_error);
+    EXPECT_THROW(calculation.preparing(), std::logic_error);
     EXPECT_THROW(calculation.consume_batch_complete(), std::logic_error);
     EXPECT_THROW(calculation.suspend(), std::logic_error);
     EXPECT_EQ(0, s_orbit_calls);

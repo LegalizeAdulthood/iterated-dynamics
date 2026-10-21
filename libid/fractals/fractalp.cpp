@@ -39,7 +39,6 @@
 #include "fractals/taylor_skinner_variations.h"
 #include "fractals/unity.h"
 #include "fractals/volterra_lotka.h"
-#include "ui/cellular.h"
 #include "ui/dynamic2d.h"
 #include "ui/frothy_basin.h"
 #include "ui/inverse_julia.h"
@@ -1504,8 +1503,8 @@ const FractalSpecific g_fractal_specific[] = {
         -1.0F, 1.0F, -1.0F, 1.0F,                                                //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                        //
         SymmetryType::NONE,                                                      //
-        nullptr, nullptr, cellular_per_image,                                    //
-        cellular_type,                                                           //
+        nullptr, nullptr, nullptr,                                               //
+        nullptr,                                                                 //
         NO_BAILOUT                                                               //
     },
 

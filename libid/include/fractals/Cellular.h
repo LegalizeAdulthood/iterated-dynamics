@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -12,8 +13,6 @@ namespace id::fractals
 {
 
 extern bool g_cellular_next_screen;
-
-bool cellular_per_image();
 
 class Cellular
 {

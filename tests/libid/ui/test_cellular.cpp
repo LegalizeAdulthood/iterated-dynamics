@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include <ui/cellular.h>
+#include <ui/calculate_image.h>
 
 #include "MockDriver.h"
 
@@ -9,11 +9,13 @@
 #include <engine/cmdfiles.h>
 #include <engine/color_state.h>
 #include <engine/LogicalScreen.h>
+#include <engine/NonStandardFractal.h>
 #include <engine/random_seed.h>
 #include <engine/resume.h>
 #include <engine/spindac.h>
 #include <engine/VideoInfo.h>
 #include <fractals/Cellular.h>
+#include <fractals/fractalp.h>
 #include <io/loadmap.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
@@ -44,6 +46,21 @@ using namespace testing;
 namespace id::test
 {
 
+namespace
+{
+
+int unexpected_renderer()
+{
+    throw std::logic_error("Cellular selection entered a renderer callback");
+}
+
+bool unexpected_setup()
+{
+    throw std::logic_error("Cellular selection entered legacy per-image setup");
+}
+
+} // namespace
+
 class TestCellularController : public Test
 {
 protected:
@@ -51,6 +68,10 @@ protected:
     void TearDown() override;
 
     MockDriver m_driver;
+    FractalSpecific m_specific{*get_fractal_specific(FractalType::CELLULAR)};
+    ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::CELLULAR};
+    ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific, &m_specific};
+    ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen, LogicalScreen{32, 6, 0, 0, 31.0, 5.0}};
     ValueSaver<int> m_saved_width{g_screen_x_dots, 32};
@@ -64,7 +85,7 @@ protected:
     ValueSaver<bool> m_saved_resuming{g_resuming, false};
     ValueSaver<bool> m_saved_next_screen{g_cellular_next_screen, false};
     ValueSaver<bool> m_saved_map{g_map_specified, false};
-    ValueSaver<CalcStatus> m_saved_status{g_calc_status, CalcStatus::IN_PROGRESS};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
     ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
     ValueSaver<bool> m_saved_first_init{g_first_init, false};
     ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
@@ -90,6 +111,9 @@ void TestCellularController::SetUp()
     std::fill_n(g_params, MAX_PARAMS, 0.0);
     g_params[1] = 1010;
     g_params[2] = 21;
+    m_specific.calc_type = unexpected_renderer;
+    m_specific.per_image = unexpected_setup;
+    g_dispatch = FractalDispatch{m_specific};
     set_normal_dot();
     EXPECT_CALL(m_driver, write_pixel(_, _, _))
         .WillRepeatedly(Invoke(
@@ -164,7 +188,7 @@ void TestCellularController::TearDown()
 
 TEST_F(TestCellularController, generationZeroNeedsNoThinkingScreen)
 {
-    EXPECT_EQ(1, cellular_type());
+    EXPECT_EQ(0, calculate_image());
 
     EXPECT_EQ(0, m_thinking_entries);
     EXPECT_EQ(0, m_thinking_exits);
@@ -176,7 +200,7 @@ TEST_F(TestCellularController, preparationEndsBeforePlottingAndCleansUpOnce)
 {
     g_params[3] = 205;
 
-    EXPECT_EQ(1, cellular_type());
+    EXPECT_EQ(0, calculate_image());
 
     EXPECT_EQ(1, m_thinking_entries);
     EXPECT_EQ(1, m_thinking_exits);
@@ -190,7 +214,7 @@ TEST_F(TestCellularController, preparationInterruptionCleansUpBeforeReportingNon
     g_params[3] = 205;
     m_interrupt = true;
 
-    EXPECT_EQ(-1, cellular_type());
+    EXPECT_EQ(-1, calculate_image());
 
     EXPECT_EQ(1, m_thinking_entries);
     EXPECT_EQ(1, m_thinking_exits);
@@ -206,7 +230,7 @@ TEST_F(TestCellularController, preparationExceptionCleansUpBeforeReportingFailur
     g_params[3] = 205;
     m_fail_input = true;
 
-    EXPECT_EQ(-1, cellular_type());
+    EXPECT_EQ(-1, calculate_image());
 
     EXPECT_EQ(1, m_thinking_entries);
     EXPECT_EQ(1, m_thinking_exits);
@@ -220,7 +244,7 @@ TEST_F(TestCellularController, plottingExceptionDoesNotEndThinkingTwice)
     g_params[3] = 5;
     m_fail_plot = true;
 
-    EXPECT_EQ(-1, cellular_type());
+    EXPECT_EQ(-1, calculate_image());
 
     EXPECT_EQ(1, m_thinking_entries);
     EXPECT_EQ(1, m_thinking_exits);
@@ -233,7 +257,7 @@ TEST_F(TestCellularController, initializationFailureDoesNotOpenThinkingScreen)
 {
     g_params[2] = 99;
 
-    EXPECT_EQ(-1, cellular_type());
+    EXPECT_EQ(-1, calculate_image());
 
     EXPECT_EQ(0, m_thinking_entries);
     EXPECT_EQ(0, m_thinking_exits);
@@ -248,21 +272,25 @@ TEST_F(TestCellularController, calculationExposesPreparationWithoutPresentingOrP
     EXPECT_CALL(m_driver, stack_screen()).Times(0);
     EXPECT_CALL(m_driver, unstack_screen()).Times(0);
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    Cellular cellular;
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
     int generations{};
 
-    while (cellular.preparing() && generations < 10)
+    while (calculation.preparing() && generations < 10)
     {
         const int row{g_row};
-        EXPECT_TRUE(cellular.iterate());
+        calculation.iterate();
+        EXPECT_FALSE(calculation.done());
         EXPECT_EQ(row + 1, g_row);
         ++generations;
     }
 
     EXPECT_EQ(9, generations);
-    EXPECT_FALSE(cellular.preparing());
+    EXPECT_FALSE(calculation.preparing());
     EXPECT_THAT(m_rows, ElementsAre(0));
-    EXPECT_TRUE(cellular.iterate());
+    calculation.iterate();
+    EXPECT_FALSE(calculation.done());
     EXPECT_THAT(m_rows, ElementsAre(0, 0));
 }
 
@@ -272,12 +300,91 @@ TEST_F(TestCellularController, calculationCannotResumeUnplottedPreparation)
     EXPECT_CALL(m_driver, stack_screen()).Times(0);
     EXPECT_CALL(m_driver, unstack_screen()).Times(0);
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    Cellular cellular;
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
 
-    EXPECT_THROW(cellular.suspend(), CellularError);
+    EXPECT_THROW(calculation.suspend(), CellularError);
 
     EXPECT_TRUE(g_resume_data.empty());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+}
+
+TEST_F(TestCellularController, newImageResetsNextScreenBeforeConstructingCellular)
+{
+    g_cellular_next_screen = true;
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, read_pixel(_, _)).Times(0);
+    NonStandardFractal calculation;
+    calculation.start();
+
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+
+    EXPECT_FALSE(g_cellular_next_screen);
+    EXPECT_FALSE(calculation.preparing());
+    EXPECT_THAT(m_rows, ElementsAre(0));
+    EXPECT_EQ(1, g_row);
+    for (int generation = 0; generation < 6 && !calculation.done(); ++generation)
+    {
+        calculation.iterate();
+    }
+    ASSERT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_THAT(m_rows, ElementsAre(0, 1, 2, 3, 4, 5));
+    calculation.iterate();
+    EXPECT_THAT(m_rows, ElementsAre(0, 1, 2, 3, 4, 5));
+    calculation.finish(false);
+}
+
+TEST_F(TestCellularController, selectedOperationPreservesSavedRowContinuation)
+{
+    alloc_resume(10, 1);
+    put_resume(2);
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, read_pixel(_, 2)).Times(32).WillRepeatedly(Return(1));
+    NonStandardFractal calculation;
+    calculation.start();
+
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+
+    EXPECT_TRUE(g_resuming);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_TRUE(m_rows.empty());
+    EXPECT_EQ(3, g_row);
+    calculation.iterate();
+    EXPECT_THAT(m_rows, ElementsAre(3));
+    calculation.suspend();
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    ASSERT_EQ(1, start_resume());
+    int row{};
+    get_resume(row);
+    EXPECT_EQ(4, row);
+}
+
+TEST_F(TestCellularController, nextScreenReadsLastRowAndAdvancesGeneration)
+{
+    g_calc_status = CalcStatus::RESUMABLE;
+    g_cellular_next_screen = true;
+    g_params[3] = 12;
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, read_pixel(_, 5)).Times(32).WillRepeatedly(Return(1));
+    NonStandardFractal calculation;
+    calculation.start();
+
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+
+    EXPECT_TRUE(g_cellular_next_screen);
+    EXPECT_TRUE(g_resuming);
+    EXPECT_FALSE(calculation.preparing());
+    EXPECT_TRUE(m_rows.empty());
+    EXPECT_EQ(18, g_params[3]);
+    EXPECT_EQ(0, g_row);
+    calculation.iterate();
+    EXPECT_FALSE(calculation.done());
+    EXPECT_THAT(m_rows, ElementsAre(0));
+    calculation.suspend();
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
 }
 
 } // namespace id::test

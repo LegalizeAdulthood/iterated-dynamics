@@ -7,12 +7,10 @@
 
 #include "engine/calcfrac.h"
 #include "engine/color_state.h"
-#include "engine/engine_timer.h"
 #include "engine/pixel.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/spindac.h"
-#include "fractals/fractalp.h"
 #include "io/loadmap.h"
 
 #include <fmt/format.h>
@@ -26,6 +24,7 @@
 
 using namespace id::engine;
 using namespace id::io;
+using namespace id::misc;
 
 namespace id::fractals
 {
@@ -438,19 +437,6 @@ static void set_cellular_palette()
     g_dac_box[5][2] = BROWN[2];
 
     refresh_dac();
-}
-
-bool cellular_per_image()
-{
-    if (!g_resuming)
-    {
-        g_cellular_next_screen = false; // initialize flag
-    }
-    const CalcType calc_type{g_dispatch.calc_type()};
-    start_calculation_timer();
-    calc_type();
-    update_calculation_timer();
-    return false;
 }
 
 } // namespace id::fractals

@@ -6,6 +6,7 @@
 #include "ui/cellular.h"
 
 #include "engine/calcfrac.h"
+#include "engine/NonStandardFractal.h"
 #include "fractals/Cellular.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
@@ -68,24 +69,24 @@ void CellularThinkingScreen::clear()
 
 } // namespace
 
-int cellular_type()
+int cellular_type(NonStandardFractal &calculation)
 {
     try
     {
-        Cellular cellular;
         CellularThinkingScreen thinking_screen;
 
-        while (true)
+        while (!calculation.done())
         {
-            thinking_screen.update(cellular.preparing());
+            thinking_screen.update(calculation.preparing());
             display_disk_storage_progress();
-            if (!cellular.iterate())
+            calculation.iterate();
+            if (calculation.done())
             {
                 break;
             }
             if (driver_key_pressed())
             {
-                cellular.suspend();
+                calculation.suspend();
                 return -1;
             }
         }
