@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
+# Copyright 2026 Richard Thomson.
 #
 function(dump_var name)
     message(STATUS "${name}=${${name}}")
@@ -64,3 +65,36 @@ if(IMAGE_COMPARE_RESULT)
         "${DIFF_IMAGE}")
     message(FATAL_ERROR "Image comparison failed with result ${IMAGE_COMPARE_RESULT}.")
 endif()
+
+file(MAKE_DIRECTORY image/blocked.tga)
+file(WRITE image/invalid.tga "not a supported Targa file")
+foreach(output IN ITEMS blocked.tga invalid.tga)
+    file(REMOVE debug/stopmsg.txt image/should-not-save.gif)
+    set(OVERLAY no)
+    if(output STREQUAL "invalid.tga")
+        set(OVERLAY yes)
+    endif()
+    execute_process(
+        COMMAND "${ID}" ${ID_EXTRA_ARGS} "video=F6" "askvideo=no"
+            "sound=off" "librarydirs=." "savedir=." "overwrite=yes"
+            "@radar/3dlook" "lightname=${output}" "targa_overlay=${OVERLAY}"
+            "batch=yes" "savename=should-not-save.gif"
+        RESULT_VARIABLE RESULT TIMEOUT 30 COMMAND_ECHO STDOUT)
+    if(NOT RESULT STREQUAL "2" OR EXISTS image/should-not-save.gif)
+        message(FATAL_ERROR "Rejected 3D output '${output}' did not fail without saving: ${RESULT}")
+    endif()
+    file(READ debug/stopmsg.txt DIAGNOSTIC)
+    if(output STREQUAL "blocked.tga")
+        set(EXPECTED "OOPS, couldn't open")
+    else()
+        set(EXPECTED "OOPS, can't handle this type of file.")
+        file(READ image/invalid.tga ORIGINAL)
+        if(NOT ORIGINAL STREQUAL "not a supported Targa file")
+            message(FATAL_ERROR "Failed overlay changed the original image")
+        endif()
+    endif()
+    string(FIND "${DIAGNOSTIC}" "${EXPECTED}" POSITION)
+    if(POSITION EQUAL -1)
+        message(FATAL_ERROR "Missing 3D output diagnostic: ${DIAGNOSTIC}")
+    endif()
+endforeach()

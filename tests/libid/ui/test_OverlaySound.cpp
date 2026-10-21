@@ -17,6 +17,7 @@
 #include <engine/resume.h>
 #include <engine/show_dot.h>
 #include <engine/sound.h>
+#include <engine/spindac.h>
 #include <engine/SoundOutput.h>
 #include <engine/StandardPass.h>
 #include <engine/VideoInfo.h>
@@ -26,6 +27,8 @@
 #include <fractals/lorenz.h>
 #include <fractals/lyapunov.h>
 #include <io/library.h>
+#include <io/check_write_file.h>
+#include <geometry/line3d.h>
 #include <misc/ValueSaver.h>
 #include <misc/debug_flags.h>
 #include <ui/calculate_image.h>
@@ -496,6 +499,24 @@ TEST_F(TestOverlaySound, imageSetupReturnsLogMapWarningWithoutPolling)
     EXPECT_THAT(image.start(), ElementsAre("Need at least 16 colors to use logmap"));
 
     EXPECT_EQ(0, g_log_map_flag);
+    image.finish();
+}
+
+TEST_F(TestOverlaySound, imageSetupReturnsTargaFailureAndKeepsPaletteRenderingAvailable)
+{
+    m_directory = std::filesystem::current_path() / "test-image-targa-fallback";
+    std::filesystem::create_directories(m_directory / "image" / "blocked.tga");
+    set_save_library(m_directory);
+    ValueSaver saved_true_color{g_true_color, true};
+    ValueSaver saved_light_name{geometry::g_light_name, std::string{"blocked.tga"}};
+    ValueSaver saved_overwrite{g_overwrite_file, true};
+    const std::string path{(m_directory / "image" / "blocked.tga").string()};
+    ImageCalculation image;
+
+    EXPECT_THAT(image.start(), ElementsAre("OOPS, couldn't open  < " + path + " >"));
+
+    EXPECT_FALSE(g_true_color);
+    EXPECT_EQ(put_color_a, g_put_color);
     image.finish();
 }
 

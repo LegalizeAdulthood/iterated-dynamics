@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -8,6 +9,7 @@
 
 #include <cstdio>
 #include <string>
+#include <vector>
 
 namespace id::geometry
 {
@@ -50,9 +52,16 @@ extern int                   g_xx_adjust;
 extern int                   g_y_shift;
 extern int                   g_yy_adjust;
 
-int line3d(Byte *pixels, unsigned line_len);
+struct Line3DResult
+{
+    int status{};
+    std::vector<std::string> warnings;
+};
+
+Line3DResult line3d(Byte *pixels, unsigned line_len);
 int targa_color(int x, int y, int color);
-bool start_targa_overlay(const std::string &path, std::FILE *source);
-bool start_targa(const std::string &path);
+// Empty diagnostic means success; source remains owned by the caller.
+std::string start_targa_overlay(const std::string &path, std::FILE *source);
+std::string start_targa(const std::string &path);
 
 } // namespace id::geometry

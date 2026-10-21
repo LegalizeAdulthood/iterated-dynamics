@@ -291,6 +291,13 @@ The current code is already part-way through this plan:
   Julibrot and stereo controllers own their palette preparation;
   FrothyBasin reports an optional-map failure and continues with the
   prior palette.  Palette-selection failures retry in their UI context.
+- `geometry/line3d.cpp` returns scanline debug warnings and reports file
+  failures without modal UI.  The restore adapter owns acknowledgement,
+  cleanup before failure display, and batch abandonment.  Targa setup
+  returns diagnostics; image setup retains palette-rendering fallback.
+  Rejected overlays close their sources and cannot trigger replacement
+  of the original without a completed temporary copy.  Shared disk-cache
+  and memory failure callbacks remain for slices 38-41.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -919,27 +926,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 35. 3D Output Diagnostics
-
-Source: Targa output failures and interactive debug diagnostics in
-`libid/geometry/line3d.cpp`; UI owners: 3D restore and stereo controllers.
-
-Work:
-
-- Return rendering and output-file diagnostics to the requesting owner.
-- Remove modal `stop_msg()` calls from geometry and file-output helpers,
-  including debug-only paths.
-- Keep projection, line plotting, file output, and cleanup in calculation
-  or I/O code; UI owns display, continuation, and abandonment decisions.
-
-Done when:
-
-- 3D transformation and output cannot invoke a UI prompt while advancing
-  geometry or writing an image.
-
-Validation: cover output failure and cleanup plus existing 3D rendering
-tests.  No new manual rendering comparison is needed.
 
 ### 36. Arbitrary-Precision Failure Ownership
 

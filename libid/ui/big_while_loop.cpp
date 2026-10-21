@@ -59,7 +59,9 @@
 #include <ctime>
 #include <filesystem>
 #include <memory>
+#include <new>
 #include <optional>
+#include <stdexcept>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -558,7 +560,20 @@ MainState big_while_loop(MainContext &context)
             i = funny_glasses_call(restore_image);
             if (g_out_line_cleanup)              // cleanup routine defined?
             {
-                g_out_line_cleanup();
+                try
+                {
+                    g_out_line_cleanup();
+                }
+                catch (const std::runtime_error &error)
+                {
+                    stop_msg(error.what());
+                    i = -1;
+                    if (g_init_batch != BatchMode::NONE)
+                    {
+                        g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE;
+                    }
+                }
+                g_out_line_cleanup = nullptr;
             }
             if (i == 0)
             {
@@ -948,8 +963,48 @@ resumeloop:                             // return here on failed overlays
 
 static int call_line3d(Byte *pixels, const int line_len)
 {
-    // this routine exists because line3d might be in an overlay
-    return line3d(pixels, line_len);
+    Line3DResult result;
+    std::string failure;
+    try
+    {
+        result = line3d(pixels, line_len);
+    }
+    catch (const std::bad_alloc &)
+    {
+        failure = "Insufficient free memory for 3D transformation";
+    }
+    catch (const std::runtime_error &error)
+    {
+        failure = error.what();
+    }
+    if (!failure.empty())
+    {
+        try
+        {
+            if (g_out_line_cleanup)
+            {
+                g_out_line_cleanup();
+            }
+        }
+        catch (const std::runtime_error &error)
+        {
+            failure += "\n";
+            failure += error.what();
+        }
+        g_out_line_cleanup = nullptr;
+        g_calc_status = CalcStatus::NON_RESUMABLE;
+        stop_msg(failure);
+        if (g_init_batch != BatchMode::NONE)
+        {
+            g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE;
+        }
+        return -1;
+    }
+    for (const std::string &warning : result.warnings)
+    {
+        stop_msg(warning);
+    }
+    return result.status;
 }
 
 // displays differences between current image file and new image

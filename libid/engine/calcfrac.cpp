@@ -343,7 +343,8 @@ std::vector<std::string> ImageCalculation::start()
     if (g_true_color)
     {
         const std::string light_path{get_checked_save_path(WriteFile::IMAGE, g_light_name).string()};
-        if (!start_targa(light_path))
+        const std::string error{start_targa(light_path)};
+        if (error.empty())
         {
             // Have to force passes = 1
             g_std_calc_mode = CalcMode::ONE_PASS;
@@ -353,6 +354,7 @@ std::vector<std::string> ImageCalculation::start()
         else
         {
             g_true_color = false;
+            warnings.push_back(error);
         }
     }
 

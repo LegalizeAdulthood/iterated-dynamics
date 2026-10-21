@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 //**********************************************************************
 // This file contains a 3D replacement for the out_line function called
@@ -26,7 +27,6 @@
 #include "ui/big_while_loop.h"
 #include "ui/diskvid.h"
 #include "ui/stereo.h"
-#include "ui/stop_msg.h"
 #include "ui/video.h"
 
 #include <fmt/format.h>
@@ -38,6 +38,8 @@
 #include <cstdio>
 #include <filesystem>
 #include <limits>
+#include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -99,8 +101,8 @@ static void put_min_max(int x, int y, int color);
 static void triangle_bounds(float pt_t[3][3]);
 static void transparent_clip_color(int x, int y, int color);
 static void vec_draw_line(const double *v1, const double *v2, int color);
-static void file_error(const std::string &filename, FileError error);
-static bool targa_validate(const std::string &filename);
+static std::string file_error(const std::string &filename, FileError error);
+static std::string targa_validate(const std::string &filename);
 
 // static variables
 static void (*s_fill_plot)(int x, int y, int color){};   //
@@ -183,8 +185,9 @@ bool g_brief{};                     // 1 = short ray trace files
 Vector g_view{};                // position of observer for perspective
 int g_transparent_color_3d[2]{};             // transparency min/max values
 
-int line3d(Byte * pixels, unsigned line_len)
+Line3DResult line3d(Byte *pixels, unsigned line_len)
 {
+    Line3DResult result;
     int rnd;
     float f_water = 0.0F;       // transformed WATERLINE for ray trace files
     double r0;
@@ -239,11 +242,13 @@ int line3d(Byte * pixels, unsigned line_len)
         int err = first_time(line_len, v);
         if (err != 0)
         {
-            return err;
+            result.status = err;
+            return result;
         }
         if (g_logical_screen.x_dots > OLD_MAX_PIXELS)
         {
-            return -1;
+            result.status = -1;
+            return result;
         }
         cross_avg[0] = 0;
         cross_avg[1] = 0;
@@ -262,7 +267,7 @@ int line3d(Byte * pixels, unsigned line_len)
     {
         if (set_pixel_buff(pixels, s_fraction.data(), line_len))
         {
-            return 0;
+            return result;
         }
     }
     else if (g_gray_flag)             // convert color numbers to grayscale values
@@ -754,7 +759,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 {
                     if (g_debug_flag != DebugFlags::NONE)
                     {
-                        stop_msg("debug, cur.color=bad");
+                        result.warnings.emplace_back("debug, cur.color=bad");
                     }
                     f_cur.color = static_cast<float>(s_bad.color);
                     cur.color = f_cur.color;
@@ -786,7 +791,7 @@ int line3d(Byte * pixels, unsigned line_len)
                             // this shouldn't happen
                             if (g_debug_flag != DebugFlags::NONE)
                             {
-                                stop_msg("debug, normal vector err2");
+                                result.warnings.emplace_back("debug, normal vector err2");
                             }
                             f_cur.color = static_cast<float>(g_colors);
                             cur.color = f_cur.color;
@@ -855,9 +860,9 @@ loop_bottom:
                 {
                     std::fclose(s_raytrace_file);
                     s_raytrace_file = nullptr;
-                    std::filesystem::remove(s_raytrace_path);
-                    file_error(g_raytrace_filename, FileError::DISK_FULL);
-                    return -1;
+                    std::error_code ignore;
+                    std::filesystem::remove(s_raytrace_path, ignore);
+                    throw std::runtime_error{file_error(g_raytrace_filename, FileError::DISK_FULL)};
                 }
             }
         }
@@ -885,7 +890,7 @@ really_the_bottom:
             s_old_cos_phi2 = s_cos_phi;
         }
     }
-    return 0;                  // decoder needs to know all is well !!!
+    return result;
 }
 
 // vector version of line draw
@@ -1444,19 +1449,19 @@ static bool set_pixel_buff(Byte *pixels, Byte *fraction, const unsigned line_len
 
 /**************************************************************************
 
-  Common routine for printing error messages to the screen for Targa
+  Common routine for formatting error messages for Targa
     and other files
 
 **************************************************************************/
 
-static void file_error(const std::string &filename, const FileError error)
+static std::string file_error(const std::string &filename, const FileError error)
 {
     std::string msg;
     s_error = error;
     switch (error)
     {
     case FileError::NONE:
-        return;
+        return {};
 
     case FileError::OPEN_FAILED:        // Can't Open
         msg = "OOPS, couldn't open  < " + filename + " >";
@@ -1474,7 +1479,7 @@ static void file_error(const std::string &filename, const FileError error)
         msg = "OOPS, can't handle this type of file.";
         break;
     }
-    stop_msg(msg);
+    return msg;
 }
 
 //**********************************************************************
@@ -1488,19 +1493,23 @@ static void file_error(const std::string &filename, const FileError error)
 //   It Verifies there is enough disk space, and leaves the file
 //   at the start of the display data area.
 //
-//   If this is an overlay, closes source and copies to "targa_temp"
+//   If this is an overlay, copies source to "targa_temp" without owning it.
 //   If there is an error close the file.
 //
 // *********************************************************************
 
-static bool start_targa_overlay(const std::string &path, std::FILE *source, const bool overlay)
+static std::string start_targa_overlay(const std::string &path, std::FILE *source, const bool overlay)
 {
+    if (overlay && source == nullptr)
+    {
+        throw std::logic_error{"Targa overlay requires a source file"};
+    }
     // Open File for both reading and writing
-    std::FILE *fps = std::fopen(path.c_str(), "w+b");
+    std::unique_ptr<std::FILE, decltype(&std::fclose)> output{std::fopen(path.c_str(), "w+b"), std::fclose};
+    std::FILE *fps = output.get();
     if (fps == nullptr)
     {
-        file_error(path, FileError::OPEN_FAILED);
-        return true;            // Oops, something's wrong!
+        return file_error(path, FileError::OPEN_FAILED);
     }
 
     int inc = 1;                // Assume we are overlaying a file
@@ -1572,67 +1581,76 @@ static bool start_targa_overlay(const std::string &path, std::FILE *source, cons
         if (std::ferror(fps))
         {
             // Almost certainly not enough disk space
-            std::fclose(fps);
-            if (overlay)
-            {
-                std::fclose(source);
-            }
+            output.reset();
             std::error_code ec;
             std::filesystem::remove(path, ec);
-            file_error(path, FileError::DISK_FULL);
-            return true;
+            return file_error(path, FileError::DISK_FULL);
         }
     }
 
+    if (overlay && (std::ferror(source) || std::feof(source)))
+    {
+        output.reset();
+        std::error_code ignore;
+        std::filesystem::remove(path, ignore);
+        return file_error(path, FileError::BAD_FILE_TYPE);
+    }
+    if (std::fflush(fps) != 0)
+    {
+        output.reset();
+        std::error_code ignore;
+        std::filesystem::remove(path, ignore);
+        return file_error(path, FileError::DISK_FULL);
+    }
     set_targa_disk_path(path);
-    if (targa_start_disk(fps, s_targa_header_24) != 0)
+    if (targa_start_disk(output.release(), s_targa_header_24) != 0)
     {
         end_disk();
         std::error_code ec;
         std::filesystem::remove(path, ec);
-        return true;
+        return file_error(path, FileError::DISK_FULL);
     }
-    return false;
+    return {};
 }
 
-bool start_targa_overlay(const std::string &path, std::FILE *source)
+std::string start_targa_overlay(const std::string &path, std::FILE *source)
 {
     return start_targa_overlay(path, source, true);
 }
 
-bool start_targa(const std::string &path)
+std::string start_targa(const std::string &path)
 {
+    s_targa_header_24 = 18;
+    set_upr_lwr();
     return start_targa_overlay(path, nullptr, false);
 }
 
-static bool targa_validate(const std::string &filename)
+static std::string targa_validate(const std::string &filename)
 {
     // Attempt to open source file for reading
     const std::filesystem::path path{find_file(ReadFile::IMAGE, filename)};
     if (path.empty())
     {
-        file_error(filename, FileError::OPEN_FAILED);
-        return true;              // Oops, file does not exist
+        return file_error(filename, FileError::OPEN_FAILED);
     }
-    std::FILE *fp = std::fopen(path.string().c_str(), "rb");
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> source{
+        std::fopen(path.string().c_str(), "rb"), std::fclose};
+    std::FILE *fp = source.get();
     if (fp == nullptr)
     {
-        file_error(filename, FileError::OPEN_FAILED);
-        return true;              // Oops, file does not exist
+        return file_error(filename, FileError::OPEN_FAILED);
     }
 
-    s_targa_header_24 += std::fgetc(fp);    // Check ID field and adjust header size
+    s_targa_header_24 = 18 + std::fgetc(fp); // Check ID field and adjust header size
 
     if (std::fgetc(fp))               // Make sure this is an unmapped file
     {
-        file_error(filename, FileError::BAD_FILE_TYPE);
-        return true;
+        return file_error(filename, FileError::BAD_FILE_TYPE);
     }
 
     if (std::fgetc(fp) != 2)          // Make sure it is a type 2 file
     {
-        file_error(filename, FileError::BAD_IMAGE_SIZE);
-        return true;
+        return file_error(filename, FileError::BAD_IMAGE_SIZE);
     }
 
     // Skip color map specification
@@ -1651,8 +1669,7 @@ static bool targa_validate(const std::string &filename)
     {
         if (std::fgetc(fp) != static_cast<int>(elem))
         {
-            file_error(filename, FileError::BAD_IMAGE_SIZE);
-            return true;
+            return file_error(filename, FileError::BAD_IMAGE_SIZE);
         }
     }
 
@@ -1666,23 +1683,23 @@ static bool targa_validate(const std::string &filename)
     }
     if (s_error == FileError::BAD_FILE_TYPE)
     {
-        file_error(filename, FileError::BAD_FILE_TYPE);
-        return true;
+        return file_error(filename, FileError::BAD_FILE_TYPE);
     }
     std::fseek(fp, 0, SEEK_SET);
 
     // Now that we know it's a good file, create a working copy
     const std::filesystem::path temp_path{get_save_path(WriteFile::IMAGE, s_targa_temp)};
-    assert(!temp_path.empty());
-    if (start_targa_overlay(temp_path.string(), fp))
+    if (temp_path.empty())
     {
-        return true;
+        return file_error(s_targa_temp, FileError::OPEN_FAILED);
+    }
+    if (const std::string error{start_targa_overlay(temp_path.string(), fp)}; !error.empty())
+    {
+        return error;
     }
 
-    std::fclose(fp);                  // Close the source
-
     s_temp_safe = true;               // Original file successfully copied to targa_temp
-    return false;
+    return {};
 }
 
 static int rgb_to_hsv(const Byte red, const Byte green, const Byte blue, //
@@ -2382,7 +2399,7 @@ static void line3d_cleanup()
         // Finish up targa files
         s_targa_header_24 = 18;         // Reset Targa header size
         end_disk();
-        if (g_debug_flag == DebugFlags::NONE && (!s_temp_safe || s_error != FileError::NONE) && g_targa_overlay)
+        if (g_debug_flag == DebugFlags::NONE && s_temp_safe && s_error != FileError::NONE && g_targa_overlay)
         {
             const std::filesystem::path light_path{get_save_path(WriteFile::IMAGE, g_light_name)};
             assert(!light_path.empty());
@@ -2391,7 +2408,7 @@ static void line3d_cleanup()
             assert(!temp_path.empty());
             std::filesystem::rename(temp_path, light_path);
         }
-        if (g_debug_flag == DebugFlags::NONE && g_targa_overlay)
+        if (g_debug_flag == DebugFlags::NONE && s_temp_safe && g_targa_overlay)
         {
             const std::filesystem::path temp_path{get_save_path(WriteFile::IMAGE, s_targa_temp)};
             assert(!temp_path.empty());
@@ -2441,7 +2458,10 @@ static int first_time(const int line_len, Vector v)
     // Open file for RAY trace output and write header
     if (g_raytrace_format != RayTraceFormat::NONE)
     {
-        ray_header();
+        if (ray_header() != 0)
+        {
+            throw std::runtime_error{file_error(g_raytrace_filename, FileError::OPEN_FAILED)};
+        }
         g_yy_adjust = 0;
         g_xx_adjust = 0;  // Disable shifting in ray tracing
         g_y_shift = 0;
@@ -2465,18 +2485,21 @@ static int first_time(const int line_len, Vector v)
         if (g_targa_overlay)
         {
             // Make sure target file is a supportable Targa File
-            if (targa_validate(g_light_name))
+            if (const std::string error{targa_validate(g_light_name)}; !error.empty())
             {
-                return -1;
+                throw std::runtime_error{error};
             }
         }
         else
         {
             const std::string path{get_checked_save_path(WriteFile::IMAGE, g_light_name).string()};
-            assert(!path.empty());
-            if (start_targa(path))     // Open new file
+            if (path.empty())
             {
-                return -1;
+                throw std::runtime_error{file_error(g_light_name, FileError::OPEN_FAILED)};
+            }
+            if (const std::string error{start_targa(path)}; !error.empty())
+            {
+                throw std::runtime_error{error};
             }
         }
     }
