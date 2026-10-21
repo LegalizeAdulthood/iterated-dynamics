@@ -586,8 +586,8 @@ The concrete render operation objects are:
   status interpretation.  It shares common image setup, timing, and
   cleanup, but its marked dispatch still enters whole UI render loops.
   Its bounded operation router now owns bifurcation state without invoking
-  per-image or renderer callbacks.  The UI still uses the marked legacy
-  entry until slice 47.1 connects the selected operation.  The remaining
+  per-image or renderer callbacks.  All six builtin bifurcation types now
+  use that selected operation through their UI controller.  The remaining
   47.x slices bind other standalone families before slice 48 removes
   per-image reentry.
 
@@ -997,24 +997,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 47.1. Bifurcation UI Operation Ownership
-
-Source: `ui/bifurcation.cpp`, `ui/non_standard_fractal.cpp`, and the
-selected bifurcation operation in `engine/NonStandardFractal.cpp`.
-
-- Let the UI drive the already-selected operation instead of constructing
-  another `Bifurcation` or entering it through a renderer callback.
-- Preserve per-column polling and saved-column resume behavior.
-- Route unsupported families through the marked legacy entry until their
-  own bindings are implemented.  Keep classification below UI.
-
-Done when: all six builtin bifurcation types use the bounded operation
-through their real UI entry path.
-
-Validation: retain operation-selection, suspension/resume, and semantic
-bifurcation tests.  Add an autokey menu/continuation journey if the
-existing scripts do not cover this entry.  Do not restore pixel golds.
-
 ### 47.2. Popcorn Operation Binding
 
 Source: `fractals/popcorn.cpp`, `ui/popcorn.cpp`, and
@@ -1024,6 +1006,10 @@ Source: `fractals/popcorn.cpp`, `ui/popcorn.cpp`, and
   setup/resume into engine selection.
 - Let the UI advance that selected object with its existing handler and
   work checkpoints.  Do not call a UI renderer from `iterate()`.
+- Replace the marked temporary bifurcation-only branch in
+  `ui/non_standard_fractal.cpp` with selected-family controller routing.
+  Keep family selection below UI and unsupported families on the marked
+  legacy path.
 
 Done when: popcorn and popcornjul use the selected calculation object.
 

@@ -17,6 +17,7 @@
 #include <fractals/fractalp.h>
 #include <fractals/population.h>
 #include <misc/ValueSaver.h>
+#include <ui/calculate_image.h>
 #include <ui/video.h>
 
 #include <gmock/gmock.h>
@@ -323,6 +324,70 @@ TEST_P(TestStandaloneBifurcation, suspensionResumesAtTheNextUncomputedColumn)
     complete(resumed);
 
     EXPECT_EQ(expected, m_pixels);
+    EXPECT_EQ(12 * WIDTH, s_orbit_calls);
+    EXPECT_EQ(WIDTH * HEIGHT, m_columns.size());
+    for (int x = 0; x < WIDTH; ++x)
+    {
+        EXPECT_EQ(HEIGHT, std::count(m_columns.begin(), m_columns.end(), x));
+    }
+}
+
+TEST_P(TestStandaloneBifurcation, tableHasNoRendererOrPerImageCallback)
+{
+    const FractalSpecific &specific{*get_fractal_specific(GetParam().type)};
+
+    EXPECT_EQ(nullptr, specific.calc_type);
+    EXPECT_EQ(nullptr, specific.per_image);
+    EXPECT_NE(nullptr, specific.orbit_calc);
+}
+
+TEST_P(TestStandaloneBifurcation, uiEntryUsesSelectedOperationWithoutLegacyCallbacks)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+
+    EXPECT_EQ(0, calculate_image());
+
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(12 * WIDTH, s_orbit_calls);
+    EXPECT_EQ(WIDTH * HEIGHT, m_columns.size());
+}
+
+TEST_P(TestStandaloneBifurcation, uiInterruptionLeavesMenuKeyPendingAndResumesAtNextColumn)
+{
+    int pending_key{};
+    bool interrupt_sent{};
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillRepeatedly(Invoke(
+            [&]
+            {
+                if (!interrupt_sent && m_columns.size() >= HEIGHT)
+                {
+                    pending_key = 'x';
+                    interrupt_sent = true;
+                }
+                return pending_key;
+            }));
+    EXPECT_CALL(m_driver, get_key())
+        .WillRepeatedly(Invoke(
+            [&pending_key]
+            {
+                const int key{pending_key};
+                pending_key = 0;
+                return key;
+            }));
+    EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([&pending_key](int key) { pending_key = key; }));
+
+    EXPECT_EQ(-1, calculate_image());
+
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+    EXPECT_EQ('x', pending_key);
+    ASSERT_EQ(HEIGHT, m_columns.size());
+    pending_key = 0;
+
+    EXPECT_EQ(0, calculate_image());
+
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_EQ(12 * WIDTH, s_orbit_calls);
     EXPECT_EQ(WIDTH * HEIGHT, m_columns.size());
     for (int x = 0; x < WIDTH; ++x)

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // This module consists only of the fractalspecific structure
 //
@@ -39,7 +40,6 @@
 #include "fractals/unity.h"
 #include "fractals/volterra_lotka.h"
 #include "ui/ant.h"
-#include "ui/bifurcation.h"
 #include "ui/cellular.h"
 #include "ui/diffusion.h"
 #include "ui/dynamic2d.h"
@@ -430,8 +430,8 @@ const FractalSpecific g_fractal_specific[] = {
         1.9F, 3.0F, 0.0F, 1.34F,                                                                         //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                //
         SymmetryType::NONE,                                                                              //
-        bifurc_verhulst_trig_orbit, nullptr, standalone_per_image,                                       //
-        bifurcation_type,                                                                                //
+        bifurc_verhulst_trig_orbit, nullptr, nullptr,                                                    //
+        nullptr,                                                                                         //
         NO_BAILOUT                                                                                       //
     },
 
@@ -1115,8 +1115,8 @@ const FractalSpecific g_fractal_specific[] = {
         -2.0F, 4.0F, -1.0F, 2.0F,                                                                        //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                //
         SymmetryType::NONE,                                                                              //
-        bifurc_lambda_trig_orbit, nullptr, standalone_per_image,                                         //
-        bifurcation_type,                                                                                //
+        bifurc_lambda_trig_orbit, nullptr, nullptr,                                                      //
+        nullptr,                                                                                         //
         NO_BAILOUT                                                                                       //
     },
 
@@ -1130,8 +1130,8 @@ const FractalSpecific g_fractal_specific[] = {
         0.275F, 1.45F, 0.0F, 2.0F,                                                                       //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                //
         SymmetryType::NONE,                                                                              //
-        bifurc_add_trig_pi_orbit, nullptr, standalone_per_image,                                         //
-        bifurcation_type,                                                                                //
+        bifurc_add_trig_pi_orbit, nullptr, nullptr,                                                      //
+        nullptr,                                                                                         //
         NO_BAILOUT                                                                                       //
     },
 
@@ -1145,8 +1145,8 @@ const FractalSpecific g_fractal_specific[] = {
         -2.5F, 2.5F, -3.5F, 3.5F,                                                                        //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                //
         SymmetryType::NONE,                                                                              //
-        bifurc_set_trig_pi_orbit, nullptr, standalone_per_image,                                         //
-        bifurcation_type,                                                                                //
+        bifurc_set_trig_pi_orbit, nullptr, nullptr,                                                      //
+        nullptr,                                                                                         //
         NO_BAILOUT                                                                                       //
     },
 
@@ -1250,8 +1250,8 @@ const FractalSpecific g_fractal_specific[] = {
         0.7F, 2.0F, -1.1F, 1.1F,                                                                         //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                //
         SymmetryType::NONE,                                                                              //
-        bifurc_stewart_trig_orbit, nullptr, standalone_per_image,                                        //
-        bifurcation_type,                                                                                //
+        bifurc_stewart_trig_orbit, nullptr, nullptr,                                                     //
+        nullptr,                                                                                         //
         NO_BAILOUT                                                                                       //
     },
 
@@ -1433,8 +1433,8 @@ const FractalSpecific g_fractal_specific[] = {
         -3.5F, -0.9F, -0.5F, 3.2F,                                                 //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                          //
         SymmetryType::NONE,                                                        //
-        bifurc_may_orbit, nullptr, bifurc_may_per_image,                           //
-        bifurcation_type,                                                          //
+        bifurc_may_orbit, nullptr, nullptr,                                        //
+        nullptr,                                                                   //
         NO_BAILOUT                                                                 //
     },
 

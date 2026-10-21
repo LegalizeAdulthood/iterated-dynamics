@@ -226,7 +226,15 @@ TEST(TestFractalDispatch, seededDispatchMatchesDefaults)
         EXPECT_EQ(from.orbit_calc, dispatch.orbit_calc()) << "index " << i << ", " << from.name;
         EXPECT_EQ(from.per_pixel, dispatch.per_pixel()) << "index " << i << ", " << from.name;
         EXPECT_EQ(from.per_image, dispatch.per_image()) << "index " << i << ", " << from.name;
-        EXPECT_EQ(from.calc_type, dispatch.calc_type()) << "index " << i << ", " << from.name;
+        EXPECT_EQ(from.calc_type != nullptr, dispatch.has_calc_type()) << "index " << i << ", " << from.name;
+        if (from.calc_type != nullptr)
+        {
+            EXPECT_EQ(from.calc_type, dispatch.calc_type()) << "index " << i << ", " << from.name;
+        }
+        else
+        {
+            EXPECT_THROW(dispatch.calc_type(), std::runtime_error) << "index " << i << ", " << from.name;
+        }
     }
 }
 

@@ -6,6 +6,7 @@
 #include "engine/NonStandardFractal.h"
 #include "misc/Driver.h"
 #include "ui/KeyboardHandler.h"
+#include "ui/bifurcation.h"
 #include "ui/calculate_image.h"
 #include "ui/standard_orbit_plot.h"
 
@@ -62,7 +63,16 @@ int non_standard_fractal()
     try
     {
         complete_image_setup(non_standard_fractal, non_standard_fractal.start());
-        non_standard_fractal.render_legacy();
+        // TODO: removed later
+        // Slice 47.2 adds controller routing for further selected operations.
+        if (non_standard_fractal.select())
+        {
+            bifurcation_type(non_standard_fractal);
+        }
+        else
+        {
+            non_standard_fractal.render_legacy();
+        }
 
         if (driver_key_pressed() != 0)
         {

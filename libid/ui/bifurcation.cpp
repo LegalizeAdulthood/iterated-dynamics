@@ -3,32 +3,29 @@
 //
 #include "ui/bifurcation.h"
 
-#include "engine/resume.h"
-#include "fractals/Bifurcation.h"
+#include "engine/NonStandardFractal.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
 
 using namespace id::engine;
-using namespace id::fractals;
 using namespace id::misc;
 
 namespace id::ui
 {
 
-int bifurcation_type()
+int bifurcation_type(NonStandardFractal &calculation)
 {
-    Bifurcation bif;
-    if (g_resuming)
+    while (!calculation.done())
     {
-        bif.resume();
-    }
-    while (bif.iterate())
-    {
-        display_disk_storage_progress();
-        if (driver_key_pressed())
+        calculation.iterate();
+        if (!calculation.done())
         {
-            bif.suspend();
-            return -1;
+            display_disk_storage_progress();
+            if (driver_key_pressed())
+            {
+                calculation.suspend();
+                return -1;
+            }
         }
     }
     return 0;
