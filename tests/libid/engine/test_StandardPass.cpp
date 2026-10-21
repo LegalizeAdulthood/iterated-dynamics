@@ -398,7 +398,7 @@ TEST_F(TestRenderLifecycle, completionAccountsForElapsedImageTimeOnce)
     EXPECT_TRUE(calculation.resume().empty());
     ASSERT_TRUE(select_next(calculation));
     EXPECT_TRUE(calculation.calculate_pixel());
-    g_engine_timer_start = static_cast<long>(std::clock() - CLOCKS_PER_SEC);
+    g_engine_timer_start = static_cast<long>(std::clock()) - CLOCKS_PER_SEC;
     for (int chunks = 0; chunks < 100 && !calculation.done(); ++chunks)
     {
         calculation.iterate();
@@ -421,7 +421,7 @@ TEST_F(TestRenderLifecycle, suspensionAndResumeAccumulateDistinctIntervals)
     EXPECT_TRUE(calculation.resume().empty());
     ASSERT_TRUE(select_next(calculation));
     EXPECT_TRUE(calculation.calculate_pixel());
-    g_engine_timer_start = static_cast<long>(std::clock() - CLOCKS_PER_SEC);
+    g_engine_timer_start = static_cast<long>(std::clock()) - CLOCKS_PER_SEC;
 
     calculation.suspend();
 
@@ -435,7 +435,7 @@ TEST_F(TestRenderLifecycle, suspensionAndResumeAccumulateDistinctIntervals)
     EXPECT_TRUE(resumed.resume().empty());
     EXPECT_EQ(suspended_time, g_calc_time);
     ASSERT_TRUE(select_next(resumed));
-    g_engine_timer_start = static_cast<long>(std::clock() - 2 * CLOCKS_PER_SEC);
+    g_engine_timer_start = static_cast<long>(std::clock()) - 2 * CLOCKS_PER_SEC;
     EXPECT_TRUE(resumed.calculate_pixel());
     for (int chunks = 0; chunks < 100 && !resumed.done(); ++chunks)
     {
@@ -508,7 +508,7 @@ TEST_F(TestRenderLifecycle, failureRestoresDispatchAndDiscardsPartialWork)
     g_dispatch.set_per_image(
         []() -> bool
         {
-            g_engine_timer_start = static_cast<long>(std::clock() - CLOCKS_PER_SEC);
+            g_engine_timer_start = static_cast<long>(std::clock()) - CLOCKS_PER_SEC;
             throw std::runtime_error("Calculation setup failed");
         });
     const FractalDispatch dispatch{g_dispatch};
@@ -544,7 +544,7 @@ TEST_F(TestRenderLifecycle, lyapunovUsesTheCommonSetupAndCleanup)
         calculation.iterate();
     }
     ASSERT_TRUE(calculation.done());
-    g_engine_timer_start = static_cast<long>(std::clock() - CLOCKS_PER_SEC);
+    g_engine_timer_start = static_cast<long>(std::clock()) - CLOCKS_PER_SEC;
     calculation.finish();
 
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);

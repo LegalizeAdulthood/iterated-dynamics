@@ -52,7 +52,7 @@ void spin_dac(const SpinDirection dir, const int inc)
             {
                 unsigned char tmp[3];
                 std::memcpy(tmp, dac_bot, 3*sizeof(unsigned char));
-                std::memcpy(dac_bot, dac_bot + 3*sizeof(unsigned char), len);
+                std::memmove(dac_bot, dac_bot + 3 * sizeof(unsigned char), len);
                 std::memcpy(dac_bot + len, tmp, 3*sizeof(unsigned char));
             }
         }
@@ -62,7 +62,7 @@ void spin_dac(const SpinDirection dir, const int inc)
             {
                 unsigned char tmp[3];
                 std::memcpy(tmp, dac_bot + len, 3*sizeof(unsigned char));
-                std::memcpy(dac_bot + 3*sizeof(unsigned char), dac_bot, len);
+                std::memmove(dac_bot + 3 * sizeof(unsigned char), dac_bot, len);
                 std::memcpy(dac_bot, tmp, 3*sizeof(unsigned char));
             }
         }
