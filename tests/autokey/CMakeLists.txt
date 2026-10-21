@@ -293,6 +293,22 @@ foreach(type IN ITEMS popcorn popcornjul)
         PROPERTIES LABELS "autokey;ui;popcorn" TIMEOUT 80)
 endforeach()
 
+foreach(mode IN ITEMS 0 1 2)
+    set(name "diffusion-interrupt-${mode}")
+    id_make_test_home("${name}" DIFFUSION_INTERRUPT_HOME
+        KEYS standard_interrupt.key)
+    add_test(NAME "AutoKeyTest.${name}"
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DCHECK_RESUME=$<SHELL_PATH:$<TARGET_FILE:check-diffusion-resume>>"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+            "-DMODE=${mode}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/diffusion_interrupt_test.cmake"
+        WORKING_DIRECTORY "${DIFFUSION_INTERRUPT_HOME}")
+    set_tests_properties("AutoKeyTest.${name}"
+        PROPERTIES LABELS "autokey;ui;diffusion" TIMEOUT 50)
+endforeach()
+
 foreach(passes IN ITEMS 1 2)
     foreach(pixel IN ITEMS optimized general)
         set(name "standard-interrupt-${passes}-${pixel}")

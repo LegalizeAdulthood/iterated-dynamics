@@ -585,12 +585,12 @@ The concrete render operation objects are:
   symmetry defaults, plot defaults, `per_image()` invocation, and final
   status interpretation.  It shares common image setup, timing, and
   cleanup, but its marked dispatch still enters whole UI render loops.
-  Its bounded operation router owns bifurcation and Popcorn state without
-  renderer callbacks.  All six builtin bifurcation types, popcorn, and
-  popcornjul use selected operations through their UI controllers.
-  Popcorn's Julia setup and symmetry selection stay below UI.  The
-  remaining 47.x slices bind other standalone families before slice 48
-  removes per-image reentry.
+  Its bounded operation router owns bifurcation, Popcorn, and standalone
+  Diffusion state without renderer callbacks.  Their UI controllers
+  advance selected objects; setup and resume stay below UI.  Popcorn's
+  Julia setup and symmetry selection also stay below UI.  The remaining
+  47.x slices bind other standalone families before slice 48 removes
+  per-image reentry.
 
 The input and presentation side starts, resumes, cancels, or paces the
 active operation.  It does not classify standard versus Lyapunov versus
@@ -997,20 +997,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 47.3. Diffusion Operation Binding
-
-Source: `fractals/Diffusion.cpp`, `ui/diffusion.cpp`, and
-`NonStandardFractal`.  This is the standalone fractal, not the pass.
-
-- Own `fractals::Diffusion` in the operation variant.
-- Preserve its boolean iteration and resume semantics through the router.
-- Keep keyboard handling in its UI controller; preserve current chunks.
-
-Done when: the standalone diffusion UI drives the selected object.
-
-Validation: reuse diffusion image and suspend/resume tests.  Exercise the
-real handler entry through autokey if existing coverage does not.
 
 ### 47.4. TestPoint Operation Binding
 

@@ -41,7 +41,6 @@
 #include "fractals/volterra_lotka.h"
 #include "ui/ant.h"
 #include "ui/cellular.h"
-#include "ui/diffusion.h"
 #include "ui/dynamic2d.h"
 #include "ui/frothy_basin.h"
 #include "ui/inverse_julia.h"
@@ -994,8 +993,8 @@ const FractalSpecific g_fractal_specific[] = {
         -2.0F, 2.0F, -1.5F, 1.5F,                                                //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                        //
         SymmetryType::NONE,                                                      //
-        nullptr, nullptr, standalone_per_image,                                  //
-        diffusion_type,                                                          //
+        nullptr, nullptr, nullptr,                                               //
+        nullptr,                                                                 //
         NO_BAILOUT                                                               //
     },
 

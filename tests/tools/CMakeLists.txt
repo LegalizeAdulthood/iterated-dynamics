@@ -35,6 +35,10 @@ add_executable(check-standard-resume check_standard_resume.cpp)
 target_link_libraries(check-standard-resume PRIVATE image-tool libid)
 target_folder(check-standard-resume "Tests/Tools")
 
+add_executable(check-diffusion-resume check_diffusion_resume.cpp)
+target_link_libraries(check-diffusion-resume PRIVATE image-tool libid fmt::fmt-header-only)
+target_folder(check-diffusion-resume "Tests/Tools")
+
 add_executable(check-show-dot check_show_dot.cpp)
 target_link_libraries(check-show-dot PRIVATE image-tool libid fmt::fmt-header-only)
 target_folder(check-show-dot "Tests/Tools")

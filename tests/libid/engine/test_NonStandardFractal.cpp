@@ -12,6 +12,7 @@
 #include <engine/LogicalScreen.h>
 #include <engine/pixel.h>
 #include <engine/pixel_grid.h>
+#include <engine/random_seed.h>
 #include <engine/resume.h>
 #include <engine/trig_fns.h>
 #include <engine/VideoInfo.h>
@@ -527,5 +528,147 @@ TEST_P(TestStandalonePopcorn, suspensionRestartsSavedRowWithSameFinalPixels)
 INSTANTIATE_TEST_SUITE_P(PopcornTypes, TestStandalonePopcorn, Values(FractalType::POPCORN, FractalType::POPCORN_JUL),
     [](const TestParamInfo<FractalType> &info) -> std::string
     { return info.param == FractalType::POPCORN ? "Popcorn" : "PopcornJulia"; });
+
+class TestStandaloneDiffusion : public TestNonStandardFractal, public WithParamInterface<int>
+{
+protected:
+    void SetUp() override
+    {
+        TestNonStandardFractal::SetUp();
+        select_type(FractalType::DIFFUSION);
+        g_params[0] = 10;
+        g_params[1] = GetParam();
+        g_params[2] = 3;
+        g_logical_screen = LogicalScreen{SIDE, SIDE, 0, 0, SIDE - 1.0, SIDE - 1.0};
+        g_screen_x_dots = SIDE;
+        g_screen_y_dots = SIDE;
+        g_put_color = put_color_a;
+        EXPECT_CALL(m_driver, read_pixel(_, _))
+            .WillRepeatedly(Invoke([this](int x, int y) { return m_frame.at(y * SIDE + x); }));
+        EXPECT_CALL(m_driver, write_pixel(_, _, _))
+            .WillRepeatedly(Invoke(
+                [this](int x, int y, int color)
+                {
+                    if (x < SIDE && y < SIDE)
+                    {
+                        m_frame.at(y * SIDE + x) = color;
+                    }
+                }));
+    }
+
+    void complete(NonStandardFractal &calculation)
+    {
+        for (int chunks = 0; chunks < MAX_CHUNKS && !calculation.done(); ++chunks)
+        {
+            calculation.iterate();
+        }
+        ASSERT_TRUE(calculation.done());
+        EXPECT_TRUE(calculation.completed());
+        calculation.finish(false);
+    }
+
+    static constexpr int SIDE{32};
+    static constexpr int MAX_CHUNKS{100000};
+    ValueSaver<bool> m_saved_fixed_seed{g_random_seed_flag, true};
+    ValueSaver<int> m_saved_random_seed{g_random_seed, 12345};
+    ValueSaver<bool> m_saved_start_show_orbit{g_start_show_orbit, false};
+    ValueSaver<bool> m_saved_show_orbit{g_show_orbit, false};
+    ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color};
+    std::array<int, SIDE * SIDE> m_frame{};
+};
+
+TEST_P(TestStandaloneDiffusion, selectionSeedsImageWithoutLegacyCallbacksOrInput)
+{
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+
+    EXPECT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+
+    EXPECT_FALSE(calculation.done());
+    EXPECT_TRUE(std::any_of(m_frame.begin(), m_frame.end(), [](int color) { return color != 0; }));
+    EXPECT_EQ(0, s_orbit_calls);
+}
+
+TEST_P(TestStandaloneDiffusion, incrementsMatchDirectCalculationAndFinishOnce)
+{
+    fractals::Diffusion reference;
+    int expected_chunks{1};
+    while (expected_chunks <= MAX_CHUNKS && reference.iterate())
+    {
+        ++expected_chunks;
+    }
+    ASSERT_LE(expected_chunks, MAX_CHUNKS);
+    const std::array<int, SIDE * SIDE> expected{m_frame};
+    const int expected_next_random{random15()};
+    m_frame.fill(0);
+
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+    int actual_chunks{};
+    while (actual_chunks < MAX_CHUNKS && !calculation.done())
+    {
+        calculation.iterate();
+        ++actual_chunks;
+    }
+
+    ASSERT_TRUE(calculation.done());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(expected_chunks, actual_chunks);
+    EXPECT_EQ(expected, m_frame);
+    EXPECT_EQ(expected_next_random, random15());
+    calculation.finish(false);
+    const long completed_time{g_calc_time};
+    calculation.finish(false);
+    EXPECT_EQ(completed_time, g_calc_time);
+}
+
+TEST_P(TestStandaloneDiffusion, suspensionRestoresTheExistingBoundsRecord)
+{
+    fractals::Diffusion reference;
+    reference.suspend();
+    const std::vector<Byte> initial_resume{g_resume_data};
+    int chunks{};
+    do
+    {
+        ASSERT_TRUE(reference.iterate());
+        ++chunks;
+        reference.suspend();
+    } while (chunks < MAX_CHUNKS && g_resume_data == initial_resume);
+    ASSERT_NE(initial_resume, g_resume_data);
+    const std::vector<Byte> expected_resume{g_resume_data};
+    end_resume();
+    m_frame.fill(0);
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+    for (int i = 0; i < chunks; ++i)
+    {
+        calculation.iterate();
+    }
+    ASSERT_FALSE(calculation.done());
+    calculation.suspend();
+
+    EXPECT_TRUE(calculation.done());
+    ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_EQ(expected_resume, g_resume_data);
+
+    NonStandardFractal resumed;
+    resumed.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, resumed.select());
+    EXPECT_TRUE(g_resume_data.empty());
+    resumed.suspend();
+    EXPECT_EQ(expected_resume, g_resume_data);
+
+    NonStandardFractal continued;
+    continued.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, continued.select());
+    complete(continued);
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+}
+
+INSTANTIATE_TEST_SUITE_P(DiffusionModes, TestStandaloneDiffusion, Values(0, 1, 2));
 
 } // namespace id::test

@@ -3,8 +3,7 @@
 //
 #include "ui/diffusion.h"
 
-#include "engine/calcfrac.h"
-#include "fractals/Diffusion.h"
+#include "engine/NonStandardFractal.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
 #include "ui/KeyboardHandler.h"
@@ -13,7 +12,6 @@
 #include <memory>
 
 using namespace id::engine;
-using namespace id::fractals;
 using namespace id::misc;
 
 namespace id::ui
@@ -57,21 +55,24 @@ private:
 
 } // namespace
 
-int diffusion_type()
+int diffusion_type(NonStandardFractal &calculation)
 {
     reset_calc_interrupted();
-    Diffusion d;
     auto keyboard_handler{std::make_shared<DiffusionKeyboardHandler>()};
     ScopedKeyboardHandler keyboard_scope{keyboard_handler};
 
-    while (d.iterate())
+    while (!calculation.done())
     {
-        display_disk_storage_progress();
-        dispatch_pending_keyboard_input();
-        if (keyboard_handler->interrupted())
+        calculation.iterate();
+        if (!calculation.done())
         {
-            d.suspend();
-            return 1;
+            display_disk_storage_progress();
+            dispatch_pending_keyboard_input();
+            if (keyboard_handler->interrupted())
+            {
+                calculation.suspend();
+                return 1;
+            }
         }
     }
 

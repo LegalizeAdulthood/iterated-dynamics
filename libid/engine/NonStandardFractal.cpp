@@ -87,6 +87,14 @@ NonStandardFractal::Operation NonStandardFractal::select()
         update_timer();
         return Operation::POPCORN;
 
+    case FractalType::DIFFUSION:
+        start_timer();
+        prepare();
+        m_state.emplace<DIFFUSION>();
+        m_done = false;
+        update_timer();
+        return Operation::DIFFUSION;
+
     default:
         return Operation::LEGACY;
     }
@@ -123,6 +131,17 @@ void NonStandardFractal::iterate()
         }
         return;
 
+    case DIFFUSION:
+        if (!m_done)
+        {
+            m_done = !std::get<DIFFUSION>(m_state).iterate();
+            if (m_done)
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -144,6 +163,14 @@ void NonStandardFractal::suspend()
         if (!m_done)
         {
             std::get<POPCORN>(m_state).suspend();
+            finish(true);
+        }
+        return;
+
+    case DIFFUSION:
+        if (!m_done)
+        {
+            std::get<DIFFUSION>(m_state).suspend();
             finish(true);
         }
         return;
@@ -170,7 +197,7 @@ void NonStandardFractal::finish(const bool interrupted)
 }
 
 // TODO: removed later
-// Slices 47.3-51 replace remaining renderer calls with selected operations.
+// Slices 47.4-51 replace remaining renderer calls with selected operations.
 void NonStandardFractal::render_legacy()
 {
     start_timer();
