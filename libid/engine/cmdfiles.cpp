@@ -101,6 +101,7 @@
 #include <numeric>
 #include <optional>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <system_error>
@@ -1162,8 +1163,21 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     g_make_parameter_file = true;
     if (!g_read_filename.empty())
     {
-        if (read_overlay() != 0)
+        try
         {
+            std::filesystem::path path{g_read_filename};
+            if (!path.has_extension())
+            {
+                path.replace_extension(".gif");
+            }
+            const std::filesystem::path found{find_file(ReadFile::IMAGE, path)};
+            ImageMetadata metadata{read_image_metadata(found.empty() ? path : found)};
+            apply_image_parameters(metadata);
+            apply_image_extensions(metadata);
+        }
+        catch (const std::runtime_error &error)
+        {
+            cmd_files_test::get_stop_msg()(StopMsgFlags::NONE, error.what());
             cmd_files_test::s_goodbye();
             return CmdArgFlags::GOODBYE;
         }

@@ -12,6 +12,8 @@
 #include "engine/sound.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
+#include "engine/Viewport.h"
+#include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "geometry/plot3d.h"
 #include "io/decoder.h"
@@ -24,14 +26,18 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/ValueSaver.h"
+#include "ui/big_while_loop.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
+#include "ui/get_3d_params.h"
+#include "ui/get_video_mode.h"
 #include "ui/slideshw.h"
 #include "ui/SoundSession.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
 
 #include <filesystem>
+#include <stdexcept>
 #include <optional>
 #include <vector>
 
@@ -43,6 +49,104 @@ using namespace id::misc;
 
 namespace id::ui
 {
+
+int prepare_image_restore()
+{
+    g_show_file = ShowFile::IMAGE_LOADED;
+    g_init_mode = -1;
+    if (g_fast_restore)
+    {
+        g_viewport.enabled = false;
+    }
+    if (!g_read_filename.has_extension())
+    {
+        g_read_filename.replace_extension(".gif");
+    }
+
+    ImageMetadata metadata;
+    try
+    {
+        const std::filesystem::path path{find_file(ReadFile::IMAGE, g_read_filename)};
+        metadata = read_image_metadata(path.empty() ? g_read_filename : path);
+    }
+    catch (const std::runtime_error &error)
+    {
+        stop_msg(error.what());
+        return -1;
+    }
+    // TODO: removed later
+    // Slice 42.1 defers this commit until setup succeeds.
+    apply_image_parameters(metadata);
+
+    if (g_overlay_3d)
+    {
+        g_init_mode = g_adapter; // use previous adapter mode for overlays
+        if (g_file_x_dots > g_logical_screen.x_dots || g_file_y_dots > g_logical_screen.y_dots)
+        {
+            stop_msg("Can't overlay with a larger image");
+            g_init_mode = -1;
+            return -1;
+        }
+    }
+    else
+    {
+        const Display3DMode old_display_ed = g_display_3d;
+        g_display_3d = g_loaded_3d ? Display3DMode::YES : Display3DMode::NONE; // for <tab> display during next
+        const int i = get_video_mode(&metadata.fractal, &metadata.formula);
+        driver_check_memory();
+        g_display_3d = old_display_ed;
+        if (i)
+        {
+            g_init_mode = -1;
+            return -1;
+        }
+    }
+
+    if (g_display_3d != Display3DMode::NONE)
+    {
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
+        set_fractal_type(FractalType::PLASMA);
+        g_params[0] = 0;
+        if (g_init_batch == BatchMode::NONE)
+        {
+            if (get_3d_params() < 0)
+            {
+                g_init_mode = -1;
+                return -1;
+            }
+        }
+    }
+
+    apply_image_extensions(metadata);
+    if (metadata.evolution.got_data)
+    {
+        const ExtBlock6 &blk_6_info{metadata.evolution};
+        g_have_evolve_info = g_calc_status == CalcStatus::RESUMABLE;
+        if (g_have_evolve_info)
+        {
+            g_evolve_info.x_parameter_range = blk_6_info.x_parameter_range;
+            g_evolve_info.y_parameter_range = blk_6_info.y_parameter_range;
+            g_evolve_info.x_parameter_offset = blk_6_info.x_parameter_offset;
+            g_evolve_info.y_parameter_offset = blk_6_info.y_parameter_offset;
+            g_evolve_info.discrete_x_parameter_offset = blk_6_info.discrete_x_parameter_offset;
+            g_evolve_info.discrete_y_parameter_offset = blk_6_info.discrete_y_parameter_offset;
+            g_evolve_info.px = blk_6_info.px;
+            g_evolve_info.py = blk_6_info.py;
+            g_evolve_info.screen_x_offset = blk_6_info.sx_offs;
+            g_evolve_info.screen_y_offset = blk_6_info.sy_offs;
+            g_evolve_info.x_dots = blk_6_info.x_dots;
+            g_evolve_info.y_dots = blk_6_info.y_dots;
+            g_evolve_info.image_grid_size = blk_6_info.image_grid_size;
+            g_evolve_info.evolving = blk_6_info.evolving;
+            g_evolve_info.this_generation_random_seed = blk_6_info.this_generation_random_seed;
+            g_evolve_info.max_random_mutation = blk_6_info.max_random_mutation;
+            g_evolve_info.count = blk_6_info.e_count;
+        }
+        save_param_history();
+    }
+    g_show_file = ShowFile::LOAD_IMAGE;
+    return 0;
+}
 
 namespace
 {

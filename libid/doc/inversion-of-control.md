@@ -782,10 +782,11 @@ The remaining UI-concept leaks outside `libid/ui` are:
   and sometimes `goodbye()`.  These are input and application-control
   leaks even when reachable only on failure or in debug builds.  Memory
   operations now report failures without UI or shutdown callbacks.
-- `libid/io/loadfile.cpp`, `libid/io/encoder.cpp`, and
-  `libid/engine/cmdfiles.cpp`: select prompts, display status, make
-  continue/cancel decisions, or shut down the application from non-UI
-  coordination code.
+- `libid/io/encoder.cpp` and `libid/engine/cmdfiles.cpp`: select prompts,
+  display status, make continue/cancel decisions, or shut down the
+  application from non-UI coordination code.  Image-load setup choices
+  now live in `ui/restore_image.cpp`; pending metadata still needs to
+  remain separate from active parameters until setup is accepted (42.1).
 
 These are not all keyboard polling sites, but they are presentation
 ownership leaks.  The engine and fractal classes may expose bounded
@@ -980,40 +981,36 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 42. Image Loading UI Decisions
+### 42.1. Image Loading Setup Cancellation
 
-Source: `read_overlay()` and related coordination in `io/loadfile.cpp`;
-UI owner: the existing image-load/restore path in `ui/big_while_loop.cpp`.
+Source: `prepare_image_restore()` in `ui/restore_image.cpp` and
+`main_restore_start()` in `ui/id_main.cpp`.
+
+Metadata reading now returns an `ImageMetadata` value without modifying
+active image parameters.  UI owns video selection, 3D setup, diagnostics,
+and evolution-history updates.  Atomic scanline loading and feedback
+already live in `ui/restore_image.cpp`.
 
 Work:
 
-- Separate metadata reading and validation from video-mode selection,
-  3D-parameter prompts, and UI history decisions.
-- Return the loaded requirements to the UI owner, which gathers choices
-  before invoking atomic GIF reading or subsequent render operations.
-- Preserve cancellation of setup dialogs, batch defaults, and prior-image
-  state on setup/read failure.  There is no mid-file keyboard cancellation.
-- Remove remaining UI calls and ownership bridges around whole-file
-  reading.  Do not replace the atomic operation with a keyboard-polling
-  controller around decoder records or rows.
-- Coordinate existing pixel/transformation output and optional sound for
-  each decoded scanline before requesting the next.  Keep that feedback
-  outside the codec, but within the atomic load command; do not require
-  full-image retention or post-close playback.  Split distinct consumer
-  conversions if needed without reintroducing keyboard polling.
+- Remove the marked early parameter commit in
+  `prepare_image_restore()`.  Setup currently applies loaded parameters
+  before prompting so Tab can display the pending image's information.
+- Give setup access to pending metadata without committing it to the
+  active image.  Preserve Tab information and batch mode defaults.
+- Keep the previous graphics screen and active image parameters until
+  setup succeeds.  Do not discard the stacked screen before video/3D
+  choices.  Restore the prior image on setup or metadata-read failure.
+- Keep 3D overlay size validation and evolution-history decisions in UI.
+  Commit loaded metadata and selected setup only after acceptance.
+- Retain atomic scanline decoding and sound feedback; no input polling
+  inside decoding, full-image buffering, or post-close playback.
 
-Done when:
-
-- Image-loading code does not invoke `get_video_mode()`,
-  `get_3d_params()`, or modal diagnostics from inside decoding setup.
-- The UI completes scanline-based loading and feedback as one atomic
-  command, without load-time input polling or a second image traversal.
-
-Validation: use autokey for cancelling video-mode/3D setup choices before
-loading, preserving the prior image, and a successful load afterward.
-Retain codec tests for invalid metadata and decoded output, plus controller
-tests for exact choice and failure cleanup.  Loading and scanline sound
-feedback remain atomic; do not script a mid-file cancellation.
+Validation: autokey cancellation of video and 3D setup, unchanged prior
+image, and a successful subsequent load.  Cover exact setup choices and
+failure cleanup with controller tests.  Existing metadata/codec and
+scanline-feedback tests cover file contents and atomic loading; do not
+duplicate those with manual tests or script mid-file cancellation.
 
 ### 43. Image Saving UI Decisions
 
@@ -1350,10 +1347,10 @@ these direct and indirect paths:
   `fractals/Cellular.cpp`, and renderer table entries in
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or
   dispatch pointers, including from per-image setup.
-- `libid/io/loadfile.cpp` and `io/encoder.cpp`: enter mode/parameter
-  selection or partial-save prompts from loading and saving operations.
-  The giflib slices remove codec polling and keyboard-interrupted saves;
-  later UI cleanup moves the remaining surrounding decisions outward.
+- `libid/io/encoder.cpp`: still enters surrounding save prompts and
+  notifications.  GIF codec operations no longer poll input or support
+  keyboard-interrupted saves.  Image-load setup choices are UI-owned;
+  slice 42.1 addresses pending versus active image state on cancellation.
 - `libid/engine/cmdfiles.cpp`: `arg_error()` calls UI through
   `s_stop_msg` and `s_goodbye`; `init_msg()` displays startup errors and
   schedules `do_pause()`.  Other command branches generate UI output or

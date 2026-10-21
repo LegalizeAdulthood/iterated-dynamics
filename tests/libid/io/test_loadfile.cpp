@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <io/loadfile.h>
 
@@ -26,6 +27,7 @@
 #include <ui/history.h>
 #include <ui/id_keys.h>
 #include <ui/make_batch_file.h>
+#include <ui/restore_image.h>
 
 #include <gif_lib.h>
 #include <gtest/gtest.h>
@@ -456,6 +458,85 @@ void TestFindFractalInfo::TearDown()
     }
 }
 
+TEST_F(TestFindFractalInfo, metadataReadDoesNotChangeActiveImage)
+{
+    add_main_record();
+    ValueSaver saved_type{g_fractal_type, FractalType::JULIA};
+    ValueSaver saved_iterations{g_max_iterations, 1234L};
+    ValueSaver saved_width{g_file_x_dots, 987};
+    ValueSaver saved_height{g_file_y_dots, 654};
+    ValueSaver saved_colors{g_file_colors, 256};
+    ValueSaver saved_aspect{g_file_aspect_ratio, 0.75f};
+    MockDriver driver;
+    ValueSaver saved_driver{g_driver, &driver};
+
+    const ImageMetadata metadata{read_image_metadata(write_small_file())};
+
+    EXPECT_EQ(2, metadata.width);
+    EXPECT_EQ(2, metadata.height);
+    EXPECT_EQ(2, metadata.colors);
+    EXPECT_EQ((std::array<Byte, 3>{255, 0, 0}), metadata.palette[0]);
+    EXPECT_EQ(+FractalType::MANDEL, metadata.fractal.fractal_type);
+    EXPECT_EQ(FractalType::JULIA, g_fractal_type);
+    EXPECT_EQ(1234, g_max_iterations);
+    EXPECT_EQ(987, g_file_x_dots);
+    EXPECT_EQ(654, g_file_y_dots);
+    EXPECT_EQ(256, g_file_colors);
+    EXPECT_FLOAT_EQ(0.75f, g_file_aspect_ratio);
+}
+
+TEST_F(TestFindFractalInfo, metadataRejectsInvalidTypeWithoutChangingActiveImage)
+{
+    FractalInfo info{};
+    std::copy_n(INFO_ID, sizeof(info.info_id), info.info_id);
+    info.fractal_type = +FractalType::MAX;
+    put_fractal_info(&m_extensions, info);
+    ValueSaver saved_type{g_fractal_type, FractalType::JULIA};
+    ValueSaver saved_iterations{g_max_iterations, 1234L};
+    ValueSaver saved_width{g_file_x_dots, 987};
+    MockDriver driver;
+    ValueSaver saved_driver{g_driver, &driver};
+    const std::filesystem::path path{write_small_file()};
+
+    EXPECT_THROW(read_image_metadata(path), std::runtime_error);
+
+    EXPECT_EQ(FractalType::JULIA, g_fractal_type);
+    EXPECT_EQ(1234, g_max_iterations);
+    EXPECT_EQ(987, g_file_x_dots);
+    EXPECT_TRUE(std::filesystem::remove(path));
+}
+
+TEST_F(TestFindFractalInfo, malformedMetadataDoesNotChangeActiveImage)
+{
+    add_main_record();
+    m_extensions.ExtensionBlocks[m_extensions.ExtensionBlockCount - 1].ByteCount = 1;
+    ValueSaver saved_type{g_fractal_type, FractalType::JULIA};
+    ValueSaver saved_width{g_file_x_dots, 987};
+    MockDriver driver;
+    ValueSaver saved_driver{g_driver, &driver};
+    const std::filesystem::path path{write_small_file()};
+
+    EXPECT_THROW(read_image_metadata(path), std::runtime_error);
+
+    EXPECT_EQ(FractalType::JULIA, g_fractal_type);
+    EXPECT_EQ(987, g_file_x_dots);
+    EXPECT_TRUE(std::filesystem::remove(path));
+}
+
+TEST_F(TestFindFractalInfo, metadataRetainsExtensionsUntilExplicitCommit)
+{
+    add_main_record();
+    const std::vector<Byte> resume{1, 2, 3, 4};
+    put_resume_info(&m_extensions, resume);
+    const ImageMetadata metadata{read_image_metadata(write_small_file())};
+
+    EXPECT_TRUE(metadata.resume.got_data);
+    EXPECT_EQ(resume, metadata.resume.resume_data);
+    EXPECT_FALSE(metadata.formula.got_data);
+    EXPECT_FALSE(metadata.evolution.got_data);
+    EXPECT_TRUE(std::filesystem::remove(m_path));
+}
+
 TEST_F(TestFindFractalInfo, readsMainRecordWithoutOptionalBlocks)
 {
     m_block_2.got_data = true;
@@ -830,7 +911,7 @@ TEST_P(TestLoadFile, integerTypeMigrated)
 {
     ValueSaver saved_read_filename{g_read_filename, GetParam().filename};
 
-    const int result{read_overlay()};
+    const int result{prepare_image_restore()};
 
     EXPECT_EQ(0, result);
     EXPECT_EQ(GetParam().type, g_fractal_type);
@@ -852,7 +933,7 @@ TEST_F(TestLoadFile, randomSeedRestored)
     ValueSaver saved_random_seed{g_random_seed, -999};
     ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
 
-    const int result{read_overlay()};
+    const int result{prepare_image_restore()};
 
     EXPECT_EQ(0, result);
     EXPECT_EQ(info.random_seed, g_random_seed);
@@ -864,7 +945,7 @@ TEST_F(TestLoadFile, legacyFloatRestored)
     ValueSaver saved_read_filename{g_read_filename, ID_TEST_GIF_MANDELFN_INT};
     g_user.legacy_float = true;
 
-    const int result{read_overlay()};
+    const int result{prepare_image_restore()};
 
     EXPECT_EQ(0, result);
     EXPECT_FALSE(g_user.legacy_float);

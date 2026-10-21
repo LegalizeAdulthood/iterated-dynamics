@@ -45,6 +45,7 @@
 #include "ui/make_mig_script.h"
 #include "ui/mouse.h"
 #include "ui/precision_diagnostics.h"
+#include "ui/restore_image.h"
 #include "ui/select_video_mode.h"
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
@@ -225,7 +226,7 @@ static bool main_restore_start(MainContext &context)
             driver_set_for_text();
             context.stacked = false;
         }
-        if (read_overlay() == 0) // read hdr, get video mode
+        if (prepare_image_restore() == 0) // read hdr, get video mode
         {
             break; // got it, exit
         }

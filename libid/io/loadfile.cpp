@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /*
         load an existing fractal image, control level
@@ -41,24 +42,21 @@
 #include "io/library.h"
 #include "math/biginit.h"
 #include "math/round_float_double.h"
-#include "misc/Driver.h"
 #include "misc/id.h"
-#include "ui/big_while_loop.h"
-#include "ui/get_3d_params.h"
-#include "ui/get_video_mode.h"
 #include "ui/make_batch_file.h"
-#include "ui/stop_msg.h"
 
 #include <fmt/format.h>
 #include <gif_lib.h>
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <cstring>
 #include <iterator>
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 using namespace id::engine;
@@ -107,6 +105,7 @@ struct DeprecatedFractalType
 
 // prototypes
 static void backwards_compat(const FractalInfo &info);
+static bool read_gif_metadata(const std::string &path, ImageMetadata &metadata);
 static bool fix_bof();
 static bool fix_period_bof();
 
@@ -924,46 +923,35 @@ FractalType migrate_integer_types(int read_type)
     return static_cast<FractalType>(read_type);
 }
 
-int read_overlay()      // read overlay/3D files, if required
+ImageMetadata read_image_metadata(const std::filesystem::path &path)
 {
-    FractalInfo read_info;
-    ExtBlock2 blk_2_info;
-    ExtBlock3 blk_3_info;
-    ExtBlock4 blk_4_info;
-    ExtBlock5 blk_5_info;
-    ExtBlock6 blk_6_info;
-    ExtBlock7 blk_7_info;
+    ImageMetadata metadata;
+    if (read_gif_metadata(path.string(), metadata))
+    {
+        throw std::runtime_error(fmt::format("Sorry, {:s} isn't a file I can decode.", path.string()));
+    }
+    if (metadata.fractal.fractal_type < 0 || metadata.fractal.fractal_type >= +FractalType::MAX)
+    {
+        throw std::runtime_error(
+            fmt::format("Warning: {:s} has a bad fractal type {:d}", path.string(), metadata.fractal.fractal_type));
+    }
+    return metadata;
+}
 
-    g_show_file = ShowFile::IMAGE_LOADED; // for any abort exit, pretend done
-    g_init_mode = -1;                     // no viewing mode set yet
+void apply_image_parameters(const ImageMetadata &metadata)
+{
+    const FractalInfo &read_info{metadata.fractal};
+    g_file_x_dots = metadata.width;
+    g_file_y_dots = metadata.height;
+    g_file_colors = metadata.colors;
+    g_file_aspect_ratio = metadata.aspect_ratio;
+    if (g_make_parameter_file)
+    {
+        std::memcpy(g_dac_box, metadata.palette.data(), metadata.colors * 3);
+    }
     g_loaded_3d = false;
-    if (g_fast_restore)
-    {
-        g_viewport.enabled = false;
-    }
-    if (!g_read_filename.has_extension())
-    {
-        g_read_filename.replace_extension(".gif");
-    }
-
-    if (find_fractal_info(find_file(ReadFile::IMAGE, g_read_filename).string(), //
-            &read_info, &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
-    {
-        // didn't find a usable file
-        stop_msg(fmt::format("Sorry, {:s} isn't a file I can decode.", g_read_filename.string()));
-        return -1;
-    }
-
     g_max_iterations = read_info.iterations_old;
-    const int read_fractal_type = read_info.fractal_type;
-    if (read_fractal_type < 0 || read_fractal_type >= +FractalType::MAX)
-    {
-        set_fractal_type(FractalType::MANDEL);
-        stop_msg(fmt::format("Warning: {:s} has a bad fractal type {:d}; using mandel",
-            g_read_filename.string(), read_fractal_type));
-        return -1;
-    }
-    set_fractal_type(migrate_integer_types(read_fractal_type));
+    set_fractal_type(migrate_integer_types(read_info.fractal_type));
     g_image_region.m_min.x = read_info.x_min;
     g_image_region.m_max.x = read_info.x_max;
     g_image_region.m_min.y = read_info.y_min;
@@ -999,51 +987,17 @@ int read_overlay()      // read overlay/3D files, if required
     backwards_legacy_v19();
     backwards_legacy_v20();
     g_version = g_file_version;
+}
 
-    if (g_overlay_3d)
-    {
-        g_init_mode = g_adapter;          // use previous adapter mode for overlays
-        if (g_file_x_dots > g_logical_screen.x_dots || g_file_y_dots > g_logical_screen.y_dots)
-        {
-            stop_msg("Can't overlay with a larger image");
-            g_init_mode = -1;
-            return -1;
-        }
-    }
-    else
-    {
-        const Display3DMode old_display_ed = g_display_3d;
-        g_display_3d = g_loaded_3d ? Display3DMode::YES : Display3DMode::NONE;   // for <tab> display during next
-        const int i = get_video_mode(&read_info, &blk_3_info);
-        driver_check_memory();
-        g_display_3d = old_display_ed;
-        if (i)
-        {
-            if (blk_2_info.got_data)
-            {
-                blk_2_info.resume_data.clear();
-                blk_2_info.length = 0;
-            }
-            g_init_mode = -1;
-            return -1;
-        }
-    }
-
-    if (g_display_3d != Display3DMode::NONE)
-    {
-        g_calc_status = CalcStatus::PARAMS_CHANGED;
-        set_fractal_type(FractalType::PLASMA);
-        g_params[0] = 0;
-        if (g_init_batch == BatchMode::NONE)
-        {
-            if (get_3d_params() < 0)
-            {
-                g_init_mode = -1;
-                return -1;
-            }
-        }
-    }
-
+void apply_image_extensions(ImageMetadata &metadata)
+{
+    const FractalInfo &read_info{metadata.fractal};
+    ExtBlock2 &blk_2_info{metadata.resume};
+    ExtBlock3 &blk_3_info{metadata.formula};
+    ExtBlock4 &blk_4_info{metadata.ranges};
+    ExtBlock5 &blk_5_info{metadata.extended};
+    ExtBlock6 &blk_6_info{metadata.evolution};
+    ExtBlock7 &blk_7_info{metadata.orbits};
     g_resume_data.clear();
 
     if (blk_2_info.got_data)
@@ -1109,28 +1063,9 @@ int read_overlay()      // read overlay/3D files, if required
             && g_calc_status != CalcStatus::COMPLETED)
         {
             g_calc_status = CalcStatus::RESUMABLE;
-            g_evolve_info.x_parameter_range = blk_6_info.x_parameter_range;
-            g_evolve_info.y_parameter_range = blk_6_info.y_parameter_range;
-            g_evolve_info.x_parameter_offset = blk_6_info.x_parameter_offset;
-            g_evolve_info.y_parameter_offset = blk_6_info.y_parameter_offset;
-            g_evolve_info.discrete_x_parameter_offset = blk_6_info.discrete_x_parameter_offset;
-            g_evolve_info.discrete_y_parameter_offset = blk_6_info.discrete_y_parameter_offset;
-            g_evolve_info.px           = blk_6_info.px;
-            g_evolve_info.py           = blk_6_info.py;
-            g_evolve_info.screen_x_offset       = blk_6_info.sx_offs;
-            g_evolve_info.screen_y_offset       = blk_6_info.sy_offs;
-            g_evolve_info.x_dots        = blk_6_info.x_dots;
-            g_evolve_info.y_dots        = blk_6_info.y_dots;
-            g_evolve_info.image_grid_size = blk_6_info.image_grid_size;
-            g_evolve_info.evolving     = blk_6_info.evolving;
-            g_evolve_info.this_generation_random_seed = blk_6_info.this_generation_random_seed;
-            g_evolve_info.max_random_mutation = blk_6_info.max_random_mutation;
-            g_evolve_info.count       = blk_6_info.e_count;
-            g_have_evolve_info = true;
         }
         else
         {
-            g_have_evolve_info = false;
             g_calc_status = CalcStatus::COMPLETED;
         }
         g_evolve_x_parameter_range = blk_6_info.x_parameter_range;
@@ -1179,7 +1114,6 @@ int read_overlay()      // read overlay/3D files, if required
             }
         }
         copy_genes_to_bank(gene);
-        save_param_history();
     }
     else
     {
@@ -1201,9 +1135,6 @@ int read_overlay()      // read overlay/3D files, if required
             g_set_orbit_corners = true;
         }
     }
-
-    g_show_file = ShowFile::LOAD_IMAGE; // trigger the file load
-    return 0;
 }
 
 // Read descriptors and extensions without decompressing or storing image pixels.
@@ -1280,6 +1211,38 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     *blk_6_info = {};
     *blk_7_info = {};
 
+    ImageMetadata metadata;
+    if (read_gif_metadata(gif_file, metadata))
+    {
+        return true;
+    }
+    *info = metadata.fractal;
+    *blk_2_info = std::move(metadata.resume);
+    *blk_3_info = metadata.formula;
+    *blk_4_info = std::move(metadata.ranges);
+    *blk_5_info = std::move(metadata.extended);
+    *blk_6_info = metadata.evolution;
+    *blk_7_info = metadata.orbits;
+    g_file_x_dots = metadata.width;
+    g_file_y_dots = metadata.height;
+    g_file_colors = metadata.colors;
+    g_file_aspect_ratio = metadata.aspect_ratio;
+    if (g_make_parameter_file)
+    {
+        std::memcpy(g_dac_box, metadata.palette.data(), metadata.colors * 3);
+    }
+    return false;
+}
+
+static bool read_gif_metadata(const std::string &gif_file, ImageMetadata &metadata)
+{
+    FractalInfo *info{&metadata.fractal};
+    ExtBlock2 *blk_2_info{&metadata.resume};
+    ExtBlock3 *blk_3_info{&metadata.formula};
+    ExtBlock4 *blk_4_info{&metadata.ranges};
+    ExtBlock5 *blk_5_info{&metadata.extended};
+    ExtBlock6 *blk_6_info{&metadata.evolution};
+    ExtBlock7 *blk_7_info{&metadata.orbits};
     int error{};
     std::unique_ptr<GifFileType, void (*)(GifFileType *)> input{DGifOpenFileName(gif_file.c_str(), &error),
         [](GifFileType *gif)
@@ -1293,33 +1256,28 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
         return true;
     }
 
-    g_file_x_dots = input->SWidth;
-    g_file_y_dots = input->SHeight;
-    g_file_colors = input->SColorMap->ColorCount;
-    g_file_aspect_ratio = 0; // unknown
+    metadata.width = input->SWidth;
+    metadata.height = input->SHeight;
+    metadata.colors = input->SColorMap->ColorCount;
+    metadata.aspect_ratio = 0; // unknown
     if (input->AspectByte != 0)
     {
-        g_file_aspect_ratio =
-            static_cast<float>(64.0 / (static_cast<double>(input->AspectByte) + 15.0) * g_file_y_dots / g_file_x_dots);
-        if (g_file_aspect_ratio > g_screen_aspect - 0.03 && g_file_aspect_ratio < g_screen_aspect + 0.03)
+        metadata.aspect_ratio = static_cast<float>(
+            64.0 / (static_cast<double>(input->AspectByte) + 15.0) * metadata.height / metadata.width);
+        if (metadata.aspect_ratio > g_screen_aspect - 0.03 && metadata.aspect_ratio < g_screen_aspect + 0.03)
         {
-            g_file_aspect_ratio = g_screen_aspect;
+            metadata.aspect_ratio = g_screen_aspect;
         }
     }
-    else if (g_file_y_dots * 4 == g_file_x_dots * 3)
+    else if (metadata.height * 4 == metadata.width * 3)
     {
-        g_file_aspect_ratio = g_screen_aspect;
+        metadata.aspect_ratio = g_screen_aspect;
     }
 
-    if (g_make_parameter_file)
+    for (int i = 0; i < metadata.colors; ++i)
     {
-        for (int i = 0; i < g_file_colors; ++i)
-        {
-            const GifColorType &color{input->SColorMap->Colors[i]};
-            g_dac_box[i][0] = color.Red;
-            g_dac_box[i][1] = color.Green;
-            g_dac_box[i][2] = color.Blue;
-        }
+        const GifColorType &color{input->SColorMap->Colors[i]};
+        metadata.palette[i] = {color.Red, color.Green, color.Blue};
     }
 
     if (has_gif_extension(input.get(), "fractint001"))
@@ -1405,7 +1363,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
         {
             return true;
         }
-        g_file_aspect_ratio = g_screen_aspect;
+        metadata.aspect_ratio = g_screen_aspect;
     }
     else
     {
@@ -1425,9 +1383,9 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
         info->bx = 255;
         info->cx = 255;
         info->dx = 255;
-        info->x_dots = static_cast<std::uint16_t>(g_file_x_dots);
-        info->y_dots = static_cast<std::uint16_t>(g_file_y_dots);
-        info->colors = static_cast<short>(g_file_colors);
+        info->x_dots = static_cast<std::uint16_t>(metadata.width);
+        info->y_dots = static_cast<std::uint16_t>(metadata.height);
+        info->colors = static_cast<short>(metadata.colors);
     }
     return DGifCloseFile(input.release(), &error) == GIF_ERROR;
 }

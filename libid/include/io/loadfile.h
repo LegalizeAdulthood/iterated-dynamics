@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
 #include <config/port.h>
 
 #include "fractals/fractype.h"
+#include "io/gif_extensions.h"
 #include "misc/version.h"
 
+#include <array>
 #include <cstdint>
 #include <filesystem>
 #include <string>
@@ -59,7 +62,25 @@ extern misc::Version         g_file_version;
 extern std::filesystem::path g_read_filename;
 extern ShowFile              g_show_file;           // LOAD_IMAGE if file display pending
 
-int read_overlay();
+struct ImageMetadata
+{
+    int width{};
+    int height{};
+    int colors{};
+    float aspect_ratio{};
+    std::array<std::array<Byte, 3>, 256> palette{};
+    FractalInfo fractal{};
+    ExtBlock2 resume{};
+    ExtBlock3 formula{};
+    ExtBlock4 ranges{};
+    ExtBlock5 extended{};
+    ExtBlock6 evolution{};
+    ExtBlock7 orbits{};
+};
+
+ImageMetadata read_image_metadata(const std::filesystem::path &path);
+void apply_image_parameters(const ImageMetadata &metadata);
+void apply_image_extensions(ImageMetadata &metadata);
 void set_if_old_bif();
 void set_function_param_defaults();
 void backwards_legacy_v18();
