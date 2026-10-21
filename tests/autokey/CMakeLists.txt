@@ -94,6 +94,18 @@ add_test(NAME AutoKeyTest.palette-cycle
 set_tests_properties(AutoKeyTest.palette-cycle
     PROPERTIES LABELS "autokey;ui;colormap" TIMEOUT 90)
 
+id_make_test_home(palette-validation PALETTE_VALIDATION_HOME
+    KEYS palette_validation.key)
+add_test(NAME AutoKeyTest.palette-validation
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCOLORMAP_COMPARE=$<SHELL_PATH:$<TARGET_FILE:colormap-compare>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/palette_validation_test.cmake"
+    WORKING_DIRECTORY "${PALETTE_VALIDATION_HOME}")
+set_tests_properties(AutoKeyTest.palette-validation
+    PROPERTIES LABELS "autokey;ui;colormap" TIMEOUT 100)
+
 id_make_test_home(cellular-preparation CELLULAR_PREPARATION_HOME
     KEYS cellular_preparation.key)
 add_test(NAME AutoKeyTest.cellular-preparation

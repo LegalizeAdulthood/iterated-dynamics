@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <engine/cmdfiles_test.h>
 
@@ -1498,22 +1499,48 @@ TEST_F(TestParameterCommand, colorsMapNameIsCaseSensitive)
     ValueSaver saved_last_map_name{g_last_map_name, ""};
     ValueSaver saved_first_init{g_first_init, false};
     ValueSaver saved_init_batch{g_init_batch, BatchMode::NORMAL};
-    StrictMock<MockFunction<cmd_files_test::StopMsg>> stop_msg;
-    StrictMock<MockFunction<cmd_files_test::Goodbye>> goodbye;
-    cmd_files_test::StopMsgFn prev_stop_msg{cmd_files_test::get_stop_msg()};
-    cmd_files_test::GoodbyeFn prev_goodbye{cmd_files_test::get_goodbye()};
-    cmd_files_test::set_stop_msg(stop_msg.AsStdFunction());
-    cmd_files_test::set_goodbye(goodbye.AsStdFunction());
-    EXPECT_CALL(stop_msg, Call(StopMsgFlags::NONE, _)).WillOnce(Return(false));
-    EXPECT_CALL(goodbye, Call());
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
 
     exec_cmd_arg("colors=@TEST", CmdFile::AT_CMD_LINE_SET_NAME);
-    cmd_files_test::set_stop_msg(prev_stop_msg);
-    cmd_files_test::set_goodbye(prev_goodbye);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
     EXPECT_TRUE(g_map_name.empty());
     EXPECT_TRUE(g_last_map_name.empty());
+}
+
+TEST_F(TestParameterCommand, missingMapReturnsDiagnosticAndPreservesMapName)
+{
+    ColorMapSaver saved_palette;
+    ValueSaver saved_map_name{g_map_name, std::string{"previous.map"}};
+    ValueSaver saved_specified{g_map_specified, false};
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    std::vector<std::string> diagnostics;
+
+    const CmdArgFlags result{cmd_arg("map=missing-palette.map", CmdFile::AT_AFTER_STARTUP, &diagnostics)};
+
+    EXPECT_EQ(CmdArgFlags::NONE, result);
+    EXPECT_EQ("previous.map", g_map_name);
+    EXPECT_FALSE(g_map_specified);
+    ASSERT_EQ(1U, diagnostics.size());
+    EXPECT_EQ("Could not load color map missing-palette.map", diagnostics.front());
+}
+
+TEST_F(TestParameterCommand, missingPaletteStopsCommandFileWithoutLosingEarlierChangeFlags)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    ValueSaver saved_iterations{g_max_iterations, 150L};
+    std::FILE *file{std::tmpfile()};
+    ASSERT_NE(nullptr, file);
+    std::fputs("test { maxiter=321 colors=@missing-command-palette.map maxiter=654 }", file);
+    std::rewind(file);
+    std::vector<std::string> diagnostics;
+
+    const CmdArgFlags result{load_commands(file, &diagnostics)};
+
+    EXPECT_TRUE(bit_set(result, CmdArgFlags::FRACTAL_PARAM));
+    EXPECT_EQ(321, g_max_iterations);
+    ASSERT_EQ(1U, diagnostics.size());
+    EXPECT_EQ("Could not load color map missing-command-palette.map", diagnostics.front());
 }
 
 TEST_F(TestParameterCommandError, recordColorsInvalidValue)

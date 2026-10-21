@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
 #include "math/cmplx.h"
+
+#include <string>
 
 namespace id::fractals
 {
@@ -18,6 +21,7 @@ public:
     FrothyBasin &operator=(FrothyBasin &&) = delete;
 
     bool per_image();
+    std::string set_froth_palette();
     void resume();
     void suspend();
     bool done() const;
@@ -40,7 +44,6 @@ private:
     void flush_overlay_orbit_point();
     void start_pixel();
     double top_x_mapping(double x);
-    void set_froth_palette();
 
     bool m_repeat_mapping{};
     int m_alt_color{};

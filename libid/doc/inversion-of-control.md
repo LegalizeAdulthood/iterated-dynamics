@@ -283,8 +283,14 @@ The current code is already part-way through this plan:
   controller before iteration.  Per-image setup still applies the same
   numeric-color fallback after legacy option normalization.  Julibrot's
   low-color check throws before initialization; the outer UI diagnostic
-  boundary reports the failure without starting the 4D renderer.  Palette
-  loading during Julibrot setup remains for slice 34.
+  boundary reports the failure without starting the 4D renderer.
+- Palette loaders return diagnostics without UI calls.  Missing files
+  preserve palette data; malformed maps retain their valid prefix and
+  fill the remainder gray, with the same compatibility conversion.
+  Selection, command input, and render controllers report diagnostics.
+  Julibrot and stereo controllers own their palette preparation;
+  FrothyBasin reports an optional-map failure and continues with the
+  prior palette.  Palette-selection failures retry in their UI context.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -708,7 +714,7 @@ The remaining UI-concept leaks outside `libid/ui` are:
 
 - `libid/fractals/lorenz.cpp`: IFS and 3D front ends invoke UI renderers;
   stereo orchestration invokes photographer prompts between images.
-- Calculation setup, palette loading, precision math, debug displays,
+- Calculation setup, precision math, debug displays,
   and memory helpers invoke `stop_msg()` and sometimes
   `goodbye()`.  These are input and application-control leaks even when
   they are reachable only on failure or in debug builds.
@@ -771,8 +777,9 @@ Existing coverage does not imply coverage of live interaction:
   Standard scripts save a resumable checkpoint, invoke `x` and Esc, then
   compare completed pixels exactly with an uninterrupted control for
   optimized and general Mandelbrot paths.
-  Palette scripts verify cycling-context saves, single stepping, and
-  return to the image.  Pass-switch scripts select BoundaryTrace and
+  Palette scripts verify cycling-context saves, single stepping, failed
+  map selection, malformed-map warnings, valid-map retry, and return to
+  the image.  Pass-switch scripts select BoundaryTrace and
   solid guessing through `x`, verify saved pass and precision metadata,
   and compare pixels exactly with fresh renders for `perturbation=auto`
   and `no`.  The show-dot script uses `ROWWAIT` to cross row boundaries,
@@ -810,7 +817,10 @@ Existing coverage does not imply coverage of live interaction:
 - Keyboard-handler tests cover dispatch, interruption flags, and key
   requeueing.  Standard controller tests also cover mid-orbit suspension,
   continuation, scanline resume positions, and perturbation/Lyapunov gates.
-  Palette controller tests verify speed and pause state without timing.
+  Palette controller tests verify speed and pause state without timing,
+  plus file-selection failure, acknowledgement, and retry.
+  Loader tests verify missing-file preservation, partial malformed-map
+  loading, returned warnings, and legacy quantization without a driver.
   Thinking-screen tests cover text, spinner updates, and active state.
   Cellular controller tests cover preparation, transition to pixel
   output, exactly-once cleanup, interruption, and injected failure.
@@ -909,28 +919,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 34. Palette Definition Diagnostics
-
-Source: color-map loading and validation in `libid/io/loadmap.cpp`;
-UI owners: palette selection and render-setup controllers.
-
-Work:
-
-- Return missing-file and malformed-map diagnostics without `stop_msg()`
-  from loader code, including loads initiated during Julibrot setup.
-- Let UI decide whether to retry, retain the prior palette, or abandon
-  the requested operation.
-- Preserve parsing, compatibility, and palette data below UI.
-
-Done when:
-
-- Palette loading cannot enter a modal screen from calculation setup.
-
-Validation: retain loader tests for missing/malformed maps and prior-state
-preservation.  Use autokey for interactive palette-selection failure,
-acknowledgement, and retry with a valid map; verify the selected palette
-and return to the image.  Startup-only failures remain process tests.
 
 ### 35. 3D Output Diagnostics
 
@@ -1454,7 +1442,7 @@ these direct and indirect paths:
   `fractals/Cellular.cpp`, and renderer table entries in
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or
   dispatch pointers, including from per-image setup.
-- Calculation validation, palette loading, math allocation, debug displays,
+- Calculation validation, math allocation, debug displays,
   and memory operations: `stop_msg()` polls
   and waits inside these callers, and some failures invoke `goodbye()`.
 - Storage setup and disk-video progress can invoke modal failure screens

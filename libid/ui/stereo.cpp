@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /*
     A module to view 3D images.
@@ -13,10 +14,12 @@
 #include "engine/random_seed.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
+#include "geometry/plot3d.h"
 #include "helpdefs.h"
 #include "io/decoder.h"
 #include "io/encoder.h"
 #include "io/gifview.h"
+#include "io/loadmap.h"
 #include "ui/restore_image.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
@@ -37,6 +40,7 @@
 #include <vector>
 
 using namespace id::engine;
+using namespace id::geometry;
 using namespace id::help;
 using namespace id::io;
 using namespace id::misc;
@@ -53,6 +57,45 @@ bool g_gray_flag{};
 CalibrationBars g_calibrate{CalibrationBars::MIDDLE};
 bool g_use_stereo_texture{};
 bool g_stereo_texture_reuse{};
+
+void setup_stereo_palette()
+{
+    if (!g_map_set)
+    {
+        return;
+    }
+    const PaletteLoadResult result{validate_luts(g_map_name)};
+    if (!result.diagnostic.empty())
+    {
+        stop_msg(result.diagnostic);
+    }
+    if (glasses_alternating_or_superimpose())
+    {
+        if (g_glasses_type == GlassesType::SUPERIMPOSE && g_colors < 256)
+        {
+            constexpr int PAL_BLUE{1};
+            constexpr int PAL_RED{2};
+            constexpr int PAL_MAGENTA{3};
+            g_dac_box[PAL_RED][0] = 255;
+            g_dac_box[PAL_RED][1] = 0;
+            g_dac_box[PAL_RED][2] = 0;
+            g_dac_box[PAL_BLUE][0] = 0;
+            g_dac_box[PAL_BLUE][1] = 0;
+            g_dac_box[PAL_BLUE][2] = 255;
+            g_dac_box[PAL_MAGENTA][0] = 255;
+            g_dac_box[PAL_MAGENTA][1] = 0;
+            g_dac_box[PAL_MAGENTA][2] = 255;
+        }
+        const double red_bright{static_cast<double>(g_red_bright) / 100.0};
+        const double blue_bright{static_cast<double>(g_blue_bright) / 100.0};
+        for (Byte(&color)[3] : g_dac_box)
+        {
+            color[0] = static_cast<Byte>(color[0] * red_bright);
+            color[2] = static_cast<Byte>(color[2] * blue_bright);
+        }
+    }
+    refresh_dac();
+}
 
 // TODO: sort out the crazy usage of this structure
 

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /*
     This file includes miscellaneous plot functions and logic
@@ -8,11 +9,9 @@
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
-#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractype.h"
 #include "geometry/line3d.h"
-#include "io/loadmap.h"
 #include "ui/diskvid.h"
 #include "ui/video.h"
 
@@ -22,7 +21,6 @@
 
 using namespace id::engine;
 using namespace id::fractals;
-using namespace id::io;
 using namespace id::ui;
 
 namespace id::geometry
@@ -426,9 +424,6 @@ static void plot3d_cross_eyed_c(const int x, const int y, const int color)
 
 void plot_setup()
 {
-    double d_red_bright  = 0;
-    double d_blue_bright = 0;
-
     // set funny glasses plot function
     switch (g_glasses_type)
     {
@@ -492,8 +487,6 @@ void plot_setup()
         s_red_local_right = static_cast<int>((100 - g_red_crop_right) * static_cast<double>(g_logical_screen.x_dots) / 100.0);
         s_blue_local_left = static_cast<int>(g_blue_crop_left * static_cast<double>(g_logical_screen.x_dots) / 100.0);
         s_blue_local_right = static_cast<int>((100 - g_blue_crop_right) * static_cast<double>(g_logical_screen.x_dots) / 100.0);
-        d_red_bright    = static_cast<double>(g_red_bright) /100.0;
-        d_blue_bright   = static_cast<double>(g_blue_bright) /100.0;
 
         switch (g_which_image)
         {
@@ -529,34 +522,6 @@ void plot_setup()
         g_xx_adjust = static_cast<int>(g_adjust_3d.x * static_cast<double>(g_logical_screen.x_dots) / 100);
     }
     g_yy_adjust = static_cast<int>(-(g_adjust_3d.y * static_cast<double>(g_logical_screen.y_dots)) / 100);
-
-    if (g_map_set)
-    {
-        validate_luts(g_map_name); // read the palette file
-        if (glasses_alternating_or_superimpose())
-        {
-            if (g_glasses_type == GlassesType::SUPERIMPOSE && g_colors < 256)
-            {
-                g_dac_box[PAL_RED  ][0] = 255;
-                g_dac_box[PAL_RED  ][1] =  0;
-                g_dac_box[PAL_RED  ][2] =  0;
-
-                g_dac_box[PAL_BLUE ][0] =  0;
-                g_dac_box[PAL_BLUE ][1] =  0;
-                g_dac_box[PAL_BLUE ][2] = 255;
-
-                g_dac_box[PAL_MAGENTA][0] = 255;
-                g_dac_box[PAL_MAGENTA][1] = 0;
-                g_dac_box[PAL_MAGENTA][2] = 255;
-            }
-            for (auto &elem : g_dac_box)
-            {
-                elem[0] = static_cast<Byte>(elem[0] * d_red_bright);
-                elem[2] = static_cast<Byte>(elem[2] * d_blue_bright);
-            }
-        }
-        refresh_dac();
-    }
 }
 
 } // namespace id::geometry

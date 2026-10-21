@@ -7,27 +7,21 @@
 #include "engine/get_julia_attractor.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
-#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/pickover_mandelbrot.h"
-#include "io/loadmap.h"
 #include "math/sqr.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "ui/get_3d_params.h"
-#include "ui/starfield.h"
 
 #include <algorithm>
 #include <stdexcept>
 
 using namespace id::engine;
-using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::fractals
 {
@@ -120,8 +114,6 @@ FractalDispatch make_julibrot_orbit_dispatch()
 
 bool julibrot_per_image()
 {
-    const char *map_name;
-
     if (g_colors < 255)
     {
         throw std::runtime_error{"Sorry, but Julibrots require a 256-color video mode"};
@@ -154,27 +146,6 @@ bool julibrot_per_image()
     s_jb.left_eye.zy = s_jb.right_eye.zy;
     s_b_base = 128;
 
-    if (g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE)
-    {
-        g_save_dac = SaveDAC::NO;
-        map_name = GLASSES1_MAP_NAME.c_str();
-    }
-    else
-    {
-        map_name = ALTERN_MAP_NAME.c_str();
-    }
-    if (g_save_dac != SaveDAC::YES)
-    {
-        if (validate_luts(map_name))
-        {
-            return false;
-        }
-        refresh_dac();
-        if (g_save_dac == SaveDAC::NEXT_TIME)
-        {
-            g_save_dac = SaveDAC::YES;
-        }
-    }
     return true;
 }
 

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -13,8 +14,13 @@ extern std::string           g_last_map_name;       // from last <l> <s> or colo
 extern Byte                  g_map_clut[256][3];    // map= (default colors)
 extern bool                  g_map_specified;       // map= specified
 
-// returns true on error
-bool validate_luts(const std::string &map_name);
-void set_color_palette_name(const std::string &map_name);
+struct PaletteLoadResult
+{
+    bool failed{};
+    std::string diagnostic;
+};
+
+PaletteLoadResult validate_luts(const std::string &map_name);
+PaletteLoadResult set_color_palette_name(const std::string &map_name);
 
 } // namespace id::io

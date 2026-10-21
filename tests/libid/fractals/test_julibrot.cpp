@@ -59,4 +59,14 @@ TEST_F(TestJulibrotSetup, initializesWith256ColorsAndPreloadedPaletteWithoutUI)
     EXPECT_EQ(SaveDAC::YES, g_save_dac);
 }
 
+TEST_F(TestJulibrotSetup, paletteSelectionIsLeftToTheController)
+{
+    g_save_dac = SaveDAC::NO;
+    g_julibrot_3d_mode = Julibrot3DMode::RED_BLUE;
+
+    EXPECT_TRUE(julibrot_per_image());
+
+    EXPECT_EQ(SaveDAC::NO, g_save_dac);
+}
+
 } // namespace id::test

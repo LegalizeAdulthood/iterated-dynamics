@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/get_cmd_string.h"
 
@@ -9,6 +10,9 @@
 #include "misc/ValueSaver.h"
 #include "ui/field_prompt.h"
 #include "ui/help.h"
+#include "ui/stop_msg.h"
+
+#include <vector>
 
 using namespace id::engine;
 using namespace id::help;
@@ -33,7 +37,12 @@ int get_cmd_string()
     int i = field_prompt("Enter command string to use.", nullptr, cmd_buf, 60, nullptr);
     if (i >= 0 && cmd_buf[0] != 0)
     {
-        i = +cmd_arg(cmd_buf, CmdFile::AT_AFTER_STARTUP);
+        std::vector<std::string> diagnostics;
+        i = +cmd_arg(cmd_buf, CmdFile::AT_AFTER_STARTUP, &diagnostics);
+        for (const std::string &diagnostic : diagnostics)
+        {
+            stop_msg(diagnostic);
+        }
         if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
         {
             backwards_legacy_v18();

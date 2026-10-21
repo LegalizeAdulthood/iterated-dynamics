@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // Command-line / Command-File Parser Routines
 //
@@ -96,6 +97,7 @@
 #include <iterator>
 #include <limits>
 #include <locale>
+#include <memory>
 #include <numeric>
 #include <optional>
 #include <sstream>
@@ -119,7 +121,7 @@ using namespace id::ui;
 namespace id::engine
 {
 
-static CmdArgFlags command_file(std::FILE *handle, CmdFile mode);
+static CmdArgFlags command_file(std::FILE *handle, CmdFile mode, std::vector<std::string> *diagnostics);
 static bool next_line(std::FILE *handle, std::string &line_buf, CmdFile mode);
 static void arg_error(const char *bad_arg);
 static void init_vars_run();
@@ -129,8 +131,8 @@ static void init_vars3d();
 static void reset_ifs_definition();
 static bool type_needs_file_entry();
 static bool type_has_file_entry();
-static void reset_startup_commands();
-static void resolve_startup_file_entry();
+static void reset_startup_commands(std::vector<std::string> *diagnostics);
+static void resolve_startup_file_entry(std::vector<std::string> *diagnostics);
 static int get_bf(BigFloat bf, const char *cur_arg);
 static bool is_a_big_float(const char *str);
 static bool parse_command_number(std::string_view text, long &value);
@@ -205,7 +207,7 @@ static bool parse_command_number(std::string_view text, double &value)
 // it also processes the 'sstools.ini' file and any
 // indirect files ('id @myfile')
 
-static void process_sstools_ini()
+static void process_sstools_ini(std::vector<std::string> *diagnostics)
 {
     const std::string sstools_ini{find_file(ReadFile::ID_CONFIG, "sstools.ini").string()}; // look for SSTOOLS.INI
     if (sstools_ini.empty())
@@ -215,7 +217,7 @@ static void process_sstools_ini()
 
     if (std::FILE *init_file = std::fopen(sstools_ini.c_str(), "r"); init_file != nullptr)
     {
-        command_file(init_file, CmdFile::SSTOOLS_INI); // process it
+        command_file(init_file, CmdFile::SSTOOLS_INI, diagnostics); // process it
     }
 }
 
@@ -241,14 +243,14 @@ static bool type_has_file_entry()
     }
 }
 
-static void reset_startup_commands()
+static void reset_startup_commands(std::vector<std::string> *diagnostics)
 {
     init_vars_restart();
     init_vars_fractal();
-    process_sstools_ini();
+    process_sstools_ini(diagnostics);
 }
 
-static void process_simple_command(char *cur_arg)
+static void process_simple_command(char *cur_arg, std::vector<std::string> *diagnostics)
 {
     bool processed{};
     if (std::strchr(cur_arg, '=') == nullptr)
@@ -288,11 +290,12 @@ static void process_simple_command(char *cur_arg)
     }
     if (!processed)
     {
-        cmd_arg(cur_arg, CmdFile::AT_CMD_LINE);           // process simple command
+        cmd_arg(cur_arg, CmdFile::AT_CMD_LINE, diagnostics); // process simple command
     }
 }
 
-static bool process_file_set_name(const std::string &filename, const std::string &param_name)
+static bool process_file_set_name(
+    const std::string &filename, const std::string &param_name, std::vector<std::string> *diagnostics)
 {
     const std::filesystem::path saved_path{g_parameter_file};
     const std::string saved_name{g_parameter_set_name};
@@ -316,11 +319,11 @@ static bool process_file_set_name(const std::string &filename, const std::string
         g_parameter_set_name = saved_name;
         return false;
     }
-    command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME);
+    command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME, diagnostics);
     return true;
 }
 
-static void process_file(char *cur_arg)
+static void process_file(char *cur_arg, std::vector<std::string> *diagnostics)
 {
     fs::path path{&cur_arg[1]};
     if (!path.has_extension())
@@ -341,10 +344,10 @@ static void process_file(char *cur_arg)
         return;
     }
 
-    command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME);
+    command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME, diagnostics);
 }
 
-static void resolve_startup_file_entry()
+static void resolve_startup_file_entry(std::vector<std::string> *diagnostics)
 {
     if (!type_needs_file_entry() || type_has_file_entry())
     {
@@ -373,12 +376,13 @@ static void resolve_startup_file_entry()
 
     if (!select_fractal_file_entry())
     {
-        reset_startup_commands();
+        reset_startup_commands(diagnostics);
     }
 }
 
-void cmd_files(const std::vector<std::string> &args)
+std::vector<std::string> cmd_files(const std::vector<std::string> &args)
 {
+    std::vector<std::string> diagnostics;
     if (g_first_init)
     {
         init_vars_run();                 // once per run initialization
@@ -386,7 +390,7 @@ void cmd_files(const std::vector<std::string> &args)
     init_vars_restart();                  // <ins> key initialization
     init_vars_fractal();                  // image initialization
 
-    process_sstools_ini();
+    process_sstools_ini(&diagnostics);
 
     // cycle through args
     for (std::size_t i = 1; i < args.size(); i++)
@@ -399,12 +403,12 @@ void cmd_files(const std::vector<std::string> &args)
         }
         if (first_char != '@')
         {
-            process_simple_command(cur_arg.data());
+            process_simple_command(cur_arg.data(), &diagnostics);
         }
         // @filename/setname?
         else if (char *slash = std::strchr(cur_arg.data(), '/'); slash != nullptr)
         {
-            if (!process_file_set_name(std::string{cur_arg.data() + 1, slash}, slash + 1))
+            if (!process_file_set_name(std::string{cur_arg.data() + 1, slash}, slash + 1, &diagnostics))
             {
                 arg_error(cur_arg.c_str());
             }
@@ -412,10 +416,10 @@ void cmd_files(const std::vector<std::string> &args)
         // @filename
         else
         {
-            process_file(cur_arg.data());
+            process_file(cur_arg.data(), &diagnostics);
         }
     }
-    resolve_startup_file_entry();
+    resolve_startup_file_entry(&diagnostics);
 
     if (!g_first_init)
     {
@@ -432,6 +436,7 @@ void cmd_files(const std::vector<std::string> &args)
 
     // PAR reads a file and sets color, don't read colors from GIF
     g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
+    return diagnostics;
 }
 
 static void init_param_flags()
@@ -443,10 +448,10 @@ static void init_param_flags()
 
 // when called, file is open in binary mode, positioned at the
 // '(' or '{' following the desired parameter set's name
-CmdArgFlags load_commands(std::FILE *infile)
+CmdArgFlags load_commands(std::FILE *infile, std::vector<std::string> *diagnostics)
 {
     init_param_flags(); // reset flags for type=
-    const CmdArgFlags ret = command_file(infile, CmdFile::AT_AFTER_STARTUP);
+    const CmdArgFlags ret = command_file(infile, CmdFile::AT_AFTER_STARTUP, diagnostics);
 
     // PAR reads a file and sets color, don't read colors from GIF
     g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
@@ -670,8 +675,9 @@ static void reset_ifs_definition()
 //        AT_CMD_LINE_SET_NAME  command line @filename/setname
 // note that cmdfile could be open as text OR as binary.
 // binary is used in @ command processing for reasonable speed note/point
-static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode)
+static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode, std::vector<std::string> *diagnostics)
 {
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{handle, std::fclose};
     if (mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME)
     {
         int i;
@@ -691,14 +697,13 @@ static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode)
         {
             break;
         }
-        const CmdArgFlags i = cmd_arg(cmd, mode);
+        const CmdArgFlags i = cmd_arg(cmd, mode, diagnostics);
         if (i == CmdArgFlags::BAD_ARG)
         {
             break;
         }
         change_flag |= i;
     }
-    std::fclose(handle);
 
     if (bit_set(change_flag, CmdArgFlags::FRACTAL_PARAM))
     {
@@ -850,7 +855,7 @@ void set_print_document(const PrintDocFn &fn)
 
 struct Command
 {
-    Command(std::string_view cur_arg, CmdFile a_mode);
+    Command(std::string_view cur_arg, CmdFile a_mode, std::vector<std::string> *diagnostics);
     CmdArgFlags bad_arg() const;
     void init_msg() const;
     std::string_view string_val(int index) const;
@@ -872,11 +877,13 @@ struct Command
     const char *string_vals[16]{};    // pointers to all string vals
     int string_val_lens[16]{};        // string value lengths
     CmdArgFlags status{CmdArgFlags::NONE};
+    std::vector<std::string> *diagnostics{};
 };
 
-Command::Command(const std::string_view cur_arg, const CmdFile a_mode) :
+Command::Command(const std::string_view cur_arg, const CmdFile a_mode, std::vector<std::string> *a_diagnostics) :
     arg(cur_arg),
-    mode(a_mode)
+    mode(a_mode),
+    diagnostics(a_diagnostics)
 {
     lowerize_parameter(arg);
     const std::size_t equals{arg.find('=', 1)};
@@ -1647,8 +1654,9 @@ static int parse_6bit_color(const char *&value)
     return k;
 }
 
-static CmdArgFlags parse_colors(const std::string_view value)
+static CmdArgFlags parse_colors(const Command &cmd)
 {
+    const std::string_view value{cmd.value};
     if (!value.empty() && value[0] == '@')
     {
         const std::string map_name{value.substr(1)};
@@ -1659,19 +1667,16 @@ static CmdArgFlags parse_colors(const std::string_view value)
             map_path.replace_extension(".map");
             path = find_file(ReadFile::MAP, map_path);
         }
-        if (!path.empty())
+        const PaletteLoadResult result{validate_luts(path.empty() ? map_name : path.string())};
+        if (cmd.diagnostics != nullptr && !result.diagnostic.empty())
         {
-            g_map_name = path.filename().string();
+            cmd.diagnostics->push_back(result.diagnostic);
         }
-        else
+        if (result.failed)
         {
-            init_msg("", map_name.c_str(), CmdFile::AT_CMD_LINE_SET_NAME);
-            goto bad_color;
+            return CmdArgFlags::BAD_ARG;
         }
-        if (validate_luts(g_map_name))
-        {
-            goto bad_color;
-        }
+        g_map_name = path.filename().string();
         if (g_display_3d != Display3DMode::NONE)
         {
             g_map_set = true;
@@ -1783,8 +1788,12 @@ bad_color:
 // colors=, set current colors
 static CmdArgFlags cmd_colors(const Command &cmd)
 {
-    if (parse_colors(cmd.value) == CmdArgFlags::BAD_ARG)
+    if (parse_colors(cmd) == CmdArgFlags::BAD_ARG)
     {
+        if (!cmd.value.empty() && cmd.value[0] == '@')
+        {
+            return CmdArgFlags::BAD_ARG;
+        }
         return cmd.bad_arg();
     }
     return CmdArgFlags::NONE;
@@ -2565,8 +2574,16 @@ static CmdArgFlags cmd_map(const Command &cmd)
         return cmd.bad_arg();
     }
 
-    g_map_name = std::string{cmd.value};
-    set_color_palette_name(g_map_name);
+    const std::string map_name{cmd.value};
+    const PaletteLoadResult result{set_color_palette_name(map_name)};
+    if (cmd.diagnostics != nullptr && !result.diagnostic.empty())
+    {
+        cmd.diagnostics->push_back(result.diagnostic);
+    }
+    if (!result.failed)
+    {
+        g_map_name = map_name;
+    }
     return CmdArgFlags::NONE;
 }
 
@@ -4189,9 +4206,9 @@ static std::optional<CmdArgFlags> handle_command(const std::array<CommandHandler
 //      | 4 means 3d=yes specified
 //      | 8 means reset specified
 //
-CmdArgFlags cmd_arg(const std::string_view cur_arg, const CmdFile mode) // process a single argument
+CmdArgFlags cmd_arg(const std::string_view cur_arg, const CmdFile mode, std::vector<std::string> *diagnostics)
 {
-    Command cmd{cur_arg, mode};
+    Command cmd{cur_arg, mode, diagnostics};
     if (cmd.status != CmdArgFlags::NONE)
     {
         return cmd.status;

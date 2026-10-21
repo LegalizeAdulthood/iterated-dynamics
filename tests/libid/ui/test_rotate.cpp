@@ -4,8 +4,13 @@
 #include <ui/rotate.h>
 
 #include "MockDriver.h"
+#include "test_data.h"
 
+#include <engine/cmdfiles.h>
+#include <engine/color_state.h>
 #include <engine/VideoInfo.h>
+#include <io/loadmap.h>
+#include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 #include <ui/id_keys.h>
 
@@ -16,6 +21,7 @@
 #include <cstring>
 
 using namespace id::engine;
+using namespace id::io;
 using namespace id::misc;
 using namespace id::misc::test;
 using namespace id::ui;
@@ -247,6 +253,50 @@ TEST_F(TestPaletteRotation, cyclingDoesNotDelayWhenTrueColorPreventsPaletteUpdat
     EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
 
     rotate(SpinDirection::FORWARD);
+}
+
+TEST_F(TestPaletteRotation, missingPaletteIsReportedAndSelectionRetriesWithoutChangingPriorPalette)
+{
+    ValueSaver saved_first_init{g_first_init, false};
+    ValueSaver saved_batch{g_init_batch, BatchMode::NONE};
+    ValueSaver saved_debug{g_debug_flag, DebugFlags::NONE};
+    ValueSaver saved_map_name{g_map_name, std::string{"previous.map"}};
+    ValueSaver saved_last_map_name{g_last_map_name};
+    ValueSaver saved_color_state{g_color_state};
+    const std::string filename{std::string{data::ID_TEST_MAP_DIR} + "/" + data::ID_TEST_MAP_FILE};
+    EXPECT_CALL(m_driver, stack_screen()).Times(3);
+    EXPECT_CALL(m_driver, unstack_screen()).Times(3);
+    EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(2);
+    EXPECT_CALL(m_driver, move_cursor(_, _));
+    EXPECT_CALL(m_driver, set_attr(_, _, _, _));
+    EXPECT_CALL(m_driver, hide_text_cursor());
+    EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
+    InSequence sequence;
+    EXPECT_CALL(m_driver, get_filename(_, _, _, _))
+        .WillOnce(Invoke(
+            [](const char *, const char *, const char *, std::string &name)
+            {
+                name = "missing-palette-selection.map";
+                return false;
+            }));
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+    EXPECT_CALL(m_driver, get_filename(_, _, _, _))
+        .WillOnce(Invoke(
+            [this, &filename](const char *, const char *, const char *, std::string &name)
+            {
+                EXPECT_EQ("previous.map", g_map_name);
+                expect_color(0, 0);
+                expect_color(255, 255);
+                name = filename;
+                return false;
+            }));
+
+    EXPECT_FALSE(load_palette());
+
+    EXPECT_EQ(filename, g_map_name);
+    EXPECT_EQ(filename, g_last_map_name);
+    EXPECT_EQ(0, std::memcmp(g_dac_box, g_old_dac_box, sizeof(g_dac_box)));
 }
 
 } // namespace id::test

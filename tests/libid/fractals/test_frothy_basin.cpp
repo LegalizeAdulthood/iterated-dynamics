@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
+#include <string>
+
 #define private public
 #include <fractals/FrothyBasin.h>
 #undef private
@@ -8,6 +11,7 @@
 #include <engine/color_state.h>
 #include <engine/VideoInfo.h>
 #include <misc/ValueSaver.h>
+#include <misc/Driver.h>
 #include <misc/version.h>
 
 #include <gtest/gtest.h>
@@ -109,6 +113,16 @@ TEST_F(TestFrothyBasin, post1821VersionUsesCurrentParameters)
     EXPECT_EQ(0.25, g_frothy_basin.m_half_a);
     EXPECT_EQ(7.0, g_magnitude_limit);
     EXPECT_EQ(171, g_orbit_color);
+}
+
+TEST_F(TestFrothyBasin, defaultPalettePreparationDoesNotInvokeTheUI)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    g_color_state = ColorState::DEFAULT_MAP;
+
+    EXPECT_TRUE(g_frothy_basin.per_image());
+
+    EXPECT_EQ(ColorState::DEFAULT_MAP, g_color_state);
 }
 
 } // namespace id::test

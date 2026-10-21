@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /*
     Routines that manipulate the Video DAC on VGA Adapters
@@ -18,6 +19,7 @@
 #include "ui/field_prompt.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
+#include "ui/stop_msg.h"
 
 #include <algorithm>
 #include <cassert>
@@ -436,22 +438,22 @@ void rotate(SpinDirection direction)
             break;
         case 'd':                       // load colors from "default.map"
         case 'D':
-            if (validate_luts("default"))
-            {
-                break;
-            }
-            f_key = 0;                  // disable random generation
-            pause_rotate();             // update palette and pause
-            break;
         case 'a':                       // load colors from "altern.map"
         case 'A':
-            if (validate_luts("altern"))
+        {
+            const PaletteLoadResult result{validate_luts(key == 'd' || key == 'D' ? "default" : "altern")};
+            if (!result.diagnostic.empty())
+            {
+                stop_msg(result.diagnostic);
+            }
+            if (result.failed)
             {
                 break;
             }
             f_key = 0;                  // disable random generation
             pause_rotate();             // update palette and pause
             break;
+        }
         case 'l':                       // load colors from a specified map
         case 'L':
             load_palette();
@@ -596,18 +598,28 @@ bool load_palette()
 {
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COLORMAP};
     std::string filename{g_map_name};
-    driver_stack_screen();
-    const bool i = driver_get_filename("Select a Map File", "Colormap", "*.map", filename);
-    driver_unstack_screen();
-    if (!i)
+    while (true)
     {
-        if (!validate_luts(filename))
+        driver_stack_screen();
+        const bool cancelled{driver_get_filename("Select a Map File", "Colormap", "*.map", filename)};
+        driver_unstack_screen();
+        if (cancelled)
         {
-            std::memcpy(g_old_dac_box, g_dac_box, 256*3);
-            g_map_name = filename;
+            return true;
         }
+        const PaletteLoadResult result{validate_luts(filename)};
+        if (!result.diagnostic.empty())
+        {
+            stop_msg(result.diagnostic);
+        }
+        if (result.failed)
+        {
+            continue;
+        }
+        std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
+        g_map_name = filename;
+        return false;
     }
-    return i;
 }
 
 } // namespace id::ui

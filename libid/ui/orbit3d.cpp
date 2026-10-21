@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/orbit3d.h"
 
 #include "fractals/lorenz.h"
+#include "ui/stereo.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/SoundSession.h"
 
@@ -25,6 +27,7 @@ int orbit3d_calc(SoundSession &sound)
     reset_calc_interrupted();
     KeyboardHandlerPtr main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
     ScopedKeyboardHandler main_loop_scope{main_loop_handler};
+    setup_stereo_palette();
     Orbit3D o3d;
 
     while (!o3d.done())

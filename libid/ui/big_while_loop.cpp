@@ -432,7 +432,11 @@ MainState big_while_loop(MainContext &context)
                 else if ((driver_is_disk() && g_colors == 256) || !g_colors)
                 {
                     // disk video, setvideomode via bios didn't get it right, so:
-                    validate_luts("default"); // read the default palette file
+                    const PaletteLoadResult result{validate_luts("default")};
+                    if (!result.diagnostic.empty())
+                    {
+                        stop_msg(result.diagnostic);
+                    }
                 }
                 g_color_state = ColorState::DEFAULT_MAP;
             }

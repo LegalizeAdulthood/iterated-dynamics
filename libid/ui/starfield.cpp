@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/starfield.h"
 
@@ -96,9 +97,13 @@ int star_field()
     s_concentration  = static_cast<long>(s_star_field_values[1] / 100.0 * (1L << 16));
     s_slope = static_cast<int>(s_star_field_values[2]);
 
-    if (validate_luts(ALTERN_MAP_NAME))
+    const PaletteLoadResult palette{validate_luts(ALTERN_MAP_NAME)};
+    if (!palette.diagnostic.empty())
     {
-        stop_msg("Unable to load ALTERN.MAP");
+        stop_msg(palette.diagnostic);
+    }
+    if (palette.failed)
+    {
         g_busy = false;
         return -1;
     }

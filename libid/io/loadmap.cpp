@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "io/loadmap.h"
 
@@ -7,7 +8,6 @@
 #include "engine/spindac.h"
 #include "io/library.h"
 #include "misc/version.h"
-#include "ui/stop_msg.h"
 
 #include <config/port.h>
 
@@ -19,7 +19,6 @@
 
 using namespace id::engine;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::io
 {
@@ -89,7 +88,7 @@ static void backwards_id1_3_map()
     }
 }
 
-bool validate_luts(const std::string &map_name)
+PaletteLoadResult validate_luts(const std::string &map_name)
 {
     std::filesystem::path map_path{map_name};
     if (!map_path.has_extension())
@@ -100,9 +99,9 @@ bool validate_luts(const std::string &map_name)
     std::FILE *f = std::fopen(map_path.string().c_str(), "r"); // search the dos path
     if (f == nullptr)
     {
-        stop_msg(fmt::format("Could not load color map {:s}", map_name));
-        return true;
+        return {true, fmt::format("Could not load color map {:s}", map_name)};
     }
+    PaletteLoadResult result;
     int index;
     for (index = 0; index < 256; index++)
     {
@@ -116,9 +115,9 @@ bool validate_luts(const std::string &map_name)
         unsigned int b{};
         if (int count = std::sscanf(line, "%u %u %u", &r, &g, &b); count != 3)
         {
-            stop_msg(fmt::format("Malformed map entry on line {:d}, only {:d} channels but expected 3.\n"
-                                 "Skipping remaining lines.",
-                index, count));
+            result.diagnostic = fmt::format("Malformed map entry on line {:d}, only {:d} channels but expected 3.\n"
+                                            "Skipping remaining lines.",
+                index, count);
             break;
         }
         //* load global dac values *
@@ -138,16 +137,17 @@ bool validate_luts(const std::string &map_name)
     backwards_id1_3_map();
     g_color_state = ColorState::MAP_FILE;
     g_last_map_name = map_name;
-    return false;
+    return result;
 }
 
 //*************************************************************************
 
-void set_color_palette_name(const std::string &map_name)
+PaletteLoadResult set_color_palette_name(const std::string &map_name)
 {
-    if (validate_luts(map_name))
+    PaletteLoadResult result{validate_luts(map_name)};
+    if (result.failed)
     {
-        return;
+        return result;
     }
     for (int i = 0; i < 256; ++i)
     {
@@ -156,6 +156,7 @@ void set_color_palette_name(const std::string &map_name)
         g_map_clut[i][2] = g_dac_box[i][2];
     }
     g_map_specified = true;
+    return result;
 }
 
 } // namespace id::io

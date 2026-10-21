@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // frothy basin routines
 
@@ -43,11 +44,11 @@ double FrothyBasin::top_x_mapping(const double x)
 }
 
 // color maps which attempt to replicate the images of James Alexander.
-void FrothyBasin::set_froth_palette()
+std::string FrothyBasin::set_froth_palette()
 {
     if (g_color_state != ColorState::DEFAULT_MAP)   // 0 means g_dac_box matches default
     {
-        return;
+        return {};
     }
     if (g_colors >= 16)
     {
@@ -74,13 +75,16 @@ void FrothyBasin::set_froth_palette()
                 map_name = "froth316.map";
             }
         }
-        if (validate_luts(map_name))
+        const PaletteLoadResult result{validate_luts(map_name)};
+        if (result.failed)
         {
-            return;
+            return result.diagnostic;
         }
         g_color_state = ColorState::DEFAULT_MAP; // treat map as default
         refresh_dac();
+        return result.diagnostic;
     }
+    return {};
 }
 
 bool FrothyBasin::per_image()
@@ -166,7 +170,6 @@ bool FrothyBasin::per_image()
     // rqlim needs to be at least sq(1+sqrt(1+sq(a))),
     // which is never bigger than 6.93..., so we'll call it 7.0
     g_magnitude_limit = std::max(g_magnitude_limit, 7.0);
-    set_froth_palette();
     // make the best of the .map situation
     if (m_attractors != 6 && g_colors >= 16)
     {

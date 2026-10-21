@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/frothy_basin.h"
 
@@ -9,6 +10,7 @@
 #include "ui/KeyboardHandler.h"
 #include "ui/SoundSession.h"
 #include "ui/standard_orbit_plot.h"
+#include "ui/stop_msg.h"
 
 #include <memory>
 
@@ -75,6 +77,10 @@ int froth_type(SoundSession &sound)
         return -1;
     }
 
+    if (const std::string diagnostic{g_frothy_basin.set_froth_palette()}; !diagnostic.empty())
+    {
+        stop_msg(diagnostic);
+    }
     g_frothy_basin.resume();
     while (!g_frothy_basin.done())
     {

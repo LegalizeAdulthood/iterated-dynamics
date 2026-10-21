@@ -29,6 +29,7 @@
 #include "ui/slideshw.h"
 #include "ui/SoundSession.h"
 #include "ui/stereo.h"
+#include "ui/stop_msg.h"
 #include "ui/video.h"
 
 #include <filesystem>
@@ -52,6 +53,10 @@ constexpr const char *ALTERNATE_FRACTAL_TYPE{".fra"};
 int restore_image_impl(SoundSession *sound)
 {
     ValueSaver busy{g_busy};
+    if (g_out_line != out_line_stereo)
+    {
+        setup_stereo_palette();
+    }
     g_row_count = 0;
     std::optional<RestoredImageOutput> output;
     unsigned int image_top{};
@@ -102,7 +107,11 @@ int restore_image_impl(SoundSession *sound)
     // don't read if glasses
     if (g_display_3d != Display3DMode::NONE && g_map_set && !glasses_alternating_or_superimpose())
     {
-        validate_luts(g_map_name); // read the palette file
+        const PaletteLoadResult result{validate_luts(g_map_name)};
+        if (!result.diagnostic.empty())
+        {
+            stop_msg(result.diagnostic);
+        }
         refresh_dac();
     }
     if (g_dac_box[0][0] != 255)

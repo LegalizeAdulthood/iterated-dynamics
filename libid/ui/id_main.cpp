@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/id_main.h"
 
@@ -19,6 +20,7 @@
 #include "math/fixed_pt.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"
+#include "misc/ValueSaver.h"
 #include "ui/big_while_loop.h"
 #include "ui/do_pause.h"
 #include "ui/evolve.h"
@@ -132,7 +134,12 @@ static void main_restart(const std::vector<std::string> &args, MainContext &cont
     driver_set_for_text();                          // switch to text mode
     g_save_dac = SaveDAC::NO;                       // don't save the VGA DAC
 
-    cmd_files(args);                                // process the command-line
+    const bool first_init{g_first_init};
+    for (const std::string &diagnostic : cmd_files(args))
+    {
+        ValueSaver saved_first_init{g_first_init, first_init};
+        stop_msg(diagnostic);
+    }
     do_pause(0);                  // pause for error msg if not batch
     init_msg("", nullptr, CmdFile::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
 

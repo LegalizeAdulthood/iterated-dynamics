@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/get_3d_params.h"
 
@@ -440,9 +441,13 @@ static bool check_map_file()
             }
         }
         std::memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
-        const bool valid = validate_luts(map_name.string());
+        const PaletteLoadResult result{validate_luts(map_name.string())};
         std::memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
-        if (valid) // Oops, something's wrong
+        if (!result.diagnostic.empty())
+        {
+            stop_msg(result.diagnostic);
+        }
+        if (result.failed)
         {
             ask_flag = true;
             continue;
