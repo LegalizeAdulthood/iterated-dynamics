@@ -67,6 +67,7 @@ add_library(libid
     include/engine/param_not_used.h engine/param_not_used.cpp
     include/engine/PertEngine.h engine/PertEngine.cpp
     engine/perturbation.cpp
+    include/engine/pixel.h engine/pixel.cpp
     include/engine/pixel_grid.h engine/pixel_grid.cpp
     include/engine/pixel_limits.h
     include/engine/Point.h

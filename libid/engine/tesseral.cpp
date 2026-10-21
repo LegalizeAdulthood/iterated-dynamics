@@ -3,18 +3,16 @@
 //
 // tesseral pass algorithm by Chris Taylor
 
+#include "engine/pixel.h"
 #include "engine/tesseral.h"
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"
-#include "ui/video.h"
 
 #include <stdexcept>
 #include <vector>
-
-using namespace id::ui;
 
 namespace id::engine
 {

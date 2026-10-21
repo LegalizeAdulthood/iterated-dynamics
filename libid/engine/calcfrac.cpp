@@ -27,6 +27,7 @@
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/ScanlinePass.h"
 #include "engine/OrbitPlot.h"
 #include "engine/pixel_grid.h"
@@ -66,7 +67,6 @@
 #include "ui/lyapunov.h"
 #include "ui/non_standard_fractal.h"
 #include "ui/standard_fractal.h"
-#include "ui/video.h"
 
 #include <fmt/format.h>
 

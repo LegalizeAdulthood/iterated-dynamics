@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // Edits VGA 256-color palettes.
 //
@@ -7,6 +8,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "io/dir_file.h"
@@ -20,7 +22,6 @@
 #include "ui/mouse.h"
 #include "ui/read_ticker.h"
 #include "ui/rotate.h"
-#include "ui/video.h"
 
 #include <fmt/format.h>
 

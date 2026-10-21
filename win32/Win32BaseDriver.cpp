@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /* d_win32.c
  *
@@ -217,7 +218,6 @@ void Win32BaseDriver::set_video_mode(const VideoInfo &mode)
         end_disk();
     }
     set_normal_dot();
-    set_normal_span();
     set_for_graphics();
     set_clear();
 }

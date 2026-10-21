@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /* d_win32_disk.c
  *
@@ -12,6 +13,7 @@
 #include <config/driver_types.h>
 
 #include "engine/calcfrac.h"
+#include "engine/pixel.h"
 #include "engine/spindac.h"
 #include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
@@ -295,7 +297,6 @@ void DiskDriver::set_video_mode(const VideoInfo &mode)
 
     resize();
     set_disk_dot();
-    set_normal_span();
 }
 
 void DiskDriver::set_clear()

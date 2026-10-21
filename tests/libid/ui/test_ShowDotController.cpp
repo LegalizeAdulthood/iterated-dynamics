@@ -10,6 +10,7 @@
 #include <engine/LogicalScreen.h>
 #include <engine/NullSoundOutput.h>
 #include <engine/OrbitPlot.h>
+#include <engine/pixel.h>
 #include <engine/resume.h>
 #include <engine/show_dot.h>
 #include <engine/SoundOutput.h>
@@ -72,7 +73,6 @@ protected:
             m_pixels[i] = 1 + i % 13;
         }
         set_normal_dot();
-        set_normal_span();
         reset_calc_interrupted();
         m_specific.flags = FractalFlags::NONE;
         m_specific.symmetry = SymmetryType::NONE;

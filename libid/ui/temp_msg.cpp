@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/temp_msg.h"
 
 #include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/VideoInfo.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/find_special_colors.h"
-#include "ui/video.h"
 
 #include <config/port.h>
 

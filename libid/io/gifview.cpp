@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // GIF scanline pixel output helpers.
+#include "io/decoder.h"
 #include "io/gifview.h"
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/Potential.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
-#include "io/decoder.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
-#include "ui/video.h"
 
 #include <cstdlib>
 #include <algorithm>

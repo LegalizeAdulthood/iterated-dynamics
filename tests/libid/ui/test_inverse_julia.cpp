@@ -9,6 +9,7 @@
 #include <engine/calcfrac.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
 #include <engine/pixel_grid.h>
 #include <engine/spindac.h>
 #include <engine/VideoInfo.h>
@@ -47,7 +48,6 @@ protected:
     {
         set_fractal_type(FractalType::MANDEL);
         set_normal_dot();
-        set_normal_span();
         alloc_pixel_grid();
         EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
         EXPECT_CALL(m_driver, read_pixel(_, _))

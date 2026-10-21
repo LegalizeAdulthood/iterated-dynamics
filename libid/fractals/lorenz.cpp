@@ -15,6 +15,7 @@
 #include "engine/jiim.h"
 #include "engine/LogicalScreen.h"
 #include "engine/OrbitPlot.h"
+#include "engine/pixel.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/SoundOutput.h"
@@ -38,7 +39,6 @@
 #include "ui/orbit3d.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
-#include "ui/video.h"
 
 #include <fmt/format.h>
 

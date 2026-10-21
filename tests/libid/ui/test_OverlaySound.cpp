@@ -13,6 +13,7 @@
 #include <engine/log_map.h>
 #include <engine/OrbitPlot.h>
 #include <engine/PertEngine.h>
+#include <engine/pixel.h>
 #include <engine/pixel_grid.h>
 #include <engine/resume.h>
 #include <engine/show_dot.h>
@@ -189,7 +190,6 @@ void TestOverlaySound::SetUp()
     alloc_pixel_grid();
     fill_pixel_grid();
     set_normal_dot();
-    set_normal_span();
     EXPECT_CALL(m_driver, read_pixel(_, _)).WillRepeatedly(Return(0));
     EXPECT_CALL(m_driver, write_pixel(_, _, _))
         .WillRepeatedly(Invoke(

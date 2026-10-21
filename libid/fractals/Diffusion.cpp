@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "fractals/Diffusion.h"
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/VideoInfo.h"
 #include "math/fpu087.h"
 #include "misc/id.h"
-#include "ui/video.h"
 
 #include <algorithm>
 
@@ -17,7 +18,6 @@
 
 using namespace id::engine;
 using namespace id::math;
-using namespace id::ui;
 
 namespace id::fractals
 {

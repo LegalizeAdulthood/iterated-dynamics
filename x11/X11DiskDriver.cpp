@@ -4,6 +4,7 @@
 //
 #include <X11Driver/X11BaseDriver.h>
 
+#include "engine/pixel.h"
 #include "engine/spindac.h"
 #include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
@@ -205,7 +206,6 @@ void X11DiskDriver::set_video_mode(const VideoInfo &mode)
 
     resize();
     set_disk_dot();
-    set_normal_span();
 }
 
 void X11DiskDriver::set_clear()

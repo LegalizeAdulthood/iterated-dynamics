@@ -9,11 +9,12 @@
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractype.h"
 #include "geometry/line3d.h"
+#include "io/decoder.h"
 #include "ui/diskvid.h"
-#include "ui/video.h"
 
 #include <config/port.h>
 
@@ -21,6 +22,7 @@
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::io;
 using namespace id::ui;
 
 namespace id::geometry

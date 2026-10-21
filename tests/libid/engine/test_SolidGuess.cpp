@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
+#include <engine/pixel.h>
 #include <engine/SolidGuess.h>
 
 #include "MockDriver.h"
@@ -71,7 +72,6 @@ protected:
         g_begin_pt = g_start_pt;
         g_dispatch.set_calc_type(calculate_pixel);
         set_normal_dot();
-        set_normal_span();
         EXPECT_CALL(m_driver, read_pixel(_, _))
             .WillRepeatedly(Invoke([this](int col, int row) { return m_pixels.at(row * 16 + col); }));
         EXPECT_CALL(m_driver, write_pixel(_, _, _))

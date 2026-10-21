@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <io/encoder.h>
 
@@ -10,6 +11,7 @@
 #include <engine/fractals.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
 #include <engine/pixel_limits.h>
 #include <engine/resume.h>
 #include <engine/spindac.h>
@@ -246,7 +248,6 @@ void TestGifWriterRaster::SetUp()
         }
     }
     set_normal_dot();
-    set_normal_span();
     EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
     EXPECT_CALL(m_driver, flush()).Times(AnyNumber());
     EXPECT_CALL(m_driver, key_pressed()).Times(0);

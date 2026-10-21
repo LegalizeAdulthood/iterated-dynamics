@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <engine/PertEngine.h>
 
@@ -8,6 +9,7 @@
 #include <engine/calcfrac.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
 #include <engine/resume.h>
 #include <engine/StandardFractal.h>
 #include <engine/VideoInfo.h>
@@ -120,7 +122,6 @@ void TestPerturbationPixels::SetUp()
 {
     s_requested_pixels.clear();
     set_normal_dot();
-    set_normal_span();
     EXPECT_CALL(m_driver, read_pixel(_, _))
         .WillRepeatedly(Invoke([this](const int col, const int row) { return m_pixels.at(row * WIDTH + col); }));
     EXPECT_CALL(m_driver, write_pixel(_, _, _))

@@ -4,14 +4,12 @@
 #include "engine/BoundaryTrace.h"
 
 #include "engine/calcfrac.h"
+#include "engine/pixel.h"
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"
-#include "ui/video.h"
 
 #include <cstring>
 #include <stdexcept>
-
-using namespace id::ui;
 
 namespace id::engine
 {

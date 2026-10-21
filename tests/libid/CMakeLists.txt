@@ -74,6 +74,7 @@ add_executable(test-id
     engine/test_InverseJulia.cpp
     engine/test_log_map.cpp
     engine/test_PertEngine.cpp
+    engine/test_pixel.cpp
     engine/test_lowerize_parameter.cpp
     engine/test_random_seed.cpp
     engine/test_resume.cpp

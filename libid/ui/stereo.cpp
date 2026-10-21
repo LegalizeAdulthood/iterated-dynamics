@@ -10,6 +10,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/pixel_limits.h"
 #include "engine/random_seed.h"
 #include "engine/spindac.h"
@@ -31,7 +32,6 @@
 #include "ui/slideshw.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
-#include "ui/video.h"
 
 #include <algorithm>
 #include <cmath>

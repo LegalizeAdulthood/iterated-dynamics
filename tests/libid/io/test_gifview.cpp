@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
+#include <io/decoder.h>
 #include <io/loadfile.h>
 
 #include "MockDriver.h"
@@ -15,7 +17,6 @@
 #include <engine/spindac.h>
 #include <engine/VideoInfo.h>
 #include <fractals/lorenz.h>
-#include <io/decoder.h>
 #include <io/gifview.h>
 #include <misc/Driver.h>
 #include <misc/ValueSaver.h>
@@ -307,7 +308,6 @@ TEST_P(TestGifViewMigs, reducesImageOffsetsAlongTheirOwnAxisWithoutPollingInput)
     ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
     ValueSaver saved_busy{g_busy, false};
     set_normal_dot();
-    set_normal_span();
     ON_CALL(driver, key_pressed()).WillByDefault(Return('x'));
     EXPECT_CALL(driver, key_pressed()).Times(0);
     EXPECT_CALL(driver, get_key()).Times(0);

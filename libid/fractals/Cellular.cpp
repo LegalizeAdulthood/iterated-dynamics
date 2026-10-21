@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 //****************** standalone engine for "cellular" *******************
 
@@ -7,12 +8,12 @@
 #include "engine/calcfrac.h"
 #include "engine/color_state.h"
 #include "engine/engine_timer.h"
+#include "engine/pixel.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/spindac.h"
 #include "fractals/fractalp.h"
 #include "io/loadmap.h"
-#include "ui/video.h"
 
 #include <fmt/format.h>
 
@@ -25,7 +26,6 @@
 
 using namespace id::engine;
 using namespace id::io;
-using namespace id::ui;
 
 namespace id::fractals
 {

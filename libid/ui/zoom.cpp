@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /*
     routines for zoombox manipulation and for panning
@@ -10,6 +11,7 @@
 #include "engine/calcfrac.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/Potential.h"
 #include "engine/resume.h"
 #include "engine/SolidGuess.h"
@@ -30,7 +32,6 @@
 #include "ui/id_keys.h"
 #include "ui/mouse.h"
 #include "ui/stop_msg.h"
-#include "ui/video.h"
 
 #include <algorithm>
 #include <cassert>

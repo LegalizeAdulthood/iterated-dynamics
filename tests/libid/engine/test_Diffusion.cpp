@@ -7,6 +7,7 @@
 
 #include <engine/calcfrac.h>
 #include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
@@ -62,7 +63,6 @@ protected:
         set_frame(4, 4);
         g_dispatch.set_calc_type(calculate_pixel);
         set_normal_dot();
-        set_normal_span();
         EXPECT_CALL(m_driver, write_pixel(_, _, _))
             .WillRepeatedly(Invoke(
                 [this](int col, int row, int color)

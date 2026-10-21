@@ -91,7 +91,6 @@ void TestCellularController::SetUp()
     g_params[1] = 1010;
     g_params[2] = 21;
     set_normal_dot();
-    set_normal_span();
     EXPECT_CALL(m_driver, write_pixel(_, _, _))
         .WillRepeatedly(Invoke(
             [this](const int col, const int row, int)

@@ -27,7 +27,6 @@
 #include <ui/evolve.h>
 #include <ui/slideshw.h>
 #include <ui/SoundSession.h>
-#include <ui/video.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

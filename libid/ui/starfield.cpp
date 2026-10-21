@@ -8,6 +8,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "helpdefs.h"
@@ -19,7 +20,6 @@
 #include "ui/help.h"
 #include "ui/slideshw.h"
 #include "ui/stop_msg.h"
-#include "ui/video.h"
 
 using namespace id::engine;
 using namespace id::help;

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "MockDriver.h"
 
@@ -9,10 +10,10 @@
 #include <engine/SoundOutput.h>
 #include <engine/VideoInfo.h>
 #include <fractals/lorenz.h>
+#include <io/decoder.h>
 #include <io/gifview.h>
 #include <io/RestoredImageOutput.h>
 #include <misc/ValueSaver.h>
-#include <ui/video.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -27,7 +28,6 @@ using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::misc::test;
-using namespace id::ui;
 using namespace testing;
 
 namespace id::test

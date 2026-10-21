@@ -17,6 +17,7 @@
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
 #include "io/check_write_file.h"
+#include "io/decoder.h"
 #include "io/gifview.h"
 #include "io/library.h"
 #include "io/loadfile.h"
@@ -27,7 +28,6 @@
 #include "ui/big_while_loop.h"
 #include "ui/diskvid.h"
 #include "ui/stereo.h"
-#include "ui/video.h"
 
 #include <fmt/format.h>
 

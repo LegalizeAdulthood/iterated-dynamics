@@ -9,6 +9,7 @@
 #include "engine/color_state.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/Potential.h"
 #include "engine/sound.h"
 #include "engine/spindac.h"
@@ -45,7 +46,6 @@
 #include "ui/SoundSession.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
-#include "ui/video.h"
 #include "ui/zoom.h"
 
 #include <config/port.h>

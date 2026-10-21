@@ -779,7 +779,6 @@ void X11BaseDriver::set_video_mode(const VideoInfo &mode)
         end_disk();
     }
     set_normal_dot();
-    set_normal_span();
     set_for_graphics();
     set_clear();
     m_output_flush_countdown = 0;

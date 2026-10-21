@@ -7,6 +7,7 @@
 #include "engine/calcfrac.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/pixel_grid.h"
 #include "engine/random_seed.h"
 #include "engine/jiim.h"

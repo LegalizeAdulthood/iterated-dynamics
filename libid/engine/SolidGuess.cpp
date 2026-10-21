@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
+#include "engine/pixel.h"
 #include "engine/SolidGuess.h"
 
 #include "engine/calcfrac.h"
@@ -8,7 +9,6 @@
 #include "engine/pixel_limits.h"
 #include "engine/work_list.h"
 #include "misc/debug_flags.h"
-#include "ui/video.h"
 
 #include <algorithm>
 #include <cassert>
@@ -17,7 +17,6 @@
 #include <vector>
 
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::engine
 {

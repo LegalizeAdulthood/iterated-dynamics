@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // The Ant Automaton is based on an article in Scientific American, July 1994.
 // The original Fractint implementation was by Tim Wegner in Fractint 19.0.
@@ -10,9 +11,9 @@
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/random_seed.h"
 #include "misc/version.h"
-#include "ui/video.h"
 
 #include <algorithm>
 #include <cmath>
@@ -23,7 +24,6 @@
 
 using namespace id::engine;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::fractals
 {

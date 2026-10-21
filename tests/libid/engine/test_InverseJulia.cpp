@@ -7,6 +7,7 @@
 
 #include <engine/calcfrac.h>
 #include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
 #include <engine/VideoInfo.h>
 #include <fractals/fractalp.h>
 #include <misc/ValueSaver.h>

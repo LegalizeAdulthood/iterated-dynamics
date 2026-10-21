@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "fractals/Plasma.h"
 
@@ -6,6 +7,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/LogicalScreen.h"
+#include "engine/pixel.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
 #include "engine/spindac.h"
@@ -15,7 +17,6 @@
 #include "misc/Driver.h"
 #include "misc/sized_types.h"
 #include "ui/diskvid.h"
-#include "ui/video.h"
 
 #include <algorithm>
 

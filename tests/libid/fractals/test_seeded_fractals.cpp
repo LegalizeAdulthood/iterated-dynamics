@@ -27,6 +27,7 @@
 #include <geometry/3d.h>
 #include <geometry/line3d.h>
 #include <geometry/plot3d.h>
+#include <io/decoder.h>
 #include <io/gifview.h>
 #include <io/loadmap.h>
 #include <io/loadfile.h>
@@ -122,7 +123,6 @@ public:
     MinimalImageState()
     {
         set_null_video();
-        set_normal_span();
     }
 
     MinimalImageState(const MinimalImageState &) = delete;

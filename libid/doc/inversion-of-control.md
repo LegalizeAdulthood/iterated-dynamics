@@ -318,6 +318,12 @@ The current code is already part-way through this plan:
   to the requesting controller.  Disk cleanup releases resources before
   propagating a transfer failure.  Targa allocations include cache padding
   after the header, preserving bounded backing-store transfers.
+- `engine/pixel.cpp` owns pixel/span access, coordinate offsets, color
+  masking, and the selected pixel functions.  UI owns activation of the
+  driver, disk, or null target.  Spans use those pixel functions directly,
+  without separate initialization.  `io/decoder.cpp` owns `out_line()`
+  and its row counter.  Calculation and codec callers no longer include
+  `ui/video.h` for pixel access; disk storage remains for slices 40-41.
 - `ui/restore_image.cpp` drives `GifRestore` scanlines and services sound
   through `SoundSession` with atomic input policy.  `RestoredImageOutput`
   submits each pixel value through `g_sound`, retaining refused pixels
@@ -336,9 +342,9 @@ The fresh reverse-call audit also found these live paths:
   also invokes photographer prompts between stereo images.
 - Storage setup and command validation can still invoke modal
   `stop_msg()` or application shutdown through `goodbye()`.
-- Pixel, span, and disk-storage functions used by calculation code live
-  under `libid/ui`.  Disk storage mixes backend work with progress text
-  and modal errors.  Pixel access itself remains calculation work.
+- Disk-storage functions used by calculation code still live under
+  `libid/ui`.  Disk storage mixes backend work with progress text and
+  modal errors.  Pixel/span access now belongs to the engine.
 - Image loading, image saving, and command parsing still select UI
   prompts, display status, or exit the application from non-UI modules.
 
@@ -745,10 +751,10 @@ The remaining UI-concept leaks outside `libid/ui` are:
   and sometimes `goodbye()`.  These are input and application-control
   leaks even when reachable only on failure or in debug builds.  Memory
   operations now report failures without UI or shutdown callbacks.
-- Calculation code calls pixel/span functions in `ui/video.cpp` and
-  storage functions in `ui/diskvid.cpp`.  Storage also displays progress
-  text and modal errors.  Backend extraction must retain plotting below
-  the UI layer while returning status and failures to UI owners.
+- Calculation code still calls storage functions in `ui/diskvid.cpp`.
+  Storage also displays progress text and modal errors.  Backend
+  extraction must retain storage below the UI layer while returning
+  status and failures to UI owners.  Pixel/span access is engine-owned.
 - `libid/io/loadfile.cpp`, `libid/io/encoder.cpp`, and
   `libid/engine/cmdfiles.cpp`: select prompts, display status, make
   continue/cancel decisions, or shut down the application from non-UI
@@ -946,28 +952,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 39. Pixel Access Layer Ownership
-
-Source: `get_color()`, pixel/span operations, and their backend selection
-in `libid/ui/video.cpp`, plus non-UI callers and headers.
-
-Work:
-
-- Move image pixel access and storage routing into an appropriate engine
-  or I/O module, following existing backend behavior.
-- Leave display-target activation and UI commands with their UI owners.
-- Update callers in passes, fractal classes, geometry, and codecs without
-  moving their plotting algorithms into UI.
-
-Done when:
-
-- Calculation code does not include `ui/video.h` for pixel access.
-- Pixel access is calculation/storage work, not a UI callback.
-
-Validation: use existing image and codec tests.  This is a dependency
-correction, not by itself inversion of an input loop; no new interface
-or callback table is required merely to relocate the backend.
 
 ### 40. Disk Storage Backend State
 

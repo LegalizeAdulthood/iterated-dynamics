@@ -1,15 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/video.h"
 
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/VideoInfo.h"
+#include "engine/pixel.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
-
-#include <cassert>
-#include <cstdarg>
 
 using namespace id::engine;
 using namespace id::misc;
@@ -17,145 +13,33 @@ using namespace id::misc;
 namespace id::ui
 {
 
-static void (*s_write_pixel)(int x, int y, int color){};
-static int (*s_read_pixel)(int x, int y){};
-static void (*s_write_span)(int y, int x, int last_x, const Byte *pixels){};
-static void (*s_read_span)(int y, int x, int last_x, Byte *pixels){};
-
-// Global variables (yuck!)
-int g_row_count{};
 int g_vesa_x_res{};
 int g_vesa_y_res{};
 int g_video_start_x{};
 int g_video_start_y{};
 
-// read_span(int row, int startcol, int stopcol, Byte *pixels)
-//
-// This routine is a 'span' analog of 'getcolor()', and gets a horizontal
-// span of pixels from the screen and stores it in pixels[] at one byte per
-// pixel
-//
-void read_span(const int row, const int start_col, const int stop_col, Byte *pixels)
-{
-    if (start_col + g_logical_screen.x_offset >= g_screen_x_dots || row + g_logical_screen.y_offset >= g_screen_y_dots)
-    {
-        return;
-    }
-    assert(s_read_span);
-    s_read_span(row + g_logical_screen.y_offset, start_col + g_logical_screen.x_offset, stop_col + g_logical_screen.x_offset, pixels);
-}
-
-// write_span(int row, int startcol, int stopcol, Byte *pixels)
-//
-// This routine is a 'span' analog of 'putcolor()', and puts a horizontal
-// span of pixels to the screen from pixels[] at one byte per pixel
-// Called by the GIF decoder
-//
-void write_span(const int row, const int start_col, const int stop_col, const Byte *pixels)
-{
-    if (start_col + g_logical_screen.x_offset >= g_screen_x_dots || row + g_logical_screen.y_offset > g_screen_y_dots)
-    {
-        return;
-    }
-    assert(s_write_span);
-    s_write_span(row + g_logical_screen.y_offset, start_col + g_logical_screen.x_offset, stop_col + g_logical_screen.x_offset, pixels);
-}
-
-static void normal_write_span(const int y, const int x, const int last_x, const Byte *pixels)
-{
-    const int width = last_x - x + 1;
-    assert(s_write_pixel);
-    for (int i = 0; i < width; i++)
-    {
-        s_write_pixel(x + i, y, pixels[i]);
-    }
-}
-
-static void normal_read_span(const int y, const int x, const int last_x, Byte *pixels)
-{
-    const int width = last_x - x + 1;
-    assert(s_read_pixel);
-    for (int i = 0; i < width; i++)
-    {
-        pixels[i] = static_cast<Byte>(s_read_pixel(x + i, y));
-    }
-}
-
 void set_normal_dot()
 {
-    s_write_pixel = driver_write_pixel;
-    s_read_pixel = driver_read_pixel;
+    set_pixel_functions(driver_write_pixel, driver_read_pixel);
 }
 
 void set_disk_dot()
 {
-    s_write_pixel = disk_write_pixel;
-    s_read_pixel = disk_read_pixel;
+    set_pixel_functions(disk_write_pixel, disk_read_pixel);
 }
 
-void set_normal_span()
-{
-    s_read_span = normal_read_span;
-    s_write_span = normal_write_span;
-}
-
-static void null_write_pixel(int a, int b, int c)
+static void null_write_pixel(int, int, int)
 {
 }
 
-static int null_read_pixel(int a, int b)
+static int null_read_pixel(int, int)
 {
     return 0;
 }
 
 void set_null_video()
 {
-    s_write_pixel = null_write_pixel;
-    s_read_pixel = null_read_pixel;
-}
-
-// Return the color on the screen at the (xdot, ydot) point
-//
-int get_color(const int x, const int y)
-{
-    const int x1 = x + g_logical_screen.x_offset;
-    const int y1 = y + g_logical_screen.y_offset;
-    if (x1 < 0 || y1 < 0 || x1 >= g_screen_x_dots || y1 >= g_screen_y_dots)
-    {
-        // this can happen in boundary trace
-        return 0;
-    }
-    assert(s_read_pixel);
-    return s_read_pixel(x1, y1);
-}
-
-// write the color on the screen at the (xdot, ydot) point
-//
-void put_color_a(const int x, const int y, const int color)
-{
-    const int x1 = x + g_logical_screen.x_offset;
-    const int y1 = y + g_logical_screen.y_offset;
-    assert(x1 >= 0 && x1 <= g_screen_x_dots);
-    assert(y1 >= 0 && y1 <= g_screen_y_dots);
-    assert(s_write_pixel);
-    s_write_pixel(x1, y1, color & g_and_color);
-}
-
-// This routine is a 'line' analog of 'putcolor()', and sends an
-// entire line of pixels to the screen (0 <= xdot < xdots) at a clip
-// Called by the GIF decoder
-//
-int out_line(Byte *pixels, const int line_len)
-{
-    driver_check_memory();
-    if (g_row_count + g_logical_screen.y_offset >= g_screen_y_dots)
-    {
-        return 0;
-    }
-    assert(s_write_span);
-    s_write_span(g_row_count + g_logical_screen.y_offset, g_logical_screen.x_offset, line_len + g_logical_screen.x_offset - 1, pixels);
-    g_row_count++;
-    return 0;
+    set_pixel_functions(null_write_pixel, null_read_pixel);
 }
 
 } // namespace id::ui

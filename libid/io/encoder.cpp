@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 //      GIF Encoder and associated routines
 //
@@ -15,6 +16,7 @@
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
 #include "engine/OrbitPlot.h"
+#include "engine/pixel.h"
 #include "engine/pixel_limits.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
@@ -58,7 +60,6 @@
 #include "ui/SaveImageProgress.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
-#include "ui/video.h"
 
 #include <gif_lib.h>
 

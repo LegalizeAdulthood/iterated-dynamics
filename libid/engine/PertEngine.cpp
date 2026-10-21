@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // Per-pixel perturbation orbit calculation
 //
@@ -19,7 +20,6 @@
 #include "math/complex_fn.h"
 #include "misc/id.h"
 #include "misc/debug_flags.h"
-#include "ui/video.h"
 
 #include <algorithm>
 #include <cmath>
@@ -29,7 +29,6 @@
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::engine
 {

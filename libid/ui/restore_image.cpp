@@ -30,7 +30,6 @@
 #include "ui/SoundSession.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
-#include "ui/video.h"
 
 #include <filesystem>
 #include <optional>

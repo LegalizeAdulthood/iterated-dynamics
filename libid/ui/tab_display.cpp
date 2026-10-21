@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/tab_display.h"
 
@@ -10,6 +11,7 @@
 #include "engine/Inversion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/param_not_used.h"
+#include "engine/pixel.h"
 #include "engine/random_seed.h"
 #include "engine/SynchronousOrbit.h"
 #include "engine/spindac.h"
@@ -41,7 +43,6 @@
 #include "ui/put_string_center.h"
 #include "ui/slideshw.h"
 #include "ui/stop_msg.h"
-#include "ui/video.h"
 
 #include <fmt/format.h>
 
