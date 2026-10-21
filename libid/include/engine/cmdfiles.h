@@ -8,6 +8,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <variant>
 
 namespace id::fractals
 {
@@ -41,7 +42,6 @@ enum class CmdArgFlags
     PARAM_3D         = 2,
     YES_3D           = 4,
     RESET            = 8,
-    GOODBYE          = 16,
 };
 
 inline int operator+(const CmdArgFlags value)
@@ -85,6 +85,10 @@ extern bool                  g_first_init;
 extern std::string           g_image_filename_mask;
 extern BatchMode             g_init_batch;
 extern bool                  g_read_color;
+constexpr int MAX_MAX_LINE_LENGTH{128};
+constexpr int MIN_MAX_LINE_LENGTH{40};
+extern int g_max_line_length;
+
 extern RecordColorsMode      g_record_colors;
 
 struct CommandDiagnostics
@@ -93,10 +97,39 @@ struct CommandDiagnostics
     std::vector<std::string> warnings;
 };
 
-CommandDiagnostics cmd_files(const std::vector<std::string> &args);
-CmdArgFlags load_commands(std::FILE *infile, CommandDiagnostics *diagnostics = nullptr);
+struct MakeHelpDocument
+{
+    std::filesystem::path filename;
+};
+
+struct MakeParameterFile
+{
+    std::filesystem::path filename;
+    std::string entry_name;
+};
+
+struct MakeMultiImageGif
+{
+    unsigned int x_mult;
+    unsigned int y_mult;
+};
+
+using CommandAction = std::variant<std::monostate, MakeHelpDocument, MakeParameterFile, MakeMultiImageGif>;
+
+struct CommandParseResult
+{
+    CmdArgFlags flags{};
+    CommandDiagnostics diagnostics;
+    CommandAction action;
+    bool needs_file_entry{};
+    bool initialize_fm{};
+};
+
+CommandParseResult cmd_files(const std::vector<std::string> &args);
+CommandParseResult reset_startup_commands();
+CommandParseResult load_commands(std::FILE *infile);
 void set_3d_defaults();
-CmdArgFlags cmd_arg(std::string_view cur_arg, CmdFile mode, CommandDiagnostics *diagnostics = nullptr);
+CommandParseResult cmd_arg(std::string_view cur_arg, CmdFile mode);
 int next_command(std::string &cmd, std::FILE *handle, std::string &line_buf, std::string_view &line, CmdFile mode,
     CommandDiagnostics *diagnostics = nullptr);
 

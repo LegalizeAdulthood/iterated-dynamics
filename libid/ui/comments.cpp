@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/comments.h"
 
 #include "engine/calcfrac.h"
+#include "engine/command_comments.h"
 #include "engine/LogicalScreen.h"
 #include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
@@ -26,8 +28,6 @@ namespace id::ui
 
 static std::string get_cpu_id();
 
-std::string g_command_comment[4];
-std::array<std::string, 4> g_par_comment;
 std::function<std::string()> g_get_cpu_id{get_cpu_id};
 
 static std::string get_cpu_id()
@@ -146,29 +146,6 @@ static std::string expand_var(const std::string &var, const std::time_t local_ti
     return {};
 }
 
-// extract comments from the comments= command
-void parse_comments(std::string_view value)
-{
-    for (std::string &elem : g_par_comment)
-    {
-        if (value.empty())
-        {
-            break;
-        }
-        const std::size_t next{value.find('/')};
-        if (value.front() != '/')
-        {
-            const std::size_t len{std::min(next, static_cast<std::size_t>(MAX_COMMENT_LEN - 1))};
-            elem = value.substr(0, len);
-        }
-        if (next == std::string_view::npos)
-        {
-            break;
-        }
-        value.remove_prefix(next + 1);
-    }
-}
-
 // expands comments from the comments= command
 static std::string expand_comments(const std::string_view source, const std::time_t local_time)
 {
@@ -224,14 +201,6 @@ const std::string &expand_command_comment(const int i)
     std::time_t now;
     std::time(&now);
     return expand_command_comment(i, now);
-}
-
-void init_comments()
-{
-    for (std::string &comment : g_par_comment)
-    {
-        comment.clear();
-    }
 }
 
 } // namespace id::ui

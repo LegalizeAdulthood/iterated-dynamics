@@ -19,6 +19,10 @@ add_executable(colormap-compare colormap_compare.cpp)
 target_link_libraries(colormap-compare PUBLIC image-tool)
 target_folder(colormap-compare "Tests/Tools")
 
+add_executable(check-command-actions check_command_actions.cpp)
+target_link_libraries(check-command-actions PRIVATE libid fmt::fmt-header-only)
+target_folder(check-command-actions "Tests/Tools")
+
 add_executable(check-command-diagnostics check_command_diagnostics.cpp)
 target_link_libraries(check-command-diagnostics PRIVATE libid fmt::fmt-header-only)
 target_folder(check-command-diagnostics "Tests/Tools")

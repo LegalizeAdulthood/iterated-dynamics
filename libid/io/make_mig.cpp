@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "io/make_mig.h"
 
@@ -8,11 +9,9 @@
 #include <fmt/format.h>
 #include <gif_lib.h>
 
-#include <cassert>
 #include <cstdint>
-#include <cstdio>
-#include <cstdlib>
 #include <cstring>
+#include <stdexcept>
 #include <filesystem>
 #include <limits>
 #include <string>
@@ -187,8 +186,7 @@ static void validate_canvas_size(const MigMetadata &metadata, const unsigned int
     const std::uint64_t height = static_cast<std::uint64_t>(metadata.height) * y_mult;
     if (width > MAX_GIF_DIMENSION || height > MAX_GIF_DIMENSION)
     {
-        fmt::print("MIG output dimensions {:d} x {:d} exceed GIF limits!\n", width, height);
-        std::exit(1);
+        throw std::runtime_error{fmt::format("MIG output dimensions {:d} x {:d} exceed GIF limits!", width, height)};
     }
 }
 
@@ -208,8 +206,7 @@ static void set_output_screen(
             first_input->SColorMap->ColorCount, first_input->SColorMap->Colors);
         if (output->SColorMap == nullptr)
         {
-            std::printf("Cannot allocate output color map!\n");
-            std::exit(1);
+            throw std::runtime_error{"Cannot allocate output color map!"};
         }
     }
 }
@@ -223,8 +220,7 @@ static OutputGif create_output_gif(
     OutputGif output{path};
     if (output.get() == nullptr)
     {
-        std::printf("Cannot create output file %s!\n", path.filename().string().c_str());
-        std::exit(1);
+        throw std::runtime_error{fmt::format("Cannot create output file {:s}!", path.filename().string())};
     }
     set_output_screen(output.get(), first_input, x_mult, y_mult);
     return output;
@@ -309,8 +305,7 @@ static void copy_extension_blocks(GifFileType *output, const GifFileType *input)
                 block.ByteCount,
                 block.Bytes) == GIF_ERROR)
         {
-            std::printf("Cannot copy GIF extension block!\n");
-            std::exit(1);
+            throw std::runtime_error{"Cannot copy GIF extension block!"};
         }
     }
 }
@@ -320,8 +315,7 @@ static SavedImage *copy_saved_image(GifFileType *output, const SavedImage &image
     SavedImage *saved_image{GifMakeSavedImage(output, &image)};
     if (saved_image == nullptr)
     {
-        std::printf("Cannot copy image into output GIF!\n");
-        std::exit(1);
+        throw std::runtime_error{"Cannot copy image into output GIF!"};
     }
     return saved_image;
 }
@@ -351,8 +345,7 @@ static void verify_single_image_output(
     InputGif output{read_input_gif(path)};
     if (output.get() == nullptr || output.slurp_result() != GIF_OK)
     {
-        std::printf("Cannot read output file %s!\n", path.filename().string().c_str());
-        std::exit(1);
+        throw std::runtime_error{fmt::format("Cannot read output file {:s}!", path.filename().string())};
     }
     const MigMetadata input_metadata{get_metadata(first_input)};
     const MigMetadata output_metadata{get_metadata(output.get())};
@@ -364,8 +357,7 @@ static void verify_single_image_output(
         !same_color_map(output.get()->SColorMap, first_input->SColorMap) || output.get()->ImageCount != 1 ||
         !same_image(output.get()->SavedImages[0], first_input->SavedImages[0]))
     {
-        std::printf("Output file %s failed GIF verification!\n", path.filename().string().c_str());
-        std::exit(1);
+        throw std::runtime_error{fmt::format("Output file {:s} failed GIF verification!", path.filename().string())};
     }
 }
 
@@ -377,15 +369,13 @@ static void verify_single_image_output(
 {
     if (first_input->ImageCount < 1)
     {
-        std::printf("Input file contains no images!\n");
-        std::exit(1);
+        throw std::runtime_error{"Input file contains no images!"};
     }
     OutputGif output{create_output_gif(path, first_input, x_mult, y_mult)};
     copy_saved_image(output.get(), first_input->SavedImages[0]);
     if (output.spew() != GIF_OK)
     {
-        std::printf("Cannot write output file %s!\n", path.filename().string().c_str());
-        std::exit(1);
+        throw std::runtime_error{fmt::format("Cannot write output file {:s}!", path.filename().string())};
     }
     verify_single_image_output(path, first_input, x_mult, y_mult);
 }
@@ -396,14 +386,12 @@ static InputGif read_tile_gif(const unsigned int x_step, const unsigned int y_st
     const std::filesystem::path path{find_file(ReadFile::IMAGE, gif_in)};
     if (path.empty())
     {
-        fmt::print("Can't locate file {:s}!\n", gif_in);
-        std::exit(1);
+        throw std::runtime_error{fmt::format("Can't locate file {:s}!", gif_in)};
     }
     InputGif gif{read_input_gif(path)};
     if (gif.get() == nullptr || gif.slurp_result() != GIF_OK || gif.get()->ImageCount < 1)
     {
-        std::printf("Can't read file %s!\n", gif_in.c_str());
-        std::exit(1);
+        throw std::runtime_error{fmt::format("Can't read file {:s}!", gif_in)};
     }
     return gif;
 }
@@ -431,8 +419,7 @@ static void verify_tiled_images_output(
     InputGif output{read_input_gif(path)};
     if (output.get() == nullptr || output.slurp_result() != GIF_OK)
     {
-        std::printf("Cannot read output file %s!\n", path.filename().string().c_str());
-        std::exit(1);
+        throw std::runtime_error{fmt::format("Cannot read output file {:s}!", path.filename().string())};
     }
     const MigMetadata input_metadata{get_metadata(first_input)};
     const MigMetadata output_metadata{get_metadata(output.get())};
@@ -441,8 +428,7 @@ static void verify_tiled_images_output(
         !same_color_map(output.get()->SColorMap, first_input->SColorMap) ||
         output.get()->ImageCount != total_tile_image_count(x_mult, y_mult))
     {
-        std::printf("Output file %s failed GIF layout verification!\n", path.filename().string().c_str());
-        std::exit(1);
+        throw std::runtime_error{fmt::format("Output file {:s} failed GIF layout verification!", path.filename().string())};
     }
     int image_number{};
     for (unsigned y_step = 0U; y_step < y_mult; y_step++)
@@ -463,8 +449,7 @@ static void verify_tiled_images_output(
                 }
                 if (!same_image_at_offset(output.get()->SavedImages[image_number++], expected, left, top))
                 {
-                    std::printf("Output file %s failed GIF offset verification!\n", path.filename().string().c_str());
-                    std::exit(1);
+                    throw std::runtime_error{fmt::format("Output file {:s} failed GIF offset verification!", path.filename().string())};
                 }
             }
         }
@@ -476,8 +461,7 @@ static void verify_tiled_images_output(
             final_input.get()->ExtensionBlockCount,
             final_input.get()->ExtensionBlocks))
     {
-        std::printf("Output file %s failed GIF extension verification!\n", path.filename().string().c_str());
-        std::exit(1);
+        throw std::runtime_error{fmt::format("Output file {:s} failed GIF extension verification!", path.filename().string())};
     }
 }
 
@@ -507,8 +491,7 @@ static void write_tiled_images_gif(
     }
     if (output.spew() != GIF_OK)
     {
-        std::printf("Cannot write output file %s!\n", path.filename().string().c_str());
-        std::exit(1);
+        throw std::runtime_error{fmt::format("Cannot write output file {:s}!", path.filename().string())};
     }
     verify_tiled_images_output(path, first_input.get(), x_mult, y_mult);
 }
@@ -525,19 +508,16 @@ static MigMetadata validate_input_gifs(const unsigned int x_mult, const unsigned
             const std::filesystem::path path{find_file(ReadFile::IMAGE, gif_in)};
             if (path.empty())
             {
-                fmt::print("Can't locate file {:s}!\n", gif_in);
-                std::exit(1);
+                throw std::runtime_error{fmt::format("Can't locate file {:s}!", gif_in)};
             }
             InputGif gif{read_input_gif(path)};
             if (gif.get() == nullptr)
             {
-                std::printf("Can't open file %s!\n", gif_in.c_str());
-                std::exit(1);
+                throw std::runtime_error{fmt::format("Can't open file {:s}!", gif_in)};
             }
             if (gif.slurp_result() != GIF_OK)
             {
-                std::printf("\007 Process failed = early EOF on input file %s\n", gif_in.c_str());
-                std::exit(1);
+                throw std::runtime_error{fmt::format(" Process failed = early EOF on input file {:s}", gif_in)};
             }
             const MigMetadata metadata{get_metadata(gif.get())};
             if (!have_first)
@@ -549,8 +529,7 @@ static MigMetadata validate_input_gifs(const unsigned int x_mult, const unsigned
             if (metadata.width != first.width || metadata.height != first.height ||
                 metadata.color_count != first.color_count)
             {
-                std::printf("File %s doesn't have the same resolution as its predecessors!\n", gif_in.c_str());
-                std::exit(1);
+                throw std::runtime_error{fmt::format("File {:s} doesn't have the same resolution as its predecessors!", gif_in)};
             }
         }
     }
@@ -581,16 +560,14 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
     validate_input_gifs(x_mult, y_mult);
 
     std::string gif_out{"fractmig.gif"};
-    std::printf("\n"
-                " Generating multi-image GIF file %s using %u X and %u Y components\n"
-                "\n",
-        gif_out.c_str(), x_mult, y_mult);
     const std::filesystem::path path{get_checked_save_path(WriteFile::IMAGE, gif_out)};
-    assert(!path.empty());
+    if (path.empty())
+    {
+        throw std::logic_error("Empty MIG output path");
+    }
 
     write_tiled_images_gif(path, x_mult, y_mult);
     delete_tile_gifs(x_mult, y_mult);
-    std::printf("File %s has been created (and its component files deleted)\n", gif_out.c_str());
 }
 
 } // namespace id::io

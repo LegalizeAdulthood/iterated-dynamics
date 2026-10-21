@@ -3,7 +3,8 @@
 //
 // Command-line / Command-File Parser Routines
 //
-#include "engine/cmdfiles_test.h"
+#include "engine/cmdfiles.h"
+#include "engine/command_comments.h"
 
 #include "engine/bailout_formula.h"
 #include "engine/Browse.h"
@@ -48,7 +49,6 @@
 #include "fractals/lsystem.h"
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
-#include "helpcom.h"
 #include "io/check_write_file.h"
 #include "io/encoder.h"
 #include "io/file_gets.h"
@@ -58,21 +58,14 @@
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
-#include "io/make_mig.h"
 #include "io/save_timer.h"
 #include "io/special_dirs.h"
 #include "math/biginit.h"
 #include "misc/debug_flags.h"
-#include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/version.h"
 #include "ui/big_while_loop.h"
-#include "ui/comments.h"
-#include "ui/get_fract_type.h"
-#include "ui/goodbye.h"
-#include "ui/help_title.h"
 #include "ui/history.h"
-#include "ui/make_batch_file.h"
 #include "ui/slideshw.h"
 #include "ui/stereo.h"
 #include <algos/string_algorithms.h>
@@ -111,7 +104,6 @@ namespace fs = std::filesystem;
 using namespace id::config;
 using namespace id::fractals;
 using namespace id::geometry;
-using namespace id::help;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
@@ -120,7 +112,8 @@ using namespace id::ui;
 namespace id::engine
 {
 
-static CmdArgFlags command_file(std::FILE *handle, CmdFile mode, CommandDiagnostics *diagnostics);
+static CommandParseResult command_file(std::FILE *handle, CmdFile mode);
+static void append_result(CommandParseResult &result, CommandParseResult source);
 static bool next_line(std::FILE *handle, std::string &line_buf, CmdFile mode);
 static void arg_error(const char *bad_arg, CommandDiagnostics *diagnostics);
 static void init_vars_run();
@@ -130,14 +123,14 @@ static void init_vars3d();
 static void reset_ifs_definition();
 static bool type_needs_file_entry();
 static bool type_has_file_entry();
-static void reset_startup_commands(CommandDiagnostics *diagnostics);
-static void resolve_startup_file_entry(CommandDiagnostics *diagnostics);
+static void resolve_startup_file_entry(CommandParseResult &result);
 static int get_bf(BigFloat bf, const char *cur_arg);
 static bool is_a_big_float(const char *str);
 static bool parse_command_number(std::string_view text, long &value);
 static bool parse_command_number(std::string_view text, double &value);
 
 // variables defined by the command line/files processor
+int g_max_line_length{72};
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
 std::string g_image_filename_mask{"*.gif"};               //
 BatchMode g_init_batch{BatchMode::NONE};                  // non-zero if batch run (no kbd)
@@ -206,7 +199,7 @@ static bool parse_command_number(std::string_view text, double &value)
 // it also processes the 'sstools.ini' file and any
 // indirect files ('id @myfile')
 
-static void process_sstools_ini(CommandDiagnostics *diagnostics)
+static void process_sstools_ini(CommandParseResult &result)
 {
     const std::string sstools_ini{find_file(ReadFile::ID_CONFIG, "sstools.ini").string()}; // look for SSTOOLS.INI
     if (sstools_ini.empty())
@@ -216,7 +209,7 @@ static void process_sstools_ini(CommandDiagnostics *diagnostics)
 
     if (std::FILE *init_file = std::fopen(sstools_ini.c_str(), "r"); init_file != nullptr)
     {
-        command_file(init_file, CmdFile::SSTOOLS_INI, diagnostics); // process it
+        append_result(result, command_file(init_file, CmdFile::SSTOOLS_INI)); // process it
     }
 }
 
@@ -242,14 +235,17 @@ static bool type_has_file_entry()
     }
 }
 
-static void reset_startup_commands(CommandDiagnostics *diagnostics)
+CommandParseResult reset_startup_commands()
 {
     init_vars_restart();
     init_vars_fractal();
-    process_sstools_ini(diagnostics);
+    CommandParseResult result;
+    process_sstools_ini(result);
+    g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
+    return result;
 }
 
-static void process_simple_command(char *cur_arg, CommandDiagnostics *diagnostics)
+static void process_simple_command(char *cur_arg, CommandParseResult &result)
 {
     bool processed{};
     if (std::strchr(cur_arg, '=') == nullptr)
@@ -289,12 +285,12 @@ static void process_simple_command(char *cur_arg, CommandDiagnostics *diagnostic
     }
     if (!processed)
     {
-        cmd_arg(cur_arg, CmdFile::AT_CMD_LINE, diagnostics); // process simple command
+        append_result(result, cmd_arg(cur_arg, CmdFile::AT_CMD_LINE)); // process simple command
     }
 }
 
 static bool process_file_set_name(
-    const std::string &filename, const std::string &param_name, CommandDiagnostics *diagnostics)
+    const std::string &filename, const std::string &param_name, CommandParseResult &result)
 {
     const std::filesystem::path saved_path{g_parameter_file};
     const std::string saved_name{g_parameter_set_name};
@@ -317,17 +313,17 @@ static bool process_file_set_name(
     {
         g_parameter_file = saved_path;
         g_parameter_set_name = saved_name;
-        if (diagnostics != nullptr && !diagnostic.empty())
+        if (!diagnostic.empty())
         {
-            diagnostics->errors.push_back(diagnostic);
+            result.diagnostics.errors.push_back(diagnostic);
         }
         return false;
     }
-    command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME, diagnostics);
+    append_result(result, command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME));
     return true;
 }
 
-static void process_file(char *cur_arg, CommandDiagnostics *diagnostics)
+static void process_file(char *cur_arg, CommandParseResult &result)
 {
     fs::path path{&cur_arg[1]};
     if (!path.has_extension())
@@ -337,21 +333,21 @@ static void process_file(char *cur_arg, CommandDiagnostics *diagnostics)
     path = find_file(ReadFile::PARAMETER, path.string());
     if (path.empty())
     {
-        arg_error(cur_arg, diagnostics);
+        arg_error(cur_arg, &result.diagnostics);
         return;
     }
 
     std::FILE *init_file = std::fopen(path.string().c_str(), "r");
     if (init_file == nullptr)
     {
-        arg_error(cur_arg, diagnostics);
+        arg_error(cur_arg, &result.diagnostics);
         return;
     }
 
-    command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME, diagnostics);
+    append_result(result, command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME));
 }
 
-static void resolve_startup_file_entry(CommandDiagnostics *diagnostics)
+static void resolve_startup_file_entry(CommandParseResult &result)
 {
     if (!type_needs_file_entry() || type_has_file_entry())
     {
@@ -363,14 +359,14 @@ static void resolve_startup_file_entry(CommandDiagnostics *diagnostics)
         switch (g_fractal_type)
         {
         case FractalType::FORMULA:
-            arg_error("type=formula requires formulaname=", diagnostics);
+            arg_error("type=formula requires formulaname=", &result.diagnostics);
             break;
         case FractalType::L_SYSTEM:
-            arg_error("type=lsystem requires lname=", diagnostics);
+            arg_error("type=lsystem requires lname=", &result.diagnostics);
             break;
         case FractalType::IFS:
         case FractalType::IFS_3D:
-            arg_error("type=ifs requires ifs=", diagnostics);
+            arg_error("type=ifs requires ifs=", &result.diagnostics);
             break;
         default:
             break;
@@ -378,26 +374,19 @@ static void resolve_startup_file_entry(CommandDiagnostics *diagnostics)
         return;
     }
 
-    if (!select_fractal_file_entry())
-    {
-        reset_startup_commands(diagnostics);
-    }
+    result.needs_file_entry = true;
 }
 
-CommandDiagnostics cmd_files(const std::vector<std::string> &args)
+CommandParseResult cmd_files(const std::vector<std::string> &args)
 {
-    CommandDiagnostics diagnostics;
     if (g_first_init)
     {
         init_vars_run();                 // once per run initialization
     }
-    init_vars_restart();                  // <ins> key initialization
-    init_vars_fractal();                  // image initialization
-
-    process_sstools_ini(&diagnostics);
+    CommandParseResult result{reset_startup_commands()};
 
     // cycle through args
-    for (std::size_t i = 1; i < args.size(); i++)
+    for (std::size_t i = 1; i < args.size() && result.action.index() == 0; i++)
     {
         std::string cur_arg{args[i]};
         const char first_char{cur_arg.empty() ? '\0' : cur_arg.front()};
@@ -407,25 +396,25 @@ CommandDiagnostics cmd_files(const std::vector<std::string> &args)
         }
         if (first_char != '@')
         {
-            process_simple_command(cur_arg.data(), &diagnostics);
+            process_simple_command(cur_arg.data(), result);
         }
         // @filename/setname?
         else if (char *slash = std::strchr(cur_arg.data(), '/'); slash != nullptr)
         {
-            if (!process_file_set_name(std::string{cur_arg.data() + 1, slash}, slash + 1, &diagnostics))
+            if (!process_file_set_name(std::string{cur_arg.data() + 1, slash}, slash + 1, result))
             {
-                arg_error(cur_arg.c_str(), &diagnostics);
+                arg_error(cur_arg.c_str(), &result.diagnostics);
             }
         }
         // @filename
         else
         {
-            process_file(cur_arg.data(), &diagnostics);
+            process_file(cur_arg.data(), result);
         }
     }
-    if (diagnostics.errors.empty())
+    if (result.diagnostics.errors.empty() && result.action.index() == 0)
     {
-        resolve_startup_file_entry(&diagnostics);
+        resolve_startup_file_entry(result);
     }
 
     if (!g_first_init)
@@ -441,7 +430,7 @@ CommandDiagnostics cmd_files(const std::vector<std::string> &args)
 
     // PAR reads a file and sets color, don't read colors from GIF
     g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
-    return diagnostics;
+    return result;
 }
 
 static void init_param_flags()
@@ -453,10 +442,10 @@ static void init_param_flags()
 
 // when called, file is open in binary mode, positioned at the
 // '(' or '{' following the desired parameter set's name
-CmdArgFlags load_commands(std::FILE *infile, CommandDiagnostics *diagnostics)
+CommandParseResult load_commands(std::FILE *infile)
 {
     init_param_flags(); // reset flags for type=
-    const CmdArgFlags ret = command_file(infile, CmdFile::AT_AFTER_STARTUP, diagnostics);
+    CommandParseResult ret{command_file(infile, CmdFile::AT_AFTER_STARTUP)};
 
     // PAR reads a file and sets color, don't read colors from GIF
     g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
@@ -680,7 +669,26 @@ static void reset_ifs_definition()
 //        AT_CMD_LINE_SET_NAME  command line @filename/setname
 // note that cmdfile could be open as text OR as binary.
 // binary is used in @ command processing for reasonable speed note/point
-static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode, CommandDiagnostics *diagnostics)
+static void append_result(CommandParseResult &result, CommandParseResult source)
+{
+    if (source.flags != CmdArgFlags::BAD_ARG)
+    {
+        result.flags |= source.flags;
+    }
+    result.diagnostics.errors.insert(result.diagnostics.errors.end(),
+        std::make_move_iterator(source.diagnostics.errors.begin()),
+        std::make_move_iterator(source.diagnostics.errors.end()));
+    result.diagnostics.warnings.insert(result.diagnostics.warnings.end(),
+        std::make_move_iterator(source.diagnostics.warnings.begin()),
+        std::make_move_iterator(source.diagnostics.warnings.end()));
+    if (source.action.index() != 0)
+    {
+        result.action = std::move(source.action);
+    }
+    result.initialize_fm = result.initialize_fm || source.initialize_fm;
+}
+
+static CommandParseResult command_file(std::FILE *handle, const CmdFile mode)
 {
     const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{handle, std::fclose};
     if (mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME)
@@ -695,28 +703,29 @@ static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode, CommandDi
     std::string cmd;
     std::string line_buf;
     std::string_view line;
-    CmdArgFlags change_flag{}; // &1 fractal stuff chgd, &2 3d stuff chgd
-    while (next_command(cmd, handle, line_buf, line, mode, diagnostics) > 0)
+    CommandParseResult result;
+    while (next_command(cmd, handle, line_buf, line, mode, &result.diagnostics) > 0)
     {
         if ((mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME) && cmd == "}")
         {
             break;
         }
-        const CmdArgFlags i = cmd_arg(cmd, mode, diagnostics);
-        if (i == CmdArgFlags::BAD_ARG)
+        CommandParseResult next{cmd_arg(cmd, mode)};
+        const bool failed{next.flags == CmdArgFlags::BAD_ARG};
+        append_result(result, std::move(next));
+        if (failed || result.action.index() != 0)
         {
             break;
         }
-        change_flag |= i;
     }
 
-    if (bit_set(change_flag, CmdArgFlags::FRACTAL_PARAM))
+    if (bit_set(result.flags, CmdArgFlags::FRACTAL_PARAM))
     {
         backwards_legacy_v18();
         backwards_legacy_v19();
         backwards_legacy_v20();
     }
-    return change_flag;
+    return result;
 }
 
 int next_command(std::string &cmd, std::FILE *handle, std::string &line_buf, std::string_view &line, const CmdFile mode, CommandDiagnostics *diagnostics)
@@ -819,39 +828,9 @@ enum
     NON_NUMERIC = -32767
 };
 
-namespace cmd_files_test
-{
-
-// TODO: removed later
-// Slice 45 moves command-generation actions and their exit decisions to UI.
-static GoodbyeFn s_goodbye{goodbye};
-static PrintDocFn s_print_document{print_document};
-
-GoodbyeFn get_goodbye()
-{
-    return s_goodbye;
-}
-
-void set_goodbye(const GoodbyeFn &fn)
-{
-    s_goodbye = fn;
-}
-
-PrintDocFn get_print_document()
-{
-    return s_print_document;
-}
-
-void set_print_document(const PrintDocFn &fn)
-{
-    s_print_document = fn;
-}
-
-} // namespace cmd_arg
-
 struct Command
 {
-    Command(std::string_view cur_arg, CmdFile a_mode, CommandDiagnostics *diagnostics);
+    Command(std::string_view cur_arg, CmdFile a_mode, CommandParseResult &result);
     CmdArgFlags bad_arg() const;
     void warn_missing_file() const;
     std::string_view string_val(int index) const;
@@ -873,13 +852,13 @@ struct Command
     const char *string_vals[16]{};    // pointers to all string vals
     int string_val_lens[16]{};        // string value lengths
     CmdArgFlags status{CmdArgFlags::NONE};
-    CommandDiagnostics *diagnostics{};
+    CommandParseResult &result;
 };
 
-Command::Command(const std::string_view cur_arg, const CmdFile a_mode, CommandDiagnostics *a_diagnostics) :
+Command::Command(const std::string_view cur_arg, const CmdFile a_mode, CommandParseResult &a_result) :
     arg(cur_arg),
     mode(a_mode),
-    diagnostics(a_diagnostics)
+    result(a_result)
 {
     lowerize_parameter(arg);
     const std::size_t equals{arg.find('=', 1)};
@@ -889,7 +868,7 @@ Command::Command(const std::string_view cur_arg, const CmdFile a_mode, CommandDi
     int j = static_cast<int>(variable_end);
     if (j > 32)
     {
-        arg_error(arg.c_str(), diagnostics); // keyword too long
+        arg_error(arg.c_str(), &result.diagnostics); // keyword too long
         status = CmdArgFlags::BAD_ARG;
         return;
     }
@@ -1007,18 +986,15 @@ std::string_view Command::string_val(const int index) const
 
 CmdArgFlags Command::bad_arg() const
 {
-    arg_error(arg.c_str(), diagnostics);
+    arg_error(arg.c_str(), &result.diagnostics);
     return CmdArgFlags::BAD_ARG;
 }
 
 void Command::warn_missing_file() const
 {
-    if (diagnostics != nullptr)
-    {
-        static constexpr const char *MODE_NAMES[]{"command line", "sstools.ini", "PAR file", "PAR file"};
-        diagnostics->warnings.push_back("Can't find " + variable.substr(0, 29) + '=' + std::string{value} +
-            ", please check " + MODE_NAMES[static_cast<int>(mode)]);
-    }
+    static constexpr const char *MODE_NAMES[]{"command line", "sstools.ini", "PAR file", "PAR file"};
+    result.diagnostics.warnings.push_back("Can't find " + variable.substr(0, 29) + '=' + std::string{value} +
+        ", please check " + MODE_NAMES[static_cast<int>(mode)]);
 }
 
 struct CommandHandler
@@ -1094,27 +1070,8 @@ static CmdArgFlags cmd_fpu(const Command &cmd)
 
 static CmdArgFlags cmd_make_doc(const Command &cmd)
 {
-    enum
-    {
-        BOX_ROW = 6,
-        BOX_COL = 11,
-        BOX_WIDTH = 57,
-        BOX_DEPTH = 12,
-    };
-    help_title();
-    driver_set_attr(1, 0, C_DVID_BKGRD, 24 * 80); // init rest to background
-                                                  // init box
-    for (int i = 0; i < BOX_DEPTH; ++i)
-    {
-        driver_set_attr(BOX_ROW + i, BOX_COL, C_DVID_LO, BOX_WIDTH);
-    }
-    driver_put_string(BOX_ROW + 2, BOX_COL + 4, C_DVID_HI, "Creating Help Document");
-    const std::string file{cmd.value.empty() ? "id.txt" : std::string{cmd.value}};
-    driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO, "Save name: " + file);
-    driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, "Status:");
-    cmd_files_test::s_print_document(file.c_str(), make_doc_msg_func);
-    cmd_files_test::s_goodbye();
-    return CmdArgFlags::GOODBYE;
+    cmd.result.action = MakeHelpDocument{cmd.value.empty() ? "id.txt" : std::string{cmd.value}};
+    return CmdArgFlags::NONE;
 }
 
 static CmdArgFlags cmd_make_par(const Command &cmd)
@@ -1123,79 +1080,39 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    std::string par_file{cmd.value};
+    std::string filename{cmd.value};
     std::string entry_name;
-    if (const std::string::size_type slash{par_file.find_first_of('/')}; slash != std::string::npos)
+    if (const std::size_t slash{filename.find('/')}; slash != std::string::npos)
     {
-        entry_name = par_file.substr(slash + 1);
-        par_file.erase(slash);
+        entry_name = filename.substr(slash + 1);
+        filename.erase(slash);
     }
-
-    g_parameter_file = par_file;
-    if (!g_parameter_file.has_extension())
+    fs::path path{filename};
+    if (!path.has_extension())
     {
-        g_parameter_file.replace_extension(".par");
+        path.replace_extension(".par");
     }
     if (entry_name.empty())
     {
         if (!g_read_filename.empty())
         {
-            g_parameter_set_name = g_read_filename.filename().string();
+            entry_name = g_read_filename.filename().string();
         }
         else if (!g_map_name.empty())
         {
-            g_parameter_set_name = g_map_name;
+            entry_name = g_map_name;
         }
         else
         {
             return cmd.bad_arg();
         }
     }
-    else
+    else if (entry_name.size() > ITEM_NAME_LEN)
     {
-        g_parameter_set_name = entry_name;
-        assert(g_parameter_set_name.length() <= ITEM_NAME_LEN);
-        if (g_parameter_set_name.length() > ITEM_NAME_LEN)
-        {
-            g_parameter_set_name.resize(ITEM_NAME_LEN);
-        }
+        entry_name.resize(ITEM_NAME_LEN);
     }
-    g_make_parameter_file = true;
-    if (!g_read_filename.empty())
-    {
-        try
-        {
-            std::filesystem::path path{g_read_filename};
-            if (!path.has_extension())
-            {
-                path.replace_extension(".gif");
-            }
-            const std::filesystem::path found{find_file(ReadFile::IMAGE, path)};
-            ImageMetadata metadata{read_image_metadata(found.empty() ? path : found)};
-            apply_image_parameters(metadata);
-            apply_image_extensions(metadata);
-        }
-        catch (const std::runtime_error &error)
-        {
-            if (cmd.diagnostics != nullptr)
-            {
-                cmd.diagnostics->errors.push_back(error.what());
-            }
-            return CmdArgFlags::BAD_ARG;
-        }
-    }
-    else if (!g_map_name.empty())
-    {
-        g_make_parameter_file_map = true;
-    }
-    g_logical_screen.x_dots = g_file_x_dots;
-    g_logical_screen.y_dots = g_file_y_dots;
-    g_logical_screen.x_size_dots = g_logical_screen.x_dots - 1;
-    g_logical_screen.y_size_dots = g_logical_screen.y_dots - 1;
-    calc_frac_init();
-    make_batch_file();
-    cmd_files_test::s_goodbye();
-    return CmdArgFlags::GOODBYE;
+    cmd.result.action = MakeParameterFile{std::move(path), std::move(entry_name)};
+    return CmdArgFlags::NONE;
 }
 
 static CmdArgFlags cmd_max_history(const Command &cmd)
@@ -1684,9 +1601,9 @@ static CmdArgFlags parse_colors(const Command &cmd)
             path = find_file(ReadFile::MAP, map_path);
         }
         const PaletteLoadResult result{validate_luts(path.empty() ? map_name : path.string())};
-        if (cmd.diagnostics != nullptr && !result.diagnostic.empty())
+        if (!result.diagnostic.empty())
         {
-            (result.failed ? cmd.diagnostics->errors : cmd.diagnostics->warnings).push_back(result.diagnostic);
+            (result.failed ? cmd.result.diagnostics.errors : cmd.result.diagnostics.warnings).push_back(result.diagnostic);
         }
         if (result.failed)
         {
@@ -2575,11 +2492,9 @@ static CmdArgFlags cmd_make_mig(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    const int x_mult = cmd.int_vals[0];
-    const int y_mult = cmd.int_vals[1];
-    make_mig(x_mult, y_mult);
-    cmd_files_test::s_goodbye();
-    return CmdArgFlags::GOODBYE;
+    cmd.result.action =
+        MakeMultiImageGif{static_cast<unsigned int>(cmd.int_vals[0]), static_cast<unsigned int>(cmd.int_vals[1])};
+    return CmdArgFlags::NONE;
 }
 
 // map=, set default colors
@@ -2592,9 +2507,9 @@ static CmdArgFlags cmd_map(const Command &cmd)
 
     const std::string map_name{cmd.value};
     const PaletteLoadResult result{set_color_palette_name(map_name)};
-    if (cmd.diagnostics != nullptr && !result.diagnostic.empty())
+    if (!result.diagnostic.empty())
     {
-        (result.failed ? cmd.diagnostics->errors : cmd.diagnostics->warnings).push_back(result.diagnostic);
+        (result.failed ? cmd.result.diagnostics.errors : cmd.result.diagnostics.warnings).push_back(result.diagnostic);
     }
     if (!result.failed)
     {
@@ -3595,14 +3510,8 @@ static CmdArgFlags cmd_sound(const Command &cmd)
             if (cmd.char_val[i] == 'f')
             {
                 // (try to)switch on opl3 fm synth
-                if (driver_init_fm())
-                {
-                    g_sound_flag |= SOUNDFLAG_OPL3_FM;
-                }
-                else
-                {
-                    g_sound_flag &= ~SOUNDFLAG_OPL3_FM;
-                }
+                g_sound_flag |= SOUNDFLAG_OPL3_FM;
+                cmd.result.initialize_fm = true;
             }
             else if (cmd.char_val[i] == 'p')
             {
@@ -4222,35 +4131,30 @@ static std::optional<CmdArgFlags> handle_command(const std::array<CommandHandler
 //      | 4 means 3d=yes specified
 //      | 8 means reset specified
 //
-CmdArgFlags cmd_arg(const std::string_view cur_arg, const CmdFile mode, CommandDiagnostics *diagnostics)
+CommandParseResult cmd_arg(const std::string_view cur_arg, const CmdFile mode)
 {
-    Command cmd{cur_arg, mode, diagnostics};
+    CommandParseResult result;
+    Command cmd{cur_arg, mode, result};
     if (cmd.status != CmdArgFlags::NONE)
     {
-        return cmd.status;
-    }
-
-    // TODO: removed later
-    // Slice 45 defers these actions; until then, do not bypass pending errors.
-    if (diagnostics != nullptr && !diagnostics->errors.empty() &&
-        (cmd.variable == "makedoc" || cmd.variable == "makepar" || cmd.variable == "makemig"))
-    {
-        return CmdArgFlags::NONE;
+        result.flags = cmd.status;
+        return result;
     }
     if (mode != CmdFile::AT_AFTER_STARTUP || g_debug_flag == DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME)
     {
         if (const std::optional handled{handle_command(s_startup_commands, cmd)}; handled.has_value())
         {
-            return handled.value();
+            result.flags = handled.value();
+            return result;
         }
     }
-
     if (const std::optional handled{handle_command(s_commands, cmd)}; handled.has_value())
     {
-        return handled.value();
+        result.flags = handled.value();
+        return result;
     }
-
-    return cmd.bad_arg();
+    result.flags = cmd.bad_arg();
+    return result;
 }
 
 static void arg_error(const char *bad_arg, CommandDiagnostics *diagnostics)

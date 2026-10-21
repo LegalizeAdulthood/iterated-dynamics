@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include <engine/cmdfiles_test.h>
+#include <engine/cmdfiles.h>
+#include <engine/command_comments.h>
+#include <ui/command_effects.h>
 
 #include "ColorMapSaver.h"
 #include "fractals/formula.h"
@@ -156,14 +158,6 @@ static std::ostream &operator<<(std::ostream &str, const CmdArgFlags value)
         str << "RESET";
         emitted = true;
     }
-    if (bit_set(value, CmdArgFlags::GOODBYE))
-    {
-        if (emitted)
-        {
-            str << " | ";
-        }
-        str << "GOODBYE";
-    }
     return str;
 }
 
@@ -183,7 +177,7 @@ protected:
     void exec_cmd_arg(const std::string &cur_arg, CmdFile mode = CmdFile::AT_AFTER_STARTUP);
 
     CmdArgFlags m_result{};
-    CommandDiagnostics m_diagnostics;
+    CommandParseResult m_parsed;
 };
 
 void TestParameterCommand::SetUp()
@@ -201,8 +195,8 @@ void TestParameterCommand::TearDown()
 
 void TestParameterCommand::exec_cmd_arg(const std::string &cur_arg, const CmdFile mode)
 {
-    m_diagnostics = {};
-    m_result = cmd_arg(cur_arg, mode, &m_diagnostics);
+    m_parsed = cmd_arg(cur_arg, mode);
+    m_result = m_parsed.flags;
 }
 
 class TestNextCommand : public Test
@@ -437,8 +431,8 @@ protected:
 
 void TestParameterCommandError::TearDown()
 {
-    EXPECT_EQ(1U, m_diagnostics.errors.size());
-    EXPECT_TRUE(m_diagnostics.warnings.empty());
+    EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+    EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
     TestParameterCommand::TearDown();
 }
 
@@ -450,8 +444,8 @@ TEST_F(TestParameterCommand, invalidArgumentReturnsDiagnosticWithoutUiOrBatchMut
     exec_cmd_arg("maxiter=bad");
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    ASSERT_EQ(1U, m_diagnostics.errors.size());
-    EXPECT_THAT(m_diagnostics.errors.front(), HasSubstr("maxiter=bad"));
+    ASSERT_EQ(1U, m_parsed.diagnostics.errors.size());
+    EXPECT_THAT(m_parsed.diagnostics.errors.front(), HasSubstr("maxiter=bad"));
     EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
 }
 
@@ -463,9 +457,10 @@ TEST_F(TestParameterCommand, missingFileReturnsWarningWithoutUi)
 
     exec_cmd_arg("lfile=missing-command-lsystem.l");
 
-    EXPECT_TRUE(m_diagnostics.errors.empty());
-    ASSERT_EQ(1U, m_diagnostics.warnings.size());
-    EXPECT_EQ("Can't find lfile=missing-command-lsystem.l, please check PAR file", m_diagnostics.warnings.front());
+    EXPECT_TRUE(m_parsed.diagnostics.errors.empty());
+    ASSERT_EQ(1U, m_parsed.diagnostics.warnings.size());
+    EXPECT_EQ(
+        "Can't find lfile=missing-command-lsystem.l, please check PAR file", m_parsed.diagnostics.warnings.front());
     EXPECT_EQ(original, g_l_system_filename);
 }
 
@@ -549,89 +544,67 @@ TEST_F(TestParameterCommandError, maxHistoryAfterStartup)
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
-class TestParameterGoodbye : public TestParameterCommand
+TEST_F(TestParameterCommand, makeDocDefaultFile)
 {
-public:
-    ~TestParameterGoodbye() override = default;
-
-protected:
-    void SetUp() override;
-    void TearDown() override;
-
-    StrictMock<MockFunction<cmd_files_test::Goodbye>> m_goodbye;
-    cmd_files_test::GoodbyeFn m_prev_goodbye;
-};
-
-void TestParameterGoodbye::SetUp()
-{
-    TestParameterCommand::SetUp();
-    m_prev_goodbye = cmd_files_test::get_goodbye();
-    cmd_files_test::set_goodbye(m_goodbye.AsStdFunction());
-}
-
-void TestParameterGoodbye::TearDown()
-{
-    cmd_files_test::set_goodbye(m_prev_goodbye);
-    TestParameterCommand::TearDown();
-}
-
-class TestParameterCommandMakeDoc : public TestParameterGoodbye
-{
-public:
-    ~TestParameterCommandMakeDoc() override = default;
-
-protected:
-    void SetUp() override;
-    void TearDown() override;
-
-    StrictMock<MockFunction<cmd_files_test::PrintDoc>> m_print_document;
-    cmd_files_test::PrintDocFn m_prev_print_document;
-    Driver *m_prev_driver{};
-    MockDriver m_driver;
-};
-
-void TestParameterCommandMakeDoc::SetUp()
-{
-    TestParameterGoodbye::SetUp();
-    m_prev_print_document = cmd_files_test::get_print_document();
-    cmd_files_test::set_print_document(m_print_document.AsStdFunction());
-    m_prev_driver = g_driver;
-    g_driver = &m_driver;
-    EXPECT_CALL(m_driver, set_clear());
-    EXPECT_CALL(m_driver, put_string(0, 0, _, HasSubstr("Iterated Dynamics")));
-    EXPECT_CALL(m_driver, set_attr(1, 0, C_DVID_BKGRD, 80 * 24));
-    EXPECT_CALL(m_driver, set_attr(_, 11, C_DVID_LO, 57)).Times(12);
-    EXPECT_CALL(m_driver, put_string(8, 15, C_DVID_HI, HasSubstr("Creating Help Document")));
-    EXPECT_CALL(m_driver, put_string(12, 15, C_DVID_LO, HasSubstr("Status:")));
-}
-
-void TestParameterCommandMakeDoc::TearDown()
-{
-    g_driver = m_prev_driver;
-    cmd_files_test::set_print_document(m_prev_print_document);
-    TestParameterGoodbye::TearDown();
-}
-
-TEST_F(TestParameterCommandMakeDoc, makeDocDefaultFile)
-{
-    EXPECT_CALL(m_driver, put_string(10, 15, C_DVID_LO, HasSubstr("Save name: id.txt")));
-    EXPECT_CALL(m_print_document, Call(StrEq("id.txt"), NotNull()));
-    EXPECT_CALL(m_goodbye, Call());
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
 
     exec_cmd_arg("makedoc", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    const MakeHelpDocument *request{std::get_if<MakeHelpDocument>(&m_parsed.action)};
+    ASSERT_NE(nullptr, request);
+    EXPECT_EQ("id.txt", request->filename);
 }
 
-TEST_F(TestParameterCommandMakeDoc, makeDocCustomFile)
+TEST_F(TestParameterCommand, makeDocCustomFile)
 {
-    EXPECT_CALL(m_driver, put_string(10, 15, C_DVID_LO, HasSubstr("Save name: foo.txt")));
-    EXPECT_CALL(m_print_document, Call(StrEq("foo.txt"), NotNull()));
-    EXPECT_CALL(m_goodbye, Call());
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
 
     exec_cmd_arg("makedoc=foo.txt", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    const MakeHelpDocument *request{std::get_if<MakeHelpDocument>(&m_parsed.action)};
+    ASSERT_NE(nullptr, request);
+    EXPECT_EQ("foo.txt", request->filename);
+}
+
+TEST_F(TestParameterCommand, makeMigReturnsDimensionsWithoutRunningIo)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+
+    exec_cmd_arg("makemig=2/3");
+
+    const MakeMultiImageGif *request{std::get_if<MakeMultiImageGif>(&m_parsed.action)};
+    ASSERT_NE(nullptr, request);
+    EXPECT_EQ(2U, request->x_mult);
+    EXPECT_EQ(3U, request->y_mult);
+}
+
+TEST_F(TestParameterCommand, soundFmRequestsDeviceInitializationWithoutIo)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    ValueSaver saved_sound{g_sound_flag};
+
+    exec_cmd_arg("sound=x/f");
+
+    EXPECT_TRUE(m_parsed.initialize_fm);
+    EXPECT_NE(0, g_sound_flag & SOUNDFLAG_OPL3_FM);
+}
+
+TEST_F(TestParameterCommand, makeParOnlyReportsOutputSettings)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    ValueSaver saved_path{g_parameter_file, fs::path{"original.par"}};
+    ValueSaver saved_name{g_parameter_set_name, std::string{"original"}};
+    ValueSaver saved_make_par{g_make_parameter_file, false};
+
+    exec_cmd_arg("makepar=result/entry", CmdFile::SSTOOLS_INI);
+
+    const MakeParameterFile *request{std::get_if<MakeParameterFile>(&m_parsed.action)};
+    ASSERT_NE(nullptr, request);
+    EXPECT_EQ("result.par", request->filename);
+    EXPECT_EQ("entry", request->entry_name);
+    EXPECT_EQ("original.par", g_parameter_file);
+    EXPECT_EQ("original", g_parameter_set_name);
+    EXPECT_FALSE(g_make_parameter_file);
 }
 
 TEST_F(TestParameterCommandError, makeParTooFewValues)
@@ -656,12 +629,13 @@ static std::string read_file_contents(const fs::path &path)
     return str.str();
 }
 
-struct TestCommandMakePar : TestParameterGoodbye
+struct TestCommandMakePar : TestParameterCommand
 {
     ~TestCommandMakePar() override = default;
 
 protected:
     void SetUp() override;
+    void exec_cmd_arg(const std::string &arg, CmdFile mode);
 
     ValueSaver<Version> m_saved_version{g_version, Version{1, 2, 3, 4, false}};
     ValueSaver<fs::path> m_saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
@@ -676,11 +650,18 @@ protected:
 
 void TestCommandMakePar::SetUp()
 {
-    TestParameterGoodbye::SetUp();
+    TestParameterCommand::SetUp();
     EXPECT_CALL(m_driver, stack_screen());
     EXPECT_CALL(m_driver, unstack_screen());
     EXPECT_CALL(m_driver, check_memory());
-    EXPECT_CALL(m_goodbye, Call());
+}
+
+void TestCommandMakePar::exec_cmd_arg(const std::string &arg, const CmdFile mode)
+{
+    TestParameterCommand::exec_cmd_arg(arg, mode);
+    EXPECT_TRUE(std::holds_alternative<MakeParameterFile>(m_parsed.action));
+    EXPECT_TRUE(apply_command_effects(m_parsed));
+    EXPECT_TRUE(m_parsed.diagnostics.errors.empty());
 }
 
 static fs::path par_path(const char *filename)
@@ -695,7 +676,7 @@ TEST_F(TestCommandMakePar, makeParNewFile)
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(R"par(bar                {
                      ; Id Version 1.2.3.4
   reset=1/2/3/4 type=mandel passes= corners=0/0/0/0 params=0/0
@@ -718,7 +699,7 @@ TEST_F(TestCommandMakePar, makeParWritesFixedRandomSeed)
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_THAT(read_file_contents(path), HasSubstr(" rseed=4567"));
 }
 
@@ -731,7 +712,7 @@ TEST_F(TestCommandMakePar, makeParOmitsGeneratedRandomSeed)
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_THAT(read_file_contents(path), Not(HasSubstr("rseed=")));
 }
 
@@ -757,7 +738,7 @@ TEST_F(TestCommandMakePar, makeParNewEntryExistingFile)
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/foo", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(R"par(bar                {
   reset=1/2/3/4 type=mandel passes= corners=0/0/0/0 params=0/0
   maxiter=0 fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
@@ -786,7 +767,7 @@ TEST_F(TestCommandMakePar, makeParWritesLegacyResetFromCompatibilityVersion)
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_THAT(read_file_contents(path), HasSubstr("  reset=1730 type=mandel"));
 }
 
@@ -799,7 +780,7 @@ TEST_F(TestCommandMakePar, makeParPreservesLegacyFloat)
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_THAT(read_file_contents(path), HasSubstr(" reset=1730 type=mandel float=y"));
 }
 
@@ -812,7 +793,7 @@ TEST_F(TestCommandMakePar, makeParWritesIdResetFromCompatibilityVersion)
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
     const std::string text{read_file_contents(path)};
-    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_THAT(text, HasSubstr("; Id Version 1.3.2"));
     EXPECT_THAT(text, HasSubstr("  reset=1/3/2 type=mandel"));
 }
@@ -832,7 +813,7 @@ TEST_F(TestCommandMakePar, makeParWritesTrimmedCornerValues)
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_THAT(read_file_contents(path), HasSubstr(" corners=-1.25/2.5/-3.75/4"));
 }
 
@@ -845,7 +826,7 @@ TEST_F(TestCommandMakePar, makeParWrapsAtConfiguredLineLength)
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
     const std::string text{read_file_contents(path)};
-    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_THAT(text, HasSubstr(" passes=\n  corners="));
 
     std::istringstream lines{text};
@@ -870,7 +851,7 @@ TEST_F(TestCommandMakePar, makeParMapOnlyWritesColors)
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
     const std::string text{read_file_contents(path)};
-    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_THAT(text, HasSubstr(" colors="));
     EXPECT_THAT(text, Not(HasSubstr(" type=mandel")));
     EXPECT_THAT(text, Not(HasSubstr(" reset=")));
@@ -1484,9 +1465,9 @@ TEST_F(TestParameterCommand, missingMapReturnsDiagnosticAndPreservesMapName)
     ValueSaver saved_map_name{g_map_name, std::string{"previous.map"}};
     ValueSaver saved_specified{g_map_specified, false};
     ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    CommandDiagnostics diagnostics;
-
-    const CmdArgFlags result{cmd_arg("map=missing-palette.map", CmdFile::AT_AFTER_STARTUP, &diagnostics)};
+    const CommandParseResult parsed{cmd_arg("map=missing-palette.map", CmdFile::AT_AFTER_STARTUP)};
+    const CmdArgFlags result{parsed.flags};
+    const CommandDiagnostics &diagnostics{parsed.diagnostics};
 
     EXPECT_EQ(CmdArgFlags::NONE, result);
     EXPECT_EQ("previous.map", g_map_name);
@@ -1503,9 +1484,9 @@ TEST_F(TestParameterCommand, missingPaletteStopsCommandFileWithoutLosingEarlierC
     ASSERT_NE(nullptr, file);
     std::fputs("test { maxiter=321 colors=@missing-command-palette.map maxiter=654 }", file);
     std::rewind(file);
-    CommandDiagnostics diagnostics;
-
-    const CmdArgFlags result{load_commands(file, &diagnostics)};
+    const CommandParseResult parsed{load_commands(file)};
+    const CmdArgFlags result{parsed.flags};
+    const CommandDiagnostics &diagnostics{parsed.diagnostics};
 
     EXPECT_TRUE(bit_set(result, CmdArgFlags::FRACTAL_PARAM));
     EXPECT_EQ(321, g_max_iterations);
@@ -2674,7 +2655,8 @@ TEST_F(TestParameterCommand, startupCollectsErrorsBeforeLaterBatchArgument)
         std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
     CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
 
-    const CommandDiagnostics diagnostics{cmd_files({"id", "maxiter=bad", "batch=yes"})};
+    const CommandParseResult parsed{cmd_files({"id", "maxiter=bad", "batch=yes"})};
+    const CommandDiagnostics &diagnostics{parsed.diagnostics};
 
     ASSERT_EQ(1U, diagnostics.errors.size());
     EXPECT_THAT(diagnostics.errors.front(), HasSubstr("maxiter=bad"));
@@ -2689,11 +2671,59 @@ TEST_F(TestParameterCommand, startupCollectsMissingFileWarningsWithoutUi)
         std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
     CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
 
-    const CommandDiagnostics diagnostics{cmd_files({"id", "lfile=missing-startup-lsystem.l"})};
+    const CommandParseResult parsed{cmd_files({"id", "lfile=missing-startup-lsystem.l"})};
+    const CommandDiagnostics &diagnostics{parsed.diagnostics};
 
     EXPECT_TRUE(diagnostics.errors.empty());
     ASSERT_EQ(1U, diagnostics.warnings.size());
     EXPECT_THAT(diagnostics.warnings.front(), HasSubstr("please check command line"));
+}
+
+TEST_F(TestParameterCommand, startupReturnsFileEntrySelectionWithoutUi)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    ValueSaver saved_first_init{g_first_init, true};
+    ValueSaver saved_special_dirs{g_special_dirs,
+        std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
+    CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
+
+    const CommandParseResult parsed{cmd_files({"id", "type=formula"})};
+
+    EXPECT_TRUE(parsed.needs_file_entry);
+    EXPECT_TRUE(parsed.diagnostics.errors.empty());
+    EXPECT_TRUE(g_formula_name.empty());
+}
+
+TEST_F(TestParameterCommand, startupStopsAtActionButRetainsEarlierErrors)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    ValueSaver saved_first_init{g_first_init, true};
+    ValueSaver saved_special_dirs{g_special_dirs,
+        std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
+    CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
+
+    const CommandParseResult parsed{cmd_files({"id", "maxiter=bad", "makedoc=unused.txt", "maxiter=888"})};
+
+    EXPECT_EQ(1U, parsed.diagnostics.errors.size());
+    EXPECT_TRUE(std::holds_alternative<MakeHelpDocument>(parsed.action));
+    EXPECT_NE(888, g_max_iterations);
+    EXPECT_FALSE(parsed.needs_file_entry);
+}
+
+TEST_F(TestParameterCommand, parameterSetStopsAtAction)
+{
+    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+    ValueSaver saved_iterations{g_max_iterations, 150L};
+    std::FILE *file{std::tmpfile()};
+    ASSERT_NE(nullptr, file);
+    std::fputs("test { maxiter=321 makemig=2/3 maxiter=654 }", file);
+    std::rewind(file);
+
+    const CommandParseResult parsed{load_commands(file)};
+
+    EXPECT_EQ(321, g_max_iterations);
+    EXPECT_TRUE(bit_set(parsed.flags, CmdArgFlags::FRACTAL_PARAM));
+    EXPECT_TRUE(std::holds_alternative<MakeMultiImageGif>(parsed.action));
 }
 
 TEST_F(TestParameterCommand, workDirExisting)
@@ -3621,7 +3651,7 @@ TEST_F(TestParameterCommand, legacyFloatControlsTrigBailout)
             std::rewind(file);
             g_user.legacy_float = true;
 
-            const CmdArgFlags result{load_commands(file)};
+            const CmdArgFlags result{load_commands(file).flags};
 
             EXPECT_NE(CmdArgFlags::BAD_ARG, result);
             EXPECT_EQ(test_case.bailout, g_user.bailout_value);

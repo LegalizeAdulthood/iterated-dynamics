@@ -1,12 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
 #include <string>
 #include <string_view>
 
+namespace id::fractals
+{
+enum class FractalType;
+}
+
 namespace id::engine
 {
+
+void set_fractal_default_functions(fractals::FractalType previous);
 
 // The values must match the values in the trigfn array in prompts1
 enum class TrigFn

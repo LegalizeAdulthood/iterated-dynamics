@@ -11,6 +11,8 @@
 #include "ui/field_prompt.h"
 #include "ui/help.h"
 #include "ui/command_diagnostics.h"
+#include "ui/command_effects.h"
+#include "ui/goodbye.h"
 
 #include <vector>
 
@@ -37,9 +39,18 @@ int get_cmd_string()
     int i = field_prompt("Enter command string to use.", nullptr, cmd_buf, 60, nullptr);
     if (i >= 0 && cmd_buf[0] != 0)
     {
-        CommandDiagnostics diagnostics;
-        i = +cmd_arg(cmd_buf, CmdFile::AT_AFTER_STARTUP, &diagnostics);
-        show_command_diagnostics(diagnostics);
+        CommandParseResult result{cmd_arg(cmd_buf, CmdFile::AT_AFTER_STARTUP)};
+        const bool exit_requested{apply_command_effects(result)};
+        i = +result.flags;
+        show_command_diagnostics(result.diagnostics);
+        if (exit_requested)
+        {
+            if (!result.diagnostics.errors.empty())
+            {
+                g_init_batch = BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE;
+            }
+            goodbye();
+        }
         if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
         {
             backwards_legacy_v18();

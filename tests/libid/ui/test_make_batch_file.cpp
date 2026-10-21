@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <ui/make_batch_file.h>
 
 #include "ColorMapSaver.h"
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/color_utils.h"
 #include "engine/SolidGuess.h"
 #include "engine/UserData.h"

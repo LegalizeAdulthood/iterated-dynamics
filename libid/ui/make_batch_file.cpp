@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/make_batch_file.h"
 
 #include "engine/bailout_formula.h"
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
+#include "engine/command_comments.h"
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/convert_center_mag.h"
@@ -96,7 +98,6 @@ namespace id::ui
 
 bool g_make_parameter_file{};
 bool g_make_parameter_file_map{};
-int g_max_line_length{72};
 
 static std::FILE *s_param_file{};
 static WriteBatchData s_wb_data;

@@ -203,68 +203,6 @@ static int sel_fract_type_help(const int key, const int choice)
     return 0;
 }
 
-void set_fractal_default_functions(const FractalType previous)
-{
-    switch (g_fractal_type)
-    {
-    case FractalType::BIFURCATION:
-        if (previous != FractalType::BIFURCATION)
-        {
-            set_trig_array(0, "ident");
-        }
-        break;
-
-    case FractalType::BIF_STEWART:
-        if (previous != FractalType::BIF_STEWART)
-        {
-            set_trig_array(0, "ident");
-        }
-        break;
-
-    case FractalType::BIF_LAMBDA:
-        if (previous != FractalType::BIF_LAMBDA)
-        {
-            set_trig_array(0, "ident");
-        }
-        break;
-
-    case FractalType::BIF_EQ_SIN_PI:
-        if (previous != FractalType::BIF_EQ_SIN_PI)
-        {
-            set_trig_array(0, "sin");
-        }
-        break;
-
-    case FractalType::BIF_PLUS_SIN_PI:
-        if (previous != FractalType::BIF_PLUS_SIN_PI)
-        {
-            set_trig_array(0, "sin");
-        }
-        break;
-
-    // Next assumes that user going between popcorn and popcornjul
-    // might not want to change function variables
-    case FractalType::POPCORN:
-    case FractalType::POPCORN_JUL:
-        if (!(previous == FractalType::POPCORN || previous == FractalType::POPCORN_JUL))
-        {
-            set_function_param_defaults();
-        }
-        break;
-
-    // set LATOO function defaults
-    case FractalType::LATOO:
-        if (previous != FractalType::LATOO)
-        {
-            set_function_param_defaults();
-        }
-        break;
-
-    default:
-        break;
-    }
-}
-
 namespace {
 
 class SaveFractalType

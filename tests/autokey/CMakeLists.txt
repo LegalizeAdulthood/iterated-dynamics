@@ -48,6 +48,18 @@ add_test(NAME AutoKeyTest.makepar-mig-pieces
 set_tests_properties(AutoKeyTest.makepar-mig-pieces
     PROPERTIES LABELS "${MAKEPAR_MIG_LABELS}")
 
+id_make_test_home(command-actions COMMAND_ACTIONS_HOME
+    KEYS command_select_accept.key command_select_cancel.key)
+add_test(NAME AutoKeyTest.command-actions
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCHECK_COMMAND=$<SHELL_PATH:$<TARGET_FILE:check-command-actions>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/command_actions_test.cmake"
+    WORKING_DIRECTORY "${COMMAND_ACTIONS_HOME}")
+set_tests_properties(AutoKeyTest.command-actions
+    PROPERTIES LABELS "autokey;ui;commands" TIMEOUT 160)
+
 id_make_test_home(command-diagnostics COMMAND_DIAGNOSTICS_HOME
     KEYS command_diagnostics.key command_startup_continue.key command_startup_abort.key)
 add_test(NAME AutoKeyTest.command-diagnostics

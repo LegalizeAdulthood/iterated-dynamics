@@ -782,15 +782,15 @@ The remaining UI-concept leaks outside `libid/ui` are:
   These are input and application-control leaks even when reachable only
   on failure or in debug builds.  Memory operations and command
   diagnostics now report failures without UI or shutdown callbacks.
-- `libid/engine/cmdfiles.cpp`: command-generation actions and initial
-  file-entry selection still invoke UI code or shut down the application.
-  Parse errors and file warnings are returned as `CommandDiagnostics`;
-  UI callers own acknowledgement, batch logging, and error exits.
-  Image-save feedback and policy now live in `ui/save_image.cpp`, which
-  drives scanline encoding through `io/ImageSave`.  Image-load setup
-  choices live in `ui/restore_image.cpp`.  Video selection, 3D settings,
-  and Tab information use pending values; the active image and stacked
-  screen remain unchanged when setup is cancelled.
+
+Command parsing returns diagnostics, generation requests, and the need
+for startup file-entry selection.  UI callers own action execution,
+selection cancellation, device initialization, and application exits.
+Image-save feedback and policy live in `ui/save_image.cpp`, which drives
+scanline encoding through `io/ImageSave`.  Image-load setup choices live
+in `ui/restore_image.cpp`.  Video selection, 3D settings, and Tab
+information use pending values; the active image and stacked screen
+remain unchanged when setup is cancelled.
 
 These are not all keyboard polling sites, but they are presentation
 ownership leaks.  The engine and fractal classes may expose bounded
@@ -984,38 +984,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 45. Command Actions And Application Effects
-
-Source: help-document generation, parameter-file generation, comments,
-`resolve_startup_file_entry()`, and application-exit branches in
-`engine/cmdfiles.cpp`.
-
-Work:
-
-- Make parsing report requested actions and settings to its outer owner.
-- Let UI/application coordination run help/status screens, batch-file
-  generation, and exit decisions after parsing returns.
-- Move initial file-entry selection and cancellation/reset decisions out
-  of `resolve_startup_file_entry()`.  Return the need for selection to
-  the UI owner instead of calling `select_fractal_file_entry()` while
-  parsing.
-- Remove the marked `s_goodbye` test hook and the temporary action guard
-  in `cmd_arg()`.  Pending parse errors must still prevent generation or
-  exit actions from bypassing diagnostic presentation.
-- Keep content generation and parameter interpretation below UI where
-  appropriate; classify data-only helpers separately from UI decisions.
-
-Done when:
-
-- A command parser no longer selects a screen or exits the application
-  while interpreting an argument.
-
-Validation: retain generated-output tests and cover command effects at
-their caller.  Reuse the parameter/MIG autokey script for its interactive
-entry path; add a script only for a distinct uncovered UI action.  Startup
-generation and exit actions remain process tests.  Do not conflate this
-with the completed `CommandResult` split for interactive menu handlers.
 
 ### 46. Common Engine Render Lifecycle
 
@@ -1268,11 +1236,10 @@ these direct and indirect paths:
   UI-owned; `io/ImageSave` owns encoding and file cleanup.  Image-load
   setup choices and cancellation are UI-owned and do not commit pending
   image parameters.
-- `libid/engine/cmdfiles.cpp`: diagnostic paths return errors and warnings
-  without UI calls.  Command-generation actions still enter UI output
-  and exit through the marked `s_goodbye` hook; initial file-entry
-  selection still invokes its UI chooser.  Slice 45 removes these
-  remaining actions and their temporary pending-error guard.
+
+Command parsing reports errors, warnings, generation actions, and startup
+selection requests without UI calls.  The command UI owns their effects;
+MIG failures unwind to it rather than exiting from I/O code.
 
 The numbered slices cover all these ownership gaps.  The source audit
 must trace UI helper and dispatch-pointer calls as well as raw driver

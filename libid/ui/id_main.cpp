@@ -24,6 +24,7 @@
 #include "misc/ValueSaver.h"
 #include "ui/big_while_loop.h"
 #include "ui/command_diagnostics.h"
+#include "ui/command_effects.h"
 #include "ui/evolve.h"
 #include "ui/get_3d_params.h"
 #include "ui/get_browse_params.h"
@@ -138,7 +139,16 @@ static void main_restart(const std::vector<std::string> &args, MainContext &cont
     g_save_dac = SaveDAC::NO;                       // don't save the VGA DAC
 
     const bool first_init{g_first_init};
-    const CommandDiagnostics diagnostics{cmd_files(args)};
+    CommandParseResult commands{cmd_files(args)};
+    if (commands.diagnostics.errors.empty() && commands.needs_file_entry && !select_fractal_file_entry())
+    {
+        CommandParseResult defaults{reset_startup_commands()};
+        defaults.diagnostics.warnings.insert(defaults.diagnostics.warnings.begin(),
+            commands.diagnostics.warnings.begin(), commands.diagnostics.warnings.end());
+        commands = std::move(defaults);
+    }
+    const bool exit_requested{apply_command_effects(commands)};
+    const CommandDiagnostics &diagnostics{commands.diagnostics};
     if (first_init || g_init_batch != BatchMode::NONE)
     {
         if (!show_startup_command_diagnostics(diagnostics))
@@ -153,6 +163,11 @@ static void main_restart(const std::vector<std::string> &args, MainContext &cont
     else
     {
         show_command_diagnostics(diagnostics);
+    }
+
+    if (exit_requested)
+    {
+        goodbye();
     }
 
     history_init();

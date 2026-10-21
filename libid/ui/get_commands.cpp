@@ -9,6 +9,8 @@
 #include "ui/get_file_entry.h"
 #include "ui/help.h"
 #include "ui/command_diagnostics.h"
+#include "ui/command_effects.h"
+#include "ui/goodbye.h"
 
 #include <cstdio>
 #include <vector>
@@ -31,9 +33,18 @@ CmdArgFlags get_commands()
     if (point >= 0 && (param_file = std::fopen(g_parameter_file.string().c_str(), "rb")) != nullptr)
     {
         std::fseek(param_file, point, SEEK_SET);
-        CommandDiagnostics diagnostics;
-        ret = load_commands(param_file, &diagnostics);
-        show_command_diagnostics(diagnostics);
+        CommandParseResult result{load_commands(param_file)};
+        const bool exit_requested{apply_command_effects(result)};
+        ret = result.flags;
+        show_command_diagnostics(result.diagnostics);
+        if (exit_requested)
+        {
+            if (!result.diagnostics.errors.empty())
+            {
+                g_init_batch = BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE;
+            }
+            goodbye();
+        }
     }
     return ret;
 }

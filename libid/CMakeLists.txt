@@ -42,7 +42,7 @@ add_library(libid
     include/engine/calcfrac.h engine/calcfrac.cpp
     include/engine/calmanfp.h engine/calmanfp.cpp
     include/engine/cmdfiles.h engine/cmdfiles.cpp
-    include/engine/cmdfiles_test.h
+    include/engine/command_comments.h engine/command_comments.cpp
     include/engine/color_state.h engine/color_state.cpp
     include/engine/color_utils.h
     include/engine/convert_center_mag.h engine/convert_center_mag.cpp
@@ -209,6 +209,7 @@ add_library(libid
     include/ui/ChoiceBuilder.h
     include/ui/command_result.h
     include/ui/command_diagnostics.h ui/command_diagnostics.cpp
+    include/ui/command_effects.h ui/command_effects.cpp
     include/ui/comments.h ui/comments.cpp
     include/ui/diffusion.h ui/diffusion.cpp
     include/ui/diskvid.h ui/diskvid.cpp
