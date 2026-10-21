@@ -932,8 +932,8 @@ ImageMetadata read_image_metadata(const std::filesystem::path &path)
     }
     if (metadata.fractal.fractal_type < 0 || metadata.fractal.fractal_type >= +FractalType::MAX)
     {
-        throw std::runtime_error(
-            fmt::format("Warning: {:s} has a bad fractal type {:d}", path.string(), metadata.fractal.fractal_type));
+        throw std::runtime_error(fmt::format("Warning: {:s} has a bad fractal type {:d}", path.string(),
+            static_cast<int>(metadata.fractal.fractal_type)));
     }
     return metadata;
 }

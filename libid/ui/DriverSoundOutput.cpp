@@ -43,7 +43,8 @@ long long sound_time_ms()
 DriverSoundOutput::Source image_sound_source()
 {
     const CalcType calc_type{g_cur_fractal_specific->calc_type};
-    if (calc_type == orbit2d_type || calc_type == orbit3d_type || calc_type == dynamic2d_type)
+    if (calc_type == static_cast<CalcType>(orbit2d_type) || calc_type == orbit3d_type ||
+        calc_type == static_cast<CalcType>(dynamic2d_type))
     {
         return DriverSoundOutput::Source::ORBIT;
     }
