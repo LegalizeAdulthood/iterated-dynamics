@@ -278,6 +278,28 @@ foreach(ADVANCE IN ITEMS ENTER ESC)
         PROPERTIES LABELS "autokey;ui;stereo;restore" TIMEOUT 80)
 endforeach()
 
+foreach(type IN ITEMS henon dynamic mandelcloud julia_inverse julibrot)
+    set(name "orbit-operation-${type}")
+    id_make_test_home("${name}" ORBIT_OPERATION_HOME)
+    file(MAKE_DIRECTORY "${ORBIT_OPERATION_HOME}/key")
+    set(RESTART "")
+    if(type STREQUAL "julia_inverse" OR type STREQUAL "julibrot")
+        set(RESTART "ENTER")
+    endif()
+    configure_file(orbit_operation.key.in "${ORBIT_OPERATION_HOME}/key/orbit_operation.key" @ONLY)
+    add_test(NAME "AutoKeyTest.${name}"
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+            "-DFRACTAL_TYPE=${type}"
+            "-DALTERN_MAP=${CMAKE_SOURCE_DIR}/home/map/altern.map"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/orbit_operation_test.cmake"
+        WORKING_DIRECTORY "${ORBIT_OPERATION_HOME}")
+    set_tests_properties("AutoKeyTest.${name}"
+        PROPERTIES LABELS "autokey;ui;orbit" TIMEOUT 80)
+endforeach()
+
 id_make_test_home(lyapunov-setup LYAPUNOV_SETUP_HOME
     KEYS lyapunov_setup.key)
 add_test(NAME AutoKeyTest.lyapunov-setup

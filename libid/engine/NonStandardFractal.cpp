@@ -56,6 +56,22 @@ NonStandardFractal::Operation NonStandardFractal::select()
     {
         throw std::logic_error("Non-standard calculation is still active");
     }
+    if (is_orbit2d(g_fractal_type))
+    {
+        start_timer();
+        prepare();
+        orbit3d_per_image();
+        g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
+        set_symmetry(g_symmetry, false);
+        Orbit2D &orbit{m_state.emplace<ORBIT_2D>()};
+        if (g_resuming)
+        {
+            orbit.resume();
+        }
+        m_done = orbit.done();
+        update_timer();
+        return Operation::ORBIT_2D;
+    }
     if (is_orbit3d(g_fractal_type))
     {
         start_timer();
@@ -229,8 +245,47 @@ NonStandardFractal::Operation NonStandardFractal::select()
         update_timer();
         return Operation::IFS_3D;
 
+    case FractalType::DYNAMIC:
+    case FractalType::MANDEL_CLOUD:
+    {
+        start_timer();
+        prepare();
+        dynamic2d_per_image();
+        g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
+        set_symmetry(g_symmetry, false);
+        Dynamic2D &dynamic{m_state.emplace<DYNAMIC_2D>()};
+        if (g_resuming)
+        {
+            dynamic.resume();
+        }
+        m_done = dynamic.done();
+        update_timer();
+        return Operation::DYNAMIC_2D;
+    }
+
+    case FractalType::INVERSE_JULIA:
+        start_timer();
+        prepare();
+        orbit3d_per_image();
+        g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
+        set_symmetry(g_symmetry, false);
+        m_done = m_state.emplace<INVERSE_JULIA>().done();
+        update_timer();
+        return Operation::INVERSE_JULIA;
+
+    case FractalType::JULIBROT:
+        start_timer();
+        prepare();
+        julibrot_per_image();
+        g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
+        set_symmetry(g_symmetry, false);
+        m_state.emplace<STANDARD_4D>();
+        m_done = false;
+        update_timer();
+        return Operation::STANDARD_4D;
+
     default:
-        return Operation::LEGACY;
+        throw std::logic_error("The selected fractal does not use a non-standard calculation operation");
     }
 }
 
@@ -342,6 +397,20 @@ void NonStandardFractal::complete_potential_storage(const bool available)
         throw std::logic_error("Potential storage was not requested");
     }
     std::get<PLASMA>(m_state).init(available);
+}
+
+bool NonStandardFractal::inverse_julia_queue_required() const
+{
+    return m_state.index() == INVERSE_JULIA && std::get<INVERSE_JULIA>(m_state).queue_required();
+}
+
+void NonStandardFractal::complete_inverse_julia_queue(const bool available)
+{
+    if (!inverse_julia_queue_required())
+    {
+        throw std::logic_error("Inverse Julia queue storage was not requested");
+    }
+    std::get<INVERSE_JULIA>(m_state).complete_queue(available);
 }
 
 void NonStandardFractal::iterate()
@@ -505,6 +574,56 @@ void NonStandardFractal::iterate()
         }
         return;
 
+    case ORBIT_2D:
+        if (!m_done)
+        {
+            Orbit2D &orbit{std::get<ORBIT_2D>(m_state)};
+            orbit.iterate();
+            m_done = orbit.done();
+            if (m_done)
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
+    case DYNAMIC_2D:
+        if (!m_done)
+        {
+            Dynamic2D &dynamic{std::get<DYNAMIC_2D>(m_state)};
+            dynamic.iterate();
+            m_done = dynamic.done();
+            if (m_done)
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
+    case INVERSE_JULIA:
+        if (!m_done)
+        {
+            InverseJuliaFractal &inverse{std::get<INVERSE_JULIA>(m_state)};
+            inverse.iterate();
+            m_done = inverse.done();
+            if (m_done)
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
+    case STANDARD_4D:
+        if (!m_done)
+        {
+            m_done = !std::get<STANDARD_4D>(m_state).iterate();
+            if (m_done)
+            {
+                g_calc_status = CalcStatus::COMPLETED;
+            }
+        }
+        return;
+
     default:
         throw std::logic_error("No non-standard calculation operation is selected");
     }
@@ -561,8 +680,26 @@ void NonStandardFractal::suspend()
     case IFS_2D:
     case IFS_3D:
     case ORBIT_3D:
+    case INVERSE_JULIA:
+    case STANDARD_4D:
         if (!m_done)
         {
+            finish(true);
+        }
+        return;
+
+    case ORBIT_2D:
+        if (!m_done)
+        {
+            std::get<ORBIT_2D>(m_state).suspend();
+            finish(true);
+        }
+        return;
+
+    case DYNAMIC_2D:
+        if (!m_done)
+        {
+            std::get<DYNAMIC_2D>(m_state).suspend();
             finish(true);
         }
         return;
@@ -618,30 +755,6 @@ void NonStandardFractal::finish(const bool interrupted)
     {
         ImageCalculation::finish();
     }
-}
-
-// TODO: removed later
-// Slice 51 replaces the remaining orbit renderer calls.
-void NonStandardFractal::render_legacy()
-{
-    if (!started() || m_state.index() != NO_OPERATION)
-    {
-        throw std::logic_error("Legacy rendering requires image setup and no selected calculation operation");
-    }
-    start_timer();
-    prepare();
-    const PerImage setup{g_dispatch.per_image()};
-    if (setup == nullptr || setup())
-    {
-        if (setup != nullptr)
-        {
-            g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
-            set_symmetry(g_symmetry, false);
-        }
-        const CalcType calc_type{g_dispatch.calc_type()};
-        calc_type();
-    }
-    update_timer();
 }
 
 } // namespace id::engine

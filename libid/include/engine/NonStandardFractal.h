@@ -9,6 +9,7 @@
 #include "fractals/Cellular.h"
 #include "fractals/Diffusion.h"
 #include "fractals/FrothyBasin.h"
+#include "fractals/julibrot.h"
 #include "fractals/lorenz.h"
 #include "fractals/lsystem.h"
 #include "fractals/Plasma.h"
@@ -26,8 +27,6 @@ class NonStandardFractal : public ImageCalculation
 public:
     enum class Operation
     {
-        // TODO: removed later
-        LEGACY,
         BIFURCATION,
         POPCORN,
         DIFFUSION,
@@ -39,7 +38,11 @@ public:
         FROTHY_BASIN,
         IFS_2D,
         IFS_3D,
-        ORBIT_3D
+        ORBIT_3D,
+        ORBIT_2D,
+        DYNAMIC_2D,
+        INVERSE_JULIA,
+        STANDARD_4D
     };
 
     NonStandardFractal() = default;
@@ -57,15 +60,13 @@ public:
     void scrub_overlay();
     bool potential_storage_required() const;
     void complete_potential_storage(bool available);
+    bool inverse_julia_queue_required() const;
+    void complete_inverse_julia_queue(bool available);
     void iterate();
     bool consume_batch_complete();
     void suspend();
     bool completed() const;
     void finish(bool interrupted);
-
-    // TODO: removed later
-    // Slice 51 replaces the remaining orbit renderer calls.
-    void render_legacy();
 
 private:
     enum StateIndex
@@ -82,7 +83,11 @@ private:
         FROTHY_BASIN,
         IFS_2D,
         IFS_3D,
-        ORBIT_3D
+        ORBIT_3D,
+        ORBIT_2D,
+        DYNAMIC_2D,
+        INVERSE_JULIA,
+        STANDARD_4D
     };
 
     struct NoOperation
@@ -94,7 +99,8 @@ private:
     geometry::StereoView m_stereo_view;
     std::variant<NoOperation, fractals::Bifurcation, fractals::Popcorn, fractals::Diffusion, fractals::TestPoint,
         fractals::Ant, fractals::Cellular, fractals::Plasma, fractals::LSystem, fractals::FrothyBasin, fractals::IFS2D,
-        fractals::IFS3D, fractals::Orbit3D>
+        fractals::IFS3D, fractals::Orbit3D, fractals::Orbit2D, fractals::Dynamic2D, fractals::InverseJuliaFractal,
+        fractals::Standard4D>
         m_state{NoOperation{}};
     bool m_done{true};
 };

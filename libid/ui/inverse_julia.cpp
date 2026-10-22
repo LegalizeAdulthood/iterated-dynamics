@@ -7,11 +7,11 @@
 #include "engine/calcfrac.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
+#include "engine/NonStandardFractal.h"
 #include "engine/pixel.h"
 #include "engine/pixel_grid.h"
 #include "engine/random_seed.h"
 #include "engine/jiim.h"
-#include "engine/resume.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
@@ -1021,48 +1021,35 @@ bool prepare_inverse_julia_queue(const unsigned long request)
     return false;
 }
 
-int inverse_julia_fractal_type()
+int inverse_julia_fractal_type(NonStandardFractal &calculation)
 {
-    int color = 0;
-
-    if (g_resuming)              // can't resume
+    if (calculation.inverse_julia_queue_required())
     {
-        return -1;
+        const bool available{prepare_inverse_julia_queue(32 * 1024UL)};
+        if (!available)
+        {
+            stop_msg(
+                StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Not enough memory: switching to random walk.\n");
+        }
+        calculation.complete_inverse_julia_queue(available);
     }
-
-    const bool needs_queue{g_major_method == Major::BREADTH_FIRST || g_major_method == Major::DEPTH_FIRST};
-    const bool has_queue{needs_queue && prepare_inverse_julia_queue(32 * 1024UL)};
-    if (needs_queue && !has_queue)
-    {
-        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Not enough memory: switching to random walk.\n");
-        g_major_method = Major::RANDOM_WALK;
-    }
-    init_inverse_julia();
 
     reset_calc_interrupted();
     std::shared_ptr<InverseJuliaOrbitKeyboardHandler> keyboard_handler{
         std::make_shared<InverseJuliaOrbitKeyboardHandler>()};
     ScopedKeyboardHandler keyboard_scope{keyboard_handler};
 
-    while (color >= 0)       // generate points
+    while (!calculation.done())
     {
         dispatch_pending_keyboard_input();
         if (keyboard_handler->interrupted())
         {
-            if (has_queue)
-            {
-                free_queue();
-            }
+            calculation.suspend();
             return -1;
         }
-        color = orbit_calc();
-        g_old_z = g_new_z;
+        calculation.iterate();
     }
-    if (has_queue)
-    {
-        free_queue();
-    }
-    return 0;
+    return calculation.completed() ? 0 : -1;
 }
 
 } // namespace id::ui

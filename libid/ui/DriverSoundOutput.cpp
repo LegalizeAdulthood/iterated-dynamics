@@ -14,8 +14,6 @@
 #include <misc/debug_flags.h>
 #include <misc/Driver.h>
 #include <ui/OrbitDelayTimer.h>
-#include <ui/dynamic2d.h>
-#include <ui/orbit2d.h>
 
 #include <fmt/format.h>
 
@@ -44,8 +42,8 @@ long long sound_time_ms()
 DriverSoundOutput::Source image_sound_source()
 {
     const CalcType calc_type{g_cur_fractal_specific->calc_type};
-    if (calc_type == static_cast<CalcType>(orbit2d_type) || is_orbit3d(g_cur_fractal_specific->type) ||
-        calc_type == static_cast<CalcType>(dynamic2d_type))
+    const FractalType type{g_cur_fractal_specific->type};
+    if (is_orbit2d(type) || is_orbit3d(type) || type == FractalType::DYNAMIC || type == FractalType::MANDEL_CLOUD)
     {
         return DriverSoundOutput::Source::ORBIT;
     }

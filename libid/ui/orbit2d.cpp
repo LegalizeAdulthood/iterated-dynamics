@@ -8,8 +8,7 @@
 */
 #include "ui/orbit2d.h"
 
-#include "engine/resume.h"
-#include "fractals/lorenz.h"
+#include "engine/NonStandardFractal.h"
 #include "ui/diskvid.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/SoundSession.h"
@@ -17,39 +16,25 @@
 #include <memory>
 
 using namespace id::engine;
-using namespace id::fractals;
 
 namespace id::ui
 {
 
-int orbit2d_type()
-{
-    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
-    return orbit2d_type(sound);
-}
-
-int orbit2d_type(SoundSession &sound)
+int orbit2d_type(NonStandardFractal &calculation, SoundSession &sound)
 {
     reset_calc_interrupted();
     KeyboardHandlerPtr main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
     ScopedKeyboardHandler main_loop_scope{main_loop_handler};
-    Orbit2D o2d;
-
-    if (g_resuming)
-    {
-        o2d.resume();
-    }
-
-    while (!o2d.done())
+    while (!calculation.done())
     {
         if (!sound.wait_until_ready() || calc_interrupted())
         {
             sound.cancel();
-            o2d.suspend();
+            calculation.suspend();
             return -1;
         }
 
-        o2d.iterate();
+        calculation.iterate();
         display_disk_storage_progress();
     }
     return sound.finish() ? 0 : -1;

@@ -280,7 +280,6 @@ TEST_P(TestOrbit3DSound, selectsEvery3dOrbitWithoutRenderingOrPolling)
 
         EXPECT_FALSE(calculation.done());
         EXPECT_FALSE(calculation.view_done());
-        EXPECT_THROW(calculation.render_legacy(), std::logic_error);
         EXPECT_EQ(0, g_color_iter);
         EXPECT_EQ(0, s_math_calls);
         EXPECT_TRUE(m_plots.empty());

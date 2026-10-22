@@ -375,10 +375,9 @@ The current code is already part-way through this plan:
 The fresh reverse-call audit also found these live paths:
 
 - `calc_fract()` calls UI render controllers directly.
-  `NonStandardFractal::render_legacy()` also reaches UI render loops
-  through dispatch function pointers stored in `FractalSpecific`.
-  Per-image callbacks perform setup only; their renderer-call bridge
-  and nested timer brackets have been removed.
+  `NonStandardFractal` selects calculation objects for every non-standard
+  renderer.  `FractalSpecific` no longer stores UI renderer pointers;
+  per-image callbacks perform setup only.
 - Command validation can still invoke modal `stop_msg()` or application
   shutdown through `goodbye()`.
 - Image loading, image saving, and command parsing still select UI
@@ -569,7 +568,7 @@ true-color setup and teardown, parser setup, log-map setup
 and cleanup, orbit display defaults, inversion setup, resume cleanup,
 calculation-time accounting, work-area cleanup, and disk image cleanup.
 
-`StandardFractal` and the legacy `NonStandardFractal` use that shared
+`StandardFractal` and `NonStandardFractal` use that shared
 implementation directly.  Lyapunov uses it through its contained standard
 calculation.  Standard resume performs common setup; bounded traversal
 retains its existing return points.  Suspension, completion, and failure
@@ -588,10 +587,11 @@ The concrete render operation objects are:
 - `engine::NonStandardFractal`: owns non-standard dispatch setup,
   symmetry defaults, plot defaults, `per_image()` invocation, and final
   status interpretation.  It shares common image setup, timing, and
-  cleanup, but its marked dispatch still enters whole UI render loops.
+  cleanup without entering UI render loops.
   Its bounded operation router owns bifurcation, Popcorn, standalone
   Diffusion, TestPoint, Ant, Cellular, Plasma, L-system, FrothyBasin, and
-  IFS state without renderer callbacks.  Their UI controllers advance
+  IFS, 2D/3D orbit, dynamic, inverse-Julia, and standard-4D state without
+  renderer callbacks.  Their UI controllers advance
   selected objects; setup, resume, and finish stay below UI.  L-system
   definition loading, startup, and terminal interpretation stay below
   UI; its controller retains thinking-screen handling and the drawing
@@ -618,8 +618,11 @@ The concrete render operation objects are:
   including failure cleanup.  `ui::StereoController` drives both families
   and owns input, photographer prompts, palette setup, and sound
   servicing.  Engine selection and sound-source classification do not
-  depend on 3D orbit renderer pointers.
-  Bounded operations cannot enter that legacy rendering entry.
+  depend on UI renderer pointers.  The legacy rendering entry is gone.
+  Orbit2D and Dynamic2D keep their existing increment and resume formats;
+  Standard4D still yields after each symmetric pixel pair.  Standalone
+  inverse Julia owns point completion and prepared-queue lifetime;
+  its controller owns allocation retries and fallback notifications.
 
 The input and presentation side starts, resumes, cancels, or paces the
 active operation.  It does not classify standard versus Lyapunov versus
@@ -632,11 +635,10 @@ points: `standard_fractal()`, `lyapunov_fractal()`, and
 return control after bounded work.  It is not fixed by moving those calls
 behind another engine wrapper.
 
-The indirect paths also belong to that boundary.  `FractalSpecific`
-still contains UI renderer pointers used by the marked legacy entry;
-the remaining 3D orbit front end calls UI from `fractals/lorenz.cpp`.
-Per-image callbacks no longer invoke those renderers.  A top-level-only
-change does not eliminate the remaining nested UI calls.
+The indirect renderer paths are closed: `FractalSpecific` has no UI
+renderer pointers, calculation front ends do not enter controllers, and
+per-image callbacks perform setup only.  The remaining outer boundary
+still needs to drive the selected operations directly.
 
 The implementation order closes calculation-side input and presentation
 paths first, then extracts misplaced backend helpers, and finally makes
@@ -818,8 +820,6 @@ removes one false dependency, and leaves a reviewable intermediate state.
 
 The remaining UI-concept leaks outside `libid/ui` are:
 
-- `libid/fractals/lorenz.cpp`: legacy GIF restoration orchestration
-  invokes photographer prompts between images.
 - Calculation setup still invokes `stop_msg()` and sometimes `goodbye()`.
   These are input and application-control leaks even when reachable only
   on failure or in debug builds.  Memory operations and command
@@ -973,6 +973,12 @@ Existing coverage does not imply coverage of live interaction:
   The reference orbit lands exactly on the default bailout boundary.
   The pass-switch fixture instead uses `center-mag=0/1/1e20`; it does not
   cover that numerical edge case.
+- Non-standard operation tests cover 2D orbit, dynamic, inverse-Julia,
+  and Standard4D selection, setup, completion, suspension, and queue
+  ownership.  Autokey menu-return journeys compare Henon, dynamic,
+  MandelCloud, inverse Julia, and Julibrot output with uninterrupted
+  renders.  Non-resumable inverse Julia and Julibrot explicitly restart
+  with Enter after cancelling the menu; resumable types continue.
 - `TestStereo` covers random-line generation.  PHOTO-mode autokey tests
   cover calculated-view save/continue/interruption and restored-view
   save/advance with Enter or Escape.  `TestStereoView` and
@@ -1053,34 +1059,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-### 51. Orbit Renderer Operation Selection
-
-Source: remaining 2D orbit, dynamic, inverse-Julia, and standard-4D
-renderer entries in `fractals/fractalp.cpp` and front ends in
-`fractals/lorenz.cpp`.
-
-Work:
-
-- Bind these remaining renderer families to engine-selected calculation
-  operations using the earlier IFS and stereo separation.
-- Keep projection, dimension selection, orbit setup, and calculation
-  state in their calculation objects; controllers own input and prompts.
-- Remove UI renderer function pointers from the remaining table entries
-  and remove `ui/*` includes from `fractals/fractalp.cpp` and calculation
-  front ends.
-- Split any family needing new calculation-state work into a separate
-  prerequisite; do not hide it in a generic UI-callback operation.
-
-Done when:
-
-- Calculation dispatch can select every renderer without naming a UI
-  renderer function or calling back into a controller.
-
-Validation: cover selected operation identity, setup, suspension, and
-completion in engine tests.  Reuse family autokey scripts established by
-earlier slices; add a journey for any newly selected keyboard context not
-yet covered.  Verify selection, return from menus, and supported completion
-or continuation.  Reuse orbit, IFS, and standard-4D rendering fixtures.
 
 ### 52. Outer UI Render Operation Control
 
@@ -1160,11 +1138,9 @@ mechanism or a source-grep test.
 Calculation code can still reach polling or key-sensitive waiting through
 these direct and indirect paths:
 
-- `libid/engine/calcfrac.cpp`, `engine/NonStandardFractal.cpp`,
-  and remaining renderer table entries in
-  `fractals/fractalp.cpp`: reach UI render loops through direct calls or
-  dispatch pointers.  Per-image setup no longer enters renderers;
-  Cellular is already an engine-owned incremental operation.
+- `libid/engine/calcfrac.cpp`: directly invokes the standard, Lyapunov,
+  and non-standard UI render controllers.  Non-standard operation
+  selection and per-image setup no longer enter renderers or UI.
 - GIF codec operations do not poll input or support keyboard-interrupted
   saves.  Image-save progress, notifications, and exit policy are
   UI-owned; `io/ImageSave` owns encoding and file cleanup.  Image-load

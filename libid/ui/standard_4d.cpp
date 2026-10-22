@@ -4,6 +4,7 @@
 #include "ui/standard_4d.h"
 
 #include "engine/spindac.h"
+#include "engine/NonStandardFractal.h"
 #include "fractals/julibrot.h"
 #include "io/loadmap.h"
 #include "misc/Driver.h"
@@ -22,7 +23,7 @@ using namespace id::misc;
 namespace id::ui
 {
 
-int standard_4d_type()
+int standard_4d_type(NonStandardFractal &calculation)
 {
     const bool red_blue{g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE};
     if (red_blue)
@@ -46,13 +47,17 @@ int standard_4d_type()
             g_save_dac = SaveDAC::YES;
         }
     }
-    Standard4D s4d;
-
-    while (s4d.iterate())
+    while (!calculation.done())
     {
+        calculation.iterate();
+        if (calculation.done())
+        {
+            break;
+        }
         display_disk_storage_progress();
         if (driver_key_pressed())
         {
+            calculation.suspend();
             return -1;
         }
     }

@@ -11,12 +11,16 @@
 #include "ui/calculate_image.h"
 #include "ui/cellular.h"
 #include "ui/diffusion.h"
+#include "ui/dynamic2d.h"
 #include "ui/frothy_basin.h"
 #include "ui/ifs2d.h"
+#include "ui/inverse_julia.h"
 #include "ui/lsystem.h"
 #include "ui/plasma.h"
+#include "ui/orbit2d.h"
 #include "ui/popcorn.h"
 #include "ui/standard_orbit_plot.h"
+#include "ui/standard_4d.h"
 #include "ui/SoundSession.h"
 #include "ui/StereoController.h"
 #include "ui/testpt.h"
@@ -125,8 +129,26 @@ int non_standard_fractal()
             break;
         }
 
-        case NonStandardFractal::Operation::LEGACY:
-            non_standard_fractal.render_legacy();
+        case NonStandardFractal::Operation::ORBIT_2D:
+        {
+            SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+            orbit2d_type(non_standard_fractal, sound);
+            break;
+        }
+
+        case NonStandardFractal::Operation::DYNAMIC_2D:
+        {
+            SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+            dynamic2d_type(non_standard_fractal, sound);
+            break;
+        }
+
+        case NonStandardFractal::Operation::INVERSE_JULIA:
+            inverse_julia_fractal_type(non_standard_fractal);
+            break;
+
+        case NonStandardFractal::Operation::STANDARD_4D:
+            standard_4d_type(non_standard_fractal);
             break;
         }
 

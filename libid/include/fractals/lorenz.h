@@ -152,6 +152,27 @@ private:
     bool m_unbounded{};
 };
 
+class InverseJuliaFractal
+{
+public:
+    InverseJuliaFractal();
+    InverseJuliaFractal(const InverseJuliaFractal &) = delete;
+    InverseJuliaFractal(InverseJuliaFractal &&) = delete;
+    ~InverseJuliaFractal();
+    InverseJuliaFractal &operator=(const InverseJuliaFractal &) = delete;
+    InverseJuliaFractal &operator=(InverseJuliaFractal &&) = delete;
+
+    bool queue_required() const;
+    void complete_queue(bool available);
+    bool done() const;
+    void iterate();
+
+private:
+    bool m_queue_required{};
+    bool m_has_queue{};
+    bool m_done{};
+};
+
 class Orbit3D
 {
 public:
@@ -266,6 +287,7 @@ constexpr const char *to_string(const Minor value)
 
 bool orbit3d_per_image();
 bool is_orbit3d(FractalType type);
+bool is_orbit2d(FractalType type);
 void init_inverse_julia();
 int lorenz3d1_orbit(double *x, double *y, double *z);
 int lorenz3d_orbit(double *x, double *y, double *z);

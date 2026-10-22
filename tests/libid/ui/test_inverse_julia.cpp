@@ -10,6 +10,7 @@
 #include <engine/cmdfiles.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/NonStandardFractal.h>
 #include <engine/pixel.h>
 #include <engine/pixel_grid.h>
 #include <engine/resume.h>
@@ -346,7 +347,9 @@ TEST_F(TestInverseJuliaQueue, diskVideoRejectionPreservesTheDisplayStorage)
 TEST_F(TestInverseJuliaQueue, standaloneControllerSeedsThenReleasesThePreparedQueue)
 {
     set_fractal_type(FractalType::INVERSE_JULIA);
-    ASSERT_TRUE(orbit3d_per_image());
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
     EXPECT_CALL(m_driver, key_pressed())
         .WillOnce(Invoke(
             []
@@ -359,7 +362,7 @@ TEST_F(TestInverseJuliaQueue, standaloneControllerSeedsThenReleasesThePreparedQu
     EXPECT_CALL(m_driver, get_key()).WillOnce(Return('x'));
     EXPECT_CALL(m_driver, unget_key('x'));
 
-    EXPECT_EQ(-1, inverse_julia_fractal_type());
+    EXPECT_EQ(-1, inverse_julia_fractal_type(calculation));
 
     EXPECT_EQ(Major::BREADTH_FIRST, g_major_method);
     EXPECT_EQ(0UL, queue_capacity());
@@ -370,7 +373,9 @@ TEST_F(TestInverseJuliaQueue, standaloneControllerSeedsThenReleasesThePreparedQu
 TEST_F(TestInverseJuliaQueue, standaloneControllerOwnsTheRandomWalkFallback)
 {
     set_fractal_type(FractalType::INVERSE_JULIA);
-    ASSERT_TRUE(orbit3d_per_image());
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
     g_debug_flag = DebugFlags::FORCE_MEMORY_FROM_DISK;
     expect_dialog();
     EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
@@ -395,7 +400,7 @@ TEST_F(TestInverseJuliaQueue, standaloneControllerOwnsTheRandomWalkFallback)
             }));
     EXPECT_CALL(m_driver, unget_key('x'));
 
-    EXPECT_EQ(-1, inverse_julia_fractal_type());
+    EXPECT_EQ(-1, inverse_julia_fractal_type(calculation));
 
     EXPECT_EQ(Major::RANDOM_WALK, g_major_method);
     EXPECT_EQ(0UL, queue_capacity());

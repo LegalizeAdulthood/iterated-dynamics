@@ -7,6 +7,7 @@
 #include <engine/cmdfiles.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/NonStandardFractal.h>
 #include <engine/OrbitPlot.h>
 #include <engine/pixel.h>
 #include <engine/resume.h>
@@ -92,6 +93,8 @@ protected:
     void SetUp() override;
     void TearDown() override;
     void run(Orbit2D &calculation);
+    int render();
+    int render(SoundSession &sound);
     void create_save_directory();
     std::vector<std::array<double, 3>> expected_samples() const;
     void load_legacy_state(
@@ -204,6 +207,25 @@ void TestOrbit2DSound::run(Orbit2D &calculation)
         calculation.iterate();
     }
     FAIL() << "Orbit2D did not complete";
+}
+
+int TestOrbit2DSound::render()
+{
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    return render(sound);
+}
+
+int TestOrbit2DSound::render(SoundSession &sound)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    if (calculation.select() != NonStandardFractal::Operation::ORBIT_2D)
+    {
+        throw std::logic_error("Unexpected selected orbit operation");
+    }
+    const int result{orbit2d_type(calculation, sound)};
+    calculation.finish(result != 0);
+    return result;
 }
 
 void TestOrbit2DSound::create_save_directory()
@@ -352,7 +374,7 @@ TEST_P(TestOrbit2DSound, controllerKeepsReadyOutputPollingCadenceAndFinishesWith
     EXPECT_CALL(*m_output, mute()).Times(0);
     EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
 
-    EXPECT_EQ(0, orbit2d_type(sound));
+    EXPECT_EQ(0, render(sound));
 
     EXPECT_EQ(expected_samples(), m_samples);
 }
@@ -375,7 +397,7 @@ TEST_P(TestOrbit2DSound, controllerServicesPlaybackAndRetriesWithoutRepeatedMath
             }));
     EXPECT_CALL(*m_output, update()).WillRepeatedly(Invoke([this] { m_ready = true; }));
 
-    EXPECT_EQ(0, orbit2d_type(sound));
+    EXPECT_EQ(0, render(sound));
 
     EXPECT_GT(refused, 0);
     EXPECT_EQ(expected_samples(), m_samples);
@@ -399,7 +421,7 @@ TEST_P(TestOrbit2DSound, controllerDrainsReleaseTailWithoutAdditionalPlottingOrM
     }
     EXPECT_CALL(*m_output, mute()).Times(0);
 
-    EXPECT_EQ(0, orbit2d_type(sound));
+    EXPECT_EQ(0, render(sound));
 
     EXPECT_EQ(3, s_math_calls);
     EXPECT_EQ(3U, m_points.size() + m_lines.size());
@@ -425,7 +447,7 @@ TEST_P(TestOrbit2DSound, menuInterruptionMutesAndResumesTheUnacceptedPoint)
     EXPECT_CALL(*m_output, mute()).WillOnce(Invoke([this] { m_ready = true; }));
     {
         SoundSession sound{m_output};
-        EXPECT_EQ(-1, orbit2d_type(sound));
+        EXPECT_EQ(-1, render(sound));
     }
     EXPECT_EQ('x', m_key);
     ASSERT_EQ(1U, m_samples.size());
@@ -443,7 +465,7 @@ TEST_P(TestOrbit2DSound, menuInterruptionMutesAndResumesTheUnacceptedPoint)
             }));
     {
         SoundSession sound{m_output};
-        EXPECT_EQ(0, orbit2d_type(sound));
+        EXPECT_EQ(0, render(sound));
     }
 
     EXPECT_EQ(expected_samples(), m_samples);
@@ -463,7 +485,7 @@ TEST_P(TestOrbit2DSound, driverRefusalStillRecordsMappedFrequenciesWithoutWaitin
     EXPECT_CALL(m_driver, mute()).Times(0);
 
     SoundSession owner;
-    EXPECT_EQ(0, orbit2d_type());
+    EXPECT_EQ(0, render());
     EXPECT_TRUE(owner.finish());
 
     EXPECT_EQ(GetParam() == FractalType::LORENZ ? "320\n520\n720\n" : "320\n620\n920\n",

@@ -7,6 +7,7 @@
 #include <engine/calcfrac.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/NonStandardFractal.h>
 #include <engine/OrbitPlot.h>
 #include <engine/pixel.h>
 #include <engine/resume.h>
@@ -32,6 +33,7 @@
 #include <fstream>
 #include <memory>
 #include <string>
+#include <stdexcept>
 #include <vector>
 
 using namespace id::engine;
@@ -81,6 +83,8 @@ protected:
     void SetUp() override;
     void TearDown() override;
     void run(Dynamic2D &calculation);
+    int render();
+    int render(SoundSession &sound);
     void create_save_directory();
     void save_legacy_state(long count, int x_step = 0, int y_step = 0, double x = 1.0, double y = 9.0);
     void interrupt_and_resume(std::size_t accepted);
@@ -205,6 +209,25 @@ void TestDynamicSound::run(Dynamic2D &calculation)
     FAIL() << "Dynamic2D did not complete";
 }
 
+int TestDynamicSound::render()
+{
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    return render(sound);
+}
+
+int TestDynamicSound::render(SoundSession &sound)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    if (calculation.select() != NonStandardFractal::Operation::DYNAMIC_2D)
+    {
+        throw std::logic_error("Unexpected selected orbit operation");
+    }
+    const int result{dynamic2d_type(calculation, sound)};
+    calculation.finish(result != 0);
+    return result;
+}
+
 void TestDynamicSound::create_save_directory()
 {
     m_directory = std::filesystem::temp_directory_path() /
@@ -259,7 +282,7 @@ void TestDynamicSound::interrupt_and_resume(const std::size_t accepted)
     EXPECT_CALL(*m_output, mute()).WillOnce(Invoke([this] { m_ready = true; }));
     {
         SoundSession sound{m_output};
-        EXPECT_EQ(-1, dynamic2d_type(sound));
+        EXPECT_EQ(-1, render(sound));
     }
     EXPECT_EQ('x', m_key);
     EXPECT_EQ(accepted, m_samples.size());
@@ -277,7 +300,7 @@ void TestDynamicSound::interrupt_and_resume(const std::size_t accepted)
             }));
     {
         SoundSession sound{m_output};
-        EXPECT_EQ(0, dynamic2d_type(sound));
+        EXPECT_EQ(0, render(sound));
     }
 
     EXPECT_EQ(expected_samples(), m_samples);
@@ -403,7 +426,7 @@ TEST_P(TestDynamicSound, controllerPreserves2048IterationPollingCadence)
     EXPECT_CALL(*m_output, mute()).Times(0);
     EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
 
-    EXPECT_EQ(0, dynamic2d_type(sound));
+    EXPECT_EQ(0, render(sound));
 
     EXPECT_EQ(6 * 4100, s_math_calls);
     EXPECT_EQ(6U * 4100, m_samples.size());
@@ -433,7 +456,7 @@ TEST_P(TestDynamicSound, controllerRetriesAcrossIterationBoundaryWithoutAddition
     EXPECT_CALL(m_driver, key_pressed()).Times(4).WillRepeatedly(Return(0));
     SoundSession sound{m_output};
 
-    EXPECT_EQ(0, dynamic2d_type(sound));
+    EXPECT_EQ(0, render(sound));
 
     EXPECT_GT(refused, 0);
     EXPECT_EQ(3, s_math_calls);
@@ -486,7 +509,7 @@ TEST_P(TestDynamicSound, completionDrainsReleaseTailWithoutAdditionalPlottingOrM
     }
     EXPECT_CALL(*m_output, mute()).Times(0);
 
-    EXPECT_EQ(0, dynamic2d_type(sound));
+    EXPECT_EQ(0, render(sound));
 
     EXPECT_EQ(18, s_math_calls);
     EXPECT_EQ(expected_samples(), m_samples);
@@ -533,7 +556,7 @@ TEST_P(TestDynamicSound, driverRefusalRecordsZeroZChannelWithoutPlaybackWaiting)
     EXPECT_CALL(m_driver, mute()).Times(0);
 
     SoundSession owner;
-    EXPECT_EQ(0, dynamic2d_type());
+    EXPECT_EQ(0, render());
     EXPECT_TRUE(owner.finish());
 
     std::ifstream file{m_directory / "sound/sound001.txt"};

@@ -7,6 +7,7 @@
 #include "test_data.h"
 
 #include <engine/calc_frac_init.h>
+#include <engine/bailout_formula.h>
 #include <engine/engine_timer.h>
 #include <engine/fractals.h>
 #include <engine/ImageRegion.h>
@@ -66,7 +67,6 @@ namespace
 {
 
 int s_orbit_calls{};
-int s_setup_calls{};
 
 int stable_population()
 {
@@ -78,6 +78,19 @@ int stable_population()
 int unexpected_renderer()
 {
     throw std::logic_error("Calculation entered a renderer callback");
+}
+
+int completed_orbit(double *, double *, double *)
+{
+    ++s_orbit_calls;
+    return 1;
+}
+
+int completed_inverse_orbit()
+{
+    ++s_orbit_calls;
+    g_new_z = {23.0, 45.0};
+    return -1;
 }
 
 bool unexpected_setup()
@@ -113,7 +126,6 @@ protected:
     void SetUp() override
     {
         s_orbit_calls = 0;
-        s_setup_calls = 0;
         select_type(FractalType::BIFURCATION);
         set_normal_dot();
         EXPECT_CALL(m_driver, key_pressed()).Times(0);
@@ -200,9 +212,10 @@ TEST_F(TestNonStandardFractal, noOperationRequiresExplicitSetupAndSelection)
     EXPECT_THROW(calculation.scrub_overlay(), std::logic_error);
     EXPECT_FALSE(calculation.potential_storage_required());
     EXPECT_THROW(calculation.complete_potential_storage(false), std::logic_error);
+    EXPECT_FALSE(calculation.inverse_julia_queue_required());
+    EXPECT_THROW(calculation.complete_inverse_julia_queue(false), std::logic_error);
     EXPECT_THROW(calculation.consume_batch_complete(), std::logic_error);
     EXPECT_THROW(calculation.suspend(), std::logic_error);
-    EXPECT_THROW(calculation.render_legacy(), std::logic_error);
     EXPECT_EQ(0, s_orbit_calls);
     EXPECT_TRUE(m_columns.empty());
 }
@@ -213,7 +226,7 @@ TEST_F(TestNonStandardFractal, unsupportedTypeDoesNotInvokeItsRenderer)
     NonStandardFractal calculation;
     ASSERT_TRUE(calculation.start().empty());
 
-    EXPECT_EQ(NonStandardFractal::Operation::LEGACY, calculation.select());
+    EXPECT_THROW(calculation.select(), std::logic_error);
 
     EXPECT_TRUE(calculation.done());
     EXPECT_THROW(calculation.iterate(), std::logic_error);
@@ -228,78 +241,195 @@ TEST_F(TestNonStandardFractal, activeOperationCannotBeReplaced)
     ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
 
     EXPECT_THROW(calculation.select(), std::logic_error);
-    EXPECT_THROW(calculation.render_legacy(), std::logic_error);
 
     calculation.iterate();
     EXPECT_EQ(HEIGHT, m_columns.size());
     EXPECT_FALSE(calculation.done());
 }
 
-TEST_F(TestNonStandardFractal, legacySetupSelectsRuntimeRendererBeforeRendering)
+TEST_F(TestNonStandardFractal, selectsEvery2dOrbitWithoutInvokingRendererOrLegacySetup)
 {
-    select_type(FractalType::LORENZ);
-    m_specific.per_image = []
+    for (const FractalType type : {FractalType::KAM, FractalType::LORENZ, FractalType::HENON, FractalType::GINGERBREAD,
+             FractalType::HOPALONG, FractalType::MARTIN, FractalType::ICON, FractalType::CHIP, FractalType::QUADRUP_TWO,
+             FractalType::THREEPLY, FractalType::LATOO})
     {
-        ++s_setup_calls;
-        g_dispatch.set_calc_type(stable_population);
-        return true;
-    };
-    g_dispatch = FractalDispatch{m_specific};
+        select_type(type);
+        EXPECT_EQ(nullptr, get_fractal_specific(type)->calc_type);
+        NonStandardFractal calculation;
+        calculation.start();
+
+        EXPECT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
+
+        EXPECT_FALSE(calculation.done());
+        EXPECT_EQ(0, s_orbit_calls);
+        EXPECT_TRUE(m_columns.empty());
+        calculation.suspend();
+        EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+        EXPECT_FALSE(g_resume_data.empty());
+        end_resume();
+    }
+}
+
+TEST_F(TestNonStandardFractal, selected2dOrbitCompletesOneIncrementWithoutCallingUi)
+{
+    select_type(FractalType::HENON);
+    g_dispatch.set_orbit_calc(reinterpret_cast<OrbitCalc>(completed_orbit));
     NonStandardFractal calculation;
-    ASSERT_TRUE(calculation.start().empty());
-    ASSERT_EQ(NonStandardFractal::Operation::LEGACY, calculation.select());
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
 
-    calculation.render_legacy();
+    calculation.iterate();
 
-    EXPECT_EQ(1, s_setup_calls);
     EXPECT_EQ(1, s_orbit_calls);
-    EXPECT_EQ(unexpected_renderer, m_specific.calc_type);
-    EXPECT_EQ(stable_population, g_dispatch.calc_type());
-    calculation.finish(false);
+    EXPECT_TRUE(calculation.done());
     EXPECT_TRUE(calculation.completed());
-}
-
-TEST_F(TestNonStandardFractal, legacySetupFalsePreventsRendererInvocation)
-{
-    select_type(FractalType::LORENZ);
-    m_specific.per_image = []
-    {
-        ++s_setup_calls;
-        return false;
-    };
-    g_dispatch = FractalDispatch{m_specific};
-    NonStandardFractal calculation;
-    ASSERT_TRUE(calculation.start().empty());
-    ASSERT_EQ(NonStandardFractal::Operation::LEGACY, calculation.select());
-
-    EXPECT_NO_THROW(calculation.render_legacy());
-
-    EXPECT_EQ(1, s_setup_calls);
-    EXPECT_EQ(0, s_orbit_calls);
-    EXPECT_TRUE(m_columns.empty());
+    calculation.iterate();
+    EXPECT_EQ(1, s_orbit_calls);
     calculation.finish(false);
 }
 
-TEST_F(TestNonStandardFractal, failedLegacySetupDiscardsWorkWithoutCallingRenderer)
+TEST_F(TestNonStandardFractal, selectsDynamicAndCloudWithResumableState)
 {
-    select_type(FractalType::LORENZ);
-    m_specific.calc_type = stable_population;
-    g_dispatch = FractalDispatch{m_specific};
+    for (const FractalType type : {FractalType::DYNAMIC, FractalType::MANDEL_CLOUD})
+    {
+        select_type(type);
+        g_params[0] = -2.0;
+        g_dispatch.set_orbit_calc(reinterpret_cast<OrbitCalc>(completed_orbit));
+        EXPECT_EQ(nullptr, get_fractal_specific(type)->calc_type);
+        NonStandardFractal calculation;
+        calculation.start();
+        ASSERT_EQ(NonStandardFractal::Operation::DYNAMIC_2D, calculation.select());
+        calculation.iterate();
 
+        calculation.suspend();
+
+        EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+        EXPECT_FALSE(g_resume_data.empty());
+        NonStandardFractal resumed;
+        resumed.start();
+        ASSERT_EQ(NonStandardFractal::Operation::DYNAMIC_2D, resumed.select());
+        for (int increments = 0; increments < 100 && !resumed.done(); ++increments)
+        {
+            resumed.iterate();
+        }
+        EXPECT_TRUE(resumed.done());
+        EXPECT_TRUE(resumed.completed());
+        resumed.finish(false);
+    }
+}
+
+TEST_F(TestNonStandardFractal, inverseJuliaWaitsForStorageDecisionThenCompletesAPoint)
+{
+    ValueSaver saved_major{g_major_method, Major::BREADTH_FIRST};
+    select_type(FractalType::INVERSE_JULIA);
+    g_dispatch.set_orbit_calc(completed_inverse_orbit);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    EXPECT_EQ(nullptr, get_fractal_specific(FractalType::INVERSE_JULIA)->calc_type);
+    EXPECT_TRUE(calculation.inverse_julia_queue_required());
+    EXPECT_THROW(calculation.iterate(), std::logic_error);
+    EXPECT_EQ(0, s_orbit_calls);
+
+    calculation.complete_inverse_julia_queue(false);
+
+    EXPECT_EQ(Major::RANDOM_WALK, g_major_method);
+    EXPECT_FALSE(calculation.inverse_julia_queue_required());
+    EXPECT_THROW(calculation.complete_inverse_julia_queue(false), std::logic_error);
+    calculation.iterate();
+    EXPECT_EQ(1, s_orbit_calls);
+    EXPECT_EQ((DComplex{23.0, 45.0}), g_old_z);
+    EXPECT_TRUE(calculation.completed());
+    calculation.iterate();
+    EXPECT_EQ(1, s_orbit_calls);
+    calculation.finish(false);
+}
+
+TEST_F(TestNonStandardFractal, randomWalkInverseJuliaSuspendsWithoutResumeData)
+{
+    ValueSaver saved_major{g_major_method, Major::RANDOM_WALK};
+    select_type(FractalType::INVERSE_JULIA);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    EXPECT_FALSE(calculation.inverse_julia_queue_required());
+    EXPECT_FALSE(calculation.done());
+
+    calculation.suspend();
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+}
+
+TEST_F(TestNonStandardFractal, inverseJuliaCannotResumeAnOldImage)
+{
+    select_type(FractalType::INVERSE_JULIA);
+    g_calc_status = CalcStatus::RESUMABLE;
+    NonStandardFractal calculation;
+    calculation.start();
+
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+
+    EXPECT_TRUE(calculation.done());
+    EXPECT_FALSE(calculation.inverse_julia_queue_required());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    calculation.finish(false);
+    EXPECT_FALSE(calculation.completed());
+    EXPECT_EQ(0, s_orbit_calls);
+}
+
+TEST_F(TestNonStandardFractal, selected4dOperationCompletesWithoutLegacyCallbacks)
+{
+    ValueSaver saved_colors{g_colors, 256};
+    ValueSaver saved_bailout{g_bailout_float, +[] { return 1; }};
+    select_type(FractalType::JULIBROT);
+    NonStandardFractal calculation;
+    calculation.start();
+
+    ASSERT_EQ(NonStandardFractal::Operation::STANDARD_4D, calculation.select());
+
+    EXPECT_EQ(nullptr, get_fractal_specific(FractalType::JULIBROT)->calc_type);
+    EXPECT_FALSE(calculation.done());
+    EXPECT_TRUE(m_columns.empty());
+    for (int increments = 0; increments < WIDTH * HEIGHT && !calculation.done(); ++increments)
+    {
+        calculation.iterate();
+    }
+    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(0, s_orbit_calls);
+    calculation.finish(false);
+}
+
+TEST_F(TestNonStandardFractal, selected4dOperationSuspendsWithoutResumeData)
+{
+    ValueSaver saved_colors{g_colors, 256};
+    select_type(FractalType::JULIBROT);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::STANDARD_4D, calculation.select());
+
+    calculation.suspend();
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+}
+
+TEST_F(TestNonStandardFractal, failedSelectedSetupDiscardsWorkWithoutCallingRenderer)
+{
+    select_type(FractalType::JULIBROT);
     EXPECT_THROW(
         {
             NonStandardFractal calculation;
-            ASSERT_TRUE(calculation.start().empty());
-            ASSERT_EQ(NonStandardFractal::Operation::LEGACY, calculation.select());
-            calculation.render_legacy();
+            calculation.start();
+            calculation.select();
         },
-        std::logic_error);
+        std::runtime_error);
 
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(0, s_orbit_calls);
     EXPECT_EQ(0, g_num_work_list);
     EXPECT_TRUE(g_resume_data.empty());
-    EXPECT_TRUE(m_columns.empty());
 }
 
 TEST_F(TestNonStandardFractal, maySelectionInitializesBetaWithoutLegacySetup)
@@ -445,7 +575,6 @@ TEST_F(TestSelectedIFS, cachedDefinitionSelectsDimensionsWithoutLegacyCallbacks)
             EXPECT_EQ(0L, g_color_iter);
             EXPECT_EQ(SymmetryType::NONE, g_symmetry);
             EXPECT_TRUE(m_columns.empty());
-            EXPECT_THROW(calculation.render_legacy(), std::logic_error);
             EXPECT_EQ(0, s_orbit_calls);
             EXPECT_EQ(type, g_fractal_type);
             calculation.suspend();

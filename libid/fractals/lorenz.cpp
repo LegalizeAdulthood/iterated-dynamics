@@ -1053,6 +1053,66 @@ void Orbit2D::iterate()
     }
 }
 
+InverseJuliaFractal::InverseJuliaFractal() :
+    m_queue_required(!g_resuming && (g_major_method == Major::BREADTH_FIRST || g_major_method == Major::DEPTH_FIRST)),
+    m_done(g_resuming)
+{
+    if (m_done)
+    {
+        g_calc_status = CalcStatus::NON_RESUMABLE;
+    }
+    else if (!m_queue_required)
+    {
+        init_inverse_julia();
+    }
+}
+
+InverseJuliaFractal::~InverseJuliaFractal()
+{
+    if (m_has_queue)
+    {
+        free_queue();
+    }
+}
+
+bool InverseJuliaFractal::queue_required() const
+{
+    return m_queue_required;
+}
+
+void InverseJuliaFractal::complete_queue(const bool available)
+{
+    if (!m_queue_required)
+    {
+        throw std::logic_error("Inverse Julia has not requested queue storage");
+    }
+    if (!available)
+    {
+        g_major_method = Major::RANDOM_WALK;
+    }
+    m_has_queue = available;
+    init_inverse_julia();
+    m_queue_required = false;
+}
+
+bool InverseJuliaFractal::done() const
+{
+    return m_done;
+}
+
+void InverseJuliaFractal::iterate()
+{
+    if (m_queue_required)
+    {
+        throw std::logic_error("Inverse Julia requires a queue storage decision");
+    }
+    if (!m_done)
+    {
+        m_done = orbit_calc() < 0;
+        g_old_z = g_new_z;
+    }
+}
+
 Orbit3D::Orbit3D(const bool both_eyes) :
     m_color(g_colors <= 2 ? 1 : 2),
     m_fp(open_orbit_save()),
@@ -1630,6 +1690,28 @@ static void setup_matrix(Matrix double_mat)
 
     // apply scale
     //   scale((double)g_x_scale/100.0,(double)g_y_scale/100.0,(double)ROUGH/100.0,doublemat);
+}
+
+bool is_orbit2d(const FractalType type)
+{
+    switch (type)
+    {
+    case FractalType::KAM:
+    case FractalType::LORENZ:
+    case FractalType::HENON:
+    case FractalType::GINGERBREAD:
+    case FractalType::HOPALONG:
+    case FractalType::MARTIN:
+    case FractalType::ICON:
+    case FractalType::CHIP:
+    case FractalType::QUADRUP_TWO:
+    case FractalType::THREEPLY:
+    case FractalType::LATOO:
+        return true;
+
+    default:
+        return false;
+    }
 }
 
 bool is_orbit3d(const FractalType type)
