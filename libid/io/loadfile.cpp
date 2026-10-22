@@ -43,6 +43,7 @@
 #include "math/biginit.h"
 #include "math/round_float_double.h"
 #include "misc/id.h"
+#include "ui/evolve.h"
 #include "ui/make_batch_file.h"
 
 #include <fmt/format.h>

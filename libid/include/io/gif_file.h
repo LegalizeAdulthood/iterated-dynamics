@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
+#include "io/EvolutionInfo.h"
 #include "io/gif_extensions.h"
-#include "ui/evolve.h"
 
 #include <vector>
 
@@ -39,8 +40,8 @@ void put_formula_info(GifFileType *gif, const FormulaInfo &info);
 std::vector<int> get_ranges_info(const GifFileType *gif);
 void put_ranges_info(GifFileType *gif, const std::vector<int> &info);
 
-ui::EvolutionInfo get_evolution_info(const GifFileType *gif);
-void put_evolution_info(GifFileType *gif, const ui::EvolutionInfo &info);
+EvolutionInfo get_evolution_info(const GifFileType *gif);
+void put_evolution_info(GifFileType *gif, const EvolutionInfo &info);
 
 OrbitsInfo get_orbits_info(const GifFileType *gif);
 void put_orbits_info(GifFileType *gif, const OrbitsInfo &info);

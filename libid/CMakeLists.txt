@@ -152,6 +152,7 @@ add_library(libid
     include/io/encoder.h io/encoder.cpp
     include/io/ImageSave.h io/ImageSave.cpp
     include/io/ends_with_slash.h io/ends_with_slash.cpp
+    include/io/EvolutionInfo.h io/EvolutionInfo.cpp
     include/io/get_disk_space.h io/get_disk_space.cpp
     include/io/file_gets.h io/file_gets.cpp
     include/io/file_item.h io/file_item.cpp

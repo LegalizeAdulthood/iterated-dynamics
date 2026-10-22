@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "io/gif_file.h"
 
@@ -18,8 +19,6 @@
 #include <new>
 #include <stdexcept>
 #include <string>
-
-using namespace id::ui;
 
 namespace id::io
 {

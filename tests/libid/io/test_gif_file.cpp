@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <io/gif_file.h>
 
@@ -24,7 +25,6 @@
 using namespace id::engine;
 using namespace id::io;
 using namespace id::test::data;
-using namespace id::ui;
 
 namespace id::test
 {
@@ -242,11 +242,6 @@ std::ostream &operator<<(std::ostream &str, const OrbitsInfo &value)
         << " }";                                                                            //
 }
 
-} // namespace id::io
-
-namespace id::ui
-{
-
 std::ostream &operator<<(std::ostream &str, const EvolutionInfo &value)
 {
     return str                                                                         //
@@ -271,7 +266,7 @@ std::ostream &operator<<(std::ostream &str, const EvolutionInfo &value)
         << " }";                                                                       //
 }
 
-} // namespace id::ui
+} // namespace id::io
 
 namespace id::test
 {

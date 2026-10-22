@@ -1119,33 +1119,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.1.1. GIF Evolution Record Ownership
-
-Source: `ui/evolve.h`, its record comparisons in `ui/evolve.cpp`, and
-GIF metadata headers including `ui/evolve.h`.
-
-Work:
-
-- Move `EvolutionInfo`, its shared record constants, and its comparison
-  helpers into the GIF metadata module.  Keep evolution interaction,
-  menus, and controller state in UI.
-- Retain the existing field-by-field GIF serializers and record lengths.
-  Do not change the file format, padding rules, or compatibility behavior.
-- Update only this record's consumers directly.  Keep evolution runtime
-  dependencies explicit in their source files rather than importing UI
-  through public GIF metadata headers.  Do not retain forwarding headers.
-- Do not move stereo data or change video keys in this subslice.
-
-Done when:
-
-- GIF evolution metadata can be used without including UI headers.
-- Evolution interaction and runtime state remain UI-owned; serialized
-  records and comparison behavior are unchanged.
-
-Validation: reuse GIF round-trip and evolution-record tests; add focused
-record-comparison coverage only where missing.  Run the full `rt-default`
-workflow.  No manual check is needed for this ownership-only change.
-
 ### 53.1.2. Stereo Calculation Data Ownership
 
 Source: `ui/stereo.h`, its parameter definitions in `ui/stereo.cpp`,
@@ -1308,8 +1281,9 @@ and setup-policy couplings, not direct input polling:
 - `libid/fractals/frasetup.cpp`: `ui/editpal.h` supplies
   `g_using_jiim` for optimized-calculator selection.  Slice 53.4 replaces
   the UI-state dependency with an explicit calculation requirement.
-- GIF metadata headers indirectly import UI through `ui/evolve.h`.
-  Slice 53.1.1 moves the record out of UI without moving interaction.
+- GIF evolution records and comparisons are I/O-owned; public GIF metadata
+  headers no longer import UI.  `io/loadfile.cpp` explicitly includes
+  `ui/evolve.h` for its existing application of evolution runtime state.
 
 GIF codec operations do not poll input or support keyboard-interrupted
 saves.  Image-save progress, notifications, and exit policy are UI-owned;

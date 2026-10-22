@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
 #include "config/port.h"
 
-#include "ui/evolve.h"
+#include "io/EvolutionInfo.h"
 
 #include <cstdint>
 #include <vector>
@@ -232,7 +233,7 @@ struct ExtBlock6
     std::uint16_t x_dots;
     std::uint16_t y_dots;
     short  e_count;
-    short  mutate[ui::NUM_GENES];
+    short  mutate[NUM_GENES];
 };
 
 struct ExtBlock7
