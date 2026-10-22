@@ -8,6 +8,7 @@
 #include "test_data.h"
 
 #include <engine/calc_frac_init.h>
+#include <engine/cmdfiles.h>
 #include <engine/color_state.h>
 #include <engine/bailout_formula.h>
 #include <engine/engine_timer.h>
@@ -36,6 +37,7 @@
 #include <misc/version.h>
 #include <ui/calculate_image.h>
 #include <ui/ant.h>
+#include <ui/AntController.h>
 #include <ui/BifurcationController.h>
 #include <ui/DiffusionController.h>
 #include <ui/help.h>
@@ -2056,6 +2058,7 @@ protected:
     ValueSaver<int> m_saved_seed{g_random_seed, 12345};
     ValueSaver<bool> m_saved_fixed_seed{g_random_seed_flag, true};
     ValueSaver<int> m_saved_delay{g_orbit_delay, 0};
+    ValueSaver<help::HelpLabels> m_saved_help{help::g_help_mode, help::HelpLabels::NONE};
 };
 
 TEST_P(TestSelectedAnt, selectionPreservesIterationBatchesWithoutRendererCallbacks)
@@ -2208,6 +2211,304 @@ TEST_P(TestSelectedAnt, uiStepsTheSelectedObjectAtExistingBatchBoundaries)
     EXPECT_TRUE(calculation.done());
     EXPECT_EQ(expected.back(), m_pixels);
     EXPECT_EQ(previous_help, help::g_help_mode);
+}
+
+TEST_P(TestSelectedAnt, controllerStepsExistingBatchesAndRestoresHelpOnCompletion)
+{
+    const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    AntController controller{calculation};
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_EQ(help::HelpLabels::HELP_ANT_COMMANDS, help::g_help_mode);
+    EXPECT_TRUE(m_columns.empty());
+    EXPECT_THROW(controller.start(), std::logic_error);
+    for (const std::array<int, WIDTH *HEIGHT> &frame : expected)
+    {
+        ASSERT_FALSE(controller.done());
+        controller.iterate();
+        EXPECT_EQ(frame, m_pixels);
+    }
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
+    const std::vector<int> columns{m_columns};
+    controller.iterate();
+    EXPECT_EQ(columns, m_columns);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+    calculation.finish(false);
+}
+
+TEST_P(TestSelectedAnt, controllerRetainsSingleStepEnterKeypadEnterAndSpace)
+{
+    const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
+    g_orbit_delay = 1;
+    EXPECT_CALL(m_driver, flush()).WillRepeatedly(Return());
+    EXPECT_CALL(m_driver, delay(0)).WillRepeatedly(Return());
+    {
+        InSequence keys;
+        EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
+        EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+        EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
+        EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER_2));
+        EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
+        EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_SPACE));
+    }
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    AntController controller{calculation};
+    controller.start();
+
+    for (const std::array<int, WIDTH *HEIGHT> &frame : expected)
+    {
+        controller.iterate();
+        EXPECT_EQ(frame, m_pixels);
+    }
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
+    calculation.finish(false);
+}
+
+TEST_P(TestSelectedAnt, controllerRetainsAdjustedDelayAcrossIterationsWithoutSingleStepping)
+{
+    const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
+    const ValueSaver saved_first_init{g_first_init, false};
+    const ValueSaver saved_real_palette{g_got_real_dac, false};
+    g_orbit_delay = 2;
+    std::vector<std::string> messages;
+    EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
+    EXPECT_CALL(m_driver, flush()).WillRepeatedly(Return());
+    EXPECT_CALL(m_driver, delay(_)).WillRepeatedly(Return());
+    EXPECT_CALL(m_driver, display_string(_, _, _, _, _))
+        .WillRepeatedly(Invoke([&messages](int, int, int, int, const char *text) { messages.emplace_back(text); }));
+    EXPECT_CALL(m_driver, read_pixel(_, _))
+        .WillRepeatedly(Invoke([this](int x, int y)
+            { return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT ? m_pixels.at(y * WIDTH + x) : 0; }));
+    EXPECT_CALL(m_driver, write_pixel(_, _, _))
+        .WillRepeatedly(Invoke(
+            [this](int x, int y, int color)
+            {
+                if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
+                {
+                    m_pixels.at(y * WIDTH + x) = color;
+                }
+            }));
+    {
+        InSequence keys;
+        EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(ID_KEY_UP_ARROW));
+        EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_UP_ARROW));
+        EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_CTL_UP_ARROW));
+        EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+        EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+        EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(ID_KEY_UP_ARROW));
+        EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+        EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+    }
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    AntController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+    EXPECT_EQ(expected[0], m_pixels);
+    EXPECT_FALSE(controller.done());
+    controller.iterate();
+    EXPECT_EQ(expected[1], m_pixels);
+    EXPECT_FALSE(controller.done());
+
+    EXPECT_THAT(messages, ElementsAre("Delay    2     ", "Delay   12     ", "Delay  112     ", "Delay  112     "));
+    controller.suspend();
+    EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
+}
+
+TEST_P(TestSelectedAnt, controllerLeavesPeekedEscapeForTheOuterContext)
+{
+    const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(ID_KEY_ESC));
+    EXPECT_CALL(m_driver, unget_key(_)).Times(0);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    AntController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_FALSE(calculation.done());
+    EXPECT_EQ(expected.front(), m_pixels);
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
+    calculation.finish(true);
+}
+
+TEST_P(TestSelectedAnt, controllerRequeuesEscapeReadWhileSingleStepping)
+{
+    const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
+    g_orbit_delay = 1;
+    EXPECT_CALL(m_driver, flush()).WillOnce(Return());
+    EXPECT_CALL(m_driver, delay(0)).WillOnce(Return());
+    {
+        InSequence keys;
+        EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
+        EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
+        EXPECT_CALL(m_driver, unget_key(ID_KEY_ESC)).WillOnce(Return());
+    }
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    AntController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(expected.front(), m_pixels);
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
+    calculation.finish(true);
+}
+
+TEST_P(TestSelectedAnt, controllerSuspensionTerminatesWorkAndRestoresHelp)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    AntController controller{calculation};
+    controller.start();
+    controller.iterate();
+    const std::vector<int> columns{m_columns};
+
+    controller.suspend();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
+    controller.iterate();
+    EXPECT_EQ(columns, m_columns);
+}
+
+TEST_P(TestSelectedAnt, controllerPlotFailureTerminatesWorkAndRestoresHelp)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    AntController controller{calculation};
+    controller.start();
+    EXPECT_CALL(m_driver, write_pixel(_, _, _)).WillOnce(Throw(std::runtime_error("Plot failed")));
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
+}
+
+TEST_P(TestSelectedAnt, controllerInputFailureTerminatesWorkAndRestoresHelp)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Throw(std::runtime_error("Input failed")));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    AntController controller{calculation};
+    controller.start();
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
+}
+
+TEST_P(TestSelectedAnt, controllerWithNoBatchesCompletesWithoutInputOrPixelOutput)
+{
+    g_params[1] = 0;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    AntController controller{calculation};
+
+    controller.start();
+    controller.iterate();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_TRUE(m_columns.empty());
+    EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
+    calculation.finish(false);
+}
+
+TEST_P(TestSelectedAnt, controllerPreservesExistingImageLifecycle)
+{
+    m_pixels.fill(3);
+    const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
+    m_pixels.fill(3);
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    alloc_resume(20, 1);
+    put_resume(42);
+    const std::vector<Byte> resume{g_resume_data};
+    g_calc_time = 1234;
+    g_timer_interval = 5678;
+    NonStandardFractal calculation;
+    calculation.select_ant_on_image();
+    AntController controller{calculation};
+    controller.start();
+
+    for (const std::array<int, WIDTH *HEIGHT> &frame : expected)
+    {
+        controller.iterate();
+        EXPECT_EQ(frame, m_pixels);
+    }
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
+    calculation.finish(false);
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_EQ(1234, g_calc_time);
+    EXPECT_EQ(5678, g_timer_interval);
+    EXPECT_EQ(resume, g_resume_data);
+}
+
+TEST_P(TestSelectedAnt, controllerDestructionRestoresHelpWithoutFinishingTheCalculation)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    {
+        AntController controller{calculation};
+        controller.start();
+        EXPECT_EQ(help::HelpLabels::HELP_ANT_COMMANDS, help::g_help_mode);
+    }
+
+    EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
+    EXPECT_FALSE(calculation.done());
+    EXPECT_TRUE(m_columns.empty());
+    calculation.finish(true);
 }
 
 INSTANTIATE_TEST_SUITE_P(AntVariants, TestSelectedAnt, Values(AntType::ONE, AntType::TWO));

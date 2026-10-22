@@ -204,6 +204,7 @@ add_library(libid
     include/misc/version.h misc/version.cpp
 
     include/ui/ant.h ui/ant.cpp
+    include/ui/AntController.h ui/AntController.cpp
     include/ui/bifurcation.h ui/bifurcation.cpp
     include/ui/BifurcationController.h ui/BifurcationController.cpp
     include/ui/big_while_loop.h ui/big_while_loop.cpp

@@ -35,7 +35,8 @@ and calculation objects.
 These files show the calculation-object and UI-controller structure.
 The audit below records the remaining reverse calls inside that structure:
 
-- `libid/ui/ant.cpp` drives `libid/fractals/Ant.cpp`.
+- `libid/ui/AntController.cpp` drives selected Ant work in
+  `libid/fractals/Ant.cpp`.
 - `libid/ui/bifurcation.cpp` drives
   `libid/fractals/Bifurcation.cpp`.
 - `libid/ui/cellular.cpp` drives `libid/fractals/Cellular.cpp`.
@@ -617,7 +618,12 @@ The concrete render operation objects are:
   in the controller.  Popcorn's Julia setup and symmetry selection also
   stay below UI.  Ant's Ctrl+A entry selects an operation on the existing
   image, without restarting common image setup, timing, or resource
-  cleanup.
+  cleanup.  `ui::AntController` steps the selected Ant operation at
+  existing batch boundaries and owns step/delay state, option-menu
+  interaction, and help-mode lifetime.  It preserves the legacy zero
+  return for completion or command interruption; the caller retains
+  final cleanup after an option-menu transition.  The synchronous entry
+  remains marked for 52.12 removal.
   `ui::BifurcationController`, `ui::DiffusionController`, and
   `ui::TestPointController` step caller-owned selected operations at the
   existing increment boundaries.  They retain pre/post-step polling,
@@ -1089,23 +1095,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 52.7. Stepwise Ant UI Context
-
-Source: `ui/ant.cpp`.
-
-Work:
-
-- Introduce `AntController` containing the existing UI step/delay state,
-  option-menu interaction, and handler scopes.
-- Its iteration advances at most the existing Ant batch or handles the
-  current input/presentation transition.  Retain single-step, Enter,
-  keypad Enter, Space, delay adjustment, and Ctrl+A behavior.
-- Ant calculation state remains in the selected operation.  Keep only
-  marked synchronous bridges until 52.12.
-
-Validation: ant-step-menu and ant-on-image scripts, direct context
-transitions, and existing batch/image tests.  No native key change.
-
 ### 52.8. Stepwise Cellular UI Context
 
 Source: `ui/cellular.cpp`.
@@ -1315,7 +1304,7 @@ still poll the driver queue directly:
 Controllers with bespoke interaction or partial handler-stack use that
 still read or write the driver queue directly:
 
-- `libid/ui/ant.cpp`
+- `libid/ui/AntController.cpp`
 - `libid/ui/inverse_julia.cpp`
 - `libid/ui/non_standard_fractal.cpp`
 - `libid/ui/stereo.cpp`
