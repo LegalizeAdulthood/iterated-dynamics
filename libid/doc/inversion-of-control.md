@@ -617,6 +617,12 @@ The concrete render operation objects are:
   stay below UI.  Ant's Ctrl+A entry selects an operation on the existing
   image, without restarting common image setup, timing, or resource
   cleanup.
+  `ui::BifurcationController`, `ui::DiffusionController`, and
+  `ui::TestPointController` step caller-owned selected operations at the
+  existing increment boundaries.  They retain pre/post-step polling,
+  disk-progress feedback, suspension, and result conventions; Diffusion
+  owns its handler lifetime.  Their synchronous entries remain marked
+  for 52.12 removal.
   Per-image callbacks no longer invoke renderers.  IFS selects 2D or 3D
   from loaded definition dimensions, including cached definitions;
   `type=ifs3d` remains compatibility syntax for `type=ifs`.  IFS retains
@@ -1070,23 +1076,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 52.3. Simple Non-Standard UI Contexts
-
-Source: `ui/bifurcation.cpp`, `ui/diffusion.cpp`, and `ui/testpt.cpp`.
-
-Work:
-
-- Introduce `BifurcationController`, `DiffusionController`, and
-  `TestPointController` around caller-owned NonStandardFractal operations.
-- Each iteration performs one existing controller loop body.  Preserve
-  its input throttle, disk-progress presentation, suspension, and result.
-  Calculation state and timing remain in the selected operation.
-- Keep synchronous entries only as marked 52.12 bridges.  No context
-  method may invoke a whole renderer or a calculation-to-UI callback.
-
-Validation: existing interruption scripts and numerical/image fixtures,
-plus direct stepping, terminal-state, and handler-lifetime tests.
-
 ### 52.4. Stepwise Orbit Sound Context
 
 Source: `ui/orbit2d.cpp` and `ui/dynamic2d.cpp`.
@@ -1355,7 +1344,7 @@ polling:
 Simple render controllers that already wrap calculation objects but
 still poll the driver queue directly:
 
-- `libid/ui/bifurcation.cpp`
+- `libid/ui/BifurcationController.cpp`
 - `libid/ui/cellular.cpp`
 - `libid/ui/dynamic2d.cpp`
 - `libid/ui/ifs2d.cpp`
@@ -1363,7 +1352,7 @@ still poll the driver queue directly:
 - `libid/ui/orbit2d.cpp`
 - `libid/ui/plasma.cpp`
 - `libid/ui/standard_4d.cpp`
-- `libid/ui/testpt.cpp`
+- `libid/ui/TestPointController.cpp`
 
 Controllers with bespoke interaction or partial handler-stack use that
 still read or write the driver queue directly:
@@ -1376,7 +1365,7 @@ still read or write the driver queue directly:
 Handler-based render controllers that still rely on
 `KeyboardHandler.cpp` polling internally:
 
-- `libid/ui/diffusion.cpp`
+- `libid/ui/DiffusionController.cpp`
 - `libid/ui/frothy_basin.cpp`
 - `libid/ui/LyapunovController.cpp`
 - `libid/ui/popcorn.cpp`

@@ -3,32 +3,24 @@
 //
 #include "ui/bifurcation.h"
 
-#include "engine/NonStandardFractal.h"
-#include "misc/Driver.h"
-#include "ui/diskvid.h"
+#include "ui/BifurcationController.h"
 
 using namespace id::engine;
-using namespace id::misc;
 
 namespace id::ui
 {
 
+// TODO: removed later
+// Slice 52.12 replaces the synchronous entry with outer UI stepping.
 int bifurcation_type(NonStandardFractal &calculation)
 {
-    while (!calculation.done())
+    BifurcationController controller{calculation};
+    controller.start();
+    while (!controller.done())
     {
-        calculation.iterate();
-        if (!calculation.done())
-        {
-            display_disk_storage_progress();
-            if (driver_key_pressed())
-            {
-                calculation.suspend();
-                return -1;
-            }
-        }
+        controller.iterate();
     }
-    return 0;
+    return controller.result();
 }
 
 } // namespace id::ui

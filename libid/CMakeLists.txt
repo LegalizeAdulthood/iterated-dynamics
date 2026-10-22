@@ -205,6 +205,7 @@ add_library(libid
 
     include/ui/ant.h ui/ant.cpp
     include/ui/bifurcation.h ui/bifurcation.cpp
+    include/ui/BifurcationController.h ui/BifurcationController.cpp
     include/ui/big_while_loop.h ui/big_while_loop.cpp
     include/ui/calculate_image.h ui/calculate_image.cpp
     include/ui/cellular.h ui/cellular.cpp
@@ -214,6 +215,7 @@ add_library(libid
     include/ui/command_effects.h ui/command_effects.cpp
     include/ui/comments.h ui/comments.cpp
     include/ui/diffusion.h ui/diffusion.cpp
+    include/ui/DiffusionController.h ui/DiffusionController.cpp
     include/ui/diskvid.h ui/diskvid.cpp
     include/ui/double_to_string.h ui/double_to_string.cpp
     include/ui/DriverSoundOutput.h ui/DriverSoundOutput.cpp
@@ -298,6 +300,7 @@ add_library(libid
     include/ui/tab_display.h ui/tab_display.cpp
     include/ui/temp_msg.h ui/temp_msg.cpp
     include/ui/testpt.h ui/testpt.cpp
+    include/ui/TestPointController.h ui/TestPointController.cpp
     include/ui/text_screen.h ui/text_screen.cpp
     include/ui/thinking.h ui/thinking.cpp
     include/ui/video.h ui/video.cpp

@@ -32,8 +32,12 @@
 #include <misc/version.h>
 #include <ui/calculate_image.h>
 #include <ui/ant.h>
+#include <ui/BifurcationController.h>
+#include <ui/DiffusionController.h>
 #include <ui/help.h>
 #include <ui/id_keys.h>
+#include <ui/KeyboardHandler.h>
+#include <ui/TestPointController.h>
 #include <ui/video.h>
 
 #include <helpdefs.h>
@@ -142,6 +146,7 @@ protected:
     void TearDown() override
     {
         end_resume();
+        reset_calc_interrupted();
     }
 
     void select_type(FractalType type)
@@ -941,6 +946,87 @@ TEST_P(TestStandaloneBifurcation, uiInterruptionLeavesMenuKeyPendingAndResumesAt
     }
 }
 
+TEST_P(TestStandaloneBifurcation, controllerAdvancesOneColumnPerStepUntilComplete)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
+    BifurcationController controller{calculation};
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_TRUE(m_columns.empty());
+    EXPECT_THROW(controller.start(), std::logic_error);
+    controller.iterate();
+    EXPECT_EQ(HEIGHT, m_columns.size());
+    EXPECT_FALSE(controller.done());
+    for (int chunks = 0; chunks < WIDTH + 1 && !controller.done(); ++chunks)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(WIDTH * HEIGHT, m_columns.size());
+    controller.iterate();
+    EXPECT_EQ(WIDTH * HEIGHT, m_columns.size());
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+    calculation.finish(false);
+}
+
+TEST_P(TestStandaloneBifurcation, controllerSuspensionResumesWithoutRepeatingColumns)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
+    BifurcationController controller{calculation};
+    controller.start();
+    controller.iterate();
+
+    controller.suspend();
+
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    NonStandardFractal resumed;
+    resumed.start();
+    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, resumed.select());
+    BifurcationController continued{resumed};
+    continued.start();
+    for (int chunks = 0; chunks < WIDTH + 1 && !continued.done(); ++chunks)
+    {
+        continued.iterate();
+    }
+    ASSERT_TRUE(continued.done());
+    EXPECT_EQ(0, continued.result());
+    EXPECT_EQ(12 * WIDTH, s_orbit_calls);
+    EXPECT_EQ(WIDTH * HEIGHT, m_columns.size());
+    resumed.finish(false);
+}
+
+TEST_P(TestStandaloneBifurcation, controllerFailureTerminatesTheSelectedOperation)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
+    g_dispatch.set_orbit_calc([]() -> int { throw std::runtime_error("Orbit failed"); });
+    BifurcationController controller{calculation};
+    controller.start();
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+}
+
 INSTANTIATE_TEST_SUITE_P(Bifurcations, TestStandaloneBifurcation, ValuesIn(BIFURCATION_CASES),
     [](const TestParamInfo<BifurcationCase> &info) -> std::string { return info.param.name; });
 
@@ -1209,6 +1295,134 @@ TEST_P(TestStandaloneDiffusion, suspensionRestoresTheExistingBoundsRecord)
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
 }
 
+TEST_P(TestStandaloneDiffusion, controllerSuspendsWithoutStartingCalculationWork)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+    const std::array<int, SIDE * SIDE> initial{m_frame};
+    DiffusionController controller{calculation};
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_EQ(initial, m_frame);
+    EXPECT_THROW(controller.start(), std::logic_error);
+    controller.suspend();
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(1, controller.result());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_P(TestStandaloneDiffusion, controllerRetainsCalculationChunksAndFinalPixels)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    fractals::Diffusion reference;
+    int expected_chunks{1};
+    while (expected_chunks <= MAX_CHUNKS && reference.iterate())
+    {
+        ++expected_chunks;
+    }
+    ASSERT_LE(expected_chunks, MAX_CHUNKS);
+    const std::array<int, SIDE * SIDE> expected{m_frame};
+    const int expected_next_random{random15()};
+    m_frame.fill(0);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+    DiffusionController controller{calculation};
+    controller.start();
+    int chunks{};
+
+    for (; chunks < MAX_CHUNKS && !controller.done(); ++chunks)
+    {
+        controller.iterate();
+    }
+
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(expected_chunks, chunks);
+    EXPECT_EQ(expected, m_frame);
+    EXPECT_EQ(expected_next_random, random15());
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+    controller.iterate();
+    EXPECT_EQ(expected, m_frame);
+    calculation.finish(false);
+}
+
+TEST_P(TestStandaloneDiffusion, controllerInterruptionKeepsMenuKeyAndPositiveResult)
+{
+    int pending_key{'x'};
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Invoke([&pending_key] { return pending_key; }));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Invoke([&pending_key] { return std::exchange(pending_key, 0); }));
+    EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([&pending_key](int key) { pending_key = key; }));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+    DiffusionController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(1, controller.result());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_EQ('x', pending_key);
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_P(TestStandaloneDiffusion, controllerOrbitToggleDoesNotInterrupt)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+    DiffusionController controller{calculation};
+    controller.start();
+
+    EXPECT_TRUE(dispatch_keyboard_key('o'));
+    EXPECT_TRUE(g_show_orbit);
+    EXPECT_TRUE(dispatch_keyboard_key('O'));
+    EXPECT_FALSE(g_show_orbit);
+    EXPECT_FALSE(calc_interrupt_requested());
+    controller.iterate();
+    EXPECT_FALSE(controller.done());
+    controller.suspend();
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_P(TestStandaloneDiffusion, controllerFailureReleasesItsKeyboardHandler)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+    DiffusionController controller{calculation};
+    controller.start();
+    EXPECT_CALL(m_driver, read_pixel(_, _)).WillOnce(Throw(std::runtime_error("Read failed")));
+
+    EXPECT_THROW(
+        {
+            for (int chunks = 0; chunks < MAX_CHUNKS && !controller.done(); ++chunks)
+            {
+                controller.iterate();
+            }
+        },
+        std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
 INSTANTIATE_TEST_SUITE_P(DiffusionModes, TestStandaloneDiffusion, Values(0, 1, 2));
 
 class TestStandaloneTestPoint : public TestNonStandardFractal, public WithParamInterface<CalcMode>
@@ -1389,7 +1603,82 @@ TEST_P(TestStandaloneTestPoint, completedResumeDoesNotComputeAnotherPixel)
     EXPECT_TRUE(calculation.completed());
     calculation.iterate();
     EXPECT_TRUE(m_columns.empty());
+    TestPointController controller{calculation};
+    controller.start();
+    controller.iterate();
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(m_columns.empty());
     calculation.finish(false);
+}
+
+TEST_P(TestStandaloneTestPoint, controllerStepsExistingPixelsUntilCompletion)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::TEST_POINT, calculation.select());
+    TestPointController controller{calculation};
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_TRUE(m_columns.empty());
+    EXPECT_THROW(controller.start(), std::logic_error);
+    controller.iterate();
+    EXPECT_EQ(1, g_col);
+    EXPECT_EQ(0, g_row);
+    EXPECT_EQ(GetParam() == CalcMode::ONE_PASS ? 1U : 2U, m_columns.size());
+    for (int chunks = 0; chunks < MAX_CHUNKS && !controller.done(); ++chunks)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.completed());
+    const std::vector<int> columns{m_columns};
+    controller.iterate();
+    EXPECT_EQ(columns, m_columns);
+    calculation.finish(false);
+}
+
+TEST_P(TestStandaloneTestPoint, controllerInterruptsBeforeComputingAPixel)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return('x'));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::TEST_POINT, calculation.select());
+    TestPointController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(m_columns.empty());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+}
+
+TEST_P(TestStandaloneTestPoint, controllerFailureTerminatesTheSelectedOperation)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::TEST_POINT, calculation.select());
+    TestPointController controller{calculation};
+    controller.start();
+    EXPECT_CALL(m_driver, write_pixel(_, _, _)).WillOnce(Throw(std::runtime_error("Plot failed")));
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
 }
 
 INSTANTIATE_TEST_SUITE_P(TestPointModes, TestStandaloneTestPoint, Values(CalcMode::ONE_PASS, CalcMode::TWO_PASS),

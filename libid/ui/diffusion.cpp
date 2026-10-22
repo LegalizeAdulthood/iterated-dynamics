@@ -3,80 +3,24 @@
 //
 #include "ui/diffusion.h"
 
-#include "engine/NonStandardFractal.h"
-#include "misc/Driver.h"
-#include "ui/diskvid.h"
-#include "ui/KeyboardHandler.h"
-#include "ui/standard_orbit_plot.h"
-
-#include <memory>
+#include "ui/DiffusionController.h"
 
 using namespace id::engine;
-using namespace id::misc;
 
 namespace id::ui
 {
 
-namespace
-{
-
-class DiffusionKeyboardHandler : public KeyboardHandler
-{
-public:
-    bool handle_key(const int key) override
-    {
-        if (g_show_orbit)
-        {
-            scrub_orbit_display();
-        }
-        if (key == 'o' || key == 'O')
-        {
-            if (!driver_is_disk())
-            {
-                g_show_orbit = !g_show_orbit;
-            }
-            return true;
-        }
-
-        driver_unget_key(key);
-        set_calc_interrupted();
-        m_interrupted = true;
-        return true;
-    }
-
-    bool interrupted() const
-    {
-        return m_interrupted;
-    }
-
-private:
-    bool m_interrupted{};
-};
-
-} // namespace
-
+// TODO: removed later
+// Slice 52.12 replaces the synchronous entry with outer UI stepping.
 int diffusion_type(NonStandardFractal &calculation)
 {
-    reset_calc_interrupted();
-    auto keyboard_handler{std::make_shared<DiffusionKeyboardHandler>()};
-    ScopedKeyboardHandler keyboard_scope{keyboard_handler};
-
-    while (!calculation.done())
+    DiffusionController controller{calculation};
+    controller.start();
+    while (!controller.done())
     {
-        calculation.iterate();
-        if (!calculation.done())
-        {
-            display_disk_storage_progress();
-            dispatch_pending_keyboard_input();
-            if (keyboard_handler->interrupted())
-            {
-                calculation.suspend();
-                return 1;
-            }
-        }
+        controller.iterate();
     }
-
-    return 0;
+    return controller.result();
 }
 
 } // namespace id::ui
