@@ -17,6 +17,7 @@
 #include <math/fixed_pt.h>
 #include <misc/stack_avail.h>
 #include <misc/ValueSaver.h>
+#include <ui/LSystemController.h>
 #include <ui/text_screen.h>
 #include <ui/thinking.h>
 
@@ -28,6 +29,7 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <vector>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -299,6 +301,301 @@ TEST_F(TestLSystemController, definitionFailureDoesNotStartSizingOrDrawing)
     EXPECT_EQ(0, m_thinking_entries);
     EXPECT_EQ(0, m_thinking_exits);
     EXPECT_EQ(0, m_lines);
+}
+
+TEST_F(TestLSystemController, stepwiseControllerPreservesSizingAndDrawingIncrements)
+{
+    struct WorkState
+    {
+        bool sizing;
+        bool done;
+        int lines;
+    };
+
+    g_params[0] = 3;
+    lsystem_load();
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    std::vector<WorkState> expected;
+    {
+        LSystem system;
+        system.start();
+        for (int i = 0; i < 5000 && !system.done() && !system.interrupted(); ++i)
+        {
+            system.iterate();
+            expected.push_back({system.sizing(), system.done(), m_lines});
+        }
+        ASSERT_TRUE(system.done());
+        ASSERT_FALSE(system.interrupted());
+    }
+    m_lines = 0;
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    LSystemController controller{calculation};
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_FALSE(thinking_active());
+    EXPECT_EQ(0, m_lines);
+    EXPECT_THROW(controller.start(), std::logic_error);
+    for (const WorkState &work : expected)
+    {
+        const bool sizing{calculation.sizing()};
+        controller.iterate();
+        EXPECT_EQ(work.sizing, calculation.sizing());
+        EXPECT_EQ(work.done, calculation.done());
+        EXPECT_EQ(work.done, controller.done());
+        EXPECT_EQ(work.lines, m_lines);
+        EXPECT_EQ(sizing && !work.done, thinking_active());
+    }
+
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(192, m_lines);
+    EXPECT_EQ(1, m_thinking_entries);
+    EXPECT_EQ(1, m_thinking_exits);
+    controller.iterate();
+    EXPECT_EQ(192, m_lines);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+    calculation.finish(false);
+    EXPECT_FALSE(lsystem_loaded());
+}
+
+TEST_F(TestLSystemController, stepwiseSizingSuspensionClosesThinking)
+{
+    g_params[0] = 6;
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    LSystemController controller{calculation};
+    controller.start();
+    controller.iterate();
+    ASSERT_TRUE(calculation.sizing());
+    ASSERT_TRUE(thinking_active());
+
+    controller.suspend();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_FALSE(lsystem_loaded());
+    EXPECT_EQ(0, m_lines);
+    EXPECT_EQ(1, m_thinking_exits);
+}
+
+TEST_F(TestLSystemController, stepwiseDrawingSuspensionDoesNotCloseThinkingTwice)
+{
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    LSystemController controller{calculation};
+    controller.start();
+    for (int i = 0; i < 100 && m_lines == 0; ++i)
+    {
+        controller.iterate();
+    }
+    ASSERT_GT(m_lines, 0);
+    ASSERT_FALSE(thinking_active());
+
+    controller.suspend();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_FALSE(lsystem_loaded());
+    EXPECT_EQ(1, m_thinking_exits);
+}
+
+TEST_F(TestLSystemController, stepwiseSizingInterruptionLeavesCommandPending)
+{
+    g_params[0] = 9;
+    m_cancel_sizing = true;
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    EXPECT_CALL(m_driver, unget_key(_)).Times(0);
+    LSystemController controller{calculation};
+    controller.start();
+
+    for (int i = 0; i < 200 && !controller.done(); ++i)
+    {
+        controller.iterate();
+    }
+
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ('x', m_pending_key);
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0, m_lines);
+    EXPECT_EQ(1, m_thinking_exits);
+}
+
+TEST_F(TestLSystemController, stepwiseDrawingInterruptionLeavesCommandPending)
+{
+    g_params[0] = 3;
+    m_cancel_drawing = true;
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    EXPECT_CALL(m_driver, unget_key(_)).Times(0);
+    LSystemController controller{calculation};
+    controller.start();
+
+    for (int i = 0; i < 5000 && !controller.done(); ++i)
+    {
+        controller.iterate();
+    }
+
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ('x', m_pending_key);
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_GT(m_lines, 0);
+    EXPECT_LT(m_lines, 192);
+    EXPECT_EQ(1, m_thinking_exits);
+}
+
+TEST_F(TestLSystemController, stepwiseInputFailureClosesCalculationAndThinking)
+{
+    g_params[0] = 9;
+    m_fail_input = true;
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    LSystemController controller{calculation};
+    controller.start();
+
+    EXPECT_THROW(
+        {
+            for (int i = 0; i < 200 && !controller.done(); ++i)
+            {
+                controller.iterate();
+            }
+        },
+        std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_FALSE(lsystem_loaded());
+    EXPECT_EQ(0, m_lines);
+    EXPECT_EQ(1, m_thinking_exits);
+}
+
+TEST_F(TestLSystemController, stepwiseDisplayFailureRestoresThinking)
+{
+    m_fail_display = true;
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    LSystemController controller{calculation};
+    controller.start();
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_FALSE(lsystem_loaded());
+    EXPECT_EQ(1, m_thinking_entries);
+    EXPECT_EQ(1, m_thinking_exits);
+}
+
+TEST_F(TestLSystemController, stepwisePlotFailureDoesNotCloseThinkingTwice)
+{
+    m_fail_plot = true;
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    LSystemController controller{calculation};
+    controller.start();
+
+    EXPECT_THROW(
+        {
+            for (int i = 0; i < 100 && !controller.done(); ++i)
+            {
+                controller.iterate();
+            }
+        },
+        std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_FALSE(lsystem_loaded());
+    EXPECT_EQ(1, m_thinking_exits);
+}
+
+TEST_F(TestLSystemController, stepwiseDestructionClosesThinkingWithoutFinishingCalculation)
+{
+    g_params[0] = 6;
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    {
+        LSystemController controller{calculation};
+        controller.start();
+        controller.iterate();
+        ASSERT_TRUE(thinking_active());
+    }
+
+    EXPECT_FALSE(thinking_active());
+    EXPECT_EQ(1, m_thinking_exits);
+    EXPECT_FALSE(calculation.done());
+    EXPECT_TRUE(lsystem_loaded());
+    calculation.finish(true);
+    EXPECT_FALSE(lsystem_loaded());
+}
+
+TEST_F(TestLSystemController, stepwiseAlreadyFinishedCalculationDoesNotOpenThinking)
+{
+    g_overflow = true;
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    ASSERT_TRUE(calculation.done());
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    LSystemController controller{calculation};
+
+    controller.start();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    controller.iterate();
+    EXPECT_EQ(0, m_thinking_entries);
+    EXPECT_EQ(0, m_thinking_exits);
+    EXPECT_EQ(0, m_lines);
+    calculation.finish(false);
 }
 
 } // namespace id::test

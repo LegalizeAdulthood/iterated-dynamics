@@ -51,6 +51,8 @@ The audit below records the remaining reverse calls inside that structure:
 - `libid/ui/plasma.cpp` drives `libid/fractals/Plasma.cpp`.
 - `libid/ui/Standard4DController.cpp` drives
   `libid/fractals/julibrot.cpp`.
+- `libid/ui/LSystemController.cpp` drives selected sizing and drawing
+  work in `libid/fractals/lsystem.cpp`.
 - `libid/ui/testpt.cpp` drives `libid/fractals/TestPoint.cpp`.
 
 The common structure is:
@@ -607,8 +609,11 @@ The concrete render operation objects are:
   renderer callbacks.  Their UI controllers advance
   selected objects; setup, resume, and finish stay below UI.  L-system
   definition loading, startup, and terminal interpretation stay below
-  UI; its controller retains thinking-screen handling and the drawing
-  poll throttle.  FrothyBasin retains its orbit and pixel checkpoints,
+  UI; `ui::LSystemController` advances existing sizing/drawing increments
+  and owns thinking-screen lifetime and the drawing poll throttle.
+  Completion, suspension, and failure close its presentation; pending
+  commands remain for the outer handler.  Its synchronous entry remains
+  marked for 52.12 removal.  FrothyBasin retains orbit/pixel checkpoints,
   palette selection, and resume coordinates below UI; its controller
   owns palette diagnostics, overlay interaction, and sound servicing.
   The completed-image orbit tool uses setup-only FrothyBasin callbacks,
@@ -1100,22 +1105,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 52.9. Stepwise L-System UI Context
-
-Source: `ui/lsystem.cpp`.
-
-Work:
-
-- Introduce `LSystemController` holding thinking-screen presentation,
-  input throttling, and handler lifetime.
-- Advance the existing sizing/drawing increments without new traversal
-  rules or finer polling.  Engine-owned loading and terminal state stay
-  in the selected operation.
-- Mark the synchronous entry for removal in 52.12.
-
-Validation: existing L-system sizing, validation, and interruption scripts,
-plus direct context transitions and thinking-screen cleanup.
-
 ### 52.10. Stepwise Overlay Presentation Contexts
 
 Source: `ui/popcorn.cpp` and `ui/frothy_basin.cpp`.
@@ -1285,7 +1274,7 @@ still poll the driver queue directly:
 - `libid/ui/BifurcationController.cpp`
 - `libid/ui/CellularController.cpp`
 - `libid/ui/IFS2DController.cpp`
-- `libid/ui/lsystem.cpp`
+- `libid/ui/LSystemController.cpp`
 - `libid/ui/plasma.cpp`
 - `libid/ui/Standard4DController.cpp`
 - `libid/ui/TestPointController.cpp`
