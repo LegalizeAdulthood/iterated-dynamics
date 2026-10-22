@@ -16,6 +16,7 @@
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
+#include "geometry/stereo_params.h"
 #include "io/check_write_file.h"
 #include "io/decoder.h"
 #include "io/gifview.h"
@@ -27,7 +28,6 @@
 #include "misc/version.h"
 #include "ui/big_while_loop.h"
 #include "io/disk_storage.h"
-#include "ui/stereo.h"
 
 #include <fmt/format.h>
 

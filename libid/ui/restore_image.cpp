@@ -16,6 +16,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "geometry/plot3d.h"
+#include "geometry/stereo_params.h"
 #include "geometry/StereoView.h"
 #include "io/decoder.h"
 #include "io/GifRestore.h"

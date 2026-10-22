@@ -28,6 +28,7 @@
 #include <geometry/3d.h>
 #include <geometry/line3d.h>
 #include <geometry/plot3d.h>
+#include <geometry/stereo_params.h>
 #include <io/decoder.h>
 #include <io/gifview.h>
 #include <io/loadmap.h>
@@ -39,7 +40,6 @@
 #include <misc/Driver.h>
 #include <misc/ValueSaver.h>
 #include <ui/big_while_loop.h>
-#include <ui/stereo.h>
 #include <ui/video.h>
 
 #include "MockDriver.h"

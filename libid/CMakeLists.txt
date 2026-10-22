@@ -142,6 +142,7 @@ add_library(libid
     include/geometry/3d.h geometry/3d.cpp
     include/geometry/line3d.h geometry/line3d.cpp
     include/geometry/plot3d.h geometry/plot3d.cpp
+    include/geometry/stereo_params.h geometry/stereo_params.cpp
     include/geometry/StereoView.h geometry/StereoView.cpp
 
     include/io/check_write_file.h io/check_write_file.cpp

@@ -16,6 +16,7 @@
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
+#include "geometry/stereo_params.h"
 #include "helpdefs.h"
 #include "io/decoder.h"
 #include "io/encoder.h"
@@ -49,14 +50,8 @@ using namespace id::misc;
 namespace id::ui
 {
 
-std::string g_stereo_texture_filename;
-int g_auto_stereo_depth{100};
 bool g_auto_stereo_batch{};
-double g_auto_stereo_width{10};
 bool g_save_rds_params{};
-bool g_gray_flag{};
-CalibrationBars g_calibrate{CalibrationBars::MIDDLE};
-bool g_use_stereo_texture{};
 bool g_stereo_texture_reuse{};
 
 void setup_stereo_palette()

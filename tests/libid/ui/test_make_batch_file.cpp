@@ -11,6 +11,7 @@
 #include "engine/UserData.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
+#include "geometry/stereo_params.h"
 #include "misc/debug_flags.h"
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
@@ -26,6 +27,7 @@
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::geometry;
 using namespace id::misc;
 using namespace id::ui;
 

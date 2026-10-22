@@ -1119,31 +1119,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.1.2. Stereo Calculation Data Ownership
-
-Source: `ui/stereo.h`, its parameter definitions in `ui/stereo.cpp`,
-and consumers including `engine/cmdfiles.cpp` and `geometry/line3d.cpp`.
-
-Work:
-
-- Move stereo calculation parameters and `CalibrationBars` into geometry.
-  Preserve their types and defaults; update their consumers directly.
-- Keep automatic-conversion requests, prompts, and parameter-save policy
-  in UI.  Slice 53.2 handles their command-parser effects; this subslice
-  does not attempt to remove that remaining parser dependency.
-- Do not retain forwarding headers or alter stereo calculation, input,
-  pacing, or work boundaries.
-- Do not change GIF metadata or video keys in this subslice.
-
-Done when:
-
-- Stereo calculation data can be used without including UI headers.
-- Stereo runtime interaction and conversion policy remain UI-owned.
-
-Validation: reuse stereo parameter, batch-file, and stereo/autokey tests,
-then run the full `rt-default` workflow.  No manual check is needed for
-unchanged calculation data and interaction.
-
 ### 53.1.3. Video-Mode Key Boundary: Discuss Before Implementation
 
 Source: `engine/video_mode.cpp` including `ui/id_keys.h`, video-mode
@@ -1179,8 +1154,8 @@ Work:
 
 - Return UI-only settings through `CommandParseResult` rather than
   mutating UI globals from the parser.  Cover video prompting, virtual
-  screens, history capacity, autokey mode/name, and automatic stereo
-  conversion requests.
+  screens, history capacity, autokey mode/name, automatic stereo
+  conversion requests, and the texture-filename reuse preference.
 - Let `apply_command_effects()` apply those settings in UI.  Keep history,
   autokey playback/recording, and conversion runtime state in their
   existing UI owners; do not relocate that state into engine.
@@ -1274,7 +1249,9 @@ and setup-policy couplings, not direct input polling:
   encodings.  Slice 53.1.3 requires design discussion before changes.
 - `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h`, `ui/history.h`,
   `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  Stereo
-  calculation data moves in 53.1.2; UI-only effects move in 53.2.
+  calculation inputs and `CalibrationBars` are geometry-owned.  Automatic
+  conversion and texture-filename reuse remain UI policy; their parser
+  effects move in 53.2.
 - `libid/engine/calc_frac_init.cpp`: `ui/zoom.h` supplies the zoom-box
   condition for invalidating adjusted resume work.  Slice 53.3 returns
   the geometry outcome and leaves that decision in UI.

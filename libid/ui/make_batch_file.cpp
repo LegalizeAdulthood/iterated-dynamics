@@ -40,6 +40,7 @@
 #include "geometry/3d.h"
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
+#include "geometry/stereo_params.h"
 #include "helpdefs.h"
 #include "io/check_write_file.h"
 #include "io/file_gets.h"

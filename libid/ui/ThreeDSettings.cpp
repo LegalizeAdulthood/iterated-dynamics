@@ -4,8 +4,8 @@
 #include "ui/ThreeDSettings.h"
 
 #include "engine/spindac.h"
+#include "geometry/stereo_params.h"
 #include "io/loadmap.h"
-#include "ui/stereo.h"
 
 #include <algorithm>
 
