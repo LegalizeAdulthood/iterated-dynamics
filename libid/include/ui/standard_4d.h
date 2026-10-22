@@ -11,6 +11,8 @@ class NonStandardFractal;
 namespace id::ui
 {
 
+// TODO: removed later
+// Slice 52.12 removes the synchronous render entry point.
 int standard_4d_type(engine::NonStandardFractal &calculation);
 
 } // namespace id::ui

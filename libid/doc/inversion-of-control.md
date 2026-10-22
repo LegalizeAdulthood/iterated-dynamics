@@ -42,11 +42,12 @@ The audit below records the remaining reverse calls inside that structure:
 - `libid/ui/diffusion.cpp` drives `libid/fractals/Diffusion.cpp`.
 - `libid/ui/OrbitController.cpp` drives selected 2D orbit and Dynamic2D
   work in `libid/fractals/lorenz.cpp`.
-- `libid/ui/ifs2d.cpp` drives `libid/fractals/lorenz.cpp`.
+- `libid/ui/IFS2DController.cpp` drives selected 2D IFS work in
+  `libid/fractals/lorenz.cpp`.
 - `libid/ui/StereoController.cpp` drives selected 3D IFS and orbit work
   owned by `libid/engine/NonStandardFractal.cpp`.
 - `libid/ui/plasma.cpp` drives `libid/fractals/Plasma.cpp`.
-- `libid/ui/standard_4d.cpp` drives
+- `libid/ui/Standard4DController.cpp` drives
   `libid/fractals/julibrot.cpp`.
 - `libid/ui/testpt.cpp` drives `libid/fractals/TestPoint.cpp`.
 
@@ -640,7 +641,11 @@ The concrete render operation objects are:
   retaining sound waits, menu interruption, disk-progress feedback, and
   completion drain.  Its handler scope ends on completion, suspension,
   or failure.  Synchronous entries remain marked for 52.12 removal.
-  Standard4D still yields after each symmetric pixel pair.  Standalone
+  `ui::IFS2DController` retains pre-point polling and non-resumable
+  interruption.  `ui::Standard4DController` retains UI palette setup
+  and post-increment polling after each unfinished symmetric pixel
+  pair.  Both step caller-owned selected operations; synchronous entries
+  remain marked for 52.12 removal.  Standalone
   inverse Julia owns point completion and prepared-queue lifetime;
   its controller owns allocation retries and fallback notifications.
 
@@ -1080,23 +1085,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 52.5. Stepwise IFS2D And Standard4D Contexts
-
-Source: `ui/ifs2d.cpp` and `ui/standard_4d.cpp`.
-
-Work:
-
-- Introduce `IFS2DController` and `Standard4DController` around selected
-  NonStandardFractal operations.  UI retains Julibrot palette handling;
-  engine code retains projection, iteration, and completion.
-- Preserve the existing pre/post-increment polling order and
-  non-resumable interruption.  One context iteration must not contain
-  the whole rendering loop.
-- Mark retained synchronous entries for removal in 52.12.
-
-Validation: IFS, Julibrot, palette-failure, and menu-return fixtures;
-direct context completion, suspension, and cleanup tests.
-
 ### 52.6. Stepwise Standalone Inverse Julia Context
 
 Source: `inverse_julia_fractal_type()` in `ui/inverse_julia.cpp`.
@@ -1333,10 +1321,10 @@ still poll the driver queue directly:
 
 - `libid/ui/BifurcationController.cpp`
 - `libid/ui/cellular.cpp`
-- `libid/ui/ifs2d.cpp`
+- `libid/ui/IFS2DController.cpp`
 - `libid/ui/lsystem.cpp`
 - `libid/ui/plasma.cpp`
-- `libid/ui/standard_4d.cpp`
+- `libid/ui/Standard4DController.cpp`
 - `libid/ui/TestPointController.cpp`
 
 Controllers with bespoke interaction or partial handler-stack use that

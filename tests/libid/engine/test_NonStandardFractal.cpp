@@ -4,9 +4,11 @@
 #include <engine/NonStandardFractal.h>
 
 #include "MockDriver.h"
+#include "ColorMapSaver.h"
 #include "test_data.h"
 
 #include <engine/calc_frac_init.h>
+#include <engine/color_state.h>
 #include <engine/bailout_formula.h>
 #include <engine/engine_timer.h>
 #include <engine/fractals.h>
@@ -28,6 +30,8 @@
 #include <geometry/line3d.h>
 #include <geometry/plot3d.h>
 #include <io/decoder.h>
+#include <io/library.h>
+#include <io/loadmap.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 #include <ui/calculate_image.h>
@@ -37,6 +41,8 @@
 #include <ui/help.h>
 #include <ui/id_keys.h>
 #include <ui/KeyboardHandler.h>
+#include <ui/IFS2DController.h>
+#include <ui/Standard4DController.h>
 #include <ui/TestPointController.h>
 #include <ui/video.h>
 
@@ -420,6 +426,216 @@ TEST_F(TestNonStandardFractal, selected4dOperationSuspendsWithoutResumeData)
     EXPECT_TRUE(g_resume_data.empty());
 }
 
+class TestStandard4DController : public TestNonStandardFractal
+{
+protected:
+    void SetUp() override
+    {
+        TestNonStandardFractal::SetUp();
+        select_type(FractalType::JULIBROT);
+        m_library = std::filesystem::path{data::ID_TEST_DATA_DIR} /
+            ("selected-4d-" + std::string{UnitTest::GetInstance()->current_test_info()->name()});
+        std::filesystem::create_directories(m_library / "map");
+        io::clear_read_library_path();
+        io::add_read_library(m_library);
+    }
+
+    void TearDown() override
+    {
+        io::clear_read_library_path();
+        std::error_code ignored;
+        std::filesystem::remove_all(m_library, ignored);
+        TestNonStandardFractal::TearDown();
+    }
+
+    void write_palette(const char *name, const char *entry)
+    {
+        std::ofstream file{m_library / "map" / name};
+        ASSERT_TRUE(file);
+        for (int i = 0; i < 256; ++i)
+        {
+            file << entry << '\n';
+        }
+    }
+
+    ValueSaver<int> m_saved_colors{g_colors, 256};
+    ValueSaver<SaveDAC> m_saved_palette{g_save_dac, SaveDAC::YES};
+    ValueSaver<Julibrot3DMode> m_saved_mode{g_julibrot_3d_mode, Julibrot3DMode::MONOCULAR};
+    ValueSaver<FractalType> m_saved_orbit_type{g_new_orbit_type, FractalType::JULIA};
+    ValueSaver<int> m_saved_depth{g_julibrot_z_dots, 1};
+    ValueSaver<decltype(g_bailout_float)> m_saved_bailout{g_bailout_float, +[] { return 0; }};
+    ValueSaver<DComplex *> m_saved_parameter{g_float_param};
+    ValueSaver<bool> m_saved_check_cur_dir{io::g_check_cur_dir, false};
+    ValueSaver<bool> m_saved_true_color{g_is_true_color, false};
+    ValueSaver<ColorState> m_saved_color_state{g_color_state};
+    ValueSaver<std::string> m_saved_map_name{io::g_last_map_name};
+    ColorMapSaver m_saved_color_map;
+    std::filesystem::path m_library;
+};
+
+TEST_F(TestStandard4DController, stepsSymmetricPixelPairsUntilCompletion)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    EXPECT_CALL(m_driver, write_palette()).Times(0);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::STANDARD_4D, calculation.select());
+    Standard4DController controller{calculation};
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_TRUE(m_columns.empty());
+    EXPECT_THROW(controller.start(), std::logic_error);
+    controller.iterate();
+    EXPECT_EQ(2U, m_columns.size());
+    EXPECT_FALSE(controller.done());
+    for (int step = 0; step < WIDTH * HEIGHT && !controller.done(); ++step)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(WIDTH * HEIGHT, m_columns.size());
+    controller.iterate();
+    EXPECT_EQ(WIDTH * HEIGHT, m_columns.size());
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+    calculation.finish(false);
+}
+
+TEST_F(TestStandard4DController, interruptsAfterComputingOneSymmetricPairAndKeepsCommandPending)
+{
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillOnce(Invoke(
+            [this]
+            {
+                EXPECT_EQ(2U, m_columns.size());
+                return 'x';
+            }));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::STANDARD_4D, calculation.select());
+    Standard4DController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+}
+
+TEST_F(TestStandard4DController, explicitSuspensionIsNonResumable)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::STANDARD_4D, calculation.select());
+    Standard4DController controller{calculation};
+    controller.start();
+
+    controller.suspend();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_TRUE(m_columns.empty());
+}
+
+TEST_F(TestStandard4DController, plotFailureTerminatesTheSelectedOperationBeforePolling)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::STANDARD_4D, calculation.select());
+    Standard4DController controller{calculation};
+    controller.start();
+    EXPECT_CALL(m_driver, write_pixel(_, _, _)).WillOnce(Throw(std::runtime_error("Plot failed")));
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+}
+
+TEST_F(TestStandard4DController, startLoadsAlternPaletteOnceAndHonorsNextTime)
+{
+    write_palette("altern.map", "10 20 30");
+    g_save_dac = SaveDAC::NEXT_TIME;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::STANDARD_4D, calculation.select());
+    EXPECT_CALL(m_driver, write_palette())
+        .WillOnce(Invoke(
+            []
+            {
+                EXPECT_EQ(10, g_dac_box[0][0]);
+                EXPECT_EQ(20, g_dac_box[0][1]);
+                EXPECT_EQ(30, g_dac_box[0][2]);
+            }));
+    Standard4DController controller{calculation};
+
+    controller.start();
+
+    EXPECT_EQ(SaveDAC::YES, g_save_dac);
+    EXPECT_EQ("altern.map", io::g_last_map_name);
+    EXPECT_TRUE(m_columns.empty());
+    controller.suspend();
+}
+
+TEST_F(TestStandard4DController, redBlueOverridesPreloadedPaletteWithGlassesMap)
+{
+    write_palette("glasses1.map", "11 21 31");
+    g_julibrot_3d_mode = Julibrot3DMode::RED_BLUE;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::STANDARD_4D, calculation.select());
+    EXPECT_CALL(m_driver, write_palette())
+        .WillOnce(Invoke(
+            []
+            {
+                EXPECT_EQ(11, g_dac_box[0][0]);
+                EXPECT_EQ(21, g_dac_box[0][1]);
+                EXPECT_EQ(31, g_dac_box[0][2]);
+            }));
+    Standard4DController controller{calculation};
+
+    controller.start();
+
+    EXPECT_EQ(SaveDAC::NO, g_save_dac);
+    EXPECT_EQ("glasses1.map", io::g_last_map_name);
+    EXPECT_TRUE(m_columns.empty());
+    controller.suspend();
+}
+
+TEST_F(TestStandard4DController, paletteInstallationFailureClosesWithoutComputingOrPolling)
+{
+    write_palette("altern.map", "10 20 30");
+    g_save_dac = SaveDAC::NO;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::STANDARD_4D, calculation.select());
+    EXPECT_CALL(m_driver, write_palette()).WillOnce(Throw(std::runtime_error("Palette failed")));
+    Standard4DController controller{calculation};
+
+    EXPECT_THROW(controller.start(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(m_columns.empty());
+    controller.iterate();
+}
+
 TEST_F(TestNonStandardFractal, failedSelectedSetupDiscardsWorkWithoutCallingRenderer)
 {
     select_type(FractalType::JULIBROT);
@@ -681,6 +897,122 @@ TEST_F(TestSelectedIFS, suspensionIsNonResumableAndTheNextSelectionRestarts)
         EXPECT_EQ(0L, g_color_iter);
         EXPECT_FALSE(restarted.done());
     }
+}
+
+TEST_F(TestSelectedIFS, controllerStepsOnePointAtATimeUntilCompletion)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::IFS_2D, calculation.select());
+    IFS2DController controller{calculation};
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_EQ(0L, g_color_iter);
+    EXPECT_TRUE(m_columns.empty());
+    EXPECT_THROW(controller.start(), std::logic_error);
+    controller.iterate();
+    EXPECT_EQ(1L, g_color_iter);
+    EXPECT_EQ(1U, m_columns.size());
+    EXPECT_FALSE(controller.done());
+    for (int point = 1; point < 1025 && !controller.done(); ++point)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(1025L, g_color_iter);
+    EXPECT_EQ(1025U, m_columns.size());
+    controller.iterate();
+    EXPECT_EQ(1025L, g_color_iter);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+    calculation.finish(false);
+}
+
+TEST_F(TestSelectedIFS, controllerInterruptsBeforeFirstPointAndKeepsCommandPending)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return('x'));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::IFS_2D, calculation.select());
+    IFS2DController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(0L, g_color_iter);
+    EXPECT_TRUE(m_columns.empty());
+}
+
+TEST_F(TestSelectedIFS, controllerSuspendsWithoutResumeDataAndNextSelectionRestarts)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::IFS_2D, calculation.select());
+    IFS2DController controller{calculation};
+    controller.start();
+    controller.iterate();
+    ASSERT_EQ(1L, g_color_iter);
+
+    controller.suspend();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    NonStandardFractal restarted;
+    restarted.start();
+    ASSERT_EQ(NonStandardFractal::Operation::IFS_2D, restarted.select());
+    EXPECT_EQ(0L, g_color_iter);
+    EXPECT_FALSE(restarted.done());
+}
+
+TEST_F(TestSelectedIFS, controllerPlotFailureTerminatesTheSelectedOperation)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::IFS_2D, calculation.select());
+    IFS2DController controller{calculation};
+    controller.start();
+    EXPECT_CALL(m_driver, write_pixel(_, _, _)).WillOnce(Throw(std::runtime_error("Plot failed")));
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+}
+
+TEST_F(TestSelectedIFS, controllerInputFailureTerminatesBeforeComputingAPoint)
+{
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Throw(std::runtime_error("Input failed")));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::IFS_2D, calculation.select());
+    IFS2DController controller{calculation};
+    controller.start();
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(m_columns.empty());
 }
 
 TEST_F(TestSelectedIFS, separateStereoViewsWaitForExplicitAdvance)

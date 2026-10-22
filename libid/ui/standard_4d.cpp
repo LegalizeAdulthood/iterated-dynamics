@@ -3,66 +3,24 @@
 //
 #include "ui/standard_4d.h"
 
-#include "engine/spindac.h"
-#include "engine/NonStandardFractal.h"
-#include "fractals/julibrot.h"
-#include "io/loadmap.h"
-#include "misc/Driver.h"
-#include "ui/diskvid.h"
-#include "ui/get_3d_params.h"
-#include "ui/starfield.h"
-#include "ui/stop_msg.h"
-
-#include <stdexcept>
+#include "ui/Standard4DController.h"
 
 using namespace id::engine;
-using namespace id::fractals;
-using namespace id::io;
-using namespace id::misc;
 
 namespace id::ui
 {
 
+// TODO: removed later
+// Slice 52.12 replaces the synchronous entry with outer UI stepping.
 int standard_4d_type(NonStandardFractal &calculation)
 {
-    const bool red_blue{g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE};
-    if (red_blue)
+    Standard4DController controller{calculation};
+    controller.start();
+    while (!controller.done())
     {
-        g_save_dac = SaveDAC::NO;
+        controller.iterate();
     }
-    if (g_save_dac != SaveDAC::YES)
-    {
-        const PaletteLoadResult palette{validate_luts(red_blue ? GLASSES1_MAP_NAME : ALTERN_MAP_NAME)};
-        if (palette.failed)
-        {
-            throw std::runtime_error{palette.diagnostic};
-        }
-        if (!palette.diagnostic.empty())
-        {
-            stop_msg(palette.diagnostic);
-        }
-        refresh_dac();
-        if (g_save_dac == SaveDAC::NEXT_TIME)
-        {
-            g_save_dac = SaveDAC::YES;
-        }
-    }
-    while (!calculation.done())
-    {
-        calculation.iterate();
-        if (calculation.done())
-        {
-            break;
-        }
-        display_disk_storage_progress();
-        if (driver_key_pressed())
-        {
-            calculation.suspend();
-            return -1;
-        }
-    }
-
-    return 0;
+    return controller.result();
 }
 
 } // namespace id::ui

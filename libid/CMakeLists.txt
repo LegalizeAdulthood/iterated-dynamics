@@ -254,6 +254,7 @@ add_library(libid
     include/ui/id_keys.h
     include/ui/id_main.h ui/id_main.cpp
     include/ui/ifs2d.h ui/ifs2d.cpp
+    include/ui/IFS2DController.h ui/IFS2DController.cpp
     include/ui/init_failure.h
     include/ui/intro.h ui/intro.cpp
     include/ui/input_field.h ui/input_field.cpp
@@ -295,6 +296,7 @@ add_library(libid
     include/ui/standard_fractal.h ui/standard_fractal.cpp
     include/ui/standard_orbit_plot.h ui/standard_orbit_plot.cpp
     include/ui/standard_4d.h ui/standard_4d.cpp
+    include/ui/Standard4DController.h ui/Standard4DController.cpp
     include/ui/starfield.h ui/starfield.cpp
     include/ui/stereo.h ui/stereo.cpp
     include/ui/stop_msg.h ui/stop_msg.cpp

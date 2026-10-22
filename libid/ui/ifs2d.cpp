@@ -3,30 +3,24 @@
 //
 #include "ui/ifs2d.h"
 
-#include "engine/NonStandardFractal.h"
-#include "misc/Driver.h"
-#include "ui/diskvid.h"
+#include "ui/IFS2DController.h"
 
 using namespace id::engine;
-using namespace id::misc;
 
 namespace id::ui
 {
 
+// TODO: removed later
+// Slice 52.12 replaces the synchronous entry with outer UI stepping.
 int ifs2d(NonStandardFractal &calculation)
 {
-    while (!calculation.done())
+    IFS2DController controller{calculation};
+    controller.start();
+    while (!controller.done())
     {
-        if (driver_key_pressed())
-        {
-            calculation.suspend();
-            return -1;
-        }
-
-        calculation.iterate();
-        display_disk_storage_progress();
+        controller.iterate();
     }
-    return 0;
+    return controller.result();
 }
 
 } // namespace id::ui
