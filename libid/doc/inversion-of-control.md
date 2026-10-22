@@ -542,17 +542,21 @@ The audited command-result categories are:
 
 ## Parameter Processing Boundary
 
-Parameter-set processing, including command interpretation, is an engine
-concern.  Some parameters affect only UI settings or functions; that does
-not make the whole parser UI-owned.  The boundary for those parameters
-remains to be decided in the final design slice, 53.5.
+Parameter-set processing and engine parameter interpretation remain
+engine concerns.  Option 1 partitions handlers by ownership: UI handles
+UI parameters and delegates unrecognized names to engine.  Both groups
+share syntax processing and preserve the original parameter order.
 
-Until that decision, defer all changes to command and parameter parsing,
-including UI-related parameter effects and `video=F6` resolution.  Earlier
-slices must preserve existing parser dependencies.  If a planned move
-requires changing parameter processing, defer that portion to 53.5 rather
-than introduce forwarding wrappers, duplicate helpers, or new engine-to-UI
-dependencies to bypass this restriction.
+Design slices 53.5.1 through 53.5.7 settle the syntax, recognition,
+routing, mixed parameters, defaults, failure behavior, and reporting.
+They authorize design discussion and plan updates only.  Keep these
+design slices ahead of the separate implementation slices they produce;
+do not change parser code before the design is agreed.
+
+Until then, defer changes to command and parameter parsing, including UI
+effects and `video=F6` resolution.  Do not bypass this restriction with
+forwarding wrappers, duplicate helpers, relocated UI state, or new
+engine-to-UI dependencies.
 
 ## Remaining Inversion-of-Control Slices
 
@@ -1133,62 +1137,216 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.5. Command Processing Boundary Design
+### 53.5.1. Shared Parameter Syntax Design
 
-Source: `engine/cmdfiles.cpp`, its parameter-set and command callers,
-`CommandParseResult`, `ui/command_effects.cpp`, and video-mode selection;
-the parser's current `ui/big_while_loop.h`, `ui/history.h`,
-`ui/slideshw.h`, and `ui/stereo.h` dependencies.
+Source: `engine/cmdfiles.cpp` (`Command`, its numeric parsing helpers, and
+`next_command`), `engine/lowerize_parameter.cpp`, and both handler tables.
+
+Scope: design discussion and plan updates only; no source changes.
 
 Work:
 
-- Decide with the user how to decouple UI concerns from `cmdfiles.cpp`.
-  This is a design slice, not permission to implement parser changes.
-- Keep parameter-set processing and engine parameter interpretation in
-  engine.  Identify UI-only parameters and commands with mixed engine/UI
-  effects; do not move the whole parser to UI.
-- Cover video prompting, virtual screens, history capacity, autokey
-  mode/name, automatic stereo conversion, texture-filename reuse, and
-  `video=F6` selection through the UI-owned mode catalog and bindings.
-- Keep history storage, autokey playback/recording, and conversion runtime
-  state in their existing UI owners; do not relocate UI state into engine.
-- Review existing command results, diagnostics, and UI effect application
-  before choosing the boundary.  Do not assume that extending
-  `CommandParseResult` is the agreed mechanism.
-- Retain the earlier 53.2 proposal as an option to evaluate: return UI-only
-  settings through `CommandParseResult`, then let `apply_command_effects()`
-  apply them in UI instead of the parser mutating UI globals.  That
-  proposal reuses the existing result/effect boundary rather than adding
-  a second settings dispatcher or synchronous wrapper; it is not yet the
-  chosen design.
-- Preserve startup, restart, and reset defaults, command ordering,
-  last-value-wins behavior, nested parameter files, invalid-argument
-  reporting, and valid effects preceding a later error.  Failed generation
-  actions must not execute.
-- Account for all parser-dependent video-key work deferred from 53.1.3.
-  Decide how `video=F6` processing requests mode selection using the
-  separate UI-owned key associations.  Replace the temporary direct read
-  of `g_video_mode_keys` in `cmdfiles.cpp` and remove its marked
-  `ui/video_mode.h` include.  Do not restore a key field to
-  `VideoInfo` or move the binding storage into engine for parser access.
-  Do not hide UI dependencies behind renamed includes or add synchronous
-  parser-to-UI callbacks.
-- After agreement, record the design and small implementation slices.
-  Do not combine that implementation with this decision.
+- Design one parsed parameter representation shared by UI and engine
+  handlers.  Keep name/value splitting, slash-separated values, numeric
+  recognition, and case preservation in common syntax processing.
+- Decide how to expose the existing private `Command` machinery without
+  exposing unrelated engine state or duplicating parsing in UI.
+- Separate syntax errors from parameter-specific interpretation and
+  validation.  Preserve ownership and lifetime of parsed string views.
+- Record the agreed ownership, API changes, small implementation slices,
+  and focused automated coverage.  Do not implement them in this slice.
 
-Done when:
+Done when: the shared syntax boundary and its consumers are agreed.
 
-- The engine/UI parameter boundary and handling of mixed parameter sets
-  are agreed, with focused implementation slices and validation coverage.
-- Those implementation slices explicitly remove parser UI-header and
-  UI-global dependencies while preserving UI application of settings.
+Validation: review existing parameter tests for empty values, omitted
+fields, filenames, numeric forms, and arbitrary precision.  Identify
+coverage gaps; no build or manual testing is required.
 
-Validation: plan separate coverage for parsed UI requests and their UI
-application.  Include defaults, repeated settings, nested files, invalid
-arguments, partial failure, and suppression of failed generation actions.
-Review existing parameter, startup, command-diagnostic, autokey, stereo,
-and batch tests against those requirements.  This slice changes the plan
-only; no build or manual testing is required.
+### 53.5.2. Parameter Recognition And Errors Design
+
+Source: `cmd_arg`, `handle_command`, `s_startup_commands`, `s_commands`,
+`CmdFile`, and `CommandDiagnostics` in the command parser.
+
+Scope: design discussion and plan updates only; no source changes.
+
+Work:
+
+- Design UI-first handling followed by engine delegation only when UI
+  does not recognize the parameter name.  Distinguish that outcome from
+  acceptance and rejection of a recognized parameter.
+- Assign one owner to each name.  Cover video prompting, virtual screens,
+  history capacity, and autokey mode/name; identify mixed parameters for
+  53.5.4.  Do not use current global-variable placement as proof of owner.
+- Preserve startup-only restrictions, processing context, the existing
+  debug override, and diagnostic conventions across both handler groups.
+- Decide how duplicate names are detected without relying on lookup
+  priority to conceal ambiguous ownership.
+- Record agreed result handling and focused implementation slices.
+
+Done when: ownership, delegation, context restrictions, and error
+reporting have an agreed contract.
+
+Validation: specify tests for unknown names, malformed UI values such as
+`maxhistory=garbage`, restricted commands, and duplicate ownership.
+Review existing diagnostics tests; no build or manual testing is required.
+
+### 53.5.3. Parameter Source Routing Design
+
+Source: `cmd_files`, `process_sstools_ini`, `process_simple_command`,
+`process_file`, `process_file_set_name`, `command_file`, `load_commands`,
+and the UI startup, file-load, and command-entry callers.
+
+Scope: design discussion and plan updates only; no source changes.
+
+Work:
+
+- Choose the common per-parameter routing point for command-line input,
+  startup configuration, indirect files, named parameter sets, and
+  interactive command entry.
+- Account for `command_file` calling `cmd_arg` internally.  Intercepting
+  only the outer command-line call must not leave file parameters on an
+  engine-only path.
+- Keep file reading, parameter-set processing, and engine interpretation
+  engine-owned.  Decide how source processing exposes parameters to
+  UI-owned routing without synchronous engine-to-UI callbacks, forwarding
+  wrappers, or moving the entire parser into UI.
+- Preserve source context, file lifetime, set boundaries, comments, and
+  existing indirect-file behavior.  Retain an explicit set-completion
+  boundary for the compatibility work considered in 53.5.7.
+- Record the agreed control flow and small implementation slices.
+
+Done when: every supported source reaches the same ownership decision
+and engine source processing cannot bypass UI handling.
+
+Validation: map existing startup, parameter-file, command-entry, autokey,
+and batch tests to each route.  Identify missing equivalent-source
+coverage; no build or manual testing is required.
+
+### 53.5.4. Mixed Parameter Ownership Design
+
+Source: `cmd_video`, `cmd_rds`, `cmd_rds_texture`, video-mode selection,
+`ui/video_mode.h`, `ui/stereo.h`, and `geometry/stereo_params.h`.
+
+Scope: design discussion and plan updates only; no source changes.
+
+Work:
+
+- Classify parameters with both UI and engine effects and agree which
+  handler coordinates each complete parameter.
+- Design `video=F6` handling so UI resolves its separate key-to-mode
+  associations and engine receives mode information, not a key binding.
+  Preserve the distinction between requesting and activating a mode.
+- Include the parser-dependent key-name work deferred from 53.1.3.
+  Specify removal of the marked `ui/video_mode.h` include and direct
+  `g_video_mode_keys` lookup from `cmdfiles.cpp`, and of `ui/id_keys.h`
+  from `engine/video_mode.cpp`.  Do not restore `VideoInfo::key` or move
+  UI binding storage into engine.
+- Separate automatic stereo conversion and texture-filename reuse policy
+  from geometry inputs.  Design coordination for `rds` and `rds-texture`,
+  including omitted values that retain existing engine settings.
+- Agree validation and application order without duplicate geometry
+  validation, reparsing forwarded commands, or engine queries into UI.
+  Keep history, autokey, and conversion runtime state in their UI owners.
+- Record small implementation slices for the individual mixed commands.
+
+Done when: each mixed parameter has explicit ownership and engine-facing
+data, with no renamed or relocated UI dependency.
+
+Validation: plan separate handler and application coverage for video
+bindings, batch image sizing, stereo defaults, texture reuse, and invalid
+mixed values.  No build or manual testing is required.
+
+### 53.5.5. Parameter Defaults And Reset Design
+
+Source: `init_vars_run`, `init_vars_restart`, `init_vars_fractal`,
+`reset_startup_commands`, `cmd_reset`, and their UI startup/reset callers.
+
+Scope: design discussion and plan updates only; no source changes.
+
+Work:
+
+- Inventory UI assignments in initialization as well as explicit
+  parameter handlers.  Define the defaults that each owner initializes.
+- Distinguish first-run initialization, restart through `<Insert>`, and
+  the `reset=` parameter.  Preserve their different reset scopes.
+- Account for video prompting and virtual-screen defaults in
+  `init_vars_restart`; do not reset them merely because `cmd_reset`
+  invokes `init_vars_fractal`.
+- Agree how the outer coordinator invokes the appropriate engine and UI
+  initialization profiles, including startup-configuration reapplication
+  and the existing suppression of mode selection on restart.
+- Record small implementation slices without introducing a universal
+  reset or relocating UI settings into engine.
+
+Done when: initialization ownership and the exact reset profiles are
+agreed for every affected UI setting.
+
+Validation: specify defaults, overrides, repeated startup, `<Insert>`,
+and `reset=` coverage using existing startup and parameter tests.
+No build or manual testing is required.
+
+### 53.5.6. Parameter Ordering And Failure Design
+
+Source: the `cmd_files` and `command_file` loops, `append_result`,
+generation-action handlers, and `ui/command_effects.cpp`.
+
+Scope: design discussion and plan updates only; no source changes.
+
+Work:
+
+- Preserve source order with UI and engine parameters interleaved.
+  Partition handlers, not execution into separate UI and engine passes.
+- Preserve repeated-setting behavior, order-dependent defaults, reset
+  positions, and valid effects preceding a later invalid parameter.
+- Retain source-specific failure behavior: parameter files stop at a bad
+  argument, while the command-line loop can continue to later arguments.
+  Do not introduce whole-input rollback or success-only UI application.
+- Preserve generation-action termination and suppression on errors.
+  Review existing effect application instead of treating UI assignments
+  as deferred generation actions.
+- Record application timing, failure rules, and implementation slices.
+  Do not change unrelated parser behavior while separating ownership.
+
+Done when: ordering, partial failure, and generation-action behavior are
+agreed across both handler groups and every source.
+
+Validation: specify mixed sequences, repeated values, errors before and
+after valid settings, indirect files, and failed generation actions.
+Reuse existing command-effect tests; no build or manual testing is
+required.
+
+### 53.5.7. Parameter Consequence Reporting Design
+
+Source: `CmdArgFlags`, `CommandParseResult`, `append_result`,
+`apply_command_effects`, command callers, and the legacy adjustments at
+the end of `command_file`.
+
+Scope: design discussion and plan updates only; no source changes.
+
+Work:
+
+- Agree how both handler groups report diagnostics, parameter-change
+  flags, reset indications, and actions to their callers.
+- Distinguish parameter ownership from consequences.  Account for UI
+  settings such as `maxhistory` that currently return `FRACTAL_PARAM`
+  and `PARAM_3D`; do not silently reclassify their effects.
+- Preserve result aggregation and parameter-set completion.  Keep legacy
+  compatibility adjustments in engine and at their existing boundaries.
+- Review `CommandParseResult` and `apply_command_effects` for reuse
+  without assuming an expanded UI-settings result is required.  UI
+  handlers own UI settings; engine must not gain UI state or callbacks.
+- Record the agreed reporting contract, focused implementation slices,
+  and separate coverage for handlers and application of their results.
+  Ensure the combined design removes the remaining parser UI includes
+  and UI-global dependencies without dropping their behavior.
+
+Done when: reporting and compatibility behavior are agreed and all seven
+design decisions have actionable, small implementation slices.
+
+Validation: review parameter, startup, diagnostic, command-effect,
+autokey, stereo, and batch tests for result flags, aggregation, reset,
+legacy versions, and action suppression.  Identify focused gaps only;
+no build or manual testing is required.
 
 ## Current Direct And Indirect Input Leaks
 
@@ -1200,14 +1358,15 @@ and setup-policy couplings, not direct input polling:
 - `VideoInfo` is key-free.  UI owns the separate `g_video_mode_keys`
   associations, the selected-entry binding, key lookup, and binding-name
   formatting.  `engine/video_mode.cpp` still includes `ui/id_keys.h`
-  for the deferred key-name parser.  Slice 53.5 handles that dependency.
+  for the deferred key-name parser.  Design slice 53.5.4 covers removal.
 - `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h`, `ui/history.h`,
   `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  The marked
   `ui/video_mode.h` include permits the temporary mechanical lookup of
-  UI-owned bindings; 53.5 decides and implements that parser boundary.
+  UI-owned bindings.  Design slices 53.5.1 through 53.5.7 specify option 1
+  before separate implementation slices remove these dependencies.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy;
-  their parser decoupling is deferred to the design decision in 53.5.
+  design slice 53.5.4 covers their mixed-parameter boundary.
 - GIF evolution records and comparisons are I/O-owned; public GIF metadata
   headers no longer import UI.  `io/loadfile.cpp` explicitly includes
   `ui/evolve.h` for its existing application of evolution runtime state.
