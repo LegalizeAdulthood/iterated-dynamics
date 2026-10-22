@@ -40,11 +40,11 @@ The audit below records the remaining reverse calls inside that structure:
   `libid/fractals/Bifurcation.cpp`.
 - `libid/ui/cellular.cpp` drives `libid/fractals/Cellular.cpp`.
 - `libid/ui/diffusion.cpp` drives `libid/fractals/Diffusion.cpp`.
-- `libid/ui/dynamic2d.cpp` drives `libid/fractals/lorenz.cpp`.
+- `libid/ui/OrbitController.cpp` drives selected 2D orbit and Dynamic2D
+  work in `libid/fractals/lorenz.cpp`.
 - `libid/ui/ifs2d.cpp` drives `libid/fractals/lorenz.cpp`.
 - `libid/ui/StereoController.cpp` drives selected 3D IFS and orbit work
   owned by `libid/engine/NonStandardFractal.cpp`.
-- `libid/ui/orbit2d.cpp` drives `libid/fractals/lorenz.cpp`.
 - `libid/ui/plasma.cpp` drives `libid/fractals/Plasma.cpp`.
 - `libid/ui/standard_4d.cpp` drives
   `libid/fractals/julibrot.cpp`.
@@ -636,6 +636,10 @@ The concrete render operation objects are:
   servicing.  Engine selection and sound-source classification do not
   depend on UI renderer pointers.  The legacy rendering entry is gone.
   Orbit2D and Dynamic2D keep their existing increment and resume formats;
+  `ui::OrbitController` steps both with a caller-owned SoundSession,
+  retaining sound waits, menu interruption, disk-progress feedback, and
+  completion drain.  Its handler scope ends on completion, suspension,
+  or failure.  Synchronous entries remain marked for 52.12 removal.
   Standard4D still yields after each symmetric pixel pair.  Standalone
   inverse Julia owns point completion and prepared-queue lifetime;
   its controller owns allocation retries and fallback notifications.
@@ -1076,23 +1080,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 52.4. Stepwise Orbit Sound Context
-
-Source: `ui/orbit2d.cpp` and `ui/dynamic2d.cpp`.
-
-Work:
-
-- Replace the duplicated loop policies with `OrbitController`, used for
-  both selected operations with a caller-owned SoundSession.
-- Retain the existing sound wait, key handling, suspension, and drain
-  behavior around one operation increment.  Preserve Dynamic2D's
-  2,048-iteration chunks and Orbit2D's existing point cadence.
-- Keep marked synchronous bridges until 52.12; do not add yield points
-  or poll input more often to accommodate the context.
-
-Validation: existing sound/backpressure/resume tests and orbit-operation
-scripts.  Verify direct stepping without repeating accepted samples.
-
 ### 52.5. Stepwise IFS2D And Standard4D Contexts
 
 Source: `ui/ifs2d.cpp` and `ui/standard_4d.cpp`.
@@ -1346,10 +1333,8 @@ still poll the driver queue directly:
 
 - `libid/ui/BifurcationController.cpp`
 - `libid/ui/cellular.cpp`
-- `libid/ui/dynamic2d.cpp`
 - `libid/ui/ifs2d.cpp`
 - `libid/ui/lsystem.cpp`
-- `libid/ui/orbit2d.cpp`
 - `libid/ui/plasma.cpp`
 - `libid/ui/standard_4d.cpp`
 - `libid/ui/TestPointController.cpp`
@@ -1368,6 +1353,7 @@ Handler-based render controllers that still rely on
 - `libid/ui/DiffusionController.cpp`
 - `libid/ui/frothy_basin.cpp`
 - `libid/ui/LyapunovController.cpp`
+- `libid/ui/OrbitController.cpp`
 - `libid/ui/popcorn.cpp`
 - `libid/ui/StandardFractalController.cpp`
 - `libid/ui/standard_orbit_plot.cpp`

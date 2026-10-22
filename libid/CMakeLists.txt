@@ -272,6 +272,7 @@ add_library(libid
     include/ui/not_disk_msg.h ui/not_disk_msg.cpp
     include/ui/non_standard_fractal.h ui/non_standard_fractal.cpp
     include/ui/orbit2d.h ui/orbit2d.cpp
+    include/ui/OrbitController.h ui/OrbitController.cpp
     include/ui/OrbitDelayTimer.h ${ID_ORBIT_DELAY_TIMER_SOURCE}
     include/ui/passes_options.h ui/passes_options.cpp
     include/ui/plasma.h ui/plasma.cpp

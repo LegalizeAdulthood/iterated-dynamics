@@ -13,6 +13,8 @@ namespace id::ui
 
 class SoundSession;
 
+// TODO: removed later
+// Slice 52.12 removes the synchronous render entry point.
 int dynamic2d_type(engine::NonStandardFractal &calculation, SoundSession &sound);
 
 } // namespace id::ui

@@ -21,6 +21,7 @@
 #include <misc/ValueSaver.h>
 #include <ui/dynamic2d.h>
 #include <ui/KeyboardHandler.h>
+#include <ui/OrbitController.h>
 #include <ui/SoundSession.h>
 #include <ui/video.h>
 
@@ -567,6 +568,76 @@ TEST_P(TestDynamicSound, driverRefusalRecordsZeroZChannelWithoutPlaybackWaiting)
         frequencies.push_back(frequency);
     }
     EXPECT_THAT(frequencies, ElementsAreArray(std::vector<int>(18, 220)));
+}
+
+TEST_P(TestDynamicSound, stepwiseControllerSuspendsAt2048IterationsAndResumesWithoutRepeatingSamples)
+{
+    g_max_iterations = 4100;
+    s_x_step = 0.0;
+    s_y_step = 0.0;
+    EXPECT_CALL(*m_output, mute()).Times(1);
+    {
+        SoundSession sound{m_output};
+        NonStandardFractal calculation;
+        calculation.start();
+        ASSERT_EQ(NonStandardFractal::Operation::DYNAMIC_2D, calculation.select());
+        OrbitController controller{calculation, sound};
+        controller.start();
+        EXPECT_EQ(0, s_math_calls);
+
+        controller.iterate(); // existing seed-start yield
+        EXPECT_EQ(0, s_math_calls);
+        controller.iterate();
+
+        EXPECT_EQ(2048, s_math_calls);
+        EXPECT_EQ(2048U, m_samples.size());
+        EXPECT_FALSE(controller.done());
+        controller.suspend();
+        EXPECT_TRUE(controller.done());
+        EXPECT_EQ(-1, controller.result());
+        EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+        EXPECT_FALSE(dispatch_keyboard_key('x'));
+    }
+    SoundSession sound{m_output};
+    NonStandardFractal resumed;
+    resumed.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DYNAMIC_2D, resumed.select());
+    OrbitController controller{resumed, sound};
+    controller.start();
+    for (int steps = 0; steps < 100 && !controller.done(); ++steps)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(6 * 4100, s_math_calls);
+    EXPECT_EQ(6U * 4100, m_samples.size());
+    controller.iterate();
+    EXPECT_EQ(6 * 4100, s_math_calls);
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
+    resumed.finish(false);
+}
+
+TEST_P(TestDynamicSound, stepwiseControllerUpdateFailureCleansUpBeforeFirstIncrement)
+{
+    SoundSession sound{m_output};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DYNAMIC_2D, calculation.select());
+    OrbitController controller{calculation, sound};
+    controller.start();
+    EXPECT_CALL(*m_output, update()).WillOnce(Throw(std::runtime_error("Update failed")));
+    EXPECT_CALL(*m_output, mute()).Times(1);
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0, s_math_calls);
+    EXPECT_TRUE(m_samples.empty());
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
 }
 
 INSTANTIATE_TEST_SUITE_P(DynamicAndCloud, TestDynamicSound, Values(FractalType::DYNAMIC, FractalType::MANDEL_CLOUD));

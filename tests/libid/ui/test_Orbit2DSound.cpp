@@ -20,6 +20,7 @@
 #include <io/library.h>
 #include <misc/ValueSaver.h>
 #include <ui/KeyboardHandler.h>
+#include <ui/OrbitController.h>
 #include <ui/orbit2d.h>
 #include <ui/SoundSession.h>
 #include <ui/video.h>
@@ -490,6 +491,172 @@ TEST_P(TestOrbit2DSound, driverRefusalStillRecordsMappedFrequenciesWithoutWaitin
 
     EXPECT_EQ(GetParam() == FractalType::LORENZ ? "320\n520\n720\n" : "320\n620\n920\n",
         read_text(m_directory / "sound/sound001.txt"));
+}
+
+TEST_P(TestOrbit2DSound, stepwiseControllerAdvancesOnePointPerCall)
+{
+    SoundSession sound{m_output};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
+    OrbitController controller{calculation, sound};
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+    EXPECT_CALL(*m_output, mute()).Times(0);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_TRUE(m_samples.empty());
+    EXPECT_EQ(0, s_math_calls);
+    EXPECT_THROW(controller.start(), std::logic_error);
+    controller.iterate();
+    ASSERT_EQ(1U, m_samples.size());
+    EXPECT_EQ(expected_samples()[0], m_samples[0]);
+    EXPECT_EQ(1, s_math_calls);
+    EXPECT_FALSE(controller.done());
+    for (int steps = 0; steps < 10 && !controller.done(); ++steps)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(expected_samples(), m_samples);
+    controller.iterate();
+    EXPECT_EQ(3, s_math_calls);
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+    calculation.finish(false);
+}
+
+TEST_P(TestOrbit2DSound, stepwiseControllerRetriesRefusedPointWithoutRepeatingMath)
+{
+    SoundSession sound{m_output};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
+    OrbitController controller{calculation, sound};
+    controller.start();
+    EXPECT_CALL(*m_output, play(_))
+        .WillOnce(Invoke(
+            [this](const SoundSample &)
+            {
+                m_ready = false;
+                return false;
+            }))
+        .WillRepeatedly(Invoke(
+            [this](const SoundSample &sample)
+            {
+                m_samples.push_back({sample.x, sample.y, sample.z});
+                return true;
+            }));
+
+    controller.iterate();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_EQ(0, s_math_calls);
+    EXPECT_TRUE(m_samples.empty());
+    EXPECT_TRUE(m_points.empty());
+    EXPECT_TRUE(m_lines.empty());
+    EXPECT_CALL(*m_output, update()).WillRepeatedly(Invoke([this] { m_ready = true; }));
+    controller.iterate();
+    EXPECT_EQ(1, s_math_calls);
+    for (int steps = 0; steps < 10 && !controller.done(); ++steps)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(expected_samples(), m_samples);
+    EXPECT_EQ(3, s_math_calls);
+    calculation.finish(false);
+}
+
+TEST_P(TestOrbit2DSound, stepwiseControllerSuspendsAndResumesAfterAcceptedPoint)
+{
+    EXPECT_CALL(*m_output, mute()).Times(1);
+    {
+        SoundSession sound{m_output};
+        NonStandardFractal calculation;
+        calculation.start();
+        ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
+        OrbitController controller{calculation, sound};
+        controller.start();
+        controller.iterate();
+        ASSERT_EQ(1, s_math_calls);
+
+        controller.suspend();
+
+        EXPECT_TRUE(controller.done());
+        EXPECT_EQ(-1, controller.result());
+        EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+        EXPECT_FALSE(dispatch_keyboard_key('x'));
+    }
+    SoundSession sound{m_output};
+    NonStandardFractal resumed;
+    resumed.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, resumed.select());
+    OrbitController controller{resumed, sound};
+    controller.start();
+    for (int steps = 0; steps < 10 && !controller.done(); ++steps)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(expected_samples(), m_samples);
+    EXPECT_EQ(3, s_math_calls);
+    resumed.finish(false);
+}
+
+TEST_P(TestOrbit2DSound, stepwiseControllerFailureClosesCalculationAndReleasesHandler)
+{
+    SoundSession sound{m_output};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
+    OrbitController controller{calculation, sound};
+    controller.start();
+    EXPECT_CALL(*m_output, play(_)).WillOnce(Throw(std::runtime_error("Playback failed")));
+    EXPECT_CALL(*m_output, mute()).Times(1);
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0, s_math_calls);
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
+}
+
+TEST_P(TestOrbit2DSound, stepwiseControllerFinalizationFailureDoesNotMuteClosedOutput)
+{
+    SoundSession sound{m_output};
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
+    OrbitController controller{calculation, sound};
+    controller.start();
+    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Close failed")));
+    EXPECT_CALL(*m_output, mute()).Times(0);
+
+    EXPECT_THROW(
+        {
+            for (int steps = 0; steps < 10 && !controller.done(); ++steps)
+            {
+                controller.iterate();
+            }
+        },
+        std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(3, s_math_calls);
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
 }
 
 INSTANTIATE_TEST_SUITE_P(PointsAndLines, TestOrbit2DSound, Values(FractalType::HENON, FractalType::LORENZ));

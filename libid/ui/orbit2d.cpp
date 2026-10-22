@@ -8,36 +8,24 @@
 */
 #include "ui/orbit2d.h"
 
-#include "engine/NonStandardFractal.h"
-#include "ui/diskvid.h"
-#include "ui/KeyboardHandler.h"
-#include "ui/SoundSession.h"
-
-#include <memory>
+#include "ui/OrbitController.h"
 
 using namespace id::engine;
 
 namespace id::ui
 {
 
+// TODO: removed later
+// Slice 52.12 replaces the synchronous entry with outer UI stepping.
 int orbit2d_type(NonStandardFractal &calculation, SoundSession &sound)
 {
-    reset_calc_interrupted();
-    KeyboardHandlerPtr main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
-    ScopedKeyboardHandler main_loop_scope{main_loop_handler};
-    while (!calculation.done())
+    OrbitController controller{calculation, sound};
+    controller.start();
+    while (!controller.done())
     {
-        if (!sound.wait_until_ready() || calc_interrupted())
-        {
-            sound.cancel();
-            calculation.suspend();
-            return -1;
-        }
-
-        calculation.iterate();
-        display_disk_storage_progress();
+        controller.iterate();
     }
-    return sound.finish() ? 0 : -1;
+    return controller.result();
 }
 
 } // namespace id::ui
