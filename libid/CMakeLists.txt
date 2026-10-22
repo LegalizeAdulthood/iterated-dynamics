@@ -287,6 +287,7 @@ add_library(libid
     include/ui/slideshw.h ui/slideshw.cpp
     include/ui/SoundSession.h ui/SoundSession.cpp
     include/ui/StereoController.h ui/StereoController.cpp
+    include/ui/StandardFractalController.h ui/StandardFractalController.cpp
     include/ui/standard_fractal.h ui/standard_fractal.cpp
     include/ui/standard_orbit_plot.h ui/standard_orbit_plot.cpp
     include/ui/standard_4d.h ui/standard_4d.cpp

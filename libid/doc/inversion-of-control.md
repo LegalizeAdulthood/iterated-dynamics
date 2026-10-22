@@ -581,6 +581,12 @@ The concrete render operation objects are:
 - `engine::StandardFractal`: owns standard escape-time traversal,
   `StandardPass`, standard pixel state, perturbation, pass dispatch,
   standard orbit-plot requests, and standard suspend/resume state.
+  `ui::StandardFractalController` can start, step, and suspend a
+  caller-owned StandardFractal.  It owns marker presentation, sound
+  servicing, and the existing MainLoop/OrbitToggle handler scopes;
+  completion and suspension release those scopes before returning.
+  The marked synchronous entry still drives this context until 52.12;
+  the outer engine/UI dispatch boundary has not yet been removed.
 - `fractals::Lyapunov`: owns Lyapunov render state by containing an
   `engine::StandardFractal`; Lyapunov-specific per-image setup remains in
   `lyapunov_per_image()` below the dispatch layer.
@@ -1060,33 +1066,215 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 52. Outer UI Render Operation Control
+### 52.2. Stepwise Lyapunov UI Context
 
-Source: `calc_fract()`, the render branches in `ui/big_while_loop.cpp`,
-`ui/calculate_image.cpp`, and standard, Lyapunov, and non-standard UI
-controllers.
+Source: `ui/lyapunov.cpp`.
 
 Work:
 
-- Have the outer UI render context obtain the engine-selected operation,
-  initialize it, poll input, advance bounded work, and finish or suspend.
+- Introduce `LyapunovController` around a caller-owned `Lyapunov`.
+  Its start, single-iteration, done, result, and suspend operations
+  retain the existing marker and keyboard-handler lifetime.
+- Keep `MainLoopKeyboardHandler` and `OrbitToggleKeyboardHandler`
+  behavior unchanged.  Calculation setup and traversal stay in Lyapunov
+  and StandardFractal; no rendering decisions move into UI.
+- The existing synchronous entry may drive this context temporarily.
+  Mark that bridge for removal in 52.12.  Do not add a new full-render
+  callback or hide the loop in another `run()` wrapper.
+
+Validation: controller lifecycle and failure tests, Lyapunov autokey,
+show-dot tests, and existing Lyapunov images.  No new native input path.
+
+### 52.3. Simple Non-Standard UI Contexts
+
+Source: `ui/bifurcation.cpp`, `ui/diffusion.cpp`, and `ui/testpt.cpp`.
+
+Work:
+
+- Introduce `BifurcationController`, `DiffusionController`, and
+  `TestPointController` around caller-owned NonStandardFractal operations.
+- Each iteration performs one existing controller loop body.  Preserve
+  its input throttle, disk-progress presentation, suspension, and result.
+  Calculation state and timing remain in the selected operation.
+- Keep synchronous entries only as marked 52.12 bridges.  No context
+  method may invoke a whole renderer or a calculation-to-UI callback.
+
+Validation: existing interruption scripts and numerical/image fixtures,
+plus direct stepping, terminal-state, and handler-lifetime tests.
+
+### 52.4. Stepwise Orbit Sound Context
+
+Source: `ui/orbit2d.cpp` and `ui/dynamic2d.cpp`.
+
+Work:
+
+- Replace the duplicated loop policies with `OrbitController`, used for
+  both selected operations with a caller-owned SoundSession.
+- Retain the existing sound wait, key handling, suspension, and drain
+  behavior around one operation increment.  Preserve Dynamic2D's
+  2,048-iteration chunks and Orbit2D's existing point cadence.
+- Keep marked synchronous bridges until 52.12; do not add yield points
+  or poll input more often to accommodate the context.
+
+Validation: existing sound/backpressure/resume tests and orbit-operation
+scripts.  Verify direct stepping without repeating accepted samples.
+
+### 52.5. Stepwise IFS2D And Standard4D Contexts
+
+Source: `ui/ifs2d.cpp` and `ui/standard_4d.cpp`.
+
+Work:
+
+- Introduce `IFS2DController` and `Standard4DController` around selected
+  NonStandardFractal operations.  UI retains Julibrot palette handling;
+  engine code retains projection, iteration, and completion.
+- Preserve the existing pre/post-increment polling order and
+  non-resumable interruption.  One context iteration must not contain
+  the whole rendering loop.
+- Mark retained synchronous entries for removal in 52.12.
+
+Validation: IFS, Julibrot, palette-failure, and menu-return fixtures;
+direct context completion, suspension, and cleanup tests.
+
+### 52.6. Stepwise Standalone Inverse Julia Context
+
+Source: `inverse_julia_fractal_type()` in `ui/inverse_julia.cpp`.
+
+Work:
+
+- Introduce `InverseJuliaFractalController`, distinct from the
+  completed-image picker/tool controller.
+- Preserve queue allocation retries and fallback notifications in UI.
+  InverseJuliaFractal retains seeding, point completion, and queue
+  lifetime; the UI context advances one selected-operation increment.
+- Retain `InverseJuliaOrbitKeyboardHandler` semantics, including orbit
+  toggling and returning unconsumed command keys to the main context.
+- Mark the synchronous entry for removal in 52.12.
+
+Validation: queue-failure/fallback tests, inverse-Julia operation scripts,
+direct stepping, and handler cleanup.  Do not retest the unchanged mouse
+picker manually.
+
+### 52.7. Stepwise Ant UI Context
+
+Source: `ui/ant.cpp`.
+
+Work:
+
+- Introduce `AntController` containing the existing UI step/delay state,
+  option-menu interaction, and handler scopes.
+- Its iteration advances at most the existing Ant batch or handles the
+  current input/presentation transition.  Retain single-step, Enter,
+  keypad Enter, Space, delay adjustment, and Ctrl+A behavior.
+- Ant calculation state remains in the selected operation.  Keep only
+  marked synchronous bridges until 52.12.
+
+Validation: ant-step-menu and ant-on-image scripts, direct context
+transitions, and existing batch/image tests.  No native key change.
+
+### 52.8. Stepwise Cellular UI Context
+
+Source: `ui/cellular.cpp`.
+
+Work:
+
+- Introduce `CellularController` holding thinking-screen presentation
+  and keyboard-handler lifetime around a selected Cellular operation.
+- Separate preparation, one generation increment, and terminal
+  presentation without changing generation-sized calculation work.
+- Preserve next-screen continuation and menu return.  Retain only a
+  marked synchronous bridge until 52.12.
+
+Validation: Cellular preparation, diagnostics, menu-return, and next-screen
+tests; direct stepping and presentation cleanup on failure.
+
+### 52.9. Stepwise L-System UI Context
+
+Source: `ui/lsystem.cpp`.
+
+Work:
+
+- Introduce `LSystemController` holding thinking-screen presentation,
+  input throttling, and handler lifetime.
+- Advance the existing sizing/drawing increments without new traversal
+  rules or finer polling.  Engine-owned loading and terminal state stay
+  in the selected operation.
+- Mark the synchronous entry for removal in 52.12.
+
+Validation: existing L-system sizing, validation, and interruption scripts,
+plus direct context transitions and thinking-screen cleanup.
+
+### 52.10. Stepwise Overlay Presentation Contexts
+
+Source: `ui/popcorn.cpp` and `ui/frothy_basin.cpp`.
+
+Work:
+
+- Introduce `PopcornController` and `FrothyBasinController` around the
+  existing selected operations, using caller-owned sound sessions.
+- Keep overlay interaction, palette diagnostics, delay policy, and
+  keyboard scopes in UI.  Each context iteration advances only the
+  existing calculation increment; plots remain calculation work.
+- Preserve the current orbitdelay policy.  This is not the deferred
+  redesign of visible overlays or audio playback.
+- Mark synchronous entries for removal in 52.12.
+
+Validation: existing overlay/sound failure tests, Popcorn and FrothyBasin
+scripts, and image fixtures; direct context suspension and cleanup.
+
+### 52.11. Stepwise Stereo UI Context
+
+Source: `ui/StereoController.cpp` and stereo photographer handling.
+
+Work:
+
+- Give the existing StereoController start, single-iteration, done,
+  result, and suspend operations around a caller-owned selected
+  IFS3D/Orbit3D calculation.
+- Keep per-eye readiness, photographer prompts, saved views, sound
+  servicing, palette setup, and handler lifetime in UI.
+- Keep combined-eye calculation and projection in the engine.  A
+  context iteration cannot invoke a whole eye's rendering loop.
+- Mark `run()` and other retained synchronous bridges for 52.12 removal.
+
+Validation: PHOTO scripts, stereo failure/cleanup tests, sound
+backpressure, and selected-operation fixtures.  No manual image retest.
+
+### 52.12. Outer UI Render Operation Control
+
+Source: `calc_fract()`, the render branches in `ui/big_while_loop.cpp`,
+`ui/calculate_image.cpp`, and the stepwise UI contexts from 52.1-52.11.
+
+Work:
+
+- Add an engine-selected ImageRenderOperation owning the standard,
+  Lyapunov, or non-standard calculation object.  Keep renderer
+  classification in engine code; the operation exposes calculation
+  identity/state, not UI function pointers.
+- Have the outer UI render context obtain that operation, initialize
+  it, and own the corresponding presentation context.  Its loop polls
+  input and advances the existing bounded work through that context.
+  Do not add another synchronous engine/UI wrapper or callback table.
 - Retain application-phase handling and command-effect mapping at their
   existing boundary.  Preserve render completion, save, and exit in batch
   mode, including user interruption while batch rendering.
 - Remove engine calls to `standard_fractal()`, `lyapunov_fractal()`, and
-  `non_standard_fractal()`, then remove obsolete `calc_fract()` dispatch
-  scaffolding.  Do not duplicate renderer classification in UI.
+  `non_standard_fractal()`, obsolete `calc_fract()` dispatch, and the
+  marked synchronous UI entry points.  UI must not classify renderers
+  by fractal type or calculation-function pointers.
 - Remove the temporary `calculate_image()` diagnostic bridge.  Preserve
-  setup warnings, fatal-error cleanup, and batch failure status while
-  the outer UI context invokes the engine operation directly.
-- Reuse UI contexts for presentation while the engine operation owns
-  calculation state, timing, and resource cleanup.
+  setup warnings, fatal-error cleanup, precision-error propagation, and
+  batch failure status at the outer UI boundary.
+- Engine objects own calculation state, timing, and cleanup.  UI
+  contexts own presentation and interaction only.
 
 Done when:
 
-- Rendering begins from UI/application coordination; engine code never
-  selects or invokes a UI controller.
-- No new wrapper retains the old nested engine/UI render call chain.
+- Rendering begins from outer UI/application coordination; engine code
+  never selects or invokes a UI controller.
+- No retained full-render bridge hides a nested rendering loop.
+- The earlier context slices are prerequisites, not completion of this
+  outer-loop ownership change.
 
 Validation: run the full `rt-default` workflow and cover batch completion,
 save, and exit with process tests, plus autokey for supported batch-key

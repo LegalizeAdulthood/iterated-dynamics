@@ -20,6 +20,8 @@
 #include <fractals/fractalp.h>
 #include <misc/ValueSaver.h>
 #include <ui/KeyboardHandler.h>
+#include <ui/SoundSession.h>
+#include <ui/StandardFractalController.h>
 #include <ui/standard_fractal.h>
 #include <ui/video.h>
 
@@ -372,6 +374,174 @@ TEST_F(TestShowDotController, parameterRestartUsesFreshMarkerState)
     EXPECT_EQ(0, standard_fractal());
 
     EXPECT_THAT(m_pixels, Each(7));
+}
+
+class TestStandardFractalController : public TestShowDotController
+{
+};
+
+TEST_F(TestStandardFractalController, requiresStartAndACompletedResult)
+{
+    StandardFractal calculation;
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    StandardFractalController controller{calculation, sound};
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+    EXPECT_EQ(0, m_calculations);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_EQ(0, m_calculations);
+    EXPECT_THROW(controller.start(), std::logic_error);
+    controller.suspend();
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+}
+
+TEST_F(TestStandardFractalController, callerAdvancesExistingChunksToCompletion)
+{
+    clear_image();
+    g_orbit_delay = 1;
+    StandardFractal calculation;
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    StandardFractalController controller{calculation, sound};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_EQ(1, m_calculations);
+    EXPECT_FALSE(controller.done());
+    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !controller.done(); ++chunks)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
+    EXPECT_THAT(m_pixels, Each(7));
+    controller.iterate();
+    EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_F(TestStandardFractalController, smallImageDoesNotIntroduceExtraYields)
+{
+    clear_image();
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    StandardFractal calculation;
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    StandardFractalController controller{calculation, sound};
+    controller.start();
+
+    controller.iterate();
+
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
+    EXPECT_THAT(m_pixels, Each(7));
+}
+
+TEST_F(TestStandardFractalController, explicitSuspensionRestoresMarkerAndResumesSavedWork)
+{
+    clear_image();
+    g_orbit_delay = 1;
+    g_size_dot = 128;
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    {
+        StandardFractal calculation;
+        StandardFractalController controller{calculation, sound};
+        controller.start();
+        for (int chunks = 0; chunks < 100 && m_calculations == 0; ++chunks)
+        {
+            ASSERT_FALSE(controller.done());
+            controller.iterate();
+        }
+        ASSERT_GT(m_calculations, 0);
+
+        controller.suspend();
+
+        EXPECT_TRUE(controller.done());
+        EXPECT_EQ(-1, controller.result());
+        EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+        EXPECT_FALSE(g_resume_data.empty());
+        EXPECT_THAT(m_pixels, Each(Ne(15)));
+        EXPECT_FALSE(dispatch_keyboard_key('o'));
+    }
+    StandardFractal resumed;
+    SoundSession resumed_sound{g_sound, SoundSession::Ownership::BORROWED};
+    StandardFractalController controller{resumed, resumed_sound};
+    controller.start();
+    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !controller.done(); ++chunks)
+    {
+        controller.iterate();
+    }
+
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
+    EXPECT_THAT(m_pixels, Each(7));
+}
+
+TEST_F(TestStandardFractalController, interruptedStepReleasesHandlersBeforeReturning)
+{
+    clear_image();
+    g_orbit_delay = 1;
+    m_interrupt_after = 5;
+    StandardFractal calculation;
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    StandardFractalController controller{calculation, sound};
+    controller.start();
+
+    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !controller.done(); ++chunks)
+    {
+        controller.iterate();
+    }
+
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_EQ('x', m_key);
+    EXPECT_THAT(m_pixels, Each(Ne(15)));
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_F(TestStandardFractalController, failedStepAbortsCalculationAndReleasesPresentation)
+{
+    clear_image();
+    g_orbit_delay = 1;
+    s_calculate = []() -> int { throw std::runtime_error("Calculation failed"); };
+    StandardFractal calculation;
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    StandardFractalController controller{calculation, sound};
+    controller.start();
+    bool failed{};
+
+    for (int chunks = 0; chunks < 100 && !failed; ++chunks)
+    {
+        try
+        {
+            controller.iterate();
+        }
+        catch (const std::runtime_error &error)
+        {
+            EXPECT_STREQ("Calculation failed", error.what());
+            failed = true;
+        }
+    }
+
+    EXPECT_TRUE(failed);
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_THAT(m_pixels, Each(0));
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
 } // namespace id::test
