@@ -38,6 +38,7 @@
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
+#include "ui/video_mode.h"
 
 #include <exception>
 #include <filesystem>
@@ -109,9 +110,12 @@ int prepare_image_restore()
     {
         g_init_mode = video->mode;
         g_video_entry = video->video;
+        g_video_entry_key = g_video_mode_keys[video->mode];
         if (g_init_mode == MAX_VIDEO_MODES - 1)
         {
             g_video_table[g_init_mode] = video->video;
+            g_video_mode_keys[g_init_mode] = 0;
+            g_video_entry_key = 0;
         }
         g_viewport = video->viewport;
         g_file_x_dots = video->width;

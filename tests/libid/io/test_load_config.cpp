@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <io/load_config.h>
 
@@ -7,7 +8,9 @@
 
 #include <engine/pixel_limits.h>
 #include <misc/Driver.h>
+#include <misc/ValueSaver.h>
 #include <ui/id_keys.h>
+#include <ui/video_mode.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -36,6 +39,7 @@ protected:
     void SetUp() override
     {
         g_video_table_len = 0;
+        g_video_mode_keys.fill(0);
         g_bad_config = ConfigStatus::OK;
     }
 
@@ -48,6 +52,8 @@ protected:
         g_video_table_len = 0;
         g_bad_config = ConfigStatus::OK;
     }
+
+    ValueSaver<std::array<int, MAX_VIDEO_MODES>> m_saved_keys{g_video_mode_keys};
 
     std::filesystem::path config_path() const
     {
@@ -108,20 +114,69 @@ TEST_F(TestLoadConfig, gdiDisk)
     ASSERT_EQ(2, g_video_table_len);
     const VideoInfo &gdi_mode{g_video_table[0]};
     EXPECT_STREQ(ID_TEST_GDI_COMMENT, gdi_mode.comment);
-    EXPECT_EQ(ID_TEST_GDI_FN_KEY, gdi_mode.key);
+    EXPECT_EQ(ID_TEST_GDI_FN_KEY, g_video_mode_keys[0]);
     EXPECT_EQ(ID_TEST_GDI_WIDTH, gdi_mode.x_dots);
     EXPECT_EQ(ID_TEST_GDI_HEIGHT, gdi_mode.y_dots);
     EXPECT_EQ(ID_TEST_GDI_COLORS, gdi_mode.colors);
     EXPECT_EQ(&gdi, gdi_mode.driver);
     const VideoInfo &disk_mode{g_video_table[1]};
     EXPECT_STREQ(ID_TEST_DISK_COMMENT, disk_mode.comment);
-    EXPECT_EQ(ID_TEST_DISK_FN_KEY, disk_mode.key);
+    EXPECT_EQ(ID_TEST_DISK_FN_KEY, g_video_mode_keys[1]);
     EXPECT_EQ(ID_TEST_DISK_WIDTH, disk_mode.x_dots);
     EXPECT_EQ(ID_TEST_DISK_HEIGHT, disk_mode.y_dots);
     EXPECT_EQ(ID_TEST_DISK_COLORS, disk_mode.colors);
     EXPECT_EQ(&disk, disk_mode.driver);
 
     close_drivers();
+}
+
+TEST_F(TestLoadConfig, bindsExistingUnassignedModeWithoutChangingDescription)
+{
+    std::vector<std::string> args{"id"};
+    MockDriver disk;
+    const std::string disk_name{"disk"};
+    EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
+    EXPECT_CALL(disk, get_name()).WillRepeatedly(ReturnRef(disk_name));
+    EXPECT_CALL(disk, validate_mode(_)).WillOnce(Return(true));
+    EXPECT_CALL(disk, terminate());
+    load_driver(&disk, args);
+    VideoInfo mode{320, 200, 256, nullptr, "built in"};
+    add_video_mode(&disk, &mode);
+
+    load_config(write_config(320, 200).string());
+    close_drivers();
+
+    EXPECT_EQ(ConfigStatus::OK, g_bad_config);
+    ASSERT_EQ(1, g_video_table_len);
+    EXPECT_EQ(ID_KEY_F1, g_video_mode_keys[0]);
+    EXPECT_EQ(mode, g_video_table[0]);
+}
+
+TEST_F(TestLoadConfig, identicalModesKeepDistinctBindings)
+{
+    std::vector<std::string> args{"id"};
+    MockDriver disk;
+    const std::string disk_name{"disk"};
+    EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
+    EXPECT_CALL(disk, get_name()).WillRepeatedly(ReturnRef(disk_name));
+    EXPECT_CALL(disk, validate_mode(_)).WillRepeatedly(Return(true));
+    EXPECT_CALL(disk, terminate());
+    const std::filesystem::path path{config_path()};
+    std::ofstream cfg{path};
+    ASSERT_TRUE(cfg) << "Unable to write " << path;
+    cfg << "F6,320,200,256,disk,same mode\n"
+           "F7,320,200,256,disk,same mode\n";
+    cfg.close();
+
+    load_driver(&disk, args);
+    load_config(path.string());
+    close_drivers();
+
+    EXPECT_EQ(ConfigStatus::OK, g_bad_config);
+    ASSERT_EQ(2, g_video_table_len);
+    EXPECT_EQ(g_video_table[0], g_video_table[1]);
+    EXPECT_EQ(0, check_vid_mode_key(ID_KEY_F6));
+    EXPECT_EQ(1, check_vid_mode_key(ID_KEY_F7));
 }
 
 TEST_F(TestLoadConfig, parsesFinalLineWithoutTrailingNewline)
@@ -173,7 +228,7 @@ TEST_P(TestLoadConfigGifDimension, acceptsModeUpToGifLimit)
 
     EXPECT_EQ(ConfigStatus::OK, g_bad_config);
     EXPECT_EQ(1, len);
-    EXPECT_EQ(ID_KEY_F1, mode.key);
+    EXPECT_EQ(ID_KEY_F1, g_video_mode_keys[0]);
     EXPECT_EQ(size, mode.x_dots);
     EXPECT_EQ(size, mode.y_dots);
     EXPECT_EQ(256, mode.colors);

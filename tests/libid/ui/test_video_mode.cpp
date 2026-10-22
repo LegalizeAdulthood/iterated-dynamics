@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <engine/video_mode.h>
 
@@ -6,6 +7,7 @@
 #include <engine/VideoInfo.h>
 #include <misc/ValueSaver.h>
 #include <ui/id_keys.h>
+#include <ui/video_mode.h>
 
 #include <gtest/gtest.h>
 
@@ -97,7 +99,7 @@ static void push_modes(const std::initializer_list<int> keys)
 {
     for (const int key : keys)
     {
-        g_video_table[g_video_table_len].key = key;
+        g_video_mode_keys[g_video_table_len] = key;
         ++g_video_table_len;
     }
 }
@@ -105,6 +107,7 @@ static void push_modes(const std::initializer_list<int> keys)
 TEST(TestVideoMode, checkKeyFnKeyNoMatchingModes)
 {
     ValueSaver saved_video_table_len{g_video_table_len, 0};
+    ValueSaver saved_video_mode_keys{g_video_mode_keys};
     push_modes({ID_KEY_F2, ID_KEY_SHF_F2, ID_KEY_CTL_F2, ID_KEY_ALT_F2});
 
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F1));
@@ -120,6 +123,7 @@ TEST(TestVideoMode, checkKeyFnKeyNoMatchingModes)
 TEST(TestVideoMode, checkKeyFnKeyMatchingModes)
 {
     ValueSaver saved_video_table_len{g_video_table_len, 0};
+    ValueSaver saved_video_mode_keys{g_video_mode_keys};
     push_modes({ID_KEY_F1, ID_KEY_F10, //
         ID_KEY_SHF_F1, ID_KEY_SHF_F10, //
         ID_KEY_CTL_F1, ID_KEY_CTL_F10, //
@@ -135,9 +139,49 @@ TEST(TestVideoMode, checkKeyFnKeyMatchingModes)
     EXPECT_EQ(7, check_vid_mode_key(ID_KEY_ALT_F10));
 }
 
+TEST(TestVideoMode, bindingChangesLeaveVideoInfoUnchanged)
+{
+    ValueSaver saved_video_table_len{g_video_table_len, 2};
+    ValueSaver saved_keys{g_video_mode_keys};
+    ValueSaver saved_first{g_video_table[0]};
+    ValueSaver saved_second{g_video_table[1]};
+    ValueSaver saved_active{g_video_entry};
+    const VideoInfo mode{800, 600, 256, nullptr, "same mode"};
+    g_video_table[0] = mode;
+    g_video_table[1] = mode;
+    g_video_entry = mode;
+    g_video_mode_keys[0] = ID_KEY_F6;
+    g_video_mode_keys[1] = ID_KEY_F7;
+
+    EXPECT_EQ(0, check_vid_mode_key(ID_KEY_F6));
+    EXPECT_EQ(1, check_vid_mode_key(ID_KEY_F7));
+
+    g_video_mode_keys[0] = ID_KEY_F8;
+    g_video_mode_keys[1] = ID_KEY_F6;
+
+    EXPECT_EQ(1, check_vid_mode_key(ID_KEY_F6));
+    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F7));
+    EXPECT_EQ(0, check_vid_mode_key(ID_KEY_F8));
+    EXPECT_EQ(mode, g_video_table[0]);
+    EXPECT_EQ(mode, g_video_table[1]);
+    EXPECT_EQ(mode, g_video_entry);
+}
+
+TEST(TestVideoMode, unassignedModeUsesReservedCatalogEntry)
+{
+    ValueSaver saved_video_table_len{g_video_table_len, 1};
+    ValueSaver saved_keys{g_video_mode_keys};
+    g_video_mode_keys[0] = 0;
+
+    EXPECT_EQ(-1, check_vid_mode_key(0));
+    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F6));
+    EXPECT_EQ(MAX_VIDEO_MODES - 1, check_vid_mode_key(1400));
+}
+
 TEST(TestVideoMode, keyName)
 {
     ValueSaver saved_video_table_len{g_video_table_len, 0};
+    ValueSaver saved_video_mode_keys{g_video_mode_keys};
     push_modes({ID_KEY_F1, ID_KEY_F10, //
         ID_KEY_SHF_F1, ID_KEY_SHF_F10, //
         ID_KEY_CTL_F1, ID_KEY_CTL_F10, //
@@ -157,40 +201,40 @@ TEST(TestVideoMode, keyName)
 
 TEST(TestVideoMode, diskVideoModeAcceptsGifSizedImages)
 {
-    EXPECT_TRUE(is_valid_disk_video_mode(VideoInfo{0, 32768, 32768, 256, nullptr, ""}));
-    EXPECT_TRUE(is_valid_disk_video_mode(VideoInfo{0, GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}));
+    EXPECT_TRUE(is_valid_disk_video_mode(VideoInfo{32768, 32768, 256, nullptr, ""}));
+    EXPECT_TRUE(is_valid_disk_video_mode(VideoInfo{GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}));
 }
 
 TEST(TestVideoMode, diskVideoModeRejectsNonGifSizedImages)
 {
-    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{0, 0, 480, 256, nullptr, ""}));
-    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{0, 640, 0, 256, nullptr, ""}));
-    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{0, GIF_MAX_PIXELS + 1, 480, 256, nullptr, ""}));
-    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{0, 640, GIF_MAX_PIXELS + 1, 256, nullptr, ""}));
-    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{0, 640, 480, 16, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{0, 480, 256, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{640, 0, 256, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{GIF_MAX_PIXELS + 1, 480, 256, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{640, GIF_MAX_PIXELS + 1, 256, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{640, 480, 16, nullptr, ""}));
 }
 
 TEST(TestVideoMode, displayVideoModeAcceptsLargePhysicalScreens)
 {
-    EXPECT_TRUE(is_valid_display_video_mode(VideoInfo{0, 32768, 32768, 256, nullptr, ""}, 32768, 32768));
+    EXPECT_TRUE(is_valid_display_video_mode(VideoInfo{32768, 32768, 256, nullptr, ""}, 32768, 32768));
     EXPECT_TRUE(is_valid_display_video_mode(
-        VideoInfo{0, GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}, GIF_MAX_PIXELS, GIF_MAX_PIXELS));
+        VideoInfo{GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}, GIF_MAX_PIXELS, GIF_MAX_PIXELS));
 }
 
 TEST(TestVideoMode, displayVideoModeRejectsInvalidMetadata)
 {
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 0, 480, 256, nullptr, ""}, 640, 480));
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 640, 0, 256, nullptr, ""}, 640, 480));
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 640, 480, 16, nullptr, ""}, 640, 480));
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 640, 480, 256, nullptr, ""}, 0, 480));
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 640, 480, 256, nullptr, ""}, 640, 0));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 480, 256, nullptr, ""}, 640, 480));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{640, 0, 256, nullptr, ""}, 640, 480));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{640, 480, 16, nullptr, ""}, 640, 480));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{640, 480, 256, nullptr, ""}, 0, 480));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{640, 480, 256, nullptr, ""}, 640, 0));
 }
 
 TEST(TestVideoMode, displayVideoModeRejectsModesLargerThanDisplay)
 {
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 1025, 768, 256, nullptr, ""}, 1024, 768));
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 1024, 769, 256, nullptr, ""}, 1024, 768));
-    EXPECT_TRUE(is_valid_display_video_mode(VideoInfo{0, 1024, 768, 256, nullptr, ""}, 1024, 768));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{1025, 768, 256, nullptr, ""}, 1024, 768));
+    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{1024, 769, 256, nullptr, ""}, 1024, 768));
+    EXPECT_TRUE(is_valid_display_video_mode(VideoInfo{1024, 768, 256, nullptr, ""}, 1024, 768));
 }
 
 } // namespace id::test

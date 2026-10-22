@@ -6,7 +6,6 @@
 
 #include "engine/calc_frac_init.h"
 #include "engine/cmdfiles.h"
-#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
@@ -22,6 +21,7 @@
 #include "ui/help.h"
 #include "ui/make_batch_file.h"
 #include "ui/stop_msg.h"
+#include "ui/video_mode.h"
 
 #include <fmt/format.h>
 
@@ -86,11 +86,11 @@ static bool video_choice_less(const VideoModeChoice &lhs, const VideoModeChoice 
     {
         return false;
     }
-    if (g_video_table[lhs.entry_num].key < g_video_table[rhs.entry_num].key)
+    if (g_video_mode_keys[lhs.entry_num] < g_video_mode_keys[rhs.entry_num])
     {
         return true;
     }
-    if (g_video_table[lhs.entry_num].key > g_video_table[rhs.entry_num].key)
+    if (g_video_mode_keys[lhs.entry_num] > g_video_mode_keys[rhs.entry_num])
     {
         return false;
     }
@@ -104,7 +104,7 @@ static bool video_choice_less(const VideoModeChoice &lhs, const VideoModeChoice 
 static void format_video_choice(const int i, const char *err, char *buf)
 {
     const VideoInfo &video{g_video_table[i]};
-    std::string key_name = vid_mode_key_name(video.key);
+    std::string key_name = vid_mode_key_name(g_video_mode_keys[i]);
     *fmt::format_to(buf, "{:<5s} {:<16s} {:<4s} {:5d} {:5d} {:3d} {:<25s}", // 67 chars
         key_name, video.driver->get_description(), err,                     //
         video.x_dots, video.y_dots,                                         //
@@ -208,7 +208,7 @@ std::optional<ImageVideoMode> get_video_mode(const ImageMetadata &metadata, cons
         {
             tmp_flags |= VI_DISK;
         }
-        if (setup.video.key == 0)
+        if (g_video_mode_keys[i] == 0)
         {
             tmp_flags |= VI_NO_KEY;
         }
@@ -337,12 +337,12 @@ std::optional<ImageVideoMode> get_video_mode(const ImageMetadata &metadata, cons
     if (!got_real_mode)  // translate from temp table to permanent
     {
         int i = setup.mode;
-        int j = g_video_table[i].key;
+        int j = g_video_mode_keys[i];
         if (j != 0)
         {
             for (setup.mode = 0; setup.mode < MAX_VIDEO_MODES-1; ++setup.mode)
             {
-                if (g_video_table[setup.mode].key == j)
+                if (g_video_mode_keys[setup.mode] == j)
                 {
                     break;
                 }

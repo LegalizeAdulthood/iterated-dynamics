@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "io/load_config.h"
 
@@ -6,6 +7,7 @@
 #include "engine/video_mode.h"
 #include "io/library.h"
 #include "misc/Driver.h"
+#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <array>
@@ -17,6 +19,7 @@
 
 using namespace id::engine;
 using namespace id::misc;
+using namespace id::ui;
 
 namespace id::io
 {
@@ -117,7 +120,6 @@ void load_config(const std::string &cfg_path)
         video_entry = {};
         const std::size_t comment_len{std::min(fields[4].size(), std::size(video_entry.comment) - 1)};
         std::copy_n(fields[4].data(), comment_len, video_entry.comment);
-        video_entry.key = key;
         video_entry.x_dots = static_cast<int>(x_dots);
         video_entry.y_dots = static_cast<int>(y_dots);
         video_entry.colors = colors;
@@ -138,12 +140,13 @@ void load_config(const std::string &cfg_path)
                         && mode.x_dots == video_entry.x_dots //
                         && mode.y_dots == video_entry.y_dots;
                 });
-            if (it != end && it->key == 0)
+            if (it != end && g_video_mode_keys[it - begin] == 0)
             {
-                it->key = video_entry.key;
+                g_video_mode_keys[it - begin] = key;
             }
             else
             {
+                g_video_mode_keys[g_video_table_len] = key;
                 add_video_mode(video_entry.driver, &video_entry);
             }
         }

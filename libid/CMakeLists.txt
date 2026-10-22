@@ -302,6 +302,7 @@ add_library(libid
     include/ui/text_screen.h ui/text_screen.cpp
     include/ui/thinking.h ui/thinking.cpp
     include/ui/video.h ui/video.cpp
+    include/ui/video_mode.h ui/video_mode.cpp
     include/ui/zoom.h ui/zoom.cpp
 
     "doc/EngineGlobals.md"

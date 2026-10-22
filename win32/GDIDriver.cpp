@@ -79,8 +79,7 @@ private:
     bool m_text_not_graphics{true};
 };
 
-#define DRIVER_MODE(width_, height_) \
-    { 0, width_, height_, 256, nullptr, "                        " }
+#define DRIVER_MODE(width_, height_) {width_, height_, 256, nullptr, "                        "}
 static VideoInfo s_modes[] =
 {
     DRIVER_MODE( 800,  600),

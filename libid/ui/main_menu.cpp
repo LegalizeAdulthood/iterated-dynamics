@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/main_menu.h"
 
@@ -17,8 +18,7 @@
 #include "ui/id_keys.h"
 #include "ui/put_string_center.h"
 #include "ui/tab_display.h"
-#include "engine/video_mode.h"
-
+#include "ui/video_mode.h"
 #include <cstring>
 
 using namespace id::engine;

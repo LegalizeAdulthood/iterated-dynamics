@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/menu_handler.h"
 
@@ -7,7 +8,6 @@
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/spindac.h"
-#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
 #include "fractals/julibrot.h"
@@ -28,6 +28,7 @@
 #include "ui/id_keys.h"
 #include "ui/rotate.h"
 #include "ui/zoom.h"
+#include "ui/video_mode.h"
 
 #include <cstring>
 

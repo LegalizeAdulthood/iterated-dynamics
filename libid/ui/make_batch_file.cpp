@@ -63,6 +63,7 @@
 #include "ui/make_mig_script.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
+#include "ui/video_mode.h"
 
 #include <algos/string_algorithms.h>
 #include <config/string_case_compare.h>
@@ -200,7 +201,7 @@ private:
 MakeParParams::MakeParParams() :
     input_command_file{g_parameter_file.string()},
     input_command_name{g_parameter_set_name},
-    video_mode_key_name{vid_mode_key_name(g_video_entry.key)}
+    video_mode_key_name{vid_mode_key_name(g_video_entry_key)}
 {
     if (m_prompt_record_colors)
     {

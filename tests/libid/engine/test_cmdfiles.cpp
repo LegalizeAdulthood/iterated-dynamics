@@ -70,6 +70,7 @@
 #include <ui/make_batch_file.h>
 #include <ui/slideshw.h>
 #include <ui/stereo.h>
+#include <ui/video_mode.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -1352,9 +1353,7 @@ TEST_F(TestParameterCommandError, videoNoModes)
 TEST_F(TestParameterCommandError, videoNoMatchingMode)
 {
     ValueSaver saved_video_table_len{g_video_table_len, 1};
-    VideoInfo test_mode{};
-    test_mode.key = ID_KEY_F2;
-    ValueSaver saved_video_mode{g_video_table[0], test_mode};
+    ValueSaver saved_video_key{g_video_mode_keys[0], ID_KEY_F2};
     ValueSaver saved_init_mode{g_init_mode, 0};
 
     exec_cmd_arg("video=F1", CmdFile::AT_CMD_LINE);
@@ -1366,9 +1365,7 @@ TEST_F(TestParameterCommandError, videoNoMatchingMode)
 TEST_F(TestParameterCommand, videoMatchingMode)
 {
     ValueSaver saved_video_table_len{g_video_table_len, 1};
-    VideoInfo test_mode{};
-    test_mode.key = ID_KEY_F1;
-    ValueSaver saved_video_mode{g_video_table[0], test_mode};
+    ValueSaver saved_video_key{g_video_mode_keys[0], ID_KEY_F1};
     ValueSaver saved_init_mode{g_init_mode, 0};
 
     exec_cmd_arg("video=F1", CmdFile::AT_CMD_LINE);
@@ -2635,9 +2632,7 @@ TEST_F(TestParameterCommand, startupPreservesOrbitDelayAfterShowDot)
         std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
     CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
     ValueSaver saved_video_table_len{g_video_table_len, 1};
-    VideoInfo test_mode{};
-    test_mode.key = ID_KEY_F6;
-    ValueSaver saved_video_mode{g_video_table[0], test_mode};
+    ValueSaver saved_video_key{g_video_mode_keys[0], ID_KEY_F6};
     ValueSaver saved_orbit_delay{g_orbit_delay, -999};
     ValueSaver saved_orbit_skip_points{g_orbit_skip_points, -999};
     const std::vector<std::string> args{"id", "video=F6", "type=mandel", "showdot=b/20", "orbitdelay=100"};

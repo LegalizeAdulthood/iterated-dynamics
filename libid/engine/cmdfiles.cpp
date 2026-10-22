@@ -69,6 +69,9 @@
 #include "ui/history.h"
 #include "ui/slideshw.h"
 #include "ui/stereo.h"
+// TODO: removed later
+// Parameter processing is decoupled from UI settings in slice 53.5.
+#include "ui/video_mode.h"
 #include <algos/string_algorithms.h>
 
 #include <config/path_limits.h>
@@ -3809,7 +3812,7 @@ static CmdArgFlags cmd_video(const Command &cmd)
     g_init_mode = -1;
     for (int i = 0; i < g_video_table_len; ++i)
     {
-        if (g_video_table[i].key == k)
+        if (g_video_mode_keys[i] == k)
         {
             g_init_mode = i;
             break;

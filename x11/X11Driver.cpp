@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <X11Driver/X11BaseDriver.h>
 
@@ -24,7 +25,7 @@ public:
     bool init(std::vector<std::string> &args) override;
 };
 
-#define DRIVER_MODE(width_, height_) {0, width_, height_, 256, nullptr, "                        "}
+#define DRIVER_MODE(width_, height_) {width_, height_, 256, nullptr, "                        "}
 VideoInfo s_modes[]{
     DRIVER_MODE(800, 600),
     DRIVER_MODE(1024, 768),

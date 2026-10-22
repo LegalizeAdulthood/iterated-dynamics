@@ -6,11 +6,11 @@
 #include "engine/calcfrac.h"
 #include "engine/command_comments.h"
 #include "engine/LogicalScreen.h"
-#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "misc/version.h"
 #include "ui/get_calculation_time.h"
 #include "ui/stop_msg.h"
+#include "ui/video_mode.h"
 
 #include <libcpuid/libcpuid.h>
 
@@ -136,7 +136,7 @@ static std::string expand_var(const std::string &var, const std::time_t local_ti
     }
     if (var == "vidkey")   // 2 to 3 chars
     {
-        return vid_mode_key_name(g_video_entry.key);
+        return vid_mode_key_name(g_video_entry_key);
     }
     if (var == "cpu")
     {

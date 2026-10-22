@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
-#include <string>
 #include <string_view>
 
 namespace id::engine
@@ -10,15 +10,10 @@ namespace id::engine
 
 struct VideoInfo;
 
-// returns g_video_table entry number if the passed keystroke is a
-// function key currently assigned to a video mode, -1 otherwise
-int check_vid_mode_key(int key);
-
+// TODO: removed later
+// Parameter processing keeps key-name parsing here until slice 53.5.
 // returns key number for the passed key name, 0 if not a key name
 int check_vid_mode_key_name(std::string_view key_name);
-
-// return name of passed key number
-std::string vid_mode_key_name(int key);
 
 // true if a disk video mode can be represented by a GIF image
 bool is_valid_disk_video_mode(const VideoInfo &mode);

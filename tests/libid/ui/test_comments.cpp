@@ -12,6 +12,7 @@
 #include <engine/LogicalScreen.h>
 #include <misc/version.h>
 #include <ui/id_keys.h>
+#include <ui/video_mode.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -42,7 +43,7 @@ protected:
         m_saved_version = g_version;
         m_saved_x_dots = g_logical_screen.x_dots;
         m_saved_y_dots = g_logical_screen.y_dots;
-        m_saved_video_key = g_video_entry.key;
+        m_saved_video_key = g_video_entry_key;
         g_calc_time = 0;
         std::tm tm{};
         tm.tm_year = TEST_YEAR - 1900; // years since 1900
@@ -56,7 +57,7 @@ protected:
     void TearDown() override
     {
         init_comments();
-        g_video_entry.key = m_saved_video_key;
+        g_video_entry_key = m_saved_video_key;
         g_logical_screen.y_dots = m_saved_y_dots;
         g_logical_screen.x_dots = m_saved_x_dots;
         g_version = m_saved_version;
@@ -252,7 +253,7 @@ TEST_F(TestComments, expandYDots)
 
 TEST_F(TestComments, expandVidKey)
 {
-    g_video_entry.key = ID_KEY_F6;
+    g_video_entry_key = ID_KEY_F6;
     g_par_comment[0] = "$vidkey$";
 
     const std::string &result{expand_command_comment(0)};

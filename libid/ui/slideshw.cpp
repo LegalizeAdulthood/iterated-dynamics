@@ -21,6 +21,7 @@
 #include "ui/tab_display.h"
 #include "ui/temp_msg.h"
 #include "ui/thinking.h"
+#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <array>

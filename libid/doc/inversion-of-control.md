@@ -1133,45 +1133,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.1.3. UI Video-Mode Mapping And Active Engine Mode
-
-Source: `engine/video_mode.cpp`, `engine/VideoInfo.h`, and UI video-mode
-selection, key-assignment, and configuration consumers.
-
-Work:
-
-- UI owns the selectable mode catalog and the mapping from function keys
-  to modes, including assignment, reassignment, lookup, and binding names.
-- Engine owns only the active video mode's rendering data.  Separate UI
-  catalog entries and their bindings from that active-mode data; a key
-  assignment is not a property of the engine's rendering target.
-- UI resolves a pressed key to a mode and supplies the selected active
-  mode to engine.  Engine calculation must not interpret keys or search
-  the catalog to decide which mode to use.
-- Place key lookup and binding-name conversion with UI mode selection,
-  rather than adding shared engine key constants or deriving UI key
-  constants from engine definitions.
-- Do not change parameter parsing or `cmdfiles.cpp`, including handling
-  of `video=F6`.  Slice 53.5 decides that boundary.  Defer any key-helper
-  move that requires parser changes; do not add a bridge to avoid waiting.
-- Preserve configuration encodings, supported keys, mode selection and
-  reassignment behavior, and active-mode initialization.  Do not change
-  calculation, plotting, polling, or pacing.
-
-Done when:
-
-- Non-parser key mapping and mode-selection responsibilities are UI-owned;
-  engine's active-mode data does not carry function-key assignments.
-- Parser-dependent helpers and mode resolution are explicitly deferred
-  to 53.5, not hidden behind a new wrapper.  This slice does not claim that
-  deferred parser dependencies have been eliminated.
-
-Validation: retain video-key conversion, configuration round-trip, and
-mode-selection coverage.  Verify that UI binding selection supplies the
-correct active mode without making engine data depend on the binding.
-Run the full `rt-default` workflow.  No new manual check is needed for
-unchanged interaction already covered by automation.
-
 ### 53.3. Viewport Adjustment And Resume Policy
 
 Source: `engine/calc_frac_init.cpp` including `ui/zoom.h`, especially
@@ -1265,6 +1226,11 @@ Work:
   reporting, and valid effects preceding a later error.  Failed generation
   actions must not execute.
 - Account for all parser-dependent video-key work deferred from 53.1.3.
+  Decide how `video=F6` processing requests mode selection using the
+  separate UI-owned key associations.  Replace the temporary direct read
+  of `g_video_mode_keys` in `cmdfiles.cpp` and remove its marked
+  `ui/video_mode.h` include.  Do not restore a key field to
+  `VideoInfo` or move the binding storage into engine for parser access.
   Do not hide UI dependencies behind renamed includes or add synchronous
   parser-to-UI callbacks.
 - After agreement, record the design and small implementation slices.
@@ -1291,15 +1257,17 @@ Non-standard operation selection and per-image setup no longer enter
 renderers or UI.  Remaining engine/fractal header dependencies are data
 and setup-policy couplings, not direct input polling:
 
-- `libid/engine/video_mode.cpp`: `ui/id_keys.h` supplies video-key
-  encodings.  Slice 53.1.3 gives mode mapping and selection to UI and
-  retains only active-mode rendering data in engine.  Parser-dependent
-  work waits for 53.5.
+- `VideoInfo` is key-free.  UI owns the separate `g_video_mode_keys`
+  associations, the selected-entry binding, key lookup, and binding-name
+  formatting.  `engine/video_mode.cpp` still includes `ui/id_keys.h`
+  for the deferred key-name parser.  Slice 53.5 handles that dependency.
 - `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h`, `ui/history.h`,
-  `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  Stereo
-  calculation inputs and `CalibrationBars` are geometry-owned.  Automatic
-  conversion and texture-filename reuse remain UI policy; their parser
-  decoupling is deferred to the design decision in 53.5.
+  `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  The marked
+  `ui/video_mode.h` include permits the temporary mechanical lookup of
+  UI-owned bindings; 53.5 decides and implements that parser boundary.
+  Stereo calculation inputs and `CalibrationBars` are geometry-owned.
+  Automatic conversion and texture-filename reuse remain UI policy;
+  their parser decoupling is deferred to the design decision in 53.5.
 - `libid/engine/calc_frac_init.cpp`: `ui/zoom.h` supplies the zoom-box
   condition for invalidating adjusted resume work.  Slice 53.3 returns
   the geometry outcome and leaves that decision in UI.

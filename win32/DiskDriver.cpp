@@ -77,8 +77,7 @@ private:
     unsigned char m_clut[256][3]{};
 };
 
-#define DRIVER_MODE(width_, height_, comment_) \
-    { 0, width_, height_, 256, nullptr, comment_ }
+#define DRIVER_MODE(width_, height_, comment_) {width_, height_, 256, nullptr, comment_}
 static VideoInfo s_modes[] = {
     // clang-format off
     DRIVER_MODE(640, 480,   "VGA                     "),

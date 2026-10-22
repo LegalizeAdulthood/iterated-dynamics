@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /* d_win32.c
  *
@@ -22,8 +23,7 @@ using namespace id::ui;
 namespace id::misc
 {
 
-#define DRIVER_MODE(width_, height_, comment_) \
-    { 0, width_, height_, 256, nullptr, comment_ }
+#define DRIVER_MODE(width_, height_, comment_) {width_, height_, 256, nullptr, comment_}
 static VideoInfo s_modes[] = {
     // clang-format off
     DRIVER_MODE(640, 480,   "VGA                     "),

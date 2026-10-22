@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -19,7 +20,6 @@ enum
 
 struct VideoInfo
 {                         // All we need to know about a video mode:
-    int key;              // function key used to invoke this mode
     int x_dots;           // number of dots across the screen
     int y_dots;           // number of dots down the screen
     int colors;           // number of colors available
@@ -29,8 +29,7 @@ struct VideoInfo
 
 inline bool operator==(const VideoInfo &lhs, const VideoInfo &rhs)
 {
-    return lhs.key == rhs.key       //
-        && lhs.x_dots == rhs.x_dots //
+    return lhs.x_dots == rhs.x_dots //
         && lhs.y_dots == rhs.y_dots //
         && lhs.colors == rhs.colors //
         && lhs.driver == rhs.driver //
@@ -51,4 +50,4 @@ extern VideoInfo g_video_entry;   //
 extern VideoInfo g_video_table[]; //
 extern int g_video_table_len;     //
 
-} // namespace id::ui
+} // namespace id::engine

@@ -26,6 +26,7 @@
 #include <misc/ValueSaver.h>
 #include <ui/big_while_loop.h>
 #include <ui/get_video_mode.h>
+#include <ui/video_mode.h>
 #include <ui/get_3d_params.h>
 #include <ui/history.h>
 #include <ui/id_keys.h>
@@ -239,6 +240,7 @@ protected:
     ValueSaver<VideoInfo> saved_video_entry{g_video_entry};
     ValueSaver<int> saved_video_table_len{g_video_table_len, 1};
     ValueSaver<VideoInfo> saved_video_mode{g_video_table[0]};
+    ValueSaver<int> saved_video_key{g_video_mode_keys[0]};
     ValueSaver<int> saved_file_x_dots{g_file_x_dots, 65535};
     ValueSaver<int> saved_file_y_dots{g_file_y_dots, 65535};
     ValueSaver<int> saved_file_colors{g_file_colors, 256};
@@ -252,7 +254,7 @@ protected:
 
 void TestGetVideoMode::SetUp()
 {
-    g_video_table[0].key = ID_KEY_F2;
+    g_video_mode_keys[0] = ID_KEY_F2;
     g_video_table[0].x_dots = 800;
     g_video_table[0].y_dots = 600;
     g_video_table[0].colors = 256;

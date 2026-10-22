@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/select_video_mode.h"
 
-#include "engine/video_mode.h"
 #include "helpdefs.h"
 #include "io/find_path.h"
 #include "io/is_writeable.h"
@@ -16,6 +16,7 @@
 #include "ui/id_keys.h"
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
+#include "ui/video_mode.h"
 
 #include <fmt/format.h>
 
@@ -70,16 +71,15 @@ static void format_vid_table(const int choice, char *buf)
 {
     const int idx = s_entry_nums[choice];
     assert(idx < g_video_table_len);
-    g_video_entry = g_video_table[idx];
-    const std::string key_name = vid_mode_key_name(g_video_entry.key);
-    const std::string &description = g_video_entry.driver->get_description();
-    const std::string &driver_name = g_video_entry.driver->get_name();
-    const std::string_view comment{bounded_string(g_video_entry.comment, sizeof(g_video_entry.comment))};
+    const VideoInfo &video{g_video_table[idx]};
+    const std::string key_name = vid_mode_key_name(g_video_mode_keys[idx]);
+    const std::string &description = video.driver->get_description();
+    const std::string &driver_name = video.driver->get_name();
+    const std::string_view comment{bounded_string(video.comment, sizeof(video.comment))};
     const std::string row{fmt::format("{:<5} {:<12} {:5d} {:5d} {:3d}  {:<12} {:<26}",
         std::string_view{key_name}.substr(0, VIDEO_MODE_KEY_LEN),
-        std::string_view{description}.substr(0, VIDEO_MODE_NAME_LEN), g_video_entry.x_dots, g_video_entry.y_dots,
-        g_video_entry.colors, std::string_view{driver_name}.substr(0, VIDEO_MODE_DRIVER_LEN),
-        comment.substr(0, VIDEO_MODE_COMMENT_LEN))};
+        std::string_view{description}.substr(0, VIDEO_MODE_NAME_LEN), video.x_dots, video.y_dots, video.colors,
+        std::string_view{driver_name}.substr(0, VIDEO_MODE_DRIVER_LEN), comment.substr(0, VIDEO_MODE_COMMENT_LEN))};
     copy_row(buf, row);
 }
 
@@ -94,20 +94,12 @@ int select_video_mode(const int current_mode)
     std::iota(s_entry_nums.begin(), s_entry_nums.end(), 0);
     std::sort(s_entry_nums.begin(), s_entry_nums.end(), ent_less);
 
-    // pick default mode
-    if (current_mode < 0)
-    {
-        g_video_entry.colors = 256;
-    }
-    else
-    {
-        g_video_entry = g_video_table[current_mode];
-    }
+    // Pick the current catalog entry, or the first 256-color mode.
     int i;
     for (i = 0; i < g_video_table_len; ++i)  // find default mode
     {
-        if (g_video_entry.colors == g_video_table[s_entry_nums[i]].colors //
-            && (current_mode < 0 || g_video_entry == g_video_table[s_entry_nums[i]]))
+        if ((current_mode < 0 && g_video_table[s_entry_nums[i]].colors == 256) //
+            || s_entry_nums[i] == current_mode)
         {
             break;
         }
@@ -139,25 +131,14 @@ int select_video_mode(const int current_mode)
     }
     // picked by function key or ENTER key
     i = i < 0 ? -1 - i : s_entry_nums[i];
-    // the selected entry now in g_video_entry
     g_video_entry = g_video_table[i];
+    g_video_entry_key = g_video_mode_keys[i];
 
-    // copy id.cfg table to resident table, note selected entry
-    int k = 0;
-    for (i = 0; i < g_video_table_len; ++i)
-    {
-        if (g_video_table[i].key > 0)
-        {
-            if (g_video_entry == g_video_table[i])
-            {
-                k = g_video_table[i].key;
-            }
-        }
-    }
-    int ret = k;
-    if (k == 0)  // selected entry not a copied (assigned to key) one
+    int ret = g_video_entry_key;
+    if (ret == 0) // selected mode has no function key assigned
     {
         g_video_table[MAX_VIDEO_MODES - 1] = g_video_entry;
+        g_video_mode_keys[MAX_VIDEO_MODES - 1] = 0;
         ret = 1400; // special value for check_vidmode_key
     }
 
@@ -190,7 +171,7 @@ static int check_mode_key(const int key, const int choice)
                 || (mode_key >= ID_KEY_SHF_F1 && mode_key <= ID_KEY_ALT_F10));
     };
     const int i = s_entry_nums[choice];
-    if (const int mode_key = g_video_table[i].key; mode_key != 0 && !is_mode_key(mode_key))
+    if (const int mode_key = g_video_mode_keys[i]; mode_key != 0 && !is_mode_key(mode_key))
     {
         // video mode key wasn't valid?
         return 0;
@@ -205,9 +186,9 @@ static int check_mode_key(const int key, const int choice)
     if (key == '-')
     {
         // unassign key?
-        if (g_video_table[i].key != 0)
+        if (g_video_mode_keys[i] != 0)
         {
-            g_video_table[i].key = 0;
+            g_video_mode_keys[i] = 0;
             s_modes_changed = true;
         }
         return 0;
@@ -219,13 +200,13 @@ static int check_mode_key(const int key, const int choice)
     {
         for (int k = 0; k < g_video_table_len; ++k)
         {
-            if (g_video_table[k].key == j)
+            if (g_video_mode_keys[k] == j)
             {
-                g_video_table[k].key = 0;
+                g_video_mode_keys[k] = 0;
                 ret = -1; // force redisplay
             }
         }
-        g_video_table[i].key = j;
+        g_video_mode_keys[i] = j;
         s_modes_changed = true;
     }
     return ret;
@@ -233,12 +214,12 @@ static int check_mode_key(const int key, const int choice)
 
 static bool ent_less(const int lhs, const int rhs)
 {
-    int i = g_video_table[lhs].key;
+    int i = g_video_mode_keys[lhs];
     if (i == 0)
     {
         i = 9999;
     }
-    int j = g_video_table[rhs].key;
+    int j = g_video_mode_keys[rhs];
     if (j == 0)
     {
         j = 9999;
@@ -293,12 +274,12 @@ static void update_id_cfg()
         // replace this line?
         if (line_num == next_line_num)
         {
-            const auto [key, x_dots, y_dots, colors, driver, comment] = g_video_table[next_mode];
-            std::fprintf(out_file, "%-4s,%4d,%5d,%3d,%s,%s\n", //
-                vid_mode_key_name(key).c_str(),                //
-                x_dots, y_dots,                                //
-                colors,                                        //
-                driver->get_name().c_str(),                    //
+            const auto [x_dots, y_dots, colors, driver, comment] = g_video_table[next_mode];
+            std::fprintf(out_file, "%-4s,%4d,%5d,%3d,%s,%s\n",           //
+                vid_mode_key_name(g_video_mode_keys[next_mode]).c_str(), //
+                x_dots, y_dots,                                          //
+                colors,                                                  //
+                driver->get_name().c_str(),                              //
                 comment);
             if (++next_mode >= g_video_table_len)
             {

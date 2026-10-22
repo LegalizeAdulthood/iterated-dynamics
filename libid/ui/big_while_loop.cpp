@@ -14,7 +14,6 @@
 #include "engine/sound.h"
 #include "engine/spindac.h"
 #include "engine/UserData.h"
-#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
@@ -47,6 +46,7 @@
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/zoom.h"
+#include "ui/video_mode.h"
 
 #include <config/port.h>
 
@@ -355,6 +355,7 @@ MainState big_while_loop(MainContext &context)
         if (g_calc_status != CalcStatus::RESUMABLE || g_show_file == ShowFile::LOAD_IMAGE)
         {
             g_video_entry = g_video_table[g_adapter];
+            g_video_entry_key = g_video_mode_keys[g_adapter];
             g_logical_screen.x_dots = g_video_entry.x_dots; // # dots across the screen
             g_logical_screen.y_dots = g_video_entry.y_dots; // # dots down the screen
             g_colors = g_video_entry.colors;                // # colors available
