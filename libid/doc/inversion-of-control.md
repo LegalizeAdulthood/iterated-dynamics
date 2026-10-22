@@ -540,6 +540,20 @@ The audited command-result categories are:
 - full reset requested
 - exit requested
 
+## Parameter Processing Boundary
+
+Parameter-set processing, including command interpretation, is an engine
+concern.  Some parameters affect only UI settings or functions; that does
+not make the whole parser UI-owned.  The boundary for those parameters
+remains to be decided in the final design slice, 53.5.
+
+Until that decision, defer all changes to command and parameter parsing,
+including UI-related parameter effects and `video=F6` resolution.  Earlier
+slices must preserve existing parser dependencies.  If a planned move
+requires changing parameter processing, defer that portion to 53.5 rather
+than introduce forwarding wrappers, duplicate helpers, or new engine-to-UI
+dependencies to bypass this restriction.
+
 ## Remaining Inversion-of-Control Slices
 
 These slices use the existing pattern from `ui::AntController`,
@@ -1119,64 +1133,44 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.1.3. Video-Mode Key Boundary: Discuss Before Implementation
+### 53.1.3. UI Video-Mode Mapping And Active Engine Mode
 
-Source: `engine/video_mode.cpp` including `ui/id_keys.h`, video-mode
-configuration key conversion, and their UI callers.
-
-Work:
-
-- Stop for design discussion with the user before implementing this
-  subslice.  The ownership and conversion mechanism are not yet chosen.
-- Do not repeat the reverted approach of adding shared engine key
-  constants and deriving `ui/id_keys.h` constants from them.
-- After agreement, record the specific changes here before implementing.
-  Limit the change to video-mode key ownership and conversion; preserve
-  configuration encodings, supported keys, and keyboard behavior.
-
-Done when:
-
-- The user-approved design removes the video-mode dependency on UI
-  headers without relocating keyboard handling into the engine.
-
-Validation: after design approval, retain video-key conversion and
-configuration round-trip coverage and run the full `rt-default` workflow.
-Determine whether any uncovered interaction requires a manual check from
-the agreed design; do not invent tests before that discussion.
-
-### 53.2. UI-Owned Command Settings
-
-Source: `engine/cmdfiles.cpp` including `ui/big_while_loop.h`,
-`ui/history.h`, `ui/slideshw.h`, and `ui/stereo.h`;
-`ui/command_effects.cpp`.
+Source: `engine/video_mode.cpp`, `engine/VideoInfo.h`, and UI video-mode
+selection, key-assignment, and configuration consumers.
 
 Work:
 
-- Return UI-only settings through `CommandParseResult` rather than
-  mutating UI globals from the parser.  Cover video prompting, virtual
-  screens, history capacity, autokey mode/name, automatic stereo
-  conversion requests, and the texture-filename reuse preference.
-- Let `apply_command_effects()` apply those settings in UI.  Keep history,
-  autokey playback/recording, and conversion runtime state in their
-  existing UI owners; do not relocate that state into engine.
-- Preserve startup and restart defaults, command ordering, last-value-wins
-  behavior, and settings supplied by nested command files.
-- Preserve invalid-argument behavior and the effects of valid commands
-  preceding a later error.  Applying settings must not execute a failed
-  generation action or introduce a new parser-to-UI callback.
-- Use the existing command-result and effect boundary, not a second
-  settings dispatcher or synchronous wrapper.
+- UI owns the selectable mode catalog and the mapping from function keys
+  to modes, including assignment, reassignment, lookup, and binding names.
+- Engine owns only the active video mode's rendering data.  Separate UI
+  catalog entries and their bindings from that active-mode data; a key
+  assignment is not a property of the engine's rendering target.
+- UI resolves a pressed key to a mode and supplies the selected active
+  mode to engine.  Engine calculation must not interpret keys or search
+  the catalog to decide which mode to use.
+- Place key lookup and binding-name conversion with UI mode selection,
+  rather than adding shared engine key constants or deriving UI key
+  constants from engine definitions.
+- Do not change parameter parsing or `cmdfiles.cpp`, including handling
+  of `video=F6`.  Slice 53.5 decides that boundary.  Defer any key-helper
+  move that requires parser changes; do not add a bridge to avoid waiting.
+- Preserve configuration encodings, supported keys, mode selection and
+  reassignment behavior, and active-mode initialization.  Do not change
+  calculation, plotting, polling, or pacing.
 
 Done when:
 
-- Command parsing no longer includes UI headers or accesses UI globals.
-- UI applies the requested settings without changing command semantics.
+- Non-parser key mapping and mode-selection responsibilities are UI-owned;
+  engine's active-mode data does not carry function-key assignments.
+- Parser-dependent helpers and mode resolution are explicitly deferred
+  to 53.5, not hidden behind a new wrapper.  This slice does not claim that
+  deferred parser dependencies have been eliminated.
 
-Validation: cover parsed requests separately from their UI application.
-Exercise defaults, repeated settings, nested files, invalid arguments,
-and partial failure.  Reuse command-diagnostic, startup, autokey, and
-stereo journeys, then run the full `rt-default` workflow.  No new manual
-check is needed for behavior already covered by those tests.
+Validation: retain video-key conversion, configuration round-trip, and
+mode-selection coverage.  Verify that UI binding selection supplies the
+correct active mode without making engine data depend on the binding.
+Run the full `rt-default` workflow.  No new manual check is needed for
+unchanged interaction already covered by automation.
 
 ### 53.3. Viewport Adjustment And Resume Policy
 
@@ -1227,8 +1221,8 @@ Work:
 Done when:
 
 - Fractal setup no longer includes `ui/editpal.h` or reads UI state.
-- Engine and fractal headers and implementations no longer require UI
-  headers, including through shared metadata dependencies.
+- This completes the orbit-tool dependency only; deferred command-parser
+  dependencies are not part of this slice's completion claim.
 - Any newly discovered UI callback has a focused follow-up slice rather
   than being hidden behind a renamed include or forwarding function.
 
@@ -1238,6 +1232,58 @@ Reuse JIIM and orbit-tool autokey journeys and image tests, then run the
 full `rt-default` workflow.  Do not repeat native cursor checks for an
 unchanged presentation path or add source-grep tests.
 
+### 53.5. Command Processing Boundary Design
+
+Source: `engine/cmdfiles.cpp`, its parameter-set and command callers,
+`CommandParseResult`, `ui/command_effects.cpp`, and video-mode selection;
+the parser's current `ui/big_while_loop.h`, `ui/history.h`,
+`ui/slideshw.h`, and `ui/stereo.h` dependencies.
+
+Work:
+
+- Decide with the user how to decouple UI concerns from `cmdfiles.cpp`.
+  This is a design slice, not permission to implement parser changes.
+- Keep parameter-set processing and engine parameter interpretation in
+  engine.  Identify UI-only parameters and commands with mixed engine/UI
+  effects; do not move the whole parser to UI.
+- Cover video prompting, virtual screens, history capacity, autokey
+  mode/name, automatic stereo conversion, texture-filename reuse, and
+  `video=F6` selection through the UI-owned mode catalog and bindings.
+- Keep history storage, autokey playback/recording, and conversion runtime
+  state in their existing UI owners; do not relocate UI state into engine.
+- Review existing command results, diagnostics, and UI effect application
+  before choosing the boundary.  Do not assume that extending
+  `CommandParseResult` is the agreed mechanism.
+- Retain the earlier 53.2 proposal as an option to evaluate: return UI-only
+  settings through `CommandParseResult`, then let `apply_command_effects()`
+  apply them in UI instead of the parser mutating UI globals.  That
+  proposal reuses the existing result/effect boundary rather than adding
+  a second settings dispatcher or synchronous wrapper; it is not yet the
+  chosen design.
+- Preserve startup, restart, and reset defaults, command ordering,
+  last-value-wins behavior, nested parameter files, invalid-argument
+  reporting, and valid effects preceding a later error.  Failed generation
+  actions must not execute.
+- Account for all parser-dependent video-key work deferred from 53.1.3.
+  Do not hide UI dependencies behind renamed includes or add synchronous
+  parser-to-UI callbacks.
+- After agreement, record the design and small implementation slices.
+  Do not combine that implementation with this decision.
+
+Done when:
+
+- The engine/UI parameter boundary and handling of mixed parameter sets
+  are agreed, with focused implementation slices and validation coverage.
+- Those implementation slices explicitly remove parser UI-header and
+  UI-global dependencies while preserving UI application of settings.
+
+Validation: plan separate coverage for parsed UI requests and their UI
+application.  Include defaults, repeated settings, nested files, invalid
+arguments, partial failure, and suppression of failed generation actions.
+Review existing parameter, startup, command-diagnostic, autokey, stereo,
+and batch tests against those requirements.  This slice changes the plan
+only; no build or manual testing is required.
+
 ## Current Direct And Indirect Input Leaks
 
 The synchronous engine-to-UI render dispatch has been removed.
@@ -1246,12 +1292,14 @@ renderers or UI.  Remaining engine/fractal header dependencies are data
 and setup-policy couplings, not direct input polling:
 
 - `libid/engine/video_mode.cpp`: `ui/id_keys.h` supplies video-key
-  encodings.  Slice 53.1.3 requires design discussion before changes.
+  encodings.  Slice 53.1.3 gives mode mapping and selection to UI and
+  retains only active-mode rendering data in engine.  Parser-dependent
+  work waits for 53.5.
 - `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h`, `ui/history.h`,
   `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  Stereo
   calculation inputs and `CalibrationBars` are geometry-owned.  Automatic
   conversion and texture-filename reuse remain UI policy; their parser
-  effects move in 53.2.
+  decoupling is deferred to the design decision in 53.5.
 - `libid/engine/calc_frac_init.cpp`: `ui/zoom.h` supplies the zoom-box
   condition for invalidating adjusted resume work.  Slice 53.3 returns
   the geometry outcome and leaves that decision in UI.
