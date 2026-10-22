@@ -909,6 +909,10 @@ void InverseJuliaController::process()
     ValueSaver saved_help_mode{
         g_help_mode, m_which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
     ValueSaver saved_dispatch{g_dispatch};
+    if (m_which == JIIMType::ORBIT)
+    {
+        g_dispatch.require_orbit_calc();
+    }
     KeyboardHandlerPtr keyboard_handler{make_inverse_julia_keyboard_handler(*this)};
     ScopedKeyboardHandler keyboard_scope{keyboard_handler};
 

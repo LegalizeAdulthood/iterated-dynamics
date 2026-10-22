@@ -20,12 +20,10 @@
 #include "fractals/pickover_mandelbrot.h"
 #include "fractals/popcorn.h"
 #include "misc/debug_flags.h"
-#include "ui/editpal.h"
 
 using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::fractals
 {
@@ -66,7 +64,7 @@ static bool use_calc_mandelbrot()
         && g_use_init_orbit != InitOrbitMode::VALUE            //
         && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) < SOUNDFLAG_X //
         && !g_attractor.enabled                                //
-        && !g_using_jiim                                       //
+        && !g_dispatch.requires_orbit_calc()                   //
         && g_bailout_test == Bailout::MOD                      //
         && (g_orbit_save_flags & OSF_MIDI) == 0;
 }

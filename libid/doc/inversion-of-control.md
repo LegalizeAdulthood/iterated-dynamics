@@ -1133,37 +1133,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.4. Orbit-Tool Calculation Requirements
-
-Source: `fractals/frasetup.cpp` including `ui/editpal.h` for
-`g_using_jiim`; `ui/inverse_julia.cpp` and `FractalDispatch`.
-
-Work:
-
-- Keep `g_using_jiim` and tool presentation state in UI.
-- Let the orbit tool explicitly require the per-orbit callback path
-  through its saved dispatcher.  Express a calculation requirement, not
-  a relocated or renamed UI-active flag.
-- Have Mandel/Julia setup honor that requirement when selecting the
-  optimized calculator.  Preserve ordinary optimized selection and all
-  other eligibility conditions.
-- Restore the prior dispatcher when the tool exits, including failure
-  paths.  Do not change orbit math, plotting, polling, or pacing.
-
-Done when:
-
-- Fractal setup no longer includes `ui/editpal.h` or reads UI state.
-- This completes the orbit-tool dependency only; deferred command-parser
-  dependencies are not part of this slice's completion claim.
-- Any newly discovered UI callback has a focused follow-up slice rather
-  than being hidden behind a renamed include or forwarding function.
-
-Validation: cover Mandel/Julia selection with and without the per-orbit
-requirement and dispatcher restoration after tool completion or failure.
-Reuse JIIM and orbit-tool autokey journeys and image tests, then run the
-full `rt-default` workflow.  Do not repeat native cursor checks for an
-unchanged presentation path or add source-grep tests.
-
 ### 53.5. Command Processing Boundary Design
 
 Source: `engine/cmdfiles.cpp`, its parameter-set and command callers,
@@ -1239,9 +1208,6 @@ and setup-policy couplings, not direct input polling:
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy;
   their parser decoupling is deferred to the design decision in 53.5.
-- `libid/fractals/frasetup.cpp`: `ui/editpal.h` supplies
-  `g_using_jiim` for optimized-calculator selection.  Slice 53.4 replaces
-  the UI-state dependency with an explicit calculation requirement.
 - GIF evolution records and comparisons are I/O-owned; public GIF metadata
   headers no longer import UI.  `io/loadfile.cpp` explicitly includes
   `ui/evolve.h` for its existing application of evolution runtime state.

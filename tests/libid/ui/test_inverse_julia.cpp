@@ -192,6 +192,51 @@ TEST_F(TestInverseJuliaController, frothyBasinOrbitWindowUsesSetupWithoutARender
     EXPECT_FALSE(dispatch_keyboard_key(ID_KEY_LEFT_ARROW));
 }
 
+TEST_F(TestInverseJuliaController, orbitToolRequiresOrbitCallbacksAndRestoresDispatch)
+{
+    g_dispatch.set_calc_type(calc_mandelbrot_type);
+    g_dispatch.set_per_image(
+        []
+        {
+            EXPECT_TRUE(g_dispatch.requires_orbit_calc());
+            g_dispatch.set_calc_type(standard_fractal_type);
+            return true;
+        });
+    const FractalDispatch saved_dispatch{g_dispatch};
+    expect_exit_key('x');
+
+    jiim(JIIMType::ORBIT);
+
+    EXPECT_FALSE(g_dispatch.requires_orbit_calc());
+    EXPECT_EQ(saved_dispatch.orbit_calc(), g_dispatch.orbit_calc());
+    EXPECT_EQ(saved_dispatch.per_pixel(), g_dispatch.per_pixel());
+    EXPECT_EQ(saved_dispatch.per_image(), g_dispatch.per_image());
+    EXPECT_EQ(saved_dispatch.calc_type(), g_dispatch.calc_type());
+    EXPECT_FALSE(dispatch_keyboard_key(ID_KEY_LEFT_ARROW));
+}
+
+TEST_F(TestInverseJuliaController, orbitToolRestoresDispatchAfterSetupFailure)
+{
+    g_dispatch.set_calc_type(calc_mandelbrot_type);
+    g_dispatch.set_per_image(
+        []() -> bool
+        {
+            EXPECT_TRUE(g_dispatch.requires_orbit_calc());
+            g_dispatch.set_calc_type(standard_fractal_type);
+            throw std::runtime_error("Orbit setup failed");
+        });
+    const FractalDispatch saved_dispatch{g_dispatch};
+
+    EXPECT_THROW(jiim(JIIMType::ORBIT), std::runtime_error);
+
+    EXPECT_FALSE(g_dispatch.requires_orbit_calc());
+    EXPECT_EQ(saved_dispatch.orbit_calc(), g_dispatch.orbit_calc());
+    EXPECT_EQ(saved_dispatch.per_pixel(), g_dispatch.per_pixel());
+    EXPECT_EQ(saved_dispatch.per_image(), g_dispatch.per_image());
+    EXPECT_EQ(saved_dispatch.calc_type(), g_dispatch.calc_type());
+    EXPECT_FALSE(dispatch_keyboard_key(ID_KEY_LEFT_ARROW));
+}
+
 TEST_F(TestInverseJuliaController, mouseScopeTracksCursorAndUnsubscribes)
 {
     CrossHairCursor cursor;

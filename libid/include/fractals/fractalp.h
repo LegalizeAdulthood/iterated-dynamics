@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -169,6 +170,8 @@ public:
     void set_calc_type(CalcType value)      { m_calc_type = value; }
     void clear_calc_type()                  { m_calc_type = nullptr; }
     bool has_calc_type() const              { return m_calc_type != nullptr; }
+    bool requires_orbit_calc() const        { return m_requires_orbit_calc; }
+    void require_orbit_calc()               { m_requires_orbit_calc = true; }
     // clang-format on
 
     void init_calc_type(const FractalSpecific &specific)
@@ -188,6 +191,7 @@ private:
     PerPixel m_per_pixel{};
     PerImage m_per_image{};
     CalcType m_calc_type{};
+    bool m_requires_orbit_calc{};
 };
 
 extern const AlternateMath   g_alternate_math[];    // alternate math function pointers

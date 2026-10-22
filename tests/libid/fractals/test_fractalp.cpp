@@ -27,7 +27,6 @@
 #include <math/big.h>
 #include <misc/debug_flags.h>
 #include <misc/version.h>
-#include <ui/editpal.h>
 
 #include <algorithm>
 #include <array>
@@ -138,12 +137,12 @@ private:
     ValueSaver<long> m_saved_distance_estimator{g_distance_estimator, 0};
     ValueSaver<std::array<int, 2>> m_saved_decomp{g_decomp, std::array<int, 2>{0, 0}};
     ValueSaver<int> m_saved_biomorph{g_biomorph, -1};
+    ValueSaver<bool> m_saved_show_orbit{g_show_orbit, false};
     ValueSaver<ColorMethod> m_saved_inside_method{g_inside_method, ColorMethod::ITER};
     ValueSaver<ColorMethod> m_saved_outside_method{g_outside_method, ColorMethod::ITER};
     ValueSaver<InitOrbitMode> m_saved_use_init_orbit{g_use_init_orbit, InitOrbitMode::NORMAL};
     ValueSaver<int> m_saved_sound_flag{g_sound_flag, SOUNDFLAG_OFF};
     ValueSaver<FiniteAttractor> m_saved_attractor{g_attractor, FiniteAttractor{}};
-    ValueSaver<bool> m_saved_using_jiim{id::ui::g_using_jiim, false};
     ValueSaver<Bailout> m_saved_bailout_test{g_bailout_test, Bailout::MOD};
     ValueSaver<int> m_saved_orbit_save_flags{g_orbit_save_flags, 0};
     ValueSaver<BFMathType> m_saved_bf_math{g_bf_math, BFMathType::NONE};
@@ -223,6 +222,7 @@ TEST(TestFractalDispatch, seededDispatchMatchesDefaults)
         const FractalSpecific &from{g_fractal_specific[i]};
         const FractalDispatch dispatch{FractalDispatch(from)};
 
+        EXPECT_FALSE(dispatch.requires_orbit_calc()) << "index " << i << ", " << from.name;
         EXPECT_EQ(from.orbit_calc, dispatch.orbit_calc()) << "index " << i << ", " << from.name;
         EXPECT_EQ(from.per_pixel, dispatch.per_pixel()) << "index " << i << ", " << from.name;
         EXPECT_EQ(from.per_image, dispatch.per_image()) << "index " << i << ", " << from.name;
@@ -513,6 +513,20 @@ TEST(TestFractalDispatch, mandelAndJuliaIneligibleFallBackToStandardCalcType)
 {
     expect_mandel_julia_calc_type_selection(FractalType::MANDEL, mandel_per_image, false);
     expect_mandel_julia_calc_type_selection(FractalType::JULIA, julia_per_image, false);
+}
+
+TEST(TestFractalDispatch, orbitCallbackRequirementUsesStandardCalcType)
+{
+    for (const FractalType type : {FractalType::MANDEL, FractalType::JULIA})
+    {
+        MandelJuliaCalcTypeState state{type};
+        g_dispatch.require_orbit_calc();
+
+        ASSERT_TRUE(per_image());
+
+        EXPECT_TRUE(g_dispatch.requires_orbit_calc());
+        EXPECT_EQ(standard_fractal_type, g_dispatch.calc_type());
+    }
 }
 
 TEST(TestFractalDispatch, showOrbitUsesStandardCalcType)
