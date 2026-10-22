@@ -170,6 +170,26 @@ TEST_F(TestStereoView, combinedViewsDoNotRequireAnotherEye)
     }
 }
 
+TEST_F(TestStereoView, restorationRequiresSeparateViewsForCombinedGlasses)
+{
+    for (const GlassesType glasses : {GlassesType::ALTERNATING, GlassesType::SUPERIMPOSE})
+    {
+        g_glasses_type = glasses;
+        StereoView view;
+        view.start(false);
+
+        EXPECT_EQ(StereoImage::RED, g_which_image);
+        EXPECT_FALSE(view.both_eyes());
+        ASSERT_TRUE(view.next_view_required());
+
+        view.next_view();
+
+        EXPECT_EQ(StereoImage::BLUE, g_which_image);
+        EXPECT_FALSE(view.both_eyes());
+        EXPECT_FALSE(view.next_view_required());
+    }
+}
+
 TEST_F(TestStereoView, viewSelectionDoesNotUseTheLastPlottedEye)
 {
     g_glasses_type = GlassesType::PHOTO;

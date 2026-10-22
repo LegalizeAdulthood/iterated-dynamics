@@ -16,6 +16,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "geometry/plot3d.h"
+#include "geometry/StereoView.h"
 #include "io/decoder.h"
 #include "io/GifRestore.h"
 #include "io/gifview.h"
@@ -37,9 +38,11 @@
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
 
+#include <exception>
 #include <filesystem>
 #include <stdexcept>
 #include <optional>
+#include <utility>
 #include <vector>
 
 using namespace id::engine;
@@ -334,6 +337,57 @@ int restore_image_impl(SoundSession *sound)
 }
 
 } // namespace
+
+int restore_image_views()
+{
+    int status{-1};
+    std::exception_ptr failure;
+    try
+    {
+        StereoView view;
+        view.start(false);
+        status = restore_image();
+        if (status == 0 && view.next_view_required())
+        {
+            if (g_glasses_type == GlassesType::PHOTO)
+            {
+                lorenz_stereo_photographer_prompt();
+            }
+            view.next_view();
+            status = restore_image();
+            if (status == 0 && g_glasses_type == GlassesType::PHOTO)
+            {
+                stop_msg(StopMsgFlags::INFO_ONLY, "Second image (right eye) is ready");
+            }
+        }
+    }
+    catch (...)
+    {
+        failure = std::current_exception();
+    }
+    // The two views share output resources; release them after restoring the screen.
+    if (g_out_line_cleanup)
+    {
+        try
+        {
+            std::exchange(g_out_line_cleanup, nullptr)();
+        }
+        catch (const std::runtime_error &error)
+        {
+            stop_msg(error.what());
+            status = -1;
+            if (g_init_batch != BatchMode::NONE)
+            {
+                g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE;
+            }
+        }
+    }
+    if (failure)
+    {
+        std::rethrow_exception(failure);
+    }
+    return status;
+}
 
 int restore_image()
 {

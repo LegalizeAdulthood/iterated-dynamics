@@ -261,6 +261,23 @@ foreach(PHOTO_TYPE IN ITEMS ifs lorenz3d)
     endforeach()
 endforeach()
 
+foreach(ADVANCE IN ITEMS ENTER ESC)
+    string(TOLOWER "${ADVANCE}" advance_name)
+    set(name "stereo-restore-${advance_name}")
+    id_make_test_home("${name}" STEREO_RESTORE_HOME)
+    file(MAKE_DIRECTORY "${STEREO_RESTORE_HOME}/key")
+    configure_file(stereo_restore.key.in "${STEREO_RESTORE_HOME}/key/stereo_restore.key" @ONLY)
+    add_test(NAME "AutoKeyTest.${name}"
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DCHECK_STEREO=$<SHELL_PATH:$<TARGET_FILE:check-stereo-photo>>"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/stereo_restore_test.cmake"
+        WORKING_DIRECTORY "${STEREO_RESTORE_HOME}")
+    set_tests_properties("AutoKeyTest.${name}"
+        PROPERTIES LABELS "autokey;ui;stereo;restore" TIMEOUT 80)
+endforeach()
+
 id_make_test_home(lyapunov-setup LYAPUNOV_SETUP_HOME
     KEYS lyapunov_setup.key)
 add_test(NAME AutoKeyTest.lyapunov-setup

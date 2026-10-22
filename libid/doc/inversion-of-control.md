@@ -366,7 +366,11 @@ The current code is already part-way through this plan:
   submits each pixel value through `g_sound`, retaining refused pixels
   and plotting accepted pixels once.  Each line's playback completes
   before the next decode; loading and normal completion do not poll input
-  or mute.  Pixel helpers remain in `io/gifview.cpp`.
+  or mute.  Pixel helpers remain in `io/gifview.cpp`.  UI explicitly
+  restores each stereo eye, including alternating and superimposed
+  glasses, using `geometry::StereoView` for projection and full-screen
+  restoration.  UI owns photographer prompts and shared output cleanup;
+  no calculation wrapper calls back into those interactions.
 
 The fresh reverse-call audit also found these live paths:
 
@@ -375,9 +379,6 @@ The fresh reverse-call audit also found these live paths:
   through dispatch function pointers stored in `FractalSpecific`.
   Per-image callbacks perform setup only; their renderer-call bridge
   and nested timer brackets have been removed.
-- `funny_glasses_call()` still invokes photographer prompts during GIF
-  restoration.  Calculated IFS and 3D orbits no longer enter that legacy
-  sequence or invoke a UI controller.
 - Command validation can still invoke modal `stop_msg()` or application
   shutdown through `goodbye()`.
 - Image loading, image saving, and command parsing still select UI
@@ -972,9 +973,12 @@ Existing coverage does not imply coverage of live interaction:
   The reference orbit lands exactly on the default bailout boundary.
   The pass-switch fixture instead uses `center-mag=0/1/1e20`; it does not
   cover that numerical edge case.
-- `TestStereo` covers random-line generation, not PHOTO-mode decisions.
-  Add autokey prompt/save/continue/cancel coverage and controller tests for
-  eye sequencing and cleanup in the stereo controller slice.
+- `TestStereo` covers random-line generation.  PHOTO-mode autokey tests
+  cover calculated-view save/continue/interruption and restored-view
+  save/advance with Enter or Escape.  `TestStereoView` and
+  `TestStereoRestore` cover eye selection, separate GIF decodes, failure
+  status, shared cleanup, and full-screen restoration without input
+  polling during decode.
 - `TestShowDotController` covers exact point and triangle restoration,
   symmetry copies, unfinished pixels, zero-delay batches, menu suspension,
   and restart.  Autokey verifies row progress and checkpoint contents;
@@ -1048,35 +1052,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   not introduce or expect mid-file keyboard cancellation.
 
 ## Implementation Slices
-
-### 50.4. Stereo GIF Restoration UI Ownership
-
-Source: `funny_glasses_call(restore_image)` in `ui/big_while_loop.cpp`,
-the remaining wrapper in `fractals/lorenz.cpp`, and `ui/stereo.cpp`.
-
-Work:
-
-- Have UI explicitly start each restoration view using the shared
-  calculation-owned projection/view operations, invoke atomic GIF
-  restoration, and decide whether to prompt or advance to another eye.
-- Retain separate restoration calls for alternating and superimposed
-  glasses; restoring their two views is not combined-eye calculation.
-- Preserve restore return status, scanline cleanup, batch diagnostics,
-  palette handling, and stereo-pair full-screen restoration on success
-  or failure.
-- Delete `funny_glasses_call()` and its remaining declaration.  Do not
-  move the callback wrapper to a UI file or reintroduce keyboard polling
-  during atomic GIF decode.
-
-Done when:
-
-- Neither calculated stereo images nor restored stereo views use a
-  synchronous calculation wrapper that invokes UI callbacks.
-
-Validation: add autokey coverage for PHOTO-mode restoration choices and
-saved views; retain restore, stereo, and 3D-look fixtures.  Use injected
-restore failures to verify cleanup and display restoration.  Native
-keyboard delivery is unchanged; no manual image comparison.
 
 ### 51. Orbit Renderer Operation Selection
 
@@ -1185,10 +1160,6 @@ mechanism or a source-grep test.
 Calculation code can still reach polling or key-sensitive waiting through
 these direct and indirect paths:
 
-- `libid/fractals/lorenz.cpp`: `funny_glasses_call()` enters a blocking
-  photographer prompt and second-image modal message during GIF
-  restoration only.  Calculated stereo operations return after bounded
-  work to their UI controller.
 - `libid/engine/calcfrac.cpp`, `engine/NonStandardFractal.cpp`,
   and remaining renderer table entries in
   `fractals/fractalp.cpp`: reach UI render loops through direct calls or

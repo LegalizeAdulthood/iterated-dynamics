@@ -558,24 +558,7 @@ MainState big_while_loop(MainContext &context)
             {
                 g_out_line = out_line;        // regular decoding
             }
-            i = funny_glasses_call(restore_image);
-            if (g_out_line_cleanup)              // cleanup routine defined?
-            {
-                try
-                {
-                    g_out_line_cleanup();
-                }
-                catch (const std::runtime_error &error)
-                {
-                    stop_msg(error.what());
-                    i = -1;
-                    if (g_init_batch != BatchMode::NONE)
-                    {
-                        g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE;
-                    }
-                }
-                g_out_line_cleanup = nullptr;
-            }
+            i = restore_image_views();
             if (i == 0)
             {
                 driver_buzzer(Buzzer::COMPLETE);

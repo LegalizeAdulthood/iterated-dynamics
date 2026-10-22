@@ -18,7 +18,7 @@ public:
     StereoView &operator=(const StereoView &) = delete;
     StereoView &operator=(StereoView &&) = delete;
 
-    void start();
+    void start(bool combine_eyes = true);
     bool both_eyes() const;
     bool next_view_required() const;
     void next_view();
@@ -30,6 +30,7 @@ private:
     GlassesType m_glasses{GlassesType::NONE};
     StereoImage m_eye{StereoImage::NONE};
     bool m_started{};
+    bool m_both_eyes{};
 };
 
 } // namespace id::geometry

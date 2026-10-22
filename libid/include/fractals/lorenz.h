@@ -282,9 +282,6 @@ int chip2d_orbit(double *x, double *y, double *z);
 int quadrup_two2d_orbit(double *x, double *y, double *z);
 int three_ply2d_orbit(double *x, double *y, double *z);
 int martin2d_orbit(double *x, double *y, double *z);
-// TODO: removed later
-// Slice 50.4 replaces the remaining GIF restoration wrapper.
-int funny_glasses_call(int (*calc)());
 int icon_orbit(double *x, double *y, double *z);
 int latoo_orbit(double *x, double *y, double *z);
 bool setup_convert_to_screen(Affine *scrn_cnvt);

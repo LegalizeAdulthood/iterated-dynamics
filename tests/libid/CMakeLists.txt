@@ -163,6 +163,7 @@ add_executable(test-id
     ui/test_SoundSession.cpp
     ui/test_StickyOrbitSound.cpp
     ui/test_stereo.cpp
+    ui/test_StereoRestore.cpp
     ui/test_tab_display.cpp
     ui/test_thinking.cpp
     ui/test_video_mode.cpp

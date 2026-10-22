@@ -15,11 +15,13 @@
 #include <filesystem>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 namespace
 {
 
-void check_image(const char *path, const id::fractals::FractalType type, const id::engine::CalcStatus status)
+std::vector<GifByteType> check_image(
+    const char *path, const id::fractals::FractalType type, const id::engine::CalcStatus status)
 {
     if (!std::filesystem::is_regular_file(path))
     {
@@ -52,6 +54,7 @@ void check_image(const char *path, const id::fractals::FractalType type, const i
     {
         throw std::runtime_error{"Unexpected IFS definition in stereo checkpoint"};
     }
+    return {begin, end};
 }
 
 } // namespace
@@ -67,15 +70,23 @@ int main(const int argc, char *argv[])
     {
         const std::string type_name{argv[1]};
         const std::string result{argv[2]};
-        if ((type_name != "ifs" && type_name != "lorenz3d") || (result != "complete" && result != "cancel"))
+        const bool restore{type_name == "restore"};
+        if ((!restore && type_name != "ifs" && type_name != "lorenz3d") ||
+            (result != "complete" && result != "cancel") || (restore && result != "complete"))
         {
             throw std::runtime_error{"Unknown stereo photographer test case"};
         }
-        const id::fractals::FractalType type{
-            type_name == "ifs" ? id::fractals::FractalType::IFS : id::fractals::FractalType::LORENZ_3D};
-        check_image(argv[3], type, id::engine::CalcStatus::IN_PROGRESS);
-        check_image(argv[4], type,
-            result == "complete" ? id::engine::CalcStatus::COMPLETED : id::engine::CalcStatus::NON_RESUMABLE);
+        const id::fractals::FractalType type{restore ? id::fractals::FractalType::PLASMA
+                : type_name == "ifs"                 ? id::fractals::FractalType::IFS
+                                                     : id::fractals::FractalType::LORENZ_3D};
+        const std::vector<GifByteType> left{check_image(
+            argv[3], type, restore ? id::engine::CalcStatus::COMPLETED : id::engine::CalcStatus::IN_PROGRESS)};
+        const std::vector<GifByteType> right{check_image(argv[4], type,
+            result == "complete" ? id::engine::CalcStatus::COMPLETED : id::engine::CalcStatus::NON_RESUMABLE)};
+        if (restore && left == right)
+        {
+            throw std::runtime_error{"Restored stereo views are identical"};
+        }
     }
     catch (const std::exception &error)
     {

@@ -23,7 +23,7 @@ StereoView::~StereoView()
     finish();
 }
 
-void StereoView::start()
+void StereoView::start(const bool combine_eyes)
 {
     if (m_started)
     {
@@ -31,18 +31,19 @@ void StereoView::start()
     }
     m_glasses = g_glasses_type;
     m_eye = m_glasses != GlassesType::NONE ? StereoImage::RED : StereoImage::NONE;
+    m_both_eyes = combine_eyes && alternating_or_superimpose(m_glasses);
     m_started = true;
     setup_plot();
 }
 
 bool StereoView::both_eyes() const
 {
-    return m_started && alternating_or_superimpose(m_glasses);
+    return m_started && m_both_eyes;
 }
 
 bool StereoView::next_view_required() const
 {
-    return m_started && m_eye == StereoImage::RED && m_glasses >= GlassesType::PHOTO &&
+    return m_started && m_eye == StereoImage::RED && m_glasses != GlassesType::NONE && !m_both_eyes &&
         g_display_3d != Display3DMode::NONE;
 }
 

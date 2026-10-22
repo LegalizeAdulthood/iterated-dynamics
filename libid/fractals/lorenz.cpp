@@ -20,7 +20,6 @@
 #include "engine/resume.h"
 #include "engine/SoundOutput.h"
 #include "engine/VideoInfo.h"
-#include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/ifs.h"
@@ -34,8 +33,6 @@
 #include "math/cmplx.h"
 #include "math/sign.h"
 #include "misc/Driver.h"
-#include "ui/stereo.h"
-#include "ui/stop_msg.h"
 
 #include <fmt/format.h>
 
@@ -50,7 +47,6 @@ using namespace id::geometry;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::fractals
 {
@@ -1419,46 +1415,6 @@ bool plot_orbits2d_setup(Affine *scrn_cnvt)
     }
 
     return true;
-}
-
-// TODO: removed later
-// Slice 50.4 replaces the remaining GIF restoration wrapper.
-int funny_glasses_call(int (*calc)())
-{
-    g_which_image = g_glasses_type != GlassesType::NONE ? StereoImage::RED : StereoImage::NONE;
-    plot_setup();
-    g_plot = g_standard_plot;
-    int status = calc();
-    if (g_glasses_type != GlassesType::NONE && status == 0 && g_display_3d != Display3DMode::NONE)
-    {
-        if (g_glasses_type == GlassesType::PHOTO)
-        {
-            lorenz_stereo_photographer_prompt();
-        }
-        g_which_image = StereoImage::BLUE;
-        if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC) && g_dispatch.per_image() != nullptr)
-        {
-            per_image(); // reset for 2nd image
-        }
-        plot_setup();
-        g_plot = g_standard_plot;
-        // is there a better way to clear the graphics screen ?
-        status = calc();
-        if (status == 0 && g_glasses_type == GlassesType::PHOTO) // photographer's mode
-        {
-            stop_msg(StopMsgFlags::INFO_ONLY, "Second image (right eye) is ready");
-        }
-    }
-    if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2 * g_logical_screen.x_dots)
-    {
-        // turn off view windows so will save properly
-        g_logical_screen.x_offset = 0;
-        g_logical_screen.y_offset = 0;
-        g_logical_screen.x_dots = g_screen_x_dots;
-        g_logical_screen.y_dots = g_screen_y_dots;
-        g_viewport.enabled = false;
-    }
-    return status;
 }
 
 IFS3D::IFS3D(const bool both_eyes) :
