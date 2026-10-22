@@ -63,6 +63,14 @@ double g_zoom_box_width{}, g_zoom_box_height{};                 // zoombox size
 double g_zoom_box_skew{};                                       // zoombox shape
 bool g_zoom_enabled{};                                          // true when zoom is enabled
 
+void invalidate_translated_resume(const bool translated)
+{
+    if (translated && g_calc_status == CalcStatus::RESUMABLE && g_zoom_box_width == 1.0)
+    {
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
+    }
+}
+
 static int  check_pan();
 static void fix_work_list();
 static void move_row(int from_row, int to_row, int col);

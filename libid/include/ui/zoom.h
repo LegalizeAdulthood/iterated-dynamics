@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -26,6 +27,9 @@ extern double                g_zoom_box_width;
 extern double                g_zoom_box_x;
 extern double                g_zoom_box_y;
 extern bool                  g_zoom_enabled;
+
+// Invalidate translated resume work only for a full-size zoom box.
+void invalidate_translated_resume(bool translated);
 
 void draw_box(bool draw_it);
 void move_box(double dx, double dy);

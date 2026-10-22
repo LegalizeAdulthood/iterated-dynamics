@@ -1133,35 +1133,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.3. Viewport Adjustment And Resume Policy
-
-Source: `engine/calc_frac_init.cpp` including `ui/zoom.h`, especially
-the double and arbitrary-precision bounds-adjustment paths;
-its UI callers in `big_while_loop.cpp` and `command_effects.cpp`.
-
-Work:
-
-- Remove calculation setup's reads of `g_zoom_box_width`.
-- Report whether bounds adjustment translated the image region, for both
-  double and arbitrary-precision setup.  Keep coordinate adjustment and
-  precision selection in engine.
-- Let the UI caller decide whether that translation invalidates saved
-  work for its active zoom operation.  Preserve the existing full-size
-  zoom-box condition and resumable-status guard.
-- Keep other calculation-status changes, including precision transitions,
-  intact.  Do not move zoom state into engine or add a callback into UI.
-
-Done when:
-
-- Calculation setup neither includes `ui/zoom.h` nor inspects zoom UI
-  state; the UI applies the existing resume-invalidation policy.
-
-Validation: cover translated and unchanged regions in double and
-arbitrary precision, resumable and non-resumable status, and the UI policy
-for full-size versus other zoom boxes.  Reuse resume and image tests, then
-run the full `rt-default` workflow.  No native interaction changes are
-intended, so no additional manual check is needed.
-
 ### 53.4. Orbit-Tool Calculation Requirements
 
 Source: `fractals/frasetup.cpp` including `ui/editpal.h` for
@@ -1268,9 +1239,6 @@ and setup-policy couplings, not direct input polling:
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy;
   their parser decoupling is deferred to the design decision in 53.5.
-- `libid/engine/calc_frac_init.cpp`: `ui/zoom.h` supplies the zoom-box
-  condition for invalidating adjusted resume work.  Slice 53.3 returns
-  the geometry outcome and leaves that decision in UI.
 - `libid/fractals/frasetup.cpp`: `ui/editpal.h` supplies
   `g_using_jiim` for optimized-calculator selection.  Slice 53.4 replaces
   the UI-state dependency with an explicit calculation requirement.

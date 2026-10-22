@@ -17,6 +17,7 @@
 #include "misc/Driver.h"
 #include "ui/help_title.h"
 #include "ui/make_batch_file.h"
+#include "ui/zoom.h"
 
 #include <fmt/format.h>
 
@@ -76,7 +77,7 @@ void make_parameter_file(const MakeParameterFile &request)
     g_logical_screen.y_dots = g_file_y_dots;
     g_logical_screen.x_size_dots = g_logical_screen.x_dots - 1;
     g_logical_screen.y_size_dots = g_logical_screen.y_dots - 1;
-    calc_frac_init();
+    invalidate_translated_resume(calc_frac_init());
     make_batch_file();
 }
 

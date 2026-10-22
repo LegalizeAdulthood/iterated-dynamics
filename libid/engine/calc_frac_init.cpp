@@ -22,7 +22,6 @@
 #include "math/sign.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
-#include "ui/zoom.h"
 
 #include <config/port.h>
 
@@ -35,7 +34,6 @@
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::engine
 {
@@ -54,10 +52,10 @@ int g_distance_estimator_x_dots{};
 int g_distance_estimator_y_dots{};
 int g_distance_estimator_width_factor{};
 
-static void adjust_to_limits(double expand);
+static bool adjust_to_limits(double expand);
 static void smallest_add(double *num);
 static bool ratio_bad(double actual, double desired);
-static void adjust_to_limits_bf(double expand);
+static bool adjust_to_limits_bf(double expand);
 static void smallest_add_bf(BigFloat num);
 
 /* This function calculates the precision needed to distinguish adjacent
@@ -126,8 +124,10 @@ void fractal_float_to_bf()
     g_calc_status = CalcStatus::PARAMS_CHANGED;
 }
 
-void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
+bool calc_frac_init() // initialize a *pile* of stuff for fractal calculation
 {
+    // Retain translations when initialization retries with higher precision.
+    bool bounds_translated{};
     g_old_color_iter = 0L;
     g_color_iter = 0L;
     std::fill_n(g_rhombus_stack, 10, 0);
@@ -257,11 +257,11 @@ init_restart:
     // now setup arrays of real coordinates corresponding to each pixel
     if (g_bf_math != BFMathType::NONE)
     {
-        adjust_to_limits_bf(1.0); // make sure all corners in valid range
+        bounds_translated |= adjust_to_limits_bf(1.0); // make sure all corners in valid range
     }
     else
     {
-        adjust_to_limits(1.0); // make sure all corners in valid range
+        bounds_translated |= adjust_to_limits(1.0); // make sure all corners in valid range
         g_delta_x  = static_cast<LDouble>(g_image_region.m_max.x - g_image_region.m_3rd.x) / static_cast<LDouble>(g_logical_screen.x_size_dots); // calculate stepsizes
         g_delta_y  = static_cast<LDouble>(g_image_region.m_max.y - g_image_region.m_3rd.y) / static_cast<LDouble>(g_logical_screen.y_size_dots);
         const DComplex size3{g_image_region.size3()};
@@ -397,6 +397,7 @@ expand_retry:
     {
         free_bf_vars();
     }
+    return bounds_translated;
 }
 
 void adjust_corner_bf()
@@ -527,7 +528,7 @@ void adjust_corner()
     }
 }
 
-static void adjust_to_limits_bf(const double expand)
+static bool adjust_to_limits_bf(const double expand)
 {
     BigStackSaver saved;
     BigFloat b_corner_x[4];
@@ -749,14 +750,7 @@ static void adjust_to_limits_bf(const double expand)
         }
     }
 
-    /* if (g_calc_status == calc_status_value::RESUMABLE && (adj_x != 0 || adj_y != 0) && (zoom_box_width == 1.0))
-       g_calc_status = calc_status_value::PARAMS_CHANGED; */
-    if (g_calc_status == CalcStatus::RESUMABLE
-        && (is_bf_not_zero(b_adj_x)|| is_bf_not_zero(b_adj_y))
-        && g_zoom_box_width == 1.0)
-    {
-        g_calc_status = CalcStatus::PARAMS_CHANGED;
-    }
+    const bool translated = is_bf_not_zero(b_adj_x) || is_bf_not_zero(b_adj_y);
 
     // xxmin = corner_x[0] - adj_x;
     sub_bf(g_bf_x_min, b_corner_x[0], b_adj_x);
@@ -772,9 +766,10 @@ static void adjust_to_limits_bf(const double expand)
     sub_bf(g_bf_y_3rd, b_corner_y[2], b_adj_y);
 
     adjust_corner_bf(); // make 3rd corner exact if very near other co-ords
+    return translated;
 }
 
-static void adjust_to_limits(const double expand)
+static bool adjust_to_limits(const double expand)
 {
     double corner_x[4];
     double corner_y[4];
@@ -876,10 +871,6 @@ static void adjust_to_limits(const double expand)
             adj_y = f_temp;
         }
     }
-    if (g_calc_status == CalcStatus::RESUMABLE && (adj_x != 0 || adj_y != 0) && g_zoom_box_width == 1.0)
-    {
-        g_calc_status = CalcStatus::PARAMS_CHANGED;
-    }
     g_image_region.m_min.x = corner_x[0] - adj_x;
     g_image_region.m_max.x = corner_x[1] - adj_x;
     g_image_region.m_3rd.x = corner_x[2] - adj_x;
@@ -888,6 +879,7 @@ static void adjust_to_limits(const double expand)
     g_image_region.m_3rd.y = corner_y[2] - adj_y;
 
     adjust_corner(); // make 3rd corner exact if very near other co-ords
+    return adj_x != 0 || adj_y != 0;
 }
 
 static void smallest_add(double *num)

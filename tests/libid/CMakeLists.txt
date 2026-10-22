@@ -68,6 +68,7 @@ add_executable(test-id
     include/TestRender.h TestRender.cpp
     expected_map.cpp
     engine/test_BoundaryTrace.cpp
+    engine/test_calc_frac_init.cpp
     engine/test_color_utils.cpp
     engine/test_cmdfiles.cpp
     engine/test_Diffusion.cpp
@@ -170,6 +171,7 @@ add_executable(test-id
     ui/test_tab_display.cpp
     ui/test_thinking.cpp
     ui/test_video_mode.cpp
+    ui/test_zoom.cpp
 )
 file(GENERATE
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/include/$<CONFIG>/test_executable_dir.h"

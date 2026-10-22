@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -30,7 +31,9 @@ extern int                   g_distance_estimator_width_factor;
 extern int                   g_distance_estimator_x_dots;       // x dots to use for video independence
 extern int                   g_distance_estimator_y_dots;       // y dots to use for video independence
 
-void calc_frac_init();
+// Return whether bounds adjustment translated the image region.
+bool calc_frac_init();
+
 void adjust_corner();
 void adjust_corner_bf();
 void fractal_float_to_bf();

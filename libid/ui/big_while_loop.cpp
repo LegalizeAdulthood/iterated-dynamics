@@ -583,7 +583,7 @@ MainState big_while_loop(MainContext &context)
         g_zoom_enabled = !driver_is_disk() && !bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_ZOOM);
         if (g_evolving == EvolutionModeFlags::NONE)
         {
-            calc_frac_init();
+            invalidate_translated_resume(calc_frac_init());
             if (show_precision_diagnostics())
             {
                 goodbye();
@@ -696,7 +696,7 @@ MainState big_while_loop(MainContext &context)
                     g_logical_screen.y_offset = tmp_y_dots * g_evolve_param_grid_y;
                     restore_param_history();
                     fiddle_params(gene, count);
-                    calc_frac_init();
+                    invalidate_translated_resume(calc_frac_init());
                     if (show_precision_diagnostics())
                     {
                         goodbye();
