@@ -230,6 +230,7 @@ add_library(libid
     include/ui/find_special_colors.h ui/find_special_colors.cpp
     include/ui/flip_image.h ui/flip_image.cpp
     include/ui/frothy_basin.h ui/frothy_basin.cpp
+    include/ui/FrothyBasinController.h ui/FrothyBasinController.cpp
     include/ui/full_screen_choice.h ui/full_screen_choice.cpp
     include/ui/full_screen_prompt.h ui/full_screen_prompt.cpp
     include/ui/get_3d_params.h ui/get_3d_params.cpp
@@ -282,6 +283,7 @@ add_library(libid
     include/ui/passes_options.h ui/passes_options.cpp
     include/ui/plasma.h ui/plasma.cpp
     include/ui/popcorn.h ui/popcorn.cpp
+    include/ui/PopcornController.h ui/PopcornController.cpp
     include/ui/precision_diagnostics.h ui/precision_diagnostics.cpp
     include/ui/put_string_center.h ui/put_string_center.cpp
     include/ui/read_ticker.h ui/read_ticker.cpp

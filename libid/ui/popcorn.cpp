@@ -3,37 +3,24 @@
 //
 #include "ui/popcorn.h"
 
-#include "engine/NonStandardFractal.h"
-#include "ui/diskvid.h"
-#include "ui/KeyboardHandler.h"
-
-#include <memory>
+#include "ui/PopcornController.h"
 
 using namespace id::engine;
 
 namespace id::ui
 {
 
+// TODO: removed later
+// Slice 52.12 replaces the synchronous entry with outer UI stepping.
 int popcorn_type(NonStandardFractal &calculation)
 {
-    reset_calc_interrupted();
-    auto main_loop_handler{std::make_shared<MainLoopKeyboardHandler>()};
-    ScopedKeyboardHandler main_loop_scope{main_loop_handler};
-
-    while (!calculation.done())
+    PopcornController controller{calculation};
+    controller.start();
+    while (!controller.done())
     {
-        calculation.iterate();
-        display_disk_storage_progress();
-        if (!calculation.done())
-        {
-            if (calc_interrupted())
-            {
-                calculation.suspend();
-                return -1;
-            }
-        }
+        controller.iterate();
     }
-    return 0;
+    return controller.result();
 }
 
 } // namespace id::ui

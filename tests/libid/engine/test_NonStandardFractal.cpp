@@ -44,6 +44,7 @@
 #include <ui/id_keys.h>
 #include <ui/KeyboardHandler.h>
 #include <ui/IFS2DController.h>
+#include <ui/PopcornController.h>
 #include <ui/Standard4DController.h>
 #include <ui/TestPointController.h>
 #include <ui/video.h>
@@ -1483,6 +1484,189 @@ TEST_P(TestStandalonePopcorn, suspensionRestartsSavedRowWithSameFinalPixels)
     complete(resumed);
 
     EXPECT_EQ(expected, m_pixels);
+}
+
+TEST_P(TestStandalonePopcorn, stepwiseControllerPreservesCalculationIncrements)
+{
+    struct WorkState
+    {
+        int row;
+        int col;
+        long iteration;
+        std::array<int, WIDTH * HEIGHT> pixels;
+        std::size_t plots;
+        bool done;
+    };
+
+    std::vector<WorkState> expected;
+    {
+        NonStandardFractal control;
+        control.start();
+        ASSERT_EQ(NonStandardFractal::Operation::POPCORN, control.select());
+        for (long i = 0; i <= WIDTH * HEIGHT * g_max_iterations && !control.done(); ++i)
+        {
+            control.iterate();
+            expected.push_back({g_row, g_col, g_color_iter, m_pixels, m_columns.size(), control.done()});
+        }
+        ASSERT_TRUE(control.done());
+        control.finish(false);
+    }
+    m_pixels.fill(0);
+    m_columns.clear();
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    PopcornController controller{calculation};
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_TRUE(m_columns.empty());
+    EXPECT_THROW(controller.start(), std::logic_error);
+    for (const WorkState &work : expected)
+    {
+        controller.iterate();
+        EXPECT_EQ(work.row, g_row);
+        EXPECT_EQ(work.col, g_col);
+        EXPECT_EQ(work.iteration, g_color_iter);
+        EXPECT_EQ(work.pixels, m_pixels);
+        EXPECT_EQ(work.plots, m_columns.size());
+        EXPECT_EQ(work.done, controller.done());
+    }
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
+    const std::size_t plots{m_columns.size()};
+    controller.iterate();
+    EXPECT_EQ(plots, m_columns.size());
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+    calculation.finish(false);
+}
+
+TEST_P(TestStandalonePopcorn, stepwiseMenuInterruptionFollowsWorkAndPreservesResumeRow)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillOnce(Invoke(
+            []
+            {
+                EXPECT_EQ(1, g_color_iter);
+                return 'x';
+            }));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return('x'));
+    EXPECT_CALL(m_driver, unget_key('x'));
+    PopcornController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
+    ASSERT_EQ(1, start_resume());
+    int row{-1};
+    get_resume(row);
+    EXPECT_EQ(0, row);
+}
+
+TEST_P(TestStandalonePopcorn, stepwiseSuspensionRetainsTheCurrentRow)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    PopcornController controller{calculation};
+    controller.start();
+    for (long chunks = 0; chunks < (WIDTH + 1) * g_max_iterations; ++chunks)
+    {
+        controller.iterate();
+    }
+    ASSERT_EQ(1, g_row);
+    ASSERT_EQ(1, g_col);
+
+    controller.suspend();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
+    ASSERT_EQ(1, start_resume());
+    int row{-1};
+    get_resume(row);
+    EXPECT_EQ(1, row);
+}
+
+TEST_P(TestStandalonePopcorn, stepwiseInputFailureReleasesHandlerAndCalculation)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Throw(std::runtime_error("input failed")));
+    PopcornController controller{calculation};
+    controller.start();
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
+}
+
+TEST_P(TestStandalonePopcorn, stepwisePlotFailureReleasesHandlerAndCalculation)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    EXPECT_CALL(m_driver, write_pixel(_, _, _)).WillOnce(Throw(std::runtime_error("plot failed")));
+    PopcornController controller{calculation};
+    controller.start();
+
+    EXPECT_THROW(
+        {
+            for (long i = 0; i <= WIDTH * HEIGHT * g_max_iterations && !controller.done(); ++i)
+            {
+                controller.iterate();
+            }
+        },
+        std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
+}
+
+TEST_P(TestStandalonePopcorn, stepwiseDestructionOnlyReleasesHandler)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    {
+        PopcornController controller{calculation};
+        controller.start();
+        controller.iterate();
+        ASSERT_FALSE(controller.done());
+    }
+
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
+    EXPECT_FALSE(calculation.done());
+    calculation.finish(true);
 }
 
 INSTANTIATE_TEST_SUITE_P(PopcornTypes, TestStandalonePopcorn, Values(FractalType::POPCORN, FractalType::POPCORN_JUL),

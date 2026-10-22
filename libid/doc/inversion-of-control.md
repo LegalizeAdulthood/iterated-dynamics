@@ -53,6 +53,10 @@ The audit below records the remaining reverse calls inside that structure:
   `libid/fractals/julibrot.cpp`.
 - `libid/ui/LSystemController.cpp` drives selected sizing and drawing
   work in `libid/fractals/lsystem.cpp`.
+- `libid/ui/PopcornController.cpp` drives selected image work in
+  `libid/fractals/popcorn.cpp`.
+- `libid/ui/FrothyBasinController.cpp` drives selected pixel and overlay
+  work in `libid/fractals/FrothyBasin.cpp`.
 - `libid/ui/testpt.cpp` drives `libid/fractals/TestPoint.cpp`.
 
 The common structure is:
@@ -614,8 +618,11 @@ The concrete render operation objects are:
   Completion, suspension, and failure close its presentation; pending
   commands remain for the outer handler.  Its synchronous entry remains
   marked for 52.12 removal.  FrothyBasin retains orbit/pixel checkpoints,
-  palette selection, and resume coordinates below UI; its controller
-  owns palette diagnostics, overlay interaction, and sound servicing.
+  palette selection, and resume coordinates below UI;
+  `ui::FrothyBasinController` advances existing increments with a
+  caller-owned SoundSession.  It owns palette diagnostics, overlay
+  interaction, sound servicing, and keyboard scopes, retaining current
+  delay policy.  Its synchronous entries remain marked for 52.12 removal.
   The completed-image orbit tool uses setup-only FrothyBasin callbacks,
   independently of the selected image calculation's lifetime.
   Plasma's controller reports storage availability before engine
@@ -625,8 +632,12 @@ The concrete render operation objects are:
   presentation.  It retains post-generation driver peeks, saved-row and
   next-screen continuation, and the legacy completion result.  Its
   synchronous entry remains marked for 52.12 removal.
-  Popcorn's Julia setup and symmetry selection also
-  stay below UI.  Ant's Ctrl+A entry selects an operation on the existing
+  Popcorn's Julia setup and symmetry selection also stay below UI.
+  `ui::PopcornController` advances existing image increments, retains
+  post-step input checks and saved-row suspension, and owns its handler
+  scope.  Popcorn does not use overlay pacing or sound servicing.  Its
+  synchronous entry remains marked for 52.12 removal.
+  Ant's Ctrl+A entry selects an operation on the existing
   image, without restarting common image setup, timing, or resource
   cleanup.  `ui::AntController` steps the selected Ant operation at
   existing batch boundaries and owns step/delay state, option-menu
@@ -1105,24 +1116,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 52.10. Stepwise Overlay Presentation Contexts
-
-Source: `ui/popcorn.cpp` and `ui/frothy_basin.cpp`.
-
-Work:
-
-- Introduce `PopcornController` and `FrothyBasinController` around the
-  existing selected operations, using caller-owned sound sessions.
-- Keep overlay interaction, palette diagnostics, delay policy, and
-  keyboard scopes in UI.  Each context iteration advances only the
-  existing calculation increment; plots remain calculation work.
-- Preserve the current orbitdelay policy.  This is not the deferred
-  redesign of visible overlays or audio playback.
-- Mark synchronous entries for removal in 52.12.
-
-Validation: existing overlay/sound failure tests, Popcorn and FrothyBasin
-scripts, and image fixtures; direct context suspension and cleanup.
-
 ### 52.11. Stepwise Stereo UI Context
 
 Source: `ui/StereoController.cpp` and stereo photographer handling.
@@ -1291,11 +1284,11 @@ Handler-based render controllers that still rely on
 `KeyboardHandler.cpp` polling internally:
 
 - `libid/ui/DiffusionController.cpp`
-- `libid/ui/frothy_basin.cpp`
+- `libid/ui/FrothyBasinController.cpp`
 - `libid/ui/InverseJuliaFractalController.cpp`
 - `libid/ui/LyapunovController.cpp`
 - `libid/ui/OrbitController.cpp`
-- `libid/ui/popcorn.cpp`
+- `libid/ui/PopcornController.cpp`
 - `libid/ui/StandardFractalController.cpp`
 - `libid/ui/standard_orbit_plot.cpp`
 - `libid/ui/StereoController.cpp`

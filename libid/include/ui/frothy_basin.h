@@ -13,7 +13,11 @@ namespace id::ui
 
 class SoundSession;
 
+// TODO: removed later
+// Slice 52.12 moves sound-session ownership to the outer UI context.
 int froth_type(engine::NonStandardFractal &calculation);
+// TODO: removed later
+// Slice 52.12 removes the synchronous render entry point.
 int froth_type(engine::NonStandardFractal &calculation, SoundSession &sound);
 
 } // namespace id::ui
