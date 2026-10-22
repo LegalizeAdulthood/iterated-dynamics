@@ -259,6 +259,7 @@ add_library(libid
     include/ui/inverse_julia.h ui/inverse_julia.cpp
     include/ui/lsystem.h ui/lsystem.cpp
     include/ui/lyapunov.h ui/lyapunov.cpp
+    include/ui/LyapunovController.h ui/LyapunovController.cpp
     include/ui/make_batch_file.h ui/make_batch_file.cpp
     include/ui/main_menu.h ui/main_menu.cpp
     include/ui/main_menu_switch.h ui/main_menu_switch.cpp

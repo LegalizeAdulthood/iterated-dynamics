@@ -590,6 +590,10 @@ The concrete render operation objects are:
 - `fractals::Lyapunov`: owns Lyapunov render state by containing an
   `engine::StandardFractal`; Lyapunov-specific per-image setup remains in
   `lyapunov_per_image()` below the dispatch layer.
+  `ui::LyapunovController` can start, step, and suspend a caller-owned
+  Lyapunov, retaining marker presentation and MainLoop/OrbitToggle
+  handler scopes.  It releases those scopes on completion, suspension,
+  or failure.  The synchronous entry remains marked for 52.12 removal.
 - `engine::NonStandardFractal`: owns non-standard dispatch setup,
   symmetry defaults, plot defaults, `per_image()` invocation, and final
   status interpretation.  It shares common image setup, timing, and
@@ -1066,25 +1070,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 52.2. Stepwise Lyapunov UI Context
-
-Source: `ui/lyapunov.cpp`.
-
-Work:
-
-- Introduce `LyapunovController` around a caller-owned `Lyapunov`.
-  Its start, single-iteration, done, result, and suspend operations
-  retain the existing marker and keyboard-handler lifetime.
-- Keep `MainLoopKeyboardHandler` and `OrbitToggleKeyboardHandler`
-  behavior unchanged.  Calculation setup and traversal stay in Lyapunov
-  and StandardFractal; no rendering decisions move into UI.
-- The existing synchronous entry may drive this context temporarily.
-  Mark that bridge for removal in 52.12.  Do not add a new full-render
-  callback or hide the loop in another `run()` wrapper.
-
-Validation: controller lifecycle and failure tests, Lyapunov autokey,
-show-dot tests, and existing Lyapunov images.  No new native input path.
-
 ### 52.3. Simple Non-Standard UI Contexts
 
 Source: `ui/bifurcation.cpp`, `ui/diffusion.cpp`, and `ui/testpt.cpp`.
@@ -1393,9 +1378,9 @@ Handler-based render controllers that still rely on
 
 - `libid/ui/diffusion.cpp`
 - `libid/ui/frothy_basin.cpp`
-- `libid/ui/lyapunov.cpp`
+- `libid/ui/LyapunovController.cpp`
 - `libid/ui/popcorn.cpp`
-- `libid/ui/standard_fractal.cpp`
+- `libid/ui/StandardFractalController.cpp`
 - `libid/ui/standard_orbit_plot.cpp`
 - `libid/ui/StereoController.cpp`
 

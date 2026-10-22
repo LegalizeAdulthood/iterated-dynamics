@@ -18,8 +18,10 @@
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
+#include <fractals/lyapunov.h>
 #include <misc/ValueSaver.h>
 #include <ui/KeyboardHandler.h>
+#include <ui/LyapunovController.h>
 #include <ui/SoundSession.h>
 #include <ui/StandardFractalController.h>
 #include <ui/standard_fractal.h>
@@ -536,6 +538,188 @@ TEST_F(TestStandardFractalController, failedStepAbortsCalculationAndReleasesPres
 
     EXPECT_TRUE(failed);
     EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_THAT(m_pixels, Each(0));
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+class TestLyapunovController : public TestShowDotController
+{
+protected:
+    void SetUp() override
+    {
+        TestShowDotController::SetUp();
+        g_inside_method = ColorMethod::COLOR;
+        g_fractal_type = FractalType::LYAPUNOV;
+        m_specific.type = FractalType::LYAPUNOV;
+    }
+};
+
+TEST_F(TestLyapunovController, requiresStartAndACompletedResult)
+{
+    Lyapunov lyapunov;
+    LyapunovController controller{lyapunov};
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+    EXPECT_EQ(0, m_calculations);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_EQ(0, m_calculations);
+    EXPECT_THROW(controller.start(), std::logic_error);
+    controller.suspend();
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_F(TestLyapunovController, callerAdvancesExistingMarkerChunksToCompletion)
+{
+    clear_image();
+    g_orbit_delay = 1;
+    Lyapunov lyapunov;
+    LyapunovController controller{lyapunov};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_EQ(1, m_calculations);
+    EXPECT_FALSE(controller.done());
+    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !controller.done(); ++chunks)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
+    EXPECT_THAT(m_pixels, Each(7));
+    controller.iterate();
+    EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_F(TestLyapunovController, zeroDelayRetainsSingleChunkCompletionWithOrWithoutMarker)
+{
+    for (const int show_dot : {-1, 15})
+    {
+        SCOPED_TRACE(show_dot);
+        clear_image();
+        m_calculations = 0;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
+        g_show_dot = show_dot;
+        Lyapunov lyapunov;
+        LyapunovController controller{lyapunov};
+        controller.start();
+
+        controller.iterate();
+
+        ASSERT_TRUE(controller.done());
+        EXPECT_EQ(0, controller.result());
+        EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
+        EXPECT_THAT(m_pixels, Each(7));
+    }
+}
+
+TEST_F(TestLyapunovController, explicitSuspensionRestoresMarkerAndResumesSavedWork)
+{
+    clear_image();
+    g_orbit_delay = 1;
+    g_size_dot = 128;
+    {
+        Lyapunov lyapunov;
+        LyapunovController controller{lyapunov};
+        controller.start();
+        controller.iterate();
+        ASSERT_EQ(1, m_calculations);
+
+        controller.suspend();
+
+        EXPECT_TRUE(controller.done());
+        EXPECT_EQ(-1, controller.result());
+        EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+        EXPECT_FALSE(g_resume_data.empty());
+        EXPECT_THAT(m_pixels, Each(Ne(15)));
+        EXPECT_FALSE(dispatch_keyboard_key('o'));
+    }
+    Lyapunov resumed;
+    LyapunovController controller{resumed};
+    controller.start();
+    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !controller.done(); ++chunks)
+    {
+        controller.iterate();
+    }
+
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
+    EXPECT_THAT(m_pixels, Each(7));
+}
+
+TEST_F(TestLyapunovController, interruptedStepReleasesHandlersBeforeReturning)
+{
+    clear_image();
+    g_orbit_delay = 1;
+    m_interrupt_after = 5;
+    Lyapunov lyapunov;
+    LyapunovController controller{lyapunov};
+    controller.start();
+
+    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !controller.done(); ++chunks)
+    {
+        controller.iterate();
+    }
+
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_EQ('x', m_key);
+    EXPECT_THAT(m_pixels, Each(Ne(15)));
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_F(TestLyapunovController, orbitToggleDoesNotInterruptCalculation)
+{
+    clear_image();
+    g_orbit_delay = 1;
+    EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
+    Lyapunov lyapunov;
+    LyapunovController controller{lyapunov};
+    controller.start();
+    controller.iterate();
+
+    EXPECT_TRUE(dispatch_keyboard_key('o'));
+    EXPECT_TRUE(g_show_orbit);
+    EXPECT_FALSE(calc_interrupt_requested());
+    EXPECT_TRUE(dispatch_keyboard_key('O'));
+    EXPECT_FALSE(g_show_orbit);
+    EXPECT_FALSE(calc_interrupt_requested());
+    EXPECT_FALSE(controller.done());
+
+    controller.suspend();
+
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_F(TestLyapunovController, failedStepAbortsCalculationAndReleasesPresentation)
+{
+    clear_image();
+    g_orbit_delay = 1;
+    s_calculate = []() -> int { throw std::runtime_error("Calculation failed"); };
+    Lyapunov lyapunov;
+    LyapunovController controller{lyapunov};
+    controller.start();
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    ASSERT_TRUE(controller.done());
     EXPECT_EQ(-1, controller.result());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_TRUE(g_resume_data.empty());
