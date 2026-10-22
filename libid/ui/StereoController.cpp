@@ -161,16 +161,4 @@ void StereoController::close(const int result)
     m_phase = Phase::COMPLETE;
 }
 
-// TODO: removed later
-// Slice 52.12 replaces the synchronous entry with outer UI stepping.
-int StereoController::run()
-{
-    start();
-    while (!done())
-    {
-        iterate();
-    }
-    return result();
-}
-
 } // namespace id::ui

@@ -26,7 +26,7 @@
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "misc/Driver.h"
-#include "ui/ant.h"
+#include "ui/AntController.h"
 #include "ui/big_while_loop.h"
 #include "io/disk_storage.h"
 #include "ui/evolve.h"
@@ -346,7 +346,13 @@ static CommandResult begin_ant(MainContext & /*context*/)
     {
         NonStandardFractal calculation;
         calculation.select_ant_on_image();
-        if (ant_type(calculation) >= 0)
+        AntController controller{calculation};
+        controller.start();
+        while (!controller.done())
+        {
+            controller.iterate();
+        }
+        if (controller.result() >= 0)
         {
             g_calc_status = CalcStatus::PARAMS_CHANGED;
         }

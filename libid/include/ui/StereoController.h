@@ -28,10 +28,6 @@ public:
     int result() const;
     void suspend();
 
-    // TODO: removed later
-    // Slice 52.12 replaces synchronous rendering with outer UI stepping.
-    int run();
-
 private:
     enum class Phase
     {

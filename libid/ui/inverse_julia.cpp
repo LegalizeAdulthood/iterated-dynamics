@@ -25,7 +25,6 @@
 #include "ui/get_a_number.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
-#include "ui/InverseJuliaFractalController.h"
 #include "ui/mouse.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
@@ -985,19 +984,6 @@ bool prepare_inverse_julia_queue(const unsigned long request)
         }
     }
     return false;
-}
-
-// TODO: removed later
-// Slice 52.12 replaces the synchronous entry with outer UI stepping.
-int inverse_julia_fractal_type(NonStandardFractal &calculation)
-{
-    InverseJuliaFractalController controller{calculation};
-    controller.start();
-    while (!controller.done())
-    {
-        controller.iterate();
-    }
-    return controller.result();
 }
 
 } // namespace id::ui

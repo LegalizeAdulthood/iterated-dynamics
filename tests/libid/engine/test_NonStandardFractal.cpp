@@ -6,6 +6,7 @@
 #include "MockDriver.h"
 #include "ColorMapSaver.h"
 #include "test_data.h"
+#include "TestRender.h"
 
 #include <engine/calc_frac_init.h>
 #include <engine/cmdfiles.h>
@@ -35,8 +36,6 @@
 #include <io/loadmap.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
-#include <ui/calculate_image.h>
-#include <ui/ant.h>
 #include <ui/AntController.h>
 #include <ui/BifurcationController.h>
 #include <ui/DiffusionController.h>
@@ -1230,7 +1229,7 @@ TEST_P(TestStandaloneBifurcation, uiEntryUsesSelectedOperationWithoutLegacyCallb
 {
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
 
-    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(0, render_image());
 
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_EQ(12 * WIDTH, s_orbit_calls);
@@ -1262,7 +1261,7 @@ TEST_P(TestStandaloneBifurcation, uiInterruptionLeavesMenuKeyPendingAndResumesAt
             }));
     EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([&pending_key](int key) { pending_key = key; }));
 
-    EXPECT_EQ(-1, calculate_image());
+    EXPECT_EQ(-1, render_image());
 
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
     EXPECT_FALSE(g_resume_data.empty());
@@ -1270,7 +1269,7 @@ TEST_P(TestStandaloneBifurcation, uiInterruptionLeavesMenuKeyPendingAndResumesAt
     ASSERT_EQ(HEIGHT, m_columns.size());
     pending_key = 0;
 
-    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(0, render_image());
 
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_EQ(12 * WIDTH, s_orbit_calls);
@@ -2095,7 +2094,7 @@ TEST_P(TestStandaloneTestPoint, uiChecksInputBeforeComputingFirstPixel)
     EXPECT_CALL(m_driver, get_key()).WillOnce(Invoke([&pending_key] { return std::exchange(pending_key, 0); }));
     EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([&pending_key](int key) { pending_key = key; }));
 
-    EXPECT_EQ(-1, calculate_image());
+    EXPECT_EQ(-1, render_image());
 
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
     EXPECT_FALSE(g_resume_data.empty());
@@ -2103,7 +2102,7 @@ TEST_P(TestStandaloneTestPoint, uiChecksInputBeforeComputingFirstPixel)
     EXPECT_EQ('x', pending_key);
     pending_key = 0;
 
-    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(0, render_image());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_FALSE(m_columns.empty());
 }
@@ -2390,7 +2389,13 @@ TEST_P(TestSelectedAnt, uiStepsTheSelectedObjectAtExistingBatchBoundaries)
                 }));
     }
 
-    EXPECT_EQ(0, ant_type(calculation));
+    AntController controller{calculation};
+    controller.start();
+    while (!controller.done())
+    {
+        controller.iterate();
+    }
+    EXPECT_EQ(0, controller.result());
 
     EXPECT_TRUE(calculation.done());
     EXPECT_EQ(expected.back(), m_pixels);

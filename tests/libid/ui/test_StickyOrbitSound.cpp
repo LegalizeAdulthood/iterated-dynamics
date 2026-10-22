@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include "MockDriver.h"
+#include "TestRender.h"
 
 #include <engine/calcfrac.h>
 #include <engine/ImageRegion.h>
@@ -20,7 +21,6 @@
 #include <misc/ValueSaver.h>
 #include <ui/KeyboardHandler.h>
 #include <ui/SoundSession.h>
-#include <ui/standard_fractal.h>
 #include <ui/video.h>
 
 #include <gmock/gmock.h>
@@ -445,7 +445,7 @@ TEST_P(TestStickyOrbitSound, controllerServicesPlaybackBeforeRetryingPendingPoin
             }));
     EXPECT_CALL(*m_output, update()).WillRepeatedly(Invoke([this] { m_ready = true; }));
 
-    EXPECT_EQ(0, standard_fractal(sound));
+    EXPECT_EQ(0, render_standard_image(sound));
 
     EXPECT_GT(refused, 0);
     const std::size_t points{(GetParam() == OrbitDrawMode::RECTANGLE ? 64U : 8U) * 3};
@@ -473,7 +473,7 @@ TEST_P(TestStickyOrbitSound, controllerInterruptAndResumeDoNotReplayAcceptedSamp
     EXPECT_CALL(*m_output, mute()).Times(1);
     {
         SoundSession sound{m_output};
-        EXPECT_EQ(-1, standard_fractal(sound));
+        EXPECT_EQ(-1, render_standard_image(sound));
     }
     ASSERT_EQ(1U, m_samples.size());
     ASSERT_EQ(1U, m_plots.size());
@@ -489,7 +489,7 @@ TEST_P(TestStickyOrbitSound, controllerInterruptAndResumeDoNotReplayAcceptedSamp
             }));
     {
         SoundSession sound{m_output};
-        EXPECT_EQ(0, standard_fractal(sound));
+        EXPECT_EQ(0, render_standard_image(sound));
     }
 
     const std::size_t seed_count{GetParam() == OrbitDrawMode::RECTANGLE ? 64U : 8U};
@@ -507,7 +507,7 @@ TEST_P(TestStickyOrbitSound, controllerAcceptsLegacyVersion2ResumeData)
     g_resuming = true;
     SoundSession sound{m_output};
 
-    EXPECT_EQ(0, standard_fractal(sound));
+    EXPECT_EQ(0, render_standard_image(sound));
 
     EXPECT_EQ((GetParam() == OrbitDrawMode::RECTANGLE ? 4U : 2U) * 3, m_samples.size());
 }
@@ -526,7 +526,7 @@ TEST_P(TestStickyOrbitSound, driverRefusalStillRecordsConstantFrequencyWithoutWa
     EXPECT_CALL(m_driver, mute()).Times(0);
 
     SoundSession owner;
-    EXPECT_EQ(0, standard_fractal());
+    EXPECT_EQ(0, render_standard_image());
     EXPECT_TRUE(owner.finish());
 
     std::ifstream file{m_directory / "sound/sound001.txt"};

@@ -28,7 +28,6 @@
 #include "ui/big_while_loop.h"
 #include "ui/evolve.h"
 #include "ui/find_special_colors.h"
-#include "ui/frothy_basin.h"
 #include "ui/id_keys.h"
 #include "ui/mouse.h"
 #include "ui/stop_msg.h"

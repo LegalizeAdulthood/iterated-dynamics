@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include <ui/inverse_julia.h>
+#include <ui/InverseJuliaFractalController.h>
 
 #include "MockDriver.h"
 
@@ -368,7 +369,13 @@ TEST_F(TestInverseJuliaQueue, standaloneControllerSeedsThenReleasesThePreparedQu
     EXPECT_CALL(m_driver, get_key()).WillOnce(Return('x'));
     EXPECT_CALL(m_driver, unget_key('x'));
 
-    EXPECT_EQ(-1, inverse_julia_fractal_type(calculation));
+    InverseJuliaFractalController controller{calculation};
+    controller.start();
+    while (!controller.done())
+    {
+        controller.iterate();
+    }
+    EXPECT_EQ(-1, controller.result());
 
     EXPECT_EQ(Major::BREADTH_FIRST, g_major_method);
     EXPECT_EQ(0UL, queue_capacity());
@@ -406,7 +413,13 @@ TEST_F(TestInverseJuliaQueue, standaloneControllerOwnsTheRandomWalkFallback)
             }));
     EXPECT_CALL(m_driver, unget_key('x'));
 
-    EXPECT_EQ(-1, inverse_julia_fractal_type(calculation));
+    InverseJuliaFractalController controller{calculation};
+    controller.start();
+    while (!controller.done())
+    {
+        controller.iterate();
+    }
+    EXPECT_EQ(-1, controller.result());
 
     EXPECT_EQ(Major::RANDOM_WALK, g_major_method);
     EXPECT_EQ(0UL, queue_capacity());

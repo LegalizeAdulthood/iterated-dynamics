@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include <ui/calculate_image.h>
 
 #include "MockDriver.h"
+#include "TestRender.h"
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>
@@ -190,7 +190,7 @@ void TestCellularController::TearDown()
 
 TEST_F(TestCellularController, generationZeroNeedsNoThinkingScreen)
 {
-    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(0, render_image());
 
     EXPECT_EQ(0, m_thinking_entries);
     EXPECT_EQ(0, m_thinking_exits);
@@ -202,7 +202,7 @@ TEST_F(TestCellularController, preparationEndsBeforePlottingAndCleansUpOnce)
 {
     g_params[3] = 205;
 
-    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(0, render_image());
 
     EXPECT_EQ(1, m_thinking_entries);
     EXPECT_EQ(1, m_thinking_exits);
@@ -216,7 +216,7 @@ TEST_F(TestCellularController, preparationInterruptionCleansUpBeforeReportingNon
     g_params[3] = 205;
     m_interrupt = true;
 
-    EXPECT_EQ(-1, calculate_image());
+    EXPECT_EQ(-1, render_image());
 
     EXPECT_EQ(1, m_thinking_entries);
     EXPECT_EQ(1, m_thinking_exits);
@@ -232,7 +232,7 @@ TEST_F(TestCellularController, preparationExceptionCleansUpBeforeReportingFailur
     g_params[3] = 205;
     m_fail_input = true;
 
-    EXPECT_EQ(-1, calculate_image());
+    EXPECT_EQ(-1, render_image());
 
     EXPECT_EQ(1, m_thinking_entries);
     EXPECT_EQ(1, m_thinking_exits);
@@ -246,7 +246,7 @@ TEST_F(TestCellularController, plottingExceptionDoesNotEndThinkingTwice)
     g_params[3] = 5;
     m_fail_plot = true;
 
-    EXPECT_EQ(-1, calculate_image());
+    EXPECT_EQ(-1, render_image());
 
     EXPECT_EQ(1, m_thinking_entries);
     EXPECT_EQ(1, m_thinking_exits);
@@ -259,7 +259,7 @@ TEST_F(TestCellularController, initializationFailureDoesNotOpenThinkingScreen)
 {
     g_params[2] = 99;
 
-    EXPECT_EQ(-1, calculate_image());
+    EXPECT_EQ(-1, render_image());
 
     EXPECT_EQ(0, m_thinking_entries);
     EXPECT_EQ(0, m_thinking_exits);

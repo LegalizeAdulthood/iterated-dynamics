@@ -48,6 +48,17 @@ add_test(NAME AutoKeyTest.makepar-mig-pieces
 set_tests_properties(AutoKeyTest.makepar-mig-pieces
     PROPERTIES LABELS "${MAKEPAR_MIG_LABELS}")
 
+id_make_test_home(batch-interrupt BATCH_INTERRUPT_HOME KEYS batch_interrupt.key)
+add_test(NAME AutoKeyTest.batch-interrupt
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCHECK_RESUME=$<SHELL_PATH:$<TARGET_FILE:check-standard-resume>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/batch_interrupt_test.cmake"
+    WORKING_DIRECTORY "${BATCH_INTERRUPT_HOME}")
+set_tests_properties(AutoKeyTest.batch-interrupt
+    PROPERTIES LABELS "autokey;ui;batch" TIMEOUT 140)
+
 id_make_test_home(command-actions COMMAND_ACTIONS_HOME
     KEYS command_select_accept.key command_select_cancel.key)
 add_test(NAME AutoKeyTest.command-actions

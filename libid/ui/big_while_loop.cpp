@@ -29,7 +29,7 @@
 #include "io/save_timer.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
-#include "ui/calculate_image.h"
+#include "ui/ImageRenderContext.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
 #include "ui/evolver_menu_switch.h"
@@ -700,7 +700,14 @@ MainState big_while_loop(MainContext &context)
                     {
                         goodbye();
                     }
-                    i = calculate_image();
+                    SoundSession image_sound{g_sound, SoundSession::Ownership::BORROWED};
+                    ImageRenderContext rendering{image_sound};
+                    rendering.start();
+                    while (!rendering.done())
+                    {
+                        rendering.iterate();
+                    }
+                    i = rendering.result();
                     if (i == -1)
                     {
                         break;
@@ -746,7 +753,14 @@ MainState big_while_loop(MainContext &context)
             else
             {
                 sound.emplace();
-                i = calculate_image();
+                SoundSession image_sound{g_sound, SoundSession::Ownership::BORROWED};
+                ImageRenderContext rendering{image_sound};
+                rendering.start();
+                while (!rendering.done())
+                {
+                    rendering.iterate();
+                }
+                i = rendering.result();
             }
 
             if (i == 0)

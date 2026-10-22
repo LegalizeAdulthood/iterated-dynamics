@@ -64,9 +64,6 @@
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
 #include "io/disk_storage.h"
-#include "ui/lyapunov.h"
-#include "ui/non_standard_fractal.h"
-#include "ui/standard_fractal.h"
 
 #include <fmt/format.h>
 
@@ -87,7 +84,6 @@ using namespace id::geometry;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::engine
 {
@@ -613,18 +609,6 @@ std::string ImageCalculation::complete_targa_storage(const bool available)
     return warning;
 }
 
-static bool static_calc_type_uses_standard_engine()
-{
-    const CalcType table_calc_type{g_cur_fractal_specific->calc_type};
-    return table_calc_type == standard_fractal_type //
-        || table_calc_type == calc_mandelbrot_type;
-}
-
-static bool static_calc_type_uses_lyapunov_renderer()
-{
-    return g_cur_fractal_specific->calc_type == lyapunov_type;
-}
-
 void ImageCalculation::finish()
 {
     if (!m_targa_storage.header.empty())
@@ -658,25 +642,6 @@ void ImageCalculation::finish()
     {
         end_disk();
     }
-}
-
-// TODO: removed later
-// Slice 52 replaces legacy UI dispatch with outer control of calculation objects.
-int calc_fract()
-{
-    if (static_calc_type_uses_lyapunov_renderer())
-    {
-        lyapunov_fractal();
-    }
-    else if (static_calc_type_uses_standard_engine())
-    {
-        standard_fractal();
-    }
-    else
-    {
-        non_standard_fractal();
-    }
-    return g_calc_status == CalcStatus::COMPLETED ? 0 : -1;
 }
 
 void init_atan_colors()

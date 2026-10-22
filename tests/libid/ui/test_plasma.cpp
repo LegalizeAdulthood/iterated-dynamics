@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include "MockDriver.h"
+#include "TestRender.h"
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>
@@ -22,8 +23,8 @@
 #include <misc/memory.h>
 #include <misc/ValueSaver.h>
 #include <ui/diskvid.h>
+#include <ui/PlasmaController.h>
 #include <ui/id_keys.h>
-#include <ui/calculate_image.h>
 #include <ui/video.h>
 
 #include <gmock/gmock.h>
@@ -280,7 +281,7 @@ TEST_F(TestPlasmaStorage, controllerPreparesPotentialStorageBeforePlotting)
             }));
     EXPECT_CALL(m_driver, flush());
 
-    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(0, render_image());
 
     EXPECT_TRUE(g_disk_flag);
     EXPECT_TRUE(g_disk_16_bit);
@@ -312,7 +313,7 @@ TEST_F(TestPlasmaStorage, cancelledStorageFallsBackBeforeCalculation)
                 return ID_KEY_ESC;
             }));
 
-    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(0, render_image());
 
     EXPECT_FALSE(g_disk_flag);
     EXPECT_FALSE(g_disk_16_bit);
@@ -327,7 +328,7 @@ TEST_F(TestPlasmaStorage, normalColorSkipsPotentialStorage)
 {
     g_params[3] = 0.5;
 
-    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(0, render_image());
 
     EXPECT_FALSE(g_disk_flag);
     EXPECT_EQ(0.5, g_params[3]);
@@ -354,7 +355,7 @@ TEST_F(TestPlasmaStorage, selectionReportsUnsupportedColorsWithoutPlotting)
     EXPECT_CALL(m_driver, write_pixel(_, _, _)).Times(0);
     expect_error("Plasma Clouds requires 4 or more color video");
 
-    EXPECT_EQ(-1, calculate_image());
+    EXPECT_EQ(-1, render_image());
 
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_FALSE(g_disk_flag);
@@ -369,7 +370,7 @@ TEST_F(TestPlasmaStorage, pendingInputInterruptsBeforeTheFirstSubdivision)
     EXPECT_CALL(m_driver, get_key()).WillOnce(Invoke([&pending] { return std::exchange(pending, 0); }));
     EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([&pending](int key) { pending = key; }));
 
-    EXPECT_EQ(-1, calculate_image());
+    EXPECT_EQ(-1, render_image());
 
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_TRUE(g_resume_data.empty());
@@ -386,7 +387,7 @@ TEST_F(TestPlasmaStorage, calculationFailureRestoresPlottingBeforeReportingError
     EXPECT_CALL(m_driver, read_pixel(_, _)).WillOnce(Throw(std::runtime_error("injected plasma failure")));
     expect_error("injected plasma failure");
 
-    EXPECT_EQ(-1, calculate_image());
+    EXPECT_EQ(-1, render_image());
 
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(g_put_color, g_plot);
@@ -412,6 +413,32 @@ TEST_F(TestPlasma, selectedOperationWaitsForStorageAvailability)
     EXPECT_EQ(0, g_params[3]);
     EXPECT_GT(m_pixels[8], 0);
     EXPECT_THROW(calculation.complete_potential_storage(false), std::logic_error);
+}
+
+TEST_F(TestPlasma, controllerRequiresStartAndPreservesTheFirstSubdivisionBoundary)
+{
+    g_params[3] = 0;
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::PLASMA, calculation.select());
+    PlasmaController controller{calculation};
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+    controller.start();
+    EXPECT_THROW(controller.start(), std::logic_error);
+    EXPECT_FALSE(controller.done());
+    EXPECT_EQ(4, std::count_if(m_pixels.begin(), m_pixels.end(), [](int color) { return color != 0; }));
+
+    controller.iterate();
+
+    EXPECT_GT(std::count_if(m_pixels.begin(), m_pixels.end(), [](int color) { return color != 0; }), 4);
+    EXPECT_FALSE(controller.done());
+    controller.suspend();
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(1, controller.result());
 }
 
 class TestSelectedPlasma : public TestPlasma, public WithParamInterface<int>

@@ -21,7 +21,7 @@
 #include <misc/ValueSaver.h>
 #include <ui/KeyboardHandler.h>
 #include <ui/OrbitController.h>
-#include <ui/orbit2d.h>
+#include <ui/OrbitController.h>
 #include <ui/SoundSession.h>
 #include <ui/video.h>
 
@@ -224,7 +224,13 @@ int TestOrbit2DSound::render(SoundSession &sound)
     {
         throw std::logic_error("Unexpected selected orbit operation");
     }
-    const int result{orbit2d_type(calculation, sound)};
+    OrbitController controller{calculation, sound};
+    controller.start();
+    while (!controller.done())
+    {
+        controller.iterate();
+    }
+    const int result{controller.result()};
     calculation.finish(result != 0);
     return result;
 }

@@ -4,6 +4,7 @@
 #include <ui/ShowDotController.h>
 
 #include "MockDriver.h"
+#include "TestRender.h"
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
@@ -20,11 +21,11 @@
 #include <fractals/fractalp.h>
 #include <fractals/lyapunov.h>
 #include <misc/ValueSaver.h>
+#include <ui/ImageRenderContext.h>
 #include <ui/KeyboardHandler.h>
 #include <ui/LyapunovController.h>
 #include <ui/SoundSession.h>
 #include <ui/StandardFractalController.h>
-#include <ui/standard_fractal.h>
 #include <ui/video.h>
 
 #include <gmock/gmock.h>
@@ -347,14 +348,14 @@ TEST_F(TestShowDotController, menuInterruptionAndResumeLeaveNoMarkerBehind)
     g_size_dot = 128;
     m_interrupt_after = 5;
 
-    EXPECT_EQ(-1, standard_fractal());
+    EXPECT_EQ(-1, render_standard_image());
     EXPECT_EQ('x', m_key);
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
     EXPECT_THAT(m_pixels, Each(Ne(15)));
     m_key = 0;
     g_resuming = true;
 
-    EXPECT_EQ(0, standard_fractal());
+    EXPECT_EQ(0, render_standard_image());
 
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
@@ -366,16 +367,116 @@ TEST_F(TestShowDotController, parameterRestartUsesFreshMarkerState)
     clear_image();
     g_orbit_delay = 1;
     m_interrupt_after = 5;
-    ASSERT_EQ(-1, standard_fractal());
+    ASSERT_EQ(-1, render_standard_image());
     EXPECT_THAT(m_pixels, Each(Ne(15)));
     clear_image();
     g_calc_status = CalcStatus::PARAMS_CHANGED;
     g_size_dot = 128;
     ValueSaver saved_iterations{g_max_iterations, 300L};
 
-    EXPECT_EQ(0, standard_fractal());
+    EXPECT_EQ(0, render_standard_image());
 
     EXPECT_THAT(m_pixels, Each(7));
+}
+
+class TestImageRenderContext : public TestShowDotController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestImageRenderContext::SetUp()
+{
+    TestShowDotController::SetUp();
+    m_specific.calc_type = standard_fractal_type;
+    m_specific.per_image = []
+    {
+        g_dispatch.set_calc_type(calculate_pixel);
+        return true;
+    };
+    g_dispatch = FractalDispatch{m_specific};
+}
+
+TEST_F(TestImageRenderContext, requiresStartAndACompletedResult)
+{
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    ImageRenderContext rendering{sound};
+
+    EXPECT_FALSE(rendering.done());
+    EXPECT_THROW(rendering.iterate(), std::logic_error);
+    EXPECT_THROW(rendering.result(), std::logic_error);
+    EXPECT_THROW(rendering.suspend(), std::logic_error);
+    EXPECT_EQ(0, m_calculations);
+
+    rendering.start();
+
+    EXPECT_FALSE(rendering.done());
+    EXPECT_EQ(0, m_calculations);
+    EXPECT_THROW(rendering.start(), std::logic_error);
+    rendering.suspend();
+    EXPECT_TRUE(rendering.done());
+    EXPECT_EQ(0, rendering.result());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_F(TestImageRenderContext, outerStepRetainsTheExistingScanlineBatch)
+{
+    clear_image();
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    ImageRenderContext rendering{sound};
+    rendering.start();
+
+    rendering.iterate();
+
+    ASSERT_TRUE(rendering.done());
+    EXPECT_EQ(0, rendering.result());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
+    EXPECT_THAT(m_pixels, Each(7));
+    rendering.iterate();
+    EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_F(TestImageRenderContext, interruptedOperationReleasesHandlersAndCanResume)
+{
+    clear_image();
+    g_orbit_delay = 1;
+    m_interrupt_after = 5;
+    EXPECT_EQ(-1, render_image());
+
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_EQ('x', m_key);
+    EXPECT_FALSE(g_resume_data.empty());
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+    EXPECT_THAT(m_pixels, Each(Ne(15)));
+
+    m_key = 0;
+    EXPECT_EQ(0, render_image());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
+    EXPECT_THAT(m_pixels, Each(7));
+}
+
+TEST_F(TestImageRenderContext, abandoningAnActiveContextAbortsAndReleasesPresentation)
+{
+    clear_image();
+    g_orbit_delay = 1;
+    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    {
+        ImageRenderContext rendering{sound};
+        rendering.start();
+        rendering.iterate();
+        EXPECT_FALSE(rendering.done());
+    }
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_THAT(m_pixels, Each(Ne(15)));
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
 class TestStandardFractalController : public TestShowDotController

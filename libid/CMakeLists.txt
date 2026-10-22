@@ -55,6 +55,7 @@ add_library(libid
     include/engine/get_julia_attractor.h engine/get_julia_attractor.cpp
     include/engine/get_prec_big_float.h engine/get_prec_big_float.cpp
     include/engine/ImageRegion.h engine/ImageRegion.cpp
+    include/engine/ImageRenderOperation.h engine/ImageRenderOperation.cpp
     include/engine/Inversion.h engine/Inversion.cpp
     include/engine/jiim.h engine/jiim.cpp
     include/engine/load_params.h engine/load_params.cpp
@@ -203,25 +204,20 @@ add_library(libid
     include/misc/ValueSaver.h
     include/misc/version.h misc/version.cpp
 
-    include/ui/ant.h ui/ant.cpp
     include/ui/AntController.h ui/AntController.cpp
-    include/ui/bifurcation.h ui/bifurcation.cpp
     include/ui/BifurcationController.h ui/BifurcationController.cpp
     include/ui/big_while_loop.h ui/big_while_loop.cpp
     include/ui/calculate_image.h ui/calculate_image.cpp
-    include/ui/cellular.h ui/cellular.cpp
     include/ui/CellularController.h ui/CellularController.cpp
     include/ui/ChoiceBuilder.h
     include/ui/command_result.h
     include/ui/command_diagnostics.h ui/command_diagnostics.cpp
     include/ui/command_effects.h ui/command_effects.cpp
     include/ui/comments.h ui/comments.cpp
-    include/ui/diffusion.h ui/diffusion.cpp
     include/ui/DiffusionController.h ui/DiffusionController.cpp
     include/ui/diskvid.h ui/diskvid.cpp
     include/ui/double_to_string.h ui/double_to_string.cpp
     include/ui/DriverSoundOutput.h ui/DriverSoundOutput.cpp
-    include/ui/dynamic2d.h ui/dynamic2d.cpp
     include/ui/editpal.h ui/editpal.cpp
     include/ui/evolve.h ui/evolve.cpp
     include/ui/evolver_menu_switch.h ui/evolver_menu_switch.cpp
@@ -229,7 +225,6 @@ add_library(libid
     include/ui/file_get_window.h ui/file_get_window.cpp
     include/ui/find_special_colors.h ui/find_special_colors.cpp
     include/ui/flip_image.h ui/flip_image.cpp
-    include/ui/frothy_basin.h ui/frothy_basin.cpp
     include/ui/FrothyBasinController.h ui/FrothyBasinController.cpp
     include/ui/full_screen_choice.h ui/full_screen_choice.cpp
     include/ui/full_screen_prompt.h ui/full_screen_prompt.cpp
@@ -256,17 +251,15 @@ add_library(libid
     include/ui/history.h ui/history.cpp
     include/ui/id_keys.h
     include/ui/id_main.h ui/id_main.cpp
-    include/ui/ifs2d.h ui/ifs2d.cpp
     include/ui/IFS2DController.h ui/IFS2DController.cpp
+    include/ui/ImageRenderContext.h ui/ImageRenderContext.cpp
     include/ui/init_failure.h
     include/ui/intro.h ui/intro.cpp
     include/ui/input_field.h ui/input_field.cpp
     include/ui/KeyboardHandler.h ui/KeyboardHandler.cpp
     include/ui/inverse_julia.h ui/inverse_julia.cpp
     include/ui/InverseJuliaFractalController.h ui/InverseJuliaFractalController.cpp
-    include/ui/lsystem.h ui/lsystem.cpp
     include/ui/LSystemController.h ui/LSystemController.cpp
-    include/ui/lyapunov.h ui/lyapunov.cpp
     include/ui/LyapunovController.h ui/LyapunovController.cpp
     include/ui/make_batch_file.h ui/make_batch_file.cpp
     include/ui/main_menu.h ui/main_menu.cpp
@@ -276,13 +269,10 @@ add_library(libid
     include/ui/menu_handler.h ui/menu_handler.cpp
     include/ui/mouse.h ui/mouse.cpp
     include/ui/not_disk_msg.h ui/not_disk_msg.cpp
-    include/ui/non_standard_fractal.h ui/non_standard_fractal.cpp
-    include/ui/orbit2d.h ui/orbit2d.cpp
     include/ui/OrbitController.h ui/OrbitController.cpp
     include/ui/OrbitDelayTimer.h ${ID_ORBIT_DELAY_TIMER_SOURCE}
     include/ui/passes_options.h ui/passes_options.cpp
-    include/ui/plasma.h ui/plasma.cpp
-    include/ui/popcorn.h ui/popcorn.cpp
+    include/ui/PlasmaController.h ui/PlasmaController.cpp
     include/ui/PopcornController.h ui/PopcornController.cpp
     include/ui/precision_diagnostics.h ui/precision_diagnostics.cpp
     include/ui/put_string_center.h ui/put_string_center.cpp
@@ -299,16 +289,13 @@ add_library(libid
     include/ui/SoundSession.h ui/SoundSession.cpp
     include/ui/StereoController.h ui/StereoController.cpp
     include/ui/StandardFractalController.h ui/StandardFractalController.cpp
-    include/ui/standard_fractal.h ui/standard_fractal.cpp
     include/ui/standard_orbit_plot.h ui/standard_orbit_plot.cpp
-    include/ui/standard_4d.h ui/standard_4d.cpp
     include/ui/Standard4DController.h ui/Standard4DController.cpp
     include/ui/starfield.h ui/starfield.cpp
     include/ui/stereo.h ui/stereo.cpp
     include/ui/stop_msg.h ui/stop_msg.cpp
     include/ui/tab_display.h ui/tab_display.cpp
     include/ui/temp_msg.h ui/temp_msg.cpp
-    include/ui/testpt.h ui/testpt.cpp
     include/ui/TestPointController.h ui/TestPointController.cpp
     include/ui/text_screen.h ui/text_screen.cpp
     include/ui/thinking.h ui/thinking.cpp

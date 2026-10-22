@@ -237,7 +237,6 @@ private:
     io::TargaStorageRequest m_targa_storage;
 };
 
-int calc_fract();
 int calc_mandelbrot_type();
 int standard_fractal_type();
 void init_atan_colors();

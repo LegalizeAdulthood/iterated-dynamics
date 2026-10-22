@@ -19,7 +19,7 @@
 #include <io/check_write_file.h>
 #include <io/library.h>
 #include <misc/ValueSaver.h>
-#include <ui/dynamic2d.h>
+#include <ui/OrbitController.h>
 #include <ui/KeyboardHandler.h>
 #include <ui/OrbitController.h>
 #include <ui/SoundSession.h>
@@ -224,7 +224,13 @@ int TestDynamicSound::render(SoundSession &sound)
     {
         throw std::logic_error("Unexpected selected orbit operation");
     }
-    const int result{dynamic2d_type(calculation, sound)};
+    OrbitController controller{calculation, sound};
+    controller.start();
+    while (!controller.done())
+    {
+        controller.iterate();
+    }
+    const int result{controller.result()};
     calculation.finish(result != 0);
     return result;
 }

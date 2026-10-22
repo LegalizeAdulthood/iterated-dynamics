@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include <ui/non_standard_fractal.h>
+#include <ui/calculate_image.h>
 
 #include "MockDriver.h"
 #include "test_data.h"
@@ -175,7 +175,26 @@ int TestLSystemController::render()
 {
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    return non_standard_fractal();
+    NonStandardFractal calculation;
+    try
+    {
+        complete_image_setup(calculation, calculation.start());
+        calculation.select();
+        LSystemController controller{calculation};
+        controller.start();
+        while (!controller.done())
+        {
+            controller.iterate();
+        }
+        calculation.finish(false);
+    }
+    catch (...)
+    {
+        g_calc_status = CalcStatus::NON_RESUMABLE;
+        calculation.finish(true);
+        throw;
+    }
+    return g_calc_status == CalcStatus::COMPLETED ? 0 : -1;
 }
 
 TEST_F(TestLSystemController, closesThinkingBeforeFirstLine)

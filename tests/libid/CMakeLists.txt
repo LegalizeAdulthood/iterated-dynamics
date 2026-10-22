@@ -65,12 +65,14 @@ add_executable(test-id
     "include/test_data.h.in"
     "include/test_library.h.in"
     "include/test_migrate_gif.h.in"
+    include/TestRender.h TestRender.cpp
     expected_map.cpp
     engine/test_BoundaryTrace.cpp
     engine/test_color_utils.cpp
     engine/test_cmdfiles.cpp
     engine/test_Diffusion.cpp
     engine/test_get_prec_big_float.cpp
+    engine/test_ImageRenderOperation.cpp
     engine/test_NonStandardFractal.cpp
     engine/test_InverseJulia.cpp
     engine/test_log_map.cpp

@@ -258,7 +258,12 @@ int TestOrbit3DSound::render(SoundSession &sound)
         throw std::logic_error("Expected a selected 3D orbit operation");
     }
     StereoController controller{calculation, sound};
-    const int result{controller.run()};
+    controller.start();
+    while (!controller.done())
+    {
+        controller.iterate();
+    }
+    const int result{controller.result()};
     calculation.finish(result != 0);
     return result;
 }
@@ -616,7 +621,12 @@ TEST_P(TestOrbit3DSound, stereoIfsWithoutPerImageSetupRendersEachEyeOnce)
     SoundSession sound{m_output};
     StereoController controller{calculation, sound};
 
-    EXPECT_EQ(0, controller.run());
+    controller.start();
+    while (!controller.done())
+    {
+        controller.iterate();
+    }
+    EXPECT_EQ(0, controller.result());
 
     EXPECT_THAT(views, ElementsAre(StereoImage::RED, StereoImage::BLUE));
     EXPECT_TRUE(calculation.done());

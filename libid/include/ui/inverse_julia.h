@@ -8,11 +8,6 @@
 
 #include <memory>
 
-namespace id::engine
-{
-class NonStandardFractal;
-}
-
 namespace id::ui
 {
 
@@ -61,9 +56,6 @@ private:
 
 void jiim(engine::JIIMType which);
 bool prepare_inverse_julia_queue(unsigned long request);
-// TODO: removed later
-// Slice 52.12 removes the synchronous render entry point.
-int inverse_julia_fractal_type(engine::NonStandardFractal &calculation);
 KeyboardHandlerPtr make_inverse_julia_keyboard_handler(InverseJuliaKeyboardContext &context);
 
 } // namespace id::ui

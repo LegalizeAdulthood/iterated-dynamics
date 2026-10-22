@@ -37,18 +37,18 @@ The audit below records the remaining reverse calls inside that structure:
 
 - `libid/ui/AntController.cpp` drives selected Ant work in
   `libid/fractals/Ant.cpp`.
-- `libid/ui/bifurcation.cpp` drives
+- `libid/ui/BifurcationController.cpp` drives
   `libid/fractals/Bifurcation.cpp`.
 - `libid/ui/CellularController.cpp` drives selected Cellular work in
   `libid/fractals/Cellular.cpp`.
-- `libid/ui/diffusion.cpp` drives `libid/fractals/Diffusion.cpp`.
+- `libid/ui/DiffusionController.cpp` drives `libid/fractals/Diffusion.cpp`.
 - `libid/ui/OrbitController.cpp` drives selected 2D orbit and Dynamic2D
   work in `libid/fractals/lorenz.cpp`.
 - `libid/ui/IFS2DController.cpp` drives selected 2D IFS work in
   `libid/fractals/lorenz.cpp`.
 - `libid/ui/StereoController.cpp` drives selected 3D IFS and orbit work
   owned by `libid/engine/NonStandardFractal.cpp`.
-- `libid/ui/plasma.cpp` drives `libid/fractals/Plasma.cpp`.
+- `libid/ui/PlasmaController.cpp` drives `libid/fractals/Plasma.cpp`.
 - `libid/ui/Standard4DController.cpp` drives
   `libid/fractals/julibrot.cpp`.
 - `libid/ui/LSystemController.cpp` drives selected sizing and drawing
@@ -57,7 +57,7 @@ The audit below records the remaining reverse calls inside that structure:
   `libid/fractals/popcorn.cpp`.
 - `libid/ui/FrothyBasinController.cpp` drives selected pixel and overlay
   work in `libid/fractals/FrothyBasin.cpp`.
-- `libid/ui/testpt.cpp` drives `libid/fractals/TestPoint.cpp`.
+- `libid/ui/TestPointController.cpp` drives `libid/fractals/TestPoint.cpp`.
 
 The common structure is:
 
@@ -167,8 +167,8 @@ compatibility during the refactor, the final shape should still separate:
 
 The current code is already part-way through this plan:
 
-- `libid/ui/standard_fractal.cpp` already owns standard-render keyboard
-  polling through the handler stack.
+- `libid/ui/StandardFractalController.cpp` owns standard-render
+  keyboard polling through the handler stack.
 - `StandardFractal` exposes separate `select_pixel()`, `selected_pixel()`,
   and `calculate_pixel()` operations.  It owns calculation dispatch and
   retains an unfinished pixel without delivering a sentinel to the pass.
@@ -275,7 +275,9 @@ The current code is already part-way through this plan:
   without polling or completing an invalid pass.  The UI reports these
   diagnostics; failed standard and Lyapunov operations discard work and
   restore dispatch.  Invalid batch renders report failure without saving.
-  The temporary `ui/calculate_image.cpp` boundary remains for slice 52.
+  `ui::ImageRenderContext` reports diagnostics at the outer boundary;
+  `ui/calculate_image.cpp` only presents setup warnings and storage
+  preparation results.
 - `ifs_load()` throws diagnostics without UI, closes rejected files,
   and publishes coefficients only after validating the definition.
   Selection reports the failure once and retries locally; rendering
@@ -383,9 +385,12 @@ The current code is already part-way through this plan:
 
 The fresh reverse-call audit also found these live paths:
 
-- `calc_fract()` calls UI render controllers directly.
-  `NonStandardFractal` selects calculation objects for every non-standard
-  renderer.  `FractalSpecific` no longer stores UI renderer pointers;
+- `ImageRenderOperation` selects and owns the standard, Lyapunov, or
+  non-standard calculation.  The outer UI `ImageRenderContext` owns its
+  presentation controller; `big_while_loop` advances it explicitly.
+  Engine code no longer calls UI render controllers.
+  `NonStandardFractal` selects calculation objects for every standalone
+  renderer.  `FractalSpecific` stores no UI renderer pointers;
   per-image callbacks perform setup only.
 - Command validation can still invoke modal `stop_msg()` or application
   shutdown through `goodbye()`.
@@ -537,8 +542,8 @@ The audited command-result categories are:
 
 ## Remaining Inversion-of-Control Slices
 
-These slices use the existing pattern from `libid/ui/ant.cpp`,
-`libid/ui/bifurcation.cpp`, `libid/ui/cellular.cpp`, and similar files:
+These slices use the existing pattern from `ui::AntController`,
+`ui::BifurcationController`, `ui::CellularController`, and similar types:
 
 ```text
 ui polling loop
@@ -594,15 +599,13 @@ The concrete render operation objects are:
   caller-owned StandardFractal.  It owns marker presentation, sound
   servicing, and the existing MainLoop/OrbitToggle handler scopes;
   completion and suspension release those scopes before returning.
-  The marked synchronous entry still drives this context until 52.12;
-  the outer engine/UI dispatch boundary has not yet been removed.
 - `fractals::Lyapunov`: owns Lyapunov render state by containing an
   `engine::StandardFractal`; Lyapunov-specific per-image setup remains in
   `lyapunov_per_image()` below the dispatch layer.
   `ui::LyapunovController` can start, step, and suspend a caller-owned
   Lyapunov, retaining marker presentation and MainLoop/OrbitToggle
   handler scopes.  It releases those scopes on completion, suspension,
-  or failure.  The synchronous entry remains marked for 52.12 removal.
+  or failure.
 - `engine::NonStandardFractal`: owns non-standard dispatch setup,
   symmetry defaults, plot defaults, `per_image()` invocation, and final
   status interpretation.  It shares common image setup, timing, and
@@ -616,41 +619,38 @@ The concrete render operation objects are:
   UI; `ui::LSystemController` advances existing sizing/drawing increments
   and owns thinking-screen lifetime and the drawing poll throttle.
   Completion, suspension, and failure close its presentation; pending
-  commands remain for the outer handler.  Its synchronous entry remains
-  marked for 52.12 removal.  FrothyBasin retains orbit/pixel checkpoints,
-  palette selection, and resume coordinates below UI;
+  commands remain for the outer handler.  FrothyBasin retains
+  orbit/pixel checkpoints, palette selection, and resume coordinates
+  below UI;
   `ui::FrothyBasinController` advances existing increments with a
   caller-owned SoundSession.  It owns palette diagnostics, overlay
   interaction, sound servicing, and keyboard scopes, retaining current
-  delay policy.  Its synchronous entries remain marked for 52.12 removal.
+  delay policy.
   The completed-image orbit tool uses setup-only FrothyBasin callbacks,
   independently of the selected image calculation's lifetime.
-  Plasma's controller reports storage availability before engine
-  initialization.  Cellular retains generation-sized preparation and
-  next-screen initialization below UI; `ui::CellularController` advances
+  `ui::PlasmaController` reports storage availability before engine
+  initialization and advances existing subdivision increments.
+  Cellular retains generation-sized preparation and next-screen
+  initialization below UI; `ui::CellularController` advances
   one generation at a time and owns thinking-screen lifetime and error
   presentation.  It retains post-generation driver peeks, saved-row and
-  next-screen continuation, and the legacy completion result.  Its
-  synchronous entry remains marked for 52.12 removal.
+  next-screen continuation, and the legacy completion result.
   Popcorn's Julia setup and symmetry selection also stay below UI.
   `ui::PopcornController` advances existing image increments, retains
   post-step input checks and saved-row suspension, and owns its handler
-  scope.  Popcorn does not use overlay pacing or sound servicing.  Its
-  synchronous entry remains marked for 52.12 removal.
+  scope.  Popcorn does not use overlay pacing or sound servicing.
   Ant's Ctrl+A entry selects an operation on the existing
   image, without restarting common image setup, timing, or resource
   cleanup.  `ui::AntController` steps the selected Ant operation at
   existing batch boundaries and owns step/delay state, option-menu
   interaction, and help-mode lifetime.  It preserves the legacy zero
   return for completion or command interruption; the caller retains
-  final cleanup after an option-menu transition.  The synchronous entry
-  remains marked for 52.12 removal.
+  final cleanup after an option-menu transition.
   `ui::BifurcationController`, `ui::DiffusionController`, and
   `ui::TestPointController` step caller-owned selected operations at the
   existing increment boundaries.  They retain pre/post-step polling,
   disk-progress feedback, suspension, and result conventions; Diffusion
-  owns its handler lifetime.  Their synchronous entries remain marked
-  for 52.12 removal.
+  owns its handler lifetime.
   Per-image callbacks no longer invoke renderers.  IFS selects 2D or 3D
   from loaded definition dimensions, including cached definitions;
   `type=ifs3d` remains compatibility syntax for `type=ifs`.  IFS retains
@@ -665,47 +665,45 @@ The concrete render operation objects are:
   caller-owned selected calculations one point at a time.  Eye
   transitions retain the modal PHOTO save prompt and prepare the next
   view before advancing a point.  Completion, suspension, and failure
-  release its handler scope; `run()` remains marked for 52.12 removal.
+  release its handler scope.
   Engine selection and sound-source classification do not depend on UI
   renderer pointers.  The legacy orbit/IFS rendering entry is gone.
   Orbit2D and Dynamic2D keep their existing increment and resume formats;
   `ui::OrbitController` steps both with a caller-owned SoundSession,
   retaining sound waits, menu interruption, disk-progress feedback, and
   completion drain.  Its handler scope ends on completion, suspension,
-  or failure.  Synchronous entries remain marked for 52.12 removal.
+  or failure.
   `ui::IFS2DController` retains pre-point polling and non-resumable
   interruption.  `ui::Standard4DController` retains UI palette setup
   and post-increment polling after each unfinished symmetric pixel
-  pair.  Both step caller-owned selected operations; synchronous entries
-  remain marked for 52.12 removal.  Standalone inverse Julia owns point
-  completion and prepared-queue lifetime;
+  pair.  Both step caller-owned selected operations.  Standalone inverse
+  Julia owns point completion and prepared-queue lifetime;
   `ui::InverseJuliaFractalController` steps that selected operation,
   retaining UI allocation retries, fallback notifications, pre-point
   input handling, and orbit toggling.  Its handler scope ends on
-  completion, suspension, or failure.  The synchronous entry remains
-  marked for 52.12 removal; the completed-image picker is unchanged.
+  completion, suspension, or failure; the completed-image picker is
+  unchanged.
 
 The input and presentation side starts, resumes, cancels, or paces the
 active operation.  It does not classify standard versus Lyapunov versus
 non-standard renderers, and it does not own orbit math, pass traversal,
 or pixel plotting.
 
-The current wrong boundary is `engine::calc_fract()` calling UI entry
-points: `standard_fractal()`, `lyapunov_fractal()`, and
-`non_standard_fractal()`.  Fixing that requires render operations that
-return control after bounded work.  It is not fixed by moving those calls
-behind another engine wrapper.
+The outer boundary now drives bounded work: `big_while_loop` starts and
+steps `ui::ImageRenderContext`, which owns an engine-selected
+`ImageRenderOperation` and its stepwise presentation controller.
+Renderer classification remains in the engine, not the UI.  Setup,
+timing, calculation state, and cleanup remain in calculation objects;
+input, sound servicing, markers, diagnostics, and storage preparation
+belong to UI contexts.  The synchronous rendering entry points and
+`calculate_image()` diagnostic bridge have been removed.
 
-The indirect renderer paths are closed: `FractalSpecific` has no UI
+The indirect renderer paths are also closed: `FractalSpecific` has no UI
 renderer pointers, calculation front ends do not enter controllers, and
-per-image callbacks perform setup only.  The remaining outer boundary
-still needs to drive the selected operations directly.
-
-The implementation order closes calculation-side input and presentation
-paths first, then extracts misplaced backend helpers, and finally makes
-the outer UI controller drive a selected engine operation.  Retain the
-wait, interrupt, and perturbation work after the sound-port slices;
-controller-specific audit follow-ups remain after that work.
+per-image callbacks perform setup only.  Existing work increments and
+controller input checkpoints are retained; outer stepping adds no polls.
+Further consolidation to a single event-driven input loop remains
+separate from the release 1.5 directory boundary.
 
 ## GIF File Operation Policy
 
@@ -1121,62 +1119,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 52.12. Outer UI Render Operation Control
-
-Source: `calc_fract()`, the render branches in `ui/big_while_loop.cpp`,
-`ui/calculate_image.cpp`, and the stepwise UI contexts from 52.1-52.11.
-
-Work:
-
-- Add an engine-selected ImageRenderOperation owning the standard,
-  Lyapunov, or non-standard calculation object.  Keep renderer
-  classification in engine code; the operation exposes calculation
-  identity/state, not UI function pointers.
-- Have the outer UI render context obtain that operation, initialize
-  it, and own the corresponding presentation context.  Its loop polls
-  input and advances the existing bounded work through that context.
-  Do not add another synchronous engine/UI wrapper or callback table.
-- Retain application-phase handling and command-effect mapping at their
-  existing boundary.  Preserve render completion, save, and exit in batch
-  mode, including user interruption while batch rendering.
-- Remove engine calls to `standard_fractal()`, `lyapunov_fractal()`, and
-  `non_standard_fractal()`, obsolete `calc_fract()` dispatch, and the
-  marked synchronous UI entry points.  UI must not classify renderers
-  by fractal type or calculation-function pointers.
-- Remove the temporary `calculate_image()` diagnostic bridge.  Preserve
-  setup warnings, fatal-error cleanup, precision-error propagation, and
-  batch failure status at the outer UI boundary.
-- Engine objects own calculation state, timing, and cleanup.  UI
-  contexts own presentation and interaction only.
-
-Done when:
-
-- Rendering begins from outer UI/application coordination; engine code
-  never selects or invokes a UI controller.
-- No retained full-render bridge hides a nested rendering loop.
-- The earlier context slices are prerequisites, not completion of this
-  outer-loop ownership change.
-
-Validation: run the full `rt-default` workflow and cover batch completion,
-save, and exit with process tests, plus autokey for supported batch-key
-interruption.  Reuse and extend autokey workflows for menu cancellation,
-fractal/parameter changes that regenerate an image, and display-only
-toggles through the outer application phases.  Assert intermediate phase
-and command effects as well as final results.  Retain controller tests for
-precise phase mapping, handler lifetime, and cleanup.  Do not substitute
-fixed waits or a manual retest of every menu or renderer.
-
-Manual testing, for physical input during CPU-bound rendering only:
-
-- Arguments:
-  `video=F6 type=mandel passes=1 maxiter=1000000 periodicity=0`.
-- While rendering, press `x` physically; verify the options screen opens
-  responsively.  Press Esc and verify rendering resumes and the window
-  continues repainting.  Do not wait for completion or compare pixels.
-- Mock-driver and autokey tests bypass physical input delivery.  Unlike
-  the show-dot check, this path has no marker delay pumping window events
-  that could hide a missing outer-loop event pump.
-
 ### 53. Remaining Data-Only UI Dependencies
 
 Source: remaining `ui/*` includes in calculation code after the concrete
@@ -1245,8 +1187,9 @@ polling:
   `driver_get_key()`.
 - The top application loop should read driver keys and feed them to the
   handler stack.
-- Render controllers should become resumable phases that do bounded work
-  when the top loop asks them to advance.
+- Render controllers already expose bounded stepping.  Their input waits
+  and modal interactions still need event-driven phases before the top
+  loop can be the sole driver-key poller.
 
 Simple render controllers that already wrap calculation objects but
 still poll the driver queue directly:
@@ -1255,7 +1198,7 @@ still poll the driver queue directly:
 - `libid/ui/CellularController.cpp`
 - `libid/ui/IFS2DController.cpp`
 - `libid/ui/LSystemController.cpp`
-- `libid/ui/plasma.cpp`
+- `libid/ui/PlasmaController.cpp`
 - `libid/ui/Standard4DController.cpp`
 - `libid/ui/TestPointController.cpp`
 
@@ -1264,7 +1207,7 @@ still read or write the driver queue directly:
 
 - `libid/ui/AntController.cpp`
 - `libid/ui/inverse_julia.cpp`
-- `libid/ui/non_standard_fractal.cpp`
+- `libid/ui/ImageRenderContext.cpp`
 - `libid/ui/stereo.cpp`
 
 Handler-based render controllers that still rely on

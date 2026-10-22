@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include "MockDriver.h"
+#include "TestRender.h"
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
@@ -38,15 +39,12 @@
 #include <misc/ValueSaver.h>
 #include <misc/memory.h>
 #include <misc/debug_flags.h>
-#include <ui/calculate_image.h>
 #include <ui/diskvid.h>
-#include <ui/frothy_basin.h>
 #include <ui/FrothyBasinController.h>
-#include <ui/non_standard_fractal.h>
+#include <ui/calculate_image.h>
 #include <ui/KeyboardHandler.h>
 #include <ui/id_keys.h>
 #include <ui/SoundSession.h>
-#include <ui/standard_fractal.h>
 #include <ui/standard_orbit_plot.h>
 #include <ui/video.h>
 
@@ -409,14 +407,14 @@ TEST_F(TestOverlaySound, controllerSuspendsWithinAnOrbitAndResumesUnfinishedPixe
     EXPECT_CALL(m_driver, unget_key('x'));
     EXPECT_CALL(*m_output, mute());
 
-    EXPECT_EQ(-1, standard_fractal());
+    EXPECT_EQ(-1, render_standard_image());
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
     EXPECT_EQ(2047, s_orbit_calls);
     EXPECT_EQ(0, m_plots);
 
     g_resuming = true;
 
-    EXPECT_EQ(0, standard_fractal());
+    EXPECT_EQ(0, render_standard_image());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_EQ(4, m_plots);
     EXPECT_EQ(5, s_pixel_calls);
@@ -632,7 +630,7 @@ TEST_F(TestTrueColorStorage, finishingAbandonedSetupDiscardsThePreparedFile)
 
 TEST_F(TestTrueColorStorage, controllerPreparesStorageAndFinishesTheTargaImage)
 {
-    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(0, render_image());
 
     EXPECT_TRUE(g_true_color);
     EXPECT_EQ(CalcMode::ONE_PASS, g_std_calc_mode);
@@ -681,7 +679,7 @@ TEST_F(TestStandardPotentialStorage, controllerPreparesStorageBeforePixelCalcula
 {
     g_std_calc_mode = CalcMode::SOLID_GUESS;
 
-    EXPECT_EQ(0, standard_fractal());
+    EXPECT_EQ(0, render_standard_image());
 
     EXPECT_TRUE(g_disk_flag);
     EXPECT_TRUE(g_disk_16_bit);
@@ -712,7 +710,7 @@ TEST_F(TestStandardPotentialStorage, controllerContinuesWithRequestedPassAfterSt
                 return ID_KEY_ESC;
             }));
 
-    EXPECT_EQ(0, standard_fractal());
+    EXPECT_EQ(0, render_standard_image());
 
     EXPECT_FALSE(g_disk_flag);
     EXPECT_FALSE(g_disk_16_bit);
@@ -753,7 +751,7 @@ TEST_F(TestStandardRenderDiagnostic, boundaryValidationReturnsToUiAndAllowsCorre
     const FractalDispatch dispatch{g_dispatch};
     expect_diagnostic("Boundary tracing cannot be used with inside=0 or outside=0");
 
-    EXPECT_EQ(-1, calculate_image());
+    EXPECT_EQ(-1, render_image());
 
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(0, g_num_work_list);
@@ -761,7 +759,7 @@ TEST_F(TestStandardRenderDiagnostic, boundaryValidationReturnsToUiAndAllowsCorre
     EXPECT_EQ(dispatch.calc_type(), g_dispatch.calc_type());
     EXPECT_EQ(dispatch.per_image(), g_dispatch.per_image());
     g_inside_method = ColorMethod::ITER;
-    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(0, render_image());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
 }
 
@@ -771,7 +769,7 @@ TEST_F(TestStandardRenderDiagnostic, allocationFailureDiscardsWorkAndReportsToUi
     const FractalDispatch dispatch{g_dispatch};
     expect_diagnostic("Insufficient free memory for calculation");
 
-    EXPECT_EQ(-1, calculate_image());
+    EXPECT_EQ(-1, render_image());
 
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(0, g_num_work_list);
@@ -792,14 +790,14 @@ TEST_F(TestStandardRenderDiagnostic, precisionFailureCleansUpBeforeReachingOuter
         });
     EXPECT_CALL(*m_output, mute());
 
-    EXPECT_THROW(calculate_image(), PrecisionError);
+    EXPECT_THROW(render_image(), PrecisionError);
 
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(0, g_num_work_list);
     EXPECT_TRUE(g_resume_data.empty());
     EXPECT_EQ(0, m_plots);
     g_dispatch.set_per_image(initialize_overlay_image);
-    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(0, render_image());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
 }
 
@@ -808,14 +806,14 @@ TEST_F(TestStandardRenderDiagnostic, backingMemoryFailureReportsToUiAfterCleanup
     g_dispatch.set_per_image([]() -> bool { throw MemoryError{"Read file error"}; });
     expect_diagnostic("Read file error");
 
-    EXPECT_EQ(-1, calculate_image());
+    EXPECT_EQ(-1, render_image());
 
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(0, g_num_work_list);
     EXPECT_TRUE(g_resume_data.empty());
     EXPECT_EQ(0, m_plots);
     g_dispatch.set_per_image(initialize_overlay_image);
-    EXPECT_EQ(0, calculate_image());
+    EXPECT_EQ(0, render_image());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
 }
 
@@ -1037,12 +1035,18 @@ int TestOverlaySoundController::render(SoundSession &sound)
 {
     if (!GetParam())
     {
-        return standard_fractal(sound);
+        return render_standard_image(sound);
     }
     NonStandardFractal calculation;
     complete_image_setup(calculation, calculation.start());
     EXPECT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, calculation.select());
-    const int result{froth_type(calculation, sound)};
+    FrothyBasinController controller{calculation, sound};
+    controller.start();
+    while (!controller.done())
+    {
+        controller.iterate();
+    }
+    const int result{controller.result()};
     calculation.finish(result < 0);
     return result;
 }
@@ -1077,7 +1081,7 @@ TEST_P(TestOverlaySoundController, evolutionCellsShareOneOutputUntilTheOwnerFini
         g_calc_status = CalcStatus::PARAMS_CHANGED;
         g_resuming = false;
 
-        EXPECT_EQ(0, GetParam() ? non_standard_fractal() : standard_fractal());
+        EXPECT_EQ(0, render_image());
 
         EXPECT_EQ(m_output, g_sound);
         EXPECT_EQ((completed_cells + 1) * 4, std::count(m_events.begin(), m_events.end(), "boundary"));
@@ -1206,7 +1210,7 @@ TEST_P(TestOverlaySoundController, recordsBoundariesAndSamplesWhenDriverDoesNotS
         {
             g_calc_status = CalcStatus::PARAMS_CHANGED;
             g_resuming = false;
-            EXPECT_EQ(0, GetParam() ? non_standard_fractal() : standard_fractal());
+            EXPECT_EQ(0, render_image());
         }
         EXPECT_TRUE(owner.finish());
     }
