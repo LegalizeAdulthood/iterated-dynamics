@@ -1119,11 +1119,10 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.1. Shared Metadata Ownership
+### 53.1.1. GIF Evolution Record Ownership
 
-Source: `engine/video_mode.cpp` including `ui/id_keys.h`,
-`engine/cmdfiles.cpp` including `ui/stereo.h`, and GIF metadata headers
-including `ui/evolve.h`.
+Source: `ui/evolve.h`, its record comparisons in `ui/evolve.cpp`, and
+GIF metadata headers including `ui/evolve.h`.
 
 Work:
 
@@ -1132,26 +1131,70 @@ Work:
   menus, and controller state in UI.
 - Retain the existing field-by-field GIF serializers and record lengths.
   Do not change the file format, padding rules, or compatibility behavior.
-- Move stereo calculation parameters and `CalibrationBars` into geometry.
-  Keep automatic-conversion requests, prompts, and parameter-save policy
-  in UI; the next slice handles their command-parser effects.
-- Share the function-key values used by video-mode configuration as
-  non-UI metadata.  Derive the corresponding `ui/id_keys.h` constants
-  from those values; do not duplicate numeric encodings or move keyboard
-  handling into the metadata module.
-- Update consumers directly.  Do not retain transitional forwarding
-  headers or introduce input, pacing, or work-boundary changes.
+- Update only this record's consumers directly.  Keep evolution runtime
+  dependencies explicit in their source files rather than importing UI
+  through public GIF metadata headers.  Do not retain forwarding headers.
+- Do not move stereo data or change video keys in this subslice.
 
 Done when:
 
-- GIF and video-mode metadata and stereo calculation data can be used
-  without including UI headers.
-- UI behavior and runtime interaction state remain UI-owned.
+- GIF evolution metadata can be used without including UI headers.
+- Evolution interaction and runtime state remain UI-owned; serialized
+  records and comparison behavior are unchanged.
 
-Validation: extend focused metadata tests where ownership changes expose
-coverage gaps.  Reuse GIF round-trip, evolution-record, video-key, stereo,
-and image tests, then run the full `rt-default` workflow.  Existing
-automation covers these unchanged interactions; no manual check is needed.
+Validation: reuse GIF round-trip and evolution-record tests; add focused
+record-comparison coverage only where missing.  Run the full `rt-default`
+workflow.  No manual check is needed for this ownership-only change.
+
+### 53.1.2. Stereo Calculation Data Ownership
+
+Source: `ui/stereo.h`, its parameter definitions in `ui/stereo.cpp`,
+and consumers including `engine/cmdfiles.cpp` and `geometry/line3d.cpp`.
+
+Work:
+
+- Move stereo calculation parameters and `CalibrationBars` into geometry.
+  Preserve their types and defaults; update their consumers directly.
+- Keep automatic-conversion requests, prompts, and parameter-save policy
+  in UI.  Slice 53.2 handles their command-parser effects; this subslice
+  does not attempt to remove that remaining parser dependency.
+- Do not retain forwarding headers or alter stereo calculation, input,
+  pacing, or work boundaries.
+- Do not change GIF metadata or video keys in this subslice.
+
+Done when:
+
+- Stereo calculation data can be used without including UI headers.
+- Stereo runtime interaction and conversion policy remain UI-owned.
+
+Validation: reuse stereo parameter, batch-file, and stereo/autokey tests,
+then run the full `rt-default` workflow.  No manual check is needed for
+unchanged calculation data and interaction.
+
+### 53.1.3. Video-Mode Key Boundary: Discuss Before Implementation
+
+Source: `engine/video_mode.cpp` including `ui/id_keys.h`, video-mode
+configuration key conversion, and their UI callers.
+
+Work:
+
+- Stop for design discussion with the user before implementing this
+  subslice.  The ownership and conversion mechanism are not yet chosen.
+- Do not repeat the reverted approach of adding shared engine key
+  constants and deriving `ui/id_keys.h` constants from them.
+- After agreement, record the specific changes here before implementing.
+  Limit the change to video-mode key ownership and conversion; preserve
+  configuration encodings, supported keys, and keyboard behavior.
+
+Done when:
+
+- The user-approved design removes the video-mode dependency on UI
+  headers without relocating keyboard handling into the engine.
+
+Validation: after design approval, retain video-key conversion and
+configuration round-trip coverage and run the full `rt-default` workflow.
+Determine whether any uncovered interaction requires a manual check from
+the agreed design; do not invent tests before that discussion.
 
 ### 53.2. UI-Owned Command Settings
 
@@ -1255,10 +1298,10 @@ renderers or UI.  Remaining engine/fractal header dependencies are data
 and setup-policy couplings, not direct input polling:
 
 - `libid/engine/video_mode.cpp`: `ui/id_keys.h` supplies video-key
-  encodings.  Shared metadata ownership is covered by 53.1.
+  encodings.  Slice 53.1.3 requires design discussion before changes.
 - `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h`, `ui/history.h`,
   `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  Stereo
-  calculation data moves in 53.1; UI-only effects move in 53.2.
+  calculation data moves in 53.1.2; UI-only effects move in 53.2.
 - `libid/engine/calc_frac_init.cpp`: `ui/zoom.h` supplies the zoom-box
   condition for invalidating adjusted resume work.  Slice 53.3 returns
   the geometry outcome and leaves that decision in UI.
@@ -1266,7 +1309,7 @@ and setup-policy couplings, not direct input polling:
   `g_using_jiim` for optimized-calculator selection.  Slice 53.4 replaces
   the UI-state dependency with an explicit calculation requirement.
 - GIF metadata headers indirectly import UI through `ui/evolve.h`.
-  Slice 53.1 moves the shared record out of UI without moving interaction.
+  Slice 53.1.1 moves the record out of UI without moving interaction.
 
 GIF codec operations do not poll input or support keyboard-interrupted
 saves.  Image-save progress, notifications, and exit policy are UI-owned;
