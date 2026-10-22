@@ -645,9 +645,13 @@ The concrete render operation objects are:
   interruption.  `ui::Standard4DController` retains UI palette setup
   and post-increment polling after each unfinished symmetric pixel
   pair.  Both step caller-owned selected operations; synchronous entries
-  remain marked for 52.12 removal.  Standalone
-  inverse Julia owns point completion and prepared-queue lifetime;
-  its controller owns allocation retries and fallback notifications.
+  remain marked for 52.12 removal.  Standalone inverse Julia owns point
+  completion and prepared-queue lifetime;
+  `ui::InverseJuliaFractalController` steps that selected operation,
+  retaining UI allocation retries, fallback notifications, pre-point
+  input handling, and orbit toggling.  Its handler scope ends on
+  completion, suspension, or failure.  The synchronous entry remains
+  marked for 52.12 removal; the completed-image picker is unchanged.
 
 The input and presentation side starts, resumes, cancels, or paces the
 active operation.  It does not classify standard versus Lyapunov versus
@@ -1085,25 +1089,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 52.6. Stepwise Standalone Inverse Julia Context
-
-Source: `inverse_julia_fractal_type()` in `ui/inverse_julia.cpp`.
-
-Work:
-
-- Introduce `InverseJuliaFractalController`, distinct from the
-  completed-image picker/tool controller.
-- Preserve queue allocation retries and fallback notifications in UI.
-  InverseJuliaFractal retains seeding, point completion, and queue
-  lifetime; the UI context advances one selected-operation increment.
-- Retain `InverseJuliaOrbitKeyboardHandler` semantics, including orbit
-  toggling and returning unconsumed command keys to the main context.
-- Mark the synchronous entry for removal in 52.12.
-
-Validation: queue-failure/fallback tests, inverse-Julia operation scripts,
-direct stepping, and handler cleanup.  Do not retest the unchanged mouse
-picker manually.
-
 ### 52.7. Stepwise Ant UI Context
 
 Source: `ui/ant.cpp`.
@@ -1340,6 +1325,7 @@ Handler-based render controllers that still rely on
 
 - `libid/ui/DiffusionController.cpp`
 - `libid/ui/frothy_basin.cpp`
+- `libid/ui/InverseJuliaFractalController.cpp`
 - `libid/ui/LyapunovController.cpp`
 - `libid/ui/OrbitController.cpp`
 - `libid/ui/popcorn.cpp`

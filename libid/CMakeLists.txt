@@ -260,6 +260,7 @@ add_library(libid
     include/ui/input_field.h ui/input_field.cpp
     include/ui/KeyboardHandler.h ui/KeyboardHandler.cpp
     include/ui/inverse_julia.h ui/inverse_julia.cpp
+    include/ui/InverseJuliaFractalController.h ui/InverseJuliaFractalController.cpp
     include/ui/lsystem.h ui/lsystem.cpp
     include/ui/lyapunov.h ui/lyapunov.cpp
     include/ui/LyapunovController.h ui/LyapunovController.cpp

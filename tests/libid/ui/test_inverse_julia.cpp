@@ -28,6 +28,7 @@
 #include <ui/big_while_loop.h>
 #include <ui/help.h>
 #include <ui/id_keys.h>
+#include <ui/InverseJuliaFractalController.h>
 #include <ui/mouse.h>
 #include <ui/main_menu_switch.h>
 #include <ui/video.h>
@@ -38,6 +39,8 @@
 #include <chrono>
 #include <cmath>
 #include <filesystem>
+#include <stdexcept>
+#include <utility>
 #include <vector>
 
 using namespace id::engine;
@@ -222,11 +225,14 @@ protected:
     ValueSaver<std::filesystem::path> m_saved_temp{g_temp_dir};
     ValueSaver<Major> m_saved_major{g_major_method, Major::BREADTH_FIRST};
     ValueSaver<bool> m_saved_resuming{g_resuming, false};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
     ValueSaver<bool> m_saved_show_orbit{g_show_orbit, false};
     ValueSaver<double> m_saved_param0{g_params[0], -1.0};
     ValueSaver<double> m_saved_param1{g_params[1], 0.0};
     ValueSaver<double> m_saved_param2{g_params[2], 4.0};
     ValueSaver<double> m_saved_param3{g_params[3], 1024.0};
+    ValueSaver<DComplex> m_saved_old_z{g_old_z};
+    ValueSaver<DComplex> m_saved_new_z{g_new_z};
     std::filesystem::path m_directory;
 };
 
@@ -405,6 +411,224 @@ TEST_F(TestInverseJuliaQueue, standaloneControllerOwnsTheRandomWalkFallback)
     EXPECT_EQ(Major::RANDOM_WALK, g_major_method);
     EXPECT_EQ(0UL, queue_capacity());
     EXPECT_FALSE(g_disk_flag);
+}
+
+TEST_F(TestInverseJuliaQueue, stepwiseControllerAdvancesOnePointAndLeavesCompletedQueueWithCalculation)
+{
+    set_fractal_type(FractalType::INVERSE_JULIA);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    g_dispatch.set_orbit_calc(
+        []
+        {
+            g_new_z.x += 1.0;
+            return g_new_z.x >= 3.0 ? -1 : 0;
+        });
+    g_new_z = {};
+    InverseJuliaFractalController controller{calculation};
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_EQ(32768UL, queue_capacity());
+    EXPECT_DOUBLE_EQ(0.0, g_new_z.x);
+    EXPECT_THROW(controller.start(), std::logic_error);
+    controller.iterate();
+    EXPECT_DOUBLE_EQ(1.0, g_old_z.x);
+    EXPECT_FALSE(controller.done());
+    controller.iterate();
+    EXPECT_DOUBLE_EQ(2.0, g_old_z.x);
+    EXPECT_FALSE(controller.done());
+    controller.iterate();
+    EXPECT_DOUBLE_EQ(3.0, g_old_z.x);
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(0, controller.result());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_EQ(32768UL, queue_capacity());
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+    controller.iterate();
+    EXPECT_DOUBLE_EQ(3.0, g_new_z.x);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    calculation.finish(false);
+
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_TRUE(exit_check().empty());
+}
+
+TEST_F(TestInverseJuliaQueue, stepwiseControllerTogglesOrbitsAndReturnsCommandsBeforeAnotherPoint)
+{
+    set_fractal_type(FractalType::INVERSE_JULIA);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    g_dispatch.set_orbit_calc(
+        []
+        {
+            g_new_z.x += 1.0;
+            return 0;
+        });
+    g_new_z = {};
+    InverseJuliaFractalController controller{calculation};
+    controller.start();
+    int pending_key{'o'};
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Invoke([&pending_key] { return pending_key; }));
+    EXPECT_CALL(m_driver, get_key()).WillRepeatedly(Invoke([&pending_key] { return std::exchange(pending_key, 0); }));
+    EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([&pending_key](int key) { pending_key = key; }));
+
+    controller.iterate();
+
+    EXPECT_TRUE(g_show_orbit);
+    EXPECT_DOUBLE_EQ(1.0, g_new_z.x);
+    EXPECT_FALSE(controller.done());
+    EXPECT_FALSE(calc_interrupt_requested());
+    pending_key = 'O';
+    controller.iterate();
+    EXPECT_FALSE(g_show_orbit);
+    EXPECT_DOUBLE_EQ(2.0, g_new_z.x);
+    EXPECT_FALSE(controller.done());
+    pending_key = 'x';
+    controller.iterate();
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_DOUBLE_EQ(2.0, g_new_z.x);
+    EXPECT_EQ('x', pending_key);
+    EXPECT_TRUE(calc_interrupt_requested());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_F(TestInverseJuliaQueue, stepwiseSuspensionReleasesQueueAndKeyboardScope)
+{
+    set_fractal_type(FractalType::INVERSE_JULIA);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    InverseJuliaFractalController controller{calculation};
+    controller.start();
+    ASSERT_EQ(32768UL, queue_capacity());
+
+    controller.suspend();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+}
+
+TEST_F(TestInverseJuliaQueue, stepwiseCalculationFailureReleasesQueueAndKeyboardScope)
+{
+    set_fractal_type(FractalType::INVERSE_JULIA);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    g_dispatch.set_orbit_calc([]() -> int { throw std::runtime_error("Orbit failed"); });
+    InverseJuliaFractalController controller{calculation};
+    controller.start();
+    ASSERT_EQ(32768UL, queue_capacity());
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+    controller.iterate();
+}
+
+TEST_F(TestInverseJuliaQueue, stepwiseInputFailureClosesBeforeComputingAPoint)
+{
+    set_fractal_type(FractalType::INVERSE_JULIA);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    g_dispatch.set_orbit_calc([]() -> int { throw std::logic_error("Unexpected orbit calculation"); });
+    InverseJuliaFractalController controller{calculation};
+    controller.start();
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Throw(std::runtime_error("Input failed")));
+
+    EXPECT_THROW(controller.iterate(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_F(TestInverseJuliaQueue, stepwisePreparationFailureTerminatesTheSelectedOperation)
+{
+    set_fractal_type(FractalType::INVERSE_JULIA);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    EXPECT_CALL(m_driver, is_disk()).WillOnce(Throw(std::runtime_error("Storage check failed")));
+    InverseJuliaFractalController controller{calculation};
+
+    EXPECT_THROW(controller.start(), std::runtime_error);
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+}
+
+TEST_F(TestInverseJuliaQueue, stepwiseControllerRejectsOldResumeWithoutPollingOrAllocating)
+{
+    set_fractal_type(FractalType::INVERSE_JULIA);
+    g_calc_status = CalcStatus::RESUMABLE;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    ASSERT_TRUE(calculation.done());
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, is_disk()).Times(0);
+    InverseJuliaFractalController controller{calculation};
+
+    controller.start();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+    controller.iterate();
+    calculation.finish(false);
+}
+
+TEST_F(TestInverseJuliaQueue, stepwiseControllerDestructionReleasesOnlyItsKeyboardScope)
+{
+    set_fractal_type(FractalType::INVERSE_JULIA);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    {
+        InverseJuliaFractalController controller{calculation};
+        controller.start();
+        ASSERT_EQ(32768UL, queue_capacity());
+    }
+
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+    EXPECT_FALSE(calculation.done());
+    EXPECT_EQ(32768UL, queue_capacity());
+    calculation.finish(true);
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
 }
 
 TEST_F(TestInverseJuliaQueue, jiimControllerReleasesItsQueueAndRestoresTheImage)

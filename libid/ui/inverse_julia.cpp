@@ -7,7 +7,6 @@
 #include "engine/calcfrac.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
-#include "engine/NonStandardFractal.h"
 #include "engine/pixel.h"
 #include "engine/pixel_grid.h"
 #include "engine/random_seed.h"
@@ -26,8 +25,8 @@
 #include "ui/get_a_number.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
+#include "ui/InverseJuliaFractalController.h"
 #include "ui/mouse.h"
-#include "ui/standard_orbit_plot.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
@@ -687,39 +686,6 @@ private:
     InverseJuliaKeyboardContext &m_context;
 };
 
-class InverseJuliaOrbitKeyboardHandler : public KeyboardHandler
-{
-public:
-    bool handle_key(const int key) override
-    {
-        if (g_show_orbit)
-        {
-            scrub_orbit_display();
-        }
-        if (key == 'o' || key == 'O')
-        {
-            if (!driver_is_disk())
-            {
-                g_show_orbit = !g_show_orbit;
-            }
-            return true;
-        }
-
-        driver_unget_key(key);
-        set_calc_interrupted();
-        m_interrupted = true;
-        return true;
-    }
-
-    bool interrupted() const
-    {
-        return m_interrupted;
-    }
-
-private:
-    bool m_interrupted{};
-};
-
 } // namespace
 
 class InverseJuliaMouseScope::Impl
@@ -1021,35 +987,17 @@ bool prepare_inverse_julia_queue(const unsigned long request)
     return false;
 }
 
+// TODO: removed later
+// Slice 52.12 replaces the synchronous entry with outer UI stepping.
 int inverse_julia_fractal_type(NonStandardFractal &calculation)
 {
-    if (calculation.inverse_julia_queue_required())
+    InverseJuliaFractalController controller{calculation};
+    controller.start();
+    while (!controller.done())
     {
-        const bool available{prepare_inverse_julia_queue(32 * 1024UL)};
-        if (!available)
-        {
-            stop_msg(
-                StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Not enough memory: switching to random walk.\n");
-        }
-        calculation.complete_inverse_julia_queue(available);
+        controller.iterate();
     }
-
-    reset_calc_interrupted();
-    std::shared_ptr<InverseJuliaOrbitKeyboardHandler> keyboard_handler{
-        std::make_shared<InverseJuliaOrbitKeyboardHandler>()};
-    ScopedKeyboardHandler keyboard_scope{keyboard_handler};
-
-    while (!calculation.done())
-    {
-        dispatch_pending_keyboard_input();
-        if (keyboard_handler->interrupted())
-        {
-            calculation.suspend();
-            return -1;
-        }
-        calculation.iterate();
-    }
-    return calculation.completed() ? 0 : -1;
+    return controller.result();
 }
 
 } // namespace id::ui
