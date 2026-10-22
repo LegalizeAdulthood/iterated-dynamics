@@ -1119,44 +1119,159 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53. Remaining Data-Only UI Dependencies
+### 53.1. Shared Metadata Ownership
 
-Source: remaining `ui/*` includes in calculation code after the concrete
-control-flow and backend ownership slices.
+Source: `engine/video_mode.cpp` including `ui/id_keys.h`,
+`engine/cmdfiles.cpp` including `ui/stereo.h`, and GIF metadata headers
+including `ui/evolve.h`.
 
 Work:
 
-- Classify each remaining dependency as data, calculation, backend work,
-  or actual UI control.  Move shared constants, types, and pure helpers
-  to their owning non-UI module when calculation requires them.
-- Include palette-analysis helpers, projection/palette constants, video
-  metadata, and UI-context flags still used by calculation setup.
-- Keep actual UI decisions with controllers.  Any newly discovered
-  callback needs its own focused inversion slice, not a renamed include
-  or a forwarding function that hides the dependency.
+- Move `EvolutionInfo`, its shared record constants, and its comparison
+  helpers into the GIF metadata module.  Keep evolution interaction,
+  menus, and controller state in UI.
+- Retain the existing field-by-field GIF serializers and record lengths.
+  Do not change the file format, padding rules, or compatibility behavior.
+- Move stereo calculation parameters and `CalibrationBars` into geometry.
+  Keep automatic-conversion requests, prompts, and parameter-save policy
+  in UI; the next slice handles their command-parser effects.
+- Share the function-key values used by video-mode configuration as
+  non-UI metadata.  Derive the corresponding `ui/id_keys.h` constants
+  from those values; do not duplicate numeric encodings or move keyboard
+  handling into the metadata module.
+- Update consumers directly.  Do not retain transitional forwarding
+  headers or introduce input, pacing, or work-boundary changes.
 
 Done when:
 
-- Engine and fractal headers and implementations no longer need UI
-  headers, including through data-only dependencies.
+- GIF and video-mode metadata and stereo calculation data can be used
+  without including UI headers.
+- UI behavior and runtime interaction state remain UI-owned.
 
-Validation: build the affected configurations and reuse existing data and
-image tests.  This dependency correction does not introduce a new input
-mechanism or a source-grep test.
+Validation: extend focused metadata tests where ownership changes expose
+coverage gaps.  Reuse GIF round-trip, evolution-record, video-key, stereo,
+and image tests, then run the full `rt-default` workflow.  Existing
+automation covers these unchanged interactions; no manual check is needed.
+
+### 53.2. UI-Owned Command Settings
+
+Source: `engine/cmdfiles.cpp` including `ui/big_while_loop.h`,
+`ui/history.h`, `ui/slideshw.h`, and `ui/stereo.h`;
+`ui/command_effects.cpp`.
+
+Work:
+
+- Return UI-only settings through `CommandParseResult` rather than
+  mutating UI globals from the parser.  Cover video prompting, virtual
+  screens, history capacity, autokey mode/name, and automatic stereo
+  conversion requests.
+- Let `apply_command_effects()` apply those settings in UI.  Keep history,
+  autokey playback/recording, and conversion runtime state in their
+  existing UI owners; do not relocate that state into engine.
+- Preserve startup and restart defaults, command ordering, last-value-wins
+  behavior, and settings supplied by nested command files.
+- Preserve invalid-argument behavior and the effects of valid commands
+  preceding a later error.  Applying settings must not execute a failed
+  generation action or introduce a new parser-to-UI callback.
+- Use the existing command-result and effect boundary, not a second
+  settings dispatcher or synchronous wrapper.
+
+Done when:
+
+- Command parsing no longer includes UI headers or accesses UI globals.
+- UI applies the requested settings without changing command semantics.
+
+Validation: cover parsed requests separately from their UI application.
+Exercise defaults, repeated settings, nested files, invalid arguments,
+and partial failure.  Reuse command-diagnostic, startup, autokey, and
+stereo journeys, then run the full `rt-default` workflow.  No new manual
+check is needed for behavior already covered by those tests.
+
+### 53.3. Viewport Adjustment And Resume Policy
+
+Source: `engine/calc_frac_init.cpp` including `ui/zoom.h`, especially
+the double and arbitrary-precision bounds-adjustment paths;
+its UI callers in `big_while_loop.cpp` and `command_effects.cpp`.
+
+Work:
+
+- Remove calculation setup's reads of `g_zoom_box_width`.
+- Report whether bounds adjustment translated the image region, for both
+  double and arbitrary-precision setup.  Keep coordinate adjustment and
+  precision selection in engine.
+- Let the UI caller decide whether that translation invalidates saved
+  work for its active zoom operation.  Preserve the existing full-size
+  zoom-box condition and resumable-status guard.
+- Keep other calculation-status changes, including precision transitions,
+  intact.  Do not move zoom state into engine or add a callback into UI.
+
+Done when:
+
+- Calculation setup neither includes `ui/zoom.h` nor inspects zoom UI
+  state; the UI applies the existing resume-invalidation policy.
+
+Validation: cover translated and unchanged regions in double and
+arbitrary precision, resumable and non-resumable status, and the UI policy
+for full-size versus other zoom boxes.  Reuse resume and image tests, then
+run the full `rt-default` workflow.  No native interaction changes are
+intended, so no additional manual check is needed.
+
+### 53.4. Orbit-Tool Calculation Requirements
+
+Source: `fractals/frasetup.cpp` including `ui/editpal.h` for
+`g_using_jiim`; `ui/inverse_julia.cpp` and `FractalDispatch`.
+
+Work:
+
+- Keep `g_using_jiim` and tool presentation state in UI.
+- Let the orbit tool explicitly require the per-orbit callback path
+  through its saved dispatcher.  Express a calculation requirement, not
+  a relocated or renamed UI-active flag.
+- Have Mandel/Julia setup honor that requirement when selecting the
+  optimized calculator.  Preserve ordinary optimized selection and all
+  other eligibility conditions.
+- Restore the prior dispatcher when the tool exits, including failure
+  paths.  Do not change orbit math, plotting, polling, or pacing.
+
+Done when:
+
+- Fractal setup no longer includes `ui/editpal.h` or reads UI state.
+- Engine and fractal headers and implementations no longer require UI
+  headers, including through shared metadata dependencies.
+- Any newly discovered UI callback has a focused follow-up slice rather
+  than being hidden behind a renamed include or forwarding function.
+
+Validation: cover Mandel/Julia selection with and without the per-orbit
+requirement and dispatcher restoration after tool completion or failure.
+Reuse JIIM and orbit-tool autokey journeys and image tests, then run the
+full `rt-default` workflow.  Do not repeat native cursor checks for an
+unchanged presentation path or add source-grep tests.
 
 ## Current Direct And Indirect Input Leaks
 
-Calculation code can still reach polling or key-sensitive waiting through
-these direct and indirect paths:
+The synchronous engine-to-UI render dispatch has been removed.
+Non-standard operation selection and per-image setup no longer enter
+renderers or UI.  Remaining engine/fractal header dependencies are data
+and setup-policy couplings, not direct input polling:
 
-- `libid/engine/calcfrac.cpp`: directly invokes the standard, Lyapunov,
-  and non-standard UI render controllers.  Non-standard operation
-  selection and per-image setup no longer enter renderers or UI.
-- GIF codec operations do not poll input or support keyboard-interrupted
-  saves.  Image-save progress, notifications, and exit policy are
-  UI-owned; `io/ImageSave` owns encoding and file cleanup.  Image-load
-  setup choices and cancellation are UI-owned and do not commit pending
-  image parameters.
+- `libid/engine/video_mode.cpp`: `ui/id_keys.h` supplies video-key
+  encodings.  Shared metadata ownership is covered by 53.1.
+- `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h`, `ui/history.h`,
+  `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  Stereo
+  calculation data moves in 53.1; UI-only effects move in 53.2.
+- `libid/engine/calc_frac_init.cpp`: `ui/zoom.h` supplies the zoom-box
+  condition for invalidating adjusted resume work.  Slice 53.3 returns
+  the geometry outcome and leaves that decision in UI.
+- `libid/fractals/frasetup.cpp`: `ui/editpal.h` supplies
+  `g_using_jiim` for optimized-calculator selection.  Slice 53.4 replaces
+  the UI-state dependency with an explicit calculation requirement.
+- GIF metadata headers indirectly import UI through `ui/evolve.h`.
+  Slice 53.1 moves the shared record out of UI without moving interaction.
+
+GIF codec operations do not poll input or support keyboard-interrupted
+saves.  Image-save progress, notifications, and exit policy are UI-owned;
+`io/ImageSave` owns encoding and file cleanup.  Image-load setup choices
+and cancellation are UI-owned and do not commit pending image parameters.
 
 Command parsing reports errors, warnings, generation actions, and startup
 selection requests without UI calls.  The command UI owns their effects;
