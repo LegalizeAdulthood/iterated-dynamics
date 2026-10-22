@@ -19,6 +19,7 @@
 #include <io/loadmap.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
+#include <ui/CellularController.h>
 #include <ui/id_keys.h>
 #include <ui/text_screen.h>
 #include <ui/thinking.h>
@@ -30,6 +31,7 @@
 #include <algorithm>
 #include <array>
 #include <cstring>
+#include <new>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -385,6 +387,293 @@ TEST_F(TestCellularController, nextScreenReadsLastRowAndAdvancesGeneration)
     EXPECT_THAT(m_rows, ElementsAre(0));
     calculation.suspend();
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+}
+
+TEST_F(TestCellularController, stepwiseControllerPreparesOneGenerationAndRendersOneRowPerCall)
+{
+    g_params[3] = 4;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillRepeatedly(Invoke(
+            [&calculation]
+            {
+                EXPECT_FALSE(calculation.done());
+                return 0;
+            }));
+    CellularController controller{calculation};
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+    EXPECT_THROW(controller.result(), std::logic_error);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    controller.start();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_FALSE(thinking_active());
+    EXPECT_EQ(1, g_row);
+    EXPECT_THAT(m_rows, ElementsAre(0));
+    EXPECT_THROW(controller.start(), std::logic_error);
+    for (int row = 2; row <= 4; ++row)
+    {
+        controller.iterate();
+        EXPECT_EQ(row, g_row);
+        EXPECT_TRUE(thinking_active());
+        EXPECT_THAT(m_rows, ElementsAre(0));
+    }
+    EXPECT_FALSE(calculation.preparing());
+    controller.iterate();
+    EXPECT_FALSE(thinking_active());
+    EXPECT_EQ(1, g_row);
+    EXPECT_THAT(m_rows, ElementsAre(0, 0));
+    for (int generation = 0; generation < 8 && !controller.done(); ++generation)
+    {
+        controller.iterate();
+    }
+
+    ASSERT_TRUE(controller.done());
+    EXPECT_EQ(1, controller.result());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_THAT(m_rows, ElementsAre(0, 0, 1, 2, 3, 4, 5));
+    EXPECT_EQ(1, m_thinking_entries);
+    EXPECT_EQ(1, m_thinking_exits);
+    EXPECT_EQ(1, m_unstacks);
+    const std::vector<int> rows{m_rows};
+    controller.iterate();
+    EXPECT_EQ(rows, m_rows);
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+    calculation.finish(false);
+}
+
+TEST_F(TestCellularController, stepwiseRenderingInterruptionLeavesTheCommandPending)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillOnce(Invoke(
+            [this]
+            {
+                EXPECT_THAT(m_rows, ElementsAre(0, 1));
+                return 'x';
+            }));
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    EXPECT_CALL(m_driver, unget_key(_)).Times(0);
+    CellularController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    ASSERT_EQ(1, start_resume());
+    int row{};
+    get_resume(row);
+    EXPECT_EQ(2, row);
+    EXPECT_EQ(0, m_unstacks);
+    EXPECT_TRUE(m_error.empty());
+}
+
+TEST_F(TestCellularController, stepwiseSuspensionRetainsTheExistingResumeRow)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    CellularController controller{calculation};
+    controller.start();
+    controller.iterate();
+
+    controller.suspend();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    ASSERT_EQ(1, start_resume());
+    int row{};
+    get_resume(row);
+    EXPECT_EQ(2, row);
+    EXPECT_FALSE(thinking_active());
+    EXPECT_TRUE(m_error.empty());
+}
+
+TEST_F(TestCellularController, stepwisePreparationSuspensionCleansUpBeforeReporting)
+{
+    g_params[3] = 10;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    CellularController controller{calculation};
+    controller.start();
+    controller.iterate();
+    ASSERT_TRUE(thinking_active());
+
+    controller.suspend();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_FALSE(thinking_active());
+    EXPECT_EQ(1, m_thinking_exits);
+    EXPECT_EQ(2, m_unstacks);
+    EXPECT_EQ("Interrupted, can't resume", m_error);
+}
+
+TEST_F(TestCellularController, stepwiseInputFailureClosesCalculationAndThinkingScreen)
+{
+    g_params[3] = 10;
+    m_fail_input = true;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    CellularController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_FALSE(thinking_active());
+    EXPECT_EQ(1, m_thinking_exits);
+    EXPECT_EQ(2, m_unstacks);
+    EXPECT_EQ("injected input failure", m_error);
+}
+
+TEST_F(TestCellularController, stepwisePlotFailureDoesNotEndThinkingTwice)
+{
+    g_params[3] = 3;
+    m_fail_plot = true;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    CellularController controller{calculation};
+    controller.start();
+    for (int generation = 0; generation < 4 && !controller.done(); ++generation)
+    {
+        controller.iterate();
+    }
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_FALSE(thinking_active());
+    EXPECT_EQ(1, m_thinking_exits);
+    EXPECT_EQ(2, m_unstacks);
+    EXPECT_EQ("injected plot failure", m_error);
+}
+
+TEST_F(TestCellularController, stepwiseThinkingDisplayFailureRestoresTheScreenBeforeReporting)
+{
+    g_params[3] = 10;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    EXPECT_CALL(m_driver, put_string(4, 10, _, _)).WillOnce(Throw(std::runtime_error("thinking display failed")));
+    CellularController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_FALSE(thinking_active());
+    EXPECT_EQ(2, m_unstacks);
+    EXPECT_EQ("thinking display failed", m_error);
+}
+
+TEST_F(TestCellularController, stepwiseAllocationFailureRetainsItsDiagnostic)
+{
+    g_params[3] = 10;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Throw(std::bad_alloc{})).RetiresOnSaturation();
+    CellularController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_FALSE(thinking_active());
+    EXPECT_EQ("Insufficient free memory for calculation", m_error);
+}
+
+TEST_F(TestCellularController, stepwiseUnknownFailureRetainsItsDiagnostic)
+{
+    g_params[3] = 10;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Throw(42)).RetiresOnSaturation();
+    CellularController controller{calculation};
+    controller.start();
+
+    controller.iterate();
+
+    EXPECT_TRUE(controller.done());
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(calculation.done());
+    EXPECT_FALSE(thinking_active());
+    EXPECT_EQ("Unknown error in cellular calculation", m_error);
+}
+
+TEST_F(TestCellularController, stepwiseDestructionClosesThinkingWithoutFinishingCalculation)
+{
+    g_params[3] = 10;
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    {
+        CellularController controller{calculation};
+        controller.start();
+        controller.iterate();
+        ASSERT_TRUE(thinking_active());
+    }
+
+    EXPECT_FALSE(thinking_active());
+    EXPECT_EQ(1, m_thinking_exits);
+    EXPECT_EQ(1, m_unstacks);
+    EXPECT_FALSE(calculation.done());
+    EXPECT_TRUE(m_error.empty());
+    calculation.finish(true);
+}
+
+TEST_F(TestCellularController, stepwiseNextScreenUsesTheSelectedContinuation)
+{
+    g_calc_status = CalcStatus::RESUMABLE;
+    g_cellular_next_screen = true;
+    g_params[3] = 12;
+    EXPECT_CALL(m_driver, read_pixel(_, 5)).Times(32).WillRepeatedly(Return(1));
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    CellularController controller{calculation};
+    controller.start();
+    EXPECT_EQ(18, g_params[3]);
+    EXPECT_EQ(0, g_row);
+
+    controller.iterate();
+
+    EXPECT_FALSE(controller.done());
+    EXPECT_THAT(m_rows, ElementsAre(0));
+    EXPECT_EQ(1, g_row);
+    EXPECT_FALSE(thinking_active());
+    EXPECT_EQ(0, m_unstacks);
+    controller.suspend();
+    EXPECT_EQ(-1, controller.result());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_cellular_next_screen);
 }
 
 } // namespace id::test

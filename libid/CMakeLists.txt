@@ -210,6 +210,7 @@ add_library(libid
     include/ui/big_while_loop.h ui/big_while_loop.cpp
     include/ui/calculate_image.h ui/calculate_image.cpp
     include/ui/cellular.h ui/cellular.cpp
+    include/ui/CellularController.h ui/CellularController.cpp
     include/ui/ChoiceBuilder.h
     include/ui/command_result.h
     include/ui/command_diagnostics.h ui/command_diagnostics.cpp

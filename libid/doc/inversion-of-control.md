@@ -39,7 +39,8 @@ The audit below records the remaining reverse calls inside that structure:
   `libid/fractals/Ant.cpp`.
 - `libid/ui/bifurcation.cpp` drives
   `libid/fractals/Bifurcation.cpp`.
-- `libid/ui/cellular.cpp` drives `libid/fractals/Cellular.cpp`.
+- `libid/ui/CellularController.cpp` drives selected Cellular work in
+  `libid/fractals/Cellular.cpp`.
 - `libid/ui/diffusion.cpp` drives `libid/fractals/Diffusion.cpp`.
 - `libid/ui/OrbitController.cpp` drives selected 2D orbit and Dynamic2D
   work in `libid/fractals/lorenz.cpp`.
@@ -614,8 +615,12 @@ The concrete render operation objects are:
   independently of the selected image calculation's lifetime.
   Plasma's controller reports storage availability before engine
   initialization.  Cellular retains generation-sized preparation and
-  next-screen initialization below UI; its thinking-screen display stays
-  in the controller.  Popcorn's Julia setup and symmetry selection also
+  next-screen initialization below UI; `ui::CellularController` advances
+  one generation at a time and owns thinking-screen lifetime and error
+  presentation.  It retains post-generation driver peeks, saved-row and
+  next-screen continuation, and the legacy completion result.  Its
+  synchronous entry remains marked for 52.12 removal.
+  Popcorn's Julia setup and symmetry selection also
   stay below UI.  Ant's Ctrl+A entry selects an operation on the existing
   image, without restarting common image setup, timing, or resource
   cleanup.  `ui::AntController` steps the selected Ant operation at
@@ -1095,22 +1100,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 52.8. Stepwise Cellular UI Context
-
-Source: `ui/cellular.cpp`.
-
-Work:
-
-- Introduce `CellularController` holding thinking-screen presentation
-  and keyboard-handler lifetime around a selected Cellular operation.
-- Separate preparation, one generation increment, and terminal
-  presentation without changing generation-sized calculation work.
-- Preserve next-screen continuation and menu return.  Retain only a
-  marked synchronous bridge until 52.12.
-
-Validation: Cellular preparation, diagnostics, menu-return, and next-screen
-tests; direct stepping and presentation cleanup on failure.
-
 ### 52.9. Stepwise L-System UI Context
 
 Source: `ui/lsystem.cpp`.
@@ -1294,7 +1283,7 @@ Simple render controllers that already wrap calculation objects but
 still poll the driver queue directly:
 
 - `libid/ui/BifurcationController.cpp`
-- `libid/ui/cellular.cpp`
+- `libid/ui/CellularController.cpp`
 - `libid/ui/IFS2DController.cpp`
 - `libid/ui/lsystem.cpp`
 - `libid/ui/plasma.cpp`
