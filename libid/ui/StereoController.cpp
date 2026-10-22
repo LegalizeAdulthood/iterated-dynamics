@@ -26,60 +26,151 @@ StereoController::StereoController(NonStandardFractal &calculation, SoundSession
 {
 }
 
-int StereoController::run()
+void StereoController::start()
 {
+    if (m_phase != Phase::READY)
+    {
+        throw std::logic_error("The stereo controller has already started");
+    }
     if (m_calculation.done())
     {
         throw std::logic_error("Stereo rendering requires an active calculation");
     }
-    reset_calc_interrupted();
-    const KeyboardHandlerPtr handler{std::make_shared<MainLoopKeyboardHandler>()};
-    const ScopedKeyboardHandler scope{handler};
+    m_phase = Phase::ACTIVE;
     try
     {
+        reset_calc_interrupted();
+        m_keyboard_scope.emplace(std::make_shared<MainLoopKeyboardHandler>());
         setup_stereo_palette();
-        while (!m_calculation.done())
-        {
-            if (m_calculation.view_done())
-            {
-                if (!m_sound.wait_until_ready())
-                {
-                    m_calculation.suspend();
-                    return -1;
-                }
-                if (g_glasses_type == GlassesType::PHOTO)
-                {
-                    lorenz_stereo_photographer_prompt();
-                }
-                m_calculation.next_view();
-                setup_stereo_palette();
-            }
-            if (!m_sound.wait_until_ready() || calc_interrupted())
-            {
-                m_sound.cancel();
-                m_calculation.suspend();
-                return -1;
-            }
-            m_calculation.iterate();
-            display_disk_storage_progress();
-        }
-        if (!m_sound.finish())
-        {
-            m_calculation.suspend();
-            return -1;
-        }
-        if (g_glasses_type == GlassesType::PHOTO)
-        {
-            stop_msg(StopMsgFlags::INFO_ONLY, "Second image (right eye) is ready");
-        }
-        return 0;
     }
     catch (...)
     {
-        m_calculation.finish(true);
-        m_sound.cancel();
+        abort();
         throw;
     }
+}
+
+void StereoController::iterate()
+{
+    if (m_phase == Phase::READY)
+    {
+        throw std::logic_error("The stereo controller has not started");
+    }
+    if (done())
+    {
+        return;
+    }
+    try
+    {
+        if (m_calculation.view_done())
+        {
+            if (!m_sound.wait_until_ready())
+            {
+                suspend();
+                return;
+            }
+            if (g_glasses_type == GlassesType::PHOTO)
+            {
+                lorenz_stereo_photographer_prompt();
+            }
+            m_calculation.next_view();
+            setup_stereo_palette();
+        }
+        if (!m_sound.wait_until_ready() || calc_interrupted())
+        {
+            suspend();
+            return;
+        }
+        m_calculation.iterate();
+        display_disk_storage_progress();
+        if (m_calculation.done())
+        {
+            finish();
+        }
+    }
+    catch (...)
+    {
+        abort();
+        throw;
+    }
+}
+
+bool StereoController::done() const
+{
+    return m_phase == Phase::COMPLETE;
+}
+
+int StereoController::result() const
+{
+    if (!done())
+    {
+        throw std::logic_error("The stereo controller has not completed");
+    }
+    return m_result;
+}
+
+void StereoController::suspend()
+{
+    if (m_phase != Phase::ACTIVE)
+    {
+        throw std::logic_error("Suspension requires an active stereo controller");
+    }
+    try
+    {
+        m_sound.cancel();
+        m_calculation.suspend();
+        close(-1);
+    }
+    catch (...)
+    {
+        abort();
+        throw;
+    }
+}
+
+void StereoController::finish()
+{
+    if (!m_sound.finish())
+    {
+        m_calculation.suspend();
+        close(-1);
+        return;
+    }
+    if (g_glasses_type == GlassesType::PHOTO)
+    {
+        stop_msg(StopMsgFlags::INFO_ONLY, "Second image (right eye) is ready");
+    }
+    close(0);
+}
+
+void StereoController::abort()
+{
+    if (done())
+    {
+        return;
+    }
+    close(-1);
+    m_calculation.finish(true);
+    m_sound.cancel();
+}
+
+void StereoController::close(const int result)
+{
+    m_keyboard_scope.reset();
+    m_result = result;
+    m_phase = Phase::COMPLETE;
+}
+
+// TODO: removed later
+// Slice 52.12 replaces the synchronous entry with outer UI stepping.
+int StereoController::run()
+{
+    start();
+    while (!done())
+    {
+        iterate();
+    }
+    return result();
 }
 
 } // namespace id::ui

@@ -661,8 +661,13 @@ The concrete render operation objects are:
   selection, projection setup, and full-screen stereo-pair restoration,
   including failure cleanup.  `ui::StereoController` drives both families
   and owns input, photographer prompts, palette setup, and sound
-  servicing.  Engine selection and sound-source classification do not
-  depend on UI renderer pointers.  The legacy rendering entry is gone.
+  servicing.  Its start/iterate/done/result/suspend operations advance
+  caller-owned selected calculations one point at a time.  Eye
+  transitions retain the modal PHOTO save prompt and prepare the next
+  view before advancing a point.  Completion, suspension, and failure
+  release its handler scope; `run()` remains marked for 52.12 removal.
+  Engine selection and sound-source classification do not depend on UI
+  renderer pointers.  The legacy orbit/IFS rendering entry is gone.
   Orbit2D and Dynamic2D keep their existing increment and resume formats;
   `ui::OrbitController` steps both with a caller-owned SoundSession,
   retaining sound waits, menu interruption, disk-progress feedback, and
@@ -1115,24 +1120,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-
-### 52.11. Stepwise Stereo UI Context
-
-Source: `ui/StereoController.cpp` and stereo photographer handling.
-
-Work:
-
-- Give the existing StereoController start, single-iteration, done,
-  result, and suspend operations around a caller-owned selected
-  IFS3D/Orbit3D calculation.
-- Keep per-eye readiness, photographer prompts, saved views, sound
-  servicing, palette setup, and handler lifetime in UI.
-- Keep combined-eye calculation and projection in the engine.  A
-  context iteration cannot invoke a whole eye's rendering loop.
-- Mark `run()` and other retained synchronous bridges for 52.12 removal.
-
-Validation: PHOTO scripts, stereo failure/cleanup tests, sound
-backpressure, and selected-operation fixtures.  No manual image retest.
 
 ### 52.12. Outer UI Render Operation Control
 
