@@ -783,11 +783,11 @@ dependencies.
   defaults clear it to false, preserving both startup and explicit reset
   behavior.  Retain existing validation and result flags; the misleading
   deprecated-handler comment is not evidence that the setting is inert.
-- UI owns the complete `reset` command's orchestration.  Engine helpers
-  validate and decode its version using the shared parsed `Command` and
-  existing `Version` type before mutation.  UI then invokes the combined
-  fractal initializer once and applies the decoded compatibility version
-  through engine-owned logic.  Preserve `g_version`, `g_file_version`,
+- UI owns the complete `reset` command's orchestration.  Engine
+  `parse_reset_version` validates and decodes its version using the shared
+  parsed `Command` and existing `Version` type before mutation.  UI then
+  invokes the combined fractal initializer once and calls engine
+  `apply_reset_version`.  Preserve `g_version`, `g_file_version`,
   diagnostics, and `FRACTAL_PARAM | RESET` behavior without reparsing.
 - Do not let an engine handler reset first and have UI react to an
   accumulated `RESET` flag by resetting again.  Initialization completes
@@ -798,8 +798,8 @@ dependencies.
   and action execution outside default initializers.  The UI source
   coordinator selects the appropriate initialization scope; engine
   source traversal does not hide a second initialization operation.
-- Deferred slice 53.7.4 separates reset-value interpretation.  Slices
-  53.8.6.1 through 53.8.6.3 move UI restart defaults after source routing.
+- Slices 53.8.6.1 through 53.8.6.3 move UI restart defaults after source
+  routing.
   Slice 53.9.6 moves pending-mode storage with its handler; 53.9.10 and
   53.9.11 move exit confirmation and coordinate explicit fractal reset.
   Keep existing slice numbers.
@@ -1480,31 +1480,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.7.4. Separate Reset Value Interpretation
-
-Source: `cmd_reset`, compatibility-version interpretation, and existing
-reset tests in `engine/cmdfiles.cpp`.
-
-Prerequisite: 53.7.3.
-
-Work:
-
-- Extract engine helpers for reset-value validation/version decoding
-  and version application, using the shared `Command` and existing
-  `Version`.  Validation/decoding must not initialize or mutate settings.
-- Keep the current handler as the caller for now: validate, invoke its
-  existing fractal initializer once, apply the version, and return the
-  same diagnostics/flags.  Do not add another reset or reparse text.
-- Preserve empty, zero, legacy, and multi-field Id version behavior and
-  both `g_version` and `g_file_version`.  Keep rejected input unchanged.
-
-Done when: engine reset-value interpretation can be reused without
-hiding initialization inside it.
-
-Validation: reuse existing reset and compatibility tests; add focused
-nonmutating-decoder coverage.  Run the full `rt-default` workflow;
-no additional manual testing is required.
-
 ### 53.8.1. Encapsulate Parameter-File Traversal
 
 Source: `command_file`, `next_command`, `load_commands`, and result
@@ -2111,16 +2086,16 @@ the full `rt-default` workflow.  No additional manual testing is required.
 
 ### 53.9.11. Coordinate Fractal Reset Through UI
 
-Source: `cmd_reset`, the 53.7.4 engine helpers, fractal initialization,
-`g_escape_exit`, and UI startup/fallback coordination.
+Source: `cmd_reset`, `engine/reset_version.{h,cpp}`, fractal
+initialization, `g_escape_exit`, and UI startup/fallback coordination.
 
 Prerequisite: 53.9.10.
 
 Work:
 
-- Move the complete `reset` handler and table entry to UI.  Use the
-  engine helpers to validate/decode before mutation; invoke combined
-  fractal initialization once, then apply the decoded engine version.
+- Move the complete `reset` handler and table entry to UI.  Use engine
+  `parse_reset_version` before mutation; invoke combined fractal
+  initialization once, then call engine `apply_reset_version`.
 - Introduce UI `reset_fractal_defaults` owning exit-confirmation reset
   and calling engine `reset_fractal_defaults`.  Move flag storage and
   declaration to UI, removing the engine assignment and temporary code.

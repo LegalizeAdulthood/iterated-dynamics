@@ -77,6 +77,7 @@ add_library(libid
     include/engine/Point.h
     include/engine/Potential.h engine/Potential.cpp
     include/engine/random_seed.h engine/random_seed.cpp
+    include/engine/reset_version.h engine/reset_version.cpp
     include/engine/resume.h engine/resume.cpp
     include/engine/show_dot.h engine/show_dot.cpp
     include/engine/SynchronousOrbit.h engine/SynchronousOrbit.cpp

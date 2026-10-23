@@ -28,6 +28,7 @@
 #include "engine/OrbitPlot.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
+#include "engine/reset_version.h"
 #include "engine/show_dot.h"
 #include "engine/SynchronousOrbit.h"
 #include "engine/SolidGuess.h"
@@ -2947,59 +2948,14 @@ static CmdArgFlags cmd_release(const Command &cmd)
 
 static CmdArgFlags cmd_reset(const Command &cmd)
 {
-    // PAR release unknown unless specified
-    if (cmd.num_val < 0)
+    const std::optional<Version> version{parse_reset_version(cmd)};
+    if (!version.has_value())
     {
         return cmd.bad_arg();
     }
 
     reset_fractal_defaults();
-    if (cmd.num_int_params == 0)
-    {
-        g_version = parse_legacy_version(1730);
-    }
-    else if (cmd.num_int_params == 1)
-    {
-        if (cmd.int_vals[0] == 0)
-        {
-            g_version = parse_legacy_version(1730);
-        }
-        // Id version: reset=100, reset=101; legacy version: reset=1960
-        else if (cmd.int_vals[0] >= 100)
-        {
-            const int version{cmd.int_vals[0]};
-            if (version == 100 || version == 101)
-            {
-                g_version = Version{version / 100, version % 100, 0, 0, false};
-            }
-            else
-            {
-                g_version = parse_legacy_version(version);
-            }
-        }
-        // Id version: reset=<major>
-        else
-        {
-            g_version = Version{};
-            g_version.major = cmd.int_vals[0];
-        }
-    }
-    // Id version: reset=<major>/<minor>[/<patch>[/<tweak>]]
-    else if (cmd.num_int_params > 1)
-    {
-        g_version = Version{};
-        g_version.major = cmd.int_vals[0];
-        g_version.minor = cmd.int_vals[1];
-        if (cmd.num_int_params > 2)
-        {
-            g_version.patch = cmd.int_vals[2];
-        }
-        if (cmd.num_int_params > 3)
-        {
-            g_version.tweak = cmd.int_vals[3];
-        }
-    }
-    g_file_version = g_version;
+    apply_reset_version(*version);
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET;
 }
 
