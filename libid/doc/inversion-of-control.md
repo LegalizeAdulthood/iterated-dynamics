@@ -1480,46 +1480,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.8.6. Route Startup And Restart Sources Through UI
-
-Source: `main_restart()` in `ui/id_main.cpp`, startup
-`CommandProcessor` construction, and startup-configuration reprocessing.
-
-Prerequisite: 53.8.5 and the named initialization groups in 53.7.1
-through 53.7.3.
-
-Work:
-
-- Replace startup's whole-source `cmd_files()` call with the common
-  coordinator over startup configuration, arguments, and indirect sets.
-- Connect startup-configuration reprocessing from
-  `reset_startup_commands()` to the same route.  Preserve the existing
-  fallback after abandoned fractal-file-entry selection.
-- Apply the agreed initialization profiles at their existing lifecycle
-  points.  Preserve first-init bookkeeping, restart suppression of mode
-  selection, pending image selection, and completion diagnostics/actions.
-- Preserve final-state entry-selection requests and batch diagnostics.
-  Keep UI-owned settings out of engine result payloads; use the existing
-  reporting fields and the outer UI selection/effect handlers.
-- Call the extracted initializers explicitly from the UI coordinator,
-  not from engine source advancement.  Keep existing mixed assignments
-  until the following focused ownership slices move them.  Do not add
-  empty UI initialization wrappers.
-- Keep `@file` and `@file/setname` inside engine source traversal, but
-  route each exposed parameter through UI exactly like a direct argument.
-  Do not invoke a complete engine-only parser from either path.
-
-Done when: all active application command sources use the coordinator
-before any parameter handlers migrate to UI.
-
-Validation: cover startup configuration, both indirect-file forms,
-command-line overrides, restart/reprocessing, and source-specific failure
-continuation.  Use mixed UI/engine test handlers to verify settings before
-and after a bad direct argument apply, while a bad file command stops
-that file only.  Cover repeated settings and reset positions as their
-real handlers migrate.  Reuse startup and autokey journeys; run the full
-`rt-default` workflow.  No additional manual testing is required.
-
 ### 53.8.6.1. Move The Video-Prompt Restart Default
 
 Source: the `g_ask_video` assignment in restart initialization and UI
@@ -1575,7 +1535,7 @@ Prerequisite: 53.8.6.2.
 Work:
 
 - Move clearing the request to `-1` into UI `reset_restart_defaults`.
-  Move restart-only mode suppression into UI startup completion, keeping
+  Keep restart-only mode suppression in UI startup completion, preserving
   first-init/debug timing and the distinct fallback path unchanged.
 - Leave storage engine-declared until 53.9.6 moves its engine handler.
   Mark this temporary declaration `// TODO: removed later`.  Do not add

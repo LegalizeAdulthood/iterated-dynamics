@@ -3,13 +3,19 @@
 //
 #include <ui/CommandRouter.h>
 
+#include <config/port_config.h>
 #include <engine/calcfrac.h>
 #include <engine/command_comments.h>
 #include <engine/CommandProcessor.h>
 #include <engine/sound.h>
+#include <engine/VideoInfo.h>
+#include <fractals/formula.h>
 #include <fractals/fractalp.h>
+#include <io/library.h>
 #include <io/loadfile.h>
+#include <io/special_dirs.h>
 #include <misc/debug_flags.h>
+#include <misc/Driver.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 
@@ -453,6 +459,335 @@ TEST_F(TestCommandRouterFile, defaultRouterRetainsSelectedSetInitializationAndLa
     EXPECT_EQ(222, g_max_iterations);
     EXPECT_EQ(550, g_base_hertz);
     EXPECT_TRUE(fs::remove(m_path));
+}
+
+class MockCommandDirectories : public SpecialDirectories
+{
+public:
+    MOCK_METHOD(fs::path, program_dir, (), (const, override));
+    MOCK_METHOD(fs::path, documents_dir, (), (const, override));
+};
+
+class TestCommandRouterStartup : public TestCommandRouterFile
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void write_source(const std::string &name, std::string_view text);
+
+    fs::path m_directory;
+    fs::path m_library;
+    std::vector<fs::path> m_sources;
+    const std::shared_ptr<NiceMock<MockCommandDirectories>> m_directories{
+        std::make_shared<NiceMock<MockCommandDirectories>>()};
+    ValueSaver<std::shared_ptr<SpecialDirectories>> m_saved_directories{g_special_dirs, m_directories};
+    ValueSaver<Driver *> m_saved_driver{g_driver, nullptr};
+    ValueSaver<fs::path> m_saved_temp_dir{g_temp_dir};
+    ValueSaver<int> m_saved_init_mode{g_init_mode};
+    ValueSaver<ShowFile> m_saved_show_file{g_show_file};
+    ValueSaver<bool> m_saved_colors_preloaded{g_colors_preloaded};
+    ValueSaver<bool> m_saved_read_color{g_read_color};
+};
+
+void TestCommandRouterStartup::SetUp()
+{
+    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
+    m_directory = fs::temp_directory_path() / (std::string{info->test_suite_name()} + '_' + info->name());
+    m_library = m_directory / ID_PROGRAM_NAME;
+    fs::create_directories(m_library);
+    ON_CALL(*m_directories, program_dir()).WillByDefault(Return(m_library));
+    ON_CALL(*m_directories, documents_dir()).WillByDefault(Return(m_directory));
+    g_first_init = true;
+    write_source("sstools.ini", "");
+}
+
+void TestCommandRouterStartup::TearDown()
+{
+    clear_read_library_path();
+    clear_save_library();
+    for (const fs::path &path : m_sources)
+    {
+        std::error_code ignored;
+        fs::remove(path, ignored);
+    }
+    std::error_code ignored;
+    fs::remove(m_library, ignored);
+    fs::remove(m_directory, ignored);
+    TestCommandRouterFile::TearDown();
+}
+
+void TestCommandRouterStartup::write_source(const std::string &name, const std::string_view text)
+{
+    const fs::path path{m_library / name};
+    m_sources.push_back(path);
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{std::fopen(path.string().c_str(), "wb"), std::fclose};
+    if (!file || std::fwrite(text.data(), 1, text.size(), file.get()) != text.size())
+    {
+        throw std::runtime_error("Cannot write startup test file: " + path.string());
+    }
+}
+
+TEST_F(TestCommandRouterStartup, routesConfigurationIndirectSetsAndArgumentsInOrder)
+{
+    write_source("sstools.ini", "ui=1 engine=2\n");
+    write_source("whole.par", "entry { engine=3 ui=4 }");
+    write_source("selected.par", "ignored { ui=999 }\nchosen { ui=5 engine=6 }");
+    std::vector<std::string> commands;
+    std::vector<CmdFile> modes;
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .Times(4)
+        .WillRepeatedly(
+            [&](const Command &cmd)
+            {
+                commands.emplace_back("ui=" + std::string{cmd.value});
+                modes.push_back(cmd.mode);
+                return CmdArgFlags::PARAM_3D;
+            });
+    EXPECT_CALL(m_engine_handler, Call(_))
+        .Times(4)
+        .WillRepeatedly(
+            [&](const Command &cmd)
+            {
+                commands.emplace_back("engine=" + std::string{cmd.value});
+                modes.push_back(cmd.mode);
+                return CmdArgFlags::FRACTAL_PARAM;
+            });
+
+    const CommandParseResult result{m_router.process_startup({"id", "@whole", "@selected/chosen", "engine=7", "ui=8"})};
+
+    EXPECT_THAT(commands, ElementsAre("ui=1", "engine=2", "engine=3", "ui=4", "ui=5", "engine=6", "engine=7", "ui=8"));
+    EXPECT_THAT(modes,
+        ElementsAre(CmdFile::SSTOOLS_INI, CmdFile::SSTOOLS_INI, CmdFile::AT_CMD_LINE_SET_NAME,
+            CmdFile::AT_CMD_LINE_SET_NAME, CmdFile::AT_CMD_LINE_SET_NAME, CmdFile::AT_CMD_LINE_SET_NAME,
+            CmdFile::AT_CMD_LINE, CmdFile::AT_CMD_LINE));
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(m_library / "selected.par", g_parameter_file);
+    EXPECT_EQ("chosen", g_parameter_set_name);
+    EXPECT_TRUE(fs::remove(m_library / "sstools.ini"));
+    EXPECT_TRUE(fs::remove(m_library / "whole.par"));
+    EXPECT_TRUE(fs::remove(m_library / "selected.par"));
+}
+
+TEST_F(TestCommandRouterStartup, configurationRejectionStopsOnlyConfiguration)
+{
+    write_source("sstools.ini", "engine=111 ui=bad engine=999\n");
+    const InSequence sequence;
+    EXPECT_CALL(m_engine_handler, Call(_))
+        .WillOnce(
+            [](const Command &)
+            {
+                g_max_iterations = 111;
+                return CmdArgFlags::FRACTAL_PARAM;
+            });
+    EXPECT_CALL(m_ui_handler, Call(_)).WillOnce([](const Command &cmd) { return cmd.bad_arg(); });
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .WillOnce(
+            [](const Command &)
+            {
+                EXPECT_EQ(111, g_max_iterations);
+                return CmdArgFlags::NONE;
+            });
+    EXPECT_CALL(m_engine_handler, Call(_))
+        .WillOnce(
+            [](const Command &)
+            {
+                g_max_iterations = 222;
+                return CmdArgFlags::FRACTAL_PARAM;
+            });
+
+    const CommandParseResult result{m_router.process_startup({"id", "ui=yes", "engine=222"})};
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre(HasSubstr("ui=bad")));
+    EXPECT_TRUE(fs::remove(m_library / "sstools.ini"));
+}
+
+TEST_F(TestCommandRouterStartup, eitherOwnerRejectionContinuesArgumentsButStopsIndirectFiles)
+{
+    std::vector<std::string> accepted;
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .WillRepeatedly(
+            [&](const Command &cmd)
+            {
+                if (cmd.value == "bad")
+                {
+                    return cmd.bad_arg();
+                }
+                accepted.emplace_back("ui=" + std::string{cmd.value});
+                g_base_hertz = cmd.num_val;
+                return CmdArgFlags::PARAM_3D;
+            });
+    EXPECT_CALL(m_engine_handler, Call(_))
+        .WillRepeatedly(
+            [&](const Command &cmd)
+            {
+                if (cmd.value == "bad")
+                {
+                    return cmd.bad_arg();
+                }
+                accepted.emplace_back("engine=" + std::string{cmd.value});
+                g_max_iterations = cmd.num_val;
+                return CmdArgFlags::FRACTAL_PARAM;
+            });
+    for (const std::string owner : {"ui", "engine"})
+    {
+        SCOPED_TRACE(owner);
+        accepted.clear();
+        write_source("broken.par", "entry { engine=210 " + owner + "=bad ui=999 }");
+
+        const CommandParseResult result{
+            m_router.process_startup({"id", "ui=100", owner + "=bad", "engine=200", "@broken", "ui=300"})};
+
+        EXPECT_THAT(accepted, ElementsAre("ui=100", "engine=200", "engine=210", "ui=300"));
+        EXPECT_EQ(300, g_base_hertz);
+        EXPECT_EQ(210, g_max_iterations);
+        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
+        EXPECT_THAT(result.diagnostics.errors, ElementsAre(HasSubstr(owner + "=bad"), HasSubstr(owner + "=bad")));
+        EXPECT_TRUE(fs::remove(m_library / "broken.par"));
+    }
+}
+
+TEST_F(TestCommandRouterStartup, initializesBeforeConfigurationAndPreservesInitialRequests)
+{
+    write_source("sstools.ini", "ui=yes\n");
+    const fs::path process_state{m_directory / "process-state"};
+    g_temp_dir = process_state;
+    g_max_iterations = 999;
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .WillOnce(
+            [&](const Command &)
+            {
+                EXPECT_TRUE(g_first_init);
+                EXPECT_NE(process_state, g_temp_dir);
+                EXPECT_EQ(FractalType::MANDEL, g_fractal_type);
+                EXPECT_EQ(150, g_max_iterations);
+                EXPECT_EQ(-1, g_init_mode);
+                g_max_iterations = 321;
+                g_init_mode = 7;
+                g_show_file = ShowFile::LOAD_IMAGE;
+                g_colors_preloaded = true;
+                g_read_color = true;
+                return CmdArgFlags::NONE;
+            });
+
+    const CommandParseResult result{m_router.process_startup({"id"})};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(321, g_max_iterations);
+    EXPECT_EQ(7, g_init_mode);
+    EXPECT_EQ(ShowFile::LOAD_IMAGE, g_show_file);
+    EXPECT_FALSE(g_read_color);
+    EXPECT_FALSE(g_first_init);
+}
+
+TEST_F(TestCommandRouterStartup, restartPreservesProcessStateAndSuppressesStartupRequests)
+{
+    write_source("sstools.ini", "ui=yes\n");
+    const fs::path process_state{m_directory / "process-state"};
+    g_first_init = false;
+    g_temp_dir = process_state;
+    g_max_iterations = 999;
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .WillOnce(
+            [&](const Command &)
+            {
+                EXPECT_FALSE(g_first_init);
+                EXPECT_EQ(process_state, g_temp_dir);
+                EXPECT_EQ(150, g_max_iterations);
+                g_max_iterations = 321;
+                g_init_mode = 7;
+                g_show_file = ShowFile::LOAD_IMAGE;
+                g_colors_preloaded = true;
+                return CmdArgFlags::NONE;
+            });
+
+    const CommandParseResult result{m_router.process_startup({"id"})};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(process_state, g_temp_dir);
+    EXPECT_EQ(321, g_max_iterations);
+    EXPECT_EQ(-1, g_init_mode);
+    EXPECT_EQ(ShowFile::IMAGE_LOADED, g_show_file);
+    EXPECT_TRUE(g_read_color);
+    EXPECT_FALSE(g_first_init);
+}
+
+TEST_F(TestCommandRouterStartup, debugOverridePreservesFirstInitAndExistingRestartSuppression)
+{
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .Times(2)
+        .WillRepeatedly(
+            [](const Command &)
+            {
+                g_debug_flag = DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME;
+                g_init_mode = 7;
+                g_show_file = ShowFile::LOAD_IMAGE;
+                return CmdArgFlags::NONE;
+            });
+    for (const bool first_init : {true, false})
+    {
+        SCOPED_TRACE(first_init);
+        g_first_init = first_init;
+
+        const CommandParseResult result{m_router.process_startup({"id", "ui=yes"})};
+
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+        EXPECT_EQ(first_init, g_first_init);
+        EXPECT_EQ(first_init ? 7 : -1, g_init_mode);
+        EXPECT_EQ(first_init ? ShowFile::LOAD_IMAGE : ShowFile::IMAGE_LOADED, g_show_file);
+    }
+}
+
+TEST_F(TestCommandRouterStartup, fallbackReappliesOnlyDefaultsAndConfiguration)
+{
+    write_source("sstools.ini", "type=formula maxiter=321 ui=yes\n");
+    const CommandRouter router{CommandHandlerTables{{}, m_ui}, engine_command_handlers()};
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .Times(2)
+        .WillRepeatedly(
+            [](const Command &)
+            {
+                g_init_mode = 7;
+                g_show_file = ShowFile::LOAD_IMAGE;
+                g_colors_preloaded = true;
+                g_debug_flag = DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME;
+                return CmdArgFlags::NONE;
+            });
+    const CommandParseResult startup{router.process_startup({"id", "maxiter=999"})};
+    ASSERT_TRUE(startup.needs_file_entry);
+    ASSERT_EQ(999, g_max_iterations);
+    const fs::path process_state{m_directory / "process-state"};
+    g_temp_dir = process_state;
+    g_first_init = false;
+
+    const CommandParseResult result{router.reset_startup()};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_FALSE(result.needs_file_entry);
+    EXPECT_TRUE(g_formula_name.empty());
+    EXPECT_EQ(321, g_max_iterations);
+    EXPECT_EQ(process_state, g_temp_dir);
+    EXPECT_FALSE(g_first_init);
+    EXPECT_EQ(DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME, g_debug_flag);
+    EXPECT_EQ(7, g_init_mode);
+    EXPECT_EQ(ShowFile::LOAD_IMAGE, g_show_file);
+    EXPECT_FALSE(g_read_color);
+    EXPECT_TRUE(fs::remove(m_library / "sstools.ini"));
+}
+
+TEST_F(TestCommandRouterStartup, finalTypeRequestsSelectionOrReportsBatchDiagnostic)
+{
+    const CommandRouter router;
+
+    const CommandParseResult interactive{router.process_startup({"id", "type=formula"})};
+    const CommandParseResult batch{router.process_startup({"id", "type=formula", "batch=yes"})};
+
+    EXPECT_TRUE(interactive.diagnostics.errors.empty());
+    EXPECT_TRUE(interactive.needs_file_entry);
+    EXPECT_FALSE(batch.needs_file_entry);
+    EXPECT_THAT(batch.diagnostics.errors, ElementsAre(HasSubstr("type=formula requires formulaname=")));
 }
 
 } // namespace id::test

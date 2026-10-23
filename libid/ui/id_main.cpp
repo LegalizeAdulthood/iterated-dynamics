@@ -24,6 +24,7 @@
 #include "ui/big_while_loop.h"
 #include "ui/command_diagnostics.h"
 #include "ui/command_effects.h"
+#include "ui/CommandRouter.h"
 #include "ui/evolve.h"
 #include "ui/get_3d_params.h"
 #include "ui/get_browse_params.h"
@@ -139,10 +140,11 @@ static void main_restart(const std::vector<std::string> &args, MainContext &cont
     g_save_dac = SaveDAC::NO;                       // don't save the VGA DAC
 
     const bool first_init{g_first_init};
-    CommandParseResult commands{cmd_files(args)};
+    const CommandRouter router;
+    CommandParseResult commands{router.process_startup(args)};
     if (commands.diagnostics.errors.empty() && commands.needs_file_entry && !select_fractal_file_entry())
     {
-        CommandParseResult defaults{reset_startup_commands()};
+        CommandParseResult defaults{router.reset_startup()};
         defaults.diagnostics.warnings.insert(defaults.diagnostics.warnings.begin(),
             commands.diagnostics.warnings.begin(), commands.diagnostics.warnings.end());
         commands = std::move(defaults);

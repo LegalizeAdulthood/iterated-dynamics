@@ -18,6 +18,9 @@ namespace id::engine
 class CommandProcessor
 {
 public:
+    // Read startup configuration only, without defaults or entry selection.
+    CommandProcessor();
+
     // Adopt an open file at its existing source position.
     CommandProcessor(std::FILE *file, CmdFile mode);
 

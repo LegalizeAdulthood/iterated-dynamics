@@ -1022,4 +1022,35 @@ TEST_F(TestStartupCommandProcessor, noSourcesCompletesWithoutPresentingACommand)
     EXPECT_THROW(processor.command(), std::logic_error);
 }
 
+TEST_F(TestStartupCommandProcessor, configurationOnlyDoesNotInitializeSettingsOrRequestEntrySelection)
+{
+    write_source("sstools.ini", "type=formula\n");
+    g_max_iterations = 432;
+    CommandProcessor processor;
+
+    run(processor);
+
+    EXPECT_EQ(432, g_max_iterations);
+    EXPECT_EQ(FractalType::FORMULA, g_fractal_type);
+    EXPECT_TRUE(g_first_init);
+    EXPECT_FALSE(processor.result().needs_file_entry);
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
+    EXPECT_FALSE(processor.advance());
+    EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
+}
+
+TEST_F(TestStartupCommandProcessor, missingConfigurationOnlyCompletesWithoutCommands)
+{
+    set_fractal_type(FractalType::FORMULA);
+    CommandProcessor processor;
+
+    EXPECT_FALSE(processor.advance());
+    EXPECT_FALSE(processor.advance());
+    EXPECT_EQ(CmdArgFlags::NONE, processor.result().flags);
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
+    EXPECT_FALSE(processor.result().needs_file_entry);
+    EXPECT_TRUE(g_first_init);
+    EXPECT_THROW(processor.command(), std::logic_error);
+}
+
 } // namespace id::test

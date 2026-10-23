@@ -285,6 +285,12 @@ static void append_result(CommandParseResult &result, CommandParseResult source)
     result.initialize_fm = result.initialize_fm || source.initialize_fm;
 }
 
+CommandProcessor::CommandProcessor() :
+    m_file{open_sstools_ini(), std::fclose},
+    m_mode(CmdFile::SSTOOLS_INI)
+{
+}
+
 CommandProcessor::CommandProcessor(std::FILE *file, const CmdFile mode) :
     m_file{file, std::fclose},
     m_mode(mode)
