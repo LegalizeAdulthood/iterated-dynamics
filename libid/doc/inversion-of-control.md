@@ -548,16 +548,14 @@ UI parameters and delegates unrecognized names to engine.  Both groups
 share syntax processing and preserve the original parameter order.
 
 Shared syntax, recognition, source routing, mixed-parameter ownership,
-initialization, ordering, and failure behavior are agreed below.
-Remaining design slice 53.5.7 settles reporting.  It authorizes design
-discussion and plan updates only.  Keep it ahead of the implementation
-slices it produces; do not change parser code before the design is
-agreed.
+initialization, ordering, failure behavior, and consequence reporting are
+agreed below.  The seven design discussions are complete; implement the
+following slices in order, beginning with shared command extraction.
 
-Until then, defer changes to command and parameter parsing, including UI
-effects and `video=F6` resolution.  Do not bypass this restriction with
-forwarding wrappers, duplicate helpers, relocated UI state, or new
-engine-to-UI dependencies.
+Separate parsing, source routing, defaults, and individual handler moves
+in their assigned slices.  Do not bypass that sequence with forwarding
+wrappers, duplicate helpers, relocated UI state, or new engine-to-UI
+dependencies.
 
 ### Agreed Shared Syntax
 
@@ -579,13 +577,13 @@ engine-to-UI dependencies.
 - Retain `CmdFile`, the existing `CommandParseResult &`, `bad_arg()`, and
   `warn_missing_file()` contracts.  This is a parsed command with context
   and a result destination, not a pure value object.  Diagnostic behavior
-  stays unchanged; consequence reporting is revisited in 53.5.7.
+  stays unchanged under the consequence-reporting agreement below.
 - Keep supported-name recognition, startup restrictions, setting changes,
   and handler selection outside `Command`.  For example,
   `maxiter=garbage` can be decomposed syntactically; its handler rejects
   the nonnumeric value.  Do not redesign decoding during extraction.
 - Implement the extraction and direct syntax tests in deferred slice
-  53.6, after the remaining design discussions are complete.
+  53.6, without changing handler ownership or result semantics.
 
 ### Agreed Recognition
 
@@ -620,7 +618,7 @@ engine-to-UI dependencies.
   rejection without delegation, startup restrictions and their override,
   single diagnostic emission, and duplicate ownership.  Deferred slice
   53.7 implements lookup; 53.8.4 composes UI-first routing and validates
-  owner tables after the remaining design discussions.
+  owner tables after source-processing extraction.
 
 ### Agreed Source Routing
 
@@ -680,7 +678,7 @@ engine-to-UI dependencies.
   routing; 53.9.1 through 53.9.11 move the UI parameters and key-name
   parser one at a time.  Initialization follows the agreement below;
   ordering and failure follow their agreement below.  Result
-  interpretation remains with 53.5.7.
+  interpretation follows the consequence-reporting agreement below.
 
 ### Agreed Mixed-Parameter Ownership
 
@@ -852,6 +850,56 @@ engine-to-UI dependencies.
   No additional dispatcher, transaction mechanism, or standalone failure
   framework is needed.  Reuse current startup, parameter, command-effect,
   action, and diagnostic tests; extend only the focused ownership gaps.
+
+### Agreed Consequence Reporting
+
+- Reuse `CommandParseResult`, `CmdArgFlags`, `CommandDiagnostics`, and
+  `CommandAction` for both handler owners.  Each receives the same parsed
+  `Command` and current result destination.  UI updates its own settings
+  directly; do not add a UI-settings result, reporting interface, action
+  queue, or settings transport into engine.
+- Keep the agreed optional-result contract.  An empty optional means
+  unrecognized; `NONE` is accepted without change flags, not proof that
+  nothing happened.  Other nonnegative flags retain their meanings.
+  `BAD_ARG` is rejection, not a change-bit combination.  Only the outer
+  coordinator assigns the selected outcome to the current result flags.
+  Use existing diagnostic helpers and do not report a rejection twice.
+- Preserve each handler's existing flags independently of ownership.
+  `maxhistory` still returns `FRACTAL_PARAM | PARAM_3D` after moving to UI.
+  Do not silently reclassify regeneration consequences.  `RESET` reports
+  an already-performed reset, not a request for another initialization;
+  preserve existing menu interpretation of `RESET` and `YES_3D`.
+- Keep one aggregation implementation in engine source processing.
+  Incorporate each command result once before reusing its current-result
+  storage.  OR nonnegative flags into accumulated flags, excluding
+  `BAD_ARG`.  Append errors and warnings in encounter order within their
+  existing separate collections.  Preserve nonempty-action assignment
+  and OR `initialize_fm` requests.  Do not discard an entire rejected
+  result: diagnostics and existing auxiliary requests still contribute.
+- Keep failure separate from accumulated change flags.  A failed file
+  returns its accepted-prefix flags plus diagnostics; a rejected single
+  command retains `BAD_ARG`.  Do not collapse both contexts into a success
+  boolean or let file-style aggregation erase single-command rejection.
+- Keep file-local flags separate from startup totals.  Flags from UI
+  handlers contribute to the same file-completion compatibility decision
+  as before.  Moving `maxhistory` must not silently suppress that file's
+  legacy adjustments.  Preserve completion after early stops and direct
+  entry's separate debug-only compatibility path.
+- Compute `needs_file_entry` from final engine settings at the existing
+  startup-completion point, only when errors/actions permit that check.
+  It is not a generically ORed command field.  UI performs selection;
+  batch mode retains its missing-entry diagnostic without a UI callback.
+- Keep diagnostic presentation, device initialization, generation, and
+  exit handling at existing outer UI boundaries.  Reuse
+  `apply_command_effects` with its current error gates, sound-device check,
+  and failure handling.  Its return means exit requested, not command
+  success.  Ordinary caller responses to change flags remain distinct
+  from whether deferred actions were allowed to execute.
+- Implement reporting within the existing extraction, lookup, source,
+  and coordinator slices, not a separate framework.  Add focused tests
+  for aggregation and caller consequences; preserve existing flag
+  assertions as handlers migrate.  Reuse parameter, startup, diagnostic,
+  command-effect, compatibility, autokey, stereo, and batch coverage.
 
 ## Remaining Inversion-of-Control Slices
 
@@ -1432,45 +1480,10 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.5.7. Parameter Consequence Reporting Design
-
-Source: `CmdArgFlags`, `CommandParseResult`, `append_result`,
-`apply_command_effects`, command callers, and the legacy adjustments at
-the end of `command_file`.
-
-Scope: design discussion and plan updates only; no source changes.
-
-Work:
-
-- Agree how both handler groups report diagnostics, parameter-change
-  flags, reset indications, and actions to their callers.
-- Distinguish parameter ownership from consequences.  Account for UI
-  settings such as `maxhistory` that currently return `FRACTAL_PARAM`
-  and `PARAM_3D`; do not silently reclassify their effects.
-- Preserve result aggregation and parameter-set completion.  Keep legacy
-  compatibility adjustments in engine and at their existing boundaries.
-- Review `CommandParseResult` and `apply_command_effects` for reuse
-  without assuming an expanded UI-settings result is required.  UI
-  handlers own UI settings; engine must not gain UI state or callbacks.
-- Record the agreed reporting contract, focused implementation slices,
-  and separate coverage for handlers and application of their results.
-  Ensure the combined design removes the remaining parser UI includes
-  and UI-global dependencies without dropping their behavior.
-
-Done when: reporting and compatibility behavior are agreed and all seven
-design decisions have actionable, small implementation slices.
-
-Validation: review parameter, startup, diagnostic, command-effect,
-autokey, stereo, and batch tests for result flags, aggregation, reset,
-legacy versions, and action suppression.  Identify focused gaps only;
-no build or manual testing is required.
-
 ### 53.6. Extract Shared Command Parsing
 
 Source: `Command` and its syntax helpers in `engine/cmdfiles.cpp`,
 `engine/lowerize_parameter.cpp`, and existing parameter tests.
-
-Prerequisite: complete design slice 53.5.7 first.
 
 Work:
 
@@ -1505,8 +1518,8 @@ is required for this extraction.
 Source: `handle_command`, `CommandHandler`, `cmd_arg`, the engine
 handler tables, and the shared parsed `Command`.
 
-Prerequisites: complete design slice 53.5.7 and extract
-the shared `Command` in 53.6.  Source integration follows in 53.8.
+Prerequisite: extract the shared `Command` in 53.6.  Source integration
+follows in 53.8.
 
 Work:
 
@@ -1540,7 +1553,7 @@ coverage.  No manual testing is required for this contract.
 
 Source: `init_vars_run` and its caller in `engine/cmdfiles.cpp`.
 
-Prerequisite: 53.7 and completion of the remaining design discussions.
+Prerequisite: 53.7.
 
 Work:
 
@@ -1630,8 +1643,8 @@ no additional manual testing is required.
 Source: `command_file`, `next_command`, `load_commands`, and result
 aggregation in `engine/cmdfiles.cpp`.
 
-Prerequisites: complete the remaining design slices and implement through
-53.7.4.  Keep this initial refactor local to the existing engine file.
+Prerequisite: 53.7.4.  Keep this initial refactor local to the existing
+engine file.
 
 Work:
 
@@ -1640,6 +1653,12 @@ Work:
 - Turn the file loop into per-command advancement.  Incorporate the
   previous outcome before exposing another command, without copying or
   moving the shared `Command`.
+- Retain one implementation of `append_result` semantics in source
+  processing.  Exclude `BAD_ARG` only from accumulated change flags,
+  retaining rejected-command diagnostics and auxiliary fields.  Preserve
+  diagnostic ordering, action assignment, and `initialize_fm` request
+  aggregation.
+  Do not generically aggregate startup-only `needs_file_entry`.
 - Preserve positioned-file adoption, braces, comments, continuations,
   flag-initialization timing, compatibility adjustments, and closure.
   Finalize a rejected file's valid prefix as before.  Stop on that
@@ -1658,8 +1677,9 @@ Validation: cover successive commands, current-command lifetime, EOF,
 early rejection, action termination, file-local flags, compatibility
 completion, and closure.  Verify earlier effects remain and later file
 commands are not applied after rejection.  Reuse `TestNextCommand` and
-parameter tests; run the full `rt-default` workflow.  No manual testing
-is required.
+parameter tests; add focused field-aggregation checks, including rejected
+results with auxiliary data.  Run the full `rt-default` workflow.
+No manual testing is required.
 
 ### 53.8.2. Add Startup Command Sources
 
@@ -1674,6 +1694,10 @@ Work:
   command-line positions, presenting parameters in their existing order.
 - Keep bare-GIF argument probing and source diagnostics engine-owned.
   Preserve startup result accumulation and action termination.
+- Keep overall results distinct from file-local completion flags.
+  Compute the missing-entry selection request from final engine settings
+  at startup completion, not by ORing per-command requests.  Preserve
+  its error/action gate and missing-entry diagnostics in batch mode.
 - Stop only the failing configuration source on ordinary rejection and
   continue into arguments.  Continue after ordinary argument errors;
   warnings do not stop processing.  An accepted action stops remaining
@@ -1692,8 +1716,9 @@ Validation: reuse startup ordering, diagnostics, later-batch-argument,
 action-termination, and bare-image coverage.  Add source-position checks;
 cover configuration rejection followed by arguments and warnings that
 permit continuation.  Preserve the existing case of earlier errors,
-an action, and an ignored later argument.  Run the full `rt-default`
-workflow.  No manual testing is required.
+an action, and an ignored later argument.  Check final-state entry
+selection and batch diagnostics independently of aggregation.  Run the
+full `rt-default` workflow.  No manual testing is required.
 
 ### 53.8.3. Add Indirect Parameter-File Sources
 
@@ -1744,6 +1769,9 @@ Work:
 - Implement the common UI loop over the processor's current command.
   Use the 53.7 result contract and let engine advancement decide whether
   another parameter follows, including after a rejected command.
+- Assign the selected owner outcome to the shared current result once.
+  Return the single command's original result, including `BAD_ARG` on
+  rejection; do not erase it through file-style flag aggregation.
 - Complete each handler's immediate settings before advancing.  Keep UI
   assignments out of deferred actions; do not gate them on aggregate
   success or add rollback.  Preserve unrelated exception propagation.
@@ -1763,8 +1791,11 @@ duplicate ownership, and single-command context.  Reuse command-effect
 tests for error-gated actions/device initialization and warnings that do
 not suppress actions; add only missing cases.  Preserve action-failure
 diagnostics/exit handling without restarting parsing.  Reuse existing
-action and diagnostic autokey journeys; run the full `rt-default`
-workflow.  No additional manual testing is required.
+action and diagnostic autokey journeys.  Cover rejection returning
+`BAD_ARG`, a setting accepted with `NONE`, and `apply_command_effects`
+retaining its exit-request meaning rather than becoming a success flag.
+Run the full `rt-default` workflow.  No additional manual testing is
+required.
 
 ### 53.8.5. Route Selected Parameter Sets Through UI
 
@@ -1780,6 +1811,10 @@ Work:
 - Transfer the already-open, positioned file to engine source ownership.
   Preserve set selection, processing context, flag initialization,
   compatibility completion, and closure.
+- Include both owners' unchanged change flags in file completion.
+  Return accepted-prefix flags even when diagnostics contain errors;
+  preserve the caller's existing response to `RESET`, `YES_3D`, and
+  regeneration flags without performing initialization again.
 - Keep diagnostics and action execution after source processing as
   before.  Do not create a separate file-specific UI dispatcher.
 
@@ -1789,9 +1824,10 @@ UI-first recognition point.
 Validation: cover mixed command ownership with test handlers, rejected
 parameters, valid earlier effects, set completion, and file closure.
 Verify a rejection stops later set commands for either owner while
-warnings do not.  Reuse command-action and diagnostic autokey coverage;
-run the full `rt-default` workflow.  No additional manual testing is
-required.
+warnings do not.  Cover UI-originated flags triggering the existing
+file-compatibility decision and accepted-prefix caller responses after
+failure.  Reuse command-action and diagnostic autokey coverage; run the
+full `rt-default` workflow.  No additional manual testing is required.
 
 ### 53.8.6. Route Startup And Restart Sources Through UI
 
@@ -1811,6 +1847,9 @@ Work:
 - Apply the agreed initialization profiles at their existing lifecycle
   points.  Preserve first-init bookkeeping, restart suppression of mode
   selection, pending image selection, and completion diagnostics/actions.
+- Preserve final-state entry-selection requests and batch diagnostics.
+  Keep UI-owned settings out of engine result payloads; use the existing
+  reporting fields and the outer UI selection/effect handlers.
 - Call the extracted initializers explicitly from the UI coordinator,
   not from engine source advancement.  Keep existing mixed assignments
   until the following focused ownership slices move them.  Do not add
@@ -1991,6 +2030,9 @@ Work:
 - Move only `maxhistory` interpretation and its table entry to UI.
 - Preserve numeric validation, history capacity, startup-only eligibility,
   its debug override, and existing `FRACTAL_PARAM | PARAM_3D` results.
+- Retain existing flag assertions after migration.  Cover the same flags
+  contributing to source completion and caller consequences, rather
+  than reclassifying them because the handler is now UI-owned.
 - Remove its engine handler and table entry, retaining one owner.
   Remove engine UI includes only when their final use is gone; leave
   default/reset changes to the agreed initialization slices.
@@ -2252,10 +2294,10 @@ and setup-policy couplings, not direct input polling:
   `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  The marked
   `ui/video_mode.h` include permits the temporary mechanical lookup of
   UI-owned bindings.  Shared syntax, recognition, routing, and mixed
-  ownership, initialization, ordering, and failure behavior are agreed;
-  53.5.7 settles reporting before deferred implementation removes
-  these dependencies.  Slices 53.9.1 through 53.9.11 move the UI handlers
-  and key-name parser without changing their semantics.
+  ownership, initialization, ordering, failure behavior, and reporting
+  are agreed.  Implementation slices remove these dependencies;
+  53.9.1 through 53.9.11 move UI handlers and the key-name parser without
+  changing their semantics.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy;
   slices 53.9.8 and 53.9.9 move their parameter handling to UI.
