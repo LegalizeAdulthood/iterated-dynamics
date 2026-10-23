@@ -8,11 +8,13 @@
 #include "WxDiskDriver.h"
 
 #include <engine/calcfrac.h>
+#include <engine/pixel.h>
 #include <engine/spindac.h>
 #include <engine/video_mode.h>
 #include <engine/VideoInfo.h>
 #include <geometry/plot3d.h>
 #include <gui/App.h>
+#include <io/disk_storage.h>
 #include <ui/diskvid.h>
 #include <ui/video.h>
 #include <ui/zoom.h>
@@ -143,9 +145,9 @@ bool WxDiskDriver::resize()
         return false;
     }
 
-    if (g_disk_flag)
+    if (io::g_disk_flag)
     {
-        end_disk();
+        io::end_disk();
     }
     start_disk();
 
@@ -222,12 +224,11 @@ void WxDiskDriver::set_video_mode(const VideoInfo &mode)
 
     resize();
     wxGetApp().clear();
-    if (g_disk_flag)
+    if (io::g_disk_flag)
     {
-        end_disk();
+        io::end_disk();
     }
     set_normal_dot();
-    set_normal_span();
     set_for_graphics();
     set_clear();
 }

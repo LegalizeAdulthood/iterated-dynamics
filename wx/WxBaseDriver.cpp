@@ -15,6 +15,7 @@
 #include <engine/video_mode.h>
 #include <engine/VideoInfo.h>
 #include <geometry/plot3d.h>
+#include <io/disk_storage.h>
 #include <io/save_timer.h>
 #include <ui/diskvid.h>
 #include <ui/id_keys.h>
@@ -331,12 +332,11 @@ void WxBaseDriver::set_video_mode(const VideoInfo &mode)
 
     resize();
     wxGetApp().clear();
-    if (g_disk_flag)
+    if (io::g_disk_flag)
     {
-        end_disk();
+        io::end_disk();
     }
     set_normal_dot();
-    set_normal_span();
     set_for_graphics();
     set_clear();
 }

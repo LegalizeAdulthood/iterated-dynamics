@@ -673,7 +673,12 @@ int X11BaseDriver::get_key()
         }
         else
         {
-            ch = handle_special_keys(m_frame.get_key_press(true));
+            const bool scripted{g_slides == SlidesMode::PLAY};
+            ch = handle_special_keys(m_frame.get_key_press(!scripted));
+            if (scripted && ch == 0)
+            {
+                delay(1);
+            }
         }
     } while (ch == 0);
 
