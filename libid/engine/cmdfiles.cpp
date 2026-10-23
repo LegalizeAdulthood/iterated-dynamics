@@ -116,7 +116,7 @@ namespace id::engine
 static CommandParseResult command_file(std::FILE *handle, CmdFile mode);
 static void append_result(CommandParseResult &result, CommandParseResult source);
 static bool next_line(std::FILE *handle, std::string &line_buf, CmdFile mode);
-static void init_vars_run();
+static void init_process_defaults();
 static void init_vars_restart();
 static void init_vars_fractal();
 static void init_vars3d();
@@ -338,7 +338,7 @@ CommandParseResult cmd_files(const std::vector<std::string> &args)
 {
     if (g_first_init)
     {
-        init_vars_run();                 // once per run initialization
+        init_process_defaults();
     }
     CommandParseResult result{reset_startup_commands()};
 
@@ -410,7 +410,7 @@ CommandParseResult load_commands(std::FILE *infile)
     return ret;
 }
 
-static void init_vars_run()              // once per run init
+static void init_process_defaults()
 {
     s_init_random_seed = static_cast<int>(std::time(nullptr));
     init_comments();

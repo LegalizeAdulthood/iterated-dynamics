@@ -798,7 +798,7 @@ dependencies.
   and action execution outside default initializers.  The UI source
   coordinator selects the appropriate initialization scope; engine
   source traversal does not hide a second initialization operation.
-- Deferred slices 53.7.1 through 53.7.4 name local groups and separate
+- Deferred slices 53.7.2 through 53.7.4 name local groups and separate
   reset-value interpretation.  Slices 53.8.6.1 through 53.8.6.3 move UI
   restart defaults after source routing.  Slice 53.9.6 moves pending-mode
   storage with its handler; 53.9.10 and 53.9.11 move exit confirmation
@@ -1479,25 +1479,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-
-### 53.7.1. Name Process Initialization
-
-Source: `init_vars_run` and its caller in `engine/cmdfiles.cpp`.
-
-Prerequisite: 53.7.
-
-Work:
-
-- Extract/name `initialize_process_defaults` locally, retaining the
-  random-seed capture, comment initialization, and directory discovery.
-- Preserve the exact call position and existing first-init/debug gating.
-  Do not move settings between reset scopes or add an empty UI wrapper.
-
-Done when: process initialization has an explicit named scope with
-unchanged behavior.
-
-Validation: reuse startup and temporary-directory tests; run the full
-`rt-default` workflow.  No additional manual testing is required.
 
 ### 53.7.2. Group Restart Initialization
 
