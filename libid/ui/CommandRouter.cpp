@@ -8,6 +8,7 @@
 #include "io/loadfile.h"
 #include "misc/debug_flags.h"
 #include "ui/big_while_loop.h"
+#include "ui/history.h"
 
 #include <fmt/format.h>
 
@@ -36,6 +37,20 @@ static CmdArgFlags cmd_ask_video(const Command &cmd)
     return CmdArgFlags::NONE;
 }
 
+static CmdArgFlags cmd_max_history(const Command &cmd)
+{
+    if (cmd.num_val == NON_NUMERIC)
+    {
+        return cmd.bad_arg();
+    }
+    if (cmd.num_val < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_max_image_history = cmd.num_val;
+    return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
+}
+
 // virtual=?
 static CmdArgFlags cmd_virtual(const Command &cmd)
 {
@@ -47,8 +62,8 @@ static CmdArgFlags cmd_virtual(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
-static const CommandHandlerTables s_ui_commands{
-    {}, {CommandHandler{"askvideo", cmd_ask_video}, CommandHandler{"virtual", cmd_virtual}}};
+static const CommandHandlerTables s_ui_commands{{CommandHandler{"maxhistory", cmd_max_history}},
+    {CommandHandler{"askvideo", cmd_ask_video}, CommandHandler{"virtual", cmd_virtual}}};
 
 static void add_names(std::set<std::string_view> &names, const std::vector<CommandHandler> &handlers)
 {

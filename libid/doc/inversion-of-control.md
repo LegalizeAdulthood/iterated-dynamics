@@ -1480,34 +1480,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.9.3. Move History-Capacity Parameter Handling To UI
-
-Source: `cmd_max_history` and its table entry in `engine/cmdfiles.cpp`.
-
-Prerequisite: 53.9.2; all application sources already use the
-common coordinator.
-
-Work:
-
-- Move only `maxhistory` interpretation and its table entry to UI.
-- Preserve numeric validation, history capacity, startup-only eligibility,
-  its debug override, and existing `FRACTAL_PARAM | PARAM_3D` results.
-- Retain existing flag assertions after migration.  Cover the same flags
-  contributing to source completion and caller consequences, rather
-  than reclassifying them because the handler is now UI-owned.
-- Remove its engine handler and table entry, retaining one owner.
-  Remove engine UI includes only when their final use is gone; leave
-  default/reset changes to the agreed initialization slices.
-- Move existing handler tests to the UI owner and verify equivalent
-  routing from every source where the parameter is permitted.  Do not
-  introduce a forwarding function or engine callback into UI.
-
-Done when: `maxhistory` is UI-owned and no source bypasses its handler.
-
-Validation: reuse existing handler, startup, and autokey coverage and
-run the full `rt-default` workflow.  No additional manual testing is
-required.
-
 ### 53.9.4. Move Autokey-Mode Parameter Handling To UI
 
 Source: `cmd_auto_key` and its table entry in `engine/cmdfiles.cpp`.

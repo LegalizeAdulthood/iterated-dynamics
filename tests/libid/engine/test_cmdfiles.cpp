@@ -67,7 +67,6 @@
 #include <misc/version.h>
 #include <ui/big_while_loop.h>
 #include <ui/comments.h>
-#include <ui/history.h>
 #include <ui/id_keys.h>
 #include <ui/make_batch_file.h>
 #include <ui/slideshw.h>
@@ -509,43 +508,6 @@ TEST_F(TestParameterCommandError, batchAfterStartup)
     ValueSaver saved_init_batch{g_init_batch, BatchMode::NONE};
 
     exec_cmd_arg("batch=yes");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
-
-TEST_F(TestParameterCommandError, maxHistoryNonNumeric)
-{
-    ValueSaver saved_max_image_history{g_max_image_history, 0};
-
-    exec_cmd_arg("maxhistory=yes", CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
-
-TEST_F(TestParameterCommandError, maxHistoryNegative)
-{
-    ValueSaver saved_max_image_history{g_max_image_history, 0};
-
-    exec_cmd_arg("maxhistory=-10", CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
-
-TEST_F(TestParameterCommand, maxHistory)
-{
-    ValueSaver saved_max_image_history{g_max_image_history, 0};
-
-    exec_cmd_arg("maxhistory=10", CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(10, g_max_image_history);
-}
-
-TEST_F(TestParameterCommandError, maxHistoryAfterStartup)
-{
-    ValueSaver saved_max_image_history{g_max_image_history, 0};
-
-    exec_cmd_arg("maxhistory=10");
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }

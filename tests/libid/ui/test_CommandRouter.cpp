@@ -19,6 +19,7 @@
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 #include <ui/big_while_loop.h>
+#include <ui/history.h>
 #include <ui/id_keys.h>
 #include <ui/video_mode.h>
 
@@ -402,6 +403,88 @@ TEST_F(TestCommandRouter, invalidVirtualScreenValuePreservesPreferenceAndDiagnos
     }
 }
 
+TEST_F(TestCommandRouter, maxHistoryNonNumeric)
+{
+    ValueSaver saved_max_image_history{g_max_image_history, 0};
+    CommandProcessor processor{"maxhistory=yes", CmdFile::SSTOOLS_INI};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+    EXPECT_EQ(0, g_max_image_history);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  maxhistory=yes"));
+}
+
+TEST_F(TestCommandRouter, maxHistoryNegative)
+{
+    ValueSaver saved_max_image_history{g_max_image_history, 0};
+    CommandProcessor processor{"maxhistory=-10", CmdFile::SSTOOLS_INI};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+    EXPECT_EQ(0, g_max_image_history);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  maxhistory=-10"));
+}
+
+TEST_F(TestCommandRouter, maxHistory)
+{
+    ValueSaver saved_max_image_history{g_max_image_history, -1};
+    const CommandRouter router;
+    for (const int max_history : {0, 10})
+    {
+        SCOPED_TRACE(max_history);
+        CommandProcessor processor{"maxhistory=" + std::to_string(max_history), CmdFile::SSTOOLS_INI};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
+        EXPECT_EQ(max_history, g_max_image_history);
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+    }
+}
+
+TEST_F(TestCommandRouter, maxHistoryAfterStartup)
+{
+    ValueSaver saved_max_image_history{g_max_image_history, 0};
+    CommandProcessor processor{"maxhistory=10", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+    EXPECT_EQ(0, g_max_image_history);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  maxhistory=10"));
+}
+
+TEST_F(TestCommandRouter, maxHistoryDebugOverrideRetainsValueValidation)
+{
+    ValueSaver saved_max_image_history{g_max_image_history, 0};
+    g_debug_flag = DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME;
+    CommandProcessor processor{"maxhistory=10", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_EQ(10, g_max_image_history);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    for (const std::string_view value : {"yes", "-10"})
+    {
+        SCOPED_TRACE(value);
+        CommandProcessor invalid{"maxhistory=" + std::string{value}, CmdFile::AT_AFTER_STARTUP};
+
+        const CommandParseResult rejected{router.process(invalid)};
+
+        EXPECT_EQ(CmdArgFlags::BAD_ARG, rejected.flags);
+        EXPECT_EQ(10, g_max_image_history);
+        EXPECT_THAT(rejected.diagnostics.errors,
+            ElementsAre("Oops. I couldn't understand the argument:\n  maxhistory=" + std::string{value}));
+    }
+}
+
 class TestCommandRouterFile : public TestCommandRouter
 {
 protected:
@@ -617,6 +700,30 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesVirtualScreenParameterAndComplete
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_FALSE(g_virtual_screens);
+    EXPECT_DOUBLE_EQ(2.0, g_params[2]);
+    EXPECT_FALSE(processor.advance());
+    EXPECT_DOUBLE_EQ(2.0, g_params[2]);
+    EXPECT_TRUE(fs::remove(m_path));
+}
+
+TEST_F(TestCommandRouterFile, maxHistoryUsesLiveOverrideAndRetainsAcceptedFlagsAtCompletion)
+{
+    ValueSaver saved_max_image_history{g_max_image_history, 0};
+    set_fractal_type(FractalType::MARKS_JULIA);
+    g_file_version = parse_legacy_version(1824);
+    g_params[2] = 1.0;
+    const std::string text{
+        "entry { debugflag=" + std::to_string(static_cast<int>(DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME)) +
+        " maxhistory=10 debugflag=0 maxhistory=20 }"};
+    CommandProcessor processor{open_input(text), CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_EQ(10, g_max_image_history);
+    EXPECT_EQ(DebugFlags::NONE, g_debug_flag);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  maxhistory=20"));
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
     EXPECT_FALSE(processor.advance());
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
@@ -958,6 +1065,39 @@ TEST_F(TestCommandRouterStartup, finalTypeRequestsSelectionOrReportsBatchDiagnos
     EXPECT_TRUE(interactive.needs_file_entry);
     EXPECT_FALSE(batch.needs_file_entry);
     EXPECT_THAT(batch.diagnostics.errors, ElementsAre(HasSubstr("type=formula requires formulaname=")));
+}
+
+TEST_F(TestCommandRouterStartup, startupSourcesRouteHistoryCapacityInOrder)
+{
+    ValueSaver saved_max_image_history{g_max_image_history, 0};
+    write_source("sstools.ini", "maxhistory=2\n");
+    write_source("whole.par", "entry { maxhistory=4 }");
+    write_source("selected.par", "ignored { maxhistory=99 }\nchosen { maxhistory=6 }");
+    const CommandRouter router;
+
+    const CommandParseResult configuration{router.process_startup({"id"})};
+
+    EXPECT_TRUE(configuration.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, configuration.flags);
+    EXPECT_EQ(2, g_max_image_history);
+
+    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
+
+    EXPECT_TRUE(whole.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, whole.flags);
+    EXPECT_EQ(4, g_max_image_history);
+
+    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
+
+    EXPECT_TRUE(selected.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, selected.flags);
+    EXPECT_EQ(6, g_max_image_history);
+
+    const CommandParseResult argument{router.process_startup({"id", "@whole", "@selected/chosen", "maxhistory=8"})};
+
+    EXPECT_TRUE(argument.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, argument.flags);
+    EXPECT_EQ(8, g_max_image_history);
 }
 
 TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVideoPromptPreferenceAlone)

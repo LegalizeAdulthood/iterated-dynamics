@@ -68,7 +68,6 @@
 #include "misc/id.h"
 #include "misc/version.h"
 #include "ui/big_while_loop.h"
-#include "ui/history.h"
 #include "ui/slideshw.h"
 #include "ui/stereo.h"
 // TODO: removed later
@@ -481,20 +480,6 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     return CmdArgFlags::NONE;
 }
 
-static CmdArgFlags cmd_max_history(const Command &cmd)
-{
-    if (cmd.num_val == NON_NUMERIC)
-    {
-        return cmd.bad_arg();
-    }
-    if (cmd.num_val < 0)
-    {
-        return cmd.bad_arg();
-    }
-    g_max_image_history = cmd.num_val;
-    return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
-}
-
 // textsafe no longer used, do validity checking, but gobble argument
 static CmdArgFlags cmd_text_safe(const Command &cmd)
 {
@@ -521,7 +506,7 @@ static CmdArgFlags cmd_vesa_detect(const Command &cmd)
 
 // these commands are allowed only at startup
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 11> s_startup_commands{
+static std::array<CommandHandler, 10> s_startup_commands{
     CommandHandler{"adapter", cmd_adapter},          //
     CommandHandler{"afi", cmd_afi},                  //
     CommandHandler{"batch", cmd_batch},              //
@@ -530,7 +515,6 @@ static std::array<CommandHandler, 11> s_startup_commands{
     CommandHandler{"fpu", cmd_fpu},                  //
     CommandHandler{"makedoc", cmd_make_doc},         //
     CommandHandler{"makepar", cmd_make_par},         //
-    CommandHandler{"maxhistory", cmd_max_history},   //
     CommandHandler{"textsafe", cmd_text_safe},       //
     CommandHandler{"vesadetect", cmd_vesa_detect},   //
 };
