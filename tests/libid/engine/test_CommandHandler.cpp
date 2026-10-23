@@ -223,29 +223,4 @@ TEST_F(TestEngineCommand, evaluatesOverrideAfterEachParameter)
     EXPECT_EQ(1U, m_result.diagnostics.errors.size());
 }
 
-TEST_F(TestEngineCommand, textualEntryDiagnosesUnknownNameOnce)
-{
-    const CommandParseResult result{cmd_arg("unknown=yes", CmdFile::AT_AFTER_STARTUP)};
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  unknown=yes"));
-}
-
-TEST_F(TestEngineCommand, textualEntryDoesNotRepeatSyntaxDiagnostic)
-{
-    const CommandParseResult result{cmd_arg(std::string(33, 'a') + "=yes", CmdFile::AT_AFTER_STARTUP)};
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_EQ(1U, result.diagnostics.errors.size());
-}
-
-TEST_F(TestEngineCommand, textualEntryDoesNotRepeatRejectionDiagnostic)
-{
-    const CommandParseResult result{cmd_arg("batch=yes", CmdFile::AT_AFTER_STARTUP)};
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_EQ(BatchMode::NONE, g_init_batch);
-    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  batch=yes"));
-}
-
 } // namespace id::test

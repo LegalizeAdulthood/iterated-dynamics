@@ -278,6 +278,40 @@ TEST_F(TestCommandRouter, defaultRouterRetainsEngineStartupRestrictions)
     EXPECT_EQ(1U, result.diagnostics.errors.size());
 }
 
+TEST_F(TestCommandRouter, defaultRouterDiagnosesUnknownNameOnce)
+{
+    CommandProcessor processor{"unknown=yes", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  unknown=yes"));
+}
+
+TEST_F(TestCommandRouter, defaultRouterDoesNotRepeatSyntaxDiagnostic)
+{
+    CommandProcessor processor{std::string(33, 'a') + "=yes", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+    EXPECT_EQ(1U, result.diagnostics.errors.size());
+}
+
+TEST_F(TestCommandRouter, defaultRouterDoesNotRepeatRejectionDiagnostic)
+{
+    CommandProcessor processor{"batch=yes", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+    EXPECT_EQ(BatchMode::NONE, g_init_batch);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  batch=yes"));
+}
+
 class TestCommandRouterFile : public TestCommandRouter
 {
 protected:
@@ -449,9 +483,10 @@ TEST_F(TestCommandRouterFile, actionStopsTheSetAndRetainsBothOwnersResults)
 
 TEST_F(TestCommandRouterFile, defaultRouterRetainsSelectedSetInitializationAndLaterEffects)
 {
-    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, cmd_arg("params=77", CmdFile::AT_CMD_LINE).flags);
-    CommandProcessor processor{open_input("entry { type=mandel maxiter=222 hertz=550 }"), CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
+    CommandProcessor initial{"params=77", CmdFile::AT_CMD_LINE};
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, router.process(initial).flags);
+    CommandProcessor processor{open_input("entry { type=mandel maxiter=222 hertz=550 }"), CmdFile::AT_AFTER_STARTUP};
 
     const CommandParseResult result{router.process(processor)};
 

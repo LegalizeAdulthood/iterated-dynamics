@@ -6,7 +6,6 @@
 #include "engine/Browse.h"
 #include "engine/Command.h"
 #include "engine/command_comments.h"
-#include "engine/VideoInfo.h"
 #include "fractals/formula.h"
 #include "fractals/fractalp.h"
 #include "fractals/ifs.h"
@@ -16,7 +15,6 @@
 #include "io/has_ext.h"
 #include "io/library.h"
 #include "io/loadfile.h"
-#include "misc/debug_flags.h"
 
 #include <algos/string_algorithms.h>
 
@@ -25,7 +23,6 @@
 #include <cstring>
 #include <iterator>
 #include <memory>
-#include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -37,24 +34,17 @@ namespace fs = std::filesystem;
 
 using namespace id::fractals;
 using namespace id::io;
-using namespace id::misc;
 
 namespace id::engine
 {
 
-static CommandParseResult command_file(std::FILE *handle, CmdFile mode);
 static void append_result(CommandParseResult &result, CommandParseResult source);
-static CommandParseResult process_commands(CommandProcessor &processor);
 static bool next_line(std::FILE *handle, std::string &line_buf, CmdFile mode);
 
 static std::string extract_filename(const fs::path &source)
 {
     return source.filename().string();
 }
-
-// cmdfiles(argc,argv) process the command-line arguments
-// it also processes the 'sstools.ini' file and any
-// indirect files ('id @myfile')
 
 static std::FILE *open_sstools_ini()
 {
@@ -87,19 +77,6 @@ static bool type_has_file_entry()
     default:
         return true;
     }
-}
-
-CommandParseResult reset_startup_commands()
-{
-    reset_restart_defaults();
-    reset_fractal_defaults();
-    CommandParseResult result;
-    if (std::FILE *file{open_sstools_ini()}; file != nullptr)
-    {
-        append_result(result, command_file(file, CmdFile::SSTOOLS_INI));
-    }
-    g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
-    return result;
 }
 
 static bool process_image_argument(const char *cur_arg)
@@ -219,45 +196,6 @@ static void resolve_startup_file_entry(CommandParseResult &result)
     }
 
     result.needs_file_entry = true;
-}
-
-CommandParseResult cmd_files(const std::vector<std::string> &args)
-{
-    if (g_first_init)
-    {
-        init_process_defaults();
-    }
-    reset_restart_defaults();
-    reset_fractal_defaults();
-    CommandProcessor processor{args};
-    CommandParseResult result{process_commands(processor)};
-
-    if (!g_first_init)
-    {
-        g_init_mode = -1;                     // don't set video when <ins> key used
-        g_show_file = ShowFile::IMAGE_LOADED; // nor startup image file
-    }
-
-    if (g_debug_flag != DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME)
-    {
-        g_first_init = false;
-    }
-
-    // PAR reads a file and sets color, don't read colors from GIF
-    g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
-    return result;
-}
-
-// when called, file is open in binary mode, positioned at the
-// '(' or '{' following the desired parameter set's name
-CommandParseResult load_commands(std::FILE *infile)
-{
-    CommandParseResult ret{command_file(infile, CmdFile::AT_AFTER_STARTUP)};
-
-    // PAR reads a file and sets color, don't read colors from GIF
-    g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
-
-    return ret;
 }
 
 // mode = AT_CMD_LINE           command line @filename
@@ -484,31 +422,6 @@ void CommandProcessor::finish_file()
         backwards_legacy_v19();
         backwards_legacy_v20();
     }
-}
-
-// TODO: removed later
-static CommandParseResult command_file(std::FILE *handle, const CmdFile mode)
-{
-    CommandProcessor processor{handle, mode};
-    return process_commands(processor);
-}
-
-// TODO: removed later
-static CommandParseResult process_commands(CommandProcessor &processor)
-{
-    while (processor.advance())
-    {
-        const Command &cmd{processor.command()};
-        if (const std::optional<CmdArgFlags> flags{handle_engine_command(cmd)}; flags.has_value())
-        {
-            cmd.result.flags = *flags;
-        }
-        else
-        {
-            cmd.result.flags = cmd.bad_arg();
-        }
-    }
-    return processor.result();
 }
 
 int next_command(std::string &cmd, std::FILE *handle, std::string &line_buf, std::string_view &line, const CmdFile mode,

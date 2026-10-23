@@ -3,6 +3,8 @@
 //
 #include <engine/cmdfiles.h>
 #include <engine/command_comments.h>
+#include <engine/CommandProcessor.h>
+#include <ui/CommandRouter.h>
 #include <ui/command_effects.h>
 
 #include "ColorMapSaver.h"
@@ -197,7 +199,9 @@ void TestParameterCommand::TearDown()
 
 void TestParameterCommand::exec_cmd_arg(const std::string &cur_arg, const CmdFile mode)
 {
-    m_parsed = cmd_arg(cur_arg, mode);
+    CommandProcessor processor{cur_arg, mode};
+    const CommandRouter router;
+    m_parsed = router.process(processor);
     m_result = m_parsed.flags;
 }
 
@@ -1463,7 +1467,9 @@ TEST_F(TestParameterCommand, missingMapReturnsDiagnosticAndPreservesMapName)
     ValueSaver saved_map_name{g_map_name, std::string{"previous.map"}};
     ValueSaver saved_specified{g_map_specified, false};
     ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    const CommandParseResult parsed{cmd_arg("map=missing-palette.map", CmdFile::AT_AFTER_STARTUP)};
+    CommandProcessor processor{"map=missing-palette.map", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+    const CommandParseResult parsed{router.process(processor)};
     const CmdArgFlags result{parsed.flags};
     const CommandDiagnostics &diagnostics{parsed.diagnostics};
 
@@ -1482,7 +1488,9 @@ TEST_F(TestParameterCommand, missingPaletteStopsCommandFileWithoutLosingEarlierC
     ASSERT_NE(nullptr, file);
     std::fputs("test { maxiter=321 colors=@missing-command-palette.map maxiter=654 }", file);
     std::rewind(file);
-    const CommandParseResult parsed{load_commands(file)};
+    CommandProcessor processor{file, CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+    const CommandParseResult parsed{router.process(processor)};
     const CmdArgFlags result{parsed.flags};
     const CommandDiagnostics &diagnostics{parsed.diagnostics};
 
@@ -2620,7 +2628,8 @@ TEST_F(TestParameterCommand, startupUsesTmpDirWhenTmpAndTempUnset)
     CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
     const std::vector<std::string> args{"id"};
 
-    cmd_files(args);
+    const CommandRouter router;
+    router.process_startup(args);
 
     EXPECT_EQ(temp_dir.string(), adjust_dir(g_temp_dir.string()));
 }
@@ -2637,7 +2646,8 @@ TEST_F(TestParameterCommand, startupPreservesOrbitDelayAfterShowDot)
     ValueSaver saved_orbit_skip_points{g_orbit_skip_points, -999};
     const std::vector<std::string> args{"id", "video=F6", "type=mandel", "showdot=b/20", "orbitdelay=100"};
 
-    cmd_files(args);
+    const CommandRouter router;
+    router.process_startup(args);
 
     EXPECT_EQ(100, g_orbit_delay);
     EXPECT_EQ(100, g_orbit_skip_points);
@@ -2651,7 +2661,8 @@ TEST_F(TestParameterCommand, startupCollectsErrorsBeforeLaterBatchArgument)
         std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
     CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
 
-    const CommandParseResult parsed{cmd_files({"id", "maxiter=bad", "batch=yes"})};
+    const CommandRouter router;
+    const CommandParseResult parsed{router.process_startup({"id", "maxiter=bad", "batch=yes"})};
     const CommandDiagnostics &diagnostics{parsed.diagnostics};
 
     ASSERT_EQ(1U, diagnostics.errors.size());
@@ -2667,7 +2678,8 @@ TEST_F(TestParameterCommand, startupCollectsMissingFileWarningsWithoutUi)
         std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
     CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
 
-    const CommandParseResult parsed{cmd_files({"id", "lfile=missing-startup-lsystem.l"})};
+    const CommandRouter router;
+    const CommandParseResult parsed{router.process_startup({"id", "lfile=missing-startup-lsystem.l"})};
     const CommandDiagnostics &diagnostics{parsed.diagnostics};
 
     EXPECT_TRUE(diagnostics.errors.empty());
@@ -2683,7 +2695,8 @@ TEST_F(TestParameterCommand, startupReturnsFileEntrySelectionWithoutUi)
         std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
     CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
 
-    const CommandParseResult parsed{cmd_files({"id", "type=formula"})};
+    const CommandRouter router;
+    const CommandParseResult parsed{router.process_startup({"id", "type=formula"})};
 
     EXPECT_TRUE(parsed.needs_file_entry);
     EXPECT_TRUE(parsed.diagnostics.errors.empty());
@@ -2698,7 +2711,8 @@ TEST_F(TestParameterCommand, startupStopsAtActionButRetainsEarlierErrors)
         std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
     CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
 
-    const CommandParseResult parsed{cmd_files({"id", "maxiter=bad", "makedoc=unused.txt", "maxiter=888"})};
+    const CommandRouter router;
+    const CommandParseResult parsed{router.process_startup({"id", "maxiter=bad", "makedoc=unused.txt", "maxiter=888"})};
 
     EXPECT_EQ(1U, parsed.diagnostics.errors.size());
     EXPECT_TRUE(std::holds_alternative<MakeHelpDocument>(parsed.action));
@@ -2715,7 +2729,9 @@ TEST_F(TestParameterCommand, parameterSetStopsAtAction)
     std::fputs("test { maxiter=321 makemig=2/3 maxiter=654 }", file);
     std::rewind(file);
 
-    const CommandParseResult parsed{load_commands(file)};
+    CommandProcessor processor{file, CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+    const CommandParseResult parsed{router.process(processor)};
 
     EXPECT_EQ(321, g_max_iterations);
     EXPECT_TRUE(bit_set(parsed.flags, CmdArgFlags::FRACTAL_PARAM));
@@ -3647,7 +3663,9 @@ TEST_F(TestParameterCommand, legacyFloatControlsTrigBailout)
             std::rewind(file);
             g_user.legacy_float = true;
 
-            const CmdArgFlags result{load_commands(file).flags};
+            CommandProcessor processor{file, CmdFile::AT_AFTER_STARTUP};
+            const CommandRouter router;
+            const CmdArgFlags result{router.process(processor).flags};
 
             EXPECT_NE(CmdArgFlags::BAD_ARG, result);
             EXPECT_EQ(test_case.bailout, g_user.bailout_value);

@@ -3445,28 +3445,6 @@ std::optional<CmdArgFlags> handle_engine_command(const Command &cmd)
     return handle_command(s_commands, cmd);
 }
 
-// cmdarg(string,mode) processes a single command-line/command-file argument
-//  return:
-//    -1 error, >= 0 ok
-//    if ok, return value:
-//      | 1 means fractal parm has been set
-//      | 2 means 3d parm has been set
-//      | 4 means 3d=yes specified
-//      | 8 means reset specified
-//
-CommandParseResult cmd_arg(const std::string_view cur_arg, const CmdFile mode)
-{
-    CommandParseResult result;
-    const Command cmd{cur_arg, mode, result};
-    if (const std::optional<CmdArgFlags> handled{handle_engine_command(cmd)}; handled.has_value())
-    {
-        result.flags = handled.value();
-        return result;
-    }
-    result.flags = cmd.bad_arg();
-    return result;
-}
-
 void set_3d_defaults()
 {
     g_rough     = 30;

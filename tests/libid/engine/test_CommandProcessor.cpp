@@ -185,7 +185,9 @@ TEST_F(TestCommandProcessor, configurationFileDoesNotRequireSetBraces)
 
 TEST_F(TestCommandProcessor, selectedSetClearsParameterInitializationFlags)
 {
-    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, cmd_arg("params=77", CmdFile::AT_CMD_LINE).flags);
+    CommandParseResult result;
+    const Command cmd{"params=77", CmdFile::AT_CMD_LINE, result};
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, handle_engine_command(cmd));
     CommandProcessor processor{open_input("entry { type=mandel }"), CmdFile::AT_AFTER_STARTUP};
 
     ASSERT_TRUE(processor.advance());
@@ -197,7 +199,9 @@ TEST_F(TestCommandProcessor, selectedSetClearsParameterInitializationFlags)
 
 TEST_F(TestCommandProcessor, startupSetPreservesEarlierParameterInitializationFlags)
 {
-    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, cmd_arg("params=77", CmdFile::AT_CMD_LINE).flags);
+    CommandParseResult result;
+    const Command cmd{"params=77", CmdFile::AT_CMD_LINE, result};
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, handle_engine_command(cmd));
     CommandProcessor processor{open_input("entry { type=mandel }"), CmdFile::AT_CMD_LINE_SET_NAME};
 
     ASSERT_TRUE(processor.advance());
@@ -324,7 +328,9 @@ TEST_F(TestCommandProcessor, successfulCompletionRunsCompatibilityOnlyOnce)
 TEST_F(TestCommandProcessor, compatibilityUsesOnlyTheCurrentFileFlags)
 {
     prepare_legacy_compatibility();
-    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, cmd_arg("maxiter=222", CmdFile::AT_CMD_LINE).flags);
+    CommandParseResult result;
+    const Command cmd{"maxiter=222", CmdFile::AT_CMD_LINE, result};
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, handle_engine_command(cmd));
     CommandProcessor processor{open_input("entry { hertz=220 }"), CmdFile::AT_AFTER_STARTUP};
     ASSERT_TRUE(processor.advance());
     handle_current(processor);
@@ -453,7 +459,9 @@ TEST_F(TestCommandProcessor, singleCommandRetainsItsOriginalRejectedResult)
 
 TEST_F(TestCommandProcessor, singleCommandDoesNotResetInitializationFlagsOrComments)
 {
-    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, cmd_arg("params=77", CmdFile::AT_CMD_LINE).flags);
+    CommandParseResult result;
+    const Command cmd{"params=77", CmdFile::AT_CMD_LINE, result};
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, handle_engine_command(cmd));
     g_command_comment[0] = "keep comment";
     std::string text{"type=mandel"};
     CommandProcessor processor{text, CmdFile::AT_AFTER_STARTUP};

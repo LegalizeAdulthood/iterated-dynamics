@@ -134,11 +134,7 @@ void reset_restart_defaults();
 void reset_fractal_defaults();
 void init_param_flags();
 
-CommandParseResult cmd_files(const std::vector<std::string> &args);
-CommandParseResult reset_startup_commands();
-CommandParseResult load_commands(std::FILE *infile);
 void set_3d_defaults();
-CommandParseResult cmd_arg(std::string_view cur_arg, CmdFile mode);
 
 // Unknown names return nullopt; recognized rejections return BAD_ARG.
 std::optional<CmdArgFlags> handle_engine_command(const Command &cmd);

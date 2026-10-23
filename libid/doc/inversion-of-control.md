@@ -1480,37 +1480,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.8.7. Remove Superseded Command Entry Paths
-
-Source: old whole-source runners in `engine/CommandProcessor.cpp`,
-textual parser entry points in `engine/cmdfiles.cpp`, declarations,
-and their test callers.
-
-Prerequisite: 53.8.6.3.
-
-Work:
-
-- Remove superseded `cmd_files()`, `load_commands()`, textual
-  `cmd_arg()`, the combined `reset_startup_commands()` source runner, and
-  temporary runners once their application callers are converted.
-  Retain initialization operations only as specified by the agreed
-  defaults design, not as hidden source-processing wrappers.
-- Keep engine-handler entry points operating on the shared parsed
-  `Command`.  Do not retain an engine-only application path just to
-  preserve old test entry points.
-- Route integration tests through the coordinator; keep genuinely
-  engine-only handler tests direct.  Remove obsolete declarations and
-  temporary comments with their temporary code.
-- Verify all supported source paths reach the common ownership decision
-  and preserve per-file completion independently of overall results.
-
-Done when: no active application or test convenience path bypasses UI
-ownership, and the temporary source-processing runners are gone.
-
-Validation: run the full `rt-default` workflow, including existing
-startup, parameter, diagnostic, action, and batch tests.  Add no
-source-grep tests or redundant image tests.  No manual testing is required.
-
 ### 53.9.1. Move Video-Prompt Parameter Handling To UI
 
 Source: `cmd_ask_video` and its table entry in `engine/cmdfiles.cpp`.
