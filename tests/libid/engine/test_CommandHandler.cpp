@@ -3,6 +3,7 @@
 //
 #include <engine/CommandHandler.h>
 
+#include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 
 #include <gmock/gmock.h>

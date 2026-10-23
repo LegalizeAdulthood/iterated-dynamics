@@ -4,6 +4,7 @@
 #include "ui/get_cmd_string.h"
 
 #include "engine/cmdfiles.h"
+#include "engine/CommandProcessor.h"
 #include "helpdefs.h"
 #include "io/loadfile.h"
 #include "misc/debug_flags.h"
@@ -12,6 +13,7 @@
 #include "ui/help.h"
 #include "ui/command_diagnostics.h"
 #include "ui/command_effects.h"
+#include "ui/CommandRouter.h"
 #include "ui/goodbye.h"
 
 #include <vector>
@@ -39,7 +41,9 @@ int get_cmd_string()
     int i = field_prompt("Enter command string to use.", nullptr, cmd_buf, 60, nullptr);
     if (i >= 0 && cmd_buf[0] != 0)
     {
-        CommandParseResult result{cmd_arg(cmd_buf, CmdFile::AT_AFTER_STARTUP)};
+        CommandProcessor processor{cmd_buf, CmdFile::AT_AFTER_STARTUP};
+        const CommandRouter router;
+        CommandParseResult result{router.process(processor)};
         const bool exit_requested{apply_command_effects(result)};
         i = +result.flags;
         show_command_diagnostics(result.diagnostics);

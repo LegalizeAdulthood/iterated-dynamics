@@ -617,8 +617,8 @@ dependencies.
 - Reuse existing parameter tests.  Add focused coverage for delegation,
   rejection without delegation, startup restrictions and their override,
   single diagnostic emission, and duplicate ownership.  Engine lookup
-  implements the shared result contract.  Slice 53.8.4 composes UI-first
-  routing and validates owner tables after source-processing extraction.
+  implements the shared result contract.  The UI coordinator composes
+  UI-first routing and validates owner tables before source advancement.
 
 ### Agreed Source Routing
 
@@ -674,7 +674,7 @@ dependencies.
   UI.  Connect every application entry point before moving individual UI
   handlers.  Remove temporary runners once their callers are converted;
   precede any new temporary addition with `// TODO: removed later`.
-- Deferred slices 53.8.4 through 53.8.7 implement source processing and
+- Deferred slices 53.8.5 through 53.8.7 implement source processing and
   routing; 53.9.1 through 53.9.11 move the UI parameters and key-name
   parser one at a time.  Initialization follows the agreement below;
   ordering and failure follow their agreement below.  Result
@@ -1480,51 +1480,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.8.4. Route Interactive Command Entry Through UI
-
-Source: `ui/get_cmd_string.cpp`, the shared recognition machinery,
-`CommandProcessor`, and the owner-table assembly.
-
-Prerequisite: 53.8.3.
-
-Work:
-
-- Add the single-parameter source context without startup initialization
-  or PAR-file completion behavior.
-- Expose `CommandProcessor` in `engine/CommandProcessor.h` and
-  `engine/CommandProcessor.cpp`.  Keep source processing in engine and
-  introduce no engine-to-UI include or callback.
-- Implement the common UI loop over the processor's current command.
-  Use the 53.7 result contract and let engine advancement decide whether
-  another parameter follows, including after a rejected command.
-- Assign the selected owner outcome to the shared current result once.
-  Return the single command's original result, including `BAD_ARG` on
-  rejection; do not erase it through file-style flag aggregation.
-- Complete each handler's immediate settings before advancing.  Keep UI
-  assignments out of deferred actions; do not gate them on aggregate
-  success or add rollback.  Preserve unrelated exception propagation.
-- Assemble and validate owner tables once before processing parameters;
-  reject duplicate names with `std::logic_error`.
-- Replace interactive entry's textual engine-parser call with this loop.
-  Preserve diagnostics, action execution, and its debug-only
-  compatibility behavior at the existing completion point.
-- Do not move parameter handlers yet.  Any temporary empty UI table must
-  be marked with `// TODO: removed later` and replaced during 53.9.
-
-Done when: interactive entry exercises the real common coordinator while
-engine owns source advancement and engine parameter interpretation.
-
-Validation: cover acceptance, unknown names, rejection without fallback,
-duplicate ownership, and single-command context.  Reuse command-effect
-tests for error-gated actions/device initialization and warnings that do
-not suppress actions; add only missing cases.  Preserve action-failure
-diagnostics/exit handling without restarting parsing.  Reuse existing
-action and diagnostic autokey journeys.  Cover rejection returning
-`BAD_ARG`, a setting accepted with `NONE`, and `apply_command_effects`
-retaining its exit-request meaning rather than becoming a success flag.
-Run the full `rt-default` workflow.  No additional manual testing is
-required.
-
 ### 53.8.5. Route Selected Parameter Sets Through UI
 
 Source: `ui/get_commands.cpp` and selected-file `CommandProcessor`
@@ -1669,8 +1624,9 @@ no additional manual testing is required.
 
 ### 53.8.7. Remove Superseded Command Entry Paths
 
-Source: old whole-source runners and textual parser entry points in
-`engine/cmdfiles.cpp`, declarations, and their test callers.
+Source: old whole-source runners in `engine/CommandProcessor.cpp`,
+textual parser entry points in `engine/cmdfiles.cpp`, declarations,
+and their test callers.
 
 Prerequisite: 53.8.6.3.
 

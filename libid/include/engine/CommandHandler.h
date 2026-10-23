@@ -7,10 +7,10 @@
 #include "misc/debug_flags.h"
 
 #include <algorithm>
-#include <array>
 #include <functional>
 #include <optional>
 #include <string_view>
+#include <vector>
 
 namespace id::engine
 {
@@ -21,17 +21,23 @@ struct CommandHandler
     std::function<CmdArgFlags(const Command &)> handler;
 };
 
+struct CommandHandlerTables
+{
+    std::vector<CommandHandler> startup;
+    std::vector<CommandHandler> unrestricted;
+};
+
 // Tables must be sorted by name. Only an unrecognized name permits delegation.
-template <std::size_t N>
+template <typename Container>
 std::optional<CmdArgFlags> handle_command(
-    const std::array<CommandHandler, N> &handlers, const Command &cmd, const bool startup_only = false)
+    const Container &handlers, const Command &cmd, const bool startup_only = false)
 {
     if (cmd.status != CmdArgFlags::NONE)
     {
         return cmd.status;
     }
-    const auto it = std::lower_bound(handlers.begin(), handlers.end(), cmd.variable,
-        [](const CommandHandler &handler, const std::string &name) { return handler.name < name; });
+    const typename Container::const_iterator it{std::lower_bound(handlers.begin(), handlers.end(), cmd.variable,
+        [](const CommandHandler &handler, const std::string_view name) { return handler.name < name; })};
     if (it == handlers.end() || it->name != cmd.variable)
     {
         return std::nullopt;
@@ -43,5 +49,8 @@ std::optional<CmdArgFlags> handle_command(
     }
     return it->handler(cmd);
 }
+
+std::optional<CmdArgFlags> handle_command(const CommandHandlerTables &tables, const Command &cmd);
+CommandHandlerTables engine_command_handlers();
 
 } // namespace id::engine

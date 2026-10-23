@@ -46,7 +46,8 @@ add_library(libid
     include/engine/color_state.h engine/color_state.cpp
     include/engine/color_utils.h
     include/engine/Command.h engine/Command.cpp
-    include/engine/CommandHandler.h
+    include/engine/CommandHandler.h engine/CommandHandler.cpp
+    include/engine/CommandProcessor.h engine/CommandProcessor.cpp
     include/engine/convert_center_mag.h engine/convert_center_mag.cpp
     include/engine/convert_corners.h engine/convert_corners.cpp
     include/engine/Diffusion.h engine/Diffusion.cpp
@@ -218,6 +219,7 @@ add_library(libid
     include/ui/command_result.h
     include/ui/command_diagnostics.h ui/command_diagnostics.cpp
     include/ui/command_effects.h ui/command_effects.cpp
+    include/ui/CommandRouter.h ui/CommandRouter.cpp
     include/ui/comments.h ui/comments.cpp
     include/ui/DiffusionController.h ui/DiffusionController.cpp
     include/ui/diskvid.h ui/diskvid.cpp

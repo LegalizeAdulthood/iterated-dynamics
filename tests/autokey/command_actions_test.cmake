@@ -8,7 +8,8 @@ file(WRITE formula/selection.frm "one {\n z = pixel:\n z = sqr(z) + pixel\n |z| 
 set(COMMON "video=F6" "askvideo=no" "sound=off" "savedir=."
     "librarydirs=." "exitnoask=yes" "overwrite=yes")
 execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${COMMON}
-    "batch=yes" "makedoc=action-help.txt" "invalid-after-action=yes"
+    "batch=yes" "lfile=missing-action-warning.l"
+    "makedoc=action-help.txt" "invalid-after-action=yes"
     RESULT_VARIABLE RESULT TIMEOUT 40 COMMAND_ECHO STDOUT)
 if(NOT RESULT STREQUAL "0" OR NOT EXISTS action-help.txt)
     message(FATAL_ERROR "Deferred help-document action failed: ${RESULT}")

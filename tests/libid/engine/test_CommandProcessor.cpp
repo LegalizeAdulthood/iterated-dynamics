@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include <engine/cmdfiles.h>
+#include <engine/CommandProcessor.h>
 
 #include <engine/calcfrac.h>
 #include <engine/Browse.h>
@@ -428,6 +428,69 @@ TEST_F(TestCommandProcessor, invalidFileOrMissingCurrentCommandThrows)
     handle_current(processor);
     ASSERT_FALSE(processor.advance());
     EXPECT_THROW(processor.command(), std::logic_error);
+}
+
+TEST_F(TestCommandProcessor, singleCommandRetainsItsOriginalRejectedResult)
+{
+    CommandProcessor processor{"unknown=yes", CmdFile::AT_AFTER_STARTUP};
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    processor.command().result.action = MakeHelpDocument{"output.txt"};
+    processor.command().result.initialize_fm = true;
+    processor.command().result.needs_file_entry = true;
+
+    EXPECT_FALSE(processor.advance());
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, processor.result().flags);
+    EXPECT_THAT(
+        processor.result().diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  unknown=yes"));
+    EXPECT_TRUE(std::holds_alternative<MakeHelpDocument>(processor.result().action));
+    EXPECT_TRUE(processor.result().initialize_fm);
+    EXPECT_TRUE(processor.result().needs_file_entry);
+    EXPECT_THROW(processor.command(), std::logic_error);
+}
+
+TEST_F(TestCommandProcessor, singleCommandDoesNotResetInitializationFlagsOrComments)
+{
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, cmd_arg("params=77", CmdFile::AT_CMD_LINE).flags);
+    g_command_comment[0] = "keep comment";
+    std::string text{"type=mandel"};
+    CommandProcessor processor{text, CmdFile::AT_AFTER_STARTUP};
+    text.clear();
+
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ("mandel", processor.command().value);
+    EXPECT_EQ(CmdFile::AT_AFTER_STARTUP, processor.command().mode);
+    handle_current(processor);
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_DOUBLE_EQ(77.0, g_params[0]);
+    EXPECT_EQ("keep comment", g_command_comment[0]);
+}
+
+TEST_F(TestCommandProcessor, singleCommandDoesNotRunFileCompatibility)
+{
+    prepare_legacy_compatibility();
+    CommandProcessor processor{"maxiter=222", CmdFile::AT_AFTER_STARTUP};
+
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_DOUBLE_EQ(1.0, g_params[2]);
+}
+
+TEST_F(TestCommandProcessor, singleCommandDoesNotResolveMissingEntries)
+{
+    CommandProcessor processor{"type=formula", CmdFile::AT_AFTER_STARTUP};
+
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_FALSE(processor.result().needs_file_entry);
 }
 
 class TestStartupCommandProcessor : public TestCommandProcessor
