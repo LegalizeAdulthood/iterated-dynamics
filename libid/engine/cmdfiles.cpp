@@ -402,7 +402,6 @@ static void init_param_flags()
 // '(' or '{' following the desired parameter set's name
 CommandParseResult load_commands(std::FILE *infile)
 {
-    init_param_flags(); // reset flags for type=
     CommandParseResult ret{command_file(infile, CmdFile::AT_AFTER_STARTUP)};
 
     // PAR reads a file and sets color, don't read colors from GIF
@@ -663,44 +662,102 @@ static void append_result(CommandParseResult &result, CommandParseResult source)
     result.initialize_fm = result.initialize_fm || source.initialize_fm;
 }
 
-static CommandParseResult command_file(std::FILE *handle, const CmdFile mode)
+CommandProcessor::CommandProcessor(std::FILE *file, const CmdFile mode) :
+    m_file{file, std::fclose},
+    m_mode(mode)
 {
-    const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{handle, std::fclose};
+    if (file == nullptr)
+    {
+        throw std::logic_error("CommandProcessor requires an open file");
+    }
+    if (mode == CmdFile::AT_AFTER_STARTUP)
+    {
+        init_param_flags();
+    }
     if (mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME)
     {
         int i;
-        while ((i = std::getc(handle)) != '{' && i != EOF)
+        while ((i = std::getc(m_file.get())) != '{' && i != EOF)
         {
         }
         clear_command_comments();
     }
+}
 
-    std::string cmd;
-    std::string line_buf;
-    std::string_view line;
-    CommandParseResult result;
-    while (next_command(cmd, handle, line_buf, line, mode, &result.diagnostics) > 0)
+CommandProcessor::~CommandProcessor() = default;
+
+const Command &CommandProcessor::command() const
+{
+    if (!m_command)
     {
-        if ((mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME) && cmd == "}")
+        throw std::logic_error("CommandProcessor has no current command");
+    }
+    return *m_command;
+}
+
+bool CommandProcessor::advance()
+{
+    if (!m_file)
+    {
+        return false;
+    }
+    if (m_command)
+    {
+        const bool failed{m_command_result.flags == CmdArgFlags::BAD_ARG};
+        m_command.reset();
+        append_result(m_result, std::move(m_command_result));
+        m_command_result = {};
+        if (failed || m_result.action.index() != 0)
         {
-            break;
-        }
-        CommandParseResult next{cmd_arg(cmd, mode)};
-        const bool failed{next.flags == CmdArgFlags::BAD_ARG};
-        append_result(result, std::move(next));
-        if (failed || result.action.index() != 0)
-        {
-            break;
+            finish_file();
+            return false;
         }
     }
 
-    if (bit_set(result.flags, CmdArgFlags::FRACTAL_PARAM))
+    if (next_command(m_text, m_file.get(), m_line_buf, m_line, m_mode, &m_result.diagnostics) <= 0)
+    {
+        finish_file();
+        return false;
+    }
+    if ((m_mode == CmdFile::AT_AFTER_STARTUP || m_mode == CmdFile::AT_CMD_LINE_SET_NAME) && m_text == "}")
+    {
+        finish_file();
+        return false;
+    }
+    m_command = std::make_unique<Command>(m_text, m_mode, m_command_result);
+    m_command_result.flags = m_command->status;
+    return true;
+}
+
+void CommandProcessor::finish_file()
+{
+    const FilePtr file{std::move(m_file)};
+    m_line = {};
+    if (bit_set(m_result.flags, CmdArgFlags::FRACTAL_PARAM))
     {
         backwards_legacy_v18();
         backwards_legacy_v19();
         backwards_legacy_v20();
     }
-    return result;
+}
+
+// TODO: removed later
+static CommandParseResult command_file(std::FILE *handle, const CmdFile mode)
+{
+    CommandProcessor processor{handle, mode};
+    while (processor.advance())
+    {
+        const Command &cmd{processor.command()};
+        if (const std::optional<CmdArgFlags> flags{handle_engine_command(cmd)}; flags.has_value())
+        {
+            cmd.result.flags = *flags;
+        }
+        else
+        {
+            cmd.result.flags = cmd.bad_arg();
+        }
+    }
+    return processor.result();
 }
 
 int next_command(std::string &cmd, std::FILE *handle, std::string &line_buf, std::string_view &line, const CmdFile mode, CommandDiagnostics *diagnostics)

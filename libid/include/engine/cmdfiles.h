@@ -5,6 +5,7 @@
 
 #include <cstdio>
 #include <filesystem>
+#include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -126,6 +127,43 @@ struct CommandParseResult
     CommandAction action;
     bool needs_file_entry{};
     bool initialize_fm{};
+};
+
+class CommandProcessor
+{
+public:
+    // Adopt an open file at its existing source position.
+    CommandProcessor(std::FILE *file, CmdFile mode);
+    ~CommandProcessor();
+    CommandProcessor(const CommandProcessor &) = delete;
+    CommandProcessor(CommandProcessor &&) = delete;
+    CommandProcessor &operator=(const CommandProcessor &) = delete;
+    CommandProcessor &operator=(CommandProcessor &&) = delete;
+
+    // Collect the previous outcome and expose the next command, if any.
+    bool advance();
+
+    // The command remains valid until the next advance.
+    const Command &command() const;
+
+    const CommandParseResult &result() const
+    {
+        return m_result;
+    }
+
+private:
+    using FilePtr = std::unique_ptr<std::FILE, decltype(&std::fclose)>;
+
+    void finish_file();
+
+    FilePtr m_file;
+    CmdFile m_mode;
+    std::string m_text;
+    std::string m_line_buf;
+    std::string_view m_line;
+    CommandParseResult m_result;
+    CommandParseResult m_command_result;
+    std::unique_ptr<Command> m_command;
 };
 
 CommandParseResult cmd_files(const std::vector<std::string> &args);

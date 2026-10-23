@@ -674,7 +674,7 @@ dependencies.
   UI.  Connect every application entry point before moving individual UI
   handlers.  Remove temporary runners once their callers are converted;
   precede any new temporary addition with `// TODO: removed later`.
-- Deferred slices 53.8.1 through 53.8.7 implement source processing and
+- Deferred slices 53.8.2 through 53.8.7 implement source processing and
   routing; 53.9.1 through 53.9.11 move the UI parameters and key-name
   parser one at a time.  Initialization follows the agreement below;
   ordering and failure follow their agreement below.  Result
@@ -1479,49 +1479,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-
-### 53.8.1. Encapsulate Parameter-File Traversal
-
-Source: `command_file`, `next_command`, `load_commands`, and result
-aggregation in `engine/cmdfiles.cpp`.
-
-Prerequisite: 53.7.4.  Keep this initial refactor local to the existing
-engine file.
-
-Work:
-
-- Introduce `CommandProcessor` owning the active file, cursor, buffers,
-  current command/result, context, and file-local accumulated flags.
-- Turn the file loop into per-command advancement.  Incorporate the
-  previous outcome before exposing another command, without copying or
-  moving the shared `Command`.
-- Retain one implementation of `append_result` semantics in source
-  processing.  Exclude `BAD_ARG` only from accumulated change flags,
-  retaining rejected-command diagnostics and auxiliary fields.  Preserve
-  diagnostic ordering, action assignment, and `initialize_fm` request
-  aggregation.
-  Do not generically aggregate startup-only `needs_file_entry`.
-- Preserve positioned-file adoption, braces, comments, continuations,
-  flag-initialization timing, compatibility adjustments, and closure.
-  Finalize a rejected file's valid prefix as before.  Stop on that
-  command's rejection or accepted action, not accumulated startup errors.
-- Preserve immediate effects preceding failure and existing rejection
-  side effects.  Close/finalize on early rejection or an action without
-  introducing rollback or a blanket exception-to-argument conversion.
-- Initially let the existing engine caller drive the incremental object.
-  Mark any newly introduced temporary runner with
-  `// TODO: removed later`; remove it in 53.8.7.
-
-Done when: file traversal owns explicit state and can return between
-commands while the existing caller preserves current behavior.
-
-Validation: cover successive commands, current-command lifetime, EOF,
-early rejection, action termination, file-local flags, compatibility
-completion, and closure.  Verify earlier effects remain and later file
-commands are not applied after rejection.  Reuse `TestNextCommand` and
-parameter tests; add focused field-aggregation checks, including rejected
-results with auxiliary data.  Run the full `rt-default` workflow.
-No manual testing is required.
 
 ### 53.8.2. Add Startup Command Sources
 
