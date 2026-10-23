@@ -45,6 +45,7 @@ add_library(libid
     include/engine/command_comments.h engine/command_comments.cpp
     include/engine/color_state.h engine/color_state.cpp
     include/engine/color_utils.h
+    include/engine/Command.h engine/Command.cpp
     include/engine/convert_center_mag.h engine/convert_center_mag.cpp
     include/engine/convert_corners.h engine/convert_corners.cpp
     include/engine/Diffusion.h engine/Diffusion.cpp

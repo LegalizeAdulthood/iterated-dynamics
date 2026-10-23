@@ -71,6 +71,7 @@ add_executable(test-id
     engine/test_calc_frac_init.cpp
     engine/test_color_utils.cpp
     engine/test_cmdfiles.cpp
+    engine/test_Command.cpp
     engine/test_Diffusion.cpp
     engine/test_get_prec_big_float.cpp
     engine/test_ImageRenderOperation.cpp

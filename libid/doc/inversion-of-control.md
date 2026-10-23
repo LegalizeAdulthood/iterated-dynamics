@@ -550,7 +550,7 @@ share syntax processing and preserve the original parameter order.
 Shared syntax, recognition, source routing, mixed-parameter ownership,
 initialization, ordering, failure behavior, and consequence reporting are
 agreed below.  The seven design discussions are complete; implement the
-following slices in order, beginning with shared command extraction.
+remaining slices in order.  Shared command extraction is complete.
 
 Separate parsing, source routing, defaults, and individual handler moves
 in their assigned slices.  Do not bypass that sequence with forwarding
@@ -582,8 +582,8 @@ dependencies.
   and handler selection outside `Command`.  For example,
   `maxiter=garbage` can be decomposed syntactically; its handler rejects
   the nonnumeric value.  Do not redesign decoding during extraction.
-- Implement the extraction and direct syntax tests in deferred slice
-  53.6, without changing handler ownership or result semantics.
+- Shared command extraction and direct syntax coverage are complete.
+  Handler ownership, routing, and result semantics remain unchanged.
 
 ### Agreed Recognition
 
@@ -1480,46 +1480,12 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.6. Extract Shared Command Parsing
-
-Source: `Command` and its syntax helpers in `engine/cmdfiles.cpp`,
-`engine/lowerize_parameter.cpp`, and existing parameter tests.
-
-Work:
-
-- Implement the agreed shared syntax design.  Extract `Command` into
-  `engine/Command.h` and `engine/Command.cpp`, moving the syntax and
-  numeric-recognition helpers it needs.  Keep actual arbitrary-precision
-  conversion, parameter handlers, and handler tables in their owners.
-- Preserve the existing context, result destination, diagnostic helpers,
-  parsed-field interfaces, and decoding behavior.  Make the backing text
-  private and stable, and disable copying and moving to protect views.
-- Keep existing handlers on `const Command &` and the current `cmd_arg`
-  control flow intact.  Expose the shared type for future UI handlers;
-  do not introduce UI routing, parameter ownership, reset, or reporting
-  changes in this extraction.
-- Add focused direct tests of decoded fields, omitted and empty values,
-  numeric recognition, preserved numeric text, and syntax diagnostics.
-  Cover owned-text lifetime and reuse existing case-normalization tests.
-  Test nonnumeric text separately from rejection by a numeric handler.
-- Register the extracted source and tests using existing CMake patterns.
-
-Done when: one shared `Command` implementation is available to both
-layers, its internal references remain valid, and existing parameter
-behavior is unchanged.
-
-Validation: run focused syntax and parameter tests, then the full
-`rt-default` workflow.  Existing normalization and handler tests remain
-regression coverage; do not add redundant image tests.  No manual testing
-is required for this extraction.
-
 ### 53.7. Separate Command Recognition And Rejection
 
 Source: `handle_command`, `CommandHandler`, `cmd_arg`, the engine
 handler tables, and the shared parsed `Command`.
 
-Prerequisite: extract the shared `Command` in 53.6.  Source integration
-follows in 53.8.
+The shared `Command` is available.  Source integration follows in 53.8.
 
 Work:
 

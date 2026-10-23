@@ -12,6 +12,7 @@
 #include "engine/calcfrac.h"
 #include "engine/color_state.h"
 #include "engine/color_utils.h"
+#include "engine/Command.h"
 #include "engine/convert_center_mag.h"
 #include "engine/convert_corners.h"
 #include "engine/engine_timer.h"
@@ -23,7 +24,6 @@
 #include "engine/load_params.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
-#include "engine/lowerize_parameter.h"
 #include "engine/OrbitPlot.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
@@ -81,7 +81,6 @@
 #include <cassert>
 #include <cctype>
 #include <cfloat>
-#include <charconv>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -91,11 +90,9 @@
 #include <functional>
 #include <iterator>
 #include <limits>
-#include <locale>
 #include <memory>
 #include <numeric>
 #include <optional>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -119,7 +116,6 @@ namespace id::engine
 static CommandParseResult command_file(std::FILE *handle, CmdFile mode);
 static void append_result(CommandParseResult &result, CommandParseResult source);
 static bool next_line(std::FILE *handle, std::string &line_buf, CmdFile mode);
-static void arg_error(const char *bad_arg, CommandDiagnostics *diagnostics);
 static void init_vars_run();
 static void init_vars_restart();
 static void init_vars_fractal();
@@ -129,9 +125,6 @@ static bool type_needs_file_entry();
 static bool type_has_file_entry();
 static void resolve_startup_file_entry(CommandParseResult &result);
 static int get_bf(BigFloat bf, const char *cur_arg);
-static bool is_a_big_float(const char *str);
-static bool parse_command_number(std::string_view text, long &value);
-static bool parse_command_number(std::string_view text, double &value);
 
 // variables defined by the command line/files processor
 int g_max_line_length{72};
@@ -157,46 +150,6 @@ static bool s_init_functions{};   // trig functions set via function=?
 static std::string extract_filename(const fs::path &source)
 {
     return source.filename().string();
-}
-
-static bool parse_command_number(std::string_view text, long &value)
-{
-    while (!text.empty() && std::isspace(static_cast<unsigned char>(text.front())) != 0)
-    {
-        text.remove_prefix(1);
-    }
-    if (!text.empty() && text.front() == '+')
-    {
-        text.remove_prefix(1);
-    }
-    if (text.empty())
-    {
-        return false;
-    }
-    const char *const first{text.data()};
-    const char *const last{first + text.size()};
-    const std::from_chars_result result{std::from_chars(first, last, value)};
-    return result.ec == std::errc{} && result.ptr == last;
-}
-
-static bool parse_command_number(std::string_view text, double &value)
-{
-    while (!text.empty() && std::isspace(static_cast<unsigned char>(text.front())) != 0)
-    {
-        text.remove_prefix(1);
-    }
-    if (!text.empty() && text.front() == '+')
-    {
-        text.remove_prefix(1);
-    }
-    if (text.empty())
-    {
-        return false;
-    }
-    std::istringstream input{std::string{text}};
-    input.imbue(std::locale::classic());
-    input >> value;
-    return input && input.eof();
 }
 
 // cmdfiles(argc,argv) process the command-line arguments
@@ -825,180 +778,6 @@ static bool next_line(std::FILE *handle, std::string &line_buf, const CmdFile mo
         }
     }
     return true;
-}
-
-enum
-{
-    NON_NUMERIC = -32767
-};
-
-struct Command
-{
-    Command(std::string_view cur_arg, CmdFile a_mode, CommandParseResult &result);
-    CmdArgFlags bad_arg() const;
-    void warn_missing_file() const;
-    std::string_view string_val(int index) const;
-
-    std::string arg;
-    CmdFile mode{};
-    std::string_view value;
-    std::string variable;
-    int num_val{};                    // numeric value of arg
-    char char_val[16]{};              // first character of arg
-    int yes_no_val[16]{};             // 0 if 'n', 1 if 'y', -1 if not
-    int total_params{};               // # of / delimited parms
-    int num_int_params{};             // # of / delimited ints
-    int num_float_params{};           // # of / delimited floats
-    int int_vals[64]{};               // pre-parsed integer parms
-    bool has_val[64]{};               // int_vals slot is valid
-    double float_vals[16]{};          // pre-parsed floating parms
-    const char *float_val_strs[16]{}; // pointers to float vals
-    const char *string_vals[16]{};    // pointers to all string vals
-    int string_val_lens[16]{};        // string value lengths
-    CmdArgFlags status{CmdArgFlags::NONE};
-    CommandParseResult &result;
-};
-
-Command::Command(const std::string_view cur_arg, const CmdFile a_mode, CommandParseResult &a_result) :
-    arg(cur_arg),
-    mode(a_mode),
-    result(a_result)
-{
-    lowerize_parameter(arg);
-    const std::size_t equals{arg.find('=', 1)};
-    const std::size_t variable_end{equals == std::string::npos ? arg.size() : equals};
-    const std::size_t value_offset{equals == std::string::npos ? arg.size() : equals + 1};
-    value = std::string_view{arg}.substr(value_offset);
-    int j = static_cast<int>(variable_end);
-    if (j > 32)
-    {
-        arg_error(arg.c_str(), &result.diagnostics); // keyword too long
-        status = CmdArgFlags::BAD_ARG;
-        return;
-    }
-    variable = arg.substr(0, variable_end);
-    char_val[0] = value.empty() ? '\0' : value[0]; // first letter of value
-    yes_no_val[0] = -1;                            // note yes|no value
-    if (char_val[0] == 'n')
-    {
-        yes_no_val[0] = 0;
-    }
-    if (char_val[0] == 'y')
-    {
-        yes_no_val[0] = 1;
-    }
-
-    num_val = 0;
-    for (std::size_t value_pos{}; value_pos < value.size();) // count and pre-parse parms
-    {
-        const std::size_t slash{value.find('/', value_pos)};
-        const std::size_t value_end{slash == std::string_view::npos ? value.size() : slash};
-        const std::string_view token{value.substr(value_pos, value_end - value_pos)};
-        const std::string_view remaining{value.substr(value_pos)};
-        const char *const token_ptr{value.data() + value_pos};
-        if (total_params == 0)
-        {
-            num_val = NON_NUMERIC;
-        }
-        if (total_params < 16)
-        {
-            string_vals[total_params] = token_ptr;
-            string_val_lens[total_params] = static_cast<int>(token.size());
-            char_val[total_params] = *token_ptr; // first letter of value
-            if (char_val[total_params] == 'n')
-            {
-                yes_no_val[total_params] = 0;
-            }
-            if (char_val[total_params] == 'y')
-            {
-                yes_no_val[total_params] = 1;
-            }
-        }
-        if (remaining.size() >= 2 && (remaining[0] == '/' || remaining[0] == '=') && remaining[1] == '/')
-        {
-            ++num_float_params;
-            ++num_int_params;
-            if (total_params < 16)
-            {
-                float_vals[total_params] = 0;
-                float_val_strs[total_params] = "0";
-            }
-            if (total_params < 64)
-            {
-                int_vals[total_params] = 0;
-                has_val[total_params] = true;
-            }
-            if (total_params == 0)
-            {
-                num_val = 0;
-            }
-        }
-        else if (long ll{}; parse_command_number(token, ll)) // needs a long int here for lyapunov
-        {
-            ++num_float_params;
-            ++num_int_params;
-            if (total_params < 16)
-            {
-                float_vals[total_params] = ll;
-                float_val_strs[total_params] = token_ptr;
-            }
-            if (total_params < 64)
-            {
-                int_vals[total_params] = static_cast<int>(ll);
-                has_val[total_params] = true;
-            }
-            if (total_params == 0)
-            {
-                num_val = static_cast<int>(ll);
-            }
-        }
-        else if (double f_temp{}; parse_command_number(token, f_temp)) // got a float
-        {
-            ++num_float_params;
-            if (total_params < 16)
-            {
-                float_vals[total_params] = f_temp;
-                float_val_strs[total_params] = token_ptr;
-            }
-        }
-        // using arbitrary precision and above failed
-        else if (remaining.size() > 513                                                  // very long command
-            || (total_params > 0 && total_params < 6                                     //
-                   && float_vals[total_params - 1] == std::numeric_limits<float>::max()) //
-            || is_a_big_float(token_ptr))
-        {
-            ++num_float_params;
-            if (total_params < 16)
-            {
-                float_vals[total_params] = std::numeric_limits<float>::max();
-                float_val_strs[total_params] = token_ptr;
-            }
-        }
-        ++total_params;
-        if (slash == std::string_view::npos)
-        {
-            break;
-        }
-        value_pos = slash + 1;
-    }
-}
-
-std::string_view Command::string_val(const int index) const
-{
-    return {string_vals[index], static_cast<size_t>(string_val_lens[index])};
-}
-
-CmdArgFlags Command::bad_arg() const
-{
-    arg_error(arg.c_str(), &result.diagnostics);
-    return CmdArgFlags::BAD_ARG;
-}
-
-void Command::warn_missing_file() const
-{
-    static constexpr const char *MODE_NAMES[]{"command line", "sstools.ini", "PAR file", "PAR file"};
-    result.diagnostics.warnings.push_back("Can't find " + variable.substr(0, 29) + '=' + std::string{value} +
-        ", please check " + MODE_NAMES[static_cast<int>(mode)]);
 }
 
 struct CommandHandler
@@ -4161,29 +3940,6 @@ CommandParseResult cmd_arg(const std::string_view cur_arg, const CmdFile mode)
     return result;
 }
 
-static void arg_error(const char *bad_arg, CommandDiagnostics *diagnostics)
-{
-    std::string spillover{bad_arg};
-    if (spillover.length() > 70)
-    {
-        spillover = spillover.substr(0, 70);
-    }
-    std::string msg{"Oops. I couldn't understand the argument:\n  "};
-    msg += spillover;
-
-    if (g_first_init)       // this is 1st call to cmdfiles
-    {
-        msg += "\n"
-               "\n"
-               "(see the Startup Help screens or documentation for a complete\n"
-               " argument list with descriptions)";
-    }
-    if (diagnostics != nullptr)
-    {
-        diagnostics->errors.push_back(msg);
-    }
-}
-
 void set_3d_defaults()
 {
     g_rough     = 30;
@@ -4238,44 +3994,6 @@ static int get_bf(BigFloat bf, const char *cur_arg)
         str_to_bf(bf, cur_arg);
     }
     return 0;
-}
-
-// Crude function to detect a floating point number. Intended for
-// use with arbitrary precision.
-static bool is_a_big_float(const char *str)
-{
-    // [+|-]numbers][.]numbers[+|-][e|g]numbers
-    bool result = true;
-    const char *s = str;
-    int num_dot{};
-    int num_e{};
-    int num_sign{};
-    while (*s != 0 && *s != '/' && *s != ' ')
-    {
-        if (*s == '-' || *s == '+')
-        {
-            num_sign++;
-        }
-        else if (*s == '.')
-        {
-            num_dot++;
-        }
-        else if (*s == 'e' || *s == 'E' || *s == 'g' || *s == 'G')
-        {
-            num_e++;
-        }
-        else if (!std::isdigit(*s))
-        {
-            result = false;
-            break;
-        }
-        s++;
-    }
-    if (num_dot > 1 || num_sign > 2 || num_e > 1)
-    {
-        result = false;
-    }
-    return result;
 }
 
 } // namespace id::engine
