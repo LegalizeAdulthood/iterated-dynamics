@@ -674,7 +674,7 @@ dependencies.
   UI.  Connect every application entry point before moving individual UI
   handlers.  Remove temporary runners once their callers are converted;
   precede any new temporary addition with `// TODO: removed later`.
-- Deferred slices 53.8.3 through 53.8.7 implement source processing and
+- Deferred slices 53.8.4 through 53.8.7 implement source processing and
   routing; 53.9.1 through 53.9.11 move the UI parameters and key-name
   parser one at a time.  Initialization follows the agreement below;
   ordering and failure follow their agreement below.  Result
@@ -1479,38 +1479,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-
-### 53.8.3. Add Indirect Parameter-File Sources
-
-Source: `process_file`, `process_file_set_name`, and startup advancement
-in `engine/cmdfiles.cpp`.
-
-Prerequisite: 53.8.2.
-
-Work:
-
-- Convert existing `@file` and `@file/setname` expansion to use retained
-  file state and present each contained parameter individually.
-- Locate and open files only when their argument is reached, after
-  earlier parameter effects.  Preserve filename defaults, selected-set
-  state, lookup failure behavior, and the existing supported syntax.
-- Complete each file with its own flags and diagnostics, then resume the
-  surrounding argument stream according to existing failure/action rules.
-- After lookup failure or an ordinary file error, preserve preceding
-  effects and continue with later arguments.  After an accepted action
-  in the file, stop remaining arguments, even with earlier diagnostics.
-- Remove the intermediate whole-file call added or retained in 53.8.2.
-  Do not add new recursive include semantics or pre-expand sources.
-
-Done when: no parameter inside a startup `@` source is hidden behind a
-whole-file execution call.
-
-Validation: cover both `@` forms, lazy lookup after earlier path
-settings, mixed file/argument order, missing sets, valid-prefix failure,
-file-local stopping followed by later arguments, and actions stopping
-the enclosing startup stream.  Check file completion before later
-arguments.  Run the full `rt-default` workflow.  No manual testing is
-required.
 
 ### 53.8.4. Route Interactive Command Entry Through UI
 

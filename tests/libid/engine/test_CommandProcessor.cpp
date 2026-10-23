@@ -448,6 +448,8 @@ protected:
     ValueSaver<std::string> m_saved_formula_name{g_formula_name, std::string{}};
     ValueSaver<std::string> m_saved_l_system_name{g_l_system_name, std::string{}};
     ValueSaver<std::string> m_saved_ifs_name{g_ifs_name, std::string{}};
+    ValueSaver<fs::path> m_saved_parameter_file{g_parameter_file, fs::path{}};
+    ValueSaver<std::string> m_saved_parameter_set_name{g_parameter_set_name, std::string{}};
 };
 
 void TestStartupCommandProcessor::SetUp()
@@ -744,23 +746,205 @@ TEST_F(TestStartupCommandProcessor, argumentFlagsDoNotTriggerFileCompatibility)
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
 }
 
-TEST_F(TestStartupCommandProcessor, indirectFilesRetainTheirExistingExecutionPath)
+TEST_F(TestStartupCommandProcessor, indirectFilesExposeCommandsInSourceOrder)
 {
     write_source("whole.par", "entry { maxiter=111 }");
-    write_source("selected.par", "entry { hertz=330 }");
-    CommandProcessor processor{std::vector<std::string>{"id", "@whole.par", "@selected.par/entry", "maxiter=222"}};
+    write_source("selected.par", "ignored { hertz=999 }\nchosen { hertz=330 }\ntrailing { hertz=888 }");
+    CommandProcessor processor{std::vector<std::string>{"id", "@whole", "@selected/chosen", "maxiter=222"}};
 
     ASSERT_TRUE(processor.advance());
+    EXPECT_EQ(150, g_max_iterations);
+    EXPECT_EQ("111", processor.command().value);
+    EXPECT_EQ(CmdFile::AT_CMD_LINE_SET_NAME, processor.command().mode);
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
     EXPECT_EQ(111, g_max_iterations);
+    EXPECT_EQ(440, g_base_hertz);
+    EXPECT_EQ("330", processor.command().value);
+    EXPECT_EQ(CmdFile::AT_CMD_LINE_SET_NAME, processor.command().mode);
+    EXPECT_EQ(m_directory / "selected.par", g_parameter_file);
+    EXPECT_EQ("chosen", g_parameter_set_name);
+    EXPECT_TRUE(fs::remove(m_directory / "whole.par"));
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
     EXPECT_EQ(330, g_base_hertz);
     EXPECT_EQ("222", processor.command().value);
+    EXPECT_EQ(CmdFile::AT_CMD_LINE, processor.command().mode);
+    EXPECT_TRUE(fs::remove(m_directory / "selected.par"));
     handle_current(processor);
     EXPECT_FALSE(processor.advance());
 
     EXPECT_EQ(222, g_max_iterations);
     EXPECT_TRUE(processor.result().diagnostics.errors.empty());
-    EXPECT_TRUE(fs::remove(m_directory / "whole.par"));
-    EXPECT_TRUE(fs::remove(m_directory / "selected.par"));
+}
+
+TEST_F(TestStartupCommandProcessor, indirectLookupUsesEarlierLibrarySettings)
+{
+    const fs::path library{m_directory / "late-library"};
+    fs::create_directory(library);
+    write_source("late-library/late-choice.par", "chosen { maxiter=222 }");
+    m_sources.push_back(library);
+    CommandProcessor processor{
+        std::vector<std::string>{"id", "librarydirs=" + library.string(), "@late-choice/chosen"}};
+
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ("librarydirs", processor.command().variable);
+    EXPECT_TRUE(find_file(ReadFile::PARAMETER, "late-choice.par").empty());
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ("222", processor.command().value);
+    EXPECT_EQ(150, g_max_iterations);
+    EXPECT_EQ(library / "late-choice.par", g_parameter_file);
+    handle_current(processor);
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
+}
+
+TEST_F(TestStartupCommandProcessor, failedIndirectLookupsPreserveSelectionAndContinueArguments)
+{
+    write_source("available.par", "present { hertz=999 }");
+    g_parameter_file = m_directory / "previous.par";
+    g_parameter_set_name = "previous";
+    CommandProcessor processor{std::vector<std::string>{
+        "id", "maxiter=111", "@missing-indirect-parameter-file", "@available/missing", "maxiter=222"}};
+
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+
+    EXPECT_EQ(111, g_max_iterations);
+    EXPECT_EQ("222", processor.command().value);
+    EXPECT_EQ(m_directory / "previous.par", g_parameter_file);
+    EXPECT_EQ("previous", g_parameter_set_name);
+    EXPECT_EQ(440, g_base_hertz);
+    EXPECT_THAT(processor.result().diagnostics.errors,
+        ElementsAre(HasSubstr("@missing-indirect-parameter-file"), HasSubstr("'missing' file entry item not found"),
+            HasSubstr("@available/missing")));
+    EXPECT_TRUE(fs::remove(m_directory / "available.par"));
+    handle_current(processor);
+    EXPECT_FALSE(processor.advance());
+    EXPECT_EQ(222, g_max_iterations);
+}
+
+TEST_F(TestStartupCommandProcessor, rejectedIndirectCommandStopsOnlyItsFile)
+{
+    write_source("rejected.par", "entry { maxiter=111 unknown=yes hertz=999 }");
+    write_source("following.par", "entry { hertz=330 }");
+    CommandProcessor processor{std::vector<std::string>{"id", "@rejected", "@following", "maxiter=222"}};
+
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ("unknown", processor.command().variable);
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ("330", processor.command().value);
+    EXPECT_EQ(111, g_max_iterations);
+    EXPECT_EQ(440, g_base_hertz);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("unknown=yes")));
+    EXPECT_TRUE(fs::remove(m_directory / "rejected.par"));
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ(330, g_base_hertz);
+    EXPECT_EQ("222", processor.command().value);
+    EXPECT_TRUE(fs::remove(m_directory / "following.par"));
+    handle_current(processor);
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
+}
+
+TEST_F(TestStartupCommandProcessor, indirectActionStopsItsFileAndRemainingStartupInputAfterEarlierErrors)
+{
+    write_source("action.par", "entry { maxiter=111 makemig=2/3 maxiter=999 }");
+    write_source("following.par", "entry { hertz=999 }");
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=bad", "@action", "@following", "maxiter=222"}};
+
+    run(processor);
+
+    EXPECT_EQ(111, g_max_iterations);
+    EXPECT_EQ(440, g_base_hertz);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("maxiter=bad")));
+    const MakeMultiImageGif *action{std::get_if<MakeMultiImageGif>(&processor.result().action)};
+    ASSERT_NE(nullptr, action);
+    EXPECT_EQ(2U, action->x_mult);
+    EXPECT_EQ(3U, action->y_mult);
+    EXPECT_FALSE(processor.result().needs_file_entry);
+    EXPECT_TRUE(fs::remove(m_directory / "action.par"));
+}
+
+TEST_F(TestStartupCommandProcessor, indirectCompatibilityUsesEachFilesFlagsAndFinishesBeforeFollowingArguments)
+{
+    prepare_legacy_compatibility();
+    write_source("unchanged.par", "entry { hertz=330 }");
+    write_source("changed.par", "entry { maxiter=222 }");
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=111", "@unchanged", "@changed", "maxiter=333"}};
+
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+    EXPECT_DOUBLE_EQ(1.0, g_params[2]);
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ("333", processor.command().value);
+    EXPECT_DOUBLE_EQ(2.0, g_params[2]);
+    handle_current(processor);
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_DOUBLE_EQ(2.0, g_params[2]);
+    EXPECT_EQ(333, g_max_iterations);
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
+}
+
+TEST_F(TestStartupCommandProcessor, indirectCommandsDoNotExpandNestedIncludes)
+{
+    write_source("outer.par", "entry { maxiter=111 @nested hertz=999 }");
+    write_source("nested.par", "entry { hertz=330 }");
+    CommandProcessor processor{std::vector<std::string>{"id", "@outer", "maxiter=222"}};
+
+    run(processor);
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ(440, g_base_hertz);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("@nested")));
+}
+
+TEST_F(TestStartupCommandProcessor, abandonmentBetweenIndirectCommandsClosesTheFile)
+{
+    write_source("abandoned.par", "entry { maxiter=111 maxiter=999 }");
+    {
+        CommandProcessor processor{std::vector<std::string>{"id", "@abandoned"}};
+        ASSERT_TRUE(processor.advance());
+        handle_current(processor);
+        ASSERT_TRUE(processor.advance());
+    }
+
+    EXPECT_EQ(111, g_max_iterations);
+    EXPECT_TRUE(fs::remove(m_directory / "abandoned.par"));
+}
+
+TEST_F(TestStartupCommandProcessor, finalIndirectFileCompletesWithoutChangingTheSelectedSet)
+{
+    write_source("final.par", "entry { maxiter=222 hertz=330 }");
+    g_parameter_file = m_directory / "previous.par";
+    g_parameter_set_name = "previous";
+    CommandProcessor processor{std::vector<std::string>{"id", "@final"}};
+
+    run(processor);
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ(330, g_base_hertz);
+    EXPECT_EQ(m_directory / "previous.par", g_parameter_file);
+    EXPECT_EQ("previous", g_parameter_set_name);
+    EXPECT_FALSE(processor.advance());
+    EXPECT_THROW(processor.command(), std::logic_error);
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
+    EXPECT_TRUE(fs::remove(m_directory / "final.par"));
 }
 
 TEST_F(TestStartupCommandProcessor, noSourcesCompletesWithoutPresentingACommand)

@@ -245,7 +245,7 @@ static bool process_image_argument(const char *cur_arg)
     return processed;
 }
 
-static bool process_file_set_name(
+static std::FILE *open_parameter_set(
     const std::string &filename, const std::string &param_name, CommandParseResult &result)
 {
     const std::filesystem::path saved_path{g_parameter_file};
@@ -258,7 +258,7 @@ static bool process_file_set_name(
     path = find_file(ReadFile::PARAMETER, path);
     if (path.empty())
     {
-        return false;
+        return nullptr;
     }
     g_parameter_file = path;
     g_parameter_set_name = param_name;
@@ -273,13 +273,12 @@ static bool process_file_set_name(
         {
             result.diagnostics.errors.push_back(diagnostic);
         }
-        return false;
+        return nullptr;
     }
-    append_result(result, command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME));
-    return true;
+    return init_file;
 }
 
-static void process_file(char *cur_arg, CommandParseResult &result)
+static std::FILE *open_parameter_file(const char *cur_arg)
 {
     fs::path path{&cur_arg[1]};
     if (!path.has_extension())
@@ -289,18 +288,10 @@ static void process_file(char *cur_arg, CommandParseResult &result)
     path = find_file(ReadFile::PARAMETER, path.string());
     if (path.empty())
     {
-        arg_error(cur_arg, &result.diagnostics);
-        return;
+        return nullptr;
     }
 
-    std::FILE *init_file = std::fopen(path.string().c_str(), "r");
-    if (init_file == nullptr)
-    {
-        arg_error(cur_arg, &result.diagnostics);
-        return;
-    }
-
-    append_result(result, command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME));
+    return std::fopen(path.string().c_str(), "r");
 }
 
 static void resolve_startup_file_entry(CommandParseResult &result)
@@ -722,7 +713,13 @@ bool CommandProcessor::advance_startup()
     {
         return false;
     }
-    if (m_source == Source::CONFIGURATION)
+    if (m_command)
+    {
+        m_command.reset();
+        append_result(m_result, std::move(m_command_result));
+        m_command_result = {};
+    }
+    while (true)
     {
         if (m_source_file)
         {
@@ -733,17 +730,15 @@ bool CommandProcessor::advance_startup()
             append_result(m_result, m_source_file->result());
             m_source_file.reset();
         }
-        g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
-        m_source = Source::ARGUMENTS;
-    }
-    if (m_command)
-    {
-        m_command.reset();
-        append_result(m_result, std::move(m_command_result));
-        m_command_result = {};
-    }
-    while (m_arg_index < m_args.size() && m_result.action.index() == 0)
-    {
+        if (m_source == Source::CONFIGURATION)
+        {
+            g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
+            m_source = Source::ARGUMENTS;
+        }
+        if (m_arg_index >= m_args.size() || m_result.action.index() != 0)
+        {
+            break;
+        }
         m_text = m_args[m_arg_index++];
         const char first_char{m_text.empty() ? '\0' : m_text.front()};
         if (first_char == ';')
@@ -752,17 +747,22 @@ bool CommandProcessor::advance_startup()
         }
         if (first_char == '@')
         {
-            // TODO: removed later
+            std::FILE *file{};
             if (char *slash{std::strchr(m_text.data(), '/')}; slash != nullptr)
             {
-                if (!process_file_set_name(std::string{m_text.data() + 1, slash}, slash + 1, m_result))
-                {
-                    arg_error(m_text.c_str(), &m_result.diagnostics);
-                }
+                file = open_parameter_set(std::string{m_text.data() + 1, slash}, slash + 1, m_result);
             }
             else
             {
-                process_file(m_text.data(), m_result);
+                file = open_parameter_file(m_text.c_str());
+            }
+            if (file == nullptr)
+            {
+                arg_error(m_text.c_str(), &m_result.diagnostics);
+            }
+            else
+            {
+                m_source_file = std::make_unique<CommandProcessor>(file, CmdFile::AT_CMD_LINE_SET_NAME);
             }
         }
         else if (!process_image_argument(m_text.c_str()))
