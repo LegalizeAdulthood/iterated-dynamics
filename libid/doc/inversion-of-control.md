@@ -548,10 +548,10 @@ UI parameters and delegates unrecognized names to engine.  Both groups
 share syntax processing and preserve the original parameter order.
 
 Shared syntax, recognition, source routing, mixed-parameter ownership,
-and initialization are agreed below.  Remaining design slices 53.5.6 and
-53.5.7 settle failure behavior and reporting.  They authorize design
-discussion and plan updates only.  Keep them ahead of the implementation
-slices they produce; do not change parser code before the design is
+initialization, ordering, and failure behavior are agreed below.
+Remaining design slice 53.5.7 settles reporting.  It authorizes design
+discussion and plan updates only.  Keep it ahead of the implementation
+slices it produces; do not change parser code before the design is
 agreed.
 
 Until then, defer changes to command and parameter parsing, including UI
@@ -679,8 +679,8 @@ engine-to-UI dependencies.
 - Deferred slices 53.8.1 through 53.8.7 implement source processing and
   routing; 53.9.1 through 53.9.11 move the UI parameters and key-name
   parser one at a time.  Initialization follows the agreement below;
-  detailed failure policy and result interpretation remain with 53.5.6
-  and 53.5.7.
+  ordering and failure follow their agreement below.  Result
+  interpretation remains with 53.5.7.
 
 ### Agreed Mixed-Parameter Ownership
 
@@ -805,6 +805,53 @@ engine-to-UI dependencies.
   restart defaults after source routing.  Slice 53.9.6 moves pending-mode
   storage with its handler; 53.9.10 and 53.9.11 move exit confirmation
   and coordinate explicit fractal reset.  Keep existing slice numbers.
+
+### Agreed Ordering And Failure
+
+- Process one ordered stream.  Complete each command's UI or engine
+  handling before reading another command.  Partition handler ownership,
+  not execution into separate UI and engine passes.  Preserve repeated
+  settings, order-dependent defaults, lazy lookup, and reset positions.
+- Apply ordinary settings immediately, including UI preferences.  Keep
+  changes preceding an error; do not introduce whole-input rollback,
+  transactional command application, or success-only UI assignment.
+  Preserve existing rejection side effects rather than assuming every
+  rejected command leaves all settings unchanged.
+- Source traversal owns continuation.  After an ordinary command-line
+  argument error, collect diagnostics and continue with later arguments.
+  After an error in startup configuration, stop and close that file,
+  then continue with arguments.  An error in a command-line `@` source
+  stops/closes that source, then resumes later arguments.  A selected
+  set stops/closes and returns to its caller; a single interactive
+  command reports rejection and returns.  UI must not unconditionally
+  break its coordinator loop on `BAD_ARG`.
+- Warnings alone neither stop processing nor suppress generation.
+  For example, command-line arguments
+  `askvideo=no maxiter=bad virtual=no` apply both UI preferences; the
+  same sequence in a parameter file stops before `virtual=no`.
+- Finalize and close a parameter file after normal completion, early
+  rejection, or a generation request.  Apply existing compatibility
+  adjustments from that file's accepted change flags, independently of
+  unrelated startup flags, before resuming an enclosing source where
+  applicable.  Keep single-command completion distinct from file scope.
+- Generation handlers record deferred actions, not immediate generation.
+  An accepted generation request stops further source processing,
+  including later command-line arguments after an indirect file.
+  Earlier errors remain recorded and suppress action execution, but do
+  not cause processing to resume after the request.  Ordinary settings
+  already applied are not undone or recast as generation actions.
+- Preserve `apply_command_effects` at the outer UI completion boundary.
+  Errors suppress generation and device initialization; warnings do not.
+  Keep existing action-failure diagnostics and exit handling.  Do not
+  resume parsing or roll back settings after an action fails.
+- Keep argument rejection distinct from exceptions.  Do not add a
+  blanket coordinator catch that turns unrelated failures into bad
+  arguments and continues.  Preserve existing propagation and cleanup.
+- Implement these rules in the existing 53.8 source/coordinator slices
+  and their tests, with real UI-setting coverage as 53.9 handlers move.
+  No additional dispatcher, transaction mechanism, or standalone failure
+  framework is needed.  Reuse current startup, parameter, command-effect,
+  action, and diagnostic tests; extend only the focused ownership gaps.
 
 ## Remaining Inversion-of-Control Slices
 
@@ -1385,36 +1432,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.5.6. Parameter Ordering And Failure Design
-
-Source: the `cmd_files` and `command_file` loops, `append_result`,
-generation-action handlers, and `ui/command_effects.cpp`.
-
-Scope: design discussion and plan updates only; no source changes.
-
-Work:
-
-- Preserve source order with UI and engine parameters interleaved.
-  Partition handlers, not execution into separate UI and engine passes.
-- Preserve repeated-setting behavior, order-dependent defaults, reset
-  positions, and valid effects preceding a later invalid parameter.
-- Retain source-specific failure behavior: parameter files stop at a bad
-  argument, while the command-line loop can continue to later arguments.
-  Do not introduce whole-input rollback or success-only UI application.
-- Preserve generation-action termination and suppression on errors.
-  Review existing effect application instead of treating UI assignments
-  as deferred generation actions.
-- Record application timing, failure rules, and implementation slices.
-  Do not change unrelated parser behavior while separating ownership.
-
-Done when: ordering, partial failure, and generation-action behavior are
-agreed across both handler groups and every source.
-
-Validation: specify mixed sequences, repeated values, errors before and
-after valid settings, indirect files, and failed generation actions.
-Reuse existing command-effect tests; no build or manual testing is
-required.
-
 ### 53.5.7. Parameter Consequence Reporting Design
 
 Source: `CmdArgFlags`, `CommandParseResult`, `append_result`,
@@ -1453,7 +1470,7 @@ no build or manual testing is required.
 Source: `Command` and its syntax helpers in `engine/cmdfiles.cpp`,
 `engine/lowerize_parameter.cpp`, and existing parameter tests.
 
-Prerequisite: complete design slices 53.5.6 and 53.5.7 first.
+Prerequisite: complete design slice 53.5.7 first.
 
 Work:
 
@@ -1488,7 +1505,7 @@ is required for this extraction.
 Source: `handle_command`, `CommandHandler`, `cmd_arg`, the engine
 handler tables, and the shared parsed `Command`.
 
-Prerequisites: complete design slices 53.5.6 and 53.5.7 and extract
+Prerequisites: complete design slice 53.5.7 and extract
 the shared `Command` in 53.6.  Source integration follows in 53.8.
 
 Work:
@@ -1625,7 +1642,11 @@ Work:
   moving the shared `Command`.
 - Preserve positioned-file adoption, braces, comments, continuations,
   flag-initialization timing, compatibility adjustments, and closure.
-  Finalize a rejected file's valid prefix as before.
+  Finalize a rejected file's valid prefix as before.  Stop on that
+  command's rejection or accepted action, not accumulated startup errors.
+- Preserve immediate effects preceding failure and existing rejection
+  side effects.  Close/finalize on early rejection or an action without
+  introducing rollback or a blanket exception-to-argument conversion.
 - Initially let the existing engine caller drive the incremental object.
   Mark any newly introduced temporary runner with
   `// TODO: removed later`; remove it in 53.8.7.
@@ -1634,9 +1655,11 @@ Done when: file traversal owns explicit state and can return between
 commands while the existing caller preserves current behavior.
 
 Validation: cover successive commands, current-command lifetime, EOF,
-early rejection, file-local flags, compatibility completion, and file
-closure.  Reuse `TestNextCommand`; run the full `rt-default` workflow.
-No manual testing is required.
+early rejection, action termination, file-local flags, compatibility
+completion, and closure.  Verify earlier effects remain and later file
+commands are not applied after rejection.  Reuse `TestNextCommand` and
+parameter tests; run the full `rt-default` workflow.  No manual testing
+is required.
 
 ### 53.8.2. Add Startup Command Sources
 
@@ -1651,6 +1674,10 @@ Work:
   command-line positions, presenting parameters in their existing order.
 - Keep bare-GIF argument probing and source diagnostics engine-owned.
   Preserve startup result accumulation and action termination.
+- Stop only the failing configuration source on ordinary rejection and
+  continue into arguments.  Continue after ordinary argument errors;
+  warnings do not stop processing.  An accepted action stops remaining
+  startup input even if earlier errors will suppress its execution.
 - Keep existing initialization calls in place until the implementation
   slices 53.8.6.1 through 53.8.6.3 apply the agreed owner profiles.
 - Leave indirect-file processing on its existing path for this
@@ -1663,7 +1690,10 @@ without changing initialization or parameter effects.
 
 Validation: reuse startup ordering, diagnostics, later-batch-argument,
 action-termination, and bare-image coverage.  Add source-position checks;
-run the full `rt-default` workflow.  No manual testing is required.
+cover configuration rejection followed by arguments and warnings that
+permit continuation.  Preserve the existing case of earlier errors,
+an action, and an ignored later argument.  Run the full `rt-default`
+workflow.  No manual testing is required.
 
 ### 53.8.3. Add Indirect Parameter-File Sources
 
@@ -1681,6 +1711,9 @@ Work:
   state, lookup failure behavior, and the existing supported syntax.
 - Complete each file with its own flags and diagnostics, then resume the
   surrounding argument stream according to existing failure/action rules.
+- After lookup failure or an ordinary file error, preserve preceding
+  effects and continue with later arguments.  After an accepted action
+  in the file, stop remaining arguments, even with earlier diagnostics.
 - Remove the intermediate whole-file call added or retained in 53.8.2.
   Do not add new recursive include semantics or pre-expand sources.
 
@@ -1689,8 +1722,10 @@ whole-file execution call.
 
 Validation: cover both `@` forms, lazy lookup after earlier path
 settings, mixed file/argument order, missing sets, valid-prefix failure,
-and file completion before later arguments.  Run the full `rt-default`
-workflow.  No manual testing is required.
+file-local stopping followed by later arguments, and actions stopping
+the enclosing startup stream.  Check file completion before later
+arguments.  Run the full `rt-default` workflow.  No manual testing is
+required.
 
 ### 53.8.4. Route Interactive Command Entry Through UI
 
@@ -1709,6 +1744,9 @@ Work:
 - Implement the common UI loop over the processor's current command.
   Use the 53.7 result contract and let engine advancement decide whether
   another parameter follows, including after a rejected command.
+- Complete each handler's immediate settings before advancing.  Keep UI
+  assignments out of deferred actions; do not gate them on aggregate
+  success or add rollback.  Preserve unrelated exception propagation.
 - Assemble and validate owner tables once before processing parameters;
   reject duplicate names with `std::logic_error`.
 - Replace interactive entry's textual engine-parser call with this loop.
@@ -1721,9 +1759,12 @@ Done when: interactive entry exercises the real common coordinator while
 engine owns source advancement and engine parameter interpretation.
 
 Validation: cover acceptance, unknown names, rejection without fallback,
-duplicate ownership, and single-command context.  Reuse command-action
-and diagnostic autokey journeys; run the full `rt-default` workflow.
-No additional manual testing is required.
+duplicate ownership, and single-command context.  Reuse command-effect
+tests for error-gated actions/device initialization and warnings that do
+not suppress actions; add only missing cases.  Preserve action-failure
+diagnostics/exit handling without restarting parsing.  Reuse existing
+action and diagnostic autokey journeys; run the full `rt-default`
+workflow.  No additional manual testing is required.
 
 ### 53.8.5. Route Selected Parameter Sets Through UI
 
@@ -1747,8 +1788,10 @@ UI-first recognition point.
 
 Validation: cover mixed command ownership with test handlers, rejected
 parameters, valid earlier effects, set completion, and file closure.
-Reuse command-action and diagnostic autokey coverage; run the full
-`rt-default` workflow.  No additional manual testing is required.
+Verify a rejection stops later set commands for either owner while
+warnings do not.  Reuse command-action and diagnostic autokey coverage;
+run the full `rt-default` workflow.  No additional manual testing is
+required.
 
 ### 53.8.6. Route Startup And Restart Sources Through UI
 
@@ -1781,7 +1824,10 @@ before any parameter handlers migrate to UI.
 
 Validation: cover startup configuration, both indirect-file forms,
 command-line overrides, restart/reprocessing, and source-specific failure
-continuation.  Reuse startup and autokey journeys; run the full
+continuation.  Use mixed UI/engine test handlers to verify settings before
+and after a bad direct argument apply, while a bad file command stops
+that file only.  Cover repeated settings and reset positions as their
+real handlers migrate.  Reuse startup and autokey journeys; run the full
 `rt-default` workflow.  No additional manual testing is required.
 
 ### 53.8.6.1. Move The Video-Prompt Restart Default
@@ -2177,7 +2223,8 @@ Work:
   remain effective despite later errors.  Do not reset video preferences,
   pending mode, history capacity, autokey, or stereo policy here.
 - Move command-level reset tests to UI; retain direct engine helper
-  tests.  Cover startup/fallback and the distinct explicit-reset scope.
+  tests.  Cover startup/fallback and the distinct explicit-reset scope,
+  including repeated resets between settings and before a later error.
 
 Done when: UI owns combined fractal initialization, engine owns only its
 defaults and version logic, and each accepted reset initializes once.
@@ -2205,8 +2252,8 @@ and setup-policy couplings, not direct input polling:
   `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  The marked
   `ui/video_mode.h` include permits the temporary mechanical lookup of
   UI-owned bindings.  Shared syntax, recognition, routing, and mixed
-  ownership and initialization are agreed; 53.5.6 and 53.5.7 settle the
-  remaining option 1 decisions before deferred implementation removes
+  ownership, initialization, ordering, and failure behavior are agreed;
+  53.5.7 settles reporting before deferred implementation removes
   these dependencies.  Slices 53.9.1 through 53.9.11 move the UI handlers
   and key-name parser without changing their semantics.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
