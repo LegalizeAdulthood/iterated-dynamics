@@ -15,6 +15,7 @@ namespace id::ui
 
 extern bool                  g_ask_video;               // flag for video prompting
 extern bool                  g_compare_gif;             // compare two gif files flag
+extern bool                  g_escape_exit;             // skip exit confirmation
 extern io::EvolutionInfo     g_evolve_info;             //
 extern int                   g_finish_row;              // save when this row is finished
 extern bool                  g_from_text;               // = true if we're in graphics mode

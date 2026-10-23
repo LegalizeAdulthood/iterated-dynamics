@@ -161,6 +161,7 @@ add_executable(test-id
     ui/test_Orbit3DSound.cpp
     ui/test_OverlaySound.cpp
     ui/test_RestoredImageSound.cpp
+    ui/test_reset_command.cpp
     ui/test_passes_options.cpp
     ui/test_plasma.cpp
     ui/test_PotentialRestore.cpp

@@ -549,8 +549,8 @@ share syntax processing and preserve the original parameter order.
 
 Shared syntax, recognition, source routing, mixed-parameter ownership,
 initialization, ordering, failure behavior, and consequence reporting are
-agreed below.  The seven design discussions are complete; implement the
-remaining slices in order.  Shared command extraction is complete.
+agreed below.  The seven design discussions and their implementation
+slices are complete.  Shared command extraction is complete.
 
 Separate parsing, source routing, defaults, and individual handler moves
 in their assigned slices.  Do not bypass that sequence with forwarding
@@ -674,7 +674,7 @@ dependencies.
   UI.  Connect every application entry point before moving individual UI
   handlers.  Remove temporary runners once their callers are converted;
   precede any new temporary addition with `// TODO: removed later`.
-- Deferred slices 53.8.5 through 53.8.7 implement source processing and
+- Completed slices 53.8.5 through 53.8.7 implement source processing and
   routing; 53.9.1 through 53.9.11 move the UI parameters and key-name
   parser one at a time.  Initialization follows the agreement below;
   ordering and failure follow their agreement below.  Result
@@ -776,10 +776,9 @@ dependencies.
   showdot, and the initial showorbit preference, stay in `main_restart`.
   History initialization keeps its current position after parameters.
 - UI owns `exitnoask` handling, including startup eligibility, validation,
-  diagnostics, and result flags.  `g_escape_exit` storage and its reset
-  remain engine-defined until 53.9.11 moves them to UI fractal defaults.
-  Those defaults clear it to false, preserving both startup and explicit
-  reset behavior.
+  diagnostics, and result flags.  UI owns `g_escape_exit` storage and its
+  fractal-default reset.  Those defaults clear it to false, preserving
+  both startup and explicit reset behavior.
 - UI owns the complete `reset` command's orchestration.  Engine
   `parse_reset_version` validates and decodes its version using the shared
   parsed `Command` and existing `Version` type before mutation.  UI then
@@ -797,9 +796,8 @@ dependencies.
   source traversal does not hide a second initialization operation.
 - Slices 53.8.6.1 through 53.8.6.3 move UI restart defaults after source
   routing.
-  UI now owns pending-mode storage and exit-confirmation handling.
-  Slice 53.9.11 moves exit-confirmation storage and coordinates explicit
-  fractal reset.
+  UI now owns pending-mode storage and exit-confirmation handling and
+  storage.  It coordinates explicit fractal reset.
   Keep existing slice numbers.
 
 ### Agreed Ordering And Failure
@@ -1475,49 +1473,12 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
   GIF load/save remains atomic; autokey may test surrounding choices,
   not introduce or expect mid-file keyboard cancellation.
 
-## Implementation Slices
-
-
-### 53.9.11. Coordinate Fractal Reset Through UI
-
-Source: `cmd_reset`, `engine/reset_version.{h,cpp}`, fractal
-initialization, `g_escape_exit`, and UI startup/fallback coordination.
-
-Prerequisite: 53.9.10.
-
-Work:
-
-- Move the complete `reset` handler and table entry to UI.  Use engine
-  `parse_reset_version` before mutation; invoke combined fractal
-  initialization once, then call engine `apply_reset_version`.
-- Introduce UI `reset_fractal_defaults` owning exit-confirmation reset
-  and calling engine `reset_fractal_defaults`.  Move flag storage and
-  declaration to UI, removing the engine assignment and temporary code.
-  Use this combined initializer for startup and configuration fallback.
-- Remove the engine `reset` handler and table entry.  Preserve exact
-  version, diagnostic, and `FRACTAL_PARAM | RESET` behavior.  Do not reset
-  a second time in response to aggregated flags or defer reset to actions.
-- Preserve in-source ordering, including `@` parameters and repeated
-  resets.  Invalid values leave settings unchanged; accepted resets
-  remain effective despite later errors.  Do not reset video preferences,
-  pending mode, history capacity, autokey, or stereo policy here.
-- Move command-level reset tests to UI; retain direct engine helper
-  tests.  Cover startup/fallback and the distinct explicit-reset scope,
-  including repeated resets between settings and before a later error.
-
-Done when: UI owns combined fractal initialization, engine owns only its
-defaults and version logic, and each accepted reset initializes once.
-
-Validation: run focused reset, ordering, version, and routing tests, then
-the full `rt-default` workflow.  Reuse existing autokey journeys;
-no additional manual testing is required.
-
-## Current Direct And Indirect Input Leaks
+## Current Engine Boundary
 
 The synchronous engine-to-UI render dispatch has been removed.
 Non-standard operation selection and per-image setup no longer enter
-renderers or UI.  Remaining engine/fractal header dependencies are data
-and setup-policy couplings, not direct input polling:
+renderers or UI.  Engine/fractal sources and headers no longer include
+UI headers.  Parameter ownership and defaults are separated:
 
 - `VideoInfo` is key-free.  UI owns the separate `g_video_mode_keys`
   associations, the selected-entry binding, key lookup, key-name parsing,
@@ -1525,18 +1486,14 @@ and setup-policy couplings, not direct input polling:
   validation with no UI key dependency.  UI owns the `video` handler and
   pending request `g_init_mode`, including its storage and
   initialization/completion policy.
-- `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h` exposes command
-  settings.  Shared syntax, recognition, routing, and mixed ownership,
-  initialization, ordering, failure behavior, and reporting are agreed.
-  Slice 53.9.11 removes the remaining parameter-handler
-  dependency without changing semantics.
-  Stereo calculation inputs and `CalibrationBars` are geometry-owned.
+- Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy.
   UI owns both the `rds` and `rds-texture` handlers; engine parameter
   handling no longer depends on UI stereo policy.
-- UI owns `exitnoask` handling.  `g_escape_exit` and its fractal-reset
-  assignment remain in engine even though they control exit confirmation.
-  Slice 53.9.11 moves storage and combined reset orchestration to UI.
+- UI owns `exitnoask`, `g_escape_exit`, and combined fractal-default
+  initialization for startup, fallback, and explicit `reset` commands.
+  Engine owns its defaults and reset-version validation/application.
+  Accepted resets take effect inline, once, before the next command.
 - GIF evolution records and comparisons are I/O-owned; public GIF metadata
   headers no longer import UI.  `io/loadfile.cpp` explicitly includes
   `ui/evolve.h` for its existing application of evolution runtime state.
@@ -1550,9 +1507,10 @@ Command parsing reports errors, warnings, generation actions, and startup
 selection requests without UI calls.  The command UI owns their effects;
 MIG failures unwind to it rather than exiting from I/O code.
 
-The numbered slices cover all these ownership gaps.  The source audit
-must trace UI helper and dispatch-pointer calls as well as raw driver
-calls; an empty raw-key search alone does not establish inversion.
+The implementation slices for the release 1.5 boundary are complete.
+Future source audits must still trace UI helper and dispatch-pointer
+calls as well as raw driver calls; an empty raw-key search alone does not
+establish inversion.
 
 The `OrbitPlot` wait loop, delay state, and sound mapping have been
 removed.  It submits numerical samples through `g_sound`; standard and

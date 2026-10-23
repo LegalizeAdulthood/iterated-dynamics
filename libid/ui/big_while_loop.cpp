@@ -76,6 +76,7 @@ namespace id::ui
 
 bool g_ask_video{};
 bool g_compare_gif{};
+bool g_escape_exit{};
 bool g_from_text{};
 int g_finish_row{};
 EvolutionInfo g_evolve_info{};

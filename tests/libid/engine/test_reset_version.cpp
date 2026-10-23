@@ -37,7 +37,6 @@ protected:
     ValueSaver<long> m_saved_iterations{g_max_iterations, 777L};
     ValueSaver<int> m_saved_delay{g_orbit_delay, 99};
     ValueSaver<int> m_saved_volume{g_fm_volume, 17};
-    ValueSaver<bool> m_saved_escape_exit{g_escape_exit, true};
     ValueSaver<bool> m_saved_first_init{g_first_init, false};
     CommandParseResult m_result;
 };
@@ -47,7 +46,6 @@ void TestResetVersion::expect_render_settings_unchanged() const
     EXPECT_EQ(777L, g_max_iterations);
     EXPECT_EQ(99, g_orbit_delay);
     EXPECT_EQ(17, g_fm_volume);
-    EXPECT_TRUE(g_escape_exit);
 }
 
 struct ResetVersionCase
@@ -126,31 +124,6 @@ TEST_F(TestResetVersion, applyingVersionDoesNotResetSettings)
     EXPECT_EQ(version, g_version);
     EXPECT_EQ(version, g_file_version);
     expect_render_settings_unchanged();
-}
-
-TEST_F(TestResetVersion, rejectedCommandKeepsSettingsAndDiagnosesOnce)
-{
-    const Command cmd{"reset=garbage", CmdFile::AT_AFTER_STARTUP, m_result};
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, handle_engine_command(cmd));
-    EXPECT_EQ(ACTIVE_VERSION, g_version);
-    EXPECT_EQ(FILE_VERSION, g_file_version);
-    expect_render_settings_unchanged();
-    EXPECT_THAT(m_result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  reset=garbage"));
-}
-
-TEST_F(TestResetVersion, acceptedCommandInitializesAndAppliesDecodedVersion)
-{
-    const Command cmd{"reset=100", CmdFile::AT_AFTER_STARTUP, m_result};
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, handle_engine_command(cmd));
-    EXPECT_EQ((Version{1, 0, 0, 0, false}), g_version);
-    EXPECT_EQ(g_version, g_file_version);
-    EXPECT_EQ(INITIAL_MAX_ITERATIONS, g_max_iterations);
-    EXPECT_EQ(0, g_orbit_delay);
-    EXPECT_EQ(63, g_fm_volume);
-    EXPECT_FALSE(g_escape_exit);
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
 }
 
 } // namespace id::test

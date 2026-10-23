@@ -4,6 +4,7 @@
 #include "ui/CommandRouter.h"
 
 #include "engine/CommandProcessor.h"
+#include "engine/reset_version.h"
 #include "geometry/stereo_params.h"
 #include "io/library.h"
 #include "io/loadfile.h"
@@ -34,6 +35,12 @@ using namespace id::misc;
 
 namespace id::ui
 {
+
+static void reset_fractal_defaults()
+{
+    g_escape_exit = false;
+    engine::reset_fractal_defaults();
+}
 
 // askvideo=?
 static CmdArgFlags cmd_ask_video(const Command &cmd)
@@ -185,6 +192,19 @@ static CmdArgFlags cmd_rds_texture(const Command &cmd)
     return CmdArgFlags::PARAM_3D;
 }
 
+static CmdArgFlags cmd_reset(const Command &cmd)
+{
+    const std::optional<Version> version{parse_reset_version(cmd)};
+    if (!version.has_value())
+    {
+        return cmd.bad_arg();
+    }
+
+    reset_fractal_defaults();
+    apply_reset_version(*version);
+    return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET;
+}
+
 static CmdArgFlags cmd_video(const Command &cmd)
 {
     const int key = check_vid_mode_key_name(cmd.value);
@@ -215,8 +235,8 @@ static const CommandHandlerTables s_ui_commands{
     {CommandHandler{"exitnoask", cmd_exit_no_ask}, CommandHandler{"maxhistory", cmd_max_history}},
     {CommandHandler{"askvideo", cmd_ask_video}, CommandHandler{"autokey", cmd_auto_key},
         CommandHandler{"autokeyname", cmd_auto_key_name}, CommandHandler{"rds", cmd_rds},
-        CommandHandler{"rds-texture", cmd_rds_texture}, CommandHandler{"video", cmd_video},
-        CommandHandler{"virtual", cmd_virtual}}};
+        CommandHandler{"rds-texture", cmd_rds_texture}, CommandHandler{"reset", cmd_reset},
+        CommandHandler{"video", cmd_video}, CommandHandler{"virtual", cmd_virtual}}};
 
 static void add_names(std::set<std::string_view> &names, const std::vector<CommandHandler> &handlers)
 {

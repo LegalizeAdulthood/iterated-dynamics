@@ -1315,6 +1315,7 @@ protected:
     ValueSaver<bool> m_saved_read_color{g_read_color};
     ValueSaver<bool> m_saved_ask_video{g_ask_video};
     ValueSaver<bool> m_saved_virtual_screens{g_virtual_screens};
+    ValueSaver<bool> m_saved_escape_exit{g_escape_exit};
 };
 
 void TestCommandRouterStartup::SetUp()
@@ -2128,6 +2129,151 @@ TEST_F(TestCommandRouterStartup, explicitResetPreservesPendingMode)
         EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
         EXPECT_EQ(mode, g_init_mode);
     }
+}
+
+TEST_F(TestCommandRouterStartup, engineFractalDefaultsLeaveExitConfirmationAlone)
+{
+    g_escape_exit = true;
+
+    engine::reset_fractal_defaults();
+
+    EXPECT_TRUE(g_escape_exit);
+}
+
+TEST_F(TestCommandRouterStartup, startupRestartAndFallbackRestoreExitConfirmationDefault)
+{
+    const CommandRouter router;
+    g_escape_exit = true;
+
+    EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
+    EXPECT_FALSE(g_escape_exit);
+    EXPECT_FALSE(g_first_init);
+    g_escape_exit = true;
+    EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
+    EXPECT_FALSE(g_escape_exit);
+    g_escape_exit = true;
+    EXPECT_TRUE(router.reset_startup().diagnostics.errors.empty());
+    EXPECT_FALSE(g_escape_exit);
+}
+
+TEST_F(TestCommandRouterStartup, fallbackRetainsExitConfirmationConfigurationOverride)
+{
+    const CommandRouter router;
+    write_source("sstools.ini", "exitnoask=yes\n");
+    g_escape_exit = false;
+
+    const CommandParseResult result{router.reset_startup()};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_TRUE(g_escape_exit);
+}
+
+TEST_F(TestCommandRouterStartup, explicitResetPreservesUnrelatedUiPreferences)
+{
+    ValueSaver saved_history{g_max_image_history, 23};
+    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
+    ValueSaver saved_auto_name{g_auto_name, fs::path{"Keep.KEY"}};
+    ValueSaver saved_auto_stereo{g_auto_stereo_batch, true};
+    ValueSaver saved_texture{g_stereo_texture_filename, std::string{"Keep.GIF"}};
+    ValueSaver saved_reuse{g_stereo_texture_reuse, true};
+    g_ask_video = false;
+    g_virtual_screens = false;
+    g_init_mode = 7;
+    g_escape_exit = true;
+    g_max_iterations = 999;
+    CommandProcessor processor{"reset=1960", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
+    EXPECT_FALSE(g_escape_exit);
+    EXPECT_EQ(INITIAL_MAX_ITERATIONS, g_max_iterations);
+    EXPECT_FALSE(g_ask_video);
+    EXPECT_FALSE(g_virtual_screens);
+    EXPECT_EQ(7, g_init_mode);
+    EXPECT_EQ(23, g_max_image_history);
+    EXPECT_EQ(SlidesMode::PLAY, g_slides);
+    EXPECT_EQ(fs::path{"Keep.KEY"}, g_auto_name);
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_EQ("Keep.GIF", g_stereo_texture_filename);
+    EXPECT_TRUE(g_stereo_texture_reuse);
+}
+
+TEST_F(TestCommandRouterFile, repeatedResetsRetainLaterSettingsWithoutADeferredReset)
+{
+    CommandProcessor processor{open_input("entry { exitnoask=yes type=julia maxiter=999 reset=1960 maxiter=321 "
+                                          "exitnoask=yes reset=1/5 maxiter=777 exitnoask=yes }"),
+        CmdFile::AT_CMD_LINE_SET_NAME};
+    ValueSaver saved_escape_exit{g_escape_exit};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D | CmdArgFlags::RESET, result.flags);
+    EXPECT_EQ(FractalType::MANDEL, g_fractal_type);
+    EXPECT_EQ(777L, g_max_iterations);
+    EXPECT_EQ((Version{1, 5, 0, 0, false}), g_version);
+    EXPECT_EQ(g_version, g_file_version);
+    EXPECT_TRUE(g_escape_exit);
+}
+
+TEST_F(TestCommandRouterFile, acceptedResetRemainsEffectiveBeforeALaterError)
+{
+    CommandProcessor processor{
+        open_input("entry { maxiter=999 reset=1960 maxiter=321 unknown=yes maxiter=777 }"), CmdFile::AT_AFTER_STARTUP};
+    ValueSaver saved_escape_exit{g_escape_exit, true};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  unknown=yes"));
+    EXPECT_EQ(321L, g_max_iterations);
+    EXPECT_EQ(parse_legacy_version(1960), g_version);
+    EXPECT_EQ(g_version, g_file_version);
+    EXPECT_FALSE(g_escape_exit);
+}
+
+TEST_F(TestCommandRouterStartup, resetsTakeEffectInlineAcrossStartupSources)
+{
+    write_source("sstools.ini", "exitnoask=yes maxiter=901 reset=1960 maxiter=111\n");
+    write_source("whole.par", "entry { exitnoask=yes maxiter=902 reset=100 maxiter=222 }");
+    write_source("selected.par", "chosen { reset=1/5 exitnoask=yes maxiter=333 }");
+    const CommandRouter router;
+
+    const CommandParseResult configuration{router.process_startup({"id"})};
+
+    EXPECT_TRUE(configuration.diagnostics.errors.empty());
+    EXPECT_FALSE(g_escape_exit);
+    EXPECT_EQ(111L, g_max_iterations);
+    EXPECT_EQ(parse_legacy_version(1960), g_version);
+
+    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
+
+    EXPECT_TRUE(whole.diagnostics.errors.empty());
+    EXPECT_FALSE(g_escape_exit);
+    EXPECT_EQ(222L, g_max_iterations);
+    EXPECT_EQ((Version{1, 0, 0, 0, false}), g_version);
+
+    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
+
+    EXPECT_TRUE(selected.diagnostics.errors.empty());
+    EXPECT_TRUE(g_escape_exit);
+    EXPECT_EQ(333L, g_max_iterations);
+    EXPECT_EQ((Version{1, 5, 0, 0, false}), g_version);
+
+    const CommandParseResult argument{
+        router.process_startup({"id", "@whole", "@selected/chosen", "reset=1/4", "maxiter=444", "exitnoask=yes"})};
+
+    EXPECT_TRUE(argument.diagnostics.errors.empty());
+    EXPECT_TRUE(g_escape_exit);
+    EXPECT_EQ(444L, g_max_iterations);
+    EXPECT_EQ((Version{1, 4, 0, 0, false}), g_version);
+    EXPECT_EQ(g_version, g_file_version);
 }
 
 } // namespace id::test

@@ -28,7 +28,6 @@
 #include "engine/OrbitPlot.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
-#include "engine/reset_version.h"
 #include "engine/show_dot.h"
 #include "engine/SynchronousOrbit.h"
 #include "engine/SolidGuess.h"
@@ -66,7 +65,6 @@
 #include "misc/debug_flags.h"
 #include "misc/id.h"
 #include "misc/version.h"
-#include "ui/big_while_loop.h"
 #include <algos/string_algorithms.h>
 
 #include <config/path_limits.h>
@@ -102,7 +100,6 @@ using namespace id::geometry;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::engine
 {
@@ -122,7 +119,6 @@ bool g_read_color{true};                                  // flag for reading co
 // true: user has specified a directory for Orgform formula compilation files
 bool g_organize_formulas_search{};
 
-bool g_escape_exit{};             // set to true to avoid the "are you sure?" screen
 bool g_first_init{true};          // first time into cmdfiles?
 fs::path g_parameter_file;        // file to find parameter sets in
 std::string g_parameter_set_name; // Name of parameter set (if not empty)
@@ -251,8 +247,6 @@ static void reset_sound_defaults()
 // init vars affecting calculation
 void reset_fractal_defaults()
 {
-    // TODO: removed later
-    g_escape_exit = false;                               // don't disable the "are you sure?" screen
     g_user.periodicity_value = 1;                        // turn on periodicity
     g_inside_method = ColorMethod::COLOR;                // inside method = color
     g_inside_color = 1;                                  // inside color = black (in default colormap)
@@ -2442,19 +2436,6 @@ static CmdArgFlags cmd_release(const Command &cmd)
     return cmd.bad_arg();
 }
 
-static CmdArgFlags cmd_reset(const Command &cmd)
-{
-    const std::optional<Version> version{parse_reset_version(cmd)};
-    if (!version.has_value())
-    {
-        return cmd.bad_arg();
-    }
-
-    reset_fractal_defaults();
-    apply_reset_version(*version);
-    return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET;
-}
-
 // rotation=?/?/?
 static CmdArgFlags cmd_rotation(const Command &cmd)
 {
@@ -3073,7 +3054,7 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 155> s_commands{
+static std::array<CommandHandler, 154> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
@@ -3187,7 +3168,6 @@ static std::array<CommandHandler, 155> s_commands{
     CommandHandler{"ray", cmd_ray},                         //
     CommandHandler{"recordcolors", cmd_record_colors},      //
     CommandHandler{"release", cmd_release},                 //
-    CommandHandler{"reset", cmd_reset},                     //
     CommandHandler{"rleps", cmd_deprecated},                // deprecated print parameters
     CommandHandler{"rotation", cmd_rotation},               //
     CommandHandler{"roughness", cmd_roughness},             //
