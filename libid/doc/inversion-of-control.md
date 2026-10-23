@@ -674,7 +674,7 @@ dependencies.
   UI.  Connect every application entry point before moving individual UI
   handlers.  Remove temporary runners once their callers are converted;
   precede any new temporary addition with `// TODO: removed later`.
-- Deferred slices 53.8.2 through 53.8.7 implement source processing and
+- Deferred slices 53.8.3 through 53.8.7 implement source processing and
   routing; 53.9.1 through 53.9.11 move the UI parameters and key-name
   parser one at a time.  Initialization follows the agreement below;
   ordering and failure follow their agreement below.  Result
@@ -1479,45 +1479,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-
-### 53.8.2. Add Startup Command Sources
-
-Source: `cmd_files`, `process_sstools_ini`, and
-`process_simple_command` in `engine/cmdfiles.cpp`.
-
-Prerequisite: 53.8.1.
-
-Work:
-
-- Extend `CommandProcessor` to retain startup-configuration and
-  command-line positions, presenting parameters in their existing order.
-- Keep bare-GIF argument probing and source diagnostics engine-owned.
-  Preserve startup result accumulation and action termination.
-- Keep overall results distinct from file-local completion flags.
-  Compute the missing-entry selection request from final engine settings
-  at startup completion, not by ORing per-command requests.  Preserve
-  its error/action gate and missing-entry diagnostics in batch mode.
-- Stop only the failing configuration source on ordinary rejection and
-  continue into arguments.  Continue after ordinary argument errors;
-  warnings do not stop processing.  An accepted action stops remaining
-  startup input even if earlier errors will suppress its execution.
-- Keep existing initialization calls in place until the implementation
-  slices 53.8.6.1 through 53.8.6.3 apply the agreed owner profiles.
-- Leave indirect-file processing on its existing path for this
-  intermediate commit; complete its incremental conversion in 53.8.3.
-  Mark any new temporary bridge with `// TODO: removed later`.
-- Do not expose the startup source to UI routing until 53.8.3 is complete.
-
-Done when: startup configuration and ordinary arguments are incremental
-without changing initialization or parameter effects.
-
-Validation: reuse startup ordering, diagnostics, later-batch-argument,
-action-termination, and bare-image coverage.  Add source-position checks;
-cover configuration rejection followed by arguments and warnings that
-permit continuation.  Preserve the existing case of earlier errors,
-an action, and an ignored later argument.  Check final-state entry
-selection and batch diagnostics independently of aggregation.  Run the
-full `rt-default` workflow.  No manual testing is required.
 
 ### 53.8.3. Add Indirect Parameter-File Sources
 

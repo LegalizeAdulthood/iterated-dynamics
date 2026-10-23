@@ -116,6 +116,7 @@ namespace id::engine
 
 static CommandParseResult command_file(std::FILE *handle, CmdFile mode);
 static void append_result(CommandParseResult &result, CommandParseResult source);
+static CommandParseResult process_commands(CommandProcessor &processor);
 static bool next_line(std::FILE *handle, std::string &line_buf, CmdFile mode);
 static void init_process_defaults();
 static void reset_restart_defaults();
@@ -157,18 +158,15 @@ static std::string extract_filename(const fs::path &source)
 // it also processes the 'sstools.ini' file and any
 // indirect files ('id @myfile')
 
-static void process_sstools_ini(CommandParseResult &result)
+static std::FILE *open_sstools_ini()
 {
     const std::string sstools_ini{find_file(ReadFile::ID_CONFIG, "sstools.ini").string()}; // look for SSTOOLS.INI
     if (sstools_ini.empty())
     {
-        return;
+        return nullptr;
     }
 
-    if (std::FILE *init_file = std::fopen(sstools_ini.c_str(), "r"); init_file != nullptr)
-    {
-        append_result(result, command_file(init_file, CmdFile::SSTOOLS_INI)); // process it
-    }
+    return std::fopen(sstools_ini.c_str(), "r");
 }
 
 static bool type_needs_file_entry()
@@ -198,12 +196,15 @@ CommandParseResult reset_startup_commands()
     reset_restart_defaults();
     reset_fractal_defaults();
     CommandParseResult result;
-    process_sstools_ini(result);
+    if (std::FILE *file{open_sstools_ini()}; file != nullptr)
+    {
+        append_result(result, command_file(file, CmdFile::SSTOOLS_INI));
+    }
     g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
     return result;
 }
 
-static void process_simple_command(char *cur_arg, CommandParseResult &result)
+static bool process_image_argument(const char *cur_arg)
 {
     bool processed{};
     if (std::strchr(cur_arg, '=') == nullptr)
@@ -241,10 +242,7 @@ static void process_simple_command(char *cur_arg, CommandParseResult &result)
             }
         }
     }
-    if (!processed)
-    {
-        append_result(result, cmd_arg(cur_arg, CmdFile::AT_CMD_LINE)); // process simple command
-    }
+    return processed;
 }
 
 static bool process_file_set_name(
@@ -341,39 +339,10 @@ CommandParseResult cmd_files(const std::vector<std::string> &args)
     {
         init_process_defaults();
     }
-    CommandParseResult result{reset_startup_commands()};
-
-    // cycle through args
-    for (std::size_t i = 1; i < args.size() && result.action.index() == 0; i++)
-    {
-        std::string cur_arg{args[i]};
-        const char first_char{cur_arg.empty() ? '\0' : cur_arg.front()};
-        if (first_char == ';') // start of comments?
-        {
-            break;
-        }
-        if (first_char != '@')
-        {
-            process_simple_command(cur_arg.data(), result);
-        }
-        // @filename/setname?
-        else if (char *slash = std::strchr(cur_arg.data(), '/'); slash != nullptr)
-        {
-            if (!process_file_set_name(std::string{cur_arg.data() + 1, slash}, slash + 1, result))
-            {
-                arg_error(cur_arg.c_str(), &result.diagnostics);
-            }
-        }
-        // @filename
-        else
-        {
-            process_file(cur_arg.data(), result);
-        }
-    }
-    if (result.diagnostics.errors.empty() && result.action.index() == 0)
-    {
-        resolve_startup_file_entry(result);
-    }
+    reset_restart_defaults();
+    reset_fractal_defaults();
+    CommandProcessor processor{args};
+    CommandParseResult result{process_commands(processor)};
 
     if (!g_first_init)
     {
@@ -686,8 +655,22 @@ CommandProcessor::CommandProcessor(std::FILE *file, const CmdFile mode) :
 
 CommandProcessor::~CommandProcessor() = default;
 
+CommandProcessor::CommandProcessor(std::vector<std::string> args) :
+    m_source(Source::CONFIGURATION),
+    m_args(std::move(args))
+{
+    if (std::FILE *file{open_sstools_ini()}; file != nullptr)
+    {
+        m_source_file = std::make_unique<CommandProcessor>(file, CmdFile::SSTOOLS_INI);
+    }
+}
+
 const Command &CommandProcessor::command() const
 {
+    if (m_source_file)
+    {
+        return m_source_file->command();
+    }
     if (!m_command)
     {
         throw std::logic_error("CommandProcessor has no current command");
@@ -697,6 +680,10 @@ const Command &CommandProcessor::command() const
 
 bool CommandProcessor::advance()
 {
+    if (m_source != Source::FILE)
+    {
+        return advance_startup();
+    }
     if (!m_file)
     {
         return false;
@@ -729,6 +716,70 @@ bool CommandProcessor::advance()
     return true;
 }
 
+bool CommandProcessor::advance_startup()
+{
+    if (m_source == Source::DONE)
+    {
+        return false;
+    }
+    if (m_source == Source::CONFIGURATION)
+    {
+        if (m_source_file)
+        {
+            if (m_source_file->advance())
+            {
+                return true;
+            }
+            append_result(m_result, m_source_file->result());
+            m_source_file.reset();
+        }
+        g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
+        m_source = Source::ARGUMENTS;
+    }
+    if (m_command)
+    {
+        m_command.reset();
+        append_result(m_result, std::move(m_command_result));
+        m_command_result = {};
+    }
+    while (m_arg_index < m_args.size() && m_result.action.index() == 0)
+    {
+        m_text = m_args[m_arg_index++];
+        const char first_char{m_text.empty() ? '\0' : m_text.front()};
+        if (first_char == ';')
+        {
+            break;
+        }
+        if (first_char == '@')
+        {
+            // TODO: removed later
+            if (char *slash{std::strchr(m_text.data(), '/')}; slash != nullptr)
+            {
+                if (!process_file_set_name(std::string{m_text.data() + 1, slash}, slash + 1, m_result))
+                {
+                    arg_error(m_text.c_str(), &m_result.diagnostics);
+                }
+            }
+            else
+            {
+                process_file(m_text.data(), m_result);
+            }
+        }
+        else if (!process_image_argument(m_text.c_str()))
+        {
+            m_command = std::make_unique<Command>(m_text, CmdFile::AT_CMD_LINE, m_command_result);
+            m_command_result.flags = m_command->status;
+            return true;
+        }
+    }
+    if (m_result.diagnostics.errors.empty() && m_result.action.index() == 0)
+    {
+        resolve_startup_file_entry(m_result);
+    }
+    m_source = Source::DONE;
+    return false;
+}
+
 void CommandProcessor::finish_file()
 {
     const FilePtr file{std::move(m_file)};
@@ -745,6 +796,12 @@ void CommandProcessor::finish_file()
 static CommandParseResult command_file(std::FILE *handle, const CmdFile mode)
 {
     CommandProcessor processor{handle, mode};
+    return process_commands(processor);
+}
+
+// TODO: removed later
+static CommandParseResult process_commands(CommandProcessor &processor)
+{
     while (processor.advance())
     {
         const Command &cmd{processor.command()};

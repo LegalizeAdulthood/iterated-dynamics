@@ -4,10 +4,15 @@
 #include <engine/cmdfiles.h>
 
 #include <engine/calcfrac.h>
+#include <engine/Browse.h>
 #include <engine/Command.h>
 #include <engine/command_comments.h>
 #include <engine/sound.h>
 #include <fractals/fractalp.h>
+#include <fractals/formula.h>
+#include <fractals/ifs.h>
+#include <fractals/lsystem.h>
+#include <io/library.h>
 #include <io/loadfile.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
@@ -22,6 +27,7 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -421,6 +427,351 @@ TEST_F(TestCommandProcessor, invalidFileOrMissingCurrentCommandThrows)
     ASSERT_TRUE(processor.advance());
     handle_current(processor);
     ASSERT_FALSE(processor.advance());
+    EXPECT_THROW(processor.command(), std::logic_error);
+}
+
+class TestStartupCommandProcessor : public TestCommandProcessor
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void write_source(const std::string &name, std::string_view text);
+    void run(CommandProcessor &processor);
+
+    fs::path m_directory;
+    std::vector<fs::path> m_sources;
+    ValueSaver<bool> m_saved_check_cur_dir{g_check_cur_dir, false};
+    ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
+    ValueSaver<ShowFile> m_saved_show_file{g_show_file, ShowFile::IMAGE_LOADED};
+    ValueSaver<fs::path> m_saved_read_filename{g_read_filename};
+    ValueSaver<Browse> m_saved_browse{g_browse};
+    ValueSaver<std::string> m_saved_formula_name{g_formula_name, std::string{}};
+    ValueSaver<std::string> m_saved_l_system_name{g_l_system_name, std::string{}};
+    ValueSaver<std::string> m_saved_ifs_name{g_ifs_name, std::string{}};
+};
+
+void TestStartupCommandProcessor::SetUp()
+{
+    TestCommandProcessor::SetUp();
+    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
+    m_directory = fs::temp_directory_path() / (std::string{info->test_suite_name()} + '_' + info->name());
+    fs::create_directories(m_directory);
+    clear_read_library_path();
+    add_read_library(m_directory);
+    set_fractal_type(FractalType::MANDEL);
+    g_first_init = true;
+}
+
+void TestStartupCommandProcessor::TearDown()
+{
+    clear_read_library_path();
+    for (const fs::path &path : m_sources)
+    {
+        std::error_code ignored;
+        fs::remove(path, ignored);
+    }
+    std::error_code ignored;
+    fs::remove(m_directory, ignored);
+    TestCommandProcessor::TearDown();
+}
+
+void TestStartupCommandProcessor::write_source(const std::string &name, const std::string_view text)
+{
+    const fs::path path{m_directory / name};
+    m_sources.push_back(path);
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{std::fopen(path.string().c_str(), "wb"), std::fclose};
+    if (!file || std::fwrite(text.data(), 1, text.size(), file.get()) != text.size())
+    {
+        throw std::runtime_error("Cannot write startup test file: " + path.string());
+    }
+}
+
+void TestStartupCommandProcessor::run(CommandProcessor &processor)
+{
+    while (processor.advance())
+    {
+        handle_current(processor);
+    }
+}
+
+TEST_F(TestStartupCommandProcessor, ownsArgumentsAndAdvancesFromConfigurationInOrder)
+{
+    write_source("sstools.ini", "[id]\nmaxiter=111\nhertz=330\n");
+    std::vector<std::string> args{"id", "maxiter=222", "hertz=660"};
+    g_max_iterations = 432;
+    CommandProcessor processor{args};
+    args.clear();
+
+    EXPECT_EQ(432, g_max_iterations);
+    ASSERT_TRUE(processor.advance());
+    const Command &first{processor.command()};
+    EXPECT_EQ(CmdFile::SSTOOLS_INI, first.mode);
+    EXPECT_EQ("111", first.value);
+    handle_current(processor);
+    EXPECT_EQ(&first, &processor.command());
+    EXPECT_EQ("111", first.value);
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ("hertz", processor.command().variable);
+    EXPECT_EQ(CmdFile::SSTOOLS_INI, processor.command().mode);
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ(111, g_max_iterations);
+    EXPECT_EQ(330, g_base_hertz);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
+    EXPECT_EQ(CmdFile::AT_CMD_LINE, processor.command().mode);
+    EXPECT_EQ("222", processor.command().value);
+    EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ("660", processor.command().value);
+    handle_current(processor);
+    EXPECT_FALSE(processor.advance());
+    EXPECT_EQ(660, g_base_hertz);
+    EXPECT_THROW(processor.command(), std::logic_error);
+    EXPECT_FALSE(processor.advance());
+}
+
+TEST_F(TestStartupCommandProcessor, rejectedConfigurationStopsItsFileButArgumentsContinueAfterErrors)
+{
+    write_source("sstools.ini", "maxiter=111\nunknown=yes\nhertz=999\n");
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=bad", "batch=yes", "maxiter=222"}};
+
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ(111, g_max_iterations);
+    EXPECT_EQ(440, g_base_hertz);
+    EXPECT_EQ(CmdFile::AT_CMD_LINE, processor.command().mode);
+    EXPECT_EQ("bad", processor.command().value);
+    EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
+    handle_current(processor);
+    run(processor);
+
+    EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, processor.result().flags);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("unknown=yes"), HasSubstr("maxiter=bad")));
+}
+
+TEST_F(TestStartupCommandProcessor, configurationWarningsPermitLaterCommandsAndArguments)
+{
+    write_source("sstools.ini", "lfile=missing-startup.l\nmaxiter=111\n");
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=222"}};
+
+    run(processor);
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
+    EXPECT_THAT(processor.result().diagnostics.warnings, ElementsAre(HasSubstr("please check sstools.ini")));
+}
+
+TEST_F(TestStartupCommandProcessor, configurationActionStopsRemainingConfigurationAndArguments)
+{
+    write_source("sstools.ini", "hertz=330\nmakedoc=unused.txt\nmaxiter=999\n");
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=222"}};
+
+    run(processor);
+
+    EXPECT_EQ(330, g_base_hertz);
+    EXPECT_EQ(150, g_max_iterations);
+    EXPECT_TRUE(std::holds_alternative<MakeHelpDocument>(processor.result().action));
+    EXPECT_FALSE(processor.result().needs_file_entry);
+    EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
+}
+
+TEST_F(TestStartupCommandProcessor, earlierArgumentErrorsDoNotPreventActionTermination)
+{
+    CommandProcessor processor{
+        std::vector<std::string>{"id", "type=formula", "maxiter=bad", "makedoc=unused.txt", "maxiter=999"}};
+
+    run(processor);
+
+    EXPECT_EQ(150, g_max_iterations);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("maxiter=bad")));
+    EXPECT_TRUE(std::holds_alternative<MakeHelpDocument>(processor.result().action));
+    EXPECT_FALSE(processor.result().needs_file_entry);
+}
+
+TEST_F(TestStartupCommandProcessor, bareGifArgumentIsProbedBetweenParameterEffects)
+{
+    write_source("preview.gif", "GIF89a");
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=111", "preview.gif", "maxiter=222"}};
+
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ(ShowFile::IMAGE_LOADED, g_show_file);
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+
+    EXPECT_EQ(111, g_max_iterations);
+    EXPECT_EQ("maxiter", processor.command().variable);
+    EXPECT_EQ("222", processor.command().value);
+    EXPECT_EQ(ShowFile::LOAD_IMAGE, g_show_file);
+    EXPECT_EQ(m_directory / "preview.gif", g_read_filename);
+    EXPECT_EQ(g_read_filename, g_browse.selected_path);
+    EXPECT_EQ("preview.gif", g_browse.name);
+    EXPECT_TRUE(fs::remove(m_directory / "preview.gif"));
+    handle_current(processor);
+    EXPECT_FALSE(processor.advance());
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
+}
+
+TEST_F(TestStartupCommandProcessor, nonGifArgumentIsExposedAndRejectionDoesNotStopLaterArguments)
+{
+    write_source("preview.dat", "NOTGIF");
+    CommandProcessor processor{std::vector<std::string>{"id", "preview.dat", "maxiter=222"}};
+
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ("preview.dat", processor.command().variable);
+    handle_current(processor);
+    run(processor);
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("preview.dat")));
+    EXPECT_EQ(ShowFile::IMAGE_LOADED, g_show_file);
+}
+
+TEST_F(TestStartupCommandProcessor, commentArgumentEndsTheSourcePermanently)
+{
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=222", "; comment", "maxiter=999"}};
+
+    run(processor);
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_FALSE(processor.advance());
+    EXPECT_THROW(processor.command(), std::logic_error);
+}
+
+TEST_F(TestStartupCommandProcessor, finalTypeDeterminesTheEntrySelectionRequest)
+{
+    CommandProcessor processor{std::vector<std::string>{"id", "type=formula", "type=mandel"}};
+
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    ASSERT_TRUE(processor.advance());
+    EXPECT_FALSE(processor.result().needs_file_entry);
+    handle_current(processor);
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_FALSE(processor.result().needs_file_entry);
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
+}
+
+TEST_F(TestStartupCommandProcessor, laterNameSatisfiesTheFinalEntrySelection)
+{
+    CommandProcessor processor{std::vector<std::string>{"id", "type=formula", "formulaname=example"}};
+
+    run(processor);
+
+    EXPECT_FALSE(processor.result().needs_file_entry);
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
+}
+
+TEST_F(TestStartupCommandProcessor, missingEntryRequestsSelectionOnlyAtCompletion)
+{
+    CommandProcessor processor{std::vector<std::string>{"id", "type=formula"}};
+
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    EXPECT_FALSE(processor.result().needs_file_entry);
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_TRUE(processor.result().needs_file_entry);
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
+}
+
+TEST_F(TestStartupCommandProcessor, rejectedArgumentSuppressesEntrySelection)
+{
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=bad", "type=formula"}};
+
+    run(processor);
+
+    EXPECT_FALSE(processor.result().needs_file_entry);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("maxiter=bad")));
+}
+
+TEST_F(TestStartupCommandProcessor, finalBatchSettingReportsMissingEntryOnlyOnce)
+{
+    CommandProcessor processor{std::vector<std::string>{"id", "type=formula", "batch=yes"}};
+
+    run(processor);
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_FALSE(processor.result().needs_file_entry);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("type=formula requires formulaname=")));
+}
+
+TEST_F(TestStartupCommandProcessor, perCommandEntryRequestIsNotAggregated)
+{
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=222"}};
+
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    processor.command().result.needs_file_entry = true;
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_FALSE(processor.result().needs_file_entry);
+}
+
+TEST_F(TestStartupCommandProcessor, configurationCompatibilityFinishesBeforeArgumentsAndIsNotRepeated)
+{
+    prepare_legacy_compatibility();
+    write_source("sstools.ini", "maxiter=111\n");
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=222"}};
+
+    ASSERT_TRUE(processor.advance());
+    handle_current(processor);
+    EXPECT_DOUBLE_EQ(1.0, g_params[2]);
+    ASSERT_TRUE(processor.advance());
+    EXPECT_DOUBLE_EQ(2.0, g_params[2]);
+    handle_current(processor);
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_DOUBLE_EQ(2.0, g_params[2]);
+}
+
+TEST_F(TestStartupCommandProcessor, argumentFlagsDoNotTriggerFileCompatibility)
+{
+    prepare_legacy_compatibility();
+    write_source("sstools.ini", "hertz=330\n");
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=222"}};
+
+    run(processor);
+
+    EXPECT_DOUBLE_EQ(1.0, g_params[2]);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
+}
+
+TEST_F(TestStartupCommandProcessor, indirectFilesRetainTheirExistingExecutionPath)
+{
+    write_source("whole.par", "entry { maxiter=111 }");
+    write_source("selected.par", "entry { hertz=330 }");
+    CommandProcessor processor{std::vector<std::string>{"id", "@whole.par", "@selected.par/entry", "maxiter=222"}};
+
+    ASSERT_TRUE(processor.advance());
+    EXPECT_EQ(111, g_max_iterations);
+    EXPECT_EQ(330, g_base_hertz);
+    EXPECT_EQ("222", processor.command().value);
+    handle_current(processor);
+    EXPECT_FALSE(processor.advance());
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
+    EXPECT_TRUE(fs::remove(m_directory / "whole.par"));
+    EXPECT_TRUE(fs::remove(m_directory / "selected.par"));
+}
+
+TEST_F(TestStartupCommandProcessor, noSourcesCompletesWithoutPresentingACommand)
+{
+    CommandProcessor processor{std::vector<std::string>{}};
+
+    EXPECT_FALSE(processor.advance());
+    EXPECT_FALSE(processor.advance());
+    EXPECT_EQ(CmdArgFlags::NONE, processor.result().flags);
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
+    EXPECT_FALSE(processor.result().needs_file_entry);
     EXPECT_THROW(processor.command(), std::logic_error);
 }
 
