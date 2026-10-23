@@ -118,7 +118,7 @@ static void append_result(CommandParseResult &result, CommandParseResult source)
 static bool next_line(std::FILE *handle, std::string &line_buf, CmdFile mode);
 static void init_process_defaults();
 static void reset_restart_defaults();
-static void init_vars_fractal();
+static void reset_fractal_defaults();
 static void init_vars3d();
 static void reset_ifs_definition();
 static bool type_needs_file_entry();
@@ -195,7 +195,7 @@ static bool type_has_file_entry()
 CommandParseResult reset_startup_commands()
 {
     reset_restart_defaults();
-    init_vars_fractal();
+    reset_fractal_defaults();
     CommandParseResult result;
     process_sstools_ini(result);
     g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
@@ -493,9 +493,40 @@ static void reset_restart_defaults()                   // <ins> key init
     init_libraries();
 }
 
-// init vars affecting calculation
-static void init_vars_fractal()
+static void reset_orbit_defaults()
 {
+    g_orbit_delay = 0;                                      // full speed orbits
+    g_orbit_skip_points = 0;                                // skip no orbit points
+    g_orbit_interval = 1;                                   // plot all orbits
+    g_keep_screen_coords = false;                           //
+    g_draw_mode = OrbitDrawMode::RECTANGLE;                 // passes=orbits draw mode
+    g_set_orbit_corners = false;                            //
+    g_orbit_corner.m_min.x = g_cur_fractal_specific->x_min; //
+    g_orbit_corner.m_min.y = g_cur_fractal_specific->y_min; //
+    g_orbit_corner.m_max.x = g_cur_fractal_specific->x_max; //
+    g_orbit_corner.m_max.y = g_cur_fractal_specific->y_max; //
+    g_orbit_corner.m_3rd.x = g_cur_fractal_specific->x_min; //
+    g_orbit_corner.m_3rd.y = g_cur_fractal_specific->y_min; //
+}
+
+static void reset_sound_defaults()
+{
+    g_base_hertz = 440;                              // basic hertz rate
+    g_fm_volume = 63;                                // full volume on soundcard o/p
+    g_hi_attenuation = 0;                            // no attenuation of hi notes
+    g_fm_attack = 5;                                 // fast attack
+    g_fm_decay = 10;                                 // long decay
+    g_fm_sustain = 13;                               // fairly high sustain level
+    g_fm_release = 5;                                // short release
+    g_fm_wave_type = 0;                              // sin wave
+    g_polyphony = 0;                                 // no polyphony
+    std::iota(&g_scale_map[0], &g_scale_map[11], 1); // straight mapping of notes in octave
+}
+
+// init vars affecting calculation
+static void reset_fractal_defaults()
+{
+    // TODO: removed later
     g_escape_exit = false;                               // don't disable the "are you sure?" screen
     g_user.periodicity_value = 1;                        // turn on periodicity
     g_inside_method = ColorMethod::COLOR;                // inside method = color
@@ -552,18 +583,7 @@ static void init_vars_fractal()
     g_colors_preloaded = false;                          //
     g_color_cycle_range_lo = 1;                          //
     g_color_cycle_range_hi = 255;                        // color cycling default range
-    g_orbit_delay = 0;                                   // full speed orbits
-    g_orbit_skip_points = 0;                             // skip no orbit points
-    g_orbit_interval = 1;                                // plot all orbits
-    g_keep_screen_coords = false;                        //
-    g_draw_mode = OrbitDrawMode::RECTANGLE;              // passes=orbits draw mode
-    g_set_orbit_corners = false;                         //
-    g_orbit_corner.m_min.x = g_cur_fractal_specific->x_min; //
-    g_orbit_corner.m_min.y = g_cur_fractal_specific->y_min; //
-    g_orbit_corner.m_max.x = g_cur_fractal_specific->x_max; //
-    g_orbit_corner.m_max.y = g_cur_fractal_specific->y_max; //
-    g_orbit_corner.m_3rd.x = g_cur_fractal_specific->x_min; //
-    g_orbit_corner.m_3rd.y = g_cur_fractal_specific->y_min; //
+    reset_orbit_defaults();
     g_math_tol[0] = 0.05;                                   // integer -> float transition is ignored
     g_math_tol[1] = 0.05;                                   // float -> bignum transition
     g_display_3d = Display3DMode::NONE;                     // 3D display is off
@@ -585,16 +605,7 @@ static void init_vars_fractal()
     g_new_orbit_type = FractalType::JULIA;                  //
     g_julibrot_z_dots = 128;                                //
     init_vars3d();                                          //
-    g_base_hertz = 440;                                     // basic hertz rate
-    g_fm_volume = 63;                                       // full volume on soundcard o/p
-    g_hi_attenuation = 0;                                   // no attenuation of hi notes
-    g_fm_attack = 5;                                        // fast attack
-    g_fm_decay = 10;                                        // long decay
-    g_fm_sustain = 13;                                      // fairly high sustain level
-    g_fm_release = 5;                                       // short release
-    g_fm_wave_type = 0;                                     // sin wave
-    g_polyphony = 0;                                        // no polyphony
-    std::iota(&g_scale_map[0], &g_scale_map[11], 1);        // straight mapping of notes in octave
+    reset_sound_defaults();
 }
 
 // init vars affecting 3d
@@ -2942,7 +2953,7 @@ static CmdArgFlags cmd_reset(const Command &cmd)
         return cmd.bad_arg();
     }
 
-    init_vars_fractal();
+    reset_fractal_defaults();
     if (cmd.num_int_params == 0)
     {
         g_version = parse_legacy_version(1730);

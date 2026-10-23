@@ -798,11 +798,11 @@ dependencies.
   and action execution outside default initializers.  The UI source
   coordinator selects the appropriate initialization scope; engine
   source traversal does not hide a second initialization operation.
-- Deferred slices 53.7.3 and 53.7.4 name local groups and separate
-  reset-value interpretation.  Slices 53.8.6.1 through 53.8.6.3 move UI
-  restart defaults after source routing.  Slice 53.9.6 moves pending-mode
-  storage with its handler; 53.9.10 and 53.9.11 move exit confirmation
-  and coordinate explicit fractal reset.  Keep existing slice numbers.
+- Deferred slice 53.7.4 separates reset-value interpretation.  Slices
+  53.8.6.1 through 53.8.6.3 move UI restart defaults after source routing.
+  Slice 53.9.6 moves pending-mode storage with its handler; 53.9.10 and
+  53.9.11 move exit confirmation and coordinate explicit fractal reset.
+  Keep existing slice numbers.
 
 ### Agreed Ordering And Failure
 
@@ -1479,29 +1479,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-
-### 53.7.3. Group Fractal Initialization
-
-Source: `init_vars_fractal`, `init_vars3d`, and their initialization groups
-in `engine/cmdfiles.cpp`.
-
-Prerequisite: 53.7.2.
-
-Work:
-
-- Name the scope `reset_fractal_defaults`; extract cohesive orbit and
-  sound groups where useful and retain the existing 3D defaults group.
-- Preserve each scope's assignments and their order.  Shared groups may
-  be reused only where their actual settings and values already match.
-- Keep calculation/output configuration in its current owner.  Leave
-  exit-confirmation ownership for 53.9.11; mark new temporary mixed-owner
-  code `// TODO: removed later` rather than inventing UI callbacks.
-
-Done when: fractal defaults have named domain groups and their original
-call sites still preserve existing behavior.
-
-Validation: reuse parameter, reset-version, and image coverage; run the
-full `rt-default` workflow.  No additional manual testing is required.
 
 ### 53.7.4. Separate Reset Value Interpretation
 
