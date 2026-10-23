@@ -9,6 +9,7 @@
 #include "misc/debug_flags.h"
 #include "ui/big_while_loop.h"
 #include "ui/history.h"
+#include "ui/slideshw.h"
 
 #include <fmt/format.h>
 
@@ -34,6 +35,23 @@ static CmdArgFlags cmd_ask_video(const Command &cmd)
         return cmd.bad_arg();
     }
     g_ask_video = cmd.yes_no_val[0] != 0;
+    return CmdArgFlags::NONE;
+}
+
+static CmdArgFlags cmd_auto_key(const Command &cmd)
+{
+    if (cmd.value == "record")
+    {
+        g_slides = SlidesMode::RECORD;
+    }
+    else if (cmd.value == "play")
+    {
+        g_slides = SlidesMode::PLAY;
+    }
+    else
+    {
+        return cmd.bad_arg();
+    }
     return CmdArgFlags::NONE;
 }
 
@@ -63,7 +81,8 @@ static CmdArgFlags cmd_virtual(const Command &cmd)
 }
 
 static const CommandHandlerTables s_ui_commands{{CommandHandler{"maxhistory", cmd_max_history}},
-    {CommandHandler{"askvideo", cmd_ask_video}, CommandHandler{"virtual", cmd_virtual}}};
+    {CommandHandler{"askvideo", cmd_ask_video}, CommandHandler{"autokey", cmd_auto_key},
+        CommandHandler{"virtual", cmd_virtual}}};
 
 static void add_names(std::set<std::string_view> &names, const std::vector<CommandHandler> &handlers)
 {

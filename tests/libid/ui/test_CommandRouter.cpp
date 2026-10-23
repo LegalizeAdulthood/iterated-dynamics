@@ -21,6 +21,7 @@
 #include <ui/big_while_loop.h>
 #include <ui/history.h>
 #include <ui/id_keys.h>
+#include <ui/slideshw.h>
 #include <ui/video_mode.h>
 
 #include <gmock/gmock.h>
@@ -485,6 +486,58 @@ TEST_F(TestCommandRouter, maxHistoryDebugOverrideRetainsValueValidation)
     }
 }
 
+TEST_F(TestCommandRouter, autoKeyInvalidValue)
+{
+    ValueSaver saved_slides{g_slides, SlidesMode::RECORD};
+    const CommandRouter router;
+    for (const std::string_view value : {"fmeh", "off"})
+    {
+        SCOPED_TRACE(value);
+        CommandProcessor processor{"autokey=" + std::string{value}, CmdFile::AT_CMD_LINE};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+        EXPECT_EQ(SlidesMode::RECORD, g_slides);
+        EXPECT_THAT(result.diagnostics.errors,
+            ElementsAre("Oops. I couldn't understand the argument:\n  autokey=" + std::string{value}));
+    }
+}
+
+TEST_F(TestCommandRouter, autoKeyRecord)
+{
+    const CommandRouter router;
+    for (const CmdFile mode : {CmdFile::AT_CMD_LINE, CmdFile::AT_AFTER_STARTUP})
+    {
+        SCOPED_TRACE(static_cast<int>(mode));
+        ValueSaver saved_slides{g_slides, SlidesMode::OFF};
+        CommandProcessor processor{"autokey=record", mode};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+        EXPECT_EQ(SlidesMode::RECORD, g_slides);
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+    }
+}
+
+TEST_F(TestCommandRouter, autoKeyPlay)
+{
+    const CommandRouter router;
+    for (const CmdFile mode : {CmdFile::AT_CMD_LINE, CmdFile::AT_AFTER_STARTUP})
+    {
+        SCOPED_TRACE(static_cast<int>(mode));
+        ValueSaver saved_slides{g_slides, SlidesMode::OFF};
+        CommandProcessor processor{"autokey=play", mode};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+        EXPECT_EQ(SlidesMode::PLAY, g_slides);
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+    }
+}
+
 class TestCommandRouterFile : public TestCommandRouter
 {
 protected:
@@ -727,6 +780,20 @@ TEST_F(TestCommandRouterFile, maxHistoryUsesLiveOverrideAndRetainsAcceptedFlagsA
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
     EXPECT_FALSE(processor.advance());
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
+    EXPECT_TRUE(fs::remove(m_path));
+}
+
+TEST_F(TestCommandRouterFile, selectedSetRoutesAutokeyModeParameter)
+{
+    ValueSaver saved_slides{g_slides, SlidesMode::OFF};
+    CommandProcessor processor{open_input("entry { autokey=record autokey=play }"), CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(SlidesMode::PLAY, g_slides);
     EXPECT_TRUE(fs::remove(m_path));
 }
 
@@ -1098,6 +1165,39 @@ TEST_F(TestCommandRouterStartup, startupSourcesRouteHistoryCapacityInOrder)
     EXPECT_TRUE(argument.diagnostics.errors.empty());
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, argument.flags);
     EXPECT_EQ(8, g_max_image_history);
+}
+
+TEST_F(TestCommandRouterStartup, startupSourcesRouteAutokeyModeInOrder)
+{
+    ValueSaver saved_slides{g_slides, SlidesMode::OFF};
+    write_source("sstools.ini", "autokey=record\n");
+    write_source("whole.par", "entry { autokey=play }");
+    write_source("selected.par", "ignored { autokey=play }\nchosen { autokey=record }");
+    const CommandRouter router;
+
+    const CommandParseResult configuration{router.process_startup({"id"})};
+
+    EXPECT_TRUE(configuration.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::NONE, configuration.flags);
+    EXPECT_EQ(SlidesMode::RECORD, g_slides);
+
+    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
+
+    EXPECT_TRUE(whole.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::NONE, whole.flags);
+    EXPECT_EQ(SlidesMode::PLAY, g_slides);
+
+    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
+
+    EXPECT_TRUE(selected.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::NONE, selected.flags);
+    EXPECT_EQ(SlidesMode::RECORD, g_slides);
+
+    const CommandParseResult argument{router.process_startup({"id", "@whole", "@selected/chosen", "autokey=play"})};
+
+    EXPECT_TRUE(argument.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::NONE, argument.flags);
+    EXPECT_EQ(SlidesMode::PLAY, g_slides);
 }
 
 TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVideoPromptPreferenceAlone)

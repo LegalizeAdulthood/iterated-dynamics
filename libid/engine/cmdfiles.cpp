@@ -614,23 +614,6 @@ static CmdArgFlags cmd_attenuate(const Command &cmd)
     return CmdArgFlags::NONE;
 }
 
-static CmdArgFlags cmd_auto_key(const Command &cmd)
-{
-    if (cmd.value == "record")
-    {
-        g_slides = SlidesMode::RECORD;
-    }
-    else if (cmd.value == "play")
-    {
-        g_slides = SlidesMode::PLAY;
-    }
-    else
-    {
-        return cmd.bad_arg();
-    }
-    return CmdArgFlags::NONE;
-}
-
 static CmdArgFlags cmd_auto_key_name(const Command &cmd)
 {
     if (const fs::path path{find_file(ReadFile::KEY, fs::path{std::string{cmd.value}})}; !path.empty())
@@ -3228,14 +3211,13 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 160> s_commands{
+static std::array<CommandHandler, 159> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
     CommandHandler{"aspectdrift", cmd_aspect_drift},        //
     CommandHandler{"attack", cmd_attack},                   //
     CommandHandler{"attenuate", cmd_attenuate},             //
-    CommandHandler{"autokey", cmd_auto_key},                //
     CommandHandler{"autokeyname", cmd_auto_key_name},       //
     CommandHandler{"background", cmd_background},           //
     CommandHandler{"bailout", cmd_bailout},                //
