@@ -547,8 +547,8 @@ engine concerns.  Option 1 partitions handlers by ownership: UI handles
 UI parameters and delegates unrecognized names to engine.  Both groups
 share syntax processing and preserve the original parameter order.
 
-Shared syntax, recognition, and source routing are agreed below.
-Remaining design slices 53.5.4 through 53.5.7 settle mixed parameters,
+Shared syntax, recognition, source routing, and mixed-parameter ownership
+are agreed below.  Remaining design slices 53.5.5 through 53.5.7 settle
 defaults, failure behavior, and reporting.  They authorize design
 discussion and plan updates only.  Keep them ahead of the implementation
 slices they produce; do not change parser code before the design is
@@ -603,8 +603,9 @@ engine-to-UI dependencies.
   Preserve the current error text and change flags.
 - UI owns `askvideo`, `virtual`, `maxhistory`, `autokey`, and
   `autokeyname`.  `maxhistory` remains startup-only.  Existing ordinary
-  engine parameters remain engine-owned; mixed parameters such as
-  `video`, `rds`, and `rds-texture` are settled in 53.5.4.
+  engine parameters remain engine-owned.  UI owns the complete `video`,
+  `rds`, and `rds-texture` parameters under the mixed-ownership agreement
+  below.
 - Retain separate startup-only and unrestricted tables within each owner.
   Startup commands are permitted when `CmdFile` is not
   `AT_AFTER_STARTUP`, or when `ALLOW_INIT_COMMANDS_ANYTIME` applies.
@@ -651,8 +652,8 @@ engine-to-UI dependencies.
   For `@scene.par/example` containing `video=F6`, engine opens and locates
   the set, then presents `video=F6` to UI.  UI resolves its binding and
   records the requested mode; engine then advances to the next parameter.
-  Preserve mode-activation timing; mixed-command details remain for
-  53.5.4.  `@` chooses the source, not the handler.
+  Preserve mode-activation timing under the mixed-ownership agreement
+  below.  `@` chooses the source, not the handler.
 - Read and expand sources incrementally.  Do not flatten all inputs or
   open later files before earlier parameters have taken effect.  Keep
   bare-GIF argument recognition in engine source processing.
@@ -676,9 +677,62 @@ engine-to-UI dependencies.
   handlers.  Remove temporary runners once their callers are converted;
   precede any new temporary addition with `// TODO: removed later`.
 - Deferred slices 53.8.1 through 53.8.7 implement source processing and
-  routing; 53.9.1 through 53.9.5 move the initial UI parameters one at a
-  time.  Initialization profiles, detailed failure policy, and result
-  interpretation remain with 53.5.5 through 53.5.7.
+  routing; 53.9.1 through 53.9.9 move the UI parameters and key-name
+  parser one at a time.  Initialization profiles, detailed failure
+  policy, and result interpretation remain with 53.5.5 through 53.5.7.
+
+### Agreed Mixed-Parameter Ownership
+
+- One handler owns each complete parameter.  UI owns `video`, `rds`, and
+  `rds-texture`, including their validation and existing result flags.
+  UI may configure public engine or geometry settings directly; the
+  dependency remains UI-to-engine.  Do not introduce another handler,
+  forwarded command text, duplicate validation, or a negotiation port.
+- Move `cmd_video` to UI.  Resolve the key name against UI-owned bindings
+  and record the resolved mode index, not the key.  Parsing requests a
+  mode; existing startup or parameter-set completion activates it at the
+  current point.  Engine retains key-free active mode information.
+- The pending request `g_init_mode` belongs to UI, unlike the active
+  engine mode.  Design slice 53.5.5 settles its initialization, reset,
+  and restart-suppression handling before implementation.  Do not move
+  those assignments into an engine-to-UI callback or forwarding wrapper.
+- Preserve `video` rejection side effects: malformed key names leave the
+  pending mode unchanged; valid but unbound names clear it.  Preserve
+  `FRACTAL_PARAM | PARAM_3D` on success.  Do not activate a driver or
+  change image dimensions while interpreting the parameter.
+- Move `check_vid_mode_key_name` to UI after the `video` handler moves.
+  Update its existing callers, including configuration-file loading.
+  Remove its engine declaration and `ui/id_keys.h` dependency without
+  retaining a forwarding function.  Keep mode validation in engine and
+  never restore `VideoInfo::key` or relocate UI binding storage there.
+- Move `cmd_rds` and its calibration-bar parser to UI.  Validate the
+  complete parameter once into local values before changing settings.
+  Depth, calibration bars, texture selection, and the texture filename
+  remain geometry inputs; automatic conversion and filename reuse remain
+  UI policy.  No additional geometry parameter handler is needed.
+- `rds=no` disables automatic conversion only.  `yes` and `random`
+  enable automatic conversion with random texture; `texture` enables it
+  with image texture.  Preserve existing field-count, numeric, named-bar,
+  and numeric-bar validation.  Omitted or empty depth and calibration
+  fields retain their current values.  Reuse is enabled only when this
+  parameter selects texture and a filename is already present.
+- Move `cmd_rds_texture` to UI without changing its asymmetric behavior.
+  Always assign the filename; set reuse according to whether it is
+  nonempty.  A nonempty filename also selects texture input.  An empty
+  filename clears the filename and reuse, but leaves texture selection
+  unchanged.  Neither form changes automatic conversion or opens a file.
+- Preserve original parameter order and filename case.  For example,
+  `rds-texture=map.gif rds=random` ends with random input and no reuse;
+  the reverse order ends with texture input and reuse.  Do not replace
+  these effects with a normalized combined mode or deferred actions.
+  Geometry-only parameters such as `stereowidth` and `usegrayscale`
+  remain engine-owned.
+- Deferred slices 53.9.6 through 53.9.9 implement the four focused moves:
+  the `video` handler, key-name parsing, the `rds` handler, and the
+  `rds-texture` handler.  Preserve existing diagnostics and change flags.
+  Reuse current parameter, video, stereo, batch, and autokey coverage;
+  extend it for rejection side effects, omitted fields, order-dependent
+  reuse, and common routing through `@` sources.
 
 ## Remaining Inversion-of-Control Slices
 
@@ -1259,40 +1313,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.5.4. Mixed Parameter Ownership Design
-
-Source: `cmd_video`, `cmd_rds`, `cmd_rds_texture`, video-mode selection,
-`ui/video_mode.h`, `ui/stereo.h`, and `geometry/stereo_params.h`.
-
-Scope: design discussion and plan updates only; no source changes.
-
-Work:
-
-- Classify parameters with both UI and engine effects and agree which
-  handler coordinates each complete parameter.
-- Design `video=F6` handling so UI resolves its separate key-to-mode
-  associations and engine receives mode information, not a key binding.
-  Preserve the distinction between requesting and activating a mode.
-- Include the parser-dependent key-name work deferred from 53.1.3.
-  Specify removal of the marked `ui/video_mode.h` include and direct
-  `g_video_mode_keys` lookup from `cmdfiles.cpp`, and of `ui/id_keys.h`
-  from `engine/video_mode.cpp`.  Do not restore `VideoInfo::key` or move
-  UI binding storage into engine.
-- Separate automatic stereo conversion and texture-filename reuse policy
-  from geometry inputs.  Design coordination for `rds` and `rds-texture`,
-  including omitted values that retain existing engine settings.
-- Agree validation and application order without duplicate geometry
-  validation, reparsing forwarded commands, or engine queries into UI.
-  Keep history, autokey, and conversion runtime state in their UI owners.
-- Record small implementation slices for the individual mixed commands.
-
-Done when: each mixed parameter has explicit ownership and engine-facing
-data, with no renamed or relocated UI dependency.
-
-Validation: plan separate handler and application coverage for video
-bindings, batch image sizing, stereo defaults, texture reuse, and invalid
-mixed values.  No build or manual testing is required.
-
 ### 53.5.5. Parameter Defaults And Reset Design
 
 Source: `init_vars_run`, `init_vars_restart`, `init_vars_fractal`,
@@ -1309,6 +1329,11 @@ Work:
 - Account for video prompting and virtual-screen defaults in
   `init_vars_restart`; do not reset them merely because `cmd_reset`
   invokes `init_vars_fractal`.
+- Include relocation of the pending video request `g_init_mode` to UI.
+  Account for its initial value, initialization assignments, and startup
+  completion's suppression on restart.  Keep active mode data in engine;
+  remove engine reads and writes of the UI request without callbacks.
+  Schedule this work before the `video` handler migration in 53.9.6.
 - Agree how the outer coordinator invokes the appropriate engine and UI
   initialization profiles, including startup-configuration reapplication
   and the existing suppression of mode selection on restart.
@@ -1390,7 +1415,7 @@ no build or manual testing is required.
 Source: `Command` and its syntax helpers in `engine/cmdfiles.cpp`,
 `engine/lowerize_parameter.cpp`, and existing parameter tests.
 
-Prerequisite: complete design slices 53.5.4 through 53.5.7 first.
+Prerequisite: complete design slices 53.5.5 through 53.5.7 first.
 
 Work:
 
@@ -1425,7 +1450,7 @@ is required for this extraction.
 Source: `handle_command`, `CommandHandler`, `cmd_arg`, the engine
 handler tables, and the shared parsed `Command`.
 
-Prerequisites: complete design slices 53.5.4 through 53.5.7 and extract
+Prerequisites: complete design slices 53.5.5 through 53.5.7 and extract
 the shared `Command` in 53.6.  Source integration follows in 53.8.
 
 Work:
@@ -1782,6 +1807,124 @@ Validation: reuse existing handler, startup, and autokey coverage and
 run the full `rt-default` workflow.  No additional manual testing is
 required.
 
+### 53.9.6. Move Video-Selection Parameter Handling To UI
+
+Source: `cmd_video` and its table entry in `engine/cmdfiles.cpp`,
+`ui/video_mode.h`, and the pending mode request.
+
+Prerequisites: 53.9.5 and the pending-mode ownership and initialization
+work agreed in 53.5.5.  All sources already use the common coordinator.
+
+Work:
+
+- Move only `video` interpretation and its table entry to UI.  Use the
+  existing key-name parser and UI binding lookup to record the resolved
+  mode index in the UI-owned pending request.
+- Preserve request versus activation timing, first matching binding,
+  malformed-name versus unbound-name side effects, diagnostics, and the
+  existing `FRACTAL_PARAM | PARAM_3D` result.  Do not activate a mode or
+  change image dimensions during parameter interpretation.
+- Remove the engine handler, table entry, direct binding lookup, and
+  marked `ui/video_mode.h` include from `cmdfiles.cpp`.  Retain one owner;
+  introduce no engine-to-UI call or forwarding function.
+- Move existing handler tests to UI.  Cover success, unchanged active
+  mode before activation, invalid names, absent bindings, and common
+  routing through startup, selected sets, `@` sources, and direct entry.
+
+Done when: only UI interprets `video`, while engine receives key-free
+mode information at the existing activation boundary.
+
+Validation: run focused handler and routing tests, then the full
+`rt-default` workflow.  Reuse existing batch image-sizing and autokey
+coverage; no additional manual testing is required.
+
+### 53.9.7. Move Video Key-Name Parsing To UI
+
+Source: `check_vid_mode_key_name` in `engine/video_mode.cpp`, its public
+declaration, and callers in configuration loading and UI code.
+
+Prerequisite: 53.9.6; engine command handling no longer parses video keys.
+
+Work:
+
+- Move the parser and declaration to `ui/video_mode.cpp` and
+  `ui/video_mode.h`.  Preserve accepted modifiers, case, trailing spaces,
+  invalid-name results, and bounded string-view handling.
+- Update configuration loading, parameter handling, batch-file creation,
+  slideshow processing, and tests to use the UI declaration directly.
+- Remove the obsolete engine declaration, its temporary comment, and
+  `ui/id_keys.h` from `engine/video_mode.cpp`.  Keep disk/display mode
+  validation in engine; do not retain a forwarding wrapper.
+
+Done when: key-name syntax is UI-owned and engine mode validation has no
+UI key dependency.
+
+Validation: reuse existing key-name parser, configuration, parameter,
+slideshow, and batch-file tests.  Run the full `rt-default` workflow;
+no additional manual testing is required.
+
+### 53.9.8. Move Automatic-Stereo Parameter Handling To UI
+
+Source: `cmd_rds`, `parse_rds_bars`, and the `rds` table entry in
+`engine/cmdfiles.cpp`, plus UI stereo policy and geometry settings.
+
+Prerequisite: 53.9.7; all sources already use the common coordinator.
+
+Work:
+
+- Move only `rds` interpretation, its calibration-bar parser, and its
+  table entry to UI.  Validate once into local values before applying
+  settings; configure geometry inputs directly without another handler.
+- Preserve field-count validation, numeric and named calibration bars,
+  and omitted/empty fields retaining existing depth and calibration.
+  `no` changes only automatic conversion; `yes`/`random` select random
+  input; `texture` selects texture input.  Preserve filename-dependent
+  reuse, diagnostics, and `PARAM_3D` on success.
+- Remove the engine handler, private parser, and table entry.  Keep
+  geometry inputs in geometry and conversion/reuse policy in UI.  Leave
+  `stereowidth`, `usegrayscale`, and `rds-texture` handling unchanged.
+- Move existing handler tests to UI.  Add focused coverage for invalid
+  commands leaving settings unchanged, omitted fields, texture reuse,
+  ordering, and the supported common source paths.
+
+Done when: UI owns the complete `rds` parameter without duplicate
+validation or engine queries into UI policy.
+
+Validation: run focused handler and routing tests, then the full
+`rt-default` workflow.  Reuse existing stereo and batch coverage;
+no additional manual testing is required.
+
+### 53.9.9. Move Stereo-Texture Parameter Handling To UI
+
+Source: `cmd_rds_texture` and its table entry in `engine/cmdfiles.cpp`,
+UI stereo policy, and geometry texture inputs.
+
+Prerequisite: 53.9.8; all sources already use the common coordinator.
+
+Work:
+
+- Move only `rds-texture` interpretation and its table entry to UI.
+  Always assign the filename and set reuse from whether it is nonempty.
+  Nonempty input selects texture; empty input leaves texture selection
+  unchanged.  Neither form changes automatic conversion or opens a file.
+- Preserve filename case, diagnostics, and the existing `PARAM_3D`
+  result.  Keep the filename and texture selection as geometry inputs,
+  with reuse and conversion policy in UI.
+- Remove the engine handler and table entry, retaining one owner.
+  Remove `ui/stereo.h` from `cmdfiles.cpp` after its final use is gone;
+  do not replace it with a callback, forwarding function, or UI state
+  relocated into engine.
+- Move existing handler tests to UI.  Cover empty input with texture
+  selection initially both true and false, unchanged conversion state,
+  case preservation, both orders with `rds=random`, and `@` routing.
+
+Done when: UI owns `rds-texture` with its existing semantics, and engine
+parameter handling no longer depends on UI stereo policy.
+
+Validation: run focused handler and routing tests, then the full
+`rt-default` workflow.  Reuse existing stereo serialization and batch
+coverage; no additional manual testing is required.
+
 ## Current Direct And Indirect Input Leaks
 
 The synchronous engine-to-UI render dispatch has been removed.
@@ -1792,16 +1935,21 @@ and setup-policy couplings, not direct input polling:
 - `VideoInfo` is key-free.  UI owns the separate `g_video_mode_keys`
   associations, the selected-entry binding, key lookup, and binding-name
   formatting.  `engine/video_mode.cpp` still includes `ui/id_keys.h`
-  for the deferred key-name parser.  Design slice 53.5.4 covers removal.
+  for the deferred key-name parser.  Slice 53.9.7 moves it to UI after
+  53.9.6 moves the `video` handler and removes the parser's engine use.
+  The pending request `g_init_mode` also remains engine-declared;
+  design slice 53.5.5 covers its UI ownership and reset behavior.
 - `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h`, `ui/history.h`,
   `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  The marked
   `ui/video_mode.h` include permits the temporary mechanical lookup of
-  UI-owned bindings.  Shared syntax, recognition, and routing are agreed;
-  design slices 53.5.4 through 53.5.7 settle the remaining option 1
-  decisions before the deferred implementation removes these dependencies.
+  UI-owned bindings.  Shared syntax, recognition, routing, and mixed
+  ownership are agreed; design slices 53.5.5 through 53.5.7 settle the
+  remaining option 1 decisions before deferred implementation removes
+  these dependencies.  Slices 53.9.1 through 53.9.9 move the UI handlers
+  and key-name parser without changing their semantics.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy;
-  design slice 53.5.4 covers their mixed-parameter boundary.
+  slices 53.9.8 and 53.9.9 move their parameter handling to UI.
 - GIF evolution records and comparisons are I/O-owned; public GIF metadata
   headers no longer import UI.  `io/loadfile.cpp` explicitly includes
   `ui/evolve.h` for its existing application of evolution runtime state.
