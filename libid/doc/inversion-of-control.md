@@ -1480,31 +1480,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.8.6.3. Move Pending-Mode Initialization And Completion Policy
-
-Source: the pending-mode assignment in restart initialization and mode
-suppression at startup completion.
-
-Prerequisite: 53.8.6.2.
-
-Work:
-
-- Move clearing the request to `-1` into UI `reset_restart_defaults`.
-  Keep restart-only mode suppression in UI startup completion, preserving
-  first-init/debug timing and the distinct fallback path unchanged.
-- Leave storage engine-declared until 53.9.6 moves its engine handler.
-  Mark this temporary declaration `// TODO: removed later`.  Do not add
-  an engine include, setter, or callback into UI to bridge the interval.
-- Preserve the active mode, pending image rules, and explicit `reset=`
-  leaving the pending mode alone.  No initializer activates a mode.
-
-Done when: pending-mode defaults and completion policy are UI-owned,
-ready for storage to move with the `video` handler.
-
-Validation: cover first startup, restart suppression, debug override,
-fallback, and explicit reset.  Run the full `rt-default` workflow;
-no additional manual testing is required.
-
 ### 53.8.7. Remove Superseded Command Entry Paths
 
 Source: old whole-source runners in `engine/CommandProcessor.cpp`,

@@ -19,6 +19,8 @@
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 #include <ui/big_while_loop.h>
+#include <ui/id_keys.h>
+#include <ui/video_mode.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -658,6 +660,7 @@ TEST_F(TestCommandRouterStartup, initializesBeforeConfigurationAndPreservesIniti
     const fs::path process_state{m_directory / "process-state"};
     g_temp_dir = process_state;
     g_max_iterations = 999;
+    g_init_mode = 9;
     EXPECT_CALL(m_ui_handler, Call(_))
         .WillOnce(
             [&](const Command &)
@@ -692,6 +695,7 @@ TEST_F(TestCommandRouterStartup, restartPreservesProcessStateAndSuppressesStartu
     g_first_init = false;
     g_temp_dir = process_state;
     g_max_iterations = 999;
+    g_init_mode = 9;
     EXPECT_CALL(m_ui_handler, Call(_))
         .WillOnce(
             [&](const Command &)
@@ -699,6 +703,7 @@ TEST_F(TestCommandRouterStartup, restartPreservesProcessStateAndSuppressesStartu
                 EXPECT_FALSE(g_first_init);
                 EXPECT_EQ(process_state, g_temp_dir);
                 EXPECT_EQ(150, g_max_iterations);
+                EXPECT_EQ(-1, g_init_mode);
                 g_max_iterations = 321;
                 g_init_mode = 7;
                 g_show_file = ShowFile::LOAD_IMAGE;
@@ -724,6 +729,7 @@ TEST_F(TestCommandRouterStartup, debugOverridePreservesFirstInitAndExistingResta
         .WillRepeatedly(
             [](const Command &)
             {
+                EXPECT_EQ(-1, g_init_mode);
                 g_debug_flag = DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME;
                 g_init_mode = 7;
                 g_show_file = ShowFile::LOAD_IMAGE;
@@ -733,6 +739,7 @@ TEST_F(TestCommandRouterStartup, debugOverridePreservesFirstInitAndExistingResta
     {
         SCOPED_TRACE(first_init);
         g_first_init = first_init;
+        g_init_mode = 9;
 
         const CommandParseResult result{m_router.process_startup({"id", "ui=yes"})};
 
@@ -752,6 +759,7 @@ TEST_F(TestCommandRouterStartup, fallbackReappliesOnlyDefaultsAndConfiguration)
         .WillRepeatedly(
             [](const Command &)
             {
+                EXPECT_EQ(-1, g_init_mode);
                 g_init_mode = 7;
                 g_show_file = ShowFile::LOAD_IMAGE;
                 g_colors_preloaded = true;
@@ -764,6 +772,7 @@ TEST_F(TestCommandRouterStartup, fallbackReappliesOnlyDefaultsAndConfiguration)
     const fs::path process_state{m_directory / "process-state"};
     g_temp_dir = process_state;
     g_first_init = false;
+    g_init_mode = 9;
 
     const CommandParseResult result{router.reset_startup()};
 
@@ -956,6 +965,74 @@ TEST_F(TestCommandRouterStartup, explicitResetPreservesVirtualScreenPreference)
         EXPECT_TRUE(result.diagnostics.errors.empty());
         EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
         EXPECT_EQ(virtual_screens, g_virtual_screens);
+    }
+}
+
+TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeavePendingModeAlone)
+{
+    g_init_mode = 7;
+
+    engine::reset_restart_defaults();
+
+    EXPECT_EQ(7, g_init_mode);
+}
+
+TEST_F(TestCommandRouterStartup, pendingModeDefaultsAndOverridesDoNotActivateVideoMode)
+{
+    const VideoInfo active{800, 600, 256, nullptr, "active"};
+    ValueSaver saved_adapter{g_adapter, 0};
+    ValueSaver saved_entry{g_video_entry, active};
+    ValueSaver saved_width{g_screen_x_dots, 800};
+    ValueSaver saved_height{g_screen_y_dots, 600};
+    ValueSaver saved_colors{g_colors, 256};
+    ValueSaver saved_table_length{g_video_table_len, 2};
+    ValueSaver saved_first_key{g_video_mode_keys[0], ID_KEY_F6};
+    ValueSaver saved_second_key{g_video_mode_keys[1], ID_KEY_F5};
+    g_init_mode = 9;
+    write_source("sstools.ini", "ui=before video=F6\n");
+    const CommandRouter router{CommandHandlerTables{{}, m_ui}, engine_command_handlers()};
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .WillOnce(
+            [](const Command &cmd)
+            {
+                EXPECT_EQ(CmdFile::SSTOOLS_INI, cmd.mode);
+                EXPECT_EQ(-1, g_init_mode);
+                return CmdArgFlags::NONE;
+            })
+        .WillOnce(
+            [](const Command &cmd)
+            {
+                EXPECT_EQ(CmdFile::AT_CMD_LINE, cmd.mode);
+                EXPECT_EQ(0, g_init_mode);
+                return CmdArgFlags::NONE;
+            });
+
+    const CommandParseResult result{router.process_startup({"id", "ui=after", "video=F5"})};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_EQ(1, g_init_mode);
+    EXPECT_EQ(0, g_adapter);
+    EXPECT_EQ(active, g_video_entry);
+    EXPECT_EQ(800, g_screen_x_dots);
+    EXPECT_EQ(600, g_screen_y_dots);
+    EXPECT_EQ(256, g_colors);
+}
+
+TEST_F(TestCommandRouterStartup, explicitResetPreservesPendingMode)
+{
+    const CommandRouter router;
+    for (const int mode : {-1, 7})
+    {
+        SCOPED_TRACE(mode);
+        g_init_mode = mode;
+        CommandProcessor processor{"reset=1960", CmdFile::AT_AFTER_STARTUP};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
+        EXPECT_EQ(mode, g_init_mode);
     }
 }
 

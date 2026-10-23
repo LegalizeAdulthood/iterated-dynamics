@@ -79,6 +79,7 @@ static void reset_restart_defaults()
 {
     g_ask_video = true;
     g_virtual_screens = true;
+    g_init_mode = -1;
     engine::reset_restart_defaults();
 }
 

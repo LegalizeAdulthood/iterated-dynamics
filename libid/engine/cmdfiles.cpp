@@ -194,7 +194,6 @@ void reset_restart_defaults()                          // <ins> key init
     g_init_batch = BatchMode::NONE;                    // not in batch mode
     g_check_cur_dir = false;                           // flag to check current dire for files
     g_save_time_interval = 0;                          // no auto-save
-    g_init_mode = -1;                                  // no initial video mode
     reset_viewport_defaults();
     g_orbit_delay = 0;                                 // full speed orbits
     g_orbit_skip_points = 0;                           // skip no orbit points

@@ -42,7 +42,8 @@ inline bool operator!=(const VideoInfo &lhs, const VideoInfo &rhs)
 }
 
 extern int g_adapter;             // index into g_video_table[]
-extern int g_init_mode;           // initial video mode
+// TODO: removed later
+extern int g_init_mode;           // pending video mode
 extern int g_colors;              // maximum colors available
 extern int g_screen_x_dots;       // # of dots on the physical screen
 extern int g_screen_y_dots;       //
