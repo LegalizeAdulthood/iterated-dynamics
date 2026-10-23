@@ -69,7 +69,6 @@
 #include <ui/comments.h>
 #include <ui/id_keys.h>
 #include <ui/make_batch_file.h>
-#include <ui/slideshw.h>
 #include <ui/stereo.h>
 #include <ui/video_mode.h>
 
@@ -1716,16 +1715,6 @@ TEST_F(TestParameterCommand, saveTime)
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(20, g_save_time_interval);
-}
-
-TEST_F(TestParameterCommand, autoKeyName)
-{
-    ValueSaver saved_auto_key_name{g_auto_name, "foo.key"};
-
-    exec_cmd_arg("autokeyname=baz.key", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("baz.key", g_auto_name);
 }
 
 class ParamSaver

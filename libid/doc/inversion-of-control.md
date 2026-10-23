@@ -1480,31 +1480,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.9.5. Move Autokey-Filename Parameter Handling To UI
-
-Source: `cmd_auto_key_name` and its table entry in `engine/cmdfiles.cpp`.
-
-Prerequisite: 53.9.4; all application sources already use the
-common coordinator.
-
-Work:
-
-- Move only `autokeyname` interpretation and its table entry to UI.
-- Preserve filename case, lookup and fallback behavior, and the existing
-  `NONE` result.  Keep script runtime state in UI.
-- Remove its engine handler and table entry, retaining one owner.
-  Remove engine UI includes only when their final use is gone; leave
-  default/reset changes to the agreed initialization slices.
-- Move existing handler tests to the UI owner and verify equivalent
-  routing from every source where the parameter is permitted.  Do not
-  introduce a forwarding function or engine callback into UI.
-
-Done when: `autokeyname` is UI-owned and no source bypasses its handler.
-
-Validation: reuse existing handler, startup, and autokey coverage and
-run the full `rt-default` workflow.  No additional manual testing is
-required.
-
 ### 53.9.6. Move Video-Selection Parameter Handling To UI
 
 Source: `cmd_video` and its table entry in `engine/cmdfiles.cpp`,

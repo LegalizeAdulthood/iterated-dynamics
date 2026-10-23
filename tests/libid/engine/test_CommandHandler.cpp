@@ -202,6 +202,15 @@ TEST_F(TestEngineCommand, doesNotOwnAutokeyModeParameter)
     EXPECT_TRUE(m_result.diagnostics.errors.empty());
 }
 
+TEST_F(TestEngineCommand, doesNotOwnAutokeyFilenameParameter)
+{
+    const Command cmd{"autokeyname=demo.key", CmdFile::AT_CMD_LINE, m_result};
+
+    EXPECT_FALSE(handle_engine_command(cmd).has_value());
+
+    EXPECT_TRUE(m_result.diagnostics.errors.empty());
+}
+
 TEST_F(TestEngineCommand, recognizesAcceptanceWithoutFlags)
 {
     const Command cmd{"fpu=387", CmdFile::AT_CMD_LINE, m_result};

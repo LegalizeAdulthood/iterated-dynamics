@@ -68,7 +68,6 @@
 #include "misc/id.h"
 #include "misc/version.h"
 #include "ui/big_while_loop.h"
-#include "ui/slideshw.h"
 #include "ui/stereo.h"
 // TODO: removed later
 // Parameter processing is decoupled from UI settings in slice 53.5.
@@ -610,19 +609,6 @@ static CmdArgFlags cmd_attenuate(const Command &cmd)
     else
     {
         return cmd.bad_arg();
-    }
-    return CmdArgFlags::NONE;
-}
-
-static CmdArgFlags cmd_auto_key_name(const Command &cmd)
-{
-    if (const fs::path path{find_file(ReadFile::KEY, fs::path{std::string{cmd.value}})}; !path.empty())
-    {
-        g_auto_name = path;
-    }
-    else
-    {
-        g_auto_name = std::string{cmd.value};
     }
     return CmdArgFlags::NONE;
 }
@@ -3211,14 +3197,13 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 159> s_commands{
+static std::array<CommandHandler, 158> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
     CommandHandler{"aspectdrift", cmd_aspect_drift},        //
     CommandHandler{"attack", cmd_attack},                   //
     CommandHandler{"attenuate", cmd_attenuate},             //
-    CommandHandler{"autokeyname", cmd_auto_key_name},       //
     CommandHandler{"background", cmd_background},           //
     CommandHandler{"bailout", cmd_bailout},                //
     CommandHandler{"bailoutest", cmd_bailout_test},        //

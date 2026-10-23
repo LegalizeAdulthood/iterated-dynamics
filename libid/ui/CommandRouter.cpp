@@ -5,6 +5,7 @@
 
 #include "engine/CommandProcessor.h"
 #include "engine/VideoInfo.h"
+#include "io/library.h"
 #include "io/loadfile.h"
 #include "misc/debug_flags.h"
 #include "ui/big_while_loop.h"
@@ -13,12 +14,16 @@
 
 #include <fmt/format.h>
 
+#include <filesystem>
 #include <optional>
 #include <set>
 #include <stdexcept>
+#include <string>
 #include <string_view>
 #include <utility>
 #include <vector>
+
+namespace fs = std::filesystem;
 
 using namespace id::engine;
 using namespace id::io;
@@ -55,6 +60,19 @@ static CmdArgFlags cmd_auto_key(const Command &cmd)
     return CmdArgFlags::NONE;
 }
 
+static CmdArgFlags cmd_auto_key_name(const Command &cmd)
+{
+    if (const fs::path path{find_file(ReadFile::KEY, fs::path{std::string{cmd.value}})}; !path.empty())
+    {
+        g_auto_name = path;
+    }
+    else
+    {
+        g_auto_name = std::string{cmd.value};
+    }
+    return CmdArgFlags::NONE;
+}
+
 static CmdArgFlags cmd_max_history(const Command &cmd)
 {
     if (cmd.num_val == NON_NUMERIC)
@@ -82,7 +100,7 @@ static CmdArgFlags cmd_virtual(const Command &cmd)
 
 static const CommandHandlerTables s_ui_commands{{CommandHandler{"maxhistory", cmd_max_history}},
     {CommandHandler{"askvideo", cmd_ask_video}, CommandHandler{"autokey", cmd_auto_key},
-        CommandHandler{"virtual", cmd_virtual}}};
+        CommandHandler{"autokeyname", cmd_auto_key_name}, CommandHandler{"virtual", cmd_virtual}}};
 
 static void add_names(std::set<std::string_view> &names, const std::vector<CommandHandler> &handlers)
 {

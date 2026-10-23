@@ -538,6 +538,28 @@ TEST_F(TestCommandRouter, autoKeyPlay)
     }
 }
 
+TEST_F(TestCommandRouter, autoKeyNamePreservesFallbackFilename)
+{
+    ValueSaver saved_auto_key_name{g_auto_name, "foo.key"};
+    const CommandRouter router;
+    for (const CmdFile mode : {CmdFile::AT_CMD_LINE, CmdFile::AT_AFTER_STARTUP})
+    {
+        SCOPED_TRACE(static_cast<int>(mode));
+        for (const std::string_view name : {"baz.key", "Missing/MixedCaseAutoKeyName.KEY"})
+        {
+            SCOPED_TRACE(name);
+            CommandProcessor processor{"autokeyname=" + std::string{name}, mode};
+
+            const CommandParseResult result{router.process(processor)};
+
+            EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+            EXPECT_EQ(fs::path{name}, g_auto_name);
+            EXPECT_TRUE(result.diagnostics.errors.empty());
+            EXPECT_TRUE(result.diagnostics.warnings.empty());
+        }
+    }
+}
+
 class TestCommandRouterFile : public TestCommandRouter
 {
 protected:
@@ -794,6 +816,22 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesAutokeyModeParameter)
     EXPECT_EQ(CmdArgFlags::NONE, result.flags);
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_EQ(SlidesMode::PLAY, g_slides);
+    EXPECT_TRUE(fs::remove(m_path));
+}
+
+TEST_F(TestCommandRouterFile, selectedSetRoutesAutokeyFilenameParameter)
+{
+    ValueSaver saved_auto_key_name{g_auto_name, "foo.key"};
+    CommandProcessor processor{
+        open_input("entry { autokeyname=SelectedAutokeyFallback.KEY }"), CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_EQ(fs::path{"SelectedAutokeyFallback.KEY"}, g_auto_name);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_TRUE(result.diagnostics.warnings.empty());
     EXPECT_TRUE(fs::remove(m_path));
 }
 
@@ -1198,6 +1236,67 @@ TEST_F(TestCommandRouterStartup, startupSourcesRouteAutokeyModeInOrder)
     EXPECT_TRUE(argument.diagnostics.errors.empty());
     EXPECT_EQ(CmdArgFlags::NONE, argument.flags);
     EXPECT_EQ(SlidesMode::PLAY, g_slides);
+}
+
+TEST_F(TestCommandRouterStartup, autoKeyNameFindsLibraryKeyFileWithOriginalCase)
+{
+    ValueSaver saved_auto_key_name{g_auto_name, "foo.key"};
+    ValueSaver saved_check_cur_dir{g_check_cur_dir, false};
+    clear_read_library_path();
+    add_read_library(m_library);
+    fs::create_directory(m_library / "key");
+    write_source("key/MixedCase.KEY", "ESC\n");
+    CommandProcessor processor{"autokeyname=MixedCase.KEY", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_EQ(m_library / "key/MixedCase.KEY", g_auto_name);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_TRUE(result.diagnostics.warnings.empty());
+    EXPECT_TRUE(fs::remove(m_library / "key/MixedCase.KEY"));
+    EXPECT_TRUE(fs::remove(m_library / "key"));
+}
+
+TEST_F(TestCommandRouterStartup, startupSourcesRouteAutokeyFilenameInOrder)
+{
+    ValueSaver saved_auto_key_name{g_auto_name, "foo.key"};
+    write_source("sstools.ini", "autokeyname=ConfigAutoKeyRoute.KEY\n");
+    write_source("whole.par", "entry { autokeyname=WholeAutoKeyRoute.KEY }");
+    write_source("selected.par",
+        "ignored { autokeyname=IgnoredAutoKeyRoute.KEY }\n"
+        "chosen { autokeyname=SelectedAutoKeyRoute.KEY }");
+    const CommandRouter router;
+
+    const CommandParseResult configuration{router.process_startup({"id"})};
+
+    EXPECT_EQ(CmdArgFlags::NONE, configuration.flags);
+    EXPECT_EQ(fs::path{"ConfigAutoKeyRoute.KEY"}, g_auto_name);
+    EXPECT_TRUE(configuration.diagnostics.errors.empty());
+    EXPECT_TRUE(configuration.diagnostics.warnings.empty());
+
+    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
+
+    EXPECT_EQ(CmdArgFlags::NONE, whole.flags);
+    EXPECT_EQ(fs::path{"WholeAutoKeyRoute.KEY"}, g_auto_name);
+    EXPECT_TRUE(whole.diagnostics.errors.empty());
+    EXPECT_TRUE(whole.diagnostics.warnings.empty());
+
+    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
+
+    EXPECT_EQ(CmdArgFlags::NONE, selected.flags);
+    EXPECT_EQ(fs::path{"SelectedAutoKeyRoute.KEY"}, g_auto_name);
+    EXPECT_TRUE(selected.diagnostics.errors.empty());
+    EXPECT_TRUE(selected.diagnostics.warnings.empty());
+
+    const CommandParseResult argument{
+        router.process_startup({"id", "@whole", "@selected/chosen", "autokeyname=ArgumentAutoKeyRoute.KEY"})};
+
+    EXPECT_EQ(CmdArgFlags::NONE, argument.flags);
+    EXPECT_EQ(fs::path{"ArgumentAutoKeyRoute.KEY"}, g_auto_name);
+    EXPECT_TRUE(argument.diagnostics.errors.empty());
+    EXPECT_TRUE(argument.diagnostics.warnings.empty());
 }
 
 TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVideoPromptPreferenceAlone)
