@@ -816,8 +816,7 @@ TEST_F(TestCommandRouterStartup, eitherOwnerRejectionContinuesArgumentsButStopsI
 TEST_F(TestCommandRouterStartup, initializesBeforeConfigurationAndPreservesInitialRequests)
 {
     write_source("sstools.ini", "ui=yes\n");
-    const fs::path process_state{m_directory / "process-state"};
-    g_temp_dir = process_state;
+    g_temp_dir.clear();
     g_max_iterations = 999;
     g_init_mode = 9;
     EXPECT_CALL(m_ui_handler, Call(_))
@@ -825,7 +824,7 @@ TEST_F(TestCommandRouterStartup, initializesBeforeConfigurationAndPreservesIniti
             [&](const Command &)
             {
                 EXPECT_TRUE(g_first_init);
-                EXPECT_NE(process_state, g_temp_dir);
+                EXPECT_FALSE(g_temp_dir.empty());
                 EXPECT_EQ(FractalType::MANDEL, g_fractal_type);
                 EXPECT_EQ(150, g_max_iterations);
                 EXPECT_EQ(-1, g_init_mode);

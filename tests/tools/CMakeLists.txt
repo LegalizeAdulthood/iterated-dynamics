@@ -31,6 +31,12 @@ add_executable(check-image-restore check_image_restore.cpp)
 target_link_libraries(check-image-restore PRIVATE libid fmt::fmt-header-only)
 target_folder(check-image-restore "Tests/Tools")
 
+if(ID_USE_WX)
+    foreach(checker IN ITEMS check-command-actions check-command-diagnostics check-image-restore)
+        target_sources(${checker} PRIVATE wx_driver_stubs.cpp)
+    endforeach()
+endif()
+
 add_executable(check-standard-resume check_standard_resume.cpp)
 target_link_libraries(check-standard-resume PRIVATE image-tool libid)
 target_folder(check-standard-resume "Tests/Tools")
