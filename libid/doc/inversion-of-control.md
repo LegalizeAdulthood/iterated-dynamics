@@ -547,12 +547,11 @@ engine concerns.  Option 1 partitions handlers by ownership: UI handles
 UI parameters and delegates unrecognized names to engine.  Both groups
 share syntax processing and preserve the original parameter order.
 
-The shared syntax design is agreed below.  Remaining design slices
-53.5.2 through 53.5.7 settle recognition, routing, mixed parameters,
-defaults, failure behavior, and reporting.  They authorize design
-discussion and plan updates only.  Keep them ahead of the implementation
-slices they produce; do not change parser code before the design is
-agreed.
+Shared syntax and recognition are agreed below.  Remaining design
+slices 53.5.3 through 53.5.7 settle routing, mixed parameters, defaults,
+failure behavior, and reporting.  They authorize design discussion and
+plan updates only.  Keep them ahead of the implementation slices they
+produce; do not change parser code before the design is agreed.
 
 Until then, defer changes to command and parameter parsing, including UI
 effects and `video=F6` resolution.  Do not bypass this restriction with
@@ -586,6 +585,39 @@ engine-to-UI dependencies.
   the nonnumeric value.  Do not redesign decoding during extraction.
 - Implement the extraction and direct syntax tests in deferred slice
   53.6, after the remaining design discussions are complete.
+
+### Agreed Recognition
+
+- Reuse `std::optional<CmdArgFlags>` for each handler group.  An empty
+  optional means the group does not own the name and permits delegation.
+  `NONE` and other nonnegative flags mean acceptance; `BAD_ARG` means
+  recognition followed by rejection.  Neither acceptance nor rejection
+  permits delegation.
+- UI handles its names first.  Delegate to engine only for an empty UI
+  result.  Reject syntax errors before either group runs.  If both groups
+  return empty, the outer coordinator calls `Command::bad_arg()` once.
+  Do not append another diagnostic for a rejection already reported.
+- Recognize ownership before checking permission.  A restricted UI name
+  remains UI-owned and is rejected without falling through to engine.
+  Preserve the current error text and change flags.
+- UI owns `askvideo`, `virtual`, `maxhistory`, `autokey`, and
+  `autokeyname`.  `maxhistory` remains startup-only.  Existing ordinary
+  engine parameters remain engine-owned; mixed parameters such as
+  `video`, `rds`, and `rds-texture` are settled in 53.5.4.
+- Retain separate startup-only and unrestricted tables within each owner.
+  Startup commands are permitted when `CmdFile` is not
+  `AT_AFTER_STARTUP`, or when `ALLOW_INIT_COMMANDS_ANYTIME` applies.
+  Evaluate eligibility for each parameter rather than snapshotting the
+  debug override for the whole source.
+- Require unique names within and across all owner tables, including
+  startup-only versus unrestricted tables.  Validate the actual assembled
+  metadata once before executing parameters.  Report duplicate ownership
+  with `std::logic_error`, not lookup precedence or assertions.  The
+  assembly point is part of source-routing design 53.5.3.
+- Reuse existing parameter tests.  Add focused coverage for delegation,
+  rejection without delegation, startup restrictions and their override,
+  single diagnostic emission, and duplicate ownership.  Deferred slice
+  53.7 implements this contract after the remaining design discussions.
 
 ## Remaining Inversion-of-Control Slices
 
@@ -1166,34 +1198,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.5.2. Parameter Recognition And Errors Design
-
-Source: `cmd_arg`, `handle_command`, `s_startup_commands`, `s_commands`,
-`CmdFile`, and `CommandDiagnostics` in the command parser.
-
-Scope: design discussion and plan updates only; no source changes.
-
-Work:
-
-- Design UI-first handling followed by engine delegation only when UI
-  does not recognize the parameter name.  Distinguish that outcome from
-  acceptance and rejection of a recognized parameter.
-- Assign one owner to each name.  Cover video prompting, virtual screens,
-  history capacity, and autokey mode/name; identify mixed parameters for
-  53.5.4.  Do not use current global-variable placement as proof of owner.
-- Preserve startup-only restrictions, processing context, the existing
-  debug override, and diagnostic conventions across both handler groups.
-- Decide how duplicate names are detected without relying on lookup
-  priority to conceal ambiguous ownership.
-- Record agreed result handling and focused implementation slices.
-
-Done when: ownership, delegation, context restrictions, and error
-reporting have an agreed contract.
-
-Validation: specify tests for unknown names, malformed UI values such as
-`maxhistory=garbage`, restricted commands, and duplicate ownership.
-Review existing diagnostics tests; no build or manual testing is required.
-
 ### 53.5.3. Parameter Source Routing Design
 
 Source: `cmd_files`, `process_sstools_ini`, `process_simple_command`,
@@ -1357,7 +1361,7 @@ no build or manual testing is required.
 Source: `Command` and its syntax helpers in `engine/cmdfiles.cpp`,
 `engine/lowerize_parameter.cpp`, and existing parameter tests.
 
-Prerequisite: complete design slices 53.5.2 through 53.5.7 first.
+Prerequisite: complete design slices 53.5.3 through 53.5.7 first.
 
 Work:
 
@@ -1387,6 +1391,48 @@ Validation: run focused syntax and parameter tests, then the full
 regression coverage; do not add redundant image tests.  No manual testing
 is required for this extraction.
 
+### 53.7. Separate Command Recognition And Rejection
+
+Source: `handle_command`, `CommandHandler`, `cmd_arg`, the owner tables,
+and the source coordinator agreed in design slice 53.5.3.
+
+Prerequisites: complete design slices 53.5.3 through 53.5.7 and extract
+the shared `Command` in 53.6.  Settle source integration and placement
+with 53.5.3 before implementing this slice.
+
+Work:
+
+- Implement the agreed optional-result contract with the shared
+  `const Command &`.  Preserve the distinction between an unknown name,
+  acceptance without change flags, acceptance with flags, and rejection.
+- Look up ownership before checking startup eligibility.  Reject a
+  recognized but restricted name without invoking its handler or
+  delegating to another owner.  Preserve the existing per-parameter debug
+  override and diagnostic behavior.
+- At the agreed coordinator, stop on syntax errors, try UI first, and
+  delegate to engine only for an empty UI result.  Report a name unknown
+  to both groups once; do not duplicate a handler's error diagnostic.
+- Validate uniqueness of the assembled owner tables once before command
+  execution.  Include duplicates within an owner and across startup-only
+  and unrestricted groups.  Throw `std::logic_error` for a conflict;
+  do not introduce a mutable function-static validation cache.
+- Keep parameter value interpretation, change flags, and source-specific
+  continuation rules unchanged.  Do not combine unrelated setting moves
+  with this dispatch-contract change; source routing and individual
+  handler migrations must have their own agreed implementation slices.
+- Add focused behavioral tests using handler metadata and invocation
+  checks, not source-grep tests.  Cover unknown-name delegation, accepted
+  `NONE`, malformed recognized values, restricted commands, the debug
+  override, one diagnostic per rejection, and duplicate ownership.
+
+Done when: only an unrecognized name permits delegation, restricted and
+invalid names remain with their owner, and ambiguous ownership is
+rejected before parameters execute.
+
+Validation: run focused recognition, context, and diagnostic tests, then
+the full `rt-default` workflow.  Reuse existing parameter validation
+coverage.  No manual testing is required for this contract.
+
 ## Current Direct And Indirect Input Leaks
 
 The synchronous engine-to-UI render dispatch has been removed.
@@ -1401,9 +1447,9 @@ and setup-policy couplings, not direct input polling:
 - `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h`, `ui/history.h`,
   `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  The marked
   `ui/video_mode.h` include permits the temporary mechanical lookup of
-  UI-owned bindings.  Shared syntax is agreed; design slices 53.5.2
-  through 53.5.7 settle the remaining option 1 decisions before separate
-  implementation slices remove these dependencies.
+  UI-owned bindings.  Shared syntax and recognition are agreed; design
+  slices 53.5.3 through 53.5.7 settle the remaining option 1 decisions
+  before separate implementation slices remove these dependencies.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy;
   design slice 53.5.4 covers their mixed-parameter boundary.
