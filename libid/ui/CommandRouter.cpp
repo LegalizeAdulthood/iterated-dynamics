@@ -4,12 +4,14 @@
 #include "ui/CommandRouter.h"
 
 #include "engine/CommandProcessor.h"
+#include "geometry/stereo_params.h"
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "misc/debug_flags.h"
 #include "ui/big_while_loop.h"
 #include "ui/history.h"
 #include "ui/slideshw.h"
+#include "ui/stereo.h"
 #include "ui/video_mode.h"
 
 #include <fmt/format.h>
@@ -26,6 +28,7 @@
 namespace fs = std::filesystem;
 
 using namespace id::engine;
+using namespace id::geometry;
 using namespace id::io;
 using namespace id::misc;
 
@@ -87,6 +90,79 @@ static CmdArgFlags cmd_max_history(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
+static std::optional<CalibrationBars> parse_rds_bars(const Command &cmd)
+{
+    const std::string_view value = cmd.string_val(2);
+    if (value == "none")
+    {
+        return CalibrationBars::NONE;
+    }
+    if (value == "middle")
+    {
+        return CalibrationBars::MIDDLE;
+    }
+    if (value == "top")
+    {
+        return CalibrationBars::TOP;
+    }
+
+    if (!cmd.has_val[2] || cmd.int_vals[2] < +CalibrationBars::NONE || cmd.int_vals[2] > +CalibrationBars::TOP)
+    {
+        return {};
+    }
+    return static_cast<CalibrationBars>(cmd.int_vals[2]);
+}
+
+static CmdArgFlags cmd_rds(const Command &cmd)
+{
+    if (cmd.total_params < 1 || cmd.total_params > 3)
+    {
+        return cmd.bad_arg();
+    }
+    const std::string_view mode = cmd.string_val(0);
+    if (mode == "no")
+    {
+        if (cmd.total_params != 1)
+        {
+            return cmd.bad_arg();
+        }
+        g_auto_stereo_batch = false;
+        return CmdArgFlags::PARAM_3D;
+    }
+    if (mode != "yes" && mode != "random" && mode != "texture")
+    {
+        return cmd.bad_arg();
+    }
+
+    int depth = g_auto_stereo_depth;
+    if (cmd.total_params > 1 && !cmd.string_val(1).empty())
+    {
+        if (!cmd.has_val[1])
+        {
+            return cmd.bad_arg();
+        }
+        depth = cmd.int_vals[1];
+    }
+
+    CalibrationBars bars = g_calibrate;
+    if (cmd.total_params > 2 && !cmd.string_val(2).empty())
+    {
+        const std::optional<CalibrationBars> parsed_bars = parse_rds_bars(cmd);
+        if (!parsed_bars.has_value())
+        {
+            return cmd.bad_arg();
+        }
+        bars = *parsed_bars;
+    }
+
+    g_auto_stereo_batch = true;
+    g_use_stereo_texture = mode == "texture";
+    g_stereo_texture_reuse = g_use_stereo_texture && !g_stereo_texture_filename.empty();
+    g_auto_stereo_depth = depth;
+    g_calibrate = bars;
+    return CmdArgFlags::PARAM_3D;
+}
+
 static CmdArgFlags cmd_video(const Command &cmd)
 {
     const int key = check_vid_mode_key_name(cmd.value);
@@ -115,8 +191,8 @@ static CmdArgFlags cmd_virtual(const Command &cmd)
 
 static const CommandHandlerTables s_ui_commands{{CommandHandler{"maxhistory", cmd_max_history}},
     {CommandHandler{"askvideo", cmd_ask_video}, CommandHandler{"autokey", cmd_auto_key},
-        CommandHandler{"autokeyname", cmd_auto_key_name}, CommandHandler{"video", cmd_video},
-        CommandHandler{"virtual", cmd_virtual}}};
+        CommandHandler{"autokeyname", cmd_auto_key_name}, CommandHandler{"rds", cmd_rds},
+        CommandHandler{"video", cmd_video}, CommandHandler{"virtual", cmd_virtual}}};
 
 static void add_names(std::set<std::string_view> &names, const std::vector<CommandHandler> &handlers)
 {

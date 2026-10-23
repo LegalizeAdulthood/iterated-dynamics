@@ -2497,79 +2497,6 @@ static CmdArgFlags cmd_r_seed(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
-static std::optional<CalibrationBars> parse_rds_bars(const Command &cmd)
-{
-    const std::string_view value = cmd.string_val(2);
-    if (value == "none")
-    {
-        return CalibrationBars::NONE;
-    }
-    if (value == "middle")
-    {
-        return CalibrationBars::MIDDLE;
-    }
-    if (value == "top")
-    {
-        return CalibrationBars::TOP;
-    }
-
-    if (!cmd.has_val[2] || cmd.int_vals[2] < +CalibrationBars::NONE || cmd.int_vals[2] > +CalibrationBars::TOP)
-    {
-        return {};
-    }
-    return static_cast<CalibrationBars>(cmd.int_vals[2]);
-}
-
-static CmdArgFlags cmd_rds(const Command &cmd)
-{
-    if (cmd.total_params < 1 || cmd.total_params > 3)
-    {
-        return cmd.bad_arg();
-    }
-    const std::string_view mode = cmd.string_val(0);
-    if (mode == "no")
-    {
-        if (cmd.total_params != 1)
-        {
-            return cmd.bad_arg();
-        }
-        g_auto_stereo_batch = false;
-        return CmdArgFlags::PARAM_3D;
-    }
-    if (mode != "yes" && mode != "random" && mode != "texture")
-    {
-        return cmd.bad_arg();
-    }
-
-    int depth = g_auto_stereo_depth;
-    if (cmd.total_params > 1 && !cmd.string_val(1).empty())
-    {
-        if (!cmd.has_val[1])
-        {
-            return cmd.bad_arg();
-        }
-        depth = cmd.int_vals[1];
-    }
-
-    CalibrationBars bars = g_calibrate;
-    if (cmd.total_params > 2 && !cmd.string_val(2).empty())
-    {
-        const std::optional<CalibrationBars> parsed_bars = parse_rds_bars(cmd);
-        if (!parsed_bars.has_value())
-        {
-            return cmd.bad_arg();
-        }
-        bars = *parsed_bars;
-    }
-
-    g_auto_stereo_batch = true;
-    g_use_stereo_texture = mode == "texture";
-    g_stereo_texture_reuse = g_use_stereo_texture && !g_stereo_texture_filename.empty();
-    g_auto_stereo_depth = depth;
-    g_calibrate = bars;
-    return CmdArgFlags::PARAM_3D;
-}
-
 static CmdArgFlags cmd_rds_texture(const Command &cmd)
 {
     g_stereo_texture_filename = std::string{cmd.value};
@@ -3170,7 +3097,7 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 157> s_commands{
+static std::array<CommandHandler, 156> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
@@ -3282,7 +3209,6 @@ static std::array<CommandHandler, 157> s_commands{
     CommandHandler{"randomize", cmd_randomize},             //
     CommandHandler{"ranges", cmd_ranges},                   //
     CommandHandler{"ray", cmd_ray},                         //
-    CommandHandler{"rds", cmd_rds},                         //
     CommandHandler{"rds-texture", cmd_rds_texture},         //
     CommandHandler{"recordcolors", cmd_record_colors},      //
     CommandHandler{"release", cmd_release},                 //

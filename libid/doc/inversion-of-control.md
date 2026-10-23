@@ -703,7 +703,7 @@ dependencies.
   loading.  Engine has no key-name parser or UI key dependency.  Keep
   mode validation in engine and never restore `VideoInfo::key` or
   relocate UI binding storage there.
-- Move `cmd_rds` and its calibration-bar parser to UI.  Validate the
+- UI owns `cmd_rds` and its calibration-bar parser.  Validate the
   complete parameter once into local values before changing settings.
   Depth, calibration bars, texture selection, and the texture filename
   remain geometry inputs; automatic conversion and filename reuse remain
@@ -725,9 +725,9 @@ dependencies.
   these effects with a normalized combined mode or deferred actions.
   Geometry-only parameters such as `stereowidth` and `usegrayscale`
   remain engine-owned.
-- Deferred slices 53.9.6 through 53.9.9 implement the four focused moves:
-  the `video` handler, key-name parsing, the `rds` handler, and the
-  `rds-texture` handler.  Preserve existing diagnostics and change flags.
+- The `video` handler, key-name parsing, and the `rds` handler are
+  UI-owned.  Slice 53.9.9 moves the `rds-texture` handler.  Preserve
+  existing diagnostics and change flags.
   Reuse current parameter, video, stereo, batch, and autokey coverage;
   extend it for rejection side effects, omitted fields, order-dependent
   reuse, and common routing through `@` sources.
@@ -1478,37 +1478,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.9.8. Move Automatic-Stereo Parameter Handling To UI
-
-Source: `cmd_rds`, `parse_rds_bars`, and the `rds` table entry in
-`engine/cmdfiles.cpp`, plus UI stereo policy and geometry settings.
-
-Prerequisite: 53.9.7; all sources already use the common coordinator.
-
-Work:
-
-- Move only `rds` interpretation, its calibration-bar parser, and its
-  table entry to UI.  Validate once into local values before applying
-  settings; configure geometry inputs directly without another handler.
-- Preserve field-count validation, numeric and named calibration bars,
-  and omitted/empty fields retaining existing depth and calibration.
-  `no` changes only automatic conversion; `yes`/`random` select random
-  input; `texture` selects texture input.  Preserve filename-dependent
-  reuse, diagnostics, and `PARAM_3D` on success.
-- Remove the engine handler, private parser, and table entry.  Keep
-  geometry inputs in geometry and conversion/reuse policy in UI.  Leave
-  `stereowidth`, `usegrayscale`, and `rds-texture` handling unchanged.
-- Move existing handler tests to UI.  Add focused coverage for invalid
-  commands leaving settings unchanged, omitted fields, texture reuse,
-  ordering, and the supported common source paths.
-
-Done when: UI owns the complete `rds` parameter without duplicate
-validation or engine queries into UI policy.
-
-Validation: run focused handler and routing tests, then the full
-`rt-default` workflow.  Reuse existing stereo and batch coverage;
-no additional manual testing is required.
-
 ### 53.9.9. Move Stereo-Texture Parameter Handling To UI
 
 Source: `cmd_rds_texture` and its table entry in `engine/cmdfiles.cpp`,
@@ -1614,11 +1583,11 @@ and setup-policy couplings, not direct input polling:
   expose command settings.  Shared syntax, recognition, routing, and mixed
   ownership, initialization, ordering, failure behavior, and reporting
   are agreed.  Implementation slices remove these dependencies;
-  53.9.8 through 53.9.11 move the remaining UI handlers without changing
+  53.9.9 through 53.9.11 move the remaining UI handlers without changing
   their semantics.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
-  Automatic conversion and texture-filename reuse remain UI policy;
-  slices 53.9.8 and 53.9.9 move their parameter handling to UI.
+  Automatic conversion and texture-filename reuse remain UI policy.
+  UI owns the `rds` handler; slice 53.9.9 moves `rds-texture` handling.
 - `g_escape_exit` and its fractal-reset assignment remain in engine even
   though they control exit confirmation.  Slices 53.9.10 and 53.9.11 move
   parameter ownership, storage, and combined reset orchestration to UI.

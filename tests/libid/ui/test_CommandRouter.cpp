@@ -11,6 +11,7 @@
 #include <engine/VideoInfo.h>
 #include <fractals/formula.h>
 #include <fractals/fractalp.h>
+#include <geometry/stereo_params.h>
 #include <io/library.h>
 #include <io/loadfile.h>
 #include <io/special_dirs.h>
@@ -22,6 +23,7 @@
 #include <ui/history.h>
 #include <ui/id_keys.h>
 #include <ui/slideshw.h>
+#include <ui/stereo.h>
 #include <ui/video_mode.h>
 
 #include <gmock/gmock.h>
@@ -40,6 +42,7 @@ namespace fs = std::filesystem;
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::geometry;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::ui;
@@ -634,6 +637,202 @@ TEST_F(TestCommandRouter, autoKeyNamePreservesFallbackFilename)
     }
 }
 
+TEST_F(TestCommandRouter, rdsNo)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, true};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
+    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
+
+    CommandProcessor processor{"rds=no", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_FALSE(g_auto_stereo_batch);
+    EXPECT_TRUE(g_use_stereo_texture);
+    EXPECT_EQ(77, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
+    EXPECT_EQ("old.gif", g_stereo_texture_filename);
+    EXPECT_TRUE(g_stereo_texture_reuse);
+}
+
+TEST_F(TestCommandRouter, rdsYesDefaultsToRandom)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 123};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
+
+    CommandProcessor processor{"rds=yes", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_FALSE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
+    EXPECT_EQ(123, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
+}
+
+TEST_F(TestCommandRouter, rdsRandomDepthAndNamedBars)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 100};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
+
+    CommandProcessor processor{"rds=random/-120/top", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_FALSE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
+    EXPECT_EQ(-120, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
+}
+
+TEST_F(TestCommandRouter, rdsTextureNumericBars)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 100};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
+    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
+
+    const CommandRouter router;
+    for (const CalibrationBars bars : {CalibrationBars::NONE, CalibrationBars::MIDDLE, CalibrationBars::TOP})
+    {
+        SCOPED_TRACE(+bars);
+        CommandProcessor processor{"rds=texture/80/" + std::to_string(+bars), CmdFile::AT_AFTER_STARTUP};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+        EXPECT_TRUE(g_auto_stereo_batch);
+        EXPECT_TRUE(g_use_stereo_texture);
+        EXPECT_TRUE(g_stereo_texture_reuse);
+        EXPECT_EQ(80, g_auto_stereo_depth);
+        EXPECT_EQ(bars, g_calibrate);
+    }
+}
+
+TEST_F(TestCommandRouter, rdsTextureNoFilenameDoesNotReuse)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
+    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, ""};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
+
+    CommandProcessor processor{"rds=texture", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_TRUE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
+}
+
+TEST_F(TestCommandRouter, rdsEmptyFieldsPreserveDefaults)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
+
+    CommandProcessor processor{"rds=random//top", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_FALSE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
+    EXPECT_EQ(77, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
+}
+
+TEST_F(TestCommandRouter, rdsOmittedOrEmptyDepthAndBarsPreserveCurrentValues)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
+    const CommandRouter router;
+    for (const std::string_view command : {"rds=random", "rds=random/", "rds=random//", "rds=random///"})
+    {
+        SCOPED_TRACE(command);
+        CommandProcessor processor{command, CmdFile::AT_AFTER_STARTUP};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+        EXPECT_TRUE(g_auto_stereo_batch);
+        EXPECT_FALSE(g_use_stereo_texture);
+        EXPECT_FALSE(g_stereo_texture_reuse);
+        EXPECT_EQ(77, g_auto_stereo_depth);
+        EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
+    }
+}
+
+TEST_F(TestCommandRouter, invalidRdsParametersLeaveSettingsUnchangedAndDiagnoseOnce)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
+    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
+    const CommandRouter router;
+    for (const bool automatic : {false, true})
+    {
+        SCOPED_TRACE(automatic);
+        g_auto_stereo_batch = automatic;
+        for (const std::string_view command :
+            {"rds=", "rds=fmeh", "rds=no/1", "rds=no//", "rds=random/deep", "rds=random/1.5", "rds=random/100/bottom",
+                "rds=random/100/-1", "rds=random/100/3", "rds=random/100/1.5", "rds=random/100/top/extra"})
+        {
+            SCOPED_TRACE(command);
+            CommandProcessor processor{command, CmdFile::AT_AFTER_STARTUP};
+
+            const CommandParseResult result{router.process(processor)};
+
+            EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+            EXPECT_THAT(result.diagnostics.errors,
+                ElementsAre("Oops. I couldn't understand the argument:\n  " + std::string{command}));
+            EXPECT_EQ(automatic, g_auto_stereo_batch);
+            EXPECT_EQ(77, g_auto_stereo_depth);
+            EXPECT_EQ(CalibrationBars::MIDDLE, g_calibrate);
+            EXPECT_TRUE(g_use_stereo_texture);
+            EXPECT_EQ("old.gif", g_stereo_texture_filename);
+            EXPECT_TRUE(g_stereo_texture_reuse);
+        }
+    }
+}
+
 class TestCommandRouterFile : public TestCommandRouter
 {
 protected:
@@ -923,6 +1122,36 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesAutokeyFilenameParameter)
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_TRUE(result.diagnostics.warnings.empty());
     EXPECT_TRUE(fs::remove(m_path));
+}
+
+TEST_F(TestCommandRouterFile, selectedSetPreservesRdsAndTextureParameterOrder)
+{
+    const CommandRouter router;
+    for (const bool texture_first : {false, true})
+    {
+        SCOPED_TRACE(texture_first);
+        ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
+        ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
+        ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
+        ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
+        ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, ""};
+        ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
+        const std::string_view commands{
+            texture_first ? "entry { rds-texture=map.gif rds=random }" : "entry { rds=random rds-texture=map.gif }"};
+        CommandProcessor processor{open_input(commands), CmdFile::AT_AFTER_STARTUP};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+        EXPECT_TRUE(g_auto_stereo_batch);
+        EXPECT_EQ(!texture_first, g_use_stereo_texture);
+        EXPECT_EQ(!texture_first, g_stereo_texture_reuse);
+        EXPECT_EQ("map.gif", g_stereo_texture_filename);
+        EXPECT_EQ(77, g_auto_stereo_depth);
+        EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
+        EXPECT_TRUE(fs::remove(m_path));
+    }
 }
 
 class MockCommandDirectories : public SpecialDirectories
@@ -1387,6 +1616,61 @@ TEST_F(TestCommandRouterStartup, startupSourcesRouteAutokeyFilenameInOrder)
     EXPECT_EQ(fs::path{"ArgumentAutoKeyRoute.KEY"}, g_auto_name);
     EXPECT_TRUE(argument.diagnostics.errors.empty());
     EXPECT_TRUE(argument.diagnostics.warnings.empty());
+}
+
+TEST_F(TestCommandRouterStartup, startupSourcesRouteRdsParametersInOrder)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
+    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "map.gif"};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
+    write_source("sstools.ini", "rds=yes/10/none\n");
+    write_source("whole.par", "entry { rds=texture/20/top }");
+    write_source("selected.par", "ignored { rds=no }\nchosen { rds=random/30/middle }");
+    const CommandRouter router;
+
+    const CommandParseResult configuration{router.process_startup({"id"})};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, configuration.flags);
+    EXPECT_TRUE(configuration.diagnostics.errors.empty());
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_FALSE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
+    EXPECT_EQ(10, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::NONE, g_calibrate);
+
+    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, whole.flags);
+    EXPECT_TRUE(whole.diagnostics.errors.empty());
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_TRUE(g_use_stereo_texture);
+    EXPECT_TRUE(g_stereo_texture_reuse);
+    EXPECT_EQ(20, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
+
+    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, selected.flags);
+    EXPECT_TRUE(selected.diagnostics.errors.empty());
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_FALSE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
+    EXPECT_EQ(30, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::MIDDLE, g_calibrate);
+
+    const CommandParseResult argument{router.process_startup({"id", "@whole", "@selected/chosen", "rds=no"})};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, argument.flags);
+    EXPECT_TRUE(argument.diagnostics.errors.empty());
+    EXPECT_FALSE(g_auto_stereo_batch);
+    EXPECT_FALSE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
+    EXPECT_EQ(30, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::MIDDLE, g_calibrate);
+    EXPECT_EQ("map.gif", g_stereo_texture_filename);
 }
 
 TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVideoPromptPreferenceAlone)
