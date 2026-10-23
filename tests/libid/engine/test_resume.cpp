@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <engine/resume.h>
 
@@ -6,6 +7,7 @@
 
 #include <gtest/gtest.h>
 
+#include <cstddef>
 #include <cstdint>
 
 using namespace id::engine;
@@ -107,6 +109,18 @@ TEST_F(TestResume, templateGetSingle)
     start_resume();
 
     ResumeData actual;
+    get_resume(actual);
+
+    EXPECT_EQ(m_data, actual);
+}
+
+TEST_F(TestResume, getFromExactSizeBuffer)
+{
+    put_resume(m_data);
+    g_resume_data.resize(static_cast<std::size_t>(g_resume_len));
+    ASSERT_EQ(3, start_resume());
+
+    ResumeData actual{};
     get_resume(actual);
 
     EXPECT_EQ(m_data, actual);

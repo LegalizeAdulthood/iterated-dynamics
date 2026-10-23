@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "engine/resume.h"
 
@@ -67,7 +68,7 @@ int get_resume_len(int len, ...)
     while (len)
     {
         Byte *dest_ptr = va_arg(arg_marker, Byte *);
-        std::copy(&g_resume_data[s_resume_offset], &g_resume_data[s_resume_offset + len], &dest_ptr[0]);
+        std::copy_n(g_resume_data.data() + s_resume_offset, len, dest_ptr);
         s_resume_offset += len;
         len = va_arg(arg_marker, int);
     }
