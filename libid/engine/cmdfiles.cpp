@@ -38,7 +38,6 @@
 #include "engine/text_color.h"
 #include "engine/trig_fns.h"
 #include "engine/UserData.h"
-#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/check_orbit_name.h"
@@ -69,9 +68,6 @@
 #include "misc/version.h"
 #include "ui/big_while_loop.h"
 #include "ui/stereo.h"
-// TODO: removed later
-// Parameter processing is decoupled from UI settings in slice 53.5.
-#include "ui/video_mode.h"
 #include <algos/string_algorithms.h>
 
 #include <config/path_limits.h>
@@ -3061,29 +3057,6 @@ static CmdArgFlags cmd_use_gray_scale(const Command &cmd)
     return CmdArgFlags::PARAM_3D;
 }
 
-static CmdArgFlags cmd_video(const Command &cmd)
-{
-    const int k = check_vid_mode_key_name(cmd.value);
-    if (k == 0)
-    {
-        return cmd.bad_arg();
-    }
-    g_init_mode = -1;
-    for (int i = 0; i < g_video_table_len; ++i)
-    {
-        if (g_video_mode_keys[i] == k)
-        {
-            g_init_mode = i;
-            break;
-        }
-    }
-    if (g_init_mode == -1)
-    {
-        return cmd.bad_arg();
-    }
-    return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
-}
-
 // viewwindows=?/?/?/?/?
 static CmdArgFlags cmd_view_windows(const Command &cmd)
 {
@@ -3197,7 +3170,7 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 158> s_commands{
+static std::array<CommandHandler, 157> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
@@ -3347,7 +3320,6 @@ static std::array<CommandHandler, 158> s_commands{
     CommandHandler{"tweaklzw", cmd_deprecated},             //
     CommandHandler{"type", cmd_type},                       //
     CommandHandler{"usegrayscale", cmd_use_gray_scale},     //
-    CommandHandler{"video", cmd_video},                     //
     CommandHandler{"viewwindows", cmd_view_windows},        //
     CommandHandler{"volume", cmd_volume},                   //
     CommandHandler{"warn", cmd_warn},                       //

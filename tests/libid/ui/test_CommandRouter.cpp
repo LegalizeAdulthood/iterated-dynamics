@@ -359,6 +359,80 @@ TEST_F(TestCommandRouter, invalidVideoPromptValuePreservesPreferenceAndDiagnoses
     }
 }
 
+TEST_F(TestCommandRouter, videoBadNamePreservesPendingMode)
+{
+    ValueSaver saved_init_mode{g_init_mode, 7};
+    CommandProcessor processor{"video=fmeh", CmdFile::AT_CMD_LINE};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+    EXPECT_EQ(7, g_init_mode);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  video=fmeh"));
+}
+
+TEST_F(TestCommandRouter, videoNoModesClearsPendingMode)
+{
+    ValueSaver saved_video_table_len{g_video_table_len, 0};
+    ValueSaver saved_init_mode{g_init_mode, 0};
+    CommandProcessor processor{"video=F1", CmdFile::AT_CMD_LINE};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+    EXPECT_EQ(-1, g_init_mode);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  video=f1"));
+}
+
+TEST_F(TestCommandRouter, videoNoMatchingModeClearsPendingMode)
+{
+    ValueSaver saved_video_table_len{g_video_table_len, 1};
+    ValueSaver saved_video_key{g_video_mode_keys[0], ID_KEY_F2};
+    ValueSaver saved_init_mode{g_init_mode, 0};
+    CommandProcessor processor{"video=F1", CmdFile::AT_CMD_LINE};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+    EXPECT_EQ(-1, g_init_mode);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  video=f1"));
+}
+
+TEST_F(TestCommandRouter, videoSelectsFirstBindingWithoutActivatingMode)
+{
+    const VideoInfo active{800, 600, 256, nullptr, "active"};
+    ValueSaver saved_adapter{g_adapter, 0};
+    ValueSaver saved_entry{g_video_entry, active};
+    ValueSaver saved_width{g_screen_x_dots, 800};
+    ValueSaver saved_height{g_screen_y_dots, 600};
+    ValueSaver saved_colors{g_colors, 256};
+    ValueSaver saved_video_table_len{g_video_table_len, 3};
+    ValueSaver saved_first_key{g_video_mode_keys[0], ID_KEY_F2};
+    ValueSaver saved_second_key{g_video_mode_keys[1], ID_KEY_F1};
+    ValueSaver saved_third_key{g_video_mode_keys[2], ID_KEY_F1};
+    ValueSaver saved_init_mode{g_init_mode, 0};
+    const CommandRouter router;
+    for (const CmdFile mode : {CmdFile::AT_CMD_LINE, CmdFile::AT_AFTER_STARTUP})
+    {
+        SCOPED_TRACE(static_cast<int>(mode));
+        CommandProcessor processor{"video=F1", mode};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
+        EXPECT_EQ(1, g_init_mode);
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+        EXPECT_EQ(0, g_adapter);
+        EXPECT_EQ(active, g_video_entry);
+        EXPECT_EQ(800, g_screen_x_dots);
+        EXPECT_EQ(600, g_screen_y_dots);
+        EXPECT_EQ(256, g_colors);
+    }
+}
+
 TEST_F(TestCommandRouter, virtualNo)
 {
     ValueSaver saved_virtual_screens{g_virtual_screens, true};
@@ -758,6 +832,22 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesVideoPromptParameter)
     EXPECT_EQ(CmdArgFlags::NONE, result.flags);
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_FALSE(g_ask_video);
+    EXPECT_TRUE(fs::remove(m_path));
+}
+
+TEST_F(TestCommandRouterFile, selectedSetRoutesVideoSelectionParameter)
+{
+    ValueSaver saved_video_table_len{g_video_table_len, 1};
+    ValueSaver saved_video_key{g_video_mode_keys[0], ID_KEY_F6};
+    ValueSaver saved_init_mode{g_init_mode, -1};
+    CommandProcessor processor{open_input("entry { video=F6 }"), CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_EQ(0, g_init_mode);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_TRUE(fs::remove(m_path));
 }
 
@@ -1502,29 +1592,46 @@ TEST_F(TestCommandRouterStartup, pendingModeDefaultsAndOverridesDoNotActivateVid
     ValueSaver saved_width{g_screen_x_dots, 800};
     ValueSaver saved_height{g_screen_y_dots, 600};
     ValueSaver saved_colors{g_colors, 256};
-    ValueSaver saved_table_length{g_video_table_len, 2};
+    ValueSaver saved_table_length{g_video_table_len, 3};
     ValueSaver saved_first_key{g_video_mode_keys[0], ID_KEY_F6};
     ValueSaver saved_second_key{g_video_mode_keys[1], ID_KEY_F5};
+    ValueSaver saved_third_key{g_video_mode_keys[2], ID_KEY_F4};
     g_init_mode = 9;
-    write_source("sstools.ini", "ui=before video=F6\n");
-    const CommandRouter router{CommandHandlerTables{{}, m_ui}, engine_command_handlers()};
-    EXPECT_CALL(m_ui_handler, Call(_))
-        .WillOnce(
-            [](const Command &cmd)
-            {
-                EXPECT_EQ(CmdFile::SSTOOLS_INI, cmd.mode);
-                EXPECT_EQ(-1, g_init_mode);
-                return CmdArgFlags::NONE;
-            })
-        .WillOnce(
-            [](const Command &cmd)
-            {
-                EXPECT_EQ(CmdFile::AT_CMD_LINE, cmd.mode);
-                EXPECT_EQ(0, g_init_mode);
-                return CmdArgFlags::NONE;
-            });
+    const CommandRouter router;
 
-    const CommandParseResult result{router.process_startup({"id", "ui=after", "video=F5"})};
+    const CommandParseResult defaults{router.process_startup({"id"})};
+
+    EXPECT_TRUE(defaults.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::NONE, defaults.flags);
+    EXPECT_EQ(-1, g_init_mode);
+
+    write_source("sstools.ini", "video=F6\n");
+    write_source("whole.par", "entry { video=F5 }");
+    write_source("selected.par", "ignored { video=F6 }\nchosen { video=F4 }");
+    g_first_init = true;
+
+    const CommandParseResult configuration{router.process_startup({"id"})};
+
+    EXPECT_TRUE(configuration.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, configuration.flags);
+    EXPECT_EQ(0, g_init_mode);
+    g_first_init = true;
+
+    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
+
+    EXPECT_TRUE(whole.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, whole.flags);
+    EXPECT_EQ(1, g_init_mode);
+    g_first_init = true;
+
+    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
+
+    EXPECT_TRUE(selected.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, selected.flags);
+    EXPECT_EQ(2, g_init_mode);
+    g_first_init = true;
+
+    const CommandParseResult result{router.process_startup({"id", "@whole", "@selected/chosen", "video=F5"})};
 
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "engine/VideoInfo.h"
 
@@ -6,7 +7,6 @@ namespace id::engine
 {
 
 int g_adapter{};
-int g_init_mode{};
 int g_screen_x_dots{};
 int g_screen_y_dots{};
 int g_colors{256};

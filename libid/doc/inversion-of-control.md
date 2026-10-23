@@ -687,15 +687,14 @@ dependencies.
   UI may configure public engine or geometry settings directly; the
   dependency remains UI-to-engine.  Do not introduce another handler,
   forwarded command text, duplicate validation, or a negotiation port.
-- Move `cmd_video` to UI.  Resolve the key name against UI-owned bindings
+- UI owns `cmd_video`.  Resolve the key name against UI-owned bindings
   and record the resolved mode index, not the key.  Parsing requests a
   mode; existing startup or parameter-set completion activates it at the
   current point.  Engine retains key-free active mode information.
 - The pending request `g_init_mode` belongs to UI, unlike the active
-  engine mode.  Move its initialization and restart suppression first;
-  relocate storage with `cmd_video` in 53.9.6 so the remaining engine
-  handler never needs a new UI dependency.  Follow the initialization
-  agreement below, without engine-to-UI callbacks or forwarding wrappers.
+  engine mode.  UI owns its storage, initialization, restart suppression,
+  and parameter handler.  Follow the initialization agreement below,
+  without engine-to-UI callbacks or forwarding wrappers.
 - Preserve `video` rejection side effects: malformed key names leave the
   pending mode unchanged; valid but unbound names clear it.  Preserve
   `FRACTAL_PARAM | PARAM_3D` on success.  Do not activate a driver or
@@ -1480,41 +1479,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.9.6. Move Video-Selection Parameter Handling To UI
-
-Source: `cmd_video` and its table entry in `engine/cmdfiles.cpp`,
-`ui/video_mode.h`, and the pending mode request.
-
-Prerequisites: 53.9.5 and the pending-mode initialization/completion work
-in 53.8.6.3.  All sources already use the common coordinator.
-
-Work:
-
-- Move only `video` interpretation and its table entry to UI.  Use the
-  existing key-name parser and UI binding lookup to record the resolved
-  mode index in the UI-owned pending request.
-- Move `g_init_mode` storage/declaration to UI in this same slice and
-  remove its temporary declaration comment.  Its engine handler and
-  initialization/completion assignments must all be gone before engine
-  loses ownership; do not expose UI state back to engine.
-- Preserve request versus activation timing, first matching binding,
-  malformed-name versus unbound-name side effects, diagnostics, and the
-  existing `FRACTAL_PARAM | PARAM_3D` result.  Do not activate a mode or
-  change image dimensions during parameter interpretation.
-- Remove the engine handler, table entry, direct binding lookup, and
-  marked `ui/video_mode.h` include from `cmdfiles.cpp`.  Retain one owner;
-  introduce no engine-to-UI call or forwarding function.
-- Move existing handler tests to UI.  Cover success, unchanged active
-  mode before activation, invalid names, absent bindings, and common
-  routing through startup, selected sets, `@` sources, and direct entry.
-
-Done when: only UI interprets `video`, while engine receives key-free
-mode information at the existing activation boundary.
-
-Validation: run focused handler and routing tests, then the full
-`rt-default` workflow.  Reuse existing batch image-sizing and autokey
-coverage; no additional manual testing is required.
-
 ### 53.9.7. Move Video Key-Name Parsing To UI
 
 Source: `check_vid_mode_key_name` in `engine/video_mode.cpp`, its public
@@ -1669,18 +1633,15 @@ and setup-policy couplings, not direct input polling:
 - `VideoInfo` is key-free.  UI owns the separate `g_video_mode_keys`
   associations, the selected-entry binding, key lookup, and binding-name
   formatting.  `engine/video_mode.cpp` still includes `ui/id_keys.h`
-  for the deferred key-name parser.  Slice 53.9.7 moves it to UI after
-  53.9.6 moves the `video` handler and removes the parser's engine use.
-  The pending request `g_init_mode` also remains engine-declared;
-  53.8.6.3 moves its initialization/completion policy and 53.9.6 moves
-  storage with its handler.
-- `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h`, `ui/history.h`,
-  `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  The marked
-  `ui/video_mode.h` include permits the temporary mechanical lookup of
-  UI-owned bindings.  Shared syntax, recognition, routing, and mixed
+  for the deferred key-name parser.  Slice 53.9.7 moves it to UI; engine
+  command handling no longer uses the parser.  UI owns the `video`
+  handler and pending request `g_init_mode`, including its storage and
+  initialization/completion policy.
+- `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h` and `ui/stereo.h`
+  expose command settings.  Shared syntax, recognition, routing, and mixed
   ownership, initialization, ordering, failure behavior, and reporting
   are agreed.  Implementation slices remove these dependencies;
-  53.9.1 through 53.9.11 move UI handlers and the key-name parser without
+  53.9.7 through 53.9.11 move UI handlers and the key-name parser without
   changing their semantics.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy;

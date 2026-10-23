@@ -11,6 +11,9 @@
 namespace id::ui
 {
 
+// Pending catalog entry; activated only after parameter processing.
+extern int g_init_mode;
+
 // Function-key bindings indexed by g_video_table entry; zero is unassigned.
 extern std::array<int, engine::MAX_VIDEO_MODES> g_video_mode_keys;
 // Binding copied with g_video_entry, including pending image restores.

@@ -12,7 +12,6 @@ accessed together in the fractal calculation and rendering pipeline.
 Related global variables for screen and display configuration:
 
 - `g_adapter` - index into g_video_table[]
-- `g_init_mode` - initial video mode
 - `g_colors` - maximum colors available
 - `g_screen_x_dots` - number of dots on the physical screen (horizontal)
 - `g_screen_y_dots` - number of dots on the physical screen (vertical)

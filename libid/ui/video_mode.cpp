@@ -10,6 +10,7 @@ using namespace id::engine;
 namespace id::ui
 {
 
+int g_init_mode{};
 std::array<int, MAX_VIDEO_MODES> g_video_mode_keys{};
 int g_video_entry_key{};
 

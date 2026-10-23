@@ -4,13 +4,14 @@
 #include "ui/CommandRouter.h"
 
 #include "engine/CommandProcessor.h"
-#include "engine/VideoInfo.h"
+#include "engine/video_mode.h"
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "misc/debug_flags.h"
 #include "ui/big_while_loop.h"
 #include "ui/history.h"
 #include "ui/slideshw.h"
+#include "ui/video_mode.h"
 
 #include <fmt/format.h>
 
@@ -87,6 +88,21 @@ static CmdArgFlags cmd_max_history(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
+static CmdArgFlags cmd_video(const Command &cmd)
+{
+    const int key = check_vid_mode_key_name(cmd.value);
+    if (key == 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_init_mode = check_vid_mode_key(key);
+    if (g_init_mode == -1)
+    {
+        return cmd.bad_arg();
+    }
+    return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
+}
+
 // virtual=?
 static CmdArgFlags cmd_virtual(const Command &cmd)
 {
@@ -100,7 +116,8 @@ static CmdArgFlags cmd_virtual(const Command &cmd)
 
 static const CommandHandlerTables s_ui_commands{{CommandHandler{"maxhistory", cmd_max_history}},
     {CommandHandler{"askvideo", cmd_ask_video}, CommandHandler{"autokey", cmd_auto_key},
-        CommandHandler{"autokeyname", cmd_auto_key_name}, CommandHandler{"virtual", cmd_virtual}}};
+        CommandHandler{"autokeyname", cmd_auto_key_name}, CommandHandler{"video", cmd_video},
+        CommandHandler{"virtual", cmd_virtual}}};
 
 static void add_names(std::set<std::string_view> &names, const std::vector<CommandHandler> &handlers)
 {

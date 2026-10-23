@@ -1297,48 +1297,6 @@ TEST_F(TestParameterCommandError, filenameTooLong)
     EXPECT_EQ(saved_browse_name, g_browse.name);
 }
 
-TEST_F(TestParameterCommandError, videoBadName)
-{
-    exec_cmd_arg("video=fmeh", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
-
-TEST_F(TestParameterCommandError, videoNoModes)
-{
-    ValueSaver saved_video_table_len{g_video_table_len, 0};
-    ValueSaver saved_init_mode{g_init_mode, 0};
-
-    exec_cmd_arg("video=F1", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(-1, g_init_mode);
-}
-
-TEST_F(TestParameterCommandError, videoNoMatchingMode)
-{
-    ValueSaver saved_video_table_len{g_video_table_len, 1};
-    ValueSaver saved_video_key{g_video_mode_keys[0], ID_KEY_F2};
-    ValueSaver saved_init_mode{g_init_mode, 0};
-
-    exec_cmd_arg("video=F1", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(-1, g_init_mode);
-}
-
-TEST_F(TestParameterCommand, videoMatchingMode)
-{
-    ValueSaver saved_video_table_len{g_video_table_len, 1};
-    ValueSaver saved_video_key{g_video_mode_keys[0], ID_KEY_F1};
-    ValueSaver saved_init_mode{g_init_mode, 0};
-
-    exec_cmd_arg("video=F1", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(0, g_init_mode);
-}
-
 class DACSaver
 {
 public:
