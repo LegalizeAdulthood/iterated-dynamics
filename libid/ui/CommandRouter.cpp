@@ -163,6 +163,17 @@ static CmdArgFlags cmd_rds(const Command &cmd)
     return CmdArgFlags::PARAM_3D;
 }
 
+static CmdArgFlags cmd_rds_texture(const Command &cmd)
+{
+    g_stereo_texture_filename = std::string{cmd.value};
+    g_stereo_texture_reuse = !cmd.value.empty();
+    if (g_stereo_texture_reuse)
+    {
+        g_use_stereo_texture = true;
+    }
+    return CmdArgFlags::PARAM_3D;
+}
+
 static CmdArgFlags cmd_video(const Command &cmd)
 {
     const int key = check_vid_mode_key_name(cmd.value);
@@ -192,7 +203,8 @@ static CmdArgFlags cmd_virtual(const Command &cmd)
 static const CommandHandlerTables s_ui_commands{{CommandHandler{"maxhistory", cmd_max_history}},
     {CommandHandler{"askvideo", cmd_ask_video}, CommandHandler{"autokey", cmd_auto_key},
         CommandHandler{"autokeyname", cmd_auto_key_name}, CommandHandler{"rds", cmd_rds},
-        CommandHandler{"video", cmd_video}, CommandHandler{"virtual", cmd_virtual}}};
+        CommandHandler{"rds-texture", cmd_rds_texture}, CommandHandler{"video", cmd_video},
+        CommandHandler{"virtual", cmd_virtual}}};
 
 static void add_names(std::set<std::string_view> &names, const std::vector<CommandHandler> &handlers)
 {

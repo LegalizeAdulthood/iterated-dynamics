@@ -69,7 +69,6 @@
 #include <ui/comments.h>
 #include <ui/id_keys.h>
 #include <ui/make_batch_file.h>
-#include <ui/stereo.h>
 #include <ui/video_mode.h>
 
 #include <gmock/gmock.h>
@@ -4764,34 +4763,6 @@ TEST_F(TestParameterCommand, trueModeValue)
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(TrueColorMode::ITERATE, g_true_mode);
-}
-
-TEST_F(TestParameterCommand, rdsTexture)
-{
-    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
-    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
-
-    exec_cmd_arg("rds-texture=texture.gif");
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ("texture.gif", g_stereo_texture_filename);
-    EXPECT_TRUE(g_use_stereo_texture);
-    EXPECT_TRUE(g_stereo_texture_reuse);
-}
-
-TEST_F(TestParameterCommand, rdsTextureEmptyDoesNotSelectTextureMap)
-{
-    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
-    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
-
-    exec_cmd_arg("rds-texture=");
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_TRUE(g_stereo_texture_filename.empty());
-    EXPECT_FALSE(g_use_stereo_texture);
-    EXPECT_FALSE(g_stereo_texture_reuse);
 }
 
 TEST_F(TestParameterCommand, useGrayScaleNo)

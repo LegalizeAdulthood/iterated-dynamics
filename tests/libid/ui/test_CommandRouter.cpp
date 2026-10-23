@@ -833,6 +833,62 @@ TEST_F(TestCommandRouter, invalidRdsParametersLeaveSettingsUnchangedAndDiagnoseO
     }
 }
 
+TEST_F(TestCommandRouter, rdsTexturePreservesFilenameCaseAndAutomaticConversion)
+{
+    const CommandRouter router;
+    for (const CmdFile mode : {CmdFile::AT_CMD_LINE, CmdFile::AT_AFTER_STARTUP})
+    {
+        SCOPED_TRACE(static_cast<int>(mode));
+        for (const bool automatic : {false, true})
+        {
+            SCOPED_TRACE(automatic);
+            ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, automatic};
+            ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
+            ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
+            ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
+            CommandProcessor processor{"rds-texture=Images/MixedCaseMap.GIF", mode};
+
+            const CommandParseResult result{router.process(processor)};
+
+            EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+            EXPECT_TRUE(result.diagnostics.errors.empty());
+            EXPECT_TRUE(result.diagnostics.warnings.empty());
+            EXPECT_EQ("Images/MixedCaseMap.GIF", g_stereo_texture_filename);
+            EXPECT_TRUE(g_use_stereo_texture);
+            EXPECT_TRUE(g_stereo_texture_reuse);
+            EXPECT_EQ(automatic, g_auto_stereo_batch);
+        }
+    }
+}
+
+TEST_F(TestCommandRouter, rdsTextureEmptyPreservesTextureSelectionAndAutomaticConversion)
+{
+    const CommandRouter router;
+    for (const bool use_texture : {false, true})
+    {
+        SCOPED_TRACE(use_texture);
+        for (const bool automatic : {false, true})
+        {
+            SCOPED_TRACE(automatic);
+            ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, automatic};
+            ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
+            ValueSaver saved_use_stereo_texture{g_use_stereo_texture, use_texture};
+            ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
+            CommandProcessor processor{"rds-texture=", CmdFile::AT_AFTER_STARTUP};
+
+            const CommandParseResult result{router.process(processor)};
+
+            EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+            EXPECT_TRUE(result.diagnostics.errors.empty());
+            EXPECT_TRUE(result.diagnostics.warnings.empty());
+            EXPECT_TRUE(g_stereo_texture_filename.empty());
+            EXPECT_EQ(use_texture, g_use_stereo_texture);
+            EXPECT_FALSE(g_stereo_texture_reuse);
+            EXPECT_EQ(automatic, g_auto_stereo_batch);
+        }
+    }
+}
+
 class TestCommandRouterFile : public TestCommandRouter
 {
 protected:
@@ -1136,8 +1192,8 @@ TEST_F(TestCommandRouterFile, selectedSetPreservesRdsAndTextureParameterOrder)
         ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
         ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, ""};
         ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
-        const std::string_view commands{
-            texture_first ? "entry { rds-texture=map.gif rds=random }" : "entry { rds=random rds-texture=map.gif }"};
+        const std::string_view commands{texture_first ? "entry { rds-texture=MixedCaseMap.GIF rds=random }"
+                                                      : "entry { rds=random rds-texture=MixedCaseMap.GIF }"};
         CommandProcessor processor{open_input(commands), CmdFile::AT_AFTER_STARTUP};
 
         const CommandParseResult result{router.process(processor)};
@@ -1147,7 +1203,7 @@ TEST_F(TestCommandRouterFile, selectedSetPreservesRdsAndTextureParameterOrder)
         EXPECT_TRUE(g_auto_stereo_batch);
         EXPECT_EQ(!texture_first, g_use_stereo_texture);
         EXPECT_EQ(!texture_first, g_stereo_texture_reuse);
-        EXPECT_EQ("map.gif", g_stereo_texture_filename);
+        EXPECT_EQ("MixedCaseMap.GIF", g_stereo_texture_filename);
         EXPECT_EQ(77, g_auto_stereo_depth);
         EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
         EXPECT_TRUE(fs::remove(m_path));
@@ -1671,6 +1727,59 @@ TEST_F(TestCommandRouterStartup, startupSourcesRouteRdsParametersInOrder)
     EXPECT_EQ(30, g_auto_stereo_depth);
     EXPECT_EQ(CalibrationBars::MIDDLE, g_calibrate);
     EXPECT_EQ("map.gif", g_stereo_texture_filename);
+}
+
+TEST_F(TestCommandRouterStartup, startupSourcesRouteStereoTextureInOrder)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, true};
+    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
+    write_source("sstools.ini", "rds-texture=ConfigTexture.GIF\n");
+    write_source("whole.par", "entry { rds-texture=WholeTexture.GIF }");
+    write_source(
+        "selected.par", "ignored { rds-texture=IgnoredTexture.GIF }\nchosen { rds-texture=SelectedTexture.GIF }");
+    const CommandRouter router;
+
+    const CommandParseResult configuration{router.process_startup({"id"})};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, configuration.flags);
+    EXPECT_TRUE(configuration.diagnostics.errors.empty());
+    EXPECT_TRUE(configuration.diagnostics.warnings.empty());
+    EXPECT_EQ("ConfigTexture.GIF", g_stereo_texture_filename);
+    EXPECT_TRUE(g_use_stereo_texture);
+    EXPECT_TRUE(g_stereo_texture_reuse);
+    EXPECT_TRUE(g_auto_stereo_batch);
+
+    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, whole.flags);
+    EXPECT_TRUE(whole.diagnostics.errors.empty());
+    EXPECT_TRUE(whole.diagnostics.warnings.empty());
+    EXPECT_EQ("WholeTexture.GIF", g_stereo_texture_filename);
+    EXPECT_TRUE(g_use_stereo_texture);
+    EXPECT_TRUE(g_stereo_texture_reuse);
+    EXPECT_TRUE(g_auto_stereo_batch);
+
+    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, selected.flags);
+    EXPECT_TRUE(selected.diagnostics.errors.empty());
+    EXPECT_TRUE(selected.diagnostics.warnings.empty());
+    EXPECT_EQ("SelectedTexture.GIF", g_stereo_texture_filename);
+    EXPECT_TRUE(g_use_stereo_texture);
+    EXPECT_TRUE(g_stereo_texture_reuse);
+    EXPECT_TRUE(g_auto_stereo_batch);
+
+    const CommandParseResult argument{router.process_startup({"id", "@whole", "@selected/chosen", "rds-texture="})};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, argument.flags);
+    EXPECT_TRUE(argument.diagnostics.errors.empty());
+    EXPECT_TRUE(argument.diagnostics.warnings.empty());
+    EXPECT_TRUE(g_stereo_texture_filename.empty());
+    EXPECT_TRUE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
+    EXPECT_TRUE(g_auto_stereo_batch);
 }
 
 TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVideoPromptPreferenceAlone)

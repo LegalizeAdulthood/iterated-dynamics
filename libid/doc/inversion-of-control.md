@@ -714,7 +714,7 @@ dependencies.
   and numeric-bar validation.  Omitted or empty depth and calibration
   fields retain their current values.  Reuse is enabled only when this
   parameter selects texture and a filename is already present.
-- Move `cmd_rds_texture` to UI without changing its asymmetric behavior.
+- UI owns `cmd_rds_texture` and its asymmetric behavior.
   Always assign the filename; set reuse according to whether it is
   nonempty.  A nonempty filename also selects texture input.  An empty
   filename clears the filename and reuse, but leaves texture selection
@@ -725,9 +725,8 @@ dependencies.
   these effects with a normalized combined mode or deferred actions.
   Geometry-only parameters such as `stereowidth` and `usegrayscale`
   remain engine-owned.
-- The `video` handler, key-name parsing, and the `rds` handler are
-  UI-owned.  Slice 53.9.9 moves the `rds-texture` handler.  Preserve
-  existing diagnostics and change flags.
+- The `video`, `rds`, and `rds-texture` handlers and key-name parsing are
+  UI-owned.  Preserve existing diagnostics and change flags.
   Reuse current parameter, video, stereo, batch, and autokey coverage;
   extend it for rejection side effects, omitted fields, order-dependent
   reuse, and common routing through `@` sources.
@@ -1478,37 +1477,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.9.9. Move Stereo-Texture Parameter Handling To UI
-
-Source: `cmd_rds_texture` and its table entry in `engine/cmdfiles.cpp`,
-UI stereo policy, and geometry texture inputs.
-
-Prerequisite: 53.9.8; all sources already use the common coordinator.
-
-Work:
-
-- Move only `rds-texture` interpretation and its table entry to UI.
-  Always assign the filename and set reuse from whether it is nonempty.
-  Nonempty input selects texture; empty input leaves texture selection
-  unchanged.  Neither form changes automatic conversion or opens a file.
-- Preserve filename case, diagnostics, and the existing `PARAM_3D`
-  result.  Keep the filename and texture selection as geometry inputs,
-  with reuse and conversion policy in UI.
-- Remove the engine handler and table entry, retaining one owner.
-  Remove `ui/stereo.h` from `cmdfiles.cpp` after its final use is gone;
-  do not replace it with a callback, forwarding function, or UI state
-  relocated into engine.
-- Move existing handler tests to UI.  Cover empty input with texture
-  selection initially both true and false, unchanged conversion state,
-  case preservation, both orders with `rds=random`, and `@` routing.
-
-Done when: UI owns `rds-texture` with its existing semantics, and engine
-parameter handling no longer depends on UI stereo policy.
-
-Validation: run focused handler and routing tests, then the full
-`rt-default` workflow.  Reuse existing stereo serialization and batch
-coverage; no additional manual testing is required.
-
 ### 53.9.10. Move Exit-Confirmation Parameter Handling To UI
 
 Source: `cmd_exit_no_ask`, its `exitnoask` table entry, `g_escape_exit`,
@@ -1579,15 +1547,15 @@ and setup-policy couplings, not direct input polling:
   validation with no UI key dependency.  UI owns the `video` handler and
   pending request `g_init_mode`, including its storage and
   initialization/completion policy.
-- `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h` and `ui/stereo.h`
-  expose command settings.  Shared syntax, recognition, routing, and mixed
-  ownership, initialization, ordering, failure behavior, and reporting
-  are agreed.  Implementation slices remove these dependencies;
-  53.9.9 through 53.9.11 move the remaining UI handlers without changing
-  their semantics.
+- `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h` exposes command
+  settings.  Shared syntax, recognition, routing, and mixed ownership,
+  initialization, ordering, failure behavior, and reporting are agreed.
+  Slices 53.9.10 and 53.9.11 remove the remaining parameter-handler
+  dependency without changing semantics.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy.
-  UI owns the `rds` handler; slice 53.9.9 moves `rds-texture` handling.
+  UI owns both the `rds` and `rds-texture` handlers; engine parameter
+  handling no longer depends on UI stereo policy.
 - `g_escape_exit` and its fractal-reset assignment remain in engine even
   though they control exit confirmation.  Slices 53.9.10 and 53.9.11 move
   parameter ownership, storage, and combined reset orchestration to UI.

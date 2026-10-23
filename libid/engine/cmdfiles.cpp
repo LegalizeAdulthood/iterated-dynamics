@@ -67,7 +67,6 @@
 #include "misc/id.h"
 #include "misc/version.h"
 #include "ui/big_while_loop.h"
-#include "ui/stereo.h"
 #include <algos/string_algorithms.h>
 
 #include <config/path_limits.h>
@@ -2497,17 +2496,6 @@ static CmdArgFlags cmd_r_seed(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
-static CmdArgFlags cmd_rds_texture(const Command &cmd)
-{
-    g_stereo_texture_filename = std::string{cmd.value};
-    g_stereo_texture_reuse = !cmd.value.empty();
-    if (g_stereo_texture_reuse)
-    {
-        g_use_stereo_texture = true;
-    }
-    return CmdArgFlags::PARAM_3D;
-}
-
 static CmdArgFlags cmd_save_dir(const Command &cmd)
 {
     g_save_dir = std::string{cmd.value};
@@ -3097,7 +3085,7 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 156> s_commands{
+static std::array<CommandHandler, 155> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
@@ -3209,7 +3197,6 @@ static std::array<CommandHandler, 156> s_commands{
     CommandHandler{"randomize", cmd_randomize},             //
     CommandHandler{"ranges", cmd_ranges},                   //
     CommandHandler{"ray", cmd_ray},                         //
-    CommandHandler{"rds-texture", cmd_rds_texture},         //
     CommandHandler{"recordcolors", cmd_record_colors},      //
     CommandHandler{"release", cmd_release},                 //
     CommandHandler{"reset", cmd_reset},                     //
