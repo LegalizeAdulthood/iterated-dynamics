@@ -547,11 +547,12 @@ engine concerns.  Option 1 partitions handlers by ownership: UI handles
 UI parameters and delegates unrecognized names to engine.  Both groups
 share syntax processing and preserve the original parameter order.
 
-Shared syntax and recognition are agreed below.  Remaining design
-slices 53.5.3 through 53.5.7 settle routing, mixed parameters, defaults,
-failure behavior, and reporting.  They authorize design discussion and
-plan updates only.  Keep them ahead of the implementation slices they
-produce; do not change parser code before the design is agreed.
+Shared syntax, recognition, and source routing are agreed below.
+Remaining design slices 53.5.4 through 53.5.7 settle mixed parameters,
+defaults, failure behavior, and reporting.  They authorize design
+discussion and plan updates only.  Keep them ahead of the implementation
+slices they produce; do not change parser code before the design is
+agreed.
 
 Until then, defer changes to command and parameter parsing, including UI
 effects and `video=F6` resolution.  Do not bypass this restriction with
@@ -563,7 +564,7 @@ engine-to-UI dependencies.
 - Reuse the existing `Command` in `engine/Command.h` and
   `engine/Command.cpp`.  Both UI and engine handlers receive the same
   `const Command &`; decode each parameter once before handler selection.
-  The routing decision remains in design slice 53.5.3.
+  Source routing follows the agreed design below.
 - Retain the existing parsed fields, numeric helpers, sentinels, array
   limits, and empty, omitted, and trailing-field behavior.  Preserve
   original numeric text for arbitrary-precision conversion; actual
@@ -612,12 +613,72 @@ engine-to-UI dependencies.
 - Require unique names within and across all owner tables, including
   startup-only versus unrestricted tables.  Validate the actual assembled
   metadata once before executing parameters.  Report duplicate ownership
-  with `std::logic_error`, not lookup precedence or assertions.  The
-  assembly point is part of source-routing design 53.5.3.
+  with `std::logic_error`, not lookup precedence or assertions.  The UI
+  coordinator validates tables before its first source advance.
 - Reuse existing parameter tests.  Add focused coverage for delegation,
   rejection without delegation, startup restrictions and their override,
   single diagnostic emission, and duplicate ownership.  Deferred slice
-  53.7 implements this contract after the remaining design discussions.
+  53.7 implements lookup; 53.8.4 composes UI-first routing and validates
+  owner tables after the remaining design discussions.
+
+### Agreed Source Routing
+
+- Introduce a concrete `engine::CommandProcessor` for incremental source
+  processing.  UI owns the outer routing loop; engine never calls a UI
+  handler or receives a UI callback.
+- Engine retains command-line position, startup configuration, file
+  lookup/open/read/close, existing `@file` and `@file/setname` expansion,
+  processing context, comments, continuation lines, and set boundaries.
+  Do not introduce recursive include behavior that is not already
+  supported.
+- Expose one current `Command` at a time, held in place without copying
+  or moving.  UI applies the agreed recognition rules to that same
+  object and writes the outcome into its existing result destination.
+  The next advance incorporates that outcome, completes source work as
+  necessary, and presents the next parameter.  No acknowledgement call
+  is needed; the current command stays valid until the next advance.
+- Engine owns per-command, per-file, and overall result accumulation and
+  source-specific continuation.  It sees command outcomes, not UI
+  settings.  A rejected command or syntax error prevents further handler
+  dispatch for that command; it does not unconditionally stop the UI
+  processing loop.
+- Support startup/restart sources, a selected parameter set supplied as
+  an already-positioned file, and a single interactive parameter.  Adopt
+  file ownership explicitly and close files on completion and exceptions.
+  Preserve distinct initialization and completion rules for each source;
+  a single interactive parameter is not a PAR-file scope.
+- Use the same UI-first loop for every parameter read from an `@` set.
+  For `@scene.par/example` containing `video=F6`, engine opens and locates
+  the set, then presents `video=F6` to UI.  UI resolves its binding and
+  records the requested mode; engine then advances to the next parameter.
+  Preserve mode-activation timing; mixed-command details remain for
+  53.5.4.  `@` chooses the source, not the handler.
+- Read and expand sources incrementally.  Do not flatten all inputs or
+  open later files before earlier parameters have taken effect.  Keep
+  bare-GIF argument recognition in engine source processing.
+- Preserve parameter-flag initialization timing.  At parameter-file
+  completion, including an early stop after rejection, engine applies
+  existing compatibility adjustments when that file's flags require
+  them.  Keep those flags separate from the overall startup result.
+  Preserve interactive entry's existing debug-only compatibility path;
+  do not apply file-completion rules to every command.
+- Use the coordinator from `main_restart()`, `get_commands()`, and
+  `get_cmd_string()`, including startup-configuration reprocessing.
+  Replace their whole-source `cmd_files()`, `load_commands()`, and
+  textual `cmd_arg()` calls.  Keep diagnostic presentation and action
+  execution at their existing outer UI boundaries.
+- Validate all assembled owner tables in the coordinator before
+  processing starts.  Do not retain an application-facing engine-only
+  path that bypasses UI ownership.  Engine-handler unit tests may still
+  invoke engine handlers directly.
+- Encapsulate source traversal locally before exposing its stepping to
+  UI.  Connect every application entry point before moving individual UI
+  handlers.  Remove temporary runners once their callers are converted;
+  precede any new temporary addition with `// TODO: removed later`.
+- Deferred slices 53.8.1 through 53.8.7 implement source processing and
+  routing; 53.9.1 through 53.9.5 move the initial UI parameters one at a
+  time.  Initialization profiles, detailed failure policy, and result
+  interpretation remain with 53.5.5 through 53.5.7.
 
 ## Remaining Inversion-of-Control Slices
 
@@ -1198,38 +1259,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.5.3. Parameter Source Routing Design
-
-Source: `cmd_files`, `process_sstools_ini`, `process_simple_command`,
-`process_file`, `process_file_set_name`, `command_file`, `load_commands`,
-and the UI startup, file-load, and command-entry callers.
-
-Scope: design discussion and plan updates only; no source changes.
-
-Work:
-
-- Choose the common per-parameter routing point for command-line input,
-  startup configuration, indirect files, named parameter sets, and
-  interactive command entry.
-- Account for `command_file` calling `cmd_arg` internally.  Intercepting
-  only the outer command-line call must not leave file parameters on an
-  engine-only path.
-- Keep file reading, parameter-set processing, and engine interpretation
-  engine-owned.  Decide how source processing exposes parameters to
-  UI-owned routing without synchronous engine-to-UI callbacks, forwarding
-  wrappers, or moving the entire parser into UI.
-- Preserve source context, file lifetime, set boundaries, comments, and
-  existing indirect-file behavior.  Retain an explicit set-completion
-  boundary for the compatibility work considered in 53.5.7.
-- Record the agreed control flow and small implementation slices.
-
-Done when: every supported source reaches the same ownership decision
-and engine source processing cannot bypass UI handling.
-
-Validation: map existing startup, parameter-file, command-entry, autokey,
-and batch tests to each route.  Identify missing equivalent-source
-coverage; no build or manual testing is required.
-
 ### 53.5.4. Mixed Parameter Ownership Design
 
 Source: `cmd_video`, `cmd_rds`, `cmd_rds_texture`, video-mode selection,
@@ -1361,7 +1390,7 @@ no build or manual testing is required.
 Source: `Command` and its syntax helpers in `engine/cmdfiles.cpp`,
 `engine/lowerize_parameter.cpp`, and existing parameter tests.
 
-Prerequisite: complete design slices 53.5.3 through 53.5.7 first.
+Prerequisite: complete design slices 53.5.4 through 53.5.7 first.
 
 Work:
 
@@ -1393,12 +1422,11 @@ is required for this extraction.
 
 ### 53.7. Separate Command Recognition And Rejection
 
-Source: `handle_command`, `CommandHandler`, `cmd_arg`, the owner tables,
-and the source coordinator agreed in design slice 53.5.3.
+Source: `handle_command`, `CommandHandler`, `cmd_arg`, the engine
+handler tables, and the shared parsed `Command`.
 
-Prerequisites: complete design slices 53.5.3 through 53.5.7 and extract
-the shared `Command` in 53.6.  Settle source integration and placement
-with 53.5.3 before implementing this slice.
+Prerequisites: complete design slices 53.5.4 through 53.5.7 and extract
+the shared `Command` in 53.6.  Source integration follows in 53.8.
 
 Work:
 
@@ -1409,29 +1437,350 @@ Work:
   recognized but restricted name without invoking its handler or
   delegating to another owner.  Preserve the existing per-parameter debug
   override and diagnostic behavior.
-- At the agreed coordinator, stop on syntax errors, try UI first, and
-  delegate to engine only for an empty UI result.  Report a name unknown
-  to both groups once; do not duplicate a handler's error diagnostic.
-- Validate uniqueness of the assembled owner tables once before command
-  execution.  Include duplicates within an owner and across startup-only
-  and unrestricted groups.  Throw `std::logic_error` for a conflict;
-  do not introduce a mutable function-static validation cache.
-- Keep parameter value interpretation, change flags, and source-specific
-  continuation rules unchanged.  Do not combine unrelated setting moves
-  with this dispatch-contract change; source routing and individual
-  handler migrations must have their own agreed implementation slices.
+- Expose engine handling of a parsed command with this result contract.
+  Keep the current textual entry point for its existing callers until
+  53.8.7 removes it.  Do not add UI routing or callbacks here.
+- Keep parameter interpretation, change flags, and source-specific
+  continuation unchanged.  A syntax error or rejection ends handler
+  dispatch for that command, not necessarily processing of the source.
 - Add focused behavioral tests using handler metadata and invocation
-  checks, not source-grep tests.  Cover unknown-name delegation, accepted
-  `NONE`, malformed recognized values, restricted commands, the debug
-  override, one diagnostic per rejection, and duplicate ownership.
+  checks, not source-grep tests.  Cover unknown names, accepted `NONE`,
+  malformed recognized values, startup restrictions, and the override.
+- Leave UI-first composition, one-time duplicate-owner validation, and
+  final unknown-name diagnostics to the coordinator in 53.8.4.
 
-Done when: only an unrecognized name permits delegation, restricted and
-invalid names remain with their owner, and ambiguous ownership is
-rejected before parameters execute.
+Done when: engine lookup distinguishes recognition from rejection
+without changing existing parameter behavior.
 
 Validation: run focused recognition, context, and diagnostic tests, then
 the full `rt-default` workflow.  Reuse existing parameter validation
 coverage.  No manual testing is required for this contract.
+
+### 53.8.1. Encapsulate Parameter-File Traversal
+
+Source: `command_file`, `next_command`, `load_commands`, and result
+aggregation in `engine/cmdfiles.cpp`.
+
+Prerequisites: complete the remaining design slices and implement 53.6
+and 53.7.  Keep this initial refactor local to the existing engine file.
+
+Work:
+
+- Introduce `CommandProcessor` owning the active file, cursor, buffers,
+  current command/result, context, and file-local accumulated flags.
+- Turn the file loop into per-command advancement.  Incorporate the
+  previous outcome before exposing another command, without copying or
+  moving the shared `Command`.
+- Preserve positioned-file adoption, braces, comments, continuations,
+  flag-initialization timing, compatibility adjustments, and closure.
+  Finalize a rejected file's valid prefix as before.
+- Initially let the existing engine caller drive the incremental object.
+  Mark any newly introduced temporary runner with
+  `// TODO: removed later`; remove it in 53.8.7.
+
+Done when: file traversal owns explicit state and can return between
+commands while the existing caller preserves current behavior.
+
+Validation: cover successive commands, current-command lifetime, EOF,
+early rejection, file-local flags, compatibility completion, and file
+closure.  Reuse `TestNextCommand`; run the full `rt-default` workflow.
+No manual testing is required.
+
+### 53.8.2. Add Startup Command Sources
+
+Source: `cmd_files`, `process_sstools_ini`, and
+`process_simple_command` in `engine/cmdfiles.cpp`.
+
+Prerequisite: 53.8.1.
+
+Work:
+
+- Extend `CommandProcessor` to retain startup-configuration and
+  command-line positions, presenting parameters in their existing order.
+- Keep bare-GIF argument probing and source diagnostics engine-owned.
+  Preserve startup result accumulation and action termination.
+- Keep existing initialization calls in place until the implementation
+  slices from 53.5.5 apply the agreed owner profiles.
+- Leave indirect-file processing on its existing path for this
+  intermediate commit; complete its incremental conversion in 53.8.3.
+  Mark any new temporary bridge with `// TODO: removed later`.
+- Do not expose the startup source to UI routing until 53.8.3 is complete.
+
+Done when: startup configuration and ordinary arguments are incremental
+without changing initialization or parameter effects.
+
+Validation: reuse startup ordering, diagnostics, later-batch-argument,
+action-termination, and bare-image coverage.  Add source-position checks;
+run the full `rt-default` workflow.  No manual testing is required.
+
+### 53.8.3. Add Indirect Parameter-File Sources
+
+Source: `process_file`, `process_file_set_name`, and startup advancement
+in `engine/cmdfiles.cpp`.
+
+Prerequisite: 53.8.2.
+
+Work:
+
+- Convert existing `@file` and `@file/setname` expansion to use retained
+  file state and present each contained parameter individually.
+- Locate and open files only when their argument is reached, after
+  earlier parameter effects.  Preserve filename defaults, selected-set
+  state, lookup failure behavior, and the existing supported syntax.
+- Complete each file with its own flags and diagnostics, then resume the
+  surrounding argument stream according to existing failure/action rules.
+- Remove the intermediate whole-file call added or retained in 53.8.2.
+  Do not add new recursive include semantics or pre-expand sources.
+
+Done when: no parameter inside a startup `@` source is hidden behind a
+whole-file execution call.
+
+Validation: cover both `@` forms, lazy lookup after earlier path
+settings, mixed file/argument order, missing sets, valid-prefix failure,
+and file completion before later arguments.  Run the full `rt-default`
+workflow.  No manual testing is required.
+
+### 53.8.4. Route Interactive Command Entry Through UI
+
+Source: `ui/get_cmd_string.cpp`, the shared recognition machinery,
+`CommandProcessor`, and the owner-table assembly.
+
+Prerequisite: 53.8.3.
+
+Work:
+
+- Add the single-parameter source context without startup initialization
+  or PAR-file completion behavior.
+- Expose `CommandProcessor` in `engine/CommandProcessor.h` and
+  `engine/CommandProcessor.cpp`.  Keep source processing in engine and
+  introduce no engine-to-UI include or callback.
+- Implement the common UI loop over the processor's current command.
+  Use the 53.7 result contract and let engine advancement decide whether
+  another parameter follows, including after a rejected command.
+- Assemble and validate owner tables once before processing parameters;
+  reject duplicate names with `std::logic_error`.
+- Replace interactive entry's textual engine-parser call with this loop.
+  Preserve diagnostics, action execution, and its debug-only
+  compatibility behavior at the existing completion point.
+- Do not move parameter handlers yet.  Any temporary empty UI table must
+  be marked with `// TODO: removed later` and replaced during 53.9.
+
+Done when: interactive entry exercises the real common coordinator while
+engine owns source advancement and engine parameter interpretation.
+
+Validation: cover acceptance, unknown names, rejection without fallback,
+duplicate ownership, and single-command context.  Reuse command-action
+and diagnostic autokey journeys; run the full `rt-default` workflow.
+No additional manual testing is required.
+
+### 53.8.5. Route Selected Parameter Sets Through UI
+
+Source: `ui/get_commands.cpp` and selected-file `CommandProcessor`
+construction.
+
+Prerequisite: 53.8.4.
+
+Work:
+
+- Replace `load_commands()` at the selected-set entry point with the
+  same UI coordinator used for interactive entry.
+- Transfer the already-open, positioned file to engine source ownership.
+  Preserve set selection, processing context, flag initialization,
+  compatibility completion, and closure.
+- Keep diagnostics and action execution after source processing as
+  before.  Do not create a separate file-specific UI dispatcher.
+
+Done when: every parameter in a selected set passes through the common
+UI-first recognition point.
+
+Validation: cover mixed command ownership with test handlers, rejected
+parameters, valid earlier effects, set completion, and file closure.
+Reuse command-action and diagnostic autokey coverage; run the full
+`rt-default` workflow.  No additional manual testing is required.
+
+### 53.8.6. Route Startup And Restart Sources Through UI
+
+Source: `main_restart()` in `ui/id_main.cpp`, startup
+`CommandProcessor` construction, and startup-configuration reprocessing.
+
+Prerequisite: 53.8.5 and the initialization agreement from 53.5.5.
+
+Work:
+
+- Replace startup's whole-source `cmd_files()` call with the common
+  coordinator over startup configuration, arguments, and indirect sets.
+- Connect startup-configuration reprocessing from
+  `reset_startup_commands()` to the same route.  Preserve the existing
+  fallback after abandoned fractal-file-entry selection.
+- Apply the agreed initialization profiles at their existing lifecycle
+  points.  Preserve first-init bookkeeping, restart suppression of mode
+  selection, pending image selection, and completion diagnostics/actions.
+- Keep `@file` and `@file/setname` inside engine source traversal, but
+  route each exposed parameter through UI exactly like a direct argument.
+  Do not invoke a complete engine-only parser from either path.
+
+Done when: all active application command sources use the coordinator
+before any parameter handlers migrate to UI.
+
+Validation: cover startup configuration, both indirect-file forms,
+command-line overrides, restart/reprocessing, and source-specific failure
+continuation.  Reuse startup and autokey journeys; run the full
+`rt-default` workflow.  No additional manual testing is required.
+
+### 53.8.7. Remove Superseded Command Entry Paths
+
+Source: old whole-source runners and textual parser entry points in
+`engine/cmdfiles.cpp`, declarations, and their test callers.
+
+Prerequisite: 53.8.6.
+
+Work:
+
+- Remove superseded `cmd_files()`, `load_commands()`, textual
+  `cmd_arg()`, the combined `reset_startup_commands()` source runner, and
+  temporary runners once their application callers are converted.
+  Retain initialization operations only as specified by the agreed
+  defaults design, not as hidden source-processing wrappers.
+- Keep engine-handler entry points operating on the shared parsed
+  `Command`.  Do not retain an engine-only application path just to
+  preserve old test entry points.
+- Route integration tests through the coordinator; keep genuinely
+  engine-only handler tests direct.  Remove obsolete declarations and
+  temporary comments with their temporary code.
+- Verify all supported source paths reach the common ownership decision
+  and preserve per-file completion independently of overall results.
+
+Done when: no active application or test convenience path bypasses UI
+ownership, and the temporary source-processing runners are gone.
+
+Validation: run the full `rt-default` workflow, including existing
+startup, parameter, diagnostic, action, and batch tests.  Add no
+source-grep tests or redundant image tests.  No manual testing is required.
+
+### 53.9.1. Move Video-Prompt Parameter Handling To UI
+
+Source: `cmd_ask_video` and its table entry in `engine/cmdfiles.cpp`.
+
+Prerequisite: 53.8.7; all application sources already use the
+common coordinator.
+
+Work:
+
+- Move only `askvideo` interpretation and its table entry to UI.
+- Preserve yes/no validation, video-prompt preference updates, diagnostics,
+  and the existing `NONE` result.
+- Remove its engine handler and table entry, retaining one owner.
+  Remove engine UI includes only when their final use is gone; leave
+  default/reset changes to the slices agreed in 53.5.5.
+- Move existing handler tests to the UI owner and verify equivalent
+  routing from every source where the parameter is permitted.  Do not
+  introduce a forwarding function or engine callback into UI.
+
+Done when: `askvideo` is UI-owned and no source bypasses its handler.
+
+Validation: reuse existing handler, startup, and autokey coverage and
+run the full `rt-default` workflow.  No additional manual testing is
+required.
+
+### 53.9.2. Move Virtual-Screen Parameter Handling To UI
+
+Source: `cmd_virtual` and its table entry in `engine/cmdfiles.cpp`.
+
+Prerequisite: 53.9.1; all application sources already use the
+common coordinator.
+
+Work:
+
+- Move only `virtual` interpretation and its table entry to UI.
+- Preserve yes/no validation, virtual-screen preference updates,
+  diagnostics, and the existing `FRACTAL_PARAM` result.
+- Remove its engine handler and table entry, retaining one owner.
+  Remove engine UI includes only when their final use is gone; leave
+  default/reset changes to the slices agreed in 53.5.5.
+- Move existing handler tests to the UI owner and verify equivalent
+  routing from every source where the parameter is permitted.  Do not
+  introduce a forwarding function or engine callback into UI.
+
+Done when: `virtual` is UI-owned and no source bypasses its handler.
+
+Validation: reuse existing handler, startup, and autokey coverage and
+run the full `rt-default` workflow.  No additional manual testing is
+required.
+
+### 53.9.3. Move History-Capacity Parameter Handling To UI
+
+Source: `cmd_max_history` and its table entry in `engine/cmdfiles.cpp`.
+
+Prerequisite: 53.9.2; all application sources already use the
+common coordinator.
+
+Work:
+
+- Move only `maxhistory` interpretation and its table entry to UI.
+- Preserve numeric validation, history capacity, startup-only eligibility,
+  its debug override, and existing `FRACTAL_PARAM | PARAM_3D` results.
+- Remove its engine handler and table entry, retaining one owner.
+  Remove engine UI includes only when their final use is gone; leave
+  default/reset changes to the slices agreed in 53.5.5.
+- Move existing handler tests to the UI owner and verify equivalent
+  routing from every source where the parameter is permitted.  Do not
+  introduce a forwarding function or engine callback into UI.
+
+Done when: `maxhistory` is UI-owned and no source bypasses its handler.
+
+Validation: reuse existing handler, startup, and autokey coverage and
+run the full `rt-default` workflow.  No additional manual testing is
+required.
+
+### 53.9.4. Move Autokey-Mode Parameter Handling To UI
+
+Source: `cmd_auto_key` and its table entry in `engine/cmdfiles.cpp`.
+
+Prerequisite: 53.9.3; all application sources already use the
+common coordinator.
+
+Work:
+
+- Move only `autokey` interpretation and its table entry to UI.
+- Preserve play/record interpretation, invalid-value diagnostics, and the
+  existing `NONE` result.  Keep playback/recording runtime state in UI.
+- Remove its engine handler and table entry, retaining one owner.
+  Remove engine UI includes only when their final use is gone; leave
+  default/reset changes to the slices agreed in 53.5.5.
+- Move existing handler tests to the UI owner and verify equivalent
+  routing from every source where the parameter is permitted.  Do not
+  introduce a forwarding function or engine callback into UI.
+
+Done when: `autokey` is UI-owned and no source bypasses its handler.
+
+Validation: reuse existing handler, startup, and autokey coverage and
+run the full `rt-default` workflow.  No additional manual testing is
+required.
+
+### 53.9.5. Move Autokey-Filename Parameter Handling To UI
+
+Source: `cmd_auto_key_name` and its table entry in `engine/cmdfiles.cpp`.
+
+Prerequisite: 53.9.4; all application sources already use the
+common coordinator.
+
+Work:
+
+- Move only `autokeyname` interpretation and its table entry to UI.
+- Preserve filename case, lookup and fallback behavior, and the existing
+  `NONE` result.  Keep script runtime state in UI.
+- Remove its engine handler and table entry, retaining one owner.
+  Remove engine UI includes only when their final use is gone; leave
+  default/reset changes to the slices agreed in 53.5.5.
+- Move existing handler tests to the UI owner and verify equivalent
+  routing from every source where the parameter is permitted.  Do not
+  introduce a forwarding function or engine callback into UI.
+
+Done when: `autokeyname` is UI-owned and no source bypasses its handler.
+
+Validation: reuse existing handler, startup, and autokey coverage and
+run the full `rt-default` workflow.  No additional manual testing is
+required.
 
 ## Current Direct And Indirect Input Leaks
 
@@ -1447,9 +1796,9 @@ and setup-policy couplings, not direct input polling:
 - `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h`, `ui/history.h`,
   `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  The marked
   `ui/video_mode.h` include permits the temporary mechanical lookup of
-  UI-owned bindings.  Shared syntax and recognition are agreed; design
-  slices 53.5.3 through 53.5.7 settle the remaining option 1 decisions
-  before separate implementation slices remove these dependencies.
+  UI-owned bindings.  Shared syntax, recognition, and routing are agreed;
+  design slices 53.5.4 through 53.5.7 settle the remaining option 1
+  decisions before the deferred implementation removes these dependencies.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy;
   design slice 53.5.4 covers their mixed-parameter boundary.
