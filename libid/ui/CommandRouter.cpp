@@ -4,7 +4,6 @@
 #include "ui/CommandRouter.h"
 
 #include "engine/CommandProcessor.h"
-#include "engine/video_mode.h"
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "misc/debug_flags.h"

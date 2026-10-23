@@ -699,11 +699,10 @@ dependencies.
   pending mode unchanged; valid but unbound names clear it.  Preserve
   `FRACTAL_PARAM | PARAM_3D` on success.  Do not activate a driver or
   change image dimensions while interpreting the parameter.
-- Move `check_vid_mode_key_name` to UI after the `video` handler moves.
-  Update its existing callers, including configuration-file loading.
-  Remove its engine declaration and `ui/id_keys.h` dependency without
-  retaining a forwarding function.  Keep mode validation in engine and
-  never restore `VideoInfo::key` or relocate UI binding storage there.
+- UI owns `check_vid_mode_key_name`, including its use by configuration
+  loading.  Engine has no key-name parser or UI key dependency.  Keep
+  mode validation in engine and never restore `VideoInfo::key` or
+  relocate UI binding storage there.
 - Move `cmd_rds` and its calibration-bar parser to UI.  Validate the
   complete parameter once into local values before changing settings.
   Depth, calibration bars, texture selection, and the texture filename
@@ -1479,31 +1478,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.9.7. Move Video Key-Name Parsing To UI
-
-Source: `check_vid_mode_key_name` in `engine/video_mode.cpp`, its public
-declaration, and callers in configuration loading and UI code.
-
-Prerequisite: 53.9.6; engine command handling no longer parses video keys.
-
-Work:
-
-- Move the parser and declaration to `ui/video_mode.cpp` and
-  `ui/video_mode.h`.  Preserve accepted modifiers, case, trailing spaces,
-  invalid-name results, and bounded string-view handling.
-- Update configuration loading, parameter handling, batch-file creation,
-  slideshow processing, and tests to use the UI declaration directly.
-- Remove the obsolete engine declaration, its temporary comment, and
-  `ui/id_keys.h` from `engine/video_mode.cpp`.  Keep disk/display mode
-  validation in engine; do not retain a forwarding wrapper.
-
-Done when: key-name syntax is UI-owned and engine mode validation has no
-UI key dependency.
-
-Validation: reuse existing key-name parser, configuration, parameter,
-slideshow, and batch-file tests.  Run the full `rt-default` workflow;
-no additional manual testing is required.
-
 ### 53.9.8. Move Automatic-Stereo Parameter Handling To UI
 
 Source: `cmd_rds`, `parse_rds_bars`, and the `rds` table entry in
@@ -1631,18 +1605,17 @@ renderers or UI.  Remaining engine/fractal header dependencies are data
 and setup-policy couplings, not direct input polling:
 
 - `VideoInfo` is key-free.  UI owns the separate `g_video_mode_keys`
-  associations, the selected-entry binding, key lookup, and binding-name
-  formatting.  `engine/video_mode.cpp` still includes `ui/id_keys.h`
-  for the deferred key-name parser.  Slice 53.9.7 moves it to UI; engine
-  command handling no longer uses the parser.  UI owns the `video`
-  handler and pending request `g_init_mode`, including its storage and
+  associations, the selected-entry binding, key lookup, key-name parsing,
+  and binding-name formatting.  Engine retains disk/display mode
+  validation with no UI key dependency.  UI owns the `video` handler and
+  pending request `g_init_mode`, including its storage and
   initialization/completion policy.
 - `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h` and `ui/stereo.h`
   expose command settings.  Shared syntax, recognition, routing, and mixed
   ownership, initialization, ordering, failure behavior, and reporting
   are agreed.  Implementation slices remove these dependencies;
-  53.9.7 through 53.9.11 move UI handlers and the key-name parser without
-  changing their semantics.
+  53.9.8 through 53.9.11 move the remaining UI handlers without changing
+  their semantics.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy;
   slices 53.9.8 and 53.9.9 move their parameter handling to UI.

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include <engine/video_mode.h>
+#include <ui/video_mode.h>
 
 #include <engine/pixel_limits.h>
+#include <engine/video_mode.h>
 #include <engine/VideoInfo.h>
 #include <misc/ValueSaver.h>
 #include <ui/id_keys.h>
-#include <ui/video_mode.h>
 
 #include <gtest/gtest.h>
 

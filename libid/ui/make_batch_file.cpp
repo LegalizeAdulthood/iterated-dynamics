@@ -26,7 +26,6 @@
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
 #include "engine/UserData.h"
-#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/formula.h"

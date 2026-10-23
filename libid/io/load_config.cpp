@@ -4,7 +4,6 @@
 #include "io/load_config.h"
 
 #include "engine/pixel_limits.h"
-#include "engine/video_mode.h"
 #include "io/library.h"
 #include "misc/Driver.h"
 #include "ui/video_mode.h"
