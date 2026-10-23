@@ -7,6 +7,7 @@
 #include "engine/VideoInfo.h"
 #include "io/loadfile.h"
 #include "misc/debug_flags.h"
+#include "ui/big_while_loop.h"
 
 #include <fmt/format.h>
 
@@ -72,6 +73,12 @@ CommandParseResult CommandRouter::process(CommandProcessor &processor) const
         cmd.result.flags = flags;
     }
     return processor.result();
+}
+
+static void reset_restart_defaults()
+{
+    g_ask_video = true;
+    engine::reset_restart_defaults();
 }
 
 CommandParseResult CommandRouter::process_startup(const std::vector<std::string> &args) const

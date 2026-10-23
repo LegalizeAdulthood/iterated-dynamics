@@ -191,7 +191,6 @@ void reset_restart_defaults()                          // <ins> key init
     reset_version_to_current();
     g_record_colors = RecordColorsMode::AUTOMATIC;     // use mapfiles in PARs
     g_dither_flag = false;                             // no dithering
-    g_ask_video = true;                                // turn on video-prompt flag
     g_overwrite_file = false;                          // don't overwrite
     g_sound_flag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
     g_init_batch = BatchMode::NONE;                    // not in batch mode

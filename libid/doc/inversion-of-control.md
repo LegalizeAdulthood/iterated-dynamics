@@ -1480,29 +1480,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.8.6.1. Move The Video-Prompt Restart Default
-
-Source: the `g_ask_video` assignment in restart initialization and UI
-startup/configuration-fallback coordination.
-
-Prerequisite: 53.8.6.
-
-Work:
-
-- Introduce UI `reset_restart_defaults` with the actual video-prompt
-  assignment and a call to engine `reset_restart_defaults`.  Remove only
-  that assignment from engine; replace coordinator calls with the UI
-  initializer at both startup and configuration-fallback boundaries.
-- Preserve true before configuration, later overrides, and no change
-  for explicit `reset=`.  Do not reset history, autokey, or stereo policy.
-
-Done when: UI owns its video-prompt default and invokes engine restart
-initialization exactly once at each existing boundary.
-
-Validation: cover startup overrides, restart, fallback, and explicit
-reset preserving the preference.  Run the full `rt-default` workflow;
-no additional manual testing is required.
-
 ### 53.8.6.2. Move The Virtual-Screen Restart Default
 
 Source: the `g_virtual_screens` assignment in the local

@@ -18,6 +18,7 @@
 #include <misc/Driver.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
+#include <ui/big_while_loop.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -487,6 +488,7 @@ protected:
     ValueSaver<ShowFile> m_saved_show_file{g_show_file};
     ValueSaver<bool> m_saved_colors_preloaded{g_colors_preloaded};
     ValueSaver<bool> m_saved_read_color{g_read_color};
+    ValueSaver<bool> m_saved_ask_video{g_ask_video};
 };
 
 void TestCommandRouterStartup::SetUp()
@@ -788,6 +790,89 @@ TEST_F(TestCommandRouterStartup, finalTypeRequestsSelectionOrReportsBatchDiagnos
     EXPECT_TRUE(interactive.needs_file_entry);
     EXPECT_FALSE(batch.needs_file_entry);
     EXPECT_THAT(batch.diagnostics.errors, ElementsAre(HasSubstr("type=formula requires formulaname=")));
+}
+
+TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVideoPromptPreferenceAlone)
+{
+    g_ask_video = false;
+
+    engine::reset_restart_defaults();
+
+    EXPECT_FALSE(g_ask_video);
+}
+
+TEST_F(TestCommandRouterStartup, videoPromptDefaultPrecedesConfigurationAndLaterOverrides)
+{
+    g_ask_video = false;
+    write_source("sstools.ini", "ui=before askvideo=no\n");
+    const CommandRouter router{CommandHandlerTables{{}, m_ui}, engine_command_handlers()};
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .WillOnce(
+            [](const Command &cmd)
+            {
+                EXPECT_EQ(CmdFile::SSTOOLS_INI, cmd.mode);
+                EXPECT_TRUE(g_ask_video);
+                return CmdArgFlags::NONE;
+            })
+        .WillOnce(
+            [](const Command &cmd)
+            {
+                EXPECT_EQ(CmdFile::AT_CMD_LINE, cmd.mode);
+                EXPECT_FALSE(g_ask_video);
+                return CmdArgFlags::NONE;
+            });
+
+    const CommandParseResult result{router.process_startup({"id", "ui=after", "askvideo=yes"})};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_TRUE(g_ask_video);
+}
+
+TEST_F(TestCommandRouterStartup, startupRestartAndFallbackRestoreVideoPromptDefault)
+{
+    const CommandRouter router;
+    g_ask_video = false;
+
+    EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
+    EXPECT_TRUE(g_ask_video);
+    EXPECT_FALSE(g_first_init);
+    g_ask_video = false;
+    EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
+    EXPECT_TRUE(g_ask_video);
+    g_ask_video = false;
+    EXPECT_TRUE(router.reset_startup().diagnostics.errors.empty());
+    EXPECT_TRUE(g_ask_video);
+}
+
+TEST_F(TestCommandRouterStartup, fallbackRetainsVideoPromptConfigurationOverride)
+{
+    const CommandRouter router;
+    write_source("sstools.ini", "askvideo=no\n");
+    g_ask_video = true;
+
+    const CommandParseResult result{router.reset_startup()};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_FALSE(g_ask_video);
+}
+
+TEST_F(TestCommandRouterStartup, explicitResetPreservesVideoPromptPreference)
+{
+    const CommandRouter router;
+    for (const bool ask_video : {true, false})
+    {
+        SCOPED_TRACE(ask_video);
+        g_ask_video = ask_video;
+        CommandProcessor processor{"reset=1960", CmdFile::AT_AFTER_STARTUP};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
+        EXPECT_EQ(ask_video, g_ask_video);
+    }
 }
 
 } // namespace id::test
