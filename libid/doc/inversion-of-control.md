@@ -1480,38 +1480,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.8.5. Route Selected Parameter Sets Through UI
-
-Source: `ui/get_commands.cpp` and selected-file `CommandProcessor`
-construction.
-
-Prerequisite: 53.8.4.
-
-Work:
-
-- Replace `load_commands()` at the selected-set entry point with the
-  same UI coordinator used for interactive entry.
-- Transfer the already-open, positioned file to engine source ownership.
-  Preserve set selection, processing context, flag initialization,
-  compatibility completion, and closure.
-- Include both owners' unchanged change flags in file completion.
-  Return accepted-prefix flags even when diagnostics contain errors;
-  preserve the caller's existing response to `RESET`, `YES_3D`, and
-  regeneration flags without performing initialization again.
-- Keep diagnostics and action execution after source processing as
-  before.  Do not create a separate file-specific UI dispatcher.
-
-Done when: every parameter in a selected set passes through the common
-UI-first recognition point.
-
-Validation: cover mixed command ownership with test handlers, rejected
-parameters, valid earlier effects, set completion, and file closure.
-Verify a rejection stops later set commands for either owner while
-warnings do not.  Cover UI-originated flags triggering the existing
-file-compatibility decision and accepted-prefix caller responses after
-failure.  Reuse command-action and diagnostic autokey coverage; run the
-full `rt-default` workflow.  No additional manual testing is required.
-
 ### 53.8.6. Route Startup And Restart Sources Through UI
 
 Source: `main_restart()` in `ui/id_main.cpp`, startup

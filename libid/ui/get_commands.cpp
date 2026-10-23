@@ -3,14 +3,17 @@
 //
 #include "ui/get_commands.h"
 
+#include "engine/CommandProcessor.h"
 #include "helpdefs.h"
-#include "misc/ValueSaver.h"
 #include "io/file_item.h"
-#include "ui/get_file_entry.h"
-#include "ui/help.h"
+#include "io/loadfile.h"
+#include "misc/ValueSaver.h"
 #include "ui/command_diagnostics.h"
 #include "ui/command_effects.h"
+#include "ui/CommandRouter.h"
+#include "ui/get_file_entry.h"
 #include "ui/goodbye.h"
+#include "ui/help.h"
 
 #include <cstdio>
 #include <vector>
@@ -33,7 +36,11 @@ CmdArgFlags get_commands()
     if (point >= 0 && (param_file = std::fopen(g_parameter_file.string().c_str(), "rb")) != nullptr)
     {
         std::fseek(param_file, point, SEEK_SET);
-        CommandParseResult result{load_commands(param_file)};
+        CommandProcessor processor{param_file, CmdFile::AT_AFTER_STARTUP};
+        const CommandRouter router;
+        CommandParseResult result{router.process(processor)};
+        // PAR reads a file and sets color, don't read colors from GIF.
+        g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
         const bool exit_requested{apply_command_effects(result)};
         ret = result.flags;
         show_command_diagnostics(result.diagnostics);

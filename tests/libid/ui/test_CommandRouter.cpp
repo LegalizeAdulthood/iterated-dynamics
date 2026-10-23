@@ -4,20 +4,32 @@
 #include <ui/CommandRouter.h>
 
 #include <engine/calcfrac.h>
+#include <engine/command_comments.h>
 #include <engine/CommandProcessor.h>
 #include <engine/sound.h>
+#include <fractals/fractalp.h>
+#include <io/loadfile.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
+#include <misc/version.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <array>
+#include <cstdio>
+#include <filesystem>
+#include <memory>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <vector>
 
+namespace fs = std::filesystem;
+
 using namespace id::engine;
+using namespace id::fractals;
+using namespace id::io;
 using namespace id::misc;
 using namespace id::ui;
 using namespace testing;
@@ -255,6 +267,192 @@ TEST_F(TestCommandRouter, defaultRouterRetainsEngineStartupRestrictions)
     EXPECT_EQ(BatchMode::NONE, g_init_batch);
     EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
     EXPECT_EQ(1U, result.diagnostics.errors.size());
+}
+
+class TestCommandRouterFile : public TestCommandRouter
+{
+protected:
+    void TearDown() override;
+    std::FILE *open_input(std::string_view text);
+
+    fs::path m_path;
+    ValueSaver<double> m_saved_param_0{g_params[0], 0.0};
+    ValueSaver<double> m_saved_param_2{g_params[2], 0.0};
+    ValueSaver<Version> m_saved_version{g_version, current_id_version()};
+    ValueSaver<Version> m_saved_file_version{g_file_version, current_id_version()};
+    ValueSaver<bool> m_saved_bif_functions{g_new_bifurcation_functions_loaded, true};
+};
+
+void TestCommandRouterFile::TearDown()
+{
+    if (!m_path.empty())
+    {
+        std::error_code error;
+        fs::remove(m_path, error);
+    }
+    clear_command_comments();
+}
+
+std::FILE *TestCommandRouterFile::open_input(const std::string_view text)
+{
+    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
+    m_path = fs::temp_directory_path() / (std::string{info->test_suite_name()} + '_' + info->name() + ".par");
+    std::unique_ptr<std::FILE, decltype(&std::fclose)> file{std::fopen(m_path.string().c_str(), "w+b"), std::fclose};
+    if (!file || std::fwrite(text.data(), 1, text.size(), file.get()) != text.size())
+    {
+        throw std::runtime_error("Cannot write parameter test file: " + m_path.string());
+    }
+    std::rewind(file.get());
+    return file.release();
+}
+
+TEST_F(TestCommandRouterFile, selectedSetUsesPositionAndContextForBothOwners)
+{
+    const std::string prefix{"ignored { ui=no }\n"};
+    std::unique_ptr<std::FILE, decltype(&std::fclose)> file{
+        open_input(prefix + "entry (description) { ui=yes engine=yes } ui=no"), std::fclose};
+    ASSERT_EQ(0, std::fseek(file.get(), static_cast<long>(prefix.size()), SEEK_SET));
+    CommandProcessor processor{file.release(), CmdFile::AT_AFTER_STARTUP};
+    const InSequence sequence;
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .WillOnce(
+            [](const Command &cmd)
+            {
+                EXPECT_EQ(CmdFile::AT_AFTER_STARTUP, cmd.mode);
+                EXPECT_EQ("yes", cmd.value);
+                cmd.result.diagnostics.warnings.push_back("UI warning");
+                return CmdArgFlags::RESET;
+            });
+    EXPECT_CALL(m_engine_handler, Call(_))
+        .WillOnce(
+            [](const Command &cmd)
+            {
+                EXPECT_EQ(CmdFile::AT_AFTER_STARTUP, cmd.mode);
+                EXPECT_EQ("yes", cmd.value);
+                cmd.result.diagnostics.warnings.push_back("engine warning");
+                return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D;
+            });
+
+    const CommandParseResult result{m_router.process(processor)};
+
+    EXPECT_EQ(
+        CmdArgFlags::RESET | CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_THAT(result.diagnostics.warnings, ElementsAre("UI warning", "engine warning"));
+    EXPECT_TRUE(fs::remove(m_path));
+}
+
+TEST_F(TestCommandRouterFile, uiRejectionRetainsEngineEffectsAndFlagsAndStopsTheSet)
+{
+    CommandProcessor processor{open_input("entry { engine=yes ui=bad engine=no }"), CmdFile::AT_AFTER_STARTUP};
+    const InSequence sequence;
+    EXPECT_CALL(m_engine_handler, Call(_))
+        .WillOnce(
+            [](const Command &)
+            {
+                g_max_iterations = 222;
+                return CmdArgFlags::RESET | CmdArgFlags::FRACTAL_PARAM;
+            });
+    EXPECT_CALL(m_ui_handler, Call(_)).WillOnce([](const Command &cmd) { return cmd.bad_arg(); });
+
+    const CommandParseResult result{m_router.process(processor)};
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ(CmdArgFlags::RESET | CmdArgFlags::FRACTAL_PARAM, result.flags);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  ui=bad"));
+    EXPECT_TRUE(fs::remove(m_path));
+}
+
+TEST_F(TestCommandRouterFile, engineRejectionRetainsUiEffectsAndFlagsAndStopsTheSet)
+{
+    CommandProcessor processor{open_input("entry { ui=yes engine=bad ui=no }"), CmdFile::AT_AFTER_STARTUP};
+    const InSequence sequence;
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .WillOnce(
+            [](const Command &)
+            {
+                g_base_hertz = 550;
+                return CmdArgFlags::YES_3D | CmdArgFlags::PARAM_3D;
+            });
+    EXPECT_CALL(m_engine_handler, Call(_)).WillOnce([](const Command &cmd) { return cmd.bad_arg(); });
+
+    const CommandParseResult result{m_router.process(processor)};
+
+    EXPECT_EQ(550, g_base_hertz);
+    EXPECT_EQ(CmdArgFlags::YES_3D | CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  engine=bad"));
+    EXPECT_TRUE(fs::remove(m_path));
+}
+
+TEST_F(TestCommandRouterFile, uiFlagsTriggerFileCompatibilityOnceEvenAfterRejection)
+{
+    set_fractal_type(FractalType::MARKS_JULIA);
+    g_file_version = parse_legacy_version(1824);
+    g_params[2] = 1.0;
+    CommandProcessor processor{open_input("entry { ui=yes engine=bad }"), CmdFile::AT_AFTER_STARTUP};
+    EXPECT_CALL(m_ui_handler, Call(_)).WillOnce(Return(CmdArgFlags::FRACTAL_PARAM));
+    EXPECT_CALL(m_engine_handler, Call(_))
+        .WillOnce(
+            [](const Command &cmd)
+            {
+                EXPECT_DOUBLE_EQ(1.0, g_params[2]);
+                return cmd.bad_arg();
+            });
+
+    const CommandParseResult result{m_router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
+    EXPECT_EQ(1U, result.diagnostics.errors.size());
+    EXPECT_DOUBLE_EQ(2.0, g_params[2]);
+    EXPECT_FALSE(processor.advance());
+    EXPECT_DOUBLE_EQ(2.0, g_params[2]);
+    EXPECT_TRUE(fs::remove(m_path));
+}
+
+TEST_F(TestCommandRouterFile, actionStopsTheSetAndRetainsBothOwnersResults)
+{
+    CommandProcessor processor{open_input("entry { ui=yes engine=yes ui=no }"), CmdFile::AT_AFTER_STARTUP};
+    const InSequence sequence;
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .WillOnce(
+            [](const Command &cmd)
+            {
+                cmd.result.initialize_fm = true;
+                return CmdArgFlags::RESET;
+            });
+    EXPECT_CALL(m_engine_handler, Call(_))
+        .WillOnce(
+            [](const Command &cmd)
+            {
+                cmd.result.action = MakeHelpDocument{"output.txt"};
+                return CmdArgFlags::NONE;
+            });
+
+    const CommandParseResult result{m_router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::RESET, result.flags);
+    EXPECT_TRUE(result.initialize_fm);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    ASSERT_TRUE(std::holds_alternative<MakeHelpDocument>(result.action));
+    EXPECT_EQ("output.txt", std::get<MakeHelpDocument>(result.action).filename);
+    EXPECT_TRUE(fs::remove(m_path));
+}
+
+TEST_F(TestCommandRouterFile, defaultRouterRetainsSelectedSetInitializationAndLaterEffects)
+{
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, cmd_arg("params=77", CmdFile::AT_CMD_LINE).flags);
+    CommandProcessor processor{open_input("entry { type=mandel maxiter=222 hertz=550 }"), CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(FractalType::MANDEL, g_fractal_type);
+    EXPECT_DOUBLE_EQ(0.0, g_params[0]);
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ(550, g_base_hertz);
+    EXPECT_TRUE(fs::remove(m_path));
 }
 
 } // namespace id::test
