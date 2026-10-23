@@ -3169,17 +3169,6 @@ static CmdArgFlags cmd_view_windows(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
-// virtual=?
-static CmdArgFlags cmd_virtual(const Command &cmd)
-{
-    if (cmd.yes_no_val[0] < 0)
-    {
-        return cmd.bad_arg();
-    }
-    g_virtual_screens = cmd.yes_no_val[0] != 0;
-    return CmdArgFlags::FRACTAL_PARAM;
-}
-
 // volume=?
 static CmdArgFlags cmd_volume(const Command &cmd)
 {
@@ -3255,7 +3244,7 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 161> s_commands{
+static std::array<CommandHandler, 160> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
@@ -3409,7 +3398,6 @@ static std::array<CommandHandler, 161> s_commands{
     CommandHandler{"usegrayscale", cmd_use_gray_scale},     //
     CommandHandler{"video", cmd_video},                     //
     CommandHandler{"viewwindows", cmd_view_windows},        //
-    CommandHandler{"virtual", cmd_virtual},                 //
     CommandHandler{"volume", cmd_volume},                   //
     CommandHandler{"warn", cmd_warn},                       //
     CommandHandler{"waterline", cmd_water_line},            //

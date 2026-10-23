@@ -5200,16 +5200,6 @@ TEST_F(TestParameterCommand, curDirNo)
     EXPECT_FALSE(g_check_cur_dir);
 }
 
-TEST_F(TestParameterCommand, virtualNo)
-{
-    ValueSaver saved_virtual_screens{g_virtual_screens, true};
-
-    exec_cmd_arg("virtual=n");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_FALSE(g_virtual_screens);
-}
-
 TEST_F(TestParameterCommand, saveDir)
 {
     ValueSaver saved_save_dir{g_save_dir, "foo"};

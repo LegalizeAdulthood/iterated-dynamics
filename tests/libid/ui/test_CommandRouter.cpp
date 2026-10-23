@@ -357,6 +357,51 @@ TEST_F(TestCommandRouter, invalidVideoPromptValuePreservesPreferenceAndDiagnoses
     }
 }
 
+TEST_F(TestCommandRouter, virtualNo)
+{
+    ValueSaver saved_virtual_screens{g_virtual_screens, true};
+    CommandProcessor processor{"virtual=n", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_FALSE(g_virtual_screens);
+}
+
+TEST_F(TestCommandRouter, virtualYes)
+{
+    ValueSaver saved_virtual_screens{g_virtual_screens, false};
+    CommandProcessor processor{"virtual=y", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_TRUE(g_virtual_screens);
+}
+
+TEST_F(TestCommandRouter, invalidVirtualScreenValuePreservesPreferenceAndDiagnosesOnce)
+{
+    ValueSaver saved_virtual_screens{g_virtual_screens};
+    const CommandRouter router;
+    for (const bool virtual_screens : {true, false})
+    {
+        SCOPED_TRACE(virtual_screens);
+        g_virtual_screens = virtual_screens;
+        CommandProcessor processor{"virtual=maybe", CmdFile::AT_AFTER_STARTUP};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+        EXPECT_EQ(virtual_screens, g_virtual_screens);
+        EXPECT_THAT(
+            result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  virtual=maybe"));
+    }
+}
+
 class TestCommandRouterFile : public TestCommandRouter
 {
 protected:
@@ -555,6 +600,26 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesVideoPromptParameter)
     EXPECT_EQ(CmdArgFlags::NONE, result.flags);
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_FALSE(g_ask_video);
+    EXPECT_TRUE(fs::remove(m_path));
+}
+
+TEST_F(TestCommandRouterFile, selectedSetRoutesVirtualScreenParameterAndCompletesCompatibility)
+{
+    ValueSaver saved_virtual_screens{g_virtual_screens, true};
+    set_fractal_type(FractalType::MARKS_JULIA);
+    g_file_version = parse_legacy_version(1824);
+    g_params[2] = 1.0;
+    CommandProcessor processor{open_input("entry { virtual=no }"), CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_FALSE(g_virtual_screens);
+    EXPECT_DOUBLE_EQ(2.0, g_params[2]);
+    EXPECT_FALSE(processor.advance());
+    EXPECT_DOUBLE_EQ(2.0, g_params[2]);
     EXPECT_TRUE(fs::remove(m_path));
 }
 
@@ -1001,28 +1066,38 @@ TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVirtualScreenPreferen
 TEST_F(TestCommandRouterStartup, virtualScreenDefaultPrecedesConfigurationAndLaterOverrides)
 {
     g_virtual_screens = false;
-    write_source("sstools.ini", "ui=before virtual=no\n");
-    const CommandRouter router{CommandHandlerTables{{}, m_ui}, engine_command_handlers()};
-    EXPECT_CALL(m_ui_handler, Call(_))
-        .WillOnce(
-            [](const Command &cmd)
-            {
-                EXPECT_EQ(CmdFile::SSTOOLS_INI, cmd.mode);
-                EXPECT_TRUE(g_virtual_screens);
-                return CmdArgFlags::NONE;
-            })
-        .WillOnce(
-            [](const Command &cmd)
-            {
-                EXPECT_EQ(CmdFile::AT_CMD_LINE, cmd.mode);
-                EXPECT_FALSE(g_virtual_screens);
-                return CmdArgFlags::NONE;
-            });
+    write_source("sstools.ini", "virtual=no\n");
+    const CommandRouter router;
 
-    const CommandParseResult result{router.process_startup({"id", "ui=after", "virtual=yes"})};
+    const CommandParseResult configuration{router.process_startup({"id"})};
+
+    EXPECT_TRUE(configuration.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, configuration.flags);
+    EXPECT_FALSE(g_virtual_screens);
+
+    const CommandParseResult result{router.process_startup({"id", "virtual=yes"})};
 
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
+    EXPECT_TRUE(g_virtual_screens);
+}
+
+TEST_F(TestCommandRouterStartup, indirectFilesRouteVirtualScreenParameter)
+{
+    write_source("whole.par", "entry { virtual=no }");
+    write_source("selected.par", "ignored { virtual=no }\nchosen { virtual=yes }");
+    const CommandRouter router;
+
+    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
+
+    EXPECT_TRUE(whole.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, whole.flags);
+    EXPECT_FALSE(g_virtual_screens);
+
+    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
+
+    EXPECT_TRUE(selected.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, selected.flags);
     EXPECT_TRUE(g_virtual_screens);
 }
 
