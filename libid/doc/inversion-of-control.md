@@ -737,7 +737,7 @@ dependencies.
 ### Agreed Initialization And Reset
 
 - Extract appropriately named functions for initialization scopes before
-  changing ownership: `initialize_process_defaults`,
+  changing ownership: `init_process_defaults`,
   `reset_restart_defaults`, and `reset_fractal_defaults`.  Extract
   cohesive domain groups, such as viewport, orbit, and sound defaults,
   inside those functions where useful.  Preserve assignment order and
@@ -798,7 +798,7 @@ dependencies.
   and action execution outside default initializers.  The UI source
   coordinator selects the appropriate initialization scope; engine
   source traversal does not hide a second initialization operation.
-- Deferred slices 53.7.2 through 53.7.4 name local groups and separate
+- Deferred slices 53.7.3 and 53.7.4 name local groups and separate
   reset-value interpretation.  Slices 53.8.6.1 through 53.8.6.3 move UI
   restart defaults after source routing.  Slice 53.9.6 moves pending-mode
   storage with its handler; 53.9.10 and 53.9.11 move exit confirmation
@@ -1480,28 +1480,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.7.2. Group Restart Initialization
-
-Source: `init_vars_restart` and its calls in `engine/cmdfiles.cpp`.
-
-Prerequisite: 53.7.1.
-
-Work:
-
-- Name the local scope `reset_restart_defaults` and extract cohesive
-  groups such as viewport defaults where they clarify its assignments.
-- Preserve assignment order, current version/library setup, and the
-  existing UI assignments temporarily.  Do not migrate ownership yet.
-  Mark any new temporary mixed-owner group `// TODO: removed later`.
-- Keep configuration reading outside the initializer, at its original
-  position.  Do not widen the `reset=` scope to include restart defaults.
-
-Done when: restart initialization is organized into named groups without
-changing reset scope or parameter ordering.
-
-Validation: reuse startup and reset tests; run the full `rt-default`
-workflow.  No additional manual testing is required.
-
 ### 53.7.3. Group Fractal Initialization
 
 Source: `init_vars_fractal`, `init_vars3d`, and their initialization groups
@@ -1806,7 +1784,8 @@ no additional manual testing is required.
 
 ### 53.8.6.2. Move The Virtual-Screen Restart Default
 
-Source: the `g_virtual_screens` assignment in restart initialization.
+Source: the `g_virtual_screens` assignment in the local
+`reset_viewport_defaults` group.
 
 Prerequisite: 53.8.6.1.
 

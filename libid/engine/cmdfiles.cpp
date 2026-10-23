@@ -117,7 +117,7 @@ static CommandParseResult command_file(std::FILE *handle, CmdFile mode);
 static void append_result(CommandParseResult &result, CommandParseResult source);
 static bool next_line(std::FILE *handle, std::string &line_buf, CmdFile mode);
 static void init_process_defaults();
-static void init_vars_restart();
+static void reset_restart_defaults();
 static void init_vars_fractal();
 static void init_vars3d();
 static void reset_ifs_definition();
@@ -194,7 +194,7 @@ static bool type_has_file_entry()
 
 CommandParseResult reset_startup_commands()
 {
-    init_vars_restart();
+    reset_restart_defaults();
     init_vars_fractal();
     CommandParseResult result;
     process_sstools_ini(result);
@@ -436,7 +436,21 @@ static void init_process_defaults()
     }
 }
 
-static void init_vars_restart() // <ins> key init
+static void reset_viewport_defaults()
+{
+    g_viewport.enabled = false;  // no view window
+    g_viewport.reduction = 4.2F; //
+    g_viewport.crop = true;      //
+    // TODO: removed later
+    g_virtual_screens = true;                          // virtual screen modes on
+    g_viewport.final_aspect_ratio = g_screen_aspect;   //
+    g_viewport.y_dots = 0;                             //
+    g_viewport.x_dots = 0;                             //
+    g_viewport.keep_aspect_ratio = true;               // keep virtual aspect
+    g_viewport.z_scroll = true;                        // relaxed screen scrolling
+}
+
+static void reset_restart_defaults()                   // <ins> key init
 {
     reset_version_to_current();
     g_record_colors = RecordColorsMode::AUTOMATIC;     // use mapfiles in PARs
@@ -448,15 +462,7 @@ static void init_vars_restart() // <ins> key init
     g_check_cur_dir = false;                           // flag to check current dire for files
     g_save_time_interval = 0;                          // no auto-save
     g_init_mode = -1;                                  // no initial video mode
-    g_viewport.enabled = false;                        // no view window
-    g_viewport.reduction = 4.2F;                       //
-    g_viewport.crop = true;                            //
-    g_virtual_screens = true;                          // virtual screen modes on
-    g_viewport.final_aspect_ratio = g_screen_aspect;   //
-    g_viewport.y_dots = 0;                             //
-    g_viewport.x_dots = 0;                             //
-    g_viewport.keep_aspect_ratio = true;               // keep virtual aspect
-    g_viewport.z_scroll = true;                        // relaxed screen scrolling
+    reset_viewport_defaults();
     g_orbit_delay = 0;                                 // full speed orbits
     g_orbit_skip_points = 0;                           // skip no orbit points
     g_orbit_interval = 1;                              // plot all orbits
