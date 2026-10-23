@@ -547,16 +547,45 @@ engine concerns.  Option 1 partitions handlers by ownership: UI handles
 UI parameters and delegates unrecognized names to engine.  Both groups
 share syntax processing and preserve the original parameter order.
 
-Design slices 53.5.1 through 53.5.7 settle the syntax, recognition,
-routing, mixed parameters, defaults, failure behavior, and reporting.
-They authorize design discussion and plan updates only.  Keep these
-design slices ahead of the separate implementation slices they produce;
-do not change parser code before the design is agreed.
+The shared syntax design is agreed below.  Remaining design slices
+53.5.2 through 53.5.7 settle recognition, routing, mixed parameters,
+defaults, failure behavior, and reporting.  They authorize design
+discussion and plan updates only.  Keep them ahead of the implementation
+slices they produce; do not change parser code before the design is
+agreed.
 
 Until then, defer changes to command and parameter parsing, including UI
 effects and `video=F6` resolution.  Do not bypass this restriction with
 forwarding wrappers, duplicate helpers, relocated UI state, or new
 engine-to-UI dependencies.
+
+### Agreed Shared Syntax
+
+- Reuse the existing `Command` in `engine/Command.h` and
+  `engine/Command.cpp`.  Both UI and engine handlers receive the same
+  `const Command &`; decode each parameter once before handler selection.
+  The routing decision remains in design slice 53.5.3.
+- Retain the existing parsed fields, numeric helpers, sentinels, array
+  limits, and empty, omitted, and trailing-field behavior.  Preserve
+  original numeric text for arbitrary-precision conversion; actual
+  conversion and precision changes remain with engine parameter handlers.
+- Keep `lowerize_parameter` and its parameter-specific case-preservation
+  rules as shared language processing.  The exemption list describes
+  syntax, not ownership of UI runtime state.
+- Own the normalized argument text privately and do not mutate it after
+  construction.  Its string views and character pointers refer into that
+  text.  Prohibit copying and moving `Command`; construct it locally and
+  pass references while processing the parameter.
+- Retain `CmdFile`, the existing `CommandParseResult &`, `bad_arg()`, and
+  `warn_missing_file()` contracts.  This is a parsed command with context
+  and a result destination, not a pure value object.  Diagnostic behavior
+  stays unchanged; consequence reporting is revisited in 53.5.7.
+- Keep supported-name recognition, startup restrictions, setting changes,
+  and handler selection outside `Command`.  For example,
+  `maxiter=garbage` can be decomposed syntactically; its handler rejects
+  the nonnumeric value.  Do not redesign decoding during extraction.
+- Implement the extraction and direct syntax tests in deferred slice
+  53.6, after the remaining design discussions are complete.
 
 ## Remaining Inversion-of-Control Slices
 
@@ -1137,31 +1166,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.5.1. Shared Parameter Syntax Design
-
-Source: `engine/cmdfiles.cpp` (`Command`, its numeric parsing helpers, and
-`next_command`), `engine/lowerize_parameter.cpp`, and both handler tables.
-
-Scope: design discussion and plan updates only; no source changes.
-
-Work:
-
-- Design one parsed parameter representation shared by UI and engine
-  handlers.  Keep name/value splitting, slash-separated values, numeric
-  recognition, and case preservation in common syntax processing.
-- Decide how to expose the existing private `Command` machinery without
-  exposing unrelated engine state or duplicating parsing in UI.
-- Separate syntax errors from parameter-specific interpretation and
-  validation.  Preserve ownership and lifetime of parsed string views.
-- Record the agreed ownership, API changes, small implementation slices,
-  and focused automated coverage.  Do not implement them in this slice.
-
-Done when: the shared syntax boundary and its consumers are agreed.
-
-Validation: review existing parameter tests for empty values, omitted
-fields, filenames, numeric forms, and arbitrary precision.  Identify
-coverage gaps; no build or manual testing is required.
-
 ### 53.5.2. Parameter Recognition And Errors Design
 
 Source: `cmd_arg`, `handle_command`, `s_startup_commands`, `s_commands`,
@@ -1348,6 +1352,41 @@ autokey, stereo, and batch tests for result flags, aggregation, reset,
 legacy versions, and action suppression.  Identify focused gaps only;
 no build or manual testing is required.
 
+### 53.6. Extract Shared Command Parsing
+
+Source: `Command` and its syntax helpers in `engine/cmdfiles.cpp`,
+`engine/lowerize_parameter.cpp`, and existing parameter tests.
+
+Prerequisite: complete design slices 53.5.2 through 53.5.7 first.
+
+Work:
+
+- Implement the agreed shared syntax design.  Extract `Command` into
+  `engine/Command.h` and `engine/Command.cpp`, moving the syntax and
+  numeric-recognition helpers it needs.  Keep actual arbitrary-precision
+  conversion, parameter handlers, and handler tables in their owners.
+- Preserve the existing context, result destination, diagnostic helpers,
+  parsed-field interfaces, and decoding behavior.  Make the backing text
+  private and stable, and disable copying and moving to protect views.
+- Keep existing handlers on `const Command &` and the current `cmd_arg`
+  control flow intact.  Expose the shared type for future UI handlers;
+  do not introduce UI routing, parameter ownership, reset, or reporting
+  changes in this extraction.
+- Add focused direct tests of decoded fields, omitted and empty values,
+  numeric recognition, preserved numeric text, and syntax diagnostics.
+  Cover owned-text lifetime and reuse existing case-normalization tests.
+  Test nonnumeric text separately from rejection by a numeric handler.
+- Register the extracted source and tests using existing CMake patterns.
+
+Done when: one shared `Command` implementation is available to both
+layers, its internal references remain valid, and existing parameter
+behavior is unchanged.
+
+Validation: run focused syntax and parameter tests, then the full
+`rt-default` workflow.  Existing normalization and handler tests remain
+regression coverage; do not add redundant image tests.  No manual testing
+is required for this extraction.
+
 ## Current Direct And Indirect Input Leaks
 
 The synchronous engine-to-UI render dispatch has been removed.
@@ -1362,8 +1401,9 @@ and setup-policy couplings, not direct input polling:
 - `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h`, `ui/history.h`,
   `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  The marked
   `ui/video_mode.h` include permits the temporary mechanical lookup of
-  UI-owned bindings.  Design slices 53.5.1 through 53.5.7 specify option 1
-  before separate implementation slices remove these dependencies.
+  UI-owned bindings.  Shared syntax is agreed; design slices 53.5.2
+  through 53.5.7 settle the remaining option 1 decisions before separate
+  implementation slices remove these dependencies.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy;
   design slice 53.5.4 covers their mixed-parameter boundary.
