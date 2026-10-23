@@ -1480,28 +1480,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.8.6.2. Move The Virtual-Screen Restart Default
-
-Source: the `g_virtual_screens` assignment in the local
-`reset_viewport_defaults` group.
-
-Prerequisite: 53.8.6.1.
-
-Work:
-
-- Move only the true assignment into UI `reset_restart_defaults`,
-  removing it from the engine initializer.  Preserve existing ordering
-  and configuration/argument overrides.
-- Keep explicit `reset=` from changing the preference; retain the UI
-  initializer's single call to its engine counterpart.
-
-Done when: virtual-screen defaults have UI ownership without widening
-the reset scope.
-
-Validation: cover startup, restart, fallback, overrides, and explicit
-reset.  Run the full `rt-default` workflow; no additional manual testing
-is required.
-
 ### 53.8.6.3. Move Pending-Mode Initialization And Completion Policy
 
 Source: the pending-mode assignment in restart initialization and mode

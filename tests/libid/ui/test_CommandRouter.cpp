@@ -489,6 +489,7 @@ protected:
     ValueSaver<bool> m_saved_colors_preloaded{g_colors_preloaded};
     ValueSaver<bool> m_saved_read_color{g_read_color};
     ValueSaver<bool> m_saved_ask_video{g_ask_video};
+    ValueSaver<bool> m_saved_virtual_screens{g_virtual_screens};
 };
 
 void TestCommandRouterStartup::SetUp()
@@ -872,6 +873,89 @@ TEST_F(TestCommandRouterStartup, explicitResetPreservesVideoPromptPreference)
         EXPECT_TRUE(result.diagnostics.errors.empty());
         EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
         EXPECT_EQ(ask_video, g_ask_video);
+    }
+}
+
+TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVirtualScreenPreferenceAlone)
+{
+    g_virtual_screens = false;
+
+    engine::reset_restart_defaults();
+
+    EXPECT_FALSE(g_virtual_screens);
+}
+
+TEST_F(TestCommandRouterStartup, virtualScreenDefaultPrecedesConfigurationAndLaterOverrides)
+{
+    g_virtual_screens = false;
+    write_source("sstools.ini", "ui=before virtual=no\n");
+    const CommandRouter router{CommandHandlerTables{{}, m_ui}, engine_command_handlers()};
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .WillOnce(
+            [](const Command &cmd)
+            {
+                EXPECT_EQ(CmdFile::SSTOOLS_INI, cmd.mode);
+                EXPECT_TRUE(g_virtual_screens);
+                return CmdArgFlags::NONE;
+            })
+        .WillOnce(
+            [](const Command &cmd)
+            {
+                EXPECT_EQ(CmdFile::AT_CMD_LINE, cmd.mode);
+                EXPECT_FALSE(g_virtual_screens);
+                return CmdArgFlags::NONE;
+            });
+
+    const CommandParseResult result{router.process_startup({"id", "ui=after", "virtual=yes"})};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
+    EXPECT_TRUE(g_virtual_screens);
+}
+
+TEST_F(TestCommandRouterStartup, startupRestartAndFallbackRestoreVirtualScreenDefault)
+{
+    const CommandRouter router;
+    g_virtual_screens = false;
+
+    EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
+    EXPECT_TRUE(g_virtual_screens);
+    EXPECT_FALSE(g_first_init);
+    g_virtual_screens = false;
+    EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
+    EXPECT_TRUE(g_virtual_screens);
+    g_virtual_screens = false;
+    EXPECT_TRUE(router.reset_startup().diagnostics.errors.empty());
+    EXPECT_TRUE(g_virtual_screens);
+}
+
+TEST_F(TestCommandRouterStartup, fallbackRetainsVirtualScreenConfigurationOverride)
+{
+    const CommandRouter router;
+    write_source("sstools.ini", "virtual=no\n");
+    g_virtual_screens = true;
+
+    const CommandParseResult result{router.reset_startup()};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
+    EXPECT_FALSE(g_virtual_screens);
+}
+
+TEST_F(TestCommandRouterStartup, explicitResetPreservesVirtualScreenPreference)
+{
+    const CommandRouter router;
+    for (const bool virtual_screens : {true, false})
+    {
+        SCOPED_TRACE(virtual_screens);
+        g_virtual_screens = virtual_screens;
+        CommandProcessor processor{"reset=1960", CmdFile::AT_AFTER_STARTUP};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
+        EXPECT_EQ(virtual_screens, g_virtual_screens);
     }
 }
 

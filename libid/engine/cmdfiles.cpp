@@ -177,8 +177,6 @@ static void reset_viewport_defaults()
     g_viewport.enabled = false;  // no view window
     g_viewport.reduction = 4.2F; //
     g_viewport.crop = true;      //
-    // TODO: removed later
-    g_virtual_screens = true;                          // virtual screen modes on
     g_viewport.final_aspect_ratio = g_screen_aspect;   //
     g_viewport.y_dots = 0;                             //
     g_viewport.x_dots = 0;                             //

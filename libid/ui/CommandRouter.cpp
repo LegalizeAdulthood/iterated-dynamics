@@ -78,6 +78,7 @@ CommandParseResult CommandRouter::process(CommandProcessor &processor) const
 static void reset_restart_defaults()
 {
     g_ask_video = true;
+    g_virtual_screens = true;
     engine::reset_restart_defaults();
 }
 
