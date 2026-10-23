@@ -3576,16 +3576,6 @@ TEST_F(TestParameterCommand, oldDemmColorsYes)
     EXPECT_TRUE(g_old_demm_colors);
 }
 
-TEST_F(TestParameterCommand, askVideoYes)
-{
-    ValueSaver saved_ask_video{g_ask_video, false};
-
-    exec_cmd_arg("askvideo=y");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_TRUE(g_ask_video);
-}
-
 TEST_F(TestParameterCommand, ramVideoIgnored)
 {
     exec_cmd_arg("ramvideo=64");

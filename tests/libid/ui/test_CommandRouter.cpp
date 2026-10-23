@@ -312,6 +312,51 @@ TEST_F(TestCommandRouter, defaultRouterDoesNotRepeatRejectionDiagnostic)
     EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  batch=yes"));
 }
 
+TEST_F(TestCommandRouter, askVideoYes)
+{
+    ValueSaver saved_ask_video{g_ask_video, false};
+    CommandProcessor processor{"askvideo=y", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_TRUE(g_ask_video);
+}
+
+TEST_F(TestCommandRouter, askVideoNo)
+{
+    ValueSaver saved_ask_video{g_ask_video, true};
+    CommandProcessor processor{"askvideo=n", CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_FALSE(g_ask_video);
+}
+
+TEST_F(TestCommandRouter, invalidVideoPromptValuePreservesPreferenceAndDiagnosesOnce)
+{
+    ValueSaver saved_ask_video{g_ask_video};
+    const CommandRouter router;
+    for (const bool ask_video : {true, false})
+    {
+        SCOPED_TRACE(ask_video);
+        g_ask_video = ask_video;
+        CommandProcessor processor{"askvideo=maybe", CmdFile::AT_AFTER_STARTUP};
+
+        const CommandParseResult result{router.process(processor)};
+
+        EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+        EXPECT_EQ(ask_video, g_ask_video);
+        EXPECT_THAT(
+            result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  askvideo=maybe"));
+    }
+}
+
 class TestCommandRouterFile : public TestCommandRouter
 {
 protected:
@@ -496,6 +541,20 @@ TEST_F(TestCommandRouterFile, defaultRouterRetainsSelectedSetInitializationAndLa
     EXPECT_DOUBLE_EQ(0.0, g_params[0]);
     EXPECT_EQ(222, g_max_iterations);
     EXPECT_EQ(550, g_base_hertz);
+    EXPECT_TRUE(fs::remove(m_path));
+}
+
+TEST_F(TestCommandRouterFile, selectedSetRoutesVideoPromptParameter)
+{
+    ValueSaver saved_ask_video{g_ask_video, true};
+    CommandProcessor processor{open_input("entry { askvideo=no }"), CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_FALSE(g_ask_video);
     EXPECT_TRUE(fs::remove(m_path));
 }
 
@@ -849,28 +908,38 @@ TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVideoPromptPreference
 TEST_F(TestCommandRouterStartup, videoPromptDefaultPrecedesConfigurationAndLaterOverrides)
 {
     g_ask_video = false;
-    write_source("sstools.ini", "ui=before askvideo=no\n");
-    const CommandRouter router{CommandHandlerTables{{}, m_ui}, engine_command_handlers()};
-    EXPECT_CALL(m_ui_handler, Call(_))
-        .WillOnce(
-            [](const Command &cmd)
-            {
-                EXPECT_EQ(CmdFile::SSTOOLS_INI, cmd.mode);
-                EXPECT_TRUE(g_ask_video);
-                return CmdArgFlags::NONE;
-            })
-        .WillOnce(
-            [](const Command &cmd)
-            {
-                EXPECT_EQ(CmdFile::AT_CMD_LINE, cmd.mode);
-                EXPECT_FALSE(g_ask_video);
-                return CmdArgFlags::NONE;
-            });
+    write_source("sstools.ini", "askvideo=no\n");
+    const CommandRouter router;
 
-    const CommandParseResult result{router.process_startup({"id", "ui=after", "askvideo=yes"})};
+    const CommandParseResult configuration{router.process_startup({"id"})};
+
+    EXPECT_TRUE(configuration.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::NONE, configuration.flags);
+    EXPECT_FALSE(g_ask_video);
+
+    const CommandParseResult result{router.process_startup({"id", "askvideo=yes"})};
 
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_TRUE(g_ask_video);
+}
+
+TEST_F(TestCommandRouterStartup, indirectFilesRouteVideoPromptParameter)
+{
+    write_source("whole.par", "entry { askvideo=no }");
+    write_source("selected.par", "ignored { askvideo=no }\nchosen { askvideo=yes }");
+    const CommandRouter router;
+
+    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
+
+    EXPECT_TRUE(whole.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::NONE, whole.flags);
+    EXPECT_FALSE(g_ask_video);
+
+    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
+
+    EXPECT_TRUE(selected.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::NONE, selected.flags);
     EXPECT_TRUE(g_ask_video);
 }
 

@@ -587,17 +587,6 @@ static CmdArgFlags cmd_ambient(const Command &cmd)
     return CmdArgFlags::PARAM_3D;
 }
 
-// askvideo=?
-static CmdArgFlags cmd_ask_video(const Command &cmd)
-{
-    if (cmd.yes_no_val[0] < 0)
-    {
-        return cmd.bad_arg();
-    }
-    g_ask_video = cmd.yes_no_val[0] != 0;
-    return CmdArgFlags::NONE;
-}
-
 // aspectdrift=?
 static CmdArgFlags cmd_aspect_drift(const Command &cmd)
 {
@@ -3266,11 +3255,10 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 162> s_commands{
+static std::array<CommandHandler, 161> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
-    CommandHandler{"askvideo", cmd_ask_video},              //
     CommandHandler{"aspectdrift", cmd_aspect_drift},        //
     CommandHandler{"attack", cmd_attack},                   //
     CommandHandler{"attenuate", cmd_attenuate},             //

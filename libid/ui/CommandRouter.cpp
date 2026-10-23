@@ -25,8 +25,18 @@ using namespace id::misc;
 namespace id::ui
 {
 
-// TODO: removed later
-static const CommandHandlerTables s_ui_commands{};
+// askvideo=?
+static CmdArgFlags cmd_ask_video(const Command &cmd)
+{
+    if (cmd.yes_no_val[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_ask_video = cmd.yes_no_val[0] != 0;
+    return CmdArgFlags::NONE;
+}
+
+static const CommandHandlerTables s_ui_commands{{}, {CommandHandler{"askvideo", cmd_ask_video}}};
 
 static void add_names(std::set<std::string_view> &names, const std::vector<CommandHandler> &handlers)
 {
