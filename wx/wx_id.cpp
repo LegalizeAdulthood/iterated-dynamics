@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "wx_id.h"
 
+#include <config/driver_types.h>
 #include <misc/stack_avail.h>
 #include <ui/id_main.h>
 
@@ -35,14 +37,14 @@ int run(int argc, char *argv[])
     __try // NOLINT(clang-diagnostic-language-extension-token)
     {
         _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
-        result = id_main(argc, argv);
+        result = id_main(argc, argv, {get_wx_driver(), get_wx_disk_driver()});
     }
     __except (create_minidump(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)
     {
         result = -1;
     }
 #else
-    result = id_main(argc, argv);
+    result = id_main(argc, argv, {get_wx_driver(), get_wx_disk_driver()});
 #endif
     return result;
 }

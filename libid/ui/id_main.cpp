@@ -415,7 +415,7 @@ static MainState main_image_start(MainContext &context)
     return MainState::CONTINUE;
 }
 
-int id_main(int argc, char *argv[])
+int id_main(int argc, char *argv[], const std::initializer_list<Driver *> drivers)
 {
     std::vector<std::string> args;
     args.reserve(static_cast<std::size_t>(argc));
@@ -432,7 +432,7 @@ int id_main(int argc, char *argv[])
     init_memory();
 
     // let drivers add their video modes
-    if (!init_drivers(args))
+    if (!init_drivers(args, drivers))
     {
         init_failure("Sorry, I couldn't find any working video drivers for your system\n");
         std::exit(-1);

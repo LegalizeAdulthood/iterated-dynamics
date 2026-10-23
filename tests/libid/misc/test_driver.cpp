@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <misc/Driver.h>
 
@@ -49,6 +50,41 @@ TEST(TestDriver, loadCanRemoveConsumedArguments)
     EXPECT_THAT(args, ElementsAre("id", "type=mandel"));
 
     close_drivers();
+}
+
+TEST(TestDriver, initUsesProvidedDriverOrder)
+{
+    std::vector<std::string> args{"id"};
+    MockDriver disk;
+    MockDriver display;
+    const InSequence sequence;
+    EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
+    EXPECT_CALL(display, init(Ref(args))).WillOnce(Return(true));
+
+    EXPECT_EQ(2, init_drivers(args, {&disk, &display}));
+    EXPECT_EQ(&disk, g_driver);
+
+    EXPECT_CALL(display, terminate());
+    EXPECT_CALL(disk, terminate());
+    close_drivers();
+    EXPECT_EQ(nullptr, g_driver);
+}
+
+TEST(TestDriver, initSkipsUnavailableDrivers)
+{
+    std::vector<std::string> args{"id"};
+    MockDriver unavailable;
+    MockDriver available;
+    const InSequence sequence;
+    EXPECT_CALL(unavailable, init(Ref(args))).WillOnce(Return(false));
+    EXPECT_CALL(available, init(Ref(args))).WillOnce(Return(true));
+
+    EXPECT_EQ(1, init_drivers(args, {nullptr, &unavailable, &available}));
+    EXPECT_EQ(&available, g_driver);
+
+    EXPECT_CALL(available, terminate());
+    close_drivers();
+    EXPECT_EQ(nullptr, g_driver);
 }
 
 } // namespace id::test

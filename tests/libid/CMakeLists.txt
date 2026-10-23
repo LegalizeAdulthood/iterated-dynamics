@@ -134,7 +134,6 @@ add_executable(test-id
     math/test_fpu087.cpp
     math/test_math.cpp
     math/test_round_float_double.cpp
-    misc/driver_types.cpp
     misc/test_driver.cpp
     misc/test_memory.cpp
     misc/test_ValueSaver.cpp

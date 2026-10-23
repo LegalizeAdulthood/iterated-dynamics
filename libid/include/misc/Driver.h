@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -6,6 +7,7 @@
 
 #include <cassert>
 #include <filesystem>
+#include <initializer_list>
 #include <string>
 #include <vector>
 
@@ -123,7 +125,7 @@ public:
 };
 
 void load_driver(Driver *drv, std::vector<std::string> &args);
-int init_drivers(std::vector<std::string> &args);
+int init_drivers(std::vector<std::string> &args, std::initializer_list<Driver *> drivers);
 void add_video_mode(Driver *drv, engine::VideoInfo *mode);
 void close_drivers();
 Driver *driver_find_by_name(const char *name);

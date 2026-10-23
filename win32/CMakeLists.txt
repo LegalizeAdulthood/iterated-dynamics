@@ -30,48 +30,43 @@ function(target_id_resources target)
         "${ID_RESOURCE_BINARY_DIR}")
 endfunction()
 
-if(ID_USE_WX)
-    # TODO: eliminate the need for os-wx
-    add_library(os-wx STATIC
-        create_minidump.h create_minidump.cpp
-        instance.h instance.cpp
-        win_defines.h
-    )
+add_library(os STATIC
+    instance.h instance.cpp
+    ods.h ods.cpp
+    win_defines.h
+)
+if(NOT ID_USE_WX)
+    target_sources(os PRIVATE init_failure.cpp)
+endif()
+target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
+target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
+target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
+target_include_directories(os PRIVATE ../libid/include PUBLIC .)
+target_folder(os "Libraries")
+add_dependencies(os native-help)
 
-    target_compile_definitions(os-wx PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
-    target_compile_options(os-wx PRIVATE ${ID_TARGET_OPTIONS})
-    target_link_libraries(os-wx PUBLIC fmt::fmt-header-only gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
-    target_include_directories(os-wx PRIVATE ../libid/include PUBLIC .)
-    target_folder(os-wx "Libraries")
-    add_dependencies(os-wx native-help)
-else()
-    add_library(os STATIC
+if(NOT ID_USE_WX)
+    add_library(driver-win32 STATIC
         create_minidump.h create_minidump.cpp
         DiskDriver.cpp
         GDIDriver.cpp
         Frame.h Frame.cpp
-        init_failure.cpp
-        instance.h instance.cpp
-        ods.h ods.cpp
         Plot.h Plot.cpp
         Win32BaseDriver.h Win32BaseDriver.cpp
         WinText.h WinText.cpp
-        instance.h
         win_defines.h
     )
 
-    target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
-    target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
-    target_link_libraries(os PUBLIC fmt::fmt-header-only gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
-    target_include_directories(os PRIVATE ../libid/include PUBLIC .)
-    target_folder(os "Libraries")
-    add_dependencies(os native-help)
+    target_link_libraries(driver-win32 PUBLIC libid fmt::fmt-header-only)
+    target_include_directories(driver-win32 PUBLIC .)
+    target_folder(driver-win32 "Libraries")
+    add_dependencies(driver-win32 native-help)
 
     add_executable(id
         win_main.cpp)
     source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
     target_include_directories(id PUBLIC .)
-    target_link_libraries(id PUBLIC libid)
+    target_link_libraries(id PUBLIC driver-win32)
     target_id_resources(id)
     gui_executable(id)
     vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")

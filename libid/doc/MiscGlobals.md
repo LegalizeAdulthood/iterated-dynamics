@@ -282,7 +282,7 @@ The `operator+` converts enum to int for comparisons and range checks.
 Typical driver lifecycle:
 
 1. **Initialization** (`main()` startup):
-   - `init_drivers(args)` - Discover available drivers
+   - `init_drivers(args, drivers)` - Initialize the supplied drivers
    - `load_driver(driver, args)` - Load specific driver
    - `driver->init(args)` - Initialize driver
 

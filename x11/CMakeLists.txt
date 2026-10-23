@@ -8,8 +8,14 @@ endif()
 
 find_package(X11 REQUIRED)
 
-add_library(os STATIC
-    init_failure.cpp
+add_library(os STATIC init_failure.cpp)
+target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
+target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
+target_include_directories(os PRIVATE ../libid/include)
+target_link_libraries(os PUBLIC os-hc help-defs)
+target_folder(os "Libraries")
+
+add_library(driver-x11 STATIC
     include/X11Driver/X11BaseDriver.h X11BaseDriver.cpp
     include/X11Driver/X11Connection.h X11Connection.cpp
     X11DiskDriver.cpp
@@ -19,17 +25,15 @@ add_library(os STATIC
     include/X11Driver/X11Text.h X11Text.cpp
 )
 
-target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
-target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
-target_link_libraries(os PUBLIC X11::X11 os-hc help-defs)
-target_include_directories(os PRIVATE ../libid/include PUBLIC include)
-target_folder(os "Libraries")
-add_dependencies(os native-help)
+target_link_libraries(driver-x11 PUBLIC libid X11::X11)
+target_include_directories(driver-x11 PUBLIC include)
+target_folder(driver-x11 "Libraries")
+add_dependencies(driver-x11 native-help)
 
 add_executable(id
     x11_main.cpp)
 target_include_directories(id PUBLIC .)
-target_link_libraries(id PUBLIC libid)
+target_link_libraries(id PUBLIC driver-x11)
 gui_executable(id RUNTIME_NAME xid)
 vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")
 install(TARGETS id DESTINATION .)
