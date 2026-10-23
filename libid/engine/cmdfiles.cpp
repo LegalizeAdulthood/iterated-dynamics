@@ -13,6 +13,7 @@
 #include "engine/color_state.h"
 #include "engine/color_utils.h"
 #include "engine/Command.h"
+#include "engine/CommandHandler.h"
 #include "engine/convert_center_mag.h"
 #include "engine/convert_corners.h"
 #include "engine/engine_timer.h"
@@ -87,7 +88,6 @@
 #include <cstring>
 #include <ctime>
 #include <filesystem>
-#include <functional>
 #include <iterator>
 #include <limits>
 #include <memory>
@@ -779,12 +779,6 @@ static bool next_line(std::FILE *handle, std::string &line_buf, const CmdFile mo
     }
     return true;
 }
-
-struct CommandHandler
-{
-    std::string_view name;
-    std::function<CmdArgFlags(const Command &)> handler;
-};
 
 // For deprecated command parameters that are still parsed but ignored.
 static CmdArgFlags cmd_deprecated(const Command &/*cmd*/)
@@ -3893,16 +3887,13 @@ static std::array<CommandHandler, 162> s_commands{
     CommandHandler{"xyshift", cmd_xy_shift},                //
 };
 
-template <size_t N>
-static std::optional<CmdArgFlags> handle_command(const std::array<CommandHandler, N> &handlers, Command &cmd)
+std::optional<CmdArgFlags> handle_engine_command(const Command &cmd)
 {
-    if (auto it = std::lower_bound(handlers.begin(), handlers.end(), cmd.variable,
-            [](const CommandHandler &handler, const std::string &name) { return handler.name < name; });
-        it != handlers.end() && it->name == cmd.variable)
+    if (const std::optional<CmdArgFlags> handled{handle_command(s_startup_commands, cmd, true)}; handled.has_value())
     {
-        return it->handler(cmd);
+        return handled;
     }
-    return {};
+    return handle_command(s_commands, cmd);
 }
 
 // cmdarg(string,mode) processes a single command-line/command-file argument
@@ -3917,21 +3908,8 @@ static std::optional<CmdArgFlags> handle_command(const std::array<CommandHandler
 CommandParseResult cmd_arg(const std::string_view cur_arg, const CmdFile mode)
 {
     CommandParseResult result;
-    Command cmd{cur_arg, mode, result};
-    if (cmd.status != CmdArgFlags::NONE)
-    {
-        result.flags = cmd.status;
-        return result;
-    }
-    if (mode != CmdFile::AT_AFTER_STARTUP || g_debug_flag == DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME)
-    {
-        if (const std::optional handled{handle_command(s_startup_commands, cmd)}; handled.has_value())
-        {
-            result.flags = handled.value();
-            return result;
-        }
-    }
-    if (const std::optional handled{handle_command(s_commands, cmd)}; handled.has_value())
+    const Command cmd{cur_arg, mode, result};
+    if (const std::optional<CmdArgFlags> handled{handle_engine_command(cmd)}; handled.has_value())
     {
         result.flags = handled.value();
         return result;

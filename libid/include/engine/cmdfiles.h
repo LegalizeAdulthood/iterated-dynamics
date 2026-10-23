@@ -5,6 +5,7 @@
 
 #include <cstdio>
 #include <filesystem>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -17,6 +18,8 @@ struct FractalSpecific;
 
 namespace id::engine
 {
+
+class Command;
 
 enum class RecordColorsMode
 {
@@ -130,6 +133,10 @@ CommandParseResult reset_startup_commands();
 CommandParseResult load_commands(std::FILE *infile);
 void set_3d_defaults();
 CommandParseResult cmd_arg(std::string_view cur_arg, CmdFile mode);
+
+// Unknown names return nullopt; recognized rejections return BAD_ARG.
+std::optional<CmdArgFlags> handle_engine_command(const Command &cmd);
+
 int next_command(std::string &cmd, std::FILE *handle, std::string &line_buf, std::string_view &line, CmdFile mode,
     CommandDiagnostics *diagnostics = nullptr);
 

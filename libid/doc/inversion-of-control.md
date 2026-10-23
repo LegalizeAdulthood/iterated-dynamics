@@ -616,9 +616,9 @@ dependencies.
   coordinator validates tables before its first source advance.
 - Reuse existing parameter tests.  Add focused coverage for delegation,
   rejection without delegation, startup restrictions and their override,
-  single diagnostic emission, and duplicate ownership.  Deferred slice
-  53.7 implements lookup; 53.8.4 composes UI-first routing and validates
-  owner tables after source-processing extraction.
+  single diagnostic emission, and duplicate ownership.  Engine lookup
+  implements the shared result contract.  Slice 53.8.4 composes UI-first
+  routing and validates owner tables after source-processing extraction.
 
 ### Agreed Source Routing
 
@@ -1479,41 +1479,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 
 ## Implementation Slices
 
-
-### 53.7. Separate Command Recognition And Rejection
-
-Source: `handle_command`, `CommandHandler`, `cmd_arg`, the engine
-handler tables, and the shared parsed `Command`.
-
-The shared `Command` is available.  Source integration follows in 53.8.
-
-Work:
-
-- Implement the agreed optional-result contract with the shared
-  `const Command &`.  Preserve the distinction between an unknown name,
-  acceptance without change flags, acceptance with flags, and rejection.
-- Look up ownership before checking startup eligibility.  Reject a
-  recognized but restricted name without invoking its handler or
-  delegating to another owner.  Preserve the existing per-parameter debug
-  override and diagnostic behavior.
-- Expose engine handling of a parsed command with this result contract.
-  Keep the current textual entry point for its existing callers until
-  53.8.7 removes it.  Do not add UI routing or callbacks here.
-- Keep parameter interpretation, change flags, and source-specific
-  continuation unchanged.  A syntax error or rejection ends handler
-  dispatch for that command, not necessarily processing of the source.
-- Add focused behavioral tests using handler metadata and invocation
-  checks, not source-grep tests.  Cover unknown names, accepted `NONE`,
-  malformed recognized values, startup restrictions, and the override.
-- Leave UI-first composition, one-time duplicate-owner validation, and
-  final unknown-name diagnostics to the coordinator in 53.8.4.
-
-Done when: engine lookup distinguishes recognition from rejection
-without changing existing parameter behavior.
-
-Validation: run focused recognition, context, and diagnostic tests, then
-the full `rt-default` workflow.  Reuse existing parameter validation
-coverage.  No manual testing is required for this contract.
 
 ### 53.7.1. Name Process Initialization
 
