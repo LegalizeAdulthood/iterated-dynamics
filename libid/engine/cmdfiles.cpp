@@ -406,17 +406,6 @@ static CmdArgFlags cmd_bios_palette(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
-// exitnoask deprecated; validate arg and gobble
-static CmdArgFlags cmd_exit_no_ask(const Command &cmd)
-{
-    if (cmd.yes_no_val[0] < 0)
-    {
-        return cmd.bad_arg();
-    }
-    g_escape_exit = cmd.yes_no_val[0] != 0;
-    return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
-}
-
 // fpu deprecated; validate arg and gobble
 static CmdArgFlags cmd_fpu(const Command &cmd)
 {
@@ -500,12 +489,11 @@ static CmdArgFlags cmd_vesa_detect(const Command &cmd)
 
 // these commands are allowed only at startup
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 10> s_startup_commands{
+static std::array<CommandHandler, 9> s_startup_commands{
     CommandHandler{"adapter", cmd_adapter},          //
     CommandHandler{"afi", cmd_afi},                  //
     CommandHandler{"batch", cmd_batch},              //
     CommandHandler{"biospalette", cmd_bios_palette}, //
-    CommandHandler{"exitnoask", cmd_exit_no_ask},    //
     CommandHandler{"fpu", cmd_fpu},                  //
     CommandHandler{"makedoc", cmd_make_doc},         //
     CommandHandler{"makepar", cmd_make_par},         //

@@ -83,6 +83,7 @@ enum class BatchMode
 extern bool                  g_colors_preloaded;
 extern std::filesystem::path g_parameter_file;
 extern std::string           g_parameter_set_name;
+// TODO: removed later
 extern bool                  g_escape_exit;
 extern bool                  g_first_init;
 extern std::string           g_image_filename_mask;

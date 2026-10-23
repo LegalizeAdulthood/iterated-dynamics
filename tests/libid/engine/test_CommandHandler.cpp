@@ -238,6 +238,15 @@ TEST_F(TestEngineCommand, doesNotOwnStereoTextureParameter)
     EXPECT_TRUE(m_result.diagnostics.errors.empty());
 }
 
+TEST_F(TestEngineCommand, doesNotOwnExitConfirmationParameter)
+{
+    const Command cmd{"exitnoask=yes", CmdFile::SSTOOLS_INI, m_result};
+
+    EXPECT_FALSE(handle_engine_command(cmd).has_value());
+
+    EXPECT_TRUE(m_result.diagnostics.errors.empty());
+}
+
 TEST_F(TestEngineCommand, recognizesAcceptanceWithoutFlags)
 {
     const Command cmd{"fpu=387", CmdFile::AT_CMD_LINE, m_result};

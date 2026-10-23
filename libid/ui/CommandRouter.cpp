@@ -76,6 +76,17 @@ static CmdArgFlags cmd_auto_key_name(const Command &cmd)
     return CmdArgFlags::NONE;
 }
 
+// exitnoask=?
+static CmdArgFlags cmd_exit_no_ask(const Command &cmd)
+{
+    if (cmd.yes_no_val[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_escape_exit = cmd.yes_no_val[0] != 0;
+    return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
+}
+
 static CmdArgFlags cmd_max_history(const Command &cmd)
 {
     if (cmd.num_val == NON_NUMERIC)
@@ -200,7 +211,8 @@ static CmdArgFlags cmd_virtual(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
-static const CommandHandlerTables s_ui_commands{{CommandHandler{"maxhistory", cmd_max_history}},
+static const CommandHandlerTables s_ui_commands{
+    {CommandHandler{"exitnoask", cmd_exit_no_ask}, CommandHandler{"maxhistory", cmd_max_history}},
     {CommandHandler{"askvideo", cmd_ask_video}, CommandHandler{"autokey", cmd_auto_key},
         CommandHandler{"autokeyname", cmd_auto_key_name}, CommandHandler{"rds", cmd_rds},
         CommandHandler{"rds-texture", cmd_rds_texture}, CommandHandler{"video", cmd_video},

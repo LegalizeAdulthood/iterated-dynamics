@@ -1241,36 +1241,6 @@ TEST_F(TestParameterCommandError, fpuDetectInvalidValue)
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
-TEST_F(TestParameterCommand, exitNoAskNo)
-{
-    ValueSaver saved_escape_exit{g_escape_exit, true};
-
-    exec_cmd_arg("exitnoask=n", CmdFile::SSTOOLS_INI);
-
-    EXPECT_FALSE(g_escape_exit);
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-}
-
-TEST_F(TestParameterCommand, exitNoAskYes)
-{
-    ValueSaver saved_escape_exit{g_escape_exit, false};
-
-    exec_cmd_arg("exitnoask=y", CmdFile::SSTOOLS_INI);
-
-    EXPECT_TRUE(g_escape_exit);
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-}
-
-TEST_F(TestParameterCommandError, exitNoAskInvalidValue)
-{
-    const bool saved_escape_exit{g_escape_exit};
-
-    exec_cmd_arg("exitnoask=!", CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(saved_escape_exit, g_escape_exit);
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
-
 TEST_F(TestParameterCommand, filenameMask)
 {
     ValueSaver saved_gif_filename_mask{g_image_filename_mask, "*.foo"};

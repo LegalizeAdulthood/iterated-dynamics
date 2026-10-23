@@ -775,11 +775,11 @@ dependencies.
   Existing UI startup groups, including browsing/evolution, disabling
   showdot, and the initial showorbit preference, stay in `main_restart`.
   History initialization keeps its current position after parameters.
-- Exit confirmation is UI policy even though `g_escape_exit` is currently
-  engine-defined.  Move it and `exitnoask` handling to UI.  UI fractal
-  defaults clear it to false, preserving both startup and explicit reset
-  behavior.  Retain existing validation and result flags; the misleading
-  deprecated-handler comment is not evidence that the setting is inert.
+- UI owns `exitnoask` handling, including startup eligibility, validation,
+  diagnostics, and result flags.  `g_escape_exit` storage and its reset
+  remain engine-defined until 53.9.11 moves them to UI fractal defaults.
+  Those defaults clear it to false, preserving both startup and explicit
+  reset behavior.
 - UI owns the complete `reset` command's orchestration.  Engine
   `parse_reset_version` validates and decodes its version using the shared
   parsed `Command` and existing `Version` type before mutation.  UI then
@@ -797,8 +797,9 @@ dependencies.
   source traversal does not hide a second initialization operation.
 - Slices 53.8.6.1 through 53.8.6.3 move UI restart defaults after source
   routing.
-  Slice 53.9.6 moves pending-mode storage with its handler; 53.9.10 and
-  53.9.11 move exit confirmation and coordinate explicit fractal reset.
+  UI now owns pending-mode storage and exit-confirmation handling.
+  Slice 53.9.11 moves exit-confirmation storage and coordinates explicit
+  fractal reset.
   Keep existing slice numbers.
 
 ### Agreed Ordering And Failure
@@ -1477,29 +1478,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.9.10. Move Exit-Confirmation Parameter Handling To UI
-
-Source: `cmd_exit_no_ask`, its `exitnoask` table entry, `g_escape_exit`,
-and ESC handling in `ui/big_while_loop.cpp`.
-
-Prerequisite: 53.9.9; all sources already use the common coordinator.
-
-Work:
-
-- Move only `exitnoask` interpretation and its table entry to UI.
-  Preserve yes/no validation, diagnostics, and the existing
-  `FRACTAL_PARAM | PARAM_3D` result.  Retain its active behavior despite
-  the old deprecated-handler comment.
-- Leave flag storage and its fractal-reset assignment in place until
-  53.9.11 moves both with reset orchestration.  Mark the temporary engine
-  declaration `// TODO: removed later`; introduce no new reverse call.
-- Move existing handler tests to UI and preserve rejection behavior.
-
-Done when: UI handles `exitnoask` and engine has no handler for that name.
-
-Validation: reuse parameter and exit-interaction autokey coverage; run
-the full `rt-default` workflow.  No additional manual testing is required.
-
 ### 53.9.11. Coordinate Fractal Reset Through UI
 
 Source: `cmd_reset`, `engine/reset_version.{h,cpp}`, fractal
@@ -1550,15 +1528,15 @@ and setup-policy couplings, not direct input polling:
 - `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h` exposes command
   settings.  Shared syntax, recognition, routing, and mixed ownership,
   initialization, ordering, failure behavior, and reporting are agreed.
-  Slices 53.9.10 and 53.9.11 remove the remaining parameter-handler
+  Slice 53.9.11 removes the remaining parameter-handler
   dependency without changing semantics.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy.
   UI owns both the `rds` and `rds-texture` handlers; engine parameter
   handling no longer depends on UI stereo policy.
-- `g_escape_exit` and its fractal-reset assignment remain in engine even
-  though they control exit confirmation.  Slices 53.9.10 and 53.9.11 move
-  parameter ownership, storage, and combined reset orchestration to UI.
+- UI owns `exitnoask` handling.  `g_escape_exit` and its fractal-reset
+  assignment remain in engine even though they control exit confirmation.
+  Slice 53.9.11 moves storage and combined reset orchestration to UI.
 - GIF evolution records and comparisons are I/O-owned; public GIF metadata
   headers no longer import UI.  `io/loadfile.cpp` explicitly includes
   `ui/evolve.h` for its existing application of evolution runtime state.
