@@ -547,9 +547,9 @@ engine concerns.  Option 1 partitions handlers by ownership: UI handles
 UI parameters and delegates unrecognized names to engine.  Both groups
 share syntax processing and preserve the original parameter order.
 
-Shared syntax, recognition, source routing, and mixed-parameter ownership
-are agreed below.  Remaining design slices 53.5.5 through 53.5.7 settle
-defaults, failure behavior, and reporting.  They authorize design
+Shared syntax, recognition, source routing, mixed-parameter ownership,
+and initialization are agreed below.  Remaining design slices 53.5.6 and
+53.5.7 settle failure behavior and reporting.  They authorize design
 discussion and plan updates only.  Keep them ahead of the implementation
 slices they produce; do not change parser code before the design is
 agreed.
@@ -605,7 +605,7 @@ engine-to-UI dependencies.
   `autokeyname`.  `maxhistory` remains startup-only.  Existing ordinary
   engine parameters remain engine-owned.  UI owns the complete `video`,
   `rds`, and `rds-texture` parameters under the mixed-ownership agreement
-  below.
+  below, and `exitnoask` and `reset` under the initialization agreement.
 - Retain separate startup-only and unrestricted tables within each owner.
   Startup commands are permitted when `CmdFile` is not
   `AT_AFTER_STARTUP`, or when `ALLOW_INIT_COMMANDS_ANYTIME` applies.
@@ -677,9 +677,10 @@ engine-to-UI dependencies.
   handlers.  Remove temporary runners once their callers are converted;
   precede any new temporary addition with `// TODO: removed later`.
 - Deferred slices 53.8.1 through 53.8.7 implement source processing and
-  routing; 53.9.1 through 53.9.9 move the UI parameters and key-name
-  parser one at a time.  Initialization profiles, detailed failure
-  policy, and result interpretation remain with 53.5.5 through 53.5.7.
+  routing; 53.9.1 through 53.9.11 move the UI parameters and key-name
+  parser one at a time.  Initialization follows the agreement below;
+  detailed failure policy and result interpretation remain with 53.5.6
+  and 53.5.7.
 
 ### Agreed Mixed-Parameter Ownership
 
@@ -693,9 +694,10 @@ engine-to-UI dependencies.
   mode; existing startup or parameter-set completion activates it at the
   current point.  Engine retains key-free active mode information.
 - The pending request `g_init_mode` belongs to UI, unlike the active
-  engine mode.  Design slice 53.5.5 settles its initialization, reset,
-  and restart-suppression handling before implementation.  Do not move
-  those assignments into an engine-to-UI callback or forwarding wrapper.
+  engine mode.  Move its initialization and restart suppression first;
+  relocate storage with `cmd_video` in 53.9.6 so the remaining engine
+  handler never needs a new UI dependency.  Follow the initialization
+  agreement below, without engine-to-UI callbacks or forwarding wrappers.
 - Preserve `video` rejection side effects: malformed key names leave the
   pending mode unchanged; valid but unbound names clear it.  Preserve
   `FRACTAL_PARAM | PARAM_3D` on success.  Do not activate a driver or
@@ -733,6 +735,76 @@ engine-to-UI dependencies.
   Reuse current parameter, video, stereo, batch, and autokey coverage;
   extend it for rejection side effects, omitted fields, order-dependent
   reuse, and common routing through `@` sources.
+
+### Agreed Initialization And Reset
+
+- Extract appropriately named functions for initialization scopes before
+  changing ownership: `initialize_process_defaults`,
+  `reset_restart_defaults`, and `reset_fractal_defaults`.  Extract
+  cohesive domain groups, such as viewport, orbit, and sound defaults,
+  inside those functions where useful.  Preserve assignment order and
+  the different settings each scope resets; do not create a universal
+  reset or one forwarding function per assignment.
+- UI initialization functions own the combined operation and call the
+  corresponding engine initialization functions.  Use namespaces to
+  distinguish the owners.  Engine functions initialize only engine
+  settings; they never call UI initialization or receive UI callbacks.
+  Introduce a UI counterpart when it owns actual initialization, not
+  just to wrap an engine call.  Engine initializers remain independently
+  callable without keyboard, mouse, or driver interaction.
+- Keep run-level random-seed capture, command-comment initialization,
+  and temporary-directory discovery under the existing `g_first_init`
+  gate.  Preserve its debug override rather than replacing that gate
+  with an unconditional once-per-process mechanism.
+- Startup applies process initialization when gated, restart defaults,
+  and fractal defaults before configuration and arguments.  `<Insert>`
+  reapplies restart and fractal defaults, configuration, and arguments.
+  Preserve its later suppression of startup mode and image requests.
+  Keep the existing first-init bookkeeping and debug-override timing.
+- Fallback after abandoned startup entry selection reapplies restart
+  and fractal defaults and configuration only.  Do not rerun process
+  initialization, arguments, all of `main_restart`, or ordinary startup
+  completion suppression on that fallback path.
+- `reset=` applies only fractal defaults and its compatibility version.
+  Selected parameter sets and single commands apply no defaults unless
+  an explicit `reset` occurs.  Preserve per-set parser-flag initialization
+  separately; it is not a request to reset application settings.
+- UI restart defaults set `g_ask_video` and `g_virtual_screens` to true
+  and clear the pending mode to `-1`.  Explicit `reset=` does not change
+  these settings.  Preserve `g_init_mode`'s existing initial storage
+  value until restart initialization runs; move its storage to UI only
+  when the engine `video` handler has also moved.
+- History capacity, autokey mode/name, automatic stereo conversion, and
+  texture reuse have no reset assignments in these initializers.  Keep
+  their process defaults in their owning modules and do not add resets.
+  Existing UI startup groups, including browsing/evolution, disabling
+  showdot, and the initial showorbit preference, stay in `main_restart`.
+  History initialization keeps its current position after parameters.
+- Exit confirmation is UI policy even though `g_escape_exit` is currently
+  engine-defined.  Move it and `exitnoask` handling to UI.  UI fractal
+  defaults clear it to false, preserving both startup and explicit reset
+  behavior.  Retain existing validation and result flags; the misleading
+  deprecated-handler comment is not evidence that the setting is inert.
+- UI owns the complete `reset` command's orchestration.  Engine helpers
+  validate and decode its version using the shared parsed `Command` and
+  existing `Version` type before mutation.  UI then invokes the combined
+  fractal initializer once and applies the decoded compatibility version
+  through engine-owned logic.  Preserve `g_version`, `g_file_version`,
+  diagnostics, and `FRACTAL_PARAM | RESET` behavior without reparsing.
+- Do not let an engine handler reset first and have UI react to an
+  accumulated `RESET` flag by resetting again.  Initialization completes
+  at the command's original position before processing another command,
+  including inside `@` sources.  Rejected reset values change neither
+  owner's defaults; later errors do not roll back an accepted reset.
+- Keep configuration lookup/reading, mode activation, source completion,
+  and action execution outside default initializers.  The UI source
+  coordinator selects the appropriate initialization scope; engine
+  source traversal does not hide a second initialization operation.
+- Deferred slices 53.7.1 through 53.7.4 name local groups and separate
+  reset-value interpretation.  Slices 53.8.6.1 through 53.8.6.3 move UI
+  restart defaults after source routing.  Slice 53.9.6 moves pending-mode
+  storage with its handler; 53.9.10 and 53.9.11 move exit confirmation
+  and coordinate explicit fractal reset.  Keep existing slice numbers.
 
 ## Remaining Inversion-of-Control Slices
 
@@ -1313,40 +1385,6 @@ requirement.  Do not repeat it for an unchanged caller or each fractal.
 ## Implementation Slices
 
 
-### 53.5.5. Parameter Defaults And Reset Design
-
-Source: `init_vars_run`, `init_vars_restart`, `init_vars_fractal`,
-`reset_startup_commands`, `cmd_reset`, and their UI startup/reset callers.
-
-Scope: design discussion and plan updates only; no source changes.
-
-Work:
-
-- Inventory UI assignments in initialization as well as explicit
-  parameter handlers.  Define the defaults that each owner initializes.
-- Distinguish first-run initialization, restart through `<Insert>`, and
-  the `reset=` parameter.  Preserve their different reset scopes.
-- Account for video prompting and virtual-screen defaults in
-  `init_vars_restart`; do not reset them merely because `cmd_reset`
-  invokes `init_vars_fractal`.
-- Include relocation of the pending video request `g_init_mode` to UI.
-  Account for its initial value, initialization assignments, and startup
-  completion's suppression on restart.  Keep active mode data in engine;
-  remove engine reads and writes of the UI request without callbacks.
-  Schedule this work before the `video` handler migration in 53.9.6.
-- Agree how the outer coordinator invokes the appropriate engine and UI
-  initialization profiles, including startup-configuration reapplication
-  and the existing suppression of mode selection on restart.
-- Record small implementation slices without introducing a universal
-  reset or relocating UI settings into engine.
-
-Done when: initialization ownership and the exact reset profiles are
-agreed for every affected UI setting.
-
-Validation: specify defaults, overrides, repeated startup, `<Insert>`,
-and `reset=` coverage using existing startup and parameter tests.
-No build or manual testing is required.
-
 ### 53.5.6. Parameter Ordering And Failure Design
 
 Source: the `cmd_files` and `command_file` loops, `append_result`,
@@ -1415,7 +1453,7 @@ no build or manual testing is required.
 Source: `Command` and its syntax helpers in `engine/cmdfiles.cpp`,
 `engine/lowerize_parameter.cpp`, and existing parameter tests.
 
-Prerequisite: complete design slices 53.5.5 through 53.5.7 first.
+Prerequisite: complete design slices 53.5.6 and 53.5.7 first.
 
 Work:
 
@@ -1450,7 +1488,7 @@ is required for this extraction.
 Source: `handle_command`, `CommandHandler`, `cmd_arg`, the engine
 handler tables, and the shared parsed `Command`.
 
-Prerequisites: complete design slices 53.5.5 through 53.5.7 and extract
+Prerequisites: complete design slices 53.5.6 and 53.5.7 and extract
 the shared `Command` in 53.6.  Source integration follows in 53.8.
 
 Work:
@@ -1481,13 +1519,102 @@ Validation: run focused recognition, context, and diagnostic tests, then
 the full `rt-default` workflow.  Reuse existing parameter validation
 coverage.  No manual testing is required for this contract.
 
+### 53.7.1. Name Process Initialization
+
+Source: `init_vars_run` and its caller in `engine/cmdfiles.cpp`.
+
+Prerequisite: 53.7 and completion of the remaining design discussions.
+
+Work:
+
+- Extract/name `initialize_process_defaults` locally, retaining the
+  random-seed capture, comment initialization, and directory discovery.
+- Preserve the exact call position and existing first-init/debug gating.
+  Do not move settings between reset scopes or add an empty UI wrapper.
+
+Done when: process initialization has an explicit named scope with
+unchanged behavior.
+
+Validation: reuse startup and temporary-directory tests; run the full
+`rt-default` workflow.  No additional manual testing is required.
+
+### 53.7.2. Group Restart Initialization
+
+Source: `init_vars_restart` and its calls in `engine/cmdfiles.cpp`.
+
+Prerequisite: 53.7.1.
+
+Work:
+
+- Name the local scope `reset_restart_defaults` and extract cohesive
+  groups such as viewport defaults where they clarify its assignments.
+- Preserve assignment order, current version/library setup, and the
+  existing UI assignments temporarily.  Do not migrate ownership yet.
+  Mark any new temporary mixed-owner group `// TODO: removed later`.
+- Keep configuration reading outside the initializer, at its original
+  position.  Do not widen the `reset=` scope to include restart defaults.
+
+Done when: restart initialization is organized into named groups without
+changing reset scope or parameter ordering.
+
+Validation: reuse startup and reset tests; run the full `rt-default`
+workflow.  No additional manual testing is required.
+
+### 53.7.3. Group Fractal Initialization
+
+Source: `init_vars_fractal`, `init_vars3d`, and their initialization groups
+in `engine/cmdfiles.cpp`.
+
+Prerequisite: 53.7.2.
+
+Work:
+
+- Name the scope `reset_fractal_defaults`; extract cohesive orbit and
+  sound groups where useful and retain the existing 3D defaults group.
+- Preserve each scope's assignments and their order.  Shared groups may
+  be reused only where their actual settings and values already match.
+- Keep calculation/output configuration in its current owner.  Leave
+  exit-confirmation ownership for 53.9.11; mark new temporary mixed-owner
+  code `// TODO: removed later` rather than inventing UI callbacks.
+
+Done when: fractal defaults have named domain groups and their original
+call sites still preserve existing behavior.
+
+Validation: reuse parameter, reset-version, and image coverage; run the
+full `rt-default` workflow.  No additional manual testing is required.
+
+### 53.7.4. Separate Reset Value Interpretation
+
+Source: `cmd_reset`, compatibility-version interpretation, and existing
+reset tests in `engine/cmdfiles.cpp`.
+
+Prerequisite: 53.7.3.
+
+Work:
+
+- Extract engine helpers for reset-value validation/version decoding
+  and version application, using the shared `Command` and existing
+  `Version`.  Validation/decoding must not initialize or mutate settings.
+- Keep the current handler as the caller for now: validate, invoke its
+  existing fractal initializer once, apply the version, and return the
+  same diagnostics/flags.  Do not add another reset or reparse text.
+- Preserve empty, zero, legacy, and multi-field Id version behavior and
+  both `g_version` and `g_file_version`.  Keep rejected input unchanged.
+
+Done when: engine reset-value interpretation can be reused without
+hiding initialization inside it.
+
+Validation: reuse existing reset and compatibility tests; add focused
+nonmutating-decoder coverage.  Run the full `rt-default` workflow;
+no additional manual testing is required.
+
 ### 53.8.1. Encapsulate Parameter-File Traversal
 
 Source: `command_file`, `next_command`, `load_commands`, and result
 aggregation in `engine/cmdfiles.cpp`.
 
-Prerequisites: complete the remaining design slices and implement 53.6
-and 53.7.  Keep this initial refactor local to the existing engine file.
+Prerequisites: complete the remaining design slices and implement through
+53.7.4.  Keep this initial refactor local to the existing engine file.
 
 Work:
 
@@ -1525,7 +1652,7 @@ Work:
 - Keep bare-GIF argument probing and source diagnostics engine-owned.
   Preserve startup result accumulation and action termination.
 - Keep existing initialization calls in place until the implementation
-  slices from 53.5.5 apply the agreed owner profiles.
+  slices 53.8.6.1 through 53.8.6.3 apply the agreed owner profiles.
 - Leave indirect-file processing on its existing path for this
   intermediate commit; complete its incremental conversion in 53.8.3.
   Mark any new temporary bridge with `// TODO: removed later`.
@@ -1628,7 +1755,8 @@ Reuse command-action and diagnostic autokey coverage; run the full
 Source: `main_restart()` in `ui/id_main.cpp`, startup
 `CommandProcessor` construction, and startup-configuration reprocessing.
 
-Prerequisite: 53.8.5 and the initialization agreement from 53.5.5.
+Prerequisite: 53.8.5 and the named initialization groups in 53.7.1
+through 53.7.3.
 
 Work:
 
@@ -1640,6 +1768,10 @@ Work:
 - Apply the agreed initialization profiles at their existing lifecycle
   points.  Preserve first-init bookkeeping, restart suppression of mode
   selection, pending image selection, and completion diagnostics/actions.
+- Call the extracted initializers explicitly from the UI coordinator,
+  not from engine source advancement.  Keep existing mixed assignments
+  until the following focused ownership slices move them.  Do not add
+  empty UI initialization wrappers.
 - Keep `@file` and `@file/setname` inside engine source traversal, but
   route each exposed parameter through UI exactly like a direct argument.
   Do not invoke a complete engine-only parser from either path.
@@ -1652,12 +1784,81 @@ command-line overrides, restart/reprocessing, and source-specific failure
 continuation.  Reuse startup and autokey journeys; run the full
 `rt-default` workflow.  No additional manual testing is required.
 
+### 53.8.6.1. Move The Video-Prompt Restart Default
+
+Source: the `g_ask_video` assignment in restart initialization and UI
+startup/configuration-fallback coordination.
+
+Prerequisite: 53.8.6.
+
+Work:
+
+- Introduce UI `reset_restart_defaults` with the actual video-prompt
+  assignment and a call to engine `reset_restart_defaults`.  Remove only
+  that assignment from engine; replace coordinator calls with the UI
+  initializer at both startup and configuration-fallback boundaries.
+- Preserve true before configuration, later overrides, and no change
+  for explicit `reset=`.  Do not reset history, autokey, or stereo policy.
+
+Done when: UI owns its video-prompt default and invokes engine restart
+initialization exactly once at each existing boundary.
+
+Validation: cover startup overrides, restart, fallback, and explicit
+reset preserving the preference.  Run the full `rt-default` workflow;
+no additional manual testing is required.
+
+### 53.8.6.2. Move The Virtual-Screen Restart Default
+
+Source: the `g_virtual_screens` assignment in restart initialization.
+
+Prerequisite: 53.8.6.1.
+
+Work:
+
+- Move only the true assignment into UI `reset_restart_defaults`,
+  removing it from the engine initializer.  Preserve existing ordering
+  and configuration/argument overrides.
+- Keep explicit `reset=` from changing the preference; retain the UI
+  initializer's single call to its engine counterpart.
+
+Done when: virtual-screen defaults have UI ownership without widening
+the reset scope.
+
+Validation: cover startup, restart, fallback, overrides, and explicit
+reset.  Run the full `rt-default` workflow; no additional manual testing
+is required.
+
+### 53.8.6.3. Move Pending-Mode Initialization And Completion Policy
+
+Source: the pending-mode assignment in restart initialization and mode
+suppression at startup completion.
+
+Prerequisite: 53.8.6.2.
+
+Work:
+
+- Move clearing the request to `-1` into UI `reset_restart_defaults`.
+  Move restart-only mode suppression into UI startup completion, keeping
+  first-init/debug timing and the distinct fallback path unchanged.
+- Leave storage engine-declared until 53.9.6 moves its engine handler.
+  Mark this temporary declaration `// TODO: removed later`.  Do not add
+  an engine include, setter, or callback into UI to bridge the interval.
+- Preserve the active mode, pending image rules, and explicit `reset=`
+  leaving the pending mode alone.  No initializer activates a mode.
+
+Done when: pending-mode defaults and completion policy are UI-owned,
+ready for storage to move with the `video` handler.
+
+Validation: cover first startup, restart suppression, debug override,
+fallback, and explicit reset.  Run the full `rt-default` workflow;
+no additional manual testing is required.
+
 ### 53.8.7. Remove Superseded Command Entry Paths
 
 Source: old whole-source runners and textual parser entry points in
 `engine/cmdfiles.cpp`, declarations, and their test callers.
 
-Prerequisite: 53.8.6.
+Prerequisite: 53.8.6.3.
 
 Work:
 
@@ -1696,7 +1897,7 @@ Work:
   and the existing `NONE` result.
 - Remove its engine handler and table entry, retaining one owner.
   Remove engine UI includes only when their final use is gone; leave
-  default/reset changes to the slices agreed in 53.5.5.
+  default/reset changes to the agreed initialization slices.
 - Move existing handler tests to the UI owner and verify equivalent
   routing from every source where the parameter is permitted.  Do not
   introduce a forwarding function or engine callback into UI.
@@ -1721,7 +1922,7 @@ Work:
   diagnostics, and the existing `FRACTAL_PARAM` result.
 - Remove its engine handler and table entry, retaining one owner.
   Remove engine UI includes only when their final use is gone; leave
-  default/reset changes to the slices agreed in 53.5.5.
+  default/reset changes to the agreed initialization slices.
 - Move existing handler tests to the UI owner and verify equivalent
   routing from every source where the parameter is permitted.  Do not
   introduce a forwarding function or engine callback into UI.
@@ -1746,7 +1947,7 @@ Work:
   its debug override, and existing `FRACTAL_PARAM | PARAM_3D` results.
 - Remove its engine handler and table entry, retaining one owner.
   Remove engine UI includes only when their final use is gone; leave
-  default/reset changes to the slices agreed in 53.5.5.
+  default/reset changes to the agreed initialization slices.
 - Move existing handler tests to the UI owner and verify equivalent
   routing from every source where the parameter is permitted.  Do not
   introduce a forwarding function or engine callback into UI.
@@ -1771,7 +1972,7 @@ Work:
   existing `NONE` result.  Keep playback/recording runtime state in UI.
 - Remove its engine handler and table entry, retaining one owner.
   Remove engine UI includes only when their final use is gone; leave
-  default/reset changes to the slices agreed in 53.5.5.
+  default/reset changes to the agreed initialization slices.
 - Move existing handler tests to the UI owner and verify equivalent
   routing from every source where the parameter is permitted.  Do not
   introduce a forwarding function or engine callback into UI.
@@ -1796,7 +1997,7 @@ Work:
   `NONE` result.  Keep script runtime state in UI.
 - Remove its engine handler and table entry, retaining one owner.
   Remove engine UI includes only when their final use is gone; leave
-  default/reset changes to the slices agreed in 53.5.5.
+  default/reset changes to the agreed initialization slices.
 - Move existing handler tests to the UI owner and verify equivalent
   routing from every source where the parameter is permitted.  Do not
   introduce a forwarding function or engine callback into UI.
@@ -1812,14 +2013,18 @@ required.
 Source: `cmd_video` and its table entry in `engine/cmdfiles.cpp`,
 `ui/video_mode.h`, and the pending mode request.
 
-Prerequisites: 53.9.5 and the pending-mode ownership and initialization
-work agreed in 53.5.5.  All sources already use the common coordinator.
+Prerequisites: 53.9.5 and the pending-mode initialization/completion work
+in 53.8.6.3.  All sources already use the common coordinator.
 
 Work:
 
 - Move only `video` interpretation and its table entry to UI.  Use the
   existing key-name parser and UI binding lookup to record the resolved
   mode index in the UI-owned pending request.
+- Move `g_init_mode` storage/declaration to UI in this same slice and
+  remove its temporary declaration comment.  Its engine handler and
+  initialization/completion assignments must all be gone before engine
+  loses ownership; do not expose UI state back to engine.
 - Preserve request versus activation timing, first matching binding,
   malformed-name versus unbound-name side effects, diagnostics, and the
   existing `FRACTAL_PARAM | PARAM_3D` result.  Do not activate a mode or
@@ -1925,6 +2130,62 @@ Validation: run focused handler and routing tests, then the full
 `rt-default` workflow.  Reuse existing stereo serialization and batch
 coverage; no additional manual testing is required.
 
+### 53.9.10. Move Exit-Confirmation Parameter Handling To UI
+
+Source: `cmd_exit_no_ask`, its `exitnoask` table entry, `g_escape_exit`,
+and ESC handling in `ui/big_while_loop.cpp`.
+
+Prerequisite: 53.9.9; all sources already use the common coordinator.
+
+Work:
+
+- Move only `exitnoask` interpretation and its table entry to UI.
+  Preserve yes/no validation, diagnostics, and the existing
+  `FRACTAL_PARAM | PARAM_3D` result.  Retain its active behavior despite
+  the old deprecated-handler comment.
+- Leave flag storage and its fractal-reset assignment in place until
+  53.9.11 moves both with reset orchestration.  Mark the temporary engine
+  declaration `// TODO: removed later`; introduce no new reverse call.
+- Move existing handler tests to UI and preserve rejection behavior.
+
+Done when: UI handles `exitnoask` and engine has no handler for that name.
+
+Validation: reuse parameter and exit-interaction autokey coverage; run
+the full `rt-default` workflow.  No additional manual testing is required.
+
+### 53.9.11. Coordinate Fractal Reset Through UI
+
+Source: `cmd_reset`, the 53.7.4 engine helpers, fractal initialization,
+`g_escape_exit`, and UI startup/fallback coordination.
+
+Prerequisite: 53.9.10.
+
+Work:
+
+- Move the complete `reset` handler and table entry to UI.  Use the
+  engine helpers to validate/decode before mutation; invoke combined
+  fractal initialization once, then apply the decoded engine version.
+- Introduce UI `reset_fractal_defaults` owning exit-confirmation reset
+  and calling engine `reset_fractal_defaults`.  Move flag storage and
+  declaration to UI, removing the engine assignment and temporary code.
+  Use this combined initializer for startup and configuration fallback.
+- Remove the engine `reset` handler and table entry.  Preserve exact
+  version, diagnostic, and `FRACTAL_PARAM | RESET` behavior.  Do not reset
+  a second time in response to aggregated flags or defer reset to actions.
+- Preserve in-source ordering, including `@` parameters and repeated
+  resets.  Invalid values leave settings unchanged; accepted resets
+  remain effective despite later errors.  Do not reset video preferences,
+  pending mode, history capacity, autokey, or stereo policy here.
+- Move command-level reset tests to UI; retain direct engine helper
+  tests.  Cover startup/fallback and the distinct explicit-reset scope.
+
+Done when: UI owns combined fractal initialization, engine owns only its
+defaults and version logic, and each accepted reset initializes once.
+
+Validation: run focused reset, ordering, version, and routing tests, then
+the full `rt-default` workflow.  Reuse existing autokey journeys;
+no additional manual testing is required.
+
 ## Current Direct And Indirect Input Leaks
 
 The synchronous engine-to-UI render dispatch has been removed.
@@ -1938,18 +2199,22 @@ and setup-policy couplings, not direct input polling:
   for the deferred key-name parser.  Slice 53.9.7 moves it to UI after
   53.9.6 moves the `video` handler and removes the parser's engine use.
   The pending request `g_init_mode` also remains engine-declared;
-  design slice 53.5.5 covers its UI ownership and reset behavior.
+  53.8.6.3 moves its initialization/completion policy and 53.9.6 moves
+  storage with its handler.
 - `libid/engine/cmdfiles.cpp`: `ui/big_while_loop.h`, `ui/history.h`,
   `ui/slideshw.h`, and `ui/stereo.h` expose command settings.  The marked
   `ui/video_mode.h` include permits the temporary mechanical lookup of
   UI-owned bindings.  Shared syntax, recognition, routing, and mixed
-  ownership are agreed; design slices 53.5.5 through 53.5.7 settle the
+  ownership and initialization are agreed; 53.5.6 and 53.5.7 settle the
   remaining option 1 decisions before deferred implementation removes
-  these dependencies.  Slices 53.9.1 through 53.9.9 move the UI handlers
+  these dependencies.  Slices 53.9.1 through 53.9.11 move the UI handlers
   and key-name parser without changing their semantics.
   Stereo calculation inputs and `CalibrationBars` are geometry-owned.
   Automatic conversion and texture-filename reuse remain UI policy;
   slices 53.9.8 and 53.9.9 move their parameter handling to UI.
+- `g_escape_exit` and its fractal-reset assignment remain in engine even
+  though they control exit confirmation.  Slices 53.9.10 and 53.9.11 move
+  parameter ownership, storage, and combined reset orchestration to UI.
 - GIF evolution records and comparisons are I/O-owned; public GIF metadata
   headers no longer import UI.  `io/loadfile.cpp` explicitly includes
   `ui/evolve.h` for its existing application of evolution runtime state.
