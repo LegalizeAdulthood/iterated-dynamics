@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "ui/standard_orbit_plot.h"
 
@@ -53,6 +54,7 @@ void pace_orbit_display()
 {
     if (g_orbit_delay <= 0)
     {
+        dispatch_orbit_input_if_due();
         return;
     }
 

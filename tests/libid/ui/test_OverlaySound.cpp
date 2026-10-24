@@ -1443,6 +1443,71 @@ TEST_P(TestOverlaySoundController, togglingOverlayOffMutesWithoutCancellingImage
     EXPECT_FALSE(g_orbit_save_flag);
 }
 
+TEST_P(TestOverlaySoundController, zeroDelayMenuKeyInterruptsBeforeThePixelCompletes)
+{
+    g_max_iterations = 4096;
+    SoundSession sound{m_output};
+    EXPECT_CALL(*m_output, play(_))
+        .WillRepeatedly(Invoke(
+            [this](const SoundSample &sample)
+            {
+                m_samples.push_back(sample);
+                if (m_samples.size() == 1)
+                {
+                    m_key = 'x';
+                }
+                return true;
+            }));
+    EXPECT_CALL(*m_output, mute()).Times(AtLeast(1));
+    EXPECT_CALL(m_driver, unget_key('x'))
+        .WillOnce(Invoke(
+            [this](int key)
+            {
+                EXPECT_LT(g_color_iter, g_max_iterations);
+                m_key = key;
+            }));
+
+    EXPECT_EQ(-1, render(sound));
+
+    EXPECT_EQ(1U, m_samples.size());
+    EXPECT_TRUE(m_ready);
+    EXPECT_EQ('x', m_key);
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_orbit_save_flag);
+}
+
+TEST_P(TestOverlaySoundController, zeroDelayOrbitToggleDoesNotWaitForPixelCompletion)
+{
+    g_max_iterations = 4096;
+    SoundSession sound{m_output};
+    EXPECT_CALL(*m_output, play(_))
+        .WillRepeatedly(Invoke(
+            [this](const SoundSample &sample)
+            {
+                m_samples.push_back(sample);
+                if (m_samples.size() == 1)
+                {
+                    m_key = 'o';
+                }
+                return true;
+            }));
+    EXPECT_CALL(*m_output, mute())
+        .WillOnce(Invoke(
+            [this]
+            {
+                EXPECT_EQ(1U, m_samples.size());
+                EXPECT_LT(g_color_iter, g_max_iterations);
+            }));
+
+    EXPECT_EQ(0, render(sound));
+
+    EXPECT_EQ(1U, m_samples.size());
+    EXPECT_TRUE(m_ready);
+    EXPECT_FALSE(g_show_orbit);
+    EXPECT_FALSE(calc_interrupt_requested());
+    EXPECT_FALSE(g_orbit_save_flag);
+}
+
 TEST_P(TestOverlaySoundController, menuInterruptMutesAndResumingRestartsOutput)
 {
     EXPECT_CALL(*m_output, play(_))
@@ -1659,7 +1724,6 @@ TEST_F(TestFrothyBasinController, stepwiseSoundWaitInterruptionPreservesCommandA
             [this](const SoundSample &)
             {
                 m_ready = false;
-                m_key = 'x';
                 return true;
             }));
     EXPECT_CALL(*m_output, mute()).WillRepeatedly(Invoke([this] { m_ready = true; }));
@@ -1670,6 +1734,7 @@ TEST_F(TestFrothyBasinController, stepwiseSoundWaitInterruptionPreservesCommandA
     controller.iterate();
     ASSERT_FALSE(controller.done());
 
+    m_key = 'x';
     controller.iterate();
 
     EXPECT_TRUE(controller.done());
