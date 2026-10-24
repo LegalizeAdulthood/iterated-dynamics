@@ -86,7 +86,7 @@ set_tests_properties(AutoKeyTest.command-diagnostics
     PROPERTIES LABELS "autokey;ui;commands" TIMEOUT 160)
 
 id_make_test_home(restore-cancel RESTORE_CANCEL_HOME
-    KEYS restore_cancel.key restore_accept.key)
+    KEYS restore_cancel.key restore_accept.key restore_viewport.key)
 add_test(NAME AutoKeyTest.restore-cancel
     COMMAND ${CMAKE_COMMAND}
         "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
@@ -96,7 +96,7 @@ add_test(NAME AutoKeyTest.restore-cancel
         -P "${CMAKE_CURRENT_SOURCE_DIR}/restore_cancel_test.cmake"
     WORKING_DIRECTORY "${RESTORE_CANCEL_HOME}")
 set_tests_properties(AutoKeyTest.restore-cancel
-    PROPERTIES LABELS "autokey;ui;restore" TIMEOUT 110)
+    PROPERTIES LABELS "autokey;ui;restore" TIMEOUT 140)
 
 id_make_test_home(3dlook-targa THREE_D_LOOK_TARGA_HOME
     IMAGES gold-3dlook01.pot=potntial.pot

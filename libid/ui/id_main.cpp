@@ -211,7 +211,7 @@ static void main_restart(const std::vector<std::string> &args, MainContext &cont
     context.stacked = false;
 }
 
-static bool main_restore_start(MainContext &context)
+static bool main_restore_start(MainContext &context, const Viewport &viewport)
 {
     driver_check_memory();
     if (g_colors_preloaded)
@@ -255,7 +255,7 @@ static bool main_restore_start(MainContext &context)
         g_show_file = ShowFile::LOAD_IMAGE;
         g_help_mode = HelpLabels::NONE;
         g_tab_enabled = true;
-        if (prepare_image_restore() == 0) // read hdr, get video mode
+        if (prepare_image_restore(viewport) == 0) // read hdr, get video mode
         {
             break; // got it, exit
         }
@@ -456,6 +456,7 @@ int id_main(int argc, char *argv[], const std::initializer_list<Driver *> driver
     MainState state{MainState::RESTART};
     MainContext context;
     bool done{};
+    bool startup_restore{};
     try
     {
         while (!done)
@@ -466,12 +467,21 @@ int id_main(int argc, char *argv[], const std::initializer_list<Driver *> driver
             case MainState::RESTART:
                 // insert key re-starts here
                 main_restart(args, context);
+                startup_restore = true;
                 state = MainState::RESTORE_START;
                 break;
 
             case MainState::RESTORE_START:
-                state = main_restore_start(context) ? MainState::RESUME_LOOP : MainState::IMAGE_START;
+            {
+                Viewport viewport{g_viewport};
+                if (!startup_restore)
+                {
+                    viewport.enabled = false;
+                }
+                state = main_restore_start(context, viewport) ? MainState::RESUME_LOOP : MainState::IMAGE_START;
+                startup_restore = false;
                 break;
+            }
 
             case MainState::IMAGE_START:
                 state = main_image_start(context);

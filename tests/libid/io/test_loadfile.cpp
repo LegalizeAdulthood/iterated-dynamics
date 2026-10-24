@@ -331,6 +331,32 @@ TEST_F(TestGetVideoMode, reducesMatchingGifIntoExplicitViewWindow)
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
 }
 
+TEST_F(TestGetVideoMode, disabledPendingViewKeepsMatchingGifResumable)
+{
+    g_file_x_dots = 800;
+    g_file_y_dots = 600;
+    g_viewport.enabled = true;
+    g_viewport.x_dots = 200;
+    g_viewport.y_dots = 150;
+    g_calc_status = CalcStatus::RESUMABLE;
+    Viewport viewport{g_viewport};
+    viewport.enabled = false;
+
+    const std::optional<ImageVideoMode> setup{get_video_mode(metadata(), viewport)};
+
+    ASSERT_TRUE(setup);
+    EXPECT_FALSE(setup->viewport.enabled);
+    EXPECT_EQ(800, setup->width);
+    EXPECT_EQ(600, setup->height);
+    EXPECT_EQ(0, setup->skip_x);
+    EXPECT_EQ(0, setup->skip_y);
+    EXPECT_EQ(CalcStatus::RESUMABLE, setup->calc_status);
+    EXPECT_TRUE(g_viewport.enabled);
+    EXPECT_EQ(200, g_viewport.x_dots);
+    EXPECT_EQ(150, g_viewport.y_dots);
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+}
+
 class TestFindFractalInfo : public Test
 {
 protected:
@@ -939,7 +965,7 @@ TEST_P(TestLoadFile, integerTypeMigrated)
 {
     ValueSaver saved_read_filename{g_read_filename, GetParam().filename};
 
-    const int result{prepare_image_restore()};
+    const int result{prepare_image_restore(g_viewport)};
 
     EXPECT_EQ(0, result);
     EXPECT_EQ(GetParam().type, g_fractal_type);
@@ -961,7 +987,7 @@ TEST_F(TestLoadFile, randomSeedRestored)
     ValueSaver saved_random_seed{g_random_seed, -999};
     ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
 
-    const int result{prepare_image_restore()};
+    const int result{prepare_image_restore(g_viewport)};
 
     EXPECT_EQ(0, result);
     EXPECT_EQ(info.random_seed, g_random_seed);
@@ -973,7 +999,7 @@ TEST_F(TestLoadFile, legacyFloatRestored)
     ValueSaver saved_read_filename{g_read_filename, ID_TEST_GIF_MANDELFN_INT};
     g_user.legacy_float = true;
 
-    const int result{prepare_image_restore()};
+    const int result{prepare_image_restore(g_viewport)};
 
     EXPECT_EQ(0, result);
     EXPECT_FALSE(g_user.legacy_float);
@@ -1002,7 +1028,7 @@ TEST_F(TestLoadFile, restoresMatchingGifUsingRequestedViewWindowPolicy)
         g_viewport.x_dots = 200;
         g_viewport.y_dots = 150;
 
-        ASSERT_EQ(0, prepare_image_restore());
+        ASSERT_EQ(0, prepare_image_restore(g_viewport));
 
         EXPECT_EQ(!fast_restore, g_viewport.enabled);
         EXPECT_EQ(0, g_viewport.x_dots);
@@ -1029,6 +1055,11 @@ TEST_F(TestLoadFile, videoCancellationKeepsActiveImage)
     ValueSaver iterations{g_max_iterations, 1234L};
     ValueSaver width{g_file_x_dots, 987};
     ValueSaver viewport{g_viewport, Viewport{}};
+    g_viewport.enabled = true;
+    g_viewport.x_dots = 200;
+    g_viewport.y_dots = 150;
+    Viewport pending_viewport{g_viewport};
+    pending_viewport.enabled = false;
     const std::string description{"mock"};
     EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
     EXPECT_CALL(m_driver, get_description()).WillRepeatedly(ReturnRef(description));
@@ -1039,21 +1070,27 @@ TEST_F(TestLoadFile, videoCancellationKeepsActiveImage)
     EXPECT_CALL(m_driver, wait_key_pressed(false)).WillOnce(Return(1));
     EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
 
-    EXPECT_EQ(-1, prepare_image_restore());
+    EXPECT_EQ(-1, prepare_image_restore(pending_viewport));
 
     EXPECT_EQ(FractalType::JULIA, g_fractal_type);
     EXPECT_EQ(1234, g_max_iterations);
     EXPECT_EQ(987, g_file_x_dots);
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_EQ(-1, g_init_mode);
+    EXPECT_TRUE(g_viewport.enabled);
+    EXPECT_EQ(200, g_viewport.x_dots);
+    EXPECT_EQ(150, g_viewport.y_dots);
 
     EXPECT_CALL(m_driver, check_memory());
     EXPECT_CALL(m_driver, wait_key_pressed(false)).WillOnce(Return(1));
     EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
-    EXPECT_EQ(0, prepare_image_restore());
+    EXPECT_EQ(0, prepare_image_restore(pending_viewport));
     EXPECT_EQ(FractalType::MANDEL, g_fractal_type);
     EXPECT_EQ(ShowFile::LOAD_IMAGE, g_show_file);
     EXPECT_NE(1234, g_max_iterations);
+    EXPECT_FALSE(g_viewport.enabled);
+    EXPECT_EQ(0, g_skip_x_dots);
+    EXPECT_EQ(0, g_skip_y_dots);
 }
 
 TEST_F(TestLoadFile, threeDCancellationKeepsActiveImage)
@@ -1071,7 +1108,7 @@ TEST_F(TestLoadFile, threeDCancellationKeepsActiveImage)
     EXPECT_CALL(m_driver, hide_text_cursor()).Times(AnyNumber());
     EXPECT_CALL(m_driver, key_cursor(_, _)).WillOnce(Return(ID_KEY_ESC));
 
-    EXPECT_EQ(-1, prepare_image_restore());
+    EXPECT_EQ(-1, prepare_image_restore(g_viewport));
 
     EXPECT_EQ(FractalType::JULIA, g_fractal_type);
     EXPECT_EQ(1234, g_max_iterations);

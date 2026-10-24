@@ -3,9 +3,10 @@
 #
 file(MAKE_DIRECTORY image checkpoints/image)
 file(REMOVE image/source.gif checkpoints/image/restore000.gif
-    checkpoints/image/restore001.gif checkpoints/image/accepted.gif)
+    checkpoints/image/restore001.gif checkpoints/image/accepted.gif
+    checkpoints/image/fullview.gif)
 set(COMMON "video=F6" "sound=off" "overwrite=yes" "exitnoask=yes"
-    "librarydirs=.")
+    "librarydirs=." "fastrestore=no")
 execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${COMMON}
     "type=mandel" "maxiter=150" "askvideo=no" "savedir=."
     "savename=source.gif" "batch=yes"
@@ -15,6 +16,7 @@ if(NOT RESULT STREQUAL "0")
 endif()
 execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${COMMON}
     "source.gif" "askvideo=no" "savedir=checkpoints"
+    "viewwindows=4/0.75/no/200/150"
     "savename=restore000.gif" "autokeyname=restore_cancel.key" "autokey=play"
     RESULT_VARIABLE RESULT TIMEOUT 40 COMMAND_ECHO STDOUT)
 if(NOT RESULT STREQUAL "0")
@@ -45,4 +47,17 @@ execute_process(COMMAND "${IMAGE_COMPARE}" "image/source.gif"
 if(NOT RESULT STREQUAL "0")
     message(FATAL_ERROR "Accepted restore changed pixels: ${RESULT}")
 endif()
-
+execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${COMMON}
+    "source.gif" "askvideo=no" "savedir=checkpoints"
+    "viewwindows=4/0.75/no/200/150"
+    "savename=fullview.gif" "autokeyname=restore_viewport.key" "autokey=play"
+    RESULT_VARIABLE RESULT TIMEOUT 30 COMMAND_ECHO STDOUT)
+if(NOT RESULT STREQUAL "0")
+    message(FATAL_ERROR "Interactive restore from a reduced view failed: ${RESULT}")
+endif()
+execute_process(COMMAND "${IMAGE_COMPARE}" "image/source.gif"
+    "checkpoints/image/fullview.gif"
+    RESULT_VARIABLE RESULT COMMAND_ECHO STDOUT)
+if(NOT RESULT STREQUAL "0")
+    message(FATAL_ERROR "Interactive restore retained the reduced view: ${RESULT}")
+endif()

@@ -56,7 +56,7 @@ using namespace id::misc;
 namespace id::ui
 {
 
-int prepare_image_restore()
+int prepare_image_restore(const Viewport &requested_viewport)
 {
     g_show_file = ShowFile::IMAGE_LOADED;
     g_init_mode = -1;
@@ -91,7 +91,7 @@ int prepare_image_restore()
     }
     else
     {
-        Viewport viewport{g_viewport};
+        Viewport viewport{requested_viewport};
         if (g_fast_restore)
         {
             viewport.enabled = false;

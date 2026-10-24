@@ -3,12 +3,17 @@
 //
 #pragma once
 
+namespace id::engine
+{
+struct Viewport;
+}
+
 namespace id::ui
 {
 
 class SoundSession;
 
-int prepare_image_restore();
+int prepare_image_restore(const engine::Viewport &viewport);
 
 int restore_image_views();
 
