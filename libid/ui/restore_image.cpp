@@ -92,7 +92,10 @@ int prepare_image_restore()
     else
     {
         Viewport viewport{g_viewport};
-        viewport.enabled = false;
+        if (g_fast_restore)
+        {
+            viewport.enabled = false;
+        }
         video = get_video_mode(metadata, viewport);
         driver_check_memory();
         if (!video)

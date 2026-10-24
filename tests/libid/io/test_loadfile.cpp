@@ -979,6 +979,46 @@ TEST_F(TestLoadFile, legacyFloatRestored)
     EXPECT_FALSE(g_user.legacy_float);
 }
 
+TEST_F(TestLoadFile, restoresMatchingGifUsingRequestedViewWindowPolicy)
+{
+    ValueSaver filename{g_read_filename, ID_TEST_GIF_MANDEL_INT};
+    ValueSaver viewport{g_viewport, Viewport{}};
+    ValueSaver adapter{g_adapter, 0};
+    ValueSaver key{g_video_mode_keys[0], ID_KEY_F2};
+    ValueSaver<Driver *> mode_driver{g_video_table[0].driver, nullptr};
+    ValueSaver screen_aspect{g_screen_aspect, 0.75f};
+    ValueSaver skip_x{g_skip_x_dots, 0};
+    ValueSaver skip_y{g_skip_y_dots, 0};
+
+    for (const bool fast_restore : {false, true})
+    {
+        SCOPED_TRACE(fast_restore);
+        if (fast_restore)
+        {
+            EXPECT_CALL(m_driver, check_memory());
+        }
+        g_fast_restore = fast_restore;
+        g_viewport.enabled = true;
+        g_viewport.x_dots = 200;
+        g_viewport.y_dots = 150;
+
+        ASSERT_EQ(0, prepare_image_restore());
+
+        EXPECT_EQ(!fast_restore, g_viewport.enabled);
+        EXPECT_EQ(0, g_viewport.x_dots);
+        EXPECT_EQ(0, g_viewport.y_dots);
+        EXPECT_EQ(fast_restore ? 0 : 3, g_skip_x_dots);
+        EXPECT_EQ(fast_restore ? 0 : 3, g_skip_y_dots);
+        if (!fast_restore)
+        {
+            EXPECT_FLOAT_EQ(4.0f, g_viewport.reduction);
+        }
+        EXPECT_EQ(800, g_file_x_dots);
+        EXPECT_EQ(600, g_file_y_dots);
+        EXPECT_EQ(ShowFile::LOAD_IMAGE, g_show_file);
+    }
+}
+
 TEST_F(TestLoadFile, videoCancellationKeepsActiveImage)
 {
     ValueSaver filename{g_read_filename, ID_TEST_GIF_MANDEL_INT};
