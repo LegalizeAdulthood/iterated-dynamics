@@ -451,6 +451,7 @@ int FrothyBasin::calc()
             m_overlay_orbit_point.x = g_old_z.x;
             m_overlay_orbit_point.y = g_old_z.y;
             m_overlay_orbit_point_pending = true;
+            m_overlay_scrub_completed = false;
             return -1;
         }
     }

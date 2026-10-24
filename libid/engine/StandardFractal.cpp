@@ -506,6 +506,7 @@ void StandardFractal::queue_overlay_orbit_plot(const double real, const double i
         orbit_plot().reset(real, imag);
         m_orbit_plot_pending = true;
         m_orbit_plot_marks_standard_orbit = mark_as_plotted;
+        m_standard_pixel_overlay_scrubbed = false;
     }
 }
 

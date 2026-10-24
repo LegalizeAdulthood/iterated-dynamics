@@ -978,6 +978,85 @@ TEST_F(TestOverlaySound, synchronousStandardPixelRetainsOverlayWhileLastSampleIs
     EXPECT_EQ(1, s_pixel_calls);
 }
 
+class TestOverlayCleanup : public TestOverlaySound
+{
+protected:
+    void SetUp() override;
+
+    std::vector<int> m_pixels{2, 3, 4, 5};
+};
+
+void TestOverlayCleanup::SetUp()
+{
+    TestOverlaySound::SetUp();
+    EXPECT_CALL(m_driver, read_pixel(_, _))
+        .WillRepeatedly(Invoke([this](int x, int y) { return m_pixels.at(y * 2 + x); }));
+    EXPECT_CALL(m_driver, write_pixel(_, _, _))
+        .WillRepeatedly(Invoke([this](int x, int y, int color) { m_pixels.at(y * 2 + x) = color; }));
+}
+
+TEST_F(TestOverlayCleanup, standardPixelRestoresOverlayAfterTogglingOffAndOn)
+{
+    g_max_iterations = 3;
+    StandardFractal calculation;
+    calculation.m_standard_pass.select(CalcMode::ONE_PASS);
+    ASSERT_EQ(-1, calculation.calculate_standard_pixel(true));
+    calculation.iterate();
+    ASSERT_TRUE(calculation.consume_orbit_overlay_displayed());
+    ASSERT_NE(5, m_pixels[3]);
+
+    calculation.scrub_overlay();
+    g_show_orbit = false;
+    ASSERT_THAT(m_pixels, ElementsAre(2, 3, 4, 5));
+    g_show_orbit = true;
+
+    int color{-1};
+    for (int step = 0; step < 8 && color < 0; ++step)
+    {
+        color = calculation.calculate_standard_pixel(true);
+        if (color < 0)
+        {
+            calculation.iterate();
+            calculation.consume_orbit_overlay_displayed();
+        }
+    }
+
+    ASSERT_GE(color, 0);
+    EXPECT_EQ(2, s_orbit_calls);
+    EXPECT_THAT(m_pixels, ElementsAre(color, 3, 4, 5));
+    EXPECT_FALSE(g_orbit_save_flag);
+}
+
+TEST_F(TestOverlayCleanup, frothyPixelRestoresOverlayAfterTogglingOffAndOn)
+{
+    g_i_stop_pt = {0, 0};
+    FrothyBasin calculation;
+    ASSERT_TRUE(calculation.per_image());
+    calculation.resume();
+    // Place the zero-valued orbit over a different pixel from the image plot.
+    g_image_region.m_min.x = -1.0;
+    g_image_region.m_max.y = -1.0;
+    calculation.iterate();
+    ASSERT_TRUE(calculation.consume_orbit_overlay_displayed());
+    ASSERT_NE(5, m_pixels[3]);
+
+    calculation.scrub_overlay();
+    g_show_orbit = false;
+    ASSERT_THAT(m_pixels, ElementsAre(2, 3, 4, 5));
+    g_show_orbit = true;
+
+    for (int step = 0; step < 8 && !calculation.done(); ++step)
+    {
+        calculation.iterate();
+        calculation.consume_orbit_overlay_displayed();
+    }
+
+    ASSERT_TRUE(calculation.done());
+    EXPECT_EQ(2U, m_samples.size());
+    EXPECT_THAT(m_pixels, ElementsAre(g_color, 3, 4, 5));
+    EXPECT_FALSE(g_orbit_save_flag);
+}
+
 TEST_F(TestOverlaySound, frothyBasinRetriesWithoutAdvancingOrbitOrRepeatingBoundary)
 {
     FrothyBasin calculation;
