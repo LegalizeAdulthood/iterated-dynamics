@@ -60,7 +60,8 @@ set_tests_properties(AutoKeyTest.batch-interrupt
     PROPERTIES LABELS "autokey;ui;batch" TIMEOUT 140)
 
 id_make_test_home(command-actions COMMAND_ACTIONS_HOME
-    KEYS command_select_accept.key command_select_cancel.key)
+    KEYS command_select_accept.key command_select_cancel.key
+        command_initial_cancel.key command_restart_cancel.key)
 add_test(NAME AutoKeyTest.command-actions
     COMMAND ${CMAKE_COMMAND}
         "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"

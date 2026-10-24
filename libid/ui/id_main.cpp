@@ -148,6 +148,12 @@ static void main_restart(const std::vector<std::string> &args, MainContext &cont
         defaults.diagnostics.warnings.insert(defaults.diagnostics.warnings.begin(),
             commands.diagnostics.warnings.begin(), commands.diagnostics.warnings.end());
         commands = std::move(defaults);
+        if (!first_init)
+        {
+            g_init_mode = -1;
+            g_show_file = ShowFile::IMAGE_LOADED;
+            g_read_color = true;
+        }
     }
     const bool exit_requested{apply_command_effects(commands)};
     const CommandDiagnostics &diagnostics{commands.diagnostics};
