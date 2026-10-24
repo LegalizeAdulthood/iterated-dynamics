@@ -314,6 +314,58 @@ TEST_F(TestGifRestore, subsamplingKeepsPotentialColorAndLowBytePairs)
     EXPECT_EQ(0, restore.result());
 }
 
+TEST_F(TestGifRestore, rejectsPotentialImageNarrowerThanLogicalScreen)
+{
+    std::vector<Byte> data{gif_data()};
+    data[6] = 0x80;
+    data[7] = 0x02; // 640-column screen, two-column image.
+    const std::filesystem::path path{write_file(data)};
+    GifRestore restore{path, 0, 0, true};
+
+    restore.iterate();
+
+    EXPECT_TRUE(restore.done());
+    EXPECT_EQ(-1, restore.result());
+    EXPECT_TRUE(restore.line().empty());
+    EXPECT_TRUE(std::filesystem::remove(path));
+}
+
+TEST_F(TestGifRestore, rejectsPotentialImageWithMismatchedDimensionsOrOffsets)
+{
+    // Change each screen dimension, image offset, and image dimension.
+    for (const int offset : {6, 8, 20, 22, 24, 26})
+    {
+        SCOPED_TRACE(Message() << "offset=" << offset);
+        std::vector<Byte> data{gif_data()};
+        data[offset] += 2;
+        const std::filesystem::path path{write_file(data)};
+        GifRestore restore{path, 0, 0, true};
+
+        restore.iterate();
+
+        EXPECT_TRUE(restore.done());
+        EXPECT_EQ(-1, restore.result());
+        EXPECT_TRUE(restore.line().empty());
+        EXPECT_TRUE(std::filesystem::remove(path));
+    }
+}
+
+TEST_F(TestGifRestore, rejectsOddPotentialWidthEvenWhenDimensionsMatch)
+{
+    std::vector<Byte> data{gif_data()};
+    data[6] = 3;
+    data[24] = 3;
+    const std::filesystem::path path{write_file(data)};
+    GifRestore restore{path, 0, 0, true};
+
+    restore.iterate();
+
+    EXPECT_TRUE(restore.done());
+    EXPECT_EQ(-1, restore.result());
+    EXPECT_TRUE(restore.line().empty());
+    EXPECT_TRUE(std::filesystem::remove(path));
+}
+
 TEST_F(TestGifRestore, independentRestoresRetainInputAndLineBuffers)
 {
     GifRestore first{write_file(gif_data())};

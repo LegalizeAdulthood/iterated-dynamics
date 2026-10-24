@@ -121,7 +121,10 @@ void GifRestore::read_image()
     }
     const GifImageDesc &image{m_input->Image};
     m_image = {image.Left, image.Top, image.Width, image.Height};
-    if (image.Width <= 0 || image.Height <= 0 || (m_potential_16bit && image.Width % 2 != 0))
+    if (image.Width <= 0 || image.Height <= 0 ||
+        (m_potential_16bit &&
+            (image.Left != 0 || image.Top != 0 || image.Width != m_width || image.Height != m_height ||
+                image.Width % 2 != 0)))
     {
         finish(-1);
         return;
