@@ -1033,7 +1033,9 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         // calculation of one orbit goes here
         // input in "old" -- output in "new"
         if (!m_standard_pixel_iteration_yielded && g_color_iter % m_check_freq == 0 && yield_to_ui &&
-            standard_pixel_yield_enabled())
+            (standard_pixel_yield_enabled() || m_standard_pass.calc_mode() == CalcMode::SOLID_GUESS ||
+                m_standard_pass.calc_mode() == CalcMode::DIFFUSION ||
+                m_standard_pass.calc_mode() == CalcMode::TESSERAL))
         {
             m_standard_pixel_iteration_yielded = true;
             m_incomplete_standard_pixel_yield = true;

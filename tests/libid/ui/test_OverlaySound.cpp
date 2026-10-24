@@ -384,20 +384,120 @@ TEST_F(TestOverlaySound, standardOrbitRetainsSoundWorkFrequency)
     EXPECT_EQ(1, s_pixel_calls);
 }
 
-TEST_F(TestOverlaySound, standardPixelKeepsNonIncrementalTraversalGate)
+class TestStandardPixelCheckpoints : public TestOverlaySound, public WithParamInterface<CalcMode>
+{
+};
+
+TEST_P(TestStandardPixelCheckpoints, unfinishedPixelRetainsSelectionAndResumesAtEachCheckpoint)
 {
     g_show_orbit = false;
-    g_max_iterations = 2050;
+    g_max_iterations = 4098;
+    g_std_calc_mode = GetParam();
+    ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_BEEP};
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
     StandardFractal calculation;
-    calculation.m_standard_pass.select(CalcMode::SOLID_GUESS);
+    calculation.resume();
+    bool selected{};
+    for (int chunks = 0; chunks < 16 && !selected; ++chunks)
+    {
+        selected = calculation.select_pixel();
+    }
+    ASSERT_TRUE(selected);
+    const Point2i point{calculation.selected_pixel()};
+
+    for (const int checkpoint : {2048, 4096})
+    {
+        EXPECT_FALSE(calculation.calculate_pixel());
+        EXPECT_TRUE(calculation.consume_traversal_yield());
+        EXPECT_EQ(checkpoint, g_color_iter);
+        EXPECT_EQ(checkpoint - 1, s_orbit_calls);
+        EXPECT_EQ(1, s_pixel_calls);
+        EXPECT_EQ(0, m_plots);
+        ASSERT_TRUE(calculation.select_pixel());
+        EXPECT_EQ(point, calculation.selected_pixel());
+    }
+
+    EXPECT_TRUE(calculation.calculate_pixel());
+
+    EXPECT_FALSE(calculation.consume_traversal_yield());
+    EXPECT_EQ(4097, s_orbit_calls);
+    EXPECT_EQ(1, s_pixel_calls);
+    EXPECT_GT(m_plots, 0);
+}
+
+TEST_P(TestStandardPixelCheckpoints, completedPixelRetainsPassBatching)
+{
+    g_show_orbit = false;
+    g_keyboard_check_interval = 0;
+    ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_BEEP};
+    StandardFractal calculation;
+    calculation.m_standard_pass.select(GetParam());
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, get_key()).Times(0);
 
     EXPECT_GE(calculation.calculate_standard_pixel(true), 0);
 
     EXPECT_FALSE(calculation.consume_traversal_yield());
-    EXPECT_EQ(2049, s_orbit_calls);
+    EXPECT_EQ(1, s_orbit_calls);
 }
+
+TEST_P(TestStandardPixelCheckpoints, atomicPixelDoesNotYieldAtOrbitCheckpoints)
+{
+    g_show_orbit = false;
+    g_max_iterations = 4098;
+    ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_BEEP};
+    StandardFractal calculation;
+    calculation.m_standard_pass.select(GetParam());
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+
+    EXPECT_GE(calculation.calculate_standard_pixel(false), 0);
+
+    EXPECT_FALSE(calculation.consume_traversal_yield());
+    EXPECT_EQ(4097, s_orbit_calls);
+    EXPECT_EQ(1, s_pixel_calls);
+}
+
+TEST_P(TestStandardPixelCheckpoints, controllerHandlesMenuKeyBeforeCompletingThePixel)
+{
+    g_show_orbit = false;
+    g_max_iterations = 4098;
+    g_std_calc_mode = GetParam();
+    ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_BEEP};
+    bool requested{};
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillRepeatedly(
+            [this, &requested]
+            {
+                if (!requested && s_orbit_calls >= 2047)
+                {
+                    requested = true;
+                    m_key = 'x';
+                }
+                return m_key;
+            });
+    EXPECT_CALL(m_driver, unget_key('x'));
+    EXPECT_CALL(*m_output, mute());
+
+    EXPECT_EQ(-1, render_standard_image());
+
+    EXPECT_TRUE(requested);
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_EQ(2047, s_orbit_calls);
+    EXPECT_EQ(1, s_pixel_calls);
+    EXPECT_EQ(0, m_plots);
+    EXPECT_FALSE(g_resume_data.empty());
+
+    g_resuming = true;
+    EXPECT_EQ(0, render_standard_image());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_GT(s_pixel_calls, 1);
+    EXPECT_GT(m_plots, 0);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    PixelPasses, TestStandardPixelCheckpoints, Values(CalcMode::SOLID_GUESS, CalcMode::DIFFUSION, CalcMode::TESSERAL));
 
 TEST_F(TestOverlaySound, controllerSuspendsWithinAnOrbitAndResumesUnfinishedPixel)
 {
