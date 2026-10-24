@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <ui/SoundSession.h>
 
@@ -507,6 +508,19 @@ TEST_F(TestSoundSession, cancellationRequiresThePortToDiscardPendingPlayback)
     SoundSession session{m_output};
 
     EXPECT_THROW(session.cancel(), std::logic_error);
+}
+
+TEST_F(TestSoundSession, muteFailureStillClosesOutputAndPreservesTheFirstError)
+{
+    InSequence sequence;
+    EXPECT_CALL(*m_output, mute()).WillOnce(Throw(std::runtime_error("mute failed")));
+    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("close failed")));
+    SoundSession session{m_output};
+
+    EXPECT_THAT([&session] { session.cancel(); }, ThrowsMessage<std::runtime_error>(StrEq("mute failed")));
+
+    EXPECT_NO_THROW(session.cancel());
+    EXPECT_FALSE(session.finish());
 }
 
 TEST_F(TestSoundSession, finishedSessionCannotResumeCalculation)

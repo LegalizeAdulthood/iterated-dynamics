@@ -5,6 +5,7 @@
 
 #include "engine/NonStandardFractal.h"
 #include "misc/Driver.h"
+#include "misc/run_cleanup.h"
 #include "ui/inverse_julia.h"
 #include "ui/standard_orbit_plot.h"
 #include "ui/stop_msg.h"
@@ -92,9 +93,7 @@ void InverseJuliaFractalController::start()
     }
     catch (...)
     {
-        close(-1);
-        m_calculation.finish(true);
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { close(-1); }, [this] { m_calculation.finish(true); });
     }
 }
 
@@ -124,9 +123,7 @@ void InverseJuliaFractalController::iterate()
     }
     catch (...)
     {
-        close(-1);
-        m_calculation.finish(true);
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { close(-1); }, [this] { m_calculation.finish(true); });
     }
 }
 

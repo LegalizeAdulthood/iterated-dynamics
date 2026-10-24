@@ -5,6 +5,7 @@
 
 #include "engine/OrbitPlot.h"
 #include "fractals/fractalp.h"
+#include "misc/run_cleanup.h"
 
 #include <stdexcept>
 
@@ -82,21 +83,24 @@ void ImageRenderOperation::finish(const bool interrupted)
 void ImageRenderOperation::abort()
 {
     g_calc_status = CalcStatus::NON_RESUMABLE;
-    scrub_orbit();
-    switch (m_state.index())
-    {
-    case STANDARD:
-        standard().abort();
-        break;
-    case LYAPUNOV:
-        lyapunov().calculation().abort();
-        break;
-    case NON_STANDARD:
-        non_standard().finish(true);
-        break;
-    default:
-        break;
-    }
+    misc::run_cleanup({}, scrub_orbit,
+        [this]
+        {
+            switch (m_state.index())
+            {
+            case STANDARD:
+                standard().abort();
+                break;
+            case LYAPUNOV:
+                lyapunov().calculation().abort();
+                break;
+            case NON_STANDARD:
+                non_standard().finish(true);
+                break;
+            default:
+                break;
+            }
+        });
 }
 
 } // namespace id::engine

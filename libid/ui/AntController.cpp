@@ -6,6 +6,7 @@
 #include "engine/NonStandardFractal.h"
 #include "engine/OrbitPlot.h"
 #include "misc/Driver.h"
+#include "misc/run_cleanup.h"
 #include "ui/diskvid.h"
 #include "ui/id_keys.h"
 #include "ui/main_menu_switch.h"
@@ -155,9 +156,7 @@ void AntController::iterate()
     }
     catch (...)
     {
-        close(-1);
-        m_calculation.finish(true);
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { close(-1); }, [this] { m_calculation.finish(true); });
     }
 }
 

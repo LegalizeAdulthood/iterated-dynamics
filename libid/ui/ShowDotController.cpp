@@ -66,7 +66,13 @@ ShowDotController::ShowDotController() :
 
 ShowDotController::~ShowDotController()
 {
-    restore();
+    try
+    {
+        restore();
+    }
+    catch (...)
+    {
+    }
 }
 
 bool ShowDotController::enabled() const

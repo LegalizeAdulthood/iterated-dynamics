@@ -28,7 +28,13 @@ NonStandardFractal::~NonStandardFractal()
 {
     if (started())
     {
-        finish(true);
+        try
+        {
+            finish(true);
+        }
+        catch (...)
+        {
+        }
     }
 }
 

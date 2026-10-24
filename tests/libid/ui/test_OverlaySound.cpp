@@ -55,6 +55,7 @@
 #include <chrono>
 #include <filesystem>
 #include <fstream>
+#include <iterator>
 #include <memory>
 #include <new>
 #include <stdexcept>
@@ -64,6 +65,8 @@
 #define private public
 #include <engine/StandardFractal.h>
 #undef private
+
+#include <ui/ImageRenderContext.h>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -738,6 +741,244 @@ TEST_F(TestTrueColorStorage, controllerPreparesStorageAndFinishesTheTargaImage)
     EXPECT_TRUE(exit_check().empty());
     EXPECT_EQ(22U + 2U * 2U * 3U, std::filesystem::file_size(m_directory / "image" / "truecolor.tga"));
 }
+
+class TestTargaFlushFailure : public TestTrueColorStorage
+{
+protected:
+    void SetUp() override;
+    void damage_backing() const;
+};
+
+void TestTargaFlushFailure::SetUp()
+{
+    TestTrueColorStorage::SetUp();
+    g_logical_screen = LogicalScreen{256, 256, 0, 0, 1.0, 1.0};
+    g_screen_x_dots = 256;
+    g_screen_y_dots = 256;
+    free_pixel_grid();
+    alloc_pixel_grid();
+    fill_pixel_grid();
+}
+
+void TestTargaFlushFailure::damage_backing() const
+{
+    // Leave a distant dirty cache block beyond stdio's buffered reads.
+    write_targa_pixel(255, 255, 10, 20, 30);
+    Byte red{};
+    Byte green{};
+    Byte blue{};
+    read_targa_pixel(0, 0, &red, &green, &blue);
+    std::filesystem::resize_file(targa_disk_path(), 0);
+}
+
+TEST_F(TestTargaFlushFailure, damagedBackingFailsDuringCacheFlush)
+{
+    ImageCalculation calculation;
+    complete_image_setup(calculation, calculation.start());
+    damage_backing();
+
+    EXPECT_THROW(calculation.finish(), MemoryError);
+
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_TRUE(exit_check().empty());
+    EXPECT_NO_THROW(calculation.finish());
+    EXPECT_NO_THROW(end_disk());
+}
+
+TEST_F(TestTargaFlushFailure, abandonedImageCleanupPreservesTheActiveException)
+{
+    EXPECT_THAT(
+        [this]
+        {
+            ImageCalculation calculation;
+            complete_image_setup(calculation, calculation.start());
+            damage_backing();
+            throw std::runtime_error("Original rendering failure");
+        },
+        ThrowsMessage<std::runtime_error>(StrEq("Original rendering failure")));
+
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_TRUE(exit_check().empty());
+    EXPECT_NO_THROW(end_disk());
+}
+
+TEST_F(TestTargaFlushFailure, abandonedStandardCleanupPreservesTheActiveException)
+{
+    EXPECT_THAT(
+        [this]
+        {
+            StandardFractal calculation;
+            complete_image_setup(calculation, calculation.resume());
+            damage_backing();
+            throw std::runtime_error("Original rendering failure");
+        },
+        ThrowsMessage<std::runtime_error>(StrEq("Original rendering failure")));
+
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_TRUE(exit_check().empty());
+    EXPECT_NO_THROW(end_disk());
+}
+
+TEST_F(TestTargaFlushFailure, abandonedNonStandardCleanupPreservesTheActiveException)
+{
+    EXPECT_THAT(
+        [this]
+        {
+            NonStandardFractal calculation;
+            complete_image_setup(calculation, calculation.start());
+            damage_backing();
+            throw std::runtime_error("Original rendering failure");
+        },
+        ThrowsMessage<std::runtime_error>(StrEq("Original rendering failure")));
+
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_TRUE(exit_check().empty());
+    EXPECT_NO_THROW(end_disk());
+}
+
+class TestRenderCleanup : public TestTargaFlushFailure, public WithParamInterface<bool>
+{
+protected:
+    void SetUp() override;
+    void damage_backing(ImageRenderContext &rendering);
+    void expect_diagnostic(const char *message);
+    void expect_released(ImageRenderContext &rendering, SoundSession &sound);
+
+    ValueSaver<bool> m_saved_first_init{g_first_init, false};
+    ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
+    ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
+};
+
+void TestRenderCleanup::SetUp()
+{
+    TestTargaFlushFailure::SetUp();
+    if (GetParam())
+    {
+        select_froth();
+    }
+}
+
+void TestRenderCleanup::damage_backing(ImageRenderContext &rendering)
+{
+    rendering.start();
+    ASSERT_FALSE(rendering.done());
+    ASSERT_TRUE(g_disk_flag);
+    TestTargaFlushFailure::damage_backing();
+}
+
+void TestRenderCleanup::expect_diagnostic(const char *message)
+{
+    EXPECT_CALL(m_driver, stack_screen());
+    EXPECT_CALL(m_driver, unstack_screen());
+    EXPECT_CALL(m_driver, move_cursor(_, _));
+    EXPECT_CALL(m_driver, hide_text_cursor());
+    EXPECT_CALL(m_driver, set_attr(_, _, _, _));
+    EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
+    EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(AnyNumber());
+    EXPECT_CALL(m_driver, put_string(_, _, _, StrEq(message)));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+}
+
+void TestRenderCleanup::expect_released(ImageRenderContext &rendering, SoundSession &sound)
+{
+    EXPECT_TRUE(rendering.done());
+    EXPECT_EQ(-1, rendering.result());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(0, g_num_work_list);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_TRUE(g_log_map_table.empty());
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_EQ(MemoryLocation::NOWHERE, disk_video_memory_type());
+    EXPECT_TRUE(exit_check().empty());
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
+    EXPECT_NO_THROW(end_disk());
+    EXPECT_NO_THROW(sound.cancel());
+    EXPECT_FALSE(sound.finish());
+    EXPECT_NO_THROW(rendering.iterate());
+}
+
+TEST_P(TestRenderCleanup, originalDiagnosticSurvivesStorageAndSoundCleanupFailures)
+{
+    SoundSession sound{m_output};
+    ImageRenderContext rendering{sound};
+    damage_backing(rendering);
+    expect_diagnostic("Original rendering failure");
+    EXPECT_CALL(m_driver, write_pixel(_, _, _)).WillOnce(Throw(std::runtime_error("Original rendering failure")));
+    EXPECT_CALL(*m_output, mute()).WillOnce(Throw(std::runtime_error("Mute failure")));
+    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Sound close failure")));
+
+    EXPECT_NO_THROW(while (!rendering.done()) { rendering.iterate(); });
+
+    EXPECT_EQ(BatchMode::NONE, g_init_batch);
+    expect_released(rendering, sound);
+}
+
+TEST_P(TestRenderCleanup, allocationDiagnosticSurvivesStorageCleanupFailure)
+{
+    SoundSession sound{m_output};
+    ImageRenderContext rendering{sound};
+    damage_backing(rendering);
+    expect_diagnostic("Insufficient free memory for calculation");
+    EXPECT_CALL(*m_output, update()).WillOnce(Throw(std::bad_alloc{}));
+    EXPECT_CALL(*m_output, mute());
+    EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
+
+    EXPECT_NO_THROW(rendering.iterate());
+
+    expect_released(rendering, sound);
+}
+
+TEST_P(TestRenderCleanup, precisionFailureStillPropagatesToTheOuterUi)
+{
+    SoundSession sound{m_output};
+    ImageRenderContext rendering{sound};
+    damage_backing(rendering);
+    EXPECT_CALL(*m_output, update()).WillOnce(Throw(PrecisionError{"Original precision failure"}));
+    EXPECT_CALL(*m_output, mute());
+    EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
+
+    EXPECT_THAT(
+        [&rendering] { rendering.iterate(); }, ThrowsMessage<PrecisionError>(StrEq("Original precision failure")));
+
+    expect_released(rendering, sound);
+}
+
+TEST_P(TestRenderCleanup, unexpectedFailureStillPropagatesWithoutChangingItsType)
+{
+    SoundSession sound{m_output};
+    ImageRenderContext rendering{sound};
+    damage_backing(rendering);
+    EXPECT_CALL(*m_output, update()).WillOnce(Throw(std::logic_error("Original logic failure")));
+    EXPECT_CALL(*m_output, mute());
+    EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
+
+    EXPECT_THAT(
+        [&rendering] { rendering.iterate(); }, ThrowsMessage<std::logic_error>(StrEq("Original logic failure")));
+
+    expect_released(rendering, sound);
+}
+
+TEST_P(TestRenderCleanup, batchFailureRetainsItsDiagnosticAndNoSaveExitPolicy)
+{
+    SoundSession sound{m_output};
+    ImageRenderContext rendering{sound};
+    damage_backing(rendering);
+    g_init_batch = BatchMode::NORMAL;
+    EXPECT_CALL(*m_output, update()).WillOnce(Throw(std::runtime_error("Original batch failure")));
+    EXPECT_CALL(*m_output, mute());
+    EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
+    EXPECT_CALL(m_driver, stack_screen()).Times(0);
+
+    EXPECT_NO_THROW(rendering.iterate());
+
+    EXPECT_EQ(BatchMode::BAILOUT_ERROR_NO_SAVE, g_init_batch);
+    std::ifstream diagnostic{get_append_save_path(WriteFile::DEBUG, "stopmsg")};
+    EXPECT_EQ("Original batch failure\n",
+        (std::string{std::istreambuf_iterator<char>{diagnostic}, std::istreambuf_iterator<char>{}}));
+    expect_released(rendering, sound);
+}
+
+INSTANTIATE_TEST_SUITE_P(StandardAndFroth, TestRenderCleanup, Bool());
 
 class TestStandardPotentialStorage : public TestOverlaySound
 {

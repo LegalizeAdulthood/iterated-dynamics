@@ -8,6 +8,7 @@
 #include "fractals/julibrot.h"
 #include "io/loadmap.h"
 #include "misc/Driver.h"
+#include "misc/run_cleanup.h"
 #include "ui/diskvid.h"
 #include "ui/get_3d_params.h"
 #include "ui/starfield.h"
@@ -66,9 +67,7 @@ void Standard4DController::start()
     }
     catch (...)
     {
-        close(-1);
-        m_calculation.finish(true);
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { close(-1); }, [this] { m_calculation.finish(true); });
     }
 }
 
@@ -98,9 +97,7 @@ void Standard4DController::iterate()
     }
     catch (...)
     {
-        close(-1);
-        m_calculation.finish(true);
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { close(-1); }, [this] { m_calculation.finish(true); });
     }
 }
 

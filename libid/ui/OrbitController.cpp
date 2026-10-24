@@ -4,6 +4,7 @@
 #include "ui/OrbitController.h"
 
 #include "engine/NonStandardFractal.h"
+#include "misc/run_cleanup.h"
 #include "ui/diskvid.h"
 #include "ui/SoundSession.h"
 
@@ -39,8 +40,7 @@ void OrbitController::start()
     }
     catch (...)
     {
-        abort();
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { abort(); });
     }
 }
 
@@ -70,8 +70,7 @@ void OrbitController::iterate()
     }
     catch (...)
     {
-        abort();
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { abort(); });
     }
 }
 
@@ -107,9 +106,7 @@ void OrbitController::finish()
 
 void OrbitController::abort()
 {
-    close(-1);
-    m_calculation.finish(true);
-    m_sound.cancel();
+    misc::run_cleanup({}, [this] { close(-1); }, [this] { m_calculation.finish(true); }, [this] { m_sound.cancel(); });
 }
 
 void OrbitController::close(const int result)

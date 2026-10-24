@@ -5,6 +5,7 @@
 
 #include "engine/NonStandardFractal.h"
 #include "geometry/plot3d.h"
+#include "misc/run_cleanup.h"
 #include "ui/diskvid.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/SoundSession.h"
@@ -45,8 +46,7 @@ void StereoController::start()
     }
     catch (...)
     {
-        abort();
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { abort(); });
     }
 }
 
@@ -90,8 +90,7 @@ void StereoController::iterate()
     }
     catch (...)
     {
-        abort();
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { abort(); });
     }
 }
 
@@ -123,8 +122,7 @@ void StereoController::suspend()
     }
     catch (...)
     {
-        abort();
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { abort(); });
     }
 }
 
@@ -149,9 +147,7 @@ void StereoController::abort()
     {
         return;
     }
-    close(-1);
-    m_calculation.finish(true);
-    m_sound.cancel();
+    misc::run_cleanup({}, [this] { close(-1); }, [this] { m_calculation.finish(true); }, [this] { m_sound.cancel(); });
 }
 
 void StereoController::close(const int result)

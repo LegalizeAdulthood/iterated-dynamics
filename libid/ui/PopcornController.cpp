@@ -4,6 +4,7 @@
 #include "ui/PopcornController.h"
 
 #include "engine/NonStandardFractal.h"
+#include "misc/run_cleanup.h"
 #include "ui/diskvid.h"
 
 #include <memory>
@@ -37,9 +38,7 @@ void PopcornController::start()
     }
     catch (...)
     {
-        close(-1);
-        m_calculation.finish(true);
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { close(-1); }, [this] { m_calculation.finish(true); });
     }
 }
 
@@ -68,9 +67,7 @@ void PopcornController::iterate()
     }
     catch (...)
     {
-        close(-1);
-        m_calculation.finish(true);
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { close(-1); }, [this] { m_calculation.finish(true); });
     }
 }
 
@@ -101,9 +98,7 @@ void PopcornController::suspend()
     }
     catch (...)
     {
-        close(-1);
-        m_calculation.finish(true);
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { close(-1); }, [this] { m_calculation.finish(true); });
     }
 }
 

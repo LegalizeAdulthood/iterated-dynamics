@@ -6,6 +6,7 @@
 #include "engine/NonStandardFractal.h"
 #include "engine/SoundOutput.h"
 #include "misc/Driver.h"
+#include "misc/run_cleanup.h"
 #include "ui/diskvid.h"
 #include "ui/SoundSession.h"
 #include "ui/standard_orbit_plot.h"
@@ -87,8 +88,7 @@ void FrothyBasinController::start()
     }
     catch (...)
     {
-        abort();
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { abort(); });
     }
 }
 
@@ -128,8 +128,7 @@ void FrothyBasinController::iterate()
     }
     catch (...)
     {
-        abort();
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { abort(); });
     }
 }
 
@@ -162,8 +161,7 @@ void FrothyBasinController::suspend()
     }
     catch (...)
     {
-        abort();
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { abort(); });
     }
 }
 
@@ -178,10 +176,9 @@ void FrothyBasinController::abort()
     {
         return;
     }
-    close(-1);
-    m_calculation.scrub_overlay();
-    m_calculation.finish(true);
-    m_sound.cancel();
+    run_cleanup(
+        {}, [this] { close(-1); }, [this] { m_calculation.scrub_overlay(); }, [this] { m_calculation.finish(true); },
+        [this] { m_sound.cancel(); });
 }
 
 void FrothyBasinController::close(const int result)

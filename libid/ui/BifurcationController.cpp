@@ -5,6 +5,7 @@
 
 #include "engine/NonStandardFractal.h"
 #include "misc/Driver.h"
+#include "misc/run_cleanup.h"
 #include "ui/diskvid.h"
 
 #include <stdexcept>
@@ -62,9 +63,7 @@ void BifurcationController::iterate()
     }
     catch (...)
     {
-        m_calculation.finish(true);
-        close(-1);
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { close(-1); }, [this] { m_calculation.finish(true); });
     }
 }
 

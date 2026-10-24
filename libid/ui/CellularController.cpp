@@ -5,6 +5,7 @@
 
 #include "engine/NonStandardFractal.h"
 #include "misc/Driver.h"
+#include "misc/run_cleanup.h"
 #include "ui/diskvid.h"
 #include "ui/stop_msg.h"
 #include "ui/thinking.h"
@@ -144,9 +145,15 @@ void CellularController::clear_thinking()
 
 void CellularController::fail(const std::string &message)
 {
-    close(-1);
     g_calc_status = CalcStatus::NON_RESUMABLE;
-    m_calculation.finish(true);
+    try
+    {
+        run_cleanup({}, [this] { close(-1); }, [this] { m_calculation.finish(true); });
+    }
+    catch (...)
+    {
+        // Report the calculation error even when cleanup also fails.
+    }
     stop_msg(message);
 }
 

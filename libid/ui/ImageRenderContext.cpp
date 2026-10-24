@@ -4,8 +4,9 @@
 #include "ui/ImageRenderContext.h"
 
 #include "engine/cmdfiles.h"
-#include "misc/Driver.h"
 #include "math/biginit.h"
+#include "misc/Driver.h"
+#include "misc/run_cleanup.h"
 #include "ui/calculate_image.h"
 #include "ui/SoundSession.h"
 #include "ui/standard_orbit_plot.h"
@@ -385,13 +386,19 @@ void ImageRenderContext::abort()
     m_result = -1;
     m_presentation.emplace<NO_PRESENTATION>();
     m_outer_keyboard_scope.reset();
-    m_operation.abort();
-    m_sound.cancel();
+    run_cleanup({}, [this] { m_operation.abort(); }, [this] { m_sound.cancel(); });
 }
 
 void ImageRenderContext::fail(const std::exception_ptr failure)
 {
-    abort();
+    try
+    {
+        abort();
+    }
+    catch (...)
+    {
+        // Cleanup must not replace the rendering failure or its reporting policy.
+    }
     std::string diagnostic;
     try
     {

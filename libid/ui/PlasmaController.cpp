@@ -5,6 +5,7 @@
 
 #include "engine/NonStandardFractal.h"
 #include "misc/Driver.h"
+#include "misc/run_cleanup.h"
 #include "ui/diskvid.h"
 
 #include <stdexcept>
@@ -40,9 +41,7 @@ void PlasmaController::start()
     }
     catch (...)
     {
-        close(-1);
-        m_calculation.finish(true);
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { close(-1); }, [this] { m_calculation.finish(true); });
     }
 }
 
@@ -72,9 +71,7 @@ void PlasmaController::iterate()
     }
     catch (...)
     {
-        close(-1);
-        m_calculation.finish(true);
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { close(-1); }, [this] { m_calculation.finish(true); });
     }
 }
 

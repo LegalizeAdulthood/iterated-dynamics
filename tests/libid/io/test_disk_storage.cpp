@@ -210,4 +210,26 @@ TEST_F(TestDiskStorage, selectingAnotherTargaPathDoesNotChangeTheActiveBackingFi
     EXPECT_TRUE(exit_check().empty());
 }
 
+TEST_F(TestDiskStorage, failedDirtyTargaFlushReleasesStorageAndAllowsRepeatedClose)
+{
+    const std::filesystem::path path{m_directory / "backing.tga"};
+    std::ofstream(path, std::ios::binary) << "012345678901234567";
+    std::FILE *file{std::fopen(path.string().c_str(), "rb")};
+    ASSERT_NE(nullptr, file);
+    const std::vector<Byte> header{read_targa_header(file, 18)};
+    set_targa_disk_path(path);
+    open(DISK_STORAGE_BLOCK_SIZE, 8, 256, MemoryLocation::DISK, header);
+    write_targa_pixel(0, 7, 10, 20, 30);
+    read_disk_pixel(0, 0);
+    std::filesystem::resize_file(path, 0);
+
+    EXPECT_THROW(end_disk(), MemoryError);
+
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_EQ(MemoryLocation::NOWHERE, disk_video_memory_type());
+    EXPECT_EQ(DiskStorageOperation::NONE, disk_storage_progress().operation);
+    EXPECT_TRUE(exit_check().empty());
+    EXPECT_NO_THROW(end_disk());
+}
+
 } // namespace id::test

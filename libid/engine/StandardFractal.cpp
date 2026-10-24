@@ -147,7 +147,13 @@ StandardFractal::~StandardFractal()
 {
     if (started())
     {
-        finish();
+        try
+        {
+            finish();
+        }
+        catch (...)
+        {
+        }
     }
 }
 

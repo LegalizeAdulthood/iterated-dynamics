@@ -7,6 +7,7 @@
 #include "engine/SoundOutput.h"
 #include "engine/StandardFractal.h"
 #include "misc/Driver.h"
+#include "misc/run_cleanup.h"
 #include "ui/calculate_image.h"
 #include "ui/diskvid.h"
 #include "ui/goodbye.h"
@@ -91,8 +92,7 @@ void StandardFractalController::start()
     }
     catch (...)
     {
-        abort();
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { abort(); });
     }
 }
 
@@ -155,8 +155,7 @@ void StandardFractalController::iterate()
     }
     catch (...)
     {
-        abort();
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { abort(); });
     }
 }
 
@@ -196,20 +195,18 @@ void StandardFractalController::finish()
 
 void StandardFractalController::abort()
 {
-    m_marker.restore();
-    m_sound.cancel();
-    m_calculation.scrub_overlay();
-    m_calculation.abort();
-    close(-1);
+    run_cleanup(
+        {}, [this] { close(-1); }, [this] { m_sound.cancel(); }, [this] { m_calculation.scrub_overlay(); },
+        [this] { m_calculation.abort(); });
 }
 
 void StandardFractalController::close(const int result)
 {
-    m_marker.restore();
     m_orbit_toggle_scope.reset();
     m_main_loop_scope.reset();
     m_result = result;
     m_phase = Phase::COMPLETE;
+    m_marker.restore();
 }
 
 } // namespace id::ui

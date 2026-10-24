@@ -7,6 +7,7 @@
 #include "engine/StandardFractal.h"
 #include "fractals/lyapunov.h"
 #include "misc/Driver.h"
+#include "misc/run_cleanup.h"
 #include "ui/calculate_image.h"
 #include "ui/diskvid.h"
 #include "ui/standard_orbit_plot.h"
@@ -73,8 +74,7 @@ void LyapunovController::start()
     }
     catch (...)
     {
-        abort();
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { abort(); });
     }
 }
 
@@ -111,8 +111,7 @@ void LyapunovController::iterate()
     }
     catch (...)
     {
-        abort();
-        throw;
+        misc::run_cleanup(std::current_exception(), [this] { abort(); });
     }
 }
 
@@ -149,19 +148,16 @@ void LyapunovController::finish()
 
 void LyapunovController::abort()
 {
-    m_marker.restore();
-    scrub_orbit_display();
-    m_lyapunov.calculation().abort();
-    close(-1);
+    run_cleanup({}, [this] { close(-1); }, scrub_orbit_display, [this] { m_lyapunov.calculation().abort(); });
 }
 
 void LyapunovController::close(const int result)
 {
-    m_marker.restore();
     m_orbit_toggle_scope.reset();
     m_main_loop_scope.reset();
     m_result = result;
     m_phase = Phase::COMPLETE;
+    m_marker.restore();
 }
 
 } // namespace id::ui

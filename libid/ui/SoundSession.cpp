@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <ui/SoundSession.h>
 
@@ -6,6 +7,7 @@
 #include <engine/sound.h>
 #include <fractals/lorenz.h>
 #include <misc/Driver.h>
+#include <misc/run_cleanup.h>
 #include <ui/KeyboardHandler.h>
 
 #include <memory>
@@ -142,11 +144,15 @@ void SoundSession::cancel()
     if (m_state == State::ACTIVE)
     {
         m_state = State::CANCELLED;
-        m_sound->mute();
-        if (m_ownership == Ownership::OWNED && !m_sound->finish())
-        {
-            throw std::logic_error("Muted sound output still has pending playback");
-        }
+        run_cleanup(
+            {}, [this] { m_sound->mute(); },
+            [this]
+            {
+                if (m_ownership == Ownership::OWNED && !m_sound->finish())
+                {
+                    throw std::logic_error("Muted sound output still has pending playback");
+                }
+            });
     }
 }
 

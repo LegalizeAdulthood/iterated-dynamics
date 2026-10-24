@@ -324,7 +324,13 @@ ImageCalculation::~ImageCalculation()
 {
     if (m_started)
     {
-        finish();
+        try
+        {
+            finish();
+        }
+        catch (...)
+        {
+        }
     }
 }
 

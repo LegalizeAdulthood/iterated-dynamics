@@ -205,6 +205,7 @@ add_library(libid
     include/misc/Driver.h misc/Driver.cpp
     include/misc/id.h
     include/misc/memory.h misc/memory.cpp
+    include/misc/run_cleanup.h
     include/misc/sized_types.h
     include/misc/stack_avail.h misc/stack_avail.cpp
     include/misc/ValueSaver.h
