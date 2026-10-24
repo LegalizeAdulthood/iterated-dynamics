@@ -9,18 +9,21 @@
 #include "engine/sound.h"
 #include "engine/spindac.h"
 #include "engine/text_color.h"
+#include "engine/Viewport.h"
 #include "helpcom.h"
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
 #include "io/make_mig.h"
 #include "misc/Driver.h"
+#include "ui/get_video_mode.h"
 #include "ui/help_title.h"
 #include "ui/make_batch_file.h"
 #include "ui/zoom.h"
 
 #include <fmt/format.h>
 
+#include <optional>
 #include <stdexcept>
 
 using namespace id::engine;
@@ -66,7 +69,20 @@ void make_parameter_file(const MakeParameterFile &request)
         }
         const std::filesystem::path found{find_file(ReadFile::IMAGE, path)};
         ImageMetadata metadata{read_image_metadata(found.empty() ? path : found)};
+        Viewport viewport{g_viewport};
+        if (g_fast_restore)
+        {
+            viewport.enabled = false;
+        }
+        const std::optional<ImageVideoMode> video{get_video_mode(metadata, viewport)};
         apply_image_parameters(metadata);
+        if (video)
+        {
+            g_viewport = video->viewport;
+            g_file_x_dots = video->width;
+            g_file_y_dots = video->height;
+            g_file_aspect_ratio = video->aspect_ratio;
+        }
         apply_image_extensions(metadata);
     }
     else if (!g_map_name.empty())

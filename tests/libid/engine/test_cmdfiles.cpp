@@ -27,6 +27,7 @@
 #include <engine/ImageRegion.h>
 #include <engine/Inversion.h>
 #include <engine/log_map.h>
+#include <engine/LogicalScreen.h>
 #include <engine/OrbitPlot.h>
 #include <engine/Potential.h>
 #include <engine/random_seed.h>
@@ -55,7 +56,9 @@
 #include <io/check_write_file.h>
 #include <io/CurrentPathSaver.h>
 #include <io/encoder.h>
+#include <io/gif_file.h>
 #include <io/gifview.h>
+#include <io/GifWriter.h>
 #include <io/library.h>
 #include <io/loadfile.h>
 #include <io/loadmap.h>
@@ -73,6 +76,7 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <gif_lib.h>
 
 #include <algorithm>
 #include <cctype>
@@ -82,6 +86,7 @@
 #include <fstream>
 #include <memory>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -821,6 +826,108 @@ TEST_F(TestCommandMakePar, makeParMapOnlyWritesColors)
     EXPECT_THAT(text, HasSubstr(" colors="));
     EXPECT_THAT(text, Not(HasSubstr(" type=mandel")));
     EXPECT_THAT(text, Not(HasSubstr(" reset=")));
+}
+
+class TestCommandMakeParView : public TestCommandMakePar
+{
+protected:
+    void TearDown() override;
+    std::string make_par_for_image(int width, int height, float aspect_ratio);
+
+    ValueSaver<Viewport> m_saved_viewport{g_viewport, Viewport{false, false, false, false, 0.75f, 4.2f}};
+    ValueSaver<float> m_saved_screen_aspect{g_screen_aspect, 0.75f};
+    ValueSaver<float> m_saved_file_aspect{g_file_aspect_ratio};
+    ValueSaver<int> m_saved_video_count{g_video_table_len, 1};
+    ValueSaver<VideoInfo> m_saved_mode{g_video_table[0], VideoInfo{800, 600, 16, nullptr, {}}};
+    ValueSaver<int> m_saved_mode_key{g_video_mode_keys[0], ID_KEY_F6};
+    ValueSaver<bool> m_saved_fast_restore{g_fast_restore, false};
+    ValueSaver<fs::path> m_saved_read_filename{g_read_filename};
+    GifFileType m_extensions{};
+    fs::path m_image_path;
+    fs::path m_parameter_path;
+};
+
+void TestCommandMakeParView::TearDown()
+{
+    GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
+    std::error_code ignored;
+    fs::remove(m_image_path, ignored);
+    fs::remove(m_parameter_path, ignored);
+    TestCommandMakePar::TearDown();
+}
+
+std::string TestCommandMakeParView::make_par_for_image(const int width, const int height, const float aspect_ratio)
+{
+    const std::string name{UnitTest::GetInstance()->current_test_info()->name()};
+    m_image_path = par_path((name + ".gif").c_str());
+    m_parameter_path = par_path((name + ".par").c_str());
+    fs::remove(m_image_path);
+    fs::remove(m_parameter_path);
+    FractalInfo info{};
+    setup_save_info(&info);
+    info.x_dots = 800;
+    info.y_dots = 600;
+    info.colors = 16;
+    info.final_aspect_ratio = aspect_ratio;
+    put_fractal_info(&m_extensions, info);
+    GifWriter writer{m_image_path, {width, height}, GifWriter::Palette(16)};
+    const std::vector<Byte> pixels(width, 0);
+    for (int row = 0; row < height; ++row)
+    {
+        if (!writer.write_pixels(pixels))
+        {
+            throw std::runtime_error("Can't write makepar test scanline");
+        }
+    }
+    if (!writer.write_extensions(m_extensions) || !writer.finish())
+    {
+        throw std::runtime_error("Can't finish makepar test image");
+    }
+    g_read_filename = m_image_path;
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    EXPECT_CALL(m_driver, set_video_mode(_)).Times(0);
+    EXPECT_CALL(m_driver, write_pixel(_, _, _)).Times(0);
+
+    exec_cmd_arg("makepar=" + m_parameter_path.filename().string() + "/view", CmdFile::SSTOOLS_INI);
+
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
+    return read_file_contents(m_parameter_path);
+}
+
+TEST_F(TestCommandMakeParView, makeParRetainsAutomaticReducedView)
+{
+    const std::string text{make_par_for_image(200, 150, 0.75f)};
+
+    EXPECT_THAT(text, HasSubstr(" viewwindows=4/0.75/no/0/0"));
+    EXPECT_EQ(200, g_logical_screen.x_dots);
+    EXPECT_EQ(150, g_logical_screen.y_dots);
+}
+
+TEST_F(TestCommandMakeParView, makeParRetainsExplicitReducedViewDimensions)
+{
+    const std::string text{make_par_for_image(201, 150, 0.75f)};
+
+    EXPECT_THAT(text, HasSubstr(" viewwindows=4.2/0.75/no/201/150"));
+}
+
+TEST_F(TestCommandMakeParView, makeParRetainsReducedViewAspectRatio)
+{
+    const std::string text{make_par_for_image(200, 100, 0.5f)};
+
+    EXPECT_THAT(text, HasSubstr(" viewwindows=4/0.5/no/0/0"));
+}
+
+TEST_F(TestCommandMakeParView, makeParWithoutMatchingVideoModeDoesNotInventAViewport)
+{
+    g_video_table[0].x_dots = 1024;
+    g_video_table[0].y_dots = 768;
+
+    const std::string text{make_par_for_image(200, 150, 0.75f)};
+
+    EXPECT_THAT(text, Not(HasSubstr("viewwindows=")));
+    EXPECT_EQ(200, g_logical_screen.x_dots);
+    EXPECT_EQ(150, g_logical_screen.y_dots);
 }
 
 TEST_F(TestParameterCommandError, releaseIsNotResetAlias)
