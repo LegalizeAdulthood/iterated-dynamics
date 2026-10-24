@@ -59,7 +59,64 @@ bool NonStandardRenderKeyboardHandler::handle_key(const int key)
     return true;
 }
 
+void report_render_failure(const std::exception_ptr failure)
+{
+    std::string diagnostic;
+    try
+    {
+        std::rethrow_exception(failure);
+    }
+    catch (const math::PrecisionError &)
+    {
+        throw;
+    }
+    catch (const std::bad_alloc &)
+    {
+        diagnostic = "Insufficient free memory for calculation";
+    }
+    catch (const std::runtime_error &error)
+    {
+        diagnostic = error.what();
+    }
+    stop_msg(diagnostic);
+    if (g_init_batch != BatchMode::NONE)
+    {
+        g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE;
+    }
+}
+
 } // namespace
+
+int finish_render_sound(SoundSession &sound, const int result, const bool failure_reported)
+{
+    try
+    {
+        if (result == 0)
+        {
+            ScopedKeyboardHandler keyboard_scope{std::make_shared<MainLoopKeyboardHandler>()};
+            return sound.finish() ? 0 : -1;
+        }
+        sound.cancel();
+        return result;
+    }
+    catch (...)
+    {
+        const std::exception_ptr failure{std::current_exception()};
+        try
+        {
+            sound.cancel();
+        }
+        catch (...)
+        {
+            // Keep the first finalization error if cancellation also fails.
+        }
+        if (!failure_reported)
+        {
+            report_render_failure(failure);
+        }
+        return -1;
+    }
+}
 
 ImageRenderContext::ImageRenderContext(SoundSession &sound) :
     m_sound{sound}
@@ -298,6 +355,11 @@ int ImageRenderContext::result() const
     return m_result;
 }
 
+bool ImageRenderContext::failure_reported() const
+{
+    return m_failure_reported;
+}
+
 void ImageRenderContext::suspend()
 {
     if (m_phase != Phase::ACTIVE)
@@ -399,28 +461,8 @@ void ImageRenderContext::fail(const std::exception_ptr failure)
     {
         // Cleanup must not replace the rendering failure or its reporting policy.
     }
-    std::string diagnostic;
-    try
-    {
-        std::rethrow_exception(failure);
-    }
-    catch (const math::PrecisionError &)
-    {
-        throw;
-    }
-    catch (const std::bad_alloc &)
-    {
-        diagnostic = "Insufficient free memory for calculation";
-    }
-    catch (const std::runtime_error &error)
-    {
-        diagnostic = error.what();
-    }
-    stop_msg(diagnostic);
-    if (g_init_batch != BatchMode::NONE)
-    {
-        g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE;
-    }
+    report_render_failure(failure);
+    m_failure_reported = true;
 }
 
 } // namespace id::ui

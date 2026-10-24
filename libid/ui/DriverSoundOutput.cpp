@@ -169,6 +169,8 @@ bool DriverSoundOutput::finish()
         m_finished = true;
         if (m_file.is_open())
         {
+            // A write error has already been reported; check close separately.
+            m_file.clear();
             m_file.close();
             if (m_file.fail())
             {

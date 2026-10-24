@@ -30,6 +30,9 @@ namespace id::ui
 
 class SoundSession;
 
+// Report new finalization errors without replacing an earlier render error.
+int finish_render_sound(SoundSession &sound, int result, bool failure_reported);
+
 class ImageRenderContext
 {
 public:
@@ -40,6 +43,7 @@ public:
     void iterate();
     bool done() const;
     int result() const;
+    bool failure_reported() const;
     void suspend();
 
 private:
@@ -89,6 +93,7 @@ private:
         m_presentation;
     Phase m_phase{Phase::READY};
     int m_result{-1};
+    bool m_failure_reported{};
 };
 
 } // namespace id::ui

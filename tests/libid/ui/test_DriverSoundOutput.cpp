@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include <ui/DriverSoundOutput.h>
-
 #include "MockDriver.h"
 
 #include <engine/LogicalScreen.h>
@@ -20,12 +18,18 @@
 #include <chrono>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <iterator>
 #include <limits>
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <tuple>
+
+#define private public
+#include <ui/DriverSoundOutput.h>
+#undef private
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -449,6 +453,22 @@ TEST_F(TestDriverSoundOutput, reportsUnavailableSavePathWithoutPlaybackOrPrompt)
 
     EXPECT_THROW(output.play({10, 20, 0}), std::runtime_error);
     EXPECT_TRUE(output.ready());
+    EXPECT_TRUE(output.finish());
+}
+
+TEST_F(TestDriverSoundOutput, reportedWriteFailureDoesNotBecomeACloseFailure)
+{
+    g_orbit_save_flags = OSF_MIDI;
+    DriverSoundOutput output{Source::OVERLAY, m_now, m_timestamp};
+    output.begin_orbit();
+    ASSERT_TRUE(output.m_file.is_open());
+    output.m_file.setstate(std::ios::badbit);
+    EXPECT_CALL(m_driver, sound_on(_)).Times(0);
+
+    EXPECT_THAT([&output] { output.play({10, 20, 0}); }, ThrowsMessage<std::runtime_error>(HasSubstr("Can't write ")));
+
+    EXPECT_NO_THROW(EXPECT_TRUE(output.finish()));
+    EXPECT_FALSE(output.m_file.is_open());
     EXPECT_TRUE(output.finish());
 }
 

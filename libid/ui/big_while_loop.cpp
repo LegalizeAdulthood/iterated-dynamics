@@ -622,6 +622,7 @@ MainState big_while_loop(MainContext &context)
         {
             // draw an image
             std::optional<SoundSession> sound;
+            bool failure_reported{};
             if (g_save_time_interval != 0 // autosave and resumable?
                 && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_RESUME))
             {
@@ -710,6 +711,7 @@ MainState big_while_loop(MainContext &context)
                         rendering.iterate();
                     }
                     i = rendering.result();
+                    failure_reported = rendering.failure_reported();
                     if (i == -1)
                     {
                         break;
@@ -763,20 +765,10 @@ MainState big_while_loop(MainContext &context)
                     rendering.iterate();
                 }
                 i = rendering.result();
+                failure_reported = rendering.failure_reported();
             }
 
-            if (i == 0)
-            {
-                ScopedKeyboardHandler keyboard_scope{std::make_shared<MainLoopKeyboardHandler>()};
-                if (!sound->finish())
-                {
-                    i = -1;
-                }
-            }
-            else
-            {
-                sound->cancel();
-            }
+            i = finish_render_sound(*sound, i, failure_reported);
             if (i == 0)
             {
                 driver_buzzer(Buzzer::COMPLETE); // finished!!

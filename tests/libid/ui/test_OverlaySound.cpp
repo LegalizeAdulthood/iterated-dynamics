@@ -978,6 +978,105 @@ TEST_P(TestRenderCleanup, batchFailureRetainsItsDiagnosticAndNoSaveExitPolicy)
     expect_released(rendering, sound);
 }
 
+TEST_P(TestRenderCleanup, borrowedWriteFailureSurvivesOwningSoundCleanup)
+{
+    g_start_show_orbit = true;
+    SoundSession owner{m_output};
+    SoundSession borrowed{g_sound, SoundSession::Ownership::BORROWED};
+    ImageRenderContext rendering{borrowed};
+    rendering.start();
+    ASSERT_FALSE(rendering.done());
+    expect_diagnostic("Original sound write failure");
+    EXPECT_CALL(*m_output, begin_orbit()).WillOnce(Throw(std::runtime_error("Original sound write failure")));
+    EXPECT_CALL(*m_output, mute()).Times(2);
+    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Sound close failure")));
+
+    EXPECT_NO_THROW(while (!rendering.done()) { rendering.iterate(); });
+    EXPECT_TRUE(rendering.failure_reported());
+    EXPECT_EQ(-1, finish_render_sound(owner, rendering.result(), rendering.failure_reported()));
+
+    EXPECT_EQ(BatchMode::NONE, g_init_batch);
+    expect_released(rendering, borrowed);
+    EXPECT_NO_THROW(owner.cancel());
+    EXPECT_FALSE(owner.finish());
+}
+
+TEST_P(TestRenderCleanup, borrowedBatchFailureKeepsOneDiagnosticAndNoSavePolicy)
+{
+    g_start_show_orbit = true;
+    SoundSession owner{m_output};
+    SoundSession borrowed{g_sound, SoundSession::Ownership::BORROWED};
+    ImageRenderContext rendering{borrowed};
+    rendering.start();
+    ASSERT_FALSE(rendering.done());
+    g_init_batch = BatchMode::NORMAL;
+    EXPECT_CALL(*m_output, begin_orbit()).WillOnce(Throw(std::runtime_error("Original sound write failure")));
+    EXPECT_CALL(*m_output, mute()).Times(2);
+    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Sound close failure")));
+    EXPECT_CALL(m_driver, stack_screen()).Times(0);
+
+    EXPECT_NO_THROW(while (!rendering.done()) { rendering.iterate(); });
+    EXPECT_TRUE(rendering.failure_reported());
+    EXPECT_EQ(-1, finish_render_sound(owner, rendering.result(), rendering.failure_reported()));
+
+    EXPECT_EQ(BatchMode::BAILOUT_ERROR_NO_SAVE, g_init_batch);
+    std::ifstream diagnostic{get_append_save_path(WriteFile::DEBUG, "stopmsg")};
+    EXPECT_EQ("Original sound write failure\n",
+        (std::string{std::istreambuf_iterator<char>{diagnostic}, std::istreambuf_iterator<char>{}}));
+    expect_released(rendering, borrowed);
+    EXPECT_NO_THROW(owner.cancel());
+}
+
+TEST_P(TestRenderCleanup, newOwnerCloseFailureUsesTheRenderErrorPolicy)
+{
+    SoundSession owner{m_output};
+    SoundSession borrowed{g_sound, SoundSession::Ownership::BORROWED};
+    ASSERT_TRUE(borrowed.finish());
+    expect_diagnostic("Sound close failure");
+    EXPECT_CALL(*m_output, mute()).Times(0);
+    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Sound close failure")));
+
+    EXPECT_EQ(-1, finish_render_sound(owner, 0, false));
+
+    EXPECT_EQ(BatchMode::NONE, g_init_batch);
+    EXPECT_NO_THROW(owner.cancel());
+    EXPECT_FALSE(owner.finish());
+}
+
+TEST_P(TestRenderCleanup, ownerCloseFailureAfterInterruptionIsNotDiscarded)
+{
+    SoundSession owner{m_output};
+    SoundSession borrowed{g_sound, SoundSession::Ownership::BORROWED};
+    EXPECT_CALL(*m_output, mute()).Times(2);
+    borrowed.cancel();
+    expect_diagnostic("Sound close failure");
+    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Sound close failure")));
+
+    EXPECT_EQ(-1, finish_render_sound(owner, -1, false));
+
+    EXPECT_EQ(BatchMode::NONE, g_init_batch);
+    EXPECT_NO_THROW(owner.cancel());
+}
+
+TEST_P(TestRenderCleanup, newBatchOwnerCloseFailureSelectsNoSaveExitPolicy)
+{
+    SoundSession owner{m_output};
+    SoundSession borrowed{g_sound, SoundSession::Ownership::BORROWED};
+    ASSERT_TRUE(borrowed.finish());
+    g_init_batch = BatchMode::NORMAL;
+    EXPECT_CALL(*m_output, mute()).Times(0);
+    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Sound close failure")));
+    EXPECT_CALL(m_driver, stack_screen()).Times(0);
+
+    EXPECT_EQ(-1, finish_render_sound(owner, 0, false));
+
+    EXPECT_EQ(BatchMode::BAILOUT_ERROR_NO_SAVE, g_init_batch);
+    std::ifstream diagnostic{get_append_save_path(WriteFile::DEBUG, "stopmsg")};
+    EXPECT_EQ("Sound close failure\n",
+        (std::string{std::istreambuf_iterator<char>{diagnostic}, std::istreambuf_iterator<char>{}}));
+    EXPECT_NO_THROW(owner.cancel());
+}
+
 INSTANTIATE_TEST_SUITE_P(StandardAndFroth, TestRenderCleanup, Bool());
 
 class TestStandardPotentialStorage : public TestOverlaySound
