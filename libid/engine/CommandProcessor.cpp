@@ -353,6 +353,11 @@ bool CommandProcessor::advance_startup()
     }
     while (true)
     {
+        const bool fatal_errors{g_first_init || g_init_batch != BatchMode::NONE};
+        if (fatal_errors && !m_result.diagnostics.errors.empty())
+        {
+            break;
+        }
         if (m_source_file)
         {
             if (m_source_file->advance())
@@ -361,6 +366,7 @@ bool CommandProcessor::advance_startup()
             }
             append_result(m_result, m_source_file->result());
             m_source_file.reset();
+            continue;
         }
         if (m_source == Source::CONFIGURATION)
         {
@@ -390,7 +396,10 @@ bool CommandProcessor::advance_startup()
             }
             if (file == nullptr)
             {
-                arg_error(m_text.c_str(), &m_result.diagnostics);
+                if (!fatal_errors || m_result.diagnostics.errors.empty())
+                {
+                    arg_error(m_text.c_str(), &m_result.diagnostics);
+                }
             }
             else
             {

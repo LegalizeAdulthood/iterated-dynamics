@@ -4,12 +4,15 @@
 #include "MockDriver.h"
 
 #include <engine/cmdfiles.h>
+#include <engine/Command.h>
 #include <misc/ValueSaver.h>
 #include <ui/command_diagnostics.h>
 #include <ui/id_keys.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+
+#include <stdexcept>
 
 using namespace id::engine;
 using namespace id::misc;
@@ -65,14 +68,21 @@ TEST_F(TestCommandDiagnostics, escapeFromStartupWarningReturnsAbortDecision)
     EXPECT_FALSE(show_startup_command_diagnostics({{}, {"missing startup file"}}));
 }
 
-TEST_F(TestCommandDiagnostics, startupErrorReturnsExitDecisionWithoutExiting)
+TEST_F(TestCommandDiagnostics, startupErrorUsesOriginalFatalDisplayWithoutPresentingOtherDiagnostics)
 {
-    expect_startup_screen(ID_KEY_ENTER);
+    CommandDiagnostics diagnostics;
+    arg_error("bad1=1", &diagnostics);
+    arg_error("bad2=1", &diagnostics);
+    diagnostics.warnings.push_back("missing startup file");
+    const InSequence sequence;
+    EXPECT_CALL(m_driver, set_for_text());
     EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
-    EXPECT_CALL(m_driver, put_string(1, 0, 7, StrEq("invalid argument")));
+    EXPECT_CALL(m_driver, put_string(0, 0, 15, StrEq("*** Error during startup:")));
+    EXPECT_CALL(m_driver, put_string(2, 0, 15, StrEq(diagnostics.errors.front())));
+    EXPECT_CALL(m_driver, move_cursor(8, 0))
+        .WillOnce(Throw(std::runtime_error("Stop before the startup delay and process exit")));
 
-    EXPECT_FALSE(show_startup_command_diagnostics({{"invalid argument"}, {}}));
-
+    EXPECT_THROW(show_startup_command_diagnostics(diagnostics), std::runtime_error);
     EXPECT_EQ(BatchMode::NONE, g_init_batch);
 }
 

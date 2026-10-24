@@ -153,6 +153,11 @@ static void main_restart(const std::vector<std::string> &args, MainContext &cont
     const CommandDiagnostics &diagnostics{commands.diagnostics};
     if (first_init || g_init_batch != BatchMode::NONE)
     {
+        ValueSaver saved_first_init{g_first_init};
+        if (first_init && !diagnostics.errors.empty())
+        {
+            g_first_init = true;
+        }
         if (!show_startup_command_diagnostics(diagnostics))
         {
             if (!diagnostics.errors.empty())

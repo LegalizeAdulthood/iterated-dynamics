@@ -1398,7 +1398,7 @@ TEST_F(TestCommandRouterStartup, routesConfigurationIndirectSetsAndArgumentsInOr
     EXPECT_TRUE(fs::remove(m_library / "selected.par"));
 }
 
-TEST_F(TestCommandRouterStartup, configurationRejectionStopsOnlyConfiguration)
+TEST_F(TestCommandRouterStartup, configurationRejectionStopsAllStartupSources)
 {
     write_source("sstools.ini", "engine=111 ui=bad engine=999\n");
     const InSequence sequence;
@@ -1410,30 +1410,16 @@ TEST_F(TestCommandRouterStartup, configurationRejectionStopsOnlyConfiguration)
                 return CmdArgFlags::FRACTAL_PARAM;
             });
     EXPECT_CALL(m_ui_handler, Call(_)).WillOnce([](const Command &cmd) { return cmd.bad_arg(); });
-    EXPECT_CALL(m_ui_handler, Call(_))
-        .WillOnce(
-            [](const Command &)
-            {
-                EXPECT_EQ(111, g_max_iterations);
-                return CmdArgFlags::NONE;
-            });
-    EXPECT_CALL(m_engine_handler, Call(_))
-        .WillOnce(
-            [](const Command &)
-            {
-                g_max_iterations = 222;
-                return CmdArgFlags::FRACTAL_PARAM;
-            });
 
     const CommandParseResult result{m_router.process_startup({"id", "ui=yes", "engine=222"})};
 
-    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ(111, g_max_iterations);
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
     EXPECT_THAT(result.diagnostics.errors, ElementsAre(HasSubstr("ui=bad")));
     EXPECT_TRUE(fs::remove(m_library / "sstools.ini"));
 }
 
-TEST_F(TestCommandRouterStartup, eitherOwnerRejectionContinuesArgumentsButStopsIndirectFiles)
+TEST_F(TestCommandRouterStartup, eitherOwnerRejectionStopsAllLaterStartupSources)
 {
     std::vector<std::string> accepted;
     EXPECT_CALL(m_ui_handler, Call(_))
@@ -1463,17 +1449,18 @@ TEST_F(TestCommandRouterStartup, eitherOwnerRejectionContinuesArgumentsButStopsI
     for (const std::string owner : {"ui", "engine"})
     {
         SCOPED_TRACE(owner);
+        g_first_init = true;
         accepted.clear();
         write_source("broken.par", "entry { engine=210 " + owner + "=bad ui=999 }");
 
         const CommandParseResult result{
             m_router.process_startup({"id", "ui=100", owner + "=bad", "engine=200", "@broken", "ui=300"})};
 
-        EXPECT_THAT(accepted, ElementsAre("ui=100", "engine=200", "engine=210", "ui=300"));
-        EXPECT_EQ(300, g_base_hertz);
-        EXPECT_EQ(210, g_max_iterations);
-        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
-        EXPECT_THAT(result.diagnostics.errors, ElementsAre(HasSubstr(owner + "=bad"), HasSubstr(owner + "=bad")));
+        EXPECT_THAT(accepted, ElementsAre("ui=100"));
+        EXPECT_EQ(100, g_base_hertz);
+        EXPECT_EQ(150, g_max_iterations);
+        EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+        EXPECT_THAT(result.diagnostics.errors, ElementsAre(HasSubstr(owner + "=bad")));
         EXPECT_TRUE(fs::remove(m_library / "broken.par"));
     }
 }

@@ -605,7 +605,7 @@ TEST_F(TestStartupCommandProcessor, ownsArgumentsAndAdvancesFromConfigurationInO
     EXPECT_FALSE(processor.advance());
 }
 
-TEST_F(TestStartupCommandProcessor, rejectedConfigurationStopsItsFileButArgumentsContinueAfterErrors)
+TEST_F(TestStartupCommandProcessor, rejectedConfigurationStopsAllStartupSources)
 {
     write_source("sstools.ini", "maxiter=111\nunknown=yes\nhertz=999\n");
     CommandProcessor processor{std::vector<std::string>{"id", "maxiter=bad", "batch=yes", "maxiter=222"}};
@@ -614,19 +614,16 @@ TEST_F(TestStartupCommandProcessor, rejectedConfigurationStopsItsFileButArgument
     handle_current(processor);
     ASSERT_TRUE(processor.advance());
     handle_current(processor);
-    ASSERT_TRUE(processor.advance());
+    EXPECT_FALSE(processor.advance());
     EXPECT_EQ(111, g_max_iterations);
     EXPECT_EQ(440, g_base_hertz);
-    EXPECT_EQ(CmdFile::AT_CMD_LINE, processor.command().mode);
-    EXPECT_EQ("bad", processor.command().value);
     EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
-    handle_current(processor);
-    run(processor);
 
-    EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
-    EXPECT_EQ(222, g_max_iterations);
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, processor.result().flags);
-    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("unknown=yes"), HasSubstr("maxiter=bad")));
+    EXPECT_EQ(BatchMode::NONE, g_init_batch);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("unknown=yes")));
+    EXPECT_FALSE(processor.advance());
+    EXPECT_THROW(processor.command(), std::logic_error);
 }
 
 TEST_F(TestStartupCommandProcessor, configurationWarningsPermitLaterCommandsAndArguments)
@@ -655,7 +652,7 @@ TEST_F(TestStartupCommandProcessor, configurationActionStopsRemainingConfigurati
     EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
 }
 
-TEST_F(TestStartupCommandProcessor, earlierArgumentErrorsDoNotPreventActionTermination)
+TEST_F(TestStartupCommandProcessor, rejectedArgumentPreventsLaterActions)
 {
     CommandProcessor processor{
         std::vector<std::string>{"id", "type=formula", "maxiter=bad", "makedoc=unused.txt", "maxiter=999"}};
@@ -664,8 +661,47 @@ TEST_F(TestStartupCommandProcessor, earlierArgumentErrorsDoNotPreventActionTermi
 
     EXPECT_EQ(150, g_max_iterations);
     EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("maxiter=bad")));
-    EXPECT_TRUE(std::holds_alternative<MakeHelpDocument>(processor.result().action));
+    EXPECT_EQ(0U, processor.result().action.index());
     EXPECT_FALSE(processor.result().needs_file_entry);
+}
+
+TEST_F(TestStartupCommandProcessor, firstInvalidArgumentStopsLaterErrorsAndStateChanges)
+{
+    CommandProcessor processor{
+        std::vector<std::string>{"id", "bad1=1", "bad2=1", "bad3=1", "bad4=1", "bad5=1", "maxiter=222", "batch=yes"}};
+
+    run(processor);
+
+    EXPECT_EQ(150, g_max_iterations);
+    EXPECT_EQ(BatchMode::NONE, g_init_batch);
+    EXPECT_THAT(processor.result().diagnostics.errors,
+        ElementsAre("Oops. I couldn't understand the argument:\n  bad1=1\n\n"
+                    "(see the Startup Help screens or documentation for a complete\n"
+                    " argument list with descriptions)"));
+    EXPECT_FALSE(processor.advance());
+}
+
+TEST_F(TestStartupCommandProcessor, nonfatalRestartErrorsStillAllowLaterArguments)
+{
+    g_first_init = false;
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=bad", "maxiter=222"}};
+
+    run(processor);
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("maxiter=bad")));
+}
+
+TEST_F(TestStartupCommandProcessor, batchErrorsStopLaterArgumentsAfterInitialStartup)
+{
+    g_first_init = false;
+    CommandProcessor processor{std::vector<std::string>{"id", "batch=yes", "maxiter=bad", "maxiter=222"}};
+
+    run(processor);
+
+    EXPECT_EQ(150, g_max_iterations);
+    EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("maxiter=bad")));
 }
 
 TEST_F(TestStartupCommandProcessor, bareGifArgumentIsProbedBetweenParameterEffects)
@@ -691,7 +727,7 @@ TEST_F(TestStartupCommandProcessor, bareGifArgumentIsProbedBetweenParameterEffec
     EXPECT_TRUE(processor.result().diagnostics.errors.empty());
 }
 
-TEST_F(TestStartupCommandProcessor, nonGifArgumentIsExposedAndRejectionDoesNotStopLaterArguments)
+TEST_F(TestStartupCommandProcessor, nonGifArgumentRejectionStopsLaterArguments)
 {
     write_source("preview.dat", "NOTGIF");
     CommandProcessor processor{std::vector<std::string>{"id", "preview.dat", "maxiter=222"}};
@@ -701,7 +737,7 @@ TEST_F(TestStartupCommandProcessor, nonGifArgumentIsExposedAndRejectionDoesNotSt
     handle_current(processor);
     run(processor);
 
-    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ(150, g_max_iterations);
     EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("preview.dat")));
     EXPECT_EQ(ShowFile::IMAGE_LOADED, g_show_file);
 }
@@ -873,7 +909,7 @@ TEST_F(TestStartupCommandProcessor, indirectLookupUsesEarlierLibrarySettings)
     EXPECT_TRUE(processor.result().diagnostics.errors.empty());
 }
 
-TEST_F(TestStartupCommandProcessor, failedIndirectLookupsPreserveSelectionAndContinueArguments)
+TEST_F(TestStartupCommandProcessor, missingIndirectFilePreservesSelectionAndStopsArguments)
 {
     write_source("available.par", "present { hertz=999 }");
     g_parameter_file = m_directory / "previous.par";
@@ -883,23 +919,36 @@ TEST_F(TestStartupCommandProcessor, failedIndirectLookupsPreserveSelectionAndCon
 
     ASSERT_TRUE(processor.advance());
     handle_current(processor);
-    ASSERT_TRUE(processor.advance());
+    EXPECT_FALSE(processor.advance());
 
     EXPECT_EQ(111, g_max_iterations);
-    EXPECT_EQ("222", processor.command().value);
     EXPECT_EQ(m_directory / "previous.par", g_parameter_file);
     EXPECT_EQ("previous", g_parameter_set_name);
     EXPECT_EQ(440, g_base_hertz);
-    EXPECT_THAT(processor.result().diagnostics.errors,
-        ElementsAre(HasSubstr("@missing-indirect-parameter-file"), HasSubstr("'missing' file entry item not found"),
-            HasSubstr("@available/missing")));
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("@missing-indirect-parameter-file")));
     EXPECT_TRUE(fs::remove(m_directory / "available.par"));
-    handle_current(processor);
     EXPECT_FALSE(processor.advance());
-    EXPECT_EQ(222, g_max_iterations);
 }
 
-TEST_F(TestStartupCommandProcessor, rejectedIndirectCommandStopsOnlyItsFile)
+TEST_F(TestStartupCommandProcessor, missingIndirectSetReportsOnlyTheFirstErrorAndStopsArguments)
+{
+    write_source("available.par", "present { hertz=999 }");
+    g_parameter_file = m_directory / "previous.par";
+    g_parameter_set_name = "previous";
+    CommandProcessor processor{std::vector<std::string>{"id", "@available/missing", "maxiter=222"}};
+
+    run(processor);
+
+    EXPECT_EQ(150, g_max_iterations);
+    EXPECT_EQ(440, g_base_hertz);
+    EXPECT_EQ(m_directory / "previous.par", g_parameter_file);
+    EXPECT_EQ("previous", g_parameter_set_name);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("'missing' file entry item not found")));
+    EXPECT_TRUE(fs::remove(m_directory / "available.par"));
+    EXPECT_FALSE(processor.advance());
+}
+
+TEST_F(TestStartupCommandProcessor, rejectedIndirectCommandStopsAllStartupSources)
 {
     write_source("rejected.par", "entry { maxiter=111 unknown=yes hertz=999 }");
     write_source("following.par", "entry { hertz=330 }");
@@ -910,35 +959,30 @@ TEST_F(TestStartupCommandProcessor, rejectedIndirectCommandStopsOnlyItsFile)
     ASSERT_TRUE(processor.advance());
     EXPECT_EQ("unknown", processor.command().variable);
     handle_current(processor);
-    ASSERT_TRUE(processor.advance());
-    EXPECT_EQ("330", processor.command().value);
+    EXPECT_FALSE(processor.advance());
     EXPECT_EQ(111, g_max_iterations);
     EXPECT_EQ(440, g_base_hertz);
     EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("unknown=yes")));
     EXPECT_TRUE(fs::remove(m_directory / "rejected.par"));
-    handle_current(processor);
-    ASSERT_TRUE(processor.advance());
-    EXPECT_EQ(330, g_base_hertz);
-    EXPECT_EQ("222", processor.command().value);
     EXPECT_TRUE(fs::remove(m_directory / "following.par"));
-    handle_current(processor);
     EXPECT_FALSE(processor.advance());
 
-    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ(111, g_max_iterations);
+    EXPECT_EQ(440, g_base_hertz);
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
 }
 
-TEST_F(TestStartupCommandProcessor, indirectActionStopsItsFileAndRemainingStartupInputAfterEarlierErrors)
+TEST_F(TestStartupCommandProcessor, indirectActionStopsItsFileAndRemainingStartupInput)
 {
     write_source("action.par", "entry { maxiter=111 makemig=2/3 maxiter=999 }");
     write_source("following.par", "entry { hertz=999 }");
-    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=bad", "@action", "@following", "maxiter=222"}};
+    CommandProcessor processor{std::vector<std::string>{"id", "@action", "@following", "maxiter=222"}};
 
     run(processor);
 
     EXPECT_EQ(111, g_max_iterations);
     EXPECT_EQ(440, g_base_hertz);
-    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("maxiter=bad")));
+    EXPECT_TRUE(processor.result().diagnostics.errors.empty());
     const MakeMultiImageGif *action{std::get_if<MakeMultiImageGif>(&processor.result().action)};
     ASSERT_NE(nullptr, action);
     EXPECT_EQ(2U, action->x_mult);
@@ -980,7 +1024,7 @@ TEST_F(TestStartupCommandProcessor, indirectCommandsDoNotExpandNestedIncludes)
 
     run(processor);
 
-    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ(111, g_max_iterations);
     EXPECT_EQ(440, g_base_hertz);
     EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("@nested")));
 }

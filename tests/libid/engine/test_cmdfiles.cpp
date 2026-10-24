@@ -2315,7 +2315,7 @@ TEST_F(TestParameterCommand, startupPreservesOrbitDelayAfterShowDot)
     EXPECT_EQ(100, g_orbit_skip_points);
 }
 
-TEST_F(TestParameterCommand, startupCollectsErrorsBeforeLaterBatchArgument)
+TEST_F(TestParameterCommand, startupErrorStopsBeforeLaterBatchArgument)
 {
     ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
     ValueSaver saved_first_init{g_first_init, true};
@@ -2329,7 +2329,7 @@ TEST_F(TestParameterCommand, startupCollectsErrorsBeforeLaterBatchArgument)
 
     ASSERT_EQ(1U, diagnostics.errors.size());
     EXPECT_THAT(diagnostics.errors.front(), HasSubstr("maxiter=bad"));
-    EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
+    EXPECT_EQ(BatchMode::NONE, g_init_batch);
 }
 
 TEST_F(TestParameterCommand, startupCollectsMissingFileWarningsWithoutUi)
@@ -2365,7 +2365,7 @@ TEST_F(TestParameterCommand, startupReturnsFileEntrySelectionWithoutUi)
     EXPECT_TRUE(g_formula_name.empty());
 }
 
-TEST_F(TestParameterCommand, startupStopsAtActionButRetainsEarlierErrors)
+TEST_F(TestParameterCommand, startupErrorPreventsLaterAction)
 {
     ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
     ValueSaver saved_first_init{g_first_init, true};
@@ -2377,7 +2377,7 @@ TEST_F(TestParameterCommand, startupStopsAtActionButRetainsEarlierErrors)
     const CommandParseResult parsed{router.process_startup({"id", "maxiter=bad", "makedoc=unused.txt", "maxiter=888"})};
 
     EXPECT_EQ(1U, parsed.diagnostics.errors.size());
-    EXPECT_TRUE(std::holds_alternative<MakeHelpDocument>(parsed.action));
+    EXPECT_EQ(0U, parsed.action.index());
     EXPECT_NE(888, g_max_iterations);
     EXPECT_FALSE(parsed.needs_file_entry);
 }
