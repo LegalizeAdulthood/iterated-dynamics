@@ -142,7 +142,12 @@ static void main_restart(const std::vector<std::string> &args, MainContext &cont
     const bool first_init{g_first_init};
     const CommandRouter router;
     CommandParseResult commands{router.process_startup(args)};
-    if (commands.diagnostics.errors.empty() && commands.needs_file_entry && !select_fractal_file_entry())
+    if (commands.needs_file_entry && !commands.diagnostics.errors.empty())
+    {
+        show_command_diagnostics(commands.diagnostics);
+        commands.diagnostics = {};
+    }
+    if (commands.needs_file_entry && !select_fractal_file_entry())
     {
         CommandParseResult defaults{router.reset_startup()};
         defaults.diagnostics.warnings.insert(defaults.diagnostics.warnings.begin(),

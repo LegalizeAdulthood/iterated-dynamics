@@ -102,3 +102,34 @@ foreach(startup_image IN ITEMS no yes)
     endif()
 endforeach()
 file(WRITE sstools.ini "${DEFAULT_CONFIGURATION}")
+
+file(WRITE restart.ini "${DEFAULT_CONFIGURATION}\nunknown=yes\n")
+foreach(selection IN ITEMS accept cancel)
+    file(WRITE sstools.ini "${DEFAULT_CONFIGURATION}")
+    file(REMOVE image/restart-ready.gif image/restart-accepted.gif
+        image/restart-cancelled.gif debug/stopmsg.txt)
+    execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${COMMON}
+        "type=formula" "formulafile=selection.frm" "maxiter=321" "debugflag=1"
+        "savename=restart-ready.gif"
+        "autokeyname=command_restart_error_${selection}.key" "autokey=play"
+        COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_LIST_DIR}/command_restart_configuration.cmake"
+        RESULTS_VARIABLE RESULTS TIMEOUT 40 COMMAND_ECHO STDOUT)
+    if(NOT RESULTS STREQUAL "0;0")
+        message(FATAL_ERROR "Restart entry ${selection} after a nonfatal error failed: ${RESULTS}")
+    endif()
+    file(READ debug/stopmsg.txt DIAGNOSTIC)
+    if(NOT DIAGNOSTIC MATCHES "unknown=yes")
+        message(FATAL_ERROR "Restart entry ${selection} lost its original diagnostic: ${DIAGNOSTIC}")
+    endif()
+    if(selection STREQUAL "accept")
+        set(CHECK_IMAGES image/restart-accepted.gif image/cancelled.gif)
+    else()
+        set(CHECK_IMAGES image/accepted.gif image/restart-cancelled.gif)
+    endif()
+    execute_process(COMMAND "${CHECK_COMMAND}" ${CHECK_IMAGES}
+        RESULT_VARIABLE RESULT COMMAND_ECHO STDOUT)
+    if(NOT RESULT STREQUAL "0")
+        message(FATAL_ERROR "Restart entry ${selection} did not produce the expected image")
+    endif()
+endforeach()
+file(WRITE sstools.ini "${DEFAULT_CONFIGURATION}")

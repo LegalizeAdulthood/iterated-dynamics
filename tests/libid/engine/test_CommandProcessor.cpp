@@ -692,16 +692,34 @@ TEST_F(TestStartupCommandProcessor, nonfatalRestartErrorsStillAllowLaterArgument
     EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("maxiter=bad")));
 }
 
+TEST_F(TestStartupCommandProcessor, nonfatalRestartErrorsStillRequestMissingEntries)
+{
+    g_first_init = false;
+    for (const char *type : {"formula", "lsystem", "ifs", "ifs3d"})
+    {
+        SCOPED_TRACE(type);
+        write_source("sstools.ini", std::string{"type="} + type + " unknown=yes\n");
+        CommandProcessor processor{std::vector<std::string>{"id"}};
+
+        run(processor);
+
+        EXPECT_TRUE(processor.result().needs_file_entry);
+        EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("unknown=yes")));
+    }
+}
+
 TEST_F(TestStartupCommandProcessor, batchErrorsStopLaterArgumentsAfterInitialStartup)
 {
     g_first_init = false;
-    CommandProcessor processor{std::vector<std::string>{"id", "batch=yes", "maxiter=bad", "maxiter=222"}};
+    CommandProcessor processor{
+        std::vector<std::string>{"id", "batch=yes", "type=formula", "maxiter=bad", "maxiter=222"}};
 
     run(processor);
 
     EXPECT_EQ(150, g_max_iterations);
     EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
     EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("maxiter=bad")));
+    EXPECT_FALSE(processor.result().needs_file_entry);
 }
 
 TEST_F(TestStartupCommandProcessor, bareGifArgumentIsProbedBetweenParameterEffects)

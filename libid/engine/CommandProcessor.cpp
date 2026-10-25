@@ -413,7 +413,8 @@ bool CommandProcessor::advance_startup()
             return true;
         }
     }
-    if (m_result.diagnostics.errors.empty() && m_result.action.index() == 0)
+    if (m_result.action.index() == 0 &&
+        (m_result.diagnostics.errors.empty() || (!g_first_init && g_init_batch == BatchMode::NONE)))
     {
         resolve_startup_file_entry(m_result);
     }
