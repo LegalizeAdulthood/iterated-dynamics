@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "fractals/newton.h"
 
@@ -45,20 +46,7 @@ void invertz2(DComplex *z)
 {
     z->x = dx_pixel();
     z->y = dy_pixel();
-    *z -= g_inversion.center;  // Normalize values to center of circle
-
-    g_temp_sqr_x = sqr(z->x) + sqr(z->y);  // Get old radius
-    if (std::abs(g_temp_sqr_x) > std::numeric_limits<float>::min())
-    {
-        g_temp_sqr_x = g_inversion.radius / g_temp_sqr_x;
-    }
-    else
-    {
-        g_temp_sqr_x = std::numeric_limits<float>::max();   // a big number, but not TOO big
-    }
-    z->x *= g_temp_sqr_x;
-    z->y *= g_temp_sqr_x;         // Perform inversion
-    *z += g_inversion.center;             // Renormalize
+    g_temp_sqr_x = g_inversion.apply(*z);
 }
 
 // Distance of complex z from unit circle

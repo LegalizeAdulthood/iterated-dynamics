@@ -12,14 +12,17 @@
 #include "engine/PertEngine.h"
 
 #include "engine/calcfrac.h"
+#include "engine/ImageRegion.h"
+#include "engine/Inversion.h"
+#include "engine/LogicalScreen.h"
 #include "engine/Potential.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
 #include "fractals/pickover_mandelbrot.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
-#include "misc/id.h"
 #include "misc/debug_flags.h"
+#include "misc/id.h"
 
 #include <algorithm>
 #include <cmath>
@@ -168,6 +171,75 @@ std::complex<double> PertEngine::pixel_delta(const std::complex<double> &pixel_p
         -m_zoom_radius * (2 * pixel_position.imag() - g_screen_y_dots) / m_window_radius};
 }
 
+std::complex<double> PertEngine::inverted_coordinate(const std::complex<double> &pixel_position) const
+{
+    const double col{pixel_position.real()};
+    const double row{g_screen_y_dots - 1 - pixel_position.imag()};
+    const double width{g_logical_screen.x_dots - 1.0};
+    const double height{g_logical_screen.y_dots - 1.0};
+    DComplex coordinate{g_image_region.m_min.x + col * ((g_image_region.m_max.x - g_image_region.m_3rd.x) / width) +
+            row * ((g_image_region.m_3rd.x - g_image_region.m_min.x) / height),
+        g_image_region.m_max.y - row * ((g_image_region.m_max.y - g_image_region.m_3rd.y) / height) -
+            col * ((g_image_region.m_3rd.y - g_image_region.m_min.y) / width)};
+    g_inversion.apply(coordinate);
+    if (g_fractal_type == FractalType::BURNING_SHIP)
+    {
+        coordinate.y = -coordinate.y;
+    }
+    return {coordinate.x, coordinate.y};
+}
+
+void PertEngine::inverted_coordinate(const BFComplex coordinate, const std::complex<double> &pixel_position) const
+{
+    BigStackSaver saved;
+    const BigFloat horizontal{alloc_stack(g_r_bf_length + 2)};
+    const BigFloat vertical{alloc_stack(g_r_bf_length + 2)};
+    const BigFloat scale{alloc_stack(g_r_bf_length + 2)};
+    const BigFloat delta{alloc_stack(g_r_bf_length + 2)};
+    float_to_bf(horizontal, pixel_position.real());
+    float_to_bf(scale, g_logical_screen.x_dots - 1);
+    div_bf(horizontal, horizontal, scale);
+    float_to_bf(vertical, g_screen_y_dots - 1 - pixel_position.imag());
+    float_to_bf(scale, g_logical_screen.y_dots - 1);
+    div_bf(vertical, vertical, scale);
+
+    sub_bf(coordinate.x, g_bf_x_max, g_bf_x_3rd);
+    mult_bf(coordinate.x, coordinate.x, horizontal);
+    sub_bf(delta, g_bf_x_3rd, g_bf_x_min);
+    mult_bf(delta, delta, vertical);
+    add_a_bf(coordinate.x, delta);
+    add_a_bf(coordinate.x, g_bf_x_min);
+    sub_bf(coordinate.y, g_bf_y_3rd, g_bf_y_max);
+    mult_bf(coordinate.y, coordinate.y, vertical);
+    sub_bf(delta, g_bf_y_min, g_bf_y_3rd);
+    mult_bf(delta, delta, horizontal);
+    add_a_bf(coordinate.y, delta);
+    add_a_bf(coordinate.y, g_bf_y_max);
+    g_inversion.apply(coordinate);
+    if (g_fractal_type == FractalType::BURNING_SHIP)
+    {
+        neg_a_bf(coordinate.y);
+    }
+}
+
+std::complex<double> PertEngine::parameter_delta(const std::complex<double> &pixel_position) const
+{
+    if (g_inversion.invert == 0)
+    {
+        return pixel_delta(pixel_position) - m_reference.delta;
+    }
+    if (g_bf_math == BFMathType::NONE)
+    {
+        return inverted_coordinate(pixel_position) - m_reference.coordinate;
+    }
+    BigStackSaver saved;
+    const BFComplex coordinate{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    inverted_coordinate(coordinate, pixel_position);
+    sub_a_bf(coordinate.x, m_reference_coordinate_bf.x);
+    sub_a_bf(coordinate.y, m_reference_coordinate_bf.y);
+    return {static_cast<double>(bf_to_float(coordinate.x)), static_cast<double>(bf_to_float(coordinate.y))};
+}
+
 void PertEngine::set_reference_point(const std::complex<double> &pixel_position)
 {
     ReferencePoint &reference{m_reference};
@@ -178,15 +250,24 @@ void PertEngine::set_reference_point(const std::complex<double> &pixel_position)
 
     if (g_bf_math != BFMathType::NONE)
     {
-        float_to_bf(m_tmp_bf, reference.delta.real());
-        add_bf(m_reference_coordinate_bf.x, m_center_bf.x, m_tmp_bf);
-        float_to_bf(m_tmp_bf, reference.delta.imag());
-        add_bf(m_reference_coordinate_bf.y, m_center_bf.y, m_tmp_bf);
+        if (g_inversion.invert != 0)
+        {
+            inverted_coordinate(m_reference_coordinate_bf, pixel_position);
+        }
+        else
+        {
+            float_to_bf(m_tmp_bf, reference.delta.real());
+            add_bf(m_reference_coordinate_bf.x, m_center_bf.x, m_tmp_bf);
+            float_to_bf(m_tmp_bf, reference.delta.imag());
+            add_bf(m_reference_coordinate_bf.y, m_center_bf.y, m_tmp_bf);
+        }
         reference_zoom_point(reference, m_reference_coordinate_bf);
     }
     else
     {
-        reference_zoom_point(reference, m_center + reference.delta);
+        reference.coordinate =
+            g_inversion.invert != 0 ? inverted_coordinate(pixel_position) : m_center + reference.delta;
+        reference_zoom_point(reference, reference.coordinate);
     }
     ++m_reference_count;
 }
@@ -195,7 +276,7 @@ int PertEngine::calculate_point(const Point &pt)
 {
     const ReferencePoint &reference{m_reference};
     const std::complex<double> pixel_position{static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())};
-    const std::complex<double> delta_sub_0{pixel_delta(pixel_position) - reference.delta};
+    const std::complex<double> delta_sub_0{parameter_delta(pixel_position)};
     std::complex<double> delta_sub_n{delta_sub_0};
     const bool at_reference{pixel_position == reference.pixel_position};
     int iteration{};

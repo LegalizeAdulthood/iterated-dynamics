@@ -5,7 +5,6 @@
 
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
-#include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
 #include "engine/OrbitPlot.h"
@@ -97,7 +96,7 @@ bool perturbation_auto_requested()
 
 bool perturbation_requested(const CalcMode calc_mode)
 {
-    if (!perturbation_supported() || g_inversion.invert != 0)
+    if (!perturbation_supported())
     {
         return false;
     }

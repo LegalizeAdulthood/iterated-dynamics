@@ -7,6 +7,7 @@
 
 #include <engine/BoundaryTrace.h>
 #include <engine/calcfrac.h>
+#include <engine/fractals.h>
 #include <engine/ImageRegion.h>
 #include <engine/Inversion.h>
 #include <engine/LogicalScreen.h>
@@ -24,6 +25,8 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <cmath>
+#include <limits>
 #include <vector>
 
 using namespace id::engine;
@@ -60,6 +63,27 @@ constexpr int WIDTH{8};
 constexpr int HEIGHT{6};
 PertEngine *s_pixel_engine{};
 std::vector<Point2i> s_requested_pixels;
+std::vector<std::complex<double>> s_reference_coordinates;
+std::complex<double> s_parameter_delta;
+
+void record_reference(const std::complex<double> &center, std::complex<double> &z)
+{
+    s_reference_coordinates.push_back(center);
+    mandel_ref_pt(center, z);
+}
+
+void record_reference_bf(const BFComplex &center, BFComplex &z)
+{
+    s_reference_coordinates.emplace_back(bf_to_float(center.x), bf_to_float(center.y));
+    mandel_ref_pt_bf(center, z);
+}
+
+void record_delta(
+    const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter_delta)
+{
+    s_parameter_delta = parameter_delta;
+    mandel_perturb(reference, delta, parameter_delta);
+}
 
 int calculate_requested_pixel()
 {
@@ -109,6 +133,7 @@ protected:
     ValueSaver<int> m_saved_inside_color{g_inside_color, 7};
     ValueSaver<int> m_saved_biomorph{g_biomorph, -1};
     ValueSaver<BFMathType> m_saved_math{g_bf_math, BFMathType::NONE};
+    ValueSaver<Inversion> m_saved_inversion{g_inversion, Inversion{}};
     ValueSaver<CalcMode> m_saved_mode{g_std_calc_mode, CalcMode::ONE_PASS};
     ValueSaver<Point2i> m_saved_start{g_start_pt, Point2i{0, 0}};
     ValueSaver<Point2i> m_saved_stop{g_stop_pt, Point2i{WIDTH - 1, HEIGHT - 1}};
@@ -122,6 +147,8 @@ protected:
 void TestPerturbationPixels::SetUp()
 {
     s_requested_pixels.clear();
+    s_reference_coordinates.clear();
+    s_parameter_delta = {};
     set_normal_dot();
     EXPECT_CALL(m_driver, read_pixel(_, _))
         .WillRepeatedly(Invoke([this](const int col, const int row) { return m_pixels.at(row * WIDTH + col); }));
@@ -330,14 +357,14 @@ TEST_F(TestPerturbationPixels, standardFractalEnablesPerturbationForBoundaryTrac
     EXPECT_THAT(m_pixels, Each(7));
 }
 
-TEST_F(TestPerturbationPixels, inversionRetainsOrdinaryPixelCalculation)
+TEST_F(TestPerturbationPixels, inversionKeepsPerturbationActiveForStandardPasses)
 {
     ValueSaver saved_user{g_user, UserData{}};
-    ValueSaver saved_inversion{g_inversion, Inversion{3, 1.0, {}, {1.0, 0.0, 0.0}}};
+    g_inversion = {3, 1.0, {1.0, 0.1}, {1.0, 1.0, 0.1}};
     ValueSaver saved_status{g_calc_status};
     ValueSaver saved_resuming{g_resuming, false};
     ValueSaver saved_region{
-        g_image_region, ImageRegion{{0.25 - 1e-10, -1e-10}, {0.25 + 1e-10, 1e-10}, {0.25 - 1e-10, -1e-10}}};
+        g_image_region, ImageRegion{{1.5 - 1e-10, -1e-10}, {1.5 + 1e-10, 1e-10}, {1.5 - 1e-10, -1e-10}}};
     m_specific.calc_type = calculate_control_pixel;
     m_specific.per_image = [] { return true; };
     m_specific.symmetry = SymmetryType::NONE;
@@ -351,6 +378,7 @@ TEST_F(TestPerturbationPixels, inversionRetainsOrdinaryPixelCalculation)
             SCOPED_TRACE(static_cast<int>(mode));
             g_std_calc_mode = pass;
             g_user.perturbation = mode;
+            g_user.perturbation_tolerance = 2.0;
             g_calc_status = CalcStatus::PARAMS_CHANGED;
             m_pixels.fill(0);
             m_plot_statuses.clear();
@@ -366,16 +394,142 @@ TEST_F(TestPerturbationPixels, inversionRetainsOrdinaryPixelCalculation)
             ASSERT_TRUE(calculation.done());
             EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
             EXPECT_EQ(pass, g_std_calc_mode);
-            EXPECT_FALSE(s_requested_pixels.empty());
-            EXPECT_THAT(m_pixels, Each(7));
+            EXPECT_EQ(mode == PerturbationMode::YES, s_requested_pixels.empty());
+            EXPECT_THAT(m_pixels, Each(mode == PerturbationMode::YES ? 1 : 7));
             ASSERT_FALSE(m_plot_statuses.empty());
             for (const StandardPassStatus &status : m_plot_statuses)
             {
-                EXPECT_FALSE(status.perturbation_active);
-                EXPECT_EQ(0, status.perturbation_reference_count);
+                EXPECT_EQ(mode == PerturbationMode::YES, status.perturbation_active);
+                if (mode == PerturbationMode::YES)
+                {
+                    EXPECT_GT(status.perturbation_reference_count, 1);
+                }
+                else
+                {
+                    EXPECT_EQ(0, status.perturbation_reference_count);
+                }
             }
             calculation.finish();
         }
+    }
+}
+
+TEST_F(TestPerturbationPixels, inversionTransformsReferenceAndRequestedCoordinates)
+{
+    ValueSaver saved_region{g_image_region, ImageRegion{{1.0, -1.0}, {3.0, 1.0}, {1.0, -1.0}}};
+    g_inversion = {3, 2.0, {1.0, 0.5}, {2.0, 1.0, 0.5}};
+    m_specific.pert_ref = record_reference;
+    m_specific.pert_pt = record_delta;
+    m_engine.initialize_frame({2.0, 0.0}, 1.0);
+    m_engine.set_glitch_tolerance(0.0);
+    const std::complex<double> offset{8.0 / 7.0, -0.3};
+    const std::complex<double> reference{std::complex<double>{1.0, 0.5} + 2.0 * offset / std::norm(offset)};
+
+    EXPECT_GE(m_engine.calculate_pixel(0, 0), 0);
+
+    ASSERT_FALSE(s_reference_coordinates.empty());
+    EXPECT_NEAR(reference.real(), s_reference_coordinates.front().real(), 1e-14);
+    EXPECT_NEAR(reference.imag(), s_reference_coordinates.front().imag(), 1e-14);
+    EXPECT_NEAR(1.0 - reference.real(), s_parameter_delta.real(), 1e-14);
+    EXPECT_NEAR(4.5 - reference.imag(), s_parameter_delta.imag(), 1e-14);
+}
+
+TEST_F(TestPerturbationPixels, inversionCenterRetainsTheStandardSingularityBehavior)
+{
+    ValueSaver saved_region{g_image_region, ImageRegion{{1.0, -1.0}, {3.0, 1.0}, {1.0, -1.0}}};
+    g_inversion = {3, 2.0, {1.0, 1.0}, {2.0, 1.0, 1.0}};
+    m_specific.pert_ref = record_reference;
+    m_engine.initialize_frame({2.0, 0.0}, 1.0);
+    m_engine.set_glitch_tolerance(2.0);
+
+    EXPECT_EQ(1, m_engine.calculate_pixel(0, 0));
+
+    EXPECT_EQ(2, m_engine.reference_count());
+    ASSERT_FALSE(s_reference_coordinates.empty());
+    EXPECT_EQ(std::complex<double>(1.0, 1.0), s_reference_coordinates.back());
+}
+
+TEST_F(TestPerturbationPixels, inversionPreservesTheBurningShipReferenceOrientation)
+{
+    ValueSaver saved_type{g_fractal_type, FractalType::BURNING_SHIP};
+    ValueSaver saved_region{g_image_region, ImageRegion{{1.0, -1.0}, {3.0, 1.0}, {1.0, -1.0}}};
+    g_inversion = {3, 2.0, {1.0, 0.5}, {2.0, 1.0, 0.5}};
+    m_specific.pert_ref = record_reference;
+    m_specific.pert_pt = record_delta;
+    m_engine.initialize_frame({2.0, 0.0}, 1.0);
+    m_engine.set_glitch_tolerance(0.0);
+    const std::complex<double> offset{8.0 / 7.0, -0.3};
+    const std::complex<double> reference{std::conj(std::complex<double>{1.0, 0.5} + 2.0 * offset / std::norm(offset))};
+
+    EXPECT_GE(m_engine.calculate_pixel(0, 0), 0);
+
+    ASSERT_FALSE(s_reference_coordinates.empty());
+    EXPECT_NEAR(reference.real(), s_reference_coordinates.front().real(), 1e-14);
+    EXPECT_NEAR(reference.imag(), s_reference_coordinates.front().imag(), 1e-14);
+    EXPECT_NEAR(1.0 - reference.real(), s_parameter_delta.real(), 1e-14);
+    EXPECT_NEAR(-4.5 - reference.imag(), s_parameter_delta.imag(), 1e-14);
+}
+
+TEST_F(TestPerturbationPixels, invertedDeepZoomPreservesDeltasAcrossReferenceReplacement)
+{
+    init_bf_dec(60);
+    m_big_float = true;
+    g_bf_math = BFMathType::BIG_FLT;
+    str_to_bf(g_bf_x_min, "1.4999999999999999999999999999999999999999");
+    str_to_bf(g_bf_x_max, "1.5000000000000000000000000000000000000001");
+    str_to_bf(g_bf_y_min, "-1e-40");
+    str_to_bf(g_bf_y_max, "1e-40");
+    copy_bf(g_bf_x_3rd, g_bf_x_min);
+    copy_bf(g_bf_y_3rd, g_bf_y_min);
+    g_inversion = {3, 1.0, {1.0, 0.0}, {1.0, 1.0, 0.0}};
+    m_specific.pert_ref_bf = record_reference_bf;
+    m_specific.pert_pt = record_delta;
+    const BFComplex center{m_engine.initialize_frame_bf(1e-40)};
+    float_to_bf(center.x, 1.5);
+    clear_bf(center.y);
+
+    EXPECT_EQ(1, m_engine.calculate_pixel(0, 2));
+
+    ASSERT_FALSE(s_reference_coordinates.empty());
+    EXPECT_NEAR(3.0, s_reference_coordinates.front().real(), 1e-14);
+    EXPECT_NEAR(32e-40 / 7.0, s_parameter_delta.real(), 1e-52);
+    EXPECT_NEAR(0.0, s_parameter_delta.imag(), 1e-52);
+
+    m_engine.finish();
+    const BFComplex replacement_center{m_engine.initialize_frame_bf(1e-40)};
+    float_to_bf(replacement_center.x, 1.5);
+    clear_bf(replacement_center.y);
+    m_engine.set_glitch_tolerance(2.0);
+    int references{1};
+    for (const Point2i &point : {Point2i{0, 2}, Point2i{WIDTH - 1, 2}, Point2i{0, 2}})
+    {
+        EXPECT_EQ(1, m_engine.calculate_pixel(point.x, point.y));
+        EXPECT_EQ(++references, m_engine.reference_count());
+        EXPECT_EQ(std::complex<double>{}, s_parameter_delta);
+    }
+}
+
+TEST_F(TestPerturbationPixels, inversionUsesTheSameNearCenterLimitAtBothPrecisions)
+{
+    init_bf_dec(60);
+    m_big_float = true;
+    BigStackSaver saved;
+    const BFComplex point_bf{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const Inversion inversion{3, 2.0, {}, {2.0, 0.0, 0.0}};
+
+    for (const double value : {0.0, 1e-40, 1.0})
+    {
+        SCOPED_TRACE(value);
+        DComplex point{value, 0.0};
+        float_to_bf(point_bf.x, value);
+        clear_bf(point_bf.y);
+
+        const double scale{inversion.apply(point)};
+        inversion.apply(point_bf);
+
+        EXPECT_DOUBLE_EQ(value == 1.0 ? 2.0 : std::numeric_limits<float>::max(), scale);
+        EXPECT_NEAR(point.x, bf_to_float(point_bf.x), 1e-16);
+        EXPECT_DOUBLE_EQ(0.0, bf_to_float(point_bf.y));
     }
 }
 
