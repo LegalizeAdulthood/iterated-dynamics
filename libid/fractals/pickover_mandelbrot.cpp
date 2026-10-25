@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "fractals/pickover_mandelbrot.h"
 
@@ -13,6 +14,7 @@
 #include "math/complex_fn.h"
 #include "math/fpu087.h"
 
+#include <array>
 #include <cmath>
 
 using namespace id::engine;
@@ -26,7 +28,7 @@ enum
     MAX_POWER = 28
 };
 
-static long s_pascal_triangle[MAX_POWER]{};
+static std::array<long, MAX_POWER + 1> s_pascal_triangle{};
 
 int mandel_trig_plus_exponent_orbit()
 {
@@ -72,7 +74,7 @@ void pascal_triangle()
         {
             c = c * (g_c_exponent - j + 1) / j;
         }
-        s_pascal_triangle[j] = c;
+        s_pascal_triangle.at(j) = c;
     }
 }
 

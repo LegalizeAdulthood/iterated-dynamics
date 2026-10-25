@@ -104,6 +104,7 @@ add_executable(test-id
     fractals/test_lsystem.cpp
     fractals/test_lyapunov.cpp
     fractals/test_parser.cpp
+    fractals/test_pickover_mandelbrot.cpp
     fractals/test_seeded_fractals.cpp
     geometry/test_StereoView.cpp
     io/test_check_write_file.cpp
