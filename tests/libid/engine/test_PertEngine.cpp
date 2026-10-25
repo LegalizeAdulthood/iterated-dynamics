@@ -409,7 +409,8 @@ protected:
     void SetUp() override;
     void TearDown() override;
     void initialize_reference(const std::complex<double> &center, double half_width = 0.0, double half_height = 0.0);
-    void compare_pixel(const std::complex<double> &center, long max_iterations, double reference_offset = 0.0);
+    void compare_pixel(const std::complex<double> &center, long max_iterations, double reference_offset = 0.0,
+        long early_iterations = 0);
     void set_initial_offset(const DComplex &offset);
     void compare_frame_coordinates(
         double tolerance, const ImageRegion &region = ImageRegion{{-0.3, 0.1}, {0.2, 0.35}, {-0.3, 0.1}});
@@ -489,8 +490,8 @@ void TestPerturbationIterations::set_initial_offset(const DComplex &offset)
     g_params[1] = offset.y;
 }
 
-void TestPerturbationIterations::compare_pixel(
-    const std::complex<double> &center, const long max_iterations, const double reference_offset)
+void TestPerturbationIterations::compare_pixel(const std::complex<double> &center, const long max_iterations,
+    const double reference_offset, const long early_iterations)
 {
     m_engine.finish();
     if (m_big_float)
@@ -513,7 +514,13 @@ void TestPerturbationIterations::compare_pixel(
     const long initial_old_color_iter{g_old_color_iter};
     StandardFractal standard;
     const int expected_color{standard.calculate_standard_pixel(false)};
-    const OrbitState expected{g_real_color_iter, g_old_z, g_new_z, g_magnitude, g_temp_sqr_x, g_temp_sqr_y};
+    // The standard epsilon-cross early exit does not publish its raw iteration count.
+    const long expected_iterations{early_iterations != 0 ? early_iterations : g_real_color_iter};
+    if (early_iterations != 0)
+    {
+        EXPECT_EQ(early_iterations, s_standard_orbit.size());
+    }
+    const OrbitState expected{expected_iterations, g_old_z, g_new_z, g_magnitude, g_temp_sqr_x, g_temp_sqr_y};
     const long expected_old_color_iter{g_old_color_iter};
 
     m_specific.pert_pt = record_perturbation_orbit;
@@ -1189,6 +1196,145 @@ TEST_P(TestPerturbationIterations, insideAtanSurvivesOffsetsAndReferenceReplacem
         EXPECT_EQ(8, g_real_color_iter);
         EXPECT_GT(m_engine.reference_count(), 1);
     }
+}
+
+TEST_P(TestPerturbationIterations, epsilonCrossStopsAtTheFirstQualifiedAxis)
+{
+    struct Sample
+    {
+        std::complex<double> point;
+        double proximity;
+        long iterations;
+        int color;
+    };
+
+    g_inside_method = ColorMethod::EPS_CROSS;
+    for (const Sample &sample :
+        {Sample{{0.0, 0.0}, 0.01, 1, 2}, Sample{{0.5, 0.0}, 0.01, 1, 6}, Sample{{-0.5, 0.5}, 0.01, 1, 6},
+            Sample{{-0.5, -0.5}, 0.01, 1, 6}, Sample{{0.5, 0.5}, 0.3125, 2, 2}, Sample{{0.5, -0.5}, 0.3125, 2, 2}})
+    {
+        SCOPED_TRACE(sample.point);
+        for (const bool negative : {false, true})
+        {
+            SCOPED_TRACE(negative);
+            g_close_proximity = negative ? -sample.proximity : sample.proximity;
+            compare_pixel(sample.point, 8, 0.0, sample.iterations);
+            EXPECT_EQ(sample.iterations, g_real_color_iter);
+            EXPECT_EQ(negative ? sample.iterations : sample.color, g_color);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, epsilonCrossUsesStrictThresholdsAndDoesNotTestTheSeed)
+{
+    g_inside_method = ColorMethod::EPS_CROSS;
+    for (const double proximity : {0.25, -0.25})
+    {
+        SCOPED_TRACE(proximity);
+        g_close_proximity = proximity;
+        compare_pixel({0.5, 0.5}, 8);
+        EXPECT_EQ(4, g_real_color_iter);
+        EXPECT_EQ(4, g_color);
+    }
+    g_close_proximity = 0.125;
+    compare_pixel({0.0, 0.5}, 3);
+    EXPECT_EQ(3, g_real_color_iter);
+    EXPECT_EQ(3, g_color);
+    g_close_proximity = 0.0;
+    compare_pixel({}, 8);
+    EXPECT_EQ(8, g_real_color_iter);
+    EXPECT_EQ(8, g_color);
+    g_close_proximity = 0.001;
+    compare_pixel({0.125, 0.0625}, 8);
+    EXPECT_EQ(8, g_real_color_iter);
+    EXPECT_EQ(8, g_color);
+}
+
+TEST_P(TestPerturbationIterations, epsilonCrossDoesNotTestEscapingUpdates)
+{
+    g_inside_method = ColorMethod::EPS_CROSS;
+    g_outside_method = ColorMethod::REAL;
+    for (const double proximity : {0.01, -0.01})
+    {
+        SCOPED_TRACE(proximity);
+        g_close_proximity = proximity;
+        compare_pixel({1.0, 0.0}, 128);
+        EXPECT_EQ(1, g_real_color_iter);
+        EXPECT_EQ(10, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, epsilonCrossHitsBypassOutsideAndBiomorphColors)
+{
+    g_inside_method = ColorMethod::EPS_CROSS;
+    g_biomorph = 9;
+    for (const ColorMethod outside : {ColorMethod::ITER, ColorMethod::REAL, ColorMethod::TDIS})
+    {
+        SCOPED_TRACE(static_cast<int>(outside));
+        g_outside_method = outside;
+        for (const double proximity : {0.3125, -0.3125})
+        {
+            g_close_proximity = proximity;
+            compare_pixel({0.5, 0.5}, 8, 0.0, 2);
+            EXPECT_EQ(2, g_color);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, epsilonCrossPreservesPeriodicityStateOnEarlyExit)
+{
+    g_inside_method = ColorMethod::EPS_CROSS;
+    g_close_proximity = 0.3125;
+    for (const int periodicity : {1, -1})
+    {
+        SCOPED_TRACE(periodicity);
+        g_periodicity_check = periodicity;
+        g_old_color_iter = 37;
+        compare_pixel({0.5, 0.5}, 64, 0.0, 2);
+        EXPECT_EQ(37, g_old_color_iter);
+        EXPECT_EQ(2, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, epsilonCrossMapsAxisColorsBeforePotentialFinishing)
+{
+    ValueSaver saved_table{g_log_map_table, std::vector<Byte>(9, 44)};
+    ValueSaver saved_max{g_log_map_table_max_size, 8L};
+    ValueSaver saved_flag{g_log_map_flag, 1L};
+    ValueSaver saved_calculate{g_log_map_calculate, false};
+    g_log_map_table[1] = 11;
+    g_log_map_table[2] = 12;
+    g_log_map_table[6] = 16;
+    g_inside_method = ColorMethod::EPS_CROSS;
+    g_outside_method = ColorMethod::REAL;
+    g_potential = {{23.0, 10.0, 4.0}, false, true};
+    g_biomorph = 9;
+    for (const double proximity : {0.01, -0.01})
+    {
+        SCOPED_TRACE(proximity);
+        g_close_proximity = proximity;
+        compare_pixel({0.5, 0.0}, 8, 0.0, 1);
+        EXPECT_EQ(proximity > 0 ? 16 : 11, g_color);
+        compare_pixel({}, 8, 0.0, 1);
+        EXPECT_EQ(proximity > 0 ? 12 : 11, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, epsilonCrossSurvivesInitializationAndReferenceReplacement)
+{
+    g_inside_method = ColorMethod::EPS_CROSS;
+    g_close_proximity = 0.01;
+    g_use_init_orbit = InitOrbitMode::VALUE;
+    g_init_orbit = {0.5, 0.5};
+    compare_pixel({}, 8, 0.0, 1);
+    EXPECT_EQ(2, g_color);
+
+    g_use_init_orbit = InitOrbitMode::NORMAL;
+    set_initial_offset({-0.125, 0.0});
+    m_engine.set_glitch_tolerance(8.0);
+    compare_pixel({0.5, 0.0}, 8, 0.125, 1);
+    EXPECT_EQ(6, g_color);
+    EXPECT_GT(m_engine.reference_count(), 1);
 }
 
 TEST_P(TestPerturbationIterations, periodicityMatchesStandardSaveSchedules)

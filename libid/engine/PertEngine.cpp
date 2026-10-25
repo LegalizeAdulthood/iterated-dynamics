@@ -526,6 +526,7 @@ int PertEngine::calculate_point(const Point &pt)
     long min_index{};      // iteration of min_orbit
     double mem_value{};
     double total_distance{};
+    int epsilon_axis{};
     const bool remember_fmod{g_inside_method == ColorMethod::FMODI || g_outside_method == ColorMethod::FMOD};
     std::complex<double> w{reference.orbit.front() + orbit_displacement};
     std::complex<double> old{w};
@@ -569,6 +570,22 @@ int PertEngine::calculate_point(const Point &pt)
         if (escaped)
         {
             break;
+        }
+        if (g_inside_method == ColorMethod::EPS_CROSS)
+        {
+            if (std::abs(w.real()) < std::abs(g_close_proximity))
+            {
+                epsilon_axis = 1;
+            }
+            else if (std::abs(w.imag()) < std::abs(g_close_proximity))
+            {
+                epsilon_axis = 2;
+            }
+            if (epsilon_axis != 0)
+            {
+                old = w;
+                break;
+            }
         }
         if (remember_fmod)
         {
@@ -643,7 +660,10 @@ int PertEngine::calculate_point(const Point &pt)
         }
     }
 
-    g_old_color_iter = iteration >= g_max_iterations ? 0 : iteration + 10;
+    if (epsilon_axis == 0)
+    {
+        g_old_color_iter = iteration >= g_max_iterations ? 0 : iteration + 10;
+    }
     g_color_iter = iteration;
     g_real_color_iter = iteration;
     g_old_z = {old.real(), old.imag()};
@@ -661,7 +681,17 @@ int PertEngine::calculate_point(const Point &pt)
     const double rq_lim2{std::sqrt(g_magnitude_limit)};
 
     const bool highlight_cycle{g_periodicity_check < 0 && m_cycle_len > 0};
-    if (iteration == g_max_iterations && (highlight_cycle || g_inside_method == ColorMethod::PERIOD))
+    if (epsilon_axis != 0)
+    {
+        constexpr int GREEN{2};
+        constexpr int YELLOW{6};
+        index = g_close_proximity > 0 ? epsilon_axis == 1 ? GREEN : YELLOW : iteration;
+        if (!g_log_map_table.empty() || g_log_map_calculate)
+        {
+            index = log_table_calc(index);
+        }
+    }
+    else if (iteration == g_max_iterations && (highlight_cycle || g_inside_method == ColorMethod::PERIOD))
     {
         if (g_potential.flag)
         {
