@@ -265,6 +265,11 @@ bool StandardFractal::done() const
     return m_phase == Phase::COMPLETE;
 }
 
+const DistanceEstimator &StandardFractal::distance_estimator() const
+{
+    return m_perturbation_active ? m_pert_engine.distance_estimator() : m_distance_estimator;
+}
+
 bool StandardFractal::consume_traversal_yield()
 {
     const bool yielded{m_standard_pixel_completed_yield || m_incomplete_standard_pixel_yield};
@@ -457,14 +462,12 @@ void StandardFractal::clear_standard_pixel()
         g_max_iterations = m_save_max_it;
     }
     m_tan_table.fill(0.0);
-    m_deriv = {};
-    m_dem_new = {};
+    m_distance_estimator = {};
     m_last_z = {};
     m_mem_value = 0.0;
     m_min_orbit = 100000.0;
     m_total_dist = 0.0;
     m_cycle_len = -1;
-    m_dem_color = -1;
     m_min_index = 0;
     m_save_max_it = 0;
     m_saved_and = 0;

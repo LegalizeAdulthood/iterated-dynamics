@@ -3,6 +3,7 @@
 //
 #pragma once
 
+#include "engine/calcfrac.h"
 #include "engine/Point.h"
 #include "engine/UserData.h"
 #include "math/big.h"
@@ -29,6 +30,7 @@ public:
     int calculate_pixel(int col, int row);
     void set_glitch_tolerance(double tolerance);
     double glitch_tolerance_threshold(const std::complex<double> &value) const;
+    const DistanceEstimator &distance_estimator() const;
 
     // Number of references computed for the current frame.
     int reference_count() const;
@@ -60,6 +62,7 @@ private:
     void reference_zoom_point(ReferencePoint &reference, const std::complex<double> &center);
 
     ReferencePoint m_reference{};
+    DistanceEstimator m_distance_estimator{};
     int m_reference_count{};
     long m_cycle_len{-1};
     math::BFComplex m_reference_coordinate_bf{};

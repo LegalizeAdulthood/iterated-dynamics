@@ -24,6 +24,7 @@ public:
 
     int calculate_mandelbrot_pixel();
     int calculate_standard_pixel(bool yield_to_ui);
+    const DistanceEstimator &distance_estimator() const;
     bool consume_traversal_yield();
     bool consume_orbit_overlay_displayed();
     void queue_overlay_orbit_plot(double real, double imag, bool mark_as_plotted = true);
@@ -99,8 +100,7 @@ private:
     PertEngine m_pert_engine{};
     StandardPass m_standard_pass{};
     std::array<double, 16> m_tan_table{};
-    math::DComplex m_deriv{};
-    math::DComplex m_dem_new{};
+    DistanceEstimator m_distance_estimator{};
     math::DComplex m_last_z{};
     CalcMode m_requested_calc_mode{};
     AfterWorkList m_after_work_list{AfterWorkList::COMPLETE};
@@ -113,7 +113,6 @@ private:
     double m_min_orbit{100000.0};
     double m_total_dist{};
     long m_cycle_len{-1};
-    long m_dem_color{-1};
     long m_min_index{};
     long m_save_max_it{};
     long m_saved_and{};

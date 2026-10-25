@@ -1432,7 +1432,8 @@ TEST_F(TestOverlaySound, soundRetryDoesNotRecalculateDistanceEstimatorDerivative
     calculation.m_standard_pixel_iteration_started = true;
     calculation.m_standard_pixel_orbit_calc_completed = true;
     calculation.m_check_freq = 2048;
-    calculation.m_deriv = {3.0, 2.0};
+    calculation.m_distance_estimator = DistanceEstimator{4.0, 100.0, true, false};
+    ASSERT_TRUE(calculation.m_distance_estimator.advance({1.0, 1.0}));
     g_old_z = {1.0, 1.0};
     g_new_z = g_old_z;
     EXPECT_CALL(*m_output, play(_)).WillRepeatedly(Return(false));
@@ -1440,7 +1441,7 @@ TEST_F(TestOverlaySound, soundRetryDoesNotRecalculateDistanceEstimatorDerivative
     EXPECT_EQ(CALC_YIELDED, calculation.calculate_standard_pixel(false));
     EXPECT_EQ(CALC_YIELDED, calculation.calculate_standard_pixel(false));
 
-    EXPECT_EQ((DComplex{3.0, 2.0}), calculation.m_deriv);
+    EXPECT_EQ((DComplex{3.0, 2.0}), calculation.distance_estimator().derivative());
     EXPECT_EQ(0, s_orbit_calls);
     EXPECT_EQ(0, m_plots);
 }

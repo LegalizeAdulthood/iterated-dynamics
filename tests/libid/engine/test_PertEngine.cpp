@@ -65,6 +65,79 @@ TEST(TestPertEngine, defaultGlitchToleranceScalesThreshold)
     EXPECT_DOUBLE_EQ(25.0e-12, engine.glitch_tolerance_threshold({3.0, 4.0}));
 }
 
+TEST(TestDistanceEstimator, mandelbrotDerivativeStartsAtOneAndIncludesParameterDerivative)
+{
+    DistanceEstimator estimator{4.0, 100.0, true, false};
+
+    EXPECT_EQ((DComplex{1.0, 0.0}), estimator.derivative());
+    EXPECT_TRUE(estimator.advance({0.5, 0.0}));
+    EXPECT_EQ((DComplex{2.0, 0.0}), estimator.derivative());
+    EXPECT_TRUE(estimator.advance({0.75, 0.0}));
+    EXPECT_EQ((DComplex{4.0, 0.0}), estimator.derivative());
+    EXPECT_TRUE(estimator.advance({1.0625, 0.0}));
+    EXPECT_EQ((DComplex{9.5, 0.0}), estimator.derivative());
+}
+
+TEST(TestDistanceEstimator, juliaDerivativeOmitsParameterDerivative)
+{
+    DistanceEstimator estimator{4.0, 100.0, false, false};
+
+    EXPECT_TRUE(estimator.advance({0.5, 0.5}));
+    EXPECT_EQ((DComplex{1.0, 1.0}), estimator.derivative());
+    EXPECT_TRUE(estimator.advance({0.25, 1.0}));
+    EXPECT_EQ((DComplex{-1.5, 2.5}), estimator.derivative());
+}
+
+TEST(TestDistanceEstimator, derivativeLimitsPreserveOrdinaryAndLegacyNorms)
+{
+    DistanceEstimator ordinary{4.0, 5.0, true, false};
+    DistanceEstimator legacy{4.0, 5.0, true, true};
+
+    EXPECT_TRUE(ordinary.advance({0.5, 0.5}));
+    EXPECT_TRUE(legacy.advance({0.5, 0.5}));
+    EXPECT_EQ((DComplex{2.0, 1.0}), ordinary.derivative());
+    EXPECT_EQ(ordinary.derivative(), legacy.derivative());
+    EXPECT_TRUE(ordinary.advance({0.0, 0.75}));
+    EXPECT_FALSE(legacy.advance({0.0, 0.75}));
+    EXPECT_EQ((DComplex{-0.5, 3.0}), ordinary.derivative());
+    EXPECT_FALSE(ordinary.advance({1.0, 0.0}));
+}
+
+TEST(TestDistanceEstimator, legacyEscapeRetainsFirstEscapeAndRaisesBailout)
+{
+    DistanceEstimator estimator{4.0, 100.0, true, true};
+
+    EXPECT_FALSE(estimator.escaped({3.0, 1.0}, 4, 10.0));
+    EXPECT_DOUBLE_EQ(535.5, estimator.bailout());
+    EXPECT_TRUE(estimator.escaped({30.0, 1.0}, 5, 901.0));
+    EXPECT_EQ(4, estimator.escape_iteration());
+    EXPECT_EQ((DComplex{3.0, 1.0}), estimator.escape_point());
+}
+
+TEST(TestDistanceEstimator, ordinaryAndLargeBailoutEscapesStopImmediately)
+{
+    DistanceEstimator ordinary{4.0, 100.0, true, false};
+    DistanceEstimator legacy{600.0, 100.0, true, true};
+
+    EXPECT_TRUE(ordinary.escaped({3.0, 0.0}, 1, 9.0));
+    EXPECT_DOUBLE_EQ(4.0, ordinary.bailout());
+    EXPECT_EQ(-1, ordinary.escape_iteration());
+    EXPECT_TRUE(legacy.escaped({30.0, 0.0}, 1, 900.0));
+    EXPECT_DOUBLE_EQ(600.0, legacy.bailout());
+    DistanceEstimator zero_magnitude{4.0, 100.0, true, true};
+    EXPECT_TRUE(zero_magnitude.escaped({}, 1, 0.0));
+}
+
+TEST(TestDistanceEstimator, distanceEstimateUsesTerminalMagnitudeAndDerivative)
+{
+    DistanceEstimator estimator{4.0, 100.0, true, false};
+    EXPECT_TRUE(estimator.advance({0.5, 0.5}));
+
+    EXPECT_DOUBLE_EQ(25.0 * std::log(25.0) * std::log(25.0) / 5.0, estimator.distance_squared({3.0, 4.0}));
+    EXPECT_DOUBLE_EQ(0.0, estimator.distance_squared({}));
+    EXPECT_DOUBLE_EQ(0.0, estimator.distance_squared({3.0, 4.0}, true));
+}
+
 TEST(TestPertEngine, nonDefaultGlitchToleranceScalesThreshold)
 {
     PertEngine engine;
@@ -154,9 +227,16 @@ std::vector<std::complex<double>> s_reference_coordinates;
 std::complex<double> s_parameter_delta;
 std::vector<std::complex<double>> s_standard_orbit;
 std::vector<std::complex<double>> s_perturbation_orbit;
+const DistanceEstimator *s_standard_distance{};
+std::vector<DComplex> s_standard_derivatives;
+std::vector<DComplex> s_perturbation_derivatives;
 
 int record_standard_orbit()
 {
+    if (s_standard_distance != nullptr)
+    {
+        s_standard_derivatives.push_back(s_standard_distance->derivative());
+    }
     s_standard_orbit.emplace_back(g_old_z.x, g_old_z.y);
     return julia_orbit();
 }
@@ -164,6 +244,10 @@ int record_standard_orbit()
 void record_perturbation_orbit(
     const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter_delta)
 {
+    if (s_standard_distance != nullptr)
+    {
+        s_perturbation_derivatives.push_back(s_pixel_engine->distance_estimator().derivative());
+    }
     s_perturbation_orbit.push_back(reference + delta);
     mandel_perturb(reference, delta, parameter_delta);
 }
@@ -412,6 +496,8 @@ protected:
     void compare_pixel(const std::complex<double> &center, long max_iterations, double reference_offset = 0.0,
         long early_iterations = 0);
     void set_initial_offset(const DComplex &offset);
+    void compare_distance_pixel(const std::complex<double> &center, long max_iterations, bool legacy,
+        double reference_offset = 0.0, int width_factor = 1);
     void compare_frame_coordinates(
         double tolerance, const ImageRegion &region = ImageRegion{{-0.3, 0.1}, {0.2, 0.35}, {-0.3, 0.1}});
 
@@ -1762,6 +1848,136 @@ TEST_P(TestPerturbationIterations, decompositionSurvivesReferenceReplacement)
     compare_pixel({0.5, 0.5}, 128, 0.125);
     EXPECT_GT(s_perturbation_orbit.size(), s_standard_orbit.size());
     EXPECT_GT(m_engine.reference_count(), 1);
+}
+
+void TestPerturbationIterations::compare_distance_pixel(const std::complex<double> &center, const long max_iterations,
+    const bool legacy, const double reference_offset, const int width_factor)
+{
+    m_engine.finish();
+    if (m_big_float)
+    {
+        free_bf_vars();
+        m_big_float = false;
+    }
+    s_standard_orbit.clear();
+    s_perturbation_orbit.clear();
+    s_standard_derivatives.clear();
+    s_perturbation_derivatives.clear();
+    ValueSaver saved_user{g_user, UserData{}};
+    ValueSaver saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
+    ValueSaver saved_resuming{g_resuming, false};
+    ValueSaver saved_legacy{g_use_old_distance_estimator};
+    ValueSaver saved_width{g_distance_estimator_width_factor, width_factor};
+    ValueSaver saved_virtual_width{g_distance_estimator_x_dots, 0};
+    ValueSaver saved_virtual_height{g_distance_estimator_y_dots, 0};
+    ValueSaver saved_limit{g_magnitude_limit};
+    g_distance_estimator = 1;
+    g_inside_method = ColorMethod::ITER;
+    g_max_iterations = max_iterations;
+    g_user.perturbation = PerturbationMode::NO;
+    g_image_region = ImageRegion{{-2.5, -1.5}, {1.5, 1.5}, {-2.5, -1.5}};
+    m_specific.calc_type = standard_fractal_type;
+    m_specific.per_image = [] { return true; };
+    m_specific.symmetry = SymmetryType::NONE;
+    g_dispatch = FractalDispatch{m_specific};
+    StandardFractal standard;
+    ASSERT_TRUE(standard.resume().empty());
+    bool selected{};
+    for (int i = 0; i < 10 && !selected; ++i)
+    {
+        selected = standard.select_pixel();
+    }
+    ASSERT_TRUE(selected);
+    g_use_old_distance_estimator = legacy;
+    const double initial_bailout{g_magnitude_limit};
+    const DComplex point{center.real(), center.imag()};
+    g_image_region = ImageRegion{point, point, point};
+    ValueSaver<LDouble> saved_delta_x{g_delta_x, 0};
+    ValueSaver<LDouble> saved_delta_y{g_delta_y, 0};
+    ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    g_col = WIDTH - 1;
+    fill_pixel_grid();
+    g_dispatch.set_orbit_calc(record_standard_orbit);
+    ValueSaver saved_recording{s_standard_distance, &standard.distance_estimator()};
+    DistanceEstimator expected;
+    long expected_iterations{};
+    double expected_magnitude{};
+    EXPECT_CALL(m_driver, write_pixel(g_col, g_row, _))
+        .WillOnce(Invoke(
+            [&](int, int, int)
+            {
+                expected = standard.distance_estimator();
+                expected_iterations = g_real_color_iter;
+                expected_magnitude = g_magnitude;
+            }))
+        .RetiresOnSaturation();
+    standard.calculate_standard_pixel(false);
+    ASSERT_FALSE(s_standard_orbit.empty());
+    const std::complex<double> terminal{s_standard_orbit.back() * s_standard_orbit.back() + center};
+    standard.finish();
+    g_magnitude_limit = initial_bailout;
+    m_specific.pert_pt = record_perturbation_orbit;
+    initialize_reference(center - std::complex<double>{reference_offset, 0.0}, reference_offset);
+
+    m_engine.calculate_pixel(g_col, g_row);
+
+    const DistanceEstimator &actual{m_engine.distance_estimator()};
+    EXPECT_EQ(expected_iterations, g_real_color_iter);
+    EXPECT_NEAR(expected_magnitude, g_magnitude, std::max(1.0, expected_magnitude) * 1e-12);
+    EXPECT_DOUBLE_EQ(expected.bailout(), actual.bailout());
+    EXPECT_EQ(expected.escape_iteration(), actual.escape_iteration());
+    EXPECT_NEAR(expected.escape_point().x, actual.escape_point().x, 1e-12);
+    EXPECT_NEAR(expected.escape_point().y, actual.escape_point().y, 1e-12);
+    EXPECT_NEAR(
+        expected.derivative().x, actual.derivative().x, std::max(1.0, std::abs(expected.derivative().x)) * 1e-12);
+    EXPECT_NEAR(
+        expected.derivative().y, actual.derivative().y, std::max(1.0, std::abs(expected.derivative().y)) * 1e-12);
+    const double expected_distance{expected.distance_squared({terminal.real(), terminal.imag()})};
+    EXPECT_NEAR(expected_distance, actual.distance_squared(g_new_z), std::max(1.0, expected_distance) * 1e-12);
+    ASSERT_GE(s_perturbation_derivatives.size(), s_standard_derivatives.size());
+    const std::size_t first{s_perturbation_derivatives.size() - s_standard_derivatives.size()};
+    for (std::size_t i = 0; i < s_standard_derivatives.size(); ++i)
+    {
+        SCOPED_TRACE(i);
+        const DComplex derivative{s_standard_derivatives[i]};
+        EXPECT_NEAR(
+            derivative.x, s_perturbation_derivatives[first + i].x, std::max(1.0, std::abs(derivative.x)) * 1e-12);
+        EXPECT_NEAR(
+            derivative.y, s_perturbation_derivatives[first + i].y, std::max(1.0, std::abs(derivative.y)) * 1e-12);
+    }
+}
+
+TEST_P(TestPerturbationIterations, distanceEstimatorMatchesStandardDerivativesAndTerminalValues)
+{
+    for (const bool legacy : {false, true})
+    {
+        SCOPED_TRACE(legacy);
+        for (const std::complex<double> point : {std::complex<double>{0.5, 0.0}, {0.5, 0.5}, {0.125, 0.0625}})
+        {
+            SCOPED_TRACE(point);
+            compare_distance_pixel(point, 32, legacy);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, distanceEstimatorRestartsDerivativeOnReferenceReplacement)
+{
+    m_engine.set_glitch_tolerance(8.0);
+    for (const bool legacy : {false, true})
+    {
+        SCOPED_TRACE(legacy);
+        compare_distance_pixel({0.5, 0.5}, 32, legacy, 0.125);
+        EXPECT_GT(m_engine.reference_count(), 1);
+        EXPECT_GT(s_perturbation_derivatives.size(), s_standard_derivatives.size());
+    }
+}
+
+TEST_P(TestPerturbationIterations, distanceEstimatorStopsBeforeOrbitUpdateAtDerivativeLimit)
+{
+    compare_distance_pixel({0.25, 0.0}, 4096, false, 0.0, 1000);
+    EXPECT_LT(g_real_color_iter, 4096);
+    EXPECT_EQ(s_standard_derivatives.size() + 1, g_real_color_iter);
 }
 
 TEST_P(TestPerturbationIterations, periodicityMatchesStandardSaveSchedules)

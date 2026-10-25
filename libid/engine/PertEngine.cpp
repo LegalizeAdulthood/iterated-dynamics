@@ -12,6 +12,7 @@
 #include "engine/PertEngine.h"
 
 #include "engine/bailout_formula.h"
+#include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/ImageRegion.h"
@@ -273,6 +274,11 @@ int PertEngine::reference_count() const
     return m_reference_count;
 }
 
+const DistanceEstimator &PertEngine::distance_estimator() const
+{
+    return m_distance_estimator;
+}
+
 void PertEngine::finish()
 {
     if (!m_done)
@@ -291,6 +297,7 @@ void PertEngine::cleanup()
     m_reference = {};
     m_reference_count = 0;
     m_cycle_len = -1;
+    m_distance_estimator = {};
     m_reference_coordinate_bf = {};
     m_tmp_bf = {};
     m_center_bf = {};
@@ -456,6 +463,11 @@ void PertEngine::set_reference_point(const std::complex<double> &pixel_position)
 int PertEngine::calculate_point(const Point &pt)
 {
     m_cycle_len = -1;
+    m_distance_estimator = g_distance_estimator ? standard_distance_estimator() : DistanceEstimator{};
+    if (g_distance_estimator)
+    {
+        g_magnitude_limit = m_distance_estimator.bailout();
+    }
     const bool star_trail{g_inside_method == ColorMethod::STAR_TRAIL};
     std::array<double, STAR_TRAIL_ITERATIONS> tan_table{};
     const bool high_precision{g_bf_math != BFMathType::NONE};
@@ -573,6 +585,10 @@ int PertEngine::calculate_point(const Point &pt)
         }
         const std::size_t sample{static_cast<std::size_t>(iteration + (bof ? 1 : 0))};
         old = w;
+        if (g_distance_estimator && !m_distance_estimator.advance({old.real(), old.imag()}))
+        {
+            break;
+        }
         const std::complex<double> reference_z{
             star_trail && sample > 1 ? star_trail_point(reference.orbit[sample - 1]) : reference.orbit[sample - 1]};
         g_cur_fractal_specific->pert_pt(reference_z, orbit_displacement, parameter_displacement);
@@ -602,9 +618,18 @@ int PertEngine::calculate_point(const Point &pt)
                 min_index = iteration + 1L;
             }
         }
-        if (escaped && !star_trail)
+        if (escaped && (g_distance_estimator || !star_trail))
         {
-            break;
+            if (!g_distance_estimator)
+            {
+                break;
+            }
+            const bool complete{m_distance_estimator.escaped({w.real(), w.imag()}, iteration, magnitude)};
+            g_magnitude_limit = m_distance_estimator.bailout();
+            if (complete)
+            {
+                break;
+            }
         }
         if (star_trail)
         {

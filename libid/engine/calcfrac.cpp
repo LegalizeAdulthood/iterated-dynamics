@@ -739,6 +739,92 @@ void setup_standard_fractal_distance_estimator()
     }
 }
 
+DistanceEstimator::DistanceEstimator(
+    const double bailout, const double derivative_limit, const bool mandelbrot, const bool legacy) :
+    m_bailout{bailout},
+    m_derivative_limit{derivative_limit},
+    m_mandelbrot{mandelbrot},
+    m_legacy{legacy}
+{
+}
+
+bool DistanceEstimator::advance(const DComplex &z)
+{
+    // Derivative of the next orbit value, before advancing the orbit itself.
+    double real{2 * (z.x * m_derivative.x - z.y * m_derivative.y)};
+    if (m_mandelbrot)
+    {
+        real += 1;
+    }
+    m_derivative.y = 2 * (z.y * m_derivative.x + z.x * m_derivative.y);
+    m_derivative.x = real;
+    return m_legacy ? !(sqr(m_derivative.x) + sqr(m_derivative.y) > m_derivative_limit)
+                    : !(std::max(std::abs(m_derivative.x), std::abs(m_derivative.y)) > m_derivative_limit);
+}
+
+bool DistanceEstimator::escaped(const DComplex &z, const long iteration, const double magnitude)
+{
+    if (!m_legacy)
+    {
+        return true;
+    }
+    if (m_escape_iteration < 0)
+    {
+        m_escape_iteration = iteration;
+        m_escape_point = z;
+    }
+    if (m_bailout >= DEM_BAILOUT)
+    {
+        return true;
+    }
+    m_bailout = DEM_BAILOUT;
+    return magnitude >= m_bailout || magnitude == 0;
+}
+
+double DistanceEstimator::distance_squared(const DComplex &z, const bool overflow) const
+{
+    const double magnitude{sqr(z.x) + sqr(z.y)};
+    if (magnitude == 0 || overflow)
+    {
+        return 0;
+    }
+    return magnitude * sqr(std::log(magnitude)) / (sqr(m_derivative.x) + sqr(m_derivative.y));
+}
+
+DComplex DistanceEstimator::derivative() const
+{
+    return m_derivative;
+}
+
+double DistanceEstimator::bailout() const
+{
+    return m_bailout;
+}
+
+long DistanceEstimator::escape_iteration() const
+{
+    return m_escape_iteration;
+}
+
+DComplex DistanceEstimator::escape_point() const
+{
+    return m_escape_point;
+}
+
+DistanceEstimator standard_distance_estimator()
+{
+    double bailout{g_magnitude_limit};
+    if (g_use_old_distance_estimator)
+    {
+        bailout = s_rq_lim_save;
+        if (g_distance_estimator != 1 || g_colors == 2)
+        {
+            bailout = std::max(bailout, DEM_BAILOUT);
+        }
+    }
+    return {bailout, s_dem_too_big, s_dem_mandel, g_use_old_distance_estimator};
+}
+
 // fast per pixel 1/2/b/g, called with row & col set
 // can also handle invert, any rqlim, potflag, zmag, epsilon cross,
 // and all the current outside options
@@ -911,9 +997,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         m_saved_color_iter = 0;
         m_caught_a_cycle = false;
         m_attracted = false;
-        m_deriv = {};
-        m_dem_color = -1;
-        m_dem_new = {};
+        m_distance_estimator = {};
         m_total_dist = 0.0;
         m_last_z = {};
         m_save_max_it = g_max_iterations;
@@ -980,18 +1064,8 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         g_init.y = dy_pixel();
         if (g_distance_estimator)
         {
-            if (g_use_old_distance_estimator)
-            {
-                g_magnitude_limit = s_rq_lim_save;
-                if (g_distance_estimator != 1 || g_colors == 2) // not doing regular outside colors
-                {
-                    // so go straight for dem bailout
-                    g_magnitude_limit = std::max(g_magnitude_limit, DEM_BAILOUT);
-                }
-                m_dem_color = -1;
-            }
-            m_deriv.x = 1;
-            m_deriv.y = 0;
+            m_distance_estimator = standard_distance_estimator();
+            g_magnitude_limit = m_distance_estimator.bailout();
             g_magnitude = 0;
         }
         g_orbit_save_flag = false;
@@ -1087,32 +1161,9 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 
         if (g_distance_estimator && !m_standard_pixel_orbit_calc_completed)
         {
-            double f_temp;
-            // Distance estimator for points near Mandelbrot set
-            // Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198
-            if (s_dem_mandel)
+            if (!m_distance_estimator.advance(g_old_z))
             {
-                f_temp = 2 * (g_old_z.x * m_deriv.x - g_old_z.y * m_deriv.y) + 1;
-            }
-            else
-            {
-                f_temp = 2 * (g_old_z.x * m_deriv.x - g_old_z.y * m_deriv.y);
-            }
-            m_deriv.y = 2 * (g_old_z.y * m_deriv.x + g_old_z.x * m_deriv.y);
-            m_deriv.x = f_temp;
-            if (g_use_old_distance_estimator)
-            {
-                if (sqr(m_deriv.x) + sqr(m_deriv.y) > s_dem_too_big)
-                {
-                    break;
-                }
-            }
-            else
-            {
-                if (std::max(std::abs(m_deriv.x), std::abs(m_deriv.y)) > s_dem_too_big)
-                {
-                    break;
-                }
+                break;
             }
             // if above exit taken, the later test vs dem_delta will place this
             // point on the boundary, because mag(old)<bailout just now
@@ -1134,21 +1185,9 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         {
             if (orbit_calc_result || g_overflow)
             {
-                if (g_use_old_distance_estimator)
-                {
-                    if (m_dem_color < 0)
-                    {
-                        m_dem_color = g_color_iter;
-                        m_dem_new = g_new_z;
-                    }
-                    if (g_magnitude_limit >= DEM_BAILOUT
-                        || g_magnitude >= (g_magnitude_limit = DEM_BAILOUT)
-                        || g_magnitude == 0)
-                    {
-                        break;
-                    }
-                }
-                else
+                const bool complete{m_distance_estimator.escaped(g_new_z, g_color_iter, g_magnitude)};
+                g_magnitude_limit = m_distance_estimator.bailout();
+                if (complete)
                 {
                     break;
                 }
@@ -1423,16 +1462,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 
     if (g_distance_estimator)
     {
-        double dist = sqr(g_new_z.x) + sqr(g_new_z.y);
-        if (dist == 0 || g_overflow)
-        {
-            dist = 0;
-        }
-        else
-        {
-            const double temp = std::log(dist);
-            dist = dist * sqr(temp) / (sqr(m_deriv.x) + sqr(m_deriv.y));
-        }
+        const double dist{m_distance_estimator.distance_squared(g_new_z, g_overflow)};
         if (dist < s_dem_delta)     // point is on the edge
         {
             if (g_distance_estimator > 0)
@@ -1466,8 +1496,8 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         }
         if (g_use_old_distance_estimator)
         {
-            g_color_iter = m_dem_color;
-            g_new_z = m_dem_new;
+            g_color_iter = m_distance_estimator.escape_iteration();
+            g_new_z = m_distance_estimator.escape_point();
         }
         // use pixel's "regular" color
     }

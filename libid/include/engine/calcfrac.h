@@ -219,6 +219,32 @@ extern int                   g_inside_color;
 extern ColorMethod           g_outside_method;
 extern int                   g_outside_color;
 
+class DistanceEstimator
+{
+public:
+    DistanceEstimator() = default;
+    DistanceEstimator(double bailout, double derivative_limit, bool mandelbrot, bool legacy);
+
+    bool advance(const math::DComplex &z);
+    bool escaped(const math::DComplex &z, long iteration, double magnitude);
+    double distance_squared(const math::DComplex &z, bool overflow = false) const;
+    math::DComplex derivative() const;
+    double bailout() const;
+    long escape_iteration() const;
+    math::DComplex escape_point() const;
+
+private:
+    math::DComplex m_derivative{1.0, 0.0};
+    math::DComplex m_escape_point{};
+    double m_bailout{};
+    double m_derivative_limit{};
+    long m_escape_iteration{-1};
+    bool m_mandelbrot{};
+    bool m_legacy{};
+};
+
+DistanceEstimator standard_distance_estimator();
+
 class ImageCalculation
 {
 public:
