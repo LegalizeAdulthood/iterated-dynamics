@@ -973,6 +973,127 @@ TEST_P(TestPerturbationIterations, fmodColorsSurviveReferenceReplacement)
     }
 }
 
+TEST_P(TestPerturbationIterations, totalDistanceExcludesTheEscapingSegment)
+{
+    struct Sample
+    {
+        std::complex<double> point;
+        long iterations;
+        int color;
+    };
+
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::TDIS;
+    for (const Sample &sample :
+        {Sample{{0.5, 0.5}, 4, 3}, Sample{{0.5, -0.5}, 4, 3}, Sample{{-1.0, 1.0}, 2, 2}, Sample{{0.5, 0.0}, 4, 1}})
+    {
+        SCOPED_TRACE(sample.point);
+        compare_pixel(sample.point, 8);
+        EXPECT_EQ(sample.iterations, g_real_color_iter);
+        EXPECT_EQ(sample.color, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, totalDistanceStartsAtTheInitializedPoint)
+{
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::TDIS;
+    g_use_init_orbit = InitOrbitMode::VALUE;
+    g_init_orbit = {-0.5, 0.0};
+    compare_pixel({0.5, 0.0}, 8);
+    EXPECT_EQ(4, g_real_color_iter);
+    EXPECT_EQ(2, g_color);
+
+    for (const InitOrbitMode mode : {InitOrbitMode::NORMAL, InitOrbitMode::PIXEL, InitOrbitMode::VALUE})
+    {
+        SCOPED_TRACE(static_cast<int>(mode));
+        g_use_init_orbit = mode;
+        g_init_orbit = {-0.5, 0.25};
+        set_initial_offset({-0.25, 0.125});
+        compare_pixel({0.5, 0.5}, 8);
+    }
+    g_use_init_orbit = InitOrbitMode::NORMAL;
+    for (const ColorMethod inside : {ColorMethod::BOF60, ColorMethod::BOF61})
+    {
+        SCOPED_TRACE(static_cast<int>(inside));
+        g_inside_method = inside;
+        for (const bool book_images : {false, true})
+        {
+            SCOPED_TRACE(book_images);
+            g_bof_match_book_images = book_images;
+            compare_pixel({0.5, 0.5}, 8);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, totalDistanceUsesStandardRangeCorrection)
+{
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::TDIS;
+    for (const Version version : {parse_legacy_version(1960), parse_legacy_version(1961), current_id_version()})
+    {
+        SCOPED_TRACE(to_string(version));
+        g_version = version;
+        g_bailout_test = Bailout::MOD;
+        set_bailout_formula(Bailout::MOD);
+        compare_pixel({1.0, 0.0}, 16);
+        EXPECT_EQ(1, g_real_color_iter);
+        EXPECT_EQ(g_version < 1961 ? 0 : 1, g_color);
+
+        g_bailout_test = Bailout::IMAG;
+        set_bailout_formula(Bailout::IMAG);
+        compare_pixel({8.0, 0.0625}, 16);
+        EXPECT_EQ(2, g_real_color_iter);
+        EXPECT_EQ(g_version < 1961 ? 0 : 1, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, totalDistanceUsesStandardPaletteFolding)
+{
+    struct Sample
+    {
+        int colors;
+        int color;
+    };
+
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::TDIS;
+    g_bailout_test = Bailout::IMAG;
+    set_bailout_formula(Bailout::IMAG);
+    for (const Sample &sample : {Sample{4, 0}, Sample{16, 4}, Sample{256, 64}})
+    {
+        SCOPED_TRACE(sample.colors);
+        g_colors = sample.colors;
+        g_and_color = g_colors - 1;
+        compare_pixel({8.0, 0.0625}, 128);
+        EXPECT_EQ(sample.color, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, totalDistanceDoesNotChangeInsideColors)
+{
+    g_outside_method = ColorMethod::TDIS;
+    g_bof_match_book_images = false;
+    for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60, ColorMethod::BOF61,
+             ColorMethod::FMODI, ColorMethod::PERIOD, ColorMethod::COLOR})
+    {
+        SCOPED_TRACE(static_cast<int>(inside));
+        g_inside_method = inside;
+        compare_pixel({}, 16);
+        EXPECT_EQ(16, g_real_color_iter);
+    }
+}
+
+TEST_P(TestPerturbationIterations, totalDistanceRestartsWithAReplacementReference)
+{
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::TDIS;
+    m_engine.set_glitch_tolerance(8.0);
+    compare_pixel({0.5, 0.5}, 8, 0.125);
+    EXPECT_EQ(3, g_color);
+    EXPECT_GT(m_engine.reference_count(), 1);
+}
+
 TEST_P(TestPerturbationIterations, periodicityMatchesStandardSaveSchedules)
 {
     for (const bool legacy : {false, true})
