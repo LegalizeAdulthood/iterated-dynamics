@@ -248,6 +248,8 @@ private:
 
 int calc_mandelbrot_type();
 int standard_fractal_type();
+double fmod_magnitude(const math::DComplex &z, double magnitude);
+long fmod_color(double value);
 long standard_outside_color(long color, const math::DComplex &z);
 int standard_palette_color(long color);
 void init_atan_colors();

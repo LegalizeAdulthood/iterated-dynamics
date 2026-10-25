@@ -183,66 +183,59 @@ bool g_show_orbit{};                                   // flag to turn on and of
 bool g_start_show_orbit{};                             // show orbits on at start of fractal
 InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL}; // flag for init orbit
 
-static double fmod_test_bailout_or()
-{
-    const double tmp_x = sqr(g_new_z.x);
-    const double tmp_y = sqr(g_new_z.y);
-    if (tmp_x > tmp_y)
-    {
-        return tmp_x;
-    }
-
-    return tmp_y;
-}
-
-// Makes the test condition for the FMOD coloring type
-//   that of the current bailout method. 'or' and 'and'
-//   methods are not used - in these cases a normal
-//   modulus test is used
-//
-static double fmod_test()
+// FMOD follows the bailout metric, except AND uses the squared modulus.
+double fmod_magnitude(const DComplex &z, const double magnitude)
 {
     double result;
 
     switch (g_bailout_test)
     {
     case Bailout::MOD:
-        if (g_magnitude == 0.0 || g_magnitude_calc)
+        if (magnitude == 0.0 || g_magnitude_calc)
         {
-            result = sqr(g_new_z.x)+sqr(g_new_z.y);
+            result = sqr(z.x) + sqr(z.y);
         }
         else
         {
-            result = g_magnitude; // don't recalculate
+            result = magnitude; // don't recalculate
         }
         break;
 
     case Bailout::REAL:
-        result = sqr(g_new_z.x);
+        result = sqr(z.x);
         break;
 
     case Bailout::IMAG:
-        result = sqr(g_new_z.y);
+        result = sqr(z.y);
         break;
 
     case Bailout::OR:
-        result = fmod_test_bailout_or();
-        break;
+    {
+        const double x = sqr(z.x);
+        const double y = sqr(z.y);
+        result = x > y ? x : y;
+    }
+    break;
 
     case Bailout::MANH:
-        result = sqr(std::abs(g_new_z.x) + std::abs(g_new_z.y));
+        result = sqr(std::abs(z.x) + std::abs(z.y));
         break;
 
     case Bailout::MANR:
-        result = sqr(g_new_z.x+g_new_z.y);
+        result = sqr(z.x + z.y);
         break;
 
     default:
-        result = sqr(g_new_z.x)+sqr(g_new_z.y);
+        result = sqr(z.x) + sqr(z.y);
         break;
     }
 
     return result;
+}
+
+long fmod_color(const double value)
+{
+    return static_cast<long>(value * g_colors / g_close_proximity);
 }
 
 // The sym_fill_line() routine was pulled out of the boundary tracing
@@ -1224,7 +1217,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             }
             else if (g_inside_method == ColorMethod::FMODI)
             {
-                if (const double mag = fmod_test(); mag < g_close_proximity)
+                if (const double mag = fmod_magnitude(g_new_z, g_magnitude); mag < g_close_proximity)
                 {
                     m_mem_value = mag;
                 }
@@ -1254,7 +1247,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             }
             else if (g_outside_method == ColorMethod::FMOD)
             {
-                if (const double mag = fmod_test(); mag < g_close_proximity)
+                if (const double mag = fmod_magnitude(g_new_z, g_magnitude); mag < g_close_proximity)
                 {
                     m_mem_value = mag;
                 }
@@ -1419,7 +1412,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         set_new_z_from_bignum();
         if (g_outside_method == ColorMethod::FMOD)
         {
-            g_color_iter = static_cast<long>(m_mem_value * g_colors / g_close_proximity);
+            g_color_iter = fmod_color(m_mem_value);
         }
         else if (g_outside_method == ColorMethod::TDIS)
         {
@@ -1559,7 +1552,7 @@ plot_inside: // we're "inside"
         }
         else if (g_inside_method == ColorMethod::FMODI)
         {
-            g_color_iter = static_cast<long>(m_mem_value * g_colors / g_close_proximity);
+            g_color_iter = fmod_color(m_mem_value);
         }
         else if (g_inside_method == ColorMethod::ATANI)            // "atan"
         {

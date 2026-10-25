@@ -524,6 +524,8 @@ int PertEngine::calculate_point(const Point &pt)
 
     double min_orbit{1e5}; // orbit value closest to origin
     long min_index{};      // iteration of min_orbit
+    double mem_value{};
+    const bool remember_fmod{g_inside_method == ColorMethod::FMODI || g_outside_method == ColorMethod::FMOD};
     std::complex<double> w{reference.orbit.front() + orbit_displacement};
     std::complex<double> old{w};
     double magnitude{mag_squared(w)};
@@ -566,6 +568,13 @@ int PertEngine::calculate_point(const Point &pt)
         if (escaped)
         {
             break;
+        }
+        if (remember_fmod)
+        {
+            if (const double mag = fmod_magnitude({w.real(), w.imag()}, magnitude); mag < g_close_proximity)
+            {
+                mem_value = mag;
+            }
         }
         old = w;
         if (check_periodicity && iteration > g_old_color_iter)
@@ -722,6 +731,10 @@ int PertEngine::calculate_point(const Point &pt)
             index = iteration == g_max_iterations ? g_max_iterations : standard_outside_color(iteration, g_new_z);
             break;
 
+        case ColorMethod::FMOD:
+            index = iteration == g_max_iterations ? g_max_iterations : fmod_color(mem_value);
+            break;
+
         default:
             if (g_potential.flag)
             {
@@ -772,6 +785,13 @@ int PertEngine::calculate_point(const Point &pt)
                 if (iteration == g_max_iterations)
                 {
                     index = min_index;
+                }
+                break;
+
+            case ColorMethod::FMODI:
+                if (iteration == g_max_iterations)
+                {
+                    index = fmod_color(mem_value);
                 }
                 break;
 

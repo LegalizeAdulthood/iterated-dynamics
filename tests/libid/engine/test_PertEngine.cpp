@@ -74,6 +74,33 @@ TEST(TestPertEngine, nonDefaultGlitchToleranceScalesThreshold)
     EXPECT_DOUBLE_EQ(6.25, engine.glitch_tolerance_threshold({3.0, 4.0}));
 }
 
+TEST(TestPertEngine, fmodMagnitudeMatchesTheSelectedBailoutMetric)
+{
+    ValueSaver saved_bailout{g_bailout_test};
+    ValueSaver saved_calculate{g_magnitude_calc, false};
+
+    struct Sample
+    {
+        Bailout bailout;
+        double magnitude;
+    };
+
+    for (const Sample &sample : {Sample{Bailout::MOD, 13.0}, {Bailout::REAL, 4.0}, {Bailout::IMAG, 9.0},
+             {Bailout::OR, 9.0}, {Bailout::AND, 13.0}, {Bailout::MANH, 25.0}, {Bailout::MANR, 1.0}})
+    {
+        SCOPED_TRACE(static_cast<int>(sample.bailout));
+        g_bailout_test = sample.bailout;
+        EXPECT_DOUBLE_EQ(sample.magnitude, fmod_magnitude({2.0, -3.0}, 13.0));
+    }
+    g_bailout_test = Bailout::OR;
+    EXPECT_DOUBLE_EQ(9.0, fmod_magnitude({-3.0, 2.0}, 13.0));
+    g_bailout_test = Bailout::MOD;
+    EXPECT_DOUBLE_EQ(7.0, fmod_magnitude({2.0, -3.0}, 7.0));
+    EXPECT_DOUBLE_EQ(13.0, fmod_magnitude({2.0, -3.0}, 0.0));
+    g_magnitude_calc = true;
+    EXPECT_DOUBLE_EQ(13.0, fmod_magnitude({2.0, -3.0}, 7.0));
+}
+
 TEST(TestPertEngine, referenceSampleCountIncludesTheInitialValue)
 {
     EXPECT_EQ(129, PertEngine::reference_sample_count(128));
@@ -408,6 +435,8 @@ protected:
     ValueSaver<Bailout> m_saved_bailout_test{g_bailout_test};
     ValueSaver<Version> m_saved_version{g_version};
     ValueSaver<int> m_saved_atan_colors{g_atan_colors};
+    ValueSaver<double> m_saved_proximity{g_close_proximity, 0.01};
+    ValueSaver<bool> m_saved_magnitude_calc{g_magnitude_calc, false};
 };
 
 void TestPerturbationIterations::SetUp()
@@ -818,6 +847,128 @@ TEST_P(TestPerturbationIterations, specialOutsideColorsSurviveReferenceReplaceme
         SCOPED_TRACE(static_cast<int>(outside));
         g_outside_method = outside;
         compare_pixel({-1.0, 1.0}, 512, 0.125);
+        EXPECT_GT(m_engine.reference_count(), 1);
+    }
+}
+
+TEST_P(TestPerturbationIterations, outsideFmodMatchesAllStandardBailoutMetrics)
+{
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::FMOD;
+    for (const Bailout bailout :
+        {Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
+    {
+        SCOPED_TRACE(static_cast<int>(bailout));
+        g_bailout_test = bailout;
+        set_bailout_formula(bailout);
+        for (const double proximity : {0.5, 1.25, 2.0, 2.3125, 4.0, 16.0, -16.0})
+        {
+            SCOPED_TRACE(proximity);
+            g_close_proximity = proximity;
+            compare_pixel({0.5, 0.5}, 8);
+            EXPECT_LT(g_real_color_iter, g_max_iterations);
+            EXPECT_GT(m_engine.reference_count(), 0);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, insideFmodMatchesAllStandardBailoutMetrics)
+{
+    g_inside_method = ColorMethod::FMODI;
+    for (const Bailout bailout :
+        {Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
+    {
+        SCOPED_TRACE(static_cast<int>(bailout));
+        g_bailout_test = bailout;
+        set_bailout_formula(bailout);
+        for (const double proximity : {0.001, 0.01, 0.1, -0.1})
+        {
+            SCOPED_TRACE(proximity);
+            g_close_proximity = proximity;
+            compare_pixel({0.125, 0.0625}, 8);
+            EXPECT_EQ(8, g_real_color_iter);
+            EXPECT_GT(m_engine.reference_count(), 0);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, outsideFmodRemembersTheLastQualifiedNonescapingValue)
+{
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::FMOD;
+
+    struct Sample
+    {
+        double proximity;
+        int color;
+    };
+
+    for (const Sample &sample : {Sample{16.0, 46}, {4.0, 186}, {2.3125, 138}, {1.25, 0}, {-16.0, 0}})
+    {
+        SCOPED_TRACE(sample.proximity);
+        g_close_proximity = sample.proximity;
+        compare_pixel({0.5, 0.5}, 8);
+        EXPECT_EQ(4, g_real_color_iter);
+        EXPECT_EQ(sample.color, g_color);
+    }
+    g_close_proximity = 16.0;
+
+    struct Palette
+    {
+        int colors;
+        int color;
+    };
+
+    for (const Palette &sample : {Palette{4, 0}, {16, 2}, {256, 46}})
+    {
+        SCOPED_TRACE(sample.colors);
+        g_colors = sample.colors;
+        g_and_color = g_colors - 1;
+        compare_pixel({0.5, 0.5}, 8);
+        EXPECT_EQ(sample.color, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, insideFmodRemembersTheLastValueRatherThanTheMinimum)
+{
+    g_inside_method = ColorMethod::FMODI;
+    for (const double proximity : {2.0, 1.0, -2.0})
+    {
+        SCOPED_TRACE(proximity);
+        g_close_proximity = proximity;
+        for (const long iterations : {2L, 3L, 4L, 5L})
+        {
+            SCOPED_TRACE(iterations);
+            compare_pixel({-1.0, 0.0}, iterations);
+            EXPECT_EQ(iterations, g_real_color_iter);
+            EXPECT_EQ(proximity == 2.0 && iterations % 2 != 0 ? 128 : 0, g_color);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, insideAndOutsideFmodShareTheSameOrbitSamples)
+{
+    g_inside_method = ColorMethod::FMODI;
+    g_outside_method = ColorMethod::FMOD;
+    g_close_proximity = 16.0;
+    compare_pixel({0.5, 0.5}, 8);
+    EXPECT_EQ(46, g_color);
+    g_close_proximity = 2.0;
+    compare_pixel({-1.0, 0.0}, 5);
+    EXPECT_EQ(128, g_color);
+}
+
+TEST_P(TestPerturbationIterations, fmodColorsSurviveReferenceReplacement)
+{
+    m_engine.set_glitch_tolerance(8.0);
+    for (const bool inside : {false, true})
+    {
+        SCOPED_TRACE(inside);
+        g_inside_method = inside ? ColorMethod::FMODI : ColorMethod::ITER;
+        g_outside_method = inside ? ColorMethod::ITER : ColorMethod::FMOD;
+        g_close_proximity = inside ? 2.0 : 16.0;
+        compare_pixel(inside ? std::complex<double>{-1.0, 0.0} : std::complex<double>{0.5, 0.5}, inside ? 5 : 8, 0.125);
+        EXPECT_EQ(inside ? 128 : 46, g_color);
         EXPECT_GT(m_engine.reference_count(), 1);
     }
 }
