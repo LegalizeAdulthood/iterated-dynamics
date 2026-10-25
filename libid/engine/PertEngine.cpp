@@ -53,6 +53,101 @@ bool bof_initialization()
         (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61) && g_bof_match_book_images;
 }
 
+void initialize_orbit_bf(const BFComplex z, const BFComplex &coordinate)
+{
+    BigStackSaver saved;
+    const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+    float_to_bf(z.x, g_params[0]);
+    float_to_bf(z.y, g_params[1]);
+    if (!bof_initialization())
+    {
+        if (g_use_init_orbit == InitOrbitMode::VALUE)
+        {
+            float_to_bf(offset, g_init_orbit.x);
+            add_a_bf(z.x, offset);
+            float_to_bf(offset, g_init_orbit.y);
+            add_a_bf(z.y, offset);
+        }
+        else
+        {
+            add_a_bf(z.x, coordinate.x);
+            add_a_bf(z.y, coordinate.y);
+        }
+    }
+}
+
+bool ambiguous_bailout(const std::complex<double> &reference, const std::complex<double> &delta)
+{
+    const double scale{
+        std::abs(reference.real()) + std::abs(reference.imag()) + std::abs(delta.real()) + std::abs(delta.imag())};
+    // bf_to_float reads whole bytes after the leading byte. Include its
+    // truncation as well as reconstruction and squared-metric roundoff.
+    constexpr int REFERENCE_BITS{8 * (std::numeric_limits<LDouble>::digits / 8)};
+    const double conversion_error{std::ldexp(1.0, -REFERENCE_BITS) + std::numeric_limits<double>::epsilon()};
+    const double error{8.0 * conversion_error * scale * scale};
+    const std::complex<double> value{reference + delta};
+    const double x{sqr(value.real())};
+    const double y{sqr(value.imag())};
+    const auto near_limit = [error](const double metric)
+    { return !std::isfinite(metric) || std::abs(metric - g_magnitude_limit) <= error; };
+    switch (g_bailout_test)
+    {
+    case Bailout::MOD:
+        return near_limit(x + y);
+    case Bailout::REAL:
+        return near_limit(x);
+    case Bailout::IMAG:
+        return near_limit(y);
+    case Bailout::OR:
+    case Bailout::AND:
+        return near_limit(x) || near_limit(y);
+    case Bailout::MANH:
+        return near_limit(sqr(std::abs(value.real()) + std::abs(value.imag())));
+    case Bailout::MANR:
+        return near_limit(sqr(value.real() + value.imag()));
+    }
+    throw std::logic_error("Unknown bailout test");
+}
+
+bool precise_bailout_reached(const BFComplex &z)
+{
+    BigStackSaver saved;
+    const BigFloat x{alloc_stack(g_r_bf_length + 2)};
+    const BigFloat y{alloc_stack(g_r_bf_length + 2)};
+    const BigFloat metric{alloc_stack(g_r_bf_length + 2)};
+    const BigFloat limit{alloc_stack(g_r_bf_length + 2)};
+    float_to_bf(limit, g_magnitude_limit);
+    square_bf(x, z.x);
+    square_bf(y, z.y);
+    switch (g_bailout_test)
+    {
+    case Bailout::MOD:
+        add_bf(metric, x, y);
+        break;
+    case Bailout::REAL:
+        return cmp_bf(x, limit) >= 0;
+    case Bailout::IMAG:
+        return cmp_bf(y, limit) >= 0;
+    case Bailout::OR:
+        return cmp_bf(x, limit) >= 0 || cmp_bf(y, limit) >= 0;
+    case Bailout::AND:
+        return cmp_bf(x, limit) >= 0 && cmp_bf(y, limit) >= 0;
+    case Bailout::MANH:
+        abs_bf(x, z.x);
+        abs_bf(y, z.y);
+        add_bf(metric, x, y);
+        square_bf(metric, metric);
+        break;
+    case Bailout::MANR:
+        add_bf(metric, z.x, z.y);
+        square_bf(metric, metric);
+        break;
+    default:
+        throw std::logic_error("Unknown bailout test");
+    }
+    return cmp_bf(metric, limit) >= 0;
+}
+
 } // namespace
 
 std::size_t PertEngine::reference_sample_count(const long max_iterations)
@@ -287,6 +382,22 @@ std::complex<double> PertEngine::parameter_delta(const std::complex<double> &pix
     return {static_cast<double>(bf_to_float(coordinate.x)), static_cast<double>(bf_to_float(coordinate.y))};
 }
 
+void PertEngine::coordinate_bf(const BFComplex coordinate, const std::complex<double> &pixel_position) const
+{
+    if (g_inversion.invert != 0)
+    {
+        inverted_coordinate(coordinate, pixel_position);
+    }
+    else
+    {
+        const std::complex<double> delta{pixel_delta(pixel_position)};
+        float_to_bf(m_tmp_bf, delta.real());
+        add_bf(coordinate.x, m_center_bf.x, m_tmp_bf);
+        float_to_bf(m_tmp_bf, delta.imag());
+        add_bf(coordinate.y, m_center_bf.y, m_tmp_bf);
+    }
+}
+
 void PertEngine::set_reference_point(const std::complex<double> &pixel_position)
 {
     const std::size_t samples{reference_sample_count(g_max_iterations)};
@@ -298,17 +409,7 @@ void PertEngine::set_reference_point(const std::complex<double> &pixel_position)
 
     if (g_bf_math != BFMathType::NONE)
     {
-        if (g_inversion.invert != 0)
-        {
-            inverted_coordinate(m_reference_coordinate_bf, pixel_position);
-        }
-        else
-        {
-            float_to_bf(m_tmp_bf, reference.delta.real());
-            add_bf(m_reference_coordinate_bf.x, m_center_bf.x, m_tmp_bf);
-            float_to_bf(m_tmp_bf, reference.delta.imag());
-            add_bf(m_reference_coordinate_bf.y, m_center_bf.y, m_tmp_bf);
-        }
+        coordinate_bf(m_reference_coordinate_bf, pixel_position);
         reference_zoom_point(reference, m_reference_coordinate_bf);
     }
     else
@@ -330,6 +431,10 @@ int PertEngine::calculate_point(const Point &pt)
         bof || g_use_init_orbit == InitOrbitMode::VALUE ? std::complex<double>{} : parameter_displacement};
     const bool at_reference{pixel_position == reference.pixel_position};
     long iteration{bof ? -1L : 0L};
+    BigStackSaver saved;
+    BFComplex precise_coordinate{};
+    BFComplex precise_orbit{};
+    std::size_t precise_sample{};
 
     double min_orbit{1e5}; // orbit value closest to origin
     long min_index{};      // iteration of min_orbit
@@ -349,6 +454,32 @@ int PertEngine::calculate_point(const Point &pt)
         w = reference.orbit[sample] + orbit_displacement;
         magnitude = mag_squared(w);
 
+        // At the reference pixel, zero delta uses the reference orbit directly.
+        if (!at_reference && (!std::isfinite(magnitude) || magnitude < reference.tolerance[sample]))
+        {
+            return PERTURBATION_RETRY;
+        }
+        bool escaped{bailout_reached(g_bailout_test, w.real(), w.imag(), g_magnitude_limit)};
+        if (g_bf_math != BFMathType::NONE && ambiguous_bailout(reference.orbit[sample], orbit_displacement))
+        {
+            if (precise_orbit.x == nullptr)
+            {
+                precise_coordinate = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+                precise_orbit = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+                coordinate_bf(precise_coordinate, pixel_position);
+                initialize_orbit_bf(precise_orbit, precise_coordinate);
+            }
+            // Retain only the current high-precision value, not another orbit history.
+            for (; precise_sample < sample; ++precise_sample)
+            {
+                old = {static_cast<double>(bf_to_float(precise_orbit.x)),
+                    static_cast<double>(bf_to_float(precise_orbit.y))};
+                g_cur_fractal_specific->pert_ref_bf(precise_coordinate, precise_orbit);
+            }
+            w = {static_cast<double>(bf_to_float(precise_orbit.x)), static_cast<double>(bf_to_float(precise_orbit.y))};
+            magnitude = mag_squared(w);
+            escaped = precise_bailout_reached(precise_orbit);
+        }
         if (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61)
         {
             if (magnitude < min_orbit)
@@ -357,13 +488,7 @@ int PertEngine::calculate_point(const Point &pt)
                 min_index = iteration + 1L;
             }
         }
-
-        // At the reference pixel, zero delta uses the reference orbit directly.
-        if (!at_reference && (!std::isfinite(magnitude) || magnitude < reference.tolerance[sample]))
-        {
-            return PERTURBATION_RETRY;
-        }
-        if (bailout_reached(g_bailout_test, w.real(), w.imag(), g_magnitude_limit))
+        if (escaped)
         {
             break;
         }
@@ -572,23 +697,7 @@ void PertEngine::reference_zoom_point(ReferencePoint &reference, const BFComplex
     BigFloat temp_imag_bf = alloc_stack(g_r_bf_length + 2);
     BigFloat tmp_bf = alloc_stack(g_r_bf_length + 2);
 
-    float_to_bf(z_bf.x, g_params[0]);
-    float_to_bf(z_bf.y, g_params[1]);
-    if (!bof_initialization())
-    {
-        if (g_use_init_orbit == InitOrbitMode::VALUE)
-        {
-            float_to_bf(tmp_bf, g_init_orbit.x);
-            add_a_bf(z_bf.x, tmp_bf);
-            float_to_bf(tmp_bf, g_init_orbit.y);
-            add_a_bf(z_bf.y, tmp_bf);
-        }
-        else
-        {
-            add_a_bf(z_bf.x, center.x);
-            add_a_bf(z_bf.y, center.y);
-        }
-    }
+    initialize_orbit_bf(z_bf, center);
 
     for (std::size_t i = 0; i < reference.orbit.size(); ++i)
     {

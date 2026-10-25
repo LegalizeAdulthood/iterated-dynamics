@@ -53,6 +53,7 @@ private:
     std::complex<double> parameter_delta(const std::complex<double> &pixel_position) const;
     std::complex<double> inverted_coordinate(const std::complex<double> &pixel_position) const;
     void inverted_coordinate(math::BFComplex coordinate, const std::complex<double> &pixel_position) const;
+    void coordinate_bf(math::BFComplex coordinate, const std::complex<double> &pixel_position) const;
     void reset_for_frame(const std::complex<double> &half_horizontal, const std::complex<double> &half_vertical);
     int calculate_point(const Point &pt);
     void reference_zoom_point(ReferencePoint &reference, const math::BFComplex &center);

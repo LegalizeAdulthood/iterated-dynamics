@@ -979,6 +979,161 @@ TEST_F(TestPerturbationPixels, highPrecisionInitialOffsetPreservesCancellation)
     EXPECT_DOUBLE_EQ(0.0, s_perturbation_orbit.front().imag());
 }
 
+TEST_F(TestPerturbationPixels, highPrecisionBailoutBoundariesPreserveSmallDisplacements)
+{
+    ValueSaver saved_test{g_bailout_test};
+    ValueSaver saved_mode{g_use_init_orbit, InitOrbitMode::VALUE};
+    ValueSaver saved_initial{g_init_orbit, DComplex{}};
+    ValueSaver saved_real{g_params[0], 0.0};
+    ValueSaver saved_imag{g_params[1], 0.0};
+    g_max_iterations = 2;
+
+    struct Boundary
+    {
+        Bailout test;
+        DComplex point;
+        bool imaginary;
+        int outward_sign;
+        double limit;
+    };
+
+    const std::array<Boundary, 8> boundaries{{
+        {Bailout::MOD, {-2.0, 0.0}, false, -1, 4.0},
+        {Bailout::REAL, {-2.0, 0.0}, false, -1, 4.0},
+        {Bailout::IMAG, {0.0, 2.0}, true, 1, 4.0},
+        {Bailout::OR, {0.0, 2.0}, true, 1, 4.0},
+        {Bailout::AND, {2.0, 2.0}, false, 1, 4.0},
+        {Bailout::MANH, {1.0, -1.0}, false, 1, 4.0},
+        {Bailout::MANR, {3.0, -1.0}, false, 1, 4.0},
+        {Bailout::MOD, {3.0, 4.0}, false, 1, 25.0},
+    }};
+    for (const Boundary &boundary : boundaries)
+    {
+        SCOPED_TRACE(static_cast<int>(boundary.test));
+        SCOPED_TRACE(boundary.limit);
+        g_bailout_test = boundary.test;
+        g_magnitude_limit = boundary.limit;
+        for (const int reference_mode : {0, 1, 2})
+        {
+            SCOPED_TRACE(reference_mode);
+            for (const int sign : {-1, 0, 1})
+            {
+                SCOPED_TRACE(sign);
+                m_engine.finish();
+                if (m_big_float)
+                {
+                    free_bf_vars();
+                }
+                init_bf_dec(60);
+                m_big_float = true;
+                g_bf_math = BFMathType::BIG_FLT;
+                const double offset{sign * 1e-40};
+                const std::complex<double> half_horizontal{
+                    reference_mode != 0 && !boundary.imaginary ? offset : 0.0, 0.0};
+                const std::complex<double> half_vertical{0.0, reference_mode != 0 && boundary.imaginary ? offset : 0.0};
+                const BFComplex center{m_engine.initialize_frame_bf(half_horizontal, half_vertical)};
+                float_to_bf(center.x, boundary.point.x);
+                float_to_bf(center.y, boundary.point.y);
+                if (reference_mode == 0)
+                {
+                    BigStackSaver saved;
+                    const BigFloat delta{alloc_stack(g_r_bf_length + 2)};
+                    float_to_bf(delta, offset);
+                    add_a_bf(boundary.imaginary ? center.y : center.x, delta);
+                }
+                DComplex expected;
+                {
+                    BigStackSaver saved;
+                    const BFComplex coordinate{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+                    const BigFloat delta{alloc_stack(g_r_bf_length + 2)};
+                    float_to_bf(coordinate.x, boundary.point.x);
+                    float_to_bf(coordinate.y, boundary.point.y);
+                    float_to_bf(delta, offset);
+                    add_a_bf(boundary.imaginary ? coordinate.y : coordinate.x, delta);
+                    expected = {
+                        static_cast<double>(bf_to_float(coordinate.x)), static_cast<double>(bf_to_float(coordinate.y))};
+                }
+                m_engine.set_glitch_tolerance(reference_mode == 2 ? 2.0 : 0.0);
+                const bool escaped{sign == 0 || sign == boundary.outward_sign};
+
+                EXPECT_EQ(escaped ? 1 : 7, m_engine.calculate_pixel(WIDTH - 1, 0));
+
+                EXPECT_EQ(escaped ? 1 : 2, g_real_color_iter);
+                EXPECT_EQ(escaped ? 1 : 2, g_color_iter);
+                EXPECT_DOUBLE_EQ(expected.x, g_new_z.x);
+                EXPECT_DOUBLE_EQ(expected.y, g_new_z.y);
+                EXPECT_DOUBLE_EQ(escaped ? 0.0 : expected.x, g_old_z.x);
+                EXPECT_DOUBLE_EQ(escaped ? 0.0 : expected.y, g_old_z.y);
+                EXPECT_DOUBLE_EQ(expected.x * expected.x, g_temp_sqr_x);
+                EXPECT_DOUBLE_EQ(expected.y * expected.y, g_temp_sqr_y);
+                EXPECT_DOUBLE_EQ(g_temp_sqr_x + g_temp_sqr_y, g_magnitude);
+                EXPECT_EQ(reference_mode == 2 ? 2 : 1, m_engine.reference_count());
+            }
+        }
+    }
+}
+
+TEST_F(TestPerturbationPixels, highPrecisionMandelBoundaryRetainsOnlyTheCurrentPreciseOrbitValue)
+{
+    ValueSaver saved_test{g_bailout_test, Bailout::MOD};
+    ValueSaver saved_mode{g_use_init_orbit, InitOrbitMode::NORMAL};
+    ValueSaver saved_real{g_params[0], 0.0};
+    ValueSaver saved_imag{g_params[1], 0.0};
+    g_max_iterations = 16;
+    m_specific.pert_ref_bf = record_reference_bf;
+    for (const int sign : {-1, 0, 1})
+    {
+        SCOPED_TRACE(sign);
+        m_engine.finish();
+        if (m_big_float)
+        {
+            free_bf_vars();
+        }
+        init_bf_dec(60);
+        m_big_float = true;
+        g_bf_math = BFMathType::BIG_FLT;
+        const BFComplex center{m_engine.initialize_frame_bf({}, {})};
+        float_to_bf(center.x, -2.0);
+        clear_bf(center.y);
+        {
+            BigStackSaver saved;
+            const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+            float_to_bf(offset, sign * 1e-40);
+            add_a_bf(center.x, offset);
+        }
+        double expected_old;
+        double expected_new;
+        {
+            BigStackSaver saved;
+            const BigFloat z{alloc_stack(g_r_bf_length + 2)};
+            const BigFloat square{alloc_stack(g_r_bf_length + 2)};
+            copy_bf(z, center.x);
+            for (long i = 0; i < (sign > 0 ? g_max_iterations - 1 : 1); ++i)
+            {
+                expected_old = static_cast<double>(bf_to_float(z));
+                square_bf(square, z);
+                add_bf(z, square, center.x);
+            }
+            expected_new = static_cast<double>(bf_to_float(z));
+            if (sign > 0)
+            {
+                expected_old = expected_new;
+            }
+        }
+        s_reference_coordinates.clear();
+
+        EXPECT_EQ(sign > 0 ? 7 : 1, m_engine.calculate_pixel(0, 0));
+
+        EXPECT_EQ(sign > 0 ? 16 : 1, g_real_color_iter);
+        EXPECT_DOUBLE_EQ(expected_new, g_new_z.x);
+        EXPECT_DOUBLE_EQ(0.0, g_new_z.y);
+        EXPECT_DOUBLE_EQ(expected_old, g_old_z.x);
+        EXPECT_DOUBLE_EQ(expected_new * expected_new, g_magnitude);
+        EXPECT_EQ(1, m_engine.reference_count());
+        EXPECT_EQ(g_max_iterations + (sign > 0 ? g_max_iterations - 1 : 1), s_reference_coordinates.size());
+    }
+}
+
 TEST_F(TestPerturbationPixels, highPrecisionFixedOrbitPreservesSmallParameterOffsets)
 {
     ValueSaver saved_mode{g_use_init_orbit, InitOrbitMode::VALUE};
