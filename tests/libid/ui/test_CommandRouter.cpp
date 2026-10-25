@@ -8,6 +8,7 @@
 #include <engine/command_comments.h>
 #include <engine/CommandProcessor.h>
 #include <engine/sound.h>
+#include <engine/UserData.h>
 #include <engine/VideoInfo.h>
 #include <fractals/formula.h>
 #include <fractals/fractalp.h>
@@ -2261,6 +2262,34 @@ TEST_F(TestCommandRouterStartup, resetsTakeEffectInlineAcrossStartupSources)
     EXPECT_EQ(444L, g_max_iterations);
     EXPECT_EQ((Version{1, 4, 0, 0, false}), g_version);
     EXPECT_EQ(g_version, g_file_version);
+}
+
+TEST_F(TestCommandRouterStartup, floatOnlyIndirectSetsDoNotRepeatCompatibilityMigration)
+{
+    ValueSaver saved_user{g_user};
+    ValueSaver saved_param_1{g_params[1]};
+    ValueSaver saved_type{g_fractal_type};
+    ValueSaver saved_specific{g_cur_fractal_specific};
+    ValueSaver saved_dispatch{g_dispatch};
+    write_source("legacy.par", "entry { reset=1824 type=marksjulia params=0.1/0.9/3 }");
+    const CommandRouter router;
+
+    for (const bool legacy_float : {true, false})
+    {
+        SCOPED_TRACE(legacy_float);
+        write_source("float-only.par", legacy_float ? "chosen { float=y }" : "chosen { float=n }");
+        for (const char *argument : {"@float-only", "@float-only/chosen"})
+        {
+            SCOPED_TRACE(argument);
+
+            const CommandParseResult result{router.process_startup({"id", "@legacy", argument})};
+
+            EXPECT_TRUE(result.diagnostics.errors.empty());
+            EXPECT_EQ(FractalType::MARKS_JULIA, g_fractal_type);
+            EXPECT_DOUBLE_EQ(4.0, g_params[2]);
+            EXPECT_EQ(legacy_float, g_user.legacy_float);
+        }
+    }
 }
 
 } // namespace id::test

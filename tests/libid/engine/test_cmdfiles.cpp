@@ -3358,7 +3358,7 @@ TEST_F(TestParameterCommand, floatYes)
 
     exec_cmd_arg("float=y");
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_user.legacy_float);
 }
 
@@ -3368,7 +3368,7 @@ TEST_F(TestParameterCommand, floatNo)
 
     exec_cmd_arg("float=n");
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_FALSE(g_user.legacy_float);
 }
 

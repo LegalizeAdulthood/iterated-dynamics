@@ -1370,7 +1370,7 @@ static CmdArgFlags cmd_float(const Command &cmd)
         return cmd.bad_arg();
     }
     g_user.legacy_float = cmd.yes_no_val[0] != 0;
-    return CmdArgFlags::FRACTAL_PARAM;
+    return CmdArgFlags::NONE;
 }
 
 // formulafile=?
