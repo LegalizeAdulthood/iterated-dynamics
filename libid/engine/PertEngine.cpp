@@ -45,6 +45,13 @@ namespace
 
 constexpr int PERTURBATION_RETRY{-3};
 
+bool bof_initialization()
+{
+    // Ordinary manzpower uses other_mandel_per_pixel, without BOF seeding.
+    return (g_fractal_type != FractalType::MANDEL_Z_POWER || g_bf_math != BFMathType::NONE) &&
+        (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61) && g_bof_match_book_images;
+}
+
 } // namespace
 
 std::size_t PertEngine::reference_sample_count(const long max_iterations)
@@ -317,9 +324,10 @@ int PertEngine::calculate_point(const Point &pt)
     const ReferencePoint &reference{m_reference};
     const std::complex<double> pixel_position{static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())};
     const std::complex<double> delta_sub_0{parameter_delta(pixel_position)};
-    std::complex<double> delta_sub_n{delta_sub_0};
+    const bool bof{bof_initialization()};
+    std::complex<double> delta_sub_n{bof ? std::complex<double>{} : delta_sub_0};
     const bool at_reference{pixel_position == reference.pixel_position};
-    long iteration{};
+    long iteration{bof ? -1L : 0L};
 
     double min_orbit{1e5}; // orbit value closest to origin
     long min_index{};      // iteration of min_orbit
@@ -333,7 +341,7 @@ int PertEngine::calculate_point(const Point &pt)
             throw std::runtime_error("No perturbation point function defined for fractal type (" +
                 std::string{g_cur_fractal_specific->name} + ")");
         }
-        const std::size_t sample{static_cast<std::size_t>(iteration)};
+        const std::size_t sample{static_cast<std::size_t>(iteration + (bof ? 1 : 0))};
         old = w;
         g_cur_fractal_specific->pert_pt(reference.orbit[sample - 1], delta_sub_n, delta_sub_0);
         w = reference.orbit[sample] + delta_sub_n;
@@ -368,6 +376,11 @@ int PertEngine::calculate_point(const Point &pt)
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = magnitude;
 
+    // BOF's first update is iteration zero, but escape colors start at one.
+    if (iteration == 0)
+    {
+        iteration = 1;
+    }
     int index;
     const double rq_lim2{std::sqrt(g_magnitude_limit)};
 
@@ -557,8 +570,13 @@ void PertEngine::reference_zoom_point(ReferencePoint &reference, const BFComplex
     BigFloat temp_imag_bf = alloc_stack(g_r_bf_length + 2);
     BigFloat tmp_bf = alloc_stack(g_r_bf_length + 2);
 
-    copy_bf(z_bf.x, center.x);
-    copy_bf(z_bf.y, center.y);
+    float_to_bf(z_bf.x, g_params[0]);
+    float_to_bf(z_bf.y, g_params[1]);
+    if (!bof_initialization())
+    {
+        add_a_bf(z_bf.x, center.x);
+        add_a_bf(z_bf.y, center.y);
+    }
 
     for (std::size_t i = 0; i < reference.orbit.size(); ++i)
     {
@@ -595,7 +613,11 @@ void PertEngine::reference_zoom_point(ReferencePoint &reference, const BFComplex
 
 void PertEngine::reference_zoom_point(ReferencePoint &reference, const std::complex<double> &center)
 {
-    std::complex<double> z = center;
+    std::complex<double> z{g_param_z1.x, g_param_z1.y};
+    if (!bof_initialization())
+    {
+        z += center;
+    }
 
     for (std::size_t i = 0; i < reference.orbit.size(); ++i)
     {
