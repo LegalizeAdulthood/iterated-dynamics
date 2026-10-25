@@ -816,7 +816,7 @@ int StandardFractal::calculate_mandelbrot_pixel()
     {
         g_color = static_cast<int>(g_color_iter);
     }
-    if (chunk_complete && standard_pixel_yield_enabled())
+    if (chunk_complete)
     {
         m_standard_pixel_completed_yield = true;
     }

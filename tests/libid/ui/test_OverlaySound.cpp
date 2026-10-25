@@ -9,6 +9,7 @@
 #include <engine/calmanfp.h>
 #include <engine/cmdfiles.h>
 #include <engine/color_state.h>
+#include <engine/fractals.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
 #include <engine/log_map.h>
@@ -526,16 +527,114 @@ TEST_F(TestOverlaySound, controllerSuspendsWithinAnOrbitAndResumesUnfinishedPixe
 TEST_F(TestOverlaySound, optimizedPixelYieldsCompletedWorkWithoutPolling)
 {
     g_show_orbit = false;
-    g_keyboard_check_interval = 0;
-    calc_mandelbrot_init();
-    StandardFractal calculation;
-    calculation.m_standard_pass.select(CalcMode::ONE_PASS);
+    ValueSaver saved_param{g_param_z1, DComplex{}};
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, get_key()).Times(0);
 
-    EXPECT_GE(calculation.calculate_mandelbrot_pixel(), 0);
+    for (const FractalType type : {FractalType::MANDEL, FractalType::JULIA})
+    {
+        g_fractal_type = type;
+        for (const CalcMode mode : {CalcMode::ONE_PASS, CalcMode::TWO_PASS, CalcMode::BOUNDARY_TRACE,
+                 CalcMode::SOLID_GUESS, CalcMode::DIFFUSION, CalcMode::TESSERAL})
+        {
+            g_keyboard_check_interval = 0;
+            calc_mandelbrot_init();
+            StandardFractal calculation;
+            calculation.m_standard_pass.select(mode);
 
-    EXPECT_TRUE(calculation.consume_traversal_yield());
+            EXPECT_GE(calculation.calculate_mandelbrot_pixel(), 0);
+
+            EXPECT_TRUE(calculation.consume_traversal_yield());
+        }
+    }
+}
+
+TEST_F(TestOverlaySound, optimizedPixelRetainsBatchingUntilBudgetExpires)
+{
+    g_show_orbit = false;
+    g_max_iterations = 4098;
+    ValueSaver saved_param{g_param_z1, DComplex{}};
+    ValueSaver saved_bailout{g_magnitude_limit, 4.0};
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+
+    for (const FractalType type : {FractalType::MANDEL, FractalType::JULIA})
+    {
+        g_fractal_type = type;
+        for (const CalcMode mode : {CalcMode::ONE_PASS, CalcMode::TWO_PASS, CalcMode::BOUNDARY_TRACE,
+                 CalcMode::SOLID_GUESS, CalcMode::DIFFUSION, CalcMode::TESSERAL})
+        {
+            g_keyboard_check_interval = 2 * g_max_iterations + 1;
+            calc_mandelbrot_init();
+            StandardFractal calculation;
+            calculation.m_standard_pass.select(mode);
+
+            for (int pixel = 0; pixel < 2; ++pixel)
+            {
+                EXPECT_GE(calculation.calculate_mandelbrot_pixel(), 0);
+                EXPECT_FALSE(calculation.consume_traversal_yield());
+            }
+            EXPECT_LT(g_keyboard_check_interval, 0);
+
+            EXPECT_GE(calculation.calculate_mandelbrot_pixel(), 0);
+
+            EXPECT_TRUE(calculation.consume_traversal_yield());
+        }
+    }
+}
+
+TEST_P(TestStandardPixelCheckpoints, controllerHandlesMenuKeyBeforeOptimizedTraversalChunkCompletes)
+{
+    g_show_orbit = false;
+    g_max_iterations = 4098;
+    g_max_keyboard_check_interval = 1000;
+    g_std_calc_mode = GetParam();
+    g_logical_screen = LogicalScreen{16, 16, 0, 0, 1.0, 1.0};
+    g_screen_x_dots = 16;
+    g_screen_y_dots = 16;
+    free_pixel_grid();
+    alloc_pixel_grid();
+    fill_pixel_grid();
+    ValueSaver saved_param{g_param_z1, DComplex{}};
+    ValueSaver saved_bailout{g_magnitude_limit, 4.0};
+    ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_BEEP};
+    m_specific.calc_type = []
+    {
+        ++s_pixel_calls;
+        return calc_mandelbrot_type();
+    };
+    m_specific.per_image = []
+    {
+        calc_mandelbrot_init();
+        return true;
+    };
+    g_dispatch = FractalDispatch{m_specific};
+    bool requested{};
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillRepeatedly(
+            [this, &requested]
+            {
+                if (!requested && s_pixel_calls > 0)
+                {
+                    requested = true;
+                    m_key = 'x';
+                }
+                return m_key;
+            });
+    EXPECT_CALL(m_driver, unget_key('x'));
+    EXPECT_CALL(*m_output, mute());
+
+    EXPECT_EQ(-1, render_standard_image());
+
+    EXPECT_TRUE(requested);
+    EXPECT_EQ(2, s_pixel_calls);
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+
+    g_resuming = true;
+    EXPECT_EQ(0, render_standard_image());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_GT(s_pixel_calls, 2);
 }
 
 TEST_F(TestOverlaySound, scanlineSuspensionRetainsTheNextPixelInBothPassModes)
