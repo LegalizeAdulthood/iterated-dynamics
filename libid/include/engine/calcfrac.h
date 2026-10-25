@@ -26,6 +26,15 @@ constexpr double AUTO_INVERT = -123456.789;
 constexpr int MAX_PARAMS{10};        // maximum number of parameters
 constexpr int MAX_NUM_ATTRACTORS{8};
 
+// Pixel calculation results; completed colors are non-negative.
+constexpr int CALC_INTERRUPTED{-1};
+constexpr int CALC_YIELDED{-2};
+
+inline bool calc_ok(const int result)
+{
+    return result != CALC_INTERRUPTED && result != CALC_YIELDED;
+}
+
 enum class InitOrbitMode
 {
     NORMAL = 0,

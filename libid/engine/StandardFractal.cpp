@@ -350,7 +350,7 @@ bool StandardFractal::calculate_pixel()
     g_row = point.y;
     ActiveStandardFractalScope active_standard_fractal{*this};
     const int color{fractals::calc_type()};
-    if (color == -1)
+    if (!calc_ok(color))
     {
         return false;
     }

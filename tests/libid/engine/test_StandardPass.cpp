@@ -72,7 +72,7 @@ constexpr PixelPassCase PIXEL_PASSES[]{
 };
 
 std::vector<Point2i> s_calculated;
-bool s_yield_once{};
+int s_pending_result{};
 bool s_checkerboard{};
 int s_color{7};
 
@@ -83,10 +83,11 @@ bool initialize_image()
 
 int calculate_selected_pixel()
 {
-    if (s_yield_once)
+    if (s_pending_result != 0)
     {
-        s_yield_once = false;
-        return -1;
+        const int result{s_pending_result};
+        s_pending_result = 0;
+        return result;
     }
     s_calculated.push_back({g_col, g_row});
     g_color = s_checkerboard ? 1 + (g_col + g_row) % 2 : s_color;
@@ -339,7 +340,7 @@ protected:
     {
         TestStandardPass::SetUp();
         s_calculated.clear();
-        s_yield_once = false;
+        s_pending_result = 0;
         s_checkerboard = false;
         s_color = 7;
         m_specific.flags = FractalFlags::NONE;
@@ -595,7 +596,7 @@ TEST_P(TestStandardFractalPixel, unfinishedCalculationRetainsSelectionAndContinu
     StandardFractal calculation;
     calculation.resume();
     ASSERT_TRUE(select_next(calculation));
-    s_yield_once = true;
+    s_pending_result = CALC_YIELDED;
 
     EXPECT_FALSE(calculation.calculate_pixel());
 
@@ -607,6 +608,22 @@ TEST_P(TestStandardFractalPixel, unfinishedCalculationRetainsSelectionAndContinu
     EXPECT_THAT(s_calculated, ElementsAre(Point2i{0, 0}));
     ASSERT_TRUE(select_next(calculation));
     EXPECT_EQ(GetParam().next, calculation.selected_pixel());
+}
+
+TEST_P(TestStandardFractalPixel, interruptedCalculationDoesNotCompleteSelectedPixel)
+{
+    g_std_calc_mode = GetParam().mode;
+    StandardFractal calculation;
+    calculation.resume();
+    ASSERT_TRUE(select_next(calculation));
+    s_pending_result = CALC_INTERRUPTED;
+
+    EXPECT_FALSE(calculation.calculate_pixel());
+
+    EXPECT_EQ((Point2i{0, 0}), calculation.selected_pixel());
+    EXPECT_TRUE(s_calculated.empty());
+    EXPECT_EQ(0, m_plot_count);
+    EXPECT_FALSE(calculation.done());
 }
 
 TEST_P(TestStandardFractalPixel, separateOperationsCompleteTheImage)
@@ -652,17 +669,18 @@ TEST_F(TestStandardFractal, scanlineCalculationRemainsBatched)
     }
 }
 
-TEST_F(TestStandardFractal, scanlineCalculationPreservesLegacySignedColors)
+TEST_F(TestStandardFractal, scanlineCalculationAcceptsZeroColor)
 {
     g_std_calc_mode = CalcMode::TWO_PASS;
-    s_color = -2;
+    s_color = 0;
     StandardFractal calculation;
     calculation.resume();
 
     calculation.iterate();
 
     EXPECT_TRUE(calculation.done());
-    EXPECT_EQ(-2, g_color);
+    EXPECT_EQ(0, g_color);
+    EXPECT_THAT(m_pixels, Each(0));
 }
 
 TEST_F(TestStandardFractal, boundaryScanKeepsItsCalculationChunk)

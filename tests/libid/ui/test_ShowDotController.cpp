@@ -91,7 +91,7 @@ protected:
             if (m_yield_once)
             {
                 m_yield_once = false;
-                return -1;
+                return CALC_YIELDED;
             }
             g_color = 7;
             g_plot(g_col, g_row, g_color);

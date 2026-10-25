@@ -1045,7 +1045,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         {
             m_standard_pixel_iteration_yielded = true;
             m_incomplete_standard_pixel_yield = true;
-            return -1;
+            return CALC_YIELDED;
         }
 
         if (g_distance_estimator && !m_standard_pixel_orbit_calc_completed)
@@ -1088,7 +1088,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             if (m_orbit_plot_pending)
             {
                 m_incomplete_standard_pixel_yield = true;
-                return -1;
+                return CALC_YIELDED;
             }
         }
         const int orbit_calc_result{m_standard_pixel_orbit_calc_result};
@@ -1131,13 +1131,13 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             if (yield_to_ui && standard_presentation_yield_enabled())
             {
                 m_incomplete_standard_pixel_yield = true;
-                return -1;
+                return CALC_YIELDED;
             }
             static_cast<void>(pending_orbit_plot().iterate());
             if (!pending_orbit_plot().done())
             {
                 m_incomplete_standard_pixel_yield = true;
-                return -1;
+                return CALC_YIELDED;
             }
             complete_pending_orbit_plot();
         }
@@ -1326,7 +1326,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 
     if (scrub_overlay_orbit(yield_to_ui))
     {
-        return -1;
+        return CALC_YIELDED;
     }
 
     g_real_color_iter = g_color_iter;           // save this before we start adjusting it
@@ -1534,7 +1534,7 @@ plot_inside: // we're "inside"
             }
             if (scrub_overlay_orbit(yield_to_ui))
             {
-                return -1;
+                return CALC_YIELDED;
             }
         }
         else if (g_inside_method == ColorMethod::FMODI)
@@ -2276,7 +2276,7 @@ long auto_log_map()
     for (g_col = 0; g_col < x_stop; g_col++) // top row
     {
         g_color = calc_type();
-        if (g_color == -1)
+        if (!calc_ok(g_color))
         {
             goto ack; // key pressed, bailout
         }
@@ -2299,7 +2299,7 @@ long auto_log_map()
     for (g_row = 0; g_row < y_stop; g_row++) // right  side
     {
         g_color = calc_type();
-        if (g_color == -1)
+        if (!calc_ok(g_color))
         {
             goto ack; // key pressed, bailout
         }
@@ -2322,7 +2322,7 @@ long auto_log_map()
     for (g_row = 0; g_row < y_stop; g_row++) // left  side
     {
         g_color = calc_type();
-        if (g_color == -1)
+        if (!calc_ok(g_color))
         {
             goto ack; // key pressed, bailout
         }
@@ -2345,7 +2345,7 @@ long auto_log_map()
     for (g_col = 0; g_col < x_stop; g_col++) // bottom row
     {
         g_color = calc_type();
-        if (g_color == -1)
+        if (!calc_ok(g_color))
         {
             goto ack; // key pressed, bailout
         }

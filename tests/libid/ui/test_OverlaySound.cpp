@@ -333,8 +333,8 @@ TEST_F(TestOverlaySound, synchronousStandardPixelReturnsOnRefusalWithoutRepeatin
     StandardFractal calculation;
     EXPECT_CALL(*m_output, play(_)).WillOnce(Return(false)).WillOnce(Return(false)).WillOnce(Return(true));
 
-    EXPECT_EQ(-1, calculation.calculate_standard_pixel(false));
-    EXPECT_EQ(-1, calculation.calculate_standard_pixel(false));
+    EXPECT_EQ(CALC_YIELDED, calculation.calculate_standard_pixel(false));
+    EXPECT_EQ(CALC_YIELDED, calculation.calculate_standard_pixel(false));
     EXPECT_EQ(1, s_orbit_calls);
     EXPECT_EQ(1, s_pixel_calls);
     EXPECT_EQ(0, m_plots);
@@ -357,7 +357,7 @@ TEST_F(TestOverlaySound, standardOrbitYieldsWithoutPollingOrRepeatingIterationWo
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, get_key()).Times(0);
 
-    EXPECT_EQ(-1, calculation.calculate_standard_pixel(true));
+    EXPECT_EQ(CALC_YIELDED, calculation.calculate_standard_pixel(true));
     EXPECT_TRUE(calculation.consume_traversal_yield());
     EXPECT_EQ(2048, g_color_iter);
     EXPECT_EQ(2047, s_orbit_calls);
@@ -378,7 +378,7 @@ TEST_F(TestOverlaySound, standardOrbitRetainsSoundWorkFrequency)
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, get_key()).Times(0);
 
-    EXPECT_EQ(-1, calculation.calculate_standard_pixel(true));
+    EXPECT_EQ(CALC_YIELDED, calculation.calculate_standard_pixel(true));
     EXPECT_TRUE(calculation.consume_traversal_yield());
     EXPECT_EQ(16, g_color_iter);
     EXPECT_EQ(15, s_orbit_calls);
@@ -1386,8 +1386,8 @@ TEST_F(TestOverlaySound, soundRetryDoesNotRecalculateDistanceEstimatorDerivative
     g_new_z = g_old_z;
     EXPECT_CALL(*m_output, play(_)).WillRepeatedly(Return(false));
 
-    EXPECT_EQ(-1, calculation.calculate_standard_pixel(false));
-    EXPECT_EQ(-1, calculation.calculate_standard_pixel(false));
+    EXPECT_EQ(CALC_YIELDED, calculation.calculate_standard_pixel(false));
+    EXPECT_EQ(CALC_YIELDED, calculation.calculate_standard_pixel(false));
 
     EXPECT_EQ((DComplex{3.0, 2.0}), calculation.m_deriv);
     EXPECT_EQ(0, s_orbit_calls);
@@ -1405,7 +1405,7 @@ TEST_F(TestOverlaySound, synchronousStandardPixelRetainsOverlayWhileLastSampleIs
                 return true;
             }));
 
-    EXPECT_EQ(-1, calculation.calculate_standard_pixel(false));
+    EXPECT_EQ(CALC_YIELDED, calculation.calculate_standard_pixel(false));
     EXPECT_TRUE(g_orbit_save_flag);
     EXPECT_EQ(1, m_plots);
 
@@ -1439,7 +1439,7 @@ TEST_F(TestOverlayCleanup, standardPixelRestoresOverlayAfterTogglingOffAndOn)
     g_max_iterations = 3;
     StandardFractal calculation;
     calculation.m_standard_pass.select(CalcMode::ONE_PASS);
-    ASSERT_EQ(-1, calculation.calculate_standard_pixel(true));
+    ASSERT_EQ(CALC_YIELDED, calculation.calculate_standard_pixel(true));
     calculation.iterate();
     ASSERT_TRUE(calculation.consume_orbit_overlay_displayed());
     ASSERT_NE(5, m_pixels[3]);
@@ -1449,11 +1449,11 @@ TEST_F(TestOverlayCleanup, standardPixelRestoresOverlayAfterTogglingOffAndOn)
     ASSERT_THAT(m_pixels, ElementsAre(2, 3, 4, 5));
     g_show_orbit = true;
 
-    int color{-1};
-    for (int step = 0; step < 8 && color < 0; ++step)
+    int color{CALC_YIELDED};
+    for (int step = 0; step < 8 && color == CALC_YIELDED; ++step)
     {
         color = calculation.calculate_standard_pixel(true);
-        if (color < 0)
+        if (color == CALC_YIELDED)
         {
             calculation.iterate();
             calculation.consume_orbit_overlay_displayed();

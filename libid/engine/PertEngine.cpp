@@ -33,6 +33,13 @@ using namespace id::misc;
 namespace id::engine
 {
 
+namespace
+{
+
+constexpr int PERTURBATION_RETRY{-3};
+
+} // namespace
+
 BFComplex PertEngine::initialize_frame_bf(const double zoom_radius)
 {
     reset_for_frame(zoom_radius);
@@ -71,7 +78,7 @@ int PertEngine::calculate_pixel(const Point &pt)
     for (;;)
     {
         const int color{calculate_point(pt)};
-        if (color >= 0)
+        if (color != PERTURBATION_RETRY)
         {
             return color;
         }
@@ -245,7 +252,7 @@ int PertEngine::calculate_point(const Point &pt)
         // At the reference pixel, zero delta uses the reference orbit directly.
         if (!at_reference && (!std::isfinite(magnitude) || magnitude < reference.tolerance[iteration]))
         {
-            return -1;
+            return PERTURBATION_RETRY;
         }
     } while (magnitude < g_magnitude_limit && iteration < g_max_iterations);
 
