@@ -805,6 +805,13 @@ int PertEngine::calculate_point(const Point &pt)
                 }
                 break;
 
+            case ColorMethod::ATANI:
+                if (iteration == g_max_iterations)
+                {
+                    index = static_cast<long>(std::abs(std::atan2(w.imag(), w.real()) * g_atan_colors / PI));
+                }
+                break;
+
             default:
                 break;
             }

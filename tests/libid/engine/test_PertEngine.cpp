@@ -1094,6 +1094,103 @@ TEST_P(TestPerturbationIterations, totalDistanceRestartsWithAReplacementReferenc
     EXPECT_GT(m_engine.reference_count(), 1);
 }
 
+TEST_P(TestPerturbationIterations, insideAtanUsesTerminalQuadrantsAndVersionScale)
+{
+    struct Sample
+    {
+        DComplex initial;
+        int legacy_16;
+        int legacy_256;
+        int current_16;
+        int current_256;
+    };
+
+    const Sample samples[]{
+        {{0.5, 0.25}, 8, 53, 4, 75},
+        {{0.25, 0.5}, 6, 126, 11, 180},
+        {{0.25, -0.5}, 6, 126, 11, 180},
+        {{0.5, -0.25}, 8, 53, 4, 75},
+        {{0.5, 0.0}, 0, 0, 0, 0},
+        {{0.0, 0.5}, 15, 180, 1, 1},
+    };
+    g_inside_method = ColorMethod::ATANI;
+    g_use_init_orbit = InitOrbitMode::VALUE;
+    for (const Version version : {parse_legacy_version(2002), parse_legacy_version(2003), current_id_version()})
+    {
+        SCOPED_TRACE(to_string(version));
+        g_version = version;
+        for (const int colors : {16, 256})
+        {
+            SCOPED_TRACE(colors);
+            g_colors = colors;
+            g_and_color = colors - 1;
+            init_atan_colors();
+            for (const Sample &sample : samples)
+            {
+                SCOPED_TRACE(sample.initial.x);
+                SCOPED_TRACE(sample.initial.y);
+                g_init_orbit = sample.initial;
+                compare_pixel({}, 2);
+                EXPECT_EQ(2, g_real_color_iter);
+                const int expected{g_version <= 2002 ? colors == 16 ? sample.legacy_16 : sample.legacy_256
+                        : colors == 16               ? sample.current_16
+                                                     : sample.current_256};
+                EXPECT_EQ(expected, g_color);
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, insideAtanPreservesOutsideColoring)
+{
+    g_inside_method = ColorMethod::ATANI;
+    init_atan_colors();
+    g_close_proximity = 16.0;
+    for (const ColorMethod outside : {ColorMethod::ITER, ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::ATAN,
+             ColorMethod::FMOD, ColorMethod::TDIS})
+    {
+        SCOPED_TRACE(static_cast<int>(outside));
+        g_outside_method = outside;
+        compare_pixel({0.5, 0.5}, 8);
+        EXPECT_EQ(4, g_real_color_iter);
+    }
+}
+
+TEST_P(TestPerturbationIterations, insideAtanMatchesPeriodicityAndHighlighting)
+{
+    g_inside_method = ColorMethod::ATANI;
+    init_atan_colors();
+    for (const int periodicity : {0, 1, -1})
+    {
+        SCOPED_TRACE(periodicity);
+        g_periodicity_check = periodicity;
+        g_old_color_iter = 0;
+        compare_pixel({-1.0, 0.0}, 64);
+        EXPECT_EQ(64, g_real_color_iter);
+        if (periodicity < 0)
+        {
+            EXPECT_EQ(7, g_color);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, insideAtanSurvivesOffsetsAndReferenceReplacement)
+{
+    g_inside_method = ColorMethod::ATANI;
+    init_atan_colors();
+    set_initial_offset({-0.125, 0.0625});
+    m_engine.set_glitch_tolerance(8.0);
+    for (const InitOrbitMode mode : {InitOrbitMode::NORMAL, InitOrbitMode::PIXEL, InitOrbitMode::VALUE})
+    {
+        SCOPED_TRACE(static_cast<int>(mode));
+        g_use_init_orbit = mode;
+        g_init_orbit = {-0.25, 0.125};
+        compare_pixel({0.125, 0.0625}, 8, 0.125);
+        EXPECT_EQ(8, g_real_color_iter);
+        EXPECT_GT(m_engine.reference_count(), 1);
+    }
+}
+
 TEST_P(TestPerturbationIterations, periodicityMatchesStandardSaveSchedules)
 {
     for (const bool legacy : {false, true})
