@@ -56,6 +56,7 @@ private:
         START_WORK_LIST,
         POTENTIAL_STORAGE,
         WORK_LIST,
+        LOG_MAP,
         COMPLETE
     };
 
@@ -65,11 +66,21 @@ private:
         START_THREE_PASS_FOLLOWUP
     };
 
+    enum class LogMapEdge
+    {
+        TOP,
+        RIGHT,
+        LEFT,
+        BOTTOM,
+        NONE
+    };
+
     void clear_standard_pixel();
     void complete();
     void complete_pending_orbit_plot();
     void finish_work_list();
     void initialize_work_list();
+    void iterate_log_map();
     OrbitPlot &pending_orbit_plot();
     void pop_work_list_front();
     bool prepare_work_item();
@@ -80,6 +91,7 @@ private:
     void start_next_pass();
     void start_perturbation_frame();
     void start_work_list();
+    void start_work_item_pass();
     bool standard_presentation_yield_enabled() const;
     bool standard_pixel_yield_enabled() const;
 
@@ -93,6 +105,10 @@ private:
     CalcMode m_requested_calc_mode{};
     AfterWorkList m_after_work_list{AfterWorkList::COMPLETE};
     Phase m_phase{Phase::START};
+    LogMapEdge m_log_map_edge{LogMapEdge::NONE};
+    math::Point2i m_log_map_point{};
+    long m_log_map_min_color{};
+    long m_log_map_max_iterations{};
     double m_mem_value{};
     double m_min_orbit{100000.0};
     double m_total_dist{};

@@ -97,7 +97,6 @@ void set_symmetry(SymmetryType sym, bool use_list);
 static bool x_sym_split(int x_axis_row, bool x_axis_between);
 static bool y_sym_split(int y_axis_col, bool y_axis_between);
 static void put_true_color_disk(int x, int y, int color);
-long auto_log_map();
 void setup_standard_fractal_distance_estimator();
 
 static DComplex s_saved{};            //
@@ -2264,114 +2263,92 @@ origin_symmetry:
     }
 }
 
-long auto_log_map()
+void StandardFractal::iterate_log_map()
 {
     // calculate round screen edges to avoid wasted colours in logmap
     const int x_stop = g_logical_screen.x_dots - 1; // don't use symmetry
     const int y_stop = g_logical_screen.y_dots - 1; // don't use symmetry
-    long min_color = std::numeric_limits<long>::max();
-    g_row = 0;
-    g_reset_periodicity = false;
-    const long old_max_it = g_max_iterations;
-    for (g_col = 0; g_col < x_stop; g_col++) // top row
+    while (m_log_map_edge != LogMapEdge::NONE)
     {
+        g_col = m_log_map_point.x;
+        g_row = m_log_map_point.y;
+        const bool horizontal{m_log_map_edge == LogMapEdge::TOP || m_log_map_edge == LogMapEdge::BOTTOM};
+        if (horizontal ? g_col >= x_stop : g_row >= y_stop)
+        {
+            for (int lag = std::min(32, horizontal ? g_col : g_row); lag > 0; --lag)
+            {
+                g_plot(g_col - (horizontal ? lag : 0), g_row - (horizontal ? 0 : lag), 0);
+            }
+            switch (m_log_map_edge)
+            {
+            case LogMapEdge::TOP:
+                m_log_map_edge = LogMapEdge::RIGHT;
+                m_log_map_point = {x_stop, 0};
+                break;
+
+            case LogMapEdge::RIGHT:
+                m_log_map_edge = LogMapEdge::LEFT;
+                m_log_map_point = {};
+                break;
+
+            case LogMapEdge::LEFT:
+                m_log_map_edge = LogMapEdge::BOTTOM;
+                m_log_map_point = {0, y_stop};
+                break;
+
+            case LogMapEdge::BOTTOM:
+                m_log_map_edge = LogMapEdge::NONE;
+                break;
+
+            case LogMapEdge::NONE:
+                break;
+            }
+            continue;
+        }
+
         g_color = calc_type();
-        if (!calc_ok(g_color))
+        if (g_color == CALC_YIELDED)
         {
-            goto ack; // key pressed, bailout
+            static_cast<void>(consume_traversal_yield());
+            return;
         }
-        if (g_real_color_iter < min_color)
+        if (g_color == CALC_INTERRUPTED)
         {
-            min_color = g_real_color_iter ;
-            g_max_iterations = std::max(2L, min_color); // speedup for when edges overlap lakes
+            suspend();
+            return;
         }
-        if (g_col >=32)
+        if (g_real_color_iter < m_log_map_min_color)
         {
-            g_plot(g_col-32, g_row, 0);
+            m_log_map_min_color = g_real_color_iter;
+            g_max_iterations = std::max(2L, m_log_map_min_color); // speedup when edges overlap lakes
         }
-    }                                    // these lines tidy up for BTM etc
-    for (int lag = 32; lag > 0; lag--)
-    {
-        g_plot(g_col-lag, g_row, 0);
+        if ((horizontal ? g_col : g_row) >= 32)
+        {
+            g_plot(g_col - (horizontal ? 32 : 0), g_row - (horizontal ? 0 : 32), 0);
+        }
+        if (horizontal)
+        {
+            ++m_log_map_point.x;
+        }
+        else
+        {
+            ++m_log_map_point.y;
+        }
+        if (consume_traversal_yield())
+        {
+            return;
+        }
     }
 
-    g_col = x_stop;
-    for (g_row = 0; g_row < y_stop; g_row++) // right  side
-    {
-        g_color = calc_type();
-        if (!calc_ok(g_color))
-        {
-            goto ack; // key pressed, bailout
-        }
-        if (g_real_color_iter < min_color)
-        {
-            min_color = g_real_color_iter ;
-            g_max_iterations = std::max(2L, min_color); // speedup for when edges overlap lakes
-        }
-        if (g_row >=32)
-        {
-            g_plot(g_col, g_row-32, 0);
-        }
-    }
-    for (int lag = 32; lag > 0; lag--)
-    {
-        g_plot(g_col, g_row-lag, 0);
-    }
-
-    g_col = 0;
-    for (g_row = 0; g_row < y_stop; g_row++) // left  side
-    {
-        g_color = calc_type();
-        if (!calc_ok(g_color))
-        {
-            goto ack; // key pressed, bailout
-        }
-        if (g_real_color_iter < min_color)
-        {
-            min_color = g_real_color_iter ;
-            g_max_iterations = std::max(2L, min_color); // speedup for when edges overlap lakes
-        }
-        if (g_row >=32)
-        {
-            g_plot(g_col, g_row-32, 0);
-        }
-    }
-    for (int lag = 32; lag > 0; lag--)
-    {
-        g_plot(g_col, g_row-lag, 0);
-    }
-
-    g_row = y_stop ;
-    for (g_col = 0; g_col < x_stop; g_col++) // bottom row
-    {
-        g_color = calc_type();
-        if (!calc_ok(g_color))
-        {
-            goto ack; // key pressed, bailout
-        }
-        if (g_real_color_iter < min_color)
-        {
-            min_color = g_real_color_iter ;
-            g_max_iterations = std::max(2L, min_color); // speedup for when edges overlap lakes
-        }
-        if (g_col >=32)
-        {
-            g_plot(g_col-32, g_row, 0);
-        }
-    }
-    for (int lag = 32; lag > 0; lag--)
-    {
-        g_plot(g_col-lag, g_row, 0);
-    }
-
-ack: // bailout here if key is pressed
-    if (min_color == 2)      // insure autologmap not called again
+    if (m_log_map_min_color == 2) // insure autologmap not called again
     {
         g_resuming = true;
     }
-    g_max_iterations = old_max_it;
-
-    return min_color ;
+    g_max_iterations = m_log_map_max_iterations;
+    g_log_map_flag = m_log_map_min_color * (g_log_map_flag / std::abs(g_log_map_flag));
+    setup_log_table();
+    m_phase = Phase::WORK_LIST;
+    start_work_item_pass();
 }
 
 // Symmetry plot for period PI

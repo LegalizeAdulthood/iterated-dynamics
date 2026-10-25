@@ -393,6 +393,112 @@ protected:
     ValueSaver<bool> m_saved_true_color{g_true_color, false};
 };
 
+class TestAutoLogMap : public TestStandardFractal, public WithParamInterface<long>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<long> m_saved_max_iterations{g_max_iterations, 128};
+    ValueSaver<long> m_saved_real_iterations{g_real_color_iter};
+    ValueSaver<bool> m_saved_auto_log_map{g_log_map_auto_calculate, false};
+    const std::vector<Point2i> m_perimeter{{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {7, 1},
+        {7, 2}, {7, 3}, {7, 4}, {7, 5}, {7, 6}, {0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {1, 7},
+        {2, 7}, {3, 7}, {4, 7}, {5, 7}, {6, 7}};
+};
+
+void TestAutoLogMap::SetUp()
+{
+    TestStandardFractal::SetUp();
+    g_log_map_flag = GetParam();
+    m_specific.calc_type = []
+    {
+        if (s_calculated.size() == 4 && s_pending_result != 0)
+        {
+            const int result{s_pending_result};
+            s_pending_result = 0;
+            return result;
+        }
+        s_calculated.push_back({g_col, g_row});
+        g_real_color_iter = 10 + (g_col + g_row) % 3;
+        g_color = 7;
+        g_plot(g_col, g_row, g_color);
+        return g_color;
+    };
+    g_dispatch = FractalDispatch{m_specific};
+}
+
+TEST_P(TestAutoLogMap, yieldPreservesTheSampleAndPerimeterOrder)
+{
+    s_pending_result = CALC_YIELDED;
+    StandardFractal calculation;
+    calculation.resume();
+
+    calculation.iterate();
+
+    ASSERT_EQ(4U, s_calculated.size());
+    EXPECT_EQ(GetParam(), g_log_map_flag);
+    EXPECT_EQ(10L, g_max_iterations);
+    EXPECT_FALSE(calculation.done());
+    EXPECT_THROW(calculation.selected_pixel(), std::logic_error);
+
+    calculation.iterate();
+
+    EXPECT_EQ(m_perimeter, s_calculated);
+    EXPECT_EQ(GetParam() > 0 ? 10L : -10L, g_log_map_flag);
+    EXPECT_EQ(128L, g_max_iterations);
+    EXPECT_FALSE(calculation.done());
+    calculation.iterate();
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(m_perimeter.size() + 64, s_calculated.size());
+    EXPECT_THAT(m_pixels, Each(7));
+}
+
+TEST_P(TestAutoLogMap, interruptionSavesUnfinishedSamplingForResume)
+{
+    s_pending_result = CALC_INTERRUPTED;
+    StandardFractal calculation;
+    calculation.resume();
+
+    calculation.iterate();
+
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+    ASSERT_EQ(4U, s_calculated.size());
+    EXPECT_EQ(GetParam(), g_log_map_flag);
+    EXPECT_EQ(128L, g_max_iterations);
+    g_resuming = true;
+    StandardFractal resumed;
+    resumed.resume();
+
+    resumed.iterate();
+
+    EXPECT_EQ(m_perimeter, s_calculated);
+    EXPECT_EQ(GetParam() > 0 ? 10L : -10L, g_log_map_flag);
+    EXPECT_EQ(128L, g_max_iterations);
+    resumed.iterate();
+    EXPECT_TRUE(resumed.done());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_THAT(m_pixels, Each(7));
+}
+
+TEST_P(TestAutoLogMap, abandoningSamplingRestoresTheIterationLimit)
+{
+    s_pending_result = CALC_YIELDED;
+    StandardFractal calculation;
+    calculation.resume();
+    calculation.iterate();
+    ASSERT_EQ(10L, g_max_iterations);
+
+    calculation.abort();
+
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_EQ(128L, g_max_iterations);
+}
+
+INSTANTIATE_TEST_SUITE_P(LogMapSigns, TestAutoLogMap, Values(2L, -2L));
+
 TEST_F(TestRenderLifecycle, completionAccountsForElapsedImageTimeOnce)
 {
     StandardFractal calculation;

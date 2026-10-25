@@ -524,6 +524,57 @@ TEST_F(TestOverlaySound, controllerSuspendsWithinAnOrbitAndResumesUnfinishedPixe
     EXPECT_EQ(5, s_pixel_calls);
 }
 
+class TestLogMapController : public TestOverlaySound, public WithParamInterface<bool>
+{
+};
+
+TEST_P(TestLogMapController, menuKeyInterruptsSamplingWithinAnOrbitAndResumeFinishesTheImage)
+{
+    g_show_orbit = false;
+    g_show_dot = GetParam() ? 15 : -1;
+    g_max_iterations = 4098;
+    g_inside_method = ColorMethod::ZMAG;
+    ValueSaver saved_log_map{g_log_map_flag, 2L};
+    ValueSaver saved_auto_log_map{g_log_map_auto_calculate, false};
+    ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_BEEP};
+    bool requested{};
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillRepeatedly(
+            [this, &requested]
+            {
+                if (!requested && s_orbit_calls >= 2047)
+                {
+                    requested = true;
+                    m_key = 'x';
+                }
+                return m_key;
+            });
+    EXPECT_CALL(m_driver, unget_key('x'));
+    EXPECT_CALL(*m_output, mute());
+
+    EXPECT_EQ(-1, render_standard_image());
+
+    EXPECT_TRUE(requested);
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_EQ(2047, s_orbit_calls);
+    EXPECT_EQ(1, s_pixel_calls);
+    EXPECT_EQ(0, m_plots);
+    EXPECT_EQ(2L, g_log_map_flag);
+    EXPECT_EQ(4098L, g_max_iterations);
+    EXPECT_FALSE(g_resume_data.empty());
+    g_resuming = true;
+
+    EXPECT_EQ(0, render_standard_image());
+
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(4098L, g_log_map_flag);
+    EXPECT_EQ(4098L, g_max_iterations);
+    EXPECT_EQ(9, s_pixel_calls);
+    EXPECT_GT(m_plots, 0);
+}
+
+INSTANTIATE_TEST_SUITE_P(ShowDot, TestLogMapController, Bool());
+
 TEST_F(TestOverlaySound, optimizedPixelYieldsCompletedWorkWithoutPolling)
 {
     g_show_orbit = false;

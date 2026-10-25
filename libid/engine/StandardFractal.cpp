@@ -19,12 +19,12 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <stdexcept>
 
 namespace id::engine
 {
 
-long auto_log_map();
 void set_symmetry(SymmetryType sym, bool use_list);
 void setup_standard_fractal_distance_estimator();
 
@@ -168,6 +168,10 @@ std::vector<std::string> StandardFractal::resume()
     m_perturbation_requested = false;
     m_standard_pass.reset();
     m_work_item_active = false;
+    m_log_map_edge = LogMapEdge::NONE;
+    m_log_map_point = {};
+    m_log_map_min_color = 0;
+    m_log_map_max_iterations = 0;
     m_standard_pixel_completed_yield = false;
     m_incomplete_standard_pixel_yield = false;
     s_standard_pass_status = {};
@@ -192,7 +196,17 @@ void StandardFractal::complete_potential_storage(const bool available)
 
 void StandardFractal::suspend()
 {
-    m_standard_pass.suspend();
+    const bool sampling{m_phase == Phase::LOG_MAP};
+    if (sampling)
+    {
+        clear_standard_pixel();
+        g_max_iterations = m_log_map_max_iterations;
+        add_work_list(g_start_pt, g_stop_pt, g_begin_pt, g_work_pass, g_work_symmetry);
+    }
+    else
+    {
+        m_standard_pass.suspend();
+    }
     s_standard_pass_status = standard_pass_status();
     if (m_perturbation_active)
     {
@@ -202,9 +216,20 @@ void StandardFractal::suspend()
     if (g_num_work_list > 0)
     {
         const bool save_pass_resume{m_standard_pass.calc_mode() == CalcMode::ORBIT};
-        alloc_resume(sizeof(g_work_list) + sizeof(long) + 20, save_pass_resume ? 3 : 2);
+        const int version{sampling ? 4 : (save_pass_resume ? 3 : 2)};
+        const int sampling_size{sampling ? static_cast<int>(sizeof(m_log_map_edge) + sizeof(m_log_map_point) +
+                                               sizeof(m_log_map_min_color) + sizeof(m_log_map_max_iterations))
+                                         : 0};
+        alloc_resume(sizeof(g_work_list) + sizeof(long) + 20 + sampling_size, version);
         put_resume_len(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
-        m_standard_pass.save_resume();
+        if (sampling)
+        {
+            put_resume(m_log_map_edge, m_log_map_point, m_log_map_min_color, m_log_map_max_iterations);
+        }
+        else
+        {
+            m_standard_pass.save_resume();
+        }
     }
     else
     {
@@ -308,6 +333,13 @@ bool StandardFractal::select_pixel()
     }
 
     start_timer();
+    if (m_phase == Phase::LOG_MAP)
+    {
+        ActiveStandardFractalScope active_standard_fractal{*this};
+        iterate_log_map();
+        update_timer();
+        return false;
+    }
     if (!prepare_work_item())
     {
         return false;
@@ -463,6 +495,11 @@ void StandardFractal::complete()
     m_work_item_active = false;
     m_standard_pass.reset();
     clear_standard_pixel();
+    if (m_log_map_edge != LogMapEdge::NONE)
+    {
+        g_max_iterations = m_log_map_max_iterations;
+        m_log_map_edge = LogMapEdge::NONE;
+    }
     if (m_perturbation_active)
     {
         m_pert_engine.finish();
@@ -615,23 +652,41 @@ bool StandardFractal::prepare_work_item()
 
         set_symmetry(g_symmetry, true);
 
-        if (!g_resuming && (std::abs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate)))
-        {
-            g_log_map_flag = auto_log_map() * (g_log_map_flag / std::abs(g_log_map_flag));
-            setup_log_table();
-        }
         m_work_item_active = true;
-        if (m_perturbation_requested && perturbation_supported())
+        if (m_log_map_edge != LogMapEdge::NONE ||
+            (!g_resuming && (std::abs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate))))
         {
-            if (!m_perturbation_active)
+            if (m_log_map_edge == LogMapEdge::NONE)
             {
-                start_perturbation_frame();
+                m_log_map_edge = LogMapEdge::TOP;
+                m_log_map_point = {};
+                m_log_map_min_color = std::numeric_limits<long>::max();
+                m_log_map_max_iterations = g_max_iterations;
             }
-            fractals::g_dispatch.set_calc_type(standard_fractal_type);
+            else if (m_log_map_min_color != std::numeric_limits<long>::max())
+            {
+                g_max_iterations = std::max(2L, m_log_map_min_color);
+            }
+            g_reset_periodicity = false;
+            m_phase = Phase::LOG_MAP;
+            return false;
         }
-        m_standard_pass.select(g_std_calc_mode);
+        start_work_item_pass();
     }
-    return true;
+    return m_phase != Phase::LOG_MAP;
+}
+
+void StandardFractal::start_work_item_pass()
+{
+    if (m_perturbation_requested && perturbation_supported())
+    {
+        if (!m_perturbation_active)
+        {
+            start_perturbation_frame();
+        }
+        fractals::g_dispatch.set_calc_type(standard_fractal_type);
+    }
+    m_standard_pass.select(g_std_calc_mode);
 }
 
 void StandardFractal::finish_work_item()
@@ -715,7 +770,11 @@ void StandardFractal::initialize_work_list()
     {
         const int version = start_resume();
         get_resume_len(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
-        if (version >= 3)
+        if (version == 4)
+        {
+            get_resume(m_log_map_edge, m_log_map_point, m_log_map_min_color, m_log_map_max_iterations);
+        }
+        else if (version >= 3)
         {
             m_standard_pass.restore_resume(g_std_calc_mode);
         }
@@ -736,11 +795,16 @@ void StandardFractal::initialize_work_list()
 bool StandardFractal::standard_pixel_yield_enabled() const
 {
     const CalcMode calc_mode{m_standard_pass.calc_mode()};
-    return calc_mode == CalcMode::ONE_PASS || calc_mode == CalcMode::TWO_PASS || calc_mode == CalcMode::BOUNDARY_TRACE;
+    return m_phase == Phase::LOG_MAP || calc_mode == CalcMode::ONE_PASS || calc_mode == CalcMode::TWO_PASS ||
+        calc_mode == CalcMode::BOUNDARY_TRACE;
 }
 
 bool StandardFractal::standard_presentation_yield_enabled() const
 {
+    if (m_phase == Phase::LOG_MAP)
+    {
+        return true;
+    }
     switch (m_standard_pass.calc_mode())
     {
     case CalcMode::ONE_PASS:
