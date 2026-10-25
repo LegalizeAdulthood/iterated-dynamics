@@ -60,6 +60,26 @@ if(NOT PARAMETERS MATCHES "selected +{" OR NOT PARAMETERS MATCHES "type=formula"
     message(FATAL_ERROR "Generated parameter set lost its requested name or image type")
 endif()
 
+file(REMOVE debug/stopmsg.txt)
+file(WRITE par/blocked.par "existing { type=mandel }\n")
+# Block temporary-file creation without relying on file permissions.
+file(MAKE_DIRECTORY par/id.tmp)
+execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${COMMON}
+    "batch=yes" "image/accepted.gif" "makepar=blocked/entry"
+    RESULT_VARIABLE RESULT TIMEOUT 20 COMMAND_ECHO STDOUT)
+file(REMOVE_RECURSE par/id.tmp)
+if(NOT RESULT STREQUAL "1")
+    message(FATAL_ERROR "Startup parameter-file write failure did not exit: ${RESULT}")
+endif()
+file(READ debug/stopmsg.txt DIAGNOSTIC)
+if(NOT DIAGNOSTIC MATCHES "Can't create .*id[.]tmp")
+    message(FATAL_ERROR "Missing parameter-file write failure diagnostic: ${DIAGNOSTIC}")
+endif()
+file(READ par/blocked.par PARAMETERS)
+if(NOT PARAMETERS STREQUAL "existing { type=mandel }\n")
+    message(FATAL_ERROR "Failed parameter-file action changed the existing file")
+endif()
+
 foreach(startup_image IN ITEMS no yes)
     file(REMOVE image/startup-initial.gif image/startup-unexpected.gif
         image/startup-expected.gif debug/stopmsg.txt)

@@ -160,7 +160,11 @@ static void main_restart(const std::vector<std::string> &args, MainContext &cont
             g_read_color = true;
         }
     }
-    const bool exit_requested{apply_command_effects(commands)};
+    bool exit_requested{};
+    {
+        ValueSaver saved_first_init{g_first_init, first_init};
+        exit_requested = apply_command_effects(commands);
+    }
     const CommandDiagnostics &diagnostics{commands.diagnostics};
     if (first_init || g_init_batch != BatchMode::NONE)
     {
