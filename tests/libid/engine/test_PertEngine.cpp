@@ -5,18 +5,26 @@
 
 #include "MockDriver.h"
 
+#include <engine/bailout_formula.h>
 #include <engine/BoundaryTrace.h>
+#include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
 #include <engine/fractals.h>
 #include <engine/ImageRegion.h>
 #include <engine/Inversion.h>
 #include <engine/LogicalScreen.h>
 #include <engine/pixel.h>
+#include <engine/pixel_grid.h>
+#include <engine/Potential.h>
 #include <engine/resume.h>
+#include <engine/spindac.h>
 #include <engine/StandardFractal.h>
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
+#include <geometry/3d.h>
+#include <geometry/line3d.h>
+#include <io/disk_storage.h>
 #include <math/biginit.h>
 #include <misc/ValueSaver.h>
 #include <ui/video.h>
@@ -35,6 +43,8 @@
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::geometry;
+using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
@@ -149,6 +159,35 @@ int calculate_control_pixel()
     return 7;
 }
 
+struct OrbitState
+{
+    long iterations;
+    DComplex old_z;
+    DComplex new_z;
+    double magnitude;
+    double square_x;
+    double square_y;
+};
+
+void expect_orbit_state(const OrbitState &expected)
+{
+    EXPECT_EQ(expected.iterations, g_color_iter);
+    EXPECT_EQ(expected.iterations, g_real_color_iter);
+    EXPECT_NEAR(expected.old_z.x, g_old_z.x, 1e-14);
+    EXPECT_NEAR(expected.old_z.y, g_old_z.y, 1e-14);
+    EXPECT_NEAR(expected.new_z.x, g_new_z.x, 1e-14);
+    EXPECT_NEAR(expected.new_z.y, g_new_z.y, 1e-14);
+    EXPECT_NEAR(expected.magnitude, g_magnitude, 1e-14);
+    EXPECT_NEAR(expected.square_x, g_temp_sqr_x, 1e-14);
+    EXPECT_NEAR(expected.square_y, g_temp_sqr_y, 1e-14);
+}
+
+void plot_iteration_color(const int col, const int row, const int color)
+{
+    put_color_a(col, row, color);
+    targa_color(col, row, color);
+}
+
 } // namespace
 
 class TestPerturbationPixels : public Test
@@ -193,6 +232,13 @@ protected:
     ValueSaver<Point2i> m_saved_begin{g_begin_pt, Point2i{0, 0}};
     ValueSaver<decltype(g_plot)> m_saved_plot{g_plot, put_color_a};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
+    ValueSaver<long> m_saved_color_iter{g_color_iter};
+    ValueSaver<long> m_saved_real_color_iter{g_real_color_iter};
+    ValueSaver<DComplex> m_saved_old_z{g_old_z};
+    ValueSaver<DComplex> m_saved_new_z{g_new_z};
+    ValueSaver<double> m_saved_magnitude{g_magnitude};
+    ValueSaver<double> m_saved_square_x{g_temp_sqr_x};
+    ValueSaver<double> m_saved_square_y{g_temp_sqr_y};
 };
 
 void TestPerturbationPixels::SetUp()
@@ -288,6 +334,173 @@ TEST_F(TestPerturbationPixels, failedInitializationReleasesStorageAndPreservesTh
     EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
     EXPECT_EQ(1, m_engine.reference_count());
 }
+
+class TestPerturbationIterations : public TestPerturbationPixels, public WithParamInterface<bool>
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void initialize_reference(const std::complex<double> &center, double radius = 0.0);
+    void compare_pixel(const std::complex<double> &center, long max_iterations);
+
+    ValueSaver<ImageRegion> m_saved_region{g_image_region};
+    ValueSaver<Potential> m_saved_potential{g_potential, Potential{}};
+    ValueSaver<int> m_saved_periodicity{g_periodicity_check, 0};
+    ValueSaver<bool> m_saved_show_orbit{g_show_orbit, false};
+    ValueSaver<long> m_saved_distance{g_distance_estimator, 0};
+    ValueSaver<int> m_saved_decomp{g_decomp[0], 0};
+    ValueSaver<int> m_saved_attractors{g_attractor.count, 0};
+    ValueSaver<InitOrbitMode> m_saved_initial_orbit{g_use_init_orbit, InitOrbitMode::NORMAL};
+    ValueSaver<DComplex> m_saved_param{g_param_z1, DComplex{}};
+    ValueSaver<DComplex *> m_saved_float_param{g_float_param, &g_init};
+    ValueSaver<int> m_saved_col{g_col, WIDTH / 2};
+    ValueSaver<int> m_saved_row{g_row, HEIGHT / 2 - 1};
+    ValueSaver<decltype(g_bailout_float)> m_saved_float_bailout{g_bailout_float};
+    ValueSaver<decltype(g_bailout_bignum)> m_saved_bn_bailout{g_bailout_bignum};
+    ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bf_bailout{g_bailout_bigfloat};
+    ValueSaver<Bailout> m_saved_bailout_test{g_bailout_test};
+};
+
+void TestPerturbationIterations::SetUp()
+{
+    TestPerturbationPixels::SetUp();
+    set_bailout_formula(Bailout::MOD);
+    g_dispatch = FractalDispatch{m_specific};
+    alloc_pixel_grid();
+}
+
+void TestPerturbationIterations::TearDown()
+{
+    end_disk();
+    free_pixel_grid();
+    TestPerturbationPixels::TearDown();
+}
+
+void TestPerturbationIterations::initialize_reference(const std::complex<double> &center, const double radius)
+{
+    if (GetParam())
+    {
+        init_bf_dec(60);
+        m_big_float = true;
+        g_bf_math = BFMathType::BIG_FLT;
+        const BFComplex center_bf{m_engine.initialize_frame_bf(radius)};
+        float_to_bf(center_bf.x, center.real());
+        float_to_bf(center_bf.y, center.imag());
+    }
+    else
+    {
+        m_engine.initialize_frame(center, radius);
+    }
+}
+
+void TestPerturbationIterations::compare_pixel(const std::complex<double> &center, const long max_iterations)
+{
+    g_max_iterations = max_iterations;
+    const DComplex point{center.real(), center.imag()};
+    g_image_region = ImageRegion{point, point, point};
+    ValueSaver<LDouble> saved_delta_x{g_delta_x, 0};
+    ValueSaver<LDouble> saved_delta_y{g_delta_y, 0};
+    ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    fill_pixel_grid();
+    StandardFractal standard;
+    const int expected_color{standard.calculate_standard_pixel(false)};
+    const OrbitState expected{g_real_color_iter, g_old_z, g_new_z, g_magnitude, g_temp_sqr_x, g_temp_sqr_y};
+
+    initialize_reference(center);
+    g_color_iter = -17;
+    g_real_color_iter = -19;
+    g_old_z = {-7.0, 9.0};
+    g_new_z = {-11.0, 13.0};
+    g_magnitude = g_temp_sqr_x = g_temp_sqr_y = -1.0;
+    EXPECT_CALL(m_driver, write_pixel(g_col, g_row, expected_color))
+        .WillOnce(Invoke([&expected](int, int, int) { expect_orbit_state(expected); }));
+
+    EXPECT_EQ(expected_color, m_engine.calculate_pixel(g_col, g_row));
+
+    expect_orbit_state(expected);
+}
+
+TEST_P(TestPerturbationIterations, firstUpdateEscapeMatchesStandardState)
+{
+    compare_pixel({1.0, 0.0}, 8);
+    EXPECT_EQ(1, g_real_color_iter);
+}
+
+TEST_P(TestPerturbationIterations, escapeOnLastAllowedUpdateMatchesStandardState)
+{
+    compare_pixel({0.5, 0.0}, 5);
+    EXPECT_EQ(4, g_real_color_iter);
+}
+
+TEST_P(TestPerturbationIterations, reachingTheLimitDoesNotPerformAnotherUpdate)
+{
+    compare_pixel({0.5, 0.0}, 4);
+    EXPECT_EQ(4, g_real_color_iter);
+    EXPECT_DOUBLE_EQ(1.62890625, g_new_z.x);
+    EXPECT_EQ(7, g_color);
+}
+
+TEST_P(TestPerturbationIterations, smallestImageLimitMatchesStandardState)
+{
+    compare_pixel({0.5, 0.0}, 2);
+    EXPECT_EQ(2, g_real_color_iter);
+    EXPECT_DOUBLE_EQ(0.75, g_new_z.x);
+}
+
+TEST_P(TestPerturbationIterations, boundedTerminalOrbitMatchesStandardState)
+{
+    compare_pixel({0.25, 0.125}, 8);
+    EXPECT_EQ(8, g_real_color_iter);
+}
+
+TEST_P(TestPerturbationIterations, referenceGenerationDoesNotDiscardAnExtraUpdate)
+{
+    m_specific.pert_ref = record_reference;
+    m_specific.pert_ref_bf = record_reference_bf;
+
+    compare_pixel({0.5, 0.0}, 4);
+
+    EXPECT_EQ(4, s_reference_coordinates.size());
+}
+
+TEST_P(TestPerturbationIterations, displacedPixelPublishesItsOwnTerminalState)
+{
+    g_max_iterations = 5;
+    initialize_reference({0.25, 0.0}, 0.75);
+
+    EXPECT_EQ(4, m_engine.calculate_pixel(5, HEIGHT / 2 - 1));
+
+    expect_orbit_state({4, {1.62890625, 0.0}, {3.1533355712890625, 0.0}, 3.1533355712890625 * 3.1533355712890625,
+        3.1533355712890625 * 3.1533355712890625, 0.0});
+}
+
+TEST_P(TestPerturbationIterations, trueColorIterationOutputUsesTheFullCountBeforePaletteOutput)
+{
+    ValueSaver saved_true_mode{g_true_mode, TrueColorMode::ITERATE};
+    ValueSaver saved_fill{g_fill_type, FillType::POINTS};
+    ValueSaver saved_haze{g_haze, 0};
+    init_memory();
+    std::uint64_t blocks{};
+    ASSERT_TRUE(disk_video_memory_blocks(WIDTH * 3, HEIGHT, 256, 0, blocks));
+    const MemoryHandle backing{memory_alloc(DISK_STORAGE_BLOCK_SIZE, blocks, MemoryLocation::MEMORY)};
+    start_disk_storage(WIDTH * 3, HEIGHT, 256, backing);
+    g_plot = plot_iteration_color;
+
+    compare_pixel({}, 257);
+
+    EXPECT_EQ(257, g_real_color_iter);
+    EXPECT_EQ(7, g_color);
+    Byte red{};
+    Byte green{};
+    Byte blue{};
+    read_targa_pixel(g_col, g_row, &red, &green, &blue);
+    EXPECT_EQ(0, red);
+    EXPECT_EQ(1, green);
+    EXPECT_EQ(1, blue);
+}
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationIterations, Bool());
 
 TEST_F(TestPerturbationPixels, failedReferenceComputesTheRequestedPixelImmediately)
 {

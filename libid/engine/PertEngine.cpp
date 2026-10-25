@@ -12,6 +12,7 @@
 #include "engine/PertEngine.h"
 
 #include "engine/calcfrac.h"
+#include "engine/fractals.h"
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"
 #include "engine/LogicalScreen.h"
@@ -308,21 +309,25 @@ int PertEngine::calculate_point(const Point &pt)
     const std::complex<double> delta_sub_0{parameter_delta(pixel_position)};
     std::complex<double> delta_sub_n{delta_sub_0};
     const bool at_reference{pixel_position == reference.pixel_position};
-    int iteration{};
+    long iteration{};
 
     double min_orbit{1e5}; // orbit value closest to origin
     long min_index{};      // iteration of min_orbit
-    double magnitude;
-    do
+    std::complex<double> w{reference.orbit.front() + delta_sub_n};
+    std::complex<double> old{w};
+    double magnitude{mag_squared(w)};
+    while (++iteration < g_max_iterations)
     {
         if (g_cur_fractal_specific->pert_pt == nullptr)
         {
             throw std::runtime_error("No perturbation point function defined for fractal type (" +
                 std::string{g_cur_fractal_specific->name} + ")");
         }
-        g_cur_fractal_specific->pert_pt(reference.orbit[iteration], delta_sub_n, delta_sub_0);
-        iteration++;
-        magnitude = mag_squared(reference.orbit[iteration] + delta_sub_n);
+        const std::size_t sample{static_cast<std::size_t>(iteration)};
+        old = w;
+        g_cur_fractal_specific->pert_pt(reference.orbit[sample - 1], delta_sub_n, delta_sub_0);
+        w = reference.orbit[sample] + delta_sub_n;
+        magnitude = mag_squared(w);
 
         if (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61)
         {
@@ -334,15 +339,27 @@ int PertEngine::calculate_point(const Point &pt)
         }
 
         // At the reference pixel, zero delta uses the reference orbit directly.
-        if (!at_reference && (!std::isfinite(magnitude) || magnitude < reference.tolerance[iteration]))
+        if (!at_reference && (!std::isfinite(magnitude) || magnitude < reference.tolerance[sample]))
         {
             return PERTURBATION_RETRY;
         }
-    } while (magnitude < g_magnitude_limit && iteration < g_max_iterations);
+        if (!(magnitude < g_magnitude_limit))
+        {
+            break;
+        }
+        old = w;
+    }
+
+    g_color_iter = iteration;
+    g_real_color_iter = iteration;
+    g_old_z = {old.real(), old.imag()};
+    g_new_z = {w.real(), w.imag()};
+    g_temp_sqr_x = sqr(g_new_z.x);
+    g_temp_sqr_y = sqr(g_new_z.y);
+    g_magnitude = magnitude;
 
     int index;
     const double rq_lim2{std::sqrt(g_magnitude_limit)};
-    const std::complex<double> w{reference.orbit[iteration] + delta_sub_n};
 
     if (g_biomorph >= 0)
     {
@@ -559,7 +576,10 @@ void PertEngine::reference_zoom_point(ReferencePoint &reference, const BFComplex
             throw std::runtime_error("No reference orbit function defined for fractal type (" +
                 std::string{g_cur_fractal_specific->name} + ")");
         }
-        g_cur_fractal_specific->pert_ref_bf(center, z_bf);
+        if (i + 1 < reference.orbit.size())
+        {
+            g_cur_fractal_specific->pert_ref_bf(center, z_bf);
+        }
     }
 }
 
@@ -583,7 +603,10 @@ void PertEngine::reference_zoom_point(ReferencePoint &reference, const std::comp
             throw std::runtime_error("No reference orbit function defined for fractal type (" +
                 std::string{g_cur_fractal_specific->name} + ")");
         }
-        g_cur_fractal_specific->pert_ref(center, z);
+        if (i + 1 < reference.orbit.size())
+        {
+            g_cur_fractal_specific->pert_ref(center, z);
+        }
     }
 }
 
