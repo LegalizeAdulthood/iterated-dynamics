@@ -159,6 +159,7 @@ void ShowDotController::show(const math::Point2i point)
             first_row += width;
             last_row += 1;
             row_step = -1;
+            shift_left_edge = false;
         }
         else if (point.x - width >= g_i_start_pt.x && point.y + width <= g_i_stop_pt.y)
         {

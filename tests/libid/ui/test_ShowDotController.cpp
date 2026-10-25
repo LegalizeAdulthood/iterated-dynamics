@@ -208,12 +208,40 @@ TEST_F(TestShowDotController, restoresThePointAsWellAsTheTriangleAtEveryCorner)
 {
     g_size_dot = 128;
     const std::vector<int> original{m_pixels};
-    ShowDotController marker;
-    for (const Point2i point : {Point2i{0, 0}, Point2i{15, 0}, Point2i{15, 11}, Point2i{0, 11}})
+
+    struct Case
     {
-        marker.show(point);
-        EXPECT_EQ(15, m_pixels[point.y * WIDTH + point.x]);
-        EXPECT_NE(original, m_pixels);
+        const char *name;
+        Point2i point;
+        Point2i origin;
+        std::array<const char *, 4> shape;
+    };
+
+    const Case cases[]{
+        {"TopLeft", {0, 0}, {0, 0}, {"#...", "##..", "###.", "####"}},
+        {"TopRight", {15, 0}, {12, 0}, {"...#", "..##", ".###", "####"}},
+        {"BottomRight", {15, 11}, {12, 8}, {"####", ".###", "..##", "...#"}},
+        {"BottomLeft", {0, 11}, {0, 8}, {"####", "###.", "##..", "#..."}},
+    };
+    ShowDotController marker;
+    for (const Case &test_case : cases)
+    {
+        SCOPED_TRACE(test_case.name);
+        std::vector<int> expected{original};
+        for (int row = 0; row < 4; ++row)
+        {
+            for (int col = 0; col < 4; ++col)
+            {
+                if (test_case.shape[row][col] == '#')
+                {
+                    expected[(test_case.origin.y + row) * WIDTH + test_case.origin.x + col] = 15;
+                }
+            }
+        }
+
+        marker.show(test_case.point);
+
+        EXPECT_EQ(expected, m_pixels);
         marker.restore();
         EXPECT_EQ(original, m_pixels);
     }
