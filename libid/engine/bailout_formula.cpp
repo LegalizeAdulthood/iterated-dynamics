@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "engine/bailout_formula.h"
 
@@ -8,6 +9,7 @@
 #include "math/biginit.h"
 
 #include <cmath>
+#include <stdexcept>
 
 using namespace id::math;
 
@@ -19,6 +21,28 @@ int (*g_bailout_float)(){};
 int (*g_bailout_bignum)(){};
 int (*g_bailout_bigfloat)(){};
 
+bool bailout_reached(const Bailout test, const double x, const double y, const double limit)
+{
+    switch (test)
+    {
+    case Bailout::MOD:
+        return sqr(x) + sqr(y) >= limit;
+    case Bailout::REAL:
+        return sqr(x) >= limit;
+    case Bailout::IMAG:
+        return sqr(y) >= limit;
+    case Bailout::OR:
+        return sqr(x) >= limit || sqr(y) >= limit;
+    case Bailout::AND:
+        return sqr(x) >= limit && sqr(y) >= limit;
+    case Bailout::MANH:
+        return sqr(std::abs(x) + std::abs(y)) >= limit;
+    case Bailout::MANR:
+        return sqr(x + y) >= limit;
+    }
+    throw std::logic_error("Unknown bailout test");
+}
+
 static void get_sqr_mag()
 {
     g_temp_sqr_x = sqr(g_new_z.x);
@@ -29,7 +53,7 @@ static void get_sqr_mag()
 static int fp_mod_bailout()
 {
     get_sqr_mag();
-    if (g_magnitude >= g_magnitude_limit)
+    if (bailout_reached(Bailout::MOD, g_new_z.x, g_new_z.y, g_magnitude_limit))
     {
         return 1;
     }
@@ -40,7 +64,7 @@ static int fp_mod_bailout()
 static int fp_real_bailout()
 {
     get_sqr_mag();
-    if (g_temp_sqr_x >= g_magnitude_limit)
+    if (bailout_reached(Bailout::REAL, g_new_z.x, g_new_z.y, g_magnitude_limit))
     {
         return 1;
     }
@@ -51,7 +75,7 @@ static int fp_real_bailout()
 static int fp_imag_bailout()
 {
     get_sqr_mag();
-    if (g_temp_sqr_y >= g_magnitude_limit)
+    if (bailout_reached(Bailout::IMAG, g_new_z.x, g_new_z.y, g_magnitude_limit))
     {
         return 1;
     }
@@ -62,7 +86,7 @@ static int fp_imag_bailout()
 static int fp_or_bailout()
 {
     get_sqr_mag();
-    if (g_temp_sqr_x >= g_magnitude_limit || g_temp_sqr_y >= g_magnitude_limit)
+    if (bailout_reached(Bailout::OR, g_new_z.x, g_new_z.y, g_magnitude_limit))
     {
         return 1;
     }
@@ -73,7 +97,7 @@ static int fp_or_bailout()
 static int fp_and_bailout()
 {
     get_sqr_mag();
-    if (g_temp_sqr_x >= g_magnitude_limit && g_temp_sqr_y >= g_magnitude_limit)
+    if (bailout_reached(Bailout::AND, g_new_z.x, g_new_z.y, g_magnitude_limit))
     {
         return 1;
     }
@@ -84,8 +108,7 @@ static int fp_and_bailout()
 static int fp_manh_bailout()
 {
     get_sqr_mag();
-    if (const double manh_mag = std::abs(g_new_z.x) + std::abs(g_new_z.y);
-        manh_mag * manh_mag >= g_magnitude_limit)
+    if (bailout_reached(Bailout::MANH, g_new_z.x, g_new_z.y, g_magnitude_limit))
     {
         return 1;
     }
@@ -96,7 +119,7 @@ static int fp_manh_bailout()
 static int fp_manr_bailout()
 {
     get_sqr_mag();
-    if (const double manr_mag = g_new_z.x + g_new_z.y; manr_mag * manr_mag >= g_magnitude_limit)
+    if (bailout_reached(Bailout::MANR, g_new_z.x, g_new_z.y, g_magnitude_limit))
     {
         return 1;
     }

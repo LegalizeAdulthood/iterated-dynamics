@@ -67,6 +67,7 @@ add_executable(test-id
     "include/test_migrate_gif.h.in"
     include/TestRender.h TestRender.cpp
     expected_map.cpp
+    engine/test_bailout_formula.cpp
     engine/test_BoundaryTrace.cpp
     engine/test_calc_frac_init.cpp
     engine/test_color_utils.cpp

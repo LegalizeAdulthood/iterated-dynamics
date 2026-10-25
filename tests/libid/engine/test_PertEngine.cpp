@@ -664,6 +664,65 @@ TEST_P(TestPerturbationIterations, firstUpdateEscapeMatchesStandardState)
     EXPECT_EQ(1, g_real_color_iter);
 }
 
+TEST_P(TestPerturbationIterations, selectedBailoutMatchesStandardTermination)
+{
+    struct Sample
+    {
+        std::complex<double> point;
+        std::array<long, 7> iterations;
+    };
+
+    const std::array<Sample, 4> samples{{
+        {{1.0, 0.0}, {1, 1, 6, 1, 6, 1, 1}},
+        {{0.0, 1.0}, {6, 6, 6, 6, 6, 1, 6}},
+        {{1.0, -1.0}, {1, 2, 1, 1, 2, 1, 1}},
+        {{0.5, 0.5}, {4, 4, 5, 4, 5, 4, 4}},
+    }};
+    for (const Bailout test :
+        {Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
+    {
+        SCOPED_TRACE(static_cast<int>(test));
+        g_bailout_test = test;
+        set_bailout_formula(test);
+        for (const Sample &sample : samples)
+        {
+            SCOPED_TRACE(sample.point.real());
+            SCOPED_TRACE(sample.point.imag());
+            for (const double limit : {1.0, 4.0, 16.0})
+            {
+                SCOPED_TRACE(limit);
+                g_magnitude_limit = limit;
+
+                compare_pixel(sample.point, 6);
+
+                if (limit == 4.0)
+                {
+                    EXPECT_EQ(sample.iterations[static_cast<std::size_t>(test)], g_real_color_iter);
+                }
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, selectedBailoutSurvivesDisplacementAndReferenceReplacement)
+{
+    for (const Bailout test :
+        {Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
+    {
+        SCOPED_TRACE(static_cast<int>(test));
+        g_bailout_test = test;
+        set_bailout_formula(test);
+        g_magnitude_limit = 0.25;
+        m_engine.set_glitch_tolerance(0.0);
+        compare_pixel({0.25, 0.125}, 8, 0.125);
+        EXPECT_EQ(1, m_engine.reference_count());
+
+        m_engine.set_glitch_tolerance(2.0);
+        compare_pixel({0.25, 0.125}, 8, 0.125);
+        EXPECT_GT(m_engine.reference_count(), 1);
+    }
+}
+
 TEST_P(TestPerturbationIterations, escapeOnLastAllowedUpdateMatchesStandardState)
 {
     compare_pixel({0.5, 0.0}, 5);

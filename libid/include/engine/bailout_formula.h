@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -22,5 +23,6 @@ extern int      (*g_bailout_bignum)();
 extern int      (*g_bailout_bigfloat)();
 
 void set_bailout_formula(Bailout test);
+bool bailout_reached(Bailout test, double x, double y, double limit);
 
 } // namespace id::engine

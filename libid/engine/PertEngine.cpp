@@ -11,6 +11,7 @@
 
 #include "engine/PertEngine.h"
 
+#include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/ImageRegion.h"
@@ -362,7 +363,7 @@ int PertEngine::calculate_point(const Point &pt)
         {
             return PERTURBATION_RETRY;
         }
-        if (!(magnitude < g_magnitude_limit))
+        if (bailout_reached(g_bailout_test, w.real(), w.imag(), g_magnitude_limit))
         {
             break;
         }
