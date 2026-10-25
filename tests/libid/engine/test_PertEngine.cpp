@@ -173,7 +173,7 @@ TEST_F(TestPerturbationPixels, failedReferenceComputesTheRequestedPixelImmediate
     EXPECT_THAT(m_plots, Each(Point2i{0, 2}));
 }
 
-TEST_F(TestPerturbationPixels, reusesTheClosestReferenceAtTinyZoomScales)
+TEST_F(TestPerturbationPixels, replacesTheCurrentReferenceWithoutRetainingHistoryAtTinyZoomScales)
 {
     m_engine.initialize_frame({0.25, 0.0}, 1e-200);
     m_engine.set_glitch_tolerance(2.0);
@@ -184,7 +184,64 @@ TEST_F(TestPerturbationPixels, reusesTheClosestReferenceAtTinyZoomScales)
 
     EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
 
-    EXPECT_EQ(3, m_engine.reference_count());
+    EXPECT_EQ(4, m_engine.reference_count());
+    EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
+    EXPECT_EQ(4, m_engine.reference_count());
+    EXPECT_THAT(m_plots, ElementsAre(Point2i{0, 0}, Point2i{WIDTH - 1, HEIGHT - 1}, Point2i{0, 0}, Point2i{0, 0}));
+}
+
+TEST_F(TestPerturbationPixels, stringentToleranceCompletesRepeatedReferenceReplacements)
+{
+    g_max_iterations = 10000;
+    m_engine.initialize_frame({-0.1, 0.1}, 1e-10);
+    m_engine.set_glitch_tolerance(2.0);
+    m_engine.initialize_pixel_strategy();
+    int references{1};
+
+    for (int pass = 0; pass < 3; ++pass)
+    {
+        for (int row = 0; row < HEIGHT; ++row)
+        {
+            for (int col = 0; col < WIDTH; ++col)
+            {
+                SCOPED_TRACE(row * WIDTH + col);
+                EXPECT_EQ(7, m_engine.calculate_pixel(col, row));
+                EXPECT_EQ(++references, m_engine.reference_count());
+                EXPECT_EQ(7, m_engine.calculate_pixel(col, row));
+                EXPECT_EQ(references, m_engine.reference_count());
+            }
+        }
+    }
+
+    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_EQ(2 * WIDTH * HEIGHT * 3, m_plots.size());
+    m_engine.finish();
+    EXPECT_EQ(0, m_engine.reference_count());
+}
+
+TEST_F(TestPerturbationPixels, defaultToleranceMatchesPerPixelReferences)
+{
+    const std::complex<double> center{-0.5, 0.0};
+    constexpr double ZOOM_RADIUS{1.5};
+    PertEngine control;
+    control.initialize_frame(center, ZOOM_RADIUS);
+    control.set_glitch_tolerance(2.0);
+    m_engine.initialize_frame(center, ZOOM_RADIUS);
+
+    for (int row = 0; row < HEIGHT; ++row)
+    {
+        for (int col = 0; col < WIDTH; ++col)
+        {
+            SCOPED_TRACE(row * WIDTH + col);
+            const int expected{control.calculate_pixel(col, row)};
+            EXPECT_GE(expected, 0);
+            EXPECT_EQ(expected, m_engine.calculate_pixel(col, row));
+            EXPECT_EQ(expected, m_pixels[row * WIDTH + col]);
+        }
+    }
+
+    EXPECT_LT(m_engine.reference_count(), control.reference_count());
+    control.finish();
 }
 
 TEST_F(TestPerturbationPixels, deepZoomKeepsTheCallersPixelOrder)

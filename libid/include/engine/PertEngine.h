@@ -7,7 +7,6 @@
 #include "math/big.h"
 
 #include <complex>
-#include <cstddef>
 #include <vector>
 
 namespace id::engine
@@ -23,7 +22,10 @@ public:
     int calculate_pixel(int col, int row);
     void set_glitch_tolerance(double tolerance);
     double glitch_tolerance_threshold(const std::complex<double> &value) const;
+
+    // Number of references computed for the current frame.
     int reference_count() const;
+
     void finish();
 
 private:
@@ -38,16 +40,15 @@ private:
     void cleanup();
     void initialize_pixel_state();
     void allocate_working_values();
-    void add_reference_point(const std::complex<double> &pixel_position);
-    std::size_t closest_reference(const Point &pt) const;
+    void set_reference_point(const std::complex<double> &pixel_position);
     std::complex<double> pixel_delta(const std::complex<double> &pixel_position) const;
     void reset_for_frame(double zoom_radius);
     int calculate_point(const Point &pt);
     void reference_zoom_point(ReferencePoint &reference, const math::BFComplex &center);
     void reference_zoom_point(ReferencePoint &reference, const std::complex<double> &center);
 
-    std::vector<ReferencePoint> m_references;
-    std::size_t m_active_reference{};
+    ReferencePoint m_reference{};
+    int m_reference_count{};
     math::BFComplex m_reference_coordinate_bf{};
     math::BigFloat m_tmp_bf{};
     math::BFComplex m_center_bf{};

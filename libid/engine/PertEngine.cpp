@@ -24,7 +24,6 @@
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
-#include <utility>
 
 using namespace id::fractals;
 using namespace id::math;
@@ -64,7 +63,7 @@ void PertEngine::initialize_pixel_strategy()
     }
 
     initialize_pixel_state();
-    add_reference_point({g_screen_x_dots / 2.0, g_screen_y_dots / 2.0});
+    set_reference_point({g_screen_x_dots / 2.0, g_screen_y_dots / 2.0});
     m_frame_initialized = true;
 }
 
@@ -82,15 +81,7 @@ int PertEngine::calculate_pixel(const Point &pt)
         {
             return color;
         }
-        const std::size_t closest{closest_reference(pt)};
-        if (closest != m_active_reference)
-        {
-            m_active_reference = closest;
-        }
-        else
-        {
-            add_reference_point({static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())});
-        }
+        set_reference_point({static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())});
     }
 }
 
@@ -111,7 +102,7 @@ double PertEngine::glitch_tolerance_threshold(const std::complex<double> &value)
 
 int PertEngine::reference_count() const
 {
-    return static_cast<int>(m_references.size());
+    return m_reference_count;
 }
 
 void PertEngine::finish()
@@ -129,8 +120,8 @@ void PertEngine::cleanup()
         restore_stack(m_saved_stack);
         m_center_stack_saved = false;
     }
-    m_references.clear();
-    m_active_reference = 0;
+    m_reference = {};
+    m_reference_count = 0;
     m_reference_coordinate_bf = {};
     m_tmp_bf = {};
     m_center_bf = {};
@@ -177,9 +168,11 @@ std::complex<double> PertEngine::pixel_delta(const std::complex<double> &pixel_p
         -m_zoom_radius * (2 * pixel_position.imag() - g_screen_y_dots) / m_window_radius};
 }
 
-void PertEngine::add_reference_point(const std::complex<double> &pixel_position)
+void PertEngine::set_reference_point(const std::complex<double> &pixel_position)
 {
-    ReferencePoint reference{pixel_position, pixel_delta(pixel_position)};
+    ReferencePoint &reference{m_reference};
+    reference.pixel_position = pixel_position;
+    reference.delta = pixel_delta(pixel_position);
     reference.orbit.resize(g_max_iterations + 1);
     reference.tolerance.resize(g_max_iterations + 1);
 
@@ -195,31 +188,12 @@ void PertEngine::add_reference_point(const std::complex<double> &pixel_position)
     {
         reference_zoom_point(reference, m_center + reference.delta);
     }
-    m_references.push_back(std::move(reference));
-    m_active_reference = m_references.size() - 1;
-}
-
-std::size_t PertEngine::closest_reference(const Point &pt) const
-{
-    // Screen distances avoid underflow at deep zoom scales.
-    const std::complex<double> pixel_position{static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())};
-    std::size_t closest{m_active_reference};
-    double distance{std::norm(pixel_position - m_references[closest].pixel_position)};
-    for (std::size_t index = 0; index < m_references.size(); ++index)
-    {
-        const double candidate{std::norm(pixel_position - m_references[index].pixel_position)};
-        if (candidate < distance)
-        {
-            closest = index;
-            distance = candidate;
-        }
-    }
-    return closest;
+    ++m_reference_count;
 }
 
 int PertEngine::calculate_point(const Point &pt)
 {
-    const ReferencePoint &reference{m_references[m_active_reference]};
+    const ReferencePoint &reference{m_reference};
     const std::complex<double> pixel_position{static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())};
     const std::complex<double> delta_sub_0{pixel_delta(pixel_position) - reference.delta};
     std::complex<double> delta_sub_n{delta_sub_0};
