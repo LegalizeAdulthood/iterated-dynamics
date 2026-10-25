@@ -14,6 +14,7 @@
 #include <engine/sound.h>
 #include <engine/SoundOutput.h>
 #include <engine/StandardPass.h>
+#include <engine/StickyOrbits.h>
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
@@ -30,6 +31,7 @@
 #include <chrono>
 #include <filesystem>
 #include <fstream>
+#include <limits>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -265,6 +267,31 @@ TEST_P(TestStickyOrbitSound, readyOutputRetains2048IterationChunks)
     EXPECT_FALSE(calculation.iterate());
     EXPECT_EQ(4096, s_math_calls);
     EXPECT_EQ(4096U, m_samples.size());
+}
+
+TEST(TestStickyOrbitChunkLimit, limitsEachChunkTo2048Iterations)
+{
+    EXPECT_EQ(2048, sticky_orbit_chunk_limit(0, 4097));
+    EXPECT_EQ(4096, sticky_orbit_chunk_limit(2048, 4097));
+    EXPECT_EQ(4097, sticky_orbit_chunk_limit(4096, 4097));
+}
+
+TEST(TestStickyOrbitChunkLimit, stopsAtIterationLimit)
+{
+    for (const long limit : {0L, 1L, 2047L, 2048L, 2049L, std::numeric_limits<long>::max()})
+    {
+        SCOPED_TRACE(limit);
+        EXPECT_EQ(limit, sticky_orbit_chunk_limit(limit, limit));
+    }
+}
+
+TEST(TestStickyOrbitChunkLimit, clampsFinalChunksAtLongMaxWithoutOverflow)
+{
+    const long limit{std::numeric_limits<long>::max()};
+    EXPECT_EQ(limit, sticky_orbit_chunk_limit(limit - 1, limit));
+    EXPECT_EQ(limit, sticky_orbit_chunk_limit(limit - 2047, limit));
+    EXPECT_EQ(limit, sticky_orbit_chunk_limit(limit - 2048, limit));
+    EXPECT_EQ(limit - 1, sticky_orbit_chunk_limit(limit - 2049, limit));
 }
 
 TEST_P(TestStickyOrbitSound, rejectedPointRetainsMathAndPlotUntilAcceptance)

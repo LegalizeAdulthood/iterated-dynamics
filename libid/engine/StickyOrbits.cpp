@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "engine/StickyOrbits.h"
 
@@ -32,6 +33,11 @@ constexpr long ORBIT_ITERATION_CHUNK = 2048;
 } // namespace
 
 OrbitDrawMode g_draw_mode{OrbitDrawMode::RECTANGLE};
+
+long sticky_orbit_chunk_limit(const long count, const long max_iterations)
+{
+    return count + std::min(ORBIT_ITERATION_CHUNK, max_iterations - count);
+}
 
 void StickyOrbits::initialize_rectangle()
 {
@@ -268,7 +274,7 @@ bool StickyOrbits::advance_orbit()
         start_orbit();
     }
 
-    const long stop_count = std::min(g_max_iterations, m_orbit.count + ORBIT_ITERATION_CHUNK);
+    const long stop_count = sticky_orbit_chunk_limit(m_orbit.count, g_max_iterations);
     for (; m_orbit.count < stop_count; ++m_orbit.count)
     {
         if (!m_orbit.point_pending)

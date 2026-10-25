@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -16,6 +17,8 @@ enum class OrbitDrawMode
 };
 
 extern OrbitDrawMode g_draw_mode;
+
+long sticky_orbit_chunk_limit(long count, long max_iterations);
 
 class StickyOrbits
 {
