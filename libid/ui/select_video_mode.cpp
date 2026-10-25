@@ -94,12 +94,13 @@ int select_video_mode(const int current_mode)
     std::iota(s_entry_nums.begin(), s_entry_nums.end(), 0);
     std::sort(s_entry_nums.begin(), s_entry_nums.end(), ent_less);
 
-    // Pick the current catalog entry, or the first 256-color mode.
+    // Pick the current catalog entry, including a reserved copy, or the first 256-color mode.
     int i;
     for (i = 0; i < g_video_table_len; ++i)  // find default mode
     {
         if ((current_mode < 0 && g_video_table[s_entry_nums[i]].colors == 256) //
-            || s_entry_nums[i] == current_mode)
+            || s_entry_nums[i] == current_mode ||
+            (current_mode == MAX_VIDEO_MODES - 1 && g_video_table[s_entry_nums[i]] == g_video_table[current_mode]))
         {
             break;
         }
