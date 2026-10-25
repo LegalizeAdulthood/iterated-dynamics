@@ -323,6 +323,10 @@ CommandParseResult CommandRouter::reset_startup() const
     reset_fractal_defaults();
     CommandProcessor processor;
     CommandParseResult result{process(processor)};
+    if (g_debug_flag != DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME)
+    {
+        g_first_init = false;
+    }
     g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
     return result;
 }

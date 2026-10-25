@@ -1600,6 +1600,67 @@ TEST_F(TestCommandRouterStartup, fallbackReappliesOnlyDefaultsAndConfiguration)
     EXPECT_TRUE(fs::remove(m_library / "sstools.ini"));
 }
 
+TEST_F(TestCommandRouterStartup, fallbackFinalizesFirstInitWithoutDebugOverride)
+{
+    const CommandRouter router{CommandHandlerTables{{}, m_ui}, engine_command_handlers()};
+    const CommandParseResult startup{router.process_startup({"id", "debugflag=110", "type=formula"})};
+    ASSERT_TRUE(startup.diagnostics.errors.empty());
+    ASSERT_TRUE(startup.needs_file_entry);
+    ASSERT_TRUE(g_first_init);
+
+    const CommandParseResult fallback{router.reset_startup()};
+
+    EXPECT_TRUE(fallback.diagnostics.errors.empty());
+    EXPECT_FALSE(fallback.needs_file_entry);
+    EXPECT_EQ(FractalType::MANDEL, g_fractal_type);
+    EXPECT_EQ(DebugFlags::NONE, g_debug_flag);
+    EXPECT_FALSE(g_first_init);
+
+    const fs::path process_state{m_directory / "process-state"};
+    g_temp_dir = process_state;
+    write_source("sstools.ini", "ui=yes\n");
+    EXPECT_CALL(m_ui_handler, Call(_))
+        .WillOnce(
+            [&](const Command &)
+            {
+                EXPECT_FALSE(g_first_init);
+                EXPECT_EQ(process_state, g_temp_dir);
+                g_init_mode = 7;
+                g_show_file = ShowFile::LOAD_IMAGE;
+                g_colors_preloaded = true;
+                return CmdArgFlags::NONE;
+            });
+
+    const CommandParseResult restarted{router.process_startup({"id"})};
+
+    EXPECT_TRUE(restarted.diagnostics.errors.empty());
+    EXPECT_EQ(process_state, g_temp_dir);
+    EXPECT_EQ(-1, g_init_mode);
+    EXPECT_EQ(ShowFile::IMAGE_LOADED, g_show_file);
+    EXPECT_TRUE(g_read_color);
+    EXPECT_FALSE(g_first_init);
+}
+
+TEST_F(TestCommandRouterStartup, fallbackRetainsFirstInitWithConfigurationDebugOverride)
+{
+    write_source("sstools.ini", "debugflag=110\n");
+    const CommandRouter router;
+    const CommandParseResult startup{router.process_startup({"id", "type=formula"})};
+    ASSERT_TRUE(startup.diagnostics.errors.empty());
+    ASSERT_TRUE(startup.needs_file_entry);
+    ASSERT_TRUE(g_first_init);
+    const fs::path process_state{m_directory / "process-state"};
+    g_temp_dir = process_state;
+
+    const CommandParseResult fallback{router.reset_startup()};
+
+    EXPECT_TRUE(fallback.diagnostics.errors.empty());
+    EXPECT_FALSE(fallback.needs_file_entry);
+    EXPECT_EQ(process_state, g_temp_dir);
+    EXPECT_EQ(DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME, g_debug_flag);
+    EXPECT_TRUE(g_first_init);
+}
+
 TEST_F(TestCommandRouterStartup, finalTypeRequestsSelectionOrReportsBatchDiagnostic)
 {
     const CommandRouter router;
