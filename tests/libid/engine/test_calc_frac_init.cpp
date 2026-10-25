@@ -9,7 +9,9 @@
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
 #include <engine/pixel_grid.h>
+#include <engine/Potential.h>
 #include <engine/UserData.h>
+#include <engine/VideoInfo.h>
 #include <fractals/fractalp.h>
 #include <math/biginit.h>
 #include <misc/debug_flags.h>
@@ -126,6 +128,23 @@ TEST_F(TestCalcFracInit, enteringArbitraryPrecisionStillInvalidatesResume)
 
     EXPECT_NE(BFMathType::NONE, g_bf_math);
     EXPECT_EQ(CalcStatus::PARAMS_CHANGED, g_calc_status);
+}
+
+TEST_F(TestCalcFracInit, potentialDisablesDistanceEstimation)
+{
+    ValueSaver saved_potential{g_potential, Potential{}};
+    ValueSaver saved_distance{g_distance_estimator};
+    ValueSaver saved_bailout{g_magnitude_limit};
+    ValueSaver saved_colors{g_colors, 256};
+    g_potential.params = {32.0, 10.0, 4.0};
+    g_user.distance_estimator_value = -9;
+    set_region({{-2.0, -1.5}, {2.0, 1.5}, {-2.0, -1.5}}, false);
+
+    EXPECT_FALSE(calc_frac_init());
+
+    EXPECT_TRUE(g_potential.flag);
+    EXPECT_EQ(0, g_distance_estimator);
+    EXPECT_EQ(0, g_user.distance_estimator_value);
 }
 
 } // namespace id::test

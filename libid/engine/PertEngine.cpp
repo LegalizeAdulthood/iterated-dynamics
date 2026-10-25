@@ -754,13 +754,23 @@ int PertEngine::calculate_point(const Point &pt)
     const double rq_lim2{std::sqrt(g_magnitude_limit)};
 
     const bool highlight_cycle{g_periodicity_check < 0 && m_cycle_len > 0};
-    if (epsilon_axis != 0)
+    const bool use_distance{
+        g_distance_estimator != 0 && !g_potential.flag && epsilon_axis == 0 && iteration < g_max_iterations};
+    const bool boundary{
+        use_distance && m_distance_estimator.on_boundary(m_distance_estimator.distance_squared(g_new_z))};
+    const bool fixed_distance_color{use_distance && (boundary ? g_distance_estimator < 0 : g_colors == 2)};
+    const bool inside{iteration == g_max_iterations || epsilon_axis != 0 || (boundary && g_distance_estimator > 0)};
+    if (fixed_distance_color)
+    {
+        index = boundary ? -g_distance_estimator : !g_inside_color;
+    }
+    else if (epsilon_axis != 0)
     {
         constexpr int GREEN{2};
         constexpr int YELLOW{6};
         index = g_close_proximity > 0 ? epsilon_axis == 1 ? GREEN : YELLOW : iteration;
     }
-    else if (iteration == g_max_iterations && (highlight_cycle || g_inside_method == ColorMethod::PERIOD))
+    else if (inside && (highlight_cycle || g_inside_method == ColorMethod::PERIOD))
     {
         if (g_potential.flag)
         {
@@ -791,7 +801,7 @@ int PertEngine::calculate_point(const Point &pt)
             index = potential(magnitude, iteration);
         }
     }
-    else if (iteration < g_max_iterations && g_decomp[0] > 0 && !g_potential.flag)
+    else if (!inside && g_decomp[0] > 0 && !g_potential.flag)
     {
         index = standard_decomposition_color(g_new_z);
         if (g_outside_method >= ColorMethod::COLOR)
@@ -799,7 +809,7 @@ int PertEngine::calculate_point(const Point &pt)
             index = g_outside_color;
         }
     }
-    else if (g_biomorph >= 0)
+    else if (g_biomorph >= 0 && !boundary)
     {
         if (iteration == g_max_iterations)
         {
@@ -881,7 +891,7 @@ int PertEngine::calculate_point(const Point &pt)
 
         if (g_inside_method >= ColorMethod::COLOR) // no filter
         {
-            if (iteration == g_max_iterations)
+            if (inside)
             {
                 index = g_inside_color;
             }
@@ -894,34 +904,41 @@ int PertEngine::calculate_point(const Point &pt)
         {
             switch (g_inside_method)
             {
+            case ColorMethod::ITER:
+            case ColorMethod::EPS_CROSS:
+                if (inside)
+                {
+                    index = g_max_iterations;
+                }
+                break;
             case ColorMethod::ZMAG:
-                if (iteration == g_max_iterations)
+                if (inside)
                 {
                     index = static_cast<long>(mag_squared(w) * (g_max_iterations >> 1) + 1);
                 }
                 break;
             case ColorMethod::BOF60:
-                if (iteration == g_max_iterations)
+                if (inside)
                 {
                     index = static_cast<long>(std::sqrt(min_orbit) * 75.0);
                 }
                 break;
             case ColorMethod::BOF61:
-                if (iteration == g_max_iterations)
+                if (inside)
                 {
                     index = min_index;
                 }
                 break;
 
             case ColorMethod::FMODI:
-                if (iteration == g_max_iterations)
+                if (inside)
                 {
                     index = fmod_color(mem_value);
                 }
                 break;
 
             case ColorMethod::ATANI:
-                if (iteration == g_max_iterations)
+                if (inside)
                 {
                     index = static_cast<long>(std::abs(std::atan2(w.imag(), w.real()) * g_atan_colors / PI));
                 }
@@ -932,9 +949,10 @@ int PertEngine::calculate_point(const Point &pt)
             }
         }
     }
-    const bool inside{iteration == g_max_iterations || epsilon_axis != 0};
-    const bool map_color{g_potential.flag ||
-        (inside ? !highlight_cycle && g_inside_method < ColorMethod::COLOR : g_outside_method < ColorMethod::COLOR)};
+    const bool map_color{!fixed_distance_color &&
+        (g_potential.flag ||
+            (inside ? !highlight_cycle && g_inside_method < ColorMethod::COLOR
+                    : g_outside_method < ColorMethod::COLOR))};
     if (map_color && (!g_log_map_table.empty() || g_log_map_calculate))
     {
         index = log_table_calc(index);

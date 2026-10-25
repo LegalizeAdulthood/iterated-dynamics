@@ -739,10 +739,11 @@ void setup_standard_fractal_distance_estimator()
     }
 }
 
-DistanceEstimator::DistanceEstimator(
-    const double bailout, const double derivative_limit, const bool mandelbrot, const bool legacy) :
+DistanceEstimator::DistanceEstimator(const double bailout, const double derivative_limit, const bool mandelbrot,
+    const bool legacy, const double boundary_limit) :
     m_bailout{bailout},
     m_derivative_limit{derivative_limit},
+    m_boundary_limit{boundary_limit},
     m_mandelbrot{mandelbrot},
     m_legacy{legacy}
 {
@@ -791,6 +792,11 @@ double DistanceEstimator::distance_squared(const DComplex &z, const bool overflo
     return magnitude * sqr(std::log(magnitude)) / (sqr(m_derivative.x) + sqr(m_derivative.y));
 }
 
+bool DistanceEstimator::on_boundary(const double distance_squared) const
+{
+    return distance_squared < m_boundary_limit;
+}
+
 DComplex DistanceEstimator::derivative() const
 {
     return m_derivative;
@@ -822,7 +828,7 @@ DistanceEstimator standard_distance_estimator()
             bailout = std::max(bailout, DEM_BAILOUT);
         }
     }
-    return {bailout, s_dem_too_big, s_dem_mandel, g_use_old_distance_estimator};
+    return {bailout, s_dem_too_big, s_dem_mandel, g_use_old_distance_estimator, s_dem_delta};
 }
 
 // fast per pixel 1/2/b/g, called with row & col set
@@ -1463,7 +1469,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
     if (g_distance_estimator)
     {
         const double dist{m_distance_estimator.distance_squared(g_new_z, g_overflow)};
-        if (dist < s_dem_delta)     // point is on the edge
+        if (m_distance_estimator.on_boundary(dist)) // point is on the edge
         {
             if (g_distance_estimator > 0)
             {
