@@ -3,6 +3,7 @@
 //
 #include "MockDriver.h"
 
+#include <io/disk_storage.h>
 #include <io/special_dirs.h>
 #include <misc/debug_flags.h>
 #include <misc/memory.h>
@@ -27,6 +28,23 @@ using namespace testing;
 
 namespace id::test
 {
+
+namespace
+{
+
+std::filesystem::space_info one_byte_available(const std::filesystem::path &, std::error_code &error)
+{
+    error.clear();
+    return {1024 * 1024, 1, 1};
+}
+
+std::filesystem::space_info no_bytes_available(const std::filesystem::path &, std::error_code &error)
+{
+    error.clear();
+    return {1024 * 1024, 0, 0};
+}
+
+} // namespace
 
 class TestMemory : public Test
 {
@@ -164,6 +182,63 @@ TEST_F(TestMemory, diskAllocationFailureCanBeRetriedWithoutLeakedHandles)
     EXPECT_EQ(1, handle.index);
     memory_release(handle);
     EXPECT_TRUE(std::filesystem::is_empty(g_temp_dir));
+}
+
+class TestMemoryBackingFile : public TestMemory, public WithParamInterface<int>
+{
+};
+
+TEST_P(TestMemoryBackingFile, availableSpaceOnlyNeedsToCoverMissingBytes)
+{
+    constexpr U16 BLOCK_SIZE{DISK_STORAGE_BLOCK_SIZE};
+    constexpr std::uint64_t REQUESTED_BYTES{2 * BLOCK_SIZE};
+    const std::size_t existing_bytes{static_cast<std::size_t>(static_cast<int>(REQUESTED_BYTES) + GetParam())};
+    const std::filesystem::path file{m_directory / "backing.dat"};
+    const std::vector<Byte> input(existing_bytes, 37);
+    {
+        std::ofstream stream{file, std::ios::binary};
+        stream.write(reinterpret_cast<const char *>(input.data()), input.size());
+    }
+
+    const DiskSpaceFn disk_space{GetParam() < 0 ? one_byte_available : no_bytes_available};
+    const MemoryHandle handle{memory_alloc(BLOCK_SIZE, 2, MemoryLocation::DISK, file, disk_space)};
+
+    EXPECT_EQ(REQUESTED_BYTES, handle.size());
+    std::vector<Byte> output(std::min<std::size_t>(existing_bytes, REQUESTED_BYTES));
+    handle.to_memory(output.data(), 1, output.size(), 0);
+    EXPECT_THAT(output, Each(37));
+    memory_release(handle);
+    EXPECT_EQ(std::max<std::uint64_t>(existing_bytes, REQUESTED_BYTES), std::filesystem::file_size(file));
+    EXPECT_TRUE(exit_check().empty());
+}
+
+INSTANTIATE_TEST_SUITE_P(SmallerEqualLarger, TestMemoryBackingFile, Values(-1, 0, 1));
+
+TEST_F(TestMemory, insufficientSpaceForBackingFileGrowthDoesNotChangeItOrLeakHandles)
+{
+    const std::filesystem::path file{m_directory / "backing.dat"};
+    std::ofstream(file, std::ios::binary) << "1234";
+
+    EXPECT_THROW(memory_alloc(1, 6, MemoryLocation::DISK, file, one_byte_available), MemoryError);
+
+    EXPECT_EQ(4U, std::filesystem::file_size(file));
+    EXPECT_TRUE(exit_check().empty());
+    const MemoryHandle handle{memory_alloc(1, 5, MemoryLocation::DISK, file, one_byte_available)};
+    EXPECT_EQ(1, handle.index);
+    memory_release(handle);
+    EXPECT_EQ(5U, std::filesystem::file_size(file));
+}
+
+TEST_F(TestMemory, newTemporaryFileRequiresItsFullSizeInAvailableSpace)
+{
+    EXPECT_THROW(memory_alloc(1, 2, MemoryLocation::DISK, {}, one_byte_available), MemoryError);
+    EXPECT_TRUE(exit_check().empty());
+    EXPECT_TRUE(std::filesystem::is_empty(m_directory));
+
+    const MemoryHandle handle{memory_alloc(1, 1, MemoryLocation::DISK, {}, one_byte_available)};
+    EXPECT_EQ(1, handle.index);
+    memory_release(handle);
+    EXPECT_TRUE(std::filesystem::is_empty(m_directory));
 }
 
 TEST_F(TestMemory, shortReadReportsFailureAndAllowsRepairAndRetry)

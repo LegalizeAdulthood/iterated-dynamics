@@ -244,8 +244,8 @@ std::vector<std::string> exit_check()
     return diagnostics;
 }
 
-MemoryHandle memory_alloc(
-    const U16 size, const std::uint64_t count, MemoryLocation requested, const std::filesystem::path &backing_file)
+MemoryHandle memory_alloc(const U16 size, const std::uint64_t count, MemoryLocation requested,
+    const std::filesystem::path &backing_file, const DiskSpaceFn disk_space)
 {
     if (size == 0 || count == 0 || count > std::numeric_limits<std::uint64_t>::max() / size)
     {
@@ -288,9 +288,15 @@ MemoryHandle memory_alloc(
     const bool temporary{backing_file.empty()};
     std::filesystem::path path{temporary ? g_temp_dir / fmt::format("id.{}.{}.tmp", getpid(), index) : backing_file};
     std::error_code error;
+    const std::uintmax_t existing_bytes{temporary ? 0 : std::filesystem::file_size(path, error)};
+    if (error)
+    {
+        throw MemoryError(fmt::format("Cannot inspect backing file {}: {}", path.string(), error.message()));
+    }
+    const std::uintmax_t additional_bytes{existing_bytes < bytes ? bytes - existing_bytes : 0};
     const std::filesystem::space_info space{
-        std::filesystem::space(path.has_parent_path() ? path.parent_path() : std::filesystem::path{"."}, error)};
-    if (error || space.available < bytes)
+        disk_space(path.has_parent_path() ? path.parent_path() : std::filesystem::path{"."}, error)};
+    if (error || space.available < additional_bytes)
     {
         throw MemoryError(fmt::format("Allocating {} bytes of {} failed: {}", bytes, memory_name(requested),
             error ? error.message() : "insufficient disk space"));
@@ -300,13 +306,7 @@ MemoryHandle memory_alloc(
     {
         throw disk_error("Create", path, errno);
     }
-    std::error_code size_error;
-    const bool extend{temporary || std::filesystem::file_size(path, size_error) < bytes};
-    if (size_error)
-    {
-        std::fclose(file);
-        throw MemoryError(fmt::format("Cannot inspect backing file {}: {}", path.string(), size_error.message()));
-    }
+    const bool extend{additional_bytes != 0};
     errno = 0;
     if ((extend && (!seek_file(file, bytes - 1) || std::fputc(0, file) == EOF || std::fflush(file) != 0)) ||
         !seek_file(file, 0))

@@ -11,6 +11,7 @@
 #include <filesystem>
 #include <stdexcept>
 #include <string>
+#include <system_error>
 #include <vector>
 
 namespace id::misc
@@ -49,8 +50,9 @@ struct MemoryHandle
 MemoryLocation memory_type(MemoryHandle handle);
 void init_memory();
 std::vector<std::string> exit_check();
-MemoryHandle memory_alloc(
-    U16 size, std::uint64_t count, MemoryLocation stored_at, const std::filesystem::path &backing_file = {});
+using DiskSpaceFn = std::filesystem::space_info (*)(const std::filesystem::path &, std::error_code &);
+MemoryHandle memory_alloc(U16 size, std::uint64_t count, MemoryLocation stored_at,
+    const std::filesystem::path &backing_file = {}, DiskSpaceFn disk_space = std::filesystem::space);
 void memory_release(MemoryHandle handle);
 
 } // namespace id::misc
