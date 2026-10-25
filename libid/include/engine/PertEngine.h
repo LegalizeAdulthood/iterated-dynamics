@@ -8,6 +8,7 @@
 #include "math/big.h"
 
 #include <complex>
+#include <cstddef>
 #include <vector>
 
 namespace id::engine
@@ -16,6 +17,9 @@ namespace id::engine
 class PertEngine
 {
 public:
+    // Validate the sample count for both reference buffers without allocating.
+    static std::size_t reference_sample_count(long max_iterations);
+
     math::BFComplex initialize_frame_bf(double zoom_radius);
     void initialize_frame(const std::complex<double> &center, double zoom_radius);
     void initialize_pixel_strategy();

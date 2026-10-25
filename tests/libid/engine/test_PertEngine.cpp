@@ -24,9 +24,13 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <limits>
+#include <new>
+#include <stdexcept>
 #include <vector>
 
 using namespace id::engine;
@@ -56,6 +60,48 @@ TEST(TestPertEngine, nonDefaultGlitchToleranceScalesThreshold)
     EXPECT_DOUBLE_EQ(6.25, engine.glitch_tolerance_threshold({3.0, 4.0}));
 }
 
+TEST(TestPertEngine, referenceSampleCountIncludesTheInitialValue)
+{
+    EXPECT_EQ(129, PertEngine::reference_sample_count(128));
+}
+
+TEST(TestPertEngine, referenceSampleCountRejectsNonpositiveIterations)
+{
+    EXPECT_THROW(PertEngine::reference_sample_count(0), std::logic_error);
+    EXPECT_THROW(PertEngine::reference_sample_count(-1), std::logic_error);
+    EXPECT_THROW(PertEngine::reference_sample_count(std::numeric_limits<long>::min()), std::logic_error);
+}
+
+TEST(TestPertEngine, referenceSampleCountHandlesTheWindowsLongMaximumWithoutAllocating)
+{
+    constexpr long WINDOWS_LONG_MAX{std::numeric_limits<std::int32_t>::max()};
+    if constexpr (sizeof(std::size_t) > sizeof(std::int32_t))
+    {
+        EXPECT_EQ(2147483648ULL, PertEngine::reference_sample_count(WINDOWS_LONG_MAX));
+    }
+    else
+    {
+        EXPECT_THROW(PertEngine::reference_sample_count(WINDOWS_LONG_MAX), std::length_error);
+    }
+}
+
+TEST(TestPertEngine, referenceSampleCountChecksContainerAndCombinedByteLimits)
+{
+    constexpr std::size_t BYTES_PER_SAMPLE{sizeof(std::complex<double>) + sizeof(double)};
+    const std::uintmax_t max_samples{std::min({std::vector<std::complex<double>>{}.max_size(),
+        std::vector<double>{}.max_size(), std::numeric_limits<std::size_t>::max() / BYTES_PER_SAMPLE})};
+    const std::uintmax_t max_iterations{std::numeric_limits<long>::max()};
+    const long largest_supported{static_cast<long>(std::min(max_iterations, max_samples - 1))};
+
+    EXPECT_EQ(
+        static_cast<std::uintmax_t>(largest_supported) + 1, PertEngine::reference_sample_count(largest_supported));
+    if (max_samples <= max_iterations)
+    {
+        EXPECT_THROW(PertEngine::reference_sample_count(static_cast<long>(max_samples)), std::length_error);
+        EXPECT_THROW(PertEngine::reference_sample_count(std::numeric_limits<long>::max()), std::length_error);
+    }
+}
+
 namespace
 {
 
@@ -65,6 +111,11 @@ PertEngine *s_pixel_engine{};
 std::vector<Point2i> s_requested_pixels;
 std::vector<std::complex<double>> s_reference_coordinates;
 std::complex<double> s_parameter_delta;
+
+void fail_reference_bf(const BFComplex &, BFComplex &)
+{
+    throw std::bad_array_new_length{};
+}
 
 void record_reference(const std::complex<double> &center, std::complex<double> &z)
 {
@@ -185,6 +236,57 @@ void TestPerturbationPixels::initialize_deep_frame()
     str_to_bf(center.x, "0.25");
     clear_bf(center.y);
     m_engine.set_glitch_tolerance(2.0);
+}
+
+TEST_F(TestPerturbationPixels, finishingReleasesReferenceWorkingStorageAndAllowsAnotherFrame)
+{
+    init_bf_dec(60);
+    m_big_float = true;
+    g_bf_math = BFMathType::BIG_FLT;
+    const int initial_stack{save_stack()};
+
+    for (int frame = 0; frame < 2; ++frame)
+    {
+        const BFComplex center{m_engine.initialize_frame_bf(1e-40)};
+        float_to_bf(center.x, 0.25);
+        clear_bf(center.y);
+        EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
+        EXPECT_EQ(1, m_engine.reference_count());
+        EXPECT_GT(save_stack(), initial_stack);
+
+        m_engine.finish();
+
+        EXPECT_EQ(initial_stack, save_stack());
+        EXPECT_EQ(0, m_engine.reference_count());
+        m_engine.finish();
+        EXPECT_EQ(initial_stack, save_stack());
+    }
+}
+
+TEST_F(TestPerturbationPixels, failedInitializationReleasesStorageAndPreservesTheAllocationError)
+{
+    init_bf_dec(60);
+    m_big_float = true;
+    g_bf_math = BFMathType::BIG_FLT;
+    const int initial_stack{save_stack()};
+    const BFComplex center{m_engine.initialize_frame_bf(1e-40)};
+    float_to_bf(center.x, 0.25);
+    clear_bf(center.y);
+    m_specific.pert_ref_bf = fail_reference_bf;
+
+    EXPECT_THROW(m_engine.initialize_pixel_strategy(), std::bad_array_new_length);
+
+    EXPECT_EQ(initial_stack, save_stack());
+    EXPECT_EQ(0, m_engine.reference_count());
+    m_engine.finish();
+    EXPECT_EQ(initial_stack, save_stack());
+
+    m_specific.pert_ref_bf = mandel_ref_pt_bf;
+    const BFComplex next_center{m_engine.initialize_frame_bf(1e-40)};
+    float_to_bf(next_center.x, 0.25);
+    clear_bf(next_center.y);
+    EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
+    EXPECT_EQ(1, m_engine.reference_count());
 }
 
 TEST_F(TestPerturbationPixels, failedReferenceComputesTheRequestedPixelImmediately)

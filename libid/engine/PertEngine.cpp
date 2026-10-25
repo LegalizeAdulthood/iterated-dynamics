@@ -23,9 +23,13 @@
 #include "math/complex_fn.h"
 #include "misc/debug_flags.h"
 #include "misc/id.h"
+#include "misc/run_cleanup.h"
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
+#include <exception>
+#include <limits>
 #include <stdexcept>
 
 using namespace id::fractals;
@@ -41,6 +45,23 @@ namespace
 constexpr int PERTURBATION_RETRY{-3};
 
 } // namespace
+
+std::size_t PertEngine::reference_sample_count(const long max_iterations)
+{
+    if (max_iterations <= 0)
+    {
+        throw std::logic_error{"Perturbation requires a positive iteration limit"};
+    }
+    constexpr std::size_t BYTES_PER_SAMPLE{sizeof(std::complex<double>) + sizeof(double)};
+    const std::size_t max_samples{std::min({std::vector<std::complex<double>>{}.max_size(),
+        std::vector<double>{}.max_size(), std::numeric_limits<std::size_t>::max() / BYTES_PER_SAMPLE})};
+    const std::uintmax_t iterations{static_cast<std::uintmax_t>(max_iterations)};
+    if (iterations >= max_samples)
+    {
+        throw std::length_error{"Perturbation reference buffers exceed addressable storage"};
+    }
+    return static_cast<std::size_t>(iterations) + 1;
+}
 
 BFComplex PertEngine::initialize_frame_bf(const double zoom_radius)
 {
@@ -65,9 +86,16 @@ void PertEngine::initialize_pixel_strategy()
         return;
     }
 
-    initialize_pixel_state();
-    set_reference_point({g_screen_x_dots / 2.0, g_screen_y_dots / 2.0});
-    m_frame_initialized = true;
+    try
+    {
+        initialize_pixel_state();
+        set_reference_point({g_screen_x_dots / 2.0, g_screen_y_dots / 2.0});
+        m_frame_initialized = true;
+    }
+    catch (...)
+    {
+        run_cleanup(std::current_exception(), [this] { cleanup(); });
+    }
 }
 
 int PertEngine::calculate_pixel(const Point &pt)
@@ -242,11 +270,12 @@ std::complex<double> PertEngine::parameter_delta(const std::complex<double> &pix
 
 void PertEngine::set_reference_point(const std::complex<double> &pixel_position)
 {
+    const std::size_t samples{reference_sample_count(g_max_iterations)};
     ReferencePoint &reference{m_reference};
     reference.pixel_position = pixel_position;
     reference.delta = pixel_delta(pixel_position);
-    reference.orbit.resize(g_max_iterations + 1);
-    reference.tolerance.resize(g_max_iterations + 1);
+    reference.orbit.resize(samples);
+    reference.tolerance.resize(samples);
 
     if (g_bf_math != BFMathType::NONE)
     {
@@ -504,7 +533,7 @@ void PertEngine::reference_zoom_point(ReferencePoint &reference, const BFComplex
     copy_bf(z_bf.x, center.x);
     copy_bf(z_bf.y, center.y);
 
-    for (int i = 0; i <= g_max_iterations; i++)
+    for (std::size_t i = 0; i < reference.orbit.size(); ++i)
     {
         std::complex<double> c;
         c.real(bf_to_float(z_bf.x));
@@ -538,7 +567,7 @@ void PertEngine::reference_zoom_point(ReferencePoint &reference, const std::comp
 {
     std::complex<double> z = center;
 
-    for (int i = 0; i <= g_max_iterations; i++)
+    for (std::size_t i = 0; i < reference.orbit.size(); ++i)
     {
         reference.orbit[i] = z;
 
