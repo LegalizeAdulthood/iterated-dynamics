@@ -13,6 +13,7 @@
 #include <engine/fractals.h>
 #include <engine/ImageRegion.h>
 #include <engine/Inversion.h>
+#include <engine/log_map.h>
 #include <engine/LogicalScreen.h>
 #include <engine/pixel.h>
 #include <engine/pixel_grid.h>
@@ -723,6 +724,140 @@ TEST_P(TestPerturbationIterations, periodicityMatchesStandardSaveSchedules)
                 }
             }
         }
+    }
+}
+
+TEST_P(TestPerturbationIterations, negativePeriodicityHighlightsOnlyDetectedCycles)
+{
+    g_inside_color = 3;
+    for (const int periodicity : {1, -1, -5})
+    {
+        SCOPED_TRACE(periodicity);
+        g_periodicity_check = periodicity;
+        g_old_color_iter = 0;
+        compare_pixel({0.0, 0.0}, 128);
+        EXPECT_EQ(periodicity < 0 ? 7 : 3, g_color);
+        EXPECT_LT(s_standard_orbit.size(), 127);
+        EXPECT_GT(m_engine.reference_count(), 0);
+    }
+    g_periodicity_check = -1;
+    g_close_enough = 1e-14;
+    compare_pixel({0.25, 0.0}, 128);
+    EXPECT_EQ(3, g_color);
+    EXPECT_EQ(127, s_standard_orbit.size());
+    compare_pixel({0.0, 0.0}, 8);
+    EXPECT_EQ(3, g_color);
+    compare_pixel({0.5, 0.0}, 8);
+    EXPECT_EQ(4, g_color);
+}
+
+TEST_P(TestPerturbationIterations, periodColorsMatchStandardCycleLengthsAndNoCycleResult)
+{
+    g_inside_method = ColorMethod::PERIOD;
+    g_close_enough = 1e-14;
+    for (const int periodicity : {0, 1, -1})
+    {
+        SCOPED_TRACE(periodicity);
+        g_periodicity_check = periodicity;
+        for (const double real : {0.0, -1.0, 0.25})
+        {
+            SCOPED_TRACE(real);
+            compare_pixel({real, 0.0}, 128);
+            const int period{real == 0.0 ? 1 : 2};
+            EXPECT_EQ(periodicity == 0 || real == 0.25 ? 128 : periodicity < 0 ? 7 : period, g_color);
+            EXPECT_GT(m_engine.reference_count(), 0);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, cycleHighlightingOverridesInsideAndBiomorphColors)
+{
+    g_periodicity_check = -1;
+    g_inside_color = 3;
+    g_biomorph = 5;
+    g_outside_method = ColorMethod::REAL;
+    for (const ColorMethod inside :
+        {ColorMethod::COLOR, ColorMethod::ITER, ColorMethod::PERIOD, ColorMethod::BOF60, ColorMethod::BOF61})
+    {
+        SCOPED_TRACE(static_cast<int>(inside));
+        g_inside_method = inside;
+        compare_pixel({0.0, 0.0}, 128);
+        EXPECT_EQ(7, g_color);
+    }
+    g_biomorph = -1;
+    g_inside_method = ColorMethod::ZMAG;
+    compare_pixel({0.0, 0.0}, 128);
+    EXPECT_EQ(1, g_color);
+    EXPECT_EQ(127, s_standard_orbit.size());
+}
+
+TEST_P(TestPerturbationIterations, periodColorsUseLogMappingButHighlightsDoNot)
+{
+    ValueSaver saved_table{g_log_map_table, std::vector<Byte>(129, 44)};
+    ValueSaver saved_max{g_log_map_table_max_size, 128L};
+    ValueSaver saved_flag{g_log_map_flag, 1L};
+    ValueSaver saved_calculate{g_log_map_calculate, false};
+    g_log_map_table[1] = 11;
+    g_log_map_table[2] = 12;
+    g_log_map_table[7] = 99;
+    g_log_map_table[128] = 13;
+    g_inside_method = ColorMethod::PERIOD;
+    g_close_enough = 1e-14;
+    for (const int periodicity : {1, -1})
+    {
+        SCOPED_TRACE(periodicity);
+        g_periodicity_check = periodicity;
+        compare_pixel({0.0, 0.0}, 128);
+        EXPECT_EQ(periodicity < 0 ? 7 : 11, g_color);
+        compare_pixel({-1.0, 0.0}, 128);
+        EXPECT_EQ(periodicity < 0 ? 7 : 12, g_color);
+        compare_pixel({0.25, 0.0}, 128);
+        EXPECT_EQ(13, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, potentialColorsTakePrecedenceOverPeriodicityColors)
+{
+    ValueSaver saved_table{g_log_map_table, std::vector<Byte>{}};
+    ValueSaver saved_max{g_log_map_table_max_size, 128L};
+    ValueSaver saved_flag{g_log_map_flag, 0L};
+    ValueSaver saved_calculate{g_log_map_calculate, false};
+    g_potential = {{23.0, 10.0, 4.0}, false, true};
+    g_periodicity_check = -1;
+    g_inside_color = 3;
+    for (const bool mapped : {false, true})
+    {
+        SCOPED_TRACE(mapped);
+        if (mapped)
+        {
+            g_log_map_flag = 1;
+            g_log_map_table.assign(129, 44);
+            g_log_map_table[3] = 31;
+            g_log_map_table[23] = 41;
+        }
+        for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::PERIOD})
+        {
+            SCOPED_TRACE(static_cast<int>(inside));
+            g_inside_method = inside;
+            compare_pixel({0.0, 0.0}, 128);
+            EXPECT_EQ(inside == ColorMethod::COLOR ? mapped ? 31 : 3 : mapped ? 41 : 23, g_color);
+            EXPECT_LT(s_standard_orbit.size(), 127);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, periodicityColorsSurviveReferenceReplacement)
+{
+    g_inside_color = 3;
+    m_engine.set_glitch_tolerance(2.0);
+    for (const int periodicity : {1, -1})
+    {
+        SCOPED_TRACE(periodicity);
+        g_periodicity_check = periodicity;
+        g_inside_method = periodicity < 0 ? ColorMethod::COLOR : ColorMethod::PERIOD;
+        compare_pixel({-1.0, 0.0}, 128, 0.125);
+        EXPECT_EQ(periodicity < 0 ? 7 : 2, g_color);
+        EXPECT_GT(m_engine.reference_count(), 1);
     }
 }
 

@@ -16,6 +16,7 @@
 #include "engine/fractals.h"
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"
+#include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
 #include "engine/Potential.h"
 #include "engine/VideoInfo.h"
@@ -646,7 +647,31 @@ int PertEngine::calculate_point(const Point &pt)
     int index;
     const double rq_lim2{std::sqrt(g_magnitude_limit)};
 
-    if (g_biomorph >= 0)
+    const bool highlight_cycle{g_periodicity_check < 0 && m_cycle_len > 0};
+    if (iteration == g_max_iterations && (highlight_cycle || g_inside_method == ColorMethod::PERIOD))
+    {
+        if (g_potential.flag)
+        {
+            index = potential(magnitude, iteration);
+            if (!g_log_map_table.empty() || g_log_map_calculate)
+            {
+                index = static_cast<int>(log_table_calc(index));
+            }
+        }
+        else if (highlight_cycle)
+        {
+            index = 7;
+        }
+        else
+        {
+            index = static_cast<int>(m_cycle_len > 0 ? m_cycle_len : g_max_iterations);
+            if (!g_log_map_table.empty() || g_log_map_calculate)
+            {
+                index = static_cast<int>(log_table_calc(index));
+            }
+        }
+    }
+    else if (g_biomorph >= 0)
     {
         if (iteration == g_max_iterations)
         {
