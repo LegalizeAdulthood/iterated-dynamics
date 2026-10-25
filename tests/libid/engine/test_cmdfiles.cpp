@@ -840,6 +840,8 @@ protected:
     ValueSaver<int> m_saved_video_count{g_video_table_len, 1};
     ValueSaver<VideoInfo> m_saved_mode{g_video_table[0], VideoInfo{800, 600, 16, nullptr, {}}};
     ValueSaver<int> m_saved_mode_key{g_video_mode_keys[0], ID_KEY_F6};
+    ValueSaver<int> m_saved_active_key{g_video_entry_key, 0};
+    ValueSaver<std::string> m_saved_comment{g_par_comment[0]};
     ValueSaver<bool> m_saved_fast_restore{g_fast_restore, false};
     ValueSaver<fs::path> m_saved_read_filename{g_read_filename};
     GifFileType m_extensions{};
@@ -916,6 +918,61 @@ TEST_F(TestCommandMakeParView, makeParRetainsReducedViewAspectRatio)
     const std::string text{make_par_for_image(200, 100, 0.5f)};
 
     EXPECT_THAT(text, HasSubstr(" viewwindows=4/0.5/no/0/0"));
+}
+
+TEST_F(TestCommandMakeParView, makeParExpandsSelectedVideoKeyAtStartup)
+{
+    g_par_comment[0] = "video:$vidkey$!";
+    const VideoInfo active_video{g_video_entry};
+
+    const std::string text{make_par_for_image(200, 150, 0.75f)};
+
+    EXPECT_THAT(text, HasSubstr("; video:F6!"));
+    EXPECT_EQ(0, g_video_entry_key);
+    EXPECT_EQ(active_video, g_video_entry);
+}
+
+TEST_F(TestCommandMakeParView, makeParExpandsSelectedVideoKeyInsteadOfActiveKey)
+{
+    g_video_entry_key = ID_KEY_F2;
+    g_par_comment[0] = "video:$vidkey$!";
+    const VideoInfo active_video{g_video_entry};
+
+    const std::string text{make_par_for_image(200, 150, 0.75f)};
+
+    EXPECT_THAT(text, HasSubstr("; video:F6!"));
+    EXPECT_EQ(ID_KEY_F2, g_video_entry_key);
+    EXPECT_EQ(active_video, g_video_entry);
+}
+
+TEST_F(TestCommandMakeParView, makeParWithUnboundVideoModeDoesNotUseActiveKey)
+{
+    ValueSaver reserved_key{g_video_mode_keys[MAX_VIDEO_MODES - 1], 0};
+    g_video_mode_keys[0] = 0;
+    g_video_entry_key = ID_KEY_F2;
+    g_par_comment[0] = "video:$vidkey$!";
+    const VideoInfo active_video{g_video_entry};
+
+    const std::string text{make_par_for_image(200, 150, 0.75f)};
+
+    EXPECT_THAT(text, HasSubstr("; video:!"));
+    EXPECT_EQ(ID_KEY_F2, g_video_entry_key);
+    EXPECT_EQ(active_video, g_video_entry);
+}
+
+TEST_F(TestCommandMakeParView, makeParWithoutMatchingVideoModeDoesNotUseActiveKey)
+{
+    g_video_table[0].x_dots = 1024;
+    g_video_table[0].y_dots = 768;
+    g_video_entry_key = ID_KEY_F2;
+    g_par_comment[0] = "video:$vidkey$!";
+    const VideoInfo active_video{g_video_entry};
+
+    const std::string text{make_par_for_image(200, 150, 0.75f)};
+
+    EXPECT_THAT(text, HasSubstr("; video:!"));
+    EXPECT_EQ(ID_KEY_F2, g_video_entry_key);
+    EXPECT_EQ(active_video, g_video_entry);
 }
 
 TEST_F(TestCommandMakeParView, makeParWithoutMatchingVideoModeDoesNotInventAViewport)

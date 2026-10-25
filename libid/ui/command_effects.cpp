@@ -16,9 +16,11 @@
 #include "io/loadmap.h"
 #include "io/make_mig.h"
 #include "misc/Driver.h"
+#include "misc/ValueSaver.h"
 #include "ui/get_video_mode.h"
 #include "ui/help_title.h"
 #include "ui/make_batch_file.h"
+#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <fmt/format.h>
@@ -57,6 +59,7 @@ void make_document(const MakeHelpDocument &request)
 
 void make_parameter_file(const MakeParameterFile &request)
 {
+    int video_key{g_video_entry_key};
     g_parameter_file = request.filename;
     g_parameter_set_name = request.entry_name;
     g_make_parameter_file = true;
@@ -78,6 +81,7 @@ void make_parameter_file(const MakeParameterFile &request)
         apply_image_parameters(metadata);
         if (video)
         {
+            video_key = video->mode >= 0 ? g_video_mode_keys[video->mode] : 0;
             g_viewport = video->viewport;
             g_file_x_dots = video->width;
             g_file_y_dots = video->height;
@@ -94,6 +98,7 @@ void make_parameter_file(const MakeParameterFile &request)
     g_logical_screen.x_size_dots = g_logical_screen.x_dots - 1;
     g_logical_screen.y_size_dots = g_logical_screen.y_dots - 1;
     invalidate_translated_resume(calc_frac_init());
+    ValueSaver saved_video_key{g_video_entry_key, video_key};
     make_batch_file();
 }
 
