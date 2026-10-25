@@ -547,8 +547,17 @@ void TestPerturbationIterations::compare_pixel(const std::complex<double> &cente
     const std::size_t first{s_perturbation_orbit.size() - s_standard_orbit.size()};
     for (std::size_t i = 0; i < s_standard_orbit.size(); ++i)
     {
-        EXPECT_NEAR(s_standard_orbit[i].real(), s_perturbation_orbit[first + i].real(), 1e-14);
-        EXPECT_NEAR(s_standard_orbit[i].imag(), s_perturbation_orbit[first + i].imag(), 1e-14);
+        double real_tolerance{1e-14};
+        double imag_tolerance{1e-14};
+        if (g_inside_method == ColorMethod::STAR_TRAIL)
+        {
+            // Escaped star-trail coordinates can exceed the useful range of an absolute tolerance.
+            constexpr double RELATIVE_TOLERANCE{4.0 * std::numeric_limits<double>::epsilon()};
+            real_tolerance = std::max(real_tolerance, std::abs(s_standard_orbit[i].real()) * RELATIVE_TOLERANCE);
+            imag_tolerance = std::max(imag_tolerance, std::abs(s_standard_orbit[i].imag()) * RELATIVE_TOLERANCE);
+        }
+        EXPECT_NEAR(s_standard_orbit[i].real(), s_perturbation_orbit[first + i].real(), real_tolerance);
+        EXPECT_NEAR(s_standard_orbit[i].imag(), s_perturbation_orbit[first + i].imag(), imag_tolerance);
     }
 }
 
@@ -1337,6 +1346,154 @@ TEST_P(TestPerturbationIterations, epsilonCrossSurvivesInitializationAndReferenc
     EXPECT_GT(m_engine.reference_count(), 1);
 }
 
+TEST_P(TestPerturbationIterations, starTrailMatchesKnownHistoriesWithoutPeriodicity)
+{
+    struct Sample
+    {
+        std::complex<double> point;
+        int color;
+    };
+
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    for (const long limit : {1L, 8L, 128L})
+    {
+        SCOPED_TRACE(limit);
+        for (const int periodicity : {0, 1, -1})
+        {
+            SCOPED_TRACE(periodicity);
+            g_periodicity_check = periodicity;
+            for (const Sample &sample : {Sample{{0.0, 0.0}, 1}, Sample{{-1.0, 0.0}, 1}, Sample{{0.0, 1.0}, 2},
+                     Sample{{0.125, 0.125}, 0}, Sample{{-0.75, 0.125}, 2}})
+            {
+                SCOPED_TRACE(sample.point);
+                compare_pixel(sample.point, limit);
+                EXPECT_EQ(sample.color, g_color);
+                EXPECT_EQ(16, g_real_color_iter);
+                EXPECT_EQ(15, s_standard_orbit.size());
+                EXPECT_EQ(limit, g_max_iterations);
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, starTrailContinuesPastBailoutAndClampsEscapingCoordinates)
+{
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    compare_pixel({1.0, 0.0}, 128);
+    EXPECT_EQ(1, g_color);
+    EXPECT_EQ(16, g_real_color_iter);
+    EXPECT_EQ(15, s_standard_orbit.size());
+    EXPECT_DOUBLE_EQ(std::numeric_limits<float>::max(), g_new_z.x);
+    EXPECT_EQ(128, g_max_iterations);
+
+    g_use_init_orbit = InitOrbitMode::VALUE;
+    g_init_orbit = {0.0, 2.0};
+    compare_pixel({}, 8);
+    EXPECT_EQ(1, g_color);
+    EXPECT_EQ(16, g_real_color_iter);
+    EXPECT_EQ(15, s_standard_orbit.size());
+    EXPECT_DOUBLE_EQ(std::numeric_limits<float>::max(), g_new_z.x);
+    EXPECT_EQ(8, g_max_iterations);
+}
+
+TEST_P(TestPerturbationIterations, starTrailUsesPaletteSizedHistorySlots)
+{
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    for (const int colors : {2, 4, 16, 256})
+    {
+        SCOPED_TRACE(colors);
+        g_colors = colors;
+        g_and_color = colors - 1;
+        compare_pixel({-0.5, 0.5}, 128);
+        EXPECT_EQ(colors < 16 ? 0 : 5, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, starTrailRestartsHistoryWithAReplacementReference)
+{
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    m_engine.set_glitch_tolerance(8.0);
+    compare_pixel({0.125, 0.125}, 128, 0.125);
+    EXPECT_EQ(0, g_color);
+    EXPECT_EQ(128, g_max_iterations);
+    EXPECT_GT(m_engine.reference_count(), 1);
+}
+
+TEST_P(TestPerturbationIterations, starTrailUsesInsideFinishingRatherThanBiomorphColoring)
+{
+    ValueSaver saved_table{g_log_map_table, std::vector<Byte>{}};
+    ValueSaver saved_calculate{g_log_map_calculate, false};
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    g_biomorph = 9;
+    compare_pixel({}, 128);
+    EXPECT_EQ(1, g_color);
+    g_potential = {{23.0, 10.0, 4.0}, false, true};
+    compare_pixel({}, 128);
+    EXPECT_EQ(23, g_color);
+    EXPECT_EQ(128, g_max_iterations);
+}
+
+TEST_P(TestPerturbationIterations, starTrailBoundsReferencesAndRestoresTheLimitBeforeReturningControl)
+{
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    g_max_iterations = std::numeric_limits<long>::max();
+    m_specific.pert_ref = record_reference;
+    m_specific.pert_ref_bf = record_reference_bf;
+    m_specific.pert_pt = record_perturbation_orbit;
+    s_reference_coordinates.clear();
+    s_perturbation_orbit.clear();
+    initialize_reference({0.0, 0.0});
+    m_engine.initialize_pixel_strategy();
+    EXPECT_EQ(16, s_reference_coordinates.size());
+    EXPECT_EQ(std::numeric_limits<long>::max(), g_max_iterations);
+
+    EXPECT_EQ(1, m_engine.calculate_pixel(g_col, g_row));
+    EXPECT_EQ(15, s_perturbation_orbit.size());
+    EXPECT_EQ(16, s_reference_coordinates.size());
+    EXPECT_EQ(std::numeric_limits<long>::max(), g_max_iterations);
+    m_engine.finish();
+    EXPECT_EQ(std::numeric_limits<long>::max(), g_max_iterations);
+}
+
+TEST_P(TestPerturbationIterations, starTrailRestoresTheLimitAfterReferenceFailure)
+{
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    g_max_iterations = 201;
+    m_specific.pert_ref = [](const std::complex<double> &, std::complex<double> &)
+    {
+        EXPECT_EQ(16, g_max_iterations);
+        throw std::runtime_error{"reference failure"};
+    };
+    m_specific.pert_ref_bf = [](const BFComplex &, BFComplex &)
+    {
+        EXPECT_EQ(16, g_max_iterations);
+        throw std::runtime_error{"reference failure"};
+    };
+    initialize_reference({0.0, 0.0});
+
+    EXPECT_THROW(m_engine.initialize_pixel_strategy(), std::runtime_error);
+    EXPECT_EQ(201, g_max_iterations);
+}
+
+TEST_P(TestPerturbationIterations, starTrailRestoresTheLimitAfterPixelAndOutputFailures)
+{
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    g_max_iterations = 201;
+    initialize_reference({0.0, 0.0});
+    m_specific.pert_pt = [](const std::complex<double> &, std::complex<double> &, const std::complex<double> &)
+    {
+        EXPECT_EQ(16, g_max_iterations);
+        throw std::runtime_error{"pixel failure"};
+    };
+
+    EXPECT_THROW(m_engine.calculate_pixel(g_col, g_row), std::runtime_error);
+    EXPECT_EQ(201, g_max_iterations);
+    m_specific.pert_pt = mandel_perturb;
+    EXPECT_CALL(m_driver, write_pixel(g_col, g_row, 1)).WillOnce(Throw(std::runtime_error{"output failure"}));
+    EXPECT_THROW(m_engine.calculate_pixel(g_col, g_row), std::runtime_error);
+    EXPECT_EQ(201, g_max_iterations);
+}
+
 TEST_P(TestPerturbationIterations, periodicityMatchesStandardSaveSchedules)
 {
     for (const bool legacy : {false, true})
@@ -1584,8 +1741,9 @@ TEST_F(TestPerturbationPixels, orbitDependentInsideModesDisablePeriodicity)
 
         EXPECT_GE(m_engine.calculate_pixel(0, 0), 0);
 
-        EXPECT_EQ(g_max_iterations - 1, s_perturbation_orbit.size());
-        EXPECT_EQ(g_max_iterations, g_real_color_iter);
+        const long iterations{inside == ColorMethod::STAR_TRAIL ? 16 : g_max_iterations};
+        EXPECT_EQ(iterations - 1, s_perturbation_orbit.size());
+        EXPECT_EQ(iterations, g_real_color_iter);
     }
 }
 

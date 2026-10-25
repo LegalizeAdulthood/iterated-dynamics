@@ -26,8 +26,10 @@
 #include "math/complex_fn.h"
 #include "misc/id.h"
 #include "misc/run_cleanup.h"
+#include "misc/ValueSaver.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdint>
 #include <exception>
@@ -45,6 +47,27 @@ namespace
 {
 
 constexpr int PERTURBATION_RETRY{-3};
+constexpr long STAR_TRAIL_ITERATIONS{16};
+
+std::complex<double> star_trail_point(const std::complex<double> &z)
+{
+    constexpr double LIMIT{std::numeric_limits<float>::max()};
+    return {std::max(std::min(z.real(), LIMIT), -LIMIT), std::max(std::min(z.imag(), LIMIT), -LIMIT)};
+}
+
+void clamp_star_trail_point(const BFComplex &z)
+{
+    const std::complex<double> value{static_cast<double>(bf_to_float(z.x)), static_cast<double>(bf_to_float(z.y))};
+    const std::complex<double> bounded{star_trail_point(value)};
+    if (bounded.real() != value.real())
+    {
+        float_to_bf(z.x, bounded.real());
+    }
+    if (bounded.imag() != value.imag())
+    {
+        float_to_bf(z.y, bounded.imag());
+    }
+}
 
 bool bof_initialization()
 {
@@ -196,6 +219,8 @@ void PertEngine::initialize_pixel_strategy()
         return;
     }
 
+    const ValueSaver saved_iterations{
+        g_max_iterations, g_inside_method == ColorMethod::STAR_TRAIL ? STAR_TRAIL_ITERATIONS : g_max_iterations};
     try
     {
         initialize_pixel_state();
@@ -210,6 +235,8 @@ void PertEngine::initialize_pixel_strategy()
 
 int PertEngine::calculate_pixel(const Point &pt)
 {
+    const ValueSaver saved_iterations{
+        g_max_iterations, g_inside_method == ColorMethod::STAR_TRAIL ? STAR_TRAIL_ITERATIONS : g_max_iterations};
     if (!m_frame_initialized)
     {
         initialize_pixel_strategy();
@@ -429,6 +456,8 @@ void PertEngine::set_reference_point(const std::complex<double> &pixel_position)
 int PertEngine::calculate_point(const Point &pt)
 {
     m_cycle_len = -1;
+    const bool star_trail{g_inside_method == ColorMethod::STAR_TRAIL};
+    std::array<double, STAR_TRAIL_ITERATIONS> tan_table{};
     const bool high_precision{g_bf_math != BFMathType::NONE};
     const bool check_periodicity{
         g_periodicity_check != 0 && g_inside_method != ColorMethod::ZMAG && g_inside_method != ColorMethod::STAR_TRAIL};
@@ -488,6 +517,10 @@ int PertEngine::calculate_point(const Point &pt)
         }
         for (; precise_sample < target; ++precise_sample)
         {
+            if (star_trail && precise_sample > 0)
+            {
+                clamp_star_trail_point(precise_orbit);
+            }
             precise_previous = {
                 static_cast<double>(bf_to_float(precise_orbit.x)), static_cast<double>(bf_to_float(precise_orbit.y))};
             g_cur_fractal_specific->pert_ref_bf(precise_coordinate, precise_orbit);
@@ -540,7 +573,9 @@ int PertEngine::calculate_point(const Point &pt)
         }
         const std::size_t sample{static_cast<std::size_t>(iteration + (bof ? 1 : 0))};
         old = w;
-        g_cur_fractal_specific->pert_pt(reference.orbit[sample - 1], orbit_displacement, parameter_displacement);
+        const std::complex<double> reference_z{
+            star_trail && sample > 1 ? star_trail_point(reference.orbit[sample - 1]) : reference.orbit[sample - 1]};
+        g_cur_fractal_specific->pert_pt(reference_z, orbit_displacement, parameter_displacement);
         w = reference.orbit[sample] + orbit_displacement;
         magnitude = mag_squared(w);
 
@@ -567,9 +602,22 @@ int PertEngine::calculate_point(const Point &pt)
                 min_index = iteration + 1L;
             }
         }
-        if (escaped)
+        if (escaped && !star_trail)
         {
             break;
+        }
+        if (star_trail)
+        {
+            const std::complex<double> bounded{star_trail_point(w)};
+            const std::complex<double> bounded_reference{star_trail_point(reference.orbit[sample])};
+            if (bounded != w || bounded_reference != reference.orbit[sample])
+            {
+                orbit_displacement = bounded - bounded_reference;
+            }
+            w = bounded;
+            magnitude = mag_squared(w);
+            const int color{static_cast<int>((iteration - 1) % g_and_color + 1)};
+            tan_table[color - 1] = w.imag() / (w.real() + 0.000001);
         }
         if (g_inside_method == ColorMethod::EPS_CROSS)
         {
@@ -712,6 +760,26 @@ int PertEngine::calculate_point(const Point &pt)
             {
                 index = log_table_calc(index);
             }
+        }
+    }
+    else if (star_trail)
+    {
+        index = 0;
+        for (int i = 1; i < STAR_TRAIL_ITERATIONS; ++i)
+        {
+            if (std::abs(tan_table[0] - tan_table[i]) < 0.05)
+            {
+                index = i;
+                break;
+            }
+        }
+        if (g_potential.flag)
+        {
+            index = potential(magnitude, iteration);
+        }
+        if (!g_log_map_table.empty() || g_log_map_calculate)
+        {
+            index = log_table_calc(index);
         }
     }
     else if (g_biomorph >= 0)
@@ -893,6 +961,10 @@ void PertEngine::reference_zoom_point(ReferencePoint &reference, const BFComplex
         }
         if (i + 1 < reference.orbit.size())
         {
+            if (g_inside_method == ColorMethod::STAR_TRAIL && i > 0)
+            {
+                clamp_star_trail_point(z_bf);
+            }
             g_cur_fractal_specific->pert_ref_bf(center, z_bf);
         }
     }
@@ -924,6 +996,10 @@ void PertEngine::reference_zoom_point(ReferencePoint &reference, const std::comp
         }
         if (i + 1 < reference.orbit.size())
         {
+            if (g_inside_method == ColorMethod::STAR_TRAIL && i > 0)
+            {
+                z = star_trail_point(z);
+            }
             g_cur_fractal_specific->pert_ref(center, z);
         }
     }
