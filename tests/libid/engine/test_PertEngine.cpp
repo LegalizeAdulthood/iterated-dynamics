@@ -122,6 +122,21 @@ std::vector<Point2i> s_requested_pixels;
 std::vector<std::complex<double>> s_reference_coordinates;
 std::complex<double> s_parameter_delta;
 
+struct CoordinateSample
+{
+    Point2i pixel;
+    std::complex<double> value;
+};
+
+std::vector<CoordinateSample> s_coordinates;
+
+void record_coordinate(
+    const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter_delta)
+{
+    s_coordinates.push_back({{g_col, g_row}, reference + delta});
+    mandel_perturb(reference, delta, parameter_delta);
+}
+
 void fail_reference_bf(const BFComplex &, BFComplex &)
 {
     throw std::bad_array_new_length{};
@@ -278,7 +293,7 @@ void TestPerturbationPixels::initialize_deep_frame()
     init_bf_dec(60);
     m_big_float = true;
     g_bf_math = BFMathType::BIG_FLT;
-    const BFComplex center{m_engine.initialize_frame_bf(1e-40)};
+    const BFComplex center{m_engine.initialize_frame_bf(1e-40, 1e-40)};
     str_to_bf(center.x, "0.25");
     clear_bf(center.y);
     m_engine.set_glitch_tolerance(2.0);
@@ -293,7 +308,7 @@ TEST_F(TestPerturbationPixels, finishingReleasesReferenceWorkingStorageAndAllows
 
     for (int frame = 0; frame < 2; ++frame)
     {
-        const BFComplex center{m_engine.initialize_frame_bf(1e-40)};
+        const BFComplex center{m_engine.initialize_frame_bf(1e-40, 1e-40)};
         float_to_bf(center.x, 0.25);
         clear_bf(center.y);
         EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
@@ -315,7 +330,7 @@ TEST_F(TestPerturbationPixels, failedInitializationReleasesStorageAndPreservesTh
     m_big_float = true;
     g_bf_math = BFMathType::BIG_FLT;
     const int initial_stack{save_stack()};
-    const BFComplex center{m_engine.initialize_frame_bf(1e-40)};
+    const BFComplex center{m_engine.initialize_frame_bf(1e-40, 1e-40)};
     float_to_bf(center.x, 0.25);
     clear_bf(center.y);
     m_specific.pert_ref_bf = fail_reference_bf;
@@ -328,7 +343,7 @@ TEST_F(TestPerturbationPixels, failedInitializationReleasesStorageAndPreservesTh
     EXPECT_EQ(initial_stack, save_stack());
 
     m_specific.pert_ref_bf = mandel_ref_pt_bf;
-    const BFComplex next_center{m_engine.initialize_frame_bf(1e-40)};
+    const BFComplex next_center{m_engine.initialize_frame_bf(1e-40, 1e-40)};
     float_to_bf(next_center.x, 0.25);
     clear_bf(next_center.y);
     EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
@@ -340,8 +355,9 @@ class TestPerturbationIterations : public TestPerturbationPixels, public WithPar
 protected:
     void SetUp() override;
     void TearDown() override;
-    void initialize_reference(const std::complex<double> &center, double radius = 0.0);
+    void initialize_reference(const std::complex<double> &center, double half_width = 0.0, double half_height = 0.0);
     void compare_pixel(const std::complex<double> &center, long max_iterations);
+    void compare_frame_coordinates(double tolerance);
 
     ValueSaver<ImageRegion> m_saved_region{g_image_region};
     ValueSaver<Potential> m_saved_potential{g_potential, Potential{}};
@@ -376,20 +392,21 @@ void TestPerturbationIterations::TearDown()
     TestPerturbationPixels::TearDown();
 }
 
-void TestPerturbationIterations::initialize_reference(const std::complex<double> &center, const double radius)
+void TestPerturbationIterations::initialize_reference(
+    const std::complex<double> &center, const double half_width, const double half_height)
 {
     if (GetParam())
     {
         init_bf_dec(60);
         m_big_float = true;
         g_bf_math = BFMathType::BIG_FLT;
-        const BFComplex center_bf{m_engine.initialize_frame_bf(radius)};
+        const BFComplex center_bf{m_engine.initialize_frame_bf(half_width, half_height)};
         float_to_bf(center_bf.x, center.real());
         float_to_bf(center_bf.y, center.imag());
     }
     else
     {
-        m_engine.initialize_frame(center, radius);
+        m_engine.initialize_frame(center, half_width, half_height);
     }
 }
 
@@ -467,7 +484,7 @@ TEST_P(TestPerturbationIterations, referenceGenerationDoesNotDiscardAnExtraUpdat
 TEST_P(TestPerturbationIterations, displacedPixelPublishesItsOwnTerminalState)
 {
     g_max_iterations = 5;
-    initialize_reference({0.25, 0.0}, 0.75);
+    initialize_reference({0.25, 0.0}, 7.0 / 12.0, 0.0);
 
     EXPECT_EQ(4, m_engine.calculate_pixel(5, HEIGHT / 2 - 1));
 
@@ -500,11 +517,122 @@ TEST_P(TestPerturbationIterations, trueColorIterationOutputUsesTheFullCountBefor
     EXPECT_EQ(1, blue);
 }
 
+void TestPerturbationIterations::compare_frame_coordinates(const double tolerance)
+{
+    ValueSaver saved_user{g_user, UserData{}};
+    ValueSaver saved_status{g_calc_status};
+    ValueSaver saved_resuming{g_resuming, false};
+    ValueSaver<LDouble> saved_delta_x{g_delta_x};
+    ValueSaver<LDouble> saved_delta_y{g_delta_y};
+    ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    g_user.perturbation = PerturbationMode::YES;
+    g_user.perturbation_tolerance = tolerance;
+    g_max_iterations = 2;
+    m_specific.calc_type = standard_fractal_type;
+    m_specific.per_image = [] { return true; };
+    m_specific.symmetry = SymmetryType::NONE;
+    m_specific.pert_ref = record_reference;
+    m_specific.pert_ref_bf = record_reference_bf;
+    m_specific.pert_pt = record_coordinate;
+    std::vector<Point2i> plots;
+    EXPECT_CALL(m_driver, write_pixel(_, _, _))
+        .WillRepeatedly(Invoke([&plots](const int col, const int row, int) { plots.push_back({col, row}); }));
+
+    for (const Point2i &size : {Point2i{8, 6}, Point2i{6, 8}, Point2i{17, 9}, Point2i{9, 17}})
+    {
+        for (const FractalType type : {FractalType::MANDEL, FractalType::BURNING_SHIP})
+        {
+            SCOPED_TRACE(size.x);
+            SCOPED_TRACE(size.y);
+            SCOPED_TRACE(static_cast<int>(type));
+            g_fractal_type = type;
+            g_screen_x_dots = size.x;
+            g_screen_y_dots = size.y;
+            g_logical_screen = {size.x, size.y, 0, 0, size.x - 1.0, size.y - 1.0};
+            g_start_pt = g_i_start_pt = g_begin_pt = {};
+            g_stop_pt = g_i_stop_pt = {size.x - 1, size.y - 1};
+            g_image_region = ImageRegion{{-0.3, 0.1}, {0.2, 0.35}, {-0.3, 0.1}};
+            g_delta_x = (g_image_region.m_max.x - g_image_region.m_min.x) / (size.x - 1);
+            g_delta_y = (g_image_region.m_max.y - g_image_region.m_min.y) / (size.y - 1);
+            alloc_pixel_grid();
+            fill_pixel_grid();
+            if (GetParam())
+            {
+                init_bf_dec(60);
+                m_big_float = true;
+                g_bf_math = BFMathType::BIG_FLT;
+                float_to_bf(g_bf_x_min, g_image_region.m_min.x);
+                float_to_bf(g_bf_x_max, g_image_region.m_max.x);
+                float_to_bf(g_bf_y_min, g_image_region.m_min.y);
+                float_to_bf(g_bf_y_max, g_image_region.m_max.y);
+                copy_bf(g_bf_x_3rd, g_bf_x_min);
+                copy_bf(g_bf_y_3rd, g_bf_y_min);
+            }
+            g_std_calc_mode = CalcMode::ONE_PASS;
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
+            g_dispatch = FractalDispatch{m_specific};
+            s_coordinates.clear();
+            s_reference_coordinates.clear();
+            plots.clear();
+            StandardFractal calculation;
+            calculation.resume();
+            for (int increments = 0; increments < size.x * size.y + 10 && !calculation.done(); ++increments)
+            {
+                calculation.iterate();
+            }
+            ASSERT_TRUE(calculation.done());
+            ASSERT_FALSE(s_reference_coordinates.empty());
+            EXPECT_NEAR(-0.05, s_reference_coordinates.front().real(), 1e-14);
+            EXPECT_NEAR(
+                type == FractalType::BURNING_SHIP ? -0.225 : 0.225, s_reference_coordinates.front().imag(), 1e-14);
+            if (tolerance > 1.0)
+            {
+                EXPECT_GT(s_reference_coordinates.size(), g_max_iterations);
+            }
+            std::vector<int> visits(size.x * size.y);
+            for (const CoordinateSample &sample : s_coordinates)
+            {
+                g_col = sample.pixel.x;
+                g_row = sample.pixel.y;
+                const std::complex<double> expected{
+                    dx_pixel(), type == FractalType::BURNING_SHIP ? -dy_pixel() : dy_pixel()};
+                EXPECT_NEAR(expected.real(), sample.value.real(), 1e-14);
+                EXPECT_NEAR(expected.imag(), sample.value.imag(), 1e-14);
+                ++visits.at(g_row * size.x + g_col);
+            }
+            EXPECT_THAT(visits, Each(Ge(1)));
+            ASSERT_EQ(size.x * size.y, plots.size());
+            for (int i = 0; i < size.x * size.y; ++i)
+            {
+                EXPECT_EQ((Point2i{i % size.x, i / size.x}), plots[i]);
+            }
+            calculation.finish();
+            if (m_big_float)
+            {
+                free_bf_vars();
+                m_big_float = false;
+                g_bf_math = BFMathType::NONE;
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, fullFrameCoordinatesMatchStandardGrid)
+{
+    compare_frame_coordinates(1e-6);
+}
+
+TEST_P(TestPerturbationIterations, replacementReferencesPreserveStandardGridCoordinates)
+{
+    compare_frame_coordinates(2.0);
+}
+
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationIterations, Bool());
 
 TEST_F(TestPerturbationPixels, failedReferenceComputesTheRequestedPixelImmediately)
 {
-    m_engine.initialize_frame({1.0, 0.0}, 0.75);
+    m_engine.initialize_frame({1.0, 0.0}, 0.75, 0.75);
 
     for (int request = 0; request < WIDTH * HEIGHT * 2; ++request)
     {
@@ -518,7 +646,7 @@ TEST_F(TestPerturbationPixels, failedReferenceComputesTheRequestedPixelImmediate
 
 TEST_F(TestPerturbationPixels, replacesTheCurrentReferenceWithoutRetainingHistoryAtTinyZoomScales)
 {
-    m_engine.initialize_frame({0.25, 0.0}, 1e-200);
+    m_engine.initialize_frame({0.25, 0.0}, 1e-200, 1e-200);
     m_engine.set_glitch_tolerance(2.0);
     EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
     EXPECT_EQ(2, m_engine.reference_count());
@@ -536,7 +664,7 @@ TEST_F(TestPerturbationPixels, replacesTheCurrentReferenceWithoutRetainingHistor
 TEST_F(TestPerturbationPixels, stringentToleranceCompletesRepeatedReferenceReplacements)
 {
     g_max_iterations = 10000;
-    m_engine.initialize_frame({-0.1, 0.1}, 1e-10);
+    m_engine.initialize_frame({-0.1, 0.1}, 1e-10, 1e-10);
     m_engine.set_glitch_tolerance(2.0);
     m_engine.initialize_pixel_strategy();
     int references{1};
@@ -567,9 +695,9 @@ TEST_F(TestPerturbationPixels, defaultToleranceMatchesPerPixelReferences)
     const std::complex<double> center{-0.5, 0.0};
     constexpr double ZOOM_RADIUS{1.5};
     PertEngine control;
-    control.initialize_frame(center, ZOOM_RADIUS);
+    control.initialize_frame(center, ZOOM_RADIUS, ZOOM_RADIUS);
     control.set_glitch_tolerance(2.0);
-    m_engine.initialize_frame(center, ZOOM_RADIUS);
+    m_engine.initialize_frame(center, ZOOM_RADIUS, ZOOM_RADIUS);
 
     for (int row = 0; row < HEIGHT; ++row)
     {
@@ -632,7 +760,7 @@ TEST_F(TestPerturbationPixels, deepZoomBoundaryTraceCompletesWithoutDeferredOrRe
 
 TEST_F(TestPerturbationPixels, boundaryTraceReceivesTheStoredNonzeroPaletteColor)
 {
-    m_engine.initialize_frame({0.25, 0.0}, 1e-10);
+    m_engine.initialize_frame({0.25, 0.0}, 1e-10, 1e-10);
     g_std_calc_mode = CalcMode::BOUNDARY_TRACE;
     g_inside_method = ColorMethod::ITER;
     g_max_iterations = 256;
@@ -735,9 +863,9 @@ TEST_F(TestPerturbationPixels, inversionTransformsReferenceAndRequestedCoordinat
     g_inversion = {3, 2.0, {1.0, 0.5}, {2.0, 1.0, 0.5}};
     m_specific.pert_ref = record_reference;
     m_specific.pert_pt = record_delta;
-    m_engine.initialize_frame({2.0, 0.0}, 1.0);
+    m_engine.initialize_frame({2.0, 0.0}, 1.0, 1.0);
     m_engine.set_glitch_tolerance(0.0);
-    const std::complex<double> offset{8.0 / 7.0, -0.3};
+    const std::complex<double> offset{1.0, -0.5};
     const std::complex<double> reference{std::complex<double>{1.0, 0.5} + 2.0 * offset / std::norm(offset)};
 
     EXPECT_GE(m_engine.calculate_pixel(0, 0), 0);
@@ -754,7 +882,7 @@ TEST_F(TestPerturbationPixels, inversionCenterRetainsTheStandardSingularityBehav
     ValueSaver saved_region{g_image_region, ImageRegion{{1.0, -1.0}, {3.0, 1.0}, {1.0, -1.0}}};
     g_inversion = {3, 2.0, {1.0, 1.0}, {2.0, 1.0, 1.0}};
     m_specific.pert_ref = record_reference;
-    m_engine.initialize_frame({2.0, 0.0}, 1.0);
+    m_engine.initialize_frame({2.0, 0.0}, 1.0, 1.0);
     m_engine.set_glitch_tolerance(2.0);
 
     EXPECT_EQ(1, m_engine.calculate_pixel(0, 0));
@@ -771,9 +899,9 @@ TEST_F(TestPerturbationPixels, inversionPreservesTheBurningShipReferenceOrientat
     g_inversion = {3, 2.0, {1.0, 0.5}, {2.0, 1.0, 0.5}};
     m_specific.pert_ref = record_reference;
     m_specific.pert_pt = record_delta;
-    m_engine.initialize_frame({2.0, 0.0}, 1.0);
+    m_engine.initialize_frame({2.0, 0.0}, 1.0, 1.0);
     m_engine.set_glitch_tolerance(0.0);
-    const std::complex<double> offset{8.0 / 7.0, -0.3};
+    const std::complex<double> offset{1.0, -0.5};
     const std::complex<double> reference{std::conj(std::complex<double>{1.0, 0.5} + 2.0 * offset / std::norm(offset))};
 
     EXPECT_GE(m_engine.calculate_pixel(0, 0), 0);
@@ -799,7 +927,7 @@ TEST_F(TestPerturbationPixels, invertedDeepZoomPreservesDeltasAcrossReferenceRep
     g_inversion = {3, 1.0, {1.0, 0.0}, {1.0, 1.0, 0.0}};
     m_specific.pert_ref_bf = record_reference_bf;
     m_specific.pert_pt = record_delta;
-    const BFComplex center{m_engine.initialize_frame_bf(1e-40)};
+    const BFComplex center{m_engine.initialize_frame_bf(1e-40, 1e-40)};
     float_to_bf(center.x, 1.5);
     clear_bf(center.y);
 
@@ -807,11 +935,11 @@ TEST_F(TestPerturbationPixels, invertedDeepZoomPreservesDeltasAcrossReferenceRep
 
     ASSERT_FALSE(s_reference_coordinates.empty());
     EXPECT_NEAR(3.0, s_reference_coordinates.front().real(), 1e-14);
-    EXPECT_NEAR(32e-40 / 7.0, s_parameter_delta.real(), 1e-52);
-    EXPECT_NEAR(0.0, s_parameter_delta.imag(), 1e-52);
+    EXPECT_NEAR(4e-40, s_parameter_delta.real(), 1e-52);
+    EXPECT_NEAR(0.8e-40, s_parameter_delta.imag(), 1e-52);
 
     m_engine.finish();
-    const BFComplex replacement_center{m_engine.initialize_frame_bf(1e-40)};
+    const BFComplex replacement_center{m_engine.initialize_frame_bf(1e-40, 1e-40)};
     float_to_bf(replacement_center.x, 1.5);
     clear_bf(replacement_center.y);
     m_engine.set_glitch_tolerance(2.0);

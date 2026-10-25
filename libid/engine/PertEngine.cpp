@@ -64,9 +64,9 @@ std::size_t PertEngine::reference_sample_count(const long max_iterations)
     return static_cast<std::size_t>(iterations) + 1;
 }
 
-BFComplex PertEngine::initialize_frame_bf(const double zoom_radius)
+BFComplex PertEngine::initialize_frame_bf(const double half_width, const double half_height)
 {
-    reset_for_frame(zoom_radius);
+    reset_for_frame(half_width, half_height);
     m_saved_stack = save_stack();
     m_center_stack_saved = true;
     m_center_bf.x = alloc_stack(g_bf_length + 2);
@@ -74,9 +74,9 @@ BFComplex PertEngine::initialize_frame_bf(const double zoom_radius)
     return m_center_bf;
 }
 
-void PertEngine::initialize_frame(const std::complex<double> &center, const double zoom_radius)
+void PertEngine::initialize_frame(const std::complex<double> &center, const double half_width, const double half_height)
 {
-    reset_for_frame(zoom_radius);
+    reset_for_frame(half_width, half_height);
     m_center = center;
 }
 
@@ -90,7 +90,7 @@ void PertEngine::initialize_pixel_strategy()
     try
     {
         initialize_pixel_state();
-        set_reference_point({g_screen_x_dots / 2.0, g_screen_y_dots / 2.0});
+        set_reference_point({(g_logical_screen.x_dots - 1) / 2.0, (g_logical_screen.y_dots - 1) / 2.0});
         m_frame_initialized = true;
     }
     catch (...)
@@ -119,7 +119,7 @@ int PertEngine::calculate_pixel(const Point &pt)
 
 int PertEngine::calculate_pixel(const int col, const int row)
 {
-    return calculate_pixel(Point{col, g_screen_y_dots - 1 - row});
+    return calculate_pixel(Point{col, g_logical_screen.y_dots - 1 - row});
 }
 
 void PertEngine::set_glitch_tolerance(const double tolerance)
@@ -163,8 +163,7 @@ void PertEngine::cleanup()
 
 void PertEngine::initialize_pixel_state()
 {
-    m_window_radius = std::min(g_screen_x_dots, g_screen_y_dots);
-    if (m_window_radius <= 0 || g_max_iterations <= 0)
+    if (g_logical_screen.x_dots <= 0 || g_logical_screen.y_dots <= 0 || g_max_iterations <= 0)
     {
         throw std::logic_error{"Perturbation requires image dimensions and a positive iteration limit"};
     }
@@ -183,27 +182,35 @@ void PertEngine::allocate_working_values()
     }
 }
 
-void PertEngine::reset_for_frame(const double zoom_radius)
+void PertEngine::reset_for_frame(const double half_width, const double half_height)
 {
     if (!m_done)
     {
         cleanup();
     }
-    m_zoom_radius = zoom_radius;
+    m_half_width = half_width;
+    m_half_height = half_height;
     m_done = false;
     m_frame_initialized = false;
 }
 
 std::complex<double> PertEngine::pixel_delta(const std::complex<double> &pixel_position) const
 {
-    return {m_zoom_radius * (2 * pixel_position.real() - g_screen_x_dots) / m_window_radius,
-        -m_zoom_radius * (2 * pixel_position.imag() - g_screen_y_dots) / m_window_radius};
+    const double width{g_logical_screen.x_dots - 1.0};
+    const double height{g_logical_screen.y_dots - 1.0};
+    const double x{width == 0.0 ? 0.0 : m_half_width * (2.0 * pixel_position.real() / width - 1.0)};
+    double y{height == 0.0 ? 0.0 : m_half_height * (2.0 * pixel_position.imag() / height - 1.0)};
+    if (g_fractal_type == FractalType::BURNING_SHIP)
+    {
+        y = -y;
+    }
+    return {x, y};
 }
 
 std::complex<double> PertEngine::inverted_coordinate(const std::complex<double> &pixel_position) const
 {
     const double col{pixel_position.real()};
-    const double row{g_screen_y_dots - 1 - pixel_position.imag()};
+    const double row{g_logical_screen.y_dots - 1 - pixel_position.imag()};
     const double width{g_logical_screen.x_dots - 1.0};
     const double height{g_logical_screen.y_dots - 1.0};
     DComplex coordinate{g_image_region.m_min.x + col * ((g_image_region.m_max.x - g_image_region.m_3rd.x) / width) +
@@ -228,7 +235,7 @@ void PertEngine::inverted_coordinate(const BFComplex coordinate, const std::comp
     float_to_bf(horizontal, pixel_position.real());
     float_to_bf(scale, g_logical_screen.x_dots - 1);
     div_bf(horizontal, horizontal, scale);
-    float_to_bf(vertical, g_screen_y_dots - 1 - pixel_position.imag());
+    float_to_bf(vertical, g_logical_screen.y_dots - 1 - pixel_position.imag());
     float_to_bf(scale, g_logical_screen.y_dots - 1);
     div_bf(vertical, vertical, scale);
 
@@ -532,7 +539,7 @@ int PertEngine::calculate_point(const Point &pt)
     {
         g_color = 1;
     }
-    g_plot(pt.get_x(), g_screen_y_dots - 1 - pt.get_y(), g_color);
+    g_plot(pt.get_x(), g_logical_screen.y_dots - 1 - pt.get_y(), g_color);
     return g_color;
 }
 

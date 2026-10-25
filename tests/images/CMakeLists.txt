@@ -204,6 +204,10 @@ add_passes_test("orbit" "o")
 add_passes_test("synchronous-orbits" "s")
 add_passes_test("tesseral" "t")
 add_image_test("mandel-perturb" PARAMETERS "type=mandel" "passes=p")
+add_image_test("manzpower-3" GOLD "gold-manzpower-3-perturb"
+    PARAMETERS "type=manzpower" "params=0/0/3" "perturbation=no")
+add_image_test("manzpower-4" GOLD "gold-manzpower-4-perturb"
+    PARAMETERS "type=manzpower" "params=0/0/4" "perturbation=no")
 add_image_test("manzpower-3-perturb" PARAMETERS "type=manzpower" "params=0/0/3" "passes=p")
 add_image_test("manzpower-4-perturb" PARAMETERS "type=manzpower" "params=0/0/4" "passes=p")
 add_image_test("fractint-formula" PARAMETERS "type=formula" "formulafile=example2.frm" "formulaname=fractint")

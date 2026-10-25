@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // Thanks to Shirom Makkad fractaltodesktop@gmail.com
 
@@ -29,7 +30,8 @@ void StandardFractal::start_perturbation_frame()
         g_c_exponent = std::clamp(g_c_exponent, 2, MAX_POWER);
     }
 
-    double mandel_width{}; // width of display
+    double half_width{};
+    double half_height{};
     double x_mag_factor{};
     double rotation{};
     double skew{};
@@ -38,14 +40,19 @@ void StandardFractal::start_perturbation_frame()
         {
             BigStackSaver saved;
             BigFloat tmp_bf{alloc_stack(g_bf_length + 2)};
+            sub_bf(tmp_bf, g_bf_x_max, g_bf_x_min);
+            half_width = bf_to_float(tmp_bf) / 2.0;
             sub_bf(tmp_bf, g_bf_y_max, g_bf_y_min);
-            mandel_width = bf_to_float(tmp_bf);
+            half_height = bf_to_float(tmp_bf) / 2.0;
         }
 
-        BFComplex center_bf{m_pert_engine.initialize_frame_bf(mandel_width / 2.0)};
+        BFComplex center_bf{m_pert_engine.initialize_frame_bf(half_width, half_height)};
         LDouble magnification_ld{};
         cvt_center_mag_bf(center_bf.x, center_bf.y, magnification_ld, x_mag_factor, rotation, skew);
-        neg_bf(center_bf.y, center_bf.y);
+        if (fractals::g_fractal_type == fractals::FractalType::BURNING_SHIP)
+        {
+            neg_bf(center_bf.y, center_bf.y);
+        }
         m_pert_engine.initialize_pixel_strategy();
     }
     else
@@ -53,9 +60,13 @@ void StandardFractal::start_perturbation_frame()
         DComplex center{};
         LDouble magnification_ld;
         cvt_center_mag(center.x, center.y, magnification_ld, x_mag_factor, rotation, skew);
-        center.y = -center.y;
-        mandel_width = g_image_region.height();
-        m_pert_engine.initialize_frame({center.x, center.y}, mandel_width / 2.0);
+        if (fractals::g_fractal_type == fractals::FractalType::BURNING_SHIP)
+        {
+            center.y = -center.y;
+        }
+        half_width = (g_image_region.m_max.x - g_image_region.m_min.x) / 2.0;
+        half_height = (g_image_region.m_max.y - g_image_region.m_min.y) / 2.0;
+        m_pert_engine.initialize_frame({center.x, center.y}, half_width, half_height);
         m_pert_engine.initialize_pixel_strategy();
     }
     m_perturbation_active = true;
