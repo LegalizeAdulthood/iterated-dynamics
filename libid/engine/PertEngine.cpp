@@ -323,15 +323,16 @@ int PertEngine::calculate_point(const Point &pt)
 {
     const ReferencePoint &reference{m_reference};
     const std::complex<double> pixel_position{static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())};
-    const std::complex<double> delta_sub_0{parameter_delta(pixel_position)};
+    const std::complex<double> parameter_displacement{parameter_delta(pixel_position)};
     const bool bof{bof_initialization()};
-    std::complex<double> delta_sub_n{bof ? std::complex<double>{} : delta_sub_0};
+    std::complex<double> orbit_displacement{
+        bof || g_use_init_orbit == InitOrbitMode::VALUE ? std::complex<double>{} : parameter_displacement};
     const bool at_reference{pixel_position == reference.pixel_position};
     long iteration{bof ? -1L : 0L};
 
     double min_orbit{1e5}; // orbit value closest to origin
     long min_index{};      // iteration of min_orbit
-    std::complex<double> w{reference.orbit.front() + delta_sub_n};
+    std::complex<double> w{reference.orbit.front() + orbit_displacement};
     std::complex<double> old{w};
     double magnitude{mag_squared(w)};
     while (++iteration < g_max_iterations)
@@ -343,8 +344,8 @@ int PertEngine::calculate_point(const Point &pt)
         }
         const std::size_t sample{static_cast<std::size_t>(iteration + (bof ? 1 : 0))};
         old = w;
-        g_cur_fractal_specific->pert_pt(reference.orbit[sample - 1], delta_sub_n, delta_sub_0);
-        w = reference.orbit[sample] + delta_sub_n;
+        g_cur_fractal_specific->pert_pt(reference.orbit[sample - 1], orbit_displacement, parameter_displacement);
+        w = reference.orbit[sample] + orbit_displacement;
         magnitude = mag_squared(w);
 
         if (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61)
@@ -574,8 +575,18 @@ void PertEngine::reference_zoom_point(ReferencePoint &reference, const BFComplex
     float_to_bf(z_bf.y, g_params[1]);
     if (!bof_initialization())
     {
-        add_a_bf(z_bf.x, center.x);
-        add_a_bf(z_bf.y, center.y);
+        if (g_use_init_orbit == InitOrbitMode::VALUE)
+        {
+            float_to_bf(tmp_bf, g_init_orbit.x);
+            add_a_bf(z_bf.x, tmp_bf);
+            float_to_bf(tmp_bf, g_init_orbit.y);
+            add_a_bf(z_bf.y, tmp_bf);
+        }
+        else
+        {
+            add_a_bf(z_bf.x, center.x);
+            add_a_bf(z_bf.y, center.y);
+        }
     }
 
     for (std::size_t i = 0; i < reference.orbit.size(); ++i)
@@ -616,7 +627,7 @@ void PertEngine::reference_zoom_point(ReferencePoint &reference, const std::comp
     std::complex<double> z{g_param_z1.x, g_param_z1.y};
     if (!bof_initialization())
     {
-        z += center;
+        z += g_use_init_orbit == InitOrbitMode::VALUE ? std::complex<double>{g_init_orbit.x, g_init_orbit.y} : center;
     }
 
     for (std::size_t i = 0; i < reference.orbit.size(); ++i)

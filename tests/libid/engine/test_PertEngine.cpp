@@ -386,6 +386,7 @@ protected:
     ValueSaver<int> m_saved_decomp{g_decomp[0], 0};
     ValueSaver<int> m_saved_attractors{g_attractor.count, 0};
     ValueSaver<InitOrbitMode> m_saved_initial_orbit{g_use_init_orbit, InitOrbitMode::NORMAL};
+    ValueSaver<DComplex> m_saved_initial_value{g_init_orbit};
     ValueSaver<DComplex> m_saved_param{g_param_z1, DComplex{}};
     ValueSaver<double> m_saved_param_real{g_params[0], 0.0};
     ValueSaver<double> m_saved_param_imag{g_params[1], 0.0};
@@ -572,6 +573,88 @@ TEST_P(TestPerturbationIterations, initialOffsetsSurviveDisplacementAndReference
         m_engine.set_glitch_tolerance(2.0);
         compare_pixel({0.25, 0.125}, 8, 0.125);
         EXPECT_GT(m_engine.reference_count(), 1);
+    }
+}
+
+TEST_P(TestPerturbationIterations, fixedZeroInitialOrbitMatchesStandardOrbit)
+{
+    g_use_init_orbit = InitOrbitMode::VALUE;
+    g_init_orbit = {};
+
+    compare_pixel({0.25, 0.125}, 8);
+
+    EXPECT_EQ(std::complex<double>{}, s_perturbation_orbit.front());
+}
+
+TEST_P(TestPerturbationIterations, fixedComplexInitialOrbitIncludesParameterOffsets)
+{
+    g_use_init_orbit = InitOrbitMode::VALUE;
+    g_init_orbit = {0.25, 0.125};
+    set_initial_offset({0.125, -0.0625});
+    m_specific.pert_ref = record_reference;
+    m_specific.pert_ref_bf = record_reference_bf;
+
+    compare_pixel({0.125, 0.0625}, 8);
+
+    EXPECT_EQ((std::complex<double>{0.375, 0.0625}), s_perturbation_orbit.front());
+    EXPECT_THAT(s_reference_coordinates, Each(Eq(std::complex<double>{0.125, 0.0625})));
+}
+
+TEST_P(TestPerturbationIterations, pixelInitializationIgnoresTheFixedInitialOrbit)
+{
+    g_use_init_orbit = InitOrbitMode::PIXEL;
+    g_init_orbit = {1.5, 2.5};
+    set_initial_offset({0.125, -0.0625});
+
+    compare_pixel({0.25, 0.125}, 8);
+
+    EXPECT_EQ((std::complex<double>{0.375, 0.0625}), s_perturbation_orbit.front());
+}
+
+TEST_P(TestPerturbationIterations, fixedInitialOrbitRetainsBofCompatibilityPrecedence)
+{
+    g_use_init_orbit = InitOrbitMode::VALUE;
+    g_init_orbit = {0.25, 0.125};
+    set_initial_offset({0.125, -0.0625});
+    for (const ColorMethod method : {ColorMethod::BOF60, ColorMethod::BOF61})
+    {
+        for (const bool book : {false, true})
+        {
+            SCOPED_TRACE(static_cast<int>(method));
+            SCOPED_TRACE(book);
+            g_inside_method = method;
+            g_bof_match_book_images = book;
+
+            compare_pixel({0.125, 0.0625}, 8);
+
+            const std::complex<double> expected{
+                book ? std::complex<double>{0.125, -0.0625} : std::complex<double>{0.375, 0.0625}};
+            EXPECT_EQ(expected, s_perturbation_orbit.front());
+            EXPECT_EQ(book ? 8 : 7, s_perturbation_orbit.size());
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, initialOrbitModesSurviveDisplacementAndReferenceReplacement)
+{
+    set_initial_offset({0.125, -0.0625});
+    for (const InitOrbitMode mode : {InitOrbitMode::VALUE, InitOrbitMode::PIXEL})
+    {
+        for (const DComplex &initial : {DComplex{}, DComplex{0.25, 0.125}})
+        {
+            SCOPED_TRACE(static_cast<int>(mode));
+            SCOPED_TRACE(initial.x);
+            SCOPED_TRACE(initial.y);
+            g_use_init_orbit = mode;
+            g_init_orbit = initial;
+            m_engine.set_glitch_tolerance(0.0);
+            compare_pixel({0.25, 0.125}, 8, 0.125);
+            EXPECT_EQ(1, m_engine.reference_count());
+
+            m_engine.set_glitch_tolerance(2.0);
+            compare_pixel({0.25, 0.125}, 8, 0.125);
+            EXPECT_GT(m_engine.reference_count(), 1);
+        }
     }
 }
 
@@ -835,6 +918,38 @@ TEST_F(TestPerturbationPixels, highPrecisionInitialOffsetPreservesCancellation)
     ASSERT_EQ(1, s_perturbation_orbit.size());
     EXPECT_NEAR(1e-40, s_perturbation_orbit.front().real(), 1e-52);
     EXPECT_DOUBLE_EQ(0.0, s_perturbation_orbit.front().imag());
+}
+
+TEST_F(TestPerturbationPixels, highPrecisionFixedOrbitPreservesSmallParameterOffsets)
+{
+    ValueSaver saved_mode{g_use_init_orbit, InitOrbitMode::VALUE};
+    ValueSaver saved_initial{g_init_orbit, DComplex{0.25, 0.125}};
+    ValueSaver saved_real{g_params[0], 1e-40};
+    ValueSaver saved_imag{g_params[1], -2e-40};
+    g_max_iterations = 2;
+    init_bf_dec(60);
+    m_big_float = true;
+    g_bf_math = BFMathType::BIG_FLT;
+    const BFComplex center{m_engine.initialize_frame_bf({}, {})};
+    float_to_bf(center.x, 0.5);
+    float_to_bf(center.y, -0.125);
+    m_specific.pert_ref_bf = [](const BFComplex &parameter, BFComplex &z)
+    {
+        BigStackSaver saved;
+        const BFComplex displacement{alloc_stack(g_bf_length + 2), alloc_stack(g_bf_length + 2)};
+        float_to_bf(displacement.x, 0.25);
+        float_to_bf(displacement.y, 0.125);
+        sub_bf(displacement.x, z.x, displacement.x);
+        sub_bf(displacement.y, z.y, displacement.y);
+        s_reference_coordinates.emplace_back(bf_to_float(displacement.x), bf_to_float(displacement.y));
+        mandel_ref_pt_bf(parameter, z);
+    };
+
+    EXPECT_GE(m_engine.calculate_pixel(0, 0), 0);
+
+    ASSERT_FALSE(s_reference_coordinates.empty());
+    EXPECT_NEAR(1e-40, s_reference_coordinates.front().real(), 1e-52);
+    EXPECT_NEAR(-2e-40, s_reference_coordinates.front().imag(), 1e-52);
 }
 
 TEST_F(TestPerturbationPixels, deepAffineFramePreservesBothBasisVectors)
