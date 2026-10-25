@@ -8,6 +8,7 @@
 #include <engine/BoundaryTrace.h>
 #include <engine/calcfrac.h>
 #include <engine/ImageRegion.h>
+#include <engine/Inversion.h>
 #include <engine/LogicalScreen.h>
 #include <engine/pixel.h>
 #include <engine/resume.h>
@@ -327,6 +328,55 @@ TEST_F(TestPerturbationPixels, standardFractalEnablesPerturbationForBoundaryTrac
     EXPECT_TRUE(calculation.done());
     EXPECT_TRUE(used_replacement_reference);
     EXPECT_THAT(m_pixels, Each(7));
+}
+
+TEST_F(TestPerturbationPixels, inversionRetainsOrdinaryPixelCalculation)
+{
+    ValueSaver saved_user{g_user, UserData{}};
+    ValueSaver saved_inversion{g_inversion, Inversion{3, 1.0, {}, {1.0, 0.0, 0.0}}};
+    ValueSaver saved_status{g_calc_status};
+    ValueSaver saved_resuming{g_resuming, false};
+    ValueSaver saved_region{
+        g_image_region, ImageRegion{{0.25 - 1e-10, -1e-10}, {0.25 + 1e-10, 1e-10}, {0.25 - 1e-10, -1e-10}}};
+    m_specific.calc_type = calculate_control_pixel;
+    m_specific.per_image = [] { return true; };
+    m_specific.symmetry = SymmetryType::NONE;
+    g_dispatch = FractalDispatch{m_specific};
+
+    for (const CalcMode pass : {CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS})
+    {
+        for (const PerturbationMode mode : {PerturbationMode::NO, PerturbationMode::YES})
+        {
+            SCOPED_TRACE(static_cast<char>(pass));
+            SCOPED_TRACE(static_cast<int>(mode));
+            g_std_calc_mode = pass;
+            g_user.perturbation = mode;
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
+            m_pixels.fill(0);
+            m_plot_statuses.clear();
+            s_requested_pixels.clear();
+            StandardFractal calculation;
+            calculation.resume();
+
+            for (int increments = 0; increments < 100 && !calculation.done(); ++increments)
+            {
+                calculation.iterate();
+            }
+
+            ASSERT_TRUE(calculation.done());
+            EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+            EXPECT_EQ(pass, g_std_calc_mode);
+            EXPECT_FALSE(s_requested_pixels.empty());
+            EXPECT_THAT(m_pixels, Each(7));
+            ASSERT_FALSE(m_plot_statuses.empty());
+            for (const StandardPassStatus &status : m_plot_statuses)
+            {
+                EXPECT_FALSE(status.perturbation_active);
+                EXPECT_EQ(0, status.perturbation_reference_count);
+            }
+            calculation.finish();
+        }
+    }
 }
 
 void TestPerturbationPixels::check_pass_switch(const PerturbationMode mode)
