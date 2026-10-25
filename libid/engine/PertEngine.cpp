@@ -766,6 +766,14 @@ int PertEngine::calculate_point(const Point &pt)
             index = potential(magnitude, iteration);
         }
     }
+    else if (iteration < g_max_iterations && g_decomp[0] > 0 && !g_potential.flag)
+    {
+        index = standard_decomposition_color(g_new_z);
+        if (g_outside_method >= ColorMethod::COLOR)
+        {
+            index = g_outside_color;
+        }
+    }
     else if (g_biomorph >= 0)
     {
         if (iteration == g_max_iterations)

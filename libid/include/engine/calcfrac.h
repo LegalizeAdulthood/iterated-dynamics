@@ -251,6 +251,7 @@ int standard_fractal_type();
 double fmod_magnitude(const math::DComplex &z, double magnitude);
 long fmod_color(double value);
 long standard_outside_color(long color, const math::DComplex &z);
+long standard_decomposition_color(math::DComplex &z);
 int standard_palette_color(long color);
 void init_atan_colors();
 int find_alternate_math(fractals::FractalType type, math::BFMathType math);

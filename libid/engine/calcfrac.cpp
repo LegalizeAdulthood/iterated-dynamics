@@ -92,7 +92,6 @@ constexpr double DEM_BAILOUT{535.5};
 constexpr double STAR_TRAIL_MAX{std::numeric_limits<float>::max()}; // just a convenient large number
 constexpr double STAR_TRAIL_MIN{-STAR_TRAIL_MAX};
 
-static void decomposition();
 void set_symmetry(SymmetryType sym, bool use_list);
 static bool x_sym_split(int x_axis_row, bool x_axis_between);
 static bool y_sym_split(int y_axis_col, bool y_axis_between);
@@ -1475,7 +1474,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 
     if (g_decomp[0] > 0)
     {
-        decomposition();
+        g_color_iter = standard_decomposition_color(g_new_z);
     }
     else if (g_biomorph != -1)
     {
@@ -1601,7 +1600,7 @@ plot_pixel:
 #define cos45  sin45
 
 // standardfractal doodad subroutines
-static void decomposition()
+long standard_decomposition_color(DComplex &z)
 {
     // constexpr double cos45  = 0.70710678118654750; // cos 45     degrees
     constexpr double sin45     = 0.70710678118654750; // sin 45     degrees
@@ -1618,16 +1617,16 @@ static void decomposition()
     constexpr double tan1_4063 = 0.02454862210892544; // tan 1.4063 degrees
     int temp = 0;
     int save_temp = 0;
-    g_color_iter = 0;
-    if (g_new_z.y < 0)
+    long color = 0;
+    if (z.y < 0)
     {
         temp = 2;
-        g_new_z.y = -g_new_z.y;
+        z.y = -z.y;
     }
-    if (g_new_z.x < 0)
+    if (z.x < 0)
     {
         ++temp;
-        g_new_z.x = -g_new_z.x;
+        z.x = -z.x;
     }
     if (g_decomp[0] == 2)
     {
@@ -1645,61 +1644,61 @@ static void decomposition()
     {
         DComplex alt;
         temp <<= 1;
-        if (g_new_z.x < g_new_z.y)
+        if (z.x < z.y)
         {
             ++temp;
-            alt.x = g_new_z.x;     // just
-            g_new_z.x = g_new_z.y; // swap
-            g_new_z.y = alt.x;     // them
+            alt.x = z.x; // just
+            z.x = z.y;   // swap
+            z.y = alt.x; // them
         }
         if (g_decomp[0] >= 16)
         {
             temp <<= 1;
-            if (g_new_z.x * tan22_5 < g_new_z.y)
+            if (z.x * tan22_5 < z.y)
             {
                 ++temp;
-                alt = g_new_z;
-                g_new_z.x = alt.x * cos45 + alt.y * sin45;
-                g_new_z.y = alt.x * sin45 - alt.y * cos45;
+                alt = z;
+                z.x = alt.x * cos45 + alt.y * sin45;
+                z.y = alt.x * sin45 - alt.y * cos45;
             }
 
             if (g_decomp[0] >= 32)
             {
                 temp <<= 1;
-                if (g_new_z.x * tan11_25 < g_new_z.y)
+                if (z.x * tan11_25 < z.y)
                 {
                     ++temp;
-                    alt = g_new_z;
-                    g_new_z.x = alt.x * cos22_5 + alt.y * sin22_5;
-                    g_new_z.y = alt.x * sin22_5 - alt.y * cos22_5;
+                    alt = z;
+                    z.x = alt.x * cos22_5 + alt.y * sin22_5;
+                    z.y = alt.x * sin22_5 - alt.y * cos22_5;
                 }
 
                 if (g_decomp[0] >= 64)
                 {
                     temp <<= 1;
-                    if (g_new_z.x * tan5_625 < g_new_z.y)
+                    if (z.x * tan5_625 < z.y)
                     {
                         ++temp;
-                        alt = g_new_z;
-                        g_new_z.x = alt.x * cos11_25 + alt.y * sin11_25;
-                        g_new_z.y = alt.x * sin11_25 - alt.y * cos11_25;
+                        alt = z;
+                        z.x = alt.x * cos11_25 + alt.y * sin11_25;
+                        z.y = alt.x * sin11_25 - alt.y * cos11_25;
                     }
 
                     if (g_decomp[0] >= 128)
                     {
                         temp <<= 1;
-                        if (g_new_z.x * tan2_8125 < g_new_z.y)
+                        if (z.x * tan2_8125 < z.y)
                         {
                             ++temp;
-                            alt = g_new_z;
-                            g_new_z.x = alt.x * cos5_625 + alt.y * sin5_625;
-                            g_new_z.y = alt.x * sin5_625 - alt.y * cos5_625;
+                            alt = z;
+                            z.x = alt.x * cos5_625 + alt.y * sin5_625;
+                            z.y = alt.x * sin5_625 - alt.y * cos5_625;
                         }
 
                         if (g_decomp[0] == 256)
                         {
                             temp <<= 1;
-                            if (g_new_z.x * tan1_4063 < g_new_z.y)
+                            if (z.x * tan1_4063 < z.y)
                             {
                                 ++temp;
                             }
@@ -1713,7 +1712,7 @@ static void decomposition()
     {
         if (temp & 1)
         {
-            g_color_iter = (1 << i) - 1 - g_color_iter;
+            color = (1 << i) - 1 - color;
         }
         temp >>= 1;
     }
@@ -1721,21 +1720,22 @@ static void decomposition()
     {
         if (save_temp & 2)
         {
-            g_color_iter = 1;
+            color = 1;
         }
         else
         {
-            g_color_iter = 0;
+            color = 0;
         }
         if (g_colors == 2)
         {
-            g_color_iter++;
+            color++;
         }
     }
     if (g_colors > g_decomp[0])
     {
-        g_color_iter++;
+        color++;
     }
+    return color;
 }
 
 // Continuous potential calculation for Mandelbrot and Julia

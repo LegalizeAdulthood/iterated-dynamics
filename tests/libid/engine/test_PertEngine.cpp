@@ -1664,6 +1664,106 @@ TEST_P(TestPerturbationIterations, mappedColorsSurviveReferenceReplacement)
     EXPECT_GT(m_engine.reference_count(), 1);
 }
 
+TEST_P(TestPerturbationIterations, decompositionMatchesStandardSectorsAndPalettes)
+{
+    ValueSaver<int> saved_colors{g_colors};
+    ValueSaver<int> saved_and_color{g_and_color};
+    g_inside_method = ColorMethod::ITER;
+    for (const int sectors : {2, 4, 8, 16, 32, 64, 128, 256})
+    {
+        SCOPED_TRACE(sectors);
+        g_decomp[0] = sectors;
+        for (const int colors : {2, 4, 16, 256})
+        {
+            SCOPED_TRACE(colors);
+            g_colors = colors;
+            g_and_color = colors - 1;
+            for (const std::complex<double> point :
+                {std::complex<double>{3.0, 0.0}, {3.0, 1.0}, {3.0, 3.0}, {1.0, 3.0}, {0.0, 3.0}, {-1.0, 3.0},
+                    {-3.0, 1.0}, {-3.0, 0.0}, {-3.0, -1.0}, {-1.0, -3.0}, {0.0, -3.0}, {1.0, -3.0}, {3.0, -1.0}})
+            {
+                SCOPED_TRACE(point);
+                set_initial_offset({-point.real(), -point.imag()});
+                compare_pixel(point, 8);
+                EXPECT_EQ(1, g_real_color_iter);
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, decompositionUsesStandardQuadrantColors)
+{
+    g_inside_method = ColorMethod::ITER;
+    g_decomp[0] = 4;
+
+    struct Sample
+    {
+        std::complex<double> point;
+        int color;
+    };
+
+    for (const Sample &sample : {Sample{{3.0, 1.0}, 1}, {{-3.0, 1.0}, 2}, {{-3.0, -1.0}, 3}, {{3.0, -1.0}, 4}})
+    {
+        SCOPED_TRACE(sample.point);
+        set_initial_offset({-sample.point.real(), -sample.point.imag()});
+        compare_pixel(sample.point, 8);
+        EXPECT_EQ(sample.color, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, decompositionOverridesBiomorphAndOutsideFormulasBeforeMapping)
+{
+    ValueSaver<double> saved_limit2{g_magnitude_limit2, 2.0};
+    g_inside_method = ColorMethod::ITER;
+    g_decomp[0] = 16;
+    g_biomorph = 9;
+    g_log_map_flag = 1;
+    g_log_map_table_max_size = 128;
+    g_log_map_table.assign(129, 44);
+    g_log_map_table[1] = 17;
+    g_log_map_table[4] = 23;
+    g_log_map_table[9] = 31;
+    g_close_proximity = 16.0;
+    init_atan_colors();
+    for (const ColorMethod outside : {ColorMethod::ITER, ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT,
+             ColorMethod::SUM, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS})
+    {
+        SCOPED_TRACE(static_cast<int>(outside));
+        g_outside_method = outside;
+        set_initial_offset({-3.0, 0.0});
+        compare_pixel({3.0, 0.0}, 128);
+        EXPECT_EQ(17, g_color);
+    }
+
+    g_outside_method = ColorMethod::COLOR;
+    g_outside_color = 6;
+    compare_pixel({3.0, 0.0}, 128);
+    EXPECT_EQ(6, g_color);
+}
+
+TEST_P(TestPerturbationIterations, decompositionDoesNotChangeInsideColors)
+{
+    g_decomp[0] = 256;
+    init_atan_colors();
+    for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::COLOR, ColorMethod::ZMAG, ColorMethod::ATANI})
+    {
+        SCOPED_TRACE(static_cast<int>(inside));
+        g_inside_method = inside;
+        compare_pixel({0.125, 0.0625}, 8);
+        EXPECT_EQ(8, g_real_color_iter);
+    }
+}
+
+TEST_P(TestPerturbationIterations, decompositionSurvivesReferenceReplacement)
+{
+    m_engine.set_glitch_tolerance(8.0);
+    g_inside_method = ColorMethod::ITER;
+    g_decomp[0] = 256;
+    compare_pixel({0.5, 0.5}, 128, 0.125);
+    EXPECT_GT(s_perturbation_orbit.size(), s_standard_orbit.size());
+    EXPECT_GT(m_engine.reference_count(), 1);
+}
+
 TEST_P(TestPerturbationIterations, periodicityMatchesStandardSaveSchedules)
 {
     for (const bool legacy : {false, true})
