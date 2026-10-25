@@ -64,9 +64,10 @@ std::size_t PertEngine::reference_sample_count(const long max_iterations)
     return static_cast<std::size_t>(iterations) + 1;
 }
 
-BFComplex PertEngine::initialize_frame_bf(const double half_width, const double half_height)
+BFComplex PertEngine::initialize_frame_bf(
+    const std::complex<double> &half_horizontal, const std::complex<double> &half_vertical)
 {
-    reset_for_frame(half_width, half_height);
+    reset_for_frame(half_horizontal, half_vertical);
     m_saved_stack = save_stack();
     m_center_stack_saved = true;
     m_center_bf.x = alloc_stack(g_bf_length + 2);
@@ -74,9 +75,10 @@ BFComplex PertEngine::initialize_frame_bf(const double half_width, const double 
     return m_center_bf;
 }
 
-void PertEngine::initialize_frame(const std::complex<double> &center, const double half_width, const double half_height)
+void PertEngine::initialize_frame(const std::complex<double> &center, const std::complex<double> &half_horizontal,
+    const std::complex<double> &half_vertical)
 {
-    reset_for_frame(half_width, half_height);
+    reset_for_frame(half_horizontal, half_vertical);
     m_center = center;
 }
 
@@ -182,14 +184,14 @@ void PertEngine::allocate_working_values()
     }
 }
 
-void PertEngine::reset_for_frame(const double half_width, const double half_height)
+void PertEngine::reset_for_frame(const std::complex<double> &half_horizontal, const std::complex<double> &half_vertical)
 {
     if (!m_done)
     {
         cleanup();
     }
-    m_half_width = half_width;
-    m_half_height = half_height;
+    m_half_horizontal = half_horizontal;
+    m_half_vertical = half_vertical;
     m_done = false;
     m_frame_initialized = false;
 }
@@ -198,13 +200,14 @@ std::complex<double> PertEngine::pixel_delta(const std::complex<double> &pixel_p
 {
     const double width{g_logical_screen.x_dots - 1.0};
     const double height{g_logical_screen.y_dots - 1.0};
-    const double x{width == 0.0 ? 0.0 : m_half_width * (2.0 * pixel_position.real() / width - 1.0)};
-    double y{height == 0.0 ? 0.0 : m_half_height * (2.0 * pixel_position.imag() / height - 1.0)};
+    const double x{width == 0.0 ? 0.0 : 2.0 * pixel_position.real() / width - 1.0};
+    const double y{height == 0.0 ? 0.0 : 2.0 * pixel_position.imag() / height - 1.0};
+    const std::complex<double> delta{m_half_horizontal * x + m_half_vertical * y};
     if (g_fractal_type == FractalType::BURNING_SHIP)
     {
-        y = -y;
+        return std::conj(delta);
     }
-    return {x, y};
+    return delta;
 }
 
 std::complex<double> PertEngine::inverted_coordinate(const std::complex<double> &pixel_position) const

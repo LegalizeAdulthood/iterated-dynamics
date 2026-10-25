@@ -740,7 +740,7 @@ TEST_F(TestOverlaySound, perturbationPixelRetainsTraversalYieldGateWithoutPollin
         StandardFractal calculation;
         calculation.m_standard_pass.select(mode);
         calculation.m_perturbation_active = true;
-        calculation.m_pert_engine.initialize_frame({0.0, 0.0}, 1.0, 1.0);
+        calculation.m_pert_engine.initialize_frame({0.0, 0.0}, {1.0, 0.0}, {0.0, 1.0});
 
         EXPECT_GE(calculation.calculate_standard_pixel(true), 0);
 

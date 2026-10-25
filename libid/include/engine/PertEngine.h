@@ -20,8 +20,10 @@ public:
     // Validate the sample count for both reference buffers without allocating.
     static std::size_t reference_sample_count(long max_iterations);
 
-    math::BFComplex initialize_frame_bf(double half_width, double half_height);
-    void initialize_frame(const std::complex<double> &center, double half_width, double half_height);
+    math::BFComplex initialize_frame_bf(
+        const std::complex<double> &half_horizontal, const std::complex<double> &half_vertical);
+    void initialize_frame(const std::complex<double> &center, const std::complex<double> &half_horizontal,
+        const std::complex<double> &half_vertical);
     void initialize_pixel_strategy();
     int calculate_pixel(const Point &pt);
     int calculate_pixel(int col, int row);
@@ -51,7 +53,7 @@ private:
     std::complex<double> parameter_delta(const std::complex<double> &pixel_position) const;
     std::complex<double> inverted_coordinate(const std::complex<double> &pixel_position) const;
     void inverted_coordinate(math::BFComplex coordinate, const std::complex<double> &pixel_position) const;
-    void reset_for_frame(double half_width, double half_height);
+    void reset_for_frame(const std::complex<double> &half_horizontal, const std::complex<double> &half_vertical);
     int calculate_point(const Point &pt);
     void reference_zoom_point(ReferencePoint &reference, const math::BFComplex &center);
     void reference_zoom_point(ReferencePoint &reference, const std::complex<double> &center);
@@ -62,8 +64,8 @@ private:
     math::BigFloat m_tmp_bf{};
     math::BFComplex m_center_bf{};
     std::complex<double> m_center{};
-    double m_half_width{};
-    double m_half_height{};
+    std::complex<double> m_half_horizontal{};
+    std::complex<double> m_half_vertical{};
     bool m_center_stack_saved{};
     bool m_done{true};
     bool m_frame_initialized{};
