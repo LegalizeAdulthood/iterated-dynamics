@@ -250,6 +250,12 @@ protected:
     ValueSaver<int> m_saved_and_color{g_and_color, 255};
     ValueSaver<long> m_saved_iterations{g_max_iterations, 128};
     ValueSaver<double> m_saved_bailout{g_magnitude_limit, 4.0};
+    ValueSaver<int> m_saved_periodicity{g_periodicity_check, 0};
+    ValueSaver<bool> m_saved_reset_periodicity{g_reset_periodicity, false};
+    ValueSaver<long> m_saved_old_color_iter{g_old_color_iter, 0};
+    ValueSaver<long> m_saved_first_saved_and{g_first_saved_and, 9};
+    ValueSaver<int> m_saved_next_saved_incr{g_periodicity_next_saved_incr, 4};
+    ValueSaver<double> m_saved_close_enough{g_close_enough, 1e-9};
     ValueSaver<ColorMethod> m_saved_inside{g_inside_method, ColorMethod::COLOR};
     ValueSaver<ColorMethod> m_saved_outside{g_outside_method, ColorMethod::ITER};
     ValueSaver<int> m_saved_inside_color{g_inside_color, 7};
@@ -380,7 +386,6 @@ protected:
 
     ValueSaver<ImageRegion> m_saved_region{g_image_region};
     ValueSaver<Potential> m_saved_potential{g_potential, Potential{}};
-    ValueSaver<int> m_saved_periodicity{g_periodicity_check, 0};
     ValueSaver<bool> m_saved_show_orbit{g_show_orbit, false};
     ValueSaver<long> m_saved_distance{g_distance_estimator, 0};
     ValueSaver<int> m_saved_decomp{g_decomp[0], 0};
@@ -422,7 +427,17 @@ void TestPerturbationIterations::initialize_reference(
     {
         init_bf_dec(60);
         m_big_float = true;
-        g_bf_math = BFMathType::BIG_FLT;
+        if (g_periodicity_check != 0)
+        {
+            if (g_bf_math == BFMathType::BIG_NUM)
+            {
+                float_to_bn(g_close_enough_bn, g_close_enough);
+            }
+            else
+            {
+                float_to_bf(g_close_enough_bf, g_close_enough);
+            }
+        }
         const BFComplex center_bf{m_engine.initialize_frame_bf({half_width, 0.0}, {0.0, half_height})};
         float_to_bf(center_bf.x, center.real());
         float_to_bf(center_bf.y, center.imag());
@@ -461,12 +476,15 @@ void TestPerturbationIterations::compare_pixel(
     ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
     fill_pixel_grid();
     g_dispatch.set_orbit_calc(record_standard_orbit);
+    const long initial_old_color_iter{g_old_color_iter};
     StandardFractal standard;
     const int expected_color{standard.calculate_standard_pixel(false)};
     const OrbitState expected{g_real_color_iter, g_old_z, g_new_z, g_magnitude, g_temp_sqr_x, g_temp_sqr_y};
+    const long expected_old_color_iter{g_old_color_iter};
 
     m_specific.pert_pt = record_perturbation_orbit;
     initialize_reference(center - std::complex<double>{reference_offset, 0.0}, reference_offset);
+    g_old_color_iter = initial_old_color_iter;
     g_color_iter = -17;
     g_real_color_iter = -19;
     g_old_z = {-7.0, 9.0};
@@ -479,6 +497,7 @@ void TestPerturbationIterations::compare_pixel(
     EXPECT_EQ(expected_color, m_engine.calculate_pixel(g_col, g_row));
 
     expect_orbit_state(expected);
+    EXPECT_EQ(expected_old_color_iter, g_old_color_iter);
     if (m_engine.reference_count() == 1)
     {
         EXPECT_EQ(s_standard_orbit.size(), s_perturbation_orbit.size());
@@ -662,6 +681,206 @@ TEST_P(TestPerturbationIterations, firstUpdateEscapeMatchesStandardState)
 {
     compare_pixel({1.0, 0.0}, 8);
     EXPECT_EQ(1, g_real_color_iter);
+}
+
+TEST_P(TestPerturbationIterations, periodicityMatchesStandardSaveSchedules)
+{
+    for (const bool legacy : {false, true})
+    {
+        SCOPED_TRACE(legacy);
+        g_first_saved_and = legacy ? 1 : 9;
+        g_periodicity_next_saved_incr = legacy ? 1 : 4;
+        for (const bool reset : {false, true})
+        {
+            SCOPED_TRACE(reset);
+            g_reset_periodicity = reset;
+            for (const int periodicity : {0, 1, 5})
+            {
+                SCOPED_TRACE(periodicity);
+                g_periodicity_check = periodicity;
+                g_close_enough = std::ldexp(1e-5, -periodicity);
+                for (const double real : {0.0, -1.0})
+                {
+                    SCOPED_TRACE(real);
+                    g_old_color_iter = 0;
+
+                    compare_pixel({real, 0.0}, 512);
+
+                    EXPECT_EQ(512, g_real_color_iter);
+                    EXPECT_EQ(7, g_color);
+                    if (periodicity == 0)
+                    {
+                        EXPECT_EQ(511, s_standard_orbit.size());
+                    }
+                    else
+                    {
+                        EXPECT_LT(s_standard_orbit.size(), 511);
+                        if (reset)
+                        {
+                            EXPECT_GT(s_standard_orbit.size(), 255);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, periodicityPreservesEscapingPixelsAndAdaptiveStart)
+{
+    g_periodicity_check = 1;
+    g_old_color_iter = 0;
+    compare_pixel({0.5, 0.0}, 8);
+    EXPECT_EQ(4, g_real_color_iter);
+    EXPECT_EQ(14, g_old_color_iter);
+
+    compare_pixel({0.0, 0.0}, 64);
+    EXPECT_GT(s_standard_orbit.size(), 14);
+    EXPECT_LT(s_standard_orbit.size(), 63);
+    EXPECT_EQ(0, g_old_color_iter);
+}
+
+TEST_P(TestPerturbationIterations, periodicityChecksReconstructedOrbitsRatherThanReferencesOrDeltas)
+{
+    g_periodicity_check = 1;
+    g_close_enough = 1e-14;
+    m_engine.set_glitch_tolerance(0.0);
+    for (const double displacement : {0.0, 0.25})
+    {
+        SCOPED_TRACE(displacement);
+        g_old_color_iter = 0;
+
+        compare_pixel({0.25, 0.0}, 128, displacement);
+
+        EXPECT_EQ(127, s_perturbation_orbit.size());
+        EXPECT_EQ(1, m_engine.reference_count());
+    }
+}
+
+TEST_P(TestPerturbationIterations, periodicityToleranceMatchesStandardAndSurvivesReferenceReplacement)
+{
+    g_periodicity_check = 1;
+    std::size_t loose_iterations{};
+    for (const double tolerance : {1e-4, 1e-12})
+    {
+        SCOPED_TRACE(tolerance);
+        g_close_enough = tolerance;
+        g_old_color_iter = 0;
+        m_engine.set_glitch_tolerance(8.0);
+
+        compare_pixel({0.125, 0.0625}, 128, 0.125);
+
+        EXPECT_GT(m_engine.reference_count(), 1);
+        EXPECT_LT(s_standard_orbit.size(), 127);
+        if (loose_iterations == 0)
+        {
+            loose_iterations = s_standard_orbit.size();
+        }
+        else
+        {
+            EXPECT_GT(s_standard_orbit.size(), loose_iterations);
+        }
+    }
+}
+
+TEST_F(TestPerturbationPixels, orbitDependentInsideModesDisablePeriodicity)
+{
+    g_periodicity_check = 1;
+    m_specific.pert_pt = record_perturbation_orbit;
+    for (const ColorMethod inside : {ColorMethod::ZMAG, ColorMethod::STAR_TRAIL})
+    {
+        SCOPED_TRACE(static_cast<int>(inside));
+        g_inside_method = inside;
+        m_engine.initialize_frame({}, {}, {});
+        s_perturbation_orbit.clear();
+
+        EXPECT_GE(m_engine.calculate_pixel(0, 0), 0);
+
+        EXPECT_EQ(g_max_iterations - 1, s_perturbation_orbit.size());
+        EXPECT_EQ(g_max_iterations, g_real_color_iter);
+    }
+}
+
+TEST_F(TestPerturbationPixels, deepPeriodicityUsesTheActivePrecisionTolerance)
+{
+    ValueSaver saved_mode{g_use_init_orbit, InitOrbitMode::NORMAL};
+    ValueSaver saved_real{g_params[0], 0.0};
+    ValueSaver saved_imag{g_params[1], 0.0};
+    g_periodicity_check = 1;
+    g_first_saved_and = 1;
+    g_periodicity_next_saved_incr = 1;
+    g_max_iterations = 64;
+    m_specific.pert_pt = record_perturbation_orbit;
+    for (const BFMathType math : {BFMathType::BIG_NUM, BFMathType::BIG_FLT})
+    {
+        SCOPED_TRACE(static_cast<int>(math));
+        for (const double tolerance : {1e-25, 1e-50})
+        {
+            SCOPED_TRACE(tolerance);
+            for (const bool replace_reference : {false, true})
+            {
+                SCOPED_TRACE(replace_reference);
+                m_engine.finish();
+                if (m_big_float)
+                {
+                    free_bf_vars();
+                }
+                {
+                    ValueSaver saved_type{
+                        g_fractal_type, math == BFMathType::BIG_NUM ? FractalType::MANDEL : FractalType::JULIA_Z_POWER};
+                    init_bf_dec(80);
+                }
+                m_big_float = true;
+                ASSERT_EQ(math, g_bf_math);
+                if (math == BFMathType::BIG_NUM)
+                {
+                    float_to_bn(g_close_enough_bn, tolerance);
+                }
+                else
+                {
+                    float_to_bf(g_close_enough_bf, tolerance);
+                }
+                const BFComplex center{m_engine.initialize_frame_bf({1e-40, 0.0}, {})};
+                float_to_bf(center.x, -2.0);
+                clear_bf(center.y);
+                m_engine.set_glitch_tolerance(replace_reference ? 2.0 : 0.0);
+                g_old_color_iter = 0;
+                s_perturbation_orbit.clear();
+
+                EXPECT_EQ(7, m_engine.calculate_pixel(WIDTH - 1, 0));
+
+                EXPECT_EQ(64, g_real_color_iter);
+                EXPECT_EQ((tolerance > 1e-40 ? 3 : 63) + (replace_reference ? 1 : 0), s_perturbation_orbit.size());
+                EXPECT_EQ(replace_reference ? 2 : 1, m_engine.reference_count());
+                EXPECT_EQ(0, g_old_color_iter);
+            }
+        }
+    }
+}
+
+TEST_F(TestPerturbationPixels, subDoublePeriodicityToleranceStillDetectsExactCycles)
+{
+    {
+        ValueSaver saved_type{g_fractal_type, FractalType::JULIA_Z_POWER};
+        init_bf_dec(400);
+    }
+    m_big_float = true;
+    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
+    str_to_bf(g_close_enough_bf, "1e-350");
+    g_periodicity_check = 1;
+    g_first_saved_and = 1;
+    g_periodicity_next_saved_incr = 1;
+    g_max_iterations = 16;
+    m_specific.pert_pt = record_perturbation_orbit;
+    const BFComplex center{m_engine.initialize_frame_bf({}, {})};
+    clear_bf(center.x);
+    clear_bf(center.y);
+    s_perturbation_orbit.clear();
+
+    EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
+
+    EXPECT_EQ(16, g_real_color_iter);
+    EXPECT_EQ(3, s_perturbation_orbit.size());
 }
 
 TEST_P(TestPerturbationIterations, selectedBailoutMatchesStandardTermination)

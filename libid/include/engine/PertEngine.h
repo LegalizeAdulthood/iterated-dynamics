@@ -61,6 +61,7 @@ private:
 
     ReferencePoint m_reference{};
     int m_reference_count{};
+    long m_cycle_len{-1};
     math::BFComplex m_reference_coordinate_bf{};
     math::BigFloat m_tmp_bf{};
     math::BFComplex m_center_bf{};

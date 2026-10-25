@@ -76,15 +76,19 @@ void initialize_orbit_bf(const BFComplex z, const BFComplex &coordinate)
     }
 }
 
+double reference_conversion_error()
+{
+    // bf_to_float reads whole bytes after the leading byte.
+    constexpr int REFERENCE_BITS{8 * (std::numeric_limits<LDouble>::digits / 8)};
+    return std::ldexp(1.0, -REFERENCE_BITS) + std::numeric_limits<double>::epsilon();
+}
+
 bool ambiguous_bailout(const std::complex<double> &reference, const std::complex<double> &delta)
 {
     const double scale{
         std::abs(reference.real()) + std::abs(reference.imag()) + std::abs(delta.real()) + std::abs(delta.imag())};
-    // bf_to_float reads whole bytes after the leading byte. Include its
-    // truncation as well as reconstruction and squared-metric roundoff.
-    constexpr int REFERENCE_BITS{8 * (std::numeric_limits<LDouble>::digits / 8)};
-    const double conversion_error{std::ldexp(1.0, -REFERENCE_BITS) + std::numeric_limits<double>::epsilon()};
-    const double error{8.0 * conversion_error * scale * scale};
+    // Include conversion truncation, reconstruction, and predicate roundoff.
+    const double error{8.0 * reference_conversion_error() * scale * scale};
     const std::complex<double> value{reference + delta};
     const double x{sqr(value.real())};
     const double y{sqr(value.imag())};
@@ -259,6 +263,7 @@ void PertEngine::cleanup()
     }
     m_reference = {};
     m_reference_count = 0;
+    m_cycle_len = -1;
     m_reference_coordinate_bf = {};
     m_tmp_bf = {};
     m_center_bf = {};
@@ -423,6 +428,34 @@ void PertEngine::set_reference_point(const std::complex<double> &pixel_position)
 
 int PertEngine::calculate_point(const Point &pt)
 {
+    m_cycle_len = -1;
+    const bool high_precision{g_bf_math != BFMathType::NONE};
+    const bool check_periodicity{
+        g_periodicity_check != 0 && g_inside_method != ColorMethod::ZMAG && g_inside_method != ColorMethod::STAR_TRAIL};
+    if (!check_periodicity)
+    {
+        g_old_color_iter = 2147483647L;
+    }
+    else if (g_inside_method == ColorMethod::PERIOD)
+    {
+        g_old_color_iter = g_max_iterations / 5 * 4;
+    }
+    else if (g_reset_periodicity)
+    {
+        g_old_color_iter = 255;
+    }
+    g_old_color_iter = std::max(g_old_color_iter, g_first_saved_and);
+    long saved_and{g_inside_method == ColorMethod::PERIOD ? 16 : g_first_saved_and};
+    int saved_incr{1};
+    long saved_iteration{};
+    std::size_t saved_sample{};
+    bool have_saved_sample{};
+    std::complex<double> saved_z;
+    if (!high_precision && g_use_init_orbit == InitOrbitMode::VALUE)
+    {
+        saved_z = {g_init_orbit.x, g_init_orbit.y};
+    }
+    double saved_error{};
     const ReferencePoint &reference{m_reference};
     const std::complex<double> pixel_position{static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())};
     const std::complex<double> parameter_displacement{parameter_delta(pixel_position)};
@@ -435,6 +468,59 @@ int PertEngine::calculate_point(const Point &pt)
     BFComplex precise_coordinate{};
     BFComplex precise_orbit{};
     std::size_t precise_sample{};
+    std::complex<double> precise_previous;
+    BFComplex precise_saved{};
+    BigFloat precise_tolerance{};
+    bool saved_is_precise{};
+    const auto advance_precise_orbit = [&](const std::size_t target)
+    {
+        if (precise_orbit.x == nullptr)
+        {
+            precise_coordinate = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+            precise_orbit = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+            coordinate_bf(precise_coordinate, pixel_position);
+            initialize_orbit_bf(precise_orbit, precise_coordinate);
+        }
+        if (target < precise_sample)
+        {
+            initialize_orbit_bf(precise_orbit, precise_coordinate);
+            precise_sample = 0;
+        }
+        for (; precise_sample < target; ++precise_sample)
+        {
+            precise_previous = {
+                static_cast<double>(bf_to_float(precise_orbit.x)), static_cast<double>(bf_to_float(precise_orbit.y))};
+            g_cur_fractal_specific->pert_ref_bf(precise_coordinate, precise_orbit);
+        }
+    };
+    const auto save_precise_value = [&]
+    {
+        if (precise_saved.x == nullptr)
+        {
+            precise_saved = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+            precise_tolerance = alloc_stack(g_r_bf_length + 2);
+            if (g_bf_math == BFMathType::BIG_NUM)
+            {
+                bn_to_bf(precise_tolerance, g_close_enough_bn);
+            }
+            else
+            {
+                copy_bf(precise_tolerance, g_close_enough_bf);
+            }
+        }
+        if (have_saved_sample)
+        {
+            advance_precise_orbit(saved_sample);
+            copy_bf(precise_saved.x, precise_orbit.x);
+            copy_bf(precise_saved.y, precise_orbit.y);
+        }
+        else
+        {
+            clear_bf(precise_saved.x);
+            clear_bf(precise_saved.y);
+        }
+        saved_is_precise = true;
+    };
 
     double min_orbit{1e5}; // orbit value closest to origin
     long min_index{};      // iteration of min_orbit
@@ -462,20 +548,9 @@ int PertEngine::calculate_point(const Point &pt)
         bool escaped{bailout_reached(g_bailout_test, w.real(), w.imag(), g_magnitude_limit)};
         if (g_bf_math != BFMathType::NONE && ambiguous_bailout(reference.orbit[sample], orbit_displacement))
         {
-            if (precise_orbit.x == nullptr)
-            {
-                precise_coordinate = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-                precise_orbit = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-                coordinate_bf(precise_coordinate, pixel_position);
-                initialize_orbit_bf(precise_orbit, precise_coordinate);
-            }
             // Retain only the current high-precision value, not another orbit history.
-            for (; precise_sample < sample; ++precise_sample)
-            {
-                old = {static_cast<double>(bf_to_float(precise_orbit.x)),
-                    static_cast<double>(bf_to_float(precise_orbit.y))};
-                g_cur_fractal_specific->pert_ref_bf(precise_coordinate, precise_orbit);
-            }
+            advance_precise_orbit(sample);
+            old = precise_previous;
             w = {static_cast<double>(bf_to_float(precise_orbit.x)), static_cast<double>(bf_to_float(precise_orbit.y))};
             magnitude = mag_squared(w);
             escaped = precise_bailout_reached(precise_orbit);
@@ -493,8 +568,68 @@ int PertEngine::calculate_point(const Point &pt)
             break;
         }
         old = w;
+        if (check_periodicity && iteration > g_old_color_iter)
+        {
+            double error{};
+            if (high_precision)
+            {
+                error = 4.0 * reference_conversion_error() *
+                    (std::abs(reference.orbit[sample].real()) + std::abs(reference.orbit[sample].imag()) +
+                        std::abs(orbit_displacement.real()) + std::abs(orbit_displacement.imag()));
+            }
+            if ((iteration & saved_and) == 0)
+            {
+                saved_iteration = iteration;
+                saved_sample = sample;
+                have_saved_sample = true;
+                saved_z = w;
+                saved_error = error;
+                saved_is_precise = false;
+                if (precise_orbit.x != nullptr)
+                {
+                    save_precise_value();
+                }
+                if (--saved_incr == 0)
+                {
+                    saved_and = (saved_and << 1) + 1;
+                    saved_incr = g_periodicity_next_saved_incr;
+                }
+            }
+            else
+            {
+                const double difference_x{std::abs(saved_z.real() - w.real())};
+                const double difference_y{std::abs(saved_z.imag() - w.imag())};
+                bool caught{difference_x < g_close_enough && difference_y < g_close_enough};
+                if (high_precision)
+                {
+                    const double tolerance{
+                        static_cast<double>(g_bf_math == BFMathType::BIG_NUM ? bn_to_float(g_close_enough_bn)
+                                                                             : bf_to_float(g_close_enough_bf))};
+                    const double candidate_tolerance{tolerance + saved_error + error};
+                    caught = difference_x <= candidate_tolerance && difference_y <= candidate_tolerance;
+                    if (caught)
+                    {
+                        if (!saved_is_precise)
+                        {
+                            save_precise_value();
+                        }
+                        advance_precise_orbit(sample);
+                        caught = cmp_bf(abs_a_bf(sub_bf(m_tmp_bf, precise_saved.x, precise_orbit.x)),
+                                     precise_tolerance) < 0 &&
+                            cmp_bf(abs_a_bf(sub_bf(m_tmp_bf, precise_saved.y, precise_orbit.y)), precise_tolerance) < 0;
+                    }
+                }
+                if (caught)
+                {
+                    m_cycle_len = iteration - saved_iteration;
+                    iteration = g_max_iterations;
+                    break;
+                }
+            }
+        }
     }
 
+    g_old_color_iter = iteration >= g_max_iterations ? 0 : iteration + 10;
     g_color_iter = iteration;
     g_real_color_iter = iteration;
     g_old_z = {old.real(), old.imag()};
