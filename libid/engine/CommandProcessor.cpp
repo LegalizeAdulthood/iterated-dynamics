@@ -296,7 +296,8 @@ bool CommandProcessor::advance()
         m_command.reset();
         append_result(m_result, std::move(m_command_result));
         m_command_result = {};
-        if (failed || m_result.action.index() != 0)
+        const bool fatal_errors{g_first_init || g_init_batch != BatchMode::NONE};
+        if (failed || (fatal_errors && !m_result.diagnostics.errors.empty()) || m_result.action.index() != 0)
         {
             finish_file();
             return false;

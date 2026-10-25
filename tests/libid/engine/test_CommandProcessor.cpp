@@ -12,6 +12,7 @@
 #include <fractals/formula.h>
 #include <fractals/ifs.h>
 #include <fractals/lsystem.h>
+#include <io/check_write_file.h>
 #include <io/library.h>
 #include <io/loadfile.h>
 #include <misc/ValueSaver.h>
@@ -289,6 +290,24 @@ TEST_F(TestCommandProcessor, rejectedFlagsAloneDoNotTriggerCompatibility)
     EXPECT_EQ(CmdArgFlags::NONE, processor.result().flags);
     EXPECT_DOUBLE_EQ(1.0, g_params[2]);
     EXPECT_EQ(150, g_max_iterations);
+}
+
+TEST_F(TestCommandProcessor, nonfatalPaletteErrorAllowsLaterFileCommands)
+{
+    ValueSaver saved_batch{g_init_batch, BatchMode::NONE};
+    CommandProcessor processor{
+        open_input("entry { maxiter=111 map=missing-startup-palette.map maxiter=222 }"), CmdFile::AT_AFTER_STARTUP};
+
+    while (processor.advance())
+    {
+        handle_current(processor);
+    }
+
+    EXPECT_EQ(222, g_max_iterations);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
+    EXPECT_THAT(
+        processor.result().diagnostics.errors, ElementsAre("Could not load color map missing-startup-palette.map"));
+    EXPECT_TRUE(fs::remove(m_path));
 }
 
 TEST_F(TestCommandProcessor, actionStopsAfterEarlierDiagnosticsWithoutStoppingOnThoseDiagnostics)
@@ -626,6 +645,25 @@ TEST_F(TestStartupCommandProcessor, rejectedConfigurationStopsAllStartupSources)
     EXPECT_THROW(processor.command(), std::logic_error);
 }
 
+TEST_F(TestStartupCommandProcessor, failedPaletteInConfigurationStopsAllStartupSources)
+{
+    ValueSaver saved_overwrite{g_overwrite_file, true};
+    write_source("sstools.ini", "maxiter=111 overwrite=no map=missing-startup-palette.map overwrite=yes unknown=yes\n");
+    CommandProcessor processor{std::vector<std::string>{"id", "maxiter=222", "hertz=999"}};
+
+    run(processor);
+
+    EXPECT_EQ(111, g_max_iterations);
+    EXPECT_EQ(440, g_base_hertz);
+    EXPECT_FALSE(g_overwrite_file);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
+    EXPECT_THAT(
+        processor.result().diagnostics.errors, ElementsAre("Could not load color map missing-startup-palette.map"));
+    EXPECT_FALSE(processor.advance());
+    EXPECT_THROW(processor.command(), std::logic_error);
+    EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
+}
+
 TEST_F(TestStartupCommandProcessor, configurationWarningsPermitLaterCommandsAndArguments)
 {
     write_source("sstools.ini", "lfile=missing-startup.l\nmaxiter=111\n");
@@ -720,6 +758,23 @@ TEST_F(TestStartupCommandProcessor, batchErrorsStopLaterArgumentsAfterInitialSta
     EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
     EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("maxiter=bad")));
     EXPECT_FALSE(processor.result().needs_file_entry);
+}
+
+TEST_F(TestStartupCommandProcessor, batchPaletteErrorStopsFileAfterInitialStartup)
+{
+    g_first_init = false;
+    write_source(
+        "palette-failure.par", "chosen { maxiter=111 map=missing-startup-palette.map maxiter=222 unknown=yes }");
+    CommandProcessor processor{std::vector<std::string>{"id", "batch=yes", "@palette-failure/chosen", "hertz=999"}};
+
+    run(processor);
+
+    EXPECT_EQ(111, g_max_iterations);
+    EXPECT_EQ(440, g_base_hertz);
+    EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
+    EXPECT_THAT(
+        processor.result().diagnostics.errors, ElementsAre("Could not load color map missing-startup-palette.map"));
+    EXPECT_TRUE(fs::remove(m_directory / "palette-failure.par"));
 }
 
 TEST_F(TestStartupCommandProcessor, bareGifArgumentIsProbedBetweenParameterEffects)
@@ -988,6 +1043,27 @@ TEST_F(TestStartupCommandProcessor, rejectedIndirectCommandStopsAllStartupSource
     EXPECT_EQ(111, g_max_iterations);
     EXPECT_EQ(440, g_base_hertz);
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
+}
+
+TEST_F(TestStartupCommandProcessor, failedPaletteInSelectedSetStopsAllStartupSources)
+{
+    ValueSaver saved_overwrite{g_overwrite_file, true};
+    write_source("palette-failure.par",
+        "chosen { maxiter=111 overwrite=no map=missing-startup-palette.map overwrite=yes unknown=yes }");
+    write_source("following.par", "entry { hertz=330 }");
+    CommandProcessor processor{std::vector<std::string>{"id", "@palette-failure/chosen", "@following", "maxiter=222"}};
+
+    run(processor);
+
+    EXPECT_EQ(111, g_max_iterations);
+    EXPECT_EQ(440, g_base_hertz);
+    EXPECT_FALSE(g_overwrite_file);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
+    EXPECT_THAT(
+        processor.result().diagnostics.errors, ElementsAre("Could not load color map missing-startup-palette.map"));
+    EXPECT_FALSE(processor.advance());
+    EXPECT_TRUE(fs::remove(m_directory / "palette-failure.par"));
+    EXPECT_TRUE(fs::remove(m_directory / "following.par"));
 }
 
 TEST_F(TestStartupCommandProcessor, indirectActionStopsItsFileAndRemainingStartupInput)
