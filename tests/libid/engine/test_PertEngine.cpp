@@ -438,6 +438,14 @@ protected:
     ValueSaver<int> m_saved_atan_colors{g_atan_colors};
     ValueSaver<double> m_saved_proximity{g_close_proximity, 0.01};
     ValueSaver<bool> m_saved_magnitude_calc{g_magnitude_calc, false};
+    ValueSaver<std::vector<Byte>> m_saved_log_table{g_log_map_table, std::vector<Byte>{}};
+    ValueSaver<long> m_saved_log_flag{g_log_map_flag, 0};
+    ValueSaver<long> m_saved_log_max{g_log_map_table_max_size, 0};
+    ValueSaver<bool> m_saved_log_calculate{g_log_map_calculate, false};
+    ValueSaver<bool> m_saved_auto_log{g_log_map_auto_calculate, false};
+    ValueSaver<LogMapCalculate> m_saved_log_fly{g_log_map_fly_calculate, LogMapCalculate::NONE};
+    ValueSaver<std::vector<int>> m_saved_ranges{g_iteration_ranges, std::vector<int>{}};
+    ValueSaver<int> m_saved_outside_color{g_outside_color};
 };
 
 void TestPerturbationIterations::SetUp()
@@ -1492,6 +1500,168 @@ TEST_P(TestPerturbationIterations, starTrailRestoresTheLimitAfterPixelAndOutputF
     EXPECT_CALL(m_driver, write_pixel(g_col, g_row, 1)).WillOnce(Throw(std::runtime_error{"output failure"}));
     EXPECT_THROW(m_engine.calculate_pixel(g_col, g_row), std::runtime_error);
     EXPECT_EQ(201, g_max_iterations);
+}
+
+TEST_P(TestPerturbationIterations, mapsFullIterationCountsBeforePaletteFolding)
+{
+    g_inside_method = ColorMethod::ITER;
+    g_log_map_flag = 1;
+    g_log_map_table_max_size = 512;
+    g_log_map_table.assign(513, 44);
+    g_log_map_table[4] = 80;
+    g_log_map_table[80] = 99;
+    g_log_map_table[512] = 13;
+    g_colors = 16;
+    g_and_color = 15;
+    compare_pixel({0.5, 0.0}, 512);
+    EXPECT_EQ(4, g_real_color_iter);
+    EXPECT_EQ(5, g_color);
+    compare_pixel({}, 512);
+    EXPECT_EQ(512, g_real_color_iter);
+    EXPECT_EQ(13, g_color);
+}
+
+TEST_P(TestPerturbationIterations, mapsSpecialOutsideColorsAfterTheirFormulas)
+{
+    g_inside_method = ColorMethod::ITER;
+    g_log_map_flag = 1;
+    g_log_map_table_max_size = 128;
+    g_log_map_table.resize(129);
+    for (std::size_t i = 0; i < g_log_map_table.size(); ++i)
+    {
+        g_log_map_table[i] = static_cast<Byte>((7 * i + 19) % 256);
+    }
+    g_close_proximity = 16.0;
+    init_atan_colors();
+    for (const ColorMethod outside : {ColorMethod::ITER, ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT,
+             ColorMethod::SUM, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS})
+    {
+        SCOPED_TRACE(static_cast<int>(outside));
+        g_outside_method = outside;
+        compare_pixel({0.5, 0.5}, 128);
+        EXPECT_EQ(4, g_real_color_iter);
+    }
+}
+
+TEST_P(TestPerturbationIterations, mapsSpecialInsideColorsAfterTheirFormulas)
+{
+    g_log_map_flag = 1;
+    g_log_map_table_max_size = 128;
+    g_log_map_table.assign(129, 44);
+    g_log_map_table[0] = 17;
+    g_log_map_table[1] = 18;
+    g_log_map_table[2] = 19;
+    g_log_map_table[128] = 20;
+    g_bof_match_book_images = false;
+    init_atan_colors();
+    for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60, ColorMethod::BOF61,
+             ColorMethod::FMODI, ColorMethod::ATANI, ColorMethod::PERIOD, ColorMethod::STAR_TRAIL})
+    {
+        SCOPED_TRACE(static_cast<int>(inside));
+        g_inside_method = inside;
+        compare_pixel({}, 128);
+    }
+}
+
+TEST_P(TestPerturbationIterations, fixedColorsAndCycleHighlightsBypassMapping)
+{
+    g_log_map_flag = 1;
+    g_log_map_table_max_size = 128;
+    g_log_map_table.assign(129, 99);
+    g_inside_method = ColorMethod::COLOR;
+    g_inside_color = 7;
+    compare_pixel({}, 128);
+    EXPECT_EQ(7, g_color);
+    compare_pixel({0.5, 0.0}, 128);
+    EXPECT_EQ(99, g_color);
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::COLOR;
+    g_outside_color = 4;
+    compare_pixel({0.5, 0.0}, 128);
+    EXPECT_EQ(4, g_color);
+    g_outside_method = ColorMethod::ITER;
+    g_periodicity_check = -1;
+    g_old_color_iter = 0;
+    compare_pixel({}, 128);
+    EXPECT_EQ(7, g_color);
+    g_inside_method = ColorMethod::COLOR;
+    g_periodicity_check = 0;
+    g_potential = {{23.0, 10.0, 4.0}, false, true};
+    compare_pixel({}, 128);
+    EXPECT_EQ(99, g_color);
+}
+
+TEST_P(TestPerturbationIterations, logarithmicAndQuadraticMapsUseTheSharedTableAndOnTheFlyPaths)
+{
+    g_inside_method = ColorMethod::ITER;
+    g_colors = 16;
+    g_and_color = 15;
+    g_log_map_table_max_size = 128;
+    for (const Version version : {parse_legacy_version(1920), parse_legacy_version(1921), parse_legacy_version(2001),
+             parse_legacy_version(2002), current_id_version()})
+    {
+        SCOPED_TRACE(to_string(version));
+        g_version = version;
+        for (const long flag : {1L, -1L, 8L, -8L})
+        {
+            SCOPED_TRACE(flag);
+            g_log_map_flag = flag;
+            for (const bool calculate : {false, true})
+            {
+                SCOPED_TRACE(calculate);
+                g_log_map_calculate = calculate;
+                g_log_map_fly_calculate = calculate ? LogMapCalculate::ON_THE_FLY : LogMapCalculate::USE_LOG_TABLE;
+                g_log_map_table.assign(calculate ? 0 : 129, 0);
+                setup_log_table();
+                compare_pixel({0.5, 0.0}, 128);
+                EXPECT_EQ(standard_palette_color(log_table_calc(4)), g_color);
+                EXPECT_EQ(4, g_real_color_iter);
+                compare_pixel({}, 128);
+                EXPECT_EQ(standard_palette_color(log_table_calc(128)), g_color);
+                EXPECT_EQ(128, g_real_color_iter);
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, mapsOrdinaryAndStripedIterationRanges)
+{
+    g_inside_method = ColorMethod::ITER;
+    g_max_iterations = 128;
+    for (const bool striped : {false, true})
+    {
+        SCOPED_TRACE(striped);
+        g_iteration_ranges = striped ? std::vector<int>{-1, 2, 8, 128} : std::vector<int>{2, 5, 128};
+        g_log_map_flag = 1;
+        ImageCalculation calculation;
+        EXPECT_TRUE(calculation.start().empty());
+        EXPECT_EQ(0, g_log_map_flag);
+        compare_pixel({0.5, 0.0}, 128);
+        EXPECT_EQ(striped ? 0 : 1, g_color);
+        EXPECT_EQ(4, g_real_color_iter);
+        compare_pixel({}, 128);
+        EXPECT_EQ(2, g_color);
+        EXPECT_EQ(128, g_real_color_iter);
+    }
+}
+
+TEST_P(TestPerturbationIterations, mappedColorsSurviveReferenceReplacement)
+{
+    g_inside_method = ColorMethod::ITER;
+    g_log_map_flag = 1;
+    g_log_map_table_max_size = 128;
+    g_log_map_table.assign(129, 44);
+    g_log_map_table[4] = 77;
+    g_log_map_table[128] = 88;
+    m_engine.set_glitch_tolerance(8.0);
+    compare_pixel({0.5, 0.5}, 128, 0.125);
+    EXPECT_EQ(77, g_color);
+    EXPECT_EQ(4, g_real_color_iter);
+    EXPECT_GT(m_engine.reference_count(), 1);
+    compare_pixel({0.125, 0.125}, 128, 0.125);
+    EXPECT_EQ(88, g_color);
+    EXPECT_EQ(128, g_real_color_iter);
+    EXPECT_GT(m_engine.reference_count(), 1);
 }
 
 TEST_P(TestPerturbationIterations, periodicityMatchesStandardSaveSchedules)
@@ -2898,6 +3068,78 @@ void TestPerturbationPixels::check_pass_switch(const PerturbationMode mode)
         EXPECT_EQ(calculate_control_pixel, g_dispatch.calc_type());
         calculation.finish();
     }
+}
+
+TEST_F(TestPerturbationPixels, automaticLogMappingUsesRawCountsAndThenRendersWithPerturbation)
+{
+    ValueSaver saved_user{g_user, UserData{}};
+    ValueSaver saved_float_param{g_float_param, &g_init};
+    ValueSaver saved_float_bailout{g_bailout_float};
+    ValueSaver saved_bn_bailout{g_bailout_bignum};
+    ValueSaver saved_bf_bailout{g_bailout_bigfloat};
+    ValueSaver saved_bailout_test{g_bailout_test, Bailout::MOD};
+    ValueSaver saved_region{g_image_region, ImageRegion{{0.5, 0.0}, {0.5, 0.0}, {0.5, 0.0}}};
+    ValueSaver saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
+    ValueSaver saved_resuming{g_resuming, false};
+    ValueSaver saved_potential{g_potential, Potential{}};
+    ValueSaver saved_distance{g_distance_estimator, 0L};
+    ValueSaver saved_start_orbit{g_start_show_orbit, false};
+    ValueSaver saved_log_table{g_log_map_table, std::vector<Byte>{}};
+    ValueSaver saved_log_flag{g_log_map_flag, 2L};
+    ValueSaver saved_log_max{g_log_map_table_max_size};
+    ValueSaver saved_log_calculate{g_log_map_calculate, false};
+    ValueSaver saved_auto_log{g_log_map_auto_calculate, false};
+    ValueSaver saved_log_fly{g_log_map_fly_calculate, LogMapCalculate::NONE};
+    ValueSaver saved_ranges{g_iteration_ranges, std::vector<int>{}};
+    ValueSaver<LDouble> saved_delta_x{g_delta_x, 0};
+    ValueSaver<LDouble> saved_delta_y{g_delta_y, 0};
+    ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    g_user.perturbation = PerturbationMode::YES;
+    set_bailout_formula(Bailout::MOD);
+    g_inside_method = ColorMethod::ITER;
+    g_colors = 16;
+    g_and_color = 15;
+    g_max_iterations = 512;
+    m_specific.calc_type = standard_fractal_type;
+    m_specific.per_image = [] { return true; };
+    m_specific.symmetry = SymmetryType::NONE;
+    g_dispatch = FractalDispatch{m_specific};
+    bool saw_mapped_sample{};
+    bool saw_perturbation{};
+    EXPECT_CALL(m_driver, write_pixel(_, _, _))
+        .WillRepeatedly(Invoke(
+            [&](const int col, const int row, const int color)
+            {
+                m_pixels.at(row * WIDTH + col) = color;
+                if (const StandardFractal *calculation{active_standard_fractal()})
+                {
+                    const bool active{calculation->standard_pass_status().perturbation_active};
+                    saw_mapped_sample |= !active && g_real_color_iter == 4 && color == 2;
+                    saw_perturbation |= active;
+                }
+            }));
+    alloc_pixel_grid();
+    fill_pixel_grid();
+    {
+        StandardFractal calculation;
+        EXPECT_TRUE(calculation.resume().empty());
+        EXPECT_EQ(512, g_log_map_table_max_size);
+        EXPECT_EQ(2, log_table_calc(4));
+        for (int increments = 0; increments < 100 && !calculation.done(); ++increments)
+        {
+            calculation.iterate();
+        }
+        EXPECT_TRUE(calculation.done());
+        EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+        EXPECT_EQ(4, g_log_map_flag);
+        EXPECT_EQ(512, g_max_iterations);
+        EXPECT_EQ(4, g_real_color_iter);
+        EXPECT_TRUE(saw_mapped_sample);
+        EXPECT_TRUE(saw_perturbation);
+        EXPECT_THAT(m_pixels, Each(1));
+    }
+    free_pixel_grid();
 }
 
 TEST_F(TestPerturbationPixels, passSwitchAutomaticallySelectsPerturbationAndClearsReferences)

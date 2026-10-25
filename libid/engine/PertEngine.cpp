@@ -734,20 +734,12 @@ int PertEngine::calculate_point(const Point &pt)
         constexpr int GREEN{2};
         constexpr int YELLOW{6};
         index = g_close_proximity > 0 ? epsilon_axis == 1 ? GREEN : YELLOW : iteration;
-        if (!g_log_map_table.empty() || g_log_map_calculate)
-        {
-            index = log_table_calc(index);
-        }
     }
     else if (iteration == g_max_iterations && (highlight_cycle || g_inside_method == ColorMethod::PERIOD))
     {
         if (g_potential.flag)
         {
             index = potential(magnitude, iteration);
-            if (!g_log_map_table.empty() || g_log_map_calculate)
-            {
-                index = log_table_calc(index);
-            }
         }
         else if (highlight_cycle)
         {
@@ -756,10 +748,6 @@ int PertEngine::calculate_point(const Point &pt)
         else
         {
             index = m_cycle_len > 0 ? m_cycle_len : g_max_iterations;
-            if (!g_log_map_table.empty() || g_log_map_calculate)
-            {
-                index = log_table_calc(index);
-            }
         }
     }
     else if (star_trail)
@@ -776,10 +764,6 @@ int PertEngine::calculate_point(const Point &pt)
         if (g_potential.flag)
         {
             index = potential(magnitude, iteration);
-        }
-        if (!g_log_map_table.empty() || g_log_map_calculate)
-        {
-            index = log_table_calc(index);
         }
     }
     else if (g_biomorph >= 0)
@@ -914,6 +898,13 @@ int PertEngine::calculate_point(const Point &pt)
                 break;
             }
         }
+    }
+    const bool inside{iteration == g_max_iterations || epsilon_axis != 0};
+    const bool map_color{g_potential.flag ||
+        (inside ? !highlight_cycle && g_inside_method < ColorMethod::COLOR : g_outside_method < ColorMethod::COLOR)};
+    if (map_color && (!g_log_map_table.empty() || g_log_map_calculate))
+    {
+        index = log_table_calc(index);
     }
     g_color = standard_palette_color(index);
     g_plot(pt.get_x(), g_logical_screen.y_dots - 1 - pt.get_y(), g_color);
