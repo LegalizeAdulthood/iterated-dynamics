@@ -834,6 +834,22 @@ static void set_new_z_from_bignum()
     }
 }
 
+int standard_palette_color(const long color)
+{
+    int index = static_cast<int>(std::abs(color));
+    if (color >= g_colors)
+    {
+        // Don't use color 0 unless from inside/outside.
+        index = g_colors < 16 ? static_cast<int>(color & g_and_color) : static_cast<int>((color - 1) % g_and_color + 1);
+    }
+    if (g_debug_flag != DebugFlags::FORCE_BOUNDARY_TRACE_ERROR && index <= 0 &&
+        g_std_calc_mode == CalcMode::BOUNDARY_TRACE)
+    {
+        index = 1;
+    }
+    return index;
+}
+
 // per pixel 1/2/b/g, called with g_row & g_col set
 int standard_fractal_type()
 {
@@ -1568,26 +1584,7 @@ plot_inside: // we're "inside"
 
 plot_pixel:
 
-    g_color = std::abs(g_color_iter);
-    if (g_color_iter >= g_colors)
-    {
-        // don't use color 0 unless from inside/outside
-        if (g_colors < 16)
-        {
-            g_color = static_cast<int>(g_color_iter & g_and_color);
-        }
-        else
-        {
-            g_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
-        }
-    }
-    if (g_debug_flag != DebugFlags::FORCE_BOUNDARY_TRACE_ERROR)
-    {
-        if (g_color <= 0 && g_std_calc_mode == CalcMode::BOUNDARY_TRACE)
-        {
-            g_color = 1;
-        }
-    }
+    g_color = standard_palette_color(g_color_iter);
     g_plot(g_col, g_row, g_color);
 
     g_max_iterations = m_save_max_it;

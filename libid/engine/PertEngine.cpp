@@ -24,7 +24,6 @@
 #include "fractals/pickover_mandelbrot.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
-#include "misc/debug_flags.h"
 #include "misc/id.h"
 #include "misc/run_cleanup.h"
 
@@ -644,7 +643,7 @@ int PertEngine::calculate_point(const Point &pt)
     {
         iteration = 1;
     }
-    int index;
+    long index;
     const double rq_lim2{std::sqrt(g_magnitude_limit)};
 
     const bool highlight_cycle{g_periodicity_check < 0 && m_cycle_len > 0};
@@ -655,7 +654,7 @@ int PertEngine::calculate_point(const Point &pt)
             index = potential(magnitude, iteration);
             if (!g_log_map_table.empty() || g_log_map_calculate)
             {
-                index = static_cast<int>(log_table_calc(index));
+                index = log_table_calc(index);
             }
         }
         else if (highlight_cycle)
@@ -664,10 +663,10 @@ int PertEngine::calculate_point(const Point &pt)
         }
         else
         {
-            index = static_cast<int>(m_cycle_len > 0 ? m_cycle_len : g_max_iterations);
+            index = m_cycle_len > 0 ? m_cycle_len : g_max_iterations;
             if (!g_log_map_table.empty() || g_log_map_calculate)
             {
-                index = static_cast<int>(log_table_calc(index));
+                index = log_table_calc(index);
             }
         }
     }
@@ -685,7 +684,7 @@ int PertEngine::calculate_point(const Point &pt)
             }
             else
             {
-                index = iteration % 256;
+                index = iteration;
             }
         }
     }
@@ -700,18 +699,18 @@ int PertEngine::calculate_point(const Point &pt)
             }
             else
             {
-                index = iteration % 256;
+                index = iteration;
             }
             break;
 
         case ColorMethod::ZMAG:
             if (iteration == g_max_iterations)
             {
-                index = static_cast<int>((w.real() * w.real() + w.imag() + w.imag()) * (g_max_iterations >> 1) + 1);
+                index = static_cast<long>((w.real() * w.real() + w.imag() + w.imag()) * (g_max_iterations >> 1) + 1);
             }
             else
             {
-                index = iteration % 256;
+                index = iteration;
             }
             break;
 
@@ -787,7 +786,7 @@ int PertEngine::calculate_point(const Point &pt)
                 }
                 else
                 {
-                    index = iteration % 256;
+                    index = iteration;
                 }
             }
             break;
@@ -801,7 +800,7 @@ int PertEngine::calculate_point(const Point &pt)
             }
             else
             {
-                index = iteration % 256;
+                index = iteration;
             }
         }
         else
@@ -811,13 +810,13 @@ int PertEngine::calculate_point(const Point &pt)
             case ColorMethod::ZMAG:
                 if (iteration == g_max_iterations)
                 {
-                    index = static_cast<int>(mag_squared(w) * (g_max_iterations >> 1) + 1);
+                    index = static_cast<long>(mag_squared(w) * (g_max_iterations >> 1) + 1);
                 }
                 break;
             case ColorMethod::BOF60:
                 if (iteration == g_max_iterations)
                 {
-                    index = static_cast<int>(std::sqrt(min_orbit) * 75.0);
+                    index = static_cast<long>(std::sqrt(min_orbit) * 75.0);
                 }
                 break;
             case ColorMethod::BOF61:
@@ -832,16 +831,7 @@ int PertEngine::calculate_point(const Point &pt)
             }
         }
     }
-    g_color = std::abs(index);
-    if (g_color >= g_colors)
-    {
-        g_color = g_colors < 16 ? g_color & g_and_color : (g_color - 1) % g_and_color + 1;
-    }
-    if (g_std_calc_mode == CalcMode::BOUNDARY_TRACE && g_color == 0 &&
-        g_debug_flag != DebugFlags::FORCE_BOUNDARY_TRACE_ERROR)
-    {
-        g_color = 1;
-    }
+    g_color = standard_palette_color(index);
     g_plot(pt.get_x(), g_logical_screen.y_dots - 1 - pt.get_y(), g_color);
     return g_color;
 }

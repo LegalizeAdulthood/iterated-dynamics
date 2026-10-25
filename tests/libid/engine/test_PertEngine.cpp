@@ -28,6 +28,7 @@
 #include <geometry/line3d.h>
 #include <io/disk_storage.h>
 #include <math/biginit.h>
+#include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 #include <ui/video.h>
 
@@ -1123,6 +1124,107 @@ TEST_P(TestPerturbationIterations, displacedPixelPublishesItsOwnTerminalState)
 
     expect_orbit_state({4, {1.62890625, 0.0}, {3.1533355712890625, 0.0}, 3.1533355712890625 * 3.1533355712890625,
         3.1533355712890625 * 3.1533355712890625, 0.0});
+}
+
+TEST_P(TestPerturbationIterations, escapeCountsAreFoldedOnlyAtTheActivePaletteSize)
+{
+    ValueSaver<LDouble> saved_delta_x{g_delta_x, 0};
+    ValueSaver<LDouble> saved_delta_y{g_delta_y, 0};
+    ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+
+    struct Sample
+    {
+        double real;
+        long iterations;
+        std::array<int, 4> colors;
+    };
+
+    // Midpoints between escape-count boundaries avoid ambiguous bailout comparisons.
+    constexpr std::array<Sample, 6> SAMPLES{{
+        {0.25014833044660284, 255, {1, 3, 15, 255}},
+        {0.2501471869631891, 256, {0, 0, 1, 1}},
+        {0.25014605665218975, 257, {1, 1, 2, 2}},
+        {0.2500373634283777, 511, {1, 3, 1, 1}},
+        {0.25003721845435867, 512, {0, 0, 2, 2}},
+        {0.25000935820314196, 1024, {0, 0, 4, 4}},
+    }};
+    constexpr std::array<int, 4> PALETTE_SIZES{2, 4, 16, 256};
+    for (std::size_t palette = 0; palette < PALETTE_SIZES.size(); ++palette)
+    {
+        g_colors = PALETTE_SIZES[palette];
+        g_and_color = g_colors - 1;
+        SCOPED_TRACE(g_colors);
+        for (const Sample &sample : SAMPLES)
+        {
+            SCOPED_TRACE(sample.iterations);
+            for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::COLOR})
+            {
+                SCOPED_TRACE(static_cast<int>(inside));
+                m_engine.finish();
+                if (m_big_float)
+                {
+                    free_bf_vars();
+                    m_big_float = false;
+                }
+                g_inside_method = inside;
+                g_max_iterations = 2048;
+                const DComplex point{sample.real, 0.0};
+                g_image_region = ImageRegion{point, point, point};
+                fill_pixel_grid();
+                StandardFractal standard;
+                const int expected_color{standard.calculate_standard_pixel(false)};
+                EXPECT_EQ(sample.iterations, g_real_color_iter);
+                EXPECT_EQ(sample.colors[palette], expected_color);
+                initialize_reference({sample.real, 0.0});
+
+                EXPECT_EQ(expected_color, m_engine.calculate_pixel(g_col, g_row));
+                EXPECT_EQ(sample.iterations, g_real_color_iter);
+                EXPECT_EQ(expected_color, m_pixels[g_row * WIDTH + g_col]);
+                EXPECT_GT(m_engine.reference_count(), 0);
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, insideIterationCountsUseTheSamePaletteFolding)
+{
+    g_inside_method = ColorMethod::ITER;
+    for (const int colors : {2, 4, 16, 256})
+    {
+        SCOPED_TRACE(colors);
+        g_colors = colors;
+        g_and_color = colors - 1;
+        for (const long iterations : {255L, 256L, 257L, 511L, 512L, 1024L})
+        {
+            SCOPED_TRACE(iterations);
+            compare_pixel({}, iterations);
+            EXPECT_EQ(iterations, g_real_color_iter);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, boundaryTracePreservesNonzeroColorsAcrossPaletteSizes)
+{
+    ValueSaver saved_debug{g_debug_flag, DebugFlags::NONE};
+    g_std_calc_mode = CalcMode::BOUNDARY_TRACE;
+    for (const int colors : {2, 4, 16, 256})
+    {
+        SCOPED_TRACE(colors);
+        g_colors = colors;
+        g_and_color = colors - 1;
+        g_inside_method = ColorMethod::ITER;
+        compare_pixel({}, 256);
+        EXPECT_EQ(1, g_color);
+        g_inside_method = ColorMethod::COLOR;
+        g_inside_color = 0;
+        compare_pixel({}, 256);
+        EXPECT_EQ(1, g_color);
+        g_debug_flag = DebugFlags::FORCE_BOUNDARY_TRACE_ERROR;
+        compare_pixel({}, 256);
+        EXPECT_EQ(0, g_color);
+        g_debug_flag = DebugFlags::NONE;
+    }
 }
 
 TEST_P(TestPerturbationIterations, trueColorIterationOutputUsesTheFullCountBeforePaletteOutput)
