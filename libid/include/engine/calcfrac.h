@@ -248,6 +248,7 @@ private:
 
 int calc_mandelbrot_type();
 int standard_fractal_type();
+long standard_outside_color(long color, const math::DComplex &z);
 int standard_palette_color(long color);
 void init_atan_colors();
 int find_alternate_math(fractals::FractalType type, math::BFMathType math);

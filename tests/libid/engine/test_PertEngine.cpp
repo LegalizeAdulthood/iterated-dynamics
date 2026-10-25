@@ -30,6 +30,7 @@
 #include <math/biginit.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
+#include <misc/version.h>
 #include <ui/video.h>
 
 #include <gmock/gmock.h>
@@ -405,6 +406,8 @@ protected:
     ValueSaver<decltype(g_bailout_bignum)> m_saved_bn_bailout{g_bailout_bignum};
     ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bf_bailout{g_bailout_bigfloat};
     ValueSaver<Bailout> m_saved_bailout_test{g_bailout_test};
+    ValueSaver<Version> m_saved_version{g_version};
+    ValueSaver<int> m_saved_atan_colors{g_atan_colors};
 };
 
 void TestPerturbationIterations::SetUp()
@@ -683,6 +686,140 @@ TEST_P(TestPerturbationIterations, firstUpdateEscapeMatchesStandardState)
 {
     compare_pixel({1.0, 0.0}, 8);
     EXPECT_EQ(1, g_real_color_iter);
+}
+
+TEST_P(TestPerturbationIterations, specialOutsideColorsMatchStandardTerminalOrbits)
+{
+    g_version = current_id_version();
+    init_atan_colors();
+    g_bof_match_book_images = false;
+    for (const ColorMethod outside :
+        {ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT, ColorMethod::SUM, ColorMethod::ATAN})
+    {
+        SCOPED_TRACE(static_cast<int>(outside));
+        g_outside_method = outside;
+        for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60, ColorMethod::BOF61})
+        {
+            SCOPED_TRACE(static_cast<int>(inside));
+            g_inside_method = inside;
+            for (const std::complex<double> point : {std::complex<double>{1.0, 0.5}, {1.0, -0.5}, {-2.0, 1.0},
+                     {-2.0, -1.0}, {0.0, 2.0}, {0.0, -2.0}, {1.0, 0.0}, {-3.0, 0.0}})
+            {
+                SCOPED_TRACE(point);
+                compare_pixel(point, 512);
+                EXPECT_LT(g_real_color_iter, g_max_iterations);
+                EXPECT_GT(m_engine.reference_count(), 0);
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, specialOutsideColorsUseStandardRangeCorrection)
+{
+    struct Sample
+    {
+        ColorMethod method;
+        std::complex<double> point;
+        long max_iterations;
+        int color;
+        bool corrected;
+    };
+
+    const Sample samples[]{
+        {ColorMethod::REAL, {1.0, 0.0}, 128, 10, false},
+        {ColorMethod::REAL, {0.0, 3.0}, 128, 1, true},
+        {ColorMethod::REAL, {0.5, 3.0}, 128, 1, true},
+        {ColorMethod::REAL, {8.0, 0.0}, 16, 1, true},
+        {ColorMethod::IMAG, {0.0, 3.0}, 128, 11, false},
+        {ColorMethod::IMAG, {0.0, -10.0}, 128, 1, true},
+        {ColorMethod::IMAG, {0.0, -8.0}, 128, 1, true},
+        {ColorMethod::IMAG, {1.0, 8.0}, 16, 1, true},
+        {ColorMethod::MULT, {1.0, 0.5}, 128, 1, false},
+        {ColorMethod::MULT, {-2.0, 0.5}, 128, 1, true},
+        {ColorMethod::MULT, {1.0, -1.0}, 128, 1, true},
+        {ColorMethod::MULT, {2.0, 0.125}, 8, 1, true},
+        {ColorMethod::SUM, {1.0, 1.0}, 128, 5, false},
+        {ColorMethod::SUM, {0.0, 3.0}, 128, 1, true},
+        {ColorMethod::SUM, {0.0, 1.75}, 128, 1, true},
+        {ColorMethod::SUM, {8.0, 1.0}, 16, 1, true},
+        {ColorMethod::ATAN, {1.0, 0.0}, 16, 1, true},
+        {ColorMethod::ATAN, {0.0, 2.0}, 16, 1, true},
+    };
+    g_inside_method = ColorMethod::ITER;
+    for (const Version version : {parse_legacy_version(1960), parse_legacy_version(1961), current_id_version()})
+    {
+        g_version = version;
+        SCOPED_TRACE(to_string(version));
+        init_atan_colors();
+        for (const Sample &sample : samples)
+        {
+            SCOPED_TRACE(static_cast<int>(sample.method));
+            SCOPED_TRACE(sample.point);
+            g_outside_method = sample.method;
+            compare_pixel(sample.point, sample.max_iterations);
+            EXPECT_EQ(sample.corrected && g_version < 1961 ? 0 : sample.color, g_color);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, outsideAtanUsesVersionAndPaletteScale)
+{
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::ATAN;
+    for (const Version version : {parse_legacy_version(2002), parse_legacy_version(2003), current_id_version()})
+    {
+        g_version = version;
+        SCOPED_TRACE(to_string(version));
+        for (const int colors : {16, 256})
+        {
+            SCOPED_TRACE(colors);
+            g_colors = colors;
+            g_and_color = colors - 1;
+            init_atan_colors();
+            const int expected{g_version <= 2002 ? colors == 16 ? 3 : 153 : colors == 16 ? 13 : 218};
+            for (const double imag : {2.0, -2.0})
+            {
+                SCOPED_TRACE(imag);
+                compare_pixel({0.0, imag}, 512);
+                EXPECT_EQ(expected, g_color);
+                EXPECT_EQ(1, g_real_color_iter);
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, specialOutsideFormulasDoNotApplyToInsidePixels)
+{
+    g_bof_match_book_images = false;
+    for (const ColorMethod outside :
+        {ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT, ColorMethod::SUM, ColorMethod::ATAN})
+    {
+        SCOPED_TRACE(static_cast<int>(outside));
+        g_outside_method = outside;
+        for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60, ColorMethod::BOF61})
+        {
+            SCOPED_TRACE(static_cast<int>(inside));
+            g_inside_method = inside;
+            compare_pixel({}, 128);
+            EXPECT_EQ(128, g_real_color_iter);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, specialOutsideColorsSurviveReferenceReplacement)
+{
+    g_version = current_id_version();
+    init_atan_colors();
+    g_inside_method = ColorMethod::ITER;
+    m_engine.set_glitch_tolerance(2.0);
+    for (const ColorMethod outside :
+        {ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT, ColorMethod::SUM, ColorMethod::ATAN})
+    {
+        SCOPED_TRACE(static_cast<int>(outside));
+        g_outside_method = outside;
+        compare_pixel({-1.0, 1.0}, 512, 0.125);
+        EXPECT_GT(m_engine.reference_count(), 1);
+    }
 }
 
 TEST_P(TestPerturbationIterations, periodicityMatchesStandardSaveSchedules)

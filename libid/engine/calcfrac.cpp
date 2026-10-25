@@ -834,6 +834,36 @@ static void set_new_z_from_bignum()
     }
 }
 
+long standard_outside_color(long color, const DComplex &z)
+{
+    // Add 7 to overcome negative values on the Mandelbrot.
+    if (g_outside_method == ColorMethod::REAL)
+    {
+        color += static_cast<long>(z.x) + 7;
+    }
+    else if (g_outside_method == ColorMethod::IMAG)
+    {
+        color += static_cast<long>(z.y) + 7;
+    }
+    else if (g_outside_method == ColorMethod::MULT && z.y)
+    {
+        color = static_cast<long>(static_cast<double>(color) * (z.x / z.y));
+    }
+    else if (g_outside_method == ColorMethod::SUM)
+    {
+        color += static_cast<long>(z.x + z.y);
+    }
+    else if (g_outside_method == ColorMethod::ATAN)
+    {
+        color = static_cast<long>(std::abs(std::atan2(z.y, z.x) * g_atan_colors / PI));
+    }
+    if ((color <= 0 || color > g_max_iterations) && g_outside_method != ColorMethod::FMOD)
+    {
+        color = g_version < 1961 ? 0 : 1;
+    }
+    return color;
+}
+
 int standard_palette_color(const long color)
 {
     int index = static_cast<int>(std::abs(color));
@@ -1387,28 +1417,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
     if (g_outside_method < ColorMethod::ITER)
     {
         set_new_z_from_bignum();
-        // Add 7 to overcome negative values on the MANDEL
-        if (g_outside_method == ColorMethod::REAL)
-        {
-            g_color_iter += static_cast<long>(g_new_z.x) + 7;
-        }
-        else if (g_outside_method == ColorMethod::IMAG)
-        {
-            g_color_iter += static_cast<long>(g_new_z.y) + 7;
-        }
-        else if (g_outside_method == ColorMethod::MULT  && g_new_z.y)
-        {
-            g_color_iter = static_cast<long>(static_cast<double>(g_color_iter) * (g_new_z.x / g_new_z.y));
-        }
-        else if (g_outside_method == ColorMethod::SUM)
-        {
-            g_color_iter += static_cast<long>(g_new_z.x + g_new_z.y);
-        }
-        else if (g_outside_method == ColorMethod::ATAN)
-        {
-            g_color_iter = static_cast<long>(std::abs(std::atan2(g_new_z.y, g_new_z.x) * g_atan_colors / PI));
-        }
-        else if (g_outside_method == ColorMethod::FMOD)
+        if (g_outside_method == ColorMethod::FMOD)
         {
             g_color_iter = static_cast<long>(m_mem_value * g_colors / g_close_proximity);
         }
@@ -1417,11 +1426,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             g_color_iter = static_cast<long>(m_total_dist);
         }
 
-        // eliminate negative colors & wrap arounds
-        if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_method != ColorMethod::FMOD)
-        {
-            g_color_iter = g_version < 1961 ? 0 : 1;
-        }
+        g_color_iter = standard_outside_color(g_color_iter, g_new_z);
     }
 
     if (g_distance_estimator)

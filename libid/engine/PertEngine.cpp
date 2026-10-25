@@ -715,62 +715,11 @@ int PertEngine::calculate_point(const Point &pt)
             break;
 
         case ColorMethod::REAL:
-            if (iteration == g_max_iterations)
-            {
-                index = g_max_iterations;
-            }
-            else
-            {
-                index = iteration + static_cast<long>(w.real()) + 7;
-            }
-            break;
-
         case ColorMethod::IMAG:
-            if (iteration == g_max_iterations)
-            {
-                index = g_max_iterations;
-            }
-            else
-            {
-                index = iteration + static_cast<long>(w.imag()) + 7;
-            }
-            break;
-
         case ColorMethod::MULT:
-            if (iteration == g_max_iterations)
-            {
-                index = g_max_iterations;
-            }
-            else if (w.imag())
-            {
-                index = static_cast<long>(static_cast<double>(iteration) * (w.real() / w.imag()));
-            }
-            else
-            {
-                index = iteration;
-            }
-            break;
-
         case ColorMethod::SUM:
-            if (iteration == g_max_iterations)
-            {
-                index = g_max_iterations;
-            }
-            else
-            {
-                index = iteration + static_cast<long>(w.real() + w.imag());
-            }
-            break;
-
         case ColorMethod::ATAN:
-            if (iteration == g_max_iterations)
-            {
-                index = g_max_iterations;
-            }
-            else
-            {
-                index = static_cast<long>(std::abs(atan2(w.imag(), w.real()) * 180.0 / PI));
-            }
+            index = iteration == g_max_iterations ? g_max_iterations : standard_outside_color(iteration, g_new_z);
             break;
 
         default:
