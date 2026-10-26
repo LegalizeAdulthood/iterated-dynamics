@@ -1022,7 +1022,12 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 {
     if (m_perturbation_active && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
-        const int color{m_pert_engine.calculate_pixel(g_col, g_row)};
+        const int color{m_pert_engine.calculate_pixel(g_col, g_row, yield_to_ui)};
+        if (color == CALC_YIELDED)
+        {
+            m_incomplete_standard_pixel_yield = true;
+            return color;
+        }
         if (yield_to_ui && standard_pixel_yield_enabled())
         {
             m_standard_pixel_completed_yield = true;

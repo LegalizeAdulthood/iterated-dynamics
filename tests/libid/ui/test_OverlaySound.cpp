@@ -54,6 +54,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <complex>
 #include <filesystem>
 #include <fstream>
 #include <iterator>
@@ -502,6 +503,53 @@ TEST_P(TestStandardPixelCheckpoints, controllerHandlesMenuKeyBeforeCompletingThe
 
 INSTANTIATE_TEST_SUITE_P(
     PixelPasses, TestStandardPixelCheckpoints, Values(CalcMode::SOLID_GUESS, CalcMode::DIFFUSION, CalcMode::TESSERAL));
+
+TEST_F(TestOverlaySound, controllerInterruptsIncompletePerturbationReferenceAndResumesImage)
+{
+    ValueSaver saved_user{g_user, UserData{}};
+    ValueSaver saved_math{g_bf_math, BFMathType::NONE};
+    ValueSaver saved_param{g_param_z1, DComplex{}};
+    g_user.perturbation = PerturbationMode::YES;
+    g_user.std_calc_mode = CalcMode::ONE_PASS;
+    g_params[0] = g_params[1] = 0.0;
+    g_show_orbit = false;
+    g_max_iterations = 5000;
+    m_specific.flags = FractalFlags::PERTURB;
+    m_specific.pert_ref = [](const std::complex<double> &center, std::complex<double> &z)
+    {
+        ++s_orbit_calls;
+        mandel_ref_pt(center, z);
+    };
+    g_dispatch = FractalDispatch{m_specific};
+    bool requested{};
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillRepeatedly(
+            [this, &requested]
+            {
+                if (!requested && s_orbit_calls >= 2048)
+                {
+                    requested = true;
+                    m_key = 'x';
+                }
+                return m_key;
+            });
+    EXPECT_CALL(m_driver, unget_key('x'));
+    EXPECT_CALL(*m_output, mute());
+
+    EXPECT_EQ(-1, render_standard_image());
+
+    EXPECT_TRUE(requested);
+    EXPECT_LT(s_orbit_calls, 5000);
+    EXPECT_EQ(0, m_plots);
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+    g_resuming = true;
+
+    EXPECT_EQ(0, render_standard_image());
+
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(4, m_plots);
+}
 
 TEST_F(TestOverlaySound, controllerSuspendsWithinAnOrbitAndResumesUnfinishedPixel)
 {

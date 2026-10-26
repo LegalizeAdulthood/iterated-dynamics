@@ -267,6 +267,7 @@ constexpr int HEIGHT{6};
 PertEngine *s_pixel_engine{};
 std::vector<Point2i> s_requested_pixels;
 std::vector<std::complex<double>> s_reference_coordinates;
+std::vector<std::complex<double>> s_reference_values;
 std::complex<double> s_parameter_delta;
 std::vector<std::complex<double>> s_standard_orbit;
 std::vector<std::complex<double>> s_perturbation_orbit;
@@ -319,12 +320,14 @@ void fail_reference_bf(const BFComplex &, BFComplex &)
 void record_reference(const std::complex<double> &center, std::complex<double> &z)
 {
     s_reference_coordinates.push_back(center);
+    s_reference_values.push_back(z);
     mandel_ref_pt(center, z);
 }
 
 void record_reference_bf(const BFComplex &center, BFComplex &z)
 {
     s_reference_coordinates.emplace_back(bf_to_float(center.x), bf_to_float(center.y));
+    s_reference_values.emplace_back(bf_to_float(z.x), bf_to_float(z.y));
     mandel_ref_pt_bf(center, z);
 }
 
@@ -451,6 +454,7 @@ void TestPerturbationPixels::SetUp()
 {
     s_requested_pixels.clear();
     s_reference_coordinates.clear();
+    s_reference_values.clear();
     s_parameter_delta = {};
     set_normal_dot();
     EXPECT_CALL(m_driver, read_pixel(_, _))
@@ -548,7 +552,7 @@ protected:
     void TearDown() override;
     void initialize_reference(const std::complex<double> &center, double half_width = 0.0, double half_height = 0.0);
     void compare_pixel(const std::complex<double> &center, long max_iterations, double reference_offset = 0.0,
-        long early_iterations = 0);
+        long early_iterations = 0, bool incremental = false);
     void set_initial_offset(const DComplex &offset);
     void compare_distance_pixel(const std::complex<double> &center, long max_iterations, bool legacy,
         double reference_offset = 0.0, const DistancePixelOptions &options = {});
@@ -586,6 +590,7 @@ protected:
     ValueSaver<LogMapCalculate> m_saved_log_fly{g_log_map_fly_calculate, LogMapCalculate::NONE};
     ValueSaver<std::vector<int>> m_saved_ranges{g_iteration_ranges, std::vector<int>{}};
     ValueSaver<int> m_saved_outside_color{g_outside_color};
+    int m_reference_yields{};
 };
 
 void TestPerturbationIterations::SetUp()
@@ -639,7 +644,7 @@ void TestPerturbationIterations::set_initial_offset(const DComplex &offset)
 }
 
 void TestPerturbationIterations::compare_pixel(const std::complex<double> &center, const long max_iterations,
-    const double reference_offset, const long early_iterations)
+    const double reference_offset, const long early_iterations, const bool incremental)
 {
     m_engine.finish();
     if (m_big_float)
@@ -697,7 +702,22 @@ void TestPerturbationIterations::compare_pixel(const std::complex<double> &cente
         .WillOnce(Invoke([&expected](int, int, int) { expect_orbit_state(expected); }))
         .RetiresOnSaturation();
 
-    EXPECT_EQ(expected_color, m_engine.calculate_pixel(g_col, g_row));
+    m_reference_yields = 0;
+    int color{CALC_YIELDED};
+    for (int step = 0; step < 1000 && color == CALC_YIELDED; ++step)
+    {
+        const std::size_t before{s_reference_coordinates.size()};
+        color = m_engine.calculate_pixel(g_col, g_row, incremental);
+        if (incremental)
+        {
+            EXPECT_LE(s_reference_coordinates.size() - before, 4096);
+        }
+        if (color == CALC_YIELDED)
+        {
+            ++m_reference_yields;
+        }
+    }
+    EXPECT_EQ(expected_color, color);
 
     if (g_potential.store_16bit)
     {
@@ -725,6 +745,162 @@ void TestPerturbationIterations::compare_pixel(const std::complex<double> &cente
         }
         EXPECT_NEAR(s_standard_orbit[i].real(), s_perturbation_orbit[first + i].real(), real_tolerance);
         EXPECT_NEAR(s_standard_orbit[i].imag(), s_perturbation_orbit[first + i].imag(), imag_tolerance);
+    }
+}
+
+TEST_P(TestPerturbationIterations, incompleteReferenceIsNotPublishedOrUsedForPixels)
+{
+    g_max_iterations = 5000;
+    m_specific.pert_ref = record_reference;
+    m_specific.pert_ref_bf = record_reference_bf;
+    initialize_reference({0.125, 0.125});
+
+    EXPECT_FALSE(m_engine.initialize_pixel_strategy());
+    EXPECT_EQ(2048, s_reference_coordinates.size());
+    EXPECT_EQ(0, m_engine.reference_count());
+    const int stack{save_stack()};
+    EXPECT_FALSE(m_engine.initialize_pixel_strategy());
+    EXPECT_EQ(4096, s_reference_coordinates.size());
+    EXPECT_EQ(0, m_engine.reference_count());
+    EXPECT_EQ(stack, save_stack());
+    EXPECT_TRUE(m_engine.initialize_pixel_strategy());
+    EXPECT_EQ(5000, s_reference_coordinates.size());
+    EXPECT_EQ(1, m_engine.reference_count());
+    EXPECT_EQ(stack, save_stack());
+    EXPECT_TRUE(m_engine.initialize_pixel_strategy());
+    EXPECT_EQ(5000, s_reference_coordinates.size());
+    EXPECT_TRUE(m_plots.empty());
+}
+
+TEST_P(TestPerturbationIterations, chunkedReferencesMatchAtomicContentsAndReplacementResults)
+{
+    g_inside_method = ColorMethod::ITER;
+    m_specific.pert_ref = record_reference;
+    m_specific.pert_ref_bf = record_reference_bf;
+    for (const double offset : {0.0, 0.125})
+    {
+        SCOPED_TRACE(offset);
+        m_engine.set_glitch_tolerance(offset == 0.0 ? DEFAULT_PERTURBATION_TOLERANCE : 8.0);
+        s_reference_coordinates.clear();
+        s_reference_values.clear();
+        compare_pixel({0.125, 0.125}, 5000, offset);
+        const std::vector<std::complex<double>> coordinates{s_reference_coordinates};
+        const std::vector<std::complex<double>> values{s_reference_values};
+        const int references{m_engine.reference_count()};
+        EXPECT_EQ(offset == 0.0 ? 1 : 2, references);
+
+        s_reference_coordinates.clear();
+        s_reference_values.clear();
+        compare_pixel({0.125, 0.125}, 5000, offset, 0, true);
+
+        EXPECT_GT(m_reference_yields, 0);
+        EXPECT_EQ(references, m_engine.reference_count());
+        EXPECT_EQ(coordinates, s_reference_coordinates);
+        EXPECT_EQ(values, s_reference_values);
+    }
+}
+
+TEST_P(TestPerturbationIterations, shortReferencesDoNotAddAYield)
+{
+    for (const double offset : {0.0, 0.125})
+    {
+        SCOPED_TRACE(offset);
+        m_engine.set_glitch_tolerance(offset == 0.0 ? DEFAULT_PERTURBATION_TOLERANCE : 8.0);
+        compare_pixel({0.125, 0.125}, 128, offset, 0, true);
+
+        EXPECT_EQ(0, m_reference_yields);
+        EXPECT_EQ(offset == 0.0 ? 1 : 2, m_engine.reference_count());
+    }
+}
+
+TEST_P(TestPerturbationIterations, referenceFailureAfterYieldDiscardsPartialStorageAndPreservesError)
+{
+    g_max_iterations = 5000;
+    m_specific.pert_ref = [](const std::complex<double> &center, std::complex<double> &z)
+    {
+        if (s_reference_coordinates.size() == 2048)
+        {
+            throw std::bad_array_new_length{};
+        }
+        record_reference(center, z);
+    };
+    m_specific.pert_ref_bf = [](const BFComplex &center, BFComplex &z)
+    {
+        if (s_reference_coordinates.size() == 2048)
+        {
+            throw std::bad_array_new_length{};
+        }
+        record_reference_bf(center, z);
+    };
+    initialize_reference({0.125, 0.125});
+    ASSERT_FALSE(m_engine.initialize_pixel_strategy());
+
+    EXPECT_THROW(m_engine.initialize_pixel_strategy(), std::bad_array_new_length);
+
+    EXPECT_EQ(0, m_engine.reference_count());
+    EXPECT_TRUE(m_plots.empty());
+    m_engine.finish();
+    m_specific.pert_ref = mandel_ref_pt;
+    m_specific.pert_ref_bf = mandel_ref_pt_bf;
+    compare_pixel({0.125, 0.125}, 128);
+}
+
+TEST_P(TestPerturbationIterations, replacementFailureAfterYieldDoesNotPublishOrPlotPartialReference)
+{
+    g_max_iterations = 5000;
+    m_engine.set_glitch_tolerance(8.0);
+    m_specific.pert_ref = record_reference;
+    m_specific.pert_ref_bf = record_reference_bf;
+    initialize_reference({0.0, 0.125}, 0.125);
+    for (int chunk = 0; chunk < 8 && m_engine.reference_count() == 0; ++chunk)
+    {
+        m_engine.initialize_pixel_strategy();
+    }
+    ASSERT_EQ(1, m_engine.reference_count());
+    m_specific.pert_ref = [](const std::complex<double> &center, std::complex<double> &z)
+    {
+        if (s_reference_coordinates.size() == 5000 + 2048)
+        {
+            throw std::bad_array_new_length{};
+        }
+        record_reference(center, z);
+    };
+    m_specific.pert_ref_bf = [](const BFComplex &center, BFComplex &z)
+    {
+        if (s_reference_coordinates.size() == 5000 + 2048)
+        {
+            throw std::bad_array_new_length{};
+        }
+        record_reference_bf(center, z);
+    };
+
+    EXPECT_EQ(CALC_YIELDED, m_engine.calculate_pixel(WIDTH - 1, HEIGHT / 2 - 1, true));
+    EXPECT_EQ(1, m_engine.reference_count());
+    EXPECT_EQ(5000 + 2048, s_reference_coordinates.size());
+    EXPECT_THROW(m_engine.calculate_pixel(WIDTH - 1, HEIGHT / 2 - 1, true), std::bad_array_new_length);
+
+    EXPECT_EQ(0, m_engine.reference_count());
+    EXPECT_TRUE(m_plots.empty());
+}
+
+TEST_F(TestPerturbationPixels, finishingPartialReferenceReleasesPersistentBigFloatValues)
+{
+    g_max_iterations = 5000;
+    init_bf_dec(60);
+    m_big_float = true;
+    const int stack{save_stack()};
+    for (int frame = 0; frame < 2; ++frame)
+    {
+        const BFComplex center{m_engine.initialize_frame_bf({}, {})};
+        float_to_bf(center.x, 0.125);
+        float_to_bf(center.y, 0.125);
+        ASSERT_FALSE(m_engine.initialize_pixel_strategy());
+        EXPECT_GT(save_stack(), stack);
+
+        m_engine.finish();
+
+        EXPECT_EQ(stack, save_stack());
+        EXPECT_EQ(0, m_engine.reference_count());
     }
 }
 

@@ -49,6 +49,7 @@ namespace
 
 constexpr int PERTURBATION_RETRY{-3};
 constexpr long STAR_TRAIL_ITERATIONS{16};
+constexpr std::size_t REFERENCE_CHUNK_SIZE{2048};
 
 std::complex<double> star_trail_point(const std::complex<double> &z)
 {
@@ -213,50 +214,65 @@ void PertEngine::initialize_frame(const std::complex<double> &center, const std:
     m_center = center;
 }
 
-void PertEngine::initialize_pixel_strategy()
+bool PertEngine::initialize_pixel_strategy()
 {
-    if (m_frame_initialized)
+    if (m_frame_initialized && m_reference_ready)
     {
-        return;
+        return true;
     }
-
     const ValueSaver saved_iterations{
         g_max_iterations, g_inside_method == ColorMethod::STAR_TRAIL ? STAR_TRAIL_ITERATIONS : g_max_iterations};
     try
     {
-        initialize_pixel_state();
-        set_reference_point({(g_logical_screen.x_dots - 1) / 2.0, (g_logical_screen.y_dots - 1) / 2.0});
-        m_frame_initialized = true;
+        if (!m_frame_initialized)
+        {
+            initialize_pixel_state();
+            set_reference_point({(g_logical_screen.x_dots - 1) / 2.0, (g_logical_screen.y_dots - 1) / 2.0});
+            m_frame_initialized = true;
+        }
+        return iterate_reference();
     }
     catch (...)
     {
         run_cleanup(std::current_exception(), [this] { cleanup(); });
+        throw;
     }
 }
 
-int PertEngine::calculate_pixel(const Point &pt)
+int PertEngine::calculate_pixel(const Point &pt, const bool incremental)
 {
     const ValueSaver saved_iterations{
         g_max_iterations, g_inside_method == ColorMethod::STAR_TRAIL ? STAR_TRAIL_ITERATIONS : g_max_iterations};
-    if (!m_frame_initialized)
-    {
-        initialize_pixel_strategy();
-    }
-
     for (;;)
     {
+        if (!m_reference_ready && !initialize_pixel_strategy())
+        {
+            if (incremental)
+            {
+                return CALC_YIELDED;
+            }
+            continue;
+        }
         const int color{calculate_point(pt)};
         if (color != PERTURBATION_RETRY)
         {
             return color;
         }
-        set_reference_point({static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())});
+        try
+        {
+            set_reference_point({static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())});
+        }
+        catch (...)
+        {
+            run_cleanup(std::current_exception(), [this] { cleanup(); });
+            throw;
+        }
     }
 }
 
-int PertEngine::calculate_pixel(const int col, const int row)
+int PertEngine::calculate_pixel(const int col, const int row, const bool incremental)
 {
-    return calculate_pixel(Point{col, g_logical_screen.y_dots - 1 - row});
+    return calculate_pixel(Point{col, g_logical_screen.y_dots - 1 - row}, incremental);
 }
 
 void PertEngine::set_glitch_tolerance(const double tolerance)
@@ -299,6 +315,11 @@ void PertEngine::cleanup()
     m_cycle_len = -1;
     m_distance_estimator = {};
     m_reference_coordinate_bf = {};
+    m_reference_z_bf = {};
+    m_reference_z = {};
+    m_reference_sample = 0;
+    m_reference_samples = 0;
+    m_reference_ready = false;
     m_tmp_bf = {};
     m_center_bf = {};
     m_done = true;
@@ -322,6 +343,8 @@ void PertEngine::allocate_working_values()
     {
         m_reference_coordinate_bf.x = alloc_stack(g_r_bf_length + 2);
         m_reference_coordinate_bf.y = alloc_stack(g_r_bf_length + 2);
+        m_reference_z_bf.x = alloc_stack(g_r_bf_length + 2);
+        m_reference_z_bf.y = alloc_stack(g_r_bf_length + 2);
         m_tmp_bf = alloc_stack(g_r_bf_length + 2);
     }
 }
@@ -439,25 +462,59 @@ void PertEngine::coordinate_bf(const BFComplex coordinate, const std::complex<do
 
 void PertEngine::set_reference_point(const std::complex<double> &pixel_position)
 {
+    m_reference_ready = false;
+    m_reference_sample = 0;
     const std::size_t samples{reference_sample_count(g_max_iterations)};
+    m_reference_samples = samples;
     ReferencePoint &reference{m_reference};
     reference.pixel_position = pixel_position;
     reference.delta = pixel_delta(pixel_position);
-    reference.orbit.resize(samples);
-    reference.tolerance.resize(samples);
+    reference.orbit.clear();
+    reference.tolerance.clear();
+    reference.orbit.reserve(samples);
+    reference.tolerance.reserve(samples);
 
     if (g_bf_math != BFMathType::NONE)
     {
         coordinate_bf(m_reference_coordinate_bf, pixel_position);
-        reference_zoom_point(reference, m_reference_coordinate_bf);
+        initialize_orbit_bf(m_reference_z_bf, m_reference_coordinate_bf);
     }
     else
     {
         reference.coordinate =
             g_inversion.invert != 0 ? inverted_coordinate(pixel_position) : m_center + reference.delta;
-        reference_zoom_point(reference, reference.coordinate);
+        m_reference_z = {g_param_z1.x, g_param_z1.y};
+        if (!bof_initialization())
+        {
+            m_reference_z += g_use_init_orbit == InitOrbitMode::VALUE
+                ? std::complex<double>{g_init_orbit.x, g_init_orbit.y}
+                : reference.coordinate;
+        }
     }
-    ++m_reference_count;
+}
+
+bool PertEngine::iterate_reference()
+{
+    if (m_reference_ready)
+    {
+        return true;
+    }
+    const std::size_t end{
+        m_reference_sample + std::min(REFERENCE_CHUNK_SIZE, m_reference_samples - m_reference_sample)};
+    if (g_bf_math != BFMathType::NONE)
+    {
+        advance_reference_bf(end);
+    }
+    else
+    {
+        advance_reference(end);
+    }
+    if (m_reference_sample == m_reference_samples)
+    {
+        m_reference_ready = true;
+        ++m_reference_count;
+    }
+    return m_reference_ready;
 }
 
 int PertEngine::calculate_point(const Point &pt)
@@ -878,87 +935,76 @@ int PertEngine::calculate_point(const Point &pt)
     return g_color;
 }
 
-void PertEngine::reference_zoom_point(ReferencePoint &reference, const BFComplex &center)
+void PertEngine::advance_reference_bf(const std::size_t end)
 {
     BigStackSaver saved;
 
-    BFComplex z_bf;
-    z_bf.x = alloc_stack(g_r_bf_length + 2);
-    z_bf.y = alloc_stack(g_r_bf_length + 2);
     BigFloat temp_real_bf = alloc_stack(g_r_bf_length + 2);
     BigFloat temp_imag_bf = alloc_stack(g_r_bf_length + 2);
     BigFloat tmp_bf = alloc_stack(g_r_bf_length + 2);
 
-    initialize_orbit_bf(z_bf, center);
-
-    for (std::size_t i = 0; i < reference.orbit.size(); ++i)
+    float_to_bf(tmp_bf, m_glitch_tolerance);
+    for (; m_reference_sample < end; ++m_reference_sample)
     {
         std::complex<double> c;
-        c.real(bf_to_float(z_bf.x));
-        c.imag(bf_to_float(z_bf.y));
+        c.real(bf_to_float(m_reference_z_bf.x));
+        c.imag(bf_to_float(m_reference_z_bf.y));
 
-        reference.orbit[i] = c;
+        m_reference.orbit.push_back(c);
         // Norm is the squared version of abs and the perturbation tolerance is squared.
         // The reason we are storing this into an array is that we need to check the magnitude against this
         // value to see if the value is glitched. We are leaving it squared because otherwise we'd need to do
         // a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 
-        float_to_bf(tmp_bf, m_glitch_tolerance);
-        mult_bf(temp_real_bf, z_bf.x, tmp_bf);
-        mult_bf(temp_imag_bf, z_bf.y, tmp_bf);
+        mult_bf(temp_real_bf, m_reference_z_bf.x, tmp_bf);
+        mult_bf(temp_imag_bf, m_reference_z_bf.y, tmp_bf);
         std::complex<double> tolerance;
         tolerance.real(bf_to_float(temp_real_bf));
         tolerance.imag(bf_to_float(temp_imag_bf));
 
-        reference.tolerance[i] = mag_squared(tolerance);
+        m_reference.tolerance.push_back(mag_squared(tolerance));
 
         if (g_cur_fractal_specific->pert_ref_bf == nullptr)
         {
             throw std::runtime_error("No reference orbit function defined for fractal type (" +
                 std::string{g_cur_fractal_specific->name} + ")");
         }
-        if (i + 1 < reference.orbit.size())
+        if (m_reference_sample + 1 < m_reference_samples)
         {
-            if (g_inside_method == ColorMethod::STAR_TRAIL && i > 0)
+            if (g_inside_method == ColorMethod::STAR_TRAIL && m_reference_sample > 0)
             {
-                clamp_star_trail_point(z_bf);
+                clamp_star_trail_point(m_reference_z_bf);
             }
-            g_cur_fractal_specific->pert_ref_bf(center, z_bf);
+            g_cur_fractal_specific->pert_ref_bf(m_reference_coordinate_bf, m_reference_z_bf);
         }
     }
 }
 
-void PertEngine::reference_zoom_point(ReferencePoint &reference, const std::complex<double> &center)
+void PertEngine::advance_reference(const std::size_t end)
 {
-    std::complex<double> z{g_param_z1.x, g_param_z1.y};
-    if (!bof_initialization())
+    for (; m_reference_sample < end; ++m_reference_sample)
     {
-        z += g_use_init_orbit == InitOrbitMode::VALUE ? std::complex<double>{g_init_orbit.x, g_init_orbit.y} : center;
-    }
-
-    for (std::size_t i = 0; i < reference.orbit.size(); ++i)
-    {
-        reference.orbit[i] = z;
+        m_reference.orbit.push_back(m_reference_z);
 
         // Norm is the squared version of abs and the perturbation tolerance is squared.
         // The reason we are storing this into an array is that we need to check the magnitude against this
         // value to see if the value is glitched. We are leaving it squared because otherwise we'd need to do
         // a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 
-        reference.tolerance[i] = glitch_tolerance_threshold(z);
+        m_reference.tolerance.push_back(glitch_tolerance_threshold(m_reference_z));
 
         if (g_cur_fractal_specific->pert_ref == nullptr)
         {
             throw std::runtime_error("No reference orbit function defined for fractal type (" +
                 std::string{g_cur_fractal_specific->name} + ")");
         }
-        if (i + 1 < reference.orbit.size())
+        if (m_reference_sample + 1 < m_reference_samples)
         {
-            if (g_inside_method == ColorMethod::STAR_TRAIL && i > 0)
+            if (g_inside_method == ColorMethod::STAR_TRAIL && m_reference_sample > 0)
             {
-                z = star_trail_point(z);
+                m_reference_z = star_trail_point(m_reference_z);
             }
-            g_cur_fractal_specific->pert_ref(center, z);
+            g_cur_fractal_specific->pert_ref(m_reference.coordinate, m_reference_z);
         }
     }
 }
