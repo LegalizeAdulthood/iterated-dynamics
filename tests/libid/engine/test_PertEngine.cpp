@@ -3734,6 +3734,208 @@ TEST_P(TestPerturbationIterations, invertedAffineCoordinatesMatchStandardGrid)
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationIterations, Bool());
 
+class TestPerturbationContinuation : public TestPerturbationIterations
+{
+protected:
+    void prepare(const long iterations = 24)
+    {
+        g_max_iterations = iterations;
+        m_specific.pert_pt = record_perturbation_orbit;
+        m_specific.pert_ref = record_reference;
+        m_specific.pert_ref_bf = record_reference_bf;
+        s_perturbation_orbit.clear();
+        s_reference_coordinates.clear();
+        s_reference_values.clear();
+        initialize_reference({-0.5, 0.25});
+    }
+
+    void check_orbit(const std::complex<double> &parameter, std::complex<double> value, long iteration)
+    {
+        m_engine.begin_orbit(parameter, value, iteration);
+        EXPECT_EQ(value, m_engine.orbit_value());
+        EXPECT_EQ(iteration, m_engine.orbit_iteration());
+        bool done{};
+        for (int call = 0; call < 20000 && !done; ++call)
+        {
+            done = m_engine.iterate_orbit();
+            if (m_engine.orbit_iteration() != iteration)
+            {
+                EXPECT_EQ(iteration + 1, m_engine.orbit_iteration());
+                value = value * value + parameter;
+                ++iteration;
+            }
+            EXPECT_NEAR(value.real(), m_engine.orbit_value().real(), 1e-13);
+            EXPECT_NEAR(value.imag(), m_engine.orbit_value().imag(), 1e-13);
+            EXPECT_EQ(iteration == g_max_iterations || std::norm(value) >= g_magnitude_limit, done);
+        }
+        EXPECT_TRUE(done);
+        EXPECT_TRUE(m_plots.empty());
+        EXPECT_TRUE(m_engine.iterate_orbit());
+        EXPECT_EQ(iteration, m_engine.orbit_iteration());
+        EXPECT_NEAR(value.real(), m_engine.orbit_value().real(), 1e-13);
+        EXPECT_NEAR(value.imag(), m_engine.orbit_value().imag(), 1e-13);
+    }
+};
+
+TEST_P(TestPerturbationContinuation, suppliedStateOverridesPixelSeedsAndColoringOptions)
+{
+    prepare();
+    set_initial_offset({0.5, -0.75});
+    g_use_init_orbit = InitOrbitMode::VALUE;
+    g_init_orbit = {0.75, 0.5};
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    g_show_orbit = true;
+    g_distance_estimator = 1;
+    g_periodicity_check = 1;
+    g_real_color_iter = -19;
+
+    check_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
+
+    EXPECT_EQ(-19, g_real_color_iter);
+    EXPECT_EQ(17, s_perturbation_orbit.size());
+    ASSERT_FALSE(s_reference_values.empty());
+    EXPECT_EQ((std::complex<double>{0.03125, -0.0625}), s_reference_values.front());
+    EXPECT_THAT(s_reference_coordinates, Each(Eq(std::complex<double>{0.125, 0.0625})));
+}
+
+TEST_P(TestPerturbationContinuation, parameterAndOrbitDisplacementsAreIndependent)
+{
+    prepare();
+    check_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
+    ASSERT_EQ(1, m_engine.reference_count());
+    const std::size_t before{s_perturbation_orbit.size()};
+
+    check_orbit({0.0625, 0.03125}, {-0.0625, 0.125}, 7);
+
+    EXPECT_EQ(1, m_engine.reference_count());
+    ASSERT_GT(s_perturbation_orbit.size(), before);
+    EXPECT_EQ((std::complex<double>{-0.0625, 0.125}), s_perturbation_orbit[before]);
+    check_orbit({0.0625, 0.03125}, {0.0625, -0.03125}, 10);
+    EXPECT_EQ(1, m_engine.reference_count());
+}
+
+TEST_P(TestPerturbationContinuation, earlierContinuationReplacesReferenceWithoutDefaultInitialization)
+{
+    prepare();
+    check_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
+
+    check_orbit({0.0625, 0.03125}, {-0.0625, 0.125}, 3);
+
+    EXPECT_EQ(2, m_engine.reference_count());
+}
+
+TEST_P(TestPerturbationContinuation, referenceReplacementPreservesAcceptedValuesAndIterationPosition)
+{
+    prepare();
+    check_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
+    s_perturbation_orbit.clear();
+    s_reference_values.clear();
+    m_specific.pert_pt =
+        [](const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter)
+    {
+        record_perturbation_orbit(reference, delta, parameter);
+        if (s_perturbation_orbit.size() == 4)
+        {
+            delta = {std::numeric_limits<double>::quiet_NaN(), 0.0};
+        }
+    };
+    const std::complex<double> parameter{0.0625, 0.03125};
+    std::complex<double> replacement{-0.0625, 0.125};
+    for (int i = 0; i < 3; ++i)
+    {
+        replacement = replacement * replacement + parameter;
+    }
+
+    check_orbit(parameter, {-0.0625, 0.125}, 7);
+
+    EXPECT_EQ(2, m_engine.reference_count());
+    EXPECT_EQ(18, s_perturbation_orbit.size());
+    ASSERT_FALSE(s_reference_values.empty());
+    EXPECT_NEAR(replacement.real(), s_reference_values.front().real(), 1e-14);
+    EXPECT_NEAR(replacement.imag(), s_reference_values.front().imag(), 1e-14);
+}
+
+TEST_P(TestPerturbationContinuation, escapeAndIterationLimitRetainTheActualTerminalState)
+{
+    prepare();
+    check_orbit({1.0, 0.0}, {0.5, 0.0}, 12);
+    EXPECT_EQ(14, m_engine.orbit_iteration());
+    EXPECT_EQ((std::complex<double>{2.5625, 0.0}), m_engine.orbit_value());
+    const std::size_t before{s_perturbation_orbit.size()};
+
+    check_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 24);
+
+    EXPECT_EQ(before, s_perturbation_orbit.size());
+}
+
+TEST_P(TestPerturbationContinuation, chunkedReferenceDoesNotPublishSpeculativeContinuationValues)
+{
+    prepare(5000);
+    m_engine.begin_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
+
+    EXPECT_FALSE(m_engine.iterate_orbit());
+    EXPECT_EQ(0, m_engine.reference_count());
+    EXPECT_EQ(7, m_engine.orbit_iteration());
+    EXPECT_EQ((std::complex<double>{0.03125, -0.0625}), m_engine.orbit_value());
+    EXPECT_TRUE(s_perturbation_orbit.empty());
+    EXPECT_THROW(m_engine.begin_orbit({}, {}, 0), std::logic_error);
+    EXPECT_THROW(m_engine.calculate_pixel(0, 0), std::logic_error);
+    EXPECT_THROW(m_engine.initialize_pixel_strategy(), std::logic_error);
+}
+
+TEST_P(TestPerturbationContinuation, preciseReplayUsesTheContinuationAnchorAndRetainsAcceptedProgress)
+{
+    if (!GetParam())
+    {
+        return;
+    }
+    prepare(5000);
+    set_initial_offset({0.5, 0.75});
+    m_specific.pert_pt =
+        [](const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter)
+    {
+        record_perturbation_orbit(reference, delta, parameter);
+        if (s_perturbation_orbit.size() == 4097)
+        {
+            delta = std::complex<double>{2.0, 0.0} - reference;
+        }
+    };
+
+    check_orbit({}, {}, 17);
+
+    EXPECT_EQ(4983, s_perturbation_orbit.size());
+    EXPECT_EQ(1, m_engine.reference_count());
+}
+
+TEST_P(TestPerturbationContinuation, completedContinuationCanReturnToPixelCalculation)
+{
+    prepare();
+    check_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
+
+    EXPECT_GE(m_engine.calculate_pixel(g_col, g_row), 0);
+
+    EXPECT_EQ(1, m_plots.size());
+    EXPECT_THROW(m_engine.iterate_orbit(), std::logic_error);
+    EXPECT_THROW(m_engine.orbit_value(), std::logic_error);
+    EXPECT_THROW(m_engine.orbit_iteration(), std::logic_error);
+}
+
+TEST_P(TestPerturbationContinuation, invalidContinuationDoesNotReplaceTheCurrentState)
+{
+    prepare();
+    EXPECT_THROW(m_engine.begin_orbit({}, {}, -1), std::logic_error);
+    EXPECT_THROW(m_engine.begin_orbit({}, {}, 25), std::logic_error);
+    EXPECT_THROW(m_engine.iterate_orbit(), std::logic_error);
+    m_engine.begin_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
+    ASSERT_FALSE(m_engine.iterate_orbit());
+
+    EXPECT_THROW(m_engine.begin_orbit({}, {}, 0), std::logic_error);
+
+    EXPECT_EQ(8, m_engine.orbit_iteration());
+}
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationContinuation, Bool());
+
 class MockPerturbationSound : public SoundOutput
 {
 public:

@@ -31,6 +31,14 @@ public:
 
     int calculate_pixel(const Point &pt, bool incremental = false);
     int calculate_pixel(int col, int row, bool incremental = false);
+
+    void begin_orbit(const std::complex<double> &parameter, const std::complex<double> &value, long iteration);
+    // Advance at most one recurrence update; true at bailout or the iteration limit.
+    // Reference preparation can return false without advancing orbit_iteration().
+    bool iterate_orbit();
+    std::complex<double> orbit_value() const;
+    long orbit_iteration() const;
+
     bool orbit_overlay_displayed() const;
     void set_glitch_tolerance(double tolerance);
     double glitch_tolerance_threshold(const std::complex<double> &value) const;
@@ -51,6 +59,15 @@ private:
         std::complex<double> coordinate;
         std::vector<std::complex<double>> orbit;
         std::vector<double> tolerance;
+        long iteration{};
+        bool explicit_orbit{};
+    };
+
+    struct OrbitInput
+    {
+        std::complex<double> parameter{};
+        std::complex<double> value{};
+        long iteration{};
     };
 
     struct PixelState
@@ -110,6 +127,8 @@ private:
     void initialize_pixel_state();
     void allocate_working_values();
     void set_reference_point(const std::complex<double> &pixel_position);
+    void set_reference_orbit();
+    void reset_reference(std::size_t samples);
     bool iterate_reference();
     std::complex<double> pixel_delta(const std::complex<double> &pixel_position) const;
     std::complex<double> parameter_delta(const std::complex<double> &pixel_position) const;
@@ -128,6 +147,9 @@ private:
     void advance_reference(std::size_t end);
 
     ReferencePoint m_reference{};
+    OrbitInput m_orbit_input{};
+    std::complex<double> m_orbit_value{};
+    long m_orbit_iteration{};
     PixelState m_pixel{};
     DistanceEstimator m_distance_estimator{};
     int m_reference_count{};
@@ -148,6 +170,7 @@ private:
     bool m_done{true};
     bool m_frame_initialized{};
     bool m_reference_ready{};
+    bool m_explicit_orbit{};
     bool m_orbit_output_started{};
     bool m_orbit_output_pending{};
     bool m_orbit_overlay_displayed{};
