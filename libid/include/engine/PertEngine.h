@@ -31,6 +31,7 @@ public:
 
     int calculate_pixel(const Point &pt, bool incremental = false);
     int calculate_pixel(int col, int row, bool incremental = false);
+    bool orbit_overlay_displayed() const;
     void set_glitch_tolerance(double tolerance);
     double glitch_tolerance_threshold(const std::complex<double> &value) const;
     const DistanceEstimator &distance_estimator() const;
@@ -58,6 +59,8 @@ private:
         {
             ORBIT,
             BAILOUT,
+            OUTPUT,
+            STATISTICS,
             PERIODICITY,
             SAVE_PERIODICITY,
             CHECK_PERIODICITY,
@@ -116,6 +119,7 @@ private:
     void reset_for_frame(const std::complex<double> &half_horizontal, const std::complex<double> &half_vertical);
     void begin_point(const Point &pt);
     void clear_point();
+    void clear_output();
     int calculate_point(const Point &pt, std::size_t &remaining);
     int finish_point(const Point &pt);
     bool advance_precise_orbit(std::size_t target, std::size_t &remaining);
@@ -136,12 +140,17 @@ private:
     std::complex<double> m_reference_z{};
     std::size_t m_reference_sample{};
     std::size_t m_reference_samples{};
+    // Accepted output survives reference replacement for the same pixel.
+    std::size_t m_orbit_output_sample{};
     std::complex<double> m_half_horizontal{};
     std::complex<double> m_half_vertical{};
     bool m_center_stack_saved{};
     bool m_done{true};
     bool m_frame_initialized{};
     bool m_reference_ready{};
+    bool m_orbit_output_started{};
+    bool m_orbit_output_pending{};
+    bool m_orbit_overlay_displayed{};
     double m_glitch_tolerance{DEFAULT_PERTURBATION_TOLERANCE};
     int m_saved_stack{};
 };

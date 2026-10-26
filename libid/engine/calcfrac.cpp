@@ -1023,6 +1023,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
     if (m_perturbation_active && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
         const int color{m_pert_engine.calculate_pixel(g_col, g_row, yield_to_ui)};
+        m_orbit_overlay_displayed = m_orbit_overlay_displayed || m_pert_engine.orbit_overlay_displayed();
         if (color == CALC_YIELDED)
         {
             m_incomplete_standard_pixel_yield = true;

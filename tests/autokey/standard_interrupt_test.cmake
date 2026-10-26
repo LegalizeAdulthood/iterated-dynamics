@@ -14,6 +14,10 @@ if(PERTURBATION_PIXEL)
         "center-mag=0.125/0.125/1e20" "maxiter=5000"
         "viewwindows=1/0.75/no/8/6")
 endif()
+if(ORBIT_OVERLAY)
+    list(APPEND PARAMETERS "perturbation=yes" "showorbit=yes"
+        "viewwindows=1/0.75/no/8/6")
+endif()
 
 execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${PARAMETERS}
     "savename=render000.gif" "autokeyname=standard_interrupt.key" "autokey=play"

@@ -19,7 +19,9 @@
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
+#include "engine/OrbitPlot.h"
 #include "engine/Potential.h"
+#include "engine/SoundOutput.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
 #include "fractals/pickover_mandelbrot.h"
@@ -241,6 +243,7 @@ bool PertEngine::initialize_pixel_strategy()
 
 int PertEngine::calculate_pixel(const Point &pt, const bool incremental)
 {
+    m_orbit_overlay_displayed = false;
     const ValueSaver saved_iterations{
         g_max_iterations, g_inside_method == ColorMethod::STAR_TRAIL ? STAR_TRAIL_ITERATIONS : g_max_iterations};
     std::size_t remaining{PIXEL_CHUNK_SIZE};
@@ -261,12 +264,12 @@ int PertEngine::calculate_pixel(const Point &pt, const bool incremental)
         }
         catch (...)
         {
-            run_cleanup(std::current_exception(), [this] { clear_point(); });
+            run_cleanup(std::current_exception(), [this] { clear_output(); }, [this] { clear_point(); });
             throw;
         }
         if (color == CALC_YIELDED)
         {
-            if (incremental)
+            if (incremental || m_orbit_output_pending || (m_orbit_output_started && !g_sound->ready()))
             {
                 return color;
             }
@@ -276,6 +279,7 @@ int PertEngine::calculate_pixel(const Point &pt, const bool incremental)
         clear_point();
         if (color != PERTURBATION_RETRY)
         {
+            clear_output();
             return color;
         }
         try
@@ -293,6 +297,11 @@ int PertEngine::calculate_pixel(const Point &pt, const bool incremental)
 int PertEngine::calculate_pixel(const int col, const int row, const bool incremental)
 {
     return calculate_pixel(Point{col, g_logical_screen.y_dots - 1 - row}, incremental);
+}
+
+bool PertEngine::orbit_overlay_displayed() const
+{
+    return m_orbit_overlay_displayed;
 }
 
 void PertEngine::set_glitch_tolerance(const double tolerance)
@@ -345,6 +354,8 @@ void PertEngine::cleanup()
     m_center_bf = {};
     m_done = true;
     m_frame_initialized = false;
+    clear_output();
+    m_orbit_overlay_displayed = false;
 }
 
 void PertEngine::initialize_pixel_state()
@@ -547,6 +558,18 @@ void PertEngine::clear_point()
     m_pixel = {};
 }
 
+void PertEngine::clear_output()
+{
+    const bool started{m_orbit_output_started};
+    m_orbit_output_started = false;
+    m_orbit_output_pending = false;
+    m_orbit_output_sample = 0;
+    if (started)
+    {
+        orbit_plot().scrub();
+    }
+}
+
 void PertEngine::begin_point(const Point &pt)
 {
     m_pixel.stack = save_stack();
@@ -592,6 +615,11 @@ void PertEngine::begin_point(const Point &pt)
     m_pixel.w = m_reference.orbit.front() + m_pixel.orbit_displacement;
     m_pixel.old = m_pixel.w;
     m_pixel.magnitude = mag_squared(m_pixel.w);
+    if (g_show_orbit && !m_orbit_output_started)
+    {
+        g_sound->begin_orbit();
+        m_orbit_output_started = true;
+    }
 }
 
 bool PertEngine::advance_precise_orbit(const std::size_t target, std::size_t &remaining)
@@ -758,6 +786,47 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                     continue;
                 }
             }
+            m_pixel.phase = PixelState::Phase::OUTPUT;
+        }
+            [[fallthrough]];
+
+        case PixelState::Phase::OUTPUT:
+            if (g_show_orbit && m_pixel.sample > m_orbit_output_sample)
+            {
+                if (!m_orbit_output_started)
+                {
+                    g_sound->begin_orbit();
+                    m_orbit_output_started = true;
+                }
+                if (!m_orbit_output_pending)
+                {
+                    orbit_plot().reset(m_pixel.w.real(), m_pixel.w.imag());
+                    m_orbit_output_pending = true;
+                }
+                const bool displayed{orbit_plot().iterate()};
+                if (!orbit_plot().done())
+                {
+                    return CALC_YIELDED;
+                }
+                m_orbit_output_pending = false;
+                m_orbit_output_sample = m_pixel.sample;
+                m_pixel.phase = PixelState::Phase::STATISTICS;
+                if (displayed)
+                {
+                    m_orbit_overlay_displayed = true;
+                    return CALC_YIELDED;
+                }
+            }
+            else
+            {
+                m_orbit_output_pending = false;
+                m_orbit_output_sample = std::max(m_orbit_output_sample, m_pixel.sample);
+                m_pixel.phase = PixelState::Phase::STATISTICS;
+            }
+            [[fallthrough]];
+
+        case PixelState::Phase::STATISTICS:
+        {
             if (m_pixel.star_trail)
             {
                 const std::complex<double> bounded{star_trail_point(m_pixel.w)};
@@ -897,6 +966,14 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
             break;
 
         case PixelState::Phase::COMPLETE:
+            if (m_orbit_output_started)
+            {
+                if (!g_sound->ready())
+                {
+                    return CALC_YIELDED;
+                }
+                orbit_plot().scrub();
+            }
             return finish_point(pt);
         }
     }

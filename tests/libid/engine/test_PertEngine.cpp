@@ -15,10 +15,12 @@
 #include <engine/Inversion.h>
 #include <engine/log_map.h>
 #include <engine/LogicalScreen.h>
+#include <engine/OrbitPlot.h>
 #include <engine/pixel.h>
 #include <engine/pixel_grid.h>
 #include <engine/Potential.h>
 #include <engine/resume.h>
+#include <engine/SoundOutput.h>
 #include <engine/spindac.h>
 #include <engine/StandardFractal.h>
 #include <engine/VideoInfo.h>
@@ -41,6 +43,7 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <memory>
 #include <new>
 #include <stdexcept>
 #include <vector>
@@ -3730,6 +3733,258 @@ TEST_P(TestPerturbationIterations, invertedAffineCoordinatesMatchStandardGrid)
 }
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationIterations, Bool());
+
+class MockPerturbationSound : public SoundOutput
+{
+public:
+    MOCK_METHOD(bool, play, (const SoundSample &), (override));
+    MOCK_METHOD(void, begin_orbit, (), (override));
+    MOCK_METHOD(void, update, (), (override));
+    MOCK_METHOD(bool, ready, (), (const, override));
+    MOCK_METHOD(void, mute, (), (override));
+    MOCK_METHOD(bool, finish, (), (override));
+};
+
+class TestPerturbationOutput : public TestPerturbationIterations
+{
+protected:
+    void SetUp() override;
+    void prepare(const std::complex<double> &center, long iterations = 16, double offset = 0.0);
+    int complete_pixel(bool incremental = true);
+    std::vector<SoundSample> expected_samples(const std::complex<double> &center) const;
+    void expect_samples(const std::vector<SoundSample> &expected) const;
+
+    std::shared_ptr<StrictMock<MockPerturbationSound>> m_output{std::make_shared<StrictMock<MockPerturbationSound>>()};
+    ValueSaver<SoundOutputPtr> m_saved_sound{g_sound, m_output};
+    ValueSaver<double> m_saved_mx1{g_plot_mx1, -2.0};
+    ValueSaver<double> m_saved_mx2{g_plot_mx2, 0.0};
+    ValueSaver<double> m_saved_my1{g_plot_my1, 1.25};
+    ValueSaver<double> m_saved_my2{g_plot_my2, 0.0};
+    ValueSaver<int> m_saved_orbit_color{g_orbit_color, 15};
+    ValueSaver<bool> m_saved_orbit_flag{g_orbit_save_flag, false};
+    std::vector<SoundSample> m_samples;
+    std::array<int, WIDTH * HEIGHT> m_background{};
+    int m_boundaries{};
+    bool m_ready{true};
+};
+
+void TestPerturbationOutput::SetUp()
+{
+    TestPerturbationIterations::SetUp();
+    for (std::size_t i = 0; i < m_background.size(); ++i)
+    {
+        m_background[i] = static_cast<int>(i % 16);
+    }
+    g_show_orbit = true;
+    EXPECT_CALL(*m_output, begin_orbit()).WillRepeatedly([this] { ++m_boundaries; });
+    EXPECT_CALL(*m_output, ready()).WillRepeatedly([this] { return m_ready; });
+    EXPECT_CALL(*m_output, play(_))
+        .WillRepeatedly(
+            [this](const SoundSample &sample)
+            {
+                m_samples.push_back(sample);
+                return true;
+            });
+}
+
+void TestPerturbationOutput::prepare(const std::complex<double> &center, const long iterations, const double offset)
+{
+    m_engine.finish();
+    if (m_big_float)
+    {
+        free_bf_vars();
+        m_big_float = false;
+    }
+    m_pixels = m_background;
+    m_plots.clear();
+    m_samples.clear();
+    m_boundaries = 0;
+    s_perturbation_orbit.clear();
+    g_max_iterations = iterations;
+    g_image_region = ImageRegion{{-2.0, -1.5}, {2.0, 1.5}, {-2.0, -1.5}};
+    g_col = WIDTH - 1;
+    m_specific.pert_pt = record_perturbation_orbit;
+    initialize_reference(center - std::complex<double>{offset, 0.0}, offset);
+}
+
+int TestPerturbationOutput::complete_pixel(const bool incremental)
+{
+    int color{CALC_YIELDED};
+    for (int chunk = 0; chunk < 1000 && color == CALC_YIELDED; ++chunk)
+    {
+        color = m_engine.calculate_pixel(g_col, g_row, incremental);
+    }
+    EXPECT_TRUE(calc_ok(color));
+    return color;
+}
+
+std::vector<SoundSample> TestPerturbationOutput::expected_samples(const std::complex<double> &center) const
+{
+    std::vector<SoundSample> samples;
+    std::complex<double> z{center};
+    for (long iteration = 1; iteration < g_max_iterations; ++iteration)
+    {
+        z = z * z + center;
+        if (std::norm(z) >= 4.0)
+        {
+            break;
+        }
+        const int x{static_cast<int>((z.imag() - 1.5) * -2.0)};
+        const int y{static_cast<int>((z.real() + 2.0) * 1.25)};
+        if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
+        {
+            samples.push_back({static_cast<double>(x), static_cast<double>(y), 0.0});
+        }
+    }
+    return samples;
+}
+
+void TestPerturbationOutput::expect_samples(const std::vector<SoundSample> &expected) const
+{
+    ASSERT_EQ(expected.size(), m_samples.size());
+    for (std::size_t i = 0; i < expected.size(); ++i)
+    {
+        SCOPED_TRACE(i);
+        EXPECT_EQ(expected[i].x, m_samples[i].x);
+        EXPECT_EQ(expected[i].y, m_samples[i].y);
+        EXPECT_EQ(expected[i].z, m_samples[i].z);
+    }
+}
+
+TEST_P(TestPerturbationOutput, reconstructedSamplesMatchOrbitOrderAndOverlayRestoresBeforePixelOutput)
+{
+    for (const std::complex<double> center : {std::complex<double>{-0.5, 0.5}, {0.5, 0.5}})
+    {
+        SCOPED_TRACE(center);
+        prepare(center);
+        g_show_orbit = false;
+        const int expected_color{complete_pixel(false)};
+        const std::array<int, WIDTH * HEIGHT> expected_pixels{m_pixels};
+        prepare(center);
+        g_show_orbit = true;
+        const std::vector<SoundSample> samples{expected_samples(center)};
+        ASSERT_FALSE(samples.empty());
+
+        EXPECT_EQ(expected_color, complete_pixel());
+
+        expect_samples(samples);
+        EXPECT_EQ(1, m_boundaries);
+        EXPECT_FALSE(g_orbit_save_flag);
+        EXPECT_EQ(expected_pixels, m_pixels);
+        EXPECT_EQ(2 * samples.size() + 1, m_plots.size());
+    }
+}
+
+TEST_P(TestPerturbationOutput, atomicAndIncrementalOutputHaveIdenticalSamplesAndPlots)
+{
+    prepare({-0.5, 0.5});
+    const int expected_color{complete_pixel(false)};
+    const std::vector<SoundSample> samples{m_samples};
+    const std::vector<Point2i> plots{m_plots};
+    const std::array<int, WIDTH * HEIGHT> pixels{m_pixels};
+    prepare({-0.5, 0.5});
+
+    EXPECT_EQ(expected_color, complete_pixel());
+
+    expect_samples(samples);
+    EXPECT_EQ(plots, m_plots);
+    EXPECT_EQ(pixels, m_pixels);
+}
+
+TEST_P(TestPerturbationOutput, replacementAfterAcceptedPointsDoesNotRepeatSamplesOrBoundary)
+{
+    const std::complex<double> center{-0.5, 0.5};
+    prepare(center, 16, 0.125);
+    m_specific.pert_pt =
+        [](const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter)
+    {
+        record_perturbation_orbit(reference, delta, parameter);
+        if (s_perturbation_orbit.size() == 4)
+        {
+            delta = {std::numeric_limits<double>::quiet_NaN(), 0.0};
+        }
+    };
+
+    EXPECT_GE(complete_pixel(), 0);
+
+    EXPECT_EQ(2, m_engine.reference_count());
+    EXPECT_EQ(1, m_boundaries);
+    expect_samples(expected_samples(center));
+    EXPECT_FALSE(g_orbit_save_flag);
+}
+
+TEST_P(TestPerturbationOutput, refusedSamplesRetainMathAndDoNotPlotOrRepeatOrbitBoundaries)
+{
+    prepare({-0.5, 0.5});
+    EXPECT_CALL(*m_output, play(_)).WillOnce(Return(false)).WillOnce(Return(false)).RetiresOnSaturation();
+
+    EXPECT_EQ(CALC_YIELDED, m_engine.calculate_pixel(g_col, g_row));
+    EXPECT_EQ(CALC_YIELDED, m_engine.calculate_pixel(g_col, g_row));
+
+    EXPECT_EQ(1, s_perturbation_orbit.size());
+    EXPECT_EQ(1, m_boundaries);
+    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(m_samples.empty());
+    EXPECT_GE(complete_pixel(), 0);
+    expect_samples(expected_samples({-0.5, 0.5}));
+    EXPECT_EQ(1, m_boundaries);
+}
+
+TEST_P(TestPerturbationOutput, finalSampleRetainsOverlayUntilNormalReleaseIsServiced)
+{
+    prepare({-0.5, 0.5}, 3);
+    EXPECT_CALL(*m_output, play(_))
+        .WillRepeatedly(
+            [this](const SoundSample &sample)
+            {
+                m_samples.push_back(sample);
+                m_ready = m_samples.size() < 2;
+                return true;
+            });
+    EXPECT_EQ(CALC_YIELDED, m_engine.calculate_pixel(g_col, g_row, true));
+    EXPECT_EQ(CALC_YIELDED, m_engine.calculate_pixel(g_col, g_row, true));
+    EXPECT_EQ(CALC_YIELDED, m_engine.calculate_pixel(g_col, g_row, true));
+    EXPECT_TRUE(g_orbit_save_flag);
+    EXPECT_EQ(2, m_samples.size());
+    EXPECT_EQ(2, m_plots.size());
+    EXPECT_EQ(2, s_perturbation_orbit.size());
+    m_ready = true;
+
+    EXPECT_GE(m_engine.calculate_pixel(g_col, g_row, true), 0);
+
+    EXPECT_FALSE(g_orbit_save_flag);
+    EXPECT_EQ(5, m_plots.size());
+    EXPECT_EQ(2, m_samples.size());
+    EXPECT_EQ(1, m_boundaries);
+}
+
+TEST_P(TestPerturbationOutput, abandoningPixelRestoresOverlayWithoutMutingOrFinishingOutput)
+{
+    prepare({-0.5, 0.5});
+    ASSERT_EQ(CALC_YIELDED, m_engine.calculate_pixel(g_col, g_row, true));
+    ASSERT_TRUE(g_orbit_save_flag);
+
+    m_engine.finish();
+
+    EXPECT_FALSE(g_orbit_save_flag);
+    EXPECT_EQ(m_background, m_pixels);
+    EXPECT_EQ(1, m_samples.size());
+}
+
+TEST_P(TestPerturbationOutput, outputFailureRestoresOverlayAndPreservesOriginalException)
+{
+    prepare({-0.5, 0.5});
+    ASSERT_EQ(CALC_YIELDED, m_engine.calculate_pixel(g_col, g_row, true));
+    EXPECT_CALL(*m_output, play(_)).WillOnce(Throw(std::bad_array_new_length{}));
+
+    EXPECT_THROW(m_engine.calculate_pixel(g_col, g_row, true), std::bad_array_new_length);
+
+    EXPECT_FALSE(g_orbit_save_flag);
+    EXPECT_EQ(m_background, m_pixels);
+    EXPECT_EQ(1, m_engine.reference_count());
+}
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationOutput, Bool());
 
 TEST_F(TestPerturbationPixels, highPrecisionInitialOffsetPreservesCancellation)
 {

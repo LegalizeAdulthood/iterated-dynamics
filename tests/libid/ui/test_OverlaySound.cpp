@@ -673,6 +673,150 @@ TEST_F(TestPerturbationController, outputBackpressureBetweenPixelChunksDoesNotAd
     EXPECT_EQ(4, m_plots);
 }
 
+class TestPerturbationOverlayController : public TestPerturbationController, public WithParamInterface<CalcMode>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<bool> m_saved_start_orbit{g_start_show_orbit, true};
+};
+
+void TestPerturbationOverlayController::SetUp()
+{
+    TestPerturbationController::SetUp();
+    g_user.std_calc_mode = GetParam();
+    g_max_iterations = 4;
+    g_show_orbit = true;
+    g_image_region = {};
+}
+
+TEST_P(TestPerturbationOverlayController, outputBackpressureDoesNotRepeatOrAdvanceOrbitMath)
+{
+    bool refused{};
+    int updates{};
+    EXPECT_CALL(*m_output, play(_))
+        .WillRepeatedly(
+            [this, &refused](const SoundSample &sample)
+            {
+                if (!refused)
+                {
+                    refused = true;
+                    m_ready = false;
+                    return false;
+                }
+                m_samples.push_back(sample);
+                return true;
+            });
+    EXPECT_CALL(*m_output, update())
+        .WillRepeatedly(
+            [this, &updates]
+            {
+                if (!m_ready)
+                {
+                    EXPECT_EQ(1, s_orbit_calls);
+                    EXPECT_EQ(0, m_plots);
+                    ++updates;
+                    m_ready = true;
+                }
+            });
+
+    EXPECT_EQ(0, render_standard_image());
+
+    EXPECT_TRUE(refused);
+    EXPECT_EQ(1, updates);
+    EXPECT_FALSE(m_samples.empty());
+    EXPECT_EQ(s_orbit_calls, m_samples.size());
+    EXPECT_FALSE(g_orbit_save_flag);
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+}
+
+TEST_P(TestPerturbationOverlayController, menuInterruptsAfterSampleAndResumeCompletesImage)
+{
+    bool requested{};
+    EXPECT_CALL(*m_output, play(_))
+        .WillRepeatedly(
+            [this, &requested](const SoundSample &sample)
+            {
+                m_samples.push_back(sample);
+                if (!requested)
+                {
+                    requested = true;
+                    m_key = 'x';
+                }
+                return true;
+            });
+    EXPECT_CALL(*m_output, mute()).Times(AtLeast(1));
+    EXPECT_CALL(m_driver, unget_key('x'));
+
+    EXPECT_EQ(-1, render_standard_image());
+
+    EXPECT_EQ(1, m_samples.size());
+    EXPECT_EQ(1, s_orbit_calls);
+    EXPECT_FALSE(g_orbit_save_flag);
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+    g_resuming = true;
+
+    EXPECT_EQ(0, render_standard_image());
+
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_FALSE(g_orbit_save_flag);
+}
+
+TEST_P(TestPerturbationOverlayController, togglingOffStopsOutputWithoutInterruptingCalculation)
+{
+    EXPECT_CALL(*m_output, play(_))
+        .WillOnce(
+            [this](const SoundSample &sample)
+            {
+                m_samples.push_back(sample);
+                m_key = 'o';
+                return true;
+            });
+    EXPECT_CALL(*m_output, mute());
+
+    EXPECT_EQ(0, render_standard_image());
+
+    EXPECT_EQ(1, m_samples.size());
+    EXPECT_FALSE(g_show_orbit);
+    EXPECT_FALSE(g_orbit_save_flag);
+    EXPECT_FALSE(calc_interrupt_requested());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+}
+
+TEST_P(TestPerturbationOverlayController, togglingOffAndOnContinuesTheSameOrbitWithoutRepeatingSamples)
+{
+    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
+    StandardFractal calculation;
+    StandardFractalController controller{calculation, sound};
+    controller.start();
+    controller.iterate();
+    ASSERT_EQ(1, m_samples.size());
+    ASSERT_EQ(1, s_orbit_calls);
+    EXPECT_CALL(*m_output, mute());
+
+    EXPECT_TRUE(dispatch_keyboard_key('o'));
+    EXPECT_FALSE(g_show_orbit);
+    EXPECT_FALSE(g_orbit_save_flag);
+    EXPECT_TRUE(dispatch_keyboard_key('o'));
+    EXPECT_TRUE(g_show_orbit);
+    controller.iterate();
+
+    EXPECT_EQ(2, m_samples.size());
+    EXPECT_EQ(2, s_orbit_calls);
+    EXPECT_EQ(1, std::count(m_events.begin(), m_events.end(), "boundary"));
+    while (!controller.done())
+    {
+        controller.iterate();
+    }
+    EXPECT_EQ(0, controller.result());
+    EXPECT_FALSE(g_orbit_save_flag);
+}
+
+INSTANTIATE_TEST_SUITE_P(PixelPasses, TestPerturbationOverlayController,
+    Values(CalcMode::ONE_PASS, CalcMode::TWO_PASS, CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS, CalcMode::DIFFUSION,
+        CalcMode::TESSERAL));
+
 TEST_F(TestOverlaySound, controllerSuspendsWithinAnOrbitAndResumesUnfinishedPixel)
 {
     g_show_orbit = false;
