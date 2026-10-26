@@ -223,12 +223,14 @@ class DistanceEstimator
 {
 public:
     DistanceEstimator() = default;
-    DistanceEstimator(double bailout, double derivative_limit, bool mandelbrot, bool legacy, double boundary_limit = 0);
+    DistanceEstimator(double bailout, double derivative_limit, bool mandelbrot, bool legacy, double boundary_limit = 0,
+        double band_width = 1);
 
     bool advance(const math::DComplex &z);
     bool escaped(const math::DComplex &z, long iteration, double magnitude);
     double distance_squared(const math::DComplex &z, bool overflow = false) const;
     bool on_boundary(double distance_squared) const;
+    long band_color(double distance_squared, bool old_colors) const;
     math::DComplex derivative() const;
     double bailout() const;
     long escape_iteration() const;
@@ -240,6 +242,7 @@ private:
     double m_bailout{};
     double m_derivative_limit{};
     double m_boundary_limit{};
+    double m_band_width{1};
     long m_escape_iteration{-1};
     bool m_mandelbrot{};
     bool m_legacy{};
@@ -279,6 +282,7 @@ int standard_fractal_type();
 double fmod_magnitude(const math::DComplex &z, double magnitude);
 long fmod_color(double value);
 long standard_outside_color(long color, const math::DComplex &z);
+long standard_escape_color(long color, math::DComplex &z, bool attracted);
 long standard_decomposition_color(math::DComplex &z);
 int standard_palette_color(long color);
 void init_atan_colors();

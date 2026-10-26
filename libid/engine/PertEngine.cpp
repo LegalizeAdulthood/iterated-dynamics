@@ -756,13 +756,48 @@ int PertEngine::calculate_point(const Point &pt)
     const bool highlight_cycle{g_periodicity_check < 0 && m_cycle_len > 0};
     const bool use_distance{
         g_distance_estimator != 0 && !g_potential.flag && epsilon_axis == 0 && iteration < g_max_iterations};
-    const bool boundary{
-        use_distance && m_distance_estimator.on_boundary(m_distance_estimator.distance_squared(g_new_z))};
-    const bool fixed_distance_color{use_distance && (boundary ? g_distance_estimator < 0 : g_colors == 2)};
+    const double distance{use_distance ? m_distance_estimator.distance_squared(g_new_z) : 0};
+    const bool boundary{use_distance && m_distance_estimator.on_boundary(distance)};
+    const bool direct_distance_color{
+        use_distance && (boundary ? g_distance_estimator < 0 : g_colors == 2 || g_distance_estimator > 1)};
+    const bool regular_distance_color{use_distance && !boundary && !direct_distance_color};
     const bool inside{iteration == g_max_iterations || epsilon_axis != 0 || (boundary && g_distance_estimator > 0)};
-    if (fixed_distance_color)
+    if (direct_distance_color)
     {
-        index = boundary ? -g_distance_estimator : !g_inside_color;
+        if (boundary)
+        {
+            index = -g_distance_estimator;
+        }
+        else if (g_colors == 2)
+        {
+            index = !g_inside_color;
+        }
+        else
+        {
+            index = m_distance_estimator.band_color(distance, g_old_demm_colors);
+        }
+    }
+    else if (regular_distance_color)
+    {
+        index = iteration;
+        if (g_use_old_distance_estimator)
+        {
+            index = m_distance_estimator.escape_iteration();
+            g_new_z = m_distance_estimator.escape_point();
+        }
+        else if (g_outside_method < ColorMethod::ITER)
+        {
+            if (g_outside_method == ColorMethod::FMOD)
+            {
+                index = fmod_color(mem_value);
+            }
+            else if (g_outside_method == ColorMethod::TDIS)
+            {
+                index = static_cast<long>(total_distance);
+            }
+            index = standard_outside_color(index, g_new_z);
+        }
+        index = standard_escape_color(index, g_new_z, false);
     }
     else if (epsilon_axis != 0)
     {
@@ -949,7 +984,7 @@ int PertEngine::calculate_point(const Point &pt)
             }
         }
     }
-    const bool map_color{!fixed_distance_color &&
+    const bool map_color{!direct_distance_color && !regular_distance_color &&
         (g_potential.flag ||
             (inside ? !highlight_cycle && g_inside_method < ColorMethod::COLOR
                     : g_outside_method < ColorMethod::COLOR))};

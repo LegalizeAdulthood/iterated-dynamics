@@ -147,6 +147,40 @@ TEST(TestDistanceEstimator, boundaryComparisonIsStrict)
     EXPECT_FALSE(estimator.on_boundary(std::nextafter(0.5, 1.0)));
 }
 
+TEST(TestDistanceEstimator, distanceBandFormulasPreserveTheirIntegerBoundaries)
+{
+    for (const double width : {0.125, 1.0, 4.0})
+    {
+        SCOPED_TRACE(width);
+        for (const bool legacy : {false, true})
+        {
+            SCOPED_TRACE(legacy);
+            const DistanceEstimator estimator{4.0, 100.0, true, legacy, 0.0, width};
+            for (const bool old_colors : {false, true})
+            {
+                SCOPED_TRACE(old_colors);
+                EXPECT_EQ(1, estimator.band_color(0.0, old_colors));
+                for (const long color : {2L, 3L, 8L, 16L})
+                {
+                    SCOPED_TRACE(color);
+                    double threshold{width * (color - 1)};
+                    if (old_colors)
+                    {
+                        threshold = sqr(width * (color * color - 1));
+                    }
+                    else if (legacy)
+                    {
+                        threshold = width * (color * color - 1);
+                    }
+                    EXPECT_EQ(color - 1, estimator.band_color(threshold * (1.0 - 1.0 / 1024), old_colors));
+                    EXPECT_EQ(color, estimator.band_color(threshold, old_colors));
+                    EXPECT_EQ(color, estimator.band_color(threshold * (1.0 + 1.0 / 1024), old_colors));
+                }
+            }
+        }
+    }
+}
+
 TEST(TestPertEngine, nonDefaultGlitchToleranceScalesThreshold)
 {
     PertEngine engine;
@@ -332,6 +366,7 @@ struct DistancePixelOptions
     ImageRegion region{{-2.5, -1.5}, {1.5, 1.5}, {-2.5, -1.5}};
     ColorMethod inside{ColorMethod::ITER};
     bool compare_colors{};
+    bool old_colors{};
 };
 
 void expect_orbit_state(const OrbitState &expected)
@@ -1886,6 +1921,7 @@ void TestPerturbationIterations::compare_distance_pixel(const std::complex<doubl
     ValueSaver saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
     ValueSaver saved_resuming{g_resuming, false};
     ValueSaver saved_legacy{g_use_old_distance_estimator};
+    ValueSaver saved_old_colors{g_old_demm_colors, options.old_colors};
     ValueSaver saved_width{g_distance_estimator_width_factor, options.width_factor};
     ValueSaver saved_virtual_width{g_distance_estimator_x_dots, options.virtual_size.x};
     ValueSaver saved_virtual_height{g_distance_estimator_y_dots, options.virtual_size.y};
@@ -1922,6 +1958,7 @@ void TestPerturbationIterations::compare_distance_pixel(const std::complex<doubl
     DistanceEstimator expected;
     long expected_iterations{};
     double expected_magnitude{};
+    DComplex expected_new_z{};
     EXPECT_CALL(m_driver, write_pixel(g_col, g_row, _))
         .WillOnce(Invoke(
             [&](int, int, int)
@@ -1929,6 +1966,7 @@ void TestPerturbationIterations::compare_distance_pixel(const std::complex<doubl
                 expected = standard.distance_estimator();
                 expected_iterations = g_real_color_iter;
                 expected_magnitude = g_magnitude;
+                expected_new_z = g_new_z;
             }))
         .RetiresOnSaturation();
     const int expected_color{standard.calculate_standard_pixel(false)};
@@ -1949,6 +1987,9 @@ void TestPerturbationIterations::compare_distance_pixel(const std::complex<doubl
 
     const DistanceEstimator &actual{m_engine.distance_estimator()};
     EXPECT_EQ(expected_iterations, g_real_color_iter);
+    EXPECT_EQ(expected_iterations, g_color_iter);
+    EXPECT_NEAR(expected_new_z.x, g_new_z.x, std::max(1.0, std::abs(expected_new_z.x)) * 1e-12);
+    EXPECT_NEAR(expected_new_z.y, g_new_z.y, std::max(1.0, std::abs(expected_new_z.y)) * 1e-12);
     EXPECT_NEAR(expected_magnitude, g_magnitude, std::max(1.0, expected_magnitude) * 1e-12);
     EXPECT_DOUBLE_EQ(expected.bailout(), actual.bailout());
     EXPECT_EQ(expected.escape_iteration(), actual.escape_iteration());
@@ -1959,7 +2000,10 @@ void TestPerturbationIterations::compare_distance_pixel(const std::complex<doubl
     EXPECT_NEAR(
         expected.derivative().y, actual.derivative().y, std::max(1.0, std::abs(expected.derivative().y)) * 1e-12);
     const double expected_distance{expected.distance_squared({terminal.real(), terminal.imag()})};
-    EXPECT_NEAR(expected_distance, actual.distance_squared(g_new_z), std::max(1.0, expected_distance) * 1e-12);
+    ASSERT_FALSE(s_perturbation_orbit.empty());
+    const std::complex<double> actual_terminal{s_perturbation_orbit.back() * s_perturbation_orbit.back() + center};
+    EXPECT_NEAR(expected_distance, actual.distance_squared({actual_terminal.real(), actual_terminal.imag()}),
+        std::max(1.0, expected_distance) * 1e-12);
     ASSERT_GE(s_perturbation_derivatives.size(), s_standard_derivatives.size());
     const std::size_t first{s_perturbation_derivatives.size() - s_standard_derivatives.size()};
     for (std::size_t i = 0; i < s_standard_derivatives.size(); ++i)
@@ -2137,6 +2181,150 @@ TEST_P(TestPerturbationIterations, distanceBoundaryClassificationSurvivesReferen
         compare_distance_pixel({0.5, 0.5}, 32, false, 0.125, options);
         EXPECT_GT(m_engine.reference_count(), 1);
         EXPECT_EQ(mode > 0 ? 32 : 9, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, distanceBandsMatchCurrentAndLegacyStandardColors)
+{
+    DistancePixelOptions options;
+    options.compare_colors = true;
+    for (const bool legacy : {false, true})
+    {
+        SCOPED_TRACE(legacy);
+        for (const bool old_colors : {false, true})
+        {
+            SCOPED_TRACE(old_colors);
+            options.old_colors = old_colors;
+            for (const long mode : {2L, 64L, 256L, 1024L})
+            {
+                SCOPED_TRACE(mode);
+                options.value = mode;
+                for (const std::complex<double> point : {std::complex<double>{0.5, 0.0}, {0.5, 0.5}, {2.0, 2.0}})
+                {
+                    SCOPED_TRACE(point);
+                    compare_distance_pixel(point, 32, legacy, 0.0, options);
+                    EXPECT_LT(g_real_color_iter, 32);
+                }
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, distanceBandsBypassOtherColoringAndMapping)
+{
+    DistancePixelOptions options;
+    options.value = 1024;
+    options.inside = ColorMethod::COLOR;
+    options.compare_colors = true;
+    g_decomp[0] = 16;
+    g_biomorph = 9;
+    g_log_map_flag = 1;
+    g_iteration_ranges = {512};
+    g_outside_color = 6;
+    for (const bool legacy : {false, true})
+    {
+        SCOPED_TRACE(legacy);
+        for (const bool old_colors : {false, true})
+        {
+            SCOPED_TRACE(old_colors);
+            options.old_colors = old_colors;
+            for (const ColorMethod outside :
+                {ColorMethod::COLOR, ColorMethod::REAL, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS})
+            {
+                SCOPED_TRACE(static_cast<int>(outside));
+                g_outside_method = outside;
+                compare_distance_pixel({2.0, 2.0}, 512, legacy, 0.0, options);
+                const DistanceEstimator &estimator{m_engine.distance_estimator()};
+                EXPECT_FALSE(estimator.on_boundary(estimator.distance_squared(g_new_z)));
+                EXPECT_EQ(standard_palette_color(estimator.band_color(estimator.distance_squared(g_new_z), old_colors)),
+                    g_color);
+                EXPECT_EQ(0, log_table_calc(g_color));
+                EXPECT_GT(g_color, 0);
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, distanceBandsSurviveReferenceReplacement)
+{
+    m_engine.set_glitch_tolerance(8.0);
+    DistancePixelOptions options;
+    options.value = 1024;
+    options.compare_colors = true;
+    for (const bool legacy : {false, true})
+    {
+        SCOPED_TRACE(legacy);
+        for (const bool old_colors : {false, true})
+        {
+            SCOPED_TRACE(old_colors);
+            options.old_colors = old_colors;
+            compare_distance_pixel({2.0, 2.0}, 32, legacy, 0.125, options);
+            EXPECT_GT(m_engine.reference_count(), 1);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, regularDistanceColorsMatchStandardOutsideFinishing)
+{
+    DistancePixelOptions options;
+    options.inside = ColorMethod::COLOR;
+    options.compare_colors = true;
+    g_outside_color = 6;
+    init_atan_colors();
+    for (const bool legacy : {false, true})
+    {
+        SCOPED_TRACE(legacy);
+        for (const long mode : {1L, -9L})
+        {
+            SCOPED_TRACE(mode);
+            options.value = mode;
+            for (const ColorMethod outside :
+                {ColorMethod::ITER, ColorMethod::COLOR, ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT,
+                    ColorMethod::SUM, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS})
+            {
+                SCOPED_TRACE(static_cast<int>(outside));
+                g_outside_method = outside;
+                compare_distance_pixel({2.0, 2.0}, 32, legacy, 0.0, options);
+                if (legacy)
+                {
+                    if (mode == 1)
+                    {
+                        EXPECT_LT(m_engine.distance_estimator().escape_iteration(), g_real_color_iter);
+                    }
+                    else
+                    {
+                        EXPECT_EQ(m_engine.distance_estimator().escape_iteration(), g_real_color_iter);
+                    }
+                    EXPECT_EQ(m_engine.distance_estimator().escape_point(), g_new_z);
+                }
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, legacyRegularDistanceColorsRetainDecompositionBiomorphAndMapping)
+{
+    m_engine.set_glitch_tolerance(8.0);
+    DistancePixelOptions options;
+    options.compare_colors = true;
+    g_log_map_flag = 1;
+    for (const int decomp : {0, 16})
+    {
+        SCOPED_TRACE(decomp);
+        g_decomp[0] = decomp;
+        for (const int biomorph : {-1, 9})
+        {
+            SCOPED_TRACE(biomorph);
+            g_biomorph = biomorph;
+            for (const long mode : {1L, -9L})
+            {
+                SCOPED_TRACE(mode);
+                options.value = mode;
+                compare_distance_pixel({2.0, 2.0}, 512, true, 0.125, options);
+                EXPECT_GT(m_engine.reference_count(), 1);
+                EXPECT_GE(m_engine.distance_estimator().escape_iteration(), 0);
+            }
+        }
     }
 }
 

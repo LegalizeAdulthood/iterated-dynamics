@@ -740,10 +740,11 @@ void setup_standard_fractal_distance_estimator()
 }
 
 DistanceEstimator::DistanceEstimator(const double bailout, const double derivative_limit, const bool mandelbrot,
-    const bool legacy, const double boundary_limit) :
+    const bool legacy, const double boundary_limit, const double band_width) :
     m_bailout{bailout},
     m_derivative_limit{derivative_limit},
     m_boundary_limit{boundary_limit},
+    m_band_width{band_width},
     m_mandelbrot{mandelbrot},
     m_legacy{legacy}
 {
@@ -802,6 +803,24 @@ DComplex DistanceEstimator::derivative() const
     return m_derivative;
 }
 
+long DistanceEstimator::band_color(const double distance_squared, const bool old_colors) const
+{
+    long color;
+    if (old_colors)
+    {
+        color = static_cast<long>(std::sqrt(std::sqrt(distance_squared) / m_band_width + 1));
+    }
+    else if (m_legacy)
+    {
+        color = static_cast<long>(std::sqrt(distance_squared / m_band_width + 1));
+    }
+    else
+    {
+        color = static_cast<long>(distance_squared / m_band_width + 1);
+    }
+    return color & std::numeric_limits<long>::max();
+}
+
 double DistanceEstimator::bailout() const
 {
     return m_bailout;
@@ -828,7 +847,7 @@ DistanceEstimator standard_distance_estimator()
             bailout = std::max(bailout, DEM_BAILOUT);
         }
     }
-    return {bailout, s_dem_too_big, s_dem_mandel, g_use_old_distance_estimator, s_dem_delta};
+    return {bailout, s_dem_too_big, s_dem_mandel, g_use_old_distance_estimator, s_dem_delta, s_dem_width};
 }
 
 // fast per pixel 1/2/b/g, called with row & col set
@@ -944,6 +963,30 @@ long standard_outside_color(long color, const DComplex &z)
     if ((color <= 0 || color > g_max_iterations) && g_outside_method != ColorMethod::FMOD)
     {
         color = g_version < 1961 ? 0 : 1;
+    }
+    return color;
+}
+
+long standard_escape_color(long color, DComplex &z, const bool attracted)
+{
+    if (g_decomp[0] > 0)
+    {
+        color = standard_decomposition_color(z);
+    }
+    else if (g_biomorph != -1)
+    {
+        if (std::abs(z.x) < g_magnitude_limit2 || std::abs(z.y) < g_magnitude_limit2)
+        {
+            color = g_biomorph;
+        }
+    }
+    if (g_outside_method >= ColorMethod::COLOR && !attracted)
+    {
+        color = g_outside_color;
+    }
+    else if (!g_log_map_table.empty() || g_log_map_calculate)
+    {
+        color = log_table_calc(color);
     }
     return color;
 }
@@ -1485,19 +1528,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         }
         if (g_distance_estimator > 1)          // pick color based on distance
         {
-            if (g_old_demm_colors)   // this one is needed for old color scheme
-            {
-                g_color_iter = static_cast<long>(std::sqrt(sqrt(dist) / s_dem_width + 1));
-            }
-            else if (g_use_old_distance_estimator)
-            {
-                g_color_iter = static_cast<long>(std::sqrt(dist / s_dem_width + 1));
-            }
-            else
-            {
-                g_color_iter = static_cast<long>(dist / s_dem_width + 1);
-            }
-            g_color_iter &= std::numeric_limits<long>::max();  // oops - color can be negative
+            g_color_iter = m_distance_estimator.band_color(dist, g_old_demm_colors);
             goto plot_pixel;       // no further adjustments apply
         }
         if (g_use_old_distance_estimator)
@@ -1508,26 +1539,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         // use pixel's "regular" color
     }
 
-    if (g_decomp[0] > 0)
-    {
-        g_color_iter = standard_decomposition_color(g_new_z);
-    }
-    else if (g_biomorph != -1)
-    {
-        if (std::abs(g_new_z.x) < g_magnitude_limit2 || std::abs(g_new_z.y) < g_magnitude_limit2)
-        {
-            g_color_iter = g_biomorph;
-        }
-    }
-
-    if (g_outside_method >= ColorMethod::COLOR && !m_attracted) // merge escape-time stripes
-    {
-        g_color_iter = g_outside_color;
-    }
-    else if (!g_log_map_table.empty() || g_log_map_calculate)
-    {
-        g_color_iter = log_table_calc(g_color_iter);
-    }
+    g_color_iter = standard_escape_color(g_color_iter, g_new_z, m_attracted);
     goto plot_pixel;
 
 plot_inside: // we're "inside"
