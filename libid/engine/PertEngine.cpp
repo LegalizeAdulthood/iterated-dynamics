@@ -751,7 +751,6 @@ int PertEngine::calculate_point(const Point &pt)
         iteration = 1;
     }
     long index;
-    const double rq_lim2{std::sqrt(g_magnitude_limit)};
 
     const bool highlight_cycle{g_periodicity_check < 0 && m_cycle_len > 0};
     const bool use_distance{
@@ -760,8 +759,8 @@ int PertEngine::calculate_point(const Point &pt)
     const bool boundary{use_distance && m_distance_estimator.on_boundary(distance)};
     const bool direct_distance_color{
         use_distance && (boundary ? g_distance_estimator < 0 : g_colors == 2 || g_distance_estimator > 1)};
-    const bool regular_distance_color{use_distance && !boundary && !direct_distance_color};
     const bool inside{iteration == g_max_iterations || epsilon_axis != 0 || (boundary && g_distance_estimator > 0)};
+    const bool regular_escape_color{!g_potential.flag && !inside && !direct_distance_color};
     if (g_potential.flag && epsilon_axis == 0)
     {
         index = potential(mag_squared(w), iteration);
@@ -781,10 +780,10 @@ int PertEngine::calculate_point(const Point &pt)
             index = m_distance_estimator.band_color(distance, g_old_demm_colors);
         }
     }
-    else if (regular_distance_color)
+    else if (regular_escape_color)
     {
         index = iteration;
-        if (g_use_old_distance_estimator)
+        if (use_distance && g_use_old_distance_estimator)
         {
             index = m_distance_estimator.escape_iteration();
             g_new_z = m_distance_estimator.escape_point();
@@ -832,140 +831,33 @@ int PertEngine::calculate_point(const Point &pt)
             }
         }
     }
-    else if (!inside && g_decomp[0] > 0)
-    {
-        index = standard_decomposition_color(g_new_z);
-        if (g_outside_method >= ColorMethod::COLOR)
-        {
-            index = g_outside_color;
-        }
-    }
-    else if (g_biomorph >= 0 && !boundary)
-    {
-        if (iteration == g_max_iterations)
-        {
-            index = g_max_iterations;
-        }
-        else
-        {
-            if (std::abs(w.real()) < rq_lim2 || std::abs(w.imag()) < rq_lim2)
-            {
-                index = g_biomorph;
-            }
-            else
-            {
-                index = iteration;
-            }
-        }
-    }
     else
     {
-        switch (g_outside_method)
-        {
-        case ColorMethod::COLOR: // no filter
-            if (iteration == g_max_iterations)
-            {
-                index = g_max_iterations;
-            }
-            else
-            {
-                index = iteration;
-            }
-            break;
-
-        case ColorMethod::ZMAG:
-            if (iteration == g_max_iterations)
-            {
-                index = static_cast<long>((w.real() * w.real() + w.imag() + w.imag()) * (g_max_iterations >> 1) + 1);
-            }
-            else
-            {
-                index = iteration;
-            }
-            break;
-
-        case ColorMethod::REAL:
-        case ColorMethod::IMAG:
-        case ColorMethod::MULT:
-        case ColorMethod::SUM:
-        case ColorMethod::ATAN:
-            index = iteration == g_max_iterations ? g_max_iterations : standard_outside_color(iteration, g_new_z);
-            break;
-
-        case ColorMethod::FMOD:
-            index = iteration == g_max_iterations ? g_max_iterations : fmod_color(mem_value);
-            break;
-
-        case ColorMethod::TDIS:
-            index = iteration == g_max_iterations ? g_max_iterations
-                                                  : standard_outside_color(static_cast<long>(total_distance), g_new_z);
-            break;
-
-        default:
-            if (iteration == g_max_iterations)
-            {
-                index = g_max_iterations;
-            }
-            else
-            {
-                index = iteration;
-            }
-            break;
-        }
-
+        index = g_max_iterations;
         if (g_inside_method >= ColorMethod::COLOR) // no filter
         {
-            if (inside)
-            {
-                index = g_inside_color;
-            }
-            else
-            {
-                index = iteration;
-            }
+            index = g_inside_color;
         }
         else
         {
             switch (g_inside_method)
             {
-            case ColorMethod::ITER:
-            case ColorMethod::EPS_CROSS:
-                if (inside)
-                {
-                    index = g_max_iterations;
-                }
-                break;
             case ColorMethod::ZMAG:
-                if (inside)
-                {
-                    index = static_cast<long>(mag_squared(w) * (g_max_iterations >> 1) + 1);
-                }
+                index = static_cast<long>(mag_squared(w) * (g_max_iterations >> 1) + 1);
                 break;
             case ColorMethod::BOF60:
-                if (inside)
-                {
-                    index = static_cast<long>(std::sqrt(min_orbit) * 75.0);
-                }
+                index = static_cast<long>(std::sqrt(min_orbit) * 75.0);
                 break;
             case ColorMethod::BOF61:
-                if (inside)
-                {
-                    index = min_index;
-                }
+                index = min_index;
                 break;
 
             case ColorMethod::FMODI:
-                if (inside)
-                {
-                    index = fmod_color(mem_value);
-                }
+                index = fmod_color(mem_value);
                 break;
 
             case ColorMethod::ATANI:
-                if (inside)
-                {
-                    index = static_cast<long>(std::abs(std::atan2(w.imag(), w.real()) * g_atan_colors / PI));
-                }
+                index = static_cast<long>(std::abs(std::atan2(w.imag(), w.real()) * g_atan_colors / PI));
                 break;
 
             default:
@@ -973,7 +865,7 @@ int PertEngine::calculate_point(const Point &pt)
             }
         }
     }
-    const bool map_color{!direct_distance_color && !regular_distance_color &&
+    const bool map_color{!direct_distance_color && !regular_escape_color &&
         (g_potential.flag ||
             (inside ? !highlight_cycle && g_inside_method < ColorMethod::COLOR
                     : g_outside_method < ColorMethod::COLOR))};

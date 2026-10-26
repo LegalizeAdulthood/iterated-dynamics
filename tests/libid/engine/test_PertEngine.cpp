@@ -1923,6 +1923,138 @@ TEST_P(TestPerturbationIterations, decompositionSurvivesReferenceReplacement)
     EXPECT_GT(m_engine.reference_count(), 1);
 }
 
+TEST_P(TestPerturbationIterations, biomorphUsesStrictComponentTestsAtTheSelectedBailout)
+{
+    ValueSaver saved_limit{g_magnitude_limit};
+    ValueSaver saved_limit2{g_magnitude_limit2};
+    g_inside_method = ColorMethod::ITER;
+
+    struct Sample
+    {
+        std::complex<double> point;
+        bool biomorph;
+    };
+
+    for (const double limit : {4.0, 100.0})
+    {
+        SCOPED_TRACE(limit);
+        g_magnitude_limit = limit;
+        const double threshold{std::sqrt(limit)};
+        g_magnitude_limit2 = threshold;
+        const double below{threshold * (1.0 - 1.0 / 1024)};
+        for (const int color : {0, 9})
+        {
+            SCOPED_TRACE(color);
+            g_biomorph = color;
+            for (const Sample &sample :
+                {Sample{{2 * threshold, 0.0}, true}, {{0.0, 2 * threshold}, true}, {{2 * threshold, threshold}, false},
+                    {{threshold, 2 * threshold}, false}, {{2 * threshold, below}, true}, {{below, 2 * threshold}, true},
+                    {{-below, -2 * threshold}, true}, {{-threshold, -2 * threshold}, false}})
+            {
+                SCOPED_TRACE(sample.point);
+                set_initial_offset({-sample.point.real(), -sample.point.imag()});
+                compare_pixel(sample.point, 128);
+                EXPECT_EQ(1, g_real_color_iter);
+                EXPECT_EQ(sample.biomorph ? color : 1, g_color);
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, biomorphRetainsOutsideFormulasAndFixedColors)
+{
+    ValueSaver saved_limit2{g_magnitude_limit2, 2.0};
+    g_biomorph = 9;
+    g_outside_color = 6;
+    g_close_proximity = 16.0;
+    init_atan_colors();
+    for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::ITER})
+    {
+        SCOPED_TRACE(static_cast<int>(inside));
+        g_inside_method = inside;
+        for (const ColorMethod outside : {ColorMethod::ITER, ColorMethod::COLOR, ColorMethod::REAL, ColorMethod::IMAG,
+                 ColorMethod::MULT, ColorMethod::SUM, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS})
+        {
+            SCOPED_TRACE(static_cast<int>(outside));
+            g_outside_method = outside;
+            compare_pixel({0.5, 0.0}, 128);
+            EXPECT_EQ(outside == ColorMethod::COLOR ? 6 : 9, g_color);
+            compare_pixel({2.0, 2.0}, 128);
+            if (outside == ColorMethod::ITER)
+            {
+                EXPECT_EQ(1, g_color);
+            }
+            else if (outside == ColorMethod::REAL)
+            {
+                EXPECT_EQ(10, g_color);
+            }
+            else if (outside == ColorMethod::COLOR)
+            {
+                EXPECT_EQ(6, g_color);
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, biomorphDoesNotReplaceInsideMethods)
+{
+    ValueSaver saved_limit2{g_magnitude_limit2, 2.0};
+    init_atan_colors();
+    for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60,
+             ColorMethod::BOF61, ColorMethod::ATANI, ColorMethod::FMODI, ColorMethod::EPS_CROSS, ColorMethod::PERIOD,
+             ColorMethod::STAR_TRAIL})
+    {
+        SCOPED_TRACE(static_cast<int>(inside));
+        g_inside_method = inside;
+        g_biomorph = -1;
+        compare_pixel({0.125, 0.0625}, 128);
+        const int expected{g_color};
+        g_biomorph = 9;
+        compare_pixel({0.125, 0.0625}, 128);
+        EXPECT_EQ(expected, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, biomorphFinishingAndMappingSurviveReferenceReplacement)
+{
+    ValueSaver saved_limit2{g_magnitude_limit2, 2.0};
+    g_biomorph = 9;
+    g_inside_method = ColorMethod::COLOR;
+    g_outside_color = 6;
+    g_log_map_flag = 1;
+    g_log_map_table_max_size = 128;
+    g_log_map_table.assign(129, 99);
+    g_log_map_table[1] = 11;
+    g_log_map_table[9] = 31;
+    g_log_map_table[10] = 23;
+    g_log_map_table[18] = 29;
+    m_engine.set_glitch_tolerance(8.0);
+
+    struct Sample
+    {
+        ColorMethod outside;
+        int color;
+    };
+
+    for (const Sample &sample :
+        {Sample{ColorMethod::ITER, 11}, {ColorMethod::REAL, 23}, {ColorMethod::IMAG, 29}, {ColorMethod::COLOR, 6}})
+    {
+        SCOPED_TRACE(static_cast<int>(sample.outside));
+        g_outside_method = sample.outside;
+        compare_pixel({0.5, 0.0}, 128, 0.125);
+        EXPECT_EQ(sample.outside == ColorMethod::COLOR ? 6 : 31, g_color);
+        EXPECT_GT(m_engine.reference_count(), 1);
+        compare_pixel({2.0, 2.0}, 128, 0.125);
+        EXPECT_EQ(sample.color, g_color);
+        EXPECT_GT(m_engine.reference_count(), 1);
+        g_decomp[0] = 16;
+        compare_pixel({0.5, 0.0}, 128, 0.125);
+        EXPECT_EQ(sample.outside == ColorMethod::COLOR ? 6 : 11, g_color);
+        EXPECT_GT(m_engine.reference_count(), 1);
+        g_decomp[0] = 0;
+    }
+}
+
 void TestPerturbationIterations::compare_distance_pixel(const std::complex<double> &center, const long max_iterations,
     const bool legacy, const double reference_offset, const DistancePixelOptions &options)
 {
