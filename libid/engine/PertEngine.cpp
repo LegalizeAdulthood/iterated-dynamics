@@ -762,7 +762,11 @@ int PertEngine::calculate_point(const Point &pt)
         use_distance && (boundary ? g_distance_estimator < 0 : g_colors == 2 || g_distance_estimator > 1)};
     const bool regular_distance_color{use_distance && !boundary && !direct_distance_color};
     const bool inside{iteration == g_max_iterations || epsilon_axis != 0 || (boundary && g_distance_estimator > 0)};
-    if (direct_distance_color)
+    if (g_potential.flag && epsilon_axis == 0)
+    {
+        index = potential(mag_squared(w), iteration);
+    }
+    else if (direct_distance_color)
     {
         if (boundary)
         {
@@ -807,11 +811,7 @@ int PertEngine::calculate_point(const Point &pt)
     }
     else if (inside && (highlight_cycle || g_inside_method == ColorMethod::PERIOD))
     {
-        if (g_potential.flag)
-        {
-            index = potential(magnitude, iteration);
-        }
-        else if (highlight_cycle)
+        if (highlight_cycle)
         {
             index = 7;
         }
@@ -831,12 +831,8 @@ int PertEngine::calculate_point(const Point &pt)
                 break;
             }
         }
-        if (g_potential.flag)
-        {
-            index = potential(magnitude, iteration);
-        }
     }
-    else if (!inside && g_decomp[0] > 0 && !g_potential.flag)
+    else if (!inside && g_decomp[0] > 0)
     {
         index = standard_decomposition_color(g_new_z);
         if (g_outside_method >= ColorMethod::COLOR)
@@ -906,20 +902,13 @@ int PertEngine::calculate_point(const Point &pt)
             break;
 
         default:
-            if (g_potential.flag)
+            if (iteration == g_max_iterations)
             {
-                index = potential(mag_squared(w), iteration);
+                index = g_max_iterations;
             }
-            else // no filter
+            else
             {
-                if (iteration == g_max_iterations)
-                {
-                    index = g_max_iterations;
-                }
-                else
-                {
-                    index = iteration;
-                }
+                index = iteration;
             }
             break;
         }

@@ -661,7 +661,21 @@ void TestPerturbationIterations::compare_pixel(const std::complex<double> &cente
     g_dispatch.set_orbit_calc(record_standard_orbit);
     const long initial_old_color_iter{g_old_color_iter};
     StandardFractal standard;
+    const Point2i potential_pixel{g_col + g_logical_screen.x_offset, g_row + g_logical_screen.y_offset};
+    if (g_potential.store_16bit)
+    {
+        write_disk_pixel(potential_pixel.x, potential_pixel.y, 255);
+        write_disk_pixel(potential_pixel.x, potential_pixel.y + g_screen_y_dots, 255);
+    }
     const int expected_color{standard.calculate_standard_pixel(false)};
+    std::array<int, 2> expected_potential{};
+    if (g_potential.store_16bit)
+    {
+        expected_potential = {read_disk_pixel(potential_pixel.x, potential_pixel.y),
+            read_disk_pixel(potential_pixel.x, potential_pixel.y + g_screen_y_dots)};
+        write_disk_pixel(potential_pixel.x, potential_pixel.y, 255);
+        write_disk_pixel(potential_pixel.x, potential_pixel.y + g_screen_y_dots, 255);
+    }
     // The standard epsilon-cross early exit does not publish its raw iteration count.
     const long expected_iterations{early_iterations != 0 ? early_iterations : g_real_color_iter};
     if (early_iterations != 0)
@@ -685,6 +699,11 @@ void TestPerturbationIterations::compare_pixel(const std::complex<double> &cente
 
     EXPECT_EQ(expected_color, m_engine.calculate_pixel(g_col, g_row));
 
+    if (g_potential.store_16bit)
+    {
+        EXPECT_EQ(expected_potential[0], read_disk_pixel(potential_pixel.x, potential_pixel.y));
+        EXPECT_EQ(expected_potential[1], read_disk_pixel(potential_pixel.x, potential_pixel.y + g_screen_y_dots));
+    }
     expect_orbit_state(expected);
     EXPECT_EQ(expected_old_color_iter, g_old_color_iter);
     if (m_engine.reference_count() == 1)
@@ -2486,6 +2505,166 @@ TEST_P(TestPerturbationIterations, potentialColorsTakePrecedenceOverPeriodicityC
             compare_pixel({0.0, 0.0}, 128);
             EXPECT_EQ(inside == ColorMethod::COLOR ? mapped ? 31 : 3 : mapped ? 41 : 23, g_color);
             EXPECT_LT(s_standard_orbit.size(), 127);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, potentialOverridesExteriorColoring)
+{
+    g_potential = {{23.0, 10.0, 4.0}, false, true};
+    g_outside_color = 6;
+    for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::ITER})
+    {
+        SCOPED_TRACE(static_cast<int>(inside));
+        g_inside_method = inside;
+        for (const int decomp : {0, 16})
+        {
+            SCOPED_TRACE(decomp);
+            g_decomp[0] = decomp;
+            for (const int biomorph : {-1, 9})
+            {
+                SCOPED_TRACE(biomorph);
+                g_biomorph = biomorph;
+                for (const ColorMethod outside :
+                    {ColorMethod::ITER, ColorMethod::COLOR, ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT,
+                        ColorMethod::SUM, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS})
+                {
+                    SCOPED_TRACE(static_cast<int>(outside));
+                    g_outside_method = outside;
+                    compare_pixel({0.5, 0.5}, 128);
+                    EXPECT_EQ(20, g_color);
+                }
+            }
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, potentialOverridesInsideColoring)
+{
+    g_potential = {{23.0, 10.0, 4.0}, false, true};
+    g_outside_method = ColorMethod::COLOR;
+    g_outside_color = 6;
+    g_decomp[0] = 16;
+    g_biomorph = 9;
+    for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60,
+             ColorMethod::BOF61, ColorMethod::ATANI, ColorMethod::FMODI, ColorMethod::STAR_TRAIL, ColorMethod::PERIOD,
+             ColorMethod::EPS_CROSS})
+    {
+        SCOPED_TRACE(static_cast<int>(inside));
+        g_inside_method = inside;
+        compare_pixel({0.125, 0.0625}, 128);
+        EXPECT_EQ(inside == ColorMethod::COLOR ? g_inside_color : 23, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, potentialMapsFixedAndSpecialColorsExactlyOnce)
+{
+    g_potential = {{23.0, 10.0, 4.0}, false, true};
+    g_log_map_flag = 1;
+    g_log_map_table_max_size = 128;
+    g_log_map_table.assign(129, 99);
+    g_log_map_table[20] = 31;
+    g_log_map_table[23] = 41;
+    g_log_map_table[7] = 37;
+    g_outside_color = 6;
+    g_decomp[0] = 16;
+    g_biomorph = 9;
+    for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::ITER, ColorMethod::ZMAG})
+    {
+        SCOPED_TRACE(static_cast<int>(inside));
+        g_inside_method = inside;
+        for (const ColorMethod outside : {ColorMethod::COLOR, ColorMethod::ITER, ColorMethod::REAL})
+        {
+            SCOPED_TRACE(static_cast<int>(outside));
+            g_outside_method = outside;
+            compare_pixel({0.5, 0.5}, 128);
+            EXPECT_EQ(31, g_color);
+            compare_pixel({0.125, 0.0625}, 128);
+            EXPECT_EQ(inside == ColorMethod::COLOR ? 37 : 41, g_color);
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, potentialUsesTableAndCalculatedMapsWithFixedColors)
+{
+    g_potential = {{23.0, 10.0, 4.0}, false, true};
+    g_inside_method = ColorMethod::COLOR;
+    g_inside_color = 11;
+    g_outside_method = ColorMethod::COLOR;
+    g_colors = 16;
+    g_and_color = 15;
+    g_log_map_flag = -1;
+    g_log_map_table_max_size = 128;
+    g_max_iterations = 128;
+    for (const bool calculate : {false, true})
+    {
+        SCOPED_TRACE(calculate);
+        g_log_map_calculate = calculate;
+        g_log_map_fly_calculate = calculate ? LogMapCalculate::ON_THE_FLY : LogMapCalculate::USE_LOG_TABLE;
+        g_log_map_table.assign(calculate ? 0 : 129, 0);
+        setup_log_table();
+        compare_pixel({0.125, 0.0625}, 128);
+        EXPECT_EQ(log_table_calc(g_inside_color), g_color);
+        EXPECT_NE(g_inside_color, g_color);
+    }
+}
+
+TEST_P(TestPerturbationIterations, potentialStoresRawSamplesSeparatelyFromMappedPixels)
+{
+    init_memory();
+    std::uint64_t blocks{};
+    ASSERT_TRUE(disk_video_memory_blocks(WIDTH, HEIGHT * 2, 256, 0, blocks));
+    start_disk_storage(WIDTH, HEIGHT * 2, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, blocks, MemoryLocation::MEMORY));
+    ValueSaver saved_row{g_row};
+    g_potential = {{23.0, 10.0, 4.0}, true, true};
+    g_outside_method = ColorMethod::COLOR;
+    g_outside_color = 6;
+    g_decomp[0] = 16;
+    g_biomorph = 9;
+    g_log_map_table_max_size = 128;
+    for (const bool mapped : {false, true})
+    {
+        SCOPED_TRACE(mapped);
+        g_log_map_flag = mapped ? 1 : 0;
+        if (!mapped)
+        {
+            g_log_map_table.clear();
+        }
+        else
+        {
+            g_log_map_table.assign(129, 99);
+            g_log_map_table[20] = 31;
+            g_log_map_table[7] = 37;
+            g_log_map_table[2] = 12;
+        }
+        for (const bool retry : {false, true})
+        {
+            SCOPED_TRACE(retry);
+            m_engine.set_glitch_tolerance(retry ? 8.0 : DEFAULT_PERTURBATION_TOLERANCE);
+            for (const int row : {0, HEIGHT - 1})
+            {
+                SCOPED_TRACE(row);
+                g_row = row;
+                g_inside_method = ColorMethod::COLOR;
+                compare_pixel({0.5, 0.5}, 128, retry ? 0.125 : 0.0);
+                EXPECT_EQ(mapped ? 31 : 20, g_color);
+                EXPECT_EQ(20, read_disk_pixel(g_col, g_row));
+                EXPECT_GT(read_disk_pixel(g_col, g_row + HEIGHT), 0);
+                EXPECT_LT(read_disk_pixel(g_col, g_row + HEIGHT), 255);
+                if (retry)
+                {
+                    EXPECT_GT(m_engine.reference_count(), 1);
+                }
+                compare_pixel({0.125, 0.0625}, 128);
+                EXPECT_EQ(mapped ? 37 : 7, g_color);
+                EXPECT_EQ(7, read_disk_pixel(g_col, g_row));
+                EXPECT_EQ(0, read_disk_pixel(g_col, g_row + HEIGHT));
+                g_inside_method = ColorMethod::EPS_CROSS;
+                compare_pixel({}, 128, 0.0, 1);
+                EXPECT_EQ(mapped ? 12 : 2, g_color);
+                EXPECT_EQ(255, read_disk_pixel(g_col, g_row));
+                EXPECT_EQ(255, read_disk_pixel(g_col, g_row + HEIGHT));
+            }
         }
     }
 }
