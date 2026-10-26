@@ -48,8 +48,8 @@ namespace
 {
 
 constexpr int PERTURBATION_RETRY{-3};
-constexpr long STAR_TRAIL_ITERATIONS{16};
 constexpr std::size_t REFERENCE_CHUNK_SIZE{2048};
+constexpr std::size_t PIXEL_CHUNK_SIZE{2048};
 
 std::complex<double> star_trail_point(const std::complex<double> &z)
 {
@@ -243,6 +243,7 @@ int PertEngine::calculate_pixel(const Point &pt, const bool incremental)
 {
     const ValueSaver saved_iterations{
         g_max_iterations, g_inside_method == ColorMethod::STAR_TRAIL ? STAR_TRAIL_ITERATIONS : g_max_iterations};
+    std::size_t remaining{PIXEL_CHUNK_SIZE};
     for (;;)
     {
         if (!m_reference_ready && !initialize_pixel_strategy())
@@ -253,7 +254,26 @@ int PertEngine::calculate_pixel(const Point &pt, const bool incremental)
             }
             continue;
         }
-        const int color{calculate_point(pt)};
+        int color;
+        try
+        {
+            color = calculate_point(pt, remaining);
+        }
+        catch (...)
+        {
+            run_cleanup(std::current_exception(), [this] { clear_point(); });
+            throw;
+        }
+        if (color == CALC_YIELDED)
+        {
+            if (incremental)
+            {
+                return color;
+            }
+            remaining = PIXEL_CHUNK_SIZE;
+            continue;
+        }
+        clear_point();
         if (color != PERTURBATION_RETRY)
         {
             return color;
@@ -311,6 +331,7 @@ void PertEngine::cleanup()
         m_center_stack_saved = false;
     }
     m_reference = {};
+    m_pixel = {};
     m_reference_count = 0;
     m_cycle_len = -1;
     m_distance_estimator = {};
@@ -517,20 +538,30 @@ bool PertEngine::iterate_reference()
     return m_reference_ready;
 }
 
-int PertEngine::calculate_point(const Point &pt)
+void PertEngine::clear_point()
 {
+    if (m_pixel.active)
+    {
+        restore_stack(m_pixel.stack);
+    }
+    m_pixel = {};
+}
+
+void PertEngine::begin_point(const Point &pt)
+{
+    m_pixel.stack = save_stack();
+    m_pixel.active = true;
     m_cycle_len = -1;
     m_distance_estimator = g_distance_estimator ? standard_distance_estimator() : DistanceEstimator{};
     if (g_distance_estimator)
     {
         g_magnitude_limit = m_distance_estimator.bailout();
     }
-    const bool star_trail{g_inside_method == ColorMethod::STAR_TRAIL};
-    std::array<double, STAR_TRAIL_ITERATIONS> tan_table{};
-    const bool high_precision{g_bf_math != BFMathType::NONE};
-    const bool check_periodicity{
-        g_periodicity_check != 0 && g_inside_method != ColorMethod::ZMAG && g_inside_method != ColorMethod::STAR_TRAIL};
-    if (!check_periodicity)
+    m_pixel.star_trail = g_inside_method == ColorMethod::STAR_TRAIL;
+    m_pixel.high_precision = g_bf_math != BFMathType::NONE;
+    m_pixel.check_periodicity =
+        g_periodicity_check != 0 && g_inside_method != ColorMethod::ZMAG && g_inside_method != ColorMethod::STAR_TRAIL;
+    if (!m_pixel.check_periodicity)
     {
         g_old_color_iter = 2147483647L;
     }
@@ -543,284 +574,368 @@ int PertEngine::calculate_point(const Point &pt)
         g_old_color_iter = 255;
     }
     g_old_color_iter = std::max(g_old_color_iter, g_first_saved_and);
-    long saved_and{g_inside_method == ColorMethod::PERIOD ? 16 : g_first_saved_and};
-    int saved_incr{1};
-    long saved_iteration{};
-    std::size_t saved_sample{};
-    bool have_saved_sample{};
-    std::complex<double> saved_z;
-    if (!high_precision && g_use_init_orbit == InitOrbitMode::VALUE)
+    m_pixel.saved_and = g_inside_method == ColorMethod::PERIOD ? 16 : g_first_saved_and;
+    if (!m_pixel.high_precision && g_use_init_orbit == InitOrbitMode::VALUE)
     {
-        saved_z = {g_init_orbit.x, g_init_orbit.y};
+        m_pixel.saved_z = {g_init_orbit.x, g_init_orbit.y};
     }
-    double saved_error{};
     const ReferencePoint &reference{m_reference};
-    const std::complex<double> pixel_position{static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())};
-    const std::complex<double> parameter_displacement{parameter_delta(pixel_position)};
-    const bool bof{bof_initialization()};
-    std::complex<double> orbit_displacement{
-        bof || g_use_init_orbit == InitOrbitMode::VALUE ? std::complex<double>{} : parameter_displacement};
-    const bool at_reference{pixel_position == reference.pixel_position};
-    long iteration{bof ? -1L : 0L};
-    BigStackSaver saved;
-    BFComplex precise_coordinate{};
-    BFComplex precise_orbit{};
-    std::size_t precise_sample{};
-    std::complex<double> precise_previous;
-    BFComplex precise_saved{};
-    BigFloat precise_tolerance{};
-    bool saved_is_precise{};
-    const auto advance_precise_orbit = [&](const std::size_t target)
+    m_pixel.position = {static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())};
+    m_pixel.parameter_displacement = parameter_delta(m_pixel.position);
+    m_pixel.bof = bof_initialization();
+    m_pixel.orbit_displacement = m_pixel.bof || g_use_init_orbit == InitOrbitMode::VALUE
+        ? std::complex<double>{}
+        : m_pixel.parameter_displacement;
+    m_pixel.at_reference = m_pixel.position == reference.pixel_position;
+    m_pixel.iteration = m_pixel.bof ? -1L : 0L;
+    m_pixel.remember_fmod = g_inside_method == ColorMethod::FMODI || g_outside_method == ColorMethod::FMOD;
+    m_pixel.w = m_reference.orbit.front() + m_pixel.orbit_displacement;
+    m_pixel.old = m_pixel.w;
+    m_pixel.magnitude = mag_squared(m_pixel.w);
+}
+
+bool PertEngine::advance_precise_orbit(const std::size_t target, std::size_t &remaining)
+{
+    if (m_pixel.precise_orbit.x == nullptr)
     {
-        if (precise_orbit.x == nullptr)
-        {
-            precise_coordinate = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-            precise_orbit = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-            coordinate_bf(precise_coordinate, pixel_position);
-            initialize_orbit_bf(precise_orbit, precise_coordinate);
-        }
-        if (target < precise_sample)
-        {
-            initialize_orbit_bf(precise_orbit, precise_coordinate);
-            precise_sample = 0;
-        }
-        for (; precise_sample < target; ++precise_sample)
-        {
-            if (star_trail && precise_sample > 0)
-            {
-                clamp_star_trail_point(precise_orbit);
-            }
-            precise_previous = {
-                static_cast<double>(bf_to_float(precise_orbit.x)), static_cast<double>(bf_to_float(precise_orbit.y))};
-            g_cur_fractal_specific->pert_ref_bf(precise_coordinate, precise_orbit);
-        }
-    };
-    const auto save_precise_value = [&]
+        m_pixel.precise_coordinate = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        m_pixel.precise_orbit = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        coordinate_bf(m_pixel.precise_coordinate, m_pixel.position);
+        initialize_orbit_bf(m_pixel.precise_orbit, m_pixel.precise_coordinate);
+    }
+    if (target < m_pixel.precise_sample)
     {
-        if (precise_saved.x == nullptr)
+        initialize_orbit_bf(m_pixel.precise_orbit, m_pixel.precise_coordinate);
+        m_pixel.precise_sample = 0;
+    }
+    for (; m_pixel.precise_sample < target; ++m_pixel.precise_sample)
+    {
+        if (remaining == 0)
         {
-            precise_saved = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-            precise_tolerance = alloc_stack(g_r_bf_length + 2);
-            if (g_bf_math == BFMathType::BIG_NUM)
-            {
-                bn_to_bf(precise_tolerance, g_close_enough_bn);
-            }
-            else
-            {
-                copy_bf(precise_tolerance, g_close_enough_bf);
-            }
+            return false;
         }
-        if (have_saved_sample)
+        --remaining;
+        if (m_pixel.star_trail && m_pixel.precise_sample > 0)
         {
-            advance_precise_orbit(saved_sample);
-            copy_bf(precise_saved.x, precise_orbit.x);
-            copy_bf(precise_saved.y, precise_orbit.y);
+            clamp_star_trail_point(m_pixel.precise_orbit);
+        }
+        m_pixel.precise_previous = {static_cast<double>(bf_to_float(m_pixel.precise_orbit.x)),
+            static_cast<double>(bf_to_float(m_pixel.precise_orbit.y))};
+        g_cur_fractal_specific->pert_ref_bf(m_pixel.precise_coordinate, m_pixel.precise_orbit);
+    }
+    return true;
+}
+
+bool PertEngine::save_precise_value(std::size_t &remaining)
+{
+    if (m_pixel.precise_saved.x == nullptr)
+    {
+        m_pixel.precise_saved = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        m_pixel.precise_tolerance = alloc_stack(g_r_bf_length + 2);
+        if (g_bf_math == BFMathType::BIG_NUM)
+        {
+            bn_to_bf(m_pixel.precise_tolerance, g_close_enough_bn);
         }
         else
         {
-            clear_bf(precise_saved.x);
-            clear_bf(precise_saved.y);
+            copy_bf(m_pixel.precise_tolerance, g_close_enough_bf);
         }
-        saved_is_precise = true;
-    };
-
-    double min_orbit{1e5}; // orbit value closest to origin
-    long min_index{};      // iteration of min_orbit
-    double mem_value{};
-    double total_distance{};
-    int epsilon_axis{};
-    const bool remember_fmod{g_inside_method == ColorMethod::FMODI || g_outside_method == ColorMethod::FMOD};
-    std::complex<double> w{reference.orbit.front() + orbit_displacement};
-    std::complex<double> old{w};
-    double magnitude{mag_squared(w)};
-    while (++iteration < g_max_iterations)
+    }
+    if (m_pixel.have_saved_sample)
     {
-        if (g_cur_fractal_specific->pert_pt == nullptr)
+        if (!advance_precise_orbit(m_pixel.saved_sample, remaining))
         {
-            throw std::runtime_error("No perturbation point function defined for fractal type (" +
-                std::string{g_cur_fractal_specific->name} + ")");
+            return false;
         }
-        const std::size_t sample{static_cast<std::size_t>(iteration + (bof ? 1 : 0))};
-        old = w;
-        if (g_distance_estimator && !m_distance_estimator.advance({old.real(), old.imag()}))
-        {
-            break;
-        }
-        const std::complex<double> reference_z{
-            star_trail && sample > 1 ? star_trail_point(reference.orbit[sample - 1]) : reference.orbit[sample - 1]};
-        g_cur_fractal_specific->pert_pt(reference_z, orbit_displacement, parameter_displacement);
-        w = reference.orbit[sample] + orbit_displacement;
-        magnitude = mag_squared(w);
+        copy_bf(m_pixel.precise_saved.x, m_pixel.precise_orbit.x);
+        copy_bf(m_pixel.precise_saved.y, m_pixel.precise_orbit.y);
+    }
+    else
+    {
+        clear_bf(m_pixel.precise_saved.x);
+        clear_bf(m_pixel.precise_saved.y);
+    }
+    m_pixel.saved_is_precise = true;
+    return true;
+}
 
-        // At the reference pixel, zero delta uses the reference orbit directly.
-        if (!at_reference && (!std::isfinite(magnitude) || magnitude < reference.tolerance[sample]))
+int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
+{
+    if (!m_pixel.active)
+    {
+        begin_point(pt);
+    }
+    else if (m_pixel.position != std::complex<double>{static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())})
+    {
+        throw std::logic_error("Cannot change pixels during an incomplete perturbation calculation");
+    }
+    const ReferencePoint &reference{m_reference};
+    for (;;)
+    {
+        switch (m_pixel.phase)
         {
-            return PERTURBATION_RETRY;
-        }
-        bool escaped{bailout_reached(g_bailout_test, w.real(), w.imag(), g_magnitude_limit)};
-        if (g_bf_math != BFMathType::NONE && ambiguous_bailout(reference.orbit[sample], orbit_displacement))
+        case PixelState::Phase::ORBIT:
         {
-            // Retain only the current high-precision value, not another orbit history.
-            advance_precise_orbit(sample);
-            old = precise_previous;
-            w = {static_cast<double>(bf_to_float(precise_orbit.x)), static_cast<double>(bf_to_float(precise_orbit.y))};
-            magnitude = mag_squared(w);
-            escaped = precise_bailout_reached(precise_orbit);
-        }
-        if (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61)
-        {
-            if (magnitude < min_orbit)
+            if (m_pixel.iteration + 1 >= g_max_iterations)
             {
-                min_orbit = magnitude;
-                min_index = iteration + 1L;
+                ++m_pixel.iteration;
+                m_pixel.phase = PixelState::Phase::COMPLETE;
+                continue;
             }
+            if (remaining == 0)
+            {
+                return CALC_YIELDED;
+            }
+            --remaining;
+            ++m_pixel.iteration;
+            if (g_cur_fractal_specific->pert_pt == nullptr)
+            {
+                throw std::runtime_error("No perturbation point function defined for fractal type (" +
+                    std::string{g_cur_fractal_specific->name} + ")");
+            }
+            m_pixel.sample = static_cast<std::size_t>(m_pixel.iteration + (m_pixel.bof ? 1 : 0));
+            m_pixel.old = m_pixel.w;
+            if (g_distance_estimator && !m_distance_estimator.advance({m_pixel.old.real(), m_pixel.old.imag()}))
+            {
+                m_pixel.phase = PixelState::Phase::COMPLETE;
+                continue;
+            }
+            const std::complex<double> reference_z{m_pixel.star_trail && m_pixel.sample > 1
+                    ? star_trail_point(reference.orbit[m_pixel.sample - 1])
+                    : reference.orbit[m_pixel.sample - 1]};
+            g_cur_fractal_specific->pert_pt(reference_z, m_pixel.orbit_displacement, m_pixel.parameter_displacement);
+            m_pixel.w = reference.orbit[m_pixel.sample] + m_pixel.orbit_displacement;
+            m_pixel.magnitude = mag_squared(m_pixel.w);
+
+            // At the reference pixel, zero delta uses the reference orbit directly.
+            if (!m_pixel.at_reference &&
+                (!std::isfinite(m_pixel.magnitude) || m_pixel.magnitude < reference.tolerance[m_pixel.sample]))
+            {
+                return PERTURBATION_RETRY;
+            }
+            m_pixel.phase = PixelState::Phase::BAILOUT;
         }
-        if (escaped && (g_distance_estimator || !star_trail))
+            [[fallthrough]];
+
+        case PixelState::Phase::BAILOUT:
         {
-            if (!g_distance_estimator)
+            bool escaped{bailout_reached(g_bailout_test, m_pixel.w.real(), m_pixel.w.imag(), g_magnitude_limit)};
+            if (g_bf_math != BFMathType::NONE &&
+                ambiguous_bailout(reference.orbit[m_pixel.sample], m_pixel.orbit_displacement))
+            {
+                // Retain only the current high-precision value, not another orbit history.
+                if (!advance_precise_orbit(m_pixel.sample, remaining))
+                {
+                    return CALC_YIELDED;
+                }
+                m_pixel.old = m_pixel.precise_previous;
+                m_pixel.w = {static_cast<double>(bf_to_float(m_pixel.precise_orbit.x)),
+                    static_cast<double>(bf_to_float(m_pixel.precise_orbit.y))};
+                m_pixel.magnitude = mag_squared(m_pixel.w);
+                escaped = precise_bailout_reached(m_pixel.precise_orbit);
+            }
+            if (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61)
+            {
+                if (m_pixel.magnitude < m_pixel.min_orbit)
+                {
+                    m_pixel.min_orbit = m_pixel.magnitude;
+                    m_pixel.min_index = m_pixel.iteration + 1L;
+                }
+            }
+            if (escaped && (g_distance_estimator || !m_pixel.star_trail))
+            {
+                if (!g_distance_estimator)
+                {
+                    m_pixel.phase = PixelState::Phase::COMPLETE;
+                    continue;
+                }
+                const bool complete{m_distance_estimator.escaped(
+                    {m_pixel.w.real(), m_pixel.w.imag()}, m_pixel.iteration, m_pixel.magnitude)};
+                g_magnitude_limit = m_distance_estimator.bailout();
+                if (complete)
+                {
+                    m_pixel.phase = PixelState::Phase::COMPLETE;
+                    continue;
+                }
+            }
+            if (m_pixel.star_trail)
+            {
+                const std::complex<double> bounded{star_trail_point(m_pixel.w)};
+                const std::complex<double> bounded_reference{star_trail_point(reference.orbit[m_pixel.sample])};
+                if (bounded != m_pixel.w || bounded_reference != reference.orbit[m_pixel.sample])
+                {
+                    m_pixel.orbit_displacement = bounded - bounded_reference;
+                }
+                m_pixel.w = bounded;
+                m_pixel.magnitude = mag_squared(m_pixel.w);
+                const int color{static_cast<int>((m_pixel.iteration - 1) % g_and_color + 1)};
+                m_pixel.tan_table[color - 1] = m_pixel.w.imag() / (m_pixel.w.real() + 0.000001);
+            }
+            if (g_inside_method == ColorMethod::EPS_CROSS)
+            {
+                if (std::abs(m_pixel.w.real()) < std::abs(g_close_proximity))
+                {
+                    m_pixel.epsilon_axis = 1;
+                }
+                else if (std::abs(m_pixel.w.imag()) < std::abs(g_close_proximity))
+                {
+                    m_pixel.epsilon_axis = 2;
+                }
+                if (m_pixel.epsilon_axis != 0)
+                {
+                    m_pixel.old = m_pixel.w;
+                    m_pixel.phase = PixelState::Phase::COMPLETE;
+                    continue;
+                }
+            }
+            if (m_pixel.remember_fmod)
+            {
+                if (const double mag = fmod_magnitude({m_pixel.w.real(), m_pixel.w.imag()}, m_pixel.magnitude);
+                    mag < g_close_proximity)
+                {
+                    m_pixel.mem_value = mag;
+                }
+            }
+            if (g_outside_method == ColorMethod::TDIS)
+            {
+                m_pixel.total_distance +=
+                    std::sqrt(sqr(m_pixel.old.real() - m_pixel.w.real()) + sqr(m_pixel.old.imag() - m_pixel.w.imag()));
+            }
+            m_pixel.old = m_pixel.w;
+            m_pixel.phase = PixelState::Phase::PERIODICITY;
+        }
+            [[fallthrough]];
+
+        case PixelState::Phase::PERIODICITY:
+        {
+            m_pixel.phase = PixelState::Phase::ORBIT;
+            if (!m_pixel.check_periodicity || m_pixel.iteration <= g_old_color_iter)
             {
                 break;
             }
-            const bool complete{m_distance_estimator.escaped({w.real(), w.imag()}, iteration, magnitude)};
-            g_magnitude_limit = m_distance_estimator.bailout();
-            if (complete)
-            {
-                break;
-            }
-        }
-        if (star_trail)
-        {
-            const std::complex<double> bounded{star_trail_point(w)};
-            const std::complex<double> bounded_reference{star_trail_point(reference.orbit[sample])};
-            if (bounded != w || bounded_reference != reference.orbit[sample])
-            {
-                orbit_displacement = bounded - bounded_reference;
-            }
-            w = bounded;
-            magnitude = mag_squared(w);
-            const int color{static_cast<int>((iteration - 1) % g_and_color + 1)};
-            tan_table[color - 1] = w.imag() / (w.real() + 0.000001);
-        }
-        if (g_inside_method == ColorMethod::EPS_CROSS)
-        {
-            if (std::abs(w.real()) < std::abs(g_close_proximity))
-            {
-                epsilon_axis = 1;
-            }
-            else if (std::abs(w.imag()) < std::abs(g_close_proximity))
-            {
-                epsilon_axis = 2;
-            }
-            if (epsilon_axis != 0)
-            {
-                old = w;
-                break;
-            }
-        }
-        if (remember_fmod)
-        {
-            if (const double mag = fmod_magnitude({w.real(), w.imag()}, magnitude); mag < g_close_proximity)
-            {
-                mem_value = mag;
-            }
-        }
-        if (g_outside_method == ColorMethod::TDIS)
-        {
-            total_distance += std::sqrt(sqr(old.real() - w.real()) + sqr(old.imag() - w.imag()));
-        }
-        old = w;
-        if (check_periodicity && iteration > g_old_color_iter)
-        {
             double error{};
-            if (high_precision)
+            if (m_pixel.high_precision)
             {
                 error = 4.0 * reference_conversion_error() *
-                    (std::abs(reference.orbit[sample].real()) + std::abs(reference.orbit[sample].imag()) +
-                        std::abs(orbit_displacement.real()) + std::abs(orbit_displacement.imag()));
+                    (std::abs(reference.orbit[m_pixel.sample].real()) +
+                        std::abs(reference.orbit[m_pixel.sample].imag()) + std::abs(m_pixel.orbit_displacement.real()) +
+                        std::abs(m_pixel.orbit_displacement.imag()));
             }
-            if ((iteration & saved_and) == 0)
+            if ((m_pixel.iteration & m_pixel.saved_and) == 0)
             {
-                saved_iteration = iteration;
-                saved_sample = sample;
-                have_saved_sample = true;
-                saved_z = w;
-                saved_error = error;
-                saved_is_precise = false;
-                if (precise_orbit.x != nullptr)
+                m_pixel.saved_iteration = m_pixel.iteration;
+                m_pixel.saved_sample = m_pixel.sample;
+                m_pixel.have_saved_sample = true;
+                m_pixel.saved_z = m_pixel.w;
+                m_pixel.saved_error = error;
+                m_pixel.saved_is_precise = false;
+                if (m_pixel.precise_orbit.x != nullptr)
                 {
-                    save_precise_value();
+                    m_pixel.phase = PixelState::Phase::SAVE_PERIODICITY;
                 }
-                if (--saved_incr == 0)
+                if (--m_pixel.saved_incr == 0)
                 {
-                    saved_and = (saved_and << 1) + 1;
-                    saved_incr = g_periodicity_next_saved_incr;
+                    m_pixel.saved_and = (m_pixel.saved_and << 1) + 1;
+                    m_pixel.saved_incr = g_periodicity_next_saved_incr;
                 }
             }
             else
             {
-                const double difference_x{std::abs(saved_z.real() - w.real())};
-                const double difference_y{std::abs(saved_z.imag() - w.imag())};
+                const double difference_x{std::abs(m_pixel.saved_z.real() - m_pixel.w.real())};
+                const double difference_y{std::abs(m_pixel.saved_z.imag() - m_pixel.w.imag())};
                 bool caught{difference_x < g_close_enough && difference_y < g_close_enough};
-                if (high_precision)
+                if (m_pixel.high_precision)
                 {
                     const double tolerance{
                         static_cast<double>(g_bf_math == BFMathType::BIG_NUM ? bn_to_float(g_close_enough_bn)
                                                                              : bf_to_float(g_close_enough_bf))};
-                    const double candidate_tolerance{tolerance + saved_error + error};
+                    const double candidate_tolerance{tolerance + m_pixel.saved_error + error};
                     caught = difference_x <= candidate_tolerance && difference_y <= candidate_tolerance;
                     if (caught)
                     {
-                        if (!saved_is_precise)
-                        {
-                            save_precise_value();
-                        }
-                        advance_precise_orbit(sample);
-                        caught = cmp_bf(abs_a_bf(sub_bf(m_tmp_bf, precise_saved.x, precise_orbit.x)),
-                                     precise_tolerance) < 0 &&
-                            cmp_bf(abs_a_bf(sub_bf(m_tmp_bf, precise_saved.y, precise_orbit.y)), precise_tolerance) < 0;
+                        m_pixel.phase = PixelState::Phase::CHECK_PERIODICITY;
+                        break;
                     }
                 }
                 if (caught)
                 {
-                    m_cycle_len = iteration - saved_iteration;
-                    iteration = g_max_iterations;
-                    break;
+                    m_cycle_len = m_pixel.iteration - m_pixel.saved_iteration;
+                    m_pixel.iteration = g_max_iterations;
+                    m_pixel.phase = PixelState::Phase::COMPLETE;
                 }
             }
+            break;
+        }
+
+        case PixelState::Phase::SAVE_PERIODICITY:
+            if (!save_precise_value(remaining))
+            {
+                return CALC_YIELDED;
+            }
+            m_pixel.phase = PixelState::Phase::ORBIT;
+            break;
+
+        case PixelState::Phase::CHECK_PERIODICITY:
+            if ((!m_pixel.saved_is_precise && !save_precise_value(remaining)) ||
+                !advance_precise_orbit(m_pixel.sample, remaining))
+            {
+                return CALC_YIELDED;
+            }
+            if (cmp_bf(abs_a_bf(sub_bf(m_tmp_bf, m_pixel.precise_saved.x, m_pixel.precise_orbit.x)),
+                    m_pixel.precise_tolerance) < 0 &&
+                cmp_bf(abs_a_bf(sub_bf(m_tmp_bf, m_pixel.precise_saved.y, m_pixel.precise_orbit.y)),
+                    m_pixel.precise_tolerance) < 0)
+            {
+                m_cycle_len = m_pixel.iteration - m_pixel.saved_iteration;
+                m_pixel.iteration = g_max_iterations;
+                m_pixel.phase = PixelState::Phase::COMPLETE;
+            }
+            else
+            {
+                m_pixel.phase = PixelState::Phase::ORBIT;
+            }
+            break;
+
+        case PixelState::Phase::COMPLETE:
+            return finish_point(pt);
         }
     }
+}
 
-    if (epsilon_axis == 0)
+int PertEngine::finish_point(const Point &pt)
+{
+    if (m_pixel.epsilon_axis == 0)
     {
-        g_old_color_iter = iteration >= g_max_iterations ? 0 : iteration + 10;
+        g_old_color_iter = m_pixel.iteration >= g_max_iterations ? 0 : m_pixel.iteration + 10;
     }
-    g_color_iter = iteration;
-    g_real_color_iter = iteration;
-    g_old_z = {old.real(), old.imag()};
-    g_new_z = {w.real(), w.imag()};
+    g_color_iter = m_pixel.iteration;
+    g_real_color_iter = m_pixel.iteration;
+    g_old_z = {m_pixel.old.real(), m_pixel.old.imag()};
+    g_new_z = {m_pixel.w.real(), m_pixel.w.imag()};
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
-    g_magnitude = magnitude;
+    g_magnitude = m_pixel.magnitude;
 
     // BOF's first update is iteration zero, but escape colors start at one.
-    if (iteration == 0)
+    if (m_pixel.iteration == 0)
     {
-        iteration = 1;
+        m_pixel.iteration = 1;
     }
     long index;
 
     const bool highlight_cycle{g_periodicity_check < 0 && m_cycle_len > 0};
-    const bool use_distance{
-        g_distance_estimator != 0 && !g_potential.flag && epsilon_axis == 0 && iteration < g_max_iterations};
+    const bool use_distance{g_distance_estimator != 0 && !g_potential.flag && m_pixel.epsilon_axis == 0 &&
+        m_pixel.iteration < g_max_iterations};
     const double distance{use_distance ? m_distance_estimator.distance_squared(g_new_z) : 0};
     const bool boundary{use_distance && m_distance_estimator.on_boundary(distance)};
     const bool direct_distance_color{
         use_distance && (boundary ? g_distance_estimator < 0 : g_colors == 2 || g_distance_estimator > 1)};
-    const bool inside{iteration == g_max_iterations || epsilon_axis != 0 || (boundary && g_distance_estimator > 0)};
+    const bool inside{
+        m_pixel.iteration == g_max_iterations || m_pixel.epsilon_axis != 0 || (boundary && g_distance_estimator > 0)};
     const bool regular_escape_color{!g_potential.flag && !inside && !direct_distance_color};
-    if (g_potential.flag && epsilon_axis == 0)
+    if (g_potential.flag && m_pixel.epsilon_axis == 0)
     {
-        index = potential(mag_squared(w), iteration);
+        index = potential(mag_squared(m_pixel.w), m_pixel.iteration);
     }
     else if (direct_distance_color)
     {
@@ -839,7 +954,7 @@ int PertEngine::calculate_point(const Point &pt)
     }
     else if (regular_escape_color)
     {
-        index = iteration;
+        index = m_pixel.iteration;
         if (use_distance && g_use_old_distance_estimator)
         {
             index = m_distance_estimator.escape_iteration();
@@ -849,21 +964,21 @@ int PertEngine::calculate_point(const Point &pt)
         {
             if (g_outside_method == ColorMethod::FMOD)
             {
-                index = fmod_color(mem_value);
+                index = fmod_color(m_pixel.mem_value);
             }
             else if (g_outside_method == ColorMethod::TDIS)
             {
-                index = static_cast<long>(total_distance);
+                index = static_cast<long>(m_pixel.total_distance);
             }
             index = standard_outside_color(index, g_new_z);
         }
         index = standard_escape_color(index, g_new_z, false);
     }
-    else if (epsilon_axis != 0)
+    else if (m_pixel.epsilon_axis != 0)
     {
         constexpr int GREEN{2};
         constexpr int YELLOW{6};
-        index = g_close_proximity > 0 ? epsilon_axis == 1 ? GREEN : YELLOW : iteration;
+        index = g_close_proximity > 0 ? m_pixel.epsilon_axis == 1 ? GREEN : YELLOW : m_pixel.iteration;
     }
     else if (inside && (highlight_cycle || g_inside_method == ColorMethod::PERIOD))
     {
@@ -876,12 +991,12 @@ int PertEngine::calculate_point(const Point &pt)
             index = m_cycle_len > 0 ? m_cycle_len : g_max_iterations;
         }
     }
-    else if (star_trail)
+    else if (m_pixel.star_trail)
     {
         index = 0;
         for (int i = 1; i < STAR_TRAIL_ITERATIONS; ++i)
         {
-            if (std::abs(tan_table[0] - tan_table[i]) < 0.05)
+            if (std::abs(m_pixel.tan_table[0] - m_pixel.tan_table[i]) < 0.05)
             {
                 index = i;
                 break;
@@ -900,21 +1015,22 @@ int PertEngine::calculate_point(const Point &pt)
             switch (g_inside_method)
             {
             case ColorMethod::ZMAG:
-                index = static_cast<long>(mag_squared(w) * (g_max_iterations >> 1) + 1);
+                index = static_cast<long>(mag_squared(m_pixel.w) * (g_max_iterations >> 1) + 1);
                 break;
             case ColorMethod::BOF60:
-                index = static_cast<long>(std::sqrt(min_orbit) * 75.0);
+                index = static_cast<long>(std::sqrt(m_pixel.min_orbit) * 75.0);
                 break;
             case ColorMethod::BOF61:
-                index = min_index;
+                index = m_pixel.min_index;
                 break;
 
             case ColorMethod::FMODI:
-                index = fmod_color(mem_value);
+                index = fmod_color(m_pixel.mem_value);
                 break;
 
             case ColorMethod::ATANI:
-                index = static_cast<long>(std::abs(std::atan2(w.imag(), w.real()) * g_atan_colors / PI));
+                index =
+                    static_cast<long>(std::abs(std::atan2(m_pixel.w.imag(), m_pixel.w.real()) * g_atan_colors / PI));
                 break;
 
             default:

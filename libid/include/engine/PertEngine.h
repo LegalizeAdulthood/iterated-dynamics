@@ -8,6 +8,7 @@
 #include "engine/UserData.h"
 #include "math/big.h"
 
+#include <array>
 #include <complex>
 #include <cstddef>
 #include <vector>
@@ -40,6 +41,8 @@ public:
     void finish();
 
 private:
+    static constexpr long STAR_TRAIL_ITERATIONS{16};
+
     struct ReferencePoint
     {
         std::complex<double> pixel_position;
@@ -47,6 +50,57 @@ private:
         std::complex<double> coordinate;
         std::vector<std::complex<double>> orbit;
         std::vector<double> tolerance;
+    };
+
+    struct PixelState
+    {
+        enum class Phase
+        {
+            ORBIT,
+            BAILOUT,
+            PERIODICITY,
+            SAVE_PERIODICITY,
+            CHECK_PERIODICITY,
+            COMPLETE
+        };
+
+        Phase phase{Phase::ORBIT};
+        std::complex<double> position{};
+        std::complex<double> parameter_displacement{};
+        std::complex<double> orbit_displacement{};
+        std::complex<double> w{};
+        std::complex<double> old{};
+        std::complex<double> saved_z{};
+        std::complex<double> precise_previous{};
+        std::array<double, STAR_TRAIL_ITERATIONS> tan_table{};
+        math::BFComplex precise_coordinate{};
+        math::BFComplex precise_orbit{};
+        math::BFComplex precise_saved{};
+        math::BigFloat precise_tolerance{};
+        std::size_t sample{};
+        std::size_t saved_sample{};
+        std::size_t precise_sample{};
+        long iteration{};
+        long saved_and{};
+        long saved_iteration{};
+        long min_index{};
+        double saved_error{};
+        double min_orbit{1e5};
+        double mem_value{};
+        double total_distance{};
+        double magnitude{};
+        int saved_incr{1};
+        int epsilon_axis{};
+        int stack{};
+        bool active{};
+        bool star_trail{};
+        bool high_precision{};
+        bool check_periodicity{};
+        bool have_saved_sample{};
+        bool saved_is_precise{};
+        bool bof{};
+        bool at_reference{};
+        bool remember_fmod{};
     };
 
     void cleanup();
@@ -60,11 +114,17 @@ private:
     void inverted_coordinate(math::BFComplex coordinate, const std::complex<double> &pixel_position) const;
     void coordinate_bf(math::BFComplex coordinate, const std::complex<double> &pixel_position) const;
     void reset_for_frame(const std::complex<double> &half_horizontal, const std::complex<double> &half_vertical);
-    int calculate_point(const Point &pt);
+    void begin_point(const Point &pt);
+    void clear_point();
+    int calculate_point(const Point &pt, std::size_t &remaining);
+    int finish_point(const Point &pt);
+    bool advance_precise_orbit(std::size_t target, std::size_t &remaining);
+    bool save_precise_value(std::size_t &remaining);
     void advance_reference_bf(std::size_t end);
     void advance_reference(std::size_t end);
 
     ReferencePoint m_reference{};
+    PixelState m_pixel{};
     DistanceEstimator m_distance_estimator{};
     int m_reference_count{};
     long m_cycle_len{-1};

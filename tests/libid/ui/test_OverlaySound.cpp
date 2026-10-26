@@ -46,6 +46,7 @@
 #include <ui/KeyboardHandler.h>
 #include <ui/id_keys.h>
 #include <ui/SoundSession.h>
+#include <ui/StandardFractalController.h>
 #include <ui/standard_orbit_plot.h>
 #include <ui/video.h>
 
@@ -548,6 +549,127 @@ TEST_F(TestOverlaySound, controllerInterruptsIncompletePerturbationReferenceAndR
     EXPECT_EQ(0, render_standard_image());
 
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(4, m_plots);
+}
+
+class TestPerturbationController : public TestOverlaySound
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<UserData> m_saved_user{g_user, UserData{}};
+    ValueSaver<BFMathType> m_saved_math{g_bf_math, BFMathType::NONE};
+    ValueSaver<DComplex> m_saved_param{g_param_z1, DComplex{}};
+    ValueSaver<double> m_saved_bailout{g_magnitude_limit, 4.0};
+};
+
+void TestPerturbationController::SetUp()
+{
+    TestOverlaySound::SetUp();
+    g_user.perturbation = PerturbationMode::YES;
+    g_user.std_calc_mode = CalcMode::ONE_PASS;
+    g_params[0] = g_params[1] = 0.0;
+    g_show_orbit = false;
+    g_max_iterations = 5000;
+    g_image_region = ImageRegion{{0.12, 0.13}, {0.13, 0.12}, {0.12, 0.12}};
+    m_specific.flags = FractalFlags::PERTURB;
+    m_specific.pert_ref = mandel_ref_pt;
+    m_specific.pert_pt =
+        [](const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter)
+    {
+        ++s_orbit_calls;
+        mandel_perturb(reference, delta, parameter);
+    };
+    g_dispatch = FractalDispatch{m_specific};
+}
+
+TEST_F(TestPerturbationController, menuInterruptsLongPixelAndResumeMatchesUninterruptedPlots)
+{
+    std::vector<int> colors;
+    EXPECT_CALL(m_driver, write_pixel(_, _, _))
+        .WillRepeatedly(
+            [this, &colors](int, int, int color)
+            {
+                ++m_plots;
+                colors.push_back(color);
+            });
+    bool requested{};
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillRepeatedly(
+            [this, &requested]
+            {
+                if (!requested && s_orbit_calls >= 2048)
+                {
+                    requested = true;
+                    m_key = 'x';
+                }
+                return m_key;
+            });
+    EXPECT_CALL(m_driver, unget_key('x'));
+    EXPECT_CALL(*m_output, mute());
+
+    EXPECT_EQ(-1, render_standard_image());
+
+    EXPECT_TRUE(requested);
+    EXPECT_EQ(2048, s_orbit_calls);
+    EXPECT_TRUE(colors.empty());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+    g_resuming = true;
+    EXPECT_EQ(0, render_standard_image());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    ASSERT_EQ(4, colors.size());
+    const std::vector<int> resumed{colors};
+    colors.clear();
+    g_resuming = false;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+
+    EXPECT_EQ(0, render_standard_image());
+
+    EXPECT_EQ(resumed, colors);
+}
+
+TEST_F(TestPerturbationController, outputBackpressureBetweenPixelChunksDoesNotAdvanceOrRepeatWork)
+{
+    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
+    StandardFractal calculation;
+    StandardFractalController controller{calculation, sound};
+    controller.start();
+    while (s_orbit_calls == 0 && !controller.done())
+    {
+        controller.iterate();
+    }
+    ASSERT_EQ(2048, s_orbit_calls);
+    ASSERT_EQ(0, m_plots);
+    m_ready = false;
+    int updates{};
+    EXPECT_CALL(m_driver, delay(1)).Times(2);
+    EXPECT_CALL(*m_output, update())
+        .WillRepeatedly(
+            [this, &updates]
+            {
+                if (!m_ready)
+                {
+                    EXPECT_EQ(2048, s_orbit_calls);
+                    EXPECT_EQ(0, m_plots);
+                    if (++updates == 3)
+                    {
+                        m_ready = true;
+                    }
+                }
+            });
+
+    controller.iterate();
+
+    EXPECT_EQ(3, updates);
+    EXPECT_EQ(4096, s_orbit_calls);
+    EXPECT_EQ(0, m_plots);
+    while (!controller.done())
+    {
+        controller.iterate();
+    }
+    EXPECT_EQ(0, controller.result());
+    EXPECT_EQ(4 * 4999, s_orbit_calls);
     EXPECT_EQ(4, m_plots);
 }
 

@@ -555,7 +555,7 @@ protected:
         long early_iterations = 0, bool incremental = false);
     void set_initial_offset(const DComplex &offset);
     void compare_distance_pixel(const std::complex<double> &center, long max_iterations, bool legacy,
-        double reference_offset = 0.0, const DistancePixelOptions &options = {});
+        double reference_offset = 0.0, const DistancePixelOptions &options = {}, bool incremental = false);
     void compare_frame_coordinates(
         double tolerance, const ImageRegion &region = ImageRegion{{-0.3, 0.1}, {0.2, 0.35}, {-0.3, 0.1}});
 
@@ -707,10 +707,12 @@ void TestPerturbationIterations::compare_pixel(const std::complex<double> &cente
     for (int step = 0; step < 1000 && color == CALC_YIELDED; ++step)
     {
         const std::size_t before{s_reference_coordinates.size()};
+        const std::size_t pixel_before{s_perturbation_orbit.size()};
         color = m_engine.calculate_pixel(g_col, g_row, incremental);
         if (incremental)
         {
             EXPECT_LE(s_reference_coordinates.size() - before, 4096);
+            EXPECT_LE(s_perturbation_orbit.size() - pixel_before, 2048);
         }
         if (color == CALC_YIELDED)
         {
@@ -811,6 +813,171 @@ TEST_P(TestPerturbationIterations, shortReferencesDoNotAddAYield)
         EXPECT_EQ(0, m_reference_yields);
         EXPECT_EQ(offset == 0.0 ? 1 : 2, m_engine.reference_count());
     }
+}
+
+TEST_P(TestPerturbationIterations, longPixelChunksRetainColoringStatisticsAndRetryOrbit)
+{
+    for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60, ColorMethod::BOF61,
+             ColorMethod::FMODI, ColorMethod::ATANI})
+    {
+        SCOPED_TRACE(static_cast<int>(inside));
+        g_inside_method = inside;
+        for (const double offset : {0.0, 0.125})
+        {
+            SCOPED_TRACE(offset);
+            m_engine.set_glitch_tolerance(offset == 0.0 ? DEFAULT_PERTURBATION_TOLERANCE : 8.0);
+            compare_pixel({0.125, 0.125}, 5000, offset);
+            const std::vector<std::complex<double>> orbit{s_perturbation_orbit};
+
+            compare_pixel({0.125, 0.125}, 5000, offset, 0, true);
+
+            EXPECT_GE(m_reference_yields, 4);
+            EXPECT_EQ(orbit, s_perturbation_orbit);
+            EXPECT_EQ(offset == 0.0 ? 1 : 2, m_engine.reference_count());
+        }
+    }
+}
+
+TEST_P(TestPerturbationIterations, incompletePixelPublishesNothingAndContinuesWithoutReplayingIterations)
+{
+    g_max_iterations = 5000;
+    m_specific.pert_pt = record_perturbation_orbit;
+    initialize_reference({0.125, 0.125});
+    while (!m_engine.initialize_pixel_strategy())
+    {
+    }
+    const int stack{save_stack()};
+    g_color_iter = -17;
+    g_real_color_iter = -19;
+
+    EXPECT_EQ(CALC_YIELDED, m_engine.calculate_pixel(g_col, g_row, true));
+    EXPECT_EQ(2048, s_perturbation_orbit.size());
+    EXPECT_EQ(-17, g_color_iter);
+    EXPECT_EQ(-19, g_real_color_iter);
+    EXPECT_TRUE(m_plots.empty());
+    EXPECT_EQ(CALC_YIELDED, m_engine.calculate_pixel(g_col, g_row, true));
+    EXPECT_EQ(4096, s_perturbation_orbit.size());
+    EXPECT_TRUE(m_plots.empty());
+    EXPECT_GE(m_engine.calculate_pixel(g_col, g_row, true), 0);
+    EXPECT_EQ(4999, s_perturbation_orbit.size());
+    EXPECT_EQ(5000, g_real_color_iter);
+    EXPECT_EQ(1, m_plots.size());
+    EXPECT_EQ(stack, save_stack());
+}
+
+TEST_P(TestPerturbationIterations, finishingIncompletePixelDiscardsItsState)
+{
+    g_max_iterations = 5000;
+    m_specific.pert_pt = record_perturbation_orbit;
+    initialize_reference({0.125, 0.125});
+    while (!m_engine.initialize_pixel_strategy())
+    {
+    }
+    ASSERT_EQ(CALC_YIELDED, m_engine.calculate_pixel(g_col, g_row, true));
+    ASSERT_EQ(2048, s_perturbation_orbit.size());
+
+    m_engine.finish();
+
+    compare_pixel({0.125, 0.125}, 128, 0.0, 0, true);
+    EXPECT_EQ(0, m_reference_yields);
+}
+
+TEST_P(TestPerturbationIterations, incompletePixelCannotBeReplacedByAnotherPixel)
+{
+    g_max_iterations = 5000;
+    initialize_reference({0.125, 0.125});
+    while (!m_engine.initialize_pixel_strategy())
+    {
+    }
+    ASSERT_EQ(CALC_YIELDED, m_engine.calculate_pixel(g_col, g_row, true));
+
+    EXPECT_THROW(m_engine.calculate_pixel(g_col - 1, g_row, true), std::logic_error);
+    EXPECT_TRUE(m_plots.empty());
+}
+
+TEST_P(TestPerturbationIterations, periodicityReplaySurvivesPixelChunkBoundaries)
+{
+    g_periodicity_check = 1;
+    g_inside_method = ColorMethod::ITER;
+    g_old_color_iter = 4500;
+    compare_pixel({0.125, 0.125}, 5000);
+    const std::vector<std::complex<double>> orbit{s_perturbation_orbit};
+    g_old_color_iter = 4500;
+
+    compare_pixel({0.125, 0.125}, 5000, 0.0, 0, true);
+
+    EXPECT_GE(m_reference_yields, 4);
+    EXPECT_EQ(orbit, s_perturbation_orbit);
+    EXPECT_LT(s_perturbation_orbit.size(), 4999);
+}
+
+TEST_P(TestPerturbationIterations, pixelFailureAfterYieldPreservesTheErrorAndReleasesPixelState)
+{
+    g_max_iterations = 5000;
+    initialize_reference({0.125, 0.125});
+    while (!m_engine.initialize_pixel_strategy())
+    {
+    }
+    const int stack{save_stack()};
+    m_specific.pert_pt =
+        [](const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter)
+    {
+        if (s_perturbation_orbit.size() == 2048)
+        {
+            throw std::bad_array_new_length{};
+        }
+        record_perturbation_orbit(reference, delta, parameter);
+    };
+    ASSERT_EQ(CALC_YIELDED, m_engine.calculate_pixel(g_col, g_row, true));
+
+    EXPECT_THROW(m_engine.calculate_pixel(g_col, g_row, true), std::bad_array_new_length);
+
+    EXPECT_EQ(stack, save_stack());
+    EXPECT_EQ(1, m_engine.reference_count());
+    EXPECT_TRUE(m_plots.empty());
+    compare_pixel({0.125, 0.125}, 128, 0.0, 0, true);
+    EXPECT_EQ(0, m_reference_yields);
+}
+
+TEST_P(TestPerturbationIterations, latePreciseBailoutReplayIsBoundedAndDoesNotRepeatDeltaUpdates)
+{
+    g_max_iterations = 5000;
+    initialize_reference({0.125, 0.125});
+    while (!m_engine.initialize_pixel_strategy())
+    {
+    }
+    const int stack{save_stack()};
+    m_specific.pert_ref_bf = record_reference_bf;
+    m_specific.pert_pt =
+        [](const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter)
+    {
+        record_perturbation_orbit(reference, delta, parameter);
+        delta =
+            s_perturbation_orbit.size() == 4097 ? std::complex<double>{2.0, 0.0} - reference : std::complex<double>{};
+    };
+    int color{CALC_YIELDED};
+    int yields{};
+    for (int chunk = 0; chunk < 20 && color == CALC_YIELDED; ++chunk)
+    {
+        const std::size_t before{s_perturbation_orbit.size() + s_reference_coordinates.size()};
+        color = m_engine.calculate_pixel(g_col, g_row, true);
+        EXPECT_LE(s_perturbation_orbit.size() + s_reference_coordinates.size() - before, 2048);
+        if (color == CALC_YIELDED)
+        {
+            ++yields;
+            EXPECT_TRUE(m_plots.empty());
+        }
+    }
+    EXPECT_GE(color, 0);
+    if (GetParam())
+    {
+        EXPECT_GE(yields, 4);
+        EXPECT_EQ(4999, s_perturbation_orbit.size());
+        EXPECT_EQ(4097, s_reference_coordinates.size());
+        EXPECT_EQ(5000, g_real_color_iter);
+    }
+    EXPECT_EQ(1, m_plots.size());
+    EXPECT_EQ(stack, save_stack());
 }
 
 TEST_P(TestPerturbationIterations, referenceFailureAfterYieldDiscardsPartialStorageAndPreservesError)
@@ -2232,7 +2399,7 @@ TEST_P(TestPerturbationIterations, biomorphFinishingAndMappingSurviveReferenceRe
 }
 
 void TestPerturbationIterations::compare_distance_pixel(const std::complex<double> &center, const long max_iterations,
-    const bool legacy, const double reference_offset, const DistancePixelOptions &options)
+    const bool legacy, const double reference_offset, const DistancePixelOptions &options, const bool incremental)
 {
     m_engine.finish();
     if (m_big_float)
@@ -2306,7 +2473,17 @@ void TestPerturbationIterations::compare_distance_pixel(const std::complex<doubl
     m_specific.pert_pt = record_perturbation_orbit;
     initialize_reference(center - std::complex<double>{reference_offset, 0.0}, reference_offset);
 
-    const int actual_color{m_engine.calculate_pixel(g_col, g_row)};
+    int actual_color{CALC_YIELDED};
+    for (int chunk = 0; chunk < 1000 && actual_color == CALC_YIELDED; ++chunk)
+    {
+        const std::size_t before{s_perturbation_derivatives.size()};
+        actual_color = m_engine.calculate_pixel(g_col, g_row, incremental);
+        if (incremental)
+        {
+            EXPECT_LE(s_perturbation_derivatives.size() - before, 2048);
+        }
+    }
+    EXPECT_TRUE(calc_ok(actual_color));
     if (options.compare_colors)
     {
         EXPECT_EQ(expected_color, actual_color);
@@ -2366,6 +2543,22 @@ TEST_P(TestPerturbationIterations, distanceEstimatorRestartsDerivativeOnReferenc
         compare_distance_pixel({0.5, 0.5}, 32, legacy, 0.125);
         EXPECT_GT(m_engine.reference_count(), 1);
         EXPECT_GT(s_perturbation_derivatives.size(), s_standard_derivatives.size());
+    }
+}
+
+TEST_P(TestPerturbationIterations, longPixelChunksRetainDistanceDerivativesAcrossYieldsAndRetries)
+{
+    for (const bool legacy : {false, true})
+    {
+        SCOPED_TRACE(legacy);
+        for (const double offset : {0.0, 0.125})
+        {
+            SCOPED_TRACE(offset);
+            m_engine.set_glitch_tolerance(offset == 0.0 ? DEFAULT_PERTURBATION_TOLERANCE : 8.0);
+            compare_distance_pixel({0.125, 0.0625}, 5000, legacy, offset, {}, true);
+            EXPECT_EQ(5000, g_real_color_iter);
+            EXPECT_EQ(offset == 0.0 ? 1 : 2, m_engine.reference_count());
+        }
     }
 }
 

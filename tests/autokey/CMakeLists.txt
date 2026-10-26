@@ -452,7 +452,7 @@ foreach(passes IN ITEMS 1 2)
 endforeach()
 
 foreach(passes IN ITEMS 1 2)
-    foreach(pixel IN ITEMS optimized general)
+    foreach(pixel IN ITEMS optimized general perturbation)
         set(name "standard-interrupt-${passes}-${pixel}")
         id_make_test_home("${name}" STANDARD_INTERRUPT_HOME
             KEYS standard_interrupt.key)
@@ -463,6 +463,7 @@ foreach(passes IN ITEMS 1 2)
                 "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
                 "-DPASSES=${passes}"
                 "-DGENERAL_PIXEL=$<STREQUAL:${pixel},general>"
+                "-DPERTURBATION_PIXEL=$<STREQUAL:${pixel},perturbation>"
                 -P "${CMAKE_CURRENT_SOURCE_DIR}/standard_interrupt_test.cmake"
             WORKING_DIRECTORY "${STANDARD_INTERRUPT_HOME}")
         set_tests_properties("AutoKeyTest.${name}"
