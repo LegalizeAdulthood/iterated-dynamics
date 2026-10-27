@@ -166,8 +166,9 @@ bool relative_delta(const BFComplex &value, const BFComplex &reference, std::com
     sub_bf(difference.x, value.x, reference.x);
     sub_bf(difference.y, value.y, reference.y);
     delta = {static_cast<double>(bf_to_float(difference.x)), static_cast<double>(bf_to_float(difference.y))};
-    return std::isfinite(delta.real()) && std::isfinite(delta.imag()) &&
-        (delta.real() != 0.0 || is_bf_zero(difference.x)) && (delta.imag() != 0.0 || is_bf_zero(difference.y));
+    // Subnormal displacements do not retain full relative precision.
+    return (std::isnormal(delta.real()) || is_bf_zero(difference.x)) &&
+        (std::isnormal(delta.imag()) || is_bf_zero(difference.y));
 }
 
 bool ambiguous_bailout(const std::complex<double> &reference, const std::complex<double> &delta)
@@ -1065,7 +1066,7 @@ void PertEngine::begin_point(const Point &pt)
     m_pixel.position = {static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())};
     if (!parameter_delta(m_pixel.position, m_pixel.parameter_displacement))
     {
-        // A nonzero displacement below double range needs its own exact reference.
+        // A displacement without full double precision needs its own exact reference.
         m_pixel.phase = PixelState::Phase::REBASE;
     }
     m_pixel.bof = bof_initialization();

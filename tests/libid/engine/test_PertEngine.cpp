@@ -6478,6 +6478,110 @@ TEST_F(TestPerturbationPixels, passSwitchRespectsDisabledPerturbation)
     check_pass_switch(PerturbationMode::NO);
 }
 
+class TestSubnormalPerturbation : public TestPerturbationPixels
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<int> m_saved_exponent{g_c_exponent, 0};
+    ValueSaver<double> m_saved_real_power{g_params[2], -0.001862};
+    ValueSaver<double> m_saved_imag_power{g_params[3], 0.0};
+    ValueSaver<DComplex *> m_saved_parameter{g_float_param, &g_init};
+    ValueSaver<DComplex> m_saved_offset{g_param_z1, DComplex{}};
+    ValueSaver<InitOrbitMode> m_saved_initial_orbit{g_use_init_orbit, InitOrbitMode::NORMAL};
+    ValueSaver<bool> m_saved_bof{g_bof_match_book_images, false};
+    ValueSaver<bool> m_saved_show_orbit{g_show_orbit, false};
+    ValueSaver<decltype(g_bailout_float)> m_saved_float_bailout{g_bailout_float};
+    ValueSaver<decltype(g_bailout_bignum)> m_saved_bn_bailout{g_bailout_bignum};
+    ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bf_bailout{g_bailout_bigfloat};
+    ValueSaver<Bailout> m_saved_bailout_test{g_bailout_test};
+};
+
+void TestSubnormalPerturbation::SetUp()
+{
+    TestPerturbationPixels::SetUp();
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    init_bf_dec(60);
+    m_big_float = true;
+    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
+    g_max_iterations = 4;
+    g_magnitude_limit = 16;
+    set_bailout_formula(Bailout::MOD);
+    str_to_bf(g_bf_x_min, "-4e-324");
+    str_to_bf(g_bf_x_max, "4e-324");
+    copy_bf(g_bf_x_3rd, g_bf_x_min);
+    clear_bf(g_bf_y_min);
+    clear_bf(g_bf_y_max);
+    clear_bf(g_bf_y_3rd);
+    m_engine.initialize_frame_bf({g_bf_x_min, g_bf_y_min}, {g_bf_x_max, g_bf_y_max}, {g_bf_x_3rd, g_bf_y_3rd});
+    ASSERT_TRUE(m_engine.initialize_pixel_strategy());
+}
+
+TEST_F(TestSubnormalPerturbation, continuationReplacesSubnormalParameterAndSeedDisplacements)
+{
+    BigStackSaver saved;
+    const BFComplex parameter{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    for (const char *coordinate : {"0", "4e-324"})
+    {
+        SCOPED_TRACE(coordinate);
+        str_to_bf(parameter.x, coordinate);
+        clear_bf(parameter.y);
+        copy_bf(g_param_z_bf.x, parameter.x);
+        clear_bf(g_param_z_bf.y);
+        copy_bf(g_old_z_bf.x, parameter.x);
+        clear_bf(g_old_z_bf.y);
+        m_engine.begin_orbit_bf(parameter, parameter, 0);
+        long iteration{};
+        bool done{};
+        for (int step = 0; step < 100 && !done; ++step)
+        {
+            done = m_engine.iterate_orbit();
+            if (m_engine.orbit_iteration() != iteration)
+            {
+                ASSERT_EQ(iteration + 1, m_engine.orbit_iteration());
+                const bool escaped{julia_z_power_orbit_bf() != 0};
+                const std::complex<double> expected{
+                    static_cast<double>(bf_to_float(g_new_z_bf.x)), static_cast<double>(bf_to_float(g_new_z_bf.y))};
+                ++iteration;
+                EXPECT_EQ(escaped, m_engine.orbit_escaped());
+                EXPECT_EQ(escaped || iteration == g_max_iterations, done);
+                EXPECT_NEAR(expected.real(), m_engine.orbit_value().real(), 1e-12);
+                EXPECT_NEAR(expected.imag(), m_engine.orbit_value().imag(), 1e-12);
+            }
+        }
+        ASSERT_TRUE(done);
+        m_engine.finish_orbit();
+    }
+    EXPECT_EQ(3, m_engine.reference_count());
+}
+
+TEST_F(TestSubnormalPerturbation, displacedPixelMatchesNativeBigFloatOrbit)
+{
+    copy_bf(g_param_z_bf.x, g_bf_x_max);
+    clear_bf(g_param_z_bf.y);
+    copy_bf(g_old_z_bf.x, g_bf_x_max);
+    clear_bf(g_old_z_bf.y);
+    // Native BF conversion also depends on the platform's floating-point range.
+    long iteration{};
+    bool escaped{};
+    // Standard pixels stop before computing the iteration-limit orbit.
+    while (!escaped && iteration + 1 < g_max_iterations)
+    {
+        ++iteration;
+        escaped = julia_z_power_orbit_bf() != 0;
+    }
+    const std::complex<double> expected{
+        static_cast<double>(bf_to_float(g_new_z_bf.x)), static_cast<double>(bf_to_float(g_new_z_bf.y))};
+
+    EXPECT_EQ(escaped ? iteration : g_inside_color, m_engine.calculate_pixel(WIDTH - 1, 0));
+
+    EXPECT_EQ(escaped ? iteration : g_max_iterations, g_color_iter);
+    EXPECT_NEAR(expected.real(), g_new_z.x, 1e-12);
+    EXPECT_NEAR(expected.imag(), g_new_z.y, 1e-12);
+    EXPECT_EQ(2, m_engine.reference_count());
+}
+
 class TestDeepPerturbationGeometry : public TestPerturbationPixels
 {
 protected:
