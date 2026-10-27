@@ -564,8 +564,9 @@ protected:
     void set_initial_offset(const DComplex &offset);
     void compare_distance_pixel(const std::complex<double> &center, long max_iterations, bool legacy,
         double reference_offset = 0.0, const DistancePixelOptions &options = {}, bool incremental = false);
-    void compare_frame_coordinates(
-        double tolerance, const ImageRegion &region = ImageRegion{{-0.3, 0.1}, {0.2, 0.35}, {-0.3, 0.1}});
+    void compare_frame_coordinates(double tolerance,
+        const ImageRegion &region = ImageRegion{{-0.3, 0.1}, {0.2, 0.35}, {-0.3, 0.1}},
+        CalcMode pass = CalcMode::ONE_PASS, Point2i offset = {});
 
     ValueSaver<ImageRegion> m_saved_region{g_image_region};
     ValueSaver<Potential> m_saved_potential{g_potential, Potential{}};
@@ -3588,7 +3589,8 @@ TEST_P(TestPerturbationIterations, trueColorIterationOutputUsesTheFullCountBefor
     EXPECT_EQ(1, blue);
 }
 
-void TestPerturbationIterations::compare_frame_coordinates(const double tolerance, const ImageRegion &region)
+void TestPerturbationIterations::compare_frame_coordinates(
+    const double tolerance, const ImageRegion &region, const CalcMode pass, const Point2i offset)
 {
     ValueSaver saved_user{g_user, UserData{}};
     ValueSaver saved_status{g_calc_status};
@@ -3607,8 +3609,21 @@ void TestPerturbationIterations::compare_frame_coordinates(const double toleranc
     m_specific.pert_ref_bf = record_reference_bf;
     m_specific.pert_pt = record_coordinate;
     std::vector<Point2i> plots;
+    std::vector<int> pixels;
+    EXPECT_CALL(m_driver, read_pixel(_, _))
+        .WillRepeatedly(
+            Invoke([&pixels](const int col, const int row) { return pixels.at(row * g_screen_x_dots + col); }));
     EXPECT_CALL(m_driver, write_pixel(_, _, _))
-        .WillRepeatedly(Invoke([&plots](const int col, const int row, int) { plots.push_back({col, row}); }));
+        .WillRepeatedly(Invoke(
+            [&plots, &pixels](const int col, const int row, const int color)
+            {
+                if (const StandardFractal *calculation{active_standard_fractal()})
+                {
+                    EXPECT_TRUE(calculation->standard_pass_status().perturbation_active);
+                }
+                pixels.at(row * g_screen_x_dots + col) = color;
+                plots.push_back({col, row});
+            }));
 
     for (const Point2i &size : {Point2i{8, 6}, Point2i{6, 8}, Point2i{17, 9}, Point2i{9, 17}})
     {
@@ -3618,9 +3633,9 @@ void TestPerturbationIterations::compare_frame_coordinates(const double toleranc
             SCOPED_TRACE(size.y);
             SCOPED_TRACE(static_cast<int>(type));
             g_fractal_type = type;
-            g_screen_x_dots = size.x;
-            g_screen_y_dots = size.y;
-            g_logical_screen = {size.x, size.y, 0, 0, size.x - 1.0, size.y - 1.0};
+            g_screen_x_dots = size.x + 2 * offset.x;
+            g_screen_y_dots = size.y + 2 * offset.y;
+            g_logical_screen = {size.x, size.y, offset.x, offset.y, size.x - 1.0, size.y - 1.0};
             g_start_pt = g_i_start_pt = g_begin_pt = {};
             g_stop_pt = g_i_stop_pt = {size.x - 1, size.y - 1};
             g_image_region = region;
@@ -3641,12 +3656,13 @@ void TestPerturbationIterations::compare_frame_coordinates(const double toleranc
                 float_to_bf(g_bf_x_3rd, region.m_3rd.x);
                 float_to_bf(g_bf_y_3rd, region.m_3rd.y);
             }
-            g_std_calc_mode = CalcMode::ONE_PASS;
+            g_std_calc_mode = pass;
             g_calc_status = CalcStatus::PARAMS_CHANGED;
             g_dispatch = FractalDispatch{m_specific};
             s_coordinates.clear();
             s_reference_coordinates.clear();
             plots.clear();
+            pixels.assign(g_screen_x_dots * g_screen_y_dots, 0);
             StandardFractal calculation;
             calculation.resume();
             for (int increments = 0; increments < size.x * size.y + 10 && !calculation.done(); ++increments)
@@ -3654,6 +3670,7 @@ void TestPerturbationIterations::compare_frame_coordinates(const double toleranc
                 calculation.iterate();
             }
             ASSERT_TRUE(calculation.done());
+            EXPECT_EQ(pass, g_std_calc_mode);
             EXPECT_EQ(GetParam(), g_bf_math != BFMathType::NONE);
             ASSERT_FALSE(s_reference_coordinates.empty());
             DComplex expected_center{region.center()};
@@ -3682,12 +3699,26 @@ void TestPerturbationIterations::compare_frame_coordinates(const double toleranc
                 EXPECT_NEAR(type == FractalType::BURNING_SHIP ? -expected.y : expected.y, sample.value.imag(), 1e-14);
                 ++visits.at(g_row * size.x + g_col);
             }
-            EXPECT_THAT(visits, Each(Ge(1)));
-            ASSERT_EQ(size.x * size.y, plots.size());
-            for (int i = 0; i < size.x * size.y; ++i)
+            EXPECT_THAT(visits, Contains(Gt(0)));
+            if (pass == CalcMode::ONE_PASS)
             {
-                EXPECT_EQ((Point2i{i % size.x, i / size.x}), plots[i]);
+                EXPECT_THAT(visits, Each(Ge(1)));
+                ASSERT_EQ(size.x * size.y, plots.size());
+                for (int i = 0; i < size.x * size.y; ++i)
+                {
+                    EXPECT_EQ((Point2i{offset.x + i % size.x, offset.y + i / size.x}), plots[i]);
+                }
             }
+            std::vector<int> plotted(size.x * size.y);
+            for (const Point2i &pixel : plots)
+            {
+                ASSERT_GE(pixel.x, offset.x);
+                ASSERT_GE(pixel.y, offset.y);
+                ASSERT_LT(pixel.x, offset.x + size.x);
+                ASSERT_LT(pixel.y, offset.y + size.y);
+                ++plotted.at((pixel.y - offset.y) * size.x + pixel.x - offset.x);
+            }
+            EXPECT_THAT(plotted, Each(Ge(1)));
             calculation.finish();
             if (m_big_float)
             {
@@ -3728,6 +3759,23 @@ TEST_P(TestPerturbationIterations, affineFrameCoordinatesMatchStandardGrid)
         const ImageRegion region{g_image_region};
         compare_frame_coordinates(1e-6, region);
         compare_frame_coordinates(2.0, region);
+    }
+}
+
+TEST_P(TestPerturbationIterations, reducedViewportCoordinatesMatchStandardPasses)
+{
+    cvt_corners(-0.05, 0.225, 8.0, 0.6, 37.0, 21.0);
+    const ImageRegion region{g_image_region};
+    for (const bool inverted : {false, true})
+    {
+        SCOPED_TRACE(inverted);
+        g_inversion = inverted ? Inversion{3, 0.5, {2.0, 1.0}, {0.5, 2.0, 1.0}} : Inversion{};
+        for (const CalcMode pass : {CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS})
+        {
+            SCOPED_TRACE(static_cast<char>(pass));
+            compare_frame_coordinates(1e-6, region, pass, {3, 2});
+            compare_frame_coordinates(2.0, region, pass, {3, 2});
+        }
     }
 }
 
