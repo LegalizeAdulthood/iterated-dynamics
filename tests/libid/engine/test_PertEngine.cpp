@@ -2084,9 +2084,13 @@ TEST_P(TestPerturbationIterations, fixedColorsAndCycleHighlightsBypassMapping)
     EXPECT_EQ(7, g_color);
     compare_pixel({0.5, 0.0}, 128);
     EXPECT_EQ(99, g_color);
-    g_inside_method = ColorMethod::ITER;
     g_outside_method = ColorMethod::COLOR;
     g_outside_color = 4;
+    compare_pixel({}, 128);
+    EXPECT_EQ(7, g_color);
+    compare_pixel({0.5, 0.0}, 128);
+    EXPECT_EQ(4, g_color);
+    g_inside_method = ColorMethod::ITER;
     compare_pixel({0.5, 0.0}, 128);
     EXPECT_EQ(4, g_color);
     g_outside_method = ColorMethod::ITER;
@@ -5498,6 +5502,92 @@ TEST_F(TestPerturbationPixels, standardFractalEnablesPerturbationForBoundaryTrac
     EXPECT_TRUE(calculation.done());
     EXPECT_TRUE(used_replacement_reference);
     EXPECT_THAT(m_pixels, Each(7));
+}
+
+TEST_P(TestPerturbationIterations, standardPassesPreserveFixedInsideAndOutsideColors)
+{
+    ValueSaver saved_user{g_user, UserData{}};
+    ValueSaver saved_status{g_calc_status};
+    ValueSaver saved_resuming{g_resuming, false};
+    ValueSaver saved_force_symmetry{g_force_symmetry, SymmetryType::NONE};
+    ValueSaver<LDouble> saved_delta_x{g_delta_x, 1.0 / (WIDTH - 1)};
+    ValueSaver<LDouble> saved_delta_y{g_delta_y, 0.5 / (HEIGHT - 1)};
+    ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    g_image_region = ImageRegion{{-0.5, 0.0}, {0.5, 0.5}, {-0.5, 0.0}};
+    fill_pixel_grid();
+    g_inside_method = g_outside_method = ColorMethod::COLOR;
+    g_inside_color = 1;
+    g_outside_color = 7;
+    m_specific.calc_type = standard_fractal_type;
+    m_specific.per_image = [] { return true; };
+    m_specific.symmetry = SymmetryType::NONE;
+    m_specific.pert_pt = record_perturbation_orbit;
+    g_dispatch = FractalDispatch{m_specific};
+    std::array<int, WIDTH * HEIGHT> expected{};
+
+    for (const CalcMode pass : {CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS})
+    {
+        for (const PerturbationMode mode : {PerturbationMode::NO, PerturbationMode::YES})
+        {
+            SCOPED_TRACE(static_cast<char>(pass));
+            SCOPED_TRACE(static_cast<int>(mode));
+            g_std_calc_mode = pass;
+            g_user.perturbation = mode;
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
+            m_pixels.fill(0);
+            m_plot_statuses.clear();
+            s_perturbation_orbit.clear();
+            if (GetParam() && mode == PerturbationMode::YES)
+            {
+                init_bf_dec(60);
+                m_big_float = true;
+                float_to_bf(g_bf_x_min, -0.5);
+                float_to_bf(g_bf_x_max, 0.5);
+                float_to_bf(g_bf_x_3rd, -0.5);
+                float_to_bf(g_bf_y_min, 0.0);
+                float_to_bf(g_bf_y_max, 0.5);
+                float_to_bf(g_bf_y_3rd, 0.0);
+            }
+            StandardFractal calculation;
+            calculation.resume();
+            for (int increments = 0; increments < 1000 && !calculation.done(); ++increments)
+            {
+                calculation.iterate();
+            }
+
+            ASSERT_TRUE(calculation.done());
+            EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+            EXPECT_EQ(pass, g_std_calc_mode);
+            EXPECT_THAT(m_pixels, Each(AnyOf(1, 7)));
+            EXPECT_THAT(m_pixels, Contains(1));
+            EXPECT_THAT(m_pixels, Contains(7));
+            EXPECT_EQ(mode == PerturbationMode::YES, !s_perturbation_orbit.empty());
+            ASSERT_FALSE(m_plot_statuses.empty());
+            for (const StandardPassStatus &status : m_plot_statuses)
+            {
+                EXPECT_EQ(mode == PerturbationMode::YES, status.perturbation_active);
+                if (mode == PerturbationMode::YES)
+                {
+                    EXPECT_GT(status.perturbation_reference_count, 0);
+                }
+            }
+            if (mode == PerturbationMode::NO)
+            {
+                expected = m_pixels;
+            }
+            else
+            {
+                EXPECT_EQ(expected, m_pixels);
+            }
+            calculation.finish();
+            if (m_big_float)
+            {
+                free_bf_vars();
+                m_big_float = false;
+            }
+        }
+    }
 }
 
 TEST_F(TestPerturbationPixels, inversionKeepsPerturbationActiveForStandardPasses)
