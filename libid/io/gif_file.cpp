@@ -40,6 +40,108 @@ static bool is_fractint_extension(const ExtensionBlock &block, const char *name)
         && std::string(reinterpret_cast<const char *>(block.Bytes), 11) == name; //
 }
 
+static int metadata_extension_limit(const int function, const GifByteType *block)
+{
+    if (function != APPLICATION_EXT_FUNC_CODE || block == nullptr || block[0] != 11 ||
+        !std::equal(block + 1, block + 11, "fractint00"))
+    {
+        return 0;
+    }
+    switch (block[11])
+    {
+    case '1':
+        return GIF_EXTENSION1_FRACTAL_INFO_LENGTH;
+    case '3':
+        return GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH;
+    case '6':
+        return GIF_EXTENSION6_EVOLVER_INFO_LENGTH;
+    case '7':
+        return GIF_EXTENSION7_ORBIT_INFO_LENGTH;
+    case '2':
+    case '4':
+    case '5':
+        return std::numeric_limits<int>::max();
+    default:
+        return 0;
+    }
+}
+
+bool read_gif_extensions(GifFileType *gif)
+{
+    while (true)
+    {
+        GifRecordType record{};
+        if (DGifGetRecordType(gif, &record) == GIF_ERROR)
+        {
+            return false;
+        }
+        switch (record)
+        {
+        case TERMINATE_RECORD_TYPE:
+            return true;
+        case IMAGE_DESC_RECORD_TYPE:
+        {
+            if (DGifGetImageDesc(gif) == GIF_ERROR)
+            {
+                return false;
+            }
+            int code_size{};
+            GifByteType *block{};
+            if (DGifGetCode(gif, &code_size, &block) == GIF_ERROR)
+            {
+                return false;
+            }
+            while (block != nullptr)
+            {
+                if (DGifGetCodeNext(gif, &block) == GIF_ERROR)
+                {
+                    return false;
+                }
+            }
+            break;
+        }
+        case EXTENSION_RECORD_TYPE:
+        {
+            int function{};
+            GifByteType *block{};
+            if (DGifGetExtension(gif, &function, &block) == GIF_ERROR)
+            {
+                return false;
+            }
+            const int limit{metadata_extension_limit(function, block)};
+            int length{};
+            while (block != nullptr)
+            {
+                if (limit != 0)
+                {
+                    if (function == CONTINUE_EXT_FUNC_CODE)
+                    {
+                        if (block[0] > limit - length)
+                        {
+                            return false;
+                        }
+                        length += block[0];
+                    }
+                    if (GifAddExtensionBlock(&gif->ExtensionBlockCount, &gif->ExtensionBlocks, function, block[0],
+                            block + 1) == GIF_ERROR)
+                    {
+                        return false;
+                    }
+                }
+                if (DGifGetExtensionNext(gif, &block) == GIF_ERROR)
+                {
+                    return false;
+                }
+                function = CONTINUE_EXT_FUNC_CODE;
+            }
+            break;
+        }
+        default:
+            return false;
+        }
+    }
+}
+
 static int find_gif_extension(const GifFileType *gif, const char *name)
 {
     for (int i = 0; i < gif->ExtensionBlockCount; ++i)

@@ -23,6 +23,9 @@ enum
     GIF_EXTENSION7_ORBIT_INFO_LENGTH = 200,
 };
 
+// Scan an open GIF for supported metadata without decoding image pixels.
+bool read_gif_extensions(GifFileType *gif);
+
 // Read helpers return owned values. Put helpers append blocks owned by gif;
 // closing gif or calling GifFreeExtensions releases those blocks.
 bool has_gif_extension(const GifFileType *gif, const char *name);

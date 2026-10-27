@@ -361,7 +361,7 @@ class TestFindFractalInfo : public Test
 {
 protected:
     std::filesystem::path write_file(bool legacy_formula);
-    std::filesystem::path write_small_file(bool extensions_first = false);
+    std::filesystem::path write_small_file(bool extensions_first = false, int ignored_blocks = 0);
     void add_main_record();
     bool read_file(const std::filesystem::path &path);
     void expect_no_optional_blocks() const;
@@ -441,7 +441,7 @@ std::filesystem::path TestFindFractalInfo::write_file(const bool legacy_formula)
     return m_path;
 }
 
-std::filesystem::path TestFindFractalInfo::write_small_file(const bool extensions_first)
+std::filesystem::path TestFindFractalInfo::write_small_file(const bool extensions_first, const int ignored_blocks)
 {
     const std::string name{UnitTest::GetInstance()->current_test_info()->name()};
     m_path = std::filesystem::temp_directory_path() / ("id-find-fractal-info-" + name + ".gif");
@@ -463,6 +463,23 @@ std::filesystem::path TestFindFractalInfo::write_small_file(const bool extension
     if (extensions_first)
     {
         write_gif_extensions(output.get(), &m_extensions);
+    }
+    if (ignored_blocks > 0)
+    {
+        for (const int function : {COMMENT_EXT_FUNC_CODE, APPLICATION_EXT_FUNC_CODE})
+        {
+            check_gif_write(EGifPutExtensionLeader(output.get(), function));
+            if (function == APPLICATION_EXT_FUNC_CODE)
+            {
+                check_gif_write(EGifPutExtensionBlock(output.get(), 11, "fractint008"));
+            }
+            const Byte ignored{'x'};
+            for (int i = 0; i < ignored_blocks; ++i)
+            {
+                check_gif_write(EGifPutExtensionBlock(output.get(), 1, &ignored));
+            }
+            check_gif_write(EGifPutExtensionTrailer(output.get()));
+        }
     }
     check_gif_write(EGifPutImageDesc(output.get(), 0, 0, 2, 2, false, nullptr));
     Byte row[2]{0, 1};
@@ -900,6 +917,80 @@ TEST_F(TestFindFractalInfo, nonApplicationExtensionDoesNotSupplyResumeData)
     ASSERT_FALSE(read_file(write_small_file()));
 
     expect_no_optional_blocks();
+}
+
+TEST_F(TestFindFractalInfo, skipsLargeUnrelatedExtensionsWithoutRetainingTheirBlocks)
+{
+    add_main_record();
+    for (const bool extensions_first : {false, true})
+    {
+        SCOPED_TRACE(extensions_first);
+        const std::filesystem::path path{write_small_file(extensions_first, 32768)};
+        {
+            int error{};
+            std::unique_ptr<GifFileType, void (*)(GifFileType *)> input{DGifOpenFileName(path.string().c_str(), &error),
+                [](GifFileType *gif)
+                {
+                    int close_error{};
+                    DGifCloseFile(gif, &close_error);
+                }};
+            ASSERT_NE(nullptr, input);
+
+            ASSERT_TRUE(read_gif_extensions(input.get()));
+
+            EXPECT_EQ(m_extensions.ExtensionBlockCount, input->ExtensionBlockCount);
+            EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, get_gif_extension_length(input.get(), "fractint001"));
+            EXPECT_STREQ(INFO_ID, get_fractal_info(input.get()).info_id);
+        }
+        ASSERT_FALSE(read_file(path));
+        EXPECT_STREQ(INFO_ID, m_info.info_id);
+        EXPECT_EQ(+FractalType::MANDEL, m_info.fractal_type);
+    }
+}
+
+TEST_F(TestFindFractalInfo, rejectsOversizedFixedRecordsBeforeRetainingExcessPayload)
+{
+    struct FixedRecord
+    {
+        const char *name;
+        int limit;
+    };
+
+    const FixedRecord records[]{{"fractint001", GIF_EXTENSION1_FRACTAL_INFO_LENGTH},
+        {"fractint003", GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH}, {"fractint006", GIF_EXTENSION6_EVOLVER_INFO_LENGTH},
+        {"fractint007", GIF_EXTENSION7_ORBIT_INFO_LENGTH}};
+    for (const FixedRecord &record : records)
+    {
+        SCOPED_TRACE(record.name);
+        GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
+        std::string name{record.name};
+        check_gif_write(GifAddExtensionBlock(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks,
+            APPLICATION_EXT_FUNC_CODE, 11, reinterpret_cast<Byte *>(name.data())));
+        Byte payload{};
+        for (int i = 0; i <= record.limit; ++i)
+        {
+            check_gif_write(GifAddExtensionBlock(
+                &m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks, CONTINUE_EXT_FUNC_CODE, 1, &payload));
+        }
+        const std::filesystem::path path{write_small_file(true)};
+        {
+            int error{};
+            std::unique_ptr<GifFileType, void (*)(GifFileType *)> input{DGifOpenFileName(path.string().c_str(), &error),
+                [](GifFileType *gif)
+                {
+                    int close_error{};
+                    DGifCloseFile(gif, &close_error);
+                }};
+            ASSERT_NE(nullptr, input);
+
+            EXPECT_FALSE(read_gif_extensions(input.get()));
+
+            EXPECT_EQ(record.limit, get_gif_extension_length(input.get(), record.name));
+            EXPECT_EQ(record.limit + 1, input->ExtensionBlockCount);
+        }
+        EXPECT_TRUE(read_file(path));
+        EXPECT_TRUE(std::filesystem::remove(path));
+    }
 }
 
 class TestLoadFile : public TestWithParam<FileFractalType>

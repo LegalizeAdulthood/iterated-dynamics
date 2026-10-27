@@ -1138,67 +1138,6 @@ void apply_image_extensions(ImageMetadata &metadata)
     }
 }
 
-// Read descriptors and extensions without decompressing or storing image pixels.
-static bool read_gif_extensions(GifFileType *gif)
-{
-    while (true)
-    {
-        GifRecordType record{};
-        if (DGifGetRecordType(gif, &record) == GIF_ERROR)
-        {
-            return false;
-        }
-        switch (record)
-        {
-        case TERMINATE_RECORD_TYPE:
-            return true;
-        case IMAGE_DESC_RECORD_TYPE:
-        {
-            if (DGifGetImageDesc(gif) == GIF_ERROR)
-            {
-                return false;
-            }
-            int code_size{};
-            GifByteType *block{};
-            if (DGifGetCode(gif, &code_size, &block) == GIF_ERROR)
-            {
-                return false;
-            }
-            while (block != nullptr)
-            {
-                if (DGifGetCodeNext(gif, &block) == GIF_ERROR)
-                {
-                    return false;
-                }
-            }
-            break;
-        }
-        case EXTENSION_RECORD_TYPE:
-        {
-            int function{};
-            GifByteType *block{};
-            if (DGifGetExtension(gif, &function, &block) == GIF_ERROR)
-            {
-                return false;
-            }
-            while (block != nullptr)
-            {
-                if (GifAddExtensionBlock(
-                        &gif->ExtensionBlockCount, &gif->ExtensionBlocks, function, block[0], block + 1) == GIF_ERROR ||
-                    DGifGetExtensionNext(gif, &block) == GIF_ERROR)
-                {
-                    return false;
-                }
-                function = CONTINUE_EXT_FUNC_CODE;
-            }
-            break;
-        }
-        default:
-            return false;
-        }
-    }
-}
-
 // return true on error, false on success
 bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     ExtBlock2 *blk_2_info, ExtBlock3 *blk_3_info, ExtBlock4 *blk_4_info, //
