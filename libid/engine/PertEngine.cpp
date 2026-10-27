@@ -222,7 +222,7 @@ bool PertEngine::initialize_pixel_strategy()
     {
         throw std::logic_error("Cannot change pixels during an incomplete perturbation orbit");
     }
-    if (!m_explicit_orbit && m_frame_initialized && m_reference_ready)
+    if (!m_reference.explicit_orbit && m_frame_initialized && m_reference_ready)
     {
         return true;
     }
@@ -230,7 +230,7 @@ bool PertEngine::initialize_pixel_strategy()
         g_max_iterations, g_inside_method == ColorMethod::STAR_TRAIL ? STAR_TRAIL_ITERATIONS : g_max_iterations};
     try
     {
-        if (m_explicit_orbit)
+        if (m_reference.explicit_orbit)
         {
             clear_point();
             m_explicit_orbit = false;
@@ -253,7 +253,7 @@ bool PertEngine::initialize_pixel_strategy()
 
 int PertEngine::calculate_pixel(const Point &pt, const bool incremental)
 {
-    if (m_explicit_orbit)
+    if (m_explicit_orbit || m_reference.explicit_orbit)
     {
         initialize_pixel_strategy();
     }
@@ -328,6 +328,7 @@ void PertEngine::begin_orbit(
     m_orbit_input = {parameter, value, iteration};
     m_orbit_value = value;
     m_orbit_iteration = iteration;
+    m_orbit_escaped = false;
     m_explicit_orbit = true;
     try
     {
@@ -348,7 +349,118 @@ void PertEngine::begin_orbit(
     }
 }
 
-bool PertEngine::iterate_orbit()
+void PertEngine::begin_orbit_bf(const BFComplex &parameter, const BFComplex &value, const long iteration)
+{
+    if (g_bf_math == BFMathType::NONE)
+    {
+        throw std::logic_error("Big-float orbit continuation requires arbitrary precision");
+    }
+    const bool replace_reference{!m_reference.explicit_orbit || iteration != m_reference.iteration};
+    begin_orbit(std::complex<double>{static_cast<double>(bf_to_float(parameter.x)),
+                    static_cast<double>(bf_to_float(parameter.y))},
+        std::complex<double>{static_cast<double>(bf_to_float(value.x)), static_cast<double>(bf_to_float(value.y))},
+        iteration);
+    try
+    {
+        copy_bf(m_orbit_parameter_bf.x, parameter.x);
+        copy_bf(m_orbit_parameter_bf.y, parameter.y);
+        copy_bf(m_orbit_initial_bf.x, value.x);
+        copy_bf(m_orbit_initial_bf.y, value.y);
+        m_orbit_input.precise = true;
+        if (replace_reference)
+        {
+            set_reference_orbit();
+        }
+    }
+    catch (...)
+    {
+        run_cleanup(std::current_exception(), [this] { cleanup(); });
+        throw;
+    }
+}
+
+void PertEngine::begin_orbit_bn(const BNComplex &parameter, const BNComplex &value, const long iteration)
+{
+    if (g_bf_math != BFMathType::BIG_NUM)
+    {
+        throw std::logic_error("Fixed-point orbit continuation requires fixed-point math");
+    }
+    const bool replace_reference{!m_reference.explicit_orbit || iteration != m_reference.iteration};
+    begin_orbit(std::complex<double>{static_cast<double>(bn_to_float(parameter.x)),
+                    static_cast<double>(bn_to_float(parameter.y))},
+        std::complex<double>{static_cast<double>(bn_to_float(value.x)), static_cast<double>(bn_to_float(value.y))},
+        iteration);
+    try
+    {
+        bn_to_bf(m_orbit_parameter_bf.x, parameter.x);
+        bn_to_bf(m_orbit_parameter_bf.y, parameter.y);
+        bn_to_bf(m_orbit_initial_bf.x, value.x);
+        bn_to_bf(m_orbit_initial_bf.y, value.y);
+        m_orbit_input.precise = true;
+        if (replace_reference)
+        {
+            set_reference_orbit();
+        }
+    }
+    catch (...)
+    {
+        run_cleanup(std::current_exception(), [this] { cleanup(); });
+        throw;
+    }
+}
+
+bool PertEngine::advance_bailout()
+{
+    if (g_fractal_type != FractalType::MANDEL)
+    {
+        throw std::logic_error("Cached-square continuation requires Mandelbrot");
+    }
+    bool escaped;
+    if (g_bf_math != BFMathType::NONE)
+    {
+        std::size_t remaining{PIXEL_CHUNK_SIZE};
+        if (!advance_precise_orbit(m_pixel.sample, remaining))
+        {
+            return false;
+        }
+        {
+            BigStackSaver saved;
+            const BigFloat real{alloc_stack(g_r_bf_length + 2)};
+            const BigFloat imag{alloc_stack(g_r_bf_length + 2)};
+            square_bf(real, m_pixel.precise_orbit.x);
+            square_bf(imag, m_pixel.precise_orbit.y);
+            sub_bf(real, real, imag);
+            add_bf(m_pixel.precise_orbit.x, real, m_pixel.precise_coordinate.x);
+        }
+        m_orbit_value = {static_cast<double>(bf_to_float(m_pixel.precise_orbit.x)),
+            static_cast<double>(bf_to_float(m_pixel.precise_orbit.y))};
+        escaped = precise_bailout_reached(m_pixel.precise_orbit);
+        if (!escaped && m_orbit_input.precise)
+        {
+            copy_bf(m_orbit_initial_bf.x, m_pixel.precise_orbit.x);
+            copy_bf(m_orbit_initial_bf.y, m_pixel.precise_orbit.y);
+        }
+    }
+    else
+    {
+        m_orbit_value.real(sqr(m_orbit_value.real()) - sqr(m_orbit_value.imag()) + m_orbit_input.parameter.real());
+        escaped = bailout_reached(g_bailout_test, m_orbit_value.real(), m_orbit_value.imag(), g_magnitude_limit);
+    }
+    ++m_orbit_iteration;
+    m_orbit_escaped = escaped;
+    m_pixel.w = m_orbit_value;
+    m_pixel.iteration = m_orbit_iteration;
+    if (!escaped)
+    {
+        m_orbit_input.value = m_orbit_value;
+        m_orbit_input.iteration = m_orbit_iteration;
+        clear_point();
+        set_reference_orbit();
+    }
+    return true;
+}
+
+bool PertEngine::iterate_orbit(const bool continue_bailout)
 {
     if (!m_explicit_orbit)
     {
@@ -356,6 +468,10 @@ bool PertEngine::iterate_orbit()
     }
     try
     {
+        if (continue_bailout && m_orbit_escaped && m_orbit_iteration < g_max_iterations)
+        {
+            return advance_bailout() && (m_orbit_escaped || m_orbit_iteration == g_max_iterations);
+        }
         if (!iterate_reference())
         {
             return false;
@@ -372,6 +488,17 @@ bool PertEngine::iterate_orbit()
                     m_orbit_iteration = m_pixel.iteration;
                 }
                 return result != CALC_YIELDED;
+            }
+            if (m_orbit_input.precise)
+            {
+                m_pixel.phase = PixelState::Phase::REBASE;
+                const std::size_t sample{static_cast<std::size_t>(m_orbit_iteration - m_reference.iteration)};
+                if (!advance_precise_orbit(sample, remaining))
+                {
+                    return false;
+                }
+                copy_bf(m_orbit_initial_bf.x, m_pixel.precise_orbit.x);
+                copy_bf(m_orbit_initial_bf.y, m_pixel.precise_orbit.y);
             }
             // Rebase at the last accepted state, never publish the failed update.
             m_orbit_input.value = m_orbit_value;
@@ -407,6 +534,26 @@ long PertEngine::orbit_iteration() const
         throw std::logic_error("Perturbation continuation requires begin_orbit");
     }
     return m_orbit_iteration;
+}
+
+bool PertEngine::orbit_escaped() const
+{
+    if (!m_explicit_orbit)
+    {
+        throw std::logic_error("Perturbation continuation requires begin_orbit");
+    }
+    return m_orbit_escaped;
+}
+
+void PertEngine::finish_orbit()
+{
+    if (!m_explicit_orbit)
+    {
+        throw std::logic_error("Perturbation continuation requires begin_orbit");
+    }
+    clear_point();
+    m_explicit_orbit = false;
+    m_orbit_escaped = false;
 }
 
 bool PertEngine::orbit_overlay_displayed() const
@@ -454,12 +601,16 @@ void PertEngine::cleanup()
     m_orbit_value = {};
     m_orbit_iteration = 0;
     m_explicit_orbit = false;
+    m_orbit_escaped = false;
     m_pixel = {};
     m_reference_count = 0;
     m_cycle_len = -1;
     m_distance_estimator = {};
     m_reference_coordinate_bf = {};
     m_reference_z_bf = {};
+    m_reference_initial_bf = {};
+    m_orbit_parameter_bf = {};
+    m_orbit_initial_bf = {};
     m_reference_z = {};
     m_reference_sample = 0;
     m_reference_samples = 0;
@@ -491,6 +642,9 @@ void PertEngine::allocate_working_values()
         m_reference_coordinate_bf.y = alloc_stack(g_r_bf_length + 2);
         m_reference_z_bf.x = alloc_stack(g_r_bf_length + 2);
         m_reference_z_bf.y = alloc_stack(g_r_bf_length + 2);
+        m_reference_initial_bf = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        m_orbit_parameter_bf = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        m_orbit_initial_bf = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
         m_tmp_bf = alloc_stack(g_r_bf_length + 2);
     }
 }
@@ -644,10 +798,22 @@ void PertEngine::set_reference_orbit()
     m_reference_z = m_orbit_input.value;
     if (g_bf_math != BFMathType::NONE)
     {
-        float_to_bf(m_reference_coordinate_bf.x, m_orbit_input.parameter.real());
-        float_to_bf(m_reference_coordinate_bf.y, m_orbit_input.parameter.imag());
-        float_to_bf(m_reference_z_bf.x, m_orbit_input.value.real());
-        float_to_bf(m_reference_z_bf.y, m_orbit_input.value.imag());
+        if (m_orbit_input.precise)
+        {
+            copy_bf(m_reference_coordinate_bf.x, m_orbit_parameter_bf.x);
+            copy_bf(m_reference_coordinate_bf.y, m_orbit_parameter_bf.y);
+            copy_bf(m_reference_z_bf.x, m_orbit_initial_bf.x);
+            copy_bf(m_reference_z_bf.y, m_orbit_initial_bf.y);
+        }
+        else
+        {
+            float_to_bf(m_reference_coordinate_bf.x, m_orbit_input.parameter.real());
+            float_to_bf(m_reference_coordinate_bf.y, m_orbit_input.parameter.imag());
+            float_to_bf(m_reference_z_bf.x, m_orbit_input.value.real());
+            float_to_bf(m_reference_z_bf.y, m_orbit_input.value.imag());
+        }
+        copy_bf(m_reference_initial_bf.x, m_reference_z_bf.x);
+        copy_bf(m_reference_initial_bf.y, m_reference_z_bf.y);
     }
 }
 
@@ -718,6 +884,17 @@ void PertEngine::begin_point(const Point &pt)
         m_pixel.sample = static_cast<std::size_t>(m_pixel.iteration - m_reference.iteration);
         m_pixel.parameter_displacement = m_orbit_input.parameter - m_reference.coordinate;
         m_pixel.orbit_displacement = m_orbit_input.value - m_reference.orbit[m_pixel.sample];
+        if (m_orbit_input.precise)
+        {
+            sub_bf(m_tmp_bf, m_orbit_parameter_bf.x, m_reference_coordinate_bf.x);
+            m_pixel.parameter_displacement.real(bf_to_float(m_tmp_bf));
+            sub_bf(m_tmp_bf, m_orbit_parameter_bf.y, m_reference_coordinate_bf.y);
+            m_pixel.parameter_displacement.imag(bf_to_float(m_tmp_bf));
+            sub_bf(m_tmp_bf, m_orbit_initial_bf.x, m_reference_initial_bf.x);
+            m_pixel.orbit_displacement.real(bf_to_float(m_tmp_bf));
+            sub_bf(m_tmp_bf, m_orbit_initial_bf.y, m_reference_initial_bf.y);
+            m_pixel.orbit_displacement.imag(bf_to_float(m_tmp_bf));
+        }
         m_pixel.w = m_pixel.old = m_orbit_input.value;
         m_pixel.magnitude = mag_squared(m_pixel.w);
         m_pixel.at_reference = m_pixel.parameter_displacement == std::complex<double>{} &&
@@ -780,8 +957,16 @@ bool PertEngine::advance_precise_orbit(const std::size_t target, std::size_t &re
         m_pixel.precise_orbit = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
         if (m_explicit_orbit)
         {
-            float_to_bf(m_pixel.precise_coordinate.x, m_orbit_input.parameter.real());
-            float_to_bf(m_pixel.precise_coordinate.y, m_orbit_input.parameter.imag());
+            if (m_orbit_input.precise)
+            {
+                copy_bf(m_pixel.precise_coordinate.x, m_orbit_parameter_bf.x);
+                copy_bf(m_pixel.precise_coordinate.y, m_orbit_parameter_bf.y);
+            }
+            else
+            {
+                float_to_bf(m_pixel.precise_coordinate.x, m_orbit_input.parameter.real());
+                float_to_bf(m_pixel.precise_coordinate.y, m_orbit_input.parameter.imag());
+            }
         }
         else
         {
@@ -792,8 +977,16 @@ bool PertEngine::advance_precise_orbit(const std::size_t target, std::size_t &re
     {
         if (m_explicit_orbit)
         {
-            float_to_bf(m_pixel.precise_orbit.x, m_orbit_input.value.real());
-            float_to_bf(m_pixel.precise_orbit.y, m_orbit_input.value.imag());
+            if (m_orbit_input.precise)
+            {
+                copy_bf(m_pixel.precise_orbit.x, m_orbit_initial_bf.x);
+                copy_bf(m_pixel.precise_orbit.y, m_orbit_initial_bf.y);
+            }
+            else
+            {
+                float_to_bf(m_pixel.precise_orbit.x, m_orbit_input.value.real());
+                float_to_bf(m_pixel.precise_orbit.y, m_orbit_input.value.imag());
+            }
             m_pixel.precise_sample = static_cast<std::size_t>(m_orbit_input.iteration - m_reference.iteration);
         }
         else
@@ -939,6 +1132,7 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
             }
             if (m_explicit_orbit)
             {
+                m_orbit_escaped = escaped;
                 if (escaped || m_pixel.iteration == g_max_iterations)
                 {
                     m_pixel.phase = PixelState::Phase::COMPLETE;
@@ -1149,6 +1343,9 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                 m_pixel.phase = PixelState::Phase::ORBIT;
             }
             break;
+
+        case PixelState::Phase::REBASE:
+            return PERTURBATION_RETRY;
 
         case PixelState::Phase::COMPLETE:
             if (m_explicit_orbit)

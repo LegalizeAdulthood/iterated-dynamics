@@ -5,10 +5,13 @@
 #include "TestRender.h"
 
 #include <engine/calcfrac.h>
+#include <engine/bailout_formula.h>
+#include <engine/fractals.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
 #include <engine/OrbitPlot.h>
 #include <engine/pixel.h>
+#include <engine/PertEngine.h>
 #include <engine/resume.h>
 #include <engine/show_dot.h>
 #include <engine/sound.h>
@@ -18,8 +21,10 @@
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
+#include <fractals/burning_ship.h>
 #include <io/library.h>
 #include <misc/ValueSaver.h>
+#include <math/biginit.h>
 #include <ui/KeyboardHandler.h>
 #include <ui/SoundSession.h>
 #include <ui/video.h>
@@ -66,6 +71,58 @@ public:
 long s_math_calls{};
 long s_iteration{};
 std::vector<Point2i> s_seeds;
+long s_perturbation_calls{};
+std::vector<std::complex<double>> s_parameter_displacements;
+
+int initialize_mandel_sticky_pixel()
+{
+    s_seeds.push_back({g_col, g_row});
+    const double step{g_bf_math == BFMathType::NONE ? 0.01 : 0.0};
+    g_init = {0.25 + g_col * step, 0.25 + g_row * step};
+    g_float_param = &g_init;
+    g_old_z = g_init;
+    g_temp_sqr_x = g_old_z.x * g_old_z.x;
+    g_temp_sqr_y = g_old_z.y * g_old_z.y;
+    if (g_bf_math == BFMathType::BIG_NUM)
+    {
+        BigStackSaver saved;
+        const BigNum offset{alloc_stack(g_bn_length)};
+        float_to_bn(offset, 1e-40);
+        mult_bn_int(offset, offset, static_cast<U16>(g_col));
+        float_to_bn(g_param_z_bn.x, g_init.x);
+        add_a_bn(g_param_z_bn.x, offset);
+        float_to_bn(g_param_z_bn.y, g_init.y);
+        copy_bn(g_old_z_bn.x, g_param_z_bn.x);
+        copy_bn(g_old_z_bn.y, g_param_z_bn.y);
+    }
+    else if (g_bf_math == BFMathType::BIG_FLT)
+    {
+        BigStackSaver saved;
+        const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+        float_to_bf(offset, 1e-40);
+        mult_a_bf_int(offset, static_cast<U16>(g_col));
+        float_to_bf(g_param_z_bf.x, g_init.x);
+        add_a_bf(g_param_z_bf.x, offset);
+        float_to_bf(g_param_z_bf.y, g_init.y);
+        copy_bf(g_old_z_bf.x, g_param_z_bf.x);
+        copy_bf(g_old_z_bf.y, g_param_z_bf.y);
+    }
+    return 1;
+}
+
+int calculate_mandel_sticky_orbit()
+{
+    ++s_math_calls;
+    return julia_orbit();
+}
+
+void calculate_sticky_perturbation(
+    const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter)
+{
+    ++s_perturbation_calls;
+    s_parameter_displacements.push_back(parameter);
+    mandel_perturb(reference, delta, parameter);
+}
 
 int initialize_sticky_pixel()
 {
@@ -570,6 +627,325 @@ TEST_P(TestStickyOrbitSound, driverRefusalStillRecordsConstantFrequencyWithoutWa
 
 INSTANTIATE_TEST_SUITE_P(RectangleAndLine, TestStickyOrbitSound, Values(OrbitDrawMode::RECTANGLE, OrbitDrawMode::LINE),
     [](const TestParamInfo<OrbitDrawMode> &info)
+    { return info.param == OrbitDrawMode::RECTANGLE ? "Rectangle" : "Line"; });
+
+class TestStickyPerturbation : public TestStickyOrbitSound
+{
+protected:
+    void SetUp() override
+    {
+        TestStickyOrbitSound::SetUp();
+        set_bailout_formula(Bailout::MOD);
+        m_specific.flags = FractalFlags::PERTURB;
+        m_specific.per_pixel = initialize_mandel_sticky_pixel;
+        m_specific.orbit_calc = calculate_mandel_sticky_orbit;
+        m_specific.pert_pt = calculate_sticky_perturbation;
+        g_dispatch = FractalDispatch{m_specific};
+        m_engine.initialize_frame({0.25, 0.25}, {1.0, 0.0}, {0.0, 1.0});
+        clear_trace();
+    }
+
+    void TearDown() override
+    {
+        m_engine.finish();
+        if (m_big_float)
+        {
+            free_bf_vars();
+        }
+        TestStickyOrbitSound::TearDown();
+    }
+
+    void clear_trace()
+    {
+        m_samples.clear();
+        m_plots.clear();
+        m_events.clear();
+        s_seeds.clear();
+        s_math_calls = 0;
+        s_perturbation_calls = 0;
+        s_parameter_displacements.clear();
+    }
+
+    void forbid_ordinary_orbits()
+    {
+        clear_trace();
+        g_dispatch.set_orbit_calc([]() -> int { throw std::logic_error("Sticky orbits bypassed perturbation"); });
+    }
+
+    void run_perturbation(StickyOrbits &calculation)
+    {
+        bool done{};
+        for (int chunk = 0; chunk < 10000 && !done; ++chunk)
+        {
+            done = calculation.iterate(&m_engine);
+        }
+        ASSERT_TRUE(done);
+    }
+
+    void expect_output(const std::vector<DComplex> &samples, const std::vector<std::array<int, 3>> &plots)
+    {
+        ASSERT_EQ(samples.size(), m_samples.size());
+        EXPECT_EQ(plots, m_plots);
+        for (std::size_t i = 0; i < samples.size(); ++i)
+        {
+            EXPECT_NEAR(samples[i].x, m_samples[i].x, 1e-14);
+            EXPECT_NEAR(samples[i].y, m_samples[i].y, 1e-14);
+        }
+    }
+
+    PertEngine m_engine;
+    ValueSaver<BFMathType> m_saved_math{g_bf_math, BFMathType::NONE};
+    ValueSaver<double> m_saved_bailout{g_magnitude_limit, 4.0};
+    ValueSaver<UserData> m_saved_user{g_user, UserData{}};
+    bool m_big_float{};
+};
+
+TEST_P(TestStickyPerturbation, numericalSamplesAndPlotsRetainTheOrdinarySeedOrder)
+{
+    StickyOrbits ordinary;
+    run(ordinary);
+    const std::vector<DComplex> samples{m_samples};
+    const std::vector<std::array<int, 3>> plots{m_plots};
+    const std::vector<Point2i> seeds{s_seeds};
+    ASSERT_FALSE(samples.empty());
+    forbid_ordinary_orbits();
+    StickyOrbits perturbation;
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+
+    run_perturbation(perturbation);
+
+    expect_output(samples, plots);
+    EXPECT_EQ(seeds, s_seeds);
+    EXPECT_GT(s_perturbation_calls, 0);
+    EXPECT_EQ(0, s_math_calls);
+}
+
+TEST_P(TestStickyPerturbation, skipAndIntervalRetainTheSamePointSequence)
+{
+    g_max_iterations = 5;
+    g_orbit_skip_points = 1;
+    g_orbit_interval = 2;
+    StickyOrbits ordinary;
+    run(ordinary);
+    const std::vector<DComplex> samples{m_samples};
+    const std::vector<std::array<int, 3>> plots{m_plots};
+    forbid_ordinary_orbits();
+    StickyOrbits perturbation;
+
+    run_perturbation(perturbation);
+
+    expect_output(samples, plots);
+    EXPECT_GT(s_perturbation_calls, m_samples.size());
+}
+
+TEST_P(TestStickyPerturbation, refusedPointDoesNotAdvanceMathOrChangeItsCoordinates)
+{
+    forbid_ordinary_orbits();
+    StickyOrbits perturbation;
+    EXPECT_CALL(*m_output, play(_)).WillOnce(Return(false)).WillOnce(Return(false));
+
+    EXPECT_FALSE(perturbation.iterate(&m_engine));
+    EXPECT_FALSE(perturbation.iterate(&m_engine));
+
+    EXPECT_EQ(1, s_perturbation_calls);
+    EXPECT_EQ(1, s_seeds.size());
+    EXPECT_TRUE(m_plots.empty());
+    g_new_z = {100.0, 200.0};
+    EXPECT_CALL(*m_output, play(_))
+        .WillRepeatedly(Invoke(
+            [this](const SoundSample &sample)
+            {
+                m_samples.push_back({sample.x, sample.y});
+                return true;
+            }));
+    run_perturbation(perturbation);
+    ASSERT_FALSE(m_samples.empty());
+    EXPECT_DOUBLE_EQ(0.25, m_samples.front().x);
+    EXPECT_DOUBLE_EQ(0.375, m_samples.front().y);
+}
+
+TEST_P(TestStickyPerturbation, escapedAndClippedPointsPreservePeriodicityPolicy)
+{
+    g_magnitude_limit = 0.1;
+    for (const int periodicity : {0, 1})
+    {
+        SCOPED_TRACE(periodicity);
+        clear_trace();
+        g_periodicity_check = periodicity;
+        g_dispatch.set_orbit_calc(calculate_mandel_sticky_orbit);
+        StickyOrbits ordinary;
+        run(ordinary);
+        const std::vector<DComplex> samples{m_samples};
+        const std::vector<std::array<int, 3>> plots{m_plots};
+        forbid_ordinary_orbits();
+        StickyOrbits perturbation;
+
+        run_perturbation(perturbation);
+
+        expect_output(samples, plots);
+    }
+}
+
+TEST_P(TestStickyPerturbation, referenceReplacementDoesNotReplayAcceptedOutput)
+{
+    StickyOrbits ordinary;
+    run(ordinary);
+    const std::vector<DComplex> samples{m_samples};
+    const std::vector<std::array<int, 3>> plots{m_plots};
+    forbid_ordinary_orbits();
+    m_engine.set_glitch_tolerance(8.0);
+    StickyOrbits perturbation;
+
+    run_perturbation(perturbation);
+
+    expect_output(samples, plots);
+    EXPECT_GT(m_engine.reference_count(), 1);
+}
+
+TEST_P(TestStickyPerturbation, clippedPointReleasesTheUnfinishedOrbitBeforeSelectingAnotherSeed)
+{
+    g_periodicity_check = 1;
+    g_image_region = {{0.0, 0.0}, {0.1, 0.1}, {0.0, 0.0}};
+    forbid_ordinary_orbits();
+    StickyOrbits perturbation;
+
+    run_perturbation(perturbation);
+
+    EXPECT_TRUE(m_samples.empty());
+    EXPECT_TRUE(m_plots.empty());
+    EXPECT_EQ(GetParam() == OrbitDrawMode::RECTANGLE ? 4 : 2, s_seeds.size());
+    EXPECT_EQ(s_seeds.size(), s_perturbation_calls);
+}
+
+TEST_P(TestStickyPerturbation, highPrecisionSeedsRetainSubDoubleCoordinateDifferences)
+{
+    for (const FractalType allocator : {FractalType::MANDEL, FractalType::MANDEL_Z_POWER})
+    {
+        SCOPED_TRACE(static_cast<int>(allocator));
+        m_engine.finish();
+        if (m_big_float)
+        {
+            free_bf_vars();
+        }
+        {
+            ValueSaver saved_type{g_fractal_type, allocator};
+            init_bf_dec(60);
+        }
+        m_big_float = true;
+        const BFComplex center{m_engine.initialize_frame_bf({}, {})};
+        float_to_bf(center.x, 0.25);
+        float_to_bf(center.y, 0.25);
+        forbid_ordinary_orbits();
+        StickyOrbits perturbation;
+
+        run_perturbation(perturbation);
+
+        ASSERT_FALSE(m_samples.empty());
+        EXPECT_EQ(m_samples.size(), m_plots.size());
+        EXPECT_EQ(1, m_engine.reference_count());
+        EXPECT_THAT(s_parameter_displacements,
+            Contains(
+                Truly([](const std::complex<double> &delta) { return delta.real() > 0.0 && delta.real() < 1e-30; })));
+        EXPECT_EQ(0, s_math_calls);
+        g_magnitude_limit = 0.1;
+        g_dispatch.set_orbit_calc(calculate_mandel_sticky_orbit);
+        clear_trace();
+        StickyOrbits ordinary_bailout;
+        run(ordinary_bailout);
+        const std::vector<DComplex> samples{m_samples};
+        const std::vector<std::array<int, 3>> plots{m_plots};
+        forbid_ordinary_orbits();
+        StickyOrbits precise_bailout;
+        run_perturbation(precise_bailout);
+        expect_output(samples, plots);
+        g_magnitude_limit = 4.0;
+    }
+}
+
+TEST_P(TestStickyPerturbation, burningShipUsesTheSameNumericalOrientationForPlottingAndSound)
+{
+    g_image_region = {{-2.0, -2.0}, {2.0, 2.0}, {-2.0, -2.0}};
+    g_fractal_type = FractalType::BURNING_SHIP;
+    ValueSaver saved_power{g_params[2]};
+    m_specific.pert_pt = burning_ship_perturb;
+    m_specific.pert_ref = burning_ship_ref_pt;
+    m_specific.pert_ref_bf = burning_ship_ref_pt_bf;
+    for (const int degree : {2, 3})
+    {
+        SCOPED_TRACE(degree);
+        g_params[2] = degree;
+        clear_trace();
+        g_dispatch.set_orbit_calc(burning_ship_orbit);
+        StickyOrbits ordinary;
+        run(ordinary);
+        const std::vector<DComplex> samples{m_samples};
+        const std::vector<std::array<int, 3>> plots{m_plots};
+        ASSERT_FALSE(samples.empty());
+        forbid_ordinary_orbits();
+        m_engine.finish();
+        m_engine.initialize_frame({0.25, -0.25}, {1.0, 0.0}, {0.0, 1.0});
+        StickyOrbits perturbation;
+
+        run_perturbation(perturbation);
+
+        expect_output(samples, plots);
+    }
+}
+
+TEST_P(TestStickyPerturbation, controllerInterruptAndResumeRetainAcceptedSoundAndPlots)
+{
+    g_user.perturbation = PerturbationMode::YES;
+    {
+        SoundSession sound{m_output};
+        ASSERT_EQ(0, render_standard_image(sound));
+    }
+    const std::vector<DComplex> samples{m_samples};
+    const std::vector<std::array<int, 3>> plots{m_plots};
+    ASSERT_GT(samples.size(), 1);
+    clear_trace();
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    EXPECT_CALL(*m_output, play(_))
+        .WillOnce(Invoke(
+            [this](const SoundSample &sample)
+            {
+                m_samples.push_back({sample.x, sample.y});
+                return true;
+            }))
+        .WillOnce(Invoke(
+            [this](const SoundSample &)
+            {
+                m_key = 'x';
+                return false;
+            }));
+    EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([this](const int key) { m_key = key; }));
+    EXPECT_CALL(*m_output, mute());
+    {
+        SoundSession sound{m_output};
+        EXPECT_EQ(-1, render_standard_image(sound));
+    }
+    ASSERT_EQ(1, m_samples.size());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    m_key = 0;
+    g_resuming = true;
+    EXPECT_CALL(*m_output, play(_))
+        .WillRepeatedly(Invoke(
+            [this](const SoundSample &sample)
+            {
+                m_samples.push_back({sample.x, sample.y});
+                return true;
+            }));
+    {
+        SoundSession sound{m_output};
+        EXPECT_EQ(0, render_standard_image(sound));
+    }
+
+    expect_output(samples, plots);
+    EXPECT_GT(s_perturbation_calls, 0);
+    EXPECT_EQ(0, s_math_calls);
+}
+
+INSTANTIATE_TEST_SUITE_P(RectangleAndLine, TestStickyPerturbation,
+    Values(OrbitDrawMode::RECTANGLE, OrbitDrawMode::LINE), [](const TestParamInfo<OrbitDrawMode> &info)
     { return info.param == OrbitDrawMode::RECTANGLE ? "Rectangle" : "Line"; });
 
 } // namespace id::test

@@ -488,6 +488,25 @@ foreach(perturbation IN ITEMS yes auto)
         PROPERTIES LABELS "autokey;ui;passes;perturbation" TIMEOUT 250)
 endforeach()
 
+foreach(draw_mode IN ITEMS r l)
+    foreach(perturbation IN ITEMS yes auto)
+        set(name "sticky-interrupt-${draw_mode}-${perturbation}")
+        id_make_test_home("${name}" STICKY_INTERRUPT_HOME
+            KEYS standard_interrupt.key)
+        add_test(NAME "AutoKeyTest.${name}"
+            COMMAND ${CMAKE_COMMAND}
+                "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+                "-DCHECK_RESUME=$<SHELL_PATH:$<TARGET_FILE:check-standard-resume>>"
+                "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+                "-DPASSES=o" "-DSTICKY_PERTURBATION=${perturbation}"
+                "-DSTICKY_DRAW_MODE=${draw_mode}"
+                -P "${CMAKE_CURRENT_SOURCE_DIR}/standard_interrupt_test.cmake"
+            WORKING_DIRECTORY "${STICKY_INTERRUPT_HOME}")
+        set_tests_properties("AutoKeyTest.${name}"
+            PROPERTIES LABELS "autokey;ui;passes;perturbation" TIMEOUT 250)
+    endforeach()
+endforeach()
+
 foreach(perturbation IN ITEMS auto no)
     set(name "perturbation-pass-switch-${perturbation}")
     id_make_test_home("${name}" PERTURBATION_PASS_SWITCH_HOME

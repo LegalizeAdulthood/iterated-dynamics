@@ -33,11 +33,16 @@ public:
     int calculate_pixel(int col, int row, bool incremental = false);
 
     void begin_orbit(const std::complex<double> &parameter, const std::complex<double> &value, long iteration);
+    void begin_orbit_bf(const math::BFComplex &parameter, const math::BFComplex &value, long iteration);
+    void begin_orbit_bn(const math::BNComplex &parameter, const math::BNComplex &value, long iteration);
     // Advance at most one recurrence update; true at bailout or the iteration limit.
     // Reference preparation can return false without advancing orbit_iteration().
-    bool iterate_orbit();
+    // continue_bailout retains Mandel's cached-square updates after a bailout.
+    bool iterate_orbit(bool continue_bailout = false);
     std::complex<double> orbit_value() const;
     long orbit_iteration() const;
+    bool orbit_escaped() const;
+    void finish_orbit();
 
     bool orbit_overlay_displayed() const;
     void set_glitch_tolerance(double tolerance);
@@ -68,6 +73,7 @@ private:
         std::complex<double> parameter{};
         std::complex<double> value{};
         long iteration{};
+        bool precise{};
     };
 
     struct PixelState
@@ -81,6 +87,7 @@ private:
             PERIODICITY,
             SAVE_PERIODICITY,
             CHECK_PERIODICITY,
+            REBASE,
             COMPLETE
         };
 
@@ -130,6 +137,7 @@ private:
     void set_reference_orbit();
     void reset_reference(std::size_t samples);
     bool iterate_reference();
+    bool advance_bailout();
     std::complex<double> pixel_delta(const std::complex<double> &pixel_position) const;
     std::complex<double> parameter_delta(const std::complex<double> &pixel_position) const;
     std::complex<double> inverted_coordinate(const std::complex<double> &pixel_position) const;
@@ -156,6 +164,9 @@ private:
     long m_cycle_len{-1};
     math::BFComplex m_reference_coordinate_bf{};
     math::BFComplex m_reference_z_bf{};
+    math::BFComplex m_reference_initial_bf{};
+    math::BFComplex m_orbit_parameter_bf{};
+    math::BFComplex m_orbit_initial_bf{};
     math::BigFloat m_tmp_bf{};
     math::BFComplex m_center_bf{};
     std::complex<double> m_center{};
@@ -171,6 +182,7 @@ private:
     bool m_frame_initialized{};
     bool m_reference_ready{};
     bool m_explicit_orbit{};
+    bool m_orbit_escaped{};
     bool m_orbit_output_started{};
     bool m_orbit_output_pending{};
     bool m_orbit_overlay_displayed{};

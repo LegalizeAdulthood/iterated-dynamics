@@ -24,6 +24,14 @@ if(SYNCHRONOUS_PERTURBATION)
         list(APPEND PARAMETERS "bfdigits=30" "center-mag=-0.75/0.1/1e14")
     endif()
 endif()
+if(STICKY_PERTURBATION)
+    list(APPEND PARAMETERS "perturbation=${STICKY_PERTURBATION}"
+        "orbitdrawmode=${STICKY_DRAW_MODE}")
+    if(STICKY_PERTURBATION STREQUAL "auto")
+        list(APPEND PARAMETERS "bfdigits=30" "center-mag=-0.75/0.1/1e14"
+            "orbitcorners=-2.5/1.5/-1.5/1.5")
+    endif()
+endif()
 
 execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${PARAMETERS}
     "savename=render000.gif" "autokeyname=standard_interrupt.key" "autokey=play"

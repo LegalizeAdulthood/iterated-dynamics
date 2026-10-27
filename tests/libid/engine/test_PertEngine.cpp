@@ -3938,6 +3938,141 @@ TEST_P(TestPerturbationContinuation, invalidContinuationDoesNotReplaceTheCurrent
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationContinuation, Bool());
 
+TEST_P(TestPerturbationContinuation, distinguishesBailoutFromTheIterationLimit)
+{
+    prepare();
+    check_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
+    EXPECT_FALSE(m_engine.orbit_escaped());
+    check_orbit({1.0, 0.0}, {0.5, 0.0}, 12);
+    EXPECT_TRUE(m_engine.orbit_escaped());
+}
+
+TEST_P(TestPerturbationContinuation, unfinishedOrbitCanBeReleasedWithoutDiscardingTheReference)
+{
+    prepare();
+    m_engine.begin_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
+    EXPECT_FALSE(m_engine.iterate_orbit());
+
+    m_engine.finish_orbit();
+
+    EXPECT_EQ(1, m_engine.reference_count());
+    EXPECT_THROW(m_engine.orbit_escaped(), std::logic_error);
+    check_orbit({0.0625, 0.03125}, {-0.0625, 0.125}, 7);
+    EXPECT_EQ(1, m_engine.reference_count());
+    m_engine.finish_orbit();
+    EXPECT_GE(m_engine.calculate_pixel(g_col, g_row), 0);
+    EXPECT_EQ(1, m_plots.size());
+}
+
+TEST_P(TestPerturbationContinuation, preciseReferenceReplacementYieldsWithoutPublishingOrReplayingFailedWork)
+{
+    if (!GetParam())
+    {
+        return;
+    }
+    prepare(5000);
+    while (!m_engine.initialize_pixel_strategy())
+    {
+    }
+    BigStackSaver saved;
+    const BFComplex parameter{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BFComplex value{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+    float_to_bf(parameter.x, 0.25);
+    clear_bf(parameter.y);
+    copy_bf(value.x, parameter.x);
+    clear_bf(value.y);
+    m_engine.begin_orbit_bf(parameter, value, 0);
+    while (!m_engine.iterate_orbit())
+    {
+    }
+    m_engine.finish_orbit();
+    float_to_bf(parameter.x, 0.125);
+    float_to_bf(parameter.y, 0.0625);
+    float_to_bf(value.x, 0.03125);
+    float_to_bf(value.y, -0.0625);
+    float_to_bf(offset, 1e-40);
+    add_a_bf(parameter.x, offset);
+    add_a_bf(value.x, offset);
+    s_perturbation_orbit.clear();
+    m_specific.pert_pt =
+        [](const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &displacement)
+    {
+        record_perturbation_orbit(reference, delta, displacement);
+        if (s_perturbation_orbit.size() == 4097)
+        {
+            delta = {std::numeric_limits<double>::quiet_NaN(), 0.0};
+        }
+    };
+    m_engine.begin_orbit_bf(parameter, value, 0);
+    std::complex<double> expected{0.03125, -0.0625};
+    int replay_yields{};
+    bool done{};
+    for (int call = 0; call < 5010 && !done; ++call)
+    {
+        const long before{m_engine.orbit_iteration()};
+        done = m_engine.iterate_orbit();
+        if (m_engine.orbit_iteration() != before)
+        {
+            EXPECT_EQ(before + 1, m_engine.orbit_iteration());
+            expected = expected * expected + std::complex<double>{0.125, 0.0625};
+        }
+        else if (before == 4096)
+        {
+            ++replay_yields;
+        }
+        EXPECT_NEAR(expected.real(), m_engine.orbit_value().real(), 1e-14);
+        EXPECT_NEAR(expected.imag(), m_engine.orbit_value().imag(), 1e-14);
+    }
+    EXPECT_TRUE(done);
+    EXPECT_EQ(5000, m_engine.orbit_iteration());
+    EXPECT_EQ(5001, s_perturbation_orbit.size());
+    EXPECT_GE(replay_yields, 2);
+    EXPECT_TRUE(m_plots.empty());
+    m_engine.finish_orbit();
+}
+
+TEST_F(TestPerturbationPixels, preciseContinuationPreservesSubDoubleParameterAndSeedDisplacements)
+{
+    init_bf_dec(60);
+    m_big_float = true;
+    g_max_iterations = 4;
+    const BFComplex center{m_engine.initialize_frame_bf({}, {})};
+    float_to_bf(center.x, 0.25);
+    clear_bf(center.y);
+    ASSERT_TRUE(m_engine.initialize_pixel_strategy());
+    BigStackSaver saved;
+    const BFComplex parameter{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BFComplex value{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+    float_to_bf(parameter.x, 0.25);
+    clear_bf(parameter.y);
+    copy_bf(value.x, parameter.x);
+    clear_bf(value.y);
+    m_engine.begin_orbit_bf(parameter, value, 0);
+    while (!m_engine.iterate_orbit())
+    {
+    }
+    m_engine.finish_orbit();
+    float_to_bf(offset, 1e-40);
+    const int references{m_engine.reference_count()};
+    add_a_bf(parameter.x, offset);
+    add_a_bf(value.x, offset);
+    s_perturbation_orbit.clear();
+    m_specific.pert_pt = record_coordinate;
+    s_coordinates.clear();
+
+    m_engine.begin_orbit_bf(parameter, value, 0);
+    EXPECT_FALSE(m_engine.iterate_orbit());
+
+    ASSERT_EQ(1, s_coordinates.size());
+    EXPECT_NEAR(1e-40, s_coordinates.front().parameter_delta.real(), 1e-52);
+    EXPECT_DOUBLE_EQ(0.0, s_coordinates.front().parameter_delta.imag());
+    EXPECT_EQ(references, m_engine.reference_count());
+    EXPECT_TRUE(m_plots.empty());
+    m_engine.finish_orbit();
+}
+
 class TestSynchronousPerturbation : public TestPerturbationIterations
 {
 protected:

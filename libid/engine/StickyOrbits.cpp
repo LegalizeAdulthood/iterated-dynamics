@@ -5,8 +5,10 @@
 
 #include "engine/calcfrac.h"
 #include "engine/convert_center_mag.h"
+#include "engine/fractals.h"
 #include "engine/LogicalScreen.h"
 #include "engine/OrbitPlot.h"
+#include "engine/PertEngine.h"
 #include "engine/resume.h"
 #include "engine/SoundOutput.h"
 #include "engine/VideoInfo.h"
@@ -14,10 +16,13 @@
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "misc/id.h"
+#include "misc/run_cleanup.h"
 
 #include <algorithm>
 #include <cmath>
+#include <complex>
 #include <cstdlib>
+#include <exception>
 #include <stdexcept>
 
 using namespace id::fractals;
@@ -48,6 +53,7 @@ void StickyOrbits::initialize_rectangle()
 
 void StickyOrbits::initialize_line()
 {
+    const int resume_accumulator{m_line.accumulator};
     const int dx = g_i_stop_pt.x - g_i_start_pt.x;
     const int dy = g_i_stop_pt.y - g_i_start_pt.y;
     bool pos_slope = dx > 0;
@@ -96,6 +102,10 @@ void StickyOrbits::initialize_line()
     }
 
     m_line.positive_slope = pos_slope;
+    if (m_line.resuming)
+    {
+        m_line.accumulator = resume_accumulator;
+    }
     m_traversal = Traversal::LINE;
 }
 
@@ -258,20 +268,76 @@ void StickyOrbits::select_orbit_color()
     }
 }
 
-void StickyOrbits::start_orbit()
+void StickyOrbits::start_orbit(PertEngine *perturbation)
 {
     select_orbit_color();
     per_pixel();
+    if (perturbation != nullptr)
+    {
+        const bool burning_ship{g_fractal_type == FractalType::BURNING_SHIP};
+        const bool conjugate_value{burning_ship && static_cast<int>(g_params[2]) > 2};
+        if (math::g_bf_math == math::BFMathType::BIG_NUM)
+        {
+            perturbation->begin_orbit_bn(math::g_param_z_bn, math::g_old_z_bn, 0);
+        }
+        else if (math::g_bf_math == math::BFMathType::BIG_FLT)
+        {
+            if (burning_ship)
+            {
+                math::neg_a_bf(math::g_param_z_bf.y);
+            }
+            if (conjugate_value)
+            {
+                math::neg_a_bf(math::g_old_z_bf.y);
+            }
+            std::exception_ptr failure;
+            try
+            {
+                perturbation->begin_orbit_bf(math::g_param_z_bf, math::g_old_z_bf, 0);
+            }
+            catch (...)
+            {
+                failure = std::current_exception();
+            }
+            misc::run_cleanup(
+                failure,
+                [burning_ship]
+                {
+                    if (burning_ship)
+                    {
+                        math::neg_a_bf(math::g_param_z_bf.y);
+                    }
+                },
+                [conjugate_value]
+                {
+                    if (conjugate_value)
+                    {
+                        math::neg_a_bf(math::g_old_z_bf.y);
+                    }
+                });
+        }
+        else
+        {
+            if (g_float_param == nullptr)
+            {
+                throw std::logic_error("Sticky perturbation requires an initialized recurrence parameter");
+            }
+            const std::complex<double> parameter{g_float_param->x, burning_ship ? -g_float_param->y : g_float_param->y};
+            const std::complex<double> value{g_old_z.x, conjugate_value ? -g_old_z.y : g_old_z.y};
+            perturbation->begin_orbit(parameter, value, 0);
+        }
+    }
     m_orbit.count = 0;
     m_orbit.active = true;
     m_orbit.point_pending = false;
+    m_orbit.escaped = false;
 }
 
-bool StickyOrbits::advance_orbit()
+bool StickyOrbits::advance_orbit(PertEngine *perturbation)
 {
     if (!m_orbit.active)
     {
-        start_orbit();
+        start_orbit(perturbation);
     }
 
     const long stop_count = sticky_orbit_chunk_limit(m_orbit.count, g_max_iterations);
@@ -279,9 +345,36 @@ bool StickyOrbits::advance_orbit()
     {
         if (!m_orbit.point_pending)
         {
-            if (orbit_calc() == 1 && g_periodicity_check)
+            if (perturbation != nullptr)
+            {
+                if (!m_orbit.escaped || g_fractal_type == FractalType::MANDEL)
+                {
+                    const long before{perturbation->orbit_iteration()};
+                    perturbation->iterate_orbit(g_fractal_type == FractalType::MANDEL);
+                    if (perturbation->orbit_iteration() == before)
+                    {
+                        return false;
+                    }
+                    const std::complex<double> value{perturbation->orbit_value()};
+                    m_orbit.point = {value.real(), value.imag()};
+                    if (g_fractal_type == FractalType::BURNING_SHIP && static_cast<int>(g_params[2]) > 2)
+                    {
+                        m_orbit.point.y = -m_orbit.point.y;
+                    }
+                    m_orbit.escaped = perturbation->orbit_escaped();
+                }
+                if (m_orbit.escaped && g_periodicity_check)
+                {
+                    continue;
+                }
+            }
+            else if (orbit_calc() == 1 && g_periodicity_check)
             {
                 continue;
+            }
+            else
+            {
+                m_orbit.point = g_new_z;
             }
 
             if (m_orbit.count < m_orbit.resume_count || m_orbit.count < g_orbit_skip_points ||
@@ -290,10 +383,10 @@ bool StickyOrbits::advance_orbit()
                 continue;
             }
 
-            m_orbit.col = static_cast<int>(
-                m_orbit.screen_convert.a * g_new_z.x + m_orbit.screen_convert.b * g_new_z.y + m_orbit.screen_convert.e);
-            m_orbit.row = static_cast<int>(
-                m_orbit.screen_convert.c * g_new_z.x + m_orbit.screen_convert.d * g_new_z.y + m_orbit.screen_convert.f);
+            m_orbit.col = static_cast<int>(m_orbit.screen_convert.a * m_orbit.point.x +
+                m_orbit.screen_convert.b * m_orbit.point.y + m_orbit.screen_convert.e);
+            m_orbit.row = static_cast<int>(m_orbit.screen_convert.c * m_orbit.point.x +
+                m_orbit.screen_convert.d * m_orbit.point.y + m_orbit.screen_convert.f);
             if (m_orbit.col <= 0 || m_orbit.col >= g_logical_screen.x_dots || m_orbit.row <= 0 ||
                 m_orbit.row >= g_logical_screen.y_dots)
             {
@@ -301,11 +394,14 @@ bool StickyOrbits::advance_orbit()
                 {
                     m_orbit.active = false;
                     m_orbit.resume_count = 0;
+                    if (perturbation != nullptr)
+                    {
+                        perturbation->finish_orbit();
+                    }
                     return true;
                 }
                 continue;
             }
-            m_orbit.point = g_new_z;
             m_orbit.point_pending = true;
         }
         if (!g_sound->play({m_orbit.point.x, m_orbit.point.y, 0.0}))
@@ -323,10 +419,14 @@ bool StickyOrbits::advance_orbit()
 
     m_orbit.active = false;
     m_orbit.resume_count = 0;
+    if (perturbation != nullptr)
+    {
+        perturbation->finish_orbit();
+    }
     return true;
 }
 
-bool StickyOrbits::draw_rectangle()
+bool StickyOrbits::draw_rectangle(PertEngine *perturbation)
 {
     if (m_row > g_i_stop_pt.y)
     {
@@ -337,7 +437,7 @@ bool StickyOrbits::draw_rectangle()
     g_current_row = m_row;
     g_row = m_row;
     g_col = m_col;
-    if (!advance_orbit())
+    if (!advance_orbit(perturbation))
     {
         return false;
     }
@@ -346,7 +446,7 @@ bool StickyOrbits::draw_rectangle()
     return done();
 }
 
-bool StickyOrbits::draw_line()
+bool StickyOrbits::draw_line(PertEngine *perturbation)
 {
     if (line_done())
     {
@@ -356,7 +456,7 @@ bool StickyOrbits::draw_line()
 
     g_row = m_row;
     g_col = m_col;
-    if (!advance_orbit())
+    if (!advance_orbit(perturbation))
     {
         return false;
     }
@@ -365,7 +465,7 @@ bool StickyOrbits::draw_line()
     return done();
 }
 
-bool StickyOrbits::draw_function()
+bool StickyOrbits::draw_function(PertEngine *perturbation)
 {
     constexpr double FACTOR = PI / 180.0;
 
@@ -378,7 +478,7 @@ bool StickyOrbits::draw_function()
     const double theta = static_cast<double>(m_function.angle) * FACTOR;
     g_col = static_cast<int>(m_function.x_factor + (m_function.x_center + m_function.x_mag_factor * std::cos(theta)));
     g_row = static_cast<int>(m_function.y_factor + (m_function.y_center + m_function.x_mag_factor * std::sin(theta)));
-    if (!advance_orbit())
+    if (!advance_orbit(perturbation))
     {
         return false;
     }
@@ -392,7 +492,7 @@ bool StickyOrbits::done() const
     return m_traversal == Traversal::DONE;
 }
 
-bool StickyOrbits::iterate()
+bool StickyOrbits::iterate(PertEngine *perturbation)
 {
     if (!m_initialized)
     {
@@ -406,13 +506,13 @@ bool StickyOrbits::iterate()
     switch (m_traversal)
     {
     case Traversal::RECTANGLE:
-        return draw_rectangle();
+        return draw_rectangle(perturbation);
 
     case Traversal::LINE:
-        return draw_line();
+        return draw_line(perturbation);
 
     case Traversal::FUNCTION:
-        return draw_function();
+        return draw_function(perturbation);
 
     case Traversal::START:
     case Traversal::DONE:
@@ -471,11 +571,17 @@ void StickyOrbits::suspend()
 void StickyOrbits::save_resume() const
 {
     put_resume(m_orbit.resume_count);
+    put_resume(m_line.accumulator);
 }
 
-void StickyOrbits::restore_resume()
+void StickyOrbits::restore_resume(const int version)
 {
     get_resume(m_orbit.resume_count);
+    if (version >= 5)
+    {
+        get_resume(m_line.accumulator);
+        m_line.resuming = true;
+    }
     if (m_orbit.resume_count < 0)
     {
         throw std::logic_error{"Invalid sticky orbit resume count"};

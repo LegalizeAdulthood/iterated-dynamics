@@ -8,6 +8,8 @@
 namespace id::engine
 {
 
+class PertEngine;
+
 enum class OrbitDrawMode
 {
     NONE = 0,
@@ -23,10 +25,10 @@ long sticky_orbit_chunk_limit(long count, long max_iterations);
 class StickyOrbits
 {
 public:
-    bool iterate();
+    bool iterate(PertEngine *perturbation = nullptr);
     void suspend();
     void save_resume() const;
-    void restore_resume();
+    void restore_resume(int version = 3);
 
 private:
     enum class Traversal
@@ -46,6 +48,7 @@ private:
         int inc2{};
         bool positive_slope{};
         bool shallow{};
+        bool resuming{};
     };
 
     struct FunctionState
@@ -71,15 +74,16 @@ private:
         bool active{};
         bool seed_color_selected{};
         bool point_pending{};
+        bool escaped{};
     };
 
     void advance_after_seed();
     void advance_line();
-    bool advance_orbit();
+    bool advance_orbit(PertEngine *perturbation);
     bool done() const;
-    bool draw_function();
-    bool draw_line();
-    bool draw_rectangle();
+    bool draw_function(PertEngine *perturbation);
+    bool draw_line(PertEngine *perturbation);
+    bool draw_rectangle(PertEngine *perturbation);
     int encoded_orbit_color() const;
     void initialize();
     void initialize_function();
@@ -88,7 +92,7 @@ private:
     bool line_done() const;
     void save_current_work();
     void select_orbit_color();
-    void start_orbit();
+    void start_orbit(PertEngine *perturbation);
 
     bool m_initialized{};
     Traversal m_traversal{Traversal::START};

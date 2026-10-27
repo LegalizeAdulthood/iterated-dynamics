@@ -216,7 +216,7 @@ void StandardFractal::suspend()
     if (g_num_work_list > 0)
     {
         const bool save_pass_resume{m_standard_pass.calc_mode() == CalcMode::ORBIT};
-        const int version{sampling ? 4 : (save_pass_resume ? 3 : 2)};
+        const int version{sampling ? 4 : (save_pass_resume ? 5 : 2)};
         const int sampling_size{sampling ? static_cast<int>(sizeof(m_log_map_edge) + sizeof(m_log_map_point) +
                                                sizeof(m_log_map_min_color) + sizeof(m_log_map_max_iterations))
                                          : 0};
@@ -779,7 +779,7 @@ void StandardFractal::initialize_work_list()
         }
         else if (version >= 3)
         {
-            m_standard_pass.restore_resume(g_std_calc_mode);
+            m_standard_pass.restore_resume(g_std_calc_mode, version);
         }
         end_resume();
         if (version < 2)

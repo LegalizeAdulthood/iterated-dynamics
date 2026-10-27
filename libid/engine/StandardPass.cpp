@@ -288,7 +288,7 @@ bool StandardPass::iterate(PertEngine *perturbation)
         return std::get<SynchronousOrbit>(m_state).iterate(perturbation);
 
     case ORBIT:
-        return std::get<StickyOrbits>(m_state).iterate();
+        return std::get<StickyOrbits>(m_state).iterate(perturbation);
 
     default:
         throw std::logic_error{"Pixel calculation belongs to StandardFractal"};
@@ -399,12 +399,12 @@ void StandardPass::save_resume() const
     }
 }
 
-void StandardPass::restore_resume(const CalcMode calc_mode)
+void StandardPass::restore_resume(const CalcMode calc_mode, const int version)
 {
     if (calc_mode == CalcMode::ORBIT)
     {
         select(calc_mode);
-        std::get<StickyOrbits>(m_state).restore_resume();
+        std::get<StickyOrbits>(m_state).restore_resume(version);
     }
 }
 
