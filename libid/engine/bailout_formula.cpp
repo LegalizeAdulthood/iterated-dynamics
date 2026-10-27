@@ -21,24 +21,25 @@ int (*g_bailout_float)(){};
 int (*g_bailout_bignum)(){};
 int (*g_bailout_bigfloat)(){};
 
-bool bailout_reached(const Bailout test, const double x, const double y, const double limit)
+bool bailout_reached(const Bailout test, const double x, const double y, const double limit, const bool strict)
 {
+    const auto reached = [limit, strict](const double metric) { return strict ? metric > limit : metric >= limit; };
     switch (test)
     {
     case Bailout::MOD:
-        return sqr(x) + sqr(y) >= limit;
+        return reached(sqr(x) + sqr(y));
     case Bailout::REAL:
-        return sqr(x) >= limit;
+        return reached(sqr(x));
     case Bailout::IMAG:
-        return sqr(y) >= limit;
+        return reached(sqr(y));
     case Bailout::OR:
-        return sqr(x) >= limit || sqr(y) >= limit;
+        return reached(sqr(x)) || reached(sqr(y));
     case Bailout::AND:
-        return sqr(x) >= limit && sqr(y) >= limit;
+        return reached(sqr(x)) && reached(sqr(y));
     case Bailout::MANH:
-        return sqr(std::abs(x) + std::abs(y)) >= limit;
+        return reached(sqr(std::abs(x) + std::abs(y)));
     case Bailout::MANR:
-        return sqr(x + y) >= limit;
+        return reached(sqr(x + y));
     }
     throw std::logic_error("Unknown bailout test");
 }

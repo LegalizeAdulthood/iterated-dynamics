@@ -554,6 +554,122 @@ TEST_F(TestPerturbationPixels, failedInitializationReleasesStorageAndPreservesTh
     EXPECT_EQ(1, m_engine.reference_count());
 }
 
+class TestPerturbationBailout : public TestPerturbationPixels, public WithParamInterface<BFMathType>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<DComplex *> m_saved_parameter{g_float_param, &g_init};
+    ValueSaver<Bailout> m_saved_test{g_bailout_test};
+    ValueSaver<decltype(g_bailout_float)> m_saved_float_bailout{g_bailout_float};
+    ValueSaver<decltype(g_bailout_bignum)> m_saved_bn_bailout{g_bailout_bignum};
+    ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bf_bailout{g_bailout_bigfloat};
+};
+
+void TestPerturbationBailout::SetUp()
+{
+    TestPerturbationPixels::SetUp();
+    if (GetParam() != BFMathType::NONE)
+    {
+        const ValueSaver saved_type{
+            g_fractal_type, GetParam() == BFMathType::BIG_NUM ? FractalType::MANDEL : FractalType::MANDEL_Z_POWER};
+        init_bf_dec(60);
+        m_big_float = true;
+    }
+    ASSERT_EQ(GetParam(), g_bf_math);
+    g_max_iterations = 4;
+}
+
+TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
+{
+    for (const double imag : {-1.0, 1.0})
+    {
+        SCOPED_TRACE(imag);
+        const std::array<double, 7> metrics{5.0, 4.0, 1.0, 4.0, 1.0, 9.0, imag < 0.0 ? 1.0 : 9.0};
+        for (const Bailout test :
+            {Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
+        {
+            SCOPED_TRACE(static_cast<int>(test));
+            g_bailout_test = test;
+            set_bailout_formula(test);
+            const double metric{metrics[static_cast<std::size_t>(test)]};
+            for (const double limit :
+                {std::nextafter(metric, 0.0), metric, std::nextafter(metric, std::numeric_limits<double>::infinity())})
+            {
+                SCOPED_TRACE(limit);
+                m_engine.finish();
+                g_magnitude_limit = limit;
+                g_init = {2.0, imag};
+                g_old_z = {};
+                g_temp_sqr_x = g_temp_sqr_y = 0.0;
+                if (GetParam() == BFMathType::BIG_NUM)
+                {
+                    float_to_bn(g_param_z_bn.x, 2.0);
+                    float_to_bn(g_param_z_bn.y, imag);
+                    clear_bn(g_old_z_bn.x);
+                    clear_bn(g_old_z_bn.y);
+                    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
+                    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+                }
+                else if (GetParam() == BFMathType::BIG_FLT)
+                {
+                    float_to_bf(g_param_z_bf.x, 2.0);
+                    float_to_bf(g_param_z_bf.y, imag);
+                    clear_bf(g_old_z_bf.x);
+                    clear_bf(g_old_z_bf.y);
+                    square_bf(g_tmp_sqr_x_bf, g_old_z_bf.x);
+                    square_bf(g_tmp_sqr_y_bf, g_old_z_bf.y);
+                }
+                std::vector<DComplex> expected;
+                bool escaped{};
+                for (int iteration = 0; iteration < g_max_iterations && !escaped; ++iteration)
+                {
+                    switch (GetParam())
+                    {
+                    case BFMathType::NONE:
+                        escaped = julia_orbit() != 0;
+                        expected.push_back(g_new_z);
+                        break;
+                    case BFMathType::BIG_NUM:
+                        escaped = julia_orbit_bn() != 0;
+                        expected.push_back(cmplx_bn_to_float(g_new_z_bn));
+                        break;
+                    case BFMathType::BIG_FLT:
+                        escaped = julia_orbit_bf() != 0;
+                        expected.push_back(cmplx_bf_to_float(g_new_z_bf));
+                        break;
+                    }
+                }
+                ASSERT_TRUE(escaped);
+                if (GetParam() == BFMathType::NONE)
+                {
+                    m_engine.initialize_frame({}, {}, {});
+                }
+                else
+                {
+                    const BFComplex center{m_engine.initialize_frame_bf({}, {})};
+                    clear_bf(center.x);
+                    clear_bf(center.y);
+                }
+                m_engine.begin_orbit({2.0, imag}, {}, 0);
+                for (std::size_t i = 0; i < expected.size(); ++i)
+                {
+                    SCOPED_TRACE(i);
+                    const bool done{m_engine.iterate_orbit()};
+                    EXPECT_EQ(i + 1, m_engine.orbit_iteration());
+                    EXPECT_DOUBLE_EQ(expected[i].x, m_engine.orbit_value().real());
+                    EXPECT_DOUBLE_EQ(expected[i].y, m_engine.orbit_value().imag());
+                    EXPECT_EQ(i + 1 == expected.size(), m_engine.orbit_escaped());
+                    EXPECT_EQ(i + 1 == expected.size(), done);
+                }
+            }
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    MathModes, TestPerturbationBailout, Values(BFMathType::NONE, BFMathType::BIG_NUM, BFMathType::BIG_FLT));
+
 class TestPerturbationIterations : public TestPerturbationPixels, public WithParamInterface<bool>
 {
 protected:
@@ -3405,7 +3521,8 @@ TEST_P(TestPerturbationIterations, selectedBailoutSurvivesDisplacementAndReferen
         SCOPED_TRACE(static_cast<int>(test));
         g_bailout_test = test;
         set_bailout_formula(test);
-        g_magnitude_limit = 0.25;
+        // Fixed-point bailout truncates limits; compare precisions at an integer.
+        g_magnitude_limit = 1.0;
         m_engine.set_glitch_tolerance(0.0);
         compare_pixel({0.25, 0.125}, 8, 0.125);
         EXPECT_EQ(1, m_engine.reference_count());
@@ -3828,6 +3945,8 @@ void TestBurningShipPerturbation::record_perturbation(
 void TestBurningShipPerturbation::compare_native_pixel(
     const std::complex<double> &point, const double reference_offset, const bool replace_reference)
 {
+    SCOPED_TRACE(reference_offset);
+    SCOPED_TRACE(replace_reference);
     m_engine.finish();
     if (m_big_float)
     {
@@ -4033,6 +4152,87 @@ TEST_P(TestBurningShipPerturbation, preciseReplayRetainsTheNativeOffsetSeed)
         compare_native_pixel({1.0, 1.0});
         compare_native_pixel({1.0, 1.0}, 0.125);
         compare_native_pixel({1.0, 1.0}, 0.125, true);
+    }
+}
+
+TEST_P(TestBurningShipPerturbation, bailoutEqualityMatchesNativePixelColors)
+{
+    g_params[2] = 2;
+    const std::array<double, 7> metrics{2.0, 1.0, 1.0, 1.0, 1.0, 4.0, 4.0};
+    for (const Bailout test :
+        {Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
+    {
+        SCOPED_TRACE(static_cast<int>(test));
+        g_bailout_test = test;
+        set_bailout_formula(test);
+        const double metric{metrics[static_cast<std::size_t>(test)]};
+        for (const double limit :
+            {std::nextafter(metric, 0.0), metric, std::nextafter(metric, std::numeric_limits<double>::infinity())})
+        {
+            SCOPED_TRACE(limit);
+            g_magnitude_limit = limit;
+            compare_native_pixel({1.0, 1.0});
+            compare_native_pixel({1.0, 1.0}, 0.125, true);
+        }
+    }
+}
+
+TEST_P(TestBurningShipPerturbation, standardPassesRetainPerturbationAtBailoutEquality)
+{
+    ValueSaver saved_user{g_user, UserData{}};
+    ValueSaver saved_status{g_calc_status};
+    ValueSaver saved_resuming{g_resuming, false};
+    ValueSaver saved_symmetry{g_force_symmetry, SymmetryType::NONE};
+    ValueSaver<LDouble> saved_delta_x{g_delta_x, 0};
+    ValueSaver<LDouble> saved_delta_y{g_delta_y, 0};
+    ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    g_fractal_type = FractalType::BURNING_SHIP;
+    g_params[2] = 2;
+    g_image_region = ImageRegion{{1.0, 0.0}, {1.0, 0.0}, {1.0, 0.0}};
+    g_user.perturbation = PerturbationMode::YES;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    m_specific.symmetry = SymmetryType::NONE;
+    if (GetParam())
+    {
+        init_bf_dec(60);
+        m_big_float = true;
+        float_to_bf(g_bf_x_min, 1.0);
+        float_to_bf(g_bf_x_max, 1.0);
+        float_to_bf(g_bf_x_3rd, 1.0);
+        clear_bf(g_bf_y_min);
+        clear_bf(g_bf_y_max);
+        clear_bf(g_bf_y_3rd);
+        m_specific.per_image = mandel_per_image_bf;
+        m_specific.per_pixel = mandel_per_pixel_bf;
+        m_specific.orbit_calc = burning_ship_bf_fractal;
+    }
+    g_dispatch = FractalDispatch{m_specific};
+    fill_pixel_grid();
+    for (const CalcMode pass : {CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS})
+    {
+        SCOPED_TRACE(static_cast<char>(pass));
+        g_std_calc_mode = pass;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
+        m_pixels.fill(0);
+        m_plot_statuses.clear();
+        StandardFractal calculation;
+        ASSERT_TRUE(calculation.resume().empty());
+        for (int step = 0; step < 1000 && !calculation.done(); ++step)
+        {
+            calculation.iterate();
+        }
+        ASSERT_TRUE(calculation.done());
+        EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+        EXPECT_EQ(pass, g_std_calc_mode);
+        EXPECT_THAT(m_pixels, Each(GetParam() ? 2 : 1));
+        ASSERT_FALSE(m_plot_statuses.empty());
+        for (const StandardPassStatus &status : m_plot_statuses)
+        {
+            EXPECT_TRUE(status.perturbation_active);
+            EXPECT_GT(status.perturbation_reference_count, 0);
+        }
+        calculation.finish();
     }
 }
 
@@ -5459,7 +5659,7 @@ TEST_F(TestPerturbationPixels, highPrecisionBailoutBoundariesPreserveSmallDispla
         {Bailout::REAL, {-2.0, 0.0}, false, -1, 4.0},
         {Bailout::IMAG, {0.0, 2.0}, true, 1, 4.0},
         {Bailout::OR, {0.0, 2.0}, true, 1, 4.0},
-        {Bailout::AND, {2.0, 2.0}, false, 1, 4.0},
+        {Bailout::AND, {2.0, 3.0}, false, 1, 4.0},
         {Bailout::MANH, {1.0, -1.0}, false, 1, 4.0},
         {Bailout::MANR, {3.0, -1.0}, false, 1, 4.0},
         {Bailout::MOD, {3.0, 4.0}, false, 1, 25.0},
@@ -5511,7 +5711,7 @@ TEST_F(TestPerturbationPixels, highPrecisionBailoutBoundariesPreserveSmallDispla
                         static_cast<double>(bf_to_float(coordinate.x)), static_cast<double>(bf_to_float(coordinate.y))};
                 }
                 m_engine.set_glitch_tolerance(reference_mode == 2 ? 2.0 : 0.0);
-                const bool escaped{sign == 0 || sign == boundary.outward_sign};
+                const bool escaped{sign == boundary.outward_sign};
 
                 EXPECT_EQ(escaped ? 1 : 7, m_engine.calculate_pixel(WIDTH - 1, 0));
 
@@ -5565,29 +5765,29 @@ TEST_F(TestPerturbationPixels, highPrecisionMandelBoundaryRetainsOnlyTheCurrentP
             const BigFloat z{alloc_stack(g_r_bf_length + 2)};
             const BigFloat square{alloc_stack(g_r_bf_length + 2)};
             copy_bf(z, center.x);
-            for (long i = 0; i < (sign > 0 ? g_max_iterations - 1 : 1); ++i)
+            for (long i = 0; i < (sign >= 0 ? g_max_iterations - 1 : 1); ++i)
             {
                 expected_old = static_cast<double>(bf_to_float(z));
                 square_bf(square, z);
                 add_bf(z, square, center.x);
             }
             expected_new = static_cast<double>(bf_to_float(z));
-            if (sign > 0)
+            if (sign >= 0)
             {
                 expected_old = expected_new;
             }
         }
         s_reference_coordinates.clear();
 
-        EXPECT_EQ(sign > 0 ? 7 : 1, m_engine.calculate_pixel(0, 0));
+        EXPECT_EQ(sign >= 0 ? 7 : 1, m_engine.calculate_pixel(0, 0));
 
-        EXPECT_EQ(sign > 0 ? 16 : 1, g_real_color_iter);
+        EXPECT_EQ(sign >= 0 ? 16 : 1, g_real_color_iter);
         EXPECT_DOUBLE_EQ(expected_new, g_new_z.x);
         EXPECT_DOUBLE_EQ(0.0, g_new_z.y);
         EXPECT_DOUBLE_EQ(expected_old, g_old_z.x);
         EXPECT_DOUBLE_EQ(expected_new * expected_new, g_magnitude);
         EXPECT_EQ(1, m_engine.reference_count());
-        EXPECT_EQ(g_max_iterations + (sign > 0 ? g_max_iterations - 1 : 1), s_reference_coordinates.size());
+        EXPECT_EQ(g_max_iterations + (sign >= 0 ? g_max_iterations - 1 : 1), s_reference_coordinates.size());
     }
 }
 

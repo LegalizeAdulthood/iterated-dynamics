@@ -23,6 +23,6 @@ extern int      (*g_bailout_bignum)();
 extern int      (*g_bailout_bigfloat)();
 
 void set_bailout_formula(Bailout test);
-bool bailout_reached(Bailout test, double x, double y, double limit);
+bool bailout_reached(Bailout test, double x, double y, double limit, bool strict = false);
 
 } // namespace id::engine

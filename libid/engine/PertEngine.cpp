@@ -154,6 +154,11 @@ double reference_conversion_error()
     return std::ldexp(1.0, -REFERENCE_BITS) + std::numeric_limits<double>::epsilon();
 }
 
+double bailout_limit()
+{
+    return g_bf_math == BFMathType::BIG_NUM ? static_cast<long>(g_magnitude_limit) : g_magnitude_limit;
+}
+
 bool ambiguous_bailout(const std::complex<double> &reference, const std::complex<double> &delta)
 {
     const double scale{
@@ -163,8 +168,9 @@ bool ambiguous_bailout(const std::complex<double> &reference, const std::complex
     const std::complex<double> value{native_orbit_value(reference + delta)};
     const double x{sqr(value.real())};
     const double y{sqr(value.imag())};
-    const auto near_limit = [error](const double metric)
-    { return !std::isfinite(metric) || std::abs(metric - g_magnitude_limit) <= error; };
+    const double limit{bailout_limit()};
+    const auto near_limit = [error, limit](const double metric)
+    { return !std::isfinite(metric) || std::abs(metric - limit) <= error; };
     switch (g_bailout_test)
     {
     case Bailout::MOD:
@@ -191,7 +197,12 @@ bool precise_bailout_reached(const BFComplex &z)
     const BigFloat y{alloc_stack(g_r_bf_length + 2)};
     const BigFloat metric{alloc_stack(g_r_bf_length + 2)};
     const BigFloat limit{alloc_stack(g_r_bf_length + 2)};
-    float_to_bf(limit, g_magnitude_limit);
+    float_to_bf(limit, bailout_limit());
+    const auto reached = [limit](const BigFloat value)
+    {
+        const int comparison{cmp_bf(value, limit)};
+        return g_bf_math == BFMathType::BIG_FLT ? comparison > 0 : comparison >= 0;
+    };
     square_bf(x, z.x);
     square_bf(y, z.y);
     switch (g_bailout_test)
@@ -200,13 +211,13 @@ bool precise_bailout_reached(const BFComplex &z)
         add_bf(metric, x, y);
         break;
     case Bailout::REAL:
-        return cmp_bf(x, limit) >= 0;
+        return reached(x);
     case Bailout::IMAG:
-        return cmp_bf(y, limit) >= 0;
+        return reached(y);
     case Bailout::OR:
-        return cmp_bf(x, limit) >= 0 || cmp_bf(y, limit) >= 0;
+        return reached(x) || reached(y);
     case Bailout::AND:
-        return cmp_bf(x, limit) >= 0 && cmp_bf(y, limit) >= 0;
+        return reached(x) && reached(y);
     case Bailout::MANH:
         abs_bf(x, z.x);
         abs_bf(y, z.y);
@@ -227,7 +238,7 @@ bool precise_bailout_reached(const BFComplex &z)
     default:
         throw std::logic_error("Unknown bailout test");
     }
-    return cmp_bf(metric, limit) >= 0;
+    return reached(metric);
 }
 
 } // namespace
@@ -1187,7 +1198,8 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
         case PixelState::Phase::BAILOUT:
         {
             const std::complex<double> value{native_orbit_value(m_pixel.w)};
-            bool escaped{bailout_reached(g_bailout_test, value.real(), value.imag(), g_magnitude_limit)};
+            bool escaped{bailout_reached(
+                g_bailout_test, value.real(), value.imag(), bailout_limit(), g_bf_math == BFMathType::BIG_FLT)};
             const bool resolve_zero_power{g_fractal_type == FractalType::MANDEL_Z_POWER && g_c_exponent == 0 &&
                 m_pixel.old == std::complex<double>{}};
             const bool resolve_power_branch{g_fractal_type == FractalType::MANDEL_Z_POWER &&

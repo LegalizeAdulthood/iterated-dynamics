@@ -75,6 +75,20 @@ TEST_P(TestBailoutFormula, purePredicatePreservesOrbitState)
     EXPECT_DOUBLE_EQ(-23.0, g_temp_sqr_y);
 }
 
+TEST_P(TestBailoutFormula, strictPredicateAcceptsEqualityAndEscapesOnlyAboveTheLimit)
+{
+    for (const BailoutSample &sample : SAMPLES)
+    {
+        const double metric{sample.metrics[static_cast<std::size_t>(GetParam())]};
+        SCOPED_TRACE(metric);
+        EXPECT_FALSE(bailout_reached(GetParam(), sample.point.x, sample.point.y, metric, true));
+        EXPECT_TRUE(bailout_reached(GetParam(), sample.point.x, sample.point.y,
+            std::nextafter(metric, -std::numeric_limits<double>::infinity()), true));
+        EXPECT_FALSE(bailout_reached(GetParam(), sample.point.x, sample.point.y,
+            std::nextafter(metric, std::numeric_limits<double>::infinity()), true));
+    }
+}
+
 TEST_P(TestBailoutFormula, statefulPredicatePreservesMagnitudeAndAdvanceRules)
 {
     set_bailout_formula(GetParam());
