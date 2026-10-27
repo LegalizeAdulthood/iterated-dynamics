@@ -24,7 +24,6 @@
 #include "engine/SoundOutput.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
-#include "fractals/pickover_mandelbrot.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
 #include "misc/id.h"
@@ -630,7 +629,6 @@ void PertEngine::initialize_pixel_state()
         throw std::logic_error{"Perturbation requires image dimensions and a positive iteration limit"};
     }
 
-    pascal_triangle();
     allocate_working_values();
 }
 

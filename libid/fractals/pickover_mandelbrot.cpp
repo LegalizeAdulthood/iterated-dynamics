@@ -14,7 +14,7 @@
 #include "math/complex_fn.h"
 #include "math/fpu087.h"
 
-#include <array>
+#include <algorithm>
 #include <cmath>
 
 using namespace id::engine;
@@ -22,13 +22,6 @@ using namespace id::math;
 
 namespace id::fractals
 {
-
-enum
-{
-    MAX_POWER = 28
-};
-
-static std::array<long, MAX_POWER + 1> s_pascal_triangle{};
 
 int mandel_trig_plus_exponent_orbit()
 {
@@ -59,25 +52,6 @@ int mandel_z_power_orbit()
     return g_bailout_float();
 }
 
-// Generate Pascal's Triangle coefficients
-void pascal_triangle()
-{
-    long c = 1L;
-
-    for (long j = 0; j <= g_c_exponent; j++)
-    {
-        if (j == 0)
-        {
-            c = 1;
-        }
-        else
-        {
-            c = c * (g_c_exponent - j + 1) / j;
-        }
-        s_pascal_triangle.at(j) = c;
-    }
-}
-
 void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<double> &z)
 {
     if (g_c_exponent == 3)
@@ -86,12 +60,7 @@ void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<doub
     }
     else
     {
-        std::complex<double> tmp{z};
-        for (int k = 0; k < g_c_exponent - 1; k++)
-        {
-            tmp *= z;
-        }
-        z = tmp + center;
+        z = power(z, std::max(g_c_exponent, 1)) + center;
     }
 }
 
@@ -109,12 +78,7 @@ void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
     }
     else
     {
-        copy_bf(tmp.x, z.x);
-        copy_bf(tmp.y, z.y);
-        for (int k = 0; k < g_c_exponent - 1; k++)
-        {
-            cmplx_mul_bf(&tmp, &tmp, &z);
-        }
+        power(tmp, z, std::max(g_c_exponent, 1));
         add_bf(z.x, tmp.x, center.x);
         add_bf(z.y, tmp.y, center.y);
     }
@@ -156,16 +120,26 @@ void mandel_z_power_perturb(
     }
     else
     {
-        std::complex<double> zp(1.0, 0.0);
-        std::complex<double> sum(0.0, 0.0);
-        for (int j = 0; j < g_c_exponent; j++)
+        // Track (ref + delta)^n - ref^n without subtracting nearby powers
+        // or materializing binomial coefficients that can overflow.
+        std::complex<double> base{ref};
+        std::complex<double> difference{delta_n};
+        std::complex<double> result{1.0, 0.0};
+        std::complex<double> result_difference{};
+        for (int exponent{g_c_exponent}; exponent > 0; exponent >>= 1)
         {
-            sum += zp * static_cast<double>(s_pascal_triangle[j]);
-            sum *= delta_n;
-            zp *= ref;
+            if (exponent & 1)
+            {
+                result_difference = result_difference * (base + difference) + result * difference;
+                result *= base;
+            }
+            if (exponent > 1)
+            {
+                difference *= base + base + difference;
+                base *= base;
+            }
         }
-        delta_n = sum;
-        delta_n += delta0;
+        delta_n = result_difference + delta0;
     }
 }
 

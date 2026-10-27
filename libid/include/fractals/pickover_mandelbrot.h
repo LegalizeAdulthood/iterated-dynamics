@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -12,7 +13,6 @@ namespace id::fractals
 int mandel_trig_plus_exponent_orbit();
 
 int mandel_z_power_orbit();
-void pascal_triangle();
 void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<double> &z);
 void mandel_z_power_ref_pt_bf(const math::BFComplex &center, math::BFComplex &z);
 void mandel_z_power_perturb(

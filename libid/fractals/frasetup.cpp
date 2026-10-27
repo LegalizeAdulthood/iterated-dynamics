@@ -47,8 +47,7 @@ bool burning_ship_per_image()
 
 bool mandel_z_power_perturbation_per_image()
 {
-    constexpr int MAX_POWER{28};
-    g_c_exponent = std::min(std::max(g_c_exponent, 2), MAX_POWER);
+    g_c_exponent = std::max(g_c_exponent, 2);
     return false;
 }
 

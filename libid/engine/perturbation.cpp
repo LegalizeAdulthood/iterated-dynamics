@@ -24,8 +24,7 @@ void StandardFractal::start_perturbation_frame()
 
     if (fractals::g_fractal_type == fractals::FractalType::MANDEL_Z_POWER)
     {
-        constexpr int MAX_POWER{28};
-        g_c_exponent = std::clamp(g_c_exponent, 2, MAX_POWER);
+        g_c_exponent = std::max(g_c_exponent, 2);
     }
 
     std::complex<double> half_horizontal;
