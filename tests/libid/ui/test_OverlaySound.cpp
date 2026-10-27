@@ -267,6 +267,71 @@ void TestOverlaySound::TearDown()
     }
 }
 
+TEST_F(TestOverlaySound, completedBifurcationDoesNotInheritThePreviousRenderInterruption)
+{
+    ValueSaver saved_start_orbit{g_start_show_orbit, true};
+    ValueSaver<LDouble> saved_delta_x{g_delta_x, 1};
+    ValueSaver<LDouble> saved_delta_y{g_delta_y, 1};
+    EXPECT_CALL(*m_output, play(_))
+        .WillOnce(Invoke(
+            [this](const SoundSample &)
+            {
+                m_key = 'x';
+                m_ready = false;
+                return true;
+            }));
+    EXPECT_CALL(*m_output, mute()).WillRepeatedly(Invoke([this] { m_ready = true; }));
+    EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([this](int key) { m_key = key; }));
+    {
+        SoundSession owner{m_output};
+        SoundSession borrowed{g_sound, SoundSession::Ownership::BORROWED};
+        ImageRenderContext rendering{borrowed};
+        rendering.start();
+        for (int step = 0; step < 100 && !rendering.done(); ++step)
+        {
+            rendering.iterate();
+        }
+        ASSERT_TRUE(rendering.done());
+        EXPECT_EQ(-1, rendering.result());
+        EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+        EXPECT_EQ(-1, finish_render_sound(owner, rendering.result(), rendering.failure_reported()));
+    }
+    ASSERT_TRUE(calc_interrupt_requested());
+    ASSERT_EQ('x', m_key);
+
+    // The main loop consumes the menu key before selecting the next image.
+    m_key = 0;
+    g_start_show_orbit = false;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    g_fractal_type = FractalType::BIFURCATION;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    m_specific.orbit_calc = [] { return 0; };
+    g_dispatch = FractalDispatch{m_specific};
+    g_params[0] = 1;
+    g_params[1] = 0.66;
+    g_image_region = ImageRegion{{2, 0}, {3, 1}, {2, 0}};
+    const int plots{m_plots};
+    EXPECT_CALL(*m_output, mute()).Times(0);
+    EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
+    SoundSession owner{m_output};
+    SoundSession borrowed{g_sound, SoundSession::Ownership::BORROWED};
+    ImageRenderContext rendering{borrowed};
+
+    rendering.start();
+    EXPECT_FALSE(calc_interrupt_requested());
+    for (int step = 0; step < 100 && !rendering.done(); ++step)
+    {
+        rendering.iterate();
+    }
+
+    ASSERT_TRUE(rendering.done());
+    EXPECT_GT(m_plots, plots);
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(0, rendering.result());
+    EXPECT_EQ(0, finish_render_sound(owner, rendering.result(), rendering.failure_reported()));
+    EXPECT_FALSE(calc_interrupt_requested());
+}
+
 TEST_F(TestOverlaySound, acceptsVisibleSampleBeforePlotAndDoesNotResubmitCompletedPoint)
 {
     OrbitPlot plot;

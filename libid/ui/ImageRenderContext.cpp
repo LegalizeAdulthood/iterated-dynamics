@@ -143,6 +143,7 @@ void ImageRenderContext::start()
     {
         throw std::logic_error("The image render context has already started");
     }
+    reset_calc_interrupted();
     m_phase = Phase::ACTIVE;
     try
     {
