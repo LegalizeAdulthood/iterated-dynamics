@@ -453,12 +453,6 @@ bool mandel_per_image_bf()
         break;
 
     case FractalType::MANDEL_Z_POWER:
-        if (g_std_calc_mode == CalcMode::PERTURBATION &&
-            bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
-        {
-            return false;
-        }
-
         init_big_pi();
         if (static_cast<double>(g_c_exponent) == g_params[2] && g_c_exponent & 1) // odd exponents
         {
@@ -467,6 +461,10 @@ bool mandel_per_image_bf()
         if (g_params[3] != 0)
         {
             g_symmetry = SymmetryType::NONE;
+        }
+        if (g_std_calc_mode == CalcMode::PERTURBATION && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+        {
+            return false;
         }
         break;
 

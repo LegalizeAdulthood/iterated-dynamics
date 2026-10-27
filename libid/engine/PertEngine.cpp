@@ -24,6 +24,7 @@
 #include "engine/SoundOutput.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
+#include "fractals/pickover_mandelbrot.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
 #include "misc/id.h"
@@ -629,6 +630,11 @@ void PertEngine::initialize_pixel_state()
         throw std::logic_error{"Perturbation requires image dimensions and a positive iteration limit"};
     }
 
+    if (g_bf_math != BFMathType::NONE && g_fractal_type == FractalType::MANDEL_Z_POWER &&
+        mandel_z_power_uses_complex_power())
+    {
+        init_big_pi();
+    }
     allocate_working_values();
 }
 
@@ -1093,14 +1099,24 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
             const std::complex<double> reference_z{m_pixel.star_trail && m_pixel.sample > 1
                     ? star_trail_point(reference.orbit[m_pixel.sample - 1])
                     : reference.orbit[m_pixel.sample - 1]};
-            if (g_bf_math != BFMathType::NONE && g_fractal_type == FractalType::MANDEL_Z_POWER && g_c_exponent <= 0 &&
+            if (m_explicit_orbit && g_bf_math == BFMathType::NONE && g_fractal_type == FractalType::MANDEL_Z_POWER &&
+                mandel_z_power_uses_complex_power() && m_pixel.old.real() < 0.0 && m_pixel.old.imag() == 0.0 &&
+                reference_z.imag() == 0.0 && std::signbit(m_pixel.old.imag()) != std::signbit(reference_z.imag()))
+            {
+                // A zero displacement cannot encode the other side of the cut.
+                return PERTURBATION_RETRY;
+            }
+            if (g_bf_math != BFMathType::NONE && g_fractal_type == FractalType::MANDEL_Z_POWER &&
+                (g_c_exponent <= 0 || mandel_z_power_uses_complex_power()) &&
                 m_pixel.orbit_displacement != std::complex<double>{})
             {
-                // Resolve cancellation at the zero-power discontinuity or a
-                // reciprocal pole from an exact replacement reference.
+                // Resolve cancellation at a pole, zero, or branch cut from
+                // an exact replacement reference.
                 const double error{8.0 * reference_conversion_error() *
                     (std::abs(reference_z) + std::abs(m_pixel.orbit_displacement))};
-                if (std::abs(reference_z + m_pixel.orbit_displacement) <= error)
+                const std::complex<double> value{reference_z + m_pixel.orbit_displacement};
+                if (std::abs(value) <= error ||
+                    (mandel_z_power_uses_complex_power() && value.real() <= error && std::abs(value.imag()) <= error))
                 {
                     return PERTURBATION_RETRY;
                 }
@@ -1124,8 +1140,12 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
             bool escaped{bailout_reached(g_bailout_test, m_pixel.w.real(), m_pixel.w.imag(), g_magnitude_limit)};
             const bool resolve_zero_power{g_fractal_type == FractalType::MANDEL_Z_POWER && g_c_exponent == 0 &&
                 m_pixel.old == std::complex<double>{}};
+            const bool resolve_power_branch{g_fractal_type == FractalType::MANDEL_Z_POWER &&
+                mandel_z_power_uses_complex_power() && m_pixel.old.real() <= 0.0 &&
+                std::abs(m_pixel.old.imag()) <= 8.0 * reference_conversion_error() * std::abs(m_pixel.old)};
             if (g_bf_math != BFMathType::NONE &&
-                (resolve_zero_power || ambiguous_bailout(reference.orbit[m_pixel.sample], m_pixel.orbit_displacement)))
+                (resolve_zero_power || resolve_power_branch ||
+                    ambiguous_bailout(reference.orbit[m_pixel.sample], m_pixel.orbit_displacement)))
             {
                 // Retain only the current high-precision value, not another orbit history.
                 if (!advance_precise_orbit(m_pixel.sample, remaining))
@@ -1137,7 +1157,7 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                     static_cast<double>(bf_to_float(m_pixel.precise_orbit.y))};
                 m_pixel.magnitude = mag_squared(m_pixel.w);
                 escaped = precise_bailout_reached(m_pixel.precise_orbit);
-                if (m_explicit_orbit)
+                if (m_explicit_orbit || resolve_power_branch)
                 {
                     m_pixel.orbit_displacement = m_pixel.w - reference.orbit[m_pixel.sample];
                 }

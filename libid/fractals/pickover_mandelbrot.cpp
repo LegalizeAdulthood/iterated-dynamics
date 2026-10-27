@@ -13,6 +13,8 @@
 #include "math/biginit.h"
 #include "math/complex_fn.h"
 #include "math/fpu087.h"
+#include "misc/debug_flags.h"
+#include "misc/id.h"
 
 #include <cmath>
 
@@ -44,10 +46,80 @@ std::complex<double> reciprocal_power(const std::complex<double> &z)
     {
         return z == std::complex<double>{} ? std::complex<double>{} : std::pow(z, static_cast<double>(g_c_exponent));
     }
+    if (mandel_z_power_uses_complex_power())
+    {
+        const DComplex result{math::pow(DComplex{z.real(), z.imag()}, DComplex{g_params[2], g_params[3]})};
+        return {result.x, result.y};
+    }
     return integer_power(z, g_c_exponent);
 }
 
+std::complex<double> complex_power(const std::complex<double> &z)
+{
+    if (z == std::complex<double>{})
+    {
+        return {};
+    }
+    if (g_bf_math != BFMathType::NONE)
+    {
+        return std::pow(z, std::complex<double>{g_params[2], g_params[3]});
+    }
+    const DComplex result{math::pow(DComplex{z.real(), z.imag()}, DComplex{g_params[2], g_params[3]})};
+    return {result.x, result.y};
+}
+
+std::complex<double> complex_power_delta(const std::complex<double> &ref, const std::complex<double> &delta)
+{
+    const std::complex<double> value{ref + delta};
+    const std::complex<double> reference_power{complex_power(ref)};
+    const std::complex<double> value_power{complex_power(value)};
+    if (ref == std::complex<double>{} || value == std::complex<double>{} || reference_power == std::complex<double>{} ||
+        value_power == std::complex<double>{} || !std::isfinite(std::abs(reference_power)) ||
+        !std::isfinite(std::abs(value_power)))
+    {
+        return value_power - reference_power;
+    }
+
+    const double phase{std::arg(value) - std::arg(ref)};
+    const std::complex<double> ratio{delta / ref};
+    std::complex<double> logarithm;
+    if (std::abs(ratio) < 0.5)
+    {
+        logarithm = {
+            0.5 * std::log1p(2.0 * ratio.real() + std::norm(ratio)), std::atan2(ratio.imag(), 1.0 + ratio.real())};
+        // Principal logarithms can differ by a full turn across the cut.
+        if (phase - logarithm.imag() > PI)
+        {
+            logarithm.imag(logarithm.imag() + 2.0 * PI);
+        }
+        else if (phase - logarithm.imag() < -PI)
+        {
+            logarithm.imag(logarithm.imag() - 2.0 * PI);
+        }
+    }
+    else
+    {
+        logarithm = {std::log(std::abs(value)) - std::log(std::abs(ref)), phase};
+    }
+    const std::complex<double> exponent{std::complex<double>{g_params[2], g_params[3]} * logarithm};
+    if (std::abs(exponent) > 0.5)
+    {
+        return value_power - reference_power;
+    }
+    // exp(a+ib)-1 without cancellation in either component.
+    const double sine{std::sin(exponent.imag() / 2.0)};
+    const std::complex<double> difference{std::expm1(exponent.real()) * std::cos(exponent.imag()) - 2.0 * sine * sine,
+        std::exp(exponent.real()) * std::sin(exponent.imag())};
+    return reference_power * difference;
+}
+
 } // namespace
+
+bool mandel_z_power_uses_complex_power()
+{
+    return g_params[3] != 0.0 || g_params[2] != std::trunc(g_params[2]) ||
+        misc::g_debug_flag == misc::DebugFlags::FORCE_COMPLEX_POWER;
+}
 
 int mandel_trig_plus_exponent_orbit()
 {
@@ -80,7 +152,11 @@ int mandel_z_power_orbit()
 
 void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<double> &z)
 {
-    if (g_c_exponent == 3)
+    if (mandel_z_power_uses_complex_power())
+    {
+        z = complex_power(z) + center;
+    }
+    else if (g_c_exponent == 3)
     {
         z = cube(z) + center;
     }
@@ -102,6 +178,13 @@ void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
     {
         clear_bf(tmp.x);
         clear_bf(tmp.y);
+    }
+    else if (mandel_z_power_uses_complex_power())
+    {
+        BFComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        float_to_bf(exponent.x, g_params[2]);
+        float_to_bf(exponent.y, g_params[3]);
+        cmplx_pow_bf(&tmp, &z, &exponent);
     }
     else if (g_c_exponent == 3)
     {
@@ -136,10 +219,15 @@ void mandel_z_power_perturb(
         delta_n = delta0;
         return;
     }
+    if (g_params[3] != 0.0 || g_params[2] != std::trunc(g_params[2]))
+    {
+        delta_n = complex_power_delta(ref, delta_n) + delta0;
+        return;
+    }
     if (g_c_exponent == 0)
     {
         double difference{};
-        if (g_bf_math != BFMathType::NONE)
+        if (g_bf_math != BFMathType::NONE || mandel_z_power_uses_complex_power())
         {
             difference = static_cast<double>(ref + delta_n != std::complex<double>{}) -
                 static_cast<double>(ref != std::complex<double>{});

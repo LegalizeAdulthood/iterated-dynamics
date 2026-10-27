@@ -106,11 +106,6 @@ bool mandel_per_image()
         break;
 
     case FractalType::MANDEL_Z_POWER:
-        if (g_std_calc_mode == CalcMode::PERTURBATION &&
-            bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
-        {
-            return false;
-        }
         if (static_cast<double>(g_c_exponent) == g_params[2] && g_c_exponent & 1)   // odd exponents
         {
             g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
@@ -126,6 +121,10 @@ bool mandel_per_image()
         else
         {
             g_dispatch.set_orbit_calc(mandel_z_power_cmplx_orbit);
+        }
+        if (g_std_calc_mode == CalcMode::PERTURBATION && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+        {
+            return false;
         }
         break;
     case FractalType::MAGNET_1M:
