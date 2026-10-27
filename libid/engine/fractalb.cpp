@@ -456,15 +456,7 @@ bool mandel_per_image_bf()
         if (g_std_calc_mode == CalcMode::PERTURBATION &&
             bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
-            // only allow integer values of real part
-            if (const int degree = static_cast<int>(g_params[2]); degree > 2)
-            {
-                return mandel_z_power_perturbation_per_image();
-            }
-            else if (degree == 2)  // NOLINT(readability-else-after-return)
-            {
-                return false;
-            }
+            return false;
         }
 
         init_big_pi();

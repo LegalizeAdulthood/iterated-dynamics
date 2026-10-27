@@ -45,12 +45,6 @@ bool burning_ship_per_image()
     return true;
 }
 
-bool mandel_z_power_perturbation_per_image()
-{
-    g_c_exponent = std::max(g_c_exponent, 2);
-    return false;
-}
-
 static bool use_calc_mandelbrot()
 {
     return g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL  //
@@ -115,14 +109,7 @@ bool mandel_per_image()
         if (g_std_calc_mode == CalcMode::PERTURBATION &&
             bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
-            if (g_c_exponent == 2)
-            {
-                return false;
-            }
-            if (g_c_exponent > 2)
-            {
-                return mandel_z_power_perturbation_per_image();
-            }
+            return false;
         }
         if (static_cast<double>(g_c_exponent) == g_params[2] && g_c_exponent & 1)   // odd exponents
         {

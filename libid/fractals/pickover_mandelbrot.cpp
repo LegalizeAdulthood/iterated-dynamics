@@ -14,7 +14,6 @@
 #include "math/complex_fn.h"
 #include "math/fpu087.h"
 
-#include <algorithm>
 #include <cmath>
 
 using namespace id::engine;
@@ -22,6 +21,33 @@ using namespace id::math;
 
 namespace id::fractals
 {
+
+namespace
+{
+
+std::complex<double> integer_power(const std::complex<double> &z, const int exponent)
+{
+    if (exponent >= 0)
+    {
+        return power(z, exponent);
+    }
+    const std::complex<double> value{power(z, -(exponent + 1)) * z};
+    const DComplex powered{value.real(), value.imag()};
+    DComplex inverse;
+    cmplx_recip(powered, inverse);
+    return {inverse.x, inverse.y};
+}
+
+std::complex<double> reciprocal_power(const std::complex<double> &z)
+{
+    if (g_bf_math != BFMathType::NONE)
+    {
+        return z == std::complex<double>{} ? std::complex<double>{} : std::pow(z, static_cast<double>(g_c_exponent));
+    }
+    return integer_power(z, g_c_exponent);
+}
+
+} // namespace
 
 int mandel_trig_plus_exponent_orbit()
 {
@@ -60,7 +86,7 @@ void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<doub
     }
     else
     {
-        z = power(z, std::max(g_c_exponent, 1)) + center;
+        z = integer_power(z, g_c_exponent) + center;
     }
 }
 
@@ -70,23 +96,62 @@ void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
     BFComplex tmp;
     tmp.x = alloc_stack(g_r_bf_length + 2);
     tmp.y = alloc_stack(g_r_bf_length + 2);
-    if (g_c_exponent == 3)
+    // The ordinary arbitrary-precision power kernel defines 0^n as 0,
+    // including zero and negative exponents.
+    if (is_bf_zero(z.x) && is_bf_zero(z.y))
+    {
+        clear_bf(tmp.x);
+        clear_bf(tmp.y);
+    }
+    else if (g_c_exponent == 3)
     {
         cube(tmp, z);
-        add_bf(z.x, tmp.x, center.x);
-        add_bf(z.y, tmp.y, center.y);
+    }
+    else if (g_c_exponent >= 0)
+    {
+        power(tmp, z, g_c_exponent);
     }
     else
     {
-        power(tmp, z, std::max(g_c_exponent, 1));
-        add_bf(z.x, tmp.x, center.x);
-        add_bf(z.y, tmp.y, center.y);
+        const BigFloat denominator{alloc_stack(g_r_bf_length + 2)};
+        BFComplex powered{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        power(tmp, z, -(g_c_exponent + 1));
+        cmplx_mul_bf(&powered, &tmp, &z);
+        square_bf(tmp.x, powered.x);
+        square_bf(tmp.y, powered.y);
+        add_bf(denominator, tmp.x, tmp.y);
+        div_bf(tmp.x, powered.x, denominator);
+        div_bf(tmp.y, powered.y, denominator);
+        neg_a_bf(tmp.y);
     }
+    add_bf(z.x, tmp.x, center.x);
+    add_bf(z.y, tmp.y, center.y);
 }
 
 void mandel_z_power_perturb(
     const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0)
 {
+    if (delta_n == std::complex<double>{})
+    {
+        delta_n = delta0;
+        return;
+    }
+    if (g_c_exponent == 0)
+    {
+        double difference{};
+        if (g_bf_math != BFMathType::NONE)
+        {
+            difference = static_cast<double>(ref + delta_n != std::complex<double>{}) -
+                static_cast<double>(ref != std::complex<double>{});
+        }
+        delta_n = delta0 + difference;
+        return;
+    }
+    if (g_c_exponent == 1)
+    {
+        delta_n += delta0;
+        return;
+    }
     if (g_c_exponent == 3)
     {
         const double r{ref.real()};
@@ -126,7 +191,9 @@ void mandel_z_power_perturb(
         std::complex<double> difference{delta_n};
         std::complex<double> result{1.0, 0.0};
         std::complex<double> result_difference{};
-        for (int exponent{g_c_exponent}; exponent > 0; exponent >>= 1)
+        const unsigned int degree{
+            g_c_exponent < 0 ? 0U - static_cast<unsigned int>(g_c_exponent) : static_cast<unsigned int>(g_c_exponent)};
+        for (unsigned int exponent{degree}; exponent > 0; exponent >>= 1)
         {
             if (exponent & 1)
             {
@@ -137,6 +204,23 @@ void mandel_z_power_perturb(
             {
                 difference *= base + base + difference;
                 base *= base;
+            }
+        }
+        if (g_c_exponent < 0)
+        {
+            const std::complex<double> value{ref + delta_n};
+            const std::complex<double> powered{power(value, -(g_c_exponent + 1)) * value};
+            const double reference_norm{std::norm(result)};
+            const double value_norm{std::norm(powered)};
+            if (reference_norm == 0.0 || value_norm == 0.0 || !std::isfinite(reference_norm) ||
+                !std::isfinite(value_norm))
+            {
+                result_difference = reciprocal_power(ref + delta_n) - reciprocal_power(ref);
+            }
+            else
+            {
+                // 1/(R + d) - 1/R, without subtracting nearby reciprocals.
+                result_difference = -result_difference / result / powered;
             }
         }
         delta_n = result_difference + delta0;

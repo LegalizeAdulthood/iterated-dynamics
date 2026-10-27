@@ -3,14 +3,12 @@
 //
 // Thanks to Shirom Makkad fractaltodesktop@gmail.com
 
-#include "engine/fractals.h"
 #include "engine/ImageRegion.h"
 #include "engine/StandardFractal.h"
 #include "engine/UserData.h"
 #include "fractals/fractype.h"
 #include "math/biginit.h"
 
-#include <algorithm>
 #include <complex>
 
 using namespace id::math;
@@ -21,11 +19,6 @@ namespace id::engine
 void StandardFractal::start_perturbation_frame()
 {
     m_pert_engine.set_glitch_tolerance(g_user.perturbation_tolerance);
-
-    if (fractals::g_fractal_type == fractals::FractalType::MANDEL_Z_POWER)
-    {
-        g_c_exponent = std::max(g_c_exponent, 2);
-    }
 
     std::complex<double> half_horizontal;
     std::complex<double> half_vertical;

@@ -11,6 +11,7 @@
 #include <engine/calcfrac.h>
 #include <engine/convert_corners.h>
 #include <engine/fractals.h>
+#include <engine/fractalb.h>
 #include <engine/ImageRegion.h>
 #include <engine/Inversion.h>
 #include <engine/log_map.h>
@@ -27,6 +28,7 @@
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
+#include <fractals/frasetup.h>
 #include <fractals/pickover_mandelbrot.h>
 #include <geometry/3d.h>
 #include <geometry/line3d.h>
@@ -3996,7 +3998,191 @@ TEST_P(TestPerturbationContinuation, largerIntegerPowersMatchTheStandardOrbitSeq
     }
 }
 
-TEST_P(TestPerturbationContinuation, standardFramePreservesLargerIntegerPowers)
+TEST_P(TestPerturbationContinuation, signedIntegerPowersMatchNativeOrbitsAndBailout)
+{
+    ValueSaver saved_exponent{g_c_exponent};
+    ValueSaver saved_power{g_params[2]};
+    ValueSaver saved_imaginary_power{g_params[3], 0.0};
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    g_max_iterations = 16;
+
+    for (const int exponent : {0, 1, -1, -2, -3, -29})
+    {
+        SCOPED_TRACE(exponent);
+        m_engine.finish();
+        if (m_big_float)
+        {
+            free_bf_vars();
+            m_big_float = false;
+        }
+        g_c_exponent = exponent;
+        g_params[2] = exponent;
+        initialize_reference({0.125, 0.0625});
+        if (GetParam())
+        {
+            init_big_pi();
+        }
+        for (const std::complex<double> parameter : {std::complex<double>{}, {0.125, 0.0625}})
+        {
+            DComplex native_parameter{parameter.real(), parameter.imag()};
+            ValueSaver saved_parameter{g_float_param, &native_parameter};
+            if (GetParam())
+            {
+                float_to_bf(g_param_z_bf.x, parameter.real());
+                float_to_bf(g_param_z_bf.y, parameter.imag());
+            }
+            for (const std::complex<double> seed : {std::complex<double>{}, {0.75, 0.125}, {1.25, -0.25}})
+            {
+                SCOPED_TRACE(parameter);
+                SCOPED_TRACE(seed);
+                std::complex<double> expected{seed};
+                if (GetParam())
+                {
+                    float_to_bf(g_old_z_bf.x, seed.real());
+                    float_to_bf(g_old_z_bf.y, seed.imag());
+                }
+                m_engine.begin_orbit(parameter, seed, 0);
+                long iteration{};
+                bool done{};
+                for (int call = 0; call < 2000 && !done; ++call)
+                {
+                    done = m_engine.iterate_orbit();
+                    if (m_engine.orbit_iteration() != iteration)
+                    {
+                        ASSERT_EQ(iteration + 1, m_engine.orbit_iteration());
+                        bool escaped;
+                        if (GetParam())
+                        {
+                            escaped = julia_z_power_orbit_bf() != 0;
+                            expected = {static_cast<double>(bf_to_float(g_new_z_bf.x)),
+                                static_cast<double>(bf_to_float(g_new_z_bf.y))};
+                        }
+                        else
+                        {
+                            g_old_z = {expected.real(), expected.imag()};
+                            escaped = mandel_z_power_orbit() != 0;
+                            expected = {g_new_z.x, g_new_z.y};
+                        }
+                        ++iteration;
+                        EXPECT_EQ(escaped, m_engine.orbit_escaped());
+                        EXPECT_EQ(escaped || iteration == g_max_iterations, done);
+                    }
+                    const double tolerance{1e-11 * std::max(1.0, std::abs(expected))};
+                    ASSERT_NEAR(expected.real(), m_engine.orbit_value().real(), tolerance);
+                    ASSERT_NEAR(expected.imag(), m_engine.orbit_value().imag(), tolerance);
+                }
+                ASSERT_TRUE(done);
+            }
+        }
+        EXPECT_TRUE(m_plots.empty());
+    }
+}
+
+TEST_P(TestPerturbationContinuation, signedPowersResolveSubDoubleInputsNearZero)
+{
+    if (!GetParam())
+    {
+        return;
+    }
+    ValueSaver saved_exponent{g_c_exponent};
+    ValueSaver saved_power{g_params[2]};
+    ValueSaver saved_imaginary_power{g_params[3], 0.0};
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    g_max_iterations = 4;
+    for (const int exponent : {0, -1, -2})
+    {
+        SCOPED_TRACE(exponent);
+        m_engine.finish();
+        if (m_big_float)
+        {
+            free_bf_vars();
+            m_big_float = false;
+        }
+        g_c_exponent = exponent;
+        g_params[2] = exponent;
+        initialize_reference({0.125, 0.0});
+        init_big_pi();
+        while (!m_engine.initialize_pixel_strategy())
+        {
+        }
+        BigStackSaver saved;
+        const BFComplex parameter{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        const BFComplex value{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        float_to_bf(parameter.x, 0.125);
+        clear_bf(parameter.y);
+        int_to_bf(value.x, 1);
+        clear_bf(value.y);
+        m_engine.begin_orbit_bf(parameter, value, 0);
+        for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
+        {
+            m_engine.iterate_orbit();
+        }
+        ASSERT_EQ(1, m_engine.orbit_iteration());
+        m_engine.finish_orbit();
+        const int references{m_engine.reference_count()};
+        str_to_bf(value.x, "1e-40");
+        copy_bf(g_param_z_bf.x, parameter.x);
+        copy_bf(g_param_z_bf.y, parameter.y);
+        copy_bf(g_old_z_bf.x, value.x);
+        copy_bf(g_old_z_bf.y, value.y);
+        const bool escaped{julia_z_power_orbit_bf() != 0};
+        const double expected{static_cast<double>(bf_to_float(g_new_z_bf.x))};
+        m_engine.begin_orbit_bf(parameter, value, 0);
+        for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
+        {
+            m_engine.iterate_orbit();
+        }
+        ASSERT_EQ(1, m_engine.orbit_iteration());
+        EXPECT_EQ(escaped, m_engine.orbit_escaped());
+        EXPECT_NEAR(expected, m_engine.orbit_value().real(), 1e-12 * std::abs(expected));
+        EXPECT_DOUBLE_EQ(0.0, m_engine.orbit_value().imag());
+        EXPECT_EQ(references + 1, m_engine.reference_count());
+        m_engine.finish_orbit();
+    }
+}
+
+TEST_F(TestPerturbationPixels, zeroPowerDistinguishesExactZeroFromAnUnderflowedReference)
+{
+    ValueSaver saved_exponent{g_c_exponent, 0};
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    g_max_iterations = 2;
+    init_bf_dec(60);
+    m_big_float = true;
+    const BFComplex center{m_engine.initialize_frame_bf({}, {})};
+    clear_bf(center.x);
+    clear_bf(center.y);
+    while (!m_engine.initialize_pixel_strategy())
+    {
+    }
+    BigStackSaver saved;
+    const BFComplex value{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    clear_bf(value.y);
+    str_to_bf(value.x, "1e-400");
+    m_engine.begin_orbit_bf(center, value, 0);
+    for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
+    {
+        m_engine.iterate_orbit();
+    }
+    ASSERT_EQ(1, m_engine.orbit_iteration());
+    EXPECT_DOUBLE_EQ(1.0, m_engine.orbit_value().real());
+    m_engine.finish_orbit();
+    clear_bf(value.x);
+    m_engine.begin_orbit_bf(center, value, 0);
+    for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
+    {
+        m_engine.iterate_orbit();
+    }
+    ASSERT_EQ(1, m_engine.orbit_iteration());
+    EXPECT_DOUBLE_EQ(0.0, m_engine.orbit_value().real());
+    EXPECT_DOUBLE_EQ(0.0, m_engine.orbit_value().imag());
+    EXPECT_FALSE(m_engine.orbit_escaped());
+    m_engine.finish_orbit();
+}
+
+TEST_P(TestPerturbationContinuation, standardFramePreservesIntegerPowers)
 {
     ValueSaver saved_exponent{g_c_exponent};
     ValueSaver saved_power{g_params[2]};
@@ -4008,7 +4194,7 @@ TEST_P(TestPerturbationContinuation, standardFramePreservesLargerIntegerPowers)
     g_fractal_type = FractalType::MANDEL_Z_POWER;
     m_specific = *get_fractal_specific(g_fractal_type);
     m_specific.symmetry = SymmetryType::NONE;
-    m_specific.per_image = [] { return true; };
+    m_specific.per_image = GetParam() ? mandel_per_image_bf : mandel_per_image;
     m_specific.pert_pt =
         [](const std::complex<double> &ref, std::complex<double> &delta, const std::complex<double> &parameter_delta)
     {
@@ -4030,7 +4216,7 @@ TEST_P(TestPerturbationContinuation, standardFramePreservesLargerIntegerPowers)
         float_to_bf(g_bf_y_3rd, 0.000125);
     }
 
-    for (const int exponent : {28, 29, 64, 2048})
+    for (const int exponent : {0, 1, -1, -2, -3, -29, 28, 29, 64, 2048})
     {
         SCOPED_TRACE(exponent);
         g_c_exponent = exponent;

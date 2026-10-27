@@ -1093,6 +1093,18 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
             const std::complex<double> reference_z{m_pixel.star_trail && m_pixel.sample > 1
                     ? star_trail_point(reference.orbit[m_pixel.sample - 1])
                     : reference.orbit[m_pixel.sample - 1]};
+            if (g_bf_math != BFMathType::NONE && g_fractal_type == FractalType::MANDEL_Z_POWER && g_c_exponent <= 0 &&
+                m_pixel.orbit_displacement != std::complex<double>{})
+            {
+                // Resolve cancellation at the zero-power discontinuity or a
+                // reciprocal pole from an exact replacement reference.
+                const double error{8.0 * reference_conversion_error() *
+                    (std::abs(reference_z) + std::abs(m_pixel.orbit_displacement))};
+                if (std::abs(reference_z + m_pixel.orbit_displacement) <= error)
+                {
+                    return PERTURBATION_RETRY;
+                }
+            }
             g_cur_fractal_specific->pert_pt(reference_z, m_pixel.orbit_displacement, m_pixel.parameter_displacement);
             m_pixel.w = reference.orbit[m_pixel.sample] + m_pixel.orbit_displacement;
             m_pixel.magnitude = mag_squared(m_pixel.w);
@@ -1110,8 +1122,10 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
         case PixelState::Phase::BAILOUT:
         {
             bool escaped{bailout_reached(g_bailout_test, m_pixel.w.real(), m_pixel.w.imag(), g_magnitude_limit)};
+            const bool resolve_zero_power{g_fractal_type == FractalType::MANDEL_Z_POWER && g_c_exponent == 0 &&
+                m_pixel.old == std::complex<double>{}};
             if (g_bf_math != BFMathType::NONE &&
-                ambiguous_bailout(reference.orbit[m_pixel.sample], m_pixel.orbit_displacement))
+                (resolve_zero_power || ambiguous_bailout(reference.orbit[m_pixel.sample], m_pixel.orbit_displacement)))
             {
                 // Retain only the current high-precision value, not another orbit history.
                 if (!advance_precise_orbit(m_pixel.sample, remaining))
