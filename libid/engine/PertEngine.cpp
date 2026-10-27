@@ -159,6 +159,17 @@ double bailout_limit()
     return g_bf_math == BFMathType::BIG_NUM ? static_cast<long>(g_magnitude_limit) : g_magnitude_limit;
 }
 
+bool relative_delta(const BFComplex &value, const BFComplex &reference, std::complex<double> &delta)
+{
+    BigStackSaver saved;
+    const BFComplex difference{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    sub_bf(difference.x, value.x, reference.x);
+    sub_bf(difference.y, value.y, reference.y);
+    delta = {static_cast<double>(bf_to_float(difference.x)), static_cast<double>(bf_to_float(difference.y))};
+    return std::isfinite(delta.real()) && std::isfinite(delta.imag()) &&
+        (delta.real() != 0.0 || is_bf_zero(difference.x)) && (delta.imag() != 0.0 || is_bf_zero(difference.y));
+}
+
 bool ambiguous_bailout(const std::complex<double> &reference, const std::complex<double> &delta)
 {
     const double scale{
@@ -268,7 +279,38 @@ BFComplex PertEngine::initialize_frame_bf(
     m_center_stack_saved = true;
     m_center_bf.x = alloc_stack(g_bf_length + 2);
     m_center_bf.y = alloc_stack(g_bf_length + 2);
+    m_half_horizontal_bf = {alloc_stack(g_bf_length + 2), alloc_stack(g_bf_length + 2)};
+    m_half_vertical_bf = {alloc_stack(g_bf_length + 2), alloc_stack(g_bf_length + 2)};
+    float_to_bf(m_half_horizontal_bf.x, half_horizontal.real());
+    float_to_bf(m_half_horizontal_bf.y, half_horizontal.imag());
+    float_to_bf(m_half_vertical_bf.x, half_vertical.real());
+    float_to_bf(m_half_vertical_bf.y, half_vertical.imag());
     return m_center_bf;
+}
+
+void PertEngine::initialize_frame_bf(const BFComplex &min, const BFComplex &max, const BFComplex &third)
+{
+    initialize_frame_bf({}, {});
+    add_bf(m_center_bf.x, min.x, max.x);
+    half_a_bf(m_center_bf.x);
+    add_bf(m_center_bf.y, min.y, max.y);
+    half_a_bf(m_center_bf.y);
+    if (g_fractal_type == FractalType::BURNING_SHIP)
+    {
+        neg_a_bf(m_center_bf.y);
+    }
+    sub_bf(m_half_horizontal_bf.x, max.x, third.x);
+    half_a_bf(m_half_horizontal_bf.x);
+    sub_bf(m_half_horizontal_bf.y, min.y, third.y);
+    half_a_bf(m_half_horizontal_bf.y);
+    sub_bf(m_half_vertical_bf.x, min.x, third.x);
+    half_a_bf(m_half_vertical_bf.x);
+    sub_bf(m_half_vertical_bf.y, max.y, third.y);
+    half_a_bf(m_half_vertical_bf.y);
+    m_half_horizontal = {static_cast<double>(bf_to_float(m_half_horizontal_bf.x)),
+        static_cast<double>(bf_to_float(m_half_horizontal_bf.y))};
+    m_half_vertical = {
+        static_cast<double>(bf_to_float(m_half_vertical_bf.x)), static_cast<double>(bf_to_float(m_half_vertical_bf.y))};
 }
 
 void PertEngine::initialize_frame(const std::complex<double> &center, const std::complex<double> &half_horizontal,
@@ -679,6 +721,8 @@ void PertEngine::cleanup()
     m_reference_ready = false;
     m_tmp_bf = {};
     m_center_bf = {};
+    m_half_horizontal_bf = {};
+    m_half_vertical_bf = {};
     m_done = true;
     m_frame_initialized = false;
     clear_output();
@@ -792,22 +836,52 @@ void PertEngine::inverted_coordinate(const BFComplex coordinate, const std::comp
     }
 }
 
-std::complex<double> PertEngine::parameter_delta(const std::complex<double> &pixel_position) const
+void PertEngine::pixel_delta(const BFComplex delta, const std::complex<double> &pixel_position) const
 {
-    if (g_inversion.invert == 0)
+    BigStackSaver saved;
+    const BigFloat factor{alloc_stack(g_r_bf_length + 2)};
+    const BigFloat divisor{alloc_stack(g_r_bf_length + 2)};
+    const BigFloat term{alloc_stack(g_r_bf_length + 2)};
+    clear_bf(delta.x);
+    clear_bf(delta.y);
+    const double width{g_logical_screen.x_dots - 1.0};
+    const double height{g_logical_screen.y_dots - 1.0};
+    if (width != 0.0)
     {
-        return pixel_delta(pixel_position) - m_reference.delta;
+        float_to_bf(factor, 2.0 * pixel_position.real() - width);
+        float_to_bf(divisor, width);
+        div_bf(factor, factor, divisor);
+        mult_bf(delta.x, m_half_horizontal_bf.x, factor);
+        mult_bf(delta.y, m_half_horizontal_bf.y, factor);
     }
+    if (height != 0.0)
+    {
+        float_to_bf(factor, 2.0 * pixel_position.imag() - height);
+        float_to_bf(divisor, height);
+        div_bf(factor, factor, divisor);
+        mult_bf(term, m_half_vertical_bf.x, factor);
+        add_a_bf(delta.x, term);
+        mult_bf(term, m_half_vertical_bf.y, factor);
+        add_a_bf(delta.y, term);
+    }
+    if (g_fractal_type == FractalType::BURNING_SHIP)
+    {
+        neg_a_bf(delta.y);
+    }
+}
+
+bool PertEngine::parameter_delta(const std::complex<double> &pixel_position, std::complex<double> &delta) const
+{
     if (g_bf_math == BFMathType::NONE)
     {
-        return inverted_coordinate(pixel_position) - m_reference.coordinate;
+        delta = g_inversion.invert != 0 ? inverted_coordinate(pixel_position) - m_reference.coordinate
+                                        : pixel_delta(pixel_position) - m_reference.delta;
+        return true;
     }
     BigStackSaver saved;
     const BFComplex coordinate{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    inverted_coordinate(coordinate, pixel_position);
-    sub_a_bf(coordinate.x, m_reference_coordinate_bf.x);
-    sub_a_bf(coordinate.y, m_reference_coordinate_bf.y);
-    return {static_cast<double>(bf_to_float(coordinate.x)), static_cast<double>(bf_to_float(coordinate.y))};
+    coordinate_bf(coordinate, pixel_position);
+    return relative_delta(coordinate, m_reference_coordinate_bf, delta);
 }
 
 void PertEngine::coordinate_bf(const BFComplex coordinate, const std::complex<double> &pixel_position) const
@@ -818,11 +892,9 @@ void PertEngine::coordinate_bf(const BFComplex coordinate, const std::complex<do
     }
     else
     {
-        const std::complex<double> delta{pixel_delta(pixel_position)};
-        float_to_bf(m_tmp_bf, delta.real());
-        add_bf(coordinate.x, m_center_bf.x, m_tmp_bf);
-        float_to_bf(m_tmp_bf, delta.imag());
-        add_bf(coordinate.y, m_center_bf.y, m_tmp_bf);
+        pixel_delta(coordinate, pixel_position);
+        add_a_bf(coordinate.x, m_center_bf.x);
+        add_a_bf(coordinate.y, m_center_bf.y);
     }
 }
 
@@ -946,14 +1018,14 @@ void PertEngine::begin_point(const Point &pt)
         m_pixel.orbit_displacement = m_orbit_input.value - m_reference.orbit[m_pixel.sample];
         if (m_orbit_input.precise)
         {
-            sub_bf(m_tmp_bf, m_orbit_parameter_bf.x, m_reference_coordinate_bf.x);
-            m_pixel.parameter_displacement.real(bf_to_float(m_tmp_bf));
-            sub_bf(m_tmp_bf, m_orbit_parameter_bf.y, m_reference_coordinate_bf.y);
-            m_pixel.parameter_displacement.imag(bf_to_float(m_tmp_bf));
-            sub_bf(m_tmp_bf, m_orbit_initial_bf.x, m_reference_initial_bf.x);
-            m_pixel.orbit_displacement.real(bf_to_float(m_tmp_bf));
-            sub_bf(m_tmp_bf, m_orbit_initial_bf.y, m_reference_initial_bf.y);
-            m_pixel.orbit_displacement.imag(bf_to_float(m_tmp_bf));
+            const bool parameter_fits{
+                relative_delta(m_orbit_parameter_bf, m_reference_coordinate_bf, m_pixel.parameter_displacement)};
+            const bool orbit_fits{
+                relative_delta(m_orbit_initial_bf, m_reference_initial_bf, m_pixel.orbit_displacement)};
+            if (!parameter_fits || !orbit_fits)
+            {
+                m_pixel.phase = PixelState::Phase::REBASE;
+            }
         }
         m_pixel.w = m_pixel.old = m_orbit_input.value;
         m_pixel.magnitude = mag_squared(m_pixel.w);
@@ -991,7 +1063,11 @@ void PertEngine::begin_point(const Point &pt)
     }
     const ReferencePoint &reference{m_reference};
     m_pixel.position = {static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())};
-    m_pixel.parameter_displacement = parameter_delta(m_pixel.position);
+    if (!parameter_delta(m_pixel.position, m_pixel.parameter_displacement))
+    {
+        // A nonzero displacement below double range needs its own exact reference.
+        m_pixel.phase = PixelState::Phase::REBASE;
+    }
     m_pixel.bof = bof_initialization();
     m_pixel.orbit_displacement =
         m_pixel.bof || explicit_initial_orbit() ? std::complex<double>{} : m_pixel.parameter_displacement;

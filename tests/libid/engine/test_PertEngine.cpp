@@ -340,6 +340,25 @@ void record_reference_bf(const BFComplex &center, BFComplex &z)
     mandel_ref_pt_bf(center, z);
 }
 
+void record_deep_reference_bf(const BFComplex &center, BFComplex &z)
+{
+    BigStackSaver saved;
+    const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+    const BigFloat scale{alloc_stack(g_r_bf_length + 2)};
+    str_to_bf(scale, "1e-400");
+    int_to_bf(offset, -2);
+    sub_bf(offset, center.x, offset);
+    div_bf(offset, offset, scale);
+    const double x{static_cast<double>(bf_to_float(offset))};
+    div_bf(offset, center.y, scale);
+    const std::complex<double> coordinate{x, static_cast<double>(bf_to_float(offset))};
+    if (s_reference_coordinates.empty() || s_reference_coordinates.back() != coordinate)
+    {
+        s_reference_coordinates.push_back(coordinate);
+    }
+    mandel_ref_pt_bf(center, z);
+}
+
 void record_delta(
     const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter_delta)
 {
@@ -6457,6 +6476,233 @@ TEST_F(TestPerturbationPixels, passSwitchAutomaticallySelectsPerturbationAndClea
 TEST_F(TestPerturbationPixels, passSwitchRespectsDisabledPerturbation)
 {
     check_pass_switch(PerturbationMode::NO);
+}
+
+class TestDeepPerturbationGeometry : public TestPerturbationPixels
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void initialize_corners();
+    void initialize_frame();
+
+    ValueSaver<UserData> m_saved_user{g_user, UserData{}};
+    ValueSaver<ImageRegion> m_saved_region{g_image_region, ImageRegion{{-2, 0}, {-2, 0}, {-2, 0}}};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status};
+    ValueSaver<bool> m_saved_resuming{g_resuming, false};
+    ValueSaver<SymmetryType> m_saved_symmetry{g_force_symmetry, SymmetryType::NONE};
+    ValueSaver<Potential> m_saved_potential{g_potential, Potential{}};
+    ValueSaver<bool> m_saved_show_orbit{g_show_orbit, false};
+    ValueSaver<bool> m_saved_start_orbit{g_start_show_orbit, false};
+    ValueSaver<long> m_saved_distance{g_distance_estimator, 0};
+    ValueSaver<InitOrbitMode> m_saved_initial_orbit{g_use_init_orbit, InitOrbitMode::NORMAL};
+    ValueSaver<DComplex> m_saved_param{g_param_z1, DComplex{}};
+    ValueSaver<double> m_saved_param_real{g_params[0], 0.0};
+    ValueSaver<double> m_saved_param_imag{g_params[1], 0.0};
+    ValueSaver<DComplex *> m_saved_float_param{g_float_param, &g_init};
+    ValueSaver<decltype(g_bailout_float)> m_saved_float_bailout{g_bailout_float};
+    ValueSaver<decltype(g_bailout_bignum)> m_saved_bn_bailout{g_bailout_bignum};
+    ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bf_bailout{g_bailout_bigfloat};
+    ValueSaver<Bailout> m_saved_bailout_test{g_bailout_test};
+};
+
+void TestDeepPerturbationGeometry::SetUp()
+{
+    TestPerturbationPixels::SetUp();
+    {
+        const ValueSaver saved_type{g_fractal_type, FractalType::MANDEL_Z_POWER};
+        init_bf_dec(450);
+        m_big_float = true;
+    }
+    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
+    g_max_iterations = 16;
+    set_bailout_formula(Bailout::MOD);
+    initialize_corners();
+    m_specific.symmetry = SymmetryType::NONE;
+    m_specific.per_image = mandel_per_image_bf;
+    m_specific.per_pixel = mandel_per_pixel_bf;
+    m_specific.orbit_calc = julia_orbit_bf;
+    m_specific.pert_ref_bf = record_deep_reference_bf;
+    g_dispatch = FractalDispatch{m_specific};
+    alloc_pixel_grid();
+    fill_pixel_grid();
+}
+
+void TestDeepPerturbationGeometry::initialize_corners()
+{
+    {
+        BigStackSaver saved;
+        const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+        str_to_bf(offset, "3e-400");
+        int_to_bf(g_bf_x_min, -2);
+        sub_a_bf(g_bf_x_min, offset);
+        int_to_bf(g_bf_x_max, -2);
+        add_a_bf(g_bf_x_max, offset);
+    }
+    copy_bf(g_bf_x_3rd, g_bf_x_min);
+    clear_bf(g_bf_y_min);
+    clear_bf(g_bf_y_max);
+    clear_bf(g_bf_y_3rd);
+}
+
+void TestDeepPerturbationGeometry::TearDown()
+{
+    end_disk();
+    free_pixel_grid();
+    TestPerturbationPixels::TearDown();
+}
+
+void TestDeepPerturbationGeometry::initialize_frame()
+{
+    m_engine.initialize_frame_bf({g_bf_x_min, g_bf_y_min}, {g_bf_x_max, g_bf_y_max}, {g_bf_x_3rd, g_bf_y_3rd});
+    ASSERT_TRUE(m_engine.initialize_pixel_strategy());
+}
+
+TEST_F(TestDeepPerturbationGeometry, passesMatchNativePixelsAcrossSubDoubleViewport)
+{
+    // Mandelbrot's production pass setup selects the fixed-point allocator.
+    free_bf_vars();
+    init_bf_dec(450);
+    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    initialize_corners();
+    m_specific.per_image = mandel_per_image_bn;
+    m_specific.per_pixel = mandel_per_pixel_bn;
+    m_specific.orbit_calc = julia_orbit_bn;
+    g_dispatch = FractalDispatch{m_specific};
+    for (const CalcMode pass : {CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS})
+    {
+        SCOPED_TRACE(static_cast<char>(pass));
+        std::array<int, WIDTH * HEIGHT> native_pixels{};
+        for (const PerturbationMode mode : {PerturbationMode::NO, PerturbationMode::YES})
+        {
+            SCOPED_TRACE(static_cast<int>(mode));
+            g_std_calc_mode = pass;
+            g_user.perturbation = mode;
+            g_bf_math = BFMathType::BIG_NUM;
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
+            m_pixels.fill(0);
+            m_plot_statuses.clear();
+            s_reference_coordinates.clear();
+            StandardFractal calculation;
+            ASSERT_TRUE(calculation.resume().empty());
+            for (int step = 0; step < 1000 && !calculation.done(); ++step)
+            {
+                calculation.iterate();
+            }
+            ASSERT_TRUE(calculation.done());
+            EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+            EXPECT_EQ(pass, g_std_calc_mode);
+            EXPECT_EQ(BFMathType::BIG_NUM, g_bf_math);
+            for (int row = 0; row < HEIGHT; ++row)
+            {
+                for (int col = 0; col < WIDTH; ++col)
+                {
+                    EXPECT_EQ(col < WIDTH / 2 ? 1 : 7, m_pixels[row * WIDTH + col]);
+                }
+            }
+            ASSERT_FALSE(m_plot_statuses.empty());
+            for (const StandardPassStatus &status : m_plot_statuses)
+            {
+                EXPECT_EQ(mode == PerturbationMode::YES, status.perturbation_active);
+            }
+            if (mode == PerturbationMode::NO)
+            {
+                native_pixels = m_pixels;
+            }
+            else
+            {
+                EXPECT_EQ(native_pixels, m_pixels);
+                EXPECT_THAT(s_reference_coordinates,
+                    Contains(Truly([](const std::complex<double> &point)
+                        { return std::abs(point - std::complex<double>{-3.0, 0.0}) < 1e-12; })));
+                EXPECT_THAT(s_reference_coordinates,
+                    Contains(Truly([](const std::complex<double> &point)
+                        { return std::abs(point - std::complex<double>{3.0, 0.0}) < 1e-12; })));
+            }
+            calculation.finish();
+        }
+    }
+}
+
+TEST_F(TestDeepPerturbationGeometry, frameRetainsPreciseGeometryForReplacementReferences)
+{
+    str_to_bf(g_bf_y_min, "-3e-400");
+    str_to_bf(g_bf_y_max, "3e-400");
+    str_to_bf(g_bf_y_3rd, "-1e-400");
+    {
+        BigStackSaver saved;
+        const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+        str_to_bf(offset, "1e-400");
+        int_to_bf(g_bf_x_3rd, -2);
+        sub_a_bf(g_bf_x_3rd, offset);
+    }
+    initialize_frame();
+    int_to_bf(g_bf_x_min, -2);
+    int_to_bf(g_bf_x_max, -2);
+    int_to_bf(g_bf_x_3rd, -2);
+    clear_bf(g_bf_y_min);
+    clear_bf(g_bf_y_max);
+    clear_bf(g_bf_y_3rd);
+
+    EXPECT_EQ(1, m_engine.calculate_pixel(0, 0));
+    EXPECT_EQ(7, m_engine.calculate_pixel(WIDTH - 1, HEIGHT - 1));
+    EXPECT_EQ(1, m_engine.calculate_pixel(0, HEIGHT - 1));
+    EXPECT_EQ(7, m_engine.calculate_pixel(WIDTH - 1, 0));
+
+    EXPECT_EQ(5, m_engine.reference_count());
+    EXPECT_THAT(s_reference_coordinates,
+        Contains(Truly([](const std::complex<double> &point)
+            { return std::abs(point - std::complex<double>{-3.0, 3.0}) < 1e-12; })));
+    EXPECT_THAT(s_reference_coordinates,
+        Contains(Truly([](const std::complex<double> &point)
+            { return std::abs(point - std::complex<double>{3.0, -3.0}) < 1e-12; })));
+    EXPECT_THAT(s_reference_coordinates,
+        Contains(Truly([](const std::complex<double> &point)
+            { return std::abs(point - std::complex<double>{-1.0, -1.0}) < 1e-12; })));
+    EXPECT_THAT(s_reference_coordinates,
+        Contains(Truly([](const std::complex<double> &point)
+            { return std::abs(point - std::complex<double>{1.0, 1.0}) < 1e-12; })));
+}
+
+TEST_F(TestDeepPerturbationGeometry, continuationReplacesUnrepresentableParameterAndSeedDisplacements)
+{
+    initialize_frame();
+    BigStackSaver saved;
+    const BFComplex parameter{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BFComplex value{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    int_to_bf(parameter.x, -2);
+    clear_bf(parameter.y);
+    copy_bf(value.x, parameter.x);
+    clear_bf(value.y);
+    m_engine.begin_orbit_bf(parameter, value, 0);
+    bool done{};
+    for (int step = 0; step < 100 && !done; ++step)
+    {
+        done = m_engine.iterate_orbit();
+    }
+    ASSERT_TRUE(done);
+    EXPECT_FALSE(m_engine.orbit_escaped());
+    EXPECT_EQ(g_max_iterations, m_engine.orbit_iteration());
+    m_engine.finish_orbit();
+    const int references{m_engine.reference_count()};
+    copy_bf(parameter.x, g_bf_x_min);
+    copy_bf(value.x, parameter.x);
+
+    m_engine.begin_orbit_bf(parameter, value, 0);
+    done = false;
+    for (int step = 0; step < 100 && !done; ++step)
+    {
+        done = m_engine.iterate_orbit();
+    }
+
+    EXPECT_TRUE(done);
+    EXPECT_TRUE(m_engine.orbit_escaped());
+    EXPECT_EQ(1, m_engine.orbit_iteration());
+    EXPECT_EQ(references + 1, m_engine.reference_count());
+    EXPECT_THAT(s_reference_coordinates,
+        Contains(Truly([](const std::complex<double> &point)
+            { return std::abs(point - std::complex<double>{-3.0, 0.0}) < 1e-12; })));
+    m_engine.finish_orbit();
 }
 
 } // namespace id::test

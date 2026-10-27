@@ -24,6 +24,7 @@ public:
 
     math::BFComplex initialize_frame_bf(
         const std::complex<double> &half_horizontal, const std::complex<double> &half_vertical);
+    void initialize_frame_bf(const math::BFComplex &min, const math::BFComplex &max, const math::BFComplex &third);
     void initialize_frame(const std::complex<double> &center, const std::complex<double> &half_horizontal,
         const std::complex<double> &half_vertical);
     // Advance one reference chunk; true when the reference is complete.
@@ -139,7 +140,8 @@ private:
     bool iterate_reference();
     bool advance_bailout();
     std::complex<double> pixel_delta(const std::complex<double> &pixel_position) const;
-    std::complex<double> parameter_delta(const std::complex<double> &pixel_position) const;
+    void pixel_delta(math::BFComplex delta, const std::complex<double> &pixel_position) const;
+    bool parameter_delta(const std::complex<double> &pixel_position, std::complex<double> &delta) const;
     std::complex<double> inverted_coordinate(const std::complex<double> &pixel_position) const;
     void inverted_coordinate(math::BFComplex coordinate, const std::complex<double> &pixel_position) const;
     void coordinate_bf(math::BFComplex coordinate, const std::complex<double> &pixel_position) const;
@@ -169,6 +171,8 @@ private:
     math::BFComplex m_orbit_initial_bf{};
     math::BigFloat m_tmp_bf{};
     math::BFComplex m_center_bf{};
+    math::BFComplex m_half_horizontal_bf{};
+    math::BFComplex m_half_vertical_bf{};
     std::complex<double> m_center{};
     std::complex<double> m_reference_z{};
     std::size_t m_reference_sample{};

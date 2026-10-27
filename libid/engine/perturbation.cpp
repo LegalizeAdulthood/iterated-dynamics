@@ -24,28 +24,7 @@ void StandardFractal::start_perturbation_frame()
     std::complex<double> half_vertical;
     if (g_bf_math != BFMathType::NONE)
     {
-        {
-            BigStackSaver saved;
-            BigFloat tmp_bf{alloc_stack(g_bf_length + 2)};
-            sub_bf(tmp_bf, g_bf_x_max, g_bf_x_3rd);
-            half_horizontal.real(bf_to_float(tmp_bf) / 2.0);
-            sub_bf(tmp_bf, g_bf_y_min, g_bf_y_3rd);
-            half_horizontal.imag(bf_to_float(tmp_bf) / 2.0);
-            sub_bf(tmp_bf, g_bf_x_min, g_bf_x_3rd);
-            half_vertical.real(bf_to_float(tmp_bf) / 2.0);
-            sub_bf(tmp_bf, g_bf_y_max, g_bf_y_3rd);
-            half_vertical.imag(bf_to_float(tmp_bf) / 2.0);
-        }
-
-        BFComplex center_bf{m_pert_engine.initialize_frame_bf(half_horizontal, half_vertical)};
-        add_bf(center_bf.x, g_bf_x_min, g_bf_x_max);
-        half_a_bf(center_bf.x);
-        add_bf(center_bf.y, g_bf_y_min, g_bf_y_max);
-        half_a_bf(center_bf.y);
-        if (fractals::g_fractal_type == fractals::FractalType::BURNING_SHIP)
-        {
-            neg_bf(center_bf.y, center_bf.y);
-        }
+        m_pert_engine.initialize_frame_bf({g_bf_x_min, g_bf_y_min}, {g_bf_x_max, g_bf_y_max}, {g_bf_x_3rd, g_bf_y_3rd});
         m_pert_engine.initialize_pixel_strategy();
     }
     else
