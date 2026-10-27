@@ -359,6 +359,17 @@ add_test(NAME AutoKeyTest.jiim
 set_tests_properties(AutoKeyTest.jiim
     PROPERTIES LABELS "autokey;ui;jiim" TIMEOUT 70)
 
+id_make_test_home(jiim-viewport JIIM_VIEWPORT_HOME KEYS jiim_viewport.key)
+add_test(NAME AutoKeyTest.jiim-viewport
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DCHECK_JIIM=$<SHELL_PATH:$<TARGET_FILE:check-jiim>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/jiim_viewport_test.cmake"
+    WORKING_DIRECTORY "${JIIM_VIEWPORT_HOME}")
+set_tests_properties(AutoKeyTest.jiim-viewport
+    PROPERTIES LABELS "autokey;ui;jiim" TIMEOUT 100)
+
 foreach(type IN ITEMS bifurcation biflambda bif+sinpi bif=sinpi bifstewart bifmay)
     string(REPLACE "+" "-plus-" name "${type}")
     string(REPLACE "=" "-eq-" name "${name}")

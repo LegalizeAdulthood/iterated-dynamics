@@ -17,6 +17,7 @@
 #include <engine/resume.h>
 #include <engine/spindac.h>
 #include <engine/VideoInfo.h>
+#include <engine/Viewport.h>
 #include <fractals/fractalp.h>
 #include <fractals/lorenz.h>
 #include <io/disk_storage.h>
@@ -107,6 +108,8 @@ protected:
                 }));
     }
 
+    void prepare_reduced_viewport();
+
     MockDriver m_driver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen, LogicalScreen{100, 100, 0, 0, 99, 99}};
@@ -142,6 +145,23 @@ protected:
     std::vector<int> m_pixels = std::vector<int>(100 * 100, 3);
     bool m_key_read{};
 };
+
+void TestInverseJuliaController::prepare_reduced_viewport()
+{
+    g_logical_screen = {8, 6, 3, 2, 7, 5};
+    g_delta_x = 4.0 / 7;
+    g_delta_y = 3.0 / 5;
+    alloc_pixel_grid();
+    fill_pixel_grid();
+    m_pixels.assign(m_pixels.size(), 0);
+    for (int row = 2; row < 8; ++row)
+    {
+        for (int col = 3; col < 11; ++col)
+        {
+            m_pixels[row * 100 + col] = 3;
+        }
+    }
+}
 
 TEST_F(TestInverseJuliaController, selectionRestoresDisplayAndRequeuesKey)
 {
@@ -234,6 +254,57 @@ TEST_F(TestInverseJuliaController, orbitToolRestoresDispatchAfterSetupFailure)
     EXPECT_EQ(saved_dispatch.per_pixel(), g_dispatch.per_pixel());
     EXPECT_EQ(saved_dispatch.per_image(), g_dispatch.per_image());
     EXPECT_EQ(saved_dispatch.calc_type(), g_dispatch.calc_type());
+    EXPECT_FALSE(dispatch_keyboard_key(ID_KEY_LEFT_ARROW));
+}
+
+TEST_F(TestInverseJuliaController, reducedViewportRestoresImageOffsetsAndGrid)
+{
+    prepare_reduced_viewport();
+    const LogicalScreen screen{g_logical_screen};
+    const std::vector<int> pixels{m_pixels};
+    expect_exit_key('x');
+
+    jiim(JIIMType::ORBIT);
+
+    EXPECT_EQ(screen.x_dots, g_logical_screen.x_dots);
+    EXPECT_EQ(screen.y_dots, g_logical_screen.y_dots);
+    EXPECT_EQ(screen.x_offset, g_logical_screen.x_offset);
+    EXPECT_EQ(screen.y_offset, g_logical_screen.y_offset);
+    EXPECT_EQ(pixels, m_pixels);
+    for (g_row = 0; g_row < screen.y_dots; ++g_row)
+    {
+        for (g_col = 0; g_col < screen.x_dots; ++g_col)
+        {
+            EXPECT_DOUBLE_EQ(-2.5 + g_col * static_cast<double>(g_delta_x), dx_pixel());
+            EXPECT_DOUBLE_EQ(1.5 - g_row * static_cast<double>(g_delta_y), dy_pixel());
+        }
+    }
+}
+
+TEST_F(TestInverseJuliaController, reducedViewportSaveRebuildsTheGridBeforeReopening)
+{
+    ValueSaver saved_viewport{g_viewport};
+    prepare_reduced_viewport();
+    expect_exit_key('s');
+
+    jiim(JIIMType::ORBIT);
+
+    EXPECT_FALSE(g_viewport.enabled);
+    EXPECT_EQ(100, g_logical_screen.x_dots);
+    EXPECT_EQ(100, g_logical_screen.y_dots);
+    EXPECT_EQ(0, g_logical_screen.x_offset);
+    EXPECT_EQ(0, g_logical_screen.y_offset);
+    g_col = g_row = 99;
+    EXPECT_DOUBLE_EQ(-2.5 + 99 * static_cast<double>(g_delta_x), dx_pixel());
+    EXPECT_DOUBLE_EQ(1.5 - 99 * static_cast<double>(g_delta_y), dy_pixel());
+    m_key_read = false;
+    expect_exit_key('x');
+
+    jiim(JIIMType::ORBIT);
+
+    EXPECT_EQ(100, g_logical_screen.x_dots);
+    EXPECT_EQ(100, g_logical_screen.y_dots);
+    EXPECT_FALSE(g_using_jiim);
     EXPECT_FALSE(dispatch_keyboard_key(ID_KEY_LEFT_ARROW));
 }
 

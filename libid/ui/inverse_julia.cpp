@@ -893,6 +893,8 @@ void InverseJuliaController::finish()
         g_logical_screen.y_size_dots = g_logical_screen.y_dots - 1;
         g_logical_screen.x_offset = 0;
         g_logical_screen.y_offset = 0;
+        alloc_pixel_grid();
+        fill_pixel_grid();
         free_temp_msg();
     }
     else
