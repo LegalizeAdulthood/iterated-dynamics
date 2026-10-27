@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /*
  *  Simultaneous Orbit Iteration Image Generation Method. Computes
@@ -17,6 +18,7 @@
 #include "engine/fractals.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
+#include "engine/PertEngine.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
 #include "misc/stack_avail.h"
@@ -67,8 +69,8 @@ static double evaluate(const double x0, const double x1, //
     return (b2*(t - x1) + b1)*(t - x0) + b0;
 }
 
-static long iteration(const double cr, const double ci, //
-    const double re, const double im,                   //
+static long ordinary_iteration(const double cr, const double ci, //
+    const double re, const double im,                            //
     long start)
 {
     g_old_z.x = re;
@@ -178,7 +180,7 @@ void SynchronousOrbit::push_rhombus(const RhombusInput &input)
     m_frame_stack.push_back(frame);
 }
 
-SynchronousOrbit::FrameResult SynchronousOrbit::process_next_frame()
+SynchronousOrbit::FrameResult SynchronousOrbit::process_next_frame(PertEngine *perturbation, int &remaining)
 {
     if (m_frame_stack.empty())
     {
@@ -188,7 +190,7 @@ SynchronousOrbit::FrameResult SynchronousOrbit::process_next_frame()
     RhombusFrame &frame = m_frame_stack.back();
     if (frame.phase == RhombusPhase::SCAN)
     {
-        if (process_scan(frame) == RhombusStep::COMPLETE)
+        if (process_scan(frame, perturbation, remaining) == RhombusStep::COMPLETE)
         {
             m_frame_stack.pop_back();
             return m_frame_stack.empty() ? FrameResult::DONE : FrameResult::CONTINUE;
@@ -209,7 +211,7 @@ SynchronousOrbit::FrameResult SynchronousOrbit::process_next_frame()
         return FrameResult::CONTINUE;
     }
 
-    const RhombusStep step{process_rhombus(frame)};
+    const RhombusStep step{process_rhombus(frame, perturbation, remaining)};
     if (step == RhombusStep::COMPLETE)
     {
         m_frame_stack.pop_back();
@@ -283,7 +285,41 @@ double SynchronousOrbit::scan_imag(const RhombusFrame &frame, const double re, c
         evaluate(input.c_im1, (input.c_im1 + input.c_im2) / 2, scan.b3[0].y, scan.b3[1].y, scan.b3[2].y, im), re);
 }
 
-SynchronousOrbit::RhombusStep SynchronousOrbit::process_scan(RhombusFrame &frame)
+bool SynchronousOrbit::scan_iteration(ScanState &scan, const double cr, const double ci, const long start, long &color,
+    PertEngine *perturbation, int &remaining)
+{
+    if (perturbation == nullptr)
+    {
+        color = ordinary_iteration(cr, ci, scan.scan_z.x, scan.scan_z.y, start);
+        return true;
+    }
+    if (!scan.orbit_active)
+    {
+        // SOI counts the supplied value as iteration one; PertEngine counts updates.
+        perturbation->begin_orbit({cr, ci}, {scan.scan_z.x, scan.scan_z.y}, start - 1);
+        scan.orbit_active = true;
+    }
+    while (remaining > 0)
+    {
+        --remaining;
+        const long before{perturbation->orbit_iteration()};
+        if (perturbation->iterate_orbit())
+        {
+            const long iteration{perturbation->orbit_iteration()};
+            color = iteration >= g_max_iterations ? BASIN_COLOR : iteration;
+            scan.orbit_active = false;
+            return true;
+        }
+        if (perturbation->orbit_iteration() == before)
+        {
+            return false;
+        }
+    }
+    return false;
+}
+
+SynchronousOrbit::RhombusStep SynchronousOrbit::process_scan(
+    RhombusFrame &frame, PertEngine *perturbation, int &remaining)
 {
     const RhombusInput &input = frame.input;
     ScanState &scan = frame.scan;
@@ -294,7 +330,11 @@ SynchronousOrbit::RhombusStep SynchronousOrbit::process_scan(RhombusFrame &frame
         case ScanPhase::ROW_START:
             scan.scan_z.x = scan_real(frame, input.c_re1, scan.z_value.y);
             scan.scan_z.y = scan_imag(frame, input.c_re1, scan.z_value.y);
-            scan.save_color = iteration(input.c_re1, scan.z_value.y, scan.scan_z.x, scan.scan_z.y, input.iter);
+            if (!scan_iteration(
+                    scan, input.c_re1, scan.z_value.y, input.iter, scan.save_color, perturbation, remaining))
+            {
+                return RhombusStep::INCOMPLETE;
+            }
             if (scan.save_color < 0)
             {
                 return RhombusStep::COMPLETE;
@@ -315,7 +355,10 @@ SynchronousOrbit::RhombusStep SynchronousOrbit::process_scan(RhombusFrame &frame
             }
             scan.scan_z.x = scan_real(frame, scan.z_value.x, scan.z_value.y);
             scan.scan_z.y = scan_imag(frame, scan.z_value.x, scan.z_value.y);
-            scan.color = iteration(scan.z_value.x, scan.z_value.y, scan.scan_z.x, scan.scan_z.y, input.iter);
+            if (!scan_iteration(scan, scan.z_value.x, scan.z_value.y, input.iter, scan.color, perturbation, remaining))
+            {
+                return RhombusStep::INCOMPLETE;
+            }
             if (scan.color < 0)
             {
                 return RhombusStep::COMPLETE;
@@ -336,7 +379,11 @@ SynchronousOrbit::RhombusStep SynchronousOrbit::process_scan(RhombusFrame &frame
             {
                 scan.scan_z.x = scan_real(frame, scan.help_real, scan.z_value.y);
                 scan.scan_z.y = scan_imag(frame, scan.help_real, scan.z_value.y);
-                scan.help_color = iteration(scan.help_real, scan.z_value.y, scan.scan_z.x, scan.scan_z.y, input.iter);
+                if (!scan_iteration(
+                        scan, scan.help_real, scan.z_value.y, input.iter, scan.help_color, perturbation, remaining))
+                {
+                    return RhombusStep::INCOMPLETE;
+                }
                 if (scan.help_color < 0)
                 {
                     return RhombusStep::COMPLETE;
@@ -369,7 +416,11 @@ SynchronousOrbit::RhombusStep SynchronousOrbit::process_scan(RhombusFrame &frame
             {
                 scan.scan_z.x = scan_real(frame, scan.help_real, scan.z_value.y);
                 scan.scan_z.y = scan_imag(frame, scan.help_real, scan.z_value.y);
-                scan.help_color = iteration(scan.help_real, scan.z_value.y, scan.scan_z.x, scan.scan_z.y, input.iter);
+                if (!scan_iteration(
+                        scan, scan.help_real, scan.z_value.y, input.iter, scan.help_color, perturbation, remaining))
+                {
+                    return RhombusStep::INCOMPLETE;
+                }
                 if (scan.help_color < 0)
                 {
                     return RhombusStep::COMPLETE;
@@ -399,7 +450,8 @@ SynchronousOrbit::RhombusStep SynchronousOrbit::process_scan(RhombusFrame &frame
     return RhombusStep::COMPLETE;
 }
 
-SynchronousOrbit::RhombusStep SynchronousOrbit::process_rhombus(RhombusFrame &frame)
+SynchronousOrbit::RhombusStep SynchronousOrbit::process_rhombus(
+    RhombusFrame &frame, PertEngine *perturbation, int &remaining)
 {
     const RhombusInput &input = frame.input;
     const double c_re1 = input.c_re1;
@@ -442,7 +494,7 @@ SynchronousOrbit::RhombusStep SynchronousOrbit::process_rhombus(RhombusFrame &fr
     if (y2 - y1 <= SCAN || avail < g_soi_min_stack)
     {
         begin_scan(frame);
-        return process_scan(frame);
+        return process_scan(frame, perturbation, remaining);
     }
 
     std::transform(std::begin(m_zi), std::end(m_zi), std::begin(m_rq), z_sqr);
@@ -666,7 +718,7 @@ SynchronousOrbit::RhombusStep SynchronousOrbit::process_rhombus(RhombusFrame &fr
         std::copy(std::begin(s), std::end(s), frame.input.zi.begin());
         frame.input.iter = iter;
         begin_scan(frame);
-        return process_scan(frame);
+        return process_scan(frame, perturbation, remaining);
     }
 
     // compute key values for subsequent rectangles
@@ -805,15 +857,17 @@ void SynchronousOrbit::start()
         1, 0));
 }
 
-bool SynchronousOrbit::iterate()
+bool SynchronousOrbit::iterate(PertEngine *perturbation)
 {
     if (!m_started)
     {
         start();
     }
+    constexpr int ORBIT_CHUNK_SIZE{2048};
+    int remaining{ORBIT_CHUNK_SIZE};
     while (!m_done)
     {
-        const FrameResult result{process_next_frame()};
+        const FrameResult result{process_next_frame(perturbation, remaining)};
         if (result == FrameResult::DONE)
         {
             m_done = true;

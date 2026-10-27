@@ -45,7 +45,7 @@ public:
     bool select_pixel();
     math::Point2i selected_pixel() const;
     void complete_pixel(int color);
-    bool iterate(); // Synchronous and sticky orbit work only.
+    bool iterate(PertEngine *perturbation = nullptr); // Synchronous and sticky orbit work only.
     void reset();
     void select(CalcMode calc_mode);
     StandardPassStatus status() const;

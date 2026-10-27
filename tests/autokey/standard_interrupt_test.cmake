@@ -18,6 +18,12 @@ if(ORBIT_OVERLAY)
     list(APPEND PARAMETERS "perturbation=yes" "showorbit=yes"
         "viewwindows=1/0.75/no/8/6")
 endif()
+if(SYNCHRONOUS_PERTURBATION)
+    list(APPEND PARAMETERS "perturbation=${SYNCHRONOUS_PERTURBATION}")
+    if(SYNCHRONOUS_PERTURBATION STREQUAL "auto")
+        list(APPEND PARAMETERS "bfdigits=30" "center-mag=-0.75/0.1/1e14")
+    endif()
+endif()
 
 execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${PARAMETERS}
     "savename=render000.gif" "autokeyname=standard_interrupt.key" "autokey=play"

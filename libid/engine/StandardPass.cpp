@@ -277,7 +277,7 @@ bool StandardPass::done() const
     }
 }
 
-bool StandardPass::iterate()
+bool StandardPass::iterate(PertEngine *perturbation)
 {
     switch (m_state.index())
     {
@@ -285,7 +285,7 @@ bool StandardPass::iterate()
         return true;
 
     case SYNCHRONOUS_ORBIT:
-        return std::get<SynchronousOrbit>(m_state).iterate();
+        return std::get<SynchronousOrbit>(m_state).iterate(perturbation);
 
     case ORBIT:
         return std::get<StickyOrbits>(m_state).iterate();

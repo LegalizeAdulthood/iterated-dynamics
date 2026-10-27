@@ -472,6 +472,22 @@ foreach(passes IN ITEMS 1 2)
     endforeach()
 endforeach()
 
+foreach(perturbation IN ITEMS yes auto)
+    set(name "synchronous-interrupt-${perturbation}")
+    id_make_test_home("${name}" SYNCHRONOUS_INTERRUPT_HOME
+        KEYS standard_interrupt.key)
+    add_test(NAME "AutoKeyTest.${name}"
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DCHECK_RESUME=$<SHELL_PATH:$<TARGET_FILE:check-standard-resume>>"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+            "-DPASSES=s" "-DSYNCHRONOUS_PERTURBATION=${perturbation}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/standard_interrupt_test.cmake"
+        WORKING_DIRECTORY "${SYNCHRONOUS_INTERRUPT_HOME}")
+    set_tests_properties("AutoKeyTest.${name}"
+        PROPERTIES LABELS "autokey;ui;passes;perturbation" TIMEOUT 250)
+endforeach()
+
 foreach(perturbation IN ITEMS auto no)
     set(name "perturbation-pass-switch-${perturbation}")
     id_make_test_home("${name}" PERTURBATION_PASS_SWITCH_HOME

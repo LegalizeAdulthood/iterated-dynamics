@@ -23,6 +23,7 @@
 #include <engine/SoundOutput.h>
 #include <engine/spindac.h>
 #include <engine/StandardFractal.h>
+#include <engine/SynchronousOrbit.h>
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
@@ -31,6 +32,7 @@
 #include <io/disk_storage.h>
 #include <math/biginit.h>
 #include <misc/debug_flags.h>
+#include <misc/stack_avail.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 #include <ui/video.h>
@@ -3935,6 +3937,210 @@ TEST_P(TestPerturbationContinuation, invalidContinuationDoesNotReplaceTheCurrent
 }
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationContinuation, Bool());
+
+class TestSynchronousPerturbation : public TestPerturbationIterations
+{
+protected:
+    void prepare(const int width = 8, const int height = 6,
+        const ImageRegion &region = {{-2.5, -1.5}, {1.5, 1.5}, {-2.5, -1.5}}, const long iterations = 128)
+    {
+        g_screen_x_dots = width;
+        g_screen_y_dots = height;
+        g_logical_screen = {width, height, 0, 0, width - 1.0, height - 1.0};
+        g_image_region = region;
+        g_max_iterations = iterations;
+        m_frame.assign(width * height, -1);
+        EXPECT_CALL(m_driver, write_pixel(_, _, _))
+            .WillRepeatedly(Invoke(
+                [this, width, height](const int col, const int row, const int color)
+                {
+                    if (col < width && row < height)
+                    {
+                        m_frame.at(row * width + col) = color;
+                        m_plots.push_back({col, row});
+                        if (const StandardFractal *calculation{active_standard_fractal()})
+                        {
+                            m_plot_statuses.push_back(calculation->standard_pass_status());
+                        }
+                    }
+                }));
+        initialize_reference({-0.5, 0.0}, 2.0, 1.5);
+        if (GetParam())
+        {
+            float_to_bf(g_bf_x_min, region.m_min.x);
+            float_to_bf(g_bf_x_max, region.m_max.x);
+            float_to_bf(g_bf_y_min, region.m_min.y);
+            float_to_bf(g_bf_y_max, region.m_max.y);
+            copy_bf(g_bf_x_3rd, g_bf_x_min);
+            copy_bf(g_bf_y_3rd, g_bf_y_min);
+        }
+        m_specific.pert_pt = record_perturbation_orbit;
+        m_specific.pert_ref = record_reference;
+        m_specific.pert_ref_bf = record_reference_bf;
+        g_dispatch.set_orbit_calc(record_standard_orbit);
+        s_perturbation_orbit.clear();
+        s_standard_orbit.clear();
+        s_reference_coordinates.clear();
+        s_reference_values.clear();
+    }
+
+    void complete(SynchronousOrbit &pass, PertEngine *perturbation = nullptr)
+    {
+        bool done{};
+        for (int chunk = 0; chunk < 20000 && !done; ++chunk)
+        {
+            done = pass.iterate(perturbation);
+        }
+        ASSERT_TRUE(done);
+    }
+
+    void forbid_ordinary_orbits()
+    {
+        g_dispatch.set_orbit_calc([]() -> int { throw std::logic_error("SOI bypassed perturbation"); });
+        s_standard_orbit.clear();
+        m_frame.assign(m_frame.size(), -1);
+        m_plots.clear();
+    }
+
+    std::vector<int> m_frame;
+};
+
+TEST_P(TestSynchronousPerturbation, scanMatchesOrdinarySoiWithoutCallingTheOrdinaryOrbit)
+{
+    prepare();
+    SynchronousOrbit ordinary;
+    complete(ordinary);
+    const std::vector<int> expected{m_frame};
+    ASSERT_FALSE(s_standard_orbit.empty());
+    forbid_ordinary_orbits();
+    SynchronousOrbit perturbation;
+
+    complete(perturbation, &m_engine);
+
+    EXPECT_EQ(expected, m_frame);
+    EXPECT_FALSE(s_perturbation_orbit.empty());
+    EXPECT_TRUE(s_standard_orbit.empty());
+    EXPECT_GT(m_engine.reference_count(), 0);
+}
+
+TEST_P(TestSynchronousPerturbation, rhombusTraversalContinuesTheInterpolatedValueAndIterationCount)
+{
+    char stack_marker{};
+    ValueSaver saved_stack_top{g_top_of_stack, &stack_marker};
+    prepare(32, 32, {{-0.76, 0.09}, {-0.74, 0.11}, {-0.76, 0.09}});
+    SynchronousOrbit ordinary;
+    complete(ordinary);
+    const std::vector<int> expected{m_frame};
+    ASSERT_FALSE(s_standard_orbit.empty());
+    const std::complex<double> initial{s_standard_orbit.front()};
+    EXPECT_NE((std::complex<double>{-0.76, 0.11}), initial);
+    const int expected_depth{g_max_rhombus_depth};
+    forbid_ordinary_orbits();
+    SynchronousOrbit perturbation;
+
+    complete(perturbation, &m_engine);
+
+    EXPECT_EQ(expected_depth, g_max_rhombus_depth);
+    EXPECT_EQ(expected, m_frame);
+    ASSERT_FALSE(s_reference_values.empty());
+    EXPECT_NEAR(initial.real(), s_reference_values.front().real(), 1e-14);
+    EXPECT_NEAR(initial.imag(), s_reference_values.front().imag(), 1e-14);
+    EXPECT_FALSE(s_perturbation_orbit.empty());
+    EXPECT_TRUE(s_standard_orbit.empty());
+}
+
+TEST_P(TestSynchronousPerturbation, narrowRegionRetainsTheSoiInterpolationPolicy)
+{
+    prepare(8, 6, {{-0.75 - 1e-10, 0.1 - 1e-10}, {-0.75 + 1e-10, 0.1 + 1e-10}, {-0.75 - 1e-10, 0.1 - 1e-10}});
+    SynchronousOrbit ordinary;
+    complete(ordinary);
+    const std::vector<int> expected{m_frame};
+    forbid_ordinary_orbits();
+    SynchronousOrbit perturbation;
+
+    complete(perturbation, &m_engine);
+
+    EXPECT_EQ(expected, m_frame);
+    EXPECT_FALSE(s_perturbation_orbit.empty());
+    ASSERT_FALSE(s_reference_coordinates.empty());
+    EXPECT_NEAR(g_image_region.m_min.x, s_reference_coordinates.front().real(), 1e-15);
+    EXPECT_NEAR(g_image_region.m_max.y, s_reference_coordinates.front().imag(), 1e-15);
+}
+
+TEST_P(TestSynchronousPerturbation, unfinishedScanRetainsItsOrbitAcrossReferenceAndIterationChunks)
+{
+    prepare(8, 6, {{0.124, 0.124}, {0.126, 0.126}, {0.124, 0.124}}, 5000);
+    SynchronousOrbit ordinary;
+    complete(ordinary);
+    const std::vector<int> expected{m_frame};
+    forbid_ordinary_orbits();
+    SynchronousOrbit perturbation;
+
+    EXPECT_FALSE(perturbation.iterate(&m_engine));
+    EXPECT_TRUE(s_perturbation_orbit.empty());
+    EXPECT_TRUE(m_plots.empty());
+    EXPECT_FALSE(perturbation.iterate(&m_engine));
+    EXPECT_FALSE(perturbation.iterate(&m_engine));
+    EXPECT_EQ(2048, s_perturbation_orbit.size());
+    EXPECT_TRUE(m_plots.empty());
+    EXPECT_FALSE(perturbation.iterate(&m_engine));
+    EXPECT_EQ(4096, s_perturbation_orbit.size());
+    EXPECT_TRUE(m_plots.empty());
+
+    complete(perturbation, &m_engine);
+
+    EXPECT_EQ(expected, m_frame);
+    EXPECT_TRUE(s_standard_orbit.empty());
+}
+
+TEST_P(TestSynchronousPerturbation, standardFractalRoutesRequestedAndAutomaticPerturbationIntoSoi)
+{
+    prepare();
+    SynchronousOrbit ordinary;
+    complete(ordinary);
+    const std::vector<int> expected{m_frame};
+    ValueSaver saved_user{g_user, UserData{}};
+    ValueSaver saved_status{g_calc_status};
+    ValueSaver saved_resuming{g_resuming, false};
+    ValueSaver saved_force_symmetry{g_force_symmetry, SymmetryType::NONE};
+    g_std_calc_mode = CalcMode::SYNCHRONOUS_ORBIT;
+    m_specific.symmetry = SymmetryType::NONE;
+    m_specific.per_image = []
+    {
+        g_dispatch.set_orbit_calc(record_standard_orbit);
+        return true;
+    };
+    for (const PerturbationMode mode : {PerturbationMode::YES, PerturbationMode::AUTO})
+    {
+        SCOPED_TRACE(static_cast<int>(mode));
+        const bool requested{mode == PerturbationMode::YES || (mode == PerturbationMode::AUTO && GetParam())};
+        g_user.perturbation = mode;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
+        m_frame.assign(m_frame.size(), -1);
+        m_plot_statuses.clear();
+        s_perturbation_orbit.clear();
+        s_standard_orbit.clear();
+        StandardFractal calculation;
+        calculation.resume();
+        for (int chunk = 0; chunk < 1000 && !calculation.done(); ++chunk)
+        {
+            calculation.iterate();
+        }
+        ASSERT_TRUE(calculation.done());
+        EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+        EXPECT_EQ(CalcMode::SYNCHRONOUS_ORBIT, g_std_calc_mode);
+        EXPECT_EQ(requested, !s_perturbation_orbit.empty());
+        EXPECT_EQ(requested, s_standard_orbit.empty());
+        ASSERT_FALSE(m_plot_statuses.empty());
+        for (const StandardPassStatus &status : m_plot_statuses)
+        {
+            EXPECT_EQ(requested, status.perturbation_active);
+        }
+        EXPECT_EQ(expected, m_frame);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestSynchronousPerturbation, Bool());
 
 class MockPerturbationSound : public SoundOutput
 {

@@ -353,7 +353,7 @@ bool StandardFractal::select_pixel()
     if (mode == CalcMode::SYNCHRONOUS_ORBIT || mode == CalcMode::ORBIT)
     {
         ActiveStandardFractalScope active_standard_fractal{*this};
-        const bool completed{m_standard_pass.iterate()};
+        const bool completed{m_standard_pass.iterate(m_perturbation_active ? &m_pert_engine : nullptr)};
         s_standard_pass_status = standard_pass_status();
         if (completed)
         {

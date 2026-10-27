@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -10,6 +11,8 @@
 namespace id::engine
 {
 
+class PertEngine;
+
 extern int g_max_rhombus_depth;
 extern int g_rhombus_stack[];
 extern int g_soi_min_stack;
@@ -18,7 +21,7 @@ extern int g_soi_min_stack_available;
 class SynchronousOrbit
 {
 public:
-    bool iterate();
+    bool iterate(PertEngine *perturbation = nullptr);
     void suspend();
 
 private:
@@ -48,6 +51,7 @@ private:
         long save_color{};
         long color{};
         long help_color{};
+        bool orbit_active{};
     };
 
     struct RhombusInput
@@ -101,11 +105,13 @@ private:
         math::DComplex z5, math::DComplex z6, math::DComplex z7, math::DComplex z8,                //
         math::DComplex z9, long iter, int depth);
     void push_rhombus(const RhombusInput &input);
-    FrameResult process_next_frame();
-    RhombusStep process_rhombus(RhombusFrame &frame);
+    FrameResult process_next_frame(PertEngine *perturbation, int &remaining);
+    RhombusStep process_rhombus(RhombusFrame &frame, PertEngine *perturbation, int &remaining);
     void start();
     void begin_scan(RhombusFrame &frame);
-    RhombusStep process_scan(RhombusFrame &frame);
+    RhombusStep process_scan(RhombusFrame &frame, PertEngine *perturbation, int &remaining);
+    bool scan_iteration(
+        ScanState &scan, double cr, double ci, long start, long &color, PertEngine *perturbation, int &remaining);
     double scan_real(const RhombusFrame &frame, double re, double im) const;
     double scan_imag(const RhombusFrame &frame, double re, double im) const;
     void orbit(math::DComplex &z, math::DComplex &rq, double cr, double ci, bool &esc);
