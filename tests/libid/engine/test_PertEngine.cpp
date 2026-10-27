@@ -3608,7 +3608,13 @@ void TestPerturbationIterations::compare_frame_coordinates(
     m_specific.symmetry = SymmetryType::NONE;
     m_specific.pert_ref = record_reference;
     m_specific.pert_ref_bf = record_reference_bf;
-    m_specific.pert_pt = record_coordinate;
+    m_specific.pert_pt = [](const std::complex<double> &reference, std::complex<double> &delta,
+                             const std::complex<double> &parameter_delta)
+    {
+        // Geometry describes the parameter, not the independently initialized seed.
+        s_coordinates.push_back({{g_col, g_row}, s_reference_coordinates.back() + parameter_delta, parameter_delta});
+        mandel_perturb(reference, delta, parameter_delta);
+    };
     std::vector<Point2i> plots;
     std::vector<int> pixels;
     EXPECT_CALL(m_driver, read_pixel(_, _))
@@ -3795,12 +3801,32 @@ INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationIterations, Bool())
 class TestBurningShipPerturbation : public TestPerturbationIterations
 {
 protected:
-    void compare_native_pixel(const std::complex<double> &point, bool replace_reference = false);
+    void compare_native_pixel(
+        const std::complex<double> &point, double reference_offset = 0.0, bool replace_reference = false);
+    static int record_native_orbit();
+    static void record_perturbation(const std::complex<double> &reference, std::complex<double> &delta,
+        const std::complex<double> &parameter_delta);
 
     ValueSaver<double> m_saved_degree{g_params[2]};
 };
 
-void TestBurningShipPerturbation::compare_native_pixel(const std::complex<double> &point, const bool replace_reference)
+int TestBurningShipPerturbation::record_native_orbit()
+{
+    const DComplex value{g_bf_math == BFMathType::NONE ? g_old_z : cmplx_bf_to_float(g_old_z_bf)};
+    s_standard_orbit.emplace_back(value.x, value.y);
+    return g_bf_math == BFMathType::NONE ? burning_ship_orbit() : burning_ship_bf_fractal();
+}
+
+void TestBurningShipPerturbation::record_perturbation(
+    const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter_delta)
+{
+    const std::complex<double> value{reference + delta};
+    s_perturbation_orbit.push_back(static_cast<int>(g_params[2]) > 2 ? std::conj(value) : value);
+    burning_ship_perturb(reference, delta, parameter_delta);
+}
+
+void TestBurningShipPerturbation::compare_native_pixel(
+    const std::complex<double> &point, const double reference_offset, const bool replace_reference)
 {
     m_engine.finish();
     if (m_big_float)
@@ -3813,9 +3839,12 @@ void TestBurningShipPerturbation::compare_native_pixel(const std::complex<double
     g_dispatch = FractalDispatch{m_specific};
     g_max_iterations = 16;
     g_col = WIDTH - 1;
-    const double offset{replace_reference ? 0.125 : 0.0};
-    initialize_reference(std::conj(point) - std::complex<double>{offset, 0.0}, offset);
-    m_engine.set_glitch_tolerance(replace_reference ? 2.0 : 0.0);
+    g_row = 0;
+    s_standard_orbit.clear();
+    s_perturbation_orbit.clear();
+    initialize_reference(std::conj(point) - std::complex<double>{reference_offset, -reference_offset}, reference_offset,
+        reference_offset);
+    m_engine.set_glitch_tolerance(0.0);
 
     const DComplex pixel{point.real(), point.imag()};
     g_image_region = ImageRegion{pixel, pixel, pixel};
@@ -3827,13 +3856,26 @@ void TestBurningShipPerturbation::compare_native_pixel(const std::complex<double
     if (GetParam())
     {
         g_dispatch.set_per_pixel(mandel_per_pixel_bf);
-        g_dispatch.set_orbit_calc(burning_ship_bf_fractal);
         float_to_bf(g_bf_x_min, point.real());
         float_to_bf(g_bf_y_max, point.imag());
         clear_bf(g_delta_x_bf);
         clear_bf(g_delta_y_bf);
         clear_bf(g_delta2_x_bf);
         clear_bf(g_delta2_y_bf);
+    }
+    g_dispatch.set_orbit_calc(record_native_orbit);
+    m_specific.pert_pt = record_perturbation;
+    if (replace_reference)
+    {
+        m_specific.pert_pt = [](const std::complex<double> &reference, std::complex<double> &delta,
+                                 const std::complex<double> &parameter_delta)
+        {
+            record_perturbation(reference, delta, parameter_delta);
+            if (s_perturbation_orbit.size() == 1)
+            {
+                delta = {std::numeric_limits<double>::quiet_NaN(), 0.0};
+            }
+        };
     }
     StandardFractal standard;
     const int expected_color{standard.calculate_standard_pixel(false)};
@@ -3847,12 +3889,21 @@ void TestBurningShipPerturbation::compare_native_pixel(const std::complex<double
     EXPECT_EQ(expected_iterations, g_real_color_iter);
     EXPECT_NEAR(expected_value.x, g_new_z.x, 1e-12);
     EXPECT_NEAR(expected_value.y, g_new_z.y, 1e-12);
-    if (!GetParam() && g_params[2] > 2)
+    if (!GetParam())
     {
         EXPECT_NEAR(expected_previous.x, g_old_z.x, 1e-12);
         EXPECT_NEAR(expected_previous.y, g_old_z.y, 1e-12);
     }
     EXPECT_EQ(replace_reference ? 2 : 1, m_engine.reference_count());
+    ASSERT_GE(s_perturbation_orbit.size(), s_standard_orbit.size());
+    const std::size_t first{s_perturbation_orbit.size() - s_standard_orbit.size()};
+    for (std::size_t i = 0; i < s_standard_orbit.size(); ++i)
+    {
+        SCOPED_TRACE(i);
+        const double tolerance{1e-12 * std::max(1.0, std::abs(s_standard_orbit[i]))};
+        EXPECT_NEAR(s_standard_orbit[i].real(), s_perturbation_orbit[first + i].real(), tolerance);
+        EXPECT_NEAR(s_standard_orbit[i].imag(), s_perturbation_orbit[first + i].imag(), tolerance);
+    }
 }
 
 TEST_P(TestBurningShipPerturbation, manrBailoutObservesNativeCoordinates)
@@ -3865,7 +3916,7 @@ TEST_P(TestBurningShipPerturbation, manrBailoutObservesNativeCoordinates)
         SCOPED_TRACE(degree);
         g_params[2] = degree;
         compare_native_pixel({1.0, 1.0});
-        compare_native_pixel({1.0, 1.0}, true);
+        compare_native_pixel({1.0, 1.0}, 0.125, true);
     }
 }
 
@@ -3878,7 +3929,7 @@ TEST_P(TestBurningShipPerturbation, imaginaryOutsideColorObservesNativeCoordinat
         SCOPED_TRACE(degree);
         g_params[2] = degree;
         compare_native_pixel({1.0, 1.0});
-        compare_native_pixel({1.0, 1.0}, true);
+        compare_native_pixel({1.0, 1.0}, 0.125, true);
     }
 }
 
@@ -3893,7 +3944,7 @@ TEST_P(TestBurningShipPerturbation, preciseManrReplayObservesNativeCoordinates)
         SCOPED_TRACE(degree);
         g_params[2] = degree;
         compare_native_pixel({1.0, 1.0});
-        compare_native_pixel({1.0, 1.0}, true);
+        compare_native_pixel({1.0, 1.0}, 0.125, true);
     }
 }
 
@@ -3909,7 +3960,79 @@ TEST_P(TestBurningShipPerturbation, fmodInsideColorUsesTheNativeManrMetric)
         SCOPED_TRACE(degree);
         g_params[2] = degree;
         compare_native_pixel({1.0, 1.0});
-        compare_native_pixel({1.0, 1.0}, true);
+        compare_native_pixel({1.0, 1.0}, 0.125, true);
+    }
+}
+
+TEST_P(TestBurningShipPerturbation, imaginaryOffsetsSeedNativeOrbitSequences)
+{
+    set_initial_offset({0.0, -1.0});
+    g_magnitude_limit = 8.0;
+    for (const int degree : {2, 3, 4, 5})
+    {
+        SCOPED_TRACE(degree);
+        g_params[2] = degree;
+        for (const InitOrbitMode mode : {InitOrbitMode::NORMAL, InitOrbitMode::PIXEL})
+        {
+            SCOPED_TRACE(static_cast<int>(mode));
+            g_use_init_orbit = mode;
+            compare_native_pixel({1.0, 1.0});
+            compare_native_pixel({1.0, 1.0}, 0.125);
+            compare_native_pixel({1.0, 1.0}, 0.125, true);
+        }
+    }
+}
+
+TEST_P(TestBurningShipPerturbation, explicitInitialOrbitsFollowTheSelectedNativeInitializer)
+{
+    set_initial_offset({0.03125, -0.0625});
+    g_use_init_orbit = InitOrbitMode::VALUE;
+    g_init_orbit = {0.25, -0.125};
+    for (const int degree : {2, 3, 4, 5})
+    {
+        SCOPED_TRACE(degree);
+        g_params[2] = degree;
+        compare_native_pixel({0.125, 0.0625});
+        compare_native_pixel({0.125, 0.0625}, 0.125);
+        compare_native_pixel({0.125, 0.0625}, 0.125, true);
+    }
+}
+
+TEST_P(TestBurningShipPerturbation, bofSeedingFollowsTheSelectedNativeInitializer)
+{
+    set_initial_offset({0.03125, -0.0625});
+    g_magnitude_calc = true;
+    for (const int degree : {2, 3, 4, 5})
+    {
+        SCOPED_TRACE(degree);
+        g_params[2] = degree;
+        for (const bool match_book : {false, true})
+        {
+            SCOPED_TRACE(match_book);
+            g_bof_match_book_images = match_book;
+            for (const ColorMethod method : {ColorMethod::BOF60, ColorMethod::BOF61})
+            {
+                SCOPED_TRACE(static_cast<int>(method));
+                g_inside_method = method;
+                compare_native_pixel({0.125, 0.0625});
+                compare_native_pixel({0.125, 0.0625}, 0.125);
+                compare_native_pixel({0.125, 0.0625}, 0.125, true);
+            }
+        }
+    }
+}
+
+TEST_P(TestBurningShipPerturbation, preciseReplayRetainsTheNativeOffsetSeed)
+{
+    set_initial_offset({0.0, -1.0});
+    g_magnitude_limit = std::nextafter(5.0, 0.0);
+    for (const int degree : {2, 3, 4, 5})
+    {
+        SCOPED_TRACE(degree);
+        g_params[2] = degree;
+        compare_native_pixel({1.0, 1.0});
+        compare_native_pixel({1.0, 1.0}, 0.125);
+        compare_native_pixel({1.0, 1.0}, 0.125, true);
     }
 }
 

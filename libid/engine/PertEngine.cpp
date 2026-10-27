@@ -87,9 +87,30 @@ void clamp_star_trail_point(const BFComplex &z)
 
 bool bof_initialization()
 {
-    // Ordinary manzpower uses other_mandel_per_pixel, without BOF seeding.
-    return (g_fractal_type != FractalType::MANDEL_Z_POWER || g_bf_math != BFMathType::NONE) &&
+    // other_mandel_per_pixel does not apply BOF seeding.
+    return (g_bf_math != BFMathType::NONE ||
+               (g_fractal_type != FractalType::MANDEL_Z_POWER && g_fractal_type != FractalType::BURNING_SHIP)) &&
         (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61) && g_bof_match_book_images;
+}
+
+bool explicit_initial_orbit()
+{
+    // Burning Ship's BIG_FLT initializer ignores initorbit.
+    return g_use_init_orbit == InitOrbitMode::VALUE &&
+        (g_fractal_type != FractalType::BURNING_SHIP || g_bf_math == BFMathType::NONE);
+}
+
+std::complex<double> initialize_orbit(const std::complex<double> &coordinate)
+{
+    std::complex<double> value{g_param_z1.x, g_param_z1.y};
+    if (!bof_initialization())
+    {
+        const std::complex<double> native_coordinate{
+            g_fractal_type == FractalType::BURNING_SHIP ? std::conj(coordinate) : coordinate};
+        value += explicit_initial_orbit() ? std::complex<double>{g_init_orbit.x, g_init_orbit.y} : native_coordinate;
+    }
+    // Conjugation also converts the native seed to the internal orbit.
+    return native_orbit_value(value);
 }
 
 void initialize_orbit_bf(const BFComplex z, const BFComplex &coordinate)
@@ -100,7 +121,7 @@ void initialize_orbit_bf(const BFComplex z, const BFComplex &coordinate)
     float_to_bf(z.y, g_params[1]);
     if (!bof_initialization())
     {
-        if (g_use_init_orbit == InitOrbitMode::VALUE)
+        if (explicit_initial_orbit())
         {
             float_to_bf(offset, g_init_orbit.x);
             add_a_bf(z.x, offset);
@@ -110,8 +131,19 @@ void initialize_orbit_bf(const BFComplex z, const BFComplex &coordinate)
         else
         {
             add_a_bf(z.x, coordinate.x);
-            add_a_bf(z.y, coordinate.y);
+            if (g_fractal_type == FractalType::BURNING_SHIP)
+            {
+                sub_a_bf(z.y, coordinate.y);
+            }
+            else
+            {
+                add_a_bf(z.y, coordinate.y);
+            }
         }
+    }
+    if (conjugated_orbit())
+    {
+        neg_a_bf(z.y);
     }
 }
 
@@ -801,13 +833,7 @@ void PertEngine::set_reference_point(const std::complex<double> &pixel_position)
     {
         reference.coordinate =
             g_inversion.invert != 0 ? inverted_coordinate(pixel_position) : m_center + reference.delta;
-        m_reference_z = {g_param_z1.x, g_param_z1.y};
-        if (!bof_initialization())
-        {
-            m_reference_z += g_use_init_orbit == InitOrbitMode::VALUE
-                ? std::complex<double>{g_init_orbit.x, g_init_orbit.y}
-                : reference.coordinate;
-        }
+        m_reference_z = initialize_orbit(reference.coordinate);
     }
 }
 
@@ -948,17 +974,20 @@ void PertEngine::begin_point(const Point &pt)
     }
     g_old_color_iter = std::max(g_old_color_iter, g_first_saved_and);
     m_pixel.saved_and = g_inside_method == ColorMethod::PERIOD ? 16 : g_first_saved_and;
-    if (!m_pixel.high_precision && g_use_init_orbit == InitOrbitMode::VALUE)
+    if (!m_pixel.high_precision && explicit_initial_orbit())
     {
-        m_pixel.saved_z = {g_init_orbit.x, g_init_orbit.y};
+        m_pixel.saved_z = native_orbit_value({g_init_orbit.x, g_init_orbit.y});
     }
     const ReferencePoint &reference{m_reference};
     m_pixel.position = {static_cast<double>(pt.get_x()), static_cast<double>(pt.get_y())};
     m_pixel.parameter_displacement = parameter_delta(m_pixel.position);
     m_pixel.bof = bof_initialization();
-    m_pixel.orbit_displacement = m_pixel.bof || g_use_init_orbit == InitOrbitMode::VALUE
-        ? std::complex<double>{}
-        : m_pixel.parameter_displacement;
+    m_pixel.orbit_displacement =
+        m_pixel.bof || explicit_initial_orbit() ? std::complex<double>{} : m_pixel.parameter_displacement;
+    if (g_fractal_type == FractalType::BURNING_SHIP && !conjugated_orbit())
+    {
+        m_pixel.orbit_displacement = std::conj(m_pixel.orbit_displacement);
+    }
     m_pixel.at_reference = m_pixel.position == reference.pixel_position;
     m_pixel.iteration = m_pixel.bof ? -1L : 0L;
     m_pixel.remember_fmod = g_inside_method == ColorMethod::FMODI || g_outside_method == ColorMethod::FMOD;
