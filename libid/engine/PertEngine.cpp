@@ -53,6 +53,18 @@ constexpr int PERTURBATION_RETRY{-3};
 constexpr std::size_t REFERENCE_CHUNK_SIZE{2048};
 constexpr std::size_t PIXEL_CHUNK_SIZE{2048};
 
+bool conjugated_orbit()
+{
+    return g_fractal_type == FractalType::BURNING_SHIP && static_cast<int>(g_params[2]) > 2;
+}
+
+std::complex<double> native_orbit_value(const std::complex<double> &value)
+{
+    // Higher-degree Burning Ship references use the conjugate native orbit.
+    // Keep recurrence state internal; convert only when observing its values.
+    return conjugated_orbit() ? std::conj(value) : value;
+}
+
 std::complex<double> star_trail_point(const std::complex<double> &z)
 {
     constexpr double LIMIT{std::numeric_limits<float>::max()};
@@ -116,7 +128,7 @@ bool ambiguous_bailout(const std::complex<double> &reference, const std::complex
         std::abs(reference.real()) + std::abs(reference.imag()) + std::abs(delta.real()) + std::abs(delta.imag())};
     // Include conversion truncation, reconstruction, and predicate roundoff.
     const double error{8.0 * reference_conversion_error() * scale * scale};
-    const std::complex<double> value{reference + delta};
+    const std::complex<double> value{native_orbit_value(reference + delta)};
     const double x{sqr(value.real())};
     const double y{sqr(value.imag())};
     const auto near_limit = [error](const double metric)
@@ -170,7 +182,14 @@ bool precise_bailout_reached(const BFComplex &z)
         square_bf(metric, metric);
         break;
     case Bailout::MANR:
-        add_bf(metric, z.x, z.y);
+        if (conjugated_orbit())
+        {
+            sub_bf(metric, z.x, z.y);
+        }
+        else
+        {
+            add_bf(metric, z.x, z.y);
+        }
         square_bf(metric, metric);
         break;
     default:
@@ -1090,8 +1109,9 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
             m_pixel.sample = static_cast<std::size_t>(
                 m_pixel.iteration - (m_explicit_orbit ? reference.iteration : 0) + (m_pixel.bof ? 1 : 0));
             m_pixel.old = m_pixel.w;
+            const std::complex<double> previous{native_orbit_value(m_pixel.old)};
             if (!m_explicit_orbit && g_distance_estimator &&
-                !m_distance_estimator.advance({m_pixel.old.real(), m_pixel.old.imag()}))
+                !m_distance_estimator.advance({previous.real(), previous.imag()}))
             {
                 m_pixel.phase = PixelState::Phase::COMPLETE;
                 continue;
@@ -1137,7 +1157,8 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
 
         case PixelState::Phase::BAILOUT:
         {
-            bool escaped{bailout_reached(g_bailout_test, m_pixel.w.real(), m_pixel.w.imag(), g_magnitude_limit)};
+            const std::complex<double> value{native_orbit_value(m_pixel.w)};
+            bool escaped{bailout_reached(g_bailout_test, value.real(), value.imag(), g_magnitude_limit)};
             const bool resolve_zero_power{g_fractal_type == FractalType::MANDEL_Z_POWER && g_c_exponent == 0 &&
                 m_pixel.old == std::complex<double>{}};
             const bool resolve_power_branch{g_fractal_type == FractalType::MANDEL_Z_POWER &&
@@ -1188,8 +1209,9 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                     m_pixel.phase = PixelState::Phase::COMPLETE;
                     continue;
                 }
-                const bool complete{m_distance_estimator.escaped(
-                    {m_pixel.w.real(), m_pixel.w.imag()}, m_pixel.iteration, m_pixel.magnitude)};
+                const std::complex<double> escape{native_orbit_value(m_pixel.w)};
+                const bool complete{
+                    m_distance_estimator.escaped({escape.real(), escape.imag()}, m_pixel.iteration, m_pixel.magnitude)};
                 g_magnitude_limit = m_distance_estimator.bailout();
                 if (complete)
                 {
@@ -1211,7 +1233,8 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                 }
                 if (!m_orbit_output_pending)
                 {
-                    orbit_plot().reset(m_pixel.w.real(), m_pixel.w.imag());
+                    const std::complex<double> value{native_orbit_value(m_pixel.w)};
+                    orbit_plot().reset(value.real(), value.imag());
                     m_orbit_output_pending = true;
                 }
                 const bool displayed{orbit_plot().iterate()};
@@ -1270,7 +1293,8 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
             }
             if (m_pixel.remember_fmod)
             {
-                if (const double mag = fmod_magnitude({m_pixel.w.real(), m_pixel.w.imag()}, m_pixel.magnitude);
+                const std::complex<double> value{native_orbit_value(m_pixel.w)};
+                if (const double mag = fmod_magnitude({value.real(), value.imag()}, m_pixel.magnitude);
                     mag < g_close_proximity)
                 {
                     m_pixel.mem_value = mag;
@@ -1405,8 +1429,10 @@ int PertEngine::finish_point(const Point &pt)
     }
     g_color_iter = m_pixel.iteration;
     g_real_color_iter = m_pixel.iteration;
-    g_old_z = {m_pixel.old.real(), m_pixel.old.imag()};
-    g_new_z = {m_pixel.w.real(), m_pixel.w.imag()};
+    const std::complex<double> previous{native_orbit_value(m_pixel.old)};
+    const std::complex<double> value{native_orbit_value(m_pixel.w)};
+    g_old_z = {previous.real(), previous.imag()};
+    g_new_z = {value.real(), value.imag()};
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = m_pixel.magnitude;

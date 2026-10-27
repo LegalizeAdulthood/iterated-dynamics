@@ -27,6 +27,7 @@
 #include <engine/SynchronousOrbit.h>
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
+#include <fractals/burning_ship.h>
 #include <fractals/fractalp.h>
 #include <fractals/frasetup.h>
 #include <fractals/pickover_mandelbrot.h>
@@ -3791,6 +3792,129 @@ TEST_P(TestPerturbationIterations, invertedAffineCoordinatesMatchStandardGrid)
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationIterations, Bool());
 
+class TestBurningShipPerturbation : public TestPerturbationIterations
+{
+protected:
+    void compare_native_pixel(const std::complex<double> &point, bool replace_reference = false);
+
+    ValueSaver<double> m_saved_degree{g_params[2]};
+};
+
+void TestBurningShipPerturbation::compare_native_pixel(const std::complex<double> &point, const bool replace_reference)
+{
+    m_engine.finish();
+    if (m_big_float)
+    {
+        free_bf_vars();
+        m_big_float = false;
+    }
+    g_fractal_type = FractalType::BURNING_SHIP;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    g_dispatch = FractalDispatch{m_specific};
+    g_max_iterations = 16;
+    g_col = WIDTH - 1;
+    const double offset{replace_reference ? 0.125 : 0.0};
+    initialize_reference(std::conj(point) - std::complex<double>{offset, 0.0}, offset);
+    m_engine.set_glitch_tolerance(replace_reference ? 2.0 : 0.0);
+
+    const DComplex pixel{point.real(), point.imag()};
+    g_image_region = ImageRegion{pixel, pixel, pixel};
+    ValueSaver<LDouble> saved_delta_x{g_delta_x, 0};
+    ValueSaver<LDouble> saved_delta_y{g_delta_y, 0};
+    ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    fill_pixel_grid();
+    if (GetParam())
+    {
+        g_dispatch.set_per_pixel(mandel_per_pixel_bf);
+        g_dispatch.set_orbit_calc(burning_ship_bf_fractal);
+        float_to_bf(g_bf_x_min, point.real());
+        float_to_bf(g_bf_y_max, point.imag());
+        clear_bf(g_delta_x_bf);
+        clear_bf(g_delta_y_bf);
+        clear_bf(g_delta2_x_bf);
+        clear_bf(g_delta2_y_bf);
+    }
+    StandardFractal standard;
+    const int expected_color{standard.calculate_standard_pixel(false)};
+    const long expected_iterations{g_real_color_iter};
+    const DComplex expected_value{GetParam() ? cmplx_bf_to_float(g_new_z_bf) : g_new_z};
+    const DComplex expected_previous{g_old_z};
+
+    const int color{m_engine.calculate_pixel(g_col, g_row)};
+
+    EXPECT_EQ(expected_color, color);
+    EXPECT_EQ(expected_iterations, g_real_color_iter);
+    EXPECT_NEAR(expected_value.x, g_new_z.x, 1e-12);
+    EXPECT_NEAR(expected_value.y, g_new_z.y, 1e-12);
+    if (!GetParam() && g_params[2] > 2)
+    {
+        EXPECT_NEAR(expected_previous.x, g_old_z.x, 1e-12);
+        EXPECT_NEAR(expected_previous.y, g_old_z.y, 1e-12);
+    }
+    EXPECT_EQ(replace_reference ? 2 : 1, m_engine.reference_count());
+}
+
+TEST_P(TestBurningShipPerturbation, manrBailoutObservesNativeCoordinates)
+{
+    g_bailout_test = Bailout::MANR;
+    set_bailout_formula(Bailout::MANR);
+    g_magnitude_limit = 2.0;
+    for (const int degree : {2, 3, 4, 5})
+    {
+        SCOPED_TRACE(degree);
+        g_params[2] = degree;
+        compare_native_pixel({1.0, 1.0});
+        compare_native_pixel({1.0, 1.0}, true);
+    }
+}
+
+TEST_P(TestBurningShipPerturbation, imaginaryOutsideColorObservesNativeCoordinates)
+{
+    g_outside_method = ColorMethod::IMAG;
+    g_magnitude_limit = 1.5;
+    for (const int degree : {2, 3, 4, 5})
+    {
+        SCOPED_TRACE(degree);
+        g_params[2] = degree;
+        compare_native_pixel({1.0, 1.0});
+        compare_native_pixel({1.0, 1.0}, true);
+    }
+}
+
+TEST_P(TestBurningShipPerturbation, preciseManrReplayObservesNativeCoordinates)
+{
+    g_bailout_test = Bailout::MANR;
+    set_bailout_formula(Bailout::MANR);
+    // Near, but not equal to, the native metric: BF uses a strict comparison.
+    g_magnitude_limit = std::nextafter(4.0, 0.0);
+    for (const int degree : {2, 3, 4, 5})
+    {
+        SCOPED_TRACE(degree);
+        g_params[2] = degree;
+        compare_native_pixel({1.0, 1.0});
+        compare_native_pixel({1.0, 1.0}, true);
+    }
+}
+
+TEST_P(TestBurningShipPerturbation, fmodInsideColorUsesTheNativeManrMetric)
+{
+    g_bailout_test = Bailout::MANR;
+    set_bailout_formula(g_bailout_test);
+    g_magnitude_limit = 8.0;
+    g_inside_method = ColorMethod::FMODI;
+    g_close_proximity = 10.0;
+    for (const int degree : {2, 3})
+    {
+        SCOPED_TRACE(degree);
+        g_params[2] = degree;
+        compare_native_pixel({1.0, 1.0});
+        compare_native_pixel({1.0, 1.0}, true);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestBurningShipPerturbation, Bool());
+
 class TestPerturbationContinuation : public TestPerturbationIterations
 {
 protected:
@@ -5110,6 +5234,53 @@ TEST_P(TestPerturbationOutput, outputFailureRestoresOverlayAndPreservesOriginalE
     EXPECT_FALSE(g_orbit_save_flag);
     EXPECT_EQ(m_background, m_pixels);
     EXPECT_EQ(1, m_engine.reference_count());
+}
+
+TEST_P(TestPerturbationOutput, burningShipOverlayAndSoundObserveNativeOrbitSequences)
+{
+    ValueSaver saved_degree{g_params[2]};
+    g_fractal_type = FractalType::BURNING_SHIP;
+    const std::complex<double> point{0.25, 0.125};
+    for (const int degree : {2, 3, 4, 5})
+    {
+        SCOPED_TRACE(degree);
+        g_params[2] = degree;
+        m_specific = *get_fractal_specific(g_fractal_type);
+        prepare(std::conj(point), 8);
+        m_specific.pert_pt = burning_ship_perturb;
+        g_init = {point.real(), point.imag()};
+        g_old_z = g_init;
+        if (GetParam())
+        {
+            float_to_bf(g_param_z_bf.x, point.real());
+            float_to_bf(g_param_z_bf.y, point.imag());
+            copy_bf(g_old_z_bf.x, g_param_z_bf.x);
+            copy_bf(g_old_z_bf.y, g_param_z_bf.y);
+        }
+        std::vector<SoundSample> samples;
+        for (long iteration = 1; iteration < g_max_iterations; ++iteration)
+        {
+            const bool escaped{GetParam() ? burning_ship_bf_fractal() != 0 : burning_ship_orbit() != 0};
+            if (escaped)
+            {
+                break;
+            }
+            const DComplex value{GetParam() ? cmplx_bf_to_float(g_new_z_bf) : g_new_z};
+            const int x{static_cast<int>((value.y - 1.5) * -2.0)};
+            const int y{static_cast<int>((value.x + 2.0) * 1.25)};
+            if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
+            {
+                samples.push_back({static_cast<double>(x), static_cast<double>(y), 0.0});
+            }
+        }
+        ASSERT_FALSE(samples.empty());
+
+        EXPECT_TRUE(calc_ok(complete_pixel()));
+
+        expect_samples(samples);
+        EXPECT_EQ(2 * samples.size() + 1, m_plots.size());
+        EXPECT_FALSE(g_orbit_save_flag);
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationOutput, Bool());
