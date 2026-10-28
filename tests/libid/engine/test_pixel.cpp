@@ -14,6 +14,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <ostream>
 #include <stdexcept>
 #include <vector>
 
@@ -47,12 +48,8 @@ void write_pixel(const int x, const int y, const int color)
 class TestPixel : public Test
 {
 protected:
-    void SetUp() override
-    {
-        s_reads.clear();
-        s_writes.clear();
-        set_pixel_functions(write_pixel, read_pixel);
-    }
+    void SetUp() override;
+    void TearDown() override;
 
     ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen, LogicalScreen{6, 5, 2, 3, 5.0, 4.0}};
     ValueSaver<int> m_saved_width{g_screen_x_dots, 10};
@@ -60,59 +57,158 @@ protected:
     ValueSaver<int> m_saved_mask{g_and_color, 15};
 };
 
-TEST_F(TestPixel, pixelsApplyOffsetsAndMaskWithoutADriver)
+void TestPixel::SetUp()
+{
+    Test::SetUp();
+    s_reads.clear();
+    s_writes.clear();
+    set_pixel_functions(write_pixel, read_pixel);
+}
+
+void TestPixel::TearDown()
+{
+    set_pixel_functions(write_pixel, read_pixel);
+    s_reads.clear();
+    s_writes.clear();
+    Test::TearDown();
+}
+
+TEST_F(TestPixel, readsApplyOffsetsWithoutADriver)
 {
     EXPECT_EQ(43, get_color(1, 1));
-    put_color_a(1, 1, 31);
 
     ASSERT_EQ(1U, s_reads.size());
     EXPECT_EQ(3, s_reads[0].x);
     EXPECT_EQ(4, s_reads[0].y);
-    EXPECT_THAT(s_writes, ElementsAre(std::array<int, 3>{3, 4, 15}));
+    EXPECT_TRUE(s_writes.empty());
 }
 
-TEST_F(TestPixel, offscreenReadsDoNotAccessTheBackend)
+TEST_F(TestPixel, writesApplyOffsetsAndMaskWithoutADriver)
 {
-    EXPECT_EQ(0, get_color(-3, 0));
-    EXPECT_EQ(0, get_color(0, -4));
-    EXPECT_EQ(0, get_color(8, 0));
-    EXPECT_EQ(0, get_color(0, 6));
+    put_color_a(1, 1, 31);
+
+    EXPECT_THAT(s_writes, ElementsAre(std::array<int, 3>{3, 4, 15}));
+    EXPECT_TRUE(s_reads.empty());
+}
+
+struct PixelPositionInput
+{
+    const char *name;
+    int x;
+    int y;
+};
+
+void PrintTo(const PixelPositionInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestPixelOffscreenRead : public TestPixel, public WithParamInterface<PixelPositionInput>
+{
+};
+
+TEST_P(TestPixelOffscreenRead, doesNotAccessBackend)
+{
+    EXPECT_EQ(0, get_color(GetParam().x, GetParam().y));
 
     EXPECT_TRUE(s_reads.empty());
 }
 
-TEST_F(TestPixel, spansApplyOffsetsWithoutMaskingStoredColors)
+INSTANTIATE_TEST_SUITE_P(Coordinates, TestPixelOffscreenRead,
+    Values(PixelPositionInput{"BeforeLeft", -3, 0}, PixelPositionInput{"AboveTop", 0, -4},
+        PixelPositionInput{"AfterRight", 8, 0}, PixelPositionInput{"BelowBottom", 0, 6}),
+    [](const TestParamInfo<PixelPositionInput> &info) { return info.param.name; });
+
+TEST_F(TestPixel, writeSpansApplyOffsetsWithoutMaskingStoredColors)
 {
     const std::array<Byte, 3> pixels{31, 160, 255};
-    std::array<Byte, 3> result{};
 
     write_span(1, 1, 3, pixels.data());
-    read_span(1, 1, 3, result.data());
 
     EXPECT_THAT(s_writes,
         ElementsAre(std::array<int, 3>{3, 4, 31}, std::array<int, 3>{4, 4, 160}, std::array<int, 3>{5, 4, 255}));
+}
+
+TEST_F(TestPixel, readSpansApplyOffsets)
+{
+    std::array<Byte, 3> result{};
+
+    read_span(1, 1, 3, result.data());
+
     EXPECT_THAT(result, ElementsAre(43, 44, 45));
     EXPECT_EQ(3U, s_reads.size());
 }
 
-TEST_F(TestPixel, clippedSpansDoNotAccessTheBackendOrChangePixels)
+struct PixelSpanInput
+{
+    const char *name;
+    int row;
+    int start;
+    int stop;
+};
+
+void PrintTo(const PixelSpanInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestPixelClippedReadSpan : public TestPixel, public WithParamInterface<PixelSpanInput>
+{
+};
+
+TEST_P(TestPixelClippedReadSpan, doesNotAccessBackendOrChangePixels)
 {
     std::array<Byte, 2> pixels{12, 34};
 
-    read_span(6, 0, 1, pixels.data());
-    read_span(0, 8, 9, pixels.data());
-    write_span(7, 0, 1, pixels.data());
-    write_span(0, 8, 9, pixels.data());
+    read_span(GetParam().row, GetParam().start, GetParam().stop, pixels.data());
 
     EXPECT_TRUE(s_reads.empty());
     EXPECT_TRUE(s_writes.empty());
     EXPECT_THAT(pixels, ElementsAre(12, 34));
 }
 
-TEST_F(TestPixel, invalidSelectionPreservesTheActiveBackend)
+INSTANTIATE_TEST_SUITE_P(ClippingInputs, TestPixelClippedReadSpan,
+    Values(PixelSpanInput{"RowOutside", 6, 0, 1}, PixelSpanInput{"ColumnOutside", 0, 8, 9}),
+    [](const TestParamInfo<PixelSpanInput> &info) { return info.param.name; });
+
+class TestPixelClippedWriteSpan : public TestPixel, public WithParamInterface<PixelSpanInput>
 {
-    EXPECT_THROW(set_pixel_functions(nullptr, read_pixel), std::logic_error);
-    EXPECT_THROW(set_pixel_functions(write_pixel, nullptr), std::logic_error);
+};
+
+TEST_P(TestPixelClippedWriteSpan, doesNotAccessBackendOrChangePixels)
+{
+    std::array<Byte, 2> pixels{12, 34};
+
+    write_span(GetParam().row, GetParam().start, GetParam().stop, pixels.data());
+
+    EXPECT_TRUE(s_reads.empty());
+    EXPECT_TRUE(s_writes.empty());
+    EXPECT_THAT(pixels, ElementsAre(12, 34));
+}
+
+INSTANTIATE_TEST_SUITE_P(ClippingInputs, TestPixelClippedWriteSpan,
+    Values(PixelSpanInput{"RowOutside", 7, 0, 1}, PixelSpanInput{"ColumnOutside", 0, 8, 9}),
+    [](const TestParamInfo<PixelSpanInput> &info) { return info.param.name; });
+
+struct PixelBackendInput
+{
+    const char *name;
+    WritePixel writer;
+    ReadPixel reader;
+};
+
+void PrintTo(const PixelBackendInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestPixelInvalidSelection : public TestPixel, public WithParamInterface<PixelBackendInput>
+{
+};
+
+TEST_P(TestPixelInvalidSelection, preservesActiveBackend)
+{
+    EXPECT_THROW(set_pixel_functions(GetParam().writer, GetParam().reader), std::logic_error);
 
     EXPECT_EQ(43, get_color(1, 1));
     put_color_a(1, 1, 31);
@@ -120,26 +216,59 @@ TEST_F(TestPixel, invalidSelectionPreservesTheActiveBackend)
     EXPECT_THAT(s_writes, ElementsAre(std::array<int, 3>{3, 4, 15}));
 }
 
-TEST_F(TestPixel, invalidPixelWritesDoNotAccessTheBackend)
+INSTANTIATE_TEST_SUITE_P(MissingFunctions, TestPixelInvalidSelection,
+    Values(PixelBackendInput{"Writer", nullptr, read_pixel}, PixelBackendInput{"Reader", write_pixel, nullptr}),
+    [](const TestParamInfo<PixelBackendInput> &info) { return info.param.name; });
+
+class TestPixelInvalidWrite : public TestPixel, public WithParamInterface<PixelPositionInput>
 {
-    EXPECT_THROW(put_color_a(-3, 0, 1), std::logic_error);
-    EXPECT_THROW(put_color_a(0, -4, 1), std::logic_error);
-    EXPECT_THROW(put_color_a(9, 0, 1), std::logic_error);
-    EXPECT_THROW(put_color_a(0, 7, 1), std::logic_error);
+};
+
+TEST_P(TestPixelInvalidWrite, doesNotAccessBackend)
+{
+    EXPECT_THROW(put_color_a(GetParam().x, GetParam().y, 1), std::logic_error);
 
     EXPECT_TRUE(s_writes.empty());
 }
 
-TEST_F(TestPixel, diskOutputDependsOnTheSelectedPixelWriter)
+INSTANTIATE_TEST_SUITE_P(Coordinates, TestPixelInvalidWrite,
+    Values(PixelPositionInput{"BeforeLeft", -3, 0}, PixelPositionInput{"AboveTop", 0, -4},
+        PixelPositionInput{"AfterRight", 9, 0}, PixelPositionInput{"BelowBottom", 0, 7}),
+    [](const TestParamInfo<PixelPositionInput> &info) { return info.param.name; });
+
+TEST_F(TestPixel, customWriterIsNotDiskOutput)
 {
     EXPECT_FALSE(disk_pixel_output());
+}
 
+class TestDiskPixel : public TestPixel
+{
+protected:
+    void SetUp() override;
+};
+
+void TestDiskPixel::SetUp()
+{
+    TestPixel::SetUp();
     set_pixel_functions(id::io::write_disk_pixel, id::io::read_disk_pixel);
+}
+
+TEST_F(TestDiskPixel, diskWriterIsDiskOutput)
+{
+    EXPECT_TRUE(disk_pixel_output());
+}
+
+TEST_F(TestDiskPixel, failedReplacementPreservesDiskClassification)
+{
+    EXPECT_THROW(set_pixel_functions(nullptr, read_pixel), std::logic_error);
 
     EXPECT_TRUE(disk_pixel_output());
-    EXPECT_THROW(set_pixel_functions(nullptr, read_pixel), std::logic_error);
-    EXPECT_TRUE(disk_pixel_output());
+}
+
+TEST_F(TestDiskPixel, switchingToCustomWriterChangesClassification)
+{
     set_pixel_functions(write_pixel, read_pixel);
+
     EXPECT_FALSE(disk_pixel_output());
 }
 
@@ -171,6 +300,7 @@ void TestPotentialPixel::TearDown()
 {
     id::io::end_disk();
     EXPECT_TRUE(exit_check().empty());
+    TestPixel::TearDown();
 }
 
 TEST_F(TestPotentialPixel, separatePixelOutputStoresBothPotentialBytesWithoutADriver)
