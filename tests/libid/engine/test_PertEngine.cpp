@@ -5676,36 +5676,88 @@ TEST_P(TestDistanceBoundaryInside, usesInsideMethodBeforeDecompositionAndBiomorp
 INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceBoundaryInside, ValuesIn(distance_boundary_inside_inputs()),
     [](const TestParamInfo<DistanceBoundaryInsideInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, distanceBoundaryAndTwoColorExteriorUseDirectColors)
+TEST_P(TestPerturbationIterations, negativeDistanceBoundaryUsesDirectColor)
 {
-    ValueSaver saved_colors{g_colors};
-    ValueSaver saved_and_color{g_and_color};
     g_log_map_flag = 1;
     DistancePixelOptions options;
     options.value = -250;
     options.width_factor = 100;
     options.compare_colors = true;
+
     compare_distance_pixel({0.5, 0.0}, 512, false, 0.0, options);
+
     EXPECT_EQ(250, g_color);
     EXPECT_NE(log_table_calc(250), g_color);
+}
 
+struct TwoColorDistanceInput
+{
+    std::string name;
+    bool big_float;
+    int inside_color;
+    int width;
+};
+
+void PrintTo(const TwoColorDistanceInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<TwoColorDistanceInput> two_color_distance_inputs()
+{
+    std::vector<TwoColorDistanceInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const int color : {0, 1})
+        {
+            for (const int width : {1, 100})
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "InsideColor" +
+                        std::to_string(color) + "_Width" + std::to_string(width),
+                    big_float, color, width});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestTwoColorDistance : public PerturbationIterationTest, public WithParamInterface<TwoColorDistanceInput>
+{
+public:
+    TestTwoColorDistance();
+
+protected:
+    void SetUp() override;
+    DistancePixelOptions m_options;
+};
+
+TestTwoColorDistance::TestTwoColorDistance() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestTwoColorDistance::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_log_map_flag = 0;
     g_colors = 2;
     g_and_color = 1;
-    options.value = 1;
-    options.width_factor = 1;
-    for (const int inside_color : {0, 1})
-    {
-        g_inside_color = inside_color;
-        options.inside = ColorMethod::COLOR;
-        compare_distance_pixel({0.5, 0.0}, 32, false, 0.0, options);
-        EXPECT_EQ(!inside_color, g_color);
-        options.width_factor = 100;
-        compare_distance_pixel({0.5, 0.0}, 32, false, 0.0, options);
-        EXPECT_EQ(inside_color, g_color);
-        options.width_factor = 1;
-    }
+    g_inside_color = GetParam().inside_color;
+    m_options.value = 1;
+    m_options.width_factor = GetParam().width;
+    m_options.compare_colors = true;
+    m_options.inside = ColorMethod::COLOR;
 }
+
+TEST_P(TestTwoColorDistance, usesDirectBoundaryAndExteriorColors)
+{
+    compare_distance_pixel({0.5, 0.0}, 32, false, 0.0, m_options);
+
+    EXPECT_EQ(GetParam().width == 1 ? !GetParam().inside_color : GetParam().inside_color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestTwoColorDistance, ValuesIn(two_color_distance_inputs()),
+    [](const TestParamInfo<TwoColorDistanceInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, distanceBoundaryHonorsVirtualImageDimensions)
 {
