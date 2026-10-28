@@ -54,6 +54,7 @@
 #include <optional>
 #include <ostream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 using namespace id::engine;
@@ -286,39 +287,78 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceBoundary,
         DistanceBoundaryInput{"AboveThreshold", std::nextafter(0.5, 1.0), false}),
     [](const TestParamInfo<DistanceBoundaryInput> &info) { return info.param.name; });
 
-TEST(TestDistanceEstimator, distanceBandFormulasPreserveTheirIntegerBoundaries)
+struct DistanceBandInput
 {
-    for (const double width : {0.125, 1.0, 4.0})
+    std::string name;
+    double width;
+    bool legacy;
+    bool old_colors;
+    double distance_squared;
+    long expected;
+};
+
+void PrintTo(const DistanceBandInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<DistanceBandInput> distance_band_inputs()
+{
+    std::vector<DistanceBandInput> inputs;
+
+    struct BandWidth
     {
-        SCOPED_TRACE(width);
+        const char *name;
+        double value;
+    };
+
+    for (const BandWidth &width : {BandWidth{"OneEighth", 0.125}, {"One", 1.0}, {"Four", 4.0}})
+    {
         for (const bool legacy : {false, true})
         {
-            SCOPED_TRACE(legacy);
-            const DistanceEstimator estimator{4.0, 100.0, true, legacy, 0.0, width};
             for (const bool old_colors : {false, true})
             {
-                SCOPED_TRACE(old_colors);
-                EXPECT_EQ(1, estimator.band_color(0.0, old_colors));
+                const std::string prefix{std::string{width.name} + (legacy ? "_Legacy" : "_Ordinary") +
+                    (old_colors ? "_OldColors" : "_CurrentColors")};
+                inputs.push_back({prefix + "_Zero", width.value, legacy, old_colors, 0.0, 1});
                 for (const long color : {2L, 3L, 8L, 16L})
                 {
-                    SCOPED_TRACE(color);
-                    double threshold{width * (color - 1)};
+                    double threshold{width.value * (color - 1)};
                     if (old_colors)
                     {
-                        threshold = sqr(width * (color * color - 1));
+                        threshold = sqr(width.value * (color * color - 1));
                     }
                     else if (legacy)
                     {
-                        threshold = width * (color * color - 1);
+                        threshold = width.value * (color * color - 1);
                     }
-                    EXPECT_EQ(color - 1, estimator.band_color(threshold * (1.0 - 1.0 / 1024), old_colors));
-                    EXPECT_EQ(color, estimator.band_color(threshold, old_colors));
-                    EXPECT_EQ(color, estimator.band_color(threshold * (1.0 + 1.0 / 1024), old_colors));
+                    const std::string name{prefix + "_Color" + std::to_string(color)};
+                    inputs.push_back(
+                        {name + "_Below", width.value, legacy, old_colors, threshold * (1.0 - 1.0 / 1024), color - 1});
+                    inputs.push_back({name + "_At", width.value, legacy, old_colors, threshold, color});
+                    inputs.push_back(
+                        {name + "_Above", width.value, legacy, old_colors, threshold * (1.0 + 1.0 / 1024), color});
                 }
             }
         }
     }
+    return inputs;
 }
+
+class TestDistanceBand : public TestWithParam<DistanceBandInput>
+{
+};
+
+TEST_P(TestDistanceBand, preservesIntegerBoundary)
+{
+    const DistanceBandInput &input{GetParam()};
+    const DistanceEstimator estimator{4.0, 100.0, true, input.legacy, 0.0, input.width};
+
+    EXPECT_EQ(input.expected, estimator.band_color(input.distance_squared, input.old_colors));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceBand, ValuesIn(distance_band_inputs()),
+    [](const TestParamInfo<DistanceBandInput> &info) { return info.param.name; });
 
 TEST(TestPertEngine, fmodMagnitudeMatchesTheSelectedBailoutMetric)
 {
