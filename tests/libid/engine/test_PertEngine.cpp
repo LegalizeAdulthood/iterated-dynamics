@@ -1970,105 +1970,281 @@ TEST_P(TestPerturbationIterations, firstUpdateEscapeMatchesStandardState)
     EXPECT_EQ(1, g_real_color_iter);
 }
 
-TEST_P(TestPerturbationIterations, specialOutsideColorsMatchStandardTerminalOrbits)
+struct PerturbationColorMethod
 {
+    const char *name;
+    ColorMethod method;
+};
+
+constexpr std::array<PerturbationColorMethod, 5> SPECIAL_OUTSIDE_METHODS{
+    {{"Real", ColorMethod::REAL}, {"Imaginary", ColorMethod::IMAG}, {"Product", ColorMethod::MULT},
+        {"Sum", ColorMethod::SUM}, {"Atan", ColorMethod::ATAN}}};
+constexpr std::array<PerturbationColorMethod, 4> ORBIT_INSIDE_METHODS{{{"Iterations", ColorMethod::ITER},
+    {"Magnitude", ColorMethod::ZMAG}, {"Bof60", ColorMethod::BOF60}, {"Bof61", ColorMethod::BOF61}}};
+
+struct OutsideTerminalInput
+{
+    std::string name;
+    bool big_float;
+    ColorMethod outside;
+    ColorMethod inside;
+    std::complex<double> point;
+};
+
+void PrintTo(const OutsideTerminalInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<OutsideTerminalInput> outside_terminal_inputs()
+{
+    struct Point
+    {
+        const char *name;
+        std::complex<double> value;
+    };
+
+    std::vector<OutsideTerminalInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &outside : SPECIAL_OUTSIDE_METHODS)
+        {
+            for (const PerturbationColorMethod &inside : ORBIT_INSIDE_METHODS)
+            {
+                for (const Point &point : {Point{"UpperRight", {1.0, 0.5}}, {"LowerRight", {1.0, -0.5}},
+                         {"UpperLeft", {-2.0, 1.0}}, {"LowerLeft", {-2.0, -1.0}}, {"PositiveImaginary", {0.0, 2.0}},
+                         {"NegativeImaginary", {0.0, -2.0}}, {"PositiveReal", {1.0, 0.0}},
+                         {"NegativeReal", {-3.0, 0.0}}})
+                {
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + outside.name + "_" +
+                            inside.name + "_" + point.name,
+                        big_float, outside.method, inside.method, point.value});
+                }
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestOutsideTerminalColor : public PerturbationIterationTest, public WithParamInterface<OutsideTerminalInput>
+{
+public:
+    TestOutsideTerminalColor();
+
+protected:
+    void SetUp() override;
+};
+
+TestOutsideTerminalColor::TestOutsideTerminalColor() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestOutsideTerminalColor::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_version = current_id_version();
     init_atan_colors();
     g_bof_match_book_images = false;
-    for (const ColorMethod outside :
-        {ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT, ColorMethod::SUM, ColorMethod::ATAN})
+    g_outside_method = GetParam().outside;
+    g_inside_method = GetParam().inside;
+}
+
+TEST_P(TestOutsideTerminalColor, matchesStandardTerminalOrbit)
+{
+    compare_pixel(GetParam().point, 512);
+
+    EXPECT_LT(g_real_color_iter, g_max_iterations);
+    EXPECT_GT(m_engine.reference_count(), 0);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideTerminalColor, ValuesIn(outside_terminal_inputs()),
+    [](const TestParamInfo<OutsideTerminalInput> &info) { return info.param.name; });
+
+struct OutsideRangeSample
+{
+    const char *name;
+    ColorMethod method;
+    std::complex<double> point;
+    long max_iterations;
+    int color;
+    bool corrected;
+};
+
+struct OutsideRangeInput
+{
+    std::string name;
+    bool big_float;
+    Version version;
+    OutsideRangeSample sample;
+};
+
+void PrintTo(const OutsideRangeInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<OutsideRangeInput> outside_range_inputs()
+{
+    struct CompatibilityVersion
     {
-        SCOPED_TRACE(static_cast<int>(outside));
-        g_outside_method = outside;
-        for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60, ColorMethod::BOF61})
+        const char *name;
+        Version version;
+    };
+
+    const OutsideRangeSample samples[]{
+        {"RealPositive", ColorMethod::REAL, {1.0, 0.0}, 128, 10, false},
+        {"RealZero", ColorMethod::REAL, {0.0, 3.0}, 128, 1, true},
+        {"RealSmallPositive", ColorMethod::REAL, {0.5, 3.0}, 128, 1, true},
+        {"RealOverIterationLimit", ColorMethod::REAL, {8.0, 0.0}, 16, 1, true},
+        {"ImaginaryPositive", ColorMethod::IMAG, {0.0, 3.0}, 128, 11, false},
+        {"ImaginaryNegativeTen", ColorMethod::IMAG, {0.0, -10.0}, 128, 1, true},
+        {"ImaginaryNegativeEight", ColorMethod::IMAG, {0.0, -8.0}, 128, 1, true},
+        {"ImaginaryOverIterationLimit", ColorMethod::IMAG, {1.0, 8.0}, 16, 1, true},
+        {"ProductPositive", ColorMethod::MULT, {1.0, 0.5}, 128, 1, false},
+        {"ProductNegativeReal", ColorMethod::MULT, {-2.0, 0.5}, 128, 1, true},
+        {"ProductNegativeImaginary", ColorMethod::MULT, {1.0, -1.0}, 128, 1, true},
+        {"ProductOverIterationLimit", ColorMethod::MULT, {2.0, 0.125}, 8, 1, true},
+        {"SumPositive", ColorMethod::SUM, {1.0, 1.0}, 128, 5, false},
+        {"SumZeroReal", ColorMethod::SUM, {0.0, 3.0}, 128, 1, true},
+        {"SumSmallImaginary", ColorMethod::SUM, {0.0, 1.75}, 128, 1, true},
+        {"SumOverIterationLimit", ColorMethod::SUM, {8.0, 1.0}, 16, 1, true},
+        {"AtanPositiveReal", ColorMethod::ATAN, {1.0, 0.0}, 16, 1, true},
+        {"AtanPositiveImaginary", ColorMethod::ATAN, {0.0, 2.0}, 16, 1, true},
+    };
+
+    std::vector<OutsideRangeInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const CompatibilityVersion &version : {CompatibilityVersion{"Legacy1960", parse_legacy_version(1960)},
+                 {"Legacy1961", parse_legacy_version(1961)}, {"Current", current_id_version()}})
         {
-            SCOPED_TRACE(static_cast<int>(inside));
-            g_inside_method = inside;
-            for (const std::complex<double> point : {std::complex<double>{1.0, 0.5}, {1.0, -0.5}, {-2.0, 1.0},
-                     {-2.0, -1.0}, {0.0, 2.0}, {0.0, -2.0}, {1.0, 0.0}, {-3.0, 0.0}})
+            for (const OutsideRangeSample &sample : samples)
             {
-                SCOPED_TRACE(point);
-                compare_pixel(point, 512);
-                EXPECT_LT(g_real_color_iter, g_max_iterations);
-                EXPECT_GT(m_engine.reference_count(), 0);
+                inputs.push_back(
+                    {std::string{big_float ? "HighPrecision_" : "Double_"} + version.name + "_" + sample.name,
+                        big_float, version.version, sample});
             }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, specialOutsideColorsUseStandardRangeCorrection)
+class TestOutsideRangeCorrection : public PerturbationIterationTest, public WithParamInterface<OutsideRangeInput>
 {
-    struct Sample
+public:
+    TestOutsideRangeCorrection();
+
+protected:
+    void SetUp() override;
+};
+
+TestOutsideRangeCorrection::TestOutsideRangeCorrection() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestOutsideRangeCorrection::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = ColorMethod::ITER;
+    g_version = GetParam().version;
+    init_atan_colors();
+    g_outside_method = GetParam().sample.method;
+}
+
+TEST_P(TestOutsideRangeCorrection, matchesStandardRangeCorrection)
+{
+    const OutsideRangeSample &sample{GetParam().sample};
+
+    compare_pixel(sample.point, sample.max_iterations);
+
+    EXPECT_EQ(sample.corrected && g_version < 1961 ? 0 : sample.color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideRangeCorrection, ValuesIn(outside_range_inputs()),
+    [](const TestParamInfo<OutsideRangeInput> &info) { return info.param.name; });
+
+struct OutsideAtanInput
+{
+    std::string name;
+    bool big_float;
+    Version version;
+    int colors;
+    double imag;
+};
+
+void PrintTo(const OutsideAtanInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<OutsideAtanInput> outside_atan_inputs()
+{
+    struct CompatibilityVersion
     {
-        ColorMethod method;
-        std::complex<double> point;
-        long max_iterations;
-        int color;
-        bool corrected;
+        const char *name;
+        Version version;
     };
 
-    const Sample samples[]{
-        {ColorMethod::REAL, {1.0, 0.0}, 128, 10, false},
-        {ColorMethod::REAL, {0.0, 3.0}, 128, 1, true},
-        {ColorMethod::REAL, {0.5, 3.0}, 128, 1, true},
-        {ColorMethod::REAL, {8.0, 0.0}, 16, 1, true},
-        {ColorMethod::IMAG, {0.0, 3.0}, 128, 11, false},
-        {ColorMethod::IMAG, {0.0, -10.0}, 128, 1, true},
-        {ColorMethod::IMAG, {0.0, -8.0}, 128, 1, true},
-        {ColorMethod::IMAG, {1.0, 8.0}, 16, 1, true},
-        {ColorMethod::MULT, {1.0, 0.5}, 128, 1, false},
-        {ColorMethod::MULT, {-2.0, 0.5}, 128, 1, true},
-        {ColorMethod::MULT, {1.0, -1.0}, 128, 1, true},
-        {ColorMethod::MULT, {2.0, 0.125}, 8, 1, true},
-        {ColorMethod::SUM, {1.0, 1.0}, 128, 5, false},
-        {ColorMethod::SUM, {0.0, 3.0}, 128, 1, true},
-        {ColorMethod::SUM, {0.0, 1.75}, 128, 1, true},
-        {ColorMethod::SUM, {8.0, 1.0}, 16, 1, true},
-        {ColorMethod::ATAN, {1.0, 0.0}, 16, 1, true},
-        {ColorMethod::ATAN, {0.0, 2.0}, 16, 1, true},
-    };
-    g_inside_method = ColorMethod::ITER;
-    for (const Version version : {parse_legacy_version(1960), parse_legacy_version(1961), current_id_version()})
+    std::vector<OutsideAtanInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        g_version = version;
-        SCOPED_TRACE(to_string(version));
-        init_atan_colors();
-        for (const Sample &sample : samples)
+        for (const CompatibilityVersion &version : {CompatibilityVersion{"Legacy2002", parse_legacy_version(2002)},
+                 {"Legacy2003", parse_legacy_version(2003)}, {"Current", current_id_version()}})
         {
-            SCOPED_TRACE(static_cast<int>(sample.method));
-            SCOPED_TRACE(sample.point);
-            g_outside_method = sample.method;
-            compare_pixel(sample.point, sample.max_iterations);
-            EXPECT_EQ(sample.corrected && g_version < 1961 ? 0 : sample.color, g_color);
+            for (const int colors : {16, 256})
+            {
+                for (const double imag : {2.0, -2.0})
+                {
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + version.name + "_Colors" +
+                            std::to_string(colors) + (imag > 0.0 ? "_PositiveImaginary" : "_NegativeImaginary"),
+                        big_float, version.version, colors, imag});
+                }
+            }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, outsideAtanUsesVersionAndPaletteScale)
+class TestOutsideAtanScale : public PerturbationIterationTest, public WithParamInterface<OutsideAtanInput>
 {
+public:
+    TestOutsideAtanScale();
+
+protected:
+    void SetUp() override;
+};
+
+TestOutsideAtanScale::TestOutsideAtanScale() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestOutsideAtanScale::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::ITER;
     g_outside_method = ColorMethod::ATAN;
-    for (const Version version : {parse_legacy_version(2002), parse_legacy_version(2003), current_id_version()})
-    {
-        g_version = version;
-        SCOPED_TRACE(to_string(version));
-        for (const int colors : {16, 256})
-        {
-            SCOPED_TRACE(colors);
-            g_colors = colors;
-            g_and_color = colors - 1;
-            init_atan_colors();
-            const int expected{g_version <= 2002 ? colors == 16 ? 3 : 153 : colors == 16 ? 13 : 218};
-            for (const double imag : {2.0, -2.0})
-            {
-                SCOPED_TRACE(imag);
-                compare_pixel({0.0, imag}, 512);
-                EXPECT_EQ(expected, g_color);
-                EXPECT_EQ(1, g_real_color_iter);
-            }
-        }
-    }
+    g_version = GetParam().version;
+    g_colors = GetParam().colors;
+    g_and_color = g_colors - 1;
+    init_atan_colors();
 }
+
+TEST_P(TestOutsideAtanScale, usesVersionAndPaletteScale)
+{
+    const int colors{GetParam().colors};
+    const int expected{g_version <= 2002 ? colors == 16 ? 3 : 153 : colors == 16 ? 13 : 218};
+
+    compare_pixel({0.0, GetParam().imag}, 512);
+
+    EXPECT_EQ(expected, g_color);
+    EXPECT_EQ(1, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideAtanScale, ValuesIn(outside_atan_inputs()),
+    [](const TestParamInfo<OutsideAtanInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, specialOutsideFormulasDoNotApplyToInsidePixels)
 {
