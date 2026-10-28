@@ -3725,22 +3725,43 @@ TEST_P(TestEpsilonMappedColor, mapsAxisColorBeforePotentialFinishing)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestEpsilonMappedColor, ValuesIn(epsilon_mapping_inputs()),
     [](const TestParamInfo<EpsilonAxisInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, epsilonCrossSurvivesInitializationAndReferenceReplacement)
+class TestEpsilonInitialization : public TestPerturbationIterations
 {
+protected:
+    void SetUp() override;
+};
+
+void TestEpsilonInitialization::SetUp()
+{
+    TestPerturbationIterations::SetUp();
     g_inside_method = ColorMethod::EPS_CROSS;
     g_close_proximity = 0.01;
-    g_use_init_orbit = InitOrbitMode::VALUE;
     g_init_orbit = {0.5, 0.5};
-    compare_pixel({}, 8, 0.0, 1);
-    EXPECT_EQ(2, g_color);
+}
 
+TEST_P(TestEpsilonInitialization, usesFixedInitialOrbit)
+{
+    g_use_init_orbit = InitOrbitMode::VALUE;
+
+    compare_pixel({}, 8, 0.0, 1);
+
+    EXPECT_EQ(2, g_color);
+}
+
+TEST_P(TestEpsilonInitialization, preservesOffsetAcrossReferenceReplacement)
+{
     g_use_init_orbit = InitOrbitMode::NORMAL;
     set_initial_offset({-0.125, 0.0});
     m_engine.set_glitch_tolerance(8.0);
+
     compare_pixel({0.5, 0.0}, 8, 0.125, 1);
+
     EXPECT_EQ(6, g_color);
     EXPECT_GT(m_engine.reference_count(), 1);
 }
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestEpsilonInitialization, Values(false, true),
+    [](const TestParamInfo<bool> &info) { return info.param ? "HighPrecision" : "Double"; });
 
 TEST_P(TestPerturbationIterations, starTrailMatchesKnownHistoriesWithoutPeriodicity)
 {
