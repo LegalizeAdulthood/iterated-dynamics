@@ -58,6 +58,7 @@
 #include <cmath>
 #include <filesystem>
 #include <fstream>
+#include <optional>
 #include <ostream>
 #include <stdexcept>
 #include <utility>
@@ -345,28 +346,49 @@ TEST_F(TestNonStandardFractal, activeOperationCannotBeReplaced)
     EXPECT_FALSE(calculation.done());
 }
 
-TEST_F(TestNonStandardFractal, selectsEvery2dOrbitWithoutInvokingRendererOrLegacySetup)
+struct NonStandardTypeInput
 {
-    for (const FractalType type : {FractalType::KAM, FractalType::LORENZ, FractalType::HENON, FractalType::GINGERBREAD,
-             FractalType::HOPALONG, FractalType::MARTIN, FractalType::ICON, FractalType::CHIP, FractalType::QUADRUP_TWO,
-             FractalType::THREEPLY, FractalType::LATOO})
-    {
-        select_type(type);
-        EXPECT_EQ(nullptr, get_fractal_specific(type)->calc_type);
-        NonStandardFractal calculation;
-        calculation.start();
+    const char *name;
+    FractalType type;
+};
 
-        EXPECT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
-
-        EXPECT_FALSE(calculation.done());
-        EXPECT_EQ(0, s_orbit_calls);
-        EXPECT_TRUE(m_columns.empty());
-        calculation.suspend();
-        EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
-        EXPECT_FALSE(g_resume_data.empty());
-        end_resume();
-    }
+void PrintTo(const NonStandardTypeInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestNonStandardOrbitSelection : public TestNonStandardFractal, public WithParamInterface<NonStandardTypeInput>
+{
+};
+
+TEST_P(TestNonStandardOrbitSelection, selectionDoesNotInvokeRendererOrLegacySetup)
+{
+    const FractalType type{GetParam().type};
+    select_type(type);
+    EXPECT_EQ(nullptr, get_fractal_specific(type)->calc_type);
+    NonStandardFractal calculation;
+    calculation.start();
+
+    EXPECT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
+
+    EXPECT_FALSE(calculation.done());
+    EXPECT_EQ(0, s_orbit_calls);
+    EXPECT_TRUE(m_columns.empty());
+    calculation.suspend();
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+    end_resume();
+}
+
+INSTANTIATE_TEST_SUITE_P(Types, TestNonStandardOrbitSelection,
+    Values(NonStandardTypeInput{"Kam", FractalType::KAM}, NonStandardTypeInput{"Lorenz", FractalType::LORENZ},
+        NonStandardTypeInput{"Henon", FractalType::HENON},
+        NonStandardTypeInput{"Gingerbread", FractalType::GINGERBREAD},
+        NonStandardTypeInput{"Hopalong", FractalType::HOPALONG}, NonStandardTypeInput{"Martin", FractalType::MARTIN},
+        NonStandardTypeInput{"Icon", FractalType::ICON}, NonStandardTypeInput{"Chip", FractalType::CHIP},
+        NonStandardTypeInput{"QuadrupTwo", FractalType::QUADRUP_TWO},
+        NonStandardTypeInput{"Threeply", FractalType::THREEPLY}, NonStandardTypeInput{"Latoo", FractalType::LATOO}),
+    [](const TestParamInfo<NonStandardTypeInput> &info) { return info.param.name; });
 
 TEST_F(TestNonStandardFractal, selected2dOrbitCompletesOneIncrementWithoutCallingUi)
 {
@@ -386,35 +408,42 @@ TEST_F(TestNonStandardFractal, selected2dOrbitCompletesOneIncrementWithoutCallin
     calculation.finish(false);
 }
 
-TEST_F(TestNonStandardFractal, selectsDynamicAndCloudWithResumableState)
+class TestDynamicSelection : public TestNonStandardFractal, public WithParamInterface<NonStandardTypeInput>
 {
-    for (const FractalType type : {FractalType::DYNAMIC, FractalType::MANDEL_CLOUD})
+};
+
+TEST_P(TestDynamicSelection, selectedTypeHasResumableState)
+{
+    const FractalType type{GetParam().type};
+    select_type(type);
+    g_params[0] = -2.0;
+    g_dispatch.set_orbit_calc(reinterpret_cast<OrbitCalc>(completed_orbit));
+    EXPECT_EQ(nullptr, get_fractal_specific(type)->calc_type);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DYNAMIC_2D, calculation.select());
+    calculation.iterate();
+
+    calculation.suspend();
+
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+    NonStandardFractal resumed;
+    resumed.start();
+    ASSERT_EQ(NonStandardFractal::Operation::DYNAMIC_2D, resumed.select());
+    for (int increments = 0; increments < 100 && !resumed.done(); ++increments)
     {
-        select_type(type);
-        g_params[0] = -2.0;
-        g_dispatch.set_orbit_calc(reinterpret_cast<OrbitCalc>(completed_orbit));
-        EXPECT_EQ(nullptr, get_fractal_specific(type)->calc_type);
-        NonStandardFractal calculation;
-        calculation.start();
-        ASSERT_EQ(NonStandardFractal::Operation::DYNAMIC_2D, calculation.select());
-        calculation.iterate();
-
-        calculation.suspend();
-
-        EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
-        EXPECT_FALSE(g_resume_data.empty());
-        NonStandardFractal resumed;
-        resumed.start();
-        ASSERT_EQ(NonStandardFractal::Operation::DYNAMIC_2D, resumed.select());
-        for (int increments = 0; increments < 100 && !resumed.done(); ++increments)
-        {
-            resumed.iterate();
-        }
-        EXPECT_TRUE(resumed.done());
-        EXPECT_TRUE(resumed.completed());
-        resumed.finish(false);
+        resumed.iterate();
     }
+    EXPECT_TRUE(resumed.done());
+    EXPECT_TRUE(resumed.completed());
+    resumed.finish(false);
 }
+
+INSTANTIATE_TEST_SUITE_P(Types, TestDynamicSelection,
+    Values(NonStandardTypeInput{"Dynamic", FractalType::DYNAMIC},
+        NonStandardTypeInput{"MandelCloud", FractalType::MANDEL_CLOUD}),
+    [](const TestParamInfo<NonStandardTypeInput> &info) { return info.param.name; });
 
 class TestInverseJuliaSelection : public TestNonStandardFractal
 {
@@ -789,26 +818,38 @@ TEST_F(TestNonStandardFractal, failedSelectedSetupDiscardsWorkWithoutCallingRend
     EXPECT_TRUE(g_resume_data.empty());
 }
 
-TEST_F(TestNonStandardFractal, maySelectionInitializesBetaWithoutLegacySetup)
+class TestMaySelection : public TestNonStandardFractal, public WithParamInterface<double>
 {
+protected:
+    void SetUp() override;
+};
+
+void TestMaySelection::SetUp()
+{
+    TestNonStandardFractal::SetUp();
     select_type(FractalType::BIF_MAY);
-    for (const double beta : {3.0, 1.0})
-    {
-        g_calc_status = CalcStatus::PARAMS_CHANGED;
-        g_params[2] = beta;
-        NonStandardFractal calculation;
-        calculation.start();
-
-        ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
-
-        const double exponent{std::max(beta, 2.0)};
-        EXPECT_EQ(exponent, g_params[2]);
-        g_rate = 1.25;
-        g_population = 0.5;
-        EXPECT_EQ(0, bifurc_may_orbit());
-        EXPECT_NEAR(1.25 * 0.5 / std::pow(1.5, exponent), g_population, 1e-15);
-    }
 }
+
+TEST_P(TestMaySelection, selectionInitializesBetaWithoutLegacySetup)
+{
+    const double beta{GetParam()};
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    g_params[2] = beta;
+    NonStandardFractal calculation;
+    calculation.start();
+
+    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
+
+    const double exponent{std::max(beta, 2.0)};
+    EXPECT_EQ(exponent, g_params[2]);
+    g_rate = 1.25;
+    g_population = 0.5;
+    EXPECT_EQ(0, bifurc_may_orbit());
+    EXPECT_NEAR(1.25 * 0.5 / std::pow(1.5, exponent), g_population, 1e-15);
+}
+
+INSTANTIATE_TEST_SUITE_P(Beta, TestMaySelection, Values(3.0, 1.0),
+    [](const TestParamInfo<double> &info) { return info.param == 3.0 ? "Three" : "One"; });
 
 TEST_F(TestNonStandardFractal, abandonedOperationDiscardsWorkWithoutChargingAnOldTimer)
 {
@@ -854,8 +895,9 @@ protected:
         select_dimension(IFSDimension::TWO);
         EXPECT_CALL(m_driver, read_pixel(_, _))
             .WillRepeatedly(Invoke([this](int x, int y) { return m_pixels.at(y * WIDTH + x); }));
-        m_path = std::filesystem::path{data::ID_TEST_DATA_DIR} /
-            ("selected-ifs-" + std::string{UnitTest::GetInstance()->current_test_info()->name()} + ".ifs");
+        std::string name{UnitTest::GetInstance()->current_test_info()->name()};
+        std::replace(name.begin(), name.end(), '/', '_');
+        m_path = std::filesystem::path{data::ID_TEST_DATA_DIR} / ("selected-ifs-" + name + ".ifs");
         g_ifs_filename = m_path;
         g_ifs_name = "entry";
     }
@@ -912,57 +954,91 @@ protected:
     std::filesystem::path m_path;
 };
 
-TEST_F(TestSelectedIFS, cachedDefinitionSelectsDimensionsWithoutLegacyCallbacks)
+struct IFSDimensionInput
 {
-    for (const IFSDimension dimension : {IFSDimension::TWO, IFSDimension::THREE})
-    {
-        for (const FractalType type : {FractalType::IFS, FractalType::IFS_3D})
-        {
-            select_dimension(dimension);
-            select_type(type);
-            const ValueSaver saved_force_symmetry{g_force_symmetry, SymmetryType::X_AXIS};
-            NonStandardFractal calculation;
-            ASSERT_TRUE(calculation.start().empty());
+    const char *name;
+    IFSDimension dimension;
+};
 
-            EXPECT_EQ(dimension == IFSDimension::TWO ? NonStandardFractal::Operation::IFS_2D
-                                                     : NonStandardFractal::Operation::IFS_3D,
-                calculation.select());
-
-            EXPECT_FALSE(calculation.done());
-            EXPECT_EQ(0L, g_color_iter);
-            EXPECT_EQ(SymmetryType::NONE, g_symmetry);
-            EXPECT_TRUE(m_columns.empty());
-            EXPECT_EQ(0, s_orbit_calls);
-            EXPECT_EQ(type, g_fractal_type);
-            calculation.suspend();
-        }
-    }
+void PrintTo(const IFSDimensionInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestSelectedIFS, loadingDefinitionSelectsItsHeaderDimensions)
+constexpr IFSDimensionInput IFS_DIMENSIONS[]{{"Two", IFSDimension::TWO}, {"Three", IFSDimension::THREE}};
+
+class TestIFSDimensionSelection : public TestSelectedIFS, public WithParamInterface<IFSDimensionInput>
 {
-    for (const IFSDimension dimension : {IFSDimension::TWO, IFSDimension::THREE})
+};
+
+struct IFSCachedSelectionInput
+{
+    const char *name;
+    IFSDimension dimension;
+    FractalType type;
+};
+
+void PrintTo(const IFSCachedSelectionInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestIFSCachedSelection : public TestSelectedIFS, public WithParamInterface<IFSCachedSelectionInput>
+{
+};
+
+TEST_P(TestIFSCachedSelection, cachedDefinitionSelectsDimensionsWithoutLegacyCallbacks)
+{
+    const IFSDimension dimension{GetParam().dimension};
+    const FractalType type{GetParam().type};
+    select_dimension(dimension);
+    select_type(type);
+    const ValueSaver saved_force_symmetry{g_force_symmetry, SymmetryType::X_AXIS};
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+
+    EXPECT_EQ(
+        dimension == IFSDimension::TWO ? NonStandardFractal::Operation::IFS_2D : NonStandardFractal::Operation::IFS_3D,
+        calculation.select());
+
+    EXPECT_FALSE(calculation.done());
+    EXPECT_EQ(0L, g_color_iter);
+    EXPECT_EQ(SymmetryType::NONE, g_symmetry);
+    EXPECT_TRUE(m_columns.empty());
+    EXPECT_EQ(0, s_orbit_calls);
+    EXPECT_EQ(type, g_fractal_type);
+    calculation.suspend();
+}
+
+INSTANTIATE_TEST_SUITE_P(Definitions, TestIFSCachedSelection,
+    Values(IFSCachedSelectionInput{"TwoRequestedTwo", IFSDimension::TWO, FractalType::IFS},
+        IFSCachedSelectionInput{"TwoRequestedThree", IFSDimension::TWO, FractalType::IFS_3D},
+        IFSCachedSelectionInput{"ThreeRequestedTwo", IFSDimension::THREE, FractalType::IFS},
+        IFSCachedSelectionInput{"ThreeRequestedThree", IFSDimension::THREE, FractalType::IFS_3D}),
+    [](const TestParamInfo<IFSCachedSelectionInput> &info) { return info.param.name; });
+
+TEST_P(TestIFSDimensionSelection, loadingDefinitionSelectsItsHeaderDimensions)
+{
+    const IFSDimension dimension{GetParam().dimension};
     {
-        {
-            std::ofstream file{m_path};
-            ASSERT_TRUE(file);
-            file << (dimension == IFSDimension::TWO ? "entry {\n0 0 0 0 3 0.5 1\n}\n"
-                                                    : "entry (3d) {\n0 0 0 0 0 0 0 0 0 3 0.5 0 1\n}\n");
-        }
-        g_ifs_definition.clear();
-        g_calc_status = CalcStatus::PARAMS_CHANGED;
-        NonStandardFractal calculation;
-        calculation.start();
-
-        EXPECT_EQ(dimension == IFSDimension::TWO ? NonStandardFractal::Operation::IFS_2D
-                                                 : NonStandardFractal::Operation::IFS_3D,
-            calculation.select());
-
-        EXPECT_EQ(dimension, g_ifs_dim);
-        EXPECT_EQ(1, g_num_affine_transforms);
-        EXPECT_EQ(0L, g_color_iter);
-        calculation.suspend();
+        std::ofstream file{m_path};
+        ASSERT_TRUE(file);
+        file << (dimension == IFSDimension::TWO ? "entry {\n0 0 0 0 3 0.5 1\n}\n"
+                                                : "entry (3d) {\n0 0 0 0 0 0 0 0 0 3 0.5 0 1\n}\n");
     }
+    g_ifs_definition.clear();
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    NonStandardFractal calculation;
+    calculation.start();
+
+    EXPECT_EQ(
+        dimension == IFSDimension::TWO ? NonStandardFractal::Operation::IFS_2D : NonStandardFractal::Operation::IFS_3D,
+        calculation.select());
+
+    EXPECT_EQ(dimension, g_ifs_dim);
+    EXPECT_EQ(1, g_num_affine_transforms);
+    EXPECT_EQ(0L, g_color_iter);
+    calculation.suspend();
 }
 
 TEST_F(TestSelectedIFS, missingDefinitionUnwindsWithoutRenderingOrPolling)
@@ -985,54 +1061,49 @@ TEST_F(TestSelectedIFS, missingDefinitionUnwindsWithoutRenderingOrPolling)
     EXPECT_TRUE(m_columns.empty());
 }
 
-TEST_F(TestSelectedIFS, incrementalCalculationCompletesWithoutInput)
+TEST_P(TestIFSDimensionSelection, incrementalCalculationCompletesWithoutInput)
 {
-    for (const IFSDimension dimension : {IFSDimension::TWO, IFSDimension::THREE})
+    const IFSDimension dimension{GetParam().dimension};
+    select_dimension(dimension);
+    NonStandardFractal calculation;
+    calculation.start();
+    calculation.select();
+
+    calculation.iterate();
+    EXPECT_EQ(1L, g_color_iter);
+    EXPECT_FALSE(calculation.done());
+    for (int point = 1; point < 1025; ++point)
     {
-        select_dimension(dimension);
-        NonStandardFractal calculation;
-        calculation.start();
-        calculation.select();
-
         calculation.iterate();
-        EXPECT_EQ(1L, g_color_iter);
-        EXPECT_FALSE(calculation.done());
-        for (int point = 1; point < 1025; ++point)
-        {
-            calculation.iterate();
-        }
-
-        EXPECT_TRUE(calculation.done());
-        EXPECT_TRUE(calculation.completed());
-        calculation.iterate();
-        EXPECT_EQ(1025L, g_color_iter);
-        calculation.finish(false);
-        EXPECT_EQ(0, s_orbit_calls);
     }
+
+    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(calculation.completed());
+    calculation.iterate();
+    EXPECT_EQ(1025L, g_color_iter);
+    calculation.finish(false);
+    EXPECT_EQ(0, s_orbit_calls);
 }
 
-TEST_F(TestSelectedIFS, suspensionIsNonResumableAndTheNextSelectionRestarts)
+TEST_P(TestIFSDimensionSelection, suspensionIsNonResumableAndTheNextSelectionRestarts)
 {
-    for (const IFSDimension dimension : {IFSDimension::TWO, IFSDimension::THREE})
-    {
-        select_dimension(dimension);
-        NonStandardFractal calculation;
-        calculation.start();
-        calculation.select();
-        calculation.iterate();
+    const IFSDimension dimension{GetParam().dimension};
+    select_dimension(dimension);
+    NonStandardFractal calculation;
+    calculation.start();
+    calculation.select();
+    calculation.iterate();
 
-        calculation.suspend();
+    calculation.suspend();
 
-        EXPECT_TRUE(calculation.done());
-        EXPECT_THROW(calculation.select(), std::logic_error);
-        EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
-        EXPECT_TRUE(g_resume_data.empty());
-        NonStandardFractal restarted;
-        restarted.start();
-        restarted.select();
-        EXPECT_EQ(0L, g_color_iter);
-        EXPECT_FALSE(restarted.done());
-    }
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    NonStandardFractal restarted;
+    restarted.start();
+    restarted.select();
+    EXPECT_EQ(0L, g_color_iter);
+    EXPECT_FALSE(restarted.done());
 }
 
 TEST_F(TestSelectedIFS, controllerStepsOnePointAtATimeUntilCompletion)
@@ -1150,6 +1221,44 @@ TEST_F(TestSelectedIFS, controllerInputFailureTerminatesBeforeComputingAPoint)
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_TRUE(m_columns.empty());
 }
+
+INSTANTIATE_TEST_SUITE_P(Dimensions, TestIFSDimensionSelection, ValuesIn(IFS_DIMENSIONS),
+    [](const TestParamInfo<IFSDimensionInput> &info) { return info.param.name; });
+
+class TestSuspendedIFSSelection : public TestIFSDimensionSelection
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::optional<NonStandardFractal> m_calculation;
+};
+
+void TestSuspendedIFSSelection::SetUp()
+{
+    TestSelectedIFS::SetUp();
+    select_dimension(GetParam().dimension);
+    m_calculation.emplace();
+    m_calculation->start();
+    m_calculation->select();
+    m_calculation->iterate();
+    m_calculation->suspend();
+    ASSERT_TRUE(m_calculation->done());
+}
+
+void TestSuspendedIFSSelection::TearDown()
+{
+    m_calculation.reset();
+    TestSelectedIFS::TearDown();
+}
+
+TEST_P(TestSuspendedIFSSelection, suspensionRejectsReselection)
+{
+    EXPECT_THROW(m_calculation->select(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Dimensions, TestSuspendedIFSSelection, ValuesIn(IFS_DIMENSIONS),
+    [](const TestParamInfo<IFSDimensionInput> &info) { return info.param.name; });
 
 TEST_F(TestSelectedIFS, separateStereoViewsWaitForExplicitAdvance)
 {
@@ -2336,23 +2445,10 @@ INSTANTIATE_TEST_SUITE_P(TestPointModes, TestStandaloneTestPoint, Values(CalcMod
     [](const TestParamInfo<CalcMode> &info) -> std::string
     { return info.param == CalcMode::ONE_PASS ? "OnePass" : "TwoPass"; });
 
-class TestSelectedAnt : public TestNonStandardFractal, public WithParamInterface<AntType>
+class SelectedAntFixture : public TestNonStandardFractal
 {
 protected:
-    void SetUp() override
-    {
-        TestNonStandardFractal::SetUp();
-        select_type(FractalType::ANT);
-        g_params[0] = 1100;
-        g_param_text[0] = "1100";
-        g_params[1] = 400;
-        g_params[2] = 2;
-        g_params[3] = static_cast<int>(GetParam());
-        g_params[4] = 1;
-        g_params[5] = 12345;
-        EXPECT_CALL(m_driver, read_pixel(_, _))
-            .WillRepeatedly(Invoke([this](int x, int y) { return m_pixels.at(y * WIDTH + x); }));
-    }
+    void initialize_ant(AntType type);
 
     std::vector<std::array<int, WIDTH * HEIGHT>> reference_frames()
     {
@@ -2377,6 +2473,32 @@ protected:
     ValueSaver<int> m_saved_delay{g_orbit_delay, 0};
     ValueSaver<help::HelpLabels> m_saved_help{help::g_help_mode, help::HelpLabels::NONE};
 };
+
+void SelectedAntFixture::initialize_ant(const AntType type)
+{
+    TestNonStandardFractal::SetUp();
+    select_type(FractalType::ANT);
+    g_params[0] = 1100;
+    g_param_text[0] = "1100";
+    g_params[1] = 400;
+    g_params[2] = 2;
+    g_params[3] = static_cast<int>(type);
+    g_params[4] = 1;
+    g_params[5] = 12345;
+    EXPECT_CALL(m_driver, read_pixel(_, _))
+        .WillRepeatedly(Invoke([this](int x, int y) { return m_pixels.at(y * WIDTH + x); }));
+}
+
+class TestSelectedAnt : public SelectedAntFixture, public WithParamInterface<AntType>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestSelectedAnt::SetUp()
+{
+    initialize_ant(GetParam());
+}
 
 TEST_P(TestSelectedAnt, selectionPreservesIterationBatchesWithoutRendererCallbacks)
 {
@@ -2459,16 +2581,46 @@ TEST_P(TestSelectedAnt, drawingOnExistingImagePreservesImageLifecycle)
     EXPECT_EQ(resume, g_resume_data);
 }
 
-TEST_P(TestSelectedAnt, existingImageEntryRejectsActiveImageCalculation)
+struct AntImageEntryInput
 {
-    NonStandardFractal calculation;
-    calculation.start();
+    const char *name;
+    AntType type;
+    bool selected;
+};
 
-    EXPECT_THROW(calculation.select_ant_on_image(), std::logic_error);
-
-    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
-    EXPECT_THROW(calculation.select_ant_on_image(), std::logic_error);
+void PrintTo(const AntImageEntryInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestAntImageEntry : public SelectedAntFixture, public WithParamInterface<AntImageEntryInput>
+{
+protected:
+    void SetUp() override;
+
+    NonStandardFractal m_calculation;
+};
+
+void TestAntImageEntry::SetUp()
+{
+    initialize_ant(GetParam().type);
+    m_calculation.start();
+    if (GetParam().selected)
+    {
+        ASSERT_EQ(NonStandardFractal::Operation::ANT, m_calculation.select());
+    }
+}
+
+TEST_P(TestAntImageEntry, existingImageEntryRejectsActiveImageCalculation)
+{
+    EXPECT_THROW(m_calculation.select_ant_on_image(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(States, TestAntImageEntry,
+    Values(AntImageEntryInput{"OneUnselected", AntType::ONE, false},
+        AntImageEntryInput{"OneSelected", AntType::ONE, true}, AntImageEntryInput{"TwoUnselected", AntType::TWO, false},
+        AntImageEntryInput{"TwoSelected", AntType::TWO, true}),
+    [](const TestParamInfo<AntImageEntryInput> &info) { return info.param.name; });
 
 TEST_P(TestSelectedAnt, zeroBatchesCompletesWithoutInputOrPixelOutput)
 {
