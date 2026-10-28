@@ -1693,93 +1693,88 @@ TEST_F(TestParameterCommandFile, missingPaletteStopsCommandFileWithoutLosingEarl
     EXPECT_EQ("Could not load color map missing-command-palette.map", diagnostics.errors.front());
 }
 
-TEST_F(TestParameterCommandError, recordColorsInvalidValue)
+struct RecordColorsParameterInput
 {
-    ValueSaver saved_record_colors{g_record_colors, RecordColorsMode::NONE};
+    const char *name;
+    const char *argument;
+    RecordColorsMode expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("recordcolors=p", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(RecordColorsMode::NONE, g_record_colors);
+void PrintTo(const RecordColorsParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, recordColorsAutomatic)
+class TestRecordColorsParameter : public TestParameterCommand, public WithParamInterface<RecordColorsParameterInput>
 {
-    ValueSaver saved_record_colors{g_record_colors, RecordColorsMode::NONE};
+private:
+    ValueSaver<RecordColorsMode> m_saved_colors{g_record_colors, RecordColorsMode::NONE};
+};
 
-    exec_cmd_arg("recordcolors=a", CmdFile::AT_CMD_LINE);
+TEST_P(TestRecordColorsParameter, setsRecordingMode)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(RecordColorsMode::AUTOMATIC, g_record_colors);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_record_colors);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommand, recordColorsComment)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestRecordColorsParameter,
+    Values(RecordColorsParameterInput{"Invalid", "recordcolors=p", RecordColorsMode::NONE, CmdArgFlags::BAD_ARG},
+        RecordColorsParameterInput{"Automatic", "recordcolors=a", RecordColorsMode::AUTOMATIC, CmdArgFlags::NONE},
+        RecordColorsParameterInput{"Comment", "recordcolors=c", RecordColorsMode::COMMENT, CmdArgFlags::NONE},
+        RecordColorsParameterInput{"Yes", "recordcolors=y", RecordColorsMode::YES, CmdArgFlags::NONE}),
+    [](const TestParamInfo<RecordColorsParameterInput> &info) { return info.param.name; });
+
+struct MaxLineLengthParameterInput
 {
-    ValueSaver saved_record_colors{g_record_colors, RecordColorsMode::NONE};
+    const char *name;
+    int value;
+    int expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("recordcolors=c", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(RecordColorsMode::COMMENT, g_record_colors);
+void PrintTo(const MaxLineLengthParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, recordColorsYes)
+class TestMaxLineLengthParameter : public TestParameterCommand, public WithParamInterface<MaxLineLengthParameterInput>
 {
-    ValueSaver saved_record_colors{g_record_colors, RecordColorsMode::NONE};
+private:
+    ValueSaver<int> m_saved_length{g_max_line_length, 0};
+};
 
-    exec_cmd_arg("recordcolors=y", CmdFile::AT_CMD_LINE);
+TEST_P(TestMaxLineLengthParameter, setsLineLength)
+{
+    exec_cmd_arg("maxlinelength=" + std::to_string(GetParam().value), CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(RecordColorsMode::YES, g_record_colors);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_max_line_length);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommandError, maxLineLengthTooSmall)
-{
-    ValueSaver saved_max_line_length{g_max_line_length, 0};
-    const std::string arg{"maxlinelength=" + std::to_string(MIN_MAX_LINE_LENGTH - 1)};
+INSTANTIATE_TEST_SUITE_P(Inputs, TestMaxLineLengthParameter,
+    Values(MaxLineLengthParameterInput{"TooSmall", MIN_MAX_LINE_LENGTH - 1, 0, CmdArgFlags::BAD_ARG},
+        MaxLineLengthParameterInput{"TooLarge", MAX_MAX_LINE_LENGTH + 1, 0, CmdArgFlags::BAD_ARG},
+        MaxLineLengthParameterInput{"Midpoint", (MIN_MAX_LINE_LENGTH + MAX_MAX_LINE_LENGTH) / 2,
+            (MIN_MAX_LINE_LENGTH + MAX_MAX_LINE_LENGTH) / 2, CmdArgFlags::NONE}),
+    [](const TestParamInfo<MaxLineLengthParameterInput> &info) { return info.param.name; });
 
-    exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(0, g_max_line_length);
-}
-
-TEST_F(TestParameterCommandError, maxLineLengthTooLarge)
-{
-    ValueSaver saved_max_line_length{g_max_line_length, 0};
-    const std::string arg{"maxlinelength=" + std::to_string(MAX_MAX_LINE_LENGTH + 1)};
-
-    exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(0, g_max_line_length);
-}
-
-TEST_F(TestParameterCommand, maxLineLength)
-{
-    ValueSaver saved_max_line_length{g_max_line_length, 0};
-    constexpr int value{(MIN_MAX_LINE_LENGTH + MAX_MAX_LINE_LENGTH) / 2};
-    const std::string arg{"maxlinelength=" + std::to_string(value)};
-
-    exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(value, g_max_line_length);
-}
-
-TEST_F(TestParameterCommandError, tplusInvalidValue)
-{
-    exec_cmd_arg("tplus=!", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
-
-TEST_F(TestParameterCommand, tplusYes)
-{
-    exec_cmd_arg("tplus=y", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-}
+INSTANTIATE_TEST_SUITE_P(TPlus, TestLegacyCommandInput,
+    Values(LegacyCommandInput{"Invalid", "tplus=!", CmdFile::AT_CMD_LINE, CmdArgFlags::BAD_ARG},
+        LegacyCommandInput{"Yes", "tplus=y", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE}),
+    [](const TestParamInfo<LegacyCommandInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommandError, nonInterlacedInvalidValue)
 {
