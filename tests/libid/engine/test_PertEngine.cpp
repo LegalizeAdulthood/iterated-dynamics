@@ -10457,22 +10457,65 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestContinuationExitReason,
         ContinuationExitInput{"HighPrecision_Escaped", true, {1.0, 0.0}, {0.5, 0.0}, 12, true}),
     [](const TestParamInfo<ContinuationExitInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationContinuation, unfinishedOrbitCanBeReleasedWithoutDiscardingTheReference)
+class TestReleasedContinuation : public PerturbationContinuationTest, public WithParamInterface<bool>
 {
+public:
+    TestReleasedContinuation();
+
+protected:
+    void SetUp() override;
+};
+
+TestReleasedContinuation::TestReleasedContinuation() :
+    PerturbationContinuationTest{GetParam()}
+{
+}
+
+void TestReleasedContinuation::SetUp()
+{
+    PerturbationContinuationTest::SetUp();
     prepare();
     m_engine.begin_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
-    EXPECT_FALSE(m_engine.iterate_orbit());
-
+    ASSERT_FALSE(m_engine.iterate_orbit());
     m_engine.finish_orbit();
+    ASSERT_EQ(1, m_engine.reference_count());
+}
 
-    EXPECT_EQ(1, m_engine.reference_count());
+TEST_P(TestReleasedContinuation, rejectsEscapeQueryAfterRelease)
+{
     EXPECT_THROW(m_engine.orbit_escaped(), std::logic_error);
+}
+
+TEST_P(TestReleasedContinuation, reusesReferenceForAnotherOrbit)
+{
     check_orbit({0.0625, 0.03125}, {-0.0625, 0.125}, 7);
+
     EXPECT_EQ(1, m_engine.reference_count());
     m_engine.finish_orbit();
+}
+
+class TestReusedContinuation : public TestReleasedContinuation
+{
+protected:
+    void SetUp() override;
+};
+
+void TestReusedContinuation::SetUp()
+{
+    TestReleasedContinuation::SetUp();
+    ASSERT_NO_FATAL_FAILURE(check_orbit({0.0625, 0.03125}, {-0.0625, 0.125}, 7));
+    ASSERT_EQ(1, m_engine.reference_count());
+    m_engine.finish_orbit();
+}
+
+TEST_P(TestReusedContinuation, returnsToPixelCalculationAfterRelease)
+{
     EXPECT_GE(m_engine.calculate_pixel(g_col, g_row), 0);
     EXPECT_EQ(1, m_plots.size());
 }
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestReleasedContinuation, Bool());
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestReusedContinuation, Bool());
 
 TEST_P(TestPerturbationContinuation, preciseReferenceReplacementYieldsWithoutPublishingOrReplayingFailedWork)
 {
