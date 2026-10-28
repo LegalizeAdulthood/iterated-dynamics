@@ -574,25 +574,23 @@ void TestFindFractalInfo::TearDown()
     }
 }
 
-TEST_F(TestFindFractalInfo, metadataReadDoesNotChangeActiveImage)
+class TestMetadataStatePreservation : public TestFindFractalInfo
 {
-    add_main_record();
-    ValueSaver saved_type{g_fractal_type, FractalType::JULIA};
-    ValueSaver saved_iterations{g_max_iterations, 1234L};
-    ValueSaver saved_width{g_file_x_dots, 987};
-    ValueSaver saved_height{g_file_y_dots, 654};
-    ValueSaver saved_colors{g_file_colors, 256};
-    ValueSaver saved_aspect{g_file_aspect_ratio, 0.75f};
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, &driver};
+protected:
+    void expect_active_image_unchanged() const;
 
-    const ImageMetadata metadata{read_image_metadata(write_small_file())};
+    ValueSaver<FractalType> saved_type{g_fractal_type, FractalType::JULIA};
+    ValueSaver<long> saved_iterations{g_max_iterations, 1234L};
+    ValueSaver<int> saved_width{g_file_x_dots, 987};
+    ValueSaver<int> saved_height{g_file_y_dots, 654};
+    ValueSaver<int> saved_colors{g_file_colors, 256};
+    ValueSaver<float> saved_aspect{g_file_aspect_ratio, 0.75f};
+    MockDriver m_driver;
+    ValueSaver<Driver *> saved_driver{g_driver, &m_driver};
+};
 
-    EXPECT_EQ(2, metadata.width);
-    EXPECT_EQ(2, metadata.height);
-    EXPECT_EQ(2, metadata.colors);
-    EXPECT_EQ((std::array<Byte, 3>{255, 0, 0}), metadata.palette[0]);
-    EXPECT_EQ(+FractalType::MANDEL, metadata.fractal.fractal_type);
+void TestMetadataStatePreservation::expect_active_image_unchanged() const
+{
     EXPECT_EQ(FractalType::JULIA, g_fractal_type);
     EXPECT_EQ(1234, g_max_iterations);
     EXPECT_EQ(987, g_file_x_dots);
@@ -601,41 +599,43 @@ TEST_F(TestFindFractalInfo, metadataReadDoesNotChangeActiveImage)
     EXPECT_FLOAT_EQ(0.75f, g_file_aspect_ratio);
 }
 
-TEST_F(TestFindFractalInfo, metadataRejectsInvalidTypeWithoutChangingActiveImage)
+TEST_F(TestMetadataStatePreservation, metadataReadDoesNotChangeActiveImage)
+{
+    add_main_record();
+
+    const ImageMetadata metadata{read_image_metadata(write_small_file())};
+
+    EXPECT_EQ(2, metadata.width);
+    EXPECT_EQ(2, metadata.height);
+    EXPECT_EQ(2, metadata.colors);
+    EXPECT_EQ((std::array<Byte, 3>{255, 0, 0}), metadata.palette[0]);
+    EXPECT_EQ(+FractalType::MANDEL, metadata.fractal.fractal_type);
+    expect_active_image_unchanged();
+}
+
+TEST_F(TestMetadataStatePreservation, metadataRejectsInvalidTypeWithoutChangingActiveImage)
 {
     FractalInfo info{};
     std::copy_n(INFO_ID, sizeof(info.info_id), info.info_id);
     info.fractal_type = +FractalType::MAX;
     put_fractal_info(&m_extensions, info);
-    ValueSaver saved_type{g_fractal_type, FractalType::JULIA};
-    ValueSaver saved_iterations{g_max_iterations, 1234L};
-    ValueSaver saved_width{g_file_x_dots, 987};
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, &driver};
     const std::filesystem::path path{write_small_file()};
 
     EXPECT_THROW(read_image_metadata(path), std::runtime_error);
 
-    EXPECT_EQ(FractalType::JULIA, g_fractal_type);
-    EXPECT_EQ(1234, g_max_iterations);
-    EXPECT_EQ(987, g_file_x_dots);
+    expect_active_image_unchanged();
     EXPECT_TRUE(std::filesystem::remove(path));
 }
 
-TEST_F(TestFindFractalInfo, malformedMetadataDoesNotChangeActiveImage)
+TEST_F(TestMetadataStatePreservation, malformedMetadataDoesNotChangeActiveImage)
 {
     add_main_record();
     m_extensions.ExtensionBlocks[m_extensions.ExtensionBlockCount - 1].ByteCount = 1;
-    ValueSaver saved_type{g_fractal_type, FractalType::JULIA};
-    ValueSaver saved_width{g_file_x_dots, 987};
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, &driver};
     const std::filesystem::path path{write_small_file()};
 
     EXPECT_THROW(read_image_metadata(path), std::runtime_error);
 
-    EXPECT_EQ(FractalType::JULIA, g_fractal_type);
-    EXPECT_EQ(987, g_file_x_dots);
+    expect_active_image_unchanged();
     EXPECT_TRUE(std::filesystem::remove(path));
 }
 
