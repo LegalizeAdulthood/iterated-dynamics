@@ -5518,49 +5518,163 @@ TEST_P(TestPerturbationIterations, distanceEstimatorStopsBeforeOrbitUpdateAtDeri
     EXPECT_EQ(s_standard_derivatives.size() + 1, g_real_color_iter);
 }
 
-TEST_P(TestPerturbationIterations, distanceBoundaryMatchesStandardInsideAndExteriorColors)
+struct DistanceBoundaryColorInput
 {
-    DistancePixelOptions options;
-    options.compare_colors = true;
-    for (const long mode : {1L, -9L})
+    std::string name;
+    bool big_float;
+    long mode;
+    int width;
+    std::complex<double> point;
+    bool escaped;
+    std::optional<int> color;
+};
+
+void PrintTo(const DistanceBoundaryColorInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<DistanceBoundaryColorInput> distance_boundary_inputs()
+{
+    std::vector<DistanceBoundaryColorInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(mode);
-        options.value = mode;
-        for (const int width : {0, 1, 5, 100, -1, -2, -100})
+        for (const long mode : {1L, -9L})
         {
-            SCOPED_TRACE(width);
-            options.width_factor = width;
-            compare_distance_pixel({0.5, 0.0}, 32, false, 0.0, options);
-            EXPECT_LT(g_real_color_iter, 32);
-            if (width == 100)
+            for (const int width : {0, 1, 5, 100, -1, -2, -100})
             {
-                EXPECT_EQ(mode > 0 ? 32 : 9, g_color);
+                const std::string name{std::string{big_float ? "HighPrecision_" : "Double_"} +
+                    (mode > 0 ? "PositiveMode_" : "NegativeMode_") + (width < 0 ? "NegativeWidth" : "Width") +
+                    std::to_string(std::abs(width))};
+                const std::optional<int> exterior_color{
+                    width == 100 ? std::optional<int>{mode > 0 ? 32 : 9} : std::nullopt};
+                inputs.push_back({name + "_Exterior", big_float, mode, width, {0.5, 0.0}, true, exterior_color});
+                inputs.push_back({name + "_Interior", big_float, mode, width, {0.125, 0.0625}, false, 32});
             }
-            compare_distance_pixel({0.125, 0.0625}, 32, false, 0.0, options);
-            EXPECT_EQ(32, g_real_color_iter);
-            EXPECT_EQ(32, g_color);
         }
+    }
+    return inputs;
+}
+
+class TestDistanceBoundarySamples : public PerturbationIterationTest,
+                                    public WithParamInterface<DistanceBoundaryColorInput>
+{
+public:
+    TestDistanceBoundarySamples();
+
+protected:
+    void SetUp() override;
+    DistancePixelOptions m_options;
+};
+
+TestDistanceBoundarySamples::TestDistanceBoundarySamples() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestDistanceBoundarySamples::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    m_options.compare_colors = true;
+    m_options.value = GetParam().mode;
+    m_options.width_factor = GetParam().width;
+}
+
+TEST_P(TestDistanceBoundarySamples, matchesStandardInsideAndExteriorColors)
+{
+    compare_distance_pixel(GetParam().point, 32, false, 0.0, m_options);
+
+    if (GetParam().escaped)
+    {
+        EXPECT_LT(g_real_color_iter, 32);
+    }
+    else
+    {
+        EXPECT_EQ(32, g_real_color_iter);
+    }
+    if (GetParam().color)
+    {
+        EXPECT_EQ(*GetParam().color, g_color);
     }
 }
 
-TEST_P(TestPerturbationIterations, distanceBoundaryUsesSelectedInsideMethodBeforeDecompositionAndBiomorph)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceBoundarySamples, ValuesIn(distance_boundary_inputs()),
+    [](const TestParamInfo<DistanceBoundaryColorInput> &info) { return info.param.name; });
+
+struct DistanceBoundaryInsideInput
 {
-    DistancePixelOptions options;
-    options.width_factor = 100;
-    options.compare_colors = true;
+    std::string name;
+    bool big_float;
+    ColorMethod inside;
+};
+
+void PrintTo(const DistanceBoundaryInsideInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<DistanceBoundaryInsideInput> distance_boundary_inside_inputs()
+{
+    const PerturbationColorMethod methods[]{
+        {"FixedColor", ColorMethod::COLOR},
+        {"Iterations", ColorMethod::ITER},
+        {"Magnitude", ColorMethod::ZMAG},
+        {"Bof60", ColorMethod::BOF60},
+        {"Bof61", ColorMethod::BOF61},
+        {"Atan", ColorMethod::ATANI},
+        {"Fmod", ColorMethod::FMODI},
+        {"EpsilonCross", ColorMethod::EPS_CROSS},
+        {"Period", ColorMethod::PERIOD},
+    };
+    std::vector<DistanceBoundaryInsideInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &method : methods)
+        {
+            inputs.push_back(
+                {std::string{big_float ? "HighPrecision_" : "Double_"} + method.name, big_float, method.method});
+        }
+    }
+    return inputs;
+}
+
+class TestDistanceBoundaryInside : public PerturbationIterationTest,
+                                   public WithParamInterface<DistanceBoundaryInsideInput>
+{
+public:
+    TestDistanceBoundaryInside();
+
+protected:
+    void SetUp() override;
+    DistancePixelOptions m_options;
+};
+
+TestDistanceBoundaryInside::TestDistanceBoundaryInside() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestDistanceBoundaryInside::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    m_options.width_factor = 100;
+    m_options.compare_colors = true;
+    m_options.inside = GetParam().inside;
     g_decomp[0] = 16;
     g_biomorph = 9;
     g_bof_match_book_images = false;
     init_atan_colors();
-    for (const ColorMethod method : {ColorMethod::COLOR, ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60,
-             ColorMethod::BOF61, ColorMethod::ATANI, ColorMethod::FMODI, ColorMethod::EPS_CROSS, ColorMethod::PERIOD})
-    {
-        SCOPED_TRACE(static_cast<int>(method));
-        options.inside = method;
-        compare_distance_pixel({0.5, 0.5}, 32, false, 0.0, options);
-        EXPECT_LT(g_real_color_iter, 32);
-    }
 }
+
+TEST_P(TestDistanceBoundaryInside, usesInsideMethodBeforeDecompositionAndBiomorph)
+{
+    compare_distance_pixel({0.5, 0.5}, 32, false, 0.0, m_options);
+
+    EXPECT_LT(g_real_color_iter, 32);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceBoundaryInside, ValuesIn(distance_boundary_inside_inputs()),
+    [](const TestParamInfo<DistanceBoundaryInsideInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, distanceBoundaryAndTwoColorExteriorUseDirectColors)
 {
