@@ -611,15 +611,27 @@ TEST_F(TestGifRestore, discardedRowsStillValidateCompressedDataTermination)
     EXPECT_EQ(-1, restore.result());
 }
 
-TEST_F(TestGifRestore, missingFileReportsFailureAndNegativeSkipFactorsThrow)
+TEST_F(TestGifRestoreInput, missingFileReportsFailure)
 {
-    const std::filesystem::path path{write_file(gif_data())};
-    EXPECT_TRUE(std::filesystem::remove(path));
-    GifRestore missing{path};
+    ASSERT_TRUE(std::filesystem::remove(m_path));
+
+    GifRestore missing{m_path};
+
     EXPECT_TRUE(missing.done());
     EXPECT_EQ(-1, missing.result());
-    EXPECT_THROW((GifRestore{path, -1, 0}), std::logic_error);
-    EXPECT_THROW((GifRestore{path, 0, -1}), std::logic_error);
 }
+
+class TestGifRestoreNegativeSkips : public TestGifRestoreInput, public WithParamInterface<std::pair<int, int>>
+{
+};
+
+TEST_P(TestGifRestoreNegativeSkips, rejectsNegativeSkipFactor)
+{
+    EXPECT_THROW((GifRestore{m_path, GetParam().first, GetParam().second}), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(SkipInputs, TestGifRestoreNegativeSkips,
+    Values(std::pair<int, int>{-1, 0}, std::pair<int, int>{0, -1}),
+    [](const TestParamInfo<std::pair<int, int>> &info) { return info.param.first < 0 ? "NegativeX" : "NegativeY"; });
 
 } // namespace id::test
