@@ -3120,6 +3120,120 @@ void TestSelectedAnt::SetUp()
     initialize_ant(GetParam());
 }
 
+class TestAntController : public TestSelectedAnt
+{
+protected:
+    void TearDown() override;
+    void prepare_calculation();
+
+    std::optional<NonStandardFractal> m_calculation;
+};
+
+void TestAntController::TearDown()
+{
+    if (m_calculation)
+    {
+        m_calculation->finish(!m_calculation->completed());
+    }
+    m_calculation.reset();
+    TestNonStandardFractal::TearDown();
+}
+
+void TestAntController::prepare_calculation()
+{
+    m_calculation.emplace();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::ANT, m_calculation->select());
+}
+
+class TestPreparedAntController : public TestAntController
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::size_t m_expected_batches{};
+    std::optional<AntController> m_controller;
+};
+
+void TestPreparedAntController::SetUp()
+{
+    TestSelectedAnt::SetUp();
+    m_expected_batches = reference_frames().size();
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    m_controller.emplace(*m_calculation);
+}
+
+void TestPreparedAntController::TearDown()
+{
+    m_controller.reset();
+    TestAntController::TearDown();
+}
+
+TEST_P(TestPreparedAntController, iterationRequiresStart)
+{
+    EXPECT_THROW(m_controller->iterate(), std::logic_error);
+}
+
+TEST_P(TestPreparedAntController, resultRequiresStart)
+{
+    EXPECT_THROW(m_controller->result(), std::logic_error);
+}
+
+TEST_P(TestPreparedAntController, suspensionRequiresStart)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+}
+
+class TestStartedAntController : public TestPreparedAntController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStartedAntController::SetUp()
+{
+    TestPreparedAntController::SetUp();
+    m_controller->start();
+}
+
+TEST_P(TestStartedAntController, rejectsDuplicateStart)
+{
+    EXPECT_THROW(m_controller->start(), std::logic_error);
+}
+
+class TestCompletedAntController : public TestPreparedAntController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestCompletedAntController::SetUp()
+{
+    TestPreparedAntController::SetUp();
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    m_controller->start();
+    for (std::size_t batch = 0; batch < m_expected_batches; ++batch)
+    {
+        m_controller->iterate();
+    }
+    ASSERT_TRUE(m_controller->done());
+}
+
+TEST_P(TestCompletedAntController, rejectsSuspensionAfterCompletion)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Variants, TestAntController, Values(AntType::ONE, AntType::TWO),
+    [](const TestParamInfo<AntType> &info) { return info.param == AntType::ONE ? "One" : "Two"; });
+INSTANTIATE_TEST_SUITE_P(Variants, TestPreparedAntController, Values(AntType::ONE, AntType::TWO),
+    [](const TestParamInfo<AntType> &info) { return info.param == AntType::ONE ? "One" : "Two"; });
+INSTANTIATE_TEST_SUITE_P(Variants, TestStartedAntController, Values(AntType::ONE, AntType::TWO),
+    [](const TestParamInfo<AntType> &info) { return info.param == AntType::ONE ? "One" : "Two"; });
+INSTANTIATE_TEST_SUITE_P(Variants, TestCompletedAntController, Values(AntType::ONE, AntType::TWO),
+    [](const TestParamInfo<AntType> &info) { return info.param == AntType::ONE ? "One" : "Two"; });
+
 TEST_P(TestSelectedAnt, selectionPreservesIterationBatchesWithoutRendererCallbacks)
 {
     const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
@@ -3308,24 +3422,19 @@ TEST_P(TestSelectedAnt, uiStepsTheSelectedObjectAtExistingBatchBoundaries)
     EXPECT_EQ(previous_help, help::g_help_mode);
 }
 
-TEST_P(TestSelectedAnt, controllerStepsExistingBatchesAndRestoresHelpOnCompletion)
+TEST_P(TestAntController, controllerStepsExistingBatchesAndRestoresHelpOnCompletion)
 {
     const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     AntController controller{calculation};
-    EXPECT_THROW(controller.iterate(), std::logic_error);
-    EXPECT_THROW(controller.result(), std::logic_error);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
 
     controller.start();
 
     EXPECT_FALSE(controller.done());
     EXPECT_EQ(help::HelpLabels::HELP_ANT_COMMANDS, help::g_help_mode);
     EXPECT_TRUE(m_columns.empty());
-    EXPECT_THROW(controller.start(), std::logic_error);
     for (const std::array<int, WIDTH *HEIGHT> &frame : expected)
     {
         ASSERT_FALSE(controller.done());
@@ -3339,8 +3448,6 @@ TEST_P(TestSelectedAnt, controllerStepsExistingBatchesAndRestoresHelpOnCompletio
     const std::vector<int> columns{m_columns};
     controller.iterate();
     EXPECT_EQ(columns, m_columns);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
-    calculation.finish(false);
 }
 
 TEST_P(TestSelectedAnt, controllerRetainsSingleStepEnterKeypadEnterAndSpace)
