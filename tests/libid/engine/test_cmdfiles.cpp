@@ -1854,35 +1854,58 @@ INSTANTIATE_TEST_SUITE_P(Gif87a, TestLegacyCommandInput,
         LegacyCommandInput{"Yes", "gif87a=yes", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE}),
     [](const TestParamInfo<LegacyCommandInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommandError, ditherInvalidValue)
+struct DitherParameterInput
 {
-    const bool saved_dither_flag{g_dither_flag};
+    const char *name;
+    const char *argument;
+    std::optional<bool> initial;
+    std::optional<bool> expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("dither=!", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(saved_dither_flag, g_dither_flag);
+void PrintTo(const DitherParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, ditherNo)
+class TestDitherParameter : public TestParameterCommand, public WithParamInterface<DitherParameterInput>
 {
-    ValueSaver saved_dither_flag{g_dither_flag, true};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("dither=n", CmdFile::AT_CMD_LINE);
+private:
+    ValueSaver<bool> m_saved_dither{g_dither_flag};
+};
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_FALSE(g_dither_flag);
+void TestDitherParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    if (GetParam().initial)
+    {
+        g_dither_flag = *GetParam().initial;
+    }
 }
 
-TEST_F(TestParameterCommand, ditherYes)
+TEST_P(TestDitherParameter, setsDitherMode)
 {
-    ValueSaver saved_dither_flag{g_dither_flag, false};
+    const bool expected{GetParam().expected.value_or(g_dither_flag)};
 
-    exec_cmd_arg("dither=yes", CmdFile::AT_CMD_LINE);
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_TRUE(g_dither_flag);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(expected, g_dither_flag);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDitherParameter,
+    Values(DitherParameterInput{"Invalid", "dither=!", std::nullopt, std::nullopt, CmdArgFlags::BAD_ARG},
+        DitherParameterInput{"No", "dither=n", true, false, CmdArgFlags::NONE},
+        DitherParameterInput{"Yes", "dither=yes", false, true, CmdArgFlags::NONE}),
+    [](const TestParamInfo<DitherParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, saveTime)
 {
