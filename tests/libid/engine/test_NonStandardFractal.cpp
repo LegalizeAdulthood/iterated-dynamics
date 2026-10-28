@@ -2921,22 +2921,97 @@ TEST_P(TestStandaloneTestPoint, completedResumeDoesNotComputeAnotherPixel)
     calculation.finish(false);
 }
 
-TEST_P(TestStandaloneTestPoint, controllerStepsExistingPixelsUntilCompletion)
+class TestSelectedTestPointController : public TestStandaloneTestPoint
+{
+protected:
+    void TearDown() override;
+    void prepare_controller();
+
+    std::optional<NonStandardFractal> m_calculation;
+    std::optional<TestPointController> m_controller;
+};
+
+void TestSelectedTestPointController::TearDown()
+{
+    m_controller.reset();
+    if (m_calculation)
+    {
+        m_calculation->finish(!m_calculation->completed());
+    }
+    m_calculation.reset();
+    TestStandaloneTestPoint::TearDown();
+}
+
+void TestSelectedTestPointController::prepare_controller()
+{
+    m_calculation.emplace();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::TEST_POINT, m_calculation->select());
+    m_controller.emplace(*m_calculation);
+}
+
+class TestPreparedTestPointController : public TestSelectedTestPointController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestPreparedTestPointController::SetUp()
+{
+    TestStandaloneTestPoint::SetUp();
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+}
+
+TEST_P(TestPreparedTestPointController, iterationRequiresStart)
+{
+    EXPECT_THROW(m_controller->iterate(), std::logic_error);
+}
+
+TEST_P(TestPreparedTestPointController, resultRequiresStart)
+{
+    EXPECT_THROW(m_controller->result(), std::logic_error);
+}
+
+TEST_P(TestPreparedTestPointController, suspensionRequiresStart)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+}
+
+class TestStartedTestPointController : public TestPreparedTestPointController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStartedTestPointController::SetUp()
+{
+    TestPreparedTestPointController::SetUp();
+    m_controller->start();
+}
+
+TEST_P(TestStartedTestPointController, rejectsDuplicateStart)
+{
+    EXPECT_THROW(m_controller->start(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Modes, TestSelectedTestPointController, Values(CalcMode::ONE_PASS, CalcMode::TWO_PASS),
+    [](const TestParamInfo<CalcMode> &info) { return info.param == CalcMode::ONE_PASS ? "OnePass" : "TwoPass"; });
+INSTANTIATE_TEST_SUITE_P(Modes, TestPreparedTestPointController, Values(CalcMode::ONE_PASS, CalcMode::TWO_PASS),
+    [](const TestParamInfo<CalcMode> &info) { return info.param == CalcMode::ONE_PASS ? "OnePass" : "TwoPass"; });
+INSTANTIATE_TEST_SUITE_P(Modes, TestStartedTestPointController, Values(CalcMode::ONE_PASS, CalcMode::TWO_PASS),
+    [](const TestParamInfo<CalcMode> &info) { return info.param == CalcMode::ONE_PASS ? "OnePass" : "TwoPass"; });
+
+TEST_P(TestSelectedTestPointController, controllerStepsExistingPixelsUntilCompletion)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::TEST_POINT, calculation.select());
-    TestPointController controller{calculation};
-    EXPECT_THROW(controller.iterate(), std::logic_error);
-    EXPECT_THROW(controller.result(), std::logic_error);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+    NonStandardFractal &calculation{*m_calculation};
+    TestPointController &controller{*m_controller};
 
     controller.start();
 
     EXPECT_FALSE(controller.done());
     EXPECT_TRUE(m_columns.empty());
-    EXPECT_THROW(controller.start(), std::logic_error);
     controller.iterate();
     EXPECT_EQ(1, g_col);
     EXPECT_EQ(0, g_row);
@@ -2951,16 +3026,13 @@ TEST_P(TestStandaloneTestPoint, controllerStepsExistingPixelsUntilCompletion)
     const std::vector<int> columns{m_columns};
     controller.iterate();
     EXPECT_EQ(columns, m_columns);
-    calculation.finish(false);
 }
 
-TEST_P(TestStandaloneTestPoint, controllerInterruptsBeforeComputingAPixel)
+TEST_P(TestSelectedTestPointController, controllerInterruptsBeforeComputingAPixel)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return('x'));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::TEST_POINT, calculation.select());
-    TestPointController controller{calculation};
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+    TestPointController &controller{*m_controller};
     controller.start();
 
     controller.iterate();
@@ -2972,13 +3044,12 @@ TEST_P(TestStandaloneTestPoint, controllerInterruptsBeforeComputingAPixel)
     EXPECT_FALSE(g_resume_data.empty());
 }
 
-TEST_P(TestStandaloneTestPoint, controllerFailureTerminatesTheSelectedOperation)
+TEST_P(TestSelectedTestPointController, controllerFailureTerminatesTheSelectedOperation)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::TEST_POINT, calculation.select());
-    TestPointController controller{calculation};
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+    NonStandardFractal &calculation{*m_calculation};
+    TestPointController &controller{*m_controller};
     controller.start();
     EXPECT_CALL(m_driver, write_pixel(_, _, _)).WillOnce(Throw(std::runtime_error("Plot failed")));
 
