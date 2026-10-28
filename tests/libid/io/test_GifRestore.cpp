@@ -474,64 +474,132 @@ TEST_F(TestGifRestore, closesFileWhenAbandonedBetweenLines)
     EXPECT_TRUE(std::filesystem::remove(path));
 }
 
-TEST_F(TestGifRestore, truncatedFileFailsAndClosesAtEveryByteBoundary)
+class TestTruncatedGifRestore : public TestGifRestore, public WithParamInterface<size_t>
 {
-    const std::vector<Byte> data{gif_data()};
-    for (std::size_t size = 0; size < data.size(); ++size)
-    {
-        SCOPED_TRACE(Message() << "size=" << size);
-        const std::filesystem::path path{write_file(std::vector<Byte>{data.begin(), data.begin() + size})};
-        GifRestore restore{path};
-        drain(restore);
-        EXPECT_LT(restore.result(), 0);
-        EXPECT_TRUE(std::filesystem::remove(path));
-    }
-}
+protected:
+    void SetUp() override;
 
-TEST_F(TestGifRestore, rejectsInvalidHeadersDescriptorsAndDataTerminators)
-{
-    // giflib checks the GIF signature, not the old decoder's version range.
-    for (const int offset : {0, 10, 19, 24, 29, 34})
-    {
-        SCOPED_TRACE(Message() << "offset=" << offset);
-        std::vector<Byte> data{gif_data()};
-        data[offset] = offset == 34 ? 1 : 0;
-        const std::filesystem::path path{write_file(data)};
-        GifRestore restore{path};
-        drain(restore);
-        EXPECT_LT(restore.result(), 0);
-        EXPECT_TRUE(std::filesystem::remove(path));
-    }
-}
+    std::filesystem::path m_path;
+};
 
-TEST_F(TestGifRestore, truncatedExtensionAndLocalPaletteFailAndClose)
-{
-    std::vector<Byte> extension{gif_header()};
-    extension.insert(extension.end(), {'!', 0xFE, 3, 'x'});
-    std::vector<Byte> palette{gif_header()};
-    palette.insert(palette.end(), {',', 0, 0, 0, 0, 2, 0, 2, 0, 0x80, 255});
-    for (const std::vector<Byte> &data : {extension, palette})
-    {
-        const std::filesystem::path path{write_file(data)};
-        GifRestore restore{path};
-        EXPECT_TRUE(drain(restore).empty());
-        EXPECT_EQ(-1, restore.result());
-        EXPECT_TRUE(std::filesystem::remove(path));
-    }
-}
-
-TEST_F(TestGifRestore, rejectsNineBitMinimumCodeSize)
+void TestTruncatedGifRestore::SetUp()
 {
     std::vector<Byte> data{gif_data()};
-    // The custom decoder accepted 9; giflib requires at most 8.
-    data[29] = 9;
-    const std::filesystem::path path{write_file(data)};
-    GifRestore restore{path};
+    ASSERT_LT(GetParam(), data.size());
+    data.resize(GetParam());
+    m_path = write_file(data);
+}
+
+TEST_P(TestTruncatedGifRestore, reportsFailureAndClosesInput)
+{
+    GifRestore restore{m_path};
+
+    drain(restore);
+
+    EXPECT_LT(restore.result(), 0);
+    EXPECT_TRUE(std::filesystem::remove(m_path));
+}
+
+INSTANTIATE_TEST_SUITE_P(ByteCutoffs, TestTruncatedGifRestore, Range<size_t>(0, gif_data().size()),
+    [](const TestParamInfo<size_t> &info) { return "Bytes" + std::to_string(info.param); });
+
+struct GifCorruptionCase
+{
+    const char *name;
+    size_t offset;
+    Byte value;
+    bool expect_no_output;
+};
+
+void PrintTo(const GifCorruptionCase &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestCorruptGifRestore : public TestGifRestore, public WithParamInterface<GifCorruptionCase>
+{
+protected:
+    void SetUp() override;
+
+    std::filesystem::path m_path;
+};
+
+void TestCorruptGifRestore::SetUp()
+{
+    std::vector<Byte> data{gif_data()};
+    data[GetParam().offset] = GetParam().value;
+    m_path = write_file(data);
+}
+
+TEST_P(TestCorruptGifRestore, reportsFailureAndClosesInput)
+{
+    GifRestore restore{m_path};
+
+    const std::vector<std::vector<Byte>> lines{drain(restore)};
+
+    EXPECT_LT(restore.result(), 0);
+    if (GetParam().expect_no_output)
+    {
+        EXPECT_TRUE(lines.empty());
+        EXPECT_EQ(-1, restore.result());
+    }
+    EXPECT_TRUE(std::filesystem::remove(m_path));
+}
+
+// giflib checks the GIF signature, not the old decoder's version range.
+INSTANTIATE_TEST_SUITE_P(CorruptInputs, TestCorruptGifRestore,
+    Values(GifCorruptionCase{"Signature", 0, 0, false}, GifCorruptionCase{"PackedScreenFields", 10, 0, false},
+        GifCorruptionCase{"ImageMarker", 19, 0, false}, GifCorruptionCase{"ImageWidth", 24, 0, false},
+        GifCorruptionCase{"ZeroMinimumCodeSize", 29, 0, false}, GifCorruptionCase{"DataTerminator", 34, 1, false},
+        // The custom decoder accepted 9; giflib requires at most 8.
+        GifCorruptionCase{"NineBitMinimumCodeSize", 29, 9, true}),
+    [](const TestParamInfo<GifCorruptionCase> &info) { return info.param.name; });
+
+struct TruncatedGifComponent
+{
+    const char *name;
+    std::vector<Byte> data;
+};
+
+void PrintTo(const TruncatedGifComponent &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+static std::vector<TruncatedGifComponent> truncated_components()
+{
+    TruncatedGifComponent extension{"Extension", gif_header()};
+    extension.data.insert(extension.data.end(), {'!', 0xFE, 3, 'x'});
+    TruncatedGifComponent palette{"LocalPalette", gif_header()};
+    palette.data.insert(palette.data.end(), {',', 0, 0, 0, 0, 2, 0, 2, 0, 0x80, 255});
+    return {extension, palette};
+}
+
+class TestTruncatedGifComponent : public TestGifRestore, public WithParamInterface<TruncatedGifComponent>
+{
+protected:
+    void SetUp() override;
+
+    std::filesystem::path m_path;
+};
+
+void TestTruncatedGifComponent::SetUp()
+{
+    m_path = write_file(GetParam().data);
+}
+
+TEST_P(TestTruncatedGifComponent, rejectsInputWithoutProducingOutput)
+{
+    GifRestore restore{m_path};
 
     EXPECT_TRUE(drain(restore).empty());
+
     EXPECT_EQ(-1, restore.result());
-    EXPECT_TRUE(std::filesystem::remove(path));
+    EXPECT_TRUE(std::filesystem::remove(m_path));
 }
+
+INSTANTIATE_TEST_SUITE_P(ComponentInputs, TestTruncatedGifComponent, ValuesIn(truncated_components()),
+    [](const TestParamInfo<TruncatedGifComponent> &info) { return info.param.name; });
 
 TEST_F(TestGifRestore, discardedRowsStillValidateCompressedDataTermination)
 {
