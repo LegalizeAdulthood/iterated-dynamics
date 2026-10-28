@@ -9262,20 +9262,59 @@ TEST_P(TestPerturbationContinuation, iterationLimitDoesNotPublishAdditionalConti
     EXPECT_EQ(before, s_perturbation_orbit.size());
 }
 
-TEST_P(TestPerturbationContinuation, chunkedReferenceDoesNotPublishSpeculativeContinuationValues)
+class TestChunkedContinuation : public TestPerturbationContinuation
 {
+protected:
+    void SetUp() override;
+};
+
+void TestChunkedContinuation::SetUp()
+{
+    TestPerturbationContinuation::SetUp();
     prepare(5000);
     m_engine.begin_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
+}
 
+TEST_P(TestChunkedContinuation, doesNotPublishSpeculativeContinuationValues)
+{
     EXPECT_FALSE(m_engine.iterate_orbit());
+
     EXPECT_EQ(0, m_engine.reference_count());
     EXPECT_EQ(7, m_engine.orbit_iteration());
     EXPECT_EQ((std::complex<double>{0.03125, -0.0625}), m_engine.orbit_value());
     EXPECT_TRUE(s_perturbation_orbit.empty());
+}
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestChunkedContinuation, Bool());
+
+class TestPendingChunkedContinuation : public TestChunkedContinuation
+{
+protected:
+    void SetUp() override;
+};
+
+void TestPendingChunkedContinuation::SetUp()
+{
+    TestChunkedContinuation::SetUp();
+    ASSERT_FALSE(m_engine.iterate_orbit());
+}
+
+TEST_P(TestPendingChunkedContinuation, rejectsBeginningAnotherOrbit)
+{
     EXPECT_THROW(m_engine.begin_orbit({}, {}, 0), std::logic_error);
+}
+
+TEST_P(TestPendingChunkedContinuation, rejectsPixelCalculation)
+{
     EXPECT_THROW(m_engine.calculate_pixel(0, 0), std::logic_error);
+}
+
+TEST_P(TestPendingChunkedContinuation, rejectsPixelStrategyInitialization)
+{
     EXPECT_THROW(m_engine.initialize_pixel_strategy(), std::logic_error);
 }
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPendingChunkedContinuation, Bool());
 
 TEST_P(TestPerturbationContinuation, preciseReplayUsesTheContinuationAnchorAndRetainsAcceptedProgress)
 {
