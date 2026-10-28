@@ -7064,9 +7064,69 @@ TEST_P(TestPotentialInside, overridesInsideColoring)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialInside, ValuesIn(potential_inside_inputs()),
     [](const TestParamInfo<PotentialInsideInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, potentialMapsFixedAndSpecialColorsExactlyOnce)
+struct PotentialMappedSampleInput
 {
-    g_potential = {{23.0, 10.0, 4.0}, false, true};
+    std::string name;
+    bool big_float;
+    ColorMethod inside;
+    ColorMethod outside;
+    std::complex<double> point;
+    int color;
+};
+
+void PrintTo(const PotentialMappedSampleInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<PotentialMappedSampleInput> potential_mapped_sample_inputs()
+{
+    const PerturbationColorMethod inside_methods[]{
+        {"FixedColor", ColorMethod::COLOR},
+        {"Iterations", ColorMethod::ITER},
+        {"Magnitude", ColorMethod::ZMAG},
+    };
+    const PerturbationColorMethod outside_methods[]{
+        {"FixedColor", ColorMethod::COLOR},
+        {"Iterations", ColorMethod::ITER},
+        {"Real", ColorMethod::REAL},
+    };
+    std::vector<PotentialMappedSampleInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &inside : inside_methods)
+        {
+            for (const PerturbationColorMethod &outside : outside_methods)
+            {
+                const std::string prefix{std::string{big_float ? "HighPrecision_" : "Double_"} + "Inside" +
+                    inside.name + "_Outside" + outside.name};
+                inputs.push_back({prefix + "_Exterior", big_float, inside.method, outside.method, {0.5, 0.5}, 31});
+                inputs.push_back({prefix + "_Interior", big_float, inside.method, outside.method, {0.125, 0.0625},
+                    inside.method == ColorMethod::COLOR ? 37 : 41});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestPotentialMappedSamples : public PerturbationPotentialTest,
+                                   public WithParamInterface<PotentialMappedSampleInput>
+{
+public:
+    TestPotentialMappedSamples();
+
+protected:
+    void SetUp() override;
+};
+
+TestPotentialMappedSamples::TestPotentialMappedSamples() :
+    PerturbationPotentialTest{GetParam().big_float}
+{
+}
+
+void TestPotentialMappedSamples::SetUp()
+{
+    PerturbationPotentialTest::SetUp();
     g_log_map_flag = 1;
     g_log_map_table_max_size = 128;
     g_log_map_table.assign(129, 99);
@@ -7076,25 +7136,64 @@ TEST_P(TestPerturbationIterations, potentialMapsFixedAndSpecialColorsExactlyOnce
     g_outside_color = 6;
     g_decomp[0] = 16;
     g_biomorph = 9;
-    for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::ITER, ColorMethod::ZMAG})
-    {
-        SCOPED_TRACE(static_cast<int>(inside));
-        g_inside_method = inside;
-        for (const ColorMethod outside : {ColorMethod::COLOR, ColorMethod::ITER, ColorMethod::REAL})
-        {
-            SCOPED_TRACE(static_cast<int>(outside));
-            g_outside_method = outside;
-            compare_pixel({0.5, 0.5}, 128);
-            EXPECT_EQ(31, g_color);
-            compare_pixel({0.125, 0.0625}, 128);
-            EXPECT_EQ(inside == ColorMethod::COLOR ? 37 : 41, g_color);
-        }
-    }
+    g_inside_method = GetParam().inside;
+    g_outside_method = GetParam().outside;
 }
 
-TEST_P(TestPerturbationIterations, potentialUsesTableAndCalculatedMapsWithFixedColors)
+TEST_P(TestPotentialMappedSamples, mapsFixedAndSpecialColorsExactlyOnce)
 {
-    g_potential = {{23.0, 10.0, 4.0}, false, true};
+    compare_pixel(GetParam().point, 128);
+
+    EXPECT_EQ(GetParam().color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialMappedSamples, ValuesIn(potential_mapped_sample_inputs()),
+    [](const TestParamInfo<PotentialMappedSampleInput> &info) { return info.param.name; });
+
+struct PotentialLogMapInput
+{
+    std::string name;
+    bool big_float;
+    bool calculate;
+};
+
+void PrintTo(const PotentialLogMapInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<PotentialLogMapInput> potential_log_map_inputs()
+{
+    std::vector<PotentialLogMapInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const bool calculate : {false, true})
+        {
+            inputs.push_back(
+                {std::string{big_float ? "HighPrecision_" : "Double_"} + (calculate ? "Calculated" : "Table"),
+                    big_float, calculate});
+        }
+    }
+    return inputs;
+}
+
+class TestPotentialLogMap : public PerturbationPotentialTest, public WithParamInterface<PotentialLogMapInput>
+{
+public:
+    TestPotentialLogMap();
+
+protected:
+    void SetUp() override;
+};
+
+TestPotentialLogMap::TestPotentialLogMap() :
+    PerturbationPotentialTest{GetParam().big_float}
+{
+}
+
+void TestPotentialLogMap::SetUp()
+{
+    PerturbationPotentialTest::SetUp();
     g_inside_method = ColorMethod::COLOR;
     g_inside_color = 11;
     g_outside_method = ColorMethod::COLOR;
@@ -7103,18 +7202,22 @@ TEST_P(TestPerturbationIterations, potentialUsesTableAndCalculatedMapsWithFixedC
     g_log_map_flag = -1;
     g_log_map_table_max_size = 128;
     g_max_iterations = 128;
-    for (const bool calculate : {false, true})
-    {
-        SCOPED_TRACE(calculate);
-        g_log_map_calculate = calculate;
-        g_log_map_fly_calculate = calculate ? LogMapCalculate::ON_THE_FLY : LogMapCalculate::USE_LOG_TABLE;
-        g_log_map_table.assign(calculate ? 0 : 129, 0);
-        setup_log_table();
-        compare_pixel({0.125, 0.0625}, 128);
-        EXPECT_EQ(log_table_calc(g_inside_color), g_color);
-        EXPECT_NE(g_inside_color, g_color);
-    }
+    g_log_map_calculate = GetParam().calculate;
+    g_log_map_fly_calculate = GetParam().calculate ? LogMapCalculate::ON_THE_FLY : LogMapCalculate::USE_LOG_TABLE;
+    g_log_map_table.assign(GetParam().calculate ? 0 : 129, 0);
+    setup_log_table();
 }
+
+TEST_P(TestPotentialLogMap, usesSelectedMapWithFixedColor)
+{
+    compare_pixel({0.125, 0.0625}, 128);
+
+    EXPECT_EQ(log_table_calc(g_inside_color), g_color);
+    EXPECT_NE(g_inside_color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialLogMap, ValuesIn(potential_log_map_inputs()),
+    [](const TestParamInfo<PotentialLogMapInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, potentialStoresRawSamplesSeparatelyFromMappedPixels)
 {
