@@ -11778,16 +11778,46 @@ TEST_F(TestPerturbationPixels, standardFractalEnablesPerturbationForBoundaryTrac
     EXPECT_THAT(m_pixels, Each(7));
 }
 
-TEST_P(TestPerturbationIterations, standardPassesPreserveFixedInsideAndOutsideColors)
+struct FixedPassColorInput
 {
-    ValueSaver saved_user{g_user, UserData{}};
-    ValueSaver saved_status{g_calc_status};
-    ValueSaver saved_resuming{g_resuming, false};
-    ValueSaver saved_force_symmetry{g_force_symmetry, SymmetryType::NONE};
-    ValueSaver<LDouble> saved_delta_x{g_delta_x, 1.0 / (WIDTH - 1)};
-    ValueSaver<LDouble> saved_delta_y{g_delta_y, 0.5 / (HEIGHT - 1)};
-    ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
-    ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    const char *name;
+    bool big_float;
+    CalcMode pass;
+};
+
+void PrintTo(const FixedPassColorInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestFixedPassColors : public PerturbationIterationTest, public WithParamInterface<FixedPassColorInput>
+{
+public:
+    TestFixedPassColors();
+
+protected:
+    void SetUp() override;
+    void render(PerturbationMode mode);
+
+private:
+    ValueSaver<UserData> m_saved_user{g_user, UserData{}};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status};
+    ValueSaver<bool> m_saved_resuming{g_resuming, false};
+    ValueSaver<SymmetryType> m_saved_force_symmetry{g_force_symmetry, SymmetryType::NONE};
+    ValueSaver<LDouble> m_saved_delta_x{g_delta_x, 1.0 / (WIDTH - 1)};
+    ValueSaver<LDouble> m_saved_delta_y{g_delta_y, 0.5 / (HEIGHT - 1)};
+    ValueSaver<LDouble> m_saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> m_saved_delta_y2{g_delta_y2, 0};
+};
+
+TestFixedPassColors::TestFixedPassColors() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestFixedPassColors::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_image_region = ImageRegion{{-0.5, 0.0}, {0.5, 0.5}, {-0.5, 0.0}};
     fill_pixel_grid();
     g_inside_method = g_outside_method = ColorMethod::COLOR;
@@ -11798,128 +11828,154 @@ TEST_P(TestPerturbationIterations, standardPassesPreserveFixedInsideAndOutsideCo
     m_specific.symmetry = SymmetryType::NONE;
     m_specific.pert_pt = record_perturbation_orbit;
     g_dispatch = FractalDispatch{m_specific};
-    std::array<int, WIDTH * HEIGHT> expected{};
+}
 
-    for (const CalcMode pass : {CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS})
+void TestFixedPassColors::render(const PerturbationMode mode)
+{
+    g_std_calc_mode = GetParam().pass;
+    g_user.perturbation = mode;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    m_pixels.fill(0);
+    m_plot_statuses.clear();
+    s_perturbation_orbit.clear();
+    if (GetParam().big_float && mode == PerturbationMode::YES)
     {
-        for (const PerturbationMode mode : {PerturbationMode::NO, PerturbationMode::YES})
-        {
-            SCOPED_TRACE(static_cast<char>(pass));
-            SCOPED_TRACE(static_cast<int>(mode));
-            g_std_calc_mode = pass;
-            g_user.perturbation = mode;
-            g_calc_status = CalcStatus::PARAMS_CHANGED;
-            m_pixels.fill(0);
-            m_plot_statuses.clear();
-            s_perturbation_orbit.clear();
-            if (GetParam() && mode == PerturbationMode::YES)
-            {
-                init_bf_dec(60);
-                m_big_float = true;
-                float_to_bf(g_bf_x_min, -0.5);
-                float_to_bf(g_bf_x_max, 0.5);
-                float_to_bf(g_bf_x_3rd, -0.5);
-                float_to_bf(g_bf_y_min, 0.0);
-                float_to_bf(g_bf_y_max, 0.5);
-                float_to_bf(g_bf_y_3rd, 0.0);
-            }
-            StandardFractal calculation;
-            calculation.resume();
-            for (int increments = 0; increments < 1000 && !calculation.done(); ++increments)
-            {
-                calculation.iterate();
-            }
+        init_bf_dec(60);
+        m_big_float = true;
+        float_to_bf(g_bf_x_min, -0.5);
+        float_to_bf(g_bf_x_max, 0.5);
+        float_to_bf(g_bf_x_3rd, -0.5);
+        float_to_bf(g_bf_y_min, 0.0);
+        float_to_bf(g_bf_y_max, 0.5);
+        float_to_bf(g_bf_y_3rd, 0.0);
+    }
+    StandardFractal calculation;
+    calculation.resume();
+    for (int increments = 0; increments < 1000 && !calculation.done(); ++increments)
+    {
+        calculation.iterate();
+    }
 
-            ASSERT_TRUE(calculation.done());
-            EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
-            EXPECT_EQ(pass, g_std_calc_mode);
-            EXPECT_THAT(m_pixels, Each(AnyOf(1, 7)));
-            EXPECT_THAT(m_pixels, Contains(1));
-            EXPECT_THAT(m_pixels, Contains(7));
-            EXPECT_EQ(mode == PerturbationMode::YES, !s_perturbation_orbit.empty());
-            ASSERT_FALSE(m_plot_statuses.empty());
-            for (const StandardPassStatus &status : m_plot_statuses)
-            {
-                EXPECT_EQ(mode == PerturbationMode::YES, status.perturbation_active);
-                if (mode == PerturbationMode::YES)
-                {
-                    EXPECT_GT(status.perturbation_reference_count, 0);
-                }
-            }
-            if (mode == PerturbationMode::NO)
-            {
-                expected = m_pixels;
-            }
-            else
-            {
-                EXPECT_EQ(expected, m_pixels);
-            }
-            calculation.finish();
-            if (m_big_float)
-            {
-                free_bf_vars();
-                m_big_float = false;
-            }
+    ASSERT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(GetParam().pass, g_std_calc_mode);
+    EXPECT_THAT(m_pixels, Each(AnyOf(1, 7)));
+    EXPECT_THAT(m_pixels, Contains(1));
+    EXPECT_THAT(m_pixels, Contains(7));
+    EXPECT_EQ(mode == PerturbationMode::YES, !s_perturbation_orbit.empty());
+    ASSERT_FALSE(m_plot_statuses.empty());
+    for (const StandardPassStatus &status : m_plot_statuses)
+    {
+        EXPECT_EQ(mode == PerturbationMode::YES, status.perturbation_active);
+        if (mode == PerturbationMode::YES)
+        {
+            EXPECT_GT(status.perturbation_reference_count, 0);
         }
+    }
+    calculation.finish();
+    if (m_big_float)
+    {
+        free_bf_vars();
+        m_big_float = false;
     }
 }
 
-TEST_F(TestPerturbationPixels, inversionKeepsPerturbationActiveForStandardPasses)
+TEST_P(TestFixedPassColors, preservesNativeFixedInsideAndOutsideColors)
 {
-    ValueSaver saved_user{g_user, UserData{}};
-    g_inversion = {3, 1.0, {1.0, 0.1}, {1.0, 1.0, 0.1}};
-    ValueSaver saved_status{g_calc_status};
-    ValueSaver saved_resuming{g_resuming, false};
-    ValueSaver saved_region{
+    ASSERT_NO_FATAL_FAILURE(render(PerturbationMode::NO));
+    const std::array<int, WIDTH * HEIGHT> expected{m_pixels};
+
+    ASSERT_NO_FATAL_FAILURE(render(PerturbationMode::YES));
+
+    EXPECT_EQ(expected, m_pixels);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFixedPassColors,
+    Values(FixedPassColorInput{"Double_BoundaryTrace", false, CalcMode::BOUNDARY_TRACE},
+        FixedPassColorInput{"Double_SolidGuess", false, CalcMode::SOLID_GUESS},
+        FixedPassColorInput{"HighPrecision_BoundaryTrace", true, CalcMode::BOUNDARY_TRACE},
+        FixedPassColorInput{"HighPrecision_SolidGuess", true, CalcMode::SOLID_GUESS}),
+    [](const TestParamInfo<FixedPassColorInput> &info) { return info.param.name; });
+
+struct InvertedPassInput
+{
+    const char *name;
+    CalcMode pass;
+    PerturbationMode mode;
+};
+
+void PrintTo(const InvertedPassInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestInvertedPassPolicy : public TestPerturbationPixels, public WithParamInterface<InvertedPassInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<UserData> m_saved_user{g_user, UserData{}};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status};
+    ValueSaver<bool> m_saved_resuming{g_resuming, false};
+    ValueSaver<ImageRegion> m_saved_region{
         g_image_region, ImageRegion{{1.5 - 1e-10, -1e-10}, {1.5 + 1e-10, 1e-10}, {1.5 - 1e-10, -1e-10}}};
+};
+
+void TestInvertedPassPolicy::SetUp()
+{
+    TestPerturbationPixels::SetUp();
+    g_inversion = {3, 1.0, {1.0, 0.1}, {1.0, 1.0, 0.1}};
     m_specific.calc_type = calculate_control_pixel;
     m_specific.per_image = [] { return true; };
     m_specific.symmetry = SymmetryType::NONE;
     g_dispatch = FractalDispatch{m_specific};
+    g_std_calc_mode = GetParam().pass;
+    g_user.perturbation = GetParam().mode;
+    g_user.perturbation_tolerance = 2.0;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    m_pixels.fill(0);
+    m_plot_statuses.clear();
+    s_requested_pixels.clear();
+}
 
-    for (const CalcMode pass : {CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS})
+TEST_P(TestInvertedPassPolicy, selectsRequestedNumericalPolicy)
+{
+    StandardFractal calculation;
+    calculation.resume();
+
+    for (int increments = 0; increments < 100 && !calculation.done(); ++increments)
     {
-        for (const PerturbationMode mode : {PerturbationMode::NO, PerturbationMode::YES})
+        calculation.iterate();
+    }
+
+    ASSERT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(GetParam().pass, g_std_calc_mode);
+    EXPECT_EQ(GetParam().mode == PerturbationMode::YES, s_requested_pixels.empty());
+    EXPECT_THAT(m_pixels, Each(GetParam().mode == PerturbationMode::YES ? 1 : 7));
+    ASSERT_FALSE(m_plot_statuses.empty());
+    for (const StandardPassStatus &status : m_plot_statuses)
+    {
+        EXPECT_EQ(GetParam().mode == PerturbationMode::YES, status.perturbation_active);
+        if (GetParam().mode == PerturbationMode::YES)
         {
-            SCOPED_TRACE(static_cast<char>(pass));
-            SCOPED_TRACE(static_cast<int>(mode));
-            g_std_calc_mode = pass;
-            g_user.perturbation = mode;
-            g_user.perturbation_tolerance = 2.0;
-            g_calc_status = CalcStatus::PARAMS_CHANGED;
-            m_pixels.fill(0);
-            m_plot_statuses.clear();
-            s_requested_pixels.clear();
-            StandardFractal calculation;
-            calculation.resume();
-
-            for (int increments = 0; increments < 100 && !calculation.done(); ++increments)
-            {
-                calculation.iterate();
-            }
-
-            ASSERT_TRUE(calculation.done());
-            EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
-            EXPECT_EQ(pass, g_std_calc_mode);
-            EXPECT_EQ(mode == PerturbationMode::YES, s_requested_pixels.empty());
-            EXPECT_THAT(m_pixels, Each(mode == PerturbationMode::YES ? 1 : 7));
-            ASSERT_FALSE(m_plot_statuses.empty());
-            for (const StandardPassStatus &status : m_plot_statuses)
-            {
-                EXPECT_EQ(mode == PerturbationMode::YES, status.perturbation_active);
-                if (mode == PerturbationMode::YES)
-                {
-                    EXPECT_GT(status.perturbation_reference_count, 1);
-                }
-                else
-                {
-                    EXPECT_EQ(0, status.perturbation_reference_count);
-                }
-            }
-            calculation.finish();
+            EXPECT_GT(status.perturbation_reference_count, 1);
+        }
+        else
+        {
+            EXPECT_EQ(0, status.perturbation_reference_count);
         }
     }
+    calculation.finish();
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInvertedPassPolicy,
+    Values(InvertedPassInput{"BoundaryTrace_Native", CalcMode::BOUNDARY_TRACE, PerturbationMode::NO},
+        InvertedPassInput{"BoundaryTrace_Perturbation", CalcMode::BOUNDARY_TRACE, PerturbationMode::YES},
+        InvertedPassInput{"SolidGuess_Native", CalcMode::SOLID_GUESS, PerturbationMode::NO},
+        InvertedPassInput{"SolidGuess_Perturbation", CalcMode::SOLID_GUESS, PerturbationMode::YES}),
+    [](const TestParamInfo<InvertedPassInput> &info) { return info.param.name; });
 
 TEST_F(TestPerturbationPixels, inversionTransformsReferenceAndRequestedCoordinates)
 {
