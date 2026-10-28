@@ -3063,52 +3063,109 @@ TEST_P(TestPerturbationIterations, totalDistanceRestartsWithAReplacementReferenc
     EXPECT_GT(m_engine.reference_count(), 1);
 }
 
-TEST_P(TestPerturbationIterations, insideAtanUsesTerminalQuadrantsAndVersionScale)
+struct InsideAtanSample
 {
-    struct Sample
+    const char *name;
+    DComplex initial;
+    int legacy_16;
+    int legacy_256;
+    int current_16;
+    int current_256;
+};
+
+struct InsideAtanInput
+{
+    std::string name;
+    bool big_float;
+    Version version;
+    int colors;
+    InsideAtanSample sample;
+};
+
+void PrintTo(const InsideAtanInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<InsideAtanInput> inside_atan_inputs()
+{
+    struct CompatibilityVersion
     {
-        DComplex initial;
-        int legacy_16;
-        int legacy_256;
-        int current_16;
-        int current_256;
+        const char *name;
+        Version version;
     };
 
-    const Sample samples[]{
-        {{0.5, 0.25}, 8, 53, 4, 75},
-        {{0.25, 0.5}, 6, 126, 11, 180},
-        {{0.25, -0.5}, 6, 126, 11, 180},
-        {{0.5, -0.25}, 8, 53, 4, 75},
-        {{0.5, 0.0}, 0, 0, 0, 0},
-        {{0.0, 0.5}, 15, 180, 1, 1},
+    const InsideAtanSample samples[]{
+        {"RealDominantUpper", {0.5, 0.25}, 8, 53, 4, 75},
+        {"ImaginaryDominantUpper", {0.25, 0.5}, 6, 126, 11, 180},
+        {"ImaginaryDominantLower", {0.25, -0.5}, 6, 126, 11, 180},
+        {"RealDominantLower", {0.5, -0.25}, 8, 53, 4, 75},
+        {"RealAxis", {0.5, 0.0}, 0, 0, 0, 0},
+        {"ImaginaryAxis", {0.0, 0.5}, 15, 180, 1, 1},
     };
-    g_inside_method = ColorMethod::ATANI;
-    g_use_init_orbit = InitOrbitMode::VALUE;
-    for (const Version version : {parse_legacy_version(2002), parse_legacy_version(2003), current_id_version()})
+
+    std::vector<InsideAtanInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(to_string(version));
-        g_version = version;
-        for (const int colors : {16, 256})
+        for (const CompatibilityVersion &version : {CompatibilityVersion{"Legacy2002", parse_legacy_version(2002)},
+                 {"Legacy2003", parse_legacy_version(2003)}, {"Current", current_id_version()}})
         {
-            SCOPED_TRACE(colors);
-            g_colors = colors;
-            g_and_color = colors - 1;
-            init_atan_colors();
-            for (const Sample &sample : samples)
+            for (const int colors : {16, 256})
             {
-                SCOPED_TRACE(sample.initial.x);
-                SCOPED_TRACE(sample.initial.y);
-                g_init_orbit = sample.initial;
-                compare_pixel({}, 2);
-                EXPECT_EQ(2, g_real_color_iter);
-                const int expected{g_version <= 2002 ? colors == 16 ? sample.legacy_16 : sample.legacy_256
-                        : colors == 16               ? sample.current_16
-                                                     : sample.current_256};
-                EXPECT_EQ(expected, g_color);
+                for (const InsideAtanSample &sample : samples)
+                {
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + version.name + "_Colors" +
+                            std::to_string(colors) + "_" + sample.name,
+                        big_float, version.version, colors, sample});
+                }
             }
         }
     }
+    return inputs;
 }
+
+class TestInsideAtanScale : public PerturbationIterationTest, public WithParamInterface<InsideAtanInput>
+{
+public:
+    TestInsideAtanScale();
+
+protected:
+    void SetUp() override;
+};
+
+TestInsideAtanScale::TestInsideAtanScale() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestInsideAtanScale::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = ColorMethod::ATANI;
+    g_use_init_orbit = InitOrbitMode::VALUE;
+    g_version = GetParam().version;
+    g_colors = GetParam().colors;
+    g_and_color = g_colors - 1;
+    init_atan_colors();
+    g_init_orbit = GetParam().sample.initial;
+}
+
+TEST_P(TestInsideAtanScale, usesTerminalQuadrantAndVersionScale)
+{
+    const InsideAtanSample &sample{GetParam().sample};
+    const int colors{GetParam().colors};
+
+    compare_pixel({}, 2);
+
+    EXPECT_EQ(2, g_real_color_iter);
+    const int expected{g_version <= 2002 ? colors == 16 ? sample.legacy_16 : sample.legacy_256
+            : colors == 16               ? sample.current_16
+                                         : sample.current_256};
+    EXPECT_EQ(expected, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInsideAtanScale, ValuesIn(inside_atan_inputs()),
+    [](const TestParamInfo<InsideAtanInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, insideAtanPreservesOutsideColoring)
 {
