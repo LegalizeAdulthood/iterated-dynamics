@@ -176,38 +176,115 @@ TEST(TestDistanceEstimator, legacyEscapeRetainsFirstEscapeAndRaisesBailout)
     EXPECT_EQ((DComplex{3.0, 1.0}), estimator.escape_point());
 }
 
-TEST(TestDistanceEstimator, ordinaryAndLargeBailoutEscapesStopImmediately)
+struct DistanceEscapeInput
 {
-    DistanceEstimator ordinary{4.0, 100.0, true, false};
-    DistanceEstimator legacy{600.0, 100.0, true, true};
+    const char *name;
+    double bailout;
+    bool legacy;
+    DComplex point;
+    double magnitude;
+    std::optional<double> expected_bailout;
+    std::optional<long> escape_iteration;
+};
 
-    EXPECT_TRUE(ordinary.escaped({3.0, 0.0}, 1, 9.0));
-    EXPECT_DOUBLE_EQ(4.0, ordinary.bailout());
-    EXPECT_EQ(-1, ordinary.escape_iteration());
-    EXPECT_TRUE(legacy.escaped({30.0, 0.0}, 1, 900.0));
-    EXPECT_DOUBLE_EQ(600.0, legacy.bailout());
-    DistanceEstimator zero_magnitude{4.0, 100.0, true, true};
-    EXPECT_TRUE(zero_magnitude.escaped({}, 1, 0.0));
+void PrintTo(const DistanceEscapeInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestDistanceEstimator, distanceEstimateUsesTerminalMagnitudeAndDerivative)
+class TestDistanceEscape : public TestWithParam<DistanceEscapeInput>
 {
-    DistanceEstimator estimator{4.0, 100.0, true, false};
-    EXPECT_TRUE(estimator.advance({0.5, 0.5}));
+};
 
-    EXPECT_DOUBLE_EQ(25.0 * std::log(25.0) * std::log(25.0) / 5.0, estimator.distance_squared({3.0, 4.0}));
-    EXPECT_DOUBLE_EQ(0.0, estimator.distance_squared({}));
-    EXPECT_DOUBLE_EQ(0.0, estimator.distance_squared({3.0, 4.0}, true));
+TEST_P(TestDistanceEscape, stopsImmediately)
+{
+    const DistanceEscapeInput &input{GetParam()};
+    DistanceEstimator estimator{input.bailout, 100.0, true, input.legacy};
+
+    EXPECT_TRUE(estimator.escaped(input.point, 1, input.magnitude));
+    if (input.expected_bailout)
+    {
+        EXPECT_DOUBLE_EQ(*input.expected_bailout, estimator.bailout());
+    }
+    if (input.escape_iteration)
+    {
+        EXPECT_EQ(*input.escape_iteration, estimator.escape_iteration());
+    }
 }
 
-TEST(TestDistanceEstimator, boundaryComparisonIsStrict)
-{
-    const DistanceEstimator estimator{4.0, 100.0, true, false, 0.5};
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceEscape,
+    Values(DistanceEscapeInput{"Ordinary", 4.0, false, {3.0, 0.0}, 9.0, 4.0, -1},
+        DistanceEscapeInput{"LargeLegacyBailout", 600.0, true, {30.0, 0.0}, 900.0, 600.0, std::nullopt},
+        DistanceEscapeInput{"ZeroMagnitude", 4.0, true, {}, 0.0, std::nullopt, std::nullopt}),
+    [](const TestParamInfo<DistanceEscapeInput> &info) { return info.param.name; });
 
-    EXPECT_TRUE(estimator.on_boundary(std::nextafter(0.5, 0.0)));
-    EXPECT_FALSE(estimator.on_boundary(0.5));
-    EXPECT_FALSE(estimator.on_boundary(std::nextafter(0.5, 1.0)));
+struct DistanceEstimateInput
+{
+    const char *name;
+    DComplex terminal;
+    bool overflow;
+    double expected;
+};
+
+void PrintTo(const DistanceEstimateInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestDistanceEstimate : public TestWithParam<DistanceEstimateInput>
+{
+protected:
+    void SetUp() override;
+
+    DistanceEstimator m_estimator{4.0, 100.0, true, false};
+};
+
+void TestDistanceEstimate::SetUp()
+{
+    EXPECT_TRUE(m_estimator.advance({0.5, 0.5}));
+}
+
+TEST_P(TestDistanceEstimate, usesTerminalMagnitudeAndDerivative)
+{
+    const DistanceEstimateInput &input{GetParam()};
+
+    EXPECT_DOUBLE_EQ(input.expected, m_estimator.distance_squared(input.terminal, input.overflow));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceEstimate,
+    Values(DistanceEstimateInput{"TerminalMagnitude", {3.0, 4.0}, false, 25.0 * std::log(25.0) * std::log(25.0) / 5.0},
+        DistanceEstimateInput{"ZeroMagnitude", {}, false, 0.0},
+        DistanceEstimateInput{"Overflow", {3.0, 4.0}, true, 0.0}),
+    [](const TestParamInfo<DistanceEstimateInput> &info) { return info.param.name; });
+
+struct DistanceBoundaryInput
+{
+    const char *name;
+    double distance_squared;
+    bool expected;
+};
+
+void PrintTo(const DistanceBoundaryInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestDistanceBoundary : public TestWithParam<DistanceBoundaryInput>
+{
+protected:
+    const DistanceEstimator m_estimator{4.0, 100.0, true, false, 0.5};
+};
+
+TEST_P(TestDistanceBoundary, comparesBoundaryStrictly)
+{
+    EXPECT_EQ(GetParam().expected, m_estimator.on_boundary(GetParam().distance_squared));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceBoundary,
+    Values(DistanceBoundaryInput{"BelowThreshold", std::nextafter(0.5, 0.0), true},
+        DistanceBoundaryInput{"AtThreshold", 0.5, false},
+        DistanceBoundaryInput{"AboveThreshold", std::nextafter(0.5, 1.0), false}),
+    [](const TestParamInfo<DistanceBoundaryInput> &info) { return info.param.name; });
 
 TEST(TestDistanceEstimator, distanceBandFormulasPreserveTheirIntegerBoundaries)
 {
