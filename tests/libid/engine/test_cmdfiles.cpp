@@ -1432,63 +1432,72 @@ TEST_F(TestParameterCommand, afiValueIgnored)
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
 }
 
-TEST_F(TestParameterCommand, textSafeDeprecatedValues)
+struct DeprecatedDisplayParameterInput
 {
-    ValueSaver saved_first_init{g_first_init, true};
-    const std::string arg{"textsafe="};
+    const char *name;
+    const char *argument;
+    CmdArgFlags result;
+    std::optional<bool> first_init;
+};
 
-    for (const char val : std::string_view{"nybs"})
+void PrintTo(const DeprecatedDisplayParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestDeprecatedDisplayParameter : public TestParameterCommand,
+                                       public WithParamInterface<DeprecatedDisplayParameterInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<bool> m_saved_first_init{g_first_init};
+};
+
+void TestDeprecatedDisplayParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    if (GetParam().first_init)
     {
-        exec_cmd_arg(arg + val, CmdFile::SSTOOLS_INI);
-
-        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
+        g_first_init = *GetParam().first_init;
     }
 }
 
-TEST_F(TestParameterCommandError, textSafeInvalidValue)
+TEST_P(TestDeprecatedDisplayParameter, retainsCompatibilityResult)
 {
-    ValueSaver saved_first_init{g_first_init, true};
+    exec_cmd_arg(GetParam().argument, CmdFile::SSTOOLS_INI);
 
-    exec_cmd_arg("textsafe=!", CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
-
-TEST_F(TestParameterCommand, vesaDetectDeprecatedValues)
-{
-    const std::string arg{"vesadetect="};
-
-    for (const char val : std::string_view{"ny"})
+    EXPECT_EQ(GetParam().result, m_result);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
     {
-        exec_cmd_arg(arg + val, CmdFile::SSTOOLS_INI);
-
-        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
     }
 }
 
-TEST_F(TestParameterCommandError, vesaDetectInvalidValue)
-{
-    exec_cmd_arg("vesadetect=!", CmdFile::SSTOOLS_INI);
+INSTANTIATE_TEST_SUITE_P(TextSafe, TestDeprecatedDisplayParameter,
+    Values(DeprecatedDisplayParameterInput{"N", "textsafe=n", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, true},
+        DeprecatedDisplayParameterInput{"Y", "textsafe=y", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, true},
+        DeprecatedDisplayParameterInput{"B", "textsafe=b", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, true},
+        DeprecatedDisplayParameterInput{"S", "textsafe=s", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, true},
+        DeprecatedDisplayParameterInput{"Invalid", "textsafe=!", CmdArgFlags::BAD_ARG, true}),
+    [](const TestParamInfo<DeprecatedDisplayParameterInput> &info) { return info.param.name; });
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
+INSTANTIATE_TEST_SUITE_P(VesaDetect, TestDeprecatedDisplayParameter,
+    Values(DeprecatedDisplayParameterInput{"N", "vesadetect=n", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D,
+               std::nullopt},
+        DeprecatedDisplayParameterInput{
+            "Y", "vesadetect=y", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, std::nullopt},
+        DeprecatedDisplayParameterInput{"Invalid", "vesadetect=!", CmdArgFlags::BAD_ARG, std::nullopt}),
+    [](const TestParamInfo<DeprecatedDisplayParameterInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommand, biosPaletteDetectDeprecatedValues)
-{
-    for (const char arg : std::string_view{"ny"})
-    {
-        exec_cmd_arg("biospalette=" + std::string{arg}, CmdFile::SSTOOLS_INI);
-
-        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    }
-}
-
-TEST_F(TestParameterCommandError, biosPaletteDetectInvalidValue)
-{
-    exec_cmd_arg("biospalette=!", CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
+INSTANTIATE_TEST_SUITE_P(BiosPalette, TestDeprecatedDisplayParameter,
+    Values(DeprecatedDisplayParameterInput{"N", "biospalette=n", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D,
+               std::nullopt},
+        DeprecatedDisplayParameterInput{
+            "Y", "biospalette=y", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, std::nullopt},
+        DeprecatedDisplayParameterInput{"Invalid", "biospalette=!", CmdArgFlags::BAD_ARG, std::nullopt}),
+    [](const TestParamInfo<DeprecatedDisplayParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, fpuDetectDeprecatedValue)
 {
