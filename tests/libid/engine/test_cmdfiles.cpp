@@ -80,11 +80,13 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <ostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -479,63 +481,90 @@ TEST_F(TestParameterCommandError, parameterTooLong)
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
-TEST_F(TestParameterCommandError, batchBadArg)
+struct BatchParameterInput
 {
-    exec_cmd_arg("batch=g", CmdFile::SSTOOLS_INI);
+    const char *name;
+    const char *argument;
+    CmdFile source;
+    BatchMode initial;
+    BatchMode expected;
+    CmdArgFlags result;
+    std::size_t errors;
+};
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+void PrintTo(const BatchParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, batchYes)
+class TestBatchParameter : public TestParameterCommand, public WithParamInterface<BatchParameterInput>
 {
-    ValueSaver saved_init_batch{g_init_batch, BatchMode::NONE};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("batch=yes", CmdFile::SSTOOLS_INI);
+    ValueSaver<BatchMode> m_saved_batch{g_init_batch};
+};
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
+void TestBatchParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_init_batch = GetParam().initial;
 }
 
-TEST_F(TestParameterCommand, batchNo)
+TEST_P(TestBatchParameter, commandPreservesExpectedBatchOutcome)
 {
-    ValueSaver saved_init_batch{g_init_batch, BatchMode::NORMAL};
+    const BatchParameterInput &input{GetParam()};
 
-    exec_cmd_arg("batch=no", CmdFile::SSTOOLS_INI);
+    exec_cmd_arg(input.argument, input.source);
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(BatchMode::NONE, g_init_batch);
+    EXPECT_EQ(input.result, m_result);
+    EXPECT_EQ(input.expected, g_init_batch);
+    EXPECT_EQ(input.errors, m_parsed.diagnostics.errors.size());
+    EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
 }
 
-TEST_F(TestParameterCommandError, batchAfterStartup)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBatchParameter,
+    Values(BatchParameterInput{"Malformed", "batch=g", CmdFile::SSTOOLS_INI, BatchMode::NONE, BatchMode::NONE,
+               CmdArgFlags::BAD_ARG, 1},
+        BatchParameterInput{"Yes", "batch=yes", CmdFile::SSTOOLS_INI, BatchMode::NONE, BatchMode::NORMAL,
+            CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, 0},
+        BatchParameterInput{"No", "batch=no", CmdFile::SSTOOLS_INI, BatchMode::NORMAL, BatchMode::NONE,
+            CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, 0},
+        BatchParameterInput{"AfterStartup", "batch=yes", CmdFile::AT_AFTER_STARTUP, BatchMode::NONE, BatchMode::NONE,
+            CmdArgFlags::BAD_ARG, 1}),
+    [](const TestParamInfo<BatchParameterInput> &info) { return info.param.name; });
+
+struct HelpDocumentParameterInput
 {
-    ValueSaver saved_init_batch{g_init_batch, BatchMode::NONE};
+    const char *name;
+    const char *argument;
+    const char *filename;
+};
 
-    exec_cmd_arg("batch=yes");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+void PrintTo(const HelpDocumentParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, makeDocDefaultFile)
+class TestHelpDocumentParameter : public TestParameterCommand, public WithParamInterface<HelpDocumentParameterInput>
 {
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+protected:
+    ValueSaver<Driver *> m_saved_driver{g_driver, nullptr};
+};
 
-    exec_cmd_arg("makedoc", CmdFile::SSTOOLS_INI);
+TEST_P(TestHelpDocumentParameter, commandSelectsOutputFilename)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::SSTOOLS_INI);
 
     const MakeHelpDocument *request{std::get_if<MakeHelpDocument>(&m_parsed.action)};
     ASSERT_NE(nullptr, request);
-    EXPECT_EQ("id.txt", request->filename);
+    EXPECT_EQ(GetParam().filename, request->filename);
 }
 
-TEST_F(TestParameterCommand, makeDocCustomFile)
-{
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-
-    exec_cmd_arg("makedoc=foo.txt", CmdFile::SSTOOLS_INI);
-
-    const MakeHelpDocument *request{std::get_if<MakeHelpDocument>(&m_parsed.action)};
-    ASSERT_NE(nullptr, request);
-    EXPECT_EQ("foo.txt", request->filename);
-}
+INSTANTIATE_TEST_SUITE_P(Filenames, TestHelpDocumentParameter,
+    Values(HelpDocumentParameterInput{"Default", "makedoc", "id.txt"},
+        HelpDocumentParameterInput{"Custom", "makedoc=foo.txt", "foo.txt"}),
+    [](const TestParamInfo<HelpDocumentParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, makeMigReturnsDimensionsWithoutRunningIo)
 {
@@ -578,19 +607,31 @@ TEST_F(TestParameterCommand, makeParOnlyReportsOutputSettings)
     EXPECT_FALSE(g_make_parameter_file);
 }
 
-TEST_F(TestParameterCommandError, makeParTooFewValues)
+struct ParameterArgumentInput
 {
-    exec_cmd_arg("makepar", CmdFile::SSTOOLS_INI);
+    const char *name;
+    const char *argument;
+};
+
+void PrintTo(const ParameterArgumentInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestMakeParArity : public TestParameterCommandError, public WithParamInterface<ParameterArgumentInput>
+{
+};
+
+TEST_P(TestMakeParArity, rejectsInvalidArgumentCount)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
-TEST_F(TestParameterCommandError, makeParTooManyValues)
-{
-    exec_cmd_arg("makepar=foo/bar/fmeh", CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
+INSTANTIATE_TEST_SUITE_P(Arity, TestMakeParArity,
+    Values(ParameterArgumentInput{"TooFew", "makepar"}, ParameterArgumentInput{"TooMany", "makepar=foo/bar/fmeh"}),
+    [](const TestParamInfo<ParameterArgumentInput> &info) { return info.param.name; });
 
 static std::string read_file_contents(const fs::path &path)
 {
