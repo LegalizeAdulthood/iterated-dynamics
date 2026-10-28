@@ -502,34 +502,39 @@ TEST(TestFractalDispatch, alternateMathFallbackLeavesDispatchUnchanged)
     EXPECT_EQ(test_calc_type, g_dispatch.calc_type());
 }
 
-TEST(TestFractalDispatch, formulaParseFailureOnlyUpdatesDispatch)
+class TestFormulaDispatch : public Test
 {
-    ParserResetter reset_parser;
-    DispatchSelectionState state{FractalType::FORMULA};
-    const TableFunctions table{table_functions(FractalType::FORMULA)};
-    ValueSaver saved_formula_name{g_formula_name, std::string{}};
+protected:
+    const TableFunctions m_table{table_functions(FractalType::FORMULA)};
 
+private:
+    ParserResetter m_reset_parser;
+    DispatchSelectionState m_state{FractalType::FORMULA};
+    ValueSaver<std::string> m_saved_formula_name{g_formula_name};
+};
+
+TEST_F(TestFormulaDispatch, parseFailureOnlyUpdatesDispatch)
+{
+    g_formula_name.clear();
     fs::path path{"unused.frm"};
 
     EXPECT_THROW(parse_formula(path, g_formula_name), std::runtime_error);
+
     EXPECT_EQ(bad_formula, g_dispatch.orbit_calc());
     EXPECT_EQ(bad_formula, g_dispatch.per_pixel());
-    expect_table_functions(FractalType::FORMULA, table);
+    expect_table_functions(FractalType::FORMULA, m_table);
 }
 
-TEST(TestFractalDispatch, formulaParseSuccessOnlyUpdatesDispatch)
+TEST_F(TestFormulaDispatch, parseSuccessOnlyUpdatesDispatch)
 {
-    ParserResetter reset_parser;
-    DispatchSelectionState state{FractalType::FORMULA};
-    const TableFunctions table{table_functions(FractalType::FORMULA)};
-    ValueSaver saved_formula_name{g_formula_name, std::string{"Fractint"}};
-
+    g_formula_name = "Fractint";
     fs::path path{fs::path{ID_TEST_FRM_DIR} / ID_TEST_FRM_FILE};
 
     EXPECT_TRUE(parse_formula(path, g_formula_name).empty());
+
     EXPECT_EQ(formula_orbit, g_dispatch.orbit_calc());
     EXPECT_EQ(formula_per_pixel, g_dispatch.per_pixel());
-    expect_table_functions(FractalType::FORMULA, table);
+    expect_table_functions(FractalType::FORMULA, m_table);
 }
 
 class TestDispatchSelector : public Test
@@ -623,48 +628,73 @@ TEST_F(TestDispatchSelector, popcornJuliaOnlyUpdatesDispatch)
     expect_table_unchanged();
 }
 
-static void expect_mandel_julia_calc_type_selection(const FractalType type, const PerImage setup, const bool optimized)
+struct CalcTypeSelectionInput
 {
-    MandelJuliaCalcTypeState state{type};
-    const FractalSpecific &table{*get_fractal_specific(type)};
-    const CalcType expected{optimized ? calc_mandelbrot_type : standard_fractal_type};
+    const char *name;
+    FractalType type;
+    PerImage setup;
+    bool optimized;
+};
 
-    if (!optimized)
+void PrintTo(const CalcTypeSelectionInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestMandelJuliaSelection : public TestWithParam<CalcTypeSelectionInput>
+{
+private:
+    MandelJuliaCalcTypeState m_state{GetParam().type};
+
+protected:
+    void SetUp() override;
+    const FractalSpecific &m_table{*get_fractal_specific(GetParam().type)};
+};
+
+void TestMandelJuliaSelection::SetUp()
+{
+    if (!GetParam().optimized)
     {
         g_debug_flag = DebugFlags::FORCE_STANDARD_FRACTAL;
     }
+}
 
-    ASSERT_EQ(standard_fractal_type, table.calc_type);
-    ASSERT_TRUE(setup());
-    EXPECT_EQ(standard_fractal_type, table.calc_type);
+TEST_P(TestMandelJuliaSelection, selectsCalculationForEligibility)
+{
+    const CalcType expected{GetParam().optimized ? calc_mandelbrot_type : standard_fractal_type};
+    ASSERT_EQ(standard_fractal_type, m_table.calc_type);
+
+    ASSERT_TRUE(GetParam().setup());
+
+    EXPECT_EQ(standard_fractal_type, m_table.calc_type);
     EXPECT_EQ(expected, g_dispatch.calc_type());
 }
 
-TEST(TestFractalDispatch, mandelAndJuliaEligibleUseOptimizedCalcType)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestMandelJuliaSelection,
+    Values(CalcTypeSelectionInput{"Mandel_Optimized", FractalType::MANDEL, mandel_per_image, true},
+        CalcTypeSelectionInput{"Julia_Optimized", FractalType::JULIA, julia_per_image, true},
+        CalcTypeSelectionInput{"Mandel_Standard", FractalType::MANDEL, mandel_per_image, false},
+        CalcTypeSelectionInput{"Julia_Standard", FractalType::JULIA, julia_per_image, false}),
+    [](const TestParamInfo<CalcTypeSelectionInput> &info) { return info.param.name; });
+
+class TestOrbitCallbackSelection : public TestWithParam<FractalType>
 {
-    expect_mandel_julia_calc_type_selection(FractalType::MANDEL, mandel_per_image, true);
-    expect_mandel_julia_calc_type_selection(FractalType::JULIA, julia_per_image, true);
+private:
+    MandelJuliaCalcTypeState m_state{GetParam()};
+};
+
+TEST_P(TestOrbitCallbackSelection, requirementUsesStandardCalculation)
+{
+    g_dispatch.require_orbit_calc();
+
+    ASSERT_TRUE(per_image());
+
+    EXPECT_TRUE(g_dispatch.requires_orbit_calc());
+    EXPECT_EQ(standard_fractal_type, g_dispatch.calc_type());
 }
 
-TEST(TestFractalDispatch, mandelAndJuliaIneligibleFallBackToStandardCalcType)
-{
-    expect_mandel_julia_calc_type_selection(FractalType::MANDEL, mandel_per_image, false);
-    expect_mandel_julia_calc_type_selection(FractalType::JULIA, julia_per_image, false);
-}
-
-TEST(TestFractalDispatch, orbitCallbackRequirementUsesStandardCalcType)
-{
-    for (const FractalType type : {FractalType::MANDEL, FractalType::JULIA})
-    {
-        MandelJuliaCalcTypeState state{type};
-        g_dispatch.require_orbit_calc();
-
-        ASSERT_TRUE(per_image());
-
-        EXPECT_TRUE(g_dispatch.requires_orbit_calc());
-        EXPECT_EQ(standard_fractal_type, g_dispatch.calc_type());
-    }
-}
+INSTANTIATE_TEST_SUITE_P(Types, TestOrbitCallbackSelection, Values(FractalType::MANDEL, FractalType::JULIA),
+    [](const TestParamInfo<FractalType> &info) { return info.param == FractalType::MANDEL ? "Mandel" : "Julia"; });
 
 TEST(TestFractalDispatch, showOrbitUsesStandardCalcType)
 {
@@ -678,36 +708,42 @@ TEST(TestFractalDispatch, showOrbitUsesStandardCalcType)
     EXPECT_EQ(standard_fractal_type, g_dispatch.calc_type());
 }
 
-TEST(TestFractalDispatch, julibrotOrbitDispatchUsesSecondaryType)
+class TestJulibrotDispatch : public Test
 {
-    DispatchSelectionState state{FractalType::JULIBROT};
-    const TableFunctions julibrot_table{table_functions(FractalType::JULIBROT)};
-    const TableFunctions orbit_table{table_functions(FractalType::JULIA_Z_POWER)};
-    ValueSaver saved_new_orbit_type{g_new_orbit_type, FractalType::JULIA_Z_POWER};
+private:
+    DispatchSelectionState m_state{FractalType::JULIBROT};
+
+protected:
+    void SetUp() override;
+    const TableFunctions m_julibrot_table{table_functions(FractalType::JULIBROT)};
+    const TableFunctions m_orbit_table{table_functions(FractalType::JULIA_Z_POWER)};
+
+private:
+    ValueSaver<FractalType> m_saved_new_orbit_type{g_new_orbit_type, FractalType::JULIA_Z_POWER};
+};
+
+void TestJulibrotDispatch::SetUp()
+{
     g_params[2] = 3.0;
     g_params[3] = 1.0;
+}
 
+TEST_F(TestJulibrotDispatch, orbitDispatchUsesSecondaryType)
+{
     const FractalDispatch dispatch{make_julibrot_orbit_dispatch()};
 
     EXPECT_EQ(mandel_z_power_cmplx_orbit, dispatch.orbit_calc());
-    EXPECT_EQ(julibrot_table.orbit_calc, g_dispatch.orbit_calc());
-    expect_table_functions(FractalType::JULIBROT, julibrot_table);
-    expect_table_functions(FractalType::JULIA_Z_POWER, orbit_table);
+    EXPECT_EQ(m_julibrot_table.orbit_calc, g_dispatch.orbit_calc());
+    expect_table_functions(FractalType::JULIBROT, m_julibrot_table);
+    expect_table_functions(FractalType::JULIA_Z_POWER, m_orbit_table);
 }
 
-TEST(TestFractalDispatch, julibrotSetupLeavesTableEntries)
+TEST_F(TestJulibrotDispatch, setupLeavesTableEntries)
 {
-    DispatchSelectionState state{FractalType::JULIBROT};
-    const TableFunctions julibrot_table{table_functions(FractalType::JULIBROT)};
-    const TableFunctions orbit_table{table_functions(FractalType::JULIA_Z_POWER)};
-    ValueSaver saved_new_orbit_type{g_new_orbit_type, FractalType::JULIA_Z_POWER};
-    g_params[2] = 3.0;
-    g_params[3] = 1.0;
-
     Standard4D standard;
 
-    expect_table_functions(FractalType::JULIBROT, julibrot_table);
-    expect_table_functions(FractalType::JULIA_Z_POWER, orbit_table);
+    expect_table_functions(FractalType::JULIBROT, m_julibrot_table);
+    expect_table_functions(FractalType::JULIA_Z_POWER, m_orbit_table);
 }
 
 class TestJuliaTableLink : public TestWithParam<FractalTableInput>
