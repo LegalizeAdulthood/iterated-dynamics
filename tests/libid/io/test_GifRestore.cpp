@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <io/GifRestore.h>
 
 #include <gif_lib.h>
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -74,7 +77,9 @@ protected:
 
 std::filesystem::path TestGifRestore::write_file(const std::vector<Byte> &data)
 {
-    const std::string name{UnitTest::GetInstance()->current_test_info()->name()};
+    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
+    std::string name{std::string{info->test_suite_name()} + "." + info->name()};
+    std::replace(name.begin(), name.end(), '/', '_');
     const std::filesystem::path path{std::filesystem::temp_directory_path() /
         ("id-GifRestore-" + name + "-" + std::to_string(m_paths.size()) + ".gif")};
     m_paths.push_back(path);
@@ -140,10 +145,22 @@ void TestGifRestore::TearDown()
     }
 }
 
-TEST_F(TestGifRestore, separatesHeaderImageLinesAndCompletion)
+class TestGifRestoreInput : public TestGifRestore
 {
-    const std::filesystem::path path{write_file(gif_data())};
-    GifRestore restore{path};
+protected:
+    void SetUp() override;
+
+    std::filesystem::path m_path;
+};
+
+void TestGifRestoreInput::SetUp()
+{
+    m_path = write_file(gif_data());
+}
+
+TEST_F(TestGifRestoreInput, separatesHeaderImageLinesAndCompletion)
+{
+    GifRestore restore{m_path};
     EXPECT_FALSE(restore.done());
     EXPECT_EQ(GifRestore::State::BLOCK, restore.state());
     EXPECT_EQ(2, restore.width());
@@ -169,9 +186,18 @@ TEST_F(TestGifRestore, separatesHeaderImageLinesAndCompletion)
     restore.iterate();
     EXPECT_TRUE(restore.done());
     EXPECT_EQ(0, restore.result());
+    EXPECT_TRUE(std::filesystem::remove(m_path));
+}
+
+TEST_F(TestGifRestoreInput, iterationAfterCompletionPreservesSuccess)
+{
+    GifRestore restore{m_path};
+    drain(restore);
+    ASSERT_EQ(0, restore.result());
+
     restore.iterate();
+
     EXPECT_EQ(0, restore.result());
-    EXPECT_TRUE(std::filesystem::remove(path));
 }
 
 TEST_F(TestGifRestore, restoresScanlinesAcrossCompressedDataSubBlocks)
@@ -256,63 +282,113 @@ TEST_F(TestGifRestore, retainsImageBoundariesPositionsAndGlobalPalette)
     EXPECT_EQ(expected, lines);
 }
 
-TEST_F(TestGifRestore, preservesPixelsWithUnequalSkipFactors)
+enum class SamplingImage
 {
-    const std::filesystem::path path{write_image({
-        {0, 1, 2, 3, 4, 5, 6},
-        {7, 8, 9, 10, 11, 12, 13},
-        {14, 15, 0, 1, 2, 3, 4},
-        {5, 6, 7, 8, 9, 10, 11},
-        {12, 13, 14, 15, 0, 1, 2},
-    })};
-    GifRestore wider_skip{path, 2, 1};
-    const std::vector<std::vector<Byte>> expected_wider{{0, 3, 6}, {14, 1, 4}, {12, 15, 2}};
+    MINIMAL,
+    UNEQUAL_SKIPS,
+    POTENTIAL
+};
 
-    EXPECT_EQ(expected_wider, drain(wider_skip));
-    EXPECT_EQ(0, wider_skip.result());
+struct GifSamplingCase
+{
+    const char *name;
+    SamplingImage image;
+    int skip_x;
+    int skip_y;
+    std::vector<std::vector<Byte>> expected;
+};
 
-    GifRestore taller_skip{path, 1, 2};
-    const std::vector<std::vector<Byte>> expected_taller{{0, 2, 4, 6}, {5, 7, 9, 11}};
-    EXPECT_EQ(expected_taller, drain(taller_skip));
-    EXPECT_EQ(0, taller_skip.result());
+void PrintTo(const GifSamplingCase &value, std::ostream *str)
+{
+    *str << value.name;
 }
 
-TEST_F(TestGifRestore, splitsPotentialRowsIntoColorsThenLowBytes)
+class GifSamplingTest : public TestGifRestore, public WithParamInterface<GifSamplingCase>
 {
-    const std::filesystem::path path{write_image({
-        {0, 1, 2, 3, 8, 9, 10, 11},
-        {4, 5, 6, 7, 12, 13, 14, 15},
-        {3, 2, 1, 0, 11, 10, 9, 8},
-    })};
-    GifRestore restore{path, 0, 0, true};
-    const std::vector<std::vector<Byte>> expected{
-        {0, 1, 2, 3}, {8, 9, 10, 11}, {4, 5, 6, 7}, {12, 13, 14, 15}, {3, 2, 1, 0}, {11, 10, 9, 8}};
+protected:
+    void SetUp() override;
 
-    EXPECT_EQ(expected, drain(restore));
+    std::filesystem::path m_path;
+};
 
+void GifSamplingTest::SetUp()
+{
+    switch (GetParam().image)
+    {
+    case SamplingImage::MINIMAL:
+        m_path = write_file(gif_data());
+        break;
+
+    case SamplingImage::UNEQUAL_SKIPS:
+        m_path = write_image({
+            {0, 1, 2, 3, 4, 5, 6},
+            {7, 8, 9, 10, 11, 12, 13},
+            {14, 15, 0, 1, 2, 3, 4},
+            {5, 6, 7, 8, 9, 10, 11},
+            {12, 13, 14, 15, 0, 1, 2},
+        });
+        break;
+
+    case SamplingImage::POTENTIAL:
+        m_path = write_image({
+            {0, 1, 2, 3, 8, 9, 10, 11},
+            {4, 5, 6, 7, 12, 13, 14, 15},
+            {3, 2, 1, 0, 11, 10, 9, 8},
+        });
+        break;
+    }
+}
+
+class TestGifPixelSampling : public GifSamplingTest
+{
+};
+
+TEST_P(TestGifPixelSampling, preservesSampledPixels)
+{
+    GifRestore restore{m_path, GetParam().skip_x, GetParam().skip_y};
+
+    EXPECT_EQ(GetParam().expected, drain(restore));
     EXPECT_EQ(0, restore.result());
-    EXPECT_EQ(8, restore.width());
-    EXPECT_EQ(3, restore.height());
-    EXPECT_EQ(8, restore.image().width);
-    EXPECT_EQ(3, restore.image().height);
-    ASSERT_EQ(16, restore.palette().size());
-    EXPECT_EQ((std::array<Byte, 3>{0, 255, 0}), restore.palette().front());
-    EXPECT_EQ((std::array<Byte, 3>{255, 0, 15}), restore.palette().back());
 }
 
-TEST_F(TestGifRestore, subsamplingKeepsPotentialColorAndLowBytePairs)
+INSTANTIATE_TEST_SUITE_P(SamplingInputs, TestGifPixelSampling,
+    Values(GifSamplingCase{"WiderSkip", SamplingImage::UNEQUAL_SKIPS, 2, 1, {{0, 3, 6}, {14, 1, 4}, {12, 15, 2}}},
+        GifSamplingCase{"TallerSkip", SamplingImage::UNEQUAL_SKIPS, 1, 2, {{0, 2, 4, 6}, {5, 7, 9, 11}}},
+        GifSamplingCase{"MinimalImage", SamplingImage::MINIMAL, 1, 1, {{0}}}),
+    [](const TestParamInfo<GifSamplingCase> &info) { return info.param.name; });
+
+class TestGifPotentialSampling : public GifSamplingTest
 {
-    const std::filesystem::path path{write_image({
-        {0, 1, 2, 3, 8, 9, 10, 11},
-        {4, 5, 6, 7, 12, 13, 14, 15},
-        {3, 2, 1, 0, 11, 10, 9, 8},
-    })};
-    GifRestore restore{path, 1, 1, true};
-    const std::vector<std::vector<Byte>> expected{{0, 2}, {8, 10}, {3, 1}, {11, 9}};
+};
 
-    EXPECT_EQ(expected, drain(restore));
+TEST_P(TestGifPotentialSampling, preservesSampledColorAndLowBytePairs)
+{
+    GifRestore restore{m_path, GetParam().skip_x, GetParam().skip_y, true};
+
+    EXPECT_EQ(GetParam().expected, drain(restore));
     EXPECT_EQ(0, restore.result());
+    if (GetParam().image == SamplingImage::MINIMAL)
+    {
+        EXPECT_EQ(2, restore.image().width);
+    }
+    else
+    {
+        EXPECT_EQ(8, restore.width());
+        EXPECT_EQ(3, restore.height());
+        EXPECT_EQ(8, restore.image().width);
+        EXPECT_EQ(3, restore.image().height);
+        ASSERT_EQ(16, restore.palette().size());
+        EXPECT_EQ((std::array<Byte, 3>{0, 255, 0}), restore.palette().front());
+        EXPECT_EQ((std::array<Byte, 3>{255, 0, 15}), restore.palette().back());
+    }
 }
+
+INSTANTIATE_TEST_SUITE_P(SamplingInputs, TestGifPotentialSampling,
+    Values(GifSamplingCase{"EveryPixel", SamplingImage::POTENTIAL, 0, 0,
+               {{0, 1, 2, 3}, {8, 9, 10, 11}, {4, 5, 6, 7}, {12, 13, 14, 15}, {3, 2, 1, 0}, {11, 10, 9, 8}}},
+        GifSamplingCase{"Subsampled", SamplingImage::POTENTIAL, 1, 1, {{0, 2}, {8, 10}, {3, 1}, {11, 9}}},
+        GifSamplingCase{"MinimalImage", SamplingImage::MINIMAL, 0, 0, {{0}, {1}, {1}, {0}}}),
+    [](const TestParamInfo<GifSamplingCase> &info) { return info.param.name; });
 
 TEST_F(TestGifRestore, rejectsPotentialImageNarrowerThanLogicalScreen)
 {
@@ -383,21 +459,6 @@ TEST_F(TestGifRestore, independentRestoresRetainInputAndLineBuffers)
     EXPECT_EQ((std::vector<Byte>{1, 0}), first.line());
     EXPECT_TRUE(drain(first).empty());
     EXPECT_EQ(0, first.result());
-}
-
-TEST_F(TestGifRestore, preservesSkipFactorsAndPotentialRowWidth)
-{
-    const std::filesystem::path path{write_file(gif_data())};
-    GifRestore skipped{path, 1, 1};
-    const std::vector<std::vector<Byte>> expected_skipped{{0}};
-    EXPECT_EQ(expected_skipped, drain(skipped));
-    EXPECT_EQ(0, skipped.result());
-
-    GifRestore potential{path, 0, 0, true};
-    const std::vector<std::vector<Byte>> expected_potential{{0}, {1}, {1}, {0}};
-    EXPECT_EQ(expected_potential, drain(potential));
-    EXPECT_EQ(2, potential.image().width);
-    EXPECT_EQ(0, potential.result());
 }
 
 TEST_F(TestGifRestore, closesFileWhenAbandonedBetweenLines)
