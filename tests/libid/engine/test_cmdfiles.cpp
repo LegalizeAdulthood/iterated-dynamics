@@ -3121,35 +3121,41 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestNumericParamsParameter,
         NumericParamsParameterInput{"TwoValues", "params=1.0/2.0", {1111.0, 2222.0, 3333.0}, {1.0, 2.0, 0.0}}),
     [](const TestParamInfo<NumericParamsParameterInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommand, paramsStoresText)
+struct RetainedParamsInput
 {
-    ValueSaver saved_param_text{g_param_text};
-    ValueSaver saved_bf_math{g_bf_math, BFMathType::NONE};
+    const char *name;
+    const char *argument;
+    std::vector<std::string> expected;
+};
 
-    exec_cmd_arg("params=112112112/1200000/3/1/1/0");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ("112112112", g_param_text[0]);
-    EXPECT_EQ("1200000", g_param_text[1]);
-    EXPECT_EQ("3", g_param_text[2]);
-    EXPECT_EQ("1", g_param_text[3]);
-    EXPECT_EQ("1", g_param_text[4]);
-    EXPECT_EQ("0", g_param_text[5]);
-    EXPECT_EQ("", g_param_text[6]);
+void PrintTo(const RetainedParamsInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, paramsStoresExplicitDecimalText)
+class TestRetainedParamsText : public TestParameterCommand, public WithParamInterface<RetainedParamsInput>
 {
-    ValueSaver saved_param_text{g_param_text};
-    ValueSaver saved_bf_math{g_bf_math, BFMathType::NONE};
+private:
+    ValueSaver<std::array<std::string, MAX_PARAMS>> m_saved_text{g_param_text};
+    ValueSaver<BFMathType> m_saved_math{g_bf_math, BFMathType::NONE};
+};
 
-    exec_cmd_arg("params=112112112.000/1200000.0");
+TEST_P(TestRetainedParamsText, retainsOriginalRepresentation)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ("112112112.000", g_param_text[0]);
-    EXPECT_EQ("1200000.0", g_param_text[1]);
-    EXPECT_EQ("", g_param_text[2]);
+    for (std::size_t i = 0; i < GetParam().expected.size(); ++i)
+    {
+        EXPECT_EQ(GetParam().expected[i], g_param_text[i]) << i;
+    }
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestRetainedParamsText,
+    Values(RetainedParamsInput{"Integers", "params=112112112/1200000/3/1/1/0",
+               {"112112112", "1200000", "3", "1", "1", "0", ""}},
+        RetainedParamsInput{"ExplicitDecimals", "params=112112112.000/1200000.0", {"112112112.000", "1200000.0", ""}}),
+    [](const TestParamInfo<RetainedParamsInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, miimBreadthFirstLeftToRight)
 {
