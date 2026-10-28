@@ -3347,27 +3347,43 @@ TEST_F(TestParameterCommand, cornersNoValues)
     EXPECT_FALSE(g_use_center_mag);
 }
 
-TEST_F(TestParameterCommand, cornersFourValues)
+struct RegionParameterInput
 {
-    ValueSaver saved_use_center_mag{g_use_center_mag, true};
-    ValueSaver saved_x_min{g_image_region.m_min.x, 111.0};
-    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, 222.0};
-    ValueSaver saved_x_max{g_image_region.m_max.x, 333.0};
-    ValueSaver saved_y_min{g_image_region.m_min.y, 444.0};
-    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, 555.0};
-    ValueSaver saved_y_max{g_image_region.m_max.y, 666.0};
+    const char *name;
+    const char *argument;
+    ImageRegion expected;
+};
 
-    exec_cmd_arg("corners=1/2/3/4");
+void PrintTo(const RegionParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestImageCornersParameter : public TestParameterCommand, public WithParamInterface<RegionParameterInput>
+{
+private:
+    ValueSaver<bool> m_saved_center_mag{g_use_center_mag, true};
+    ValueSaver<ImageRegion> m_saved_region{g_image_region, ImageRegion{{111.0, 444.0}, {333.0, 666.0}, {222.0, 555.0}}};
+};
+
+TEST_P(TestImageCornersParameter, setsImageCorners)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_use_center_mag);
-    EXPECT_EQ(1.0, g_image_region.m_min.x);
-    EXPECT_EQ(1.0, g_image_region.m_3rd.x);
-    EXPECT_EQ(2.0, g_image_region.m_max.x);
-    EXPECT_EQ(3.0, g_image_region.m_min.y);
-    EXPECT_EQ(3.0, g_image_region.m_3rd.y);
-    EXPECT_EQ(4.0, g_image_region.m_max.y);
+    EXPECT_EQ(GetParam().expected.m_min.x, g_image_region.m_min.x);
+    EXPECT_EQ(GetParam().expected.m_max.x, g_image_region.m_max.x);
+    EXPECT_EQ(GetParam().expected.m_min.y, g_image_region.m_min.y);
+    EXPECT_EQ(GetParam().expected.m_max.y, g_image_region.m_max.y);
+    EXPECT_EQ(GetParam().expected.m_3rd.x, g_image_region.m_3rd.x);
+    EXPECT_EQ(GetParam().expected.m_3rd.y, g_image_region.m_3rd.y);
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestImageCornersParameter,
+    Values(RegionParameterInput{"FourValues", "corners=1/2/3/4", {{1.0, 3.0}, {2.0, 4.0}, {1.0, 3.0}}},
+        RegionParameterInput{"SixValues", "corners=1/2/3/4/5/6", {{1.0, 3.0}, {2.0, 4.0}, {5.0, 6.0}}}),
+    [](const TestParamInfo<RegionParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, cornersLongValueSelectsBigFloatPrecision)
 {
@@ -3394,73 +3410,33 @@ TEST_F(TestParameterCommand, cornersLongValueSelectsBigFloatPrecision)
     EXPECT_FALSE(g_use_center_mag);
 }
 
-TEST_F(TestParameterCommand, cornersSixValues)
+class TestOrbitCornersParameter : public TestParameterCommand, public WithParamInterface<RegionParameterInput>
 {
-    ValueSaver saved_use_center_mag{g_use_center_mag, true};
-    ValueSaver saved_x_min{g_image_region.m_min.x, 111.0};
-    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, 222.0};
-    ValueSaver saved_x_max{g_image_region.m_max.x, 333.0};
-    ValueSaver saved_y_min{g_image_region.m_min.y, 444.0};
-    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, 555.0};
-    ValueSaver saved_y_max{g_image_region.m_max.y, 666.0};
+private:
+    ValueSaver<bool> m_saved_set_corners{g_set_orbit_corners, false};
+    ValueSaver<bool> m_saved_keep_coords{g_keep_screen_coords};
+    ValueSaver<ImageRegion> m_saved_region{g_orbit_corner, ImageRegion{{999.0, 999.0}, {999.0, 999.0}, {999.0, 999.0}}};
+};
 
-    exec_cmd_arg("corners=1/2/3/4/5/6");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_FALSE(g_use_center_mag);
-    EXPECT_EQ(1.0, g_image_region.m_min.x);
-    EXPECT_EQ(2.0, g_image_region.m_max.x);
-    EXPECT_EQ(3.0, g_image_region.m_min.y);
-    EXPECT_EQ(4.0, g_image_region.m_max.y);
-    EXPECT_EQ(5.0, g_image_region.m_3rd.x);
-    EXPECT_EQ(6.0, g_image_region.m_3rd.y);
-}
-
-TEST_F(TestParameterCommand, orbitCornersFourValues)
+TEST_P(TestOrbitCornersParameter, setsOrbitCorners)
 {
-    ValueSaver saved_set_orbit_corners{g_set_orbit_corners, false};
-    ValueSaver saved_orbit_corner_min_x{g_orbit_corner.m_min.x, 999.0};
-    ValueSaver saved_orbit_corner_max_x{g_orbit_corner.m_max.x, 999.0};
-    ValueSaver saved_orbit_corner_3_x{g_orbit_corner.m_3rd.x, 999.0};
-    ValueSaver saved_orbit_corner_min_y{g_orbit_corner.m_min.y, 999.0};
-    ValueSaver saved_orbit_corner_max_y{g_orbit_corner.m_max.y, 999.0};
-    ValueSaver saved_orbit_corner_3_y{g_orbit_corner.m_3rd.y, 999.0};
-
-    exec_cmd_arg("orbitcorners=1/2/3/4");
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_set_orbit_corners);
     EXPECT_TRUE(g_keep_screen_coords);
-    EXPECT_EQ(1.0, g_orbit_corner.m_min.x);
-    EXPECT_EQ(2.0, g_orbit_corner.m_max.x);
-    EXPECT_EQ(3.0, g_orbit_corner.m_min.y);
-    EXPECT_EQ(4.0, g_orbit_corner.m_max.y);
-    EXPECT_EQ(1.0, g_orbit_corner.m_3rd.x);
-    EXPECT_EQ(3.0, g_orbit_corner.m_3rd.y);
+    EXPECT_EQ(GetParam().expected.m_min.x, g_orbit_corner.m_min.x);
+    EXPECT_EQ(GetParam().expected.m_max.x, g_orbit_corner.m_max.x);
+    EXPECT_EQ(GetParam().expected.m_min.y, g_orbit_corner.m_min.y);
+    EXPECT_EQ(GetParam().expected.m_max.y, g_orbit_corner.m_max.y);
+    EXPECT_EQ(GetParam().expected.m_3rd.x, g_orbit_corner.m_3rd.x);
+    EXPECT_EQ(GetParam().expected.m_3rd.y, g_orbit_corner.m_3rd.y);
 }
 
-TEST_F(TestParameterCommand, orbitCornersSixValues)
-{
-    ValueSaver saved_set_orbit_corners{g_set_orbit_corners, false};
-    ValueSaver saved_orbit_corner_min_x{g_orbit_corner.m_min.x, 999.0};
-    ValueSaver saved_orbit_corner_max_x{g_orbit_corner.m_max.x, 999.0};
-    ValueSaver saved_orbit_corner_3_x{g_orbit_corner.m_3rd.x, 999.0};
-    ValueSaver saved_orbit_corner_min_y{g_orbit_corner.m_min.y, 999.0};
-    ValueSaver saved_orbit_corner_max_y{g_orbit_corner.m_max.y, 999.0};
-    ValueSaver saved_orbit_corner_3_y{g_orbit_corner.m_3rd.y, 999.0};
-
-    exec_cmd_arg("orbitcorners=1/2/3/4/5/6");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_TRUE(g_set_orbit_corners);
-    EXPECT_TRUE(g_keep_screen_coords);
-    EXPECT_EQ(1.0, g_orbit_corner.m_min.x);
-    EXPECT_EQ(2.0, g_orbit_corner.m_max.x);
-    EXPECT_EQ(3.0, g_orbit_corner.m_min.y);
-    EXPECT_EQ(4.0, g_orbit_corner.m_max.y);
-    EXPECT_EQ(5.0, g_orbit_corner.m_3rd.x);
-    EXPECT_EQ(6.0, g_orbit_corner.m_3rd.y);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOrbitCornersParameter,
+    Values(RegionParameterInput{"FourValues", "orbitcorners=1/2/3/4", {{1.0, 3.0}, {2.0, 4.0}, {1.0, 3.0}}},
+        RegionParameterInput{"SixValues", "orbitcorners=1/2/3/4/5/6", {{1.0, 3.0}, {2.0, 4.0}, {5.0, 6.0}}}),
+    [](const TestParamInfo<RegionParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, screenCoordsYes)
 {
@@ -3472,35 +3448,37 @@ TEST_F(TestParameterCommand, screenCoordsYes)
     EXPECT_TRUE(g_keep_screen_coords);
 }
 
-TEST_F(TestParameterCommand, orbitDrawModeLine)
+struct OrbitDrawModeParameterInput
 {
-    ValueSaver saved_orbit_draw_mode{g_draw_mode, static_cast<OrbitDrawMode>('!')};
+    const char *name;
+    const char *argument;
+    OrbitDrawMode expected;
+};
 
-    exec_cmd_arg("orbitdrawmode=l");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(OrbitDrawMode::LINE, g_draw_mode);
+void PrintTo(const OrbitDrawModeParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, orbitDrawModeRectangle)
+class TestOrbitDrawModeParameter : public TestParameterCommand, public WithParamInterface<OrbitDrawModeParameterInput>
 {
-    ValueSaver saved_orbit_draw_mode{g_draw_mode, static_cast<OrbitDrawMode>('!')};
+private:
+    ValueSaver<OrbitDrawMode> m_saved_mode{g_draw_mode, static_cast<OrbitDrawMode>('!')};
+};
 
-    exec_cmd_arg("orbitdrawmode=r");
+TEST_P(TestOrbitDrawModeParameter, setsDrawMode)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(OrbitDrawMode::RECTANGLE, g_draw_mode);
+    EXPECT_EQ(GetParam().expected, g_draw_mode);
 }
 
-TEST_F(TestParameterCommand, orbitDrawModeFunction)
-{
-    ValueSaver saved_orbit_draw_mode{g_draw_mode, static_cast<OrbitDrawMode>('!')};
-
-    exec_cmd_arg("orbitdrawmode=f");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(OrbitDrawMode::FUNCTION, g_draw_mode);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOrbitDrawModeParameter,
+    Values(OrbitDrawModeParameterInput{"Line", "orbitdrawmode=l", OrbitDrawMode::LINE},
+        OrbitDrawModeParameterInput{"Rectangle", "orbitdrawmode=r", OrbitDrawMode::RECTANGLE},
+        OrbitDrawModeParameterInput{"Function", "orbitdrawmode=f", OrbitDrawMode::FUNCTION}),
+    [](const TestParamInfo<OrbitDrawModeParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, viewWindowsdDefaults)
 {
