@@ -1175,19 +1175,39 @@ INSTANTIATE_TEST_SUITE_P(Arguments, TestRejectedRelease,
         RejectedReleaseInput{"Unsupported", "release=100", std::nullopt, std::nullopt}),
     [](const TestParamInfo<RejectedReleaseInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommand, resetVersionControlsLambdaExpBailout)
+struct LambdaResetCompatibilityInput
 {
-    ValueSaver saved_version{g_version};
-    ValueSaver saved_fractal_type{g_fractal_type};
-    ValueSaver saved_cur_fractal_specific{g_cur_fractal_specific};
-    ValueSaver saved_dispatch{g_dispatch};
-    ValueSaver saved_trig_index{g_trig_index[0]};
-    ValueSaver saved_float_param{g_float_param};
-    ValueSaver saved_param_z1{g_param_z1};
-    ValueSaver saved_old_z{g_old_z};
-    ValueSaver saved_magnitude_limit{g_magnitude_limit};
+    const char *name;
+    const char *argument;
+    int escape_result;
+};
 
-    exec_cmd_arg("reset=2002");
+void PrintTo(const LambdaResetCompatibilityInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestLambdaResetCompatibility : public TestParameterCommand,
+                                     public WithParamInterface<LambdaResetCompatibilityInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<Version> m_saved_version{g_version};
+    ValueSaver<FractalType> m_saved_type{g_fractal_type};
+    ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific};
+    ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
+    ValueSaver<TrigFn> m_saved_trig{g_trig_index[0]};
+    ValueSaver<DComplex *> m_saved_float_param{g_float_param};
+    ValueSaver<DComplex> m_saved_param{g_param_z1};
+    ValueSaver<DComplex> m_saved_old_z{g_old_z};
+    ValueSaver<double> m_saved_limit{g_magnitude_limit};
+};
+
+void TestLambdaResetCompatibility::SetUp()
+{
+    TestParameterCommand::SetUp();
+    exec_cmd_arg(GetParam().argument);
     set_trig_array(0, "exp");
     set_fractal_type(FractalType::LAMBDA_FN);
     g_param_z1 = DComplex{1.9, 0.4};
@@ -1195,44 +1215,56 @@ TEST_F(TestParameterCommand, resetVersionControlsLambdaExpBailout)
     g_magnitude_limit = 64.0;
     lambda_trig_per_image();
     g_old_z = DComplex{9.0, 0.0};
-    EXPECT_EQ(0, orbit_calc());
-
-    exec_cmd_arg("reset=2003");
-    set_trig_array(0, "exp");
-    set_fractal_type(FractalType::LAMBDA_FN);
-    g_param_z1 = DComplex{1.9, 0.4};
-    g_float_param = &g_param_z1;
-    g_magnitude_limit = 64.0;
-    lambda_trig_per_image();
-    g_old_z = DComplex{9.0, 0.0};
-    EXPECT_EQ(1, orbit_calc());
 }
 
-TEST_F(TestParameterCommand, atanColorsUseLegacyScaleThrough2002)
+TEST_P(TestLambdaResetCompatibility, resetVersionControlsEscapeResult)
 {
-    ValueSaver saved_version{g_version};
-    ValueSaver saved_colors{g_colors};
-    ValueSaver saved_atan_colors{g_atan_colors};
+    EXPECT_EQ(GetParam().escape_result, orbit_calc());
+}
 
-    g_version = parse_legacy_version(2002);
-    g_colors = 256;
+INSTANTIATE_TEST_SUITE_P(Versions, TestLambdaResetCompatibility,
+    Values(LambdaResetCompatibilityInput{"Through2002", "reset=2002", 0},
+        LambdaResetCompatibilityInput{"After2002", "reset=2003", 1}),
+    [](const TestParamInfo<LambdaResetCompatibilityInput> &info) { return info.param.name; });
+
+struct AtanColorCompatibilityInput
+{
+    const char *name;
+    int version;
+    int scale;
+};
+
+void PrintTo(const AtanColorCompatibilityInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestAtanColorCompatibility : public TestParameterCommand, public WithParamInterface<AtanColorCompatibilityInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<Version> m_saved_version{g_version};
+    ValueSaver<int> m_saved_colors{g_colors, 256};
+    ValueSaver<int> m_saved_scale{g_atan_colors};
+};
+
+void TestAtanColorCompatibility::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_version = parse_legacy_version(GetParam().version);
+}
+
+TEST_P(TestAtanColorCompatibility, versionControlsColorScale)
+{
     init_atan_colors();
 
-    EXPECT_EQ(180, g_atan_colors);
+    EXPECT_EQ(GetParam().scale, g_atan_colors);
 }
 
-TEST_F(TestParameterCommand, atanColorsUsePaletteSizeAfter2002)
-{
-    ValueSaver saved_version{g_version};
-    ValueSaver saved_colors{g_colors};
-    ValueSaver saved_atan_colors{g_atan_colors};
-
-    g_version = parse_legacy_version(2003);
-    g_colors = 256;
-    init_atan_colors();
-
-    EXPECT_EQ(g_colors, g_atan_colors);
-}
+INSTANTIATE_TEST_SUITE_P(Versions, TestAtanColorCompatibility,
+    Values(AtanColorCompatibilityInput{"Through2002", 2002, 180}, AtanColorCompatibilityInput{"After2002", 2003, 256}),
+    [](const TestParamInfo<AtanColorCompatibilityInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, longFilenameExtensionOK)
 {
