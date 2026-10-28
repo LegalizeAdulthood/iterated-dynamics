@@ -4902,97 +4902,289 @@ TEST_P(TestPerturbationIterations, decompositionSurvivesReferenceReplacement)
     EXPECT_GT(m_engine.reference_count(), 1);
 }
 
-TEST_P(TestPerturbationIterations, biomorphUsesStrictComponentTestsAtTheSelectedBailout)
+class PerturbationBiomorphTest : public PerturbationIterationTest
 {
-    ValueSaver saved_limit{g_magnitude_limit};
-    ValueSaver saved_limit2{g_magnitude_limit2};
-    g_inside_method = ColorMethod::ITER;
+public:
+    explicit PerturbationBiomorphTest(bool use_big_float);
 
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<double> m_saved_limit2{g_magnitude_limit2};
+};
+
+PerturbationBiomorphTest::PerturbationBiomorphTest(const bool use_big_float) :
+    PerturbationIterationTest{use_big_float}
+{
+}
+
+void PerturbationBiomorphTest::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_magnitude_limit2 = 2.0;
+}
+
+struct BiomorphBoundaryInput
+{
+    std::string name;
+    bool big_float;
+    double limit;
+    int color;
+    std::complex<double> point;
+    bool hit;
+};
+
+void PrintTo(const BiomorphBoundaryInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<BiomorphBoundaryInput> biomorph_boundary_inputs()
+{
+    struct Limit
+    {
+        const char *name;
+        double value;
+    };
     struct Sample
     {
+        const char *name;
         std::complex<double> point;
-        bool biomorph;
+        bool hit;
     };
 
-    for (const double limit : {4.0, 100.0})
+    std::vector<BiomorphBoundaryInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(limit);
-        g_magnitude_limit = limit;
-        const double threshold{std::sqrt(limit)};
-        g_magnitude_limit2 = threshold;
-        const double below{threshold * (1.0 - 1.0 / 1024)};
-        for (const int color : {0, 9})
+        for (const Limit &limit : {Limit{"Four", 4.0}, {"Hundred", 100.0}})
         {
-            SCOPED_TRACE(color);
-            g_biomorph = color;
-            for (const Sample &sample :
-                {Sample{{2 * threshold, 0.0}, true}, {{0.0, 2 * threshold}, true}, {{2 * threshold, threshold}, false},
-                    {{threshold, 2 * threshold}, false}, {{2 * threshold, below}, true}, {{below, 2 * threshold}, true},
-                    {{-below, -2 * threshold}, true}, {{-threshold, -2 * threshold}, false}})
+            const double threshold{std::sqrt(limit.value)};
+            const double below{threshold * (1.0 - 1.0 / 1024)};
+            const Sample samples[]{
+                {"PositiveRealAxis", {2 * threshold, 0.0}, true},
+                {"PositiveImaginaryAxis", {0.0, 2 * threshold}, true},
+                {"ImaginaryAtThreshold", {2 * threshold, threshold}, false},
+                {"RealAtThreshold", {threshold, 2 * threshold}, false},
+                {"ImaginaryBelowThreshold", {2 * threshold, below}, true},
+                {"RealBelowThreshold", {below, 2 * threshold}, true},
+                {"NegativeRealBelowThreshold", {-below, -2 * threshold}, true},
+                {"NegativeRealAtThreshold", {-threshold, -2 * threshold}, false},
+            };
+            for (const int color : {0, 9})
             {
-                SCOPED_TRACE(sample.point);
-                set_initial_offset({-sample.point.real(), -sample.point.imag()});
-                compare_pixel(sample.point, 128);
-                EXPECT_EQ(1, g_real_color_iter);
-                EXPECT_EQ(sample.biomorph ? color : 1, g_color);
+                for (const Sample &sample : samples)
+                {
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Limit" + limit.name +
+                            "_Color" + std::to_string(color) + "_" + sample.name,
+                        big_float, limit.value, color, sample.point, sample.hit});
+                }
             }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, biomorphRetainsOutsideFormulasAndFixedColors)
+class TestBiomorphBoundary : public PerturbationBiomorphTest, public WithParamInterface<BiomorphBoundaryInput>
 {
-    ValueSaver saved_limit2{g_magnitude_limit2, 2.0};
+public:
+    TestBiomorphBoundary();
+
+protected:
+    void SetUp() override;
+};
+
+TestBiomorphBoundary::TestBiomorphBoundary() :
+    PerturbationBiomorphTest{GetParam().big_float}
+{
+}
+
+void TestBiomorphBoundary::SetUp()
+{
+    PerturbationBiomorphTest::SetUp();
+    g_inside_method = ColorMethod::ITER;
+    g_magnitude_limit = GetParam().limit;
+    g_magnitude_limit2 = std::sqrt(GetParam().limit);
+    g_biomorph = GetParam().color;
+    const std::complex<double> point{GetParam().point};
+    set_initial_offset({-point.real(), -point.imag()});
+}
+
+TEST_P(TestBiomorphBoundary, usesStrictComponentsAtSelectedBailout)
+{
+    compare_pixel(GetParam().point, 128);
+
+    EXPECT_EQ(1, g_real_color_iter);
+    EXPECT_EQ(GetParam().hit ? GetParam().color : 1, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBiomorphBoundary, ValuesIn(biomorph_boundary_inputs()),
+    [](const TestParamInfo<BiomorphBoundaryInput> &info) { return info.param.name; });
+
+struct BiomorphOutsideInput
+{
+    std::string name;
+    bool big_float;
+    ColorMethod inside;
+    ColorMethod outside;
+    std::complex<double> point;
+    std::optional<int> color;
+};
+
+void PrintTo(const BiomorphOutsideInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<BiomorphOutsideInput> biomorph_outside_inputs()
+{
+    const std::array<PerturbationColorMethod, 2> inside_methods{
+        {{"FixedColor", ColorMethod::COLOR}, {"Iterations", ColorMethod::ITER}}};
+    const std::array<PerturbationColorMethod, 9> outside_methods{
+        {{"Iterations", ColorMethod::ITER}, {"FixedColor", ColorMethod::COLOR}, {"Real", ColorMethod::REAL},
+            {"Imaginary", ColorMethod::IMAG}, {"Product", ColorMethod::MULT}, {"Sum", ColorMethod::SUM},
+            {"Atan", ColorMethod::ATAN}, {"Fmod", ColorMethod::FMOD}, {"TotalDistance", ColorMethod::TDIS}}};
+    std::vector<BiomorphOutsideInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &inside : inside_methods)
+        {
+            for (const PerturbationColorMethod &outside : outside_methods)
+            {
+                for (const bool hit : {true, false})
+                {
+                    std::optional<int> color;
+                    if (hit)
+                    {
+                        color = outside.method == ColorMethod::COLOR ? 6 : 9;
+                    }
+                    else if (outside.method == ColorMethod::ITER)
+                    {
+                        color = 1;
+                    }
+                    else if (outside.method == ColorMethod::REAL)
+                    {
+                        color = 10;
+                    }
+                    else if (outside.method == ColorMethod::COLOR)
+                    {
+                        color = 6;
+                    }
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Inside" + inside.name +
+                            "_Outside" + outside.name + (hit ? "_Hit" : "_NoHit"),
+                        big_float, inside.method, outside.method,
+                        hit ? std::complex<double>{0.5, 0.0} : std::complex<double>{2.0, 2.0}, color});
+                }
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestBiomorphOutside : public PerturbationBiomorphTest, public WithParamInterface<BiomorphOutsideInput>
+{
+public:
+    TestBiomorphOutside();
+
+protected:
+    void SetUp() override;
+};
+
+TestBiomorphOutside::TestBiomorphOutside() :
+    PerturbationBiomorphTest{GetParam().big_float}
+{
+}
+
+void TestBiomorphOutside::SetUp()
+{
+    PerturbationBiomorphTest::SetUp();
     g_biomorph = 9;
     g_outside_color = 6;
     g_close_proximity = 16.0;
     init_atan_colors();
-    for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::ITER})
+    g_inside_method = GetParam().inside;
+    g_outside_method = GetParam().outside;
+}
+
+TEST_P(TestBiomorphOutside, retainsOutsideFormulaAndFixedColor)
+{
+    compare_pixel(GetParam().point, 128);
+
+    if (GetParam().color)
     {
-        SCOPED_TRACE(static_cast<int>(inside));
-        g_inside_method = inside;
-        for (const ColorMethod outside : {ColorMethod::ITER, ColorMethod::COLOR, ColorMethod::REAL, ColorMethod::IMAG,
-                 ColorMethod::MULT, ColorMethod::SUM, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS})
-        {
-            SCOPED_TRACE(static_cast<int>(outside));
-            g_outside_method = outside;
-            compare_pixel({0.5, 0.0}, 128);
-            EXPECT_EQ(outside == ColorMethod::COLOR ? 6 : 9, g_color);
-            compare_pixel({2.0, 2.0}, 128);
-            if (outside == ColorMethod::ITER)
-            {
-                EXPECT_EQ(1, g_color);
-            }
-            else if (outside == ColorMethod::REAL)
-            {
-                EXPECT_EQ(10, g_color);
-            }
-            else if (outside == ColorMethod::COLOR)
-            {
-                EXPECT_EQ(6, g_color);
-            }
-        }
+        EXPECT_EQ(*GetParam().color, g_color);
     }
 }
 
-TEST_P(TestPerturbationIterations, biomorphDoesNotReplaceInsideMethods)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBiomorphOutside, ValuesIn(biomorph_outside_inputs()),
+    [](const TestParamInfo<BiomorphOutsideInput> &info) { return info.param.name; });
+
+struct BiomorphInsideInput
 {
-    ValueSaver saved_limit2{g_magnitude_limit2, 2.0};
-    init_atan_colors();
-    for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60,
-             ColorMethod::BOF61, ColorMethod::ATANI, ColorMethod::FMODI, ColorMethod::EPS_CROSS, ColorMethod::PERIOD,
-             ColorMethod::STAR_TRAIL})
-    {
-        SCOPED_TRACE(static_cast<int>(inside));
-        g_inside_method = inside;
-        g_biomorph = -1;
-        compare_pixel({0.125, 0.0625}, 128);
-        const int expected{g_color};
-        g_biomorph = 9;
-        compare_pixel({0.125, 0.0625}, 128);
-        EXPECT_EQ(expected, g_color);
-    }
+    std::string name;
+    bool big_float;
+    ColorMethod inside;
+};
+
+void PrintTo(const BiomorphInsideInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+std::vector<BiomorphInsideInput> biomorph_inside_inputs()
+{
+    const std::array<PerturbationColorMethod, 10> methods{
+        {{"FixedColor", ColorMethod::COLOR}, {"Iterations", ColorMethod::ITER}, {"Magnitude", ColorMethod::ZMAG},
+            {"Bof60", ColorMethod::BOF60}, {"Bof61", ColorMethod::BOF61}, {"Atan", ColorMethod::ATANI},
+            {"Fmod", ColorMethod::FMODI}, {"EpsilonCross", ColorMethod::EPS_CROSS}, {"Period", ColorMethod::PERIOD},
+            {"StarTrail", ColorMethod::STAR_TRAIL}}};
+    std::vector<BiomorphInsideInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &inside : methods)
+        {
+            inputs.push_back(
+                {std::string{big_float ? "HighPrecision_" : "Double_"} + inside.name, big_float, inside.method});
+        }
+    }
+    return inputs;
+}
+
+class TestBiomorphInside : public PerturbationBiomorphTest, public WithParamInterface<BiomorphInsideInput>
+{
+public:
+    TestBiomorphInside();
+
+protected:
+    void SetUp() override;
+};
+
+TestBiomorphInside::TestBiomorphInside() :
+    PerturbationBiomorphTest{GetParam().big_float}
+{
+}
+
+void TestBiomorphInside::SetUp()
+{
+    PerturbationBiomorphTest::SetUp();
+    init_atan_colors();
+    g_inside_method = GetParam().inside;
+}
+
+TEST_P(TestBiomorphInside, doesNotReplaceInsideMethod)
+{
+    g_biomorph = -1;
+    compare_pixel({0.125, 0.0625}, 128);
+    const int expected{g_color};
+
+    g_biomorph = 9;
+    compare_pixel({0.125, 0.0625}, 128);
+
+    EXPECT_EQ(expected, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBiomorphInside, ValuesIn(biomorph_inside_inputs()),
+    [](const TestParamInfo<BiomorphInsideInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, biomorphFinishingAndMappingSurviveReferenceReplacement)
 {
