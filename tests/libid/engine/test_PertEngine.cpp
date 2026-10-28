@@ -6675,51 +6675,131 @@ TEST_P(TestPeriodColors, matchesStandardCycleLengthAndNoCycleResult)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestPeriodColors, ValuesIn(period_color_inputs()),
     [](const TestParamInfo<PeriodColorInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, cycleHighlightingOverridesInsideAndBiomorphColors)
+struct CycleColorInput
 {
-    g_periodicity_check = -1;
-    g_inside_color = 3;
-    g_biomorph = 5;
-    g_outside_method = ColorMethod::REAL;
-    for (const ColorMethod inside :
-        {ColorMethod::COLOR, ColorMethod::ITER, ColorMethod::PERIOD, ColorMethod::BOF60, ColorMethod::BOF61})
-    {
-        SCOPED_TRACE(static_cast<int>(inside));
-        g_inside_method = inside;
-        compare_pixel({0.0, 0.0}, 128);
-        EXPECT_EQ(7, g_color);
-    }
-    g_biomorph = -1;
-    g_inside_method = ColorMethod::ZMAG;
-    compare_pixel({0.0, 0.0}, 128);
-    EXPECT_EQ(1, g_color);
-    EXPECT_EQ(127, s_standard_orbit.size());
+    std::string name;
+    bool big_float;
+    ColorMethod inside;
+    int biomorph;
+    int color;
+    std::optional<std::size_t> orbit_size;
+};
+
+void PrintTo(const CycleColorInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_P(TestPerturbationIterations, periodColorsUseLogMappingButHighlightsDoNot)
+std::vector<CycleColorInput> cycle_color_inputs()
 {
-    ValueSaver saved_table{g_log_map_table, std::vector<Byte>(129, 44)};
-    ValueSaver saved_max{g_log_map_table_max_size, 128L};
-    ValueSaver saved_flag{g_log_map_flag, 1L};
-    ValueSaver saved_calculate{g_log_map_calculate, false};
+    const PerturbationColorMethod methods[]{
+        {"FixedColor", ColorMethod::COLOR},
+        {"Iterations", ColorMethod::ITER},
+        {"Period", ColorMethod::PERIOD},
+        {"Bof60", ColorMethod::BOF60},
+        {"Bof61", ColorMethod::BOF61},
+    };
+    std::vector<CycleColorInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        const std::string prefix{big_float ? "HighPrecision_" : "Double_"};
+        for (const PerturbationColorMethod &method : methods)
+        {
+            inputs.push_back({prefix + method.name + "_BiomorphFive", big_float, method.method, 5, 7, std::nullopt});
+        }
+        inputs.push_back({prefix + "Magnitude_NoBiomorph", big_float, ColorMethod::ZMAG, -1, 1, 127});
+    }
+    return inputs;
+}
+
+class TestCycleColors : public PerturbationIterationTest, public WithParamInterface<CycleColorInput>
+{
+public:
+    TestCycleColors();
+
+protected:
+    void SetUp() override;
+};
+
+TestCycleColors::TestCycleColors() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestCycleColors::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_periodicity_check = -1;
+    g_inside_color = 3;
+    g_biomorph = GetParam().biomorph;
+    g_outside_method = ColorMethod::REAL;
+    g_inside_method = GetParam().inside;
+}
+
+TEST_P(TestCycleColors, retainsCycleHighlightingPrecedence)
+{
+    compare_pixel({0.0, 0.0}, 128);
+
+    EXPECT_EQ(GetParam().color, g_color);
+    if (GetParam().orbit_size)
+    {
+        EXPECT_EQ(*GetParam().orbit_size, s_standard_orbit.size());
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestCycleColors, ValuesIn(cycle_color_inputs()),
+    [](const TestParamInfo<CycleColorInput> &info) { return info.param.name; });
+
+std::vector<PeriodColorInput> mapped_period_color_inputs()
+{
+    std::vector<PeriodColorInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const int periodicity : {1, -1})
+        {
+            for (const double real : {0.0, -1.0, 0.25})
+            {
+                const int color{real == 0.25 ? 13 : periodicity < 0 ? 7 : real == 0.0 ? 11 : 12};
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
+                        (periodicity < 0 ? "NegativePeriodicity" : "Periodicity") +
+                        (real == 0.0           ? "_Zero"
+                                : real == -1.0 ? "_MinusOne"
+                                               : "_Quarter"),
+                    big_float, periodicity, real, color});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestMappedPeriodColors : public TestPeriodColors
+{
+protected:
+    void SetUp() override;
+};
+
+void TestMappedPeriodColors::SetUp()
+{
+    TestPeriodColors::SetUp();
+    g_log_map_table.assign(129, 44);
+    g_log_map_table_max_size = 128;
+    g_log_map_flag = 1;
+    g_log_map_calculate = false;
     g_log_map_table[1] = 11;
     g_log_map_table[2] = 12;
     g_log_map_table[7] = 99;
     g_log_map_table[128] = 13;
-    g_inside_method = ColorMethod::PERIOD;
-    g_close_enough = 1e-14;
-    for (const int periodicity : {1, -1})
-    {
-        SCOPED_TRACE(periodicity);
-        g_periodicity_check = periodicity;
-        compare_pixel({0.0, 0.0}, 128);
-        EXPECT_EQ(periodicity < 0 ? 7 : 11, g_color);
-        compare_pixel({-1.0, 0.0}, 128);
-        EXPECT_EQ(periodicity < 0 ? 7 : 12, g_color);
-        compare_pixel({0.25, 0.0}, 128);
-        EXPECT_EQ(13, g_color);
-    }
 }
+
+TEST_P(TestMappedPeriodColors, mapsPeriodColorsButNotHighlights)
+{
+    compare_pixel({GetParam().real, 0.0}, 128);
+
+    EXPECT_EQ(GetParam().color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestMappedPeriodColors, ValuesIn(mapped_period_color_inputs()),
+    [](const TestParamInfo<PeriodColorInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, potentialColorsTakePrecedenceOverPeriodicityColors)
 {
