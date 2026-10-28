@@ -1853,52 +1853,116 @@ TEST_P(TestPerturbationIterations, pixelInitializationIgnoresTheFixedInitialOrbi
     EXPECT_EQ((std::complex<double>{0.375, 0.0625}), s_perturbation_orbit.front());
 }
 
-TEST_P(TestPerturbationIterations, fixedInitialOrbitRetainsBofCompatibilityPrecedence)
+class TestFixedBofInitialization : public TestPerturbationBofInitialization
 {
+protected:
+    void SetUp() override;
+};
+
+void TestFixedBofInitialization::SetUp()
+{
+    TestPerturbationBofInitialization::SetUp();
     g_use_init_orbit = InitOrbitMode::VALUE;
     g_init_orbit = {0.25, 0.125};
-    set_initial_offset({0.125, -0.0625});
-    for (const ColorMethod method : {ColorMethod::BOF60, ColorMethod::BOF61})
-    {
-        for (const bool book : {false, true})
-        {
-            SCOPED_TRACE(static_cast<int>(method));
-            SCOPED_TRACE(book);
-            g_inside_method = method;
-            g_bof_match_book_images = book;
-
-            compare_pixel({0.125, 0.0625}, 8);
-
-            const std::complex<double> expected{
-                book ? std::complex<double>{0.125, -0.0625} : std::complex<double>{0.375, 0.0625}};
-            EXPECT_EQ(expected, s_perturbation_orbit.front());
-            EXPECT_EQ(book ? 8 : 7, s_perturbation_orbit.size());
-        }
-    }
 }
 
-TEST_P(TestPerturbationIterations, initialOrbitModesSurviveDisplacementAndReferenceReplacement)
+TEST_P(TestFixedBofInitialization, retainsCompatibilityPrecedence)
 {
-    set_initial_offset({0.125, -0.0625});
-    for (const InitOrbitMode mode : {InitOrbitMode::VALUE, InitOrbitMode::PIXEL})
-    {
-        for (const DComplex &initial : {DComplex{}, DComplex{0.25, 0.125}})
-        {
-            SCOPED_TRACE(static_cast<int>(mode));
-            SCOPED_TRACE(initial.x);
-            SCOPED_TRACE(initial.y);
-            g_use_init_orbit = mode;
-            g_init_orbit = initial;
-            m_engine.set_glitch_tolerance(0.0);
-            compare_pixel({0.25, 0.125}, 8, 0.125);
-            EXPECT_EQ(1, m_engine.reference_count());
+    const bool book{GetParam().book};
 
-            m_engine.set_glitch_tolerance(2.0);
-            compare_pixel({0.25, 0.125}, 8, 0.125);
-            EXPECT_GT(m_engine.reference_count(), 1);
+    compare_pixel({0.125, 0.0625}, 8);
+
+    const std::complex<double> expected{
+        book ? std::complex<double>{0.125, -0.0625} : std::complex<double>{0.375, 0.0625}};
+    EXPECT_EQ(expected, s_perturbation_orbit.front());
+    EXPECT_EQ(book ? 8 : 7, s_perturbation_orbit.size());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFixedBofInitialization, ValuesIn(perturbation_bof_inputs()),
+    [](const TestParamInfo<BofInitializationInput> &info) { return info.param.name; });
+
+struct InitialOrbitReplacementInput
+{
+    std::string name;
+    bool big_float;
+    InitOrbitMode mode;
+    DComplex initial;
+    double tolerance;
+};
+
+void PrintTo(const InitialOrbitReplacementInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<InitialOrbitReplacementInput> initial_orbit_replacement_inputs()
+{
+    struct InitialValue
+    {
+        const char *name;
+        DComplex value;
+    };
+
+    std::vector<InitialOrbitReplacementInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const InitOrbitMode mode : {InitOrbitMode::VALUE, InitOrbitMode::PIXEL})
+        {
+            for (const InitialValue &initial : {InitialValue{"Zero", {}}, {"Complex", {0.25, 0.125}}})
+            {
+                for (const double tolerance : {0.0, 2.0})
+                {
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
+                            (mode == InitOrbitMode::VALUE ? "Value_" : "Pixel_") + initial.name +
+                            (tolerance == 0.0 ? "_NoReplacement" : "_Replacement"),
+                        big_float, mode, initial.value, tolerance});
+                }
+            }
         }
     }
+    return inputs;
 }
+
+class TestInitialOrbitReplacement : public PerturbationIterationTest,
+                                    public WithParamInterface<InitialOrbitReplacementInput>
+{
+public:
+    TestInitialOrbitReplacement();
+
+protected:
+    void SetUp() override;
+};
+
+TestInitialOrbitReplacement::TestInitialOrbitReplacement() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestInitialOrbitReplacement::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    set_initial_offset({0.125, -0.0625});
+    g_use_init_orbit = GetParam().mode;
+    g_init_orbit = GetParam().initial;
+    m_engine.set_glitch_tolerance(GetParam().tolerance);
+}
+
+TEST_P(TestInitialOrbitReplacement, preservesDisplacedInitialOrbit)
+{
+    compare_pixel({0.25, 0.125}, 8, 0.125);
+
+    if (GetParam().tolerance == 0.0)
+    {
+        EXPECT_EQ(1, m_engine.reference_count());
+    }
+    else
+    {
+        EXPECT_GT(m_engine.reference_count(), 1);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInitialOrbitReplacement, ValuesIn(initial_orbit_replacement_inputs()),
+    [](const TestParamInfo<InitialOrbitReplacementInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, firstUpdateEscapeMatchesStandardState)
 {
