@@ -6223,69 +6223,173 @@ TEST_P(TestDistanceBandReplacement, survivesReferenceReplacement)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceBandReplacement, ValuesIn(distance_band_replacement_inputs()),
     [](const TestParamInfo<DistanceBandReplacementInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, regularDistanceColorsMatchStandardOutsideFinishing)
+struct RegularDistanceColorInput
 {
-    DistancePixelOptions options;
-    options.inside = ColorMethod::COLOR;
-    options.compare_colors = true;
-    g_outside_color = 6;
-    init_atan_colors();
-    for (const bool legacy : {false, true})
+    std::string name;
+    bool big_float;
+    bool legacy;
+    long mode;
+    ColorMethod outside;
+};
+
+void PrintTo(const RegularDistanceColorInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<RegularDistanceColorInput> regular_distance_color_inputs()
+{
+    const PerturbationColorMethod methods[]{
+        {"Iterations", ColorMethod::ITER},
+        {"FixedColor", ColorMethod::COLOR},
+        {"Real", ColorMethod::REAL},
+        {"Imaginary", ColorMethod::IMAG},
+        {"Product", ColorMethod::MULT},
+        {"Sum", ColorMethod::SUM},
+        {"Atan", ColorMethod::ATAN},
+        {"Fmod", ColorMethod::FMOD},
+        {"TotalDistance", ColorMethod::TDIS},
+    };
+    std::vector<RegularDistanceColorInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(legacy);
-        for (const long mode : {1L, -9L})
+        for (const bool legacy : {false, true})
         {
-            SCOPED_TRACE(mode);
-            options.value = mode;
-            for (const ColorMethod outside :
-                {ColorMethod::ITER, ColorMethod::COLOR, ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT,
-                    ColorMethod::SUM, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS})
+            for (const long mode : {1L, -9L})
             {
-                SCOPED_TRACE(static_cast<int>(outside));
-                g_outside_method = outside;
-                compare_distance_pixel({2.0, 2.0}, 32, legacy, 0.0, options);
-                if (legacy)
+                for (const PerturbationColorMethod &method : methods)
                 {
-                    if (mode == 1)
-                    {
-                        EXPECT_LT(m_engine.distance_estimator().escape_iteration(), g_real_color_iter);
-                    }
-                    else
-                    {
-                        EXPECT_EQ(m_engine.distance_estimator().escape_iteration(), g_real_color_iter);
-                    }
-                    EXPECT_EQ(m_engine.distance_estimator().escape_point(), g_new_z);
+                    inputs.push_back(
+                        {std::string{big_float ? "HighPrecision_" : "Double_"} + (legacy ? "Legacy_" : "Current_") +
+                                (mode > 0 ? "PositiveMode_" : "NegativeMode_") + method.name,
+                            big_float, legacy, mode, method.method});
                 }
             }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, legacyRegularDistanceColorsRetainDecompositionBiomorphAndMapping)
+class TestRegularDistanceColor : public PerturbationIterationTest, public WithParamInterface<RegularDistanceColorInput>
 {
-    m_engine.set_glitch_tolerance(8.0);
-    DistancePixelOptions options;
-    options.compare_colors = true;
-    g_log_map_flag = 1;
-    for (const int decomp : {0, 16})
+public:
+    TestRegularDistanceColor();
+
+protected:
+    void SetUp() override;
+    DistancePixelOptions m_options;
+};
+
+TestRegularDistanceColor::TestRegularDistanceColor() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestRegularDistanceColor::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    m_options.inside = ColorMethod::COLOR;
+    m_options.compare_colors = true;
+    m_options.value = GetParam().mode;
+    g_outside_color = 6;
+    init_atan_colors();
+    g_outside_method = GetParam().outside;
+}
+
+TEST_P(TestRegularDistanceColor, matchesStandardOutsideFinishing)
+{
+    compare_distance_pixel({2.0, 2.0}, 32, GetParam().legacy, 0.0, m_options);
+
+    if (GetParam().legacy)
     {
-        SCOPED_TRACE(decomp);
-        g_decomp[0] = decomp;
-        for (const int biomorph : {-1, 9})
+        if (GetParam().mode == 1)
         {
-            SCOPED_TRACE(biomorph);
-            g_biomorph = biomorph;
-            for (const long mode : {1L, -9L})
+            EXPECT_LT(m_engine.distance_estimator().escape_iteration(), g_real_color_iter);
+        }
+        else
+        {
+            EXPECT_EQ(m_engine.distance_estimator().escape_iteration(), g_real_color_iter);
+        }
+        EXPECT_EQ(m_engine.distance_estimator().escape_point(), g_new_z);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestRegularDistanceColor, ValuesIn(regular_distance_color_inputs()),
+    [](const TestParamInfo<RegularDistanceColorInput> &info) { return info.param.name; });
+
+struct LegacyDistanceMappingInput
+{
+    std::string name;
+    bool big_float;
+    int decomposition;
+    int biomorph;
+    long mode;
+};
+
+void PrintTo(const LegacyDistanceMappingInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<LegacyDistanceMappingInput> legacy_distance_mapping_inputs()
+{
+    std::vector<LegacyDistanceMappingInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const int decomposition : {0, 16})
+        {
+            for (const int biomorph : {-1, 9})
             {
-                SCOPED_TRACE(mode);
-                options.value = mode;
-                compare_distance_pixel({2.0, 2.0}, 512, true, 0.125, options);
-                EXPECT_GT(m_engine.reference_count(), 1);
-                EXPECT_GE(m_engine.distance_estimator().escape_iteration(), 0);
+                for (const long mode : {1L, -9L})
+                {
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Decomposition" +
+                            std::to_string(decomposition) + (biomorph < 0 ? "_NoBiomorph_" : "_BiomorphNine_") +
+                            (mode > 0 ? "PositiveMode" : "NegativeMode"),
+                        big_float, decomposition, biomorph, mode});
+                }
             }
         }
     }
+    return inputs;
 }
+
+class TestLegacyDistanceMapping : public PerturbationIterationTest,
+                                  public WithParamInterface<LegacyDistanceMappingInput>
+{
+public:
+    TestLegacyDistanceMapping();
+
+protected:
+    void SetUp() override;
+    DistancePixelOptions m_options;
+};
+
+TestLegacyDistanceMapping::TestLegacyDistanceMapping() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestLegacyDistanceMapping::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    m_engine.set_glitch_tolerance(8.0);
+    m_options.compare_colors = true;
+    m_options.value = GetParam().mode;
+    g_log_map_flag = 1;
+    g_decomp[0] = GetParam().decomposition;
+    g_biomorph = GetParam().biomorph;
+}
+
+TEST_P(TestLegacyDistanceMapping, retainsDecompositionBiomorphAndMapping)
+{
+    compare_distance_pixel({2.0, 2.0}, 512, true, 0.125, m_options);
+
+    EXPECT_GT(m_engine.reference_count(), 1);
+    EXPECT_GE(m_engine.distance_estimator().escape_iteration(), 0);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestLegacyDistanceMapping, ValuesIn(legacy_distance_mapping_inputs()),
+    [](const TestParamInfo<LegacyDistanceMappingInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, periodicityMatchesStandardSaveSchedules)
 {
