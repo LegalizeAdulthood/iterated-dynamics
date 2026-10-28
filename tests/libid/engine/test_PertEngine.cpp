@@ -7726,65 +7726,179 @@ TEST_F(TestPerturbationPixels, subDoublePeriodicityToleranceStillDetectsExactCyc
     EXPECT_EQ(3, s_perturbation_orbit.size());
 }
 
-TEST_P(TestPerturbationIterations, selectedBailoutMatchesStandardTermination)
+struct PerturbationBailoutMethod
+{
+    const char *name;
+    Bailout test;
+};
+
+constexpr std::array<PerturbationBailoutMethod, 7> TERMINATION_BAILOUTS{{
+    {"Modulus", Bailout::MOD},
+    {"Real", Bailout::REAL},
+    {"Imaginary", Bailout::IMAG},
+    {"Or", Bailout::OR},
+    {"And", Bailout::AND},
+    {"Manhattan", Bailout::MANH},
+    {"ManhattanReal", Bailout::MANR},
+}};
+
+struct BailoutTerminationInput
+{
+    std::string name;
+    bool big_float;
+    Bailout test;
+    std::complex<double> point;
+    double limit;
+    std::optional<long> iterations;
+};
+
+void PrintTo(const BailoutTerminationInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<BailoutTerminationInput> bailout_termination_inputs()
 {
     struct Sample
     {
+        const char *name;
         std::complex<double> point;
         std::array<long, 7> iterations;
     };
 
-    const std::array<Sample, 4> samples{{
-        {{1.0, 0.0}, {1, 1, 6, 1, 6, 1, 1}},
-        {{0.0, 1.0}, {6, 6, 6, 6, 6, 1, 6}},
-        {{1.0, -1.0}, {1, 2, 1, 1, 2, 1, 1}},
-        {{0.5, 0.5}, {4, 4, 5, 4, 5, 4, 4}},
-    }};
-    for (const Bailout test :
-        {Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
+    const Sample samples[]{
+        {"OneReal", {1.0, 0.0}, {1, 1, 6, 1, 6, 1, 1}},
+        {"OneImaginary", {0.0, 1.0}, {6, 6, 6, 6, 6, 1, 6}},
+        {"OneMinusImaginary", {1.0, -1.0}, {1, 2, 1, 1, 2, 1, 1}},
+        {"HalfComplex", {0.5, 0.5}, {4, 4, 5, 4, 5, 4, 4}},
+    };
+    std::vector<BailoutTerminationInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(static_cast<int>(test));
-        g_bailout_test = test;
-        set_bailout_formula(test);
-        for (const Sample &sample : samples)
+        for (const PerturbationBailoutMethod &method : TERMINATION_BAILOUTS)
         {
-            SCOPED_TRACE(sample.point.real());
-            SCOPED_TRACE(sample.point.imag());
-            for (const double limit : {1.0, 4.0, 16.0})
+            for (const Sample &sample : samples)
             {
-                SCOPED_TRACE(limit);
-                g_magnitude_limit = limit;
-
-                compare_pixel(sample.point, 6);
-
-                if (limit == 4.0)
+                for (const double limit : {1.0, 4.0, 16.0})
                 {
-                    EXPECT_EQ(sample.iterations[static_cast<std::size_t>(test)], g_real_color_iter);
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + method.name + "_" +
+                            sample.name + "_Limit" + std::to_string(static_cast<int>(limit)),
+                        big_float, method.test, sample.point, limit,
+                        limit == 4.0 ? std::optional<long>{sample.iterations[static_cast<std::size_t>(method.test)]}
+                                     : std::nullopt});
                 }
             }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, selectedBailoutSurvivesDisplacementAndReferenceReplacement)
+class TestBailoutTermination : public PerturbationIterationTest, public WithParamInterface<BailoutTerminationInput>
 {
-    for (const Bailout test :
-        {Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
-    {
-        SCOPED_TRACE(static_cast<int>(test));
-        g_bailout_test = test;
-        set_bailout_formula(test);
-        // Fixed-point bailout truncates limits; compare precisions at an integer.
-        g_magnitude_limit = 1.0;
-        m_engine.set_glitch_tolerance(0.0);
-        compare_pixel({0.25, 0.125}, 8, 0.125);
-        EXPECT_EQ(1, m_engine.reference_count());
+public:
+    TestBailoutTermination();
 
-        m_engine.set_glitch_tolerance(2.0);
-        compare_pixel({0.25, 0.125}, 8, 0.125);
+protected:
+    void SetUp() override;
+};
+
+TestBailoutTermination::TestBailoutTermination() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestBailoutTermination::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_bailout_test = GetParam().test;
+    set_bailout_formula(GetParam().test);
+    g_magnitude_limit = GetParam().limit;
+}
+
+TEST_P(TestBailoutTermination, matchesStandardTermination)
+{
+    compare_pixel(GetParam().point, 6);
+
+    if (GetParam().iterations)
+    {
+        EXPECT_EQ(*GetParam().iterations, g_real_color_iter);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBailoutTermination, ValuesIn(bailout_termination_inputs()),
+    [](const TestParamInfo<BailoutTerminationInput> &info) { return info.param.name; });
+
+struct BailoutReplacementInput
+{
+    std::string name;
+    bool big_float;
+    Bailout test;
+    double tolerance;
+};
+
+void PrintTo(const BailoutReplacementInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<BailoutReplacementInput> bailout_replacement_inputs()
+{
+    std::vector<BailoutReplacementInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationBailoutMethod &method : TERMINATION_BAILOUTS)
+        {
+            for (const double tolerance : {0.0, 2.0})
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + method.name +
+                        (tolerance == 0.0 ? "_NoReplacement" : "_ForcedReplacement"),
+                    big_float, method.test, tolerance});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestBailoutReplacement : public PerturbationIterationTest, public WithParamInterface<BailoutReplacementInput>
+{
+public:
+    TestBailoutReplacement();
+
+protected:
+    void SetUp() override;
+};
+
+TestBailoutReplacement::TestBailoutReplacement() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestBailoutReplacement::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_bailout_test = GetParam().test;
+    set_bailout_formula(GetParam().test);
+    // Fixed-point bailout truncates limits; compare precisions at an integer.
+    g_magnitude_limit = 1.0;
+    m_engine.set_glitch_tolerance(GetParam().tolerance);
+}
+
+TEST_P(TestBailoutReplacement, retainsSelectedBailoutWithDisplacedReference)
+{
+    compare_pixel({0.25, 0.125}, 8, 0.125);
+
+    if (GetParam().tolerance == 0.0)
+    {
+        EXPECT_EQ(1, m_engine.reference_count());
+    }
+    else
+    {
         EXPECT_GT(m_engine.reference_count(), 1);
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBailoutReplacement, ValuesIn(bailout_replacement_inputs()),
+    [](const TestParamInfo<BailoutReplacementInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, escapeOnLastAllowedUpdateMatchesStandardState)
 {
