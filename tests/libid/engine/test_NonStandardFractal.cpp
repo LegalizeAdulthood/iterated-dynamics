@@ -1795,22 +1795,123 @@ TEST_P(TestStandaloneBifurcation, uiInterruptionLeavesMenuKeyPendingAndResumesAt
     }
 }
 
-TEST_P(TestStandaloneBifurcation, controllerAdvancesOneColumnPerStepUntilComplete)
+class TestBifurcationController : public TestStandaloneBifurcation
+{
+protected:
+    void TearDown() override;
+    void prepare_controller();
+
+    std::optional<NonStandardFractal> m_calculation;
+    std::optional<BifurcationController> m_controller;
+};
+
+void TestBifurcationController::TearDown()
+{
+    m_controller.reset();
+    if (m_calculation)
+    {
+        m_calculation->finish(!m_calculation->completed());
+    }
+    m_calculation.reset();
+    TestNonStandardFractal::TearDown();
+}
+
+void TestBifurcationController::prepare_controller()
+{
+    m_calculation.emplace();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, m_calculation->select());
+    m_controller.emplace(*m_calculation);
+}
+
+class TestPreparedBifurcationController : public TestBifurcationController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestPreparedBifurcationController::SetUp()
+{
+    TestStandaloneBifurcation::SetUp();
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+}
+
+TEST_P(TestPreparedBifurcationController, iterationRequiresStart)
+{
+    EXPECT_THROW(m_controller->iterate(), std::logic_error);
+}
+
+TEST_P(TestPreparedBifurcationController, resultRequiresStart)
+{
+    EXPECT_THROW(m_controller->result(), std::logic_error);
+}
+
+TEST_P(TestPreparedBifurcationController, suspensionRequiresStart)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+}
+
+class TestStartedBifurcationController : public TestPreparedBifurcationController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStartedBifurcationController::SetUp()
+{
+    TestPreparedBifurcationController::SetUp();
+    m_controller->start();
+}
+
+TEST_P(TestStartedBifurcationController, rejectsDuplicateStart)
+{
+    EXPECT_THROW(m_controller->start(), std::logic_error);
+}
+
+class TestCompletedBifurcationController : public TestPreparedBifurcationController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestCompletedBifurcationController::SetUp()
+{
+    TestPreparedBifurcationController::SetUp();
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    m_controller->start();
+    m_controller->iterate();
+    for (int chunks = 0; chunks < WIDTH + 1 && !m_controller->done(); ++chunks)
+    {
+        m_controller->iterate();
+    }
+    ASSERT_TRUE(m_controller->done());
+}
+
+TEST_P(TestCompletedBifurcationController, rejectsSuspensionAfterCompletion)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Types, TestBifurcationController, ValuesIn(BIFURCATION_CASES),
+    [](const TestParamInfo<BifurcationCase> &info) { return info.param.name; });
+INSTANTIATE_TEST_SUITE_P(Types, TestPreparedBifurcationController, ValuesIn(BIFURCATION_CASES),
+    [](const TestParamInfo<BifurcationCase> &info) { return info.param.name; });
+INSTANTIATE_TEST_SUITE_P(Types, TestStartedBifurcationController, ValuesIn(BIFURCATION_CASES),
+    [](const TestParamInfo<BifurcationCase> &info) { return info.param.name; });
+INSTANTIATE_TEST_SUITE_P(Types, TestCompletedBifurcationController, ValuesIn(BIFURCATION_CASES),
+    [](const TestParamInfo<BifurcationCase> &info) { return info.param.name; });
+
+TEST_P(TestBifurcationController, controllerAdvancesOneColumnPerStepUntilComplete)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
-    BifurcationController controller{calculation};
-    EXPECT_THROW(controller.iterate(), std::logic_error);
-    EXPECT_THROW(controller.result(), std::logic_error);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+    NonStandardFractal &calculation{*m_calculation};
+    BifurcationController &controller{*m_controller};
 
     controller.start();
 
     EXPECT_FALSE(controller.done());
     EXPECT_TRUE(m_columns.empty());
-    EXPECT_THROW(controller.start(), std::logic_error);
     controller.iterate();
     EXPECT_EQ(HEIGHT, m_columns.size());
     EXPECT_FALSE(controller.done());
@@ -1824,17 +1925,13 @@ TEST_P(TestStandaloneBifurcation, controllerAdvancesOneColumnPerStepUntilComplet
     EXPECT_EQ(WIDTH * HEIGHT, m_columns.size());
     controller.iterate();
     EXPECT_EQ(WIDTH * HEIGHT, m_columns.size());
-    EXPECT_THROW(controller.suspend(), std::logic_error);
-    calculation.finish(false);
 }
 
-TEST_P(TestStandaloneBifurcation, controllerSuspensionResumesWithoutRepeatingColumns)
+TEST_P(TestBifurcationController, controllerSuspensionResumesWithoutRepeatingColumns)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
-    BifurcationController controller{calculation};
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+    BifurcationController &controller{*m_controller};
     controller.start();
     controller.iterate();
 
@@ -1859,13 +1956,12 @@ TEST_P(TestStandaloneBifurcation, controllerSuspensionResumesWithoutRepeatingCol
     resumed.finish(false);
 }
 
-TEST_P(TestStandaloneBifurcation, controllerFailureTerminatesTheSelectedOperation)
+TEST_P(TestBifurcationController, controllerFailureTerminatesTheSelectedOperation)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::BIFURCATION, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+    NonStandardFractal &calculation{*m_calculation};
     g_dispatch.set_orbit_calc([]() -> int { throw std::runtime_error("Orbit failed"); });
-    BifurcationController controller{calculation};
+    BifurcationController &controller{*m_controller};
     controller.start();
 
     EXPECT_THROW(controller.iterate(), std::runtime_error);
