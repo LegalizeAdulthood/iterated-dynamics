@@ -21,10 +21,12 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cstdio>
 #include <filesystem>
 #include <memory>
 #include <optional>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -40,6 +42,19 @@ using namespace testing;
 
 namespace id::test
 {
+
+namespace
+{
+
+std::string test_input_name()
+{
+    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
+    std::string name{std::string{info->test_suite_name()} + '_' + info->name()};
+    std::replace(name.begin(), name.end(), '/', '_');
+    return name;
+}
+
+} // namespace
 
 class TestCommandProcessor : public Test
 {
@@ -78,8 +93,7 @@ void TestCommandProcessor::TearDown()
 
 std::FILE *TestCommandProcessor::open_input(const std::string_view text)
 {
-    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
-    m_path = fs::temp_directory_path() / (std::string{info->test_suite_name()} + '_' + info->name() + ".par");
+    m_path = fs::temp_directory_path() / (test_input_name() + ".par");
     std::unique_ptr<std::FILE, decltype(&std::fclose)> file{std::fopen(m_path.string().c_str(), "w+b"), std::fclose};
     if (!file || std::fwrite(text.data(), 1, text.size(), file.get()) != text.size())
     {
@@ -154,21 +168,45 @@ TEST_F(TestCommandProcessor, adoptsPositionedSetAndStopsAtItsClosingBrace)
     EXPECT_TRUE(fs::remove(m_path));
 }
 
-TEST_F(TestCommandProcessor, preservesCommentsAndContinuationLines)
+class TestCommentedCommandProcessor : public TestCommandProcessor
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::optional<CommandProcessor> m_processor;
+    std::string m_value;
+};
+
+void TestCommentedCommandProcessor::SetUp()
+{
+    TestCommandProcessor::SetUp();
     g_command_comment[0] = "old comment";
-    CommandProcessor processor{
-        open_input("entry {\n; First Comment\nmaxiter=2\\\n  22\n; Second Comment\n}\n"), CmdFile::AT_AFTER_STARTUP};
+    m_processor.emplace(
+        open_input("entry {\n; First Comment\nmaxiter=2\\\n  22\n; Second Comment\n}\n"), CmdFile::AT_AFTER_STARTUP);
     EXPECT_TRUE(g_command_comment[0].empty());
+    ASSERT_TRUE(m_processor->advance());
+    m_value = m_processor->command().value;
+    handle_current(*m_processor);
+    ASSERT_FALSE(m_processor->advance());
+}
 
-    ASSERT_TRUE(processor.advance());
-    EXPECT_EQ("222", processor.command().value);
-    handle_current(processor);
-    EXPECT_FALSE(processor.advance());
+void TestCommentedCommandProcessor::TearDown()
+{
+    m_processor.reset();
+    TestCommandProcessor::TearDown();
+}
 
-    EXPECT_EQ(222, g_max_iterations);
+TEST_F(TestCommentedCommandProcessor, retainsFileComments)
+{
     EXPECT_EQ("First Comment", g_command_comment[0]);
     EXPECT_EQ("Second Comment", g_command_comment[1]);
+}
+
+TEST_F(TestCommentedCommandProcessor, joinsContinuationLines)
+{
+    EXPECT_EQ("222", m_value);
+    EXPECT_EQ(222, g_max_iterations);
 }
 
 TEST_F(TestCommandProcessor, configurationFileDoesNotRequireSetBraces)
@@ -184,33 +222,48 @@ TEST_F(TestCommandProcessor, configurationFileDoesNotRequireSetBraces)
     EXPECT_TRUE(fs::remove(m_path));
 }
 
-TEST_F(TestCommandProcessor, selectedSetClearsParameterInitializationFlags)
+struct CommandSourceInitializationInput
 {
+    const char *name;
+    CmdFile source;
+    double expected_parameter;
+};
+
+void PrintTo(const CommandSourceInitializationInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestCommandSourceInitialization : public TestCommandProcessor,
+                                        public WithParamInterface<CommandSourceInitializationInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestCommandSourceInitialization::SetUp()
+{
+    TestCommandProcessor::SetUp();
     CommandParseResult result;
     const Command cmd{"params=77", CmdFile::AT_CMD_LINE, result};
     ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, handle_engine_command(cmd));
-    CommandProcessor processor{open_input("entry { type=mandel }"), CmdFile::AT_AFTER_STARTUP};
+}
+
+TEST_P(TestCommandSourceInitialization, sourceControlsEarlierParameterInitialization)
+{
+    CommandProcessor processor{open_input("entry { type=mandel }"), GetParam().source};
 
     ASSERT_TRUE(processor.advance());
     handle_current(processor);
     EXPECT_FALSE(processor.advance());
 
-    EXPECT_DOUBLE_EQ(0.0, g_params[0]);
+    EXPECT_DOUBLE_EQ(GetParam().expected_parameter, g_params[0]);
 }
 
-TEST_F(TestCommandProcessor, startupSetPreservesEarlierParameterInitializationFlags)
-{
-    CommandParseResult result;
-    const Command cmd{"params=77", CmdFile::AT_CMD_LINE, result};
-    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, handle_engine_command(cmd));
-    CommandProcessor processor{open_input("entry { type=mandel }"), CmdFile::AT_CMD_LINE_SET_NAME};
-
-    ASSERT_TRUE(processor.advance());
-    handle_current(processor);
-    EXPECT_FALSE(processor.advance());
-
-    EXPECT_DOUBLE_EQ(77.0, g_params[0]);
-}
+INSTANTIATE_TEST_SUITE_P(Sources, TestCommandSourceInitialization,
+    Values(CommandSourceInitializationInput{"SelectedSet", CmdFile::AT_AFTER_STARTUP, 0.0},
+        CommandSourceInitializationInput{"StartupSet", CmdFile::AT_CMD_LINE_SET_NAME, 77.0}),
+    [](const TestParamInfo<CommandSourceInitializationInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandProcessor, rejectionRetainsDiagnosticsAndAuxiliaryDataButNotBadFlags)
 {
@@ -444,16 +497,57 @@ TEST_F(TestCommandProcessor, handlerExceptionClosesTheFileWithoutRollingBackEarl
     EXPECT_TRUE(fs::remove(m_path));
 }
 
-TEST_F(TestCommandProcessor, invalidFileOrMissingCurrentCommandThrows)
+TEST_F(TestCommandProcessor, constructionRejectsNullFile)
 {
     EXPECT_THROW((CommandProcessor{nullptr, CmdFile::AT_AFTER_STARTUP}), std::logic_error);
-    CommandProcessor processor{open_input("entry { maxiter=222 }"), CmdFile::AT_AFTER_STARTUP};
-    EXPECT_THROW(processor.command(), std::logic_error);
-    ASSERT_TRUE(processor.advance());
-    handle_current(processor);
-    ASSERT_FALSE(processor.advance());
-    EXPECT_THROW(processor.command(), std::logic_error);
 }
+
+struct FileCommandAccessInput
+{
+    const char *name;
+    bool completed;
+};
+
+void PrintTo(const FileCommandAccessInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestFileCommandAccess : public TestCommandProcessor, public WithParamInterface<FileCommandAccessInput>
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::optional<CommandProcessor> m_processor;
+};
+
+void TestFileCommandAccess::SetUp()
+{
+    TestCommandProcessor::SetUp();
+    m_processor.emplace(open_input("entry { maxiter=222 }"), CmdFile::AT_AFTER_STARTUP);
+    if (GetParam().completed)
+    {
+        ASSERT_TRUE(m_processor->advance());
+        handle_current(*m_processor);
+        ASSERT_FALSE(m_processor->advance());
+    }
+}
+
+void TestFileCommandAccess::TearDown()
+{
+    m_processor.reset();
+    TestCommandProcessor::TearDown();
+}
+
+TEST_P(TestFileCommandAccess, accessRequiresACurrentCommand)
+{
+    EXPECT_THROW(m_processor->command(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(States, TestFileCommandAccess,
+    Values(FileCommandAccessInput{"Unstarted", false}, FileCommandAccessInput{"Completed", true}),
+    [](const TestParamInfo<FileCommandAccessInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandProcessor, singleCommandRetainsItsOriginalRejectedResult)
 {
@@ -476,21 +570,46 @@ TEST_F(TestCommandProcessor, singleCommandRetainsItsOriginalRejectedResult)
     EXPECT_THROW(processor.command(), std::logic_error);
 }
 
-TEST_F(TestCommandProcessor, singleCommandDoesNotResetInitializationFlagsOrComments)
+class TestSingleCommandContext : public TestCommandProcessor
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::string m_text{"type=mandel"};
+    std::optional<CommandProcessor> m_processor;
+};
+
+void TestSingleCommandContext::SetUp()
+{
+    TestCommandProcessor::SetUp();
     CommandParseResult result;
     const Command cmd{"params=77", CmdFile::AT_CMD_LINE, result};
     ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, handle_engine_command(cmd));
     g_command_comment[0] = "keep comment";
-    std::string text{"type=mandel"};
-    CommandProcessor processor{text, CmdFile::AT_AFTER_STARTUP};
-    text.clear();
+    m_processor.emplace(m_text, CmdFile::AT_AFTER_STARTUP);
+    m_text.clear();
+}
 
-    ASSERT_TRUE(processor.advance());
-    EXPECT_EQ("mandel", processor.command().value);
-    EXPECT_EQ(CmdFile::AT_AFTER_STARTUP, processor.command().mode);
-    handle_current(processor);
-    EXPECT_FALSE(processor.advance());
+void TestSingleCommandContext::TearDown()
+{
+    m_processor.reset();
+    TestCommandProcessor::TearDown();
+}
+
+TEST_F(TestSingleCommandContext, ownsSourceTextAndMode)
+{
+    ASSERT_TRUE(m_processor->advance());
+
+    EXPECT_EQ("mandel", m_processor->command().value);
+    EXPECT_EQ(CmdFile::AT_AFTER_STARTUP, m_processor->command().mode);
+}
+
+TEST_F(TestSingleCommandContext, preservesInitializationFlagsAndComments)
+{
+    ASSERT_TRUE(m_processor->advance());
+    handle_current(*m_processor);
+    EXPECT_FALSE(m_processor->advance());
 
     EXPECT_DOUBLE_EQ(77.0, g_params[0]);
     EXPECT_EQ("keep comment", g_command_comment[0]);
@@ -545,8 +664,7 @@ protected:
 void TestStartupCommandProcessor::SetUp()
 {
     TestCommandProcessor::SetUp();
-    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
-    m_directory = fs::temp_directory_path() / (std::string{info->test_suite_name()} + '_' + info->name());
+    m_directory = fs::temp_directory_path() / test_input_name();
     fs::create_directories(m_directory);
     clear_read_library_path();
     add_read_library(m_directory);
@@ -730,21 +848,24 @@ TEST_F(TestStartupCommandProcessor, nonfatalRestartErrorsStillAllowLaterArgument
     EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("maxiter=bad")));
 }
 
-TEST_F(TestStartupCommandProcessor, nonfatalRestartErrorsStillRequestMissingEntries)
+class TestRestartMissingEntries : public TestStartupCommandProcessor, public WithParamInterface<const char *>
+{
+};
+
+TEST_P(TestRestartMissingEntries, nonfatalRestartErrorStillRequestsMissingEntry)
 {
     g_first_init = false;
-    for (const char *type : {"formula", "lsystem", "ifs", "ifs3d"})
-    {
-        SCOPED_TRACE(type);
-        write_source("sstools.ini", std::string{"type="} + type + " unknown=yes\n");
-        CommandProcessor processor{std::vector<std::string>{"id"}};
+    write_source("sstools.ini", std::string{"type="} + GetParam() + " unknown=yes\n");
+    CommandProcessor processor{std::vector<std::string>{"id"}};
 
-        run(processor);
+    run(processor);
 
-        EXPECT_TRUE(processor.result().needs_file_entry);
-        EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("unknown=yes")));
-    }
+    EXPECT_TRUE(processor.result().needs_file_entry);
+    EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("unknown=yes")));
 }
+
+INSTANTIATE_TEST_SUITE_P(FractalTypes, TestRestartMissingEntries, Values("formula", "lsystem", "ifs", "ifs3d"),
+    [](const TestParamInfo<const char *> &info) { return info.param; });
 
 TEST_F(TestStartupCommandProcessor, batchErrorsStopLaterArgumentsAfterInitialStartup)
 {
