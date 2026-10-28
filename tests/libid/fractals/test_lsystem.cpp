@@ -196,11 +196,63 @@ TEST_F(TestLSystem, stopsBeforeDrawingOnOverflow)
     EXPECT_TRUE(m_lines.empty());
 }
 
-TEST_F(TestLSystem, startInitializesSizingWithoutTraversing)
+class LSystemDefinitionTest : public TestLSystem
 {
-    g_l_system_name = "Koch1";
-    g_params[0] = 9;
+protected:
+    void load_definition(const char *name, int order);
+    void finish_sizing(LSystem &system);
+    void start_selected(NonStandardFractal &calculation);
+    void advance_to_drawing(NonStandardFractal &calculation);
+};
+
+void LSystemDefinitionTest::load_definition(const char *name, const int order)
+{
+    g_l_system_name = name;
+    g_params[0] = order;
     ASSERT_NO_THROW(lsystem_load());
+}
+
+void LSystemDefinitionTest::finish_sizing(LSystem &system)
+{
+    for (int i = 0; i < 100 && system.sizing(); ++i)
+    {
+        system.iterate();
+        EXPECT_TRUE(m_lines.empty());
+    }
+    ASSERT_FALSE(system.sizing());
+    ASSERT_FALSE(system.done());
+}
+
+void LSystemDefinitionTest::start_selected(NonStandardFractal &calculation)
+{
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+}
+
+void LSystemDefinitionTest::advance_to_drawing(NonStandardFractal &calculation)
+{
+    for (int i = 0; i < 100 && calculation.sizing(); ++i)
+    {
+        calculation.iterate();
+    }
+    ASSERT_FALSE(calculation.sizing());
+    ASSERT_FALSE(calculation.done());
+}
+
+class TestGrowingLSystem : public LSystemDefinitionTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGrowingLSystem::SetUp()
+{
+    LSystemDefinitionTest::SetUp();
+    ASSERT_NO_FATAL_FAILURE(load_definition("Koch1", 9));
+}
+
+TEST_F(TestGrowingLSystem, startInitializesSizingWithoutTraversing)
+{
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
     LSystem system;
@@ -210,48 +262,81 @@ TEST_F(TestLSystem, startInitializesSizingWithoutTraversing)
     EXPECT_TRUE(system.sizing());
     EXPECT_FALSE(system.done());
     EXPECT_FALSE(system.interrupted());
-    for (int i = 0; i < 1024; ++i)
-    {
-        system.iterate();
-    }
-    EXPECT_TRUE(system.sizing());
-    EXPECT_FALSE(system.done());
     EXPECT_TRUE(m_lines.empty());
 }
 
-TEST_F(TestLSystem, sizingEndsBeforeDrawingStarts)
+TEST_F(TestGrowingLSystem, boundedSizingRemainsIncomplete)
 {
-    g_l_system_name = "SizingBox";
-    g_params[0] = 0;
-    ASSERT_NO_THROW(lsystem_load());
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
     LSystem system;
     system.start();
 
-    for (int i = 0; i < 100 && system.sizing(); ++i)
+    for (int i = 0; i < 1024; ++i)
     {
         system.iterate();
-        EXPECT_TRUE(m_lines.empty());
     }
 
-    EXPECT_FALSE(system.sizing());
+    EXPECT_TRUE(system.sizing());
     EXPECT_FALSE(system.done());
+    EXPECT_TRUE(m_lines.empty());
+}
+
+class TestBoxLSystem : public LSystemDefinitionTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBoxLSystem::SetUp()
+{
+    LSystemDefinitionTest::SetUp();
+    ASSERT_NO_FATAL_FAILURE(load_definition("SizingBox", 0));
+}
+
+TEST_F(TestBoxLSystem, sizingEndsBeforeDrawingStarts)
+{
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    LSystem system;
+    system.start();
+
+    finish_sizing(system);
+}
+
+TEST_F(TestBoxLSystem, firstDrawingIncrementPlotsOneLine)
+{
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    LSystem system;
+    system.start();
+    ASSERT_NO_FATAL_FAILURE(finish_sizing(system));
+
     system.iterate();
+
     EXPECT_EQ(1U, m_lines.size());
+}
+
+TEST_F(TestBoxLSystem, drawingCompletesAfterSizing)
+{
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    LSystem system;
+    system.start();
+    ASSERT_NO_FATAL_FAILURE(finish_sizing(system));
+    system.iterate();
+
     for (int i = 0; i < 100 && !system.done(); ++i)
     {
         system.iterate();
     }
+
     EXPECT_TRUE(system.done());
     EXPECT_FALSE(system.sizing());
 }
 
-TEST_F(TestLSystem, suspensionStopsSizing)
+TEST_F(TestGrowingLSystem, suspensionStopsSizing)
 {
-    g_l_system_name = "Koch1";
-    g_params[0] = 9;
-    ASSERT_NO_THROW(lsystem_load());
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
     LSystem system;
@@ -267,11 +352,8 @@ TEST_F(TestLSystem, suspensionStopsSizing)
     EXPECT_TRUE(m_lines.empty());
 }
 
-TEST_F(TestLSystem, overflowDuringSizingStopsBeforeDrawing)
+TEST_F(TestGrowingLSystem, overflowDuringSizingStopsBeforeDrawing)
 {
-    g_l_system_name = "Koch1";
-    g_params[0] = 9;
-    ASSERT_NO_THROW(lsystem_load());
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
     LSystem system;
@@ -287,7 +369,22 @@ TEST_F(TestLSystem, overflowDuringSizingStopsBeforeDrawing)
     EXPECT_TRUE(m_lines.empty());
 }
 
-TEST_F(TestLSystem, selectedOperationPreservesSizingAndDrawingIncrements)
+class TestSelectedLSystem : public LSystemDefinitionTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestSelectedLSystem::SetUp()
+{
+    LSystemDefinitionTest::SetUp();
+    ASSERT_NO_FATAL_FAILURE(load_definition("Koch1", 3));
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    EXPECT_CALL(m_driver, stack_screen()).Times(0);
+}
+
+TEST_F(TestSelectedLSystem, preservesSizingAndDrawingIncrements)
 {
     struct WorkState
     {
@@ -296,14 +393,8 @@ TEST_F(TestLSystem, selectedOperationPreservesSizingAndDrawingIncrements)
         std::size_t lines;
     };
 
-    g_l_system_name = "Koch1";
-    g_params[0] = 3;
-    lsystem_load();
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    EXPECT_CALL(m_driver, get_key()).Times(0);
-    EXPECT_CALL(m_driver, stack_screen()).Times(0);
     std::vector<WorkState> expected;
     {
         LSystem system;
@@ -336,61 +427,162 @@ TEST_F(TestLSystem, selectedOperationPreservesSizingAndDrawingIncrements)
     EXPECT_TRUE(calculation.done());
     EXPECT_TRUE(calculation.completed());
     EXPECT_EQ(expected_lines, m_lines);
-    calculation.iterate();
-    EXPECT_EQ(expected_lines, m_lines);
     calculation.finish(false);
-    EXPECT_FALSE(lsystem_loaded());
 }
 
-TEST_F(TestLSystem, selectionUsesAnAlreadyLoadedDefinition)
+class TestCachedLSystemSelection : public LSystemDefinitionTest
 {
+protected:
+    void SetUp() override;
+};
+
+void TestCachedLSystemSelection::SetUp()
+{
+    LSystemDefinitionTest::SetUp();
     g_l_system_name = "SizingBox";
     lsystem_load();
     g_l_system_filename.replace_filename("missing.l");
+}
+
+TEST_F(TestCachedLSystemSelection, usesAlreadyLoadedDefinition)
+{
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
     NonStandardFractal calculation;
-    calculation.start();
 
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(start_selected(calculation));
 
     EXPECT_TRUE(calculation.sizing());
     EXPECT_FALSE(calculation.done());
     EXPECT_TRUE(m_lines.empty());
+}
+
+TEST_F(TestCachedLSystemSelection, suspensionFinalizesNonResumableWork)
+{
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    ASSERT_NO_FATAL_FAILURE(start_selected(calculation));
+
     calculation.suspend();
+
     EXPECT_TRUE(calculation.done());
     EXPECT_FALSE(lsystem_loaded());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_TRUE(g_resume_data.empty());
 }
 
-TEST_F(TestLSystem, drawingOverflowTerminatesTheSelectedOperation)
+class TestSelectedDrawingLSystem : public LSystemDefinitionTest
 {
+protected:
+    void SetUp() override;
+};
+
+void TestSelectedDrawingLSystem::SetUp()
+{
+    LSystemDefinitionTest::SetUp();
     g_l_system_name = "Koch1";
     g_params[0] = 0;
+}
+
+TEST_F(TestSelectedDrawingLSystem, overflowTerminatesSelectedOperation)
+{
     char stack_top{};
     const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
     NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
-    for (int i = 0; i < 100 && calculation.sizing(); ++i)
-    {
-        calculation.iterate();
-    }
-    ASSERT_FALSE(calculation.sizing());
-    ASSERT_FALSE(calculation.done());
+    ASSERT_NO_FATAL_FAILURE(start_selected(calculation));
+    ASSERT_NO_FATAL_FAILURE(advance_to_drawing(calculation));
     g_overflow = true;
 
     calculation.iterate();
 
     EXPECT_TRUE(calculation.done());
     EXPECT_TRUE(m_lines.empty());
-    calculation.iterate();
-    EXPECT_TRUE(m_lines.empty());
     calculation.finish(false);
+}
+
+struct LSystemCompletionInput
+{
+    const char *name;
+    bool overflow;
+};
+
+void PrintTo(const LSystemCompletionInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestCompletedLSystemSelection : public LSystemDefinitionTest, public WithParamInterface<LSystemCompletionInput>
+{
+protected:
+    void SetUp() override;
+    void complete_selected(NonStandardFractal &calculation);
+};
+
+void TestCompletedLSystemSelection::SetUp()
+{
+    LSystemDefinitionTest::SetUp();
+    g_l_system_name = "Koch1";
+    g_params[0] = GetParam().overflow ? 0 : 3;
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    EXPECT_CALL(m_driver, stack_screen()).Times(0);
+}
+
+void TestCompletedLSystemSelection::complete_selected(NonStandardFractal &calculation)
+{
+    ASSERT_NO_FATAL_FAILURE(start_selected(calculation));
+    if (GetParam().overflow)
+    {
+        ASSERT_NO_FATAL_FAILURE(advance_to_drawing(calculation));
+        g_overflow = true;
+        calculation.iterate();
+        ASSERT_TRUE(m_lines.empty());
+    }
+    else
+    {
+        for (int i = 0; i < 5000 && !calculation.done(); ++i)
+        {
+            calculation.iterate();
+        }
+    }
+    ASSERT_TRUE(calculation.done());
+    if (!GetParam().overflow)
+    {
+        ASSERT_TRUE(calculation.completed());
+    }
+}
+
+TEST_P(TestCompletedLSystemSelection, iterateAfterCompletionDoesNotPlot)
+{
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    ASSERT_NO_FATAL_FAILURE(complete_selected(calculation));
+    const std::vector<Line> expected_lines{m_lines};
+
+    calculation.iterate();
+
+    EXPECT_EQ(expected_lines, m_lines);
+    calculation.finish(false);
+}
+
+TEST_P(TestCompletedLSystemSelection, finishUnloadsDefinitionAndClearsOverflow)
+{
+    char stack_top{};
+    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    NonStandardFractal calculation;
+    ASSERT_NO_FATAL_FAILURE(complete_selected(calculation));
+
+    calculation.finish(false);
+
     EXPECT_FALSE(lsystem_loaded());
     EXPECT_FALSE(g_overflow);
 }
+
+INSTANTIATE_TEST_SUITE_P(Completion, TestCompletedLSystemSelection,
+    Values(LSystemCompletionInput{"Normal", false}, LSystemCompletionInput{"DrawingOverflow", true}),
+    [](const TestParamInfo<LSystemCompletionInput> &info) { return info.param.name; });
 
 class TestLSystemLoad : public TestLSystem
 {
