@@ -4832,18 +4832,65 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestDecompositionOverride,
             {"Fmod", ColorMethod::FMOD}, {"TotalDistance", ColorMethod::TDIS}, {"FixedColor", ColorMethod::COLOR}})),
     [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, decompositionDoesNotChangeInsideColors)
+struct DecompositionInsideInput
 {
+    std::string name;
+    bool big_float;
+    ColorMethod inside;
+};
+
+void PrintTo(const DecompositionInsideInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<DecompositionInsideInput> decomposition_inside_inputs()
+{
+    const std::array<PerturbationColorMethod, 4> methods{{{"Iterations", ColorMethod::ITER},
+        {"FixedColor", ColorMethod::COLOR}, {"Magnitude", ColorMethod::ZMAG}, {"Atan", ColorMethod::ATANI}}};
+    std::vector<DecompositionInsideInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &inside : methods)
+        {
+            inputs.push_back(
+                {std::string{big_float ? "HighPrecision_" : "Double_"} + inside.name, big_float, inside.method});
+        }
+    }
+    return inputs;
+}
+
+class TestDecompositionInside : public PerturbationIterationTest, public WithParamInterface<DecompositionInsideInput>
+{
+public:
+    TestDecompositionInside();
+
+protected:
+    void SetUp() override;
+};
+
+TestDecompositionInside::TestDecompositionInside() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestDecompositionInside::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_decomp[0] = 256;
     init_atan_colors();
-    for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::COLOR, ColorMethod::ZMAG, ColorMethod::ATANI})
-    {
-        SCOPED_TRACE(static_cast<int>(inside));
-        g_inside_method = inside;
-        compare_pixel({0.125, 0.0625}, 8);
-        EXPECT_EQ(8, g_real_color_iter);
-    }
+    g_inside_method = GetParam().inside;
 }
+
+TEST_P(TestDecompositionInside, preservesInsideColor)
+{
+    compare_pixel({0.125, 0.0625}, 8);
+
+    EXPECT_EQ(8, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDecompositionInside, ValuesIn(decomposition_inside_inputs()),
+    [](const TestParamInfo<DecompositionInsideInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, decompositionSurvivesReferenceReplacement)
 {
