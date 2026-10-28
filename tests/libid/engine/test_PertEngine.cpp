@@ -11201,52 +11201,98 @@ TEST_P(TestPerturbationOutput, outputFailureRestoresOverlayAndPreservesOriginalE
     EXPECT_EQ(1, m_engine.reference_count());
 }
 
-TEST_P(TestPerturbationOutput, burningShipOverlayAndSoundObserveNativeOrbitSequences)
+struct ShipOutputInput
 {
-    ValueSaver saved_degree{g_params[2]};
+    std::string name;
+    bool big_float;
+    int degree;
+};
+
+void PrintTo(const ShipOutputInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<ShipOutputInput> ship_output_inputs()
+{
+    std::vector<ShipOutputInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const int degree : {2, 3, 4, 5})
+        {
+            inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Degree" + std::to_string(degree),
+                big_float, degree});
+        }
+    }
+    return inputs;
+}
+
+class TestShipOrbitOutput : public PerturbationOutputTest, public WithParamInterface<ShipOutputInput>
+{
+public:
+    TestShipOrbitOutput();
+
+protected:
+    void SetUp() override;
+    std::vector<SoundSample> m_expected_samples;
+
+private:
+    ValueSaver<double> m_saved_degree{g_params[2]};
+};
+
+TestShipOrbitOutput::TestShipOrbitOutput() :
+    PerturbationOutputTest{GetParam().big_float}
+{
+}
+
+void TestShipOrbitOutput::SetUp()
+{
+    PerturbationOutputTest::SetUp();
     g_fractal_type = FractalType::BURNING_SHIP;
     const std::complex<double> point{0.25, 0.125};
-    for (const int degree : {2, 3, 4, 5})
+    g_params[2] = GetParam().degree;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    prepare(std::conj(point), 8);
+    m_specific.pert_pt = burning_ship_perturb;
+    g_init = {point.real(), point.imag()};
+    g_old_z = g_init;
+    if (GetParam().big_float)
     {
-        SCOPED_TRACE(degree);
-        g_params[2] = degree;
-        m_specific = *get_fractal_specific(g_fractal_type);
-        prepare(std::conj(point), 8);
-        m_specific.pert_pt = burning_ship_perturb;
-        g_init = {point.real(), point.imag()};
-        g_old_z = g_init;
-        if (GetParam())
-        {
-            float_to_bf(g_param_z_bf.x, point.real());
-            float_to_bf(g_param_z_bf.y, point.imag());
-            copy_bf(g_old_z_bf.x, g_param_z_bf.x);
-            copy_bf(g_old_z_bf.y, g_param_z_bf.y);
-        }
-        std::vector<SoundSample> samples;
-        for (long iteration = 1; iteration < g_max_iterations; ++iteration)
-        {
-            const bool escaped{GetParam() ? burning_ship_bf_fractal() != 0 : burning_ship_orbit() != 0};
-            if (escaped)
-            {
-                break;
-            }
-            const DComplex value{GetParam() ? cmplx_bf_to_float(g_new_z_bf) : g_new_z};
-            const int x{static_cast<int>((value.y - 1.5) * -2.0)};
-            const int y{static_cast<int>((value.x + 2.0) * 1.25)};
-            if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
-            {
-                samples.push_back({static_cast<double>(x), static_cast<double>(y), 0.0});
-            }
-        }
-        ASSERT_FALSE(samples.empty());
-
-        EXPECT_TRUE(calc_ok(complete_pixel()));
-
-        expect_samples(samples);
-        EXPECT_EQ(2 * samples.size() + 1, m_plots.size());
-        EXPECT_FALSE(g_orbit_save_flag);
+        float_to_bf(g_param_z_bf.x, point.real());
+        float_to_bf(g_param_z_bf.y, point.imag());
+        copy_bf(g_old_z_bf.x, g_param_z_bf.x);
+        copy_bf(g_old_z_bf.y, g_param_z_bf.y);
     }
+    m_expected_samples.clear();
+    for (long iteration = 1; iteration < g_max_iterations; ++iteration)
+    {
+        const bool escaped{GetParam().big_float ? burning_ship_bf_fractal() != 0 : burning_ship_orbit() != 0};
+        if (escaped)
+        {
+            break;
+        }
+        const DComplex value{GetParam().big_float ? cmplx_bf_to_float(g_new_z_bf) : g_new_z};
+        const int x{static_cast<int>((value.y - 1.5) * -2.0)};
+        const int y{static_cast<int>((value.x + 2.0) * 1.25)};
+        if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
+        {
+            m_expected_samples.push_back({static_cast<double>(x), static_cast<double>(y), 0.0});
+        }
+    }
+    ASSERT_FALSE(m_expected_samples.empty());
 }
+
+TEST_P(TestShipOrbitOutput, overlayAndSoundObserveNativeSequence)
+{
+    EXPECT_TRUE(calc_ok(complete_pixel()));
+
+    expect_samples(m_expected_samples);
+    EXPECT_EQ(2 * m_expected_samples.size() + 1, m_plots.size());
+    EXPECT_FALSE(g_orbit_save_flag);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestShipOrbitOutput, ValuesIn(ship_output_inputs()),
+    [](const TestParamInfo<ShipOutputInput> &info) { return info.param.name; });
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationOutput, Bool());
 
