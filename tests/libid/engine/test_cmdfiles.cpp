@@ -93,6 +93,7 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -3670,86 +3671,132 @@ TEST_F(TestParameterCommand, oldDemmColorsYes)
     EXPECT_TRUE(g_old_demm_colors);
 }
 
-TEST_F(TestParameterCommand, floatYes)
+struct LegacyFloatParameterInput
 {
-    ValueSaver saved_legacy_float{g_user.legacy_float, false};
+    const char *name;
+    const char *argument;
+    std::optional<bool> initial;
+    std::optional<bool> expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("float=y");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_TRUE(g_user.legacy_float);
+void PrintTo(const LegacyFloatParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, floatNo)
+class TestLegacyFloatParameter : public TestParameterCommand, public WithParamInterface<LegacyFloatParameterInput>
 {
-    ValueSaver saved_legacy_float{g_user.legacy_float, true};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("float=n");
+private:
+    ValueSaver<bool> m_saved_legacy_float{g_user.legacy_float};
+};
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_FALSE(g_user.legacy_float);
-}
-
-TEST_F(TestParameterCommandError, floatBadArg)
+void TestLegacyFloatParameter::SetUp()
 {
-    ValueSaver saved_legacy_float{g_user.legacy_float, true};
-
-    exec_cmd_arg("float=!");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_TRUE(g_user.legacy_float);
-}
-
-TEST_F(TestParameterCommand, legacyFloatControlsTrigBailout)
-{
-    ValueSaver saved_user{g_user};
-    ValueSaver saved_version{g_version};
-    ValueSaver saved_file_version{g_file_version};
-    ValueSaver saved_fractal_type{g_fractal_type};
-    ValueSaver saved_fractal_specific{g_cur_fractal_specific};
-
-    struct Case
+    TestParameterCommand::SetUp();
+    if (GetParam().initial)
     {
-        const char *params;
-        long bailout;
-        bool legacy_float;
-    };
-
-    const Case cases[]{
-        {"reset", 0, false},
-        {"reset float=n", 0, false},
-        {"reset float=y", 2500, true},
-        {"reset float=y float=n", 0, false},
-        {"reset float=n float=y", 2500, true},
-        {"reset float=y bailout=64", 64, true},
-        {"reset float=n bailout=100", 100, false},
-        {"reset=1799 float=y", 2500, true},
-        {"reset=1800 float=y", 0, true},
-        {"reset=2004 float=y", 0, true},
-        {"reset=1/4 float=y", 0, true},
-    };
-    for (const char *type : {"mandelfn", "lambdafn"})
-    {
-        for (const Case &test_case : cases)
-        {
-            const std::string params{std::string{"{ "} + test_case.params + " type=" + type + " function=ident }"};
-            SCOPED_TRACE(params);
-            std::FILE *file{std::tmpfile()};
-            ASSERT_NE(nullptr, file);
-            std::fputs(params.c_str(), file);
-            std::rewind(file);
-            g_user.legacy_float = true;
-
-            CommandProcessor processor{file, CmdFile::AT_AFTER_STARTUP};
-            const CommandRouter router;
-            const CmdArgFlags result{router.process(processor).flags};
-
-            EXPECT_NE(CmdArgFlags::BAD_ARG, result);
-            EXPECT_EQ(test_case.bailout, g_user.bailout_value);
-            EXPECT_EQ(test_case.legacy_float, g_user.legacy_float);
-        }
+        g_user.legacy_float = *GetParam().initial;
     }
 }
+
+TEST_P(TestLegacyFloatParameter, setsLegacyFloatIntent)
+{
+    exec_cmd_arg(GetParam().argument);
+
+    EXPECT_EQ(GetParam().result, m_result);
+    if (GetParam().expected)
+    {
+        EXPECT_EQ(*GetParam().expected, g_user.legacy_float);
+    }
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestLegacyFloatParameter,
+    Values(LegacyFloatParameterInput{"Yes", "float=y", false, true, CmdArgFlags::NONE},
+        LegacyFloatParameterInput{"No", "float=n", true, false, CmdArgFlags::NONE},
+        LegacyFloatParameterInput{"BadArgument", "float=!", true, true, CmdArgFlags::BAD_ARG},
+        LegacyFloatParameterInput{"BadValue", "float=foo", std::nullopt, std::nullopt, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<LegacyFloatParameterInput> &info) { return info.param.name; });
+
+struct LegacyFloatBailoutInput
+{
+    const char *name;
+    const char *params;
+    long bailout;
+    bool legacy_float;
+};
+
+void PrintTo(const LegacyFloatBailoutInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+using LegacyFloatBailoutParameter = std::tuple<std::string, LegacyFloatBailoutInput>;
+
+class TestLegacyFloatBailout : public TestParameterCommand, public WithParamInterface<LegacyFloatBailoutParameter>
+{
+protected:
+    void SetUp() override;
+
+    std::unique_ptr<std::FILE, decltype(&std::fclose)> m_file{nullptr, std::fclose};
+
+private:
+    ValueSaver<UserData> m_saved_user{g_user};
+    ValueSaver<Version> m_saved_version{g_version};
+    ValueSaver<Version> m_saved_file_version{g_file_version};
+    ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type};
+    ValueSaver<const FractalSpecific *> m_saved_fractal_specific{g_cur_fractal_specific};
+};
+
+void TestLegacyFloatBailout::SetUp()
+{
+    TestParameterCommand::SetUp();
+    m_file.reset(std::tmpfile());
+    ASSERT_NE(nullptr, m_file);
+}
+
+TEST_P(TestLegacyFloatBailout, appliesLegacyTrigBailout)
+{
+    const LegacyFloatBailoutInput &input{std::get<1>(GetParam())};
+    const std::string params{
+        std::string{"{ "} + input.params + " type=" + std::get<0>(GetParam()) + " function=ident }"};
+    SCOPED_TRACE(params);
+    std::fputs(params.c_str(), m_file.get());
+    std::rewind(m_file.get());
+    g_user.legacy_float = true;
+
+    CommandProcessor processor{m_file.release(), CmdFile::AT_AFTER_STARTUP};
+    const CommandRouter router;
+    const CmdArgFlags result{router.process(processor).flags};
+
+    EXPECT_NE(CmdArgFlags::BAD_ARG, result);
+    EXPECT_EQ(input.bailout, g_user.bailout_value);
+    EXPECT_EQ(input.legacy_float, g_user.legacy_float);
+}
+
+INSTANTIATE_TEST_SUITE_P(TypesAndCommands, TestLegacyFloatBailout,
+    Combine(Values(std::string{"mandelfn"}, std::string{"lambdafn"}),
+        Values(LegacyFloatBailoutInput{"Reset", "reset", 0, false},
+            LegacyFloatBailoutInput{"FloatNo", "reset float=n", 0, false},
+            LegacyFloatBailoutInput{"FloatYes", "reset float=y", 2500, true},
+            LegacyFloatBailoutInput{"YesThenNo", "reset float=y float=n", 0, false},
+            LegacyFloatBailoutInput{"NoThenYes", "reset float=n float=y", 2500, true},
+            LegacyFloatBailoutInput{"YesCustomBailout", "reset float=y bailout=64", 64, true},
+            LegacyFloatBailoutInput{"NoCustomBailout", "reset float=n bailout=100", 100, false},
+            LegacyFloatBailoutInput{"Reset1799", "reset=1799 float=y", 2500, true},
+            LegacyFloatBailoutInput{"Reset1800", "reset=1800 float=y", 0, true},
+            LegacyFloatBailoutInput{"Reset2004", "reset=2004 float=y", 0, true},
+            LegacyFloatBailoutInput{"ResetId14", "reset=1/4 float=y", 0, true})),
+    [](const TestParamInfo<LegacyFloatBailoutParameter> &info)
+    { return std::get<0>(info.param) + "_" + std::get<1>(info.param).name; });
 
 TEST_F(TestParameterCommand, fastRestoreYes)
 {
@@ -3771,25 +3818,36 @@ TEST_F(TestParameterCommand, biomorph)
     EXPECT_EQ(52, g_user.biomorph_value);
 }
 
-TEST_F(TestParameterCommand, orbitSaveRaw)
+struct OrbitSaveParameterInput
 {
-    ValueSaver saved_orbit_save_flags{g_orbit_save_flags, 0};
+    const char *name;
+    const char *argument;
+    int expected;
+};
 
-    exec_cmd_arg("orbitsave=y");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(OSF_RAW, g_orbit_save_flags);
+void PrintTo(const OrbitSaveParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, orbitSaveMidi)
+class TestOrbitSaveParameter : public TestParameterCommand, public WithParamInterface<OrbitSaveParameterInput>
 {
-    ValueSaver saved_orbit_save_flags{g_orbit_save_flags, 0};
+private:
+    ValueSaver<int> m_saved_flags{g_orbit_save_flags, 0};
+};
 
-    exec_cmd_arg("orbitsave=s");
+TEST_P(TestOrbitSaveParameter, setsSaveFlags)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(OSF_MIDI | OSF_RAW, g_orbit_save_flags);
+    EXPECT_EQ(GetParam().expected, g_orbit_save_flags);
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOrbitSaveParameter,
+    Values(OrbitSaveParameterInput{"Raw", "orbitsave=y", OSF_RAW},
+        OrbitSaveParameterInput{"Midi", "orbitsave=s", OSF_MIDI | OSF_RAW}),
+    [](const TestParamInfo<OrbitSaveParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, orbitSaveName)
 {
@@ -3819,13 +3877,6 @@ TEST_F(TestParameterCommand, bailOutTestMod)
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(Bailout::MOD, g_bailout_test);
-}
-
-TEST_F(TestParameterCommandError, floatBadValue)
-{
-    exec_cmd_arg("float=foo");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
 TEST_F(TestParameterCommandError, bailOutTestBadValue)
