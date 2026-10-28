@@ -13,6 +13,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 using namespace id::io;
@@ -390,57 +391,57 @@ INSTANTIATE_TEST_SUITE_P(SamplingInputs, TestGifPotentialSampling,
         GifSamplingCase{"MinimalImage", SamplingImage::MINIMAL, 0, 0, {{0}, {1}, {1}, {0}}}),
     [](const TestParamInfo<GifSamplingCase> &info) { return info.param.name; });
 
-TEST_F(TestGifRestore, rejectsPotentialImageNarrowerThanLogicalScreen)
+struct PotentialDescriptorCase
 {
-    std::vector<Byte> data{gif_data()};
-    data[6] = 0x80;
-    data[7] = 0x02; // 640-column screen, two-column image.
-    const std::filesystem::path path{write_file(data)};
-    GifRestore restore{path, 0, 0, true};
+    const char *name;
+    std::vector<std::pair<size_t, Byte>> mutations;
+};
 
-    restore.iterate();
-
-    EXPECT_TRUE(restore.done());
-    EXPECT_EQ(-1, restore.result());
-    EXPECT_TRUE(restore.line().empty());
-    EXPECT_TRUE(std::filesystem::remove(path));
+void PrintTo(const PotentialDescriptorCase &value, std::ostream *str)
+{
+    *str << value.name;
 }
 
-TEST_F(TestGifRestore, rejectsPotentialImageWithMismatchedDimensionsOrOffsets)
+class TestPotentialGifDescriptor : public TestGifRestore, public WithParamInterface<PotentialDescriptorCase>
 {
-    // Change each screen dimension, image offset, and image dimension.
-    for (const int offset : {6, 8, 20, 22, 24, 26})
+protected:
+    void SetUp() override;
+
+    std::filesystem::path m_path;
+};
+
+void TestPotentialGifDescriptor::SetUp()
+{
+    std::vector<Byte> data{gif_data()};
+    for (const std::pair<size_t, Byte> &mutation : GetParam().mutations)
     {
-        SCOPED_TRACE(Message() << "offset=" << offset);
-        std::vector<Byte> data{gif_data()};
-        data[offset] += 2;
-        const std::filesystem::path path{write_file(data)};
-        GifRestore restore{path, 0, 0, true};
-
-        restore.iterate();
-
-        EXPECT_TRUE(restore.done());
-        EXPECT_EQ(-1, restore.result());
-        EXPECT_TRUE(restore.line().empty());
-        EXPECT_TRUE(std::filesystem::remove(path));
+        data[mutation.first] = mutation.second;
     }
+    m_path = write_file(data);
 }
 
-TEST_F(TestGifRestore, rejectsOddPotentialWidthEvenWhenDimensionsMatch)
+TEST_P(TestPotentialGifDescriptor, rejectsInconsistentDimensionsOrOffsets)
 {
-    std::vector<Byte> data{gif_data()};
-    data[6] = 3;
-    data[24] = 3;
-    const std::filesystem::path path{write_file(data)};
-    GifRestore restore{path, 0, 0, true};
+    GifRestore restore{m_path, 0, 0, true};
 
     restore.iterate();
 
     EXPECT_TRUE(restore.done());
     EXPECT_EQ(-1, restore.result());
     EXPECT_TRUE(restore.line().empty());
-    EXPECT_TRUE(std::filesystem::remove(path));
+    EXPECT_TRUE(std::filesystem::remove(m_path));
 }
+
+INSTANTIATE_TEST_SUITE_P(DescriptorInputs, TestPotentialGifDescriptor,
+    Values(PotentialDescriptorCase{"NarrowerThan640ColumnScreen", {{6, 0x80}, {7, 0x02}}},
+        PotentialDescriptorCase{"ScreenWidthMismatch", {{6, 4}}},
+        PotentialDescriptorCase{"ScreenHeightMismatch", {{8, 4}}},
+        PotentialDescriptorCase{"LeftOffsetMismatch", {{20, 2}}},
+        PotentialDescriptorCase{"TopOffsetMismatch", {{22, 2}}},
+        PotentialDescriptorCase{"ImageWidthMismatch", {{24, 4}}},
+        PotentialDescriptorCase{"ImageHeightMismatch", {{26, 4}}},
+        PotentialDescriptorCase{"OddMatchingWidths", {{6, 3}, {24, 3}}}),
+    [](const TestParamInfo<PotentialDescriptorCase> &info) { return info.param.name; });
 
 TEST_F(TestGifRestore, independentRestoresRetainInputAndLineBuffers)
 {
