@@ -9783,58 +9783,158 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestSignedSubDoublePower,
     Values(PrecisePowerInput{"Zero", 0}, PrecisePowerInput{"NegativeOne", -1}, PrecisePowerInput{"NegativeTwo", -2}),
     [](const TestParamInfo<PrecisePowerInput> &info) { return info.param.name; });
 
-TEST_F(TestPerturbationPixels, zeroPowerDistinguishesExactZeroFromAnUnderflowedReference)
+struct ZeroPowerSeedInput
 {
-    ValueSaver saved_exponent{g_c_exponent, 0};
+    const char *name;
+    bool exact_zero;
+    bool underflowed_reference;
+    double real;
+    std::optional<double> imaginary;
+    std::optional<bool> escaped;
+};
+
+void PrintTo(const ZeroPowerSeedInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestZeroPowerSeed : public TestPerturbationPixels, public WithParamInterface<ZeroPowerSeedInput>
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    BFComplex m_center{};
+    BFComplex m_value{};
+
+private:
+    ValueSaver<int> m_saved_exponent{g_c_exponent, 0};
+    std::optional<BigStackSaver> m_stack;
+};
+
+void TestZeroPowerSeed::SetUp()
+{
+    TestPerturbationPixels::SetUp();
     g_fractal_type = FractalType::MANDEL_Z_POWER;
     m_specific = *get_fractal_specific(g_fractal_type);
     g_max_iterations = 2;
     init_bf_dec(60);
     m_big_float = true;
-    const BFComplex center{m_engine.initialize_frame_bf({}, {})};
-    clear_bf(center.x);
-    clear_bf(center.y);
+    m_center = m_engine.initialize_frame_bf({}, {});
+    clear_bf(m_center.x);
+    clear_bf(m_center.y);
     while (!m_engine.initialize_pixel_strategy())
     {
     }
-    BigStackSaver saved;
-    const BFComplex value{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    clear_bf(value.y);
-    str_to_bf(value.x, "1e-400");
-    m_engine.begin_orbit_bf(center, value, 0);
+    m_stack.emplace();
+    m_value = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    clear_bf(m_value.y);
+    // Exact zero must retain the reference left by the underflowed seed.
+    if (GetParam().underflowed_reference)
+    {
+        str_to_bf(m_value.x, "1e-400");
+        m_engine.begin_orbit_bf(m_center, m_value, 0);
+        for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
+        {
+            m_engine.iterate_orbit();
+        }
+        ASSERT_EQ(1, m_engine.orbit_iteration());
+        m_engine.finish_orbit();
+    }
+}
+
+void TestZeroPowerSeed::TearDown()
+{
+    m_stack.reset();
+    TestPerturbationPixels::TearDown();
+}
+
+TEST_P(TestZeroPowerSeed, distinguishesExactZeroFromUnderflowedReference)
+{
+    if (GetParam().exact_zero)
+    {
+        clear_bf(m_value.x);
+    }
+    else
+    {
+        str_to_bf(m_value.x, "1e-400");
+    }
+
+    m_engine.begin_orbit_bf(m_center, m_value, 0);
     for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
     {
         m_engine.iterate_orbit();
     }
+
     ASSERT_EQ(1, m_engine.orbit_iteration());
-    EXPECT_DOUBLE_EQ(1.0, m_engine.orbit_value().real());
-    m_engine.finish_orbit();
-    clear_bf(value.x);
-    m_engine.begin_orbit_bf(center, value, 0);
-    for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
+    EXPECT_DOUBLE_EQ(GetParam().real, m_engine.orbit_value().real());
+    if (GetParam().imaginary)
     {
-        m_engine.iterate_orbit();
+        EXPECT_DOUBLE_EQ(*GetParam().imaginary, m_engine.orbit_value().imag());
     }
-    ASSERT_EQ(1, m_engine.orbit_iteration());
-    EXPECT_DOUBLE_EQ(0.0, m_engine.orbit_value().real());
-    EXPECT_DOUBLE_EQ(0.0, m_engine.orbit_value().imag());
-    EXPECT_FALSE(m_engine.orbit_escaped());
+    if (GetParam().escaped)
+    {
+        EXPECT_EQ(*GetParam().escaped, m_engine.orbit_escaped());
+    }
     m_engine.finish_orbit();
 }
 
-TEST_P(TestPerturbationContinuation, standardFramePreservesIntegerPowers)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestZeroPowerSeed,
+    Values(ZeroPowerSeedInput{"UnderflowedSeed", false, false, 1.0, std::nullopt, std::nullopt},
+        ZeroPowerSeedInput{"ExactZeroAfterUnderflowedSeed", true, true, 0.0, 0.0, false}),
+    [](const TestParamInfo<ZeroPowerSeedInput> &info) { return info.param.name; });
+
+struct FrameIntegerPowerInput
 {
-    ValueSaver saved_exponent{g_c_exponent};
-    ValueSaver saved_power{g_params[2]};
-    ValueSaver saved_power_imaginary{g_params[3], 0.0};
-    ValueSaver saved_user{g_user, UserData{}};
-    ValueSaver saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
-    ValueSaver saved_resuming{g_resuming, false};
+    std::string name;
+    bool big_float;
+    int exponent;
+};
+
+void PrintTo(const FrameIntegerPowerInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<FrameIntegerPowerInput> frame_integer_power_inputs()
+{
+    std::vector<FrameIntegerPowerInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const int exponent : {0, 1, -1, -2, -3, -29, 28, 29, 64, 2048})
+        {
+            inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
+                    (exponent < 0 ? "NegativePower" : "Power") + std::to_string(std::abs(exponent)),
+                big_float, exponent});
+        }
+    }
+    return inputs;
+}
+
+class TestFrameIntegerPower : public PerturbationIntegerPowerTest, public WithParamInterface<FrameIntegerPowerInput>
+{
+public:
+    TestFrameIntegerPower();
+
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<UserData> m_saved_user{g_user, UserData{}};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
+    ValueSaver<bool> m_saved_resuming{g_resuming, false};
+};
+
+TestFrameIntegerPower::TestFrameIntegerPower() :
+    PerturbationIntegerPowerTest{GetParam().big_float}
+{
+}
+
+void TestFrameIntegerPower::SetUp()
+{
+    PerturbationIntegerPowerTest::SetUp();
     g_user.perturbation = PerturbationMode::YES;
-    g_fractal_type = FractalType::MANDEL_Z_POWER;
-    m_specific = *get_fractal_specific(g_fractal_type);
     m_specific.symmetry = SymmetryType::NONE;
-    m_specific.per_image = GetParam() ? mandel_per_image_bf : mandel_per_image;
+    m_specific.per_image = GetParam().big_float ? mandel_per_image_bf : mandel_per_image;
     m_specific.pert_pt =
         [](const std::complex<double> &ref, std::complex<double> &delta, const std::complex<double> &parameter_delta)
     {
@@ -9844,7 +9944,7 @@ TEST_P(TestPerturbationContinuation, standardFramePreservesIntegerPowers)
     g_dispatch = FractalDispatch{m_specific};
     g_max_iterations = 4;
     g_image_region = ImageRegion{{0.875, 0.000125}, {0.875, 0.000125}, {0.875, 0.000125}};
-    if (GetParam())
+    if (GetParam().big_float)
     {
         init_bf_dec(60);
         m_big_float = true;
@@ -9855,27 +9955,30 @@ TEST_P(TestPerturbationContinuation, standardFramePreservesIntegerPowers)
         float_to_bf(g_bf_y_max, 0.000125);
         float_to_bf(g_bf_y_3rd, 0.000125);
     }
-
-    for (const int exponent : {0, 1, -1, -2, -3, -29, 28, 29, 64, 2048})
-    {
-        SCOPED_TRACE(exponent);
-        g_c_exponent = exponent;
-        g_params[2] = exponent;
-        g_calc_status = CalcStatus::PARAMS_CHANGED;
-        s_perturbation_orbit.clear();
-        StandardFractal calculation;
-        calculation.resume();
-        for (int chunk = 0; chunk < 200 && !calculation.done(); ++chunk)
-        {
-            calculation.iterate();
-            EXPECT_EQ(exponent, g_c_exponent);
-        }
-        ASSERT_TRUE(calculation.done());
-        EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
-        EXPECT_FALSE(s_perturbation_orbit.empty());
-        calculation.finish();
-    }
+    g_c_exponent = GetParam().exponent;
+    g_params[2] = GetParam().exponent;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    s_perturbation_orbit.clear();
 }
+
+TEST_P(TestFrameIntegerPower, preservesIntegerPowerThroughoutFrame)
+{
+    StandardFractal calculation;
+    calculation.resume();
+    for (int chunk = 0; chunk < 200 && !calculation.done(); ++chunk)
+    {
+        calculation.iterate();
+        EXPECT_EQ(GetParam().exponent, g_c_exponent);
+    }
+
+    ASSERT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_FALSE(s_perturbation_orbit.empty());
+    calculation.finish();
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFrameIntegerPower, ValuesIn(frame_integer_power_inputs()),
+    [](const TestParamInfo<FrameIntegerPowerInput> &info) { return info.param.name; });
 
 class TestComplexPerturbationContinuation : public TestPerturbationIterations
 {
