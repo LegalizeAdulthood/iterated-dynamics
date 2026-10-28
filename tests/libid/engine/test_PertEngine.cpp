@@ -1598,23 +1598,52 @@ TEST_F(TestPerturbationPixels, finishingPartialReferenceReleasesPersistentBigFlo
     }
 }
 
-TEST_P(TestPerturbationIterations, realInitialOffsetMatchesStandardOrbit)
+struct InitialOffsetInput
 {
-    set_initial_offset({0.125, 0.0});
+    const char *name;
+    bool big_float;
+    DComplex offset;
+    std::complex<double> expected;
+};
 
-    compare_pixel({0.25, 0.125}, 8);
-
-    EXPECT_EQ((std::complex<double>{0.375, 0.125}), s_perturbation_orbit.front());
+void PrintTo(const InitialOffsetInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_P(TestPerturbationIterations, imaginaryInitialOffsetMatchesStandardOrbit)
+class TestPerturbationInitialOffset : public PerturbationIterationTest, public WithParamInterface<InitialOffsetInput>
 {
-    set_initial_offset({0.0, -0.0625});
+public:
+    TestPerturbationInitialOffset();
 
+protected:
+    void SetUp() override;
+};
+
+TestPerturbationInitialOffset::TestPerturbationInitialOffset() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestPerturbationInitialOffset::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    set_initial_offset(GetParam().offset);
+}
+
+TEST_P(TestPerturbationInitialOffset, matchesStandardOrbit)
+{
     compare_pixel({0.25, 0.125}, 8);
 
-    EXPECT_EQ((std::complex<double>{0.25, 0.0625}), s_perturbation_orbit.front());
+    EXPECT_EQ(GetParam().expected, s_perturbation_orbit.front());
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPerturbationInitialOffset,
+    Values(InitialOffsetInput{"DoubleRealOffset", false, {0.125, 0.0}, {0.375, 0.125}},
+        InitialOffsetInput{"DoubleImaginaryOffset", false, {0.0, -0.0625}, {0.25, 0.0625}},
+        InitialOffsetInput{"HighPrecisionRealOffset", true, {0.125, 0.0}, {0.375, 0.125}},
+        InitialOffsetInput{"HighPrecisionImaginaryOffset", true, {0.0, -0.0625}, {0.25, 0.0625}}),
+    [](const TestParamInfo<InitialOffsetInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, combinedInitialOffsetsDoNotChangeTheRecurrenceParameter)
 {
@@ -1628,27 +1657,80 @@ TEST_P(TestPerturbationIterations, combinedInitialOffsetsDoNotChangeTheRecurrenc
     EXPECT_THAT(s_reference_coordinates, Each(Eq(std::complex<double>{0.25, 0.125})));
 }
 
-TEST_P(TestPerturbationIterations, bofInitializationMatchesBothStandardCompatibilityPolicies)
+struct BofInitializationInput
 {
-    set_initial_offset({0.125, -0.0625});
-    for (const ColorMethod method : {ColorMethod::BOF60, ColorMethod::BOF61})
+    std::string name;
+    bool big_float;
+    ColorMethod method;
+    bool book;
+};
+
+void PrintTo(const BofInitializationInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<BofInitializationInput> perturbation_bof_inputs()
+{
+    struct BofMethod
     {
-        for (const bool book : {false, true})
+        const char *name;
+        ColorMethod value;
+    };
+
+    std::vector<BofInitializationInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const BofMethod &method : {BofMethod{"Bof60", ColorMethod::BOF60}, {"Bof61", ColorMethod::BOF61}})
         {
-            SCOPED_TRACE(static_cast<int>(method));
-            SCOPED_TRACE(book);
-            g_inside_method = method;
-            g_bof_match_book_images = book;
-
-            compare_pixel({0.25, 0.125}, 8);
-
-            const std::complex<double> expected{
-                book ? std::complex<double>{0.125, -0.0625} : std::complex<double>{0.375, 0.0625}};
-            EXPECT_EQ(expected, s_perturbation_orbit.front());
-            EXPECT_EQ(book ? 8 : 7, s_perturbation_orbit.size());
+            for (const bool book : {false, true})
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + method.name +
+                        (book ? "_Book" : "_Ordinary"),
+                    big_float, method.value, book});
+            }
         }
     }
+    return inputs;
 }
+
+class TestPerturbationBofInitialization : public PerturbationIterationTest,
+                                          public WithParamInterface<BofInitializationInput>
+{
+public:
+    TestPerturbationBofInitialization();
+
+protected:
+    void SetUp() override;
+};
+
+TestPerturbationBofInitialization::TestPerturbationBofInitialization() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestPerturbationBofInitialization::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    set_initial_offset({0.125, -0.0625});
+    g_inside_method = GetParam().method;
+    g_bof_match_book_images = GetParam().book;
+}
+
+TEST_P(TestPerturbationBofInitialization, matchesStandardCompatibilityPolicy)
+{
+    const bool book{GetParam().book};
+
+    compare_pixel({0.25, 0.125}, 8);
+
+    const std::complex<double> expected{
+        book ? std::complex<double>{0.125, -0.0625} : std::complex<double>{0.375, 0.0625}};
+    EXPECT_EQ(expected, s_perturbation_orbit.front());
+    EXPECT_EQ(book ? 8 : 7, s_perturbation_orbit.size());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPerturbationBofInitialization, ValuesIn(perturbation_bof_inputs()),
+    [](const TestParamInfo<BofInitializationInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, bofFirstUpdateCanEscapeAtIterationZero)
 {
@@ -1664,23 +1746,77 @@ TEST_P(TestPerturbationIterations, bofFirstUpdateCanEscapeAtIterationZero)
     EXPECT_EQ((std::complex<double>{2.0, 0.0}), s_perturbation_orbit.front());
 }
 
-TEST_P(TestPerturbationIterations, initialOffsetsSurviveDisplacementAndReferenceReplacement)
+struct InitialOffsetReplacementInput
 {
-    set_initial_offset({0.125, -0.0625});
-    for (const bool book : {false, true})
-    {
-        SCOPED_TRACE(book);
-        g_inside_method = book ? ColorMethod::BOF60 : ColorMethod::ITER;
-        g_bof_match_book_images = book;
-        m_engine.set_glitch_tolerance(0.0);
-        compare_pixel({0.25, 0.125}, 8, 0.125);
-        EXPECT_EQ(1, m_engine.reference_count());
+    std::string name;
+    bool big_float;
+    bool book;
+    double tolerance;
+};
 
-        m_engine.set_glitch_tolerance(2.0);
-        compare_pixel({0.25, 0.125}, 8, 0.125);
+void PrintTo(const InitialOffsetReplacementInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<InitialOffsetReplacementInput> initial_offset_replacement_inputs()
+{
+    std::vector<InitialOffsetReplacementInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const bool book : {false, true})
+        {
+            for (const double tolerance : {0.0, 2.0})
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
+                        (book ? "Book_" : "Ordinary_") + (tolerance == 0.0 ? "NoReplacement" : "Replacement"),
+                    big_float, book, tolerance});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestInitialOffsetReplacement : public PerturbationIterationTest,
+                                     public WithParamInterface<InitialOffsetReplacementInput>
+{
+public:
+    TestInitialOffsetReplacement();
+
+protected:
+    void SetUp() override;
+};
+
+TestInitialOffsetReplacement::TestInitialOffsetReplacement() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestInitialOffsetReplacement::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    set_initial_offset({0.125, -0.0625});
+    g_inside_method = GetParam().book ? ColorMethod::BOF60 : ColorMethod::ITER;
+    g_bof_match_book_images = GetParam().book;
+    m_engine.set_glitch_tolerance(GetParam().tolerance);
+}
+
+TEST_P(TestInitialOffsetReplacement, preservesDisplacedInitialization)
+{
+    compare_pixel({0.25, 0.125}, 8, 0.125);
+
+    if (GetParam().tolerance == 0.0)
+    {
+        EXPECT_EQ(1, m_engine.reference_count());
+    }
+    else
+    {
         EXPECT_GT(m_engine.reference_count(), 1);
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInitialOffsetReplacement, ValuesIn(initial_offset_replacement_inputs()),
+    [](const TestParamInfo<InitialOffsetReplacementInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, fixedZeroInitialOrbitMatchesStandardOrbit)
 {
