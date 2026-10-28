@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <fractals/ifs.h>
 
@@ -10,6 +11,7 @@
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
+#include <ostream>
 
 namespace fs = std::filesystem;
 
@@ -29,7 +31,6 @@ protected:
     void TearDown() override;
 
     void skip_token();
-    void skip_first_ifs_definition();
 
     fs::path m_ifs_file{fs::path{ID_TEST_DATA_DIR} / ID_TEST_IFS_FILE};
     std::FILE *m_file{};
@@ -53,16 +54,6 @@ void TestGetIFSToken::skip_token()
     get_next_ifs_token(m_buff.data(), m_file);
 }
 
-void TestGetIFSToken::skip_first_ifs_definition()
-{
-    constexpr int num_first_tokens = 7 + 1 + 1; // {, params, }
-    get_ifs_token(m_buff.data(), m_file);       // name
-    for (int i = 0; i < num_first_tokens; ++i)
-    {
-        skip_token();
-    }
-}
-
 TEST_F(TestGetIFSToken, firstTokenIsName)
 {
     const char *result = get_ifs_token(m_buff.data(), m_file);
@@ -71,62 +62,51 @@ TEST_F(TestGetIFSToken, firstTokenIsName)
     ASSERT_STREQ(ID_TEST_FIRST_IFS_NAME, result);
 }
 
-TEST_F(TestGetIFSToken, secondTokenIsOpenBrace)
+struct IFSTokenPosition
 {
-    get_ifs_token(m_buff.data(), m_file);
+    const char *name;
+    int skipped_next;
+    const char *expected;
+};
 
-    const char *result = get_next_ifs_token(m_buff.data(), m_file);
-
-    ASSERT_NE(nullptr, result);
-    ASSERT_STREQ("{", result);
+void PrintTo(const IFSTokenPosition &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestGetIFSToken, thirdTokenIsFirstParam)
+class TestNextIFSToken : public TestGetIFSToken, public testing::WithParamInterface<IFSTokenPosition>
 {
+protected:
+    void SetUp() override;
+};
+
+void TestNextIFSToken::SetUp()
+{
+    TestGetIFSToken::SetUp();
     get_ifs_token(m_buff.data(), m_file);
-    skip_token();
-
-    const char *result = get_next_ifs_token(m_buff.data(), m_file);
-
-    ASSERT_NE(nullptr, result);
-    ASSERT_STREQ(ID_TEST_FIRST_IFS_PARAM1, result);
-}
-
-TEST_F(TestGetIFSToken, firstIFSDefinitionHasOneRow)
-{
-    constexpr int num_param_tokens = 7;
-    constexpr int num_open_brace_tokens = 1;
-    get_ifs_token(m_buff.data(), m_file); // name
-    for (int i = 0; i < num_param_tokens + num_open_brace_tokens; ++i)
+    for (int i = 0; i < GetParam().skipped_next; ++i)
     {
         skip_token();
     }
-
-    const char *result = get_next_ifs_token(m_buff.data(), m_file);
-
-    ASSERT_NE(nullptr, result);
-    ASSERT_STREQ("}", result);
 }
 
-TEST_F(TestGetIFSToken, secondIFSDefinitionName)
+TEST_P(TestNextIFSToken, readsTokenAtStreamPosition)
 {
-    skip_first_ifs_definition();
-
-    const char *result = get_next_ifs_token(m_buff.data(), m_file);
+    const char *result{get_next_ifs_token(m_buff.data(), m_file)};
 
     ASSERT_NE(nullptr, result);
-    ASSERT_STREQ(ID_TEST_SECOND_IFS_NAME, result);
+    ASSERT_STREQ(GetParam().expected, result);
 }
 
-TEST_F(TestGetIFSToken, secondIFSDefinition3DQualifier)
-{
-    skip_first_ifs_definition();
-    skip_token();
+constexpr int FIRST_IFS_PARAMETERS{7};
+constexpr int FIRST_IFS_BODY_TOKENS{FIRST_IFS_PARAMETERS + 2};
 
-    const char *result = get_next_ifs_token(m_buff.data(), m_file);
-
-    ASSERT_NE(nullptr, result);
-    ASSERT_STREQ("(3D)", result);
-}
+INSTANTIATE_TEST_SUITE_P(Positions, TestNextIFSToken,
+    testing::Values(IFSTokenPosition{"OpenBrace", 0, "{"},
+        IFSTokenPosition{"FirstParameter", 1, ID_TEST_FIRST_IFS_PARAM1},
+        IFSTokenPosition{"CloseBraceAfterOneRow", FIRST_IFS_PARAMETERS + 1, "}"},
+        IFSTokenPosition{"SecondDefinitionName", FIRST_IFS_BODY_TOKENS, ID_TEST_SECOND_IFS_NAME},
+        IFSTokenPosition{"SecondDefinitionQualifier", FIRST_IFS_BODY_TOKENS + 1, "(3D)"}),
+    [](const testing::TestParamInfo<IFSTokenPosition> &info) { return info.param.name; });
 
 } // namespace id::test
