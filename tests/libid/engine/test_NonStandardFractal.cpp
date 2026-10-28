@@ -209,42 +209,127 @@ protected:
     std::vector<int> m_columns;
 };
 
-TEST_F(TestNonStandardFractal, noOperationRequiresExplicitSetupAndSelection)
+class TestEmptyNonStandardFractal : public TestNonStandardFractal
 {
-    NonStandardFractal calculation;
+protected:
+    void TearDown() override;
 
-    EXPECT_TRUE(calculation.done());
-    EXPECT_THROW(calculation.select(), std::logic_error);
-    EXPECT_THROW(calculation.view_done(), std::logic_error);
-    EXPECT_THROW(calculation.next_view(), std::logic_error);
-    EXPECT_THROW(calculation.iterate(), std::logic_error);
-    EXPECT_THROW(calculation.preparing(), std::logic_error);
-    EXPECT_THROW(calculation.sizing(), std::logic_error);
-    EXPECT_THROW(calculation.prepare_palette(), std::logic_error);
-    EXPECT_THROW(calculation.consume_orbit_overlay_displayed(), std::logic_error);
-    EXPECT_THROW(calculation.scrub_overlay(), std::logic_error);
-    EXPECT_FALSE(calculation.potential_storage_required());
-    EXPECT_THROW(calculation.complete_potential_storage(false), std::logic_error);
-    EXPECT_FALSE(calculation.inverse_julia_queue_required());
-    EXPECT_THROW(calculation.complete_inverse_julia_queue(false), std::logic_error);
-    EXPECT_THROW(calculation.consume_batch_complete(), std::logic_error);
-    EXPECT_THROW(calculation.suspend(), std::logic_error);
+    NonStandardFractal m_calculation;
+};
+
+void TestEmptyNonStandardFractal::TearDown()
+{
     EXPECT_EQ(0, s_orbit_calls);
     EXPECT_TRUE(m_columns.empty());
+    TestNonStandardFractal::TearDown();
 }
 
-TEST_F(TestNonStandardFractal, unsupportedTypeDoesNotInvokeItsRenderer)
+TEST_F(TestEmptyNonStandardFractal, initiallyDone)
 {
+    EXPECT_TRUE(m_calculation.done());
+}
+
+TEST_F(TestEmptyNonStandardFractal, selectionRequiresStart)
+{
+    EXPECT_THROW(m_calculation.select(), std::logic_error);
+}
+
+TEST_F(TestEmptyNonStandardFractal, viewCompletionRequiresSelection)
+{
+    EXPECT_THROW(m_calculation.view_done(), std::logic_error);
+}
+
+TEST_F(TestEmptyNonStandardFractal, viewAdvanceRequiresSelection)
+{
+    EXPECT_THROW(m_calculation.next_view(), std::logic_error);
+}
+
+TEST_F(TestEmptyNonStandardFractal, iterationRequiresSelection)
+{
+    EXPECT_THROW(m_calculation.iterate(), std::logic_error);
+}
+
+TEST_F(TestEmptyNonStandardFractal, preparationQueryRequiresSelection)
+{
+    EXPECT_THROW(m_calculation.preparing(), std::logic_error);
+}
+
+TEST_F(TestEmptyNonStandardFractal, sizingQueryRequiresSelection)
+{
+    EXPECT_THROW(m_calculation.sizing(), std::logic_error);
+}
+
+TEST_F(TestEmptyNonStandardFractal, palettePreparationRequiresSelection)
+{
+    EXPECT_THROW(m_calculation.prepare_palette(), std::logic_error);
+}
+
+TEST_F(TestEmptyNonStandardFractal, overlayNotificationRequiresSelection)
+{
+    EXPECT_THROW(m_calculation.consume_orbit_overlay_displayed(), std::logic_error);
+}
+
+TEST_F(TestEmptyNonStandardFractal, overlayScrubbingRequiresSelection)
+{
+    EXPECT_THROW(m_calculation.scrub_overlay(), std::logic_error);
+}
+
+TEST_F(TestEmptyNonStandardFractal, doesNotRequestPotentialStorage)
+{
+    EXPECT_FALSE(m_calculation.potential_storage_required());
+}
+
+TEST_F(TestEmptyNonStandardFractal, potentialStorageCompletionRequiresSelection)
+{
+    EXPECT_THROW(m_calculation.complete_potential_storage(false), std::logic_error);
+}
+
+TEST_F(TestEmptyNonStandardFractal, doesNotRequestInverseJuliaQueue)
+{
+    EXPECT_FALSE(m_calculation.inverse_julia_queue_required());
+}
+
+TEST_F(TestEmptyNonStandardFractal, inverseJuliaQueueCompletionRequiresSelection)
+{
+    EXPECT_THROW(m_calculation.complete_inverse_julia_queue(false), std::logic_error);
+}
+
+TEST_F(TestEmptyNonStandardFractal, batchNotificationRequiresSelection)
+{
+    EXPECT_THROW(m_calculation.consume_batch_complete(), std::logic_error);
+}
+
+TEST_F(TestEmptyNonStandardFractal, suspensionRequiresSelection)
+{
+    EXPECT_THROW(m_calculation.suspend(), std::logic_error);
+}
+
+class TestUnsupportedNonStandardFractal : public TestEmptyNonStandardFractal
+{
+protected:
+    void SetUp() override;
+};
+
+void TestUnsupportedNonStandardFractal::SetUp()
+{
+    TestNonStandardFractal::SetUp();
     select_type(FractalType::MANDEL);
-    NonStandardFractal calculation;
-    ASSERT_TRUE(calculation.start().empty());
+    ASSERT_TRUE(m_calculation.start().empty());
+}
 
-    EXPECT_THROW(calculation.select(), std::logic_error);
+TEST_F(TestUnsupportedNonStandardFractal, selectionRejectsUnsupportedType)
+{
+    EXPECT_THROW(m_calculation.select(), std::logic_error);
+}
 
-    EXPECT_TRUE(calculation.done());
-    EXPECT_THROW(calculation.iterate(), std::logic_error);
-    EXPECT_EQ(0, s_orbit_calls);
-    EXPECT_TRUE(m_columns.empty());
+TEST_F(TestUnsupportedNonStandardFractal, unsupportedTypeRemainsDone)
+{
+    EXPECT_TRUE(m_calculation.done());
+}
+
+TEST_F(TestUnsupportedNonStandardFractal, iterationRejectsUnsupportedType)
+{
+    EXPECT_THROW(m_calculation.iterate(), std::logic_error);
 }
 
 TEST_F(TestNonStandardFractal, activeOperationCannotBeReplaced)
@@ -331,31 +416,80 @@ TEST_F(TestNonStandardFractal, selectsDynamicAndCloudWithResumableState)
     }
 }
 
-TEST_F(TestNonStandardFractal, inverseJuliaWaitsForStorageDecisionThenCompletesAPoint)
+class TestInverseJuliaSelection : public TestNonStandardFractal
 {
-    ValueSaver saved_major{g_major_method, Major::BREADTH_FIRST};
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    ValueSaver<Major> m_saved_major{g_major_method, Major::BREADTH_FIRST};
+    NonStandardFractal m_calculation;
+};
+
+void TestInverseJuliaSelection::SetUp()
+{
+    TestNonStandardFractal::SetUp();
     select_type(FractalType::INVERSE_JULIA);
     g_dispatch.set_orbit_calc(completed_inverse_orbit);
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    m_calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, m_calculation.select());
+}
+
+void TestInverseJuliaSelection::TearDown()
+{
+    m_calculation.finish(!m_calculation.completed());
+    TestNonStandardFractal::TearDown();
+}
+
+TEST_F(TestInverseJuliaSelection, selectedTypeHasNoLegacyRenderer)
+{
     EXPECT_EQ(nullptr, get_fractal_specific(FractalType::INVERSE_JULIA)->calc_type);
-    EXPECT_TRUE(calculation.inverse_julia_queue_required());
-    EXPECT_THROW(calculation.iterate(), std::logic_error);
+}
+
+TEST_F(TestInverseJuliaSelection, selectionRequestsQueueBeforeOrbitWork)
+{
+    EXPECT_TRUE(m_calculation.inverse_julia_queue_required());
     EXPECT_EQ(0, s_orbit_calls);
+}
 
-    calculation.complete_inverse_julia_queue(false);
+TEST_F(TestInverseJuliaSelection, iterationRequiresQueueDecision)
+{
+    EXPECT_THROW(m_calculation.iterate(), std::logic_error);
+    EXPECT_EQ(0, s_orbit_calls);
+}
 
+class TestInverseJuliaFallback : public TestInverseJuliaSelection
+{
+protected:
+    void SetUp() override;
+};
+
+void TestInverseJuliaFallback::SetUp()
+{
+    TestInverseJuliaSelection::SetUp();
+    m_calculation.complete_inverse_julia_queue(false);
+}
+
+TEST_F(TestInverseJuliaFallback, queueRejectionSelectsRandomWalk)
+{
     EXPECT_EQ(Major::RANDOM_WALK, g_major_method);
-    EXPECT_FALSE(calculation.inverse_julia_queue_required());
-    EXPECT_THROW(calculation.complete_inverse_julia_queue(false), std::logic_error);
-    calculation.iterate();
+    EXPECT_FALSE(m_calculation.inverse_julia_queue_required());
+}
+
+TEST_F(TestInverseJuliaFallback, queueCompletionRejectsDuplicateDecision)
+{
+    EXPECT_THROW(m_calculation.complete_inverse_julia_queue(false), std::logic_error);
+}
+
+TEST_F(TestInverseJuliaFallback, fallbackCompletesAPointOnce)
+{
+    m_calculation.iterate();
+
     EXPECT_EQ(1, s_orbit_calls);
     EXPECT_EQ((DComplex{23.0, 45.0}), g_old_z);
-    EXPECT_TRUE(calculation.completed());
-    calculation.iterate();
+    EXPECT_TRUE(m_calculation.completed());
+    m_calculation.iterate();
     EXPECT_EQ(1, s_orbit_calls);
-    calculation.finish(false);
 }
 
 TEST_F(TestNonStandardFractal, randomWalkInverseJuliaSuspendsWithoutResumeData)
