@@ -36,48 +36,72 @@ namespace id::test
 class TestLoadConfig : public Test
 {
 protected:
-    void SetUp() override
-    {
-        g_video_table_len = 0;
-        g_video_mode_keys.fill(0);
-        g_bad_config = ConfigStatus::OK;
-    }
+    void SetUp() override;
+    void TearDown() override;
+    ExpectationSet register_driver(MockDriver &driver, const std::string &name);
+    std::filesystem::path config_path() const;
+    std::filesystem::path write_config(int width, int height) const;
 
-    void TearDown() override
-    {
-        if (g_driver != nullptr)
-        {
-            close_drivers();
-        }
-        g_video_table_len = 0;
-        g_bad_config = ConfigStatus::OK;
-    }
-
+    std::vector<std::string> m_args{"id"};
+    MockDriver m_gdi;
+    MockDriver m_disk;
+    const std::string m_gdi_name{"gdi"};
+    const std::string m_disk_name{"disk"};
     ValueSaver<std::array<int, MAX_VIDEO_MODES>> m_saved_keys{g_video_mode_keys};
+};
 
-    std::filesystem::path config_path() const
+void TestLoadConfig::SetUp()
+{
+    Test::SetUp();
+    g_video_table_len = 0;
+    g_video_mode_keys.fill(0);
+    g_bad_config = ConfigStatus::OK;
+}
+
+void TestLoadConfig::TearDown()
+{
+    if (g_driver != nullptr)
     {
-        const TestInfo *info = UnitTest::GetInstance()->current_test_info();
-        std::string name{info->test_suite_name()};
-        name += '_';
-        name += info->name();
-        std::replace_if(name.begin(), name.end(), [](const unsigned char ch) { return std::isalnum(ch) == 0; }, '_');
-        return std::filesystem::path{ID_TEST_HOME_DIR} / (name + ".cfg");
+        close_drivers();
     }
+    std::error_code error;
+    std::filesystem::remove(config_path(), error);
+    g_video_table_len = 0;
+    g_bad_config = ConfigStatus::OK;
+    Test::TearDown();
+}
 
-    std::filesystem::path write_config(const int width, const int height) const
+ExpectationSet TestLoadConfig::register_driver(MockDriver &driver, const std::string &name)
+{
+    const ExpectationSet initialized = EXPECT_CALL(driver, init(Ref(m_args))).WillOnce(Return(true));
+    EXPECT_CALL(driver, get_name()).WillRepeatedly(ReturnRef(name));
+    EXPECT_CALL(driver, terminate());
+    load_driver(&driver, m_args);
+    return initialized;
+}
+
+std::filesystem::path TestLoadConfig::config_path() const
+{
+    const TestInfo *info = UnitTest::GetInstance()->current_test_info();
+    std::string name{info->test_suite_name()};
+    name += '_';
+    name += info->name();
+    std::replace_if(name.begin(), name.end(), [](const unsigned char ch) { return std::isalnum(ch) == 0; }, '_');
+    return std::filesystem::path{ID_TEST_HOME_DIR} / (name + ".cfg");
+}
+
+std::filesystem::path TestLoadConfig::write_config(const int width, const int height) const
+{
+    const std::filesystem::path path{config_path()};
+    std::ofstream cfg{path};
+    if (!cfg)
     {
-        const std::filesystem::path path{config_path()};
-        std::ofstream cfg{path};
-        if (!cfg)
-        {
-            ADD_FAILURE() << "Unable to write " << path;
-            return path;
-        }
-        cfg << "F1," << width << ',' << height << ",256,disk,test mode\n";
+        ADD_FAILURE() << "Unable to write " << path;
         return path;
     }
-};
+    cfg << "F1," << width << ',' << height << ",256,disk,test mode\n";
+    return path;
+}
 
 class TestLoadConfigGifDimension : public TestLoadConfig, public WithParamInterface<int>
 {
@@ -93,21 +117,10 @@ TEST_F(TestLoadConfig, pixelLimits)
 
 TEST_F(TestLoadConfig, gdiDisk)
 {
-    std::vector<std::string> args{"id"};
-    MockDriver gdi;
-    const std::string gdi_name{"gdi"};
-    MockDriver disk;
-    const std::string disk_name{"disk"};
-    ExpectationSet init_gdi = EXPECT_CALL(gdi, init(Ref(args))).WillOnce(Return(true));
-    ExpectationSet init_disk = EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
-    EXPECT_CALL(gdi, get_name()).WillRepeatedly(ReturnRef(gdi_name));
-    EXPECT_CALL(gdi, validate_mode(_)).After(init_gdi).WillRepeatedly(Return(true));
-    EXPECT_CALL(disk, get_name()).WillRepeatedly(ReturnRef(disk_name));
-    EXPECT_CALL(disk, validate_mode(_)).After(init_disk).WillRepeatedly(Return(true));
-    EXPECT_CALL(gdi, terminate());
-    EXPECT_CALL(disk, terminate());
-    load_driver(&gdi, args);
-    load_driver(&disk, args);
+    const ExpectationSet init_gdi{register_driver(m_gdi, m_gdi_name)};
+    const ExpectationSet init_disk{register_driver(m_disk, m_disk_name)};
+    EXPECT_CALL(m_gdi, validate_mode(_)).After(init_gdi).WillRepeatedly(Return(true));
+    EXPECT_CALL(m_disk, validate_mode(_)).After(init_disk).WillRepeatedly(Return(true));
 
     load_config(ID_TEST_HOME_CONFIG_FILE);
 
@@ -118,33 +131,24 @@ TEST_F(TestLoadConfig, gdiDisk)
     EXPECT_EQ(ID_TEST_GDI_WIDTH, gdi_mode.x_dots);
     EXPECT_EQ(ID_TEST_GDI_HEIGHT, gdi_mode.y_dots);
     EXPECT_EQ(ID_TEST_GDI_COLORS, gdi_mode.colors);
-    EXPECT_EQ(&gdi, gdi_mode.driver);
+    EXPECT_EQ(&m_gdi, gdi_mode.driver);
     const VideoInfo &disk_mode{g_video_table[1]};
     EXPECT_STREQ(ID_TEST_DISK_COMMENT, disk_mode.comment);
     EXPECT_EQ(ID_TEST_DISK_FN_KEY, g_video_mode_keys[1]);
     EXPECT_EQ(ID_TEST_DISK_WIDTH, disk_mode.x_dots);
     EXPECT_EQ(ID_TEST_DISK_HEIGHT, disk_mode.y_dots);
     EXPECT_EQ(ID_TEST_DISK_COLORS, disk_mode.colors);
-    EXPECT_EQ(&disk, disk_mode.driver);
-
-    close_drivers();
+    EXPECT_EQ(&m_disk, disk_mode.driver);
 }
 
 TEST_F(TestLoadConfig, bindsExistingUnassignedModeWithoutChangingDescription)
 {
-    std::vector<std::string> args{"id"};
-    MockDriver disk;
-    const std::string disk_name{"disk"};
-    EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
-    EXPECT_CALL(disk, get_name()).WillRepeatedly(ReturnRef(disk_name));
-    EXPECT_CALL(disk, validate_mode(_)).WillOnce(Return(true));
-    EXPECT_CALL(disk, terminate());
-    load_driver(&disk, args);
+    register_driver(m_disk, m_disk_name);
+    EXPECT_CALL(m_disk, validate_mode(_)).WillOnce(Return(true));
     VideoInfo mode{320, 200, 256, nullptr, "built in"};
-    add_video_mode(&disk, &mode);
+    add_video_mode(&m_disk, &mode);
 
     load_config(write_config(320, 200).string());
-    close_drivers();
 
     EXPECT_EQ(ConfigStatus::OK, g_bad_config);
     ASSERT_EQ(1, g_video_table_len);
@@ -154,13 +158,8 @@ TEST_F(TestLoadConfig, bindsExistingUnassignedModeWithoutChangingDescription)
 
 TEST_F(TestLoadConfig, identicalModesKeepDistinctBindings)
 {
-    std::vector<std::string> args{"id"};
-    MockDriver disk;
-    const std::string disk_name{"disk"};
-    EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
-    EXPECT_CALL(disk, get_name()).WillRepeatedly(ReturnRef(disk_name));
-    EXPECT_CALL(disk, validate_mode(_)).WillRepeatedly(Return(true));
-    EXPECT_CALL(disk, terminate());
+    register_driver(m_disk, m_disk_name);
+    EXPECT_CALL(m_disk, validate_mode(_)).WillRepeatedly(Return(true));
     const std::filesystem::path path{config_path()};
     std::ofstream cfg{path};
     ASSERT_TRUE(cfg) << "Unable to write " << path;
@@ -168,9 +167,7 @@ TEST_F(TestLoadConfig, identicalModesKeepDistinctBindings)
            "F7,320,200,256,disk,same mode\n";
     cfg.close();
 
-    load_driver(&disk, args);
     load_config(path.string());
-    close_drivers();
 
     EXPECT_EQ(ConfigStatus::OK, g_bad_config);
     ASSERT_EQ(2, g_video_table_len);
@@ -181,15 +178,9 @@ TEST_F(TestLoadConfig, identicalModesKeepDistinctBindings)
 
 TEST_F(TestLoadConfig, parsesFinalLineWithoutTrailingNewline)
 {
-    std::vector<std::string> args{"id"};
-    MockDriver disk;
-    const std::string disk_name{"disk"};
     const std::string comment{"last char"};
-    EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
-    EXPECT_CALL(disk, get_name()).WillRepeatedly(ReturnRef(disk_name));
-    EXPECT_CALL(disk, validate_mode(_)).WillOnce(Return(true));
-    EXPECT_CALL(disk, terminate());
-    load_driver(&disk, args);
+    register_driver(m_disk, m_disk_name);
+    EXPECT_CALL(m_disk, validate_mode(_)).WillOnce(Return(true));
     const std::filesystem::path path{config_path()};
     std::ofstream cfg{path};
     ASSERT_TRUE(cfg) << "Unable to write " << path;
@@ -200,21 +191,14 @@ TEST_F(TestLoadConfig, parsesFinalLineWithoutTrailingNewline)
 
     ASSERT_EQ(1, g_video_table_len);
     EXPECT_STREQ(comment.c_str(), g_video_table[0].comment);
-    close_drivers();
 }
 
 TEST_P(TestLoadConfigGifDimension, acceptsModeUpToGifLimit)
 {
-    std::vector<std::string> args{"id"};
     const int size{GetParam()};
-    MockDriver disk;
-    const std::string disk_name{"disk"};
-    EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
-    EXPECT_CALL(disk, get_name()).WillRepeatedly(ReturnRef(disk_name));
-    EXPECT_CALL(disk, validate_mode(AllOf(Field(&VideoInfo::x_dots, size), Field(&VideoInfo::y_dots, size))))
+    register_driver(m_disk, m_disk_name);
+    EXPECT_CALL(m_disk, validate_mode(AllOf(Field(&VideoInfo::x_dots, size), Field(&VideoInfo::y_dots, size))))
         .WillOnce(Return(true));
-    EXPECT_CALL(disk, terminate());
-    load_driver(&disk, args);
 
     load_config(write_config(size, size).string());
 
@@ -224,7 +208,6 @@ TEST_P(TestLoadConfigGifDimension, acceptsModeUpToGifLimit)
     {
         mode = g_video_table[0];
     }
-    close_drivers();
 
     EXPECT_EQ(ConfigStatus::OK, g_bad_config);
     EXPECT_EQ(1, len);
@@ -232,23 +215,18 @@ TEST_P(TestLoadConfigGifDimension, acceptsModeUpToGifLimit)
     EXPECT_EQ(size, mode.x_dots);
     EXPECT_EQ(size, mode.y_dots);
     EXPECT_EQ(256, mode.colors);
-    EXPECT_EQ(&disk, mode.driver);
+    EXPECT_EQ(&m_disk, mode.driver);
 }
 
 INSTANTIATE_TEST_SUITE_P(GifDimension, TestLoadConfigGifDimension, Values(MAX_PIXELS, MAX_PIXELS + 1, GIF_MAX_PIXELS));
 
 TEST_F(TestLoadConfig, rejectsModeAboveGifLimit)
 {
-    std::vector<std::string> args{"id"};
-    MockDriver disk;
-    EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
-    EXPECT_CALL(disk, terminate());
-    load_driver(&disk, args);
+    register_driver(m_disk, m_disk_name);
 
     load_config(write_config(GIF_MAX_PIXELS + 1, GIF_MAX_PIXELS + 1).string());
 
     const int len{g_video_table_len};
-    close_drivers();
 
     EXPECT_EQ(ConfigStatus::BAD_NO_MESSAGE, g_bad_config);
     EXPECT_EQ(0, len);
