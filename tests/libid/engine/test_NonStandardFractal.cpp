@@ -1260,125 +1260,240 @@ TEST_P(TestSuspendedIFSSelection, suspensionRejectsReselection)
 INSTANTIATE_TEST_SUITE_P(Dimensions, TestSuspendedIFSSelection, ValuesIn(IFS_DIMENSIONS),
     [](const TestParamInfo<IFSDimensionInput> &info) { return info.param.name; });
 
-TEST_F(TestSelectedIFS, separateStereoViewsWaitForExplicitAdvance)
+struct IFSGlassesInput
 {
-    for (const GlassesType glasses : {GlassesType::PHOTO, GlassesType::STEREO_PAIR})
+    const char *name;
+    GlassesType glasses;
+};
+
+void PrintTo(const IFSGlassesInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+constexpr IFSGlassesInput SEPARATE_IFS_GLASSES[]{
+    {"Photo", GlassesType::PHOTO}, {"StereoPair", GlassesType::STEREO_PAIR}};
+
+constexpr IFSGlassesInput COMBINED_IFS_GLASSES[]{
+    {"Alternating", GlassesType::ALTERNATING}, {"Superimposed", GlassesType::SUPERIMPOSE}};
+
+class IFSStereoViewFixture : public TestSelectedIFS, public WithParamInterface<IFSGlassesInput>
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::optional<NonStandardFractal> m_calculation;
+};
+
+void IFSStereoViewFixture::SetUp()
+{
+    TestSelectedIFS::SetUp();
+    select_dimension(IFSDimension::THREE);
+    g_glasses_type = GetParam().glasses;
+    m_calculation.emplace();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::IFS_3D, m_calculation->select());
+}
+
+void IFSStereoViewFixture::TearDown()
+{
+    m_calculation->finish(!m_calculation->completed());
+    m_calculation.reset();
+    TestSelectedIFS::TearDown();
+}
+
+class TestSeparateIFSStereo : public IFSStereoViewFixture
+{
+};
+
+TEST_P(TestSeparateIFSStereo, separateViewsWaitForExplicitAdvance)
+{
+    NonStandardFractal &calculation{*m_calculation};
+    EXPECT_EQ(StereoImage::RED, g_which_image);
+    EXPECT_FALSE(calculation.view_done());
+
+    complete_view(calculation);
+
+    EXPECT_TRUE(calculation.view_done());
+    EXPECT_FALSE(calculation.done());
+    EXPECT_EQ(CalcStatus::IN_PROGRESS, g_calc_status);
+    calculation.next_view();
+    EXPECT_EQ(StereoImage::BLUE, g_which_image);
+    EXPECT_EQ(0L, g_color_iter);
+    EXPECT_FALSE(calculation.view_done());
+    complete_view(calculation);
+    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(calculation.completed());
+}
+
+TEST_P(TestSeparateIFSStereo, unfinishedViewRejectsAdvance)
+{
+    EXPECT_THROW(m_calculation->next_view(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Glasses, TestSeparateIFSStereo, ValuesIn(SEPARATE_IFS_GLASSES),
+    [](const TestParamInfo<IFSGlassesInput> &info) { return info.param.name; });
+
+class TestIFSStereoBoundary : public IFSStereoViewFixture
+{
+protected:
+    void SetUp() override;
+};
+
+void TestIFSStereoBoundary::SetUp()
+{
+    IFSStereoViewFixture::SetUp();
+    ASSERT_NO_FATAL_FAILURE(complete_view(*m_calculation));
+    ASSERT_TRUE(m_calculation->view_done());
+    ASSERT_FALSE(m_calculation->done());
+}
+
+TEST_P(TestIFSStereoBoundary, completedViewRejectsIteration)
+{
+    EXPECT_THROW(m_calculation->iterate(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Glasses, TestIFSStereoBoundary, ValuesIn(SEPARATE_IFS_GLASSES),
+    [](const TestParamInfo<IFSGlassesInput> &info) { return info.param.name; });
+
+class TestCombinedIFSStereo : public IFSStereoViewFixture
+{
+};
+
+TEST_P(TestCombinedIFSStereo, combinedStereoCompletesBothEyesInOneView)
+{
+    complete_view(*m_calculation);
+
+    EXPECT_TRUE(m_calculation->done());
+    EXPECT_TRUE(m_calculation->completed());
+}
+
+INSTANTIATE_TEST_SUITE_P(Glasses, TestCombinedIFSStereo, ValuesIn(COMBINED_IFS_GLASSES),
+    [](const TestParamInfo<IFSGlassesInput> &info) { return info.param.name; });
+
+class TestCompletedIFSStereo : public IFSStereoViewFixture
+{
+protected:
+    void SetUp() override;
+};
+
+void TestCompletedIFSStereo::SetUp()
+{
+    IFSStereoViewFixture::SetUp();
+    ASSERT_NO_FATAL_FAILURE(complete_view(*m_calculation));
+    if (GetParam().glasses == GlassesType::PHOTO || GetParam().glasses == GlassesType::STEREO_PAIR)
     {
-        select_dimension(IFSDimension::THREE);
-        g_glasses_type = glasses;
-        NonStandardFractal calculation;
-        calculation.start();
-        ASSERT_EQ(NonStandardFractal::Operation::IFS_3D, calculation.select());
-        EXPECT_EQ(StereoImage::RED, g_which_image);
-        EXPECT_FALSE(calculation.view_done());
-        EXPECT_THROW(calculation.next_view(), std::logic_error);
+        m_calculation->next_view();
+        ASSERT_NO_FATAL_FAILURE(complete_view(*m_calculation));
+    }
+    ASSERT_TRUE(m_calculation->done());
+    ASSERT_TRUE(m_calculation->completed());
+}
 
+TEST_P(TestCompletedIFSStereo, completedCalculationRejectsViewAdvance)
+{
+    EXPECT_THROW(m_calculation->next_view(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Glasses, TestCompletedIFSStereo,
+    Values(SEPARATE_IFS_GLASSES[0], SEPARATE_IFS_GLASSES[1], COMBINED_IFS_GLASSES[0], COMBINED_IFS_GLASSES[1]),
+    [](const TestParamInfo<IFSGlassesInput> &info) { return info.param.name; });
+
+class FullScreenIFSStereoFixture : public TestSelectedIFS
+{
+protected:
+    void SetUp() override;
+    void expect_full_screen();
+};
+
+void FullScreenIFSStereoFixture::SetUp()
+{
+    TestSelectedIFS::SetUp();
+    select_dimension(IFSDimension::THREE);
+    g_glasses_type = GlassesType::STEREO_PAIR;
+    g_screen_x_dots = WIDTH * 2;
+    g_logical_screen = {WIDTH, HEIGHT, 0, 0, WIDTH - 1.0, HEIGHT - 1.0};
+    g_viewport.enabled = true;
+}
+
+void FullScreenIFSStereoFixture::expect_full_screen()
+{
+    EXPECT_EQ(WIDTH * 2, g_logical_screen.x_dots);
+    EXPECT_EQ(HEIGHT, g_logical_screen.y_dots);
+    EXPECT_EQ(0, g_logical_screen.x_offset);
+    EXPECT_EQ(0, g_logical_screen.y_offset);
+    EXPECT_FALSE(g_viewport.enabled);
+}
+
+class TestIFSStereoRestoration : public FullScreenIFSStereoFixture, public WithParamInterface<bool>
+{
+};
+
+TEST_P(TestIFSStereoRestoration, terminationRestoresFullScreen)
+{
+    NonStandardFractal calculation;
+    calculation.start();
+    calculation.select();
+
+    if (GetParam())
+    {
+        calculation.suspend();
+    }
+    else
+    {
         complete_view(calculation);
-
-        EXPECT_TRUE(calculation.view_done());
-        EXPECT_FALSE(calculation.done());
-        EXPECT_EQ(CalcStatus::IN_PROGRESS, g_calc_status);
-        EXPECT_THROW(calculation.iterate(), std::logic_error);
         calculation.next_view();
-        EXPECT_EQ(StereoImage::BLUE, g_which_image);
-        EXPECT_EQ(0L, g_color_iter);
-        EXPECT_FALSE(calculation.view_done());
+        EXPECT_EQ(WIDTH, g_logical_screen.x_offset);
         complete_view(calculation);
-        EXPECT_TRUE(calculation.done());
-        EXPECT_TRUE(calculation.completed());
-        EXPECT_THROW(calculation.next_view(), std::logic_error);
         calculation.finish(false);
     }
+
+    expect_full_screen();
 }
 
-TEST_F(TestSelectedIFS, combinedStereoCompletesBothEyesInOneView)
+INSTANTIATE_TEST_SUITE_P(Interrupted, TestIFSStereoRestoration, Bool(),
+    [](const TestParamInfo<bool> &info) { return info.param ? "Suspended" : "Completed"; });
+
+class TestIFSStereoFailure : public FullScreenIFSStereoFixture, public WithParamInterface<bool>
 {
-    for (const GlassesType glasses : {GlassesType::ALTERNATING, GlassesType::SUPERIMPOSE})
-    {
-        select_dimension(IFSDimension::THREE);
-        g_glasses_type = glasses;
-        NonStandardFractal calculation;
-        calculation.start();
-        calculation.select();
+protected:
+    void SetUp() override;
 
-        complete_view(calculation);
+    ValueSaver<int> m_saved_row_count{io::g_row_count, 0};
+};
 
-        EXPECT_TRUE(calculation.done());
-        EXPECT_TRUE(calculation.completed());
-        EXPECT_THROW(calculation.next_view(), std::logic_error);
-        calculation.finish(false);
-    }
-}
-
-TEST_F(TestSelectedIFS, stereoPairRestoresFullScreenOnCompletionOrSuspension)
+void TestIFSStereoFailure::SetUp()
 {
-    for (const bool interrupted : {false, true})
-    {
-        select_dimension(IFSDimension::THREE);
-        g_glasses_type = GlassesType::STEREO_PAIR;
-        g_screen_x_dots = WIDTH * 2;
-        g_logical_screen = {WIDTH, HEIGHT, 0, 0, WIDTH - 1.0, HEIGHT - 1.0};
-        g_viewport.enabled = true;
-        NonStandardFractal calculation;
-        calculation.start();
-        calculation.select();
-        if (interrupted)
-        {
-            calculation.suspend();
-        }
-        else
-        {
-            complete_view(calculation);
-            calculation.next_view();
-            EXPECT_EQ(WIDTH, g_logical_screen.x_offset);
-            complete_view(calculation);
-            calculation.finish(false);
-        }
-
-        EXPECT_EQ(WIDTH * 2, g_logical_screen.x_dots);
-        EXPECT_EQ(HEIGHT, g_logical_screen.y_dots);
-        EXPECT_EQ(0, g_logical_screen.x_offset);
-        EXPECT_EQ(0, g_logical_screen.y_offset);
-        EXPECT_FALSE(g_viewport.enabled);
-    }
-}
-
-TEST_F(TestSelectedIFS, stereoPairRestoresFullScreenAfterCalculationFailure)
-{
-    const ValueSaver saved_row_count{io::g_row_count, 0};
+    FullScreenIFSStereoFixture::SetUp();
     g_image_region = ImageRegion{{-1.0, -1.0}, {1.0, 1.0}, {-1.0, -1.0}};
-    for (const bool second_eye : {false, true})
-    {
-        select_dimension(IFSDimension::THREE);
-        g_glasses_type = GlassesType::STEREO_PAIR;
-        g_screen_x_dots = WIDTH * 2;
-        g_logical_screen = {WIDTH, HEIGHT, 0, 0, WIDTH - 1.0, HEIGHT - 1.0};
-        g_viewport.enabled = true;
-        EXPECT_THROW(
-            {
-                NonStandardFractal calculation;
-                calculation.start();
-                calculation.select();
-                if (second_eye)
-                {
-                    complete_view(calculation);
-                    calculation.next_view();
-                }
-                EXPECT_CALL(m_driver, write_pixel(_, _, _))
-                    .WillOnce(Throw(std::runtime_error("Pixel output failed")))
-                    .RetiresOnSaturation();
-                complete_view(calculation);
-            },
-            std::runtime_error);
-
-        EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
-        EXPECT_EQ(WIDTH * 2, g_logical_screen.x_dots);
-        EXPECT_EQ(HEIGHT, g_logical_screen.y_dots);
-        EXPECT_EQ(0, g_logical_screen.x_offset);
-        EXPECT_EQ(0, g_logical_screen.y_offset);
-        EXPECT_FALSE(g_viewport.enabled);
-    }
 }
+
+TEST_P(TestIFSStereoFailure, calculationFailureRestoresFullScreen)
+{
+    EXPECT_THROW(
+        {
+            NonStandardFractal calculation;
+            calculation.start();
+            calculation.select();
+            if (GetParam())
+            {
+                complete_view(calculation);
+                calculation.next_view();
+            }
+            EXPECT_CALL(m_driver, write_pixel(_, _, _))
+                .WillOnce(Throw(std::runtime_error("Pixel output failed")))
+                .RetiresOnSaturation();
+            complete_view(calculation);
+        },
+        std::runtime_error);
+
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    expect_full_screen();
+}
+
+INSTANTIATE_TEST_SUITE_P(SecondEye, TestIFSStereoFailure, Bool(),
+    [](const TestParamInfo<bool> &info) { return info.param ? "SecondEye" : "FirstEye"; });
 
 class TestStandaloneBifurcation : public TestNonStandardFractal, public WithParamInterface<BifurcationCase>
 {
