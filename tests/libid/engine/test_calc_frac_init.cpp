@@ -20,6 +20,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <ostream>
+
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
@@ -85,39 +87,56 @@ protected:
     ValueSaver<std::array<double, 2>> m_saved_tolerance{g_math_tol, std::array<double, 2>{0.05, 0.05}};
 };
 
-class TestCalcFracInitBounds : public TestCalcFracInit, public WithParamInterface<bool>
+struct ImageTranslationInput
+{
+    const char *name;
+    ImageRegion input;
+    ImageRegion expected;
+    bool arbitrary_precision;
+    bool translated;
+    double tolerance;
+};
+
+void PrintTo(const ImageTranslationInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestCalcFracInitBounds : public TestCalcFracInit, public WithParamInterface<ImageTranslationInput>
 {
 };
 
-TEST_P(TestCalcFracInitBounds, reportsUntranslatedRegion)
+TEST_P(TestCalcFracInitBounds, reportsRegionTranslationWithoutInvalidatingResume)
 {
-    const ImageRegion region{{-2.0, -1.5}, {2.0, 1.5}, {-2.0, -1.5}};
-    set_region(region, GetParam());
+    const ImageTranslationInput &input{GetParam()};
+    set_region(input.input, input.arbitrary_precision);
 
-    EXPECT_FALSE(calc_frac_init());
-
-    EXPECT_EQ(region, current_region());
-    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
-    EXPECT_EQ(GetParam(), g_bf_math != BFMathType::NONE);
-}
-
-TEST_P(TestCalcFracInitBounds, reportsTranslationWithoutInvalidatingResume)
-{
-    set_region({{32768.0, -32770.0}, {32770.0, -32768.0}, {32768.0, -32770.0}}, GetParam());
-
-    EXPECT_TRUE(calc_frac_init());
+    EXPECT_EQ(input.translated, calc_frac_init());
 
     const ImageRegion region{current_region()};
-    EXPECT_NEAR(32765.99, region.m_min.x, 1e-8);
-    EXPECT_NEAR(32767.99, region.m_max.x, 1e-8);
-    EXPECT_NEAR(-32767.99, region.m_min.y, 1e-8);
-    EXPECT_NEAR(-32765.99, region.m_max.y, 1e-8);
+    EXPECT_NEAR(input.expected.m_min.x, region.m_min.x, input.tolerance);
+    EXPECT_NEAR(input.expected.m_max.x, region.m_max.x, input.tolerance);
+    EXPECT_NEAR(input.expected.m_min.y, region.m_min.y, input.tolerance);
+    EXPECT_NEAR(input.expected.m_max.y, region.m_max.y, input.tolerance);
+    EXPECT_NEAR(input.expected.m_3rd.x, region.m_3rd.x, input.tolerance);
+    EXPECT_NEAR(input.expected.m_3rd.y, region.m_3rd.y, input.tolerance);
     EXPECT_EQ(region.m_min, region.m_3rd);
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
-    EXPECT_EQ(GetParam(), g_bf_math != BFMathType::NONE);
+    EXPECT_EQ(input.arbitrary_precision, g_bf_math != BFMathType::NONE);
 }
 
-INSTANTIATE_TEST_SUITE_P(Precision, TestCalcFracInitBounds, Bool());
+const ImageRegion UNTRANSLATED_REGION{{-2.0, -1.5}, {2.0, 1.5}, {-2.0, -1.5}};
+const ImageRegion TRANSLATION_INPUT{{32768.0, -32770.0}, {32770.0, -32768.0}, {32768.0, -32770.0}};
+const ImageRegion TRANSLATION_EXPECTED{{32765.99, -32767.99}, {32767.99, -32765.99}, {32765.99, -32767.99}};
+
+INSTANTIATE_TEST_SUITE_P(TranslationInputs, TestCalcFracInitBounds,
+    Values(ImageTranslationInput{"UntranslatedFloat", UNTRANSLATED_REGION, UNTRANSLATED_REGION, false, false, 0.0},
+        ImageTranslationInput{
+            "UntranslatedArbitraryPrecision", UNTRANSLATED_REGION, UNTRANSLATED_REGION, true, false, 0.0},
+        ImageTranslationInput{"TranslatedFloat", TRANSLATION_INPUT, TRANSLATION_EXPECTED, false, true, 1e-8},
+        ImageTranslationInput{
+            "TranslatedArbitraryPrecision", TRANSLATION_INPUT, TRANSLATION_EXPECTED, true, true, 1e-8}),
+    [](const TestParamInfo<ImageTranslationInput> &info) { return info.param.name; });
 
 TEST_F(TestCalcFracInit, enteringArbitraryPrecisionStillInvalidatesResume)
 {
