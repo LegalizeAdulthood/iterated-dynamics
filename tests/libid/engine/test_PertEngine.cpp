@@ -5186,9 +5186,69 @@ TEST_P(TestBiomorphInside, doesNotReplaceInsideMethod)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestBiomorphInside, ValuesIn(biomorph_inside_inputs()),
     [](const TestParamInfo<BiomorphInsideInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, biomorphFinishingAndMappingSurviveReferenceReplacement)
+struct BiomorphReplacementInput
 {
-    ValueSaver saved_limit2{g_magnitude_limit2, 2.0};
+    std::string name;
+    bool big_float;
+    ColorMethod outside;
+    std::complex<double> point;
+    int decomposition;
+    int color;
+};
+
+void PrintTo(const BiomorphReplacementInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<BiomorphReplacementInput> biomorph_replacement_inputs()
+{
+    struct Method
+    {
+        const char *name;
+        ColorMethod outside;
+        int color;
+    };
+
+    const Method methods[]{
+        {"Iterations", ColorMethod::ITER, 11},
+        {"Real", ColorMethod::REAL, 23},
+        {"Imaginary", ColorMethod::IMAG, 29},
+        {"FixedColor", ColorMethod::COLOR, 6},
+    };
+    std::vector<BiomorphReplacementInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const Method &method : methods)
+        {
+            const std::string name{std::string{big_float ? "HighPrecision_" : "Double_"} + method.name};
+            inputs.push_back({name + "_Hit", big_float, method.outside, {0.5, 0.0}, 0,
+                method.outside == ColorMethod::COLOR ? 6 : 31});
+            inputs.push_back({name + "_NoHit", big_float, method.outside, {2.0, 2.0}, 0, method.color});
+            inputs.push_back({name + "_DecomposedHit", big_float, method.outside, {0.5, 0.0}, 16,
+                method.outside == ColorMethod::COLOR ? 6 : 11});
+        }
+    }
+    return inputs;
+}
+
+class TestBiomorphReplacement : public PerturbationBiomorphTest, public WithParamInterface<BiomorphReplacementInput>
+{
+public:
+    TestBiomorphReplacement();
+
+protected:
+    void SetUp() override;
+};
+
+TestBiomorphReplacement::TestBiomorphReplacement() :
+    PerturbationBiomorphTest{GetParam().big_float}
+{
+}
+
+void TestBiomorphReplacement::SetUp()
+{
+    PerturbationBiomorphTest::SetUp();
     g_biomorph = 9;
     g_inside_method = ColorMethod::COLOR;
     g_outside_color = 6;
@@ -5200,31 +5260,20 @@ TEST_P(TestPerturbationIterations, biomorphFinishingAndMappingSurviveReferenceRe
     g_log_map_table[10] = 23;
     g_log_map_table[18] = 29;
     m_engine.set_glitch_tolerance(8.0);
-
-    struct Sample
-    {
-        ColorMethod outside;
-        int color;
-    };
-
-    for (const Sample &sample :
-        {Sample{ColorMethod::ITER, 11}, {ColorMethod::REAL, 23}, {ColorMethod::IMAG, 29}, {ColorMethod::COLOR, 6}})
-    {
-        SCOPED_TRACE(static_cast<int>(sample.outside));
-        g_outside_method = sample.outside;
-        compare_pixel({0.5, 0.0}, 128, 0.125);
-        EXPECT_EQ(sample.outside == ColorMethod::COLOR ? 6 : 31, g_color);
-        EXPECT_GT(m_engine.reference_count(), 1);
-        compare_pixel({2.0, 2.0}, 128, 0.125);
-        EXPECT_EQ(sample.color, g_color);
-        EXPECT_GT(m_engine.reference_count(), 1);
-        g_decomp[0] = 16;
-        compare_pixel({0.5, 0.0}, 128, 0.125);
-        EXPECT_EQ(sample.outside == ColorMethod::COLOR ? 6 : 11, g_color);
-        EXPECT_GT(m_engine.reference_count(), 1);
-        g_decomp[0] = 0;
-    }
+    g_outside_method = GetParam().outside;
+    g_decomp[0] = GetParam().decomposition;
 }
+
+TEST_P(TestBiomorphReplacement, retainsFinishingAndMapping)
+{
+    compare_pixel(GetParam().point, 128, 0.125);
+
+    EXPECT_EQ(GetParam().color, g_color);
+    EXPECT_GT(m_engine.reference_count(), 1);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBiomorphReplacement, ValuesIn(biomorph_replacement_inputs()),
+    [](const TestParamInfo<BiomorphReplacementInput> &info) { return info.param.name; });
 
 void PerturbationIterationTest::compare_distance_pixel(const std::complex<double> &center, const long max_iterations,
     const bool legacy, const double reference_offset, const DistancePixelOptions &options, const bool incremental)
