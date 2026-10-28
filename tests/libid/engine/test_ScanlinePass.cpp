@@ -18,6 +18,8 @@
 
 #include <algorithm>
 #include <array>
+#include <optional>
+#include <ostream>
 #include <stdexcept>
 #include <vector>
 
@@ -270,18 +272,49 @@ TEST_F(TestScanlinePass, completionPreservesLegacySignedColors)
     }
 }
 
-TEST_F(TestScanlinePass, completionRequiresASelection)
+struct ScanlineSelectionInput
 {
-    OnePass pass;
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
-    ASSERT_TRUE(pass.select_pixel());
-    EXPECT_EQ((Point2i{0, 0}), pass.selected_pixel());
+    const char *name;
+    bool consumed;
+};
 
-    pass.complete_pixel(7);
-
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
+void PrintTo(const ScanlineSelectionInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
+
+class TestScanlinePassSelectionGuard : public TestScanlinePass, public WithParamInterface<ScanlineSelectionInput>
+{
+protected:
+    void SetUp() override;
+
+    std::optional<OnePass> m_pass;
+};
+
+void TestScanlinePassSelectionGuard::SetUp()
+{
+    TestScanlinePass::SetUp();
+    m_pass.emplace();
+    if (GetParam().consumed)
+    {
+        ASSERT_TRUE(m_pass->select_pixel());
+        EXPECT_EQ((Point2i{0, 0}), m_pass->selected_pixel());
+        m_pass->complete_pixel(7);
+    }
+}
+
+TEST_P(TestScanlinePassSelectionGuard, accessorRequiresPendingSelection)
+{
+    EXPECT_THROW(m_pass->selected_pixel(), std::logic_error);
+}
+
+TEST_P(TestScanlinePassSelectionGuard, completionRequiresPendingSelection)
+{
+    EXPECT_THROW(m_pass->complete_pixel(7), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(SelectionStates, TestScanlinePassSelectionGuard,
+    Values(ScanlineSelectionInput{"NeverSelected", false}, ScanlineSelectionInput{"Consumed", true}),
+    [](const TestParamInfo<ScanlineSelectionInput> &info) { return info.param.name; });
 
 } // namespace id::test
