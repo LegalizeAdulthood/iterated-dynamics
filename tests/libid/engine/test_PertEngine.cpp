@@ -12103,29 +12103,61 @@ TEST_F(TestInvertedReferenceReplacement, preservesGeometryAcrossOrderedReplaceme
     }
 }
 
-TEST_F(TestPerturbationPixels, inversionUsesTheSameNearCenterLimitAtBothPrecisions)
+struct NearCenterInput
 {
+    const char *name;
+    double value;
+};
+
+void PrintTo(const NearCenterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestNearCenterInversion : public TestPerturbationPixels, public WithParamInterface<NearCenterInput>
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    BFComplex m_point_bf{};
+    const Inversion m_inversion{3, 2.0, {}, {2.0, 0.0, 0.0}};
+
+private:
+    std::optional<BigStackSaver> m_stack;
+};
+
+void TestNearCenterInversion::SetUp()
+{
+    TestPerturbationPixels::SetUp();
     init_bf_dec(60);
     m_big_float = true;
-    BigStackSaver saved;
-    const BFComplex point_bf{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    const Inversion inversion{3, 2.0, {}, {2.0, 0.0, 0.0}};
-
-    for (const double value : {0.0, 1e-40, 1.0})
-    {
-        SCOPED_TRACE(value);
-        DComplex point{value, 0.0};
-        float_to_bf(point_bf.x, value);
-        clear_bf(point_bf.y);
-
-        const double scale{inversion.apply(point)};
-        inversion.apply(point_bf);
-
-        EXPECT_DOUBLE_EQ(value == 1.0 ? 2.0 : std::numeric_limits<float>::max(), scale);
-        EXPECT_NEAR(point.x, bf_to_float(point_bf.x), 1e-16);
-        EXPECT_DOUBLE_EQ(0.0, bf_to_float(point_bf.y));
-    }
+    m_stack.emplace();
+    m_point_bf = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    float_to_bf(m_point_bf.x, GetParam().value);
+    clear_bf(m_point_bf.y);
 }
+
+void TestNearCenterInversion::TearDown()
+{
+    m_stack.reset();
+    TestPerturbationPixels::TearDown();
+}
+
+TEST_P(TestNearCenterInversion, usesSameLimitAtBothPrecisions)
+{
+    DComplex point{GetParam().value, 0.0};
+
+    const double scale{m_inversion.apply(point)};
+    m_inversion.apply(m_point_bf);
+
+    EXPECT_DOUBLE_EQ(GetParam().value == 1.0 ? 2.0 : std::numeric_limits<float>::max(), scale);
+    EXPECT_NEAR(point.x, bf_to_float(m_point_bf.x), 1e-16);
+    EXPECT_DOUBLE_EQ(0.0, bf_to_float(m_point_bf.y));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestNearCenterInversion,
+    Values(NearCenterInput{"Zero", 0.0}, NearCenterInput{"SubDouble", 1e-40}, NearCenterInput{"One", 1.0}),
+    [](const TestParamInfo<NearCenterInput> &info) { return info.param.name; });
 
 void TestPerturbationPixels::check_pass_switch(const PerturbationMode mode)
 {
