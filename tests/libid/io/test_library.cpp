@@ -482,59 +482,73 @@ INSTANTIATE_TEST_SUITE_P(FirstMatchInputs, TestLibraryWildcard,
             Path{ID_TEST_SAVE_DIR} / ID_TEST_SAVE_IMAGE_ROOT_FILE}),
     [](const testing::TestParamInfo<LibraryWildcardInput> &info) { return info.param.name; });
 
-TEST_F(TestLibrary, findWildcardSeqence)
+struct LibrarySequenceInput
 {
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-    add_read_library(ID_TEST_LIBRARY_DIR3);
-    const std::vector expected{                        //
-        Path{ID_TEST_LIBRARY_DIR2} / "image/test.gif", //
-        Path{ID_TEST_LIBRARY_DIR3} / "image/root.gif"};
+    const char *name;
+    std::vector<Path> roots;
+    Path current_directory;
+    Path pattern;
+    std::vector<Path> expected;
+};
+
+void PrintTo(const LibrarySequenceInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestLibrarySequence : public TestLibrary, public testing::WithParamInterface<LibrarySequenceInput>
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+private:
+    std::unique_ptr<CurrentPathSaver> m_current_directory;
+};
+
+void TestLibrarySequence::SetUp()
+{
+    TestLibrary::SetUp();
+    const LibrarySequenceInput &input{GetParam()};
+    if (!input.current_directory.empty())
+    {
+        m_current_directory = std::make_unique<CurrentPathSaver>(input.current_directory);
+    }
+    for (const Path &root : input.roots)
+    {
+        add_read_library(root);
+    }
+}
+
+void TestLibrarySequence::TearDown()
+{
+    m_current_directory.reset();
+    TestLibrary::TearDown();
+}
+
+TEST_P(TestLibrarySequence, enumeratesMatchesInSearchOrder)
+{
+    const LibrarySequenceInput &input{GetParam()};
     std::vector<Path> results;
 
-    for (Path next{find_wildcard_first(ReadFile::IMAGE, "*.gif")}; !next.empty();
+    for (Path next{find_wildcard_first(ReadFile::IMAGE, input.pattern.string())}; !next.empty();
         next = find_wildcard_next())
     {
         results.emplace_back(next);
     }
 
-    EXPECT_EQ(expected, results);
+    EXPECT_EQ(input.expected, results);
 }
 
-TEST_F(TestLibrary, findWildcardSequenceRootFilesAfterSubdirFiles)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR1);
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-    add_read_library(ID_TEST_LIBRARY_DIR3);
-    const std::vector expected{                        //
-        Path{ID_TEST_LIBRARY_DIR2} / "image/test.gif", //
-        Path{ID_TEST_LIBRARY_DIR3} / "image/root.gif", //
-        Path{ID_TEST_LIBRARY_DIR1} / "root.gif"};
-    std::vector<Path> results;
-
-    for (Path next{find_wildcard_first(ReadFile::IMAGE, "*.gif")}; !next.empty();
-        next = find_wildcard_next())
-    {
-        results.emplace_back(next);
-    }
-
-    EXPECT_EQ(expected, results);
-}
-
-TEST_F(TestLibrary, findWildcardExplicitRelativeDirectorySequence)
-{
-    CurrentPathSaver saved_cur_dir{ID_TEST_LIBRARY_DIR};
-    add_read_library(ID_TEST_LIBRARY_DIR3);
-    const Path wildcard{Path{"lib1"} / "*.gif"};
-    std::vector<Path> results;
-
-    for (Path next{find_wildcard_first(ReadFile::IMAGE, wildcard.string())}; !next.empty();
-        next = find_wildcard_next())
-    {
-        results.emplace_back(next);
-    }
-
-    const std::vector expected{Path{"lib1"} / "root.gif"};
-    EXPECT_EQ(expected, results);
-}
+INSTANTIATE_TEST_SUITE_P(SequenceInputs, TestLibrarySequence,
+    testing::Values(LibrarySequenceInput{"Subdirectories", {ID_TEST_LIBRARY_DIR2, ID_TEST_LIBRARY_DIR3}, {}, "*.gif",
+                        {Path{ID_TEST_LIBRARY_DIR2} / "image/test.gif", Path{ID_TEST_LIBRARY_DIR3} / "image/root.gif"}},
+        LibrarySequenceInput{"RootAfterSubdirectories",
+            {ID_TEST_LIBRARY_DIR1, ID_TEST_LIBRARY_DIR2, ID_TEST_LIBRARY_DIR3}, {}, "*.gif",
+            {Path{ID_TEST_LIBRARY_DIR2} / "image/test.gif", Path{ID_TEST_LIBRARY_DIR3} / "image/root.gif",
+                Path{ID_TEST_LIBRARY_DIR1} / "root.gif"}},
+        LibrarySequenceInput{"ExplicitRelativeDirectory", {ID_TEST_LIBRARY_DIR3}, ID_TEST_LIBRARY_DIR,
+            Path{"lib1"} / "*.gif", {Path{"lib1"} / "root.gif"}}),
+    [](const testing::TestParamInfo<LibrarySequenceInput> &info) { return info.param.name; });
 
 } // namespace id::test
