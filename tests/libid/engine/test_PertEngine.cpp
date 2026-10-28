@@ -6801,83 +6801,268 @@ TEST_P(TestMappedPeriodColors, mapsPeriodColorsButNotHighlights)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestMappedPeriodColors, ValuesIn(mapped_period_color_inputs()),
     [](const TestParamInfo<PeriodColorInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, potentialColorsTakePrecedenceOverPeriodicityColors)
+class PerturbationPotentialTest : public PerturbationIterationTest
 {
-    ValueSaver saved_table{g_log_map_table, std::vector<Byte>{}};
-    ValueSaver saved_max{g_log_map_table_max_size, 128L};
-    ValueSaver saved_flag{g_log_map_flag, 0L};
-    ValueSaver saved_calculate{g_log_map_calculate, false};
-    g_potential = {{23.0, 10.0, 4.0}, false, true};
-    g_periodicity_check = -1;
-    g_inside_color = 3;
-    for (const bool mapped : {false, true})
-    {
-        SCOPED_TRACE(mapped);
-        if (mapped)
-        {
-            g_log_map_flag = 1;
-            g_log_map_table.assign(129, 44);
-            g_log_map_table[3] = 31;
-            g_log_map_table[23] = 41;
-        }
-        for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::PERIOD})
-        {
-            SCOPED_TRACE(static_cast<int>(inside));
-            g_inside_method = inside;
-            compare_pixel({0.0, 0.0}, 128);
-            EXPECT_EQ(inside == ColorMethod::COLOR ? mapped ? 31 : 3 : mapped ? 41 : 23, g_color);
-            EXPECT_LT(s_standard_orbit.size(), 127);
-        }
-    }
+public:
+    explicit PerturbationPotentialTest(bool use_big_float);
+
+protected:
+    void SetUp() override;
+};
+
+PerturbationPotentialTest::PerturbationPotentialTest(const bool use_big_float) :
+    PerturbationIterationTest{use_big_float}
+{
 }
 
-TEST_P(TestPerturbationIterations, potentialOverridesExteriorColoring)
+void PerturbationPotentialTest::SetUp()
 {
+    PerturbationIterationTest::SetUp();
     g_potential = {{23.0, 10.0, 4.0}, false, true};
-    g_outside_color = 6;
-    for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::ITER})
+}
+
+struct PotentialPeriodicityInput
+{
+    std::string name;
+    bool big_float;
+    bool mapped;
+    ColorMethod inside;
+};
+
+void PrintTo(const PotentialPeriodicityInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<PotentialPeriodicityInput> potential_periodicity_inputs()
+{
+    const PerturbationColorMethod methods[]{
+        {"FixedColor", ColorMethod::COLOR},
+        {"Period", ColorMethod::PERIOD},
+    };
+    std::vector<PotentialPeriodicityInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(static_cast<int>(inside));
-        g_inside_method = inside;
-        for (const int decomp : {0, 16})
+        for (const bool mapped : {false, true})
         {
-            SCOPED_TRACE(decomp);
-            g_decomp[0] = decomp;
-            for (const int biomorph : {-1, 9})
+            for (const PerturbationColorMethod &method : methods)
             {
-                SCOPED_TRACE(biomorph);
-                g_biomorph = biomorph;
-                for (const ColorMethod outside :
-                    {ColorMethod::ITER, ColorMethod::COLOR, ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT,
-                        ColorMethod::SUM, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS})
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
+                        (mapped ? "Mapped_" : "Unmapped_") + method.name,
+                    big_float, mapped, method.method});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestPotentialPeriodicity : public PerturbationPotentialTest, public WithParamInterface<PotentialPeriodicityInput>
+{
+public:
+    TestPotentialPeriodicity();
+
+protected:
+    void SetUp() override;
+};
+
+TestPotentialPeriodicity::TestPotentialPeriodicity() :
+    PerturbationPotentialTest{GetParam().big_float}
+{
+}
+
+void TestPotentialPeriodicity::SetUp()
+{
+    PerturbationPotentialTest::SetUp();
+    g_log_map_table.clear();
+    g_log_map_table_max_size = 128;
+    g_log_map_flag = 0;
+    g_log_map_calculate = false;
+    g_periodicity_check = -1;
+    g_inside_color = 3;
+    if (GetParam().mapped)
+    {
+        g_log_map_flag = 1;
+        g_log_map_table.assign(129, 44);
+        g_log_map_table[3] = 31;
+        g_log_map_table[23] = 41;
+    }
+    g_inside_method = GetParam().inside;
+}
+
+TEST_P(TestPotentialPeriodicity, takesPrecedenceOverPeriodicityColors)
+{
+    compare_pixel({0.0, 0.0}, 128);
+
+    EXPECT_EQ(GetParam().inside == ColorMethod::COLOR ? GetParam().mapped ? 31 : 3
+            : GetParam().mapped                       ? 41
+                                                      : 23,
+        g_color);
+    EXPECT_LT(s_standard_orbit.size(), 127);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialPeriodicity, ValuesIn(potential_periodicity_inputs()),
+    [](const TestParamInfo<PotentialPeriodicityInput> &info) { return info.param.name; });
+
+struct PotentialExteriorInput
+{
+    std::string name;
+    bool big_float;
+    ColorMethod inside;
+    int decomposition;
+    int biomorph;
+    ColorMethod outside;
+};
+
+void PrintTo(const PotentialExteriorInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<PotentialExteriorInput> potential_exterior_inputs()
+{
+    const PerturbationColorMethod inside_methods[]{
+        {"FixedColor", ColorMethod::COLOR},
+        {"Iterations", ColorMethod::ITER},
+    };
+    const PerturbationColorMethod outside_methods[]{
+        {"Iterations", ColorMethod::ITER},
+        {"FixedColor", ColorMethod::COLOR},
+        {"Real", ColorMethod::REAL},
+        {"Imaginary", ColorMethod::IMAG},
+        {"Product", ColorMethod::MULT},
+        {"Sum", ColorMethod::SUM},
+        {"Atan", ColorMethod::ATAN},
+        {"Fmod", ColorMethod::FMOD},
+        {"TotalDistance", ColorMethod::TDIS},
+    };
+    std::vector<PotentialExteriorInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &inside : inside_methods)
+        {
+            for (const int decomposition : {0, 16})
+            {
+                for (const int biomorph : {-1, 9})
                 {
-                    SCOPED_TRACE(static_cast<int>(outside));
-                    g_outside_method = outside;
-                    compare_pixel({0.5, 0.5}, 128);
-                    EXPECT_EQ(20, g_color);
+                    for (const PerturbationColorMethod &outside : outside_methods)
+                    {
+                        inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Inside" +
+                                inside.name + "_Decomposition" + std::to_string(decomposition) +
+                                (biomorph < 0 ? "_NoBiomorph_" : "_BiomorphNine_") + "Outside" + outside.name,
+                            big_float, inside.method, decomposition, biomorph, outside.method});
+                    }
                 }
             }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, potentialOverridesInsideColoring)
+class TestPotentialExterior : public PerturbationPotentialTest, public WithParamInterface<PotentialExteriorInput>
 {
-    g_potential = {{23.0, 10.0, 4.0}, false, true};
+public:
+    TestPotentialExterior();
+
+protected:
+    void SetUp() override;
+};
+
+TestPotentialExterior::TestPotentialExterior() :
+    PerturbationPotentialTest{GetParam().big_float}
+{
+}
+
+void TestPotentialExterior::SetUp()
+{
+    PerturbationPotentialTest::SetUp();
+    g_outside_color = 6;
+    g_inside_method = GetParam().inside;
+    g_decomp[0] = GetParam().decomposition;
+    g_biomorph = GetParam().biomorph;
+    g_outside_method = GetParam().outside;
+}
+
+TEST_P(TestPotentialExterior, overridesExteriorColoring)
+{
+    compare_pixel({0.5, 0.5}, 128);
+
+    EXPECT_EQ(20, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialExterior, ValuesIn(potential_exterior_inputs()),
+    [](const TestParamInfo<PotentialExteriorInput> &info) { return info.param.name; });
+
+struct PotentialInsideInput
+{
+    std::string name;
+    bool big_float;
+    ColorMethod inside;
+};
+
+void PrintTo(const PotentialInsideInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<PotentialInsideInput> potential_inside_inputs()
+{
+    const PerturbationColorMethod methods[]{
+        {"FixedColor", ColorMethod::COLOR},
+        {"Iterations", ColorMethod::ITER},
+        {"Magnitude", ColorMethod::ZMAG},
+        {"Bof60", ColorMethod::BOF60},
+        {"Bof61", ColorMethod::BOF61},
+        {"Atan", ColorMethod::ATANI},
+        {"Fmod", ColorMethod::FMODI},
+        {"StarTrail", ColorMethod::STAR_TRAIL},
+        {"Period", ColorMethod::PERIOD},
+        {"EpsilonCross", ColorMethod::EPS_CROSS},
+    };
+    std::vector<PotentialInsideInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &method : methods)
+        {
+            inputs.push_back(
+                {std::string{big_float ? "HighPrecision_" : "Double_"} + method.name, big_float, method.method});
+        }
+    }
+    return inputs;
+}
+
+class TestPotentialInside : public PerturbationPotentialTest, public WithParamInterface<PotentialInsideInput>
+{
+public:
+    TestPotentialInside();
+
+protected:
+    void SetUp() override;
+};
+
+TestPotentialInside::TestPotentialInside() :
+    PerturbationPotentialTest{GetParam().big_float}
+{
+}
+
+void TestPotentialInside::SetUp()
+{
+    PerturbationPotentialTest::SetUp();
     g_outside_method = ColorMethod::COLOR;
     g_outside_color = 6;
     g_decomp[0] = 16;
     g_biomorph = 9;
-    for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60,
-             ColorMethod::BOF61, ColorMethod::ATANI, ColorMethod::FMODI, ColorMethod::STAR_TRAIL, ColorMethod::PERIOD,
-             ColorMethod::EPS_CROSS})
-    {
-        SCOPED_TRACE(static_cast<int>(inside));
-        g_inside_method = inside;
-        compare_pixel({0.125, 0.0625}, 128);
-        EXPECT_EQ(inside == ColorMethod::COLOR ? g_inside_color : 23, g_color);
-    }
+    g_inside_method = GetParam().inside;
 }
+
+TEST_P(TestPotentialInside, overridesInsideColoring)
+{
+    compare_pixel({0.125, 0.0625}, 128);
+
+    EXPECT_EQ(GetParam().inside == ColorMethod::COLOR ? g_inside_color : 23, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialInside, ValuesIn(potential_inside_inputs()),
+    [](const TestParamInfo<PotentialInsideInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, potentialMapsFixedAndSpecialColorsExactlyOnce)
 {
