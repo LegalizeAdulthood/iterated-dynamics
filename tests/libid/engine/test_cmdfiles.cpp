@@ -2277,35 +2277,43 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestBfDigitsParameter,
         BfDigitsParameterInput{"TooLarge", "bfdigits=2001", 9999, CmdArgFlags::BAD_ARG}),
     [](const TestParamInfo<BfDigitsParameterInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommand, maxIterNumber)
+struct MaxIterationsParameterInput
 {
-    ValueSaver saved_max_iterations{g_max_iterations, 9999};
+    const char *name;
+    const char *argument;
+    long expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("maxiter=20", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(20, g_max_iterations);
+void PrintTo(const MaxIterationsParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommandError, maxIterNumberTooSmall)
+class TestMaxIterationsParameter : public TestParameterCommand, public WithParamInterface<MaxIterationsParameterInput>
 {
-    ValueSaver saved_max_iterations{g_max_iterations, 9999};
+private:
+    ValueSaver<long> m_saved_iterations{g_max_iterations, 9999};
+};
 
-    exec_cmd_arg("maxiter=1", CmdFile::AT_CMD_LINE);
+TEST_P(TestMaxIterationsParameter, setsIterationLimit)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(9999, g_max_iterations);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_max_iterations);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommandError, maxIterNotNumber)
-{
-    ValueSaver saved_max_iterations{g_max_iterations, 9999};
-
-    exec_cmd_arg("maxiter=fmeh", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(9999, g_max_iterations);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestMaxIterationsParameter,
+    Values(MaxIterationsParameterInput{"Number", "maxiter=20", 20, CmdArgFlags::FRACTAL_PARAM},
+        MaxIterationsParameterInput{"TooSmall", "maxiter=1", 9999, CmdArgFlags::BAD_ARG},
+        MaxIterationsParameterInput{"NotNumber", "maxiter=fmeh", 9999, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<MaxIterationsParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommandError, passesInvalidValue)
 {
