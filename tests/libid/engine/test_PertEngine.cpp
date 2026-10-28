@@ -8719,55 +8719,127 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestShipPreciseManr,
     ValuesIn(ship_reference_inputs({2, 3, 4, 5}, SHIP_ORIGINAL_AND_REPLACED)),
     [](const TestParamInfo<ShipReferenceInput> &info) { return info.param.name; });
 
-TEST_P(TestBurningShipPerturbation, fmodInsideColorUsesTheNativeManrMetric)
+const std::vector<BurningShipReference> SHIP_REFERENCES{
+    {"Original", 0.0, false},
+    {"Displaced", 0.125, false},
+    {"DisplacedReplacement", 0.125, true},
+};
+
+class TestShipFmodInside : public BurningShipReferenceTest
 {
+protected:
+    void SetUp() override;
+};
+
+void TestShipFmodInside::SetUp()
+{
+    BurningShipReferenceTest::SetUp();
     g_bailout_test = Bailout::MANR;
     set_bailout_formula(g_bailout_test);
     g_magnitude_limit = 8.0;
     g_inside_method = ColorMethod::FMODI;
     g_close_proximity = 10.0;
-    for (const int degree : {2, 3})
-    {
-        SCOPED_TRACE(degree);
-        g_params[2] = degree;
-        compare_native_pixel({1.0, 1.0});
-        compare_native_pixel({1.0, 1.0}, 0.125, true);
-    }
 }
 
-TEST_P(TestBurningShipPerturbation, imaginaryOffsetsSeedNativeOrbitSequences)
+TEST_P(TestShipFmodInside, usesNativeManrMetric)
 {
-    set_initial_offset({0.0, -1.0});
-    g_magnitude_limit = 8.0;
-    for (const int degree : {2, 3, 4, 5})
+    compare_native_pixel({1.0, 1.0}, GetParam().offset, GetParam().replace);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestShipFmodInside,
+    ValuesIn(ship_reference_inputs({2, 3}, SHIP_ORIGINAL_AND_REPLACED)),
+    [](const TestParamInfo<ShipReferenceInput> &info) { return info.param.name; });
+
+struct ShipInitializerInput
+{
+    std::string name;
+    bool big_float;
+    int degree;
+    InitOrbitMode mode;
+    double offset;
+    bool replace;
+};
+
+void PrintTo(const ShipInitializerInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<ShipInitializerInput> ship_initializer_inputs()
+{
+    std::vector<ShipInitializerInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(degree);
-        g_params[2] = degree;
-        for (const InitOrbitMode mode : {InitOrbitMode::NORMAL, InitOrbitMode::PIXEL})
+        for (const int degree : {2, 3, 4, 5})
         {
-            SCOPED_TRACE(static_cast<int>(mode));
-            g_use_init_orbit = mode;
-            compare_native_pixel({1.0, 1.0});
-            compare_native_pixel({1.0, 1.0}, 0.125);
-            compare_native_pixel({1.0, 1.0}, 0.125, true);
+            for (const InitOrbitMode mode : {InitOrbitMode::NORMAL, InitOrbitMode::PIXEL})
+            {
+                for (const BurningShipReference &reference : SHIP_REFERENCES)
+                {
+                    inputs.push_back(
+                        {std::string{big_float ? "HighPrecision_" : "Double_"} + "Degree" + std::to_string(degree) +
+                                (mode == InitOrbitMode::NORMAL ? "_Normal_" : "_Pixel_") + reference.name,
+                            big_float, degree, mode, reference.offset, reference.replace});
+                }
+            }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestBurningShipPerturbation, explicitInitialOrbitsFollowTheSelectedNativeInitializer)
+class TestShipImaginaryOffset : public BurningShipPerturbationTest, public WithParamInterface<ShipInitializerInput>
 {
+public:
+    TestShipImaginaryOffset();
+
+protected:
+    void SetUp() override;
+};
+
+TestShipImaginaryOffset::TestShipImaginaryOffset() :
+    BurningShipPerturbationTest{GetParam().big_float}
+{
+}
+
+void TestShipImaginaryOffset::SetUp()
+{
+    BurningShipPerturbationTest::SetUp();
+    set_initial_offset({0.0, -1.0});
+    g_magnitude_limit = 8.0;
+    g_params[2] = GetParam().degree;
+    g_use_init_orbit = GetParam().mode;
+}
+
+TEST_P(TestShipImaginaryOffset, seedsNativeOrbitSequence)
+{
+    compare_native_pixel({1.0, 1.0}, GetParam().offset, GetParam().replace);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestShipImaginaryOffset, ValuesIn(ship_initializer_inputs()),
+    [](const TestParamInfo<ShipInitializerInput> &info) { return info.param.name; });
+
+class TestShipExplicitInitializer : public BurningShipReferenceTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestShipExplicitInitializer::SetUp()
+{
+    BurningShipReferenceTest::SetUp();
     set_initial_offset({0.03125, -0.0625});
     g_use_init_orbit = InitOrbitMode::VALUE;
     g_init_orbit = {0.25, -0.125};
-    for (const int degree : {2, 3, 4, 5})
-    {
-        SCOPED_TRACE(degree);
-        g_params[2] = degree;
-        compare_native_pixel({0.125, 0.0625});
-        compare_native_pixel({0.125, 0.0625}, 0.125);
-        compare_native_pixel({0.125, 0.0625}, 0.125, true);
-    }
 }
+
+TEST_P(TestShipExplicitInitializer, followsSelectedNativeInitializer)
+{
+    compare_native_pixel({0.125, 0.0625}, GetParam().offset, GetParam().replace);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestShipExplicitInitializer,
+    ValuesIn(ship_reference_inputs({2, 3, 4, 5}, SHIP_REFERENCES)),
+    [](const TestParamInfo<ShipReferenceInput> &info) { return info.param.name; });
 
 TEST_P(TestBurningShipPerturbation, bofSeedingFollowsTheSelectedNativeInitializer)
 {
