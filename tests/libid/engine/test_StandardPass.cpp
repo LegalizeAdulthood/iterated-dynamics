@@ -30,6 +30,8 @@
 #include <algorithm>
 #include <array>
 #include <ctime>
+#include <initializer_list>
+#include <optional>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -236,8 +238,6 @@ TEST_P(TestStandardPassPixel, completionAdvancesTheActivePassOnce)
     pass.complete_pixel(13);
 
     EXPECT_EQ(13, g_color);
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
     pass.select(GetParam().mode);
     ASSERT_TRUE(select_next(pass));
     EXPECT_EQ(GetParam().next, pass.selected_pixel());
@@ -253,16 +253,163 @@ TEST_P(TestStandardPassPixel, completionAdvancesTheActivePassOnce)
     }
 }
 
-TEST_P(TestStandardPassPixel, completionRequiresSelection)
+class TestStandardPassInstance : public TestStandardPass
 {
-    StandardPass pass;
-    pass.select(GetParam().mode);
+protected:
+    void SetUp() override;
+    void TearDown() override;
 
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
-    ASSERT_TRUE(select_next(pass));
-    EXPECT_EQ((Point2i{0, 0}), pass.selected_pixel());
+    std::optional<StandardPass> m_pass;
+};
+
+void TestStandardPassInstance::SetUp()
+{
+    TestStandardPass::SetUp();
+    m_pass.emplace();
 }
+
+void TestStandardPassInstance::TearDown()
+{
+    m_pass.reset();
+    TestStandardPass::TearDown();
+}
+
+enum class StandardPassGuardState
+{
+    INITIAL,
+    COMPLETED,
+    RESET,
+    CHANGED,
+};
+
+struct StandardPassGuardCase
+{
+    const char *name;
+    StandardPassGuardState state;
+};
+
+struct StandardPassGuardInput
+{
+    std::string name;
+    PixelPassCase pass;
+    StandardPassGuardState state;
+};
+
+void PrintTo(const StandardPassGuardInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+static std::vector<StandardPassGuardInput> pixel_guard_inputs(const std::initializer_list<StandardPassGuardCase> states)
+{
+    std::vector<StandardPassGuardInput> inputs;
+    for (const PixelPassCase &pass : PIXEL_PASSES)
+    {
+        for (const StandardPassGuardCase &state : states)
+        {
+            inputs.push_back({std::string{pass.name} + "_" + state.name, pass, state.state});
+        }
+    }
+    return inputs;
+}
+
+class TestStandardPassSelectionGuard : public TestStandardPassInstance,
+                                       public WithParamInterface<StandardPassGuardInput>
+{
+protected:
+    void SetUp() override;
+    void verify_continuation();
+};
+
+void TestStandardPassSelectionGuard::SetUp()
+{
+    TestStandardPassInstance::SetUp();
+    const StandardPassGuardInput &input{GetParam()};
+    m_pass->select(input.pass.mode);
+    if (input.state == StandardPassGuardState::INITIAL)
+    {
+        return;
+    }
+    ASSERT_TRUE(select_next(*m_pass));
+    if (input.state == StandardPassGuardState::RESET)
+    {
+        m_pass->reset();
+        return;
+    }
+    g_plot(0, 0, 13);
+    if (input.state == StandardPassGuardState::COMPLETED)
+    {
+        g_color = 99;
+        g_col = 99;
+        g_row = 99;
+    }
+    m_pass->complete_pixel(13);
+    if (input.state == StandardPassGuardState::CHANGED)
+    {
+        ASSERT_TRUE(select_next(*m_pass));
+        EXPECT_EQ(input.pass.next, m_pass->selected_pixel());
+        const CalcMode other{input.pass.mode == CalcMode::ONE_PASS ? CalcMode::TWO_PASS : CalcMode::ONE_PASS};
+        m_pass->select(other);
+    }
+}
+
+void TestStandardPassSelectionGuard::verify_continuation()
+{
+    const StandardPassGuardInput &input{GetParam()};
+    if (input.state == StandardPassGuardState::COMPLETED || input.state == StandardPassGuardState::RESET)
+    {
+        m_pass->select(input.pass.mode);
+    }
+    ASSERT_TRUE(select_next(*m_pass));
+    const Point2i expected{input.state == StandardPassGuardState::COMPLETED ? input.pass.next : Point2i{0, 0}};
+    EXPECT_EQ(expected, m_pass->selected_pixel());
+}
+
+class TestStandardPassAccessorGuard : public TestStandardPassSelectionGuard
+{
+};
+
+TEST_P(TestStandardPassAccessorGuard, rejectionPreservesContinuation)
+{
+    EXPECT_THROW(m_pass->selected_pixel(), std::logic_error);
+
+    verify_continuation();
+}
+
+INSTANTIATE_TEST_SUITE_P(PixelStates, TestStandardPassAccessorGuard,
+    ValuesIn(pixel_guard_inputs(
+        {{"Initial", StandardPassGuardState::INITIAL}, {"Completed", StandardPassGuardState::COMPLETED},
+            {"Reset", StandardPassGuardState::RESET}, {"PassChanged", StandardPassGuardState::CHANGED}})),
+    [](const TestParamInfo<StandardPassGuardInput> &info) { return info.param.name; });
+
+class TestStandardPassCompletionGuard : public TestStandardPassSelectionGuard
+{
+};
+
+TEST_P(TestStandardPassCompletionGuard, rejectionPreservesContinuation)
+{
+    EXPECT_THROW(m_pass->complete_pixel(7), std::logic_error);
+
+    verify_continuation();
+}
+
+INSTANTIATE_TEST_SUITE_P(PixelStates, TestStandardPassCompletionGuard,
+    ValuesIn(pixel_guard_inputs({{"Initial", StandardPassGuardState::INITIAL},
+        {"Completed", StandardPassGuardState::COMPLETED}, {"Reset", StandardPassGuardState::RESET}})),
+    [](const TestParamInfo<StandardPassGuardInput> &info) { return info.param.name; });
+
+class TestStandardPassResetSelection : public TestStandardPassSelectionGuard
+{
+};
+
+TEST_P(TestStandardPassResetSelection, hasNoPixelRequest)
+{
+    EXPECT_FALSE(m_pass->select_pixel());
+}
+
+INSTANTIATE_TEST_SUITE_P(PixelStates, TestStandardPassResetSelection,
+    ValuesIn(pixel_guard_inputs({{"Reset", StandardPassGuardState::RESET}})),
+    [](const TestParamInfo<StandardPassGuardInput> &info) { return info.param.name; });
 
 TEST_P(TestStandardPassPixel, resetDiscardsPendingSelection)
 {
@@ -274,9 +421,6 @@ TEST_P(TestStandardPassPixel, resetDiscardsPendingSelection)
 
     EXPECT_EQ(CalcMode::NONE, pass.calc_mode());
     EXPECT_TRUE(pass.done());
-    EXPECT_FALSE(pass.select_pixel());
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
     pass.select(GetParam().mode);
     ASSERT_TRUE(select_next(pass));
     EXPECT_EQ((Point2i{0, 0}), pass.selected_pixel());
@@ -296,7 +440,6 @@ TEST_P(TestStandardPassPixel, changingPassDiscardsPendingSelection)
     pass.select(other);
 
     EXPECT_EQ(other, pass.calc_mode());
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
     ASSERT_TRUE(select_next(pass));
     EXPECT_EQ((Point2i{0, 0}), pass.selected_pixel());
 }
@@ -304,34 +447,97 @@ TEST_P(TestStandardPassPixel, changingPassDiscardsPendingSelection)
 INSTANTIATE_TEST_SUITE_P(PixelPasses, TestStandardPassPixel, ValuesIn(PIXEL_PASSES),
     [](const TestParamInfo<PixelPassCase> &info) -> std::string { return info.param.name; });
 
-TEST_F(TestStandardPass, emptyPassHasNoPixelWork)
+class TestEmptyStandardPass : public TestStandardPassInstance
 {
-    StandardPass pass;
+};
 
-    EXPECT_EQ(CalcMode::NONE, pass.calc_mode());
-    EXPECT_FALSE(pass.select_pixel());
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
-    EXPECT_TRUE(pass.iterate());
+TEST_F(TestEmptyStandardPass, hasNoCalculationMode)
+{
+    EXPECT_EQ(CalcMode::NONE, m_pass->calc_mode());
 }
 
-TEST_F(TestStandardPass, orbitAlgorithmsDoNotOfferPixelRequests)
+TEST_F(TestEmptyStandardPass, hasNoPixelRequest)
 {
-    StandardPass pass;
-    for (const CalcMode mode : {CalcMode::SYNCHRONOUS_ORBIT, CalcMode::ORBIT})
-    {
-        SCOPED_TRACE(static_cast<int>(mode));
-        pass.select(mode);
+    EXPECT_FALSE(m_pass->select_pixel());
+}
 
-        EXPECT_THROW(pass.select_pixel(), std::logic_error);
-        EXPECT_THROW(pass.begin_chunk(), std::logic_error);
-        EXPECT_THROW(pass.done(), std::logic_error);
-        EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-        EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
-        EXPECT_EQ(mode, pass.calc_mode());
-    }
+TEST_F(TestEmptyStandardPass, rejectsSelectedPixelAccess)
+{
+    EXPECT_THROW(m_pass->selected_pixel(), std::logic_error);
+}
+
+TEST_F(TestEmptyStandardPass, rejectsPixelCompletion)
+{
+    EXPECT_THROW(m_pass->complete_pixel(7), std::logic_error);
+}
+
+TEST_F(TestEmptyStandardPass, iterationIsAlreadyComplete)
+{
+    EXPECT_TRUE(m_pass->iterate());
+}
+
+struct OrbitPassInput
+{
+    const char *name;
+    CalcMode mode;
+};
+
+void PrintTo(const OrbitPassInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestStandardPassOrbit : public TestStandardPassInstance, public WithParamInterface<OrbitPassInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStandardPassOrbit::SetUp()
+{
+    TestStandardPassInstance::SetUp();
+    m_pass->select(GetParam().mode);
+}
+
+TEST_P(TestStandardPassOrbit, rejectsPixelSelection)
+{
+    EXPECT_THROW(m_pass->select_pixel(), std::logic_error);
     EXPECT_EQ(0, m_plot_count);
 }
+
+TEST_P(TestStandardPassOrbit, rejectsBeginningPixelChunk)
+{
+    EXPECT_THROW(m_pass->begin_chunk(), std::logic_error);
+    EXPECT_EQ(0, m_plot_count);
+}
+
+TEST_P(TestStandardPassOrbit, rejectsPixelCompletionQuery)
+{
+    EXPECT_THROW(m_pass->done(), std::logic_error);
+    EXPECT_EQ(0, m_plot_count);
+}
+
+TEST_P(TestStandardPassOrbit, rejectsSelectedPixelAccess)
+{
+    EXPECT_THROW(m_pass->selected_pixel(), std::logic_error);
+    EXPECT_EQ(0, m_plot_count);
+}
+
+TEST_P(TestStandardPassOrbit, rejectsPixelCompletion)
+{
+    EXPECT_THROW(m_pass->complete_pixel(7), std::logic_error);
+    EXPECT_EQ(0, m_plot_count);
+}
+
+TEST_P(TestStandardPassOrbit, retainsSelectedModeWithoutPlotting)
+{
+    EXPECT_EQ(GetParam().mode, m_pass->calc_mode());
+    EXPECT_EQ(0, m_plot_count);
+}
+
+INSTANTIATE_TEST_SUITE_P(OrbitModes, TestStandardPassOrbit,
+    Values(OrbitPassInput{"SynchronousOrbit", CalcMode::SYNCHRONOUS_ORBIT}, OrbitPassInput{"Orbit", CalcMode::ORBIT}),
+    [](const TestParamInfo<OrbitPassInput> &info) { return info.param.name; });
 
 TEST_F(TestStandardPass, suspensionBeforeSynchronousTraversalQueuesWorkWithoutStarting)
 {
