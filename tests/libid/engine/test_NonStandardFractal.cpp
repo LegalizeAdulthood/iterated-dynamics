@@ -2096,7 +2096,123 @@ TEST_P(TestStandalonePopcorn, suspensionRestartsSavedRowWithSameFinalPixels)
     EXPECT_EQ(expected, m_pixels);
 }
 
-TEST_P(TestStandalonePopcorn, stepwiseControllerPreservesCalculationIncrements)
+class TestPopcornController : public TestStandalonePopcorn
+{
+protected:
+    void TearDown() override;
+    void prepare_calculation();
+
+    std::optional<NonStandardFractal> m_calculation;
+};
+
+void TestPopcornController::TearDown()
+{
+    if (m_calculation)
+    {
+        m_calculation->finish(!m_calculation->completed());
+    }
+    m_calculation.reset();
+    TestStandalonePopcorn::TearDown();
+}
+
+void TestPopcornController::prepare_calculation()
+{
+    m_calculation.emplace();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, m_calculation->select());
+}
+
+class TestPreparedPopcornController : public TestPopcornController
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::optional<PopcornController> m_controller;
+};
+
+void TestPreparedPopcornController::SetUp()
+{
+    TestStandalonePopcorn::SetUp();
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    m_controller.emplace(*m_calculation);
+}
+
+void TestPreparedPopcornController::TearDown()
+{
+    m_controller.reset();
+    TestPopcornController::TearDown();
+}
+
+TEST_P(TestPreparedPopcornController, iterationRequiresStart)
+{
+    EXPECT_THROW(m_controller->iterate(), std::logic_error);
+}
+
+TEST_P(TestPreparedPopcornController, resultRequiresStart)
+{
+    EXPECT_THROW(m_controller->result(), std::logic_error);
+}
+
+TEST_P(TestPreparedPopcornController, suspensionRequiresStart)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+}
+
+class TestStartedPopcornController : public TestPreparedPopcornController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStartedPopcornController::SetUp()
+{
+    TestPreparedPopcornController::SetUp();
+    m_controller->start();
+}
+
+TEST_P(TestStartedPopcornController, rejectsDuplicateStart)
+{
+    EXPECT_THROW(m_controller->start(), std::logic_error);
+}
+
+class TestCompletedPopcornController : public TestPreparedPopcornController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestCompletedPopcornController::SetUp()
+{
+    TestPreparedPopcornController::SetUp();
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    m_controller->start();
+    for (long i = 0; i <= WIDTH * HEIGHT * g_max_iterations && !m_controller->done(); ++i)
+    {
+        m_controller->iterate();
+    }
+    ASSERT_TRUE(m_controller->done());
+}
+
+TEST_P(TestCompletedPopcornController, rejectsSuspensionAfterCompletion)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Types, TestPopcornController, Values(FractalType::POPCORN, FractalType::POPCORN_JUL),
+    [](const TestParamInfo<FractalType> &info)
+    { return info.param == FractalType::POPCORN ? "Popcorn" : "PopcornJulia"; });
+INSTANTIATE_TEST_SUITE_P(Types, TestPreparedPopcornController, Values(FractalType::POPCORN, FractalType::POPCORN_JUL),
+    [](const TestParamInfo<FractalType> &info)
+    { return info.param == FractalType::POPCORN ? "Popcorn" : "PopcornJulia"; });
+INSTANTIATE_TEST_SUITE_P(Types, TestStartedPopcornController, Values(FractalType::POPCORN, FractalType::POPCORN_JUL),
+    [](const TestParamInfo<FractalType> &info)
+    { return info.param == FractalType::POPCORN ? "Popcorn" : "PopcornJulia"; });
+INSTANTIATE_TEST_SUITE_P(Types, TestCompletedPopcornController, Values(FractalType::POPCORN, FractalType::POPCORN_JUL),
+    [](const TestParamInfo<FractalType> &info)
+    { return info.param == FractalType::POPCORN ? "Popcorn" : "PopcornJulia"; });
+
+TEST_P(TestPopcornController, stepwiseControllerPreservesCalculationIncrements)
 {
     struct WorkState
     {
@@ -2124,20 +2240,15 @@ TEST_P(TestStandalonePopcorn, stepwiseControllerPreservesCalculationIncrements)
     m_pixels.fill(0);
     m_columns.clear();
     g_calc_status = CalcStatus::PARAMS_CHANGED;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
     PopcornController controller{calculation};
-    EXPECT_THROW(controller.iterate(), std::logic_error);
-    EXPECT_THROW(controller.result(), std::logic_error);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
 
     controller.start();
 
     EXPECT_FALSE(controller.done());
     EXPECT_TRUE(m_columns.empty());
-    EXPECT_THROW(controller.start(), std::logic_error);
     for (const WorkState &work : expected)
     {
         controller.iterate();
@@ -2155,15 +2266,12 @@ TEST_P(TestStandalonePopcorn, stepwiseControllerPreservesCalculationIncrements)
     const std::size_t plots{m_columns.size()};
     controller.iterate();
     EXPECT_EQ(plots, m_columns.size());
-    EXPECT_THROW(controller.suspend(), std::logic_error);
-    calculation.finish(false);
 }
 
-TEST_P(TestStandalonePopcorn, stepwiseMenuInterruptionFollowsWorkAndPreservesResumeRow)
+TEST_P(TestPopcornController, stepwiseMenuInterruptionFollowsWorkAndPreservesResumeRow)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     EXPECT_CALL(m_driver, key_pressed())
         .WillOnce(Invoke(
             []
@@ -2189,11 +2297,10 @@ TEST_P(TestStandalonePopcorn, stepwiseMenuInterruptionFollowsWorkAndPreservesRes
     EXPECT_EQ(0, row);
 }
 
-TEST_P(TestStandalonePopcorn, stepwiseSuspensionRetainsTheCurrentRow)
+TEST_P(TestPopcornController, stepwiseSuspensionRetainsTheCurrentRow)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
     PopcornController controller{calculation};
     controller.start();
@@ -2217,11 +2324,10 @@ TEST_P(TestStandalonePopcorn, stepwiseSuspensionRetainsTheCurrentRow)
     EXPECT_EQ(1, row);
 }
 
-TEST_P(TestStandalonePopcorn, stepwiseInputFailureReleasesHandlerAndCalculation)
+TEST_P(TestPopcornController, stepwiseInputFailureReleasesHandlerAndCalculation)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     EXPECT_CALL(m_driver, key_pressed()).WillOnce(Throw(std::runtime_error("input failed")));
     PopcornController controller{calculation};
     controller.start();
@@ -2235,11 +2341,10 @@ TEST_P(TestStandalonePopcorn, stepwiseInputFailureReleasesHandlerAndCalculation)
     EXPECT_FALSE(dispatch_keyboard_key('x'));
 }
 
-TEST_P(TestStandalonePopcorn, stepwisePlotFailureReleasesHandlerAndCalculation)
+TEST_P(TestPopcornController, stepwisePlotFailureReleasesHandlerAndCalculation)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
     EXPECT_CALL(m_driver, write_pixel(_, _, _)).WillOnce(Throw(std::runtime_error("plot failed")));
     PopcornController controller{calculation};
@@ -2261,11 +2366,10 @@ TEST_P(TestStandalonePopcorn, stepwisePlotFailureReleasesHandlerAndCalculation)
     EXPECT_FALSE(dispatch_keyboard_key('x'));
 }
 
-TEST_P(TestStandalonePopcorn, stepwiseDestructionOnlyReleasesHandler)
+TEST_P(TestPopcornController, stepwiseDestructionOnlyReleasesHandler)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::POPCORN, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
     {
         PopcornController controller{calculation};
@@ -2276,7 +2380,6 @@ TEST_P(TestStandalonePopcorn, stepwiseDestructionOnlyReleasesHandler)
 
     EXPECT_FALSE(dispatch_keyboard_key('x'));
     EXPECT_FALSE(calculation.done());
-    calculation.finish(true);
 }
 
 INSTANTIATE_TEST_SUITE_P(PopcornTypes, TestStandalonePopcorn, Values(FractalType::POPCORN, FractalType::POPCORN_JUL),
