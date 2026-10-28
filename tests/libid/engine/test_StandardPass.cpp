@@ -1416,6 +1416,9 @@ protected:
     void SetUp() override;
     void TearDown() override;
     void open_storage();
+    void request_storage(CalcMode mode = CalcMode::ONE_PASS);
+
+    std::optional<StandardFractal> m_calculation;
 };
 
 void TestStandardPotential::SetUp()
@@ -1429,6 +1432,7 @@ void TestStandardPotential::SetUp()
 
 void TestStandardPotential::TearDown()
 {
+    m_calculation.reset();
     end_disk();
     EXPECT_TRUE(exit_check().empty());
     TestStandardFractal::TearDown();
@@ -1438,6 +1442,15 @@ void TestStandardPotential::open_storage()
 {
     start_disk_storage(8, 16, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
     g_disk_16_bit = true;
+}
+
+void TestStandardPotential::request_storage(const CalcMode mode)
+{
+    g_std_calc_mode = mode;
+    m_calculation.emplace();
+    m_calculation->resume();
+    m_calculation->iterate();
+    ASSERT_TRUE(m_calculation->potential_storage_required());
 }
 
 TEST_F(TestStandardPotential, storageRequirementStopsBeforeWorkOrInput)
@@ -1463,11 +1476,8 @@ TEST_F(TestStandardPotential, storageRequirementStopsBeforeWorkOrInput)
 
 TEST_F(TestStandardPotential, availableStorageSelectsOnePassBeforeCalculating)
 {
-    g_std_calc_mode = CalcMode::SOLID_GUESS;
-    StandardFractal calculation;
-    calculation.resume();
-    calculation.iterate();
-    ASSERT_TRUE(calculation.potential_storage_required());
+    ASSERT_NO_FATAL_FAILURE(request_storage(CalcMode::SOLID_GUESS));
+    StandardFractal &calculation{*m_calculation};
     open_storage();
 
     calculation.complete_potential_storage(true);
@@ -1483,11 +1493,8 @@ TEST_F(TestStandardPotential, availableStorageSelectsOnePassBeforeCalculating)
 
 TEST_F(TestStandardPotential, unavailableStorageRetainsRequestedTraversal)
 {
-    g_std_calc_mode = CalcMode::TWO_PASS;
-    StandardFractal calculation;
-    calculation.resume();
-    calculation.iterate();
-    ASSERT_TRUE(calculation.potential_storage_required());
+    ASSERT_NO_FATAL_FAILURE(request_storage(CalcMode::TWO_PASS));
+    StandardFractal &calculation{*m_calculation};
 
     calculation.complete_potential_storage(false);
 
@@ -1502,10 +1509,8 @@ TEST_F(TestStandardPotential, unavailableStorageRetainsRequestedTraversal)
 
 TEST_F(TestStandardPotential, resumeKeepsExistingStorageAndContinuesAtSavedPixel)
 {
-    StandardFractal calculation;
-    calculation.resume();
-    calculation.iterate();
-    ASSERT_TRUE(calculation.potential_storage_required());
+    ASSERT_NO_FATAL_FAILURE(request_storage());
+    StandardFractal &calculation{*m_calculation};
     open_storage();
     write_disk_pixel(3, 11, 123);
     calculation.complete_potential_storage(true);
@@ -1531,11 +1536,8 @@ TEST_F(TestStandardPotential, resumeKeepsExistingStorageAndContinuesAtSavedPixel
 
 TEST_F(TestStandardPotential, threePassFollowupRequestsFreshStorage)
 {
-    g_std_calc_mode = CalcMode::THREE_PASS;
-    StandardFractal calculation;
-    calculation.resume();
-    calculation.iterate();
-    ASSERT_TRUE(calculation.potential_storage_required());
+    ASSERT_NO_FATAL_FAILURE(request_storage(CalcMode::THREE_PASS));
+    StandardFractal &calculation{*m_calculation};
     open_storage();
     calculation.complete_potential_storage(true);
     calculation.iterate();
@@ -1550,19 +1552,50 @@ TEST_F(TestStandardPotential, threePassFollowupRequestsFreshStorage)
     EXPECT_EQ(128U, s_calculated.size());
 }
 
-TEST_F(TestStandardPotential, storageCompletionRequiresAnOutstandingRequest)
+struct PotentialStorageGuardInput
 {
-    StandardFractal calculation;
-    EXPECT_THROW(calculation.complete_potential_storage(false), std::logic_error);
-    calculation.resume();
-    calculation.iterate();
-    ASSERT_TRUE(calculation.potential_storage_required());
-    calculation.complete_potential_storage(false);
+    const char *name;
+    bool consumed;
+    bool completion;
+};
 
-    EXPECT_THROW(calculation.complete_potential_storage(true), std::logic_error);
-
-    calculation.abort();
+void PrintTo(const PotentialStorageGuardInput &value, std::ostream *out)
+{
+    *out << value.name;
 }
+
+class TestPotentialStorageGuard : public TestStandardPotential, public WithParamInterface<PotentialStorageGuardInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestPotentialStorageGuard::SetUp()
+{
+    TestStandardPotential::SetUp();
+    if (GetParam().consumed)
+    {
+        ASSERT_NO_FATAL_FAILURE(request_storage());
+        m_calculation->complete_potential_storage(false);
+    }
+    else
+    {
+        m_calculation.emplace();
+    }
+}
+
+TEST_P(TestPotentialStorageGuard, storageCompletionRequiresAnOutstandingRequest)
+{
+    EXPECT_THROW(m_calculation->complete_potential_storage(GetParam().completion), std::logic_error);
+    if (GetParam().consumed)
+    {
+        m_calculation->abort();
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(RequestStates, TestPotentialStorageGuard,
+    Values(PotentialStorageGuardInput{"Absent", false, false}, PotentialStorageGuardInput{"Consumed", true, true}),
+    [](const TestParamInfo<PotentialStorageGuardInput> &info) { return info.param.name; });
 
 TEST_F(TestStandardFractal, inactivePotentialDoesNotRequestStorage)
 {
