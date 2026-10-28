@@ -975,9 +975,6 @@ protected:
     void set_initial_offset(const DComplex &offset);
     void compare_distance_pixel(const std::complex<double> &center, long max_iterations, bool legacy,
         double reference_offset = 0.0, const DistancePixelOptions &options = {}, bool incremental = false);
-    void compare_frame_coordinates(double tolerance,
-        const ImageRegion &region = ImageRegion{{-0.3, 0.1}, {0.2, 0.35}, {-0.3, 0.1}},
-        CalcMode pass = CalcMode::ONE_PASS, Point2i offset = {});
 
     ValueSaver<ImageRegion> m_saved_region{g_image_region};
     ValueSaver<Potential> m_saved_potential{g_potential, Potential{}};
@@ -8215,18 +8212,118 @@ TEST_P(TestPerturbationIterations, trueColorIterationOutputUsesTheFullCountBefor
     EXPECT_EQ(1, blue);
 }
 
-void PerturbationIterationTest::compare_frame_coordinates(
-    const double tolerance, const ImageRegion &region, const CalcMode pass, const Point2i offset)
+struct FrameCoordinateTransform
 {
-    ValueSaver saved_user{g_user, UserData{}};
-    ValueSaver saved_status{g_calc_status};
-    ValueSaver saved_resuming{g_resuming, false};
-    ValueSaver<LDouble> saved_delta_x{g_delta_x};
-    ValueSaver<LDouble> saved_delta_y{g_delta_y};
-    ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
-    ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    double x_magnification;
+    double rotation;
+    double skew;
+};
+
+struct FrameCoordinateContext
+{
+    const char *name;
+    std::optional<FrameCoordinateTransform> transform;
+    Inversion inversion;
+    CalcMode pass;
+    Point2i offset;
+};
+
+struct FrameCoordinateInput
+{
+    std::string name;
+    bool big_float;
+    Point2i size;
+    FractalType type;
+    double tolerance;
+    FrameCoordinateContext context;
+};
+
+void PrintTo(const FrameCoordinateInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<FrameCoordinateInput> frame_coordinate_inputs()
+{
+    const Inversion inversion{3, 0.5, {2.0, 1.0}, {0.5, 2.0, 1.0}};
+    const FrameCoordinateTransform reduced_transform{0.6, 37.0, 21.0};
+    const FrameCoordinateContext contexts[]{
+        {"Default", std::nullopt, {}, CalcMode::ONE_PASS, {}},
+        {"Rotation37", FrameCoordinateTransform{1.0, 37.0, 0.0}, {}, CalcMode::ONE_PASS, {}},
+        {"Skew21", FrameCoordinateTransform{1.0, 0.0, 21.0}, {}, CalcMode::ONE_PASS, {}},
+        {"XMagnification2p5", FrameCoordinateTransform{2.5, 0.0, 0.0}, {}, CalcMode::ONE_PASS, {}},
+        {"CombinedNegative", FrameCoordinateTransform{0.6, -72.0, -18.0}, {}, CalcMode::ONE_PASS, {}},
+        {"QuarterTurn", FrameCoordinateTransform{1.0, 90.0, 0.0}, {}, CalcMode::ONE_PASS, {}},
+        {"ReducedBoundaryTrace", reduced_transform, {}, CalcMode::BOUNDARY_TRACE, {3, 2}},
+        {"ReducedSolidGuess", reduced_transform, {}, CalcMode::SOLID_GUESS, {3, 2}},
+        {"ReducedInvertedBoundaryTrace", reduced_transform, inversion, CalcMode::BOUNDARY_TRACE, {3, 2}},
+        {"ReducedInvertedSolidGuess", reduced_transform, inversion, CalcMode::SOLID_GUESS, {3, 2}},
+        {"InvertedAffine", reduced_transform, inversion, CalcMode::ONE_PASS, {}},
+    };
+    std::vector<FrameCoordinateInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const FrameCoordinateContext &context : contexts)
+        {
+            for (const double tolerance : {1e-6, 2.0})
+            {
+                for (const Point2i &size : {Point2i{8, 6}, Point2i{6, 8}, Point2i{17, 9}, Point2i{9, 17}})
+                {
+                    for (const FractalType type : {FractalType::MANDEL, FractalType::BURNING_SHIP})
+                    {
+                        inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + context.name +
+                                (tolerance > 1.0 ? "_ReplacementTolerance_" : "_SmallTolerance_") + "Width" +
+                                std::to_string(size.x) + "_Height" + std::to_string(size.y) +
+                                (type == FractalType::MANDEL ? "_Mandel" : "_BurningShip"),
+                            big_float, size, type, tolerance, context});
+                    }
+                }
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestPerturbationFrameCoordinates : public PerturbationIterationTest,
+                                         public WithParamInterface<FrameCoordinateInput>
+{
+public:
+    TestPerturbationFrameCoordinates();
+
+protected:
+    void SetUp() override;
+    ImageRegion m_frame_region{{-0.3, 0.1}, {0.2, 0.35}, {-0.3, 0.1}};
+    std::vector<Point2i> m_frame_plots;
+    std::vector<int> m_frame_pixels;
+
+private:
+    ValueSaver<UserData> m_saved_user{g_user, UserData{}};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status};
+    ValueSaver<bool> m_saved_resuming{g_resuming, false};
+    ValueSaver<LDouble> m_saved_delta_x{g_delta_x};
+    ValueSaver<LDouble> m_saved_delta_y{g_delta_y};
+    ValueSaver<LDouble> m_saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> m_saved_delta_y2{g_delta_y2, 0};
+};
+
+TestPerturbationFrameCoordinates::TestPerturbationFrameCoordinates() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestPerturbationFrameCoordinates::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    const FrameCoordinateInput &input{GetParam()};
+    if (input.context.transform)
+    {
+        const FrameCoordinateTransform &transform{*input.context.transform};
+        cvt_corners(-0.05, 0.225, 8.0, transform.x_magnification, transform.rotation, transform.skew);
+        m_frame_region = g_image_region;
+    }
+    g_inversion = input.context.inversion;
     g_user.perturbation = PerturbationMode::YES;
-    g_user.perturbation_tolerance = tolerance;
+    g_user.perturbation_tolerance = input.tolerance;
     g_max_iterations = 2;
     m_specific.calc_type = standard_fractal_type;
     m_specific.per_image = [] { return true; };
@@ -8240,186 +8337,124 @@ void PerturbationIterationTest::compare_frame_coordinates(
         s_coordinates.push_back({{g_col, g_row}, s_reference_coordinates.back() + parameter_delta, parameter_delta});
         mandel_perturb(reference, delta, parameter_delta);
     };
-    std::vector<Point2i> plots;
-    std::vector<int> pixels;
     EXPECT_CALL(m_driver, read_pixel(_, _))
         .WillRepeatedly(
-            Invoke([&pixels](const int col, const int row) { return pixels.at(row * g_screen_x_dots + col); }));
+            Invoke([this](const int col, const int row) { return m_frame_pixels.at(row * g_screen_x_dots + col); }));
     EXPECT_CALL(m_driver, write_pixel(_, _, _))
         .WillRepeatedly(Invoke(
-            [&plots, &pixels](const int col, const int row, const int color)
+            [this](const int col, const int row, const int color)
             {
                 if (const StandardFractal *calculation{active_standard_fractal()})
                 {
                     EXPECT_TRUE(calculation->standard_pass_status().perturbation_active);
                 }
-                pixels.at(row * g_screen_x_dots + col) = color;
-                plots.push_back({col, row});
+                m_frame_pixels.at(row * g_screen_x_dots + col) = color;
+                m_frame_plots.push_back({col, row});
             }));
 
-    for (const Point2i &size : {Point2i{8, 6}, Point2i{6, 8}, Point2i{17, 9}, Point2i{9, 17}})
+    const Point2i size{input.size};
+    const Point2i offset{input.context.offset};
+    const ImageRegion &region{m_frame_region};
+    g_fractal_type = input.type;
+    g_screen_x_dots = size.x + 2 * offset.x;
+    g_screen_y_dots = size.y + 2 * offset.y;
+    g_logical_screen = {size.x, size.y, offset.x, offset.y, size.x - 1.0, size.y - 1.0};
+    g_start_pt = g_i_start_pt = g_begin_pt = {};
+    g_stop_pt = g_i_stop_pt = {size.x - 1, size.y - 1};
+    g_image_region = region;
+    g_delta_x = (region.m_max.x - region.m_3rd.x) / (size.x - 1);
+    g_delta_y = (region.m_max.y - region.m_3rd.y) / (size.y - 1);
+    g_delta_x2 = (region.m_3rd.x - region.m_min.x) / (size.y - 1);
+    g_delta_y2 = (region.m_3rd.y - region.m_min.y) / (size.x - 1);
+    alloc_pixel_grid();
+    fill_pixel_grid();
+    if (input.big_float)
     {
-        for (const FractalType type : {FractalType::MANDEL, FractalType::BURNING_SHIP})
+        init_bf_dec(60);
+        m_big_float = true;
+        float_to_bf(g_bf_x_min, g_image_region.m_min.x);
+        float_to_bf(g_bf_x_max, g_image_region.m_max.x);
+        float_to_bf(g_bf_y_min, g_image_region.m_min.y);
+        float_to_bf(g_bf_y_max, g_image_region.m_max.y);
+        float_to_bf(g_bf_x_3rd, region.m_3rd.x);
+        float_to_bf(g_bf_y_3rd, region.m_3rd.y);
+    }
+    g_std_calc_mode = input.context.pass;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    g_dispatch = FractalDispatch{m_specific};
+    s_coordinates.clear();
+    s_reference_coordinates.clear();
+    m_frame_plots.clear();
+    m_frame_pixels.assign(g_screen_x_dots * g_screen_y_dots, 0);
+}
+
+TEST_P(TestPerturbationFrameCoordinates, matchesStandardGridAndPlotCoverage)
+{
+    const FrameCoordinateInput &input{GetParam()};
+    const Point2i size{input.size};
+    const Point2i offset{input.context.offset};
+    const CalcMode pass{input.context.pass};
+    StandardFractal calculation;
+    calculation.resume();
+    for (int increments = 0; increments < size.x * size.y + 10 && !calculation.done(); ++increments)
+    {
+        calculation.iterate();
+    }
+    ASSERT_TRUE(calculation.done());
+    EXPECT_EQ(pass, g_std_calc_mode);
+    EXPECT_EQ(input.big_float, g_bf_math != BFMathType::NONE);
+    ASSERT_FALSE(s_reference_coordinates.empty());
+    DComplex expected_center{m_frame_region.center()};
+    if (g_inversion.invert != 0)
+    {
+        g_inversion.apply(expected_center);
+    }
+    EXPECT_NEAR(expected_center.x, s_reference_coordinates.front().real(), 1e-14);
+    EXPECT_NEAR(input.type == FractalType::BURNING_SHIP ? -expected_center.y : expected_center.y,
+        s_reference_coordinates.front().imag(), 1e-14);
+    if (input.tolerance > 1.0)
+    {
+        EXPECT_GT(s_reference_coordinates.size(), g_max_iterations);
+    }
+    std::vector<int> visits(size.x * size.y);
+    for (const CoordinateSample &sample : s_coordinates)
+    {
+        g_col = sample.pixel.x;
+        g_row = sample.pixel.y;
+        DComplex expected{dx_pixel(), dy_pixel()};
+        if (g_inversion.invert != 0)
         {
-            SCOPED_TRACE(size.x);
-            SCOPED_TRACE(size.y);
-            SCOPED_TRACE(static_cast<int>(type));
-            g_fractal_type = type;
-            g_screen_x_dots = size.x + 2 * offset.x;
-            g_screen_y_dots = size.y + 2 * offset.y;
-            g_logical_screen = {size.x, size.y, offset.x, offset.y, size.x - 1.0, size.y - 1.0};
-            g_start_pt = g_i_start_pt = g_begin_pt = {};
-            g_stop_pt = g_i_stop_pt = {size.x - 1, size.y - 1};
-            g_image_region = region;
-            g_delta_x = (region.m_max.x - region.m_3rd.x) / (size.x - 1);
-            g_delta_y = (region.m_max.y - region.m_3rd.y) / (size.y - 1);
-            g_delta_x2 = (region.m_3rd.x - region.m_min.x) / (size.y - 1);
-            g_delta_y2 = (region.m_3rd.y - region.m_min.y) / (size.x - 1);
-            alloc_pixel_grid();
-            fill_pixel_grid();
-            if (m_use_big_float)
-            {
-                init_bf_dec(60);
-                m_big_float = true;
-                float_to_bf(g_bf_x_min, g_image_region.m_min.x);
-                float_to_bf(g_bf_x_max, g_image_region.m_max.x);
-                float_to_bf(g_bf_y_min, g_image_region.m_min.y);
-                float_to_bf(g_bf_y_max, g_image_region.m_max.y);
-                float_to_bf(g_bf_x_3rd, region.m_3rd.x);
-                float_to_bf(g_bf_y_3rd, region.m_3rd.y);
-            }
-            g_std_calc_mode = pass;
-            g_calc_status = CalcStatus::PARAMS_CHANGED;
-            g_dispatch = FractalDispatch{m_specific};
-            s_coordinates.clear();
-            s_reference_coordinates.clear();
-            plots.clear();
-            pixels.assign(g_screen_x_dots * g_screen_y_dots, 0);
-            StandardFractal calculation;
-            calculation.resume();
-            for (int increments = 0; increments < size.x * size.y + 10 && !calculation.done(); ++increments)
-            {
-                calculation.iterate();
-            }
-            ASSERT_TRUE(calculation.done());
-            EXPECT_EQ(pass, g_std_calc_mode);
-            EXPECT_EQ(m_use_big_float, g_bf_math != BFMathType::NONE);
-            ASSERT_FALSE(s_reference_coordinates.empty());
-            DComplex expected_center{region.center()};
-            if (g_inversion.invert != 0)
-            {
-                g_inversion.apply(expected_center);
-            }
-            EXPECT_NEAR(expected_center.x, s_reference_coordinates.front().real(), 1e-14);
-            EXPECT_NEAR(type == FractalType::BURNING_SHIP ? -expected_center.y : expected_center.y,
-                s_reference_coordinates.front().imag(), 1e-14);
-            if (tolerance > 1.0)
-            {
-                EXPECT_GT(s_reference_coordinates.size(), g_max_iterations);
-            }
-            std::vector<int> visits(size.x * size.y);
-            for (const CoordinateSample &sample : s_coordinates)
-            {
-                g_col = sample.pixel.x;
-                g_row = sample.pixel.y;
-                DComplex expected{dx_pixel(), dy_pixel()};
-                if (g_inversion.invert != 0)
-                {
-                    g_inversion.apply(expected);
-                }
-                EXPECT_NEAR(expected.x, sample.value.real(), 1e-14);
-                EXPECT_NEAR(type == FractalType::BURNING_SHIP ? -expected.y : expected.y, sample.value.imag(), 1e-14);
-                ++visits.at(g_row * size.x + g_col);
-            }
-            EXPECT_THAT(visits, Contains(Gt(0)));
-            if (pass == CalcMode::ONE_PASS)
-            {
-                EXPECT_THAT(visits, Each(Ge(1)));
-                ASSERT_EQ(size.x * size.y, plots.size());
-                for (int i = 0; i < size.x * size.y; ++i)
-                {
-                    EXPECT_EQ((Point2i{offset.x + i % size.x, offset.y + i / size.x}), plots[i]);
-                }
-            }
-            std::vector<int> plotted(size.x * size.y);
-            for (const Point2i &pixel : plots)
-            {
-                ASSERT_GE(pixel.x, offset.x);
-                ASSERT_GE(pixel.y, offset.y);
-                ASSERT_LT(pixel.x, offset.x + size.x);
-                ASSERT_LT(pixel.y, offset.y + size.y);
-                ++plotted.at((pixel.y - offset.y) * size.x + pixel.x - offset.x);
-            }
-            EXPECT_THAT(plotted, Each(Ge(1)));
-            calculation.finish();
-            if (m_big_float)
-            {
-                free_bf_vars();
-                m_big_float = false;
-                g_bf_math = BFMathType::NONE;
-            }
+            g_inversion.apply(expected);
+        }
+        EXPECT_NEAR(expected.x, sample.value.real(), 1e-14);
+        EXPECT_NEAR(input.type == FractalType::BURNING_SHIP ? -expected.y : expected.y, sample.value.imag(), 1e-14);
+        ++visits.at(g_row * size.x + g_col);
+    }
+    EXPECT_THAT(visits, Contains(Gt(0)));
+    if (pass == CalcMode::ONE_PASS)
+    {
+        EXPECT_THAT(visits, Each(Ge(1)));
+        ASSERT_EQ(size.x * size.y, m_frame_plots.size());
+        for (int i = 0; i < size.x * size.y; ++i)
+        {
+            EXPECT_EQ((Point2i{offset.x + i % size.x, offset.y + i / size.x}), m_frame_plots[i]);
         }
     }
-}
-
-TEST_P(TestPerturbationIterations, fullFrameCoordinatesMatchStandardGrid)
-{
-    compare_frame_coordinates(1e-6);
-}
-
-TEST_P(TestPerturbationIterations, replacementReferencesPreserveStandardGridCoordinates)
-{
-    compare_frame_coordinates(2.0);
-}
-
-TEST_P(TestPerturbationIterations, affineFrameCoordinatesMatchStandardGrid)
-{
-    struct Transform
+    std::vector<int> plotted(size.x * size.y);
+    for (const Point2i &pixel : m_frame_plots)
     {
-        double x_magnification;
-        double rotation;
-        double skew;
-    };
-
-    for (const Transform &transform : {Transform{1.0, 37.0, 0.0}, Transform{1.0, 0.0, 21.0}, Transform{2.5, 0.0, 0.0},
-             Transform{0.6, -72.0, -18.0}, Transform{1.0, 90.0, 0.0}})
-    {
-        SCOPED_TRACE(transform.x_magnification);
-        SCOPED_TRACE(transform.rotation);
-        SCOPED_TRACE(transform.skew);
-        cvt_corners(-0.05, 0.225, 8.0, transform.x_magnification, transform.rotation, transform.skew);
-        const ImageRegion region{g_image_region};
-        compare_frame_coordinates(1e-6, region);
-        compare_frame_coordinates(2.0, region);
+        ASSERT_GE(pixel.x, offset.x);
+        ASSERT_GE(pixel.y, offset.y);
+        ASSERT_LT(pixel.x, offset.x + size.x);
+        ASSERT_LT(pixel.y, offset.y + size.y);
+        ++plotted.at((pixel.y - offset.y) * size.x + pixel.x - offset.x);
     }
+    EXPECT_THAT(plotted, Each(Ge(1)));
+    calculation.finish();
 }
 
-TEST_P(TestPerturbationIterations, reducedViewportCoordinatesMatchStandardPasses)
-{
-    cvt_corners(-0.05, 0.225, 8.0, 0.6, 37.0, 21.0);
-    const ImageRegion region{g_image_region};
-    for (const bool inverted : {false, true})
-    {
-        SCOPED_TRACE(inverted);
-        g_inversion = inverted ? Inversion{3, 0.5, {2.0, 1.0}, {0.5, 2.0, 1.0}} : Inversion{};
-        for (const CalcMode pass : {CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS})
-        {
-            SCOPED_TRACE(static_cast<char>(pass));
-            compare_frame_coordinates(1e-6, region, pass, {3, 2});
-            compare_frame_coordinates(2.0, region, pass, {3, 2});
-        }
-    }
-}
-
-TEST_P(TestPerturbationIterations, invertedAffineCoordinatesMatchStandardGrid)
-{
-    g_inversion = {3, 0.5, {2.0, 1.0}, {0.5, 2.0, 1.0}};
-    cvt_corners(-0.05, 0.225, 8.0, 0.6, 37.0, 21.0);
-    const ImageRegion region{g_image_region};
-
-    compare_frame_coordinates(1e-6, region);
-    compare_frame_coordinates(2.0, region);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPerturbationFrameCoordinates, ValuesIn(frame_coordinate_inputs()),
+    [](const TestParamInfo<FrameCoordinateInput> &info) { return info.param.name; });
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationIterations, Bool());
 
