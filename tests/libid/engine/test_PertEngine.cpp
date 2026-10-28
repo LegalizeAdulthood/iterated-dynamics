@@ -51,6 +51,8 @@
 #include <limits>
 #include <memory>
 #include <new>
+#include <optional>
+#include <ostream>
 #include <stdexcept>
 #include <vector>
 
@@ -67,50 +69,101 @@ using namespace testing;
 namespace id::test
 {
 
-TEST(TestPertEngine, defaultGlitchToleranceScalesThreshold)
+struct GlitchToleranceInput
 {
-    PertEngine engine;
+    const char *name;
+    std::optional<double> tolerance;
+    double threshold;
+};
 
-    EXPECT_DOUBLE_EQ(25.0e-12, engine.glitch_tolerance_threshold({3.0, 4.0}));
+void PrintTo(const GlitchToleranceInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestDistanceEstimator, mandelbrotDerivativeStartsAtOneAndIncludesParameterDerivative)
+class TestGlitchTolerance : public TestWithParam<GlitchToleranceInput>
 {
-    DistanceEstimator estimator{4.0, 100.0, true, false};
+protected:
+    void SetUp() override;
 
-    EXPECT_EQ((DComplex{1.0, 0.0}), estimator.derivative());
-    EXPECT_TRUE(estimator.advance({0.5, 0.0}));
-    EXPECT_EQ((DComplex{2.0, 0.0}), estimator.derivative());
-    EXPECT_TRUE(estimator.advance({0.75, 0.0}));
-    EXPECT_EQ((DComplex{4.0, 0.0}), estimator.derivative());
-    EXPECT_TRUE(estimator.advance({1.0625, 0.0}));
-    EXPECT_EQ((DComplex{9.5, 0.0}), estimator.derivative());
+    PertEngine m_engine;
+};
+
+void TestGlitchTolerance::SetUp()
+{
+    if (GetParam().tolerance)
+    {
+        m_engine.set_glitch_tolerance(*GetParam().tolerance);
+    }
 }
 
-TEST(TestDistanceEstimator, juliaDerivativeOmitsParameterDerivative)
+TEST_P(TestGlitchTolerance, scalesThreshold)
 {
-    DistanceEstimator estimator{4.0, 100.0, false, false};
-
-    EXPECT_TRUE(estimator.advance({0.5, 0.5}));
-    EXPECT_EQ((DComplex{1.0, 1.0}), estimator.derivative());
-    EXPECT_TRUE(estimator.advance({0.25, 1.0}));
-    EXPECT_EQ((DComplex{-1.5, 2.5}), estimator.derivative());
+    EXPECT_DOUBLE_EQ(GetParam().threshold, m_engine.glitch_tolerance_threshold({3.0, 4.0}));
 }
 
-TEST(TestDistanceEstimator, derivativeLimitsPreserveOrdinaryAndLegacyNorms)
-{
-    DistanceEstimator ordinary{4.0, 5.0, true, false};
-    DistanceEstimator legacy{4.0, 5.0, true, true};
+INSTANTIATE_TEST_SUITE_P(Inputs, TestGlitchTolerance,
+    Values(GlitchToleranceInput{"Default", std::nullopt, 25.0e-12}, GlitchToleranceInput{"NonDefault", 0.5, 6.25}),
+    [](const TestParamInfo<GlitchToleranceInput> &info) { return info.param.name; });
 
-    EXPECT_TRUE(ordinary.advance({0.5, 0.5}));
-    EXPECT_TRUE(legacy.advance({0.5, 0.5}));
-    EXPECT_EQ((DComplex{2.0, 1.0}), ordinary.derivative());
-    EXPECT_EQ(ordinary.derivative(), legacy.derivative());
-    EXPECT_TRUE(ordinary.advance({0.0, 0.75}));
-    EXPECT_FALSE(legacy.advance({0.0, 0.75}));
-    EXPECT_EQ((DComplex{-0.5, 3.0}), ordinary.derivative());
-    EXPECT_FALSE(ordinary.advance({1.0, 0.0}));
+struct DerivativeStep
+{
+    DComplex point;
+    bool continues;
+    std::optional<DComplex> derivative;
+};
+
+struct DerivativeTrajectoryInput
+{
+    const char *name;
+    bool mandelbrot;
+    bool legacy;
+    double limit;
+    std::optional<DComplex> initial;
+    std::vector<DerivativeStep> steps;
+};
+
+void PrintTo(const DerivativeTrajectoryInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestDistanceDerivative : public TestWithParam<DerivativeTrajectoryInput>
+{
+};
+
+TEST_P(TestDistanceDerivative, followsDerivativeTrajectory)
+{
+    const DerivativeTrajectoryInput &input{GetParam()};
+    DistanceEstimator estimator{4.0, input.limit, input.mandelbrot, input.legacy};
+
+    if (input.initial)
+    {
+        EXPECT_EQ(*input.initial, estimator.derivative());
+    }
+    for (const DerivativeStep &step : input.steps)
+    {
+        SCOPED_TRACE(PrintToString(step.point));
+        EXPECT_EQ(step.continues, estimator.advance(step.point));
+        if (step.derivative)
+        {
+            EXPECT_EQ(*step.derivative, estimator.derivative());
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceDerivative,
+    Values(DerivativeTrajectoryInput{"Mandelbrot", true, false, 100.0, DComplex{1.0, 0.0},
+               {{{0.5, 0.0}, true, DComplex{2.0, 0.0}}, {{0.75, 0.0}, true, DComplex{4.0, 0.0}},
+                   {{1.0625, 0.0}, true, DComplex{9.5, 0.0}}}},
+        DerivativeTrajectoryInput{"Julia", false, false, 100.0, std::nullopt,
+            {{{0.5, 0.5}, true, DComplex{1.0, 1.0}}, {{0.25, 1.0}, true, DComplex{-1.5, 2.5}}}},
+        DerivativeTrajectoryInput{"OrdinaryNormLimit", true, false, 5.0, std::nullopt,
+            {{{0.5, 0.5}, true, DComplex{2.0, 1.0}}, {{0.0, 0.75}, true, DComplex{-0.5, 3.0}},
+                {{1.0, 0.0}, false, std::nullopt}}},
+        DerivativeTrajectoryInput{"LegacyNormLimit", true, true, 5.0, std::nullopt,
+            {{{0.5, 0.5}, true, DComplex{2.0, 1.0}}, {{0.0, 0.75}, false, std::nullopt}}}),
+    [](const TestParamInfo<DerivativeTrajectoryInput> &info) { return info.param.name; });
 
 TEST(TestDistanceEstimator, legacyEscapeRetainsFirstEscapeAndRaisesBailout)
 {
@@ -188,15 +241,6 @@ TEST(TestDistanceEstimator, distanceBandFormulasPreserveTheirIntegerBoundaries)
             }
         }
     }
-}
-
-TEST(TestPertEngine, nonDefaultGlitchToleranceScalesThreshold)
-{
-    PertEngine engine;
-
-    engine.set_glitch_tolerance(0.5);
-
-    EXPECT_DOUBLE_EQ(6.25, engine.glitch_tolerance_threshold({3.0, 4.0}));
 }
 
 TEST(TestPertEngine, fmodMagnitudeMatchesTheSelectedBailoutMetric)
