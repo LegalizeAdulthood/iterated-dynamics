@@ -13,6 +13,7 @@
 #include <engine/Inversion.h>
 #include <engine/Potential.h>
 #include <engine/random_seed.h>
+#include <engine/resume.h>
 #include <engine/spindac.h>
 #include <engine/UserData.h>
 #include <engine/VideoInfo.h>
@@ -23,6 +24,7 @@
 #include <io/gif_extensions.h>
 #include <io/gif_file.h>
 #include <io/GifRestore.h>
+#include <math/biginit.h>
 #include <misc/ValueSaver.h>
 #include <ui/big_while_loop.h>
 #include <ui/get_video_mode.h>
@@ -49,6 +51,7 @@
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
+using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
 using namespace id::test::migrate_gif;
@@ -361,8 +364,9 @@ class TestFindFractalInfo : public Test
 {
 protected:
     std::filesystem::path write_file(bool legacy_formula);
-    std::filesystem::path write_small_file(bool extensions_first = false, int ignored_blocks = 0);
-    void add_main_record();
+    std::filesystem::path write_small_file(
+        bool extensions_first = false, int ignored_blocks = 0, const GifFileType *trailing_extensions = nullptr);
+    void add_main_record(int precision = 0, FractalType type = FractalType::MANDEL);
     bool read_file(const std::filesystem::path &path);
     void expect_no_optional_blocks() const;
     void TearDown() override;
@@ -441,7 +445,8 @@ std::filesystem::path TestFindFractalInfo::write_file(const bool legacy_formula)
     return m_path;
 }
 
-std::filesystem::path TestFindFractalInfo::write_small_file(const bool extensions_first, const int ignored_blocks)
+std::filesystem::path TestFindFractalInfo::write_small_file(
+    const bool extensions_first, const int ignored_blocks, const GifFileType *trailing_extensions)
 {
     const std::string name{UnitTest::GetInstance()->current_test_info()->name()};
     m_path = std::filesystem::temp_directory_path() / ("id-find-fractal-info-" + name + ".gif");
@@ -489,16 +494,22 @@ std::filesystem::path TestFindFractalInfo::write_small_file(const bool extension
     {
         write_gif_extensions(output.get(), &m_extensions);
     }
+    if (trailing_extensions != nullptr)
+    {
+        write_gif_extensions(output.get(), trailing_extensions);
+    }
     check_gif_write(EGifCloseFile(output.release(), &error));
     return m_path;
 }
 
-void TestFindFractalInfo::add_main_record()
+void TestFindFractalInfo::add_main_record(const int precision, const FractalType type)
 {
     FractalInfo info{};
     std::copy_n(INFO_ID, sizeof(info.info_id), info.info_id);
     info.info_version = FRACTAL_INFO_VERSION;
-    info.fractal_type = +FractalType::MANDEL;
+    info.fractal_type = +type;
+    info.bf_math = precision != 0;
+    info.bf_length = static_cast<std::int16_t>(precision);
     info.iterations_old = INITIAL_MAX_ITERATIONS;
     info.iterations = INITIAL_MAX_ITERATIONS;
     put_fractal_info(&m_extensions, info);
@@ -730,7 +741,6 @@ TEST_F(TestFindFractalInfo, extensionsBeforeImageRetainEmptyOptionalRecords)
     add_main_record();
     put_resume_info(&m_extensions, {});
     put_ranges_info(&m_extensions, {});
-    put_extended_param_info(&m_extensions, {});
 
     ASSERT_FALSE(read_file(write_small_file(true)));
 
@@ -741,8 +751,7 @@ TEST_F(TestFindFractalInfo, extensionsBeforeImageRetainEmptyOptionalRecords)
     EXPECT_TRUE(m_block_4.got_data);
     EXPECT_EQ(0, m_block_4.length);
     EXPECT_TRUE(m_block_4.range_data.empty());
-    EXPECT_TRUE(m_block_5.got_data);
-    EXPECT_TRUE(m_block_5.apm_data.empty());
+    EXPECT_FALSE(m_block_5.got_data);
     EXPECT_FALSE(m_block_3.got_data);
     EXPECT_FALSE(m_block_6.got_data);
     EXPECT_FALSE(m_block_7.got_data);
@@ -756,12 +765,12 @@ TEST_F(TestFindFractalInfo, readsMultiBlockPayloadsWithoutPollingPendingInput)
     EXPECT_CALL(driver, key_pressed()).Times(0);
     EXPECT_CALL(driver, get_key()).Times(0);
     const std::vector<Byte> resume(511, 0xA5);
-    const std::vector<char> parameters(256, 'a');
+    const std::vector<char> parameters(484, 'a');
     const std::vector<int> ranges{-1, 128, 255, 32767, -32768};
     put_resume_info(&m_extensions, resume);
     put_ranges_info(&m_extensions, ranges);
     put_extended_param_info(&m_extensions, parameters);
-    add_main_record();
+    add_main_record(16);
     const std::filesystem::path path{write_small_file()};
 
     ASSERT_FALSE(read_file(path));
@@ -773,6 +782,171 @@ TEST_F(TestFindFractalInfo, readsMultiBlockPayloadsWithoutPollingPendingInput)
     EXPECT_EQ(parameters, m_block_5.apm_data);
     EXPECT_TRUE(std::filesystem::remove(path));
     EXPECT_EQ(resume, m_block_2.resume_data);
+}
+
+TEST_F(TestFindFractalInfo, scannerRejectsDuplicateIdentifiersAcrossImageBoundaries)
+{
+    for (const char *identifier : {"fractint000", "fractint001", "fractint002", "fractint003", "fractint004",
+             "fractint005", "fractint006", "fractint007", "fractint008", "fractint999"})
+    {
+        SCOPED_TRACE(identifier);
+        GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
+        check_gif_write(GifAddExtensionBlock(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks,
+            APPLICATION_EXT_FUNC_CODE, 11, reinterpret_cast<Byte *>(const_cast<char *>(identifier))));
+        Byte payload{'x'};
+        check_gif_write(GifAddExtensionBlock(
+            &m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks, CONTINUE_EXT_FUNC_CODE, 1, &payload));
+        for (const bool before_image : {false, true})
+        {
+            SCOPED_TRACE(before_image);
+            for (const bool duplicate : {false, true})
+            {
+                SCOPED_TRACE(duplicate);
+                const std::filesystem::path path{
+                    write_small_file(before_image, 0, duplicate ? &m_extensions : nullptr)};
+                int error{};
+                std::unique_ptr<GifFileType, void (*)(GifFileType *)> input{
+                    DGifOpenFileName(path.string().c_str(), &error), [](GifFileType *gif)
+                    {
+                        int close_error{};
+                        DGifCloseFile(gif, &close_error);
+                    }};
+                ASSERT_NE(nullptr, input);
+
+                EXPECT_EQ(!duplicate, read_gif_extensions(input.get()));
+            }
+        }
+    }
+}
+
+class TestFindPrecisionMetadata : public TestFindFractalInfo
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void expect_active_image() const;
+
+    ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::JULIA};
+    ValueSaver<BFMathType> m_saved_math{g_bf_math};
+    ValueSaver<long> m_saved_iterations{g_max_iterations, 1234};
+    ValueSaver<std::vector<Byte>> m_saved_resume{g_resume_data, std::vector<Byte>{1, 2, 3}};
+    int m_length{};
+    int m_stack{};
+};
+
+void TestFindPrecisionMetadata::SetUp()
+{
+    init_bf_dec(20);
+    float_to_bf(g_bf_x_min, 1.25);
+    g_file_x_dots = 987;
+    m_length = g_bf_length;
+    m_stack = save_stack();
+}
+
+void TestFindPrecisionMetadata::TearDown()
+{
+    free_bf_vars();
+    TestFindFractalInfo::TearDown();
+}
+
+void TestFindPrecisionMetadata::expect_active_image() const
+{
+    EXPECT_EQ(FractalType::JULIA, g_fractal_type);
+    EXPECT_EQ(1234, g_max_iterations);
+    EXPECT_EQ(987, g_file_x_dots);
+    EXPECT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    EXPECT_EQ(m_length, g_bf_length);
+    EXPECT_EQ(m_stack, save_stack());
+    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
+    EXPECT_EQ((std::vector<Byte>{1, 2, 3}), g_resume_data);
+}
+
+TEST_F(TestFindPrecisionMetadata, invalidPayloadSizesDoNotChangeActiveImage)
+{
+    for (const size_t size : {0U, 483U, 485U, 1024U})
+    {
+        SCOPED_TRACE(size);
+        GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
+        add_main_record(16);
+        put_extended_param_info(&m_extensions, std::vector<char>(size, 'a'));
+        const std::filesystem::path path{write_small_file()};
+
+        EXPECT_TRUE(read_file(path));
+        EXPECT_THROW(read_image_metadata(path), std::runtime_error);
+        expect_active_image();
+
+        ImageMetadata metadata;
+        metadata.fractal.fractal_type = +FractalType::MANDEL;
+        metadata.fractal.bf_length = 16;
+        metadata.extended.got_data = true;
+        metadata.extended.apm_data.resize(size);
+        EXPECT_THROW(apply_image_parameters(metadata), std::runtime_error);
+        EXPECT_THROW(apply_image_extensions(metadata), std::runtime_error);
+        expect_active_image();
+        EXPECT_TRUE(std::filesystem::remove(path));
+    }
+}
+
+TEST_F(TestFindPrecisionMetadata, unsupportedPrecisionDoesNotChangeActiveImage)
+{
+    for (const int precision : {-1, 0, 673, 709, 32767})
+    {
+        SCOPED_TRACE(precision);
+        GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
+        add_main_record(precision);
+        put_extended_param_info(&m_extensions, {});
+        const std::filesystem::path path{write_small_file(true)};
+
+        EXPECT_THROW(read_image_metadata(path), std::runtime_error);
+        expect_active_image();
+        EXPECT_TRUE(std::filesystem::remove(path));
+    }
+}
+
+TEST_F(TestFindPrecisionMetadata, duplicateMainRecordsDoNotChangeActiveImage)
+{
+    add_main_record(16);
+    put_extended_param_info(&m_extensions, std::vector<char>(484));
+    const std::filesystem::path path{write_small_file(true, 0, &m_extensions)};
+
+    EXPECT_THROW(read_image_metadata(path), std::runtime_error);
+
+    expect_active_image();
+    EXPECT_TRUE(std::filesystem::remove(path));
+}
+
+TEST_F(TestFindPrecisionMetadata, validPayloadsMatchStoredPrecisionWithoutChangingActiveImage)
+{
+    struct Sample
+    {
+        FractalType type;
+        int precision;
+        size_t bytes;
+    };
+
+    for (const Sample &sample : {Sample{FractalType::MANDEL, 12, 396}, Sample{FractalType::MANDEL, 13, 484},
+             Sample{FractalType::MANDEL, 16, 484}, Sample{FractalType::MANDEL, 672, 14916},
+             Sample{FractalType::DIVIDE_BROT5, 708, 15708}})
+    {
+        SCOPED_TRACE(sample.precision);
+        for (const bool before_image : {false, true})
+        {
+            SCOPED_TRACE(before_image);
+            GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
+            add_main_record(sample.precision, sample.type);
+            const std::vector<char> parameters(sample.bytes, 'a');
+            put_extended_param_info(&m_extensions, parameters);
+            const std::filesystem::path path{write_small_file(before_image)};
+
+            const ImageMetadata metadata{read_image_metadata(path)};
+
+            EXPECT_EQ(sample.precision, metadata.fractal.bf_length);
+            EXPECT_TRUE(metadata.extended.got_data);
+            EXPECT_EQ(parameters, metadata.extended.apm_data);
+            expect_active_image();
+            EXPECT_TRUE(std::filesystem::remove(path));
+        }
+    }
 }
 
 TEST_F(TestFindFractalInfo, skipsInvalidLzwPixelsWhenReadingMetadata)

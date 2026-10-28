@@ -40,26 +40,32 @@ static bool is_fractint_extension(const ExtensionBlock &block, const char *name)
         && std::string(reinterpret_cast<const char *>(block.Bytes), 11) == name; //
 }
 
-static int metadata_extension_limit(const int function, const GifByteType *block)
+static int fractint_extension_id(const int function, const GifByteType *block)
 {
     if (function != APPLICATION_EXT_FUNC_CODE || block == nullptr || block[0] != 11 ||
-        !std::equal(block + 1, block + 11, "fractint00"))
+        !std::equal(block + 1, block + 9, "fractint") ||
+        !std::all_of(block + 9, block + 12, [](const GifByteType byte) { return byte >= '0' && byte <= '9'; }))
     {
-        return 0;
+        return -1;
     }
-    switch (block[11])
+    return (block[9] - '0') * 100 + (block[10] - '0') * 10 + block[11] - '0';
+}
+
+static int metadata_extension_limit(const int identifier)
+{
+    switch (identifier)
     {
-    case '1':
+    case 1:
         return GIF_EXTENSION1_FRACTAL_INFO_LENGTH;
-    case '3':
+    case 3:
         return GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH;
-    case '6':
+    case 6:
         return GIF_EXTENSION6_EVOLVER_INFO_LENGTH;
-    case '7':
+    case 7:
         return GIF_EXTENSION7_ORBIT_INFO_LENGTH;
-    case '2':
-    case '4':
-    case '5':
+    case 2:
+    case 4:
+    case 5:
         return std::numeric_limits<int>::max();
     default:
         return 0;
@@ -68,6 +74,7 @@ static int metadata_extension_limit(const int function, const GifByteType *block
 
 bool read_gif_extensions(GifFileType *gif)
 {
+    std::array<bool, 1000> identifiers{};
     while (true)
     {
         GifRecordType record{};
@@ -108,7 +115,16 @@ bool read_gif_extensions(GifFileType *gif)
             {
                 return false;
             }
-            const int limit{metadata_extension_limit(function, block)};
+            const int identifier{fractint_extension_id(function, block)};
+            if (identifier >= 0)
+            {
+                if (identifiers[identifier])
+                {
+                    return false;
+                }
+                identifiers[identifier] = true;
+            }
+            const int limit{metadata_extension_limit(identifier)};
             int length{};
             while (block != nullptr)
             {

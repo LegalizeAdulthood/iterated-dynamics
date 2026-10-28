@@ -161,32 +161,48 @@ long g_start_stack{};
 long g_max_stack{};
 int g_bf_save_len{};
 
+static BFMathType select_bf_math(const FractalType type)
+{
+    if (const int i = find_alternate_math(type, BFMathType::BIG_NUM); i > -1)
+    {
+        return g_alternate_math[i].math;
+    }
+    if (const int i = find_alternate_math(type, BFMathType::BIG_FLT); i > -1)
+    {
+        return g_alternate_math[i].math;
+    }
+    return BFMathType::BIG_NUM;
+}
+
+static bool supported_bn_length(const int bn_length, const BFMathType math)
+{
+    return bn_length > 0 && bn_length <= (math == BFMathType::BIG_NUM ? MAX_BIGNUM_LENGTH : MAX_BIGFLOAT_LENGTH);
+}
+
+static int bf_length_for_bn_length(const int bn_length)
+{
+    return (bn_length + 3) / 4 * 4 + 4;
+}
+
+size_t bf_parameter_bytes(const int bn_length, const FractalType type)
+{
+    if (!supported_bn_length(bn_length, select_bf_math(type)))
+    {
+        throw PrecisionError(fmt::format("Requested bignumber length of {} is unsupported", bn_length));
+    }
+    return 22 * static_cast<size_t>(bf_length_for_bn_length(bn_length) + 2);
+}
+
 static void init_bf2(const int bn_length, const int int_length, const int decimals)
 {
-    BFMathType math{BFMathType::BIG_NUM};
-    /* at present time one call would suffice, but this logic allows
-       multiple kinds of alternate math e.g. long double */
-    if (int i = find_alternate_math(g_fractal_type, BFMathType::BIG_NUM); i > -1)
-    {
-        math = g_alternate_math[i].math;
-    }
-    else
-    {
-        i = find_alternate_math(g_fractal_type, BFMathType::BIG_FLT);
-        if (i > -1)
-        {
-            math = g_alternate_math[i].math;
-        }
-    }
-
-    const int max_length{math == BFMathType::BIG_NUM ? MAX_BIGNUM_LENGTH : MAX_BIGFLOAT_LENGTH};
-    if (bn_length <= 0 || bn_length > max_length)
+    const BFMathType math{select_bf_math(g_fractal_type)};
+    if (!supported_bn_length(bn_length, math))
     {
         throw PrecisionError(fmt::format("Requested precision of {} too high", decimals));
     }
-    const int rounded_length{(bn_length + 3) / 4 * 4};
+    const int bf_length{bf_length_for_bn_length(bn_length)};
+    const int rounded_length{bf_length - 4};
     const int padding{rounded_length == 4 ? 4 : 8};
-    const int bf_length{rounded_length + 4};
     const int r_length{rounded_length + padding};
     const int r_bf_length{bf_length + padding};
     // Check scratch globals, persistent values, and temporary stack space

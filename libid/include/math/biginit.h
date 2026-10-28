@@ -8,6 +8,11 @@
 #include <stddef.h>
 #include <stdexcept>
 
+namespace id::fractals
+{
+enum class FractalType;
+}
+
 namespace id::math
 {
 
@@ -29,6 +34,8 @@ int save_stack();
 void restore_stack(int old_offset);
 void init_bf_dec(int dec);
 void init_bf_length(int bnl);
+// Validate stored precision and return the corner/parameter payload size.
+size_t bf_parameter_bytes(int bn_length, fractals::FractalType type);
 void init_big_pi();
 
 class BigStackSaver

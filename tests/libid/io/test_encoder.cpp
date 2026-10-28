@@ -1334,6 +1334,7 @@ TEST_F(TestGifWriterExtensions, preservesCompleteRecordOrderingAndTotalEncodedLe
     g_iteration_ranges = {16, 32};
     std::vector<Byte> parameters(22 * (16 + 2), 0xA5);
     ValueSaver saved_bf_length{g_bf_length, 16};
+    ValueSaver saved_bn_length{g_bn_length, 12};
     ValueSaver saved_min{g_bf_x_min, parameters.data()};
     g_bf_math = BFMathType::BIG_FLT;
     g_evolving = EvolutionModeFlags::FIELD_MAP;

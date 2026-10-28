@@ -924,6 +924,16 @@ FractalType migrate_integer_types(int read_type)
     return static_cast<FractalType>(read_type);
 }
 
+static void validate_precision_metadata(const ImageMetadata &metadata)
+{
+    if (metadata.extended.got_data &&
+        metadata.extended.apm_data.size() !=
+            bf_parameter_bytes(metadata.fractal.bf_length, migrate_integer_types(metadata.fractal.fractal_type)))
+    {
+        throw std::runtime_error("Invalid extended precision parameter size");
+    }
+}
+
 ImageMetadata read_image_metadata(const std::filesystem::path &path)
 {
     ImageMetadata metadata;
@@ -941,6 +951,7 @@ ImageMetadata read_image_metadata(const std::filesystem::path &path)
 
 void apply_image_parameters(const ImageMetadata &metadata)
 {
+    validate_precision_metadata(metadata);
     const FractalInfo &read_info{metadata.fractal};
     g_file_x_dots = metadata.width;
     g_file_y_dots = metadata.height;
@@ -992,6 +1003,7 @@ void apply_image_parameters(const ImageMetadata &metadata)
 
 void apply_image_extensions(ImageMetadata &metadata)
 {
+    validate_precision_metadata(metadata);
     const FractalInfo &read_info{metadata.fractal};
     ExtBlock2 &blk_2_info{metadata.resume};
     ExtBlock3 &blk_3_info{metadata.formula};
@@ -1041,7 +1053,6 @@ void apply_image_extensions(ImageMetadata &metadata)
 
     if (blk_5_info.got_data)
     {
-        g_bf_math = BFMathType::BIG_NUM;
         init_bf_length(read_info.bf_length);
         std::memcpy(g_bf_x_min, blk_5_info.apm_data.data(), blk_5_info.apm_data.size());
     }
@@ -1298,6 +1309,7 @@ static bool read_gif_metadata(const std::string &gif_file, ImageMetadata &metada
                 blk_7_info->draw_mode = orbits.draw_mode;
                 blk_7_info->got_data = true;
             }
+            validate_precision_metadata(metadata);
         }
         catch (const std::runtime_error &)
         {

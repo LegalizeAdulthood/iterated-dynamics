@@ -199,15 +199,18 @@ TEST_F(TestGifWriter, emitsSharedExtensionsWithOriginalGroupingAndEmptyRecords)
     ValueSaver saved_aspect{g_file_aspect_ratio};
     ValueSaver saved_make_parameter_file{g_make_parameter_file, false};
     const std::vector<Byte> resume(511, 0xA5);
+    const std::vector<char> parameters(396, 'a');
     put_resume_info(&m_extensions, resume);
-    put_extended_param_info(&m_extensions, {});
-    put_ranges_info(&m_extensions, {-1, 128, 32767});
+    put_extended_param_info(&m_extensions, parameters);
+    put_ranges_info(&m_extensions, {});
     FractalInfo info{};
     std::copy_n(INFO_ID, sizeof(info.info_id), info.info_id);
     info.info_version = FRACTAL_INFO_VERSION;
     info.iterations = 150;
     info.x_dots = 2;
     info.y_dots = 2;
+    info.bf_length = 12;
+    info.bf_math = 1;
     put_fractal_info(&m_extensions, info);
     GifWriter writer{m_path, {2, 2}, make_palette(2)};
     ASSERT_TRUE(writer.write_pixels({0, 1}));
@@ -230,7 +233,7 @@ TEST_F(TestGifWriter, emitsSharedExtensionsWithOriginalGroupingAndEmptyRecords)
     }
     EXPECT_EQ(resume, get_resume_info(gif.get()));
     EXPECT_TRUE(has_gif_extension(gif.get(), "fractint005"));
-    EXPECT_TRUE(get_extended_param_info(gif.get()).empty());
+    EXPECT_EQ(parameters, get_extended_param_info(gif.get()));
     FractalInfo loaded{};
     ExtBlock2 block2{};
     ExtBlock3 block3{};
@@ -243,9 +246,9 @@ TEST_F(TestGifWriter, emitsSharedExtensionsWithOriginalGroupingAndEmptyRecords)
     EXPECT_TRUE(block2.got_data);
     EXPECT_EQ(resume, block2.resume_data);
     EXPECT_TRUE(block4.got_data);
-    EXPECT_EQ((std::vector<int>{-1, 128, 32767}), block4.range_data);
+    EXPECT_TRUE(block4.range_data.empty());
     EXPECT_TRUE(block5.got_data);
-    EXPECT_TRUE(block5.apm_data.empty());
+    EXPECT_EQ(parameters, block5.apm_data);
 }
 
 TEST_F(TestGifWriter, finishIsIdempotentAndLeavesBorrowedStreamOpen)
