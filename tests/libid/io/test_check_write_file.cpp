@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <io/check_write_file.h>
 
@@ -12,6 +13,8 @@
 
 #include <filesystem>
 #include <fstream>
+#include <ostream>
+#include <string>
 #include <gtest/gtest.h>
 
 using namespace id::io;
@@ -30,41 +33,42 @@ static void create_file(const fs::path &path)
     std::ofstream out{path};
 }
 
-TEST(TestCheckWriteFile, newFile)
+struct FilenameAdvancementInput
 {
-    std::string name{ID_TEST_CHECK_WRITE_FILE_NEW};
+    const char *name;
+    const char *requested;
+    const char *extension;
+    const char *expected;
+};
 
-    io::check_write_file(name, ID_TEST_CHECK_WRITE_FILE_EXT);
-
-    EXPECT_EQ(id::test::check_write_file::ID_TEST_CHECK_WRITE_FILE_NEW, name);
+void PrintTo(const FilenameAdvancementInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
 
-TEST(TestCheckWriteFile, existingFile2)
+class TestCheckWriteFile : public testing::TestWithParam<FilenameAdvancementInput>
 {
-    std::string name{ID_TEST_CHECK_WRITE_FILE_EXISTS2};
+};
 
-    io::check_write_file(name, ID_TEST_CHECK_WRITE_FILE_EXT);
+TEST_P(TestCheckWriteFile, advancesPastExistingFilenames)
+{
+    std::string name{GetParam().requested};
 
-    EXPECT_EQ(id::test::check_write_file::ID_TEST_CHECK_WRITE_FILE3, name);
+    io::check_write_file(name, GetParam().extension);
+
+    EXPECT_EQ(GetParam().expected, name);
 }
 
-TEST(TestCheckWriteFile, existingFile1)
-{
-    std::string name{ID_TEST_CHECK_WRITE_FILE_EXISTS1};
-
-    io::check_write_file(name, ID_TEST_CHECK_WRITE_FILE_EXT);
-
-    EXPECT_EQ(id::test::check_write_file::ID_TEST_CHECK_WRITE_FILE3, name);
-}
-
-TEST(TestCheckWriteFile, existingFile1NoExtension)
-{
-    std::string name{ID_TEST_CHECK_WRITE_FILE_BASE1};
-
-    io::check_write_file(name, ID_TEST_CHECK_WRITE_FILE_EXT);
-
-    EXPECT_EQ(ID_TEST_CHECK_WRITE_FILE3, name);
-}
+INSTANTIATE_TEST_SUITE_P(FilenameInputs, TestCheckWriteFile,
+    testing::Values(FilenameAdvancementInput{"NewFile", ID_TEST_CHECK_WRITE_FILE_NEW, ID_TEST_CHECK_WRITE_FILE_EXT,
+                        ID_TEST_CHECK_WRITE_FILE_NEW},
+        FilenameAdvancementInput{"ExistingSecondFile", ID_TEST_CHECK_WRITE_FILE_EXISTS2, ID_TEST_CHECK_WRITE_FILE_EXT,
+            ID_TEST_CHECK_WRITE_FILE3},
+        FilenameAdvancementInput{"ExistingFirstFile", ID_TEST_CHECK_WRITE_FILE_EXISTS1, ID_TEST_CHECK_WRITE_FILE_EXT,
+            ID_TEST_CHECK_WRITE_FILE3},
+        FilenameAdvancementInput{"OmittedExtension", ID_TEST_CHECK_WRITE_FILE_BASE1, ID_TEST_CHECK_WRITE_FILE_EXT,
+            ID_TEST_CHECK_WRITE_FILE3}),
+    [](const testing::TestParamInfo<FilenameAdvancementInput> &info) { return info.param.name; });
 
 TEST(TestGetCheckedSavePath, existingFileAdvancesWhenOverwriteIsOff)
 {
