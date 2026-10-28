@@ -3518,51 +3518,149 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestEpsilonNoHit,
         EpsilonResultInput{"HighPrecisionNoHit", true, {0.125, 0.0625}, 0.001, 8, 8, 8}),
     [](const TestParamInfo<EpsilonResultInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, epsilonCrossDoesNotTestEscapingUpdates)
+class TestEpsilonEscapingUpdate : public TestEpsilonResult
 {
-    g_inside_method = ColorMethod::EPS_CROSS;
+protected:
+    void SetUp() override;
+};
+
+void TestEpsilonEscapingUpdate::SetUp()
+{
+    TestEpsilonResult::SetUp();
     g_outside_method = ColorMethod::REAL;
-    for (const double proximity : {0.01, -0.01})
-    {
-        SCOPED_TRACE(proximity);
-        g_close_proximity = proximity;
-        compare_pixel({1.0, 0.0}, 128);
-        EXPECT_EQ(1, g_real_color_iter);
-        EXPECT_EQ(10, g_color);
-    }
 }
 
-TEST_P(TestPerturbationIterations, epsilonCrossHitsBypassOutsideAndBiomorphColors)
+TEST_P(TestEpsilonEscapingUpdate, doesNotTestEscapingUpdate)
 {
-    g_inside_method = ColorMethod::EPS_CROSS;
-    g_biomorph = 9;
-    for (const ColorMethod outside : {ColorMethod::ITER, ColorMethod::REAL, ColorMethod::TDIS})
+    const EpsilonResultInput &input{GetParam()};
+
+    compare_pixel(input.point, input.max_iterations);
+
+    EXPECT_EQ(input.iterations, g_real_color_iter);
+    EXPECT_EQ(input.color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestEpsilonEscapingUpdate,
+    Values(EpsilonResultInput{"DoublePositive", false, {1.0, 0.0}, 0.01, 128, 1, 10},
+        EpsilonResultInput{"DoubleNegative", false, {1.0, 0.0}, -0.01, 128, 1, 10},
+        EpsilonResultInput{"HighPrecisionPositive", true, {1.0, 0.0}, 0.01, 128, 1, 10},
+        EpsilonResultInput{"HighPrecisionNegative", true, {1.0, 0.0}, -0.01, 128, 1, 10}),
+    [](const TestParamInfo<EpsilonResultInput> &info) { return info.param.name; });
+
+struct EpsilonOutsideInput
+{
+    std::string name;
+    bool big_float;
+    ColorMethod outside;
+    double proximity;
+};
+
+void PrintTo(const EpsilonOutsideInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<EpsilonOutsideInput> epsilon_outside_inputs()
+{
+    const std::array<PerturbationColorMethod, 3> methods{
+        {{"Iterations", ColorMethod::ITER}, {"Real", ColorMethod::REAL}, {"TotalDistance", ColorMethod::TDIS}}};
+    std::vector<EpsilonOutsideInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(static_cast<int>(outside));
-        g_outside_method = outside;
-        for (const double proximity : {0.3125, -0.3125})
+        for (const PerturbationColorMethod &outside : methods)
         {
-            g_close_proximity = proximity;
-            compare_pixel({0.5, 0.5}, 8, 0.0, 2);
-            EXPECT_EQ(2, g_color);
+            for (const double proximity : {0.3125, -0.3125})
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + outside.name +
+                        (proximity > 0.0 ? "_Positive" : "_Negative"),
+                    big_float, outside.method, proximity});
+            }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, epsilonCrossPreservesPeriodicityStateOnEarlyExit)
+class TestEpsilonOutsideColor : public PerturbationIterationTest, public WithParamInterface<EpsilonOutsideInput>
 {
+public:
+    TestEpsilonOutsideColor();
+
+protected:
+    void SetUp() override;
+};
+
+TestEpsilonOutsideColor::TestEpsilonOutsideColor() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestEpsilonOutsideColor::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = ColorMethod::EPS_CROSS;
+    g_biomorph = 9;
+    g_outside_method = GetParam().outside;
+    g_close_proximity = GetParam().proximity;
+}
+
+TEST_P(TestEpsilonOutsideColor, bypassesOutsideAndBiomorphColors)
+{
+    compare_pixel({0.5, 0.5}, 8, 0.0, 2);
+
+    EXPECT_EQ(2, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestEpsilonOutsideColor, ValuesIn(epsilon_outside_inputs()),
+    [](const TestParamInfo<EpsilonOutsideInput> &info) { return info.param.name; });
+
+struct EpsilonPeriodicityInput
+{
+    const char *name;
+    bool big_float;
+    int periodicity;
+};
+
+void PrintTo(const EpsilonPeriodicityInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestEpsilonPeriodicity : public PerturbationIterationTest, public WithParamInterface<EpsilonPeriodicityInput>
+{
+public:
+    TestEpsilonPeriodicity();
+
+protected:
+    void SetUp() override;
+};
+
+TestEpsilonPeriodicity::TestEpsilonPeriodicity() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestEpsilonPeriodicity::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::EPS_CROSS;
     g_close_proximity = 0.3125;
-    for (const int periodicity : {1, -1})
-    {
-        SCOPED_TRACE(periodicity);
-        g_periodicity_check = periodicity;
-        g_old_color_iter = 37;
-        compare_pixel({0.5, 0.5}, 64, 0.0, 2);
-        EXPECT_EQ(37, g_old_color_iter);
-        EXPECT_EQ(2, g_color);
-    }
+    g_periodicity_check = GetParam().periodicity;
+    g_old_color_iter = 37;
 }
+
+TEST_P(TestEpsilonPeriodicity, preservesStateOnEarlyExit)
+{
+    compare_pixel({0.5, 0.5}, 64, 0.0, 2);
+
+    EXPECT_EQ(37, g_old_color_iter);
+    EXPECT_EQ(2, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestEpsilonPeriodicity,
+    Values(EpsilonPeriodicityInput{"DoubleEnabled", false, 1}, EpsilonPeriodicityInput{"DoubleHighlighted", false, -1},
+        EpsilonPeriodicityInput{"HighPrecisionEnabled", true, 1},
+        EpsilonPeriodicityInput{"HighPrecisionHighlighted", true, -1}),
+    [](const TestParamInfo<EpsilonPeriodicityInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, epsilonCrossMapsAxisColorsBeforePotentialFinishing)
 {
