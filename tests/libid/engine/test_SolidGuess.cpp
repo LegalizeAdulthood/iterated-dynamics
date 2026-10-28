@@ -20,6 +20,8 @@
 
 #include <algorithm>
 #include <array>
+#include <optional>
+#include <ostream>
 #include <stdexcept>
 #include <vector>
 
@@ -214,7 +216,6 @@ TEST_F(TestSolidGuess, completionAdvancesOnlyTheSeedCursor)
     provide_pixel(pass);
 
     EXPECT_FALSE(g_reset_periodicity);
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
     ASSERT_TRUE(pass.select_pixel());
     EXPECT_EQ((Point2i{4, 0}), pass.selected_pixel());
     EXPECT_FALSE(g_reset_periodicity);
@@ -342,19 +343,100 @@ TEST_F(TestSolidGuess, suspensionOfLowerRowRetainsItsFirstPassResumePosition)
     EXPECT_THAT(m_pixels, Each(7));
 }
 
-TEST_F(TestSolidGuess, completionRequiresASelection)
+enum class SolidGuessGuardState
 {
-    SolidGuess pass;
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
-    ASSERT_FALSE(pass.select_pixel());
-    ASSERT_TRUE(pass.select_pixel());
+    NEVER_SELECTED,
+    COMPLETED_SEED,
+    COMPLETED_PROBE,
+    COMPLETED_REPAIR,
+};
 
-    provide_pixel(pass);
+struct SolidGuessGuardInput
+{
+    const char *name;
+    SolidGuessGuardState state;
+    int color;
+};
 
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
+void PrintTo(const SolidGuessGuardInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
+
+class TestSolidGuessSelectionGuard : public TestSolidGuess, public WithParamInterface<SolidGuessGuardInput>
+{
+protected:
+    void SetUp() override;
+
+    std::optional<SolidGuess> m_pass;
+};
+
+void TestSolidGuessSelectionGuard::SetUp()
+{
+    TestSolidGuess::SetUp();
+    m_pass.emplace();
+    if (GetParam().state == SolidGuessGuardState::NEVER_SELECTED)
+    {
+        return;
+    }
+    ASSERT_FALSE(m_pass->select_pixel());
+    switch (GetParam().state)
+    {
+    case SolidGuessGuardState::NEVER_SELECTED:
+        break;
+    case SolidGuessGuardState::COMPLETED_SEED:
+        ASSERT_TRUE(m_pass->select_pixel());
+        provide_pixel(*m_pass);
+        break;
+    case SolidGuessGuardState::COMPLETED_PROBE:
+        selection_chunk(*m_pass);
+        ASSERT_NO_FATAL_FAILURE(complete_seed_row(*m_pass, {4, 4}));
+        ASSERT_NO_FATAL_FAILURE(expect_probe(*m_pass, {2, 2}, 9));
+        break;
+    case SolidGuessGuardState::COMPLETED_REPAIR:
+        selection_chunk(*m_pass);
+        ASSERT_NO_FATAL_FAILURE(complete_seed_row(*m_pass, {8, 4}));
+        ASSERT_NO_FATAL_FAILURE(expect_probe(*m_pass, {6, 2}, 9));
+        ASSERT_NO_FATAL_FAILURE(expect_probe(*m_pass, {6, 0}, 7));
+        ASSERT_NO_FATAL_FAILURE(expect_probe(*m_pass, {4, 2}, 9));
+        ASSERT_NO_FATAL_FAILURE(expect_probe(*m_pass, {2, 0}, 11));
+        ASSERT_TRUE(m_pass->select_pixel());
+        ASSERT_EQ((Point2i{2, 2}), m_pass->selected_pixel());
+        ASSERT_TRUE(m_pass->select_pixel());
+        provide_pixel(*m_pass, 12);
+        break;
+    }
+}
+
+class TestSolidGuessAccessorGuard : public TestSolidGuessSelectionGuard
+{
+};
+
+TEST_P(TestSolidGuessAccessorGuard, requiresPendingSelection)
+{
+    EXPECT_THROW(m_pass->selected_pixel(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(SelectionStates, TestSolidGuessAccessorGuard,
+    Values(SolidGuessGuardInput{"NeverSelected", SolidGuessGuardState::NEVER_SELECTED, 7},
+        SolidGuessGuardInput{"CompletedSeed", SolidGuessGuardState::COMPLETED_SEED, 7}),
+    [](const TestParamInfo<SolidGuessGuardInput> &info) { return info.param.name; });
+
+class TestSolidGuessCompletionGuard : public TestSolidGuessSelectionGuard
+{
+};
+
+TEST_P(TestSolidGuessCompletionGuard, requiresPendingSelection)
+{
+    EXPECT_THROW(m_pass->complete_pixel(GetParam().color), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(SelectionStates, TestSolidGuessCompletionGuard,
+    Values(SolidGuessGuardInput{"NeverSelected", SolidGuessGuardState::NEVER_SELECTED, 7},
+        SolidGuessGuardInput{"CompletedSeed", SolidGuessGuardState::COMPLETED_SEED, 7},
+        SolidGuessGuardInput{"CompletedProbe", SolidGuessGuardState::COMPLETED_PROBE, 9},
+        SolidGuessGuardInput{"CompletedRepair", SolidGuessGuardState::COMPLETED_REPAIR, 12}),
+    [](const TestParamInfo<SolidGuessGuardInput> &info) { return info.param.name; });
 
 TEST_F(TestSolidGuess, blockProbeRetainsSelectionEvenAfterItsPixelWasPlotted)
 {
@@ -392,7 +474,6 @@ TEST_F(TestSolidGuess, completedProbeColorsDriveTheNextProbeAndBlockFill)
     complete_seed_row(pass, {4, 4});
 
     expect_probe(pass, {2, 2}, 9);
-    EXPECT_THROW(pass.complete_pixel(9), std::logic_error);
     expect_probe(pass, {2, 0}, 10);
     expect_probe(pass, {0, 2}, 11);
     ASSERT_TRUE(pass.select_pixel());      // finish this block before selecting the next
@@ -427,7 +508,6 @@ TEST_F(TestSolidGuess, repairsRetainThePreviousBlocksTopAndCenterColors)
     EXPECT_EQ(11, m_pixels.at(1 * 16 + 3));
     EXPECT_EQ(12, m_pixels.at(3 * 16 + 3));
     EXPECT_TRUE(s_calculated.empty());
-    EXPECT_THROW(pass.complete_pixel(12), std::logic_error);
 }
 
 TEST_F(TestSolidGuess, repairsRetainTheUpperRowColors)
