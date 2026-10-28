@@ -2345,83 +2345,208 @@ TEST_P(TestOutsideReferenceReplacement, preservesOutsideColor)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideReferenceReplacement, ValuesIn(outside_replacement_inputs()),
     [](const TestParamInfo<OutsideTerminalInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, outsideFmodMatchesAllStandardBailoutMetrics)
+struct FmodMetricInput
 {
-    g_inside_method = ColorMethod::ITER;
-    g_outside_method = ColorMethod::FMOD;
-    for (const Bailout bailout :
-        {Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
-    {
-        SCOPED_TRACE(static_cast<int>(bailout));
-        g_bailout_test = bailout;
-        set_bailout_formula(bailout);
-        for (const double proximity : {0.5, 1.25, 2.0, 2.3125, 4.0, 16.0, -16.0})
-        {
-            SCOPED_TRACE(proximity);
-            g_close_proximity = proximity;
-            compare_pixel({0.5, 0.5}, 8);
-            EXPECT_LT(g_real_color_iter, g_max_iterations);
-            EXPECT_GT(m_engine.reference_count(), 0);
-        }
-    }
+    std::string name;
+    bool big_float;
+    Bailout bailout;
+    double proximity;
+};
+
+struct FmodProximity
+{
+    const char *name;
+    double value;
+};
+
+void PrintTo(const FmodMetricInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_P(TestPerturbationIterations, insideFmodMatchesAllStandardBailoutMetrics)
+std::vector<FmodMetricInput> fmod_metric_inputs(const std::vector<FmodProximity> &proximities)
 {
+    struct Metric
+    {
+        const char *name;
+        Bailout value;
+    };
+
+    std::vector<FmodMetricInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const Metric &metric :
+            {Metric{"Mod", Bailout::MOD}, {"Real", Bailout::REAL}, {"Imaginary", Bailout::IMAG}, {"Or", Bailout::OR},
+                {"And", Bailout::AND}, {"Manhattan", Bailout::MANH}, {"ManhattanReal", Bailout::MANR}})
+        {
+            for (const FmodProximity &proximity : proximities)
+            {
+                inputs.push_back(
+                    {std::string{big_float ? "HighPrecision_" : "Double_"} + metric.name + "_" + proximity.name,
+                        big_float, metric.value, proximity.value});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestFmodMetric : public PerturbationIterationTest, public WithParamInterface<FmodMetricInput>
+{
+public:
+    TestFmodMetric();
+
+protected:
+    void SetUp() override;
+};
+
+TestFmodMetric::TestFmodMetric() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestFmodMetric::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_bailout_test = GetParam().bailout;
+    set_bailout_formula(GetParam().bailout);
+    g_close_proximity = GetParam().proximity;
+}
+
+class TestOutsideFmodMetric : public TestFmodMetric
+{
+protected:
+    void SetUp() override;
+};
+
+void TestOutsideFmodMetric::SetUp()
+{
+    TestFmodMetric::SetUp();
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::FMOD;
+}
+
+TEST_P(TestOutsideFmodMetric, matchesStandardBailoutMetric)
+{
+    compare_pixel({0.5, 0.5}, 8);
+
+    EXPECT_LT(g_real_color_iter, g_max_iterations);
+    EXPECT_GT(m_engine.reference_count(), 0);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideFmodMetric,
+    ValuesIn(fmod_metric_inputs({{"Half", 0.5}, {"OneAndQuarter", 1.25}, {"Two", 2.0}, {"TwoAndFiveSixteenths", 2.3125},
+        {"Four", 4.0}, {"Sixteen", 16.0}, {"NegativeSixteen", -16.0}})),
+    [](const TestParamInfo<FmodMetricInput> &info) { return info.param.name; });
+
+class TestInsideFmodMetric : public TestFmodMetric
+{
+protected:
+    void SetUp() override;
+};
+
+void TestInsideFmodMetric::SetUp()
+{
+    TestFmodMetric::SetUp();
     g_inside_method = ColorMethod::FMODI;
-    for (const Bailout bailout :
-        {Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
+}
+
+TEST_P(TestInsideFmodMetric, matchesStandardBailoutMetric)
+{
+    compare_pixel({0.125, 0.0625}, 8);
+
+    EXPECT_EQ(8, g_real_color_iter);
+    EXPECT_GT(m_engine.reference_count(), 0);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInsideFmodMetric,
+    ValuesIn(fmod_metric_inputs(
+        {{"OneThousandth", 0.001}, {"OneHundredth", 0.01}, {"OneTenth", 0.1}, {"NegativeOneTenth", -0.1}})),
+    [](const TestParamInfo<FmodMetricInput> &info) { return info.param.name; });
+
+struct OutsideFmodSample
+{
+    const char *name;
+    double proximity;
+    int colors;
+    int expected_color;
+    std::optional<long> expected_iterations;
+};
+
+struct OutsideFmodInput
+{
+    std::string name;
+    bool big_float;
+    OutsideFmodSample sample;
+};
+
+void PrintTo(const OutsideFmodInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<OutsideFmodInput> outside_fmod_inputs()
+{
+    const OutsideFmodSample samples[]{
+        {"ProximitySixteen", 16.0, 256, 46, 4},
+        {"ProximityFour", 4.0, 256, 186, 4},
+        {"ProximityTwoAndFiveSixteenths", 2.3125, 256, 138, 4},
+        {"ProximityOneAndQuarter", 1.25, 256, 0, 4},
+        {"ProximityNegativeSixteen", -16.0, 256, 0, 4},
+        {"PaletteFour", 16.0, 4, 0, std::nullopt},
+        {"PaletteSixteen", 16.0, 16, 2, std::nullopt},
+        {"PaletteTwoHundredFiftySix", 16.0, 256, 46, std::nullopt},
+    };
+
+    std::vector<OutsideFmodInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(static_cast<int>(bailout));
-        g_bailout_test = bailout;
-        set_bailout_formula(bailout);
-        for (const double proximity : {0.001, 0.01, 0.1, -0.1})
+        for (const OutsideFmodSample &sample : samples)
         {
-            SCOPED_TRACE(proximity);
-            g_close_proximity = proximity;
-            compare_pixel({0.125, 0.0625}, 8);
-            EXPECT_EQ(8, g_real_color_iter);
-            EXPECT_GT(m_engine.reference_count(), 0);
+            inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + sample.name, big_float, sample});
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, outsideFmodRemembersTheLastQualifiedNonescapingValue)
+class TestOutsideFmodColor : public PerturbationIterationTest, public WithParamInterface<OutsideFmodInput>
 {
+public:
+    TestOutsideFmodColor();
+
+protected:
+    void SetUp() override;
+};
+
+TestOutsideFmodColor::TestOutsideFmodColor() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestOutsideFmodColor::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::ITER;
     g_outside_method = ColorMethod::FMOD;
-
-    struct Sample
-    {
-        double proximity;
-        int color;
-    };
-
-    for (const Sample &sample : {Sample{16.0, 46}, {4.0, 186}, {2.3125, 138}, {1.25, 0}, {-16.0, 0}})
-    {
-        SCOPED_TRACE(sample.proximity);
-        g_close_proximity = sample.proximity;
-        compare_pixel({0.5, 0.5}, 8);
-        EXPECT_EQ(4, g_real_color_iter);
-        EXPECT_EQ(sample.color, g_color);
-    }
-    g_close_proximity = 16.0;
-
-    struct Palette
-    {
-        int colors;
-        int color;
-    };
-
-    for (const Palette &sample : {Palette{4, 0}, {16, 2}, {256, 46}})
-    {
-        SCOPED_TRACE(sample.colors);
-        g_colors = sample.colors;
-        g_and_color = g_colors - 1;
-        compare_pixel({0.5, 0.5}, 8);
-        EXPECT_EQ(sample.color, g_color);
-    }
+    g_close_proximity = GetParam().sample.proximity;
+    g_colors = GetParam().sample.colors;
+    g_and_color = g_colors - 1;
 }
+
+TEST_P(TestOutsideFmodColor, retainsLastQualifiedNonescapingValue)
+{
+    const OutsideFmodSample &sample{GetParam().sample};
+
+    compare_pixel({0.5, 0.5}, 8);
+
+    if (sample.expected_iterations)
+    {
+        EXPECT_EQ(*sample.expected_iterations, g_real_color_iter);
+    }
+    EXPECT_EQ(sample.expected_color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideFmodColor, ValuesIn(outside_fmod_inputs()),
+    [](const TestParamInfo<OutsideFmodInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, insideFmodRemembersTheLastValueRatherThanTheMinimum)
 {
