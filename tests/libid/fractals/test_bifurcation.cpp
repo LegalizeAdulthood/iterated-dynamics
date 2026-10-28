@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "fractals/Bifurcation.h"
 
@@ -21,6 +22,7 @@
 #include <array>
 #include <limits>
 #include <optional>
+#include <ostream>
 #include <vector>
 
 using namespace id::engine;
@@ -269,44 +271,62 @@ static void expect_column_summary(const BifurcationColumnSummary &expected, cons
     EXPECT_EQ(expected.row_buckets, actual.row_buckets);
 }
 
-TEST(TestBifurcationSequence, recordsPopulationValues)
+struct SequenceObservationInput
 {
-    const BifurcationSequence result{
-        run_bifurcation_sequence({bifurc_lambda_trig_orbit, TrigFn::IDENT, 2.0, 0.25, std::nullopt, 3})};
+    const char *name;
+    BifurcationSequenceInput input;
+    std::vector<double> populations;
+    std::optional<int> bailout_step;
+};
 
-    ASSERT_EQ(3U, result.populations.size());
-    EXPECT_DOUBLE_EQ(0.375, result.populations[0]);
-    EXPECT_DOUBLE_EQ(0.46875, result.populations[1]);
-    EXPECT_DOUBLE_EQ(0.498046875, result.populations[2]);
-    EXPECT_FALSE(result.bailout_step.has_value());
+void PrintTo(const SequenceObservationInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestBifurcationSequence, recordsBailoutStep)
+class TestBifurcationSequence : public testing::TestWithParam<SequenceObservationInput>
 {
-    const BifurcationSequence result{
-        run_bifurcation_sequence({bifurc_lambda_trig_orbit, TrigFn::IDENT, 100001.0, 2.0, std::nullopt, 10})};
+};
 
-    ASSERT_EQ(1U, result.populations.size());
-    EXPECT_DOUBLE_EQ(-200002.0, result.populations[0]);
-    ASSERT_TRUE(result.bailout_step.has_value());
-    EXPECT_EQ(0, *result.bailout_step);
+TEST_P(TestBifurcationSequence, recordsSequenceObservations)
+{
+    const BifurcationSequence result{run_bifurcation_sequence(GetParam().input)};
+
+    ASSERT_EQ(GetParam().populations.size(), result.populations.size());
+    for (std::size_t i = 0; i < result.populations.size(); ++i)
+    {
+        EXPECT_DOUBLE_EQ(GetParam().populations[i], result.populations[i]);
+    }
+    if (GetParam().bailout_step)
+    {
+        ASSERT_TRUE(result.bailout_step.has_value());
+        EXPECT_EQ(*GetParam().bailout_step, *result.bailout_step);
+    }
+    else
+    {
+        EXPECT_FALSE(result.bailout_step.has_value());
+    }
 }
 
-TEST(TestBifurcationSequence, initializesMayBeta)
-{
-    const BifurcationSequence result{run_bifurcation_sequence({bifurc_may_orbit, TrigFn::SIN, 2.0, 1.0, 3.0, 1})};
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBifurcationSequence,
+    testing::Values(SequenceObservationInput{"PopulationValues",
+                        {bifurc_lambda_trig_orbit, TrigFn::IDENT, 2.0, 0.25, std::nullopt, 3},
+                        {0.375, 0.46875, 0.498046875}, std::nullopt},
+        SequenceObservationInput{
+            "BailoutStep", {bifurc_lambda_trig_orbit, TrigFn::IDENT, 100001.0, 2.0, std::nullopt, 10}, {-200002.0}, 0},
+        SequenceObservationInput{"MayBeta", {bifurc_may_orbit, TrigFn::SIN, 2.0, 1.0, 3.0, 1}, {0.25}, std::nullopt}),
+    [](const testing::TestParamInfo<SequenceObservationInput> &info) { return info.param.name; });
 
-    ASSERT_EQ(1U, result.populations.size());
-    EXPECT_DOUBLE_EQ(0.25, result.populations[0]);
-    EXPECT_FALSE(result.bailout_step.has_value());
+void PrintTo(const StableBifurcationSequenceCase &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestBifurcationStableSequence, followsReferencePrefixes)
+std::vector<StableBifurcationSequenceCase> stable_bifurcation_inputs()
 {
-    const std::vector<StableBifurcationSequenceCase> tests{
-        StableBifurcationSequenceCase{"Bifurcation",
-            {bifurc_verhulst_trig_orbit, TrigFn::IDENT, 0.5, 0.2, std::nullopt, 4},
-            {0.28, 0.3808, 0.49869568000000003, 0.6236948293746688}, 1.0e-12},
+    return {StableBifurcationSequenceCase{"Bifurcation",
+                {bifurc_verhulst_trig_orbit, TrigFn::IDENT, 0.5, 0.2, std::nullopt, 4},
+                {0.28, 0.3808, 0.49869568000000003, 0.6236948293746688}, 1.0e-12},
         StableBifurcationSequenceCase{"BifLambda", {bifurc_lambda_trig_orbit, TrigFn::IDENT, 1.5, 0.2, std::nullopt, 4},
             {0.24000000000000005, 0.27360000000000007, 0.29811456000000003, 0.31386340367400961}, 1.0e-12},
         StableBifurcationSequenceCase{"BifMay", {bifurc_may_orbit, TrigFn::SIN, 2.0, 1.0, 3.0, 4},
@@ -320,28 +340,38 @@ TEST(TestBifurcationStableSequence, followsReferencePrefixes)
         StableBifurcationSequenceCase{"BifEqualSinPi",
             {bifurc_set_trig_pi_orbit, TrigFn::SIN, 0.9, 0.2, std::nullopt, 4},
             {0.52900672706322582, 0.89626570041163567, 0.28813764047421686, 0.70789997473289534}, 1.0e-10}};
-
-    for (const StableBifurcationSequenceCase &test : tests)
-    {
-        SCOPED_TRACE(test.name);
-        const BifurcationSequence result{run_bifurcation_sequence(test.input)};
-
-        expect_populations_near(result, test.expected_populations, test.tolerance);
-        EXPECT_NEAR(test.expected_populations.back(), result.populations.back(), test.tolerance);
-        EXPECT_FALSE(result.bailout_step.has_value());
-    }
 }
 
-TEST(TestBifurcationChaoticSequence, followsSummaryStatistics)
+class TestBifurcationStableSequence : public testing::TestWithParam<StableBifurcationSequenceCase>
+{
+};
+
+TEST_P(TestBifurcationStableSequence, followsReferencePrefixes)
+{
+    const BifurcationSequence result{run_bifurcation_sequence(GetParam().input)};
+
+    expect_populations_near(result, GetParam().expected_populations, GetParam().tolerance);
+    EXPECT_NEAR(GetParam().expected_populations.back(), result.populations.back(), GetParam().tolerance);
+    EXPECT_FALSE(result.bailout_step.has_value());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBifurcationStableSequence, testing::ValuesIn(stable_bifurcation_inputs()),
+    [](const testing::TestParamInfo<StableBifurcationSequenceCase> &info) { return info.param.name; });
+
+void PrintTo(const ChaoticBifurcationSummaryCase &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<ChaoticBifurcationSummaryCase> chaotic_bifurcation_inputs()
 {
     constexpr int BURN_IN{512};
     constexpr int SAMPLE_COUNT{4096};
-    const std::vector<ChaoticBifurcationSummaryCase> tests{
-        ChaoticBifurcationSummaryCase{"BifMay",
-            {bifurc_may_orbit, TrigFn::SIN, 50.0, 0.66, 7.0, BURN_IN + SAMPLE_COUNT}, BURN_IN, 0.0, 3.0,
-            {0.011659782830271741, 2.8326161383664665, 0.9307299406817845, 0.80112311740260389,
-                ChaoticHistogram{1487, 762, 474, 429, 169, 176, 241, 358}},
-            0.08, 250},
+    return {ChaoticBifurcationSummaryCase{"BifMay",
+                {bifurc_may_orbit, TrigFn::SIN, 50.0, 0.66, 7.0, BURN_IN + SAMPLE_COUNT}, BURN_IN, 0.0, 3.0,
+                {0.011659782830271741, 2.8326161383664665, 0.9307299406817845, 0.80112311740260389,
+                    ChaoticHistogram{1487, 762, 474, 429, 169, 176, 241, 358}},
+                0.08, 250},
         ChaoticBifurcationSummaryCase{"BifPlusSinPi",
             {bifurc_add_trig_pi_orbit, TrigFn::SIN, 1.4, 0.66, std::nullopt, BURN_IN + SAMPLE_COUNT}, BURN_IN, 0.0, 2.0,
             {0.063655873023445553, 1.9363294864874447, 0.9997575286269117, 0.38783794226994606,
@@ -353,36 +383,53 @@ TEST(TestBifurcationChaoticSequence, followsSummaryStatistics)
             {-1.1999991466632438, 1.1999996150746453, -0.00021277050287789141, 0.59111613857773837,
                 ChaoticHistogram{758, 394, 426, 481, 454, 403, 417, 763}},
             0.08, 250}};
-
-    for (const ChaoticBifurcationSummaryCase &test : tests)
-    {
-        SCOPED_TRACE(test.name);
-        const BifurcationSequence result{run_bifurcation_sequence(test.input)};
-
-        ASSERT_EQ(static_cast<std::size_t>(test.input.iterations), result.populations.size());
-        EXPECT_FALSE(result.bailout_step.has_value());
-        const ChaoticBifurcationSummary summary{
-            summarize_sequence(result, test.burn_in, test.histogram_minimum, test.histogram_maximum)};
-        expect_summary_near(test.expected, summary, test.value_tolerance, test.histogram_tolerance);
-    }
 }
 
-TEST(TestBifurcationColumn, mapsPopulationToRows)
+class TestBifurcationChaoticSequence : public testing::TestWithParam<ChaoticBifurcationSummaryCase>
 {
-    BifurcationColumnState state;
-    Bifurcation bifurcation;
-    const std::vector<BifurcationColumnCase> tests{
-        BifurcationColumnCase{"PeriodTwo", 3.2, {128, 2, 13, 31, 22.0, ColumnRowBuckets{0, 64, 0, 64, 0, 0, 0, 0}}},
+};
+
+TEST_P(TestBifurcationChaoticSequence, followsSummaryStatistics)
+{
+    const BifurcationSequence result{run_bifurcation_sequence(GetParam().input)};
+
+    ASSERT_EQ(static_cast<std::size_t>(GetParam().input.iterations), result.populations.size());
+    EXPECT_FALSE(result.bailout_step.has_value());
+    const ChaoticBifurcationSummary summary{
+        summarize_sequence(result, GetParam().burn_in, GetParam().histogram_minimum, GetParam().histogram_maximum)};
+    expect_summary_near(GetParam().expected, summary, GetParam().value_tolerance, GetParam().histogram_tolerance);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBifurcationChaoticSequence, testing::ValuesIn(chaotic_bifurcation_inputs()),
+    [](const testing::TestParamInfo<ChaoticBifurcationSummaryCase> &info) { return info.param.name; });
+
+void PrintTo(const BifurcationColumnCase &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<BifurcationColumnCase> bifurcation_column_inputs()
+{
+    return {BifurcationColumnCase{"PeriodTwo", 3.2, {128, 2, 13, 31, 22.0, ColumnRowBuckets{0, 64, 0, 64, 0, 0, 0, 0}}},
         BifurcationColumnCase{
             "Chaotic", 3.7, {128, 38, 5, 47, 21.21875, ColumnRowBuckets{17, 31, 37, 16, 8, 19, 0, 0}}}};
-
-    for (const BifurcationColumnCase &test : tests)
-    {
-        SCOPED_TRACE(test.name);
-        const std::vector<int> &column{bifurcation.calculate_column(test.rate)};
-
-        expect_column_summary(test.expected, summarize_column(column));
-    }
 }
+
+class TestBifurcationColumn : public testing::TestWithParam<BifurcationColumnCase>
+{
+protected:
+    BifurcationColumnState m_state;
+    Bifurcation m_bifurcation;
+};
+
+TEST_P(TestBifurcationColumn, mapsPopulationToRows)
+{
+    const std::vector<int> &column{m_bifurcation.calculate_column(GetParam().rate)};
+
+    expect_column_summary(GetParam().expected, summarize_column(column));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBifurcationColumn, testing::ValuesIn(bifurcation_column_inputs()),
+    [](const testing::TestParamInfo<BifurcationColumnCase> &info) { return info.param.name; });
 
 } // namespace id::test
