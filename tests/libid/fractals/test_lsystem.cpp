@@ -20,9 +20,11 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <array>
 #include <filesystem>
 #include <fstream>
+#include <optional>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -587,17 +589,7 @@ INSTANTIATE_TEST_SUITE_P(Completion, TestCompletedLSystemSelection,
 class TestLSystemLoad : public TestLSystem
 {
 protected:
-    void SetUp() override
-    {
-        TestLSystem::SetUp();
-        m_path = std::filesystem::path{data::ID_TEST_DATA_DIR} /
-            ("lsystem-" + std::string{UnitTest::GetInstance()->current_test_info()->name()} + ".l");
-        g_l_system_filename = m_path;
-        g_l_system_name = "entry";
-        EXPECT_CALL(m_driver, key_pressed()).Times(0);
-        EXPECT_CALL(m_driver, get_key()).Times(0);
-        EXPECT_CALL(m_driver, stack_screen()).Times(0);
-    }
+    void SetUp() override;
 
     void TearDown() override
     {
@@ -613,129 +605,167 @@ protected:
         out << text;
     }
 
-    void expect_failure(const char *message)
-    {
-        try
-        {
-            lsystem_load();
-            FAIL() << "Expected a loader diagnostic";
-        }
-        catch (const std::runtime_error &error)
-        {
-            EXPECT_THAT(error.what(), HasSubstr(message));
-        }
-        EXPECT_FALSE(lsystem_loaded());
-        EXPECT_EQ(0, g_max_angle);
-        LSystem system;
-        EXPECT_THROW(system.start(), std::logic_error);
-        EXPECT_TRUE(system.done());
-        EXPECT_FALSE(system.sizing());
-        EXPECT_TRUE(m_lines.empty());
-    }
+    void expect_failure(const char *message);
 
     std::filesystem::path m_path;
 };
 
-TEST_F(TestLSystemLoad, reportsMissingFileWithoutUI)
+void TestLSystemLoad::SetUp()
 {
-    expect_failure("'entry' file entry item not found");
+    TestLSystem::SetUp();
+    std::string name{UnitTest::GetInstance()->current_test_info()->name()};
+    std::replace(name.begin(), name.end(), '/', '-');
+    m_path = std::filesystem::path{data::ID_TEST_DATA_DIR} / ("lsystem-" + name + ".l");
+    g_l_system_filename = m_path;
+    g_l_system_name = "entry";
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    EXPECT_CALL(m_driver, stack_screen()).Times(0);
 }
 
-TEST_F(TestLSystemLoad, reportsMissingEntryWithoutUI)
+void TestLSystemLoad::expect_failure(const char *message)
 {
-    write_definition("other {\naxiom f\nangle 4\n}\n");
-
-    expect_failure("'entry' file entry item not found");
-}
-
-TEST_F(TestLSystemLoad, reportsEmptyEntryNameWithoutUI)
-{
-    g_l_system_name.clear();
-
-    expect_failure("File entry item name is empty");
-}
-
-TEST_F(TestLSystemLoad, rejectsMissingAxiom)
-{
-    write_definition("entry {\nangle 4\n}\n");
-
-    expect_failure("Error:  no axiom");
-}
-
-TEST_F(TestLSystemLoad, rejectsMissingAxiomValue)
-{
-    write_definition("entry {\naxiom\nangle 4\n}\n");
-
-    expect_failure("Error:  no axiom");
-}
-
-TEST_F(TestLSystemLoad, rejectsMissingAngle)
-{
-    write_definition("entry {\naxiom f\n}\n");
-
-    expect_failure("Error:  illegal or missing angle");
-}
-
-TEST_F(TestLSystemLoad, rejectsInvalidAngle)
-{
-    for (const char *angle : {"", "two", "4junk", "2", "51", "260", "-4", "99999999999999999999"})
+    try
     {
-        SCOPED_TRACE(angle);
-        write_definition("entry {\naxiom f\nangle " + std::string{angle} + "\n}\n");
+        lsystem_load();
+        FAIL() << "Expected a loader diagnostic";
+    }
+    catch (const std::runtime_error &error)
+    {
+        EXPECT_THAT(error.what(), HasSubstr(message));
+    }
+    EXPECT_FALSE(lsystem_loaded());
+    EXPECT_EQ(0, g_max_angle);
+    EXPECT_TRUE(m_lines.empty());
+}
 
-        expect_failure("Error:  illegal or missing angle");
+struct LSystemLoadInput
+{
+    const char *name;
+    std::optional<std::string> definition;
+    const char *entry;
+    const char *message;
+    std::optional<std::string> previous_definition;
+};
+
+void PrintTo(const LSystemLoadInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<LSystemLoadInput> lsystem_load_inputs()
+{
+    std::vector<LSystemLoadInput> inputs{
+        {"MissingFile", std::nullopt, "entry", "'entry' file entry item not found", std::nullopt},
+        {"MissingEntry", "other {\naxiom f\nangle 4\n}\n", "entry", "'entry' file entry item not found", std::nullopt},
+        {"EmptyEntryName", std::nullopt, "", "File entry item name is empty", std::nullopt},
+        {"MissingAxiom", "entry {\nangle 4\n}\n", "entry", "Error:  no axiom", std::nullopt},
+        {"MissingAxiomValue", "entry {\naxiom\nangle 4\n}\n", "entry", "Error:  no axiom", std::nullopt},
+        {"MissingAngle", "entry {\naxiom f\n}\n", "entry", "Error:  illegal or missing angle", std::nullopt},
+        {"ReservedSymbol", "entry {\naxiom f\nangle 4\n+ = f\n}\n", "entry", "Redefined reserved symbol +",
+            std::nullopt},
+        {"ExtraText", "entry {\naxiom f extra\nangle 4\n}\n", "entry", "Extra text after command line 2: extra",
+            std::nullopt},
+        {"MalformedCommand", "entry {\naxiom f\nangle 4\n=\n}\n", "entry", "missing command", std::nullopt},
+        {"UnknownCommand", "entry {\naxiom f\nangle 4\nunknown f\n}\n", "entry", "Syntax error line 4: unknown",
+            std::nullopt},
+        {"UnterminatedDefinition", "entry {\naxiom f\nangle 4\n", "entry", "'entry' file entry item not found",
+            std::nullopt},
+        {"FailedReloadCannotReusePreviousAxiom", "entry {\nangle 4\n}\n", "entry", "Error:  no axiom",
+            "entry {\naxiom f\nangle 4\nf = ff\n}\n"}};
+
+    struct Angle
+    {
+        const char *name;
+        const char *value;
+    };
+
+    const std::array<Angle, 8> angles{{{"EmptyAngle", ""}, {"WordAngle", "two"}, {"TrailingAngle", "4junk"},
+        {"AngleTwo", "2"}, {"AngleFiftyOne", "51"}, {"AngleTwoSixty", "260"}, {"NegativeAngle", "-4"},
+        {"OverflowAngle", "99999999999999999999"}}};
+    for (const Angle &angle : angles)
+    {
+        inputs.push_back({angle.name, "entry {\naxiom f\nangle " + std::string{angle.value} + "\n}\n", "entry",
+            "Error:  illegal or missing angle", std::nullopt});
+    }
+    return inputs;
+}
+
+class TestInvalidLSystemLoad : public TestLSystemLoad, public WithParamInterface<LSystemLoadInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestInvalidLSystemLoad::SetUp()
+{
+    TestLSystemLoad::SetUp();
+    g_l_system_name = GetParam().entry;
+    if (GetParam().previous_definition)
+    {
+        write_definition(*GetParam().previous_definition);
+        ASSERT_NO_THROW(lsystem_load());
+        ASSERT_TRUE(lsystem_loaded());
+    }
+    if (GetParam().definition)
+    {
+        write_definition(*GetParam().definition);
     }
 }
 
-TEST_F(TestLSystemLoad, rejectsRedefinedReservedSymbol)
+TEST_P(TestInvalidLSystemLoad, reportsDiagnosticAndClearsDefinition)
 {
-    write_definition("entry {\naxiom f\nangle 4\n+ = f\n}\n");
-
-    expect_failure("Redefined reserved symbol +");
+    expect_failure(GetParam().message);
 }
 
-TEST_F(TestLSystemLoad, rejectsExtraText)
+class TestFailedLSystemStart : public TestInvalidLSystemLoad
 {
-    write_definition("entry {\naxiom f extra\nangle 4\n}\n");
+protected:
+    void SetUp() override;
+};
 
-    expect_failure("Extra text after command line 2: extra");
+void TestFailedLSystemStart::SetUp()
+{
+    ASSERT_NO_FATAL_FAILURE(TestInvalidLSystemLoad::SetUp());
+    ASSERT_NO_FATAL_FAILURE(expect_failure(GetParam().message));
 }
 
-TEST_F(TestLSystemLoad, rejectsMalformedCommand)
+TEST_P(TestFailedLSystemStart, rejectsStartWithoutAValidDefinition)
 {
-    write_definition("entry {\naxiom f\nangle 4\n=\n}\n");
+    LSystem system;
 
-    expect_failure("missing command");
+    EXPECT_THROW(system.start(), std::logic_error);
+
+    EXPECT_TRUE(system.done());
+    EXPECT_FALSE(system.sizing());
+    EXPECT_TRUE(m_lines.empty());
 }
 
-TEST_F(TestLSystemLoad, rejectsUnknownCommand)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInvalidLSystemLoad, ValuesIn(lsystem_load_inputs()),
+    [](const TestParamInfo<LSystemLoadInput> &info) { return info.param.name; });
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFailedLSystemStart, ValuesIn(lsystem_load_inputs()),
+    [](const TestParamInfo<LSystemLoadInput> &info) { return info.param.name; });
+
+class TestLSystemLoadRecovery : public TestLSystemLoad
 {
-    write_definition("entry {\naxiom f\nangle 4\nunknown f\n}\n");
+protected:
+    void SetUp() override;
+};
 
-    expect_failure("Syntax error line 4: unknown");
-}
-
-TEST_F(TestLSystemLoad, rejectsUnterminatedDefinition)
+void TestLSystemLoadRecovery::SetUp()
 {
-    write_definition("entry {\naxiom f\nangle 4\n");
-
-    expect_failure("'entry' file entry item not found");
-}
-
-TEST_F(TestLSystemLoad, failedReloadCannotReusePreviousAxiom)
-{
-    write_definition("entry {\naxiom f\nangle 4\nf = ff\n}\n");
-    ASSERT_NO_THROW(lsystem_load());
-    ASSERT_TRUE(lsystem_loaded());
-    write_definition("entry {\nangle 4\n}\n");
-
-    expect_failure("Error:  no axiom");
-}
-
-TEST_F(TestLSystemLoad, validDefinitionAfterFailureCanSizeAndDraw)
-{
+    TestLSystemLoad::SetUp();
     write_definition("entry {\naxiom f\nangle 2\n}\n");
-    expect_failure("Error:  illegal or missing angle");
+    ASSERT_NO_FATAL_FAILURE(expect_failure("Error:  illegal or missing angle"));
+    LSystem system;
+    ASSERT_THROW(system.start(), std::logic_error);
+    ASSERT_TRUE(system.done());
+    ASSERT_FALSE(system.sizing());
+    ASSERT_TRUE(m_lines.empty());
+}
+
+TEST_F(TestLSystemLoadRecovery, validDefinitionAfterFailureCanSizeAndDraw)
+{
     write_definition("entry {\naxiom f\nangle 4\n}\n");
 
     render("entry");
