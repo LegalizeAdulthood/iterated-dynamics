@@ -8476,17 +8476,6 @@ BurningShipPerturbationTest::BurningShipPerturbationTest(const bool use_big_floa
 {
 }
 
-class TestBurningShipPerturbation : public BurningShipPerturbationTest, public WithParamInterface<bool>
-{
-public:
-    TestBurningShipPerturbation();
-};
-
-TestBurningShipPerturbation::TestBurningShipPerturbation() :
-    BurningShipPerturbationTest{GetParam()}
-{
-}
-
 int BurningShipPerturbationTest::record_native_orbit()
 {
     const DComplex value{g_bf_math == BFMathType::NONE ? g_old_z : cmplx_bf_to_float(g_old_z_bf)};
@@ -9013,23 +9002,52 @@ TEST_P(TestShipBailoutEquality, matchesNativePixelColorAtBailoutBoundary)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestShipBailoutEquality, ValuesIn(ship_bailout_equality_inputs()),
     [](const TestParamInfo<ShipBailoutEqualityInput> &info) { return info.param.name; });
 
-TEST_P(TestBurningShipPerturbation, standardPassesRetainPerturbationAtBailoutEquality)
+struct ShipPassInput
 {
-    ValueSaver saved_user{g_user, UserData{}};
-    ValueSaver saved_status{g_calc_status};
-    ValueSaver saved_resuming{g_resuming, false};
-    ValueSaver saved_symmetry{g_force_symmetry, SymmetryType::NONE};
-    ValueSaver<LDouble> saved_delta_x{g_delta_x, 0};
-    ValueSaver<LDouble> saved_delta_y{g_delta_y, 0};
-    ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
-    ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    const char *name;
+    bool big_float;
+    CalcMode pass;
+};
+
+void PrintTo(const ShipPassInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestShipPassBailout : public BurningShipPerturbationTest, public WithParamInterface<ShipPassInput>
+{
+public:
+    TestShipPassBailout();
+
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<UserData> m_saved_user{g_user, UserData{}};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status};
+    ValueSaver<bool> m_saved_resuming{g_resuming, false};
+    ValueSaver<SymmetryType> m_saved_symmetry{g_force_symmetry, SymmetryType::NONE};
+    ValueSaver<LDouble> m_saved_delta_x{g_delta_x, 0};
+    ValueSaver<LDouble> m_saved_delta_y{g_delta_y, 0};
+    ValueSaver<LDouble> m_saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> m_saved_delta_y2{g_delta_y2, 0};
+};
+
+TestShipPassBailout::TestShipPassBailout() :
+    BurningShipPerturbationTest{GetParam().big_float}
+{
+}
+
+void TestShipPassBailout::SetUp()
+{
+    BurningShipPerturbationTest::SetUp();
     g_fractal_type = FractalType::BURNING_SHIP;
     g_params[2] = 2;
     g_image_region = ImageRegion{{1.0, 0.0}, {1.0, 0.0}, {1.0, 0.0}};
     g_user.perturbation = PerturbationMode::YES;
     m_specific = *get_fractal_specific(g_fractal_type);
     m_specific.symmetry = SymmetryType::NONE;
-    if (GetParam())
+    if (GetParam().big_float)
     {
         init_bf_dec(60);
         m_big_float = true;
@@ -9045,34 +9063,40 @@ TEST_P(TestBurningShipPerturbation, standardPassesRetainPerturbationAtBailoutEqu
     }
     g_dispatch = FractalDispatch{m_specific};
     fill_pixel_grid();
-    for (const CalcMode pass : {CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS})
-    {
-        SCOPED_TRACE(static_cast<char>(pass));
-        g_std_calc_mode = pass;
-        g_calc_status = CalcStatus::PARAMS_CHANGED;
-        m_pixels.fill(0);
-        m_plot_statuses.clear();
-        StandardFractal calculation;
-        ASSERT_TRUE(calculation.resume().empty());
-        for (int step = 0; step < 1000 && !calculation.done(); ++step)
-        {
-            calculation.iterate();
-        }
-        ASSERT_TRUE(calculation.done());
-        EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
-        EXPECT_EQ(pass, g_std_calc_mode);
-        EXPECT_THAT(m_pixels, Each(GetParam() ? 2 : 1));
-        ASSERT_FALSE(m_plot_statuses.empty());
-        for (const StandardPassStatus &status : m_plot_statuses)
-        {
-            EXPECT_TRUE(status.perturbation_active);
-            EXPECT_GT(status.perturbation_reference_count, 0);
-        }
-        calculation.finish();
-    }
+    g_std_calc_mode = GetParam().pass;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    m_pixels.fill(0);
+    m_plot_statuses.clear();
 }
 
-INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestBurningShipPerturbation, Bool());
+TEST_P(TestShipPassBailout, retainsPerturbationAtBailoutEquality)
+{
+    StandardFractal calculation;
+    ASSERT_TRUE(calculation.resume().empty());
+    for (int step = 0; step < 1000 && !calculation.done(); ++step)
+    {
+        calculation.iterate();
+    }
+
+    ASSERT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(GetParam().pass, g_std_calc_mode);
+    EXPECT_THAT(m_pixels, Each(GetParam().big_float ? 2 : 1));
+    ASSERT_FALSE(m_plot_statuses.empty());
+    for (const StandardPassStatus &status : m_plot_statuses)
+    {
+        EXPECT_TRUE(status.perturbation_active);
+        EXPECT_GT(status.perturbation_reference_count, 0);
+    }
+    calculation.finish();
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestShipPassBailout,
+    Values(ShipPassInput{"Double_BoundaryTrace", false, CalcMode::BOUNDARY_TRACE},
+        ShipPassInput{"Double_SolidGuess", false, CalcMode::SOLID_GUESS},
+        ShipPassInput{"HighPrecision_BoundaryTrace", true, CalcMode::BOUNDARY_TRACE},
+        ShipPassInput{"HighPrecision_SolidGuess", true, CalcMode::SOLID_GUESS}),
+    [](const TestParamInfo<ShipPassInput> &info) { return info.param.name; });
 
 class TestPerturbationContinuation : public TestPerturbationIterations
 {
