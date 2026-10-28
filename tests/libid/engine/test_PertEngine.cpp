@@ -2855,63 +2855,203 @@ TEST_P(TestTotalDistanceBofSeed, startsAtCompatibilitySeed)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestTotalDistanceBofSeed, ValuesIn(perturbation_bof_inputs()),
     [](const TestParamInfo<BofInitializationInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, totalDistanceUsesStandardRangeCorrection)
+struct TotalDistanceRangeInput
 {
-    g_inside_method = ColorMethod::ITER;
-    g_outside_method = ColorMethod::TDIS;
-    for (const Version version : {parse_legacy_version(1960), parse_legacy_version(1961), current_id_version()})
-    {
-        SCOPED_TRACE(to_string(version));
-        g_version = version;
-        g_bailout_test = Bailout::MOD;
-        set_bailout_formula(Bailout::MOD);
-        compare_pixel({1.0, 0.0}, 16);
-        EXPECT_EQ(1, g_real_color_iter);
-        EXPECT_EQ(g_version < 1961 ? 0 : 1, g_color);
+    std::string name;
+    bool big_float;
+    Version version;
+    Bailout bailout;
+    std::complex<double> point;
+    long expected_iterations;
+};
 
-        g_bailout_test = Bailout::IMAG;
-        set_bailout_formula(Bailout::IMAG);
-        compare_pixel({8.0, 0.0625}, 16);
-        EXPECT_EQ(2, g_real_color_iter);
-        EXPECT_EQ(g_version < 1961 ? 0 : 1, g_color);
-    }
+void PrintTo(const TotalDistanceRangeInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_P(TestPerturbationIterations, totalDistanceUsesStandardPaletteFolding)
+std::vector<TotalDistanceRangeInput> total_distance_range_inputs()
 {
+    struct CompatibilityVersion
+    {
+        const char *name;
+        Version version;
+    };
     struct Sample
     {
-        int colors;
-        int color;
+        const char *name;
+        Bailout bailout;
+        std::complex<double> point;
+        long expected_iterations;
     };
 
+    std::vector<TotalDistanceRangeInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const CompatibilityVersion &version : {CompatibilityVersion{"Legacy1960", parse_legacy_version(1960)},
+                 {"Legacy1961", parse_legacy_version(1961)}, {"Current", current_id_version()}})
+        {
+            for (const Sample &sample :
+                {Sample{"Mod", Bailout::MOD, {1.0, 0.0}, 1}, {"Imaginary", Bailout::IMAG, {8.0, 0.0625}, 2}})
+            {
+                inputs.push_back(
+                    {std::string{big_float ? "HighPrecision_" : "Double_"} + version.name + "_" + sample.name,
+                        big_float, version.version, sample.bailout, sample.point, sample.expected_iterations});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestTotalDistanceRange : public PerturbationIterationTest, public WithParamInterface<TotalDistanceRangeInput>
+{
+public:
+    TestTotalDistanceRange();
+
+protected:
+    void SetUp() override;
+};
+
+TestTotalDistanceRange::TestTotalDistanceRange() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestTotalDistanceRange::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::TDIS;
+    g_version = GetParam().version;
+    g_bailout_test = GetParam().bailout;
+    set_bailout_formula(GetParam().bailout);
+}
+
+TEST_P(TestTotalDistanceRange, usesStandardRangeCorrection)
+{
+    compare_pixel(GetParam().point, 16);
+
+    EXPECT_EQ(GetParam().expected_iterations, g_real_color_iter);
+    EXPECT_EQ(g_version < 1961 ? 0 : 1, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestTotalDistanceRange, ValuesIn(total_distance_range_inputs()),
+    [](const TestParamInfo<TotalDistanceRangeInput> &info) { return info.param.name; });
+
+struct TotalDistancePaletteInput
+{
+    const char *name;
+    bool big_float;
+    int colors;
+    int expected_color;
+};
+
+void PrintTo(const TotalDistancePaletteInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestTotalDistancePalette : public PerturbationIterationTest, public WithParamInterface<TotalDistancePaletteInput>
+{
+public:
+    TestTotalDistancePalette();
+
+protected:
+    void SetUp() override;
+};
+
+TestTotalDistancePalette::TestTotalDistancePalette() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestTotalDistancePalette::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::ITER;
     g_outside_method = ColorMethod::TDIS;
     g_bailout_test = Bailout::IMAG;
     set_bailout_formula(Bailout::IMAG);
-    for (const Sample &sample : {Sample{4, 0}, Sample{16, 4}, Sample{256, 64}})
-    {
-        SCOPED_TRACE(sample.colors);
-        g_colors = sample.colors;
-        g_and_color = g_colors - 1;
-        compare_pixel({8.0, 0.0625}, 128);
-        EXPECT_EQ(sample.color, g_color);
-    }
+    g_colors = GetParam().colors;
+    g_and_color = g_colors - 1;
 }
 
-TEST_P(TestPerturbationIterations, totalDistanceDoesNotChangeInsideColors)
+TEST_P(TestTotalDistancePalette, usesStandardPaletteFolding)
 {
+    compare_pixel({8.0, 0.0625}, 128);
+
+    EXPECT_EQ(GetParam().expected_color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestTotalDistancePalette,
+    Values(TotalDistancePaletteInput{"DoubleFourColors", false, 4, 0},
+        TotalDistancePaletteInput{"DoubleSixteenColors", false, 16, 4},
+        TotalDistancePaletteInput{"DoubleTwoHundredFiftySixColors", false, 256, 64},
+        TotalDistancePaletteInput{"HighPrecisionFourColors", true, 4, 0},
+        TotalDistancePaletteInput{"HighPrecisionSixteenColors", true, 16, 4},
+        TotalDistancePaletteInput{"HighPrecisionTwoHundredFiftySixColors", true, 256, 64}),
+    [](const TestParamInfo<TotalDistancePaletteInput> &info) { return info.param.name; });
+
+struct TotalDistanceInsideInput
+{
+    std::string name;
+    bool big_float;
+    ColorMethod inside;
+};
+
+void PrintTo(const TotalDistanceInsideInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<TotalDistanceInsideInput> total_distance_inside_inputs()
+{
+    const std::array<PerturbationColorMethod, 7> methods{{{"Iterations", ColorMethod::ITER},
+        {"Magnitude", ColorMethod::ZMAG}, {"Bof60", ColorMethod::BOF60}, {"Bof61", ColorMethod::BOF61},
+        {"Fmod", ColorMethod::FMODI}, {"Period", ColorMethod::PERIOD}, {"FixedColor", ColorMethod::COLOR}}};
+    std::vector<TotalDistanceInsideInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &inside : methods)
+        {
+            inputs.push_back(
+                {std::string{big_float ? "HighPrecision_" : "Double_"} + inside.name, big_float, inside.method});
+        }
+    }
+    return inputs;
+}
+
+class TestTotalDistanceInside : public PerturbationIterationTest, public WithParamInterface<TotalDistanceInsideInput>
+{
+public:
+    TestTotalDistanceInside();
+
+protected:
+    void SetUp() override;
+};
+
+TestTotalDistanceInside::TestTotalDistanceInside() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestTotalDistanceInside::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_outside_method = ColorMethod::TDIS;
     g_bof_match_book_images = false;
-    for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60, ColorMethod::BOF61,
-             ColorMethod::FMODI, ColorMethod::PERIOD, ColorMethod::COLOR})
-    {
-        SCOPED_TRACE(static_cast<int>(inside));
-        g_inside_method = inside;
-        compare_pixel({}, 16);
-        EXPECT_EQ(16, g_real_color_iter);
-    }
+    g_inside_method = GetParam().inside;
 }
+
+TEST_P(TestTotalDistanceInside, preservesInsideColor)
+{
+    compare_pixel({}, 16);
+
+    EXPECT_EQ(16, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestTotalDistanceInside, ValuesIn(total_distance_inside_inputs()),
+    [](const TestParamInfo<TotalDistanceInsideInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, totalDistanceRestartsWithAReplacementReference)
 {
