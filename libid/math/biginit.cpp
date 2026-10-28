@@ -111,7 +111,10 @@ BigFloat g_bf_params[10]{}; // (g_bf_length + 2)*10
 BigFloat g_bf_tmp{};
 BigFloat g_bf10_tmp{}; // g_bf_decimals + 4
 
-constexpr long BIGNUM_ARENA_SIZE{0x10000L}; // 64 KB
+constexpr long BIGNUM_ARENA_SIZE{1024L * 1024};
+// Supported g_bn_length limits are independent of working storage capacity.
+constexpr int MAX_BIGNUM_LENGTH{672};
+constexpr int MAX_BIGFLOAT_LENGTH{708};
 
 static char s_storage[BIGNUM_ARENA_SIZE];
 static BigNum s_bn_root{};
@@ -176,7 +179,8 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
         }
     }
 
-    if (bn_length <= 0 || bn_length > BIGNUM_ARENA_SIZE)
+    const int max_length{math == BFMathType::BIG_NUM ? MAX_BIGNUM_LENGTH : MAX_BIGFLOAT_LENGTH};
+    if (bn_length <= 0 || bn_length > max_length)
     {
         throw PrecisionError(fmt::format("Requested precision of {} too high", decimals));
     }
@@ -504,7 +508,7 @@ void init_bf_dec(const int dec)
 //   intl = bytes for integer part (1, 2, or 4)
 void init_bf_length(const int bnl)
 {
-    if (bnl <= 0 || bnl > BIGNUM_ARENA_SIZE)
+    if (bnl <= 0 || bnl > MAX_BIGFLOAT_LENGTH)
     {
         throw PrecisionError(fmt::format("Requested bignumber length of {} is unsupported", bnl));
     }

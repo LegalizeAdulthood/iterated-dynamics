@@ -151,6 +151,54 @@ TEST_F(TestBigFloat, floatingPointArenaRejectsUnsupportedPrecision)
     EXPECT_NO_THROW(init_bf_dec(40));
 }
 
+TEST_F(TestBigFloat, largerArenaPreservesPrecisionLimits)
+{
+    struct Limit
+    {
+        FractalType type;
+        BFMathType math;
+        int length;
+    };
+
+    for (const Limit &limit : {Limit{FractalType::MANDEL, BFMathType::BIG_NUM, 672},
+             Limit{FractalType::DIVIDE_BROT5, BFMathType::BIG_FLT, 708}})
+    {
+        SCOPED_TRACE(limit.length);
+        g_fractal_type = limit.type;
+        init_bf_length(limit.length);
+        ASSERT_EQ(limit.math, g_bf_math);
+        ASSERT_EQ(limit.length, g_bn_length);
+        float_to_bf(g_bf_x_min, 1.25);
+        const int stack{save_stack()};
+
+        EXPECT_THROW(init_bf_length(limit.length + 1), PrecisionError);
+
+        EXPECT_EQ(limit.length, g_bn_length);
+        EXPECT_EQ(stack, save_stack());
+        EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
+    }
+}
+
+TEST_F(TestBigFloat, stackStorageCrossesSixtyFourKilobytes)
+{
+    constexpr size_t OLD_ARENA_SIZE{64 * 1024};
+    const int stack{save_stack()};
+    float_to_bf(g_bf_x_min, 1.25);
+    {
+        BigStackSaver saved;
+        alloc_stack(OLD_ARENA_SIZE);
+        const BigFloat value{alloc_stack(g_bf_length + 2)};
+        EXPECT_GT(save_stack(), OLD_ARENA_SIZE);
+        float_to_bf(value, 2.5);
+        add_bf(value, value, g_bf_x_min);
+
+        EXPECT_EQ(3.75L, bf_to_float(value));
+        EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
+    }
+    EXPECT_EQ(stack, save_stack());
+    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
+}
+
 TEST_F(TestBigFloat, stackLimitFailureLeavesAllocationStateUnchanged)
 {
     const int stack{save_stack()};

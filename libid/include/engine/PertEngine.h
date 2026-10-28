@@ -169,6 +169,7 @@ private:
     math::BFComplex m_reference_initial_bf{};
     math::BFComplex m_orbit_parameter_bf{};
     math::BFComplex m_orbit_initial_bf{};
+    math::BigFloat m_tmp_bf{};
     math::BFComplex m_center_bf{};
     math::BFComplex m_half_horizontal_bf{};
     math::BFComplex m_half_vertical_bf{};
