@@ -529,97 +529,159 @@ TEST_F(TestFailedOpenGifWriter, finishReportsFailureWithoutCreatingOutput)
     EXPECT_FALSE(std::filesystem::exists(m_path));
 }
 
-class TestGifWriterHeaderFailure : public TestGifWriter, public WithParamInterface<int>
+class GifWriterStreamTest : public TestGifWriter
 {
+protected:
+    void open_writer(const GifWriter::Screen &screen);
+
+    FailingBuffer m_buffer;
+    std::ostream m_output{&m_buffer};
+    std::unique_ptr<GifWriter> m_writer;
 };
+
+void GifWriterStreamTest::open_writer(const GifWriter::Screen &screen)
+{
+    m_writer = std::make_unique<GifWriter>(m_output, screen, make_palette(2));
+}
+
+class TestGifWriterHeaderFailure : public GifWriterStreamTest, public WithParamInterface<int>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGifWriterHeaderFailure::SetUp()
+{
+    TestGifWriter::SetUp();
+    m_buffer.remaining = GetParam();
+    open_writer({2, 1});
+}
 
 TEST_P(TestGifWriterHeaderFailure, detectsShortWritesIncludingUncheckedDescriptorFields)
 {
-    FailingBuffer buffer;
-    buffer.remaining = GetParam();
-    std::ostream output{&buffer};
-    GifWriter writer{output, {2, 1}, make_palette(2)};
-
-    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, writer.error());
-    EXPECT_FALSE(writer.finish());
+    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, m_writer->error());
+    EXPECT_FALSE(m_writer->finish());
 }
 
 INSTANTIATE_TEST_SUITE_P(ByteLimits, TestGifWriterHeaderFailure, Values(0, 6, 8, 13, 19, 20, 29));
 
-TEST_F(TestGifWriter, reportsCompressedRowFailureAndRetainsFirstError)
+class TestGifWriterRasterFailure : public GifWriterStreamTest
 {
-    FailingBuffer buffer;
-    std::ostream output{&buffer};
-    GifWriter writer{output, {2, 2}, make_palette(2)};
-    ASSERT_TRUE(writer.write_pixels({0, 1}));
-    buffer.remaining = 0;
+protected:
+    void SetUp() override;
+};
 
-    EXPECT_FALSE(writer.write_pixels({1, 0}));
-    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, writer.error());
-    EXPECT_FALSE(writer.finish());
-    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, writer.error());
+void TestGifWriterRasterFailure::SetUp()
+{
+    TestGifWriter::SetUp();
+    open_writer({2, 2});
+    ASSERT_TRUE(m_writer->write_pixels({0, 1}));
+    m_buffer.remaining = 0;
 }
 
-class TestGifWriterExtensionFailure : public TestGifWriter, public WithParamInterface<int>
+TEST_F(TestGifWriterRasterFailure, reportsCompressedRowFailureAndRetainsFirstError)
 {
+    EXPECT_FALSE(m_writer->write_pixels({1, 0}));
+    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, m_writer->error());
+    EXPECT_FALSE(m_writer->finish());
+    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, m_writer->error());
+}
+
+class GifWriterCompletedRowTest : public GifWriterStreamTest
+{
+protected:
+    void SetUp() override;
 };
+
+void GifWriterCompletedRowTest::SetUp()
+{
+    TestGifWriter::SetUp();
+    open_writer({2, 1});
+    ASSERT_TRUE(m_writer->write_pixels({0, 1}));
+}
+
+class TestGifWriterExtensionFailure : public GifWriterCompletedRowTest, public WithParamInterface<int>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGifWriterExtensionFailure::SetUp()
+{
+    GifWriterCompletedRowTest::SetUp();
+    put_resume_info(&m_extensions, std::vector<Byte>(511, 0xA5));
+    m_buffer.remaining = GetParam();
+}
 
 TEST_P(TestGifWriterExtensionFailure, detectsShortLeaderPayloadAndTerminatorWrites)
 {
-    put_resume_info(&m_extensions, std::vector<Byte>(511, 0xA5));
-    FailingBuffer buffer;
-    std::ostream output{&buffer};
-    GifWriter writer{output, {2, 1}, make_palette(2)};
-    ASSERT_TRUE(writer.write_pixels({0, 1}));
-    buffer.remaining = GetParam();
-
-    EXPECT_FALSE(writer.write_extensions(m_extensions));
-    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, writer.error());
-    EXPECT_FALSE(writer.finish());
+    EXPECT_FALSE(m_writer->write_extensions(m_extensions));
+    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, m_writer->error());
+    EXPECT_FALSE(m_writer->finish());
 }
 
 INSTANTIATE_TEST_SUITE_P(ByteLimits, TestGifWriterExtensionFailure, Values(0, 2, 3, 14, 15, 270, 528));
 
-TEST_F(TestGifWriter, detectsTrailerFailureEvenWhenGiflibCloseReportsSuccess)
+class TestGifWriterTrailerFailure : public GifWriterCompletedRowTest
 {
-    FailingBuffer buffer;
-    std::ostream output{&buffer};
-    GifWriter writer{output, {2, 1}, make_palette(2)};
-    ASSERT_TRUE(writer.write_pixels({0, 1}));
-    buffer.remaining = 0;
+protected:
+    void SetUp() override;
+};
 
-    EXPECT_FALSE(writer.finish());
-    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, writer.error());
-    const std::string incomplete{buffer.str()};
-    EXPECT_FALSE(writer.finish());
-    EXPECT_EQ(incomplete, buffer.str());
+void TestGifWriterTrailerFailure::SetUp()
+{
+    GifWriterCompletedRowTest::SetUp();
+    m_buffer.remaining = 0;
 }
 
-TEST_F(TestGifWriter, reportsFinalOutputFlushFailure)
+TEST_F(TestGifWriterTrailerFailure, detectsTrailerFailureEvenWhenGiflibCloseReportsSuccess)
 {
-    FailingBuffer buffer;
-    std::ostream output{&buffer};
-    GifWriter writer{output, {2, 1}, make_palette(2)};
-    ASSERT_TRUE(writer.write_pixels({0, 1}));
-    buffer.fail_sync = true;
-
-    EXPECT_FALSE(writer.finish());
-    EXPECT_EQ(E_GIF_ERR_CLOSE_FAILED, writer.error());
-    EXPECT_EQ(1, buffer.sync_count);
-    EXPECT_FALSE(writer.finish());
-    EXPECT_EQ(1, buffer.sync_count);
+    EXPECT_FALSE(m_writer->finish());
+    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, m_writer->error());
+    const std::string incomplete{m_buffer.str()};
+    EXPECT_FALSE(m_writer->finish());
+    EXPECT_EQ(incomplete, m_buffer.str());
 }
 
-TEST_F(TestGifWriter, containsStreamExceptionsAtTheGiflibCallbackBoundary)
+class TestGifWriterFlushFailure : public GifWriterCompletedRowTest
 {
-    FailingBuffer buffer;
-    buffer.remaining = 0;
-    std::ostream output{&buffer};
-    output.exceptions(std::ios::badbit | std::ios::failbit);
-    GifWriter writer{output, {2, 1}, make_palette(2)};
+protected:
+    void SetUp() override;
+};
 
-    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, writer.error());
-    EXPECT_FALSE(writer.finish());
+void TestGifWriterFlushFailure::SetUp()
+{
+    GifWriterCompletedRowTest::SetUp();
+    m_buffer.fail_sync = true;
+}
+
+TEST_F(TestGifWriterFlushFailure, reportsFinalOutputFlushFailure)
+{
+    EXPECT_FALSE(m_writer->finish());
+    EXPECT_EQ(E_GIF_ERR_CLOSE_FAILED, m_writer->error());
+    EXPECT_EQ(1, m_buffer.sync_count);
+    EXPECT_FALSE(m_writer->finish());
+    EXPECT_EQ(1, m_buffer.sync_count);
+}
+
+class TestGifWriterCallbackFailure : public GifWriterStreamTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGifWriterCallbackFailure::SetUp()
+{
+    TestGifWriter::SetUp();
+    m_buffer.remaining = 0;
+    m_output.exceptions(std::ios::badbit | std::ios::failbit);
+    open_writer({2, 1});
+}
+
+TEST_F(TestGifWriterCallbackFailure, containsStreamExceptionsAtTheGiflibCallbackBoundary)
+{
+    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, m_writer->error());
+    EXPECT_FALSE(m_writer->finish());
 }
 
 class TestGifWriterSize : public TestGifWriter, public WithParamInterface<std::pair<int, int>>
