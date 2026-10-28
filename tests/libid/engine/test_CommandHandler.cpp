@@ -10,6 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <ostream>
 #include <string>
 
 using namespace id::engine;
@@ -29,56 +30,132 @@ protected:
     const std::array<CommandHandler, 1> m_handlers{CommandHandler{"known", m_handler.AsStdFunction()}};
 };
 
-TEST_F(TestCommandHandler, unknownNameDoesNotInvokeHandlerOrDiagnose)
+struct CommandLookupInput
 {
-    const Command cmd{"unknown=yes", CmdFile::AT_AFTER_STARTUP, m_result};
+    const char *name;
+    const char *argument;
+    bool empty_table;
+    bool restricted;
+};
 
-    EXPECT_FALSE(handle_command(m_handlers, cmd).has_value());
+void PrintTo(const CommandLookupInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestCommandLookup : public TestCommandHandler, public WithParamInterface<CommandLookupInput>
+{
+};
+
+TEST_P(TestCommandLookup, unrecognizedNameDoesNotInvokeHandlerOrDiagnose)
+{
+    const CommandLookupInput &input{GetParam()};
+    const Command cmd{input.argument, CmdFile::AT_AFTER_STARTUP, m_result};
+    const std::array<CommandHandler, 0> empty_handlers{};
+
+    EXPECT_FALSE((input.empty_table ? handle_command(empty_handlers, cmd, input.restricted)
+                                    : handle_command(m_handlers, cmd, input.restricted))
+            .has_value());
 
     EXPECT_TRUE(m_result.diagnostics.errors.empty());
     EXPECT_TRUE(m_result.diagnostics.warnings.empty());
 }
 
-TEST_F(TestCommandHandler, emptyTableDoesNotRecognizeName)
-{
-    const std::array<CommandHandler, 0> handlers{};
-    const Command cmd{"known=yes", CmdFile::AT_AFTER_STARTUP, m_result};
+INSTANTIATE_TEST_SUITE_P(Lookups, TestCommandLookup,
+    Values(CommandLookupInput{"Unknown", "unknown=yes", false, false},
+        CommandLookupInput{"EmptyTable", "known=yes", true, false},
+        CommandLookupInput{"RestrictedUnknown", "unknown=yes", false, true}),
+    [](const TestParamInfo<CommandLookupInput> &info) { return info.param.name; });
 
-    EXPECT_FALSE(handle_command(handlers, cmd).has_value());
+struct AcceptedCommandInput
+{
+    const char *name;
+    const char *argument;
+    CmdFile source;
+    bool restricted;
+    DebugFlags debug;
+    CmdArgFlags flags;
+};
+
+void PrintTo(const AcceptedCommandInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestAcceptedCommandHandler : public TestCommandHandler, public WithParamInterface<AcceptedCommandInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestAcceptedCommandHandler::SetUp()
+{
+    g_debug_flag = GetParam().debug;
+}
+
+TEST_P(TestAcceptedCommandHandler, acceptancePreservesResultFlags)
+{
+    const AcceptedCommandInput &input{GetParam()};
+    const Command cmd{input.argument, input.source, m_result};
+    EXPECT_CALL(m_handler, Call(Ref(cmd))).WillOnce(Return(input.flags));
+
+    EXPECT_EQ(input.flags, handle_command(m_handlers, cmd, input.restricted));
 
     EXPECT_TRUE(m_result.diagnostics.errors.empty());
 }
 
-TEST_F(TestCommandHandler, acceptanceWithoutFlagsIsRecognized)
+INSTANTIATE_TEST_SUITE_P(Acceptance, TestAcceptedCommandHandler,
+    Values(AcceptedCommandInput{"NoFlags", "KNOWN=yes", CmdFile::AT_AFTER_STARTUP, false, DebugFlags::NONE,
+               CmdArgFlags::NONE},
+        AcceptedCommandInput{"ChangeFlags", "known=yes", CmdFile::AT_AFTER_STARTUP, false, DebugFlags::NONE,
+            CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        AcceptedCommandInput{"Override", "known=yes", CmdFile::AT_AFTER_STARTUP, true,
+            DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME, CmdArgFlags::NONE},
+        AcceptedCommandInput{
+            "CommandLine", "known=yes", CmdFile::AT_CMD_LINE, true, DebugFlags::NONE, CmdArgFlags::NONE},
+        AcceptedCommandInput{
+            "Configuration", "known=yes", CmdFile::SSTOOLS_INI, true, DebugFlags::NONE, CmdArgFlags::NONE},
+        AcceptedCommandInput{
+            "CommandLineSet", "known=yes", CmdFile::AT_CMD_LINE_SET_NAME, true, DebugFlags::NONE, CmdArgFlags::NONE}),
+    [](const TestParamInfo<AcceptedCommandInput> &info) { return info.param.name; });
+
+struct RejectedCommandInput
 {
-    const Command cmd{"KNOWN=yes", CmdFile::AT_AFTER_STARTUP, m_result};
-    EXPECT_CALL(m_handler, Call(Ref(cmd))).WillOnce(Return(CmdArgFlags::NONE));
+    const char *name;
+    bool restricted;
+    DebugFlags debug;
+};
 
-    EXPECT_EQ(CmdArgFlags::NONE, handle_command(m_handlers, cmd));
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
+void PrintTo(const RejectedCommandInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestCommandHandler, acceptancePreservesChangeFlags)
+class TestRejectedCommandHandler : public TestCommandHandler, public WithParamInterface<RejectedCommandInput>
 {
-    const Command cmd{"known=yes", CmdFile::AT_AFTER_STARTUP, m_result};
-    const CmdArgFlags flags{CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D};
-    EXPECT_CALL(m_handler, Call(Ref(cmd))).WillOnce(Return(flags));
+protected:
+    void SetUp() override;
+};
 
-    EXPECT_EQ(flags, handle_command(m_handlers, cmd));
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
+void TestRejectedCommandHandler::SetUp()
+{
+    g_debug_flag = GetParam().debug;
 }
 
-TEST_F(TestCommandHandler, rejectedValueIsRecognizedAndDiagnosedOnce)
+TEST_P(TestRejectedCommandHandler, rejectionDiagnosesTheValueOnce)
 {
     const Command cmd{"known=garbage", CmdFile::AT_AFTER_STARTUP, m_result};
     EXPECT_CALL(m_handler, Call(Ref(cmd))).WillOnce([](const Command &command) { return command.bad_arg(); });
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, handle_command(m_handlers, cmd));
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, handle_command(m_handlers, cmd, GetParam().restricted));
 
     EXPECT_THAT(m_result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  known=garbage"));
 }
+
+INSTANTIATE_TEST_SUITE_P(Rejection, TestRejectedCommandHandler,
+    Values(RejectedCommandInput{"Unrestricted", false, DebugFlags::NONE},
+        RejectedCommandInput{"Override", true, DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME}),
+    [](const TestParamInfo<RejectedCommandInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandHandler, syntaxErrorDoesNotInvokeHandlerOrRepeatDiagnostic)
 {
@@ -99,54 +176,6 @@ TEST_F(TestCommandHandler, restrictedNameIsRejectedWithoutInvokingHandler)
 
     EXPECT_THAT(m_result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  known=yes"));
 }
-
-TEST_F(TestCommandHandler, unknownNameIsNotRejectedByStartupRestriction)
-{
-    const Command cmd{"unknown=yes", CmdFile::AT_AFTER_STARTUP, m_result};
-
-    EXPECT_FALSE(handle_command(m_handlers, cmd, true).has_value());
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
-
-TEST_F(TestCommandHandler, overrideAllowsRestrictedHandler)
-{
-    g_debug_flag = DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME;
-    const Command cmd{"known=yes", CmdFile::AT_AFTER_STARTUP, m_result};
-    EXPECT_CALL(m_handler, Call(Ref(cmd))).WillOnce(Return(CmdArgFlags::NONE));
-
-    EXPECT_EQ(CmdArgFlags::NONE, handle_command(m_handlers, cmd, true));
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
-
-TEST_F(TestCommandHandler, overrideDoesNotBypassValueValidation)
-{
-    g_debug_flag = DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME;
-    const Command cmd{"known=garbage", CmdFile::AT_AFTER_STARTUP, m_result};
-    EXPECT_CALL(m_handler, Call(Ref(cmd))).WillOnce([](const Command &command) { return command.bad_arg(); });
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, handle_command(m_handlers, cmd, true));
-
-    EXPECT_EQ(1U, m_result.diagnostics.errors.size());
-}
-
-class TestStartupCommandHandler : public TestCommandHandler, public WithParamInterface<CmdFile>
-{
-};
-
-TEST_P(TestStartupCommandHandler, invokesHandlerDuringStartup)
-{
-    const Command cmd{"known=yes", GetParam(), m_result};
-    EXPECT_CALL(m_handler, Call(Ref(cmd))).WillOnce(Return(CmdArgFlags::NONE));
-
-    EXPECT_EQ(CmdArgFlags::NONE, handle_command(m_handlers, cmd, true));
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
-
-INSTANTIATE_TEST_SUITE_P(StartupSources, TestStartupCommandHandler,
-    Values(CmdFile::AT_CMD_LINE, CmdFile::SSTOOLS_INI, CmdFile::AT_CMD_LINE_SET_NAME));
 
 class TestEngineCommand : public Test
 {
