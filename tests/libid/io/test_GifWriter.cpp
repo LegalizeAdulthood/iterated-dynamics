@@ -277,6 +277,9 @@ TEST_F(TestFinishedGifWriter, finishIsIdempotent)
 
     EXPECT_EQ(m_complete, m_buffer.str());
     EXPECT_EQ(1, m_buffer.sync_count);
+    m_writer.reset();
+    EXPECT_EQ(m_complete, m_buffer.str());
+    EXPECT_EQ(1, m_buffer.sync_count);
 }
 
 TEST_F(TestFinishedGifWriter, destructionLeavesBorrowedStreamOpen)
@@ -292,11 +295,19 @@ TEST_F(TestFinishedGifWriter, destructionLeavesBorrowedStreamOpen)
 TEST_F(TestFinishedGifWriter, rejectsPixelsAfterFinish)
 {
     EXPECT_THROW(m_writer->write_pixels({0, 1}), std::logic_error);
+    m_writer.reset();
+
+    EXPECT_EQ(m_complete, m_buffer.str());
+    EXPECT_EQ(1, m_buffer.sync_count);
 }
 
 TEST_F(TestFinishedGifWriter, rejectsExtensionsAfterFinish)
 {
     EXPECT_THROW(m_writer->write_extensions(m_extensions), std::logic_error);
+    m_writer.reset();
+
+    EXPECT_EQ(m_complete, m_buffer.str());
+    EXPECT_EQ(1, m_buffer.sync_count);
 }
 
 TEST_F(TestGifWriter, releasesIncompleteFileOnDestruction)
@@ -309,23 +320,110 @@ TEST_F(TestGifWriter, releasesIncompleteFileOnDestruction)
     EXPECT_TRUE(std::filesystem::remove(m_path));
 }
 
-TEST_F(TestGifWriter, rejectsInvalidCallSequencesWithoutAdvancingRaster)
+class TestGifWriterSequence : public TestGifWriter
 {
-    std::ostringstream output;
-    GifWriter writer{output, {2, 2}, make_palette(2)};
+protected:
+    void SetUp() override;
+    void complete_raster();
+    void finish_output();
 
-    EXPECT_THROW(writer.finish(), std::logic_error);
-    EXPECT_THROW(writer.write_extensions(m_extensions), std::logic_error);
-    EXPECT_THROW(writer.write_pixels({}), std::logic_error);
-    EXPECT_THROW(writer.write_pixels({0, 1, 0}), std::logic_error);
-    EXPECT_THROW(writer.write_pixels({0, 2}), std::logic_error);
-    ASSERT_TRUE(writer.write_pixels({0}));
-    EXPECT_THROW(writer.write_pixels({1, 0}), std::logic_error);
-    ASSERT_TRUE(writer.write_pixels({1}));
-    ASSERT_TRUE(writer.write_pixels({1, 0}));
-    EXPECT_THROW(writer.write_pixels({0}), std::logic_error);
-    EXPECT_TRUE(writer.write_extensions(m_extensions));
-    EXPECT_TRUE(writer.finish());
+    std::ostringstream m_output;
+    std::unique_ptr<GifWriter> m_writer;
+};
+
+void TestGifWriterSequence::SetUp()
+{
+    TestGifWriter::SetUp();
+    m_writer = std::make_unique<GifWriter>(m_output, GifWriter::Screen{2, 2}, make_palette(2));
+}
+
+void TestGifWriterSequence::complete_raster()
+{
+    ASSERT_TRUE(m_writer->write_pixels({0, 1}));
+    ASSERT_TRUE(m_writer->write_pixels({1, 0}));
+    finish_output();
+}
+
+void TestGifWriterSequence::finish_output()
+{
+    EXPECT_TRUE(m_writer->write_extensions(m_extensions));
+    EXPECT_TRUE(m_writer->finish());
+}
+
+TEST_F(TestGifWriterSequence, rejectsPrematureFinishWithoutAdvancingRaster)
+{
+    EXPECT_THROW(m_writer->finish(), std::logic_error);
+
+    complete_raster();
+}
+
+TEST_F(TestGifWriterSequence, rejectsPrematureExtensionsWithoutAdvancingRaster)
+{
+    EXPECT_THROW(m_writer->write_extensions(m_extensions), std::logic_error);
+
+    complete_raster();
+}
+
+TEST_F(TestGifWriterSequence, rejectsEmptyPixelsWithoutAdvancingRaster)
+{
+    EXPECT_THROW(m_writer->write_pixels({}), std::logic_error);
+
+    complete_raster();
+}
+
+TEST_F(TestGifWriterSequence, rejectsRowOverflowWithoutAdvancingRaster)
+{
+    EXPECT_THROW(m_writer->write_pixels({0, 1, 0}), std::logic_error);
+
+    complete_raster();
+}
+
+TEST_F(TestGifWriterSequence, rejectsInvalidPaletteIndexWithoutAdvancingRaster)
+{
+    EXPECT_THROW(m_writer->write_pixels({0, 2}), std::logic_error);
+
+    complete_raster();
+}
+
+class TestGifWriterPartialRow : public TestGifWriterSequence
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGifWriterPartialRow::SetUp()
+{
+    TestGifWriterSequence::SetUp();
+    ASSERT_TRUE(m_writer->write_pixels({0}));
+}
+
+TEST_F(TestGifWriterPartialRow, rejectsRowOverflowWithoutAdvancingRaster)
+{
+    EXPECT_THROW(m_writer->write_pixels({1, 0}), std::logic_error);
+
+    ASSERT_TRUE(m_writer->write_pixels({1}));
+    ASSERT_TRUE(m_writer->write_pixels({1, 0}));
+    finish_output();
+}
+
+class TestGifWriterCompleteRaster : public TestGifWriterSequence
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGifWriterCompleteRaster::SetUp()
+{
+    TestGifWriterSequence::SetUp();
+    ASSERT_TRUE(m_writer->write_pixels({0, 1}));
+    ASSERT_TRUE(m_writer->write_pixels({1, 0}));
+}
+
+TEST_F(TestGifWriterCompleteRaster, rejectsPixelsBeyondCompletedRaster)
+{
+    EXPECT_THROW(m_writer->write_pixels({0}), std::logic_error);
+
+    finish_output();
 }
 
 TEST_F(TestGifWriter, rejectsMalformedExtensionBlocksBeforeWritingThem)
@@ -364,9 +462,42 @@ TEST_F(TestGifWriter, reportsOpenFailureWithoutCreatingMissingDirectories)
     GifWriter writer{m_path / "missing.gif", {2, 1}, make_palette(2)};
 
     EXPECT_EQ(E_GIF_ERR_OPEN_FAILED, writer.error());
-    EXPECT_FALSE(writer.write_pixels({0, 1}));
-    EXPECT_FALSE(writer.write_extensions(m_extensions));
-    EXPECT_FALSE(writer.finish());
+    EXPECT_FALSE(std::filesystem::exists(m_path));
+}
+
+class TestFailedOpenGifWriter : public TestGifWriter
+{
+protected:
+    void SetUp() override;
+
+    std::unique_ptr<GifWriter> m_writer;
+};
+
+void TestFailedOpenGifWriter::SetUp()
+{
+    TestGifWriter::SetUp();
+    m_writer = std::make_unique<GifWriter>(m_path / "missing.gif", GifWriter::Screen{2, 1}, make_palette(2));
+    ASSERT_EQ(E_GIF_ERR_OPEN_FAILED, m_writer->error());
+}
+
+TEST_F(TestFailedOpenGifWriter, pixelWriteReportsFailureWithoutCreatingOutput)
+{
+    EXPECT_FALSE(m_writer->write_pixels({0, 1}));
+
+    EXPECT_FALSE(std::filesystem::exists(m_path));
+}
+
+TEST_F(TestFailedOpenGifWriter, extensionWriteReportsFailureWithoutCreatingOutput)
+{
+    EXPECT_FALSE(m_writer->write_extensions(m_extensions));
+
+    EXPECT_FALSE(std::filesystem::exists(m_path));
+}
+
+TEST_F(TestFailedOpenGifWriter, finishReportsFailureWithoutCreatingOutput)
+{
+    EXPECT_FALSE(m_writer->finish());
+
     EXPECT_FALSE(std::filesystem::exists(m_path));
 }
 
