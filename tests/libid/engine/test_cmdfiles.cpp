@@ -4006,45 +4006,36 @@ TEST_F(TestParameterCommand, volumeValue)
     EXPECT_EQ(63, g_fm_volume);
 }
 
-TEST_F(TestParameterCommand, attenuateNo)
+struct AttenuateParameterInput
 {
-    ValueSaver saved_hi_attenuation{g_hi_attenuation, -999};
+    const char *name;
+    const char *argument;
+    int expected;
+};
 
-    exec_cmd_arg("attenuate=n");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(0, g_hi_attenuation);
+void PrintTo(const AttenuateParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, attenuateLow)
+class TestAttenuateParameter : public TestParameterCommand, public WithParamInterface<AttenuateParameterInput>
 {
-    ValueSaver saved_hi_attenuation{g_hi_attenuation, -999};
+private:
+    ValueSaver<int> m_saved_attenuation{g_hi_attenuation, -999};
+};
 
-    exec_cmd_arg("attenuate=l");
+TEST_P(TestAttenuateParameter, setsAttenuation)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(1, g_hi_attenuation);
+    EXPECT_EQ(GetParam().expected, g_hi_attenuation);
 }
 
-TEST_F(TestParameterCommand, attenuateMiddle)
-{
-    ValueSaver saved_hi_attenuation{g_hi_attenuation, -999};
-
-    exec_cmd_arg("attenuate=m");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(2, g_hi_attenuation);
-}
-
-TEST_F(TestParameterCommand, attenuateHigh)
-{
-    ValueSaver saved_hi_attenuation{g_hi_attenuation, -999};
-
-    exec_cmd_arg("attenuate=h");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(3, g_hi_attenuation);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestAttenuateParameter,
+    Values(AttenuateParameterInput{"No", "attenuate=n", 0}, AttenuateParameterInput{"Low", "attenuate=l", 1},
+        AttenuateParameterInput{"Middle", "attenuate=m", 2}, AttenuateParameterInput{"High", "attenuate=h", 3}),
+    [](const TestParamInfo<AttenuateParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, polyphonyValue)
 {
