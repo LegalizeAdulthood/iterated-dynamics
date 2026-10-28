@@ -1794,86 +1794,65 @@ INSTANTIATE_TEST_SUITE_P(PixelZoom, TestLegacyCommandInput,
         LegacyCommandInput{"Four", "pixelzoom=4", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE}),
     [](const TestParamInfo<LegacyCommandInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommandError, warnInvalidValue)
+struct OverwriteParameterInput
 {
-    ValueSaver saved_overwrite_file{g_overwrite_file, false};
+    const char *name;
+    const char *argument;
+    bool initial;
+    bool expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("warn=!", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_FALSE(g_overwrite_file);
+void PrintTo(const OverwriteParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, warnNo)
+class TestOverwriteParameter : public TestParameterCommand, public WithParamInterface<OverwriteParameterInput>
 {
-    ValueSaver saved_overwrite_file{g_overwrite_file, false};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("warn=n", CmdFile::AT_CMD_LINE);
+private:
+    ValueSaver<bool> m_saved_overwrite{g_overwrite_file};
+};
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_TRUE(g_overwrite_file);
+void TestOverwriteParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_overwrite_file = GetParam().initial;
 }
 
-TEST_F(TestParameterCommand, warnYes)
+TEST_P(TestOverwriteParameter, setsOverwritePolicy)
 {
-    ValueSaver saved_overwrite_file{g_overwrite_file, true};
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    exec_cmd_arg("warn=yes", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_FALSE(g_overwrite_file);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_overwrite_file);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommandError, overwriteInvalidValue)
-{
-    ValueSaver saved_overwrite_file{g_overwrite_file, true};
+INSTANTIATE_TEST_SUITE_P(Warn, TestOverwriteParameter,
+    Values(OverwriteParameterInput{"Invalid", "warn=!", false, false, CmdArgFlags::BAD_ARG},
+        OverwriteParameterInput{"No", "warn=n", false, true, CmdArgFlags::NONE},
+        OverwriteParameterInput{"Yes", "warn=yes", true, false, CmdArgFlags::NONE}),
+    [](const TestParamInfo<OverwriteParameterInput> &info) { return info.param.name; });
 
-    exec_cmd_arg("overwrite=!", CmdFile::AT_CMD_LINE);
+INSTANTIATE_TEST_SUITE_P(Overwrite, TestOverwriteParameter,
+    Values(OverwriteParameterInput{"Invalid", "overwrite=!", true, true, CmdArgFlags::BAD_ARG},
+        OverwriteParameterInput{"No", "overwrite=n", false, false, CmdArgFlags::NONE},
+        OverwriteParameterInput{"Yes", "overwrite=yes", true, true, CmdArgFlags::NONE}),
+    [](const TestParamInfo<OverwriteParameterInput> &info) { return info.param.name; });
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_TRUE(g_overwrite_file);
-}
-
-TEST_F(TestParameterCommand, overwriteNo)
-{
-    ValueSaver saved_overwrite_file{g_overwrite_file, false};
-
-    exec_cmd_arg("overwrite=n", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_FALSE(g_overwrite_file);
-}
-
-TEST_F(TestParameterCommand, overwriteYes)
-{
-    ValueSaver saved_overwrite_file{g_overwrite_file, true};
-
-    exec_cmd_arg("overwrite=yes", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_TRUE(g_overwrite_file);
-}
-
-TEST_F(TestParameterCommandError, gif87aInvalidValue)
-{
-    exec_cmd_arg("gif87a=!", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
-
-TEST_F(TestParameterCommand, gif87aNo)
-{
-    exec_cmd_arg("gif87a=n", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-}
-
-TEST_F(TestParameterCommand, gif87aYes)
-{
-    exec_cmd_arg("gif87a=yes", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-}
+INSTANTIATE_TEST_SUITE_P(Gif87a, TestLegacyCommandInput,
+    Values(LegacyCommandInput{"Invalid", "gif87a=!", CmdFile::AT_CMD_LINE, CmdArgFlags::BAD_ARG},
+        LegacyCommandInput{"No", "gif87a=n", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE},
+        LegacyCommandInput{"Yes", "gif87a=yes", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE}),
+    [](const TestParamInfo<LegacyCommandInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommandError, ditherInvalidValue)
 {
