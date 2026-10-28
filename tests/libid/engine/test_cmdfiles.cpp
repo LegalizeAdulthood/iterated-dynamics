@@ -3869,141 +3869,122 @@ TEST_F(TestParameterCommand, bailOut)
     EXPECT_EQ(50L, g_user.bailout_value);
 }
 
-TEST_F(TestParameterCommand, bailOutTestMod)
+struct BailoutTestParameterInput
 {
-    ValueSaver saved_bailout_test{g_bailout_test, Bailout::REAL};
+    const char *name;
+    const char *argument;
+    Bailout expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("bailoutest=mod");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(Bailout::MOD, g_bailout_test);
+void PrintTo(const BailoutTestParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommandError, bailOutTestBadValue)
+class TestBailoutTestParameter : public TestParameterCommand, public WithParamInterface<BailoutTestParameterInput>
 {
-    ValueSaver saved_bailout_test{g_bailout_test, Bailout::REAL};
+private:
+    ValueSaver<Bailout> m_saved_bailout{g_bailout_test, Bailout::REAL};
+};
 
-    exec_cmd_arg("bailoutest=foo");
+TEST_P(TestBailoutTestParameter, setsBailoutSelector)
+{
+    exec_cmd_arg(GetParam().argument);
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(Bailout::REAL, g_bailout_test);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_bailout_test);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommand, symmetryXAxis)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBailoutTestParameter,
+    Values(BailoutTestParameterInput{"Mod", "bailoutest=mod", Bailout::MOD, CmdArgFlags::FRACTAL_PARAM},
+        BailoutTestParameterInput{"Invalid", "bailoutest=foo", Bailout::REAL, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<BailoutTestParameterInput> &info) { return info.param.name; });
+
+struct SymmetryParameterInput
 {
-    ValueSaver save_force_symmetry{g_force_symmetry, SymmetryType::XY_AXIS};
+    const char *name;
+    const char *argument;
+    SymmetryType expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("symmetry=xaxis");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(SymmetryType::X_AXIS, g_force_symmetry);
+void PrintTo(const SymmetryParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommandError, symmetryBadValue)
+class TestSymmetryParameter : public TestParameterCommand, public WithParamInterface<SymmetryParameterInput>
 {
-    ValueSaver save_force_symmetry{g_force_symmetry, SymmetryType::XY_AXIS};
+private:
+    ValueSaver<SymmetryType> m_saved_symmetry{g_force_symmetry, SymmetryType::XY_AXIS};
+};
 
-    exec_cmd_arg("symmetry=fmeh");
+TEST_P(TestSymmetryParameter, setsForcedSymmetry)
+{
+    exec_cmd_arg(GetParam().argument);
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(SymmetryType::XY_AXIS, g_force_symmetry);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_force_symmetry);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommand, soundYes)
-{
-    ValueSaver saved_sound_flag{g_sound_flag, 0};
+INSTANTIATE_TEST_SUITE_P(Inputs, TestSymmetryParameter,
+    Values(SymmetryParameterInput{"XAxis", "symmetry=xaxis", SymmetryType::X_AXIS, CmdArgFlags::FRACTAL_PARAM},
+        SymmetryParameterInput{"Invalid", "symmetry=fmeh", SymmetryType::XY_AXIS, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<SymmetryParameterInput> &info) { return info.param.name; });
 
-    exec_cmd_arg("sound=yes");
+struct SoundCommandParameterInput
+{
+    const char *name;
+    const char *argument;
+    int flags;
+    std::optional<bool> buzzer;
+};
+
+void PrintTo(const SoundCommandParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestSoundCommandParameter : public TestParameterCommand, public WithParamInterface<SoundCommandParameterInput>
+{
+private:
+    ValueSaver<int> m_saved_sound_flags{g_sound_flag, 0};
+};
+
+TEST_P(TestSoundCommandParameter, setsSoundFlags)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER, g_sound_flag);
-    EXPECT_TRUE(sound_buzzer_enabled());
+    EXPECT_EQ(GetParam().flags, g_sound_flag);
+    if (GetParam().buzzer)
+    {
+        EXPECT_EQ(*GetParam().buzzer, sound_buzzer_enabled());
+    }
 }
 
-TEST_F(TestParameterCommand, soundNo)
-{
-    ValueSaver saved_sound_flag{g_sound_flag, 0};
-
-    exec_cmd_arg("sound=no");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(SOUNDFLAG_OFF | SOUNDFLAG_SPEAKER, g_sound_flag);
-    EXPECT_FALSE(sound_buzzer_enabled());
-}
-
-TEST_F(TestParameterCommand, soundBeep)
-{
-    ValueSaver saved_sound_flag{g_sound_flag, 0};
-
-    exec_cmd_arg("sound=b");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER, g_sound_flag);
-    EXPECT_TRUE(sound_buzzer_enabled());
-}
-
-TEST_F(TestParameterCommand, soundOrbitX)
-{
-    ValueSaver saved_sound_flag{g_sound_flag, 0};
-
-    exec_cmd_arg("sound=x");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(SOUNDFLAG_X | SOUNDFLAG_SPEAKER, g_sound_flag);
-    EXPECT_FALSE(sound_buzzer_enabled());
-}
-
-TEST_F(TestParameterCommand, soundOrbitY)
-{
-    ValueSaver saved_sound_flag{g_sound_flag, 0};
-
-    exec_cmd_arg("sound=y");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(SOUNDFLAG_Y | SOUNDFLAG_SPEAKER, g_sound_flag);
-    EXPECT_FALSE(sound_buzzer_enabled());
-}
-
-TEST_F(TestParameterCommand, soundOrbitZ)
-{
-    ValueSaver saved_sound_flag{g_sound_flag, 0};
-
-    exec_cmd_arg("sound=z");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(SOUNDFLAG_Z | SOUNDFLAG_SPEAKER, g_sound_flag);
-    EXPECT_FALSE(sound_buzzer_enabled());
-}
-
-TEST_F(TestParameterCommand, soundOrbitZMidi)
-{
-    ValueSaver saved_sound_flag{g_sound_flag, 0};
-
-    exec_cmd_arg("sound=z/m");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(SOUNDFLAG_Z | SOUNDFLAG_MIDI, g_sound_flag);
-}
-
-TEST_F(TestParameterCommand, soundOrbitZSpeaker)
-{
-    ValueSaver saved_sound_flag{g_sound_flag, 0};
-
-    exec_cmd_arg("sound=z/p");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(SOUNDFLAG_Z | SOUNDFLAG_SPEAKER, g_sound_flag);
-}
-
-TEST_F(TestParameterCommand, soundOrbitZQuantized)
-{
-    ValueSaver saved_sound_flag{g_sound_flag, 0};
-
-    exec_cmd_arg("sound=z/q");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(SOUNDFLAG_Z | SOUNDFLAG_QUANTIZED, g_sound_flag);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestSoundCommandParameter,
+    Values(SoundCommandParameterInput{"Yes", "sound=yes", SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER, true},
+        SoundCommandParameterInput{"No", "sound=no", SOUNDFLAG_OFF | SOUNDFLAG_SPEAKER, false},
+        SoundCommandParameterInput{"Beep", "sound=b", SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER, true},
+        SoundCommandParameterInput{"OrbitX", "sound=x", SOUNDFLAG_X | SOUNDFLAG_SPEAKER, false},
+        SoundCommandParameterInput{"OrbitY", "sound=y", SOUNDFLAG_Y | SOUNDFLAG_SPEAKER, false},
+        SoundCommandParameterInput{"OrbitZ", "sound=z", SOUNDFLAG_Z | SOUNDFLAG_SPEAKER, false},
+        SoundCommandParameterInput{"OrbitZMidi", "sound=z/m", SOUNDFLAG_Z | SOUNDFLAG_MIDI, std::nullopt},
+        SoundCommandParameterInput{"OrbitZSpeaker", "sound=z/p", SOUNDFLAG_Z | SOUNDFLAG_SPEAKER, std::nullopt},
+        SoundCommandParameterInput{"OrbitZQuantized", "sound=z/q", SOUNDFLAG_Z | SOUNDFLAG_QUANTIZED, std::nullopt}),
+    [](const TestParamInfo<SoundCommandParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, hertzValue)
 {
