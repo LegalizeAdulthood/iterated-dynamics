@@ -454,13 +454,19 @@ std::filesystem::path TestFindFractalInfo::write_file(const bool legacy_formula)
     return m_path;
 }
 
-std::filesystem::path TestFindFractalInfo::write_small_file(
-    const bool extensions_first, const int ignored_blocks, const GifFileType *trailing_extensions)
+static std::vector<char> small_gif_bytes(const GifFileType *extensions, const bool extensions_first = false,
+    const int ignored_blocks = 0, const GifFileType *trailing_extensions = nullptr)
 {
-    m_path = test_path();
+    std::vector<char> bytes;
     int error{};
     std::unique_ptr<GifFileType, void (*)(GifFileType *)> output{
-        EGifOpenFileName(m_path.string().c_str(), false, &error), [](GifFileType *gif)
+        EGifOpen(&bytes,
+            [](GifFileType *gif, const GifByteType *data, const int size)
+            {
+                std::vector<char> &buffer{*static_cast<std::vector<char> *>(gif->UserData)};
+                buffer.insert(buffer.end(), data, data + size);
+                return size;
+            }, &error), [](GifFileType *gif)
         {
             int close_error{};
             EGifCloseFile(gif, &close_error);
@@ -475,7 +481,7 @@ std::filesystem::path TestFindFractalInfo::write_small_file(
     check_gif_write(EGifPutScreenDesc(output.get(), 2, 2, 1, 0, palette.get()));
     if (extensions_first)
     {
-        write_gif_extensions(output.get(), &m_extensions);
+        write_gif_extensions(output.get(), extensions);
     }
     if (ignored_blocks > 0)
     {
@@ -500,17 +506,32 @@ std::filesystem::path TestFindFractalInfo::write_small_file(
     check_gif_write(EGifPutLine(output.get(), row, 2));
     if (!extensions_first)
     {
-        write_gif_extensions(output.get(), &m_extensions);
+        write_gif_extensions(output.get(), extensions);
     }
     if (trailing_extensions != nullptr)
     {
         write_gif_extensions(output.get(), trailing_extensions);
     }
     check_gif_write(EGifCloseFile(output.release(), &error));
+    return bytes;
+}
+
+std::filesystem::path TestFindFractalInfo::write_small_file(
+    const bool extensions_first, const int ignored_blocks, const GifFileType *trailing_extensions)
+{
+    m_path = test_path();
+    const std::vector<char> bytes{
+        small_gif_bytes(&m_extensions, extensions_first, ignored_blocks, trailing_extensions)};
+    std::ofstream output{m_path, std::ios::binary | std::ios::trunc};
+    output.write(bytes.data(), static_cast<std::streamsize>(bytes.size()));
+    if (!output)
+    {
+        throw std::runtime_error("Can't write small metadata test input");
+    }
     return m_path;
 }
 
-void TestFindFractalInfo::add_main_record(const int precision, const FractalType type)
+static FractalInfo main_record(const int precision = 0, const FractalType type = FractalType::MANDEL)
 {
     FractalInfo info{};
     std::copy_n(INFO_ID, sizeof(info.info_id), info.info_id);
@@ -520,7 +541,12 @@ void TestFindFractalInfo::add_main_record(const int precision, const FractalType
     info.bf_length = static_cast<std::int16_t>(precision);
     info.iterations_old = INITIAL_MAX_ITERATIONS;
     info.iterations = INITIAL_MAX_ITERATIONS;
-    put_fractal_info(&m_extensions, info);
+    return info;
+}
+
+void TestFindFractalInfo::add_main_record(const int precision, const FractalType type)
+{
+    put_fractal_info(&m_extensions, main_record(precision, type));
 }
 
 bool TestFindFractalInfo::read_file(const std::filesystem::path &path)
@@ -1155,64 +1181,109 @@ TEST_F(TestFindFractalInfo, plainGifUsesUnsignedHeaderDimensionsAspectAndPalette
     EXPECT_EQ(0, g_dac_box[1][2]);
 }
 
-TEST_F(TestFindFractalInfo, readsUnsignedHeaderDimensionBoundaries)
+class TestHeaderDimensions : public TestFindFractalInfo, public WithParamInterface<int>
 {
-    for (const int size : {32767, 32768, 65535})
-    {
-        SCOPED_TRACE(size);
-        const std::filesystem::path path{write_small_file()};
-        {
-            std::fstream file{path, std::ios::in | std::ios::out | std::ios::binary};
-            const Byte dimensions[]{static_cast<Byte>(size), static_cast<Byte>(size >> 8), static_cast<Byte>(size),
-                static_cast<Byte>(size >> 8)};
-            file.seekp(6);
-            file.write(reinterpret_cast<const char *>(dimensions), sizeof(dimensions));
-        }
+protected:
+    void SetUp() override;
+};
 
-        ASSERT_FALSE(read_file(path));
-
-        EXPECT_EQ(size, g_file_x_dots);
-        EXPECT_EQ(size, g_file_y_dots);
-        EXPECT_EQ(size, m_info.x_dots);
-        EXPECT_EQ(size, m_info.y_dots);
-    }
+void TestHeaderDimensions::SetUp()
+{
+    write_small_file();
+    const int size{GetParam()};
+    std::fstream file{m_path, std::ios::in | std::ios::out | std::ios::binary};
+    const Byte dimensions[]{
+        static_cast<Byte>(size), static_cast<Byte>(size >> 8), static_cast<Byte>(size), static_cast<Byte>(size >> 8)};
+    file.seekp(6);
+    file.write(reinterpret_cast<const char *>(dimensions), sizeof(dimensions));
 }
 
-TEST_F(TestFindFractalInfo, invalidHeaderOrMissingFileReportsFailure)
+TEST_P(TestHeaderDimensions, readsUnsignedDimensions)
 {
-    for (const int offset : {0, 6, 8})
-    {
-        SCOPED_TRACE(offset);
-        const std::filesystem::path path{write_small_file()};
-        {
-            std::fstream file{path, std::ios::in | std::ios::out | std::ios::binary};
-            file.seekp(offset);
-            file.put(0);
-        }
+    ASSERT_FALSE(read_file(m_path));
 
-        EXPECT_TRUE(read_file(path));
-        EXPECT_TRUE(std::filesystem::remove(path));
-    }
+    EXPECT_EQ(GetParam(), g_file_x_dots);
+    EXPECT_EQ(GetParam(), g_file_y_dots);
+    EXPECT_EQ(GetParam(), m_info.x_dots);
+    EXPECT_EQ(GetParam(), m_info.y_dots);
+}
+
+INSTANTIATE_TEST_SUITE_P(UnsignedBoundaries, TestHeaderDimensions, Values(32767, 32768, 65535),
+    [](const TestParamInfo<int> &info) { return "Size" + std::to_string(info.param); });
+
+class TestInvalidGifHeader : public TestFindFractalInfo, public WithParamInterface<int>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestInvalidGifHeader::SetUp()
+{
+    write_small_file();
+    std::fstream file{m_path, std::ios::in | std::ios::out | std::ios::binary};
+    file.seekp(GetParam());
+    file.put(0);
+}
+
+TEST_P(TestInvalidGifHeader, reportsFailureAndClosesInput)
+{
+    EXPECT_TRUE(read_file(m_path));
+    EXPECT_TRUE(std::filesystem::remove(m_path));
+}
+
+INSTANTIATE_TEST_SUITE_P(HeaderOffsets, TestInvalidGifHeader, Values(0, 6, 8),
+    [](const TestParamInfo<int> &info) { return "Offset" + std::to_string(info.param); });
+
+TEST_F(TestFindFractalInfo, missingFileReportsFailure)
+{
+    m_path = test_path();
+    ASSERT_FALSE(std::filesystem::exists(m_path));
+
     EXPECT_TRUE(read_file(m_path));
 }
 
-TEST_F(TestFindFractalInfo, truncatedFilesReportFailureAndCloseAtEveryByteBoundary)
+static std::vector<char> metadata_gif_bytes()
+{
+    const std::unique_ptr<GifFileType, void (*)(GifFileType *)> metadata{new GifFileType{}, [](GifFileType *gif)
+        {
+            GifFreeExtensions(&gif->ExtensionBlockCount, &gif->ExtensionBlocks);
+            delete gif;
+        }};
+    put_fractal_info(metadata.get(), main_record());
+    return small_gif_bytes(metadata.get());
+}
+
+class TestTruncatedGifMetadata : public TestFindFractalInfo, public WithParamInterface<size_t>
+{
+protected:
+    void SetUp() override;
+
+    std::vector<char> m_bytes;
+};
+
+void TestTruncatedGifMetadata::SetUp()
+{
+    m_bytes = metadata_gif_bytes();
+    ASSERT_LT(GetParam(), m_bytes.size());
+    m_path = test_path();
+    std::ofstream output{m_path, std::ios::binary | std::ios::trunc};
+    output.write(m_bytes.data(), static_cast<std::streamsize>(GetParam()));
+    ASSERT_TRUE(output);
+}
+
+TEST_P(TestTruncatedGifMetadata, reportsFailureAndClosesInput)
+{
+    EXPECT_TRUE(read_file(m_path));
+    EXPECT_TRUE(std::filesystem::remove(m_path));
+}
+
+INSTANTIATE_TEST_SUITE_P(ByteCutoffs, TestTruncatedGifMetadata, Range<size_t>(0, metadata_gif_bytes().size()),
+    [](const TestParamInfo<size_t> &info) { return "Bytes" + std::to_string(info.param); });
+
+TEST_F(TestFindFractalInfo, completeMetadataFileIsAccepted)
 {
     add_main_record();
-    const std::filesystem::path path{write_small_file()};
-    std::ifstream input{path, std::ios::binary};
-    const std::vector<char> bytes{std::istreambuf_iterator<char>{input}, std::istreambuf_iterator<char>{}};
-    input.close();
-    for (std::size_t size = 0; size < bytes.size(); ++size)
-    {
-        SCOPED_TRACE(size);
-        {
-            std::ofstream output{path, std::ios::binary | std::ios::trunc};
-            output.write(bytes.data(), static_cast<std::streamsize>(size));
-        }
-        EXPECT_TRUE(read_file(path));
-        EXPECT_TRUE(std::filesystem::remove(path));
-    }
+
     EXPECT_FALSE(read_file(write_small_file()));
 }
 
