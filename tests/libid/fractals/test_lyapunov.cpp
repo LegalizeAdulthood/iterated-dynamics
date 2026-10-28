@@ -107,47 +107,67 @@ INSTANTIATE_TEST_SUITE_P(Compatibility, TestLegacyLyapunovColor,
     testing::Values(LegacyLyapunovColorInput{"DefaultInside", 1, 0}, LegacyLyapunovColorInput{"ExplicitInside", 2, 2}),
     [](const testing::TestParamInfo<LegacyLyapunovColorInput> &info) { return info.param.name; });
 
-TEST_F(TestLyapunovSetup, numericInsideNeedsNoWarning)
+struct LyapunovInsideInput
 {
-    Lyapunov lyapunov;
+    const char *name;
+    int version;
+    ColorMethod method;
+    int normalized_color;
+    bool warning;
+    bool exact_warning;
+};
 
-    EXPECT_TRUE(lyapunov.resume().empty());
-    EXPECT_TRUE(lyapunov_per_image());
+class TestLyapunovInsideInput : public TestLyapunovSetup, public testing::WithParamInterface<LyapunovInsideInput>
+{
+protected:
+    void SetUp() override;
+    void expect_warnings(const std::vector<std::string> &warnings);
+};
 
-    EXPECT_EQ(ColorMethod::COLOR, g_inside_method);
-    EXPECT_EQ(5, g_inside_color);
+void TestLyapunovInsideInput::SetUp()
+{
+    g_version = parse_legacy_version(GetParam().version);
+    g_inside_method = GetParam().method;
 }
 
-TEST_F(TestLyapunovSetup, unsupportedInsideReturnsWarningWithoutUI)
+void TestLyapunovInsideInput::expect_warnings(const std::vector<std::string> &warnings)
 {
-    for (const ColorMethod method : {ColorMethod::ITER, ColorMethod::BOF60, ColorMethod::EPS_CROSS})
+    EXPECT_EQ(GetParam().warning, !warnings.empty());
+    if (GetParam().exact_warning)
     {
-        Lyapunov lyapunov;
-        g_inside_method = method;
-
         EXPECT_EQ(
             (std::vector<std::string>{"Sorry, inside options other than inside=nnn are not supported by the lyapunov"}),
-            lyapunov.resume());
-        EXPECT_EQ(method, g_inside_method);
-        EXPECT_TRUE(lyapunov_per_image());
-
-        EXPECT_EQ(ColorMethod::COLOR, g_inside_method);
-        EXPECT_EQ(1, g_inside_color);
+            warnings);
     }
 }
 
-TEST_F(TestLyapunovSetup, legacyUnsupportedInsideStillFallsBackToOne)
+TEST_P(TestLyapunovInsideInput, resumeReportsWarningsWithoutNormalizingInside)
 {
-    g_version = parse_legacy_version(1730);
-    g_inside_method = ColorMethod::BOF60;
     Lyapunov lyapunov;
 
-    EXPECT_FALSE(lyapunov.resume().empty());
+    expect_warnings(lyapunov.resume());
+
+    EXPECT_EQ(GetParam().method, g_inside_method);
+}
+
+TEST_P(TestLyapunovInsideInput, perImageNormalizesInside)
+{
+    Lyapunov lyapunov;
+    expect_warnings(lyapunov.resume());
+
     EXPECT_TRUE(lyapunov_per_image());
 
     EXPECT_EQ(ColorMethod::COLOR, g_inside_method);
-    EXPECT_EQ(1, g_inside_color);
+    EXPECT_EQ(GetParam().normalized_color, g_inside_color);
 }
+
+const LyapunovInsideInput LYAPUNOV_INSIDE_INPUTS[]{{"Numeric", 2000, ColorMethod::COLOR, 5, false, false},
+    {"Iter", 2000, ColorMethod::ITER, 1, true, true}, {"Bof60", 2000, ColorMethod::BOF60, 1, true, true},
+    {"EpsCross", 2000, ColorMethod::EPS_CROSS, 1, true, true},
+    {"LegacyUnsupported", 1730, ColorMethod::BOF60, 1, true, false}};
+
+INSTANTIATE_TEST_SUITE_P(InsideInputs, TestLyapunovInsideInput, testing::ValuesIn(LYAPUNOV_INSIDE_INPUTS),
+    [](const testing::TestParamInfo<LyapunovInsideInput> &info) { return info.param.name; });
 
 TEST_F(TestLyapunovSetup, correctedInsideDoesNotRepeatWarning)
 {
