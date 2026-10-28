@@ -801,7 +801,66 @@ TEST_F(TestPerturbationPixels, failedInitializationReleasesStorageAndPreservesTh
     EXPECT_EQ(1, m_engine.reference_count());
 }
 
-class TestPerturbationBailout : public TestPerturbationPixels, public WithParamInterface<BFMathType>
+struct PerturbationBailoutInput
+{
+    std::string name;
+    BFMathType math;
+    double imag;
+    Bailout bailout;
+    double limit;
+};
+
+void PrintTo(const PerturbationBailoutInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<PerturbationBailoutInput> perturbation_bailout_inputs()
+{
+    struct MathMode
+    {
+        const char *name;
+        BFMathType value;
+    };
+
+    struct BailoutMetric
+    {
+        const char *name;
+        Bailout value;
+    };
+
+    struct Threshold
+    {
+        const char *name;
+        double value;
+    };
+
+    std::vector<PerturbationBailoutInput> inputs;
+    for (const MathMode &math :
+        {MathMode{"Double", BFMathType::NONE}, {"BigNum", BFMathType::BIG_NUM}, {"BigFloat", BFMathType::BIG_FLT}})
+    {
+        for (const double imag : {-1.0, 1.0})
+        {
+            const std::array<double, 7> metrics{5.0, 4.0, 1.0, 4.0, 1.0, 9.0, imag < 0.0 ? 1.0 : 9.0};
+            for (const BailoutMetric &bailout : {BailoutMetric{"Mod", Bailout::MOD}, {"Real", Bailout::REAL},
+                     {"Imaginary", Bailout::IMAG}, {"Or", Bailout::OR}, {"And", Bailout::AND},
+                     {"Manhattan", Bailout::MANH}, {"ManhattanReal", Bailout::MANR}})
+            {
+                const double metric{metrics[static_cast<std::size_t>(bailout.value)]};
+                for (const Threshold &threshold : {Threshold{"Below", std::nextafter(metric, 0.0)}, {"At", metric},
+                         {"Above", std::nextafter(metric, std::numeric_limits<double>::infinity())}})
+                {
+                    inputs.push_back({std::string{math.name} + (imag < 0.0 ? "_NegativeImag_" : "_PositiveImag_") +
+                            bailout.name + "_" + threshold.name,
+                        math.value, imag, bailout.value, threshold.value});
+                }
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestPerturbationBailout : public TestPerturbationPixels, public WithParamInterface<PerturbationBailoutInput>
 {
 protected:
     void SetUp() override;
@@ -816,106 +875,91 @@ protected:
 void TestPerturbationBailout::SetUp()
 {
     TestPerturbationPixels::SetUp();
-    if (GetParam() != BFMathType::NONE)
+    if (GetParam().math != BFMathType::NONE)
     {
         const ValueSaver saved_type{
-            g_fractal_type, GetParam() == BFMathType::BIG_NUM ? FractalType::MANDEL : FractalType::MANDEL_Z_POWER};
+            g_fractal_type, GetParam().math == BFMathType::BIG_NUM ? FractalType::MANDEL : FractalType::MANDEL_Z_POWER};
         init_bf_dec(60);
         m_big_float = true;
     }
-    ASSERT_EQ(GetParam(), g_bf_math);
+    ASSERT_EQ(GetParam().math, g_bf_math);
     g_max_iterations = 4;
 }
 
 TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
 {
-    for (const double imag : {-1.0, 1.0})
+    const PerturbationBailoutInput &input{GetParam()};
+    g_bailout_test = input.bailout;
+    set_bailout_formula(input.bailout);
+    m_engine.finish();
+    g_magnitude_limit = input.limit;
+    g_init = {2.0, input.imag};
+    g_old_z = {};
+    g_temp_sqr_x = g_temp_sqr_y = 0.0;
+    if (input.math == BFMathType::BIG_NUM)
     {
-        SCOPED_TRACE(imag);
-        const std::array<double, 7> metrics{5.0, 4.0, 1.0, 4.0, 1.0, 9.0, imag < 0.0 ? 1.0 : 9.0};
-        for (const Bailout test :
-            {Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
+        float_to_bn(g_param_z_bn.x, 2.0);
+        float_to_bn(g_param_z_bn.y, input.imag);
+        clear_bn(g_old_z_bn.x);
+        clear_bn(g_old_z_bn.y);
+        square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
+        square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+    }
+    else if (input.math == BFMathType::BIG_FLT)
+    {
+        float_to_bf(g_param_z_bf.x, 2.0);
+        float_to_bf(g_param_z_bf.y, input.imag);
+        clear_bf(g_old_z_bf.x);
+        clear_bf(g_old_z_bf.y);
+        square_bf(g_tmp_sqr_x_bf, g_old_z_bf.x);
+        square_bf(g_tmp_sqr_y_bf, g_old_z_bf.y);
+    }
+    std::vector<DComplex> expected;
+    bool escaped{};
+    for (int iteration = 0; iteration < g_max_iterations && !escaped; ++iteration)
+    {
+        switch (input.math)
         {
-            SCOPED_TRACE(static_cast<int>(test));
-            g_bailout_test = test;
-            set_bailout_formula(test);
-            const double metric{metrics[static_cast<std::size_t>(test)]};
-            for (const double limit :
-                {std::nextafter(metric, 0.0), metric, std::nextafter(metric, std::numeric_limits<double>::infinity())})
-            {
-                SCOPED_TRACE(limit);
-                m_engine.finish();
-                g_magnitude_limit = limit;
-                g_init = {2.0, imag};
-                g_old_z = {};
-                g_temp_sqr_x = g_temp_sqr_y = 0.0;
-                if (GetParam() == BFMathType::BIG_NUM)
-                {
-                    float_to_bn(g_param_z_bn.x, 2.0);
-                    float_to_bn(g_param_z_bn.y, imag);
-                    clear_bn(g_old_z_bn.x);
-                    clear_bn(g_old_z_bn.y);
-                    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
-                    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
-                }
-                else if (GetParam() == BFMathType::BIG_FLT)
-                {
-                    float_to_bf(g_param_z_bf.x, 2.0);
-                    float_to_bf(g_param_z_bf.y, imag);
-                    clear_bf(g_old_z_bf.x);
-                    clear_bf(g_old_z_bf.y);
-                    square_bf(g_tmp_sqr_x_bf, g_old_z_bf.x);
-                    square_bf(g_tmp_sqr_y_bf, g_old_z_bf.y);
-                }
-                std::vector<DComplex> expected;
-                bool escaped{};
-                for (int iteration = 0; iteration < g_max_iterations && !escaped; ++iteration)
-                {
-                    switch (GetParam())
-                    {
-                    case BFMathType::NONE:
-                        escaped = julia_orbit() != 0;
-                        expected.push_back(g_new_z);
-                        break;
-                    case BFMathType::BIG_NUM:
-                        escaped = julia_orbit_bn() != 0;
-                        expected.push_back(cmplx_bn_to_float(g_new_z_bn));
-                        break;
-                    case BFMathType::BIG_FLT:
-                        escaped = julia_orbit_bf() != 0;
-                        expected.push_back(cmplx_bf_to_float(g_new_z_bf));
-                        break;
-                    }
-                }
-                ASSERT_TRUE(escaped);
-                if (GetParam() == BFMathType::NONE)
-                {
-                    m_engine.initialize_frame({}, {}, {});
-                }
-                else
-                {
-                    const BFComplex center{m_engine.initialize_frame_bf({}, {})};
-                    clear_bf(center.x);
-                    clear_bf(center.y);
-                }
-                m_engine.begin_orbit({2.0, imag}, {}, 0);
-                for (std::size_t i = 0; i < expected.size(); ++i)
-                {
-                    SCOPED_TRACE(i);
-                    const bool done{m_engine.iterate_orbit()};
-                    EXPECT_EQ(i + 1, m_engine.orbit_iteration());
-                    EXPECT_DOUBLE_EQ(expected[i].x, m_engine.orbit_value().real());
-                    EXPECT_DOUBLE_EQ(expected[i].y, m_engine.orbit_value().imag());
-                    EXPECT_EQ(i + 1 == expected.size(), m_engine.orbit_escaped());
-                    EXPECT_EQ(i + 1 == expected.size(), done);
-                }
-            }
+        case BFMathType::NONE:
+            escaped = julia_orbit() != 0;
+            expected.push_back(g_new_z);
+            break;
+        case BFMathType::BIG_NUM:
+            escaped = julia_orbit_bn() != 0;
+            expected.push_back(cmplx_bn_to_float(g_new_z_bn));
+            break;
+        case BFMathType::BIG_FLT:
+            escaped = julia_orbit_bf() != 0;
+            expected.push_back(cmplx_bf_to_float(g_new_z_bf));
+            break;
         }
+    }
+    ASSERT_TRUE(escaped);
+    if (input.math == BFMathType::NONE)
+    {
+        m_engine.initialize_frame({}, {}, {});
+    }
+    else
+    {
+        const BFComplex center{m_engine.initialize_frame_bf({}, {})};
+        clear_bf(center.x);
+        clear_bf(center.y);
+    }
+    m_engine.begin_orbit({2.0, input.imag}, {}, 0);
+    for (std::size_t i = 0; i < expected.size(); ++i)
+    {
+        SCOPED_TRACE(i);
+        const bool done{m_engine.iterate_orbit()};
+        EXPECT_EQ(i + 1, m_engine.orbit_iteration());
+        EXPECT_DOUBLE_EQ(expected[i].x, m_engine.orbit_value().real());
+        EXPECT_DOUBLE_EQ(expected[i].y, m_engine.orbit_value().imag());
+        EXPECT_EQ(i + 1 == expected.size(), m_engine.orbit_escaped());
+        EXPECT_EQ(i + 1 == expected.size(), done);
     }
 }
 
-INSTANTIATE_TEST_SUITE_P(
-    MathModes, TestPerturbationBailout, Values(BFMathType::NONE, BFMathType::BIG_NUM, BFMathType::BIG_FLT));
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPerturbationBailout, ValuesIn(perturbation_bailout_inputs()),
+    [](const TestParamInfo<PerturbationBailoutInput> &info) { return info.param.name; });
 
 class TestPerturbationIterations : public TestPerturbationPixels, public WithParamInterface<bool>
 {
