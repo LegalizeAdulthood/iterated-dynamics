@@ -12035,8 +12035,16 @@ TEST_F(TestPerturbationPixels, inversionCenterRetainsTheStandardSingularityBehav
     EXPECT_EQ(std::complex<double>(1.0, 1.0), s_reference_coordinates.back());
 }
 
-TEST_F(TestPerturbationPixels, invertedDeepZoomPreservesDeltasAcrossReferenceReplacement)
+class TestInvertedDeepZoom : public TestPerturbationPixels
 {
+protected:
+    void SetUp() override;
+    void initialize_reference();
+};
+
+void TestInvertedDeepZoom::SetUp()
+{
+    TestPerturbationPixels::SetUp();
     init_bf_dec(60);
     m_big_float = true;
     g_bf_math = BFMathType::BIG_FLT;
@@ -12049,22 +12057,43 @@ TEST_F(TestPerturbationPixels, invertedDeepZoomPreservesDeltasAcrossReferenceRep
     g_inversion = {3, 1.0, {1.0, 0.0}, {1.0, 1.0, 0.0}};
     m_specific.pert_ref_bf = record_reference_bf;
     m_specific.pert_pt = record_delta;
+    initialize_reference();
+}
+
+void TestInvertedDeepZoom::initialize_reference()
+{
     const BFComplex center{m_engine.initialize_frame_bf({1e-40, 0.0}, {0.0, 1e-40})};
     float_to_bf(center.x, 1.5);
     clear_bf(center.y);
+}
 
+TEST_F(TestInvertedDeepZoom, preservesInitialPreciseDisplacement)
+{
     EXPECT_EQ(1, m_engine.calculate_pixel(0, 2));
 
     ASSERT_FALSE(s_reference_coordinates.empty());
     EXPECT_NEAR(3.0, s_reference_coordinates.front().real(), 1e-14);
     EXPECT_NEAR(4e-40, s_parameter_delta.real(), 1e-52);
     EXPECT_NEAR(0.8e-40, s_parameter_delta.imag(), 1e-52);
+}
 
+class TestInvertedReferenceReplacement : public TestInvertedDeepZoom
+{
+protected:
+    void SetUp() override;
+};
+
+void TestInvertedReferenceReplacement::SetUp()
+{
+    TestInvertedDeepZoom::SetUp();
+    ASSERT_EQ(1, m_engine.calculate_pixel(0, 2));
     m_engine.finish();
-    const BFComplex replacement_center{m_engine.initialize_frame_bf({1e-40, 0.0}, {0.0, 1e-40})};
-    float_to_bf(replacement_center.x, 1.5);
-    clear_bf(replacement_center.y);
+    initialize_reference();
     m_engine.set_glitch_tolerance(2.0);
+}
+
+TEST_F(TestInvertedReferenceReplacement, preservesGeometryAcrossOrderedReplacements)
+{
     int references{1};
     for (const Point2i &point : {Point2i{0, 2}, Point2i{WIDTH - 1, 2}, Point2i{0, 2}})
     {
