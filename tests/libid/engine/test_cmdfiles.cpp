@@ -682,6 +682,16 @@ static fs::path par_path(const char *filename)
     return fs::path{ID_TEST_DATA_DIR} / ID_TEST_PAR_SUBDIR / filename;
 }
 
+static std::string parameter_test_name()
+{
+    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
+    std::string name{std::string{info->test_suite_name()} + '_' + info->name()};
+    std::replace(name.begin(), name.end(), '/', '_');
+    std::transform(name.begin(), name.end(), name.begin(),
+        [](const unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+    return name;
+}
+
 class TestGeneratedParameterFile : public TestCommandMakePar
 {
 protected:
@@ -695,12 +705,7 @@ protected:
 void TestGeneratedParameterFile::SetUp()
 {
     TestCommandMakePar::SetUp();
-    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
-    std::string name{std::string{info->test_suite_name()} + '_' + info->name()};
-    std::replace(name.begin(), name.end(), '/', '_');
-    std::transform(name.begin(), name.end(), name.begin(),
-        [](const unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
-    const std::string filename{"generated-" + name + ".par"};
+    const std::string filename{"generated-" + parameter_test_name() + ".par"};
     m_output = par_path(filename.c_str());
     fs::create_directories(m_output.parent_path());
     fs::remove(m_output);
@@ -968,7 +973,7 @@ void TestCommandMakeParView::TearDown()
 
 std::string TestCommandMakeParView::make_par_for_image(const int width, const int height, const float aspect_ratio)
 {
-    const std::string name{UnitTest::GetInstance()->current_test_info()->name()};
+    const std::string name{parameter_test_name()};
     m_image_path = par_path((name + ".gif").c_str());
     m_parameter_path = par_path((name + ".par").c_str());
     fs::remove(m_image_path);
@@ -1005,83 +1010,102 @@ std::string TestCommandMakeParView::make_par_for_image(const int width, const in
     return read_file_contents(m_parameter_path);
 }
 
-TEST_F(TestCommandMakeParView, makeParRetainsAutomaticReducedView)
+struct SavedViewportInput
 {
-    const std::string text{make_par_for_image(200, 150, 0.75f)};
+    const char *name;
+    int width;
+    int height;
+    float aspect;
+    const char *text;
+    std::optional<std::pair<int, int>> logical_screen;
+};
 
-    EXPECT_THAT(text, HasSubstr(" viewwindows=4/0.75/no/0/0"));
-    EXPECT_EQ(200, g_logical_screen.x_dots);
-    EXPECT_EQ(150, g_logical_screen.y_dots);
+void PrintTo(const SavedViewportInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestCommandMakeParView, makeParRetainsExplicitReducedViewDimensions)
+class TestSavedViewport : public TestCommandMakeParView, public WithParamInterface<SavedViewportInput>
 {
-    const std::string text{make_par_for_image(201, 150, 0.75f)};
+};
 
-    EXPECT_THAT(text, HasSubstr(" viewwindows=4.2/0.75/no/201/150"));
+TEST_P(TestSavedViewport, retainsReducedViewParameters)
+{
+    const SavedViewportInput &input{GetParam()};
+
+    const std::string text{make_par_for_image(input.width, input.height, input.aspect)};
+
+    EXPECT_THAT(text, HasSubstr(input.text));
+    if (input.logical_screen)
+    {
+        EXPECT_EQ(input.logical_screen->first, g_logical_screen.x_dots);
+        EXPECT_EQ(input.logical_screen->second, g_logical_screen.y_dots);
+    }
 }
 
-TEST_F(TestCommandMakeParView, makeParRetainsReducedViewAspectRatio)
-{
-    const std::string text{make_par_for_image(200, 100, 0.5f)};
+INSTANTIATE_TEST_SUITE_P(Viewports, TestSavedViewport,
+    Values(
+        SavedViewportInput{"Automatic", 200, 150, 0.75f, " viewwindows=4/0.75/no/0/0", std::pair<int, int>{200, 150}},
+        SavedViewportInput{"Explicit", 201, 150, 0.75f, " viewwindows=4.2/0.75/no/201/150", std::nullopt},
+        SavedViewportInput{"Aspect", 200, 100, 0.5f, " viewwindows=4/0.5/no/0/0", std::nullopt}),
+    [](const TestParamInfo<SavedViewportInput> &info) { return info.param.name; });
 
-    EXPECT_THAT(text, HasSubstr(" viewwindows=4/0.5/no/0/0"));
+struct SavedVideoKeyInput
+{
+    const char *name;
+    int width;
+    int height;
+    int binding;
+    int active_key;
+    bool clear_reserved_key;
+    const char *comment;
+};
+
+void PrintTo(const SavedVideoKeyInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestCommandMakeParView, makeParExpandsSelectedVideoKeyAtStartup)
+class TestSavedVideoKey : public TestCommandMakeParView, public WithParamInterface<SavedVideoKeyInput>
 {
+protected:
+    void SetUp() override;
+
+    ValueSaver<int> m_saved_reserved_key{g_video_mode_keys[MAX_VIDEO_MODES - 1]};
+};
+
+void TestSavedVideoKey::SetUp()
+{
+    TestCommandMakeParView::SetUp();
+    const SavedVideoKeyInput &input{GetParam()};
+    g_video_table[0].x_dots = input.width;
+    g_video_table[0].y_dots = input.height;
+    g_video_mode_keys[0] = input.binding;
+    g_video_entry_key = input.active_key;
     g_par_comment[0] = "video:$vidkey$!";
+    if (input.clear_reserved_key)
+    {
+        g_video_mode_keys[MAX_VIDEO_MODES - 1] = 0;
+    }
+}
+
+TEST_P(TestSavedVideoKey, expandsSelectedModeWithoutChangingActiveVideo)
+{
     const VideoInfo active_video{g_video_entry};
 
     const std::string text{make_par_for_image(200, 150, 0.75f)};
 
-    EXPECT_THAT(text, HasSubstr("; video:F6!"));
-    EXPECT_EQ(0, g_video_entry_key);
+    EXPECT_THAT(text, HasSubstr(GetParam().comment));
+    EXPECT_EQ(GetParam().active_key, g_video_entry_key);
     EXPECT_EQ(active_video, g_video_entry);
 }
 
-TEST_F(TestCommandMakeParView, makeParExpandsSelectedVideoKeyInsteadOfActiveKey)
-{
-    g_video_entry_key = ID_KEY_F2;
-    g_par_comment[0] = "video:$vidkey$!";
-    const VideoInfo active_video{g_video_entry};
-
-    const std::string text{make_par_for_image(200, 150, 0.75f)};
-
-    EXPECT_THAT(text, HasSubstr("; video:F6!"));
-    EXPECT_EQ(ID_KEY_F2, g_video_entry_key);
-    EXPECT_EQ(active_video, g_video_entry);
-}
-
-TEST_F(TestCommandMakeParView, makeParWithUnboundVideoModeDoesNotUseActiveKey)
-{
-    ValueSaver reserved_key{g_video_mode_keys[MAX_VIDEO_MODES - 1], 0};
-    g_video_mode_keys[0] = 0;
-    g_video_entry_key = ID_KEY_F2;
-    g_par_comment[0] = "video:$vidkey$!";
-    const VideoInfo active_video{g_video_entry};
-
-    const std::string text{make_par_for_image(200, 150, 0.75f)};
-
-    EXPECT_THAT(text, HasSubstr("; video:!"));
-    EXPECT_EQ(ID_KEY_F2, g_video_entry_key);
-    EXPECT_EQ(active_video, g_video_entry);
-}
-
-TEST_F(TestCommandMakeParView, makeParWithoutMatchingVideoModeDoesNotUseActiveKey)
-{
-    g_video_table[0].x_dots = 1024;
-    g_video_table[0].y_dots = 768;
-    g_video_entry_key = ID_KEY_F2;
-    g_par_comment[0] = "video:$vidkey$!";
-    const VideoInfo active_video{g_video_entry};
-
-    const std::string text{make_par_for_image(200, 150, 0.75f)};
-
-    EXPECT_THAT(text, HasSubstr("; video:!"));
-    EXPECT_EQ(ID_KEY_F2, g_video_entry_key);
-    EXPECT_EQ(active_video, g_video_entry);
-}
+INSTANTIATE_TEST_SUITE_P(Bindings, TestSavedVideoKey,
+    Values(SavedVideoKeyInput{"Startup", 800, 600, ID_KEY_F6, 0, false, "; video:F6!"},
+        SavedVideoKeyInput{"OtherActiveKey", 800, 600, ID_KEY_F6, ID_KEY_F2, false, "; video:F6!"},
+        SavedVideoKeyInput{"Unbound", 800, 600, 0, ID_KEY_F2, true, "; video:!"},
+        SavedVideoKeyInput{"NoMatch", 1024, 768, ID_KEY_F6, ID_KEY_F2, false, "; video:!"}),
+    [](const TestParamInfo<SavedVideoKeyInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandMakeParView, makeParWithoutMatchingVideoModeDoesNotInventAViewport)
 {
@@ -1095,17 +1119,61 @@ TEST_F(TestCommandMakeParView, makeParWithoutMatchingVideoModeDoesNotInventAView
     EXPECT_EQ(150, g_logical_screen.y_dots);
 }
 
-TEST_F(TestParameterCommandError, releaseIsNotResetAlias)
+struct RejectedReleaseInput
 {
-    ValueSaver saved_version{g_version, Version{1, 2, 3, 4, false}};
-    ValueSaver saved_file_version{g_file_version, Version{5, 6, 7, 8, false}};
+    const char *name;
+    const char *argument;
+    std::optional<Version> initial_version;
+    std::optional<Version> initial_file_version;
+};
 
-    exec_cmd_arg("release=1906");
+void PrintTo(const RejectedReleaseInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRejectedRelease : public TestParameterCommandError, public WithParamInterface<RejectedReleaseInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<Version> m_saved_version{g_version};
+    ValueSaver<Version> m_saved_file_version{g_file_version};
+};
+
+void TestRejectedRelease::SetUp()
+{
+    TestParameterCommand::SetUp();
+    if (GetParam().initial_version)
+    {
+        g_version = *GetParam().initial_version;
+    }
+    if (GetParam().initial_file_version)
+    {
+        g_file_version = *GetParam().initial_file_version;
+    }
+}
+
+TEST_P(TestRejectedRelease, rejectsArgumentWithoutChangingProvidedVersions)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ((Version{1, 2, 3, 4, false}), g_version);
-    EXPECT_EQ((Version{5, 6, 7, 8, false}), g_file_version);
+    if (GetParam().initial_version)
+    {
+        EXPECT_EQ(*GetParam().initial_version, g_version);
+    }
+    if (GetParam().initial_file_version)
+    {
+        EXPECT_EQ(*GetParam().initial_file_version, g_file_version);
+    }
 }
+
+INSTANTIATE_TEST_SUITE_P(Arguments, TestRejectedRelease,
+    Values(
+        RejectedReleaseInput{"NotResetAlias", "release=1906", Version{1, 2, 3, 4, false}, Version{5, 6, 7, 8, false}},
+        RejectedReleaseInput{"Unsupported", "release=100", std::nullopt, std::nullopt}),
+    [](const TestParamInfo<RejectedReleaseInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, resetVersionControlsLambdaExpBailout)
 {
@@ -4966,13 +5034,6 @@ TEST_F(TestParameterCommand, briefNo)
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_FALSE(g_brief);
-}
-
-TEST_F(TestParameterCommandError, releaseNotAllowed)
-{
-    exec_cmd_arg("release=100");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
 TEST_F(TestParameterCommand, curDirNo)
