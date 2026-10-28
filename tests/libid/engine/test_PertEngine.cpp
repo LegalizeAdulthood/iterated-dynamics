@@ -7219,65 +7219,140 @@ TEST_P(TestPotentialLogMap, usesSelectedMapWithFixedColor)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialLogMap, ValuesIn(potential_log_map_inputs()),
     [](const TestParamInfo<PotentialLogMapInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, potentialStoresRawSamplesSeparatelyFromMappedPixels)
+struct PotentialStorageInput
 {
+    std::string name;
+    bool big_float;
+    bool mapped;
+    bool retry;
+    int row;
+};
+
+void PrintTo(const PotentialStorageInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<PotentialStorageInput> potential_storage_inputs()
+{
+    std::vector<PotentialStorageInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const bool mapped : {false, true})
+        {
+            for (const bool retry : {false, true})
+            {
+                for (const int row : {0, HEIGHT - 1})
+                {
+                    inputs.push_back(
+                        {std::string{big_float ? "HighPrecision_" : "Double_"} + (mapped ? "Mapped_" : "Unmapped_") +
+                                (retry ? "Retry_" : "NoRetry_") + (row == 0 ? "TopRow" : "BottomRow"),
+                            big_float, mapped, retry, row});
+                }
+            }
+        }
+    }
+    return inputs;
+}
+
+class PotentialStorageTest : public PerturbationPotentialTest, public WithParamInterface<PotentialStorageInput>
+{
+public:
+    PotentialStorageTest();
+
+protected:
+    void SetUp() override;
+};
+
+PotentialStorageTest::PotentialStorageTest() :
+    PerturbationPotentialTest{GetParam().big_float}
+{
+}
+
+void PotentialStorageTest::SetUp()
+{
+    PerturbationPotentialTest::SetUp();
     init_memory();
     std::uint64_t blocks{};
     ASSERT_TRUE(disk_video_memory_blocks(WIDTH, HEIGHT * 2, 256, 0, blocks));
     start_disk_storage(WIDTH, HEIGHT * 2, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, blocks, MemoryLocation::MEMORY));
-    ValueSaver saved_row{g_row};
     g_potential = {{23.0, 10.0, 4.0}, true, true};
     g_outside_method = ColorMethod::COLOR;
     g_outside_color = 6;
     g_decomp[0] = 16;
     g_biomorph = 9;
     g_log_map_table_max_size = 128;
-    for (const bool mapped : {false, true})
+    g_log_map_flag = GetParam().mapped ? 1 : 0;
+    if (GetParam().mapped)
     {
-        SCOPED_TRACE(mapped);
-        g_log_map_flag = mapped ? 1 : 0;
-        if (!mapped)
-        {
-            g_log_map_table.clear();
-        }
-        else
-        {
-            g_log_map_table.assign(129, 99);
-            g_log_map_table[20] = 31;
-            g_log_map_table[7] = 37;
-            g_log_map_table[2] = 12;
-        }
-        for (const bool retry : {false, true})
-        {
-            SCOPED_TRACE(retry);
-            m_engine.set_glitch_tolerance(retry ? 8.0 : DEFAULT_PERTURBATION_TOLERANCE);
-            for (const int row : {0, HEIGHT - 1})
-            {
-                SCOPED_TRACE(row);
-                g_row = row;
-                g_inside_method = ColorMethod::COLOR;
-                compare_pixel({0.5, 0.5}, 128, retry ? 0.125 : 0.0);
-                EXPECT_EQ(mapped ? 31 : 20, g_color);
-                EXPECT_EQ(20, read_disk_pixel(g_col, g_row));
-                EXPECT_GT(read_disk_pixel(g_col, g_row + HEIGHT), 0);
-                EXPECT_LT(read_disk_pixel(g_col, g_row + HEIGHT), 255);
-                if (retry)
-                {
-                    EXPECT_GT(m_engine.reference_count(), 1);
-                }
-                compare_pixel({0.125, 0.0625}, 128);
-                EXPECT_EQ(mapped ? 37 : 7, g_color);
-                EXPECT_EQ(7, read_disk_pixel(g_col, g_row));
-                EXPECT_EQ(0, read_disk_pixel(g_col, g_row + HEIGHT));
-                g_inside_method = ColorMethod::EPS_CROSS;
-                compare_pixel({}, 128, 0.0, 1);
-                EXPECT_EQ(mapped ? 12 : 2, g_color);
-                EXPECT_EQ(255, read_disk_pixel(g_col, g_row));
-                EXPECT_EQ(255, read_disk_pixel(g_col, g_row + HEIGHT));
-            }
-        }
+        g_log_map_table.assign(129, 99);
+        g_log_map_table[20] = 31;
+        g_log_map_table[7] = 37;
+        g_log_map_table[2] = 12;
+    }
+    else
+    {
+        g_log_map_table.clear();
+    }
+    m_engine.set_glitch_tolerance(GetParam().retry ? 8.0 : DEFAULT_PERTURBATION_TOLERANCE);
+    g_row = GetParam().row;
+    g_inside_method = ColorMethod::COLOR;
+}
+
+class TestPotentialExteriorStorage : public PotentialStorageTest
+{
+};
+
+TEST_P(TestPotentialExteriorStorage, storesRawPotentialSeparatelyFromMappedPixel)
+{
+    compare_pixel({0.5, 0.5}, 128, GetParam().retry ? 0.125 : 0.0);
+
+    EXPECT_EQ(GetParam().mapped ? 31 : 20, g_color);
+    EXPECT_EQ(20, read_disk_pixel(g_col, g_row));
+    EXPECT_GT(read_disk_pixel(g_col, g_row + HEIGHT), 0);
+    EXPECT_LT(read_disk_pixel(g_col, g_row + HEIGHT), 255);
+    if (GetParam().retry)
+    {
+        EXPECT_GT(m_engine.reference_count(), 1);
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialExteriorStorage, ValuesIn(potential_storage_inputs()),
+    [](const TestParamInfo<PotentialStorageInput> &info) { return info.param.name; });
+
+class TestPotentialInsideStorage : public PotentialStorageTest
+{
+};
+
+TEST_P(TestPotentialInsideStorage, storesUnmappedFixedInsideColor)
+{
+    compare_pixel({0.125, 0.0625}, 128);
+
+    EXPECT_EQ(GetParam().mapped ? 37 : 7, g_color);
+    EXPECT_EQ(7, read_disk_pixel(g_col, g_row));
+    EXPECT_EQ(0, read_disk_pixel(g_col, g_row + HEIGHT));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialInsideStorage, ValuesIn(potential_storage_inputs()),
+    [](const TestParamInfo<PotentialStorageInput> &info) { return info.param.name; });
+
+class TestPotentialEpsilonStorage : public PotentialStorageTest
+{
+};
+
+TEST_P(TestPotentialEpsilonStorage, doesNotWritePotentialForEpsilonCrossExit)
+{
+    g_inside_method = ColorMethod::EPS_CROSS;
+
+    compare_pixel({}, 128, 0.0, 1);
+
+    EXPECT_EQ(GetParam().mapped ? 12 : 2, g_color);
+    EXPECT_EQ(255, read_disk_pixel(g_col, g_row));
+    EXPECT_EQ(255, read_disk_pixel(g_col, g_row + HEIGHT));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialEpsilonStorage, ValuesIn(potential_storage_inputs()),
+    [](const TestParamInfo<PotentialStorageInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, periodicityColorsSurviveReferenceReplacement)
 {
