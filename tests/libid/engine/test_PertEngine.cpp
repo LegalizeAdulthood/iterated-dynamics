@@ -4427,62 +4427,195 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialMapping,
         MappedColorMethodInput{"HighPrecision", true, ColorMethod::COLOR}),
     [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, logarithmicAndQuadraticMapsUseTheSharedTableAndOnTheFlyPaths)
+struct LogMapPathInput
 {
+    std::string name;
+    bool big_float;
+    Version version;
+    long flag;
+    bool calculate;
+    std::complex<double> point;
+    int iterations;
+};
+
+void PrintTo(const LogMapPathInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<LogMapPathInput> log_map_path_inputs()
+{
+    struct CompatibilityVersion
+    {
+        const char *name;
+        Version version;
+    };
+
+    struct Flag
+    {
+        const char *name;
+        long value;
+    };
+
+    struct Sample
+    {
+        const char *name;
+        std::complex<double> point;
+        int iterations;
+    };
+
+    std::vector<LogMapPathInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const CompatibilityVersion &version : {CompatibilityVersion{"Legacy1920", parse_legacy_version(1920)},
+                 {"Legacy1921", parse_legacy_version(1921)}, {"Legacy2001", parse_legacy_version(2001)},
+                 {"Legacy2002", parse_legacy_version(2002)}, {"Current", current_id_version()}})
+        {
+            for (const Flag &flag :
+                {Flag{"PositiveOne", 1L}, {"NegativeOne", -1L}, {"PositiveEight", 8L}, {"NegativeEight", -8L}})
+            {
+                for (const bool calculate : {false, true})
+                {
+                    for (const Sample &sample : {Sample{"Outside", {0.5, 0.0}, 4}, {"Inside", {}, 128}})
+                    {
+                        inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + version.name + "_" +
+                                flag.name + (calculate ? "_OnTheFly_" : "_Table_") + sample.name,
+                            big_float, version.version, flag.value, calculate, sample.point, sample.iterations});
+                    }
+                }
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestLogMapPaths : public PerturbationIterationTest, public WithParamInterface<LogMapPathInput>
+{
+public:
+    TestLogMapPaths();
+
+protected:
+    void SetUp() override;
+};
+
+TestLogMapPaths::TestLogMapPaths() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestLogMapPaths::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::ITER;
     g_colors = 16;
     g_and_color = 15;
     g_log_map_table_max_size = 128;
-    for (const Version version : {parse_legacy_version(1920), parse_legacy_version(1921), parse_legacy_version(2001),
-             parse_legacy_version(2002), current_id_version()})
-    {
-        SCOPED_TRACE(to_string(version));
-        g_version = version;
-        for (const long flag : {1L, -1L, 8L, -8L})
-        {
-            SCOPED_TRACE(flag);
-            g_log_map_flag = flag;
-            for (const bool calculate : {false, true})
-            {
-                SCOPED_TRACE(calculate);
-                g_log_map_calculate = calculate;
-                g_log_map_fly_calculate = calculate ? LogMapCalculate::ON_THE_FLY : LogMapCalculate::USE_LOG_TABLE;
-                g_log_map_table.assign(calculate ? 0 : 129, 0);
-                setup_log_table();
-                compare_pixel({0.5, 0.0}, 128);
-                EXPECT_EQ(standard_palette_color(log_table_calc(4)), g_color);
-                EXPECT_EQ(4, g_real_color_iter);
-                compare_pixel({}, 128);
-                EXPECT_EQ(standard_palette_color(log_table_calc(128)), g_color);
-                EXPECT_EQ(128, g_real_color_iter);
-            }
-        }
-    }
+    g_version = GetParam().version;
+    g_log_map_flag = GetParam().flag;
+    g_log_map_calculate = GetParam().calculate;
+    g_log_map_fly_calculate = GetParam().calculate ? LogMapCalculate::ON_THE_FLY : LogMapCalculate::USE_LOG_TABLE;
+    g_log_map_table.assign(GetParam().calculate ? 0 : 129, 0);
+    setup_log_table();
 }
 
-TEST_P(TestPerturbationIterations, mapsOrdinaryAndStripedIterationRanges)
+TEST_P(TestLogMapPaths, usesSharedTableOrOnTheFlyMapping)
 {
+    compare_pixel(GetParam().point, 128);
+
+    EXPECT_EQ(standard_palette_color(log_table_calc(GetParam().iterations)), g_color);
+    EXPECT_EQ(GetParam().iterations, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestLogMapPaths, ValuesIn(log_map_path_inputs()),
+    [](const TestParamInfo<LogMapPathInput> &info) { return info.param.name; });
+
+struct IterationRangeInput
+{
+    const char *name;
+    bool big_float;
+    bool striped;
+    std::complex<double> point;
+    int iterations;
+    int color;
+};
+
+void PrintTo(const IterationRangeInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestIterationRangeMapping : public PerturbationIterationTest, public WithParamInterface<IterationRangeInput>
+{
+public:
+    TestIterationRangeMapping();
+
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+private:
+    std::unique_ptr<ImageCalculation> m_calculation;
+};
+
+TestIterationRangeMapping::TestIterationRangeMapping() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestIterationRangeMapping::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::ITER;
     g_max_iterations = 128;
-    for (const bool striped : {false, true})
-    {
-        SCOPED_TRACE(striped);
-        g_iteration_ranges = striped ? std::vector<int>{-1, 2, 8, 128} : std::vector<int>{2, 5, 128};
-        g_log_map_flag = 1;
-        ImageCalculation calculation;
-        EXPECT_TRUE(calculation.start().empty());
-        EXPECT_EQ(0, g_log_map_flag);
-        compare_pixel({0.5, 0.0}, 128);
-        EXPECT_EQ(striped ? 0 : 1, g_color);
-        EXPECT_EQ(4, g_real_color_iter);
-        compare_pixel({}, 128);
-        EXPECT_EQ(2, g_color);
-        EXPECT_EQ(128, g_real_color_iter);
-    }
+    g_iteration_ranges = GetParam().striped ? std::vector<int>{-1, 2, 8, 128} : std::vector<int>{2, 5, 128};
+    g_log_map_flag = 1;
+    m_calculation = std::make_unique<ImageCalculation>();
+    EXPECT_TRUE(m_calculation->start().empty());
+    EXPECT_EQ(0, g_log_map_flag);
 }
 
-TEST_P(TestPerturbationIterations, mappedColorsSurviveReferenceReplacement)
+void TestIterationRangeMapping::TearDown()
 {
+    m_calculation.reset();
+    PerturbationIterationTest::TearDown();
+}
+
+TEST_P(TestIterationRangeMapping, mapsIterationRange)
+{
+    compare_pixel(GetParam().point, 128);
+
+    EXPECT_EQ(GetParam().color, g_color);
+    EXPECT_EQ(GetParam().iterations, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestIterationRangeMapping,
+    Values(IterationRangeInput{"DoubleOrdinaryOutside", false, false, {0.5, 0.0}, 4, 1},
+        IterationRangeInput{"DoubleOrdinaryInside", false, false, {}, 128, 2},
+        IterationRangeInput{"DoubleStripedOutside", false, true, {0.5, 0.0}, 4, 0},
+        IterationRangeInput{"DoubleStripedInside", false, true, {}, 128, 2},
+        IterationRangeInput{"HighPrecisionOrdinaryOutside", true, false, {0.5, 0.0}, 4, 1},
+        IterationRangeInput{"HighPrecisionOrdinaryInside", true, false, {}, 128, 2},
+        IterationRangeInput{"HighPrecisionStripedOutside", true, true, {0.5, 0.0}, 4, 0},
+        IterationRangeInput{"HighPrecisionStripedInside", true, true, {}, 128, 2}),
+    [](const TestParamInfo<IterationRangeInput> &info) { return info.param.name; });
+
+class TestMappedReferenceReplacement : public PerturbationIterationTest, public WithParamInterface<LogMappedSampleInput>
+{
+public:
+    TestMappedReferenceReplacement();
+
+protected:
+    void SetUp() override;
+};
+
+TestMappedReferenceReplacement::TestMappedReferenceReplacement() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestMappedReferenceReplacement::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::ITER;
     g_log_map_flag = 1;
     g_log_map_table_max_size = 128;
@@ -4490,15 +4623,23 @@ TEST_P(TestPerturbationIterations, mappedColorsSurviveReferenceReplacement)
     g_log_map_table[4] = 77;
     g_log_map_table[128] = 88;
     m_engine.set_glitch_tolerance(8.0);
-    compare_pixel({0.5, 0.5}, 128, 0.125);
-    EXPECT_EQ(77, g_color);
-    EXPECT_EQ(4, g_real_color_iter);
-    EXPECT_GT(m_engine.reference_count(), 1);
-    compare_pixel({0.125, 0.125}, 128, 0.125);
-    EXPECT_EQ(88, g_color);
-    EXPECT_EQ(128, g_real_color_iter);
+}
+
+TEST_P(TestMappedReferenceReplacement, preservesMappedColor)
+{
+    compare_pixel(GetParam().point, 128, 0.125);
+
+    EXPECT_EQ(GetParam().color, g_color);
+    EXPECT_EQ(GetParam().iterations, g_real_color_iter);
     EXPECT_GT(m_engine.reference_count(), 1);
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestMappedReferenceReplacement,
+    Values(LogMappedSampleInput{"DoubleOutside", false, {0.5, 0.5}, 4, 77},
+        LogMappedSampleInput{"DoubleInside", false, {0.125, 0.125}, 128, 88},
+        LogMappedSampleInput{"HighPrecisionOutside", true, {0.5, 0.5}, 4, 77},
+        LogMappedSampleInput{"HighPrecisionInside", true, {0.125, 0.125}, 128, 88}),
+    [](const TestParamInfo<LogMappedSampleInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, decompositionMatchesStandardSectorsAndPalettes)
 {
