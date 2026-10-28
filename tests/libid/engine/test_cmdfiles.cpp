@@ -1652,17 +1652,38 @@ TEST_F(TestParameterCommand, missingMapReturnsDiagnosticAndPreservesMapName)
     EXPECT_EQ("Could not load color map missing-palette.map", diagnostics.errors.front());
 }
 
-TEST_F(TestParameterCommand, missingPaletteStopsCommandFileWithoutLosingEarlierChangeFlags)
+class TestParameterCommandFile : public TestParameterCommand
 {
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    ValueSaver saved_iterations{g_max_iterations, 150L};
-    std::FILE *file{std::tmpfile()};
-    ASSERT_NE(nullptr, file);
-    std::fputs("test { maxiter=321 colors=@missing-command-palette.map maxiter=654 }", file);
-    std::rewind(file);
-    CommandProcessor processor{file, CmdFile::AT_AFTER_STARTUP};
+protected:
+    void SetUp() override;
+    CommandParseResult process_commands(const char *commands);
+
+private:
+    ValueSaver<Driver *> m_saved_driver{g_driver, nullptr};
+    ValueSaver<long> m_saved_iterations{g_max_iterations, 150L};
+    std::unique_ptr<std::FILE, decltype(&std::fclose)> m_file{nullptr, std::fclose};
+};
+
+void TestParameterCommandFile::SetUp()
+{
+    TestParameterCommand::SetUp();
+    m_file.reset(std::tmpfile());
+    ASSERT_NE(nullptr, m_file);
+}
+
+CommandParseResult TestParameterCommandFile::process_commands(const char *commands)
+{
+    std::fputs(commands, m_file.get());
+    std::rewind(m_file.get());
+    CommandProcessor processor{m_file.release(), CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
-    const CommandParseResult parsed{router.process(processor)};
+    return router.process(processor);
+}
+
+TEST_F(TestParameterCommandFile, missingPaletteStopsCommandFileWithoutLosingEarlierChangeFlags)
+{
+    const CommandParseResult parsed{
+        process_commands("test { maxiter=321 colors=@missing-command-palette.map maxiter=654 }")};
     const CmdArgFlags result{parsed.flags};
     const CommandDiagnostics &diagnostics{parsed.diagnostics};
 
@@ -2838,18 +2859,9 @@ TEST_F(TestParameterCommand, startupErrorPreventsLaterAction)
     EXPECT_FALSE(parsed.needs_file_entry);
 }
 
-TEST_F(TestParameterCommand, parameterSetStopsAtAction)
+TEST_F(TestParameterCommandFile, parameterSetStopsAtAction)
 {
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    ValueSaver saved_iterations{g_max_iterations, 150L};
-    std::FILE *file{std::tmpfile()};
-    ASSERT_NE(nullptr, file);
-    std::fputs("test { maxiter=321 makemig=2/3 maxiter=654 }", file);
-    std::rewind(file);
-
-    CommandProcessor processor{file, CmdFile::AT_AFTER_STARTUP};
-    const CommandRouter router;
-    const CommandParseResult parsed{router.process(processor)};
+    const CommandParseResult parsed{process_commands("test { maxiter=321 makemig=2/3 maxiter=654 }")};
 
     EXPECT_EQ(321, g_max_iterations);
     EXPECT_TRUE(bit_set(parsed.flags, CmdArgFlags::FRACTAL_PARAM));
