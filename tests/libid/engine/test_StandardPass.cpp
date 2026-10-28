@@ -650,19 +650,40 @@ void TestAutoLogMap::SetUp()
     g_dispatch = FractalDispatch{m_specific};
 }
 
-TEST_P(TestAutoLogMap, yieldPreservesTheSampleAndPerimeterOrder)
+class TestAutoLogMapYield : public TestAutoLogMap
 {
-    s_pending_result = CALC_YIELDED;
-    StandardFractal calculation;
-    calculation.resume();
+protected:
+    void SetUp() override;
+    void TearDown() override;
 
-    calculation.iterate();
+    std::optional<StandardFractal> m_calculation;
+};
+
+void TestAutoLogMapYield::SetUp()
+{
+    TestAutoLogMap::SetUp();
+    s_pending_result = CALC_YIELDED;
+    m_calculation.emplace();
+    m_calculation->resume();
+    m_calculation->iterate();
+    ASSERT_EQ(4U, s_calculated.size());
+    ASSERT_FALSE(m_calculation->done());
+}
+
+void TestAutoLogMapYield::TearDown()
+{
+    m_calculation.reset();
+    TestAutoLogMap::TearDown();
+}
+
+TEST_P(TestAutoLogMapYield, yieldPreservesTheSampleAndPerimeterOrder)
+{
+    StandardFractal &calculation{*m_calculation};
 
     ASSERT_EQ(4U, s_calculated.size());
     EXPECT_EQ(GetParam(), g_log_map_flag);
     EXPECT_EQ(10L, g_max_iterations);
     EXPECT_FALSE(calculation.done());
-    EXPECT_THROW(calculation.selected_pixel(), std::logic_error);
 
     calculation.iterate();
 
@@ -675,6 +696,14 @@ TEST_P(TestAutoLogMap, yieldPreservesTheSampleAndPerimeterOrder)
     EXPECT_EQ(m_perimeter.size() + 64, s_calculated.size());
     EXPECT_THAT(m_pixels, Each(7));
 }
+
+TEST_P(TestAutoLogMapYield, samplingRejectsSelectedPixelAccess)
+{
+    EXPECT_THROW(m_calculation->selected_pixel(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(LogMapSigns, TestAutoLogMapYield, Values(2L, -2L),
+    [](const TestParamInfo<long> &info) { return info.param > 0 ? "Positive" : "Negative"; });
 
 TEST_P(TestAutoLogMap, interruptionSavesUnfinishedSamplingForResume)
 {
@@ -976,16 +1005,50 @@ TEST_F(TestRenderLifecycle, activeCalculationCannotBeStartedAgain)
     calculation.abort();
 }
 
-class TestStandardFractalPixel : public TestStandardFractal, public WithParamInterface<PixelPassCase>
+class TestStandardFractalInstance : public TestStandardFractal
+{
+protected:
+    void TearDown() override;
+    void start_calculation(CalcMode mode);
+    void finish_calculation();
+
+    std::optional<StandardFractal> m_calculation;
+};
+
+void TestStandardFractalInstance::TearDown()
+{
+    m_calculation.reset();
+    TestStandardFractal::TearDown();
+}
+
+void TestStandardFractalInstance::start_calculation(const CalcMode mode)
+{
+    g_std_calc_mode = mode;
+    m_calculation.emplace();
+    m_calculation->resume();
+}
+
+void TestStandardFractalInstance::finish_calculation()
+{
+    for (int chunks = 0; chunks < 1000 && !m_calculation->done(); ++chunks)
+    {
+        while (m_calculation->select_pixel())
+        {
+            ASSERT_LT(s_calculated.size(), 10000U);
+            ASSERT_TRUE(m_calculation->calculate_pixel());
+        }
+    }
+    ASSERT_TRUE(m_calculation->done());
+}
+
+class TestStandardFractalPixel : public TestStandardFractalInstance, public WithParamInterface<PixelPassCase>
 {
 };
 
 TEST_P(TestStandardFractalPixel, selectedCoordinateIsObservableBeforeCalculation)
 {
-    g_std_calc_mode = GetParam().mode;
-    StandardFractal calculation;
-    calculation.resume();
-    EXPECT_THROW(calculation.calculate_pixel(), std::logic_error);
+    start_calculation(GetParam().mode);
+    StandardFractal &calculation{*m_calculation};
 
     ASSERT_TRUE(select_next(calculation));
     EXPECT_EQ((Point2i{0, 0}), calculation.selected_pixel());
@@ -996,9 +1059,20 @@ TEST_P(TestStandardFractalPixel, selectedCoordinateIsObservableBeforeCalculation
     EXPECT_EQ((Point2i{0, 0}), calculation.selected_pixel());
     EXPECT_TRUE(s_calculated.empty());
     EXPECT_EQ(0, m_plot_count);
+}
+
+TEST_P(TestStandardFractalPixel, completionUsesTheSelectedCoordinateAndAdvances)
+{
+    start_calculation(GetParam().mode);
+    StandardFractal &calculation{*m_calculation};
+    ASSERT_TRUE(select_next(calculation));
+    g_col = 99;
+    g_row = 99;
+    ASSERT_TRUE(calculation.select_pixel());
+
     ASSERT_TRUE(calculation.calculate_pixel());
+
     EXPECT_THAT(s_calculated, ElementsAre(Point2i{0, 0}));
-    EXPECT_THROW(calculation.calculate_pixel(), std::logic_error);
     ASSERT_TRUE(select_next(calculation));
     EXPECT_EQ(GetParam().next, calculation.selected_pixel());
 }
@@ -1041,25 +1115,120 @@ TEST_P(TestStandardFractalPixel, interruptedCalculationDoesNotCompleteSelectedPi
 
 TEST_P(TestStandardFractalPixel, separateOperationsCompleteTheImage)
 {
-    g_std_calc_mode = GetParam().mode;
-    StandardFractal calculation;
-    calculation.resume();
+    start_calculation(GetParam().mode);
 
-    for (int chunks = 0; chunks < 1000 && !calculation.done(); ++chunks)
-    {
-        while (calculation.select_pixel())
-        {
-            ASSERT_LT(s_calculated.size(), 10000U);
-            ASSERT_TRUE(calculation.calculate_pixel());
-        }
-    }
+    finish_calculation();
 
-    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(m_calculation->done());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_THAT(m_pixels, Each(7));
-    EXPECT_THROW(calculation.selected_pixel(), std::logic_error);
-    EXPECT_THROW(calculation.calculate_pixel(), std::logic_error);
 }
+
+enum class StandardFractalGuardState
+{
+    BEFORE_SELECTION,
+    CONSUMED,
+    IMAGE_COMPLETE,
+};
+
+struct StandardFractalGuardCase
+{
+    const char *name;
+    StandardFractalGuardState state;
+};
+
+struct StandardFractalGuardInput
+{
+    std::string name;
+    PixelPassCase pass;
+    StandardFractalGuardState state;
+};
+
+void PrintTo(const StandardFractalGuardInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+static std::vector<StandardFractalGuardInput> fractal_guard_inputs(
+    const std::initializer_list<StandardFractalGuardCase> states)
+{
+    std::vector<StandardFractalGuardInput> inputs;
+    for (const PixelPassCase &pass : PIXEL_PASSES)
+    {
+        for (const StandardFractalGuardCase &state : states)
+        {
+            inputs.push_back({std::string{pass.name} + "_" + state.name, pass, state.state});
+        }
+    }
+    return inputs;
+}
+
+class TestStandardFractalPixelGuard : public TestStandardFractalInstance,
+                                      public WithParamInterface<StandardFractalGuardInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStandardFractalPixelGuard::SetUp()
+{
+    TestStandardFractalInstance::SetUp();
+    const StandardFractalGuardInput &input{GetParam()};
+    start_calculation(input.pass.mode);
+    if (input.state == StandardFractalGuardState::CONSUMED)
+    {
+        ASSERT_TRUE(select_next(*m_calculation));
+        g_col = 99;
+        g_row = 99;
+        ASSERT_TRUE(m_calculation->select_pixel());
+        ASSERT_TRUE(m_calculation->calculate_pixel());
+    }
+    else if (input.state == StandardFractalGuardState::IMAGE_COMPLETE)
+    {
+        ASSERT_NO_FATAL_FAILURE(finish_calculation());
+    }
+}
+
+class TestStandardFractalPixelCalculationGuard : public TestStandardFractalPixelGuard
+{
+};
+
+TEST_P(TestStandardFractalPixelCalculationGuard, rejectionPreservesCalculationState)
+{
+    EXPECT_THROW(m_calculation->calculate_pixel(), std::logic_error);
+
+    if (GetParam().state == StandardFractalGuardState::IMAGE_COMPLETE)
+    {
+        EXPECT_TRUE(m_calculation->done());
+    }
+    else
+    {
+        ASSERT_TRUE(select_next(*m_calculation));
+        const Point2i expected{
+            GetParam().state == StandardFractalGuardState::CONSUMED ? GetParam().pass.next : Point2i{0, 0}};
+        EXPECT_EQ(expected, m_calculation->selected_pixel());
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(PixelStates, TestStandardFractalPixelCalculationGuard,
+    ValuesIn(fractal_guard_inputs({{"BeforeSelection", StandardFractalGuardState::BEFORE_SELECTION},
+        {"Consumed", StandardFractalGuardState::CONSUMED},
+        {"ImageComplete", StandardFractalGuardState::IMAGE_COMPLETE}})),
+    [](const TestParamInfo<StandardFractalGuardInput> &info) { return info.param.name; });
+
+class TestStandardFractalPixelAccessGuard : public TestStandardFractalPixelGuard
+{
+};
+
+TEST_P(TestStandardFractalPixelAccessGuard, completedImageRejectsSelectedPixelAccess)
+{
+    EXPECT_THROW(m_calculation->selected_pixel(), std::logic_error);
+    EXPECT_TRUE(m_calculation->done());
+}
+
+INSTANTIATE_TEST_SUITE_P(PixelStates, TestStandardFractalPixelAccessGuard,
+    ValuesIn(fractal_guard_inputs({{"ImageComplete", StandardFractalGuardState::IMAGE_COMPLETE}})),
+    [](const TestParamInfo<StandardFractalGuardInput> &info) { return info.param.name; });
 
 INSTANTIATE_TEST_SUITE_P(PixelPasses, TestStandardFractalPixel, ValuesIn(PIXEL_PASSES),
     [](const TestParamInfo<PixelPassCase> &info) -> std::string { return info.param.name; });
