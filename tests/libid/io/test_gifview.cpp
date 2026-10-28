@@ -28,7 +28,10 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <algorithm>
 #include <filesystem>
+#include <memory>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -112,26 +115,46 @@ private:
 
 } // namespace
 
-TEST(TestLegacy13GifPalette, detectsQuantizedPaletteInVersionRange)
+struct GifPaletteDetectionInput
 {
-    Byte palette[256][3]{};
-    palette[0][0] = 252;
-    palette[0][1] = 168;
-    palette[0][2] = 84;
+    const char *name;
+    Version version;
+    std::array<Byte, 3> color;
+    int count;
+    bool expected;
+};
 
-    EXPECT_FALSE(backwards_id1_3_palette_needed(Version{1, 3, 0, 0, false}, palette, 1));
-    EXPECT_TRUE(backwards_id1_3_palette_needed(Version{1, 3, 1, 0, false}, palette, 1));
-    EXPECT_TRUE(backwards_id1_3_palette_needed(Version{1, 3, 2, 9, false}, palette, 1));
-    EXPECT_FALSE(backwards_id1_3_palette_needed(Version{1, 3, 3, 0, false}, palette, 1));
+void PrintTo(const GifPaletteDetectionInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
 
-TEST(TestLegacy13GifPalette, rejectsNonQuantizedPaletteInVersionRange)
+class TestLegacy13GifPaletteDetection : public TestWithParam<GifPaletteDetectionInput>
 {
-    Byte palette[256][3]{};
-    palette[0][0] = 253;
+protected:
+    void SetUp() override;
 
-    EXPECT_FALSE(backwards_id1_3_palette_needed(Version{1, 3, 1, 0, false}, palette, 1));
+    Byte m_palette[256][3]{};
+};
+
+void TestLegacy13GifPaletteDetection::SetUp()
+{
+    Test::SetUp();
+    std::copy(GetParam().color.begin(), GetParam().color.end(), m_palette[0]);
 }
+
+TEST_P(TestLegacy13GifPaletteDetection, detectsPaletteCompatibility)
+{
+    EXPECT_EQ(GetParam().expected, backwards_id1_3_palette_needed(GetParam().version, m_palette, GetParam().count));
+}
+
+INSTANTIATE_TEST_SUITE_P(DetectionInputs, TestLegacy13GifPaletteDetection,
+    Values(GifPaletteDetectionInput{"BeforeRange", Version{1, 3, 0, 0, false}, {252, 168, 84}, 1, false},
+        GifPaletteDetectionInput{"RangeStart", Version{1, 3, 1, 0, false}, {252, 168, 84}, 1, true},
+        GifPaletteDetectionInput{"WithinRange", Version{1, 3, 2, 9, false}, {252, 168, 84}, 1, true},
+        GifPaletteDetectionInput{"AfterRange", Version{1, 3, 3, 0, false}, {252, 168, 84}, 1, false},
+        GifPaletteDetectionInput{"NonQuantized", Version{1, 3, 1, 0, false}, {253, 0, 0}, 1, false}),
+    [](const TestParamInfo<GifPaletteDetectionInput> &info) { return info.param.name; });
 
 TEST(TestLegacy13GifPalette, expandsQuantizedPaletteToFullRange)
 {
@@ -155,119 +178,131 @@ TEST(TestLegacy13GifPalette, expandsQuantizedPaletteToFullRange)
     EXPECT_EQ(130, palette[1][2]);
 }
 
-class TestGifViewLineWidth : public TestWithParam<int>
+class TestGifViewRestore : public Test
 {
+protected:
+    void SetUp() override;
+    void create_gif(int width, int left = 0, int top = 0);
+    void expect_no_input();
+
+    MockDriver m_driver;
+    std::unique_ptr<TestGifOutputFile> m_gif;
+
+private:
+    ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
+    ValueSaver<std::filesystem::path> m_read_filename{g_read_filename};
+    ValueSaver<OutLine> m_out_line{g_out_line, out_line};
+    ValueSaver<bool> m_read_color{g_read_color, true};
+    ValueSaver<ColorState> m_color_state{g_color_state, ColorState::DEFAULT_MAP};
+    ValueSaver<Display3DMode> m_display_3d{g_display_3d, Display3DMode::NONE};
+    ValueSaver<bool> m_map_set{g_map_set, false};
+    ValueSaver<int> m_colors{g_colors, 256};
+    ValueSaver<bool> m_dither_flag{g_dither_flag, false};
+    ValueSaver<bool> m_potential_16bit{g_potential.store_16bit, false};
+    ValueSaver<int> m_skip_x_dots{g_skip_x_dots, 0};
+    ValueSaver<int> m_skip_y_dots{g_skip_y_dots, 0};
+    ValueSaver<CalcStatus> m_calc_status{g_calc_status, CalcStatus::COMPLETED};
+    ValueSaver<bool> m_busy{g_busy, false};
+    ValueSaver<LogicalScreen> m_screen{g_logical_screen};
+    ValueSaver<int> m_row_count{g_row_count};
+    ValueSaver<std::vector<int>> m_line_lengths{s_line_lengths};
+    ValueSaver<std::vector<std::array<int, 3>>> m_sound_pixels{s_sound_pixels};
 };
+
+void TestGifViewRestore::SetUp()
+{
+    Test::SetUp();
+    s_line_lengths.clear();
+    s_sound_pixels.clear();
+    EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
+}
+
+void TestGifViewRestore::create_gif(const int width, const int left, const int top)
+{
+    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
+    std::string name{std::string{info->test_suite_name()} + "-" + info->name()};
+    std::replace(name.begin(), name.end(), '/', '-');
+    m_gif = std::make_unique<TestGifOutputFile>(
+        std::filesystem::temp_directory_path() / ("id-gifview-" + name + ".gif"), width, left, top);
+    g_read_filename = m_gif->path();
+}
+
+void TestGifViewRestore::expect_no_input()
+{
+    ON_CALL(m_driver, key_pressed()).WillByDefault(Return('x'));
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+}
+
+class TestGifViewLineWidth : public TestGifViewRestore, public WithParamInterface<int>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGifViewLineWidth::SetUp()
+{
+    TestGifViewRestore::SetUp();
+    create_gif(GetParam());
+}
 
 TEST_P(TestGifViewLineWidth, positiveCallbackResultPreservesFullWidthAndSuccessfulRestore)
 {
-    const int width{GetParam()};
-    const TestGifOutputFile gif{
-        std::filesystem::temp_directory_path() / ("id-gifview-" + std::to_string(width) + ".gif"), width};
-    MockDriver driver;
-    ValueSaver<Driver *> saved_driver{g_driver, &driver};
-    ValueSaver saved_read_filename{g_read_filename, gif.path()};
-    ValueSaver<int (*)(Byte *, int)> saved_out_line{g_out_line, capture_positive_out_line};
-    ValueSaver saved_read_color{g_read_color, true};
-    ValueSaver saved_color_state{g_color_state, ColorState::DEFAULT_MAP};
-    ValueSaver saved_display_3d{g_display_3d, Display3DMode::NONE};
-    ValueSaver saved_map_set{g_map_set, false};
-    ValueSaver saved_colors{g_colors, 256};
-    ValueSaver saved_dither_flag{g_dither_flag, false};
-    ValueSaver saved_potential_16bit{g_potential.store_16bit, false};
-    ValueSaver saved_skip_x_dots{g_skip_x_dots, 0};
-    ValueSaver saved_skip_y_dots{g_skip_y_dots, 0};
-    ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
-    ValueSaver saved_busy{g_busy, false};
-    s_line_lengths.clear();
-    EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
-    ON_CALL(driver, key_pressed()).WillByDefault(Return('x'));
-    EXPECT_CALL(driver, key_pressed()).Times(0);
-    EXPECT_CALL(driver, get_key()).Times(0);
+    g_out_line = capture_positive_out_line;
+    expect_no_input();
 
     EXPECT_EQ(0, restore_image());
 
     ASSERT_EQ(1, s_line_lengths.size());
-    EXPECT_EQ(width, s_line_lengths[0]);
+    EXPECT_EQ(GetParam(), s_line_lengths[0]);
     EXPECT_FALSE(g_busy);
-    EXPECT_TRUE(std::filesystem::remove(gif.path()));
+    EXPECT_TRUE(std::filesystem::remove(m_gif->path()));
 }
 
 TEST_P(TestGifViewLineWidth, callbackFailureClosesFileAndClearsBusyState)
 {
-    const int width{GetParam()};
-    const TestGifOutputFile gif{
-        std::filesystem::temp_directory_path() / ("id-gifview-error-" + std::to_string(width) + ".gif"), width};
-    MockDriver driver;
-    ValueSaver<Driver *> saved_driver{g_driver, &driver};
-    ValueSaver saved_read_filename{g_read_filename, gif.path()};
-    ValueSaver<decltype(g_out_line)> saved_out_line{g_out_line, [](Byte *, int)
-        {
-            EXPECT_TRUE(g_busy);
-            return -73;
-        }};
-    ValueSaver saved_read_color{g_read_color, true};
-    ValueSaver saved_color_state{g_color_state, ColorState::DEFAULT_MAP};
-    ValueSaver saved_display_3d{g_display_3d, Display3DMode::NONE};
-    ValueSaver saved_map_set{g_map_set, false};
-    ValueSaver saved_colors{g_colors, 256};
-    ValueSaver saved_dither_flag{g_dither_flag, false};
-    ValueSaver saved_potential_16bit{g_potential.store_16bit, false};
-    ValueSaver saved_skip_x_dots{g_skip_x_dots, 0};
-    ValueSaver saved_skip_y_dots{g_skip_y_dots, 0};
-    ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
-    ValueSaver saved_busy{g_busy, false};
-    EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
+    g_out_line = [](Byte *, int)
+    {
+        EXPECT_TRUE(g_busy);
+        return -73;
+    };
 
     EXPECT_EQ(-73, restore_image());
 
     EXPECT_FALSE(g_busy);
-    EXPECT_TRUE(std::filesystem::remove(gif.path()));
+    EXPECT_TRUE(std::filesystem::remove(m_gif->path()));
 }
 
 INSTANTIATE_TEST_SUITE_P(Widths, TestGifViewLineWidth, Values(640, MAX_PIXELS, MAX_PIXELS + 1, GIF_MAX_PIXELS));
 
-class TestGifViewSound : public TestWithParam<bool>
+class TestGifViewSound : public TestGifViewRestore, public WithParamInterface<bool>
 {
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<int> m_sound_flag{g_sound_flag, SOUNDFLAG_X};
+    ValueSaver<decltype(g_put_color)> m_put_color{g_put_color, capture_sound_pixel};
+    ValueSaver<int> m_orbit_delay{g_orbit_delay, 0};
+    ValueSaver<int> m_orbit_flags{g_orbit_save_flags, 0};
+    ValueSaver<int> m_base_hertz{g_base_hertz, 220};
 };
+
+void TestGifViewSound::SetUp()
+{
+    TestGifViewRestore::SetUp();
+    create_gif(8);
+    g_logical_screen = LogicalScreen{4, 2, 0, 0, 3.0, 1.0};
+}
 
 TEST_P(TestGifViewSound, restoresDecodedPixelsAcrossDisplayRowsWithoutPollingInput)
 {
     const bool supported{GetParam()};
-    const TestGifOutputFile gif{
-        std::filesystem::temp_directory_path() / (supported ? "id-gifview-sound-on.gif" : "id-gifview-sound-off.gif"),
-        8};
-    MockDriver driver;
-    ValueSaver<Driver *> saved_driver{g_driver, &driver};
-    ValueSaver saved_read_filename{g_read_filename, gif.path()};
-    ValueSaver<decltype(g_out_line)> saved_out_line{g_out_line, out_line};
-    ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_X};
-    ValueSaver<decltype(g_put_color)> saved_put_color{g_put_color, capture_sound_pixel};
-    ValueSaver saved_screen{g_logical_screen, LogicalScreen{4, 2, 0, 0, 3.0, 1.0}};
-    ValueSaver saved_row_count{g_row_count};
-    ValueSaver saved_read_color{g_read_color, true};
-    ValueSaver saved_color_state{g_color_state, ColorState::DEFAULT_MAP};
-    ValueSaver saved_display_3d{g_display_3d, Display3DMode::NONE};
-    ValueSaver saved_map_set{g_map_set, false};
-    ValueSaver saved_colors{g_colors, 256};
-    ValueSaver saved_dither_flag{g_dither_flag, false};
-    ValueSaver saved_potential_16bit{g_potential.store_16bit, false};
-    ValueSaver saved_skip_x_dots{g_skip_x_dots, 0};
-    ValueSaver saved_skip_y_dots{g_skip_y_dots, 0};
-    ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
-    ValueSaver saved_busy{g_busy, false};
-    ValueSaver saved_orbit_delay{g_orbit_delay, 0};
-    ValueSaver saved_orbit_flags{g_orbit_save_flags, 0};
-    ValueSaver saved_base_hertz{g_base_hertz, 220};
-    s_sound_pixels.clear();
-    EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
-    EXPECT_CALL(driver, sound_on(220)).Times(8).WillRepeatedly(Return(supported));
-    EXPECT_CALL(driver, sound_off()).Times(supported ? 8 : 0);
-    EXPECT_CALL(driver, mute()).Times(0);
-    EXPECT_CALL(driver, delay(_)).Times(0);
-    ON_CALL(driver, key_pressed()).WillByDefault(Return('x'));
-    EXPECT_CALL(driver, key_pressed()).Times(0);
-    EXPECT_CALL(driver, get_key()).Times(0);
+    EXPECT_CALL(m_driver, sound_on(220)).Times(8).WillRepeatedly(Return(supported));
+    EXPECT_CALL(m_driver, sound_off()).Times(supported ? 8 : 0);
+    EXPECT_CALL(m_driver, mute()).Times(0);
+    EXPECT_CALL(m_driver, delay(_)).Times(0);
+    expect_no_input();
 
     EXPECT_EQ(0, restore_image());
 
@@ -279,51 +314,49 @@ TEST_P(TestGifViewSound, restoresDecodedPixelsAcrossDisplayRowsWithoutPollingInp
 
 INSTANTIATE_TEST_SUITE_P(DriverSound, TestGifViewSound, Bool());
 
-class TestGifViewMigs : public TestWithParam<bool>
+class TestGifViewMigs : public TestGifViewRestore, public WithParamInterface<bool>
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+private:
+    ValueSaver<int> m_screen_x{g_screen_x_dots, 8};
+    ValueSaver<int> m_screen_y{g_screen_y_dots, 8};
 };
+
+void TestGifViewMigs::SetUp()
+{
+    TestGifViewRestore::SetUp();
+    const bool skip_x{GetParam()};
+    create_gif(4, 3, 4);
+    g_logical_screen = LogicalScreen{8, 8, 0, 0, 1.0, 1.0};
+    g_skip_x_dots = skip_x ? 1 : 0;
+    g_skip_y_dots = skip_x ? 0 : 1;
+    set_normal_dot();
+}
+
+void TestGifViewMigs::TearDown()
+{
+    set_null_video();
+    TestGifViewRestore::TearDown();
+}
 
 TEST_P(TestGifViewMigs, reducesImageOffsetsAlongTheirOwnAxisWithoutPollingInput)
 {
     const bool skip_x{GetParam()};
-    const TestGifOutputFile gif{
-        std::filesystem::temp_directory_path() / (skip_x ? "id-gifview-mig-x.gif" : "id-gifview-mig-y.gif"), 4, 3, 4};
-    MockDriver driver;
-    ValueSaver<Driver *> saved_driver{g_driver, &driver};
-    ValueSaver saved_read_filename{g_read_filename, gif.path()};
-    ValueSaver<decltype(g_out_line)> saved_out_line{g_out_line, out_line};
-    ValueSaver saved_screen{g_logical_screen, LogicalScreen{8, 8, 0, 0, 1.0, 1.0}};
-    ValueSaver saved_screen_x{g_screen_x_dots, 8};
-    ValueSaver saved_screen_y{g_screen_y_dots, 8};
-    ValueSaver saved_row_count{g_row_count};
-    ValueSaver saved_read_color{g_read_color, true};
-    ValueSaver saved_color_state{g_color_state, ColorState::DEFAULT_MAP};
-    ValueSaver saved_display_3d{g_display_3d, Display3DMode::NONE};
-    ValueSaver saved_map_set{g_map_set, false};
-    ValueSaver saved_colors{g_colors, 256};
-    ValueSaver saved_dither_flag{g_dither_flag, false};
-    ValueSaver saved_potential_16bit{g_potential.store_16bit, false};
-    ValueSaver saved_skip_x_dots{g_skip_x_dots, skip_x ? 1 : 0};
-    ValueSaver saved_skip_y_dots{g_skip_y_dots, skip_x ? 0 : 1};
-    ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
-    ValueSaver saved_busy{g_busy, false};
-    set_normal_dot();
-    ON_CALL(driver, key_pressed()).WillByDefault(Return('x'));
-    EXPECT_CALL(driver, key_pressed()).Times(0);
-    EXPECT_CALL(driver, get_key()).Times(0);
-    EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
+    expect_no_input();
     const int left{skip_x ? 1 : 3};
     const int top{skip_x ? 4 : 2};
     const int width{skip_x ? 2 : 4};
     for (int col = left; col < left + width; ++col)
     {
-        EXPECT_CALL(driver, write_pixel(col, top, 0));
+        EXPECT_CALL(m_driver, write_pixel(col, top, 0));
     }
 
     EXPECT_EQ(0, restore_image());
 
     EXPECT_EQ(1, g_row_count);
-    set_null_video();
 }
 
 INSTANTIATE_TEST_SUITE_P(SkipAxis, TestGifViewMigs, Bool());
