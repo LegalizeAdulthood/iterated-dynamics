@@ -30,8 +30,12 @@
 
 #include <algorithm>
 #include <array>
+#include <cctype>
 #include <filesystem>
+#include <ostream>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -185,58 +189,97 @@ INSTANTIATE_TEST_SUITE_P(Flags, TestNumTrigFns,
         NumTrigFnsParam{FractalFlags::BAIL_TEST, 0}, NumTrigFnsParam{FractalFlags::BF_MATH, 0},
         NumTrigFnsParam{FractalFlags::LD_MATH, 0}, NumTrigFnsParam{FractalFlags::PERTURB, 0}));
 
-TEST(TestFractalSpecific, perturbationFlagRequiresPerturbationFunctions)
+struct FractalTableInput
 {
+    int index;
+    const FractalSpecific *specific;
+    bool backlink;
+};
+
+void PrintTo(const FractalTableInput &input, std::ostream *out)
+{
+    *out << input.specific->name << "_" << static_cast<int>(input.specific->type);
+}
+
+using FractalEntryPredicate = bool (*)(const FractalSpecific &);
+
+std::vector<FractalTableInput> fractal_table_inputs(FractalEntryPredicate include)
+{
+    std::vector<FractalTableInput> inputs;
     for (int i = 0; i < g_num_fractal_types; ++i)
     {
-        if (!bit_set(g_fractal_specific[i].flags, FractalFlags::PERTURB))
+        const FractalSpecific &specific{g_fractal_specific[i]};
+        if (include(specific))
         {
-            continue;
+            // Inverse Julia has a Mandelbrot link without a reciprocal link.
+            inputs.push_back({i, &specific, specific.type != FractalType::INVERSE_JULIA});
         }
+    }
+    return inputs;
+}
 
-        EXPECT_NE(nullptr, g_fractal_specific[i].pert_ref)
-            << "Fractal type " << g_fractal_specific[i].name << " (" << i
-            << ") has no perturbation reference function";
-        EXPECT_NE(nullptr, g_fractal_specific[i].pert_ref_bf)
-            << "Fractal type " << g_fractal_specific[i].name << " (" << i
-            << ") has no perturbation bigfloat reference function";
-        EXPECT_NE(nullptr, g_fractal_specific[i].pert_pt)
-            << "Fractal type " << g_fractal_specific[i].name << " (" << i
-            << ") has no perturbation point function";
+std::string fractal_table_case_name(const TestParamInfo<FractalTableInput> &info)
+{
+    std::string name;
+    for (const unsigned char ch : std::string{info.param.specific->name})
+    {
+        name += std::isalnum(ch) ? static_cast<char>(ch) : '_';
+    }
+    return name + "_Type" + std::to_string(static_cast<int>(info.param.specific->type));
+}
+
+class TestPerturbationTableEntry : public TestWithParam<FractalTableInput>
+{
+};
+
+TEST_P(TestPerturbationTableEntry, flagRequiresPerturbationFunctions)
+{
+    const FractalSpecific &specific{*GetParam().specific};
+    EXPECT_NE(nullptr, specific.pert_ref)
+        << "Fractal type " << specific.name << " (" << GetParam().index << ") has no perturbation reference function";
+    EXPECT_NE(nullptr, specific.pert_ref_bf) << "Fractal type " << specific.name << " (" << GetParam().index
+                                             << ") has no perturbation bigfloat reference function";
+    EXPECT_NE(nullptr, specific.pert_pt) << "Fractal type " << specific.name << " (" << GetParam().index
+                                         << ") has no perturbation point function";
+}
+
+INSTANTIATE_TEST_SUITE_P(Entries, TestPerturbationTableEntry,
+    ValuesIn(fractal_table_inputs(
+        [](const FractalSpecific &specific) { return bit_set(specific.flags, FractalFlags::PERTURB); })),
+    fractal_table_case_name);
+
+class TestFractalTableEntry : public TestWithParam<FractalTableInput>
+{
+};
+
+TEST_P(TestFractalTableEntry, typeMatchesLookup)
+{
+    const FractalSpecific &from{*GetParam().specific};
+    EXPECT_EQ(&from, get_fractal_specific(from.type)) << "index " << GetParam().index << ", " << from.name;
+}
+
+TEST_P(TestFractalTableEntry, seededDispatchMatchesDefaults)
+{
+    const FractalSpecific &from{*GetParam().specific};
+    const FractalDispatch dispatch{FractalDispatch(from)};
+
+    EXPECT_FALSE(dispatch.requires_orbit_calc()) << "index " << GetParam().index << ", " << from.name;
+    EXPECT_EQ(from.orbit_calc, dispatch.orbit_calc()) << "index " << GetParam().index << ", " << from.name;
+    EXPECT_EQ(from.per_pixel, dispatch.per_pixel()) << "index " << GetParam().index << ", " << from.name;
+    EXPECT_EQ(from.per_image, dispatch.per_image()) << "index " << GetParam().index << ", " << from.name;
+    EXPECT_EQ(from.calc_type != nullptr, dispatch.has_calc_type()) << "index " << GetParam().index << ", " << from.name;
+    if (from.calc_type != nullptr)
+    {
+        EXPECT_EQ(from.calc_type, dispatch.calc_type()) << "index " << GetParam().index << ", " << from.name;
+    }
+    else
+    {
+        EXPECT_THROW(dispatch.calc_type(), std::runtime_error) << "index " << GetParam().index << ", " << from.name;
     }
 }
 
-TEST(TestFractalSpecific, typeMatchesGet)
-{
-    for (int i = 0; i < g_num_fractal_types; ++i)
-    {
-        const FractalSpecific &from{g_fractal_specific[i]};
-        EXPECT_EQ(&from, get_fractal_specific(from.type)) << "index " << i << ", " << g_fractal_specific[i].name;
-    }
-}
-
-TEST(TestFractalDispatch, seededDispatchMatchesDefaults)
-{
-    for (int i = 0; i < g_num_fractal_types; ++i)
-    {
-        const FractalSpecific &from{g_fractal_specific[i]};
-        const FractalDispatch dispatch{FractalDispatch(from)};
-
-        EXPECT_FALSE(dispatch.requires_orbit_calc()) << "index " << i << ", " << from.name;
-        EXPECT_EQ(from.orbit_calc, dispatch.orbit_calc()) << "index " << i << ", " << from.name;
-        EXPECT_EQ(from.per_pixel, dispatch.per_pixel()) << "index " << i << ", " << from.name;
-        EXPECT_EQ(from.per_image, dispatch.per_image()) << "index " << i << ", " << from.name;
-        EXPECT_EQ(from.calc_type != nullptr, dispatch.has_calc_type()) << "index " << i << ", " << from.name;
-        if (from.calc_type != nullptr)
-        {
-            EXPECT_EQ(from.calc_type, dispatch.calc_type()) << "index " << i << ", " << from.name;
-        }
-        else
-        {
-            EXPECT_THROW(dispatch.calc_type(), std::runtime_error) << "index " << i << ", " << from.name;
-        }
-    }
-}
+INSTANTIATE_TEST_SUITE_P(Entries, TestFractalTableEntry,
+    ValuesIn(fractal_table_inputs([](const FractalSpecific &) { return true; })), fractal_table_case_name);
 
 TEST(TestFractalDispatch, setFractalTypeSeedsFunctionsAndInvalidatesCalcType)
 {
@@ -573,38 +616,46 @@ TEST(TestFractalDispatch, julibrotSetupLeavesTableEntries)
     expect_table_functions(FractalType::JULIA_Z_POWER, orbit_table);
 }
 
-TEST(TestFractalSpecific, toJuliaExists)
+class TestJuliaTableLink : public TestWithParam<FractalTableInput>
 {
-    for (int i = 0; i < g_num_fractal_types; ++i)
+};
+
+TEST_P(TestJuliaTableLink, existsAndLinksBackToMandelbrot)
+{
+    const FractalSpecific &from{*GetParam().specific};
+    const FractalType julia_type{from.to_julia};
+
+    EXPECT_NO_THROW(get_fractal_specific(julia_type)) << "index " << GetParam().index << " (" << from.name << ")";
+    EXPECT_EQ(from.type, get_fractal_specific(julia_type)->to_mandel)
+        << "index " << GetParam().index << " (" << from.name << ") mismatched Julia/Mandelbrot toggle";
+}
+
+INSTANTIATE_TEST_SUITE_P(Entries, TestJuliaTableLink,
+    ValuesIn(fractal_table_inputs(
+        [](const FractalSpecific &specific) { return specific.to_julia != FractalType::NO_FRACTAL; })),
+    fractal_table_case_name);
+
+class TestMandelTableLink : public TestWithParam<FractalTableInput>
+{
+};
+
+TEST_P(TestMandelTableLink, existsWithRequiredJuliaBacklink)
+{
+    const FractalSpecific &from{*GetParam().specific};
+    const FractalType mandel_type{from.to_mandel};
+
+    EXPECT_NO_THROW(get_fractal_specific(mandel_type)) << "index " << GetParam().index << " (" << from.name << ")";
+    if (GetParam().backlink)
     {
-        const FractalSpecific &from{g_fractal_specific[i]};
-        if (const FractalType julia_type = from.to_julia; julia_type != FractalType::NO_FRACTAL)
-        {
-            EXPECT_NO_THROW(get_fractal_specific(julia_type)) << "index " << i << " (" << from.name << ")";
-            EXPECT_EQ(from.type, get_fractal_specific(julia_type)->to_mandel)
-                << "index " << i << " (" << from.name << ") mismatched Julia/Mandelbrot toggle";
-        }
+        EXPECT_EQ(from.type, get_fractal_specific(mandel_type)->to_julia)
+            << "index " << GetParam().index << " (" << from.name << ") mismatched Julia/Mandelbrot toggle";
     }
 }
 
-TEST(TestFractalSpecific, toMandelbrotExists)
-{
-    for (int i = 0; i < g_num_fractal_types; ++i)
-    {
-        const FractalSpecific &from{g_fractal_specific[i]};
-        if (const FractalType mandel_type = from.to_mandel; mandel_type != FractalType::NO_FRACTAL)
-        {
-            EXPECT_NO_THROW(get_fractal_specific(mandel_type)) << "index " << i << " (" << from.name << ")";
-            // type=inverse_julia is a special case;
-            // it has a link to Mandelbrot, but doesn't have a link back.
-            if (from.type != FractalType::INVERSE_JULIA)
-            {
-                EXPECT_EQ(from.type, get_fractal_specific(mandel_type)->to_julia)
-                    << "index " << i << " (" << from.name << ") mismatched Julia/Mandelbrot toggle";
-            }
-        }
-    }
-}
+INSTANTIATE_TEST_SUITE_P(Entries, TestMandelTableLink,
+    ValuesIn(fractal_table_inputs(
+        [](const FractalSpecific &specific) { return specific.to_mandel != FractalType::NO_FRACTAL; })),
+    fractal_table_case_name);
 
 std::ostream &operator<<(std::ostream &str, const FractalSpecific &value)
 {

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <fractals/check_orbit_name.h>
 
@@ -6,6 +7,8 @@
 
 #include <gtest/gtest.h>
 
+#include <cctype>
+#include <ostream>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -15,39 +18,49 @@ using namespace id::fractals;
 namespace id::test
 {
 
-TEST(TestCheckOrbitName, julibrotNames)
+struct OrbitNameInput
 {
-    std::vector<std::string> names;
-    for (int i = 0; i < g_num_fractal_types; ++i)
-    {
-        if (bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB))
-        {
-            names.emplace_back(g_fractal_specific[i].name);
-        }
-    }
+    std::string name;
+    int type;
+    bool invalid;
+};
 
-    for (const std::string &name : names)
-    {
-        EXPECT_FALSE(check_orbit_name(name)) << name;
-    }
+void PrintTo(const OrbitNameInput &input, std::ostream *out)
+{
+    *out << input.name << "_" << input.type;
 }
 
-TEST(TestCheckOrbitName, notValidNames)
+std::vector<OrbitNameInput> orbit_name_inputs()
 {
-    std::vector<std::string> names;
+    std::vector<OrbitNameInput> inputs;
     for (int i = 0; i < g_num_fractal_types; ++i)
     {
-        if (!bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB))
-        {
-            names.emplace_back(g_fractal_specific[i].name);
-        }
+        const FractalSpecific &specific{g_fractal_specific[i]};
+        inputs.push_back(
+            {specific.name, static_cast<int>(specific.type), !bit_set(specific.flags, FractalFlags::OK_JB)});
     }
-
-    for (const std::string &name : names)
-    {
-        EXPECT_TRUE(check_orbit_name(name)) << name;
-    }
+    return inputs;
 }
+
+class TestOrbitNameValidity : public testing::TestWithParam<OrbitNameInput>
+{
+};
+
+TEST_P(TestOrbitNameValidity, matchesJulibrotEligibility)
+{
+    EXPECT_EQ(GetParam().invalid, check_orbit_name(GetParam().name)) << GetParam().name;
+}
+
+INSTANTIATE_TEST_SUITE_P(Names, TestOrbitNameValidity, testing::ValuesIn(orbit_name_inputs()),
+    [](const testing::TestParamInfo<OrbitNameInput> &info)
+    {
+        std::string name{info.param.invalid ? "Invalid_" : "Julibrot_"};
+        for (const unsigned char ch : info.param.name)
+        {
+            name += std::isalnum(ch) ? static_cast<char>(ch) : '_';
+        }
+        return name + "_Type" + std::to_string(info.param.type);
+    });
 
 TEST(TestCheckOrbitName, honorsStringViewLength)
 {
