@@ -101,32 +101,88 @@ TEST_P(TestDiskStorageCache, packedPixelsSurviveEvictionWithoutUi)
 INSTANTIATE_TEST_SUITE_P(Formats, TestDiskStorageCache,
     Combine(Values(2, 4, 16, 256), Values(MemoryLocation::MEMORY, MemoryLocation::DISK)));
 
-TEST_F(TestDiskStorage, queueBytesRoundTripAtCacheBoundaries)
+class TestDiskStorageQueue : public TestDiskStorage
 {
-    open(DISK_STORAGE_BLOCK_SIZE, 2, 256, MemoryLocation::MEMORY);
-    const std::array<Byte, 4> input{12, 34, 56, 78};
-    std::array<Byte, 4> output{};
+protected:
+    void SetUp() override;
 
-    EXPECT_TRUE(to_mem_disk(DISK_STORAGE_BLOCK_SIZE - 4, input.size(), input.data()));
-    EXPECT_TRUE(to_mem_disk(DISK_STORAGE_BLOCK_SIZE, input.size(), input.data()));
-    EXPECT_TRUE(from_mem_disk(DISK_STORAGE_BLOCK_SIZE - 4, output.size(), output.data()));
-    EXPECT_EQ(input, output);
-    output.fill(0);
-    EXPECT_TRUE(from_mem_disk(DISK_STORAGE_BLOCK_SIZE, output.size(), output.data()));
-    EXPECT_EQ(input, output);
-    EXPECT_FALSE(to_mem_disk(DISK_STORAGE_BLOCK_SIZE - 2, input.size(), input.data()));
-    EXPECT_FALSE(from_mem_disk(-1, output.size(), output.data()));
+    const std::array<Byte, 4> m_input{12, 34, 56, 78};
+    std::array<Byte, 4> m_output{};
+};
+
+void TestDiskStorageQueue::SetUp()
+{
+    TestDiskStorage::SetUp();
+    open(DISK_STORAGE_BLOCK_SIZE, 2, 256, MemoryLocation::MEMORY);
 }
 
-TEST_F(TestDiskStorage, progressIsDataWithoutPresentation)
+class TestDiskStorageQueueBoundary : public TestDiskStorageQueue, public WithParamInterface<int>
 {
-    open(16, 8, 256, MemoryLocation::MEMORY);
-    EXPECT_EQ(DiskStorageOperation::NONE, disk_storage_progress().operation);
+};
 
+TEST_P(TestDiskStorageQueueBoundary, bytesRoundTripAtCacheBoundary)
+{
+    EXPECT_TRUE(to_mem_disk(GetParam(), m_input.size(), m_input.data()));
+    EXPECT_TRUE(from_mem_disk(GetParam(), m_output.size(), m_output.data()));
+
+    EXPECT_EQ(m_input, m_output);
+}
+
+INSTANTIATE_TEST_SUITE_P(CacheOffsets, TestDiskStorageQueueBoundary,
+    Values(DISK_STORAGE_BLOCK_SIZE - 4, DISK_STORAGE_BLOCK_SIZE),
+    [](const TestParamInfo<int> &info) { return info.param == DISK_STORAGE_BLOCK_SIZE ? "NextBlock" : "EndOfBlock"; });
+
+TEST_F(TestDiskStorageQueue, rejectsCrossBlockWrite)
+{
+    EXPECT_FALSE(to_mem_disk(DISK_STORAGE_BLOCK_SIZE - 2, m_input.size(), m_input.data()));
+}
+
+TEST_F(TestDiskStorageQueue, rejectsNegativeOffsetRead)
+{
+    EXPECT_FALSE(from_mem_disk(-1, m_output.size(), m_output.data()));
+}
+
+class TestDiskStorageProgress : public TestDiskStorage
+{
+protected:
+    void SetUp() override;
+};
+
+void TestDiskStorageProgress::SetUp()
+{
+    TestDiskStorage::SetUp();
+    open(16, 8, 256, MemoryLocation::MEMORY);
+}
+
+TEST_F(TestDiskStorageProgress, initialProgressHasNoOperation)
+{
+    EXPECT_EQ(DiskStorageOperation::NONE, disk_storage_progress().operation);
+}
+
+TEST_F(TestDiskStorageProgress, writeProgressReportsTheWrittenRow)
+{
     write_disk_pixel(1, 3, 77);
+
     EXPECT_EQ(DiskStorageOperation::WRITE, disk_storage_progress().operation);
     EXPECT_EQ(3, disk_storage_progress().row);
+}
+
+class TestDiskStorageReadProgress : public TestDiskStorageProgress
+{
+protected:
+    void SetUp() override;
+};
+
+void TestDiskStorageReadProgress::SetUp()
+{
+    TestDiskStorageProgress::SetUp();
+    write_disk_pixel(1, 3, 77);
+}
+
+TEST_F(TestDiskStorageReadProgress, readProgressReportsTheReadRow)
+{
     EXPECT_EQ(77, read_disk_pixel(1, 3));
+
     EXPECT_EQ(DiskStorageOperation::READ, disk_storage_progress().operation);
     EXPECT_EQ(3, disk_storage_progress().row);
 }
