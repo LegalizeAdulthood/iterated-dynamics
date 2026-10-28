@@ -2108,25 +2108,42 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestFinAttractParameter,
         FinAttractParameterInput{"Yes", "finattract=y", false, true, CmdArgFlags::FRACTAL_PARAM}),
     [](const TestParamInfo<FinAttractParameterInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommandError, noBoFInvalidValue)
+struct BofParameterInput
 {
-    ValueSaver saved_bof_match_book_images{g_bof_match_book_images, true};
+    const char *name;
+    const char *argument;
+    bool expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("nobof=!", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_TRUE(g_bof_match_book_images);
+void PrintTo(const BofParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, noBoFYes)
+class TestBofParameter : public TestParameterCommand, public WithParamInterface<BofParameterInput>
 {
-    ValueSaver saved_bof_match_book_images{g_bof_match_book_images, true};
+private:
+    ValueSaver<bool> m_saved_match_book{g_bof_match_book_images, true};
+};
 
-    exec_cmd_arg("nobof=y", CmdFile::AT_CMD_LINE);
+TEST_P(TestBofParameter, setsBookImageMatching)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_FALSE(g_bof_match_book_images);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_bof_match_book_images);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBofParameter,
+    Values(BofParameterInput{"Invalid", "nobof=!", true, CmdArgFlags::BAD_ARG},
+        BofParameterInput{"Yes", "nobof=y", false, CmdArgFlags::FRACTAL_PARAM}),
+    [](const TestParamInfo<BofParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, setTrigArrayHonorsStringViewLength)
 {
