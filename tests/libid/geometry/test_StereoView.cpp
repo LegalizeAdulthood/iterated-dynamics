@@ -16,6 +16,7 @@
 
 #include <gtest/gtest.h>
 
+#include <ostream>
 #include <stdexcept>
 
 using namespace id::engine;
@@ -198,103 +199,153 @@ TEST_F(TestMonoStereoView, rejectsNextView)
     EXPECT_THROW(m_view.next_view(), std::logic_error);
 }
 
-TEST_F(TestStereoView, separateViewsSelectEachEyeAndProjection)
+class TestSeparateStereoModes : public TestStereoView, public WithParamInterface<GlassesType>
 {
-    for (const GlassesType glasses : {GlassesType::PHOTO, GlassesType::STEREO_PAIR})
+protected:
+    void SetUp() override;
+    StereoView m_view;
+};
+
+void TestSeparateStereoModes::SetUp()
+{
+    TestStereoView::SetUp();
+    g_logical_screen = {100, 60, 7, 9, 99.0, 59.0};
+    start_view(m_view, GetParam());
+}
+
+TEST_P(TestSeparateStereoModes, selectsEachEyeAndProjection)
+{
+    EXPECT_EQ(StereoImage::RED, g_which_image);
+    EXPECT_EQ(g_standard_plot, g_plot);
+    EXPECT_EQ(20, g_x_shift);
+    EXPECT_EQ(0, g_x_shift1);
+    EXPECT_EQ(5, g_xx_adjust);
+    EXPECT_EQ(-1, g_xx_adjust1);
+    EXPECT_FALSE(m_view.both_eyes());
+    EXPECT_TRUE(m_view.next_view_required());
+    if (GetParam() == GlassesType::STEREO_PAIR)
     {
-        g_logical_screen = {100, 60, 7, 9, 99.0, 59.0};
-        StereoView view;
-        start_view(view, glasses);
+        EXPECT_EQ(50, g_logical_screen.x_offset);
+    }
 
-        EXPECT_EQ(StereoImage::RED, g_which_image);
-        EXPECT_EQ(g_standard_plot, g_plot);
-        EXPECT_EQ(20, g_x_shift);
-        EXPECT_EQ(0, g_x_shift1);
-        EXPECT_EQ(5, g_xx_adjust);
-        EXPECT_EQ(-1, g_xx_adjust1);
-        EXPECT_FALSE(view.both_eyes());
-        EXPECT_TRUE(view.next_view_required());
-        if (glasses == GlassesType::STEREO_PAIR)
-        {
-            EXPECT_EQ(50, g_logical_screen.x_offset);
-        }
+    m_view.next_view();
 
-        view.next_view();
-
-        EXPECT_EQ(StereoImage::BLUE, g_which_image);
-        EXPECT_EQ(g_standard_plot, g_plot);
-        EXPECT_EQ(0, g_x_shift);
-        EXPECT_EQ(-1, g_xx_adjust);
-        EXPECT_FALSE(view.next_view_required());
-        if (glasses == GlassesType::STEREO_PAIR)
-        {
-            EXPECT_EQ(150, g_logical_screen.x_offset);
-        }
+    EXPECT_EQ(StereoImage::BLUE, g_which_image);
+    EXPECT_EQ(g_standard_plot, g_plot);
+    EXPECT_EQ(0, g_x_shift);
+    EXPECT_EQ(-1, g_xx_adjust);
+    EXPECT_FALSE(m_view.next_view_required());
+    if (GetParam() == GlassesType::STEREO_PAIR)
+    {
+        EXPECT_EQ(150, g_logical_screen.x_offset);
     }
 }
 
-TEST_F(TestStereoView, separateViewsRejectThirdView)
+TEST_P(TestSeparateStereoModes, rejectsThirdView)
 {
-    for (const GlassesType glasses : {GlassesType::PHOTO, GlassesType::STEREO_PAIR})
-    {
-        g_logical_screen = {100, 60, 7, 9, 99.0, 59.0};
-        StereoView view;
-        start_view(view, glasses);
-        view.next_view();
+    m_view.next_view();
 
-        EXPECT_THROW(view.next_view(), std::logic_error);
-    }
+    EXPECT_THROW(m_view.next_view(), std::logic_error);
 }
 
-TEST_F(TestStereoView, combinedViewsDoNotRequireAnotherEye)
-{
-    for (const GlassesType glasses : {GlassesType::ALTERNATING, GlassesType::SUPERIMPOSE})
-    {
-        StereoView view;
-        start_view(view, glasses);
+INSTANTIATE_TEST_SUITE_P(Modes, TestSeparateStereoModes, Values(GlassesType::PHOTO, GlassesType::STEREO_PAIR),
+    [](const TestParamInfo<GlassesType> &info) { return info.param == GlassesType::PHOTO ? "Photo" : "StereoPair"; });
 
-        EXPECT_EQ(StereoImage::RED, g_which_image);
-        EXPECT_NE(ignore_pixel, g_standard_plot);
-        EXPECT_EQ(g_standard_plot, g_plot);
-        EXPECT_TRUE(view.both_eyes());
-        EXPECT_FALSE(view.next_view_required());
-        g_which_image = StereoImage::BLUE;
-        EXPECT_TRUE(view.both_eyes());
-        EXPECT_FALSE(view.next_view_required());
-    }
+struct CombinedStereoInput
+{
+    const char *name;
+    GlassesType glasses;
+    StereoImage eye;
+};
+
+void PrintTo(const CombinedStereoInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestStereoView, combinedViewsRejectNextView)
+class TestCombinedStereoModes : public TestStereoView, public WithParamInterface<CombinedStereoInput>
 {
-    for (const GlassesType glasses : {GlassesType::ALTERNATING, GlassesType::SUPERIMPOSE})
-    {
-        StereoView view;
-        start_view(view, glasses);
-        g_which_image = StereoImage::BLUE;
+protected:
+    void SetUp() override;
+    StereoView m_view;
+};
 
-        EXPECT_THROW(view.next_view(), std::logic_error);
-    }
+void TestCombinedStereoModes::SetUp()
+{
+    TestStereoView::SetUp();
+    start_view(m_view, GetParam().glasses);
+    ASSERT_EQ(StereoImage::RED, g_which_image);
+    g_which_image = GetParam().eye;
 }
 
-TEST_F(TestStereoView, restorationRequiresSeparateViewsForCombinedGlasses)
+TEST_P(TestCombinedStereoModes, doesNotRequireAnotherEye)
 {
-    for (const GlassesType glasses : {GlassesType::ALTERNATING, GlassesType::SUPERIMPOSE})
-    {
-        g_glasses_type = glasses;
-        StereoView view;
-        view.start(false);
-
-        EXPECT_EQ(StereoImage::RED, g_which_image);
-        EXPECT_FALSE(view.both_eyes());
-        ASSERT_TRUE(view.next_view_required());
-
-        view.next_view();
-
-        EXPECT_EQ(StereoImage::BLUE, g_which_image);
-        EXPECT_FALSE(view.both_eyes());
-        EXPECT_FALSE(view.next_view_required());
-    }
+    EXPECT_NE(ignore_pixel, g_standard_plot);
+    EXPECT_EQ(g_standard_plot, g_plot);
+    EXPECT_TRUE(m_view.both_eyes());
+    EXPECT_FALSE(m_view.next_view_required());
 }
+
+INSTANTIATE_TEST_SUITE_P(ModesAndEyes, TestCombinedStereoModes,
+    Values(CombinedStereoInput{"Alternating_Red", GlassesType::ALTERNATING, StereoImage::RED},
+        CombinedStereoInput{"Alternating_Blue", GlassesType::ALTERNATING, StereoImage::BLUE},
+        CombinedStereoInput{"Superimposed_Red", GlassesType::SUPERIMPOSE, StereoImage::RED},
+        CombinedStereoInput{"Superimposed_Blue", GlassesType::SUPERIMPOSE, StereoImage::BLUE}),
+    [](const TestParamInfo<CombinedStereoInput> &info) { return info.param.name; });
+
+class TestCombinedStereoRejection : public TestStereoView, public WithParamInterface<GlassesType>
+{
+protected:
+    void SetUp() override;
+    StereoView m_view;
+};
+
+void TestCombinedStereoRejection::SetUp()
+{
+    TestStereoView::SetUp();
+    start_view(m_view, GetParam());
+    g_which_image = StereoImage::BLUE;
+}
+
+TEST_P(TestCombinedStereoRejection, rejectsNextView)
+{
+    EXPECT_THROW(m_view.next_view(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Modes, TestCombinedStereoRejection, Values(GlassesType::ALTERNATING, GlassesType::SUPERIMPOSE),
+    [](const TestParamInfo<GlassesType> &info)
+    { return info.param == GlassesType::ALTERNATING ? "Alternating" : "Superimposed"; });
+
+class TestRestoredStereoModes : public TestStereoView, public WithParamInterface<GlassesType>
+{
+protected:
+    void SetUp() override;
+    StereoView m_view;
+};
+
+void TestRestoredStereoModes::SetUp()
+{
+    TestStereoView::SetUp();
+    g_glasses_type = GetParam();
+    m_view.start(false);
+}
+
+TEST_P(TestRestoredStereoModes, requiresSeparateViewsForCombinedGlasses)
+{
+    EXPECT_EQ(StereoImage::RED, g_which_image);
+    EXPECT_FALSE(m_view.both_eyes());
+    ASSERT_TRUE(m_view.next_view_required());
+
+    m_view.next_view();
+
+    EXPECT_EQ(StereoImage::BLUE, g_which_image);
+    EXPECT_FALSE(m_view.both_eyes());
+    EXPECT_FALSE(m_view.next_view_required());
+}
+
+INSTANTIATE_TEST_SUITE_P(Modes, TestRestoredStereoModes, Values(GlassesType::ALTERNATING, GlassesType::SUPERIMPOSE),
+    [](const TestParamInfo<GlassesType> &info)
+    { return info.param == GlassesType::ALTERNATING ? "Alternating" : "Superimposed"; });
 
 TEST_F(TestStereoView, viewSelectionDoesNotUseTheLastPlottedEye)
 {
@@ -335,83 +386,114 @@ TEST_F(TestDisabledStereoView, rejectsNextView)
     EXPECT_THROW(m_view.next_view(), std::logic_error);
 }
 
-TEST_F(TestStereoView, finishRestoresFullScreenFromEitherEye)
+class TestFinishedStereoEye : public TestStereoView, public WithParamInterface<bool>
+{
+protected:
+    void SetUp() override;
+    StereoView m_view;
+};
+
+void TestFinishedStereoEye::SetUp()
+{
+    TestStereoView::SetUp();
+    finish_pair_view(m_view, GetParam());
+}
+
+TEST_P(TestFinishedStereoEye, restoresFullScreenAndFinishIsIdempotent)
+{
+    expect_full_screen();
+
+    m_view.finish();
+
+    expect_full_screen();
+}
+
+TEST_P(TestFinishedStereoEye, requiresNoNextView)
+{
+    EXPECT_FALSE(m_view.next_view_required());
+}
+
+TEST_P(TestFinishedStereoEye, rejectsNextView)
+{
+    EXPECT_THROW(m_view.next_view(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Eyes, TestFinishedStereoEye, Bool(),
+    [](const TestParamInfo<bool> &info) { return info.param ? "SecondEye" : "FirstEye"; });
+
+TEST_F(TestStereoView, completedViewCanRestartForAnotherEye)
 {
     StereoView view;
-    for (const bool second_eye : {false, true})
-    {
-        finish_pair_view(view, second_eye);
+    finish_pair_view(view, false);
 
-        expect_full_screen();
-        view.finish();
-        expect_full_screen();
-    }
+    finish_pair_view(view, true);
+
+    expect_full_screen();
 }
 
-TEST_F(TestStereoView, completedViewRequiresNoNextView)
+class TestFailedStereoEye : public TestStereoView, public WithParamInterface<bool>
 {
-    for (const bool second_eye : {false, true})
-    {
-        StereoView view;
-        finish_pair_view(view, second_eye);
+protected:
+    void SetUp() override;
+};
 
-        EXPECT_FALSE(view.next_view_required());
-    }
-}
-
-TEST_F(TestStereoView, completedViewRejectsNextView)
+void TestFailedStereoEye::SetUp()
 {
-    for (const bool second_eye : {false, true})
-    {
-        StereoView view;
-        finish_pair_view(view, second_eye);
-
-        EXPECT_THROW(view.next_view(), std::logic_error);
-    }
-}
-
-TEST_F(TestStereoView, failureUnwindingRestoresFullScreenFromEitherEye)
-{
+    TestStereoView::SetUp();
     g_glasses_type = GlassesType::STEREO_PAIR;
-    for (const bool second_eye : {false, true})
-    {
-        g_logical_screen = {100, 60, 7, 9, 99.0, 59.0};
-        g_viewport.enabled = true;
-        EXPECT_THROW(
-            {
-                StereoView view;
-                view.start();
-                if (second_eye)
-                {
-                    view.next_view();
-                }
-                throw std::runtime_error("View calculation failed");
-            },
-            std::runtime_error);
-
-        expect_full_screen();
-    }
+    g_logical_screen = {100, 60, 7, 9, 99.0, 59.0};
+    g_viewport.enabled = true;
 }
 
-TEST_F(TestStereoView, finishRetainsViewportWhenItIsNotASideBySidePair)
+TEST_P(TestFailedStereoEye, unwindingRestoresFullScreen)
 {
-    for (const GlassesType glasses : {GlassesType::PHOTO, GlassesType::STEREO_PAIR})
-    {
-        g_glasses_type = glasses;
-        g_screen_x_dots = 100;
-        g_viewport.enabled = true;
-        StereoView view;
-        view.start();
-        view.next_view();
+    EXPECT_THROW(
+        {
+            StereoView view;
+            view.start();
+            if (GetParam())
+            {
+                view.next_view();
+            }
+            throw std::runtime_error("View calculation failed");
+        },
+        std::runtime_error);
 
-        view.finish();
-
-        EXPECT_EQ(100, g_logical_screen.x_dots);
-        EXPECT_EQ(60, g_logical_screen.y_dots);
-        EXPECT_EQ(7, g_logical_screen.x_offset);
-        EXPECT_EQ(9, g_logical_screen.y_offset);
-        EXPECT_TRUE(g_viewport.enabled);
-    }
+    expect_full_screen();
 }
+
+INSTANTIATE_TEST_SUITE_P(Eyes, TestFailedStereoEye, Bool(),
+    [](const TestParamInfo<bool> &info) { return info.param ? "SecondEye" : "FirstEye"; });
+
+class TestStereoViewportMode : public TestStereoView, public WithParamInterface<GlassesType>
+{
+protected:
+    void SetUp() override;
+    StereoView m_view;
+};
+
+void TestStereoViewportMode::SetUp()
+{
+    TestStereoView::SetUp();
+    g_glasses_type = GetParam();
+    g_screen_x_dots = 100;
+    g_viewport.enabled = true;
+    m_view.start();
+    m_view.next_view();
+}
+
+TEST_P(TestStereoViewportMode, finishRetainsViewportWhenNotSideBySide)
+{
+    m_view.finish();
+
+    EXPECT_EQ(100, g_logical_screen.x_dots);
+    EXPECT_EQ(60, g_logical_screen.y_dots);
+    EXPECT_EQ(7, g_logical_screen.x_offset);
+    EXPECT_EQ(9, g_logical_screen.y_offset);
+    EXPECT_TRUE(g_viewport.enabled);
+}
+
+INSTANTIATE_TEST_SUITE_P(Modes, TestStereoViewportMode, Values(GlassesType::PHOTO, GlassesType::STEREO_PAIR),
+    [](const TestParamInfo<GlassesType> &info) { return info.param == GlassesType::PHOTO ? "Photo" : "StereoPair"; });
 
 } // namespace id::test
