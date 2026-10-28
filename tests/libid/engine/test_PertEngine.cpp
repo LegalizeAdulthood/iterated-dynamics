@@ -3763,68 +3763,198 @@ TEST_P(TestEpsilonInitialization, preservesOffsetAcrossReferenceReplacement)
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestEpsilonInitialization, Values(false, true),
     [](const TestParamInfo<bool> &info) { return info.param ? "HighPrecision" : "Double"; });
 
-TEST_P(TestPerturbationIterations, starTrailMatchesKnownHistoriesWithoutPeriodicity)
+struct StarTrailHistoryInput
+{
+    std::string name;
+    bool big_float;
+    long limit;
+    int periodicity;
+    std::complex<double> point;
+    int color;
+};
+
+void PrintTo(const StarTrailHistoryInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<StarTrailHistoryInput> star_trail_history_inputs()
 {
     struct Sample
     {
+        const char *name;
         std::complex<double> point;
         int color;
     };
 
-    g_inside_method = ColorMethod::STAR_TRAIL;
-    for (const long limit : {1L, 8L, 128L})
+    struct Periodicity
     {
-        SCOPED_TRACE(limit);
-        for (const int periodicity : {0, 1, -1})
+        const char *name;
+        int value;
+    };
+
+    std::vector<StarTrailHistoryInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const long limit : {1L, 8L, 128L})
         {
-            SCOPED_TRACE(periodicity);
-            g_periodicity_check = periodicity;
-            for (const Sample &sample : {Sample{{0.0, 0.0}, 1}, Sample{{-1.0, 0.0}, 1}, Sample{{0.0, 1.0}, 2},
-                     Sample{{0.125, 0.125}, 0}, Sample{{-0.75, 0.125}, 2}})
+            for (const Periodicity &periodicity : {Periodicity{"Disabled", 0}, {"Enabled", 1}, {"Highlighted", -1}})
             {
-                SCOPED_TRACE(sample.point);
-                compare_pixel(sample.point, limit);
-                EXPECT_EQ(sample.color, g_color);
-                EXPECT_EQ(16, g_real_color_iter);
-                EXPECT_EQ(15, s_standard_orbit.size());
-                EXPECT_EQ(limit, g_max_iterations);
+                for (const Sample &sample : {Sample{"Origin", {0.0, 0.0}, 1}, {"NegativeReal", {-1.0, 0.0}, 1},
+                         {"PositiveImaginary", {0.0, 1.0}, 2}, {"SmallComplex", {0.125, 0.125}, 0},
+                         {"LeftOffset", {-0.75, 0.125}, 2}})
+                {
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Limit" +
+                            std::to_string(limit) + "_" + periodicity.name + "_" + sample.name,
+                        big_float, limit, periodicity.value, sample.point, sample.color});
+                }
             }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, starTrailContinuesPastBailoutAndClampsEscapingCoordinates)
+class TestStarTrailHistory : public PerturbationIterationTest, public WithParamInterface<StarTrailHistoryInput>
 {
-    g_inside_method = ColorMethod::STAR_TRAIL;
-    compare_pixel({1.0, 0.0}, 128);
-    EXPECT_EQ(1, g_color);
-    EXPECT_EQ(16, g_real_color_iter);
-    EXPECT_EQ(15, s_standard_orbit.size());
-    EXPECT_DOUBLE_EQ(std::numeric_limits<float>::max(), g_new_z.x);
-    EXPECT_EQ(128, g_max_iterations);
+public:
+    TestStarTrailHistory();
 
-    g_use_init_orbit = InitOrbitMode::VALUE;
-    g_init_orbit = {0.0, 2.0};
-    compare_pixel({}, 8);
-    EXPECT_EQ(1, g_color);
-    EXPECT_EQ(16, g_real_color_iter);
-    EXPECT_EQ(15, s_standard_orbit.size());
-    EXPECT_DOUBLE_EQ(std::numeric_limits<float>::max(), g_new_z.x);
-    EXPECT_EQ(8, g_max_iterations);
+protected:
+    void SetUp() override;
+};
+
+TestStarTrailHistory::TestStarTrailHistory() :
+    PerturbationIterationTest{GetParam().big_float}
+{
 }
 
-TEST_P(TestPerturbationIterations, starTrailUsesPaletteSizedHistorySlots)
+void TestStarTrailHistory::SetUp()
 {
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::STAR_TRAIL;
-    for (const int colors : {2, 4, 16, 256})
+    g_periodicity_check = GetParam().periodicity;
+}
+
+TEST_P(TestStarTrailHistory, matchesKnownHistoryWithoutPeriodicity)
+{
+    compare_pixel(GetParam().point, GetParam().limit);
+
+    EXPECT_EQ(GetParam().color, g_color);
+    EXPECT_EQ(16, g_real_color_iter);
+    EXPECT_EQ(15, s_standard_orbit.size());
+    EXPECT_EQ(GetParam().limit, g_max_iterations);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestStarTrailHistory, ValuesIn(star_trail_history_inputs()),
+    [](const TestParamInfo<StarTrailHistoryInput> &info) { return info.param.name; });
+
+struct StarTrailEscapeInput
+{
+    const char *name;
+    bool big_float;
+    std::complex<double> point;
+    long limit;
+    std::optional<DComplex> initial;
+};
+
+void PrintTo(const StarTrailEscapeInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestStarTrailEscape : public PerturbationIterationTest, public WithParamInterface<StarTrailEscapeInput>
+{
+public:
+    TestStarTrailEscape();
+
+protected:
+    void SetUp() override;
+};
+
+TestStarTrailEscape::TestStarTrailEscape() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestStarTrailEscape::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    if (GetParam().initial)
     {
-        SCOPED_TRACE(colors);
-        g_colors = colors;
-        g_and_color = colors - 1;
-        compare_pixel({-0.5, 0.5}, 128);
-        EXPECT_EQ(colors < 16 ? 0 : 5, g_color);
+        g_use_init_orbit = InitOrbitMode::VALUE;
+        g_init_orbit = *GetParam().initial;
     }
 }
+
+TEST_P(TestStarTrailEscape, continuesPastBailoutAndClampsCoordinates)
+{
+    compare_pixel(GetParam().point, GetParam().limit);
+
+    EXPECT_EQ(1, g_color);
+    EXPECT_EQ(16, g_real_color_iter);
+    EXPECT_EQ(15, s_standard_orbit.size());
+    EXPECT_DOUBLE_EQ(std::numeric_limits<float>::max(), g_new_z.x);
+    EXPECT_EQ(GetParam().limit, g_max_iterations);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestStarTrailEscape,
+    Values(StarTrailEscapeInput{"DoublePixelSeed", false, {1.0, 0.0}, 128, std::nullopt},
+        StarTrailEscapeInput{"DoubleFixedSeed", false, {}, 8, DComplex{0.0, 2.0}},
+        StarTrailEscapeInput{"HighPrecisionPixelSeed", true, {1.0, 0.0}, 128, std::nullopt},
+        StarTrailEscapeInput{"HighPrecisionFixedSeed", true, {}, 8, DComplex{0.0, 2.0}}),
+    [](const TestParamInfo<StarTrailEscapeInput> &info) { return info.param.name; });
+
+struct StarTrailPaletteInput
+{
+    const char *name;
+    bool big_float;
+    int colors;
+};
+
+void PrintTo(const StarTrailPaletteInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestStarTrailPalette : public PerturbationIterationTest, public WithParamInterface<StarTrailPaletteInput>
+{
+public:
+    TestStarTrailPalette();
+
+protected:
+    void SetUp() override;
+};
+
+TestStarTrailPalette::TestStarTrailPalette() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestStarTrailPalette::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    g_colors = GetParam().colors;
+    g_and_color = g_colors - 1;
+}
+
+TEST_P(TestStarTrailPalette, usesPaletteSizedHistorySlots)
+{
+    compare_pixel({-0.5, 0.5}, 128);
+
+    EXPECT_EQ(GetParam().colors < 16 ? 0 : 5, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestStarTrailPalette,
+    Values(StarTrailPaletteInput{"DoubleTwoColors", false, 2}, StarTrailPaletteInput{"DoubleFourColors", false, 4},
+        StarTrailPaletteInput{"DoubleSixteenColors", false, 16},
+        StarTrailPaletteInput{"DoubleTwoHundredFiftySixColors", false, 256},
+        StarTrailPaletteInput{"HighPrecisionTwoColors", true, 2},
+        StarTrailPaletteInput{"HighPrecisionFourColors", true, 4},
+        StarTrailPaletteInput{"HighPrecisionSixteenColors", true, 16},
+        StarTrailPaletteInput{"HighPrecisionTwoHundredFiftySixColors", true, 256}),
+    [](const TestParamInfo<StarTrailPaletteInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, starTrailRestartsHistoryWithAReplacementReference)
 {
