@@ -4913,29 +4913,38 @@ TEST_F(TestParameterCommand, radius)
     EXPECT_EQ(1, g_sphere_radius);
 }
 
-TEST_F(TestParameterCommand, transparentOneValue)
+struct TransparentParameterInput
 {
-    ValueSaver saved_transparent_color_3d0{g_transparent_color_3d[0], -99};
-    ValueSaver saved_transparent_color_3d1{g_transparent_color_3d[1], -99};
+    const char *name;
+    const char *argument;
+    int high;
+};
 
-    exec_cmd_arg("transparent=1");
+void PrintTo(const TransparentParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestTransparentParameter : public TestParameterCommand, public WithParamInterface<TransparentParameterInput>
+{
+private:
+    ValueSaver<int> m_saved_low{g_transparent_color_3d[0], -99};
+    ValueSaver<int> m_saved_high{g_transparent_color_3d[1], -99};
+};
+
+TEST_P(TestTransparentParameter, setsTransparentColorBounds)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_transparent_color_3d[0]);
-    EXPECT_EQ(1, g_transparent_color_3d[1]);
+    EXPECT_EQ(GetParam().high, g_transparent_color_3d[1]);
 }
 
-TEST_F(TestParameterCommand, transparentTwoValues)
-{
-    ValueSaver saved_transparent_color_3d0{g_transparent_color_3d[0], -99};
-    ValueSaver saved_transparent_color_3d1{g_transparent_color_3d[1], -99};
-
-    exec_cmd_arg("transparent=1/2");
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, g_transparent_color_3d[0]);
-    EXPECT_EQ(2, g_transparent_color_3d[1]);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestTransparentParameter,
+    Values(TransparentParameterInput{"OneValue", "transparent=1", 1},
+        TransparentParameterInput{"TwoValues", "transparent=1/2", 2}),
+    [](const TestParamInfo<TransparentParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, previewNo)
 {
@@ -5017,35 +5026,47 @@ TEST_F(TestParameterCommand, trueColorNo)
     EXPECT_FALSE(g_true_color);
 }
 
-TEST_F(TestParameterCommand, trueModeDefaultColor)
+struct TrueModeParameterInput
 {
-    ValueSaver saved_true_mode{g_true_mode, TrueColorMode::ITERATE};
+    const char *name;
+    const char *argument;
+    TrueColorMode initial;
+    TrueColorMode expected;
+};
 
-    exec_cmd_arg("truemode=d");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(TrueColorMode::DEFAULT_COLOR, g_true_mode);
+void PrintTo(const TrueModeParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, trueModeIterate)
+class TestTrueModeParameter : public TestParameterCommand, public WithParamInterface<TrueModeParameterInput>
 {
-    ValueSaver saved_true_mode{g_true_mode, TrueColorMode::DEFAULT_COLOR};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("truemode=i");
+private:
+    ValueSaver<TrueColorMode> m_saved_mode{g_true_mode};
+};
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(TrueColorMode::ITERATE, g_true_mode);
+void TestTrueModeParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_true_mode = GetParam().initial;
 }
 
-TEST_F(TestParameterCommand, trueModeValue)
+TEST_P(TestTrueModeParameter, setsTrueColorMode)
 {
-    ValueSaver saved_true_mode{g_true_mode, TrueColorMode::DEFAULT_COLOR};
-
-    exec_cmd_arg("truemode=1");
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(TrueColorMode::ITERATE, g_true_mode);
+    EXPECT_EQ(GetParam().expected, g_true_mode);
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestTrueModeParameter,
+    Values(TrueModeParameterInput{"DefaultColor", "truemode=d", TrueColorMode::ITERATE, TrueColorMode::DEFAULT_COLOR},
+        TrueModeParameterInput{"Iterate", "truemode=i", TrueColorMode::DEFAULT_COLOR, TrueColorMode::ITERATE},
+        TrueModeParameterInput{"Value", "truemode=1", TrueColorMode::DEFAULT_COLOR, TrueColorMode::ITERATE}),
+    [](const TestParamInfo<TrueModeParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, useGrayScaleNo)
 {
@@ -5057,25 +5078,24 @@ TEST_F(TestParameterCommand, useGrayScaleNo)
     EXPECT_FALSE(g_gray_flag);
 }
 
-TEST_F(TestParameterCommand, stereoWidth)
+class TestStereoWidthParameter : public TestParameterCommand, public WithParamInterface<ParameterArgumentInput>
 {
-    ValueSaver saved_auto_stereo_width{g_auto_stereo_width, true};
+private:
+    ValueSaver<double> m_saved_width{g_auto_stereo_width, 1.0};
+};
 
-    exec_cmd_arg("stereowidth=4.5");
+TEST_P(TestStereoWidthParameter, setsStereoWidth)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(4.5, g_auto_stereo_width);
 }
 
-TEST_F(TestParameterCommand, monitorWidthAliasForStereoWidth)
-{
-    ValueSaver saved_auto_stereo_width{g_auto_stereo_width, true};
-
-    exec_cmd_arg("monitorwidth=4.5");
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(4.5, g_auto_stereo_width);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestStereoWidthParameter,
+    Values(ParameterArgumentInput{"StereoWidth", "stereowidth=4.5"},
+        ParameterArgumentInput{"MonitorWidthAlias", "monitorwidth=4.5"}),
+    [](const TestParamInfo<ParameterArgumentInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, targaOverlayNo)
 {
