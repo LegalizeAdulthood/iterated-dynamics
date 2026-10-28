@@ -1008,8 +1008,6 @@ protected:
     ValueSaver<std::vector<int>> m_saved_ranges{g_iteration_ranges, std::vector<int>{}};
     ValueSaver<int> m_saved_outside_color{g_outside_color};
     int m_reference_yields{};
-
-private:
     const bool m_use_big_float;
 };
 
@@ -8458,8 +8456,11 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestPerturbationFrameCoordinates, ValuesIn(fram
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationIterations, Bool());
 
-class TestBurningShipPerturbation : public TestPerturbationIterations
+class BurningShipPerturbationTest : public PerturbationIterationTest
 {
+public:
+    explicit BurningShipPerturbationTest(bool use_big_float);
+
 protected:
     void compare_native_pixel(
         const std::complex<double> &point, double reference_offset = 0.0, bool replace_reference = false);
@@ -8470,14 +8471,30 @@ protected:
     ValueSaver<double> m_saved_degree{g_params[2]};
 };
 
-int TestBurningShipPerturbation::record_native_orbit()
+BurningShipPerturbationTest::BurningShipPerturbationTest(const bool use_big_float) :
+    PerturbationIterationTest{use_big_float}
+{
+}
+
+class TestBurningShipPerturbation : public BurningShipPerturbationTest, public WithParamInterface<bool>
+{
+public:
+    TestBurningShipPerturbation();
+};
+
+TestBurningShipPerturbation::TestBurningShipPerturbation() :
+    BurningShipPerturbationTest{GetParam()}
+{
+}
+
+int BurningShipPerturbationTest::record_native_orbit()
 {
     const DComplex value{g_bf_math == BFMathType::NONE ? g_old_z : cmplx_bf_to_float(g_old_z_bf)};
     s_standard_orbit.emplace_back(value.x, value.y);
     return g_bf_math == BFMathType::NONE ? burning_ship_orbit() : burning_ship_bf_fractal();
 }
 
-void TestBurningShipPerturbation::record_perturbation(
+void BurningShipPerturbationTest::record_perturbation(
     const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &parameter_delta)
 {
     const std::complex<double> value{reference + delta};
@@ -8485,7 +8502,7 @@ void TestBurningShipPerturbation::record_perturbation(
     burning_ship_perturb(reference, delta, parameter_delta);
 }
 
-void TestBurningShipPerturbation::compare_native_pixel(
+void BurningShipPerturbationTest::compare_native_pixel(
     const std::complex<double> &point, const double reference_offset, const bool replace_reference)
 {
     SCOPED_TRACE(reference_offset);
@@ -8515,7 +8532,7 @@ void TestBurningShipPerturbation::compare_native_pixel(
     ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
     ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
     fill_pixel_grid();
-    if (GetParam())
+    if (m_use_big_float)
     {
         g_dispatch.set_per_pixel(mandel_per_pixel_bf);
         float_to_bf(g_bf_x_min, point.real());
@@ -8542,7 +8559,7 @@ void TestBurningShipPerturbation::compare_native_pixel(
     StandardFractal standard;
     const int expected_color{standard.calculate_standard_pixel(false)};
     const long expected_iterations{g_real_color_iter};
-    const DComplex expected_value{GetParam() ? cmplx_bf_to_float(g_new_z_bf) : g_new_z};
+    const DComplex expected_value{m_use_big_float ? cmplx_bf_to_float(g_new_z_bf) : g_new_z};
     const DComplex expected_previous{g_old_z};
 
     const int color{m_engine.calculate_pixel(g_col, g_row)};
@@ -8551,7 +8568,7 @@ void TestBurningShipPerturbation::compare_native_pixel(
     EXPECT_EQ(expected_iterations, g_real_color_iter);
     EXPECT_NEAR(expected_value.x, g_new_z.x, 1e-12);
     EXPECT_NEAR(expected_value.y, g_new_z.y, 1e-12);
-    if (!GetParam())
+    if (!m_use_big_float)
     {
         EXPECT_NEAR(expected_previous.x, g_old_z.x, 1e-12);
         EXPECT_NEAR(expected_previous.y, g_old_z.y, 1e-12);
@@ -8568,47 +8585,139 @@ void TestBurningShipPerturbation::compare_native_pixel(
     }
 }
 
-TEST_P(TestBurningShipPerturbation, manrBailoutObservesNativeCoordinates)
+struct BurningShipReference
 {
+    const char *name;
+    double offset;
+    bool replace;
+};
+
+const std::vector<BurningShipReference> SHIP_ORIGINAL_AND_REPLACED{
+    {"Original", 0.0, false},
+    {"DisplacedReplacement", 0.125, true},
+};
+
+struct ShipReferenceInput
+{
+    std::string name;
+    bool big_float;
+    int degree;
+    double offset;
+    bool replace;
+};
+
+void PrintTo(const ShipReferenceInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<ShipReferenceInput> ship_reference_inputs(
+    const std::vector<int> &degrees, const std::vector<BurningShipReference> &references)
+{
+    std::vector<ShipReferenceInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const int degree : degrees)
+        {
+            for (const BurningShipReference &reference : references)
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Degree" +
+                        std::to_string(degree) + "_" + reference.name,
+                    big_float, degree, reference.offset, reference.replace});
+            }
+        }
+    }
+    return inputs;
+}
+
+class BurningShipReferenceTest : public BurningShipPerturbationTest, public WithParamInterface<ShipReferenceInput>
+{
+public:
+    BurningShipReferenceTest();
+
+protected:
+    void SetUp() override;
+};
+
+BurningShipReferenceTest::BurningShipReferenceTest() :
+    BurningShipPerturbationTest{GetParam().big_float}
+{
+}
+
+void BurningShipReferenceTest::SetUp()
+{
+    BurningShipPerturbationTest::SetUp();
+    g_params[2] = GetParam().degree;
+}
+
+class TestShipManrCoordinates : public BurningShipReferenceTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestShipManrCoordinates::SetUp()
+{
+    BurningShipReferenceTest::SetUp();
     g_bailout_test = Bailout::MANR;
     set_bailout_formula(Bailout::MANR);
     g_magnitude_limit = 2.0;
-    for (const int degree : {2, 3, 4, 5})
-    {
-        SCOPED_TRACE(degree);
-        g_params[2] = degree;
-        compare_native_pixel({1.0, 1.0});
-        compare_native_pixel({1.0, 1.0}, 0.125, true);
-    }
 }
 
-TEST_P(TestBurningShipPerturbation, imaginaryOutsideColorObservesNativeCoordinates)
+TEST_P(TestShipManrCoordinates, observesNativeCoordinates)
 {
+    compare_native_pixel({1.0, 1.0}, GetParam().offset, GetParam().replace);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestShipManrCoordinates,
+    ValuesIn(ship_reference_inputs({2, 3, 4, 5}, SHIP_ORIGINAL_AND_REPLACED)),
+    [](const TestParamInfo<ShipReferenceInput> &info) { return info.param.name; });
+
+class TestShipImaginaryColor : public BurningShipReferenceTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestShipImaginaryColor::SetUp()
+{
+    BurningShipReferenceTest::SetUp();
     g_outside_method = ColorMethod::IMAG;
     g_magnitude_limit = 1.5;
-    for (const int degree : {2, 3, 4, 5})
-    {
-        SCOPED_TRACE(degree);
-        g_params[2] = degree;
-        compare_native_pixel({1.0, 1.0});
-        compare_native_pixel({1.0, 1.0}, 0.125, true);
-    }
 }
 
-TEST_P(TestBurningShipPerturbation, preciseManrReplayObservesNativeCoordinates)
+TEST_P(TestShipImaginaryColor, observesNativeCoordinates)
 {
+    compare_native_pixel({1.0, 1.0}, GetParam().offset, GetParam().replace);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestShipImaginaryColor,
+    ValuesIn(ship_reference_inputs({2, 3, 4, 5}, SHIP_ORIGINAL_AND_REPLACED)),
+    [](const TestParamInfo<ShipReferenceInput> &info) { return info.param.name; });
+
+class TestShipPreciseManr : public BurningShipReferenceTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestShipPreciseManr::SetUp()
+{
+    BurningShipReferenceTest::SetUp();
     g_bailout_test = Bailout::MANR;
     set_bailout_formula(Bailout::MANR);
     // Near, but not equal to, the native metric: BF uses a strict comparison.
     g_magnitude_limit = std::nextafter(4.0, 0.0);
-    for (const int degree : {2, 3, 4, 5})
-    {
-        SCOPED_TRACE(degree);
-        g_params[2] = degree;
-        compare_native_pixel({1.0, 1.0});
-        compare_native_pixel({1.0, 1.0}, 0.125, true);
-    }
 }
+
+TEST_P(TestShipPreciseManr, replaysNativeCoordinates)
+{
+    compare_native_pixel({1.0, 1.0}, GetParam().offset, GetParam().replace);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestShipPreciseManr,
+    ValuesIn(ship_reference_inputs({2, 3, 4, 5}, SHIP_ORIGINAL_AND_REPLACED)),
+    [](const TestParamInfo<ShipReferenceInput> &info) { return info.param.name; });
 
 TEST_P(TestBurningShipPerturbation, fmodInsideColorUsesTheNativeManrMetric)
 {
