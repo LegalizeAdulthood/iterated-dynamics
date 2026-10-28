@@ -3420,30 +3420,103 @@ TEST_P(TestEpsilonFirstAxis, stopsAtFirstQualifiedAxis)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestEpsilonFirstAxis, ValuesIn(epsilon_axis_inputs()),
     [](const TestParamInfo<EpsilonAxisInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, epsilonCrossUsesStrictThresholdsAndDoesNotTestTheSeed)
+struct EpsilonResultInput
 {
-    g_inside_method = ColorMethod::EPS_CROSS;
-    for (const double proximity : {0.25, -0.25})
-    {
-        SCOPED_TRACE(proximity);
-        g_close_proximity = proximity;
-        compare_pixel({0.5, 0.5}, 8);
-        EXPECT_EQ(4, g_real_color_iter);
-        EXPECT_EQ(4, g_color);
-    }
-    g_close_proximity = 0.125;
-    compare_pixel({0.0, 0.5}, 3);
-    EXPECT_EQ(3, g_real_color_iter);
-    EXPECT_EQ(3, g_color);
-    g_close_proximity = 0.0;
-    compare_pixel({}, 8);
-    EXPECT_EQ(8, g_real_color_iter);
-    EXPECT_EQ(8, g_color);
-    g_close_proximity = 0.001;
-    compare_pixel({0.125, 0.0625}, 8);
-    EXPECT_EQ(8, g_real_color_iter);
-    EXPECT_EQ(8, g_color);
+    const char *name;
+    bool big_float;
+    std::complex<double> point;
+    double proximity;
+    long max_iterations;
+    long iterations;
+    int color;
+};
+
+void PrintTo(const EpsilonResultInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestEpsilonResult : public PerturbationIterationTest, public WithParamInterface<EpsilonResultInput>
+{
+public:
+    TestEpsilonResult();
+
+protected:
+    void SetUp() override;
+};
+
+TestEpsilonResult::TestEpsilonResult() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestEpsilonResult::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = ColorMethod::EPS_CROSS;
+    g_close_proximity = GetParam().proximity;
+}
+
+class TestEpsilonThreshold : public TestEpsilonResult
+{
+};
+
+TEST_P(TestEpsilonThreshold, excludesThresholdEquality)
+{
+    const EpsilonResultInput &input{GetParam()};
+
+    compare_pixel(input.point, input.max_iterations);
+
+    EXPECT_EQ(input.iterations, g_real_color_iter);
+    EXPECT_EQ(input.color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestEpsilonThreshold,
+    Values(EpsilonResultInput{"DoublePositive", false, {0.5, 0.5}, 0.25, 8, 4, 4},
+        EpsilonResultInput{"DoubleNegative", false, {0.5, 0.5}, -0.25, 8, 4, 4},
+        EpsilonResultInput{"HighPrecisionPositive", true, {0.5, 0.5}, 0.25, 8, 4, 4},
+        EpsilonResultInput{"HighPrecisionNegative", true, {0.5, 0.5}, -0.25, 8, 4, 4}),
+    [](const TestParamInfo<EpsilonResultInput> &info) { return info.param.name; });
+
+class TestEpsilonSeedExclusion : public TestEpsilonResult
+{
+};
+
+TEST_P(TestEpsilonSeedExclusion, doesNotTestInitialSeed)
+{
+    const EpsilonResultInput &input{GetParam()};
+
+    compare_pixel(input.point, input.max_iterations);
+
+    EXPECT_EQ(input.iterations, g_real_color_iter);
+    EXPECT_EQ(input.color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestEpsilonSeedExclusion,
+    Values(EpsilonResultInput{"Double", false, {0.0, 0.5}, 0.125, 3, 3, 3},
+        EpsilonResultInput{"HighPrecision", true, {0.0, 0.5}, 0.125, 3, 3, 3}),
+    [](const TestParamInfo<EpsilonResultInput> &info) { return info.param.name; });
+
+class TestEpsilonNoHit : public TestEpsilonResult
+{
+};
+
+TEST_P(TestEpsilonNoHit, reachesLimitWithoutAxisHit)
+{
+    const EpsilonResultInput &input{GetParam()};
+
+    compare_pixel(input.point, input.max_iterations);
+
+    EXPECT_EQ(input.iterations, g_real_color_iter);
+    EXPECT_EQ(input.color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestEpsilonNoHit,
+    Values(EpsilonResultInput{"DoubleDisabled", false, {}, 0.0, 8, 8, 8},
+        EpsilonResultInput{"DoubleNoHit", false, {0.125, 0.0625}, 0.001, 8, 8, 8},
+        EpsilonResultInput{"HighPrecisionDisabled", true, {}, 0.0, 8, 8, 8},
+        EpsilonResultInput{"HighPrecisionNoHit", true, {0.125, 0.0625}, 0.001, 8, 8, 8}),
+    [](const TestParamInfo<EpsilonResultInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, epsilonCrossDoesNotTestEscapingUpdates)
 {
