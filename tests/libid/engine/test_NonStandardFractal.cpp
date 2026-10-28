@@ -3125,6 +3125,7 @@ class TestAntController : public TestSelectedAnt
 protected:
     void TearDown() override;
     void prepare_calculation();
+    void prepare_existing_image();
 
     std::optional<NonStandardFractal> m_calculation;
 };
@@ -3144,6 +3145,12 @@ void TestAntController::prepare_calculation()
     m_calculation.emplace();
     m_calculation->start();
     ASSERT_EQ(NonStandardFractal::Operation::ANT, m_calculation->select());
+}
+
+void TestAntController::prepare_existing_image()
+{
+    m_calculation.emplace();
+    m_calculation->select_ant_on_image();
 }
 
 class TestPreparedAntController : public TestAntController
@@ -3371,13 +3378,12 @@ TEST_P(TestSelectedAnt, zeroBatchesCompletesWithoutInputOrPixelOutput)
     EXPECT_TRUE(m_columns.empty());
 }
 
-TEST_P(TestSelectedAnt, uiStepsTheSelectedObjectAtExistingBatchBoundaries)
+TEST_P(TestAntController, uiStepsTheSelectedObjectAtExistingBatchBoundaries)
 {
     const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
     const help::HelpLabels previous_help{help::g_help_mode};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     EXPECT_CALL(m_driver, flush()).Times(2);
     EXPECT_CALL(m_driver, delay(0)).Times(2);
     {
@@ -3450,7 +3456,7 @@ TEST_P(TestAntController, controllerStepsExistingBatchesAndRestoresHelpOnComplet
     EXPECT_EQ(columns, m_columns);
 }
 
-TEST_P(TestSelectedAnt, controllerRetainsSingleStepEnterKeypadEnterAndSpace)
+TEST_P(TestAntController, controllerRetainsSingleStepEnterKeypadEnterAndSpace)
 {
     const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
     g_orbit_delay = 1;
@@ -3465,9 +3471,8 @@ TEST_P(TestSelectedAnt, controllerRetainsSingleStepEnterKeypadEnterAndSpace)
         EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
         EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_SPACE));
     }
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     AntController controller{calculation};
     controller.start();
 
@@ -3480,10 +3485,9 @@ TEST_P(TestSelectedAnt, controllerRetainsSingleStepEnterKeypadEnterAndSpace)
     EXPECT_TRUE(controller.done());
     EXPECT_EQ(0, controller.result());
     EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
-    calculation.finish(false);
 }
 
-TEST_P(TestSelectedAnt, controllerRetainsAdjustedDelayAcrossIterationsWithoutSingleStepping)
+TEST_P(TestAntController, controllerRetainsAdjustedDelayAcrossIterationsWithoutSingleStepping)
 {
     const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
     const ValueSaver saved_first_init{g_first_init, false};
@@ -3518,9 +3522,8 @@ TEST_P(TestSelectedAnt, controllerRetainsAdjustedDelayAcrossIterationsWithoutSin
         EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
         EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
     }
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     AntController controller{calculation};
     controller.start();
 
@@ -3536,14 +3539,13 @@ TEST_P(TestSelectedAnt, controllerRetainsAdjustedDelayAcrossIterationsWithoutSin
     EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
 }
 
-TEST_P(TestSelectedAnt, controllerLeavesPeekedEscapeForTheOuterContext)
+TEST_P(TestAntController, controllerLeavesPeekedEscapeForTheOuterContext)
 {
     const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
     EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(ID_KEY_ESC));
     EXPECT_CALL(m_driver, unget_key(_)).Times(0);
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     AntController controller{calculation};
     controller.start();
 
@@ -3555,10 +3557,9 @@ TEST_P(TestSelectedAnt, controllerLeavesPeekedEscapeForTheOuterContext)
     EXPECT_EQ(expected.front(), m_pixels);
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
-    calculation.finish(true);
 }
 
-TEST_P(TestSelectedAnt, controllerRequeuesEscapeReadWhileSingleStepping)
+TEST_P(TestAntController, controllerRequeuesEscapeReadWhileSingleStepping)
 {
     const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
     g_orbit_delay = 1;
@@ -3570,9 +3571,8 @@ TEST_P(TestSelectedAnt, controllerRequeuesEscapeReadWhileSingleStepping)
         EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
         EXPECT_CALL(m_driver, unget_key(ID_KEY_ESC)).WillOnce(Return());
     }
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     AntController controller{calculation};
     controller.start();
 
@@ -3583,15 +3583,13 @@ TEST_P(TestSelectedAnt, controllerRequeuesEscapeReadWhileSingleStepping)
     EXPECT_EQ(expected.front(), m_pixels);
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
-    calculation.finish(true);
 }
 
-TEST_P(TestSelectedAnt, controllerSuspensionTerminatesWorkAndRestoresHelp)
+TEST_P(TestAntController, controllerSuspensionTerminatesWorkAndRestoresHelp)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     AntController controller{calculation};
     controller.start();
     controller.iterate();
@@ -3609,11 +3607,10 @@ TEST_P(TestSelectedAnt, controllerSuspensionTerminatesWorkAndRestoresHelp)
     EXPECT_EQ(columns, m_columns);
 }
 
-TEST_P(TestSelectedAnt, controllerPlotFailureTerminatesWorkAndRestoresHelp)
+TEST_P(TestAntController, controllerPlotFailureTerminatesWorkAndRestoresHelp)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     AntController controller{calculation};
     controller.start();
     EXPECT_CALL(m_driver, write_pixel(_, _, _)).WillOnce(Throw(std::runtime_error("Plot failed")));
@@ -3627,12 +3624,11 @@ TEST_P(TestSelectedAnt, controllerPlotFailureTerminatesWorkAndRestoresHelp)
     EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
 }
 
-TEST_P(TestSelectedAnt, controllerInputFailureTerminatesWorkAndRestoresHelp)
+TEST_P(TestAntController, controllerInputFailureTerminatesWorkAndRestoresHelp)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillOnce(Throw(std::runtime_error("Input failed")));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     AntController controller{calculation};
     controller.start();
 
@@ -3645,12 +3641,11 @@ TEST_P(TestSelectedAnt, controllerInputFailureTerminatesWorkAndRestoresHelp)
     EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
 }
 
-TEST_P(TestSelectedAnt, controllerWithNoBatchesCompletesWithoutInputOrPixelOutput)
+TEST_P(TestAntController, controllerWithNoBatchesCompletesWithoutInputOrPixelOutput)
 {
     g_params[1] = 0;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     AntController controller{calculation};
 
     controller.start();
@@ -3661,10 +3656,9 @@ TEST_P(TestSelectedAnt, controllerWithNoBatchesCompletesWithoutInputOrPixelOutpu
     EXPECT_TRUE(calculation.completed());
     EXPECT_TRUE(m_columns.empty());
     EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
-    calculation.finish(false);
 }
 
-TEST_P(TestSelectedAnt, controllerPreservesExistingImageLifecycle)
+TEST_P(TestAntController, controllerPreservesExistingImageLifecycle)
 {
     m_pixels.fill(3);
     const std::vector<std::array<int, WIDTH * HEIGHT>> expected{reference_frames()};
@@ -3675,8 +3669,8 @@ TEST_P(TestSelectedAnt, controllerPreservesExistingImageLifecycle)
     const std::vector<Byte> resume{g_resume_data};
     g_calc_time = 1234;
     g_timer_interval = 5678;
-    NonStandardFractal calculation;
-    calculation.select_ant_on_image();
+    ASSERT_NO_FATAL_FAILURE(prepare_existing_image());
+    NonStandardFractal &calculation{*m_calculation};
     AntController controller{calculation};
     controller.start();
 
@@ -3696,11 +3690,10 @@ TEST_P(TestSelectedAnt, controllerPreservesExistingImageLifecycle)
     EXPECT_EQ(resume, g_resume_data);
 }
 
-TEST_P(TestSelectedAnt, controllerDestructionRestoresHelpWithoutFinishingTheCalculation)
+TEST_P(TestAntController, controllerDestructionRestoresHelpWithoutFinishingTheCalculation)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ANT, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     {
         AntController controller{calculation};
         controller.start();
@@ -3710,7 +3703,6 @@ TEST_P(TestSelectedAnt, controllerDestructionRestoresHelpWithoutFinishingTheCalc
     EXPECT_EQ(help::HelpLabels::NONE, help::g_help_mode);
     EXPECT_FALSE(calculation.done());
     EXPECT_TRUE(m_columns.empty());
-    calculation.finish(true);
 }
 
 INSTANTIATE_TEST_SUITE_P(AntVariants, TestSelectedAnt, Values(AntType::ONE, AntType::TWO));
