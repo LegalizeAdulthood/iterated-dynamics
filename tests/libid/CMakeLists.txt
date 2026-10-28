@@ -180,6 +180,9 @@ add_executable(test-id
     ui/test_video_mode.cpp
     ui/test_zoom.cpp
 )
+set_source_files_properties(engine/test_cmdfiles.cpp PROPERTIES
+    COMPILE_OPTIONS "$<$<CXX_COMPILER_ID:MSVC>:/bigobj>"
+)
 file(GENERATE
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/include/$<CONFIG>/test_executable_dir.h"
     CONTENT [[// SPDX-License-Identifier: GPL-3.0-only

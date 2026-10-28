@@ -2652,102 +2652,128 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestIterationRangesParameter,
             "OneStripe", "ranges=10/-20/30", 0, std::vector<int>{10, -1, 20, 30}, CmdArgFlags::FRACTAL_PARAM}),
     [](const TestParamInfo<IterationRangesParameterInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommand, saveNameOnFirstInit)
+struct SaveNameParameterInput
 {
-    ValueSaver saved_first_init{g_first_init, true};
+    const char *name;
+    CmdFile mode;
+    bool first_init;
+    std::optional<std::string> initial_name;
+    const char *expected;
+};
 
-    exec_cmd_arg("savename=test.gif", CmdFile::AT_CMD_LINE);
+void PrintTo(const SaveNameParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestSaveNameParameter : public TestParameterCommand, public WithParamInterface<SaveNameParameterInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<bool> m_saved_first_init{g_first_init};
+    ValueSaver<fs::path> m_saved_filename{g_save_filename};
+};
+
+void TestSaveNameParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_first_init = GetParam().first_init;
+    if (GetParam().initial_name)
+    {
+        g_save_filename = *GetParam().initial_name;
+    }
+}
+
+TEST_P(TestSaveNameParameter, setsSaveNameForSource)
+{
+    exec_cmd_arg("savename=test.gif", GetParam().mode);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("test.gif", g_save_filename);
+    EXPECT_EQ(GetParam().expected, g_save_filename);
 }
 
-TEST_F(TestParameterCommand, saveNameAfterStartup)
-{
-    ValueSaver saved_first_init{g_first_init, false};
-    ValueSaver saved_save_filename{g_save_filename, "bar.gif"};
+INSTANTIATE_TEST_SUITE_P(Inputs, TestSaveNameParameter,
+    Values(SaveNameParameterInput{"FirstInit", CmdFile::AT_CMD_LINE, true, std::nullopt, "test.gif"},
+        SaveNameParameterInput{"AfterStartup", CmdFile::AT_AFTER_STARTUP, false, "bar.gif", "test.gif"},
+        SaveNameParameterInput{"OtherSource", CmdFile::AT_CMD_LINE_SET_NAME, false, "bar.gif", "bar.gif"}),
+    [](const TestParamInfo<SaveNameParameterInput> &info) { return info.param.name; });
 
-    exec_cmd_arg("savename=test.gif");
+struct MinStackParameterInput
+{
+    const char *name;
+    const char *argument;
+    int expected;
+    CmdArgFlags result;
+};
+
+void PrintTo(const MinStackParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestMinStackParameter : public TestParameterCommand, public WithParamInterface<MinStackParameterInput>
+{
+private:
+    ValueSaver<int> m_saved_min_stack{g_soi_min_stack, 9999};
+};
+
+TEST_P(TestMinStackParameter, setsMinimumStack)
+{
+    exec_cmd_arg(GetParam().argument);
+
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_soi_min_stack);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestMinStackParameter,
+    Values(MinStackParameterInput{"TooFew", "minstack=", 9999, CmdArgFlags::BAD_ARG},
+        MinStackParameterInput{"TooMany", "minstack=10/20", 9999, CmdArgFlags::BAD_ARG},
+        MinStackParameterInput{"Number", "minstack=200", 200, CmdArgFlags::NONE}),
+    [](const TestParamInfo<MinStackParameterInput> &info) { return info.param.name; });
+
+struct MathToleranceParameterInput
+{
+    const char *name;
+    const char *argument;
+    std::optional<double> second;
+};
+
+void PrintTo(const MathToleranceParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestMathToleranceParameter : public TestParameterCommand, public WithParamInterface<MathToleranceParameterInput>
+{
+private:
+    ValueSaver<double> m_saved_first{g_math_tol[0], 9999.0};
+    ValueSaver<double> m_saved_second{g_math_tol[1], 8888.0};
+};
+
+TEST_P(TestMathToleranceParameter, setsExplicitToleranceComponents)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("test.gif", g_save_filename);
+    EXPECT_EQ(9999.0, g_math_tol[0]);
+    if (GetParam().second)
+    {
+        EXPECT_EQ(*GetParam().second, g_math_tol[1]);
+    }
 }
 
-TEST_F(TestParameterCommand, saveNameOtherwise)
-{
-    ValueSaver saved_first_init{g_first_init, false};
-    ValueSaver saved_save_filename{g_save_filename, "bar.gif"};
-
-    exec_cmd_arg("savename=test.gif", CmdFile::AT_CMD_LINE_SET_NAME);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("bar.gif", g_save_filename);
-}
-
-TEST_F(TestParameterCommandError, minStackTooFewValues)
-{
-    ValueSaver saved_soi_min_stack{g_soi_min_stack, 9999};
-
-    exec_cmd_arg("minstack=");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(9999, g_soi_min_stack);
-}
-
-TEST_F(TestParameterCommandError, minStackTooManyValues)
-{
-    ValueSaver saved_soi_min_stack{g_soi_min_stack, 9999};
-
-    exec_cmd_arg("minstack=10/20");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(9999, g_soi_min_stack);
-}
-
-TEST_F(TestParameterCommand, minStackNumber)
-{
-    ValueSaver saved_soi_min_stack{g_soi_min_stack, 9999};
-
-    exec_cmd_arg("minstack=200");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(200, g_soi_min_stack);
-}
-
-TEST_F(TestParameterCommand, mathToleranceOneValue)
-{
-    ValueSaver saved_math_tol0{g_math_tol[0], 9999.0};
-    ValueSaver saved_math_tol1{g_math_tol[1], 8888.0};
-
-    exec_cmd_arg("mathtolerance=20");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(9999.0, g_math_tol[0]); // integer -> float value unchanged
-}
-
-TEST_F(TestParameterCommand, mathToleranceTwoValues)
-{
-    ValueSaver saved_math_tol0{g_math_tol[0], 9999.0};
-    ValueSaver saved_math_tol1{g_math_tol[1], 8888.0};
-
-    exec_cmd_arg("mathtolerance=20/30");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(9999.0, g_math_tol[0]); // integer -> float value unchanged
-    EXPECT_EQ(30, g_math_tol[1]);
-}
-
-TEST_F(TestParameterCommand, mathToleranceSecondValueOnly)
-{
-    ValueSaver saved_math_tol0{g_math_tol[0], 9999.0};
-    ValueSaver saved_math_tol1{g_math_tol[1], 8888.0};
-
-    exec_cmd_arg("mathtolerance=/30");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(9999, g_math_tol[0]);
-    EXPECT_EQ(30, g_math_tol[1]);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestMathToleranceParameter,
+    Values(MathToleranceParameterInput{"OneValue", "mathtolerance=20", std::nullopt},
+        MathToleranceParameterInput{"TwoValues", "mathtolerance=20/30", 30.0},
+        MathToleranceParameterInput{"SecondOnly", "mathtolerance=/30", 30.0}),
+    [](const TestParamInfo<MathToleranceParameterInput> &info) { return info.param.name; });
 
 static std::string adjust_dir(std::string actual)
 {
