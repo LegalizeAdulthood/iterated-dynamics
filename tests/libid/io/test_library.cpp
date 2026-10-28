@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <io/library.h>
 
@@ -16,8 +17,10 @@
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <ostream>
 #include <string>
 #include <utility>
+#include <vector>
 
 using Path = std::filesystem::path;
 
@@ -158,112 +161,65 @@ TEST_F(TestLibrary, defaultReadLibrariesPreferProgramDirectoryToCompiledHomeDire
     EXPECT_EQ(config_path, find_file(ReadFile::ID_CONFIG, "id.cfg"));
 }
 
-TEST_F(TestLibrary, findConfigInLibraryDirectory)
+struct LibraryLookupInput
 {
-    add_read_library(ID_TEST_LIBRARY_DIR1);
+    const char *name;
+    std::vector<Path> roots;
+    ReadFile category;
+    const char *filename;
+    Path expected;
+};
 
-    const Path path{find_file(ReadFile::ID_CONFIG, "root.cfg")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"root.cfg"}, path.filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR1}, path.parent_path()) << path;
+void PrintTo(const LibraryLookupInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
 
-TEST_F(TestLibrary, findConfigInLibrarySubDirectory)
+class TestLibraryLookup : public TestLibrary, public testing::WithParamInterface<LibraryLookupInput>
 {
-    add_read_library(ID_TEST_LIBRARY_DIR3);
+protected:
+    void SetUp() override;
+};
 
-    const Path path{find_file(ReadFile::ID_CONFIG, "id.cfg")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"id.cfg"}, path.filename()) << path;
-    EXPECT_EQ(Path{"config"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
+void TestLibraryLookup::SetUp()
+{
+    TestLibrary::SetUp();
+    for (const Path &root : GetParam().roots)
+    {
+        add_read_library(root);
+    }
 }
 
-TEST_F(TestLibrary, findFormulaInLibraryDirectory)
+TEST_P(TestLibraryLookup, findsFileUsingOrderedLibraryRoots)
 {
-    add_read_library(ID_TEST_LIBRARY_DIR1);
-
-    const Path path{find_file(ReadFile::FORMULA, "root.frm")};
+    const Path path{find_file(GetParam().category, GetParam().filename)};
 
     ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR1}, path.parent_path()) << path;
+    EXPECT_EQ(GetParam().expected, path) << path;
 }
 
-TEST_F(TestLibrary, findFormulaInLibrarySubDirectory)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR3);
-
-    const Path path{find_file(ReadFile::FORMULA, "root.frm")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
-    EXPECT_EQ(Path{"formula"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, preferFormulaSubDirectory)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR1);
-    add_read_library(ID_TEST_LIBRARY_DIR3);
-
-    const Path path{find_file(ReadFile::FORMULA, "root.frm")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, findFormulaSearchMultiplePaths)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR1);
-    add_read_library(ID_TEST_LIBRARY_DIR3);
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-
-    const Path path{find_file(ReadFile::FORMULA, ID_TEST_FRM_FILE)};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{ID_TEST_FRM_FILE}, path.filename()) << path;
-    EXPECT_EQ(Path{"formula"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, findFormulaInLibraryPluralSubDirectory)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-
-    const Path path{find_file(ReadFile::FORMULA, ID_TEST_FORMULA_FILE2)};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{ID_TEST_FORMULA_FILE2}, path.filename()) << path;
-    EXPECT_EQ(Path{"formulas"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, findMapInLibraryPluralSubDirectory)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-
-    const Path path{find_file(ReadFile::MAP, ID_TEST_MAP_FILE2)};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{ID_TEST_MAP_FILE2}, path.filename()) << path;
-    EXPECT_EQ(Path{"maps"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, findParameterInLibraryPluralSubDirectory)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-
-    const Path path{find_file(ReadFile::PARAMETER, ID_TEST_PAR_FILE2)};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{ID_TEST_PAR_FILE2}, path.filename()) << path;
-    EXPECT_EQ(Path{"pars"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
-}
+INSTANTIATE_TEST_SUITE_P(LookupInputs, TestLibraryLookup,
+    testing::Values(LibraryLookupInput{"ConfigRoot", {ID_TEST_LIBRARY_DIR1}, ReadFile::ID_CONFIG, "root.cfg",
+                        Path{ID_TEST_LIBRARY_DIR1} / "root.cfg"},
+        LibraryLookupInput{"ConfigSubdirectory", {ID_TEST_LIBRARY_DIR3}, ReadFile::ID_CONFIG, "id.cfg",
+            Path{ID_TEST_LIBRARY_DIR3} / "config" / "id.cfg"},
+        LibraryLookupInput{"FormulaRoot", {ID_TEST_LIBRARY_DIR1}, ReadFile::FORMULA, "root.frm",
+            Path{ID_TEST_LIBRARY_DIR1} / "root.frm"},
+        LibraryLookupInput{"FormulaSubdirectory", {ID_TEST_LIBRARY_DIR3}, ReadFile::FORMULA, "root.frm",
+            Path{ID_TEST_LIBRARY_DIR3} / "formula" / "root.frm"},
+        LibraryLookupInput{"PreferFormulaSubdirectory", {ID_TEST_LIBRARY_DIR1, ID_TEST_LIBRARY_DIR3}, ReadFile::FORMULA,
+            "root.frm", Path{ID_TEST_LIBRARY_DIR3} / "formula" / "root.frm"},
+        LibraryLookupInput{"MultipleFormulaRoots", {ID_TEST_LIBRARY_DIR1, ID_TEST_LIBRARY_DIR3, ID_TEST_LIBRARY_DIR2},
+            ReadFile::FORMULA, ID_TEST_FRM_FILE, Path{ID_TEST_LIBRARY_DIR2} / "formula" / ID_TEST_FRM_FILE},
+        LibraryLookupInput{"PluralFormula", {ID_TEST_LIBRARY_DIR2}, ReadFile::FORMULA, ID_TEST_FORMULA_FILE2,
+            Path{ID_TEST_LIBRARY_DIR2} / "formulas" / ID_TEST_FORMULA_FILE2},
+        LibraryLookupInput{"PluralMap", {ID_TEST_LIBRARY_DIR2}, ReadFile::MAP, ID_TEST_MAP_FILE2,
+            Path{ID_TEST_LIBRARY_DIR2} / "maps" / ID_TEST_MAP_FILE2},
+        LibraryLookupInput{"PluralParameter", {ID_TEST_LIBRARY_DIR2}, ReadFile::PARAMETER, ID_TEST_PAR_FILE2,
+            Path{ID_TEST_LIBRARY_DIR2} / "pars" / ID_TEST_PAR_FILE2},
+        LibraryLookupInput{"ImageDirectory", {ID_TEST_LIBRARY_DIR2}, ReadFile::IMAGE, ID_TEST_IMAGE_FILE,
+            Path{ID_TEST_LIBRARY_DIR2} / "image" / ID_TEST_IMAGE_FILE}),
+    [](const testing::TestParamInfo<LibraryLookupInput> &info) { return info.param.name; });
 
 TEST_F(TestLibrary, findFileIgnoresPluralFallbackSubDirectory)
 {
@@ -300,18 +256,6 @@ TEST_F(TestLibrary, findFileFromSaveLibrary)
     EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
     EXPECT_EQ(Path{"formula"}, path.parent_path().filename()) << path;
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, findImageInLibraryDirectory)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-
-    const Path path{find_file(ReadFile::IMAGE, ID_TEST_IMAGE_FILE)};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{ID_TEST_IMAGE_FILE}, path.filename()) << path;
-    EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
 }
 
 TEST_F(TestLibrary, setSaveLibrary)
