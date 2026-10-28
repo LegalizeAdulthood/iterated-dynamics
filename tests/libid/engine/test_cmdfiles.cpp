@@ -2804,32 +2804,45 @@ TEST_F(TestParameterCommand, tempDirExisting)
     EXPECT_EQ(new_dir.string(), adjust_dir(g_temp_dir.string()));
 }
 
-TEST_F(TestParameterCommand, startupUsesTmpDirWhenTmpAndTempUnset)
+class TestStartupCommand : public TestParameterCommand
 {
-    fs::path temp_dir{ID_TEST_DATA_DIR};
-    temp_dir.make_preferred();
-    EnvVarSaver saved_tmp{"TMP", nullptr};
-    EnvVarSaver saved_temp{"TEMP", nullptr};
-    EnvVarSaver saved_tmp_dir{"TMPDIR", temp_dir.string().c_str()};
-    ValueSaver saved_first_init{g_first_init, true};
-    ValueSaver saved_temp_dir{g_temp_dir, fs::path{}};
-    ValueSaver saved_special_dirs{g_special_dirs,
+private:
+    ValueSaver<bool> m_saved_first_init{g_first_init, true};
+    ValueSaver<std::shared_ptr<SpecialDirectories>> m_saved_special_dirs{g_special_dirs,
         std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
-    CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
+    CurrentPathSaver m_current_directory{ID_TEST_HOME_DIR};
+};
+
+class TestStartupHeadlessCommand : public TestStartupCommand
+{
+private:
+    ValueSaver<Driver *> m_saved_driver{g_driver, nullptr};
+};
+
+class TestStartupTempDirectory : public TestStartupCommand
+{
+protected:
+    fs::path m_temp_directory{ID_TEST_DATA_DIR};
+
+private:
+    EnvVarSaver m_saved_tmp{"TMP", nullptr};
+    EnvVarSaver m_saved_temp{"TEMP", nullptr};
+    EnvVarSaver m_saved_tmp_dir{"TMPDIR", m_temp_directory.make_preferred().string().c_str()};
+    ValueSaver<fs::path> m_saved_temp_dir{g_temp_dir, fs::path{}};
+};
+
+TEST_F(TestStartupTempDirectory, startupUsesTmpDirWhenTmpAndTempUnset)
+{
     const std::vector<std::string> args{"id"};
 
     const CommandRouter router;
     router.process_startup(args);
 
-    EXPECT_EQ(temp_dir.string(), adjust_dir(g_temp_dir.string()));
+    EXPECT_EQ(m_temp_directory.string(), adjust_dir(g_temp_dir.string()));
 }
 
-TEST_F(TestParameterCommand, startupPreservesOrbitDelayAfterShowDot)
+TEST_F(TestStartupCommand, startupPreservesOrbitDelayAfterShowDot)
 {
-    ValueSaver saved_first_init{g_first_init, true};
-    ValueSaver saved_special_dirs{g_special_dirs,
-        std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
-    CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
     ValueSaver saved_video_table_len{g_video_table_len, 1};
     ValueSaver saved_video_key{g_video_mode_keys[0], ID_KEY_F6};
     ValueSaver saved_orbit_delay{g_orbit_delay, -999};
@@ -2843,14 +2856,8 @@ TEST_F(TestParameterCommand, startupPreservesOrbitDelayAfterShowDot)
     EXPECT_EQ(100, g_orbit_skip_points);
 }
 
-TEST_F(TestParameterCommand, startupErrorStopsBeforeLaterBatchArgument)
+TEST_F(TestStartupHeadlessCommand, startupErrorStopsBeforeLaterBatchArgument)
 {
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    ValueSaver saved_first_init{g_first_init, true};
-    ValueSaver saved_special_dirs{g_special_dirs,
-        std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
-    CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
-
     const CommandRouter router;
     const CommandParseResult parsed{router.process_startup({"id", "maxiter=bad", "batch=yes"})};
     const CommandDiagnostics &diagnostics{parsed.diagnostics};
@@ -2860,14 +2867,8 @@ TEST_F(TestParameterCommand, startupErrorStopsBeforeLaterBatchArgument)
     EXPECT_EQ(BatchMode::NONE, g_init_batch);
 }
 
-TEST_F(TestParameterCommand, startupCollectsMissingFileWarningsWithoutUi)
+TEST_F(TestStartupHeadlessCommand, startupCollectsMissingFileWarningsWithoutUi)
 {
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    ValueSaver saved_first_init{g_first_init, true};
-    ValueSaver saved_special_dirs{g_special_dirs,
-        std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
-    CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
-
     const CommandRouter router;
     const CommandParseResult parsed{router.process_startup({"id", "lfile=missing-startup-lsystem.l"})};
     const CommandDiagnostics &diagnostics{parsed.diagnostics};
@@ -2877,14 +2878,8 @@ TEST_F(TestParameterCommand, startupCollectsMissingFileWarningsWithoutUi)
     EXPECT_THAT(diagnostics.warnings.front(), HasSubstr("please check command line"));
 }
 
-TEST_F(TestParameterCommand, startupReturnsFileEntrySelectionWithoutUi)
+TEST_F(TestStartupHeadlessCommand, startupReturnsFileEntrySelectionWithoutUi)
 {
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    ValueSaver saved_first_init{g_first_init, true};
-    ValueSaver saved_special_dirs{g_special_dirs,
-        std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
-    CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
-
     const CommandRouter router;
     const CommandParseResult parsed{router.process_startup({"id", "type=formula"})};
 
@@ -2893,14 +2888,8 @@ TEST_F(TestParameterCommand, startupReturnsFileEntrySelectionWithoutUi)
     EXPECT_TRUE(g_formula_name.empty());
 }
 
-TEST_F(TestParameterCommand, startupErrorPreventsLaterAction)
+TEST_F(TestStartupHeadlessCommand, startupErrorPreventsLaterAction)
 {
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    ValueSaver saved_first_init{g_first_init, true};
-    ValueSaver saved_special_dirs{g_special_dirs,
-        std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
-    CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
-
     const CommandRouter router;
     const CommandParseResult parsed{router.process_startup({"id", "maxiter=bad", "makedoc=unused.txt", "maxiter=888"})};
 
