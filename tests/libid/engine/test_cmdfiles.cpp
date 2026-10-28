@@ -4690,101 +4690,140 @@ TEST_F(TestParameterCommand, xyAdjust)
     EXPECT_EQ(2, g_adjust_3d.y);
 }
 
-TEST_F(TestParameterCommand, threeDNo)
+struct ThreeDParameterInput
 {
-    VALUE_UNCHANGED(g_overlay_3d, true);
-    ValueSaver saved_display_3d{g_display_3d, Display3DMode::YES};
+    const char *name;
+    const char *argument;
+    bool initial_overlay;
+    Display3DMode initial_display;
+    std::optional<CalcStatus> calc_status;
+    bool overlay;
+    Display3DMode display;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("3d=no");
+void PrintTo(const ThreeDParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestThreeDParameter : public TestParameterCommand, public WithParamInterface<ThreeDParameterInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<bool> m_saved_overlay{g_overlay_3d};
+    ValueSaver<Display3DMode> m_saved_display{g_display_3d};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status};
+};
+
+void TestThreeDParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_overlay_3d = GetParam().initial_overlay;
+    g_display_3d = GetParam().initial_display;
+    if (GetParam().calc_status)
+    {
+        g_calc_status = *GetParam().calc_status;
+    }
+}
+
+TEST_P(TestThreeDParameter, selects3DDisplay)
+{
+    exec_cmd_arg(GetParam().argument);
+
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().overlay, g_overlay_3d);
+    EXPECT_EQ(GetParam().display, g_display_3d);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestThreeDParameter,
+    Values(ThreeDParameterInput{"No", "3d=no", true, Display3DMode::YES, std::nullopt, true, Display3DMode::NONE,
+               CmdArgFlags::PARAM_3D},
+        ThreeDParameterInput{"Yes", "3d=yes", false, Display3DMode::MINUS_ONE, std::nullopt, false, Display3DMode::YES,
+            CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D},
+        ThreeDParameterInput{"OverlayWithFractal", "3d=overlay", false, Display3DMode::MINUS_ONE,
+            CalcStatus::PARAMS_CHANGED, true, Display3DMode::YES, CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D},
+        ThreeDParameterInput{"OverlayNoFractal", "3d=overlay", false, Display3DMode::MINUS_ONE, CalcStatus::NO_FRACTAL,
+            false, Display3DMode::YES, CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D}),
+    [](const TestParamInfo<ThreeDParameterInput> &info) { return info.param.name; });
+
+struct SphereParameterInput
+{
+    const char *name;
+    const char *argument;
+    bool initial;
+    bool expected;
+};
+
+void PrintTo(const SphereParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestSphereParameter : public TestParameterCommand, public WithParamInterface<SphereParameterInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<bool> m_saved_sphere{g_sphere};
+};
+
+void TestSphereParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_sphere = GetParam().initial;
+}
+
+TEST_P(TestSphereParameter, setsSphereMode)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(Display3DMode::NONE, g_display_3d);
+    EXPECT_EQ(GetParam().expected, g_sphere);
 }
 
-TEST_F(TestParameterCommand, threeDYes)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestSphereParameter,
+    Values(
+        SphereParameterInput{"No", "sphere=no", true, false}, SphereParameterInput{"Yes", "sphere=yes", false, true}),
+    [](const TestParamInfo<SphereParameterInput> &info) { return info.param.name; });
+
+struct ScaleXYZParameterInput
 {
-    ValueSaver saved_overlay_3d{g_overlay_3d, false};
-    ValueSaver saved_display_3d{g_display_3d, Display3DMode::MINUS_ONE};
+    const char *name;
+    const char *argument;
+    int rough;
+};
 
-    exec_cmd_arg("3d=yes");
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D, m_result);
-    EXPECT_FALSE(g_overlay_3d);
-    EXPECT_EQ(Display3DMode::YES, g_display_3d);
+void PrintTo(const ScaleXYZParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, threeDOverlayWithFractal)
+class TestScaleXYZParameter : public TestParameterCommand, public WithParamInterface<ScaleXYZParameterInput>
 {
-    ValueSaver saved_overlay_3d{g_overlay_3d, false};
-    ValueSaver saved_display_3d{g_display_3d, Display3DMode::MINUS_ONE};
-    ValueSaver saved_calc_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
+private:
+    ValueSaver<int> m_saved_x_scale{g_x_scale, -99};
+    ValueSaver<int> m_saved_y_scale{g_y_scale, -99};
+    ValueSaver<int> m_saved_rough{g_rough, -99};
+};
 
-    exec_cmd_arg("3d=overlay");
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D, m_result);
-    EXPECT_TRUE(g_overlay_3d);
-    EXPECT_EQ(Display3DMode::YES, g_display_3d);
-}
-
-TEST_F(TestParameterCommand, threeDOverlayNoFractal)
+TEST_P(TestScaleXYZParameter, setsExplicitScaleComponents)
 {
-    ValueSaver saved_overlay_3d{g_overlay_3d, false};
-    ValueSaver saved_display_3d{g_display_3d, Display3DMode::MINUS_ONE};
-    ValueSaver saved_calc_status{g_calc_status, CalcStatus::NO_FRACTAL};
-
-    exec_cmd_arg("3d=overlay");
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D, m_result);
-    EXPECT_FALSE(g_overlay_3d);
-    EXPECT_EQ(Display3DMode::YES, g_display_3d);
-}
-
-TEST_F(TestParameterCommand, sphereNo)
-{
-    ValueSaver saved_sphere{g_sphere, true};
-
-    exec_cmd_arg("sphere=no");
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_FALSE(g_sphere);
-}
-
-TEST_F(TestParameterCommand, sphereYes)
-{
-    ValueSaver saved_sphere{g_sphere, false};
-
-    exec_cmd_arg("sphere=yes");
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_TRUE(g_sphere);
-}
-
-TEST_F(TestParameterCommand, scaleXYZTwoValues)
-{
-    ValueSaver saved_x_scale{g_x_scale, -99};
-    ValueSaver saved_y_scale{g_y_scale, -99};
-    VALUE_UNCHANGED(g_rough, -99);
-
-    exec_cmd_arg("scalexyz=1/2");
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_x_scale);
     EXPECT_EQ(2, g_y_scale);
+    EXPECT_EQ(GetParam().rough, g_rough);
 }
 
-TEST_F(TestParameterCommand, scaleXYZThreeValues)
-{
-    ValueSaver saved_x_scale{g_x_scale, -99};
-    ValueSaver saved_y_scale{g_y_scale, -99};
-    ValueSaver saved_rough{g_rough, -99};
-
-    exec_cmd_arg("scalexyz=1/2/3");
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, g_x_scale);
-    EXPECT_EQ(2, g_y_scale);
-    EXPECT_EQ(3, g_rough);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestScaleXYZParameter,
+    Values(ScaleXYZParameterInput{"TwoValues", "scalexyz=1/2", -99},
+        ScaleXYZParameterInput{"ThreeValues", "scalexyz=1/2/3", 3}),
+    [](const TestParamInfo<ScaleXYZParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, roughness)
 {
