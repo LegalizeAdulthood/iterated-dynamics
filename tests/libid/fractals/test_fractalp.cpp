@@ -32,6 +32,7 @@
 #include <array>
 #include <cctype>
 #include <filesystem>
+#include <optional>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -272,22 +273,39 @@ TEST_P(TestFractalTableEntry, seededDispatchMatchesDefaults)
     {
         EXPECT_EQ(from.calc_type, dispatch.calc_type()) << "index " << GetParam().index << ", " << from.name;
     }
-    else
-    {
-        EXPECT_THROW(dispatch.calc_type(), std::runtime_error) << "index " << GetParam().index << ", " << from.name;
-    }
 }
+
+class TestMissingDispatchCalculation : public TestWithParam<FractalTableInput>
+{
+};
+
+TEST_P(TestMissingDispatchCalculation, rejectsCalculationQuery)
+{
+    const FractalDispatch dispatch{*GetParam().specific};
+
+    EXPECT_THROW(dispatch.calc_type(), std::runtime_error)
+        << "index " << GetParam().index << ", " << GetParam().specific->name;
+}
+
+INSTANTIATE_TEST_SUITE_P(Entries, TestMissingDispatchCalculation,
+    ValuesIn(fractal_table_inputs([](const FractalSpecific &specific) { return specific.calc_type == nullptr; })),
+    fractal_table_case_name);
 
 INSTANTIATE_TEST_SUITE_P(Entries, TestFractalTableEntry,
     ValuesIn(fractal_table_inputs([](const FractalSpecific &) { return true; })), fractal_table_case_name);
 
-TEST(TestFractalDispatch, setFractalTypeSeedsFunctionsAndInvalidatesCalcType)
+class TestFractalTypeChange : public Test
 {
-    ValueSaver saved_type{g_fractal_type};
-    ValueSaver saved_specific{g_cur_fractal_specific};
-    ValueSaver saved_dispatch{g_dispatch};
+private:
+    ValueSaver<FractalType> m_saved_type{g_fractal_type};
+    ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific};
+    ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
+};
 
+TEST_F(TestFractalTypeChange, seedsFunctionsAndInvalidatesCalculation)
+{
     g_dispatch.set_calc_type(test_calc_type);
+
     set_fractal_type(FractalType::MANDEL);
 
     const FractalSpecific &from{*get_fractal_specific(FractalType::MANDEL)};
@@ -295,16 +313,30 @@ TEST(TestFractalDispatch, setFractalTypeSeedsFunctionsAndInvalidatesCalcType)
     EXPECT_EQ(from.per_pixel, g_dispatch.per_pixel());
     EXPECT_EQ(from.per_image, g_dispatch.per_image());
     EXPECT_FALSE(g_dispatch.has_calc_type());
+}
+
+class TestInvalidatedCalculation : public TestFractalTypeChange
+{
+protected:
+    void SetUp() override;
+};
+
+void TestInvalidatedCalculation::SetUp()
+{
+    TestFractalTypeChange::SetUp();
+    g_dispatch.set_calc_type(test_calc_type);
+    set_fractal_type(FractalType::MANDEL);
+}
+
+TEST_F(TestInvalidatedCalculation, rejectsCalculationQuery)
+{
     EXPECT_THROW(g_dispatch.calc_type(), std::runtime_error);
 }
 
-TEST(TestFractalDispatch, initCalcTypeAfterTypeChangePreparesDispatch)
+TEST_F(TestFractalTypeChange, initializationPreparesCalculationDispatch)
 {
-    ValueSaver saved_type{g_fractal_type};
-    ValueSaver saved_specific{g_cur_fractal_specific};
-    ValueSaver saved_dispatch{g_dispatch};
-
     set_fractal_type(FractalType::MANDEL);
+
     g_dispatch.init_calc_type(*g_cur_fractal_specific);
 
     const FractalSpecific &from{*get_fractal_specific(FractalType::MANDEL)};
@@ -500,74 +532,95 @@ TEST(TestFractalDispatch, formulaParseSuccessOnlyUpdatesDispatch)
     expect_table_functions(FractalType::FORMULA, table);
 }
 
-TEST(TestFractalDispatch, perImageSelectorsOnlyUpdateDispatch)
+class TestDispatchSelector : public Test
 {
-    {
-        DispatchSelectionState state{FractalType::MANDEL_Z_POWER};
-        const TableFunctions table{table_functions(FractalType::MANDEL_Z_POWER)};
-        g_params[2] = 3.0;
-        g_params[3] = 1.0;
+protected:
+    void select_type(FractalType type);
+    void expect_table_unchanged() const;
 
-        EXPECT_TRUE(mandel_per_image());
+private:
+    std::optional<DispatchSelectionState> m_state;
+    FractalType m_type{FractalType::NO_FRACTAL};
+    TableFunctions m_table{};
+};
 
-        EXPECT_EQ(mandel_z_power_cmplx_orbit, g_dispatch.orbit_calc());
-        expect_table_functions(FractalType::MANDEL_Z_POWER, table);
-    }
+void TestDispatchSelector::select_type(const FractalType type)
+{
+    m_state.emplace(type);
+    m_type = type;
+    m_table = table_functions(type);
+}
 
-    {
-        DispatchSelectionState state{FractalType::MANDEL_FN};
-        const TableFunctions table{table_functions(FractalType::MANDEL_FN)};
-        g_trig_index[0] = TrigFn::LOG;
+void TestDispatchSelector::expect_table_unchanged() const
+{
+    expect_table_functions(m_type, m_table);
+}
 
-        EXPECT_TRUE(mandel_trig_per_image());
+TEST_F(TestDispatchSelector, mandelPowerOnlyUpdatesDispatch)
+{
+    select_type(FractalType::MANDEL_Z_POWER);
+    g_params[2] = 3.0;
+    g_params[3] = 1.0;
 
-        EXPECT_EQ(lambda_trig_orbit, g_dispatch.orbit_calc());
-        expect_table_functions(FractalType::MANDEL_FN, table);
-    }
+    EXPECT_TRUE(mandel_per_image());
 
-    {
-        DispatchSelectionState state{FractalType::PHOENIX};
-        const TableFunctions table{table_functions(FractalType::PHOENIX)};
-        g_param_z2.x = 2.0;
+    EXPECT_EQ(mandel_z_power_cmplx_orbit, g_dispatch.orbit_calc());
+    expect_table_unchanged();
+}
 
-        EXPECT_TRUE(phoenix_per_image());
+TEST_F(TestDispatchSelector, mandelTrigOnlyUpdatesDispatch)
+{
+    select_type(FractalType::MANDEL_FN);
+    g_trig_index[0] = TrigFn::LOG;
 
-        EXPECT_EQ(phoenix_plus_fractal, g_dispatch.orbit_calc());
-        expect_table_functions(FractalType::PHOENIX, table);
-    }
+    EXPECT_TRUE(mandel_trig_per_image());
 
-    {
-        DispatchSelectionState state{FractalType::FN_PLUS_FN};
-        const TableFunctions table{table_functions(FractalType::FN_PLUS_FN)};
-        g_trig_index[0] = TrigFn::SIN;
-        g_trig_index[1] = TrigFn::TAN;
-        g_param_z1 = DComplex{2.0, 0.0};
-        g_param_z2 = DComplex{2.0, 0.0};
+    EXPECT_EQ(lambda_trig_orbit, g_dispatch.orbit_calc());
+    expect_table_unchanged();
+}
 
-        EXPECT_TRUE(trig_plus_trig_per_image());
+TEST_F(TestDispatchSelector, phoenixOnlyUpdatesDispatch)
+{
+    select_type(FractalType::PHOENIX);
+    g_param_z2.x = 2.0;
 
-        EXPECT_EQ(trig_plus_trig_orbit, g_dispatch.orbit_calc());
-        EXPECT_EQ(other_julia_per_pixel, g_dispatch.per_pixel());
-        expect_table_functions(FractalType::FN_PLUS_FN, table);
-    }
+    EXPECT_TRUE(phoenix_per_image());
 
-    {
-        DispatchSelectionState state{FractalType::POPCORN_JUL};
-        const TableFunctions table{table_functions(FractalType::POPCORN_JUL)};
-        g_trig_index[0] = TrigFn::SIN;
-        g_trig_index[1] = TrigFn::TAN;
-        g_trig_index[2] = TrigFn::SIN;
-        g_trig_index[3] = TrigFn::TAN;
-        g_param_z1 = DComplex{0.0, 0.0};
-        g_param_z2 = DComplex{3.0, 0.0};
-        g_debug_flag = DebugFlags::FORCE_REAL_POPCORN;
+    EXPECT_EQ(phoenix_plus_fractal, g_dispatch.orbit_calc());
+    expect_table_unchanged();
+}
 
-        EXPECT_TRUE(julia_per_image());
+TEST_F(TestDispatchSelector, trigPlusTrigOnlyUpdatesDispatch)
+{
+    select_type(FractalType::FN_PLUS_FN);
+    g_trig_index[0] = TrigFn::SIN;
+    g_trig_index[1] = TrigFn::TAN;
+    g_param_z1 = DComplex{2.0, 0.0};
+    g_param_z2 = DComplex{2.0, 0.0};
 
-        EXPECT_EQ(nullptr, g_dispatch.orbit_calc());
-        EXPECT_EQ(SymmetryType::ORIGIN, g_symmetry);
-        expect_table_functions(FractalType::POPCORN_JUL, table);
-    }
+    EXPECT_TRUE(trig_plus_trig_per_image());
+
+    EXPECT_EQ(trig_plus_trig_orbit, g_dispatch.orbit_calc());
+    EXPECT_EQ(other_julia_per_pixel, g_dispatch.per_pixel());
+    expect_table_unchanged();
+}
+
+TEST_F(TestDispatchSelector, popcornJuliaOnlyUpdatesDispatch)
+{
+    select_type(FractalType::POPCORN_JUL);
+    g_trig_index[0] = TrigFn::SIN;
+    g_trig_index[1] = TrigFn::TAN;
+    g_trig_index[2] = TrigFn::SIN;
+    g_trig_index[3] = TrigFn::TAN;
+    g_param_z1 = DComplex{0.0, 0.0};
+    g_param_z2 = DComplex{3.0, 0.0};
+    g_debug_flag = DebugFlags::FORCE_REAL_POPCORN;
+
+    EXPECT_TRUE(julia_per_image());
+
+    EXPECT_EQ(nullptr, g_dispatch.orbit_calc());
+    EXPECT_EQ(SymmetryType::ORIGIN, g_symmetry);
+    expect_table_unchanged();
 }
 
 static void expect_mandel_julia_calc_type_selection(const FractalType type, const PerImage setup, const bool optimized)
