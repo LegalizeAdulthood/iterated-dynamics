@@ -4641,82 +4641,196 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestMappedReferenceReplacement,
         LogMappedSampleInput{"HighPrecisionInside", true, {0.125, 0.125}, 128, 88}),
     [](const TestParamInfo<LogMappedSampleInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, decompositionMatchesStandardSectorsAndPalettes)
+struct DecompositionInput
 {
-    ValueSaver<int> saved_colors{g_colors};
-    ValueSaver<int> saved_and_color{g_and_color};
-    g_inside_method = ColorMethod::ITER;
-    for (const int sectors : {2, 4, 8, 16, 32, 64, 128, 256})
+    std::string name;
+    bool big_float;
+    int sectors;
+    int colors;
+    std::complex<double> point;
+};
+
+void PrintTo(const DecompositionInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<DecompositionInput> decomposition_inputs()
+{
+    struct Point
     {
-        SCOPED_TRACE(sectors);
-        g_decomp[0] = sectors;
-        for (const int colors : {2, 4, 16, 256})
+        const char *name;
+        std::complex<double> value;
+    };
+
+    const Point points[]{
+        {"PositiveReal", {3.0, 0.0}},
+        {"UpperRightReal", {3.0, 1.0}},
+        {"UpperRightDiagonal", {3.0, 3.0}},
+        {"UpperRightImaginary", {1.0, 3.0}},
+        {"PositiveImaginary", {0.0, 3.0}},
+        {"UpperLeftImaginary", {-1.0, 3.0}},
+        {"UpperLeftReal", {-3.0, 1.0}},
+        {"NegativeReal", {-3.0, 0.0}},
+        {"LowerLeftReal", {-3.0, -1.0}},
+        {"LowerLeftImaginary", {-1.0, -3.0}},
+        {"NegativeImaginary", {0.0, -3.0}},
+        {"LowerRightImaginary", {1.0, -3.0}},
+        {"LowerRightReal", {3.0, -1.0}},
+    };
+
+    std::vector<DecompositionInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const int sectors : {2, 4, 8, 16, 32, 64, 128, 256})
         {
-            SCOPED_TRACE(colors);
-            g_colors = colors;
-            g_and_color = colors - 1;
-            for (const std::complex<double> point :
-                {std::complex<double>{3.0, 0.0}, {3.0, 1.0}, {3.0, 3.0}, {1.0, 3.0}, {0.0, 3.0}, {-1.0, 3.0},
-                    {-3.0, 1.0}, {-3.0, 0.0}, {-3.0, -1.0}, {-1.0, -3.0}, {0.0, -3.0}, {1.0, -3.0}, {3.0, -1.0}})
+            for (const int colors : {2, 4, 16, 256})
             {
-                SCOPED_TRACE(point);
-                set_initial_offset({-point.real(), -point.imag()});
-                compare_pixel(point, 8);
-                EXPECT_EQ(1, g_real_color_iter);
+                for (const Point &point : points)
+                {
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Sectors" +
+                            std::to_string(sectors) + "_Colors" + std::to_string(colors) + "_" + point.name,
+                        big_float, sectors, colors, point.value});
+                }
             }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, decompositionUsesStandardQuadrantColors)
+class TestDecompositionPalette : public PerturbationIterationTest, public WithParamInterface<DecompositionInput>
 {
+public:
+    TestDecompositionPalette();
+
+protected:
+    void SetUp() override;
+};
+
+TestDecompositionPalette::TestDecompositionPalette() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestDecompositionPalette::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = ColorMethod::ITER;
+    g_decomp[0] = GetParam().sectors;
+    g_colors = GetParam().colors;
+    g_and_color = g_colors - 1;
+    const std::complex<double> point{GetParam().point};
+    set_initial_offset({-point.real(), -point.imag()});
+}
+
+TEST_P(TestDecompositionPalette, matchesStandardSectorsAndPalette)
+{
+    compare_pixel(GetParam().point, 8);
+
+    EXPECT_EQ(1, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDecompositionPalette, ValuesIn(decomposition_inputs()),
+    [](const TestParamInfo<DecompositionInput> &info) { return info.param.name; });
+
+struct DecompositionQuadrantInput
+{
+    const char *name;
+    bool big_float;
+    std::complex<double> point;
+    int color;
+};
+
+void PrintTo(const DecompositionQuadrantInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestDecompositionQuadrant : public PerturbationIterationTest,
+                                  public WithParamInterface<DecompositionQuadrantInput>
+{
+public:
+    TestDecompositionQuadrant();
+
+protected:
+    void SetUp() override;
+};
+
+TestDecompositionQuadrant::TestDecompositionQuadrant() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestDecompositionQuadrant::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::ITER;
     g_decomp[0] = 4;
-
-    struct Sample
-    {
-        std::complex<double> point;
-        int color;
-    };
-
-    for (const Sample &sample : {Sample{{3.0, 1.0}, 1}, {{-3.0, 1.0}, 2}, {{-3.0, -1.0}, 3}, {{3.0, -1.0}, 4}})
-    {
-        SCOPED_TRACE(sample.point);
-        set_initial_offset({-sample.point.real(), -sample.point.imag()});
-        compare_pixel(sample.point, 8);
-        EXPECT_EQ(sample.color, g_color);
-    }
+    const std::complex<double> point{GetParam().point};
+    set_initial_offset({-point.real(), -point.imag()});
 }
 
-TEST_P(TestPerturbationIterations, decompositionOverridesBiomorphAndOutsideFormulasBeforeMapping)
+TEST_P(TestDecompositionQuadrant, usesStandardQuadrantColor)
 {
-    ValueSaver<double> saved_limit2{g_magnitude_limit2, 2.0};
+    compare_pixel(GetParam().point, 8);
+
+    EXPECT_EQ(GetParam().color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDecompositionQuadrant,
+    Values(DecompositionQuadrantInput{"DoubleUpperRight", false, {3.0, 1.0}, 1},
+        DecompositionQuadrantInput{"DoubleUpperLeft", false, {-3.0, 1.0}, 2},
+        DecompositionQuadrantInput{"DoubleLowerLeft", false, {-3.0, -1.0}, 3},
+        DecompositionQuadrantInput{"DoubleLowerRight", false, {3.0, -1.0}, 4},
+        DecompositionQuadrantInput{"HighPrecisionUpperRight", true, {3.0, 1.0}, 1},
+        DecompositionQuadrantInput{"HighPrecisionUpperLeft", true, {-3.0, 1.0}, 2},
+        DecompositionQuadrantInput{"HighPrecisionLowerLeft", true, {-3.0, -1.0}, 3},
+        DecompositionQuadrantInput{"HighPrecisionLowerRight", true, {3.0, -1.0}, 4}),
+    [](const TestParamInfo<DecompositionQuadrantInput> &info) { return info.param.name; });
+
+class TestDecompositionOverride : public MappedColorMethodTest
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<double> m_saved_limit2{g_magnitude_limit2};
+};
+
+void TestDecompositionOverride::SetUp()
+{
+    MappedColorMethodTest::SetUp();
+    g_magnitude_limit2 = 2.0;
     g_inside_method = ColorMethod::ITER;
     g_decomp[0] = 16;
     g_biomorph = 9;
-    g_log_map_flag = 1;
-    g_log_map_table_max_size = 128;
     g_log_map_table.assign(129, 44);
     g_log_map_table[1] = 17;
     g_log_map_table[4] = 23;
     g_log_map_table[9] = 31;
     g_close_proximity = 16.0;
     init_atan_colors();
-    for (const ColorMethod outside : {ColorMethod::ITER, ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT,
-             ColorMethod::SUM, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS})
+    g_outside_method = GetParam().method;
+    if (g_outside_method == ColorMethod::COLOR)
     {
-        SCOPED_TRACE(static_cast<int>(outside));
-        g_outside_method = outside;
-        set_initial_offset({-3.0, 0.0});
-        compare_pixel({3.0, 0.0}, 128);
-        EXPECT_EQ(17, g_color);
+        g_outside_color = 6;
     }
-
-    g_outside_method = ColorMethod::COLOR;
-    g_outside_color = 6;
-    compare_pixel({3.0, 0.0}, 128);
-    EXPECT_EQ(6, g_color);
+    set_initial_offset({-3.0, 0.0});
 }
+
+TEST_P(TestDecompositionOverride, preservesFinishingPriority)
+{
+    compare_pixel({3.0, 0.0}, 128);
+
+    EXPECT_EQ(GetParam().method == ColorMethod::COLOR ? 6 : 17, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDecompositionOverride,
+    ValuesIn(mapped_color_method_inputs(
+        {{"Iterations", ColorMethod::ITER}, {"Real", ColorMethod::REAL}, {"Imaginary", ColorMethod::IMAG},
+            {"Product", ColorMethod::MULT}, {"Sum", ColorMethod::SUM}, {"Atan", ColorMethod::ATAN},
+            {"Fmod", ColorMethod::FMOD}, {"TotalDistance", ColorMethod::TDIS}, {"FixedColor", ColorMethod::COLOR}})),
+    [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, decompositionDoesNotChangeInsideColors)
 {
