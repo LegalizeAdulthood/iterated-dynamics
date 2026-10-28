@@ -20,6 +20,8 @@
 
 #include <algorithm>
 #include <array>
+#include <optional>
+#include <ostream>
 #include <stdexcept>
 #include <vector>
 
@@ -343,26 +345,53 @@ TEST_F(TestBoundaryTrace, suspensionOfOutlineWorkRestartsAtItsScanCursor)
     EXPECT_THAT(m_pixels, Each(7));
 }
 
-TEST_F(TestBoundaryTrace, invalidColorsReportFailureWithoutCompletingOrPolling)
+struct BoundaryColorInput
 {
-    ValueSaver saved_inside_color{g_inside_color, 0};
-    ValueSaver saved_outside_color{g_outside_color, 0};
-    for (const bool inside : {true, false})
-    {
-        g_inside_method = inside ? ColorMethod::COLOR : ColorMethod::ITER;
-        g_outside_method = inside ? ColorMethod::ITER : ColorMethod::COLOR;
-        BoundaryTrace pass;
+    const char *name;
+    ColorMethod inside;
+    ColorMethod outside;
+};
 
-        EXPECT_THROW(pass.select_pixel(), std::runtime_error);
-        EXPECT_FALSE(pass.done());
-        EXPECT_TRUE(m_plots.empty());
-        EXPECT_TRUE(s_calculated.empty());
-
-        g_inside_method = ColorMethod::ITER;
-        g_outside_method = ColorMethod::ITER;
-        EXPECT_TRUE(pass.select_pixel());
-    }
+void PrintTo(const BoundaryColorInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
+
+class TestBoundaryTraceInvalidColors : public TestBoundaryTrace, public WithParamInterface<BoundaryColorInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<int> m_inside_color{g_inside_color, 0};
+    ValueSaver<int> m_outside_color{g_outside_color, 0};
+};
+
+void TestBoundaryTraceInvalidColors::SetUp()
+{
+    TestBoundaryTrace::SetUp();
+    g_inside_method = GetParam().inside;
+    g_outside_method = GetParam().outside;
+}
+
+TEST_P(TestBoundaryTraceInvalidColors, reportsFailureAndAllowsCorrectedSettings)
+{
+    BoundaryTrace pass;
+
+    EXPECT_THROW(pass.select_pixel(), std::runtime_error);
+    EXPECT_FALSE(pass.done());
+    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(s_calculated.empty());
+
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::ITER;
+    EXPECT_TRUE(pass.select_pixel());
+}
+
+INSTANTIATE_TEST_SUITE_P(ColorInputs, TestBoundaryTraceInvalidColors,
+    Values(BoundaryColorInput{"InsideZero", ColorMethod::COLOR, ColorMethod::ITER},
+        BoundaryColorInput{"OutsideZero", ColorMethod::ITER, ColorMethod::COLOR}),
+    [](const TestParamInfo<BoundaryColorInput> &info) { return info.param.name; });
 
 TEST_F(TestBoundaryTrace, insufficientColorsReportFailureWithoutCompletingOrPolling)
 {
@@ -378,19 +407,56 @@ TEST_F(TestBoundaryTrace, insufficientColorsReportFailureWithoutCompletingOrPoll
     EXPECT_TRUE(pass.select_pixel());
 }
 
-TEST_F(TestBoundaryTrace, completionRequiresASelection)
+struct BoundaryTraceSelectionInput
 {
-    BoundaryTrace pass;
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
-    ASSERT_TRUE(pass.select_pixel());
+    const char *name;
+    bool consumed;
+    Point2i next;
+};
 
-    provide_pixel(pass);
-
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
-    ASSERT_TRUE(pass.select_pixel());
-    EXPECT_EQ((Point2i{1, 0}), pass.selected_pixel());
+void PrintTo(const BoundaryTraceSelectionInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
+
+class TestBoundaryTraceSelectionGuard : public TestBoundaryTrace, public WithParamInterface<BoundaryTraceSelectionInput>
+{
+protected:
+    void SetUp() override;
+
+    std::optional<BoundaryTrace> m_pass;
+};
+
+void TestBoundaryTraceSelectionGuard::SetUp()
+{
+    TestBoundaryTrace::SetUp();
+    m_pass.emplace();
+    if (GetParam().consumed)
+    {
+        ASSERT_TRUE(m_pass->select_pixel());
+        provide_pixel(*m_pass);
+    }
+}
+
+TEST_P(TestBoundaryTraceSelectionGuard, accessorRejectionPreservesNextSelection)
+{
+    EXPECT_THROW(m_pass->selected_pixel(), std::logic_error);
+
+    ASSERT_TRUE(m_pass->select_pixel());
+    EXPECT_EQ(GetParam().next, m_pass->selected_pixel());
+}
+
+TEST_P(TestBoundaryTraceSelectionGuard, completionRejectionPreservesNextSelection)
+{
+    EXPECT_THROW(m_pass->complete_pixel(7), std::logic_error);
+
+    ASSERT_TRUE(m_pass->select_pixel());
+    EXPECT_EQ(GetParam().next, m_pass->selected_pixel());
+}
+
+INSTANTIATE_TEST_SUITE_P(SelectionStates, TestBoundaryTraceSelectionGuard,
+    Values(BoundaryTraceSelectionInput{"NeverSelected", false, {0, 0}},
+        BoundaryTraceSelectionInput{"Consumed", true, {1, 0}}),
+    [](const TestParamInfo<BoundaryTraceSelectionInput> &info) { return info.param.name; });
 
 } // namespace id::test
