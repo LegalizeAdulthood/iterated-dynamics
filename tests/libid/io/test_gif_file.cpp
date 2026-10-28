@@ -19,6 +19,7 @@
 #include <cstdint>
 #include <iterator>
 #include <numeric>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 
@@ -571,40 +572,104 @@ TEST_P(TestGIFResumeRoundTrip, preservesOpaqueBytesAndSubBlockBoundaries)
 
 INSTANTIATE_TEST_SUITE_P(SubBlockSizes, TestGIFResumeRoundTrip, testing::Values(0, 1, 254, 255, 256, 510, 511));
 
-TEST_F(TestGIFExtensions, distinguishesAbsentAndEmptyOptionalRecords)
+TEST_F(TestGIFExtensions, absentResumeRecordHasNoData)
 {
     EXPECT_FALSE(has_gif_extension(&m_gif, "fractint002"));
     EXPECT_EQ(0, get_gif_extension_length(&m_gif, "fractint002"));
     EXPECT_TRUE(get_resume_info(&m_gif).empty());
+}
+
+TEST_F(TestGIFExtensions, absentRangesRecordHasNoData)
+{
     EXPECT_FALSE(has_gif_extension(&m_gif, "fractint004"));
     EXPECT_TRUE(get_ranges_info(&m_gif).empty());
+}
+
+TEST_F(TestGIFExtensions, absentPrecisionRecordHasNoData)
+{
     EXPECT_FALSE(has_gif_extension(&m_gif, "fractint005"));
     EXPECT_TRUE(get_extended_param_info(&m_gif).empty());
+}
 
+TEST_F(TestGIFExtensions, emptyResumeRecordIsPresentWithoutData)
+{
     put_resume_info(&m_gif, {});
-    put_ranges_info(&m_gif, {});
-    put_extended_param_info(&m_gif, {});
 
     EXPECT_TRUE(has_gif_extension(&m_gif, "fractint002"));
     EXPECT_TRUE(get_resume_info(&m_gif).empty());
     EXPECT_EQ(0, get_gif_extension_length(&m_gif, "fractint002"));
+}
+
+TEST_F(TestGIFExtensions, emptyRangesRecordIsPresentWithoutData)
+{
+    put_ranges_info(&m_gif, {});
+
     EXPECT_TRUE(has_gif_extension(&m_gif, "fractint004"));
     EXPECT_TRUE(get_ranges_info(&m_gif).empty());
+}
+
+TEST_F(TestGIFExtensions, emptyPrecisionRecordIsPresentWithoutData)
+{
+    put_extended_param_info(&m_gif, {});
+
     EXPECT_TRUE(has_gif_extension(&m_gif, "fractint005"));
     EXPECT_TRUE(get_extended_param_info(&m_gif).empty());
 }
 
-TEST_F(TestGIFExtensions, presenceRequiresMatchingApplicationIdentifier)
+class TestGIFResumeLookup : public TestGIFExtensions
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGIFResumeLookup::SetUp()
 {
     put_resume_info(&m_gif, {0, 128, 255});
-    EXPECT_FALSE(has_gif_extension(&m_gif, "fractint003"));
-    m_gif.ExtensionBlocks[0].Function = COMMENT_EXT_FUNC_CODE;
-    EXPECT_FALSE(has_gif_extension(&m_gif, "fractint002"));
-    EXPECT_TRUE(get_resume_info(&m_gif).empty());
-    m_gif.ExtensionBlocks[0].Function = APPLICATION_EXT_FUNC_CODE;
-    m_gif.ExtensionBlocks[0].ByteCount = 10;
-    EXPECT_FALSE(has_gif_extension(&m_gif, "fractint002"));
 }
+
+TEST_F(TestGIFResumeLookup, commentRecordsDoNotSupplyResumeData)
+{
+    m_gif.ExtensionBlocks[0].Function = COMMENT_EXT_FUNC_CODE;
+
+    EXPECT_TRUE(get_resume_info(&m_gif).empty());
+}
+
+struct GIFIdentifierInput
+{
+    const char *name;
+    const char *query;
+    int function;
+    int length;
+};
+
+void PrintTo(const GIFIdentifierInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestGIFInvalidIdentifier : public TestGIFResumeLookup, public testing::WithParamInterface<GIFIdentifierInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGIFInvalidIdentifier::SetUp()
+{
+    TestGIFResumeLookup::SetUp();
+    m_gif.ExtensionBlocks[0].Function = GetParam().function;
+    m_gif.ExtensionBlocks[0].ByteCount = GetParam().length;
+}
+
+TEST_P(TestGIFInvalidIdentifier, presenceRequiresMatchingApplicationIdentifier)
+{
+    EXPECT_FALSE(has_gif_extension(&m_gif, GetParam().query));
+}
+
+INSTANTIATE_TEST_SUITE_P(IdentifierInputs, TestGIFInvalidIdentifier,
+    testing::Values(GIFIdentifierInput{"DifferentIdentifier", "fractint003", APPLICATION_EXT_FUNC_CODE, 11},
+        GIFIdentifierInput{"CommentFunction", "fractint002", COMMENT_EXT_FUNC_CODE, 11},
+        GIFIdentifierInput{"TruncatedIdentifier", "fractint002", APPLICATION_EXT_FUNC_CODE, 10}),
+    [](const testing::TestParamInfo<GIFIdentifierInput> &info) { return info.param.name; });
 
 TEST_F(TestGIFExtensions, resumeDataStopsAtNextApplicationAndOwnsItsBytes)
 {
