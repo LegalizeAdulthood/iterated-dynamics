@@ -859,6 +859,10 @@ void SynchronousOrbit::start()
 
 bool SynchronousOrbit::iterate(PertEngine *perturbation)
 {
+    if (m_done)
+    {
+        return true;
+    }
     if (!m_started)
     {
         start();
@@ -883,7 +887,7 @@ bool SynchronousOrbit::iterate(PertEngine *perturbation)
 
 void SynchronousOrbit::suspend()
 {
-    if (!m_started || m_done)
+    if (m_done)
     {
         return;
     }

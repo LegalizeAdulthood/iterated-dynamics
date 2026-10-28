@@ -333,6 +333,23 @@ TEST_F(TestStandardPass, orbitAlgorithmsDoNotOfferPixelRequests)
     EXPECT_EQ(0, m_plot_count);
 }
 
+TEST_F(TestStandardPass, suspensionBeforeSynchronousTraversalQueuesWorkWithoutStarting)
+{
+    StandardPass pass;
+    pass.select(CalcMode::SYNCHRONOUS_ORBIT);
+
+    pass.suspend();
+
+    ASSERT_EQ(1, g_num_work_list);
+    EXPECT_EQ(g_start_pt, g_work_list[0].start);
+    EXPECT_EQ(g_stop_pt, g_work_list[0].stop);
+    EXPECT_EQ(g_begin_pt, g_work_list[0].begin);
+    EXPECT_TRUE(pass.iterate());
+    pass.suspend();
+    EXPECT_EQ(1, g_num_work_list);
+    EXPECT_EQ(0, m_plot_count);
+}
+
 class TestStandardFractal : public TestStandardPass
 {
 protected:
@@ -495,6 +512,90 @@ TEST_P(TestAutoLogMap, abandoningSamplingRestoresTheIterationLimit)
     EXPECT_TRUE(calculation.done());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(128L, g_max_iterations);
+}
+
+TEST_P(TestAutoLogMap, suspensionAfterSamplingPreservesUnstartedTraversal)
+{
+    g_dispatch.set_orbit_calc([] { return 1; });
+    for (const CalcMode mode : {CalcMode::ONE_PASS, CalcMode::TWO_PASS, CalcMode::SYNCHRONOUS_ORBIT})
+    {
+        SCOPED_TRACE(static_cast<char>(mode));
+        g_std_calc_mode = mode;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
+        g_resuming = false;
+        g_log_map_flag = GetParam();
+        m_pixels.assign(64, -1);
+        StandardFractal baseline;
+        baseline.resume();
+        for (int chunks = 0; chunks < 1000 && !baseline.done(); ++chunks)
+        {
+            baseline.iterate();
+        }
+        ASSERT_TRUE(baseline.done());
+        ASSERT_EQ(CalcStatus::COMPLETED, g_calc_status);
+        ASSERT_THAT(m_pixels, Each(Ge(0)));
+        const std::vector<int> expected{m_pixels};
+
+        for (const bool other_work : {false, true})
+        {
+            SCOPED_TRACE(other_work);
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
+            g_resuming = false;
+            g_log_map_flag = GetParam();
+            s_calculated.clear();
+            StandardFractal calculation;
+            calculation.resume();
+            for (int chunks = 0; chunks < 100 && g_log_map_flag == GetParam(); ++chunks)
+            {
+                calculation.iterate();
+            }
+            ASSERT_EQ(GetParam() > 0 ? 10L : -10L, g_log_map_flag);
+            ASSERT_EQ(m_perimeter, s_calculated);
+            ASSERT_FALSE(calculation.done());
+            ASSERT_EQ(0, g_num_work_list);
+            const WorkList active{g_start_pt, g_stop_pt, g_begin_pt, g_work_symmetry, g_work_pass};
+            if (other_work)
+            {
+                ASSERT_FALSE(add_work_list({1, 1}, {3, 3}, {1, 1}, 1, 0));
+            }
+
+            calculation.suspend();
+
+            ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+            ASSERT_FALSE(g_resume_data.empty());
+            ASSERT_EQ(other_work ? 2 : 1, g_num_work_list);
+            EXPECT_EQ(active.start, g_work_list[0].start);
+            EXPECT_EQ(active.stop, g_work_list[0].stop);
+            EXPECT_EQ(active.begin, g_work_list[0].begin);
+            EXPECT_EQ(active.pass, g_work_list[0].pass);
+            EXPECT_EQ(active.symmetry, g_work_list[0].symmetry);
+            ASSERT_EQ(2, start_resume());
+            int saved_count{};
+            std::array<WorkList, MAX_CALC_WORK> saved_work{};
+            get_resume_len(sizeof(saved_count), &saved_count, sizeof(g_work_list), saved_work.data(), 0);
+            EXPECT_EQ(g_num_work_list, saved_count);
+            EXPECT_EQ(active.start, saved_work[0].start);
+            EXPECT_EQ(active.stop, saved_work[0].stop);
+            EXPECT_EQ(active.begin, saved_work[0].begin);
+            EXPECT_EQ(active.pass, saved_work[0].pass);
+            EXPECT_EQ(active.symmetry, saved_work[0].symmetry);
+            m_pixels.assign(64, -1);
+            s_calculated.clear();
+            g_resuming = true;
+            StandardFractal resumed;
+            resumed.resume();
+            for (int chunks = 0; chunks < 1000 && !resumed.done(); ++chunks)
+            {
+                resumed.iterate();
+            }
+            ASSERT_TRUE(resumed.done());
+            EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+            EXPECT_EQ(128L, g_max_iterations);
+            EXPECT_EQ(GetParam() > 0 ? 10L : -10L, g_log_map_flag);
+            EXPECT_THAT(m_pixels, Each(Ge(0)));
+            EXPECT_EQ(expected, m_pixels);
+        }
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(LogMapSigns, TestAutoLogMap, Values(2L, -2L));

@@ -95,8 +95,13 @@ math::Point2i ScanlinePass::selected_pixel() const
 
 void ScanlinePass::suspend()
 {
+    if (m_done)
+    {
+        return;
+    }
     if (!m_standard_calc_active)
     {
+        add_work_list(g_start_pt, g_stop_pt, g_begin_pt, g_work_pass, g_work_symmetry);
         return;
     }
     if (m_current_pass == 1)
