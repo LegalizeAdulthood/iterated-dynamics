@@ -3169,70 +3169,64 @@ TEST_F(TestParameterCommand, miimBreadthFirstLeftToRight)
     EXPECT_EQ(Minor::LEFT_FIRST, g_inverse_julia_minor_method);
 }
 
-TEST_F(TestParameterCommand, initOrbitPixel)
+struct InitOrbitParameterInput
 {
-    ValueSaver saved_use_init_orbit{g_use_init_orbit, InitOrbitMode::VALUE};
-    ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
+    const char *name;
+    const char *argument;
+    InitOrbitMode initial;
+    InitOrbitMode mode;
+    DComplex expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("initorbit=pixel");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(InitOrbitMode::PIXEL, g_use_init_orbit);
-    EXPECT_EQ(111.0, g_init_orbit.x);
-    EXPECT_EQ(222.0, g_init_orbit.y);
+void PrintTo(const InitOrbitParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, initOrbitValue)
+class TestInitOrbitParameter : public TestParameterCommand, public WithParamInterface<InitOrbitParameterInput>
 {
-    ValueSaver saved_use_init_orbit{g_use_init_orbit, InitOrbitMode::PIXEL};
-    ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("initorbit=10/20");
+private:
+    ValueSaver<InitOrbitMode> m_saved_mode{g_use_init_orbit};
+    ValueSaver<DComplex> m_saved_orbit{g_init_orbit, DComplex{111.0, 222.0}};
+};
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(InitOrbitMode::VALUE, g_use_init_orbit);
-    EXPECT_EQ(10.0, g_init_orbit.x);
-    EXPECT_EQ(20.0, g_init_orbit.y);
+void TestInitOrbitParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_use_init_orbit = GetParam().initial;
 }
 
-TEST_F(TestParameterCommandError, initOrbitTooFewParameters)
+TEST_P(TestInitOrbitParameter, setsInitialOrbit)
 {
-    ValueSaver saved_use_init_orbit{g_use_init_orbit, InitOrbitMode::PIXEL};
-    ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
+    exec_cmd_arg(GetParam().argument);
 
-    exec_cmd_arg("initorbit=10");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(InitOrbitMode::PIXEL, g_use_init_orbit);
-    EXPECT_EQ(111.0, g_init_orbit.x);
-    EXPECT_EQ(222.0, g_init_orbit.y);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().mode, g_use_init_orbit);
+    EXPECT_EQ(GetParam().expected.x, g_init_orbit.x);
+    EXPECT_EQ(GetParam().expected.y, g_init_orbit.y);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommandError, initOrbitTooFewFloatParameters)
-{
-    ValueSaver saved_use_init_orbit{g_use_init_orbit, InitOrbitMode::PIXEL};
-    ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
-
-    exec_cmd_arg("initorbit=10/fmeh");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(InitOrbitMode::PIXEL, g_use_init_orbit);
-    EXPECT_EQ(111.0, g_init_orbit.x);
-    EXPECT_EQ(222.0, g_init_orbit.y);
-}
-
-TEST_F(TestParameterCommandError, initOrbitTooManyParameters)
-{
-    ValueSaver saved_use_init_orbit{g_use_init_orbit, InitOrbitMode::PIXEL};
-    ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
-
-    exec_cmd_arg("initorbit=10/20/30");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(InitOrbitMode::PIXEL, g_use_init_orbit);
-    EXPECT_EQ(111.0, g_init_orbit.x);
-    EXPECT_EQ(222.0, g_init_orbit.y);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInitOrbitParameter,
+    Values(InitOrbitParameterInput{"Pixel", "initorbit=pixel", InitOrbitMode::VALUE, InitOrbitMode::PIXEL,
+               {111.0, 222.0}, CmdArgFlags::FRACTAL_PARAM},
+        InitOrbitParameterInput{"Value", "initorbit=10/20", InitOrbitMode::PIXEL, InitOrbitMode::VALUE, {10.0, 20.0},
+            CmdArgFlags::FRACTAL_PARAM},
+        InitOrbitParameterInput{"TooFewParameters", "initorbit=10", InitOrbitMode::PIXEL, InitOrbitMode::PIXEL,
+            {111.0, 222.0}, CmdArgFlags::BAD_ARG},
+        InitOrbitParameterInput{"TooFewFloatParameters", "initorbit=10/fmeh", InitOrbitMode::PIXEL,
+            InitOrbitMode::PIXEL, {111.0, 222.0}, CmdArgFlags::BAD_ARG},
+        InitOrbitParameterInput{"TooManyParameters", "initorbit=10/20/30", InitOrbitMode::PIXEL, InitOrbitMode::PIXEL,
+            {111.0, 222.0}, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<InitOrbitParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, threeDModeMonocular)
 {
@@ -3244,105 +3238,78 @@ TEST_F(TestParameterCommand, threeDModeMonocular)
     EXPECT_EQ(Julibrot3DMode::MONOCULAR, g_julibrot_3d_mode);
 }
 
-TEST_F(TestParameterCommand, julibrot3DZDots)
+struct JulibrotGeometryParameterInput
 {
-    ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin_fp{g_julibrot_origin, 111.0F};
+    const char *name;
+    const char *argument;
+    std::vector<float> expected;
+};
 
-    exec_cmd_arg("julibrot3d=100");
+void PrintTo(const JulibrotGeometryParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestJulibrotGeometryParameter : public TestParameterCommand,
+                                      public WithParamInterface<JulibrotGeometryParameterInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<int> m_saved_z_dots{g_julibrot_z_dots, 9999};
+    ValueSaver<float> m_saved_origin{g_julibrot_origin, 111.0F};
+    ValueSaver<float> m_saved_depth{g_julibrot_depth};
+    ValueSaver<float> m_saved_height{g_julibrot_height};
+    ValueSaver<float> m_saved_width{g_julibrot_width};
+    ValueSaver<float> m_saved_distance{g_julibrot_dist};
+};
+
+void TestJulibrotGeometryParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    const std::size_t count{GetParam().expected.size()};
+    if (count >= 2)
+    {
+        g_julibrot_depth = 222.0F;
+    }
+    if (count >= 3)
+    {
+        g_julibrot_height = 333.0F;
+    }
+    if (count >= 4)
+    {
+        g_julibrot_width = 444.0F;
+    }
+    if (count >= 5)
+    {
+        g_julibrot_dist = 555.0F;
+    }
+}
+
+TEST_P(TestJulibrotGeometryParameter, setsExplicitGeometry)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(111.0F, g_julibrot_origin);
+    const std::array<float, 5> actual{
+        g_julibrot_origin, g_julibrot_depth, g_julibrot_height, g_julibrot_width, g_julibrot_dist};
+    for (std::size_t i = 0; i < GetParam().expected.size(); ++i)
+    {
+        EXPECT_EQ(GetParam().expected[i], actual[i]) << i;
+    }
 }
 
-TEST_F(TestParameterCommand, julibrot3DOrigin)
-{
-    ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0F};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0F};
-
-    exec_cmd_arg("julibrot3d=100/10");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0F, g_julibrot_origin);
-    EXPECT_EQ(222.0F, g_julibrot_depth);
-}
-
-TEST_F(TestParameterCommand, julibrot3DDepth)
-{
-    ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0F};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0F};
-    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0F};
-
-    exec_cmd_arg("julibrot3d=100/10/12");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0F, g_julibrot_origin);
-    EXPECT_EQ(12.0F, g_julibrot_depth);
-    EXPECT_EQ(333.0F, g_julibrot_height);
-}
-
-TEST_F(TestParameterCommand, julibrot3DHeight)
-{
-    ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0F};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0F};
-    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0F};
-    ValueSaver saved_julibrot_width{g_julibrot_width, 444.0F};
-
-    exec_cmd_arg("julibrot3d=100/10/12/14");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0F, g_julibrot_origin);
-    EXPECT_EQ(12.0F, g_julibrot_depth);
-    EXPECT_EQ(14.0F, g_julibrot_height);
-    EXPECT_EQ(444.0F, g_julibrot_width);
-}
-
-TEST_F(TestParameterCommand, julibrot3DWidth)
-{
-    ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0F};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0F};
-    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0F};
-    ValueSaver saved_julibrot_width{g_julibrot_width, 444.0F};
-    ValueSaver saved_julibrot_dist{g_julibrot_dist, 555.0F};
-
-    exec_cmd_arg("julibrot3d=100/10/12/14/16");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0F, g_julibrot_origin);
-    EXPECT_EQ(12.0F, g_julibrot_depth);
-    EXPECT_EQ(14.0F, g_julibrot_height);
-    EXPECT_EQ(16.0F, g_julibrot_width);
-    EXPECT_EQ(555.0F, g_julibrot_dist);
-}
-
-TEST_F(TestParameterCommand, julibrot3DDistance)
-{
-    ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0F};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0F};
-    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0F};
-    ValueSaver saved_julibrot_width{g_julibrot_width, 444.0F};
-    ValueSaver saved_julibrot_dist{g_julibrot_dist, 555.0F};
-
-    exec_cmd_arg("julibrot3d=100/10/12/14/16/18");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0F, g_julibrot_origin);
-    EXPECT_EQ(12.0F, g_julibrot_depth);
-    EXPECT_EQ(14.0F, g_julibrot_height);
-    EXPECT_EQ(16.0F, g_julibrot_width);
-    EXPECT_EQ(18.0F, g_julibrot_dist);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestJulibrotGeometryParameter,
+    Values(JulibrotGeometryParameterInput{"ZDots", "julibrot3d=100", {111.0F}},
+        JulibrotGeometryParameterInput{"Origin", "julibrot3d=100/10", {10.0F, 222.0F}},
+        JulibrotGeometryParameterInput{"Depth", "julibrot3d=100/10/12", {10.0F, 12.0F, 333.0F}},
+        JulibrotGeometryParameterInput{"Height", "julibrot3d=100/10/12/14", {10.0F, 12.0F, 14.0F, 444.0F}},
+        JulibrotGeometryParameterInput{"Width", "julibrot3d=100/10/12/14/16", {10.0F, 12.0F, 14.0F, 16.0F, 555.0F}},
+        JulibrotGeometryParameterInput{
+            "Distance", "julibrot3d=100/10/12/14/16/18", {10.0F, 12.0F, 14.0F, 16.0F, 18.0F}}),
+    [](const TestParamInfo<JulibrotGeometryParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, julibrotEyes)
 {
