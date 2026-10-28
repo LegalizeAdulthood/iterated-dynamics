@@ -1,123 +1,82 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <io/path_match.h>
 
 #include <gtest/gtest.h>
 
-#include <algorithm>
-#include <filesystem>
-#include <vector>
+#include <ostream>
 
 using namespace id::io;
 
 namespace id::test
 {
 
-TEST(TestPatternMatch, all)
+struct PatternMatchInput
 {
-    const MatchFn all = match_fn("*.*");
+    const char *name;
+    const char *pattern;
+    const char *filename;
+    bool expected;
+};
 
-    EXPECT_TRUE(all("foo.txt"));
-    EXPECT_TRUE(all("foo.foo"));
-    EXPECT_TRUE(all("id.id"));
+void PrintTo(const PatternMatchInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
 
-TEST(TestPatternMatch, anyExtension)
+class TestPatternMatch : public testing::TestWithParam<PatternMatchInput>
 {
-    const MatchFn any_ext = match_fn("foo.*");
+};
 
-    EXPECT_TRUE(any_ext("foo.txt"));
-    EXPECT_TRUE(any_ext("foo.foo"));
-    EXPECT_FALSE(any_ext("id.id"));
+TEST_P(TestPatternMatch, matchesFilenameUsingPattern)
+{
+    const MatchFn match{match_fn(GetParam().pattern)};
+
+    EXPECT_EQ(GetParam().expected, match(GetParam().filename));
 }
 
-TEST(TestPatternMatch, anyStem)
-{
-    const MatchFn any_stem = match_fn("*.txt");
-
-    EXPECT_TRUE(any_stem("foo.txt"));
-    EXPECT_FALSE(any_stem("foo.foo"));
-    EXPECT_FALSE(any_stem("id.id"));
-}
-
-TEST(TestPatternMatch, anyStemWildExtension)
-{
-    const MatchFn any_stem = match_fn("*.t?t");
-
-    EXPECT_TRUE(any_stem("foo.txt"));
-    EXPECT_FALSE(any_stem("foo.foo"));
-    EXPECT_TRUE(any_stem("id.tst"));
-}
-
-TEST(TestPatternMatch, wildExtension)
-{
-    const MatchFn wild_ext = match_fn("foo.t?t");
-
-    EXPECT_TRUE(wild_ext("foo.txt"));
-    EXPECT_FALSE(wild_ext("foo.foo"));
-    EXPECT_FALSE(wild_ext("id.tst"));
-}
-
-TEST(TestPatternMatch, wildStem)
-{
-    const MatchFn wild_stem = match_fn("fo?.txt");
-
-    EXPECT_TRUE(wild_stem("foo.txt"));
-    EXPECT_TRUE(wild_stem("for.txt"));
-    EXPECT_FALSE(wild_stem("id.tst"));
-}
-
-TEST(TestPatternMatch, wildFilename)
-{
-    const MatchFn wild_filename = match_fn("fo?.t?t");
-
-    EXPECT_TRUE(wild_filename("foo.txt"));
-    EXPECT_TRUE(wild_filename("for.tst"));
-    EXPECT_FALSE(wild_filename("fro.txt"));
-    EXPECT_FALSE(wild_filename("foo.sst"));
-    EXPECT_FALSE(wild_filename("id.tst"));
-}
-
-TEST(TestPatternMatch, filenameSubstring)
-{
-    const MatchFn arbitrary = match_fn("*frob*.*");
-
-    EXPECT_FALSE(arbitrary("fab.bof"));
-    EXPECT_TRUE(arbitrary("goinkfrob.bof"));
-    EXPECT_TRUE(arbitrary("goinkfrobgoink.bof"));
-    EXPECT_TRUE(arbitrary("frobgoink.goinkbof"));
-}
-
-TEST(TestPatternMatch, extensionSubstring)
-{
-    const MatchFn arbitrary = match_fn("*.*frob*");
-
-    EXPECT_FALSE(arbitrary("fab.bof"));
-    EXPECT_TRUE(arbitrary("bof.goinkfrob"));
-    EXPECT_TRUE(arbitrary("bof.goinkfrobgoink"));
-    EXPECT_TRUE(arbitrary("bof.frobgoink"));
-}
-
-TEST(TestPatternMatch, arbitrary)
-{
-    const MatchFn arbitrary = match_fn("*f?b*.*b?f*");
-
-    EXPECT_TRUE(arbitrary("fab.bof"));
-    EXPECT_TRUE(arbitrary("goinkf0b.bof"));
-    EXPECT_TRUE(arbitrary("goinkf0bgoink.bof"));
-    EXPECT_TRUE(arbitrary("goinkf0bgoink.goinkbof"));
-    EXPECT_TRUE(arbitrary("goinkf0bgoink.goinkbofgoink"));
-}
-
-TEST(TestPatternMatch, everything)
-{
-    const MatchFn everything = match_fn("*");
-
-    EXPECT_TRUE(everything("fab.bof"));
-    EXPECT_TRUE(everything("goinkf0b.bof"));
-    EXPECT_TRUE(everything("goinkf0bgoink.bof"));
-    EXPECT_TRUE(everything("goinkf0bgoink.goinkbof"));
-    EXPECT_TRUE(everything("goinkf0bgoink.goinkbofgoink"));
-}
+INSTANTIATE_TEST_SUITE_P(PatternInputs, TestPatternMatch,
+    testing::Values(PatternMatchInput{"AllFooText", "*.*", "foo.txt", true},
+        PatternMatchInput{"AllFooFoo", "*.*", "foo.foo", true}, PatternMatchInput{"AllIdId", "*.*", "id.id", true},
+        PatternMatchInput{"AnyExtensionText", "foo.*", "foo.txt", true},
+        PatternMatchInput{"AnyExtensionFoo", "foo.*", "foo.foo", true},
+        PatternMatchInput{"AnyExtensionOtherStem", "foo.*", "id.id", false},
+        PatternMatchInput{"AnyStemText", "*.txt", "foo.txt", true},
+        PatternMatchInput{"AnyStemOtherExtension", "*.txt", "foo.foo", false},
+        PatternMatchInput{"AnyStemOtherName", "*.txt", "id.id", false},
+        PatternMatchInput{"WildExtensionText", "*.t?t", "foo.txt", true},
+        PatternMatchInput{"WildExtensionWrongSuffix", "*.t?t", "foo.foo", false},
+        PatternMatchInput{"WildExtensionTst", "*.t?t", "id.tst", true},
+        PatternMatchInput{"FixedStemText", "foo.t?t", "foo.txt", true},
+        PatternMatchInput{"FixedStemWrongExtension", "foo.t?t", "foo.foo", false},
+        PatternMatchInput{"FixedStemWrongStem", "foo.t?t", "id.tst", false},
+        PatternMatchInput{"WildStemFoo", "fo?.txt", "foo.txt", true},
+        PatternMatchInput{"WildStemFor", "fo?.txt", "for.txt", true},
+        PatternMatchInput{"WildStemWrongName", "fo?.txt", "id.tst", false},
+        PatternMatchInput{"WildFilenameFoo", "fo?.t?t", "foo.txt", true},
+        PatternMatchInput{"WildFilenameFor", "fo?.t?t", "for.tst", true},
+        PatternMatchInput{"WildFilenameWrongStem", "fo?.t?t", "fro.txt", false},
+        PatternMatchInput{"WildFilenameWrongExtension", "fo?.t?t", "foo.sst", false},
+        PatternMatchInput{"WildFilenameWrongName", "fo?.t?t", "id.tst", false},
+        PatternMatchInput{"StemSubstringAbsent", "*frob*.*", "fab.bof", false},
+        PatternMatchInput{"StemSubstringAtEnd", "*frob*.*", "goinkfrob.bof", true},
+        PatternMatchInput{"StemSubstringEmbedded", "*frob*.*", "goinkfrobgoink.bof", true},
+        PatternMatchInput{"StemSubstringAtStart", "*frob*.*", "frobgoink.goinkbof", true},
+        PatternMatchInput{"ExtensionSubstringAbsent", "*.*frob*", "fab.bof", false},
+        PatternMatchInput{"ExtensionSubstringAtEnd", "*.*frob*", "bof.goinkfrob", true},
+        PatternMatchInput{"ExtensionSubstringEmbedded", "*.*frob*", "bof.goinkfrobgoink", true},
+        PatternMatchInput{"ExtensionSubstringAtStart", "*.*frob*", "bof.frobgoink", true},
+        PatternMatchInput{"ArbitraryExact", "*f?b*.*b?f*", "fab.bof", true},
+        PatternMatchInput{"ArbitraryStemSuffix", "*f?b*.*b?f*", "goinkf0b.bof", true},
+        PatternMatchInput{"ArbitraryStemEmbedded", "*f?b*.*b?f*", "goinkf0bgoink.bof", true},
+        PatternMatchInput{"ArbitraryExtensionSuffix", "*f?b*.*b?f*", "goinkf0bgoink.goinkbof", true},
+        PatternMatchInput{"ArbitraryBothEmbedded", "*f?b*.*b?f*", "goinkf0bgoink.goinkbofgoink", true},
+        PatternMatchInput{"EverythingExact", "*", "fab.bof", true},
+        PatternMatchInput{"EverythingStemSuffix", "*", "goinkf0b.bof", true},
+        PatternMatchInput{"EverythingStemEmbedded", "*", "goinkf0bgoink.bof", true},
+        PatternMatchInput{"EverythingExtensionSuffix", "*", "goinkf0bgoink.goinkbof", true},
+        PatternMatchInput{"EverythingBothEmbedded", "*", "goinkf0bgoink.goinkbofgoink", true}),
+    [](const testing::TestParamInfo<PatternMatchInput> &info) { return info.param.name; });
 
 } // namespace id::test
