@@ -1266,25 +1266,47 @@ INSTANTIATE_TEST_SUITE_P(Versions, TestAtanColorCompatibility,
     Values(AtanColorCompatibilityInput{"Through2002", 2002, 180}, AtanColorCompatibilityInput{"After2002", 2003, 256}),
     [](const TestParamInfo<AtanColorCompatibilityInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommand, longFilenameExtensionOK)
+struct FilenameMaskParameterInput
 {
-    ValueSaver saved_gif_filename_mask{g_image_filename_mask, "*.pot"};
+    const char *name;
+    const char *initial;
+    const char *argument;
+    CmdFile source;
+    const char *expected;
+};
 
-    exec_cmd_arg("filename=.foobar");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("*.foobar", g_image_filename_mask);
+void PrintTo(const FilenameMaskParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, filenameExtension)
+class TestFilenameMaskParameter : public TestParameterCommand, public WithParamInterface<FilenameMaskParameterInput>
 {
-    ValueSaver saved_gif_filename_mask{g_image_filename_mask, "*.pot"};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("filename=.gif");
+    ValueSaver<std::string> m_saved_mask{g_image_filename_mask};
+};
+
+void TestFilenameMaskParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_image_filename_mask = GetParam().initial;
+}
+
+TEST_P(TestFilenameMaskParameter, extensionSelectsExpectedMask)
+{
+    exec_cmd_arg(GetParam().argument, GetParam().source);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("*.gif", g_image_filename_mask);
+    EXPECT_EQ(GetParam().expected, g_image_filename_mask);
 }
+
+INSTANTIATE_TEST_SUITE_P(Extensions, TestFilenameMaskParameter,
+    Values(FilenameMaskParameterInput{"Long", "*.pot", "filename=.foobar", CmdFile::AT_AFTER_STARTUP, "*.foobar"},
+        FilenameMaskParameterInput{"Gif", "*.pot", "filename=.gif", CmdFile::AT_AFTER_STARTUP, "*.gif"},
+        FilenameMaskParameterInput{"CommandLinePot", "*.foo", "filename=.pot", CmdFile::AT_CMD_LINE, "*.pot"}),
+    [](const TestParamInfo<FilenameMaskParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommandError, filenameValueTooLong)
 {
@@ -1308,45 +1330,100 @@ TEST_F(TestParameterCommandError, mapTooLong)
     EXPECT_EQ("foo.map", g_map_name);
 }
 
-TEST_F(TestParameterCommand, mapSpecifiesSubdir)
+struct MapLookupParameterInput
 {
-    ValueSaver saved_map_name{g_map_name, ""};
-    add_read_library(ID_TEST_HOME_DIR);
+    const char *name;
+    const char *initial;
+    bool current_directory;
+};
 
-    exec_cmd_arg(std::string{"map="} + ID_TEST_MAP_SUBDIR + SLASH + ID_TEST_MAP_FILE, CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(std::string{ID_TEST_MAP_SUBDIR} + SLASH + ID_TEST_MAP_FILE, g_map_name);
-    clear_read_library_path();
+void PrintTo(const MapLookupParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, mapSpecifiesExistingFile)
+class TestMapLookupParameter : public TestParameterCommand, public WithParamInterface<MapLookupParameterInput>
 {
-    ValueSaver saved_map_name{g_map_name, "foo.map"};
-    CurrentPathSaver cur_dir(ID_TEST_HOME_DIR);
+protected:
+    void SetUp() override;
+    void TearDown() override;
 
-    exec_cmd_arg(std::string{"map="} + ID_TEST_MAP_SUBDIR + SLASH + ID_TEST_MAP_FILE, CmdFile::SSTOOLS_INI);
+    ValueSaver<std::string> m_saved_map{g_map_name};
+    std::optional<CurrentPathSaver> m_saved_path;
+};
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(std::string{ID_TEST_MAP_SUBDIR} + SLASH + ID_TEST_MAP_FILE, g_map_name);
-}
-
-TEST_F(TestParameterCommand, adapterDeprecatedValues)
+void TestMapLookupParameter::SetUp()
 {
-    for (const std::string arg : {"egamono", "hgc", "ega", "cga", "mcga", "vga"})
+    TestParameterCommand::SetUp();
+    g_map_name = GetParam().initial;
+    if (GetParam().current_directory)
     {
-        exec_cmd_arg("adapter=" + arg, CmdFile::SSTOOLS_INI);
-
-        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
+        m_saved_path.emplace(fs::path{ID_TEST_HOME_DIR});
+    }
+    else
+    {
+        add_read_library(ID_TEST_HOME_DIR);
     }
 }
 
-TEST_F(TestParameterCommandError, adapterBadValue)
+void TestMapLookupParameter::TearDown()
 {
-    exec_cmd_arg("adapter=bad", CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    m_saved_path.reset();
+    TestParameterCommand::TearDown();
 }
+
+TEST_P(TestMapLookupParameter, lookupSelectsRequestedMap)
+{
+    const std::string name{std::string{ID_TEST_MAP_SUBDIR} + SLASH + ID_TEST_MAP_FILE};
+
+    exec_cmd_arg("map=" + name, CmdFile::SSTOOLS_INI);
+
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
+    EXPECT_EQ(name, g_map_name);
+}
+
+INSTANTIATE_TEST_SUITE_P(Lookups, TestMapLookupParameter,
+    Values(MapLookupParameterInput{"LibrarySubdirectory", "", false},
+        MapLookupParameterInput{"ExistingRelativeFile", "foo.map", true}),
+    [](const TestParamInfo<MapLookupParameterInput> &info) { return info.param.name; });
+
+struct DeprecatedAdapterInput
+{
+    const char *name;
+    const char *argument;
+    CmdArgFlags result;
+};
+
+void PrintTo(const DeprecatedAdapterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestDeprecatedAdapterParameter : public TestParameterCommand, public WithParamInterface<DeprecatedAdapterInput>
+{
+};
+
+TEST_P(TestDeprecatedAdapterParameter, recognizesExpectedCompatibilityResult)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::SSTOOLS_INI);
+
+    EXPECT_EQ(GetParam().result, m_result);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Adapters, TestDeprecatedAdapterParameter,
+    Values(DeprecatedAdapterInput{"Egamono", "adapter=egamono", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        DeprecatedAdapterInput{"Hgc", "adapter=hgc", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        DeprecatedAdapterInput{"Ega", "adapter=ega", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        DeprecatedAdapterInput{"Cga", "adapter=cga", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        DeprecatedAdapterInput{"Mcga", "adapter=mcga", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        DeprecatedAdapterInput{"Vga", "adapter=vga", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        DeprecatedAdapterInput{"Invalid", "adapter=bad", CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<DeprecatedAdapterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, afiValueIgnored)
 {
@@ -1425,16 +1502,6 @@ TEST_F(TestParameterCommandError, fpuDetectInvalidValue)
     exec_cmd_arg("fpu=487", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
-
-TEST_F(TestParameterCommand, filenameMask)
-{
-    ValueSaver saved_gif_filename_mask{g_image_filename_mask, "*.foo"};
-
-    exec_cmd_arg("filename=.pot", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ("*.pot", g_image_filename_mask);
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommandError, filenameTooLong)
