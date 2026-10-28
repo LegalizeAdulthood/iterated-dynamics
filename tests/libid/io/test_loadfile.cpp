@@ -792,40 +792,73 @@ TEST_F(TestFindFractalInfo, readsMultiBlockPayloadsWithoutPollingPendingInput)
     EXPECT_EQ(resume, m_block_2.resume_data);
 }
 
-TEST_F(TestFindFractalInfo, scannerRejectsDuplicateIdentifiersAcrossImageBoundaries)
+class TestMetadataScanner : public TestFindFractalInfo
 {
-    for (const char *identifier : {"fractint000", "fractint001", "fractint002", "fractint003", "fractint004",
-             "fractint005", "fractint006", "fractint007", "fractint008", "fractint999"})
-    {
-        SCOPED_TRACE(identifier);
-        GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
-        check_gif_write(GifAddExtensionBlock(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks,
-            APPLICATION_EXT_FUNC_CODE, 11, reinterpret_cast<Byte *>(const_cast<char *>(identifier))));
-        Byte payload{'x'};
-        check_gif_write(GifAddExtensionBlock(
-            &m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks, CONTINUE_EXT_FUNC_CODE, 1, &payload));
-        for (const bool before_image : {false, true})
-        {
-            SCOPED_TRACE(before_image);
-            for (const bool duplicate : {false, true})
-            {
-                SCOPED_TRACE(duplicate);
-                const std::filesystem::path path{
-                    write_small_file(before_image, 0, duplicate ? &m_extensions : nullptr)};
-                int error{};
-                std::unique_ptr<GifFileType, void (*)(GifFileType *)> input{
-                    DGifOpenFileName(path.string().c_str(), &error), [](GifFileType *gif)
-                    {
-                        int close_error{};
-                        DGifCloseFile(gif, &close_error);
-                    }};
-                ASSERT_NE(nullptr, input);
+protected:
+    void TearDown() override;
+    void open_input();
+    static void close_input(GifFileType *gif);
 
-                EXPECT_EQ(!duplicate, read_gif_extensions(input.get()));
-            }
-        }
+    using GifInput = std::unique_ptr<GifFileType, decltype(&close_input)>;
+    GifInput m_input{nullptr, close_input};
+};
+
+void TestMetadataScanner::TearDown()
+{
+    m_input.reset();
+    TestFindFractalInfo::TearDown();
+}
+
+void TestMetadataScanner::open_input()
+{
+    int error{};
+    m_input.reset(DGifOpenFileName(m_path.string().c_str(), &error));
+    if (!m_input)
+    {
+        throw std::runtime_error("Can't open metadata scanner input");
     }
 }
+
+void TestMetadataScanner::close_input(GifFileType *gif)
+{
+    int error{};
+    DGifCloseFile(gif, &error);
+}
+
+using MetadataIdentifierCase = std::tuple<const char *, bool, bool>;
+
+class TestMetadataIdentifierUniqueness : public TestMetadataScanner, public WithParamInterface<MetadataIdentifierCase>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestMetadataIdentifierUniqueness::SetUp()
+{
+    std::string identifier{std::get<0>(GetParam())};
+    check_gif_write(GifAddExtensionBlock(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks,
+        APPLICATION_EXT_FUNC_CODE, 11, reinterpret_cast<Byte *>(identifier.data())));
+    Byte payload{'x'};
+    check_gif_write(GifAddExtensionBlock(
+        &m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks, CONTINUE_EXT_FUNC_CODE, 1, &payload));
+    write_small_file(std::get<1>(GetParam()), 0, std::get<2>(GetParam()) ? &m_extensions : nullptr);
+    open_input();
+}
+
+TEST_P(TestMetadataIdentifierUniqueness, scannerRejectsOnlyRepeatedIdentifiers)
+{
+    EXPECT_EQ(!std::get<2>(GetParam()), read_gif_extensions(m_input.get()));
+}
+
+INSTANTIATE_TEST_SUITE_P(IdentifiersAndPlacement, TestMetadataIdentifierUniqueness,
+    Combine(Values("fractint000", "fractint001", "fractint002", "fractint003", "fractint004", "fractint005",
+                "fractint006", "fractint007", "fractint008", "fractint999"),
+        Bool(), Bool()),
+    [](const TestParamInfo<MetadataIdentifierCase> &info)
+    {
+        return std::string{std::get<0>(info.param)} + (std::get<1>(info.param) ? "BeforeImage" : "AfterImage") +
+            (std::get<2>(info.param) ? "Repeated" : "Unique");
+    });
 
 class TestFindPrecisionMetadata : public TestFindFractalInfo
 {
@@ -1192,79 +1225,94 @@ TEST_F(TestFindFractalInfo, nonApplicationExtensionDoesNotSupplyResumeData)
     expect_no_optional_blocks();
 }
 
-TEST_F(TestFindFractalInfo, skipsLargeUnrelatedExtensionsWithoutRetainingTheirBlocks)
+class TestIgnoredMetadataExtensions : public TestMetadataScanner, public WithParamInterface<bool>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestIgnoredMetadataExtensions::SetUp()
 {
     add_main_record();
-    for (const bool extensions_first : {false, true})
-    {
-        SCOPED_TRACE(extensions_first);
-        const std::filesystem::path path{write_small_file(extensions_first, 32768)};
-        {
-            int error{};
-            std::unique_ptr<GifFileType, void (*)(GifFileType *)> input{DGifOpenFileName(path.string().c_str(), &error),
-                [](GifFileType *gif)
-                {
-                    int close_error{};
-                    DGifCloseFile(gif, &close_error);
-                }};
-            ASSERT_NE(nullptr, input);
-
-            ASSERT_TRUE(read_gif_extensions(input.get()));
-
-            EXPECT_EQ(m_extensions.ExtensionBlockCount, input->ExtensionBlockCount);
-            EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, get_gif_extension_length(input.get(), "fractint001"));
-            EXPECT_STREQ(INFO_ID, get_fractal_info(input.get()).info_id);
-        }
-        ASSERT_FALSE(read_file(path));
-        EXPECT_STREQ(INFO_ID, m_info.info_id);
-        EXPECT_EQ(+FractalType::MANDEL, m_info.fractal_type);
-    }
+    write_small_file(GetParam(), 32768);
 }
 
-TEST_F(TestFindFractalInfo, rejectsOversizedFixedRecordsBeforeRetainingExcessPayload)
+TEST_P(TestIgnoredMetadataExtensions, scannerRetainsOnlyKnownMetadata)
 {
-    struct FixedRecord
-    {
-        const char *name;
-        int limit;
-    };
+    open_input();
 
-    const FixedRecord records[]{{"fractint001", GIF_EXTENSION1_FRACTAL_INFO_LENGTH},
-        {"fractint003", GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH}, {"fractint006", GIF_EXTENSION6_EVOLVER_INFO_LENGTH},
-        {"fractint007", GIF_EXTENSION7_ORBIT_INFO_LENGTH}};
-    for (const FixedRecord &record : records)
-    {
-        SCOPED_TRACE(record.name);
-        GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
-        std::string name{record.name};
-        check_gif_write(GifAddExtensionBlock(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks,
-            APPLICATION_EXT_FUNC_CODE, 11, reinterpret_cast<Byte *>(name.data())));
-        Byte payload{};
-        for (int i = 0; i <= record.limit; ++i)
-        {
-            check_gif_write(GifAddExtensionBlock(
-                &m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks, CONTINUE_EXT_FUNC_CODE, 1, &payload));
-        }
-        const std::filesystem::path path{write_small_file(true)};
-        {
-            int error{};
-            std::unique_ptr<GifFileType, void (*)(GifFileType *)> input{DGifOpenFileName(path.string().c_str(), &error),
-                [](GifFileType *gif)
-                {
-                    int close_error{};
-                    DGifCloseFile(gif, &close_error);
-                }};
-            ASSERT_NE(nullptr, input);
+    ASSERT_TRUE(read_gif_extensions(m_input.get()));
 
-            EXPECT_FALSE(read_gif_extensions(input.get()));
-
-            EXPECT_EQ(record.limit, get_gif_extension_length(input.get(), record.name));
-            EXPECT_EQ(record.limit + 1, input->ExtensionBlockCount);
-        }
-        EXPECT_TRUE(read_file(path));
-        EXPECT_TRUE(std::filesystem::remove(path));
-    }
+    EXPECT_EQ(m_extensions.ExtensionBlockCount, m_input->ExtensionBlockCount);
+    EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, get_gif_extension_length(m_input.get(), "fractint001"));
+    EXPECT_STREQ(INFO_ID, get_fractal_info(m_input.get()).info_id);
 }
+
+TEST_P(TestIgnoredMetadataExtensions, readerFindsMainRecordAfterUnrelatedExtensions)
+{
+    ASSERT_FALSE(read_file(m_path));
+
+    EXPECT_STREQ(INFO_ID, m_info.info_id);
+    EXPECT_EQ(+FractalType::MANDEL, m_info.fractal_type);
+}
+
+INSTANTIATE_TEST_SUITE_P(Placement, TestIgnoredMetadataExtensions, Bool(),
+    [](const TestParamInfo<bool> &info) { return info.param ? "BeforeImage" : "AfterImage"; });
+
+struct FixedMetadataRecord
+{
+    const char *identifier;
+    int limit;
+};
+
+void PrintTo(const FixedMetadataRecord &record, std::ostream *str)
+{
+    *str << record.identifier;
+}
+
+class TestOversizedFixedMetadata : public TestMetadataScanner, public WithParamInterface<FixedMetadataRecord>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestOversizedFixedMetadata::SetUp()
+{
+    std::string identifier{GetParam().identifier};
+    check_gif_write(GifAddExtensionBlock(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks,
+        APPLICATION_EXT_FUNC_CODE, 11, reinterpret_cast<Byte *>(identifier.data())));
+    Byte payload{};
+    for (int i = 0; i <= GetParam().limit; ++i)
+    {
+        check_gif_write(GifAddExtensionBlock(
+            &m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks, CONTINUE_EXT_FUNC_CODE, 1, &payload));
+    }
+    write_small_file(true);
+}
+
+TEST_P(TestOversizedFixedMetadata, scannerRejectsBeforeRetainingExcessPayload)
+{
+    open_input();
+
+    EXPECT_FALSE(read_gif_extensions(m_input.get()));
+
+    EXPECT_EQ(GetParam().limit, get_gif_extension_length(m_input.get(), GetParam().identifier));
+    EXPECT_EQ(GetParam().limit + 1, m_input->ExtensionBlockCount);
+}
+
+TEST_P(TestOversizedFixedMetadata, readerRejectsOversizedRecordAndClosesInput)
+{
+    EXPECT_TRUE(read_file(m_path));
+
+    EXPECT_TRUE(std::filesystem::remove(m_path));
+}
+
+INSTANTIATE_TEST_SUITE_P(RecordLimits, TestOversizedFixedMetadata,
+    Values(FixedMetadataRecord{"fractint001", GIF_EXTENSION1_FRACTAL_INFO_LENGTH},
+        FixedMetadataRecord{"fractint003", GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH},
+        FixedMetadataRecord{"fractint006", GIF_EXTENSION6_EVOLVER_INFO_LENGTH},
+        FixedMetadataRecord{"fractint007", GIF_EXTENSION7_ORBIT_INFO_LENGTH}),
+    [](const TestParamInfo<FixedMetadataRecord> &info) { return info.param.identifier; });
 
 class TestLoadFile : public TestWithParam<FileFractalType>
 {
