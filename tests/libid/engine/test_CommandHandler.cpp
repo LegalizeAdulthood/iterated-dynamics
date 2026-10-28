@@ -186,104 +186,46 @@ protected:
     CommandParseResult m_result;
 };
 
-TEST_F(TestEngineCommand, unknownNameIsUndiagnosed)
+struct EngineCommandOwnershipInput
 {
-    const Command cmd{"unknown=yes", CmdFile::AT_AFTER_STARTUP, m_result};
+    const char *name;
+    const char *argument;
+    CmdFile source;
+};
+
+void PrintTo(const EngineCommandOwnershipInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestEngineCommandOwnership : public TestEngineCommand, public WithParamInterface<EngineCommandOwnershipInput>
+{
+};
+
+TEST_P(TestEngineCommandOwnership, unownedCommandIsUndiagnosed)
+{
+    const Command cmd{GetParam().argument, GetParam().source, m_result};
 
     EXPECT_FALSE(handle_engine_command(cmd).has_value());
 
     EXPECT_TRUE(m_result.diagnostics.errors.empty());
 }
 
-TEST_F(TestEngineCommand, doesNotOwnVideoPromptParameter)
-{
-    const Command cmd{"askvideo=yes", CmdFile::AT_AFTER_STARTUP, m_result};
-
-    EXPECT_FALSE(handle_engine_command(cmd).has_value());
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
-
-TEST_F(TestEngineCommand, doesNotOwnVirtualScreenParameter)
-{
-    const Command cmd{"virtual=yes", CmdFile::AT_AFTER_STARTUP, m_result};
-
-    EXPECT_FALSE(handle_engine_command(cmd).has_value());
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
-
-TEST_F(TestEngineCommand, doesNotOwnHistoryCapacityParameter)
-{
-    const Command cmd{"maxhistory=10", CmdFile::AT_CMD_LINE, m_result};
-
-    EXPECT_FALSE(handle_engine_command(cmd).has_value());
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
-
-TEST_F(TestEngineCommand, doesNotOwnAutokeyModeParameter)
-{
-    const Command cmd{"autokey=play", CmdFile::AT_CMD_LINE, m_result};
-
-    EXPECT_FALSE(handle_engine_command(cmd).has_value());
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
-
-TEST_F(TestEngineCommand, doesNotOwnAutokeyFilenameParameter)
-{
-    const Command cmd{"autokeyname=demo.key", CmdFile::AT_CMD_LINE, m_result};
-
-    EXPECT_FALSE(handle_engine_command(cmd).has_value());
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
-
-TEST_F(TestEngineCommand, doesNotOwnVideoSelectionParameter)
-{
-    const Command cmd{"video=F6", CmdFile::AT_CMD_LINE, m_result};
-
-    EXPECT_FALSE(handle_engine_command(cmd).has_value());
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
-
-TEST_F(TestEngineCommand, doesNotOwnAutomaticStereoParameter)
-{
-    const Command cmd{"rds=random/100/top", CmdFile::AT_AFTER_STARTUP, m_result};
-
-    EXPECT_FALSE(handle_engine_command(cmd).has_value());
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
-
-TEST_F(TestEngineCommand, doesNotOwnStereoTextureParameter)
-{
-    const Command cmd{"rds-texture=map.gif", CmdFile::AT_AFTER_STARTUP, m_result};
-
-    EXPECT_FALSE(handle_engine_command(cmd).has_value());
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
-
-TEST_F(TestEngineCommand, doesNotOwnExitConfirmationParameter)
-{
-    const Command cmd{"exitnoask=yes", CmdFile::SSTOOLS_INI, m_result};
-
-    EXPECT_FALSE(handle_engine_command(cmd).has_value());
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
-
-TEST_F(TestEngineCommand, doesNotOwnResetParameter)
-{
-    const Command cmd{"reset=1960", CmdFile::AT_AFTER_STARTUP, m_result};
-
-    EXPECT_FALSE(handle_engine_command(cmd).has_value());
-
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
-}
+INSTANTIATE_TEST_SUITE_P(Arguments, TestEngineCommandOwnership,
+    Values(EngineCommandOwnershipInput{"unknownNameIsUndiagnosed", "unknown=yes", CmdFile::AT_AFTER_STARTUP},
+        EngineCommandOwnershipInput{"doesNotOwnVideoPromptParameter", "askvideo=yes", CmdFile::AT_AFTER_STARTUP},
+        EngineCommandOwnershipInput{"doesNotOwnVirtualScreenParameter", "virtual=yes", CmdFile::AT_AFTER_STARTUP},
+        EngineCommandOwnershipInput{"doesNotOwnHistoryCapacityParameter", "maxhistory=10", CmdFile::AT_CMD_LINE},
+        EngineCommandOwnershipInput{"doesNotOwnAutokeyModeParameter", "autokey=play", CmdFile::AT_CMD_LINE},
+        EngineCommandOwnershipInput{"doesNotOwnAutokeyFilenameParameter", "autokeyname=demo.key", CmdFile::AT_CMD_LINE},
+        EngineCommandOwnershipInput{"doesNotOwnVideoSelectionParameter", "video=F6", CmdFile::AT_CMD_LINE},
+        EngineCommandOwnershipInput{
+            "doesNotOwnAutomaticStereoParameter", "rds=random/100/top", CmdFile::AT_AFTER_STARTUP},
+        EngineCommandOwnershipInput{
+            "doesNotOwnStereoTextureParameter", "rds-texture=map.gif", CmdFile::AT_AFTER_STARTUP},
+        EngineCommandOwnershipInput{"doesNotOwnExitConfirmationParameter", "exitnoask=yes", CmdFile::SSTOOLS_INI},
+        EngineCommandOwnershipInput{"doesNotOwnResetParameter", "reset=1960", CmdFile::AT_AFTER_STARTUP}),
+    [](const TestParamInfo<EngineCommandOwnershipInput> &info) { return info.param.name; });
 
 TEST_F(TestEngineCommand, recognizesAcceptanceWithoutFlags)
 {
@@ -294,35 +236,51 @@ TEST_F(TestEngineCommand, recognizesAcceptanceWithoutFlags)
     EXPECT_TRUE(m_result.diagnostics.errors.empty());
 }
 
-TEST_F(TestEngineCommand, recognizesAcceptanceWithFlags)
+struct EngineBatchCommandInput
 {
-    const Command cmd{"batch=yes", CmdFile::AT_CMD_LINE, m_result};
+    const char *name;
+    const char *argument;
+    CmdFile source;
+    CmdArgFlags flags;
+    BatchMode batch;
+    const char *error;
+};
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, handle_engine_command(cmd));
-
-    EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
-    EXPECT_TRUE(m_result.diagnostics.errors.empty());
+void PrintTo(const EngineBatchCommandInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestEngineCommand, malformedRecognizedValueIsRejectedOnce)
+class TestEngineBatchCommand : public TestEngineCommand, public WithParamInterface<EngineBatchCommandInput>
 {
-    const Command cmd{"batch=garbage", CmdFile::AT_CMD_LINE, m_result};
+};
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, handle_engine_command(cmd));
+TEST_P(TestEngineBatchCommand, processingPreservesResultAndBatchState)
+{
+    const EngineBatchCommandInput &input{GetParam()};
+    const Command cmd{input.argument, input.source, m_result};
 
-    EXPECT_EQ(BatchMode::NONE, g_init_batch);
-    EXPECT_THAT(m_result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  batch=garbage"));
+    EXPECT_EQ(input.flags, handle_engine_command(cmd));
+
+    EXPECT_EQ(input.batch, g_init_batch);
+    if (input.error)
+    {
+        EXPECT_THAT(m_result.diagnostics.errors, ElementsAre(input.error));
+    }
+    else
+    {
+        EXPECT_TRUE(m_result.diagnostics.errors.empty());
+    }
 }
 
-TEST_F(TestEngineCommand, restrictedNameIsRecognizedWithoutChangingState)
-{
-    const Command cmd{"batch=yes", CmdFile::AT_AFTER_STARTUP, m_result};
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, handle_engine_command(cmd));
-
-    EXPECT_EQ(BatchMode::NONE, g_init_batch);
-    EXPECT_THAT(m_result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  batch=yes"));
-}
+INSTANTIATE_TEST_SUITE_P(Contexts, TestEngineBatchCommand,
+    Values(EngineBatchCommandInput{"Accepted", "batch=yes", CmdFile::AT_CMD_LINE,
+               CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, BatchMode::NORMAL, nullptr},
+        EngineBatchCommandInput{"Malformed", "batch=garbage", CmdFile::AT_CMD_LINE, CmdArgFlags::BAD_ARG,
+            BatchMode::NONE, "Oops. I couldn't understand the argument:\n  batch=garbage"},
+        EngineBatchCommandInput{"Restricted", "batch=yes", CmdFile::AT_AFTER_STARTUP, CmdArgFlags::BAD_ARG,
+            BatchMode::NONE, "Oops. I couldn't understand the argument:\n  batch=yes"}),
+    [](const TestParamInfo<EngineBatchCommandInput> &info) { return info.param.name; });
 
 TEST_F(TestEngineCommand, evaluatesOverrideAfterEachParameter)
 {
