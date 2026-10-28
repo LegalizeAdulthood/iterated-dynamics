@@ -9,6 +9,7 @@
 #include <gtest/gtest.h>
 
 #include <limits>
+#include <ostream>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -91,24 +92,39 @@ TEST_F(TestCommand, decodesYesNoFields)
     EXPECT_EQ("no", cmd.string_val(1));
 }
 
-TEST_F(TestCommand, absentAndEmptyValuesHaveNoFields)
+struct EmptyCommandInput
 {
-    for (const char *text : {"reset", "reset="})
-    {
-        SCOPED_TRACE(text);
-        const Command cmd{text, CmdFile::AT_CMD_LINE, m_result};
+    const char *name;
+    const char *argument;
+};
 
-        EXPECT_EQ("reset", cmd.variable);
-        EXPECT_TRUE(cmd.value.empty());
-        EXPECT_EQ(0, cmd.num_val);
-        EXPECT_EQ(0, cmd.total_params);
-        EXPECT_EQ(0, cmd.num_int_params);
-        EXPECT_EQ(0, cmd.num_float_params);
-        EXPECT_EQ('\0', cmd.char_val[0]);
-        EXPECT_EQ(-1, cmd.yes_no_val[0]);
-        EXPECT_EQ(CmdArgFlags::NONE, cmd.status);
-    }
+void PrintTo(const EmptyCommandInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestEmptyCommandValue : public TestCommand, public WithParamInterface<EmptyCommandInput>
+{
+};
+
+TEST_P(TestEmptyCommandValue, valueHasNoFields)
+{
+    const Command cmd{GetParam().argument, CmdFile::AT_CMD_LINE, m_result};
+
+    EXPECT_EQ("reset", cmd.variable);
+    EXPECT_TRUE(cmd.value.empty());
+    EXPECT_EQ(0, cmd.num_val);
+    EXPECT_EQ(0, cmd.total_params);
+    EXPECT_EQ(0, cmd.num_int_params);
+    EXPECT_EQ(0, cmd.num_float_params);
+    EXPECT_EQ('\0', cmd.char_val[0]);
+    EXPECT_EQ(-1, cmd.yes_no_val[0]);
+    EXPECT_EQ(CmdArgFlags::NONE, cmd.status);
+}
+
+INSTANTIATE_TEST_SUITE_P(Values, TestEmptyCommandValue,
+    Values(EmptyCommandInput{"Absent", "reset"}, EmptyCommandInput{"Empty", "reset="}),
+    [](const TestParamInfo<EmptyCommandInput> &info) { return info.param.name; });
 
 TEST_F(TestCommand, retainsEmptyInteriorFieldClassification)
 {
@@ -302,30 +318,40 @@ TEST_F(TestCommand, startupBadArgumentRetainsHelpSuffix)
     EXPECT_THAT(m_result.diagnostics.errors.front(), HasSubstr("see the Startup Help screens"));
 }
 
-TEST_F(TestCommand, missingFileWarningRetainsSourceContext)
+struct CommandWarningInput
 {
-    struct Context
-    {
-        CmdFile mode;
-        const char *name;
-    };
+    const char *name;
+    CmdFile mode;
+    const char *context;
+};
 
-    constexpr Context contexts[]{{CmdFile::AT_CMD_LINE, "command line"}, {CmdFile::SSTOOLS_INI, "sstools.ini"},
-        {CmdFile::AT_AFTER_STARTUP, "PAR file"}, {CmdFile::AT_CMD_LINE_SET_NAME, "PAR file"}};
-    for (const Context &context : contexts)
-    {
-        SCOPED_TRACE(context.name);
-        CommandParseResult result;
-        const Command cmd{"IFSFILE=Mixed.IFS", context.mode, result};
-
-        cmd.warn_missing_file();
-
-        ASSERT_THAT(result.diagnostics.warnings, SizeIs(1));
-        EXPECT_EQ("Can't find ifsfile=Mixed.IFS, please check " + std::string{context.name},
-            result.diagnostics.warnings.front());
-        EXPECT_TRUE(result.diagnostics.errors.empty());
-    }
+void PrintTo(const CommandWarningInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestCommandWarning : public TestCommand, public WithParamInterface<CommandWarningInput>
+{
+};
+
+TEST_P(TestCommandWarning, missingFileWarningRetainsSourceContext)
+{
+    const Command cmd{"IFSFILE=Mixed.IFS", GetParam().mode, m_result};
+
+    cmd.warn_missing_file();
+
+    ASSERT_THAT(m_result.diagnostics.warnings, SizeIs(1));
+    EXPECT_EQ("Can't find ifsfile=Mixed.IFS, please check " + std::string{GetParam().context},
+        m_result.diagnostics.warnings.front());
+    EXPECT_TRUE(m_result.diagnostics.errors.empty());
+}
+
+INSTANTIATE_TEST_SUITE_P(Sources, TestCommandWarning,
+    Values(CommandWarningInput{"CommandLine", CmdFile::AT_CMD_LINE, "command line"},
+        CommandWarningInput{"Configuration", CmdFile::SSTOOLS_INI, "sstools.ini"},
+        CommandWarningInput{"AfterStartup", CmdFile::AT_AFTER_STARTUP, "PAR file"},
+        CommandWarningInput{"CommandLineSet", CmdFile::AT_CMD_LINE_SET_NAME, "PAR file"}),
+    [](const TestParamInfo<CommandWarningInput> &info) { return info.param.name; });
 
 TEST_F(TestCommand, cannotCopyOrMoveInternalViews)
 {
