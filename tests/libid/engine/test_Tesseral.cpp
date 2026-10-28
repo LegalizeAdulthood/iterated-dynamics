@@ -19,6 +19,9 @@
 
 #include <algorithm>
 #include <array>
+#include <cstddef>
+#include <optional>
+#include <ostream>
 #include <stdexcept>
 #include <vector>
 
@@ -285,31 +288,48 @@ TEST_F(TestTesseral, nonuniformMiddleRequiresSubdivision)
     EXPECT_TRUE(s_calculated.empty());
 }
 
-TEST_F(TestTesseral, rowProbesKeepTheirExistingChunkSize)
+struct TesseralFrameInput
 {
-    set_frame(600, 4);
+    const char *name;
+    int width;
+    int height;
+    std::array<std::size_t, 3> chunks;
+};
+
+void PrintTo(const TesseralFrameInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestTesseralFrame : public TestTesseral, public WithParamInterface<TesseralFrameInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestTesseralFrame::SetUp()
+{
+    TestTesseral::SetUp();
+    set_frame(GetParam().width, GetParam().height);
+}
+
+TEST_P(TestTesseralFrame, probesKeepTheirExistingChunkSizes)
+{
     Tesseral pass;
 
-    EXPECT_EQ(512U, selection_chunk(pass).size());
-    EXPECT_EQ(600U, selection_chunk(pass).size());
-    EXPECT_EQ(92U, selection_chunk(pass).size());
+    for (const std::size_t expected : GetParam().chunks)
+    {
+        EXPECT_EQ(expected, selection_chunk(pass).size());
+    }
 
     EXPECT_FALSE(pass.done());
     EXPECT_TRUE(s_calculated.empty());
 }
 
-TEST_F(TestTesseral, columnProbesKeepTheirExistingChunkSize)
-{
-    set_frame(4, 600);
-    Tesseral pass;
-
-    EXPECT_EQ(520U, selection_chunk(pass).size());
-    EXPECT_EQ(598U, selection_chunk(pass).size());
-    EXPECT_EQ(86U, selection_chunk(pass).size());
-
-    EXPECT_FALSE(pass.done());
-    EXPECT_TRUE(s_calculated.empty());
-}
+INSTANTIATE_TEST_SUITE_P(Frames, TestTesseralFrame,
+    Values(TesseralFrameInput{"WideRows", 600, 4, {512, 600, 92}},
+        TesseralFrameInput{"TallColumns", 4, 600, {520, 598, 86}}),
+    [](const TestParamInfo<TesseralFrameInput> &info) { return info.param.name; });
 
 TEST_F(TestTesseral, boxTraversalKeepsItsExistingChunkSize)
 {
@@ -437,17 +457,48 @@ TEST_F(TestTesseral, narrowEdgesKeepTheirExistingSingleSample)
     EXPECT_TRUE(s_calculated.empty());
 }
 
-TEST_F(TestTesseral, completionRequiresASelection)
+struct TesseralSelectionInput
 {
-    Tesseral pass;
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
-    ASSERT_TRUE(pass.select_pixel());
+    const char *name;
+    bool consumed;
+};
 
-    provide_pixel(pass);
-
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
+void PrintTo(const TesseralSelectionInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
+
+class TestTesseralSelectionGuard : public TestTesseral, public WithParamInterface<TesseralSelectionInput>
+{
+protected:
+    void SetUp() override;
+
+    std::optional<Tesseral> m_pass;
+};
+
+void TestTesseralSelectionGuard::SetUp()
+{
+    TestTesseral::SetUp();
+    m_pass.emplace();
+    if (GetParam().consumed)
+    {
+        ASSERT_TRUE(m_pass->select_pixel());
+        provide_pixel(*m_pass);
+    }
+}
+
+TEST_P(TestTesseralSelectionGuard, accessorRequiresPendingSelection)
+{
+    EXPECT_THROW(m_pass->selected_pixel(), std::logic_error);
+}
+
+TEST_P(TestTesseralSelectionGuard, completionRequiresPendingSelection)
+{
+    EXPECT_THROW(m_pass->complete_pixel(7), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(SelectionStates, TestTesseralSelectionGuard,
+    Values(TesseralSelectionInput{"NeverSelected", false}, TesseralSelectionInput{"Consumed", true}),
+    [](const TestParamInfo<TesseralSelectionInput> &info) { return info.param.name; });
 
 } // namespace id::test
