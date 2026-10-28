@@ -5335,33 +5335,50 @@ TEST_F(TestParameterCommand, colorRangeHexValues)
     }
 }
 
-TEST_F(TestParameterCommand, singleReadLibraryDir)
+struct LibraryDirectoryInput
 {
-    using Path = std::filesystem::path;
-    clear_read_library_path();
+    const char *name;
+    std::string directories;
+    const char *probe;
+    const char *expected_directory;
+};
 
-    exec_cmd_arg(std::string{"librarydirs="} + library::ID_TEST_LIBRARY_DIR2);
-
-    const Path path{find_file(ReadFile::FORMULA, ID_TEST_FRM_FILE)};
-    ASSERT_FALSE(path.empty());
-    EXPECT_EQ(Path{ID_TEST_FRM_FILE}, path.filename()) << path;
-    EXPECT_EQ(Path{"formula"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{test::library::ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
+void PrintTo(const LibraryDirectoryInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, multipleReadLibraryDir)
+class TestLibraryDirectoryParameter : public TestParameterCommand, public WithParamInterface<LibraryDirectoryInput>
 {
-    using Path = std::filesystem::path;
+protected:
+    void SetUp() override;
+};
+
+void TestLibraryDirectoryParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
     clear_read_library_path();
-
-    exec_cmd_arg(std::string{"librarydirs="} + //
-        library::ID_TEST_LIBRARY_DIR1 + "," + library::ID_TEST_LIBRARY_DIR3);
-
-    const Path path{find_file(ReadFile::FORMULA, "root.frm")};
-    ASSERT_FALSE(path.empty());
-    EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
-    EXPECT_EQ(Path{"formula"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{test::library::ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }
+
+TEST_P(TestLibraryDirectoryParameter, findsFormulaInConfiguredDirectories)
+{
+    const LibraryDirectoryInput &input{GetParam()};
+
+    exec_cmd_arg(std::string{"librarydirs="} + input.directories);
+
+    const fs::path path{find_file(ReadFile::FORMULA, input.probe)};
+    ASSERT_FALSE(path.empty());
+    EXPECT_EQ(fs::path{input.probe}, path.filename()) << path;
+    EXPECT_EQ(fs::path{"formula"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(fs::path{input.expected_directory}, path.parent_path().parent_path()) << path;
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestLibraryDirectoryParameter,
+    Values(LibraryDirectoryInput{"SingleDirectory", library::ID_TEST_LIBRARY_DIR2, ID_TEST_FRM_FILE,
+               library::ID_TEST_LIBRARY_DIR2},
+        LibraryDirectoryInput{"MultipleDirectories",
+            std::string{library::ID_TEST_LIBRARY_DIR1} + "," + library::ID_TEST_LIBRARY_DIR3, "root.frm",
+            library::ID_TEST_LIBRARY_DIR3}),
+    [](const TestParamInfo<LibraryDirectoryInput> &info) { return info.param.name; });
 
 } // namespace id::test
