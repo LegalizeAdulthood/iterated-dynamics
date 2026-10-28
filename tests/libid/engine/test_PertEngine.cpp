@@ -12497,8 +12497,15 @@ void TestDeepPerturbationGeometry::initialize_frame()
     ASSERT_TRUE(m_engine.initialize_pixel_strategy());
 }
 
-TEST_F(TestDeepPerturbationGeometry, passesMatchNativePixelsAcrossSubDoubleViewport)
+class TestDeepViewportPass : public TestDeepPerturbationGeometry, public WithParamInterface<CalcMode>
 {
+protected:
+    void SetUp() override;
+};
+
+void TestDeepViewportPass::SetUp()
+{
+    TestDeepPerturbationGeometry::SetUp();
     // Mandelbrot's production pass setup selects the fixed-point allocator.
     free_bf_vars();
     init_bf_dec(450);
@@ -12508,60 +12515,65 @@ TEST_F(TestDeepPerturbationGeometry, passesMatchNativePixelsAcrossSubDoubleViewp
     m_specific.per_pixel = mandel_per_pixel_bn;
     m_specific.orbit_calc = julia_orbit_bn;
     g_dispatch = FractalDispatch{m_specific};
-    for (const CalcMode pass : {CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS})
+}
+
+TEST_P(TestDeepViewportPass, matchesNativePixelsAcrossSubDoubleViewport)
+{
+    const CalcMode pass{GetParam()};
+    std::array<int, WIDTH * HEIGHT> native_pixels{};
+    for (const PerturbationMode mode : {PerturbationMode::NO, PerturbationMode::YES})
     {
-        SCOPED_TRACE(static_cast<char>(pass));
-        std::array<int, WIDTH * HEIGHT> native_pixels{};
-        for (const PerturbationMode mode : {PerturbationMode::NO, PerturbationMode::YES})
+        SCOPED_TRACE(static_cast<int>(mode));
+        g_std_calc_mode = pass;
+        g_user.perturbation = mode;
+        g_bf_math = BFMathType::BIG_NUM;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
+        m_pixels.fill(0);
+        m_plot_statuses.clear();
+        s_reference_coordinates.clear();
+        StandardFractal calculation;
+        ASSERT_TRUE(calculation.resume().empty());
+        for (int step = 0; step < 1000 && !calculation.done(); ++step)
         {
-            SCOPED_TRACE(static_cast<int>(mode));
-            g_std_calc_mode = pass;
-            g_user.perturbation = mode;
-            g_bf_math = BFMathType::BIG_NUM;
-            g_calc_status = CalcStatus::PARAMS_CHANGED;
-            m_pixels.fill(0);
-            m_plot_statuses.clear();
-            s_reference_coordinates.clear();
-            StandardFractal calculation;
-            ASSERT_TRUE(calculation.resume().empty());
-            for (int step = 0; step < 1000 && !calculation.done(); ++step)
-            {
-                calculation.iterate();
-            }
-            ASSERT_TRUE(calculation.done());
-            EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
-            EXPECT_EQ(pass, g_std_calc_mode);
-            EXPECT_EQ(BFMathType::BIG_NUM, g_bf_math);
-            for (int row = 0; row < HEIGHT; ++row)
-            {
-                for (int col = 0; col < WIDTH; ++col)
-                {
-                    EXPECT_EQ(col < WIDTH / 2 ? 1 : 7, m_pixels[row * WIDTH + col]);
-                }
-            }
-            ASSERT_FALSE(m_plot_statuses.empty());
-            for (const StandardPassStatus &status : m_plot_statuses)
-            {
-                EXPECT_EQ(mode == PerturbationMode::YES, status.perturbation_active);
-            }
-            if (mode == PerturbationMode::NO)
-            {
-                native_pixels = m_pixels;
-            }
-            else
-            {
-                EXPECT_EQ(native_pixels, m_pixels);
-                EXPECT_THAT(s_reference_coordinates,
-                    Contains(Truly([](const std::complex<double> &point)
-                        { return std::abs(point - std::complex<double>{-3.0, 0.0}) < 1e-12; })));
-                EXPECT_THAT(s_reference_coordinates,
-                    Contains(Truly([](const std::complex<double> &point)
-                        { return std::abs(point - std::complex<double>{3.0, 0.0}) < 1e-12; })));
-            }
-            calculation.finish();
+            calculation.iterate();
         }
+        ASSERT_TRUE(calculation.done());
+        EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+        EXPECT_EQ(pass, g_std_calc_mode);
+        EXPECT_EQ(BFMathType::BIG_NUM, g_bf_math);
+        for (int row = 0; row < HEIGHT; ++row)
+        {
+            for (int col = 0; col < WIDTH; ++col)
+            {
+                EXPECT_EQ(col < WIDTH / 2 ? 1 : 7, m_pixels[row * WIDTH + col]);
+            }
+        }
+        ASSERT_FALSE(m_plot_statuses.empty());
+        for (const StandardPassStatus &status : m_plot_statuses)
+        {
+            EXPECT_EQ(mode == PerturbationMode::YES, status.perturbation_active);
+        }
+        if (mode == PerturbationMode::NO)
+        {
+            native_pixels = m_pixels;
+        }
+        else
+        {
+            EXPECT_EQ(native_pixels, m_pixels);
+            EXPECT_THAT(s_reference_coordinates,
+                Contains(Truly([](const std::complex<double> &point)
+                    { return std::abs(point - std::complex<double>{-3.0, 0.0}) < 1e-12; })));
+            EXPECT_THAT(s_reference_coordinates,
+                Contains(Truly([](const std::complex<double> &point)
+                    { return std::abs(point - std::complex<double>{3.0, 0.0}) < 1e-12; })));
+        }
+        calculation.finish();
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDeepViewportPass, Values(CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS),
+    [](const TestParamInfo<CalcMode> &info)
+    { return info.param == CalcMode::BOUNDARY_TRACE ? "BoundaryTrace" : "SolidGuess"; });
 
 TEST_F(TestDeepPerturbationGeometry, frameRetainsPreciseGeometryForReplacementReferences)
 {
