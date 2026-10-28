@@ -623,10 +623,21 @@ TEST_F(TestGifWriterRaster, reportsOutputOpenFailure)
     EXPECT_FALSE(g_busy);
 }
 
-TEST_F(TestGifWriterRaster, incrementalSaveDoesNotPresentUiOrChangeBusyState)
+class TestGifWriterIncrementalSave : public TestGifWriterRaster
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::vector<Byte> m_pixels;
+    std::unique_ptr<ImageSave> m_image;
+};
+
+void TestGifWriterIncrementalSave::SetUp()
+{
+    TestGifWriterRaster::SetUp();
     configure_image(8, 3, 256);
-    const std::vector<Byte> pixels{image_pixels()};
+    m_pixels = image_pixels();
     EXPECT_CALL(m_driver, is_disk()).Times(0);
     EXPECT_CALL(m_driver, flush()).Times(0);
     EXPECT_CALL(m_driver, write_pixel(_, _, _)).Times(0);
@@ -637,25 +648,57 @@ TEST_F(TestGifWriterRaster, incrementalSaveDoesNotPresentUiOrChangeBusyState)
                 EXPECT_FALSE(g_busy);
                 return m_frame.at(static_cast<std::size_t>(y) * m_frame_width + x);
             });
-    ImageSave image{m_path};
+    m_image = std::make_unique<ImageSave>(m_path);
+}
+
+void TestGifWriterIncrementalSave::TearDown()
+{
+    m_image.reset();
+    TestGifWriterRaster::TearDown();
+}
+
+TEST_F(TestGifWriterIncrementalSave, incrementalSaveDoesNotPresentUiOrChangeBusyState)
+{
     for (int row = 0; row < 3; ++row)
     {
-        EXPECT_FALSE(image.done());
-        image.iterate();
-        EXPECT_EQ(row + 1, image.rows_written());
+        EXPECT_FALSE(m_image->done());
+        m_image->iterate();
+        EXPECT_EQ(row + 1, m_image->rows_written());
     }
-    EXPECT_FALSE(image.done());
+    EXPECT_FALSE(m_image->done());
 
-    image.iterate();
+    m_image->iterate();
 
-    EXPECT_TRUE(image.done());
-    EXPECT_TRUE(image.succeeded());
-    EXPECT_TRUE(image.diagnostic().empty());
+    EXPECT_TRUE(m_image->done());
+    EXPECT_TRUE(m_image->succeeded());
+    EXPECT_TRUE(m_image->diagnostic().empty());
     EXPECT_FALSE(g_busy);
     const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, pixels, 8, 3);
-    EXPECT_EQ(pixels, image_pixels());
-    EXPECT_THROW(image.iterate(), std::logic_error);
+    expect_raster(*gif, m_pixels, 8, 3);
+    EXPECT_EQ(m_pixels, image_pixels());
+}
+
+class TestGifWriterCompletedSave : public TestGifWriterIncrementalSave
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGifWriterCompletedSave::SetUp()
+{
+    TestGifWriterIncrementalSave::SetUp();
+    for (int row = 0; row < 3; ++row)
+    {
+        m_image->iterate();
+    }
+    m_image->iterate();
+    ASSERT_TRUE(m_image->done());
+    ASSERT_TRUE(m_image->succeeded());
+}
+
+TEST_F(TestGifWriterCompletedSave, rejectsIterationAfterCompletion)
+{
+    EXPECT_THROW(m_image->iterate(), std::logic_error);
 }
 
 TEST_F(TestGifWriterRaster, unfinishedSaveRemovesItsPartialFileWithoutUi)
