@@ -123,110 +123,100 @@ static void write_gif_extensions(GifFileType *output, const GifFileType *metadat
     }
 }
 
-TEST(TestBackwardsLegacyV20, oldMandelOutsideRealSetsBadOutside)
+struct BackwardsLegacyCase
 {
-    ValueSaver saved_bad_outside{g_bad_outside, false};
-    ValueSaver saved_file_version{g_file_version, Version{19, 60, 0, 0, true}};
-    ValueSaver saved_fractal_type{g_fractal_type, FractalType::MANDEL};
-    ValueSaver saved_outside_method{g_outside_method, ColorMethod::REAL};
-    ValueSaver saved_inside_method{g_inside_method, ColorMethod::ITER};
-    ValueSaver saved_new_bifurcation_functions_loaded{g_new_bifurcation_functions_loaded, true};
+    const char *name;
+    Version version;
+    FractalType type;
+    ColorMethod outside;
+    bool initial_bad_outside;
+    bool expected_bad_outside;
+};
 
+void PrintTo(const BackwardsLegacyCase &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestBackwardsLegacyV20 : public TestWithParam<BackwardsLegacyCase>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<bool> saved_bad_outside{g_bad_outside};
+    ValueSaver<Version> saved_file_version{g_file_version};
+    ValueSaver<FractalType> saved_fractal_type{g_fractal_type};
+    ValueSaver<ColorMethod> saved_outside_method{g_outside_method};
+    ValueSaver<ColorMethod> saved_inside_method{g_inside_method, ColorMethod::ITER};
+    ValueSaver<bool> saved_new_bifurcation_functions_loaded{g_new_bifurcation_functions_loaded, true};
+};
+
+void TestBackwardsLegacyV20::SetUp()
+{
+    g_bad_outside = GetParam().initial_bad_outside;
+    g_file_version = GetParam().version;
+    g_fractal_type = GetParam().type;
+    g_outside_method = GetParam().outside;
+}
+
+TEST_P(TestBackwardsLegacyV20, appliesOutsideCompatibilityFlag)
+{
     backwards_legacy_v20();
 
-    EXPECT_TRUE(g_bad_outside);
+    EXPECT_EQ(GetParam().expected_bad_outside, g_bad_outside);
 }
 
-TEST(TestBackwardsLegacyV20, oldJuliaOutsideSummSetsBadOutside)
+INSTANTIATE_TEST_SUITE_P(CompatibilityInputs, TestBackwardsLegacyV20,
+    Values(BackwardsLegacyCase{"OldMandelOutsideReal", {19, 60, 0, 0, true}, FractalType::MANDEL, ColorMethod::REAL,
+               false, true},
+        BackwardsLegacyCase{
+            "OldJuliaOutsideSum", {19, 60, 0, 0, true}, FractalType::JULIA, ColorMethod::SUM, false, true},
+        BackwardsLegacyCase{
+            "ModernMandelOutsideReal", {19, 61, 0, 0, true}, FractalType::MANDEL, ColorMethod::REAL, true, false},
+        BackwardsLegacyCase{
+            "OldNonMandelOutsideReal", {19, 60, 0, 0, true}, FractalType::FN_PLUS_FN, ColorMethod::REAL, true, false}),
+    [](const TestParamInfo<BackwardsLegacyCase> &info) { return info.param.name; });
+
+struct FractalVersionCase
 {
-    ValueSaver saved_bad_outside{g_bad_outside, false};
-    ValueSaver saved_file_version{g_file_version, Version{19, 60, 0, 0, true}};
-    ValueSaver saved_fractal_type{g_fractal_type, FractalType::JULIA};
-    ValueSaver saved_outside_method{g_outside_method, ColorMethod::SUM};
-    ValueSaver saved_inside_method{g_inside_method, ColorMethod::ITER};
-    ValueSaver saved_new_bifurcation_functions_loaded{g_new_bifurcation_functions_loaded, true};
+    const char *name;
+    FractalInfo info;
+    Version expected;
+};
 
-    backwards_legacy_v20();
-
-    EXPECT_TRUE(g_bad_outside);
-}
-
-TEST(TestBackwardsLegacyV20, modernMandelOutsideRealClearsBadOutside)
+void PrintTo(const FractalVersionCase &value, std::ostream *str)
 {
-    ValueSaver saved_bad_outside{g_bad_outside, true};
-    ValueSaver saved_file_version{g_file_version, Version{19, 61, 0, 0, true}};
-    ValueSaver saved_fractal_type{g_fractal_type, FractalType::MANDEL};
-    ValueSaver saved_outside_method{g_outside_method, ColorMethod::REAL};
-    ValueSaver saved_inside_method{g_inside_method, ColorMethod::ITER};
-    ValueSaver saved_new_bifurcation_functions_loaded{g_new_bifurcation_functions_loaded, true};
-
-    backwards_legacy_v20();
-
-    EXPECT_FALSE(g_bad_outside);
+    *str << value.name;
 }
 
-TEST(TestBackwardsLegacyV20, oldNonMandelOutsideRealClearsBadOutside)
-{
-    ValueSaver saved_bad_outside{g_bad_outside, true};
-    ValueSaver saved_file_version{g_file_version, Version{19, 60, 0, 0, true}};
-    ValueSaver saved_fractal_type{g_fractal_type, FractalType::FN_PLUS_FN};
-    ValueSaver saved_outside_method{g_outside_method, ColorMethod::REAL};
-    ValueSaver saved_inside_method{g_inside_method, ColorMethod::ITER};
-    ValueSaver saved_new_bifurcation_functions_loaded{g_new_bifurcation_functions_loaded, true};
-
-    backwards_legacy_v20();
-
-    EXPECT_FALSE(g_bad_outside);
-}
-
-TEST(TestFractalInfoVersion, legacyFractintRelease)
+static FractalInfo version_info(const std::int16_t format, const std::int16_t release, const Version version = {})
 {
     FractalInfo info{};
-    info.info_version = FRACTAL_INFO_VERSION_LEGACY_20_4;
-    info.release = 1960;
-
-    EXPECT_EQ(parse_legacy_version(1960), fractal_info_version(info));
+    info.info_version = format;
+    info.release = release;
+    info.version_major = static_cast<std::uint8_t>(version.major);
+    info.version_minor = static_cast<std::uint8_t>(version.minor);
+    info.version_patch = static_cast<std::uint8_t>(version.patch);
+    info.version_tweak = static_cast<std::uint8_t>(version.tweak);
+    return info;
 }
 
-TEST(TestFractalInfoVersion, idOneOneUsesLegacyReleaseField)
+using TestFractalInfoVersion = TestWithParam<FractalVersionCase>;
+
+TEST_P(TestFractalInfoVersion, convertsStoredVersion)
 {
-    FractalInfo info{};
-    info.info_version = FRACTAL_INFO_VERSION_LEGACY_20_4;
-    info.release = 101;
-
-    EXPECT_EQ((Version{1, 1, 0, 0, false}), fractal_info_version(info));
+    EXPECT_EQ(GetParam().expected, fractal_info_version(GetParam().info));
 }
 
-TEST(TestFractalInfoVersion, modernIdUsesFourVersionFields)
-{
-    FractalInfo info{};
-    info.info_version = FRACTAL_INFO_VERSION;
-    info.release = 2004;
-    info.version_major = 1;
-    info.version_minor = 2;
-    info.version_patch = 3;
-    info.version_tweak = 4;
-
-    EXPECT_EQ((Version{1, 2, 3, 4, false}), fractal_info_version(info));
-}
-
-TEST(TestFractalInfoVersion, modernIdUsesLegacyVersionField)
-{
-    FractalInfo info{};
-    info.info_version = FRACTAL_INFO_VERSION;
-    info.release = 1730;
-
-    EXPECT_EQ(parse_legacy_version(1730), fractal_info_version(info));
-}
-
-TEST(TestFractalInfoVersion, legacyInvalidReleaseFallsBackToFractintFourteenTen)
-{
-    FractalInfo info{};
-    info.info_version = 5;
-    info.release = 4000;
-
-    EXPECT_EQ(parse_legacy_version(1410), fractal_info_version(info));
-}
+INSTANTIATE_TEST_SUITE_P(VersionInputs, TestFractalInfoVersion,
+    Values(FractalVersionCase{"LegacyFractintRelease", version_info(FRACTAL_INFO_VERSION_LEGACY_20_4, 1960),
+               parse_legacy_version(1960)},
+        FractalVersionCase{"IdOneOneRelease", version_info(FRACTAL_INFO_VERSION_LEGACY_20_4, 101), {1, 1, 0, 0, false}},
+        FractalVersionCase{
+            "ModernFourFields", version_info(FRACTAL_INFO_VERSION, 2004, {1, 2, 3, 4, false}), {1, 2, 3, 4, false}},
+        FractalVersionCase{"ModernLegacyRelease", version_info(FRACTAL_INFO_VERSION, 1730), parse_legacy_version(1730)},
+        FractalVersionCase{"InvalidLegacyRelease", version_info(5, 4000), parse_legacy_version(1410)}),
+    [](const TestParamInfo<FractalVersionCase> &info) { return info.param.name; });
 
 class TestGetVideoMode : public Test
 {
