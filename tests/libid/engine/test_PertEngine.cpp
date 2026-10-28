@@ -4062,11 +4062,29 @@ TEST_P(TestPerturbationIterations, starTrailRestoresTheLimitAfterReferenceFailur
     EXPECT_EQ(201, g_max_iterations);
 }
 
-TEST_P(TestPerturbationIterations, starTrailRestoresTheLimitAfterPixelAndOutputFailures)
+class TestStarTrailFailure : public TestPerturbationIterations
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+};
+
+void TestStarTrailFailure::SetUp()
+{
+    TestPerturbationIterations::SetUp();
     g_inside_method = ColorMethod::STAR_TRAIL;
     g_max_iterations = 201;
     initialize_reference({0.0, 0.0});
+}
+
+void TestStarTrailFailure::TearDown()
+{
+    m_specific.pert_pt = mandel_perturb;
+    TestPerturbationIterations::TearDown();
+}
+
+TEST_P(TestStarTrailFailure, restoresLimitAfterPixelFailure)
+{
     m_specific.pert_pt = [](const std::complex<double> &, std::complex<double> &, const std::complex<double> &)
     {
         EXPECT_EQ(16, g_max_iterations);
@@ -4075,11 +4093,19 @@ TEST_P(TestPerturbationIterations, starTrailRestoresTheLimitAfterPixelAndOutputF
 
     EXPECT_THROW(m_engine.calculate_pixel(g_col, g_row), std::runtime_error);
     EXPECT_EQ(201, g_max_iterations);
+}
+
+TEST_P(TestStarTrailFailure, restoresLimitAfterOutputFailure)
+{
     m_specific.pert_pt = mandel_perturb;
     EXPECT_CALL(m_driver, write_pixel(g_col, g_row, 1)).WillOnce(Throw(std::runtime_error{"output failure"}));
+
     EXPECT_THROW(m_engine.calculate_pixel(g_col, g_row), std::runtime_error);
     EXPECT_EQ(201, g_max_iterations);
 }
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestStarTrailFailure, Values(false, true),
+    [](const TestParamInfo<bool> &info) { return info.param ? "HighPrecision" : "Double"; });
 
 TEST_P(TestPerturbationIterations, mapsFullIterationCountsBeforePaletteFolding)
 {
