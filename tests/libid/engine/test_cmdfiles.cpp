@@ -1969,53 +1969,49 @@ TEST_F(TestParameterCommand, typeSierpinski)
     }
 }
 
-TEST_F(TestParameterCommandError, insideInvalidValue)
+struct ColoringParameterInput
 {
-    ValueSaver saved_inside_method{g_inside_method, static_cast<ColorMethod>(-9999)};
-    ValueSaver saved_inside_color{g_inside_color, -9999};
+    const char *name;
+    const char *argument;
+    ColorMethod method;
+    int color;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("inside=foo", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(-9999, +g_inside_method);
-    EXPECT_EQ(-9999, g_inside_color);
+void PrintTo(const ColoringParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, insideZMag)
+class TestInsideParameter : public TestParameterCommand, public WithParamInterface<ColoringParameterInput>
 {
-    ValueSaver saved_inside_method{g_inside_method, static_cast<ColorMethod>(-9999)};
-    ValueSaver saved_inside_color{g_inside_color, -9999};
+private:
+    ValueSaver<ColorMethod> m_saved_method{g_inside_method, static_cast<ColorMethod>(-9999)};
+    ValueSaver<int> m_saved_color{g_inside_color, -9999};
+};
 
-    exec_cmd_arg("inside=zmag", CmdFile::AT_CMD_LINE);
+TEST_P(TestInsideParameter, setsInsideColoring)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(ColorMethod::ZMAG, g_inside_method);
-    EXPECT_EQ(-1, g_inside_color);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().method, g_inside_method);
+    EXPECT_EQ(GetParam().color, g_inside_color);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommand, insideNumber)
-{
-    ValueSaver saved_inside_method{g_inside_method, static_cast<ColorMethod>(-9999)};
-    ValueSaver saved_inside_color{g_inside_color, -9999};
-
-    exec_cmd_arg("inside=100", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(ColorMethod::COLOR, g_inside_method);
-    EXPECT_EQ(100, g_inside_color);
-}
-
-TEST_F(TestParameterCommand, insideEpsilonCross)
-{
-    ValueSaver saved_inside_method{g_inside_method, static_cast<ColorMethod>(-9999)};
-    ValueSaver saved_inside_color{g_inside_color, -9999};
-
-    exec_cmd_arg("inside=epsiloncross", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(ColorMethod::EPS_CROSS, g_inside_method);
-    EXPECT_EQ(-1, g_inside_color);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInsideParameter,
+    Values(
+        ColoringParameterInput{"Invalid", "inside=foo", static_cast<ColorMethod>(-9999), -9999, CmdArgFlags::BAD_ARG},
+        ColoringParameterInput{"ZMag", "inside=zmag", ColorMethod::ZMAG, -1, CmdArgFlags::FRACTAL_PARAM},
+        ColoringParameterInput{"Number", "inside=100", ColorMethod::COLOR, 100, CmdArgFlags::FRACTAL_PARAM},
+        ColoringParameterInput{
+            "EpsilonCross", "inside=epsiloncross", ColorMethod::EPS_CROSS, -1, CmdArgFlags::FRACTAL_PARAM}),
+    [](const TestParamInfo<ColoringParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, proximity)
 {
@@ -2027,55 +2023,90 @@ TEST_F(TestParameterCommand, proximity)
     EXPECT_EQ(423.0, g_close_proximity);
 }
 
-TEST_F(TestParameterCommand, fillColorNormal)
+struct FillColorParameterInput
 {
-    ValueSaver saved_fill_color{g_fill_color, 999};
+    const char *name;
+    const char *argument;
+    int expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("fillcolor=normal", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(-1, g_fill_color);
+void PrintTo(const FillColorParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommandError, fillColorInvalid)
+class TestFillColorParameter : public TestParameterCommand, public WithParamInterface<FillColorParameterInput>
 {
-    ValueSaver saved_fill_color{g_fill_color, 999};
+private:
+    ValueSaver<int> m_saved_fill_color{g_fill_color, 999};
+};
 
-    exec_cmd_arg("fillcolor=fmeh", CmdFile::AT_CMD_LINE);
+TEST_P(TestFillColorParameter, setsFillColor)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(999, g_fill_color);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_fill_color);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommand, fillColorNumber)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFillColorParameter,
+    Values(FillColorParameterInput{"Normal", "fillcolor=normal", -1, CmdArgFlags::FRACTAL_PARAM},
+        FillColorParameterInput{"Number", "fillcolor=100", 100, CmdArgFlags::FRACTAL_PARAM},
+        FillColorParameterInput{"Invalid", "fillcolor=fmeh", 999, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<FillColorParameterInput> &info) { return info.param.name; });
+
+struct FinAttractParameterInput
 {
-    ValueSaver saved_fill_color{g_fill_color, 999};
+    const char *name;
+    const char *argument;
+    bool initial;
+    bool expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("fillcolor=100", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(100, g_fill_color);
+void PrintTo(const FinAttractParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommandError, finAttractInvalidValue)
+class TestFinAttractParameter : public TestParameterCommand, public WithParamInterface<FinAttractParameterInput>
 {
-    ValueSaver saved_finite_attractor{g_attractor.enabled, true};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("finattract=!", CmdFile::AT_CMD_LINE);
+private:
+    ValueSaver<bool> m_saved_enabled{g_attractor.enabled};
+};
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_TRUE(g_attractor.enabled);
+void TestFinAttractParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_attractor.enabled = GetParam().initial;
 }
 
-TEST_F(TestParameterCommand, finAttractYes)
+TEST_P(TestFinAttractParameter, setsFiniteAttractorMode)
 {
-    ValueSaver saved_finite_attractor{g_attractor.enabled, false};
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    exec_cmd_arg("finattract=y", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_TRUE(g_attractor.enabled);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_attractor.enabled);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFinAttractParameter,
+    Values(FinAttractParameterInput{"Invalid", "finattract=!", true, true, CmdArgFlags::BAD_ARG},
+        FinAttractParameterInput{"Yes", "finattract=y", false, true, CmdArgFlags::FRACTAL_PARAM}),
+    [](const TestParamInfo<FinAttractParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommandError, noBoFInvalidValue)
 {
