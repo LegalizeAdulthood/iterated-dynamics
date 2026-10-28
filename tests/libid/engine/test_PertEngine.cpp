@@ -5398,46 +5398,116 @@ void PerturbationIterationTest::compare_distance_pixel(const std::complex<double
     }
 }
 
-TEST_P(TestPerturbationIterations, distanceEstimatorMatchesStandardDerivativesAndTerminalValues)
+struct DistanceDerivativeInput
 {
-    for (const bool legacy : {false, true})
-    {
-        SCOPED_TRACE(legacy);
-        for (const std::complex<double> point : {std::complex<double>{0.5, 0.0}, {0.5, 0.5}, {0.125, 0.0625}})
-        {
-            SCOPED_TRACE(point);
-            compare_distance_pixel(point, 32, legacy);
-        }
-    }
+    std::string name;
+    bool big_float;
+    bool legacy;
+    std::complex<double> point;
+    double reference_offset;
+};
+
+void PrintTo(const DistanceDerivativeInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_P(TestPerturbationIterations, distanceEstimatorRestartsDerivativeOnReferenceReplacement)
+struct DistanceDerivativeSample
 {
-    m_engine.set_glitch_tolerance(8.0);
-    for (const bool legacy : {false, true})
-    {
-        SCOPED_TRACE(legacy);
-        compare_distance_pixel({0.5, 0.5}, 32, legacy, 0.125);
-        EXPECT_GT(m_engine.reference_count(), 1);
-        EXPECT_GT(s_perturbation_derivatives.size(), s_standard_derivatives.size());
-    }
-}
+    const char *name;
+    std::complex<double> point;
+    double reference_offset;
+};
 
-TEST_P(TestPerturbationIterations, longPixelChunksRetainDistanceDerivativesAcrossYieldsAndRetries)
+std::vector<DistanceDerivativeInput> distance_derivative_inputs(const std::vector<DistanceDerivativeSample> &samples)
 {
-    for (const bool legacy : {false, true})
+    std::vector<DistanceDerivativeInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(legacy);
-        for (const double offset : {0.0, 0.125})
+        for (const bool legacy : {false, true})
         {
-            SCOPED_TRACE(offset);
-            m_engine.set_glitch_tolerance(offset == 0.0 ? DEFAULT_PERTURBATION_TOLERANCE : 8.0);
-            compare_distance_pixel({0.125, 0.0625}, 5000, legacy, offset, {}, true);
-            EXPECT_EQ(5000, g_real_color_iter);
-            EXPECT_EQ(offset == 0.0 ? 1 : 2, m_engine.reference_count());
+            for (const DistanceDerivativeSample &sample : samples)
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
+                        (legacy ? "Legacy_" : "Current_") + sample.name,
+                    big_float, legacy, sample.point, sample.reference_offset});
+            }
         }
     }
+    return inputs;
 }
+
+class DistanceDerivativeTest : public PerturbationIterationTest, public WithParamInterface<DistanceDerivativeInput>
+{
+public:
+    DistanceDerivativeTest();
+
+protected:
+    void SetUp() override;
+};
+
+DistanceDerivativeTest::DistanceDerivativeTest() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void DistanceDerivativeTest::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    m_engine.set_glitch_tolerance(GetParam().reference_offset == 0.0 ? DEFAULT_PERTURBATION_TOLERANCE : 8.0);
+}
+
+class TestDistanceDerivativeSamples : public DistanceDerivativeTest
+{
+};
+
+TEST_P(TestDistanceDerivativeSamples, matchesStandardDerivativesAndTerminalValues)
+{
+    compare_distance_pixel(GetParam().point, 32, GetParam().legacy);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceDerivativeSamples,
+    ValuesIn(distance_derivative_inputs({
+        {"RealExterior", {0.5, 0.0}, 0.0},
+        {"ComplexExterior", {0.5, 0.5}, 0.0},
+        {"Interior", {0.125, 0.0625}, 0.0},
+    })),
+    [](const TestParamInfo<DistanceDerivativeInput> &info) { return info.param.name; });
+
+class TestDistanceDerivativeReplacement : public DistanceDerivativeTest
+{
+};
+
+TEST_P(TestDistanceDerivativeReplacement, restartsDerivativeOnReferenceReplacement)
+{
+    compare_distance_pixel(GetParam().point, 32, GetParam().legacy, GetParam().reference_offset);
+
+    EXPECT_GT(m_engine.reference_count(), 1);
+    EXPECT_GT(s_perturbation_derivatives.size(), s_standard_derivatives.size());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceDerivativeReplacement,
+    ValuesIn(distance_derivative_inputs({{"ComplexExterior", {0.5, 0.5}, 0.125}})),
+    [](const TestParamInfo<DistanceDerivativeInput> &info) { return info.param.name; });
+
+class TestDistanceDerivativeChunks : public DistanceDerivativeTest
+{
+};
+
+TEST_P(TestDistanceDerivativeChunks, retainsDerivativesAcrossYieldsAndRetries)
+{
+    compare_distance_pixel(GetParam().point, 5000, GetParam().legacy, GetParam().reference_offset, {}, true);
+
+    EXPECT_EQ(5000, g_real_color_iter);
+    EXPECT_EQ(GetParam().reference_offset == 0.0 ? 1 : 2, m_engine.reference_count());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceDerivativeChunks,
+    ValuesIn(distance_derivative_inputs({
+        {"OriginalReference", {0.125, 0.0625}, 0.0},
+        {"ReplacementReference", {0.125, 0.0625}, 0.125},
+    })),
+    [](const TestParamInfo<DistanceDerivativeInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, distanceEstimatorStopsBeforeOrbitUpdateAtDerivativeLimit)
 {
