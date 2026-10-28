@@ -24,74 +24,39 @@ struct TestLyapunov : testing::Test
     ValueSaver<Version> saved_version{g_version, parse_legacy_version(2000)};
 };
 
-TEST_F(TestLyapunov, legacy1731InvertsLyapunovSequence)
+struct LegacyLyapunovSequenceInput
+{
+    const char *name;
+    int order;
+    std::vector<int> expected;
+};
+
+class TestLegacyLyapunovSequence : public TestLyapunov, public testing::WithParamInterface<LegacyLyapunovSequenceInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestLegacyLyapunovSequence::SetUp()
 {
     g_version = parse_legacy_version(1731);
-
-    const LyapunovSequence sequence{build_lyapunov_sequence(65)};
-
-    EXPECT_EQ(9, sequence.length);
-    EXPECT_EQ(0, sequence.rxy[0]);
-    EXPECT_EQ(0, sequence.rxy[1]);
-    EXPECT_EQ(1, sequence.rxy[2]);
-    EXPECT_EQ(1, sequence.rxy[3]);
-    EXPECT_EQ(1, sequence.rxy[4]);
-    EXPECT_EQ(1, sequence.rxy[5]);
-    EXPECT_EQ(1, sequence.rxy[6]);
-    EXPECT_EQ(0, sequence.rxy[7]);
-    EXPECT_EQ(1, sequence.rxy[8]);
 }
 
-TEST_F(TestLyapunov, legacy1731MasksOrderToSixteenBits)
+TEST_P(TestLegacyLyapunovSequence, retainsLegacySequence)
 {
-    g_version = parse_legacy_version(1731);
+    const LyapunovSequence sequence{build_lyapunov_sequence(GetParam().order)};
 
-    const LyapunovSequence sequence{build_lyapunov_sequence(0x10001)};
-
-    EXPECT_EQ(3, sequence.length);
-    EXPECT_EQ(0, sequence.rxy[0]);
-    EXPECT_EQ(0, sequence.rxy[1]);
-    EXPECT_EQ(1, sequence.rxy[2]);
+    ASSERT_EQ(GetParam().expected.size(), sequence.length);
+    for (std::size_t i = 0; i < GetParam().expected.size(); ++i)
+    {
+        EXPECT_EQ(GetParam().expected[i], sequence.rxy[i]) << i;
+    }
 }
 
-TEST_F(TestLyapunov, legacy1730ForcesOnePassAndDefaultInsideZero)
-{
-    ValueSaver saved_max_iterations{g_max_iterations, 25L};
-    ValueSaver saved_user_calc_mode{g_user.std_calc_mode, CalcMode::SOLID_GUESS};
-    ValueSaver saved_calc_mode{g_std_calc_mode, CalcMode::SOLID_GUESS};
-    ValueSaver saved_inside_method{g_inside_method, ColorMethod::COLOR};
-    ValueSaver saved_inside_color{g_inside_color, 1};
-    ValueSaver saved_debug_flag{g_debug_flag, DebugFlags::NONE};
-    ValueSaver saved_param_0{g_params[0], 65.0};
-    ValueSaver saved_param_1{g_params[1], 0.05};
-    ValueSaver saved_param_2{g_params[2], 0.0};
-    g_version = parse_legacy_version(1730);
-
-    EXPECT_TRUE(lyapunov_per_image());
-
-    EXPECT_EQ(CalcMode::ONE_PASS, g_user.std_calc_mode);
-    EXPECT_EQ(CalcMode::ONE_PASS, g_std_calc_mode);
-    EXPECT_EQ(ColorMethod::COLOR, g_inside_method);
-    EXPECT_EQ(0, g_inside_color);
-}
-
-TEST_F(TestLyapunov, legacy1730KeepsExplicitInsideColor)
-{
-    ValueSaver saved_max_iterations{g_max_iterations, 25L};
-    ValueSaver saved_user_calc_mode{g_user.std_calc_mode, CalcMode::SOLID_GUESS};
-    ValueSaver saved_calc_mode{g_std_calc_mode, CalcMode::SOLID_GUESS};
-    ValueSaver saved_inside_method{g_inside_method, ColorMethod::COLOR};
-    ValueSaver saved_inside_color{g_inside_color, 2};
-    ValueSaver saved_debug_flag{g_debug_flag, DebugFlags::NONE};
-    ValueSaver saved_param_0{g_params[0], 65.0};
-    ValueSaver saved_param_1{g_params[1], 0.05};
-    ValueSaver saved_param_2{g_params[2], 0.0};
-    g_version = parse_legacy_version(1730);
-
-    EXPECT_TRUE(lyapunov_per_image());
-
-    EXPECT_EQ(2, g_inside_color);
-}
+INSTANTIATE_TEST_SUITE_P(Compatibility, TestLegacyLyapunovSequence,
+    testing::Values(LegacyLyapunovSequenceInput{"Inverted", 65, {0, 0, 1, 1, 1, 1, 1, 0, 1}},
+        LegacyLyapunovSequenceInput{"MaskedToSixteenBits", 0x10001, {0, 0, 1}}),
+    [](const testing::TestParamInfo<LegacyLyapunovSequenceInput> &info) { return info.param.name; });
 
 struct TestLyapunovSetup : TestLyapunov
 {
@@ -106,6 +71,41 @@ struct TestLyapunovSetup : TestLyapunov
     ValueSaver<double> saved_seed{g_params[1], 0.05};
     ValueSaver<double> saved_filter{g_params[2], 0.0};
 };
+
+struct LegacyLyapunovColorInput
+{
+    const char *name;
+    int inside;
+    int expected;
+};
+
+class TestLegacyLyapunovColor : public TestLyapunovSetup, public testing::WithParamInterface<LegacyLyapunovColorInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestLegacyLyapunovColor::SetUp()
+{
+    g_version = parse_legacy_version(1730);
+    g_user.std_calc_mode = CalcMode::SOLID_GUESS;
+    g_std_calc_mode = CalcMode::SOLID_GUESS;
+    g_inside_color = GetParam().inside;
+}
+
+TEST_P(TestLegacyLyapunovColor, normalizesLegacySetup)
+{
+    EXPECT_TRUE(lyapunov_per_image());
+
+    EXPECT_EQ(CalcMode::ONE_PASS, g_user.std_calc_mode);
+    EXPECT_EQ(CalcMode::ONE_PASS, g_std_calc_mode);
+    EXPECT_EQ(ColorMethod::COLOR, g_inside_method);
+    EXPECT_EQ(GetParam().expected, g_inside_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Compatibility, TestLegacyLyapunovColor,
+    testing::Values(LegacyLyapunovColorInput{"DefaultInside", 1, 0}, LegacyLyapunovColorInput{"ExplicitInside", 2, 2}),
+    [](const testing::TestParamInfo<LegacyLyapunovColorInput> &info) { return info.param.name; });
 
 TEST_F(TestLyapunovSetup, numericInsideNeedsNoWarning)
 {
