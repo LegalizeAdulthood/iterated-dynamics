@@ -86,6 +86,7 @@
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <optional>
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
@@ -743,29 +744,51 @@ TEST_F(TestGeneratedParameterFile, makeParNewFile)
         << path;
 }
 
-TEST_F(TestGeneratedParameterFile, makeParWritesFixedRandomSeed)
+struct SavedParameterSeedInput
 {
-    const fs::path &path{m_output};
-    ValueSaver saved_random_seed{g_random_seed, 4567};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
+    const char *name;
+    bool fixed;
+};
 
-    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_THAT(read_file_contents(path), HasSubstr(" rseed=4567"));
+void PrintTo(const SavedParameterSeedInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestGeneratedParameterFile, makeParOmitsGeneratedRandomSeed)
+class TestSavedParameterSeed : public TestGeneratedParameterFile, public WithParamInterface<SavedParameterSeedInput>
 {
-    const fs::path &path{m_output};
-    ValueSaver saved_random_seed{g_random_seed, 4567};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, false};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
+    ValueSaver<int> m_saved_seed{g_random_seed, 4567};
+    ValueSaver<bool> m_saved_fixed_seed{g_random_seed_flag};
+};
+
+void TestSavedParameterSeed::SetUp()
+{
+    TestGeneratedParameterFile::SetUp();
+    g_random_seed_flag = GetParam().fixed;
+}
+
+TEST_P(TestSavedParameterSeed, savesOnlyFixedRandomSeeds)
+{
+    exec_cmd_arg("makepar=" + m_output.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_THAT(read_file_contents(path), Not(HasSubstr("rseed=")));
+    const std::string text{read_file_contents(m_output)};
+    if (GetParam().fixed)
+    {
+        EXPECT_THAT(text, HasSubstr(" rseed=4567"));
+    }
+    else
+    {
+        EXPECT_THAT(text, Not(HasSubstr("rseed=")));
+    }
 }
+
+INSTANTIATE_TEST_SUITE_P(Seeds, TestSavedParameterSeed,
+    Values(SavedParameterSeedInput{"Fixed", true}, SavedParameterSeedInput{"Generated", false}),
+    [](const TestParamInfo<SavedParameterSeedInput> &info) { return info.param.name; });
 
 TEST_F(TestGeneratedParameterFile, makeParNewEntryExistingFile)
 {
@@ -802,41 +825,60 @@ foo                {
         << path;
 }
 
-TEST_F(TestGeneratedParameterFile, makeParWritesLegacyResetFromCompatibilityVersion)
+struct SavedParameterVersionInput
 {
-    const fs::path &path{m_output};
-    g_version = parse_legacy_version(1730);
+    const char *name;
+    Version version;
+    std::optional<bool> legacy_float;
+    const char *reset_text;
+    const char *version_text;
+};
 
-    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_THAT(read_file_contents(path), HasSubstr("  reset=1730 type=mandel"));
+void PrintTo(const SavedParameterVersionInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestGeneratedParameterFile, makeParPreservesLegacyFloat)
+class TestSavedParameterVersion : public TestGeneratedParameterFile,
+                                  public WithParamInterface<SavedParameterVersionInput>
 {
-    const fs::path &path{m_output};
-    g_version = parse_legacy_version(1730);
-    ValueSaver saved_legacy_float{g_user.legacy_float, true};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
+    ValueSaver<bool> m_saved_legacy_float{g_user.legacy_float};
+};
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_THAT(read_file_contents(path), HasSubstr(" reset=1730 type=mandel float=y"));
+void TestSavedParameterVersion::SetUp()
+{
+    TestGeneratedParameterFile::SetUp();
+    g_version = GetParam().version;
+    if (GetParam().legacy_float)
+    {
+        g_user.legacy_float = *GetParam().legacy_float;
+    }
 }
 
-TEST_F(TestGeneratedParameterFile, makeParWritesIdResetFromCompatibilityVersion)
+TEST_P(TestSavedParameterVersion, savesCompatibilityVersionText)
 {
-    const fs::path &path{m_output};
-    g_version = Version{1, 3, 2, 0, false};
+    exec_cmd_arg("makepar=" + m_output.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
-    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
-
-    const std::string text{read_file_contents(path)};
+    const std::string text{read_file_contents(m_output)};
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_THAT(text, HasSubstr("; Id Version 1.3.2"));
-    EXPECT_THAT(text, HasSubstr("  reset=1/3/2 type=mandel"));
+    EXPECT_THAT(text, HasSubstr(GetParam().reset_text));
+    if (GetParam().version_text)
+    {
+        EXPECT_THAT(text, HasSubstr(GetParam().version_text));
+    }
 }
+
+INSTANTIATE_TEST_SUITE_P(Versions, TestSavedParameterVersion,
+    Values(SavedParameterVersionInput{"LegacyReset", parse_legacy_version(1730), std::nullopt,
+               "  reset=1730 type=mandel", nullptr},
+        SavedParameterVersionInput{
+            "LegacyFloat", parse_legacy_version(1730), true, " reset=1730 type=mandel float=y", nullptr},
+        SavedParameterVersionInput{
+            "IdReset", Version{1, 3, 2, 0, false}, std::nullopt, "  reset=1/3/2 type=mandel", "; Id Version 1.3.2"}),
+    [](const TestParamInfo<SavedParameterVersionInput> &info) { return info.param.name; });
 
 TEST_F(TestGeneratedParameterFile, makeParWritesTrimmedCornerValues)
 {
