@@ -3467,6 +3467,70 @@ TEST_F(TestPerturbationPixels, deepPeriodicityUsesTheActivePrecisionTolerance)
     }
 }
 
+TEST_P(TestPerturbationIterations, periodicityReplayFitsAcceptedPrecision)
+{
+    const ValueSaver saved_user{g_user, UserData{}};
+    const ValueSaver saved_digits{g_bf_digits, 0};
+    const ValueSaver<LDouble> saved_delta_x{g_delta_x, 0};
+    const ValueSaver<LDouble> saved_delta_y{g_delta_y, 0};
+    const ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
+    const ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    g_user.bailout_value = 4;
+    g_max_iterations = 1024;
+    g_periodicity_check = 1;
+    g_reset_periodicity = true;
+    g_inside_method = ColorMethod::ITER;
+    g_image_region = ImageRegion{};
+    fill_pixel_grid();
+    if (GetParam())
+    {
+        init_bf_dec(1610);
+        m_big_float = true;
+        ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
+        clear_bn(g_x_min_bn);
+        clear_bn(g_y_max_bn);
+        clear_bn(g_delta_x_bn);
+        clear_bn(g_delta_y_bn);
+        clear_bn(g_delta2_x_bn);
+        clear_bn(g_delta2_y_bn);
+        float_to_bn(g_close_enough_bn, g_close_enough);
+        g_dispatch.set_per_pixel(mandel_per_pixel_bn);
+        g_dispatch.set_orbit_calc(julia_orbit_bn);
+    }
+    StandardFractal standard;
+    const int expected_color{standard.calculate_standard_pixel(false)};
+    const long expected_iterations{g_real_color_iter};
+    EXPECT_EQ(g_max_iterations, expected_iterations);
+    const int initial_stack{save_stack()};
+    for (const bool incremental : {false, true})
+    {
+        SCOPED_TRACE(incremental);
+        if (GetParam())
+        {
+            const BFComplex center{m_engine.initialize_frame_bf({}, {})};
+            clear_bf(center.x);
+            clear_bf(center.y);
+        }
+        else
+        {
+            m_engine.initialize_frame({}, {}, {});
+        }
+        g_old_color_iter = 0;
+        m_specific.pert_pt = record_perturbation_orbit;
+        s_perturbation_orbit.clear();
+        int color{CALC_YIELDED};
+        for (int step = 0; color == CALC_YIELDED && step < 100; ++step)
+        {
+            ASSERT_NO_THROW(color = m_engine.calculate_pixel(g_col, g_row, incremental));
+        }
+        EXPECT_EQ(expected_color, color);
+        EXPECT_EQ(expected_iterations, g_real_color_iter);
+        EXPECT_LT(s_perturbation_orbit.size(), g_max_iterations - 1);
+        m_engine.finish();
+        EXPECT_EQ(initial_stack, save_stack());
+    }
+}
+
 TEST_F(TestPerturbationPixels, subDoublePeriodicityToleranceStillDetectsExactCycles)
 {
     {

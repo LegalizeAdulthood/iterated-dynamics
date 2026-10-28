@@ -720,7 +720,6 @@ void PertEngine::cleanup()
     m_reference_sample = 0;
     m_reference_samples = 0;
     m_reference_ready = false;
-    m_tmp_bf = {};
     m_center_bf = {};
     m_half_horizontal_bf = {};
     m_half_vertical_bf = {};
@@ -756,7 +755,6 @@ void PertEngine::allocate_working_values()
         m_reference_initial_bf = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
         m_orbit_parameter_bf = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
         m_orbit_initial_bf = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-        m_tmp_bf = alloc_stack(g_r_bf_length + 2);
     }
 }
 
@@ -1498,14 +1496,17 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
             break;
 
         case PixelState::Phase::CHECK_PERIODICITY:
+        {
             if ((!m_pixel.saved_is_precise && !save_precise_value(remaining)) ||
                 !advance_precise_orbit(m_pixel.sample, remaining))
             {
                 return CALC_YIELDED;
             }
-            if (cmp_bf(abs_a_bf(sub_bf(m_tmp_bf, m_pixel.precise_saved.x, m_pixel.precise_orbit.x)),
+            BigStackSaver saved;
+            const BigFloat difference{alloc_stack(g_r_bf_length + 2)};
+            if (cmp_bf(abs_a_bf(sub_bf(difference, m_pixel.precise_saved.x, m_pixel.precise_orbit.x)),
                     m_pixel.precise_tolerance) < 0 &&
-                cmp_bf(abs_a_bf(sub_bf(m_tmp_bf, m_pixel.precise_saved.y, m_pixel.precise_orbit.y)),
+                cmp_bf(abs_a_bf(sub_bf(difference, m_pixel.precise_saved.y, m_pixel.precise_orbit.y)),
                     m_pixel.precise_tolerance) < 0)
             {
                 m_cycle_len = m_pixel.iteration - m_pixel.saved_iteration;
@@ -1517,6 +1518,7 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                 m_pixel.phase = PixelState::Phase::ORBIT;
             }
             break;
+        }
 
         case PixelState::Phase::REBASE:
             return PERTURBATION_RETRY;
