@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <io/load_entry_text.h>
 
@@ -8,9 +9,13 @@
 
 #include <gtest/gtest.h>
 
+#include <cerrno>
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
+#include <memory>
+#include <ostream>
+#include <string>
 #include <string_view>
 #include <vector>
 
@@ -86,44 +91,48 @@ static std::vector<std::string> split_lines(std::string_view text)
     return split(text, '\n');
 }
 
-TEST(TestLoadEntryText, columnZeroOneLine)
+struct EntryTextColumnInput
 {
-    char result[2048]{};
-    constexpr int max_lines{1};
-    constexpr int start_row{};
-    constexpr int start_col{};
-    std::filesystem::path frm{ID_TEST_FRM_DIR};
-    frm /= ID_TEST_FRM_FILE;
-    std::FILE *entry_file{std::fopen(frm.string().c_str(), "r")};
-    ASSERT_NE(nullptr, entry_file) << "Couldn't open '" << frm.string() << "', errno=" << errno;
-    ASSERT_NO_FATAL_FAILURE(position_to_line_starting_with(entry_file, "Fractint"));
+    const char *name;
+    int column;
+    std::string expected;
+};
 
-    load_entry_text(entry_file, result, max_lines, start_row, start_col);
-
-    const std::vector expected{split_lines(FRACTINT_FORMULA)};
-    const std::vector actual{split_lines(result)};
-    EXPECT_EQ(1U, actual.size());
-    EXPECT_EQ(expected[0], actual[0]);
+void PrintTo(const EntryTextColumnInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
 
-TEST(TestLoadEntryText, columnTwoOneLine)
+class TestLoadEntryText : public testing::TestWithParam<EntryTextColumnInput>
 {
-    char result[2048]{};
-    constexpr int max_lines{1};
-    constexpr int start_row{};
-    constexpr int start_col{2};
-    std::filesystem::path frm{ID_TEST_FRM_DIR};
-    frm /= ID_TEST_FRM_FILE;
-    std::FILE *entry_file{std::fopen(frm.string().c_str(), "r")};
-    ASSERT_NE(nullptr, entry_file) << "Couldn't open '" << frm.string() << "', errno=" << errno;
-    ASSERT_NO_FATAL_FAILURE(position_to_line_starting_with(entry_file, "Fractint"));
+protected:
+    void SetUp() override;
 
-    load_entry_text(entry_file, result, max_lines, start_row, start_col);
+    std::unique_ptr<std::FILE, decltype(&std::fclose)> m_file{nullptr, &std::fclose};
+    char m_result[2048]{};
+};
 
-    const std::vector expected{split_lines(FRACTINT_FORMULA)};
-    const std::vector actual{split_lines(result)};
-    EXPECT_EQ(1U, actual.size());
-    EXPECT_EQ(expected[0].substr(start_col), actual[0]);
+void TestLoadEntryText::SetUp()
+{
+    Test::SetUp();
+    const std::filesystem::path frm{std::filesystem::path{ID_TEST_FRM_DIR} / ID_TEST_FRM_FILE};
+    m_file.reset(std::fopen(frm.string().c_str(), "r"));
+    ASSERT_NE(nullptr, m_file) << "Couldn't open '" << frm.string() << "', errno=" << errno;
+    ASSERT_NO_FATAL_FAILURE(position_to_line_starting_with(m_file.get(), "Fractint"));
 }
+
+TEST_P(TestLoadEntryText, loadsOneLineFromColumn)
+{
+    load_entry_text(m_file.get(), m_result, 1, 0, GetParam().column);
+
+    const std::vector actual{split_lines(m_result)};
+    EXPECT_EQ(1U, actual.size());
+    EXPECT_EQ(GetParam().expected, actual[0]);
+}
+
+INSTANTIATE_TEST_SUITE_P(ColumnInputs, TestLoadEntryText,
+    testing::Values(EntryTextColumnInput{"ColumnZero", 0, split_lines(FRACTINT_FORMULA)[0]},
+        EntryTextColumnInput{"ColumnTwo", 2, split_lines(FRACTINT_FORMULA)[0].substr(2)}),
+    [](const testing::TestParamInfo<EntryTextColumnInput> &info) { return info.param.name; });
 
 } // namespace id::test
