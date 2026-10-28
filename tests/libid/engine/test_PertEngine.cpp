@@ -2548,49 +2548,149 @@ TEST_P(TestOutsideFmodColor, retainsLastQualifiedNonescapingValue)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideFmodColor, ValuesIn(outside_fmod_inputs()),
     [](const TestParamInfo<OutsideFmodInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, insideFmodRemembersTheLastValueRatherThanTheMinimum)
+struct FmodOrbitInput
 {
-    g_inside_method = ColorMethod::FMODI;
-    for (const double proximity : {2.0, 1.0, -2.0})
+    std::string name;
+    bool big_float;
+    double proximity;
+    std::complex<double> point;
+    long iterations;
+    int expected_color;
+};
+
+void PrintTo(const FmodOrbitInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<FmodOrbitInput> inside_fmod_value_inputs()
+{
+    std::vector<FmodOrbitInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(proximity);
-        g_close_proximity = proximity;
-        for (const long iterations : {2L, 3L, 4L, 5L})
+        for (const FmodProximity &proximity : {FmodProximity{"Two", 2.0}, {"One", 1.0}, {"NegativeTwo", -2.0}})
         {
-            SCOPED_TRACE(iterations);
-            compare_pixel({-1.0, 0.0}, iterations);
-            EXPECT_EQ(iterations, g_real_color_iter);
-            EXPECT_EQ(proximity == 2.0 && iterations % 2 != 0 ? 128 : 0, g_color);
+            for (const long iterations : {2L, 3L, 4L, 5L})
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + proximity.name +
+                        "_Iterations" + std::to_string(iterations),
+                    big_float, proximity.value, {-1.0, 0.0}, iterations,
+                    proximity.value == 2.0 && iterations % 2 != 0 ? 128 : 0});
+            }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, insideAndOutsideFmodShareTheSameOrbitSamples)
+class TestInsideFmodValue : public PerturbationIterationTest, public WithParamInterface<FmodOrbitInput>
 {
+public:
+    TestInsideFmodValue();
+
+protected:
+    void SetUp() override;
+};
+
+TestInsideFmodValue::TestInsideFmodValue() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestInsideFmodValue::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::FMODI;
-    g_outside_method = ColorMethod::FMOD;
-    g_close_proximity = 16.0;
-    compare_pixel({0.5, 0.5}, 8);
-    EXPECT_EQ(46, g_color);
-    g_close_proximity = 2.0;
-    compare_pixel({-1.0, 0.0}, 5);
-    EXPECT_EQ(128, g_color);
+    g_close_proximity = GetParam().proximity;
 }
 
-TEST_P(TestPerturbationIterations, fmodColorsSurviveReferenceReplacement)
+TEST_P(TestInsideFmodValue, retainsLastValueRatherThanMinimum)
 {
-    m_engine.set_glitch_tolerance(8.0);
-    for (const bool inside : {false, true})
-    {
-        SCOPED_TRACE(inside);
-        g_inside_method = inside ? ColorMethod::FMODI : ColorMethod::ITER;
-        g_outside_method = inside ? ColorMethod::ITER : ColorMethod::FMOD;
-        g_close_proximity = inside ? 2.0 : 16.0;
-        compare_pixel(inside ? std::complex<double>{-1.0, 0.0} : std::complex<double>{0.5, 0.5}, inside ? 5 : 8, 0.125);
-        EXPECT_EQ(inside ? 128 : 46, g_color);
-        EXPECT_GT(m_engine.reference_count(), 1);
-    }
+    compare_pixel(GetParam().point, GetParam().iterations);
+
+    EXPECT_EQ(GetParam().iterations, g_real_color_iter);
+    EXPECT_EQ(GetParam().expected_color, g_color);
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInsideFmodValue, ValuesIn(inside_fmod_value_inputs()),
+    [](const TestParamInfo<FmodOrbitInput> &info) { return info.param.name; });
+
+class TestCombinedFmodSamples : public TestInsideFmodValue
+{
+protected:
+    void SetUp() override;
+};
+
+void TestCombinedFmodSamples::SetUp()
+{
+    TestInsideFmodValue::SetUp();
+    g_outside_method = ColorMethod::FMOD;
+}
+
+TEST_P(TestCombinedFmodSamples, sharesInsideAndOutsideOrbitSamples)
+{
+    compare_pixel(GetParam().point, GetParam().iterations);
+
+    EXPECT_EQ(GetParam().expected_color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestCombinedFmodSamples,
+    Values(FmodOrbitInput{"DoubleOutside", false, 16.0, {0.5, 0.5}, 8, 46},
+        FmodOrbitInput{"DoubleInside", false, 2.0, {-1.0, 0.0}, 5, 128},
+        FmodOrbitInput{"HighPrecisionOutside", true, 16.0, {0.5, 0.5}, 8, 46},
+        FmodOrbitInput{"HighPrecisionInside", true, 2.0, {-1.0, 0.0}, 5, 128}),
+    [](const TestParamInfo<FmodOrbitInput> &info) { return info.param.name; });
+
+struct FmodReplacementInput
+{
+    const char *name;
+    bool big_float;
+    bool inside;
+};
+
+void PrintTo(const FmodReplacementInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestFmodReferenceReplacement : public PerturbationIterationTest, public WithParamInterface<FmodReplacementInput>
+{
+public:
+    TestFmodReferenceReplacement();
+
+protected:
+    void SetUp() override;
+};
+
+TestFmodReferenceReplacement::TestFmodReferenceReplacement() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestFmodReferenceReplacement::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    m_engine.set_glitch_tolerance(8.0);
+    const bool inside{GetParam().inside};
+    g_inside_method = inside ? ColorMethod::FMODI : ColorMethod::ITER;
+    g_outside_method = inside ? ColorMethod::ITER : ColorMethod::FMOD;
+    g_close_proximity = inside ? 2.0 : 16.0;
+}
+
+TEST_P(TestFmodReferenceReplacement, preservesFmodColor)
+{
+    const bool inside{GetParam().inside};
+
+    compare_pixel(inside ? std::complex<double>{-1.0, 0.0} : std::complex<double>{0.5, 0.5}, inside ? 5 : 8, 0.125);
+
+    EXPECT_EQ(inside ? 128 : 46, g_color);
+    EXPECT_GT(m_engine.reference_count(), 1);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFmodReferenceReplacement,
+    Values(FmodReplacementInput{"DoubleOutside", false, false}, FmodReplacementInput{"DoubleInside", false, true},
+        FmodReplacementInput{"HighPrecisionOutside", true, false},
+        FmodReplacementInput{"HighPrecisionInside", true, true}),
+    [](const TestParamInfo<FmodReplacementInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, totalDistanceExcludesTheEscapingSegment)
 {
