@@ -1178,23 +1178,115 @@ TEST_P(TestIFSDimensionSelection, suspensionIsNonResumableAndTheNextSelectionRes
     EXPECT_FALSE(restarted.done());
 }
 
-TEST_F(TestSelectedIFS, controllerStepsOnePointAtATimeUntilCompletion)
+class TestIFSController : public TestSelectedIFS
+{
+protected:
+    void TearDown() override;
+    void prepare_controller();
+
+    std::optional<NonStandardFractal> m_calculation;
+    std::optional<IFS2DController> m_controller;
+};
+
+void TestIFSController::TearDown()
+{
+    m_controller.reset();
+    if (m_calculation)
+    {
+        m_calculation->finish(!m_calculation->completed());
+    }
+    m_calculation.reset();
+    TestSelectedIFS::TearDown();
+}
+
+void TestIFSController::prepare_controller()
+{
+    m_calculation.emplace();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::IFS_2D, m_calculation->select());
+    m_controller.emplace(*m_calculation);
+}
+
+class TestPreparedIFSController : public TestIFSController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestPreparedIFSController::SetUp()
+{
+    TestSelectedIFS::SetUp();
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+}
+
+TEST_F(TestPreparedIFSController, iterationRequiresStart)
+{
+    EXPECT_THROW(m_controller->iterate(), std::logic_error);
+}
+
+TEST_F(TestPreparedIFSController, resultRequiresStart)
+{
+    EXPECT_THROW(m_controller->result(), std::logic_error);
+}
+
+TEST_F(TestPreparedIFSController, suspensionRequiresStart)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+}
+
+class TestStartedIFSController : public TestPreparedIFSController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStartedIFSController::SetUp()
+{
+    TestPreparedIFSController::SetUp();
+    m_controller->start();
+}
+
+TEST_F(TestStartedIFSController, rejectsDuplicateStart)
+{
+    EXPECT_THROW(m_controller->start(), std::logic_error);
+}
+
+class TestCompletedIFSController : public TestPreparedIFSController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestCompletedIFSController::SetUp()
+{
+    TestPreparedIFSController::SetUp();
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    m_controller->start();
+    m_controller->iterate();
+    for (int point = 1; point < 1025 && !m_controller->done(); ++point)
+    {
+        m_controller->iterate();
+    }
+    ASSERT_TRUE(m_controller->done());
+}
+
+TEST_F(TestCompletedIFSController, rejectsSuspensionAfterCompletion)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+}
+
+TEST_F(TestIFSController, controllerStepsOnePointAtATimeUntilCompletion)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::IFS_2D, calculation.select());
-    IFS2DController controller{calculation};
-    EXPECT_THROW(controller.iterate(), std::logic_error);
-    EXPECT_THROW(controller.result(), std::logic_error);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+    NonStandardFractal &calculation{*m_calculation};
+    IFS2DController &controller{*m_controller};
 
     controller.start();
 
     EXPECT_FALSE(controller.done());
     EXPECT_EQ(0L, g_color_iter);
     EXPECT_TRUE(m_columns.empty());
-    EXPECT_THROW(controller.start(), std::logic_error);
     controller.iterate();
     EXPECT_EQ(1L, g_color_iter);
     EXPECT_EQ(1U, m_columns.size());
@@ -1210,17 +1302,14 @@ TEST_F(TestSelectedIFS, controllerStepsOnePointAtATimeUntilCompletion)
     EXPECT_EQ(1025U, m_columns.size());
     controller.iterate();
     EXPECT_EQ(1025L, g_color_iter);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
-    calculation.finish(false);
 }
 
-TEST_F(TestSelectedIFS, controllerInterruptsBeforeFirstPointAndKeepsCommandPending)
+TEST_F(TestIFSController, controllerInterruptsBeforeFirstPointAndKeepsCommandPending)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return('x'));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::IFS_2D, calculation.select());
-    IFS2DController controller{calculation};
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+    NonStandardFractal &calculation{*m_calculation};
+    IFS2DController &controller{*m_controller};
     controller.start();
 
     controller.iterate();
@@ -1234,13 +1323,11 @@ TEST_F(TestSelectedIFS, controllerInterruptsBeforeFirstPointAndKeepsCommandPendi
     EXPECT_TRUE(m_columns.empty());
 }
 
-TEST_F(TestSelectedIFS, controllerSuspendsWithoutResumeDataAndNextSelectionRestarts)
+TEST_F(TestIFSController, controllerSuspendsWithoutResumeDataAndNextSelectionRestarts)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::IFS_2D, calculation.select());
-    IFS2DController controller{calculation};
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+    IFS2DController &controller{*m_controller};
     controller.start();
     controller.iterate();
     ASSERT_EQ(1L, g_color_iter);
@@ -1258,13 +1345,12 @@ TEST_F(TestSelectedIFS, controllerSuspendsWithoutResumeDataAndNextSelectionResta
     EXPECT_FALSE(restarted.done());
 }
 
-TEST_F(TestSelectedIFS, controllerPlotFailureTerminatesTheSelectedOperation)
+TEST_F(TestIFSController, controllerPlotFailureTerminatesTheSelectedOperation)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::IFS_2D, calculation.select());
-    IFS2DController controller{calculation};
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+    NonStandardFractal &calculation{*m_calculation};
+    IFS2DController &controller{*m_controller};
     controller.start();
     EXPECT_CALL(m_driver, write_pixel(_, _, _)).WillOnce(Throw(std::runtime_error("Plot failed")));
 
@@ -1276,13 +1362,12 @@ TEST_F(TestSelectedIFS, controllerPlotFailureTerminatesTheSelectedOperation)
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
 }
 
-TEST_F(TestSelectedIFS, controllerInputFailureTerminatesBeforeComputingAPoint)
+TEST_F(TestIFSController, controllerInputFailureTerminatesBeforeComputingAPoint)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillOnce(Throw(std::runtime_error("Input failed")));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::IFS_2D, calculation.select());
-    IFS2DController controller{calculation};
+    ASSERT_NO_FATAL_FAILURE(prepare_controller());
+    NonStandardFractal &calculation{*m_calculation};
+    IFS2DController &controller{*m_controller};
     controller.start();
 
     EXPECT_THROW(controller.iterate(), std::runtime_error);
