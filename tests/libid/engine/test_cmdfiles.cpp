@@ -4339,45 +4339,52 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestOrbitIntervalParameter,
         OrbitIntervalParameterInput{"TooBig", "orbitinterval=256", 255L}),
     [](const TestParamInfo<OrbitIntervalParameterInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommand, showDotDefault)
+struct ShowDotParameterInput
 {
-    ValueSaver save_show_dot{g_show_dot, -999L};
-    VALUE_UNCHANGED(g_auto_show_dot, static_cast<AutoShowDot>('!'));
-    VALUE_UNCHANGED(g_size_dot, 10);
+    const char *name;
+    const char *argument;
+    int initial_size;
+    AutoShowDot mode;
+    int size;
+};
 
-    exec_cmd_arg("showdot");
+void PrintTo(const ShowDotParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestShowDotParameter : public TestParameterCommand, public WithParamInterface<ShowDotParameterInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<int> m_saved_dot{g_show_dot, -999};
+    ValueSaver<AutoShowDot> m_saved_mode{g_auto_show_dot, static_cast<AutoShowDot>('!')};
+    ValueSaver<int> m_saved_size{g_size_dot};
+};
+
+void TestShowDotParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_size_dot = GetParam().initial_size;
+}
+
+TEST_P(TestShowDotParameter, setsDotSettings)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(15, g_show_dot);
+    EXPECT_EQ(GetParam().mode, g_auto_show_dot);
+    EXPECT_EQ(GetParam().size, g_size_dot);
 }
 
-TEST_F(TestParameterCommand, showDotAuto)
-{
-    ValueSaver save_show_dot{g_show_dot, -999L};
-    ValueSaver save_auto_show_dot{g_auto_show_dot, static_cast<AutoShowDot>('!')};
-    ValueSaver save_size_dot{g_size_dot, -99};
-
-    exec_cmd_arg("showdot=a");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(15, g_show_dot);
-    EXPECT_EQ(AutoShowDot::AUTOMATIC, g_auto_show_dot);
-    EXPECT_EQ(0, g_size_dot);
-}
-
-TEST_F(TestParameterCommand, showDotAutoSize)
-{
-    ValueSaver save_show_dot{g_show_dot, -999L};
-    ValueSaver save_auto_show_dot{g_auto_show_dot, static_cast<AutoShowDot>('!')};
-    ValueSaver save_size_dot{g_size_dot, -1};
-
-    exec_cmd_arg("showdot=a/20");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(15, g_show_dot);
-    EXPECT_EQ(AutoShowDot::AUTOMATIC, g_auto_show_dot);
-    EXPECT_EQ(20, g_size_dot);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestShowDotParameter,
+    Values(ShowDotParameterInput{"Default", "showdot", 10, static_cast<AutoShowDot>('!'), 10},
+        ShowDotParameterInput{"Automatic", "showdot=a", -99, AutoShowDot::AUTOMATIC, 0},
+        ShowDotParameterInput{"AutomaticSize", "showdot=a/20", -1, AutoShowDot::AUTOMATIC, 20}),
+    [](const TestParamInfo<ShowDotParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, showOrbitYes)
 {
@@ -4389,80 +4396,81 @@ TEST_F(TestParameterCommand, showOrbitYes)
     EXPECT_TRUE(g_start_show_orbit);
 }
 
-TEST_F(TestParameterCommand, decompValue)
+struct DecompParameterInput
 {
-    ValueSaver save_decomp0{g_decomp[0], -99};
-    ValueSaver save_decomp1{g_decomp[1], -99};
-    ValueUnchanged saved_user_bailout_value("g_user.bailout_value", g_user.bailout_value, -99L);
+    const char *name;
+    const char *argument;
+    int second;
+    long bailout;
+};
 
-    exec_cmd_arg("decomp=16");
+void PrintTo(const DecompParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestDecompParameter : public TestParameterCommand, public WithParamInterface<DecompParameterInput>
+{
+private:
+    ValueSaver<int> m_saved_first{g_decomp[0], -99};
+    ValueSaver<int> m_saved_second{g_decomp[1], -99};
+    ValueSaver<long> m_saved_bailout{g_user.bailout_value, -99L};
+};
+
+TEST_P(TestDecompParameter, setsDecompositionAndOptionalBailout)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(16, g_decomp[0]);
-    EXPECT_EQ(0, g_decomp[1]);
+    EXPECT_EQ(GetParam().second, g_decomp[1]);
+    EXPECT_EQ(GetParam().bailout, g_user.bailout_value);
 }
 
-TEST_F(TestParameterCommand, decompTwoValues)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDecompParameter,
+    Values(DecompParameterInput{"OneValue", "decomp=16", 0, -99L},
+        DecompParameterInput{"TwoValues", "decomp=16/4", 4, 4L}),
+    [](const TestParamInfo<DecompParameterInput> &info) { return info.param.name; });
+
+struct DistEstParameterInput
 {
-    ValueSaver save_decomp0{g_decomp[0], -99};
-    ValueSaver save_decomp1{g_decomp[1], -99};
-    ValueSaver save_bailout{g_user.bailout_value, -99L};
+    const char *name;
+    const char *argument;
+    int width;
+    int x_dots;
+    int y_dots;
+};
 
-    exec_cmd_arg("decomp=16/4");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(16, g_decomp[0]);
-    EXPECT_EQ(4, g_decomp[1]);
-    EXPECT_EQ(4, g_user.bailout_value);
+void PrintTo(const DistEstParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, distEstOneValue)
+class TestDistEstParameter : public TestParameterCommand, public WithParamInterface<DistEstParameterInput>
 {
-    ValueSaver saved_user_distance_estimator_value{g_user.distance_estimator_value, -99L};
-    ValueSaver saved_distance_estimator_width_factor{g_distance_estimator_width_factor, -99};
-    ValueSaver saved_distance_estimator_x_dots{g_distance_estimator_x_dots, -99};
-    ValueSaver saved_distance_estimator_y_dots{g_distance_estimator_y_dots, -99};
+private:
+    ValueSaver<long> m_saved_distance{g_user.distance_estimator_value, -99L};
+    ValueSaver<int> m_saved_width{g_distance_estimator_width_factor, -99};
+    ValueSaver<int> m_saved_x_dots{g_distance_estimator_x_dots, -99};
+    ValueSaver<int> m_saved_y_dots{g_distance_estimator_y_dots, -99};
+};
 
-    exec_cmd_arg("distest=4");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(4L, g_user.distance_estimator_value);
-    EXPECT_EQ(71, g_distance_estimator_width_factor);
-    EXPECT_EQ(0, g_distance_estimator_x_dots);
-    EXPECT_EQ(0, g_distance_estimator_y_dots);
-}
-
-TEST_F(TestParameterCommand, distEstTwoValues)
+TEST_P(TestDistEstParameter, setsDistanceEstimatorSettings)
 {
-    ValueSaver saved_user_distance_estimator_value{g_user.distance_estimator_value, -99L};
-    ValueSaver saved_distance_estimator_width_factor{g_distance_estimator_width_factor, -99};
-    ValueSaver saved_distance_estimator_x_dots{g_distance_estimator_x_dots, -99};
-    ValueSaver saved_distance_estimator_y_dots{g_distance_estimator_y_dots, -99};
-
-    exec_cmd_arg("distest=4/5");
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(4L, g_user.distance_estimator_value);
-    EXPECT_EQ(5, g_distance_estimator_width_factor);
-    EXPECT_EQ(0, g_distance_estimator_x_dots);
-    EXPECT_EQ(0, g_distance_estimator_y_dots);
+    EXPECT_EQ(GetParam().width, g_distance_estimator_width_factor);
+    EXPECT_EQ(GetParam().x_dots, g_distance_estimator_x_dots);
+    EXPECT_EQ(GetParam().y_dots, g_distance_estimator_y_dots);
 }
 
-TEST_F(TestParameterCommand, distEstFourValues)
-{
-    ValueSaver saved_user_distance_estimator_value{g_user.distance_estimator_value, -99L};
-    ValueSaver saved_distance_estimator_width_factor{g_distance_estimator_width_factor, -99};
-    ValueSaver saved_distance_estimator_x_dots{g_distance_estimator_x_dots, -99};
-    ValueSaver saved_distance_estimator_y_dots{g_distance_estimator_y_dots, -99};
-
-    exec_cmd_arg("distest=4/5/6/7");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(4L, g_user.distance_estimator_value);
-    EXPECT_EQ(5, g_distance_estimator_width_factor);
-    EXPECT_EQ(6, g_distance_estimator_x_dots);
-    EXPECT_EQ(7, g_distance_estimator_y_dots);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistEstParameter,
+    Values(DistEstParameterInput{"OneValue", "distest=4", 71, 0, 0},
+        DistEstParameterInput{"TwoValues", "distest=4/5", 5, 0, 0},
+        DistEstParameterInput{"FourValues", "distest=4/5/6/7", 5, 6, 7}),
+    [](const TestParamInfo<DistEstParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, formulaFileFilename)
 {
