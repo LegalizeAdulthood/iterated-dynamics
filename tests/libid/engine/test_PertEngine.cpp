@@ -360,74 +360,141 @@ TEST_P(TestDistanceBand, preservesIntegerBoundary)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceBand, ValuesIn(distance_band_inputs()),
     [](const TestParamInfo<DistanceBandInput> &info) { return info.param.name; });
 
-TEST(TestPertEngine, fmodMagnitudeMatchesTheSelectedBailoutMetric)
+struct FmodMagnitudeInput
 {
-    ValueSaver saved_bailout{g_bailout_test};
-    ValueSaver saved_calculate{g_magnitude_calc, false};
+    const char *name;
+    Bailout bailout;
+    DComplex point;
+    double cached_magnitude;
+    bool calculate;
+    double expected;
+};
 
-    struct Sample
-    {
-        Bailout bailout;
-        double magnitude;
-    };
-
-    for (const Sample &sample : {Sample{Bailout::MOD, 13.0}, {Bailout::REAL, 4.0}, {Bailout::IMAG, 9.0},
-             {Bailout::OR, 9.0}, {Bailout::AND, 13.0}, {Bailout::MANH, 25.0}, {Bailout::MANR, 1.0}})
-    {
-        SCOPED_TRACE(static_cast<int>(sample.bailout));
-        g_bailout_test = sample.bailout;
-        EXPECT_DOUBLE_EQ(sample.magnitude, fmod_magnitude({2.0, -3.0}, 13.0));
-    }
-    g_bailout_test = Bailout::OR;
-    EXPECT_DOUBLE_EQ(9.0, fmod_magnitude({-3.0, 2.0}, 13.0));
-    g_bailout_test = Bailout::MOD;
-    EXPECT_DOUBLE_EQ(7.0, fmod_magnitude({2.0, -3.0}, 7.0));
-    EXPECT_DOUBLE_EQ(13.0, fmod_magnitude({2.0, -3.0}, 0.0));
-    g_magnitude_calc = true;
-    EXPECT_DOUBLE_EQ(13.0, fmod_magnitude({2.0, -3.0}, 7.0));
+void PrintTo(const FmodMagnitudeInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestPertEngine, referenceSampleCountIncludesTheInitialValue)
+class TestFmodMagnitude : public TestWithParam<FmodMagnitudeInput>
 {
-    EXPECT_EQ(129, PertEngine::reference_sample_count(128));
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<Bailout> m_saved_bailout{g_bailout_test};
+    ValueSaver<bool> m_saved_calculate{g_magnitude_calc};
+};
+
+void TestFmodMagnitude::SetUp()
+{
+    g_bailout_test = GetParam().bailout;
+    g_magnitude_calc = GetParam().calculate;
 }
 
-TEST(TestPertEngine, referenceSampleCountRejectsNonpositiveIterations)
+TEST_P(TestFmodMagnitude, usesSelectedBailoutMetric)
 {
-    EXPECT_THROW(PertEngine::reference_sample_count(0), std::logic_error);
-    EXPECT_THROW(PertEngine::reference_sample_count(-1), std::logic_error);
-    EXPECT_THROW(PertEngine::reference_sample_count(std::numeric_limits<long>::min()), std::logic_error);
+    const FmodMagnitudeInput &input{GetParam()};
+
+    EXPECT_DOUBLE_EQ(input.expected, fmod_magnitude(input.point, input.cached_magnitude));
 }
 
-TEST(TestPertEngine, referenceSampleCountHandlesTheWindowsLongMaximumWithoutAllocating)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFmodMagnitude,
+    Values(FmodMagnitudeInput{"ModCached", Bailout::MOD, {2.0, -3.0}, 13.0, false, 13.0},
+        FmodMagnitudeInput{"Real", Bailout::REAL, {2.0, -3.0}, 13.0, false, 4.0},
+        FmodMagnitudeInput{"Imaginary", Bailout::IMAG, {2.0, -3.0}, 13.0, false, 9.0},
+        FmodMagnitudeInput{"Or", Bailout::OR, {2.0, -3.0}, 13.0, false, 9.0},
+        FmodMagnitudeInput{"And", Bailout::AND, {2.0, -3.0}, 13.0, false, 13.0},
+        FmodMagnitudeInput{"Manhattan", Bailout::MANH, {2.0, -3.0}, 13.0, false, 25.0},
+        FmodMagnitudeInput{"ManhattanReal", Bailout::MANR, {2.0, -3.0}, 13.0, false, 1.0},
+        FmodMagnitudeInput{"OrRealDominates", Bailout::OR, {-3.0, 2.0}, 13.0, false, 9.0},
+        FmodMagnitudeInput{"ModUsesSuppliedCache", Bailout::MOD, {2.0, -3.0}, 7.0, false, 7.0},
+        FmodMagnitudeInput{"ModComputesMissingCache", Bailout::MOD, {2.0, -3.0}, 0.0, false, 13.0},
+        FmodMagnitudeInput{"ModRecalculates", Bailout::MOD, {2.0, -3.0}, 7.0, true, 13.0}),
+    [](const TestParamInfo<FmodMagnitudeInput> &info) { return info.param.name; });
+
+struct ReferenceSampleCountInput
 {
+    const char *name;
+    long iterations;
+    std::optional<std::uintmax_t> expected;
+};
+
+void PrintTo(const ReferenceSampleCountInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<ReferenceSampleCountInput> reference_sample_count_inputs()
+{
+    std::vector<ReferenceSampleCountInput> inputs{{"IncludesInitialValue", 128, 129}};
     constexpr long WINDOWS_LONG_MAX{std::numeric_limits<std::int32_t>::max()};
     if constexpr (sizeof(std::size_t) > sizeof(std::int32_t))
     {
-        EXPECT_EQ(2147483648ULL, PertEngine::reference_sample_count(WINDOWS_LONG_MAX));
+        inputs.push_back({"WindowsLongMaximum", WINDOWS_LONG_MAX, 2147483648ULL});
     }
     else
     {
-        EXPECT_THROW(PertEngine::reference_sample_count(WINDOWS_LONG_MAX), std::length_error);
+        inputs.push_back({"WindowsLongMaximum", WINDOWS_LONG_MAX, std::nullopt});
     }
-}
-
-TEST(TestPertEngine, referenceSampleCountChecksContainerAndCombinedByteLimits)
-{
     constexpr std::size_t BYTES_PER_SAMPLE{sizeof(std::complex<double>) + sizeof(double)};
     const std::uintmax_t max_samples{std::min({std::vector<std::complex<double>>{}.max_size(),
         std::vector<double>{}.max_size(), std::numeric_limits<std::size_t>::max() / BYTES_PER_SAMPLE})};
     const std::uintmax_t max_iterations{std::numeric_limits<long>::max()};
     const long largest_supported{static_cast<long>(std::min(max_iterations, max_samples - 1))};
-
-    EXPECT_EQ(
-        static_cast<std::uintmax_t>(largest_supported) + 1, PertEngine::reference_sample_count(largest_supported));
+    inputs.push_back({"LargestSupported", largest_supported, static_cast<std::uintmax_t>(largest_supported) + 1});
     if (max_samples <= max_iterations)
     {
-        EXPECT_THROW(PertEngine::reference_sample_count(static_cast<long>(max_samples)), std::length_error);
-        EXPECT_THROW(PertEngine::reference_sample_count(std::numeric_limits<long>::max()), std::length_error);
+        inputs.push_back({"ContainerLimit", static_cast<long>(max_samples), std::nullopt});
+        inputs.push_back({"LongMaximum", std::numeric_limits<long>::max(), std::nullopt});
+    }
+    return inputs;
+}
+
+class TestReferenceSampleCount : public TestWithParam<ReferenceSampleCountInput>
+{
+};
+
+TEST_P(TestReferenceSampleCount, checksReferenceCapacity)
+{
+    const ReferenceSampleCountInput &input{GetParam()};
+
+    if (input.expected)
+    {
+        EXPECT_EQ(*input.expected, PertEngine::reference_sample_count(input.iterations));
+    }
+    else
+    {
+        EXPECT_THROW(PertEngine::reference_sample_count(input.iterations), std::length_error);
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestReferenceSampleCount, ValuesIn(reference_sample_count_inputs()),
+    [](const TestParamInfo<ReferenceSampleCountInput> &info) { return info.param.name; });
+
+struct InvalidReferenceSampleCountInput
+{
+    const char *name;
+    long iterations;
+};
+
+void PrintTo(const InvalidReferenceSampleCountInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestInvalidReferenceSampleCount : public TestWithParam<InvalidReferenceSampleCountInput>
+{
+};
+
+TEST_P(TestInvalidReferenceSampleCount, rejectsNonpositiveIterations)
+{
+    EXPECT_THROW(PertEngine::reference_sample_count(GetParam().iterations), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInvalidReferenceSampleCount,
+    Values(InvalidReferenceSampleCountInput{"Zero", 0}, InvalidReferenceSampleCountInput{"Negative", -1},
+        InvalidReferenceSampleCountInput{"LongMinimum", std::numeric_limits<long>::min()}),
+    [](const TestParamInfo<InvalidReferenceSampleCountInput> &info) { return info.param.name; });
 
 namespace
 {
