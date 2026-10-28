@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <memory>
 #include <ostream>
 #include <string>
 #include <utility>
@@ -388,44 +389,98 @@ TEST_F(TestLibrary, defaultReadLibrariesUseCurrentDirectoryWhenFractDirUnset)
     EXPECT_EQ(Path{"root.frm"}, path) << path;
 }
 
-TEST_F(TestLibrary, findWildcardNoMatches)
+struct LibraryWildcardInput
 {
-    add_read_library(ID_TEST_LIBRARY_DIR1);
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-    add_read_library(ID_TEST_LIBRARY_DIR3);
+    const char *name;
+    std::vector<Path> roots;
+    Path current_directory;
+    bool check_current_directory;
+    Path save_library;
+    ReadFile category;
+    Path pattern;
+    Path expected;
+};
 
-    const Path path{find_wildcard_first(ReadFile::IMAGE, ID_TEST_NO_SUCH_IMAGE_FILE)};
-
-    ASSERT_TRUE(path.empty()) << path;
+void PrintTo(const LibraryWildcardInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
 
-TEST_F(TestLibrary, findWildcardFirstMatchSubDirTestGif)
+class TestLibraryWildcard : public TestLibrary, public testing::WithParamInterface<LibraryWildcardInput>
 {
-    add_read_library(ID_TEST_LIBRARY_DIR1);
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-    add_read_library(ID_TEST_LIBRARY_DIR3);
+protected:
+    void SetUp() override;
+    void TearDown() override;
 
-    const Path path{find_wildcard_first(ReadFile::IMAGE, "*.gif")};
+private:
+    std::unique_ptr<CurrentPathSaver> m_current_directory;
+    ValueSaver<bool> m_check_current_directory{g_check_cur_dir};
+};
 
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"test.gif"}, path.filename()) << path;
-    EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
+void TestLibraryWildcard::SetUp()
+{
+    TestLibrary::SetUp();
+    const LibraryWildcardInput &input{GetParam()};
+    if (!input.current_directory.empty())
+    {
+        m_current_directory = std::make_unique<CurrentPathSaver>(input.current_directory);
+    }
+    if (input.check_current_directory)
+    {
+        g_check_cur_dir = true;
+    }
+    for (const Path &root : input.roots)
+    {
+        add_read_library(root);
+    }
+    if (!input.save_library.empty())
+    {
+        set_save_library(input.save_library);
+    }
 }
 
-TEST_F(TestLibrary, findWildcardFirstMatchSubDirRootGif)
+void TestLibraryWildcard::TearDown()
 {
-    add_read_library(ID_TEST_LIBRARY_DIR1);
-    add_read_library(ID_TEST_LIBRARY_DIR3);
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-
-    const Path path{find_wildcard_first(ReadFile::IMAGE, "*.gif")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"root.gif"}, path.filename()) << path;
-    EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
+    m_current_directory.reset();
+    TestLibrary::TearDown();
 }
+
+TEST_P(TestLibraryWildcard, returnsFirstMatchUsingSearchPolicy)
+{
+    const LibraryWildcardInput &input{GetParam()};
+
+    const Path path{find_wildcard_first(input.category, input.pattern.string())};
+
+    ASSERT_EQ(input.expected.empty(), path.empty()) << path;
+    EXPECT_EQ(input.expected, path) << path;
+}
+
+INSTANTIATE_TEST_SUITE_P(FirstMatchInputs, TestLibraryWildcard,
+    testing::Values(
+        LibraryWildcardInput{"NoMatches", {ID_TEST_LIBRARY_DIR1, ID_TEST_LIBRARY_DIR2, ID_TEST_LIBRARY_DIR3}, {}, false,
+            {}, ReadFile::IMAGE, ID_TEST_NO_SUCH_IMAGE_FILE, {}},
+        LibraryWildcardInput{"FirstSubdirectory", {ID_TEST_LIBRARY_DIR1, ID_TEST_LIBRARY_DIR2, ID_TEST_LIBRARY_DIR3},
+            {}, false, {}, ReadFile::IMAGE, "*.gif", Path{ID_TEST_LIBRARY_DIR2} / "image" / "test.gif"},
+        LibraryWildcardInput{"ReorderedSubdirectories",
+            {ID_TEST_LIBRARY_DIR1, ID_TEST_LIBRARY_DIR3, ID_TEST_LIBRARY_DIR2}, {}, false, {}, ReadFile::IMAGE, "*.gif",
+            Path{ID_TEST_LIBRARY_DIR3} / "image" / "root.gif"},
+        LibraryWildcardInput{"RootFile", {ID_TEST_LIBRARY_DIR1}, {}, false, {}, ReadFile::IMAGE, "*.gif",
+            Path{ID_TEST_LIBRARY_DIR1} / "root.gif"},
+        LibraryWildcardInput{"CurrentDirectory", {ID_TEST_LIBRARY_DIR3}, ID_TEST_LIBRARY_DIR2, true, {},
+            ReadFile::IMAGE, "*.gif", Path{"image"} / "test.gif"},
+        LibraryWildcardInput{"PluralSubdirectory", {ID_TEST_LIBRARY_DIR2}, {}, false, {}, ReadFile::FORMULA,
+            ID_TEST_FORMULA_FILE2, Path{ID_TEST_LIBRARY_DIR2} / "formulas" / ID_TEST_FORMULA_FILE2},
+        LibraryWildcardInput{"ExplicitRelativeDirectory", {ID_TEST_LIBRARY_DIR3}, ID_TEST_LIBRARY_DIR, false, {},
+            ReadFile::IMAGE, Path{"lib1"} / "*.gif", Path{"lib1"} / "root.gif"},
+        LibraryWildcardInput{"ExplicitAbsoluteDirectory", {ID_TEST_LIBRARY_DIR3}, {}, false, {}, ReadFile::IMAGE,
+            Path{ID_TEST_LIBRARY_DIR1} / "*.gif", Path{ID_TEST_LIBRARY_DIR1} / "root.gif"},
+        LibraryWildcardInput{"SaveSubdirectory", {ID_TEST_LIBRARY_DIR1, ID_TEST_LIBRARY_DIR2, ID_TEST_LIBRARY_DIR3}, {},
+            false, ID_TEST_SAVE_DIR, ReadFile::IMAGE, ID_TEST_SAVE_IMAGE_FILE,
+            Path{ID_TEST_SAVE_DIR} / "image" / ID_TEST_SAVE_IMAGE_FILE},
+        LibraryWildcardInput{"SaveRoot", {ID_TEST_LIBRARY_DIR1, ID_TEST_LIBRARY_DIR2, ID_TEST_LIBRARY_DIR3}, {}, false,
+            ID_TEST_SAVE_DIR, ReadFile::IMAGE, ID_TEST_SAVE_IMAGE_ROOT_FILE,
+            Path{ID_TEST_SAVE_DIR} / ID_TEST_SAVE_IMAGE_ROOT_FILE}),
+    [](const testing::TestParamInfo<LibraryWildcardInput> &info) { return info.param.name; });
 
 TEST_F(TestLibrary, findWildcardSeqence)
 {
@@ -443,15 +498,6 @@ TEST_F(TestLibrary, findWildcardSeqence)
     }
 
     EXPECT_EQ(expected, results);
-}
-
-TEST_F(TestLibrary, findWildcardRootFilesAfterSubdirFiles)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR1);
-
-    const Path first{find_wildcard_first(ReadFile::IMAGE, "*.gif")};
-
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR1}/"root.gif", first);
 }
 
 TEST_F(TestLibrary, findWildcardSequenceRootFilesAfterSubdirFiles)
@@ -474,45 +520,6 @@ TEST_F(TestLibrary, findWildcardSequenceRootFilesAfterSubdirFiles)
     EXPECT_EQ(expected, results);
 }
 
-TEST_F(TestLibrary, findWildcardCurrentDirectoryWhenEnabled)
-{
-    CurrentPathSaver saved_cur_dir{ID_TEST_LIBRARY_DIR2};
-    ValueSaver saved_check_cur_dir{g_check_cur_dir, true};
-    add_read_library(ID_TEST_LIBRARY_DIR3);
-
-    const Path path{find_wildcard_first(ReadFile::IMAGE, "*.gif")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"test.gif"}, path.filename()) << path;
-    EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{"image"} / "test.gif", path) << path;
-}
-
-TEST_F(TestLibrary, findWildcardPluralSubDirectory)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-
-    const Path path{find_wildcard_first(ReadFile::FORMULA, ID_TEST_FORMULA_FILE2)};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{ID_TEST_FORMULA_FILE2}, path.filename()) << path;
-    EXPECT_EQ(Path{"formulas"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, findWildcardExplicitRelativeDirectory)
-{
-    CurrentPathSaver saved_cur_dir{ID_TEST_LIBRARY_DIR};
-    add_read_library(ID_TEST_LIBRARY_DIR3);
-    const Path wildcard{Path{"lib1"} / "*.gif"};
-
-    const Path path{find_wildcard_first(ReadFile::IMAGE, wildcard.string())};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"root.gif"}, path.filename()) << path;
-    EXPECT_EQ(Path{"lib1"} / "root.gif", path) << path;
-}
-
 TEST_F(TestLibrary, findWildcardExplicitRelativeDirectorySequence)
 {
     CurrentPathSaver saved_cur_dir{ID_TEST_LIBRARY_DIR};
@@ -528,47 +535,6 @@ TEST_F(TestLibrary, findWildcardExplicitRelativeDirectorySequence)
 
     const std::vector expected{Path{"lib1"} / "root.gif"};
     EXPECT_EQ(expected, results);
-}
-
-TEST_F(TestLibrary, findWildcardExplicitAbsoluteDirectory)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR3);
-    const Path wildcard{Path{ID_TEST_LIBRARY_DIR1} / "*.gif"};
-
-    const Path path{find_wildcard_first(ReadFile::IMAGE, wildcard.string())};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"root.gif"}, path.filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR1}, path.parent_path()) << path;
-}
-
-TEST_F(TestLibrary, findWildcardSaveLibrarySubDir)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR1);
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-    add_read_library(ID_TEST_LIBRARY_DIR3);
-    set_save_library(ID_TEST_SAVE_DIR);
-
-    const Path path{find_wildcard_first(ReadFile::IMAGE, ID_TEST_SAVE_IMAGE_FILE)};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{ID_TEST_SAVE_IMAGE_FILE}, path.filename()) << path;
-    EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_SAVE_DIR}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, findWildcardSaveLibraryRootDir)
-{
-    add_read_library(ID_TEST_LIBRARY_DIR1);
-    add_read_library(ID_TEST_LIBRARY_DIR2);
-    add_read_library(ID_TEST_LIBRARY_DIR3);
-    set_save_library(ID_TEST_SAVE_DIR);
-
-    const Path path{find_wildcard_first(ReadFile::IMAGE, ID_TEST_SAVE_IMAGE_ROOT_FILE)};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{ID_TEST_SAVE_IMAGE_ROOT_FILE}, path.filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_SAVE_DIR}, path.parent_path()) << path;
 }
 
 } // namespace id::test
