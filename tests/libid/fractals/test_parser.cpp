@@ -16,7 +16,9 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <fstream>
+#include <optional>
 #include <stdexcept>
 
 namespace fs = std::filesystem;
@@ -235,10 +237,30 @@ TEST_F(ParserTest, inlineFormulaIsUsedWhenFormulaFileIsMissing)
     EXPECT_EQ(g_parameter_file, path);
 }
 
-TEST_F(ParserTest, rejectsEmptyFormulaWithoutUI)
+struct FormulaParseFailure
 {
-    expect_failure({"empty", "", ""}, "Formula has no executable instructions");
+    const char *name;
+    FormulaEntry entry;
+    const char *message;
+};
+
+class TestFormulaParseFailure : public ParserTest, public WithParamInterface<FormulaParseFailure>
+{
+};
+
+TEST_P(TestFormulaParseFailure, rejectsInvalidFormulaWithoutUI)
+{
+    expect_failure(GetParam().entry, GetParam().message);
 }
+
+INSTANTIATE_TEST_SUITE_P(InvalidFormulas, TestFormulaParseFailure,
+    Values(FormulaParseFailure{"Empty", {"empty", "", ""}, "Formula has no executable instructions"},
+        FormulaParseFailure{"UndefinedFunction", {"bad", "", "z = unknown(pixel)"}, "Undefined Function"},
+        FormulaParseFailure{"UnmatchedJump", {"bad", "", "if (pixel)\nz = pixel"}, "has no matching \"endif\""},
+        FormulaParseFailure{"OverlongToken", {"bad", "", std::string(80, 'z') + "=pixel"}, "32 character limit"},
+        FormulaParseFailure{
+            "OversizedName", {std::string(100, 'a'), "", "z=pixel"}, "Formula name has too many characters"}),
+    [](const TestParamInfo<FormulaParseFailure> &info) { return info.param.name; });
 
 TEST_F(ParserTest, preservesErrorLocationExpressionAndCaret)
 {
@@ -254,26 +276,6 @@ TEST_F(ParserTest, preservesErrorLocationExpressionAndCaret)
         EXPECT_THAT(error.what(), HasSubstr("^"));
     }
     expect_no_program();
-}
-
-TEST_F(ParserTest, rejectsUndefinedFunction)
-{
-    expect_failure({"bad", "", "z = unknown(pixel)"}, "Undefined Function");
-}
-
-TEST_F(ParserTest, rejectsUnmatchedJump)
-{
-    expect_failure({"bad", "", "if (pixel)\nz = pixel"}, "has no matching \"endif\"");
-}
-
-TEST_F(ParserTest, rejectsOverlongToken)
-{
-    expect_failure({"bad", "", std::string(80, 'z') + "=pixel"}, "32 character limit");
-}
-
-TEST_F(ParserTest, rejectsOversizedName)
-{
-    expect_failure({std::string(100, 'a'), "", "z=pixel"}, "Formula name has too many characters");
 }
 
 TEST_F(ParserTest, returnsRecoverableSymmetryWarningWithoutUI)
@@ -311,11 +313,7 @@ namespace
 class FormulaLoadTest : public ParserTest
 {
 protected:
-    void SetUp() override
-    {
-        m_path = fs::path{ID_TEST_DATA_DIR} /
-            ("formula-" + std::string{UnitTest::GetInstance()->current_test_info()->name()} + ".frm");
-    }
+    void SetUp() override;
 
     void TearDown() override
     {
@@ -352,44 +350,79 @@ protected:
 
 } // namespace
 
-TEST_F(FormulaLoadTest, reportsMissingFileWithoutUI)
+void FormulaLoadTest::SetUp()
 {
-    expect_load_failure("'entry' file entry item not found");
+    std::string name{UnitTest::GetInstance()->current_test_info()->name()};
+    std::replace(name.begin(), name.end(), '/', '-');
+    m_path = fs::path{ID_TEST_DATA_DIR} / ("formula-" + name + ".frm");
 }
 
-TEST_F(FormulaLoadTest, reportsMissingEntryWithoutUI)
+struct FormulaLookupFailure
 {
-    write_definition("other { z=pixel }\n");
+    const char *name;
+    std::optional<std::string> definition;
+    const char *entry;
+    const char *message;
+};
 
-    expect_load_failure("'entry' file entry item not found");
+class TestFormulaLookupFailure : public FormulaLoadTest, public WithParamInterface<FormulaLookupFailure>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestFormulaLookupFailure::SetUp()
+{
+    FormulaLoadTest::SetUp();
+    g_formula_name = GetParam().entry;
+    if (GetParam().definition)
+    {
+        write_definition(*GetParam().definition);
+    }
 }
 
-TEST_F(FormulaLoadTest, rejectsEmptyName)
+TEST_P(TestFormulaLookupFailure, reportsLookupFailureWithoutUI)
 {
-    g_formula_name.clear();
-
-    expect_load_failure("File entry item name is empty");
+    expect_load_failure(GetParam().message);
 }
 
-TEST_F(FormulaLoadTest, closesFileAfterHeaderFailure)
-{
-    write_definition("entry (INVALID) { z=pixel }\n");
-    expect_load_failure("Symmetry below is invalid");
+INSTANTIATE_TEST_SUITE_P(LookupFailures, TestFormulaLookupFailure,
+    Values(FormulaLookupFailure{"MissingFile", std::nullopt, "entry", "'entry' file entry item not found"},
+        FormulaLookupFailure{"MissingEntry", "other { z=pixel }\n", "entry", "'entry' file entry item not found"},
+        FormulaLookupFailure{"EmptyName", std::nullopt, "", "File entry item name is empty"}),
+    [](const TestParamInfo<FormulaLookupFailure> &info) { return info.param.name; });
 
+struct FormulaFileFailure
+{
+    const char *name;
+    const char *definition;
+    const char *message;
+};
+
+class TestFormulaFileRecovery : public FormulaLoadTest, public WithParamInterface<FormulaFileFailure>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestFormulaFileRecovery::SetUp()
+{
+    FormulaLoadTest::SetUp();
+    write_definition(GetParam().definition);
+    expect_load_failure(GetParam().message);
+}
+
+TEST_P(TestFormulaFileRecovery, closesFailedInputAndLoadsReplacement)
+{
     EXPECT_TRUE(fs::remove(m_path));
     write_definition("entry { z=pixel }\n");
     EXPECT_TRUE(parse_formula(m_path, g_formula_name).empty());
 }
 
-TEST_F(FormulaLoadTest, closesFileAfterPrescanFailure)
-{
-    write_definition("entry { z=*pixel }\n");
-    expect_load_failure("Should be an Argument");
-
-    EXPECT_TRUE(fs::remove(m_path));
-    write_definition("entry { z=pixel }\n");
-    EXPECT_TRUE(parse_formula(m_path, g_formula_name).empty());
-}
+INSTANTIATE_TEST_SUITE_P(FailedInputs, TestFormulaFileRecovery,
+    Values(FormulaFileFailure{"Header", "entry (INVALID) { z=pixel }\n", "Symmetry below is invalid"},
+        FormulaFileFailure{"Prescan", "entry { z=*pixel }\n", "Should be an Argument"}),
+    [](const TestParamInfo<FormulaFileFailure> &info) { return info.param.name; });
 
 TEST_F(FormulaLoadTest, inspectionReportsMissingDefinitionWithoutUI)
 {
