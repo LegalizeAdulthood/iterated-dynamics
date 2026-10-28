@@ -5121,88 +5121,117 @@ TEST_F(TestParameterCommand, background)
     EXPECT_EQ(3, g_background_color[2]);
 }
 
-TEST_F(TestParameterCommand, lightNameFirstInit)
+struct LightNameParameterInput
 {
-    ValueSaver saved_first_init{g_first_init, true};
-    ValueSaver saved_light_name{g_light_name, "fmeh"};
+    const char *name;
+    bool first_init;
+    CmdFile source;
+    const char *expected;
+};
 
-    exec_cmd_arg("lightname=foo", CmdFile::AT_CMD_LINE);
+void PrintTo(const LightNameParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestLightNameParameter : public TestParameterCommand, public WithParamInterface<LightNameParameterInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<bool> m_saved_first_init{g_first_init};
+    ValueSaver<std::string> m_saved_name{g_light_name, "fmeh"};
+};
+
+void TestLightNameParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_first_init = GetParam().first_init;
+}
+
+TEST_P(TestLightNameParameter, appliesLightNameForSourceContext)
+{
+    exec_cmd_arg("lightname=foo", GetParam().source);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("foo", g_light_name);
+    EXPECT_EQ(GetParam().expected, g_light_name);
 }
 
-TEST_F(TestParameterCommand, lightNameAfterStartup)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestLightNameParameter,
+    Values(LightNameParameterInput{"FirstInit", true, CmdFile::AT_CMD_LINE, "foo"},
+        LightNameParameterInput{"AfterStartup", false, CmdFile::AT_AFTER_STARTUP, "foo"},
+        LightNameParameterInput{"NotSet", false, CmdFile::AT_CMD_LINE, "fmeh"}),
+    [](const TestParamInfo<LightNameParameterInput> &info) { return info.param.name; });
+
+struct RayParameterInput
 {
-    ValueSaver saved_first_init{g_first_init, false};
-    ValueSaver saved_light_name{g_light_name, "fmeh"};
+    const char *name;
+    const char *argument;
+    CmdFile source;
+    RayTraceFormat initial;
+    RayTraceFormat expected;
+    std::optional<CmdArgFlags> result;
+};
 
-    exec_cmd_arg("lightname=foo");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("foo", g_light_name);
+void PrintTo(const RayParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, lightNameNotSet)
+class TestRayParameter : public TestParameterCommand, public WithParamInterface<RayParameterInput>
 {
-    ValueSaver saved_first_init{g_first_init, false};
-    VALUE_UNCHANGED(g_light_name, std::string{"fmeh"});
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("lightname=foo", CmdFile::AT_CMD_LINE);
+private:
+    ValueSaver<RayTraceFormat> m_saved_format{g_raytrace_format};
+};
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
+void TestRayParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_raytrace_format = GetParam().initial;
 }
 
-TEST_F(TestParameterCommand, ray)
+TEST_P(TestRayParameter, selectsRayTraceFormat)
 {
-    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::NONE};
+    const RayParameterInput &input{GetParam()};
 
-    exec_cmd_arg("ray=3", CmdFile::AT_CMD_LINE);
+    exec_cmd_arg(input.argument, input.source);
 
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(RayTraceFormat::RAW, g_raytrace_format);
+    if (input.result)
+    {
+        EXPECT_EQ(*input.result, m_result);
+    }
+    EXPECT_EQ(input.expected, g_raytrace_format);
 }
 
-TEST_F(TestParameterCommandError, rayNegative)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestRayParameter,
+    Values(RayParameterInput{"Numeric", "ray=3", CmdFile::AT_CMD_LINE, RayTraceFormat::NONE, RayTraceFormat::RAW,
+               CmdArgFlags::PARAM_3D},
+        RayParameterInput{"None", "ray=none", CmdFile::AT_AFTER_STARTUP, RayTraceFormat::RAYSHADE, RayTraceFormat::NONE,
+            std::nullopt},
+        RayParameterInput{"DKB", "ray=dkb", CmdFile::AT_AFTER_STARTUP, RayTraceFormat::RAYSHADE,
+            RayTraceFormat::DKB_POVRAY, std::nullopt},
+        RayParameterInput{"POVRay", "ray=pov-ray", CmdFile::AT_AFTER_STARTUP, RayTraceFormat::RAYSHADE,
+            RayTraceFormat::DKB_POVRAY, std::nullopt}),
+    [](const TestParamInfo<RayParameterInput> &info) { return info.param.name; });
+
+class TestInvalidRayParameter : public TestParameterCommandError, public WithParamInterface<ParameterArgumentInput>
 {
-    exec_cmd_arg("ray=-1");
+};
+
+TEST_P(TestInvalidRayParameter, rejectsOutOfRangeFormat)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
-TEST_F(TestParameterCommandError, rayTooLarge)
-{
-    exec_cmd_arg("ray=8");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
-
-TEST_F(TestParameterCommand, rayByName)
-{
-    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::RAYSHADE};
-
-    exec_cmd_arg("ray=none");
-
-    EXPECT_EQ(RayTraceFormat::NONE, g_raytrace_format);
-}
-
-TEST_F(TestParameterCommand, rayByNameDKB)
-{
-    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::RAYSHADE};
-
-    exec_cmd_arg("ray=dkb");
-
-    EXPECT_EQ(RayTraceFormat::DKB_POVRAY, g_raytrace_format);
-}
-
-TEST_F(TestParameterCommand, rayByNamePOVRay)
-{
-    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::RAYSHADE};
-
-    exec_cmd_arg("ray=pov-ray");
-
-    EXPECT_EQ(RayTraceFormat::DKB_POVRAY, g_raytrace_format);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInvalidRayParameter,
+    Values(ParameterArgumentInput{"Negative", "ray=-1"}, ParameterArgumentInput{"TooLarge", "ray=8"}),
+    [](const TestParamInfo<ParameterArgumentInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, briefNo)
 {
@@ -5259,16 +5288,37 @@ TEST_F(TestParameterCommand, colorsIncreasingSixBitRamp)
     }
 }
 
-TEST_F(TestParameterCommand, colorsHexValues)
+struct ColorValueParameterInput
 {
-    ColorMapSaver saved_dac_box;
+    const char *name;
+    const char *argument;
+    unsigned expected;
+};
 
-    exec_cmd_arg("colors=#404040");
-
-    EXPECT_EQ(0x40U, g_dac_box[0][0]);
-    EXPECT_EQ(0x40U, g_dac_box[0][1]);
-    EXPECT_EQ(0x40U, g_dac_box[0][2]);
+void PrintTo(const ColorValueParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestColorValueParameter : public TestParameterCommand, public WithParamInterface<ColorValueParameterInput>
+{
+private:
+    ColorMapSaver m_saved_colors;
+};
+
+TEST_P(TestColorValueParameter, setsFirstPaletteColor)
+{
+    exec_cmd_arg(GetParam().argument);
+
+    EXPECT_EQ(GetParam().expected, g_dac_box[0][0]);
+    EXPECT_EQ(GetParam().expected, g_dac_box[0][1]);
+    EXPECT_EQ(GetParam().expected, g_dac_box[0][2]);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestColorValueParameter,
+    Values(ColorValueParameterInput{"HexValues", "colors=#404040", 0x40U},
+        ColorValueParameterInput{"SixBitMappedToEightBit", "colors=zzz", expand_6bit_color(63)}),
+    [](const TestParamInfo<ColorValueParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, colorRangeHexValues)
 {
@@ -5283,17 +5333,6 @@ TEST_F(TestParameterCommand, colorRangeHexValues)
         EXPECT_EQ(values[i], g_dac_box[i][1]);
         EXPECT_EQ(values[i], g_dac_box[i][2]);
     }
-}
-
-TEST_F(TestParameterCommand, color6BitMappedTo8Bit)
-{
-    ColorMapSaver saved_dac_box;
-
-    exec_cmd_arg("colors=zzz");
-
-    EXPECT_EQ(expand_6bit_color(63), g_dac_box[0][0]);
-    EXPECT_EQ(expand_6bit_color(63), g_dac_box[0][1]);
-    EXPECT_EQ(expand_6bit_color(63), g_dac_box[0][2]);
 }
 
 TEST_F(TestParameterCommand, singleReadLibraryDir)
