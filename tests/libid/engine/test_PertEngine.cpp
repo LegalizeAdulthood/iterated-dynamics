@@ -961,8 +961,11 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestPerturbationBailout, ValuesIn(perturbation_bailout_inputs()),
     [](const TestParamInfo<PerturbationBailoutInput> &info) { return info.param.name; });
 
-class TestPerturbationIterations : public TestPerturbationPixels, public WithParamInterface<bool>
+class PerturbationIterationTest : public TestPerturbationPixels
 {
+public:
+    explicit PerturbationIterationTest(bool use_big_float);
+
 protected:
     void SetUp() override;
     void TearDown() override;
@@ -1008,9 +1011,28 @@ protected:
     ValueSaver<std::vector<int>> m_saved_ranges{g_iteration_ranges, std::vector<int>{}};
     ValueSaver<int> m_saved_outside_color{g_outside_color};
     int m_reference_yields{};
+
+private:
+    const bool m_use_big_float;
 };
 
-void TestPerturbationIterations::SetUp()
+PerturbationIterationTest::PerturbationIterationTest(const bool use_big_float) :
+    m_use_big_float{use_big_float}
+{
+}
+
+class TestPerturbationIterations : public PerturbationIterationTest, public WithParamInterface<bool>
+{
+public:
+    TestPerturbationIterations();
+};
+
+TestPerturbationIterations::TestPerturbationIterations() :
+    PerturbationIterationTest{GetParam()}
+{
+}
+
+void PerturbationIterationTest::SetUp()
 {
     TestPerturbationPixels::SetUp();
     set_bailout_formula(Bailout::MOD);
@@ -1018,17 +1040,17 @@ void TestPerturbationIterations::SetUp()
     alloc_pixel_grid();
 }
 
-void TestPerturbationIterations::TearDown()
+void PerturbationIterationTest::TearDown()
 {
     end_disk();
     free_pixel_grid();
     TestPerturbationPixels::TearDown();
 }
 
-void TestPerturbationIterations::initialize_reference(
+void PerturbationIterationTest::initialize_reference(
     const std::complex<double> &center, const double half_width, const double half_height)
 {
-    if (GetParam())
+    if (m_use_big_float)
     {
         init_bf_dec(60);
         m_big_float = true;
@@ -1053,14 +1075,14 @@ void TestPerturbationIterations::initialize_reference(
     }
 }
 
-void TestPerturbationIterations::set_initial_offset(const DComplex &offset)
+void PerturbationIterationTest::set_initial_offset(const DComplex &offset)
 {
     g_param_z1 = offset;
     g_params[0] = offset.x;
     g_params[1] = offset.y;
 }
 
-void TestPerturbationIterations::compare_pixel(const std::complex<double> &center, const long max_iterations,
+void PerturbationIterationTest::compare_pixel(const std::complex<double> &center, const long max_iterations,
     const double reference_offset, const long early_iterations, const bool incremental)
 {
     m_engine.finish();
@@ -1191,69 +1213,157 @@ TEST_P(TestPerturbationIterations, incompleteReferenceIsNotPublishedOrUsedForPix
     EXPECT_TRUE(m_plots.empty());
 }
 
-TEST_P(TestPerturbationIterations, chunkedReferencesMatchAtomicContentsAndReplacementResults)
+struct PerturbationOffsetInput
 {
+    const char *name;
+    bool big_float;
+    double offset;
+};
+
+void PrintTo(const PerturbationOffsetInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestPerturbationReferenceOffset : public PerturbationIterationTest,
+                                        public WithParamInterface<PerturbationOffsetInput>
+{
+public:
+    TestPerturbationReferenceOffset();
+
+protected:
+    void SetUp() override;
+};
+
+TestPerturbationReferenceOffset::TestPerturbationReferenceOffset() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestPerturbationReferenceOffset::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    m_engine.set_glitch_tolerance(GetParam().offset == 0.0 ? DEFAULT_PERTURBATION_TOLERANCE : 8.0);
+}
+
+TEST_P(TestPerturbationReferenceOffset, chunkedReferencesMatchAtomicContentsAndReplacementResults)
+{
+    const double offset{GetParam().offset};
     g_inside_method = ColorMethod::ITER;
     m_specific.pert_ref = record_reference;
     m_specific.pert_ref_bf = record_reference_bf;
-    for (const double offset : {0.0, 0.125})
-    {
-        SCOPED_TRACE(offset);
-        m_engine.set_glitch_tolerance(offset == 0.0 ? DEFAULT_PERTURBATION_TOLERANCE : 8.0);
-        s_reference_coordinates.clear();
-        s_reference_values.clear();
-        compare_pixel({0.125, 0.125}, 5000, offset);
-        const std::vector<std::complex<double>> coordinates{s_reference_coordinates};
-        const std::vector<std::complex<double>> values{s_reference_values};
-        const int references{m_engine.reference_count()};
-        EXPECT_EQ(offset == 0.0 ? 1 : 2, references);
+    s_reference_coordinates.clear();
+    s_reference_values.clear();
+    compare_pixel({0.125, 0.125}, 5000, offset);
+    const std::vector<std::complex<double>> coordinates{s_reference_coordinates};
+    const std::vector<std::complex<double>> values{s_reference_values};
+    const int references{m_engine.reference_count()};
+    EXPECT_EQ(offset == 0.0 ? 1 : 2, references);
 
-        s_reference_coordinates.clear();
-        s_reference_values.clear();
-        compare_pixel({0.125, 0.125}, 5000, offset, 0, true);
+    s_reference_coordinates.clear();
+    s_reference_values.clear();
+    compare_pixel({0.125, 0.125}, 5000, offset, 0, true);
 
-        EXPECT_GT(m_reference_yields, 0);
-        EXPECT_EQ(references, m_engine.reference_count());
-        EXPECT_EQ(coordinates, s_reference_coordinates);
-        EXPECT_EQ(values, s_reference_values);
-    }
+    EXPECT_GT(m_reference_yields, 0);
+    EXPECT_EQ(references, m_engine.reference_count());
+    EXPECT_EQ(coordinates, s_reference_coordinates);
+    EXPECT_EQ(values, s_reference_values);
 }
 
-TEST_P(TestPerturbationIterations, shortReferencesDoNotAddAYield)
+TEST_P(TestPerturbationReferenceOffset, shortReferencesDoNotAddAYield)
 {
-    for (const double offset : {0.0, 0.125})
-    {
-        SCOPED_TRACE(offset);
-        m_engine.set_glitch_tolerance(offset == 0.0 ? DEFAULT_PERTURBATION_TOLERANCE : 8.0);
-        compare_pixel({0.125, 0.125}, 128, offset, 0, true);
+    const double offset{GetParam().offset};
 
-        EXPECT_EQ(0, m_reference_yields);
-        EXPECT_EQ(offset == 0.0 ? 1 : 2, m_engine.reference_count());
-    }
+    compare_pixel({0.125, 0.125}, 128, offset, 0, true);
+
+    EXPECT_EQ(0, m_reference_yields);
+    EXPECT_EQ(offset == 0.0 ? 1 : 2, m_engine.reference_count());
 }
 
-TEST_P(TestPerturbationIterations, longPixelChunksRetainColoringStatisticsAndRetryOrbit)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPerturbationReferenceOffset,
+    Values(PerturbationOffsetInput{"DoubleDefaultReference", false, 0.0},
+        PerturbationOffsetInput{"DoubleReplacementReference", false, 0.125},
+        PerturbationOffsetInput{"HighPrecisionDefaultReference", true, 0.0},
+        PerturbationOffsetInput{"HighPrecisionReplacementReference", true, 0.125}),
+    [](const TestParamInfo<PerturbationOffsetInput> &info) { return info.param.name; });
+
+struct PerturbationPixelChunkInput
 {
-    for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60, ColorMethod::BOF61,
-             ColorMethod::FMODI, ColorMethod::ATANI})
+    std::string name;
+    bool big_float;
+    ColorMethod inside;
+    double offset;
+};
+
+void PrintTo(const PerturbationPixelChunkInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<PerturbationPixelChunkInput> perturbation_pixel_chunk_inputs()
+{
+    struct InsideMethod
     {
-        SCOPED_TRACE(static_cast<int>(inside));
-        g_inside_method = inside;
-        for (const double offset : {0.0, 0.125})
+        const char *name;
+        ColorMethod value;
+    };
+
+    std::vector<PerturbationPixelChunkInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const InsideMethod &inside : {InsideMethod{"Iterations", ColorMethod::ITER},
+                 {"Magnitude", ColorMethod::ZMAG}, {"Bof60", ColorMethod::BOF60}, {"Bof61", ColorMethod::BOF61},
+                 {"Fmod", ColorMethod::FMODI}, {"Atan", ColorMethod::ATANI}})
         {
-            SCOPED_TRACE(offset);
-            m_engine.set_glitch_tolerance(offset == 0.0 ? DEFAULT_PERTURBATION_TOLERANCE : 8.0);
-            compare_pixel({0.125, 0.125}, 5000, offset);
-            const std::vector<std::complex<double>> orbit{s_perturbation_orbit};
-
-            compare_pixel({0.125, 0.125}, 5000, offset, 0, true);
-
-            EXPECT_GE(m_reference_yields, 4);
-            EXPECT_EQ(orbit, s_perturbation_orbit);
-            EXPECT_EQ(offset == 0.0 ? 1 : 2, m_engine.reference_count());
+            for (const double offset : {0.0, 0.125})
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + inside.name +
+                        (offset == 0.0 ? "_DefaultReference" : "_ReplacementReference"),
+                    big_float, inside.value, offset});
+            }
         }
     }
+    return inputs;
 }
+
+class TestPerturbationPixelChunks : public PerturbationIterationTest,
+                                    public WithParamInterface<PerturbationPixelChunkInput>
+{
+public:
+    TestPerturbationPixelChunks();
+
+protected:
+    void SetUp() override;
+};
+
+TestPerturbationPixelChunks::TestPerturbationPixelChunks() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestPerturbationPixelChunks::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = GetParam().inside;
+    m_engine.set_glitch_tolerance(GetParam().offset == 0.0 ? DEFAULT_PERTURBATION_TOLERANCE : 8.0);
+}
+
+TEST_P(TestPerturbationPixelChunks, retainsColoringStatisticsAndRetryOrbit)
+{
+    const double offset{GetParam().offset};
+
+    compare_pixel({0.125, 0.125}, 5000, offset);
+    const std::vector<std::complex<double>> orbit{s_perturbation_orbit};
+
+    compare_pixel({0.125, 0.125}, 5000, offset, 0, true);
+
+    EXPECT_GE(m_reference_yields, 4);
+    EXPECT_EQ(orbit, s_perturbation_orbit);
+    EXPECT_EQ(offset == 0.0 ? 1 : 2, m_engine.reference_count());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPerturbationPixelChunks, ValuesIn(perturbation_pixel_chunk_inputs()),
+    [](const TestParamInfo<PerturbationPixelChunkInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, incompletePixelPublishesNothingAndContinuesWithoutReplayingIterations)
 {
@@ -2819,7 +2929,7 @@ TEST_P(TestPerturbationIterations, biomorphFinishingAndMappingSurviveReferenceRe
     }
 }
 
-void TestPerturbationIterations::compare_distance_pixel(const std::complex<double> &center, const long max_iterations,
+void PerturbationIterationTest::compare_distance_pixel(const std::complex<double> &center, const long max_iterations,
     const bool legacy, const double reference_offset, const DistancePixelOptions &options, const bool incremental)
 {
     m_engine.finish();
@@ -4062,7 +4172,7 @@ TEST_P(TestPerturbationIterations, trueColorIterationOutputUsesTheFullCountBefor
     EXPECT_EQ(1, blue);
 }
 
-void TestPerturbationIterations::compare_frame_coordinates(
+void PerturbationIterationTest::compare_frame_coordinates(
     const double tolerance, const ImageRegion &region, const CalcMode pass, const Point2i offset)
 {
     ValueSaver saved_user{g_user, UserData{}};
@@ -4124,7 +4234,7 @@ void TestPerturbationIterations::compare_frame_coordinates(
             g_delta_y2 = (region.m_3rd.y - region.m_min.y) / (size.x - 1);
             alloc_pixel_grid();
             fill_pixel_grid();
-            if (GetParam())
+            if (m_use_big_float)
             {
                 init_bf_dec(60);
                 m_big_float = true;
@@ -4150,7 +4260,7 @@ void TestPerturbationIterations::compare_frame_coordinates(
             }
             ASSERT_TRUE(calculation.done());
             EXPECT_EQ(pass, g_std_calc_mode);
-            EXPECT_EQ(GetParam(), g_bf_math != BFMathType::NONE);
+            EXPECT_EQ(m_use_big_float, g_bf_math != BFMathType::NONE);
             ASSERT_FALSE(s_reference_coordinates.empty());
             DComplex expected_center{region.center()};
             if (g_inversion.invert != 0)
