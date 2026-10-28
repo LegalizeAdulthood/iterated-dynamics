@@ -7513,71 +7513,132 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestOrbitDependentPeriodicity,
         OrbitDependentInsideInput{"StarTrail", ColorMethod::STAR_TRAIL}),
     [](const TestParamInfo<OrbitDependentInsideInput> &info) { return info.param.name; });
 
-TEST_F(TestPerturbationPixels, deepPeriodicityUsesTheActivePrecisionTolerance)
+struct DeepPeriodicityInput
 {
-    ValueSaver saved_mode{g_use_init_orbit, InitOrbitMode::NORMAL};
-    ValueSaver saved_real{g_params[0], 0.0};
-    ValueSaver saved_imag{g_params[1], 0.0};
+    std::string name;
+    BFMathType math;
+    double tolerance;
+    bool replace_reference;
+};
+
+void PrintTo(const DeepPeriodicityInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<DeepPeriodicityInput> deep_periodicity_inputs()
+{
+    std::vector<DeepPeriodicityInput> inputs;
+    for (const BFMathType math : {BFMathType::BIG_NUM, BFMathType::BIG_FLT})
+    {
+        for (const double tolerance : {1e-25, 1e-50})
+        {
+            for (const bool replace_reference : {false, true})
+            {
+                inputs.push_back({std::string{math == BFMathType::BIG_NUM ? "BigNum_" : "BigFloat_"} +
+                        (tolerance == 1e-25 ? "Tolerance1eMinus25_" : "Tolerance1eMinus50_") +
+                        (replace_reference ? "ReplacementReference" : "OriginalReference"),
+                    math, tolerance, replace_reference});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestDeepPeriodicity : public TestPerturbationPixels, public WithParamInterface<DeepPeriodicityInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<InitOrbitMode> m_saved_mode{g_use_init_orbit, InitOrbitMode::NORMAL};
+    ValueSaver<double> m_saved_real{g_params[0], 0.0};
+    ValueSaver<double> m_saved_imag{g_params[1], 0.0};
+};
+
+void TestDeepPeriodicity::SetUp()
+{
+    TestPerturbationPixels::SetUp();
     g_periodicity_check = 1;
     g_first_saved_and = 1;
     g_periodicity_next_saved_incr = 1;
     g_max_iterations = 64;
     m_specific.pert_pt = record_perturbation_orbit;
-    for (const BFMathType math : {BFMathType::BIG_NUM, BFMathType::BIG_FLT})
+    m_engine.finish();
     {
-        SCOPED_TRACE(static_cast<int>(math));
-        for (const double tolerance : {1e-25, 1e-50})
-        {
-            SCOPED_TRACE(tolerance);
-            for (const bool replace_reference : {false, true})
-            {
-                SCOPED_TRACE(replace_reference);
-                m_engine.finish();
-                if (m_big_float)
-                {
-                    free_bf_vars();
-                }
-                {
-                    ValueSaver saved_type{
-                        g_fractal_type, math == BFMathType::BIG_NUM ? FractalType::MANDEL : FractalType::JULIA_Z_POWER};
-                    init_bf_dec(80);
-                }
-                m_big_float = true;
-                ASSERT_EQ(math, g_bf_math);
-                if (math == BFMathType::BIG_NUM)
-                {
-                    float_to_bn(g_close_enough_bn, tolerance);
-                }
-                else
-                {
-                    float_to_bf(g_close_enough_bf, tolerance);
-                }
-                const BFComplex center{m_engine.initialize_frame_bf({1e-40, 0.0}, {})};
-                float_to_bf(center.x, -2.0);
-                clear_bf(center.y);
-                m_engine.set_glitch_tolerance(replace_reference ? 2.0 : 0.0);
-                g_old_color_iter = 0;
-                s_perturbation_orbit.clear();
-
-                EXPECT_EQ(7, m_engine.calculate_pixel(WIDTH - 1, 0));
-
-                EXPECT_EQ(64, g_real_color_iter);
-                EXPECT_EQ((tolerance > 1e-40 ? 3 : 63) + (replace_reference ? 1 : 0), s_perturbation_orbit.size());
-                EXPECT_EQ(replace_reference ? 2 : 1, m_engine.reference_count());
-                EXPECT_EQ(0, g_old_color_iter);
-            }
-        }
+        ValueSaver saved_type{
+            g_fractal_type, GetParam().math == BFMathType::BIG_NUM ? FractalType::MANDEL : FractalType::JULIA_Z_POWER};
+        init_bf_dec(80);
     }
+    m_big_float = true;
+    ASSERT_EQ(GetParam().math, g_bf_math);
+    if (GetParam().math == BFMathType::BIG_NUM)
+    {
+        float_to_bn(g_close_enough_bn, GetParam().tolerance);
+    }
+    else
+    {
+        float_to_bf(g_close_enough_bf, GetParam().tolerance);
+    }
+    const BFComplex center{m_engine.initialize_frame_bf({1e-40, 0.0}, {})};
+    float_to_bf(center.x, -2.0);
+    clear_bf(center.y);
+    m_engine.set_glitch_tolerance(GetParam().replace_reference ? 2.0 : 0.0);
+    g_old_color_iter = 0;
+    s_perturbation_orbit.clear();
 }
 
-TEST_P(TestPerturbationIterations, periodicityReplayFitsAcceptedPrecision)
+TEST_P(TestDeepPeriodicity, usesActivePrecisionTolerance)
 {
-    const ValueSaver saved_user{g_user, UserData{}};
-    const ValueSaver saved_digits{g_bf_digits, 0};
-    const ValueSaver<LDouble> saved_delta_x{g_delta_x, 0};
-    const ValueSaver<LDouble> saved_delta_y{g_delta_y, 0};
-    const ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
-    const ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    EXPECT_EQ(7, m_engine.calculate_pixel(WIDTH - 1, 0));
+
+    EXPECT_EQ(64, g_real_color_iter);
+    EXPECT_EQ(
+        (GetParam().tolerance > 1e-40 ? 3 : 63) + (GetParam().replace_reference ? 1 : 0), s_perturbation_orbit.size());
+    EXPECT_EQ(GetParam().replace_reference ? 2 : 1, m_engine.reference_count());
+    EXPECT_EQ(0, g_old_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDeepPeriodicity, ValuesIn(deep_periodicity_inputs()),
+    [](const TestParamInfo<DeepPeriodicityInput> &info) { return info.param.name; });
+
+struct PrecisionReplayInput
+{
+    const char *name;
+    bool big_float;
+    bool incremental;
+};
+
+void PrintTo(const PrecisionReplayInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestPeriodicityReplay : public PerturbationIterationTest, public WithParamInterface<PrecisionReplayInput>
+{
+public:
+    TestPeriodicityReplay();
+
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<UserData> m_saved_user{g_user, UserData{}};
+    ValueSaver<int> m_saved_digits{g_bf_digits, 0};
+    ValueSaver<LDouble> m_saved_delta_x{g_delta_x, 0};
+    ValueSaver<LDouble> m_saved_delta_y{g_delta_y, 0};
+    ValueSaver<LDouble> m_saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> m_saved_delta_y2{g_delta_y2, 0};
+};
+
+TestPeriodicityReplay::TestPeriodicityReplay() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestPeriodicityReplay::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_user.bailout_value = 4;
     g_max_iterations = 1024;
     g_periodicity_check = 1;
@@ -7585,7 +7646,7 @@ TEST_P(TestPerturbationIterations, periodicityReplayFitsAcceptedPrecision)
     g_inside_method = ColorMethod::ITER;
     g_image_region = ImageRegion{};
     fill_pixel_grid();
-    if (GetParam())
+    if (GetParam().big_float)
     {
         init_bf_dec(1610);
         m_big_float = true;
@@ -7600,39 +7661,45 @@ TEST_P(TestPerturbationIterations, periodicityReplayFitsAcceptedPrecision)
         g_dispatch.set_per_pixel(mandel_per_pixel_bn);
         g_dispatch.set_orbit_calc(julia_orbit_bn);
     }
+}
+
+TEST_P(TestPeriodicityReplay, fitsAcceptedPrecision)
+{
     StandardFractal standard;
     const int expected_color{standard.calculate_standard_pixel(false)};
     const long expected_iterations{g_real_color_iter};
     EXPECT_EQ(g_max_iterations, expected_iterations);
     const int initial_stack{save_stack()};
-    for (const bool incremental : {false, true})
+    if (GetParam().big_float)
     {
-        SCOPED_TRACE(incremental);
-        if (GetParam())
-        {
-            const BFComplex center{m_engine.initialize_frame_bf({}, {})};
-            clear_bf(center.x);
-            clear_bf(center.y);
-        }
-        else
-        {
-            m_engine.initialize_frame({}, {}, {});
-        }
-        g_old_color_iter = 0;
-        m_specific.pert_pt = record_perturbation_orbit;
-        s_perturbation_orbit.clear();
-        int color{CALC_YIELDED};
-        for (int step = 0; color == CALC_YIELDED && step < 100; ++step)
-        {
-            ASSERT_NO_THROW(color = m_engine.calculate_pixel(g_col, g_row, incremental));
-        }
-        EXPECT_EQ(expected_color, color);
-        EXPECT_EQ(expected_iterations, g_real_color_iter);
-        EXPECT_LT(s_perturbation_orbit.size(), g_max_iterations - 1);
-        m_engine.finish();
-        EXPECT_EQ(initial_stack, save_stack());
+        const BFComplex center{m_engine.initialize_frame_bf({}, {})};
+        clear_bf(center.x);
+        clear_bf(center.y);
     }
+    else
+    {
+        m_engine.initialize_frame({}, {}, {});
+    }
+    g_old_color_iter = 0;
+    m_specific.pert_pt = record_perturbation_orbit;
+    s_perturbation_orbit.clear();
+    int color{CALC_YIELDED};
+    for (int step = 0; color == CALC_YIELDED && step < 100; ++step)
+    {
+        ASSERT_NO_THROW(color = m_engine.calculate_pixel(g_col, g_row, GetParam().incremental));
+    }
+    EXPECT_EQ(expected_color, color);
+    EXPECT_EQ(expected_iterations, g_real_color_iter);
+    EXPECT_LT(s_perturbation_orbit.size(), g_max_iterations - 1);
+    m_engine.finish();
+    EXPECT_EQ(initial_stack, save_stack());
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPeriodicityReplay,
+    Values(PrecisionReplayInput{"Double_Atomic", false, false}, PrecisionReplayInput{"Double_Incremental", false, true},
+        PrecisionReplayInput{"HighPrecision_Atomic", true, false},
+        PrecisionReplayInput{"HighPrecision_Incremental", true, true}),
+    [](const TestParamInfo<PrecisionReplayInput> &info) { return info.param.name; });
 
 TEST_F(TestPerturbationPixels, subDoublePeriodicityToleranceStillDetectsExactCycles)
 {
