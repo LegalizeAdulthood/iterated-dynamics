@@ -21,6 +21,8 @@
 
 #include <array>
 #include <cmath>
+#include <optional>
+#include <ostream>
 #include <stdexcept>
 #include <vector>
 
@@ -240,84 +242,230 @@ TEST_F(TestInverseJulia, miimSeedsAndAdvancesTheCalculationQueue)
     EXPECT_EQ(1U, m_pixels.size());
 }
 
-TEST_F(TestInverseJulia, preparedBackingSupportsQueueAndStackWithoutUi)
+class TestPreparedInverseJuliaQueue : public TestInverseJulia
 {
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    prepare_queue(4);
-    EXPECT_EQ(4UL, queue_capacity());
-    EXPECT_TRUE(queue_empty());
-    EXPECT_EQ(1, enqueue_float(1.0F, 2.0F));
-    EXPECT_EQ(1, enqueue_float(3.0F, 4.0F));
-    EXPECT_TRUE(queue_full_almost());
-    EXPECT_EQ(1, push_float(5.0F, 6.0F));
-    EXPECT_EQ(0, push_float(7.0F, 8.0F));
+protected:
+    void SetUp() override;
+    void wrap_queue();
 
-    EXPECT_EQ((DComplex{1.0, 2.0}), dequeue_float());
-    EXPECT_EQ((DComplex{5.0, 6.0}), pop_float());
-    EXPECT_EQ((DComplex{3.0, 4.0}), dequeue_float());
-    EXPECT_TRUE(queue_empty());
+    ValueSaver<Driver *> m_without_driver{g_driver, nullptr};
+};
+
+void TestPreparedInverseJuliaQueue::SetUp()
+{
+    TestInverseJulia::SetUp();
+    ASSERT_NO_FATAL_FAILURE(prepare_queue(4));
+}
+
+void TestPreparedInverseJuliaQueue::wrap_queue()
+{
     for (int i = 0; i < 8; ++i)
     {
         EXPECT_EQ(1, enqueue_float(static_cast<float>(i), 0.0F));
         EXPECT_EQ((DComplex{static_cast<double>(i), 0.0}), dequeue_float());
     }
+}
+
+TEST_F(TestPreparedInverseJuliaQueue, backingProvidesAnEmptyQueueWithoutUi)
+{
+    EXPECT_EQ(4UL, queue_capacity());
+    EXPECT_TRUE(queue_empty());
+}
+
+class TestFilledInverseJuliaQueue : public TestPreparedInverseJuliaQueue
+{
+protected:
+    void SetUp() override;
+};
+
+void TestFilledInverseJuliaQueue::SetUp()
+{
+    TestPreparedInverseJuliaQueue::SetUp();
+    ASSERT_EQ(1, enqueue_float(1.0F, 2.0F));
+    ASSERT_EQ(1, enqueue_float(3.0F, 4.0F));
+    ASSERT_TRUE(queue_full_almost());
+    ASSERT_EQ(1, push_float(5.0F, 6.0F));
+}
+
+TEST_F(TestFilledInverseJuliaQueue, capacityRejectsAnotherPush)
+{
+    EXPECT_EQ(0, push_float(7.0F, 8.0F));
+}
+
+TEST_F(TestFilledInverseJuliaQueue, queueRetainsFifoOrderAroundAStackPop)
+{
+    EXPECT_EQ((DComplex{1.0, 2.0}), dequeue_float());
+    ASSERT_EQ((DComplex{5.0, 6.0}), pop_float());
+    EXPECT_EQ((DComplex{3.0, 4.0}), dequeue_float());
+    EXPECT_TRUE(queue_empty());
+}
+
+TEST_F(TestFilledInverseJuliaQueue, stackReturnsNewestValueAfterADequeue)
+{
+    ASSERT_EQ((DComplex{1.0, 2.0}), dequeue_float());
+
+    EXPECT_EQ((DComplex{5.0, 6.0}), pop_float());
+}
+
+class TestDrainedInverseJuliaQueue : public TestFilledInverseJuliaQueue
+{
+protected:
+    void SetUp() override;
+};
+
+void TestDrainedInverseJuliaQueue::SetUp()
+{
+    TestFilledInverseJuliaQueue::SetUp();
+    ASSERT_EQ(0, push_float(7.0F, 8.0F));
+    ASSERT_EQ((DComplex{1.0, 2.0}), dequeue_float());
+    ASSERT_EQ((DComplex{5.0, 6.0}), pop_float());
+    ASSERT_EQ((DComplex{3.0, 4.0}), dequeue_float());
+    ASSERT_TRUE(queue_empty());
+}
+
+TEST_F(TestDrainedInverseJuliaQueue, wraparoundRetainsEveryValue)
+{
+    wrap_queue();
+}
+
+class TestWrappedInverseJuliaQueue : public TestDrainedInverseJuliaQueue
+{
+protected:
+    void SetUp() override;
+};
+
+void TestWrappedInverseJuliaQueue::SetUp()
+{
+    TestDrainedInverseJuliaQueue::SetUp();
+    ASSERT_NO_FATAL_FAILURE(wrap_queue());
+}
+
+TEST_F(TestWrappedInverseJuliaQueue, freeingQueueReleasesItsBacking)
+{
     free_queue();
+
     EXPECT_EQ(0UL, queue_capacity());
     EXPECT_FALSE(g_disk_flag);
 }
 
-TEST_F(TestInverseJulia, invalidInitializationLeavesUnclaimedBackingWithTheCaller)
+class TestInvalidInverseJuliaCapacity : public TestInverseJulia
 {
-    const MemoryHandle backing{memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY)};
+protected:
+    void SetUp() override;
+    void TearDown() override;
 
-    EXPECT_THROW(init_queue(1, backing), std::logic_error);
+    MemoryHandle m_backing{};
+};
+
+void TestInvalidInverseJuliaCapacity::SetUp()
+{
+    TestInverseJulia::SetUp();
+    m_backing = memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY);
+}
+
+void TestInvalidInverseJuliaCapacity::TearDown()
+{
+    memory_release(m_backing);
+    TestInverseJulia::TearDown();
+}
+
+TEST_F(TestInvalidInverseJuliaCapacity, rejectionLeavesBackingWithTheCaller)
+{
+    EXPECT_THROW(init_queue(1, m_backing), std::logic_error);
     EXPECT_EQ(0UL, queue_capacity());
     EXPECT_FALSE(g_disk_flag);
-    EXPECT_EQ(MemoryLocation::MEMORY, memory_type(backing));
-    memory_release(backing);
+    EXPECT_EQ(MemoryLocation::MEMORY, memory_type(m_backing));
+}
+
+TEST_F(TestInverseJulia, initializationRejectsInvalidBacking)
+{
     EXPECT_THROW(init_queue(4, MemoryHandle{}), std::logic_error);
 }
 
-TEST_F(TestInverseJulia, standaloneSetupDoesNotAllocateOrChooseFallback)
+class TestStandaloneInverseJulia : public TestInverseJulia
 {
-    ValueSaver saved_type{g_fractal_type, FractalType::INVERSE_JULIA};
-    ValueSaver saved_major{g_major_method, Major::BREADTH_FIRST};
-    ValueSaver saved_param{g_params[2], 1000.0};
+protected:
+    void SetUp() override;
 
-    EXPECT_TRUE(orbit3d_per_image());
+    ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::INVERSE_JULIA};
+    ValueSaver<Major> m_saved_major{g_major_method, Major::BREADTH_FIRST};
+    ValueSaver<double> m_saved_param{g_params[2], 1000.0};
+};
 
+void TestStandaloneInverseJulia::SetUp()
+{
+    TestInverseJulia::SetUp();
+    ASSERT_TRUE(orbit3d_per_image());
+}
+
+TEST_F(TestStandaloneInverseJulia, setupDoesNotAllocateOrChooseFallback)
+{
     EXPECT_EQ(Major::BREADTH_FIRST, g_major_method);
     EXPECT_EQ(255.0, g_params[2]);
     EXPECT_EQ(0UL, queue_capacity());
     EXPECT_FALSE(g_disk_flag);
+}
+
+TEST_F(TestStandaloneInverseJulia, initializationRequiresAQueue)
+{
     EXPECT_THROW(init_inverse_julia(), std::logic_error);
 }
 
-TEST_F(TestInverseJulia, standaloneSeedsPreserveBreadthAndDepthOrdering)
+struct InverseJuliaSeedInput
 {
-    ValueSaver saved_type{g_fractal_type, FractalType::INVERSE_JULIA};
-    ValueSaver saved_major{g_major_method, Major::BREADTH_FIRST};
-    ValueSaver saved_minor{g_inverse_julia_minor_method};
-    ValueSaver saved_param0{g_params[0], -1.0};
-    ValueSaver saved_param1{g_params[1], 0.0};
-    ValueSaver saved_param2{g_params[2], 4.0};
-    prepare_queue(16);
+    const char *name;
+    Major major;
+    std::optional<Minor> minor;
+    bool positive_first;
+};
+
+void PrintTo(const InverseJuliaSeedInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestInverseJuliaSeedOrder : public TestInverseJulia, public WithParamInterface<InverseJuliaSeedInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::INVERSE_JULIA};
+    ValueSaver<Major> m_saved_major{g_major_method, Major::BREADTH_FIRST};
+    ValueSaver<Minor> m_saved_minor{g_inverse_julia_minor_method};
+    ValueSaver<double> m_saved_param0{g_params[0], -1.0};
+    ValueSaver<double> m_saved_param1{g_params[1], 0.0};
+    ValueSaver<double> m_saved_param2{g_params[2], 4.0};
+};
+
+void TestInverseJuliaSeedOrder::SetUp()
+{
+    TestInverseJulia::SetUp();
+    ASSERT_NO_FATAL_FAILURE(prepare_queue(16));
     ASSERT_TRUE(orbit3d_per_image());
+    g_major_method = GetParam().major;
+    if (GetParam().minor)
+    {
+        g_inverse_julia_minor_method = *GetParam().minor;
+    }
+}
+
+TEST_P(TestInverseJuliaSeedOrder, seedsPreserveSelectedOrdering)
+{
     const double positive{(1 + std::sqrt(5.0)) / 2};
     const double negative{(1 - std::sqrt(5.0)) / 2};
 
     init_inverse_julia();
-    EXPECT_NEAR(positive, dequeue_float().x, 1e-6);
-    EXPECT_NEAR(negative, dequeue_float().x, 1e-6);
-    g_major_method = Major::DEPTH_FIRST;
-    g_inverse_julia_minor_method = Minor::LEFT_FIRST;
-    init_inverse_julia();
-    EXPECT_NEAR(negative, pop_float().x, 1e-6);
-    EXPECT_NEAR(positive, pop_float().x, 1e-6);
-    g_inverse_julia_minor_method = Minor::RIGHT_FIRST;
-    init_inverse_julia();
-    EXPECT_NEAR(positive, pop_float().x, 1e-6);
-    EXPECT_NEAR(negative, pop_float().x, 1e-6);
+
+    const DComplex first{GetParam().major == Major::BREADTH_FIRST ? dequeue_float() : pop_float()};
+    const DComplex second{GetParam().major == Major::BREADTH_FIRST ? dequeue_float() : pop_float()};
+    EXPECT_NEAR(GetParam().positive_first ? positive : negative, first.x, 1e-6);
+    EXPECT_NEAR(GetParam().positive_first ? negative : positive, second.x, 1e-6);
 }
+
+INSTANTIATE_TEST_SUITE_P(Methods, TestInverseJuliaSeedOrder,
+    Values(InverseJuliaSeedInput{"BreadthFirst", Major::BREADTH_FIRST, std::nullopt, true},
+        InverseJuliaSeedInput{"DepthLeft", Major::DEPTH_FIRST, Minor::LEFT_FIRST, false},
+        InverseJuliaSeedInput{"DepthRight", Major::DEPTH_FIRST, Minor::RIGHT_FIRST, true}),
+    [](const TestParamInfo<InverseJuliaSeedInput> &info) { return info.param.name; });
 
 } // namespace id::test
