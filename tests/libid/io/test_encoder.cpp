@@ -716,10 +716,23 @@ TEST_F(TestGifWriterRaster, unfinishedSaveRemovesItsPartialFileWithoutUi)
     EXPECT_FALSE(g_busy);
 }
 
-TEST_F(TestGifWriterRaster, existingTemporaryDestinationIsNotDeleted)
+class TestGifWriterExistingImage : public TestGifWriterRaster
 {
+protected:
+    void SetUp() override;
+
+    std::vector<Byte> m_original_pixels;
+};
+
+void TestGifWriterExistingImage::SetUp()
+{
+    TestGifWriterRaster::SetUp();
+    m_original_pixels = image_pixels();
     ASSERT_EQ(0, save());
-    const std::vector<Byte> pixels{image_pixels()};
+}
+
+TEST_F(TestGifWriterExistingImage, existingTemporaryDestinationIsNotDeleted)
+{
     const std::filesystem::path temporary{m_directory / "id.tmp"};
     std::filesystem::create_directory(temporary);
     EXPECT_CALL(m_driver, is_disk()).Times(0);
@@ -733,13 +746,11 @@ TEST_F(TestGifWriterRaster, existingTemporaryDestinationIsNotDeleted)
 
     EXPECT_TRUE(std::filesystem::is_directory(temporary));
     const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, pixels, 8, 6);
+    expect_raster(*gif, m_original_pixels, 8, 6);
 }
 
-TEST_F(TestGifWriterRaster, replacementFailurePreservesOriginalAndExistingBackup)
+TEST_F(TestGifWriterExistingImage, replacementFailurePreservesOriginalAndExistingBackup)
 {
-    ASSERT_EQ(0, save());
-    const std::vector<Byte> pixels{image_pixels()};
     const std::filesystem::path backup{m_directory / "id.tmp.bak"};
     {
         std::ofstream reserved{backup};
@@ -759,7 +770,7 @@ TEST_F(TestGifWriterRaster, replacementFailurePreservesOriginalAndExistingBackup
     EXPECT_TRUE(std::filesystem::exists(backup));
     EXPECT_FALSE(std::filesystem::exists(m_directory / "id.tmp"));
     const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, pixels, 8, 6);
+    expect_raster(*gif, m_original_pixels, 8, 6);
 }
 
 TEST_F(TestGifWriterRaster, notificationFollowsProgressRestorationAndFileClosure)
@@ -851,68 +862,104 @@ TEST_F(TestGifWriterRaster, flushesProgressAfterEachStoredRowAndRestoresIt)
     EXPECT_FALSE(g_busy);
 }
 
-TEST_F(TestGifWriterRaster, restoresProgressAfterScanlineWriteFailure)
+class GifWriterSaveStreamTest : public TestGifWriterRaster
 {
-    configure_image(600, 12, 256);
-    const std::vector<Byte> pixels{image_pixels()};
-    FailingSaveBuffer buffer;
-    std::ostream output{&buffer};
-    ImageSave image{output, m_path};
-    int flushes{};
+protected:
+    void TearDown() override;
+    void start_save(int width, int height);
+
+    FailingSaveBuffer m_buffer;
+    std::ostream m_output{&m_buffer};
+    std::vector<Byte> m_pixels;
+    std::unique_ptr<ImageSave> m_image;
+};
+
+void GifWriterSaveStreamTest::start_save(const int width, const int height)
+{
+    configure_image(width, height, 256);
+    m_pixels = image_pixels();
+    m_image = std::make_unique<ImageSave>(m_output, m_path);
+}
+
+void GifWriterSaveStreamTest::TearDown()
+{
+    m_image.reset();
+    TestGifWriterRaster::TearDown();
+}
+
+class TestGifWriterRowWriteFailure : public GifWriterSaveStreamTest
+{
+protected:
+    void SetUp() override;
+
+    int m_flushes{};
+};
+
+void TestGifWriterRowWriteFailure::SetUp()
+{
+    TestGifWriterRaster::SetUp();
+    start_save(600, 12);
     EXPECT_CALL(m_driver, flush())
         .WillRepeatedly(
-            [&buffer, &flushes]
+            [this]
             {
-                ++flushes;
-                buffer.remaining = 0;
+                ++m_flushes;
+                m_buffer.remaining = 0;
             });
-
-    EXPECT_FALSE(write_image(image));
-
-    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, image.error());
-    EXPECT_GE(flushes, 2);
-    EXPECT_LT(flushes, 13);
-    EXPECT_EQ(pixels, image_pixels());
-    EXPECT_TRUE(image.done());
-    EXPECT_FALSE(image.succeeded());
 }
 
-TEST_F(TestGifWriterRaster, restoresProgressAndReportsCloseFailure)
+TEST_F(TestGifWriterRowWriteFailure, restoresProgressAfterScanlineWriteFailure)
 {
-    const std::vector<Byte> pixels{image_pixels()};
-    FailingSaveBuffer buffer;
-    std::ostream output{&buffer};
-    ImageSave image{output, m_path};
-    buffer.fail_sync = true;
+    EXPECT_FALSE(write_image(*m_image));
+
+    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, m_image->error());
+    EXPECT_GE(m_flushes, 2);
+    EXPECT_LT(m_flushes, 13);
+    EXPECT_EQ(m_pixels, image_pixels());
+    EXPECT_TRUE(m_image->done());
+    EXPECT_FALSE(m_image->succeeded());
+}
+
+class TestGifWriterSaveCloseFailure : public GifWriterSaveStreamTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGifWriterSaveCloseFailure::SetUp()
+{
+    TestGifWriterRaster::SetUp();
+    start_save(8, 6);
+    m_buffer.fail_sync = true;
     EXPECT_CALL(m_driver, flush()).Times(7);
-
-    EXPECT_FALSE(write_image(image));
-
-    EXPECT_EQ(E_GIF_ERR_CLOSE_FAILED, image.error());
-    EXPECT_EQ(pixels, image_pixels());
-    EXPECT_TRUE(image.done());
-    EXPECT_FALSE(image.succeeded());
 }
 
-TEST_F(TestGifWriterRaster, failedReplacementPreservesOriginalAndRemovesTemporaryFile)
+TEST_F(TestGifWriterSaveCloseFailure, restoresProgressAndReportsCloseFailure)
 {
-    const std::vector<Byte> pixels{image_pixels()};
-    ASSERT_EQ(0, save());
+    EXPECT_FALSE(write_image(*m_image));
+
+    EXPECT_EQ(E_GIF_ERR_CLOSE_FAILED, m_image->error());
+    EXPECT_EQ(m_pixels, image_pixels());
+    EXPECT_TRUE(m_image->done());
+    EXPECT_FALSE(m_image->succeeded());
+}
+
+TEST_F(TestGifWriterExistingImage, failedReplacementPreservesOriginalAndRemovesTemporaryFile)
+{
     g_logical_screen.x_dots = GIF_MAX_PIXELS + 1;
     std::filesystem::path filename{m_path};
 
     EXPECT_EQ(-1, save_image(filename));
 
     const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, pixels, 8, 6);
+    expect_raster(*gif, m_original_pixels, 8, 6);
     EXPECT_FALSE(std::filesystem::exists(m_directory / "id.tmp"));
     EXPECT_EQ(BatchMode::BAILOUT_ERROR_NO_SAVE, g_init_batch);
     EXPECT_FALSE(g_busy);
 }
 
-TEST_F(TestGifWriterRaster, overwriteReplacesOriginalOnlyAfterSuccessfulSave)
+TEST_F(TestGifWriterExistingImage, overwriteReplacesOriginalOnlyAfterSuccessfulSave)
 {
-    ASSERT_EQ(0, save());
     m_frame[0] = 123;
     const std::vector<Byte> pixels{image_pixels()};
     std::filesystem::path filename{m_path};
@@ -924,9 +971,8 @@ TEST_F(TestGifWriterRaster, overwriteReplacesOriginalOnlyAfterSuccessfulSave)
     EXPECT_FALSE(std::filesystem::exists(m_directory / "id.tmp"));
 }
 
-TEST_F(TestGifWriterRaster, selectsNextFilenameWithoutOverwriting)
+TEST_F(TestGifWriterExistingImage, selectsNextFilenameWithoutOverwriting)
 {
-    ASSERT_EQ(0, save());
     g_overwrite_file = false;
     std::filesystem::path filename{m_path};
 
