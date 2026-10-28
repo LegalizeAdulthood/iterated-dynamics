@@ -2315,101 +2315,137 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestMaxIterationsParameter,
         MaxIterationsParameterInput{"NotNumber", "maxiter=fmeh", 9999, CmdArgFlags::BAD_ARG}),
     [](const TestParamInfo<MaxIterationsParameterInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommandError, passesInvalidValue)
+struct PassesParameterInput
 {
-    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
+    const char *name;
+    const char *argument;
+    CalcMode mode;
+    std::optional<int> stop_pass;
+    std::optional<PerturbationMode> perturbation;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("passes=!", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(static_cast<CalcMode>('Z'), g_user.std_calc_mode);
+void PrintTo(const PassesParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommandError, passesMissingValue)
+class TestPassesParameter : public TestParameterCommand, public WithParamInterface<PassesParameterInput>
 {
-    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("passes=", CmdFile::AT_CMD_LINE);
+private:
+    ValueSaver<CalcMode> m_saved_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
+    ValueSaver<int> m_saved_stop_pass{g_stop_pass};
+    ValueSaver<PerturbationMode> m_saved_perturbation{g_user.perturbation};
+};
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(static_cast<CalcMode>('Z'), g_user.std_calc_mode);
+void TestPassesParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    if (GetParam().stop_pass)
+    {
+        g_stop_pass = -1;
+    }
+    if (GetParam().perturbation)
+    {
+        g_user.perturbation = PerturbationMode::AUTO;
+    }
 }
 
-TEST_F(TestParameterCommand, passesBoundaryTrace)
+TEST_P(TestPassesParameter, setsTraversalOptions)
 {
-    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    exec_cmd_arg("passes=b", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(CalcMode::BOUNDARY_TRACE, g_user.std_calc_mode);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().mode, g_user.std_calc_mode);
+    if (GetParam().stop_pass)
+    {
+        EXPECT_EQ(*GetParam().stop_pass, g_stop_pass);
+    }
+    if (GetParam().perturbation)
+    {
+        EXPECT_EQ(*GetParam().perturbation, g_user.perturbation);
+    }
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommand, passesSolidGuess)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPassesParameter,
+    Values(PassesParameterInput{"Invalid", "passes=!", static_cast<CalcMode>('Z'), std::nullopt, std::nullopt,
+               CmdArgFlags::BAD_ARG},
+        PassesParameterInput{
+            "Missing", "passes=", static_cast<CalcMode>('Z'), std::nullopt, std::nullopt, CmdArgFlags::BAD_ARG},
+        PassesParameterInput{
+            "NonNumeric", "passes=gg", static_cast<CalcMode>('Z'), std::nullopt, std::nullopt, CmdArgFlags::BAD_ARG},
+        PassesParameterInput{"BoundaryTrace", "passes=b", CalcMode::BOUNDARY_TRACE, std::nullopt, std::nullopt,
+            CmdArgFlags::FRACTAL_PARAM},
+        PassesParameterInput{
+            "SolidGuess", "passes=g", CalcMode::SOLID_GUESS, 0, std::nullopt, CmdArgFlags::FRACTAL_PARAM},
+        PassesParameterInput{
+            "SolidGuess3", "passes=g3", CalcMode::SOLID_GUESS, 3, std::nullopt, CmdArgFlags::FRACTAL_PARAM},
+        PassesParameterInput{"Perturbation", "passes=p", CalcMode::PERTURBATION, std::nullopt, PerturbationMode::YES,
+            CmdArgFlags::FRACTAL_PARAM}),
+    [](const TestParamInfo<PassesParameterInput> &info) { return info.param.name; });
+
+struct PerturbationParameterInput
 {
-    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
-    ValueSaver saved_stop_pass{g_stop_pass, -1};
+    const char *name;
+    const char *argument;
+    PerturbationMode initial;
+    PerturbationMode expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("passes=g", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(CalcMode::SOLID_GUESS, g_user.std_calc_mode);
-    EXPECT_EQ(0, g_stop_pass);
+void PrintTo(const PerturbationParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, passesSolidGuess3)
+class TestPerturbationParameter : public TestParameterCommand, public WithParamInterface<PerturbationParameterInput>
 {
-    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
-    ValueSaver saved_stop_pass{g_stop_pass, -1};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("passes=g3", CmdFile::AT_CMD_LINE);
+private:
+    ValueSaver<PerturbationMode> m_saved_perturbation{g_user.perturbation};
+};
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(CalcMode::SOLID_GUESS, g_user.std_calc_mode);
-    EXPECT_EQ(3, g_stop_pass);
+void TestPerturbationParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_user.perturbation = GetParam().initial;
 }
 
-TEST_F(TestParameterCommand, passesPerturbation)
+TEST_P(TestPerturbationParameter, setsPerturbationMode)
 {
-    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
-    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::AUTO};
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    exec_cmd_arg("passes=p", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(CalcMode::PERTURBATION, g_user.std_calc_mode);
-    EXPECT_EQ(PerturbationMode::YES, g_user.perturbation);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_user.perturbation);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommand, perturbationAuto)
-{
-    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::YES};
-
-    exec_cmd_arg("perturbation=auto", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(PerturbationMode::AUTO, g_user.perturbation);
-}
-
-TEST_F(TestParameterCommand, perturbationYes)
-{
-    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::AUTO};
-
-    exec_cmd_arg("perturbation=yes", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(PerturbationMode::YES, g_user.perturbation);
-}
-
-TEST_F(TestParameterCommand, perturbationNo)
-{
-    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::AUTO};
-
-    exec_cmd_arg("perturbation=no", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(PerturbationMode::NO, g_user.perturbation);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPerturbationParameter,
+    Values(PerturbationParameterInput{"Auto", "perturbation=auto", PerturbationMode::YES, PerturbationMode::AUTO,
+               CmdArgFlags::FRACTAL_PARAM},
+        PerturbationParameterInput{
+            "Yes", "perturbation=yes", PerturbationMode::AUTO, PerturbationMode::YES, CmdArgFlags::FRACTAL_PARAM},
+        PerturbationParameterInput{
+            "No", "perturbation=no", PerturbationMode::AUTO, PerturbationMode::NO, CmdArgFlags::FRACTAL_PARAM},
+        PerturbationParameterInput{
+            "Invalid", "perturbation=maybe", PerturbationMode::YES, PerturbationMode::YES, CmdArgFlags::BAD_ARG},
+        PerturbationParameterInput{
+            "Missing", "perturbation=", PerturbationMode::YES, PerturbationMode::YES, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<PerturbationParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, perturbationNoOverridesPassesPerturbation)
 {
@@ -2424,85 +2460,58 @@ TEST_F(TestParameterCommand, perturbationNoOverridesPassesPerturbation)
     EXPECT_EQ(PerturbationMode::NO, g_user.perturbation);
 }
 
-TEST_F(TestParameterCommandError, perturbationInvalidValue)
+struct PerturbationToleranceParameterInput
 {
-    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::YES};
+    const char *name;
+    const char *argument;
+    double initial;
+    double expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("perturbation=maybe", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(PerturbationMode::YES, g_user.perturbation);
+void PrintTo(const PerturbationToleranceParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommandError, perturbationMissingValue)
+class TestPerturbationToleranceParameter : public TestParameterCommand,
+                                           public WithParamInterface<PerturbationToleranceParameterInput>
 {
-    ValueSaver saved_user_perturbation{g_user.perturbation, PerturbationMode::YES};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("perturbation=", CmdFile::AT_CMD_LINE);
+private:
+    ValueSaver<double> m_saved_tolerance{g_user.perturbation_tolerance};
+};
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(PerturbationMode::YES, g_user.perturbation);
+void TestPerturbationToleranceParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_user.perturbation_tolerance = GetParam().initial;
 }
 
-TEST_F(TestParameterCommand, perturbationTolerance)
+TEST_P(TestPerturbationToleranceParameter, setsErrorTolerance)
 {
-    ValueSaver saved_user_perturbation_tolerance{g_user.perturbation_tolerance, DEFAULT_PERTURBATION_TOLERANCE};
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    exec_cmd_arg("perturbation-tolerance=0.001", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_DOUBLE_EQ(0.001, g_user.perturbation_tolerance);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_DOUBLE_EQ(GetParam().expected, g_user.perturbation_tolerance);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommandError, perturbationToleranceInvalidValue)
-{
-    ValueSaver saved_user_perturbation_tolerance{g_user.perturbation_tolerance, 0.25};
-
-    exec_cmd_arg("perturbation-tolerance=fmeh", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_DOUBLE_EQ(0.25, g_user.perturbation_tolerance);
-}
-
-TEST_F(TestParameterCommandError, perturbationToleranceMissingValue)
-{
-    ValueSaver saved_user_perturbation_tolerance{g_user.perturbation_tolerance, 0.25};
-
-    exec_cmd_arg("perturbation-tolerance=", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_DOUBLE_EQ(0.25, g_user.perturbation_tolerance);
-}
-
-TEST_F(TestParameterCommandError, perturbationToleranceZero)
-{
-    ValueSaver saved_user_perturbation_tolerance{g_user.perturbation_tolerance, 0.25};
-
-    exec_cmd_arg("perturbation-tolerance=0", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_DOUBLE_EQ(0.25, g_user.perturbation_tolerance);
-}
-
-TEST_F(TestParameterCommandError, perturbationToleranceNegative)
-{
-    ValueSaver saved_user_perturbation_tolerance{g_user.perturbation_tolerance, 0.25};
-
-    exec_cmd_arg("perturbation-tolerance=-0.001", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_DOUBLE_EQ(0.25, g_user.perturbation_tolerance);
-}
-
-TEST_F(TestParameterCommandError, passesSolidGuessNonNumeric)
-{
-    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
-
-    exec_cmd_arg("passes=gg", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(static_cast<CalcMode>('Z'), g_user.std_calc_mode);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPerturbationToleranceParameter,
+    Values(PerturbationToleranceParameterInput{"Value", "perturbation-tolerance=0.001", DEFAULT_PERTURBATION_TOLERANCE,
+               0.001, CmdArgFlags::FRACTAL_PARAM},
+        PerturbationToleranceParameterInput{"Invalid", "perturbation-tolerance=fmeh", 0.25, 0.25, CmdArgFlags::BAD_ARG},
+        PerturbationToleranceParameterInput{"Missing", "perturbation-tolerance=", 0.25, 0.25, CmdArgFlags::BAD_ARG},
+        PerturbationToleranceParameterInput{"Zero", "perturbation-tolerance=0", 0.25, 0.25, CmdArgFlags::BAD_ARG},
+        PerturbationToleranceParameterInput{
+            "Negative", "perturbation-tolerance=-0.001", 0.25, 0.25, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<PerturbationToleranceParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, isMandYes)
 {
