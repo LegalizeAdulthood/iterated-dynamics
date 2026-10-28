@@ -3617,49 +3617,48 @@ TEST_F(TestParameterCommand, aspectDrift)
     EXPECT_EQ(12.0F, g_aspect_drift);
 }
 
-TEST_F(TestParameterCommand, invertComputedRadius)
+struct InvertParameterInput
 {
-    ValueSaver saved_inversion0{g_inversion.params[0], 999.0};
-    ValueSaver saved_inversion1{g_inversion.params[1], 999.0};
-    ValueSaver saved_inversion2{g_inversion.params[2], 999.0};
-    ValueSaver saved_invert{g_inversion.invert, 999};
+    const char *name;
+    const char *argument;
+    double radius;
+    std::optional<DComplex> center;
+    int invert;
+};
 
-    exec_cmd_arg("invert=-1");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(-1.0, g_inversion.params[0]);
-    EXPECT_EQ(1, g_inversion.invert);
+void PrintTo(const InvertParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, invertDefaultCenter)
+class TestInvertParameter : public TestParameterCommand, public WithParamInterface<InvertParameterInput>
 {
-    ValueSaver saved_inversion0{g_inversion.params[0], 999.0};
-    ValueSaver saved_inversion1{g_inversion.params[1], 999.0};
-    ValueSaver saved_inversion2{g_inversion.params[2], 999.0};
-    ValueSaver saved_invert{g_inversion.invert, 999};
+private:
+    ValueSaver<double> m_saved_radius{g_inversion.params[0], 999.0};
+    ValueSaver<double> m_saved_center_x{g_inversion.params[1], 999.0};
+    ValueSaver<double> m_saved_center_y{g_inversion.params[2], 999.0};
+    ValueSaver<int> m_saved_invert{g_inversion.invert, 999};
+};
 
-    exec_cmd_arg("invert=1");
+TEST_P(TestInvertParameter, setsInversionParameters)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(1.0, g_inversion.params[0]);
-    EXPECT_EQ(1, g_inversion.invert);
+    EXPECT_EQ(GetParam().radius, g_inversion.params[0]);
+    if (GetParam().center)
+    {
+        EXPECT_EQ(GetParam().center->x, g_inversion.params[1]);
+        EXPECT_EQ(GetParam().center->y, g_inversion.params[2]);
+    }
+    EXPECT_EQ(GetParam().invert, g_inversion.invert);
 }
 
-TEST_F(TestParameterCommand, invertRadiusCenter)
-{
-    ValueSaver saved_inversion0{g_inversion.params[0], 999.0};
-    ValueSaver saved_inversion1{g_inversion.params[1], 999.0};
-    ValueSaver saved_inversion2{g_inversion.params[2], 999.0};
-    ValueSaver saved_invert{g_inversion.invert, 999};
-
-    exec_cmd_arg("invert=1/100/200");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(1.0, g_inversion.params[0]);
-    EXPECT_EQ(100.0, g_inversion.params[1]);
-    EXPECT_EQ(200.0, g_inversion.params[2]);
-    EXPECT_EQ(3, g_inversion.invert);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInvertParameter,
+    Values(InvertParameterInput{"ComputedRadius", "invert=-1", -1.0, std::nullopt, 1},
+        InvertParameterInput{"DefaultCenter", "invert=1", 1.0, std::nullopt, 1},
+        InvertParameterInput{"RadiusAndCenter", "invert=1/100/200", 1.0, DComplex{100.0, 200.0}, 3}),
+    [](const TestParamInfo<InvertParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, oldDemmColorsYes)
 {
