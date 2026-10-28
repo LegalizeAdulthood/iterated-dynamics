@@ -9980,83 +9980,18 @@ TEST_P(TestFrameIntegerPower, preservesIntegerPowerThroughoutFrame)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestFrameIntegerPower, ValuesIn(frame_integer_power_inputs()),
     [](const TestParamInfo<FrameIntegerPowerInput> &info) { return info.param.name; });
 
-class TestComplexPerturbationContinuation : public TestPerturbationIterations
+class ComplexPerturbationContinuationTest : public PerturbationIterationTest
 {
+public:
+    explicit ComplexPerturbationContinuationTest(bool use_big_float);
+
 protected:
     static void record_point(
-        const std::complex<double> &ref, std::complex<double> &delta, const std::complex<double> &parameter_delta)
-    {
-        s_perturbation_orbit.push_back(ref + delta);
-        mandel_z_power_perturb(ref, delta, parameter_delta);
-    }
+        const std::complex<double> &ref, std::complex<double> &delta, const std::complex<double> &parameter_delta);
 
-    void prepare(const std::complex<double> &power)
-    {
-        m_engine.finish();
-        if (m_big_float)
-        {
-            free_bf_vars();
-            m_big_float = false;
-        }
-        g_fractal_type = FractalType::MANDEL_Z_POWER;
-        g_params[2] = power.real();
-        g_params[3] = power.imag();
-        g_param_z2 = {power.real(), power.imag()};
-        g_c_exponent = static_cast<int>(power.real());
-        g_max_iterations = 8;
-        m_specific = *get_fractal_specific(g_fractal_type);
-        m_specific.pert_pt = record_point;
-        s_perturbation_orbit.clear();
-        initialize_reference({0.0625, 0.03125});
-    }
+    void prepare(const std::complex<double> &power);
 
-    void check_orbit(const std::complex<double> &parameter, const std::complex<double> &seed)
-    {
-        SCOPED_TRACE(parameter);
-        SCOPED_TRACE(seed);
-        DComplex native_parameter{parameter.real(), parameter.imag()};
-        ValueSaver saved_parameter{g_float_param, &native_parameter};
-        if (GetParam())
-        {
-            float_to_bf(g_param_z_bf.x, parameter.real());
-            float_to_bf(g_param_z_bf.y, parameter.imag());
-            float_to_bf(g_old_z_bf.x, seed.real());
-            float_to_bf(g_old_z_bf.y, seed.imag());
-        }
-        std::complex<double> expected{seed};
-        m_engine.begin_orbit(parameter, seed, 0);
-        long iteration{};
-        bool done{};
-        for (int call = 0; call < 2000 && !done; ++call)
-        {
-            done = m_engine.iterate_orbit();
-            if (m_engine.orbit_iteration() != iteration)
-            {
-                ASSERT_EQ(iteration + 1, m_engine.orbit_iteration());
-                bool escaped;
-                if (GetParam())
-                {
-                    escaped = julia_z_power_orbit_bf() != 0;
-                    expected = {
-                        static_cast<double>(bf_to_float(g_new_z_bf.x)), static_cast<double>(bf_to_float(g_new_z_bf.y))};
-                }
-                else
-                {
-                    g_old_z = {expected.real(), expected.imag()};
-                    escaped = mandel_z_power_cmplx_orbit() != 0;
-                    expected = {g_new_z.x, g_new_z.y};
-                }
-                ++iteration;
-                EXPECT_EQ(escaped, m_engine.orbit_escaped());
-                EXPECT_EQ(escaped || iteration == g_max_iterations, done);
-            }
-            const double tolerance{1e-11 * std::max(1.0, std::abs(expected))};
-            ASSERT_NEAR(expected.real(), m_engine.orbit_value().real(), tolerance);
-            ASSERT_NEAR(expected.imag(), m_engine.orbit_value().imag(), tolerance);
-        }
-        ASSERT_TRUE(done);
-        EXPECT_TRUE(m_plots.empty());
-    }
+    void check_orbit(const std::complex<double> &parameter, const std::complex<double> &seed);
 
     ValueSaver<int> m_saved_exponent{g_c_exponent};
     ValueSaver<double> m_saved_real_power{g_params[2]};
@@ -10065,25 +10000,174 @@ protected:
     ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
 };
 
-TEST_P(TestComplexPerturbationContinuation, pointSequencesMatchTheNativeComplexPowerKernels)
+ComplexPerturbationContinuationTest::ComplexPerturbationContinuationTest(bool use_big_float) :
+    PerturbationIterationTest{use_big_float}
 {
-    for (const std::complex<double> power :
-        {std::complex<double>{2.5, 0.0}, {0.5, 0.0}, {-0.5, 0.0}, {2.5, 0.25}, {0.25, -0.5}, {0.0, 0.5}})
+}
+
+void ComplexPerturbationContinuationTest::record_point(
+    const std::complex<double> &ref, std::complex<double> &delta, const std::complex<double> &parameter_delta)
+{
+    s_perturbation_orbit.push_back(ref + delta);
+    mandel_z_power_perturb(ref, delta, parameter_delta);
+}
+
+void ComplexPerturbationContinuationTest::prepare(const std::complex<double> &power)
+{
+    m_engine.finish();
+    if (m_big_float)
     {
-        SCOPED_TRACE(power);
-        prepare(power);
-        g_max_iterations = 4;
-        for (const std::complex<double> parameter : {std::complex<double>{}, {0.0625, 0.03125}})
+        free_bf_vars();
+        m_big_float = false;
+    }
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    g_params[2] = power.real();
+    g_params[3] = power.imag();
+    g_param_z2 = {power.real(), power.imag()};
+    g_c_exponent = static_cast<int>(power.real());
+    g_max_iterations = 8;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    m_specific.pert_pt = record_point;
+    s_perturbation_orbit.clear();
+    initialize_reference({0.0625, 0.03125});
+}
+
+void ComplexPerturbationContinuationTest::check_orbit(
+    const std::complex<double> &parameter, const std::complex<double> &seed)
+{
+    SCOPED_TRACE(parameter);
+    SCOPED_TRACE(seed);
+    DComplex native_parameter{parameter.real(), parameter.imag()};
+    ValueSaver saved_parameter{g_float_param, &native_parameter};
+    if (m_use_big_float)
+    {
+        float_to_bf(g_param_z_bf.x, parameter.real());
+        float_to_bf(g_param_z_bf.y, parameter.imag());
+        float_to_bf(g_old_z_bf.x, seed.real());
+        float_to_bf(g_old_z_bf.y, seed.imag());
+    }
+    std::complex<double> expected{seed};
+    m_engine.begin_orbit(parameter, seed, 0);
+    long iteration{};
+    bool done{};
+    for (int call = 0; call < 2000 && !done; ++call)
+    {
+        done = m_engine.iterate_orbit();
+        if (m_engine.orbit_iteration() != iteration)
         {
-            for (const std::complex<double> seed :
-                {std::complex<double>{}, {0.5, 0.125}, {-0.5, 0.000125}, {-0.5, -0.000125}})
+            ASSERT_EQ(iteration + 1, m_engine.orbit_iteration());
+            bool escaped;
+            if (m_use_big_float)
             {
-                check_orbit(parameter, seed);
+                escaped = julia_z_power_orbit_bf() != 0;
+                expected = {
+                    static_cast<double>(bf_to_float(g_new_z_bf.x)), static_cast<double>(bf_to_float(g_new_z_bf.y))};
+            }
+            else
+            {
+                g_old_z = {expected.real(), expected.imag()};
+                escaped = mandel_z_power_cmplx_orbit() != 0;
+                expected = {g_new_z.x, g_new_z.y};
+            }
+            ++iteration;
+            EXPECT_EQ(escaped, m_engine.orbit_escaped());
+            EXPECT_EQ(escaped || iteration == g_max_iterations, done);
+        }
+        const double tolerance{1e-11 * std::max(1.0, std::abs(expected))};
+        ASSERT_NEAR(expected.real(), m_engine.orbit_value().real(), tolerance);
+        ASSERT_NEAR(expected.imag(), m_engine.orbit_value().imag(), tolerance);
+    }
+    ASSERT_TRUE(done);
+    EXPECT_TRUE(m_plots.empty());
+}
+
+class TestComplexPerturbationContinuation : public ComplexPerturbationContinuationTest, public WithParamInterface<bool>
+{
+public:
+    TestComplexPerturbationContinuation();
+};
+
+TestComplexPerturbationContinuation::TestComplexPerturbationContinuation() :
+    ComplexPerturbationContinuationTest{GetParam()}
+{
+}
+
+struct ComplexOrbitInput
+{
+    std::string name;
+    bool big_float;
+    std::complex<double> power;
+    std::complex<double> parameter;
+    std::complex<double> seed;
+};
+
+void PrintTo(const ComplexOrbitInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<ComplexOrbitInput> complex_orbit_inputs()
+{
+    const std::vector<NamedOrbitValue> powers{{"Power2p5", {2.5, 0.0}}, {"Power0p5", {0.5, 0.0}},
+        {"NegativePower0p5", {-0.5, 0.0}}, {"Power2p5Plus0p25i", {2.5, 0.25}}, {"Power0p25Minus0p5i", {0.25, -0.5}},
+        {"Power0p5i", {0.0, 0.5}}};
+    const std::vector<NamedOrbitValue> parameters{{"ZeroParameter", {}}, {"ComplexParameter", {0.0625, 0.03125}}};
+    const std::vector<NamedOrbitValue> seeds{{"ZeroSeed", {}}, {"PositiveSeed", {0.5, 0.125}},
+        {"AboveBranch", {-0.5, 0.000125}}, {"BelowBranch", {-0.5, -0.000125}}};
+    std::vector<ComplexOrbitInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const NamedOrbitValue &power : powers)
+        {
+            for (const NamedOrbitValue &parameter : parameters)
+            {
+                for (const NamedOrbitValue &seed : seeds)
+                {
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + power.name + "_" +
+                            parameter.name + "_" + seed.name,
+                        big_float, power.value, parameter.value, seed.value});
+                }
             }
         }
-        EXPECT_FALSE(s_perturbation_orbit.empty());
+    }
+    return inputs;
+}
+
+class TestComplexPowerOrbit : public ComplexPerturbationContinuationTest, public WithParamInterface<ComplexOrbitInput>
+{
+public:
+    TestComplexPowerOrbit();
+
+protected:
+    void SetUp() override;
+};
+
+TestComplexPowerOrbit::TestComplexPowerOrbit() :
+    ComplexPerturbationContinuationTest{GetParam().big_float}
+{
+}
+
+void TestComplexPowerOrbit::SetUp()
+{
+    ComplexPerturbationContinuationTest::SetUp();
+    prepare(GetParam().power);
+    g_max_iterations = 4;
+    // Preserve a shared reference for nonzero deltas in the input sweep.
+    if (GetParam().parameter != std::complex<double>{} || GetParam().seed != std::complex<double>{})
+    {
+        ASSERT_NO_FATAL_FAILURE(check_orbit({}, {}));
     }
 }
+
+TEST_P(TestComplexPowerOrbit, matchesNativeComplexPowerSequence)
+{
+    check_orbit(GetParam().parameter, GetParam().seed);
+
+    EXPECT_FALSE(s_perturbation_orbit.empty());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestComplexPowerOrbit, ValuesIn(complex_orbit_inputs()),
+    [](const TestParamInfo<ComplexOrbitInput> &info) { return info.param.name; });
 
 TEST_P(TestComplexPerturbationContinuation, referenceReplacementPreservesAcceptedProgress)
 {
@@ -10104,68 +10188,142 @@ TEST_P(TestComplexPerturbationContinuation, referenceReplacementPreservesAccepte
     EXPECT_EQ(g_max_iterations + 1, s_perturbation_orbit.size());
 }
 
-TEST_P(TestComplexPerturbationContinuation, standardFrameUsesBothExponentComponents)
+struct ComplexFrameInput
 {
-    ValueSaver saved_user{g_user, UserData{}};
-    ValueSaver saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
-    ValueSaver saved_resuming{g_resuming, false};
-    g_user.perturbation = PerturbationMode::YES;
-    for (const std::complex<double> power : {std::complex<double>{2.5, 0.0}, {0.5, 0.25}, {2.5, -0.25}, {0.0, 0.5}})
-    {
-        SCOPED_TRACE(power);
-        prepare(power);
-        m_specific.symmetry = SymmetryType::NONE;
-        m_specific.per_image = GetParam() ? mandel_per_image_bf : mandel_per_image;
-        g_dispatch = FractalDispatch{m_specific};
-        g_image_region = ImageRegion{{0.125, 0.0625}, {0.125, 0.0625}, {0.125, 0.0625}};
-        if (GetParam())
-        {
-            float_to_bf(g_bf_x_min, 0.125);
-            float_to_bf(g_bf_x_max, 0.125);
-            float_to_bf(g_bf_x_3rd, 0.125);
-            float_to_bf(g_bf_y_min, 0.0625);
-            float_to_bf(g_bf_y_max, 0.0625);
-            float_to_bf(g_bf_y_3rd, 0.0625);
-        }
-        g_calc_status = CalcStatus::PARAMS_CHANGED;
-        StandardFractal calculation;
-        calculation.resume();
-        for (int chunk = 0; chunk < 200 && !calculation.done(); ++chunk)
-        {
-            calculation.iterate();
-        }
-        ASSERT_TRUE(calculation.done());
-        EXPECT_FALSE(s_perturbation_orbit.empty());
-        EXPECT_DOUBLE_EQ(power.real(), g_params[2]);
-        EXPECT_DOUBLE_EQ(power.imag(), g_params[3]);
-        calculation.finish();
-    }
+    std::string name;
+    bool big_float;
+    std::complex<double> power;
+};
+
+void PrintTo(const ComplexFrameInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+std::vector<ComplexFrameInput> complex_frame_inputs()
+{
+    const std::vector<NamedOrbitValue> powers{{"Power2p5", {2.5, 0.0}}, {"Power0p5Plus0p25i", {0.5, 0.25}},
+        {"Power2p5Minus0p25i", {2.5, -0.25}}, {"Power0p5i", {0.0, 0.5}}};
+    std::vector<ComplexFrameInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const NamedOrbitValue &power : powers)
+        {
+            inputs.push_back(
+                {std::string{big_float ? "HighPrecision_" : "Double_"} + power.name, big_float, power.value});
+        }
+    }
+    return inputs;
+}
+
+class TestComplexPowerFrame : public ComplexPerturbationContinuationTest, public WithParamInterface<ComplexFrameInput>
+{
+public:
+    TestComplexPowerFrame();
+
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<UserData> m_saved_user{g_user, UserData{}};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
+    ValueSaver<bool> m_saved_resuming{g_resuming, false};
+};
+
+TestComplexPowerFrame::TestComplexPowerFrame() :
+    ComplexPerturbationContinuationTest{GetParam().big_float}
+{
+}
+
+void TestComplexPowerFrame::SetUp()
+{
+    ComplexPerturbationContinuationTest::SetUp();
+    g_user.perturbation = PerturbationMode::YES;
+    prepare(GetParam().power);
+    m_specific.symmetry = SymmetryType::NONE;
+    m_specific.per_image = GetParam().big_float ? mandel_per_image_bf : mandel_per_image;
+    g_dispatch = FractalDispatch{m_specific};
+    g_image_region = ImageRegion{{0.125, 0.0625}, {0.125, 0.0625}, {0.125, 0.0625}};
+    if (GetParam().big_float)
+    {
+        float_to_bf(g_bf_x_min, 0.125);
+        float_to_bf(g_bf_x_max, 0.125);
+        float_to_bf(g_bf_x_3rd, 0.125);
+        float_to_bf(g_bf_y_min, 0.0625);
+        float_to_bf(g_bf_y_max, 0.0625);
+        float_to_bf(g_bf_y_3rd, 0.0625);
+    }
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+}
+
+TEST_P(TestComplexPowerFrame, usesBothExponentComponents)
+{
+    StandardFractal calculation;
+    calculation.resume();
+    for (int chunk = 0; chunk < 200 && !calculation.done(); ++chunk)
+    {
+        calculation.iterate();
+    }
+
+    ASSERT_TRUE(calculation.done());
+    EXPECT_FALSE(s_perturbation_orbit.empty());
+    EXPECT_DOUBLE_EQ(GetParam().power.real(), g_params[2]);
+    EXPECT_DOUBLE_EQ(GetParam().power.imag(), g_params[3]);
+    calculation.finish();
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestComplexPowerFrame, ValuesIn(complex_frame_inputs()),
+    [](const TestParamInfo<ComplexFrameInput> &info) { return info.param.name; });
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestComplexPerturbationContinuation, Bool());
 
-TEST_F(TestPerturbationPixels, complexPowerRetainsSignedZeroBranchSides)
+class TestSignedZeroPower : public TestPerturbationPixels, public WithParamInterface<int>
 {
-    ValueSaver saved_exponent{g_c_exponent, 0};
-    ValueSaver saved_real{g_params[2], 0.5};
-    ValueSaver saved_imag{g_params[3], 0.0};
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<int> m_saved_exponent{g_c_exponent, 0};
+    ValueSaver<double> m_saved_real{g_params[2], 0.5};
+    ValueSaver<double> m_saved_imaginary{g_params[3], 0.0};
+};
+
+void TestSignedZeroPower::SetUp()
+{
+    TestPerturbationPixels::SetUp();
     g_fractal_type = FractalType::MANDEL_Z_POWER;
     m_specific = *get_fractal_specific(g_fractal_type);
     g_max_iterations = 2;
     m_engine.initialize_frame({}, {}, {});
-    for (const int sign : {1, -1})
+    // Keep the opposite branch's reference for the negative-zero case.
+    if (GetParam() < 0)
     {
-        m_engine.begin_orbit({}, {-1.0, std::copysign(0.0, static_cast<double>(sign))}, 0);
+        m_engine.begin_orbit({}, {-1.0, 0.0}, 0);
         for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
         {
             m_engine.iterate_orbit();
         }
         ASSERT_EQ(1, m_engine.orbit_iteration());
-        EXPECT_NEAR(0.0, m_engine.orbit_value().real(), 1e-12);
-        EXPECT_NEAR(sign, m_engine.orbit_value().imag(), 1e-12);
         m_engine.finish_orbit();
     }
 }
+
+TEST_P(TestSignedZeroPower, retainsSignedZeroBranchSide)
+{
+    m_engine.begin_orbit({}, {-1.0, std::copysign(0.0, static_cast<double>(GetParam()))}, 0);
+    for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
+    {
+        m_engine.iterate_orbit();
+    }
+
+    ASSERT_EQ(1, m_engine.orbit_iteration());
+    EXPECT_NEAR(0.0, m_engine.orbit_value().real(), 1e-12);
+    EXPECT_NEAR(GetParam(), m_engine.orbit_value().imag(), 1e-12);
+    m_engine.finish_orbit();
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestSignedZeroPower, Values(1, -1),
+    [](const TestParamInfo<int> &info) { return info.param > 0 ? "PositiveZero" : "NegativeZero"; });
 
 TEST_F(TestPerturbationPixels, complexPowerMatchesNativeBranchesBelowDoubleRange)
 {
