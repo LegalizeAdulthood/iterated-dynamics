@@ -17,9 +17,11 @@
 
 #include <gtest/gtest.h>
 
+#include <array>
 #include <filesystem>
 #include <cstring>
 #include <fstream>
+#include <ostream>
 #include <string>
 
 namespace fs = std::filesystem;
@@ -60,9 +62,41 @@ private:
     fs::path m_path;
 };
 
-TEST(TestValidateLuts, loadMap)
+class TestValidateLuts : public testing::Test
 {
-    ValueSaver saved_map_name{g_map_name, std::string{ID_TEST_MAP_DIR} + "/foo.map"};
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    Byte m_default_palette[256][3]{};
+
+private:
+    ColorMapSaver m_palette;
+    ValueSaver<Driver *> m_driver{g_driver, nullptr};
+    ValueSaver<Version> m_version{g_version};
+    ValueSaver<ColorState> m_state{g_color_state};
+    ValueSaver<std::string> m_name{g_last_map_name};
+    ValueSaver<std::string> m_map_name{g_map_name};
+    ValueSaver<bool> m_specified{g_map_specified};
+};
+
+void TestValidateLuts::SetUp()
+{
+    Test::SetUp();
+    clear_read_library_path();
+    std::memcpy(m_default_palette, g_map_clut, sizeof(m_default_palette));
+}
+
+void TestValidateLuts::TearDown()
+{
+    std::memcpy(g_map_clut, m_default_palette, sizeof(m_default_palette));
+    clear_read_library_path();
+    Test::TearDown();
+}
+
+TEST_F(TestValidateLuts, loadMap)
+{
+    g_map_name = std::string{ID_TEST_MAP_DIR} + "/foo.map";
     add_read_library(ID_TEST_HOME_DIR);
 
     const PaletteLoadResult result{validate_luts(ID_TEST_MAP_FILE)};
@@ -75,66 +109,64 @@ TEST(TestValidateLuts, loadMap)
         EXPECT_EQ(g_expected_map[i][1], g_dac_box[i][1]) << "index " << i << " green";
         EXPECT_EQ(g_expected_map[i][2], g_dac_box[i][2]) << "index " << i << " blue";
     }
-    clear_read_library_path();
 }
 
-TEST(TestValidateLuts, oldResetExpandsQuantizedMap)
+struct MapCompatibilityInput
 {
-    TempMap map{"test-loadmap-legacy-quantized.map", "84 168 252"};
-    ValueSaver saved_version{g_version, Version{1, 3, 0, 0, false}};
+    const char *name;
+    const char *filename;
+    Version version;
+    const char *rgb;
+    std::array<int, 3> expected;
+};
+
+void PrintTo(const MapCompatibilityInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestValidateLutsCompatibility : public TestValidateLuts, public testing::WithParamInterface<MapCompatibilityInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestValidateLutsCompatibility::SetUp()
+{
+    TestValidateLuts::SetUp();
+    g_version = GetParam().version;
+}
+
+TEST_P(TestValidateLutsCompatibility, loadsPaletteUsingVersionCompatibility)
+{
+    const MapCompatibilityInput &input{GetParam()};
+    TempMap map{input.filename, input.rgb};
 
     const PaletteLoadResult result{validate_luts(map.string())};
 
     EXPECT_FALSE(result.failed);
     EXPECT_TRUE(result.diagnostic.empty());
-    EXPECT_EQ(expand_8bit_color(84), g_dac_box[0][0]);
-    EXPECT_EQ(expand_8bit_color(168), g_dac_box[0][1]);
-    EXPECT_EQ(expand_8bit_color(252), g_dac_box[0][2]);
-    EXPECT_EQ(expand_8bit_color(84), g_dac_box[255][0]);
-    EXPECT_EQ(expand_8bit_color(168), g_dac_box[255][1]);
-    EXPECT_EQ(expand_8bit_color(252), g_dac_box[255][2]);
+    for (int channel = 0; channel < 3; ++channel)
+    {
+        EXPECT_EQ(input.expected[channel], g_dac_box[0][channel]) << "channel " << channel;
+        EXPECT_EQ(input.expected[channel], g_dac_box[255][channel]) << "channel " << channel;
+    }
 }
 
-TEST(TestValidateLuts, modernResetKeepsQuantizedMapExact)
+INSTANTIATE_TEST_SUITE_P(CompatibilityInputs, TestValidateLutsCompatibility,
+    testing::Values(
+        MapCompatibilityInput{"LegacyQuantized", "test-loadmap-legacy-quantized.map", Version{1, 3, 0, 0, false},
+            "84 168 252", {expand_8bit_color(84), expand_8bit_color(168), expand_8bit_color(252)}},
+        MapCompatibilityInput{"ModernQuantized", "test-loadmap-modern-quantized.map", Version{1, 3, 1, 0, false},
+            "84 168 252", {84, 168, 252}},
+        MapCompatibilityInput{"LegacyNonQuantized", "test-loadmap-legacy-non-quantized.map", Version{1, 3, 0, 0, false},
+            "83 168 252", {83, 168, 252}}),
+    [](const testing::TestParamInfo<MapCompatibilityInput> &info) { return info.param.name; });
+
+TEST_F(TestValidateLuts, missingMapPreservesPaletteAndMetadataWithoutUI)
 {
-    TempMap map{"test-loadmap-modern-quantized.map", "84 168 252"};
-    ValueSaver saved_version{g_version, Version{1, 3, 1, 0, false}};
-
-    const PaletteLoadResult result{validate_luts(map.string())};
-
-    EXPECT_FALSE(result.failed);
-    EXPECT_TRUE(result.diagnostic.empty());
-    EXPECT_EQ(84, g_dac_box[0][0]);
-    EXPECT_EQ(168, g_dac_box[0][1]);
-    EXPECT_EQ(252, g_dac_box[0][2]);
-    EXPECT_EQ(84, g_dac_box[255][0]);
-    EXPECT_EQ(168, g_dac_box[255][1]);
-    EXPECT_EQ(252, g_dac_box[255][2]);
-}
-
-TEST(TestValidateLuts, oldResetKeepsNonQuantizedMapExact)
-{
-    TempMap map{"test-loadmap-legacy-non-quantized.map", "83 168 252"};
-    ValueSaver saved_version{g_version, Version{1, 3, 0, 0, false}};
-
-    const PaletteLoadResult result{validate_luts(map.string())};
-
-    EXPECT_FALSE(result.failed);
-    EXPECT_TRUE(result.diagnostic.empty());
-    EXPECT_EQ(83, g_dac_box[0][0]);
-    EXPECT_EQ(168, g_dac_box[0][1]);
-    EXPECT_EQ(252, g_dac_box[0][2]);
-    EXPECT_EQ(83, g_dac_box[255][0]);
-    EXPECT_EQ(168, g_dac_box[255][1]);
-    EXPECT_EQ(252, g_dac_box[255][2]);
-}
-
-TEST(TestValidateLuts, missingMapPreservesPaletteAndMetadataWithoutUI)
-{
-    ColorMapSaver saved_palette;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    ValueSaver saved_state{g_color_state, ColorState::UNKNOWN_MAP};
-    ValueSaver saved_name{g_last_map_name, std::string{"previous.map"}};
+    g_color_state = ColorState::UNKNOWN_MAP;
+    g_last_map_name = "previous.map";
     Byte palette[256][3];
     std::memcpy(palette, g_dac_box, sizeof(palette));
 
@@ -147,13 +179,9 @@ TEST(TestValidateLuts, missingMapPreservesPaletteAndMetadataWithoutUI)
     EXPECT_EQ("previous.map", g_last_map_name);
 }
 
-TEST(TestValidateLuts, malformedMapLoadsValidPrefixAndFillsRemainderWithoutUI)
+TEST_F(TestValidateLuts, malformedMapLoadsValidPrefixAndFillsRemainderWithoutUI)
 {
-    ColorMapSaver saved_palette;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    ValueSaver saved_version{g_version, Version{1, 3, 1, 0, false}};
-    ValueSaver saved_state{g_color_state};
-    ValueSaver saved_name{g_last_map_name};
+    g_version = Version{1, 3, 1, 0, false};
     TempMap map{"test-loadmap-malformed.map", "257 258 259\n10 20"};
 
     const PaletteLoadResult result{validate_luts(map.string())};
@@ -175,31 +203,22 @@ TEST(TestValidateLuts, malformedMapLoadsValidPrefixAndFillsRemainderWithoutUI)
     EXPECT_EQ(map.string(), g_last_map_name);
 }
 
-TEST(TestValidateLuts, missingDefaultMapPreservesStoredPaletteWithoutUI)
+TEST_F(TestValidateLuts, missingDefaultMapPreservesStoredPaletteWithoutUI)
 {
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    ValueSaver saved_specified{g_map_specified, true};
-    Byte palette[256][3];
-    std::memcpy(palette, g_map_clut, sizeof(palette));
+    g_map_specified = true;
 
     const PaletteLoadResult result{set_color_palette_name("missing-default-palette.map")};
 
     EXPECT_TRUE(result.failed);
-    EXPECT_EQ(0, std::memcmp(palette, g_map_clut, sizeof(palette)));
+    EXPECT_EQ(0, std::memcmp(m_default_palette, g_map_clut, sizeof(m_default_palette)));
     EXPECT_TRUE(g_map_specified);
 }
 
-TEST(TestValidateLuts, malformedDefaultMapRetainsWarningAndStoresPartialPalette)
+TEST_F(TestValidateLuts, malformedDefaultMapRetainsWarningAndStoresPartialPalette)
 {
-    ColorMapSaver saved_palette;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    ValueSaver saved_version{g_version, Version{1, 3, 1, 0, false}};
-    ValueSaver saved_specified{g_map_specified, false};
-    ValueSaver saved_state{g_color_state};
-    ValueSaver saved_name{g_last_map_name};
+    g_version = Version{1, 3, 1, 0, false};
+    g_map_specified = false;
     TempMap map{"test-loadmap-default-malformed.map", "1 2 3\n4 5"};
-    Byte palette[256][3];
-    std::memcpy(palette, g_map_clut, sizeof(palette));
 
     const PaletteLoadResult result{set_color_palette_name(map.string())};
 
@@ -207,7 +226,6 @@ TEST(TestValidateLuts, malformedDefaultMapRetainsWarningAndStoresPartialPalette)
     EXPECT_FALSE(result.diagnostic.empty());
     EXPECT_TRUE(g_map_specified);
     EXPECT_EQ(0, std::memcmp(g_dac_box, g_map_clut, sizeof(g_map_clut)));
-    std::memcpy(g_map_clut, palette, sizeof(palette));
 }
 
 } // namespace id::test
