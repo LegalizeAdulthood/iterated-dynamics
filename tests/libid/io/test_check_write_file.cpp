@@ -15,6 +15,7 @@
 #include <fstream>
 #include <ostream>
 #include <string>
+#include <vector>
 #include <gtest/gtest.h>
 
 using namespace id::io;
@@ -70,148 +71,151 @@ INSTANTIATE_TEST_SUITE_P(FilenameInputs, TestCheckWriteFile,
             ID_TEST_CHECK_WRITE_FILE3}),
     [](const testing::TestParamInfo<FilenameAdvancementInput> &info) { return info.param.name; });
 
-TEST(TestGetCheckedSavePath, existingFileAdvancesWhenOverwriteIsOff)
+class TestGetCheckedSavePath : public testing::Test
 {
-    ValueSaver saved_overwrite{g_overwrite_file, false};
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void create_owned_file(const fs::path &path);
+
+private:
+    ValueSaver<bool> m_overwrite{g_overwrite_file, false};
+    ValueSaver<fs::path> m_save_dir{g_save_dir};
+    std::vector<fs::path> m_files;
+};
+
+void TestGetCheckedSavePath::SetUp()
+{
+    Test::SetUp();
     set_save_library(ID_TEST_SAVE_DIR);
+}
+
+void TestGetCheckedSavePath::TearDown()
+{
+    for (const fs::path &path : m_files)
+    {
+        std::error_code error;
+        fs::remove(path, error);
+    }
+    clear_save_library();
+    Test::TearDown();
+}
+
+void TestGetCheckedSavePath::create_owned_file(const fs::path &path)
+{
+    m_files.emplace_back(path);
+    create_file(path);
+}
+
+struct SaveCollisionInput
+{
+    const char *name;
+    WriteFile category;
+    const char *requested;
+    bool overwrite;
+    fs::path existing;
+    fs::path expected;
+};
+
+void PrintTo(const SaveCollisionInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestGetCheckedSavePathCollision : public TestGetCheckedSavePath,
+                                        public testing::WithParamInterface<SaveCollisionInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGetCheckedSavePathCollision::SetUp()
+{
+    TestGetCheckedSavePath::SetUp();
+    g_overwrite_file = GetParam().overwrite;
+    if (!GetParam().existing.empty())
+    {
+        create_owned_file(fs::path{ID_TEST_SAVE_DIR} / GetParam().existing);
+    }
+}
+
+TEST_P(TestGetCheckedSavePathCollision, resolvesCollisionUsingOverwritePolicy)
+{
+    const fs::path path{get_checked_save_path(GetParam().category, GetParam().requested)};
+
+    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / GetParam().expected, path);
+}
+
+INSTANTIATE_TEST_SUITE_P(CollisionInputs, TestGetCheckedSavePathCollision,
+    testing::Values(
+        SaveCollisionInput{"ImageAdvances", WriteFile::IMAGE, ID_TEST_SAVE_IMAGE_FILE, false, {}, "image/save2.gif"},
+        SaveCollisionInput{"ImageOverwrites", WriteFile::IMAGE, ID_TEST_SAVE_IMAGE_FILE, true, {}, "image/save.gif"},
+        SaveCollisionInput{"MapAdvances", WriteFile::MAP, "colors", false, "map/colors.map", "map/colors2.map"},
+        SaveCollisionInput{
+            "MigGifAdvances", WriteFile::IMAGE, "fractmig.gif", false, "image/fractmig.gif", "image/fractmig2.gif"},
+        SaveCollisionInput{"MigBatchAdvances", WriteFile::ROOT, "makemig.bat", false, "makemig.bat", "makemig2.bat"},
+        SaveCollisionInput{
+            "DebugAdvances", WriteFile::DEBUG, "debugfrm", false, "debug/debugfrm.txt", "debug/debugfrm2.txt"},
+        SaveCollisionInput{
+            "DebugOverwrites", WriteFile::DEBUG, "stopmsg", true, "debug/stopmsg.txt", "debug/stopmsg.txt"}),
+    [](const testing::TestParamInfo<SaveCollisionInput> &info) { return info.param.name; });
+
+struct SaveExtensionInput
+{
+    const char *name;
+    const char *requested;
+    const char *expected;
+};
+
+void PrintTo(const SaveExtensionInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestGetCheckedSavePathExtension : public TestGetCheckedSavePath,
+                                        public testing::WithParamInterface<SaveExtensionInput>
+{
+};
+
+TEST_P(TestGetCheckedSavePathExtension, resolvesFilenameExtension)
+{
+    const fs::path path{get_checked_save_path(WriteFile::IMAGE, GetParam().requested)};
+
+    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "image" / GetParam().expected, path);
+}
+
+INSTANTIATE_TEST_SUITE_P(ExtensionInputs, TestGetCheckedSavePathExtension,
+    testing::Values(SaveExtensionInput{"Default", "newimage", "newimage.gif"},
+        SaveExtensionInput{"Explicit", "newimage.tga", "newimage.tga"}),
+    [](const testing::TestParamInfo<SaveExtensionInput> &info) { return info.param.name; });
+
+TEST_F(TestGetCheckedSavePath, saveDirIsUsedWithoutSaveLibrary)
+{
+    clear_save_library();
+    g_save_dir = ID_TEST_SAVE_DIR;
 
     const fs::path path{get_checked_save_path(WriteFile::IMAGE, ID_TEST_SAVE_IMAGE_FILE)};
 
     EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "image/save2.gif", path);
-    clear_save_library();
 }
 
-TEST(TestGetCheckedSavePath, existingFileIsReusedWhenOverwriteIsOn)
-{
-    ValueSaver saved_overwrite{g_overwrite_file, true};
-    set_save_library(ID_TEST_SAVE_DIR);
-
-    const fs::path path{get_checked_save_path(WriteFile::IMAGE, ID_TEST_SAVE_IMAGE_FILE)};
-
-    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "image/save.gif", path);
-    clear_save_library();
-}
-
-TEST(TestGetCheckedSavePath, defaultExtensionIsAdded)
-{
-    ValueSaver saved_overwrite{g_overwrite_file, false};
-    set_save_library(ID_TEST_SAVE_DIR);
-
-    const fs::path path{get_checked_save_path(WriteFile::IMAGE, "newimage")};
-
-    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "image/newimage.gif", path);
-    clear_save_library();
-}
-
-TEST(TestGetCheckedSavePath, explicitExtensionIsPreserved)
-{
-    ValueSaver saved_overwrite{g_overwrite_file, false};
-    set_save_library(ID_TEST_SAVE_DIR);
-
-    const fs::path path{get_checked_save_path(WriteFile::IMAGE, "newimage.tga")};
-
-    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "image/newimage.tga", path);
-    clear_save_library();
-}
-
-TEST(TestGetCheckedSavePath, saveDirIsUsedWithoutSaveLibrary)
-{
-    ValueSaver saved_overwrite{g_overwrite_file, false};
-    ValueSaver saved_save_dir{g_save_dir, fs::path{ID_TEST_SAVE_DIR}};
-
-    const fs::path path{get_checked_save_path(WriteFile::IMAGE, ID_TEST_SAVE_IMAGE_FILE)};
-
-    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "image/save2.gif", path);
-}
-
-TEST(TestGetCheckedSavePath, currentDirectoryCollisionDoesNotAdvanceFinalPath)
+TEST_F(TestGetCheckedSavePath, currentDirectoryCollisionDoesNotAdvanceFinalPath)
 {
     CurrentPathSaver saved_cur_dir{ID_TEST_CHECK_WRITE_FILE_DATA_DIR};
-    ValueSaver saved_overwrite{g_overwrite_file, false};
-    set_save_library(ID_TEST_SAVE_DIR);
 
     const fs::path path{get_checked_save_path(WriteFile::IMAGE, "fract001")};
 
     EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "image/fract001.gif", path);
-    clear_save_library();
 }
 
-TEST(TestGetCheckedSavePath, mapCollisionAdvancesWhenOverwriteIsOff)
+TEST_F(TestGetCheckedSavePath, appendPathIgnoresOverwritePolicy)
 {
-    ValueSaver saved_overwrite{g_overwrite_file, false};
-    set_save_library(ID_TEST_SAVE_DIR);
-    const fs::path existing{fs::path{ID_TEST_SAVE_DIR} / "map/colors.map"};
-    create_file(existing);
-
-    const fs::path path{get_checked_save_path(WriteFile::MAP, "colors")};
-
-    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "map/colors2.map", path);
-    clear_save_library();
-}
-
-TEST(TestGetCheckedSavePath, migGifCollisionAdvancesWhenOverwriteIsOff)
-{
-    ValueSaver saved_overwrite{g_overwrite_file, false};
-    set_save_library(ID_TEST_SAVE_DIR);
-    const fs::path existing{fs::path{ID_TEST_SAVE_DIR} / "image/fractmig.gif"};
-    create_file(existing);
-
-    const fs::path path{get_checked_save_path(WriteFile::IMAGE, "fractmig.gif")};
-
-    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "image/fractmig2.gif", path);
-    clear_save_library();
-}
-
-TEST(TestGetCheckedSavePath, makeMigBatchCollisionAdvancesWhenOverwriteIsOff)
-{
-    ValueSaver saved_overwrite{g_overwrite_file, false};
-    set_save_library(ID_TEST_SAVE_DIR);
-    const fs::path existing{fs::path{ID_TEST_SAVE_DIR} / "makemig.bat"};
-    create_file(existing);
-
-    const fs::path path{get_checked_save_path(WriteFile::ROOT, "makemig.bat")};
-
-    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "makemig2.bat", path);
-    clear_save_library();
-}
-
-TEST(TestGetCheckedSavePath, debugCollisionAdvancesWhenOverwriteIsOff)
-{
-    ValueSaver saved_overwrite{g_overwrite_file, false};
-    set_save_library(ID_TEST_SAVE_DIR);
-    const fs::path existing{fs::path{ID_TEST_SAVE_DIR} / "debug/debugfrm.txt"};
-    create_file(existing);
-
-    const fs::path path{get_checked_save_path(WriteFile::DEBUG, "debugfrm")};
-
-    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "debug/debugfrm2.txt", path);
-    clear_save_library();
-}
-
-TEST(TestGetCheckedSavePath, debugCollisionIsReusedWhenOverwriteIsOn)
-{
-    ValueSaver saved_overwrite{g_overwrite_file, true};
-    set_save_library(ID_TEST_SAVE_DIR);
-    const fs::path existing{fs::path{ID_TEST_SAVE_DIR} / "debug/stopmsg.txt"};
-    create_file(existing);
-
-    const fs::path path{get_checked_save_path(WriteFile::DEBUG, "stopmsg")};
-
-    EXPECT_EQ(existing, path);
-    clear_save_library();
-}
-
-TEST(TestGetCheckedSavePath, appendPathIgnoresOverwritePolicy)
-{
-    ValueSaver saved_overwrite{g_overwrite_file, false};
-    set_save_library(ID_TEST_SAVE_DIR);
     const fs::path existing{fs::path{ID_TEST_SAVE_DIR} / "debug/frmtokens.txt"};
-    create_file(existing);
+    create_owned_file(existing);
 
     const fs::path path{get_append_save_path(WriteFile::DEBUG, "frmtokens")};
 
     EXPECT_EQ(existing, path);
-    clear_save_library();
 }
 
 } // namespace id::test
