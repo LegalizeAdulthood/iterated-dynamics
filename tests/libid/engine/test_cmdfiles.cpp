@@ -79,6 +79,7 @@
 #include <gif_lib.h>
 
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <cstddef>
 #include <cstdio>
@@ -2975,120 +2976,150 @@ TEST_F(TestParameterCommand, textColorsMono)
     }
 }
 
-TEST_F(TestParameterCommand, textColorsValues)
+struct TextColorsParameterInput
 {
-    TextColorSaver saved_text_colors;
+    const char *name;
+    const char *argument;
+    std::optional<Byte> first_color;
+};
 
-    exec_cmd_arg("textcolors=24/28");
+void PrintTo(const TextColorsParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestTextColorsParameter : public TestParameterCommand, public WithParamInterface<TextColorsParameterInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    TextColorSaver m_saved_colors;
+};
+
+void TestTextColorsParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    if (GetParam().first_color)
+    {
+        g_text_color[0] = *GetParam().first_color;
+    }
+}
+
+TEST_P(TestTextColorsParameter, setsExplicitTextColors)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(0x24, g_text_color[0]);
     EXPECT_EQ(0x28, g_text_color[1]);
 }
 
-TEST_F(TestParameterCommand, textColorsSkippedValues)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestTextColorsParameter,
+    Values(TextColorsParameterInput{"Values", "textcolors=24/28", std::nullopt},
+        TextColorsParameterInput{"SkippedValue", "textcolors=/28", Byte{0x24}}),
+    [](const TestParamInfo<TextColorsParameterInput> &info) { return info.param.name; });
+
+struct PotentialParameterInput
 {
-    TextColorSaver saved_text_colors;
-    g_text_color[0] = 0x24;
+    const char *name;
+    const char *argument;
+    std::array<double, 3> expected;
+    bool initial_16bit;
+    bool expected_16bit;
+};
 
-    exec_cmd_arg("textcolors=/28");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(0x24, g_text_color[0]);
-    EXPECT_EQ(0x28, g_text_color[1]);
+void PrintTo(const PotentialParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, potentialOneValue)
+class TestPotentialParameter : public TestParameterCommand, public WithParamInterface<PotentialParameterInput>
 {
-    ValueSaver saved_potential_params0{g_potential.params[0], 9999.0};
-    ValueSaver saved_potential_params1{g_potential.params[1], 8888.0};
-    ValueSaver saved_potential_params2{g_potential.params[2], 7777.0};
-    ValueSaver saved_potential_16bit{g_potential.store_16bit, true};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("potential=111");
+private:
+    ValueSaver<double> m_saved_first{g_potential.params[0], 9999.0};
+    ValueSaver<double> m_saved_second{g_potential.params[1], 8888.0};
+    ValueSaver<double> m_saved_third{g_potential.params[2], 7777.0};
+    ValueSaver<bool> m_saved_16bit{g_potential.store_16bit};
+};
+
+void TestPotentialParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_potential.store_16bit = GetParam().initial_16bit;
+}
+
+TEST_P(TestPotentialParameter, setsPotentialComponents)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(111.0, g_potential.params[0]);
-    EXPECT_EQ(8888.0, g_potential.params[1]);
-    EXPECT_EQ(7777.0, g_potential.params[2]);
-    EXPECT_FALSE(g_potential.store_16bit);
+    for (std::size_t i = 0; i < GetParam().expected.size(); ++i)
+    {
+        EXPECT_EQ(GetParam().expected[i], g_potential.params[i]) << i;
+    }
+    EXPECT_EQ(GetParam().expected_16bit, g_potential.store_16bit);
 }
 
-TEST_F(TestParameterCommand, potentialTwoValues)
-{
-    ValueSaver saved_potential_params0{g_potential.params[0], 9999.0};
-    ValueSaver saved_potential_params1{g_potential.params[1], 8888.0};
-    ValueSaver saved_potential_params2{g_potential.params[2], 7777.0};
-    ValueSaver saved_potential_16bit{g_potential.store_16bit, true};
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialParameter,
+    Values(PotentialParameterInput{"OneValue", "potential=111", {111.0, 8888.0, 7777.0}, true, false},
+        PotentialParameterInput{"TwoValues", "potential=111/222", {111.0, 222.0, 7777.0}, true, false},
+        PotentialParameterInput{"ThreeValues", "potential=111/222/333", {111.0, 222.0, 333.0}, true, false},
+        PotentialParameterInput{"SixteenBit", "potential=111/222/333/16bit", {111.0, 222.0, 333.0}, false, true}),
+    [](const TestParamInfo<PotentialParameterInput> &info) { return info.param.name; });
 
-    exec_cmd_arg("potential=111/222");
+struct NumericParamsParameterInput
+{
+    const char *name;
+    const char *argument;
+    std::vector<double> initial;
+    std::vector<double> expected;
+};
+
+void PrintTo(const NumericParamsParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestNumericParamsParameter : public TestParameterCommand, public WithParamInterface<NumericParamsParameterInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<double> m_saved_first{g_params[0]};
+    ValueSaver<double> m_saved_second{g_params[1]};
+    ValueSaver<double> m_saved_third{g_params[2]};
+    ValueSaver<BFMathType> m_saved_math{g_bf_math, BFMathType::NONE};
+};
+
+void TestNumericParamsParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    for (std::size_t i = 0; i < GetParam().initial.size(); ++i)
+    {
+        g_params[i] = GetParam().initial[i];
+    }
+}
+
+TEST_P(TestNumericParamsParameter, setsAndZeroFillsParameters)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(111.0, g_potential.params[0]);
-    EXPECT_EQ(222.0, g_potential.params[1]);
-    EXPECT_EQ(7777.0, g_potential.params[2]);
-    EXPECT_FALSE(g_potential.store_16bit);
+    for (std::size_t i = 0; i < GetParam().expected.size(); ++i)
+    {
+        EXPECT_EQ(GetParam().expected[i], g_params[i]) << i;
+    }
 }
 
-TEST_F(TestParameterCommand, potentialThreeValues)
-{
-    ValueSaver saved_potential_params0{g_potential.params[0], 9999.0};
-    ValueSaver saved_potential_params1{g_potential.params[1], 8888.0};
-    ValueSaver saved_potential_params2{g_potential.params[2], 7777.0};
-    ValueSaver saved_potential_16bit{g_potential.store_16bit, true};
-
-    exec_cmd_arg("potential=111/222/333");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(111.0, g_potential.params[0]);
-    EXPECT_EQ(222.0, g_potential.params[1]);
-    EXPECT_EQ(333.0, g_potential.params[2]);
-    EXPECT_FALSE(g_potential.store_16bit);
-}
-
-TEST_F(TestParameterCommand, potential16Bit)
-{
-    ValueSaver saved_potential_params0{g_potential.params[0], 9999.0};
-    ValueSaver saved_potential_params1{g_potential.params[1], 8888.0};
-    ValueSaver saved_potential_params2{g_potential.params[2], 7777.0};
-    ValueSaver saved_potential_16bit{g_potential.store_16bit, false};
-
-    exec_cmd_arg("potential=111/222/333/16bit");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(111.0, g_potential.params[0]);
-    EXPECT_EQ(222.0, g_potential.params[1]);
-    EXPECT_EQ(333.0, g_potential.params[2]);
-    EXPECT_TRUE(g_potential.store_16bit);
-}
-
-TEST_F(TestParameterCommand, paramsOneValue)
-{
-    ValueSaver saved_params0{g_params[0], 1111.0};
-    ValueSaver saved_params1{g_params[1], 2222.0};
-    ValueSaver saved_bf_math{g_bf_math, BFMathType::NONE};
-
-    exec_cmd_arg("params=1.0");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(1.0, g_params[0]);
-    EXPECT_EQ(0.0, g_params[1]);
-}
-
-TEST_F(TestParameterCommand, paramsTwoValues)
-{
-    ValueSaver saved_params0{g_params[0], 1111.0};
-    ValueSaver saved_params1{g_params[1], 2222.0};
-    ValueSaver saved_params2{g_params[2], 3333.0};
-    ValueSaver saved_bf_math{g_bf_math, BFMathType::NONE};
-
-    exec_cmd_arg("params=1.0/2.0");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(1.0, g_params[0]);
-    EXPECT_EQ(2.0, g_params[1]);
-    EXPECT_EQ(0.0, g_params[2]);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestNumericParamsParameter,
+    Values(NumericParamsParameterInput{"OneValue", "params=1.0", {1111.0, 2222.0}, {1.0, 0.0}},
+        NumericParamsParameterInput{"TwoValues", "params=1.0/2.0", {1111.0, 2222.0, 3333.0}, {1.0, 2.0, 0.0}}),
+    [](const TestParamInfo<NumericParamsParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, paramsStoresText)
 {
