@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <engine/trig_fns.h>
 
@@ -10,6 +11,7 @@
 #include <gtest/gtest.h>
 
 #include <string>
+#include <ostream>
 
 using namespace id::fractals;
 using namespace id::misc;
@@ -30,26 +32,44 @@ protected:
     ValueSaver<TrigFn> m_saved_trig_index3{g_trig_index[3], TrigFn::COTAN};
 };
 
-TEST_F(TestTrigFns, trigDetailsEmptyWhenNoFunctions)
+struct TrigDisplayInput
 {
-    EXPECT_EQ("", trig_details());
-    EXPECT_EQ("", get_function_param());
+    const char *name;
+    int count;
+    const char *details;
+    const char *parameter;
+};
+
+void PrintTo(const TrigDisplayInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
 
-TEST_F(TestTrigFns, trigDetailsRendersOneFunction)
+class TestTrigFnsDisplay : public TestTrigFns, public testing::WithParamInterface<TrigDisplayInput>
 {
-    g_formula.max_function = 1;
+protected:
+    void SetUp() override;
+};
 
-    EXPECT_EQ("sin", trig_details());
-    EXPECT_EQ(" function=sin", get_function_param());
+void TestTrigFnsDisplay::SetUp()
+{
+    TestTrigFns::SetUp();
+    g_formula.max_function = GetParam().count;
 }
 
-TEST_F(TestTrigFns, trigDetailsRendersMultipleFunctions)
+TEST_P(TestTrigFnsDisplay, rendersFunctionDetails)
 {
-    g_formula.max_function = 4;
-
-    EXPECT_EQ("sin/cos/tan/cotan", trig_details());
-    EXPECT_EQ(" function=sin/cos/tan/cotan", get_function_param());
+    EXPECT_EQ(GetParam().details, trig_details());
 }
+
+TEST_P(TestTrigFnsDisplay, rendersFunctionParameter)
+{
+    EXPECT_EQ(GetParam().parameter, get_function_param());
+}
+
+INSTANTIATE_TEST_SUITE_P(FunctionCounts, TestTrigFnsDisplay,
+    testing::Values(TrigDisplayInput{"Empty", 0, "", ""}, TrigDisplayInput{"OneFunction", 1, "sin", " function=sin"},
+        TrigDisplayInput{"FourFunctions", 4, "sin/cos/tan/cotan", " function=sin/cos/tan/cotan"}),
+    [](const testing::TestParamInfo<TrigDisplayInput> &info) { return info.param.name; });
 
 } // namespace id::engine
