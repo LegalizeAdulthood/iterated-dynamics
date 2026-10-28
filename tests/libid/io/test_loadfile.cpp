@@ -271,85 +271,97 @@ ImageMetadata TestGetVideoMode::metadata() const
     return data;
 }
 
-TEST_F(TestGetVideoMode, reducesLargeGifView)
+struct PendingViewportCase
 {
-    const std::optional<ImageVideoMode> setup{get_video_mode(metadata(), g_viewport)};
+    const char *name;
+    int file_width;
+    int file_height;
+    float file_aspect;
+    CalcStatus initial_status;
+    int view_width;
+    int view_height;
+    bool disable_pending_view;
+    int expected_width;
+    int expected_height;
+    int expected_skip_x;
+    int expected_skip_y;
+    CalcStatus expected_status;
+    std::optional<bool> expected_view_enabled;
+    std::optional<float> expected_reduction;
+};
+
+void PrintTo(const PendingViewportCase &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestPendingViewport : public TestGetVideoMode, public WithParamInterface<PendingViewportCase>
+{
+protected:
+    void SetUp() override;
+
+    Viewport m_pending_viewport{};
+};
+
+void TestPendingViewport::SetUp()
+{
+    TestGetVideoMode::SetUp();
+    const PendingViewportCase &input{GetParam()};
+    g_file_x_dots = input.file_width;
+    g_file_y_dots = input.file_height;
+    g_file_aspect_ratio = input.file_aspect;
+    g_calc_status = input.initial_status;
+    g_viewport.enabled = input.view_width != 0;
+    g_viewport.x_dots = input.view_width;
+    g_viewport.y_dots = input.view_height;
+    m_pending_viewport = g_viewport;
+    if (input.disable_pending_view)
+    {
+        m_pending_viewport.enabled = false;
+    }
+}
+
+TEST_P(TestPendingViewport, computesPendingModeWithoutChangingActiveImage)
+{
+    const PendingViewportCase &expected{GetParam()};
+
+    const std::optional<ImageVideoMode> setup{get_video_mode(metadata(), m_pending_viewport)};
 
     ASSERT_TRUE(setup);
-    EXPECT_EQ(596, setup->width);
-    EXPECT_EQ(596, setup->height);
-    EXPECT_EQ(109, setup->skip_x);
-    EXPECT_EQ(109, setup->skip_y);
-    EXPECT_EQ(65535, g_file_x_dots);
-    EXPECT_EQ(65535, g_file_y_dots);
+    EXPECT_EQ(expected.expected_width, setup->width);
+    EXPECT_EQ(expected.expected_height, setup->height);
+    EXPECT_EQ(expected.expected_skip_x, setup->skip_x);
+    EXPECT_EQ(expected.expected_skip_y, setup->skip_y);
+    EXPECT_EQ(expected.expected_status, setup->calc_status);
+    if (expected.expected_view_enabled)
+    {
+        EXPECT_EQ(*expected.expected_view_enabled, setup->viewport.enabled);
+    }
+    if (expected.expected_reduction)
+    {
+        EXPECT_FLOAT_EQ(*expected.expected_reduction, setup->viewport.reduction);
+        EXPECT_EQ(0, setup->viewport.x_dots);
+        EXPECT_EQ(0, setup->viewport.y_dots);
+    }
+    EXPECT_EQ(expected.file_width, g_file_x_dots);
+    EXPECT_EQ(expected.file_height, g_file_y_dots);
+    EXPECT_EQ(expected.initial_status, g_calc_status);
+    EXPECT_EQ(expected.view_width != 0, g_viewport.enabled);
+    EXPECT_EQ(expected.view_width, g_viewport.x_dots);
+    EXPECT_EQ(expected.view_height, g_viewport.y_dots);
     EXPECT_EQ(0, g_skip_x_dots);
 }
 
-TEST_F(TestGetVideoMode, fitsOversizedGifWithUnequalSkipFactors)
-{
-    g_file_x_dots = 1600;
-    g_file_y_dots = 1800;
-    g_file_aspect_ratio = 0.75f;
-    g_calc_status = CalcStatus::RESUMABLE;
-
-    const std::optional<ImageVideoMode> setup{get_video_mode(metadata(), g_viewport)};
-
-    ASSERT_TRUE(setup);
-    EXPECT_EQ(800, setup->width);
-    EXPECT_EQ(600, setup->height);
-    EXPECT_EQ(1, setup->skip_x);
-    EXPECT_EQ(2, setup->skip_y);
-    EXPECT_EQ(CalcStatus::PARAMS_CHANGED, setup->calc_status);
-    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
-}
-
-TEST_F(TestGetVideoMode, reducesMatchingGifIntoExplicitViewWindow)
-{
-    g_file_x_dots = 800;
-    g_file_y_dots = 600;
-    g_viewport.enabled = true;
-    g_viewport.x_dots = 200;
-    g_calc_status = CalcStatus::RESUMABLE;
-
-    const std::optional<ImageVideoMode> setup{get_video_mode(metadata(), g_viewport)};
-
-    ASSERT_TRUE(setup);
-    EXPECT_TRUE(setup->viewport.enabled);
-    EXPECT_FLOAT_EQ(4.0f, setup->viewport.reduction);
-    EXPECT_EQ(0, setup->viewport.x_dots);
-    EXPECT_EQ(0, setup->viewport.y_dots);
-    EXPECT_EQ(3, setup->skip_x);
-    EXPECT_EQ(3, setup->skip_y);
-    EXPECT_EQ(CalcStatus::PARAMS_CHANGED, setup->calc_status);
-    EXPECT_EQ(200, g_viewport.x_dots);
-    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
-}
-
-TEST_F(TestGetVideoMode, disabledPendingViewKeepsMatchingGifResumable)
-{
-    g_file_x_dots = 800;
-    g_file_y_dots = 600;
-    g_viewport.enabled = true;
-    g_viewport.x_dots = 200;
-    g_viewport.y_dots = 150;
-    g_calc_status = CalcStatus::RESUMABLE;
-    Viewport viewport{g_viewport};
-    viewport.enabled = false;
-
-    const std::optional<ImageVideoMode> setup{get_video_mode(metadata(), viewport)};
-
-    ASSERT_TRUE(setup);
-    EXPECT_FALSE(setup->viewport.enabled);
-    EXPECT_EQ(800, setup->width);
-    EXPECT_EQ(600, setup->height);
-    EXPECT_EQ(0, setup->skip_x);
-    EXPECT_EQ(0, setup->skip_y);
-    EXPECT_EQ(CalcStatus::RESUMABLE, setup->calc_status);
-    EXPECT_TRUE(g_viewport.enabled);
-    EXPECT_EQ(200, g_viewport.x_dots);
-    EXPECT_EQ(150, g_viewport.y_dots);
-    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
-}
+INSTANTIATE_TEST_SUITE_P(ViewportInputs, TestPendingViewport,
+    Values(PendingViewportCase{"LargeGif", 65535, 65535, 0.0f, CalcStatus::COMPLETED, 0, 0, false, 596, 596, 109, 109,
+               CalcStatus::COMPLETED, std::nullopt, std::nullopt},
+        PendingViewportCase{"UnequalSkipFactors", 1600, 1800, 0.75f, CalcStatus::RESUMABLE, 0, 0, false, 800, 600, 1, 2,
+            CalcStatus::PARAMS_CHANGED, std::nullopt, std::nullopt},
+        PendingViewportCase{"ExplicitView", 800, 600, 0.0f, CalcStatus::RESUMABLE, 200, 0, false, 800, 600, 3, 3,
+            CalcStatus::PARAMS_CHANGED, true, 4.0f},
+        PendingViewportCase{"DisabledPendingView", 800, 600, 0.0f, CalcStatus::RESUMABLE, 200, 150, true, 800, 600, 0,
+            0, CalcStatus::RESUMABLE, false, std::nullopt}),
+    [](const TestParamInfo<PendingViewportCase> &info) { return info.param.name; });
 
 class TestFindFractalInfo : public Test
 {
@@ -1390,11 +1402,8 @@ INSTANTIATE_TEST_SUITE_P(RecordLimits, TestOversizedFixedMetadata,
         FixedMetadataRecord{"fractint007", GIF_EXTENSION7_ORBIT_INFO_LENGTH}),
     [](const TestParamInfo<FixedMetadataRecord> &info) { return info.param.identifier; });
 
-class TestLoadFile : public TestWithParam<FileFractalType>
+class LoadFileTest : public Test
 {
-public:
-    ~TestLoadFile() override = default;
-
 protected:
     void SetUp() override;
     void TearDown() override;
@@ -1434,7 +1443,7 @@ protected:
     ValueSaver<Driver *> saved_driver{g_driver, &m_driver};
 };
 
-void TestLoadFile::SetUp()
+void LoadFileTest::SetUp()
 {
     EXPECT_CALL(m_driver, check_memory);
     EXPECT_CALL(m_driver, write_palette);
@@ -1443,11 +1452,15 @@ void TestLoadFile::SetUp()
     save_history_info();
 }
 
-void TestLoadFile::TearDown()
+void LoadFileTest::TearDown()
 {
     restore_history_info(g_history_ptr);
     Test::TearDown();
 }
+
+class TestLoadFile : public LoadFileTest, public WithParamInterface<FileFractalType>
+{
+};
 
 TEST_P(TestLoadFile, integerTypeMigrated)
 {
@@ -1493,45 +1506,52 @@ TEST_F(TestLoadFile, legacyFloatRestored)
     EXPECT_FALSE(g_user.legacy_float);
 }
 
-TEST_F(TestLoadFile, restoresMatchingGifUsingRequestedViewWindowPolicy)
+class TestMatchingGifViewport : public LoadFileTest, public WithParamInterface<bool>
 {
-    ValueSaver filename{g_read_filename, ID_TEST_GIF_MANDEL_INT};
-    ValueSaver viewport{g_viewport, Viewport{}};
-    ValueSaver adapter{g_adapter, 0};
-    ValueSaver key{g_video_mode_keys[0], ID_KEY_F2};
+protected:
+    void SetUp() override;
+
+    ValueSaver<std::filesystem::path> filename{g_read_filename, ID_TEST_GIF_MANDEL_INT};
+    ValueSaver<Viewport> viewport{g_viewport, Viewport{}};
+    ValueSaver<int> adapter{g_adapter, 0};
+    ValueSaver<int> key{g_video_mode_keys[0], ID_KEY_F2};
     ValueSaver<Driver *> mode_driver{g_video_table[0].driver, nullptr};
-    ValueSaver screen_aspect{g_screen_aspect, 0.75f};
-    ValueSaver skip_x{g_skip_x_dots, 0};
-    ValueSaver skip_y{g_skip_y_dots, 0};
+    ValueSaver<float> screen_aspect{g_screen_aspect, 0.75f};
+    ValueSaver<int> skip_x{g_skip_x_dots, 0};
+    ValueSaver<int> skip_y{g_skip_y_dots, 0};
+};
 
-    for (const bool fast_restore : {false, true})
-    {
-        SCOPED_TRACE(fast_restore);
-        if (fast_restore)
-        {
-            EXPECT_CALL(m_driver, check_memory());
-        }
-        g_fast_restore = fast_restore;
-        g_viewport.enabled = true;
-        g_viewport.x_dots = 200;
-        g_viewport.y_dots = 150;
-
-        ASSERT_EQ(0, prepare_image_restore(g_viewport));
-
-        EXPECT_EQ(!fast_restore, g_viewport.enabled);
-        EXPECT_EQ(0, g_viewport.x_dots);
-        EXPECT_EQ(0, g_viewport.y_dots);
-        EXPECT_EQ(fast_restore ? 0 : 3, g_skip_x_dots);
-        EXPECT_EQ(fast_restore ? 0 : 3, g_skip_y_dots);
-        if (!fast_restore)
-        {
-            EXPECT_FLOAT_EQ(4.0f, g_viewport.reduction);
-        }
-        EXPECT_EQ(800, g_file_x_dots);
-        EXPECT_EQ(600, g_file_y_dots);
-        EXPECT_EQ(ShowFile::LOAD_IMAGE, g_show_file);
-    }
+void TestMatchingGifViewport::SetUp()
+{
+    LoadFileTest::SetUp();
+    g_fast_restore = GetParam();
+    g_viewport.enabled = true;
+    g_viewport.x_dots = 200;
+    g_viewport.y_dots = 150;
 }
+
+TEST_P(TestMatchingGifViewport, restoresUsingRequestedViewWindowPolicy)
+{
+    const bool fast_restore{GetParam()};
+
+    ASSERT_EQ(0, prepare_image_restore(g_viewport));
+
+    EXPECT_EQ(!fast_restore, g_viewport.enabled);
+    EXPECT_EQ(0, g_viewport.x_dots);
+    EXPECT_EQ(0, g_viewport.y_dots);
+    EXPECT_EQ(fast_restore ? 0 : 3, g_skip_x_dots);
+    EXPECT_EQ(fast_restore ? 0 : 3, g_skip_y_dots);
+    if (!fast_restore)
+    {
+        EXPECT_FLOAT_EQ(4.0f, g_viewport.reduction);
+    }
+    EXPECT_EQ(800, g_file_x_dots);
+    EXPECT_EQ(600, g_file_y_dots);
+    EXPECT_EQ(ShowFile::LOAD_IMAGE, g_show_file);
+}
+
+INSTANTIATE_TEST_SUITE_P(RestorePolicy, TestMatchingGifViewport, Bool(),
+    [](const TestParamInfo<bool> &info) { return info.param ? "Fast" : "ViewWindow"; });
 
 TEST_F(TestLoadFile, videoCancellationKeepsActiveImage)
 {
