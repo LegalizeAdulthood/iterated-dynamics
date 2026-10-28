@@ -3480,117 +3480,91 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestOrbitDrawModeParameter,
         OrbitDrawModeParameterInput{"Function", "orbitdrawmode=f", OrbitDrawMode::FUNCTION}),
     [](const TestParamInfo<OrbitDrawModeParameterInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommand, viewWindowsdDefaults)
+struct ViewWindowsParameterInput
 {
-    ValueSaver saved_view_window{g_viewport.enabled, false};
-    ValueSaver saved_view_reduction{g_viewport.reduction, 999.0F};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
-    ValueSaver saved_final_aspect_ration{g_viewport.final_aspect_ratio, 999.0F};
-    ValueSaver saved_view_crop{g_viewport.crop, false};
-    ValueSaver saved_view_x_dots{g_viewport.x_dots, 999};
-    ValueSaver saved_view_y_dots{g_viewport.y_dots, 999};
+    const char *name;
+    const char *argument;
+    bool initial_crop;
+    float reduction;
+    std::optional<bool> enabled;
+    std::optional<float> screen_aspect;
+    std::optional<float> final_aspect;
+    std::optional<bool> crop;
+    std::optional<int> x_dots;
+    std::optional<int> y_dots;
+};
 
-    exec_cmd_arg("viewwindows");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_TRUE(g_viewport.enabled);
-    EXPECT_EQ(4.2F, g_viewport.reduction);
-    EXPECT_EQ(0.75F, g_screen_aspect);
-    EXPECT_EQ(0.75F, g_viewport.final_aspect_ratio);
-    EXPECT_TRUE(g_viewport.crop);
-    EXPECT_EQ(0, g_viewport.x_dots);
-    EXPECT_EQ(0, g_viewport.y_dots);
+void PrintTo(const ViewWindowsParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, viewWindowsOneValue)
+class TestViewWindowsParameter : public TestParameterCommand, public WithParamInterface<ViewWindowsParameterInput>
 {
-    ValueSaver saved_view_window{g_viewport.enabled, false};
-    ValueSaver saved_view_reduction{g_viewport.reduction, 999.0F};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
-    ValueSaver saved_final_aspect_ration{g_viewport.final_aspect_ratio, 999.0F};
-    ValueSaver saved_view_crop{g_viewport.crop, false};
-    ValueSaver saved_view_x_dots{g_viewport.x_dots, 999};
-    ValueSaver saved_view_y_dots{g_viewport.y_dots, 999};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("viewwindows=2");
+private:
+    ValueSaver<Viewport> m_saved_viewport{g_viewport};
+    ValueSaver<float> m_saved_screen_aspect{g_screen_aspect, 0.75F};
+};
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0F, g_viewport.reduction);
+void TestViewWindowsParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_viewport.enabled = false;
+    g_viewport.reduction = 999.0F;
+    g_viewport.final_aspect_ratio = 999.0F;
+    g_viewport.crop = GetParam().initial_crop;
+    g_viewport.x_dots = 999;
+    g_viewport.y_dots = 999;
 }
 
-TEST_F(TestParameterCommand, viewWindowsTwoValues)
+TEST_P(TestViewWindowsParameter, setsViewportComponents)
 {
-    ValueSaver saved_view_window{g_viewport.enabled, false};
-    ValueSaver saved_view_reduction{g_viewport.reduction, 999.0F};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
-    ValueSaver saved_final_aspect_ration{g_viewport.final_aspect_ratio, 999.0F};
-    ValueSaver saved_view_crop{g_viewport.crop, false};
-    ValueSaver saved_view_x_dots{g_viewport.x_dots, 999};
-    ValueSaver saved_view_y_dots{g_viewport.y_dots, 999};
-
-    exec_cmd_arg("viewwindows=2/3");
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0F, g_viewport.reduction);
-    EXPECT_EQ(3.0F, g_viewport.final_aspect_ratio);
+    EXPECT_EQ(GetParam().reduction, g_viewport.reduction);
+    if (GetParam().enabled)
+    {
+        EXPECT_EQ(*GetParam().enabled, g_viewport.enabled);
+    }
+    if (GetParam().screen_aspect)
+    {
+        EXPECT_EQ(*GetParam().screen_aspect, g_screen_aspect);
+    }
+    if (GetParam().final_aspect)
+    {
+        EXPECT_EQ(*GetParam().final_aspect, g_viewport.final_aspect_ratio);
+    }
+    if (GetParam().crop)
+    {
+        EXPECT_EQ(*GetParam().crop, g_viewport.crop);
+    }
+    if (GetParam().x_dots)
+    {
+        EXPECT_EQ(*GetParam().x_dots, g_viewport.x_dots);
+    }
+    if (GetParam().y_dots)
+    {
+        EXPECT_EQ(*GetParam().y_dots, g_viewport.y_dots);
+    }
 }
 
-TEST_F(TestParameterCommand, viewWindowsThreeValues)
-{
-    ValueSaver saved_view_window{g_viewport.enabled, false};
-    ValueSaver saved_view_reduction{g_viewport.reduction, 999.0F};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
-    ValueSaver saved_final_aspect_ration{g_viewport.final_aspect_ratio, 999.0F};
-    ValueSaver saved_view_crop{g_viewport.crop, true};
-    ValueSaver saved_view_x_dots{g_viewport.x_dots, 999};
-    ValueSaver saved_view_y_dots{g_viewport.y_dots, 999};
-
-    exec_cmd_arg("viewwindows=2/3/n");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0F, g_viewport.reduction);
-    EXPECT_EQ(3.0F, g_viewport.final_aspect_ratio);
-    EXPECT_FALSE(g_viewport.crop);
-}
-
-TEST_F(TestParameterCommand, viewWindowsFourValues)
-{
-    ValueSaver saved_view_window{g_viewport.enabled, false};
-    ValueSaver saved_view_reduction{g_viewport.reduction, 999.0F};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
-    ValueSaver saved_final_aspect_ration{g_viewport.final_aspect_ratio, 999.0F};
-    ValueSaver saved_view_crop{g_viewport.crop, true};
-    ValueSaver saved_view_x_dots{g_viewport.x_dots, 999};
-    ValueSaver saved_view_y_dots{g_viewport.y_dots, 999};
-
-    exec_cmd_arg("viewwindows=2/3/n/800");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0F, g_viewport.reduction);
-    EXPECT_EQ(3.0F, g_viewport.final_aspect_ratio);
-    EXPECT_FALSE(g_viewport.crop);
-    EXPECT_EQ(800, g_viewport.x_dots);
-}
-
-TEST_F(TestParameterCommand, viewWindowsFiveValues)
-{
-    ValueSaver saved_view_window{g_viewport.enabled, false};
-    ValueSaver saved_view_reduction{g_viewport.reduction, 999.0F};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
-    ValueSaver saved_final_aspect_ration{g_viewport.final_aspect_ratio, 999.0F};
-    ValueSaver saved_view_crop{g_viewport.crop, true};
-    ValueSaver saved_view_x_dots{g_viewport.x_dots, 999};
-    ValueSaver saved_view_y_dots{g_viewport.y_dots, 999};
-
-    exec_cmd_arg("viewwindows=2/3/n/800/600");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0F, g_viewport.reduction);
-    EXPECT_EQ(3.0F, g_viewport.final_aspect_ratio);
-    EXPECT_FALSE(g_viewport.crop);
-    EXPECT_EQ(800, g_viewport.x_dots);
-    EXPECT_EQ(600, g_viewport.y_dots);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestViewWindowsParameter,
+    Values(ViewWindowsParameterInput{"Defaults", "viewwindows", false, 4.2F, true, 0.75F, 0.75F, true, 0, 0},
+        ViewWindowsParameterInput{"OneValue", "viewwindows=2", false, 2.0F, std::nullopt, std::nullopt, std::nullopt,
+            std::nullopt, std::nullopt, std::nullopt},
+        ViewWindowsParameterInput{"TwoValues", "viewwindows=2/3", false, 2.0F, std::nullopt, std::nullopt, 3.0F,
+            std::nullopt, std::nullopt, std::nullopt},
+        ViewWindowsParameterInput{"ThreeValues", "viewwindows=2/3/n", true, 2.0F, std::nullopt, std::nullopt, 3.0F,
+            false, std::nullopt, std::nullopt},
+        ViewWindowsParameterInput{"FourValues", "viewwindows=2/3/n/800", true, 2.0F, std::nullopt, std::nullopt, 3.0F,
+            false, 800, std::nullopt},
+        ViewWindowsParameterInput{
+            "FiveValues", "viewwindows=2/3/n/800/600", true, 2.0F, std::nullopt, std::nullopt, 3.0F, false, 800, 600}),
+    [](const TestParamInfo<ViewWindowsParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, centerMagOn)
 {
@@ -3603,71 +3577,35 @@ TEST_F(TestParameterCommand, centerMagOn)
     EXPECT_TRUE(g_use_center_mag);
 }
 
-TEST_F(TestParameterCommand, centerMagThreeValues)
+class TestCenterMagParameter : public TestParameterCommand, public WithParamInterface<RegionParameterInput>
 {
-    ValueSaver saved_use_center_mag{g_use_center_mag, false};
-    ValueSaver saved_x_min{g_image_region.m_min.x, 999.0};
-    ValueSaver saved_x_max{g_image_region.m_max.x, 999.0};
-    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, 999.0};
-    ValueSaver saved_y_min{g_image_region.m_min.y, 999.0};
-    ValueSaver saved_y_max{g_image_region.m_max.y, 999.0};
-    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, 999.0};
+private:
+    ValueSaver<bool> m_saved_center_mag{g_use_center_mag, false};
+    ValueSaver<ImageRegion> m_saved_region{g_image_region, ImageRegion{{999.0, 999.0}, {999.0, 999.0}, {999.0, 999.0}}};
+};
 
-    exec_cmd_arg("center-mag=2/4/3");
+TEST_P(TestCenterMagParameter, setsImageRegionFromCenterAndMagnification)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_use_center_mag);
-    EXPECT_NEAR(1.555555, g_image_region.m_min.x, 1e-6);
-    EXPECT_NEAR(2.444444, g_image_region.m_max.x, 1e-6);
-    EXPECT_NEAR(1.555555, g_image_region.m_3rd.x, 1e-6);
-    EXPECT_NEAR(3.666666, g_image_region.m_min.y, 1e-6);
-    EXPECT_NEAR(4.333333, g_image_region.m_max.y, 1e-6);
-    EXPECT_NEAR(3.666666, g_image_region.m_3rd.y, 1e-6);
+    EXPECT_NEAR(GetParam().expected.m_min.x, g_image_region.m_min.x, 1e-6);
+    EXPECT_NEAR(GetParam().expected.m_max.x, g_image_region.m_max.x, 1e-6);
+    EXPECT_NEAR(GetParam().expected.m_3rd.x, g_image_region.m_3rd.x, 1e-6);
+    EXPECT_NEAR(GetParam().expected.m_min.y, g_image_region.m_min.y, 1e-6);
+    EXPECT_NEAR(GetParam().expected.m_max.y, g_image_region.m_max.y, 1e-6);
+    EXPECT_NEAR(GetParam().expected.m_3rd.y, g_image_region.m_3rd.y, 1e-6);
 }
 
-TEST_F(TestParameterCommand, centerMagFourValues)
-{
-    ValueSaver saved_use_center_mag{g_use_center_mag, false};
-    ValueSaver saved_x_min{g_image_region.m_min.x, 999.0};
-    ValueSaver saved_x_max{g_image_region.m_max.x, 999.0};
-    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, 999.0};
-    ValueSaver saved_y_min{g_image_region.m_min.y, 999.0};
-    ValueSaver saved_y_max{g_image_region.m_max.y, 999.0};
-    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, 999.0};
-
-    exec_cmd_arg("center-mag=2/4/3/90");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_TRUE(g_use_center_mag);
-    EXPECT_NEAR(1.995061, g_image_region.m_min.x, 1e-6);
-    EXPECT_NEAR(2.004938, g_image_region.m_max.x, 1e-6);
-    EXPECT_NEAR(1.995061, g_image_region.m_3rd.x, 1e-6);
-    EXPECT_NEAR(3.666666, g_image_region.m_min.y, 1e-6);
-    EXPECT_NEAR(4.333333, g_image_region.m_max.y, 1e-6);
-    EXPECT_NEAR(3.666666, g_image_region.m_3rd.y, 1e-6);
-}
-
-TEST_F(TestParameterCommand, centerMagFiveValues)
-{
-    ValueSaver saved_use_center_mag{g_use_center_mag, false};
-    ValueSaver saved_x_min{g_image_region.m_min.x, 999.0};
-    ValueSaver saved_x_max{g_image_region.m_max.x, 999.0};
-    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, 999.0};
-    ValueSaver saved_y_min{g_image_region.m_min.y, 999.0};
-    ValueSaver saved_y_max{g_image_region.m_max.y, 999.0};
-    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, 999.0};
-
-    exec_cmd_arg("center-mag=2/4/3/90/45");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_TRUE(g_use_center_mag);
-    EXPECT_NEAR(2.232210, g_image_region.m_min.x, 1e-6);
-    EXPECT_NEAR(1.767789, g_image_region.m_max.x, 1e-6);
-    EXPECT_NEAR(1.760805, g_image_region.m_3rd.x, 1e-6);
-    EXPECT_NEAR(3.760805, g_image_region.m_min.y, 1e-6);
-    EXPECT_NEAR(4.239194, g_image_region.m_max.y, 1e-6);
-    EXPECT_NEAR(3.767789, g_image_region.m_3rd.y, 1e-6);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestCenterMagParameter,
+    Values(RegionParameterInput{"ThreeValues", "center-mag=2/4/3",
+               {{1.555555, 3.666666}, {2.444444, 4.333333}, {1.555555, 3.666666}}},
+        RegionParameterInput{
+            "FourValues", "center-mag=2/4/3/90", {{1.995061, 3.666666}, {2.004938, 4.333333}, {1.995061, 3.666666}}},
+        RegionParameterInput{"FiveValues", "center-mag=2/4/3/90/45",
+            {{2.232210, 3.760805}, {1.767789, 4.239194}, {1.760805, 3.767789}}}),
+    [](const TestParamInfo<RegionParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, aspectDrift)
 {
