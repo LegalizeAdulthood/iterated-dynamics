@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include "fractals/interpreter.h"
 
@@ -40,109 +41,115 @@ static DComplex stack_power(const DComplex &base, const DComplex &exponent)
     return stack[0].d;
 }
 
-static DComplex formula_rand_from_seed(const int seed)
+struct TestFormulaRandom : TestInterpreter
 {
-    ValueSaver saved_formula{g_formula};
-    ValueSaver saved_random_seed{g_random_seed, seed};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
-    ValueSaver saved_runtime{g_runtime, RuntimeState{}};
+    void SetUp() override;
+    DComplex rand_from_seed(int seed);
+    DComplex rand_from_srand(int image_seed);
 
+    ValueSaver<CompiledFormula> saved_formula{g_formula};
+    ValueSaver<int> saved_random_seed{g_random_seed, 1234};
+    ValueSaver<bool> saved_random_seed_flag{g_random_seed_flag, true};
+    ValueSaver<RuntimeState> saved_runtime{g_runtime, RuntimeState{}};
+};
+
+void TestFormulaRandom::SetUp()
+{
     g_formula.vars.resize(8);
+}
+
+DComplex TestFormulaRandom::rand_from_seed(const int seed)
+{
+    g_random_seed = seed;
+    g_runtime = RuntimeState{};
     random_seed();
     d_random();
-
     return g_formula.vars[7].a.d;
 }
 
-static DComplex formula_rand_from_srand(const int image_seed)
+DComplex TestFormulaRandom::rand_from_srand(const int image_seed)
 {
-    ValueSaver saved_formula{g_formula};
-    ValueSaver saved_random_seed{g_random_seed, image_seed};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
-    ValueSaver saved_runtime{g_runtime, RuntimeState{}};
+    g_random_seed = image_seed;
+    g_runtime = RuntimeState{};
     Arg stack{};
-    ValueSaver saved_arg1{g_arg1, &stack};
-
-    g_formula.vars.resize(8);
+    ValueSaver<Arg *> saved_stack_arg{g_arg1, &stack};
     stack.d = DComplex{0.25, 0.75};
     d_stk_srand();
-
     return g_formula.vars[7].a.d;
 }
 
-TEST_F(TestInterpreter, pre1900ZeroBasePowerDoesNotOverflow)
+struct ZeroBasePowerInput
 {
-    g_version = parse_legacy_version(1899);
+    const char *name;
+    int version;
+    DComplex exponent;
+    DComplex result;
+    bool overflow;
+};
+
+class TestZeroBasePower : public TestInterpreter, public testing::WithParamInterface<ZeroBasePowerInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestZeroBasePower::SetUp()
+{
+    g_version = parse_legacy_version(GetParam().version);
     g_overflow = false;
-
-    const DComplex result{stack_power({0.0, 0.0}, {7.0, 0.0})};
-
-    EXPECT_EQ((DComplex{0.0, 0.0}), result);
-    EXPECT_FALSE(g_overflow);
 }
 
-TEST_F(TestInterpreter, reset1900ZeroBasePowerSetsOverflow)
+TEST_P(TestZeroBasePower, retainsVersionedResultAndOverflow)
 {
-    g_version = parse_legacy_version(1900);
-    g_overflow = false;
+    const DComplex result{stack_power({0.0, 0.0}, GetParam().exponent)};
 
-    const DComplex result{stack_power({0.0, 0.0}, {7.0, 0.0})};
-
-    EXPECT_EQ((DComplex{0.0, 0.0}), result);
-    EXPECT_TRUE(g_overflow);
+    EXPECT_EQ(GetParam().result, result);
+    EXPECT_EQ(GetParam().overflow, g_overflow);
 }
 
-TEST_F(TestInterpreter, pre1900ZeroBaseZeroExponentReturnsOne)
+INSTANTIATE_TEST_SUITE_P(Compatibility, TestZeroBasePower,
+    testing::Values(ZeroBasePowerInput{"Pre1900PositiveExponent", 1899, {7.0, 0.0}, {0.0, 0.0}, false},
+        ZeroBasePowerInput{"Reset1900PositiveExponent", 1900, {7.0, 0.0}, {0.0, 0.0}, true},
+        ZeroBasePowerInput{"Pre1900ZeroExponent", 1899, {0.0, 0.0}, {1.0, 0.0}, false},
+        ZeroBasePowerInput{"Reset1900ZeroExponent", 1900, {0.0, 0.0}, {0.0, 0.0}, true}),
+    [](const testing::TestParamInfo<ZeroBasePowerInput> &info) { return info.param.name; });
+
+struct FormulaSeedPair
 {
-    g_version = parse_legacy_version(1899);
-    g_overflow = false;
+    const char *name;
+    int first;
+    int second;
+    bool equal;
+};
 
-    const DComplex result{stack_power({0.0, 0.0}, {0.0, 0.0})};
+class TestFormulaRandomSeeds : public TestFormulaRandom, public testing::WithParamInterface<FormulaSeedPair>
+{
+};
 
-    EXPECT_EQ((DComplex{1.0, 0.0}), result);
-    EXPECT_FALSE(g_overflow);
+TEST_P(TestFormulaRandomSeeds, fixedSeedControlsRandomValue)
+{
+    const DComplex first{rand_from_seed(GetParam().first)};
+    const DComplex second{rand_from_seed(GetParam().second)};
+
+    EXPECT_EQ(GetParam().equal, first == second);
 }
 
-TEST_F(TestInterpreter, reset1900ZeroBaseZeroExponentSetsOverflow)
+INSTANTIATE_TEST_SUITE_P(SeedPairs, TestFormulaRandomSeeds,
+    testing::Values(FormulaSeedPair{"Repeated", 1234, 1234, true}, FormulaSeedPair{"Changed", 1234, 5678, false}),
+    [](const testing::TestParamInfo<FormulaSeedPair> &info) { return info.param.name; });
+
+TEST_F(TestFormulaRandom, formulaRandWithoutFixedSeedAdvancesImageSeed)
 {
-    g_version = parse_legacy_version(1900);
-    g_overflow = false;
+    g_random_seed_flag = false;
 
-    const DComplex result{stack_power({0.0, 0.0}, {0.0, 0.0})};
-
-    EXPECT_EQ((DComplex{0.0, 0.0}), result);
-    EXPECT_TRUE(g_overflow);
-}
-
-TEST_F(TestInterpreter, formulaRandRepeatsWithFixedRandomSeed)
-{
-    EXPECT_EQ(formula_rand_from_seed(1234), formula_rand_from_seed(1234));
-}
-
-TEST_F(TestInterpreter, formulaRandChangesWithFixedRandomSeed)
-{
-    const DComplex first{formula_rand_from_seed(1234)};
-    const DComplex second{formula_rand_from_seed(5678)};
-
-    EXPECT_TRUE(first.x != second.x || first.y != second.y);
-}
-
-TEST_F(TestInterpreter, formulaRandWithoutFixedSeedAdvancesImageSeed)
-{
-    ValueSaver saved_formula{g_formula};
-    ValueSaver saved_random_seed{g_random_seed, 1234};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, false};
-    ValueSaver saved_runtime{g_runtime, RuntimeState{}};
-
-    g_formula.vars.resize(8);
     random_seed();
 
     EXPECT_EQ(1235, g_random_seed);
 }
 
-TEST_F(TestInterpreter, formulaSrandIgnoresImageRandomSeed)
+TEST_F(TestFormulaRandom, formulaSrandIgnoresImageRandomSeed)
 {
-    EXPECT_EQ(formula_rand_from_srand(1234), formula_rand_from_srand(5678));
+    EXPECT_EQ(rand_from_srand(1234), rand_from_srand(5678));
 }
 
 } // namespace id::test
