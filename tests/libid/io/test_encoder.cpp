@@ -1142,25 +1142,47 @@ TEST_P(TestGifWriterResume, savesOnlyUsedResumeBytesWithLegacySubBlocks)
 
 INSTANTIATE_TEST_SUITE_P(SubBlockSizes, TestGifWriterResume, Values(0, 1, 254, 255, 256, 510, 511, 4097));
 
-TEST_F(TestGifWriterExtensions, omitsResumeRecordForCompletedImageOrEmptyStorage)
+struct GifResumeOmissionInput
 {
-    g_resume_data = {0x12, 0x34};
-    g_resume_len = 2;
-    ASSERT_EQ(0, save());
-    {
-        const GifFilePtr completed{read_saved_gif()};
-        expect_layout(completed.get(), {"fractint001"});
-    }
+    const char *name;
+    CalcStatus status;
+    std::vector<Byte> data;
+    int length;
+};
 
-    g_resume_data.clear();
-    g_resume_len = 0;
-    g_calc_status = CalcStatus::RESUMABLE;
+void PrintTo(const GifResumeOmissionInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestGifWriterResumeOmission : public TestGifWriterExtensions, public WithParamInterface<GifResumeOmissionInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGifWriterResumeOmission::SetUp()
+{
+    TestGifWriterExtensions::SetUp();
+    g_calc_status = GetParam().status;
+    g_resume_data = GetParam().data;
+    g_resume_len = GetParam().length;
+}
+
+TEST_P(TestGifWriterResumeOmission, omitsInapplicableResumeRecord)
+{
     ASSERT_EQ(0, save());
-    const GifFilePtr empty{read_saved_gif()};
-    expect_layout(empty.get(), {"fractint001"});
+
+    const GifFilePtr gif{read_saved_gif()};
+    expect_layout(gif.get(), {"fractint001"});
     ASSERT_FALSE(read_metadata());
     EXPECT_FALSE(m_resume.got_data);
 }
+
+INSTANTIATE_TEST_SUITE_P(ResumeOmissionInputs, TestGifWriterResumeOmission,
+    Values(GifResumeOmissionInput{"CompletedImage", CalcStatus::COMPLETED, {0x12, 0x34}, 2},
+        GifResumeOmissionInput{"EmptyStorage", CalcStatus::RESUMABLE, {}, 0}),
+    [](const TestParamInfo<GifResumeOmissionInput> &info) { return info.param.name; });
 
 class TestGifWriterName : public TestGifWriterExtensions, public WithParamInterface<FractalType>
 {
@@ -1217,25 +1239,37 @@ TEST_P(TestGifWriterName, savesSelectedItemNameAndOnlyFormulaUsageFlags)
 INSTANTIATE_TEST_SUITE_P(ItemTypes, TestGifWriterName,
     Values(FractalType::FORMULA, FractalType::L_SYSTEM, FractalType::IFS, FractalType::IFS_3D));
 
-TEST_F(TestGifWriterExtensions, terminatesTruncatedItemNamesAndPreservesEmptyNames)
+class TestGifWriterStoredName : public TestGifWriterExtensions, public WithParamInterface<std::string>
 {
+protected:
+    void SetUp() override;
+
+    ValueSaver<std::string> m_saved_name{g_l_system_name};
+};
+
+void TestGifWriterStoredName::SetUp()
+{
+    TestGifWriterExtensions::SetUp();
     g_fractal_type = FractalType::L_SYSTEM;
-    ValueSaver saved_name{g_l_system_name};
-    for (const std::string name : {std::string(60, 'A'), std::string{}})
-    {
-        SCOPED_TRACE(name);
-        g_l_system_name = name;
-        ASSERT_EQ(0, save());
-        const GifFilePtr gif{read_saved_gif()};
-        expect_layout(gif.get(), {"fractint003", "fractint001"});
-        const FormulaInfo info{get_formula_info(gif.get())};
-        EXPECT_EQ(name.substr(0, 39), info.form_name);
-        EXPECT_EQ(0, info.form_name[39]);
-        ASSERT_FALSE(read_metadata());
-        EXPECT_TRUE(m_formula.got_data);
-        EXPECT_EQ(name.substr(0, 39), m_formula.form_name);
-    }
+    g_l_system_name = GetParam();
 }
+
+TEST_P(TestGifWriterStoredName, storesTerminatedItemName)
+{
+    ASSERT_EQ(0, save());
+
+    const GifFilePtr gif{read_saved_gif()};
+    expect_layout(gif.get(), {"fractint003", "fractint001"});
+    const FormulaInfo info{get_formula_info(gif.get())};
+    EXPECT_EQ(GetParam().substr(0, 39), info.form_name);
+    EXPECT_EQ(0, info.form_name[39]);
+    ASSERT_FALSE(read_metadata());
+    EXPECT_TRUE(m_formula.got_data);
+    EXPECT_EQ(GetParam().substr(0, 39), m_formula.form_name);
+}
+
+INSTANTIATE_TEST_SUITE_P(ItemNames, TestGifWriterStoredName, Values(std::string(60, 'A'), std::string{}),
+    [](const TestParamInfo<std::string> &info) { return info.param.empty() ? "EmptyName" : "TruncatedName"; });
 
 TEST_F(TestGifWriterExtensions, savesSignedIterationRangesInLittleEndianOrder)
 {
@@ -1391,16 +1425,31 @@ TEST_F(TestGifWriterExtensions, savesCachedEvolutionStateForResumableCalculation
     EXPECT_EQ(static_cast<int>(Variations::RANDOM), m_evolution.mutate[1]);
 }
 
-TEST_F(TestGifWriterExtensions, savesOrbitSettingsOnlyForOrbitPass)
+class TestGifWriterOrbitSettings : public TestGifWriterExtensions
 {
-    ValueSaver saved_corner{g_orbit_corner, ImageRegion{{-2.5, -1.5}, {1.5, 1.5}, {-2.0, -1.0}}};
-    ValueSaver saved_keep{g_keep_screen_coords, true};
-    ValueSaver saved_draw{g_draw_mode, OrbitDrawMode::LINE};
+protected:
+    void SetUp() override;
+
+    ValueSaver<ImageRegion> m_saved_corner{g_orbit_corner};
+    ValueSaver<bool> m_saved_keep{g_keep_screen_coords};
+    ValueSaver<OrbitDrawMode> m_saved_draw{g_draw_mode};
+};
+
+void TestGifWriterOrbitSettings::SetUp()
+{
+    TestGifWriterExtensions::SetUp();
+    g_orbit_corner = ImageRegion{{-2.5, -1.5}, {1.5, 1.5}, {-2.0, -1.0}};
+    g_keep_screen_coords = true;
+    g_draw_mode = OrbitDrawMode::LINE;
+}
+
+TEST_F(TestGifWriterOrbitSettings, serializesOrbitSettingsForOrbitPass)
+{
     g_std_calc_mode = CalcMode::ORBIT;
 
     ASSERT_EQ(0, save());
 
-    GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_saved_gif()};
     expect_layout(gif.get(), {"fractint007", "fractint001"});
     const OrbitsInfo info{get_orbits_info(gif.get())};
     EXPECT_EQ(-2.5, info.orbit_corner_min_x);
@@ -1422,8 +1471,10 @@ TEST_F(TestGifWriterExtensions, savesOrbitSettingsOnlyForOrbitPass)
     EXPECT_EQ(-1.0, m_orbits.oy_3rd);
     EXPECT_EQ(1, m_orbits.keep_screen_coords);
     EXPECT_EQ('l', m_orbits.draw_mode);
+}
 
-    gif.reset();
+TEST_F(TestGifWriterOrbitSettings, omitsOrbitSettingsForOtherPass)
+{
     g_std_calc_mode = CalcMode::ONE_PASS;
     ASSERT_EQ(0, save());
     const GifFilePtr other_pass{read_saved_gif()};
