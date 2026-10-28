@@ -4111,155 +4111,118 @@ TEST_F(TestParameterCommand, scaleMapValues)
     EXPECT_EQ(-999, g_scale_map[2]);
 }
 
-TEST_F(TestParameterCommand, periodicityNo)
+struct PeriodicityParameterInput
 {
-    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
+    const char *name;
+    const char *argument;
+    int expected;
+};
 
-    exec_cmd_arg("periodicity=no");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(0, g_user.periodicity_value);
+void PrintTo(const PeriodicityParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, periodicityYes)
+class TestPeriodicityParameter : public TestParameterCommand, public WithParamInterface<PeriodicityParameterInput>
 {
-    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
+private:
+    ValueSaver<int> m_saved_periodicity{g_user.periodicity_value, -999};
+};
 
-    exec_cmd_arg("periodicity=yes");
+TEST_P(TestPeriodicityParameter, setsPeriodicity)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(1, g_user.periodicity_value);
+    EXPECT_EQ(GetParam().expected, g_user.periodicity_value);
 }
 
-TEST_F(TestParameterCommand, periodicityShow)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPeriodicityParameter,
+    Values(PeriodicityParameterInput{"No", "periodicity=no", 0}, PeriodicityParameterInput{"Yes", "periodicity=yes", 1},
+        PeriodicityParameterInput{"Show", "periodicity=show", -1},
+        PeriodicityParameterInput{"Value", "periodicity=24", 24},
+        PeriodicityParameterInput{"ShowValue", "periodicity=-24", -24},
+        PeriodicityParameterInput{"ClampedHigh", "periodicity=500", 255},
+        PeriodicityParameterInput{"ClampedLow", "periodicity=-500", -255}),
+    [](const TestParamInfo<PeriodicityParameterInput> &info) { return info.param.name; });
+
+struct LogMapParameterInput
 {
-    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
+    const char *name;
+    const char *argument;
+    long expected;
+};
 
-    exec_cmd_arg("periodicity=show");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(-1, g_user.periodicity_value);
+void PrintTo(const LogMapParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, periodicityValue)
+class TestLogMapParameter : public TestParameterCommand, public WithParamInterface<LogMapParameterInput>
 {
-    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
+private:
+    ValueSaver<bool> m_saved_auto_calculate{g_log_map_auto_calculate, true};
+    ValueSaver<long> m_saved_map_flag{g_log_map_flag};
+};
 
-    exec_cmd_arg("periodicity=24");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(24, g_user.periodicity_value);
-}
-
-TEST_F(TestParameterCommand, periodicityShowValue)
+TEST_P(TestLogMapParameter, setsLogMap)
 {
-    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
-
-    exec_cmd_arg("periodicity=-24");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(-24, g_user.periodicity_value);
-}
-
-TEST_F(TestParameterCommand, periodicityValueClampedHigh)
-{
-    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
-
-    exec_cmd_arg("periodicity=500");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(255, g_user.periodicity_value);
-}
-
-TEST_F(TestParameterCommand, periodicityValueClampedLow)
-{
-    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
-
-    exec_cmd_arg("periodicity=-500");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(-255, g_user.periodicity_value);
-}
-
-TEST_F(TestParameterCommand, logMapNo)
-{
-    ValueSaver saved_log_map_auto_calculate{g_log_map_auto_calculate, true};
-
-    exec_cmd_arg("logmap=no");
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_log_map_auto_calculate);
-    EXPECT_EQ(0L, g_log_map_flag);
+    EXPECT_EQ(GetParam().expected, g_log_map_flag);
 }
 
-TEST_F(TestParameterCommand, logMapYes)
-{
-    ValueSaver saved_log_map_auto_calculate{g_log_map_auto_calculate, true};
+INSTANTIATE_TEST_SUITE_P(Inputs, TestLogMapParameter,
+    Values(LogMapParameterInput{"No", "logmap=no", 0L}, LogMapParameterInput{"Yes", "logmap=yes", 1L},
+        LogMapParameterInput{"Old", "logmap=old", -1L}, LogMapParameterInput{"Value", "logmap=15", 15L}),
+    [](const TestParamInfo<LogMapParameterInput> &info) { return info.param.name; });
 
-    exec_cmd_arg("logmap=yes");
+struct LogModeParameterInput
+{
+    const char *name;
+    const char *argument;
+    bool initial_auto;
+    LogMapCalculate expected;
+    bool expected_auto;
+};
+
+void PrintTo(const LogModeParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestLogModeParameter : public TestParameterCommand, public WithParamInterface<LogModeParameterInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<LogMapCalculate> m_saved_mode{g_log_map_fly_calculate, static_cast<LogMapCalculate>(-999)};
+    ValueSaver<bool> m_saved_auto_calculate{g_log_map_auto_calculate};
+};
+
+void TestLogModeParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    g_log_map_auto_calculate = GetParam().initial_auto;
+}
+
+TEST_P(TestLogModeParameter, setsLogMapMode)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_FALSE(g_log_map_auto_calculate);
-    EXPECT_EQ(1L, g_log_map_flag);
+    EXPECT_EQ(GetParam().expected, g_log_map_fly_calculate);
+    EXPECT_EQ(GetParam().expected_auto, g_log_map_auto_calculate);
 }
 
-TEST_F(TestParameterCommand, logMapOld)
-{
-    ValueSaver saved_log_map_auto_calculate{g_log_map_auto_calculate, true};
-
-    exec_cmd_arg("logmap=old");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_FALSE(g_log_map_auto_calculate);
-    EXPECT_EQ(-1L, g_log_map_flag);
-}
-
-TEST_F(TestParameterCommand, logMapValue)
-{
-    ValueSaver saved_log_map_auto_calculate{g_log_map_auto_calculate, true};
-
-    exec_cmd_arg("logmap=15");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_FALSE(g_log_map_auto_calculate);
-    EXPECT_EQ(15L, g_log_map_flag);
-}
-
-TEST_F(TestParameterCommand, logModeFly)
-{
-    ValueSaver saved_log_map_fly_calculate{g_log_map_fly_calculate, static_cast<LogMapCalculate>(-999)};
-    ValueSaver saved_log_map_auto_calculate{g_log_map_auto_calculate, true};
-
-    exec_cmd_arg("logmode=f");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(LogMapCalculate::ON_THE_FLY, g_log_map_fly_calculate);
-    EXPECT_FALSE(g_log_map_auto_calculate);
-}
-
-TEST_F(TestParameterCommand, logModeTable)
-{
-    ValueSaver saved_log_map_fly_calculate{g_log_map_fly_calculate, static_cast<LogMapCalculate>(-999)};
-    ValueSaver saved_log_map_auto_calculate{g_log_map_auto_calculate, true};
-
-    exec_cmd_arg("logmode=t");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(LogMapCalculate::USE_LOG_TABLE, g_log_map_fly_calculate);
-    EXPECT_FALSE(g_log_map_auto_calculate);
-}
-
-TEST_F(TestParameterCommand, logModeAuto)
-{
-    ValueSaver saved_log_map_fly_calculate{g_log_map_fly_calculate, static_cast<LogMapCalculate>(-999)};
-    ValueSaver saved_log_map_auto_calculate{g_log_map_auto_calculate, false};
-
-    exec_cmd_arg("logmode=a");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(LogMapCalculate::NONE, g_log_map_fly_calculate);
-    EXPECT_TRUE(g_log_map_auto_calculate);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestLogModeParameter,
+    Values(LogModeParameterInput{"Fly", "logmode=f", true, LogMapCalculate::ON_THE_FLY, false},
+        LogModeParameterInput{"Table", "logmode=t", true, LogMapCalculate::USE_LOG_TABLE, false},
+        LogModeParameterInput{"Auto", "logmode=a", false, LogMapCalculate::NONE, true}),
+    [](const TestParamInfo<LogModeParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, debugFlagValueViaDebug)
 {
