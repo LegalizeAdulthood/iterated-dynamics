@@ -9098,48 +9098,71 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestShipPassBailout,
         ShipPassInput{"HighPrecision_SolidGuess", true, CalcMode::SOLID_GUESS}),
     [](const TestParamInfo<ShipPassInput> &info) { return info.param.name; });
 
-class TestPerturbationContinuation : public TestPerturbationIterations
+class PerturbationContinuationTest : public PerturbationIterationTest
 {
-protected:
-    void prepare(const long iterations = 24)
-    {
-        g_max_iterations = iterations;
-        m_specific.pert_pt = record_perturbation_orbit;
-        m_specific.pert_ref = record_reference;
-        m_specific.pert_ref_bf = record_reference_bf;
-        s_perturbation_orbit.clear();
-        s_reference_coordinates.clear();
-        s_reference_values.clear();
-        initialize_reference({-0.5, 0.25});
-    }
+public:
+    explicit PerturbationContinuationTest(bool use_big_float);
 
-    void check_orbit(const std::complex<double> &parameter, std::complex<double> value, long iteration)
+protected:
+    void prepare(long iterations = 24);
+    void check_orbit(const std::complex<double> &parameter, std::complex<double> value, long iteration);
+};
+
+PerturbationContinuationTest::PerturbationContinuationTest(const bool use_big_float) :
+    PerturbationIterationTest{use_big_float}
+{
+}
+
+void PerturbationContinuationTest::prepare(const long iterations)
+{
+    g_max_iterations = iterations;
+    m_specific.pert_pt = record_perturbation_orbit;
+    m_specific.pert_ref = record_reference;
+    m_specific.pert_ref_bf = record_reference_bf;
+    s_perturbation_orbit.clear();
+    s_reference_coordinates.clear();
+    s_reference_values.clear();
+    initialize_reference({-0.5, 0.25});
+}
+
+void PerturbationContinuationTest::check_orbit(
+    const std::complex<double> &parameter, std::complex<double> value, long iteration)
+{
+    m_engine.begin_orbit(parameter, value, iteration);
+    EXPECT_EQ(value, m_engine.orbit_value());
+    EXPECT_EQ(iteration, m_engine.orbit_iteration());
+    bool done{};
+    for (int call = 0; call < 20000 && !done; ++call)
     {
-        m_engine.begin_orbit(parameter, value, iteration);
-        EXPECT_EQ(value, m_engine.orbit_value());
-        EXPECT_EQ(iteration, m_engine.orbit_iteration());
-        bool done{};
-        for (int call = 0; call < 20000 && !done; ++call)
+        done = m_engine.iterate_orbit();
+        if (m_engine.orbit_iteration() != iteration)
         {
-            done = m_engine.iterate_orbit();
-            if (m_engine.orbit_iteration() != iteration)
-            {
-                EXPECT_EQ(iteration + 1, m_engine.orbit_iteration());
-                value = value * value + parameter;
-                ++iteration;
-            }
-            EXPECT_NEAR(value.real(), m_engine.orbit_value().real(), 1e-13);
-            EXPECT_NEAR(value.imag(), m_engine.orbit_value().imag(), 1e-13);
-            EXPECT_EQ(iteration == g_max_iterations || std::norm(value) >= g_magnitude_limit, done);
+            EXPECT_EQ(iteration + 1, m_engine.orbit_iteration());
+            value = value * value + parameter;
+            ++iteration;
         }
-        EXPECT_TRUE(done);
-        EXPECT_TRUE(m_plots.empty());
-        EXPECT_TRUE(m_engine.iterate_orbit());
-        EXPECT_EQ(iteration, m_engine.orbit_iteration());
         EXPECT_NEAR(value.real(), m_engine.orbit_value().real(), 1e-13);
         EXPECT_NEAR(value.imag(), m_engine.orbit_value().imag(), 1e-13);
+        EXPECT_EQ(iteration == g_max_iterations || std::norm(value) >= g_magnitude_limit, done);
     }
+    EXPECT_TRUE(done);
+    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(m_engine.iterate_orbit());
+    EXPECT_EQ(iteration, m_engine.orbit_iteration());
+    EXPECT_NEAR(value.real(), m_engine.orbit_value().real(), 1e-13);
+    EXPECT_NEAR(value.imag(), m_engine.orbit_value().imag(), 1e-13);
+}
+
+class TestPerturbationContinuation : public PerturbationContinuationTest, public WithParamInterface<bool>
+{
+public:
+    TestPerturbationContinuation();
 };
+
+TestPerturbationContinuation::TestPerturbationContinuation() :
+    PerturbationContinuationTest{GetParam()}
+{
+}
 
 TEST_P(TestPerturbationContinuation, suppliedStateOverridesPixelSeedsAndColoringOptions)
 {
@@ -9219,12 +9242,19 @@ TEST_P(TestPerturbationContinuation, referenceReplacementPreservesAcceptedValues
     EXPECT_NEAR(replacement.imag(), s_reference_values.front().imag(), 1e-14);
 }
 
-TEST_P(TestPerturbationContinuation, escapeAndIterationLimitRetainTheActualTerminalState)
+TEST_P(TestPerturbationContinuation, escapingContinuationRetainsTheActualTerminalState)
 {
     prepare();
+
     check_orbit({1.0, 0.0}, {0.5, 0.0}, 12);
+
     EXPECT_EQ(14, m_engine.orbit_iteration());
     EXPECT_EQ((std::complex<double>{2.5625, 0.0}), m_engine.orbit_value());
+}
+
+TEST_P(TestPerturbationContinuation, iterationLimitDoesNotPublishAdditionalContinuationSamples)
+{
+    prepare();
     const std::size_t before{s_perturbation_orbit.size()};
 
     check_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 24);
@@ -9830,14 +9860,54 @@ TEST_F(TestPerturbationPixels, complexPowerMatchesNativeBranchesBelowDoubleRange
     }
 }
 
-TEST_P(TestPerturbationContinuation, distinguishesBailoutFromTheIterationLimit)
+struct ContinuationExitInput
 {
-    prepare();
-    check_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
-    EXPECT_FALSE(m_engine.orbit_escaped());
-    check_orbit({1.0, 0.0}, {0.5, 0.0}, 12);
-    EXPECT_TRUE(m_engine.orbit_escaped());
+    const char *name;
+    bool big_float;
+    std::complex<double> parameter;
+    std::complex<double> value;
+    long iteration;
+    bool escaped;
+};
+
+void PrintTo(const ContinuationExitInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestContinuationExitReason : public PerturbationContinuationTest, public WithParamInterface<ContinuationExitInput>
+{
+public:
+    TestContinuationExitReason();
+
+protected:
+    void SetUp() override;
+};
+
+TestContinuationExitReason::TestContinuationExitReason() :
+    PerturbationContinuationTest{GetParam().big_float}
+{
+}
+
+void TestContinuationExitReason::SetUp()
+{
+    PerturbationContinuationTest::SetUp();
+    prepare();
+}
+
+TEST_P(TestContinuationExitReason, distinguishesBailoutFromIterationLimit)
+{
+    check_orbit(GetParam().parameter, GetParam().value, GetParam().iteration);
+
+    EXPECT_EQ(GetParam().escaped, m_engine.orbit_escaped());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestContinuationExitReason,
+    Values(ContinuationExitInput{"Double_IterationLimit", false, {0.125, 0.0625}, {0.03125, -0.0625}, 7, false},
+        ContinuationExitInput{"Double_Escaped", false, {1.0, 0.0}, {0.5, 0.0}, 12, true},
+        ContinuationExitInput{"HighPrecision_IterationLimit", true, {0.125, 0.0625}, {0.03125, -0.0625}, 7, false},
+        ContinuationExitInput{"HighPrecision_Escaped", true, {1.0, 0.0}, {0.5, 0.0}, 12, true}),
+    [](const TestParamInfo<ContinuationExitInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationContinuation, unfinishedOrbitCanBeReleasedWithoutDiscardingTheReference)
 {
