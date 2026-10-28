@@ -459,23 +459,45 @@ TEST_F(TestGifWriterRaster, savesLogicalPixelsAtPhysicalScreenOffset)
     EXPECT_EQ(frame, m_frame);
 }
 
-TEST_F(TestGifWriterRaster, savesAspectByteForExplicitViewAndClampsIt)
+struct SavedGifAspect
 {
+    const char *name;
+    float aspect;
+    int byte;
+};
+
+void PrintTo(const SavedGifAspect &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestGifWriterAspect : public TestGifWriterRaster, public WithParamInterface<SavedGifAspect>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGifWriterAspect::SetUp()
+{
+    TestGifWriterRaster::SetUp();
     g_viewport.enabled = true;
     g_viewport.x_dots = 8;
     g_viewport.y_dots = 6;
-    for (const std::pair<float, int> setting :
-        {std::pair{0.75f, 49}, std::pair{0.5f, 81}, std::pair{1000.0f, 1}, std::pair{0.01f, 255}})
-    {
-        SCOPED_TRACE(setting.first);
-        g_viewport.final_aspect_ratio = setting.first;
-
-        ASSERT_EQ(0, save());
-
-        const GifFilePtr gif{read_saved_gif()};
-        EXPECT_EQ(setting.second, gif->AspectByte);
-    }
+    g_viewport.final_aspect_ratio = GetParam().aspect;
 }
+
+TEST_P(TestGifWriterAspect, savesAspectByteForExplicitView)
+{
+    ASSERT_EQ(0, save());
+
+    const GifFilePtr gif{read_saved_gif()};
+    EXPECT_EQ(GetParam().byte, gif->AspectByte);
+}
+
+INSTANTIATE_TEST_SUITE_P(AspectInputs, TestGifWriterAspect,
+    Values(SavedGifAspect{"NormalAspect", 0.75f, 49}, SavedGifAspect{"WideAspect", 0.5f, 81},
+        SavedGifAspect{"ClampLowByte", 1000.0f, 1}, SavedGifAspect{"ClampHighByte", 0.01f, 255}),
+    [](const TestParamInfo<SavedGifAspect> &info) { return info.param.name; });
 
 TEST_F(TestGifWriterRaster, savesAutomaticViewAspectFromPhysicalScreen)
 {
@@ -551,36 +573,45 @@ TEST_F(TestGifWriterRaster, savesPotentialRowsAsColorsThenLowBytes)
     EXPECT_EQ(pixels, image_pixels());
 }
 
-TEST_F(TestGifWriterRaster, rejectsUnrepresentablePotentialWidth)
+struct InvalidSavedGifDimensions
 {
-    configure_image(GIF_MAX_PIXELS / 2 + 1, 1, 256);
-    g_disk_16_bit = true;
+    const char *name;
+    int width;
+    int height;
+    bool potential;
+};
 
+void PrintTo(const InvalidSavedGifDimensions &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestGifWriterInvalidDimensions : public TestGifWriterRaster, public WithParamInterface<InvalidSavedGifDimensions>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGifWriterInvalidDimensions::SetUp()
+{
+    TestGifWriterRaster::SetUp();
+    configure_image(GetParam().width, GetParam().height, 256);
+    g_disk_16_bit = GetParam().potential;
+}
+
+TEST_P(TestGifWriterInvalidDimensions, rejectsUnrepresentableDimensions)
+{
     EXPECT_EQ(-1, save());
 
     EXPECT_FALSE(std::filesystem::exists(m_path));
     EXPECT_FALSE(g_busy);
 }
 
-TEST_F(TestGifWriterRaster, rejectsUnrepresentableWidth)
-{
-    configure_image(GIF_MAX_PIXELS + 1, 1, 256);
-
-    EXPECT_EQ(-1, save());
-
-    EXPECT_FALSE(std::filesystem::exists(m_path));
-    EXPECT_FALSE(g_busy);
-}
-
-TEST_F(TestGifWriterRaster, rejectsUnrepresentableHeight)
-{
-    configure_image(1, GIF_MAX_PIXELS + 1, 256);
-
-    EXPECT_EQ(-1, save());
-
-    EXPECT_FALSE(std::filesystem::exists(m_path));
-    EXPECT_FALSE(g_busy);
-}
+INSTANTIATE_TEST_SUITE_P(DimensionInputs, TestGifWriterInvalidDimensions,
+    Values(InvalidSavedGifDimensions{"PotentialWidth", GIF_MAX_PIXELS / 2 + 1, 1, true},
+        InvalidSavedGifDimensions{"Width", GIF_MAX_PIXELS + 1, 1, false},
+        InvalidSavedGifDimensions{"Height", 1, GIF_MAX_PIXELS + 1, false}),
+    [](const TestParamInfo<InvalidSavedGifDimensions> &info) { return info.param.name; });
 
 TEST_F(TestGifWriterRaster, reportsOutputOpenFailure)
 {
