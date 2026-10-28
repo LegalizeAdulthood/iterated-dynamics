@@ -3336,32 +3336,89 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestInsideAtanReplacement,
         AtanInitialOrbitInput{"HighPrecisionValue", true, InitOrbitMode::VALUE}),
     [](const TestParamInfo<AtanInitialOrbitInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, epsilonCrossStopsAtTheFirstQualifiedAxis)
+struct EpsilonAxisSample
 {
-    struct Sample
-    {
-        std::complex<double> point;
-        double proximity;
-        long iterations;
-        int color;
+    const char *name;
+    std::complex<double> point;
+    double proximity;
+    long iterations;
+    int color;
+};
+
+struct EpsilonAxisInput
+{
+    std::string name;
+    bool big_float;
+    bool negative;
+    EpsilonAxisSample sample;
+};
+
+void PrintTo(const EpsilonAxisInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<EpsilonAxisInput> epsilon_axis_inputs()
+{
+    const EpsilonAxisSample samples[]{
+        {"Origin", {0.0, 0.0}, 0.01, 1, 2},
+        {"PositiveReal", {0.5, 0.0}, 0.01, 1, 6},
+        {"UpperLeft", {-0.5, 0.5}, 0.01, 1, 6},
+        {"LowerLeft", {-0.5, -0.5}, 0.01, 1, 6},
+        {"UpperRightDelayed", {0.5, 0.5}, 0.3125, 2, 2},
+        {"LowerRightDelayed", {0.5, -0.5}, 0.3125, 2, 2},
     };
 
-    g_inside_method = ColorMethod::EPS_CROSS;
-    for (const Sample &sample :
-        {Sample{{0.0, 0.0}, 0.01, 1, 2}, Sample{{0.5, 0.0}, 0.01, 1, 6}, Sample{{-0.5, 0.5}, 0.01, 1, 6},
-            Sample{{-0.5, -0.5}, 0.01, 1, 6}, Sample{{0.5, 0.5}, 0.3125, 2, 2}, Sample{{0.5, -0.5}, 0.3125, 2, 2}})
+    std::vector<EpsilonAxisInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(sample.point);
-        for (const bool negative : {false, true})
+        for (const EpsilonAxisSample &sample : samples)
         {
-            SCOPED_TRACE(negative);
-            g_close_proximity = negative ? -sample.proximity : sample.proximity;
-            compare_pixel(sample.point, 8, 0.0, sample.iterations);
-            EXPECT_EQ(sample.iterations, g_real_color_iter);
-            EXPECT_EQ(negative ? sample.iterations : sample.color, g_color);
+            for (const bool negative : {false, true})
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + sample.name +
+                        (negative ? "_Negative" : "_Positive"),
+                    big_float, negative, sample});
+            }
         }
     }
+    return inputs;
 }
+
+class TestEpsilonFirstAxis : public PerturbationIterationTest, public WithParamInterface<EpsilonAxisInput>
+{
+public:
+    TestEpsilonFirstAxis();
+
+protected:
+    void SetUp() override;
+};
+
+TestEpsilonFirstAxis::TestEpsilonFirstAxis() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestEpsilonFirstAxis::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = ColorMethod::EPS_CROSS;
+    g_close_proximity = GetParam().negative ? -GetParam().sample.proximity : GetParam().sample.proximity;
+}
+
+TEST_P(TestEpsilonFirstAxis, stopsAtFirstQualifiedAxis)
+{
+    const EpsilonAxisInput &input{GetParam()};
+    const EpsilonAxisSample &sample{input.sample};
+
+    compare_pixel(sample.point, 8, 0.0, sample.iterations);
+
+    EXPECT_EQ(sample.iterations, g_real_color_iter);
+    EXPECT_EQ(input.negative ? sample.iterations : sample.color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestEpsilonFirstAxis, ValuesIn(epsilon_axis_inputs()),
+    [](const TestParamInfo<EpsilonAxisInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, epsilonCrossUsesStrictThresholdsAndDoesNotTestTheSeed)
 {
