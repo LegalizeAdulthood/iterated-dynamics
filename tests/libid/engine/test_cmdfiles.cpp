@@ -4224,35 +4224,37 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestLogModeParameter,
         LogModeParameterInput{"Auto", "logmode=a", false, LogMapCalculate::NONE, true}),
     [](const TestParamInfo<LogModeParameterInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommand, debugFlagValueViaDebug)
+struct DebugFlagParameterInput
 {
-    ValueSaver saved_debug_flag{g_debug_flag, DebugFlags::NONE};
+    const char *name;
+    const char *argument;
+    DebugFlags expected;
+};
 
-    exec_cmd_arg("debug=300");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(DebugFlags::PREVENT_MIIM, g_debug_flag);
+void PrintTo(const DebugFlagParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, debugFlagValue)
+class TestDebugFlagParameter : public TestParameterCommand, public WithParamInterface<DebugFlagParameterInput>
 {
-    ValueSaver saved_debug_flag{g_debug_flag, DebugFlags::NONE};
+private:
+    ValueSaver<DebugFlags> m_saved_debug_flag{g_debug_flag, DebugFlags::NONE};
+};
 
-    exec_cmd_arg("debugflag=300");
+TEST_P(TestDebugFlagParameter, setsDebugFlag)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(DebugFlags::PREVENT_MIIM, g_debug_flag);
+    EXPECT_EQ(GetParam().expected, g_debug_flag);
 }
 
-TEST_F(TestParameterCommand, debugFlagOddValue)
-{
-    ValueSaver saved_debug_flag{g_debug_flag, DebugFlags::NONE};
-
-    exec_cmd_arg("debugflag=301");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(static_cast<DebugFlags>(301), g_debug_flag);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDebugFlagParameter,
+    Values(DebugFlagParameterInput{"DebugAlias", "debug=300", DebugFlags::PREVENT_MIIM},
+        DebugFlagParameterInput{"DebugFlag", "debugflag=300", DebugFlags::PREVENT_MIIM},
+        DebugFlagParameterInput{"OddValue", "debugflag=301", static_cast<DebugFlags>(301)}),
+    [](const TestParamInfo<DebugFlagParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, randomSeedValue)
 {
@@ -4266,59 +4268,76 @@ TEST_F(TestParameterCommand, randomSeedValue)
     EXPECT_TRUE(g_random_seed_flag);
 }
 
-TEST_F(TestParameterCommand, orbitDelayValue)
+struct OrbitDelayParameterInput
 {
-    ValueSaver save_orbit_delay{g_orbit_delay, -999};
-    ValueSaver save_orbit_skip_points{g_orbit_skip_points, -999};
+    const char *name;
+    const char *argument;
+    int expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("orbitdelay=301");
+void PrintTo(const OrbitDelayParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestOrbitDelayParameter : public TestParameterCommand, public WithParamInterface<OrbitDelayParameterInput>
+{
+private:
+    ValueSaver<int> m_saved_delay{g_orbit_delay, -999};
+    ValueSaver<int> m_saved_skip_points{g_orbit_skip_points, -999};
+};
+
+TEST_P(TestOrbitDelayParameter, setsDelayAndSkipPoints)
+{
+    exec_cmd_arg(GetParam().argument);
+
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_orbit_delay);
+    EXPECT_EQ(GetParam().expected, g_orbit_skip_points);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOrbitDelayParameter,
+    Values(OrbitDelayParameterInput{"Value", "orbitdelay=301", 301, CmdArgFlags::NONE},
+        OrbitDelayParameterInput{"NotNumeric", "orbitdelay=100\n", -999, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<OrbitDelayParameterInput> &info) { return info.param.name; });
+
+struct OrbitIntervalParameterInput
+{
+    const char *name;
+    const char *argument;
+    long expected;
+};
+
+void PrintTo(const OrbitIntervalParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestOrbitIntervalParameter : public TestParameterCommand, public WithParamInterface<OrbitIntervalParameterInput>
+{
+private:
+    ValueSaver<long> m_saved_interval{g_orbit_interval, -999L};
+};
+
+TEST_P(TestOrbitIntervalParameter, setsClampedInterval)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(301, g_orbit_delay);
-    EXPECT_EQ(301, g_orbit_skip_points);
+    EXPECT_EQ(GetParam().expected, g_orbit_interval);
 }
 
-TEST_F(TestParameterCommandError, orbitDelayValueMustBeNumeric)
-{
-    ValueSaver save_orbit_delay{g_orbit_delay, -999};
-    ValueSaver save_orbit_skip_points{g_orbit_skip_points, -999};
-
-    exec_cmd_arg("orbitdelay=100\n");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(-999, g_orbit_delay);
-    EXPECT_EQ(-999, g_orbit_skip_points);
-}
-
-TEST_F(TestParameterCommand, orbitIntervalValue)
-{
-    ValueSaver save_orbit_interval{g_orbit_interval, -999L};
-
-    exec_cmd_arg("orbitinterval=201");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(201, g_orbit_interval);
-}
-
-TEST_F(TestParameterCommand, orbitIntervalValueTooSmall)
-{
-    ValueSaver save_orbit_interval{g_orbit_interval, -999L};
-
-    exec_cmd_arg("orbitinterval=0");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(1, g_orbit_interval);
-}
-
-TEST_F(TestParameterCommand, orbitIntervalValueTooBig)
-{
-    ValueSaver save_orbit_interval{g_orbit_interval, -999L};
-
-    exec_cmd_arg("orbitinterval=256");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(255, g_orbit_interval);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOrbitIntervalParameter,
+    Values(OrbitIntervalParameterInput{"Value", "orbitinterval=201", 201L},
+        OrbitIntervalParameterInput{"TooSmall", "orbitinterval=0", 1L},
+        OrbitIntervalParameterInput{"TooBig", "orbitinterval=256", 255L}),
+    [](const TestParamInfo<OrbitIntervalParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, showDotDefault)
 {
