@@ -6391,91 +6391,289 @@ TEST_P(TestLegacyDistanceMapping, retainsDecompositionBiomorphAndMapping)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestLegacyDistanceMapping, ValuesIn(legacy_distance_mapping_inputs()),
     [](const TestParamInfo<LegacyDistanceMappingInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, periodicityMatchesStandardSaveSchedules)
+struct PeriodicityScheduleInput
 {
-    for (const bool legacy : {false, true})
+    std::string name;
+    bool big_float;
+    bool legacy;
+    bool reset;
+    int periodicity;
+    double real;
+};
+
+void PrintTo(const PeriodicityScheduleInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<PeriodicityScheduleInput> periodicity_schedule_inputs()
+{
+    std::vector<PeriodicityScheduleInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(legacy);
-        g_first_saved_and = legacy ? 1 : 9;
-        g_periodicity_next_saved_incr = legacy ? 1 : 4;
-        for (const bool reset : {false, true})
+        for (const bool legacy : {false, true})
         {
-            SCOPED_TRACE(reset);
-            g_reset_periodicity = reset;
-            for (const int periodicity : {0, 1, 5})
+            for (const bool reset : {false, true})
             {
-                SCOPED_TRACE(periodicity);
-                g_periodicity_check = periodicity;
-                g_close_enough = std::ldexp(1e-5, -periodicity);
-                for (const double real : {0.0, -1.0})
+                for (const int periodicity : {0, 1, 5})
                 {
-                    SCOPED_TRACE(real);
-                    g_old_color_iter = 0;
-
-                    compare_pixel({real, 0.0}, 512);
-
-                    EXPECT_EQ(512, g_real_color_iter);
-                    EXPECT_EQ(7, g_color);
-                    if (periodicity == 0)
+                    for (const double real : {0.0, -1.0})
                     {
-                        EXPECT_EQ(511, s_standard_orbit.size());
-                    }
-                    else
-                    {
-                        EXPECT_LT(s_standard_orbit.size(), 511);
-                        if (reset)
-                        {
-                            EXPECT_GT(s_standard_orbit.size(), 255);
-                        }
+                        inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
+                                (legacy ? "LegacySchedule_" : "CurrentSchedule_") + (reset ? "Reset_" : "NoReset_") +
+                                "Periodicity" + std::to_string(periodicity) + (real == 0.0 ? "_Zero" : "_MinusOne"),
+                            big_float, legacy, reset, periodicity, real});
                     }
                 }
             }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, negativePeriodicityHighlightsOnlyDetectedCycles)
+class TestPeriodicitySchedule : public PerturbationIterationTest, public WithParamInterface<PeriodicityScheduleInput>
 {
-    g_inside_color = 3;
-    for (const int periodicity : {1, -1, -5})
+public:
+    TestPeriodicitySchedule();
+
+protected:
+    void SetUp() override;
+};
+
+TestPeriodicitySchedule::TestPeriodicitySchedule() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestPeriodicitySchedule::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_first_saved_and = GetParam().legacy ? 1 : 9;
+    g_periodicity_next_saved_incr = GetParam().legacy ? 1 : 4;
+    g_reset_periodicity = GetParam().reset;
+    g_periodicity_check = GetParam().periodicity;
+    g_close_enough = std::ldexp(1e-5, -GetParam().periodicity);
+    g_old_color_iter = 0;
+}
+
+TEST_P(TestPeriodicitySchedule, matchesStandardSaveSchedule)
+{
+    compare_pixel({GetParam().real, 0.0}, 512);
+
+    EXPECT_EQ(512, g_real_color_iter);
+    EXPECT_EQ(7, g_color);
+    if (GetParam().periodicity == 0)
     {
-        SCOPED_TRACE(periodicity);
-        g_periodicity_check = periodicity;
-        g_old_color_iter = 0;
-        compare_pixel({0.0, 0.0}, 128);
-        EXPECT_EQ(periodicity < 0 ? 7 : 3, g_color);
-        EXPECT_LT(s_standard_orbit.size(), 127);
-        EXPECT_GT(m_engine.reference_count(), 0);
+        EXPECT_EQ(511, s_standard_orbit.size());
     }
-    g_periodicity_check = -1;
-    g_close_enough = 1e-14;
-    compare_pixel({0.25, 0.0}, 128);
-    EXPECT_EQ(3, g_color);
-    EXPECT_EQ(127, s_standard_orbit.size());
-    compare_pixel({0.0, 0.0}, 8);
-    EXPECT_EQ(3, g_color);
-    compare_pixel({0.5, 0.0}, 8);
-    EXPECT_EQ(4, g_color);
-}
-
-TEST_P(TestPerturbationIterations, periodColorsMatchStandardCycleLengthsAndNoCycleResult)
-{
-    g_inside_method = ColorMethod::PERIOD;
-    g_close_enough = 1e-14;
-    for (const int periodicity : {0, 1, -1})
+    else
     {
-        SCOPED_TRACE(periodicity);
-        g_periodicity_check = periodicity;
-        for (const double real : {0.0, -1.0, 0.25})
+        EXPECT_LT(s_standard_orbit.size(), 511);
+        if (GetParam().reset)
         {
-            SCOPED_TRACE(real);
-            compare_pixel({real, 0.0}, 128);
-            const int period{real == 0.0 ? 1 : 2};
-            EXPECT_EQ(periodicity == 0 || real == 0.25 ? 128 : periodicity < 0 ? 7 : period, g_color);
-            EXPECT_GT(m_engine.reference_count(), 0);
+            EXPECT_GT(s_standard_orbit.size(), 255);
         }
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPeriodicitySchedule, ValuesIn(periodicity_schedule_inputs()),
+    [](const TestParamInfo<PeriodicityScheduleInput> &info) { return info.param.name; });
+
+struct DetectedCycleInput
+{
+    std::string name;
+    bool big_float;
+    int periodicity;
+};
+
+void PrintTo(const DetectedCycleInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<DetectedCycleInput> detected_cycle_inputs()
+{
+    std::vector<DetectedCycleInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const int periodicity : {1, -1, -5})
+        {
+            inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
+                    (periodicity < 0 ? "NegativePeriodicity" : "Periodicity") + std::to_string(std::abs(periodicity)),
+                big_float, periodicity});
+        }
+    }
+    return inputs;
+}
+
+class TestDetectedCycleHighlight : public PerturbationIterationTest, public WithParamInterface<DetectedCycleInput>
+{
+public:
+    TestDetectedCycleHighlight();
+
+protected:
+    void SetUp() override;
+};
+
+TestDetectedCycleHighlight::TestDetectedCycleHighlight() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestDetectedCycleHighlight::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_color = 3;
+    g_periodicity_check = GetParam().periodicity;
+    g_old_color_iter = 0;
+}
+
+TEST_P(TestDetectedCycleHighlight, highlightsDetectedCycleOnlyForNegativePeriodicity)
+{
+    compare_pixel({0.0, 0.0}, 128);
+
+    EXPECT_EQ(GetParam().periodicity < 0 ? 7 : 3, g_color);
+    EXPECT_LT(s_standard_orbit.size(), 127);
+    EXPECT_GT(m_engine.reference_count(), 0);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDetectedCycleHighlight, ValuesIn(detected_cycle_inputs()),
+    [](const TestParamInfo<DetectedCycleInput> &info) { return info.param.name; });
+
+struct UndetectedCycleInput
+{
+    std::string name;
+    bool big_float;
+    double real;
+    long iterations;
+    int color;
+    std::optional<std::size_t> orbit_size;
+};
+
+void PrintTo(const UndetectedCycleInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<UndetectedCycleInput> undetected_cycle_inputs()
+{
+    std::vector<UndetectedCycleInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        const std::string prefix{big_float ? "HighPrecision_" : "Double_"};
+        inputs.push_back({prefix + "NoCycle", big_float, 0.25, 128, 3, 127});
+        inputs.push_back({prefix + "IterationLimit", big_float, 0.0, 8, 3, std::nullopt});
+        inputs.push_back({prefix + "Exterior", big_float, 0.5, 8, 4, std::nullopt});
+    }
+    return inputs;
+}
+
+class TestUndetectedCycleHighlight : public PerturbationIterationTest, public WithParamInterface<UndetectedCycleInput>
+{
+public:
+    TestUndetectedCycleHighlight();
+
+protected:
+    void SetUp() override;
+};
+
+TestUndetectedCycleHighlight::TestUndetectedCycleHighlight() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestUndetectedCycleHighlight::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_color = 3;
+    g_periodicity_check = -1;
+    g_close_enough = 1e-14;
+}
+
+TEST_P(TestUndetectedCycleHighlight, doesNotHighlightUndetectedCycle)
+{
+    compare_pixel({GetParam().real, 0.0}, GetParam().iterations);
+
+    EXPECT_EQ(GetParam().color, g_color);
+    if (GetParam().orbit_size)
+    {
+        EXPECT_EQ(*GetParam().orbit_size, s_standard_orbit.size());
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestUndetectedCycleHighlight, ValuesIn(undetected_cycle_inputs()),
+    [](const TestParamInfo<UndetectedCycleInput> &info) { return info.param.name; });
+
+struct PeriodColorInput
+{
+    std::string name;
+    bool big_float;
+    int periodicity;
+    double real;
+    int color;
+};
+
+void PrintTo(const PeriodColorInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<PeriodColorInput> period_color_inputs()
+{
+    std::vector<PeriodColorInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const int periodicity : {0, 1, -1})
+        {
+            for (const double real : {0.0, -1.0, 0.25})
+            {
+                const int period{real == 0.0 ? 1 : 2};
+                const int color{periodicity == 0 || real == 0.25 ? 128 : periodicity < 0 ? 7 : period};
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
+                        (periodicity < 0 ? "NegativePeriodicity" : "Periodicity") +
+                        std::to_string(std::abs(periodicity)) +
+                        (real == 0.0           ? "_Zero"
+                                : real == -1.0 ? "_MinusOne"
+                                               : "_Quarter"),
+                    big_float, periodicity, real, color});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestPeriodColors : public PerturbationIterationTest, public WithParamInterface<PeriodColorInput>
+{
+public:
+    TestPeriodColors();
+
+protected:
+    void SetUp() override;
+};
+
+TestPeriodColors::TestPeriodColors() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestPeriodColors::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = ColorMethod::PERIOD;
+    g_close_enough = 1e-14;
+    g_periodicity_check = GetParam().periodicity;
+}
+
+TEST_P(TestPeriodColors, matchesStandardCycleLengthAndNoCycleResult)
+{
+    compare_pixel({GetParam().real, 0.0}, 128);
+
+    EXPECT_EQ(GetParam().color, g_color);
+    EXPECT_GT(m_engine.reference_count(), 0);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPeriodColors, ValuesIn(period_color_inputs()),
+    [](const TestParamInfo<PeriodColorInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, cycleHighlightingOverridesInsideAndBiomorphColors)
 {
