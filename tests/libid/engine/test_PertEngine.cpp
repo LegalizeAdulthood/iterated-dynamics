@@ -3167,55 +3167,174 @@ TEST_P(TestInsideAtanScale, usesTerminalQuadrantAndVersionScale)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestInsideAtanScale, ValuesIn(inside_atan_inputs()),
     [](const TestParamInfo<InsideAtanInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, insideAtanPreservesOutsideColoring)
+struct AtanOutsideInput
 {
+    std::string name;
+    bool big_float;
+    ColorMethod outside;
+};
+
+void PrintTo(const AtanOutsideInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<AtanOutsideInput> atan_outside_inputs()
+{
+    const std::array<PerturbationColorMethod, 6> methods{
+        {{"Iterations", ColorMethod::ITER}, {"Real", ColorMethod::REAL}, {"Imaginary", ColorMethod::IMAG},
+            {"Atan", ColorMethod::ATAN}, {"Fmod", ColorMethod::FMOD}, {"TotalDistance", ColorMethod::TDIS}}};
+    std::vector<AtanOutsideInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &outside : methods)
+        {
+            inputs.push_back(
+                {std::string{big_float ? "HighPrecision_" : "Double_"} + outside.name, big_float, outside.method});
+        }
+    }
+    return inputs;
+}
+
+class TestInsideAtanOutsideColor : public PerturbationIterationTest, public WithParamInterface<AtanOutsideInput>
+{
+public:
+    TestInsideAtanOutsideColor();
+
+protected:
+    void SetUp() override;
+};
+
+TestInsideAtanOutsideColor::TestInsideAtanOutsideColor() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestInsideAtanOutsideColor::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::ATANI;
     init_atan_colors();
     g_close_proximity = 16.0;
-    for (const ColorMethod outside : {ColorMethod::ITER, ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::ATAN,
-             ColorMethod::FMOD, ColorMethod::TDIS})
-    {
-        SCOPED_TRACE(static_cast<int>(outside));
-        g_outside_method = outside;
-        compare_pixel({0.5, 0.5}, 8);
-        EXPECT_EQ(4, g_real_color_iter);
-    }
+    g_outside_method = GetParam().outside;
 }
 
-TEST_P(TestPerturbationIterations, insideAtanMatchesPeriodicityAndHighlighting)
+TEST_P(TestInsideAtanOutsideColor, preservesOutsideColoring)
 {
+    compare_pixel({0.5, 0.5}, 8);
+
+    EXPECT_EQ(4, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInsideAtanOutsideColor, ValuesIn(atan_outside_inputs()),
+    [](const TestParamInfo<AtanOutsideInput> &info) { return info.param.name; });
+
+struct AtanPeriodicityInput
+{
+    const char *name;
+    bool big_float;
+    int periodicity;
+};
+
+void PrintTo(const AtanPeriodicityInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestInsideAtanPeriodicity : public PerturbationIterationTest, public WithParamInterface<AtanPeriodicityInput>
+{
+public:
+    TestInsideAtanPeriodicity();
+
+protected:
+    void SetUp() override;
+};
+
+TestInsideAtanPeriodicity::TestInsideAtanPeriodicity() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestInsideAtanPeriodicity::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::ATANI;
     init_atan_colors();
-    for (const int periodicity : {0, 1, -1})
+    g_periodicity_check = GetParam().periodicity;
+    g_old_color_iter = 0;
+}
+
+TEST_P(TestInsideAtanPeriodicity, matchesPeriodicityAndHighlighting)
+{
+    compare_pixel({-1.0, 0.0}, 64);
+
+    EXPECT_EQ(64, g_real_color_iter);
+    if (GetParam().periodicity < 0)
     {
-        SCOPED_TRACE(periodicity);
-        g_periodicity_check = periodicity;
-        g_old_color_iter = 0;
-        compare_pixel({-1.0, 0.0}, 64);
-        EXPECT_EQ(64, g_real_color_iter);
-        if (periodicity < 0)
-        {
-            EXPECT_EQ(7, g_color);
-        }
+        EXPECT_EQ(7, g_color);
     }
 }
 
-TEST_P(TestPerturbationIterations, insideAtanSurvivesOffsetsAndReferenceReplacement)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInsideAtanPeriodicity,
+    Values(AtanPeriodicityInput{"DoubleDisabled", false, 0}, AtanPeriodicityInput{"DoubleEnabled", false, 1},
+        AtanPeriodicityInput{"DoubleHighlighted", false, -1}, AtanPeriodicityInput{"HighPrecisionDisabled", true, 0},
+        AtanPeriodicityInput{"HighPrecisionEnabled", true, 1},
+        AtanPeriodicityInput{"HighPrecisionHighlighted", true, -1}),
+    [](const TestParamInfo<AtanPeriodicityInput> &info) { return info.param.name; });
+
+struct AtanInitialOrbitInput
 {
+    const char *name;
+    bool big_float;
+    InitOrbitMode mode;
+};
+
+void PrintTo(const AtanInitialOrbitInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestInsideAtanReplacement : public PerturbationIterationTest, public WithParamInterface<AtanInitialOrbitInput>
+{
+public:
+    TestInsideAtanReplacement();
+
+protected:
+    void SetUp() override;
+};
+
+TestInsideAtanReplacement::TestInsideAtanReplacement() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestInsideAtanReplacement::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::ATANI;
     init_atan_colors();
     set_initial_offset({-0.125, 0.0625});
     m_engine.set_glitch_tolerance(8.0);
-    for (const InitOrbitMode mode : {InitOrbitMode::NORMAL, InitOrbitMode::PIXEL, InitOrbitMode::VALUE})
-    {
-        SCOPED_TRACE(static_cast<int>(mode));
-        g_use_init_orbit = mode;
-        g_init_orbit = {-0.25, 0.125};
-        compare_pixel({0.125, 0.0625}, 8, 0.125);
-        EXPECT_EQ(8, g_real_color_iter);
-        EXPECT_GT(m_engine.reference_count(), 1);
-    }
+    g_use_init_orbit = GetParam().mode;
+    g_init_orbit = {-0.25, 0.125};
 }
+
+TEST_P(TestInsideAtanReplacement, preservesOffsetsAcrossReferenceReplacement)
+{
+    compare_pixel({0.125, 0.0625}, 8, 0.125);
+
+    EXPECT_EQ(8, g_real_color_iter);
+    EXPECT_GT(m_engine.reference_count(), 1);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInsideAtanReplacement,
+    Values(AtanInitialOrbitInput{"DoubleNormal", false, InitOrbitMode::NORMAL},
+        AtanInitialOrbitInput{"DoublePixel", false, InitOrbitMode::PIXEL},
+        AtanInitialOrbitInput{"DoubleValue", false, InitOrbitMode::VALUE},
+        AtanInitialOrbitInput{"HighPrecisionNormal", true, InitOrbitMode::NORMAL},
+        AtanInitialOrbitInput{"HighPrecisionPixel", true, InitOrbitMode::PIXEL},
+        AtanInitialOrbitInput{"HighPrecisionValue", true, InitOrbitMode::VALUE}),
+    [](const TestParamInfo<AtanInitialOrbitInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, epsilonCrossStopsAtTheFirstQualifiedAxis)
 {
