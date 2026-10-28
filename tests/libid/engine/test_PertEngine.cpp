@@ -10325,52 +10325,88 @@ TEST_P(TestSignedZeroPower, retainsSignedZeroBranchSide)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestSignedZeroPower, Values(1, -1),
     [](const TestParamInfo<int> &info) { return info.param > 0 ? "PositiveZero" : "NegativeZero"; });
 
-TEST_F(TestPerturbationPixels, complexPowerMatchesNativeBranchesBelowDoubleRange)
+class TestSubDoublePowerBranch : public TestPerturbationPixels, public WithParamInterface<int>
 {
-    ValueSaver saved_exponent{g_c_exponent, 0};
-    ValueSaver saved_real{g_params[2], 0.5};
-    ValueSaver saved_imag{g_params[3], 0.0};
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void compare_branch(int sign);
+
+private:
+    ValueSaver<int> m_saved_exponent{g_c_exponent, 0};
+    ValueSaver<double> m_saved_real{g_params[2], 0.5};
+    ValueSaver<double> m_saved_imaginary{g_params[3], 0.0};
+    std::optional<BigStackSaver> m_stack;
+    BFComplex m_center{};
+    BFComplex m_value{};
+    BFComplex m_native{};
+    BFComplex m_exponent{};
+};
+
+void TestSubDoublePowerBranch::SetUp()
+{
+    TestPerturbationPixels::SetUp();
     g_fractal_type = FractalType::MANDEL_Z_POWER;
     m_specific = *get_fractal_specific(g_fractal_type);
     g_max_iterations = 2;
     init_bf_dec(60);
     m_big_float = true;
-    const BFComplex center{m_engine.initialize_frame_bf({}, {})};
-    clear_bf(center.x);
-    clear_bf(center.y);
+    m_center = m_engine.initialize_frame_bf({}, {});
+    clear_bf(m_center.x);
+    clear_bf(m_center.y);
     while (!m_engine.initialize_pixel_strategy())
     {
     }
-    BigStackSaver saved;
-    const BFComplex value{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex native{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    float_to_bf(exponent.x, 0.5);
-    clear_bf(exponent.y);
-    int_to_bf(value.x, -1);
-    for (const int sign : {1, -1})
+    m_stack.emplace();
+    m_value = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    m_native = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    m_exponent = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    float_to_bf(m_exponent.x, 0.5);
+    clear_bf(m_exponent.y);
+    int_to_bf(m_value.x, -1);
+    // Retain the positive branch's reference when crossing below the cut.
+    if (GetParam() < 0)
     {
-        str_to_bf(value.y, sign > 0 ? "1e-400" : "-1e-400");
-        EXPECT_DOUBLE_EQ(-1.0, static_cast<double>(bf_to_float(value.x)));
-        EXPECT_EQ(sign, sign_bf(value.y));
-        EXPECT_NEAR(std::acos(-1.0), static_cast<double>(bf_to_float(g_bf_pi)), 1e-12);
-        BFComplex native_seed{value};
-        cmplx_pow_bf(&native, &native_seed, &exponent);
-        // Preserve the native kernel's behavior beyond its initial floating-
-        // point approximation range, rather than substituting a new policy.
-        const std::complex<double> expected{
-            static_cast<double>(bf_to_float(native.x)), static_cast<double>(bf_to_float(native.y))};
-        m_engine.begin_orbit_bf(center, value, 0);
-        for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
-        {
-            m_engine.iterate_orbit();
-        }
-        ASSERT_EQ(1, m_engine.orbit_iteration());
-        EXPECT_NEAR(expected.real(), m_engine.orbit_value().real(), 1e-12);
-        EXPECT_NEAR(expected.imag(), m_engine.orbit_value().imag(), 1e-12);
-        m_engine.finish_orbit();
+        ASSERT_NO_FATAL_FAILURE(compare_branch(1));
     }
 }
+
+void TestSubDoublePowerBranch::TearDown()
+{
+    m_stack.reset();
+    TestPerturbationPixels::TearDown();
+}
+
+void TestSubDoublePowerBranch::compare_branch(const int sign)
+{
+    str_to_bf(m_value.y, sign > 0 ? "1e-400" : "-1e-400");
+    EXPECT_DOUBLE_EQ(-1.0, static_cast<double>(bf_to_float(m_value.x)));
+    EXPECT_EQ(sign, sign_bf(m_value.y));
+    EXPECT_NEAR(std::acos(-1.0), static_cast<double>(bf_to_float(g_bf_pi)), 1e-12);
+    BFComplex native_seed{m_value};
+    cmplx_pow_bf(&m_native, &native_seed, &m_exponent);
+    // Preserve the native kernel's behavior beyond its initial floating-
+    // point approximation range, rather than substituting a new policy.
+    const std::complex<double> expected{
+        static_cast<double>(bf_to_float(m_native.x)), static_cast<double>(bf_to_float(m_native.y))};
+    m_engine.begin_orbit_bf(m_center, m_value, 0);
+    for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
+    {
+        m_engine.iterate_orbit();
+    }
+    ASSERT_EQ(1, m_engine.orbit_iteration());
+    EXPECT_NEAR(expected.real(), m_engine.orbit_value().real(), 1e-12);
+    EXPECT_NEAR(expected.imag(), m_engine.orbit_value().imag(), 1e-12);
+    m_engine.finish_orbit();
+}
+
+TEST_P(TestSubDoublePowerBranch, matchesNativeBranchBelowDoubleRange)
+{
+    compare_branch(GetParam());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestSubDoublePowerBranch, Values(1, -1),
+    [](const TestParamInfo<int> &info) { return info.param > 0 ? "AboveBranch" : "BelowBranch"; });
 
 struct ContinuationExitInput
 {
