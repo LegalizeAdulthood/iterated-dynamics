@@ -17,7 +17,9 @@
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
+#include <memory>
 #include <stdexcept>
+#include <string>
 #include <tuple>
 #include <vector>
 
@@ -210,29 +212,68 @@ TEST_F(TestDiskStorage, invalidHandleDoesNotPublishStorage)
     EXPECT_TRUE(exit_check().empty());
 }
 
-TEST_F(TestDiskStorage, truncatedTargaHeaderClosesTheSource)
+class TestDiskStorageTarga : public TestDiskStorage
 {
-    const std::filesystem::path path{m_directory / "short.tga"};
-    std::ofstream(path, std::ios::binary) << "short";
-    std::FILE *file{std::fopen(path.string().c_str(), "rb")};
-    ASSERT_NE(nullptr, file);
+protected:
+    using FilePtr = std::unique_ptr<std::FILE, decltype(&std::fclose)>;
 
-    EXPECT_THROW(read_targa_header(file, 18), MemoryError);
+    void SetUp() override;
+    void write_source(const std::string &contents) const;
+    FilePtr open_source() const;
+    void open_backing(int width, int height);
 
-    EXPECT_FALSE(g_disk_flag);
-    EXPECT_TRUE(std::filesystem::remove(path));
+    std::filesystem::path m_path;
+};
+
+void TestDiskStorageTarga::SetUp()
+{
+    TestDiskStorage::SetUp();
+    m_path = m_directory / "backing.tga";
+    write_source("012345678901234567");
 }
 
-TEST_F(TestDiskStorage, failedBackingReadCanBeClosedWithoutUi)
+void TestDiskStorageTarga::write_source(const std::string &contents) const
 {
-    const std::filesystem::path path{m_directory / "backing.tga"};
-    std::ofstream(path, std::ios::binary) << "012345678901234567";
-    std::FILE *file{std::fopen(path.string().c_str(), "rb")};
-    ASSERT_NE(nullptr, file);
-    const std::vector<Byte> header{read_targa_header(file, 18)};
-    set_targa_disk_path(path);
-    open(DISK_STORAGE_BLOCK_SIZE, 1, 256, MemoryLocation::DISK, header);
-    std::filesystem::resize_file(path, 1);
+    std::ofstream output{m_path, std::ios::binary};
+    output << contents;
+    output.close();
+    if (!output)
+    {
+        throw std::runtime_error("Can't create Targa backing test input");
+    }
+}
+
+TestDiskStorageTarga::FilePtr TestDiskStorageTarga::open_source() const
+{
+    FilePtr source{std::fopen(m_path.string().c_str(), "rb"), std::fclose};
+    if (!source)
+    {
+        throw std::runtime_error("Can't open Targa backing test input");
+    }
+    return source;
+}
+
+void TestDiskStorageTarga::open_backing(const int width, const int height)
+{
+    const std::vector<Byte> header{read_targa_header(open_source().release(), 18)};
+    set_targa_disk_path(m_path);
+    open(width, height, 256, MemoryLocation::DISK, header);
+}
+
+TEST_F(TestDiskStorageTarga, truncatedTargaHeaderClosesTheSource)
+{
+    write_source("short");
+
+    EXPECT_THROW(read_targa_header(open_source().release(), 18), MemoryError);
+
+    EXPECT_FALSE(g_disk_flag);
+    EXPECT_TRUE(std::filesystem::remove(m_path));
+}
+
+TEST_F(TestDiskStorageTarga, failedBackingReadCanBeClosedWithoutUi)
+{
+    open_backing(DISK_STORAGE_BLOCK_SIZE, 1);
+    std::filesystem::resize_file(m_path, 1);
 
     EXPECT_THROW(read_disk_pixel(0, 0), MemoryError);
     EXPECT_NO_THROW(end_disk());
@@ -241,43 +282,31 @@ TEST_F(TestDiskStorage, failedBackingReadCanBeClosedWithoutUi)
     EXPECT_EQ(MemoryLocation::NOWHERE, disk_video_memory_type());
     EXPECT_EQ(DiskStorageOperation::NONE, disk_storage_progress().operation);
     EXPECT_TRUE(exit_check().empty());
-    EXPECT_TRUE(std::filesystem::exists(path));
+    EXPECT_TRUE(std::filesystem::exists(m_path));
 }
 
-TEST_F(TestDiskStorage, selectingAnotherTargaPathDoesNotChangeTheActiveBackingFile)
+TEST_F(TestDiskStorageTarga, selectingAnotherTargaPathDoesNotChangeTheActiveBackingFile)
 {
-    const std::filesystem::path active{m_directory / "active.tga"};
     const std::filesystem::path next{m_directory / "next.tga"};
-    std::ofstream(active, std::ios::binary) << "012345678901234567";
     std::ofstream(next, std::ios::binary) << "keep";
-    std::FILE *file{std::fopen(active.string().c_str(), "rb")};
-    ASSERT_NE(nullptr, file);
-    const std::vector<Byte> header{read_targa_header(file, 18)};
-    set_targa_disk_path(active);
-    open(6, 2, 256, MemoryLocation::DISK, header);
+    open_backing(6, 2);
     write_targa_pixel(0, 0, 10, 20, 30);
 
     set_targa_disk_path(next);
     end_disk();
 
-    EXPECT_EQ(30U, std::filesystem::file_size(active));
+    EXPECT_EQ(30U, std::filesystem::file_size(m_path));
     EXPECT_EQ(4U, std::filesystem::file_size(next));
     EXPECT_FALSE(g_disk_flag);
     EXPECT_TRUE(exit_check().empty());
 }
 
-TEST_F(TestDiskStorage, failedDirtyTargaFlushReleasesStorageAndAllowsRepeatedClose)
+TEST_F(TestDiskStorageTarga, failedDirtyTargaFlushReleasesStorageAndAllowsRepeatedClose)
 {
-    const std::filesystem::path path{m_directory / "backing.tga"};
-    std::ofstream(path, std::ios::binary) << "012345678901234567";
-    std::FILE *file{std::fopen(path.string().c_str(), "rb")};
-    ASSERT_NE(nullptr, file);
-    const std::vector<Byte> header{read_targa_header(file, 18)};
-    set_targa_disk_path(path);
-    open(DISK_STORAGE_BLOCK_SIZE, 8, 256, MemoryLocation::DISK, header);
+    open_backing(DISK_STORAGE_BLOCK_SIZE, 8);
     write_targa_pixel(0, 7, 10, 20, 30);
     read_disk_pixel(0, 0);
-    std::filesystem::resize_file(path, 0);
+    std::filesystem::resize_file(m_path, 0);
 
     EXPECT_THROW(end_disk(), MemoryError);
 
