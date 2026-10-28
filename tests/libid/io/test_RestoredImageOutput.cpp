@@ -20,6 +20,7 @@
 
 #include <array>
 #include <memory>
+#include <ostream>
 #include <stdexcept>
 #include <vector>
 
@@ -48,6 +49,8 @@ public:
 };
 
 std::vector<std::array<int, 3>> s_pixels;
+constexpr Byte REPLACEMENT_PIXELS[]{8, 9};
+constexpr Byte SINGLE_PIXEL[]{1};
 
 void capture_restored_pixel(const int col, const int row, const int color)
 {
@@ -119,10 +122,33 @@ TEST_F(TestRestoredImageOutput, iterationCommitsExactlyOnePixel)
     EXPECT_FALSE(output.done());
     EXPECT_EQ(0, output.row());
     EXPECT_EQ(1, output.column());
-    drain(output);
-    EXPECT_TRUE(output.done());
-    EXPECT_EQ(3, output.column());
-    output.iterate();
+}
+
+class TestRestoredImageCompletedLine : public TestRestoredImageOutput
+{
+protected:
+    void SetUp() override;
+
+    RestoredImageOutput m_output{4};
+
+private:
+    const std::array<Byte, 3> m_pixels{3, 5, 7};
+};
+
+void TestRestoredImageCompletedLine::SetUp()
+{
+    TestRestoredImageOutput::SetUp();
+    m_output.set_line(m_pixels.data(), static_cast<int>(m_pixels.size()));
+    drain(m_output);
+}
+
+TEST_F(TestRestoredImageCompletedLine, iterationAfterCompletionDoesNotPlotMorePixels)
+{
+    EXPECT_TRUE(m_output.done());
+    EXPECT_EQ(3, m_output.column());
+
+    m_output.iterate();
+
     EXPECT_EQ(3U, s_pixels.size());
 }
 
@@ -194,38 +220,96 @@ TEST_F(TestRestoredImageOutput, emptyLineDoesNotMovePosition)
     EXPECT_EQ(expected, s_pixels);
 }
 
-TEST_F(TestRestoredImageOutput, replacingPendingLineThrowsWithoutLosingPixels)
+struct RestoredLineInput
 {
-    RestoredImageOutput output{4};
-    const Byte first[]{1, 2};
-    const Byte second[]{8, 9};
-    output.set_line(first, 2);
-    output.iterate();
+    const char *name;
+    const Byte *pixels;
+    int length;
+};
 
-    EXPECT_THROW(output.set_line(second, 2), std::logic_error);
-    EXPECT_THROW(output.set_line(nullptr, 0), std::logic_error);
-    drain(output);
+void PrintTo(const RestoredLineInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestRestoredImagePendingLine : public TestRestoredImageOutput, public WithParamInterface<RestoredLineInput>
+{
+protected:
+    void SetUp() override;
+
+    RestoredImageOutput m_output{4};
+
+private:
+    const std::array<Byte, 2> m_first{1, 2};
+};
+
+void TestRestoredImagePendingLine::SetUp()
+{
+    TestRestoredImageOutput::SetUp();
+    m_output.set_line(m_first.data(), static_cast<int>(m_first.size()));
+    m_output.iterate();
+}
+
+TEST_P(TestRestoredImagePendingLine, rejectsReplacementWithoutLosingPixels)
+{
+    EXPECT_THROW(m_output.set_line(GetParam().pixels, GetParam().length), std::logic_error);
+
+    drain(m_output);
 
     const std::vector<std::array<int, 3>> expected{{0, 0, 1}, {1, 0, 2}};
     EXPECT_EQ(expected, s_pixels);
 }
 
-TEST_F(TestRestoredImageOutput, rejectsInvalidPositionsAndLineArguments)
+INSTANTIATE_TEST_SUITE_P(PendingLineInputs, TestRestoredImagePendingLine,
+    Values(RestoredLineInput{"Pixels", REPLACEMENT_PIXELS, 2}, RestoredLineInput{"Empty", nullptr, 0}),
+    [](const TestParamInfo<RestoredLineInput> &info) { return info.param.name; });
+
+struct RestoredPositionInput
 {
-    EXPECT_THROW(RestoredImageOutput{0}, std::logic_error);
-    EXPECT_THROW(RestoredImageOutput{-1}, std::logic_error);
-    EXPECT_THROW((RestoredImageOutput{4, -1, 0}), std::logic_error);
-    EXPECT_THROW((RestoredImageOutput{4, 0, -1}), std::logic_error);
-    EXPECT_THROW((RestoredImageOutput{4, 0, 4}), std::logic_error);
-    RestoredImageOutput output{4};
-    const Byte pixels[]{1};
+    const char *name;
+    int width;
+    int row;
+    int column;
+};
 
-    EXPECT_THROW(output.set_line(pixels, -1), std::logic_error);
-    EXPECT_THROW(output.set_line(nullptr, 1), std::logic_error);
+void PrintTo(const RestoredPositionInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
 
-    EXPECT_TRUE(output.done());
+class TestRestoredImageInvalidPosition : public TestRestoredImageOutput,
+                                         public WithParamInterface<RestoredPositionInput>
+{
+};
+
+TEST_P(TestRestoredImageInvalidPosition, rejectsConstructorPosition)
+{
+    EXPECT_THROW((RestoredImageOutput{GetParam().width, GetParam().row, GetParam().column}), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(PositionInputs, TestRestoredImageInvalidPosition,
+    Values(RestoredPositionInput{"ZeroWidth", 0, 0, 0}, RestoredPositionInput{"NegativeWidth", -1, 0, 0},
+        RestoredPositionInput{"NegativeRow", 4, -1, 0}, RestoredPositionInput{"NegativeColumn", 4, 0, -1},
+        RestoredPositionInput{"ColumnAtWidth", 4, 0, 4}),
+    [](const TestParamInfo<RestoredPositionInput> &info) { return info.param.name; });
+
+class TestRestoredImageInvalidLine : public TestRestoredImageOutput, public WithParamInterface<RestoredLineInput>
+{
+protected:
+    RestoredImageOutput m_output{4};
+};
+
+TEST_P(TestRestoredImageInvalidLine, rejectsArgumentsWithoutChangingOutput)
+{
+    EXPECT_THROW(m_output.set_line(GetParam().pixels, GetParam().length), std::logic_error);
+
+    EXPECT_TRUE(m_output.done());
     EXPECT_TRUE(s_pixels.empty());
 }
+
+INSTANTIATE_TEST_SUITE_P(LineInputs, TestRestoredImageInvalidLine,
+    Values(RestoredLineInput{"NegativeLength", SINGLE_PIXEL, -1}, RestoredLineInput{"NullPixels", nullptr, 1}),
+    [](const TestParamInfo<RestoredLineInput> &info) { return info.param.name; });
 
 TEST_F(TestRestoredImageOutput, instancesKeepIndependentBuffersAndPositions)
 {
