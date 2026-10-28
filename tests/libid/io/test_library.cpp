@@ -258,17 +258,55 @@ TEST_F(TestLibrary, findFileFromSaveLibrary)
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }
 
-TEST_F(TestLibrary, setSaveLibrary)
+struct LibrarySaveInput
 {
-    set_save_library(ID_TEST_LIBRARY_DIR3);
+    const char *name;
+    WriteFile category;
+    const char *requested;
+    const char *filename;
+    const char *subdirectory;
+};
 
-    const Path path{get_save_path(WriteFile::IMAGE, ID_TEST_IMAGE_FILE)};
+void PrintTo(const LibrarySaveInput &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestLibrarySave : public TestLibrary, public testing::WithParamInterface<LibrarySaveInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestLibrarySave::SetUp()
+{
+    TestLibrary::SetUp();
+    set_save_library(ID_TEST_LIBRARY_DIR3);
+}
+
+TEST_P(TestLibrarySave, usesCategoryExtensionAndSubdirectory)
+{
+    const LibrarySaveInput &input{GetParam()};
+
+    const Path path{get_save_path(input.category, input.requested)};
 
     ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{ID_TEST_IMAGE_FILE}, path.filename()) << path;
-    EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{input.filename}, path.filename()) << path;
+    EXPECT_EQ(Path{input.subdirectory}, path.parent_path().filename()) << path;
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }
+
+INSTANTIATE_TEST_SUITE_P(SaveInputs, TestLibrarySave,
+    testing::Values(LibrarySaveInput{"Image", WriteFile::IMAGE, ID_TEST_IMAGE_FILE, ID_TEST_IMAGE_FILE, "image"},
+        LibrarySaveInput{"Map", WriteFile::MAP, "foo", "foo.map", "map"},
+        LibrarySaveInput{"Formula", WriteFile::FORMULA, "foo", "foo.frm", "formula"},
+        LibrarySaveInput{"Parameter", WriteFile::PARAMETER, "foo", "foo.par", "par"},
+        LibrarySaveInput{"Orbit", WriteFile::ORBIT, "foo", "foo.raw", "orbit"},
+        LibrarySaveInput{"Sound", WriteFile::SOUND, "foo", "foo.txt", "sound"},
+        LibrarySaveInput{"Raytrace", WriteFile::RAYTRACE, "foo", "foo.ray", "raytrace"},
+        LibrarySaveInput{"Debug", WriteFile::DEBUG, "trace", "trace.txt", "debug"},
+        LibrarySaveInput{"DebugJson", WriteFile::DEBUG_JSON, "history", "history.json", "debug"}),
+    [](const testing::TestParamInfo<LibrarySaveInput> &info) { return info.param.name; });
 
 TEST_F(TestLibrary, saveLibraryDefaultsToSaveDir)
 {
@@ -279,91 +317,6 @@ TEST_F(TestLibrary, saveLibraryDefaultsToSaveDir)
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{ID_TEST_IMAGE_FILE}, path.filename()) << path;
     EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, saveFileAddsExtension)
-{
-    set_save_library(ID_TEST_LIBRARY_DIR3);
-
-    const Path path{get_save_path(WriteFile::MAP, "foo")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"foo.map"}, path.filename()) << path;
-    EXPECT_EQ(Path{"map"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, saveFormulaMapAndParameterUseSingularSubDirectories)
-{
-    set_save_library(ID_TEST_LIBRARY_DIR3);
-
-    const Path formula_path{get_save_path(WriteFile::FORMULA, "foo")};
-    const Path map_path{get_save_path(WriteFile::MAP, "foo")};
-    const Path par_path{get_save_path(WriteFile::PARAMETER, "foo")};
-
-    EXPECT_EQ(Path{"formula"}, formula_path.parent_path().filename()) << formula_path;
-    EXPECT_EQ(Path{"map"}, map_path.parent_path().filename()) << map_path;
-    EXPECT_EQ(Path{"par"}, par_path.parent_path().filename()) << par_path;
-}
-
-TEST_F(TestLibrary, saveOrbit)
-{
-    set_save_library(ID_TEST_LIBRARY_DIR3);
-
-    const Path path{get_save_path(WriteFile::ORBIT, "foo")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"foo.raw"}, path.filename()) << path;
-    EXPECT_EQ(Path{"orbit"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, saveSound)
-{
-    set_save_library(ID_TEST_LIBRARY_DIR3);
-
-    const Path path{get_save_path(WriteFile::SOUND, "foo")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"foo.txt"}, path.filename()) << path;
-    EXPECT_EQ(Path{"sound"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, saveRaytrace)
-{
-    set_save_library(ID_TEST_LIBRARY_DIR3);
-
-    const Path path{get_save_path(WriteFile::RAYTRACE, "foo")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"foo.ray"}, path.filename()) << path;
-    EXPECT_EQ(Path{"raytrace"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, saveDebug)
-{
-    set_save_library(ID_TEST_LIBRARY_DIR3);
-
-    const Path path{get_save_path(WriteFile::DEBUG, "trace")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"trace.txt"}, path.filename()) << path;
-    EXPECT_EQ(Path{"debug"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, saveDebugJson)
-{
-    set_save_library(ID_TEST_LIBRARY_DIR3);
-
-    const Path path{get_save_path(WriteFile::DEBUG_JSON, "history")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"history.json"}, path.filename()) << path;
-    EXPECT_EQ(Path{"debug"}, path.parent_path().filename()) << path;
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }
 
