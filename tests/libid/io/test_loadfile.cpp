@@ -46,6 +46,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <tuple>
 #include <vector>
 
 using namespace id::engine;
@@ -943,21 +944,43 @@ INSTANTIATE_TEST_SUITE_P(PayloadSizes, TestInvalidPrecisionPayload,
         PrecisionPayloadSize{"Oversized", 485}, PrecisionPayloadSize{"ArenaOverflow", 1024}),
     [](const TestParamInfo<PrecisionPayloadSize> &info) { return info.param.name; });
 
-TEST_F(TestFindPrecisionMetadata, unsupportedPrecisionDoesNotChangeActiveImage)
+struct PrecisionValue
 {
-    for (const int precision : {-1, 0, 673, 709, 32767})
-    {
-        SCOPED_TRACE(precision);
-        GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
-        add_main_record(precision);
-        put_extended_param_info(&m_extensions, {});
-        const std::filesystem::path path{write_small_file(true)};
+    const char *name;
+    int precision;
+};
 
-        EXPECT_THROW(read_image_metadata(path), std::runtime_error);
-        expect_active_image();
-        EXPECT_TRUE(std::filesystem::remove(path));
-    }
+void PrintTo(const PrecisionValue &value, std::ostream *str)
+{
+    *str << value.name;
 }
+
+class TestUnsupportedPrecision : public TestFindPrecisionMetadata, public WithParamInterface<PrecisionValue>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestUnsupportedPrecision::SetUp()
+{
+    TestFindPrecisionMetadata::SetUp();
+    add_main_record(GetParam().precision);
+    put_extended_param_info(&m_extensions, {});
+    write_small_file(true);
+}
+
+TEST_P(TestUnsupportedPrecision, rejectionPreservesActiveImage)
+{
+    EXPECT_THROW(read_image_metadata(m_path), std::runtime_error);
+
+    expect_active_image();
+    EXPECT_TRUE(std::filesystem::remove(m_path));
+}
+
+INSTANTIATE_TEST_SUITE_P(DeclaredPrecision, TestUnsupportedPrecision,
+    Values(PrecisionValue{"Negative", -1}, PrecisionValue{"Zero", 0}, PrecisionValue{"BeyondBigNum", 673},
+        PrecisionValue{"BeyondBigFloat", 709}, PrecisionValue{"MaximumStoredValue", 32767}),
+    [](const TestParamInfo<PrecisionValue> &info) { return info.param.name; });
 
 TEST_F(TestFindPrecisionMetadata, duplicateMainRecordsDoNotChangeActiveImage)
 {
@@ -971,39 +994,59 @@ TEST_F(TestFindPrecisionMetadata, duplicateMainRecordsDoNotChangeActiveImage)
     EXPECT_TRUE(std::filesystem::remove(path));
 }
 
-TEST_F(TestFindPrecisionMetadata, validPayloadsMatchStoredPrecisionWithoutChangingActiveImage)
+struct PrecisionMetadataCase
 {
-    struct Sample
-    {
-        FractalType type;
-        int precision;
-        size_t bytes;
-    };
+    const char *name;
+    FractalType type;
+    int precision;
+    size_t bytes;
+};
 
-    for (const Sample &sample : {Sample{FractalType::MANDEL, 12, 396}, Sample{FractalType::MANDEL, 13, 484},
-             Sample{FractalType::MANDEL, 16, 484}, Sample{FractalType::MANDEL, 672, 14916},
-             Sample{FractalType::DIVIDE_BROT5, 708, 15708}})
-    {
-        SCOPED_TRACE(sample.precision);
-        for (const bool before_image : {false, true})
-        {
-            SCOPED_TRACE(before_image);
-            GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
-            add_main_record(sample.precision, sample.type);
-            const std::vector<char> parameters(sample.bytes, 'a');
-            put_extended_param_info(&m_extensions, parameters);
-            const std::filesystem::path path{write_small_file(before_image)};
-
-            const ImageMetadata metadata{read_image_metadata(path)};
-
-            EXPECT_EQ(sample.precision, metadata.fractal.bf_length);
-            EXPECT_TRUE(metadata.extended.got_data);
-            EXPECT_EQ(parameters, metadata.extended.apm_data);
-            expect_active_image();
-            EXPECT_TRUE(std::filesystem::remove(path));
-        }
-    }
+void PrintTo(const PrecisionMetadataCase &sample, std::ostream *str)
+{
+    *str << sample.name;
 }
+
+using PlacedPrecisionMetadata = std::tuple<PrecisionMetadataCase, bool>;
+
+class TestValidPrecisionMetadata : public TestFindPrecisionMetadata, public WithParamInterface<PlacedPrecisionMetadata>
+{
+protected:
+    void SetUp() override;
+
+    std::vector<char> m_parameters;
+};
+
+void TestValidPrecisionMetadata::SetUp()
+{
+    TestFindPrecisionMetadata::SetUp();
+    const PrecisionMetadataCase &sample{std::get<0>(GetParam())};
+    m_parameters.assign(sample.bytes, 'a');
+    add_main_record(sample.precision, sample.type);
+    put_extended_param_info(&m_extensions, m_parameters);
+    write_small_file(std::get<1>(GetParam()));
+}
+
+TEST_P(TestValidPrecisionMetadata, readingPreservesPayloadAndActiveImage)
+{
+    const ImageMetadata metadata{read_image_metadata(m_path)};
+
+    EXPECT_EQ(std::get<0>(GetParam()).precision, metadata.fractal.bf_length);
+    EXPECT_TRUE(metadata.extended.got_data);
+    EXPECT_EQ(m_parameters, metadata.extended.apm_data);
+    expect_active_image();
+    EXPECT_TRUE(std::filesystem::remove(m_path));
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionAndPlacement, TestValidPrecisionMetadata,
+    Combine(Values(PrecisionMetadataCase{"Mandel12", FractalType::MANDEL, 12, 396},
+                PrecisionMetadataCase{"Mandel13", FractalType::MANDEL, 13, 484},
+                PrecisionMetadataCase{"Mandel16", FractalType::MANDEL, 16, 484},
+                PrecisionMetadataCase{"BigNumLimit", FractalType::MANDEL, 672, 14916},
+                PrecisionMetadataCase{"BigFloatLimit", FractalType::DIVIDE_BROT5, 708, 15708}),
+        Bool()),
+    [](const TestParamInfo<PlacedPrecisionMetadata> &info)
+    { return std::string{std::get<0>(info.param).name} + (std::get<1>(info.param) ? "BeforeImage" : "AfterImage"); });
 
 TEST_F(TestFindFractalInfo, skipsInvalidLzwPixelsWhenReadingMetadata)
 {
