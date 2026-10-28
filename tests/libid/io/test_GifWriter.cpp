@@ -88,7 +88,8 @@ protected:
 
 void TestGifWriter::SetUp()
 {
-    std::string name{UnitTest::GetInstance()->current_test_info()->name()};
+    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
+    std::string name{std::string{info->test_suite_name()} + "." + info->name()};
     std::replace(name.begin(), name.end(), '/', '_');
     m_path = std::filesystem::temp_directory_path() / ("id-GifWriter-" + name + ".gif");
     std::filesystem::remove(m_path);
@@ -426,36 +427,63 @@ TEST_F(TestGifWriterCompleteRaster, rejectsPixelsBeyondCompletedRaster)
     finish_output();
 }
 
-TEST_F(TestGifWriter, rejectsMalformedExtensionBlocksBeforeWritingThem)
+struct MalformedExtensionCase
 {
-    std::ostringstream output;
-    GifWriter writer{output, {2, 1}, make_palette(2)};
-    ASSERT_TRUE(writer.write_pixels({0, 1}));
-    const std::string raster{output.str()};
-    Byte bytes[256]{};
-    ExtensionBlock block{11, bytes, CONTINUE_EXT_FUNC_CODE};
-    // This block is borrowed, not allocated by giflib.
-    GifFileType malformed{};
-    malformed.ExtensionBlockCount = 1;
-    malformed.ExtensionBlocks = &block;
+    const char *name;
+    int function;
+    int bytes;
+    bool missing_bytes;
+    int blocks;
+    bool missing_blocks;
+};
 
-    EXPECT_THROW(writer.write_extensions(malformed), std::logic_error);
-    block.Function = APPLICATION_EXT_FUNC_CODE;
-    block.ByteCount = 256;
-    EXPECT_THROW(writer.write_extensions(malformed), std::logic_error);
-    block.ByteCount = 0;
-    EXPECT_THROW(writer.write_extensions(malformed), std::logic_error);
-    block.ByteCount = 11;
-    block.Bytes = nullptr;
-    EXPECT_THROW(writer.write_extensions(malformed), std::logic_error);
-    malformed.ExtensionBlockCount = -1;
-    EXPECT_THROW(writer.write_extensions(malformed), std::logic_error);
-    malformed.ExtensionBlockCount = 1;
-    malformed.ExtensionBlocks = nullptr;
-    EXPECT_THROW(writer.write_extensions(malformed), std::logic_error);
-    EXPECT_EQ(raster, output.str());
-    EXPECT_TRUE(writer.finish());
+void PrintTo(const MalformedExtensionCase &value, std::ostream *str)
+{
+    *str << value.name;
 }
+
+class TestGifWriterMalformedExtension : public TestGifWriter, public WithParamInterface<MalformedExtensionCase>
+{
+protected:
+    void SetUp() override;
+
+    std::ostringstream m_output;
+    Byte m_bytes[256]{};
+    ExtensionBlock m_block{};
+    // This block is borrowed, not allocated by giflib.
+    GifFileType m_malformed{};
+    std::string m_raster;
+    std::unique_ptr<GifWriter> m_writer;
+};
+
+void TestGifWriterMalformedExtension::SetUp()
+{
+    TestGifWriter::SetUp();
+    m_writer = std::make_unique<GifWriter>(m_output, GifWriter::Screen{2, 1}, make_palette(2));
+    ASSERT_TRUE(m_writer->write_pixels({0, 1}));
+    m_raster = m_output.str();
+    const MalformedExtensionCase &input{GetParam()};
+    m_block = {input.bytes, input.missing_bytes ? nullptr : m_bytes, input.function};
+    m_malformed.ExtensionBlockCount = input.blocks;
+    m_malformed.ExtensionBlocks = input.missing_blocks ? nullptr : &m_block;
+}
+
+TEST_P(TestGifWriterMalformedExtension, rejectsMalformedBlocksBeforeWritingThem)
+{
+    EXPECT_THROW(m_writer->write_extensions(m_malformed), std::logic_error);
+
+    EXPECT_EQ(m_raster, m_output.str());
+    EXPECT_TRUE(m_writer->finish());
+}
+
+INSTANTIATE_TEST_SUITE_P(ExtensionInputs, TestGifWriterMalformedExtension,
+    Values(MalformedExtensionCase{"OrphanContinuation", CONTINUE_EXT_FUNC_CODE, 11, false, 1, false},
+        MalformedExtensionCase{"OversizedBlock", APPLICATION_EXT_FUNC_CODE, 256, false, 1, false},
+        MalformedExtensionCase{"EmptyBlock", APPLICATION_EXT_FUNC_CODE, 0, false, 1, false},
+        MalformedExtensionCase{"MissingBytes", APPLICATION_EXT_FUNC_CODE, 11, true, 1, false},
+        MalformedExtensionCase{"NegativeCount", APPLICATION_EXT_FUNC_CODE, 11, true, -1, false},
+        MalformedExtensionCase{"MissingBlocks", APPLICATION_EXT_FUNC_CODE, 11, true, 1, true}),
+    [](const TestParamInfo<MalformedExtensionCase> &info) { return info.param.name; });
 
 TEST_F(TestGifWriter, reportsOpenFailureWithoutCreatingMissingDirectories)
 {
@@ -623,19 +651,48 @@ TEST_P(TestGifWriterSize, supportsUnsignedDimensionBoundaries)
 INSTANTIATE_TEST_SUITE_P(UnsignedBounds, TestGifWriterSize,
     Values(std::pair{32768, 1}, std::pair{65535, 1}, std::pair{1, 32768}, std::pair{1, 65535}));
 
-TEST_F(TestGifWriter, rejectsInvalidScreensAndPalettesBeforeOpeningOutput)
+struct InvalidGifScreen
 {
-    for (const GifWriter::Screen screen : {GifWriter::Screen{0, 1}, {-1, 1}, {1, 0}, {1, -1}, {65536, 1}, {1, 65536},
-             {2, 1, 0}, {2, 1, 9}, {2, 1, 8, -1}, {2, 1, 8, 2}})
-    {
-        EXPECT_THROW((GifWriter{m_path, screen, make_palette(2)}), std::logic_error);
-        EXPECT_FALSE(std::filesystem::exists(m_path));
-    }
-    for (const int count : {0, 1, 3, 257})
-    {
-        EXPECT_THROW((GifWriter{m_path, {2, 1}, make_palette(count)}), std::logic_error);
-        EXPECT_FALSE(std::filesystem::exists(m_path));
-    }
+    const char *name;
+    GifWriter::Screen screen;
+};
+
+void PrintTo(const InvalidGifScreen &value, std::ostream *str)
+{
+    *str << value.name;
 }
+
+class TestGifWriterInvalidScreen : public TestGifWriter, public WithParamInterface<InvalidGifScreen>
+{
+};
+
+TEST_P(TestGifWriterInvalidScreen, rejectsInvalidScreenBeforeOpeningOutput)
+{
+    EXPECT_THROW((GifWriter{m_path, GetParam().screen, make_palette(2)}), std::logic_error);
+
+    EXPECT_FALSE(std::filesystem::exists(m_path));
+}
+
+INSTANTIATE_TEST_SUITE_P(ScreenInputs, TestGifWriterInvalidScreen,
+    Values(InvalidGifScreen{"ZeroWidth", {0, 1}}, InvalidGifScreen{"NegativeWidth", {-1, 1}},
+        InvalidGifScreen{"ZeroHeight", {1, 0}}, InvalidGifScreen{"NegativeHeight", {1, -1}},
+        InvalidGifScreen{"WidthOverflow", {65536, 1}}, InvalidGifScreen{"HeightOverflow", {1, 65536}},
+        InvalidGifScreen{"ZeroResolution", {2, 1, 0}}, InvalidGifScreen{"ResolutionOverflow", {2, 1, 9}},
+        InvalidGifScreen{"NegativeBackground", {2, 1, 8, -1}}, InvalidGifScreen{"BackgroundOverflow", {2, 1, 8, 2}}),
+    [](const TestParamInfo<InvalidGifScreen> &info) { return info.param.name; });
+
+class TestGifWriterInvalidPalette : public TestGifWriter, public WithParamInterface<int>
+{
+};
+
+TEST_P(TestGifWriterInvalidPalette, rejectsInvalidPaletteBeforeOpeningOutput)
+{
+    EXPECT_THROW((GifWriter{m_path, {2, 1}, make_palette(GetParam())}), std::logic_error);
+
+    EXPECT_FALSE(std::filesystem::exists(m_path));
+}
+
+INSTANTIATE_TEST_SUITE_P(PaletteSizes, TestGifWriterInvalidPalette, Values(0, 1, 3, 257),
+    [](const TestParamInfo<int> &info) { return "Colors" + std::to_string(info.param); });
 
 } // namespace id::test
