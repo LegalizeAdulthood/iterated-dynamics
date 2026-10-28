@@ -681,10 +681,51 @@ static fs::path par_path(const char *filename)
     return fs::path{ID_TEST_DATA_DIR} / ID_TEST_PAR_SUBDIR / filename;
 }
 
-TEST_F(TestCommandMakePar, makeParNewFile)
+class TestGeneratedParameterFile : public TestCommandMakePar
 {
-    const fs::path path{par_path("new.par")};
-    fs::remove(path);
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void write_initial_contents(std::string_view contents);
+
+    fs::path m_output;
+};
+
+void TestGeneratedParameterFile::SetUp()
+{
+    TestCommandMakePar::SetUp();
+    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
+    std::string name{std::string{info->test_suite_name()} + '_' + info->name()};
+    std::replace(name.begin(), name.end(), '/', '_');
+    std::transform(name.begin(), name.end(), name.begin(),
+        [](const unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+    const std::string filename{"generated-" + name + ".par"};
+    m_output = par_path(filename.c_str());
+    fs::create_directories(m_output.parent_path());
+    fs::remove(m_output);
+}
+
+void TestGeneratedParameterFile::TearDown()
+{
+    if (!m_output.empty())
+    {
+        std::error_code error;
+        fs::remove(m_output, error);
+        EXPECT_FALSE(error) << m_output;
+    }
+    TestCommandMakePar::TearDown();
+}
+
+void TestGeneratedParameterFile::write_initial_contents(const std::string_view contents)
+{
+    std::ofstream file{m_output};
+    ASSERT_TRUE(file);
+    file << contents;
+}
+
+TEST_F(TestGeneratedParameterFile, makeParNewFile)
+{
+    const fs::path &path{m_output};
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
@@ -702,10 +743,9 @@ TEST_F(TestCommandMakePar, makeParNewFile)
         << path;
 }
 
-TEST_F(TestCommandMakePar, makeParWritesFixedRandomSeed)
+TEST_F(TestGeneratedParameterFile, makeParWritesFixedRandomSeed)
 {
-    const fs::path path{par_path("fixed-rseed.par")};
-    fs::remove(path);
+    const fs::path &path{m_output};
     ValueSaver saved_random_seed{g_random_seed, 4567};
     ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
 
@@ -715,10 +755,9 @@ TEST_F(TestCommandMakePar, makeParWritesFixedRandomSeed)
     EXPECT_THAT(read_file_contents(path), HasSubstr(" rseed=4567"));
 }
 
-TEST_F(TestCommandMakePar, makeParOmitsGeneratedRandomSeed)
+TEST_F(TestGeneratedParameterFile, makeParOmitsGeneratedRandomSeed)
 {
-    const fs::path path{par_path("generated-rseed.par")};
-    fs::remove(path);
+    const fs::path &path{m_output};
     ValueSaver saved_random_seed{g_random_seed, 4567};
     ValueSaver saved_random_seed_flag{g_random_seed_flag, false};
 
@@ -728,18 +767,10 @@ TEST_F(TestCommandMakePar, makeParOmitsGeneratedRandomSeed)
     EXPECT_THAT(read_file_contents(path), Not(HasSubstr("rseed=")));
 }
 
-static void set_file_contents(const fs::path &path, const std::string_view contents)
+TEST_F(TestGeneratedParameterFile, makeParNewEntryExistingFile)
 {
-    fs::create_directories(path.parent_path());
-    fs::remove(path);
-    std::ofstream file{path};
-    file << contents;
-}
-
-TEST_F(TestCommandMakePar, makeParNewEntryExistingFile)
-{
-    const fs::path path{par_path("existing.par")};
-    set_file_contents(path, R"par(bar                {
+    const fs::path &path{m_output};
+    write_initial_contents(R"par(bar                {
   reset=1/2/3/4 type=mandel passes= corners=0/0/0/0 params=0/0
   maxiter=0 fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
   periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
@@ -771,10 +802,9 @@ foo                {
         << path;
 }
 
-TEST_F(TestCommandMakePar, makeParWritesLegacyResetFromCompatibilityVersion)
+TEST_F(TestGeneratedParameterFile, makeParWritesLegacyResetFromCompatibilityVersion)
 {
-    const fs::path path{par_path("legacy-reset.par")};
-    fs::remove(path);
+    const fs::path &path{m_output};
     g_version = parse_legacy_version(1730);
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
@@ -783,10 +813,9 @@ TEST_F(TestCommandMakePar, makeParWritesLegacyResetFromCompatibilityVersion)
     EXPECT_THAT(read_file_contents(path), HasSubstr("  reset=1730 type=mandel"));
 }
 
-TEST_F(TestCommandMakePar, makeParPreservesLegacyFloat)
+TEST_F(TestGeneratedParameterFile, makeParPreservesLegacyFloat)
 {
-    const fs::path path{par_path("legacy-float.par")};
-    fs::remove(path);
+    const fs::path &path{m_output};
     g_version = parse_legacy_version(1730);
     ValueSaver saved_legacy_float{g_user.legacy_float, true};
 
@@ -796,10 +825,9 @@ TEST_F(TestCommandMakePar, makeParPreservesLegacyFloat)
     EXPECT_THAT(read_file_contents(path), HasSubstr(" reset=1730 type=mandel float=y"));
 }
 
-TEST_F(TestCommandMakePar, makeParWritesIdResetFromCompatibilityVersion)
+TEST_F(TestGeneratedParameterFile, makeParWritesIdResetFromCompatibilityVersion)
 {
-    const fs::path path{par_path("id-reset.par")};
-    fs::remove(path);
+    const fs::path &path{m_output};
     g_version = Version{1, 3, 2, 0, false};
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
@@ -810,10 +838,9 @@ TEST_F(TestCommandMakePar, makeParWritesIdResetFromCompatibilityVersion)
     EXPECT_THAT(text, HasSubstr("  reset=1/3/2 type=mandel"));
 }
 
-TEST_F(TestCommandMakePar, makeParWritesTrimmedCornerValues)
+TEST_F(TestGeneratedParameterFile, makeParWritesTrimmedCornerValues)
 {
-    const fs::path path{par_path("trimmed-corners.par")};
-    fs::remove(path);
+    const fs::path &path{m_output};
     ValueSaver saved_use_center_mag{g_use_center_mag, false};
     ValueSaver saved_bf_math{g_bf_math, BFMathType::NONE};
     ValueSaver saved_x_min{g_image_region.m_min.x, -1.25};
@@ -829,10 +856,9 @@ TEST_F(TestCommandMakePar, makeParWritesTrimmedCornerValues)
     EXPECT_THAT(read_file_contents(path), HasSubstr(" corners=-1.25/2.5/-3.75/4"));
 }
 
-TEST_F(TestCommandMakePar, makeParWrapsAtConfiguredLineLength)
+TEST_F(TestGeneratedParameterFile, makeParWrapsAtConfiguredLineLength)
 {
-    const fs::path path{par_path("wrapped.par")};
-    fs::remove(path);
+    const fs::path &path{m_output};
     ValueSaver saved_max_line_length{g_max_line_length, MIN_MAX_LINE_LENGTH};
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
@@ -852,10 +878,9 @@ TEST_F(TestCommandMakePar, makeParWrapsAtConfiguredLineLength)
     }
 }
 
-TEST_F(TestCommandMakePar, makeParMapOnlyWritesColors)
+TEST_F(TestGeneratedParameterFile, makeParMapOnlyWritesColors)
 {
-    const fs::path path{par_path("map-only.par")};
-    fs::remove(path);
+    const fs::path &path{m_output};
     ValueSaver saved_read_filename{g_read_filename, fs::path{}};
     ValueSaver saved_map_name{g_map_name, std::string{"rainbow.map"}};
     ValueSaver saved_file_colors{g_file_colors, 16};
