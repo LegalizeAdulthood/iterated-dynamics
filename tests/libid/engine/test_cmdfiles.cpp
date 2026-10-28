@@ -2156,141 +2156,126 @@ TEST_F(TestParameterCommand, setTrigArrayHonorsStringViewLength)
     EXPECT_EQ(TrigFn::SIN, g_trig_index[0]);
 }
 
-TEST_F(TestParameterCommand, functionSin)
+struct FunctionParameterInput
 {
-    ValueSaver saved_trig_index0{g_trig_index[0], TrigFn::IDENT};
-    ValueSaver saved_trig_fns_loaded{g_new_bifurcation_functions_loaded, false};
+    const char *name;
+    const char *argument;
+    std::vector<TrigFn> expected;
+};
 
-    exec_cmd_arg("function=sin", CmdFile::AT_CMD_LINE);
+void PrintTo(const FunctionParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestFunctionParameter : public TestParameterCommand, public WithParamInterface<FunctionParameterInput>
+{
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<TrigFn> m_saved_first{g_trig_index[0]};
+    ValueSaver<TrigFn> m_saved_second{g_trig_index[1]};
+    ValueSaver<TrigFn> m_saved_third{g_trig_index[2]};
+    ValueSaver<TrigFn> m_saved_fourth{g_trig_index[3]};
+    ValueSaver<bool> m_saved_loaded{g_new_bifurcation_functions_loaded, false};
+};
+
+void TestFunctionParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    for (std::size_t i = 0; i < GetParam().expected.size(); ++i)
+    {
+        g_trig_index[i] = TrigFn::IDENT;
+    }
+}
+
+TEST_P(TestFunctionParameter, setsFunctions)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(TrigFn::SIN, g_trig_index[0]);
+    for (std::size_t i = 0; i < GetParam().expected.size(); ++i)
+    {
+        EXPECT_EQ(GetParam().expected[i], g_trig_index[i]) << i;
+    }
     EXPECT_TRUE(g_new_bifurcation_functions_loaded);
 }
 
-TEST_F(TestParameterCommand, functionSinCos)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFunctionParameter,
+    Values(FunctionParameterInput{"Sin", "function=sin", {TrigFn::SIN}},
+        FunctionParameterInput{"SinCos", "function=sin/cos", {TrigFn::SIN, TrigFn::COS}},
+        FunctionParameterInput{"SinCosTan", "function=sin/cos/tan", {TrigFn::SIN, TrigFn::COS, TrigFn::TAN}},
+        FunctionParameterInput{
+            "SinCosTanCot", "function=sin/cos/tan/cotan", {TrigFn::SIN, TrigFn::COS, TrigFn::TAN, TrigFn::COTAN}}),
+    [](const TestParamInfo<FunctionParameterInput> &info) { return info.param.name; });
+
+class TestOutsideParameter : public TestParameterCommand, public WithParamInterface<ColoringParameterInput>
 {
-    ValueSaver saved_trig_index0{g_trig_index[0], TrigFn::IDENT};
-    ValueSaver saved_trig_index1{g_trig_index[1], TrigFn::IDENT};
-    ValueSaver saved_trig_fns_loaded{g_new_bifurcation_functions_loaded, false};
+private:
+    ValueSaver<ColorMethod> m_saved_method{g_outside_method, static_cast<ColorMethod>(-9999)};
+    ValueSaver<int> m_saved_color{g_outside_color, -9999};
+};
 
-    exec_cmd_arg("function=sin/cos", CmdFile::AT_CMD_LINE);
+TEST_P(TestOutsideParameter, setsOutsideColoring)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(TrigFn::SIN, g_trig_index[0]);
-    EXPECT_EQ(TrigFn::COS, g_trig_index[1]);
-    EXPECT_TRUE(g_new_bifurcation_functions_loaded);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().method, g_outside_method);
+    EXPECT_EQ(GetParam().color, g_outside_color);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommand, functionSinCosTan)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideParameter,
+    Values(ColoringParameterInput{"Real", "outside=real", ColorMethod::REAL, -1, CmdArgFlags::FRACTAL_PARAM},
+        ColoringParameterInput{"Number", "outside=100", ColorMethod::COLOR, 100, CmdArgFlags::FRACTAL_PARAM},
+        ColoringParameterInput{
+            "Invalid", "outside=zmag", static_cast<ColorMethod>(-9999), -9999, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<ColoringParameterInput> &info) { return info.param.name; });
+
+struct BfDigitsParameterInput
 {
-    ValueSaver saved_trig_index0{g_trig_index[0], TrigFn::IDENT};
-    ValueSaver saved_trig_index1{g_trig_index[1], TrigFn::IDENT};
-    ValueSaver saved_trig_index2{g_trig_index[2], TrigFn::IDENT};
-    ValueSaver saved_trig_fns_loaded{g_new_bifurcation_functions_loaded, false};
+    const char *name;
+    const char *argument;
+    int expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("function=sin/cos/tan", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(TrigFn::SIN, g_trig_index[0]);
-    EXPECT_EQ(TrigFn::COS, g_trig_index[1]);
-    EXPECT_EQ(TrigFn::TAN, g_trig_index[2]);
-    EXPECT_TRUE(g_new_bifurcation_functions_loaded);
+void PrintTo(const BfDigitsParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, functionSinCosTanCot)
+class TestBfDigitsParameter : public TestParameterCommand, public WithParamInterface<BfDigitsParameterInput>
 {
-    ValueSaver saved_trig_index0{g_trig_index[0], TrigFn::IDENT};
-    ValueSaver saved_trig_index1{g_trig_index[1], TrigFn::IDENT};
-    ValueSaver saved_trig_index2{g_trig_index[2], TrigFn::IDENT};
-    ValueSaver saved_trig_index3{g_trig_index[3], TrigFn::IDENT};
-    ValueSaver saved_trig_fns_loaded{g_new_bifurcation_functions_loaded, false};
+private:
+    ValueSaver<int> m_saved_digits{g_bf_digits, 9999};
+};
 
-    exec_cmd_arg("function=sin/cos/tan/cotan", CmdFile::AT_CMD_LINE);
+TEST_P(TestBfDigitsParameter, setsPrecisionDigits)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(TrigFn::SIN, g_trig_index[0]);
-    EXPECT_EQ(TrigFn::COS, g_trig_index[1]);
-    EXPECT_EQ(TrigFn::TAN, g_trig_index[2]);
-    EXPECT_EQ(TrigFn::COTAN, g_trig_index[3]);
-    EXPECT_TRUE(g_new_bifurcation_functions_loaded);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_bf_digits);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommand, outsideReal)
-{
-    ValueSaver saved_outside_method{g_outside_method, static_cast<ColorMethod>(-9999)};
-    ValueSaver saved_outside{g_outside_color, -9999};
-
-    exec_cmd_arg("outside=real", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(ColorMethod::REAL, g_outside_method);
-    EXPECT_EQ(-1, g_outside_color);
-}
-
-TEST_F(TestParameterCommand, outsideNumber)
-{
-    ValueSaver saved_outside_method{g_outside_method, static_cast<ColorMethod>(-9999)};
-    ValueSaver saved_outside{g_outside_color, -9999};
-
-    exec_cmd_arg("outside=100", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(ColorMethod::COLOR, g_outside_method);
-    EXPECT_EQ(100, g_outside_color);
-}
-
-TEST_F(TestParameterCommandError, outsideInvalidName)
-{
-    ValueSaver saved_outside_method{g_outside_method, static_cast<ColorMethod>(-9999)};
-    ValueSaver saved_outside{g_outside_color, -9999};
-
-    exec_cmd_arg("outside=zmag", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(-9999, +g_outside_method);
-    EXPECT_EQ(-9999, g_outside_color);
-}
-
-TEST_F(TestParameterCommand, bfDigitsNumber)
-{
-    ValueSaver saved_outside{g_bf_digits, 9999};
-
-    exec_cmd_arg("bfdigits=200", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(200, g_bf_digits);
-}
-
-TEST_F(TestParameterCommandError, bfDigitsInvalidValue)
-{
-    ValueSaver saved_outside{g_bf_digits, 9999};
-
-    exec_cmd_arg("bfdigits=fmeh", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(9999, g_bf_digits);
-}
-
-TEST_F(TestParameterCommandError, bfDigitsTooSmall)
-{
-    ValueSaver saved_outside{g_bf_digits, 9999};
-
-    exec_cmd_arg("bfdigits=-1", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(9999, g_bf_digits);
-}
-
-TEST_F(TestParameterCommandError, bfDigitsTooLarge)
-{
-    ValueSaver saved_outside{g_bf_digits, 9999};
-
-    exec_cmd_arg("bfdigits=2001", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(9999, g_bf_digits);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBfDigitsParameter,
+    Values(BfDigitsParameterInput{"Number", "bfdigits=200", 200, CmdArgFlags::FRACTAL_PARAM},
+        BfDigitsParameterInput{"Invalid", "bfdigits=fmeh", 9999, CmdArgFlags::BAD_ARG},
+        BfDigitsParameterInput{"TooSmall", "bfdigits=-1", 9999, CmdArgFlags::BAD_ARG},
+        BfDigitsParameterInput{"TooLarge", "bfdigits=2001", 9999, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<BfDigitsParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, maxIterNumber)
 {
