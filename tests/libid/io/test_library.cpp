@@ -126,36 +126,57 @@ void TestLibrary::TearDown()
     Test::TearDown();
 }
 
-TEST_F(TestLibrary, initLibrariesFindsConfigAwayFromCurrentDirectory)
+class TestLibraryInitialization : public TestLibrary
+{
+protected:
+    void prepare_directories(
+        const Path &current_dir, const Path &program_dir, const Path &documents_dir, const Path &config_path);
+    void TearDown() override;
+
+private:
+    EnvVarSaver m_fract_dir{"FRACTDIR", nullptr};
+    ValueSaver<std::shared_ptr<SpecialDirectories>> m_special_dirs{g_special_dirs};
+    std::unique_ptr<CurrentPathSaver> m_current_directory;
+    Path m_config_path;
+};
+
+void TestLibraryInitialization::prepare_directories(
+    const Path &current_dir, const Path &program_dir, const Path &documents_dir, const Path &config_path)
+{
+    m_config_path = config_path;
+    std::filesystem::create_directories(current_dir);
+    std::filesystem::create_directories(config_path.parent_path());
+    std::ofstream{config_path} << "; test config\n";
+    m_current_directory = std::make_unique<CurrentPathSaver>(current_dir);
+    g_special_dirs = std::make_shared<TestSpecialDirectories>(program_dir, documents_dir);
+}
+
+void TestLibraryInitialization::TearDown()
+{
+    m_current_directory.reset();
+    std::error_code error;
+    std::filesystem::remove(m_config_path, error);
+    TestLibrary::TearDown();
+}
+
+TEST_F(TestLibraryInitialization, initLibrariesFindsConfigAwayFromCurrentDirectory)
 {
     const Path current_dir{Path{data::ID_TEST_DATA_DIR} / "other-current-dir"};
     const Path documents_dir{Path{data::ID_TEST_DATA_DIR} / "documents"};
     const Path config_path{documents_dir / ID_PROGRAM_NAME / "config" / "id.cfg"};
-    std::filesystem::create_directories(current_dir);
-    std::filesystem::create_directories(config_path.parent_path());
-    std::ofstream{config_path} << "; test config\n";
-    CurrentPathSaver saved_cur_dir{current_dir};
-    ValueSaver saved_special_dirs{
-        g_special_dirs, std::make_shared<TestSpecialDirectories>(Path{"missing-program-dir"}, documents_dir)};
-    EnvVarSaver fract_dir{"FRACTDIR", nullptr};
+    prepare_directories(current_dir, "missing-program-dir", documents_dir, config_path);
 
     init_libraries();
 
     EXPECT_EQ(config_path, find_file(ReadFile::ID_CONFIG, "id.cfg"));
 }
 
-TEST_F(TestLibrary, defaultReadLibrariesPreferProgramDirectoryToCompiledHomeDirectory)
+TEST_F(TestLibraryInitialization, defaultReadLibrariesPreferProgramDirectoryToCompiledHomeDirectory)
 {
     const Path current_dir{Path{data::ID_TEST_DATA_DIR} / "program-dir-current-dir"};
     const Path program_dir{Path{data::ID_TEST_DATA_DIR} / "program-dir"};
     const Path config_path{program_dir / "config" / "id.cfg"};
-    std::filesystem::create_directories(current_dir);
-    std::filesystem::create_directories(config_path.parent_path());
-    std::ofstream{config_path} << "; test config\n";
-    CurrentPathSaver saved_cur_dir{current_dir};
-    ValueSaver saved_special_dirs{
-        g_special_dirs, std::make_shared<TestSpecialDirectories>(program_dir, Path{"missing-documents-dir"})};
-    EnvVarSaver fract_dir{"FRACTDIR", nullptr};
+    prepare_directories(current_dir, program_dir, "missing-documents-dir", config_path);
 
     init_default_read_libraries();
 
@@ -222,9 +243,14 @@ INSTANTIATE_TEST_SUITE_P(LookupInputs, TestLibraryLookup,
             Path{ID_TEST_LIBRARY_DIR2} / "image" / ID_TEST_IMAGE_FILE}),
     [](const testing::TestParamInfo<LibraryLookupInput> &info) { return info.param.name; });
 
-TEST_F(TestLibrary, findFileIgnoresPluralFallbackSubDirectory)
+class TestLibraryFallback : public TestLibrary
 {
-    EnvVarSaver fract_dir{"FRACTDIR", ID_TEST_SEARCH_DIR1};
+private:
+    EnvVarSaver m_fract_dir{"FRACTDIR", ID_TEST_SEARCH_DIR1};
+};
+
+TEST_F(TestLibraryFallback, findFileIgnoresPluralFallbackSubDirectory)
+{
     init_default_read_libraries();
 
     const Path path{find_file(ReadFile::FORMULA, ID_TEST_FORMULA_FILE2)};
@@ -232,10 +258,9 @@ TEST_F(TestLibrary, findFileIgnoresPluralFallbackSubDirectory)
     EXPECT_TRUE(path.empty()) << path;
 }
 
-TEST_F(TestLibrary, findFileReadLibraryPrecedesFallback)
+TEST_F(TestLibraryFallback, findFileReadLibraryPrecedesFallback)
 {
     add_read_library(ID_TEST_LIBRARY_DIR2);
-    EnvVarSaver fract_dir{"FRACTDIR", ID_TEST_SEARCH_DIR1};
     init_default_read_libraries();
 
     const Path path{find_file(ReadFile::IMAGE, ID_TEST_IMAGE_FILE)};
@@ -321,30 +346,26 @@ TEST_F(TestLibrary, saveLibraryDefaultsToSaveDir)
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }
 
-TEST_F(TestLibrary, findFileCheckFallbackRoot)
+class TestLibraryFallbackLookup : public TestLibraryFallback, public testing::WithParamInterface<LibraryLookupInput>
 {
-    EnvVarSaver fract_dir{"FRACTDIR", ID_TEST_SEARCH_DIR1};
+};
+
+TEST_P(TestLibraryFallbackLookup, findsFileInFallbackDirectory)
+{
     init_default_read_libraries();
 
-    const Path path{find_file(ReadFile::FORMULA, "root.frm")};
+    const Path path{find_file(GetParam().category, GetParam().filename)};
 
     ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_SEARCH_DIR1}, path.parent_path()) << path;
+    EXPECT_EQ(GetParam().expected, path) << path;
 }
 
-TEST_F(TestLibrary, findFilePreferFallbackSubDir)
-{
-    EnvVarSaver fract_dir{"FRACTDIR", ID_TEST_SEARCH_DIR1};
-    init_default_read_libraries();
-
-    const Path path{find_file(ReadFile::IFS, ID_TEST_IFS_FILE)};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{ID_TEST_IFS_FILE}, path.filename()) << path;
-    EXPECT_EQ(Path{"ifs"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_SEARCH_DIR1}, path.parent_path().parent_path()) << path;
-}
+INSTANTIATE_TEST_SUITE_P(FallbackInputs, TestLibraryFallbackLookup,
+    testing::Values(
+        LibraryLookupInput{"Root", {}, ReadFile::FORMULA, "root.frm", Path{ID_TEST_SEARCH_DIR1} / "root.frm"},
+        LibraryLookupInput{
+            "Subdirectory", {}, ReadFile::IFS, ID_TEST_IFS_FILE, Path{ID_TEST_SEARCH_DIR1} / "ifs" / ID_TEST_IFS_FILE}),
+    [](const testing::TestParamInfo<LibraryLookupInput> &info) { return info.param.name; });
 
 TEST_F(TestLibrary, findFileAbsolutePath)
 {
@@ -376,10 +397,15 @@ TEST_F(TestLibrary, findFileCurrentDirectory)
     EXPECT_EQ(Path{"formula"} / ID_TEST_FORMULA_FILE2, path) << path;
 }
 
-TEST_F(TestLibrary, defaultReadLibrariesUseCurrentDirectoryWhenFractDirUnset)
+class TestLibraryCurrentFallback : public TestLibrary
 {
-    EnvVarSaver fract_dir{"FRACTDIR", nullptr};
-    CurrentPathSaver saved_cur_dir{ID_TEST_SEARCH_DIR1};
+private:
+    EnvVarSaver m_fract_dir{"FRACTDIR", nullptr};
+    CurrentPathSaver m_current_directory{ID_TEST_SEARCH_DIR1};
+};
+
+TEST_F(TestLibraryCurrentFallback, defaultReadLibrariesUseCurrentDirectoryWhenFractDirUnset)
+{
     init_default_read_libraries();
 
     const Path path{find_file(ReadFile::FORMULA, "root.frm")};
