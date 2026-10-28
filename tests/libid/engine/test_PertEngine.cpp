@@ -4274,37 +4274,158 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestMappedInsideColor,
         {"Atan", ColorMethod::ATANI}, {"Period", ColorMethod::PERIOD}, {"StarTrail", ColorMethod::STAR_TRAIL}})),
     [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, fixedColorsAndCycleHighlightsBypassMapping)
+class MappingBypassTest : public MappedColorMethodTest
 {
-    g_log_map_flag = 1;
-    g_log_map_table_max_size = 128;
+protected:
+    void SetUp() override;
+};
+
+void MappingBypassTest::SetUp()
+{
+    MappedColorMethodTest::SetUp();
     g_log_map_table.assign(129, 99);
-    g_inside_method = ColorMethod::COLOR;
     g_inside_color = 7;
-    compare_pixel({}, 128);
-    EXPECT_EQ(7, g_color);
-    compare_pixel({0.5, 0.0}, 128);
-    EXPECT_EQ(99, g_color);
-    g_outside_method = ColorMethod::COLOR;
-    g_outside_color = 4;
-    compare_pixel({}, 128);
-    EXPECT_EQ(7, g_color);
-    compare_pixel({0.5, 0.0}, 128);
-    EXPECT_EQ(4, g_color);
-    g_inside_method = ColorMethod::ITER;
-    compare_pixel({0.5, 0.0}, 128);
-    EXPECT_EQ(4, g_color);
-    g_outside_method = ColorMethod::ITER;
-    g_periodicity_check = -1;
-    g_old_color_iter = 0;
-    compare_pixel({}, 128);
-    EXPECT_EQ(7, g_color);
+}
+
+class TestFixedInsideMappingBypass : public MappingBypassTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestFixedInsideMappingBypass::SetUp()
+{
+    MappingBypassTest::SetUp();
     g_inside_method = ColorMethod::COLOR;
-    g_periodicity_check = 0;
-    g_potential = {{23.0, 10.0, 4.0}, false, true};
+    g_outside_method = GetParam().method;
+    if (g_outside_method == ColorMethod::COLOR)
+    {
+        g_outside_color = 4;
+    }
+}
+
+TEST_P(TestFixedInsideMappingBypass, bypassesMappingForFixedInsideColor)
+{
     compare_pixel({}, 128);
+
+    EXPECT_EQ(7, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFixedInsideMappingBypass,
+    Values(MappedColorMethodInput{"DoubleOutsideIterations", false, ColorMethod::ITER},
+        MappedColorMethodInput{"DoubleOutsideFixed", false, ColorMethod::COLOR},
+        MappedColorMethodInput{"HighPrecisionOutsideIterations", true, ColorMethod::ITER},
+        MappedColorMethodInput{"HighPrecisionOutsideFixed", true, ColorMethod::COLOR}),
+    [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
+
+class TestUnfixedOutsideMapping : public MappingBypassTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestUnfixedOutsideMapping::SetUp()
+{
+    MappingBypassTest::SetUp();
+    g_inside_method = ColorMethod::COLOR;
+    g_outside_method = GetParam().method;
+}
+
+TEST_P(TestUnfixedOutsideMapping, stillMapsUnfixedOutsideColor)
+{
+    compare_pixel({0.5, 0.0}, 128);
+
     EXPECT_EQ(99, g_color);
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestUnfixedOutsideMapping,
+    Values(MappedColorMethodInput{"Double", false, ColorMethod::ITER},
+        MappedColorMethodInput{"HighPrecision", true, ColorMethod::ITER}),
+    [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
+
+class TestFixedOutsideMappingBypass : public MappingBypassTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestFixedOutsideMappingBypass::SetUp()
+{
+    MappingBypassTest::SetUp();
+    g_inside_method = GetParam().method;
+    g_outside_method = ColorMethod::COLOR;
+    g_outside_color = 4;
+}
+
+TEST_P(TestFixedOutsideMappingBypass, bypassesMappingForFixedOutsideColor)
+{
+    compare_pixel({0.5, 0.0}, 128);
+
+    EXPECT_EQ(4, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFixedOutsideMappingBypass,
+    Values(MappedColorMethodInput{"DoubleInsideFixed", false, ColorMethod::COLOR},
+        MappedColorMethodInput{"DoubleInsideIterations", false, ColorMethod::ITER},
+        MappedColorMethodInput{"HighPrecisionInsideFixed", true, ColorMethod::COLOR},
+        MappedColorMethodInput{"HighPrecisionInsideIterations", true, ColorMethod::ITER}),
+    [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
+
+class TestCycleMappingBypass : public MappingBypassTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestCycleMappingBypass::SetUp()
+{
+    MappingBypassTest::SetUp();
+    g_inside_method = GetParam().method;
+    g_outside_method = ColorMethod::ITER;
+    g_outside_color = 4;
+    g_periodicity_check = -1;
+    g_old_color_iter = 0;
+}
+
+TEST_P(TestCycleMappingBypass, bypassesMappingForCycleHighlight)
+{
+    compare_pixel({}, 128);
+
+    EXPECT_EQ(7, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestCycleMappingBypass,
+    Values(MappedColorMethodInput{"Double", false, ColorMethod::ITER},
+        MappedColorMethodInput{"HighPrecision", true, ColorMethod::ITER}),
+    [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
+
+class TestPotentialMapping : public MappingBypassTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestPotentialMapping::SetUp()
+{
+    MappingBypassTest::SetUp();
+    g_inside_method = GetParam().method;
+    g_outside_method = ColorMethod::ITER;
+    g_outside_color = 4;
+    g_periodicity_check = 0;
+    g_potential = {{23.0, 10.0, 4.0}, false, true};
+}
+
+TEST_P(TestPotentialMapping, mapsPotentialColor)
+{
+    compare_pixel({}, 128);
+
+    EXPECT_EQ(99, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialMapping,
+    Values(MappedColorMethodInput{"Double", false, ColorMethod::COLOR},
+        MappedColorMethodInput{"HighPrecision", true, ColorMethod::COLOR}),
+    [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, logarithmicAndQuadraticMapsUseTheSharedTableAndOnTheFlyPaths)
 {
