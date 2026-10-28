@@ -3966,19 +3966,59 @@ TEST_P(TestPerturbationIterations, starTrailRestartsHistoryWithAReplacementRefer
     EXPECT_GT(m_engine.reference_count(), 1);
 }
 
-TEST_P(TestPerturbationIterations, starTrailUsesInsideFinishingRatherThanBiomorphColoring)
+struct StarTrailFinishingInput
 {
-    ValueSaver saved_table{g_log_map_table, std::vector<Byte>{}};
-    ValueSaver saved_calculate{g_log_map_calculate, false};
+    const char *name;
+    bool big_float;
+    bool potential;
+};
+
+void PrintTo(const StarTrailFinishingInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestStarTrailFinishing : public PerturbationIterationTest, public WithParamInterface<StarTrailFinishingInput>
+{
+public:
+    TestStarTrailFinishing();
+
+protected:
+    void SetUp() override;
+};
+
+TestStarTrailFinishing::TestStarTrailFinishing() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestStarTrailFinishing::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_log_map_table.clear();
+    g_log_map_calculate = false;
     g_inside_method = ColorMethod::STAR_TRAIL;
     g_biomorph = 9;
-    compare_pixel({}, 128);
-    EXPECT_EQ(1, g_color);
-    g_potential = {{23.0, 10.0, 4.0}, false, true};
-    compare_pixel({}, 128);
-    EXPECT_EQ(23, g_color);
-    EXPECT_EQ(128, g_max_iterations);
+    g_potential = GetParam().potential ? Potential{{23.0, 10.0, 4.0}, false, true} : Potential{};
 }
+
+TEST_P(TestStarTrailFinishing, usesInsideFinishingRatherThanBiomorphColor)
+{
+    compare_pixel({}, 128);
+
+    EXPECT_EQ(GetParam().potential ? 23 : 1, g_color);
+    if (GetParam().potential)
+    {
+        EXPECT_EQ(128, g_max_iterations);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestStarTrailFinishing,
+    Values(StarTrailFinishingInput{"DoubleWithoutPotential", false, false},
+        StarTrailFinishingInput{"DoubleWithPotential", false, true},
+        StarTrailFinishingInput{"HighPrecisionWithoutPotential", true, false},
+        StarTrailFinishingInput{"HighPrecisionWithPotential", true, true}),
+    [](const TestParamInfo<StarTrailFinishingInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, starTrailBoundsReferencesAndRestoresTheLimitBeforeReturningControl)
 {
