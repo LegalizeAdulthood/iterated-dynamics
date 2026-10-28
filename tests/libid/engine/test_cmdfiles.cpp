@@ -2790,18 +2790,34 @@ static std::string adjust_dir(std::string actual)
     return actual;
 }
 
-TEST_F(TestParameterCommand, tempDirExisting)
+class TestDirectoryParameter : public TestParameterCommand
 {
-    fs::path start_dir{ID_TEST_DATA_DIR};
-    start_dir.make_preferred();
-    fs::path new_dir{ID_TEST_DATA_SUBDIR};
-    new_dir.make_preferred();
-    ValueSaver saved_temp_dir{g_temp_dir, start_dir.make_preferred()};
+protected:
+    void SetUp() override;
 
-    exec_cmd_arg("tempdir=" + new_dir.string());
+    fs::path m_start_directory{ID_TEST_DATA_DIR};
+    fs::path m_new_directory{ID_TEST_DATA_SUBDIR};
+
+private:
+    ValueSaver<fs::path> m_saved_temp_directory{g_temp_dir};
+    ValueSaver<fs::path> m_saved_working_directory{g_working_dir};
+};
+
+void TestDirectoryParameter::SetUp()
+{
+    TestParameterCommand::SetUp();
+    m_start_directory.make_preferred();
+    m_new_directory.make_preferred();
+}
+
+TEST_F(TestDirectoryParameter, tempDirExisting)
+{
+    g_temp_dir = m_start_directory;
+
+    exec_cmd_arg("tempdir=" + m_new_directory.string());
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(new_dir.string(), adjust_dir(g_temp_dir.string()));
+    EXPECT_EQ(m_new_directory.string(), adjust_dir(g_temp_dir.string()));
 }
 
 class TestStartupCommand : public TestParameterCommand
@@ -2908,18 +2924,14 @@ TEST_F(TestParameterCommandFile, parameterSetStopsAtAction)
     EXPECT_TRUE(std::holds_alternative<MakeMultiImageGif>(parsed.action));
 }
 
-TEST_F(TestParameterCommand, workDirExisting)
+TEST_F(TestDirectoryParameter, workDirExisting)
 {
-    fs::path start_dir{ID_TEST_DATA_DIR};
-    start_dir.make_preferred();
-    fs::path new_dir{ID_TEST_DATA_SUBDIR};
-    new_dir.make_preferred();
-    ValueSaver saved_working_dir{g_working_dir, start_dir.make_preferred()};
+    g_working_dir = m_start_directory;
 
-    exec_cmd_arg("workdir=" + new_dir.string());
+    exec_cmd_arg("workdir=" + m_new_directory.string());
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(new_dir.string(), adjust_dir(g_working_dir.string()));
+    EXPECT_EQ(m_new_directory.string(), adjust_dir(g_working_dir.string()));
 }
 
 class TextColorSaver
