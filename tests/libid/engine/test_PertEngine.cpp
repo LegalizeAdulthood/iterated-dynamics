@@ -9340,18 +9340,56 @@ TEST_P(TestPerturbationContinuation, preciseReplayUsesTheContinuationAnchorAndRe
     EXPECT_EQ(1, m_engine.reference_count());
 }
 
-TEST_P(TestPerturbationContinuation, completedContinuationCanReturnToPixelCalculation)
+class TestCompletedContinuation : public TestPerturbationContinuation
 {
+protected:
+    void SetUp() override;
+};
+
+void TestCompletedContinuation::SetUp()
+{
+    TestPerturbationContinuation::SetUp();
     prepare();
     check_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
+}
 
+TEST_P(TestCompletedContinuation, canReturnToPixelCalculation)
+{
     EXPECT_GE(m_engine.calculate_pixel(g_col, g_row), 0);
 
     EXPECT_EQ(1, m_plots.size());
+}
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestCompletedContinuation, Bool());
+
+class TestPixelAfterContinuation : public TestCompletedContinuation
+{
+protected:
+    void SetUp() override;
+};
+
+void TestPixelAfterContinuation::SetUp()
+{
+    TestCompletedContinuation::SetUp();
+    ASSERT_GE(m_engine.calculate_pixel(g_col, g_row), 0);
+}
+
+TEST_P(TestPixelAfterContinuation, rejectsOrbitIteration)
+{
     EXPECT_THROW(m_engine.iterate_orbit(), std::logic_error);
+}
+
+TEST_P(TestPixelAfterContinuation, rejectsOrbitValue)
+{
     EXPECT_THROW(m_engine.orbit_value(), std::logic_error);
+}
+
+TEST_P(TestPixelAfterContinuation, rejectsOrbitIterationCount)
+{
     EXPECT_THROW(m_engine.orbit_iteration(), std::logic_error);
 }
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPixelAfterContinuation, Bool());
 
 TEST_P(TestPerturbationContinuation, invalidContinuationDoesNotReplaceTheCurrentState)
 {
