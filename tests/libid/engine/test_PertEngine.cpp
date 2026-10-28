@@ -11977,25 +11977,48 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestInvertedPassPolicy,
         InvertedPassInput{"SolidGuess_Perturbation", CalcMode::SOLID_GUESS, PerturbationMode::YES}),
     [](const TestParamInfo<InvertedPassInput> &info) { return info.param.name; });
 
-TEST_F(TestPerturbationPixels, inversionTransformsReferenceAndRequestedCoordinates)
+class TestInvertedReferenceOrientation : public TestPerturbationPixels, public WithParamInterface<FractalType>
 {
-    ValueSaver saved_region{g_image_region, ImageRegion{{1.0, -1.0}, {3.0, 1.0}, {1.0, -1.0}}};
+protected:
+    void SetUp() override;
+    std::complex<double> m_reference{};
+
+private:
+    ValueSaver<ImageRegion> m_saved_region{g_image_region, ImageRegion{{1.0, -1.0}, {3.0, 1.0}, {1.0, -1.0}}};
+};
+
+void TestInvertedReferenceOrientation::SetUp()
+{
+    TestPerturbationPixels::SetUp();
+    g_fractal_type = GetParam();
     g_inversion = {3, 2.0, {1.0, 0.5}, {2.0, 1.0, 0.5}};
     m_specific.pert_ref = record_reference;
     m_specific.pert_pt = record_delta;
     m_engine.initialize_frame({2.0, 0.0}, {1.0, 0.0}, {0.0, 1.0});
     m_engine.set_glitch_tolerance(0.0);
     const std::complex<double> offset{1.0, -0.5};
-    const std::complex<double> reference{std::complex<double>{1.0, 0.5} + 2.0 * offset / std::norm(offset)};
+    m_reference = std::complex<double>{1.0, 0.5} + 2.0 * offset / std::norm(offset);
+    if (GetParam() == FractalType::BURNING_SHIP)
+    {
+        m_reference = std::conj(m_reference);
+    }
+}
 
+TEST_P(TestInvertedReferenceOrientation, transformsReferenceAndRequestedCoordinates)
+{
     EXPECT_GE(m_engine.calculate_pixel(0, 0), 0);
 
     ASSERT_FALSE(s_reference_coordinates.empty());
-    EXPECT_NEAR(reference.real(), s_reference_coordinates.front().real(), 1e-14);
-    EXPECT_NEAR(reference.imag(), s_reference_coordinates.front().imag(), 1e-14);
-    EXPECT_NEAR(1.0 - reference.real(), s_parameter_delta.real(), 1e-14);
-    EXPECT_NEAR(4.5 - reference.imag(), s_parameter_delta.imag(), 1e-14);
+    EXPECT_NEAR(m_reference.real(), s_reference_coordinates.front().real(), 1e-14);
+    EXPECT_NEAR(m_reference.imag(), s_reference_coordinates.front().imag(), 1e-14);
+    EXPECT_NEAR(1.0 - m_reference.real(), s_parameter_delta.real(), 1e-14);
+    EXPECT_NEAR(
+        (GetParam() == FractalType::BURNING_SHIP ? -4.5 : 4.5) - m_reference.imag(), s_parameter_delta.imag(), 1e-14);
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInvertedReferenceOrientation,
+    Values(FractalType::MANDEL, FractalType::BURNING_SHIP), [](const TestParamInfo<FractalType> &info)
+    { return info.param == FractalType::MANDEL ? "Mandelbrot" : "BurningShip"; });
 
 TEST_F(TestPerturbationPixels, inversionCenterRetainsTheStandardSingularityBehavior)
 {
@@ -12010,27 +12033,6 @@ TEST_F(TestPerturbationPixels, inversionCenterRetainsTheStandardSingularityBehav
     EXPECT_EQ(2, m_engine.reference_count());
     ASSERT_FALSE(s_reference_coordinates.empty());
     EXPECT_EQ(std::complex<double>(1.0, 1.0), s_reference_coordinates.back());
-}
-
-TEST_F(TestPerturbationPixels, inversionPreservesTheBurningShipReferenceOrientation)
-{
-    ValueSaver saved_type{g_fractal_type, FractalType::BURNING_SHIP};
-    ValueSaver saved_region{g_image_region, ImageRegion{{1.0, -1.0}, {3.0, 1.0}, {1.0, -1.0}}};
-    g_inversion = {3, 2.0, {1.0, 0.5}, {2.0, 1.0, 0.5}};
-    m_specific.pert_ref = record_reference;
-    m_specific.pert_pt = record_delta;
-    m_engine.initialize_frame({2.0, 0.0}, {1.0, 0.0}, {0.0, 1.0});
-    m_engine.set_glitch_tolerance(0.0);
-    const std::complex<double> offset{1.0, -0.5};
-    const std::complex<double> reference{std::conj(std::complex<double>{1.0, 0.5} + 2.0 * offset / std::norm(offset))};
-
-    EXPECT_GE(m_engine.calculate_pixel(0, 0), 0);
-
-    ASSERT_FALSE(s_reference_coordinates.empty());
-    EXPECT_NEAR(reference.real(), s_reference_coordinates.front().real(), 1e-14);
-    EXPECT_NEAR(reference.imag(), s_reference_coordinates.front().imag(), 1e-14);
-    EXPECT_NEAR(1.0 - reference.real(), s_parameter_delta.real(), 1e-14);
-    EXPECT_NEAR(-4.5 - reference.imag(), s_parameter_delta.imag(), 1e-14);
 }
 
 TEST_F(TestPerturbationPixels, invertedDeepZoomPreservesDeltasAcrossReferenceReplacement)
