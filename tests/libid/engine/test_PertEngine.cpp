@@ -2692,26 +2692,59 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestFmodReferenceReplacement,
         FmodReplacementInput{"HighPrecisionInside", true, true}),
     [](const TestParamInfo<FmodReplacementInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, totalDistanceExcludesTheEscapingSegment)
+struct TotalDistanceInput
 {
-    struct Sample
-    {
-        std::complex<double> point;
-        long iterations;
-        int color;
-    };
+    const char *name;
+    bool big_float;
+    std::complex<double> point;
+    long expected_iterations;
+    int expected_color;
+};
 
+void PrintTo(const TotalDistanceInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestTotalDistanceSample : public PerturbationIterationTest, public WithParamInterface<TotalDistanceInput>
+{
+public:
+    TestTotalDistanceSample();
+
+protected:
+    void SetUp() override;
+};
+
+TestTotalDistanceSample::TestTotalDistanceSample() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestTotalDistanceSample::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::ITER;
     g_outside_method = ColorMethod::TDIS;
-    for (const Sample &sample :
-        {Sample{{0.5, 0.5}, 4, 3}, Sample{{0.5, -0.5}, 4, 3}, Sample{{-1.0, 1.0}, 2, 2}, Sample{{0.5, 0.0}, 4, 1}})
-    {
-        SCOPED_TRACE(sample.point);
-        compare_pixel(sample.point, 8);
-        EXPECT_EQ(sample.iterations, g_real_color_iter);
-        EXPECT_EQ(sample.color, g_color);
-    }
 }
+
+TEST_P(TestTotalDistanceSample, excludesEscapingSegment)
+{
+    compare_pixel(GetParam().point, 8);
+
+    EXPECT_EQ(GetParam().expected_iterations, g_real_color_iter);
+    EXPECT_EQ(GetParam().expected_color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestTotalDistanceSample,
+    Values(TotalDistanceInput{"DoubleUpperRight", false, {0.5, 0.5}, 4, 3},
+        TotalDistanceInput{"DoubleLowerRight", false, {0.5, -0.5}, 4, 3},
+        TotalDistanceInput{"DoubleUpperLeft", false, {-1.0, 1.0}, 2, 2},
+        TotalDistanceInput{"DoubleRealAxis", false, {0.5, 0.0}, 4, 1},
+        TotalDistanceInput{"HighPrecisionUpperRight", true, {0.5, 0.5}, 4, 3},
+        TotalDistanceInput{"HighPrecisionLowerRight", true, {0.5, -0.5}, 4, 3},
+        TotalDistanceInput{"HighPrecisionUpperLeft", true, {-1.0, 1.0}, 2, 2},
+        TotalDistanceInput{"HighPrecisionRealAxis", true, {0.5, 0.0}, 4, 1}),
+    [](const TestParamInfo<TotalDistanceInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, totalDistanceStartsAtTheInitializedPoint)
 {
