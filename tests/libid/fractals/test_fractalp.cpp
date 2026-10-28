@@ -323,43 +323,84 @@ TEST(TestFractalDispatch, makeDispatchFromTypeSeedsFromRequestedType)
     EXPECT_EQ(from.calc_type, dispatch.calc_type());
 }
 
-TEST(TestFractalDispatch, accessorsUseCurrentDispatch)
+class TestDispatchAccessor : public Test
 {
-    FractalDispatch dispatch{};
-    dispatch.set_orbit_calc(test_orbit_calc);
-    dispatch.set_per_pixel(test_per_pixel);
-    dispatch.set_per_image(test_per_image);
-    dispatch.set_calc_type(test_calc_type);
+private:
+    ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific, nullptr};
+    ValueSaver<FractalDispatch> m_saved_dispatch{
+        g_dispatch, FractalDispatch{test_orbit_calc, test_per_pixel, test_per_image, test_calc_type}};
+};
 
-    ValueSaver saved_specific{g_cur_fractal_specific, nullptr};
-    ValueSaver saved_dispatch{g_dispatch, dispatch};
-
+TEST_F(TestDispatchAccessor, perImageUsesCurrentDispatch)
+{
     EXPECT_TRUE(per_image());
+}
+
+TEST_F(TestDispatchAccessor, perPixelUsesCurrentDispatch)
+{
     EXPECT_EQ(23, per_pixel());
+}
+
+TEST_F(TestDispatchAccessor, orbitUsesCurrentDispatch)
+{
     EXPECT_EQ(17, orbit_calc());
+}
+
+TEST_F(TestDispatchAccessor, calculationUsesCurrentDispatch)
+{
     EXPECT_EQ(test_calc_type, g_dispatch.calc_type());
     EXPECT_EQ(31, calc_type());
 }
 
-TEST(TestFractalDispatch, settersOnlyUpdateDispatch)
+class TestDispatchSetter : public Test
 {
-    FractalSpecific specific{};
-    ValueSaver saved_specific{g_cur_fractal_specific, &specific};
-    ValueSaver saved_dispatch{g_dispatch};
+protected:
+    void expect_table_unchanged() const;
 
+private:
+    FractalSpecific m_specific{};
+    ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific, &m_specific};
+    ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
+};
+
+void TestDispatchSetter::expect_table_unchanged() const
+{
+    EXPECT_EQ(nullptr, m_specific.orbit_calc);
+    EXPECT_EQ(nullptr, m_specific.per_pixel);
+    EXPECT_EQ(nullptr, m_specific.per_image);
+    EXPECT_EQ(nullptr, m_specific.calc_type);
+}
+
+TEST_F(TestDispatchSetter, orbitSetterOnlyUpdatesDispatch)
+{
     g_dispatch.set_orbit_calc(test_orbit_calc);
-    g_dispatch.set_per_pixel(test_per_pixel);
-    g_dispatch.set_per_image(test_per_image);
-    g_dispatch.set_calc_type(test_calc_type);
 
     EXPECT_EQ(test_orbit_calc, g_dispatch.orbit_calc());
+    expect_table_unchanged();
+}
+
+TEST_F(TestDispatchSetter, perPixelSetterOnlyUpdatesDispatch)
+{
+    g_dispatch.set_per_pixel(test_per_pixel);
+
     EXPECT_EQ(test_per_pixel, g_dispatch.per_pixel());
+    expect_table_unchanged();
+}
+
+TEST_F(TestDispatchSetter, perImageSetterOnlyUpdatesDispatch)
+{
+    g_dispatch.set_per_image(test_per_image);
+
     EXPECT_EQ(test_per_image, g_dispatch.per_image());
+    expect_table_unchanged();
+}
+
+TEST_F(TestDispatchSetter, calculationSetterOnlyUpdatesDispatch)
+{
+    g_dispatch.set_calc_type(test_calc_type);
+
     EXPECT_EQ(test_calc_type, g_dispatch.calc_type());
-    EXPECT_EQ(nullptr, specific.orbit_calc);
-    EXPECT_EQ(nullptr, specific.per_pixel);
-    EXPECT_EQ(nullptr, specific.per_image);
-    EXPECT_EQ(nullptr, specific.calc_type);
+    expect_table_unchanged();
 }
 
 TEST(TestFractalDispatch, alternateMathOnlyUpdatesDispatch)
