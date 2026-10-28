@@ -1553,46 +1553,93 @@ TEST_P(TestMatchingGifViewport, restoresUsingRequestedViewWindowPolicy)
 INSTANTIATE_TEST_SUITE_P(RestorePolicy, TestMatchingGifViewport, Bool(),
     [](const TestParamInfo<bool> &info) { return info.param ? "Fast" : "ViewWindow"; });
 
-TEST_F(TestLoadFile, videoCancellationKeepsActiveImage)
+class TestRestoreCancellation : public LoadFileTest
 {
-    ValueSaver filename{g_read_filename, ID_TEST_GIF_MANDEL_INT};
-    ValueSaver ask{g_ask_video, true};
-    ValueSaver batch{g_init_batch, BatchMode::NONE};
-    ValueSaver mode_driver{g_video_table[0].driver, &m_driver};
-    ValueSaver status{g_calc_status, CalcStatus::COMPLETED};
-    ValueSaver iterations{g_max_iterations, 1234L};
-    ValueSaver width{g_file_x_dots, 987};
-    ValueSaver viewport{g_viewport, Viewport{}};
-    g_viewport.enabled = true;
-    g_viewport.x_dots = 200;
-    g_viewport.y_dots = 150;
-    Viewport pending_viewport{g_viewport};
-    pending_viewport.enabled = false;
-    const std::string description{"mock"};
-    EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
-    EXPECT_CALL(m_driver, get_description()).WillRepeatedly(ReturnRef(description));
+protected:
+    void SetUp() override;
+    void expect_active_image_unchanged() const;
+
+    ValueSaver<std::filesystem::path> filename{g_read_filename, ID_TEST_GIF_MANDEL_INT};
+    ValueSaver<BatchMode> batch{g_init_batch, BatchMode::NONE};
+    ValueSaver<CalcStatus> status{g_calc_status, CalcStatus::COMPLETED};
+    ValueSaver<long> iterations{g_max_iterations, 1234L};
+    ValueSaver<int> width{g_file_x_dots, 987};
+};
+
+void TestRestoreCancellation::SetUp()
+{
+    LoadFileTest::SetUp();
     EXPECT_CALL(m_driver, set_clear()).Times(AnyNumber());
     EXPECT_CALL(m_driver, set_attr(_, _, _, _)).Times(AnyNumber());
     EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(AnyNumber());
     EXPECT_CALL(m_driver, hide_text_cursor()).Times(AnyNumber());
-    EXPECT_CALL(m_driver, wait_key_pressed(false)).WillOnce(Return(1));
-    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
+}
 
-    EXPECT_EQ(-1, prepare_image_restore(pending_viewport));
-
+void TestRestoreCancellation::expect_active_image_unchanged() const
+{
     EXPECT_EQ(FractalType::JULIA, g_fractal_type);
     EXPECT_EQ(1234, g_max_iterations);
     EXPECT_EQ(987, g_file_x_dots);
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_EQ(-1, g_init_mode);
+}
+
+class TestVideoRestoreCancellation : public TestRestoreCancellation
+{
+protected:
+    void SetUp() override;
+    void expect_viewport_unchanged() const;
+
+    ValueSaver<bool> ask{g_ask_video, true};
+    ValueSaver<Driver *> mode_driver{g_video_table[0].driver, &m_driver};
+    ValueSaver<Viewport> viewport{g_viewport, Viewport{}};
+    ValueSaver<int> skip_x{g_skip_x_dots};
+    ValueSaver<int> skip_y{g_skip_y_dots};
+    Viewport m_pending_viewport{};
+    const std::string m_description{"mock"};
+};
+
+void TestVideoRestoreCancellation::SetUp()
+{
+    TestRestoreCancellation::SetUp();
+    g_viewport.enabled = true;
+    g_viewport.x_dots = 200;
+    g_viewport.y_dots = 150;
+    m_pending_viewport = g_viewport;
+    m_pending_viewport.enabled = false;
+    EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
+    EXPECT_CALL(m_driver, get_description()).WillRepeatedly(ReturnRef(m_description));
+    EXPECT_CALL(m_driver, wait_key_pressed(false)).WillOnce(Return(1));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
+}
+
+void TestVideoRestoreCancellation::expect_viewport_unchanged() const
+{
     EXPECT_TRUE(g_viewport.enabled);
     EXPECT_EQ(200, g_viewport.x_dots);
     EXPECT_EQ(150, g_viewport.y_dots);
+}
+
+TEST_F(TestVideoRestoreCancellation, videoCancellationKeepsActiveImage)
+{
+    EXPECT_EQ(-1, prepare_image_restore(m_pending_viewport));
+
+    expect_active_image_unchanged();
+    expect_viewport_unchanged();
+}
+
+TEST_F(TestVideoRestoreCancellation, retryAfterCancellationAppliesPendingImage)
+{
+    ASSERT_EQ(-1, prepare_image_restore(m_pending_viewport));
+    expect_active_image_unchanged();
+    expect_viewport_unchanged();
 
     EXPECT_CALL(m_driver, check_memory());
     EXPECT_CALL(m_driver, wait_key_pressed(false)).WillOnce(Return(1));
     EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
-    EXPECT_EQ(0, prepare_image_restore(pending_viewport));
+
+    EXPECT_EQ(0, prepare_image_restore(m_pending_viewport));
+
     EXPECT_EQ(FractalType::MANDEL, g_fractal_type);
     EXPECT_EQ(ShowFile::LOAD_IMAGE, g_show_file);
     EXPECT_NE(1234, g_max_iterations);
@@ -1601,30 +1648,17 @@ TEST_F(TestLoadFile, videoCancellationKeepsActiveImage)
     EXPECT_EQ(0, g_skip_y_dots);
 }
 
-TEST_F(TestLoadFile, threeDCancellationKeepsActiveImage)
+TEST_F(TestRestoreCancellation, threeDCancellationKeepsActiveImage)
 {
-    ValueSaver filename{g_read_filename, ID_TEST_GIF_MANDEL_INT};
     ValueSaver display{g_display_3d, Display3DMode::YES};
-    ValueSaver batch{g_init_batch, BatchMode::NONE};
-    ValueSaver status{g_calc_status, CalcStatus::COMPLETED};
-    ValueSaver iterations{g_max_iterations, 1234L};
-    ValueSaver width{g_file_x_dots, 987};
     const ThreeDSettings before;
-    EXPECT_CALL(m_driver, set_clear()).Times(AnyNumber());
-    EXPECT_CALL(m_driver, set_attr(_, _, _, _)).Times(AnyNumber());
-    EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(AnyNumber());
-    EXPECT_CALL(m_driver, hide_text_cursor()).Times(AnyNumber());
     EXPECT_CALL(m_driver, key_cursor(_, _)).WillOnce(Return(ID_KEY_ESC));
 
     EXPECT_EQ(-1, prepare_image_restore(g_viewport));
 
-    EXPECT_EQ(FractalType::JULIA, g_fractal_type);
-    EXPECT_EQ(1234, g_max_iterations);
-    EXPECT_EQ(987, g_file_x_dots);
-    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    expect_active_image_unchanged();
     EXPECT_EQ(before.x_rot, id::geometry::g_x_rot);
     EXPECT_EQ(before.sphere, id::geometry::g_sphere);
-    EXPECT_EQ(-1, g_init_mode);
 }
 
 TEST(TestThreeDSettings, editsRemainPendingUntilApplied)
