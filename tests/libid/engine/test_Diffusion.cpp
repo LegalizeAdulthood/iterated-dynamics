@@ -19,6 +19,8 @@
 
 #include <algorithm>
 #include <array>
+#include <optional>
+#include <ostream>
 #include <stdexcept>
 #include <vector>
 
@@ -374,17 +376,48 @@ TEST_F(TestDiffusionPass, suspensionPreservesBothCounterWords)
     EXPECT_TRUE(s_calculated.empty());
 }
 
-TEST_F(TestDiffusionPass, completionRequiresASelection)
+struct DiffusionSelectionInput
 {
-    Diffusion pass;
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
-    ASSERT_TRUE(pass.select_pixel());
+    const char *name;
+    bool consumed;
+};
 
-    pass.complete_pixel(7);
-
-    EXPECT_THROW(pass.selected_pixel(), std::logic_error);
-    EXPECT_THROW(pass.complete_pixel(7), std::logic_error);
+void PrintTo(const DiffusionSelectionInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
+
+class TestDiffusionPassSelectionGuard : public TestDiffusionPass, public WithParamInterface<DiffusionSelectionInput>
+{
+protected:
+    void SetUp() override;
+
+    std::optional<Diffusion> m_pass;
+};
+
+void TestDiffusionPassSelectionGuard::SetUp()
+{
+    TestDiffusionPass::SetUp();
+    m_pass.emplace();
+    if (GetParam().consumed)
+    {
+        ASSERT_TRUE(m_pass->select_pixel());
+        m_pass->complete_pixel(7);
+    }
+}
+
+TEST_P(TestDiffusionPassSelectionGuard, accessorRequiresPendingSelection)
+{
+    EXPECT_THROW(m_pass->selected_pixel(), std::logic_error);
+}
+
+TEST_P(TestDiffusionPassSelectionGuard, completionRequiresPendingSelection)
+{
+    EXPECT_THROW(m_pass->complete_pixel(7), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(SelectionStates, TestDiffusionPassSelectionGuard,
+    Values(DiffusionSelectionInput{"NeverSelected", false}, DiffusionSelectionInput{"Consumed", true}),
+    [](const TestParamInfo<DiffusionSelectionInput> &info) { return info.param.name; });
 
 } // namespace id::test
