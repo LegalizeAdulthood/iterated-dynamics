@@ -2523,127 +2523,134 @@ TEST_F(TestParameterCommand, isMandYes)
     EXPECT_TRUE(g_frm_is_mandelbrot);
 }
 
-TEST_F(TestParameterCommandError, cycleLimitTooLow)
+struct CycleLimitParameterInput
 {
-    ValueSaver saved_cycle_limit{g_init_cycle_limit, 9999};
+    const char *name;
+    const char *argument;
+    int expected;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("cyclelimit=1", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(9999, g_init_cycle_limit);
+void PrintTo(const CycleLimitParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommandError, cycleLimitTooHigh)
+class TestCycleLimitParameter : public TestParameterCommand, public WithParamInterface<CycleLimitParameterInput>
 {
-    ValueSaver saved_cycle_limit{g_init_cycle_limit, 9999};
+private:
+    ValueSaver<int> m_saved_limit{g_init_cycle_limit, 9999};
+};
 
-    exec_cmd_arg("cyclelimit=257", CmdFile::AT_CMD_LINE);
+TEST_P(TestCycleLimitParameter, setsCycleLimit)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(9999, g_init_cycle_limit);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().expected, g_init_cycle_limit);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommand, cycleLimitNumber)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestCycleLimitParameter,
+    Values(CycleLimitParameterInput{"TooLow", "cyclelimit=1", 9999, CmdArgFlags::BAD_ARG},
+        CycleLimitParameterInput{"TooHigh", "cyclelimit=257", 9999, CmdArgFlags::BAD_ARG},
+        CycleLimitParameterInput{"Number", "cyclelimit=100", 100, CmdArgFlags::NONE}),
+    [](const TestParamInfo<CycleLimitParameterInput> &info) { return info.param.name; });
+
+struct CycleRangeParameterInput
 {
-    ValueSaver saved_cycle_limit{g_init_cycle_limit, 9999};
+    const char *name;
+    const char *argument;
+    int low;
+    int high;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("cyclelimit=100", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(100, g_init_cycle_limit);
+void PrintTo(const CycleRangeParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, cycleRangeNoParams)
+class TestCycleRangeParameter : public TestParameterCommand, public WithParamInterface<CycleRangeParameterInput>
 {
-    ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
-    ValueSaver saved_cycle_range_hi{g_color_cycle_range_hi, 9999};
+private:
+    ValueSaver<int> m_saved_low{g_color_cycle_range_lo, 9999};
+    ValueSaver<int> m_saved_high{g_color_cycle_range_hi, 9999};
+};
 
-    exec_cmd_arg("cyclerange", CmdFile::AT_CMD_LINE);
+TEST_P(TestCycleRangeParameter, setsCycleRange)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(1, g_color_cycle_range_lo);
-    EXPECT_EQ(255, g_color_cycle_range_hi);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().low, g_color_cycle_range_lo);
+    EXPECT_EQ(GetParam().high, g_color_cycle_range_hi);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommand, cycleRangeOneParam)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestCycleRangeParameter,
+    Values(CycleRangeParameterInput{"NoParams", "cyclerange", 1, 255, CmdArgFlags::NONE},
+        CycleRangeParameterInput{"OneParam", "cyclerange=10", 10, 255, CmdArgFlags::NONE},
+        CycleRangeParameterInput{"TwoParams", "cyclerange=10/20", 10, 20, CmdArgFlags::NONE},
+        CycleRangeParameterInput{"LowTooLow", "cyclerange=-1/20", 9999, 9999, CmdArgFlags::BAD_ARG},
+        CycleRangeParameterInput{"HighTooHigh", "cyclerange=10/256", 9999, 9999, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<CycleRangeParameterInput> &info) { return info.param.name; });
+
+struct IterationRangesParameterInput
 {
-    ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
-    ValueSaver saved_cycle_range_hi{g_color_cycle_range_hi, 9999};
+    const char *name;
+    const char *argument;
+    long log_map_flag;
+    std::optional<std::vector<int>> ranges;
+    CmdArgFlags result;
+};
 
-    exec_cmd_arg("cyclerange=10", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(10, g_color_cycle_range_lo);
-    EXPECT_EQ(255, g_color_cycle_range_hi);
+void PrintTo(const IterationRangesParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, cycleRangeTwoParams)
+class TestIterationRangesParameter : public TestParameterCommand,
+                                     public WithParamInterface<IterationRangesParameterInput>
 {
-    ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
-    ValueSaver saved_cycle_range_hi{g_color_cycle_range_hi, 9999};
+private:
+    ValueSaver<long> m_saved_log_map{g_log_map_flag, 9999};
+    ValueSaver<std::vector<int>> m_saved_ranges{g_iteration_ranges};
+};
 
-    exec_cmd_arg("cyclerange=10/20", CmdFile::AT_CMD_LINE);
+TEST_P(TestIterationRangesParameter, setsIterationRanges)
+{
+    exec_cmd_arg(GetParam().argument, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(10, g_color_cycle_range_lo);
-    EXPECT_EQ(20, g_color_cycle_range_hi);
+    EXPECT_EQ(GetParam().result, m_result);
+    EXPECT_EQ(GetParam().log_map_flag, g_log_map_flag);
+    if (GetParam().ranges)
+    {
+        EXPECT_EQ(*GetParam().ranges, g_iteration_ranges);
+    }
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
 }
 
-TEST_F(TestParameterCommandError, cycleRangeLoTooLow)
-{
-    ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
-    ValueSaver saved_cycle_range_hi{g_color_cycle_range_hi, 9999};
-
-    exec_cmd_arg("cyclerange=-1/20", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(9999, g_color_cycle_range_lo);
-    EXPECT_EQ(9999, g_color_cycle_range_hi);
-}
-
-TEST_F(TestParameterCommandError, cycleRangeHiTooHigh)
-{
-    ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
-    ValueSaver saved_cycle_range_hi{g_color_cycle_range_hi, 9999};
-
-    exec_cmd_arg("cyclerange=10/256", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(9999, g_color_cycle_range_lo);
-    EXPECT_EQ(9999, g_color_cycle_range_hi);
-}
-
-TEST_F(TestParameterCommandError, rangesInvalidParamCount)
-{
-    ValueSaver saved_log_map_flag(g_log_map_flag, 9999);
-
-    exec_cmd_arg("ranges=100/102/foo", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(9999, g_log_map_flag);
-}
-
-TEST_F(TestParameterCommand, rangesNoStriping)
-{
-    ValueSaver saved_log_map_flag(g_log_map_flag, 9999);
-
-    exec_cmd_arg("ranges=10/20/30", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(0, g_log_map_flag);
-    EXPECT_EQ((std::vector{10, 20, 30}), g_iteration_ranges);
-}
-
-TEST_F(TestParameterCommand, rangesOneStripe)
-{
-    ValueSaver saved_log_map_flag(g_log_map_flag, 9999);
-
-    exec_cmd_arg("ranges=10/-20/30", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(0, g_log_map_flag);
-    EXPECT_EQ((std::vector{10, -1, 20, 30}), g_iteration_ranges);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestIterationRangesParameter,
+    Values(
+        IterationRangesParameterInput{"InvalidCount", "ranges=100/102/foo", 9999, std::nullopt, CmdArgFlags::BAD_ARG},
+        IterationRangesParameterInput{
+            "NoStriping", "ranges=10/20/30", 0, std::vector<int>{10, 20, 30}, CmdArgFlags::FRACTAL_PARAM},
+        IterationRangesParameterInput{
+            "OneStripe", "ranges=10/-20/30", 0, std::vector<int>{10, -1, 20, 30}, CmdArgFlags::FRACTAL_PARAM}),
+    [](const TestParamInfo<IterationRangesParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, saveNameOnFirstInit)
 {
