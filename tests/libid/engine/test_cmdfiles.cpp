@@ -1776,52 +1776,23 @@ INSTANTIATE_TEST_SUITE_P(TPlus, TestLegacyCommandInput,
         LegacyCommandInput{"Yes", "tplus=y", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE}),
     [](const TestParamInfo<LegacyCommandInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommandError, nonInterlacedInvalidValue)
-{
-    exec_cmd_arg("noninterlaced=!", CmdFile::AT_CMD_LINE);
+INSTANTIATE_TEST_SUITE_P(NonInterlaced, TestLegacyCommandInput,
+    Values(LegacyCommandInput{"Invalid", "noninterlaced=!", CmdFile::AT_CMD_LINE, CmdArgFlags::BAD_ARG},
+        LegacyCommandInput{"Yes", "noninterlaced=y", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE}),
+    [](const TestParamInfo<LegacyCommandInput> &info) { return info.param.name; });
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
+INSTANTIATE_TEST_SUITE_P(MaxColorRes, TestLegacyCommandInput,
+    Values(LegacyCommandInput{"Invalid", "maxcolorres=3", CmdFile::AT_CMD_LINE, CmdArgFlags::BAD_ARG},
+        LegacyCommandInput{"One", "maxcolorres=1", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE},
+        LegacyCommandInput{"Four", "maxcolorres=4", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE},
+        LegacyCommandInput{"Eight", "maxcolorres=8", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE},
+        LegacyCommandInput{"Sixteen", "maxcolorres=16", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE}),
+    [](const TestParamInfo<LegacyCommandInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommand, nonInterlacedYes)
-{
-    exec_cmd_arg("noninterlaced=y", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-}
-
-TEST_F(TestParameterCommandError, maxColorResInvalidValue)
-{
-    exec_cmd_arg("maxcolorres=3", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
-
-TEST_F(TestParameterCommand, maxColorResValidValue)
-{
-    for (const int v : {1, 4, 8, 16})
-    {
-        const std::string arg{"maxcolorres=" + std::to_string(v)};
-
-        exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);
-
-        EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    }
-}
-
-TEST_F(TestParameterCommandError, pixelZoomInvalidValue)
-{
-    exec_cmd_arg("pixelzoom=5", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
-
-TEST_F(TestParameterCommand, pixelZoomValidValue)
-{
-    exec_cmd_arg("pixelzoom=4", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-}
+INSTANTIATE_TEST_SUITE_P(PixelZoom, TestLegacyCommandInput,
+    Values(LegacyCommandInput{"Invalid", "pixelzoom=5", CmdFile::AT_CMD_LINE, CmdArgFlags::BAD_ARG},
+        LegacyCommandInput{"Four", "pixelzoom=4", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE}),
+    [](const TestParamInfo<LegacyCommandInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommandError, warnInvalidValue)
 {
