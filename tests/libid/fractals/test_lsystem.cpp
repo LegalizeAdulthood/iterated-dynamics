@@ -23,7 +23,7 @@
 #include <array>
 #include <filesystem>
 #include <fstream>
-#include <initializer_list>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -89,21 +89,7 @@ protected:
         calculation.finish(false);
     }
 
-    void expect_lines(const std::initializer_list<Line> expected)
-    {
-        ASSERT_EQ(expected.size(), m_lines.size());
-        std::size_t index{};
-        for (const Line &line : expected)
-        {
-            SCOPED_TRACE(index);
-            for (int coordinate = 0; coordinate < 4; ++coordinate)
-            {
-                EXPECT_NEAR(line[coordinate], m_lines[index][coordinate], 1);
-            }
-            EXPECT_EQ(line[4], m_lines[index][4]);
-            ++index;
-        }
-    }
+    void expect_lines(const std::vector<Line> &expected);
 
     MockDriver m_driver;
     FractalSpecific m_specific{*get_fractal_specific(FractalType::L_SYSTEM)};
@@ -126,88 +112,80 @@ protected:
     std::vector<Line> m_lines;
 };
 
-TEST_F(TestLSystem, fitsBothAxes)
+void TestLSystem::expect_lines(const std::vector<Line> &expected)
 {
-    render("SizingBox");
-
-    expect_lines({{5, 103, 105, 103, 15}, {105, 103, 105, 3, 15}, {105, 3, 5, 3, 15}, {5, 3, 5, 103, 15}});
+    ASSERT_EQ(expected.size(), m_lines.size());
+    std::size_t index{};
+    for (const Line &line : expected)
+    {
+        SCOPED_TRACE(index);
+        for (int coordinate = 0; coordinate < 4; ++coordinate)
+        {
+            EXPECT_NEAR(line[coordinate], m_lines[index][coordinate], 1);
+        }
+        EXPECT_EQ(line[4], m_lines[index][4]);
+        ++index;
+    }
 }
 
-TEST_F(TestLSystem, centersDegenerateAxis)
+struct LSystemRenderInput
 {
-    render("SizingHorizontal");
+    const char *name;
+    const char *definition;
+    int order;
+    std::vector<std::array<int, 5>> lines;
+};
 
-    expect_lines({{5, 53, 55, 53, 15}, {55, 53, 105, 53, 15}});
+void PrintTo(const LSystemRenderInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestLSystem, restoresNestedBranchTurtleButKeepsExtrema)
+std::vector<LSystemRenderInput> lsystem_render_inputs()
 {
-    render("SizingBranches");
-
-    expect_lines({{30, 103, 55, 103, 15}, {55, 103, 55, 53, 15}, {55, 53, 80, 53, 15}, {55, 53, 55, 3, 15},
-        {55, 103, 80, 103, 15}});
+    return {{"fitsBothAxes", "SizingBox", 0,
+                {{5, 103, 105, 103, 15}, {105, 103, 105, 3, 15}, {105, 3, 5, 3, 15}, {5, 3, 5, 103, 15}}},
+        {"centersDegenerateAxis", "SizingHorizontal", 0, {{5, 53, 55, 53, 15}, {55, 53, 105, 53, 15}}},
+        {"restoresNestedBranchTurtleButKeepsExtrema", "SizingBranches", 0,
+            {{30, 103, 55, 103, 15}, {55, 103, 55, 53, 15}, {55, 53, 80, 53, 15}, {55, 53, 55, 3, 15},
+                {55, 103, 80, 103, 15}}},
+        {"restoresBranchesInsideExpandedRule", "SizingBranchRule", 1,
+            {{30, 103, 55, 103, 15}, {55, 103, 55, 53, 15}, {55, 53, 80, 53, 15}, {55, 53, 55, 3, 15},
+                {55, 103, 80, 103, 15}}},
+        {"restoresReverseAfterBranch", "SizingReverse", 0,
+            {{5, 53, 55, 53, 15}, {55, 53, 55, 103, 15}, {55, 53, 105, 53, 15}, {105, 53, 105, 3, 15}}},
+        {"restoresRealAngleAndScaleAfterBranch", "SizingRealAngle", 0,
+            {{5, 3, 55, 3, 15}, {55, 3, 55, 103, 15}, {55, 3, 105, 3, 15}}},
+        {"includesUnplottedMovesInBounds", "SizingMove", 0, {{38, 53, 105, 53, 15}}},
+        {"ExpansionDepthZero", "SizingExpansion", 0, {}},
+        {"ExpansionDepthOne", "SizingExpansion", 1, {{5, 53, 105, 53, 15}}},
+        {"ExpansionDepthTwo", "SizingExpansion", 2,
+            {{30, 103, 80, 103, 15}, {80, 103, 80, 53, 15}, {80, 53, 80, 3, 15}}},
+        {"appliesAllMatchingRulesInSourceOrder", "SizingRules", 1, {{5, 103, 105, 103, 15}, {105, 103, 105, 3, 15}}},
+        {"acceptsEmptyReplacement", "SizingEmptyRule", 1, {{55, 103, 55, 3, 15}}},
+        {"sizesDeepExpansionWithoutRecursiveStack", "SizingDeep", 10000, {{5, 53, 105, 53, 15}}}};
 }
 
-TEST_F(TestLSystem, restoresBranchesInsideExpandedRule)
+class TestLSystemRender : public TestLSystem, public WithParamInterface<LSystemRenderInput>
 {
-    render("SizingBranchRule", 1);
+};
 
-    expect_lines({{30, 103, 55, 103, 15}, {55, 103, 55, 53, 15}, {55, 53, 80, 53, 15}, {55, 53, 55, 3, 15},
-        {55, 103, 80, 103, 15}});
+TEST_P(TestLSystemRender, rendersDefinitionAtOrder)
+{
+    render(GetParam().definition, GetParam().order);
+
+    if (GetParam().lines.empty())
+    {
+        EXPECT_TRUE(m_lines.empty());
+    }
+    else
+    {
+        expect_lines(GetParam().lines);
+    }
 }
 
-TEST_F(TestLSystem, restoresReverseAfterBranch)
-{
-    render("SizingReverse");
-
-    expect_lines({{5, 53, 55, 53, 15}, {55, 53, 55, 103, 15}, {55, 53, 105, 53, 15}, {105, 53, 105, 3, 15}});
-}
-
-TEST_F(TestLSystem, restoresRealAngleAndScaleAfterBranch)
-{
-    render("SizingRealAngle");
-
-    expect_lines({{5, 3, 55, 3, 15}, {55, 3, 55, 103, 15}, {55, 3, 105, 3, 15}});
-}
-
-TEST_F(TestLSystem, includesUnplottedMovesInBounds)
-{
-    render("SizingMove");
-
-    expect_lines({{38, 53, 105, 53, 15}});
-}
-
-TEST_F(TestLSystem, honorsExpansionDepth)
-{
-    render("SizingExpansion", 0);
-    EXPECT_TRUE(m_lines.empty());
-    render("SizingExpansion", 1);
-    expect_lines({{5, 53, 105, 53, 15}});
-    m_lines.clear();
-    render("SizingExpansion", 2);
-    expect_lines({{30, 103, 80, 103, 15}, {80, 103, 80, 53, 15}, {80, 53, 80, 3, 15}});
-}
-
-TEST_F(TestLSystem, appliesAllMatchingRulesInSourceOrder)
-{
-    render("SizingRules", 1);
-
-    expect_lines({{5, 103, 105, 103, 15}, {105, 103, 105, 3, 15}});
-}
-
-TEST_F(TestLSystem, acceptsEmptyReplacement)
-{
-    render("SizingEmptyRule", 1);
-
-    expect_lines({{55, 103, 55, 3, 15}});
-}
-
-TEST_F(TestLSystem, sizesDeepExpansionWithoutRecursiveStack)
-{
-    render("SizingDeep", 10000);
-
-    expect_lines({{5, 53, 105, 53, 15}});
-}
+INSTANTIATE_TEST_SUITE_P(Definitions, TestLSystemRender, ValuesIn(lsystem_render_inputs()),
+    [](const TestParamInfo<LSystemRenderInput> &info) { return info.param.name; });
 
 TEST_F(TestLSystem, stopsBeforeDrawingOnOverflow)
 {
