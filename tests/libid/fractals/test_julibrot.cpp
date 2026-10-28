@@ -31,24 +31,27 @@ struct TestJulibrotSetup : testing::Test
     ValueSaver<math::DComplex *> saved_parameter{g_float_param, &parameter};
 };
 
-TEST_F(TestJulibrotSetup, rejectsLowColorModeBeforeInitializingWithoutUI)
+class TestJulibrotColorRejection : public TestJulibrotSetup, public testing::WithParamInterface<int>
 {
-    for (const int colors : {2, 4, 16, 254})
+};
+
+TEST_P(TestJulibrotColorRejection, rejectsLowColorModeBeforeInitializingWithoutUI)
+{
+    g_colors = GetParam();
+    try
     {
-        g_colors = colors;
-        try
-        {
-            julibrot_per_image();
-            FAIL() << "Expected a video-mode diagnostic";
-        }
-        catch (const std::runtime_error &error)
-        {
-            EXPECT_STREQ("Sorry, but Julibrots require a 256-color video mode", error.what());
-        }
-        EXPECT_EQ(&parameter, g_float_param);
-        EXPECT_EQ(SaveDAC::YES, g_save_dac);
+        julibrot_per_image();
+        FAIL() << "Expected a video-mode diagnostic";
     }
+    catch (const std::runtime_error &error)
+    {
+        EXPECT_STREQ("Sorry, but Julibrots require a 256-color video mode", error.what());
+    }
+    EXPECT_EQ(&parameter, g_float_param);
+    EXPECT_EQ(SaveDAC::YES, g_save_dac);
 }
+
+INSTANTIATE_TEST_SUITE_P(LowColorModes, TestJulibrotColorRejection, testing::Values(2, 4, 16, 254));
 
 TEST_F(TestJulibrotSetup, initializesWith256ColorsAndPreloadedPaletteWithoutUI)
 {
