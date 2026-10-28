@@ -521,14 +521,24 @@ std::vector<int> line3d_colors_from_seed(const int seed)
 
 } // namespace
 
-TEST(TestSeededFractals, antReuseLastRandomPreservesGeneratedSeed)
+class TestGeneratedFractalSeed : public testing::Test
 {
-    FractalParamSaver saved_params;
-    MinimalImageState image;
-    ValueSaver saved_random_seed{g_random_seed, SEED};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, false};
+protected:
+    void SetUp() override;
 
+    FractalParamSaver m_saved_params;
+    MinimalImageState m_image;
+    ValueSaver<int> m_saved_random_seed{g_random_seed, SEED};
+    ValueSaver<bool> m_saved_random_seed_flag{g_random_seed_flag, false};
+};
+
+void TestGeneratedFractalSeed::SetUp()
+{
     clear_params();
+}
+
+TEST_F(TestGeneratedFractalSeed, antReuseLastRandomPreservesGeneratedSeed)
+{
     g_params[0] = 1100.0;
     g_params[1] = 100.0;
     g_params[2] = 1.0;
@@ -540,14 +550,8 @@ TEST(TestSeededFractals, antReuseLastRandomPreservesGeneratedSeed)
     EXPECT_EQ(SEED, g_random_seed);
 }
 
-TEST(TestSeededFractals, cellularReuseLastRandomPreservesGeneratedSeed)
+TEST_F(TestGeneratedFractalSeed, cellularReuseLastRandomPreservesGeneratedSeed)
 {
-    FractalParamSaver saved_params;
-    MinimalImageState image;
-    ValueSaver saved_random_seed{g_random_seed, SEED};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, false};
-
-    clear_params();
     g_params[0] = -1.0;
     g_params[1] = 1010.0;
     g_params[2] = 21.0;
@@ -557,14 +561,8 @@ TEST(TestSeededFractals, cellularReuseLastRandomPreservesGeneratedSeed)
     EXPECT_EQ(SEED, g_random_seed);
 }
 
-TEST(TestSeededFractals, plasmaReuseLastRandomPreservesGeneratedSeed)
+TEST_F(TestGeneratedFractalSeed, plasmaReuseLastRandomPreservesGeneratedSeed)
 {
-    FractalParamSaver saved_params;
-    MinimalImageState image;
-    ValueSaver saved_random_seed{g_random_seed, SEED};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, false};
-
-    clear_params();
     g_params[0] = 1.0;
     g_params[2] = 1.0;
 
@@ -574,23 +572,41 @@ TEST(TestSeededFractals, plasmaReuseLastRandomPreservesGeneratedSeed)
     EXPECT_EQ(SEED, g_random_seed);
 }
 
-TEST(TestSeededFractals, lyapunovRandomPopulationRepeatsWithFixedSeed)
+struct FractalSeedPair
 {
-    EXPECT_EQ(lyapunov_population_from_seed(SEED), lyapunov_population_from_seed(SEED));
+    const char *name;
+    int first;
+    int second;
+    bool equal;
+};
+
+class TestLyapunovSeedPair : public testing::Test, public testing::WithParamInterface<FractalSeedPair>
+{
+};
+
+TEST_P(TestLyapunovSeedPair, randomPopulationDependsOnSeed)
+{
+    const double first{lyapunov_population_from_seed(GetParam().first)};
+    const double second{lyapunov_population_from_seed(GetParam().second)};
+
+    EXPECT_EQ(GetParam().equal, first == second);
 }
 
-TEST(TestSeededFractals, lyapunovRandomPopulationChangesWithFixedSeed)
-{
-    EXPECT_NE(lyapunov_population_from_seed(SEED), lyapunov_population_from_seed(SEED + 1));
-}
+INSTANTIATE_TEST_SUITE_P(SeedPairs, TestLyapunovSeedPair,
+    testing::Values(FractalSeedPair{"Repeated", SEED, SEED, true}, FractalSeedPair{"Changed", SEED, SEED + 1, false}),
+    [](const testing::TestParamInfo<FractalSeedPair> &info) { return info.param.name; });
 
-TEST(TestSeededFractals, lyapunovExplicitPopulationDoesNotConsumeImageRng)
+class TestExplicitLyapunovPopulation : public testing::Test
 {
+protected:
     LyapunovState state;
-    ValueSaver saved_random_seed{g_random_seed, SEED};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
-    ValueSaver saved_population{g_population, 0.0};
+    ValueSaver<int> saved_random_seed{g_random_seed, SEED};
+    ValueSaver<bool> saved_random_seed_flag{g_random_seed_flag, true};
+    ValueSaver<double> saved_population{g_population, 0.0};
+};
 
+TEST_F(TestExplicitLyapunovPopulation, doesNotConsumeImageRng)
+{
     set_random_seed(SEED);
     g_params[1] = 0.25;
     EXPECT_CALL(state.driver(), key_pressed()).Times(0);
@@ -602,54 +618,50 @@ TEST(TestSeededFractals, lyapunovExplicitPopulationDoesNotConsumeImageRng)
     EXPECT_EQ(FIRST_RANDOM15, random15());
 }
 
-TEST(TestSeededFractals, ifs2dRepeatsWithFixedSeed)
+class TestIFS2DSeedPair : public testing::Test, public testing::WithParamInterface<FractalSeedPair>
 {
-    const std::vector<int> first{ifs2d_colors_from_seed(LOW_RANDOM_SEED)};
-    const std::vector<int> second{ifs2d_colors_from_seed(LOW_RANDOM_SEED)};
+};
 
-    ASSERT_FALSE(first.empty());
-    EXPECT_EQ(first, second);
-}
-
-TEST(TestSeededFractals, ifs2dChangesWithFixedSeed)
+TEST_P(TestIFS2DSeedPair, plottedColorsDependOnSeed)
 {
-    const std::vector<int> first{ifs2d_colors_from_seed(LOW_RANDOM_SEED)};
-    const std::vector<int> second{ifs2d_colors_from_seed(HIGH_RANDOM_SEED)};
+    const std::vector<int> first{ifs2d_colors_from_seed(GetParam().first)};
+    const std::vector<int> second{ifs2d_colors_from_seed(GetParam().second)};
 
     ASSERT_FALSE(first.empty());
     ASSERT_FALSE(second.empty());
-    EXPECT_NE(first, second);
+    EXPECT_EQ(GetParam().equal, first == second);
 }
 
-TEST(TestSeededFractals, ifs3dRepeatsWithFixedSeed)
-{
-    const std::vector<int> first{ifs3d_colors_from_seed(LOW_RANDOM_SEED)};
-    const std::vector<int> second{ifs3d_colors_from_seed(LOW_RANDOM_SEED)};
+INSTANTIATE_TEST_SUITE_P(SeedPairs, TestIFS2DSeedPair,
+    testing::Values(FractalSeedPair{"Repeated", LOW_RANDOM_SEED, LOW_RANDOM_SEED, true},
+        FractalSeedPair{"Changed", LOW_RANDOM_SEED, HIGH_RANDOM_SEED, false}),
+    [](const testing::TestParamInfo<FractalSeedPair> &info) { return info.param.name; });
 
-    ASSERT_FALSE(first.empty());
-    EXPECT_EQ(first, second);
-}
-
-TEST(TestSeededFractals, ifs3dChangesWithFixedSeed)
+class TestIFS3DSeedPair : public testing::Test, public testing::WithParamInterface<FractalSeedPair>
 {
-    const std::vector<int> first{ifs3d_colors_from_seed(LOW_RANDOM_SEED)};
-    const std::vector<int> second{ifs3d_colors_from_seed(HIGH_RANDOM_SEED)};
+};
+
+TEST_P(TestIFS3DSeedPair, plottedColorsDependOnSeed)
+{
+    const std::vector<int> first{ifs3d_colors_from_seed(GetParam().first)};
+    const std::vector<int> second{ifs3d_colors_from_seed(GetParam().second)};
 
     ASSERT_FALSE(first.empty());
     ASSERT_FALSE(second.empty());
-    EXPECT_NE(first, second);
+    EXPECT_EQ(GetParam().equal, first == second);
 }
 
-TEST(TestSeededFractals, inverseJuliaRandomWalkSeedsImageRng)
+INSTANTIATE_TEST_SUITE_P(SeedPairs, TestIFS3DSeedPair,
+    testing::Values(FractalSeedPair{"Repeated", LOW_RANDOM_SEED, LOW_RANDOM_SEED, true},
+        FractalSeedPair{"Changed", LOW_RANDOM_SEED, HIGH_RANDOM_SEED, false}),
+    [](const testing::TestParamInfo<FractalSeedPair> &info) { return info.param.name; });
+
+TEST_F(TestGeneratedFractalSeed, inverseJuliaRandomWalkSeedsImageRng)
 {
-    FractalParamSaver saved_params;
-    MinimalImageState image;
     ValueSaver saved_fractal_type{g_fractal_type, FractalType::INVERSE_JULIA};
     ValueSaver saved_major_method{g_major_method, Major::RANDOM_WALK};
-    ValueSaver saved_random_seed{g_random_seed, SEED};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
+    g_random_seed_flag = true;
 
-    clear_params();
     set_random_seed(LOW_RANDOM_SEED);
 
     EXPECT_TRUE(orbit3d_per_image());
@@ -658,30 +670,34 @@ TEST(TestSeededFractals, inverseJuliaRandomWalkSeedsImageRng)
     EXPECT_EQ(FIRST_RANDOM15, random15());
 }
 
-TEST(TestSeededFractals, line3dRandomizeRepeatsWithFixedSeed)
+class TestLine3DSeedPair : public testing::Test, public testing::WithParamInterface<FractalSeedPair>
 {
-    const std::vector<int> first{line3d_colors_from_seed(LOW_RANDOM_SEED)};
-    const std::vector<int> second{line3d_colors_from_seed(LOW_RANDOM_SEED)};
+};
 
-    ASSERT_FALSE(first.empty());
-    EXPECT_EQ(first, second);
-}
-
-TEST(TestSeededFractals, line3dRandomizeChangesWithFixedSeed)
+TEST_P(TestLine3DSeedPair, plottedColorsDependOnSeed)
 {
-    const std::vector<int> first{line3d_colors_from_seed(LOW_RANDOM_SEED)};
-    const std::vector<int> second{line3d_colors_from_seed(HIGH_RANDOM_SEED)};
+    const std::vector<int> first{line3d_colors_from_seed(GetParam().first)};
+    const std::vector<int> second{line3d_colors_from_seed(GetParam().second)};
 
     ASSERT_FALSE(first.empty());
     ASSERT_FALSE(second.empty());
-    EXPECT_NE(first, second);
+    EXPECT_EQ(GetParam().equal, first == second);
 }
 
-TEST(TestSeededFractals, line3dRandomizeGeneratedSeedAdvances)
-{
-    ValueSaver saved_random_seed{g_random_seed, LOW_RANDOM_SEED};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, false};
+INSTANTIATE_TEST_SUITE_P(SeedPairs, TestLine3DSeedPair,
+    testing::Values(FractalSeedPair{"Repeated", LOW_RANDOM_SEED, LOW_RANDOM_SEED, true},
+        FractalSeedPair{"Changed", LOW_RANDOM_SEED, HIGH_RANDOM_SEED, false}),
+    [](const testing::TestParamInfo<FractalSeedPair> &info) { return info.param.name; });
 
+class TestLine3DRandomSeed : public testing::Test
+{
+protected:
+    ValueSaver<int> saved_random_seed{g_random_seed, LOW_RANDOM_SEED};
+    ValueSaver<bool> saved_random_seed_flag{g_random_seed_flag, false};
+};
+
+TEST_F(TestLine3DRandomSeed, line3dRandomizeGeneratedSeedAdvances)
+{
     const std::vector<int> first{line3d_colors_for_current_seed(7)};
     const std::vector<int> second{line3d_colors_for_current_seed(7)};
 
@@ -691,10 +707,10 @@ TEST(TestSeededFractals, line3dRandomizeGeneratedSeedAdvances)
     EXPECT_NE(first, second);
 }
 
-TEST(TestSeededFractals, line3dRandomizeZeroDoesNotConsumeImageRng)
+TEST_F(TestLine3DRandomSeed, line3dRandomizeZeroDoesNotConsumeImageRng)
 {
-    ValueSaver saved_random_seed{g_random_seed, SEED};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
+    g_random_seed = SEED;
+    g_random_seed_flag = true;
 
     set_random_seed(SEED);
 
