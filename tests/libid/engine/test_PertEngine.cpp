@@ -5985,85 +5985,243 @@ TEST_P(TestDistanceClassification, retainsClassificationAfterReferenceReplacemen
 INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceClassification, ValuesIn(distance_classification_inputs()),
     [](const TestParamInfo<DistanceClassificationInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, distanceBandsMatchCurrentAndLegacyStandardColors)
+struct DistanceBandSampleInput
 {
-    DistancePixelOptions options;
-    options.compare_colors = true;
-    for (const bool legacy : {false, true})
+    std::string name;
+    bool big_float;
+    bool legacy;
+    bool old_colors;
+    long mode;
+    std::complex<double> point;
+};
+
+void PrintTo(const DistanceBandSampleInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<DistanceBandSampleInput> distance_band_sample_inputs()
+{
+    struct Sample
     {
-        SCOPED_TRACE(legacy);
-        for (const bool old_colors : {false, true})
+        const char *name;
+        std::complex<double> point;
+    };
+
+    const Sample samples[]{
+        {"RealExterior", {0.5, 0.0}},
+        {"ComplexExterior", {0.5, 0.5}},
+        {"FarExterior", {2.0, 2.0}},
+    };
+    std::vector<DistanceBandSampleInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const bool legacy : {false, true})
         {
-            SCOPED_TRACE(old_colors);
-            options.old_colors = old_colors;
-            for (const long mode : {2L, 64L, 256L, 1024L})
+            for (const bool old_colors : {false, true})
             {
-                SCOPED_TRACE(mode);
-                options.value = mode;
-                for (const std::complex<double> point : {std::complex<double>{0.5, 0.0}, {0.5, 0.5}, {2.0, 2.0}})
+                for (const long mode : {2L, 64L, 256L, 1024L})
                 {
-                    SCOPED_TRACE(point);
-                    compare_distance_pixel(point, 32, legacy, 0.0, options);
-                    EXPECT_LT(g_real_color_iter, 32);
+                    for (const Sample &sample : samples)
+                    {
+                        inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
+                                (legacy ? "Legacy_" : "Current_") + (old_colors ? "OldColors_" : "NewColors_") +
+                                "Mode" + std::to_string(mode) + "_" + sample.name,
+                            big_float, legacy, old_colors, mode, sample.point});
+                    }
                 }
             }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, distanceBandsBypassOtherColoringAndMapping)
+class TestDistanceBandSamples : public PerturbationIterationTest, public WithParamInterface<DistanceBandSampleInput>
 {
-    DistancePixelOptions options;
-    options.value = 1024;
-    options.inside = ColorMethod::COLOR;
-    options.compare_colors = true;
+public:
+    TestDistanceBandSamples();
+
+protected:
+    void SetUp() override;
+    DistancePixelOptions m_options;
+};
+
+TestDistanceBandSamples::TestDistanceBandSamples() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestDistanceBandSamples::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    m_options.compare_colors = true;
+    m_options.old_colors = GetParam().old_colors;
+    m_options.value = GetParam().mode;
+}
+
+TEST_P(TestDistanceBandSamples, matchesCurrentAndLegacyStandardColors)
+{
+    compare_distance_pixel(GetParam().point, 32, GetParam().legacy, 0.0, m_options);
+
+    EXPECT_LT(g_real_color_iter, 32);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceBandSamples, ValuesIn(distance_band_sample_inputs()),
+    [](const TestParamInfo<DistanceBandSampleInput> &info) { return info.param.name; });
+
+struct DistanceBandOutsideInput
+{
+    std::string name;
+    bool big_float;
+    bool legacy;
+    bool old_colors;
+    ColorMethod outside;
+};
+
+void PrintTo(const DistanceBandOutsideInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<DistanceBandOutsideInput> distance_band_outside_inputs()
+{
+    const PerturbationColorMethod methods[]{
+        {"FixedColor", ColorMethod::COLOR},
+        {"Real", ColorMethod::REAL},
+        {"Atan", ColorMethod::ATAN},
+        {"Fmod", ColorMethod::FMOD},
+        {"TotalDistance", ColorMethod::TDIS},
+    };
+    std::vector<DistanceBandOutsideInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const bool legacy : {false, true})
+        {
+            for (const bool old_colors : {false, true})
+            {
+                for (const PerturbationColorMethod &method : methods)
+                {
+                    inputs.push_back(
+                        {std::string{big_float ? "HighPrecision_" : "Double_"} + (legacy ? "Legacy_" : "Current_") +
+                                (old_colors ? "OldColors_" : "NewColors_") + method.name,
+                            big_float, legacy, old_colors, method.method});
+                }
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestDistanceBandOutside : public PerturbationIterationTest, public WithParamInterface<DistanceBandOutsideInput>
+{
+public:
+    TestDistanceBandOutside();
+
+protected:
+    void SetUp() override;
+    DistancePixelOptions m_options;
+};
+
+TestDistanceBandOutside::TestDistanceBandOutside() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestDistanceBandOutside::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    m_options.value = 1024;
+    m_options.inside = ColorMethod::COLOR;
+    m_options.compare_colors = true;
+    m_options.old_colors = GetParam().old_colors;
     g_decomp[0] = 16;
     g_biomorph = 9;
     g_log_map_flag = 1;
     g_iteration_ranges = {512};
     g_outside_color = 6;
-    for (const bool legacy : {false, true})
+    g_outside_method = GetParam().outside;
+}
+
+TEST_P(TestDistanceBandOutside, bypassesOtherColoringAndMapping)
+{
+    compare_distance_pixel({2.0, 2.0}, 512, GetParam().legacy, 0.0, m_options);
+
+    const DistanceEstimator &estimator{m_engine.distance_estimator()};
+    EXPECT_FALSE(estimator.on_boundary(estimator.distance_squared(g_new_z)));
+    EXPECT_EQ(standard_palette_color(estimator.band_color(estimator.distance_squared(g_new_z), GetParam().old_colors)),
+        g_color);
+    EXPECT_EQ(0, log_table_calc(g_color));
+    EXPECT_GT(g_color, 0);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceBandOutside, ValuesIn(distance_band_outside_inputs()),
+    [](const TestParamInfo<DistanceBandOutsideInput> &info) { return info.param.name; });
+
+struct DistanceBandReplacementInput
+{
+    std::string name;
+    bool big_float;
+    bool legacy;
+    bool old_colors;
+};
+
+void PrintTo(const DistanceBandReplacementInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<DistanceBandReplacementInput> distance_band_replacement_inputs()
+{
+    std::vector<DistanceBandReplacementInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(legacy);
-        for (const bool old_colors : {false, true})
+        for (const bool legacy : {false, true})
         {
-            SCOPED_TRACE(old_colors);
-            options.old_colors = old_colors;
-            for (const ColorMethod outside :
-                {ColorMethod::COLOR, ColorMethod::REAL, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS})
+            for (const bool old_colors : {false, true})
             {
-                SCOPED_TRACE(static_cast<int>(outside));
-                g_outside_method = outside;
-                compare_distance_pixel({2.0, 2.0}, 512, legacy, 0.0, options);
-                const DistanceEstimator &estimator{m_engine.distance_estimator()};
-                EXPECT_FALSE(estimator.on_boundary(estimator.distance_squared(g_new_z)));
-                EXPECT_EQ(standard_palette_color(estimator.band_color(estimator.distance_squared(g_new_z), old_colors)),
-                    g_color);
-                EXPECT_EQ(0, log_table_calc(g_color));
-                EXPECT_GT(g_color, 0);
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
+                        (legacy ? "Legacy_" : "Current_") + (old_colors ? "OldColors" : "NewColors"),
+                    big_float, legacy, old_colors});
             }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, distanceBandsSurviveReferenceReplacement)
+class TestDistanceBandReplacement : public PerturbationIterationTest,
+                                    public WithParamInterface<DistanceBandReplacementInput>
 {
-    m_engine.set_glitch_tolerance(8.0);
-    DistancePixelOptions options;
-    options.value = 1024;
-    options.compare_colors = true;
-    for (const bool legacy : {false, true})
-    {
-        SCOPED_TRACE(legacy);
-        for (const bool old_colors : {false, true})
-        {
-            SCOPED_TRACE(old_colors);
-            options.old_colors = old_colors;
-            compare_distance_pixel({2.0, 2.0}, 32, legacy, 0.125, options);
-            EXPECT_GT(m_engine.reference_count(), 1);
-        }
-    }
+public:
+    TestDistanceBandReplacement();
+
+protected:
+    void SetUp() override;
+    DistancePixelOptions m_options;
+};
+
+TestDistanceBandReplacement::TestDistanceBandReplacement() :
+    PerturbationIterationTest{GetParam().big_float}
+{
 }
+
+void TestDistanceBandReplacement::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    m_engine.set_glitch_tolerance(8.0);
+    m_options.value = 1024;
+    m_options.compare_colors = true;
+    m_options.old_colors = GetParam().old_colors;
+}
+
+TEST_P(TestDistanceBandReplacement, survivesReferenceReplacement)
+{
+    compare_distance_pixel({2.0, 2.0}, 32, GetParam().legacy, 0.125, m_options);
+
+    EXPECT_GT(m_engine.reference_count(), 1);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceBandReplacement, ValuesIn(distance_band_replacement_inputs()),
+    [](const TestParamInfo<DistanceBandReplacementInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, regularDistanceColorsMatchStandardOutsideFinishing)
 {
