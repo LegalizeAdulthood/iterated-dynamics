@@ -8841,65 +8841,177 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestShipExplicitInitializer,
     ValuesIn(ship_reference_inputs({2, 3, 4, 5}, SHIP_REFERENCES)),
     [](const TestParamInfo<ShipReferenceInput> &info) { return info.param.name; });
 
-TEST_P(TestBurningShipPerturbation, bofSeedingFollowsTheSelectedNativeInitializer)
+struct ShipBofInput
 {
-    set_initial_offset({0.03125, -0.0625});
-    g_magnitude_calc = true;
-    for (const int degree : {2, 3, 4, 5})
+    std::string name;
+    bool big_float;
+    int degree;
+    bool match_book;
+    ColorMethod method;
+    double offset;
+    bool replace;
+};
+
+void PrintTo(const ShipBofInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<ShipBofInput> ship_bof_inputs()
+{
+    const PerturbationColorMethod methods[]{
+        {"Bof60", ColorMethod::BOF60},
+        {"Bof61", ColorMethod::BOF61},
+    };
+    std::vector<ShipBofInput> inputs;
+    for (const ShipReferenceInput &reference : ship_reference_inputs({2, 3, 4, 5}, SHIP_REFERENCES))
     {
-        SCOPED_TRACE(degree);
-        g_params[2] = degree;
         for (const bool match_book : {false, true})
         {
-            SCOPED_TRACE(match_book);
-            g_bof_match_book_images = match_book;
-            for (const ColorMethod method : {ColorMethod::BOF60, ColorMethod::BOF61})
+            for (const PerturbationColorMethod &method : methods)
             {
-                SCOPED_TRACE(static_cast<int>(method));
-                g_inside_method = method;
-                compare_native_pixel({0.125, 0.0625});
-                compare_native_pixel({0.125, 0.0625}, 0.125);
-                compare_native_pixel({0.125, 0.0625}, 0.125, true);
+                inputs.push_back(
+                    {reference.name + (match_book ? "_Book_" : "_Current_") + method.name, reference.big_float,
+                        reference.degree, match_book, method.method, reference.offset, reference.replace});
             }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestBurningShipPerturbation, preciseReplayRetainsTheNativeOffsetSeed)
+class TestShipBofSeed : public BurningShipPerturbationTest, public WithParamInterface<ShipBofInput>
 {
+public:
+    TestShipBofSeed();
+
+protected:
+    void SetUp() override;
+};
+
+TestShipBofSeed::TestShipBofSeed() :
+    BurningShipPerturbationTest{GetParam().big_float}
+{
+}
+
+void TestShipBofSeed::SetUp()
+{
+    BurningShipPerturbationTest::SetUp();
+    set_initial_offset({0.03125, -0.0625});
+    g_magnitude_calc = true;
+    g_params[2] = GetParam().degree;
+    g_bof_match_book_images = GetParam().match_book;
+    g_inside_method = GetParam().method;
+}
+
+TEST_P(TestShipBofSeed, followsSelectedNativeInitializer)
+{
+    compare_native_pixel({0.125, 0.0625}, GetParam().offset, GetParam().replace);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestShipBofSeed, ValuesIn(ship_bof_inputs()),
+    [](const TestParamInfo<ShipBofInput> &info) { return info.param.name; });
+
+class TestShipPreciseOffset : public BurningShipReferenceTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestShipPreciseOffset::SetUp()
+{
+    BurningShipReferenceTest::SetUp();
     set_initial_offset({0.0, -1.0});
     g_magnitude_limit = std::nextafter(5.0, 0.0);
-    for (const int degree : {2, 3, 4, 5})
-    {
-        SCOPED_TRACE(degree);
-        g_params[2] = degree;
-        compare_native_pixel({1.0, 1.0});
-        compare_native_pixel({1.0, 1.0}, 0.125);
-        compare_native_pixel({1.0, 1.0}, 0.125, true);
-    }
 }
 
-TEST_P(TestBurningShipPerturbation, bailoutEqualityMatchesNativePixelColors)
+TEST_P(TestShipPreciseOffset, retainsNativeOffsetSeedDuringReplay)
 {
-    g_params[2] = 2;
+    compare_native_pixel({1.0, 1.0}, GetParam().offset, GetParam().replace);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestShipPreciseOffset, ValuesIn(ship_reference_inputs({2, 3, 4, 5}, SHIP_REFERENCES)),
+    [](const TestParamInfo<ShipReferenceInput> &info) { return info.param.name; });
+
+struct ShipBailoutEqualityInput
+{
+    std::string name;
+    bool big_float;
+    Bailout test;
+    double limit;
+    double offset;
+    bool replace;
+};
+
+void PrintTo(const ShipBailoutEqualityInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<ShipBailoutEqualityInput> ship_bailout_equality_inputs()
+{
     const std::array<double, 7> metrics{2.0, 1.0, 1.0, 1.0, 1.0, 4.0, 4.0};
-    for (const Bailout test :
-        {Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
+
+    struct Boundary
     {
-        SCOPED_TRACE(static_cast<int>(test));
-        g_bailout_test = test;
-        set_bailout_formula(test);
-        const double metric{metrics[static_cast<std::size_t>(test)]};
-        for (const double limit :
-            {std::nextafter(metric, 0.0), metric, std::nextafter(metric, std::numeric_limits<double>::infinity())})
+        const char *name;
+        double limit;
+    };
+
+    std::vector<ShipBailoutEqualityInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationBailoutMethod &method : TERMINATION_BAILOUTS)
         {
-            SCOPED_TRACE(limit);
-            g_magnitude_limit = limit;
-            compare_native_pixel({1.0, 1.0});
-            compare_native_pixel({1.0, 1.0}, 0.125, true);
+            const double metric{metrics[static_cast<std::size_t>(method.test)]};
+            const Boundary boundaries[]{
+                {"Below", std::nextafter(metric, 0.0)},
+                {"At", metric},
+                {"Above", std::nextafter(metric, std::numeric_limits<double>::infinity())},
+            };
+            for (const Boundary &boundary : boundaries)
+            {
+                for (const BurningShipReference &reference : SHIP_ORIGINAL_AND_REPLACED)
+                {
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + method.name + "_" +
+                            boundary.name + "_" + reference.name,
+                        big_float, method.test, boundary.limit, reference.offset, reference.replace});
+                }
+            }
         }
     }
+    return inputs;
 }
+
+class TestShipBailoutEquality : public BurningShipPerturbationTest, public WithParamInterface<ShipBailoutEqualityInput>
+{
+public:
+    TestShipBailoutEquality();
+
+protected:
+    void SetUp() override;
+};
+
+TestShipBailoutEquality::TestShipBailoutEquality() :
+    BurningShipPerturbationTest{GetParam().big_float}
+{
+}
+
+void TestShipBailoutEquality::SetUp()
+{
+    BurningShipPerturbationTest::SetUp();
+    g_params[2] = 2;
+    g_bailout_test = GetParam().test;
+    set_bailout_formula(GetParam().test);
+    g_magnitude_limit = GetParam().limit;
+}
+
+TEST_P(TestShipBailoutEquality, matchesNativePixelColorAtBailoutBoundary)
+{
+    compare_native_pixel({1.0, 1.0}, GetParam().offset, GetParam().replace);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestShipBailoutEquality, ValuesIn(ship_bailout_equality_inputs()),
+    [](const TestParamInfo<ShipBailoutEqualityInput> &info) { return info.param.name; });
 
 TEST_P(TestBurningShipPerturbation, standardPassesRetainPerturbationAtBailoutEquality)
 {
