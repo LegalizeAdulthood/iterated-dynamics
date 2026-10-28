@@ -61,6 +61,7 @@
 #include <fstream>
 #include <memory>
 #include <limits>
+#include <ostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -79,61 +80,94 @@ using namespace testing;
 namespace id::test
 {
 
-TEST(TestEncoder, saveInfoPreservesActiveIdCompatibilityVersion)
+class EncoderSaveInfoTest : public Test
 {
-    ValueSaver saved_version{g_version, Version{1, 3, 2, 7, false}};
-    FractalInfo info{};
+protected:
+    ValueSaver<Version> m_saved_version{g_version};
+    ValueSaver<bool> m_saved_legacy_float{g_user.legacy_float};
+    FractalInfo m_info{};
+};
 
-    setup_save_info(&info);
+struct EncoderVersionInput
+{
+    const char *name;
+    Version version;
+    int release;
+    std::array<int, 4> stored;
+};
 
-    EXPECT_EQ(2004, info.release);
-    EXPECT_EQ(1, info.version_major);
-    EXPECT_EQ(3, info.version_minor);
-    EXPECT_EQ(2, info.version_patch);
-    EXPECT_EQ(7, info.version_tweak);
-    EXPECT_EQ((Version{1, 3, 2, 7, false}), fractal_info_version(info));
+void PrintTo(const EncoderVersionInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
 
-TEST(TestEncoder, saveInfoPreservesActiveLegacyCompatibilityVersion)
+class TestEncoderVersion : public EncoderSaveInfoTest, public WithParamInterface<EncoderVersionInput>
 {
-    ValueSaver saved_version{g_version, parse_legacy_version(1730)};
-    FractalInfo info{};
+protected:
+    void SetUp() override;
+};
 
-    setup_save_info(&info);
-
-    EXPECT_EQ(1730, info.release);
-    EXPECT_EQ(0, info.version_major);
-    EXPECT_EQ(0, info.version_minor);
-    EXPECT_EQ(0, info.version_patch);
-    EXPECT_EQ(0, info.version_tweak);
-    EXPECT_EQ(parse_legacy_version(1730), fractal_info_version(info));
+void TestEncoderVersion::SetUp()
+{
+    g_version = GetParam().version;
 }
 
-TEST(TestEncoder, saveInfoPreservesLegacyFloat)
+TEST_P(TestEncoderVersion, saveInfoPreservesActiveCompatibilityVersion)
 {
-    ValueSaver saved_version{g_version, parse_legacy_version(1730)};
-    ValueSaver saved_legacy_float{g_user.legacy_float};
-    for (const bool legacy_float : {false, true})
-    {
-        g_user.legacy_float = legacy_float;
-        FractalInfo info{};
+    const EncoderVersionInput &expected{GetParam()};
 
-        setup_save_info(&info);
+    setup_save_info(&m_info);
 
-        EXPECT_EQ(legacy_float ? 1 : 0, info.float_flag);
-    }
+    EXPECT_EQ(expected.release, m_info.release);
+    EXPECT_EQ(expected.stored[0], m_info.version_major);
+    EXPECT_EQ(expected.stored[1], m_info.version_minor);
+    EXPECT_EQ(expected.stored[2], m_info.version_patch);
+    EXPECT_EQ(expected.stored[3], m_info.version_tweak);
+    EXPECT_EQ(expected.version, fractal_info_version(m_info));
 }
 
-TEST(TestEncoder, saveInfoUsesFloatForModernId)
+INSTANTIATE_TEST_SUITE_P(CompatibilityVersions, TestEncoderVersion,
+    Values(EncoderVersionInput{"IdVersion", {1, 3, 2, 7, false}, 2004, {1, 3, 2, 7}},
+        EncoderVersionInput{"LegacyVersion", parse_legacy_version(1730), 1730, {0, 0, 0, 0}}),
+    [](const TestParamInfo<EncoderVersionInput> &info) { return info.param.name; });
+
+struct EncoderFloatInput
 {
-    ValueSaver saved_version{g_version, Version{1, 4, 0, 0, false}};
-    ValueSaver saved_legacy_float{g_user.legacy_float, false};
-    FractalInfo info{};
+    const char *name;
+    Version version;
+    bool legacy_float;
+    int flag;
+};
 
-    setup_save_info(&info);
-
-    EXPECT_EQ(1, info.float_flag);
+void PrintTo(const EncoderFloatInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
+
+class TestEncoderFloatPolicy : public EncoderSaveInfoTest, public WithParamInterface<EncoderFloatInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestEncoderFloatPolicy::SetUp()
+{
+    g_version = GetParam().version;
+    g_user.legacy_float = GetParam().legacy_float;
+}
+
+TEST_P(TestEncoderFloatPolicy, savedFloatFlagFollowsCompatibilityPolicy)
+{
+    setup_save_info(&m_info);
+
+    EXPECT_EQ(GetParam().flag, m_info.float_flag);
+}
+
+INSTANTIATE_TEST_SUITE_P(FloatPolicies, TestEncoderFloatPolicy,
+    Values(EncoderFloatInput{"LegacyInteger", parse_legacy_version(1730), false, 0},
+        EncoderFloatInput{"LegacyFloat", parse_legacy_version(1730), true, 1},
+        EncoderFloatInput{"ModernId", {1, 4, 0, 0, false}, false, 1}),
+    [](const TestParamInfo<EncoderFloatInput> &info) { return info.param.name; });
 
 namespace
 {
