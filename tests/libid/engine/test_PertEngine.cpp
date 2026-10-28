@@ -3662,12 +3662,47 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestEpsilonPeriodicity,
         EpsilonPeriodicityInput{"HighPrecisionHighlighted", true, -1}),
     [](const TestParamInfo<EpsilonPeriodicityInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, epsilonCrossMapsAxisColorsBeforePotentialFinishing)
+std::vector<EpsilonAxisInput> epsilon_mapping_inputs()
 {
-    ValueSaver saved_table{g_log_map_table, std::vector<Byte>(9, 44)};
-    ValueSaver saved_max{g_log_map_table_max_size, 8L};
-    ValueSaver saved_flag{g_log_map_flag, 1L};
-    ValueSaver saved_calculate{g_log_map_calculate, false};
+    const std::array<EpsilonAxisSample, 2> samples{
+        {{"ImaginaryCoordinateZero", {0.5, 0.0}, 0.01, 1, 16}, {"Origin", {0.0, 0.0}, 0.01, 1, 12}}};
+    std::vector<EpsilonAxisInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const EpsilonAxisSample &sample : samples)
+        {
+            for (const bool negative : {false, true})
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + sample.name +
+                        (negative ? "_Negative" : "_Positive"),
+                    big_float, negative, sample});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestEpsilonMappedColor : public PerturbationIterationTest, public WithParamInterface<EpsilonAxisInput>
+{
+public:
+    TestEpsilonMappedColor();
+
+protected:
+    void SetUp() override;
+};
+
+TestEpsilonMappedColor::TestEpsilonMappedColor() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestEpsilonMappedColor::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_log_map_table = std::vector<Byte>(9, 44);
+    g_log_map_table_max_size = 8L;
+    g_log_map_flag = 1L;
+    g_log_map_calculate = false;
     g_log_map_table[1] = 11;
     g_log_map_table[2] = 12;
     g_log_map_table[6] = 16;
@@ -3675,16 +3710,20 @@ TEST_P(TestPerturbationIterations, epsilonCrossMapsAxisColorsBeforePotentialFini
     g_outside_method = ColorMethod::REAL;
     g_potential = {{23.0, 10.0, 4.0}, false, true};
     g_biomorph = 9;
-    for (const double proximity : {0.01, -0.01})
-    {
-        SCOPED_TRACE(proximity);
-        g_close_proximity = proximity;
-        compare_pixel({0.5, 0.0}, 8, 0.0, 1);
-        EXPECT_EQ(proximity > 0 ? 16 : 11, g_color);
-        compare_pixel({}, 8, 0.0, 1);
-        EXPECT_EQ(proximity > 0 ? 12 : 11, g_color);
-    }
+    g_close_proximity = GetParam().negative ? -GetParam().sample.proximity : GetParam().sample.proximity;
 }
+
+TEST_P(TestEpsilonMappedColor, mapsAxisColorBeforePotentialFinishing)
+{
+    const EpsilonAxisInput &input{GetParam()};
+
+    compare_pixel(input.sample.point, 8, 0.0, 1);
+
+    EXPECT_EQ(input.negative ? 11 : input.sample.color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestEpsilonMappedColor, ValuesIn(epsilon_mapping_inputs()),
+    [](const TestParamInfo<EpsilonAxisInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, epsilonCrossSurvivesInitializationAndReferenceReplacement)
 {
