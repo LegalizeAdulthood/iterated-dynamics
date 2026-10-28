@@ -12300,15 +12300,18 @@ TEST_F(TestPerturbationPixels, automaticLogMappingUsesRawCountsAndThenRendersWit
     free_pixel_grid();
 }
 
-TEST_F(TestPerturbationPixels, passSwitchAutomaticallySelectsPerturbationAndClearsReferences)
+class TestPassSwitchPolicy : public TestPerturbationPixels, public WithParamInterface<PerturbationMode>
 {
-    check_pass_switch(PerturbationMode::AUTO);
+};
+
+TEST_P(TestPassSwitchPolicy, preservesPolicyAcrossOrderedPassSwitches)
+{
+    check_pass_switch(GetParam());
 }
 
-TEST_F(TestPerturbationPixels, passSwitchRespectsDisabledPerturbation)
-{
-    check_pass_switch(PerturbationMode::NO);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPassSwitchPolicy, Values(PerturbationMode::AUTO, PerturbationMode::NO),
+    [](const TestParamInfo<PerturbationMode> &info)
+    { return info.param == PerturbationMode::AUTO ? "Automatic" : "Disabled"; });
 
 class TestSubnormalPerturbation : public TestPerturbationPixels
 {
