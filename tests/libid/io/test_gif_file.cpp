@@ -703,30 +703,48 @@ TEST_F(TestGIFExtensions, nameOnlyFormulaRecordUsesLegacyDefaults)
     EXPECT_EQ(0, info.uses_p5);
 }
 
-TEST_F(TestGIFExtensions, rejectsOtherTruncatedOrOversizedFormulaRecords)
+class TestGIFMalformedFormulaRecord : public TestGIFExtensions, public testing::WithParamInterface<int>
 {
-    for (const int size : {0, 39, 41, 65, 67})
-    {
-        SCOPED_TRACE(size);
-        GifFreeExtensions(&m_gif.ExtensionBlockCount, &m_gif.ExtensionBlocks);
-        add_extension("fractint003", std::vector<Byte>(size, 0));
+protected:
+    void SetUp() override;
+};
 
-        EXPECT_THROW(get_formula_info(&m_gif), std::runtime_error);
-    }
+void TestGIFMalformedFormulaRecord::SetUp()
+{
+    add_extension("fractint003", std::vector<Byte>(GetParam(), 0));
 }
 
-TEST_F(TestGIFExtensions, rejectsMissingTruncatedAndOversizedFixedRecords)
+TEST_P(TestGIFMalformedFormulaRecord, rejectsMalformedRecordSize)
+{
+    EXPECT_THROW(get_formula_info(&m_gif), std::runtime_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(FormulaRecordSizes, TestGIFMalformedFormulaRecord, testing::Values(0, 39, 41, 65, 67),
+    [](const testing::TestParamInfo<int> &info) { return "Bytes" + std::to_string(info.param); });
+
+TEST_F(TestGIFExtensions, missingFractalRecordIsRejected)
 {
     EXPECT_THROW(get_fractal_info(&m_gif), std::runtime_error);
-    for (const int size : {0, 503, 505})
-    {
-        SCOPED_TRACE(size);
-        GifFreeExtensions(&m_gif.ExtensionBlockCount, &m_gif.ExtensionBlocks);
-        add_extension("fractint001", std::vector<Byte>(size, 0));
-
-        EXPECT_THROW(get_fractal_info(&m_gif), std::runtime_error);
-    }
 }
+
+class TestGIFMalformedFractalRecord : public TestGIFExtensions, public testing::WithParamInterface<int>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGIFMalformedFractalRecord::SetUp()
+{
+    add_extension("fractint001", std::vector<Byte>(GetParam(), 0));
+}
+
+TEST_P(TestGIFMalformedFractalRecord, rejectsMalformedRecordSize)
+{
+    EXPECT_THROW(get_fractal_info(&m_gif), std::runtime_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(FractalRecordSizes, TestGIFMalformedFractalRecord, testing::Values(0, 503, 505),
+    [](const testing::TestParamInfo<int> &info) { return "Bytes" + std::to_string(info.param); });
 
 TEST(TestCompareFractalInfo, futureFieldsAreIgnored)
 {
