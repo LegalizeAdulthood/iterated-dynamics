@@ -7,6 +7,7 @@
 
 #include <ostream>
 #include <string>
+#include <tuple>
 
 using namespace id::io;
 using namespace testing;
@@ -109,26 +110,67 @@ TEST_P(TestEvolutionInfoMutation, changedMutationIsUnequal)
 INSTANTIATE_TEST_SUITE_P(MutationIndices, TestEvolutionInfoMutation, Range<int>(0, NUM_GENES),
     [](const TestParamInfo<int> &info) { return "Gene" + std::to_string(info.param); });
 
-TEST(TestEvolutionInfo, preservesCoordinateToleranceAndExactMutationMagnitude)
+struct EvolutionCoordinateField
 {
-    const EvolutionInfo original{};
-    constexpr double EvolutionInfo::*coordinates[]{
-        &EvolutionInfo::x_parameter_range,
-        &EvolutionInfo::y_parameter_range,
-        &EvolutionInfo::x_parameter_offset,
-        &EvolutionInfo::y_parameter_offset,
-    };
-    for (double EvolutionInfo::*member : coordinates)
+    const char *name;
+    double EvolutionInfo::*member;
+};
+
+void PrintTo(const EvolutionCoordinateField &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+struct EvolutionCoordinateDelta
+{
+    const char *name;
+    double value;
+    bool equal;
+};
+
+void PrintTo(const EvolutionCoordinateDelta &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+using EvolutionCoordinateInput = std::tuple<EvolutionCoordinateField, EvolutionCoordinateDelta>;
+
+class TestEvolutionInfoCoordinate : public EvolutionComparisonTest, public WithParamInterface<EvolutionCoordinateInput>
+{
+};
+
+TEST_P(TestEvolutionInfoCoordinate, honorsCoordinateTolerance)
+{
+    const EvolutionCoordinateField &field{std::get<0>(GetParam())};
+    const EvolutionCoordinateDelta &delta{std::get<1>(GetParam())};
+
+    m_changed.*field.member = delta.value;
+
+    if (delta.equal)
     {
-        EvolutionInfo changed{original};
-        changed.*member = 1.0e-7;
-        EXPECT_EQ(original, changed);
-        changed.*member = 1.0e-5;
-        EXPECT_NE(original, changed);
+        EXPECT_EQ(m_original, m_changed);
     }
-    EvolutionInfo changed{original};
-    changed.max_random_mutation = 1.0e-7;
-    EXPECT_NE(original, changed);
+    else
+    {
+        EXPECT_NE(m_original, m_changed);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(CoordinateInputs, TestEvolutionInfoCoordinate,
+    Combine(Values(EvolutionCoordinateField{"XRange", &EvolutionInfo::x_parameter_range},
+                EvolutionCoordinateField{"YRange", &EvolutionInfo::y_parameter_range},
+                EvolutionCoordinateField{"XOffset", &EvolutionInfo::x_parameter_offset},
+                EvolutionCoordinateField{"YOffset", &EvolutionInfo::y_parameter_offset}),
+        Values(EvolutionCoordinateDelta{"WithinTolerance", 1.0e-7, true},
+            EvolutionCoordinateDelta{"OutsideTolerance", 1.0e-5, false})),
+    [](const TestParamInfo<EvolutionCoordinateInput> &info)
+    { return std::string{std::get<0>(info.param).name} + std::get<1>(info.param).name; });
+
+TEST_F(EvolutionComparisonTest, mutationMagnitudeIsComparedExactly)
+{
+    m_changed.max_random_mutation = 1.0e-7;
+
+    EXPECT_NE(m_original, m_changed);
 }
 
 TEST(TestEvolutionInfo, ignoresReservedFields)
