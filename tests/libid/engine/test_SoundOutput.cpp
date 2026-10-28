@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <engine/SoundOutput.h>
 
@@ -143,20 +144,56 @@ void RecordingSoundOutput::require_open() const
 
 } // namespace
 
-TEST(TestNullSoundOutput, acceptsSamplesWithoutPlayback)
+class TestNullSoundOutput : public Test
 {
-    NullSoundOutput output;
+protected:
+    void SetUp() override;
 
-    output.begin_orbit();
-    EXPECT_TRUE(output.ready());
-    EXPECT_TRUE(output.play({1.0, 2.0, 3.0}));
-    EXPECT_TRUE(output.play({4.0, 5.0, 6.0}));
-    output.update();
-    output.mute();
-    EXPECT_TRUE(output.ready());
-    EXPECT_TRUE(output.play({7.0, 8.0, 9.0}));
-    EXPECT_TRUE(output.finish());
-    EXPECT_TRUE(output.finish());
+    NullSoundOutput m_output;
+};
+
+void TestNullSoundOutput::SetUp()
+{
+    m_output.begin_orbit();
+}
+
+TEST_F(TestNullSoundOutput, acceptsSamplesWithoutPlayback)
+{
+    EXPECT_TRUE(m_output.ready());
+    EXPECT_TRUE(m_output.play({1.0, 2.0, 3.0}));
+    EXPECT_TRUE(m_output.play({4.0, 5.0, 6.0}));
+    m_output.update();
+}
+
+class TestMutedNullSoundOutput : public TestNullSoundOutput
+{
+protected:
+    void SetUp() override;
+};
+
+void TestMutedNullSoundOutput::SetUp()
+{
+    TestNullSoundOutput::SetUp();
+    ASSERT_TRUE(m_output.ready());
+    ASSERT_TRUE(m_output.play({1.0, 2.0, 3.0}));
+    ASSERT_TRUE(m_output.play({4.0, 5.0, 6.0}));
+    m_output.update();
+    m_output.mute();
+}
+
+TEST_F(TestMutedNullSoundOutput, mutePreservesUsability)
+{
+    EXPECT_TRUE(m_output.ready());
+    EXPECT_TRUE(m_output.play({7.0, 8.0, 9.0}));
+}
+
+TEST_F(TestMutedNullSoundOutput, finishIsIdempotent)
+{
+    ASSERT_TRUE(m_output.ready());
+    ASSERT_TRUE(m_output.play({7.0, 8.0, 9.0}));
+
+    EXPECT_TRUE(m_output.finish());
+    EXPECT_TRUE(m_output.finish());
 }
 
 TEST(TestSoundOutputBinding, defaultsToNullSoundOutput)
@@ -303,12 +340,29 @@ TEST_F(TestSoundOutput, muteCancelsReleaseTailBeforeFinalization)
     EXPECT_THAT(m_output->samples, ElementsAre(FieldsAre(1.0, 2.0, 3.0)));
 }
 
-TEST_F(TestSoundOutput, completedSessionRejectsFurtherOutput)
+class TestCompletedSoundOutput : public TestSoundOutput
 {
-    EXPECT_TRUE(g_sound->finish());
+protected:
+    void SetUp() override;
+};
 
+void TestCompletedSoundOutput::SetUp()
+{
+    ASSERT_TRUE(g_sound->finish());
+}
+
+TEST_F(TestCompletedSoundOutput, completedSessionIsNotReady)
+{
     EXPECT_FALSE(g_sound->ready());
+}
+
+TEST_F(TestCompletedSoundOutput, completedSessionRejectsPlay)
+{
     EXPECT_THROW(g_sound->play({1.0, 2.0, 3.0}), std::logic_error);
+}
+
+TEST_F(TestCompletedSoundOutput, completedSessionRejectsBeginOrbit)
+{
     EXPECT_THROW(g_sound->begin_orbit(), std::logic_error);
 }
 
