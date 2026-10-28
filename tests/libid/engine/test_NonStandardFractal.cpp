@@ -61,6 +61,7 @@
 #include <optional>
 #include <ostream>
 #include <stdexcept>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -2526,22 +2527,104 @@ TEST_P(TestStandaloneDiffusion, suspensionRestoresTheExistingBoundsRecord)
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
 }
 
-TEST_P(TestStandaloneDiffusion, controllerSuspendsWithoutStartingCalculationWork)
+class TestDiffusionController : public TestStandaloneDiffusion
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+protected:
+    void TearDown() override;
+    void prepare_calculation();
+
+    std::optional<NonStandardFractal> m_calculation;
+};
+
+void TestDiffusionController::TearDown()
+{
+    if (m_calculation)
+    {
+        m_calculation->finish(!m_calculation->completed());
+    }
+    m_calculation.reset();
+    TestNonStandardFractal::TearDown();
+}
+
+void TestDiffusionController::prepare_calculation()
+{
+    m_calculation.emplace();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, m_calculation->select());
+}
+
+class TestPreparedDiffusionController : public TestDiffusionController
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::optional<DiffusionController> m_controller;
+};
+
+void TestPreparedDiffusionController::SetUp()
+{
+    TestStandaloneDiffusion::SetUp();
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    m_controller.emplace(*m_calculation);
+}
+
+void TestPreparedDiffusionController::TearDown()
+{
+    m_controller.reset();
+    TestDiffusionController::TearDown();
+}
+
+TEST_P(TestPreparedDiffusionController, iterationRequiresStart)
+{
+    EXPECT_THROW(m_controller->iterate(), std::logic_error);
+}
+
+TEST_P(TestPreparedDiffusionController, resultRequiresStart)
+{
+    EXPECT_THROW(m_controller->result(), std::logic_error);
+}
+
+TEST_P(TestPreparedDiffusionController, suspensionRequiresStart)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+}
+
+class TestStartedDiffusionController : public TestPreparedDiffusionController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStartedDiffusionController::SetUp()
+{
+    TestPreparedDiffusionController::SetUp();
+    m_controller->start();
+}
+
+TEST_P(TestStartedDiffusionController, rejectsDuplicateStart)
+{
+    EXPECT_THROW(m_controller->start(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Modes, TestDiffusionController, Values(0, 1, 2),
+    [](const TestParamInfo<int> &info) { return "Mode" + std::to_string(info.param); });
+INSTANTIATE_TEST_SUITE_P(Modes, TestPreparedDiffusionController, Values(0, 1, 2),
+    [](const TestParamInfo<int> &info) { return "Mode" + std::to_string(info.param); });
+INSTANTIATE_TEST_SUITE_P(Modes, TestStartedDiffusionController, Values(0, 1, 2),
+    [](const TestParamInfo<int> &info) { return "Mode" + std::to_string(info.param); });
+
+TEST_P(TestDiffusionController, controllerSuspendsWithoutStartingCalculationWork)
+{
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     const std::array<int, SIDE * SIDE> initial{m_frame};
     DiffusionController controller{calculation};
-    EXPECT_THROW(controller.iterate(), std::logic_error);
-    EXPECT_THROW(controller.result(), std::logic_error);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
 
     controller.start();
 
     EXPECT_FALSE(controller.done());
     EXPECT_EQ(initial, m_frame);
-    EXPECT_THROW(controller.start(), std::logic_error);
     controller.suspend();
     EXPECT_TRUE(controller.done());
     EXPECT_EQ(1, controller.result());
@@ -2550,7 +2633,7 @@ TEST_P(TestStandaloneDiffusion, controllerSuspendsWithoutStartingCalculationWork
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
-TEST_P(TestStandaloneDiffusion, controllerRetainsCalculationChunksAndFinalPixels)
+TEST_P(TestDiffusionController, controllerRetainsCalculationChunksAndFinalPixels)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
     fractals::Diffusion reference;
@@ -2563,9 +2646,8 @@ TEST_P(TestStandaloneDiffusion, controllerRetainsCalculationChunksAndFinalPixels
     const std::array<int, SIDE * SIDE> expected{m_frame};
     const int expected_next_random{random15()};
     m_frame.fill(0);
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     DiffusionController controller{calculation};
     controller.start();
     int chunks{};
@@ -2583,18 +2665,16 @@ TEST_P(TestStandaloneDiffusion, controllerRetainsCalculationChunksAndFinalPixels
     EXPECT_FALSE(dispatch_keyboard_key('o'));
     controller.iterate();
     EXPECT_EQ(expected, m_frame);
-    calculation.finish(false);
 }
 
-TEST_P(TestStandaloneDiffusion, controllerInterruptionKeepsMenuKeyAndPositiveResult)
+TEST_P(TestDiffusionController, controllerInterruptionKeepsMenuKeyAndPositiveResult)
 {
     int pending_key{'x'};
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Invoke([&pending_key] { return pending_key; }));
     EXPECT_CALL(m_driver, get_key()).WillOnce(Invoke([&pending_key] { return std::exchange(pending_key, 0); }));
     EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([&pending_key](int key) { pending_key = key; }));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     DiffusionController controller{calculation};
     controller.start();
 
@@ -2607,13 +2687,12 @@ TEST_P(TestStandaloneDiffusion, controllerInterruptionKeepsMenuKeyAndPositiveRes
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
-TEST_P(TestStandaloneDiffusion, controllerOrbitToggleDoesNotInterrupt)
+TEST_P(TestDiffusionController, controllerOrbitToggleDoesNotInterrupt)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
     EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     DiffusionController controller{calculation};
     controller.start();
 
@@ -2628,12 +2707,11 @@ TEST_P(TestStandaloneDiffusion, controllerOrbitToggleDoesNotInterrupt)
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
-TEST_P(TestStandaloneDiffusion, controllerFailureReleasesItsKeyboardHandler)
+TEST_P(TestDiffusionController, controllerFailureReleasesItsKeyboardHandler)
 {
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::DIFFUSION, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     DiffusionController controller{calculation};
     controller.start();
     EXPECT_CALL(m_driver, read_pixel(_, _)).WillOnce(Throw(std::runtime_error("Read failed")));
