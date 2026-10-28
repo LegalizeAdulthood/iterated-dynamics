@@ -688,7 +688,7 @@ TEST_F(TestFindFractalInfo, legacyNameOnlyRecordUsesDefaultFormulaFlags)
     EXPECT_FALSE(m_block_7.got_data);
 }
 
-TEST_F(TestFindFractalInfo, readsLegacyOptionalRecords)
+TEST_F(TestFindFractalInfo, readsLegacyResumeRecord)
 {
     ASSERT_FALSE(read_file(ID_TEST_GIF_EXT2_FILE));
     ASSERT_TRUE(m_block_2.got_data);
@@ -697,23 +697,35 @@ TEST_F(TestFindFractalInfo, readsLegacyOptionalRecords)
     const std::vector<Byte> resume_prefix{2, 0, 1, 0, 0, 0, 63, 6, 0, 0, 175, 4, 128, 2, 0, 0};
     EXPECT_EQ(resume_prefix,
         (std::vector<Byte>{m_block_2.resume_data.begin(), m_block_2.resume_data.begin() + resume_prefix.size()}));
+}
 
+TEST_F(TestFindFractalInfo, readsLegacyFormulaRecord)
+{
     ASSERT_FALSE(read_file(ID_TEST_GIF_EXT3_FILE));
     ASSERT_TRUE(m_block_3.got_data);
     EXPECT_EQ(66, m_block_3.length);
     EXPECT_STREQ("Mandel3", m_block_3.form_name);
     EXPECT_EQ(0, m_block_3.uses_p1);
     EXPECT_EQ(1, m_block_3.ismand);
+}
 
+TEST_F(TestFindFractalInfo, readsLegacyRangesRecord)
+{
     ASSERT_FALSE(read_file(ID_TEST_GIF_EXT4_FILE));
     ASSERT_TRUE(m_block_4.got_data);
     EXPECT_EQ(5, m_block_4.length);
     EXPECT_EQ((std::vector<int>{10, 20, 30, 40, 50}), m_block_4.range_data);
+}
 
+TEST_F(TestFindFractalInfo, readsLegacyPrecisionRecord)
+{
     ASSERT_FALSE(read_file(ID_TEST_GIF_EXT5_FILE));
     ASSERT_TRUE(m_block_5.got_data);
     EXPECT_EQ(396, m_block_5.apm_data.size());
+}
 
+TEST_F(TestFindFractalInfo, readsLegacyEvolutionRecord)
+{
     ASSERT_FALSE(read_file(ID_TEST_GIF_EXT6_FILE));
     ASSERT_TRUE(m_block_6.got_data);
     EXPECT_EQ(200, m_block_6.length);
@@ -730,7 +742,10 @@ TEST_F(TestFindFractalInfo, readsLegacyOptionalRecords)
     EXPECT_EQ(480, m_block_6.y_dots);
     EXPECT_EQ(81, m_block_6.e_count);
     EXPECT_EQ(5, m_block_6.mutate[0]);
+}
 
+TEST_F(TestFindFractalInfo, readsLegacyOrbitRecord)
+{
     ASSERT_FALSE(read_file(ID_TEST_GIF_EXT7_FILE));
     ASSERT_TRUE(m_block_7.got_data);
     EXPECT_EQ(200, m_block_7.length);
