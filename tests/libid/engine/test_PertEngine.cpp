@@ -9391,19 +9391,80 @@ TEST_P(TestPixelAfterContinuation, rejectsOrbitIterationCount)
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPixelAfterContinuation, Bool());
 
-TEST_P(TestPerturbationContinuation, invalidContinuationDoesNotReplaceTheCurrentState)
+struct InvalidContinuationStartInput
+{
+    const char *name;
+    bool big_float;
+    long iteration;
+};
+
+void PrintTo(const InvalidContinuationStartInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestInvalidContinuationStart : public PerturbationContinuationTest,
+                                     public WithParamInterface<InvalidContinuationStartInput>
+{
+public:
+    TestInvalidContinuationStart();
+
+protected:
+    void SetUp() override;
+};
+
+TestInvalidContinuationStart::TestInvalidContinuationStart() :
+    PerturbationContinuationTest{GetParam().big_float}
+{
+}
+
+void TestInvalidContinuationStart::SetUp()
+{
+    PerturbationContinuationTest::SetUp();
+    prepare();
+}
+
+TEST_P(TestInvalidContinuationStart, rejectsInvalidStartingIteration)
+{
+    EXPECT_THROW(m_engine.begin_orbit({}, {}, GetParam().iteration), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInvalidContinuationStart,
+    Values(InvalidContinuationStartInput{"Double_NegativeIteration", false, -1},
+        InvalidContinuationStartInput{"Double_BeyondIterationLimit", false, 25},
+        InvalidContinuationStartInput{"HighPrecision_NegativeIteration", true, -1},
+        InvalidContinuationStartInput{"HighPrecision_BeyondIterationLimit", true, 25}),
+    [](const TestParamInfo<InvalidContinuationStartInput> &info) { return info.param.name; });
+
+TEST_P(TestPerturbationContinuation, rejectsOrbitIterationWithoutBeginning)
 {
     prepare();
-    EXPECT_THROW(m_engine.begin_orbit({}, {}, -1), std::logic_error);
-    EXPECT_THROW(m_engine.begin_orbit({}, {}, 25), std::logic_error);
+
     EXPECT_THROW(m_engine.iterate_orbit(), std::logic_error);
+}
+
+class TestActiveContinuation : public TestPerturbationContinuation
+{
+protected:
+    void SetUp() override;
+};
+
+void TestActiveContinuation::SetUp()
+{
+    TestPerturbationContinuation::SetUp();
+    prepare();
     m_engine.begin_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
     ASSERT_FALSE(m_engine.iterate_orbit());
+}
 
+TEST_P(TestActiveContinuation, rejectsBeginningAnotherOrbitWithoutReplacingState)
+{
     EXPECT_THROW(m_engine.begin_orbit({}, {}, 0), std::logic_error);
 
     EXPECT_EQ(8, m_engine.orbit_iteration());
 }
+
+INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestActiveContinuation, Bool());
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPerturbationContinuation, Bool());
 
