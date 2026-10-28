@@ -251,26 +251,52 @@ TEST_F(TestGifWriter, emitsSharedExtensionsWithOriginalGroupingAndEmptyRecords)
     EXPECT_EQ(parameters, block5.apm_data);
 }
 
-TEST_F(TestGifWriter, finishIsIdempotentAndLeavesBorrowedStreamOpen)
+class TestFinishedGifWriter : public TestGifWriter
 {
-    FailingBuffer buffer;
-    std::ostream output{&buffer};
-    std::string complete;
-    {
-        GifWriter writer{output, {2, 1}, make_palette(2)};
-        ASSERT_TRUE(writer.write_pixels({0, 1}));
-        ASSERT_TRUE(writer.finish());
-        complete = buffer.str();
-        EXPECT_TRUE(writer.finish());
-        EXPECT_EQ(complete, buffer.str());
-        EXPECT_EQ(1, buffer.sync_count);
-        EXPECT_THROW(writer.write_pixels({0, 1}), std::logic_error);
-        EXPECT_THROW(writer.write_extensions(m_extensions), std::logic_error);
-    }
-    EXPECT_EQ(complete, buffer.str());
-    EXPECT_EQ(1, buffer.sync_count);
-    output << 'X';
-    EXPECT_EQ(complete + 'X', buffer.str());
+protected:
+    void SetUp() override;
+
+    FailingBuffer m_buffer;
+    std::ostream m_output{&m_buffer};
+    std::unique_ptr<GifWriter> m_writer;
+    std::string m_complete;
+};
+
+void TestFinishedGifWriter::SetUp()
+{
+    TestGifWriter::SetUp();
+    m_writer = std::make_unique<GifWriter>(m_output, GifWriter::Screen{2, 1}, make_palette(2));
+    ASSERT_TRUE(m_writer->write_pixels({0, 1}));
+    ASSERT_TRUE(m_writer->finish());
+    m_complete = m_buffer.str();
+}
+
+TEST_F(TestFinishedGifWriter, finishIsIdempotent)
+{
+    EXPECT_TRUE(m_writer->finish());
+
+    EXPECT_EQ(m_complete, m_buffer.str());
+    EXPECT_EQ(1, m_buffer.sync_count);
+}
+
+TEST_F(TestFinishedGifWriter, destructionLeavesBorrowedStreamOpen)
+{
+    m_writer.reset();
+
+    EXPECT_EQ(m_complete, m_buffer.str());
+    EXPECT_EQ(1, m_buffer.sync_count);
+    m_output << 'X';
+    EXPECT_EQ(m_complete + 'X', m_buffer.str());
+}
+
+TEST_F(TestFinishedGifWriter, rejectsPixelsAfterFinish)
+{
+    EXPECT_THROW(m_writer->write_pixels({0, 1}), std::logic_error);
+}
+
+TEST_F(TestFinishedGifWriter, rejectsExtensionsAfterFinish)
+{
+    EXPECT_THROW(m_writer->write_extensions(m_extensions), std::logic_error);
 }
 
 TEST_F(TestGifWriter, releasesIncompleteFileOnDestruction)
