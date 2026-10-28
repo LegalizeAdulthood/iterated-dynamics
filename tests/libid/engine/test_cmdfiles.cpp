@@ -1425,12 +1425,48 @@ INSTANTIATE_TEST_SUITE_P(Adapters, TestDeprecatedAdapterParameter,
         DeprecatedAdapterInput{"Invalid", "adapter=bad", CmdArgFlags::BAD_ARG}),
     [](const TestParamInfo<DeprecatedAdapterInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommand, afiValueIgnored)
+struct LegacyCommandInput
 {
-    exec_cmd_arg("afi=anything", CmdFile::SSTOOLS_INI);
+    const char *name;
+    const char *argument;
+    CmdFile mode;
+    CmdArgFlags result;
+};
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
+void PrintTo(const LegacyCommandInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestLegacyCommandInput : public TestParameterCommand, public WithParamInterface<LegacyCommandInput>
+{
+};
+
+TEST_P(TestLegacyCommandInput, retainsCompatibilityResult)
+{
+    exec_cmd_arg(GetParam().argument, GetParam().mode);
+
+    EXPECT_EQ(GetParam().result, m_result);
+    if (GetParam().result == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+        EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Fpu, TestLegacyCommandInput,
+    Values(LegacyCommandInput{"Accepted", "fpu=387", CmdFile::SSTOOLS_INI, CmdArgFlags::NONE},
+        LegacyCommandInput{"Invalid", "fpu=487", CmdFile::SSTOOLS_INI, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<LegacyCommandInput> &info) { return info.param.name; });
+
+INSTANTIATE_TEST_SUITE_P(Ignored, TestLegacyCommandInput,
+    Values(LegacyCommandInput{"Afi", "afi=anything", CmdFile::SSTOOLS_INI,
+               CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        LegacyCommandInput{"IterIncr", "iterincr=fmeh", CmdFile::AT_CMD_LINE, CmdArgFlags::NONE},
+        LegacyCommandInput{"TweakLzw", "tweaklzw=fmeh", CmdFile::AT_AFTER_STARTUP, CmdArgFlags::NONE},
+        LegacyCommandInput{"ExitMode", "exitmode=fmeh", CmdFile::AT_AFTER_STARTUP, CmdArgFlags::NONE},
+        LegacyCommandInput{"RamVideo", "ramvideo=64", CmdFile::AT_AFTER_STARTUP, CmdArgFlags::NONE}),
+    [](const TestParamInfo<LegacyCommandInput> &info) { return info.param.name; });
 
 struct DeprecatedDisplayParameterInput
 {
@@ -1498,20 +1534,6 @@ INSTANTIATE_TEST_SUITE_P(BiosPalette, TestDeprecatedDisplayParameter,
             "Y", "biospalette=y", CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, std::nullopt},
         DeprecatedDisplayParameterInput{"Invalid", "biospalette=!", CmdArgFlags::BAD_ARG, std::nullopt}),
     [](const TestParamInfo<DeprecatedDisplayParameterInput> &info) { return info.param.name; });
-
-TEST_F(TestParameterCommand, fpuDetectDeprecatedValue)
-{
-    exec_cmd_arg("fpu=387", CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-}
-
-TEST_F(TestParameterCommandError, fpuDetectInvalidValue)
-{
-    exec_cmd_arg("fpu=487", CmdFile::SSTOOLS_INI);
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-}
 
 TEST_F(TestParameterCommandError, filenameTooLong)
 {
@@ -2263,13 +2285,6 @@ TEST_F(TestParameterCommandError, maxIterNotNumber)
     EXPECT_EQ(9999, g_max_iterations);
 }
 
-TEST_F(TestParameterCommand, iterIncrIgnored)
-{
-    exec_cmd_arg("iterincr=fmeh", CmdFile::AT_CMD_LINE);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-}
-
 TEST_F(TestParameterCommandError, passesInvalidValue)
 {
     ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
@@ -2623,13 +2638,6 @@ TEST_F(TestParameterCommand, saveNameOtherwise)
     EXPECT_EQ("bar.gif", g_save_filename);
 }
 
-TEST_F(TestParameterCommand, tweakLZWDeprecated)
-{
-    exec_cmd_arg("tweaklzw=fmeh");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-}
-
 TEST_F(TestParameterCommandError, minStackTooFewValues)
 {
     ValueSaver saved_soi_min_stack{g_soi_min_stack, 9999};
@@ -2860,13 +2868,6 @@ TEST_F(TestParameterCommand, workDirExisting)
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(new_dir.string(), adjust_dir(g_working_dir.string()));
-}
-
-TEST_F(TestParameterCommand, exitModeDeprecated)
-{
-    exec_cmd_arg("exitmode=fmeh");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 class TextColorSaver
@@ -3684,13 +3685,6 @@ TEST_F(TestParameterCommand, oldDemmColorsYes)
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_old_demm_colors);
-}
-
-TEST_F(TestParameterCommand, ramVideoIgnored)
-{
-    exec_cmd_arg("ramvideo=64");
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommand, floatYes)
