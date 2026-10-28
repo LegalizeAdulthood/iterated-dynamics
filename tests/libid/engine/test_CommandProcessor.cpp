@@ -567,7 +567,6 @@ TEST_F(TestCommandProcessor, singleCommandRetainsItsOriginalRejectedResult)
     EXPECT_TRUE(std::holds_alternative<MakeHelpDocument>(processor.result().action));
     EXPECT_TRUE(processor.result().initialize_fm);
     EXPECT_TRUE(processor.result().needs_file_entry);
-    EXPECT_THROW(processor.command(), std::logic_error);
 }
 
 class TestSingleCommandContext : public TestCommandProcessor
@@ -738,7 +737,6 @@ TEST_F(TestStartupCommandProcessor, ownsArgumentsAndAdvancesFromConfigurationInO
     handle_current(processor);
     EXPECT_FALSE(processor.advance());
     EXPECT_EQ(660, g_base_hertz);
-    EXPECT_THROW(processor.command(), std::logic_error);
     EXPECT_FALSE(processor.advance());
 }
 
@@ -760,7 +758,6 @@ TEST_F(TestStartupCommandProcessor, rejectedConfigurationStopsAllStartupSources)
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
     EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("unknown=yes")));
     EXPECT_FALSE(processor.advance());
-    EXPECT_THROW(processor.command(), std::logic_error);
 }
 
 TEST_F(TestStartupCommandProcessor, failedPaletteInConfigurationStopsAllStartupSources)
@@ -778,7 +775,6 @@ TEST_F(TestStartupCommandProcessor, failedPaletteInConfigurationStopsAllStartupS
     EXPECT_THAT(
         processor.result().diagnostics.errors, ElementsAre("Could not load color map missing-startup-palette.map"));
     EXPECT_FALSE(processor.advance());
-    EXPECT_THROW(processor.command(), std::logic_error);
     EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
 }
 
@@ -944,7 +940,6 @@ TEST_F(TestStartupCommandProcessor, commentArgumentEndsTheSourcePermanently)
 
     EXPECT_EQ(222, g_max_iterations);
     EXPECT_FALSE(processor.advance());
-    EXPECT_THROW(processor.command(), std::logic_error);
 }
 
 TEST_F(TestStartupCommandProcessor, finalTypeDeterminesTheEntrySelectionRequest)
@@ -1272,7 +1267,6 @@ TEST_F(TestStartupCommandProcessor, finalIndirectFileCompletesWithoutChangingThe
     EXPECT_EQ(m_directory / "previous.par", g_parameter_file);
     EXPECT_EQ("previous", g_parameter_set_name);
     EXPECT_FALSE(processor.advance());
-    EXPECT_THROW(processor.command(), std::logic_error);
     EXPECT_TRUE(processor.result().diagnostics.errors.empty());
     EXPECT_TRUE(fs::remove(m_directory / "final.par"));
 }
@@ -1286,7 +1280,6 @@ TEST_F(TestStartupCommandProcessor, noSourcesCompletesWithoutPresentingACommand)
     EXPECT_EQ(CmdArgFlags::NONE, processor.result().flags);
     EXPECT_TRUE(processor.result().diagnostics.errors.empty());
     EXPECT_FALSE(processor.result().needs_file_entry);
-    EXPECT_THROW(processor.command(), std::logic_error);
 }
 
 TEST_F(TestStartupCommandProcessor, configurationOnlyDoesNotInitializeSettingsOrRequestEntrySelection)
@@ -1317,7 +1310,115 @@ TEST_F(TestStartupCommandProcessor, missingConfigurationOnlyCompletesWithoutComm
     EXPECT_TRUE(processor.result().diagnostics.errors.empty());
     EXPECT_FALSE(processor.result().needs_file_entry);
     EXPECT_TRUE(g_first_init);
-    EXPECT_THROW(processor.command(), std::logic_error);
 }
+
+enum class CommandTerminalCause
+{
+    REJECTED_SINGLE,
+    STARTUP_COMPLETE,
+    REJECTED_CONFIGURATION,
+    FAILED_PALETTE,
+    COMMENT_ARGUMENT,
+    FINAL_INDIRECT_FILE,
+    NO_SOURCES,
+    MISSING_CONFIGURATION
+};
+
+struct TerminalCommandInput
+{
+    const char *name;
+    CommandTerminalCause cause;
+};
+
+void PrintTo(const TerminalCommandInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestTerminalCommandAccess : public TestStartupCommandProcessor, public WithParamInterface<TerminalCommandInput>
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    ValueSaver<bool> m_saved_overwrite{g_overwrite_file};
+    std::optional<CommandProcessor> m_processor;
+};
+
+void TestTerminalCommandAccess::SetUp()
+{
+    TestStartupCommandProcessor::SetUp();
+    switch (GetParam().cause)
+    {
+    case CommandTerminalCause::REJECTED_SINGLE:
+        g_first_init = false;
+        m_processor.emplace("unknown=yes", CmdFile::AT_AFTER_STARTUP);
+        ASSERT_TRUE(m_processor->advance());
+        handle_current(*m_processor);
+        m_processor->command().result.action = MakeHelpDocument{"output.txt"};
+        m_processor->command().result.initialize_fm = true;
+        m_processor->command().result.needs_file_entry = true;
+        break;
+    case CommandTerminalCause::STARTUP_COMPLETE:
+    {
+        write_source("sstools.ini", "[id]\nmaxiter=111\nhertz=330\n");
+        std::vector<std::string> args{"id", "maxiter=222", "hertz=660"};
+        g_max_iterations = 432;
+        m_processor.emplace(args);
+        args.clear();
+        break;
+    }
+    case CommandTerminalCause::REJECTED_CONFIGURATION:
+        write_source("sstools.ini", "maxiter=111\nunknown=yes\nhertz=999\n");
+        m_processor.emplace(std::vector<std::string>{"id", "maxiter=bad", "batch=yes", "maxiter=222"});
+        break;
+    case CommandTerminalCause::FAILED_PALETTE:
+        g_overwrite_file = true;
+        write_source(
+            "sstools.ini", "maxiter=111 overwrite=no map=missing-startup-palette.map overwrite=yes unknown=yes\n");
+        m_processor.emplace(std::vector<std::string>{"id", "maxiter=222", "hertz=999"});
+        break;
+    case CommandTerminalCause::COMMENT_ARGUMENT:
+        m_processor.emplace(std::vector<std::string>{"id", "maxiter=222", "; comment", "maxiter=999"});
+        break;
+    case CommandTerminalCause::FINAL_INDIRECT_FILE:
+        write_source("final.par", "entry { maxiter=222 hertz=330 }");
+        g_parameter_file = m_directory / "previous.par";
+        g_parameter_set_name = "previous";
+        m_processor.emplace(std::vector<std::string>{"id", "@final"});
+        break;
+    case CommandTerminalCause::NO_SOURCES:
+        m_processor.emplace(std::vector<std::string>{});
+        break;
+    case CommandTerminalCause::MISSING_CONFIGURATION:
+        set_fractal_type(FractalType::FORMULA);
+        m_processor.emplace();
+        break;
+    }
+    run(*m_processor);
+    ASSERT_FALSE(m_processor->advance());
+}
+
+void TestTerminalCommandAccess::TearDown()
+{
+    m_processor.reset();
+    TestStartupCommandProcessor::TearDown();
+}
+
+TEST_P(TestTerminalCommandAccess, terminalStateRejectsCommandAccess)
+{
+    EXPECT_THROW(m_processor->command(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(TerminalCauses, TestTerminalCommandAccess,
+    Values(TerminalCommandInput{"RejectedSingle", CommandTerminalCause::REJECTED_SINGLE},
+        TerminalCommandInput{"StartupComplete", CommandTerminalCause::STARTUP_COMPLETE},
+        TerminalCommandInput{"RejectedConfiguration", CommandTerminalCause::REJECTED_CONFIGURATION},
+        TerminalCommandInput{"FailedPalette", CommandTerminalCause::FAILED_PALETTE},
+        TerminalCommandInput{"CommentArgument", CommandTerminalCause::COMMENT_ARGUMENT},
+        TerminalCommandInput{"FinalIndirectFile", CommandTerminalCause::FINAL_INDIRECT_FILE},
+        TerminalCommandInput{"NoSources", CommandTerminalCause::NO_SOURCES},
+        TerminalCommandInput{"MissingConfiguration", CommandTerminalCause::MISSING_CONFIGURATION}),
+    [](const TestParamInfo<TerminalCommandInput> &info) { return info.param.name; });
 
 } // namespace id::test
