@@ -7354,20 +7354,43 @@ TEST_P(TestPotentialEpsilonStorage, doesNotWritePotentialForEpsilonCrossExit)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialEpsilonStorage, ValuesIn(potential_storage_inputs()),
     [](const TestParamInfo<PotentialStorageInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, periodicityColorsSurviveReferenceReplacement)
+class TestPeriodicityReplacement : public PerturbationIterationTest, public WithParamInterface<DetectedCycleInput>
 {
+public:
+    TestPeriodicityReplacement();
+
+protected:
+    void SetUp() override;
+};
+
+TestPeriodicityReplacement::TestPeriodicityReplacement() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestPeriodicityReplacement::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_color = 3;
     m_engine.set_glitch_tolerance(2.0);
-    for (const int periodicity : {1, -1})
-    {
-        SCOPED_TRACE(periodicity);
-        g_periodicity_check = periodicity;
-        g_inside_method = periodicity < 0 ? ColorMethod::COLOR : ColorMethod::PERIOD;
-        compare_pixel({-1.0, 0.0}, 128, 0.125);
-        EXPECT_EQ(periodicity < 0 ? 7 : 2, g_color);
-        EXPECT_GT(m_engine.reference_count(), 1);
-    }
+    g_periodicity_check = GetParam().periodicity;
+    g_inside_method = GetParam().periodicity < 0 ? ColorMethod::COLOR : ColorMethod::PERIOD;
 }
+
+TEST_P(TestPeriodicityReplacement, retainsPeriodicityColorAfterReferenceReplacement)
+{
+    compare_pixel({-1.0, 0.0}, 128, 0.125);
+
+    EXPECT_EQ(GetParam().periodicity < 0 ? 7 : 2, g_color);
+    EXPECT_GT(m_engine.reference_count(), 1);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestPeriodicityReplacement,
+    Values(DetectedCycleInput{"Double_PositivePeriodicity", false, 1},
+        DetectedCycleInput{"Double_NegativePeriodicity", false, -1},
+        DetectedCycleInput{"HighPrecision_PositivePeriodicity", true, 1},
+        DetectedCycleInput{"HighPrecision_NegativePeriodicity", true, -1}),
+    [](const TestParamInfo<DetectedCycleInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, periodicityPreservesEscapingPixelsAndAdaptiveStart)
 {
@@ -7383,22 +7406,44 @@ TEST_P(TestPerturbationIterations, periodicityPreservesEscapingPixelsAndAdaptive
     EXPECT_EQ(0, g_old_color_iter);
 }
 
-TEST_P(TestPerturbationIterations, periodicityChecksReconstructedOrbitsRatherThanReferencesOrDeltas)
+class TestReconstructedPeriodicity : public PerturbationIterationTest,
+                                     public WithParamInterface<PerturbationOffsetInput>
 {
+public:
+    TestReconstructedPeriodicity();
+
+protected:
+    void SetUp() override;
+};
+
+TestReconstructedPeriodicity::TestReconstructedPeriodicity() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestReconstructedPeriodicity::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_periodicity_check = 1;
     g_close_enough = 1e-14;
     m_engine.set_glitch_tolerance(0.0);
-    for (const double displacement : {0.0, 0.25})
-    {
-        SCOPED_TRACE(displacement);
-        g_old_color_iter = 0;
-
-        compare_pixel({0.25, 0.0}, 128, displacement);
-
-        EXPECT_EQ(127, s_perturbation_orbit.size());
-        EXPECT_EQ(1, m_engine.reference_count());
-    }
+    g_old_color_iter = 0;
 }
+
+TEST_P(TestReconstructedPeriodicity, checksReconstructedOrbitInsteadOfReferenceOrDelta)
+{
+    compare_pixel({0.25, 0.0}, 128, GetParam().offset);
+
+    EXPECT_EQ(127, s_perturbation_orbit.size());
+    EXPECT_EQ(1, m_engine.reference_count());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestReconstructedPeriodicity,
+    Values(PerturbationOffsetInput{"Double_NoDisplacement", false, 0.0},
+        PerturbationOffsetInput{"Double_QuarterDisplacement", false, 0.25},
+        PerturbationOffsetInput{"HighPrecision_NoDisplacement", true, 0.0},
+        PerturbationOffsetInput{"HighPrecision_QuarterDisplacement", true, 0.25}),
+    [](const TestParamInfo<PerturbationOffsetInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, periodicityToleranceMatchesStandardAndSurvivesReferenceReplacement)
 {
@@ -7426,24 +7471,47 @@ TEST_P(TestPerturbationIterations, periodicityToleranceMatchesStandardAndSurvive
     }
 }
 
-TEST_F(TestPerturbationPixels, orbitDependentInsideModesDisablePeriodicity)
+struct OrbitDependentInsideInput
 {
+    const char *name;
+    ColorMethod inside;
+};
+
+void PrintTo(const OrbitDependentInsideInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestOrbitDependentPeriodicity : public TestPerturbationPixels,
+                                      public WithParamInterface<OrbitDependentInsideInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestOrbitDependentPeriodicity::SetUp()
+{
+    TestPerturbationPixels::SetUp();
     g_periodicity_check = 1;
     m_specific.pert_pt = record_perturbation_orbit;
-    for (const ColorMethod inside : {ColorMethod::ZMAG, ColorMethod::STAR_TRAIL})
-    {
-        SCOPED_TRACE(static_cast<int>(inside));
-        g_inside_method = inside;
-        m_engine.initialize_frame({}, {}, {});
-        s_perturbation_orbit.clear();
-
-        EXPECT_GE(m_engine.calculate_pixel(0, 0), 0);
-
-        const long iterations{inside == ColorMethod::STAR_TRAIL ? 16 : g_max_iterations};
-        EXPECT_EQ(iterations - 1, s_perturbation_orbit.size());
-        EXPECT_EQ(iterations, g_real_color_iter);
-    }
+    g_inside_method = GetParam().inside;
+    m_engine.initialize_frame({}, {}, {});
+    s_perturbation_orbit.clear();
 }
+
+TEST_P(TestOrbitDependentPeriodicity, disablesPeriodicityForOrbitDependentInsideMethod)
+{
+    EXPECT_GE(m_engine.calculate_pixel(0, 0), 0);
+
+    const long iterations{GetParam().inside == ColorMethod::STAR_TRAIL ? 16 : g_max_iterations};
+    EXPECT_EQ(iterations - 1, s_perturbation_orbit.size());
+    EXPECT_EQ(iterations, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOrbitDependentPeriodicity,
+    Values(OrbitDependentInsideInput{"Magnitude", ColorMethod::ZMAG},
+        OrbitDependentInsideInput{"StarTrail", ColorMethod::STAR_TRAIL}),
+    [](const TestParamInfo<OrbitDependentInsideInput> &info) { return info.param.name; });
 
 TEST_F(TestPerturbationPixels, deepPeriodicityUsesTheActivePrecisionTolerance)
 {
