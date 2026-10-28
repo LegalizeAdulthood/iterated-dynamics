@@ -7948,13 +7948,24 @@ TEST_P(TestPerturbationIterations, displacedPixelPublishesItsOwnTerminalState)
         3.1533355712890625 * 3.1533355712890625, 0.0});
 }
 
-TEST_P(TestPerturbationIterations, escapeCountsAreFoldedOnlyAtTheActivePaletteSize)
+struct EscapePaletteInput
 {
-    ValueSaver<LDouble> saved_delta_x{g_delta_x, 0};
-    ValueSaver<LDouble> saved_delta_y{g_delta_y, 0};
-    ValueSaver<LDouble> saved_delta_x2{g_delta_x2, 0};
-    ValueSaver<LDouble> saved_delta_y2{g_delta_y2, 0};
+    std::string name;
+    bool big_float;
+    int colors;
+    ColorMethod inside;
+    double real;
+    long iterations;
+    int color;
+};
 
+void PrintTo(const EscapePaletteInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<EscapePaletteInput> escape_palette_inputs()
+{
     struct Sample
     {
         double real;
@@ -7972,82 +7983,212 @@ TEST_P(TestPerturbationIterations, escapeCountsAreFoldedOnlyAtTheActivePaletteSi
         {0.25000935820314196, 1024, {0, 0, 4, 4}},
     }};
     constexpr std::array<int, 4> PALETTE_SIZES{2, 4, 16, 256};
-    for (std::size_t palette = 0; palette < PALETTE_SIZES.size(); ++palette)
+    std::vector<EscapePaletteInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        g_colors = PALETTE_SIZES[palette];
-        g_and_color = g_colors - 1;
-        SCOPED_TRACE(g_colors);
-        for (const Sample &sample : SAMPLES)
+        for (std::size_t palette = 0; palette < PALETTE_SIZES.size(); ++palette)
         {
-            SCOPED_TRACE(sample.iterations);
-            for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::COLOR})
+            for (const Sample &sample : SAMPLES)
             {
-                SCOPED_TRACE(static_cast<int>(inside));
-                m_engine.finish();
-                if (m_big_float)
+                for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::COLOR})
                 {
-                    free_bf_vars();
-                    m_big_float = false;
+                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Palette" +
+                            std::to_string(PALETTE_SIZES[palette]) + "_Iterations" + std::to_string(sample.iterations) +
+                            (inside == ColorMethod::ITER ? "_InsideIterations" : "_InsideFixed"),
+                        big_float, PALETTE_SIZES[palette], inside, sample.real, sample.iterations,
+                        sample.colors[palette]});
                 }
-                g_inside_method = inside;
-                g_max_iterations = 2048;
-                const DComplex point{sample.real, 0.0};
-                g_image_region = ImageRegion{point, point, point};
-                fill_pixel_grid();
-                StandardFractal standard;
-                const int expected_color{standard.calculate_standard_pixel(false)};
-                EXPECT_EQ(sample.iterations, g_real_color_iter);
-                EXPECT_EQ(sample.colors[palette], expected_color);
-                initialize_reference({sample.real, 0.0});
-
-                EXPECT_EQ(expected_color, m_engine.calculate_pixel(g_col, g_row));
-                EXPECT_EQ(sample.iterations, g_real_color_iter);
-                EXPECT_EQ(expected_color, m_pixels[g_row * WIDTH + g_col]);
-                EXPECT_GT(m_engine.reference_count(), 0);
             }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, insideIterationCountsUseTheSamePaletteFolding)
+class TestEscapePalette : public PerturbationIterationTest, public WithParamInterface<EscapePaletteInput>
 {
-    g_inside_method = ColorMethod::ITER;
-    for (const int colors : {2, 4, 16, 256})
+public:
+    TestEscapePalette();
+
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<LDouble> m_saved_delta_x{g_delta_x, 0};
+    ValueSaver<LDouble> m_saved_delta_y{g_delta_y, 0};
+    ValueSaver<LDouble> m_saved_delta_x2{g_delta_x2, 0};
+    ValueSaver<LDouble> m_saved_delta_y2{g_delta_y2, 0};
+};
+
+TestEscapePalette::TestEscapePalette() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestEscapePalette::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_colors = GetParam().colors;
+    g_and_color = g_colors - 1;
+    g_inside_method = GetParam().inside;
+    g_max_iterations = 2048;
+    const DComplex point{GetParam().real, 0.0};
+    g_image_region = ImageRegion{point, point, point};
+    fill_pixel_grid();
+}
+
+TEST_P(TestEscapePalette, foldsEscapeCountOnlyAtActivePaletteSize)
+{
+    StandardFractal standard;
+    const int expected_color{standard.calculate_standard_pixel(false)};
+    EXPECT_EQ(GetParam().iterations, g_real_color_iter);
+    EXPECT_EQ(GetParam().color, expected_color);
+    initialize_reference({GetParam().real, 0.0});
+
+    EXPECT_EQ(expected_color, m_engine.calculate_pixel(g_col, g_row));
+    EXPECT_EQ(GetParam().iterations, g_real_color_iter);
+    EXPECT_EQ(expected_color, m_pixels[g_row * WIDTH + g_col]);
+    EXPECT_GT(m_engine.reference_count(), 0);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestEscapePalette, ValuesIn(escape_palette_inputs()),
+    [](const TestParamInfo<EscapePaletteInput> &info) { return info.param.name; });
+
+struct InsidePaletteInput
+{
+    std::string name;
+    bool big_float;
+    int colors;
+    long iterations;
+};
+
+void PrintTo(const InsidePaletteInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<InsidePaletteInput> inside_palette_inputs()
+{
+    std::vector<InsidePaletteInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(colors);
-        g_colors = colors;
-        g_and_color = colors - 1;
-        for (const long iterations : {255L, 256L, 257L, 511L, 512L, 1024L})
+        for (const int colors : {2, 4, 16, 256})
         {
-            SCOPED_TRACE(iterations);
-            compare_pixel({}, iterations);
-            EXPECT_EQ(iterations, g_real_color_iter);
+            for (const long iterations : {255L, 256L, 257L, 511L, 512L, 1024L})
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Palette" +
+                        std::to_string(colors) + "_Iterations" + std::to_string(iterations),
+                    big_float, colors, iterations});
+            }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, boundaryTracePreservesNonzeroColorsAcrossPaletteSizes)
+class TestInsidePalette : public PerturbationIterationTest, public WithParamInterface<InsidePaletteInput>
 {
-    ValueSaver saved_debug{g_debug_flag, DebugFlags::NONE};
-    g_std_calc_mode = CalcMode::BOUNDARY_TRACE;
-    for (const int colors : {2, 4, 16, 256})
-    {
-        SCOPED_TRACE(colors);
-        g_colors = colors;
-        g_and_color = colors - 1;
-        g_inside_method = ColorMethod::ITER;
-        compare_pixel({}, 256);
-        EXPECT_EQ(1, g_color);
-        g_inside_method = ColorMethod::COLOR;
-        g_inside_color = 0;
-        compare_pixel({}, 256);
-        EXPECT_EQ(1, g_color);
-        g_debug_flag = DebugFlags::FORCE_BOUNDARY_TRACE_ERROR;
-        compare_pixel({}, 256);
-        EXPECT_EQ(0, g_color);
-        g_debug_flag = DebugFlags::NONE;
-    }
+public:
+    TestInsidePalette();
+
+protected:
+    void SetUp() override;
+};
+
+TestInsidePalette::TestInsidePalette() :
+    PerturbationIterationTest{GetParam().big_float}
+{
 }
+
+void TestInsidePalette::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = ColorMethod::ITER;
+    g_colors = GetParam().colors;
+    g_and_color = g_colors - 1;
+}
+
+TEST_P(TestInsidePalette, foldsInsideIterationCountAtActivePaletteSize)
+{
+    compare_pixel({}, GetParam().iterations);
+
+    EXPECT_EQ(GetParam().iterations, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInsidePalette, ValuesIn(inside_palette_inputs()),
+    [](const TestParamInfo<InsidePaletteInput> &info) { return info.param.name; });
+
+struct BoundaryPaletteInput
+{
+    std::string name;
+    bool big_float;
+    int colors;
+    ColorMethod inside;
+    int inside_color;
+    DebugFlags debug;
+    int color;
+};
+
+void PrintTo(const BoundaryPaletteInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<BoundaryPaletteInput> boundary_palette_inputs()
+{
+    std::vector<BoundaryPaletteInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const int colors : {2, 4, 16, 256})
+        {
+            const std::string prefix{
+                std::string{big_float ? "HighPrecision_" : "Double_"} + "Palette" + std::to_string(colors)};
+            // The original sweep changed the fixed inside color after its first case.
+            inputs.push_back({prefix + "_InsideIterations", big_float, colors, ColorMethod::ITER, colors == 2 ? 7 : 0,
+                DebugFlags::NONE, 1});
+            inputs.push_back({prefix + "_FixedInside", big_float, colors, ColorMethod::COLOR, 0, DebugFlags::NONE, 1});
+            inputs.push_back({prefix + "_FixedInsideForcedError", big_float, colors, ColorMethod::COLOR, 0,
+                DebugFlags::FORCE_BOUNDARY_TRACE_ERROR, 0});
+        }
+    }
+    return inputs;
+}
+
+class TestBoundaryPalette : public PerturbationIterationTest, public WithParamInterface<BoundaryPaletteInput>
+{
+public:
+    TestBoundaryPalette();
+
+protected:
+    void SetUp() override;
+
+private:
+    ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
+};
+
+TestBoundaryPalette::TestBoundaryPalette() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestBoundaryPalette::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_std_calc_mode = CalcMode::BOUNDARY_TRACE;
+    g_colors = GetParam().colors;
+    g_and_color = g_colors - 1;
+    g_inside_method = GetParam().inside;
+    g_inside_color = GetParam().inside_color;
+    g_debug_flag = GetParam().debug;
+}
+
+TEST_P(TestBoundaryPalette, preservesNonzeroBoundaryTraceColors)
+{
+    compare_pixel({}, 256);
+
+    EXPECT_EQ(GetParam().color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBoundaryPalette, ValuesIn(boundary_palette_inputs()),
+    [](const TestParamInfo<BoundaryPaletteInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, trueColorIterationOutputUsesTheFullCountBeforePaletteOutput)
 {
