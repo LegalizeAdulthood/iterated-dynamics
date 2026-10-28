@@ -4472,25 +4472,37 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestDistEstParameter,
         DistEstParameterInput{"FourValues", "distest=4/5/6/7", 5, 6, 7}),
     [](const TestParamInfo<DistEstParameterInput> &info) { return info.param.name; });
 
-TEST_F(TestParameterCommand, formulaFileFilename)
+struct FormulaFileParameterInput
 {
-    ValueSaver saved_formula_filename{g_formula_filename, ""};
+    const char *name;
+    std::string argument;
+    fs::path expected;
+};
 
-    exec_cmd_arg(std::string{"formulafile="} + ID_TEST_FRM_FILE);
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(home_file(ID_TEST_FRM_SUBDIR, ID_TEST_FRM_FILE), g_formula_filename);
+void PrintTo(const FormulaFileParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParameterCommand, formulaFileMissingFilename)
+class TestFormulaFileParameter : public TestParameterCommand, public WithParamInterface<FormulaFileParameterInput>
 {
-    ValueSaver saved_formula_filename{g_formula_filename, ""};
+private:
+    ValueSaver<fs::path> m_saved_filename{g_formula_filename, fs::path{}};
+};
 
-    exec_cmd_arg("formulafile=missing.frm");
+TEST_P(TestFormulaFileParameter, setsFormulaFilename)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(fs::path{"missing.frm"}, g_formula_filename);
+    EXPECT_EQ(GetParam().expected, g_formula_filename);
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFormulaFileParameter,
+    Values(FormulaFileParameterInput{"Existing", std::string{"formulafile="} + ID_TEST_FRM_FILE,
+               home_file(ID_TEST_FRM_SUBDIR, ID_TEST_FRM_FILE)},
+        FormulaFileParameterInput{"Missing", "formulafile=missing.frm", fs::path{"missing.frm"}}),
+    [](const TestParamInfo<FormulaFileParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, formulaName)
 {
@@ -4532,25 +4544,34 @@ TEST_F(TestParameterCommand, ifsFileFilename)
     EXPECT_EQ(home_file(ID_TEST_IFS_SUBDIR, ID_TEST_IFS_FILE), g_ifs_filename);
 }
 
-TEST_F(TestParameterCommand, ifsName)
+struct IFSNameParameterInput
 {
-    ValueSaver saved_ifs_name{g_ifs_name, ""};
+    const char *name;
+    const char *argument;
+};
 
-    exec_cmd_arg("ifs=Monongahela");
+void PrintTo(const IFSNameParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestIFSNameParameter : public TestParameterCommand, public WithParamInterface<IFSNameParameterInput>
+{
+private:
+    ValueSaver<std::string> m_saved_name{g_ifs_name, std::string{}};
+};
+
+TEST_P(TestIFSNameParameter, setsIFSName)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ("Monongahela", g_ifs_name);
 }
 
-TEST_F(TestParameterCommand, ifs3DName)
-{
-    ValueSaver saved_ifs_name{g_ifs_name, ""};
-
-    exec_cmd_arg("ifs3d=Monongahela");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ("Monongahela", g_ifs_name);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestIFSNameParameter,
+    Values(IFSNameParameterInput{"IFS", "ifs=Monongahela"}, IFSNameParameterInput{"IFS3D", "ifs3d=Monongahela"}),
+    [](const TestParamInfo<IFSNameParameterInput> &info) { return info.param.name; });
 
 TEST_F(TestParameterCommand, parmFile)
 {
