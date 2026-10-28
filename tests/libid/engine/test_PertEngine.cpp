@@ -4107,8 +4107,37 @@ TEST_P(TestStarTrailFailure, restoresLimitAfterOutputFailure)
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestStarTrailFailure, Values(false, true),
     [](const TestParamInfo<bool> &info) { return info.param ? "HighPrecision" : "Double"; });
 
-TEST_P(TestPerturbationIterations, mapsFullIterationCountsBeforePaletteFolding)
+struct LogMappedSampleInput
 {
+    const char *name;
+    bool big_float;
+    std::complex<double> point;
+    long iterations;
+    int color;
+};
+
+void PrintTo(const LogMappedSampleInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestFullIterationMapping : public PerturbationIterationTest, public WithParamInterface<LogMappedSampleInput>
+{
+public:
+    TestFullIterationMapping();
+
+protected:
+    void SetUp() override;
+};
+
+TestFullIterationMapping::TestFullIterationMapping() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestFullIterationMapping::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_inside_method = ColorMethod::ITER;
     g_log_map_flag = 1;
     g_log_map_table_max_size = 512;
@@ -4118,19 +4147,80 @@ TEST_P(TestPerturbationIterations, mapsFullIterationCountsBeforePaletteFolding)
     g_log_map_table[512] = 13;
     g_colors = 16;
     g_and_color = 15;
-    compare_pixel({0.5, 0.0}, 512);
-    EXPECT_EQ(4, g_real_color_iter);
-    EXPECT_EQ(5, g_color);
-    compare_pixel({}, 512);
-    EXPECT_EQ(512, g_real_color_iter);
-    EXPECT_EQ(13, g_color);
 }
 
-TEST_P(TestPerturbationIterations, mapsSpecialOutsideColorsAfterTheirFormulas)
+TEST_P(TestFullIterationMapping, mapsFullCountBeforePaletteFolding)
 {
-    g_inside_method = ColorMethod::ITER;
+    compare_pixel(GetParam().point, 512);
+
+    EXPECT_EQ(GetParam().iterations, g_real_color_iter);
+    EXPECT_EQ(GetParam().color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFullIterationMapping,
+    Values(LogMappedSampleInput{"DoubleOutside", false, {0.5, 0.0}, 4, 5},
+        LogMappedSampleInput{"DoubleInside", false, {}, 512, 13},
+        LogMappedSampleInput{"HighPrecisionOutside", true, {0.5, 0.0}, 4, 5},
+        LogMappedSampleInput{"HighPrecisionInside", true, {}, 512, 13}),
+    [](const TestParamInfo<LogMappedSampleInput> &info) { return info.param.name; });
+
+struct MappedColorMethodInput
+{
+    std::string name;
+    bool big_float;
+    ColorMethod method;
+};
+
+void PrintTo(const MappedColorMethodInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<MappedColorMethodInput> mapped_color_method_inputs(const std::vector<PerturbationColorMethod> &methods)
+{
+    std::vector<MappedColorMethodInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &method : methods)
+        {
+            inputs.push_back(
+                {std::string{big_float ? "HighPrecision_" : "Double_"} + method.name, big_float, method.method});
+        }
+    }
+    return inputs;
+}
+
+class MappedColorMethodTest : public PerturbationIterationTest, public WithParamInterface<MappedColorMethodInput>
+{
+public:
+    MappedColorMethodTest();
+
+protected:
+    void SetUp() override;
+};
+
+MappedColorMethodTest::MappedColorMethodTest() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void MappedColorMethodTest::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_log_map_flag = 1;
     g_log_map_table_max_size = 128;
+}
+
+class TestMappedOutsideColor : public MappedColorMethodTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestMappedOutsideColor::SetUp()
+{
+    MappedColorMethodTest::SetUp();
+    g_inside_method = ColorMethod::ITER;
     g_log_map_table.resize(129);
     for (std::size_t i = 0; i < g_log_map_table.size(); ++i)
     {
@@ -4138,20 +4228,31 @@ TEST_P(TestPerturbationIterations, mapsSpecialOutsideColorsAfterTheirFormulas)
     }
     g_close_proximity = 16.0;
     init_atan_colors();
-    for (const ColorMethod outside : {ColorMethod::ITER, ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT,
-             ColorMethod::SUM, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS})
-    {
-        SCOPED_TRACE(static_cast<int>(outside));
-        g_outside_method = outside;
-        compare_pixel({0.5, 0.5}, 128);
-        EXPECT_EQ(4, g_real_color_iter);
-    }
+    g_outside_method = GetParam().method;
 }
 
-TEST_P(TestPerturbationIterations, mapsSpecialInsideColorsAfterTheirFormulas)
+TEST_P(TestMappedOutsideColor, mapsAfterOutsideFormula)
 {
-    g_log_map_flag = 1;
-    g_log_map_table_max_size = 128;
+    compare_pixel({0.5, 0.5}, 128);
+
+    EXPECT_EQ(4, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestMappedOutsideColor,
+    ValuesIn(mapped_color_method_inputs({{"Iterations", ColorMethod::ITER}, {"Real", ColorMethod::REAL},
+        {"Imaginary", ColorMethod::IMAG}, {"Product", ColorMethod::MULT}, {"Sum", ColorMethod::SUM},
+        {"Atan", ColorMethod::ATAN}, {"Fmod", ColorMethod::FMOD}, {"TotalDistance", ColorMethod::TDIS}})),
+    [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
+
+class TestMappedInsideColor : public MappedColorMethodTest
+{
+protected:
+    void SetUp() override;
+};
+
+void TestMappedInsideColor::SetUp()
+{
+    MappedColorMethodTest::SetUp();
     g_log_map_table.assign(129, 44);
     g_log_map_table[0] = 17;
     g_log_map_table[1] = 18;
@@ -4159,14 +4260,19 @@ TEST_P(TestPerturbationIterations, mapsSpecialInsideColorsAfterTheirFormulas)
     g_log_map_table[128] = 20;
     g_bof_match_book_images = false;
     init_atan_colors();
-    for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60, ColorMethod::BOF61,
-             ColorMethod::FMODI, ColorMethod::ATANI, ColorMethod::PERIOD, ColorMethod::STAR_TRAIL})
-    {
-        SCOPED_TRACE(static_cast<int>(inside));
-        g_inside_method = inside;
-        compare_pixel({}, 128);
-    }
+    g_inside_method = GetParam().method;
 }
+
+TEST_P(TestMappedInsideColor, mapsAfterInsideFormula)
+{
+    compare_pixel({}, 128);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestMappedInsideColor,
+    ValuesIn(mapped_color_method_inputs({{"Iterations", ColorMethod::ITER}, {"Magnitude", ColorMethod::ZMAG},
+        {"Bof60", ColorMethod::BOF60}, {"Bof61", ColorMethod::BOF61}, {"Fmod", ColorMethod::FMODI},
+        {"Atan", ColorMethod::ATANI}, {"Period", ColorMethod::PERIOD}, {"StarTrail", ColorMethod::STAR_TRAIL}})),
+    [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, fixedColorsAndCycleHighlightsBypassMapping)
 {
