@@ -5759,63 +5759,231 @@ TEST_P(TestTwoColorDistance, usesDirectBoundaryAndExteriorColors)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestTwoColorDistance, ValuesIn(two_color_distance_inputs()),
     [](const TestParamInfo<TwoColorDistanceInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, distanceBoundaryHonorsVirtualImageDimensions)
+struct VirtualDistanceInput
 {
-    DistancePixelOptions options;
-    options.width_factor = 5;
-    options.compare_colors = true;
-    for (const bool rotated : {false, true})
+    std::string name;
+    bool big_float;
+    bool rotated;
+    bool narrow;
+};
+
+void PrintTo(const VirtualDistanceInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<VirtualDistanceInput> virtual_distance_inputs()
+{
+    std::vector<VirtualDistanceInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(rotated);
-        options.region = rotated ? ImageRegion{{-2.0, -2.0}, {2.0, 2.0}, {1.0, -2.0}}
-                                 : ImageRegion{{-2.0, -2.0}, {2.0, 2.0}, {-2.0, 1.0}};
-        options.virtual_size = rotated ? Point2i{800, 2} : Point2i{2, 600};
-        compare_distance_pixel({0.5, 0.0}, 32, false, 0.0, options);
+        for (const bool rotated : {false, true})
+        {
+            for (const bool narrow : {true, false})
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
+                        (rotated ? "Rotated_" : "Unrotated_") + (narrow ? "Narrow" : "FullSize"),
+                    big_float, rotated, narrow});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestVirtualDistance : public PerturbationIterationTest, public WithParamInterface<VirtualDistanceInput>
+{
+public:
+    TestVirtualDistance();
+
+protected:
+    void SetUp() override;
+    DistancePixelOptions m_options;
+};
+
+TestVirtualDistance::TestVirtualDistance() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestVirtualDistance::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    m_options.width_factor = 5;
+    m_options.compare_colors = true;
+    m_options.region = GetParam().rotated ? ImageRegion{{-2.0, -2.0}, {2.0, 2.0}, {1.0, -2.0}}
+                                          : ImageRegion{{-2.0, -2.0}, {2.0, 2.0}, {-2.0, 1.0}};
+    m_options.virtual_size =
+        GetParam().narrow ? (GetParam().rotated ? Point2i{800, 2} : Point2i{2, 600}) : Point2i{800, 600};
+}
+
+TEST_P(TestVirtualDistance, honorsVirtualImageDimensions)
+{
+    compare_distance_pixel({0.5, 0.0}, 32, false, 0.0, m_options);
+
+    if (GetParam().narrow)
+    {
         EXPECT_EQ(32, g_color);
-        options.virtual_size = {800, 600};
-        compare_distance_pixel({0.5, 0.0}, 32, false, 0.0, options);
+    }
+    else
+    {
         EXPECT_EQ(g_real_color_iter, g_color);
         EXPECT_LT(g_color, 32);
     }
 }
 
-TEST_P(TestPerturbationIterations, distanceBoundaryUsesInsideMappingInsteadOfOutsideAdjustments)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestVirtualDistance, ValuesIn(virtual_distance_inputs()),
+    [](const TestParamInfo<VirtualDistanceInput> &info) { return info.param.name; });
+
+struct DistanceInsideMappingInput
 {
+    std::string name;
+    bool big_float;
+    ColorMethod outside;
+    ColorMethod inside;
+};
+
+void PrintTo(const DistanceInsideMappingInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<DistanceInsideMappingInput> distance_inside_mapping_inputs()
+{
+    const PerturbationColorMethod outside_methods[]{
+        {"Iterations", ColorMethod::ITER},
+        {"FixedColor", ColorMethod::COLOR},
+        {"Real", ColorMethod::REAL},
+        {"Atan", ColorMethod::ATAN},
+        {"Fmod", ColorMethod::FMOD},
+        {"TotalDistance", ColorMethod::TDIS},
+    };
+    const PerturbationColorMethod inside_methods[]{
+        {"Iterations", ColorMethod::ITER},
+        {"FixedColor", ColorMethod::COLOR},
+    };
+    std::vector<DistanceInsideMappingInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &outside : outside_methods)
+        {
+            for (const PerturbationColorMethod &inside : inside_methods)
+            {
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Outside" + outside.name +
+                        "_Inside" + inside.name,
+                    big_float, outside.method, inside.method});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestDistanceInsideMapping : public PerturbationIterationTest,
+                                  public WithParamInterface<DistanceInsideMappingInput>
+{
+public:
+    TestDistanceInsideMapping();
+
+protected:
+    void SetUp() override;
+    DistancePixelOptions m_options;
+};
+
+TestDistanceInsideMapping::TestDistanceInsideMapping() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestDistanceInsideMapping::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_log_map_flag = 1;
     init_atan_colors();
-    DistancePixelOptions options;
-    options.width_factor = 100;
-    options.compare_colors = true;
-    for (const ColorMethod outside : {ColorMethod::ITER, ColorMethod::COLOR, ColorMethod::REAL, ColorMethod::ATAN,
-             ColorMethod::FMOD, ColorMethod::TDIS})
+    m_options.width_factor = 100;
+    m_options.compare_colors = true;
+    m_options.inside = GetParam().inside;
+    g_outside_method = GetParam().outside;
+}
+
+TEST_P(TestDistanceInsideMapping, usesInsideMappingInsteadOfOutsideAdjustments)
+{
+    compare_distance_pixel({0.5, 0.5}, 512, false, 0.0, m_options);
+
+    if (GetParam().inside == ColorMethod::ITER)
     {
-        SCOPED_TRACE(static_cast<int>(outside));
-        g_outside_method = outside;
-        compare_distance_pixel({0.5, 0.5}, 512, false, 0.0, options);
         EXPECT_EQ(standard_palette_color(log_table_calc(512)), g_color);
         EXPECT_NE(standard_palette_color(512), g_color);
-        options.inside = ColorMethod::COLOR;
-        compare_distance_pixel({0.5, 0.5}, 512, false, 0.0, options);
+    }
+    else
+    {
         EXPECT_EQ(g_inside_color, g_color);
-        options.inside = ColorMethod::ITER;
     }
 }
 
-TEST_P(TestPerturbationIterations, distanceBoundaryClassificationSurvivesReferenceReplacement)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceInsideMapping, ValuesIn(distance_inside_mapping_inputs()),
+    [](const TestParamInfo<DistanceInsideMappingInput> &info) { return info.param.name; });
+
+struct DistanceClassificationInput
 {
-    m_engine.set_glitch_tolerance(8.0);
-    DistancePixelOptions options;
-    options.width_factor = 100;
-    options.compare_colors = true;
-    for (const long mode : {1L, -9L})
-    {
-        SCOPED_TRACE(mode);
-        options.value = mode;
-        compare_distance_pixel({0.5, 0.5}, 32, false, 0.125, options);
-        EXPECT_GT(m_engine.reference_count(), 1);
-        EXPECT_EQ(mode > 0 ? 32 : 9, g_color);
-    }
+    std::string name;
+    bool big_float;
+    long mode;
+};
+
+void PrintTo(const DistanceClassificationInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+std::vector<DistanceClassificationInput> distance_classification_inputs()
+{
+    std::vector<DistanceClassificationInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const long mode : {1L, -9L})
+        {
+            inputs.push_back(
+                {std::string{big_float ? "HighPrecision_" : "Double_"} + (mode > 0 ? "PositiveMode" : "NegativeMode"),
+                    big_float, mode});
+        }
+    }
+    return inputs;
+}
+
+class TestDistanceClassification : public PerturbationIterationTest,
+                                   public WithParamInterface<DistanceClassificationInput>
+{
+public:
+    TestDistanceClassification();
+
+protected:
+    void SetUp() override;
+    DistancePixelOptions m_options;
+};
+
+TestDistanceClassification::TestDistanceClassification() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestDistanceClassification::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    m_engine.set_glitch_tolerance(8.0);
+    m_options.width_factor = 100;
+    m_options.compare_colors = true;
+    m_options.value = GetParam().mode;
+}
+
+TEST_P(TestDistanceClassification, retainsClassificationAfterReferenceReplacement)
+{
+    compare_distance_pixel({0.5, 0.5}, 32, false, 0.125, m_options);
+
+    EXPECT_GT(m_engine.reference_count(), 1);
+    EXPECT_EQ(GetParam().mode > 0 ? 32 : 9, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestDistanceClassification, ValuesIn(distance_classification_inputs()),
+    [](const TestParamInfo<DistanceClassificationInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, distanceBandsMatchCurrentAndLegacyStandardColors)
 {
