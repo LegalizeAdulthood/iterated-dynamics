@@ -10626,72 +10626,98 @@ TEST_F(TestPerturbationPixels, preciseContinuationPreservesSubDoubleParameterAnd
     m_engine.finish_orbit();
 }
 
-class TestSynchronousPerturbation : public TestPerturbationIterations
+class SynchronousPerturbationTest : public PerturbationIterationTest
 {
+public:
+    explicit SynchronousPerturbationTest(bool use_big_float);
+
 protected:
     void prepare(const int width = 8, const int height = 6,
-        const ImageRegion &region = {{-2.5, -1.5}, {1.5, 1.5}, {-2.5, -1.5}}, const long iterations = 128)
-    {
-        g_screen_x_dots = width;
-        g_screen_y_dots = height;
-        g_logical_screen = {width, height, 0, 0, width - 1.0, height - 1.0};
-        g_image_region = region;
-        g_max_iterations = iterations;
-        m_frame.assign(width * height, -1);
-        EXPECT_CALL(m_driver, write_pixel(_, _, _))
-            .WillRepeatedly(Invoke(
-                [this, width, height](const int col, const int row, const int color)
-                {
-                    if (col < width && row < height)
-                    {
-                        m_frame.at(row * width + col) = color;
-                        m_plots.push_back({col, row});
-                        if (const StandardFractal *calculation{active_standard_fractal()})
-                        {
-                            m_plot_statuses.push_back(calculation->standard_pass_status());
-                        }
-                    }
-                }));
-        initialize_reference({-0.5, 0.0}, 2.0, 1.5);
-        if (GetParam())
-        {
-            float_to_bf(g_bf_x_min, region.m_min.x);
-            float_to_bf(g_bf_x_max, region.m_max.x);
-            float_to_bf(g_bf_y_min, region.m_min.y);
-            float_to_bf(g_bf_y_max, region.m_max.y);
-            copy_bf(g_bf_x_3rd, g_bf_x_min);
-            copy_bf(g_bf_y_3rd, g_bf_y_min);
-        }
-        m_specific.pert_pt = record_perturbation_orbit;
-        m_specific.pert_ref = record_reference;
-        m_specific.pert_ref_bf = record_reference_bf;
-        g_dispatch.set_orbit_calc(record_standard_orbit);
-        s_perturbation_orbit.clear();
-        s_standard_orbit.clear();
-        s_reference_coordinates.clear();
-        s_reference_values.clear();
-    }
+        const ImageRegion &region = {{-2.5, -1.5}, {1.5, 1.5}, {-2.5, -1.5}}, const long iterations = 128);
 
-    void complete(SynchronousOrbit &pass, PertEngine *perturbation = nullptr)
-    {
-        bool done{};
-        for (int chunk = 0; chunk < 20000 && !done; ++chunk)
-        {
-            done = pass.iterate(perturbation);
-        }
-        ASSERT_TRUE(done);
-    }
+    void complete(SynchronousOrbit &pass, PertEngine *perturbation = nullptr);
 
-    void forbid_ordinary_orbits()
-    {
-        g_dispatch.set_orbit_calc([]() -> int { throw std::logic_error("SOI bypassed perturbation"); });
-        s_standard_orbit.clear();
-        m_frame.assign(m_frame.size(), -1);
-        m_plots.clear();
-    }
+    void forbid_ordinary_orbits();
 
     std::vector<int> m_frame;
 };
+
+SynchronousPerturbationTest::SynchronousPerturbationTest(bool use_big_float) :
+    PerturbationIterationTest{use_big_float}
+{
+}
+
+void SynchronousPerturbationTest::prepare(
+    const int width, const int height, const ImageRegion &region, const long iterations)
+{
+    g_screen_x_dots = width;
+    g_screen_y_dots = height;
+    g_logical_screen = {width, height, 0, 0, width - 1.0, height - 1.0};
+    g_image_region = region;
+    g_max_iterations = iterations;
+    m_frame.assign(width * height, -1);
+    EXPECT_CALL(m_driver, write_pixel(_, _, _))
+        .WillRepeatedly(Invoke(
+            [this, width, height](const int col, const int row, const int color)
+            {
+                if (col < width && row < height)
+                {
+                    m_frame.at(row * width + col) = color;
+                    m_plots.push_back({col, row});
+                    if (const StandardFractal *calculation{active_standard_fractal()})
+                    {
+                        m_plot_statuses.push_back(calculation->standard_pass_status());
+                    }
+                }
+            }));
+    initialize_reference({-0.5, 0.0}, 2.0, 1.5);
+    if (m_use_big_float)
+    {
+        float_to_bf(g_bf_x_min, region.m_min.x);
+        float_to_bf(g_bf_x_max, region.m_max.x);
+        float_to_bf(g_bf_y_min, region.m_min.y);
+        float_to_bf(g_bf_y_max, region.m_max.y);
+        copy_bf(g_bf_x_3rd, g_bf_x_min);
+        copy_bf(g_bf_y_3rd, g_bf_y_min);
+    }
+    m_specific.pert_pt = record_perturbation_orbit;
+    m_specific.pert_ref = record_reference;
+    m_specific.pert_ref_bf = record_reference_bf;
+    g_dispatch.set_orbit_calc(record_standard_orbit);
+    s_perturbation_orbit.clear();
+    s_standard_orbit.clear();
+    s_reference_coordinates.clear();
+    s_reference_values.clear();
+}
+
+void SynchronousPerturbationTest::complete(SynchronousOrbit &pass, PertEngine *perturbation)
+{
+    bool done{};
+    for (int chunk = 0; chunk < 20000 && !done; ++chunk)
+    {
+        done = pass.iterate(perturbation);
+    }
+    ASSERT_TRUE(done);
+}
+
+void SynchronousPerturbationTest::forbid_ordinary_orbits()
+{
+    g_dispatch.set_orbit_calc([]() -> int { throw std::logic_error("SOI bypassed perturbation"); });
+    s_standard_orbit.clear();
+    m_frame.assign(m_frame.size(), -1);
+    m_plots.clear();
+}
+
+class TestSynchronousPerturbation : public SynchronousPerturbationTest, public WithParamInterface<bool>
+{
+public:
+    TestSynchronousPerturbation();
+};
+
+TestSynchronousPerturbation::TestSynchronousPerturbation() :
+    SynchronousPerturbationTest{GetParam()}
+{
+}
 
 TEST_P(TestSynchronousPerturbation, scanMatchesOrdinarySoiWithoutCallingTheOrdinaryOrbit)
 {
@@ -10781,16 +10807,47 @@ TEST_P(TestSynchronousPerturbation, unfinishedScanRetainsItsOrbitAcrossReference
     EXPECT_TRUE(s_standard_orbit.empty());
 }
 
-TEST_P(TestSynchronousPerturbation, standardFractalRoutesRequestedAndAutomaticPerturbationIntoSoi)
+struct SynchronousSelectionInput
 {
+    const char *name;
+    bool big_float;
+    PerturbationMode mode;
+};
+
+void PrintTo(const SynchronousSelectionInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestSynchronousSelection : public SynchronousPerturbationTest,
+                                 public WithParamInterface<SynchronousSelectionInput>
+{
+public:
+    TestSynchronousSelection();
+
+protected:
+    void SetUp() override;
+    std::vector<int> m_expected;
+
+private:
+    ValueSaver<UserData> m_saved_user{g_user, UserData{}};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status};
+    ValueSaver<bool> m_saved_resuming{g_resuming, false};
+    ValueSaver<SymmetryType> m_saved_force_symmetry{g_force_symmetry, SymmetryType::NONE};
+};
+
+TestSynchronousSelection::TestSynchronousSelection() :
+    SynchronousPerturbationTest{GetParam().big_float}
+{
+}
+
+void TestSynchronousSelection::SetUp()
+{
+    SynchronousPerturbationTest::SetUp();
     prepare();
     SynchronousOrbit ordinary;
-    complete(ordinary);
-    const std::vector<int> expected{m_frame};
-    ValueSaver saved_user{g_user, UserData{}};
-    ValueSaver saved_status{g_calc_status};
-    ValueSaver saved_resuming{g_resuming, false};
-    ValueSaver saved_force_symmetry{g_force_symmetry, SymmetryType::NONE};
+    ASSERT_NO_FATAL_FAILURE(complete(ordinary));
+    m_expected = m_frame;
     g_std_calc_mode = CalcMode::SYNCHRONOUS_ORBIT;
     m_specific.symmetry = SymmetryType::NONE;
     m_specific.per_image = []
@@ -10798,35 +10855,44 @@ TEST_P(TestSynchronousPerturbation, standardFractalRoutesRequestedAndAutomaticPe
         g_dispatch.set_orbit_calc(record_standard_orbit);
         return true;
     };
-    for (const PerturbationMode mode : {PerturbationMode::YES, PerturbationMode::AUTO})
-    {
-        SCOPED_TRACE(static_cast<int>(mode));
-        const bool requested{mode == PerturbationMode::YES || (mode == PerturbationMode::AUTO && GetParam())};
-        g_user.perturbation = mode;
-        g_calc_status = CalcStatus::PARAMS_CHANGED;
-        m_frame.assign(m_frame.size(), -1);
-        m_plot_statuses.clear();
-        s_perturbation_orbit.clear();
-        s_standard_orbit.clear();
-        StandardFractal calculation;
-        calculation.resume();
-        for (int chunk = 0; chunk < 1000 && !calculation.done(); ++chunk)
-        {
-            calculation.iterate();
-        }
-        ASSERT_TRUE(calculation.done());
-        EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
-        EXPECT_EQ(CalcMode::SYNCHRONOUS_ORBIT, g_std_calc_mode);
-        EXPECT_EQ(requested, !s_perturbation_orbit.empty());
-        EXPECT_EQ(requested, s_standard_orbit.empty());
-        ASSERT_FALSE(m_plot_statuses.empty());
-        for (const StandardPassStatus &status : m_plot_statuses)
-        {
-            EXPECT_EQ(requested, status.perturbation_active);
-        }
-        EXPECT_EQ(expected, m_frame);
-    }
+    g_user.perturbation = GetParam().mode;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    m_frame.assign(m_frame.size(), -1);
+    m_plot_statuses.clear();
+    s_perturbation_orbit.clear();
+    s_standard_orbit.clear();
 }
+
+TEST_P(TestSynchronousSelection, routesRequestedPerturbationIntoSoi)
+{
+    StandardFractal calculation;
+    calculation.resume();
+    for (int chunk = 0; chunk < 1000 && !calculation.done(); ++chunk)
+    {
+        calculation.iterate();
+    }
+
+    const bool requested{GetParam().mode == PerturbationMode::YES ||
+        (GetParam().mode == PerturbationMode::AUTO && GetParam().big_float)};
+    ASSERT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
+    EXPECT_EQ(CalcMode::SYNCHRONOUS_ORBIT, g_std_calc_mode);
+    EXPECT_EQ(requested, !s_perturbation_orbit.empty());
+    EXPECT_EQ(requested, s_standard_orbit.empty());
+    ASSERT_FALSE(m_plot_statuses.empty());
+    for (const StandardPassStatus &status : m_plot_statuses)
+    {
+        EXPECT_EQ(requested, status.perturbation_active);
+    }
+    EXPECT_EQ(m_expected, m_frame);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestSynchronousSelection,
+    Values(SynchronousSelectionInput{"Double_Requested", false, PerturbationMode::YES},
+        SynchronousSelectionInput{"Double_Automatic", false, PerturbationMode::AUTO},
+        SynchronousSelectionInput{"HighPrecision_Requested", true, PerturbationMode::YES},
+        SynchronousSelectionInput{"HighPrecision_Automatic", true, PerturbationMode::AUTO}),
+    [](const TestParamInfo<SynchronousSelectionInput> &info) { return info.param.name; });
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestSynchronousPerturbation, Bool());
 
@@ -10841,8 +10907,11 @@ public:
     MOCK_METHOD(bool, finish, (), (override));
 };
 
-class TestPerturbationOutput : public TestPerturbationIterations
+class PerturbationOutputTest : public PerturbationIterationTest
 {
+public:
+    explicit PerturbationOutputTest(bool use_big_float);
+
 protected:
     void SetUp() override;
     void prepare(const std::complex<double> &center, long iterations = 16, double offset = 0.0);
@@ -10864,9 +10933,14 @@ protected:
     bool m_ready{true};
 };
 
-void TestPerturbationOutput::SetUp()
+PerturbationOutputTest::PerturbationOutputTest(bool use_big_float) :
+    PerturbationIterationTest{use_big_float}
 {
-    TestPerturbationIterations::SetUp();
+}
+
+void PerturbationOutputTest::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     for (std::size_t i = 0; i < m_background.size(); ++i)
     {
         m_background[i] = static_cast<int>(i % 16);
@@ -10883,7 +10957,7 @@ void TestPerturbationOutput::SetUp()
             });
 }
 
-void TestPerturbationOutput::prepare(const std::complex<double> &center, const long iterations, const double offset)
+void PerturbationOutputTest::prepare(const std::complex<double> &center, const long iterations, const double offset)
 {
     m_engine.finish();
     if (m_big_float)
@@ -10903,7 +10977,7 @@ void TestPerturbationOutput::prepare(const std::complex<double> &center, const l
     initialize_reference(center - std::complex<double>{offset, 0.0}, offset);
 }
 
-int TestPerturbationOutput::complete_pixel(const bool incremental)
+int PerturbationOutputTest::complete_pixel(const bool incremental)
 {
     int color{CALC_YIELDED};
     for (int chunk = 0; chunk < 1000 && color == CALC_YIELDED; ++chunk)
@@ -10914,7 +10988,7 @@ int TestPerturbationOutput::complete_pixel(const bool incremental)
     return color;
 }
 
-std::vector<SoundSample> TestPerturbationOutput::expected_samples(const std::complex<double> &center) const
+std::vector<SoundSample> PerturbationOutputTest::expected_samples(const std::complex<double> &center) const
 {
     std::vector<SoundSample> samples;
     std::complex<double> z{center};
@@ -10935,7 +11009,7 @@ std::vector<SoundSample> TestPerturbationOutput::expected_samples(const std::com
     return samples;
 }
 
-void TestPerturbationOutput::expect_samples(const std::vector<SoundSample> &expected) const
+void PerturbationOutputTest::expect_samples(const std::vector<SoundSample> &expected) const
 {
     ASSERT_EQ(expected.size(), m_samples.size());
     for (std::size_t i = 0; i < expected.size(); ++i)
@@ -10947,29 +11021,76 @@ void TestPerturbationOutput::expect_samples(const std::vector<SoundSample> &expe
     }
 }
 
-TEST_P(TestPerturbationOutput, reconstructedSamplesMatchOrbitOrderAndOverlayRestoresBeforePixelOutput)
+class TestPerturbationOutput : public PerturbationOutputTest, public WithParamInterface<bool>
 {
-    for (const std::complex<double> center : {std::complex<double>{-0.5, 0.5}, {0.5, 0.5}})
-    {
-        SCOPED_TRACE(center);
-        prepare(center);
-        g_show_orbit = false;
-        const int expected_color{complete_pixel(false)};
-        const std::array<int, WIDTH * HEIGHT> expected_pixels{m_pixels};
-        prepare(center);
-        g_show_orbit = true;
-        const std::vector<SoundSample> samples{expected_samples(center)};
-        ASSERT_FALSE(samples.empty());
+public:
+    TestPerturbationOutput();
+};
 
-        EXPECT_EQ(expected_color, complete_pixel());
-
-        expect_samples(samples);
-        EXPECT_EQ(1, m_boundaries);
-        EXPECT_FALSE(g_orbit_save_flag);
-        EXPECT_EQ(expected_pixels, m_pixels);
-        EXPECT_EQ(2 * samples.size() + 1, m_plots.size());
-    }
+TestPerturbationOutput::TestPerturbationOutput() :
+    PerturbationOutputTest{GetParam()}
+{
 }
+
+struct OrbitOutputInput
+{
+    const char *name;
+    bool big_float;
+    std::complex<double> center;
+};
+
+void PrintTo(const OrbitOutputInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestReconstructedOrbitOutput : public PerturbationOutputTest, public WithParamInterface<OrbitOutputInput>
+{
+public:
+    TestReconstructedOrbitOutput();
+
+protected:
+    void SetUp() override;
+    int m_expected_color{};
+    std::array<int, WIDTH * HEIGHT> m_expected_pixels{};
+    std::vector<SoundSample> m_expected_samples;
+};
+
+TestReconstructedOrbitOutput::TestReconstructedOrbitOutput() :
+    PerturbationOutputTest{GetParam().big_float}
+{
+}
+
+void TestReconstructedOrbitOutput::SetUp()
+{
+    PerturbationOutputTest::SetUp();
+    prepare(GetParam().center);
+    g_show_orbit = false;
+    m_expected_color = complete_pixel(false);
+    m_expected_pixels = m_pixels;
+    prepare(GetParam().center);
+    g_show_orbit = true;
+    m_expected_samples = expected_samples(GetParam().center);
+    ASSERT_FALSE(m_expected_samples.empty());
+}
+
+TEST_P(TestReconstructedOrbitOutput, restoresOverlayAfterOrderedSamplesBeforePixelOutput)
+{
+    EXPECT_EQ(m_expected_color, complete_pixel());
+
+    expect_samples(m_expected_samples);
+    EXPECT_EQ(1, m_boundaries);
+    EXPECT_FALSE(g_orbit_save_flag);
+    EXPECT_EQ(m_expected_pixels, m_pixels);
+    EXPECT_EQ(2 * m_expected_samples.size() + 1, m_plots.size());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestReconstructedOrbitOutput,
+    Values(OrbitOutputInput{"Double_NegativeCenter", false, {-0.5, 0.5}},
+        OrbitOutputInput{"Double_PositiveCenter", false, {0.5, 0.5}},
+        OrbitOutputInput{"HighPrecision_NegativeCenter", true, {-0.5, 0.5}},
+        OrbitOutputInput{"HighPrecision_PositiveCenter", true, {0.5, 0.5}}),
+    [](const TestParamInfo<OrbitOutputInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationOutput, atomicAndIncrementalOutputHaveIdenticalSamplesAndPlots)
 {
