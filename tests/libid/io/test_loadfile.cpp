@@ -363,6 +363,7 @@ TEST_F(TestGetVideoMode, disabledPendingViewKeepsMatchingGifResumable)
 class TestFindFractalInfo : public Test
 {
 protected:
+    std::filesystem::path test_path() const;
     std::filesystem::path write_file(bool legacy_formula);
     std::filesystem::path write_small_file(
         bool extensions_first = false, int ignored_blocks = 0, const GifFileType *trailing_extensions = nullptr);
@@ -387,10 +388,17 @@ protected:
     std::filesystem::path m_path;
 };
 
+std::filesystem::path TestFindFractalInfo::test_path() const
+{
+    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
+    std::string name{std::string{info->test_suite_name()} + "." + info->name()};
+    std::replace(name.begin(), name.end(), '/', '_');
+    return std::filesystem::temp_directory_path() / ("id-find-fractal-info-" + name + ".gif");
+}
+
 std::filesystem::path TestFindFractalInfo::write_file(const bool legacy_formula)
 {
-    const std::string name{UnitTest::GetInstance()->current_test_info()->name()};
-    m_path = std::filesystem::temp_directory_path() / ("id-find-fractal-info-" + name + ".gif");
+    m_path = test_path();
     int error{};
     std::unique_ptr<GifFileType, void (*)(GifFileType *)> input{DGifOpenFileName(ID_TEST_GIF_EXT3_FILE, &error),
         [](GifFileType *gif)
@@ -448,8 +456,7 @@ std::filesystem::path TestFindFractalInfo::write_file(const bool legacy_formula)
 std::filesystem::path TestFindFractalInfo::write_small_file(
     const bool extensions_first, const int ignored_blocks, const GifFileType *trailing_extensions)
 {
-    const std::string name{UnitTest::GetInstance()->current_test_info()->name()};
-    m_path = std::filesystem::temp_directory_path() / ("id-find-fractal-info-" + name + ".gif");
+    m_path = test_path();
     int error{};
     std::unique_ptr<GifFileType, void (*)(GifFileType *)> output{
         EGifOpenFileName(m_path.string().c_str(), false, &error), [](GifFileType *gif)
@@ -861,31 +868,80 @@ void TestFindPrecisionMetadata::expect_active_image() const
     EXPECT_EQ((std::vector<Byte>{1, 2, 3}), g_resume_data);
 }
 
-TEST_F(TestFindPrecisionMetadata, invalidPayloadSizesDoNotChangeActiveImage)
+struct PrecisionPayloadSize
 {
-    for (const size_t size : {0U, 483U, 485U, 1024U})
-    {
-        SCOPED_TRACE(size);
-        GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
-        add_main_record(16);
-        put_extended_param_info(&m_extensions, std::vector<char>(size, 'a'));
-        const std::filesystem::path path{write_small_file()};
+    const char *name;
+    size_t bytes;
+};
 
-        EXPECT_TRUE(read_file(path));
-        EXPECT_THROW(read_image_metadata(path), std::runtime_error);
-        expect_active_image();
-
-        ImageMetadata metadata;
-        metadata.fractal.fractal_type = +FractalType::MANDEL;
-        metadata.fractal.bf_length = 16;
-        metadata.extended.got_data = true;
-        metadata.extended.apm_data.resize(size);
-        EXPECT_THROW(apply_image_parameters(metadata), std::runtime_error);
-        EXPECT_THROW(apply_image_extensions(metadata), std::runtime_error);
-        expect_active_image();
-        EXPECT_TRUE(std::filesystem::remove(path));
-    }
+void PrintTo(const PrecisionPayloadSize &size, std::ostream *str)
+{
+    *str << size.name;
 }
+
+class TestInvalidPrecisionPayload : public TestFindPrecisionMetadata, public WithParamInterface<PrecisionPayloadSize>
+{
+protected:
+    void SetUp() override;
+    std::filesystem::path write_metadata();
+
+    ImageMetadata m_metadata;
+};
+
+void TestInvalidPrecisionPayload::SetUp()
+{
+    TestFindPrecisionMetadata::SetUp();
+    m_metadata.fractal.fractal_type = +FractalType::MANDEL;
+    m_metadata.fractal.bf_length = 16;
+    m_metadata.extended.got_data = true;
+    m_metadata.extended.apm_data.resize(GetParam().bytes);
+}
+
+std::filesystem::path TestInvalidPrecisionPayload::write_metadata()
+{
+    add_main_record(16);
+    put_extended_param_info(&m_extensions, std::vector<char>(GetParam().bytes, 'a'));
+    return write_small_file();
+}
+
+TEST_P(TestInvalidPrecisionPayload, finderRejectsInvalidPayloadWithoutChangingActiveImage)
+{
+    const std::filesystem::path path{write_metadata()};
+
+    EXPECT_TRUE(read_file(path));
+
+    expect_active_image();
+    EXPECT_TRUE(std::filesystem::remove(path));
+}
+
+TEST_P(TestInvalidPrecisionPayload, metadataReaderRejectsInvalidPayloadWithoutChangingActiveImage)
+{
+    const std::filesystem::path path{write_metadata()};
+
+    EXPECT_THROW(read_image_metadata(path), std::runtime_error);
+
+    expect_active_image();
+    EXPECT_TRUE(std::filesystem::remove(path));
+}
+
+TEST_P(TestInvalidPrecisionPayload, parameterApplicationRejectsInvalidPayloadWithoutChangingActiveImage)
+{
+    EXPECT_THROW(apply_image_parameters(m_metadata), std::runtime_error);
+
+    expect_active_image();
+}
+
+TEST_P(TestInvalidPrecisionPayload, extensionApplicationRejectsInvalidPayloadWithoutChangingActiveImage)
+{
+    EXPECT_THROW(apply_image_extensions(m_metadata), std::runtime_error);
+
+    expect_active_image();
+}
+
+INSTANTIATE_TEST_SUITE_P(PayloadSizes, TestInvalidPrecisionPayload,
+    Values(PrecisionPayloadSize{"Empty", 0}, PrecisionPayloadSize{"Truncated", 483},
+        PrecisionPayloadSize{"Oversized", 485}, PrecisionPayloadSize{"ArenaOverflow", 1024}),
+    [](const TestParamInfo<PrecisionPayloadSize> &info) { return info.param.name; });
 
 TEST_F(TestFindPrecisionMetadata, unsupportedPrecisionDoesNotChangeActiveImage)
 {
