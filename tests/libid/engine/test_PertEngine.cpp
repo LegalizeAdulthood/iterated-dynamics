@@ -2746,37 +2746,114 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestTotalDistanceSample,
         TotalDistanceInput{"HighPrecisionRealAxis", true, {0.5, 0.0}, 4, 1}),
     [](const TestParamInfo<TotalDistanceInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, totalDistanceStartsAtTheInitializedPoint)
+class TestTotalDistanceFixedSeed : public TestTotalDistanceSample
 {
-    g_inside_method = ColorMethod::ITER;
-    g_outside_method = ColorMethod::TDIS;
+protected:
+    void SetUp() override;
+};
+
+void TestTotalDistanceFixedSeed::SetUp()
+{
+    TestTotalDistanceSample::SetUp();
     g_use_init_orbit = InitOrbitMode::VALUE;
     g_init_orbit = {-0.5, 0.0};
-    compare_pixel({0.5, 0.0}, 8);
-    EXPECT_EQ(4, g_real_color_iter);
-    EXPECT_EQ(2, g_color);
-
-    for (const InitOrbitMode mode : {InitOrbitMode::NORMAL, InitOrbitMode::PIXEL, InitOrbitMode::VALUE})
-    {
-        SCOPED_TRACE(static_cast<int>(mode));
-        g_use_init_orbit = mode;
-        g_init_orbit = {-0.5, 0.25};
-        set_initial_offset({-0.25, 0.125});
-        compare_pixel({0.5, 0.5}, 8);
-    }
-    g_use_init_orbit = InitOrbitMode::NORMAL;
-    for (const ColorMethod inside : {ColorMethod::BOF60, ColorMethod::BOF61})
-    {
-        SCOPED_TRACE(static_cast<int>(inside));
-        g_inside_method = inside;
-        for (const bool book_images : {false, true})
-        {
-            SCOPED_TRACE(book_images);
-            g_bof_match_book_images = book_images;
-            compare_pixel({0.5, 0.5}, 8);
-        }
-    }
 }
+
+TEST_P(TestTotalDistanceFixedSeed, startsAtFixedSeed)
+{
+    compare_pixel(GetParam().point, 8);
+
+    EXPECT_EQ(GetParam().expected_iterations, g_real_color_iter);
+    EXPECT_EQ(GetParam().expected_color, g_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestTotalDistanceFixedSeed,
+    Values(TotalDistanceInput{"Double", false, {0.5, 0.0}, 4, 2},
+        TotalDistanceInput{"HighPrecision", true, {0.5, 0.0}, 4, 2}),
+    [](const TestParamInfo<TotalDistanceInput> &info) { return info.param.name; });
+
+struct TotalDistanceOffsetInput
+{
+    const char *name;
+    bool big_float;
+    InitOrbitMode mode;
+};
+
+void PrintTo(const TotalDistanceOffsetInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestTotalDistanceOffset : public PerturbationIterationTest, public WithParamInterface<TotalDistanceOffsetInput>
+{
+public:
+    TestTotalDistanceOffset();
+
+protected:
+    void SetUp() override;
+};
+
+TestTotalDistanceOffset::TestTotalDistanceOffset() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestTotalDistanceOffset::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_inside_method = ColorMethod::ITER;
+    g_outside_method = ColorMethod::TDIS;
+    g_use_init_orbit = GetParam().mode;
+    g_init_orbit = {-0.5, 0.25};
+    set_initial_offset({-0.25, 0.125});
+}
+
+TEST_P(TestTotalDistanceOffset, startsAtOffsetSeed)
+{
+    compare_pixel({0.5, 0.5}, 8);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestTotalDistanceOffset,
+    Values(TotalDistanceOffsetInput{"DoubleNormal", false, InitOrbitMode::NORMAL},
+        TotalDistanceOffsetInput{"DoublePixel", false, InitOrbitMode::PIXEL},
+        TotalDistanceOffsetInput{"DoubleValue", false, InitOrbitMode::VALUE},
+        TotalDistanceOffsetInput{"HighPrecisionNormal", true, InitOrbitMode::NORMAL},
+        TotalDistanceOffsetInput{"HighPrecisionPixel", true, InitOrbitMode::PIXEL},
+        TotalDistanceOffsetInput{"HighPrecisionValue", true, InitOrbitMode::VALUE}),
+    [](const TestParamInfo<TotalDistanceOffsetInput> &info) { return info.param.name; });
+
+class TestTotalDistanceBofSeed : public PerturbationIterationTest, public WithParamInterface<BofInitializationInput>
+{
+public:
+    TestTotalDistanceBofSeed();
+
+protected:
+    void SetUp() override;
+};
+
+TestTotalDistanceBofSeed::TestTotalDistanceBofSeed() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestTotalDistanceBofSeed::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_outside_method = ColorMethod::TDIS;
+    g_use_init_orbit = InitOrbitMode::NORMAL;
+    g_init_orbit = {-0.5, 0.25};
+    set_initial_offset({-0.25, 0.125});
+    g_inside_method = GetParam().method;
+    g_bof_match_book_images = GetParam().book;
+}
+
+TEST_P(TestTotalDistanceBofSeed, startsAtCompatibilitySeed)
+{
+    compare_pixel({0.5, 0.5}, 8);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestTotalDistanceBofSeed, ValuesIn(perturbation_bof_inputs()),
+    [](const TestParamInfo<BofInitializationInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, totalDistanceUsesStandardRangeCorrection)
 {
