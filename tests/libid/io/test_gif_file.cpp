@@ -22,6 +22,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 using namespace id::engine;
 using namespace id::io;
@@ -315,7 +316,11 @@ void TestOpenGIF::SetUp()
 
 void TestOpenGIF::TearDown()
 {
-    DGifCloseFile(m_gif, nullptr);
+    if (m_gif != nullptr)
+    {
+        DGifCloseFile(m_gif, nullptr);
+        m_gif = nullptr;
+    }
     Test::TearDown();
 }
 
@@ -332,6 +337,7 @@ int TestOpenGIF::extension_total(const int begin, const int end) const
 class TestSlurpGIF : public TestOpenGIF
 {
 public:
+    TestSlurpGIF() = default;
     explicit TestSlurpGIF(const char *name);
     ~TestSlurpGIF() override = default;
 
@@ -349,6 +355,7 @@ TestSlurpGIF::TestSlurpGIF(const char *name) :
 void TestSlurpGIF::SetUp()
 {
     TestOpenGIF::SetUp();
+    ASSERT_NE(nullptr, m_gif);
     m_result = DGifSlurp(m_gif);
 }
 
@@ -795,14 +802,84 @@ TEST_F(TestOpenGIF, checkScreen)
     EXPECT_EQ(0, m_gif->ExtensionBlockCount);
 }
 
-TEST_F(TestGIFFractalInfoExtension, check)
+struct GIFLayoutRecord
 {
-    EXPECT_NE(GIF_ERROR, m_result);
-    EXPECT_EQ(3, m_gif->ExtensionBlockCount);
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[0].ByteCount);
-    EXPECT_EQ("fractint001", get_extension_name(0));
-    EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(1, 3));
+    const char *identifier;
+    int header_block;
+    int end_block;
+    int length;
+    int length_multiple{};
+};
+
+struct GIFLayoutInput
+{
+    const char *name;
+    const char *filename;
+    int blocks;
+    std::vector<GIFLayoutRecord> records;
+};
+
+void PrintTo(const GIFLayoutInput &value, std::ostream *str)
+{
+    *str << value.name;
 }
+
+class TestGIFRecordLayout : public TestSlurpGIF, public testing::WithParamInterface<GIFLayoutInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestGIFRecordLayout::SetUp()
+{
+    m_name = GetParam().filename;
+    TestSlurpGIF::SetUp();
+}
+
+TEST_P(TestGIFRecordLayout, preservesOrderedIdentifiersAndPayloadLengths)
+{
+    ASSERT_NE(GIF_ERROR, m_result);
+    ASSERT_EQ(GetParam().blocks, m_gif->ExtensionBlockCount);
+    for (const GIFLayoutRecord &record : GetParam().records)
+    {
+        SCOPED_TRACE(record.identifier);
+        ASSERT_EQ(11, m_gif->ExtensionBlocks[record.header_block].ByteCount);
+        EXPECT_EQ(record.identifier, get_extension_name(record.header_block));
+        const int length{extension_total(record.header_block + 1, record.end_block)};
+        if (record.length_multiple != 0)
+        {
+            EXPECT_EQ(0, length % record.length_multiple);
+        }
+        else
+        {
+            EXPECT_EQ(record.length, length);
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(RecordLayouts, TestGIFRecordLayout,
+    testing::Values(GIFLayoutInput{"FractalInfo", ID_TEST_GIF_EXT1_FILE, 3,
+                        {{"fractint001", 0, 3, GIF_EXTENSION1_FRACTAL_INFO_LENGTH}}},
+        GIFLayoutInput{"ResumeInfo", ID_TEST_GIF_EXT2_FILE, 7,
+            {{"fractint002", 0, 2, GIF_EXTENSION2_RESUME_INFO_LENGTH},
+                {"fractint003", 2, 4, GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH},
+                {"fractint001", 4, 7, GIF_EXTENSION1_FRACTAL_INFO_LENGTH}}},
+        GIFLayoutInput{"ItemName", ID_TEST_GIF_EXT3_FILE, 5,
+            {{"fractint003", 0, 2, GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH},
+                {"fractint001", 2, 5, GIF_EXTENSION1_FRACTAL_INFO_LENGTH}}},
+        GIFLayoutInput{"Ranges", ID_TEST_GIF_EXT4_FILE, 5,
+            {{"fractint004", 0, 2, 5 * 2}, {"fractint001", 2, 5, GIF_EXTENSION1_FRACTAL_INFO_LENGTH}}},
+        // Runtime precision stores 6 + 6 + 10 bignums at a variable digit length.
+        GIFLayoutInput{"BigNumParameters", ID_TEST_GIF_EXT5_FILE, 6,
+            {{"fractint005", 0, 3, 0, 22}, {"fractint001", 3, 6, GIF_EXTENSION1_FRACTAL_INFO_LENGTH}}},
+        GIFLayoutInput{"Evolution", ID_TEST_GIF_EXT6_FILE, 5,
+            {{"fractint006", 0, 2, GIF_EXTENSION6_EVOLVER_INFO_LENGTH},
+                {"fractint001", 2, 5, GIF_EXTENSION1_FRACTAL_INFO_LENGTH}}},
+        GIFLayoutInput{"OrbitSettings", ID_TEST_GIF_EXT7_FILE, 7,
+            {{"fractint002", 0, 2, GIF_EXTENSION2_RESUME_INFO_LENGTH},
+                {"fractint007", 2, 4, GIF_EXTENSION7_ORBIT_INFO_LENGTH},
+                {"fractint001", 4, 7, GIF_EXTENSION1_FRACTAL_INFO_LENGTH}}}),
+    [](const testing::TestParamInfo<GIFLayoutInput> &info) { return info.param.name; });
 
 TEST_F(TestGIFFractalInfoExtension, decode)
 {
@@ -980,21 +1057,6 @@ TEST_P(TestGIFDimensionMetadata, fractalInfoRoundTripsUnsignedDimensions)
     EXPECT_EQ(info.y_trans, info2.y_trans);
 }
 
-TEST_F(TestGIFResumeInfoExtension, check)
-{
-    EXPECT_NE(GIF_ERROR, m_result);
-    EXPECT_EQ(7, m_gif->ExtensionBlockCount);
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[0].ByteCount);
-    EXPECT_EQ("fractint002", get_extension_name(0));
-    EXPECT_EQ(GIF_EXTENSION2_RESUME_INFO_LENGTH, extension_total(1, 2));
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[2].ByteCount);
-    EXPECT_EQ("fractint003", get_extension_name(2));
-    EXPECT_EQ(GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH, extension_total(3, 4));
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[4].ByteCount);
-    EXPECT_EQ("fractint001", get_extension_name(4));
-    EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(5, 7));
-}
-
 TEST_F(TestGIFResumeInfoExtension, decode)
 {
     const std::vector<Byte> bytes{get_resume_info(m_gif)};
@@ -1002,18 +1064,6 @@ TEST_F(TestGIFResumeInfoExtension, decode)
 
     ASSERT_EQ(GIF_EXTENSION2_RESUME_INFO_LENGTH, bytes.size());
     EXPECT_EQ(expected_prefix, (std::vector<Byte>{bytes.begin(), bytes.begin() + expected_prefix.size()}));
-}
-
-TEST_F(TestGIFItemNameInfoExtension, check)
-{
-    EXPECT_NE(GIF_ERROR, m_result);
-    EXPECT_EQ(5, m_gif->ExtensionBlockCount);
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[0].ByteCount);
-    EXPECT_EQ("fractint003", get_extension_name(0));
-    EXPECT_EQ(GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH, extension_total(1, 2));
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[2].ByteCount);
-    EXPECT_EQ("fractint001", get_extension_name(2));
-    EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(3, 5));
 }
 
 TEST_F(TestGIFItemNameInfoExtension, decode)
@@ -1041,20 +1091,6 @@ TEST_F(TestGIFItemNameInfoExtension, encode)
     EXPECT_EQ(info, info2);
 }
 
-TEST_F(TestGIFRangesInfoExtension, check)
-{
-    constexpr int num_ranges = 5;
-    constexpr int GIF_EXTENSION4_RANGES_INFO_LENGTH = num_ranges * 2;
-    EXPECT_NE(GIF_ERROR, m_result);
-    EXPECT_EQ(5, m_gif->ExtensionBlockCount);
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[0].ByteCount);
-    EXPECT_EQ("fractint004", get_extension_name(0));
-    EXPECT_EQ(GIF_EXTENSION4_RANGES_INFO_LENGTH, extension_total(1, 2));
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[2].ByteCount);
-    EXPECT_EQ("fractint001", get_extension_name(2));
-    EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(3, 5));
-}
-
 TEST_F(TestGIFRangesInfoExtension, decode)
 {
     const std::vector info{get_ranges_info(m_gif)};
@@ -1078,20 +1114,6 @@ TEST_F(TestGIFRangesInfoExtension, encode)
     EXPECT_EQ(info1, info2) << VecPrinter(info1) << " != " << VecPrinter(info2);
 }
 
-TEST_F(TestGIFBigNumParametersExtension, check)
-{
-    EXPECT_NE(GIF_ERROR, m_result);
-    EXPECT_EQ(6, m_gif->ExtensionBlockCount);
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[0].ByteCount);
-    EXPECT_EQ("fractint005", get_extension_name(0));
-    // Extension length is determined at runtime based on bignum digit length;
-    // 6 + 6 + 10 bignums are stored in the block.
-    EXPECT_EQ(0, extension_total(1, 3) % 22);
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[3].ByteCount);
-    EXPECT_EQ("fractint001", get_extension_name(3));
-    EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(4, 6));
-}
-
 TEST_F(TestGIFBigNumParametersExtension, decode)
 {
     const std::vector info{get_extended_param_info(m_gif)};
@@ -1108,18 +1130,6 @@ TEST_F(TestGIFBigNumParametersExtension, encode)
 
     const std::vector info2{get_extended_param_info(out)};
     EXPECT_EQ(info, info2);
-}
-
-TEST_F(TestGIFEvolutionInfoExtension, check)
-{
-    EXPECT_NE(GIF_ERROR, m_result);
-    EXPECT_EQ(5, m_gif->ExtensionBlockCount);
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[0].ByteCount);
-    EXPECT_EQ("fractint006", get_extension_name(0));
-    EXPECT_EQ(GIF_EXTENSION6_EVOLVER_INFO_LENGTH, extension_total(1, 2));
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[2].ByteCount);
-    EXPECT_EQ("fractint001", get_extension_name(2));
-    EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(3, 5));
 }
 
 TEST_F(TestGIFEvolutionInfoExtension, decode)
@@ -1182,21 +1192,6 @@ TEST_P(TestGIFDimensionMetadata, evolutionInfoRoundTripsUnsignedDimensions)
 
 INSTANTIATE_TEST_SUITE_P(GifDimension, TestGIFDimensionMetadata,
     testing::Values(std::uint16_t{32767}, std::uint16_t{32768}, std::uint16_t{65535}));
-
-TEST_F(TestGIFOrbitInfoExtension, check)
-{
-    EXPECT_NE(GIF_ERROR, m_result);
-    EXPECT_EQ(7, m_gif->ExtensionBlockCount);
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[0].ByteCount);
-    EXPECT_EQ("fractint002", get_extension_name(0));
-    EXPECT_EQ(GIF_EXTENSION2_RESUME_INFO_LENGTH, extension_total(1, 2));
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[2].ByteCount);
-    EXPECT_EQ("fractint007", get_extension_name(2));
-    EXPECT_EQ(GIF_EXTENSION7_ORBIT_INFO_LENGTH, extension_total(3, 4));
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[4].ByteCount);
-    EXPECT_EQ("fractint001", get_extension_name(4));
-    EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(5, 7));
-}
 
 TEST_F(TestGIFOrbitInfoExtension, decode)
 {
