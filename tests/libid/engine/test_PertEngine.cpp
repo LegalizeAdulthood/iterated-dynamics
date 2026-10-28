@@ -2246,39 +2246,104 @@ TEST_P(TestOutsideAtanScale, usesVersionAndPaletteScale)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideAtanScale, ValuesIn(outside_atan_inputs()),
     [](const TestParamInfo<OutsideAtanInput> &info) { return info.param.name; });
 
-TEST_P(TestPerturbationIterations, specialOutsideFormulasDoNotApplyToInsidePixels)
+std::vector<OutsideTerminalInput> outside_inside_inputs()
 {
-    g_bof_match_book_images = false;
-    for (const ColorMethod outside :
-        {ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT, ColorMethod::SUM, ColorMethod::ATAN})
+    std::vector<OutsideTerminalInput> inputs;
+    for (const bool big_float : {false, true})
     {
-        SCOPED_TRACE(static_cast<int>(outside));
-        g_outside_method = outside;
-        for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::ZMAG, ColorMethod::BOF60, ColorMethod::BOF61})
+        for (const PerturbationColorMethod &outside : SPECIAL_OUTSIDE_METHODS)
         {
-            SCOPED_TRACE(static_cast<int>(inside));
-            g_inside_method = inside;
-            compare_pixel({}, 128);
-            EXPECT_EQ(128, g_real_color_iter);
+            for (const PerturbationColorMethod &inside : ORBIT_INSIDE_METHODS)
+            {
+                inputs.push_back(
+                    {std::string{big_float ? "HighPrecision_" : "Double_"} + outside.name + "_" + inside.name,
+                        big_float, outside.method, inside.method, {}});
+            }
         }
     }
+    return inputs;
 }
 
-TEST_P(TestPerturbationIterations, specialOutsideColorsSurviveReferenceReplacement)
+class TestOutsideInsideColor : public PerturbationIterationTest, public WithParamInterface<OutsideTerminalInput>
 {
+public:
+    TestOutsideInsideColor();
+
+protected:
+    void SetUp() override;
+};
+
+TestOutsideInsideColor::TestOutsideInsideColor() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestOutsideInsideColor::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_bof_match_book_images = false;
+    g_outside_method = GetParam().outside;
+    g_inside_method = GetParam().inside;
+}
+
+TEST_P(TestOutsideInsideColor, leavesInsidePixelsUnchanged)
+{
+    compare_pixel(GetParam().point, 128);
+
+    EXPECT_EQ(128, g_real_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideInsideColor, ValuesIn(outside_inside_inputs()),
+    [](const TestParamInfo<OutsideTerminalInput> &info) { return info.param.name; });
+
+std::vector<OutsideTerminalInput> outside_replacement_inputs()
+{
+    std::vector<OutsideTerminalInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        for (const PerturbationColorMethod &outside : SPECIAL_OUTSIDE_METHODS)
+        {
+            inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + outside.name, big_float,
+                outside.method, ColorMethod::ITER, {-1.0, 1.0}});
+        }
+    }
+    return inputs;
+}
+
+class TestOutsideReferenceReplacement : public PerturbationIterationTest,
+                                        public WithParamInterface<OutsideTerminalInput>
+{
+public:
+    TestOutsideReferenceReplacement();
+
+protected:
+    void SetUp() override;
+};
+
+TestOutsideReferenceReplacement::TestOutsideReferenceReplacement() :
+    PerturbationIterationTest{GetParam().big_float}
+{
+}
+
+void TestOutsideReferenceReplacement::SetUp()
+{
+    PerturbationIterationTest::SetUp();
     g_version = current_id_version();
     init_atan_colors();
-    g_inside_method = ColorMethod::ITER;
+    g_inside_method = GetParam().inside;
     m_engine.set_glitch_tolerance(2.0);
-    for (const ColorMethod outside :
-        {ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT, ColorMethod::SUM, ColorMethod::ATAN})
-    {
-        SCOPED_TRACE(static_cast<int>(outside));
-        g_outside_method = outside;
-        compare_pixel({-1.0, 1.0}, 512, 0.125);
-        EXPECT_GT(m_engine.reference_count(), 1);
-    }
+    g_outside_method = GetParam().outside;
 }
+
+TEST_P(TestOutsideReferenceReplacement, preservesOutsideColor)
+{
+    compare_pixel(GetParam().point, 512, 0.125);
+
+    EXPECT_GT(m_engine.reference_count(), 1);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideReferenceReplacement, ValuesIn(outside_replacement_inputs()),
+    [](const TestParamInfo<OutsideTerminalInput> &info) { return info.param.name; });
 
 TEST_P(TestPerturbationIterations, outsideFmodMatchesAllStandardBailoutMetrics)
 {
