@@ -504,20 +504,64 @@ TEST_F(TestPendingPlasmaStorage, repeatedStorageCompletionIsRejected)
     EXPECT_THROW(m_calculation->complete_potential_storage(false), std::logic_error);
 }
 
-TEST_F(TestPlasma, controllerRequiresStartAndPreservesTheFirstSubdivisionBoundary)
+class TestPlasmaControllerLifecycle : public TestPlasma
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<NonStandardFractal> m_calculation;
+};
+
+void TestPlasmaControllerLifecycle::SetUp()
+{
+    TestPlasma::SetUp();
     g_params[3] = 0;
-    NonStandardFractal calculation;
-    ASSERT_TRUE(calculation.start().empty());
-    ASSERT_EQ(NonStandardFractal::Operation::PLASMA, calculation.select());
-    PlasmaController controller{calculation};
+    m_calculation = std::make_unique<NonStandardFractal>();
+    ASSERT_TRUE(m_calculation->start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::PLASMA, m_calculation->select());
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+}
+
+void TestPlasmaControllerLifecycle::TearDown()
+{
+    m_calculation.reset();
+    TestPlasma::TearDown();
+}
+
+TEST_F(TestPlasmaControllerLifecycle, iterationBeforeStartIsRejected)
+{
+    PlasmaController controller{*m_calculation};
 
     EXPECT_THROW(controller.iterate(), std::logic_error);
+}
+
+TEST_F(TestPlasmaControllerLifecycle, resultBeforeStartIsRejected)
+{
+    PlasmaController controller{*m_calculation};
+
     EXPECT_THROW(controller.result(), std::logic_error);
+}
+
+TEST_F(TestPlasmaControllerLifecycle, suspensionBeforeStartIsRejected)
+{
+    PlasmaController controller{*m_calculation};
+
     EXPECT_THROW(controller.suspend(), std::logic_error);
+}
+
+TEST_F(TestPlasmaControllerLifecycle, duplicateStartIsRejected)
+{
+    PlasmaController controller{*m_calculation};
     controller.start();
+
     EXPECT_THROW(controller.start(), std::logic_error);
+}
+
+TEST_F(TestPlasmaControllerLifecycle, firstIterationPreservesTheSubdivisionBoundary)
+{
+    PlasmaController controller{*m_calculation};
+    controller.start();
     EXPECT_FALSE(controller.done());
     EXPECT_EQ(4, std::count_if(m_pixels.begin(), m_pixels.end(), [](int color) { return color != 0; }));
 
@@ -525,7 +569,17 @@ TEST_F(TestPlasma, controllerRequiresStartAndPreservesTheFirstSubdivisionBoundar
 
     EXPECT_GT(std::count_if(m_pixels.begin(), m_pixels.end(), [](int color) { return color != 0; }), 4);
     EXPECT_FALSE(controller.done());
+}
+
+TEST_F(TestPlasmaControllerLifecycle, suspensionCompletesTheController)
+{
+    PlasmaController controller{*m_calculation};
+    controller.start();
+    controller.iterate();
+    ASSERT_FALSE(controller.done());
+
     controller.suspend();
+
     EXPECT_TRUE(controller.done());
     EXPECT_EQ(1, controller.result());
 }
