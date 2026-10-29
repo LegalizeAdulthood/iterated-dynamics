@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <ui/thinking.h>
 
@@ -25,6 +26,8 @@ namespace id::ui
 class TestThinking : public Test
 {
 protected:
+    void TearDown() override;
+
     void expect_initial_display(const char *message)
     {
         InSequence sequence;
@@ -42,6 +45,11 @@ protected:
     MockDriver m_driver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
 };
+
+void TestThinking::TearDown()
+{
+    thinking_end();
+}
 
 TEST_F(TestThinking, displaysPaddedMessage)
 {
@@ -72,7 +80,6 @@ TEST_F(TestThinking, updatesSpinnerAfterDelay)
     EXPECT_TRUE(thinking("work"));
 
     EXPECT_CALL(m_driver, unstack_screen());
-    thinking_end();
 }
 
 } // namespace id::ui
