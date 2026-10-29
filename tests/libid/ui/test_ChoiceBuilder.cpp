@@ -480,27 +480,40 @@ TEST_F(TestChoiceBuilderPrompting, floatChoice)
     EXPECT_EQ(1, builder.count());
 }
 
-TEST_F(TestChoiceBuilderPrompting, doubleChoice)
+class TestChoiceBuilderDoublePrompt : public TestChoiceBuilderPrompting
 {
-    ChoiceBuilder<1, Shim> builder;
-    expect_choice_value("x parameter range (across screen)", has_double_number(123.456));
+protected:
+    void expect_double_choice(int display_len = 0);
 
-    builder.double_number("x parameter range (across screen)", 123.456);
-    builder.prompt("Evolution Mode Options", 255);
+    static constexpr const char *CHOICE{"x parameter range (across screen)"};
+    static constexpr double VALUE{123.456};
+    ChoiceBuilder<1, Shim> m_builder;
+};
 
-    EXPECT_EQ(1, builder.count());
+void TestChoiceBuilderDoublePrompt::expect_double_choice(const int display_len)
+{
+    expect_choice_value(CHOICE, has_double_number(VALUE, display_len));
 }
 
-TEST_F(TestChoiceBuilderPrompting, doubleChoiceWithDisplayLength)
+TEST_F(TestChoiceBuilderDoublePrompt, defaultDisplayLength)
 {
-    ChoiceBuilder<1, Shim> builder;
+    expect_double_choice();
+
+    m_builder.double_number(CHOICE, VALUE);
+    m_builder.prompt("Evolution Mode Options", 255);
+
+    EXPECT_EQ(1, m_builder.count());
+}
+
+TEST_F(TestChoiceBuilderDoublePrompt, explicitDisplayLength)
+{
     constexpr int display_len{14};
-    expect_choice_value("x parameter range (across screen)", has_double_number(123.456, display_len));
+    expect_double_choice(display_len);
 
-    builder.double_number("x parameter range (across screen)", 123.456, display_len);
-    builder.prompt("Evolution Mode Options", 255);
+    m_builder.double_number(CHOICE, VALUE, display_len);
+    m_builder.prompt("Evolution Mode Options", 255);
 
-    EXPECT_EQ(1, builder.count());
+    EXPECT_EQ(1, m_builder.count());
 }
 
 TEST_F(TestChoiceBuilderPrompting, intDoubleChoice)
