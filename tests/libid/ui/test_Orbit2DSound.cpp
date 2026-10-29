@@ -101,6 +101,15 @@ protected:
     void load_legacy_state(
         Orbit2D &calculation, int count, long iteration, double x = 1.0, double y = 1.0, double z = 1.0);
 
+    struct ControllerRun
+    {
+        explicit ControllerRun(const SoundOutputPtr &output);
+
+        SoundSession sound;
+        NonStandardFractal calculation;
+        OrbitController controller;
+    };
+
     MockDriver m_driver;
     std::shared_ptr<StrictMock<MockOrbit2DSound>> m_output{std::make_shared<StrictMock<MockOrbit2DSound>>()};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
@@ -499,52 +508,124 @@ TEST_P(TestOrbit2DSound, driverRefusalStillRecordsMappedFrequenciesWithoutWaitin
         read_text(m_directory / "sound/sound001.txt"));
 }
 
-TEST_P(TestOrbit2DSound, stepwiseControllerAdvancesOnePointPerCall)
+TestOrbit2DSound::ControllerRun::ControllerRun(const SoundOutputPtr &output) :
+    sound{output},
+    controller{calculation, sound}
 {
-    SoundSession sound{m_output};
-    NonStandardFractal calculation;
     calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
-    OrbitController controller{calculation, sound};
-    EXPECT_THROW(controller.iterate(), std::logic_error);
-    EXPECT_THROW(controller.result(), std::logic_error);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
+    if (calculation.select() != NonStandardFractal::Operation::ORBIT_2D)
+    {
+        throw std::logic_error("Unexpected selected orbit operation");
+    }
+}
+
+TEST_P(TestOrbit2DSound, iterateBeforeControllerStartIsRejected)
+{
+    ControllerRun run{m_output};
     EXPECT_CALL(*m_output, mute()).Times(0);
 
-    controller.start();
+    EXPECT_THROW(run.controller.iterate(), std::logic_error);
 
-    EXPECT_FALSE(controller.done());
+    EXPECT_TRUE(run.sound.finish(SoundSession::InputPolicy::ATOMIC));
+}
+
+TEST_P(TestOrbit2DSound, resultBeforeControllerStartIsRejected)
+{
+    ControllerRun run{m_output};
+    EXPECT_CALL(*m_output, mute()).Times(0);
+
+    EXPECT_THROW(run.controller.result(), std::logic_error);
+
+    EXPECT_TRUE(run.sound.finish(SoundSession::InputPolicy::ATOMIC));
+}
+
+TEST_P(TestOrbit2DSound, suspendBeforeControllerStartIsRejected)
+{
+    ControllerRun run{m_output};
+    EXPECT_CALL(*m_output, mute()).Times(0);
+
+    EXPECT_THROW(run.controller.suspend(), std::logic_error);
+
+    EXPECT_TRUE(run.sound.finish(SoundSession::InputPolicy::ATOMIC));
+}
+
+TEST_P(TestOrbit2DSound, duplicateControllerStartIsRejected)
+{
+    ControllerRun run{m_output};
+    run.controller.start();
+    EXPECT_CALL(*m_output, mute()).Times(0);
+
+    EXPECT_THROW(run.controller.start(), std::logic_error);
+
+    EXPECT_TRUE(run.sound.finish(SoundSession::InputPolicy::ATOMIC));
+}
+
+TEST_P(TestOrbit2DSound, suspendAfterControllerCompletionIsRejected)
+{
+    ControllerRun run{m_output};
+    run.controller.start();
+    EXPECT_CALL(*m_output, mute()).Times(0);
+    for (int steps = 0; steps < 10 && !run.controller.done(); ++steps)
+    {
+        run.controller.iterate();
+    }
+    ASSERT_TRUE(run.controller.done());
+
+    EXPECT_THROW(run.controller.suspend(), std::logic_error);
+
+    run.calculation.finish(false);
+}
+
+TEST_P(TestOrbit2DSound, iterateAfterControllerCompletionDoesNotRepeatWork)
+{
+    ControllerRun run{m_output};
+    run.controller.start();
+    EXPECT_CALL(*m_output, mute()).Times(0);
+    for (int steps = 0; steps < 10 && !run.controller.done(); ++steps)
+    {
+        run.controller.iterate();
+    }
+    ASSERT_TRUE(run.controller.done());
+
+    run.controller.iterate();
+
+    EXPECT_EQ(3, s_math_calls);
+    EXPECT_EQ(expected_samples(), m_samples);
+    EXPECT_FALSE(dispatch_keyboard_key('x'));
+    run.calculation.finish(false);
+}
+
+TEST_P(TestOrbit2DSound, stepwiseControllerAdvancesOnePointPerCall)
+{
+    ControllerRun run{m_output};
+    EXPECT_CALL(*m_output, mute()).Times(0);
+
+    run.controller.start();
+
+    EXPECT_FALSE(run.controller.done());
     EXPECT_TRUE(m_samples.empty());
     EXPECT_EQ(0, s_math_calls);
-    EXPECT_THROW(controller.start(), std::logic_error);
-    controller.iterate();
+    run.controller.iterate();
     ASSERT_EQ(1U, m_samples.size());
     EXPECT_EQ(expected_samples()[0], m_samples[0]);
     EXPECT_EQ(1, s_math_calls);
-    EXPECT_FALSE(controller.done());
-    for (int steps = 0; steps < 10 && !controller.done(); ++steps)
+    EXPECT_FALSE(run.controller.done());
+    for (int steps = 0; steps < 10 && !run.controller.done(); ++steps)
     {
-        controller.iterate();
+        run.controller.iterate();
     }
-    ASSERT_TRUE(controller.done());
-    EXPECT_EQ(0, controller.result());
-    EXPECT_TRUE(calculation.completed());
+    ASSERT_TRUE(run.controller.done());
+    EXPECT_EQ(0, run.controller.result());
+    EXPECT_TRUE(run.calculation.completed());
     EXPECT_EQ(expected_samples(), m_samples);
-    controller.iterate();
-    EXPECT_EQ(3, s_math_calls);
     EXPECT_FALSE(dispatch_keyboard_key('x'));
-    EXPECT_THROW(controller.suspend(), std::logic_error);
-    calculation.finish(false);
+    run.calculation.finish(false);
 }
 
 TEST_P(TestOrbit2DSound, stepwiseControllerRetriesRefusedPointWithoutRepeatingMath)
 {
-    SoundSession sound{m_output};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
-    OrbitController controller{calculation, sound};
-    controller.start();
+    ControllerRun run{m_output};
+    run.controller.start();
     EXPECT_CALL(*m_output, play(_))
         .WillOnce(Invoke(
             [this](const SoundSample &)
@@ -559,80 +640,68 @@ TEST_P(TestOrbit2DSound, stepwiseControllerRetriesRefusedPointWithoutRepeatingMa
                 return true;
             }));
 
-    controller.iterate();
+    run.controller.iterate();
 
-    EXPECT_FALSE(controller.done());
+    EXPECT_FALSE(run.controller.done());
     EXPECT_EQ(0, s_math_calls);
     EXPECT_TRUE(m_samples.empty());
     EXPECT_TRUE(m_points.empty());
     EXPECT_TRUE(m_lines.empty());
     EXPECT_CALL(*m_output, update()).WillRepeatedly(Invoke([this] { m_ready = true; }));
-    controller.iterate();
+    run.controller.iterate();
     EXPECT_EQ(1, s_math_calls);
-    for (int steps = 0; steps < 10 && !controller.done(); ++steps)
+    for (int steps = 0; steps < 10 && !run.controller.done(); ++steps)
     {
-        controller.iterate();
+        run.controller.iterate();
     }
-    ASSERT_TRUE(controller.done());
-    EXPECT_EQ(0, controller.result());
+    ASSERT_TRUE(run.controller.done());
+    EXPECT_EQ(0, run.controller.result());
     EXPECT_EQ(expected_samples(), m_samples);
     EXPECT_EQ(3, s_math_calls);
-    calculation.finish(false);
+    run.calculation.finish(false);
 }
 
 TEST_P(TestOrbit2DSound, stepwiseControllerSuspendsAndResumesAfterAcceptedPoint)
 {
     EXPECT_CALL(*m_output, mute()).Times(1);
     {
-        SoundSession sound{m_output};
-        NonStandardFractal calculation;
-        calculation.start();
-        ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
-        OrbitController controller{calculation, sound};
-        controller.start();
-        controller.iterate();
+        ControllerRun first{m_output};
+        first.controller.start();
+        first.controller.iterate();
         ASSERT_EQ(1, s_math_calls);
 
-        controller.suspend();
+        first.controller.suspend();
 
-        EXPECT_TRUE(controller.done());
-        EXPECT_EQ(-1, controller.result());
+        EXPECT_TRUE(first.controller.done());
+        EXPECT_EQ(-1, first.controller.result());
         EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
         EXPECT_FALSE(dispatch_keyboard_key('x'));
     }
-    SoundSession sound{m_output};
-    NonStandardFractal resumed;
-    resumed.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, resumed.select());
-    OrbitController controller{resumed, sound};
-    controller.start();
-    for (int steps = 0; steps < 10 && !controller.done(); ++steps)
+    ControllerRun resumed{m_output};
+    resumed.controller.start();
+    for (int steps = 0; steps < 10 && !resumed.controller.done(); ++steps)
     {
-        controller.iterate();
+        resumed.controller.iterate();
     }
-    ASSERT_TRUE(controller.done());
-    EXPECT_EQ(0, controller.result());
+    ASSERT_TRUE(resumed.controller.done());
+    EXPECT_EQ(0, resumed.controller.result());
     EXPECT_EQ(expected_samples(), m_samples);
     EXPECT_EQ(3, s_math_calls);
-    resumed.finish(false);
+    resumed.calculation.finish(false);
 }
 
 TEST_P(TestOrbit2DSound, stepwiseControllerFailureClosesCalculationAndReleasesHandler)
 {
-    SoundSession sound{m_output};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
-    OrbitController controller{calculation, sound};
-    controller.start();
+    ControllerRun run{m_output};
+    run.controller.start();
     EXPECT_CALL(*m_output, play(_)).WillOnce(Throw(std::runtime_error("Playback failed")));
     EXPECT_CALL(*m_output, mute()).Times(1);
 
-    EXPECT_THROW(controller.iterate(), std::runtime_error);
+    EXPECT_THROW(run.controller.iterate(), std::runtime_error);
 
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(run.controller.done());
+    EXPECT_EQ(-1, run.controller.result());
+    EXPECT_TRUE(run.calculation.done());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(0, s_math_calls);
     EXPECT_FALSE(dispatch_keyboard_key('x'));
@@ -640,27 +709,23 @@ TEST_P(TestOrbit2DSound, stepwiseControllerFailureClosesCalculationAndReleasesHa
 
 TEST_P(TestOrbit2DSound, stepwiseControllerFinalizationFailureDoesNotMuteClosedOutput)
 {
-    SoundSession sound{m_output};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_2D, calculation.select());
-    OrbitController controller{calculation, sound};
-    controller.start();
+    ControllerRun run{m_output};
+    run.controller.start();
     EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Close failed")));
     EXPECT_CALL(*m_output, mute()).Times(0);
 
     EXPECT_THROW(
         {
-            for (int steps = 0; steps < 10 && !controller.done(); ++steps)
+            for (int steps = 0; steps < 10 && !run.controller.done(); ++steps)
             {
-                controller.iterate();
+                run.controller.iterate();
             }
         },
         std::runtime_error);
 
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(run.controller.done());
+    EXPECT_EQ(-1, run.controller.result());
+    EXPECT_TRUE(run.calculation.done());
     EXPECT_EQ(3, s_math_calls);
     EXPECT_FALSE(dispatch_keyboard_key('x'));
 }
