@@ -34,6 +34,7 @@
 #include <array>
 #include <chrono>
 #include <filesystem>
+#include <memory>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -136,17 +137,35 @@ void TestPlasma::prepare_storage()
     start_disk_storage(7, 14, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
 }
 
-TEST_F(TestPlasma, constructionNormalizesConfigurationWithoutStorageOrPixels)
+class TestUninitializedPlasma : public TestPlasma
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<Plasma> m_plasma;
+};
+
+void TestUninitializedPlasma::SetUp()
+{
+    TestPlasma::SetUp();
     g_params[0] = 1.2;
     g_params[1] = 2.0;
     g_params[2] = 2.0;
     g_params[3] = 2.0;
+    m_plasma = std::make_unique<Plasma>();
+}
 
-    Plasma plasma;
+void TestUninitializedPlasma::TearDown()
+{
+    m_plasma.reset();
+    TestPlasma::TearDown();
+}
 
-    EXPECT_TRUE(plasma.potential_storage_required());
-    EXPECT_FALSE(plasma.done());
+TEST_F(TestUninitializedPlasma, constructionNormalizesConfigurationWithoutStorageOrPixels)
+{
+    EXPECT_TRUE(m_plasma->potential_storage_required());
+    EXPECT_FALSE(m_plasma->done());
     EXPECT_FALSE(g_disk_flag);
     EXPECT_EQ(put_color_a, g_plot);
     EXPECT_EQ(1.125, g_params[0]);
@@ -154,7 +173,11 @@ TEST_F(TestPlasma, constructionNormalizesConfigurationWithoutStorageOrPixels)
     EXPECT_EQ(1.0, g_params[2]);
     EXPECT_EQ(1.0, g_params[3]);
     EXPECT_TRUE(std::all_of(m_pixels.begin(), m_pixels.end(), [](int color) { return color == 0; }));
-    EXPECT_THROW(plasma.iterate(), std::logic_error);
+}
+
+TEST_F(TestUninitializedPlasma, iterationBeforeInitializationIsRejected)
+{
+    EXPECT_THROW(m_plasma->iterate(), std::logic_error);
 }
 
 TEST_F(TestPlasma, preparedStorageReceivesBothBytesWithLogicalOffsets)
