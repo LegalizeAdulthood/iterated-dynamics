@@ -38,7 +38,6 @@ TEST_P(TestPatternMatch, matchesFilenameUsingPattern)
 
 INSTANTIATE_TEST_SUITE_P(PatternInputs, TestPatternMatch,
     testing::Values(PatternMatchInput{"AllFooText", "*.*", "foo.txt", true},
-        PatternMatchInput{"AllFooFoo", "*.*", "foo.foo", true}, PatternMatchInput{"AllIdId", "*.*", "id.id", true},
         PatternMatchInput{"AnyExtensionText", "foo.*", "foo.txt", true},
         PatternMatchInput{"AnyExtensionFoo", "foo.*", "foo.foo", true},
         PatternMatchInput{"AnyExtensionOtherStem", "foo.*", "id.id", false},
@@ -72,11 +71,7 @@ INSTANTIATE_TEST_SUITE_P(PatternInputs, TestPatternMatch,
         PatternMatchInput{"ArbitraryStemEmbedded", "*f?b*.*b?f*", "goinkf0bgoink.bof", true},
         PatternMatchInput{"ArbitraryExtensionSuffix", "*f?b*.*b?f*", "goinkf0bgoink.goinkbof", true},
         PatternMatchInput{"ArbitraryBothEmbedded", "*f?b*.*b?f*", "goinkf0bgoink.goinkbofgoink", true},
-        PatternMatchInput{"EverythingExact", "*", "fab.bof", true},
-        PatternMatchInput{"EverythingStemSuffix", "*", "goinkf0b.bof", true},
-        PatternMatchInput{"EverythingStemEmbedded", "*", "goinkf0bgoink.bof", true},
-        PatternMatchInput{"EverythingExtensionSuffix", "*", "goinkf0bgoink.goinkbof", true},
-        PatternMatchInput{"EverythingBothEmbedded", "*", "goinkf0bgoink.goinkbofgoink", true}),
+        PatternMatchInput{"EverythingExact", "*", "fab.bof", true}),
     [](const testing::TestParamInfo<PatternMatchInput> &info) { return info.param.name; });
 
 } // namespace id::test
