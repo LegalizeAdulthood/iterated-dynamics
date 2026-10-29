@@ -270,11 +270,26 @@ TEST(TestSlideShow, rowWaitAcceptsANamedKeyAtTheCurrentRow)
     stop_slide_show();
 }
 
-TEST(TestSlideShow, fastInputDoesNotApplyTypingDelaysAfterWaitCommands)
+struct SlideShowFastWaitInput
+{
+    const char *name;
+    const char *command;
+};
+
+void PrintTo(const SlideShowFastWaitInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestSlideShowFastWait : public TestWithParam<SlideShowFastWaitInput>
+{
+};
+
+TEST_P(TestSlideShowFastWait, preservesFastTypingAfterWait)
 {
     TempDir temp_dir;
     const fs::path input_path{temp_dir.path() / "fast.key"};
-    write_text_file(input_path, "FAST\nWAIT 0\nCALCWAIT\nENTER\nENTER\n");
+    write_text_file(input_path, std::string{"FAST\n"} + GetParam().command + "\nENTER\nENTER\n");
     MockDriver driver;
     ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
     ValueSaver saved_auto_name{g_auto_name, input_path};
@@ -286,12 +301,15 @@ TEST(TestSlideShow, fastInputDoesNotApplyTypingDelaysAfterWaitCommands)
 
     EXPECT_EQ(0, slide_show());
     EXPECT_EQ(0, slide_show());
-    EXPECT_EQ(0, slide_show());
     EXPECT_EQ(ID_KEY_ENTER, slide_show());
     EXPECT_EQ(ID_KEY_ENTER, slide_show());
 
     stop_slide_show();
 }
+
+INSTANTIATE_TEST_SUITE_P(Command, TestSlideShowFastWait,
+    Values(SlideShowFastWaitInput{"TimedWait", "WAIT 0"}, SlideShowFastWaitInput{"CalculationWait", "CALCWAIT"}),
+    [](const TestParamInfo<SlideShowFastWaitInput> &info) { return info.param.name; });
 
 struct SlideShowIterationWaitInput
 {
