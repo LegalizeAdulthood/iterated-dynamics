@@ -2840,24 +2840,49 @@ TEST_F(TestFrothyBasinController, stepwiseControllerPreservesCalculationIncremen
     calculation.finish(false);
 }
 
-TEST_F(TestFrothyBasinController, stepwiseSuspensionScrubsOverlayAndRetainsUnfinishedPixel)
+struct FrothySuspensionInput
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, calculation.select());
-    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
+    const char *name;
+    bool overlay;
+    int next_col;
+};
+
+void PrintTo(const FrothySuspensionInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestFrothySuspension : public TestPreparedFrothyController, public WithParamInterface<FrothySuspensionInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestFrothySuspension::SetUp()
+{
+    g_start_show_orbit = GetParam().overlay;
+    TestPreparedFrothyController::SetUp();
     EXPECT_CALL(*m_output, mute());
     EXPECT_CALL(*m_output, finish()).Times(0);
-    FrothyBasinController controller{calculation, sound};
-    controller.start();
-    controller.iterate();
-    ASSERT_TRUE(g_orbit_save_flag);
+    m_controller->start();
+    m_controller->iterate();
+    if (GetParam().overlay)
+    {
+        ASSERT_TRUE(g_orbit_save_flag);
+    }
+    else
+    {
+        ASSERT_EQ(1, m_plots);
+    }
+}
 
-    controller.suspend();
+TEST_P(TestFrothySuspension, suspensionRetainsTheUnfinishedPixel)
+{
+    m_controller->suspend();
 
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
+    EXPECT_TRUE(m_calculation->done());
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
     EXPECT_FALSE(g_orbit_save_flag);
     EXPECT_FALSE(dispatch_keyboard_key('o'));
@@ -2866,35 +2891,13 @@ TEST_F(TestFrothyBasinController, stepwiseSuspensionScrubsOverlayAndRetainsUnfin
     int col{-1};
     get_resume(row, col);
     EXPECT_EQ(0, row);
-    EXPECT_EQ(0, col);
+    EXPECT_EQ(GetParam().next_col, col);
 }
 
-TEST_F(TestFrothyBasinController, stepwisePixelSuspensionRetainsNextUnfinishedPixel)
-{
-    g_start_show_orbit = false;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, calculation.select());
-    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
-    EXPECT_CALL(*m_output, mute());
-    EXPECT_CALL(*m_output, finish()).Times(0);
-    FrothyBasinController controller{calculation, sound};
-    controller.start();
-    controller.iterate();
-    ASSERT_EQ(1, m_plots);
-
-    controller.suspend();
-
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
-    ASSERT_EQ(1, start_resume());
-    int row{-1};
-    int col{-1};
-    get_resume(row, col);
-    EXPECT_EQ(0, row);
-    EXPECT_EQ(1, col);
-}
+INSTANTIATE_TEST_SUITE_P(Checkpoints, TestFrothySuspension,
+    Values(FrothySuspensionInput{"OverlayWithinFirstPixel", true, 0},
+        FrothySuspensionInput{"CompletedFirstPixel", false, 1}),
+    [](const TestParamInfo<FrothySuspensionInput> &info) { return info.param.name; });
 
 TEST_F(TestPreparedFrothyController, stepwiseOrbitToggleDoesNotInterruptImage)
 {
