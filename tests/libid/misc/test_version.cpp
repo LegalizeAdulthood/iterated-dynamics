@@ -108,40 +108,67 @@ INSTANTIATE_TEST_SUITE_P(Components, TestVersionParameterFormat,
         VersionTextInput{"AllFields", {5, 6, 7, 8, false}, "5/6/7/8"}),
     [](const testing::TestParamInfo<VersionTextInput> &info) { return info.param.name; });
 
-TEST(TestVersion, parseLegacyVersionMajor)
+struct LegacyVersionParseInput
 {
-    const Version result{parse_legacy_version(100)};
+    const char *name;
+    int encoded;
+    Version expected;
+};
 
-    EXPECT_TRUE(result.legacy);
-    EXPECT_EQ(1, result.major);
-    EXPECT_EQ(0, result.minor);
-    EXPECT_EQ(0, result.patch);
-    EXPECT_EQ(0, result.tweak);
+void PrintTo(const LegacyVersionParseInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestVersion, parseLegacyVersionMajorMinor)
+class TestLegacyVersionParsing : public testing::TestWithParam<LegacyVersionParseInput>
 {
-    const Version result{parse_legacy_version(1401)};
+};
 
-    EXPECT_TRUE(result.legacy);
-    EXPECT_EQ(14, result.major);
-    EXPECT_EQ(1, result.minor);
-    EXPECT_EQ(0, result.patch);
-    EXPECT_EQ(0, result.tweak);
+TEST_P(TestLegacyVersionParsing, decodesVersionComponents)
+{
+    const Version result{parse_legacy_version(GetParam().encoded)};
+
+    EXPECT_EQ(GetParam().expected, result);
 }
+
+INSTANTIATE_TEST_SUITE_P(Encoded, TestLegacyVersionParsing,
+    testing::Values(LegacyVersionParseInput{"Major", 100, {1, 0, 0, 0, true}},
+        LegacyVersionParseInput{"MajorMinor", 1401, {14, 1, 0, 0, true}}),
+    [](const testing::TestParamInfo<LegacyVersionParseInput> &info) { return info.param.name; });
 
 inline std::ostream &operator<<(std::ostream &str, const Version &value)
 {
     return str << (value.legacy ? "legacy{" : "id{") << to_string(value) << '}';
 }
 
-TEST(TestVersion, legacyVersionLessThanIdVersion)
+struct OrderedVersionPairInput
 {
-    const Version lhs{parse_legacy_version(1401)};
-    const Version rhs{1, 0, 0, 0, false};
+    const char *name;
+    Version left;
+    Version right;
+};
 
-    EXPECT_LT(lhs, rhs);
+void PrintTo(const OrderedVersionPairInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestVersionOrdering : public testing::TestWithParam<OrderedVersionPairInput>
+{
+};
+
+TEST_P(TestVersionOrdering, comparesVersionOrder)
+{
+    EXPECT_LT(GetParam().left, GetParam().right);
+}
+
+INSTANTIATE_TEST_SUITE_P(Components, TestVersionOrdering,
+    testing::Values(OrderedVersionPairInput{"LegacyBeforeId", parse_legacy_version(1401), {1, 0, 0, 0, false}},
+        OrderedVersionPairInput{"LegacyMajor", parse_legacy_version(1301), parse_legacy_version(1401)},
+        OrderedVersionPairInput{"LegacyMinor", parse_legacy_version(1301), parse_legacy_version(1306)},
+        OrderedVersionPairInput{"Patch", {1, 1, 0, 0, false}, {1, 1, 1, 0, false}},
+        OrderedVersionPairInput{"Tweak", {1, 1, 1, 0, false}, {1, 1, 1, 1, false}}),
+    [](const testing::TestParamInfo<OrderedVersionPairInput> &info) { return info.param.name; });
 
 TEST(TestVersion, idVersionGreaterThanLegacyVersion)
 {
@@ -158,45 +185,38 @@ TEST(TestVersion, versionGreaterThanLegacyInteger)
     EXPECT_GT(lhs, 2002);
 }
 
-TEST(TestVersion, legacyLesserMajorVersion)
+struct EqualVersionPairInput
 {
-    const Version lhs{parse_legacy_version(1301)};
-    const Version rhs{parse_legacy_version(1401)};
+    const char *name;
+    Version left;
+    Version right;
+    bool equal;
+};
 
-    EXPECT_LT(lhs, rhs);
+void PrintTo(const EqualVersionPairInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestVersion, legacyLesserMinorVersion)
+class TestVersionEquality : public testing::TestWithParam<EqualVersionPairInput>
 {
-    const Version lhs{parse_legacy_version(1301)};
-    const Version rhs{parse_legacy_version(1306)};
+};
 
-    EXPECT_LT(lhs, rhs);
+TEST_P(TestVersionEquality, comparesVersionEquality)
+{
+    EXPECT_EQ(GetParam().equal, GetParam().left == GetParam().right);
+    EXPECT_EQ(!GetParam().equal, GetParam().left != GetParam().right);
 }
 
-TEST(TestVersion, lesserPatchVersion)
-{
-    const Version lhs{1, 1, 0, 0, false};
-    const Version rhs{1, 1, 1, 0, false};
-
-    EXPECT_LT(lhs, rhs);
-}
-
-TEST(TestVersion, lesserTweakVersion)
-{
-    const Version lhs{1, 1, 1, 0, false};
-    const Version rhs{1, 1, 1, 1, false};
-
-    EXPECT_LT(lhs, rhs);
-}
-
-TEST(TestVersion, legacyVersionNotEqualIdVersion)
-{
-    const Version lhs{1, 0, 0, 0, true};
-    const Version rhs{1, 0, 0, 0, false};
-
-    EXPECT_NE(lhs, rhs);
-}
+INSTANTIATE_TEST_SUITE_P(Components, TestVersionEquality,
+    testing::Values(EqualVersionPairInput{"LegacyLeft", {1, 0, 0, 0, true}, {1, 0, 0, 0, false}, false},
+        EqualVersionPairInput{"LegacyRight", {1, 0, 0, 0, false}, {1, 0, 0, 0, true}, false},
+        EqualVersionPairInput{"Same", {1, 0, 0, 0, false}, {1, 0, 0, 0, false}, true},
+        EqualVersionPairInput{"Major", {1, 0, 0, 0, false}, {2, 0, 0, 0, false}, false},
+        EqualVersionPairInput{"Minor", {1, 0, 0, 0, false}, {1, 1, 0, 0, false}, false},
+        EqualVersionPairInput{"Patch", {1, 1, 0, 0, false}, {1, 1, 1, 0, false}, false},
+        EqualVersionPairInput{"Tweak", {1, 1, 1, 0, false}, {1, 1, 1, 1, false}, false}),
+    [](const testing::TestParamInfo<EqualVersionPairInput> &info) { return info.param.name; });
 
 class TestVersionDisplayFormat : public testing::TestWithParam<VersionTextInput>
 {
@@ -214,58 +234,5 @@ INSTANTIATE_TEST_SUITE_P(Components, TestVersionDisplayFormat,
         VersionTextInput{"Patch", {1, 0, 1, 0, false}, "Id v1.0.1"},
         VersionTextInput{"Tweak", {1, 0, 0, 1, false}, "Id v1.0.0.1"}),
     [](const testing::TestParamInfo<VersionTextInput> &info) { return info.param.name; });
-
-TEST(TestVersion, legacyDifferentFromId)
-{
-    constexpr Version lhs{Version{1, 0, 0, 0, false}};
-    constexpr Version rhs{Version{1, 0, 0, 0, true}};
-
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
-}
-
-TEST(TestVersion, sameVersionsEqual)
-{
-    constexpr Version ver{Version{1, 0, 0, 0, false}};
-
-    EXPECT_TRUE(ver == ver);
-    EXPECT_FALSE(ver != ver);
-}
-
-TEST(TestVersion, majorVersionDifferent)
-{
-    constexpr Version lhs{Version{1, 0, 0, 0, false}};
-    constexpr Version rhs{Version{2, 0, 0, 0, false}};
-
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
-}
-
-TEST(TestVersion, minorVersionDifferent)
-{
-    constexpr Version lhs{Version{1, 0, 0, 0, false}};
-    constexpr Version rhs{Version{1, 1, 0, 0, false}};
-
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
-}
-
-TEST(TestVersion, patchVersionDifferent)
-{
-    constexpr Version lhs{Version{1, 1, 0, 0, false}};
-    constexpr Version rhs{Version{1, 1, 1, 0, false}};
-
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
-}
-
-TEST(TestVersion, tweakVersionDifferent)
-{
-    constexpr Version lhs{Version{1, 1, 1, 0, false}};
-    constexpr Version rhs{Version{1, 1, 1, 1, false}};
-
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
-}
 
 } // namespace id::test
