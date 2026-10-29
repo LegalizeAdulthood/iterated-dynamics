@@ -126,63 +126,51 @@ TEST(TestStringCaseCompare, prefixIsLess)
     EXPECT_GT(0, string_case_compare("frac", "fractint"));
 }
 
-TEST(TestStringCaseEqualCount, firstStringEmpty)
+struct StringCaseCountedEqualityInput
 {
-    constexpr char buffer[80]{"foo"};
+    const char *name;
+    const char *left;
+    const char *right;
+    std::size_t count;
+    bool expected;
+};
 
-    EXPECT_FALSE(string_case_equal("", buffer, sizeof(buffer)));
+void PrintTo(const StringCaseCountedEqualityInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestStringCaseEqualCount, secondStringEmpty)
+class TestStringCaseEqualCount : public CountedStringOperands,
+                                 public testing::WithParamInterface<StringCaseCountedEqualityInput>
 {
-    constexpr char buffer[80]{"foo"};
+protected:
+    void SetUp() override;
+};
 
-    EXPECT_FALSE(string_case_equal(buffer, "", sizeof(buffer)));
+void TestStringCaseEqualCount::SetUp()
+{
+    set_operands(GetParam().left, GetParam().right);
 }
 
-TEST(TestStringCaseEqualCount, firstStringExhaustedEqual)
+TEST_P(TestStringCaseEqualCount, comparesEquality)
 {
-    constexpr char buffer[]{"foo"};
+    const bool result{string_case_equal(m_left.data(), m_right.data(), GetParam().count)};
 
-    EXPECT_TRUE(string_case_equal(buffer, "foobar", sizeof(buffer) - 1));
+    EXPECT_EQ(GetParam().expected, result);
 }
 
-TEST(TestStringCaseEqualCount, secondStringExhaustedEqual)
-{
-    constexpr char buffer[]{"foo"};
-
-    EXPECT_TRUE(string_case_equal("foobar", buffer, sizeof(buffer) - 1));
-}
-
-TEST(TestStringCaseEqualCount, zeroLengthAlwaysEqual)
-{
-    EXPECT_TRUE(string_case_equal("foo", "bar", 0));
-}
-
-TEST(TestStringCaseEqualCount, differOnlyByCaseEqual)
-{
-    EXPECT_TRUE(string_case_equal("foo", "FoO", 3));
-}
-
-TEST(TestStringCaseEqualCount, differNotZero)
-{
-    EXPECT_FALSE(string_case_equal("foo", "bar", 3));
-}
-
-TEST(TestStringCaseEqualCount, lessNegative)
-{
-    EXPECT_FALSE(string_case_equal("bar", "foo", 3));
-}
-
-TEST(TestStringCaseEqualCount, greaterPositive)
-{
-    EXPECT_FALSE(string_case_equal("foo", "bar", 3));
-}
-
-TEST(TestStringCaseEqualCount, prefixIsLessCount)
-{
-    EXPECT_FALSE(string_case_equal("frac", "fractint", 8));
-}
+INSTANTIATE_TEST_SUITE_P(Operands, TestStringCaseEqualCount,
+    testing::Values(StringCaseCountedEqualityInput{"firstStringEmpty", "", "foo", 80, false},
+        StringCaseCountedEqualityInput{"secondStringEmpty", "foo", "", 80, false},
+        StringCaseCountedEqualityInput{"firstStringExhaustedEqual", "foo", "foobar", 3, true},
+        StringCaseCountedEqualityInput{"secondStringExhaustedEqual", "foobar", "foo", 3, true},
+        StringCaseCountedEqualityInput{"zeroLengthAlwaysEqual", "foo", "bar", 0, true},
+        StringCaseCountedEqualityInput{"differOnlyByCaseEqual", "foo", "FoO", 3, true},
+        StringCaseCountedEqualityInput{"differNotZero", "foo", "bar", 3, false},
+        StringCaseCountedEqualityInput{"lessNegative", "bar", "foo", 3, false},
+        StringCaseCountedEqualityInput{"greaterPositive", "foo", "bar", 3, false},
+        StringCaseCountedEqualityInput{"prefixIsLessCount", "frac", "fractint", 8, false}),
+    [](const testing::TestParamInfo<StringCaseCountedEqualityInput> &info) { return info.param.name; });
 
 TEST(TestStringCaseEqual, firstStringEmptyEqual)
 {
