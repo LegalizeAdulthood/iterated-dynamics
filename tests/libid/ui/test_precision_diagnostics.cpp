@@ -90,11 +90,23 @@ TEST_F(TestPrecisionDiagnostics, formatsDoubleCornersAndPixelDeltasWithoutInput)
     EXPECT_TRUE(g_precision_diagnostics.empty());
 }
 
-TEST_F(TestPrecisionDiagnostics, formatsArbitraryPrecisionCornersAndSavedCorners)
+TEST_F(TestPrecisionDiagnostics, formatsBigNumCorners)
 {
     EXPECT_THAT(format_corners_bn("bn"), AllOf(StartsWith("bn\n"), HasSubstr("x_min_bn=-2.")));
+}
+
+TEST_F(TestPrecisionDiagnostics, formatsBigFloatCorners)
+{
     EXPECT_THAT(format_corners_bf("bf"), AllOf(StartsWith("bf\n"), HasSubstr("bf_y_min=-1.5")));
+}
+
+TEST_F(TestPrecisionDiagnostics, formatsSavedBigFloatCorners)
+{
     EXPECT_THAT(format_corners_bf_save("saved"), AllOf(StartsWith("saved\n"), HasSubstr("bf_save_x_max=2.0")));
+}
+
+TEST_F(TestPrecisionDiagnostics, formatsBigFloatGlobals)
+{
     EXPECT_THAT(
         format_globals_bf("globals"), AllOf(StartsWith("globals\n"), HasSubstr("bn_step=4"), HasSubstr("decimals=20")));
 }
