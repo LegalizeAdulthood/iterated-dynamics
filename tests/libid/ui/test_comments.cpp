@@ -19,6 +19,7 @@
 
 #include <ctime>
 #include <iomanip>
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -92,12 +93,38 @@ TEST_F(TestComments, expandCpu)
     EXPECT_EQ("; rendered on Intel Core i9 CPU", result);
 }
 
-TEST_F(TestComments, emptyString)
+struct CommentTextInput
 {
+    const char *name;
+    const char *input;
+    std::string expected;
+};
+
+void PrintTo(const CommentTextInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestLiteralCommentInputs : public TestComments, public WithParamInterface<CommentTextInput>
+{
+};
+
+TEST_P(TestLiteralCommentInputs, expandsLiteralAndEscapedText)
+{
+    g_par_comment[0] = GetParam().input;
+
     const std::string &result{expand_command_comment(0)};
 
-    EXPECT_TRUE(result.empty());
+    EXPECT_EQ(GetParam().expected, result);
 }
+
+INSTANTIATE_TEST_SUITE_P(Text, TestLiteralCommentInputs,
+    Values(CommentTextInput{"Empty", "", ""},
+        CommentTextInput{"Underscores", "every_word_separated_with_underscore", "every word separated with underscore"},
+        CommentTextInput{"EscapedUnderscore", R"(escaped\_underscore)", "escaped_underscore"},
+        CommentTextInput{"EscapedDollar", R"(escaped\$_dollar)", "escaped$ dollar"},
+        CommentTextInput{"EscapedBackslash", R"(escaped\\_backslash)", R"(escaped\ backslash)"}),
+    [](const TestParamInfo<CommentTextInput> &info) { return info.param.name; });
 
 TEST_F(TestComments, parseCommentsSplitsSlashDelimitedValues)
 {
@@ -116,150 +143,71 @@ TEST_F(TestComments, parseCommentsTruncatesToLegacyLimit)
     EXPECT_EQ("tail", g_par_comment[1]);
 }
 
-TEST_F(TestComments, replaceUnderscoresWithSpaces)
+struct CommentCalculationTimeInput
 {
-    g_par_comment[0] = "every_word_separated_with_underscore";
+    const char *name;
+    long centiseconds;
+    const char *expected;
+};
 
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ("every word separated with underscore", result);
+void PrintTo(const CommentCalculationTimeInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestComments, escapedUnderscore)
+class TestCommentCalculationTime : public TestComments, public WithParamInterface<CommentCalculationTimeInput>
 {
-    g_par_comment[0] = R"(escaped\_underscore)";
+};
 
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ("escaped_underscore", result);
-}
-
-TEST_F(TestComments, escapedDollar)
+TEST_P(TestCommentCalculationTime, expandsElapsedTime)
 {
-    g_par_comment[0] = R"(escaped\$_dollar)";
-
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ("escaped$ dollar", result);
-}
-
-TEST_F(TestComments, escapedBackslash)
-{
-    g_par_comment[0] = R"(escaped\\_backslash)";
-
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ(R"(escaped\ backslash)", result);
-}
-
-TEST_F(TestComments, expandZeroCalcTime)
-{
-    g_calc_time = 0;
+    g_calc_time = GetParam().centiseconds;
     g_par_comment[0] = "$calctime$";
 
     const std::string &result{expand_command_comment(0)};
 
-    EXPECT_EQ("  0:00:00.00", result);
+    EXPECT_EQ(GetParam().expected, result);
 }
 
-TEST_F(TestComments, expandHundredthsSecondsCalcTime)
+INSTANTIATE_TEST_SUITE_P(Duration, TestCommentCalculationTime,
+    Values(CommentCalculationTimeInput{"Zero", 0, "  0:00:00.00"},
+        CommentCalculationTimeInput{"Hundredths", 42, "  0:00:00.42"},
+        CommentCalculationTimeInput{"Seconds", 42 * 100 + 42, "  0:00:42.42"},
+        CommentCalculationTimeInput{"Minutes", (42 * 60 + 42) * 100 + 42, "  0:42:42.42"},
+        CommentCalculationTimeInput{"Hours", ((4 * 60 + 42) * 60 + 42) * 100 + 42, "  4:42:42.42"},
+        CommentCalculationTimeInput{"Days", (((4 * 24 + 4) * 60 + 42) * 60 + 42) * 100 + 42, "100:42:42.42"}),
+    [](const TestParamInfo<CommentCalculationTimeInput> &info) { return info.param.name; });
+
+class TestCommentMetadata : public TestComments, public WithParamInterface<CommentTextInput>
 {
-    g_calc_time = 42;
-    g_par_comment[0] = "$calctime$";
+protected:
+    void SetUp() override;
+};
 
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ("  0:00:00.42", result);
-}
-
-TEST_F(TestComments, expandSecondsCalcTime)
+void TestCommentMetadata::SetUp()
 {
-    g_calc_time = 42 * 100 + 42;
-    g_par_comment[0] = "$calctime$";
-
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ("  0:00:42.42", result);
-}
-
-TEST_F(TestComments, expandMinutesCalcTime)
-{
-    g_calc_time = (42 * 60 + 42) * 100 + 42;
-    g_par_comment[0] = "$calctime$";
-
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ("  0:42:42.42", result);
-}
-
-TEST_F(TestComments, expandHoursCalcTime)
-{
-    g_calc_time = ((4 * 60 + 42) * 60 + 42) * 100 + 42;
-    g_par_comment[0] = "$calctime$";
-
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ("  4:42:42.42", result);
-}
-
-TEST_F(TestComments, expandDaysCalcTime)
-{
-    g_calc_time = (((4 * 24 + 4) * 60 + 42) * 60 + 42) * 100 + 42;
-    g_par_comment[0] = "$calctime$";
-
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ("100:42:42.42", result);
-}
-
-TEST_F(TestComments, expandVersion)
-{
+    TestComments::SetUp();
     g_version = parse_legacy_version(1730);
-    g_par_comment[0] = "$version$";
-
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ(to_string(current_id_version()), result);
-}
-
-TEST_F(TestComments, expandPatch)
-{
-    g_par_comment[0] = "$patch$";
-
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ(std::to_string(current_id_version().patch), result);
-}
-
-TEST_F(TestComments, expandXDots)
-{
     g_logical_screen.x_dots = 1964;
-    g_par_comment[0] = "$xdots$";
-
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ("1964", result);
-}
-
-TEST_F(TestComments, expandYDots)
-{
     g_logical_screen.y_dots = 1964;
-    g_par_comment[0] = "$ydots$";
-
-    const std::string &result{expand_command_comment(0)};
-
-    EXPECT_EQ("1964", result);
-}
-
-TEST_F(TestComments, expandVidKey)
-{
     g_video_entry_key = ID_KEY_F6;
-    g_par_comment[0] = "$vidkey$";
+}
+
+TEST_P(TestCommentMetadata, expandsMetadataToken)
+{
+    g_par_comment[0] = GetParam().input;
 
     const std::string &result{expand_command_comment(0)};
 
-    EXPECT_EQ("F6", result);
+    EXPECT_EQ(GetParam().expected, result);
 }
+
+INSTANTIATE_TEST_SUITE_P(Token, TestCommentMetadata,
+    Values(CommentTextInput{"Version", "$version$", to_string(current_id_version())},
+        CommentTextInput{"Patch", "$patch$", std::to_string(current_id_version().patch)},
+        CommentTextInput{"XDots", "$xdots$", "1964"}, CommentTextInput{"YDots", "$ydots$", "1964"},
+        CommentTextInput{"VideoKey", "$vidkey$", "F6"}),
+    [](const TestParamInfo<CommentTextInput> &info) { return info.param.name; });
 
 TEST_F(TestComments, expandYear)
 {
