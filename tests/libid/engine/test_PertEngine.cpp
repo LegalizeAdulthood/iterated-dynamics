@@ -2489,7 +2489,6 @@ std::vector<OutsideFmodInput> outside_fmod_inputs()
         {"ProximityNegativeSixteen", -16.0, 256, 0, 4},
         {"PaletteFour", 16.0, 4, 0, std::nullopt},
         {"PaletteSixteen", 16.0, 16, 2, std::nullopt},
-        {"PaletteTwoHundredFiftySix", 16.0, 256, 46, std::nullopt},
     };
 
     std::vector<OutsideFmodInput> inputs;
