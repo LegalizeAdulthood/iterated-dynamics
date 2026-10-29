@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <ui/main_menu_switch.h>
 
@@ -45,13 +46,17 @@ TEST_F(TestMainMenuSwitch, nothingChangedOnLowerCaseM)
     EXPECT_FALSE(m_context.stacked);
 }
 
-TEST_F(TestMainMenuSwitch, quickCalcResetOnImageCompleted)
+class TestMainMenuSwitchQuickCalc : public TestMainMenuSwitch, public WithParamInterface<CalcStatus>
 {
-    ValueSaver saved_quick_calc{g_quick_calc, true};
-    ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
-    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, CalcMode::SOLID_GUESS};
-    ValueSaver saved_old_std_calc_mode{g_old_std_calc_mode, CalcMode::ONE_PASS};
+protected:
+    ValueSaver<bool> m_saved_quick_calc{g_quick_calc, true};
+    ValueSaver<CalcStatus> m_saved_status{g_calc_status, GetParam()};
+    ValueSaver<CalcMode> m_saved_mode{g_user.std_calc_mode, CalcMode::SOLID_GUESS};
+    ValueSaver<CalcMode> m_saved_old_mode{g_old_std_calc_mode, CalcMode::ONE_PASS};
+};
 
+TEST_P(TestMainMenuSwitchQuickCalc, restoresCalculationMode)
+{
     const CommandResult result{execute('m')};
 
     EXPECT_EQ(CommandResult::IGNORED, result);
@@ -59,26 +64,12 @@ TEST_F(TestMainMenuSwitch, quickCalcResetOnImageCompleted)
     EXPECT_FALSE(m_context.from_mandel);
     EXPECT_FALSE(m_context.more_keys);
     EXPECT_FALSE(m_context.stacked);
-    EXPECT_FALSE(g_quick_calc);
+    EXPECT_EQ(GetParam() != CalcStatus::COMPLETED, g_quick_calc);
     EXPECT_EQ(CalcMode::ONE_PASS, g_user.std_calc_mode);
 }
 
-TEST_F(TestMainMenuSwitch, userCalcModeResetOnQuickCalcImageNotComplete)
-{
-    ValueSaver saved_quick_calc{g_quick_calc, true};
-    ValueSaver saved_calc_status{g_calc_status, CalcStatus::IN_PROGRESS};
-    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, CalcMode::SOLID_GUESS};
-    ValueSaver saved_old_std_calc_mode{g_old_std_calc_mode, CalcMode::ONE_PASS};
-
-    const CommandResult result{execute('m')};
-
-    EXPECT_EQ(CommandResult::IGNORED, result);
-    EXPECT_EQ('m', m_context.key);
-    EXPECT_FALSE(m_context.from_mandel);
-    EXPECT_FALSE(m_context.more_keys);
-    EXPECT_FALSE(m_context.stacked);
-    EXPECT_TRUE(g_quick_calc);
-    EXPECT_EQ(CalcMode::ONE_PASS, g_user.std_calc_mode);
-}
+INSTANTIATE_TEST_SUITE_P(Status, TestMainMenuSwitchQuickCalc, Values(CalcStatus::COMPLETED, CalcStatus::IN_PROGRESS),
+    [](const TestParamInfo<CalcStatus> &info)
+    { return info.param == CalcStatus::COMPLETED ? "Completed" : "InProgress"; });
 
 } // namespace id::test
