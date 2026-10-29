@@ -160,17 +160,19 @@ INSTANTIATE_TEST_SUITE_P(Query, TestHelpTopicLookup,
         TopicTitleLookupInput{"Missing", "  \"Missing Topic\"   ", -1}),
     [](const testing::TestParamInfo<TopicTitleLookupInput> &info) { return info.param.name; });
 
-TEST_F(TestHelpSource, readSourceParsesQuotedDocContentsAndFormatsToc)
+constexpr char QUOTED_DOC_CONTENTS[]{"~DocContents\n"
+                                     "{1.   , 0, \"Quoted Topic\", \"Second Topic\", FF}\n"
+                                     "{1.1  , 1, LabelTopic}\n"
+                                     "~Topic=Quoted Topic\n"
+                                     "First body.\n"
+                                     "~Topic=Second Topic\n"
+                                     "Second body.\n"
+                                     "~Topic=LabelTopic\n"
+                                     "Label body.\n"};
+
+TEST_F(TestHelpSource, parsesQuotedDocContentsMetadata)
 {
-    read_source("~DocContents\n"
-                "{1.   , 0, \"Quoted Topic\", \"Second Topic\", FF}\n"
-                "{1.1  , 1, LabelTopic}\n"
-                "~Topic=Quoted Topic\n"
-                "First body.\n"
-                "~Topic=Second Topic\n"
-                "Second body.\n"
-                "~Topic=LabelTopic\n"
-                "Label body.\n");
+    read_source(QUOTED_DOC_CONTENTS);
 
     EXPECT_EQ(0, g_errors);
     EXPECT_EQ(0, g_warnings);
@@ -186,7 +188,14 @@ TEST_F(TestHelpSource, readSourceParsesQuotedDocContentsAndFormatsToc)
     EXPECT_FALSE(entry.is_label[1]);
     EXPECT_EQ("Second Topic", entry.topic_name[1]);
     EXPECT_NE(0, entry.flags & CF_NEW_PAGE);
+}
 
+TEST_F(TestHelpSource, formatsQuotedDocContentsToc)
+{
+    read_source(QUOTED_DOC_CONTENTS);
+
+    EXPECT_EQ(0, g_errors);
+    EXPECT_EQ(0, g_warnings);
     ASSERT_FALSE(g_src.topics.empty());
     const Topic &toc_topic{g_src.topics[0]};
     const std::string toc_text{toc_topic.get_topic_text(), toc_topic.text_len};
@@ -206,19 +215,26 @@ TEST_F(TestHelpSource, readSourceWarnsForLongTopicTitle)
     EXPECT_EQ(long_title, g_src.topics[0].title);
 }
 
-TEST_F(TestHelpSource, readSourceReportsEmptyLabelAndWarnsForLongLabel)
+TEST_F(TestHelpSource, rejectsEmptyLabel)
+{
+    read_source("~Topic=Base\n"
+                "~Label=\n"
+                "Body.\n");
+
+    EXPECT_EQ(1, g_errors);
+    EXPECT_EQ(0, g_warnings);
+    EXPECT_EQ(nullptr, g_src.find_label(""));
+}
+
+TEST_F(TestHelpSource, warnsForLongLabel)
 {
     const std::string long_label(33, 'L');
     read_source("~Topic=Base\n"
-                "~Label=\n"
                 "~Label=" +
-        long_label +
-        "\n"
-        "Body.\n");
+        long_label + "\nBody.\n");
 
-    EXPECT_EQ(1, g_errors);
+    EXPECT_EQ(0, g_errors);
     EXPECT_EQ(1, g_warnings);
-    EXPECT_EQ(nullptr, g_src.find_label(""));
     ASSERT_NE(nullptr, g_src.find_label(long_label.c_str()));
 }
 
