@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <ui/history.h>
 
@@ -72,16 +73,26 @@ static std::string read_file_contents(const std::filesystem::path &path)
     return str.str();
 }
 
-TEST_F(TestHistory, restoresVersionAndFileVersion)
+class TestHistoryRestore : public TestHistory
+{
+protected:
+    void SetUp() override;
+};
+
+void TestHistoryRestore::SetUp()
+{
+    TestHistory::SetUp();
+    EXPECT_CALL(m_driver, write_palette());
+    EXPECT_CALL(m_driver, delay(_)).Times(0);
+}
+
+TEST_F(TestHistoryRestore, restoresVersionAndFileVersion)
 {
     g_version = parse_legacy_version(1730);
     g_file_version = parse_legacy_version(2004);
     save_history_info();
     g_version = current_id_version();
     g_file_version = current_id_version();
-
-    EXPECT_CALL(m_driver, write_palette());
-    EXPECT_CALL(m_driver, delay(_)).Times(0);
 
     restore_history_info(g_history_ptr);
 
@@ -105,23 +116,24 @@ TEST_F(TestHistory, dumpsVersionAndFileVersion)
     EXPECT_THAT(text, Not(HasSubstr(R"json("release":)json")));
 }
 
-TEST_F(TestHistory, restoresLegacyFloat)
+class TestHistoryLegacyFloat : public TestHistoryRestore, public WithParamInterface<bool>
 {
-    ValueSaver saved_legacy_float{g_user.legacy_float};
-    for (const bool legacy_float : {false, true})
-    {
-        g_history_ptr = -1;
-        g_user.legacy_float = legacy_float;
-        save_history_info();
-        g_user.legacy_float = !legacy_float;
+protected:
+    ValueSaver<bool> m_saved_legacy_float{g_user.legacy_float};
+};
 
-        EXPECT_CALL(m_driver, write_palette());
-        EXPECT_CALL(m_driver, delay(_)).Times(0);
+TEST_P(TestHistoryLegacyFloat, restoresSavedSetting)
+{
+    g_user.legacy_float = GetParam();
+    save_history_info();
+    g_user.legacy_float = !GetParam();
 
-        restore_history_info(g_history_ptr);
+    restore_history_info(g_history_ptr);
 
-        EXPECT_EQ(legacy_float, g_user.legacy_float);
-    }
+    EXPECT_EQ(GetParam(), g_user.legacy_float);
 }
+
+INSTANTIATE_TEST_SUITE_P(Setting, TestHistoryLegacyFloat, Values(false, true),
+    [](const TestParamInfo<bool> &info) { return info.param ? "Enabled" : "Disabled"; });
 
 } // namespace id::test
