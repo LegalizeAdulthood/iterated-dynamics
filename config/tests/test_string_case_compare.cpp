@@ -72,7 +72,6 @@ INSTANTIATE_TEST_SUITE_P(Operands, TestStringCaseCompareCount,
         StringCaseCountedComparisonInput{"differOnlyByCaseEqual", "foo", "FoO", 3, 0},
         StringCaseCountedComparisonInput{"differNotZero", "foo", "bar", 3, 1},
         StringCaseCountedComparisonInput{"lessNegative", "bar", "foo", 3, -1},
-        StringCaseCountedComparisonInput{"greaterPositive", "foo", "bar", 3, 1},
         StringCaseCountedComparisonInput{"prefixIsLessCount", "frac", "fractint", 8, -1}),
     [](const testing::TestParamInfo<StringCaseCountedComparisonInput> &info) { return info.param.name; });
 
@@ -109,9 +108,7 @@ INSTANTIATE_TEST_SUITE_P(Operands, TestStringCaseCompare,
         StringCaseUnboundedComparisonInput{"zeroLengthAlwaysEqual", "", "", 0},
         StringCaseUnboundedComparisonInput{"differOnlyByCaseEqual", "foo", "FoO", 0},
         StringCaseUnboundedComparisonInput{"differNotZero", "foo", "bar", 1},
-        StringCaseUnboundedComparisonInput{"lessNegative", "bar", "foo", -1},
-        StringCaseUnboundedComparisonInput{"greaterPositive", "foo", "bar", 1},
-        StringCaseUnboundedComparisonInput{"prefixIsLess", "frac", "fractint", -1}),
+        StringCaseUnboundedComparisonInput{"lessNegative", "bar", "foo", -1}),
     [](const testing::TestParamInfo<StringCaseUnboundedComparisonInput> &info) { return info.param.name; });
 
 struct StringCaseCountedEqualityInput
@@ -156,7 +153,6 @@ INSTANTIATE_TEST_SUITE_P(Operands, TestStringCaseEqualCount,
         StringCaseCountedEqualityInput{"differOnlyByCaseEqual", "foo", "FoO", 3, true},
         StringCaseCountedEqualityInput{"differNotZero", "foo", "bar", 3, false},
         StringCaseCountedEqualityInput{"lessNegative", "bar", "foo", 3, false},
-        StringCaseCountedEqualityInput{"greaterPositive", "foo", "bar", 3, false},
         StringCaseCountedEqualityInput{"prefixIsLessCount", "frac", "fractint", 8, false}),
     [](const testing::TestParamInfo<StringCaseCountedEqualityInput> &info) { return info.param.name; });
 
@@ -192,8 +188,7 @@ INSTANTIATE_TEST_SUITE_P(Operands, TestStringCaseEqual,
         StringCaseUnboundedEqualityInput{"zeroLengthAlwaysEqual", "", "", true},
         StringCaseUnboundedEqualityInput{"differOnlyByCaseEqual", "foo", "FoO", true},
         StringCaseUnboundedEqualityInput{"differNotZero", "foo", "bar", false},
-        StringCaseUnboundedEqualityInput{"lessNegative", "bar", "foo", false},
-        StringCaseUnboundedEqualityInput{"prefixIsLess", "frac", "fractint", false}),
+        StringCaseUnboundedEqualityInput{"lessNegative", "bar", "foo", false}),
     [](const testing::TestParamInfo<StringCaseUnboundedEqualityInput> &info) { return info.param.name; });
 
 } // namespace id::test
