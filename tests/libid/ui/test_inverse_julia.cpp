@@ -697,12 +697,24 @@ TEST_F(TestInverseJuliaIncremental, stepwiseControllerAdvancesOnePointPerIterati
     calculation.finish(false);
 }
 
-TEST_F(TestInverseJuliaQueue, stepwiseControllerTogglesOrbitsAndReturnsCommandsBeforeAnotherPoint)
+class TestInverseJuliaKeyboard : public TestInverseJuliaQueue
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<NonStandardFractal> m_calculation;
+    std::unique_ptr<InverseJuliaFractalController> m_controller;
+    int m_pending_key{};
+};
+
+void TestInverseJuliaKeyboard::SetUp()
+{
+    TestInverseJuliaQueue::SetUp();
     set_fractal_type(FractalType::INVERSE_JULIA);
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    m_calculation = std::make_unique<NonStandardFractal>();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, m_calculation->select());
     g_dispatch.set_orbit_calc(
         []
         {
@@ -710,30 +722,79 @@ TEST_F(TestInverseJuliaQueue, stepwiseControllerTogglesOrbitsAndReturnsCommandsB
             return 0;
         });
     g_new_z = {};
-    InverseJuliaFractalController controller{calculation};
-    controller.start();
-    int pending_key{'o'};
-    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Invoke([&pending_key] { return pending_key; }));
-    EXPECT_CALL(m_driver, get_key()).WillRepeatedly(Invoke([&pending_key] { return std::exchange(pending_key, 0); }));
-    EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([&pending_key](int key) { pending_key = key; }));
+    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Invoke([this] { return m_pending_key; }));
+    EXPECT_CALL(m_driver, get_key()).WillRepeatedly(Invoke([this] { return std::exchange(m_pending_key, 0); }));
+    m_controller = std::make_unique<InverseJuliaFractalController>(*m_calculation);
+    m_controller->start();
+}
 
-    controller.iterate();
+void TestInverseJuliaKeyboard::TearDown()
+{
+    m_controller.reset();
+    m_calculation.reset();
+    TestInverseJuliaQueue::TearDown();
+}
 
-    EXPECT_TRUE(g_show_orbit);
-    EXPECT_DOUBLE_EQ(1.0, g_new_z.x);
-    EXPECT_FALSE(controller.done());
+struct InverseJuliaToggleInput
+{
+    const char *name;
+    int key;
+    bool initial_orbit;
+    int prior_points;
+    double expected_x;
+};
+
+void PrintTo(const InverseJuliaToggleInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestInverseJuliaOrbitToggle : public TestInverseJuliaKeyboard, public WithParamInterface<InverseJuliaToggleInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestInverseJuliaOrbitToggle::SetUp()
+{
+    TestInverseJuliaKeyboard::SetUp();
+    g_show_orbit = GetParam().initial_orbit;
+    for (int point = 0; point < GetParam().prior_points; ++point)
+    {
+        m_controller->iterate();
+    }
+}
+
+TEST_P(TestInverseJuliaOrbitToggle, togglesOrbitsWithoutInterrupting)
+{
+    m_pending_key = GetParam().key;
+
+    m_controller->iterate();
+
+    EXPECT_EQ(!GetParam().initial_orbit, g_show_orbit);
+    EXPECT_DOUBLE_EQ(GetParam().expected_x, g_new_z.x);
+    EXPECT_FALSE(m_controller->done());
     EXPECT_FALSE(calc_interrupt_requested());
-    pending_key = 'O';
-    controller.iterate();
-    EXPECT_FALSE(g_show_orbit);
+}
+
+INSTANTIATE_TEST_SUITE_P(Key, TestInverseJuliaOrbitToggle,
+    Values(InverseJuliaToggleInput{"LowercaseEnables", 'o', false, 0, 1.0},
+        InverseJuliaToggleInput{"UppercaseDisables", 'O', true, 1, 2.0}),
+    [](const TestParamInfo<InverseJuliaToggleInput> &info) { return info.param.name; });
+
+TEST_F(TestInverseJuliaKeyboard, returnsCommandBeforeAnotherPoint)
+{
+    m_controller->iterate();
+    m_controller->iterate();
+    m_pending_key = 'x';
+    EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([this](int key) { m_pending_key = key; }));
+
+    m_controller->iterate();
+
+    EXPECT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
     EXPECT_DOUBLE_EQ(2.0, g_new_z.x);
-    EXPECT_FALSE(controller.done());
-    pending_key = 'x';
-    controller.iterate();
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_DOUBLE_EQ(2.0, g_new_z.x);
-    EXPECT_EQ('x', pending_key);
+    EXPECT_EQ('x', m_pending_key);
     EXPECT_TRUE(calc_interrupt_requested());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_TRUE(g_resume_data.empty());
