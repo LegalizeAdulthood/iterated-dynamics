@@ -451,24 +451,57 @@ TEST_F(TestPlasmaStorage, calculationFailureRestoresPlottingBeforeReportingError
     EXPECT_TRUE(g_potential.store_16bit);
 }
 
-TEST_F(TestPlasma, selectedOperationWaitsForStorageAvailability)
+class TestPendingPlasmaStorage : public TestPlasma
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<NonStandardFractal> m_calculation;
+};
+
+void TestPendingPlasmaStorage::SetUp()
+{
+    TestPlasma::SetUp();
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    NonStandardFractal calculation;
-    ASSERT_TRUE(calculation.start().empty());
+    m_calculation = std::make_unique<NonStandardFractal>();
+    ASSERT_TRUE(m_calculation->start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::PLASMA, m_calculation->select());
+}
 
-    ASSERT_EQ(NonStandardFractal::Operation::PLASMA, calculation.select());
+void TestPendingPlasmaStorage::TearDown()
+{
+    m_calculation.reset();
+    TestPlasma::TearDown();
+}
 
-    EXPECT_TRUE(calculation.potential_storage_required());
-    EXPECT_FALSE(calculation.done());
+TEST_F(TestPendingPlasmaStorage, selectedOperationWaitsForStorageAvailability)
+{
+    EXPECT_TRUE(m_calculation->potential_storage_required());
+    EXPECT_FALSE(m_calculation->done());
     EXPECT_FALSE(g_disk_flag);
     EXPECT_TRUE(std::all_of(m_pixels.begin(), m_pixels.end(), [](int color) { return color == 0; }));
-    EXPECT_THROW(calculation.iterate(), std::logic_error);
-    calculation.complete_potential_storage(false);
-    EXPECT_FALSE(calculation.potential_storage_required());
+}
+
+TEST_F(TestPendingPlasmaStorage, iterationBeforeStorageCompletionIsRejected)
+{
+    EXPECT_THROW(m_calculation->iterate(), std::logic_error);
+}
+
+TEST_F(TestPendingPlasmaStorage, unavailableStorageCompletesWithColorFallback)
+{
+    m_calculation->complete_potential_storage(false);
+
+    EXPECT_FALSE(m_calculation->potential_storage_required());
     EXPECT_EQ(0, g_params[3]);
     EXPECT_GT(m_pixels[8], 0);
-    EXPECT_THROW(calculation.complete_potential_storage(false), std::logic_error);
+}
+
+TEST_F(TestPendingPlasmaStorage, repeatedStorageCompletionIsRejected)
+{
+    m_calculation->complete_potential_storage(false);
+
+    EXPECT_THROW(m_calculation->complete_potential_storage(false), std::logic_error);
 }
 
 TEST_F(TestPlasma, controllerRequiresStartAndPreservesTheFirstSubdivisionBoundary)
