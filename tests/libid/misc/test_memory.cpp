@@ -307,32 +307,74 @@ TEST_P(TestInvalidMemoryFills, rejectsInvalidRangeWithoutChangingStorage)
 INSTANTIATE_TEST_SUITE_P(Arguments, TestInvalidMemoryFills, ValuesIn(invalid_memory_fill_inputs()),
     [](const TestParamInfo<InvalidMemoryFillInput> &info) { return info.param.name; });
 
-TEST_F(TestMemory, rejectsInvalidHandlesWithoutInput)
+class TestInvalidMemoryHandle : public TestMemory
 {
-    std::array<Byte, 4> buffer{};
-    const MemoryHandle empty;
-    const MemoryHandle invalid{256};
+protected:
+    std::array<Byte, 4> m_buffer{};
+    const MemoryHandle m_empty;
+    const MemoryHandle m_invalid{256};
+};
 
-    EXPECT_THROW(empty.from_memory(buffer.data(), 1, 4, 0), std::logic_error);
-    EXPECT_THROW(invalid.to_memory(buffer.data(), 1, 4, 0), std::logic_error);
-    EXPECT_THROW(invalid.set(0, 1, 4, 0), std::logic_error);
-    EXPECT_THROW(memory_release(invalid), std::logic_error);
-    EXPECT_NO_THROW(memory_release(empty));
+TEST_F(TestInvalidMemoryHandle, rejectsWriteToEmptyHandle)
+{
+    EXPECT_THROW(m_empty.from_memory(m_buffer.data(), 1, 4, 0), std::logic_error);
 }
 
-TEST_F(TestMemory, rejectsInvalidAllocationSizesWithoutPublishingHandles)
+TEST_F(TestInvalidMemoryHandle, rejectsReadFromInvalidHandle)
 {
-    EXPECT_THROW(memory_alloc(0, 1, MemoryLocation::MEMORY), std::logic_error);
-    EXPECT_THROW(memory_alloc(1, 0, MemoryLocation::MEMORY), std::logic_error);
-    EXPECT_THROW(memory_alloc(2, std::numeric_limits<std::uint64_t>::max(), MemoryLocation::MEMORY), std::logic_error);
-    EXPECT_THROW(memory_alloc(1, 1, MemoryLocation::NOWHERE), std::logic_error);
-    EXPECT_THROW(memory_alloc(1, 1, static_cast<MemoryLocation>(-1)), std::logic_error);
+    EXPECT_THROW(m_invalid.to_memory(m_buffer.data(), 1, 4, 0), std::logic_error);
+}
+
+TEST_F(TestInvalidMemoryHandle, rejectsFillOfInvalidHandle)
+{
+    EXPECT_THROW(m_invalid.set(0, 1, 4, 0), std::logic_error);
+}
+
+TEST_F(TestInvalidMemoryHandle, rejectsReleaseOfInvalidHandle)
+{
+    EXPECT_THROW(memory_release(m_invalid), std::logic_error);
+}
+
+TEST_F(TestInvalidMemoryHandle, acceptsReleaseOfEmptyHandle)
+{
+    EXPECT_NO_THROW(memory_release(m_empty));
+}
+
+struct RejectedMemoryAllocationInput
+{
+    const char *name;
+    U16 size;
+    std::uint64_t count;
+    MemoryLocation location;
+};
+
+void PrintTo(const RejectedMemoryAllocationInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRejectedMemoryAllocation : public TestMemory, public WithParamInterface<RejectedMemoryAllocationInput>
+{
+};
+
+TEST_P(TestRejectedMemoryAllocation, rejectsWithoutPublishingHandle)
+{
+    EXPECT_THROW(memory_alloc(GetParam().size, GetParam().count, GetParam().location), std::logic_error);
     EXPECT_TRUE(exit_check().empty());
 
     const MemoryHandle valid{memory_alloc(1, 1, MemoryLocation::MEMORY)};
     EXPECT_EQ(1, valid.index);
     memory_release(valid);
 }
+
+INSTANTIATE_TEST_SUITE_P(Arguments, TestRejectedMemoryAllocation,
+    Values(RejectedMemoryAllocationInput{"ZeroUnit", 0, 1, MemoryLocation::MEMORY},
+        RejectedMemoryAllocationInput{"ZeroCount", 1, 0, MemoryLocation::MEMORY},
+        RejectedMemoryAllocationInput{
+            "SizeOverflow", 2, std::numeric_limits<std::uint64_t>::max(), MemoryLocation::MEMORY},
+        RejectedMemoryAllocationInput{"Nowhere", 1, 1, MemoryLocation::NOWHERE},
+        RejectedMemoryAllocationInput{"InvalidLocation", 1, 1, static_cast<MemoryLocation>(-1)}),
+    [](const TestParamInfo<RejectedMemoryAllocationInput> &info) { return info.param.name; });
 
 TEST_F(TestMemory, exhaustedHandleTableCanBeRetriedAfterRelease)
 {
