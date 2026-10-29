@@ -702,16 +702,29 @@ TEST_P(TestOrbit3DSound, controllerFailureRestoresScreenAndOuterKeyboardHandler)
     EXPECT_TRUE(dispatch_keyboard_key('?'));
 }
 
-TEST_P(TestOrbit3DSound, stereoIfsWithoutPerImageSetupRendersEachEyeOnce)
+class TestStereoIFS : public Orbit3DSoundTestState
 {
+protected:
+    void SetUp() override;
+
+    ValueSaver<std::vector<float>> m_saved_definition{
+        g_ifs_definition, std::vector<float>{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}};
+    ValueSaver<IFSDimension> m_saved_dimension{g_ifs_dim, IFSDimension::THREE};
+    ValueSaver<int> m_saved_transforms{g_num_affine_transforms, 1};
+};
+
+void TestStereoIFS::SetUp()
+{
+    Orbit3DSoundTestState::SetUp();
     g_fractal_type = FractalType::IFS_3D;
     g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
     g_dispatch = FractalDispatch{*g_cur_fractal_specific};
     ASSERT_EQ(nullptr, g_dispatch.per_image());
     g_glasses_type = GlassesType::STEREO_PAIR;
-    const ValueSaver saved_definition{g_ifs_definition, std::vector<float>{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}};
-    const ValueSaver saved_dimension{g_ifs_dim, IFSDimension::THREE};
-    const ValueSaver saved_transforms{g_num_affine_transforms, 1};
+}
+
+TEST_F(TestStereoIFS, stereoIfsWithoutPerImageSetupRendersEachEyeOnce)
+{
     std::vector<StereoImage> views;
     EXPECT_CALL(m_driver, key_pressed())
         .WillRepeatedly(Invoke(
@@ -962,16 +975,8 @@ TEST_P(TestOrbit3DSound, stepwiseSeparateEyesDoNotRenderAnEntireEyeDuringTransit
     run.calculation.finish(false);
 }
 
-TEST_P(TestOrbit3DSound, stepwiseIfsAdvancesOnePointPerCallInEachEye)
+TEST_F(TestStereoIFS, stepwiseIfsAdvancesOnePointPerCallInEachEye)
 {
-    g_fractal_type = FractalType::IFS_3D;
-    g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
-    g_dispatch = FractalDispatch{*g_cur_fractal_specific};
-    g_glasses_type = GlassesType::STEREO_PAIR;
-    const ValueSaver<std::vector<float>> saved_definition{
-        g_ifs_definition, std::vector<float>{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}};
-    const ValueSaver<IFSDimension> saved_dimension{g_ifs_dim, IFSDimension::THREE};
-    const ValueSaver<int> saved_transforms{g_num_affine_transforms, 1};
     NonStandardFractal calculation;
     calculation.start();
     ASSERT_EQ(NonStandardFractal::Operation::IFS_3D, calculation.select());
