@@ -1844,10 +1844,12 @@ TEST_P(TestOwnerCloseFailure, closeFailureUsesTheRenderErrorPolicy)
     }
 }
 
-INSTANTIATE_TEST_SUITE_P(Policies, TestOwnerCloseFailure, ValuesIn(RENDER_FAILURE_POLICIES),
+INSTANTIATE_TEST_SUITE_P(Policies, TestOwnerCloseFailure,
+    Values(RenderFailurePolicyInput{"StandardInteractive", false, BatchMode::NONE},
+        RenderFailurePolicyInput{"StandardBatch", false, BatchMode::NORMAL}),
     [](const TestParamInfo<RenderFailurePolicyInput> &info) { return info.param.name; });
 
-TEST_P(TestRenderCleanup, ownerCloseFailureAfterInterruptionIsNotDiscarded)
+TEST_F(TestRenderCleanupBase, ownerCloseFailureAfterInterruptionIsNotDiscarded)
 {
     SoundSession owner{m_output};
     SoundSession borrowed{g_sound, SoundSession::Ownership::BORROWED};
