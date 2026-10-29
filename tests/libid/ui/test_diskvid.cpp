@@ -32,6 +32,7 @@
 #include <filesystem>
 #include <iterator>
 #include <limits>
+#include <ostream>
 #include <string>
 #include <thread>
 
@@ -84,57 +85,112 @@ TEST(TestDiskVideo, memoryBlocksAcceptGifMaximum)
     EXPECT_EQ((static_cast<std::uint64_t>(GIF_MAX_PIXELS) * GIF_MAX_PIXELS + 2047) / 2048, blocks);
 }
 
-TEST(TestDiskVideo, memoryBlocksRejectInvalidSizes)
+struct DiskMemoryBlocksInput
+{
+    const char *name;
+    std::int64_t width;
+    std::int64_t height;
+    int colors;
+    int header_length;
+    std::uint64_t blocks;
+};
+
+void PrintTo(const DiskMemoryBlocksInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestInvalidDiskMemoryBlocks : public testing::TestWithParam<DiskMemoryBlocksInput>
+{
+};
+
+TEST_P(TestInvalidDiskMemoryBlocks, rejectsInvalidSizes)
 {
     std::uint64_t blocks{};
 
-    EXPECT_FALSE(disk_video_memory_blocks(0, 1, 256, 0, blocks));
-    EXPECT_FALSE(disk_video_memory_blocks(1, 0, 256, 0, blocks));
-    EXPECT_FALSE(disk_video_memory_blocks(1, 1, 1, 0, blocks));
-    EXPECT_FALSE(disk_video_memory_blocks(1, 1, 256, -1, blocks));
-    EXPECT_FALSE(disk_video_memory_blocks(std::numeric_limits<std::int64_t>::max(), 2, 256, 0, blocks));
+    EXPECT_FALSE(disk_video_memory_blocks(
+        GetParam().width, GetParam().height, GetParam().colors, GetParam().header_length, blocks));
 }
 
-TEST(TestDiskVideo, memoryBlocksIncludeHeaderAndCachePadding)
+INSTANTIATE_TEST_SUITE_P(Input, TestInvalidDiskMemoryBlocks,
+    testing::Values(DiskMemoryBlocksInput{"ZeroWidth", 0, 1, 256, 0, 0},
+        DiskMemoryBlocksInput{"ZeroHeight", 1, 0, 256, 0, 0}, DiskMemoryBlocksInput{"OneColor", 1, 1, 1, 0, 0},
+        DiskMemoryBlocksInput{"NegativeHeader", 1, 1, 256, -1, 0},
+        DiskMemoryBlocksInput{"Overflow", std::numeric_limits<std::int64_t>::max(), 2, 256, 0, 0}),
+    [](const testing::TestParamInfo<DiskMemoryBlocksInput> &info) { return info.param.name; });
+
+class TestPaddedDiskMemoryBlocks : public testing::TestWithParam<DiskMemoryBlocksInput>
+{
+};
+
+TEST_P(TestPaddedDiskMemoryBlocks, includesHeaderAndCachePadding)
 {
     std::uint64_t blocks{};
 
-    ASSERT_TRUE(disk_video_memory_blocks(6, 2, 256, 18, blocks));
-    EXPECT_EQ(2U, blocks);
-    ASSERT_TRUE(disk_video_memory_blocks(2048, 1, 256, 18, blocks));
-    EXPECT_EQ(2U, blocks);
-    ASSERT_TRUE(disk_video_memory_blocks(2049, 1, 256, 18, blocks));
-    EXPECT_EQ(3U, blocks);
+    ASSERT_TRUE(disk_video_memory_blocks(
+        GetParam().width, GetParam().height, GetParam().colors, GetParam().header_length, blocks));
+
+    EXPECT_EQ(GetParam().blocks, blocks);
 }
 
-TEST(TestDiskVideo, preparedStorageUsesMemoryWhenAvailable)
-{
-    MockDriver driver;
-    DiskVideoState state{&driver, DebugFlags::NONE};
-    EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
+INSTANTIATE_TEST_SUITE_P(Size, TestPaddedDiskMemoryBlocks,
+    testing::Values(DiskMemoryBlocksInput{"ShortImage", 6, 2, 256, 18, 2},
+        DiskMemoryBlocksInput{"FullBlock", 2048, 1, 256, 18, 2},
+        DiskMemoryBlocksInput{"PastBlock", 2049, 1, 256, 18, 3}),
+    [](const testing::TestParamInfo<DiskMemoryBlocksInput> &info) { return info.param.name; });
 
-    EXPECT_TRUE(prepare_disk_storage(16, 16, 256));
+struct PreparedDiskStorageInput
+{
+    const char *name;
+    DebugFlags policy;
+    int width;
+    int height;
+    int col;
+    int row;
+    int color;
+    MemoryLocation location;
+    bool check_origin;
+};
+
+void PrintTo(const PreparedDiskStorageInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestPreparedDiskStorage : public testing::TestWithParam<PreparedDiskStorageInput>
+{
+protected:
+    void SetUp() override;
+
+    MockDriver m_driver;
+    DiskVideoState m_state{&m_driver, GetParam().policy};
+};
+
+void TestPreparedDiskStorage::SetUp()
+{
+    EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
+}
+
+TEST_P(TestPreparedDiskStorage, usesTheRequestedBackingAndRetainsPixels)
+{
+    EXPECT_TRUE(prepare_disk_storage(GetParam().width, GetParam().height, 256));
 
     EXPECT_TRUE(g_disk_flag);
-    EXPECT_EQ(MemoryLocation::MEMORY, disk_video_memory_type());
-    write_disk_pixel(15, 15, 77);
-    EXPECT_EQ(77, read_disk_pixel(15, 15));
+    EXPECT_EQ(GetParam().location, disk_video_memory_type());
+    write_disk_pixel(GetParam().col, GetParam().row, GetParam().color);
+    if (GetParam().check_origin)
+    {
+        EXPECT_EQ(0, read_disk_pixel(0, 0));
+    }
+    EXPECT_EQ(GetParam().color, read_disk_pixel(GetParam().col, GetParam().row));
 }
 
-TEST(TestDiskVideo, preparedStorageUsesDiskWhenForced)
-{
-    MockDriver driver;
-    DiskVideoState state{&driver, DebugFlags::FORCE_MEMORY_FROM_DISK};
-    EXPECT_CALL(driver, is_disk()).WillRepeatedly(Return(false));
-
-    EXPECT_TRUE(prepare_disk_storage(64, 64, 256));
-
-    EXPECT_TRUE(g_disk_flag);
-    EXPECT_EQ(MemoryLocation::DISK, disk_video_memory_type());
-    write_disk_pixel(63, 63, 99);
-    EXPECT_EQ(0, read_disk_pixel(0, 0));
-    EXPECT_EQ(99, read_disk_pixel(63, 63));
-}
+INSTANTIATE_TEST_SUITE_P(Backing, TestPreparedDiskStorage,
+    testing::Values(
+        PreparedDiskStorageInput{"Memory", DebugFlags::NONE, 16, 16, 15, 15, 77, MemoryLocation::MEMORY, false},
+        PreparedDiskStorageInput{
+            "Disk", DebugFlags::FORCE_MEMORY_FROM_DISK, 64, 64, 63, 63, 99, MemoryLocation::DISK, true}),
+    [](const testing::TestParamInfo<PreparedDiskStorageInput> &info) { return info.param.name; });
 
 TEST(TestDiskVideo, targaCachePreservesHeaderAndPixelsAcrossBackingBlocks)
 {
