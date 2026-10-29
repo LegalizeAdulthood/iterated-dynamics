@@ -144,10 +144,18 @@ TEST_F(TestPrecisionDiagnostics, formatsBigFloatComparison)
     EXPECT_THAT(format_compare_values_bf("bf", -1.5L, g_bf_y_min), HasSubstr("bignum=-1.5e0"));
 }
 
-TEST_F(TestPrecisionDiagnostics, shortVariablesDoNotRequireSeventyNineCharacters)
+TEST_F(TestPrecisionDiagnostics, shortBigNumValueDoesNotRequirePadding)
 {
     EXPECT_LT(format_var_bn("n", g_x_min_bn).size(), 79U);
+}
+
+TEST_F(TestPrecisionDiagnostics, shortBigFloatValueDoesNotRequirePadding)
+{
     EXPECT_LT(format_var_bf("n", g_bf_x_min).size(), 79U);
+}
+
+TEST_F(TestPrecisionDiagnostics, oversizedBigNumLabelIsTruncated)
+{
     EXPECT_EQ(std::string(79, 'x'), format_var_bn(std::string(100, 'x').c_str(), g_x_min_bn));
 }
 
