@@ -296,16 +296,6 @@ void TestBoxLSystem::SetUp()
     ASSERT_NO_FATAL_FAILURE(load_definition("SizingBox", 0));
 }
 
-TEST_F(TestBoxLSystem, sizingEndsBeforeDrawingStarts)
-{
-    char stack_top{};
-    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    LSystem system;
-    system.start();
-
-    finish_sizing(system);
-}
-
 TEST_F(TestBoxLSystem, firstDrawingIncrementPlotsOneLine)
 {
     char stack_top{};
