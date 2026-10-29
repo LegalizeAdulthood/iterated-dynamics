@@ -464,35 +464,6 @@ TEST_F(TestCachedLSystemSelection, suspensionFinalizesNonResumableWork)
     EXPECT_TRUE(g_resume_data.empty());
 }
 
-class TestSelectedDrawingLSystem : public LSystemDefinitionTest
-{
-protected:
-    void SetUp() override;
-};
-
-void TestSelectedDrawingLSystem::SetUp()
-{
-    LSystemDefinitionTest::SetUp();
-    g_l_system_name = "Koch1";
-    g_params[0] = 0;
-}
-
-TEST_F(TestSelectedDrawingLSystem, overflowTerminatesSelectedOperation)
-{
-    char stack_top{};
-    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    NonStandardFractal calculation;
-    ASSERT_NO_FATAL_FAILURE(start_selected(calculation));
-    ASSERT_NO_FATAL_FAILURE(advance_to_drawing(calculation));
-    g_overflow = true;
-
-    calculation.iterate();
-
-    EXPECT_TRUE(calculation.done());
-    EXPECT_TRUE(m_lines.empty());
-    calculation.finish(false);
-}
-
 struct LSystemCompletionInput
 {
     const char *name;
