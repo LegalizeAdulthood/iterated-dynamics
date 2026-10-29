@@ -18,6 +18,8 @@
 #include <algorithm>
 #include <complex>
 #include <limits>
+#include <string>
+#include <vector>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -28,25 +30,45 @@ using namespace testing;
 namespace id::test
 {
 
-class TestMandelZPowerPerturbation : public TestWithParam<int>
+class TestMandelPowerState : public Test
 {
 protected:
-    void TearDown() override
-    {
-        if (m_big_float)
-        {
-            free_bf_vars();
-        }
-    }
+    void TearDown() override;
+    void initialize_precision();
 
     bool m_big_float{};
+    ValueSaver<int> m_saved_exponent{g_c_exponent};
     ValueSaver<BFMathType> m_saved_math{g_bf_math, BFMathType::NONE};
     ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::MANDEL_Z_POWER};
 };
 
+void TestMandelPowerState::TearDown()
+{
+    if (m_big_float)
+    {
+        free_bf_vars();
+    }
+}
+
+void TestMandelPowerState::initialize_precision()
+{
+    init_bf_dec(60);
+    m_big_float = true;
+}
+
+class TestMandelZPowerPerturbation : public TestMandelPowerState, public WithParamInterface<int>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestMandelZPowerPerturbation::SetUp()
+{
+    g_c_exponent = GetParam();
+}
+
 TEST_P(TestMandelZPowerPerturbation, setupPreservesTheRequestedExponent)
 {
-    ValueSaver saved_exponent{g_c_exponent, GetParam()};
     ValueSaver saved_power{g_params[2], static_cast<double>(GetParam())};
     ValueSaver saved_mode{g_std_calc_mode, CalcMode::PERTURBATION};
     ValueSaver saved_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL_Z_POWER)};
@@ -59,55 +81,57 @@ TEST_P(TestMandelZPowerPerturbation, setupPreservesTheRequestedExponent)
     EXPECT_EQ(GetParam(), g_c_exponent);
 }
 
-TEST_P(TestMandelZPowerPerturbation, matchesDirectPowerUpdate)
+struct PositivePowerDeltaInput
 {
-    ValueSaver saved_exponent{g_c_exponent, GetParam()};
-    const std::complex<double> reference{0.75, 0.125};
-    const std::complex<double> delta{0.125, -0.0625};
-    const std::complex<double> parameter_delta{0.003, -0.002};
-    const std::complex<double> expected{
-        std::pow(reference + delta, GetParam()) - std::pow(reference, GetParam()) + parameter_delta};
-    std::complex<double> actual{delta};
+    int exponent;
+    const char *name;
+    std::complex<double> reference;
+    std::complex<double> delta;
+};
 
-    mandel_z_power_perturb(reference, actual, parameter_delta);
+std::vector<PositivePowerDeltaInput> positive_power_delta_inputs()
+{
+    std::vector<PositivePowerDeltaInput> inputs;
+    for (const int exponent : {2, 3, 26, 27, 28, 29, 32, 64, 128, 1024, 2048})
+    {
+        inputs.push_back({exponent, "Direct", {0.75, 0.125}, {0.125, -0.0625}});
+        inputs.push_back({exponent, "ZeroReference", {}, {0.875, -0.0625}});
+        inputs.push_back({exponent, "UnitCircle", {0.999, 0.000125}, {0.000125, -0.0000625}});
+    }
+    return inputs;
+}
+
+class TestPositivePowerDelta : public TestMandelPowerState, public WithParamInterface<PositivePowerDeltaInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestPositivePowerDelta::SetUp()
+{
+    g_c_exponent = GetParam().exponent;
+}
+
+TEST_P(TestPositivePowerDelta, matchesDirectPowerUpdate)
+{
+    const PositivePowerDeltaInput &input{GetParam()};
+    const std::complex<double> parameter_delta{0.003, -0.002};
+    const std::complex<double> expected{std::pow(input.reference + input.delta, input.exponent) -
+        std::pow(input.reference, input.exponent) + parameter_delta};
+    std::complex<double> actual{input.delta};
+
+    mandel_z_power_perturb(input.reference, actual, parameter_delta);
 
     EXPECT_NEAR(expected.real(), actual.real(), 1.0e-13);
     EXPECT_NEAR(expected.imag(), actual.imag(), 1.0e-13);
 }
 
-TEST_P(TestMandelZPowerPerturbation, matchesPowerUpdateWithZeroReference)
-{
-    ValueSaver saved_exponent{g_c_exponent, GetParam()};
-    const std::complex<double> delta{0.875, -0.0625};
-    const std::complex<double> parameter_delta{0.003, -0.002};
-    const std::complex<double> expected{std::pow(delta, GetParam()) + parameter_delta};
-    std::complex<double> actual{delta};
-
-    mandel_z_power_perturb({}, actual, parameter_delta);
-
-    EXPECT_NEAR(expected.real(), actual.real(), 1.0e-13);
-    EXPECT_NEAR(expected.imag(), actual.imag(), 1.0e-13);
-}
-
-TEST_P(TestMandelZPowerPerturbation, matchesPowerUpdateNearTheUnitCircle)
-{
-    ValueSaver saved_exponent{g_c_exponent, GetParam()};
-    const std::complex<double> reference{0.999, 0.000125};
-    const std::complex<double> delta{0.000125, -0.0000625};
-    const std::complex<double> parameter_delta{0.003, -0.002};
-    const std::complex<double> expected{
-        std::pow(reference + delta, GetParam()) - std::pow(reference, GetParam()) + parameter_delta};
-    std::complex<double> actual{delta};
-
-    mandel_z_power_perturb(reference, actual, parameter_delta);
-
-    EXPECT_NEAR(expected.real(), actual.real(), 1.0e-13);
-    EXPECT_NEAR(expected.imag(), actual.imag(), 1.0e-13);
-}
+INSTANTIATE_TEST_SUITE_P(SupportedPowers, TestPositivePowerDelta, ValuesIn(positive_power_delta_inputs()),
+    [](const TestParamInfo<PositivePowerDeltaInput> &info)
+    { return std::string{info.param.name} + "Power" + std::to_string(info.param.exponent); });
 
 TEST_P(TestMandelZPowerPerturbation, retainsDisplacementsTooSmallToAddToTheReference)
 {
-    ValueSaver saved_exponent{g_c_exponent, GetParam()};
     const std::complex<double> delta{1e-40, -2e-40};
     std::complex<double> actual{delta};
 
@@ -119,7 +143,6 @@ TEST_P(TestMandelZPowerPerturbation, retainsDisplacementsTooSmallToAddToTheRefer
 
 TEST_P(TestMandelZPowerPerturbation, referenceSequenceMatchesRepeatedMultiplication)
 {
-    ValueSaver saved_exponent{g_c_exponent, GetParam()};
     const std::complex<double> center{-0.125, 0.000125};
     std::complex<double> actual{0.999, -0.000125};
     std::complex<double> expected{actual};
@@ -145,9 +168,7 @@ TEST_P(TestMandelZPowerPerturbation, referenceSequenceMatchesRepeatedMultiplicat
 
 TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMultiplication)
 {
-    ValueSaver saved_exponent{g_c_exponent, GetParam()};
-    init_bf_dec(60);
-    m_big_float = true;
+    initialize_precision();
     BigStackSaver saved;
     const BFComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     BFComplex actual{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
@@ -191,18 +212,34 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
 INSTANTIATE_TEST_SUITE_P(
     SupportedPowers, TestMandelZPowerPerturbation, Values(2, 3, 26, 27, 28, 29, 32, 64, 128, 1024, 2048));
 
-TEST(TestMandelZPowerPerturbationLimits, maximumIntegerExponentNeedsNoCoefficientStorage)
+class TestMaximumMandelPower : public TestMandelPowerState
 {
-    ValueSaver saved_exponent{g_c_exponent, std::numeric_limits<int>::max()};
+protected:
+    void SetUp() override;
+};
+
+void TestMaximumMandelPower::SetUp()
+{
+    g_c_exponent = std::numeric_limits<int>::max();
     EXPECT_EQ(std::numeric_limits<int>::max(), g_c_exponent);
+}
+
+TEST_F(TestMaximumMandelPower, retainsSubDoubleDisplacementsWithoutCoefficientStorage)
+{
     std::complex<double> delta{1e-40, -2e-40};
 
     mandel_z_power_perturb({1.0, 0.0}, delta, {});
 
     EXPECT_NEAR(g_c_exponent * 1e-40, delta.real(), g_c_exponent * 1e-54);
     EXPECT_NEAR(g_c_exponent * -2e-40, delta.imag(), g_c_exponent * 1e-54);
+}
+
+TEST_F(TestMaximumMandelPower, updatesUnitReferenceWithoutCoefficientStorage)
+{
     std::complex<double> reference{1.0, 0.0};
+
     mandel_z_power_ref_pt({}, reference);
+
     EXPECT_EQ((std::complex<double>{1.0, 0.0}), reference);
 }
 
