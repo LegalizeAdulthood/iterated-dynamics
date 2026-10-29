@@ -75,27 +75,69 @@ class TestMemoryTransfer : public TestMemory, public WithParamInterface<MemoryLo
 {
 };
 
-TEST_P(TestMemoryTransfer, roundTripsLargeTransfersAndFillsAcrossBlocks)
+class TestLargeMemoryTransfer : public TestMemory, public WithParamInterface<MemoryLocation>
 {
-    const MemoryHandle handle{memory_alloc(1, 70003, GetParam())};
-    std::vector<Byte> input(70000);
-    for (size_t i = 0; i < input.size(); ++i)
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void release_handle();
+
+    MemoryHandle m_handle;
+    std::vector<Byte> m_input;
+    std::vector<Byte> m_output;
+};
+
+void TestLargeMemoryTransfer::SetUp()
+{
+    TestMemory::SetUp();
+    m_handle = memory_alloc(1, 70003, GetParam());
+    m_input.resize(70000);
+    m_output.resize(m_input.size());
+    for (std::size_t i = 0; i < m_input.size(); ++i)
     {
-        input[i] = static_cast<Byte>(i % 251);
+        m_input[i] = static_cast<Byte>(i % 251);
     }
-    std::vector<Byte> output(input.size());
+}
 
-    handle.from_memory(input.data(), 1, input.size(), 3);
-    handle.to_memory(output.data(), 1, output.size(), 3);
+void TestLargeMemoryTransfer::TearDown()
+{
+    if (m_handle)
+    {
+        memory_release(m_handle);
+    }
+    TestMemory::TearDown();
+}
 
-    EXPECT_EQ(input, output);
-    handle.set(37, 1, output.size(), 3);
-    handle.to_memory(output.data(), 1, output.size(), 3);
-    EXPECT_THAT(output, Each(37));
-    EXPECT_EQ(70003U, handle.size());
-    memory_release(handle);
+void TestLargeMemoryTransfer::release_handle()
+{
+    memory_release(m_handle);
+    m_handle = {};
+}
+
+TEST_P(TestLargeMemoryTransfer, roundTripsAcrossBlocks)
+{
+    m_handle.from_memory(m_input.data(), 1, m_input.size(), 3);
+    m_handle.to_memory(m_output.data(), 1, m_output.size(), 3);
+
+    EXPECT_EQ(m_input, m_output);
+    release_handle();
     EXPECT_TRUE(exit_check().empty());
 }
+
+TEST_P(TestLargeMemoryTransfer, fillsAcrossBlocks)
+{
+    m_handle.from_memory(m_input.data(), 1, m_input.size(), 3);
+
+    m_handle.set(37, 1, m_output.size(), 3);
+    m_handle.to_memory(m_output.data(), 1, m_output.size(), 3);
+
+    EXPECT_THAT(m_output, Each(37));
+    EXPECT_EQ(70003U, m_handle.size());
+    release_handle();
+    EXPECT_TRUE(exit_check().empty());
+}
+
+INSTANTIATE_TEST_SUITE_P(Locations, TestLargeMemoryTransfer, Values(MemoryLocation::MEMORY, MemoryLocation::DISK));
 
 TEST_P(TestMemoryTransfer, rejectsInvalidTransfersWithoutInputOrChangingStorage)
 {
