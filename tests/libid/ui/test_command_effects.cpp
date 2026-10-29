@@ -20,17 +20,21 @@ using namespace testing;
 namespace id::test
 {
 
-TEST(TestCommandEffects, noActionDoesNotRequestExit)
+class TestCommandEffectsNoDriver : public Test
 {
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
+protected:
+    ValueSaver<Driver *> m_saved_driver{g_driver, nullptr};
+};
+
+TEST_F(TestCommandEffectsNoDriver, noActionDoesNotRequestExit)
+{
     CommandParseResult result;
 
     EXPECT_FALSE(apply_command_effects(result));
 }
 
-TEST(TestCommandEffects, pendingErrorsPreventGenerationAndDeviceInitialization)
+TEST_F(TestCommandEffectsNoDriver, pendingErrorsPreventGenerationAndDeviceInitialization)
 {
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
     CommandParseResult result;
     result.action = MakeHelpDocument{"must-not-be-written.txt"};
     result.initialize_fm = true;
