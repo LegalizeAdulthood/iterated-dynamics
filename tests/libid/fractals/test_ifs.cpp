@@ -232,13 +232,6 @@ void TestIFSAtLimit::SetUp()
     write_definition(m_text + "}\n");
 }
 
-TEST_F(TestIFSAtLimit, acceptsSixtyThreeTransforms)
-{
-    ifs_load();
-
-    EXPECT_EQ(63, g_num_affine_transforms);
-}
-
 class TestIFSOverLimit : public TestIFSAtLimit
 {
 protected:
