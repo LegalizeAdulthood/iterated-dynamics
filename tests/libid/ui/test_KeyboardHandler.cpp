@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <ui/KeyboardHandler.h>
 
@@ -7,6 +8,7 @@
 #include "MockDriver.h"
 
 #include <memory>
+#include <ostream>
 #include <utility>
 #include <vector>
 
@@ -81,33 +83,42 @@ protected:
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
 };
 
-TEST_F(TestKeyboardHandler, calcInterruptedOffersKeyFromTopToBottom)
+struct KeyboardPropagationInput
 {
-    expect_key(17);
+    const char *name;
+    bool top_consumes;
+    int key;
+    KeyboardEvents expected;
+};
+
+void PrintTo(const KeyboardPropagationInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestKeyboardHandlerPropagation : public TestKeyboardHandler, public WithParamInterface<KeyboardPropagationInput>
+{
+};
+
+TEST_P(TestKeyboardHandlerPropagation, offersKeyUntilConsumed)
+{
+    expect_key(GetParam().key);
     KeyboardEvents events;
-    auto bottom{std::make_shared<RecordingKeyboardHandler>(1, true, events)};
-    auto top{std::make_shared<RecordingKeyboardHandler>(2, false, events)};
+    const std::shared_ptr<RecordingKeyboardHandler> bottom{std::make_shared<RecordingKeyboardHandler>(1, true, events)};
+    const std::shared_ptr<RecordingKeyboardHandler> top{
+        std::make_shared<RecordingKeyboardHandler>(2, GetParam().top_consumes, events)};
     ScopedKeyboardHandler bottom_scope{bottom};
     ScopedKeyboardHandler top_scope{top};
 
     EXPECT_FALSE(calc_interrupted());
 
-    EXPECT_THAT(events, ElementsAre(Pair(2, 17), Pair(1, 17)));
+    EXPECT_THAT(events, ElementsAreArray(GetParam().expected));
 }
 
-TEST_F(TestKeyboardHandler, consumedKeyStopsPropagation)
-{
-    expect_key(23);
-    KeyboardEvents events;
-    auto bottom{std::make_shared<RecordingKeyboardHandler>(1, true, events)};
-    auto top{std::make_shared<RecordingKeyboardHandler>(2, true, events)};
-    ScopedKeyboardHandler bottom_scope{bottom};
-    ScopedKeyboardHandler top_scope{top};
-
-    EXPECT_FALSE(calc_interrupted());
-
-    EXPECT_THAT(events, ElementsAre(Pair(2, 23)));
-}
+INSTANTIATE_TEST_SUITE_P(Consumption, TestKeyboardHandlerPropagation,
+    Values(KeyboardPropagationInput{"BottomConsumes", false, 17, {{2, 17}, {1, 17}}},
+        KeyboardPropagationInput{"TopConsumes", true, 23, {{2, 23}}}),
+    [](const TestParamInfo<KeyboardPropagationInput> &info) { return info.param.name; });
 
 TEST_F(TestKeyboardHandler, unconsumedKeyIsDiscarded)
 {
