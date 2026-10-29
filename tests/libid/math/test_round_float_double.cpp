@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <math/round_float_double.h>
 
@@ -7,22 +8,30 @@
 namespace id::math
 {
 
-TEST(TestRoundFloatDouble, trimsFloatConversionNoise)
+struct FloatRoundingInput
 {
-    double value{static_cast<double>(static_cast<float>(1.0 / 3.0))};
+    const char *name;
+    double input;
+    double expected;
+};
+
+class TestFloatRounding : public testing::TestWithParam<FloatRoundingInput>
+{
+};
+
+TEST_P(TestFloatRounding, roundsToSevenSignificantDigits)
+{
+    double value{GetParam().input};
 
     round_float_double(&value);
 
-    EXPECT_DOUBLE_EQ(0.3333333, value);
+    EXPECT_DOUBLE_EQ(GetParam().expected, value);
 }
 
-TEST(TestRoundFloatDouble, keepsSevenSignificantDigits)
-{
-    double value{12345.678901234};
-
-    round_float_double(&value);
-
-    EXPECT_DOUBLE_EQ(12345.68, value);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestFloatRounding,
+    testing::Values(
+        FloatRoundingInput{"FloatConversionNoise", static_cast<double>(static_cast<float>(1.0 / 3.0)), 0.3333333},
+        FloatRoundingInput{"SevenSignificantDigits", 12345.678901234, 12345.68}),
+    [](const testing::TestParamInfo<FloatRoundingInput> &info) { return info.param.name; });
 
 } // namespace id::math

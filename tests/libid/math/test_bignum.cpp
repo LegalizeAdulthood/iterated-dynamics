@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <math/big.h>
 #include <math/biginit.h>
@@ -47,19 +48,30 @@ protected:
     ValueSaver<int> m_saved_bf_digits;
 };
 
-TEST_F(TestBigNum, formatsIntegerWithDecimalPoint)
+struct BigNumFormatInput
 {
-    char input[]{"42"};
+    const char *name;
+    const char *input;
+    int decimals;
+    const char *expected;
+};
 
-    EXPECT_EQ("42.", round_trip(input, 5));
+class TestBigNumFormatting : public TestBigNum, public testing::WithParamInterface<BigNumFormatInput>
+{
+};
+
+TEST_P(TestBigNumFormatting, formatsParsedValue)
+{
+    std::string input{GetParam().input};
+
+    EXPECT_EQ(GetParam().expected, round_trip(input.data(), GetParam().decimals));
 }
 
-TEST_F(TestBigNum, formatsPositiveFractionalInput)
-{
-    char input[]{"12.5"};
-
-    EXPECT_EQ("12.5", round_trip(input, 5));
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigNumFormatting,
+    testing::Values(BigNumFormatInput{"Integer", "42", 5, "42."},
+        BigNumFormatInput{"PositiveFraction", "12.5", 5, "12.5"},
+        BigNumFormatInput{"TrailingFractionalZeros", "12.500", 5, "12.5"}),
+    [](const testing::TestParamInfo<BigNumFormatInput> &info) { return info.param.name; });
 
 TEST_F(TestBigNum, formatsZeroValue)
 {
@@ -67,13 +79,6 @@ TEST_F(TestBigNum, formatsZeroValue)
     int_to_bn(value, 0);
 
     EXPECT_EQ("0.", format(value, 5));
-}
-
-TEST_F(TestBigNum, trimsTrailingFractionalZeros)
-{
-    char input[]{"12.500"};
-
-    EXPECT_EQ("12.5", round_trip(input, 5));
 }
 
 } // namespace id::test
