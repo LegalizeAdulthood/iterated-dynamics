@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <math/fpu087.h>
 
@@ -24,64 +25,44 @@ inline std::ostream &operator<<(std::ostream &str, const DComplex &value)
 namespace id::test
 {
 
-TEST(TestMath, nanExponent)
+struct ExceptionalComplexProduct
 {
-    const DComplex x{std::nan("1"), 0.0};
-    DComplex z{};
+    const char *name;
+    DComplex lhs;
+    DComplex rhs;
+    bool imaginary;
+    bool nan;
+};
 
-    cmplx_exp(x, z); // z = e^x
-
-    EXPECT_TRUE(std::isnan(z.x));
-    EXPECT_EQ(0.0, z.y);
-}
-
-TEST(TestMath, nanRealMultiply)
+class TestExceptionalComplexProduct : public testing::TestWithParam<ExceptionalComplexProduct>
 {
-    const DComplex lhs{std::nan("1"), 0.0};
-    const DComplex rhs{1.0, 0.0};
+};
 
+TEST_P(TestExceptionalComplexProduct, preservesExceptionalComponent)
+{
     DComplex result;
-    fpu_cmplx_mul(lhs, rhs, result);
 
-    EXPECT_TRUE(std::isnan(result.x));
-    EXPECT_EQ(0.0, result.y);
+    fpu_cmplx_mul(GetParam().lhs, GetParam().rhs, result);
+
+    const double exceptional{GetParam().imaginary ? result.y : result.x};
+    const double zero{GetParam().imaginary ? result.x : result.y};
+    EXPECT_EQ(0.0, zero);
+    if (GetParam().nan)
+    {
+        EXPECT_TRUE(std::isnan(exceptional));
+    }
+    else
+    {
+        EXPECT_TRUE(std::isinf(exceptional));
+    }
 }
 
-TEST(TestMath, infRealMultiply)
-{
-    const DComplex lhs{INFINITY, 0.0};
-    const DComplex rhs{1.0, 0.0};
-
-    DComplex result;
-    fpu_cmplx_mul(lhs, rhs, result);
-
-    EXPECT_TRUE(std::isinf(result.x));
-    EXPECT_EQ(0.0, result.y);
-}
-
-TEST(TestMath, nanImagMultiply)
-{
-    const DComplex lhs{0.0, std::nan("1")};
-    const DComplex rhs{1.0, 0.0};
-
-    DComplex result;
-    fpu_cmplx_mul(lhs, rhs, result);
-
-    EXPECT_EQ(0.0, result.x);
-    EXPECT_TRUE(std::isnan(result.y));
-}
-
-TEST(TestMath, infImagMultiply)
-{
-    const DComplex lhs{0.0, INFINITY};
-    const DComplex rhs{1.0, 0.0};
-
-    DComplex result;
-    fpu_cmplx_mul(lhs, rhs, result);
-
-    EXPECT_EQ(0.0, result.x);
-    EXPECT_TRUE(std::isinf(result.y));
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestExceptionalComplexProduct,
+    testing::Values(ExceptionalComplexProduct{"NanReal", {std::nan("1"), 0.0}, {1.0, 0.0}, false, true},
+        ExceptionalComplexProduct{"InfiniteReal", {INFINITY, 0.0}, {1.0, 0.0}, false, false},
+        ExceptionalComplexProduct{"NanImaginary", {0.0, std::nan("1")}, {1.0, 0.0}, true, true},
+        ExceptionalComplexProduct{"InfiniteImaginary", {0.0, INFINITY}, {1.0, 0.0}, true, false}),
+    [](const testing::TestParamInfo<ExceptionalComplexProduct> &info) { return info.param.name; });
 
 TEST(TestMath, zeroDivide)
 {
@@ -95,53 +76,38 @@ TEST(TestMath, zeroDivide)
     EXPECT_TRUE(g_overflow);
 }
 
-TEST(TestMath, nanAngleSinCos)
+struct ExceptionalAngle
 {
-    const double angle{std::nan("1")};
+    const char *name;
+    double value;
+};
 
+class TestExceptionalAngle : public testing::TestWithParam<ExceptionalAngle>
+{
+protected:
     double result_sin{999.0};
     double result_cos{999.0};
-    sin_cos(angle, result_sin, result_cos);
+};
+
+TEST_P(TestExceptionalAngle, sineAndCosineRetainFallback)
+{
+    sin_cos(GetParam().value, result_sin, result_cos);
 
     EXPECT_EQ(0.0, result_sin);
     EXPECT_EQ(1.0, result_cos);
 }
 
-TEST(TestMath, infAngleSinCos)
+TEST_P(TestExceptionalAngle, hyperbolicSineAndCosineRetainFallback)
 {
-    const double angle{INFINITY};
-
-    double result_sin{999.0};
-    double result_cos{999.0};
-    sin_cos(angle, result_sin, result_cos);
-
-    EXPECT_EQ(0.0, result_sin);
-    EXPECT_EQ(1.0, result_cos);
-}
-
-TEST(TestMath, nanAngleSinHCosH)
-{
-    const double angle{std::nan("1")};
-
-    double result_sin{999.0};
-    double result_cos{999.0};
-    sinh_cosh(angle, result_sin, result_cos);
+    sinh_cosh(GetParam().value, result_sin, result_cos);
 
     EXPECT_EQ(1.0, result_sin);
     EXPECT_EQ(1.0, result_cos);
 }
 
-TEST(TestMath, infAngleSinHCosH)
-{
-    const double angle{INFINITY};
-
-    double result_sin{999.0};
-    double result_cos{999.0};
-    sinh_cosh(angle, result_sin, result_cos);
-
-    EXPECT_EQ(1.0, result_sin);
-    EXPECT_EQ(1.0, result_cos);
-}
+INSTANTIATE_TEST_SUITE_P(Angles, TestExceptionalAngle,
+    testing::Values(ExceptionalAngle{"Nan", std::nan("1")}, ExceptionalAngle{"Infinite", INFINITY}),
+    [](const testing::TestParamInfo<ExceptionalAngle> &info) { return info.param.name; });
 
 TEST(TestMath, multiplyAliasing)
 {

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <math/fpu087.h>
 
@@ -44,27 +45,39 @@ TEST(TestMath, complexLogZeroIsZero)
     EXPECT_EQ(0.0, z.y);
 }
 
-TEST(TestMath, complexLogReal)
+struct ComplexLogInput
 {
-    const DComplex x{5.0, 0.0};
-    DComplex z{1.0, 1.0};
+    const char *name;
+    DComplex input;
+    double expected_imaginary;
+    double imaginary_tolerance;
+};
 
-    cmplx_log(x, z); // z = log(x)
+class TestComplexLogInput : public testing::TestWithParam<ComplexLogInput>
+{
+};
 
-    EXPECT_NEAR(std::log(5.0), z.x, 1e-9);
-    EXPECT_EQ(0.0, z.y);
+TEST_P(TestComplexLogInput, retainsRealMagnitudeAndBranch)
+{
+    DComplex result{1.0, 1.0};
+
+    cmplx_log(GetParam().input, result);
+
+    EXPECT_NEAR(std::log(5.0), result.x, 1e-9);
+    if (GetParam().imaginary_tolerance == 0.0)
+    {
+        EXPECT_EQ(GetParam().expected_imaginary, result.y);
+    }
+    else
+    {
+        EXPECT_NEAR(GetParam().expected_imaginary, result.y, GetParam().imaginary_tolerance);
+    }
 }
 
-TEST(TestMath, complexLogNegativeReal)
-{
-    const DComplex x{-5.0, 0.0};
-    DComplex z{1.0, 1.0};
-
-    cmplx_log(x, z); // z = log(x)
-
-    EXPECT_NEAR(std::log(5.0), z.x, 1e-9);
-    EXPECT_NEAR(std::acos(-1.0), z.y, 1e-9);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestComplexLogInput,
+    testing::Values(ComplexLogInput{"PositiveReal", {5.0, 0.0}, 0.0, 0.0},
+        ComplexLogInput{"NegativeReal", {-5.0, 0.0}, std::acos(-1.0), 1e-9}),
+    [](const testing::TestParamInfo<ComplexLogInput> &info) { return info.param.name; });
 
 TEST(TestMath, complexLogPointerAlias)
 {
@@ -76,26 +89,50 @@ TEST(TestMath, complexLogPointerAlias)
     EXPECT_NEAR(std::atan2(2.0, 1.0), z.y, 1e-9);
 }
 
-TEST(TestMath, complexExpUnderflowMatchesFractint)
+enum class ExponentialRealResult
 {
-    const DComplex x{-691.0, 1.0};
-    DComplex z{1.0, 1.0};
+    ZERO,
+    NAN_VALUE,
+    INFINITE
+};
 
-    cmplx_exp(x, z); // z = exp(x)
+struct ComplexExpInput
+{
+    const char *name;
+    DComplex input;
+    DComplex initial;
+    ExponentialRealResult real_result;
+};
 
-    EXPECT_EQ(0.0, z.x);
-    EXPECT_EQ(0.0, z.y);
+class TestComplexExpInput : public testing::TestWithParam<ComplexExpInput>
+{
+};
+
+TEST_P(TestComplexExpInput, retainsFractintExceptionalResult)
+{
+    DComplex result{GetParam().initial};
+
+    cmplx_exp(GetParam().input, result);
+
+    switch (GetParam().real_result)
+    {
+    case ExponentialRealResult::ZERO:
+        EXPECT_EQ(0.0, result.x);
+        break;
+    case ExponentialRealResult::NAN_VALUE:
+        EXPECT_TRUE(std::isnan(result.x));
+        break;
+    case ExponentialRealResult::INFINITE:
+        EXPECT_TRUE(std::isinf(result.x));
+        break;
+    }
+    EXPECT_EQ(0.0, result.y);
 }
 
-TEST(TestMath, complexExpOverflowMatchesFractint)
-{
-    const DComplex x{1000.0, 0.0};
-    DComplex z{1.0, 1.0};
-
-    cmplx_exp(x, z); // z = exp(x)
-
-    EXPECT_TRUE(std::isinf(z.x));
-    EXPECT_EQ(0.0, z.y);
-}
+INSTANTIATE_TEST_SUITE_P(Inputs, TestComplexExpInput,
+    testing::Values(ComplexExpInput{"Nan", {std::nan("1"), 0.0}, {}, ExponentialRealResult::NAN_VALUE},
+        ComplexExpInput{"Underflow", {-691.0, 1.0}, {1.0, 1.0}, ExponentialRealResult::ZERO},
+        ComplexExpInput{"Overflow", {1000.0, 0.0}, {1.0, 1.0}, ExponentialRealResult::INFINITE}),
+    [](const testing::TestParamInfo<ComplexExpInput> &info) { return info.param.name; });
 
 } // namespace id::test
