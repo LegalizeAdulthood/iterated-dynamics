@@ -33,6 +33,7 @@
 #include <cstring>
 #include <memory>
 #include <new>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -702,13 +703,39 @@ TEST_F(TestCellularController, stepwiseThinkingDisplayFailureRestoresTheScreenBe
     EXPECT_EQ("thinking display failed", m_error);
 }
 
-TEST_F(TestCellularController, stepwiseAllocationFailureRetainsItsDiagnostic)
+struct CellularFailureInput
+{
+    const char *name;
+    bool allocation;
+    const char *diagnostic;
+};
+
+void PrintTo(const CellularFailureInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestCellularFailure : public TestCellularController, public WithParamInterface<CellularFailureInput>
+{
+};
+
+TEST_P(TestCellularFailure, stepwiseFailureRetainsItsDiagnostic)
 {
     g_params[3] = 10;
     NonStandardFractal calculation;
     calculation.start();
     ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
-    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Throw(std::bad_alloc{})).RetiresOnSaturation();
+    EXPECT_CALL(m_driver, key_pressed())
+        .WillOnce(Invoke(
+            [this]() -> int
+            {
+                if (GetParam().allocation)
+                {
+                    throw std::bad_alloc{};
+                }
+                throw 42;
+            }))
+        .RetiresOnSaturation();
     CellularController controller{calculation};
     controller.start();
 
@@ -718,27 +745,13 @@ TEST_F(TestCellularController, stepwiseAllocationFailureRetainsItsDiagnostic)
     EXPECT_EQ(-1, controller.result());
     EXPECT_TRUE(calculation.done());
     EXPECT_FALSE(thinking_active());
-    EXPECT_EQ("Insufficient free memory for calculation", m_error);
+    EXPECT_EQ(GetParam().diagnostic, m_error);
 }
 
-TEST_F(TestCellularController, stepwiseUnknownFailureRetainsItsDiagnostic)
-{
-    g_params[3] = 10;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
-    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Throw(42)).RetiresOnSaturation();
-    CellularController controller{calculation};
-    controller.start();
-
-    controller.iterate();
-
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_TRUE(calculation.done());
-    EXPECT_FALSE(thinking_active());
-    EXPECT_EQ("Unknown error in cellular calculation", m_error);
-}
+INSTANTIATE_TEST_SUITE_P(Exception, TestCellularFailure,
+    Values(CellularFailureInput{"Allocation", true, "Insufficient free memory for calculation"},
+        CellularFailureInput{"Unknown", false, "Unknown error in cellular calculation"}),
+    [](const TestParamInfo<CellularFailureInput> &info) { return info.param.name; });
 
 TEST_F(TestCellularController, stepwiseDestructionClosesThinkingWithoutFinishingCalculation)
 {
