@@ -111,16 +111,36 @@ TEST_F(TestPrecisionDiagnostics, formatsBigFloatGlobals)
         format_globals_bf("globals"), AllOf(StartsWith("globals\n"), HasSubstr("bn_step=4"), HasSubstr("decimals=20")));
 }
 
-TEST_F(TestPrecisionDiagnostics, formatsValuesAndComparisonsWithoutPolling)
+TEST_F(TestPrecisionDiagnostics, formatsBigNumVariable)
 {
     EXPECT_THAT(format_var_bn("value", g_y_min_bn), StartsWith("value -1.5"));
+}
+
+TEST_F(TestPrecisionDiagnostics, formatsBigFloatVariable)
+{
     EXPECT_THAT(format_var_bf("value", g_bf_y_min), StartsWith("-1.5e0"));
+}
+
+TEST_F(TestPrecisionDiagnostics, formatsTwoBigFloatValues)
+{
     EXPECT_THAT(format_two_bf("left", g_bf_x_min, "right", g_bf_x_max, 8),
         AllOf(HasSubstr("left->-2.0e0"), HasSubstr("right->2.0e0")));
+}
+
+TEST_F(TestPrecisionDiagnostics, formatsThreeBigFloatValues)
+{
     EXPECT_THAT(
         format_three_bf("left", g_bf_x_min, "right", g_bf_x_max, "bottom", g_bf_y_min, 8), HasSubstr("bottom->-1.5e0"));
+}
+
+TEST_F(TestPrecisionDiagnostics, formatsBigNumComparison)
+{
     EXPECT_THAT(format_compare_values("bn", -1.5L, g_y_min_bn),
         AllOf(HasSubstr("bignum=-1.5"), HasSubstr("double=-1.50000000000000000000")));
+}
+
+TEST_F(TestPrecisionDiagnostics, formatsBigFloatComparison)
+{
     EXPECT_THAT(format_compare_values_bf("bf", -1.5L, g_bf_y_min), HasSubstr("bignum=-1.5e0"));
 }
 
