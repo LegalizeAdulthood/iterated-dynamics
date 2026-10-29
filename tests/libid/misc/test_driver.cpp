@@ -17,74 +17,92 @@ using namespace testing;
 namespace id::test
 {
 
-TEST(TestDriver, loadClose)
+class TestDriver : public Test
 {
-    std::vector<std::string> args{"id"};
-    MockDriver gdi;
-    EXPECT_CALL(gdi, init(Ref(args))).WillOnce(Return(true));
-    EXPECT_CALL(gdi, terminate());
+protected:
+    void TearDown() override;
 
-    load_driver(&gdi, args);
+    std::vector<std::string> m_args{"id"};
+    MockDriver m_first;
+    MockDriver m_second;
+};
 
-    EXPECT_EQ(&gdi, g_driver);
+void TestDriver::TearDown()
+{
+    close_drivers();
+    EXPECT_EQ(nullptr, g_driver);
+}
+
+TEST_F(TestDriver, loadClose)
+{
+    EXPECT_CALL(m_first, init(Ref(m_args))).WillOnce(Return(true));
+    EXPECT_CALL(m_first, terminate());
+
+    load_driver(&m_first, m_args);
+
+    EXPECT_EQ(&m_first, g_driver);
 
     close_drivers();
     EXPECT_EQ(nullptr, g_driver);
 }
 
-TEST(TestDriver, loadCanRemoveConsumedArguments)
+TEST_F(TestDriver, loadCanRemoveConsumedArguments)
 {
-    std::vector<std::string> args{"id", "--driver-option", "type=mandel"};
-    MockDriver gdi;
-    EXPECT_CALL(gdi, init(Ref(args)))
+    m_args = {"id", "--driver-option", "type=mandel"};
+    EXPECT_CALL(m_first, init(Ref(m_args)))
         .WillOnce(Invoke(
             [](std::vector<std::string> &init_args)
             {
                 init_args.erase(init_args.begin() + 1);
                 return true;
             }));
-    EXPECT_CALL(gdi, terminate());
+    EXPECT_CALL(m_first, terminate());
 
-    load_driver(&gdi, args);
+    load_driver(&m_first, m_args);
 
-    EXPECT_THAT(args, ElementsAre("id", "type=mandel"));
-
-    close_drivers();
+    EXPECT_THAT(m_args, ElementsAre("id", "type=mandel"));
 }
 
-TEST(TestDriver, initUsesProvidedDriverOrder)
+TEST_F(TestDriver, initializationUsesProvidedOrderAndSelectsFirstDriver)
 {
-    std::vector<std::string> args{"id"};
-    MockDriver disk;
-    MockDriver display;
+    {
+        const InSequence sequence;
+        EXPECT_CALL(m_first, init(Ref(m_args))).WillOnce(Return(true));
+        EXPECT_CALL(m_second, init(Ref(m_args))).WillOnce(Return(true));
+    }
+    EXPECT_CALL(m_first, terminate());
+    EXPECT_CALL(m_second, terminate());
+
+    EXPECT_EQ(2, init_drivers(m_args, {&m_first, &m_second}));
+    EXPECT_EQ(&m_first, g_driver);
+}
+
+TEST_F(TestDriver, terminationReversesInitializationOrder)
+{
+    EXPECT_CALL(m_first, init(Ref(m_args))).WillOnce(Return(true));
+    EXPECT_CALL(m_second, init(Ref(m_args))).WillOnce(Return(true));
+    ASSERT_EQ(2, init_drivers(m_args, {&m_first, &m_second}));
+
     const InSequence sequence;
-    EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
-    EXPECT_CALL(display, init(Ref(args))).WillOnce(Return(true));
+    EXPECT_CALL(m_second, terminate());
+    EXPECT_CALL(m_first, terminate());
 
-    EXPECT_EQ(2, init_drivers(args, {&disk, &display}));
-    EXPECT_EQ(&disk, g_driver);
-
-    EXPECT_CALL(display, terminate());
-    EXPECT_CALL(disk, terminate());
     close_drivers();
+
     EXPECT_EQ(nullptr, g_driver);
 }
 
-TEST(TestDriver, initSkipsUnavailableDrivers)
+TEST_F(TestDriver, initSkipsUnavailableDrivers)
 {
-    std::vector<std::string> args{"id"};
-    MockDriver unavailable;
-    MockDriver available;
-    const InSequence sequence;
-    EXPECT_CALL(unavailable, init(Ref(args))).WillOnce(Return(false));
-    EXPECT_CALL(available, init(Ref(args))).WillOnce(Return(true));
+    {
+        const InSequence sequence;
+        EXPECT_CALL(m_first, init(Ref(m_args))).WillOnce(Return(false));
+        EXPECT_CALL(m_second, init(Ref(m_args))).WillOnce(Return(true));
+    }
+    EXPECT_CALL(m_second, terminate());
 
-    EXPECT_EQ(1, init_drivers(args, {nullptr, &unavailable, &available}));
-    EXPECT_EQ(&available, g_driver);
-
-    EXPECT_CALL(available, terminate());
-    close_drivers();
-    EXPECT_EQ(nullptr, g_driver);
+    EXPECT_EQ(1, init_drivers(m_args, {nullptr, &m_first, &m_second}));
+    EXPECT_EQ(&m_second, g_driver);
 }
 
 } // namespace id::test
