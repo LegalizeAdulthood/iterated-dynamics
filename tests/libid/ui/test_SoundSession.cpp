@@ -17,11 +17,13 @@
 #include <misc/ValueSaver.h>
 #include <ui/KeyboardHandler.h>
 
+#include <algorithm>
 #include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <iterator>
 #include <memory>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 
@@ -101,8 +103,10 @@ void TestSoundSession::SetUp()
 {
     reset_calc_interrupted();
     const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
+    std::string test_name{info->name()};
+    std::replace(test_name.begin(), test_name.end(), '/', '-');
     m_directory = fs::temp_directory_path() /
-        ("id-sound-session-" + std::string{info->name()} + "-" +
+        ("id-sound-session-" + test_name + "-" +
             std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
     m_directory_created = fs::create_directory(m_directory);
     ASSERT_TRUE(m_directory_created);
@@ -120,18 +124,42 @@ void TestSoundSession::TearDown()
     }
 }
 
-TEST_F(TestSoundSession, selectsNullOutputOnlyWhenNeitherPlaybackNorRecordingIsRequested)
+struct SoundSessionModeInput
 {
-    for (const int mode : {SOUNDFLAG_OFF, SOUNDFLAG_BEEP})
-    {
-        g_sound_flag = mode;
-        SoundSession session{Source::OVERLAY};
-        EXPECT_NE(nullptr, dynamic_cast<NullSoundOutput *>(g_sound.get()));
-        EXPECT_TRUE(session.wait_until_ready());
-        EXPECT_TRUE(session.finish());
-    }
+    const char *name;
+    int mode;
+};
+
+void PrintTo(const SoundSessionModeInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestNullSoundSession : public TestSoundSession, public WithParamInterface<SoundSessionModeInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestNullSoundSession::SetUp()
+{
+    TestSoundSession::SetUp();
+    g_sound_flag = GetParam().mode;
+}
+
+TEST_P(TestNullSoundSession, selectsNullOutputWithoutPlaybackOrRecording)
+{
+    SoundSession session{Source::OVERLAY};
+
+    EXPECT_NE(nullptr, dynamic_cast<NullSoundOutput *>(g_sound.get()));
+    EXPECT_TRUE(session.wait_until_ready());
+    EXPECT_TRUE(session.finish());
     EXPECT_FALSE(fs::exists(m_directory / "sound"));
 }
+
+INSTANTIATE_TEST_SUITE_P(Modes, TestNullSoundSession,
+    Values(SoundSessionModeInput{"Off", SOUNDFLAG_OFF}, SoundSessionModeInput{"Beep", SOUNDFLAG_BEEP}),
+    [](const TestParamInfo<SoundSessionModeInput> &info) { return info.param.name; });
 
 TEST_F(TestSoundSession, recordingRequestRetainsDriverAdapterWithoutPlayback)
 {
@@ -175,38 +203,53 @@ TEST_F(TestSoundSession, batchModeDoesNotEnableRecording)
     EXPECT_FALSE(fs::exists(m_directory / "sound"));
 }
 
-TEST_F(TestSoundSession, renderOwnerSelectsTheProducerMapping)
+struct SoundProducerMappingInput
 {
-    ValueSaver saved_specific{g_cur_fractal_specific};
-    ValueSaver saved_mode{g_std_calc_mode};
-    g_sound_flag = SOUNDFLAG_X;
+    const char *name;
+    FractalType type;
+    CalcMode mode;
+    int frequency;
+};
 
-    struct MappingCase
-    {
-        FractalType type;
-        CalcMode mode;
-        int frequency;
-    };
-
-    const MappingCase cases[]{
-        {FractalType::MANDEL, CalcMode::ONE_PASS, 230},
-        {FractalType::MANDEL, CalcMode::ORBIT, 220},
-        {FractalType::FROTHY_BASIN, CalcMode::ORBIT, 230},
-        {FractalType::HENON, CalcMode::ONE_PASS, 1220},
-        {FractalType::LORENZ_3D, CalcMode::ONE_PASS, 1220},
-        {FractalType::DYNAMIC, CalcMode::ONE_PASS, 1220},
-    };
-    for (const MappingCase &test : cases)
-    {
-        g_cur_fractal_specific = get_fractal_specific(test.type);
-        g_std_calc_mode = test.mode;
-        EXPECT_CALL(m_driver, sound_on(test.frequency)).WillOnce(Return(false));
-        SoundSession owner;
-
-        EXPECT_TRUE(g_sound->play({10, 20, 30}));
-        EXPECT_TRUE(owner.finish());
-    }
+void PrintTo(const SoundProducerMappingInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestSoundProducerMapping : public TestSoundSession, public WithParamInterface<SoundProducerMappingInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific};
+    ValueSaver<CalcMode> m_saved_mode{g_std_calc_mode};
+};
+
+void TestSoundProducerMapping::SetUp()
+{
+    TestSoundSession::SetUp();
+    g_sound_flag = SOUNDFLAG_X;
+    g_cur_fractal_specific = get_fractal_specific(GetParam().type);
+    g_std_calc_mode = GetParam().mode;
+    EXPECT_CALL(m_driver, sound_on(GetParam().frequency)).WillOnce(Return(false));
+}
+
+TEST_P(TestSoundProducerMapping, renderOwnerSelectsTheProducerMapping)
+{
+    SoundSession owner;
+
+    EXPECT_TRUE(g_sound->play({10, 20, 30}));
+    EXPECT_TRUE(owner.finish());
+}
+
+INSTANTIATE_TEST_SUITE_P(Producers, TestSoundProducerMapping,
+    Values(SoundProducerMappingInput{"Mandel", FractalType::MANDEL, CalcMode::ONE_PASS, 230},
+        SoundProducerMappingInput{"StickyMandel", FractalType::MANDEL, CalcMode::ORBIT, 220},
+        SoundProducerMappingInput{"FrothyBasin", FractalType::FROTHY_BASIN, CalcMode::ORBIT, 230},
+        SoundProducerMappingInput{"Henon", FractalType::HENON, CalcMode::ONE_PASS, 1220},
+        SoundProducerMappingInput{"Lorenz3D", FractalType::LORENZ_3D, CalcMode::ONE_PASS, 1220},
+        SoundProducerMappingInput{"Dynamic", FractalType::DYNAMIC, CalcMode::ONE_PASS, 1220}),
+    [](const TestParamInfo<SoundProducerMappingInput> &info) { return info.param.name; });
 
 TEST_F(TestSoundSession, renderMappingUsesTheModeAfterImageSetupAndThenRemainsFixed)
 {
@@ -377,7 +420,28 @@ TEST_F(TestSoundSession, atomicOutputWaitsAndFinishesWithoutPollingOrCancelling)
     EXPECT_TRUE(calc_interrupt_requested());
 }
 
-TEST_F(TestSoundSession, interruptionWhileWaitingUsesTheExistingKeyboardHandler)
+class TestInterruptedSoundSession : public TestSoundSession
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<ScopedKeyboardHandler> m_keyboard_scope;
+};
+
+void TestInterruptedSoundSession::SetUp()
+{
+    TestSoundSession::SetUp();
+    m_keyboard_scope = std::make_unique<ScopedKeyboardHandler>(std::make_shared<MainLoopKeyboardHandler>());
+}
+
+void TestInterruptedSoundSession::TearDown()
+{
+    m_keyboard_scope.reset();
+    TestSoundSession::TearDown();
+}
+
+TEST_F(TestInterruptedSoundSession, interruptionWhileWaitingUsesTheExistingKeyboardHandler)
 {
     InSequence sequence;
     EXPECT_CALL(*m_output, update());
@@ -387,8 +451,6 @@ TEST_F(TestSoundSession, interruptionWhileWaitingUsesTheExistingKeyboardHandler)
     EXPECT_CALL(m_driver, unget_key('x'));
     EXPECT_CALL(*m_output, mute());
     EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
-    const KeyboardHandlerPtr handler{std::make_shared<MainLoopKeyboardHandler>()};
-    ScopedKeyboardHandler keyboard_scope{handler};
     SoundSession session{m_output};
 
     EXPECT_FALSE(session.wait_until_ready());
@@ -422,7 +484,7 @@ TEST_F(TestSoundSession, handledKeyCanLeavePlaybackWaitingWithoutInterrupting)
     EXPECT_TRUE(session.finish());
 }
 
-TEST_F(TestSoundSession, interruptionDuringCompletionMutesBeforeFinalizing)
+TEST_F(TestInterruptedSoundSession, interruptionDuringCompletionMutesBeforeFinalizing)
 {
     InSequence sequence;
     EXPECT_CALL(*m_output, update());
@@ -432,8 +494,6 @@ TEST_F(TestSoundSession, interruptionDuringCompletionMutesBeforeFinalizing)
     EXPECT_CALL(m_driver, unget_key('x'));
     EXPECT_CALL(*m_output, mute());
     EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
-    const KeyboardHandlerPtr handler{std::make_shared<MainLoopKeyboardHandler>()};
-    ScopedKeyboardHandler keyboard_scope{handler};
     SoundSession session{m_output};
 
     EXPECT_FALSE(session.finish());
