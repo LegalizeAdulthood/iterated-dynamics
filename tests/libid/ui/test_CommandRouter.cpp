@@ -30,6 +30,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <array>
 #include <cstdio>
 #include <filesystem>
@@ -890,11 +891,12 @@ void PrintTo(const RouterRdsInput &input, std::ostream *out)
     *out << input.name;
 }
 
-class TestRouterRdsState : public TestCommandRouter
+class RouterRdsStateGuard
 {
-protected:
-    void prepare_state(const RouterRdsState &initial);
+public:
+    void apply(const RouterRdsState &initial);
 
+private:
     ValueSaver<bool> m_saved_rds_batch{g_auto_stereo_batch};
     ValueSaver<bool> m_saved_texture{g_use_stereo_texture};
     ValueSaver<int> m_saved_depth{g_auto_stereo_depth};
@@ -903,7 +905,7 @@ protected:
     ValueSaver<bool> m_saved_reuse{g_stereo_texture_reuse};
 };
 
-void TestRouterRdsState::prepare_state(const RouterRdsState &initial)
+void RouterRdsStateGuard::apply(const RouterRdsState &initial)
 {
     g_auto_stereo_batch = initial.batch;
     g_use_stereo_texture = initial.texture;
@@ -912,6 +914,12 @@ void TestRouterRdsState::prepare_state(const RouterRdsState &initial)
     g_stereo_texture_filename = initial.filename;
     g_stereo_texture_reuse = initial.reuse;
 }
+
+class TestRouterRdsState : public TestCommandRouter
+{
+protected:
+    RouterRdsStateGuard m_rds_state;
+};
 
 class TestAcceptedRouterRds : public TestRouterRdsState, public WithParamInterface<RouterRdsInput>
 {
@@ -922,7 +930,7 @@ protected:
 void TestAcceptedRouterRds::SetUp()
 {
     TestRouterRdsState::SetUp();
-    prepare_state(GetParam().initial);
+    m_rds_state.apply(GetParam().initial);
 }
 
 TEST_P(TestAcceptedRouterRds, returnsTheExpectedStereoSettings)
@@ -982,7 +990,7 @@ protected:
 void TestRejectedRouterRds::SetUp()
 {
     TestRouterRdsState::SetUp();
-    prepare_state(GetParam().initial);
+    m_rds_state.apply(GetParam().initial);
 }
 
 TEST_P(TestRejectedRouterRds, invalidParametersPreserveAllStereoSettings)
@@ -1093,7 +1101,7 @@ protected:
 void TestRouterStereoTexture::SetUp()
 {
     TestRouterRdsState::SetUp();
-    prepare_state({GetParam().automatic, GetParam().initial_texture, g_auto_stereo_depth, g_calibrate, "old.gif",
+    m_rds_state.apply({GetParam().automatic, GetParam().initial_texture, g_auto_stereo_depth, g_calibrate, "old.gif",
         GetParam().initial_reuse});
 }
 
@@ -1132,6 +1140,7 @@ class TestCommandRouterFile : public TestCommandRouter
 {
 protected:
     void TearDown() override;
+    static std::string test_name();
     std::FILE *open_input(std::string_view text);
 
     fs::path m_path;
@@ -1152,10 +1161,17 @@ void TestCommandRouterFile::TearDown()
     clear_command_comments();
 }
 
-std::FILE *TestCommandRouterFile::open_input(const std::string_view text)
+std::string TestCommandRouterFile::test_name()
 {
     const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
-    m_path = fs::temp_directory_path() / (std::string{info->test_suite_name()} + '_' + info->name() + ".par");
+    std::string name{std::string{info->test_suite_name()} + '_' + info->name()};
+    std::replace(name.begin(), name.end(), '/', '_');
+    return name;
+}
+
+std::FILE *TestCommandRouterFile::open_input(const std::string_view text)
+{
+    m_path = fs::temp_directory_path() / (test_name() + ".par");
     std::unique_ptr<std::FILE, decltype(&std::fclose)> file{std::fopen(m_path.string().c_str(), "w+b"), std::fclose};
     if (!file || std::fwrite(text.data(), 1, text.size(), file.get()) != text.size())
     {
@@ -1419,35 +1435,42 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesAutokeyFilenameParameter)
     EXPECT_TRUE(fs::remove(m_path));
 }
 
-TEST_F(TestCommandRouterFile, selectedSetPreservesRdsAndTextureParameterOrder)
+class TestSelectedRdsOrder : public TestCommandRouterFile, public WithParamInterface<bool>
+{
+protected:
+    void SetUp() override;
+
+    RouterRdsStateGuard m_rds_state;
+};
+
+void TestSelectedRdsOrder::SetUp()
+{
+    TestCommandRouterFile::SetUp();
+    m_rds_state.apply({false, false, 77, CalibrationBars::TOP, "", false});
+}
+
+TEST_P(TestSelectedRdsOrder, preservesRdsAndTextureParameterOrder)
 {
     const CommandRouter router;
-    for (const bool texture_first : {false, true})
-    {
-        SCOPED_TRACE(texture_first);
-        ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
-        ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
-        ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
-        ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
-        ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, ""};
-        ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
-        const std::string_view commands{texture_first ? "entry { rds-texture=MixedCaseMap.GIF rds=random }"
-                                                      : "entry { rds=random rds-texture=MixedCaseMap.GIF }"};
-        CommandProcessor processor{open_input(commands), CmdFile::AT_AFTER_STARTUP};
+    const std::string_view commands{GetParam() ? "entry { rds-texture=MixedCaseMap.GIF rds=random }"
+                                               : "entry { rds=random rds-texture=MixedCaseMap.GIF }"};
+    CommandProcessor processor{open_input(commands), CmdFile::AT_AFTER_STARTUP};
 
-        const CommandParseResult result{router.process(processor)};
+    const CommandParseResult result{router.process(processor)};
 
-        EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
-        EXPECT_TRUE(result.diagnostics.errors.empty());
-        EXPECT_TRUE(g_auto_stereo_batch);
-        EXPECT_EQ(!texture_first, g_use_stereo_texture);
-        EXPECT_EQ(!texture_first, g_stereo_texture_reuse);
-        EXPECT_EQ("MixedCaseMap.GIF", g_stereo_texture_filename);
-        EXPECT_EQ(77, g_auto_stereo_depth);
-        EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
-        EXPECT_TRUE(fs::remove(m_path));
-    }
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_EQ(!GetParam(), g_use_stereo_texture);
+    EXPECT_EQ(!GetParam(), g_stereo_texture_reuse);
+    EXPECT_EQ("MixedCaseMap.GIF", g_stereo_texture_filename);
+    EXPECT_EQ(77, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
+    EXPECT_TRUE(fs::remove(m_path));
 }
+
+INSTANTIATE_TEST_SUITE_P(Orders, TestSelectedRdsOrder, Bool(),
+    [](const TestParamInfo<bool> &info) { return info.param ? "TextureFirst" : "RandomFirst"; });
 
 class MockCommandDirectories : public SpecialDirectories
 {
@@ -1482,8 +1505,7 @@ protected:
 
 void TestCommandRouterStartup::SetUp()
 {
-    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
-    m_directory = fs::temp_directory_path() / (std::string{info->test_suite_name()} + '_' + info->name());
+    m_directory = fs::temp_directory_path() / test_name();
     m_library = m_directory / ID_PROGRAM_NAME;
     fs::create_directories(m_library);
     ON_CALL(*m_directories, program_dir()).WillByDefault(Return(m_library));
@@ -1581,51 +1603,75 @@ TEST_F(TestCommandRouterStartup, configurationRejectionStopsAllStartupSources)
     EXPECT_TRUE(fs::remove(m_library / "sstools.ini"));
 }
 
-TEST_F(TestCommandRouterStartup, eitherOwnerRejectionStopsAllLaterStartupSources)
+struct RouterStartupOwnerInput
 {
-    std::vector<std::string> accepted;
+    const char *name;
+    const char *owner;
+    int initial_hertz;
+};
+
+void PrintTo(const RouterStartupOwnerInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterStartupRejection : public TestCommandRouterStartup, public WithParamInterface<RouterStartupOwnerInput>
+{
+protected:
+    void SetUp() override;
+
+    std::vector<std::string> m_accepted;
+};
+
+void TestRouterStartupRejection::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
+    g_base_hertz = GetParam().initial_hertz;
     EXPECT_CALL(m_ui_handler, Call(_))
         .WillRepeatedly(
-            [&](const Command &cmd)
+            [this](const Command &cmd)
             {
                 if (cmd.value == "bad")
                 {
                     return cmd.bad_arg();
                 }
-                accepted.emplace_back("ui=" + std::string{cmd.value});
+                m_accepted.emplace_back("ui=" + std::string{cmd.value});
                 g_base_hertz = cmd.num_val;
                 return CmdArgFlags::PARAM_3D;
             });
     EXPECT_CALL(m_engine_handler, Call(_))
         .WillRepeatedly(
-            [&](const Command &cmd)
+            [this](const Command &cmd)
             {
                 if (cmd.value == "bad")
                 {
                     return cmd.bad_arg();
                 }
-                accepted.emplace_back("engine=" + std::string{cmd.value});
+                m_accepted.emplace_back("engine=" + std::string{cmd.value});
                 g_max_iterations = cmd.num_val;
                 return CmdArgFlags::FRACTAL_PARAM;
             });
-    for (const std::string owner : {"ui", "engine"})
-    {
-        SCOPED_TRACE(owner);
-        g_first_init = true;
-        accepted.clear();
-        write_source("broken.par", "entry { engine=210 " + owner + "=bad ui=999 }");
-
-        const CommandParseResult result{
-            m_router.process_startup({"id", "ui=100", owner + "=bad", "engine=200", "@broken", "ui=300"})};
-
-        EXPECT_THAT(accepted, ElementsAre("ui=100"));
-        EXPECT_EQ(100, g_base_hertz);
-        EXPECT_EQ(150, g_max_iterations);
-        EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
-        EXPECT_THAT(result.diagnostics.errors, ElementsAre(HasSubstr(owner + "=bad")));
-        EXPECT_TRUE(fs::remove(m_library / "broken.par"));
-    }
 }
+
+TEST_P(TestRouterStartupRejection, rejectionStopsAllLaterStartupSources)
+{
+    const std::string owner{GetParam().owner};
+    write_source("broken.par", "entry { engine=210 " + owner + "=bad ui=999 }");
+
+    const CommandParseResult result{
+        m_router.process_startup({"id", "ui=100", owner + "=bad", "engine=200", "@broken", "ui=300"})};
+
+    EXPECT_THAT(m_accepted, ElementsAre("ui=100"));
+    EXPECT_EQ(100, g_base_hertz);
+    EXPECT_EQ(150, g_max_iterations);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre(HasSubstr(owner + "=bad")));
+    EXPECT_TRUE(fs::remove(m_library / "broken.par"));
+}
+
+INSTANTIATE_TEST_SUITE_P(Owners, TestRouterStartupRejection,
+    Values(RouterStartupOwnerInput{"Ui", "ui", 440}, RouterStartupOwnerInput{"Engine", "engine", 100}),
+    [](const TestParamInfo<RouterStartupOwnerInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouterStartup, initializesBeforeConfigurationAndPreservesInitialRequests)
 {
