@@ -65,6 +65,11 @@ protected:
     void TearDown() override;
     int render();
 
+    // Stack-space checks require an anchor in the test body's stack frame.
+    void set_stack_anchor(char *stack_top);
+
+    void prepare_calculation();
+
     MockDriver m_driver;
     FractalSpecific m_specific{*get_fractal_specific(FractalType::L_SYSTEM)};
     ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::L_SYSTEM};
@@ -96,6 +101,8 @@ protected:
     bool m_fail_display{};
     bool m_fail_plot{};
     bool m_overflow_on_spinner{};
+    std::unique_ptr<ValueSaver<char *>> m_saved_stack;
+    std::unique_ptr<NonStandardFractal> m_calculation;
 };
 
 void TestLSystemController::SetUp()
@@ -168,8 +175,22 @@ void TestLSystemController::SetUp()
 
 void TestLSystemController::TearDown()
 {
+    m_calculation.reset();
+    m_saved_stack.reset();
     EXPECT_FALSE(thinking_active());
     EXPECT_FALSE(m_visible);
+}
+
+void TestLSystemController::set_stack_anchor(char *stack_top)
+{
+    m_saved_stack = std::make_unique<ValueSaver<char *>>(g_top_of_stack, stack_top);
+}
+
+void TestLSystemController::prepare_calculation()
+{
+    m_calculation = std::make_unique<NonStandardFractal>();
+    ASSERT_TRUE(m_calculation->start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, m_calculation->select());
 }
 
 int TestLSystemController::render()
@@ -326,32 +347,17 @@ TEST_F(TestLSystemController, definitionFailureDoesNotStartSizingOrDrawing)
 class TestLSystemLifecycle : public TestLSystemController
 {
 protected:
-    void TearDown() override;
-
-    // Stack-space checks require an anchor in the test body's stack frame.
-    void prepare_calculation(char *stack_top);
+    void prepare_lifecycle(char *stack_top);
 
     void complete_controller(LSystemController &controller);
-
-    std::unique_ptr<ValueSaver<char *>> m_saved_stack;
-    std::unique_ptr<NonStandardFractal> m_calculation;
 };
 
-void TestLSystemLifecycle::TearDown()
-{
-    m_calculation.reset();
-    m_saved_stack.reset();
-    TestLSystemController::TearDown();
-}
-
-void TestLSystemLifecycle::prepare_calculation(char *stack_top)
+void TestLSystemLifecycle::prepare_lifecycle(char *stack_top)
 {
     g_params[0] = 3;
     lsystem_load();
-    m_saved_stack = std::make_unique<ValueSaver<char *>>(g_top_of_stack, stack_top);
-    m_calculation = std::make_unique<NonStandardFractal>();
-    ASSERT_TRUE(m_calculation->start().empty());
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, m_calculation->select());
+    set_stack_anchor(stack_top);
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
 }
 
 void TestLSystemLifecycle::complete_controller(LSystemController &controller)
@@ -366,7 +372,7 @@ void TestLSystemLifecycle::complete_controller(LSystemController &controller)
 TEST_F(TestLSystemLifecycle, iterationBeforeStartIsRejected)
 {
     char stack_top{};
-    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    ASSERT_NO_FATAL_FAILURE(prepare_lifecycle(&stack_top));
     LSystemController controller{*m_calculation};
 
     EXPECT_THROW(controller.iterate(), std::logic_error);
@@ -375,7 +381,7 @@ TEST_F(TestLSystemLifecycle, iterationBeforeStartIsRejected)
 TEST_F(TestLSystemLifecycle, resultBeforeStartIsRejected)
 {
     char stack_top{};
-    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    ASSERT_NO_FATAL_FAILURE(prepare_lifecycle(&stack_top));
     LSystemController controller{*m_calculation};
 
     EXPECT_THROW(controller.result(), std::logic_error);
@@ -384,7 +390,7 @@ TEST_F(TestLSystemLifecycle, resultBeforeStartIsRejected)
 TEST_F(TestLSystemLifecycle, suspensionBeforeStartIsRejected)
 {
     char stack_top{};
-    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    ASSERT_NO_FATAL_FAILURE(prepare_lifecycle(&stack_top));
     LSystemController controller{*m_calculation};
 
     EXPECT_THROW(controller.suspend(), std::logic_error);
@@ -393,7 +399,7 @@ TEST_F(TestLSystemLifecycle, suspensionBeforeStartIsRejected)
 TEST_F(TestLSystemLifecycle, duplicateStartIsRejected)
 {
     char stack_top{};
-    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    ASSERT_NO_FATAL_FAILURE(prepare_lifecycle(&stack_top));
     LSystemController controller{*m_calculation};
     controller.start();
 
@@ -403,7 +409,7 @@ TEST_F(TestLSystemLifecycle, duplicateStartIsRejected)
 TEST_F(TestLSystemLifecycle, suspensionAfterCompletionIsRejected)
 {
     char stack_top{};
-    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    ASSERT_NO_FATAL_FAILURE(prepare_lifecycle(&stack_top));
     LSystemController controller{*m_calculation};
     controller.start();
     complete_controller(controller);
@@ -426,7 +432,7 @@ TEST_F(TestLSystemController, stepwiseControllerPreservesSizingAndDrawingIncreme
     g_params[0] = 3;
     lsystem_load();
     char stack_top{};
-    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
+    set_stack_anchor(&stack_top);
     std::vector<WorkState> expected;
     {
         LSystem system;
@@ -440,9 +446,8 @@ TEST_F(TestLSystemController, stepwiseControllerPreservesSizingAndDrawingIncreme
         ASSERT_FALSE(system.interrupted());
     }
     m_lines = 0;
-    NonStandardFractal calculation;
-    ASSERT_TRUE(calculation.start().empty());
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     LSystemController controller{calculation};
 
     controller.start();
@@ -474,7 +479,7 @@ TEST_F(TestLSystemController, stepwiseControllerPreservesSizingAndDrawingIncreme
 TEST_F(TestLSystemLifecycle, iterationAfterCompletionDoesNotDraw)
 {
     char stack_top{};
-    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    ASSERT_NO_FATAL_FAILURE(prepare_lifecycle(&stack_top));
     LSystemController controller{*m_calculation};
     controller.start();
     complete_controller(controller);
@@ -491,10 +496,9 @@ TEST_F(TestLSystemController, stepwiseSizingSuspensionClosesThinking)
 {
     g_params[0] = 6;
     char stack_top{};
-    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    set_stack_anchor(&stack_top);
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     LSystemController controller{calculation};
     controller.start();
     controller.iterate();
@@ -515,10 +519,9 @@ TEST_F(TestLSystemController, stepwiseSizingSuspensionClosesThinking)
 TEST_F(TestLSystemController, stepwiseDrawingSuspensionDoesNotCloseThinkingTwice)
 {
     char stack_top{};
-    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    set_stack_anchor(&stack_top);
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     LSystemController controller{calculation};
     controller.start();
     for (int i = 0; i < 100 && m_lines == 0; ++i)
@@ -543,10 +546,9 @@ TEST_F(TestLSystemController, stepwiseSizingInterruptionLeavesCommandPending)
     g_params[0] = 9;
     m_cancel_sizing = true;
     char stack_top{};
-    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    set_stack_anchor(&stack_top);
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     EXPECT_CALL(m_driver, get_key()).Times(0);
     EXPECT_CALL(m_driver, unget_key(_)).Times(0);
     LSystemController controller{calculation};
@@ -571,10 +573,9 @@ TEST_F(TestLSystemController, stepwiseDrawingInterruptionLeavesCommandPending)
     g_params[0] = 3;
     m_cancel_drawing = true;
     char stack_top{};
-    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    set_stack_anchor(&stack_top);
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     EXPECT_CALL(m_driver, get_key()).Times(0);
     EXPECT_CALL(m_driver, unget_key(_)).Times(0);
     LSystemController controller{calculation};
@@ -600,10 +601,9 @@ TEST_F(TestLSystemController, stepwiseInputFailureClosesCalculationAndThinking)
     g_params[0] = 9;
     m_fail_input = true;
     char stack_top{};
-    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    set_stack_anchor(&stack_top);
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     LSystemController controller{calculation};
     controller.start();
 
@@ -628,10 +628,9 @@ TEST_F(TestLSystemController, stepwiseDisplayFailureRestoresThinking)
 {
     m_fail_display = true;
     char stack_top{};
-    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    set_stack_anchor(&stack_top);
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     LSystemController controller{calculation};
     controller.start();
 
@@ -649,10 +648,9 @@ TEST_F(TestLSystemController, stepwisePlotFailureDoesNotCloseThinkingTwice)
 {
     m_fail_plot = true;
     char stack_top{};
-    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    set_stack_anchor(&stack_top);
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     LSystemController controller{calculation};
     controller.start();
 
@@ -676,10 +674,9 @@ TEST_F(TestLSystemController, stepwiseDestructionClosesThinkingWithoutFinishingC
 {
     g_params[0] = 6;
     char stack_top{};
-    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
+    set_stack_anchor(&stack_top);
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     {
         LSystemController controller{calculation};
         controller.start();
@@ -698,27 +695,14 @@ TEST_F(TestLSystemController, stepwiseDestructionClosesThinkingWithoutFinishingC
 class TestLSystemAlreadyFinished : public TestLSystemController
 {
 protected:
-    void TearDown() override;
-    void prepare_calculation(char *stack_top);
-
-    std::unique_ptr<ValueSaver<char *>> m_saved_stack;
-    std::unique_ptr<NonStandardFractal> m_calculation;
+    void prepare_finished(char *stack_top);
 };
 
-void TestLSystemAlreadyFinished::TearDown()
-{
-    m_calculation.reset();
-    m_saved_stack.reset();
-    TestLSystemController::TearDown();
-}
-
-void TestLSystemAlreadyFinished::prepare_calculation(char *stack_top)
+void TestLSystemAlreadyFinished::prepare_finished(char *stack_top)
 {
     g_overflow = true;
-    m_saved_stack = std::make_unique<ValueSaver<char *>>(g_top_of_stack, stack_top);
-    m_calculation = std::make_unique<NonStandardFractal>();
-    m_calculation->start();
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, m_calculation->select());
+    set_stack_anchor(stack_top);
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
     ASSERT_TRUE(m_calculation->done());
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
 }
@@ -726,7 +710,7 @@ void TestLSystemAlreadyFinished::prepare_calculation(char *stack_top)
 TEST_F(TestLSystemAlreadyFinished, stepwiseAlreadyFinishedCalculationDoesNotOpenThinking)
 {
     char stack_top{};
-    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    ASSERT_NO_FATAL_FAILURE(prepare_finished(&stack_top));
     LSystemController controller{*m_calculation};
 
     controller.start();
@@ -742,7 +726,7 @@ TEST_F(TestLSystemAlreadyFinished, stepwiseAlreadyFinishedCalculationDoesNotOpen
 TEST_F(TestLSystemAlreadyFinished, iterationAfterCompletionDoesNotOpenThinking)
 {
     char stack_top{};
-    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    ASSERT_NO_FATAL_FAILURE(prepare_finished(&stack_top));
     LSystemController controller{*m_calculation};
     controller.start();
     ASSERT_TRUE(controller.done());
