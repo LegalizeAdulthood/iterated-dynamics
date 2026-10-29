@@ -34,6 +34,7 @@
 #include <cstdio>
 #include <filesystem>
 #include <memory>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -67,22 +68,47 @@ protected:
     const CommandRouter m_router{CommandHandlerTables{{}, m_ui}, CommandHandlerTables{{}, m_engine}};
 };
 
-TEST_F(TestCommandRouter, acceptsUiWithoutFlagsOrDelegation)
+struct RouterOwnerInput
 {
-    CommandProcessor processor{"ui=yes", CmdFile::AT_AFTER_STARTUP};
-    EXPECT_CALL(m_ui_handler, Call(_))
+    const char *name;
+    bool ui;
+    CmdArgFlags flags;
+};
+
+void PrintTo(const RouterOwnerInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestAcceptedRouterOwner : public TestCommandRouter, public WithParamInterface<RouterOwnerInput>
+{
+};
+
+TEST_P(TestAcceptedRouterOwner, preservesTheCommandAndReturnsOwnerFlags)
+{
+    CommandProcessor processor{GetParam().ui ? "ui=yes" : "engine=yes", CmdFile::AT_AFTER_STARTUP};
+    EXPECT_CALL((GetParam().ui ? m_ui_handler : m_engine_handler), Call(_))
         .WillOnce(
-            [&](const Command &cmd)
+            [this, &processor](const Command &cmd)
             {
                 EXPECT_EQ(&processor.command(), &cmd);
-                return CmdArgFlags::NONE;
+                if (!GetParam().ui)
+                {
+                    EXPECT_EQ(CmdFile::AT_AFTER_STARTUP, cmd.mode);
+                }
+                return GetParam().flags;
             });
 
     const CommandParseResult result{m_router.process(processor)};
 
-    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_EQ(GetParam().flags, result.flags);
     EXPECT_TRUE(result.diagnostics.errors.empty());
 }
+
+INSTANTIATE_TEST_SUITE_P(Owners, TestAcceptedRouterOwner,
+    Values(
+        RouterOwnerInput{"Ui", true, CmdArgFlags::NONE}, RouterOwnerInput{"Engine", false, CmdArgFlags::FRACTAL_PARAM}),
+    [](const TestParamInfo<RouterOwnerInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouter, preservesUiFlagsAndAuxiliaryResults)
 {
@@ -105,45 +131,26 @@ TEST_F(TestCommandRouter, preservesUiFlagsAndAuxiliaryResults)
     EXPECT_TRUE(std::holds_alternative<MakeHelpDocument>(result.action));
 }
 
-TEST_F(TestCommandRouter, delegatesUnknownUiNameToEngineWithTheSameCommand)
+class TestRejectedRouterOwner : public TestCommandRouter, public WithParamInterface<RouterOwnerInput>
 {
-    CommandProcessor processor{"engine=yes", CmdFile::AT_AFTER_STARTUP};
-    EXPECT_CALL(m_engine_handler, Call(_))
-        .WillOnce(
-            [&](const Command &cmd)
-            {
-                EXPECT_EQ(&processor.command(), &cmd);
-                EXPECT_EQ(CmdFile::AT_AFTER_STARTUP, cmd.mode);
-                return CmdArgFlags::FRACTAL_PARAM;
-            });
+};
+
+TEST_P(TestRejectedRouterOwner, rejectionProducesOnlyTheOwnerDiagnostic)
+{
+    const std::string argument{GetParam().ui ? "ui=bad" : "engine=bad"};
+    CommandProcessor processor{argument, CmdFile::AT_AFTER_STARTUP};
+    EXPECT_CALL((GetParam().ui ? m_ui_handler : m_engine_handler), Call(_))
+        .WillOnce([](const Command &cmd) { return cmd.bad_arg(); });
 
     const CommandParseResult result{m_router.process(processor)};
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(GetParam().flags, result.flags);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  " + argument));
 }
 
-TEST_F(TestCommandRouter, rejectedUiNameDoesNotDelegateOrRepeatDiagnostic)
-{
-    CommandProcessor processor{"ui=bad", CmdFile::AT_AFTER_STARTUP};
-    EXPECT_CALL(m_ui_handler, Call(_)).WillOnce([](const Command &cmd) { return cmd.bad_arg(); });
-
-    const CommandParseResult result{m_router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  ui=bad"));
-}
-
-TEST_F(TestCommandRouter, rejectedEngineNameIsNotDiagnosedAgain)
-{
-    CommandProcessor processor{"engine=bad", CmdFile::AT_AFTER_STARTUP};
-    EXPECT_CALL(m_engine_handler, Call(_)).WillOnce([](const Command &cmd) { return cmd.bad_arg(); });
-
-    const CommandParseResult result{m_router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  engine=bad"));
-}
+INSTANTIATE_TEST_SUITE_P(Owners, TestRejectedRouterOwner,
+    Values(RouterOwnerInput{"Ui", true, CmdArgFlags::BAD_ARG}, RouterOwnerInput{"Engine", false, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<RouterOwnerInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouter, unknownNameIsDiagnosedOnce)
 {
@@ -201,41 +208,76 @@ TEST_F(TestCommandRouter, startupContextPermitsRestrictedUiName)
     EXPECT_TRUE(result.diagnostics.errors.empty());
 }
 
-TEST_F(TestCommandRouter, duplicateNamesAreRejectedAcrossEveryTablePairBeforeAdvancement)
+struct RouterTablePairInput
+{
+    const char *name;
+    std::size_t first;
+    std::size_t second;
+};
+
+void PrintTo(const RouterTablePairInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestDuplicateRouterTablePair : public TestCommandRouter, public WithParamInterface<RouterTablePairInput>
+{
+};
+
+TEST_P(TestDuplicateRouterTablePair, rejectsDuplicateNamesBeforeAdvancement)
 {
     CommandProcessor processor{"maxiter=222", CmdFile::AT_AFTER_STARTUP};
-    for (std::size_t first = 0; first < 4; ++first)
-    {
-        for (std::size_t second = first + 1; second < 4; ++second)
-        {
-            SCOPED_TRACE(Message() << first << ", " << second);
-            std::array<std::vector<CommandHandler>, 4> tables{};
-            tables[first] = m_ui;
-            tables[second] = m_ui;
+    std::array<std::vector<CommandHandler>, 4> tables{};
+    tables[GetParam().first] = m_ui;
+    tables[GetParam().second] = m_ui;
 
-            EXPECT_THROW(
-                (CommandRouter{CommandHandlerTables{tables[0], tables[1]}, CommandHandlerTables{tables[2], tables[3]}}),
-                std::logic_error);
-        }
-    }
+    EXPECT_THROW(
+        (CommandRouter{CommandHandlerTables{tables[0], tables[1]}, CommandHandlerTables{tables[2], tables[3]}}),
+        std::logic_error);
+
     EXPECT_EQ(150, g_max_iterations);
     EXPECT_THROW(processor.command(), std::logic_error);
 }
 
-TEST_F(TestCommandRouter, duplicateNamesAreRejectedWithinEveryTable)
+INSTANTIATE_TEST_SUITE_P(TablePairs, TestDuplicateRouterTablePair,
+    Values(RouterTablePairInput{"UiRestrictedAndUiGeneral", 0, 1},
+        RouterTablePairInput{"UiRestrictedAndEngineRestricted", 0, 2},
+        RouterTablePairInput{"UiRestrictedAndEngineGeneral", 0, 3},
+        RouterTablePairInput{"UiGeneralAndEngineRestricted", 1, 2},
+        RouterTablePairInput{"UiGeneralAndEngineGeneral", 1, 3},
+        RouterTablePairInput{"EngineRestrictedAndEngineGeneral", 2, 3}),
+    [](const TestParamInfo<RouterTablePairInput> &info) { return info.param.name; });
+
+struct RouterTableInput
+{
+    const char *name;
+    std::size_t group;
+};
+
+void PrintTo(const RouterTableInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestDuplicateRouterTable : public TestCommandRouter, public WithParamInterface<RouterTableInput>
+{
+};
+
+TEST_P(TestDuplicateRouterTable, rejectsDuplicateNamesWithinTheTable)
 {
     const std::vector<CommandHandler> duplicates{m_ui[0], m_ui[0]};
-    for (std::size_t group = 0; group < 4; ++group)
-    {
-        SCOPED_TRACE(group);
-        std::array<std::vector<CommandHandler>, 4> tables{};
-        tables[group] = duplicates;
+    std::array<std::vector<CommandHandler>, 4> tables{};
+    tables[GetParam().group] = duplicates;
 
-        EXPECT_THROW(
-            (CommandRouter{CommandHandlerTables{tables[0], tables[1]}, CommandHandlerTables{tables[2], tables[3]}}),
-            std::logic_error);
-    }
+    EXPECT_THROW(
+        (CommandRouter{CommandHandlerTables{tables[0], tables[1]}, CommandHandlerTables{tables[2], tables[3]}}),
+        std::logic_error);
 }
+
+INSTANTIATE_TEST_SUITE_P(Tables, TestDuplicateRouterTable,
+    Values(RouterTableInput{"UiRestricted", 0}, RouterTableInput{"UiGeneral", 1},
+        RouterTableInput{"EngineRestricted", 2}, RouterTableInput{"EngineGeneral", 3}),
+    [](const TestParamInfo<RouterTableInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouter, unrelatedHandlerExceptionsPropagate)
 {
