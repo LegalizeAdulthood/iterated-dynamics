@@ -2140,58 +2140,55 @@ INSTANTIATE_TEST_SUITE_P(Sources, TestRouterRdsSources,
             {false, false, 30, CalibrationBars::MIDDLE, "map.gif", false}}),
     [](const TestParamInfo<RouterRdsSourceInput> &info) { return info.param.name; });
 
-TEST_F(TestCommandRouterStartup, startupSourcesRouteStereoTextureInOrder)
+class TestRouterTextureSources : public TestCommandRouterStartup, public WithParamInterface<RouterRdsSourceInput>
 {
-    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, true};
-    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
-    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
+protected:
+    void SetUp() override;
+
+    RouterRdsStateGuard m_rds_state;
+};
+
+void TestRouterTextureSources::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
+    m_rds_state.apply(GetParam().initial);
     write_source("sstools.ini", "rds-texture=ConfigTexture.GIF\n");
     write_source("whole.par", "entry { rds-texture=WholeTexture.GIF }");
     write_source(
         "selected.par", "ignored { rds-texture=IgnoredTexture.GIF }\nchosen { rds-texture=SelectedTexture.GIF }");
+}
+
+TEST_P(TestRouterTextureSources, laterSourcesDetermineTheTextureSettings)
+{
     const CommandRouter router;
 
-    const CommandParseResult configuration{router.process_startup({"id"})};
+    const CommandParseResult result{router.process_startup(GetParam().arguments)};
 
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, configuration.flags);
-    EXPECT_TRUE(configuration.diagnostics.errors.empty());
-    EXPECT_TRUE(configuration.diagnostics.warnings.empty());
-    EXPECT_EQ("ConfigTexture.GIF", g_stereo_texture_filename);
-    EXPECT_TRUE(g_use_stereo_texture);
-    EXPECT_TRUE(g_stereo_texture_reuse);
-    EXPECT_TRUE(g_auto_stereo_batch);
-
-    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, whole.flags);
-    EXPECT_TRUE(whole.diagnostics.errors.empty());
-    EXPECT_TRUE(whole.diagnostics.warnings.empty());
-    EXPECT_EQ("WholeTexture.GIF", g_stereo_texture_filename);
-    EXPECT_TRUE(g_use_stereo_texture);
-    EXPECT_TRUE(g_stereo_texture_reuse);
-    EXPECT_TRUE(g_auto_stereo_batch);
-
-    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, selected.flags);
-    EXPECT_TRUE(selected.diagnostics.errors.empty());
-    EXPECT_TRUE(selected.diagnostics.warnings.empty());
-    EXPECT_EQ("SelectedTexture.GIF", g_stereo_texture_filename);
-    EXPECT_TRUE(g_use_stereo_texture);
-    EXPECT_TRUE(g_stereo_texture_reuse);
-    EXPECT_TRUE(g_auto_stereo_batch);
-
-    const CommandParseResult argument{router.process_startup({"id", "@whole", "@selected/chosen", "rds-texture="})};
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, argument.flags);
-    EXPECT_TRUE(argument.diagnostics.errors.empty());
-    EXPECT_TRUE(argument.diagnostics.warnings.empty());
-    EXPECT_TRUE(g_stereo_texture_filename.empty());
-    EXPECT_TRUE(g_use_stereo_texture);
-    EXPECT_FALSE(g_stereo_texture_reuse);
-    EXPECT_TRUE(g_auto_stereo_batch);
+    const RouterRdsState &expected{GetParam().expected};
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_TRUE(result.diagnostics.warnings.empty());
+    EXPECT_EQ(expected.filename, g_stereo_texture_filename);
+    EXPECT_EQ(expected.texture, g_use_stereo_texture);
+    EXPECT_EQ(expected.reuse, g_stereo_texture_reuse);
+    EXPECT_EQ(expected.batch, g_auto_stereo_batch);
+    EXPECT_EQ(expected.depth, g_auto_stereo_depth);
+    EXPECT_EQ(expected.bars, g_calibrate);
 }
+
+INSTANTIATE_TEST_SUITE_P(Sources, TestRouterTextureSources,
+    Values(RouterRdsSourceInput{"Configuration", {"id"}, {true, false, 100, CalibrationBars::MIDDLE, "old.gif", false},
+               {true, true, 100, CalibrationBars::MIDDLE, "ConfigTexture.GIF", true}},
+        RouterRdsSourceInput{"WholeFile", {"id", "@whole"},
+            {true, true, 100, CalibrationBars::MIDDLE, "ConfigTexture.GIF", true},
+            {true, true, 100, CalibrationBars::MIDDLE, "WholeTexture.GIF", true}},
+        RouterRdsSourceInput{"SelectedSet", {"id", "@whole", "@selected/chosen"},
+            {true, true, 100, CalibrationBars::MIDDLE, "WholeTexture.GIF", true},
+            {true, true, 100, CalibrationBars::MIDDLE, "SelectedTexture.GIF", true}},
+        RouterRdsSourceInput{"Argument", {"id", "@whole", "@selected/chosen", "rds-texture="},
+            {true, true, 100, CalibrationBars::MIDDLE, "SelectedTexture.GIF", true},
+            {true, true, 100, CalibrationBars::MIDDLE, "", false}}),
+    [](const TestParamInfo<RouterRdsSourceInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVideoPromptPreferenceAlone)
 {
@@ -2202,43 +2199,58 @@ TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVideoPromptPreference
     EXPECT_FALSE(g_ask_video);
 }
 
-TEST_F(TestCommandRouterStartup, videoPromptDefaultPrecedesConfigurationAndLaterOverrides)
+struct RouterPreferenceSourceInput
 {
+    const char *name;
+    std::vector<std::string> arguments;
+    bool indirect;
+    bool expected;
+};
+
+void PrintTo(const RouterPreferenceSourceInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterAskVideoSources : public TestCommandRouterStartup,
+                                  public WithParamInterface<RouterPreferenceSourceInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestRouterAskVideoSources::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
     g_ask_video = false;
-    write_source("sstools.ini", "askvideo=no\n");
+    if (GetParam().indirect)
+    {
+        write_source("whole.par", "entry { askvideo=no }");
+        write_source("selected.par", "ignored { askvideo=no }\nchosen { askvideo=yes }");
+    }
+    else
+    {
+        write_source("sstools.ini", "askvideo=no\n");
+    }
+}
+
+TEST_P(TestRouterAskVideoSources, laterSourcesDetermineTheVideoPromptPreference)
+{
     const CommandRouter router;
 
-    const CommandParseResult configuration{router.process_startup({"id"})};
-
-    EXPECT_TRUE(configuration.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::NONE, configuration.flags);
-    EXPECT_FALSE(g_ask_video);
-
-    const CommandParseResult result{router.process_startup({"id", "askvideo=yes"})};
+    const CommandParseResult result{router.process_startup(GetParam().arguments)};
 
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_EQ(CmdArgFlags::NONE, result.flags);
-    EXPECT_TRUE(g_ask_video);
+    EXPECT_EQ(GetParam().expected, g_ask_video);
 }
 
-TEST_F(TestCommandRouterStartup, indirectFilesRouteVideoPromptParameter)
-{
-    write_source("whole.par", "entry { askvideo=no }");
-    write_source("selected.par", "ignored { askvideo=no }\nchosen { askvideo=yes }");
-    const CommandRouter router;
-
-    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
-
-    EXPECT_TRUE(whole.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::NONE, whole.flags);
-    EXPECT_FALSE(g_ask_video);
-
-    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
-
-    EXPECT_TRUE(selected.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::NONE, selected.flags);
-    EXPECT_TRUE(g_ask_video);
-}
+INSTANTIATE_TEST_SUITE_P(Sources, TestRouterAskVideoSources,
+    Values(RouterPreferenceSourceInput{"Configuration", {"id"}, false, false},
+        RouterPreferenceSourceInput{"Argument", {"id", "askvideo=yes"}, false, true},
+        RouterPreferenceSourceInput{"WholeFile", {"id", "@whole"}, true, false},
+        RouterPreferenceSourceInput{"SelectedSet", {"id", "@whole", "@selected/chosen"}, true, true}),
+    [](const TestParamInfo<RouterPreferenceSourceInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouterStartup, startupRestartAndFallbackRestoreVideoPromptDefault)
 {
@@ -2295,43 +2307,44 @@ TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVirtualScreenPreferen
     EXPECT_FALSE(g_virtual_screens);
 }
 
-TEST_F(TestCommandRouterStartup, virtualScreenDefaultPrecedesConfigurationAndLaterOverrides)
+class TestRouterVirtualSources : public TestCommandRouterStartup, public WithParamInterface<RouterPreferenceSourceInput>
 {
+protected:
+    void SetUp() override;
+};
+
+void TestRouterVirtualSources::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
     g_virtual_screens = false;
-    write_source("sstools.ini", "virtual=no\n");
+    if (GetParam().indirect)
+    {
+        write_source("whole.par", "entry { virtual=no }");
+        write_source("selected.par", "ignored { virtual=no }\nchosen { virtual=yes }");
+    }
+    else
+    {
+        write_source("sstools.ini", "virtual=no\n");
+    }
+}
+
+TEST_P(TestRouterVirtualSources, laterSourcesDetermineTheVirtualScreenPreference)
+{
     const CommandRouter router;
 
-    const CommandParseResult configuration{router.process_startup({"id"})};
-
-    EXPECT_TRUE(configuration.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, configuration.flags);
-    EXPECT_FALSE(g_virtual_screens);
-
-    const CommandParseResult result{router.process_startup({"id", "virtual=yes"})};
+    const CommandParseResult result{router.process_startup(GetParam().arguments)};
 
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
-    EXPECT_TRUE(g_virtual_screens);
+    EXPECT_EQ(GetParam().expected, g_virtual_screens);
 }
 
-TEST_F(TestCommandRouterStartup, indirectFilesRouteVirtualScreenParameter)
-{
-    write_source("whole.par", "entry { virtual=no }");
-    write_source("selected.par", "ignored { virtual=no }\nchosen { virtual=yes }");
-    const CommandRouter router;
-
-    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
-
-    EXPECT_TRUE(whole.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, whole.flags);
-    EXPECT_FALSE(g_virtual_screens);
-
-    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
-
-    EXPECT_TRUE(selected.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, selected.flags);
-    EXPECT_TRUE(g_virtual_screens);
-}
+INSTANTIATE_TEST_SUITE_P(Sources, TestRouterVirtualSources,
+    Values(RouterPreferenceSourceInput{"Configuration", {"id"}, false, false},
+        RouterPreferenceSourceInput{"Argument", {"id", "virtual=yes"}, false, true},
+        RouterPreferenceSourceInput{"WholeFile", {"id", "@whole"}, true, false},
+        RouterPreferenceSourceInput{"SelectedSet", {"id", "@whole", "@selected/chosen"}, true, true}),
+    [](const TestParamInfo<RouterPreferenceSourceInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouterStartup, startupRestartAndFallbackRestoreVirtualScreenDefault)
 {
