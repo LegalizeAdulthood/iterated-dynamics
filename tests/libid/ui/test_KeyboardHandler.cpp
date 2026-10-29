@@ -79,9 +79,17 @@ protected:
         EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
     }
 
+    std::shared_ptr<RecordingKeyboardHandler> make_handler(int id, bool consumed);
+
+    KeyboardEvents m_events;
     MockDriver m_driver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
 };
+
+std::shared_ptr<RecordingKeyboardHandler> TestKeyboardHandler::make_handler(const int id, const bool consumed)
+{
+    return std::make_shared<RecordingKeyboardHandler>(id, consumed, m_events);
+}
 
 struct KeyboardPropagationInput
 {
@@ -103,16 +111,14 @@ class TestKeyboardHandlerPropagation : public TestKeyboardHandler, public WithPa
 TEST_P(TestKeyboardHandlerPropagation, offersKeyUntilConsumed)
 {
     expect_key(GetParam().key);
-    KeyboardEvents events;
-    const std::shared_ptr<RecordingKeyboardHandler> bottom{std::make_shared<RecordingKeyboardHandler>(1, true, events)};
-    const std::shared_ptr<RecordingKeyboardHandler> top{
-        std::make_shared<RecordingKeyboardHandler>(2, GetParam().top_consumes, events)};
+    const std::shared_ptr<RecordingKeyboardHandler> bottom{make_handler(1, true)};
+    const std::shared_ptr<RecordingKeyboardHandler> top{make_handler(2, GetParam().top_consumes)};
     ScopedKeyboardHandler bottom_scope{bottom};
     ScopedKeyboardHandler top_scope{top};
 
     EXPECT_FALSE(calc_interrupted());
 
-    EXPECT_THAT(events, ElementsAreArray(GetParam().expected));
+    EXPECT_THAT(m_events, ElementsAreArray(GetParam().expected));
 }
 
 INSTANTIATE_TEST_SUITE_P(Consumption, TestKeyboardHandlerPropagation,
@@ -123,26 +129,24 @@ INSTANTIATE_TEST_SUITE_P(Consumption, TestKeyboardHandlerPropagation,
 TEST_F(TestKeyboardHandler, unconsumedKeyIsDiscarded)
 {
     expect_key(29);
-    KeyboardEvents events;
-    auto handler{std::make_shared<RecordingKeyboardHandler>(1, false, events)};
+    const std::shared_ptr<RecordingKeyboardHandler> handler{make_handler(1, false)};
     ScopedKeyboardHandler scope{handler};
 
     EXPECT_FALSE(calc_interrupted());
 
-    EXPECT_THAT(events, ElementsAre(Pair(1, 29)));
+    EXPECT_THAT(m_events, ElementsAre(Pair(1, 29)));
 }
 
 TEST_F(TestKeyboardHandler, handlerRequestsCalculationInterruption)
 {
     expect_key(31);
-    KeyboardEvents events;
-    auto handler{std::make_shared<RecordingKeyboardHandler>(1, true, events)};
+    const std::shared_ptr<RecordingKeyboardHandler> handler{make_handler(1, true)};
     handler->interrupt_calc();
     ScopedKeyboardHandler scope{handler};
 
     EXPECT_TRUE(calc_interrupted());
 
-    EXPECT_THAT(events, ElementsAre(Pair(1, 31)));
+    EXPECT_THAT(m_events, ElementsAre(Pair(1, 31)));
 }
 
 TEST_F(TestKeyboardHandler, calcInterruptRequestedDoesNotPoll)
@@ -168,9 +172,8 @@ TEST_F(TestKeyboardHandler, mainLoopHandlerRequeuesKeyAndInterrupts)
 
 TEST_F(TestKeyboardHandler, scopedHandlerRegistrationPopsHandler)
 {
-    KeyboardEvents events;
-    auto bottom{std::make_shared<RecordingKeyboardHandler>(1, true, events)};
-    auto top{std::make_shared<RecordingKeyboardHandler>(2, true, events)};
+    const std::shared_ptr<RecordingKeyboardHandler> bottom{make_handler(1, true)};
+    const std::shared_ptr<RecordingKeyboardHandler> top{make_handler(2, true)};
     ScopedKeyboardHandler bottom_scope{bottom};
     {
         ScopedKeyboardHandler top_scope{top};
@@ -179,7 +182,7 @@ TEST_F(TestKeyboardHandler, scopedHandlerRegistrationPopsHandler)
 
     EXPECT_FALSE(calc_interrupted());
 
-    EXPECT_THAT(events, ElementsAre(Pair(1, 37)));
+    EXPECT_THAT(m_events, ElementsAre(Pair(1, 37)));
 }
 
 } // namespace id::test
