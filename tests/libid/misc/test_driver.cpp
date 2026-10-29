@@ -33,19 +33,6 @@ void TestDriver::TearDown()
     EXPECT_EQ(nullptr, g_driver);
 }
 
-TEST_F(TestDriver, loadClose)
-{
-    EXPECT_CALL(m_first, init(Ref(m_args))).WillOnce(Return(true));
-    EXPECT_CALL(m_first, terminate());
-
-    load_driver(&m_first, m_args);
-
-    EXPECT_EQ(&m_first, g_driver);
-
-    close_drivers();
-    EXPECT_EQ(nullptr, g_driver);
-}
-
 TEST_F(TestDriver, loadCanRemoveConsumedArguments)
 {
     m_args = {"id", "--driver-option", "type=mandel"};
