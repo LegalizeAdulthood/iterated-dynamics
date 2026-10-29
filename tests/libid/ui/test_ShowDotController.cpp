@@ -514,25 +514,78 @@ void TestImageRenderContext::SetUp()
     g_dispatch = FractalDispatch{m_specific};
 }
 
-TEST_F(TestImageRenderContext, requiresStartAndACompletedResult)
+class TestPreparedImageRenderContext : public TestImageRenderContext
 {
-    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
-    ImageRenderContext rendering{sound};
+protected:
+    void SetUp() override;
+    void TearDown() override;
 
-    EXPECT_FALSE(rendering.done());
-    EXPECT_THROW(rendering.iterate(), std::logic_error);
-    EXPECT_THROW(rendering.result(), std::logic_error);
-    EXPECT_THROW(rendering.suspend(), std::logic_error);
+    std::unique_ptr<SoundSession> m_sound;
+    std::unique_ptr<ImageRenderContext> m_rendering;
+};
+
+void TestPreparedImageRenderContext::SetUp()
+{
+    TestImageRenderContext::SetUp();
+    m_sound = std::make_unique<SoundSession>(g_sound, SoundSession::Ownership::BORROWED);
+    m_rendering = std::make_unique<ImageRenderContext>(*m_sound);
+    ASSERT_FALSE(m_rendering->done());
+    ASSERT_EQ(0, m_calculations);
+}
+
+void TestPreparedImageRenderContext::TearDown()
+{
+    m_rendering.reset();
+    m_sound.reset();
+    TestImageRenderContext::TearDown();
+}
+
+TEST_F(TestPreparedImageRenderContext, iterateRequiresStart)
+{
+    EXPECT_THROW(m_rendering->iterate(), std::logic_error);
+
     EXPECT_EQ(0, m_calculations);
+}
 
-    rendering.start();
+TEST_F(TestPreparedImageRenderContext, resultRequiresCompletion)
+{
+    EXPECT_THROW(m_rendering->result(), std::logic_error);
 
-    EXPECT_FALSE(rendering.done());
     EXPECT_EQ(0, m_calculations);
-    EXPECT_THROW(rendering.start(), std::logic_error);
-    rendering.suspend();
-    EXPECT_TRUE(rendering.done());
-    EXPECT_EQ(0, rendering.result());
+}
+
+TEST_F(TestPreparedImageRenderContext, suspendRequiresStart)
+{
+    EXPECT_THROW(m_rendering->suspend(), std::logic_error);
+
+    EXPECT_EQ(0, m_calculations);
+}
+
+class TestStartedImageRenderContext : public TestPreparedImageRenderContext
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStartedImageRenderContext::SetUp()
+{
+    TestPreparedImageRenderContext::SetUp();
+    m_rendering->start();
+    ASSERT_FALSE(m_rendering->done());
+    ASSERT_EQ(0, m_calculations);
+}
+
+TEST_F(TestStartedImageRenderContext, duplicateStartIsRejected)
+{
+    EXPECT_THROW(m_rendering->start(), std::logic_error);
+}
+
+TEST_F(TestStartedImageRenderContext, explicitSuspensionCompletesTheController)
+{
+    m_rendering->suspend();
+
+    EXPECT_TRUE(m_rendering->done());
+    EXPECT_EQ(0, m_rendering->result());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
