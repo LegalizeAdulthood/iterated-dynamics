@@ -24,6 +24,7 @@
 #include <cctype>
 #include <filesystem>
 #include <fstream>
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -92,24 +93,34 @@ static std::string read_text_file(const fs::path &path)
     return result;
 }
 
-TEST(TestSlideShow, controlKeyCodeUsesCaretSyntax)
+struct SlideShowKeyInput
 {
-    EXPECT_EQ(ID_KEY_CTL_S, get_slide_show_key_code("^S"));
-    EXPECT_EQ(ID_KEY_CTL_S, get_slide_show_key_code("^s"));
-    EXPECT_EQ(ID_KEY_CTL_BACKSLASH, get_slide_show_key_code("^\\"));
+    const char *name;
+    const char *token;
+    int expected;
+};
+
+void PrintTo(const SlideShowKeyInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestSlideShow, invalidCaretSyntaxIsNotAKeyCode)
+class TestSlideShowKeyTokens : public TestWithParam<SlideShowKeyInput>
 {
-    EXPECT_EQ(-1, get_slide_show_key_code("^"));
-    EXPECT_EQ(-1, get_slide_show_key_code("^SS"));
-    EXPECT_EQ(-1, get_slide_show_key_code("^1"));
+};
+
+TEST_P(TestSlideShowKeyTokens, decodesKeyToken)
+{
+    EXPECT_EQ(GetParam().expected, get_slide_show_key_code(GetParam().token));
 }
 
-TEST(TestSlideShow, namedKeyCodeStillWorks)
-{
-    EXPECT_EQ(ID_KEY_ENTER, get_slide_show_key_code("ENTER"));
-}
+INSTANTIATE_TEST_SUITE_P(Token, TestSlideShowKeyTokens,
+    Values(SlideShowKeyInput{"UpperControlS", "^S", ID_KEY_CTL_S},
+        SlideShowKeyInput{"LowerControlS", "^s", ID_KEY_CTL_S},
+        SlideShowKeyInput{"ControlBackslash", "^\\", ID_KEY_CTL_BACKSLASH}, SlideShowKeyInput{"BareCaret", "^", -1},
+        SlideShowKeyInput{"LongCaret", "^SS", -1}, SlideShowKeyInput{"NumericCaret", "^1", -1},
+        SlideShowKeyInput{"Named", "ENTER", ID_KEY_ENTER}),
+    [](const TestParamInfo<SlideShowKeyInput> &info) { return info.param.name; });
 
 TEST(TestSlideShow, recordShowWritesNamedMnemonic)
 {
@@ -196,7 +207,23 @@ TEST(TestSlideShow, thinkingWaitAcceptsNamedKeyWhenThinkingIsAlreadyActive)
     stop_slide_show();
 }
 
-TEST(TestSlideShow, rowWaitDeliversKeyOnlyAfterRenderingReachesTheRow)
+struct SlideShowRowWaitInput
+{
+    const char *name;
+    int row;
+    CalcStatus status;
+};
+
+void PrintTo(const SlideShowRowWaitInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestSlideShowRowWait : public TestWithParam<SlideShowRowWaitInput>
+{
+};
+
+TEST_P(TestSlideShowRowWait, waitsUntilCalculationReachesTarget)
 {
     TempDir temp_dir;
     const fs::path input_path{temp_dir.path() / "row.key"};
@@ -204,23 +231,25 @@ TEST(TestSlideShow, rowWaitDeliversKeyOnlyAfterRenderingReachesTheRow)
     MockDriver driver;
     ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
     ValueSaver saved_auto_name{g_auto_name, input_path};
-    ValueSaver saved_row{g_current_row, 0};
-    ValueSaver saved_status{g_calc_status, CalcStatus::IN_PROGRESS};
+    ValueSaver saved_coordinate{g_current_row, GetParam().row};
+    ValueSaver saved_status{g_calc_status, GetParam().status};
     stop_slide_show();
     ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
     EXPECT_CALL(driver, set_keyboard_timeout(_));
 
     EXPECT_EQ(0, slide_show());
-    g_current_row = 1;
-    EXPECT_EQ(0, slide_show());
     g_current_row = 2;
-    g_calc_status = CalcStatus::RESUMABLE;
-    EXPECT_EQ(0, slide_show());
     g_calc_status = CalcStatus::IN_PROGRESS;
     EXPECT_EQ('x', slide_show());
 
     stop_slide_show();
 }
+
+INSTANTIATE_TEST_SUITE_P(BlockedState, TestSlideShowRowWait,
+    Values(SlideShowRowWaitInput{"BeforeStart", 0, CalcStatus::IN_PROGRESS},
+        SlideShowRowWaitInput{"BeforeTarget", 1, CalcStatus::IN_PROGRESS},
+        SlideShowRowWaitInput{"NotCalculating", 2, CalcStatus::RESUMABLE}),
+    [](const TestParamInfo<SlideShowRowWaitInput> &info) { return info.param.name; });
 
 TEST(TestSlideShow, rowWaitAcceptsANamedKeyAtTheCurrentRow)
 {
@@ -264,7 +293,23 @@ TEST(TestSlideShow, fastInputDoesNotApplyTypingDelaysAfterWaitCommands)
     stop_slide_show();
 }
 
-TEST(TestSlideShow, iterationWaitDeliversKeyOnlyDuringCalculationAtTheTargetIteration)
+struct SlideShowIterationWaitInput
+{
+    const char *name;
+    long iteration;
+    CalcStatus status;
+};
+
+void PrintTo(const SlideShowIterationWaitInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestSlideShowIterationWait : public TestWithParam<SlideShowIterationWaitInput>
+{
+};
+
+TEST_P(TestSlideShowIterationWait, waitsUntilCalculationReachesTarget)
 {
     TempDir temp_dir;
     const fs::path input_path{temp_dir.path() / "iteration.key"};
@@ -272,23 +317,25 @@ TEST(TestSlideShow, iterationWaitDeliversKeyOnlyDuringCalculationAtTheTargetIter
     MockDriver driver;
     ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
     ValueSaver saved_auto_name{g_auto_name, input_path};
-    ValueSaver saved_iteration{g_color_iter, 0L};
-    ValueSaver saved_status{g_calc_status, CalcStatus::IN_PROGRESS};
+    ValueSaver saved_coordinate{g_color_iter, GetParam().iteration};
+    ValueSaver saved_status{g_calc_status, GetParam().status};
     stop_slide_show();
     ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
     EXPECT_CALL(driver, set_keyboard_timeout(_));
 
     EXPECT_EQ(0, slide_show());
-    g_color_iter = 511;
-    EXPECT_EQ(0, slide_show());
     g_color_iter = 512;
-    g_calc_status = CalcStatus::COMPLETED;
-    EXPECT_EQ(0, slide_show());
     g_calc_status = CalcStatus::IN_PROGRESS;
     EXPECT_EQ('x', slide_show());
 
     stop_slide_show();
 }
+
+INSTANTIATE_TEST_SUITE_P(BlockedState, TestSlideShowIterationWait,
+    Values(SlideShowIterationWaitInput{"BeforeStart", 0, CalcStatus::IN_PROGRESS},
+        SlideShowIterationWaitInput{"BeforeTarget", 511, CalcStatus::IN_PROGRESS},
+        SlideShowIterationWaitInput{"NotCalculating", 512, CalcStatus::COMPLETED}),
+    [](const TestParamInfo<SlideShowIterationWaitInput> &info) { return info.param.name; });
 
 TEST(TestSlideShow, iterationWaitAcceptsANamedKeyAtTheCurrentIteration)
 {
