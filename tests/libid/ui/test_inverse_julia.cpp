@@ -41,6 +41,7 @@
 #include <chrono>
 #include <cmath>
 #include <filesystem>
+#include <ostream>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -163,14 +164,31 @@ void TestInverseJuliaController::prepare_reduced_viewport()
     }
 }
 
-TEST_F(TestInverseJuliaController, selectionRestoresDisplayAndRequeuesKey)
+struct JuliaSelectionExitInput
 {
-    expect_exit_key(ID_KEY_SPACE);
+    const char *name;
+    int key;
+    double x;
+    double y;
+};
+
+void PrintTo(const JuliaSelectionExitInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestInverseJuliaExit : public TestInverseJuliaController, public WithParamInterface<JuliaSelectionExitInput>
+{
+};
+
+TEST_P(TestInverseJuliaExit, exitRestoresDisplayAndControllerState)
+{
+    expect_exit_key(GetParam().key);
 
     jiim(JIIMType::JIIM);
 
-    EXPECT_DOUBLE_EQ(-0.5, g_julia_c.x);
-    EXPECT_DOUBLE_EQ(0, g_julia_c.y);
+    EXPECT_DOUBLE_EQ(GetParam().x, g_julia_c.x);
+    EXPECT_DOUBLE_EQ(GetParam().y, g_julia_c.y);
     EXPECT_THAT(m_pixels, Each(3));
     EXPECT_TRUE(g_line_buff.empty());
     EXPECT_EQ(DebugFlags::PREVENT_MIIM, g_debug_flag);
@@ -178,18 +196,10 @@ TEST_F(TestInverseJuliaController, selectionRestoresDisplayAndRequeuesKey)
     EXPECT_FALSE(dispatch_keyboard_key(ID_KEY_LEFT_ARROW));
 }
 
-TEST_F(TestInverseJuliaController, menuExitRestoresControllerState)
-{
-    expect_exit_key('x');
-
-    jiim(JIIMType::JIIM);
-
-    EXPECT_DOUBLE_EQ(JULIA_C_NOT_SET, g_julia_c.x);
-    EXPECT_DOUBLE_EQ(JULIA_C_NOT_SET, g_julia_c.y);
-    EXPECT_THAT(m_pixels, Each(3));
-    EXPECT_TRUE(g_line_buff.empty());
-    EXPECT_FALSE(dispatch_keyboard_key(ID_KEY_LEFT_ARROW));
-}
+INSTANTIATE_TEST_SUITE_P(Key, TestInverseJuliaExit,
+    Values(JuliaSelectionExitInput{"Selection", ID_KEY_SPACE, -0.5, 0},
+        JuliaSelectionExitInput{"Menu", 'x', JULIA_C_NOT_SET, JULIA_C_NOT_SET}),
+    [](const TestParamInfo<JuliaSelectionExitInput> &info) { return info.param.name; });
 
 TEST_F(TestInverseJuliaController, frothyBasinOrbitWindowUsesSetupWithoutARenderer)
 {
