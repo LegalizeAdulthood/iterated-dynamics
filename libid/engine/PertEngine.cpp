@@ -1312,14 +1312,6 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                 m_pixel.phase = PixelState::Phase::ORBIT;
                 return CALC_YIELDED;
             }
-            if (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61)
-            {
-                if (m_pixel.magnitude < m_pixel.min_orbit)
-                {
-                    m_pixel.min_orbit = m_pixel.magnitude;
-                    m_pixel.min_index = m_pixel.iteration + 1L;
-                }
-            }
             if (escaped && (g_distance_estimator || !m_pixel.star_trail))
             {
                 if (!g_distance_estimator)
@@ -1335,6 +1327,14 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                 {
                     m_pixel.phase = PixelState::Phase::COMPLETE;
                     continue;
+                }
+            }
+            if (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61)
+            {
+                if (m_pixel.magnitude < m_pixel.min_orbit)
+                {
+                    m_pixel.min_orbit = m_pixel.magnitude;
+                    m_pixel.min_index = m_pixel.iteration + 1L;
                 }
             }
             m_pixel.phase = PixelState::Phase::OUTPUT;

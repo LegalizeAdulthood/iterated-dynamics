@@ -5600,6 +5600,8 @@ struct DistanceBoundaryInsideInput
     std::string name;
     bool big_float;
     ColorMethod inside;
+    std::complex<double> point{0.5, 0.5};
+    bool legacy{};
 };
 
 void PrintTo(const DistanceBoundaryInsideInput &input, std::ostream *out)
@@ -5625,8 +5627,16 @@ std::vector<DistanceBoundaryInsideInput> distance_boundary_inside_inputs()
     {
         for (const PerturbationColorMethod &method : methods)
         {
-            inputs.push_back(
-                {std::string{big_float ? "HighPrecision_" : "Double_"} + method.name, big_float, method.method});
+            const std::string name{std::string{big_float ? "HighPrecision_" : "Double_"} + method.name};
+            inputs.push_back({name, big_float, method.method});
+            if (method.method == ColorMethod::BOF60 || method.method == ColorMethod::BOF61)
+            {
+                for (const bool legacy : {false, true})
+                {
+                    inputs.push_back({name + (legacy ? "_LegacyFirstEscape" : "_FirstEscape"), big_float, method.method,
+                        {1.0, 1.0}, legacy});
+                }
+            }
         }
     }
     return inputs;
@@ -5662,7 +5672,7 @@ void TestDistanceBoundaryInside::SetUp()
 
 TEST_P(TestDistanceBoundaryInside, usesInsideMethodBeforeDecompositionAndBiomorph)
 {
-    compare_distance_pixel({0.5, 0.5}, 32, false, 0.0, m_options);
+    compare_distance_pixel(GetParam().point, 32, GetParam().legacy, 0.0, m_options);
 
     EXPECT_LT(g_real_color_iter, 32);
 }
