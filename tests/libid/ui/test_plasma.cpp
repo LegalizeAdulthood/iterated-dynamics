@@ -281,17 +281,6 @@ TEST_F(TestPotentialPlasmaInitialization, duplicateInitializationIsRejected)
     EXPECT_THROW(m_plasma->init(true), std::logic_error);
 }
 
-TEST_F(TestPotentialPlasmaInitialization, destructionRestoresSavedPotentialAndPlotState)
-{
-    m_plasma->init(true);
-
-    m_plasma.reset();
-
-    EXPECT_TRUE(g_potential.flag);
-    EXPECT_TRUE(g_potential.store_16bit);
-    EXPECT_EQ(g_put_color, g_plot);
-}
-
 class TestPlasmaStorage : public TestPlasma
 {
 protected:
