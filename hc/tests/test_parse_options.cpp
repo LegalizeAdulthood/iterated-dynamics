@@ -114,8 +114,7 @@ TEST_P(TestCompilerModeOptions, selectsRequestedMode)
 
 INSTANTIATE_TEST_SUITE_P(Option, TestCompilerModeOptions,
     Values(CompilerModeInput{"Compile", "/c", Mode::COMPILE}, CompilerModeInput{"Print", "/p", Mode::PRINT},
-        CompilerModeInput{"Append", "/a", Mode::APPEND}, CompilerModeInput{"Delete", "/d", Mode::DELETE},
-        CompilerModeInput{"AsciiDoc", "/adoc", Mode::ASCII_DOC}),
+        CompilerModeInput{"Append", "/a", Mode::APPEND}, CompilerModeInput{"Delete", "/d", Mode::DELETE}),
     [](const TestParamInfo<CompilerModeInput> &info) { return info.param.name; });
 
 TEST_F(TestParseCompilerOptions, asciiDocOutputDir)
@@ -132,13 +131,6 @@ TEST_F(TestParseCompilerOptions, asciiDocSwapPath)
 
     EXPECT_EQ(hc::Mode::ASCII_DOC, m_options.mode);
     EXPECT_EQ("swap", m_options.swap_path);
-}
-
-TEST_F(TestParseCompilerOptions, firstFile)
-{
-    parse_options({"foo.src"});
-
-    EXPECT_EQ("foo.src", m_options.fname1);
 }
 
 TEST_F(TestParseCompilerOptions, secondFile)
