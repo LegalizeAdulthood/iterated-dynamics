@@ -70,6 +70,7 @@ class TestCellularController : public Test
 protected:
     void SetUp() override;
     void TearDown() override;
+    void prepare_calculation();
 
     MockDriver m_driver;
     FractalSpecific m_specific{*get_fractal_specific(FractalType::CELLULAR)};
@@ -106,6 +107,7 @@ protected:
     bool m_interrupt{};
     bool m_fail_input{};
     bool m_fail_plot{};
+    std::unique_ptr<NonStandardFractal> m_calculation;
 };
 
 void TestCellularController::SetUp()
@@ -185,9 +187,17 @@ void TestCellularController::SetUp()
 
 void TestCellularController::TearDown()
 {
+    m_calculation.reset();
     EXPECT_FALSE(thinking_active());
     std::copy(m_saved_params.begin(), m_saved_params.end(), g_params);
     std::memcpy(g_dac_box, m_saved_palette.data(), sizeof(g_dac_box));
+}
+
+void TestCellularController::prepare_calculation()
+{
+    m_calculation = std::make_unique<NonStandardFractal>();
+    ASSERT_TRUE(m_calculation->start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, m_calculation->select());
 }
 
 TEST_F(TestCellularController, generationZeroNeedsNoThinkingScreen)
@@ -276,9 +286,8 @@ TEST_F(TestCellularController, calculationExposesPreparationWithoutPresentingOrP
     EXPECT_CALL(m_driver, stack_screen()).Times(0);
     EXPECT_CALL(m_driver, unstack_screen()).Times(0);
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    NonStandardFractal calculation;
-    ASSERT_TRUE(calculation.start().empty());
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     int generations{};
 
     while (calculation.preparing() && generations < 10)
@@ -304,9 +313,8 @@ TEST_F(TestCellularController, calculationCannotResumeUnplottedPreparation)
     EXPECT_CALL(m_driver, stack_screen()).Times(0);
     EXPECT_CALL(m_driver, unstack_screen()).Times(0);
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    NonStandardFractal calculation;
-    ASSERT_TRUE(calculation.start().empty());
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
 
     EXPECT_THROW(calculation.suspend(), CellularError);
 
@@ -318,9 +326,6 @@ class TestCellularNewImage : public TestCellularController
 {
 protected:
     void SetUp() override;
-    void TearDown() override;
-
-    std::unique_ptr<NonStandardFractal> m_calculation;
 };
 
 void TestCellularNewImage::SetUp()
@@ -329,15 +334,7 @@ void TestCellularNewImage::SetUp()
     g_cellular_next_screen = true;
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, read_pixel(_, _)).Times(0);
-    m_calculation = std::make_unique<NonStandardFractal>();
-    m_calculation->start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, m_calculation->select());
-}
-
-void TestCellularNewImage::TearDown()
-{
-    m_calculation.reset();
-    TestCellularController::TearDown();
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
 }
 
 TEST_F(TestCellularNewImage, newImageResetsNextScreenBeforeConstructingCellular)
@@ -379,10 +376,8 @@ TEST_F(TestCellularController, selectedOperationPreservesSavedRowContinuation)
     put_resume(2);
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, read_pixel(_, 2)).Times(32).WillRepeatedly(Return(1));
-    NonStandardFractal calculation;
-    calculation.start();
-
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
 
     EXPECT_TRUE(g_resuming);
     EXPECT_TRUE(g_resume_data.empty());
@@ -406,10 +401,8 @@ TEST_F(TestCellularController, nextScreenReadsLastRowAndAdvancesGeneration)
     g_params[3] = 12;
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, read_pixel(_, 5)).Times(32).WillRepeatedly(Return(1));
-    NonStandardFractal calculation;
-    calculation.start();
-
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
 
     EXPECT_TRUE(g_cellular_next_screen);
     EXPECT_TRUE(g_resuming);
@@ -428,19 +421,14 @@ class TestCellularStepwise : public TestCellularController
 {
 protected:
     void SetUp() override;
-    void TearDown() override;
     void complete_controller(CellularController &controller);
-
-    std::unique_ptr<NonStandardFractal> m_calculation;
 };
 
 void TestCellularStepwise::SetUp()
 {
     TestCellularController::SetUp();
     g_params[3] = 4;
-    m_calculation = std::make_unique<NonStandardFractal>();
-    m_calculation->start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, m_calculation->select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
     EXPECT_CALL(m_driver, key_pressed())
         .WillRepeatedly(Invoke(
             [this]
@@ -448,12 +436,6 @@ void TestCellularStepwise::SetUp()
                 EXPECT_FALSE(m_calculation->done());
                 return 0;
             }));
-}
-
-void TestCellularStepwise::TearDown()
-{
-    m_calculation.reset();
-    TestCellularController::TearDown();
 }
 
 void TestCellularStepwise::complete_controller(CellularController &controller)
@@ -560,9 +542,8 @@ TEST_F(TestCellularStepwise, iterationAfterCompletionDoesNotPlotAgain)
 
 TEST_F(TestCellularController, stepwiseRenderingInterruptionLeavesTheCommandPending)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     EXPECT_CALL(m_driver, key_pressed())
         .WillOnce(Invoke(
             [this]
@@ -591,9 +572,8 @@ TEST_F(TestCellularController, stepwiseRenderingInterruptionLeavesTheCommandPend
 
 TEST_F(TestCellularController, stepwiseSuspensionRetainsTheExistingResumeRow)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     CellularController controller{calculation};
     controller.start();
     controller.iterate();
@@ -615,9 +595,8 @@ TEST_F(TestCellularController, stepwiseSuspensionRetainsTheExistingResumeRow)
 TEST_F(TestCellularController, stepwisePreparationSuspensionCleansUpBeforeReporting)
 {
     g_params[3] = 10;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     CellularController controller{calculation};
     controller.start();
     controller.iterate();
@@ -640,9 +619,8 @@ TEST_F(TestCellularController, stepwiseInputFailureClosesCalculationAndThinkingS
 {
     g_params[3] = 10;
     m_fail_input = true;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     CellularController controller{calculation};
     controller.start();
 
@@ -662,9 +640,8 @@ TEST_F(TestCellularController, stepwisePlotFailureDoesNotEndThinkingTwice)
 {
     g_params[3] = 3;
     m_fail_plot = true;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     CellularController controller{calculation};
     controller.start();
     for (int generation = 0; generation < 4 && !controller.done(); ++generation)
@@ -685,9 +662,8 @@ TEST_F(TestCellularController, stepwisePlotFailureDoesNotEndThinkingTwice)
 TEST_F(TestCellularController, stepwiseThinkingDisplayFailureRestoresTheScreenBeforeReporting)
 {
     g_params[3] = 10;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     EXPECT_CALL(m_driver, put_string(4, 10, _, _)).WillOnce(Throw(std::runtime_error("thinking display failed")));
     CellularController controller{calculation};
     controller.start();
@@ -722,9 +698,8 @@ class TestCellularFailure : public TestCellularController, public WithParamInter
 TEST_P(TestCellularFailure, stepwiseFailureRetainsItsDiagnostic)
 {
     g_params[3] = 10;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     EXPECT_CALL(m_driver, key_pressed())
         .WillOnce(Invoke(
             [this]() -> int
@@ -756,9 +731,8 @@ INSTANTIATE_TEST_SUITE_P(Exception, TestCellularFailure,
 TEST_F(TestCellularController, stepwiseDestructionClosesThinkingWithoutFinishingCalculation)
 {
     g_params[3] = 10;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     {
         CellularController controller{calculation};
         controller.start();
@@ -780,9 +754,8 @@ TEST_F(TestCellularController, stepwiseNextScreenUsesTheSelectedContinuation)
     g_cellular_next_screen = true;
     g_params[3] = 12;
     EXPECT_CALL(m_driver, read_pixel(_, 5)).Times(32).WillRepeatedly(Return(1));
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation());
+    NonStandardFractal &calculation{*m_calculation};
     CellularController controller{calculation};
     controller.start();
     EXPECT_EQ(18, g_params[3]);
