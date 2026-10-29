@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <Compiler.h>
 
@@ -88,40 +89,34 @@ void TestParseCompilerOptions::parse_options(const std::vector<const char *> &ar
     m_options = hc::parse_options(static_cast<int>(m_argv.size()), m_argv.data());
 }
 
-TEST_F(TestParseCompilerOptions, modeCompile)
+struct CompilerModeInput
 {
-    parse_options({"/c"});
+    const char *name;
+    const char *option;
+    Mode expected;
+};
 
-    EXPECT_EQ(hc::Mode::COMPILE, m_options.mode);
+void PrintTo(const CompilerModeInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestParseCompilerOptions, modePrint)
+class TestCompilerModeOptions : public TestParseCompilerOptions, public WithParamInterface<CompilerModeInput>
 {
-    parse_options({"/p"});
+};
 
-    EXPECT_EQ(hc::Mode::PRINT, m_options.mode);
+TEST_P(TestCompilerModeOptions, selectsRequestedMode)
+{
+    parse_options({GetParam().option});
+
+    EXPECT_EQ(GetParam().expected, m_options.mode);
 }
 
-TEST_F(TestParseCompilerOptions, modeAppend)
-{
-    parse_options({"/a"});
-
-    EXPECT_EQ(hc::Mode::APPEND, m_options.mode);
-}
-
-TEST_F(TestParseCompilerOptions, modeDelete)
-{
-    parse_options({"/d"});
-
-    EXPECT_EQ(hc::Mode::DELETE, m_options.mode);
-}
-
-TEST_F(TestParseCompilerOptions, modeAsciiDoc)
-{
-    parse_options({"/adoc"});
-
-    EXPECT_EQ(hc::Mode::ASCII_DOC, m_options.mode);
-}
+INSTANTIATE_TEST_SUITE_P(Option, TestCompilerModeOptions,
+    Values(CompilerModeInput{"Compile", "/c", Mode::COMPILE}, CompilerModeInput{"Print", "/p", Mode::PRINT},
+        CompilerModeInput{"Append", "/a", Mode::APPEND}, CompilerModeInput{"Delete", "/d", Mode::DELETE},
+        CompilerModeInput{"AsciiDoc", "/adoc", Mode::ASCII_DOC}),
+    [](const TestParamInfo<CompilerModeInput> &info) { return info.param.name; });
 
 TEST_F(TestParseCompilerOptions, asciiDocOutputDir)
 {
