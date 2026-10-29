@@ -586,31 +586,41 @@ INSTANTIATE_TEST_SUITE_P(Length, TestChoiceBuilderStringPrompt,
         ChoiceBuilderStringInput{"Truncated", "1234567890123456", "123456789012345"}),
     [](const TestParamInfo<ChoiceBuilderStringInput> &info) { return info.param.name; });
 
-TEST_F(TestChoiceBuilderPrompting, stringBufferChoice)
+class TestChoiceBuilderBufferPrompt : public TestChoiceBuilderPrompting
 {
-    ChoiceBuilder<1, Shim> builder;
-    constexpr int len{80};
-    char buff[len];
-    expect_choice_value("Browse search filename mask ", has_string_buff(buff, len));
+protected:
+    void expect_buffer_choice(int display_len = 0);
 
-    builder.string_buff("Browse search filename mask ", buff, len);
-    builder.prompt("Evolution Mode Options", 255);
+    static constexpr const char *CHOICE{"Browse search filename mask "};
+    static constexpr int LENGTH{80};
+    ChoiceBuilder<1, Shim> m_builder;
+    char m_buffer[LENGTH];
+};
 
-    EXPECT_EQ(1, builder.count());
+void TestChoiceBuilderBufferPrompt::expect_buffer_choice(const int display_len)
+{
+    expect_choice_value(CHOICE, has_string_buff(m_buffer, LENGTH, display_len));
 }
 
-TEST_F(TestChoiceBuilderPrompting, stringBufferChoiceWithDisplayLength)
+TEST_F(TestChoiceBuilderBufferPrompt, defaultDisplayLength)
 {
-    ChoiceBuilder<1, Shim> builder;
-    constexpr int len{80};
+    expect_buffer_choice();
+
+    m_builder.string_buff(CHOICE, m_buffer, LENGTH);
+    m_builder.prompt("Evolution Mode Options", 255);
+
+    EXPECT_EQ(1, m_builder.count());
+}
+
+TEST_F(TestChoiceBuilderBufferPrompt, explicitDisplayLength)
+{
     constexpr int display_len{20};
-    char buff[len];
-    expect_choice_value("Browse search filename mask ", has_string_buff(buff, len, display_len));
+    expect_buffer_choice(display_len);
 
-    builder.string_buff("Browse search filename mask ", buff, len, display_len);
-    builder.prompt("Evolution Mode Options", 255);
+    m_builder.string_buff(CHOICE, m_buffer, LENGTH, display_len);
+    m_builder.prompt("Evolution Mode Options", 255);
 
-    EXPECT_EQ(1, builder.count());
+    EXPECT_EQ(1, m_builder.count());
 }
 
 TEST_F(TestChoiceBuilderPrompting, multipleChoices)
