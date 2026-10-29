@@ -2464,64 +2464,91 @@ TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeavePendingModeAlone)
     EXPECT_EQ(7, g_init_mode);
 }
 
-TEST_F(TestCommandRouterStartup, pendingModeDefaultsAndOverridesDoNotActivateVideoMode)
+class TestRouterPendingMode : public TestCommandRouterStartup
 {
-    const VideoInfo active{800, 600, 256, nullptr, "active"};
-    ValueSaver saved_adapter{g_adapter, 0};
-    ValueSaver saved_entry{g_video_entry, active};
-    ValueSaver saved_width{g_screen_x_dots, 800};
-    ValueSaver saved_height{g_screen_y_dots, 600};
-    ValueSaver saved_colors{g_colors, 256};
-    ValueSaver saved_table_length{g_video_table_len, 3};
-    ValueSaver saved_first_key{g_video_mode_keys[0], ID_KEY_F6};
-    ValueSaver saved_second_key{g_video_mode_keys[1], ID_KEY_F5};
-    ValueSaver saved_third_key{g_video_mode_keys[2], ID_KEY_F4};
-    g_init_mode = 9;
-    const CommandRouter router;
+protected:
+    void expect_active_mode_unchanged();
 
-    const CommandParseResult defaults{router.process_startup({"id"})};
+    const VideoInfo m_active{800, 600, 256, nullptr, "active"};
+    ValueSaver<int> m_saved_adapter{g_adapter, 0};
+    ValueSaver<VideoInfo> m_saved_entry{g_video_entry, m_active};
+    ValueSaver<int> m_saved_width{g_screen_x_dots, 800};
+    ValueSaver<int> m_saved_height{g_screen_y_dots, 600};
+    ValueSaver<int> m_saved_colors{g_colors, 256};
+    ValueSaver<int> m_saved_table_length{g_video_table_len, 3};
+    ValueSaver<int> m_saved_first_key{g_video_mode_keys[0], ID_KEY_F6};
+    ValueSaver<int> m_saved_second_key{g_video_mode_keys[1], ID_KEY_F5};
+    ValueSaver<int> m_saved_third_key{g_video_mode_keys[2], ID_KEY_F4};
+};
 
-    EXPECT_TRUE(defaults.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::NONE, defaults.flags);
-    EXPECT_EQ(-1, g_init_mode);
-
-    write_source("sstools.ini", "video=F6\n");
-    write_source("whole.par", "entry { video=F5 }");
-    write_source("selected.par", "ignored { video=F6 }\nchosen { video=F4 }");
-    g_first_init = true;
-
-    const CommandParseResult configuration{router.process_startup({"id"})};
-
-    EXPECT_TRUE(configuration.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, configuration.flags);
-    EXPECT_EQ(0, g_init_mode);
-    g_first_init = true;
-
-    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
-
-    EXPECT_TRUE(whole.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, whole.flags);
-    EXPECT_EQ(1, g_init_mode);
-    g_first_init = true;
-
-    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
-
-    EXPECT_TRUE(selected.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, selected.flags);
-    EXPECT_EQ(2, g_init_mode);
-    g_first_init = true;
-
-    const CommandParseResult result{router.process_startup({"id", "@whole", "@selected/chosen", "video=F5"})};
-
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
-    EXPECT_EQ(1, g_init_mode);
+void TestRouterPendingMode::expect_active_mode_unchanged()
+{
     EXPECT_EQ(0, g_adapter);
-    EXPECT_EQ(active, g_video_entry);
+    EXPECT_EQ(m_active, g_video_entry);
     EXPECT_EQ(800, g_screen_x_dots);
     EXPECT_EQ(600, g_screen_y_dots);
     EXPECT_EQ(256, g_colors);
 }
+
+TEST_F(TestRouterPendingMode, defaultsDoNotActivateVideoMode)
+{
+    g_init_mode = 9;
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process_startup({"id"})};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_EQ(-1, g_init_mode);
+    expect_active_mode_unchanged();
+}
+
+struct RouterPendingModeInput
+{
+    const char *name;
+    std::vector<std::string> arguments;
+    int initial;
+    int expected;
+};
+
+void PrintTo(const RouterPendingModeInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterPendingModeSources : public TestRouterPendingMode, public WithParamInterface<RouterPendingModeInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestRouterPendingModeSources::SetUp()
+{
+    TestRouterPendingMode::SetUp();
+    write_source("sstools.ini", "video=F6\n");
+    write_source("whole.par", "entry { video=F5 }");
+    write_source("selected.par", "ignored { video=F6 }\nchosen { video=F4 }");
+    g_init_mode = GetParam().initial;
+}
+
+TEST_P(TestRouterPendingModeSources, sourcesSelectAPendingModeWithoutActivatingIt)
+{
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process_startup(GetParam().arguments)};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_EQ(GetParam().expected, g_init_mode);
+    expect_active_mode_unchanged();
+}
+
+INSTANTIATE_TEST_SUITE_P(Sources, TestRouterPendingModeSources,
+    Values(RouterPendingModeInput{"Configuration", {"id"}, -1, 0},
+        RouterPendingModeInput{"WholeFile", {"id", "@whole"}, 0, 1},
+        RouterPendingModeInput{"SelectedSet", {"id", "@whole", "@selected/chosen"}, 1, 2},
+        RouterPendingModeInput{"Argument", {"id", "@whole", "@selected/chosen", "video=F5"}, 2, 1}),
+    [](const TestParamInfo<RouterPendingModeInput> &info) { return info.param.name; });
 
 class TestRouterResetPendingMode : public TestCommandRouterStartup, public WithParamInterface<int>
 {
