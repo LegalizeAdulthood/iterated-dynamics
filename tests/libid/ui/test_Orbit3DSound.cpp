@@ -114,6 +114,17 @@ protected:
     void create_save_directory();
 
     FractalType m_fractal_type{FractalType::LORENZ_3D};
+    static void start_calculation(NonStandardFractal &calculation);
+
+    struct ControllerRun
+    {
+        ControllerRun(const SoundOutputPtr &output, SoundSession::Ownership ownership = SoundSession::Ownership::OWNED);
+
+        NonStandardFractal calculation;
+        SoundSession sound;
+        StereoController controller;
+    };
+
     MockDriver m_driver;
     std::shared_ptr<StrictMock<MockOrbit3DSound>> m_output{std::make_shared<StrictMock<MockOrbit3DSound>>()};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
@@ -798,81 +809,157 @@ TEST_P(TestOrbit3DSound, clippedRedEyeDoesNotAddSoundForVisibleBlueEye)
     EXPECT_THAT(m_eyes, ElementsAre(StereoImage::BLUE, StereoImage::BLUE, StereoImage::BLUE));
 }
 
+void Orbit3DSoundTestState::start_calculation(NonStandardFractal &calculation)
+{
+    calculation.start();
+    if (calculation.select() != NonStandardFractal::Operation::ORBIT_3D)
+    {
+        throw std::logic_error("Expected a selected 3D orbit operation");
+    }
+}
+
+Orbit3DSoundTestState::ControllerRun::ControllerRun(
+    const SoundOutputPtr &output, const SoundSession::Ownership ownership) :
+    sound{output, ownership},
+    controller{calculation, sound}
+{
+    Orbit3DSoundTestState::start_calculation(calculation);
+}
+
+TEST_P(TestOrbit3DSound, iterateBeforeControllerStartIsRejected)
+{
+    ControllerRun run{m_output};
+    EXPECT_CALL(*m_output, mute()).Times(0);
+
+    EXPECT_THROW(run.controller.iterate(), std::logic_error);
+
+    EXPECT_TRUE(run.sound.finish(SoundSession::InputPolicy::ATOMIC));
+}
+
+TEST_P(TestOrbit3DSound, resultBeforeControllerStartIsRejected)
+{
+    ControllerRun run{m_output};
+    EXPECT_CALL(*m_output, mute()).Times(0);
+
+    EXPECT_THROW(run.controller.result(), std::logic_error);
+
+    EXPECT_TRUE(run.sound.finish(SoundSession::InputPolicy::ATOMIC));
+}
+
+TEST_P(TestOrbit3DSound, suspendBeforeControllerStartIsRejected)
+{
+    ControllerRun run{m_output};
+    EXPECT_CALL(*m_output, mute()).Times(0);
+
+    EXPECT_THROW(run.controller.suspend(), std::logic_error);
+
+    EXPECT_TRUE(run.sound.finish(SoundSession::InputPolicy::ATOMIC));
+}
+
+TEST_P(TestOrbit3DSound, duplicateControllerStartIsRejected)
+{
+    ControllerRun run{m_output};
+    run.controller.start();
+    EXPECT_CALL(*m_output, mute()).Times(0);
+
+    EXPECT_THROW(run.controller.start(), std::logic_error);
+
+    EXPECT_TRUE(run.sound.finish(SoundSession::InputPolicy::ATOMIC));
+}
+
+TEST_P(TestOrbit3DSound, suspensionAfterControllerCompletionIsRejected)
+{
+    ControllerRun run{m_output};
+    run.controller.start();
+    EXPECT_CALL(*m_output, mute()).Times(0);
+    for (int point = 0; point < 110 && !run.controller.done(); ++point)
+    {
+        run.controller.iterate();
+    }
+    ASSERT_TRUE(run.controller.done());
+
+    EXPECT_THROW(run.controller.suspend(), std::logic_error);
+
+    run.calculation.finish(false);
+}
+
+TEST_P(TestOrbit3DSound, iterationAfterControllerCompletionDoesNotRepeatWork)
+{
+    ControllerRun run{m_output};
+    run.controller.start();
+    EXPECT_CALL(*m_output, mute()).Times(0);
+    for (int point = 0; point < 110 && !run.controller.done(); ++point)
+    {
+        run.controller.iterate();
+    }
+    ASSERT_TRUE(run.controller.done());
+
+    run.controller.iterate();
+
+    EXPECT_EQ(103, s_math_calls);
+    run.calculation.finish(false);
+}
+
 TEST_P(TestOrbit3DSound, stepwiseControllerAdvancesOneOrbitPointPerCall)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
-    SoundSession sound{m_output};
+    ControllerRun run{m_output};
     EXPECT_CALL(*m_output, mute()).Times(0);
     EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
-    StereoController controller{calculation, sound};
-    EXPECT_THROW(controller.iterate(), std::logic_error);
-    EXPECT_THROW(controller.result(), std::logic_error);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
 
-    controller.start();
+    run.controller.start();
 
-    EXPECT_FALSE(controller.done());
+    EXPECT_FALSE(run.controller.done());
     EXPECT_EQ(0, s_math_calls);
     EXPECT_TRUE(m_plots.empty());
-    EXPECT_THROW(controller.start(), std::logic_error);
     for (int point = 1; point <= 103; ++point)
     {
-        controller.iterate();
+        run.controller.iterate();
         EXPECT_EQ(point, s_math_calls);
         EXPECT_EQ(point, g_color_iter);
-        EXPECT_EQ(point == 103, controller.done());
+        EXPECT_EQ(point == 103, run.controller.done());
     }
-    ASSERT_TRUE(controller.done());
-    EXPECT_EQ(0, controller.result());
-    EXPECT_TRUE(calculation.completed());
+    ASSERT_TRUE(run.controller.done());
+    EXPECT_EQ(0, run.controller.result());
+    EXPECT_TRUE(run.calculation.completed());
     EXPECT_EQ(3U, m_plots.size());
     EXPECT_EQ(3U, m_samples.size());
     EXPECT_FALSE(dispatch_keyboard_key('?'));
-    controller.iterate();
-    EXPECT_EQ(103, s_math_calls);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
-    calculation.finish(false);
+    run.calculation.finish(false);
 }
 
 TEST_P(TestOrbit3DSound, stepwiseSeparateEyesDoNotRenderAnEntireEyeDuringTransition)
 {
     g_glasses_type = GlassesType::STEREO_PAIR;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
-    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
+    ControllerRun run{m_output, SoundSession::Ownership::BORROWED};
     EXPECT_CALL(*m_output, mute()).Times(0);
     EXPECT_CALL(*m_output, finish()).Times(0);
-    StereoController controller{calculation, sound};
-    controller.start();
+    run.controller.start();
     for (int point = 1; point <= 103; ++point)
     {
-        controller.iterate();
+        run.controller.iterate();
         EXPECT_EQ(point, s_math_calls);
         EXPECT_EQ(StereoImage::RED, g_which_image);
-        EXPECT_FALSE(controller.done());
+        EXPECT_FALSE(run.controller.done());
     }
-    ASSERT_TRUE(calculation.view_done());
+    ASSERT_TRUE(run.calculation.view_done());
 
-    controller.iterate();
+    run.controller.iterate();
 
     EXPECT_EQ(StereoImage::BLUE, g_which_image);
     EXPECT_EQ(1, g_color_iter);
     EXPECT_EQ(104, s_math_calls);
-    EXPECT_FALSE(controller.done());
+    EXPECT_FALSE(run.controller.done());
     for (int point = 2; point <= 103; ++point)
     {
-        controller.iterate();
+        run.controller.iterate();
         EXPECT_EQ(103 + point, s_math_calls);
     }
-    ASSERT_TRUE(controller.done());
-    EXPECT_EQ(0, controller.result());
-    EXPECT_TRUE(calculation.completed());
+    ASSERT_TRUE(run.controller.done());
+    EXPECT_EQ(0, run.controller.result());
+    EXPECT_TRUE(run.calculation.completed());
     EXPECT_EQ(6U, m_plots.size());
     EXPECT_FALSE(dispatch_keyboard_key('?'));
-    calculation.finish(false);
+    run.calculation.finish(false);
 }
 
 TEST_P(TestOrbit3DSound, stepwiseIfsAdvancesOnePointPerCallInEachEye)
@@ -919,63 +1006,83 @@ TEST_P(TestOrbit3DSound, stepwiseIfsAdvancesOnePointPerCallInEachEye)
     calculation.finish(false);
 }
 
-TEST_P(TestOrbit3DSound, stepwiseSuspensionRestoresScreenAndHandlerInEitherEye)
+struct Orbit3DSuspensionInput
+{
+    const char *name;
+    FractalType type;
+    bool second_eye;
+};
+
+void PrintTo(const Orbit3DSuspensionInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestStereoControllerSuspension : public Orbit3DSoundTestState, public WithParamInterface<Orbit3DSuspensionInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStereoControllerSuspension::SetUp()
+{
+    m_fractal_type = GetParam().type;
+    Orbit3DSoundTestState::SetUp();
+}
+
+TEST_P(TestStereoControllerSuspension, suspensionRestoresScreenAndHandlerInSelectedEye)
 {
     const ValueSaver<Viewport> saved_viewport{g_viewport};
     g_glasses_type = GlassesType::STEREO_PAIR;
     g_screen_x_dots = 40;
-    EXPECT_CALL(*m_output, mute()).Times(2);
+    EXPECT_CALL(*m_output, mute()).Times(1);
     EXPECT_CALL(*m_output, finish()).Times(0);
-    for (const bool second_eye : {false, true})
+    g_logical_screen = {20, 20, 0, 0, 19.0, 19.0};
+    g_viewport.enabled = true;
+    ControllerRun run{m_output, SoundSession::Ownership::BORROWED};
+    run.controller.start();
+    if (GetParam().second_eye)
     {
-        g_logical_screen = {20, 20, 0, 0, 19.0, 19.0};
-        g_viewport.enabled = true;
-        NonStandardFractal calculation;
-        calculation.start();
-        ASSERT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
-        SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
-        StereoController controller{calculation, sound};
-        controller.start();
-        if (second_eye)
+        for (int point = 0; point < 104; ++point)
         {
-            for (int point = 0; point < 104; ++point)
-            {
-                controller.iterate();
-            }
-            ASSERT_EQ(StereoImage::BLUE, g_which_image);
+            run.controller.iterate();
         }
-
-        controller.suspend();
-
-        EXPECT_TRUE(controller.done());
-        EXPECT_EQ(-1, controller.result());
-        EXPECT_TRUE(calculation.done());
-        EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
-        EXPECT_TRUE(g_resume_data.empty());
-        EXPECT_EQ(40, g_logical_screen.x_dots);
-        EXPECT_EQ(0, g_logical_screen.x_offset);
-        EXPECT_FALSE(g_viewport.enabled);
-        EXPECT_FALSE(dispatch_keyboard_key('?'));
+        ASSERT_EQ(StereoImage::BLUE, g_which_image);
     }
+
+    run.controller.suspend();
+
+    EXPECT_TRUE(run.controller.done());
+    EXPECT_EQ(-1, run.controller.result());
+    EXPECT_TRUE(run.calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_EQ(40, g_logical_screen.x_dots);
+    EXPECT_EQ(0, g_logical_screen.x_offset);
+    EXPECT_FALSE(g_viewport.enabled);
+    EXPECT_FALSE(dispatch_keyboard_key('?'));
 }
+
+INSTANTIATE_TEST_SUITE_P(Eyes, TestStereoControllerSuspension,
+    Values(Orbit3DSuspensionInput{"LorenzRed", FractalType::LORENZ_3D, false},
+        Orbit3DSuspensionInput{"LorenzBlue", FractalType::LORENZ_3D, true},
+        Orbit3DSuspensionInput{"PickoverRed", FractalType::PICKOVER, false},
+        Orbit3DSuspensionInput{"PickoverBlue", FractalType::PICKOVER, true}),
+    [](const TestParamInfo<Orbit3DSuspensionInput> &info) { return info.param.name; });
 
 TEST_P(TestOrbit3DSound, stepwiseMenuInterruptionPrecedesFirstCalculationIncrement)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
-    SoundSession sound{m_output};
+    ControllerRun run{m_output};
     EXPECT_CALL(*m_output, mute());
     EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([this](int key) { m_key = key; }));
-    StereoController controller{calculation, sound};
-    controller.start();
+    run.controller.start();
     m_key = 'x';
 
-    controller.iterate();
+    run.controller.iterate();
 
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(run.controller.done());
+    EXPECT_EQ(-1, run.controller.result());
+    EXPECT_TRUE(run.calculation.done());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ('x', m_key);
     EXPECT_EQ(0, s_math_calls);
@@ -985,37 +1092,33 @@ TEST_P(TestOrbit3DSound, stepwiseMenuInterruptionPrecedesFirstCalculationIncreme
 
 TEST_P(TestOrbit3DSound, stepwiseRefusalRetriesTheSamePointOnTheNextCall)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
-    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
+    ControllerRun run{m_output, SoundSession::Ownership::BORROWED};
     EXPECT_CALL(*m_output, mute()).Times(0);
     EXPECT_CALL(*m_output, finish()).Times(0);
-    StereoController controller{calculation, sound};
-    controller.start();
+    run.controller.start();
     for (int point = 0; point < 100; ++point)
     {
-        controller.iterate();
+        run.controller.iterate();
     }
     EXPECT_CALL(*m_output, play(_)).WillOnce(Return(false)).RetiresOnSaturation();
 
-    controller.iterate();
+    run.controller.iterate();
 
     EXPECT_EQ(101, s_math_calls);
     EXPECT_TRUE(m_plots.empty());
     EXPECT_TRUE(m_samples.empty());
-    controller.iterate();
+    run.controller.iterate();
     EXPECT_EQ(101, s_math_calls);
     EXPECT_EQ(1U, m_plots.size());
     EXPECT_EQ(1U, m_samples.size());
-    for (int point = 0; point < 10 && !controller.done(); ++point)
+    for (int point = 0; point < 10 && !run.controller.done(); ++point)
     {
-        controller.iterate();
+        run.controller.iterate();
     }
-    ASSERT_TRUE(controller.done());
-    EXPECT_EQ(0, controller.result());
+    ASSERT_TRUE(run.controller.done());
+    EXPECT_EQ(0, run.controller.result());
     EXPECT_EQ(103, s_math_calls);
-    calculation.finish(false);
+    run.calculation.finish(false);
 }
 
 TEST_P(TestOrbit3DSound, stepwiseBlueEyeFailureRestoresScreenAndOuterHandler)
@@ -1027,26 +1130,22 @@ TEST_P(TestOrbit3DSound, stepwiseBlueEyeFailureRestoresScreenAndOuterHandler)
     const std::shared_ptr<StrictMock<MockStereoOuterHandler>> outer{
         std::make_shared<StrictMock<MockStereoOuterHandler>>()};
     const ScopedKeyboardHandler scope{outer};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
-    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
+    ControllerRun run{m_output, SoundSession::Ownership::BORROWED};
     EXPECT_CALL(*m_output, mute());
     EXPECT_CALL(*m_output, finish()).Times(0);
-    StereoController controller{calculation, sound};
-    controller.start();
+    run.controller.start();
     for (int point = 0; point < 104; ++point)
     {
-        controller.iterate();
+        run.controller.iterate();
     }
     ASSERT_EQ(StereoImage::BLUE, g_which_image);
     EXPECT_CALL(*m_output, update()).WillOnce(Throw(std::runtime_error("Sound update failed")));
 
-    EXPECT_THROW(controller.iterate(), std::runtime_error);
+    EXPECT_THROW(run.controller.iterate(), std::runtime_error);
 
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(run.controller.done());
+    EXPECT_EQ(-1, run.controller.result());
+    EXPECT_TRUE(run.calculation.done());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(40, g_logical_screen.x_dots);
     EXPECT_EQ(0, g_logical_screen.x_offset);
@@ -1061,26 +1160,22 @@ TEST_P(TestOrbit3DSound, stepwisePhotoNoticeFailureDoesNotStartTheSecondEye)
     const ValueSaver<BatchMode> saved_batch{g_init_batch, BatchMode::NONE};
     const ValueSaver<DebugFlags> saved_debug{g_debug_flag, DebugFlags::NONE};
     g_glasses_type = GlassesType::PHOTO;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
-    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
+    ControllerRun run{m_output, SoundSession::Ownership::BORROWED};
     EXPECT_CALL(*m_output, mute());
     EXPECT_CALL(*m_output, finish()).Times(0);
-    StereoController controller{calculation, sound};
-    controller.start();
+    run.controller.start();
     for (int point = 0; point < 103; ++point)
     {
-        controller.iterate();
+        run.controller.iterate();
     }
-    ASSERT_TRUE(calculation.view_done());
+    ASSERT_TRUE(run.calculation.view_done());
     EXPECT_CALL(m_driver, stack_screen()).WillOnce(Throw(std::runtime_error("Notice failed")));
 
-    EXPECT_THROW(controller.iterate(), std::runtime_error);
+    EXPECT_THROW(run.controller.iterate(), std::runtime_error);
 
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(run.controller.done());
+    EXPECT_EQ(-1, run.controller.result());
+    EXPECT_TRUE(run.calculation.done());
     EXPECT_EQ(103, s_math_calls);
     EXPECT_EQ(StereoImage::RED, g_which_image);
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
@@ -1090,8 +1185,7 @@ TEST_P(TestOrbit3DSound, stepwisePhotoNoticeFailureDoesNotStartTheSecondEye)
 TEST_P(TestOrbit3DSound, stepwiseDestructionReleasesHandlerWithoutFinishingCalculation)
 {
     NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
+    start_calculation(calculation);
     SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
     EXPECT_CALL(*m_output, mute()).Times(0);
     EXPECT_CALL(*m_output, finish()).Times(0);
@@ -1118,8 +1212,19 @@ TEST_P(TestOrbit3DSound, stepwiseStartStillRequiresAnActiveCalculation)
     EXPECT_THROW(controller.start(), std::logic_error);
 
     EXPECT_FALSE(controller.done());
-    EXPECT_THROW(controller.result(), std::logic_error);
     EXPECT_FALSE(dispatch_keyboard_key('?'));
+}
+
+TEST_P(TestOrbit3DSound, resultAfterRejectedInactiveStartIsUnavailable)
+{
+    NonStandardFractal calculation;
+    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
+    EXPECT_CALL(*m_output, mute()).Times(0);
+    EXPECT_CALL(*m_output, finish()).Times(0);
+    StereoController controller{calculation, sound};
+    ASSERT_THROW(controller.start(), std::logic_error);
+
+    EXPECT_THROW(controller.result(), std::logic_error);
 }
 
 INSTANTIATE_TEST_SUITE_P(PointsAndLines, TestOrbit3DSound, Values(FractalType::LORENZ_3D, FractalType::PICKOVER));
