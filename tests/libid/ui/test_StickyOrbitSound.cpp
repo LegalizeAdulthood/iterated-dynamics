@@ -38,6 +38,7 @@
 #include <fstream>
 #include <limits>
 #include <memory>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -153,10 +154,10 @@ bool initialize_sticky_image()
 
 } // namespace
 
-class TestStickyOrbitSound : public TestWithParam<OrbitDrawMode>
+class TestStickyOrbitSoundBase : public Test
 {
 protected:
-    void SetUp() override;
+    void prepare(OrbitDrawMode mode);
     void TearDown() override;
     void run(StickyOrbits &calculation);
     void run(StandardPass &pass);
@@ -208,13 +209,13 @@ protected:
     bool m_ready{true};
 };
 
-void TestStickyOrbitSound::SetUp()
+void TestStickyOrbitSoundBase::prepare(const OrbitDrawMode mode)
 {
     reset_calc_interrupted();
     s_math_calls = 0;
     s_iteration = 0;
     s_seeds.clear();
-    g_draw_mode = GetParam();
+    g_draw_mode = mode;
     m_specific.flags = FractalFlags::NONE;
     m_specific.orbit_calc = calculate_sticky_orbit;
     m_specific.per_pixel = initialize_sticky_pixel;
@@ -255,7 +256,7 @@ void TestStickyOrbitSound::SetUp()
     EXPECT_CALL(*m_output, finish()).WillRepeatedly(Return(true));
 }
 
-void TestStickyOrbitSound::TearDown()
+void TestStickyOrbitSoundBase::TearDown()
 {
     reset_calc_interrupted();
     end_resume();
@@ -268,7 +269,7 @@ void TestStickyOrbitSound::TearDown()
     }
 }
 
-void TestStickyOrbitSound::run(StickyOrbits &calculation)
+void TestStickyOrbitSoundBase::run(StickyOrbits &calculation)
 {
     for (int increments = 0; increments < 10000; ++increments)
     {
@@ -280,7 +281,7 @@ void TestStickyOrbitSound::run(StickyOrbits &calculation)
     FAIL() << "Sticky orbit calculation did not complete";
 }
 
-void TestStickyOrbitSound::run(StandardPass &pass)
+void TestStickyOrbitSoundBase::run(StandardPass &pass)
 {
     for (int increments = 0; increments < 10000; ++increments)
     {
@@ -290,6 +291,17 @@ void TestStickyOrbitSound::run(StandardPass &pass)
         }
     }
     FAIL() << "Sticky orbit pass did not complete";
+}
+
+class TestStickyOrbitSound : public TestStickyOrbitSoundBase, public WithParamInterface<OrbitDrawMode>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStickyOrbitSound::SetUp()
+{
+    prepare(GetParam());
 }
 
 TEST_P(TestStickyOrbitSound, submitsNumericalSampleBeforeEachPlotWithoutPolling)
@@ -326,30 +338,44 @@ TEST_P(TestStickyOrbitSound, readyOutputRetains2048IterationChunks)
     EXPECT_EQ(4096U, m_samples.size());
 }
 
-TEST(TestStickyOrbitChunkLimit, limitsEachChunkTo2048Iterations)
+struct StickyChunkInput
 {
-    EXPECT_EQ(2048, sticky_orbit_chunk_limit(0, 4097));
-    EXPECT_EQ(4096, sticky_orbit_chunk_limit(2048, 4097));
-    EXPECT_EQ(4097, sticky_orbit_chunk_limit(4096, 4097));
+    const char *name;
+    long iteration;
+    long limit;
+    long expected;
+};
+
+void PrintTo(const StickyChunkInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestStickyOrbitChunkLimit, stopsAtIterationLimit)
+class TestStickyChunkLimit : public TestWithParam<StickyChunkInput>
 {
-    for (const long limit : {0L, 1L, 2047L, 2048L, 2049L, std::numeric_limits<long>::max()})
-    {
-        SCOPED_TRACE(limit);
-        EXPECT_EQ(limit, sticky_orbit_chunk_limit(limit, limit));
-    }
+};
+
+TEST_P(TestStickyChunkLimit, clampsTheNextChunkToTheIterationLimit)
+{
+    EXPECT_EQ(GetParam().expected, sticky_orbit_chunk_limit(GetParam().iteration, GetParam().limit));
 }
 
-TEST(TestStickyOrbitChunkLimit, clampsFinalChunksAtLongMaxWithoutOverflow)
-{
-    const long limit{std::numeric_limits<long>::max()};
-    EXPECT_EQ(limit, sticky_orbit_chunk_limit(limit - 1, limit));
-    EXPECT_EQ(limit, sticky_orbit_chunk_limit(limit - 2047, limit));
-    EXPECT_EQ(limit, sticky_orbit_chunk_limit(limit - 2048, limit));
-    EXPECT_EQ(limit - 1, sticky_orbit_chunk_limit(limit - 2049, limit));
-}
+constexpr long MAX_STICKY_ITERATIONS = std::numeric_limits<long>::max();
+
+INSTANTIATE_TEST_SUITE_P(Boundaries, TestStickyChunkLimit,
+    Values(StickyChunkInput{"FirstChunk", 0, 4097, 2048}, StickyChunkInput{"SecondChunk", 2048, 4097, 4096},
+        StickyChunkInput{"FinalPartialChunk", 4096, 4097, 4097}, StickyChunkInput{"StoppedAtZero", 0, 0, 0},
+        StickyChunkInput{"StoppedAtOne", 1, 1, 1}, StickyChunkInput{"StoppedBeforeChunk", 2047, 2047, 2047},
+        StickyChunkInput{"StoppedAtChunk", 2048, 2048, 2048}, StickyChunkInput{"StoppedAfterChunk", 2049, 2049, 2049},
+        StickyChunkInput{"StoppedAtLongMax", MAX_STICKY_ITERATIONS, MAX_STICKY_ITERATIONS, MAX_STICKY_ITERATIONS},
+        StickyChunkInput{"LongMaxFinalOne", MAX_STICKY_ITERATIONS - 1, MAX_STICKY_ITERATIONS, MAX_STICKY_ITERATIONS},
+        StickyChunkInput{
+            "LongMaxPartialChunk", MAX_STICKY_ITERATIONS - 2047, MAX_STICKY_ITERATIONS, MAX_STICKY_ITERATIONS},
+        StickyChunkInput{
+            "LongMaxWholeChunk", MAX_STICKY_ITERATIONS - 2048, MAX_STICKY_ITERATIONS, MAX_STICKY_ITERATIONS},
+        StickyChunkInput{
+            "LongMaxPenultimateChunk", MAX_STICKY_ITERATIONS - 2049, MAX_STICKY_ITERATIONS, MAX_STICKY_ITERATIONS - 1}),
+    [](const TestParamInfo<StickyChunkInput> &info) { return info.param.name; });
 
 TEST_P(TestStickyOrbitSound, rejectedPointRetainsMathAndPlotUntilAcceptance)
 {
@@ -447,30 +473,49 @@ TEST_P(TestStickyOrbitSound, suspendedSeedPrecedesOtherQueuedWork)
     EXPECT_EQ((Point2i{2, 0}), g_work_list[1].begin);
 }
 
-TEST_P(TestStickyOrbitSound, clippedPointsDoNotSubmitSound)
+struct StickyClippingInput
+{
+    const char *name;
+    OrbitDrawMode mode;
+    int periodicity;
+    int iterations_per_seed;
+};
+
+void PrintTo(const StickyClippingInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestStickyClipping : public TestStickyOrbitSoundBase, public WithParamInterface<StickyClippingInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStickyClipping::SetUp()
+{
+    prepare(GetParam().mode);
+    g_dispatch.set_orbit_calc(calculate_clipped_sticky_orbit);
+    g_periodicity_check = GetParam().periodicity;
+    EXPECT_CALL(*m_output, play(_)).Times(0);
+}
+
+TEST_P(TestStickyClipping, clippedSeedDoesNotSubmitSound)
 {
     StickyOrbits calculation;
-    g_dispatch.set_orbit_calc(calculate_clipped_sticky_orbit);
-    EXPECT_CALL(*m_output, play(_)).Times(0);
 
     run(calculation);
 
     EXPECT_TRUE(m_plots.empty());
-    EXPECT_EQ(s_seeds.size() * 3, s_math_calls);
+    EXPECT_EQ(s_seeds.size() * GetParam().iterations_per_seed, s_math_calls);
 }
 
-TEST_P(TestStickyOrbitSound, clippedPointWithPeriodicityEndsCurrentSeedWithoutSound)
-{
-    StickyOrbits calculation;
-    g_dispatch.set_orbit_calc(calculate_clipped_sticky_orbit);
-    g_periodicity_check = 1;
-    EXPECT_CALL(*m_output, play(_)).Times(0);
-
-    run(calculation);
-
-    EXPECT_TRUE(m_plots.empty());
-    EXPECT_EQ(s_seeds.size(), s_math_calls);
-}
+INSTANTIATE_TEST_SUITE_P(Policies, TestStickyClipping,
+    Values(StickyClippingInput{"RectangleWithoutPeriodicity", OrbitDrawMode::RECTANGLE, 0, 3},
+        StickyClippingInput{"LineWithoutPeriodicity", OrbitDrawMode::LINE, 0, 3},
+        StickyClippingInput{"RectangleWithPeriodicity", OrbitDrawMode::RECTANGLE, 1, 1},
+        StickyClippingInput{"LineWithPeriodicity", OrbitDrawMode::LINE, 1, 1}),
+    [](const TestParamInfo<StickyClippingInput> &info) { return info.param.name; });
 
 TEST_P(TestStickyOrbitSound, rejectsNegativeResumeCount)
 {
