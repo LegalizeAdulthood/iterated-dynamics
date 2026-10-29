@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <array>
 #include <numeric>
+#include <ostream>
 #include <string>
 #include <string_view>
 
@@ -38,7 +39,6 @@ class TestPutEncodedColors : public testing::Test
 {
 protected:
     void fill_dac_from_values(int count);
-    void up_down_values(int count);
     void up_down_values(int count, int up, int down);
     void iota4(int count);
     ColorMapSaver m_saved_dac_box;
@@ -113,13 +113,6 @@ void TestPutEncodedColors::fill_dac_from_values(const int count)
     }
 }
 
-void TestPutEncodedColors::up_down_values(const int count)
-{
-    constexpr int up{0};
-    const int down{static_cast<Byte>(count * 2 - 1)};
-    up_down_values(count, up, down);
-}
-
 void TestPutEncodedColors::up_down_values(const int count, int up, int down)
 {
     int offset{};
@@ -136,21 +129,35 @@ void TestPutEncodedColors::up_down_values(const int count, int up, int down)
 
 void TestPutEncodedColors::iota4(const int count)
 {
-    std::generate_n(values.begin(), count,
-        []
-        {
-            static int value{};
-            const int result{value};
-            value += 4;
-            return result;
-        });
+    for (int i = 0; i < count; ++i)
+    {
+        values[i] = static_cast<Byte>(i * 4);
+    }
 }
 
-TEST_F(TestPutEncodedColors, increasingSixBitRamp)
+struct EncodedSixBitRampInput
 {
+    const char *name;
+    Version version;
+    bool expanded;
+};
+
+void PrintTo(const EncodedSixBitRampInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestEncodedSixBitRamp : public TestPutEncodedColors, public testing::WithParamInterface<EncodedSixBitRampInput>
+{
+};
+
+TEST_P(TestEncodedSixBitRamp, compressesRepeatedRamp)
+{
+    g_version = GetParam().version;
     for (int i = 0; i < 256; ++i)
     {
-        const Byte val{static_cast<Byte>(i % 64 * 4)};
+        const Byte val{
+            GetParam().expanded ? expand_6bit_color(static_cast<Byte>(i % 64)) : static_cast<Byte>(i % 64 * 4)};
         g_dac_box[i][0] = val;
         g_dac_box[i][1] = val;
         g_dac_box[i][2] = val;
@@ -161,76 +168,88 @@ TEST_F(TestPutEncodedColors, increasingSixBitRamp)
     EXPECT_EQ("000<56>tttuuuvvv<3>zzz000<57>uuu<4>zzz000<57>uuu<4>zzz000<62>zzz", m_data.buf);
 }
 
-TEST_F(TestPutEncodedColors, values0Through9EncodedAsDigits)
+INSTANTIATE_TEST_SUITE_P(Representation, TestEncodedSixBitRamp,
+    testing::Values(EncodedSixBitRampInput{"Modern", current_id_version(), false},
+        EncodedSixBitRampInput{"Legacy", parse_legacy_version(2000), true}),
+    [](const testing::TestParamInfo<EncodedSixBitRampInput> &info) { return info.param.name; });
+
+struct EncodedColorRampInput
 {
-    up_down_values(5);
-    fill_dac_from_values(10);
+    const char *name;
+    int count;
+    int up;
+    int down;
+    const char *expected;
+};
 
-    put_encoded_colors(m_data, 10);
-
-    constexpr std::string_view expected{"000999111888222777333666444555"};
-    EXPECT_EQ(expected, m_data.buf);
+void PrintTo(const EncodedColorRampInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestPutEncodedColors, values10Through35EncodedAsUpperCaseLetters)
+class TestEncodedColorRamp : public TestPutEncodedColors, public testing::WithParamInterface<EncodedColorRampInput>
 {
-    up_down_values(13, 10, 35);
-    fill_dac_from_values(26);
+};
 
-    put_encoded_colors(m_data, 26);
+TEST_P(TestEncodedColorRamp, encodesAlternatingRamp)
+{
+    up_down_values(GetParam().count / 2, GetParam().up, GetParam().down);
+    fill_dac_from_values(GetParam().count);
 
-    constexpr std::string_view expected{
-        "AAAZZZBBBYYYCCCXXXDDDWWWEEEVVVFFFUUUGGGTTTHHHSSSIIIRRRJJJQQQKKKPPPLLLOOOMMMNNN"};
-    EXPECT_EQ(expected, m_data.buf);
+    put_encoded_colors(m_data, GetParam().count);
+
+    EXPECT_EQ(GetParam().expected, m_data.buf);
 }
 
-TEST_F(TestPutEncodedColors, values36Through63EncodedAsLowerCaseLetters)
+INSTANTIATE_TEST_SUITE_P(Range, TestEncodedColorRamp,
+    testing::Values(EncodedColorRampInput{"Digits", 10, 0, 9, "000999111888222777333666444555"},
+        EncodedColorRampInput{
+            "UpperCase", 26, 10, 35, "AAAZZZBBBYYYCCCXXXDDDWWWEEEVVVFFFUUUGGGTTTHHHSSSIIIRRRJJJQQQKKKPPPLLLOOOMMMNNN"},
+        EncodedColorRampInput{"LowerCase", 28, 36, 63,
+            "___zzz"
+            "```yyy"
+            "aaaxxx"
+            "bbbwww"
+            "cccvvv"
+            "ddduuu"
+            "eeettt"
+            "fffsss"
+            "gggrrr"
+            "hhhqqq"
+            "iiippp"
+            "jjjooo"
+            "kkknnn"
+            "lllmmm"}),
+    [](const testing::TestParamInfo<EncodedColorRampInput> &info) { return info.param.name; });
+
+struct SmoothColorInput
 {
-    up_down_values(14, 36, 63);
-    fill_dac_from_values(28);
+    int count;
+    const char *expected;
+};
 
-    put_encoded_colors(m_data, 28);
-
-    constexpr std::string_view expected{"___zzz"
-                                        "```yyy"
-                                        "aaaxxx"
-                                        "bbbwww"
-                                        "cccvvv"
-                                        "ddduuu"
-                                        "eeettt"
-                                        "fffsss"
-                                        "gggrrr"
-                                        "hhhqqq"
-                                        "iiippp"
-                                        "jjjooo"
-                                        "kkknnn"
-                                        "lllmmm"};
-    EXPECT_EQ(expected, m_data.buf);
+void PrintTo(const SmoothColorInput &input, std::ostream *out)
+{
+    *out << input.count;
 }
 
-TEST_F(TestPutEncodedColors, smoothFourColors)
+class TestEncodedSmoothColors : public TestPutEncodedColors, public testing::WithParamInterface<SmoothColorInput>
 {
-    static constexpr int NUM_COLORS{4};
-    iota4(NUM_COLORS);
-    fill_dac_from_values(NUM_COLORS);
+};
 
-    put_encoded_colors(m_data, NUM_COLORS);
+TEST_P(TestEncodedSmoothColors, compressesSmoothRamp)
+{
+    iota4(GetParam().count);
+    fill_dac_from_values(GetParam().count);
 
-    constexpr std::string_view expected{"000<2>333"};
-    EXPECT_EQ(expected, m_data.buf);
+    put_encoded_colors(m_data, GetParam().count);
+
+    EXPECT_EQ(GetParam().expected, m_data.buf);
 }
 
-TEST_F(TestPutEncodedColors, smoothFiveColors)
-{
-    static constexpr int NUM_COLORS{5};
-    iota4(NUM_COLORS);
-    fill_dac_from_values(NUM_COLORS);
-
-    put_encoded_colors(m_data, NUM_COLORS);
-
-    constexpr std::string_view expected{"000<3>444"};
-    EXPECT_EQ(expected, m_data.buf);
-}
+INSTANTIATE_TEST_SUITE_P(ColorCount, TestEncodedSmoothColors,
+    testing::Values(SmoothColorInput{4, "000<2>333"}, SmoothColorInput{5, "000<3>444"}),
+    [](const testing::TestParamInfo<SmoothColorInput> &info) { return "Colors" + std::to_string(info.param.count); });
 
 TEST_F(TestPutEncodedColors, twoLeastLSBSetEncodedAsHex)
 {
@@ -242,22 +261,6 @@ TEST_F(TestPutEncodedColors, twoLeastLSBSetEncodedAsHex)
 
     constexpr std::string_view expected{"#434343"};
     EXPECT_EQ(expected, m_data.buf);
-}
-
-TEST_F(TestPutEncodedColors, legacyVersionWritesExpandedSixBitRampAsLegacyColors)
-{
-    ValueSaver saved_version{g_version, parse_legacy_version(2000)};
-    for (int i = 0; i < 256; ++i)
-    {
-        const Byte val{expand_6bit_color(static_cast<Byte>(i % 64))};
-        g_dac_box[i][0] = val;
-        g_dac_box[i][1] = val;
-        g_dac_box[i][2] = val;
-    }
-
-    put_encoded_colors(m_data, 256);
-
-    EXPECT_EQ("000<56>tttuuuvvv<3>zzz000<57>uuu<4>zzz000<57>uuu<4>zzz000<62>zzz", m_data.buf);
 }
 
 TEST_F(TestPutFractalParams, antUsesTextRuleForFirstParam)
