@@ -209,69 +209,24 @@ INSTANTIATE_TEST_SUITE_P(Token, TestCommentMetadata,
         CommentTextInput{"VideoKey", "$vidkey$", "F6"}),
     [](const TestParamInfo<CommentTextInput> &info) { return info.param.name; });
 
-TEST_F(TestComments, expandYear)
+class TestCommentDateTime : public TestComments, public WithParamInterface<CommentTextInput>
 {
-    g_par_comment[0] = "$year$";
+};
+
+TEST_P(TestCommentDateTime, expandsTokenAtTheFixedFixtureTime)
+{
+    g_par_comment[0] = GetParam().input;
 
     const std::string &result{expand_command_comment(0, m_test_time)};
 
-    EXPECT_EQ(std::to_string(TEST_YEAR), result);
+    EXPECT_EQ(GetParam().expected, result);
 }
 
-TEST_F(TestComments, expandMonth)
-{
-    g_par_comment[0] = "$month$";
-
-    const std::string &result{expand_command_comment(0, m_test_time)};
-
-    EXPECT_EQ("Dec", result);
-}
-
-TEST_F(TestComments, expandDay)
-{
-    g_par_comment[0] = "$day$";
-
-    const std::string &result{expand_command_comment(0, m_test_time)};
-
-    EXPECT_EQ(std::to_string(TEST_DAY), result);
-}
-
-TEST_F(TestComments, expandHour)
-{
-    g_par_comment[0] = "$hour$";
-
-    const std::string &result{expand_command_comment(0, m_test_time)};
-
-    EXPECT_EQ(std::to_string(TEST_HOUR), result);
-}
-
-TEST_F(TestComments, expandMinute)
-{
-    g_par_comment[0] = "$min$";
-
-    const std::string &result{expand_command_comment(0, m_test_time)};
-
-    EXPECT_EQ(std::to_string(TEST_MINUTE), result);
-}
-
-TEST_F(TestComments, expandTime)
-{
-    g_par_comment[0] = "$time$";
-
-    const std::string &result{expand_command_comment(0, m_test_time)};
-
-    EXPECT_EQ(
-        std::to_string(TEST_HOUR) + ':' + std::to_string(TEST_MINUTE) + ':' + std::to_string(TEST_SECOND),
-        result);
-}
-
-TEST_F(TestComments, expandDate)
-{
-    g_par_comment[0] = "$date$";
-
-    const std::string &result{expand_command_comment(0, m_test_time)};
-
-    EXPECT_EQ("Dec " + std::to_string(TEST_DAY) + ", " + std::to_string(TEST_YEAR), result);
-}
+INSTANTIATE_TEST_SUITE_P(Token, TestCommentDateTime,
+    Values(CommentTextInput{"Year", "$year$", "1984"}, CommentTextInput{"Month", "$month$", "Dec"},
+        CommentTextInput{"Day", "$day$", "12"}, CommentTextInput{"Hour", "$hour$", "20"},
+        CommentTextInput{"Minute", "$min$", "45"}, CommentTextInput{"Time", "$time$", "20:45:32"},
+        CommentTextInput{"Date", "$date$", "Dec 12, 1984"}),
+    [](const TestParamInfo<CommentTextInput> &info) { return info.param.name; });
 
 } // namespace id::test
