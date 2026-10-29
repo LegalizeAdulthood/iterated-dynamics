@@ -122,58 +122,89 @@ INSTANTIATE_TEST_SUITE_P(Token, TestSlideShowKeyTokens,
         SlideShowKeyInput{"Named", "ENTER", ID_KEY_ENTER}),
     [](const TestParamInfo<SlideShowKeyInput> &info) { return info.param.name; });
 
-TEST(TestSlideShow, recordShowWritesNamedMnemonic)
+class TestSlideShowSession : public Test
 {
-    TempDir temp_dir;
-    const fs::path output_path{temp_dir.path() / "key" / "recorded.key"};
+protected:
+    void SetUp() override;
+    void TearDown() override;
 
-    ValueSaver saved_auto_name{g_auto_name, "recorded.key"};
-    ValueSaver saved_overwrite{g_overwrite_file, true};
-    ValueSaver saved_save_dir{g_save_dir, temp_dir.path()};
+    TempDir m_temp_dir;
+};
 
+void TestSlideShowSession::SetUp()
+{
     stop_slide_show();
+}
+
+void TestSlideShowSession::TearDown()
+{
+    stop_slide_show();
+}
+
+class TestSlideShowPlayback : public TestSlideShowSession
+{
+protected:
+    void SetUp() override;
+    void write_script(const char *filename, const std::string &text);
+
+    MockDriver m_driver;
+    ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
+    ValueSaver<fs::path> m_saved_auto_name{g_auto_name};
+    ValueSaver<SlidesMode> m_saved_slides{g_slides};
+    fs::path m_input_path;
+};
+
+void TestSlideShowPlayback::SetUp()
+{
+    TestSlideShowSession::SetUp();
+    g_slides = SlidesMode::PLAY;
+}
+
+void TestSlideShowPlayback::write_script(const char *filename, const std::string &text)
+{
+    m_input_path = m_temp_dir.path() / filename;
+    write_text_file(m_input_path, text);
+    g_auto_name = m_input_path;
+}
+
+class TestSlideShowRecording : public TestSlideShowSession
+{
+protected:
+    ValueSaver<fs::path> m_saved_auto_name{g_auto_name, "recorded.key"};
+    ValueSaver<bool> m_saved_overwrite{g_overwrite_file, true};
+    ValueSaver<fs::path> m_saved_save_dir{g_save_dir, m_temp_dir.path()};
+};
+
+TEST_F(TestSlideShowRecording, recordShowWritesNamedMnemonic)
+{
+    const fs::path output_path{m_temp_dir.path() / "key" / "recorded.key"};
+
     record_show(ID_KEY_CTL_RIGHT_ARROW);
     stop_slide_show();
 
     EXPECT_EQ("CTRL_RIGHT\n", read_text_file(output_path));
 }
 
-TEST(TestSlideShow, slideShowGotoResumesAtTarget)
+TEST_F(TestSlideShowPlayback, slideShowGotoResumesAtTarget)
 {
-    TempDir temp_dir;
-    const fs::path input_path{temp_dir.path() / "goto.key"};
-    write_text_file(input_path, "GOTO target\nignored: 65\ntarget: ENTER\n");
+    write_script("goto.key", "GOTO target\nignored: 65\ntarget: ENTER\n");
 
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
-    ValueSaver saved_auto_name{g_auto_name, input_path};
     ValueSaver saved_busy{g_busy, false};
     ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
 
-    stop_slide_show();
-    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
-    EXPECT_CALL(driver, set_keyboard_timeout(_));
+    EXPECT_CALL(m_driver, set_keyboard_timeout(_));
 
     EXPECT_EQ(ID_KEY_ENTER, slide_show());
-
-    stop_slide_show();
 }
 
-TEST(TestSlideShow, thinkingWaitDeliversKeyOnlyWhileThinkingIsActive)
+TEST_F(TestSlideShowPlayback, thinkingWaitDeliversKeyOnlyWhileThinkingIsActive)
 {
-    TempDir temp_dir;
-    const fs::path input_path{temp_dir.path() / "thinking.key"};
-    write_text_file(input_path, "THINKWAIT x\n");
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
-    ValueSaver saved_auto_name{g_auto_name, input_path};
-    stop_slide_show();
-    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
-    EXPECT_CALL(driver, set_keyboard_timeout(_));
-    EXPECT_CALL(driver, stack_screen());
-    EXPECT_CALL(driver, set_clear());
-    EXPECT_CALL(driver, put_string(_, _, _, _)).Times(2);
-    EXPECT_CALL(driver, unstack_screen());
+    write_script("thinking.key", "THINKWAIT x\n");
+    EXPECT_CALL(m_driver, set_keyboard_timeout(_));
+    EXPECT_CALL(m_driver, stack_screen());
+    EXPECT_CALL(m_driver, set_clear());
+    EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(2);
+    EXPECT_CALL(m_driver, unstack_screen());
 
     EXPECT_EQ(0, slide_show());
     EXPECT_EQ(0, slide_show());
@@ -181,30 +212,21 @@ TEST(TestSlideShow, thinkingWaitDeliversKeyOnlyWhileThinkingIsActive)
     EXPECT_EQ('x', slide_show());
 
     thinking_end();
-    stop_slide_show();
 }
 
-TEST(TestSlideShow, thinkingWaitAcceptsNamedKeyWhenThinkingIsAlreadyActive)
+TEST_F(TestSlideShowPlayback, thinkingWaitAcceptsNamedKeyWhenThinkingIsAlreadyActive)
 {
-    TempDir temp_dir;
-    const fs::path input_path{temp_dir.path() / "thinking.key"};
-    write_text_file(input_path, "THINKWAIT ENTER\n");
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
-    ValueSaver saved_auto_name{g_auto_name, input_path};
-    stop_slide_show();
-    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
-    EXPECT_CALL(driver, set_keyboard_timeout(_));
-    EXPECT_CALL(driver, stack_screen());
-    EXPECT_CALL(driver, set_clear());
-    EXPECT_CALL(driver, put_string(_, _, _, _)).Times(2);
-    EXPECT_CALL(driver, unstack_screen());
+    write_script("thinking.key", "THINKWAIT ENTER\n");
+    EXPECT_CALL(m_driver, set_keyboard_timeout(_));
+    EXPECT_CALL(m_driver, stack_screen());
+    EXPECT_CALL(m_driver, set_clear());
+    EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(2);
+    EXPECT_CALL(m_driver, unstack_screen());
 
     thinking("preparation");
     EXPECT_EQ(ID_KEY_ENTER, slide_show());
 
     thinking_end();
-    stop_slide_show();
 }
 
 struct SlideShowRowWaitInput
@@ -219,30 +241,21 @@ void PrintTo(const SlideShowRowWaitInput &input, std::ostream *out)
     *out << input.name;
 }
 
-class TestSlideShowRowWait : public TestWithParam<SlideShowRowWaitInput>
+class TestSlideShowRowWait : public TestSlideShowPlayback, public WithParamInterface<SlideShowRowWaitInput>
 {
 };
 
 TEST_P(TestSlideShowRowWait, waitsUntilCalculationReachesTarget)
 {
-    TempDir temp_dir;
-    const fs::path input_path{temp_dir.path() / "row.key"};
-    write_text_file(input_path, "ROWWAIT 2 x\n");
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
-    ValueSaver saved_auto_name{g_auto_name, input_path};
+    write_script("row.key", "ROWWAIT 2 x\n");
     ValueSaver saved_coordinate{g_current_row, GetParam().row};
     ValueSaver saved_status{g_calc_status, GetParam().status};
-    stop_slide_show();
-    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
-    EXPECT_CALL(driver, set_keyboard_timeout(_));
+    EXPECT_CALL(m_driver, set_keyboard_timeout(_));
 
     EXPECT_EQ(0, slide_show());
     g_current_row = 2;
     g_calc_status = CalcStatus::IN_PROGRESS;
     EXPECT_EQ('x', slide_show());
-
-    stop_slide_show();
 }
 
 INSTANTIATE_TEST_SUITE_P(BlockedState, TestSlideShowRowWait,
@@ -251,23 +264,14 @@ INSTANTIATE_TEST_SUITE_P(BlockedState, TestSlideShowRowWait,
         SlideShowRowWaitInput{"NotCalculating", 2, CalcStatus::RESUMABLE}),
     [](const TestParamInfo<SlideShowRowWaitInput> &info) { return info.param.name; });
 
-TEST(TestSlideShow, rowWaitAcceptsANamedKeyAtTheCurrentRow)
+TEST_F(TestSlideShowPlayback, rowWaitAcceptsANamedKeyAtTheCurrentRow)
 {
-    TempDir temp_dir;
-    const fs::path input_path{temp_dir.path() / "row.key"};
-    write_text_file(input_path, "ROWWAIT 1 ENTER\n");
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
-    ValueSaver saved_auto_name{g_auto_name, input_path};
+    write_script("row.key", "ROWWAIT 1 ENTER\n");
     ValueSaver saved_row{g_current_row, 1};
     ValueSaver saved_status{g_calc_status, CalcStatus::IN_PROGRESS};
-    stop_slide_show();
-    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
-    EXPECT_CALL(driver, set_keyboard_timeout(_));
+    EXPECT_CALL(m_driver, set_keyboard_timeout(_));
 
     EXPECT_EQ(ID_KEY_ENTER, slide_show());
-
-    stop_slide_show();
 }
 
 struct SlideShowFastWaitInput
@@ -281,30 +285,21 @@ void PrintTo(const SlideShowFastWaitInput &input, std::ostream *out)
     *out << input.name;
 }
 
-class TestSlideShowFastWait : public TestWithParam<SlideShowFastWaitInput>
+class TestSlideShowFastWait : public TestSlideShowPlayback, public WithParamInterface<SlideShowFastWaitInput>
 {
 };
 
 TEST_P(TestSlideShowFastWait, preservesFastTypingAfterWait)
 {
-    TempDir temp_dir;
-    const fs::path input_path{temp_dir.path() / "fast.key"};
-    write_text_file(input_path, std::string{"FAST\n"} + GetParam().command + "\nENTER\nENTER\n");
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
-    ValueSaver saved_auto_name{g_auto_name, input_path};
+    write_script("fast.key", std::string{"FAST\n"} + GetParam().command + "\nENTER\nENTER\n");
     ValueSaver saved_status{g_calc_status, CalcStatus::COMPLETED};
     ValueSaver saved_busy{g_busy, false};
-    stop_slide_show();
-    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
-    EXPECT_CALL(driver, set_keyboard_timeout(_)).Times(AnyNumber());
+    EXPECT_CALL(m_driver, set_keyboard_timeout(_)).Times(AnyNumber());
 
     EXPECT_EQ(0, slide_show());
     EXPECT_EQ(0, slide_show());
     EXPECT_EQ(ID_KEY_ENTER, slide_show());
     EXPECT_EQ(ID_KEY_ENTER, slide_show());
-
-    stop_slide_show();
 }
 
 INSTANTIATE_TEST_SUITE_P(Command, TestSlideShowFastWait,
@@ -323,30 +318,21 @@ void PrintTo(const SlideShowIterationWaitInput &input, std::ostream *out)
     *out << input.name;
 }
 
-class TestSlideShowIterationWait : public TestWithParam<SlideShowIterationWaitInput>
+class TestSlideShowIterationWait : public TestSlideShowPlayback, public WithParamInterface<SlideShowIterationWaitInput>
 {
 };
 
 TEST_P(TestSlideShowIterationWait, waitsUntilCalculationReachesTarget)
 {
-    TempDir temp_dir;
-    const fs::path input_path{temp_dir.path() / "iteration.key"};
-    write_text_file(input_path, "ITERWAIT 512 x\n");
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
-    ValueSaver saved_auto_name{g_auto_name, input_path};
+    write_script("iteration.key", "ITERWAIT 512 x\n");
     ValueSaver saved_coordinate{g_color_iter, GetParam().iteration};
     ValueSaver saved_status{g_calc_status, GetParam().status};
-    stop_slide_show();
-    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
-    EXPECT_CALL(driver, set_keyboard_timeout(_));
+    EXPECT_CALL(m_driver, set_keyboard_timeout(_));
 
     EXPECT_EQ(0, slide_show());
     g_color_iter = 512;
     g_calc_status = CalcStatus::IN_PROGRESS;
     EXPECT_EQ('x', slide_show());
-
-    stop_slide_show();
 }
 
 INSTANTIATE_TEST_SUITE_P(BlockedState, TestSlideShowIterationWait,
@@ -355,84 +341,52 @@ INSTANTIATE_TEST_SUITE_P(BlockedState, TestSlideShowIterationWait,
         SlideShowIterationWaitInput{"NotCalculating", 512, CalcStatus::COMPLETED}),
     [](const TestParamInfo<SlideShowIterationWaitInput> &info) { return info.param.name; });
 
-TEST(TestSlideShow, iterationWaitAcceptsANamedKeyAtTheCurrentIteration)
+TEST_F(TestSlideShowPlayback, iterationWaitAcceptsANamedKeyAtTheCurrentIteration)
 {
-    TempDir temp_dir;
-    const fs::path input_path{temp_dir.path() / "iteration.key"};
-    write_text_file(input_path, "ITERWAIT 512 ENTER\n");
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
-    ValueSaver saved_auto_name{g_auto_name, input_path};
+    write_script("iteration.key", "ITERWAIT 512 ENTER\n");
     ValueSaver saved_iteration{g_color_iter, 512L};
     ValueSaver saved_status{g_calc_status, CalcStatus::IN_PROGRESS};
-    stop_slide_show();
-    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
-    EXPECT_CALL(driver, set_keyboard_timeout(_));
+    EXPECT_CALL(m_driver, set_keyboard_timeout(_));
 
     EXPECT_EQ(ID_KEY_ENTER, slide_show());
-
-    stop_slide_show();
 }
 
-TEST(TestSlideShow, stoppingSlideShowDiscardsThePendingIterationWait)
+TEST_F(TestSlideShowPlayback, stoppingSlideShowDiscardsThePendingIterationWait)
 {
-    TempDir temp_dir;
-    const fs::path input_path{temp_dir.path() / "iteration.key"};
-    write_text_file(input_path, "ITERWAIT 512 x\n");
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
-    ValueSaver saved_auto_name{g_auto_name, input_path};
+    write_script("iteration.key", "ITERWAIT 512 x\n");
     ValueSaver saved_iteration{g_color_iter, 0L};
     ValueSaver saved_status{g_calc_status, CalcStatus::IN_PROGRESS};
-    stop_slide_show();
-    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
-    EXPECT_CALL(driver, set_keyboard_timeout(_)).Times(2);
+    EXPECT_CALL(m_driver, set_keyboard_timeout(_)).Times(2);
 
     EXPECT_EQ(0, slide_show());
     stop_slide_show();
-    write_text_file(input_path, "ENTER\n");
+    write_text_file(m_input_path, "ENTER\n");
     g_slides = SlidesMode::PLAY;
     EXPECT_EQ(ID_KEY_ENTER, slide_show());
-
-    stop_slide_show();
 }
 
-TEST(TestSlideShow, slideShowMessageDisplaysLineAfterSecondsArgument)
+TEST_F(TestSlideShowPlayback, slideShowMessageDisplaysLineAfterSecondsArgument)
 {
-    TempDir temp_dir;
-    const fs::path input_path{temp_dir.path() / "message.key"};
-    write_text_file(input_path, "MESSAGE 0 hello\n");
+    write_script("message.key", "MESSAGE 0 hello\n");
 
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
-    ValueSaver saved_auto_name{g_auto_name, input_path};
     ValueSaver saved_busy{g_busy, false};
     ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
 
-    stop_slide_show();
-    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
-    EXPECT_CALL(driver, set_keyboard_timeout(_));
-    EXPECT_CALL(driver, is_text()).WillOnce(Return(true));
-    EXPECT_CALL(driver, move_cursor(0, _)).Times(160);
-    EXPECT_CALL(driver, get_char_attr()).Times(80).WillRepeatedly(Return(7));
-    EXPECT_CALL(driver, put_string(0, 0, 7, StrEq(" hello")));
-    EXPECT_CALL(driver, hide_text_cursor());
-    EXPECT_CALL(driver, put_char_attr(7)).Times(80);
+    EXPECT_CALL(m_driver, set_keyboard_timeout(_));
+    EXPECT_CALL(m_driver, is_text()).WillOnce(Return(true));
+    EXPECT_CALL(m_driver, move_cursor(0, _)).Times(160);
+    EXPECT_CALL(m_driver, get_char_attr()).Times(80).WillRepeatedly(Return(7));
+    EXPECT_CALL(m_driver, put_string(0, 0, 7, StrEq(" hello")));
+    EXPECT_CALL(m_driver, hide_text_cursor());
+    EXPECT_CALL(m_driver, put_char_attr(7)).Times(80);
 
     EXPECT_EQ(0, slide_show());
-
-    stop_slide_show();
 }
 
-TEST(TestSlideShow, slideShowUnknownTokenDisplaysErrorMessage)
+TEST_F(TestSlideShowPlayback, slideShowUnknownTokenDisplaysErrorMessage)
 {
-    TempDir temp_dir;
-    const fs::path input_path{temp_dir.path() / "error.key"};
-    write_text_file(input_path, "BOGUS\n");
+    write_script("error.key", "BOGUS\n");
 
-    MockDriver driver;
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(&driver)};
-    ValueSaver saved_auto_name{g_auto_name, input_path};
     ValueSaver saved_busy{g_busy, false};
     ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
     ValueSaver saved_debug_flag{g_debug_flag, DebugFlags::NONE};
@@ -440,23 +394,19 @@ TEST(TestSlideShow, slideShowUnknownTokenDisplaysErrorMessage)
     ValueSaver saved_init_batch{g_init_batch, BatchMode::NONE};
     ValueSaver saved_text_row{g_text_row, 4};
 
-    stop_slide_show();
-    ValueSaver saved_slides{g_slides, SlidesMode::PLAY};
-    EXPECT_CALL(driver, set_keyboard_timeout(_));
-    EXPECT_CALL(driver, stack_screen());
-    EXPECT_CALL(driver, move_cursor(4, 0));
-    EXPECT_CALL(driver, put_string(4, 0, 7, StrEq("Slideshow error:\nCan't understand BOGUS")));
-    EXPECT_CALL(driver, put_string(6, 0, 7, StrEq("Any key to continue...")));
-    EXPECT_CALL(driver, set_attr(4, 0, _, _));
-    EXPECT_CALL(driver, hide_text_cursor());
-    EXPECT_CALL(driver, buzzer(Buzzer::PROBLEM));
-    EXPECT_CALL(driver, key_pressed()).WillOnce(Return(0));
-    EXPECT_CALL(driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
-    EXPECT_CALL(driver, unstack_screen());
+    EXPECT_CALL(m_driver, set_keyboard_timeout(_));
+    EXPECT_CALL(m_driver, stack_screen());
+    EXPECT_CALL(m_driver, move_cursor(4, 0));
+    EXPECT_CALL(m_driver, put_string(4, 0, 7, StrEq("Slideshow error:\nCan't understand BOGUS")));
+    EXPECT_CALL(m_driver, put_string(6, 0, 7, StrEq("Any key to continue...")));
+    EXPECT_CALL(m_driver, set_attr(4, 0, _, _));
+    EXPECT_CALL(m_driver, hide_text_cursor());
+    EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(0));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
+    EXPECT_CALL(m_driver, unstack_screen());
 
     EXPECT_EQ(0, slide_show());
-
-    stop_slide_show();
 }
 
 } // namespace id::test
