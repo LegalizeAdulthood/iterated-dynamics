@@ -637,48 +637,71 @@ TEST_F(TestCommandRouter, exitNoAskAfterStartupPreservesPreference)
     EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  exitnoask=n"));
 }
 
-TEST_F(TestCommandRouter, maxHistoryNonNumeric)
+struct RouterHistoryInput
 {
-    ValueSaver saved_max_image_history{g_max_image_history, 0};
-    CommandProcessor processor{"maxhistory=yes", CmdFile::SSTOOLS_INI};
+    const char *name;
+    const char *value;
+    int initial;
+    int expected;
+    CmdFile mode;
+    DebugFlags debug;
+    CmdArgFlags flags;
+};
+
+void PrintTo(const RouterHistoryInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterHistoryCapacity : public TestCommandRouter, public WithParamInterface<RouterHistoryInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<int> m_saved_capacity{g_max_image_history};
+};
+
+void TestRouterHistoryCapacity::SetUp()
+{
+    TestCommandRouter::SetUp();
+    g_max_image_history = GetParam().initial;
+    g_debug_flag = GetParam().debug;
+}
+
+TEST_P(TestRouterHistoryCapacity, processesTheHistoryCapacityInItsCommandContext)
+{
+    const std::string argument{"maxhistory=" + std::string{GetParam().value}};
+    CommandProcessor processor{argument, GetParam().mode};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_EQ(0, g_max_image_history);
-    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  maxhistory=yes"));
-}
-
-TEST_F(TestCommandRouter, maxHistoryNegative)
-{
-    ValueSaver saved_max_image_history{g_max_image_history, 0};
-    CommandProcessor processor{"maxhistory=-10", CmdFile::SSTOOLS_INI};
-    const CommandRouter router;
-
-    const CommandParseResult result{router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_EQ(0, g_max_image_history);
-    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  maxhistory=-10"));
-}
-
-TEST_F(TestCommandRouter, maxHistory)
-{
-    ValueSaver saved_max_image_history{g_max_image_history, -1};
-    const CommandRouter router;
-    for (const int max_history : {0, 10})
+    EXPECT_EQ(GetParam().flags, result.flags);
+    EXPECT_EQ(GetParam().expected, g_max_image_history);
+    if (GetParam().flags == CmdArgFlags::BAD_ARG)
     {
-        SCOPED_TRACE(max_history);
-        CommandProcessor processor{"maxhistory=" + std::to_string(max_history), CmdFile::SSTOOLS_INI};
-
-        const CommandParseResult result{router.process(processor)};
-
-        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
-        EXPECT_EQ(max_history, g_max_image_history);
+        EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  " + argument));
+    }
+    else
+    {
         EXPECT_TRUE(result.diagnostics.errors.empty());
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(Capacities, TestRouterHistoryCapacity,
+    Values(RouterHistoryInput{"NonNumeric", "yes", 0, 0, CmdFile::SSTOOLS_INI, DebugFlags::NONE, CmdArgFlags::BAD_ARG},
+        RouterHistoryInput{"Negative", "-10", 0, 0, CmdFile::SSTOOLS_INI, DebugFlags::NONE, CmdArgFlags::BAD_ARG},
+        RouterHistoryInput{"Zero", "0", -1, 0, CmdFile::SSTOOLS_INI, DebugFlags::NONE,
+            CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        RouterHistoryInput{"Ten", "10", 0, 10, CmdFile::SSTOOLS_INI, DebugFlags::NONE,
+            CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        RouterHistoryInput{"OverrideTen", "10", 0, 10, CmdFile::AT_AFTER_STARTUP,
+            DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME, CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        RouterHistoryInput{"OverrideNonNumeric", "yes", 10, 10, CmdFile::AT_AFTER_STARTUP,
+            DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME, CmdArgFlags::BAD_ARG},
+        RouterHistoryInput{"OverrideNegative", "-10", 10, 10, CmdFile::AT_AFTER_STARTUP,
+            DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<RouterHistoryInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouter, maxHistoryAfterStartup)
 {
@@ -691,32 +714,6 @@ TEST_F(TestCommandRouter, maxHistoryAfterStartup)
     EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
     EXPECT_EQ(0, g_max_image_history);
     EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  maxhistory=10"));
-}
-
-TEST_F(TestCommandRouter, maxHistoryDebugOverrideRetainsValueValidation)
-{
-    ValueSaver saved_max_image_history{g_max_image_history, 0};
-    g_debug_flag = DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME;
-    CommandProcessor processor{"maxhistory=10", CmdFile::AT_AFTER_STARTUP};
-    const CommandRouter router;
-
-    const CommandParseResult result{router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
-    EXPECT_EQ(10, g_max_image_history);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-    for (const std::string_view value : {"yes", "-10"})
-    {
-        SCOPED_TRACE(value);
-        CommandProcessor invalid{"maxhistory=" + std::string{value}, CmdFile::AT_AFTER_STARTUP};
-
-        const CommandParseResult rejected{router.process(invalid)};
-
-        EXPECT_EQ(CmdArgFlags::BAD_ARG, rejected.flags);
-        EXPECT_EQ(10, g_max_image_history);
-        EXPECT_THAT(rejected.diagnostics.errors,
-            ElementsAre("Oops. I couldn't understand the argument:\n  maxhistory=" + std::string{value}));
-    }
 }
 
 TEST_F(TestCommandRouter, autoKeyInvalidValue)
