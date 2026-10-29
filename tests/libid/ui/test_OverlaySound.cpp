@@ -986,64 +986,100 @@ TEST_P(TestLogMapController, menuKeyInterruptsSamplingWithinAnOrbitAndResumeFini
 
 INSTANTIATE_TEST_SUITE_P(ShowDot, TestLogMapController, Bool());
 
-TEST_F(TestOverlaySound, optimizedPixelYieldsCompletedWorkWithoutPolling)
+struct OptimizedOverlayPixelInput
 {
-    g_show_orbit = false;
-    ValueSaver saved_param{g_param_z1, DComplex{}};
-    EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    EXPECT_CALL(m_driver, get_key()).Times(0);
+    const char *name;
+    FractalType type;
+    CalcMode mode;
+};
 
-    for (const FractalType type : {FractalType::MANDEL, FractalType::JULIA})
-    {
-        g_fractal_type = type;
-        for (const CalcMode mode : {CalcMode::ONE_PASS, CalcMode::TWO_PASS, CalcMode::BOUNDARY_TRACE,
-                 CalcMode::SOLID_GUESS, CalcMode::DIFFUSION, CalcMode::TESSERAL})
-        {
-            g_keyboard_check_interval = 0;
-            calc_mandelbrot_init();
-            StandardFractal calculation;
-            calculation.m_standard_pass.select(mode);
-
-            EXPECT_GE(calculation.calculate_mandelbrot_pixel(), 0);
-
-            EXPECT_TRUE(calculation.consume_traversal_yield());
-        }
-    }
+void PrintTo(const OptimizedOverlayPixelInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestOverlaySound, optimizedPixelRetainsBatchingUntilBudgetExpires)
+const OptimizedOverlayPixelInput OPTIMIZED_OVERLAY_PIXEL_INPUTS[]{
+    {"MandelOnePass", FractalType::MANDEL, CalcMode::ONE_PASS},
+    {"MandelTwoPass", FractalType::MANDEL, CalcMode::TWO_PASS},
+    {"MandelBoundary", FractalType::MANDEL, CalcMode::BOUNDARY_TRACE},
+    {"MandelSolidGuess", FractalType::MANDEL, CalcMode::SOLID_GUESS},
+    {"MandelDiffusion", FractalType::MANDEL, CalcMode::DIFFUSION},
+    {"MandelTesseral", FractalType::MANDEL, CalcMode::TESSERAL},
+    {"JuliaOnePass", FractalType::JULIA, CalcMode::ONE_PASS}, {"JuliaTwoPass", FractalType::JULIA, CalcMode::TWO_PASS},
+    {"JuliaBoundary", FractalType::JULIA, CalcMode::BOUNDARY_TRACE},
+    {"JuliaSolidGuess", FractalType::JULIA, CalcMode::SOLID_GUESS},
+    {"JuliaDiffusion", FractalType::JULIA, CalcMode::DIFFUSION},
+    {"JuliaTesseral", FractalType::JULIA, CalcMode::TESSERAL}};
+
+class TestOptimizedOverlayPixel : public TestOverlaySound, public WithParamInterface<OptimizedOverlayPixelInput>
 {
+protected:
+    void SetUp() override;
+
+    ValueSaver<DComplex> m_saved_param{g_param_z1, DComplex{}};
+};
+
+void TestOptimizedOverlayPixel::SetUp()
+{
+    TestOverlaySound::SetUp();
     g_show_orbit = false;
+    g_fractal_type = GetParam().type;
+}
+
+TEST_P(TestOptimizedOverlayPixel, yieldsCompletedWorkWithoutPolling)
+{
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    g_keyboard_check_interval = 0;
+    calc_mandelbrot_init();
+    StandardFractal calculation;
+    calculation.m_standard_pass.select(GetParam().mode);
+
+    EXPECT_GE(calculation.calculate_mandelbrot_pixel(), 0);
+
+    EXPECT_TRUE(calculation.consume_traversal_yield());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOptimizedOverlayPixel, ValuesIn(OPTIMIZED_OVERLAY_PIXEL_INPUTS),
+    [](const TestParamInfo<OptimizedOverlayPixelInput> &info) { return info.param.name; });
+
+class TestOptimizedOverlayPixelBatch : public TestOptimizedOverlayPixel
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<double> m_saved_bailout{g_magnitude_limit, 4.0};
+};
+
+void TestOptimizedOverlayPixelBatch::SetUp()
+{
+    TestOptimizedOverlayPixel::SetUp();
     g_max_iterations = 4098;
-    ValueSaver saved_param{g_param_z1, DComplex{}};
-    ValueSaver saved_bailout{g_magnitude_limit, 4.0};
+}
+
+TEST_P(TestOptimizedOverlayPixelBatch, retainsBatchingUntilBudgetExpires)
+{
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, get_key()).Times(0);
+    g_keyboard_check_interval = 2 * g_max_iterations + 1;
+    calc_mandelbrot_init();
+    StandardFractal calculation;
+    calculation.m_standard_pass.select(GetParam().mode);
 
-    for (const FractalType type : {FractalType::MANDEL, FractalType::JULIA})
+    for (int pixel = 0; pixel < 2; ++pixel)
     {
-        g_fractal_type = type;
-        for (const CalcMode mode : {CalcMode::ONE_PASS, CalcMode::TWO_PASS, CalcMode::BOUNDARY_TRACE,
-                 CalcMode::SOLID_GUESS, CalcMode::DIFFUSION, CalcMode::TESSERAL})
-        {
-            g_keyboard_check_interval = 2 * g_max_iterations + 1;
-            calc_mandelbrot_init();
-            StandardFractal calculation;
-            calculation.m_standard_pass.select(mode);
-
-            for (int pixel = 0; pixel < 2; ++pixel)
-            {
-                EXPECT_GE(calculation.calculate_mandelbrot_pixel(), 0);
-                EXPECT_FALSE(calculation.consume_traversal_yield());
-            }
-            EXPECT_LT(g_keyboard_check_interval, 0);
-
-            EXPECT_GE(calculation.calculate_mandelbrot_pixel(), 0);
-
-            EXPECT_TRUE(calculation.consume_traversal_yield());
-        }
+        EXPECT_GE(calculation.calculate_mandelbrot_pixel(), 0);
+        EXPECT_FALSE(calculation.consume_traversal_yield());
     }
+    EXPECT_LT(g_keyboard_check_interval, 0);
+
+    EXPECT_GE(calculation.calculate_mandelbrot_pixel(), 0);
+
+    EXPECT_TRUE(calculation.consume_traversal_yield());
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOptimizedOverlayPixelBatch, ValuesIn(OPTIMIZED_OVERLAY_PIXEL_INPUTS),
+    [](const TestParamInfo<OptimizedOverlayPixelInput> &info) { return info.param.name; });
 
 TEST_P(TestStandardPixelCheckpoints, controllerHandlesMenuKeyBeforeOptimizedTraversalChunkCompletes)
 {
@@ -1099,66 +1135,112 @@ TEST_P(TestStandardPixelCheckpoints, controllerHandlesMenuKeyBeforeOptimizedTrav
     EXPECT_GT(s_pixel_calls, 2);
 }
 
-TEST_F(TestOverlaySound, scanlineSuspensionRetainsTheNextPixelInBothPassModes)
+struct ScanlineOverlayCheckpointInput
 {
+    const char *name;
+    int primary_pixels;
+    CalcMode mode;
+};
+
+void PrintTo(const ScanlineOverlayCheckpointInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestScanlineOverlayCheckpoint : public TestOverlaySound, public WithParamInterface<ScanlineOverlayCheckpointInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestScanlineOverlayCheckpoint::SetUp()
+{
+    TestOverlaySound::SetUp();
     g_show_orbit = false;
     g_max_keyboard_check_interval = 1;
-    EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    EXPECT_CALL(m_driver, get_key()).Times(0);
-
-    for (const int primary_pixels : {1, 2})
-    {
-        for (const CalcMode mode : {CalcMode::ONE_PASS, CalcMode::TWO_PASS})
-        {
-            g_std_calc_mode = mode;
-            g_resuming = false;
-            s_pixel_positions.clear();
-            StandardFractal calculation;
-            calculation.resume();
-            for (int increments = 0; increments < primary_pixels; ++increments)
-            {
-                calculation.iterate();
-            }
-            ASSERT_EQ(primary_pixels, s_pixel_positions.size());
-            calculation.suspend();
-            ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
-
-            g_resuming = true;
-            StandardFractal resumed;
-            resumed.resume();
-            for (int increments = 0; increments < 20 && !resumed.done(); ++increments)
-            {
-                resumed.iterate();
-            }
-            ASSERT_TRUE(resumed.done());
-            ASSERT_EQ(4U, s_pixel_positions.size());
-            EXPECT_EQ((Point2i{0, 0}), s_pixel_positions[0]);
-            EXPECT_EQ((Point2i{1, 0}), s_pixel_positions[1]);
-            EXPECT_EQ((Point2i{0, 1}), s_pixel_positions[2]);
-            EXPECT_EQ((Point2i{1, 1}), s_pixel_positions[3]);
-        }
-    }
+    g_std_calc_mode = GetParam().mode;
+    g_resuming = false;
+    s_pixel_positions.clear();
 }
 
-TEST_F(TestOverlaySound, perturbationPixelRetainsTraversalYieldGateWithoutPolling)
+TEST_P(TestScanlineOverlayCheckpoint, suspensionRetainsTheNextPixel)
 {
-    m_specific.flags = FractalFlags::PERTURB;
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, get_key()).Times(0);
-
-    for (const CalcMode mode : {CalcMode::ONE_PASS, CalcMode::SOLID_GUESS})
+    StandardFractal calculation;
+    calculation.resume();
+    for (int increments = 0; increments < GetParam().primary_pixels; ++increments)
     {
-        StandardFractal calculation;
-        calculation.m_standard_pass.select(mode);
-        calculation.m_perturbation_active = true;
-        calculation.m_pert_engine.initialize_frame({0.0, 0.0}, {1.0, 0.0}, {0.0, 1.0});
-
-        EXPECT_GE(calculation.calculate_standard_pixel(true), 0);
-
-        EXPECT_EQ(mode == CalcMode::ONE_PASS, calculation.consume_traversal_yield());
-        calculation.m_pert_engine.finish();
+        calculation.iterate();
     }
+    ASSERT_EQ(GetParam().primary_pixels, s_pixel_positions.size());
+    calculation.suspend();
+    ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+
+    g_resuming = true;
+    StandardFractal resumed;
+    resumed.resume();
+    for (int increments = 0; increments < 20 && !resumed.done(); ++increments)
+    {
+        resumed.iterate();
+    }
+    ASSERT_TRUE(resumed.done());
+    ASSERT_EQ(4U, s_pixel_positions.size());
+    EXPECT_EQ((Point2i{0, 0}), s_pixel_positions[0]);
+    EXPECT_EQ((Point2i{1, 0}), s_pixel_positions[1]);
+    EXPECT_EQ((Point2i{0, 1}), s_pixel_positions[2]);
+    EXPECT_EQ((Point2i{1, 1}), s_pixel_positions[3]);
 }
+
+INSTANTIATE_TEST_SUITE_P(Checkpoints, TestScanlineOverlayCheckpoint,
+    Values(ScanlineOverlayCheckpointInput{"OnePassAfterFirstPixel", 1, CalcMode::ONE_PASS},
+        ScanlineOverlayCheckpointInput{"TwoPassAfterFirstPixel", 1, CalcMode::TWO_PASS},
+        ScanlineOverlayCheckpointInput{"OnePassAfterSecondPixel", 2, CalcMode::ONE_PASS},
+        ScanlineOverlayCheckpointInput{"TwoPassAfterSecondPixel", 2, CalcMode::TWO_PASS}),
+    [](const TestParamInfo<ScanlineOverlayCheckpointInput> &info) { return info.param.name; });
+
+struct PerturbationOverlayYieldInput
+{
+    const char *name;
+    CalcMode mode;
+};
+
+void PrintTo(const PerturbationOverlayYieldInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestPerturbationOverlayYield : public TestOverlaySound, public WithParamInterface<PerturbationOverlayYieldInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestPerturbationOverlayYield::SetUp()
+{
+    TestOverlaySound::SetUp();
+    m_specific.flags = FractalFlags::PERTURB;
+}
+
+TEST_P(TestPerturbationOverlayYield, retainsTraversalYieldGateWithoutPolling)
+{
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    StandardFractal calculation;
+    calculation.m_standard_pass.select(GetParam().mode);
+    calculation.m_perturbation_active = true;
+    calculation.m_pert_engine.initialize_frame({0.0, 0.0}, {1.0, 0.0}, {0.0, 1.0});
+
+    EXPECT_GE(calculation.calculate_standard_pixel(true), 0);
+
+    EXPECT_EQ(GetParam().mode == CalcMode::ONE_PASS, calculation.consume_traversal_yield());
+    calculation.m_pert_engine.finish();
+}
+
+INSTANTIATE_TEST_SUITE_P(Passes, TestPerturbationOverlayYield,
+    Values(PerturbationOverlayYieldInput{"OnePass", CalcMode::ONE_PASS},
+        PerturbationOverlayYieldInput{"SolidGuess", CalcMode::SOLID_GUESS}),
+    [](const TestParamInfo<PerturbationOverlayYieldInput> &info) { return info.param.name; });
 
 TEST_F(TestOverlaySound, lyapunovScanlineYieldsCompletedPixelWithoutPolling)
 {
