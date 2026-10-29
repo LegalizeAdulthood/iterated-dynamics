@@ -152,25 +152,51 @@ INSTANTIATE_TEST_SUITE_P(Owners, TestRejectedRouterOwner,
     Values(RouterOwnerInput{"Ui", true, CmdArgFlags::BAD_ARG}, RouterOwnerInput{"Engine", false, CmdArgFlags::BAD_ARG}),
     [](const TestParamInfo<RouterOwnerInput> &info) { return info.param.name; });
 
-TEST_F(TestCommandRouter, unknownNameIsDiagnosedOnce)
+class TestRouterDiagnostic : public TestCommandRouter, public WithParamInterface<bool>
+{
+protected:
+    void SetUp() override;
+    const CommandRouter &router() const;
+
+    std::unique_ptr<CommandRouter> m_default_router;
+};
+
+void TestRouterDiagnostic::SetUp()
+{
+    TestCommandRouter::SetUp();
+    if (GetParam())
+    {
+        m_default_router = std::make_unique<CommandRouter>();
+    }
+}
+
+const CommandRouter &TestRouterDiagnostic::router() const
+{
+    return m_default_router ? *m_default_router : m_router;
+}
+
+TEST_P(TestRouterDiagnostic, unknownNameIsDiagnosedOnce)
 {
     CommandProcessor processor{"unknown=yes", CmdFile::AT_AFTER_STARTUP};
 
-    const CommandParseResult result{m_router.process(processor)};
+    const CommandParseResult result{router().process(processor)};
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
     EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  unknown=yes"));
 }
 
-TEST_F(TestCommandRouter, syntaxFailureDoesNotInvokeEitherOwner)
+TEST_P(TestRouterDiagnostic, syntaxFailureIsDiagnosedOnceWithoutInvokingAnOwner)
 {
     CommandProcessor processor{std::string(33, 'a') + "=yes", CmdFile::AT_AFTER_STARTUP};
 
-    const CommandParseResult result{m_router.process(processor)};
+    const CommandParseResult result{router().process(processor)};
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
     EXPECT_EQ(1U, result.diagnostics.errors.size());
 }
+
+INSTANTIATE_TEST_SUITE_P(Routers, TestRouterDiagnostic, Bool(),
+    [](const TestParamInfo<bool> &info) { return info.param ? "Default" : "Injected"; });
 
 TEST_F(TestCommandRouter, restrictedUiNameDoesNotDelegateOrInvokeHandler)
 {
@@ -322,28 +348,6 @@ TEST_F(TestCommandRouter, defaultRouterRetainsEngineStartupRestrictions)
     const CommandParseResult result{router.process(processor)};
 
     EXPECT_EQ(BatchMode::NONE, g_init_batch);
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_EQ(1U, result.diagnostics.errors.size());
-}
-
-TEST_F(TestCommandRouter, defaultRouterDiagnosesUnknownNameOnce)
-{
-    CommandProcessor processor{"unknown=yes", CmdFile::AT_AFTER_STARTUP};
-    const CommandRouter router;
-
-    const CommandParseResult result{router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  unknown=yes"));
-}
-
-TEST_F(TestCommandRouter, defaultRouterDoesNotRepeatSyntaxDiagnostic)
-{
-    CommandProcessor processor{std::string(33, 'a') + "=yes", CmdFile::AT_AFTER_STARTUP};
-    const CommandRouter router;
-
-    const CommandParseResult result{router.process(processor)};
-
     EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
     EXPECT_EQ(1U, result.diagnostics.errors.size());
 }
