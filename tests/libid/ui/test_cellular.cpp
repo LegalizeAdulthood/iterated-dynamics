@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <array>
 #include <cstring>
+#include <memory>
 #include <new>
 #include <stdexcept>
 #include <string>
@@ -389,23 +390,92 @@ TEST_F(TestCellularController, nextScreenReadsLastRowAndAdvancesGeneration)
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
 }
 
-TEST_F(TestCellularController, stepwiseControllerPreparesOneGenerationAndRendersOneRowPerCall)
+class TestCellularStepwise : public TestCellularController
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void complete_controller(CellularController &controller);
+
+    std::unique_ptr<NonStandardFractal> m_calculation;
+};
+
+void TestCellularStepwise::SetUp()
+{
+    TestCellularController::SetUp();
     g_params[3] = 4;
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+    m_calculation = std::make_unique<NonStandardFractal>();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, m_calculation->select());
     EXPECT_CALL(m_driver, key_pressed())
         .WillRepeatedly(Invoke(
-            [&calculation]
+            [this]
             {
-                EXPECT_FALSE(calculation.done());
+                EXPECT_FALSE(m_calculation->done());
                 return 0;
             }));
-    CellularController controller{calculation};
+}
+
+void TestCellularStepwise::TearDown()
+{
+    m_calculation.reset();
+    TestCellularController::TearDown();
+}
+
+void TestCellularStepwise::complete_controller(CellularController &controller)
+{
+    for (int generation = 0; generation < 12 && !controller.done(); ++generation)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+}
+
+TEST_F(TestCellularStepwise, iterationBeforeStartIsRejected)
+{
+    CellularController controller{*m_calculation};
+
     EXPECT_THROW(controller.iterate(), std::logic_error);
+}
+
+TEST_F(TestCellularStepwise, resultBeforeStartIsRejected)
+{
+    CellularController controller{*m_calculation};
+
     EXPECT_THROW(controller.result(), std::logic_error);
+}
+
+TEST_F(TestCellularStepwise, suspensionBeforeStartIsRejected)
+{
+    CellularController controller{*m_calculation};
+
     EXPECT_THROW(controller.suspend(), std::logic_error);
+}
+
+TEST_F(TestCellularStepwise, duplicateStartIsRejected)
+{
+    CellularController controller{*m_calculation};
+    controller.start();
+
+    EXPECT_THROW(controller.start(), std::logic_error);
+}
+
+TEST_F(TestCellularStepwise, suspensionAfterCompletionIsRejected)
+{
+    CellularController controller{*m_calculation};
+    controller.start();
+    complete_controller(controller);
+    ASSERT_TRUE(controller.done());
+
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    m_calculation->finish(false);
+}
+
+TEST_F(TestCellularStepwise, stepwiseControllerPreparesOneGenerationAndRendersOneRowPerCall)
+{
+    NonStandardFractal &calculation{*m_calculation};
+    CellularController controller{calculation};
 
     controller.start();
 
@@ -413,7 +483,6 @@ TEST_F(TestCellularController, stepwiseControllerPreparesOneGenerationAndRenders
     EXPECT_FALSE(thinking_active());
     EXPECT_EQ(1, g_row);
     EXPECT_THAT(m_rows, ElementsAre(0));
-    EXPECT_THROW(controller.start(), std::logic_error);
     for (int row = 2; row <= 4; ++row)
     {
         controller.iterate();
@@ -441,7 +510,6 @@ TEST_F(TestCellularController, stepwiseControllerPreparesOneGenerationAndRenders
     const std::vector<int> rows{m_rows};
     controller.iterate();
     EXPECT_EQ(rows, m_rows);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
     calculation.finish(false);
 }
 
