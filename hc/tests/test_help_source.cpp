@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <HelpSource.h>
 #include <messages.h>
@@ -11,6 +12,7 @@
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
+#include <ostream>
 #include <string>
 
 namespace hc::test
@@ -90,35 +92,73 @@ protected:
     std::string m_output;
 };
 
-TEST(TestLabels, indexLabelLeast)
+struct LabelOrderingInput
 {
-    const Label idx{INDEX_LABEL, 0, 0, 0};
-    const Label other{"HELP_OTHER", 0, 0, 0};
+    const char *name;
+    const char *first;
+    const char *second;
+};
 
-    EXPECT_TRUE(idx < other);
-    EXPECT_FALSE(other < idx);
+void PrintTo(const LabelOrderingInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestLabels, labelsSortByName)
+class TestLabelOrdering : public testing::TestWithParam<LabelOrderingInput>
 {
-    const Label smaller{"aardvark", 0, 0, 0};
-    const Label bigger{"zebra", 0, 0, 0};
+};
 
-    EXPECT_TRUE(smaller < bigger);
-    EXPECT_FALSE(bigger < smaller);
+TEST_P(TestLabelOrdering, ordersLabelsByName)
+{
+    const Label first{GetParam().first, 0, 0, 0};
+    const Label second{GetParam().second, 0, 0, 0};
+
+    EXPECT_TRUE(first < second);
+    EXPECT_FALSE(second < first);
 }
 
-TEST_F(TestHelpSource, findTopicTitleTrimsSpacesAndOptionalQuotes)
+INSTANTIATE_TEST_SUITE_P(Names, TestLabelOrdering,
+    testing::Values(LabelOrderingInput{"IndexFirst", INDEX_LABEL, "HELP_OTHER"},
+        LabelOrderingInput{"Alphabetic", "aardvark", "zebra"}),
+    [](const testing::TestParamInfo<LabelOrderingInput> &info) { return info.param.name; });
+
+struct TopicTitleLookupInput
 {
+    const char *name;
+    const char *query;
+    int expected;
+};
+
+void PrintTo(const TopicTitleLookupInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestHelpTopicLookup : public TestHelpSource, public testing::WithParamInterface<TopicTitleLookupInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestHelpTopicLookup::SetUp()
+{
+    TestHelpSource::SetUp();
     Topic topic{};
     topic.title = "Quoted Topic";
     topic.title_len = static_cast<unsigned>(topic.title.length());
     g_src.topics.push_back(topic);
-
-    EXPECT_EQ(0, find_topic_title("  Quoted Topic   "));
-    EXPECT_EQ(0, find_topic_title("  \"Quoted Topic\"   "));
-    EXPECT_EQ(-1, find_topic_title("  \"Missing Topic\"   "));
 }
+
+TEST_P(TestHelpTopicLookup, findsTitleIgnoringOptionalQuotesAndPadding)
+{
+    EXPECT_EQ(GetParam().expected, find_topic_title(GetParam().query));
+}
+
+INSTANTIATE_TEST_SUITE_P(Query, TestHelpTopicLookup,
+    testing::Values(TopicTitleLookupInput{"Padded", "  Quoted Topic   ", 0},
+        TopicTitleLookupInput{"Quoted", "  \"Quoted Topic\"   ", 0},
+        TopicTitleLookupInput{"Missing", "  \"Missing Topic\"   ", -1}),
+    [](const testing::TestParamInfo<TopicTitleLookupInput> &info) { return info.param.name; });
 
 TEST_F(TestHelpSource, readSourceParsesQuotedDocContentsAndFormatsToc)
 {
