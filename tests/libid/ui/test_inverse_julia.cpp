@@ -802,26 +802,54 @@ TEST_F(TestInverseJuliaKeyboard, returnsCommandBeforeAnotherPoint)
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
-TEST_F(TestInverseJuliaQueue, stepwiseSuspensionReleasesQueueAndKeyboardScope)
+class TestInverseJuliaSuspension : public TestInverseJuliaQueue
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<NonStandardFractal> m_calculation;
+    std::unique_ptr<InverseJuliaFractalController> m_controller;
+};
+
+void TestInverseJuliaSuspension::SetUp()
+{
+    TestInverseJuliaQueue::SetUp();
     set_fractal_type(FractalType::INVERSE_JULIA);
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
-    InverseJuliaFractalController controller{calculation};
-    controller.start();
+    m_calculation = std::make_unique<NonStandardFractal>();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, m_calculation->select());
+    m_controller = std::make_unique<InverseJuliaFractalController>(*m_calculation);
+    m_controller->start();
     ASSERT_EQ(32768UL, queue_capacity());
+}
 
-    controller.suspend();
+void TestInverseJuliaSuspension::TearDown()
+{
+    m_controller.reset();
+    m_calculation.reset();
+    TestInverseJuliaQueue::TearDown();
+}
 
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_TRUE(calculation.done());
+TEST_F(TestInverseJuliaSuspension, stepwiseSuspensionReleasesQueueAndKeyboardScope)
+{
+    m_controller->suspend();
+
+    EXPECT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
+    EXPECT_TRUE(m_calculation->done());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_TRUE(g_resume_data.empty());
     EXPECT_EQ(0UL, queue_capacity());
     EXPECT_FALSE(dispatch_keyboard_key('o'));
-    EXPECT_THROW(controller.suspend(), std::logic_error);
+}
+
+TEST_F(TestInverseJuliaSuspension, repeatedSuspensionIsRejected)
+{
+    m_controller->suspend();
+    ASSERT_TRUE(m_controller->done());
+
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
 }
 
 TEST_F(TestInverseJuliaQueue, stepwiseCalculationFailureReleasesQueueAndKeyboardScope)
