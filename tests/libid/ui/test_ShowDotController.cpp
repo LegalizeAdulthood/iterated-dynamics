@@ -653,26 +653,81 @@ class TestStandardFractalController : public TestShowDotController
 {
 };
 
-TEST_F(TestStandardFractalController, requiresStartAndACompletedResult)
+class TestPreparedStandardController : public TestStandardFractalController
 {
-    StandardFractal calculation;
-    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
-    StandardFractalController controller{calculation, sound};
+protected:
+    void SetUp() override;
+    void TearDown() override;
 
-    EXPECT_FALSE(controller.done());
-    EXPECT_THROW(controller.iterate(), std::logic_error);
-    EXPECT_THROW(controller.result(), std::logic_error);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
+    std::unique_ptr<StandardFractal> m_calculation;
+    std::unique_ptr<SoundSession> m_sound;
+    std::unique_ptr<StandardFractalController> m_controller;
+};
+
+void TestPreparedStandardController::SetUp()
+{
+    TestStandardFractalController::SetUp();
+    m_calculation = std::make_unique<StandardFractal>();
+    m_sound = std::make_unique<SoundSession>(g_sound, SoundSession::Ownership::BORROWED);
+    m_controller = std::make_unique<StandardFractalController>(*m_calculation, *m_sound);
+    ASSERT_FALSE(m_controller->done());
+    ASSERT_EQ(0, m_calculations);
+}
+
+void TestPreparedStandardController::TearDown()
+{
+    m_controller.reset();
+    m_sound.reset();
+    m_calculation.reset();
+    TestStandardFractalController::TearDown();
+}
+
+TEST_F(TestPreparedStandardController, iterateRequiresStart)
+{
+    EXPECT_THROW(m_controller->iterate(), std::logic_error);
+
     EXPECT_EQ(0, m_calculations);
+}
 
-    controller.start();
+TEST_F(TestPreparedStandardController, resultRequiresCompletion)
+{
+    EXPECT_THROW(m_controller->result(), std::logic_error);
 
-    EXPECT_FALSE(controller.done());
     EXPECT_EQ(0, m_calculations);
-    EXPECT_THROW(controller.start(), std::logic_error);
-    controller.suspend();
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
+}
+
+TEST_F(TestPreparedStandardController, suspendRequiresStart)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+
+    EXPECT_EQ(0, m_calculations);
+}
+
+class TestStartedStandardController : public TestPreparedStandardController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStartedStandardController::SetUp()
+{
+    TestPreparedStandardController::SetUp();
+    m_controller->start();
+    ASSERT_FALSE(m_controller->done());
+    ASSERT_EQ(0, m_calculations);
+}
+
+TEST_F(TestStartedStandardController, duplicateStartIsRejected)
+{
+    EXPECT_THROW(m_controller->start(), std::logic_error);
+}
+
+TEST_F(TestStartedStandardController, explicitSuspensionCompletesTheController)
+{
+    m_controller->suspend();
+
+    EXPECT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
 }
 
 TEST_F(TestStandardFractalController, callerAdvancesExistingChunksToCompletion)
