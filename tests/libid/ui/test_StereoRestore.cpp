@@ -165,71 +165,89 @@ void TestStereoRestore::expect_full_screen() const
     EXPECT_FALSE(g_viewport.enabled);
 }
 
-TEST_F(TestStereoRestore, separateDecodesRestoreAllScanlinesForBothEyes)
+class TestStereoRestoreGlasses : public TestStereoRestore, public WithParamInterface<GlassesType>
 {
-    for (const GlassesType glasses : {GlassesType::ALTERNATING, GlassesType::SUPERIMPOSE, GlassesType::STEREO_PAIR})
-    {
-        g_glasses_type = glasses;
-        g_logical_screen = {4, 3, 0, 0, 3.0, 2.0};
-        g_out_line_cleanup = clean_up;
-        m_cleanup_count = 0;
-        m_lines.clear();
+};
 
-        EXPECT_EQ(0, restore_image_views());
-
-        EXPECT_THAT(m_lines,
-            ElementsAre(StereoImage::RED, StereoImage::RED, StereoImage::RED, StereoImage::BLUE, StereoImage::BLUE,
-                StereoImage::BLUE));
-        EXPECT_EQ(1, m_cleanup_count);
-        EXPECT_EQ(nullptr, g_out_line_cleanup);
-        EXPECT_FALSE(g_busy);
-    }
-    expect_full_screen();
-    EXPECT_TRUE(std::filesystem::remove(g_read_filename));
-}
-
-TEST_F(TestStereoRestore, monoAndDisabled3dRestoreOnlyOnce)
+TEST_P(TestStereoRestoreGlasses, restoresAllScanlinesForBothEyes)
 {
-    for (const bool disable_3d : {false, true})
+    g_glasses_type = GetParam();
+
+    EXPECT_EQ(0, restore_image_views());
+
+    EXPECT_THAT(m_lines,
+        ElementsAre(StereoImage::RED, StereoImage::RED, StereoImage::RED, StereoImage::BLUE, StereoImage::BLUE,
+            StereoImage::BLUE));
+    EXPECT_EQ(1, m_cleanup_count);
+    EXPECT_EQ(nullptr, g_out_line_cleanup);
+    EXPECT_FALSE(g_busy);
+    if (GetParam() == GlassesType::STEREO_PAIR)
     {
-        g_glasses_type = disable_3d ? GlassesType::STEREO_PAIR : GlassesType::NONE;
-        g_display_3d = disable_3d ? Display3DMode::NONE : Display3DMode::YES;
-        m_cleanup_count = 0;
-        g_out_line_cleanup = clean_up;
-        m_lines.clear();
-
-        EXPECT_EQ(0, restore_image_views());
-
-        EXPECT_THAT(m_lines, Each(disable_3d ? StereoImage::RED : StereoImage::NONE));
-        EXPECT_EQ(3, m_lines.size());
-    }
-}
-
-TEST_F(TestStereoRestore, failedScanlineStopsRestorationAndCleansUpEitherEye)
-{
-    for (const StereoImage eye : {StereoImage::RED, StereoImage::BLUE})
-    {
-        g_logical_screen = {4, 3, 0, 0, 3.0, 2.0};
-        g_out_line_cleanup = clean_up;
-        m_cleanup_count = 0;
-        m_lines.clear();
-        s_output = [this, eye](Byte *, int)
-        {
-            EXPECT_EQ(0, m_cleanup_count);
-            m_lines.push_back(g_which_image);
-            ++g_row_count;
-            return g_which_image == eye ? -1 : 0;
-        };
-
-        EXPECT_EQ(-1, restore_image_views());
-
-        EXPECT_EQ(eye == StereoImage::RED ? 1 : 4, m_lines.size());
-        EXPECT_EQ(1, m_cleanup_count);
         expect_full_screen();
-        EXPECT_FALSE(g_busy);
     }
     EXPECT_TRUE(std::filesystem::remove(g_read_filename));
 }
+
+INSTANTIATE_TEST_SUITE_P(Glasses, TestStereoRestoreGlasses,
+    Values(GlassesType::ALTERNATING, GlassesType::SUPERIMPOSE, GlassesType::STEREO_PAIR),
+    [](const TestParamInfo<GlassesType> &info)
+    {
+        switch (info.param)
+        {
+        case GlassesType::ALTERNATING:
+            return "Alternating";
+        case GlassesType::SUPERIMPOSE:
+            return "Superimpose";
+        default:
+            return "StereoPair";
+        }
+    });
+
+class TestStereoRestoreSingleView : public TestStereoRestore, public WithParamInterface<bool>
+{
+};
+
+TEST_P(TestStereoRestoreSingleView, restoresOnlyOnce)
+{
+    const bool disable_3d{GetParam()};
+    g_glasses_type = disable_3d ? GlassesType::STEREO_PAIR : GlassesType::NONE;
+    g_display_3d = disable_3d ? Display3DMode::NONE : Display3DMode::YES;
+
+    EXPECT_EQ(0, restore_image_views());
+
+    EXPECT_THAT(m_lines, Each(disable_3d ? StereoImage::RED : StereoImage::NONE));
+    EXPECT_EQ(3, m_lines.size());
+}
+
+INSTANTIATE_TEST_SUITE_P(Configuration, TestStereoRestoreSingleView, Values(false, true),
+    [](const TestParamInfo<bool> &info) { return info.param ? "Disabled3d" : "Mono"; });
+
+class TestStereoRestoreFailedEye : public TestStereoRestore, public WithParamInterface<StereoImage>
+{
+};
+
+TEST_P(TestStereoRestoreFailedEye, stopsRestorationAndCleansUp)
+{
+    const StereoImage eye{GetParam()};
+    s_output = [this, eye](Byte *, int)
+    {
+        EXPECT_EQ(0, m_cleanup_count);
+        m_lines.push_back(g_which_image);
+        ++g_row_count;
+        return g_which_image == eye ? -1 : 0;
+    };
+
+    EXPECT_EQ(-1, restore_image_views());
+
+    EXPECT_EQ(eye == StereoImage::RED ? 1 : 4, m_lines.size());
+    EXPECT_EQ(1, m_cleanup_count);
+    expect_full_screen();
+    EXPECT_FALSE(g_busy);
+    EXPECT_TRUE(std::filesystem::remove(g_read_filename));
+}
+
+INSTANTIATE_TEST_SUITE_P(Eye, TestStereoRestoreFailedEye, Values(StereoImage::RED, StereoImage::BLUE),
+    [](const TestParamInfo<StereoImage> &info) { return info.param == StereoImage::RED ? "Red" : "Blue"; });
 
 TEST_F(TestStereoRestore, exceptionalScanlineRestoresScreenAndReleasesOutput)
 {
