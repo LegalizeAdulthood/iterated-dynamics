@@ -559,48 +559,70 @@ INSTANTIATE_TEST_SUITE_P(Preferences, TestRouterVirtualScreen,
         VirtualScreenInput{"InvalidWhenDisabled", "maybe", false, false, CmdArgFlags::BAD_ARG}),
     [](const TestParamInfo<VirtualScreenInput> &info) { return info.param.name; });
 
-TEST_F(TestCommandRouter, exitNoAskNo)
+struct ExitNoAskInput
 {
-    ValueSaver saved_escape_exit{g_escape_exit, true};
-    CommandProcessor processor{"exitnoask=n", CmdFile::SSTOOLS_INI};
+    const char *name;
+    const char *value;
+    bool initial;
+    bool expected;
+    CmdFile mode;
+    DebugFlags debug;
+    CmdArgFlags flags;
+};
+
+void PrintTo(const ExitNoAskInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterExitNoAsk : public TestCommandRouter, public WithParamInterface<ExitNoAskInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<bool> m_saved_escape_exit{g_escape_exit};
+};
+
+void TestRouterExitNoAsk::SetUp()
+{
+    TestCommandRouter::SetUp();
+    g_escape_exit = GetParam().initial;
+    g_debug_flag = GetParam().debug;
+}
+
+TEST_P(TestRouterExitNoAsk, processesTheExitPreferenceInItsCommandContext)
+{
+    CommandProcessor processor{"exitnoask=" + std::string{GetParam().value}, GetParam().mode};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
 
-    EXPECT_FALSE(g_escape_exit);
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-}
-
-TEST_F(TestCommandRouter, exitNoAskYes)
-{
-    ValueSaver saved_escape_exit{g_escape_exit, false};
-    CommandProcessor processor{"exitnoask=y", CmdFile::SSTOOLS_INI};
-    const CommandRouter router;
-
-    const CommandParseResult result{router.process(processor)};
-
-    EXPECT_TRUE(g_escape_exit);
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-}
-
-TEST_F(TestCommandRouter, exitNoAskInvalidValuePreservesPreferenceAndDiagnosesOnce)
-{
-    const CommandRouter router;
-    for (const bool escape_exit : {false, true})
+    EXPECT_EQ(GetParam().expected, g_escape_exit);
+    EXPECT_EQ(GetParam().flags, result.flags);
+    if (GetParam().flags == CmdArgFlags::BAD_ARG)
     {
-        SCOPED_TRACE(escape_exit);
-        ValueSaver saved_escape_exit{g_escape_exit, escape_exit};
-        CommandProcessor processor{"exitnoask=!", CmdFile::SSTOOLS_INI};
-
-        const CommandParseResult result{router.process(processor)};
-
-        EXPECT_EQ(escape_exit, g_escape_exit);
-        EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
         EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  exitnoask=!"));
     }
+    else
+    {
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+    }
 }
+
+INSTANTIATE_TEST_SUITE_P(Preferences, TestRouterExitNoAsk,
+    Values(ExitNoAskInput{"No", "n", true, false, CmdFile::SSTOOLS_INI, DebugFlags::NONE,
+               CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        ExitNoAskInput{"Yes", "y", false, true, CmdFile::SSTOOLS_INI, DebugFlags::NONE,
+            CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        ExitNoAskInput{
+            "InvalidWhenDisabled", "!", false, false, CmdFile::SSTOOLS_INI, DebugFlags::NONE, CmdArgFlags::BAD_ARG},
+        ExitNoAskInput{
+            "InvalidWhenEnabled", "!", true, true, CmdFile::SSTOOLS_INI, DebugFlags::NONE, CmdArgFlags::BAD_ARG},
+        ExitNoAskInput{"OverrideYes", "y", false, true, CmdFile::AT_AFTER_STARTUP,
+            DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME, CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D},
+        ExitNoAskInput{"OverrideInvalidWhenEnabled", "!", true, true, CmdFile::AT_AFTER_STARTUP,
+            DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<ExitNoAskInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouter, exitNoAskAfterStartupPreservesPreference)
 {
@@ -613,27 +635,6 @@ TEST_F(TestCommandRouter, exitNoAskAfterStartupPreservesPreference)
     EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
     EXPECT_TRUE(g_escape_exit);
     EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  exitnoask=n"));
-}
-
-TEST_F(TestCommandRouter, exitNoAskDebugOverrideRetainsValueValidation)
-{
-    ValueSaver saved_escape_exit{g_escape_exit, false};
-    g_debug_flag = DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME;
-    CommandProcessor processor{"exitnoask=y", CmdFile::AT_AFTER_STARTUP};
-    const CommandRouter router;
-
-    const CommandParseResult result{router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
-    EXPECT_TRUE(g_escape_exit);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-    CommandProcessor invalid{"exitnoask=!", CmdFile::AT_AFTER_STARTUP};
-
-    const CommandParseResult rejected{router.process(invalid)};
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, rejected.flags);
-    EXPECT_TRUE(g_escape_exit);
-    EXPECT_THAT(rejected.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  exitnoask=!"));
 }
 
 TEST_F(TestCommandRouter, maxHistoryNonNumeric)
