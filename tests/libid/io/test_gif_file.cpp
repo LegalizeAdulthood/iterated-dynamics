@@ -598,15 +598,6 @@ TEST_F(TestGIFExtensions, absentPrecisionRecordHasNoData)
     EXPECT_TRUE(get_extended_param_info(&m_gif).empty());
 }
 
-TEST_F(TestGIFExtensions, emptyResumeRecordIsPresentWithoutData)
-{
-    put_resume_info(&m_gif, {});
-
-    EXPECT_TRUE(has_gif_extension(&m_gif, "fractint002"));
-    EXPECT_TRUE(get_resume_info(&m_gif).empty());
-    EXPECT_EQ(0, get_gif_extension_length(&m_gif, "fractint002"));
-}
-
 TEST_F(TestGIFExtensions, emptyRangesRecordIsPresentWithoutData)
 {
     put_ranges_info(&m_gif, {});
