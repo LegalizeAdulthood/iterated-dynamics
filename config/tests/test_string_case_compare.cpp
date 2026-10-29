@@ -160,54 +160,40 @@ INSTANTIATE_TEST_SUITE_P(Operands, TestStringCaseEqualCount,
         StringCaseCountedEqualityInput{"prefixIsLessCount", "frac", "fractint", 8, false}),
     [](const testing::TestParamInfo<StringCaseCountedEqualityInput> &info) { return info.param.name; });
 
-TEST(TestStringCaseEqual, firstStringEmptyEqual)
+struct StringCaseUnboundedEqualityInput
 {
-    EXPECT_FALSE(string_case_equal("", "foo"));
+    const char *name;
+    const char *left;
+    const char *right;
+    bool expected;
+};
+
+void PrintTo(const StringCaseUnboundedEqualityInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestStringCaseEqual, secondStringEmptyNotEqual)
+class TestStringCaseEqual : public testing::Test, public testing::WithParamInterface<StringCaseUnboundedEqualityInput>
 {
-    EXPECT_FALSE(string_case_equal("foo", ""));
+};
+
+TEST_P(TestStringCaseEqual, comparesEquality)
+{
+    const bool result{string_case_equal(GetParam().left, GetParam().right)};
+
+    EXPECT_EQ(GetParam().expected, result);
 }
 
-TEST(TestStringCaseEqual, firstStringExhaustedEqual)
-{
-    EXPECT_FALSE(string_case_equal("foo", "foobar"));
-}
-
-TEST(TestStringCaseEqual, secondStringExhaustedGreater)
-{
-    EXPECT_FALSE(string_case_equal("foobar", "foo"));
-}
-
-TEST(TestStringCaseEqual, zeroLengthAlwaysEqual)
-{
-    EXPECT_TRUE(string_case_equal("", ""));
-}
-
-TEST(TestStringCaseEqual, differOnlyByCaseEqual)
-{
-    EXPECT_TRUE(string_case_equal("foo", "FoO"));
-}
-
-TEST(TestStringCaseEqual, differNotZero)
-{
-    EXPECT_FALSE(string_case_equal("foo", "bar"));
-}
-
-TEST(TestStringCaseEqual, lessNegative)
-{
-    EXPECT_FALSE(string_case_equal("bar", "foo"));
-}
-
-TEST(TestStringCaseEqual, greaterPositive)
-{
-    EXPECT_FALSE(string_case_equal("foo", "bar"));
-}
-
-TEST(TestStringCaseEqual, prefixIsLess)
-{
-    EXPECT_FALSE(string_case_equal("frac", "fractint"));
-}
+INSTANTIATE_TEST_SUITE_P(Operands, TestStringCaseEqual,
+    testing::Values(StringCaseUnboundedEqualityInput{"firstStringEmptyEqual", "", "foo", false},
+        StringCaseUnboundedEqualityInput{"secondStringEmptyNotEqual", "foo", "", false},
+        StringCaseUnboundedEqualityInput{"firstStringExhaustedEqual", "foo", "foobar", false},
+        StringCaseUnboundedEqualityInput{"secondStringExhaustedGreater", "foobar", "foo", false},
+        StringCaseUnboundedEqualityInput{"zeroLengthAlwaysEqual", "", "", true},
+        StringCaseUnboundedEqualityInput{"differOnlyByCaseEqual", "foo", "FoO", true},
+        StringCaseUnboundedEqualityInput{"differNotZero", "foo", "bar", false},
+        StringCaseUnboundedEqualityInput{"lessNegative", "bar", "foo", false},
+        StringCaseUnboundedEqualityInput{"prefixIsLess", "frac", "fractint", false}),
+    [](const testing::TestParamInfo<StringCaseUnboundedEqualityInput> &info) { return info.param.name; });
 
 } // namespace id::test
