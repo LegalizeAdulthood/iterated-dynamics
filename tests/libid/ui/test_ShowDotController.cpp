@@ -408,30 +408,55 @@ INSTANTIATE_TEST_SUITE_P(Passes, TestMarkerPass,
         MarkerPassInput{"Tesseral", CalcMode::TESSERAL}),
     [](const TestParamInfo<MarkerPassInput> &info) { return info.param.name; });
 
-TEST_F(TestShowDotController, zeroDelayRetainsTheOrdinaryScanlineBatch)
+class TestMarkerCalculation : public TestShowDotController
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void prepare_calculation();
+
+    std::unique_ptr<ShowDotController> m_marker;
+    std::unique_ptr<StandardFractal> m_calculation;
+};
+
+void TestMarkerCalculation::SetUp()
+{
+    TestShowDotController::SetUp();
     clear_image();
-    ShowDotController marker;
-    StandardFractal calculation;
-    calculation.resume();
+}
 
-    marker.iterate(calculation);
+void TestMarkerCalculation::TearDown()
+{
+    m_calculation.reset();
+    m_marker.reset();
+    TestShowDotController::TearDown();
+}
 
-    EXPECT_TRUE(calculation.done());
+void TestMarkerCalculation::prepare_calculation()
+{
+    m_marker = std::make_unique<ShowDotController>();
+    m_calculation = std::make_unique<StandardFractal>();
+    m_calculation->resume();
+}
+
+TEST_F(TestMarkerCalculation, zeroDelayRetainsTheOrdinaryScanlineBatch)
+{
+    prepare_calculation();
+
+    m_marker->iterate(*m_calculation);
+
+    EXPECT_TRUE(m_calculation->done());
     EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
     EXPECT_EQ(0, m_flushes);
 }
 
-TEST_F(TestShowDotController, delayHappensWithTheMarkerVisibleButCalculationSeesRestoredPixels)
+TEST_F(TestMarkerCalculation, delayHappensWithTheMarkerVisibleButCalculationSeesRestoredPixels)
 {
-    clear_image();
     g_orbit_delay = 1;
     EXPECT_CALL(m_driver, delay(0)).Times(2).WillRepeatedly(Invoke([this] { EXPECT_EQ(15, m_pixels[0]); }));
-    ShowDotController marker;
-    StandardFractal calculation;
-    calculation.resume();
+    prepare_calculation();
 
-    marker.iterate(calculation);
+    m_marker->iterate(*m_calculation);
 
     EXPECT_EQ(1, m_calculations);
     EXPECT_EQ(1, m_flushes);
@@ -439,19 +464,16 @@ TEST_F(TestShowDotController, delayHappensWithTheMarkerVisibleButCalculationSees
     EXPECT_THAT(m_pixels, Each(Ne(15)));
 }
 
-TEST_F(TestShowDotController, unfinishedPixelDoesNotRepeatItsMarkerOrDelay)
+TEST_F(TestMarkerCalculation, unfinishedPixelDoesNotRepeatItsMarkerOrDelay)
 {
-    clear_image();
     g_orbit_delay = 1;
     m_yield_once = true;
-    ShowDotController marker;
-    StandardFractal calculation;
-    calculation.resume();
+    prepare_calculation();
 
-    marker.iterate(calculation);
+    m_marker->iterate(*m_calculation);
     EXPECT_EQ(1, m_flushes);
     EXPECT_THAT(m_pixels, Each(0));
-    marker.iterate(calculation);
+    m_marker->iterate(*m_calculation);
 
     EXPECT_EQ(2, m_calculations);
     EXPECT_EQ(1, m_flushes);
@@ -658,6 +680,7 @@ class TestPreparedStandardController : public TestStandardFractalController
 protected:
     void SetUp() override;
     void TearDown() override;
+    void prepare_controller();
 
     std::unique_ptr<StandardFractal> m_calculation;
     std::unique_ptr<SoundSession> m_sound;
@@ -667,11 +690,7 @@ protected:
 void TestPreparedStandardController::SetUp()
 {
     TestStandardFractalController::SetUp();
-    m_calculation = std::make_unique<StandardFractal>();
-    m_sound = std::make_unique<SoundSession>(g_sound, SoundSession::Ownership::BORROWED);
-    m_controller = std::make_unique<StandardFractalController>(*m_calculation, *m_sound);
-    ASSERT_FALSE(m_controller->done());
-    ASSERT_EQ(0, m_calculations);
+    prepare_controller();
 }
 
 void TestPreparedStandardController::TearDown()
@@ -680,6 +699,41 @@ void TestPreparedStandardController::TearDown()
     m_sound.reset();
     m_calculation.reset();
     TestStandardFractalController::TearDown();
+}
+
+void TestPreparedStandardController::prepare_controller()
+{
+    m_calculation = std::make_unique<StandardFractal>();
+    m_sound = std::make_unique<SoundSession>(g_sound, SoundSession::Ownership::BORROWED);
+    m_controller = std::make_unique<StandardFractalController>(*m_calculation, *m_sound);
+    ASSERT_FALSE(m_controller->done());
+    ASSERT_EQ(0, m_calculations);
+}
+
+class TestSteppedStandardController : public TestPreparedStandardController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestSteppedStandardController::SetUp()
+{
+    TestStandardFractalController::SetUp();
+    clear_image();
+    g_orbit_delay = 1;
+    prepare_controller();
+}
+
+class TestSuspendingStandardController : public TestSteppedStandardController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestSuspendingStandardController::SetUp()
+{
+    g_size_dot = 128;
+    TestSteppedStandardController::SetUp();
 }
 
 TEST_F(TestPreparedStandardController, iterateRequiresStart)
@@ -730,29 +784,24 @@ TEST_F(TestStartedStandardController, explicitSuspensionCompletesTheController)
     EXPECT_EQ(-1, m_controller->result());
 }
 
-TEST_F(TestStandardFractalController, callerAdvancesExistingChunksToCompletion)
+TEST_F(TestSteppedStandardController, callerAdvancesExistingChunksToCompletion)
 {
-    clear_image();
-    g_orbit_delay = 1;
-    StandardFractal calculation;
-    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
-    StandardFractalController controller{calculation, sound};
-    controller.start();
+    m_controller->start();
 
-    controller.iterate();
+    m_controller->iterate();
 
     EXPECT_EQ(1, m_calculations);
-    EXPECT_FALSE(controller.done());
-    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !controller.done(); ++chunks)
+    EXPECT_FALSE(m_controller->done());
+    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !m_controller->done(); ++chunks)
     {
-        controller.iterate();
+        m_controller->iterate();
     }
-    ASSERT_TRUE(controller.done());
-    EXPECT_EQ(0, controller.result());
+    ASSERT_TRUE(m_controller->done());
+    EXPECT_EQ(0, m_controller->result());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
     EXPECT_THAT(m_pixels, Each(7));
-    controller.iterate();
+    m_controller->iterate();
     EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
@@ -774,32 +823,26 @@ TEST_F(TestStandardFractalController, smallImageDoesNotIntroduceExtraYields)
     EXPECT_THAT(m_pixels, Each(7));
 }
 
-TEST_F(TestStandardFractalController, explicitSuspensionRestoresMarkerAndResumesSavedWork)
+TEST_F(TestSuspendingStandardController, explicitSuspensionRestoresMarkerAndResumesSavedWork)
 {
-    clear_image();
-    g_orbit_delay = 1;
-    g_size_dot = 128;
-    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
+    m_controller->start();
+    for (int chunks = 0; chunks < 100 && m_calculations == 0; ++chunks)
     {
-        StandardFractal calculation;
-        StandardFractalController controller{calculation, sound};
-        controller.start();
-        for (int chunks = 0; chunks < 100 && m_calculations == 0; ++chunks)
-        {
-            ASSERT_FALSE(controller.done());
-            controller.iterate();
-        }
-        ASSERT_GT(m_calculations, 0);
-
-        controller.suspend();
-
-        EXPECT_TRUE(controller.done());
-        EXPECT_EQ(-1, controller.result());
-        EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
-        EXPECT_FALSE(g_resume_data.empty());
-        EXPECT_THAT(m_pixels, Each(Ne(15)));
-        EXPECT_FALSE(dispatch_keyboard_key('o'));
+        ASSERT_FALSE(m_controller->done());
+        m_controller->iterate();
     }
+    ASSERT_GT(m_calculations, 0);
+
+    m_controller->suspend();
+
+    EXPECT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+    EXPECT_THAT(m_pixels, Each(Ne(15)));
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+    m_controller.reset();
+    m_calculation.reset();
     StandardFractal resumed;
     SoundSession resumed_sound{g_sound, SoundSession::Ownership::BORROWED};
     StandardFractalController controller{resumed, resumed_sound};
@@ -815,45 +858,35 @@ TEST_F(TestStandardFractalController, explicitSuspensionRestoresMarkerAndResumes
     EXPECT_THAT(m_pixels, Each(7));
 }
 
-TEST_F(TestStandardFractalController, interruptedStepReleasesHandlersBeforeReturning)
+TEST_F(TestSteppedStandardController, interruptedStepReleasesHandlersBeforeReturning)
 {
-    clear_image();
-    g_orbit_delay = 1;
     m_interrupt_after = 5;
-    StandardFractal calculation;
-    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
-    StandardFractalController controller{calculation, sound};
-    controller.start();
+    m_controller->start();
 
-    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !controller.done(); ++chunks)
+    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !m_controller->done(); ++chunks)
     {
-        controller.iterate();
+        m_controller->iterate();
     }
 
-    ASSERT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
+    ASSERT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
     EXPECT_EQ('x', m_key);
     EXPECT_THAT(m_pixels, Each(Ne(15)));
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
-TEST_F(TestStandardFractalController, failedStepAbortsCalculationAndReleasesPresentation)
+TEST_F(TestSteppedStandardController, failedStepAbortsCalculationAndReleasesPresentation)
 {
-    clear_image();
-    g_orbit_delay = 1;
     s_calculate = []() -> int { throw std::runtime_error("Calculation failed"); };
-    StandardFractal calculation;
-    SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
-    StandardFractalController controller{calculation, sound};
-    controller.start();
+    m_controller->start();
     bool failed{};
 
     for (int chunks = 0; chunks < 100 && !failed; ++chunks)
     {
         try
         {
-            controller.iterate();
+            m_controller->iterate();
         }
         catch (const std::runtime_error &error)
         {
@@ -863,8 +896,8 @@ TEST_F(TestStandardFractalController, failedStepAbortsCalculationAndReleasesPres
     }
 
     EXPECT_TRUE(failed);
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
+    EXPECT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_TRUE(g_resume_data.empty());
     EXPECT_EQ(0, g_num_work_list);
@@ -889,6 +922,7 @@ class TestPreparedLyapunovController : public TestLyapunovController
 protected:
     void SetUp() override;
     void TearDown() override;
+    void prepare_controller();
 
     std::unique_ptr<Lyapunov> m_lyapunov;
     std::unique_ptr<LyapunovController> m_controller;
@@ -897,10 +931,7 @@ protected:
 void TestPreparedLyapunovController::SetUp()
 {
     TestLyapunovController::SetUp();
-    m_lyapunov = std::make_unique<Lyapunov>();
-    m_controller = std::make_unique<LyapunovController>(*m_lyapunov);
-    ASSERT_FALSE(m_controller->done());
-    ASSERT_EQ(0, m_calculations);
+    prepare_controller();
 }
 
 void TestPreparedLyapunovController::TearDown()
@@ -908,6 +939,40 @@ void TestPreparedLyapunovController::TearDown()
     m_controller.reset();
     m_lyapunov.reset();
     TestLyapunovController::TearDown();
+}
+
+void TestPreparedLyapunovController::prepare_controller()
+{
+    m_lyapunov = std::make_unique<Lyapunov>();
+    m_controller = std::make_unique<LyapunovController>(*m_lyapunov);
+    ASSERT_FALSE(m_controller->done());
+    ASSERT_EQ(0, m_calculations);
+}
+
+class TestSteppedLyapunovController : public TestPreparedLyapunovController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestSteppedLyapunovController::SetUp()
+{
+    TestLyapunovController::SetUp();
+    clear_image();
+    g_orbit_delay = 1;
+    prepare_controller();
+}
+
+class TestSuspendingLyapunovController : public TestSteppedLyapunovController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestSuspendingLyapunovController::SetUp()
+{
+    g_size_dot = 128;
+    TestSteppedLyapunovController::SetUp();
 }
 
 TEST_F(TestPreparedLyapunovController, iterateRequiresStart)
@@ -959,75 +1024,75 @@ TEST_F(TestStartedLyapunovController, explicitSuspensionCompletesTheController)
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
-TEST_F(TestLyapunovController, callerAdvancesExistingMarkerChunksToCompletion)
+TEST_F(TestSteppedLyapunovController, callerAdvancesExistingMarkerChunksToCompletion)
 {
-    clear_image();
-    g_orbit_delay = 1;
-    Lyapunov lyapunov;
-    LyapunovController controller{lyapunov};
-    controller.start();
+    m_controller->start();
 
-    controller.iterate();
+    m_controller->iterate();
 
     EXPECT_EQ(1, m_calculations);
-    EXPECT_FALSE(controller.done());
-    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !controller.done(); ++chunks)
+    EXPECT_FALSE(m_controller->done());
+    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !m_controller->done(); ++chunks)
     {
-        controller.iterate();
+        m_controller->iterate();
     }
-    ASSERT_TRUE(controller.done());
-    EXPECT_EQ(0, controller.result());
+    ASSERT_TRUE(m_controller->done());
+    EXPECT_EQ(0, m_controller->result());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
     EXPECT_THAT(m_pixels, Each(7));
-    controller.iterate();
+    m_controller->iterate();
     EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
-TEST_F(TestLyapunovController, zeroDelayRetainsSingleChunkCompletionWithOrWithoutMarker)
+class TestZeroDelayLyapunovController : public TestPreparedLyapunovController, public WithParamInterface<int>
 {
-    for (const int show_dot : {-1, 15})
-    {
-        SCOPED_TRACE(show_dot);
-        clear_image();
-        m_calculations = 0;
-        g_calc_status = CalcStatus::PARAMS_CHANGED;
-        g_show_dot = show_dot;
-        Lyapunov lyapunov;
-        LyapunovController controller{lyapunov};
-        controller.start();
+protected:
+    void SetUp() override;
+};
 
-        controller.iterate();
-
-        ASSERT_TRUE(controller.done());
-        EXPECT_EQ(0, controller.result());
-        EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
-        EXPECT_THAT(m_pixels, Each(7));
-    }
+void TestZeroDelayLyapunovController::SetUp()
+{
+    TestLyapunovController::SetUp();
+    clear_image();
+    m_calculations = 0;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    g_show_dot = GetParam();
+    prepare_controller();
 }
 
-TEST_F(TestLyapunovController, explicitSuspensionRestoresMarkerAndResumesSavedWork)
+TEST_P(TestZeroDelayLyapunovController, retainsSingleChunkCompletion)
 {
-    clear_image();
-    g_orbit_delay = 1;
-    g_size_dot = 128;
-    {
-        Lyapunov lyapunov;
-        LyapunovController controller{lyapunov};
-        controller.start();
-        controller.iterate();
-        ASSERT_EQ(1, m_calculations);
+    m_controller->start();
 
-        controller.suspend();
+    m_controller->iterate();
 
-        EXPECT_TRUE(controller.done());
-        EXPECT_EQ(-1, controller.result());
-        EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
-        EXPECT_FALSE(g_resume_data.empty());
-        EXPECT_THAT(m_pixels, Each(Ne(15)));
-        EXPECT_FALSE(dispatch_keyboard_key('o'));
-    }
+    ASSERT_TRUE(m_controller->done());
+    EXPECT_EQ(0, m_controller->result());
+    EXPECT_EQ(WIDTH * HEIGHT, m_calculations);
+    EXPECT_THAT(m_pixels, Each(7));
+}
+
+INSTANTIATE_TEST_SUITE_P(Markers, TestZeroDelayLyapunovController, Values(-1, 15),
+    [](const TestParamInfo<int> &info) { return info.param < 0 ? "Disabled" : "Enabled"; });
+
+TEST_F(TestSuspendingLyapunovController, explicitSuspensionRestoresMarkerAndResumesSavedWork)
+{
+    m_controller->start();
+    m_controller->iterate();
+    ASSERT_EQ(1, m_calculations);
+
+    m_controller->suspend();
+
+    EXPECT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_FALSE(g_resume_data.empty());
+    EXPECT_THAT(m_pixels, Each(Ne(15)));
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+    m_controller.reset();
+    m_lyapunov.reset();
     Lyapunov resumed;
     LyapunovController controller{resumed};
     controller.start();
@@ -1042,37 +1107,29 @@ TEST_F(TestLyapunovController, explicitSuspensionRestoresMarkerAndResumesSavedWo
     EXPECT_THAT(m_pixels, Each(7));
 }
 
-TEST_F(TestLyapunovController, interruptedStepReleasesHandlersBeforeReturning)
+TEST_F(TestSteppedLyapunovController, interruptedStepReleasesHandlersBeforeReturning)
 {
-    clear_image();
-    g_orbit_delay = 1;
     m_interrupt_after = 5;
-    Lyapunov lyapunov;
-    LyapunovController controller{lyapunov};
-    controller.start();
+    m_controller->start();
 
-    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !controller.done(); ++chunks)
+    for (int chunks = 0; chunks < WIDTH * HEIGHT + 20 && !m_controller->done(); ++chunks)
     {
-        controller.iterate();
+        m_controller->iterate();
     }
 
-    ASSERT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
+    ASSERT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
     EXPECT_EQ('x', m_key);
     EXPECT_THAT(m_pixels, Each(Ne(15)));
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
-TEST_F(TestLyapunovController, orbitToggleDoesNotInterruptCalculation)
+TEST_F(TestSteppedLyapunovController, orbitToggleDoesNotInterruptCalculation)
 {
-    clear_image();
-    g_orbit_delay = 1;
     EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
-    Lyapunov lyapunov;
-    LyapunovController controller{lyapunov};
-    controller.start();
-    controller.iterate();
+    m_controller->start();
+    m_controller->iterate();
 
     EXPECT_TRUE(dispatch_keyboard_key('o'));
     EXPECT_TRUE(g_show_orbit);
@@ -1080,26 +1137,22 @@ TEST_F(TestLyapunovController, orbitToggleDoesNotInterruptCalculation)
     EXPECT_TRUE(dispatch_keyboard_key('O'));
     EXPECT_FALSE(g_show_orbit);
     EXPECT_FALSE(calc_interrupt_requested());
-    EXPECT_FALSE(controller.done());
+    EXPECT_FALSE(m_controller->done());
 
-    controller.suspend();
+    m_controller->suspend();
 
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
-TEST_F(TestLyapunovController, failedStepAbortsCalculationAndReleasesPresentation)
+TEST_F(TestSteppedLyapunovController, failedStepAbortsCalculationAndReleasesPresentation)
 {
-    clear_image();
-    g_orbit_delay = 1;
     s_calculate = []() -> int { throw std::runtime_error("Calculation failed"); };
-    Lyapunov lyapunov;
-    LyapunovController controller{lyapunov};
-    controller.start();
+    m_controller->start();
 
-    EXPECT_THROW(controller.iterate(), std::runtime_error);
+    EXPECT_THROW(m_controller->iterate(), std::runtime_error);
 
-    ASSERT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
+    ASSERT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_TRUE(g_resume_data.empty());
     EXPECT_EQ(0, g_num_work_list);
