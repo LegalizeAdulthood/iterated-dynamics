@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <array>
 #include <filesystem>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -108,15 +109,31 @@ protected:
     ValueSaver<UserData> m_saved_user{g_user, UserData{}};
 };
 
-TEST(TestPerturbationStatusText, singularReference)
+struct PerturbationStatusTextInput
 {
-    EXPECT_EQ("Perturbation (1 reference)", perturbation_status_text(1));
+    const char *name;
+    int count;
+    const char *expected;
+};
+
+void PrintTo(const PerturbationStatusTextInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestPerturbationStatusText, pluralReferences)
+class TestPerturbationStatusText : public TestWithParam<PerturbationStatusTextInput>
 {
-    EXPECT_EQ("Perturbation (2 references)", perturbation_status_text(2));
+};
+
+TEST_P(TestPerturbationStatusText, formatsReferenceCount)
+{
+    EXPECT_EQ(GetParam().expected, perturbation_status_text(GetParam().count));
 }
+
+INSTANTIATE_TEST_SUITE_P(Count, TestPerturbationStatusText,
+    Values(PerturbationStatusTextInput{"Singular", 1, "Perturbation (1 reference)"},
+        PerturbationStatusTextInput{"Plural", 2, "Perturbation (2 references)"}),
+    [](const TestParamInfo<PerturbationStatusTextInput> &info) { return info.param.name; });
 
 std::vector<std::string> TestTabDisplay::display_status()
 {
