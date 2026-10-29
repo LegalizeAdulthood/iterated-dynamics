@@ -12,6 +12,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <ostream>
 #include <stdexcept>
 
 using namespace id::engine;
@@ -51,22 +52,35 @@ TEST_F(TestCommandDiagnostics, cleanStartupNeedsNoPresentation)
     EXPECT_TRUE(show_startup_command_diagnostics({}));
 }
 
-TEST_F(TestCommandDiagnostics, warningCanBeAcknowledgedAfterParsing)
+struct StartupWarningKeyInput
 {
-    expect_startup_screen(ID_KEY_ENTER);
+    const char *name;
+    int key;
+    bool proceed;
+};
+
+void PrintTo(const StartupWarningKeyInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestCommandDiagnosticsWarning : public TestCommandDiagnostics, public WithParamInterface<StartupWarningKeyInput>
+{
+};
+
+TEST_P(TestCommandDiagnosticsWarning, returnsAcknowledgementDecision)
+{
+    expect_startup_screen(GetParam().key);
     EXPECT_CALL(m_driver, put_string(1, 0, 7, StrEq("missing startup file")));
 
-    EXPECT_TRUE(show_startup_command_diagnostics({{}, {"missing startup file"}}));
+    EXPECT_EQ(GetParam().proceed, show_startup_command_diagnostics({{}, {"missing startup file"}}));
 
     EXPECT_EQ(BatchMode::NONE, g_init_batch);
 }
 
-TEST_F(TestCommandDiagnostics, escapeFromStartupWarningReturnsAbortDecision)
-{
-    expect_startup_screen(ID_KEY_ESC);
-
-    EXPECT_FALSE(show_startup_command_diagnostics({{}, {"missing startup file"}}));
-}
+INSTANTIATE_TEST_SUITE_P(Key, TestCommandDiagnosticsWarning,
+    Values(StartupWarningKeyInput{"Enter", ID_KEY_ENTER, true}, StartupWarningKeyInput{"Escape", ID_KEY_ESC, false}),
+    [](const TestParamInfo<StartupWarningKeyInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandDiagnostics, startupErrorUsesOriginalFatalDisplayWithoutPresentingOtherDiagnostics)
 {
