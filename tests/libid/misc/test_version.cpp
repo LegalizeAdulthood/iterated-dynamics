@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <misc/version.h>
 
@@ -52,82 +53,40 @@ TEST(TestVersion, resetVersionToCurrent)
     EXPECT_FALSE(g_file_version.legacy);
 }
 
-TEST(TestVersion, legacyVersionToString)
+struct VersionTextInput
 {
-    const Version v{20, 4, 0, 0, true};
+    const char *name;
+    Version version;
+    const char *expected;
+};
 
-    EXPECT_EQ("20.04", to_string(v));
+void PrintTo(const VersionTextInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestVersion, toStringMajor)
+class TestVersionStringFormat : public testing::TestWithParam<VersionTextInput>
 {
-    const Version v{5, 0, 0, 0, false};
+};
 
-    EXPECT_EQ("5.0", to_string(v));
+TEST_P(TestVersionStringFormat, formatsVersion)
+{
+    EXPECT_EQ(GetParam().expected, to_string(GetParam().version));
 }
 
-TEST(TestVersion, toStringMajorMinor)
-{
-    const Version v{5, 6, 0, 0, false};
-
-    EXPECT_EQ("5.6", to_string(v));
-}
-
-TEST(TestVersion, toStringMajorMinorPatch)
-{
-    const Version v{5, 6, 7, 0, false};
-
-    EXPECT_EQ("5.6.7", to_string(v));
-}
-
-TEST(TestVersion, toStringMajorPatch)
-{
-    const Version v{5, 0, 7, 0, false};
-
-    EXPECT_EQ("5.0.7", to_string(v));
-}
-
-TEST(TestVersion, toStringMajorTweak)
-{
-    const Version v{5, 0, 0, 8, false};
-
-    EXPECT_EQ("5.0.0.8", to_string(v));
-}
-
-TEST(TestVersion, toStringMajorMinorTweak)
-{
-    const Version v{5, 6, 0, 8, false};
-
-    EXPECT_EQ("5.6.0.8", to_string(v));
-}
-
-TEST(TestVersion, currentVersionStringMajorMinor)
-{
-    const Version version{3, 4, 0, 0, false};
-
-    EXPECT_EQ("3.4", to_string(version));
-}
-
-TEST(TestVersion, currentVersionStringMajorMinorPatch)
-{
-    const Version version{3, 4, 5, 0, false};
-
-    EXPECT_EQ("3.4.5", to_string(version));
-}
-
-TEST(TestVersion, currentVersionStringMajorMinorPatchTweak)
-{
-    const Version version{3, 4, 5, 6, false};
-
-    EXPECT_EQ("3.4.5.6", to_string(version));
-}
-
-TEST(TestVersion, currentVersionStringMajorMinorTweak)
-{
-    const Version version{3, 4, 0, 1, false};
-
-    EXPECT_EQ("3.4.0.1", to_string(version));
-}
+INSTANTIATE_TEST_SUITE_P(Components, TestVersionStringFormat,
+    testing::Values(VersionTextInput{"legacyVersionToString", {20, 4, 0, 0, true}, "20.04"},
+        VersionTextInput{"toStringMajor", {5, 0, 0, 0, false}, "5.0"},
+        VersionTextInput{"toStringMajorMinor", {5, 6, 0, 0, false}, "5.6"},
+        VersionTextInput{"toStringMajorMinorPatch", {5, 6, 7, 0, false}, "5.6.7"},
+        VersionTextInput{"toStringMajorPatch", {5, 0, 7, 0, false}, "5.0.7"},
+        VersionTextInput{"toStringMajorTweak", {5, 0, 0, 8, false}, "5.0.0.8"},
+        VersionTextInput{"toStringMajorMinorTweak", {5, 6, 0, 8, false}, "5.6.0.8"},
+        VersionTextInput{"currentVersionStringMajorMinor", {3, 4, 0, 0, false}, "3.4"},
+        VersionTextInput{"currentVersionStringMajorMinorPatch", {3, 4, 5, 0, false}, "3.4.5"},
+        VersionTextInput{"currentVersionStringMajorMinorPatchTweak", {3, 4, 5, 6, false}, "3.4.5.6"},
+        VersionTextInput{"currentVersionStringMajorMinorTweak", {3, 4, 0, 1, false}, "3.4.0.1"}),
+    [](const testing::TestParamInfo<VersionTextInput> &info) { return info.param.name; });
 
 TEST(TestVersion, parStringMajor)
 {
