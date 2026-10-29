@@ -33,6 +33,7 @@
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <ostream>
 #include <string>
 #include <stdexcept>
 #include <vector>
@@ -78,10 +79,11 @@ int calculate_sound_orbit(double *x, double *y, double *)
 
 } // namespace
 
-class TestDynamicSound : public TestWithParam<FractalType>
+class DynamicSoundTestState : public Test
 {
 protected:
     void SetUp() override;
+    void set_constant_coordinates(long max_iterations);
     void TearDown() override;
     void run(Dynamic2D &calculation);
     int render();
@@ -91,6 +93,7 @@ protected:
     void interrupt_and_resume(std::size_t accepted);
     std::vector<std::array<double, 3>> expected_samples() const;
 
+    FractalType m_fractal_type{FractalType::DYNAMIC};
     MockDriver m_driver;
     std::shared_ptr<StrictMock<MockDynamicSound>> m_output{std::make_shared<StrictMock<MockDynamicSound>>()};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
@@ -132,14 +135,14 @@ protected:
     bool m_ready{true};
 };
 
-void TestDynamicSound::SetUp()
+void DynamicSoundTestState::SetUp()
 {
     reset_calc_interrupted();
     s_math_calls = 0;
     s_x_step = 0.125;
     s_y_step = -0.25;
     s_events.clear();
-    g_fractal_type = GetParam();
+    g_fractal_type = m_fractal_type;
     g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
     g_dispatch = FractalDispatch{*g_cur_fractal_specific};
     g_dispatch.set_orbit_calc(reinterpret_cast<OrbitCalc>(calculate_sound_orbit));
@@ -184,7 +187,7 @@ void TestDynamicSound::SetUp()
     EXPECT_CALL(*m_output, finish()).WillRepeatedly(Return(true));
 }
 
-void TestDynamicSound::TearDown()
+void DynamicSoundTestState::TearDown()
 {
     reset_calc_interrupted();
     end_resume();
@@ -197,7 +200,7 @@ void TestDynamicSound::TearDown()
     }
 }
 
-void TestDynamicSound::run(Dynamic2D &calculation)
+void DynamicSoundTestState::run(Dynamic2D &calculation)
 {
     for (int increments = 0; increments < 100; ++increments)
     {
@@ -210,13 +213,13 @@ void TestDynamicSound::run(Dynamic2D &calculation)
     FAIL() << "Dynamic2D did not complete";
 }
 
-int TestDynamicSound::render()
+int DynamicSoundTestState::render()
 {
     SoundSession sound{g_sound, SoundSession::Ownership::BORROWED};
     return render(sound);
 }
 
-int TestDynamicSound::render(SoundSession &sound)
+int DynamicSoundTestState::render(SoundSession &sound)
 {
     NonStandardFractal calculation;
     calculation.start();
@@ -235,7 +238,7 @@ int TestDynamicSound::render(SoundSession &sound)
     return result;
 }
 
-void TestDynamicSound::create_save_directory()
+void DynamicSoundTestState::create_save_directory()
 {
     m_directory = std::filesystem::temp_directory_path() /
         ("id-dynamic-sound-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
@@ -243,14 +246,14 @@ void TestDynamicSound::create_save_directory()
     set_save_library(m_directory);
 }
 
-void TestDynamicSound::save_legacy_state(
+void DynamicSoundTestState::save_legacy_state(
     const long count, const int x_step, const int y_step, const double x, const double y)
 {
     alloc_resume(100, 1);
     put_resume(count, 3, -1, -1, x, y, x_step, y_step);
 }
 
-std::vector<std::array<double, 3>> TestDynamicSound::expected_samples() const
+std::vector<std::array<double, 3>> DynamicSoundTestState::expected_samples() const
 {
     std::vector<std::array<double, 3>> result;
     for (int row = 0; row <= 2; ++row)
@@ -270,7 +273,7 @@ std::vector<std::array<double, 3>> TestDynamicSound::expected_samples() const
     return result;
 }
 
-void TestDynamicSound::interrupt_and_resume(const std::size_t accepted)
+void DynamicSoundTestState::interrupt_and_resume(const std::size_t accepted)
 {
     EXPECT_CALL(*m_output, play(_))
         .WillRepeatedly(Invoke(
@@ -312,12 +315,53 @@ void TestDynamicSound::interrupt_and_resume(const std::size_t accepted)
 
     EXPECT_EQ(expected_samples(), m_samples);
     EXPECT_EQ(18, s_math_calls);
-    const std::size_t plots_per_seed{GetParam() == FractalType::DYNAMIC ? 3U : 2U};
+    const std::size_t plots_per_seed{m_fractal_type == FractalType::DYNAMIC ? 3U : 2U};
     ASSERT_EQ(6 * plots_per_seed, m_plots.size());
     for (std::size_t i = 0; i < m_plots.size(); ++i)
     {
         EXPECT_EQ(i / plots_per_seed + 1, m_plots[i][4]);
     }
+}
+
+void DynamicSoundTestState::set_constant_coordinates(const long max_iterations)
+{
+    g_max_iterations = max_iterations;
+    s_x_step = 0.0;
+    s_y_step = 0.0;
+}
+
+class TestDynamicSound : public DynamicSoundTestState, public WithParamInterface<FractalType>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestDynamicSound::SetUp()
+{
+    m_fractal_type = GetParam();
+    DynamicSoundTestState::SetUp();
+}
+
+class DynamicSoundControllerRun
+{
+public:
+    explicit DynamicSoundControllerRun(const SoundOutputPtr &output);
+
+    SoundSession sound;
+    NonStandardFractal calculation;
+    OrbitController controller;
+};
+
+DynamicSoundControllerRun::DynamicSoundControllerRun(const SoundOutputPtr &output) :
+    sound{output},
+    controller{calculation, sound}
+{
+    calculation.start();
+    if (calculation.select() != NonStandardFractal::Operation::DYNAMIC_2D)
+    {
+        throw std::logic_error("Unexpected selected dynamic operation");
+    }
+    controller.start();
 }
 
 TEST_P(TestDynamicSound, numericalSamplesPrecedePlotsAndMathWithoutPollingOrMuting)
@@ -425,9 +469,7 @@ TEST_P(TestDynamicSound, unboundedPointCompletesWithoutSoundOrMath)
 
 TEST_P(TestDynamicSound, controllerPreserves2048IterationPollingCadence)
 {
-    g_max_iterations = 4100;
-    s_x_step = 0.0;
-    s_y_step = 0.0;
+    set_constant_coordinates(4100);
     SoundSession sound{m_output};
     EXPECT_CALL(m_driver, key_pressed()).Times(25).WillRepeatedly(Return(0));
     EXPECT_CALL(*m_output, mute()).Times(0);
@@ -441,9 +483,7 @@ TEST_P(TestDynamicSound, controllerPreserves2048IterationPollingCadence)
 
 TEST_P(TestDynamicSound, controllerRetriesAcrossIterationBoundaryWithoutAdditionalYield)
 {
-    g_max_iterations = 2050;
-    s_x_step = 0.0;
-    s_y_step = 0.0;
+    set_constant_coordinates(2050);
     save_legacy_state(2047L, 1, 2);
     g_resuming = true;
     int refused{};
@@ -473,9 +513,7 @@ TEST_P(TestDynamicSound, controllerRetriesAcrossIterationBoundaryWithoutAddition
 
 TEST_P(TestDynamicSound, suspensionAtIterationBoundaryPreservesPendingPoint)
 {
-    g_max_iterations = 2050;
-    s_x_step = 0.0;
-    s_y_step = 0.0;
+    set_constant_coordinates(2050);
     save_legacy_state(2048L);
     EXPECT_CALL(*m_output, play(_)).WillOnce(Return(false)).WillRepeatedly(Return(true));
     {
@@ -495,15 +533,41 @@ TEST_P(TestDynamicSound, suspensionAtIterationBoundaryPreservesPendingPoint)
     EXPECT_EQ(2U, m_plots.size());
 }
 
-TEST_P(TestDynamicSound, menuInterruptionBeforeFirstPointMutesAndResumes)
+struct DynamicSoundCheckpointInput
 {
-    interrupt_and_resume(0);
+    const char *name;
+    FractalType type;
+    std::size_t accepted;
+};
+
+void PrintTo(const DynamicSoundCheckpointInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_P(TestDynamicSound, menuInterruptionAtNextSeedMutesAndResumesWithoutRepeatingSeed)
+class TestDynamicSoundCheckpoint : public DynamicSoundTestState, public WithParamInterface<DynamicSoundCheckpointInput>
 {
-    interrupt_and_resume(3);
+protected:
+    void SetUp() override;
+};
+
+void TestDynamicSoundCheckpoint::SetUp()
+{
+    m_fractal_type = GetParam().type;
+    DynamicSoundTestState::SetUp();
 }
+
+TEST_P(TestDynamicSoundCheckpoint, menuInterruptionMutesAndResumesWithoutRepeatingAcceptedWork)
+{
+    interrupt_and_resume(GetParam().accepted);
+}
+
+INSTANTIATE_TEST_SUITE_P(Checkpoints, TestDynamicSoundCheckpoint,
+    Values(DynamicSoundCheckpointInput{"DynamicBeforeFirstPoint", FractalType::DYNAMIC, 0},
+        DynamicSoundCheckpointInput{"DynamicAtNextSeed", FractalType::DYNAMIC, 3},
+        DynamicSoundCheckpointInput{"CloudBeforeFirstPoint", FractalType::MANDEL_CLOUD, 0},
+        DynamicSoundCheckpointInput{"CloudAtNextSeed", FractalType::MANDEL_CLOUD, 3}),
+    [](const TestParamInfo<DynamicSoundCheckpointInput> &info) { return info.param.name; });
 
 TEST_P(TestDynamicSound, completionDrainsReleaseTailWithoutAdditionalPlottingOrMute)
 {
@@ -578,17 +642,11 @@ TEST_P(TestDynamicSound, driverRefusalRecordsZeroZChannelWithoutPlaybackWaiting)
 
 TEST_P(TestDynamicSound, stepwiseControllerSuspendsAt2048IterationsAndResumesWithoutRepeatingSamples)
 {
-    g_max_iterations = 4100;
-    s_x_step = 0.0;
-    s_y_step = 0.0;
+    set_constant_coordinates(4100);
     EXPECT_CALL(*m_output, mute()).Times(1);
     {
-        SoundSession sound{m_output};
-        NonStandardFractal calculation;
-        calculation.start();
-        ASSERT_EQ(NonStandardFractal::Operation::DYNAMIC_2D, calculation.select());
-        OrbitController controller{calculation, sound};
-        controller.start();
+        DynamicSoundControllerRun run{m_output};
+        OrbitController &controller{run.controller};
         EXPECT_EQ(0, s_math_calls);
 
         controller.iterate(); // existing seed-start yield
@@ -604,12 +662,9 @@ TEST_P(TestDynamicSound, stepwiseControllerSuspendsAt2048IterationsAndResumesWit
         EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
         EXPECT_FALSE(dispatch_keyboard_key('x'));
     }
-    SoundSession sound{m_output};
-    NonStandardFractal resumed;
-    resumed.start();
-    ASSERT_EQ(NonStandardFractal::Operation::DYNAMIC_2D, resumed.select());
-    OrbitController controller{resumed, sound};
-    controller.start();
+    DynamicSoundControllerRun resumed_run{m_output};
+    NonStandardFractal &resumed{resumed_run.calculation};
+    OrbitController &controller{resumed_run.controller};
     for (int steps = 0; steps < 100 && !controller.done(); ++steps)
     {
         controller.iterate();
@@ -626,12 +681,9 @@ TEST_P(TestDynamicSound, stepwiseControllerSuspendsAt2048IterationsAndResumesWit
 
 TEST_P(TestDynamicSound, stepwiseControllerUpdateFailureCleansUpBeforeFirstIncrement)
 {
-    SoundSession sound{m_output};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::DYNAMIC_2D, calculation.select());
-    OrbitController controller{calculation, sound};
-    controller.start();
+    DynamicSoundControllerRun run{m_output};
+    NonStandardFractal &calculation{run.calculation};
+    OrbitController &controller{run.controller};
     EXPECT_CALL(*m_output, update()).WillOnce(Throw(std::runtime_error("Update failed")));
     EXPECT_CALL(*m_output, mute()).Times(1);
 
