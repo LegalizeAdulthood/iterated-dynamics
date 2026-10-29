@@ -26,6 +26,7 @@
 
 #include <cstring>
 #include <filesystem>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -322,6 +323,97 @@ TEST_F(TestLSystemController, definitionFailureDoesNotStartSizingOrDrawing)
     EXPECT_EQ(0, m_lines);
 }
 
+class TestLSystemLifecycle : public TestLSystemController
+{
+protected:
+    void TearDown() override;
+
+    // Stack-space checks require an anchor in the test body's stack frame.
+    void prepare_calculation(char *stack_top);
+
+    void complete_controller(LSystemController &controller);
+
+    std::unique_ptr<ValueSaver<char *>> m_saved_stack;
+    std::unique_ptr<NonStandardFractal> m_calculation;
+};
+
+void TestLSystemLifecycle::TearDown()
+{
+    m_calculation.reset();
+    m_saved_stack.reset();
+    TestLSystemController::TearDown();
+}
+
+void TestLSystemLifecycle::prepare_calculation(char *stack_top)
+{
+    g_params[0] = 3;
+    lsystem_load();
+    m_saved_stack = std::make_unique<ValueSaver<char *>>(g_top_of_stack, stack_top);
+    m_calculation = std::make_unique<NonStandardFractal>();
+    ASSERT_TRUE(m_calculation->start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, m_calculation->select());
+}
+
+void TestLSystemLifecycle::complete_controller(LSystemController &controller)
+{
+    for (int work = 0; work < 5000 && !controller.done(); ++work)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+}
+
+TEST_F(TestLSystemLifecycle, iterationBeforeStartIsRejected)
+{
+    char stack_top{};
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    LSystemController controller{*m_calculation};
+
+    EXPECT_THROW(controller.iterate(), std::logic_error);
+}
+
+TEST_F(TestLSystemLifecycle, resultBeforeStartIsRejected)
+{
+    char stack_top{};
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    LSystemController controller{*m_calculation};
+
+    EXPECT_THROW(controller.result(), std::logic_error);
+}
+
+TEST_F(TestLSystemLifecycle, suspensionBeforeStartIsRejected)
+{
+    char stack_top{};
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    LSystemController controller{*m_calculation};
+
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+}
+
+TEST_F(TestLSystemLifecycle, duplicateStartIsRejected)
+{
+    char stack_top{};
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    LSystemController controller{*m_calculation};
+    controller.start();
+
+    EXPECT_THROW(controller.start(), std::logic_error);
+}
+
+TEST_F(TestLSystemLifecycle, suspensionAfterCompletionIsRejected)
+{
+    char stack_top{};
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    LSystemController controller{*m_calculation};
+    controller.start();
+    complete_controller(controller);
+    ASSERT_TRUE(controller.done());
+
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    m_calculation->finish(false);
+}
+
 TEST_F(TestLSystemController, stepwiseControllerPreservesSizingAndDrawingIncrements)
 {
     struct WorkState
@@ -352,16 +444,12 @@ TEST_F(TestLSystemController, stepwiseControllerPreservesSizingAndDrawingIncreme
     ASSERT_TRUE(calculation.start().empty());
     ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
     LSystemController controller{calculation};
-    EXPECT_THROW(controller.iterate(), std::logic_error);
-    EXPECT_THROW(controller.result(), std::logic_error);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
 
     controller.start();
 
     EXPECT_FALSE(controller.done());
     EXPECT_FALSE(thinking_active());
     EXPECT_EQ(0, m_lines);
-    EXPECT_THROW(controller.start(), std::logic_error);
     for (const WorkState &work : expected)
     {
         const bool sizing{calculation.sizing()};
@@ -381,7 +469,6 @@ TEST_F(TestLSystemController, stepwiseControllerPreservesSizingAndDrawingIncreme
     EXPECT_EQ(1, m_thinking_exits);
     controller.iterate();
     EXPECT_EQ(192, m_lines);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
     calculation.finish(false);
     EXPECT_FALSE(lsystem_loaded());
 }
