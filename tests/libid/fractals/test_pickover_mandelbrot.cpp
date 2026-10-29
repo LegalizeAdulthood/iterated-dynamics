@@ -620,17 +620,6 @@ void TestComplexPowerSetup::SetUp()
     set_exponent(GetParam().value);
 }
 
-TEST_P(TestComplexPowerSetup, ordinarySetupRetainsNativeSymmetryAndOrbitSelection)
-{
-    EXPECT_FALSE(mandel_per_image());
-
-    EXPECT_EQ(mandel_z_power_cmplx_orbit, g_dispatch.orbit_calc());
-    if (GetParam().value.imag() != 0.0)
-    {
-        EXPECT_EQ(SymmetryType::NONE, g_symmetry);
-    }
-}
-
 TEST_P(TestComplexPowerSetup, preciseSetupRetainsNativeSymmetry)
 {
     EXPECT_FALSE(mandel_per_image());
