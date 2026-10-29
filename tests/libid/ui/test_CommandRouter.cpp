@@ -198,41 +198,63 @@ TEST_P(TestRouterDiagnostic, syntaxFailureIsDiagnosedOnceWithoutInvokingAnOwner)
 INSTANTIATE_TEST_SUITE_P(Routers, TestRouterDiagnostic, Bool(),
     [](const TestParamInfo<bool> &info) { return info.param ? "Default" : "Injected"; });
 
-TEST_F(TestCommandRouter, restrictedUiNameDoesNotDelegateOrInvokeHandler)
+struct RestrictedRouterInput
+{
+    const char *name;
+    CmdFile mode;
+    DebugFlags debug;
+    CmdArgFlags flags;
+};
+
+void PrintTo(const RestrictedRouterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRestrictedUiRouter : public TestCommandRouter, public WithParamInterface<RestrictedRouterInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestRestrictedUiRouter::SetUp()
+{
+    TestCommandRouter::SetUp();
+    g_debug_flag = GetParam().debug;
+    if (GetParam().flags == CmdArgFlags::NONE)
+    {
+        EXPECT_CALL(m_ui_handler, Call(_)).WillOnce(Return(CmdArgFlags::NONE));
+    }
+    else
+    {
+        EXPECT_CALL(m_ui_handler, Call(_)).Times(0);
+    }
+}
+
+TEST_P(TestRestrictedUiRouter, enforcesTheCommandContext)
 {
     const CommandRouter router{CommandHandlerTables{m_ui, {}}, CommandHandlerTables{{}, m_engine}};
-    CommandProcessor processor{"ui=yes", CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{"ui=yes", GetParam().mode};
 
     const CommandParseResult result{router.process(processor)};
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  ui=yes"));
+    EXPECT_EQ(GetParam().flags, result.flags);
+    if (GetParam().flags == CmdArgFlags::BAD_ARG)
+    {
+        EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  ui=yes"));
+    }
+    else
+    {
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+    }
 }
 
-TEST_F(TestCommandRouter, overridePermitsRestrictedUiName)
-{
-    g_debug_flag = DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME;
-    const CommandRouter router{CommandHandlerTables{m_ui, {}}, CommandHandlerTables{{}, m_engine}};
-    CommandProcessor processor{"ui=yes", CmdFile::AT_AFTER_STARTUP};
-    EXPECT_CALL(m_ui_handler, Call(_)).WillOnce(Return(CmdArgFlags::NONE));
-
-    const CommandParseResult result{router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-}
-
-TEST_F(TestCommandRouter, startupContextPermitsRestrictedUiName)
-{
-    const CommandRouter router{CommandHandlerTables{m_ui, {}}, CommandHandlerTables{{}, m_engine}};
-    CommandProcessor processor{"ui=yes", CmdFile::AT_CMD_LINE};
-    EXPECT_CALL(m_ui_handler, Call(_)).WillOnce(Return(CmdArgFlags::NONE));
-
-    const CommandParseResult result{router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-}
+INSTANTIATE_TEST_SUITE_P(Contexts, TestRestrictedUiRouter,
+    Values(RestrictedRouterInput{"AfterStartup", CmdFile::AT_AFTER_STARTUP, DebugFlags::NONE, CmdArgFlags::BAD_ARG},
+        RestrictedRouterInput{
+            "DebugOverride", CmdFile::AT_AFTER_STARTUP, DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME, CmdArgFlags::NONE},
+        RestrictedRouterInput{"Startup", CmdFile::AT_CMD_LINE, DebugFlags::NONE, CmdArgFlags::NONE}),
+    [](const TestParamInfo<RestrictedRouterInput> &info) { return info.param.name; });
 
 struct RouterTablePairInput
 {
@@ -353,50 +375,60 @@ TEST_F(TestCommandRouter, defaultRouterRetainsEngineStartupRestrictions)
     EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  batch=yes"));
 }
 
-TEST_F(TestCommandRouter, askVideoYes)
+struct AskVideoInput
 {
-    ValueSaver saved_ask_video{g_ask_video, false};
-    CommandProcessor processor{"askvideo=y", CmdFile::AT_AFTER_STARTUP};
+    const char *name;
+    const char *value;
+    bool initial;
+    bool expected;
+    CmdArgFlags flags;
+};
+
+void PrintTo(const AskVideoInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterAskVideo : public TestCommandRouter, public WithParamInterface<AskVideoInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<bool> m_saved_ask_video{g_ask_video};
+};
+
+void TestRouterAskVideo::SetUp()
+{
+    TestCommandRouter::SetUp();
+    g_ask_video = GetParam().initial;
+}
+
+TEST_P(TestRouterAskVideo, processesVideoPromptPreference)
+{
+    CommandProcessor processor{"askvideo=" + std::string{GetParam().value}, CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
 
-    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-    EXPECT_TRUE(g_ask_video);
-}
-
-TEST_F(TestCommandRouter, askVideoNo)
-{
-    ValueSaver saved_ask_video{g_ask_video, true};
-    CommandProcessor processor{"askvideo=n", CmdFile::AT_AFTER_STARTUP};
-    const CommandRouter router;
-
-    const CommandParseResult result{router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-    EXPECT_FALSE(g_ask_video);
-}
-
-TEST_F(TestCommandRouter, invalidVideoPromptValuePreservesPreferenceAndDiagnosesOnce)
-{
-    ValueSaver saved_ask_video{g_ask_video};
-    const CommandRouter router;
-    for (const bool ask_video : {true, false})
+    EXPECT_EQ(GetParam().flags, result.flags);
+    EXPECT_EQ(GetParam().expected, g_ask_video);
+    if (GetParam().flags == CmdArgFlags::BAD_ARG)
     {
-        SCOPED_TRACE(ask_video);
-        g_ask_video = ask_video;
-        CommandProcessor processor{"askvideo=maybe", CmdFile::AT_AFTER_STARTUP};
-
-        const CommandParseResult result{router.process(processor)};
-
-        EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-        EXPECT_EQ(ask_video, g_ask_video);
         EXPECT_THAT(
             result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  askvideo=maybe"));
     }
+    else
+    {
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+    }
 }
+
+INSTANTIATE_TEST_SUITE_P(Values, TestRouterAskVideo,
+    Values(AskVideoInput{"Yes", "y", false, true, CmdArgFlags::NONE},
+        AskVideoInput{"No", "n", true, false, CmdArgFlags::NONE},
+        AskVideoInput{"InvalidWhenEnabled", "maybe", true, true, CmdArgFlags::BAD_ARG},
+        AskVideoInput{"InvalidWhenDisabled", "maybe", false, false, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<AskVideoInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouter, videoBadNamePreservesPendingMode)
 {
