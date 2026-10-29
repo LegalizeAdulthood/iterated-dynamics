@@ -19,6 +19,7 @@
 
 #include <array>
 #include <cstring>
+#include <ostream>
 
 using namespace id::engine;
 using namespace id::io;
@@ -78,41 +79,45 @@ void TestPaletteRotation::expect_color(const int index, const int source)
     }
 }
 
-TEST_F(TestPaletteRotation, engineRotatesForwardWithoutDelaying)
+struct PaletteRotationInput
+{
+    const char *name;
+    SpinDirection direction;
+    int steps;
+    std::array<int, 4> sources;
+};
+
+void PrintTo(const PaletteRotationInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestPaletteRotationSteps : public TestPaletteRotation, public WithParamInterface<PaletteRotationInput>
+{
+};
+
+TEST_P(TestPaletteRotationSteps, rotatesPaletteWithoutDelaying)
 {
     EXPECT_CALL(m_driver, write_palette());
     EXPECT_CALL(m_driver, delay(_)).Times(0);
 
-    spin_dac(SpinDirection::FORWARD, 1);
+    spin_dac(GetParam().direction, GetParam().steps);
 
     expect_color(0, 0);
-    expect_color(1, 2);
-    expect_color(2, 3);
-    expect_color(3, 4);
-    expect_color(4, 1);
+    for (int color = 1; color <= 4; ++color)
+    {
+        expect_color(color, GetParam().sources[color - 1]);
+    }
     for (int color = 5; color < 256; ++color)
     {
         expect_color(color, color);
     }
 }
 
-TEST_F(TestPaletteRotation, engineRotatesBackwardMultipleStepsWithoutDelaying)
-{
-    EXPECT_CALL(m_driver, write_palette());
-    EXPECT_CALL(m_driver, delay(_)).Times(0);
-
-    spin_dac(SpinDirection::BACKWARD, 2);
-
-    expect_color(0, 0);
-    expect_color(1, 3);
-    expect_color(2, 4);
-    expect_color(3, 1);
-    expect_color(4, 2);
-    for (int color = 5; color < 256; ++color)
-    {
-        expect_color(color, color);
-    }
-}
+INSTANTIATE_TEST_SUITE_P(Direction, TestPaletteRotationSteps,
+    Values(PaletteRotationInput{"Forward", SpinDirection::FORWARD, 1, {2, 3, 4, 1}},
+        PaletteRotationInput{"Backward", SpinDirection::BACKWARD, 2, {3, 4, 1, 2}}),
+    [](const TestParamInfo<PaletteRotationInput> &info) { return info.param.name; });
 
 TEST_F(TestPaletteRotation, plainRefreshWritesUnchangedPaletteWithoutDelaying)
 {
@@ -149,20 +154,40 @@ TEST_F(TestPaletteRotation, disabledRangeStillRefreshesWithoutRotation)
     EXPECT_EQ(0, std::memcmp(g_old_dac_box, g_dac_box, sizeof(g_dac_box)));
 }
 
-TEST_F(TestPaletteRotation, engineDoesNotWriteUnsupportedPalettes)
+struct UnsupportedPaletteInput
+{
+    const char *name;
+    int colors;
+    bool true_color;
+    TrueColorMode mode;
+};
+
+void PrintTo(const UnsupportedPaletteInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestPaletteRotationUnsupported : public TestPaletteRotation, public WithParamInterface<UnsupportedPaletteInput>
+{
+};
+
+TEST_P(TestPaletteRotationUnsupported, doesNotWritePalette)
 {
     EXPECT_CALL(m_driver, write_palette()).Times(0);
     EXPECT_CALL(m_driver, delay(_)).Times(0);
-    g_colors = 2;
-    refresh_dac();
+    g_colors = GetParam().colors;
+    g_is_true_color = GetParam().true_color;
+    g_true_mode = GetParam().mode;
 
-    g_colors = 256;
-    g_is_true_color = true;
-    g_true_mode = TrueColorMode::ITERATE;
     refresh_dac();
 
     EXPECT_EQ(0, std::memcmp(g_old_dac_box, g_dac_box, sizeof(g_dac_box)));
 }
+
+INSTANTIATE_TEST_SUITE_P(Configuration, TestPaletteRotationUnsupported,
+    Values(UnsupportedPaletteInput{"TwoColors", 2, false, TrueColorMode::DEFAULT_COLOR},
+        UnsupportedPaletteInput{"TrueColorIterate", 256, true, TrueColorMode::ITERATE}),
+    [](const TestParamInfo<UnsupportedPaletteInput> &info) { return info.param.name; });
 
 TEST_F(TestPaletteRotation, cyclingControllerAppliesSpeedKeysBeforeTheNextDelay)
 {
