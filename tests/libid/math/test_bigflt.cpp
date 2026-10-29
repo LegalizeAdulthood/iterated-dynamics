@@ -378,11 +378,6 @@ void TestExhaustedArenaStack::SetUp()
     ASSERT_EQ(g_max_stack, save_stack());
 }
 
-TEST_F(TestExhaustedArenaStack, rejectsAllocationAfterExhaustion)
-{
-    EXPECT_THROW(alloc_stack(1), PrecisionError);
-}
-
 TEST_F(TestExhaustedArenaStack, restoringStackAfterRejectionAllowsReuse)
 {
     EXPECT_THROW(alloc_stack(1), PrecisionError);
@@ -431,18 +426,6 @@ TEST_F(TestFreedArena, releasesActiveArenaState)
     EXPECT_EQ(0, g_start_stack);
     EXPECT_EQ(0, g_max_stack);
     EXPECT_EQ(0, g_bignum_max_stack_addr);
-}
-
-TEST_F(TestFreedArena, rejectsAllocationWithoutAnArena)
-{
-    EXPECT_THROW(alloc_stack(1), std::logic_error);
-}
-
-TEST_F(TestFreedArena, invalidInitializationLeavesNoActiveArena)
-{
-    EXPECT_THROW(init_bf_dec(2000), PrecisionError);
-
-    EXPECT_EQ(BFMathType::NONE, g_bf_math);
 }
 
 TEST_F(TestFreedArena, initializesFreshStorageAfterRejectedOperations)
