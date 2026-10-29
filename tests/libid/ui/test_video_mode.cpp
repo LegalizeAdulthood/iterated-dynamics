@@ -299,63 +299,114 @@ TEST_F(TestVideoModeSelection, cancelPreservesTheActiveUnboundMode)
     EXPECT_EQ(0, g_video_entry_key);
 }
 
-TEST(TestVideoMode, keyName)
+struct VideoModeKeyNameInput
 {
-    ValueSaver saved_video_table_len{g_video_table_len, 0};
-    ValueSaver saved_video_mode_keys{g_video_mode_keys};
-    push_modes({ID_KEY_F1, ID_KEY_F10, //
-        ID_KEY_SHF_F1, ID_KEY_SHF_F10, //
-        ID_KEY_CTL_F1, ID_KEY_CTL_F10, //
-        ID_KEY_ALT_F1, ID_KEY_ALT_F10});
+    const char *name;
+    int key;
+    const char *expected;
+};
 
-    EXPECT_EQ("F1", vid_mode_key_name(ID_KEY_F1));
-    EXPECT_EQ("F10", vid_mode_key_name(ID_KEY_F10));
-    EXPECT_EQ("SF1", vid_mode_key_name(ID_KEY_SHF_F1));
-    EXPECT_EQ("SF10", vid_mode_key_name(ID_KEY_SHF_F10));
-    EXPECT_EQ("CF1", vid_mode_key_name(ID_KEY_CTL_F1));
-    EXPECT_EQ("CF10", vid_mode_key_name(ID_KEY_CTL_F10));
-    EXPECT_EQ("AF1", vid_mode_key_name(ID_KEY_ALT_F1));
-    EXPECT_EQ("AF10", vid_mode_key_name(ID_KEY_ALT_F10));
-    EXPECT_EQ("", vid_mode_key_name(-1));
-    EXPECT_EQ("", vid_mode_key_name(ID_KEY_CTL_A));
+void PrintTo(const VideoModeKeyNameInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestVideoMode, diskVideoModeAcceptsGifSizedImages)
+class TestVideoModeKeyName : public TestWithParam<VideoModeKeyNameInput>
 {
-    EXPECT_TRUE(is_valid_disk_video_mode(VideoInfo{32768, 32768, 256, nullptr, ""}));
-    EXPECT_TRUE(is_valid_disk_video_mode(VideoInfo{GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}));
+protected:
+    void SetUp() override;
+
+    ValueSaver<int> m_saved_length{g_video_table_len, 0};
+    ValueSaver<std::array<int, MAX_VIDEO_MODES>> m_saved_bindings{g_video_mode_keys};
+};
+
+void TestVideoModeKeyName::SetUp()
+{
+    push_modes({ID_KEY_F1, ID_KEY_F10, ID_KEY_SHF_F1, ID_KEY_SHF_F10, ID_KEY_CTL_F1, ID_KEY_CTL_F10, ID_KEY_ALT_F1,
+        ID_KEY_ALT_F10});
 }
 
-TEST(TestVideoMode, diskVideoModeRejectsNonGifSizedImages)
+TEST_P(TestVideoModeKeyName, formatsAssignedKey)
 {
-    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{0, 480, 256, nullptr, ""}));
-    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{640, 0, 256, nullptr, ""}));
-    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{GIF_MAX_PIXELS + 1, 480, 256, nullptr, ""}));
-    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{640, GIF_MAX_PIXELS + 1, 256, nullptr, ""}));
-    EXPECT_FALSE(is_valid_disk_video_mode(VideoInfo{640, 480, 16, nullptr, ""}));
+    EXPECT_EQ(GetParam().expected, vid_mode_key_name(GetParam().key));
 }
 
-TEST(TestVideoMode, displayVideoModeAcceptsLargePhysicalScreens)
+INSTANTIATE_TEST_SUITE_P(Key, TestVideoModeKeyName,
+    Values(VideoModeKeyNameInput{"F1", ID_KEY_F1, "F1"}, VideoModeKeyNameInput{"F10", ID_KEY_F10, "F10"},
+        VideoModeKeyNameInput{"ShiftF1", ID_KEY_SHF_F1, "SF1"},
+        VideoModeKeyNameInput{"ShiftF10", ID_KEY_SHF_F10, "SF10"},
+        VideoModeKeyNameInput{"ControlF1", ID_KEY_CTL_F1, "CF1"},
+        VideoModeKeyNameInput{"ControlF10", ID_KEY_CTL_F10, "CF10"},
+        VideoModeKeyNameInput{"AltF1", ID_KEY_ALT_F1, "AF1"}, VideoModeKeyNameInput{"AltF10", ID_KEY_ALT_F10, "AF10"},
+        VideoModeKeyNameInput{"Negative", -1, ""}, VideoModeKeyNameInput{"ControlA", ID_KEY_CTL_A, ""}),
+    [](const TestParamInfo<VideoModeKeyNameInput> &info) { return info.param.name; });
+
+struct DiskVideoModeInput
 {
-    EXPECT_TRUE(is_valid_display_video_mode(VideoInfo{32768, 32768, 256, nullptr, ""}, 32768, 32768));
-    EXPECT_TRUE(is_valid_display_video_mode(
-        VideoInfo{GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}, GIF_MAX_PIXELS, GIF_MAX_PIXELS));
+    const char *name;
+    VideoInfo mode;
+    bool valid;
+};
+
+void PrintTo(const DiskVideoModeInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestVideoMode, displayVideoModeRejectsInvalidMetadata)
+class TestDiskVideoModeValidity : public TestWithParam<DiskVideoModeInput>
 {
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{0, 480, 256, nullptr, ""}, 640, 480));
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{640, 0, 256, nullptr, ""}, 640, 480));
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{640, 480, 16, nullptr, ""}, 640, 480));
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{640, 480, 256, nullptr, ""}, 0, 480));
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{640, 480, 256, nullptr, ""}, 640, 0));
+};
+
+TEST_P(TestDiskVideoModeValidity, validatesImageDimensionsAndColors)
+{
+    EXPECT_EQ(GetParam().valid, is_valid_disk_video_mode(GetParam().mode));
 }
 
-TEST(TestVideoMode, displayVideoModeRejectsModesLargerThanDisplay)
+INSTANTIATE_TEST_SUITE_P(Mode, TestDiskVideoModeValidity,
+    Values(DiskVideoModeInput{"Large", VideoInfo{32768, 32768, 256, nullptr, ""}, true},
+        DiskVideoModeInput{"Maximum", VideoInfo{GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}, true},
+        DiskVideoModeInput{"ZeroWidth", VideoInfo{0, 480, 256, nullptr, ""}, false},
+        DiskVideoModeInput{"ZeroHeight", VideoInfo{640, 0, 256, nullptr, ""}, false},
+        DiskVideoModeInput{"ExcessWidth", VideoInfo{GIF_MAX_PIXELS + 1, 480, 256, nullptr, ""}, false},
+        DiskVideoModeInput{"ExcessHeight", VideoInfo{640, GIF_MAX_PIXELS + 1, 256, nullptr, ""}, false},
+        DiskVideoModeInput{"UnsupportedColors", VideoInfo{640, 480, 16, nullptr, ""}, false}),
+    [](const TestParamInfo<DiskVideoModeInput> &info) { return info.param.name; });
+
+struct DisplayVideoModeInput
 {
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{1025, 768, 256, nullptr, ""}, 1024, 768));
-    EXPECT_FALSE(is_valid_display_video_mode(VideoInfo{1024, 769, 256, nullptr, ""}, 1024, 768));
-    EXPECT_TRUE(is_valid_display_video_mode(VideoInfo{1024, 768, 256, nullptr, ""}, 1024, 768));
+    const char *name;
+    VideoInfo mode;
+    int width;
+    int height;
+    bool valid;
+};
+
+void PrintTo(const DisplayVideoModeInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestDisplayVideoModeValidity : public TestWithParam<DisplayVideoModeInput>
+{
+};
+
+TEST_P(TestDisplayVideoModeValidity, validatesModeAgainstDisplay)
+{
+    EXPECT_EQ(GetParam().valid, is_valid_display_video_mode(GetParam().mode, GetParam().width, GetParam().height));
+}
+
+INSTANTIATE_TEST_SUITE_P(Mode, TestDisplayVideoModeValidity,
+    Values(DisplayVideoModeInput{"Large", VideoInfo{32768, 32768, 256, nullptr, ""}, 32768, 32768, true},
+        DisplayVideoModeInput{"Maximum", VideoInfo{GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}, GIF_MAX_PIXELS,
+            GIF_MAX_PIXELS, true},
+        DisplayVideoModeInput{"ZeroWidth", VideoInfo{0, 480, 256, nullptr, ""}, 640, 480, false},
+        DisplayVideoModeInput{"ZeroHeight", VideoInfo{640, 0, 256, nullptr, ""}, 640, 480, false},
+        DisplayVideoModeInput{"UnsupportedColors", VideoInfo{640, 480, 16, nullptr, ""}, 640, 480, false},
+        DisplayVideoModeInput{"ZeroDisplayWidth", VideoInfo{640, 480, 256, nullptr, ""}, 0, 480, false},
+        DisplayVideoModeInput{"ZeroDisplayHeight", VideoInfo{640, 480, 256, nullptr, ""}, 640, 0, false},
+        DisplayVideoModeInput{"ExcessWidth", VideoInfo{1025, 768, 256, nullptr, ""}, 1024, 768, false},
+        DisplayVideoModeInput{"ExcessHeight", VideoInfo{1024, 769, 256, nullptr, ""}, 1024, 768, false},
+        DisplayVideoModeInput{"ExactFit", VideoInfo{1024, 768, 256, nullptr, ""}, 1024, 768, true}),
+    [](const TestParamInfo<DisplayVideoModeInput> &info) { return info.param.name; });
 
 } // namespace id::test
