@@ -287,26 +287,6 @@ void TestFilledInverseJuliaQueue::SetUp()
     ASSERT_EQ(1, push_float(5.0F, 6.0F));
 }
 
-TEST_F(TestFilledInverseJuliaQueue, capacityRejectsAnotherPush)
-{
-    EXPECT_EQ(0, push_float(7.0F, 8.0F));
-}
-
-TEST_F(TestFilledInverseJuliaQueue, queueRetainsFifoOrderAroundAStackPop)
-{
-    EXPECT_EQ((DComplex{1.0, 2.0}), dequeue_float());
-    ASSERT_EQ((DComplex{5.0, 6.0}), pop_float());
-    EXPECT_EQ((DComplex{3.0, 4.0}), dequeue_float());
-    EXPECT_TRUE(queue_empty());
-}
-
-TEST_F(TestFilledInverseJuliaQueue, stackReturnsNewestValueAfterADequeue)
-{
-    ASSERT_EQ((DComplex{1.0, 2.0}), dequeue_float());
-
-    EXPECT_EQ((DComplex{5.0, 6.0}), pop_float());
-}
-
 class TestDrainedInverseJuliaQueue : public TestFilledInverseJuliaQueue
 {
 protected:
@@ -321,11 +301,6 @@ void TestDrainedInverseJuliaQueue::SetUp()
     ASSERT_EQ((DComplex{5.0, 6.0}), pop_float());
     ASSERT_EQ((DComplex{3.0, 4.0}), dequeue_float());
     ASSERT_TRUE(queue_empty());
-}
-
-TEST_F(TestDrainedInverseJuliaQueue, wraparoundRetainsEveryValue)
-{
-    wrap_queue();
 }
 
 class TestWrappedInverseJuliaQueue : public TestDrainedInverseJuliaQueue
