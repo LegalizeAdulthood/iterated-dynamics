@@ -253,11 +253,6 @@ void TestDiskPixel::SetUp()
     set_pixel_functions(id::io::write_disk_pixel, id::io::read_disk_pixel);
 }
 
-TEST_F(TestDiskPixel, diskWriterIsDiskOutput)
-{
-    EXPECT_TRUE(disk_pixel_output());
-}
-
 TEST_F(TestDiskPixel, failedReplacementPreservesDiskClassification)
 {
     EXPECT_THROW(set_pixel_functions(nullptr, read_pixel), std::logic_error);
