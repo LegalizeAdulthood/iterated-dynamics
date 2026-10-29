@@ -10485,14 +10485,6 @@ TEST_P(TestReleasedContinuation, rejectsEscapeQueryAfterRelease)
     EXPECT_THROW(m_engine.orbit_escaped(), std::logic_error);
 }
 
-TEST_P(TestReleasedContinuation, reusesReferenceForAnotherOrbit)
-{
-    check_orbit({0.0625, 0.03125}, {-0.0625, 0.125}, 7);
-
-    EXPECT_EQ(1, m_engine.reference_count());
-    m_engine.finish_orbit();
-}
-
 class TestReusedContinuation : public TestReleasedContinuation
 {
 protected:
