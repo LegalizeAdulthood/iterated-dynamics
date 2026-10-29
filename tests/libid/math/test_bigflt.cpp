@@ -324,21 +324,71 @@ TEST_F(TestBigFloat, stackStorageCrossesSixtyFourKilobytes)
     EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
 }
 
-TEST_F(TestBigFloat, stackLimitFailureLeavesAllocationStateUnchanged)
+class TestArenaStack : public TestBigFloat
 {
-    const int stack{save_stack()};
-    const long high_water{g_bignum_max_stack_addr};
-    const size_t available{static_cast<size_t>(g_max_stack - stack)};
+protected:
+    void SetUp() override;
 
-    EXPECT_THROW(alloc_stack(available + 1), PrecisionError);
-    EXPECT_THROW(alloc_stack(std::numeric_limits<size_t>::max()), PrecisionError);
+    int m_stack{};
+    long m_high_water{};
+    std::size_t m_available{};
+};
 
-    EXPECT_EQ(stack, save_stack());
-    EXPECT_EQ(high_water, g_bignum_max_stack_addr);
-    EXPECT_NE(nullptr, alloc_stack(available));
+void TestArenaStack::SetUp()
+{
+    TestBigFloat::SetUp();
+    m_stack = save_stack();
+    m_high_water = g_bignum_max_stack_addr;
+    m_available = static_cast<std::size_t>(g_max_stack - m_stack);
+}
+
+class TestOversizedArenaStack : public TestArenaStack, public testing::WithParamInterface<bool>
+{
+};
+
+TEST_P(TestOversizedArenaStack, rejectionPreservesAllocationState)
+{
+    const std::size_t request{GetParam() ? std::numeric_limits<std::size_t>::max() : m_available + 1};
+
+    EXPECT_THROW(alloc_stack(request), PrecisionError);
+
+    EXPECT_EQ(m_stack, save_stack());
+    EXPECT_EQ(m_high_water, g_bignum_max_stack_addr);
+}
+
+INSTANTIATE_TEST_SUITE_P(Requests, TestOversizedArenaStack, testing::Bool(),
+    [](const testing::TestParamInfo<bool> &info) { return info.param ? "MaximumSize" : "AvailablePlusOne"; });
+
+TEST_F(TestArenaStack, exactExhaustionAllocatesTheRemainingStorage)
+{
+    EXPECT_NE(nullptr, alloc_stack(m_available));
     EXPECT_EQ(g_max_stack, save_stack());
+}
+
+class TestExhaustedArenaStack : public TestArenaStack
+{
+protected:
+    void SetUp() override;
+};
+
+void TestExhaustedArenaStack::SetUp()
+{
+    TestArenaStack::SetUp();
+    ASSERT_NE(nullptr, alloc_stack(m_available));
+    ASSERT_EQ(g_max_stack, save_stack());
+}
+
+TEST_F(TestExhaustedArenaStack, rejectsAllocationAfterExhaustion)
+{
     EXPECT_THROW(alloc_stack(1), PrecisionError);
-    restore_stack(stack);
+}
+
+TEST_F(TestExhaustedArenaStack, restoringStackAfterRejectionAllowsReuse)
+{
+    EXPECT_THROW(alloc_stack(1), PrecisionError);
+
+    restore_stack(m_stack);
+
     BigFloat value{alloc_stack(g_bf_length + 2)};
     str_to_bf(value, "1.25");
     EXPECT_EQ(1.25L, bf_to_float(value));
@@ -360,22 +410,49 @@ TEST_F(TestBigFloat, stackSaverUnwindsAfterExhaustion)
     EXPECT_NO_THROW(alloc_stack(g_bf_length + 2));
 }
 
-TEST_F(TestBigFloat, freeingArenaAllowsFreshInitialization)
+class TestFreedArena : public TestBigFloat
 {
+protected:
+    void SetUp() override;
+};
+
+void TestFreedArena::SetUp()
+{
+    TestBigFloat::SetUp();
     float_to_bf(g_bf_x_min, 1.25);
     alloc_stack(g_bf_length + 2);
-
     free_bf_vars();
+}
 
+TEST_F(TestFreedArena, releasesActiveArenaState)
+{
     EXPECT_EQ(BFMathType::NONE, g_bf_math);
     EXPECT_EQ(0, save_stack());
     EXPECT_EQ(0, g_start_stack);
     EXPECT_EQ(0, g_max_stack);
     EXPECT_EQ(0, g_bignum_max_stack_addr);
+}
+
+TEST_F(TestFreedArena, rejectsAllocationWithoutAnArena)
+{
+    EXPECT_THROW(alloc_stack(1), std::logic_error);
+}
+
+TEST_F(TestFreedArena, invalidInitializationLeavesNoActiveArena)
+{
+    EXPECT_THROW(init_bf_dec(2000), PrecisionError);
+
+    EXPECT_EQ(BFMathType::NONE, g_bf_math);
+}
+
+TEST_F(TestFreedArena, initializesFreshStorageAfterRejectedOperations)
+{
     EXPECT_THROW(alloc_stack(1), std::logic_error);
     EXPECT_THROW(init_bf_dec(2000), PrecisionError);
     EXPECT_EQ(BFMathType::NONE, g_bf_math);
+
     init_bf_dec(20);
+
     EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min));
     BigFloat value{alloc_stack(g_bf_length + 2)};
     str_to_bf(value, "1.25");
