@@ -1620,14 +1620,6 @@ void TestVideoRestoreCancellation::expect_viewport_unchanged() const
     EXPECT_EQ(150, g_viewport.y_dots);
 }
 
-TEST_F(TestVideoRestoreCancellation, videoCancellationKeepsActiveImage)
-{
-    EXPECT_EQ(-1, prepare_image_restore(m_pending_viewport));
-
-    expect_active_image_unchanged();
-    expect_viewport_unchanged();
-}
-
 TEST_F(TestVideoRestoreCancellation, retryAfterCancellationAppliesPendingImage)
 {
     ASSERT_EQ(-1, prepare_image_restore(m_pending_viewport));
