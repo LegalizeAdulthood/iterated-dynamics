@@ -35,6 +35,7 @@
 #include <array>
 #include <functional>
 #include <memory>
+#include <ostream>
 #include <stdexcept>
 #include <vector>
 
@@ -204,85 +205,149 @@ TEST_F(TestShowDotController, disabledMarkerDoesNotTouchImage)
     EXPECT_EQ(original, m_pixels);
 }
 
-TEST_F(TestShowDotController, restoresThePointAsWellAsTheTriangleAtEveryCorner)
+class TestMarkerGeometry : public TestShowDotController
 {
+protected:
+    void SetUp() override;
+
+    std::vector<int> m_original;
+};
+
+void TestMarkerGeometry::SetUp()
+{
+    TestShowDotController::SetUp();
+    m_original = m_pixels;
+}
+
+struct MarkerCornerInput
+{
+    const char *name;
+    Point2i point;
+    Point2i origin;
+    std::array<const char *, 4> shape;
+};
+
+void PrintTo(const MarkerCornerInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestMarkerCorner : public TestMarkerGeometry, public WithParamInterface<MarkerCornerInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestMarkerCorner::SetUp()
+{
+    TestMarkerGeometry::SetUp();
     g_size_dot = 128;
-    const std::vector<int> original{m_pixels};
+}
 
-    struct Case
+TEST_P(TestMarkerCorner, restoresThePointAndTriangle)
+{
+    std::vector<int> expected{m_original};
+    for (int row = 0; row < 4; ++row)
     {
-        const char *name;
-        Point2i point;
-        Point2i origin;
-        std::array<const char *, 4> shape;
-    };
-
-    const Case cases[]{
-        {"TopLeft", {0, 0}, {0, 0}, {"#...", "##..", "###.", "####"}},
-        {"TopRight", {15, 0}, {12, 0}, {"...#", "..##", ".###", "####"}},
-        {"BottomRight", {15, 11}, {12, 8}, {"####", ".###", "..##", "...#"}},
-        {"BottomLeft", {0, 11}, {0, 8}, {"####", "###.", "##..", "#..."}},
-    };
-    ShowDotController marker;
-    for (const Case &test_case : cases)
-    {
-        SCOPED_TRACE(test_case.name);
-        std::vector<int> expected{original};
-        for (int row = 0; row < 4; ++row)
+        for (int col = 0; col < 4; ++col)
         {
-            for (int col = 0; col < 4; ++col)
+            if (GetParam().shape[row][col] == '#')
             {
-                if (test_case.shape[row][col] == '#')
-                {
-                    expected[(test_case.origin.y + row) * WIDTH + test_case.origin.x + col] = 15;
-                }
+                expected[(GetParam().origin.y + row) * WIDTH + GetParam().origin.x + col] = 15;
             }
         }
-
-        marker.show(test_case.point);
-
-        EXPECT_EQ(expected, m_pixels);
-        marker.restore();
-        EXPECT_EQ(original, m_pixels);
     }
+    ShowDotController marker;
+
+    marker.show(GetParam().point);
+
+    EXPECT_EQ(expected, m_pixels);
+    marker.restore();
+    EXPECT_EQ(m_original, m_pixels);
 }
 
-TEST_F(TestShowDotController, restoresSymmetryCopiesWithoutAssumingTheirOriginalColors)
+INSTANTIATE_TEST_SUITE_P(Corners, TestMarkerCorner,
+    Values(MarkerCornerInput{"TopLeft", {0, 0}, {0, 0}, {"#...", "##..", "###.", "####"}},
+        MarkerCornerInput{"TopRight", {15, 0}, {12, 0}, {"...#", "..##", ".###", "####"}},
+        MarkerCornerInput{"BottomRight", {15, 11}, {12, 8}, {"####", ".###", "..##", "...#"}},
+        MarkerCornerInput{"BottomLeft", {0, 11}, {0, 8}, {"####", "###.", "##..", "#..."}}),
+    [](const TestParamInfo<MarkerCornerInput> &info) { return info.param.name; });
+
+using MarkerPlot = void (*)(int, int, int);
+
+struct MarkerSymmetryInput
 {
+    const char *name;
+    MarkerPlot plot;
+};
+
+void PrintTo(const MarkerSymmetryInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestOrdinaryMarkerSymmetry : public TestMarkerGeometry, public WithParamInterface<MarkerSymmetryInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestOrdinaryMarkerSymmetry::SetUp()
+{
+    TestMarkerGeometry::SetUp();
     g_size_dot = 128;
     g_i_stop_pt = {7, 5};
-    const std::vector<int> original{m_pixels};
-    using Plot = void (*)(int, int, int);
-    for (const Plot plot : {sym_plot2, sym_plot2y, sym_plot2j, sym_plot4, sym_plot2_basin, sym_plot4_basin})
-    {
-        g_plot = plot;
-        ShowDotController marker;
-
-        marker.show({3, 3});
-        EXPECT_NE(original, m_pixels);
-        g_plot = put_color_a;
-        marker.restore();
-
-        EXPECT_EQ(original, m_pixels);
-    }
+    g_plot = GetParam().plot;
 }
 
-TEST_F(TestShowDotController, restoresPeriodicCopiesAndOverlappingAxisPixels)
+TEST_P(TestOrdinaryMarkerSymmetry, restoresCopiesWithoutAssumingTheirOriginalColors)
 {
-    ValueSaver saved_period{g_pi_in_pixels, 4};
-    g_i_stop_pt = {3, 5};
-    const std::vector<int> original{m_pixels};
-    using Plot = void (*)(int, int, int);
-    for (const Plot plot : {sym_pi_plot, sym_pi_plot2j, sym_pi_plot4j, sym_plot4})
-    {
-        g_plot = plot;
-        ShowDotController marker;
-        marker.show({0, 0});
-        EXPECT_EQ(15, m_pixels[0]);
-        marker.restore();
-        EXPECT_EQ(original, m_pixels);
-    }
+    ShowDotController marker;
+
+    marker.show({3, 3});
+    EXPECT_NE(m_original, m_pixels);
+    g_plot = put_color_a;
+    marker.restore();
+
+    EXPECT_EQ(m_original, m_pixels);
 }
+
+INSTANTIATE_TEST_SUITE_P(Symmetries, TestOrdinaryMarkerSymmetry,
+    Values(MarkerSymmetryInput{"Horizontal", sym_plot2}, MarkerSymmetryInput{"Vertical", sym_plot2y},
+        MarkerSymmetryInput{"Origin", sym_plot2j}, MarkerSymmetryInput{"BothAxes", sym_plot4},
+        MarkerSymmetryInput{"HorizontalBasin", sym_plot2_basin}, MarkerSymmetryInput{"BothAxesBasin", sym_plot4_basin}),
+    [](const TestParamInfo<MarkerSymmetryInput> &info) { return info.param.name; });
+
+class TestPeriodicMarkerSymmetry : public TestMarkerGeometry, public WithParamInterface<MarkerSymmetryInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<int> m_saved_period{g_pi_in_pixels, 4};
+};
+
+void TestPeriodicMarkerSymmetry::SetUp()
+{
+    TestMarkerGeometry::SetUp();
+    g_i_stop_pt = {3, 5};
+    g_plot = GetParam().plot;
+}
+
+TEST_P(TestPeriodicMarkerSymmetry, restoresPeriodicCopiesAndOverlappingAxisPixels)
+{
+    ShowDotController marker;
+
+    marker.show({0, 0});
+    EXPECT_EQ(15, m_pixels[0]);
+    marker.restore();
+
+    EXPECT_EQ(m_original, m_pixels);
+}
+
+INSTANTIATE_TEST_SUITE_P(Symmetries, TestPeriodicMarkerSymmetry,
+    Values(MarkerSymmetryInput{"Periodic", sym_pi_plot}, MarkerSymmetryInput{"PeriodicOrigin", sym_pi_plot2j},
+        MarkerSymmetryInput{"PeriodicBothAxes", sym_pi_plot4j}, MarkerSymmetryInput{"BothAxes", sym_plot4}),
+    [](const TestParamInfo<MarkerSymmetryInput> &info) { return info.param.name; });
 
 TEST_F(TestShowDotController, destructionRestoresAnOutstandingMarker)
 {
@@ -295,29 +360,53 @@ TEST_F(TestShowDotController, destructionRestoresAnOutstandingMarker)
     EXPECT_EQ(original, m_pixels);
 }
 
-TEST_F(TestShowDotController, allPixelPassesReadOnlyRestoredImageData)
+struct MarkerPassInput
 {
-    for (const CalcMode mode : {CalcMode::ONE_PASS, CalcMode::TWO_PASS, CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS,
-             CalcMode::DIFFUSION, CalcMode::TESSERAL})
-    {
-        SCOPED_TRACE(static_cast<int>(mode));
-        clear_image();
-        g_std_calc_mode = mode;
-        g_resuming = false;
-        g_size_dot = 128;
-        ShowDotController marker;
-        StandardFractal calculation;
-        calculation.resume();
+    const char *name;
+    CalcMode mode;
+};
 
-        for (int chunks = 0; chunks < 1000 && !calculation.done(); ++chunks)
-        {
-            marker.iterate(calculation);
-        }
-
-        EXPECT_TRUE(calculation.done());
-        EXPECT_THAT(m_pixels, Each(7));
-    }
+void PrintTo(const MarkerPassInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestMarkerPass : public TestShowDotController, public WithParamInterface<MarkerPassInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestMarkerPass::SetUp()
+{
+    TestShowDotController::SetUp();
+    clear_image();
+    g_std_calc_mode = GetParam().mode;
+    g_resuming = false;
+    g_size_dot = 128;
+}
+
+TEST_P(TestMarkerPass, readsOnlyRestoredImageData)
+{
+    ShowDotController marker;
+    StandardFractal calculation;
+    calculation.resume();
+
+    for (int chunks = 0; chunks < 1000 && !calculation.done(); ++chunks)
+    {
+        marker.iterate(calculation);
+    }
+
+    EXPECT_TRUE(calculation.done());
+    EXPECT_THAT(m_pixels, Each(7));
+}
+
+INSTANTIATE_TEST_SUITE_P(Passes, TestMarkerPass,
+    Values(MarkerPassInput{"OnePass", CalcMode::ONE_PASS}, MarkerPassInput{"TwoPass", CalcMode::TWO_PASS},
+        MarkerPassInput{"BoundaryTrace", CalcMode::BOUNDARY_TRACE},
+        MarkerPassInput{"SolidGuess", CalcMode::SOLID_GUESS}, MarkerPassInput{"Diffusion", CalcMode::DIFFUSION},
+        MarkerPassInput{"Tesseral", CalcMode::TESSERAL}),
+    [](const TestParamInfo<MarkerPassInput> &info) { return info.param.name; });
 
 TEST_F(TestShowDotController, zeroDelayRetainsTheOrdinaryScanlineBatch)
 {
