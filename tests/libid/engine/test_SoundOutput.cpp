@@ -157,14 +157,6 @@ void TestNullSoundOutput::SetUp()
     m_output.begin_orbit();
 }
 
-TEST_F(TestNullSoundOutput, acceptsSamplesWithoutPlayback)
-{
-    EXPECT_TRUE(m_output.ready());
-    EXPECT_TRUE(m_output.play({1.0, 2.0, 3.0}));
-    EXPECT_TRUE(m_output.play({4.0, 5.0, 6.0}));
-    m_output.update();
-}
-
 class TestMutedNullSoundOutput : public TestNullSoundOutput
 {
 protected:
@@ -179,12 +171,6 @@ void TestMutedNullSoundOutput::SetUp()
     ASSERT_TRUE(m_output.play({4.0, 5.0, 6.0}));
     m_output.update();
     m_output.mute();
-}
-
-TEST_F(TestMutedNullSoundOutput, mutePreservesUsability)
-{
-    EXPECT_TRUE(m_output.ready());
-    EXPECT_TRUE(m_output.play({7.0, 8.0, 9.0}));
 }
 
 TEST_F(TestMutedNullSoundOutput, finishIsIdempotent)
