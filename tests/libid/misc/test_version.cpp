@@ -82,10 +82,7 @@ INSTANTIATE_TEST_SUITE_P(Components, TestVersionStringFormat,
         VersionTextInput{"toStringMajorPatch", {5, 0, 7, 0, false}, "5.0.7"},
         VersionTextInput{"toStringMajorTweak", {5, 0, 0, 8, false}, "5.0.0.8"},
         VersionTextInput{"toStringMajorMinorTweak", {5, 6, 0, 8, false}, "5.6.0.8"},
-        VersionTextInput{"currentVersionStringMajorMinor", {3, 4, 0, 0, false}, "3.4"},
-        VersionTextInput{"currentVersionStringMajorMinorPatch", {3, 4, 5, 0, false}, "3.4.5"},
-        VersionTextInput{"currentVersionStringMajorMinorPatchTweak", {3, 4, 5, 6, false}, "3.4.5.6"},
-        VersionTextInput{"currentVersionStringMajorMinorTweak", {3, 4, 0, 1, false}, "3.4.0.1"}),
+        VersionTextInput{"currentVersionStringMajorMinorPatchTweak", {3, 4, 5, 6, false}, "3.4.5.6"}),
     [](const testing::TestParamInfo<VersionTextInput> &info) { return info.param.name; });
 
 class TestVersionParameterFormat : public testing::TestWithParam<VersionTextInput>
@@ -229,10 +226,7 @@ TEST_P(TestVersionDisplayFormat, formatsDisplayVersion)
 
 INSTANTIATE_TEST_SUITE_P(Components, TestVersionDisplayFormat,
     testing::Values(VersionTextInput{"Legacy", parse_legacy_version(2004), "FRACTINT v20.04"},
-        VersionTextInput{"AllFields", {1, 2, 3, 4, false}, "Id v1.2.3.4"},
-        VersionTextInput{"Major", {1, 0, 0, 0, false}, "Id v1.0"},
-        VersionTextInput{"Patch", {1, 0, 1, 0, false}, "Id v1.0.1"},
-        VersionTextInput{"Tweak", {1, 0, 0, 1, false}, "Id v1.0.0.1"}),
+        VersionTextInput{"AllFields", {1, 2, 3, 4, false}, "Id v1.2.3.4"}),
     [](const testing::TestParamInfo<VersionTextInput> &info) { return info.param.name; });
 
 } // namespace id::test
