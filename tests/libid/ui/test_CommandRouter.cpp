@@ -350,17 +350,6 @@ TEST_F(TestCommandRouter, defaultRouterRetainsEngineStartupRestrictions)
     EXPECT_EQ(BatchMode::NONE, g_init_batch);
     EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
     EXPECT_EQ(1U, result.diagnostics.errors.size());
-}
-
-TEST_F(TestCommandRouter, defaultRouterDoesNotRepeatRejectionDiagnostic)
-{
-    CommandProcessor processor{"batch=yes", CmdFile::AT_AFTER_STARTUP};
-    const CommandRouter router;
-
-    const CommandParseResult result{router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_EQ(BatchMode::NONE, g_init_batch);
     EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  batch=yes"));
 }
 
