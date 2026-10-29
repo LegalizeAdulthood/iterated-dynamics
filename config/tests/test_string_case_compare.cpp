@@ -1,71 +1,80 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <config/string_case_compare.h>
 
 #include <gtest/gtest.h>
+
+#include <algorithm>
+#include <array>
+#include <ostream>
+#include <string_view>
 
 using namespace id::config;
 
 namespace id::test
 {
 
-TEST(TestStringCaseCompareCount, firstStringEmpty)
+class CountedStringOperands : public testing::Test
 {
-    constexpr char buffer[80]{"foo"};
+protected:
+    void set_operands(std::string_view left, std::string_view right);
 
-    EXPECT_GT(0, string_case_compare("", buffer, sizeof(buffer)));
+    std::array<char, 80> m_left{};
+    std::array<char, 80> m_right{};
+};
+
+void CountedStringOperands::set_operands(const std::string_view left, const std::string_view right)
+{
+    std::copy(left.begin(), left.end(), m_left.begin());
+    std::copy(right.begin(), right.end(), m_right.begin());
 }
 
-TEST(TestStringCaseCompareCount, secondStringEmpty)
+struct StringCaseCountedComparisonInput
 {
-    constexpr char buffer[80]{"foo"};
+    const char *name;
+    const char *left;
+    const char *right;
+    std::size_t count;
+    int expected;
+};
 
-    EXPECT_LT(0, string_case_compare(buffer, "", sizeof(buffer)));
+void PrintTo(const StringCaseCountedComparisonInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestStringCaseCompareCount, firstStringExhaustedEqual)
+class TestStringCaseCompareCount : public CountedStringOperands,
+                                   public testing::WithParamInterface<StringCaseCountedComparisonInput>
 {
-    constexpr char buffer[]{"foo"};
+protected:
+    void SetUp() override;
+};
 
-    EXPECT_EQ(0, string_case_compare(buffer, "foobar", sizeof(buffer) - 1));
+void TestStringCaseCompareCount::SetUp()
+{
+    set_operands(GetParam().left, GetParam().right);
 }
 
-TEST(TestStringCaseCompareCount, secondStringExhaustedEqual)
+TEST_P(TestStringCaseCompareCount, comparesOrdering)
 {
-    constexpr char buffer[]{"foo"};
+    const int result{string_case_compare(m_left.data(), m_right.data(), GetParam().count)};
 
-    EXPECT_EQ(0, string_case_compare("foobar", buffer, sizeof(buffer) - 1));
+    EXPECT_EQ(GetParam().expected, (result > 0) - (result < 0));
 }
 
-TEST(TestStringCaseCompareCount, zeroLengthAlwaysEqual)
-{
-    EXPECT_EQ(0, string_case_compare("foo", "bar", 0));
-}
-
-TEST(TestStringCaseCompareCount, differOnlyByCaseEqual)
-{
-    EXPECT_EQ(0, string_case_compare("foo", "FoO", 3));
-}
-
-TEST(TestStringCaseCompareCount, differNotZero)
-{
-    EXPECT_LT(0, string_case_compare("foo", "bar", 3));
-}
-
-TEST(TestStringCaseCompareCount, lessNegative)
-{
-    EXPECT_GT(0, string_case_compare("bar", "foo", 3));
-}
-
-TEST(TestStringCaseCompareCount, greaterPositive)
-{
-    EXPECT_LT(0, string_case_compare("foo", "bar", 3));
-}
-
-TEST(TestStringCaseCompareCount, prefixIsLessCount)
-{
-    EXPECT_GT(0, string_case_compare("frac", "fractint", 8));
-}
+INSTANTIATE_TEST_SUITE_P(Operands, TestStringCaseCompareCount,
+    testing::Values(StringCaseCountedComparisonInput{"firstStringEmpty", "", "foo", 80, -1},
+        StringCaseCountedComparisonInput{"secondStringEmpty", "foo", "", 80, 1},
+        StringCaseCountedComparisonInput{"firstStringExhaustedEqual", "foo", "foobar", 3, 0},
+        StringCaseCountedComparisonInput{"secondStringExhaustedEqual", "foobar", "foo", 3, 0},
+        StringCaseCountedComparisonInput{"zeroLengthAlwaysEqual", "foo", "bar", 0, 0},
+        StringCaseCountedComparisonInput{"differOnlyByCaseEqual", "foo", "FoO", 3, 0},
+        StringCaseCountedComparisonInput{"differNotZero", "foo", "bar", 3, 1},
+        StringCaseCountedComparisonInput{"lessNegative", "bar", "foo", 3, -1},
+        StringCaseCountedComparisonInput{"greaterPositive", "foo", "bar", 3, 1},
+        StringCaseCountedComparisonInput{"prefixIsLessCount", "frac", "fractint", 8, -1}),
+    [](const testing::TestParamInfo<StringCaseCountedComparisonInput> &info) { return info.param.name; });
 
 TEST(TestStringCaseCompare, firstStringEmptyEqual)
 {
