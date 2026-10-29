@@ -68,7 +68,7 @@ private:
 class TestTabDisplay : public Test
 {
 protected:
-    std::vector<std::string> display_status();
+    std::vector<std::string> display_status(const std::vector<int> &keys = {ID_KEY_ESC}, bool driver_info = true);
 
     void SetUp() override
     {
@@ -135,7 +135,7 @@ INSTANTIATE_TEST_SUITE_P(Count, TestPerturbationStatusText,
         PerturbationStatusTextInput{"Plural", 2, "Perturbation (2 references)"}),
     [](const TestParamInfo<PerturbationStatusTextInput> &info) { return info.param.name; });
 
-std::vector<std::string> TestTabDisplay::display_status()
+std::vector<std::string> TestTabDisplay::display_status(const std::vector<int> &keys, const bool driver_info)
 {
     std::vector<std::string> output;
 
@@ -145,10 +145,19 @@ std::vector<std::string> TestTabDisplay::display_status()
     EXPECT_CALL(m_driver, put_string(_, _, _, _))
         .Times(AnyNumber())
         .WillRepeatedly(Invoke([&output](int, int, int, const char *text) { output.emplace_back(text); }));
-    EXPECT_CALL(m_driver, get_name()).WillRepeatedly(ReturnRef(m_driver_name));
-    EXPECT_CALL(m_driver, get_description()).WillRepeatedly(ReturnRef(m_driver_description));
-    EXPECT_CALL(m_driver, hide_text_cursor());
-    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
+    if (driver_info)
+    {
+        EXPECT_CALL(m_driver, get_name()).WillRepeatedly(ReturnRef(m_driver_name));
+        EXPECT_CALL(m_driver, get_description()).WillRepeatedly(ReturnRef(m_driver_description));
+    }
+    EXPECT_CALL(m_driver, hide_text_cursor()).Times(static_cast<int>(keys.size()));
+    {
+        InSequence sequence;
+        for (const int key : keys)
+        {
+            EXPECT_CALL(m_driver, get_key()).WillOnce(Return(key));
+        }
+    }
     EXPECT_CALL(m_driver, unstack_screen());
 
     EXPECT_EQ(0, tab_display());
@@ -167,18 +176,7 @@ TEST_F(TestTabDisplay, pendingMetadataDoesNotChangeActiveImage)
     metadata.height = 456;
     metadata.colors = 256;
     ValueSaver pending{g_tab_metadata, std::make_shared<const ImageMetadata>(metadata)};
-    std::vector<std::string> output;
-    EXPECT_CALL(m_driver, stack_screen());
-    EXPECT_CALL(m_driver, set_clear()).Times(AnyNumber());
-    EXPECT_CALL(m_driver, set_attr(_, _, _, _)).Times(AnyNumber());
-    EXPECT_CALL(m_driver, put_string(_, _, _, _))
-        .Times(AnyNumber())
-        .WillRepeatedly(Invoke([&output](int, int, int, const char *text) { output.emplace_back(text); }));
-    EXPECT_CALL(m_driver, hide_text_cursor()).Times(2);
-    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_CTL_TAB)).WillOnce(Return(ID_KEY_ESC));
-    EXPECT_CALL(m_driver, unstack_screen());
-
-    EXPECT_EQ(0, tab_display());
+    const std::vector<std::string> output{display_status({ID_KEY_CTL_TAB, ID_KEY_ESC}, false)};
 
     EXPECT_THAT(output, Contains(HasSubstr("Fractal type: julia")));
     EXPECT_THAT(output, Contains(HasSubstr("Image dimensions: 123 x 456 x 256")));
