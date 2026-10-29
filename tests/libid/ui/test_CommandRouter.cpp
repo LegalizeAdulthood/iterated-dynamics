@@ -1955,38 +1955,55 @@ INSTANTIATE_TEST_SUITE_P(Sources, TestRouterHistorySources,
         RouterHistorySourceInput{"Argument", {"id", "@whole", "@selected/chosen", "maxhistory=8"}, 6, 8}),
     [](const TestParamInfo<RouterHistorySourceInput> &info) { return info.param.name; });
 
-TEST_F(TestCommandRouterStartup, startupSourcesRouteAutokeyModeInOrder)
+struct RouterSlideSourceInput
 {
-    ValueSaver saved_slides{g_slides, SlidesMode::OFF};
+    const char *name;
+    std::vector<std::string> arguments;
+    SlidesMode initial;
+    SlidesMode expected;
+};
+
+void PrintTo(const RouterSlideSourceInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterSlideSources : public TestCommandRouterStartup, public WithParamInterface<RouterSlideSourceInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<SlidesMode> m_saved_slides{g_slides};
+};
+
+void TestRouterSlideSources::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
+    g_slides = GetParam().initial;
     write_source("sstools.ini", "autokey=record\n");
     write_source("whole.par", "entry { autokey=play }");
     write_source("selected.par", "ignored { autokey=play }\nchosen { autokey=record }");
+}
+
+TEST_P(TestRouterSlideSources, laterSourcesDetermineTheSlideMode)
+{
     const CommandRouter router;
 
-    const CommandParseResult configuration{router.process_startup({"id"})};
+    const CommandParseResult result{router.process_startup(GetParam().arguments)};
 
-    EXPECT_TRUE(configuration.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::NONE, configuration.flags);
-    EXPECT_EQ(SlidesMode::RECORD, g_slides);
-
-    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
-
-    EXPECT_TRUE(whole.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::NONE, whole.flags);
-    EXPECT_EQ(SlidesMode::PLAY, g_slides);
-
-    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
-
-    EXPECT_TRUE(selected.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::NONE, selected.flags);
-    EXPECT_EQ(SlidesMode::RECORD, g_slides);
-
-    const CommandParseResult argument{router.process_startup({"id", "@whole", "@selected/chosen", "autokey=play"})};
-
-    EXPECT_TRUE(argument.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::NONE, argument.flags);
-    EXPECT_EQ(SlidesMode::PLAY, g_slides);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_EQ(GetParam().expected, g_slides);
 }
+
+INSTANTIATE_TEST_SUITE_P(Sources, TestRouterSlideSources,
+    Values(RouterSlideSourceInput{"Configuration", {"id"}, SlidesMode::OFF, SlidesMode::RECORD},
+        RouterSlideSourceInput{"WholeFile", {"id", "@whole"}, SlidesMode::RECORD, SlidesMode::PLAY},
+        RouterSlideSourceInput{
+            "SelectedSet", {"id", "@whole", "@selected/chosen"}, SlidesMode::PLAY, SlidesMode::RECORD},
+        RouterSlideSourceInput{
+            "Argument", {"id", "@whole", "@selected/chosen", "autokey=play"}, SlidesMode::RECORD, SlidesMode::PLAY}),
+    [](const TestParamInfo<RouterSlideSourceInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouterStartup, autoKeyNameFindsLibraryKeyFileWithOriginalCase)
 {
@@ -2009,100 +2026,119 @@ TEST_F(TestCommandRouterStartup, autoKeyNameFindsLibraryKeyFileWithOriginalCase)
     EXPECT_TRUE(fs::remove(m_library / "key"));
 }
 
-TEST_F(TestCommandRouterStartup, startupSourcesRouteAutokeyFilenameInOrder)
+struct RouterAutoNameSourceInput
 {
-    ValueSaver saved_auto_key_name{g_auto_name, "foo.key"};
+    const char *name;
+    std::vector<std::string> arguments;
+    const char *initial;
+    const char *expected;
+};
+
+void PrintTo(const RouterAutoNameSourceInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterAutoNameSources : public TestCommandRouterStartup, public WithParamInterface<RouterAutoNameSourceInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<fs::path> m_saved_auto_name{g_auto_name};
+};
+
+void TestRouterAutoNameSources::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
+    g_auto_name = GetParam().initial;
     write_source("sstools.ini", "autokeyname=ConfigAutoKeyRoute.KEY\n");
     write_source("whole.par", "entry { autokeyname=WholeAutoKeyRoute.KEY }");
     write_source("selected.par",
         "ignored { autokeyname=IgnoredAutoKeyRoute.KEY }\n"
         "chosen { autokeyname=SelectedAutoKeyRoute.KEY }");
-    const CommandRouter router;
-
-    const CommandParseResult configuration{router.process_startup({"id"})};
-
-    EXPECT_EQ(CmdArgFlags::NONE, configuration.flags);
-    EXPECT_EQ(fs::path{"ConfigAutoKeyRoute.KEY"}, g_auto_name);
-    EXPECT_TRUE(configuration.diagnostics.errors.empty());
-    EXPECT_TRUE(configuration.diagnostics.warnings.empty());
-
-    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
-
-    EXPECT_EQ(CmdArgFlags::NONE, whole.flags);
-    EXPECT_EQ(fs::path{"WholeAutoKeyRoute.KEY"}, g_auto_name);
-    EXPECT_TRUE(whole.diagnostics.errors.empty());
-    EXPECT_TRUE(whole.diagnostics.warnings.empty());
-
-    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
-
-    EXPECT_EQ(CmdArgFlags::NONE, selected.flags);
-    EXPECT_EQ(fs::path{"SelectedAutoKeyRoute.KEY"}, g_auto_name);
-    EXPECT_TRUE(selected.diagnostics.errors.empty());
-    EXPECT_TRUE(selected.diagnostics.warnings.empty());
-
-    const CommandParseResult argument{
-        router.process_startup({"id", "@whole", "@selected/chosen", "autokeyname=ArgumentAutoKeyRoute.KEY"})};
-
-    EXPECT_EQ(CmdArgFlags::NONE, argument.flags);
-    EXPECT_EQ(fs::path{"ArgumentAutoKeyRoute.KEY"}, g_auto_name);
-    EXPECT_TRUE(argument.diagnostics.errors.empty());
-    EXPECT_TRUE(argument.diagnostics.warnings.empty());
 }
 
-TEST_F(TestCommandRouterStartup, startupSourcesRouteRdsParametersInOrder)
+TEST_P(TestRouterAutoNameSources, laterSourcesDetermineTheAutokeyFilename)
 {
-    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
-    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
-    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
-    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "map.gif"};
-    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process_startup(GetParam().arguments)};
+
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_EQ(fs::path{GetParam().expected}, g_auto_name);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_TRUE(result.diagnostics.warnings.empty());
+}
+
+INSTANTIATE_TEST_SUITE_P(Sources, TestRouterAutoNameSources,
+    Values(RouterAutoNameSourceInput{"Configuration", {"id"}, "foo.key", "ConfigAutoKeyRoute.KEY"},
+        RouterAutoNameSourceInput{"WholeFile", {"id", "@whole"}, "ConfigAutoKeyRoute.KEY", "WholeAutoKeyRoute.KEY"},
+        RouterAutoNameSourceInput{
+            "SelectedSet", {"id", "@whole", "@selected/chosen"}, "WholeAutoKeyRoute.KEY", "SelectedAutoKeyRoute.KEY"},
+        RouterAutoNameSourceInput{"Argument",
+            {"id", "@whole", "@selected/chosen", "autokeyname=ArgumentAutoKeyRoute.KEY"}, "SelectedAutoKeyRoute.KEY",
+            "ArgumentAutoKeyRoute.KEY"}),
+    [](const TestParamInfo<RouterAutoNameSourceInput> &info) { return info.param.name; });
+
+struct RouterRdsSourceInput
+{
+    const char *name;
+    std::vector<std::string> arguments;
+    RouterRdsState initial;
+    RouterRdsState expected;
+};
+
+void PrintTo(const RouterRdsSourceInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterRdsSources : public TestCommandRouterStartup, public WithParamInterface<RouterRdsSourceInput>
+{
+protected:
+    void SetUp() override;
+
+    RouterRdsStateGuard m_rds_state;
+};
+
+void TestRouterRdsSources::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
+    m_rds_state.apply(GetParam().initial);
     write_source("sstools.ini", "rds=yes/10/none\n");
     write_source("whole.par", "entry { rds=texture/20/top }");
     write_source("selected.par", "ignored { rds=no }\nchosen { rds=random/30/middle }");
+}
+
+TEST_P(TestRouterRdsSources, laterSourcesDetermineTheStereoSettings)
+{
     const CommandRouter router;
 
-    const CommandParseResult configuration{router.process_startup({"id"})};
+    const CommandParseResult result{router.process_startup(GetParam().arguments)};
 
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, configuration.flags);
-    EXPECT_TRUE(configuration.diagnostics.errors.empty());
-    EXPECT_TRUE(g_auto_stereo_batch);
-    EXPECT_FALSE(g_use_stereo_texture);
-    EXPECT_FALSE(g_stereo_texture_reuse);
-    EXPECT_EQ(10, g_auto_stereo_depth);
-    EXPECT_EQ(CalibrationBars::NONE, g_calibrate);
-
-    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, whole.flags);
-    EXPECT_TRUE(whole.diagnostics.errors.empty());
-    EXPECT_TRUE(g_auto_stereo_batch);
-    EXPECT_TRUE(g_use_stereo_texture);
-    EXPECT_TRUE(g_stereo_texture_reuse);
-    EXPECT_EQ(20, g_auto_stereo_depth);
-    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
-
-    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, selected.flags);
-    EXPECT_TRUE(selected.diagnostics.errors.empty());
-    EXPECT_TRUE(g_auto_stereo_batch);
-    EXPECT_FALSE(g_use_stereo_texture);
-    EXPECT_FALSE(g_stereo_texture_reuse);
-    EXPECT_EQ(30, g_auto_stereo_depth);
-    EXPECT_EQ(CalibrationBars::MIDDLE, g_calibrate);
-
-    const CommandParseResult argument{router.process_startup({"id", "@whole", "@selected/chosen", "rds=no"})};
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, argument.flags);
-    EXPECT_TRUE(argument.diagnostics.errors.empty());
-    EXPECT_FALSE(g_auto_stereo_batch);
-    EXPECT_FALSE(g_use_stereo_texture);
-    EXPECT_FALSE(g_stereo_texture_reuse);
-    EXPECT_EQ(30, g_auto_stereo_depth);
-    EXPECT_EQ(CalibrationBars::MIDDLE, g_calibrate);
-    EXPECT_EQ("map.gif", g_stereo_texture_filename);
+    const RouterRdsState &expected{GetParam().expected};
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(expected.batch, g_auto_stereo_batch);
+    EXPECT_EQ(expected.texture, g_use_stereo_texture);
+    EXPECT_EQ(expected.reuse, g_stereo_texture_reuse);
+    EXPECT_EQ(expected.depth, g_auto_stereo_depth);
+    EXPECT_EQ(expected.bars, g_calibrate);
+    EXPECT_EQ(expected.filename, g_stereo_texture_filename);
 }
+
+INSTANTIATE_TEST_SUITE_P(Sources, TestRouterRdsSources,
+    Values(RouterRdsSourceInput{"Configuration", {"id"}, {false, false, 77, CalibrationBars::MIDDLE, "map.gif", false},
+               {true, false, 10, CalibrationBars::NONE, "map.gif", false}},
+        RouterRdsSourceInput{"WholeFile", {"id", "@whole"}, {true, false, 10, CalibrationBars::NONE, "map.gif", false},
+            {true, true, 20, CalibrationBars::TOP, "map.gif", true}},
+        RouterRdsSourceInput{"SelectedSet", {"id", "@whole", "@selected/chosen"},
+            {true, true, 20, CalibrationBars::TOP, "map.gif", true},
+            {true, false, 30, CalibrationBars::MIDDLE, "map.gif", false}},
+        RouterRdsSourceInput{"Argument", {"id", "@whole", "@selected/chosen", "rds=no"},
+            {true, false, 30, CalibrationBars::MIDDLE, "map.gif", false},
+            {false, false, 30, CalibrationBars::MIDDLE, "map.gif", false}}),
+    [](const TestParamInfo<RouterRdsSourceInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouterStartup, startupSourcesRouteStereoTextureInOrder)
 {
