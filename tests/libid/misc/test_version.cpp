@@ -88,47 +88,25 @@ INSTANTIATE_TEST_SUITE_P(Components, TestVersionStringFormat,
         VersionTextInput{"currentVersionStringMajorMinorTweak", {3, 4, 0, 1, false}, "3.4.0.1"}),
     [](const testing::TestParamInfo<VersionTextInput> &info) { return info.param.name; });
 
-TEST(TestVersion, parStringMajor)
+class TestVersionParameterFormat : public testing::TestWithParam<VersionTextInput>
 {
-    ValueSaver saved_version{g_version, Version{5, 0, 0, 0, false}};
+protected:
+    ValueSaver<Version> m_saved_version{g_version, GetParam().version};
+};
 
-    EXPECT_EQ("5/0", to_par_string(g_version));
+TEST_P(TestVersionParameterFormat, formatsParameterVersion)
+{
+    EXPECT_EQ(GetParam().expected, to_par_string(g_version));
 }
 
-TEST(TestVersion, parStringLegacy)
-{
-    ValueSaver saved_version{g_version, parse_legacy_version(1730)};
-
-    EXPECT_EQ("1730", to_par_string(g_version));
-}
-
-TEST(TestVersion, parStringMajorMinor)
-{
-    ValueSaver saved_version{g_version, Version{5, 6, 0, 0, false}};
-
-    EXPECT_EQ("5/6", to_par_string(g_version));
-}
-
-TEST(TestVersion, parStringMajorMinorPatch)
-{
-    ValueSaver saved_version{g_version, Version{5, 6, 7, 0, false}};
-
-    EXPECT_EQ("5/6/7", to_par_string(g_version));
-}
-
-TEST(TestVersion, parStringMajorMinorTweak)
-{
-    ValueSaver saved_version{g_version, Version{5, 6, 0, 7, false}};
-
-    EXPECT_EQ("5/6/0/7", to_par_string(g_version));
-}
-
-TEST(TestVersion, parStringMajorMinorPatchTweak)
-{
-    ValueSaver saved_version{g_version, Version{5, 6, 7, 8, false}};
-
-    EXPECT_EQ("5/6/7/8", to_par_string(g_version));
-}
+INSTANTIATE_TEST_SUITE_P(Components, TestVersionParameterFormat,
+    testing::Values(VersionTextInput{"Major", {5, 0, 0, 0, false}, "5/0"},
+        VersionTextInput{"Legacy", parse_legacy_version(1730), "1730"},
+        VersionTextInput{"MajorMinor", {5, 6, 0, 0, false}, "5/6"},
+        VersionTextInput{"MajorMinorPatch", {5, 6, 7, 0, false}, "5/6/7"},
+        VersionTextInput{"MajorMinorTweak", {5, 6, 0, 7, false}, "5/6/0/7"},
+        VersionTextInput{"AllFields", {5, 6, 7, 8, false}, "5/6/7/8"}),
+    [](const testing::TestParamInfo<VersionTextInput> &info) { return info.param.name; });
 
 TEST(TestVersion, parseLegacyVersionMajor)
 {
@@ -220,50 +198,22 @@ TEST(TestVersion, legacyVersionNotEqualIdVersion)
     EXPECT_NE(lhs, rhs);
 }
 
-TEST(TestVersion, legacyVersionToDisplayString)
+class TestVersionDisplayFormat : public testing::TestWithParam<VersionTextInput>
 {
-    const Version version{parse_legacy_version(2004)};
+};
 
-    const std::string result{to_display_string(version)};
-
-    EXPECT_EQ("FRACTINT v20.04", result);
+TEST_P(TestVersionDisplayFormat, formatsDisplayVersion)
+{
+    EXPECT_EQ(GetParam().expected, to_display_string(GetParam().version));
 }
 
-TEST(TestVersion, idVersionToDisplayString)
-{
-    const Version version{Version{1, 2, 3, 4, false}};
-
-    const std::string result{to_display_string(version)};
-
-    EXPECT_EQ("Id v1.2.3.4", result);
-}
-
-TEST(TestVersion, idVersionMajorMinorToDisplayString)
-{
-    const Version version{Version{1, 0, 0, 0, false}};
-
-    const std::string result{to_display_string(version)};
-
-    EXPECT_EQ("Id v1.0", result);
-}
-
-TEST(TestVersion, idVersionMajorPatchToDisplayString)
-{
-    const Version version{Version{1, 0, 1, 0, false}};
-
-    const std::string result{to_display_string(version)};
-
-    EXPECT_EQ("Id v1.0.1", result);
-}
-
-TEST(TestVersion, idVersionMajorTweakToDisplayString)
-{
-    const Version version{Version{1, 0, 0, 1, false}};
-
-    const std::string result{to_display_string(version)};
-
-    EXPECT_EQ("Id v1.0.0.1", result);
-}
+INSTANTIATE_TEST_SUITE_P(Components, TestVersionDisplayFormat,
+    testing::Values(VersionTextInput{"Legacy", parse_legacy_version(2004), "FRACTINT v20.04"},
+        VersionTextInput{"AllFields", {1, 2, 3, 4, false}, "Id v1.2.3.4"},
+        VersionTextInput{"Major", {1, 0, 0, 0, false}, "Id v1.0"},
+        VersionTextInput{"Patch", {1, 0, 1, 0, false}, "Id v1.0.1"},
+        VersionTextInput{"Tweak", {1, 0, 0, 1, false}, "Id v1.0.0.1"}),
+    [](const testing::TestParamInfo<VersionTextInput> &info) { return info.param.name; });
 
 TEST(TestVersion, legacyDifferentFromId)
 {
