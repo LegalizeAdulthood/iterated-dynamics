@@ -586,14 +586,21 @@ TEST_F(TestPlasmaControllerLifecycle, suspensionCompletesTheController)
 
 class TestSelectedPlasma : public TestPlasma, public WithParamInterface<int>
 {
+protected:
+    void SetUp() override;
 };
 
-TEST_P(TestSelectedPlasma, selectedOperationPreservesSubdivisionChunksAndPixels)
+void TestSelectedPlasma::SetUp()
 {
+    TestPlasma::SetUp();
     g_params[1] = GetParam();
     g_params[3] = 0;
     g_debug_flag = DebugFlags::NONE;
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
+}
+
+TEST_P(TestSelectedPlasma, selectedOperationPreservesSubdivisionChunksAndPixels)
+{
     std::vector<std::array<int, 49>> expected;
     std::array<int, 49> initial{};
     {
@@ -626,10 +633,26 @@ TEST_P(TestSelectedPlasma, selectedOperationPreservesSubdivisionChunksAndPixels)
 
     EXPECT_EQ(next_random, random15());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
-    calculation.iterate();
-    EXPECT_EQ(expected.back(), m_pixels);
     calculation.finish(false);
     EXPECT_EQ(g_put_color, g_plot);
+}
+
+TEST_P(TestSelectedPlasma, iterationAfterCompletionDoesNotChangePixels)
+{
+    NonStandardFractal calculation;
+    ASSERT_TRUE(calculation.start().empty());
+    ASSERT_EQ(NonStandardFractal::Operation::PLASMA, calculation.select());
+    for (int chunk = 0; chunk < 256 && !calculation.done(); ++chunk)
+    {
+        calculation.iterate();
+    }
+    ASSERT_TRUE(calculation.done());
+    const std::array<int, 49> pixels{m_pixels};
+
+    calculation.iterate();
+
+    EXPECT_EQ(pixels, m_pixels);
+    calculation.finish(false);
 }
 
 INSTANTIATE_TEST_SUITE_P(Algorithms, TestSelectedPlasma, Values(0, 1));
