@@ -402,16 +402,25 @@ protected:
     std::filesystem::path m_directory;
 };
 
-TEST_F(TestDiskVideoSetup, retryAllocatesStorageAfterUiCorrectsTheFailure)
+class TestDiskVideoRetry : public TestDiskVideoSetup, public testing::WithParamInterface<int>
 {
-    expect_errors(1);
+};
+
+TEST_P(TestDiskVideoRetry, retryAllocatesUsableStorageAfterUiCorrectsTheFailure)
+{
+    expect_errors(GetParam());
+    int attempts{};
     EXPECT_CALL(m_driver, get_key())
-        .WillOnce(testing::Invoke(
-            []
+        .Times(GetParam())
+        .WillRepeatedly(testing::Invoke(
+            [this, &attempts]
             {
-                EXPECT_FALSE(g_disk_flag);
-                EXPECT_TRUE(exit_check().empty());
-                std::filesystem::create_directory(g_temp_dir);
+                if (++attempts == GetParam())
+                {
+                    EXPECT_FALSE(g_disk_flag);
+                    EXPECT_TRUE(exit_check().empty());
+                    std::filesystem::create_directory(g_temp_dir);
+                }
                 return ID_KEY_ENTER;
             }));
 
@@ -426,25 +435,8 @@ TEST_F(TestDiskVideoSetup, retryAllocatesStorageAfterUiCorrectsTheFailure)
     EXPECT_TRUE(std::filesystem::is_empty(g_temp_dir));
 }
 
-TEST_F(TestDiskVideoSetup, failureCanBeRetriedMoreThanOnce)
-{
-    expect_errors(2);
-    EXPECT_CALL(m_driver, get_key())
-        .WillOnce(Return(ID_KEY_ENTER))
-        .WillOnce(testing::Invoke(
-            []
-            {
-                EXPECT_FALSE(g_disk_flag);
-                EXPECT_TRUE(exit_check().empty());
-                std::filesystem::create_directory(g_temp_dir);
-                return ID_KEY_ENTER;
-            }));
-
-    EXPECT_TRUE(prepare_disk_storage(64, 64, 256));
-
-    EXPECT_TRUE(g_disk_flag);
-    EXPECT_EQ(MemoryLocation::DISK, disk_video_memory_type());
-}
+INSTANTIATE_TEST_SUITE_P(Failures, TestDiskVideoRetry, testing::Values(1, 2),
+    [](const testing::TestParamInfo<int> &info) { return "After" + std::to_string(info.param); });
 
 TEST_F(TestDiskVideoSetup, cancellationLeavesNoStorageAndAllowsLaterSetup)
 {
