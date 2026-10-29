@@ -2668,14 +2668,109 @@ TEST_P(TestOverlaySoundController, menuInterruptMutesAndResumingRestartsOutput)
 class TestFrothyBasinController : public TestOverlaySound
 {
 protected:
-    void SetUp() override
-    {
-        TestOverlaySound::SetUp();
-        select_froth();
-    }
+    void SetUp() override;
 
     ValueSaver<bool> m_saved_start_orbit{g_start_show_orbit, true};
 };
+
+void TestFrothyBasinController::SetUp()
+{
+    TestOverlaySound::SetUp();
+    select_froth();
+}
+
+class TestPreparedFrothyController : public TestFrothyBasinController
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<NonStandardFractal> m_calculation;
+    std::unique_ptr<SoundSession> m_sound;
+    std::unique_ptr<FrothyBasinController> m_controller;
+};
+
+void TestPreparedFrothyController::SetUp()
+{
+    TestFrothyBasinController::SetUp();
+    m_calculation = std::make_unique<NonStandardFractal>();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, m_calculation->select());
+    m_sound = std::make_unique<SoundSession>(m_output, SoundSession::Ownership::BORROWED);
+    m_controller = std::make_unique<FrothyBasinController>(*m_calculation, *m_sound);
+}
+
+void TestPreparedFrothyController::TearDown()
+{
+    m_controller.reset();
+    m_sound.reset();
+    m_calculation.reset();
+    TestFrothyBasinController::TearDown();
+}
+
+TEST_F(TestPreparedFrothyController, iterateRequiresStart)
+{
+    EXPECT_THROW(m_controller->iterate(), std::logic_error);
+}
+
+TEST_F(TestPreparedFrothyController, resultRequiresCompletion)
+{
+    EXPECT_THROW(m_controller->result(), std::logic_error);
+}
+
+TEST_F(TestPreparedFrothyController, suspendRequiresStart)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+}
+
+class TestStartedFrothyController : public TestPreparedFrothyController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStartedFrothyController::SetUp()
+{
+    TestPreparedFrothyController::SetUp();
+    m_controller->start();
+}
+
+TEST_F(TestStartedFrothyController, duplicateStartIsRejected)
+{
+    EXPECT_THROW(m_controller->start(), std::logic_error);
+}
+
+class TestCompletedFrothyController : public TestStartedFrothyController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestCompletedFrothyController::SetUp()
+{
+    TestStartedFrothyController::SetUp();
+    EXPECT_CALL(*m_output, mute()).Times(0);
+    EXPECT_CALL(*m_output, finish()).Times(0);
+    for (int step = 0; step < 100 && !m_controller->done(); ++step)
+    {
+        m_controller->iterate();
+    }
+    ASSERT_TRUE(m_controller->done());
+}
+
+TEST_F(TestCompletedFrothyController, iterateDoesNotPlotAfterCompletion)
+{
+    const int plots{m_plots};
+
+    m_controller->iterate();
+
+    EXPECT_EQ(plots, m_plots);
+}
+
+TEST_F(TestCompletedFrothyController, suspendAfterCompletionIsRejected)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+}
 
 TEST_F(TestFrothyBasinController, stepwiseControllerPreservesCalculationIncrements)
 {
@@ -2716,15 +2811,11 @@ TEST_F(TestFrothyBasinController, stepwiseControllerPreservesCalculationIncremen
     EXPECT_CALL(*m_output, mute()).Times(0);
     EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
     FrothyBasinController controller{calculation, sound};
-    EXPECT_THROW(controller.iterate(), std::logic_error);
-    EXPECT_THROW(controller.result(), std::logic_error);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
 
     controller.start();
 
     EXPECT_FALSE(controller.done());
     EXPECT_TRUE(m_events.empty());
-    EXPECT_THROW(controller.start(), std::logic_error);
     for (const WorkState &work : expected)
     {
         controller.iterate();
@@ -2746,10 +2837,6 @@ TEST_F(TestFrothyBasinController, stepwiseControllerPreservesCalculationIncremen
         EXPECT_EQ(samples[i].y, m_samples[i].y);
     }
     EXPECT_FALSE(dispatch_keyboard_key('o'));
-    const int plots{m_plots};
-    controller.iterate();
-    EXPECT_EQ(plots, m_plots);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
     calculation.finish(false);
 }
 
@@ -2809,17 +2896,12 @@ TEST_F(TestFrothyBasinController, stepwisePixelSuspensionRetainsNextUnfinishedPi
     EXPECT_EQ(1, col);
 }
 
-TEST_F(TestFrothyBasinController, stepwiseOrbitToggleDoesNotInterruptImage)
+TEST_F(TestPreparedFrothyController, stepwiseOrbitToggleDoesNotInterruptImage)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, calculation.select());
-    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
     EXPECT_CALL(*m_output, mute());
     EXPECT_CALL(*m_output, finish()).Times(0);
-    FrothyBasinController controller{calculation, sound};
-    controller.start();
-    controller.iterate();
+    m_controller->start();
+    m_controller->iterate();
     ASSERT_TRUE(g_orbit_save_flag);
 
     EXPECT_TRUE(dispatch_keyboard_key('o'));
@@ -2827,24 +2909,20 @@ TEST_F(TestFrothyBasinController, stepwiseOrbitToggleDoesNotInterruptImage)
     EXPECT_FALSE(g_show_orbit);
     EXPECT_FALSE(g_orbit_save_flag);
     EXPECT_FALSE(calc_interrupt_requested());
-    EXPECT_FALSE(controller.done());
-    for (int i = 0; i < 100 && !controller.done(); ++i)
+    EXPECT_FALSE(m_controller->done());
+    for (int i = 0; i < 100 && !m_controller->done(); ++i)
     {
-        controller.iterate();
+        m_controller->iterate();
     }
-    ASSERT_TRUE(controller.done());
-    EXPECT_EQ(0, controller.result());
-    EXPECT_TRUE(calculation.completed());
+    ASSERT_TRUE(m_controller->done());
+    EXPECT_EQ(0, m_controller->result());
+    EXPECT_TRUE(m_calculation->completed());
     EXPECT_FALSE(dispatch_keyboard_key('o'));
-    calculation.finish(false);
+    m_calculation->finish(false);
 }
 
-TEST_F(TestFrothyBasinController, stepwiseSoundWaitInterruptionPreservesCommandAndResume)
+TEST_F(TestPreparedFrothyController, stepwiseSoundWaitInterruptionPreservesCommandAndResume)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, calculation.select());
-    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
     EXPECT_CALL(*m_output, play(_))
         .WillOnce(Invoke(
             [this](const SoundSample &)
@@ -2855,17 +2933,16 @@ TEST_F(TestFrothyBasinController, stepwiseSoundWaitInterruptionPreservesCommandA
     EXPECT_CALL(*m_output, mute()).WillRepeatedly(Invoke([this] { m_ready = true; }));
     EXPECT_CALL(*m_output, finish()).Times(0);
     EXPECT_CALL(m_driver, unget_key('x')).WillOnce(Invoke([this](int key) { m_key = key; }));
-    FrothyBasinController controller{calculation, sound};
-    controller.start();
-    controller.iterate();
-    ASSERT_FALSE(controller.done());
+    m_controller->start();
+    m_controller->iterate();
+    ASSERT_FALSE(m_controller->done());
 
     m_key = 'x';
-    controller.iterate();
+    m_controller->iterate();
 
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
+    EXPECT_TRUE(m_calculation->done());
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
     EXPECT_EQ('x', m_key);
     EXPECT_TRUE(g_show_orbit);
@@ -2873,72 +2950,57 @@ TEST_F(TestFrothyBasinController, stepwiseSoundWaitInterruptionPreservesCommandA
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
-TEST_F(TestFrothyBasinController, stepwiseSoundFailureReleasesHandlersAndCalculation)
+TEST_F(TestPreparedFrothyController, stepwiseSoundFailureReleasesHandlersAndCalculation)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, calculation.select());
-    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
     EXPECT_CALL(*m_output, update()).WillOnce(Throw(std::runtime_error("sound failed")));
     EXPECT_CALL(*m_output, mute());
     EXPECT_CALL(*m_output, finish()).Times(0);
-    FrothyBasinController controller{calculation, sound};
-    controller.start();
+    m_controller->start();
 
-    EXPECT_THROW(controller.iterate(), std::runtime_error);
+    EXPECT_THROW(m_controller->iterate(), std::runtime_error);
 
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
+    EXPECT_TRUE(m_calculation->done());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_EQ(0, m_plots);
     EXPECT_FALSE(g_orbit_save_flag);
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
-TEST_F(TestFrothyBasinController, stepwisePlotFailureScrubsOverlayAndReleasesHandlers)
+TEST_F(TestPreparedFrothyController, stepwisePlotFailureScrubsOverlayAndReleasesHandlers)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, calculation.select());
-    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
     EXPECT_CALL(m_driver, write_pixel(_, _, _))
         .WillOnce(Throw(std::runtime_error("plot failed")))
         .RetiresOnSaturation();
     EXPECT_CALL(*m_output, mute());
     EXPECT_CALL(*m_output, finish()).Times(0);
-    FrothyBasinController controller{calculation, sound};
-    controller.start();
+    m_controller->start();
 
-    EXPECT_THROW(controller.iterate(), std::runtime_error);
+    EXPECT_THROW(m_controller->iterate(), std::runtime_error);
 
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
-    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
+    EXPECT_TRUE(m_calculation->done());
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
     EXPECT_FALSE(g_orbit_save_flag);
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
-TEST_F(TestFrothyBasinController, stepwiseDestructionOnlyReleasesHandlers)
+TEST_F(TestPreparedFrothyController, stepwiseDestructionOnlyReleasesHandlers)
 {
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::FROTHY_BASIN, calculation.select());
-    SoundSession sound{m_output, SoundSession::Ownership::BORROWED};
     EXPECT_CALL(*m_output, mute()).Times(0);
     EXPECT_CALL(*m_output, finish()).Times(0);
-    {
-        FrothyBasinController controller{calculation, sound};
-        controller.start();
-        controller.iterate();
-        ASSERT_FALSE(controller.done());
-    }
+    m_controller->start();
+    m_controller->iterate();
+    ASSERT_FALSE(m_controller->done());
+
+    m_controller.reset();
 
     EXPECT_FALSE(dispatch_keyboard_key('o'));
-    EXPECT_FALSE(calculation.done());
-    calculation.scrub_overlay();
-    calculation.finish(true);
+    EXPECT_FALSE(m_calculation->done());
+    m_calculation->scrub_overlay();
+    m_calculation->finish(true);
 }
 
 INSTANTIATE_TEST_SUITE_P(StandardAndFrothyBasin, TestOverlaySoundController, Values(false, true));
