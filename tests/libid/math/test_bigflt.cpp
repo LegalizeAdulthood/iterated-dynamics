@@ -49,60 +49,112 @@ protected:
     ValueSaver<FractalType> m_saved_fractal_type;
 };
 
-TEST_F(TestBigFloat, parsesPlainDecimal)
+struct BigFloatParseInput
 {
-    BigFloat value{alloc_stack(g_bf_length + 2)};
+    const char *name;
+    std::string storage;
+    std::size_t length;
+    LDouble expected;
+};
 
-    str_to_bf(value, "1.25");
-
-    EXPECT_EQ(1.25L, bf_to_float(value));
-}
-
-TEST_F(TestBigFloat, parsesStringViewWithoutTerminator)
+class TestBigFloatParse : public TestBigFloat, public testing::WithParamInterface<BigFloatParseInput>
 {
-    const std::string storage{"1.25x"};
-    const std::string_view text{storage.data(), 4};
+};
+
+TEST_P(TestBigFloatParse, parsesTheSpecifiedText)
+{
+    const std::string_view text{GetParam().storage.data(), GetParam().length};
     BigFloat value{alloc_stack(g_bf_length + 2)};
 
     str_to_bf(value, text);
 
-    EXPECT_EQ(1.25L, bf_to_float(value));
+    EXPECT_EQ(GetParam().expected, bf_to_float(value));
 }
 
-TEST_F(TestBigFloat, parsesExponent)
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatParse,
+    testing::Values(BigFloatParseInput{"PlainDecimal", "1.25", 4, 1.25L},
+        BigFloatParseInput{"UnterminatedView", "1.25x", 4, 1.25L}, BigFloatParseInput{"Exponent", "1.25e2", 6, 125.0L}),
+    [](const testing::TestParamInfo<BigFloatParseInput> &info) { return info.param.name; });
+
+class TestBigFloatFormat : public TestBigFloat
 {
-    BigFloat value{alloc_stack(g_bf_length + 2)};
+protected:
+    void prepare_value(const char *text);
 
-    str_to_bf(value, "1.25e2");
+    BigFloat m_value{};
+};
 
-    EXPECT_EQ(125.0L, bf_to_float(value));
-}
-
-TEST_F(TestBigFloat, formatsZero)
+void TestBigFloatFormat::prepare_value(const char *text)
 {
-    BigFloat value{alloc_stack(g_bf_length + 2)};
-    clear_bf(value);
-
-    EXPECT_EQ("0.0", bf_to_string(value, 5));
-    EXPECT_EQ("0.0", bf_to_string_e(value, 5));
-    EXPECT_EQ("0.0", bf_to_string_f(value, 5));
+    m_value = alloc_stack(g_bf_length + 2);
+    if (text)
+    {
+        str_to_bf(m_value, text);
+    }
+    else
+    {
+        clear_bf(m_value);
+    }
 }
 
-TEST_F(TestBigFloat, formatsFixedDecimal)
+TEST_F(TestBigFloatFormat, generalFormatHandlesZero)
 {
-    BigFloat value{alloc_stack(g_bf_length + 2)};
-    str_to_bf(value, "1.25");
+    prepare_value(nullptr);
 
-    EXPECT_EQ("1.25", bf_to_string_f(value, 5));
+    EXPECT_EQ("0.0", bf_to_string(m_value, 5));
 }
 
-TEST_F(TestBigFloat, formatsScientificDecimal)
+struct BigFloatFormatInput
 {
-    BigFloat value{alloc_stack(g_bf_length + 2)};
-    str_to_bf(value, "1.25");
+    const char *name;
+    const char *input;
+    int decimals;
+    const char *expected;
+};
 
-    EXPECT_EQ("1.25e0", bf_to_string_e(value, 5));
+class TestBigFloatFixedFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigFloatFixedFormat::SetUp()
+{
+    TestBigFloat::SetUp();
+    prepare_value(GetParam().input);
 }
+
+TEST_P(TestBigFloatFixedFormat, formatsFixedDecimal)
+{
+    EXPECT_EQ(GetParam().expected, bf_to_string_f(m_value, GetParam().decimals));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatFixedFormat,
+    testing::Values(
+        BigFloatFormatInput{"Zero", nullptr, 5, "0.0"}, BigFloatFormatInput{"PositiveDecimal", "1.25", 5, "1.25"}),
+    [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
+
+class TestBigFloatScientificFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigFloatScientificFormat::SetUp()
+{
+    TestBigFloat::SetUp();
+    prepare_value(GetParam().input);
+}
+
+TEST_P(TestBigFloatScientificFormat, formatsScientificDecimal)
+{
+    EXPECT_EQ(GetParam().expected, bf_to_string_e(m_value, GetParam().decimals));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatScientificFormat,
+    testing::Values(
+        BigFloatFormatInput{"Zero", nullptr, 5, "0.0"}, BigFloatFormatInput{"PositiveDecimal", "1.25", 5, "1.25e0"}),
+    [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
 
 TEST_F(TestBigFloat, rejectedPrecisionPreservesActiveArena)
 {
