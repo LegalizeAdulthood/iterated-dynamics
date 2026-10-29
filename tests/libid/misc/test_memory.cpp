@@ -376,43 +376,102 @@ INSTANTIATE_TEST_SUITE_P(Arguments, TestRejectedMemoryAllocation,
         RejectedMemoryAllocationInput{"InvalidLocation", 1, 1, static_cast<MemoryLocation>(-1)}),
     [](const TestParamInfo<RejectedMemoryAllocationInput> &info) { return info.param.name; });
 
-TEST_F(TestMemory, exhaustedHandleTableCanBeRetriedAfterRelease)
+class TestMemoryResources : public TestMemory
 {
-    std::vector<MemoryHandle> handles;
+protected:
+    void TearDown() override;
+    MemoryHandle allocate(U16 size, std::uint64_t count, MemoryLocation location,
+        const std::filesystem::path &backing_file = {}, DiskSpaceFn disk_space = std::filesystem::space);
+    void release(MemoryHandle handle);
+    void release_all();
+
+    std::vector<MemoryHandle> m_handles;
+};
+
+MemoryHandle TestMemoryResources::allocate(const U16 size, const std::uint64_t count, const MemoryLocation location,
+    const std::filesystem::path &backing_file, const DiskSpaceFn disk_space)
+{
+    const MemoryHandle handle{memory_alloc(size, count, location, backing_file, disk_space)};
+    m_handles.push_back(handle);
+    return handle;
+}
+
+void TestMemoryResources::release(const MemoryHandle handle)
+{
+    memory_release(handle);
+    m_handles.erase(std::remove_if(m_handles.begin(), m_handles.end(),
+                        [handle](const MemoryHandle candidate) { return candidate.index == handle.index; }),
+        m_handles.end());
+}
+
+void TestMemoryResources::release_all()
+{
+    while (!m_handles.empty())
+    {
+        release(m_handles.back());
+    }
+}
+
+void TestMemoryResources::TearDown()
+{
+    release_all();
+    TestMemory::TearDown();
+}
+
+class TestMemoryBackingStorage : public TestMemoryResources
+{
+protected:
+    void SetUp() override;
+    void write_backing_file(const std::vector<Byte> &input);
+
+    std::filesystem::path m_file;
+};
+
+void TestMemoryBackingStorage::SetUp()
+{
+    TestMemoryResources::SetUp();
+    m_file = m_directory / "backing.dat";
+}
+
+void TestMemoryBackingStorage::write_backing_file(const std::vector<Byte> &input)
+{
+    std::ofstream stream{m_file, std::ios::binary};
+    stream.write(reinterpret_cast<const char *>(input.data()), input.size());
+}
+
+TEST_F(TestMemoryResources, exhaustedHandleTableCanBeRetriedAfterRelease)
+{
     for (int i = 1; i < 256; ++i)
     {
-        handles.push_back(memory_alloc(1, 1, MemoryLocation::MEMORY));
+        allocate(1, 1, MemoryLocation::MEMORY);
     }
 
-    EXPECT_THROW(memory_alloc(1, 1, MemoryLocation::MEMORY), MemoryError);
+    EXPECT_THROW(allocate(1, 1, MemoryLocation::MEMORY), MemoryError);
 
-    memory_release(handles.back());
-    const MemoryHandle retried{memory_alloc(1, 1, MemoryLocation::MEMORY)};
-    EXPECT_EQ(handles.back().index, retried.index);
-    memory_release(retried);
-    handles.pop_back();
-    for (const MemoryHandle handle : handles)
-    {
-        memory_release(handle);
-    }
+    const U16 released_index{m_handles.back().index};
+    release(m_handles.back());
+    const MemoryHandle retried{allocate(1, 1, MemoryLocation::MEMORY)};
+    EXPECT_EQ(released_index, retried.index);
+    release(retried);
+    release_all();
     EXPECT_TRUE(exit_check().empty());
 }
 
-TEST_F(TestMemory, diskAllocationFailureCanBeRetriedWithoutLeakedHandles)
+TEST_F(TestMemoryResources, diskAllocationFailureCanBeRetriedWithoutLeakedHandles)
 {
     g_temp_dir = m_directory / "missing";
 
-    EXPECT_THROW(memory_alloc(1, 4096, MemoryLocation::DISK), MemoryError);
+    EXPECT_THROW(allocate(1, 4096, MemoryLocation::DISK), MemoryError);
     EXPECT_TRUE(exit_check().empty());
 
     std::filesystem::create_directory(g_temp_dir);
-    const MemoryHandle handle{memory_alloc(1, 4096, MemoryLocation::DISK)};
+    const MemoryHandle handle{allocate(1, 4096, MemoryLocation::DISK)};
     EXPECT_EQ(1, handle.index);
-    memory_release(handle);
+    release(handle);
     EXPECT_TRUE(std::filesystem::is_empty(g_temp_dir));
 }
 
-class TestMemoryBackingFile : public TestMemory, public WithParamInterface<int>
+class TestMemoryBackingFile : public TestMemoryBackingStorage, public WithParamInterface<int>
 {
 };
 
@@ -421,60 +480,54 @@ TEST_P(TestMemoryBackingFile, availableSpaceOnlyNeedsToCoverMissingBytes)
     constexpr U16 BLOCK_SIZE{DISK_STORAGE_BLOCK_SIZE};
     constexpr std::uint64_t REQUESTED_BYTES{2 * BLOCK_SIZE};
     const std::size_t existing_bytes{static_cast<std::size_t>(static_cast<int>(REQUESTED_BYTES) + GetParam())};
-    const std::filesystem::path file{m_directory / "backing.dat"};
     const std::vector<Byte> input(existing_bytes, 37);
-    {
-        std::ofstream stream{file, std::ios::binary};
-        stream.write(reinterpret_cast<const char *>(input.data()), input.size());
-    }
+    write_backing_file(input);
 
     const DiskSpaceFn disk_space{GetParam() < 0 ? one_byte_available : no_bytes_available};
-    const MemoryHandle handle{memory_alloc(BLOCK_SIZE, 2, MemoryLocation::DISK, file, disk_space)};
+    const MemoryHandle handle{allocate(BLOCK_SIZE, 2, MemoryLocation::DISK, m_file, disk_space)};
 
     EXPECT_EQ(REQUESTED_BYTES, handle.size());
     std::vector<Byte> output(std::min<std::size_t>(existing_bytes, REQUESTED_BYTES));
     handle.to_memory(output.data(), 1, output.size(), 0);
     EXPECT_THAT(output, Each(37));
-    memory_release(handle);
-    EXPECT_EQ(std::max<std::uint64_t>(existing_bytes, REQUESTED_BYTES), std::filesystem::file_size(file));
+    release(handle);
+    EXPECT_EQ(std::max<std::uint64_t>(existing_bytes, REQUESTED_BYTES), std::filesystem::file_size(m_file));
     EXPECT_TRUE(exit_check().empty());
 }
 
 INSTANTIATE_TEST_SUITE_P(SmallerEqualLarger, TestMemoryBackingFile, Values(-1, 0, 1));
 
-TEST_F(TestMemory, insufficientSpaceForBackingFileGrowthDoesNotChangeItOrLeakHandles)
+TEST_F(TestMemoryBackingStorage, insufficientSpaceForBackingFileGrowthDoesNotChangeItOrLeakHandles)
 {
-    const std::filesystem::path file{m_directory / "backing.dat"};
-    std::ofstream(file, std::ios::binary) << "1234";
+    write_backing_file({'1', '2', '3', '4'});
 
-    EXPECT_THROW(memory_alloc(1, 6, MemoryLocation::DISK, file, one_byte_available), MemoryError);
+    EXPECT_THROW(allocate(1, 6, MemoryLocation::DISK, m_file, one_byte_available), MemoryError);
 
-    EXPECT_EQ(4U, std::filesystem::file_size(file));
+    EXPECT_EQ(4U, std::filesystem::file_size(m_file));
     EXPECT_TRUE(exit_check().empty());
-    const MemoryHandle handle{memory_alloc(1, 5, MemoryLocation::DISK, file, one_byte_available)};
+    const MemoryHandle handle{allocate(1, 5, MemoryLocation::DISK, m_file, one_byte_available)};
     EXPECT_EQ(1, handle.index);
-    memory_release(handle);
-    EXPECT_EQ(5U, std::filesystem::file_size(file));
+    release(handle);
+    EXPECT_EQ(5U, std::filesystem::file_size(m_file));
 }
 
-TEST_F(TestMemory, newTemporaryFileRequiresItsFullSizeInAvailableSpace)
+TEST_F(TestMemoryResources, newTemporaryFileRequiresItsFullSizeInAvailableSpace)
 {
-    EXPECT_THROW(memory_alloc(1, 2, MemoryLocation::DISK, {}, one_byte_available), MemoryError);
+    EXPECT_THROW(allocate(1, 2, MemoryLocation::DISK, {}, one_byte_available), MemoryError);
     EXPECT_TRUE(exit_check().empty());
     EXPECT_TRUE(std::filesystem::is_empty(m_directory));
 
-    const MemoryHandle handle{memory_alloc(1, 1, MemoryLocation::DISK, {}, one_byte_available)};
+    const MemoryHandle handle{allocate(1, 1, MemoryLocation::DISK, {}, one_byte_available)};
     EXPECT_EQ(1, handle.index);
-    memory_release(handle);
+    release(handle);
     EXPECT_TRUE(std::filesystem::is_empty(m_directory));
 }
 
-TEST_F(TestMemory, shortReadReportsFailureAndAllowsRepairAndRetry)
+TEST_F(TestMemoryBackingStorage, shortReadReportsFailureAndAllowsRepairAndRetry)
 {
-    const std::filesystem::path file{m_directory / "backing.dat"};
-    std::ofstream(file, std::ios::binary) << "1234";
-    const MemoryHandle handle{memory_alloc(1, 4, MemoryLocation::DISK, file)};
-    std::filesystem::resize_file(file, 1);
+    write_backing_file({'1', '2', '3', '4'});
+    const MemoryHandle handle{allocate(1, 4, MemoryLocation::DISK, m_file)};
+    std::filesystem::resize_file(m_file, 1);
     std::array<Byte, 4> buffer{};
 
     EXPECT_THROW(handle.to_memory(buffer.data(), 1, 4, 0), MemoryError);
@@ -483,24 +536,24 @@ TEST_F(TestMemory, shortReadReportsFailureAndAllowsRepairAndRetry)
     handle.from_memory(repaired.data(), 1, repaired.size(), 0);
     handle.to_memory(buffer.data(), 1, buffer.size(), 0);
     EXPECT_EQ(repaired, buffer);
-    memory_release(handle);
-    EXPECT_TRUE(std::filesystem::exists(file));
-    EXPECT_EQ(4U, std::filesystem::file_size(file));
+    release(handle);
+    EXPECT_TRUE(std::filesystem::exists(m_file));
+    EXPECT_EQ(4U, std::filesystem::file_size(m_file));
     EXPECT_TRUE(exit_check().empty());
 }
 
-TEST_F(TestMemory, releaseUsesTheAllocatedPathRatherThanCurrentTempDirectory)
+TEST_F(TestMemoryResources, releaseUsesTheAllocatedPathRatherThanCurrentTempDirectory)
 {
-    const MemoryHandle handle{memory_alloc(1, 16, MemoryLocation::DISK)};
+    const MemoryHandle handle{allocate(1, 16, MemoryLocation::DISK)};
     ASSERT_FALSE(std::filesystem::is_empty(m_directory));
     g_temp_dir = m_directory / "elsewhere";
 
-    memory_release(handle);
+    release(handle);
 
     EXPECT_TRUE(std::filesystem::is_empty(m_directory));
 }
 
-TEST_F(TestMemory, shutdownReturnsReportsAfterReleasingAllResources)
+TEST_F(TestMemoryResources, shutdownReturnsReportsAfterReleasingAllResources)
 {
     memory_alloc(1, 16, MemoryLocation::MEMORY);
     memory_alloc(1, 16, MemoryLocation::DISK);
@@ -511,9 +564,9 @@ TEST_F(TestMemory, shutdownReturnsReportsAfterReleasingAllResources)
 
     EXPECT_TRUE(std::filesystem::is_empty(m_directory));
     EXPECT_TRUE(exit_check().empty());
-    const MemoryHandle handle{memory_alloc(1, 16, MemoryLocation::MEMORY)};
+    const MemoryHandle handle{allocate(1, 16, MemoryLocation::MEMORY)};
     EXPECT_EQ(1, handle.index);
-    memory_release(handle);
+    release(handle);
 }
 
 } // namespace id::test
