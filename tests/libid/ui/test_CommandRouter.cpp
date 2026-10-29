@@ -890,10 +890,10 @@ void PrintTo(const RouterRdsInput &input, std::ostream *out)
     *out << input.name;
 }
 
-class TestAcceptedRouterRds : public TestCommandRouter, public WithParamInterface<RouterRdsInput>
+class TestRouterRdsState : public TestCommandRouter
 {
 protected:
-    void SetUp() override;
+    void prepare_state(const RouterRdsState &initial);
 
     ValueSaver<bool> m_saved_rds_batch{g_auto_stereo_batch};
     ValueSaver<bool> m_saved_texture{g_use_stereo_texture};
@@ -903,16 +903,26 @@ protected:
     ValueSaver<bool> m_saved_reuse{g_stereo_texture_reuse};
 };
 
-void TestAcceptedRouterRds::SetUp()
+void TestRouterRdsState::prepare_state(const RouterRdsState &initial)
 {
-    TestCommandRouter::SetUp();
-    const RouterRdsState &initial{GetParam().initial};
     g_auto_stereo_batch = initial.batch;
     g_use_stereo_texture = initial.texture;
     g_auto_stereo_depth = initial.depth;
     g_calibrate = initial.bars;
     g_stereo_texture_filename = initial.filename;
     g_stereo_texture_reuse = initial.reuse;
+}
+
+class TestAcceptedRouterRds : public TestRouterRdsState, public WithParamInterface<RouterRdsInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestAcceptedRouterRds::SetUp()
+{
+    TestRouterRdsState::SetUp();
+    prepare_state(GetParam().initial);
 }
 
 TEST_P(TestAcceptedRouterRds, returnsTheExpectedStereoSettings)
@@ -963,96 +973,160 @@ INSTANTIATE_TEST_SUITE_P(Settings, TestAcceptedRouterRds,
             {true, false, 77, CalibrationBars::TOP, "", false}}),
     [](const TestParamInfo<RouterRdsInput> &info) { return info.param.name; });
 
-TEST_F(TestCommandRouter, invalidRdsParametersLeaveSettingsUnchangedAndDiagnoseOnce)
+class TestRejectedRouterRds : public TestRouterRdsState, public WithParamInterface<RouterRdsInput>
 {
-    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch};
-    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
-    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
-    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
-    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
-    const CommandRouter router;
-    for (const bool automatic : {false, true})
-    {
-        SCOPED_TRACE(automatic);
-        g_auto_stereo_batch = automatic;
-        for (const std::string_view command :
-            {"rds=", "rds=fmeh", "rds=no/1", "rds=no//", "rds=random/deep", "rds=random/1.5", "rds=random/100/bottom",
-                "rds=random/100/-1", "rds=random/100/3", "rds=random/100/1.5", "rds=random/100/top/extra"})
-        {
-            SCOPED_TRACE(command);
-            CommandProcessor processor{command, CmdFile::AT_AFTER_STARTUP};
+protected:
+    void SetUp() override;
+};
 
-            const CommandParseResult result{router.process(processor)};
-
-            EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-            EXPECT_THAT(result.diagnostics.errors,
-                ElementsAre("Oops. I couldn't understand the argument:\n  " + std::string{command}));
-            EXPECT_EQ(automatic, g_auto_stereo_batch);
-            EXPECT_EQ(77, g_auto_stereo_depth);
-            EXPECT_EQ(CalibrationBars::MIDDLE, g_calibrate);
-            EXPECT_TRUE(g_use_stereo_texture);
-            EXPECT_EQ("old.gif", g_stereo_texture_filename);
-            EXPECT_TRUE(g_stereo_texture_reuse);
-        }
-    }
+void TestRejectedRouterRds::SetUp()
+{
+    TestRouterRdsState::SetUp();
+    prepare_state(GetParam().initial);
 }
 
-TEST_F(TestCommandRouter, rdsTexturePreservesFilenameCaseAndAutomaticConversion)
+TEST_P(TestRejectedRouterRds, invalidParametersPreserveAllStereoSettings)
 {
+    CommandProcessor processor{GetParam().command, CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
-    for (const CmdFile mode : {CmdFile::AT_CMD_LINE, CmdFile::AT_AFTER_STARTUP})
-    {
-        SCOPED_TRACE(static_cast<int>(mode));
-        for (const bool automatic : {false, true})
-        {
-            SCOPED_TRACE(automatic);
-            ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, automatic};
-            ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
-            ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
-            ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
-            CommandProcessor processor{"rds-texture=Images/MixedCaseMap.GIF", mode};
 
-            const CommandParseResult result{router.process(processor)};
+    const CommandParseResult result{router.process(processor)};
 
-            EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
-            EXPECT_TRUE(result.diagnostics.errors.empty());
-            EXPECT_TRUE(result.diagnostics.warnings.empty());
-            EXPECT_EQ("Images/MixedCaseMap.GIF", g_stereo_texture_filename);
-            EXPECT_TRUE(g_use_stereo_texture);
-            EXPECT_TRUE(g_stereo_texture_reuse);
-            EXPECT_EQ(automatic, g_auto_stereo_batch);
-        }
-    }
+    const RouterRdsState &expected{GetParam().expected};
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+    EXPECT_THAT(result.diagnostics.errors,
+        ElementsAre("Oops. I couldn't understand the argument:\n  " + std::string{GetParam().command}));
+    EXPECT_EQ(expected.batch, g_auto_stereo_batch);
+    EXPECT_EQ(expected.depth, g_auto_stereo_depth);
+    EXPECT_EQ(expected.bars, g_calibrate);
+    EXPECT_EQ(expected.texture, g_use_stereo_texture);
+    EXPECT_EQ(expected.filename, g_stereo_texture_filename);
+    EXPECT_EQ(expected.reuse, g_stereo_texture_reuse);
 }
 
-TEST_F(TestCommandRouter, rdsTextureEmptyPreservesTextureSelectionAndAutomaticConversion)
+INSTANTIATE_TEST_SUITE_P(RejectedSettings, TestRejectedRouterRds,
+    Values(RouterRdsInput{"EmptyManual", "rds=", {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+               {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"UnknownModeManual", "rds=fmeh", {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"NoWithDepthManual", "rds=no/1", {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"NoWithEmptyFieldsManual", "rds=no//",
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"NonNumericDepthManual", "rds=random/deep",
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"FractionalDepthManual", "rds=random/1.5",
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"UnknownBarsManual", "rds=random/100/bottom",
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"NegativeBarsManual", "rds=random/100/-1",
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"TooManyBarsManual", "rds=random/100/3",
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"FractionalBarsManual", "rds=random/100/1.5",
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"ExtraFieldManual", "rds=random/100/top/extra",
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {false, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"EmptyAutomatic", "rds=", {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"UnknownModeAutomatic", "rds=fmeh", {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"NoWithDepthAutomatic", "rds=no/1", {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"NoWithEmptyFieldsAutomatic", "rds=no//",
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"NonNumericDepthAutomatic", "rds=random/deep",
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"FractionalDepthAutomatic", "rds=random/1.5",
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"UnknownBarsAutomatic", "rds=random/100/bottom",
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"NegativeBarsAutomatic", "rds=random/100/-1",
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"TooManyBarsAutomatic", "rds=random/100/3",
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"FractionalBarsAutomatic", "rds=random/100/1.5",
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"ExtraFieldAutomatic", "rds=random/100/top/extra",
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true},
+            {true, true, 77, CalibrationBars::MIDDLE, "old.gif", true}}),
+    [](const TestParamInfo<RouterRdsInput> &info) { return info.param.name; });
+
+struct RouterTextureInput
 {
-    const CommandRouter router;
-    for (const bool use_texture : {false, true})
-    {
-        SCOPED_TRACE(use_texture);
-        for (const bool automatic : {false, true})
-        {
-            SCOPED_TRACE(automatic);
-            ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, automatic};
-            ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
-            ValueSaver saved_use_stereo_texture{g_use_stereo_texture, use_texture};
-            ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
-            CommandProcessor processor{"rds-texture=", CmdFile::AT_AFTER_STARTUP};
+    const char *name;
+    const char *filename;
+    CmdFile mode;
+    bool automatic;
+    bool initial_texture;
+    bool initial_reuse;
+    bool expected_texture;
+    bool expected_reuse;
+};
 
-            const CommandParseResult result{router.process(processor)};
-
-            EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
-            EXPECT_TRUE(result.diagnostics.errors.empty());
-            EXPECT_TRUE(result.diagnostics.warnings.empty());
-            EXPECT_TRUE(g_stereo_texture_filename.empty());
-            EXPECT_EQ(use_texture, g_use_stereo_texture);
-            EXPECT_FALSE(g_stereo_texture_reuse);
-            EXPECT_EQ(automatic, g_auto_stereo_batch);
-        }
-    }
+void PrintTo(const RouterTextureInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestRouterStereoTexture : public TestRouterRdsState, public WithParamInterface<RouterTextureInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestRouterStereoTexture::SetUp()
+{
+    TestRouterRdsState::SetUp();
+    prepare_state({GetParam().automatic, GetParam().initial_texture, g_auto_stereo_depth, g_calibrate, "old.gif",
+        GetParam().initial_reuse});
+}
+
+TEST_P(TestRouterStereoTexture, preservesFilenameAndAutomaticConversionSemantics)
+{
+    CommandProcessor processor{"rds-texture=" + std::string{GetParam().filename}, GetParam().mode};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_TRUE(result.diagnostics.warnings.empty());
+    EXPECT_EQ(GetParam().filename, g_stereo_texture_filename);
+    EXPECT_EQ(GetParam().expected_texture, g_use_stereo_texture);
+    EXPECT_EQ(GetParam().expected_reuse, g_stereo_texture_reuse);
+    EXPECT_EQ(GetParam().automatic, g_auto_stereo_batch);
+}
+
+INSTANTIATE_TEST_SUITE_P(Textures, TestRouterStereoTexture,
+    Values(RouterTextureInput{"StartupManual", "Images/MixedCaseMap.GIF", CmdFile::AT_CMD_LINE, false, false, false,
+               true, true},
+        RouterTextureInput{
+            "StartupAutomatic", "Images/MixedCaseMap.GIF", CmdFile::AT_CMD_LINE, true, false, false, true, true},
+        RouterTextureInput{
+            "InteractiveManual", "Images/MixedCaseMap.GIF", CmdFile::AT_AFTER_STARTUP, false, false, false, true, true},
+        RouterTextureInput{"InteractiveAutomatic", "Images/MixedCaseMap.GIF", CmdFile::AT_AFTER_STARTUP, true, false,
+            false, true, true},
+        RouterTextureInput{"EmptyUnselectedManual", "", CmdFile::AT_AFTER_STARTUP, false, false, true, false, false},
+        RouterTextureInput{"EmptyUnselectedAutomatic", "", CmdFile::AT_AFTER_STARTUP, true, false, true, false, false},
+        RouterTextureInput{"EmptySelectedManual", "", CmdFile::AT_AFTER_STARTUP, false, true, true, true, false},
+        RouterTextureInput{"EmptySelectedAutomatic", "", CmdFile::AT_AFTER_STARTUP, true, true, true, true, false}),
+    [](const TestParamInfo<RouterTextureInput> &info) { return info.param.name; });
 
 class TestCommandRouterFile : public TestCommandRouter
 {
