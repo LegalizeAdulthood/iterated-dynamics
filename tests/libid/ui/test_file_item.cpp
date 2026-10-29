@@ -127,35 +127,62 @@ INSTANTIATE_TEST_SUITE_P(Entry, TestFindFileItemInputs,
             "LSystemCaseVariant", ItemType::L_SYSTEM, data::ID_TEST_LSYSTEM_DIR, data::ID_TEST_LSYSTEM_FILE, "koch1"}),
     [](const testing::TestParamInfo<FileItemInput> &info) { return info.param.name; });
 
-TEST_F(TestFindFileItem, diagnosticLookupRejectsEmptyNameWithoutPolling)
+struct FileItemDiagnosticInput
 {
-    id::misc::test::MockDriver driver;
-    ValueSaver saved_driver{g_driver, &driver};
-    EXPECT_CALL(driver, key_pressed()).Times(0);
-    EXPECT_CALL(driver, get_key()).Times(0);
-    std::string diagnostic;
-    m_path = fs::path{data::ID_TEST_IFS_DIR} / data::ID_TEST_IFS_FILE;
+    FileItemInput item;
+    const char *diagnostic;
+    bool batch;
+};
 
-    EXPECT_TRUE(find_file_item(m_path, "", &m_file, ItemType::IFS, diagnostic));
+void PrintTo(const FileItemDiagnosticInput &input, std::ostream *out)
+{
+    *out << input.item.name;
+}
 
-    EXPECT_EQ("File entry item name is empty", diagnostic);
+class TestFileItemDiagnostics : public TestFindFileItem, public testing::WithParamInterface<FileItemDiagnosticInput>
+{
+protected:
+    void SetUp() override;
+
+    id::misc::test::MockDriver m_driver;
+    ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
+    ValueSaver<bool> m_saved_first_init{g_first_init};
+    ValueSaver<BatchMode> m_saved_batch{g_init_batch};
+};
+
+void TestFileItemDiagnostics::SetUp()
+{
+    TestFindFileItem::SetUp();
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    if (GetParam().batch)
+    {
+        g_first_init = false;
+        g_init_batch = BatchMode::NORMAL;
+    }
+    m_path = fs::path{GetParam().item.directory} / GetParam().item.filename;
+}
+
+TEST_P(TestFileItemDiagnostics, reportsLookupFailureWithoutPolling)
+{
+    const bool result{find_file_item(m_path, GetParam().item.entry, &m_file, GetParam().item.type, m_diagnostic)};
+
+    EXPECT_TRUE(result);
+    EXPECT_EQ(GetParam().diagnostic, m_diagnostic);
     EXPECT_EQ(nullptr, m_file);
 }
 
-TEST_F(TestFindFileItem, diagnosticLookupReportsMissingEntryWithoutPolling)
-{
-    id::misc::test::MockDriver driver;
-    ValueSaver saved_driver{g_driver, &driver};
-    EXPECT_CALL(driver, key_pressed()).Times(0);
-    EXPECT_CALL(driver, get_key()).Times(0);
-    std::string diagnostic;
-    m_path = fs::path{data::ID_TEST_IFS_DIR} / data::ID_TEST_IFS_FILE;
-
-    EXPECT_TRUE(find_file_item(m_path, "missing-test-entry", &m_file, ItemType::IFS, diagnostic));
-
-    EXPECT_EQ("'missing-test-entry' file entry item not found", diagnostic);
-    EXPECT_EQ(nullptr, m_file);
-}
+INSTANTIATE_TEST_SUITE_P(Failure, TestFileItemDiagnostics,
+    testing::Values(
+        FileItemDiagnosticInput{{"EmptyIfs", ItemType::IFS, data::ID_TEST_IFS_DIR, data::ID_TEST_IFS_FILE, ""},
+            "File entry item name is empty", false},
+        FileItemDiagnosticInput{
+            {"MissingIfs", ItemType::IFS, data::ID_TEST_IFS_DIR, data::ID_TEST_IFS_FILE, "missing-test-entry"},
+            "'missing-test-entry' file entry item not found", false},
+        FileItemDiagnosticInput{
+            {"EmptyLSystem", ItemType::L_SYSTEM, data::ID_TEST_LSYSTEM_DIR, data::ID_TEST_LSYSTEM_FILE, ""},
+            "File entry item name is empty", true}),
+    [](const testing::TestParamInfo<FileItemDiagnosticInput> &info) { return info.param.item.name; });
 
 TEST_F(TestFindFileItem, diagnosticLookupClearsOldErrorAndReturnsPositionedFile)
 {
@@ -167,19 +194,6 @@ TEST_F(TestFindFileItem, diagnosticLookupClearsOldErrorAndReturnsPositionedFile)
     EXPECT_TRUE(diagnostic.empty());
     ASSERT_NE(nullptr, m_file);
     EXPECT_EQ(data::ID_TEST_FIRST_IFS_NAME[0], std::fgetc(m_file));
-}
-
-TEST_F(TestFindFileItem, emptyItemName)
-{
-    ValueSaver saved_first_init{g_first_init, false};
-    ValueSaver saved_init_batch{g_init_batch, BatchMode::NORMAL};
-    m_path = data::ID_TEST_LSYSTEM_DIR;
-    m_path /= data::ID_TEST_LSYSTEM_FILE;
-
-    const bool result{find_file_item(m_path, "", &m_file, ItemType::L_SYSTEM, m_diagnostic)};
-
-    EXPECT_TRUE(result);
-    EXPECT_EQ(nullptr, m_file);
 }
 
 namespace
@@ -286,44 +300,31 @@ protected:
 
 } // namespace
 
-TEST_F(TestFindFileItemCurrentDir, formula)
+class TestCurrentDirectoryFileItemInputs : public TestFindFileItemCurrentDir,
+                                           public testing::WithParamInterface<FileItemInput>
 {
-    CurrentPathSaver cur_dir{data::ID_TEST_FRM_DIR};
-    m_path /= data::ID_TEST_FRM_FILE;
+};
 
-    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA, m_diagnostic)};
+TEST_P(TestCurrentDirectoryFileItemInputs, findsEntryInTheCurrentDirectory)
+{
+    CurrentPathSaver cur_dir{GetParam().directory};
+    m_path /= GetParam().filename;
+
+    const bool result{find_file_item(m_path, GetParam().entry, &m_file, GetParam().type, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(data::ID_TEST_FRM_FILE, m_path.filename());
-    EXPECT_EQ(fs::current_path() / data::ID_TEST_FRM_FILE, fs::absolute(m_path));
+    EXPECT_EQ(GetParam().filename, m_path.filename());
+    EXPECT_EQ(fs::current_path() / GetParam().filename, fs::absolute(m_path));
 }
 
-TEST_F(TestFindFileItemCurrentDir, ifs)
-{
-    CurrentPathSaver cur_dir{data::ID_TEST_IFS_DIR};
-    m_path /= data::ID_TEST_IFS_FILE;
-
-    const bool result{find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS, m_diagnostic)};
-
-    EXPECT_FALSE(result);
-    EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(data::ID_TEST_IFS_FILE, m_path.filename());
-    EXPECT_EQ(fs::current_path() / data::ID_TEST_IFS_FILE, fs::absolute(m_path));
-}
-
-TEST_F(TestFindFileItemCurrentDir, lindenmayerSystem)
-{
-    CurrentPathSaver cur_dir{data::ID_TEST_LSYSTEM_DIR};
-    m_path /= data::ID_TEST_LSYSTEM_FILE;
-
-    const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM, m_diagnostic)};
-
-    EXPECT_FALSE(result);
-    EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(data::ID_TEST_LSYSTEM_FILE, m_path.filename());
-    EXPECT_EQ(fs::current_path() / data::ID_TEST_LSYSTEM_FILE, fs::absolute(m_path));
-}
+INSTANTIATE_TEST_SUITE_P(Type, TestCurrentDirectoryFileItemInputs,
+    testing::Values(
+        FileItemInput{"Formula", ItemType::FORMULA, data::ID_TEST_FRM_DIR, data::ID_TEST_FRM_FILE, "Fractint"},
+        FileItemInput{
+            "Ifs", ItemType::IFS, data::ID_TEST_IFS_DIR, data::ID_TEST_IFS_FILE, data::ID_TEST_FIRST_IFS_NAME},
+        FileItemInput{"LSystem", ItemType::L_SYSTEM, data::ID_TEST_LSYSTEM_DIR, data::ID_TEST_LSYSTEM_FILE, "Koch1"}),
+    [](const testing::TestParamInfo<FileItemInput> &info) { return info.param.name; });
 
 namespace
 {
@@ -349,40 +350,28 @@ protected:
 
 } // namespace
 
-TEST_F(TestFindFileItemLibrary, formula)
+class TestLibraryFileItemInputs : public TestFindFileItemLibrary, public testing::WithParamInterface<FileItemInput>
 {
-    m_path = library::ID_TEST_LIBRARY_DIR;
-    m_path /= library::ID_TEST_FORMULA_FILE2;
+};
 
-    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA, m_diagnostic)};
+TEST_P(TestLibraryFileItemInputs, findsEntryInTheLibrary)
+{
+    m_path = fs::path{library::ID_TEST_LIBRARY_DIR} / GetParam().filename;
+
+    const bool result{find_file_item(m_path, GetParam().entry, &m_file, GetParam().type, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(file(data::ID_TEST_FRM_SUBDIR, library::ID_TEST_FORMULA_FILE2), m_path);
+    EXPECT_EQ(file(GetParam().directory, GetParam().filename), m_path);
 }
 
-TEST_F(TestFindFileItemLibrary, ifs)
-{
-    m_path = library::ID_TEST_LIBRARY_DIR;
-    m_path /= library::ID_TEST_IFS_FILE2;
-
-    const bool result{find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS, m_diagnostic)};
-
-    EXPECT_FALSE(result);
-    EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(file(data::ID_TEST_IFS_SUBDIR, library::ID_TEST_IFS_FILE2), m_path);
-}
-
-TEST_F(TestFindFileItemLibrary, lindenmayerSystem)
-{
-    m_path = library::ID_TEST_LIBRARY_DIR;
-    m_path /= library::ID_TEST_LSYSTEM_FILE2;
-
-    const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM, m_diagnostic)};
-
-    EXPECT_FALSE(result);
-    EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(file(data::ID_TEST_LSYSTEM_SUBDIR, library::ID_TEST_LSYSTEM_FILE2), m_path);
-}
+INSTANTIATE_TEST_SUITE_P(Type, TestLibraryFileItemInputs,
+    testing::Values(FileItemInput{"Formula", ItemType::FORMULA, data::ID_TEST_FRM_SUBDIR,
+                        library::ID_TEST_FORMULA_FILE2, "Fractint"},
+        FileItemInput{
+            "Ifs", ItemType::IFS, data::ID_TEST_IFS_SUBDIR, library::ID_TEST_IFS_FILE2, data::ID_TEST_FIRST_IFS_NAME},
+        FileItemInput{
+            "LSystem", ItemType::L_SYSTEM, data::ID_TEST_LSYSTEM_SUBDIR, library::ID_TEST_LSYSTEM_FILE2, "Koch1"}),
+    [](const testing::TestParamInfo<FileItemInput> &info) { return info.param.name; });
 
 } // namespace id::test
