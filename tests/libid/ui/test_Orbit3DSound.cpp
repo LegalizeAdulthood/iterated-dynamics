@@ -41,6 +41,7 @@
 #include <fstream>
 #include <functional>
 #include <memory>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -103,7 +104,7 @@ int calculate_sound_orbit(double *x, double *y, double *z)
 
 } // namespace
 
-class TestOrbit3DSound : public TestWithParam<FractalType>
+class Orbit3DSoundTestState : public Test
 {
 protected:
     void SetUp() override;
@@ -112,6 +113,7 @@ protected:
     int render(SoundSession &sound);
     void create_save_directory();
 
+    FractalType m_fractal_type{FractalType::LORENZ_3D};
     MockDriver m_driver;
     std::shared_ptr<StrictMock<MockOrbit3DSound>> m_output{std::make_shared<StrictMock<MockOrbit3DSound>>()};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
@@ -165,13 +167,13 @@ protected:
     bool m_ready{true};
 };
 
-void TestOrbit3DSound::SetUp()
+void Orbit3DSoundTestState::SetUp()
 {
     reset_calc_interrupted();
     s_math_calls = 0;
     s_limit = 102;
     s_on_orbit = {};
-    g_fractal_type = GetParam();
+    g_fractal_type = m_fractal_type;
     g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
     g_dispatch = FractalDispatch{*g_cur_fractal_specific};
     g_dispatch.set_orbit_calc(reinterpret_cast<OrbitCalc>(calculate_sound_orbit));
@@ -216,7 +218,7 @@ void TestOrbit3DSound::SetUp()
     EXPECT_CALL(*m_output, finish()).WillRepeatedly(Return(true));
 }
 
-void TestOrbit3DSound::TearDown()
+void Orbit3DSoundTestState::TearDown()
 {
     reset_calc_interrupted();
     s_on_orbit = {};
@@ -228,7 +230,7 @@ void TestOrbit3DSound::TearDown()
     }
 }
 
-void TestOrbit3DSound::run(Orbit3D &calculation)
+void Orbit3DSoundTestState::run(Orbit3D &calculation)
 {
     for (int increments = 0; increments < 10000; ++increments)
     {
@@ -241,7 +243,7 @@ void TestOrbit3DSound::run(Orbit3D &calculation)
     FAIL() << "Orbit3D did not complete";
 }
 
-void TestOrbit3DSound::create_save_directory()
+void Orbit3DSoundTestState::create_save_directory()
 {
     m_directory = std::filesystem::temp_directory_path() /
         ("id-orbit3d-sound-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
@@ -249,7 +251,7 @@ void TestOrbit3DSound::create_save_directory()
     set_save_library(m_directory);
 }
 
-int TestOrbit3DSound::render(SoundSession &sound)
+int Orbit3DSoundTestState::render(SoundSession &sound)
 {
     NonStandardFractal calculation;
     calculation.start();
@@ -268,99 +270,194 @@ int TestOrbit3DSound::render(SoundSession &sound)
     return result;
 }
 
-TEST_P(TestOrbit3DSound, selectsEvery3dOrbitWithoutRenderingOrPolling)
+class TestOrbit3DSound : public Orbit3DSoundTestState, public WithParamInterface<FractalType>
 {
-    EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    EXPECT_CALL(m_driver, get_key()).Times(0);
-    for (const FractalType type :
-        {FractalType::KAM_3D, FractalType::LORENZ_3D, FractalType::ROSSLER, FractalType::PICKOVER,
-            FractalType::LORENZ_3D1, FractalType::LORENZ_3D3, FractalType::LORENZ_3D4, FractalType::ICON_3D})
-    {
-        g_fractal_type = type;
-        g_cur_fractal_specific = get_fractal_specific(type);
-        g_dispatch = FractalDispatch{*g_cur_fractal_specific};
-        EXPECT_EQ(nullptr, g_cur_fractal_specific->calc_type);
-        NonStandardFractal calculation;
-        calculation.start();
+protected:
+    void SetUp() override;
+};
 
-        EXPECT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
-
-        EXPECT_FALSE(calculation.done());
-        EXPECT_FALSE(calculation.view_done());
-        EXPECT_EQ(0, g_color_iter);
-        EXPECT_EQ(0, s_math_calls);
-        EXPECT_TRUE(m_plots.empty());
-        EXPECT_TRUE(m_samples.empty());
-        calculation.suspend();
-        EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
-    }
+void TestOrbit3DSound::SetUp()
+{
+    m_fractal_type = GetParam();
+    Orbit3DSoundTestState::SetUp();
 }
 
-TEST_P(TestOrbit3DSound, selectedViewsRequireExplicitAdvanceAndRestartOrbitState)
+struct Orbit3DSelectionInput
 {
-    EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    EXPECT_CALL(m_driver, get_key()).Times(0);
-    for (const GlassesType glasses : {GlassesType::PHOTO, GlassesType::STEREO_PAIR})
-    {
-        g_glasses_type = glasses;
-        NonStandardFractal calculation;
-        calculation.start();
-        ASSERT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
-        EXPECT_EQ(StereoImage::RED, g_which_image);
-        EXPECT_THROW(calculation.next_view(), std::logic_error);
-        for (int point = 0; point < 103; ++point)
-        {
-            calculation.iterate();
-        }
+    const char *name;
+    FractalType type;
+};
 
-        ASSERT_TRUE(calculation.view_done());
-        EXPECT_FALSE(calculation.done());
-        EXPECT_EQ(CalcStatus::IN_PROGRESS, g_calc_status);
-        EXPECT_THROW(calculation.iterate(), std::logic_error);
-        calculation.next_view();
-
-        EXPECT_EQ(StereoImage::BLUE, g_which_image);
-        EXPECT_EQ(0, g_color_iter);
-        EXPECT_FALSE(calculation.view_done());
-        for (int point = 0; point < 103; ++point)
-        {
-            calculation.iterate();
-        }
-        EXPECT_TRUE(calculation.done());
-        EXPECT_TRUE(calculation.completed());
-        EXPECT_THROW(calculation.next_view(), std::logic_error);
-        calculation.finish(false);
-    }
+void PrintTo(const Orbit3DSelectionInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_P(TestOrbit3DSound, selectedInterruptionIsNonResumableInEitherView)
+class TestOrbit3DSelection : public Orbit3DSoundTestState, public WithParamInterface<Orbit3DSelectionInput>
 {
-    g_glasses_type = GlassesType::PHOTO;
+protected:
+    void SetUp() override;
+};
+
+void TestOrbit3DSelection::SetUp()
+{
+    m_fractal_type = GetParam().type;
+    Orbit3DSoundTestState::SetUp();
+    g_dispatch = FractalDispatch{*g_cur_fractal_specific};
+}
+
+TEST_P(TestOrbit3DSelection, selectsOrbitWithoutRenderingOrPolling)
+{
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, get_key()).Times(0);
-    for (const bool second_eye : {false, true})
+    EXPECT_EQ(nullptr, g_cur_fractal_specific->calc_type);
+    NonStandardFractal calculation;
+    calculation.start();
+
+    EXPECT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
+
+    EXPECT_FALSE(calculation.done());
+    EXPECT_FALSE(calculation.view_done());
+    EXPECT_EQ(0, g_color_iter);
+    EXPECT_EQ(0, s_math_calls);
+    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(m_samples.empty());
+    calculation.suspend();
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+}
+
+INSTANTIATE_TEST_SUITE_P(Orbits, TestOrbit3DSelection,
+    Values(Orbit3DSelectionInput{"Kam3D", FractalType::KAM_3D},
+        Orbit3DSelectionInput{"Lorenz3D", FractalType::LORENZ_3D},
+        Orbit3DSelectionInput{"Rossler", FractalType::ROSSLER},
+        Orbit3DSelectionInput{"Pickover", FractalType::PICKOVER},
+        Orbit3DSelectionInput{"Lorenz3D1", FractalType::LORENZ_3D1},
+        Orbit3DSelectionInput{"Lorenz3D3", FractalType::LORENZ_3D3},
+        Orbit3DSelectionInput{"Lorenz3D4", FractalType::LORENZ_3D4},
+        Orbit3DSelectionInput{"Icon3D", FractalType::ICON_3D}),
+    [](const TestParamInfo<Orbit3DSelectionInput> &info) { return info.param.name; });
+
+struct Orbit3DViewInput
+{
+    const char *name;
+    FractalType type;
+    GlassesType glasses;
+};
+
+void PrintTo(const Orbit3DViewInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestOrbit3DViews : public Orbit3DSoundTestState, public WithParamInterface<Orbit3DViewInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestOrbit3DViews::SetUp()
+{
+    m_fractal_type = GetParam().type;
+    Orbit3DSoundTestState::SetUp();
+    g_glasses_type = GetParam().glasses;
+}
+
+TEST_P(TestOrbit3DViews, requiresExplicitAdvanceAndRestartsOrbitState)
+{
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    NonStandardFractal calculation;
+    calculation.start();
+    ASSERT_EQ(NonStandardFractal::Operation::ORBIT_3D, calculation.select());
+    EXPECT_EQ(StereoImage::RED, g_which_image);
+    EXPECT_THROW(calculation.next_view(), std::logic_error);
+    for (int point = 0; point < 103; ++point)
     {
-        NonStandardFractal calculation;
-        calculation.start();
-        calculation.select();
-        if (second_eye)
-        {
-            for (int point = 0; point < 103; ++point)
-            {
-                calculation.iterate();
-            }
-            calculation.next_view();
-        }
         calculation.iterate();
-
-        calculation.suspend();
-
-        EXPECT_TRUE(calculation.done());
-        EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
-        EXPECT_TRUE(g_resume_data.empty());
-        EXPECT_THROW(calculation.view_done(), std::logic_error);
     }
+
+    ASSERT_TRUE(calculation.view_done());
+    EXPECT_FALSE(calculation.done());
+    EXPECT_EQ(CalcStatus::IN_PROGRESS, g_calc_status);
+    EXPECT_THROW(calculation.iterate(), std::logic_error);
+    calculation.next_view();
+
+    EXPECT_EQ(StereoImage::BLUE, g_which_image);
+    EXPECT_EQ(0, g_color_iter);
+    EXPECT_FALSE(calculation.view_done());
+    for (int point = 0; point < 103; ++point)
+    {
+        calculation.iterate();
+    }
+    EXPECT_TRUE(calculation.done());
+    EXPECT_TRUE(calculation.completed());
+    EXPECT_THROW(calculation.next_view(), std::logic_error);
+    calculation.finish(false);
 }
+
+INSTANTIATE_TEST_SUITE_P(Views, TestOrbit3DViews,
+    Values(Orbit3DViewInput{"LorenzPhoto", FractalType::LORENZ_3D, GlassesType::PHOTO},
+        Orbit3DViewInput{"LorenzStereoPair", FractalType::LORENZ_3D, GlassesType::STEREO_PAIR},
+        Orbit3DViewInput{"PickoverPhoto", FractalType::PICKOVER, GlassesType::PHOTO},
+        Orbit3DViewInput{"PickoverStereoPair", FractalType::PICKOVER, GlassesType::STEREO_PAIR}),
+    [](const TestParamInfo<Orbit3DViewInput> &info) { return info.param.name; });
+
+struct Orbit3DInterruptionInput
+{
+    const char *name;
+    FractalType type;
+    bool second_eye;
+};
+
+void PrintTo(const Orbit3DInterruptionInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestOrbit3DInterruption : public Orbit3DSoundTestState, public WithParamInterface<Orbit3DInterruptionInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestOrbit3DInterruption::SetUp()
+{
+    m_fractal_type = GetParam().type;
+    Orbit3DSoundTestState::SetUp();
+    g_glasses_type = GlassesType::PHOTO;
+}
+
+TEST_P(TestOrbit3DInterruption, interruptionIsNonResumableInSelectedEye)
+{
+    EXPECT_CALL(m_driver, key_pressed()).Times(0);
+    EXPECT_CALL(m_driver, get_key()).Times(0);
+    NonStandardFractal calculation;
+    calculation.start();
+    calculation.select();
+    if (GetParam().second_eye)
+    {
+        for (int point = 0; point < 103; ++point)
+        {
+            calculation.iterate();
+        }
+        calculation.next_view();
+    }
+    calculation.iterate();
+
+    calculation.suspend();
+
+    EXPECT_TRUE(calculation.done());
+    EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
+    EXPECT_TRUE(g_resume_data.empty());
+    EXPECT_THROW(calculation.view_done(), std::logic_error);
+}
+
+INSTANTIATE_TEST_SUITE_P(Eyes, TestOrbit3DInterruption,
+    Values(Orbit3DInterruptionInput{"LorenzRed", FractalType::LORENZ_3D, false},
+        Orbit3DInterruptionInput{"LorenzBlue", FractalType::LORENZ_3D, true},
+        Orbit3DInterruptionInput{"PickoverRed", FractalType::PICKOVER, false},
+        Orbit3DInterruptionInput{"PickoverBlue", FractalType::PICKOVER, true}),
+    [](const TestParamInfo<Orbit3DInterruptionInput> &info) { return info.param.name; });
 
 TEST_P(TestOrbit3DSound, submitsTransformedValuesOnlyAfterBoundsAreEstablished)
 {
