@@ -12,28 +12,6 @@ using namespace id::math;
 namespace id::test
 {
 
-TEST(TestMath, complexDividePointerAliasX)
-{
-    const DComplex y{2.0, 0.0};
-    DComplex z{1.0, 2.0};
-
-    fpu_cmplx_div(z, y, z); // z = z/y
-
-    EXPECT_EQ(1.0/2.0, z.x);
-    EXPECT_EQ(1.0, z.y);
-}
-
-TEST(TestMath, complexDividePointerAliasY)
-{
-    const DComplex x{1.0, 2.0};
-    DComplex z{2.0, 0.0};
-
-    fpu_cmplx_div(x, z, z); // z = x/z
-
-    EXPECT_EQ(1.0/2.0, z.x);
-    EXPECT_EQ(1.0, z.y);
-}
-
 TEST(TestMath, complexLogZeroIsZero)
 {
     const DComplex x{0.0, 0.0};

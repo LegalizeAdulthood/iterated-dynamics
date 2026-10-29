@@ -125,25 +125,41 @@ TEST(TestMath, multiplyAliasing)
     EXPECT_EQ(stdResult.imag(), alias_result.y);
 }
 
-TEST(TestMath, divideAliasing)
+struct ComplexDivisionAliasInput
 {
-    const DComplex num{1.0, 2.0};
-    const DComplex denom{2.0, 4.0};
-    DComplex result;
-    fpu_cmplx_div(num, denom, result);
-    const std::complex<double> stdResult{std::complex<double>{1.0, 2.0}/std::complex<double>{2.0, 4.0}};
+    const char *name;
+    DComplex numerator;
+    DComplex denominator;
+    bool alias_numerator;
+};
 
-    DComplex alias_result1{1.0, 2.0};
-    fpu_cmplx_div(alias_result1, denom, alias_result1);
-    DComplex alias_result2{2.0, 4.0};
-    fpu_cmplx_div(num, alias_result2, alias_result2);
+class TestComplexDivisionAlias : public testing::TestWithParam<ComplexDivisionAliasInput>
+{
+};
 
-    EXPECT_EQ(stdResult.real(), result.x);
-    EXPECT_EQ(stdResult.imag(), result.y);
-    EXPECT_EQ(stdResult.real(), alias_result1.x);
-    EXPECT_EQ(stdResult.imag(), alias_result1.y);
-    EXPECT_EQ(stdResult.real(), alias_result2.x);
-    EXPECT_EQ(stdResult.imag(), alias_result2.y);
+TEST_P(TestComplexDivisionAlias, matchesTheNonAliasedQuotient)
+{
+    DComplex numerator{GetParam().numerator};
+    DComplex denominator{GetParam().denominator};
+    DComplex baseline;
+    fpu_cmplx_div(numerator, denominator, baseline);
+    const std::complex<double> expected{
+        std::complex<double>{numerator.x, numerator.y} / std::complex<double>{denominator.x, denominator.y}};
+    DComplex &aliased{GetParam().alias_numerator ? numerator : denominator};
+
+    fpu_cmplx_div(numerator, denominator, aliased);
+
+    EXPECT_EQ(expected.real(), baseline.x);
+    EXPECT_EQ(expected.imag(), baseline.y);
+    EXPECT_EQ(expected.real(), aliased.x);
+    EXPECT_EQ(expected.imag(), aliased.y);
 }
+
+INSTANTIATE_TEST_SUITE_P(Operands, TestComplexDivisionAlias,
+    testing::Values(ComplexDivisionAliasInput{"CollinearNumerator", {1.0, 2.0}, {2.0, 4.0}, true},
+        ComplexDivisionAliasInput{"CollinearDenominator", {1.0, 2.0}, {2.0, 4.0}, false},
+        ComplexDivisionAliasInput{"RealDivisorNumerator", {1.0, 2.0}, {2.0, 0.0}, true},
+        ComplexDivisionAliasInput{"RealDivisorDenominator", {1.0, 2.0}, {2.0, 0.0}, false}),
+    [](const testing::TestParamInfo<ComplexDivisionAliasInput> &info) { return info.param.name; });
 
 } // namespace id::test
