@@ -443,66 +443,98 @@ TEST_F(TestCommandRouter, videoBadNamePreservesPendingMode)
     EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  video=fmeh"));
 }
 
-TEST_F(TestCommandRouter, videoNoModesClearsPendingMode)
+class TestUnavailableRouterVideo : public TestCommandRouter, public WithParamInterface<bool>
 {
-    ValueSaver saved_video_table_len{g_video_table_len, 0};
-    ValueSaver saved_init_mode{g_init_mode, 0};
-    CommandProcessor processor{"video=F1", CmdFile::AT_CMD_LINE};
-    const CommandRouter router;
+protected:
+    void SetUp() override;
 
-    const CommandParseResult result{router.process(processor)};
+    ValueSaver<int> m_saved_table_length{g_video_table_len};
+    ValueSaver<int> m_saved_key{g_video_mode_keys[0]};
+    ValueSaver<int> m_saved_init_mode{g_init_mode, 0};
+};
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_EQ(-1, g_init_mode);
-    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  video=f1"));
-}
-
-TEST_F(TestCommandRouter, videoNoMatchingModeClearsPendingMode)
+void TestUnavailableRouterVideo::SetUp()
 {
-    ValueSaver saved_video_table_len{g_video_table_len, 1};
-    ValueSaver saved_video_key{g_video_mode_keys[0], ID_KEY_F2};
-    ValueSaver saved_init_mode{g_init_mode, 0};
-    CommandProcessor processor{"video=F1", CmdFile::AT_CMD_LINE};
-    const CommandRouter router;
-
-    const CommandParseResult result{router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-    EXPECT_EQ(-1, g_init_mode);
-    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  video=f1"));
-}
-
-TEST_F(TestCommandRouter, videoSelectsFirstBindingWithoutActivatingMode)
-{
-    const VideoInfo active{800, 600, 256, nullptr, "active"};
-    ValueSaver saved_adapter{g_adapter, 0};
-    ValueSaver saved_entry{g_video_entry, active};
-    ValueSaver saved_width{g_screen_x_dots, 800};
-    ValueSaver saved_height{g_screen_y_dots, 600};
-    ValueSaver saved_colors{g_colors, 256};
-    ValueSaver saved_video_table_len{g_video_table_len, 3};
-    ValueSaver saved_first_key{g_video_mode_keys[0], ID_KEY_F2};
-    ValueSaver saved_second_key{g_video_mode_keys[1], ID_KEY_F1};
-    ValueSaver saved_third_key{g_video_mode_keys[2], ID_KEY_F1};
-    ValueSaver saved_init_mode{g_init_mode, 0};
-    const CommandRouter router;
-    for (const CmdFile mode : {CmdFile::AT_CMD_LINE, CmdFile::AT_AFTER_STARTUP})
+    TestCommandRouter::SetUp();
+    g_video_table_len = GetParam() ? 1 : 0;
+    if (GetParam())
     {
-        SCOPED_TRACE(static_cast<int>(mode));
-        CommandProcessor processor{"video=F1", mode};
-
-        const CommandParseResult result{router.process(processor)};
-
-        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
-        EXPECT_EQ(1, g_init_mode);
-        EXPECT_TRUE(result.diagnostics.errors.empty());
-        EXPECT_EQ(0, g_adapter);
-        EXPECT_EQ(active, g_video_entry);
-        EXPECT_EQ(800, g_screen_x_dots);
-        EXPECT_EQ(600, g_screen_y_dots);
-        EXPECT_EQ(256, g_colors);
+        g_video_mode_keys[0] = ID_KEY_F2;
     }
 }
+
+TEST_P(TestUnavailableRouterVideo, unavailableBindingClearsPendingMode)
+{
+    CommandProcessor processor{"video=F1", CmdFile::AT_CMD_LINE};
+    const CommandRouter router;
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+    EXPECT_EQ(-1, g_init_mode);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  video=f1"));
+}
+
+INSTANTIATE_TEST_SUITE_P(Bindings, TestUnavailableRouterVideo, Bool(),
+    [](const TestParamInfo<bool> &info) { return info.param ? "NonmatchingTable" : "EmptyTable"; });
+
+struct RouterVideoContextInput
+{
+    const char *name;
+    CmdFile mode;
+    int initial_mode;
+};
+
+void PrintTo(const RouterVideoContextInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterVideoSelection : public TestCommandRouter, public WithParamInterface<RouterVideoContextInput>
+{
+protected:
+    void SetUp() override;
+
+    const VideoInfo m_active{800, 600, 256, nullptr, "active"};
+    ValueSaver<int> m_saved_adapter{g_adapter, 0};
+    ValueSaver<VideoInfo> m_saved_entry{g_video_entry, m_active};
+    ValueSaver<int> m_saved_width{g_screen_x_dots, 800};
+    ValueSaver<int> m_saved_height{g_screen_y_dots, 600};
+    ValueSaver<int> m_saved_colors{g_colors, 256};
+    ValueSaver<int> m_saved_table_length{g_video_table_len, 3};
+    ValueSaver<int> m_saved_first_key{g_video_mode_keys[0], ID_KEY_F2};
+    ValueSaver<int> m_saved_second_key{g_video_mode_keys[1], ID_KEY_F1};
+    ValueSaver<int> m_saved_third_key{g_video_mode_keys[2], ID_KEY_F1};
+    ValueSaver<int> m_saved_init_mode{g_init_mode};
+};
+
+void TestRouterVideoSelection::SetUp()
+{
+    TestCommandRouter::SetUp();
+    g_init_mode = GetParam().initial_mode;
+}
+
+TEST_P(TestRouterVideoSelection, selectsTheFirstBindingWithoutActivatingIt)
+{
+    const CommandRouter router;
+    CommandProcessor processor{"video=F1", GetParam().mode};
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_EQ(1, g_init_mode);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(0, g_adapter);
+    EXPECT_EQ(m_active, g_video_entry);
+    EXPECT_EQ(800, g_screen_x_dots);
+    EXPECT_EQ(600, g_screen_y_dots);
+    EXPECT_EQ(256, g_colors);
+}
+
+INSTANTIATE_TEST_SUITE_P(Contexts, TestRouterVideoSelection,
+    Values(RouterVideoContextInput{"CommandLine", CmdFile::AT_CMD_LINE, 0},
+        RouterVideoContextInput{"AfterStartup", CmdFile::AT_AFTER_STARTUP, 1}),
+    [](const TestParamInfo<RouterVideoContextInput> &info) { return info.param.name; });
 
 struct VirtualScreenInput
 {
