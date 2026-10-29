@@ -1349,16 +1349,67 @@ TEST_F(TestTrueColorStorage, imageSetupReturnsStorageRequirementsWithoutEntering
     EXPECT_EQ(2, image.targa_storage().width);
     EXPECT_EQ(2, image.targa_storage().height);
     EXPECT_EQ(put_color_a, g_put_color);
-    const std::filesystem::path path{image.targa_storage().path};
-    EXPECT_TRUE(std::filesystem::exists(path));
-    const std::string warning{image.complete_targa_storage(false)};
-    EXPECT_THAT(warning, HasSubstr(path.string()));
-    EXPECT_FALSE(g_true_color);
-    EXPECT_FALSE(std::filesystem::exists(path));
-    EXPECT_TRUE(image.targa_storage().header.empty());
-    EXPECT_EQ(put_color_a, g_put_color);
-    EXPECT_THROW(image.complete_targa_storage(false), std::logic_error);
+    EXPECT_TRUE(std::filesystem::exists(image.targa_storage().path));
     image.finish();
+}
+
+class TestPreparedTrueColorStorage : public TestTrueColorStorage
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<ImageCalculation> m_image;
+    std::filesystem::path m_prepared_path;
+};
+
+void TestPreparedTrueColorStorage::SetUp()
+{
+    TestTrueColorStorage::SetUp();
+    EXPECT_CALL(m_driver, is_disk()).Times(0);
+    m_image = std::make_unique<ImageCalculation>();
+    ASSERT_TRUE(m_image->start().empty());
+    m_prepared_path = m_image->targa_storage().path;
+}
+
+void TestPreparedTrueColorStorage::TearDown()
+{
+    if (m_image)
+    {
+        EXPECT_NO_THROW(m_image->finish());
+        m_image.reset();
+    }
+    TestTrueColorStorage::TearDown();
+}
+
+TEST_F(TestPreparedTrueColorStorage, refusedStorageFallsBackAndDiscardsThePreparedFile)
+{
+    const std::string warning{m_image->complete_targa_storage(false)};
+
+    EXPECT_THAT(warning, HasSubstr(m_prepared_path.string()));
+    EXPECT_FALSE(g_true_color);
+    EXPECT_FALSE(std::filesystem::exists(m_prepared_path));
+    EXPECT_TRUE(m_image->targa_storage().header.empty());
+    EXPECT_EQ(put_color_a, g_put_color);
+}
+
+class TestRefusedTrueColorStorage : public TestPreparedTrueColorStorage
+{
+protected:
+    void SetUp() override;
+};
+
+void TestRefusedTrueColorStorage::SetUp()
+{
+    TestPreparedTrueColorStorage::SetUp();
+    ASSERT_NE(nullptr, m_image);
+    const std::string warning{m_image->complete_targa_storage(false)};
+    ASSERT_THAT(warning, HasSubstr(m_prepared_path.string()));
+}
+
+TEST_F(TestRefusedTrueColorStorage, repeatedStorageCompletionIsRejected)
+{
+    EXPECT_THROW(m_image->complete_targa_storage(false), std::logic_error);
 }
 
 TEST_F(TestTrueColorStorage, finishingAbandonedSetupDiscardsThePreparedFile)
