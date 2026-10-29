@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <ui/ChoiceBuilder.h>
 
@@ -398,33 +399,42 @@ protected:
     }
 };
 
-TEST(TestFullScreenValueMatchers, hasValue)
+class TestFullScreenPredicateMatcher : public TestWithParam<bool>
 {
-    FullScreenValues values{};
-    const auto always = [](MatchResultListener *, const FullScreenValues &) { return true; };
-    const auto never = [](MatchResultListener *, const FullScreenValues &) { return false; };
+protected:
+    FullScreenValues m_value{};
+};
 
-    EXPECT_THAT(&values, has_value(0, always));
-    EXPECT_THAT(&values, Not(has_value(0, never)));
+TEST_P(TestFullScreenPredicateMatcher, hasValueReportsPredicateResult)
+{
+    const bool expected{GetParam()};
+    const FullScreenValuePredicate predicate{
+        [expected](MatchResultListener *, const FullScreenValues &) { return expected; }};
+
+    EXPECT_EQ(expected, Matches(has_value(0, predicate))(&m_value));
 }
 
-TEST(TestFullScreenValueMatchers, hasType)
-{
-    FullScreenValues value{};
-    value.type = 'f';
+INSTANTIATE_TEST_SUITE_P(Predicate, TestFullScreenPredicateMatcher, Values(true, false),
+    [](const TestParamInfo<bool> &info) { return info.param ? "Matches" : "DoesNotMatch"; });
 
-    EXPECT_THAT(&value, has_value(0, has_type('f')));
-    EXPECT_THAT(&value, Not(has_value(0, has_type('i'))));
+class TestFullScreenTypeMatcher : public TestWithParam<int>
+{
+protected:
+    FullScreenValues m_value{'f'};
+};
+
+TEST_P(TestFullScreenTypeMatcher, hasTypeReportsTypeMatch)
+{
+    EXPECT_EQ(GetParam() == 'f', Matches(has_value(0, has_type(GetParam())))(&m_value));
 }
 
-TEST(TestFullScreenValueMatchers, hasAllHead)
+TEST_P(TestFullScreenTypeMatcher, hasAllHeadReportsTypeMatch)
 {
-    FullScreenValues value{};
-    value.type = 'f';
-
-    EXPECT_THAT(&value, has_value(0, has_all(has_type('f'))));
-    EXPECT_THAT(&value, Not(has_value(0, has_all(has_type('i')))));
+    EXPECT_EQ(GetParam() == 'f', Matches(has_value(0, has_all(has_type(GetParam()))))(&m_value));
 }
+
+INSTANTIATE_TEST_SUITE_P(Type, TestFullScreenTypeMatcher, Values('f', 'i'),
+    [](const TestParamInfo<int> &info) { return info.param == 'f' ? "Matches" : "DoesNotMatch"; });
 
 TEST_F(TestChoiceBuilderPrompting, yesNoChoice)
 {
