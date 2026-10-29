@@ -884,25 +884,78 @@ protected:
     }
 };
 
-TEST_F(TestLyapunovController, requiresStartAndACompletedResult)
+class TestPreparedLyapunovController : public TestLyapunovController
 {
-    Lyapunov lyapunov;
-    LyapunovController controller{lyapunov};
+protected:
+    void SetUp() override;
+    void TearDown() override;
 
-    EXPECT_FALSE(controller.done());
-    EXPECT_THROW(controller.iterate(), std::logic_error);
-    EXPECT_THROW(controller.result(), std::logic_error);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
+    std::unique_ptr<Lyapunov> m_lyapunov;
+    std::unique_ptr<LyapunovController> m_controller;
+};
+
+void TestPreparedLyapunovController::SetUp()
+{
+    TestLyapunovController::SetUp();
+    m_lyapunov = std::make_unique<Lyapunov>();
+    m_controller = std::make_unique<LyapunovController>(*m_lyapunov);
+    ASSERT_FALSE(m_controller->done());
+    ASSERT_EQ(0, m_calculations);
+}
+
+void TestPreparedLyapunovController::TearDown()
+{
+    m_controller.reset();
+    m_lyapunov.reset();
+    TestLyapunovController::TearDown();
+}
+
+TEST_F(TestPreparedLyapunovController, iterateRequiresStart)
+{
+    EXPECT_THROW(m_controller->iterate(), std::logic_error);
+
     EXPECT_EQ(0, m_calculations);
+}
 
-    controller.start();
+TEST_F(TestPreparedLyapunovController, resultRequiresCompletion)
+{
+    EXPECT_THROW(m_controller->result(), std::logic_error);
 
-    EXPECT_FALSE(controller.done());
     EXPECT_EQ(0, m_calculations);
-    EXPECT_THROW(controller.start(), std::logic_error);
-    controller.suspend();
-    EXPECT_TRUE(controller.done());
-    EXPECT_EQ(-1, controller.result());
+}
+
+TEST_F(TestPreparedLyapunovController, suspendRequiresStart)
+{
+    EXPECT_THROW(m_controller->suspend(), std::logic_error);
+
+    EXPECT_EQ(0, m_calculations);
+}
+
+class TestStartedLyapunovController : public TestPreparedLyapunovController
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStartedLyapunovController::SetUp()
+{
+    TestPreparedLyapunovController::SetUp();
+    m_controller->start();
+    ASSERT_FALSE(m_controller->done());
+    ASSERT_EQ(0, m_calculations);
+}
+
+TEST_F(TestStartedLyapunovController, duplicateStartIsRejected)
+{
+    EXPECT_THROW(m_controller->start(), std::logic_error);
+}
+
+TEST_F(TestStartedLyapunovController, explicitSuspensionCompletesTheController)
+{
+    m_controller->suspend();
+
+    EXPECT_TRUE(m_controller->done());
+    EXPECT_EQ(-1, m_controller->result());
     EXPECT_FALSE(dispatch_keyboard_key('o'));
 }
 
