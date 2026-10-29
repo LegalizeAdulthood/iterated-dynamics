@@ -35,6 +35,7 @@
 #include <chrono>
 #include <cstring>
 #include <filesystem>
+#include <memory>
 #include <stdexcept>
 
 using namespace id::engine;
@@ -155,11 +156,39 @@ void TestPotentialRestore::expect_potential_bytes()
     }
 }
 
-TEST_F(TestPotentialRestore, scanlinesUsePreparedStorageWithoutUiOrDriverQueries)
+class TestPotentialScanlineTarget : public TestPotentialRestore, public WithParamInterface<bool>
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<ValueSaver<Driver *>> m_driver_guard;
+};
+
+void TestPotentialScanlineTarget::SetUp()
+{
+    TestPotentialRestore::SetUp();
     prepare_storage();
-    write_disk_pixel(4, 7, 171);
-    EXPECT_CALL(m_driver, is_disk()).Times(0);
+    if (GetParam())
+    {
+        set_disk_dot();
+        m_driver_guard = std::make_unique<ValueSaver<Driver *>>(g_driver, nullptr);
+    }
+    else
+    {
+        write_disk_pixel(4, 7, 171);
+        EXPECT_CALL(m_driver, is_disk()).Times(0);
+    }
+}
+
+void TestPotentialScanlineTarget::TearDown()
+{
+    m_driver_guard.reset();
+    TestPotentialRestore::TearDown();
+}
+
+TEST_P(TestPotentialScanlineTarget, scanlinesUsePreparedStorageWithoutDriverQueries)
+{
     std::array<Byte, 3> high{12, 34, 56};
     std::array<Byte, 3> low{78, 90, 123};
 
@@ -168,54 +197,60 @@ TEST_F(TestPotentialRestore, scanlinesUsePreparedStorageWithoutUiOrDriverQueries
     EXPECT_EQ(0, pot_line(low.data(), static_cast<int>(low.size())));
 
     EXPECT_EQ(2, g_row_count);
-    EXPECT_EQ(12, m_frame[6]);
-    EXPECT_EQ(34, m_frame[7]);
-    EXPECT_EQ(56, m_frame[8]);
     EXPECT_EQ(12, read_disk_pixel(1, 1));
     EXPECT_EQ(78, read_disk_pixel(1, 3));
-    EXPECT_EQ(171, read_disk_pixel(4, 7));
+    if (GetParam())
+    {
+        EXPECT_THAT(m_frame, Each(0));
+    }
+    else
+    {
+        EXPECT_EQ(12, m_frame[6]);
+        EXPECT_EQ(34, m_frame[7]);
+        EXPECT_EQ(56, m_frame[8]);
+        EXPECT_EQ(171, read_disk_pixel(4, 7));
+    }
 }
 
-TEST_F(TestPotentialRestore, diskPixelOutputNeedsNoDriver)
+INSTANTIATE_TEST_SUITE_P(Output, TestPotentialScanlineTarget, Values(false, true),
+    [](const TestParamInfo<bool> &info) { return info.param ? "DiskWithoutDriver" : "ScreenWithDriver"; });
+
+class TestUnavailablePotentialStorage : public TestPotentialRestore, public WithParamInterface<bool>
 {
-    prepare_storage();
-    set_disk_dot();
-    ValueSaver saved_driver{g_driver, static_cast<Driver *>(nullptr)};
-    std::array<Byte, 3> high{12, 34, 56};
-    std::array<Byte, 3> low{78, 90, 123};
+protected:
+    void SetUp() override;
+};
 
-    EXPECT_EQ(0, pot_line(high.data(), static_cast<int>(high.size())));
-    EXPECT_EQ(0, pot_line(low.data(), static_cast<int>(low.size())));
-
-    EXPECT_EQ(2, g_row_count);
-    EXPECT_EQ(12, read_disk_pixel(1, 1));
-    EXPECT_EQ(78, read_disk_pixel(1, 3));
-    EXPECT_THAT(m_frame, Each(0));
-}
-
-TEST_F(TestPotentialRestore, missingStorageIsAPreconditionFailureWithoutUi)
+void TestUnavailablePotentialStorage::SetUp()
 {
+    TestPotentialRestore::SetUp();
+    if (GetParam())
+    {
+        start_disk_storage(5, 4, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
+    }
     EXPECT_CALL(m_driver, is_disk()).Times(0);
+}
+
+TEST_P(TestUnavailablePotentialStorage, scanlineOutputRejectsUnavailablePotentialStorage)
+{
     std::array<Byte, 3> pixels{12, 34, 56};
 
     EXPECT_THROW(pot_line(pixels.data(), static_cast<int>(pixels.size())), std::logic_error);
 
     EXPECT_EQ(0, g_row_count);
-    EXPECT_FALSE(g_disk_flag);
     EXPECT_THAT(m_frame, Each(0));
+    if (GetParam())
+    {
+        EXPECT_EQ(0, read_disk_pixel(1, 1));
+    }
+    else
+    {
+        EXPECT_FALSE(g_disk_flag);
+    }
 }
 
-TEST_F(TestPotentialRestore, ordinaryDiskStorageIsNotPotentialStorage)
-{
-    start_disk_storage(5, 4, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
-    EXPECT_CALL(m_driver, is_disk()).Times(0);
-    std::array<Byte, 3> pixels{12, 34, 56};
-
-    EXPECT_THROW(pot_line(pixels.data(), static_cast<int>(pixels.size())), std::logic_error);
-
-    EXPECT_EQ(0, g_row_count);
-    EXPECT_EQ(0, read_disk_pixel(1, 1));
-}
+INSTANTIATE_TEST_SUITE_P(Storage, TestUnavailablePotentialStorage, Values(false, true),
+    [](const TestParamInfo<bool> &info) { return info.param ? "Ordinary" : "Absent"; });
 
 TEST_F(TestPotentialRestore, uiPreparesStorageOnceBeforeRestoringAllScanlines)
 {
