@@ -748,240 +748,220 @@ TEST_F(TestCommandRouter, maxHistoryAfterStartup)
     EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  maxhistory=10"));
 }
 
-TEST_F(TestCommandRouter, autoKeyInvalidValue)
+struct RouterAutoKeyInput
 {
-    ValueSaver saved_slides{g_slides, SlidesMode::RECORD};
-    const CommandRouter router;
-    for (const std::string_view value : {"fmeh", "off"})
-    {
-        SCOPED_TRACE(value);
-        CommandProcessor processor{"autokey=" + std::string{value}, CmdFile::AT_CMD_LINE};
+    const char *name;
+    const char *value;
+    CmdFile mode;
+    SlidesMode initial;
+    SlidesMode expected;
+};
 
-        const CommandParseResult result{router.process(processor)};
-
-        EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-        EXPECT_EQ(SlidesMode::RECORD, g_slides);
-        EXPECT_THAT(result.diagnostics.errors,
-            ElementsAre("Oops. I couldn't understand the argument:\n  autokey=" + std::string{value}));
-    }
+void PrintTo(const RouterAutoKeyInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestCommandRouter, autoKeyRecord)
+class TestAcceptedRouterAutoKey : public TestCommandRouter, public WithParamInterface<RouterAutoKeyInput>
 {
-    const CommandRouter router;
-    for (const CmdFile mode : {CmdFile::AT_CMD_LINE, CmdFile::AT_AFTER_STARTUP})
-    {
-        SCOPED_TRACE(static_cast<int>(mode));
-        ValueSaver saved_slides{g_slides, SlidesMode::OFF};
-        CommandProcessor processor{"autokey=record", mode};
+protected:
+    void SetUp() override;
 
-        const CommandParseResult result{router.process(processor)};
+    ValueSaver<SlidesMode> m_saved_slides{g_slides};
+};
 
-        EXPECT_EQ(CmdArgFlags::NONE, result.flags);
-        EXPECT_EQ(SlidesMode::RECORD, g_slides);
-        EXPECT_TRUE(result.diagnostics.errors.empty());
-    }
+void TestAcceptedRouterAutoKey::SetUp()
+{
+    TestCommandRouter::SetUp();
+    g_slides = GetParam().initial;
 }
 
-TEST_F(TestCommandRouter, autoKeyPlay)
+class TestRejectedRouterAutoKey : public TestAcceptedRouterAutoKey
 {
-    const CommandRouter router;
-    for (const CmdFile mode : {CmdFile::AT_CMD_LINE, CmdFile::AT_AFTER_STARTUP})
-    {
-        SCOPED_TRACE(static_cast<int>(mode));
-        ValueSaver saved_slides{g_slides, SlidesMode::OFF};
-        CommandProcessor processor{"autokey=play", mode};
+};
 
-        const CommandParseResult result{router.process(processor)};
-
-        EXPECT_EQ(CmdArgFlags::NONE, result.flags);
-        EXPECT_EQ(SlidesMode::PLAY, g_slides);
-        EXPECT_TRUE(result.diagnostics.errors.empty());
-    }
-}
-
-TEST_F(TestCommandRouter, autoKeyNamePreservesFallbackFilename)
+TEST_P(TestRejectedRouterAutoKey, rejectsInvalidModesWithoutChangingSlides)
 {
-    ValueSaver saved_auto_key_name{g_auto_name, "foo.key"};
-    const CommandRouter router;
-    for (const CmdFile mode : {CmdFile::AT_CMD_LINE, CmdFile::AT_AFTER_STARTUP})
-    {
-        SCOPED_TRACE(static_cast<int>(mode));
-        for (const std::string_view name : {"baz.key", "Missing/MixedCaseAutoKeyName.KEY"})
-        {
-            SCOPED_TRACE(name);
-            CommandProcessor processor{"autokeyname=" + std::string{name}, mode};
-
-            const CommandParseResult result{router.process(processor)};
-
-            EXPECT_EQ(CmdArgFlags::NONE, result.flags);
-            EXPECT_EQ(fs::path{name}, g_auto_name);
-            EXPECT_TRUE(result.diagnostics.errors.empty());
-            EXPECT_TRUE(result.diagnostics.warnings.empty());
-        }
-    }
-}
-
-TEST_F(TestCommandRouter, rdsNo)
-{
-    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, true};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
-    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
-    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
-    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
-    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
-
-    CommandProcessor processor{"rds=no", CmdFile::AT_AFTER_STARTUP};
+    const std::string argument{"autokey=" + std::string{GetParam().value}};
+    CommandProcessor processor{argument, GetParam().mode};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
 
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-    EXPECT_FALSE(g_auto_stereo_batch);
-    EXPECT_TRUE(g_use_stereo_texture);
-    EXPECT_EQ(77, g_auto_stereo_depth);
-    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
-    EXPECT_EQ("old.gif", g_stereo_texture_filename);
-    EXPECT_TRUE(g_stereo_texture_reuse);
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
+    EXPECT_EQ(GetParam().expected, g_slides);
+    EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  " + argument));
 }
 
-TEST_F(TestCommandRouter, rdsYesDefaultsToRandom)
-{
-    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
-    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 123};
-    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
-    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
+INSTANTIATE_TEST_SUITE_P(Modes, TestRejectedRouterAutoKey,
+    Values(RouterAutoKeyInput{"Unknown", "fmeh", CmdFile::AT_CMD_LINE, SlidesMode::RECORD, SlidesMode::RECORD},
+        RouterAutoKeyInput{"Off", "off", CmdFile::AT_CMD_LINE, SlidesMode::RECORD, SlidesMode::RECORD}),
+    [](const TestParamInfo<RouterAutoKeyInput> &info) { return info.param.name; });
 
-    CommandProcessor processor{"rds=yes", CmdFile::AT_AFTER_STARTUP};
+TEST_P(TestAcceptedRouterAutoKey, selectsTheRequestedSlideMode)
+{
+    CommandProcessor processor{"autokey=" + std::string{GetParam().value}, GetParam().mode};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
 
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_EQ(GetParam().expected, g_slides);
     EXPECT_TRUE(result.diagnostics.errors.empty());
-    EXPECT_TRUE(g_auto_stereo_batch);
-    EXPECT_FALSE(g_use_stereo_texture);
-    EXPECT_FALSE(g_stereo_texture_reuse);
-    EXPECT_EQ(123, g_auto_stereo_depth);
-    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
 }
 
-TEST_F(TestCommandRouter, rdsRandomDepthAndNamedBars)
-{
-    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
-    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 100};
-    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
-    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
+INSTANTIATE_TEST_SUITE_P(Modes, TestAcceptedRouterAutoKey,
+    Values(RouterAutoKeyInput{"RecordAtStartup", "record", CmdFile::AT_CMD_LINE, SlidesMode::OFF, SlidesMode::RECORD},
+        RouterAutoKeyInput{
+            "RecordAfterStartup", "record", CmdFile::AT_AFTER_STARTUP, SlidesMode::OFF, SlidesMode::RECORD},
+        RouterAutoKeyInput{"PlayAtStartup", "play", CmdFile::AT_CMD_LINE, SlidesMode::OFF, SlidesMode::PLAY},
+        RouterAutoKeyInput{"PlayAfterStartup", "play", CmdFile::AT_AFTER_STARTUP, SlidesMode::OFF, SlidesMode::PLAY}),
+    [](const TestParamInfo<RouterAutoKeyInput> &info) { return info.param.name; });
 
-    CommandProcessor processor{"rds=random/-120/top", CmdFile::AT_AFTER_STARTUP};
+struct RouterAutoKeyNameInput
+{
+    const char *name;
+    const char *filename;
+    CmdFile mode;
+    const char *initial;
+};
+
+void PrintTo(const RouterAutoKeyNameInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterAutoKeyName : public TestCommandRouter, public WithParamInterface<RouterAutoKeyNameInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<fs::path> m_saved_auto_name{g_auto_name};
+};
+
+void TestRouterAutoKeyName::SetUp()
+{
+    TestCommandRouter::SetUp();
+    g_auto_name = GetParam().initial;
+}
+
+TEST_P(TestRouterAutoKeyName, preservesTheFallbackFilename)
+{
+    CommandProcessor processor{"autokeyname=" + std::string{GetParam().filename}, GetParam().mode};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
 
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_EQ(CmdArgFlags::NONE, result.flags);
+    EXPECT_EQ(fs::path{GetParam().filename}, g_auto_name);
     EXPECT_TRUE(result.diagnostics.errors.empty());
-    EXPECT_TRUE(g_auto_stereo_batch);
-    EXPECT_FALSE(g_use_stereo_texture);
-    EXPECT_FALSE(g_stereo_texture_reuse);
-    EXPECT_EQ(-120, g_auto_stereo_depth);
-    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
+    EXPECT_TRUE(result.diagnostics.warnings.empty());
 }
 
-TEST_F(TestCommandRouter, rdsTextureNumericBars)
+INSTANTIATE_TEST_SUITE_P(Filenames, TestRouterAutoKeyName,
+    Values(RouterAutoKeyNameInput{"StartupSimple", "baz.key", CmdFile::AT_CMD_LINE, "foo.key"},
+        RouterAutoKeyNameInput{"StartupMixedPath", "Missing/MixedCaseAutoKeyName.KEY", CmdFile::AT_CMD_LINE, "baz.key"},
+        RouterAutoKeyNameInput{
+            "InteractiveSimple", "baz.key", CmdFile::AT_AFTER_STARTUP, "Missing/MixedCaseAutoKeyName.KEY"},
+        RouterAutoKeyNameInput{
+            "InteractiveMixedPath", "Missing/MixedCaseAutoKeyName.KEY", CmdFile::AT_AFTER_STARTUP, "baz.key"}),
+    [](const TestParamInfo<RouterAutoKeyNameInput> &info) { return info.param.name; });
+
+struct RouterRdsState
 {
-    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
-    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 100};
-    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
-    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
-    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
+    bool batch;
+    bool texture;
+    int depth;
+    CalibrationBars bars;
+    std::string filename;
+    bool reuse;
+};
 
-    const CommandRouter router;
-    for (const CalibrationBars bars : {CalibrationBars::NONE, CalibrationBars::MIDDLE, CalibrationBars::TOP})
-    {
-        SCOPED_TRACE(+bars);
-        CommandProcessor processor{"rds=texture/80/" + std::to_string(+bars), CmdFile::AT_AFTER_STARTUP};
+struct RouterRdsInput
+{
+    const char *name;
+    const char *command;
+    RouterRdsState initial;
+    RouterRdsState expected;
+};
 
-        const CommandParseResult result{router.process(processor)};
-
-        EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
-        EXPECT_TRUE(result.diagnostics.errors.empty());
-        EXPECT_TRUE(g_auto_stereo_batch);
-        EXPECT_TRUE(g_use_stereo_texture);
-        EXPECT_TRUE(g_stereo_texture_reuse);
-        EXPECT_EQ(80, g_auto_stereo_depth);
-        EXPECT_EQ(bars, g_calibrate);
-    }
+void PrintTo(const RouterRdsInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestCommandRouter, rdsTextureNoFilenameDoesNotReuse)
+class TestAcceptedRouterRds : public TestCommandRouter, public WithParamInterface<RouterRdsInput>
 {
-    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
-    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, ""};
-    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
+protected:
+    void SetUp() override;
 
-    CommandProcessor processor{"rds=texture", CmdFile::AT_AFTER_STARTUP};
+    ValueSaver<bool> m_saved_rds_batch{g_auto_stereo_batch};
+    ValueSaver<bool> m_saved_texture{g_use_stereo_texture};
+    ValueSaver<int> m_saved_depth{g_auto_stereo_depth};
+    ValueSaver<CalibrationBars> m_saved_bars{g_calibrate};
+    ValueSaver<std::string> m_saved_filename{g_stereo_texture_filename};
+    ValueSaver<bool> m_saved_reuse{g_stereo_texture_reuse};
+};
+
+void TestAcceptedRouterRds::SetUp()
+{
+    TestCommandRouter::SetUp();
+    const RouterRdsState &initial{GetParam().initial};
+    g_auto_stereo_batch = initial.batch;
+    g_use_stereo_texture = initial.texture;
+    g_auto_stereo_depth = initial.depth;
+    g_calibrate = initial.bars;
+    g_stereo_texture_filename = initial.filename;
+    g_stereo_texture_reuse = initial.reuse;
+}
+
+TEST_P(TestAcceptedRouterRds, returnsTheExpectedStereoSettings)
+{
+    CommandProcessor processor{GetParam().command, CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
 
+    const RouterRdsState &expected{GetParam().expected};
     EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
     EXPECT_TRUE(result.diagnostics.errors.empty());
-    EXPECT_TRUE(g_auto_stereo_batch);
-    EXPECT_TRUE(g_use_stereo_texture);
-    EXPECT_FALSE(g_stereo_texture_reuse);
+    EXPECT_EQ(expected.batch, g_auto_stereo_batch);
+    EXPECT_EQ(expected.texture, g_use_stereo_texture);
+    EXPECT_EQ(expected.depth, g_auto_stereo_depth);
+    EXPECT_EQ(expected.bars, g_calibrate);
+    EXPECT_EQ(expected.filename, g_stereo_texture_filename);
+    EXPECT_EQ(expected.reuse, g_stereo_texture_reuse);
 }
 
-TEST_F(TestCommandRouter, rdsEmptyFieldsPreserveDefaults)
-{
-    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
-    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
-    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
-    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
-
-    CommandProcessor processor{"rds=random//top", CmdFile::AT_AFTER_STARTUP};
-    const CommandRouter router;
-
-    const CommandParseResult result{router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-    EXPECT_TRUE(g_auto_stereo_batch);
-    EXPECT_FALSE(g_use_stereo_texture);
-    EXPECT_FALSE(g_stereo_texture_reuse);
-    EXPECT_EQ(77, g_auto_stereo_depth);
-    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
-}
-
-TEST_F(TestCommandRouter, rdsOmittedOrEmptyDepthAndBarsPreserveCurrentValues)
-{
-    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
-    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
-    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
-    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
-    const CommandRouter router;
-    for (const std::string_view command : {"rds=random", "rds=random/", "rds=random//", "rds=random///"})
-    {
-        SCOPED_TRACE(command);
-        CommandProcessor processor{command, CmdFile::AT_AFTER_STARTUP};
-
-        const CommandParseResult result{router.process(processor)};
-
-        EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
-        EXPECT_TRUE(result.diagnostics.errors.empty());
-        EXPECT_TRUE(g_auto_stereo_batch);
-        EXPECT_FALSE(g_use_stereo_texture);
-        EXPECT_FALSE(g_stereo_texture_reuse);
-        EXPECT_EQ(77, g_auto_stereo_depth);
-        EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
-    }
-}
+INSTANTIATE_TEST_SUITE_P(Settings, TestAcceptedRouterRds,
+    Values(RouterRdsInput{"No", "rds=no", {true, true, 77, CalibrationBars::TOP, "old.gif", true},
+               {false, true, 77, CalibrationBars::TOP, "old.gif", true}},
+        RouterRdsInput{"Yes", "rds=yes", {false, true, 123, CalibrationBars::TOP, "", true},
+            {true, false, 123, CalibrationBars::TOP, "", false}},
+        RouterRdsInput{"RandomDepthAndBars", "rds=random/-120/top",
+            {false, true, 100, CalibrationBars::MIDDLE, "", true},
+            {true, false, -120, CalibrationBars::TOP, "", false}},
+        RouterRdsInput{"TextureNoBars", "rds=texture/80/0",
+            {false, false, 100, CalibrationBars::MIDDLE, "old.gif", false},
+            {true, true, 80, CalibrationBars::NONE, "old.gif", true}},
+        RouterRdsInput{"TextureMiddleBars", "rds=texture/80/1",
+            {true, true, 80, CalibrationBars::NONE, "old.gif", true},
+            {true, true, 80, CalibrationBars::MIDDLE, "old.gif", true}},
+        RouterRdsInput{"TextureTopBars", "rds=texture/80/2", {true, true, 80, CalibrationBars::MIDDLE, "old.gif", true},
+            {true, true, 80, CalibrationBars::TOP, "old.gif", true}},
+        RouterRdsInput{"TextureWithoutFilename", "rds=texture", {false, false, 100, CalibrationBars::MIDDLE, "", true},
+            {true, true, 100, CalibrationBars::MIDDLE, "", false}},
+        RouterRdsInput{"EmptyDepth", "rds=random//top", {false, true, 77, CalibrationBars::MIDDLE, "", true},
+            {true, false, 77, CalibrationBars::TOP, "", false}},
+        RouterRdsInput{"OmittedDepthAndBars", "rds=random", {false, true, 77, CalibrationBars::TOP, "", true},
+            {true, false, 77, CalibrationBars::TOP, "", false}},
+        RouterRdsInput{"EmptyDepthOnly", "rds=random/", {true, false, 77, CalibrationBars::TOP, "", false},
+            {true, false, 77, CalibrationBars::TOP, "", false}},
+        RouterRdsInput{"EmptyDepthAndBars", "rds=random//", {true, false, 77, CalibrationBars::TOP, "", false},
+            {true, false, 77, CalibrationBars::TOP, "", false}},
+        RouterRdsInput{"TrailingEmptyField", "rds=random///", {true, false, 77, CalibrationBars::TOP, "", false},
+            {true, false, 77, CalibrationBars::TOP, "", false}}),
+    [](const TestParamInfo<RouterRdsInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouter, invalidRdsParametersLeaveSettingsUnchangedAndDiagnoseOnce)
 {
