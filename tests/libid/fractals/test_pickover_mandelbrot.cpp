@@ -511,127 +511,270 @@ TEST_P(TestPreciseSignedPowerDelta, preservesZeroAndSmallNonzeroInputs)
 INSTANTIATE_TEST_SUITE_P(SignedPowers, TestPreciseSignedPowerDelta, ValuesIn(precise_signed_delta_inputs()),
     [](const TestParamInfo<SignedPowerDeltaInput> &info) { return info.param.name; });
 
-class TestComplexMandelZPowerPerturbation : public TestWithParam<std::complex<double>>
+class TestComplexPowerState : public TestMandelPowerState
 {
 protected:
-    void SetUp() override
-    {
-        g_params[2] = GetParam().real();
-        g_params[3] = GetParam().imag();
-        g_c_exponent = static_cast<int>(g_params[2]);
-    }
+    void set_exponent(const std::complex<double> &exponent);
+    std::complex<double> native_power(const std::complex<double> &z);
+    void initialize_complex_precision();
 
-    void TearDown() override
-    {
-        if (m_big_float)
-        {
-            free_bf_vars();
-        }
-    }
-
-    std::complex<double> native_power(const std::complex<double> &z)
-    {
-        const DComplex result{id::math::pow(DComplex{z.real(), z.imag()}, DComplex{g_params[2], g_params[3]})};
-        return {result.x, result.y};
-    }
-
-    void initialize_precision()
-    {
-        init_bf_dec(60);
-        m_big_float = true;
-        init_big_pi();
-    }
-
-    bool m_big_float{};
     ValueSaver<double> m_saved_real{g_params[2]};
     ValueSaver<double> m_saved_imag{g_params[3]};
-    ValueSaver<int> m_saved_exponent{g_c_exponent};
-    ValueSaver<BFMathType> m_saved_math{g_bf_math, BFMathType::NONE};
-    ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::MANDEL_Z_POWER};
     ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
 };
 
-TEST_P(TestComplexMandelZPowerPerturbation, referenceUsesBothExponentComponentsAndTheNativeBranch)
+void TestComplexPowerState::set_exponent(const std::complex<double> &exponent)
+{
+    g_params[2] = exponent.real();
+    g_params[3] = exponent.imag();
+    g_c_exponent = static_cast<int>(g_params[2]);
+}
+
+std::complex<double> TestComplexPowerState::native_power(const std::complex<double> &z)
+{
+    const DComplex result{id::math::pow(DComplex{z.real(), z.imag()}, DComplex{g_params[2], g_params[3]})};
+    return {result.x, result.y};
+}
+
+void TestComplexPowerState::initialize_complex_precision()
+{
+    initialize_precision();
+    init_big_pi();
+}
+
+struct ComplexPowerExponent
+{
+    const char *name;
+    std::complex<double> value;
+};
+
+const ComplexPowerExponent COMPLEX_POWER_EXPONENTS[]{{"TwoPointFive", {2.5, 0.0}}, {"Half", {0.5, 0.0}},
+    {"NegativeHalf", {-0.5, 0.0}}, {"TwoPointFivePlusQuarterI", {2.5, 0.25}}, {"QuarterMinusHalfI", {0.25, -0.5}},
+    {"HalfI", {0.0, 0.5}}, {"SmallComplex", {0.03125, 0.015625}}};
+
+struct ComplexPowerReferenceInput
+{
+    std::string name;
+    std::complex<double> exponent;
+    std::complex<double> reference;
+};
+
+std::vector<ComplexPowerReferenceInput> complex_reference_inputs()
+{
+    std::vector<ComplexPowerReferenceInput> inputs;
+    for (const ComplexPowerExponent &exponent : COMPLEX_POWER_EXPONENTS)
+    {
+        for (const ComplexPowerReferenceInput &input : {ComplexPowerReferenceInput{"Zero", exponent.value, {}},
+                 {"Positive", exponent.value, {0.75, 0.125}}, {"CutAbove", exponent.value, {-0.75, 0.0001}},
+                 {"CutBelow", exponent.value, {-0.75, -0.0001}}, {"OnCut", exponent.value, {-0.75, 0.0}}})
+        {
+            inputs.push_back({input.name + exponent.name, exponent.value, input.reference});
+        }
+    }
+    return inputs;
+}
+
+class TestComplexPowerReference : public TestComplexPowerState, public WithParamInterface<ComplexPowerReferenceInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestComplexPowerReference::SetUp()
+{
+    set_exponent(GetParam().exponent);
+}
+
+TEST_P(TestComplexPowerReference, usesBothExponentComponentsAndTheNativeBranch)
 {
     const std::complex<double> center{0.0625, -0.03125};
-    for (const std::complex<double> seed :
-        {std::complex<double>{}, {0.75, 0.125}, {-0.75, 0.0001}, {-0.75, -0.0001}, {-0.75, 0.0}})
+    const std::complex<double> expected{native_power(GetParam().reference) + center};
+    std::complex<double> actual{GetParam().reference};
+
+    mandel_z_power_ref_pt(center, actual);
+
+    EXPECT_EQ(expected, actual);
+}
+
+INSTANTIATE_TEST_SUITE_P(ComplexPowers, TestComplexPowerReference, ValuesIn(complex_reference_inputs()),
+    [](const TestParamInfo<ComplexPowerReferenceInput> &info) { return info.param.name; });
+
+class TestComplexPowerSetup : public TestComplexPowerState, public WithParamInterface<ComplexPowerExponent>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<CalcMode> saved_mode{g_std_calc_mode, CalcMode::PERTURBATION};
+    ValueSaver<const FractalSpecific *> saved_specific{
+        g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL_Z_POWER)};
+    ValueSaver<FractalDispatch> saved_dispatch{g_dispatch, FractalDispatch{*g_cur_fractal_specific}};
+    ValueSaver<DComplex *> saved_parameter{g_float_param};
+    ValueSaver<DComplex> saved_power{g_power_z};
+    ValueSaver<SymmetryType> saved_symmetry{g_symmetry, g_cur_fractal_specific->symmetry};
+    ValueSaver<int> saved_periodicity{g_periodicity_check, 0};
+    ValueSaver<LogicalScreen> saved_screen{g_logical_screen, LogicalScreen{8, 6, 0, 0, 7.0, 5.0}};
+};
+
+void TestComplexPowerSetup::SetUp()
+{
+    set_exponent(GetParam().value);
+}
+
+TEST_P(TestComplexPowerSetup, ordinarySetupRetainsNativeSymmetryAndOrbitSelection)
+{
+    EXPECT_FALSE(mandel_per_image());
+
+    EXPECT_EQ(mandel_z_power_cmplx_orbit, g_dispatch.orbit_calc());
+    if (GetParam().value.imag() != 0.0)
     {
-        SCOPED_TRACE(seed);
-        const std::complex<double> expected{native_power(seed) + center};
-        std::complex<double> actual{seed};
-        mandel_z_power_ref_pt(center, actual);
-        EXPECT_EQ(expected, actual);
+        EXPECT_EQ(SymmetryType::NONE, g_symmetry);
     }
 }
 
-TEST_P(TestComplexMandelZPowerPerturbation, legacyPerturbationSetupRetainsNativeSymmetryAndOrbitSelection)
+TEST_P(TestComplexPowerSetup, preciseSetupRetainsNativeSymmetry)
 {
-    ValueSaver saved_mode{g_std_calc_mode, CalcMode::PERTURBATION};
-    ValueSaver saved_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL_Z_POWER)};
-    ValueSaver saved_dispatch{g_dispatch, FractalDispatch{*g_cur_fractal_specific}};
-    ValueSaver saved_parameter{g_float_param};
-    ValueSaver saved_power{g_power_z};
-    ValueSaver saved_symmetry{g_symmetry, g_cur_fractal_specific->symmetry};
-    ValueSaver saved_periodicity{g_periodicity_check, 0};
-    ValueSaver saved_screen{g_logical_screen, LogicalScreen{8, 6, 0, 0, 7.0, 5.0}};
     EXPECT_FALSE(mandel_per_image());
     EXPECT_EQ(mandel_z_power_cmplx_orbit, g_dispatch.orbit_calc());
-    if (GetParam().imag() != 0.0)
+    if (GetParam().value.imag() != 0.0)
     {
         EXPECT_EQ(SymmetryType::NONE, g_symmetry);
     }
-    initialize_precision();
+    initialize_complex_precision();
     g_symmetry = g_cur_fractal_specific->symmetry;
+
     EXPECT_FALSE(mandel_per_image_bf());
-    if (GetParam().imag() != 0.0)
+
+    if (GetParam().value.imag() != 0.0)
     {
         EXPECT_EQ(SymmetryType::NONE, g_symmetry);
     }
 }
 
-TEST_P(TestComplexMandelZPowerPerturbation, deltaMatchesNativeUpdatesWithinAndAcrossTheCut)
+INSTANTIATE_TEST_SUITE_P(ComplexPowers, TestComplexPowerSetup, ValuesIn(COMPLEX_POWER_EXPONENTS),
+    [](const TestParamInfo<ComplexPowerExponent> &info) { return info.param.name; });
+
+struct ComplexPowerDeltaInput
 {
-    const std::complex<double> parameter_delta{0.003, -0.002};
+    std::string name;
+    std::complex<double> exponent;
+    std::complex<double> reference;
+    std::complex<double> delta;
+};
 
-    struct Sample
+std::vector<ComplexPowerDeltaInput> complex_delta_inputs()
+{
+    std::vector<ComplexPowerDeltaInput> inputs;
+    for (const ComplexPowerExponent &exponent : COMPLEX_POWER_EXPONENTS)
     {
-        std::complex<double> ref;
-        std::complex<double> delta;
-    };
-
-    for (const Sample &sample : {Sample{{0.75, 0.125}, {0.002, -0.001}}, {{-0.75, 0.0001}, {0.002, -0.0002}},
-             {{-0.75, -0.0001}, {0.002, 0.0002}}, {{-0.75, 0.0001}, {0.0001, 0.00005}}, {{}, {0.125, 0.0625}},
-             {{0.125, 0.0625}, {-0.125, -0.0625}}, {{1e-300, 0.0}, {1e-301, 0.0}}})
-    {
-        SCOPED_TRACE(sample.ref);
-        SCOPED_TRACE(sample.delta);
-        const std::complex<double> expected{
-            native_power(sample.ref + sample.delta) - native_power(sample.ref) + parameter_delta};
-        std::complex<double> actual{sample.delta};
-        mandel_z_power_perturb(sample.ref, actual, parameter_delta);
-        EXPECT_NEAR(expected.real(), actual.real(), 1e-12 * std::max(1.0, std::abs(expected)));
-        EXPECT_NEAR(expected.imag(), actual.imag(), 1e-12 * std::max(1.0, std::abs(expected)));
+        for (const ComplexPowerDeltaInput &input :
+            {ComplexPowerDeltaInput{"Positive", exponent.value, {0.75, 0.125}, {0.002, -0.001}},
+                {"AcrossCutFromAbove", exponent.value, {-0.75, 0.0001}, {0.002, -0.0002}},
+                {"AcrossCutFromBelow", exponent.value, {-0.75, -0.0001}, {0.002, 0.0002}},
+                {"AboveCut", exponent.value, {-0.75, 0.0001}, {0.0001, 0.00005}},
+                {"ZeroReference", exponent.value, {}, {0.125, 0.0625}},
+                {"Cancelled", exponent.value, {0.125, 0.0625}, {-0.125, -0.0625}},
+                {"TinyReference", exponent.value, {1e-300, 0.0}, {1e-301, 0.0}}})
+        {
+            inputs.push_back({input.name + exponent.name, exponent.value, input.reference, input.delta});
+        }
     }
+    return inputs;
 }
 
-TEST_P(TestComplexMandelZPowerPerturbation, deltaRetainsSubDoubleDisplacements)
+class TestComplexPowerDelta : public TestComplexPowerState, public WithParamInterface<ComplexPowerDeltaInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestComplexPowerDelta::SetUp()
+{
+    set_exponent(GetParam().exponent);
+}
+
+TEST_P(TestComplexPowerDelta, matchesNativeUpdatesWithinAndAcrossTheCut)
+{
+    const ComplexPowerDeltaInput &input{GetParam()};
+    const std::complex<double> parameter_delta{0.003, -0.002};
+    const std::complex<double> expected{
+        native_power(input.reference + input.delta) - native_power(input.reference) + parameter_delta};
+    std::complex<double> actual{input.delta};
+
+    mandel_z_power_perturb(input.reference, actual, parameter_delta);
+
+    EXPECT_NEAR(expected.real(), actual.real(), 1e-12 * std::max(1.0, std::abs(expected)));
+    EXPECT_NEAR(expected.imag(), actual.imag(), 1e-12 * std::max(1.0, std::abs(expected)));
+}
+
+INSTANTIATE_TEST_SUITE_P(ComplexPowers, TestComplexPowerDelta, ValuesIn(complex_delta_inputs()),
+    [](const TestParamInfo<ComplexPowerDeltaInput> &info) { return info.param.name; });
+
+std::vector<ComplexPowerReferenceInput> complex_small_delta_inputs()
+{
+    std::vector<ComplexPowerReferenceInput> inputs;
+    for (const ComplexPowerExponent &exponent : COMPLEX_POWER_EXPONENTS)
+    {
+        inputs.push_back({std::string{"Positive"} + exponent.name, exponent.value, {1.0, 0.0}});
+        inputs.push_back({std::string{"AboveCut"} + exponent.name, exponent.value, {-1.0, 1e-30}});
+        inputs.push_back({std::string{"BelowCut"} + exponent.name, exponent.value, {-1.0, -1e-30}});
+    }
+    return inputs;
+}
+
+class TestComplexPowerSmallDelta : public TestComplexPowerReference
+{
+};
+
+TEST_P(TestComplexPowerSmallDelta, retainsSubDoubleDisplacements)
 {
     const std::complex<double> delta{1e-40, -2e-40};
-    for (const std::complex<double> ref : {std::complex<double>{1.0, 0.0}, {-1.0, 1e-30}, {-1.0, -1e-30}})
-    {
-        SCOPED_TRACE(ref);
-        const std::complex<double> expected{GetParam() * native_power(ref) * delta / ref};
-        std::complex<double> actual{delta};
-        mandel_z_power_perturb(ref, actual, {});
-        EXPECT_NEAR(expected.real(), actual.real(), 1e-53);
-        EXPECT_NEAR(expected.imag(), actual.imag(), 1e-53);
-    }
+    const std::complex<double> ref{GetParam().reference};
+    const std::complex<double> expected{GetParam().exponent * native_power(ref) * delta / ref};
+    std::complex<double> actual{delta};
+
+    mandel_z_power_perturb(ref, actual, {});
+
+    EXPECT_NEAR(expected.real(), actual.real(), 1e-53);
+    EXPECT_NEAR(expected.imag(), actual.imag(), 1e-53);
 }
 
-TEST_P(TestComplexMandelZPowerPerturbation, preciseReferenceUsesTheNativeArbitraryPrecisionKernel)
+INSTANTIATE_TEST_SUITE_P(ComplexPowers, TestComplexPowerSmallDelta, ValuesIn(complex_small_delta_inputs()),
+    [](const TestParamInfo<ComplexPowerReferenceInput> &info) { return info.param.name; });
+
+struct PreciseComplexPowerInput
 {
-    initialize_precision();
+    std::string name;
+    std::complex<double> exponent;
+    const char *imaginary;
+};
+
+std::vector<PreciseComplexPowerInput> precise_complex_reference_inputs()
+{
+    std::vector<PreciseComplexPowerInput> inputs;
+    for (const ComplexPowerExponent &exponent : COMPLEX_POWER_EXPONENTS)
+    {
+        inputs.push_back({std::string{"AboveCut"} + exponent.name, exponent.value, "1e-40"});
+        inputs.push_back({std::string{"BelowCut"} + exponent.name, exponent.value, "-1e-40"});
+        inputs.push_back({std::string{"OnCut"} + exponent.name, exponent.value, "0"});
+    }
+    return inputs;
+}
+
+class TestPreciseComplexPowerReference : public TestComplexPowerState,
+                                         public WithParamInterface<PreciseComplexPowerInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestPreciseComplexPowerReference::SetUp()
+{
+    set_exponent(GetParam().exponent);
+    initialize_complex_precision();
+}
+
+TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
+{
     BigStackSaver saved;
     BFComplex seed{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     BFComplex actual{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
@@ -639,59 +782,96 @@ TEST_P(TestComplexMandelZPowerPerturbation, preciseReferenceUsesTheNativeArbitra
     BFComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     const BFComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     const BigFloat difference{alloc_stack(g_r_bf_length + 2)};
-    float_to_bf(exponent.x, GetParam().real());
-    float_to_bf(exponent.y, GetParam().imag());
+    float_to_bf(exponent.x, GetParam().exponent.real());
+    float_to_bf(exponent.y, GetParam().exponent.imag());
     float_to_bf(center.x, 0.0625);
     float_to_bf(center.y, -0.03125);
-    for (const char *imag : {"1e-40", "-1e-40", "0"})
-    {
-        SCOPED_TRACE(imag);
-        str_to_bf(seed.x, "-0.75000000000000000000000000000000000000001");
-        str_to_bf(seed.y, imag);
-        copy_bf(actual.x, seed.x);
-        copy_bf(actual.y, seed.y);
-        cmplx_pow_bf(&expected, &seed, &exponent);
-        add_a_bf(expected.x, center.x);
-        add_a_bf(expected.y, center.y);
-        mandel_z_power_ref_pt_bf(center, actual);
-        sub_bf(difference, actual.x, expected.x);
-        EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
-        sub_bf(difference, actual.y, expected.y);
-        EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
-    }
+    str_to_bf(seed.x, "-0.75000000000000000000000000000000000000001");
+    str_to_bf(seed.y, GetParam().imaginary);
+    copy_bf(actual.x, seed.x);
+    copy_bf(actual.y, seed.y);
+    cmplx_pow_bf(&expected, &seed, &exponent);
+    add_a_bf(expected.x, center.x);
+    add_a_bf(expected.y, center.y);
+
+    mandel_z_power_ref_pt_bf(center, actual);
+
+    sub_bf(difference, actual.x, expected.x);
+    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
+    sub_bf(difference, actual.y, expected.y);
+    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
+}
+
+INSTANTIATE_TEST_SUITE_P(ComplexPowers, TestPreciseComplexPowerReference, ValuesIn(precise_complex_reference_inputs()),
+    [](const TestParamInfo<PreciseComplexPowerInput> &info) { return info.param.name; });
+
+class TestPreciseComplexPowerZero : public TestComplexPowerState, public WithParamInterface<ComplexPowerExponent>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestPreciseComplexPowerZero::SetUp()
+{
+    set_exponent(GetParam().value);
+    initialize_complex_precision();
+}
+
+TEST_P(TestPreciseComplexPowerZero, zeroReferenceProducesTheCenter)
+{
+    BigStackSaver saved;
+    BFComplex actual{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BFComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    float_to_bf(center.x, 0.0625);
+    float_to_bf(center.y, -0.03125);
     clear_bf(actual.x);
     clear_bf(actual.y);
+
     mandel_z_power_ref_pt_bf(center, actual);
+
     EXPECT_EQ(0, cmp_bf(center.x, actual.x));
     EXPECT_EQ(0, cmp_bf(center.y, actual.y));
 }
 
-INSTANTIATE_TEST_SUITE_P(ComplexPowers, TestComplexMandelZPowerPerturbation,
-    Values(std::complex<double>{2.5, 0.0}, std::complex<double>{0.5, 0.0}, std::complex<double>{-0.5, 0.0},
-        std::complex<double>{2.5, 0.25}, std::complex<double>{0.25, -0.5}, std::complex<double>{0.0, 0.5},
-        std::complex<double>{0.03125, 0.015625}));
+INSTANTIATE_TEST_SUITE_P(ComplexPowers, TestPreciseComplexPowerZero, ValuesIn(COMPLEX_POWER_EXPONENTS),
+    [](const TestParamInfo<ComplexPowerExponent> &info) { return info.param.name; });
 
-TEST(TestMandelZPowerPerturbationLimits, forcedComplexIntegerPowersRetainTheComplexZeroConvention)
+class TestForcedComplexIntegerPower : public TestMandelPowerState, public WithParamInterface<int>
 {
-    ValueSaver saved_debug{g_debug_flag, DebugFlags::FORCE_COMPLEX_POWER};
-    ValueSaver saved_real{g_params[2]};
-    ValueSaver saved_imag{g_params[3], 0.0};
-    ValueSaver saved_exponent{g_c_exponent};
-    ValueSaver saved_math{g_bf_math, BFMathType::NONE};
-    for (const int exponent : {0, 1, -1, -2, 2})
-    {
-        SCOPED_TRACE(exponent);
-        g_c_exponent = exponent;
-        g_params[2] = exponent;
-        std::complex<double> reference{};
-        mandel_z_power_ref_pt({}, reference);
-        EXPECT_EQ(std::complex<double>{}, reference);
-        std::complex<double> delta{0.5, 0.0};
-        const DComplex expected{id::math::pow(DComplex{0.5, 0.0}, DComplex{static_cast<double>(exponent), 0.0})};
-        mandel_z_power_perturb({}, delta, {});
-        EXPECT_NEAR(expected.x, delta.real(), 1e-13);
-        EXPECT_NEAR(expected.y, delta.imag(), 1e-13);
-    }
+protected:
+    void SetUp() override;
+
+    ValueSaver<DebugFlags> saved_debug{g_debug_flag, DebugFlags::FORCE_COMPLEX_POWER};
+    ValueSaver<double> saved_real{g_params[2]};
+    ValueSaver<double> saved_imag{g_params[3], 0.0};
+};
+
+void TestForcedComplexIntegerPower::SetUp()
+{
+    g_c_exponent = GetParam();
+    g_params[2] = GetParam();
 }
+
+TEST_P(TestForcedComplexIntegerPower, zeroReferenceRetainsTheComplexConvention)
+{
+    std::complex<double> reference{};
+
+    mandel_z_power_ref_pt({}, reference);
+
+    EXPECT_EQ(std::complex<double>{}, reference);
+}
+
+TEST_P(TestForcedComplexIntegerPower, deltaRetainsTheNativeComplexConvention)
+{
+    std::complex<double> delta{0.5, 0.0};
+    const DComplex expected{id::math::pow(DComplex{0.5, 0.0}, DComplex{static_cast<double>(GetParam()), 0.0})};
+
+    mandel_z_power_perturb({}, delta, {});
+
+    EXPECT_NEAR(expected.x, delta.real(), 1e-13);
+    EXPECT_NEAR(expected.y, delta.imag(), 1e-13);
+}
+
+INSTANTIATE_TEST_SUITE_P(ForcedComplexPowers, TestForcedComplexIntegerPower, Values(0, 1, -1, -2, 2));
 
 } // namespace id::test
