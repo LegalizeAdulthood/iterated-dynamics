@@ -2252,20 +2252,100 @@ INSTANTIATE_TEST_SUITE_P(Sources, TestRouterAskVideoSources,
         RouterPreferenceSourceInput{"SelectedSet", {"id", "@whole", "@selected/chosen"}, true, true}),
     [](const TestParamInfo<RouterPreferenceSourceInput> &info) { return info.param.name; });
 
-TEST_F(TestCommandRouterStartup, startupRestartAndFallbackRestoreVideoPromptDefault)
+class TestRouterStartupPhase : public TestCommandRouterStartup, public WithParamInterface<bool>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestRouterStartupPhase::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
+    if (!GetParam())
+    {
+        const CommandRouter router;
+        ASSERT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
+    }
+}
+
+TEST_P(TestRouterStartupPhase, restoresVideoPromptDefault)
 {
     const CommandRouter router;
     g_ask_video = false;
 
     EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
+
     EXPECT_TRUE(g_ask_video);
     EXPECT_FALSE(g_first_init);
-    g_ask_video = false;
+}
+
+TEST_P(TestRouterStartupPhase, restoresVirtualScreenDefault)
+{
+    const CommandRouter router;
+    g_virtual_screens = false;
+
     EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
-    EXPECT_TRUE(g_ask_video);
+
+    EXPECT_TRUE(g_virtual_screens);
+    EXPECT_FALSE(g_first_init);
+}
+
+TEST_P(TestRouterStartupPhase, restoresExitConfirmationDefault)
+{
+    const CommandRouter router;
+    g_escape_exit = true;
+
+    EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
+
+    EXPECT_FALSE(g_escape_exit);
+    EXPECT_FALSE(g_first_init);
+}
+
+INSTANTIATE_TEST_SUITE_P(Phase, TestRouterStartupPhase, Values(true, false),
+    [](const TestParamInfo<bool> &info) { return info.param ? "Initial" : "Restart"; });
+
+class TestRouterStartupFallback : public TestCommandRouterStartup
+{
+protected:
+    void SetUp() override;
+};
+
+void TestRouterStartupFallback::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
+    const CommandRouter router;
+    ASSERT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
+    ASSERT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
+}
+
+TEST_F(TestRouterStartupFallback, restoresVideoPromptDefault)
+{
+    const CommandRouter router;
     g_ask_video = false;
+
     EXPECT_TRUE(router.reset_startup().diagnostics.errors.empty());
+
     EXPECT_TRUE(g_ask_video);
+}
+
+TEST_F(TestRouterStartupFallback, restoresVirtualScreenDefault)
+{
+    const CommandRouter router;
+    g_virtual_screens = false;
+
+    EXPECT_TRUE(router.reset_startup().diagnostics.errors.empty());
+
+    EXPECT_TRUE(g_virtual_screens);
+}
+
+TEST_F(TestRouterStartupFallback, restoresExitConfirmationDefault)
+{
+    const CommandRouter router;
+    g_escape_exit = true;
+
+    EXPECT_TRUE(router.reset_startup().diagnostics.errors.empty());
+
+    EXPECT_FALSE(g_escape_exit);
 }
 
 TEST_F(TestCommandRouterStartup, fallbackRetainsVideoPromptConfigurationOverride)
@@ -2281,22 +2361,38 @@ TEST_F(TestCommandRouterStartup, fallbackRetainsVideoPromptConfigurationOverride
     EXPECT_FALSE(g_ask_video);
 }
 
-TEST_F(TestCommandRouterStartup, explicitResetPreservesVideoPromptPreference)
+class TestRouterResetPreference : public TestCommandRouterStartup, public WithParamInterface<bool>
+{
+};
+
+TEST_P(TestRouterResetPreference, preservesVideoPromptPreference)
 {
     const CommandRouter router;
-    for (const bool ask_video : {true, false})
-    {
-        SCOPED_TRACE(ask_video);
-        g_ask_video = ask_video;
-        CommandProcessor processor{"reset=1960", CmdFile::AT_AFTER_STARTUP};
+    g_ask_video = GetParam();
+    CommandProcessor processor{"reset=1960", CmdFile::AT_AFTER_STARTUP};
 
-        const CommandParseResult result{router.process(processor)};
+    const CommandParseResult result{router.process(processor)};
 
-        EXPECT_TRUE(result.diagnostics.errors.empty());
-        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
-        EXPECT_EQ(ask_video, g_ask_video);
-    }
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
+    EXPECT_EQ(GetParam(), g_ask_video);
 }
+
+TEST_P(TestRouterResetPreference, preservesVirtualScreenPreference)
+{
+    const CommandRouter router;
+    g_virtual_screens = GetParam();
+    CommandProcessor processor{"reset=1960", CmdFile::AT_AFTER_STARTUP};
+
+    const CommandParseResult result{router.process(processor)};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
+    EXPECT_EQ(GetParam(), g_virtual_screens);
+}
+
+INSTANTIATE_TEST_SUITE_P(Preference, TestRouterResetPreference, Values(true, false),
+    [](const TestParamInfo<bool> &info) { return info.param ? "Enabled" : "Disabled"; });
 
 TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeaveVirtualScreenPreferenceAlone)
 {
@@ -2346,22 +2442,6 @@ INSTANTIATE_TEST_SUITE_P(Sources, TestRouterVirtualSources,
         RouterPreferenceSourceInput{"SelectedSet", {"id", "@whole", "@selected/chosen"}, true, true}),
     [](const TestParamInfo<RouterPreferenceSourceInput> &info) { return info.param.name; });
 
-TEST_F(TestCommandRouterStartup, startupRestartAndFallbackRestoreVirtualScreenDefault)
-{
-    const CommandRouter router;
-    g_virtual_screens = false;
-
-    EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
-    EXPECT_TRUE(g_virtual_screens);
-    EXPECT_FALSE(g_first_init);
-    g_virtual_screens = false;
-    EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
-    EXPECT_TRUE(g_virtual_screens);
-    g_virtual_screens = false;
-    EXPECT_TRUE(router.reset_startup().diagnostics.errors.empty());
-    EXPECT_TRUE(g_virtual_screens);
-}
-
 TEST_F(TestCommandRouterStartup, fallbackRetainsVirtualScreenConfigurationOverride)
 {
     const CommandRouter router;
@@ -2373,23 +2453,6 @@ TEST_F(TestCommandRouterStartup, fallbackRetainsVirtualScreenConfigurationOverri
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
     EXPECT_FALSE(g_virtual_screens);
-}
-
-TEST_F(TestCommandRouterStartup, explicitResetPreservesVirtualScreenPreference)
-{
-    const CommandRouter router;
-    for (const bool virtual_screens : {true, false})
-    {
-        SCOPED_TRACE(virtual_screens);
-        g_virtual_screens = virtual_screens;
-        CommandProcessor processor{"reset=1960", CmdFile::AT_AFTER_STARTUP};
-
-        const CommandParseResult result{router.process(processor)};
-
-        EXPECT_TRUE(result.diagnostics.errors.empty());
-        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
-        EXPECT_EQ(virtual_screens, g_virtual_screens);
-    }
 }
 
 TEST_F(TestCommandRouterStartup, engineRestartDefaultsLeavePendingModeAlone)
@@ -2460,22 +2523,25 @@ TEST_F(TestCommandRouterStartup, pendingModeDefaultsAndOverridesDoNotActivateVid
     EXPECT_EQ(256, g_colors);
 }
 
-TEST_F(TestCommandRouterStartup, explicitResetPreservesPendingMode)
+class TestRouterResetPendingMode : public TestCommandRouterStartup, public WithParamInterface<int>
+{
+};
+
+TEST_P(TestRouterResetPendingMode, preservesPendingMode)
 {
     const CommandRouter router;
-    for (const int mode : {-1, 7})
-    {
-        SCOPED_TRACE(mode);
-        g_init_mode = mode;
-        CommandProcessor processor{"reset=1960", CmdFile::AT_AFTER_STARTUP};
+    g_init_mode = GetParam();
+    CommandProcessor processor{"reset=1960", CmdFile::AT_AFTER_STARTUP};
 
-        const CommandParseResult result{router.process(processor)};
+    const CommandParseResult result{router.process(processor)};
 
-        EXPECT_TRUE(result.diagnostics.errors.empty());
-        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
-        EXPECT_EQ(mode, g_init_mode);
-    }
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, result.flags);
+    EXPECT_EQ(GetParam(), g_init_mode);
 }
+
+INSTANTIATE_TEST_SUITE_P(Mode, TestRouterResetPendingMode, Values(-1, 7),
+    [](const TestParamInfo<int> &info) { return info.param < 0 ? "Unselected" : "Selected"; });
 
 TEST_F(TestCommandRouterStartup, engineFractalDefaultsLeaveExitConfirmationAlone)
 {
@@ -2484,22 +2550,6 @@ TEST_F(TestCommandRouterStartup, engineFractalDefaultsLeaveExitConfirmationAlone
     engine::reset_fractal_defaults();
 
     EXPECT_TRUE(g_escape_exit);
-}
-
-TEST_F(TestCommandRouterStartup, startupRestartAndFallbackRestoreExitConfirmationDefault)
-{
-    const CommandRouter router;
-    g_escape_exit = true;
-
-    EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
-    EXPECT_FALSE(g_escape_exit);
-    EXPECT_FALSE(g_first_init);
-    g_escape_exit = true;
-    EXPECT_TRUE(router.process_startup({"id"}).diagnostics.errors.empty());
-    EXPECT_FALSE(g_escape_exit);
-    g_escape_exit = true;
-    EXPECT_TRUE(router.reset_startup().diagnostics.errors.empty());
-    EXPECT_FALSE(g_escape_exit);
 }
 
 TEST_F(TestCommandRouterStartup, fallbackRetainsExitConfirmationConfigurationOverride)
