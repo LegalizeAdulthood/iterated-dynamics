@@ -467,10 +467,24 @@ TEST_F(TestLSystemController, stepwiseControllerPreservesSizingAndDrawingIncreme
     EXPECT_EQ(192, m_lines);
     EXPECT_EQ(1, m_thinking_entries);
     EXPECT_EQ(1, m_thinking_exits);
-    controller.iterate();
-    EXPECT_EQ(192, m_lines);
     calculation.finish(false);
     EXPECT_FALSE(lsystem_loaded());
+}
+
+TEST_F(TestLSystemLifecycle, iterationAfterCompletionDoesNotDraw)
+{
+    char stack_top{};
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    LSystemController controller{*m_calculation};
+    controller.start();
+    complete_controller(controller);
+    ASSERT_TRUE(controller.done());
+    ASSERT_EQ(192, m_lines);
+
+    controller.iterate();
+
+    EXPECT_EQ(192, m_lines);
+    m_calculation->finish(false);
 }
 
 TEST_F(TestLSystemController, stepwiseSizingSuspensionClosesThinking)
@@ -681,27 +695,64 @@ TEST_F(TestLSystemController, stepwiseDestructionClosesThinkingWithoutFinishingC
     EXPECT_FALSE(lsystem_loaded());
 }
 
-TEST_F(TestLSystemController, stepwiseAlreadyFinishedCalculationDoesNotOpenThinking)
+class TestLSystemAlreadyFinished : public TestLSystemController
+{
+protected:
+    void TearDown() override;
+    void prepare_calculation(char *stack_top);
+
+    std::unique_ptr<ValueSaver<char *>> m_saved_stack;
+    std::unique_ptr<NonStandardFractal> m_calculation;
+};
+
+void TestLSystemAlreadyFinished::TearDown()
+{
+    m_calculation.reset();
+    m_saved_stack.reset();
+    TestLSystemController::TearDown();
+}
+
+void TestLSystemAlreadyFinished::prepare_calculation(char *stack_top)
 {
     g_overflow = true;
-    char stack_top{};
-    const ValueSaver<char *> saved_stack{g_top_of_stack, &stack_top};
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, calculation.select());
-    ASSERT_TRUE(calculation.done());
+    m_saved_stack = std::make_unique<ValueSaver<char *>>(g_top_of_stack, stack_top);
+    m_calculation = std::make_unique<NonStandardFractal>();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::L_SYSTEM, m_calculation->select());
+    ASSERT_TRUE(m_calculation->done());
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    LSystemController controller{calculation};
+}
+
+TEST_F(TestLSystemAlreadyFinished, stepwiseAlreadyFinishedCalculationDoesNotOpenThinking)
+{
+    char stack_top{};
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    LSystemController controller{*m_calculation};
 
     controller.start();
 
     EXPECT_TRUE(controller.done());
     EXPECT_EQ(0, controller.result());
-    controller.iterate();
     EXPECT_EQ(0, m_thinking_entries);
     EXPECT_EQ(0, m_thinking_exits);
     EXPECT_EQ(0, m_lines);
-    calculation.finish(false);
+    m_calculation->finish(false);
+}
+
+TEST_F(TestLSystemAlreadyFinished, iterationAfterCompletionDoesNotOpenThinking)
+{
+    char stack_top{};
+    ASSERT_NO_FATAL_FAILURE(prepare_calculation(&stack_top));
+    LSystemController controller{*m_calculation};
+    controller.start();
+    ASSERT_TRUE(controller.done());
+
+    controller.iterate();
+
+    EXPECT_EQ(0, m_thinking_entries);
+    EXPECT_EQ(0, m_thinking_exits);
+    EXPECT_EQ(0, m_lines);
+    m_calculation->finish(false);
 }
 
 } // namespace id::test
