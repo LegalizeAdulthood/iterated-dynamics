@@ -1543,10 +1543,9 @@ TYPED_TEST(TestAbandonedCalculation, cleanupPreservesTheActiveException)
     EXPECT_NO_THROW(end_disk());
 }
 
-class TestRenderCleanup : public TestTargaFlushFailure, public WithParamInterface<bool>
+class TestRenderCleanupBase : public TestTargaFlushFailure
 {
 protected:
-    void SetUp() override;
     void damage_backing(ImageRenderContext &rendering);
     void expect_diagnostic(const char *message);
     void expect_released(ImageRenderContext &rendering, SoundSession &sound);
@@ -1556,16 +1555,7 @@ protected:
     ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
 };
 
-void TestRenderCleanup::SetUp()
-{
-    TestTargaFlushFailure::SetUp();
-    if (GetParam())
-    {
-        select_froth();
-    }
-}
-
-void TestRenderCleanup::damage_backing(ImageRenderContext &rendering)
+void TestRenderCleanupBase::damage_backing(ImageRenderContext &rendering)
 {
     rendering.start();
     ASSERT_FALSE(rendering.done());
@@ -1573,7 +1563,7 @@ void TestRenderCleanup::damage_backing(ImageRenderContext &rendering)
     TestTargaFlushFailure::damage_backing();
 }
 
-void TestRenderCleanup::expect_diagnostic(const char *message)
+void TestRenderCleanupBase::expect_diagnostic(const char *message)
 {
     EXPECT_CALL(m_driver, stack_screen());
     EXPECT_CALL(m_driver, unstack_screen());
@@ -1586,7 +1576,7 @@ void TestRenderCleanup::expect_diagnostic(const char *message)
     EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ENTER));
 }
 
-void TestRenderCleanup::expect_released(ImageRenderContext &rendering, SoundSession &sound)
+void TestRenderCleanupBase::expect_released(ImageRenderContext &rendering, SoundSession &sound)
 {
     EXPECT_TRUE(rendering.done());
     EXPECT_EQ(-1, rendering.result());
@@ -1602,6 +1592,48 @@ void TestRenderCleanup::expect_released(ImageRenderContext &rendering, SoundSess
     EXPECT_NO_THROW(sound.cancel());
     EXPECT_FALSE(sound.finish());
     EXPECT_NO_THROW(rendering.iterate());
+}
+
+class TestRenderCleanup : public TestRenderCleanupBase, public WithParamInterface<bool>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestRenderCleanup::SetUp()
+{
+    TestRenderCleanupBase::SetUp();
+    if (GetParam())
+    {
+        select_froth();
+    }
+}
+
+class TestRenderFailurePropagation : public TestRenderCleanup
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<SoundSession> m_sound;
+    std::unique_ptr<ImageRenderContext> m_rendering;
+};
+
+void TestRenderFailurePropagation::SetUp()
+{
+    TestRenderCleanup::SetUp();
+    m_sound = std::make_unique<SoundSession>(m_output);
+    m_rendering = std::make_unique<ImageRenderContext>(*m_sound);
+    damage_backing(*m_rendering);
+    EXPECT_CALL(*m_output, mute());
+    EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
+}
+
+void TestRenderFailurePropagation::TearDown()
+{
+    m_rendering.reset();
+    m_sound.reset();
+    TestRenderCleanup::TearDown();
 }
 
 TEST_P(TestRenderCleanup, originalDiagnosticSurvivesStorageAndSoundCleanupFailures)
@@ -1635,34 +1667,115 @@ TEST_P(TestRenderCleanup, allocationDiagnosticSurvivesStorageCleanupFailure)
     expect_released(rendering, sound);
 }
 
-TEST_P(TestRenderCleanup, precisionFailureStillPropagatesToTheOuterUi)
+TEST_P(TestRenderFailurePropagation, precisionFailureStillPropagatesToTheOuterUi)
 {
-    SoundSession sound{m_output};
-    ImageRenderContext rendering{sound};
-    damage_backing(rendering);
     EXPECT_CALL(*m_output, update()).WillOnce(Throw(PrecisionError{"Original precision failure"}));
-    EXPECT_CALL(*m_output, mute());
-    EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
 
-    EXPECT_THAT(
-        [&rendering] { rendering.iterate(); }, ThrowsMessage<PrecisionError>(StrEq("Original precision failure")));
+    EXPECT_THAT([this] { m_rendering->iterate(); }, ThrowsMessage<PrecisionError>(StrEq("Original precision failure")));
 
-    expect_released(rendering, sound);
+    expect_released(*m_rendering, *m_sound);
 }
 
-TEST_P(TestRenderCleanup, unexpectedFailureStillPropagatesWithoutChangingItsType)
+TEST_P(TestRenderFailurePropagation, unexpectedFailureStillPropagatesWithoutChangingItsType)
 {
-    SoundSession sound{m_output};
-    ImageRenderContext rendering{sound};
-    damage_backing(rendering);
     EXPECT_CALL(*m_output, update()).WillOnce(Throw(std::logic_error("Original logic failure")));
-    EXPECT_CALL(*m_output, mute());
-    EXPECT_CALL(*m_output, finish()).WillOnce(Return(true));
 
-    EXPECT_THAT(
-        [&rendering] { rendering.iterate(); }, ThrowsMessage<std::logic_error>(StrEq("Original logic failure")));
+    EXPECT_THAT([this] { m_rendering->iterate(); }, ThrowsMessage<std::logic_error>(StrEq("Original logic failure")));
 
-    expect_released(rendering, sound);
+    expect_released(*m_rendering, *m_sound);
+}
+
+INSTANTIATE_TEST_SUITE_P(StandardAndFroth, TestRenderFailurePropagation, Bool());
+
+struct RenderFailurePolicyInput
+{
+    const char *name;
+    bool frothy;
+    BatchMode batch;
+};
+
+void PrintTo(const RenderFailurePolicyInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+const RenderFailurePolicyInput RENDER_FAILURE_POLICIES[]{{"StandardInteractive", false, BatchMode::NONE},
+    {"FrothyInteractive", true, BatchMode::NONE}, {"StandardBatch", false, BatchMode::NORMAL},
+    {"FrothyBatch", true, BatchMode::NORMAL}};
+
+class TestRenderFailurePolicy : public TestRenderCleanupBase, public WithParamInterface<RenderFailurePolicyInput>
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void expect_failure_diagnostic(const char *message);
+    void expect_failure_policy(const char *message);
+
+    std::unique_ptr<SoundSession> m_owner;
+    std::unique_ptr<SoundSession> m_borrowed;
+    std::unique_ptr<ImageRenderContext> m_rendering;
+};
+
+void TestRenderFailurePolicy::SetUp()
+{
+    TestRenderCleanupBase::SetUp();
+    if (GetParam().frothy)
+    {
+        select_froth();
+    }
+    m_owner = std::make_unique<SoundSession>(m_output);
+    m_borrowed = std::make_unique<SoundSession>(g_sound, SoundSession::Ownership::BORROWED);
+}
+
+void TestRenderFailurePolicy::TearDown()
+{
+    m_rendering.reset();
+    m_borrowed.reset();
+    m_owner.reset();
+    TestRenderCleanupBase::TearDown();
+}
+
+void TestRenderFailurePolicy::expect_failure_diagnostic(const char *message)
+{
+    if (GetParam().batch == BatchMode::NORMAL)
+    {
+        EXPECT_CALL(m_driver, stack_screen()).Times(0);
+    }
+    else
+    {
+        expect_diagnostic(message);
+    }
+}
+
+void TestRenderFailurePolicy::expect_failure_policy(const char *message)
+{
+    EXPECT_EQ(GetParam().batch == BatchMode::NORMAL ? BatchMode::BAILOUT_ERROR_NO_SAVE : BatchMode::NONE, g_init_batch);
+    if (GetParam().batch == BatchMode::NORMAL)
+    {
+        std::ifstream diagnostic{get_append_save_path(WriteFile::DEBUG, "stopmsg")};
+        EXPECT_EQ(std::string{message} + "\n",
+            (std::string{std::istreambuf_iterator<char>{diagnostic}, std::istreambuf_iterator<char>{}}));
+    }
+}
+
+class TestBorrowedRenderFailure : public TestRenderFailurePolicy
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBorrowedRenderFailure::SetUp()
+{
+    TestRenderFailurePolicy::SetUp();
+    g_start_show_orbit = true;
+    m_rendering = std::make_unique<ImageRenderContext>(*m_borrowed);
+    m_rendering->start();
+    ASSERT_FALSE(m_rendering->done());
+    g_init_batch = GetParam().batch;
+    expect_failure_diagnostic("Original sound write failure");
+    EXPECT_CALL(*m_output, begin_orbit()).WillOnce(Throw(std::runtime_error("Original sound write failure")));
+    EXPECT_CALL(*m_output, mute()).Times(2);
+    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Sound close failure")));
 }
 
 TEST_P(TestRenderCleanup, batchFailureRetainsItsDiagnosticAndNoSaveExitPolicy)
@@ -1685,70 +1798,54 @@ TEST_P(TestRenderCleanup, batchFailureRetainsItsDiagnosticAndNoSaveExitPolicy)
     expect_released(rendering, sound);
 }
 
-TEST_P(TestRenderCleanup, borrowedWriteFailureSurvivesOwningSoundCleanup)
+TEST_P(TestBorrowedRenderFailure, writeFailureSurvivesOwningSoundCleanup)
 {
-    g_start_show_orbit = true;
-    SoundSession owner{m_output};
-    SoundSession borrowed{g_sound, SoundSession::Ownership::BORROWED};
-    ImageRenderContext rendering{borrowed};
-    rendering.start();
-    ASSERT_FALSE(rendering.done());
-    expect_diagnostic("Original sound write failure");
-    EXPECT_CALL(*m_output, begin_orbit()).WillOnce(Throw(std::runtime_error("Original sound write failure")));
-    EXPECT_CALL(*m_output, mute()).Times(2);
-    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Sound close failure")));
+    EXPECT_NO_THROW(while (!m_rendering->done()) { m_rendering->iterate(); });
+    EXPECT_TRUE(m_rendering->failure_reported());
+    EXPECT_EQ(-1, finish_render_sound(*m_owner, m_rendering->result(), m_rendering->failure_reported()));
 
-    EXPECT_NO_THROW(while (!rendering.done()) { rendering.iterate(); });
-    EXPECT_TRUE(rendering.failure_reported());
-    EXPECT_EQ(-1, finish_render_sound(owner, rendering.result(), rendering.failure_reported()));
-
-    EXPECT_EQ(BatchMode::NONE, g_init_batch);
-    expect_released(rendering, borrowed);
-    EXPECT_NO_THROW(owner.cancel());
-    EXPECT_FALSE(owner.finish());
+    expect_failure_policy("Original sound write failure");
+    expect_released(*m_rendering, *m_borrowed);
+    EXPECT_NO_THROW(m_owner->cancel());
+    if (GetParam().batch == BatchMode::NONE)
+    {
+        EXPECT_FALSE(m_owner->finish());
+    }
 }
 
-TEST_P(TestRenderCleanup, borrowedBatchFailureKeepsOneDiagnosticAndNoSavePolicy)
+INSTANTIATE_TEST_SUITE_P(Policies, TestBorrowedRenderFailure, ValuesIn(RENDER_FAILURE_POLICIES),
+    [](const TestParamInfo<RenderFailurePolicyInput> &info) { return info.param.name; });
+
+class TestOwnerCloseFailure : public TestRenderFailurePolicy
 {
-    g_start_show_orbit = true;
-    SoundSession owner{m_output};
-    SoundSession borrowed{g_sound, SoundSession::Ownership::BORROWED};
-    ImageRenderContext rendering{borrowed};
-    rendering.start();
-    ASSERT_FALSE(rendering.done());
-    g_init_batch = BatchMode::NORMAL;
-    EXPECT_CALL(*m_output, begin_orbit()).WillOnce(Throw(std::runtime_error("Original sound write failure")));
-    EXPECT_CALL(*m_output, mute()).Times(2);
-    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Sound close failure")));
-    EXPECT_CALL(m_driver, stack_screen()).Times(0);
+protected:
+    void SetUp() override;
+};
 
-    EXPECT_NO_THROW(while (!rendering.done()) { rendering.iterate(); });
-    EXPECT_TRUE(rendering.failure_reported());
-    EXPECT_EQ(-1, finish_render_sound(owner, rendering.result(), rendering.failure_reported()));
-
-    EXPECT_EQ(BatchMode::BAILOUT_ERROR_NO_SAVE, g_init_batch);
-    std::ifstream diagnostic{get_append_save_path(WriteFile::DEBUG, "stopmsg")};
-    EXPECT_EQ("Original sound write failure\n",
-        (std::string{std::istreambuf_iterator<char>{diagnostic}, std::istreambuf_iterator<char>{}}));
-    expect_released(rendering, borrowed);
-    EXPECT_NO_THROW(owner.cancel());
-}
-
-TEST_P(TestRenderCleanup, newOwnerCloseFailureUsesTheRenderErrorPolicy)
+void TestOwnerCloseFailure::SetUp()
 {
-    SoundSession owner{m_output};
-    SoundSession borrowed{g_sound, SoundSession::Ownership::BORROWED};
-    ASSERT_TRUE(borrowed.finish());
-    expect_diagnostic("Sound close failure");
+    TestRenderFailurePolicy::SetUp();
+    ASSERT_TRUE(m_borrowed->finish());
+    g_init_batch = GetParam().batch;
+    expect_failure_diagnostic("Sound close failure");
     EXPECT_CALL(*m_output, mute()).Times(0);
     EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Sound close failure")));
-
-    EXPECT_EQ(-1, finish_render_sound(owner, 0, false));
-
-    EXPECT_EQ(BatchMode::NONE, g_init_batch);
-    EXPECT_NO_THROW(owner.cancel());
-    EXPECT_FALSE(owner.finish());
 }
+
+TEST_P(TestOwnerCloseFailure, closeFailureUsesTheRenderErrorPolicy)
+{
+    EXPECT_EQ(-1, finish_render_sound(*m_owner, 0, false));
+
+    expect_failure_policy("Sound close failure");
+    EXPECT_NO_THROW(m_owner->cancel());
+    if (GetParam().batch == BatchMode::NONE)
+    {
+        EXPECT_FALSE(m_owner->finish());
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Policies, TestOwnerCloseFailure, ValuesIn(RENDER_FAILURE_POLICIES),
+    [](const TestParamInfo<RenderFailurePolicyInput> &info) { return info.param.name; });
 
 TEST_P(TestRenderCleanup, ownerCloseFailureAfterInterruptionIsNotDiscarded)
 {
@@ -1762,25 +1859,6 @@ TEST_P(TestRenderCleanup, ownerCloseFailureAfterInterruptionIsNotDiscarded)
     EXPECT_EQ(-1, finish_render_sound(owner, -1, false));
 
     EXPECT_EQ(BatchMode::NONE, g_init_batch);
-    EXPECT_NO_THROW(owner.cancel());
-}
-
-TEST_P(TestRenderCleanup, newBatchOwnerCloseFailureSelectsNoSaveExitPolicy)
-{
-    SoundSession owner{m_output};
-    SoundSession borrowed{g_sound, SoundSession::Ownership::BORROWED};
-    ASSERT_TRUE(borrowed.finish());
-    g_init_batch = BatchMode::NORMAL;
-    EXPECT_CALL(*m_output, mute()).Times(0);
-    EXPECT_CALL(*m_output, finish()).WillOnce(Throw(std::runtime_error("Sound close failure")));
-    EXPECT_CALL(m_driver, stack_screen()).Times(0);
-
-    EXPECT_EQ(-1, finish_render_sound(owner, 0, false));
-
-    EXPECT_EQ(BatchMode::BAILOUT_ERROR_NO_SAVE, g_init_batch);
-    std::ifstream diagnostic{get_append_save_path(WriteFile::DEBUG, "stopmsg")};
-    EXPECT_EQ("Sound close failure\n",
-        (std::string{std::istreambuf_iterator<char>{diagnostic}, std::istreambuf_iterator<char>{}}));
     EXPECT_NO_THROW(owner.cancel());
 }
 
