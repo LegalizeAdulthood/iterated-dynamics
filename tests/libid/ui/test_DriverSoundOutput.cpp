@@ -358,36 +358,58 @@ TEST_F(TestDriverSoundOutput, destructionCancelsUnfinishedToneAndClosesRecording
     EXPECT_EQ("230\n", read_text(m_directory / "sound/sound001.txt"));
 }
 
-TEST_F(TestDriverSoundOutput, existingNameAdvancesWithoutOverwriting)
+struct SoundOverwriteInput
 {
+    const char *name;
+    bool overwrite;
+    const char *existing_text;
+    const char *first_text;
+    const char *second_text;
+};
+
+void PrintTo(const SoundOverwriteInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestSoundRecordingOverwrite : public TestDriverSoundOutput, public WithParamInterface<SoundOverwriteInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestSoundRecordingOverwrite::SetUp()
+{
+    TestDriverSoundOutput::SetUp();
     g_orbit_save_flags = OSF_MIDI;
+    g_overwrite_file = GetParam().overwrite;
     fs::create_directory(m_directory / "sound");
-    write_text(m_directory / "sound/sound001.txt", "preserved\n");
+    write_text(m_directory / "sound/sound001.txt", GetParam().existing_text);
+}
+
+TEST_P(TestSoundRecordingOverwrite, appliesOverwritePolicyToExistingRecording)
+{
     DriverSoundOutput output{Source::OVERLAY, m_now, m_timestamp};
     EXPECT_CALL(m_driver, sound_on(230)).WillOnce(Return(false));
 
     EXPECT_TRUE(output.play({10, 20, 0}));
     EXPECT_TRUE(output.finish());
 
-    EXPECT_EQ("preserved\n", read_text(m_directory / "sound/sound001.txt"));
-    EXPECT_EQ("230\n", read_text(m_directory / "sound/sound002.txt"));
+    EXPECT_EQ(GetParam().first_text, read_text(m_directory / "sound/sound001.txt"));
+    if (GetParam().second_text)
+    {
+        EXPECT_EQ(GetParam().second_text, read_text(m_directory / "sound/sound002.txt"));
+    }
+    else
+    {
+        EXPECT_FALSE(fs::exists(m_directory / "sound/sound002.txt"));
+    }
 }
 
-TEST_F(TestDriverSoundOutput, overwriteReusesExistingName)
-{
-    g_orbit_save_flags = OSF_MIDI;
-    g_overwrite_file = true;
-    fs::create_directory(m_directory / "sound");
-    write_text(m_directory / "sound/sound001.txt", "replaced\n");
-    DriverSoundOutput output{Source::OVERLAY, m_now, m_timestamp};
-    EXPECT_CALL(m_driver, sound_on(230)).WillOnce(Return(false));
-
-    EXPECT_TRUE(output.play({10, 20, 0}));
-    EXPECT_TRUE(output.finish());
-
-    EXPECT_EQ("230\n", read_text(m_directory / "sound/sound001.txt"));
-    EXPECT_FALSE(fs::exists(m_directory / "sound/sound002.txt"));
-}
+INSTANTIATE_TEST_SUITE_P(Policies, TestSoundRecordingOverwrite,
+    Values(SoundOverwriteInput{"PreserveExisting", false, "preserved\n", "preserved\n", "230\n"},
+        SoundOverwriteInput{"OverwriteExisting", true, "replaced\n", "230\n", nullptr}),
+    [](const TestParamInfo<SoundOverwriteInput> &info) { return info.param.name; });
 
 struct DriverOrbitSoundInput
 {
