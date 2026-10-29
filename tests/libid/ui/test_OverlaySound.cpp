@@ -64,6 +64,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #define private public
@@ -1479,48 +1480,60 @@ TEST_F(TestTargaFlushFailure, damagedBackingFailsDuringCacheFlush)
     EXPECT_NO_THROW(end_disk());
 }
 
-TEST_F(TestTargaFlushFailure, abandonedImageCleanupPreservesTheActiveException)
+template <typename Calculation>
+class TestAbandonedCalculation : public TestTargaFlushFailure
 {
-    EXPECT_THAT(
-        [this]
-        {
-            ImageCalculation calculation;
-            complete_image_setup(calculation, calculation.start());
-            damage_backing();
-            throw std::runtime_error("Original rendering failure");
-        },
-        ThrowsMessage<std::runtime_error>(StrEq("Original rendering failure")));
+protected:
+    void prepare(ImageCalculation &calculation);
+    void prepare(StandardFractal &calculation);
+};
 
-    EXPECT_FALSE(g_disk_flag);
-    EXPECT_TRUE(exit_check().empty());
-    EXPECT_NO_THROW(end_disk());
+template <typename Calculation>
+void TestAbandonedCalculation<Calculation>::prepare(ImageCalculation &calculation)
+{
+    complete_image_setup(calculation, calculation.start());
 }
 
-TEST_F(TestTargaFlushFailure, abandonedStandardCleanupPreservesTheActiveException)
+template <typename Calculation>
+void TestAbandonedCalculation<Calculation>::prepare(StandardFractal &calculation)
 {
-    EXPECT_THAT(
-        [this]
-        {
-            StandardFractal calculation;
-            complete_image_setup(calculation, calculation.resume());
-            damage_backing();
-            throw std::runtime_error("Original rendering failure");
-        },
-        ThrowsMessage<std::runtime_error>(StrEq("Original rendering failure")));
-
-    EXPECT_FALSE(g_disk_flag);
-    EXPECT_TRUE(exit_check().empty());
-    EXPECT_NO_THROW(end_disk());
+    complete_image_setup(calculation, calculation.resume());
 }
 
-TEST_F(TestTargaFlushFailure, abandonedNonStandardCleanupPreservesTheActiveException)
+struct AbandonedCalculationNames
+{
+    template <typename Calculation>
+    static std::string GetName(int);
+};
+
+template <typename Calculation>
+std::string AbandonedCalculationNames::GetName(int)
+{
+    if constexpr (std::is_same_v<Calculation, ImageCalculation>)
+    {
+        return "Image";
+    }
+    else if constexpr (std::is_same_v<Calculation, StandardFractal>)
+    {
+        return "Standard";
+    }
+    else
+    {
+        return "NonStandard";
+    }
+}
+
+using AbandonedCalculations = Types<ImageCalculation, StandardFractal, NonStandardFractal>;
+TYPED_TEST_SUITE(TestAbandonedCalculation, AbandonedCalculations, AbandonedCalculationNames);
+
+TYPED_TEST(TestAbandonedCalculation, cleanupPreservesTheActiveException)
 {
     EXPECT_THAT(
         [this]
         {
-            NonStandardFractal calculation;
-            complete_image_setup(calculation, calculation.start());
-            damage_backing();
+            TypeParam calculation;
+            this->prepare(calculation);
+            this->damage_backing();
             throw std::runtime_error("Original rendering failure");
         },
         ThrowsMessage<std::runtime_error>(StrEq("Original rendering failure")));
