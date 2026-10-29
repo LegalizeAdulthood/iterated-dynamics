@@ -263,114 +263,140 @@ TEST_F(TestPutEncodedColors, twoLeastLSBSetEncodedAsHex)
     EXPECT_EQ(expected, m_data.buf);
 }
 
-TEST_F(TestPutFractalParams, antUsesTextRuleForFirstParam)
+struct AntParameterInput
 {
-    g_param_text[0] = "101001011001";
+    const char *name;
+    const char *rule;
+    const char *expected;
+};
+
+void PrintTo(const AntParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestAntParameterSerialization : public TestPutFractalParams, public testing::WithParamInterface<AntParameterInput>
+{
+};
+
+TEST_P(TestAntParameterSerialization, writesRuleParameter)
+{
+    g_param_text[0] = GetParam().rule;
 
     put_fractal_params(m_data);
 
-    constexpr std::string_view expected{"params=101001011001/1200000.0/3.0/2.0/0.0/0.0"};
-    EXPECT_EQ(expected, m_data.buf);
+    EXPECT_EQ(GetParam().expected, m_data.buf);
 }
 
-TEST_F(TestPutFractalParams, antUsesNumericRuleWhenTextIsEmpty)
-{
-    put_fractal_params(m_data);
+INSTANTIATE_TEST_SUITE_P(Rule, TestAntParameterSerialization,
+    testing::Values(AntParameterInput{"Text", "101001011001", "params=101001011001/1200000.0/3.0/2.0/0.0/0.0"},
+        AntParameterInput{"Numeric", "", "params=1100.0/1200000.0/3.0/2.0/0.0/0.0"}),
+    [](const testing::TestParamInfo<AntParameterInput> &info) { return info.param.name; });
 
-    constexpr std::string_view expected{"params=1100.0/1200000.0/3.0/2.0/0.0/0.0"};
-    EXPECT_EQ(expected, m_data.buf);
+struct CalculationModeParameterInput
+{
+    const char *name;
+    CalcMode mode;
+    PerturbationMode perturbation;
+    double tolerance;
+    const char *expected;
+};
+
+void PrintTo(const CalculationModeParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestPutCalculationModeParams, suppressesDefaults)
+class TestCalculationModeSerialization : public TestPutCalculationModeParams,
+                                         public testing::WithParamInterface<CalculationModeParameterInput>
 {
-    put_calculation_mode_params(m_data);
+};
 
-    EXPECT_TRUE(m_data.buf.empty());
-}
-
-TEST_F(TestPutCalculationModeParams, writesPassesWhenNonDefault)
+TEST_P(TestCalculationModeSerialization, writesNonDefaultSettings)
 {
-    g_user.std_calc_mode = CalcMode::ONE_PASS;
-
-    put_calculation_mode_params(m_data);
-
-    EXPECT_EQ("passes=1", m_data.buf);
-}
-
-TEST_F(TestPutCalculationModeParams, writesPerturbationWhenNonDefault)
-{
-    g_user.perturbation = PerturbationMode::YES;
-
-    put_calculation_mode_params(m_data);
-
-    EXPECT_EQ("perturbation=yes", m_data.buf);
-}
-
-TEST_F(TestPutCalculationModeParams, writesPerturbationNo)
-{
-    g_user.perturbation = PerturbationMode::NO;
+    g_user.std_calc_mode = GetParam().mode;
+    g_user.perturbation = GetParam().perturbation;
+    g_user.perturbation_tolerance = GetParam().tolerance;
 
     put_calculation_mode_params(m_data);
 
-    EXPECT_EQ("perturbation=no", m_data.buf);
+    EXPECT_EQ(GetParam().expected, m_data.buf);
 }
 
-TEST_F(TestPutCalculationModeParams, writesToleranceWhenNonDefault)
+INSTANTIATE_TEST_SUITE_P(Settings, TestCalculationModeSerialization,
+    testing::Values(CalculationModeParameterInput{"Defaults", CalcMode::SOLID_GUESS, PerturbationMode::AUTO,
+                        DEFAULT_PERTURBATION_TOLERANCE, ""},
+        CalculationModeParameterInput{
+            "OnePass", CalcMode::ONE_PASS, PerturbationMode::AUTO, DEFAULT_PERTURBATION_TOLERANCE, "passes=1"},
+        CalculationModeParameterInput{"PerturbationYes", CalcMode::SOLID_GUESS, PerturbationMode::YES,
+            DEFAULT_PERTURBATION_TOLERANCE, "perturbation=yes"},
+        CalculationModeParameterInput{"PerturbationNo", CalcMode::SOLID_GUESS, PerturbationMode::NO,
+            DEFAULT_PERTURBATION_TOLERANCE, "perturbation=no"},
+        CalculationModeParameterInput{
+            "Tolerance", CalcMode::SOLID_GUESS, PerturbationMode::AUTO, 0.001, "perturbation-tolerance=0.001"},
+        CalculationModeParameterInput{"CompatibilityPass", CalcMode::PERTURBATION, PerturbationMode::AUTO,
+            DEFAULT_PERTURBATION_TOLERANCE, "perturbation=yes"}),
+    [](const testing::TestParamInfo<CalculationModeParameterInput> &info) { return info.param.name; });
+
+struct RdsParameterInput
 {
-    g_user.perturbation_tolerance = 0.001;
+    const char *name;
+    bool enabled;
+    bool texture;
+    int depth;
+    CalibrationBars bars;
+    double width;
+    bool grayscale;
+    const char *filename;
+    const char *expected;
+};
 
-    put_calculation_mode_params(m_data);
-
-    EXPECT_EQ("perturbation-tolerance=0.001", m_data.buf);
+void PrintTo(const RdsParameterInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST_F(TestPutCalculationModeParams, writesPerturbationForCompatibilityPassesP)
+class TestRdsParameterSerialization : public TestPutRdsParams, public testing::WithParamInterface<RdsParameterInput>
 {
-    g_user.std_calc_mode = CalcMode::PERTURBATION;
+protected:
+    void SetUp() override;
 
-    put_calculation_mode_params(m_data);
+    ValueSaver<bool> m_saved_enabled{g_save_rds_params};
+    ValueSaver<bool> m_saved_texture{g_use_stereo_texture};
+    ValueSaver<int> m_saved_depth{g_auto_stereo_depth};
+    ValueSaver<CalibrationBars> m_saved_bars{g_calibrate};
+    ValueSaver<double> m_saved_width{g_auto_stereo_width};
+    ValueSaver<bool> m_saved_grayscale{g_gray_flag};
+    ValueSaver<std::string> m_saved_filename{g_stereo_texture_filename};
+};
 
-    EXPECT_EQ("perturbation=yes", m_data.buf);
+void TestRdsParameterSerialization::SetUp()
+{
+    g_save_rds_params = GetParam().enabled;
+    if (GetParam().enabled)
+    {
+        g_use_stereo_texture = GetParam().texture;
+        g_auto_stereo_depth = GetParam().depth;
+        g_calibrate = GetParam().bars;
+        g_auto_stereo_width = GetParam().width;
+        g_gray_flag = GetParam().grayscale;
+        g_stereo_texture_filename = GetParam().filename;
+    }
 }
 
-TEST_F(TestPutRdsParams, skippedWhenImageIsNotRds)
+TEST_P(TestRdsParameterSerialization, writesSelectedSettings)
 {
-    ValueSaver saved_save_rds_params{g_save_rds_params, false};
-
     put_rds_params(m_data);
 
-    EXPECT_TRUE(m_data.buf.empty());
+    EXPECT_EQ(GetParam().expected, m_data.buf);
 }
 
-TEST_F(TestPutRdsParams, randomDotsIncludeDepthBarsWidthAndGrayscale)
-{
-    ValueSaver saved_save_rds_params{g_save_rds_params, true};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
-    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, -120};
-    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
-    ValueSaver saved_auto_stereo_width{g_auto_stereo_width, 4.5};
-    ValueSaver saved_gray_flag{g_gray_flag, true};
-
-    put_rds_params(m_data);
-
-    constexpr std::string_view expected{"rds=random/-120/top stereowidth=4.5 usegrayscale=y"};
-    EXPECT_EQ(expected, m_data.buf);
-}
-
-TEST_F(TestPutRdsParams, textureIncludesFilename)
-{
-    ValueSaver saved_save_rds_params{g_save_rds_params, true};
-    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
-    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "textures/Texture.GIF"};
-    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 80};
-    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::NONE};
-    ValueSaver saved_auto_stereo_width{g_auto_stereo_width, 10.0};
-    ValueSaver saved_gray_flag{g_gray_flag, false};
-
-    put_rds_params(m_data);
-
-    constexpr std::string_view expected{"rds=texture/80/none rds-texture=Texture.GIF"};
-    EXPECT_EQ(expected, m_data.buf);
-}
+INSTANTIATE_TEST_SUITE_P(Settings, TestRdsParameterSerialization,
+    testing::Values(RdsParameterInput{"Disabled", false, false, 0, CalibrationBars::NONE, 0.0, false, "", ""},
+        RdsParameterInput{"RandomDots", true, false, -120, CalibrationBars::TOP, 4.5, true, "",
+            "rds=random/-120/top stereowidth=4.5 usegrayscale=y"},
+        RdsParameterInput{"Texture", true, true, 80, CalibrationBars::NONE, 10.0, false, "textures/Texture.GIF",
+            "rds=texture/80/none rds-texture=Texture.GIF"}),
+    [](const testing::TestParamInfo<RdsParameterInput> &info) { return info.param.name; });
 
 } // namespace
