@@ -230,25 +230,53 @@ TEST(TestDiskVideo, targaCachePreservesHeaderAndPixelsAcrossBackingBlocks)
     std::filesystem::remove(path);
 }
 
-TEST(TestDiskVideo, diskPixelTargetDoesNotCallUi)
+class TestDiskPixelTarget : public testing::Test
 {
-    MockDriver driver;
-    DiskVideoState state{&driver, DebugFlags::NONE};
-    ValueSaver screen{g_logical_screen, LogicalScreen{16, 16, 0, 0, 1.0, 1.0}};
-    ValueSaver width{g_screen_x_dots, 16};
-    ValueSaver height{g_screen_y_dots, 16};
-    ValueSaver mask{g_and_color, 255};
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    MockDriver m_driver;
+    DiskVideoState m_state{&m_driver, DebugFlags::NONE};
+    ValueSaver<LogicalScreen> m_screen{g_logical_screen, LogicalScreen{16, 16, 0, 0, 1.0, 1.0}};
+    ValueSaver<int> m_width{g_screen_x_dots, 16};
+    ValueSaver<int> m_height{g_screen_y_dots, 16};
+    ValueSaver<int> m_mask{g_and_color, 255};
+};
+
+void TestDiskPixelTarget::SetUp()
+{
     start_disk_storage(16, 16, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
     set_disk_dot();
+}
 
+void TestDiskPixelTarget::TearDown()
+{
+    set_null_video();
+}
+
+class TestDiskPixelColors : public TestDiskPixelTarget, public testing::WithParamInterface<int>
+{
+};
+
+TEST_P(TestDiskPixelColors, roundTripsColor)
+{
+    put_color_a(5, 7, GetParam());
+
+    EXPECT_EQ(GetParam(), get_color(5, 7));
+}
+
+INSTANTIATE_TEST_SUITE_P(Color, TestDiskPixelColors, testing::Range(0, 256),
+    [](const testing::TestParamInfo<int> &info) { return "Color" + std::to_string(info.param); });
+
+TEST_F(TestDiskPixelTarget, repeatedOperationsDoNotCallUi)
+{
     for (int i = 0; i < 2048; ++i)
     {
         const int color{i % 256};
         put_color_a(5, 7, color);
         EXPECT_EQ(color, get_color(5, 7));
     }
-
-    set_null_video();
 }
 
 TEST(TestDiskVideo, controllerDisplaysPotentialWriteProgress)
