@@ -16,6 +16,7 @@
 #include <gmock/gmock.h>
 
 #include <cctype>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -84,92 +85,47 @@ TEST_F(TestFindFileItem, entryLimitReturnsWarningWithoutUi)
     EXPECT_EQ(0, choices[2000].name[0]);
 }
 
-TEST_F(TestFindFileItem, formula)
+struct FileItemInput
 {
-    m_path = data::ID_TEST_FRM_DIR;
-    m_path /= data::ID_TEST_FRM_FILE;
+    const char *name;
+    ItemType type;
+    const char *directory;
+    const char *filename;
+    const char *entry;
+};
 
-    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA, m_diagnostic)};
+void PrintTo(const FileItemInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestFindFileItemInputs : public TestFindFileItem, public testing::WithParamInterface<FileItemInput>
+{
+};
+
+TEST_P(TestFindFileItemInputs, findsEntryWithoutChangingTheFilePath)
+{
+    m_path = fs::path{GetParam().directory} / GetParam().filename;
+
+    const bool result{find_file_item(m_path, GetParam().entry, &m_file, GetParam().type, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(fs::path{data::ID_TEST_FRM_DIR} / data::ID_TEST_FRM_FILE, m_path);
+    EXPECT_EQ(fs::path{GetParam().directory} / GetParam().filename, m_path);
 }
 
-TEST_F(TestFindFileItem, formulaEntryNameCaseVariant)
-{
-    m_path = data::ID_TEST_FRM_DIR;
-    m_path /= data::ID_TEST_FRM_FILE;
-
-    const bool result{find_file_item(m_path, "fractINT", &m_file, ItemType::FORMULA, m_diagnostic)};
-
-    EXPECT_FALSE(result);
-    EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(fs::path{data::ID_TEST_FRM_DIR} / data::ID_TEST_FRM_FILE, m_path);
-}
-
-#if !defined(_WIN32)
-TEST_F(TestFindFileItem, parameterFileCaseVariantDoesNotHideFormulaPath)
-{
-    m_path = fs::path{data::ID_TEST_FRM_DIR} / data::ID_TEST_FRM_FILE;
-    const fs::path case_variant{m_path.parent_path() / to_upper_copy(m_path.filename().string())};
-    ValueSaver<fs::path> saved_parameter_file{g_parameter_file, case_variant};
-
-    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA, m_diagnostic)};
-
-    EXPECT_FALSE(result);
-    EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(fs::path{data::ID_TEST_FRM_DIR} / data::ID_TEST_FRM_FILE, m_path);
-}
-#endif
-
-TEST_F(TestFindFileItem, ifs)
-{
-    m_path = data::ID_TEST_IFS_DIR;
-    m_path /= data::ID_TEST_IFS_FILE;
-
-    const bool result{find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS, m_diagnostic)};
-
-    EXPECT_FALSE(result);
-    EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(fs::path{data::ID_TEST_IFS_DIR} / data::ID_TEST_IFS_FILE, m_path);
-}
-
-TEST_F(TestFindFileItem, ifsEntryNameCaseVariant)
-{
-    m_path = data::ID_TEST_IFS_DIR;
-    m_path /= data::ID_TEST_IFS_FILE;
-
-    const bool result{find_file_item(m_path, "BINARY", &m_file, ItemType::IFS, m_diagnostic)};
-
-    EXPECT_FALSE(result);
-    EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(fs::path{data::ID_TEST_IFS_DIR} / data::ID_TEST_IFS_FILE, m_path);
-}
-
-TEST_F(TestFindFileItem, lindenmayerSystem)
-{
-    m_path = data::ID_TEST_LSYSTEM_DIR;
-    m_path /= data::ID_TEST_LSYSTEM_FILE;
-
-    const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM, m_diagnostic)};
-
-    EXPECT_FALSE(result);
-    EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(fs::path{data::ID_TEST_LSYSTEM_DIR} / data::ID_TEST_LSYSTEM_FILE, m_path);
-}
-
-TEST_F(TestFindFileItem, lindenmayerSystemEntryNameCaseVariant)
-{
-    m_path = data::ID_TEST_LSYSTEM_DIR;
-    m_path /= data::ID_TEST_LSYSTEM_FILE;
-
-    const bool result{find_file_item(m_path, "koch1", &m_file, ItemType::L_SYSTEM, m_diagnostic)};
-
-    EXPECT_FALSE(result);
-    EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(fs::path{data::ID_TEST_LSYSTEM_DIR} / data::ID_TEST_LSYSTEM_FILE, m_path);
-}
+INSTANTIATE_TEST_SUITE_P(Entry, TestFindFileItemInputs,
+    testing::Values(
+        FileItemInput{"Formula", ItemType::FORMULA, data::ID_TEST_FRM_DIR, data::ID_TEST_FRM_FILE, "Fractint"},
+        FileItemInput{
+            "FormulaCaseVariant", ItemType::FORMULA, data::ID_TEST_FRM_DIR, data::ID_TEST_FRM_FILE, "fractINT"},
+        FileItemInput{
+            "Ifs", ItemType::IFS, data::ID_TEST_IFS_DIR, data::ID_TEST_IFS_FILE, data::ID_TEST_FIRST_IFS_NAME},
+        FileItemInput{"IfsCaseVariant", ItemType::IFS, data::ID_TEST_IFS_DIR, data::ID_TEST_IFS_FILE, "BINARY"},
+        FileItemInput{"LSystem", ItemType::L_SYSTEM, data::ID_TEST_LSYSTEM_DIR, data::ID_TEST_LSYSTEM_FILE, "Koch1"},
+        FileItemInput{
+            "LSystemCaseVariant", ItemType::L_SYSTEM, data::ID_TEST_LSYSTEM_DIR, data::ID_TEST_LSYSTEM_FILE, "koch1"}),
+    [](const testing::TestParamInfo<FileItemInput> &info) { return info.param.name; });
 
 TEST_F(TestFindFileItem, diagnosticLookupRejectsEmptyNameWithoutPolling)
 {
@@ -241,22 +197,55 @@ protected:
 
 } // namespace
 
-TEST_F(TestFindFileItemParFile, formula)
+class TestFindParameterFileItem : public TestFindFileItemParFile, public testing::WithParamInterface<FileItemInput>
 {
-    m_path = "missing.frm";
+};
 
-    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA, m_diagnostic)};
+TEST_P(TestFindParameterFileItem, fallsBackToTheParameterFile)
+{
+    m_path = GetParam().filename;
+
+    const bool result{find_file_item(m_path, GetParam().entry, &m_file, GetParam().type, m_diagnostic)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
     EXPECT_EQ(g_parameter_file, m_path);
 }
 
-TEST_F(TestFindFileItemParFile, formulaUsesExistingFileBeforeParameterFile)
-{
-    m_path = data::ID_TEST_FRM_DIR;
-    m_path /= data::ID_TEST_FRM_FILE;
+INSTANTIATE_TEST_SUITE_P(Type, TestFindParameterFileItem,
+    testing::Values(FileItemInput{"Formula", ItemType::FORMULA, "", "missing.frm", "Fractint"},
+        FileItemInput{"Ifs", ItemType::IFS, "", "missing.ifs", data::ID_TEST_FIRST_IFS_NAME},
+        FileItemInput{"LSystem", ItemType::L_SYSTEM, "", "missing.l", "Koch1"}),
+    [](const testing::TestParamInfo<FileItemInput> &info) { return info.param.name; });
 
+struct FormulaPrecedenceInput
+{
+    const char *name;
+    fs::path parameter_file;
+};
+
+void PrintTo(const FormulaPrecedenceInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestFormulaFilePrecedence : public TestFindFileItem, public testing::WithParamInterface<FormulaPrecedenceInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<fs::path> m_saved_parameter_file{g_parameter_file};
+};
+
+void TestFormulaFilePrecedence::SetUp()
+{
+    TestFindFileItem::SetUp();
+    g_parameter_file = GetParam().parameter_file;
+    m_path = fs::path{data::ID_TEST_FRM_DIR} / data::ID_TEST_FRM_FILE;
+}
+
+TEST_P(TestFormulaFilePrecedence, existingFormulaPrecedesTheParameterFile)
+{
     const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA, m_diagnostic)};
 
     EXPECT_FALSE(result);
@@ -264,27 +253,18 @@ TEST_F(TestFindFileItemParFile, formulaUsesExistingFileBeforeParameterFile)
     EXPECT_EQ(fs::path{data::ID_TEST_FRM_DIR} / data::ID_TEST_FRM_FILE, m_path);
 }
 
-TEST_F(TestFindFileItemParFile, ifs)
+std::vector<FormulaPrecedenceInput> formula_precedence_inputs()
 {
-    m_path = "missing.ifs";
-
-    const bool result{find_file_item(m_path, data::ID_TEST_FIRST_IFS_NAME, &m_file, ItemType::IFS, m_diagnostic)};
-
-    EXPECT_FALSE(result);
-    EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(g_parameter_file, m_path);
+    std::vector<FormulaPrecedenceInput> inputs{
+        {"SeparateFile", fs::path{data::ID_TEST_PAR_DIR} / data::ID_TEST_PAR_FILE}};
+#if !defined(_WIN32)
+    inputs.push_back({"CaseVariant", fs::path{data::ID_TEST_FRM_DIR} / to_upper_copy(data::ID_TEST_FRM_FILE)});
+#endif
+    return inputs;
 }
 
-TEST_F(TestFindFileItemParFile, lindenmayerSystem)
-{
-    m_path = "missing.l";
-
-    const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM, m_diagnostic)};
-
-    EXPECT_FALSE(result);
-    EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(g_parameter_file, m_path);
-}
+INSTANTIATE_TEST_SUITE_P(ParameterFile, TestFormulaFilePrecedence, testing::ValuesIn(formula_precedence_inputs()),
+    [](const testing::TestParamInfo<FormulaPrecedenceInput> &info) { return info.param.name; });
 
 namespace
 {
