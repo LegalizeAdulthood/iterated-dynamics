@@ -8,8 +8,10 @@
 
 #include <engine/calc_frac_init.h>
 #include <engine/engine_timer.h>
-#include <engine/LogicalScreen.h>
 #include <engine/log_map.h>
+#include <engine/LogicalScreen.h>
+#include <engine/NullSoundOutput.h>
+#include <engine/OrbitPlot.h>
 #include <engine/Potential.h>
 #include <engine/resume.h>
 #include <engine/show_dot.h>
@@ -31,6 +33,7 @@
 #include <array>
 #include <ctime>
 #include <initializer_list>
+#include <memory>
 #include <optional>
 #include <ostream>
 #include <stdexcept>
@@ -93,6 +96,21 @@ int calculate_selected_pixel()
     }
     s_calculated.push_back({g_col, g_row});
     g_color = s_checkerboard ? 1 + (g_col + g_row) % 2 : s_color;
+    g_plot(g_col, g_row, g_color);
+    return g_color;
+}
+
+int calculate_log_map_pixel()
+{
+    if (s_calculated.size() == 4 && s_pending_result != 0)
+    {
+        const int result{s_pending_result};
+        s_pending_result = 0;
+        return result;
+    }
+    s_calculated.push_back({g_col, g_row});
+    g_real_color_iter = 10 + (g_col + g_row) % 3;
+    g_color = 7;
     g_plot(g_col, g_row, g_color);
     return g_color;
 }
@@ -633,20 +651,7 @@ void AutoLogMapFixture::initialize_log_map(const long log_map)
 {
     TestStandardFractal::SetUp();
     g_log_map_flag = log_map;
-    m_specific.calc_type = []
-    {
-        if (s_calculated.size() == 4 && s_pending_result != 0)
-        {
-            const int result{s_pending_result};
-            s_pending_result = 0;
-            return result;
-        }
-        s_calculated.push_back({g_col, g_row});
-        g_real_color_iter = 10 + (g_col + g_row) % 3;
-        g_color = 7;
-        g_plot(g_col, g_row, g_color);
-        return g_color;
-    };
+    m_specific.calc_type = calculate_log_map_pixel;
     g_dispatch = FractalDispatch{m_specific};
 }
 
@@ -884,6 +889,163 @@ TEST_P(TestAutoLogMapResume, suspensionAfterSamplingPreservesUnstartedTraversal)
 INSTANTIATE_TEST_SUITE_P(ResumeInputs, TestAutoLogMapResume, ValuesIn(auto_log_map_resume_inputs()),
     [](const TestParamInfo<AutoLogMapResumeInput> &info) { return info.param.name; });
 INSTANTIATE_TEST_SUITE_P(LogMapSigns, TestAutoLogMap, Values(2L, -2L));
+
+struct StickyLogMapResumeInput
+{
+    std::string name;
+    long log_map;
+    OrbitDrawMode draw_mode;
+    bool other_work;
+};
+
+void PrintTo(const StickyLogMapResumeInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<StickyLogMapResumeInput> sticky_log_map_resume_inputs()
+{
+    std::vector<StickyLogMapResumeInput> inputs;
+    for (const long sign : {2L, -2L})
+    {
+        for (const OrbitDrawMode mode : {OrbitDrawMode::RECTANGLE, OrbitDrawMode::LINE})
+        {
+            for (const bool queued : {false, true})
+            {
+                inputs.push_back({std::string{sign > 0 ? "Positive_" : "Negative_"} +
+                        (mode == OrbitDrawMode::RECTANGLE ? "Rectangle_" : "Line_") +
+                        (queued ? "QueuedWork" : "NoQueuedWork"),
+                    sign, mode, queued});
+            }
+        }
+    }
+    return inputs;
+}
+
+class TestStickyLogMapResume : public AutoLogMapFixture, public WithParamInterface<StickyLogMapResumeInput>
+{
+protected:
+    void SetUp() override;
+    void start_after_sampling(StandardFractal &calculation);
+    void complete(StandardFractal &calculation);
+
+    static constexpr int WIDTH{8};
+    static constexpr int HEIGHT{6};
+    static constexpr int SAMPLE_COUNT{2 * (WIDTH + HEIGHT - 2)};
+    ValueSaver<OrbitDrawMode> m_saved_draw_mode{g_draw_mode};
+    ValueSaver<ImageRegion> m_saved_region{g_image_region};
+    ValueSaver<bool> m_saved_keep_coords{g_keep_screen_coords, false};
+    ValueSaver<long> m_saved_orbit_interval{g_orbit_interval, 1};
+    ValueSaver<int> m_saved_skip_points{g_orbit_skip_points, 0};
+    ValueSaver<int> m_saved_periodicity_check{g_periodicity_check, 0};
+    ValueSaver<DComplex> m_saved_new_z{g_new_z};
+    ValueSaver<SoundOutputPtr> m_saved_sound{g_sound, std::make_shared<NullSoundOutput>()};
+};
+
+void TestStickyLogMapResume::SetUp()
+{
+    initialize_log_map(GetParam().log_map);
+    set_frame(WIDTH, HEIGHT);
+    g_std_calc_mode = CalcMode::ORBIT;
+    g_draw_mode = GetParam().draw_mode;
+    g_inside_color = 7;
+    g_image_region.m_min = {0.0, 0.0};
+    g_image_region.m_max = {2.0, 2.0};
+    g_image_region.m_3rd = {0.0, 0.0};
+    m_specific.calc_type = standard_fractal_type;
+    m_specific.per_image = []
+    {
+        g_dispatch.set_calc_type(calculate_log_map_pixel);
+        return true;
+    };
+    m_specific.per_pixel = []
+    {
+        s_calculated.push_back({g_col, g_row});
+        return 0;
+    };
+    m_specific.orbit_calc = []
+    {
+        g_new_z = {1.0 + g_col * 0.1, 1.0 + g_row * 0.1};
+        return 0;
+    };
+    g_dispatch = FractalDispatch{m_specific};
+}
+
+void TestStickyLogMapResume::start_after_sampling(StandardFractal &calculation)
+{
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
+    g_resuming = false;
+    g_log_map_flag = GetParam().log_map;
+    m_pixels.assign(WIDTH * HEIGHT, -1);
+    s_calculated.clear();
+    ASSERT_TRUE(calculation.resume().empty());
+    for (int chunks = 0; chunks < 100 && g_log_map_flag == GetParam().log_map; ++chunks)
+    {
+        calculation.iterate();
+    }
+    ASSERT_EQ(GetParam().log_map > 0 ? 10L : -10L, g_log_map_flag);
+    ASSERT_EQ(SAMPLE_COUNT, s_calculated.size());
+    ASSERT_FALSE(calculation.done());
+    ASSERT_EQ(0, g_num_work_list);
+    if (GetParam().other_work)
+    {
+        ASSERT_FALSE(add_work_list({1, 1}, {5, 3}, {1, 1}, 0, 0));
+    }
+}
+
+void TestStickyLogMapResume::complete(StandardFractal &calculation)
+{
+    for (int chunks = 0; chunks < 1000 && !calculation.done(); ++chunks)
+    {
+        calculation.iterate();
+    }
+    ASSERT_TRUE(calculation.done());
+    ASSERT_EQ(CalcStatus::COMPLETED, g_calc_status);
+}
+
+TEST_P(TestStickyLogMapResume, suspensionAfterSamplingPreservesUnstartedTraversal)
+{
+    StandardFractal baseline;
+    ASSERT_NO_FATAL_FAILURE(start_after_sampling(baseline));
+    const std::vector<Point2i> expected_samples{s_calculated};
+    ASSERT_NO_FATAL_FAILURE(complete(baseline));
+    ASSERT_GT(s_calculated.size(), SAMPLE_COUNT);
+    const std::vector<Point2i> expected_seeds{s_calculated.begin() + SAMPLE_COUNT, s_calculated.end()};
+    const std::vector<int> expected_pixels{m_pixels};
+
+    StandardFractal calculation;
+    ASSERT_NO_FATAL_FAILURE(start_after_sampling(calculation));
+    ASSERT_EQ(expected_samples, s_calculated);
+    const WorkList active{g_start_pt, g_stop_pt, g_begin_pt, g_work_symmetry, g_work_pass};
+    const int plots_before_suspension{m_plot_count};
+
+    calculation.suspend();
+
+    ASSERT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    ASSERT_FALSE(g_resume_data.empty());
+    ASSERT_EQ(GetParam().other_work ? 2 : 1, g_num_work_list);
+    EXPECT_EQ(active.start, g_work_list[0].start);
+    EXPECT_EQ(active.stop, g_work_list[0].stop);
+    EXPECT_EQ(active.begin, g_work_list[0].begin);
+    EXPECT_EQ(active.pass, g_work_list[0].pass);
+    EXPECT_EQ(active.symmetry, g_work_list[0].symmetry);
+    EXPECT_EQ(expected_samples, s_calculated);
+    EXPECT_EQ(plots_before_suspension, m_plot_count);
+
+    s_calculated.clear();
+    g_resuming = true;
+    StandardFractal resumed;
+    ASSERT_TRUE(resumed.resume().empty());
+    ASSERT_NO_FATAL_FAILURE(complete(resumed));
+
+    EXPECT_EQ(expected_seeds, s_calculated);
+    EXPECT_EQ(expected_pixels, m_pixels);
+    EXPECT_EQ(128L, g_max_iterations);
+    EXPECT_EQ(GetParam().log_map > 0 ? 10L : -10L, g_log_map_flag);
+}
+
+INSTANTIATE_TEST_SUITE_P(ResumeInputs, TestStickyLogMapResume, ValuesIn(sticky_log_map_resume_inputs()),
+    [](const TestParamInfo<StickyLogMapResumeInput> &info) { return info.param.name; });
 
 TEST_F(TestRenderLifecycle, completionAccountsForElapsedImageTimeOnce)
 {

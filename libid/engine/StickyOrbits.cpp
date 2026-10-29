@@ -102,7 +102,8 @@ void StickyOrbits::initialize_line()
     }
 
     m_line.positive_slope = pos_slope;
-    if (m_line.resuming)
+    // A zero pass identifies traversal that has not started yet.
+    if (m_line.resuming && g_work_pass != 0)
     {
         m_line.accumulator = resume_accumulator;
     }
@@ -494,13 +495,13 @@ bool StickyOrbits::done() const
 
 bool StickyOrbits::iterate(PertEngine *perturbation)
 {
-    if (!m_initialized)
-    {
-        initialize();
-    }
     if (done())
     {
         return true;
+    }
+    if (!m_initialized)
+    {
+        initialize();
     }
 
     switch (m_traversal)
@@ -529,7 +530,12 @@ int StickyOrbits::encoded_orbit_color() const
 
 void StickyOrbits::save_current_work()
 {
-    WorkList work{g_start_pt, g_stop_pt, {m_col, m_row}, g_work_symmetry, encoded_orbit_color()};
+    WorkList work{g_start_pt, g_stop_pt, g_begin_pt, g_work_symmetry, g_work_pass};
+    if (m_initialized)
+    {
+        work.begin = {m_col, m_row};
+        work.pass = encoded_orbit_color();
+    }
     switch (m_traversal)
     {
     case Traversal::RECTANGLE:
@@ -541,6 +547,8 @@ void StickyOrbits::save_current_work()
         break;
 
     case Traversal::START:
+        break;
+
     case Traversal::DONE:
     default:
         return;
@@ -557,13 +565,16 @@ void StickyOrbits::save_current_work()
 
 void StickyOrbits::suspend()
 {
-    if (!m_initialized || done())
+    if (done())
     {
         return;
     }
 
     save_current_work();
-    m_orbit.resume_count = m_orbit.active ? std::max(m_orbit.resume_count, m_orbit.count) : 0;
+    if (m_initialized)
+    {
+        m_orbit.resume_count = m_orbit.active ? std::max(m_orbit.resume_count, m_orbit.count) : 0;
+    }
     m_traversal = Traversal::DONE;
     m_orbit.active = false;
 }

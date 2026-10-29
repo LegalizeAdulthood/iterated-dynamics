@@ -459,6 +459,26 @@ TEST_P(TestStickyOrbitSound, skippedIterationsDoNotSubmitSamples)
     EXPECT_EQ(s_seeds.size() * 5, s_math_calls);
 }
 
+TEST_P(TestStickyOrbitSound, suspensionBeforeFirstIncrementDoesNotInitializeTraversal)
+{
+    StickyOrbits calculation;
+    const WorkList expected{g_start_pt, g_stop_pt, g_begin_pt, g_work_symmetry, g_work_pass};
+
+    calculation.suspend();
+
+    ASSERT_EQ(1, g_num_work_list);
+    EXPECT_EQ(expected.start, g_work_list[0].start);
+    EXPECT_EQ(expected.stop, g_work_list[0].stop);
+    EXPECT_EQ(expected.begin, g_work_list[0].begin);
+    EXPECT_EQ(expected.pass, g_work_list[0].pass);
+    EXPECT_EQ(expected.symmetry, g_work_list[0].symmetry);
+    EXPECT_TRUE(calculation.iterate());
+    EXPECT_TRUE(s_seeds.empty());
+    EXPECT_EQ(0, s_math_calls);
+    EXPECT_TRUE(m_samples.empty());
+    EXPECT_TRUE(m_plots.empty());
+}
+
 TEST_P(TestStickyOrbitSound, suspendedSeedPrecedesOtherQueuedWork)
 {
     StickyOrbits calculation;
