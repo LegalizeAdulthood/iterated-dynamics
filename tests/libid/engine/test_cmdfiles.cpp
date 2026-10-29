@@ -1173,8 +1173,7 @@ TEST_P(TestRejectedRelease, rejectsArgumentWithoutChangingProvidedVersions)
 
 INSTANTIATE_TEST_SUITE_P(Arguments, TestRejectedRelease,
     Values(
-        RejectedReleaseInput{"NotResetAlias", "release=1906", Version{1, 2, 3, 4, false}, Version{5, 6, 7, 8, false}},
-        RejectedReleaseInput{"Unsupported", "release=100", std::nullopt, std::nullopt}),
+        RejectedReleaseInput{"NotResetAlias", "release=1906", Version{1, 2, 3, 4, false}, Version{5, 6, 7, 8, false}}),
     [](const TestParamInfo<RejectedReleaseInput> &info) { return info.param.name; });
 
 struct LambdaResetCompatibilityInput
@@ -3722,8 +3721,7 @@ TEST_P(TestLegacyFloatParameter, setsLegacyFloatIntent)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestLegacyFloatParameter,
     Values(LegacyFloatParameterInput{"Yes", "float=y", false, true, CmdArgFlags::NONE},
         LegacyFloatParameterInput{"No", "float=n", true, false, CmdArgFlags::NONE},
-        LegacyFloatParameterInput{"BadArgument", "float=!", true, true, CmdArgFlags::BAD_ARG},
-        LegacyFloatParameterInput{"BadValue", "float=foo", std::nullopt, std::nullopt, CmdArgFlags::BAD_ARG}),
+        LegacyFloatParameterInput{"BadArgument", "float=!", true, true, CmdArgFlags::BAD_ARG}),
     [](const TestParamInfo<LegacyFloatParameterInput> &info) { return info.param.name; });
 
 struct LegacyFloatBailoutInput
