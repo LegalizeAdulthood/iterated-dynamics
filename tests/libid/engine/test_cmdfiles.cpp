@@ -1121,60 +1121,19 @@ TEST_F(TestCommandMakeParView, makeParWithoutMatchingVideoModeDoesNotInventAView
     EXPECT_EQ(150, g_logical_screen.y_dots);
 }
 
-struct RejectedReleaseInput
+TEST_F(TestParameterCommandError, releaseIsNotResetAlias)
 {
-    const char *name;
-    const char *argument;
-    std::optional<Version> initial_version;
-    std::optional<Version> initial_file_version;
-};
+    const Version version{1, 2, 3, 4, false};
+    const Version file_version{5, 6, 7, 8, false};
+    ValueSaver saved_version{g_version, version};
+    ValueSaver saved_file_version{g_file_version, file_version};
 
-void PrintTo(const RejectedReleaseInput &input, std::ostream *out)
-{
-    *out << input.name;
-}
-
-class TestRejectedRelease : public TestParameterCommandError, public WithParamInterface<RejectedReleaseInput>
-{
-protected:
-    void SetUp() override;
-
-    ValueSaver<Version> m_saved_version{g_version};
-    ValueSaver<Version> m_saved_file_version{g_file_version};
-};
-
-void TestRejectedRelease::SetUp()
-{
-    TestParameterCommand::SetUp();
-    if (GetParam().initial_version)
-    {
-        g_version = *GetParam().initial_version;
-    }
-    if (GetParam().initial_file_version)
-    {
-        g_file_version = *GetParam().initial_file_version;
-    }
-}
-
-TEST_P(TestRejectedRelease, rejectsArgumentWithoutChangingProvidedVersions)
-{
-    exec_cmd_arg(GetParam().argument);
+    exec_cmd_arg("release=1906");
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    if (GetParam().initial_version)
-    {
-        EXPECT_EQ(*GetParam().initial_version, g_version);
-    }
-    if (GetParam().initial_file_version)
-    {
-        EXPECT_EQ(*GetParam().initial_file_version, g_file_version);
-    }
+    EXPECT_EQ(version, g_version);
+    EXPECT_EQ(file_version, g_file_version);
 }
-
-INSTANTIATE_TEST_SUITE_P(Arguments, TestRejectedRelease,
-    Values(
-        RejectedReleaseInput{"NotResetAlias", "release=1906", Version{1, 2, 3, 4, false}, Version{5, 6, 7, 8, false}}),
-    [](const TestParamInfo<RejectedReleaseInput> &info) { return info.param.name; });
 
 struct LambdaResetCompatibilityInput
 {

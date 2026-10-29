@@ -10324,7 +10324,7 @@ TEST_P(TestSignedZeroPower, retainsSignedZeroBranchSide)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestSignedZeroPower, Values(1, -1),
     [](const TestParamInfo<int> &info) { return info.param > 0 ? "PositiveZero" : "NegativeZero"; });
 
-class TestSubDoublePowerBranch : public TestPerturbationPixels, public WithParamInterface<int>
+class TestSubDoublePowerBranch : public TestPerturbationPixels
 {
 protected:
     void SetUp() override;
@@ -10364,10 +10364,7 @@ void TestSubDoublePowerBranch::SetUp()
     clear_bf(m_exponent.y);
     int_to_bf(m_value.x, -1);
     // Retain the positive branch's reference when crossing below the cut.
-    if (GetParam() < 0)
-    {
-        ASSERT_NO_FATAL_FAILURE(compare_branch(1));
-    }
+    ASSERT_NO_FATAL_FAILURE(compare_branch(1));
 }
 
 void TestSubDoublePowerBranch::TearDown()
@@ -10399,13 +10396,10 @@ void TestSubDoublePowerBranch::compare_branch(const int sign)
     m_engine.finish_orbit();
 }
 
-TEST_P(TestSubDoublePowerBranch, matchesNativeBranchBelowDoubleRange)
+TEST_F(TestSubDoublePowerBranch, matchesNativeBranchBelowDoubleRange)
 {
-    compare_branch(GetParam());
+    compare_branch(-1);
 }
-
-INSTANTIATE_TEST_SUITE_P(Inputs, TestSubDoublePowerBranch, Values(1, -1),
-    [](const TestParamInfo<int> &info) { return info.param > 0 ? "AboveBranch" : "BelowBranch"; });
 
 struct ContinuationExitInput
 {
