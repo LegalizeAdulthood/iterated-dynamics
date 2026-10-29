@@ -61,6 +61,7 @@
 #include <iterator>
 #include <memory>
 #include <new>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -367,17 +368,35 @@ TEST_F(TestOverlaySound, scrubbingDisplayMutesTheBoundOutputBeforeRestoringPixel
     EXPECT_THAT(m_events, ElementsAre("sample", "plot", "mute", "plot"));
 }
 
-TEST_F(TestOverlaySound, clipsPointsBeforeSubmittingSound)
+struct ClippedOverlayPoint
+{
+    const char *name;
+    DComplex point;
+};
+
+void PrintTo(const ClippedOverlayPoint &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestClippedOverlaySound : public TestOverlaySound, public WithParamInterface<ClippedOverlayPoint>
+{
+};
+
+TEST_P(TestClippedOverlaySound, clipsPointBeforeSubmittingSound)
 {
     OrbitPlot plot;
-    for (const DComplex point : {DComplex{-1.0, 0.0}, DComplex{0.0, 3.0}})
-    {
-        plot.reset(point.x, point.y);
-        EXPECT_FALSE(plot.iterate());
-        EXPECT_TRUE(plot.done());
-    }
+    plot.reset(GetParam().point.x, GetParam().point.y);
+
+    EXPECT_FALSE(plot.iterate());
+    EXPECT_TRUE(plot.done());
+
     EXPECT_TRUE(m_events.empty());
 }
+
+INSTANTIATE_TEST_SUITE_P(Points, TestClippedOverlaySound,
+    Values(ClippedOverlayPoint{"NegativeX", {-1.0, 0.0}}, ClippedOverlayPoint{"LargeY", {0.0, 3.0}}),
+    [](const TestParamInfo<ClippedOverlayPoint> &info) { return info.param.name; });
 
 TEST_F(TestOverlaySound, refusalLeavesPointUnplottedUntilAccepted)
 {
@@ -412,13 +431,42 @@ TEST_F(TestOverlaySound, synchronousStandardPixelReturnsOnRefusalWithoutRepeatin
     EXPECT_EQ(1, std::count(m_events.begin(), m_events.end(), "boundary"));
 }
 
-TEST_F(TestOverlaySound, standardOrbitYieldsWithoutPollingOrRepeatingIterationWork)
+struct StandardOrbitCheckpointInput
 {
+    const char *name;
+    int sound_flag;
+    int show_dot;
+    long max_iterations;
+    long yield_iteration;
+    int orbit_calls_before;
+    int orbit_calls_after;
+};
+
+void PrintTo(const StandardOrbitCheckpointInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestStandardOrbitCheckpoint : public TestOverlaySound, public WithParamInterface<StandardOrbitCheckpointInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<int> m_saved_sound_flag{g_sound_flag};
+};
+
+void TestStandardOrbitCheckpoint::SetUp()
+{
+    TestOverlaySound::SetUp();
     g_show_orbit = false;
-    g_show_dot = 15;
+    g_show_dot = GetParam().show_dot;
     g_orbit_delay = 20;
-    g_max_iterations = 2050;
-    ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_BEEP};
+    g_max_iterations = GetParam().max_iterations;
+    g_sound_flag = GetParam().sound_flag;
+}
+
+TEST_P(TestStandardOrbitCheckpoint, yieldsWithoutPollingOrRepeatingIterationWork)
+{
     StandardFractal calculation;
     calculation.m_standard_pass.select(CalcMode::ONE_PASS);
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
@@ -426,34 +474,18 @@ TEST_F(TestOverlaySound, standardOrbitYieldsWithoutPollingOrRepeatingIterationWo
 
     EXPECT_EQ(CALC_YIELDED, calculation.calculate_standard_pixel(true));
     EXPECT_TRUE(calculation.consume_traversal_yield());
-    EXPECT_EQ(2048, g_color_iter);
-    EXPECT_EQ(2047, s_orbit_calls);
+    EXPECT_EQ(GetParam().yield_iteration, g_color_iter);
+    EXPECT_EQ(GetParam().orbit_calls_before, s_orbit_calls);
     EXPECT_GE(calculation.calculate_standard_pixel(true), 0);
 
-    EXPECT_EQ(2049, s_orbit_calls);
+    EXPECT_EQ(GetParam().orbit_calls_after, s_orbit_calls);
     EXPECT_EQ(1, s_pixel_calls);
 }
 
-TEST_F(TestOverlaySound, standardOrbitRetainsSoundWorkFrequency)
-{
-    g_show_orbit = false;
-    g_orbit_delay = 20;
-    g_max_iterations = 18;
-    ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_X};
-    StandardFractal calculation;
-    calculation.m_standard_pass.select(CalcMode::ONE_PASS);
-    EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    EXPECT_CALL(m_driver, get_key()).Times(0);
-
-    EXPECT_EQ(CALC_YIELDED, calculation.calculate_standard_pixel(true));
-    EXPECT_TRUE(calculation.consume_traversal_yield());
-    EXPECT_EQ(16, g_color_iter);
-    EXPECT_EQ(15, s_orbit_calls);
-    EXPECT_GE(calculation.calculate_standard_pixel(true), 0);
-
-    EXPECT_EQ(17, s_orbit_calls);
-    EXPECT_EQ(1, s_pixel_calls);
-}
+INSTANTIATE_TEST_SUITE_P(Checkpoints, TestStandardOrbitCheckpoint,
+    Values(StandardOrbitCheckpointInput{"Marker", SOUNDFLAG_BEEP, 15, 2050, 2048, 2047, 2049},
+        StandardOrbitCheckpointInput{"Sound", SOUNDFLAG_X, -1, 18, 16, 15, 17}),
+    [](const TestParamInfo<StandardOrbitCheckpointInput> &info) { return info.param.name; });
 
 class TestStandardPixelCheckpoints : public TestOverlaySound, public WithParamInterface<CalcMode>
 {
