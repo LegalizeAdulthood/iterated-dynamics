@@ -504,50 +504,60 @@ TEST_F(TestCommandRouter, videoSelectsFirstBindingWithoutActivatingMode)
     }
 }
 
-TEST_F(TestCommandRouter, virtualNo)
+struct VirtualScreenInput
 {
-    ValueSaver saved_virtual_screens{g_virtual_screens, true};
-    CommandProcessor processor{"virtual=n", CmdFile::AT_AFTER_STARTUP};
+    const char *name;
+    const char *value;
+    bool initial;
+    bool expected;
+    CmdArgFlags flags;
+};
+
+void PrintTo(const VirtualScreenInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterVirtualScreen : public TestCommandRouter, public WithParamInterface<VirtualScreenInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<bool> m_saved_virtual_screens{g_virtual_screens};
+};
+
+void TestRouterVirtualScreen::SetUp()
+{
+    TestCommandRouter::SetUp();
+    g_virtual_screens = GetParam().initial;
+}
+
+TEST_P(TestRouterVirtualScreen, processesTheVirtualScreenPreference)
+{
+    CommandProcessor processor{"virtual=" + std::string{GetParam().value}, CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-    EXPECT_FALSE(g_virtual_screens);
-}
-
-TEST_F(TestCommandRouter, virtualYes)
-{
-    ValueSaver saved_virtual_screens{g_virtual_screens, false};
-    CommandProcessor processor{"virtual=y", CmdFile::AT_AFTER_STARTUP};
-    const CommandRouter router;
-
-    const CommandParseResult result{router.process(processor)};
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
-    EXPECT_TRUE(result.diagnostics.errors.empty());
-    EXPECT_TRUE(g_virtual_screens);
-}
-
-TEST_F(TestCommandRouter, invalidVirtualScreenValuePreservesPreferenceAndDiagnosesOnce)
-{
-    ValueSaver saved_virtual_screens{g_virtual_screens};
-    const CommandRouter router;
-    for (const bool virtual_screens : {true, false})
+    EXPECT_EQ(GetParam().flags, result.flags);
+    EXPECT_EQ(GetParam().expected, g_virtual_screens);
+    if (GetParam().flags == CmdArgFlags::BAD_ARG)
     {
-        SCOPED_TRACE(virtual_screens);
-        g_virtual_screens = virtual_screens;
-        CommandProcessor processor{"virtual=maybe", CmdFile::AT_AFTER_STARTUP};
-
-        const CommandParseResult result{router.process(processor)};
-
-        EXPECT_EQ(CmdArgFlags::BAD_ARG, result.flags);
-        EXPECT_EQ(virtual_screens, g_virtual_screens);
         EXPECT_THAT(
             result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  virtual=maybe"));
     }
+    else
+    {
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+    }
 }
+
+INSTANTIATE_TEST_SUITE_P(Preferences, TestRouterVirtualScreen,
+    Values(VirtualScreenInput{"No", "n", true, false, CmdArgFlags::FRACTAL_PARAM},
+        VirtualScreenInput{"Yes", "y", false, true, CmdArgFlags::FRACTAL_PARAM},
+        VirtualScreenInput{"InvalidWhenEnabled", "maybe", true, true, CmdArgFlags::BAD_ARG},
+        VirtualScreenInput{"InvalidWhenDisabled", "maybe", false, false, CmdArgFlags::BAD_ARG}),
+    [](const TestParamInfo<VirtualScreenInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouter, exitNoAskNo)
 {
