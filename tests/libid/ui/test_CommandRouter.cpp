@@ -1740,11 +1740,24 @@ TEST_F(TestCommandRouterStartup, restartPreservesProcessStateAndSuppressesStartu
     EXPECT_FALSE(g_first_init);
 }
 
-TEST_F(TestCommandRouterStartup, debugOverridePreservesFirstInitAndExistingRestartSuppression)
+class TestRouterStartupOverride : public TestCommandRouterStartup, public WithParamInterface<bool>
 {
+protected:
+    void SetUp() override;
+};
+
+void TestRouterStartupOverride::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
+    g_first_init = GetParam();
+    g_init_mode = 9;
+    if (!GetParam())
+    {
+        g_debug_flag = DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME;
+        g_show_file = ShowFile::LOAD_IMAGE;
+    }
     EXPECT_CALL(m_ui_handler, Call(_))
-        .Times(2)
-        .WillRepeatedly(
+        .WillOnce(
             [](const Command &)
             {
                 EXPECT_EQ(-1, g_init_mode);
@@ -1753,20 +1766,20 @@ TEST_F(TestCommandRouterStartup, debugOverridePreservesFirstInitAndExistingResta
                 g_show_file = ShowFile::LOAD_IMAGE;
                 return CmdArgFlags::NONE;
             });
-    for (const bool first_init : {true, false})
-    {
-        SCOPED_TRACE(first_init);
-        g_first_init = first_init;
-        g_init_mode = 9;
-
-        const CommandParseResult result{m_router.process_startup({"id", "ui=yes"})};
-
-        EXPECT_TRUE(result.diagnostics.errors.empty());
-        EXPECT_EQ(first_init, g_first_init);
-        EXPECT_EQ(first_init ? 7 : -1, g_init_mode);
-        EXPECT_EQ(first_init ? ShowFile::LOAD_IMAGE : ShowFile::IMAGE_LOADED, g_show_file);
-    }
 }
+
+TEST_P(TestRouterStartupOverride, preservesFirstInitAndRestartSuppression)
+{
+    const CommandParseResult result{m_router.process_startup({"id", "ui=yes"})};
+
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(GetParam(), g_first_init);
+    EXPECT_EQ(GetParam() ? 7 : -1, g_init_mode);
+    EXPECT_EQ(GetParam() ? ShowFile::LOAD_IMAGE : ShowFile::IMAGE_LOADED, g_show_file);
+}
+
+INSTANTIATE_TEST_SUITE_P(Phases, TestRouterStartupOverride, Bool(),
+    [](const TestParamInfo<bool> &info) { return info.param ? "Initial" : "Restart"; });
 
 TEST_F(TestCommandRouterStartup, fallbackReappliesOnlyDefaultsAndConfiguration)
 {
@@ -1868,51 +1881,79 @@ TEST_F(TestCommandRouterStartup, fallbackRetainsFirstInitWithConfigurationDebugO
     EXPECT_TRUE(g_first_init);
 }
 
-TEST_F(TestCommandRouterStartup, finalTypeRequestsSelectionOrReportsBatchDiagnostic)
+class TestRouterFinalType : public TestCommandRouterStartup, public WithParamInterface<bool>
+{
+};
+
+TEST_P(TestRouterFinalType, selectsTheFinalTypePolicy)
 {
     const CommandRouter router;
+    const std::vector<std::string> arguments{GetParam() ? std::vector<std::string>{"id", "type=formula", "batch=yes"}
+                                                        : std::vector<std::string>{"id", "type=formula"}};
 
-    const CommandParseResult interactive{router.process_startup({"id", "type=formula"})};
-    const CommandParseResult batch{router.process_startup({"id", "type=formula", "batch=yes"})};
+    const CommandParseResult result{router.process_startup(arguments)};
 
-    EXPECT_TRUE(interactive.diagnostics.errors.empty());
-    EXPECT_TRUE(interactive.needs_file_entry);
-    EXPECT_FALSE(batch.needs_file_entry);
-    EXPECT_THAT(batch.diagnostics.errors, ElementsAre(HasSubstr("type=formula requires formulaname=")));
+    EXPECT_EQ(!GetParam(), result.needs_file_entry);
+    if (GetParam())
+    {
+        EXPECT_THAT(result.diagnostics.errors, ElementsAre(HasSubstr("type=formula requires formulaname=")));
+    }
+    else
+    {
+        EXPECT_TRUE(result.diagnostics.errors.empty());
+    }
 }
 
-TEST_F(TestCommandRouterStartup, startupSourcesRouteHistoryCapacityInOrder)
+INSTANTIATE_TEST_SUITE_P(Policies, TestRouterFinalType, Bool(),
+    [](const TestParamInfo<bool> &info) { return info.param ? "Batch" : "Interactive"; });
+
+struct RouterHistorySourceInput
 {
-    ValueSaver saved_max_image_history{g_max_image_history, 0};
+    const char *name;
+    std::vector<std::string> arguments;
+    int initial;
+    int expected;
+};
+
+void PrintTo(const RouterHistorySourceInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterHistorySources : public TestCommandRouterStartup, public WithParamInterface<RouterHistorySourceInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<int> m_saved_capacity{g_max_image_history};
+};
+
+void TestRouterHistorySources::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
+    g_max_image_history = GetParam().initial;
     write_source("sstools.ini", "maxhistory=2\n");
     write_source("whole.par", "entry { maxhistory=4 }");
     write_source("selected.par", "ignored { maxhistory=99 }\nchosen { maxhistory=6 }");
+}
+
+TEST_P(TestRouterHistorySources, laterSourcesDetermineTheHistoryCapacity)
+{
     const CommandRouter router;
 
-    const CommandParseResult configuration{router.process_startup({"id"})};
+    const CommandParseResult result{router.process_startup(GetParam().arguments)};
 
-    EXPECT_TRUE(configuration.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, configuration.flags);
-    EXPECT_EQ(2, g_max_image_history);
-
-    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
-
-    EXPECT_TRUE(whole.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, whole.flags);
-    EXPECT_EQ(4, g_max_image_history);
-
-    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
-
-    EXPECT_TRUE(selected.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, selected.flags);
-    EXPECT_EQ(6, g_max_image_history);
-
-    const CommandParseResult argument{router.process_startup({"id", "@whole", "@selected/chosen", "maxhistory=8"})};
-
-    EXPECT_TRUE(argument.diagnostics.errors.empty());
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, argument.flags);
-    EXPECT_EQ(8, g_max_image_history);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
+    EXPECT_EQ(GetParam().expected, g_max_image_history);
 }
+
+INSTANTIATE_TEST_SUITE_P(Sources, TestRouterHistorySources,
+    Values(RouterHistorySourceInput{"Configuration", {"id"}, 0, 2},
+        RouterHistorySourceInput{"WholeFile", {"id", "@whole"}, 2, 4},
+        RouterHistorySourceInput{"SelectedSet", {"id", "@whole", "@selected/chosen"}, 4, 6},
+        RouterHistorySourceInput{"Argument", {"id", "@whole", "@selected/chosen", "maxhistory=8"}, 6, 8}),
+    [](const TestParamInfo<RouterHistorySourceInput> &info) { return info.param.name; });
 
 TEST_F(TestCommandRouterStartup, startupSourcesRouteAutokeyModeInOrder)
 {
