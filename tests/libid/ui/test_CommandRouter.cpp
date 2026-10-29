@@ -2661,70 +2661,109 @@ TEST_F(TestCommandRouterFile, acceptedResetRemainsEffectiveBeforeALaterError)
     EXPECT_FALSE(g_escape_exit);
 }
 
-TEST_F(TestCommandRouterStartup, resetsTakeEffectInlineAcrossStartupSources)
+struct RouterInlineResetInput
 {
+    const char *name;
+    std::vector<std::string> arguments;
+    bool first_init;
+    bool escape_exit;
+    long iterations;
+    Version version;
+};
+
+void PrintTo(const RouterInlineResetInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterInlineResetSources : public TestCommandRouterStartup, public WithParamInterface<RouterInlineResetInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestRouterInlineResetSources::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
     write_source("sstools.ini", "exitnoask=yes maxiter=901 reset=1960 maxiter=111\n");
     write_source("whole.par", "entry { exitnoask=yes maxiter=902 reset=100 maxiter=222 }");
     write_source("selected.par", "chosen { reset=1/5 exitnoask=yes maxiter=333 }");
+    g_first_init = GetParam().first_init;
+}
+
+TEST_P(TestRouterInlineResetSources, resetsTakeEffectInline)
+{
     const CommandRouter router;
 
-    const CommandParseResult configuration{router.process_startup({"id"})};
+    const CommandParseResult result{router.process_startup(GetParam().arguments)};
 
-    EXPECT_TRUE(configuration.diagnostics.errors.empty());
-    EXPECT_FALSE(g_escape_exit);
-    EXPECT_EQ(111L, g_max_iterations);
-    EXPECT_EQ(parse_legacy_version(1960), g_version);
-
-    const CommandParseResult whole{router.process_startup({"id", "@whole"})};
-
-    EXPECT_TRUE(whole.diagnostics.errors.empty());
-    EXPECT_FALSE(g_escape_exit);
-    EXPECT_EQ(222L, g_max_iterations);
-    EXPECT_EQ((Version{1, 0, 0, 0, false}), g_version);
-
-    const CommandParseResult selected{router.process_startup({"id", "@whole", "@selected/chosen"})};
-
-    EXPECT_TRUE(selected.diagnostics.errors.empty());
-    EXPECT_TRUE(g_escape_exit);
-    EXPECT_EQ(333L, g_max_iterations);
-    EXPECT_EQ((Version{1, 5, 0, 0, false}), g_version);
-
-    const CommandParseResult argument{
-        router.process_startup({"id", "@whole", "@selected/chosen", "reset=1/4", "maxiter=444", "exitnoask=yes"})};
-
-    EXPECT_TRUE(argument.diagnostics.errors.empty());
-    EXPECT_TRUE(g_escape_exit);
-    EXPECT_EQ(444L, g_max_iterations);
-    EXPECT_EQ((Version{1, 4, 0, 0, false}), g_version);
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(GetParam().escape_exit, g_escape_exit);
+    EXPECT_EQ(GetParam().iterations, g_max_iterations);
+    EXPECT_EQ(GetParam().version, g_version);
     EXPECT_EQ(g_version, g_file_version);
 }
 
-TEST_F(TestCommandRouterStartup, floatOnlyIndirectSetsDoNotRepeatCompatibilityMigration)
+INSTANTIATE_TEST_SUITE_P(Sources, TestRouterInlineResetSources,
+    Values(RouterInlineResetInput{"Configuration", {"id"}, true, false, 111L, parse_legacy_version(1960)},
+        RouterInlineResetInput{"WholeFile", {"id", "@whole"}, false, false, 222L, Version{1, 0, 0, 0, false}},
+        RouterInlineResetInput{
+            "SelectedSet", {"id", "@whole", "@selected/chosen"}, false, true, 333L, Version{1, 5, 0, 0, false}},
+        RouterInlineResetInput{"Argument",
+            {"id", "@whole", "@selected/chosen", "reset=1/4", "maxiter=444", "exitnoask=yes"}, false, true, 444L,
+            Version{1, 4, 0, 0, false}}),
+    [](const TestParamInfo<RouterInlineResetInput> &info) { return info.param.name; });
+
+struct RouterLegacyFloatInput
 {
-    ValueSaver saved_user{g_user};
-    ValueSaver saved_param_1{g_params[1]};
-    ValueSaver saved_type{g_fractal_type};
-    ValueSaver saved_specific{g_cur_fractal_specific};
-    ValueSaver saved_dispatch{g_dispatch};
+    const char *name;
+    bool legacy_float;
+    const char *argument;
+    bool first_init;
+};
+
+void PrintTo(const RouterLegacyFloatInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestRouterLegacyFloatSources : public TestCommandRouterStartup, public WithParamInterface<RouterLegacyFloatInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<UserData> m_saved_user{g_user};
+    ValueSaver<double> m_saved_param_1{g_params[1]};
+    ValueSaver<FractalType> m_saved_type{g_fractal_type};
+    ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific};
+    ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
+};
+
+void TestRouterLegacyFloatSources::SetUp()
+{
+    TestCommandRouterStartup::SetUp();
     write_source("legacy.par", "entry { reset=1824 type=marksjulia params=0.1/0.9/3 }");
+    write_source("float-only.par", GetParam().legacy_float ? "chosen { float=y }" : "chosen { float=n }");
+    g_first_init = GetParam().first_init;
+}
+
+TEST_P(TestRouterLegacyFloatSources, indirectFloatSettingDoesNotRepeatCompatibilityMigration)
+{
     const CommandRouter router;
 
-    for (const bool legacy_float : {true, false})
-    {
-        SCOPED_TRACE(legacy_float);
-        write_source("float-only.par", legacy_float ? "chosen { float=y }" : "chosen { float=n }");
-        for (const char *argument : {"@float-only", "@float-only/chosen"})
-        {
-            SCOPED_TRACE(argument);
+    const CommandParseResult result{router.process_startup({"id", "@legacy", GetParam().argument})};
 
-            const CommandParseResult result{router.process_startup({"id", "@legacy", argument})};
-
-            EXPECT_TRUE(result.diagnostics.errors.empty());
-            EXPECT_EQ(FractalType::MARKS_JULIA, g_fractal_type);
-            EXPECT_DOUBLE_EQ(4.0, g_params[2]);
-            EXPECT_EQ(legacy_float, g_user.legacy_float);
-        }
-    }
+    EXPECT_TRUE(result.diagnostics.errors.empty());
+    EXPECT_EQ(FractalType::MARKS_JULIA, g_fractal_type);
+    EXPECT_DOUBLE_EQ(4.0, g_params[2]);
+    EXPECT_EQ(GetParam().legacy_float, g_user.legacy_float);
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestRouterLegacyFloatSources,
+    Values(RouterLegacyFloatInput{"EnabledWholeFile", true, "@float-only", true},
+        RouterLegacyFloatInput{"EnabledSelectedSet", true, "@float-only/chosen", false},
+        RouterLegacyFloatInput{"DisabledWholeFile", false, "@float-only", false},
+        RouterLegacyFloatInput{"DisabledSelectedSet", false, "@float-only/chosen", false}),
+    [](const TestParamInfo<RouterLegacyFloatInput> &info) { return info.param.name; });
 
 } // namespace id::test
