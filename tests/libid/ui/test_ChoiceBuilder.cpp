@@ -12,6 +12,7 @@
 #include <cstring>
 #include <functional>
 #include <memory>
+#include <ostream>
 #include <string_view>
 
 using namespace id::ui;
@@ -552,27 +553,38 @@ TEST_F(TestChoiceBuilderPrompting, listChoice)
     EXPECT_EQ(1, builder.count());
 }
 
-TEST_F(TestChoiceBuilderPrompting, stringChoice)
+struct ChoiceBuilderStringInput
+{
+    const char *name;
+    const char *input;
+    const char *expected;
+};
+
+void PrintTo(const ChoiceBuilderStringInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestChoiceBuilderStringPrompt : public TestChoiceBuilderPrompting,
+                                      public WithParamInterface<ChoiceBuilderStringInput>
+{
+};
+
+TEST_P(TestChoiceBuilderStringPrompt, stringChoiceFitsFixedField)
 {
     ChoiceBuilder<1, Shim> builder;
-    expect_choice_value("Browse search filename mask ", has_string("*.gif"));
+    expect_choice_value("Browse search filename mask ", has_string(GetParam().expected));
 
-    builder.string("Browse search filename mask ", "*.gif");
+    builder.string("Browse search filename mask ", GetParam().input);
     builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());
 }
 
-TEST_F(TestChoiceBuilderPrompting, stringChoiceTruncatesToFixedField)
-{
-    ChoiceBuilder<1, Shim> builder;
-    expect_choice_value("Browse search filename mask ", has_string("123456789012345"));
-
-    builder.string("Browse search filename mask ", "1234567890123456");
-    builder.prompt("Evolution Mode Options", 255);
-
-    EXPECT_EQ(1, builder.count());
-}
+INSTANTIATE_TEST_SUITE_P(Length, TestChoiceBuilderStringPrompt,
+    Values(ChoiceBuilderStringInput{"Fits", "*.gif", "*.gif"},
+        ChoiceBuilderStringInput{"Truncated", "1234567890123456", "123456789012345"}),
+    [](const TestParamInfo<ChoiceBuilderStringInput> &info) { return info.param.name; });
 
 TEST_F(TestChoiceBuilderPrompting, stringBufferChoice)
 {
