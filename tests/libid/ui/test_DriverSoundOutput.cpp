@@ -389,24 +389,53 @@ TEST_F(TestDriverSoundOutput, overwriteReusesExistingName)
     EXPECT_FALSE(fs::exists(m_directory / "sound/sound002.txt"));
 }
 
-TEST_F(TestDriverSoundOutput, renderSourceRecognizesSelected3dOrbitsWithoutRendererPointers)
+struct DriverOrbitSoundInput
 {
-    const ValueSaver saved_type{g_fractal_type};
-    const ValueSaver saved_specific{g_cur_fractal_specific};
-    EXPECT_CALL(m_driver, sound_on(320)).Times(8).WillRepeatedly(Return(false));
-    for (const FractalType type :
-        {FractalType::KAM_3D, FractalType::LORENZ_3D, FractalType::ROSSLER, FractalType::PICKOVER,
-            FractalType::LORENZ_3D1, FractalType::LORENZ_3D3, FractalType::LORENZ_3D4, FractalType::ICON_3D})
-    {
-        g_fractal_type = type;
-        g_cur_fractal_specific = get_fractal_specific(type);
-        EXPECT_EQ(nullptr, g_cur_fractal_specific->calc_type);
-        DriverSoundOutput output{Source::RENDER, m_now, m_timestamp};
+    const char *name;
+    FractalType type;
+};
 
-        EXPECT_TRUE(output.play({1, 2, 3}));
-        EXPECT_TRUE(output.finish());
-    }
+void PrintTo(const DriverOrbitSoundInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+class TestDriverOrbitSound : public TestDriverSoundOutput, public WithParamInterface<DriverOrbitSoundInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<FractalType> saved_type{g_fractal_type};
+    ValueSaver<const FractalSpecific *> saved_specific{g_cur_fractal_specific};
+};
+
+void TestDriverOrbitSound::SetUp()
+{
+    TestDriverSoundOutput::SetUp();
+    g_fractal_type = GetParam().type;
+    g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
+}
+
+TEST_P(TestDriverOrbitSound, renderSourceRecognizesSelected3dOrbitWithoutRendererPointers)
+{
+    EXPECT_CALL(m_driver, sound_on(320)).WillOnce(Return(false));
+    EXPECT_EQ(nullptr, g_cur_fractal_specific->calc_type);
+    DriverSoundOutput output{Source::RENDER, m_now, m_timestamp};
+
+    EXPECT_TRUE(output.play({1, 2, 3}));
+    EXPECT_TRUE(output.finish());
+}
+
+INSTANTIATE_TEST_SUITE_P(Orbits, TestDriverOrbitSound,
+    Values(DriverOrbitSoundInput{"Kam3D", FractalType::KAM_3D},
+        DriverOrbitSoundInput{"Lorenz3D", FractalType::LORENZ_3D},
+        DriverOrbitSoundInput{"Rossler", FractalType::ROSSLER},
+        DriverOrbitSoundInput{"Pickover", FractalType::PICKOVER},
+        DriverOrbitSoundInput{"Lorenz3D1", FractalType::LORENZ_3D1},
+        DriverOrbitSoundInput{"Lorenz3D3", FractalType::LORENZ_3D3},
+        DriverOrbitSoundInput{"Lorenz3D4", FractalType::LORENZ_3D4},
+        DriverOrbitSoundInput{"Icon3D", FractalType::ICON_3D}),
+    [](const TestParamInfo<DriverOrbitSoundInput> &info) { return info.param.name; });
 
 TEST_F(TestDriverSoundOutput, instancesKeepSeparateRecordingFiles)
 {
@@ -530,15 +559,26 @@ TEST_F(TestDriverSoundOutput, rejectsInvalidMappingBeforeOutput)
     EXPECT_TRUE(output.finish());
 }
 
-TEST_F(TestDriverSoundOutput, rejectsInvalidTimingAndImageDimensions)
+TEST_F(TestDriverSoundOutput, rejectsNegativeTiming)
 {
     g_orbit_delay = -1;
+
     EXPECT_THROW((DriverSoundOutput{Source::OVERLAY, m_now, m_timestamp}), std::logic_error);
+}
+
+TEST_F(TestDriverSoundOutput, rejectsScaledOverlayWithZeroWidth)
+{
     g_orbit_delay = 0;
     g_debug_flag = DebugFlags::FORCE_SCALED_SOUND_FORMULA;
     g_logical_screen.x_dots = 0;
+
     EXPECT_THROW((DriverSoundOutput{Source::OVERLAY, m_now, m_timestamp}), std::logic_error);
+}
+
+TEST_F(TestDriverSoundOutput, rejectsRestoredImageWithZeroColors)
+{
     g_colors = 0;
+
     EXPECT_THROW((DriverSoundOutput{Source::RESTORED_IMAGE, m_now, m_timestamp}), std::logic_error);
 }
 
