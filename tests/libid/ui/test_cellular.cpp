@@ -313,15 +313,35 @@ TEST_F(TestCellularController, calculationCannotResumeUnplottedPreparation)
     EXPECT_EQ(CalcStatus::NON_RESUMABLE, g_calc_status);
 }
 
-TEST_F(TestCellularController, newImageResetsNextScreenBeforeConstructingCellular)
+class TestCellularNewImage : public TestCellularController
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<NonStandardFractal> m_calculation;
+};
+
+void TestCellularNewImage::SetUp()
+{
+    TestCellularController::SetUp();
     g_cellular_next_screen = true;
     EXPECT_CALL(m_driver, key_pressed()).Times(0);
     EXPECT_CALL(m_driver, read_pixel(_, _)).Times(0);
-    NonStandardFractal calculation;
-    calculation.start();
+    m_calculation = std::make_unique<NonStandardFractal>();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, m_calculation->select());
+}
 
-    ASSERT_EQ(NonStandardFractal::Operation::CELLULAR, calculation.select());
+void TestCellularNewImage::TearDown()
+{
+    m_calculation.reset();
+    TestCellularController::TearDown();
+}
+
+TEST_F(TestCellularNewImage, newImageResetsNextScreenBeforeConstructingCellular)
+{
+    NonStandardFractal &calculation{*m_calculation};
 
     EXPECT_FALSE(g_cellular_next_screen);
     EXPECT_FALSE(calculation.preparing());
@@ -334,9 +354,22 @@ TEST_F(TestCellularController, newImageResetsNextScreenBeforeConstructingCellula
     ASSERT_TRUE(calculation.done());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_THAT(m_rows, ElementsAre(0, 1, 2, 3, 4, 5));
-    calculation.iterate();
-    EXPECT_THAT(m_rows, ElementsAre(0, 1, 2, 3, 4, 5));
     calculation.finish(false);
+}
+
+TEST_F(TestCellularNewImage, iterationAfterCompletionDoesNotPlotAgain)
+{
+    for (int generation = 0; generation < 6 && !m_calculation->done(); ++generation)
+    {
+        m_calculation->iterate();
+    }
+    ASSERT_TRUE(m_calculation->done());
+    ASSERT_THAT(m_rows, ElementsAre(0, 1, 2, 3, 4, 5));
+
+    m_calculation->iterate();
+
+    EXPECT_THAT(m_rows, ElementsAre(0, 1, 2, 3, 4, 5));
+    m_calculation->finish(false);
 }
 
 TEST_F(TestCellularController, selectedOperationPreservesSavedRowContinuation)
@@ -507,10 +540,21 @@ TEST_F(TestCellularStepwise, stepwiseControllerPreparesOneGenerationAndRendersOn
     EXPECT_EQ(1, m_thinking_entries);
     EXPECT_EQ(1, m_thinking_exits);
     EXPECT_EQ(1, m_unstacks);
-    const std::vector<int> rows{m_rows};
-    controller.iterate();
-    EXPECT_EQ(rows, m_rows);
     calculation.finish(false);
+}
+
+TEST_F(TestCellularStepwise, iterationAfterCompletionDoesNotPlotAgain)
+{
+    CellularController controller{*m_calculation};
+    controller.start();
+    complete_controller(controller);
+    ASSERT_TRUE(controller.done());
+    const std::vector<int> rows{m_rows};
+
+    controller.iterate();
+
+    EXPECT_EQ(rows, m_rows);
+    m_calculation->finish(false);
 }
 
 TEST_F(TestCellularController, stepwiseRenderingInterruptionLeavesTheCommandPending)
