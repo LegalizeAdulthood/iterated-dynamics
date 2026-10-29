@@ -18,6 +18,7 @@
 #include <filesystem>
 #include <fstream>
 #include <limits>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -69,10 +70,6 @@ protected:
     ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
     ValueSaver<std::filesystem::path> m_saved_temp{g_temp_dir};
     std::filesystem::path m_directory;
-};
-
-class TestMemoryTransfer : public TestMemory, public WithParamInterface<MemoryLocation>
-{
 };
 
 class TestLargeMemoryTransfer : public TestMemory, public WithParamInterface<MemoryLocation>
@@ -139,29 +136,176 @@ TEST_P(TestLargeMemoryTransfer, fillsAcrossBlocks)
 
 INSTANTIATE_TEST_SUITE_P(Locations, TestLargeMemoryTransfer, Values(MemoryLocation::MEMORY, MemoryLocation::DISK));
 
-TEST_P(TestMemoryTransfer, rejectsInvalidTransfersWithoutInputOrChangingStorage)
+class TestInvalidMemoryTransfer : public TestMemory
 {
-    const MemoryHandle handle{memory_alloc(1, 4, GetParam())};
-    std::array<Byte, 4> buffer{1, 2, 3, 4};
-    handle.from_memory(buffer.data(), 1, buffer.size(), 0);
+protected:
+    void TearDown() override;
+    void prepare_storage(MemoryLocation location);
+    void expect_unchanged_storage();
 
-    EXPECT_THROW(handle.from_memory(buffer.data(), 0, 1, 0), std::logic_error);
-    EXPECT_THROW(handle.to_memory(buffer.data(), 1, 0, 0), std::logic_error);
-    EXPECT_THROW(handle.set(0, 2, std::numeric_limits<std::uint64_t>::max(), 0), std::logic_error);
-    EXPECT_THROW(handle.to_memory(buffer.data(), 2, 1, std::numeric_limits<std::uint64_t>::max()), std::logic_error);
-    EXPECT_THROW(handle.from_memory(buffer.data(), 1, 1, 4), std::logic_error);
-    EXPECT_THROW(handle.to_memory(buffer.data(), 1, 4, 1), std::logic_error);
-    EXPECT_THROW(handle.set(0, 1, 1, 5), std::logic_error);
-    EXPECT_THROW(handle.from_memory(nullptr, 1, 1, 0), std::logic_error);
-    EXPECT_THROW(handle.to_memory(nullptr, 1, 1, 0), std::logic_error);
+    MemoryHandle m_handle;
+    std::array<Byte, 4> m_buffer{1, 2, 3, 4};
+};
 
-    buffer.fill(0);
-    handle.to_memory(buffer.data(), 1, buffer.size(), 0);
-    EXPECT_THAT(buffer, ElementsAre(1, 2, 3, 4));
-    memory_release(handle);
+void TestInvalidMemoryTransfer::TearDown()
+{
+    if (m_handle)
+    {
+        memory_release(m_handle);
+    }
+    TestMemory::TearDown();
 }
 
-INSTANTIATE_TEST_SUITE_P(Locations, TestMemoryTransfer, Values(MemoryLocation::MEMORY, MemoryLocation::DISK));
+void TestInvalidMemoryTransfer::prepare_storage(const MemoryLocation location)
+{
+    m_handle = memory_alloc(1, 4, location);
+    m_handle.from_memory(m_buffer.data(), 1, m_buffer.size(), 0);
+}
+
+void TestInvalidMemoryTransfer::expect_unchanged_storage()
+{
+    m_buffer.fill(0);
+    m_handle.to_memory(m_buffer.data(), 1, m_buffer.size(), 0);
+    EXPECT_THAT(m_buffer, ElementsAre(1, 2, 3, 4));
+}
+
+struct InvalidBufferTransferInput
+{
+    std::string name;
+    MemoryLocation location;
+    U16 size;
+    std::uint64_t count;
+    std::uint64_t offset;
+    bool null_buffer;
+};
+
+void PrintTo(const InvalidBufferTransferInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<InvalidBufferTransferInput> invalid_memory_write_inputs()
+{
+    std::vector<InvalidBufferTransferInput> inputs;
+    for (const MemoryLocation location : {MemoryLocation::MEMORY, MemoryLocation::DISK})
+    {
+        const std::string prefix{location == MemoryLocation::MEMORY ? "Memory" : "Disk"};
+        inputs.push_back({prefix + "ZeroUnit", location, 0, 1, 0, false});
+        inputs.push_back({prefix + "PastEnd", location, 1, 1, 4, false});
+        inputs.push_back({prefix + "NullBuffer", location, 1, 1, 0, true});
+    }
+    return inputs;
+}
+
+class TestInvalidMemoryWrites : public TestInvalidMemoryTransfer, public WithParamInterface<InvalidBufferTransferInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestInvalidMemoryWrites::SetUp()
+{
+    TestMemory::SetUp();
+    prepare_storage(GetParam().location);
+}
+
+TEST_P(TestInvalidMemoryWrites, rejectsInvalidRangeWithoutChangingStorage)
+{
+    EXPECT_THROW(m_handle.from_memory(GetParam().null_buffer ? nullptr : m_buffer.data(), GetParam().size,
+                     GetParam().count, GetParam().offset),
+        std::logic_error);
+
+    expect_unchanged_storage();
+}
+
+INSTANTIATE_TEST_SUITE_P(Arguments, TestInvalidMemoryWrites, ValuesIn(invalid_memory_write_inputs()),
+    [](const TestParamInfo<InvalidBufferTransferInput> &info) { return info.param.name; });
+
+std::vector<InvalidBufferTransferInput> invalid_memory_read_inputs()
+{
+    std::vector<InvalidBufferTransferInput> inputs;
+    for (const MemoryLocation location : {MemoryLocation::MEMORY, MemoryLocation::DISK})
+    {
+        const std::string prefix{location == MemoryLocation::MEMORY ? "Memory" : "Disk"};
+        inputs.push_back({prefix + "ZeroCount", location, 1, 0, 0, false});
+        inputs.push_back({prefix + "OffsetOverflow", location, 2, 1, std::numeric_limits<std::uint64_t>::max(), false});
+        inputs.push_back({prefix + "PastEnd", location, 1, 4, 1, false});
+        inputs.push_back({prefix + "NullBuffer", location, 1, 1, 0, true});
+    }
+    return inputs;
+}
+
+class TestInvalidMemoryReads : public TestInvalidMemoryTransfer, public WithParamInterface<InvalidBufferTransferInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestInvalidMemoryReads::SetUp()
+{
+    TestMemory::SetUp();
+    prepare_storage(GetParam().location);
+}
+
+TEST_P(TestInvalidMemoryReads, rejectsInvalidRangeWithoutChangingStorage)
+{
+    EXPECT_THROW(m_handle.to_memory(GetParam().null_buffer ? nullptr : m_buffer.data(), GetParam().size,
+                     GetParam().count, GetParam().offset),
+        std::logic_error);
+
+    expect_unchanged_storage();
+}
+
+INSTANTIATE_TEST_SUITE_P(Arguments, TestInvalidMemoryReads, ValuesIn(invalid_memory_read_inputs()),
+    [](const TestParamInfo<InvalidBufferTransferInput> &info) { return info.param.name; });
+
+struct InvalidMemoryFillInput
+{
+    std::string name;
+    MemoryLocation location;
+    U16 size;
+    std::uint64_t count;
+    std::uint64_t offset;
+};
+
+void PrintTo(const InvalidMemoryFillInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<InvalidMemoryFillInput> invalid_memory_fill_inputs()
+{
+    std::vector<InvalidMemoryFillInput> inputs;
+    for (const MemoryLocation location : {MemoryLocation::MEMORY, MemoryLocation::DISK})
+    {
+        const std::string prefix{location == MemoryLocation::MEMORY ? "Memory" : "Disk"};
+        inputs.push_back({prefix + "SizeOverflow", location, 2, std::numeric_limits<std::uint64_t>::max(), 0});
+        inputs.push_back({prefix + "PastEnd", location, 1, 1, 5});
+    }
+    return inputs;
+}
+
+class TestInvalidMemoryFills : public TestInvalidMemoryTransfer, public WithParamInterface<InvalidMemoryFillInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestInvalidMemoryFills::SetUp()
+{
+    TestMemory::SetUp();
+    prepare_storage(GetParam().location);
+}
+
+TEST_P(TestInvalidMemoryFills, rejectsInvalidRangeWithoutChangingStorage)
+{
+    EXPECT_THROW(m_handle.set(0, GetParam().size, GetParam().count, GetParam().offset), std::logic_error);
+
+    expect_unchanged_storage();
+}
+
+INSTANTIATE_TEST_SUITE_P(Arguments, TestInvalidMemoryFills, ValuesIn(invalid_memory_fill_inputs()),
+    [](const TestParamInfo<InvalidMemoryFillInput> &info) { return info.param.name; });
 
 TEST_F(TestMemory, rejectsInvalidHandlesWithoutInput)
 {
