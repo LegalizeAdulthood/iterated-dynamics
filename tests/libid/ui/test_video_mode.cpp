@@ -17,8 +17,10 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <ostream>
 #include <string>
 #include <string_view>
+#include <vector>
 
 using namespace id::engine;
 using namespace id::misc;
@@ -29,57 +31,53 @@ using namespace testing;
 namespace id::test
 {
 
-TEST(TestVideoMode, checkKeyNameFnKey)
+struct VideoModeKeyTokenInput
 {
-    EXPECT_EQ(ID_KEY_F1, check_vid_mode_key_name("F1"));
-    EXPECT_EQ(ID_KEY_F2, check_vid_mode_key_name("f2"));
-    EXPECT_EQ(ID_KEY_F6, check_vid_mode_key_name("F6   "));
-    EXPECT_EQ(ID_KEY_F10, check_vid_mode_key_name("F10"));
-    EXPECT_EQ(0, check_vid_mode_key_name("b"));
-    EXPECT_EQ(0, check_vid_mode_key_name("f"));
-    EXPECT_EQ(0, check_vid_mode_key_name("f0"));
-    EXPECT_EQ(0, check_vid_mode_key_name("ff"));
-    EXPECT_EQ(0, check_vid_mode_key_name("f11"));
+    const char *name;
+    const char *token;
+    int expected;
+};
+
+void PrintTo(const VideoModeKeyTokenInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestVideoMode, checkKeyNameShiftFnKey)
+class TestVideoModeKeyToken : public TestWithParam<VideoModeKeyTokenInput>
 {
-    EXPECT_EQ(ID_KEY_SHF_F1, check_vid_mode_key_name("SF1"));
-    EXPECT_EQ(ID_KEY_SHF_F2, check_vid_mode_key_name("sf2"));
-    EXPECT_EQ(ID_KEY_SHF_F6, check_vid_mode_key_name("SF6   "));
-    EXPECT_EQ(ID_KEY_SHF_F10, check_vid_mode_key_name("SF10"));
-    EXPECT_EQ(0, check_vid_mode_key_name("s"));
-    EXPECT_EQ(0, check_vid_mode_key_name("sf"));
-    EXPECT_EQ(0, check_vid_mode_key_name("sf0"));
-    EXPECT_EQ(0, check_vid_mode_key_name("sff"));
-    EXPECT_EQ(0, check_vid_mode_key_name("sf11"));
+};
+
+TEST_P(TestVideoModeKeyToken, decodesFunctionKeyName)
+{
+    EXPECT_EQ(GetParam().expected, check_vid_mode_key_name(GetParam().token));
 }
 
-TEST(TestVideoMode, checkKeyNameControlFnKey)
-{
-    EXPECT_EQ(ID_KEY_CTL_F1, check_vid_mode_key_name("CF1"));
-    EXPECT_EQ(ID_KEY_CTL_F2, check_vid_mode_key_name("cf2"));
-    EXPECT_EQ(ID_KEY_CTL_F6, check_vid_mode_key_name("CF6   "));
-    EXPECT_EQ(ID_KEY_CTL_F10, check_vid_mode_key_name("CF10"));
-    EXPECT_EQ(0, check_vid_mode_key_name("c"));
-    EXPECT_EQ(0, check_vid_mode_key_name("cf"));
-    EXPECT_EQ(0, check_vid_mode_key_name("cf0"));
-    EXPECT_EQ(0, check_vid_mode_key_name("cff"));
-    EXPECT_EQ(0, check_vid_mode_key_name("cf11"));
-}
-
-TEST(TestVideoMode, checkKeyNameAltFnKey)
-{
-    EXPECT_EQ(ID_KEY_ALT_F1, check_vid_mode_key_name("AF1"));
-    EXPECT_EQ(ID_KEY_ALT_F2, check_vid_mode_key_name("af2"));
-    EXPECT_EQ(ID_KEY_ALT_F6, check_vid_mode_key_name("AF6   "));
-    EXPECT_EQ(ID_KEY_ALT_F10, check_vid_mode_key_name("AF10"));
-    EXPECT_EQ(0, check_vid_mode_key_name("a"));
-    EXPECT_EQ(0, check_vid_mode_key_name("af"));
-    EXPECT_EQ(0, check_vid_mode_key_name("af0"));
-    EXPECT_EQ(0, check_vid_mode_key_name("aff"));
-    EXPECT_EQ(0, check_vid_mode_key_name("af11"));
-}
+INSTANTIATE_TEST_SUITE_P(Spelling, TestVideoModeKeyToken,
+    Values(VideoModeKeyTokenInput{"PlainFirst", "F1", ID_KEY_F1},
+        VideoModeKeyTokenInput{"PlainLowerSecond", "f2", ID_KEY_F2},
+        VideoModeKeyTokenInput{"PlainTrailingSixth", "F6   ", ID_KEY_F6},
+        VideoModeKeyTokenInput{"PlainTenth", "F10", ID_KEY_F10}, VideoModeKeyTokenInput{"PlainInvalidLetter", "b", 0},
+        VideoModeKeyTokenInput{"PlainIncomplete", "f", 0}, VideoModeKeyTokenInput{"PlainZero", "f0", 0},
+        VideoModeKeyTokenInput{"PlainRepeatedF", "ff", 0}, VideoModeKeyTokenInput{"PlainEleven", "f11", 0},
+        VideoModeKeyTokenInput{"ShiftFirst", "SF1", ID_KEY_SHF_F1},
+        VideoModeKeyTokenInput{"ShiftLowerSecond", "sf2", ID_KEY_SHF_F2},
+        VideoModeKeyTokenInput{"ShiftTrailingSixth", "SF6   ", ID_KEY_SHF_F6},
+        VideoModeKeyTokenInput{"ShiftTenth", "SF10", ID_KEY_SHF_F10}, VideoModeKeyTokenInput{"ShiftBarePrefix", "s", 0},
+        VideoModeKeyTokenInput{"ShiftIncomplete", "sf", 0}, VideoModeKeyTokenInput{"ShiftZero", "sf0", 0},
+        VideoModeKeyTokenInput{"ShiftRepeatedF", "sff", 0}, VideoModeKeyTokenInput{"ShiftEleven", "sf11", 0},
+        VideoModeKeyTokenInput{"ControlFirst", "CF1", ID_KEY_CTL_F1},
+        VideoModeKeyTokenInput{"ControlLowerSecond", "cf2", ID_KEY_CTL_F2},
+        VideoModeKeyTokenInput{"ControlTrailingSixth", "CF6   ", ID_KEY_CTL_F6},
+        VideoModeKeyTokenInput{"ControlTenth", "CF10", ID_KEY_CTL_F10},
+        VideoModeKeyTokenInput{"ControlBarePrefix", "c", 0}, VideoModeKeyTokenInput{"ControlIncomplete", "cf", 0},
+        VideoModeKeyTokenInput{"ControlZero", "cf0", 0}, VideoModeKeyTokenInput{"ControlRepeatedF", "cff", 0},
+        VideoModeKeyTokenInput{"ControlEleven", "cf11", 0}, VideoModeKeyTokenInput{"AltFirst", "AF1", ID_KEY_ALT_F1},
+        VideoModeKeyTokenInput{"AltLowerSecond", "af2", ID_KEY_ALT_F2},
+        VideoModeKeyTokenInput{"AltTrailingSixth", "AF6   ", ID_KEY_ALT_F6},
+        VideoModeKeyTokenInput{"AltTenth", "AF10", ID_KEY_ALT_F10}, VideoModeKeyTokenInput{"AltBarePrefix", "a", 0},
+        VideoModeKeyTokenInput{"AltIncomplete", "af", 0}, VideoModeKeyTokenInput{"AltZero", "af0", 0},
+        VideoModeKeyTokenInput{"AltRepeatedF", "aff", 0}, VideoModeKeyTokenInput{"AltEleven", "af11", 0}),
+    [](const TestParamInfo<VideoModeKeyTokenInput> &info) { return info.param.name; });
 
 TEST(TestVideoMode, checkKeyNameHonorsStringViewLength)
 {
@@ -87,20 +85,6 @@ TEST(TestVideoMode, checkKeyNameHonorsStringViewLength)
     const std::string_view key_name{storage.data(), 2};
 
     EXPECT_EQ(ID_KEY_F6, check_vid_mode_key_name(key_name));
-}
-
-TEST(TestVideoMode, checkKeyFnKeyNoModes)
-{
-    ValueSaver saved_video_table_len{g_video_table_len, 0};
-
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F1));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F10));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SHF_F1));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SHF_F10));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_CTL_F1));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_CTL_F10));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_ALT_F1));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_ALT_F10));
 }
 
 static void push_modes(const std::initializer_list<int> keys)
@@ -112,40 +96,64 @@ static void push_modes(const std::initializer_list<int> keys)
     }
 }
 
-TEST(TestVideoMode, checkKeyFnKeyNoMatchingModes)
+struct VideoModeBindingInput
 {
-    ValueSaver saved_video_table_len{g_video_table_len, 0};
-    ValueSaver saved_video_mode_keys{g_video_mode_keys};
-    push_modes({ID_KEY_F2, ID_KEY_SHF_F2, ID_KEY_CTL_F2, ID_KEY_ALT_F2});
+    std::string name;
+    std::vector<int> bindings;
+    int query;
+    int expected;
+};
 
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F1));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F10));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SHF_F1));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SHF_F10));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_CTL_F1));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_CTL_F10));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_ALT_F1));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_ALT_F10));
+void PrintTo(const VideoModeBindingInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
 
-TEST(TestVideoMode, checkKeyFnKeyMatchingModes)
+std::vector<VideoModeBindingInput> video_mode_binding_inputs()
 {
-    ValueSaver saved_video_table_len{g_video_table_len, 0};
-    ValueSaver saved_video_mode_keys{g_video_mode_keys};
-    push_modes({ID_KEY_F1, ID_KEY_F10, //
-        ID_KEY_SHF_F1, ID_KEY_SHF_F10, //
-        ID_KEY_CTL_F1, ID_KEY_CTL_F10, //
-        ID_KEY_ALT_F1, ID_KEY_ALT_F10});
-
-    EXPECT_EQ(0, check_vid_mode_key(ID_KEY_F1));
-    EXPECT_EQ(1, check_vid_mode_key(ID_KEY_F10));
-    EXPECT_EQ(2, check_vid_mode_key(ID_KEY_SHF_F1));
-    EXPECT_EQ(3, check_vid_mode_key(ID_KEY_SHF_F10));
-    EXPECT_EQ(4, check_vid_mode_key(ID_KEY_CTL_F1));
-    EXPECT_EQ(5, check_vid_mode_key(ID_KEY_CTL_F10));
-    EXPECT_EQ(6, check_vid_mode_key(ID_KEY_ALT_F1));
-    EXPECT_EQ(7, check_vid_mode_key(ID_KEY_ALT_F10));
+    const std::vector<int> queries{ID_KEY_F1, ID_KEY_F10, ID_KEY_SHF_F1, ID_KEY_SHF_F10, ID_KEY_CTL_F1, ID_KEY_CTL_F10,
+        ID_KEY_ALT_F1, ID_KEY_ALT_F10};
+    const std::array<const char *, 8> names{
+        "F1", "F10", "ShiftF1", "ShiftF10", "ControlF1", "ControlF10", "AltF1", "AltF10"};
+    const std::vector<int> nonmatching{ID_KEY_F2, ID_KEY_SHF_F2, ID_KEY_CTL_F2, ID_KEY_ALT_F2};
+    std::vector<VideoModeBindingInput> inputs;
+    for (int i = 0; i < 8; ++i)
+    {
+        inputs.push_back({std::string{"Empty"} + names[i], {}, queries[i], -1});
+        inputs.push_back({std::string{"Nonmatching"} + names[i], nonmatching, queries[i], -1});
+        inputs.push_back({std::string{"Matching"} + names[i], queries, queries[i], i});
+    }
+    inputs.push_back({"UnboundZero", {0}, 0, -1});
+    inputs.push_back({"UnboundF6", {0}, ID_KEY_F6, -1});
+    inputs.push_back({"ReservedEntry", {0}, 1400, MAX_VIDEO_MODES - 1});
+    return inputs;
 }
+
+class TestVideoModeBindingLookup : public TestWithParam<VideoModeBindingInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<int> m_saved_length{g_video_table_len, 0};
+    ValueSaver<std::array<int, MAX_VIDEO_MODES>> m_saved_bindings{g_video_mode_keys};
+};
+
+void TestVideoModeBindingLookup::SetUp()
+{
+    for (const int key : GetParam().bindings)
+    {
+        g_video_mode_keys[g_video_table_len] = key;
+        ++g_video_table_len;
+    }
+}
+
+TEST_P(TestVideoModeBindingLookup, findsAssignedMode)
+{
+    EXPECT_EQ(GetParam().expected, check_vid_mode_key(GetParam().query));
+}
+
+INSTANTIATE_TEST_SUITE_P(Layout, TestVideoModeBindingLookup, ValuesIn(video_mode_binding_inputs()),
+    [](const TestParamInfo<VideoModeBindingInput> &info) { return info.param.name; });
 
 TEST(TestVideoMode, bindingChangesLeaveVideoInfoUnchanged)
 {
@@ -173,17 +181,6 @@ TEST(TestVideoMode, bindingChangesLeaveVideoInfoUnchanged)
     EXPECT_EQ(mode, g_video_table[0]);
     EXPECT_EQ(mode, g_video_table[1]);
     EXPECT_EQ(mode, g_video_entry);
-}
-
-TEST(TestVideoMode, unassignedModeUsesReservedCatalogEntry)
-{
-    ValueSaver saved_video_table_len{g_video_table_len, 1};
-    ValueSaver saved_keys{g_video_mode_keys};
-    g_video_mode_keys[0] = 0;
-
-    EXPECT_EQ(-1, check_vid_mode_key(0));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F6));
-    EXPECT_EQ(MAX_VIDEO_MODES - 1, check_vid_mode_key(1400));
 }
 
 class TestVideoModeSelection : public Test
