@@ -156,28 +156,102 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatScientificFormat,
         BigFloatFormatInput{"Zero", nullptr, 5, "0.0"}, BigFloatFormatInput{"PositiveDecimal", "1.25", 5, "1.25e0"}),
     [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
 
-TEST_F(TestBigFloat, rejectedPrecisionPreservesActiveArena)
+class TestActivePrecisionArena : public TestBigFloat
 {
+protected:
+    void prepare_active_arena(FractalType type);
+    void expect_preserved_arena();
+
+    int m_length{};
+    int m_decimals{};
+    int m_stack{};
+    BigFloat m_corner{};
+};
+
+void TestActivePrecisionArena::prepare_active_arena(const FractalType type)
+{
+    g_fractal_type = type;
+    init_bf_dec(20);
     float_to_bf(g_bf_x_min, 1.25);
-    const int length{g_bf_length};
-    const int decimals{g_decimals};
-    const int stack{save_stack()};
-    const BigFloat corner{g_bf_x_min};
+    m_length = g_bf_length;
+    m_decimals = g_decimals;
+    m_stack = save_stack();
+    m_corner = g_bf_x_min;
+}
 
-    EXPECT_THROW(init_bf_dec(2000), PrecisionError);
-    EXPECT_THROW(init_bf_dec(std::numeric_limits<int>::max()), PrecisionError);
-    EXPECT_THROW(init_bf_length(4096), PrecisionError);
-    EXPECT_THROW(init_bf_length(std::numeric_limits<int>::max()), PrecisionError);
-    EXPECT_THROW(init_bf_length(std::numeric_limits<int>::min()), PrecisionError);
-
-    EXPECT_EQ(length, g_bf_length);
-    EXPECT_EQ(decimals, g_decimals);
-    EXPECT_EQ(stack, save_stack());
-    EXPECT_EQ(corner, g_bf_x_min);
+void TestActivePrecisionArena::expect_preserved_arena()
+{
+    EXPECT_EQ(m_length, g_bf_length);
+    EXPECT_EQ(m_decimals, g_decimals);
+    EXPECT_EQ(m_stack, save_stack());
+    EXPECT_EQ(m_corner, g_bf_x_min);
     EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
+}
+
+struct RejectedDecimalPrecisionInput
+{
+    const char *name;
+    FractalType type;
+    BFMathType math;
+    int request;
+};
+
+class TestRejectedDecimalPrecision : public TestActivePrecisionArena,
+                                     public testing::WithParamInterface<RejectedDecimalPrecisionInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestRejectedDecimalPrecision::SetUp()
+{
+    TestBigFloat::SetUp();
+    prepare_active_arena(GetParam().type);
+    ASSERT_EQ(GetParam().math, g_bf_math);
+}
+
+TEST_P(TestRejectedDecimalPrecision, preservesActiveArenaAndAllowsCorrection)
+{
+    const int integer_length{g_bn_length};
+
+    EXPECT_THROW(init_bf_dec(GetParam().request), PrecisionError);
+
+    expect_preserved_arena();
+    EXPECT_EQ(integer_length, g_bn_length);
+    EXPECT_NO_THROW(init_bf_dec(40));
+    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
+}
+
+INSTANTIATE_TEST_SUITE_P(Requests, TestRejectedDecimalPrecision,
+    testing::Values(RejectedDecimalPrecisionInput{"BigNumUnsupported", FractalType::MANDEL, BFMathType::BIG_NUM, 2000},
+        RejectedDecimalPrecisionInput{
+            "BigNumMaximumInteger", FractalType::MANDEL, BFMathType::BIG_NUM, std::numeric_limits<int>::max()},
+        RejectedDecimalPrecisionInput{"BigFloatUnsupported", FractalType::DIVIDE_BROT5, BFMathType::BIG_FLT, 2000}),
+    [](const testing::TestParamInfo<RejectedDecimalPrecisionInput> &info) { return info.param.name; });
+
+class TestRejectedBytePrecision : public TestActivePrecisionArena, public testing::WithParamInterface<int>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestRejectedBytePrecision::SetUp()
+{
+    TestBigFloat::SetUp();
+    prepare_active_arena(FractalType::MANDEL);
+}
+
+TEST_P(TestRejectedBytePrecision, preservesActiveArenaAndAllowsCorrection)
+{
+    EXPECT_THROW(init_bf_length(GetParam()), PrecisionError);
+
+    expect_preserved_arena();
     init_bf_dec(40);
     EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
 }
+
+INSTANTIATE_TEST_SUITE_P(Requests, TestRejectedBytePrecision,
+    testing::Values(4096, std::numeric_limits<int>::max(), std::numeric_limits<int>::min()));
 
 TEST_F(TestBigFloat, rejectedForcedPrecisionAllowsCorrectedRequest)
 {
@@ -190,46 +264,45 @@ TEST_F(TestBigFloat, rejectedForcedPrecisionAllowsCorrectedRequest)
     EXPECT_EQ(40, g_decimals);
 }
 
-TEST_F(TestBigFloat, floatingPointArenaRejectsUnsupportedPrecision)
+struct ArenaPrecisionLimit
 {
-    g_fractal_type = FractalType::DIVIDE_BROT5;
-    init_bf_dec(20);
-    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
-    const int length{g_bn_length};
+    const char *name;
+    FractalType type;
+    BFMathType math;
+    int length;
+};
 
-    EXPECT_THROW(init_bf_dec(2000), PrecisionError);
+class TestArenaPrecisionLimit : public TestBigFloat, public testing::WithParamInterface<ArenaPrecisionLimit>
+{
+protected:
+    void SetUp() override;
+};
 
-    EXPECT_EQ(length, g_bn_length);
-    EXPECT_NO_THROW(init_bf_dec(40));
+void TestArenaPrecisionLimit::SetUp()
+{
+    TestBigFloat::SetUp();
+    g_fractal_type = GetParam().type;
+    init_bf_length(GetParam().length);
+    ASSERT_EQ(GetParam().math, g_bf_math);
+    ASSERT_EQ(GetParam().length, g_bn_length);
+    float_to_bf(g_bf_x_min, 1.25);
 }
 
-TEST_F(TestBigFloat, largerArenaPreservesPrecisionLimits)
+TEST_P(TestArenaPrecisionLimit, rejectsRequestsPastTheBackendLimit)
 {
-    struct Limit
-    {
-        FractalType type;
-        BFMathType math;
-        int length;
-    };
+    const int stack{save_stack()};
 
-    for (const Limit &limit : {Limit{FractalType::MANDEL, BFMathType::BIG_NUM, 672},
-             Limit{FractalType::DIVIDE_BROT5, BFMathType::BIG_FLT, 708}})
-    {
-        SCOPED_TRACE(limit.length);
-        g_fractal_type = limit.type;
-        init_bf_length(limit.length);
-        ASSERT_EQ(limit.math, g_bf_math);
-        ASSERT_EQ(limit.length, g_bn_length);
-        float_to_bf(g_bf_x_min, 1.25);
-        const int stack{save_stack()};
+    EXPECT_THROW(init_bf_length(GetParam().length + 1), PrecisionError);
 
-        EXPECT_THROW(init_bf_length(limit.length + 1), PrecisionError);
-
-        EXPECT_EQ(limit.length, g_bn_length);
-        EXPECT_EQ(stack, save_stack());
-        EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
-    }
+    EXPECT_EQ(GetParam().length, g_bn_length);
+    EXPECT_EQ(stack, save_stack());
+    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
 }
+
+INSTANTIATE_TEST_SUITE_P(Backends, TestArenaPrecisionLimit,
+    testing::Values(ArenaPrecisionLimit{"BigNum", FractalType::MANDEL, BFMathType::BIG_NUM, 672},
+        ArenaPrecisionLimit{"BigFloat", FractalType::DIVIDE_BROT5, BFMathType::BIG_FLT, 708}),
+    [](const testing::TestParamInfo<ArenaPrecisionLimit> &info) { return info.param.name; });
 
 TEST_F(TestBigFloat, stackStorageCrossesSixtyFourKilobytes)
 {
