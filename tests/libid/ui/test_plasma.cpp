@@ -238,21 +238,54 @@ TEST_F(TestPlasma, unavailableStorageFallsBackToNormalColorAndBorder)
     }
 }
 
-TEST_F(TestPlasma, potentialBorderAndSavedStateSurviveInitialization)
+class TestPotentialPlasmaInitialization : public TestPlasma
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<Plasma> m_plasma;
+};
+
+void TestPotentialPlasmaInitialization::SetUp()
+{
+    TestPlasma::SetUp();
     g_outside_method = ColorMethod::COLOR;
     prepare_storage();
-    {
-        Plasma plasma;
-        g_potential.flag = false;
-        g_potential.store_16bit = false;
+    m_plasma = std::make_unique<Plasma>();
+    g_potential.flag = false;
+    g_potential.store_16bit = false;
+}
 
-        plasma.init(true);
+void TestPotentialPlasmaInitialization::TearDown()
+{
+    m_plasma.reset();
+    EXPECT_TRUE(g_potential.flag);
+    EXPECT_TRUE(g_potential.store_16bit);
+    EXPECT_EQ(g_put_color, g_plot);
+    TestPlasma::TearDown();
+}
 
-        EXPECT_EQ(0x04, read_disk_pixel(1, 1));
-        EXPECT_EQ(0xD2, read_disk_pixel(1, 8));
-        EXPECT_THROW(plasma.init(true), std::logic_error);
-    }
+TEST_F(TestPotentialPlasmaInitialization, initializationPreservesPotentialBorderBytes)
+{
+    m_plasma->init(true);
+
+    EXPECT_EQ(0x04, read_disk_pixel(1, 1));
+    EXPECT_EQ(0xD2, read_disk_pixel(1, 8));
+}
+
+TEST_F(TestPotentialPlasmaInitialization, duplicateInitializationIsRejected)
+{
+    m_plasma->init(true);
+
+    EXPECT_THROW(m_plasma->init(true), std::logic_error);
+}
+
+TEST_F(TestPotentialPlasmaInitialization, destructionRestoresSavedPotentialAndPlotState)
+{
+    m_plasma->init(true);
+
+    m_plasma.reset();
 
     EXPECT_TRUE(g_potential.flag);
     EXPECT_TRUE(g_potential.store_16bit);
