@@ -9315,12 +9315,19 @@ TEST_P(TestPendingChunkedContinuation, rejectsPixelStrategyInitialization)
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestPendingChunkedContinuation, Bool());
 
-TEST_P(TestPerturbationContinuation, preciseReplayUsesTheContinuationAnchorAndRetainsAcceptedProgress)
+class TestPrecisePerturbationContinuation : public PerturbationContinuationTest
 {
-    if (!GetParam())
-    {
-        return;
-    }
+public:
+    TestPrecisePerturbationContinuation();
+};
+
+TestPrecisePerturbationContinuation::TestPrecisePerturbationContinuation() :
+    PerturbationContinuationTest{true}
+{
+}
+
+TEST_F(TestPrecisePerturbationContinuation, preciseReplayUsesTheContinuationAnchorAndRetainsAcceptedProgress)
+{
     prepare(5000);
     set_initial_offset({0.5, 0.75});
     m_specific.pert_pt =
@@ -10502,12 +10509,8 @@ TEST_P(TestReusedContinuation, returnsToPixelCalculationAfterRelease)
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestReleasedContinuation, Bool());
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestReusedContinuation, Bool());
 
-TEST_P(TestPerturbationContinuation, preciseReferenceReplacementYieldsWithoutPublishingOrReplayingFailedWork)
+TEST_F(TestPrecisePerturbationContinuation, preciseReferenceReplacementYieldsWithoutPublishingOrReplayingFailedWork)
 {
-    if (!GetParam())
-    {
-        return;
-    }
     prepare(5000);
     while (!m_engine.initialize_pixel_strategy())
     {
