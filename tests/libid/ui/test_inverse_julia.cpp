@@ -41,6 +41,7 @@
 #include <chrono>
 #include <cmath>
 #include <filesystem>
+#include <memory>
 #include <ostream>
 #include <stdexcept>
 #include <utility>
@@ -571,12 +572,23 @@ TEST_F(TestInverseJuliaQueue, standaloneControllerOwnsTheRandomWalkFallback)
     EXPECT_FALSE(g_disk_flag);
 }
 
-TEST_F(TestInverseJuliaQueue, stepwiseControllerAdvancesOnePointAndLeavesCompletedQueueWithCalculation)
+class TestInverseJuliaIncremental : public TestInverseJuliaQueue
 {
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void complete_controller(InverseJuliaFractalController &controller);
+
+    std::unique_ptr<NonStandardFractal> m_calculation;
+};
+
+void TestInverseJuliaIncremental::SetUp()
+{
+    TestInverseJuliaQueue::SetUp();
     set_fractal_type(FractalType::INVERSE_JULIA);
-    NonStandardFractal calculation;
-    calculation.start();
-    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, calculation.select());
+    m_calculation = std::make_unique<NonStandardFractal>();
+    m_calculation->start();
+    ASSERT_EQ(NonStandardFractal::Operation::INVERSE_JULIA, m_calculation->select());
     g_dispatch.set_orbit_calc(
         []
         {
@@ -584,17 +596,90 @@ TEST_F(TestInverseJuliaQueue, stepwiseControllerAdvancesOnePointAndLeavesComplet
             return g_new_z.x >= 3.0 ? -1 : 0;
         });
     g_new_z = {};
-    InverseJuliaFractalController controller{calculation};
+}
+
+void TestInverseJuliaIncremental::TearDown()
+{
+    m_calculation.reset();
+    TestInverseJuliaQueue::TearDown();
+}
+
+void TestInverseJuliaIncremental::complete_controller(InverseJuliaFractalController &controller)
+{
+    for (int point = 0; point < 3 && !controller.done(); ++point)
+    {
+        controller.iterate();
+    }
+    ASSERT_TRUE(controller.done());
+}
+
+TEST_F(TestInverseJuliaIncremental, iterationBeforeStartIsRejected)
+{
+    InverseJuliaFractalController controller{*m_calculation};
+
     EXPECT_THROW(controller.iterate(), std::logic_error);
+}
+
+TEST_F(TestInverseJuliaIncremental, resultBeforeStartIsRejected)
+{
+    InverseJuliaFractalController controller{*m_calculation};
+
     EXPECT_THROW(controller.result(), std::logic_error);
+}
+
+TEST_F(TestInverseJuliaIncremental, suspensionBeforeStartIsRejected)
+{
+    InverseJuliaFractalController controller{*m_calculation};
+
     EXPECT_THROW(controller.suspend(), std::logic_error);
+}
+
+TEST_F(TestInverseJuliaIncremental, duplicateStartIsRejected)
+{
+    InverseJuliaFractalController controller{*m_calculation};
+    controller.start();
+
+    EXPECT_THROW(controller.start(), std::logic_error);
+}
+
+TEST_F(TestInverseJuliaIncremental, suspensionAfterCompletionIsRejected)
+{
+    InverseJuliaFractalController controller{*m_calculation};
+    controller.start();
+    complete_controller(controller);
+    ASSERT_TRUE(controller.done());
+
+    EXPECT_THROW(controller.suspend(), std::logic_error);
+
+    m_calculation->finish(false);
+}
+
+TEST_F(TestInverseJuliaIncremental, completedQueueRemainsOwnedByTheCalculation)
+{
+    InverseJuliaFractalController controller{*m_calculation};
+    controller.start();
+    complete_controller(controller);
+    ASSERT_TRUE(controller.done());
+
+    EXPECT_EQ(32768UL, queue_capacity());
+    EXPECT_FALSE(dispatch_keyboard_key('o'));
+
+    m_calculation->finish(false);
+
+    EXPECT_EQ(0UL, queue_capacity());
+    EXPECT_TRUE(exit_check().empty());
+}
+
+TEST_F(TestInverseJuliaIncremental, stepwiseControllerAdvancesOnePointPerIteration)
+{
+    NonStandardFractal &calculation{*m_calculation};
+    InverseJuliaFractalController controller{calculation};
 
     controller.start();
 
     EXPECT_FALSE(controller.done());
     EXPECT_EQ(32768UL, queue_capacity());
     EXPECT_DOUBLE_EQ(0.0, g_new_z.x);
-    EXPECT_THROW(controller.start(), std::logic_error);
     controller.iterate();
     EXPECT_DOUBLE_EQ(1.0, g_old_z.x);
     EXPECT_FALSE(controller.done());
@@ -606,16 +691,10 @@ TEST_F(TestInverseJuliaQueue, stepwiseControllerAdvancesOnePointAndLeavesComplet
     ASSERT_TRUE(controller.done());
     EXPECT_EQ(0, controller.result());
     EXPECT_TRUE(calculation.completed());
-    EXPECT_EQ(32768UL, queue_capacity());
-    EXPECT_FALSE(dispatch_keyboard_key('o'));
     controller.iterate();
     EXPECT_DOUBLE_EQ(3.0, g_new_z.x);
-    EXPECT_THROW(controller.suspend(), std::logic_error);
 
     calculation.finish(false);
-
-    EXPECT_EQ(0UL, queue_capacity());
-    EXPECT_TRUE(exit_check().empty());
 }
 
 TEST_F(TestInverseJuliaQueue, stepwiseControllerTogglesOrbitsAndReturnsCommandsBeforeAnotherPoint)
