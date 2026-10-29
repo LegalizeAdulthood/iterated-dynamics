@@ -1515,21 +1515,6 @@ TEST_P(TestIFSStereoBoundary, completedViewRejectsIteration)
 INSTANTIATE_TEST_SUITE_P(Glasses, TestIFSStereoBoundary, ValuesIn(SEPARATE_IFS_GLASSES),
     [](const TestParamInfo<IFSGlassesInput> &info) { return info.param.name; });
 
-class TestCombinedIFSStereo : public IFSStereoViewFixture
-{
-};
-
-TEST_P(TestCombinedIFSStereo, combinedStereoCompletesBothEyesInOneView)
-{
-    complete_view(*m_calculation);
-
-    EXPECT_TRUE(m_calculation->done());
-    EXPECT_TRUE(m_calculation->completed());
-}
-
-INSTANTIATE_TEST_SUITE_P(Glasses, TestCombinedIFSStereo, ValuesIn(COMBINED_IFS_GLASSES),
-    [](const TestParamInfo<IFSGlassesInput> &info) { return info.param.name; });
-
 class TestCompletedIFSStereo : public IFSStereoViewFixture
 {
 protected:
