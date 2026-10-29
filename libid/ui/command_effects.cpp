@@ -108,6 +108,10 @@ bool apply_command_effects(CommandParseResult &result)
 {
     if (!result.diagnostics.errors.empty())
     {
+        if (result.initialize_fm)
+        {
+            g_sound_flag &= ~SOUNDFLAG_OPL3_FM;
+        }
         return false;
     }
     if (result.initialize_fm && (g_sound_flag & SOUNDFLAG_OPL3_FM) != 0 && !driver_init_fm())

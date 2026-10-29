@@ -35,6 +35,7 @@ TEST_F(TestCommandEffectsNoDriver, noActionDoesNotRequestExit)
 
 TEST_F(TestCommandEffectsNoDriver, pendingErrorsPreventGenerationAndDeviceInitialization)
 {
+    ValueSaver saved_sound{g_sound_flag, SOUNDFLAG_X | SOUNDFLAG_OPL3_FM | SOUNDFLAG_SPEAKER};
     CommandParseResult result;
     result.action = MakeHelpDocument{"must-not-be-written.txt"};
     result.initialize_fm = true;
@@ -42,6 +43,18 @@ TEST_F(TestCommandEffectsNoDriver, pendingErrorsPreventGenerationAndDeviceInitia
 
     EXPECT_FALSE(apply_command_effects(result));
     EXPECT_THAT(result.diagnostics.errors, ElementsAre("invalid earlier argument"));
+    EXPECT_EQ(SOUNDFLAG_X | SOUNDFLAG_SPEAKER, g_sound_flag);
+}
+
+TEST_F(TestCommandEffectsNoDriver, pendingErrorsPreserveFmWithoutInitializationRequest)
+{
+    ValueSaver saved_sound{g_sound_flag, SOUNDFLAG_X | SOUNDFLAG_OPL3_FM};
+    CommandParseResult result;
+    result.diagnostics.errors.push_back("invalid earlier argument");
+
+    EXPECT_FALSE(apply_command_effects(result));
+
+    EXPECT_EQ(SOUNDFLAG_X | SOUNDFLAG_OPL3_FM, g_sound_flag);
 }
 
 class TestCommandEffectsFm : public TestWithParam<bool>

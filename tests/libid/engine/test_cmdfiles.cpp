@@ -1653,6 +1653,22 @@ TEST_F(TestParameterCommandFile, missingPaletteStopsCommandFileWithoutLosingEarl
     EXPECT_EQ("Could not load color map missing-command-palette.map", diagnostics.errors.front());
 }
 
+TEST_F(TestParameterCommandFile, parameterErrorClearsUninitializedFmRequest)
+{
+    ValueSaver saved_sound{g_sound_flag, SOUNDFLAG_OFF};
+    ValueSaver saved_first_init{g_first_init, false};
+    CommandParseResult parsed{process_commands("entry { sound=x/f unknown=yes }")};
+    ASSERT_TRUE(parsed.initialize_fm);
+    ASSERT_EQ(1U, parsed.diagnostics.errors.size());
+    const std::string diagnostic{parsed.diagnostics.errors.front()};
+    ASSERT_THAT(diagnostic, HasSubstr("unknown=yes"));
+
+    EXPECT_FALSE(apply_command_effects(parsed));
+
+    EXPECT_EQ(SOUNDFLAG_X, g_sound_flag);
+    EXPECT_THAT(parsed.diagnostics.errors, ElementsAre(diagnostic));
+}
+
 struct RecordColorsParameterInput
 {
     const char *name;
