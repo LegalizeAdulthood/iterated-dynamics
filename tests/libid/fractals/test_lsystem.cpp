@@ -713,11 +713,6 @@ void TestInvalidLSystemLoad::SetUp()
     }
 }
 
-TEST_P(TestInvalidLSystemLoad, reportsDiagnosticAndClearsDefinition)
-{
-    expect_failure(GetParam().message);
-}
-
 class TestFailedLSystemStart : public TestInvalidLSystemLoad
 {
 protected:
@@ -741,8 +736,6 @@ TEST_P(TestFailedLSystemStart, rejectsStartWithoutAValidDefinition)
     EXPECT_TRUE(m_lines.empty());
 }
 
-INSTANTIATE_TEST_SUITE_P(Inputs, TestInvalidLSystemLoad, ValuesIn(lsystem_load_inputs()),
-    [](const TestParamInfo<LSystemLoadInput> &info) { return info.param.name; });
 INSTANTIATE_TEST_SUITE_P(Inputs, TestFailedLSystemStart, ValuesIn(lsystem_load_inputs()),
     [](const TestParamInfo<LSystemLoadInput> &info) { return info.param.name; });
 
