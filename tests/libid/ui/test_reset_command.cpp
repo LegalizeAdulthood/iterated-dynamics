@@ -16,6 +16,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <optional>
+#include <ostream>
 #include <string>
 
 using namespace id::engine;
@@ -63,205 +65,149 @@ void TestResetCommandError::TearDown()
     EXPECT_TRUE(m_parsed.diagnostics.warnings.empty());
 }
 
-TEST_F(TestResetCommandError, resetBadArg)
+struct RejectedResetInput
 {
-    ValueSaver saved_version{g_version, Version{1, 2, 3, 4, false}};
-    ValueSaver saved_file_version{g_file_version, Version{5, 6, 7, 8, false}};
+    const char *name;
+    const char *argument;
+    Version initial_version;
+    Version initial_file_version;
+};
 
-    exec_cmd_arg("reset=foo");
+void PrintTo(const RejectedResetInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestResetCommandRejected : public TestResetCommandError, public WithParamInterface<RejectedResetInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestResetCommandRejected::SetUp()
+{
+    TestResetCommandError::SetUp();
+    g_version = GetParam().initial_version;
+    g_file_version = GetParam().initial_file_version;
+}
+
+TEST_P(TestResetCommandRejected, rejectsOnceWithoutChangingSettings)
+{
+    exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ((Version{1, 2, 3, 4, false}), g_version);
-    EXPECT_EQ((Version{5, 6, 7, 8, false}), g_file_version);
-}
-
-TEST_F(TestResetCommand, resetNoArg)
-{
-    ValueSaver saved_version{g_version, Version{1, 2, 0, 0, false}};
-    ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
-    ValueSaver saved_legacy_float{g_user.legacy_float, true};
-
-    exec_cmd_arg("reset");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(17, g_version.major);
-    EXPECT_EQ(30, g_version.minor);
-    EXPECT_EQ(0, g_version.patch);
-    EXPECT_EQ(0, g_version.tweak);
-    EXPECT_TRUE(g_version.legacy);
-    EXPECT_EQ(17, g_file_version.major);
-    EXPECT_EQ(30, g_file_version.minor);
-    EXPECT_EQ(0, g_file_version.patch);
-    EXPECT_EQ(0, g_file_version.tweak);
-    EXPECT_TRUE(g_file_version.legacy);
-    EXPECT_FALSE(g_user.legacy_float);
-}
-
-TEST_F(TestResetCommand, resetZero)
-{
-    ValueSaver saved_version{g_version, Version{1, 2, 0, 0, false}};
-    ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
-
-    exec_cmd_arg("reset=0");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(parse_legacy_version(1730), g_version);
-    EXPECT_EQ(parse_legacy_version(1730), g_file_version);
-}
-
-TEST_F(TestResetCommand, resetVersion10)
-{
-    ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, true}};
-    ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
-
-    exec_cmd_arg("reset=100");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(1, g_version.major);
-    EXPECT_EQ(0, g_version.minor);
-    EXPECT_EQ(0, g_version.patch);
-    EXPECT_EQ(0, g_version.tweak);
-    EXPECT_FALSE(g_version.legacy);
-    EXPECT_EQ((Version{1, 0, 0, 0, false}), g_file_version);
-}
-
-TEST_F(TestResetCommand, resetVersion11)
-{
-    ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, true}};
-    ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
-
-    exec_cmd_arg("reset=101");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(1, g_version.major);
-    EXPECT_EQ(1, g_version.minor);
-    EXPECT_EQ(0, g_version.patch);
-    EXPECT_EQ(0, g_version.tweak);
-    EXPECT_FALSE(g_version.legacy);
-    EXPECT_EQ((Version{1, 1, 0, 0, false}), g_file_version);
-}
-
-TEST_F(TestResetCommand, resetVersion12)
-{
-    ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, true}};
-    ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
-
-    exec_cmd_arg("reset=1/2");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(1, g_version.major);
-    EXPECT_EQ(2, g_version.minor);
-    EXPECT_EQ(0, g_version.patch);
-    EXPECT_EQ(0, g_version.tweak);
-    EXPECT_FALSE(g_version.legacy);
-    EXPECT_EQ((Version{1, 2, 0, 0, false}), g_file_version);
-}
-
-TEST_F(TestResetCommand, resetLegacyVersion)
-{
-    ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, false}};
-    ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, false}};
-
-    exec_cmd_arg("reset=1906");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(19, g_version.major);
-    EXPECT_EQ(6, g_version.minor);
-    EXPECT_EQ(0, g_version.patch);
-    EXPECT_EQ(0, g_version.tweak);
-    EXPECT_TRUE(g_version.legacy);
-    EXPECT_EQ(19, g_file_version.major);
-    EXPECT_EQ(6, g_file_version.minor);
-    EXPECT_EQ(0, g_file_version.patch);
-    EXPECT_EQ(0, g_file_version.tweak);
-    EXPECT_TRUE(g_file_version.legacy);
-}
-
-TEST_F(TestResetCommand, resetVersionAllFields)
-{
-    ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
-
-    exec_cmd_arg("reset=1/2/3/4");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(1, g_version.major);
-    EXPECT_EQ(2, g_version.minor);
-    EXPECT_EQ(3, g_version.patch);
-    EXPECT_EQ(4, g_version.tweak);
-    EXPECT_FALSE(g_version.legacy);
-    EXPECT_EQ(1, g_file_version.major);
-    EXPECT_EQ(2, g_file_version.minor);
-    EXPECT_EQ(3, g_file_version.patch);
-    EXPECT_EQ(4, g_file_version.tweak);
-    EXPECT_FALSE(g_file_version.legacy);
-}
-
-TEST_F(TestResetCommand, resetVersionMajorMinorPatch)
-{
-    ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
-
-    exec_cmd_arg("reset=1/3/2");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ((Version{1, 3, 2, 0, false}), g_version);
-    EXPECT_EQ((Version{1, 3, 2, 0, false}), g_file_version);
-}
-
-TEST_F(TestResetCommandError, resetYesBadArg)
-{
-    ValueSaver saved_version{g_version, Version{1, 2, 3, 4, false}};
-    ValueSaver saved_file_version{g_file_version, Version{5, 6, 7, 8, false}};
-
-    exec_cmd_arg("reset=y");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ((Version{1, 2, 3, 4, false}), g_version);
-    EXPECT_EQ((Version{5, 6, 7, 8, false}), g_file_version);
-}
-
-TEST_F(TestResetCommand, resetInsideOne)
-{
-    ValueSaver saved_inside_color{g_inside_color, -9999};
-
-    exec_cmd_arg("reset");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(1, g_inside_color);
-}
-
-TEST_F(TestResetCommand, resetLegacyInsideOne)
-{
-    ValueSaver saved_inside_color{g_inside_color, -9999};
-
-    exec_cmd_arg("reset=1960");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(1, g_inside_color);
-}
-
-TEST_F(TestResetCommand, resetIdInsideOne)
-{
-    ValueSaver saved_inside_color{g_inside_color, -9999};
-
-    exec_cmd_arg("reset=100");
-
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(1, g_inside_color);
-}
-
-TEST_F(TestResetCommand, rejectedCommandKeepsSettingsAndDiagnosesOnce)
-{
-    exec_cmd_arg("reset=garbage");
-
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ((Version{1, 2, 3, 4, false}), g_version);
-    EXPECT_EQ((Version{5, 6, 7, 8, true}), g_file_version);
+    EXPECT_EQ(GetParam().initial_version, g_version);
+    EXPECT_EQ(GetParam().initial_file_version, g_file_version);
     EXPECT_EQ(777L, g_max_iterations);
     EXPECT_EQ(99, g_orbit_delay);
     EXPECT_EQ(17, g_fm_volume);
     EXPECT_TRUE(g_escape_exit);
-    EXPECT_THAT(m_parsed.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  reset=garbage"));
+    EXPECT_THAT(m_parsed.diagnostics.errors,
+        ElementsAre(std::string{"Oops. I couldn't understand the argument:\n  "} + GetParam().argument));
 }
+
+INSTANTIATE_TEST_SUITE_P(Argument, TestResetCommandRejected,
+    Values(RejectedResetInput{"Word", "reset=foo", {1, 2, 3, 4, false}, {5, 6, 7, 8, false}},
+        RejectedResetInput{"Boolean", "reset=y", {1, 2, 3, 4, false}, {5, 6, 7, 8, false}},
+        RejectedResetInput{"Garbage", "reset=garbage", {1, 2, 3, 4, false}, {5, 6, 7, 8, true}}),
+    [](const TestParamInfo<RejectedResetInput> &info) { return info.param.name; });
+
+struct ResetVersionInput
+{
+    const char *name;
+    const char *argument;
+    Version initial_version;
+    Version initial_file_version;
+    Version expected;
+    std::optional<bool> legacy_float;
+};
+
+void PrintTo(const ResetVersionInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestResetCommandVersions : public TestResetCommand, public WithParamInterface<ResetVersionInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<bool> m_saved_legacy_float{g_user.legacy_float};
+};
+
+void TestResetCommandVersions::SetUp()
+{
+    TestResetCommand::SetUp();
+    g_version = GetParam().initial_version;
+    g_file_version = GetParam().initial_file_version;
+    if (GetParam().legacy_float.has_value())
+    {
+        g_user.legacy_float = *GetParam().legacy_float;
+    }
+}
+
+TEST_P(TestResetCommandVersions, appliesDecodedVersion)
+{
+    exec_cmd_arg(GetParam().argument);
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
+    EXPECT_EQ(GetParam().expected, g_version);
+    EXPECT_EQ(GetParam().expected, g_file_version);
+    if (GetParam().legacy_float.has_value())
+    {
+        EXPECT_FALSE(g_user.legacy_float);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Argument, TestResetCommandVersions,
+    Values(ResetVersionInput{"NoArgument", "reset", {1, 2, 0, 0, false}, {9, 9, 9, 9, true}, parse_legacy_version(1730),
+               true},
+        ResetVersionInput{
+            "Zero", "reset=0", {1, 2, 0, 0, false}, {9, 9, 9, 9, true}, parse_legacy_version(1730), std::nullopt},
+        ResetVersionInput{"Version10", "reset=100", {2222, 3333, 4444, 5555, true}, {9, 9, 9, 9, true},
+            {1, 0, 0, 0, false}, std::nullopt},
+        ResetVersionInput{"Version11", "reset=101", {2222, 3333, 4444, 5555, true}, {9, 9, 9, 9, true},
+            {1, 1, 0, 0, false}, std::nullopt},
+        ResetVersionInput{"Version12", "reset=1/2", {2222, 3333, 4444, 5555, true}, {9, 9, 9, 9, true},
+            {1, 2, 0, 0, false}, std::nullopt},
+        ResetVersionInput{"Legacy", "reset=1906", {2222, 3333, 4444, 5555, false}, {9, 9, 9, 9, false},
+            parse_legacy_version(1906), std::nullopt},
+        ResetVersionInput{
+            "AllFields", "reset=1/2/3/4", {1, 2, 3, 4, false}, {9, 9, 9, 9, true}, {1, 2, 3, 4, false}, std::nullopt},
+        ResetVersionInput{"MajorMinorPatch", "reset=1/3/2", {1, 2, 3, 4, false}, {9, 9, 9, 9, true},
+            {1, 3, 2, 0, false}, std::nullopt}),
+    [](const TestParamInfo<ResetVersionInput> &info) { return info.param.name; });
+
+struct ResetInsideInput
+{
+    const char *name;
+    const char *argument;
+    int expected;
+};
+
+void PrintTo(const ResetInsideInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestResetCommandInsideColors : public TestResetCommand, public WithParamInterface<ResetInsideInput>
+{
+protected:
+    ValueSaver<int> m_saved_inside_color{g_inside_color, -9999};
+};
+
+TEST_P(TestResetCommandInsideColors, restoresInsideColor)
+{
+    exec_cmd_arg(GetParam().argument);
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
+    EXPECT_EQ(GetParam().expected, g_inside_color);
+}
+
+INSTANTIATE_TEST_SUITE_P(Argument, TestResetCommandInsideColors,
+    Values(ResetInsideInput{"Default", "reset", 1}, ResetInsideInput{"Legacy", "reset=1960", 1},
+        ResetInsideInput{"Modern", "reset=100", 1}),
+    [](const TestParamInfo<ResetInsideInput> &info) { return info.param.name; });
 
 TEST_F(TestResetCommand, acceptedCommandInitializesAndAppliesDecodedVersion)
 {
