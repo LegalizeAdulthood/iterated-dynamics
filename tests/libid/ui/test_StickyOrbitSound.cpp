@@ -952,50 +952,104 @@ TEST_P(TestStickyPerturbation, clippedPointReleasesTheUnfinishedOrbitBeforeSelec
     EXPECT_EQ(s_seeds.size(), s_perturbation_calls);
 }
 
-TEST_P(TestStickyPerturbation, highPrecisionSeedsRetainSubDoubleCoordinateDifferences)
+struct StickyPrecisionInput
 {
-    for (const FractalType allocator : {FractalType::MANDEL, FractalType::MANDEL_Z_POWER})
-    {
-        SCOPED_TRACE(static_cast<int>(allocator));
-        m_engine.finish();
-        if (m_big_float)
-        {
-            free_bf_vars();
-        }
-        {
-            ValueSaver saved_type{g_fractal_type, allocator};
-            init_bf_dec(60);
-        }
-        m_big_float = true;
-        const BFComplex center{m_engine.initialize_frame_bf({}, {})};
-        float_to_bf(center.x, 0.25);
-        float_to_bf(center.y, 0.25);
-        forbid_ordinary_orbits();
-        StickyOrbits perturbation;
+    const char *name;
+    OrbitDrawMode mode;
+    FractalType allocator;
+};
 
-        run_perturbation(perturbation);
-
-        ASSERT_FALSE(m_samples.empty());
-        EXPECT_EQ(m_samples.size(), m_plots.size());
-        EXPECT_EQ(1, m_engine.reference_count());
-        EXPECT_THAT(s_parameter_displacements,
-            Contains(
-                Truly([](const std::complex<double> &delta) { return delta.real() > 0.0 && delta.real() < 1e-30; })));
-        EXPECT_EQ(0, s_math_calls);
-        g_magnitude_limit = 0.1;
-        g_dispatch.set_orbit_calc(calculate_mandel_sticky_orbit);
-        clear_trace();
-        StickyOrbits ordinary_bailout;
-        run(ordinary_bailout);
-        const std::vector<DComplex> samples{m_samples};
-        const std::vector<std::array<int, 3>> plots{m_plots};
-        forbid_ordinary_orbits();
-        StickyOrbits precise_bailout;
-        run_perturbation(precise_bailout);
-        expect_output(samples, plots);
-        g_magnitude_limit = 4.0;
-    }
+void PrintTo(const StickyPrecisionInput &input, std::ostream *out)
+{
+    *out << input.name;
 }
+
+const StickyPrecisionInput STICKY_PRECISION_INPUTS[]{{"MandelRectangle", OrbitDrawMode::RECTANGLE, FractalType::MANDEL},
+    {"MandelLine", OrbitDrawMode::LINE, FractalType::MANDEL},
+    {"PowerRectangle", OrbitDrawMode::RECTANGLE, FractalType::MANDEL_Z_POWER},
+    {"PowerLine", OrbitDrawMode::LINE, FractalType::MANDEL_Z_POWER}};
+
+class TestStickyHighPrecision : public TestStickyPerturbationBase, public WithParamInterface<StickyPrecisionInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestStickyHighPrecision::SetUp()
+{
+    prepare_perturbation(GetParam().mode);
+    m_engine.finish();
+    {
+        ValueSaver<FractalType> saved_type{g_fractal_type, GetParam().allocator};
+        init_bf_dec(60);
+    }
+    m_big_float = true;
+    const BFComplex center{m_engine.initialize_frame_bf({}, {})};
+    float_to_bf(center.x, 0.25);
+    float_to_bf(center.y, 0.25);
+    forbid_ordinary_orbits();
+}
+
+TEST_P(TestStickyHighPrecision, seedsRetainSubDoubleCoordinateDifferences)
+{
+    StickyOrbits perturbation;
+
+    run_perturbation(perturbation);
+
+    ASSERT_FALSE(m_samples.empty());
+    EXPECT_EQ(m_samples.size(), m_plots.size());
+    EXPECT_EQ(1, m_engine.reference_count());
+    EXPECT_THAT(s_parameter_displacements,
+        Contains(Truly([](const std::complex<double> &delta) { return delta.real() > 0.0 && delta.real() < 1e-30; })));
+    EXPECT_EQ(0, s_math_calls);
+}
+
+INSTANTIATE_TEST_SUITE_P(Allocators, TestStickyHighPrecision, ValuesIn(STICKY_PRECISION_INPUTS),
+    [](const TestParamInfo<StickyPrecisionInput> &info) { return info.param.name; });
+
+class TestStickyHighPrecisionBailout : public TestStickyHighPrecision
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::unique_ptr<StickyOrbits> m_seed_evaluation;
+};
+
+void TestStickyHighPrecisionBailout::SetUp()
+{
+    TestStickyHighPrecision::SetUp();
+    m_seed_evaluation = std::make_unique<StickyOrbits>();
+    run_perturbation(*m_seed_evaluation);
+    ASSERT_FALSE(m_samples.empty());
+}
+
+void TestStickyHighPrecisionBailout::TearDown()
+{
+    m_seed_evaluation.reset();
+    TestStickyHighPrecision::TearDown();
+}
+
+TEST_P(TestStickyHighPrecisionBailout, bailoutAfterSeedEvaluationMatchesOrdinaryOutput)
+{
+    g_magnitude_limit = 0.1;
+    g_dispatch.set_orbit_calc(calculate_mandel_sticky_orbit);
+    clear_trace();
+    StickyOrbits ordinary_bailout;
+    run(ordinary_bailout);
+    const std::vector<DComplex> samples{m_samples};
+    const std::vector<std::array<int, 3>> plots{m_plots};
+    forbid_ordinary_orbits();
+    StickyOrbits precise_bailout;
+
+    run_perturbation(precise_bailout);
+
+    expect_output(samples, plots);
+    g_magnitude_limit = 4.0;
+}
+
+INSTANTIATE_TEST_SUITE_P(Allocators, TestStickyHighPrecisionBailout, ValuesIn(STICKY_PRECISION_INPUTS),
+    [](const TestParamInfo<StickyPrecisionInput> &info) { return info.param.name; });
 
 struct StickyBurningShipInput
 {
