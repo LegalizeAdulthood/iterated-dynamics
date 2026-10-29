@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <math/cmplx.h>
 
@@ -27,95 +28,81 @@ TEST(TestComplex, valueConstruct)
     EXPECT_EQ(2.0, val.y);
 }
 
-TEST(TestComplex, prefixPlus)
+class TestComplexOperands : public testing::Test
 {
-    const DComplex val{1.0, 2.0};
-
-    const DComplex result = +val;
-
-    EXPECT_EQ(val.x, result.x);
-    EXPECT_EQ(val.y, result.y);
-}
-
-TEST(TestComplex, prefixMinus)
-{
-    const DComplex val{1.0, 2.0};
-
-    const DComplex result = -val;
-
-    EXPECT_EQ(-val.x, result.x);
-    EXPECT_EQ(-val.y, result.y);
-}
-
-TEST(TestComplex, addAssign)
-{
+protected:
     DComplex lhs{1.0, 2.0};
     const DComplex rhs{2.0, 1.0};
+    const double scalar{2.0};
+};
 
+TEST_F(TestComplexOperands, prefixPlus)
+{
+    const DComplex result = +lhs;
+
+    EXPECT_EQ(lhs.x, result.x);
+    EXPECT_EQ(lhs.y, result.y);
+}
+
+TEST_F(TestComplexOperands, prefixMinus)
+{
+    const DComplex result = -lhs;
+
+    EXPECT_EQ(-lhs.x, result.x);
+    EXPECT_EQ(-lhs.y, result.y);
+}
+
+TEST_F(TestComplexOperands, addAssign)
+{
     lhs += rhs;
 
     EXPECT_EQ(3.0, lhs.x);
     EXPECT_EQ(3.0, lhs.y);
 }
 
-TEST(TestComplex, subtractAssign)
+TEST_F(TestComplexOperands, subtractAssign)
 {
-    DComplex lhs{1.0, 2.0};
-    const DComplex rhs{2.0, 1.0};
-
     lhs -= rhs;
 
     EXPECT_EQ(-1.0, lhs.x);
     EXPECT_EQ(1.0, lhs.y);
 }
 
-TEST(TestComplex, scalarMultiplyAssign)
+TEST_F(TestComplexOperands, scalarMultiplyAssign)
 {
-    DComplex lhs{1.0, 2.0};
-
-    lhs *= 2.0;
+    lhs *= scalar;
 
     EXPECT_EQ(2.0, lhs.x);
     EXPECT_EQ(4.0, lhs.y);
 }
 
-TEST(TestComplex, add)
+TEST_F(TestComplexOperands, add)
 {
-    const DComplex lhs{1.0, 2.0};
-    const DComplex rhs{2.0, 1.0};
-
     const DComplex result = lhs + rhs;
 
     EXPECT_EQ(3.0, result.x);
     EXPECT_EQ(3.0, result.y);
 }
 
-TEST(TestComplex, subtract)
+TEST_F(TestComplexOperands, subtract)
 {
-    const DComplex lhs{1.0, 2.0};
-    const DComplex rhs{2.0, 1.0};
-
     const DComplex result = lhs - rhs;
 
     EXPECT_EQ(-1.0, result.x);
     EXPECT_EQ(1.0, result.y);
 }
 
-TEST(TestComplex, scalarMultiplyRight)
+TEST_F(TestComplexOperands, scalarMultiplyRight)
 {
-    const DComplex lhs{1.0, 2.0};
-
-    const DComplex result = lhs * 2.0;
+    const DComplex result = lhs * scalar;
 
     EXPECT_EQ(2.0, result.x);
     EXPECT_EQ(4.0, result.y);
 }
 
-TEST(TestComplex, scalarMultiplyLeft)
+TEST_F(TestComplexOperands, scalarMultiplyLeft)
 {
-    const DComplex lhs{1.0, 2.0};
-
-    const DComplex result = 2.0 * lhs;
+    const DComplex result = scalar * lhs;
 
     EXPECT_EQ(2.0, result.x);
     EXPECT_EQ(4.0, result.y);
