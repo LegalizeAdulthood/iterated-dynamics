@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 
+#include "ColorMapSaver.h"
 #include "MockDriver.h"
 #include "TestRender.h"
 
@@ -33,6 +34,7 @@
 #include <cstring>
 #include <memory>
 #include <new>
+#include <optional>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -96,7 +98,7 @@ protected:
     ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
     ValueSaver<std::vector<Byte>> m_saved_resume{g_resume_data, std::vector<Byte>{}};
     std::array<double, MAX_PARAMS> m_saved_params{};
-    std::array<Byte, sizeof(g_dac_box)> m_saved_palette{};
+    std::optional<ColorMapSaver> m_saved_palette;
     std::vector<int> m_rows;
     std::string m_error;
     int m_thinking_entries{};
@@ -113,7 +115,7 @@ protected:
 void TestCellularController::SetUp()
 {
     std::copy_n(g_params, MAX_PARAMS, m_saved_params.begin());
-    std::memcpy(m_saved_palette.data(), g_dac_box, sizeof(g_dac_box));
+    m_saved_palette.emplace();
     std::fill_n(g_params, MAX_PARAMS, 0.0);
     g_params[1] = 1010;
     g_params[2] = 21;
@@ -190,7 +192,7 @@ void TestCellularController::TearDown()
     m_calculation.reset();
     EXPECT_FALSE(thinking_active());
     std::copy(m_saved_params.begin(), m_saved_params.end(), g_params);
-    std::memcpy(g_dac_box, m_saved_palette.data(), sizeof(g_dac_box));
+    m_saved_palette.reset();
 }
 
 void TestCellularController::prepare_calculation()

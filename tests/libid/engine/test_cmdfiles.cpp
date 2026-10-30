@@ -1448,36 +1448,9 @@ TEST_F(TestParameterCommandError, filenameTooLong)
     EXPECT_EQ(saved_browse_name, g_browse.name);
 }
 
-class DACSaver
-{
-public:
-    DACSaver()
-    {
-        for (int i = 0; i < 256; ++i)
-        {
-            m_dac_box[i][0] = g_dac_box[i][0];
-            m_dac_box[i][1] = g_dac_box[i][1];
-            m_dac_box[i][2] = g_dac_box[i][2];
-        }
-    }
-
-    ~DACSaver()
-    {
-        for (int i = 0; i < 256; ++i)
-        {
-            g_dac_box[i][0] = m_dac_box[i][0];
-            g_dac_box[i][1] = m_dac_box[i][1];
-            g_dac_box[i][2] = m_dac_box[i][2];
-        }
-    }
-
-private:
-    Byte m_dac_box[256][3];
-};
-
 TEST_F(TestParameterCommand, colorsEmptySetsDefaultDAC)
 {
-    DACSaver saved_dac_box;
+    ColorMapSaver saved_dac_box;
     for (int i = 0; i < 256; ++i) // NOLINT(modernize-loop-convert)
     {
         g_dac_box[i][0] = 0x10;

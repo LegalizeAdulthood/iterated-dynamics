@@ -3,6 +3,7 @@
 //
 #include <ui/rotate.h>
 
+#include "ColorMapSaver.h"
 #include "MockDriver.h"
 #include "test_data.h"
 
@@ -19,6 +20,7 @@
 
 #include <array>
 #include <cstring>
+#include <optional>
 #include <ostream>
 
 using namespace id::engine;
@@ -47,13 +49,13 @@ protected:
     ValueSaver<bool> m_saved_real_dac{g_got_real_dac, true};
     ValueSaver<bool> m_saved_true_color{g_is_true_color, false};
     ValueSaver<TrueColorMode> m_saved_true_mode{g_true_mode, TrueColorMode::DEFAULT_COLOR};
-    std::array<Byte, sizeof(g_dac_box)> m_saved_palette{};
+    std::optional<ColorMapSaver> m_saved_palette;
     std::array<Byte, sizeof(g_old_dac_box)> m_saved_old_palette{};
 };
 
 void TestPaletteRotation::SetUp()
 {
-    std::memcpy(m_saved_palette.data(), g_dac_box, sizeof(g_dac_box));
+    m_saved_palette.emplace();
     std::memcpy(m_saved_old_palette.data(), g_old_dac_box, sizeof(g_old_dac_box));
     for (int color = 0; color < 256; ++color)
     {
@@ -67,7 +69,7 @@ void TestPaletteRotation::SetUp()
 
 void TestPaletteRotation::TearDown()
 {
-    std::memcpy(g_dac_box, m_saved_palette.data(), sizeof(g_dac_box));
+    m_saved_palette.reset();
     std::memcpy(g_old_dac_box, m_saved_old_palette.data(), sizeof(g_old_dac_box));
 }
 
