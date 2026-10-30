@@ -39,7 +39,8 @@ TEST_F(TestGifReadSupport, decodeFailureClosesInput)
     io::GifWriter writer{m_path, {1, 1}, {{0, 0, 0}, {255, 255, 255}}};
     ASSERT_TRUE(writer.write_pixels({1}));
     ASSERT_TRUE(writer.finish());
-    std::filesystem::resize_file(m_path, std::filesystem::file_size(m_path) - 2);
+    // Remove the trailer; giflib 5.2.2 corrupts its image table on truncated pixel data.
+    std::filesystem::resize_file(m_path, std::filesystem::file_size(m_path) - 1);
 
     EXPECT_THROW(read_gif(m_path), std::runtime_error);
 

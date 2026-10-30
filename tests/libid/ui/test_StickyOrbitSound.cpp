@@ -36,6 +36,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <cmath>
 #include <filesystem>
 #include <fstream>
 #include <limits>
@@ -519,6 +520,63 @@ INSTANTIATE_TEST_SUITE_P(Policies, TestStickyClipping,
         StickyClippingInput{"RectangleWithPeriodicity", OrbitDrawMode::RECTANGLE, 1, 1},
         StickyClippingInput{"LineWithPeriodicity", OrbitDrawMode::LINE, 1, 1}),
     [](const TestParamInfo<StickyClippingInput> &info) { return info.param.name; });
+
+struct StickyPixelCoordinateInput
+{
+    const char *name;
+    double coordinate;
+    int expected;
+};
+
+void PrintTo(const StickyPixelCoordinateInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+class TestStickyPixelCoordinates : public TestStickyOrbitSoundBase,
+                                   public WithParamInterface<StickyPixelCoordinateInput>
+{
+};
+
+TEST_P(TestStickyPixelCoordinates, clipsAndConvertsProjectedCoordinates)
+{
+    prepare(OrbitDrawMode::LINE);
+    g_image_region = {{0.0, 0.0}, {7.0, 7.0}, {0.0, 0.0}};
+    g_dispatch.set_orbit_calc(
+        []
+        {
+            g_new_z = {GetParam().coordinate - 0.5, 7.5 - GetParam().coordinate};
+            return 0;
+        });
+    StickyOrbits calculation;
+
+    run(calculation);
+
+    if (GetParam().expected == 0)
+    {
+        EXPECT_TRUE(m_plots.empty());
+        EXPECT_TRUE(m_samples.empty());
+    }
+    else
+    {
+        ASSERT_FALSE(m_plots.empty());
+        EXPECT_THAT(m_plots, Each(ElementsAre(GetParam().expected, GetParam().expected, _)));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Coordinates, TestStickyPixelCoordinates,
+    Values(StickyPixelCoordinateInput{"BelowHalfPixelTie", std::nextafter(4.0, 0.0), 4},
+        StickyPixelCoordinateInput{"AboveHalfPixelTie", std::nextafter(4.0, 8.0), 4},
+        StickyPixelCoordinateInput{"BeforeHalfPixelTie", 4.0 - 1e-8, 3},
+        StickyPixelCoordinateInput{"AfterHalfPixelTie", 4.0 + 1e-8, 4},
+        StickyPixelCoordinateInput{"FirstVisibleBoundary", std::nextafter(1.0, 0.0), 1},
+        StickyPixelCoordinateInput{"LastBoundary", std::nextafter(8.0, 0.0), 0},
+        StickyPixelCoordinateInput{"Zero", 0.0, 0}, StickyPixelCoordinateInput{"Outside", 8.0, 0},
+        StickyPixelCoordinateInput{"PositiveInfinity", std::numeric_limits<double>::infinity(), 0},
+        StickyPixelCoordinateInput{"NegativeInfinity", -std::numeric_limits<double>::infinity(), 0},
+        StickyPixelCoordinateInput{"NaN", std::numeric_limits<double>::quiet_NaN(), 0},
+        StickyPixelCoordinateInput{"BeyondIntegerRange", std::numeric_limits<double>::max(), 0}),
+    [](const TestParamInfo<StickyPixelCoordinateInput> &info) { return info.param.name; });
 
 TEST_P(TestStickyOrbitSound, rejectsNegativeResumeCount)
 {

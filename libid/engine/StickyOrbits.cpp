@@ -23,6 +23,7 @@
 #include <complex>
 #include <cstdlib>
 #include <exception>
+#include <limits>
 #include <stdexcept>
 
 using namespace id::fractals;
@@ -34,6 +35,20 @@ namespace
 {
 
 constexpr long ORBIT_ITERATION_CHUNK = 2048;
+
+int screen_coordinate(const double coordinate, const int limit)
+{
+    if (!std::isfinite(coordinate))
+    {
+        return 0;
+    }
+    // The affine conversion includes 0.5 for nearest-pixel rounding.
+    // Stabilize ties when roundoff moves a point across an integer.
+    const double nearest{std::round(coordinate)};
+    const double roundoff{4 * std::numeric_limits<double>::epsilon() * std::max(1.0, std::abs(coordinate))};
+    const double snapped{std::abs(coordinate - nearest) <= roundoff ? nearest : coordinate};
+    return snapped >= 1 && snapped < limit ? static_cast<int>(snapped) : 0;
+}
 
 } // namespace
 
@@ -384,10 +399,12 @@ bool StickyOrbits::advance_orbit(PertEngine *perturbation)
                 continue;
             }
 
-            m_orbit.col = static_cast<int>(m_orbit.screen_convert.a * m_orbit.point.x +
-                m_orbit.screen_convert.b * m_orbit.point.y + m_orbit.screen_convert.e);
-            m_orbit.row = static_cast<int>(m_orbit.screen_convert.c * m_orbit.point.x +
-                m_orbit.screen_convert.d * m_orbit.point.y + m_orbit.screen_convert.f);
+            m_orbit.col = screen_coordinate(m_orbit.screen_convert.a * m_orbit.point.x +
+                    m_orbit.screen_convert.b * m_orbit.point.y + m_orbit.screen_convert.e,
+                g_logical_screen.x_dots);
+            m_orbit.row = screen_coordinate(m_orbit.screen_convert.c * m_orbit.point.x +
+                    m_orbit.screen_convert.d * m_orbit.point.y + m_orbit.screen_convert.f,
+                g_logical_screen.y_dots);
             if (m_orbit.col <= 0 || m_orbit.col >= g_logical_screen.x_dots || m_orbit.row <= 0 ||
                 m_orbit.row >= g_logical_screen.y_dots)
             {
