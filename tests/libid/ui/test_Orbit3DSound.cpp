@@ -3,6 +3,7 @@
 //
 #include "MockDriver.h"
 #include "MockSoundOutput.h"
+#include "PendingDriverKey.h"
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>
@@ -198,15 +199,7 @@ void Orbit3DSoundTestState::SetUp()
                 m_eyes.push_back(g_which_image);
             }));
     EXPECT_CALL(m_driver, read_pixel(_, _)).WillRepeatedly(Return(0));
-    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Invoke([this] { return m_key; }));
-    EXPECT_CALL(m_driver, get_key())
-        .WillRepeatedly(Invoke(
-            [this]
-            {
-                const int key{m_key};
-                m_key = 0;
-                return key;
-            }));
+    expect_pending_driver_key(m_driver, m_key);
     EXPECT_CALL(*m_output, play(_))
         .WillRepeatedly(Invoke(
             [this](const SoundSample &sample)

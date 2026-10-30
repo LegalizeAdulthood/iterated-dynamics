@@ -3,6 +3,7 @@
 //
 #include "MockDriver.h"
 #include "MockSoundOutput.h"
+#include "PendingDriverKey.h"
 #include "TestRender.h"
 
 #include <engine/calc_frac_init.h>
@@ -212,15 +213,7 @@ void TestOverlaySound::SetUp()
                 ++m_plots;
                 m_events.emplace_back("plot");
             }));
-    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Invoke([this] { return m_key; }));
-    EXPECT_CALL(m_driver, get_key())
-        .WillRepeatedly(Invoke(
-            [this]
-            {
-                const int key{m_key};
-                m_key = 0;
-                return key;
-            }));
+    expect_pending_driver_key(m_driver, m_key);
     EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
     EXPECT_CALL(*m_output, play(_))
         .WillRepeatedly(Invoke(

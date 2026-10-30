@@ -4,6 +4,7 @@
 #include <ui/ShowDotController.h>
 
 #include "MockDriver.h"
+#include "PendingDriverKey.h"
 #include "TestRender.h"
 
 #include <engine/calc_frac_init.h>
@@ -108,15 +109,7 @@ protected:
             .WillRepeatedly(Invoke([this](int col, int row, int color) { m_pixels.at(row * WIDTH + col) = color; }));
         EXPECT_CALL(m_driver, flush()).WillRepeatedly(Invoke([this] { ++m_flushes; }));
         EXPECT_CALL(m_driver, delay(0)).Times(AnyNumber());
-        EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Invoke([this] { return m_key; }));
-        EXPECT_CALL(m_driver, get_key())
-            .WillRepeatedly(Invoke(
-                [this]
-                {
-                    const int key{m_key};
-                    m_key = 0;
-                    return key;
-                }));
+        expect_pending_driver_key(m_driver, m_key);
         EXPECT_CALL(m_driver, unget_key('x')).WillRepeatedly(Invoke([this](int key) { m_key = key; }));
     }
 
