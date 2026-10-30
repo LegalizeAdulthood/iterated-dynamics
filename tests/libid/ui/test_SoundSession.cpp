@@ -4,6 +4,7 @@
 #include <ui/SoundSession.h>
 
 #include "MockDriver.h"
+#include "MockSoundOutput.h"
 
 #include <engine/cmdfiles.h>
 #include <engine/NullSoundOutput.h>
@@ -45,17 +46,6 @@ namespace id::test
 
 namespace
 {
-
-class MockSoundOutput : public SoundOutput
-{
-public:
-    MOCK_METHOD(bool, play, (const SoundSample &), (override));
-    MOCK_METHOD(void, update, (), (override));
-    MOCK_METHOD(bool, ready, (), (const, override));
-    MOCK_METHOD(void, begin_orbit, (), (override));
-    MOCK_METHOD(void, mute, (), (override));
-    MOCK_METHOD(bool, finish, (), (override));
-};
 
 class MockSoundKeyboardHandler : public KeyboardHandler
 {

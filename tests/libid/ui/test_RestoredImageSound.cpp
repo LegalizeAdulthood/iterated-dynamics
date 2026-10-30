@@ -4,6 +4,7 @@
 #include <ui/restore_image.h>
 
 #include "MockDriver.h"
+#include "MockSoundOutput.h"
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>
@@ -55,17 +56,6 @@ namespace id::test
 namespace
 {
 
-class MockRestoreOutput : public SoundOutput
-{
-public:
-    MOCK_METHOD(bool, play, (const SoundSample &), (override));
-    MOCK_METHOD(void, update, (), (override));
-    MOCK_METHOD(bool, ready, (), (const, override));
-    MOCK_METHOD(void, begin_orbit, (), (override));
-    MOCK_METHOD(void, mute, (), (override));
-    MOCK_METHOD(bool, finish, (), (override));
-};
-
 std::vector<std::array<int, 3>> s_restored_pixels;
 
 void record_pixel(const int col, const int row, const int color)
@@ -87,7 +77,7 @@ protected:
     void TearDown() override;
 
     MockDriver m_driver;
-    std::shared_ptr<StrictMock<MockRestoreOutput>> m_output{std::make_shared<StrictMock<MockRestoreOutput>>()};
+    std::shared_ptr<StrictMock<MockSoundOutput>> m_output{std::make_shared<StrictMock<MockSoundOutput>>()};
     std::filesystem::path m_directory;
     Byte m_palette[256][3]{};
     std::vector<int> m_samples;

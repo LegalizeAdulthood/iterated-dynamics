@@ -60,6 +60,7 @@ add_executable(test-id
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_migrate_gif.h"
     "include/expected_map.h"
     "include/MockDriver.h"
+    "include/MockSoundOutput.h"
     "include/ValueUnchanged.h"
     "include/test_config_data.h.in"
     "include/test_data.h.in"
