@@ -4,6 +4,7 @@
 #include <ui/make_batch_file.h>
 
 #include "ColorMapSaver.h"
+#include "FractalParamSaver.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/color_utils.h"
@@ -47,25 +48,6 @@ protected:
     WriteBatchData m_data{};
 };
 
-class MakeBatchParamSaver
-{
-public:
-    MakeBatchParamSaver()
-    {
-        std::copy(&g_params[0], &g_params[MAX_PARAMS], m_params.begin());
-        m_param_text = g_param_text;
-    }
-    ~MakeBatchParamSaver()
-    {
-        std::copy(m_params.begin(), m_params.end(), &g_params[0]);
-        g_param_text = m_param_text;
-    }
-
-private:
-    std::array<double, MAX_PARAMS> m_params{};
-    std::array<std::string, MAX_PARAMS> m_param_text;
-};
-
 class TestPutFractalParams : public testing::Test
 {
 protected:
@@ -79,7 +61,7 @@ protected:
         g_params[3] = 2.0;
     }
 
-    MakeBatchParamSaver m_saved_params;
+    FractalParamSaver m_saved_params;
     ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::ANT};
     ValueSaver<const FractalSpecific *> m_saved_fractal_specific{
         g_cur_fractal_specific, get_fractal_specific(FractalType::ANT)};

@@ -42,6 +42,7 @@
 #include <ui/big_while_loop.h>
 #include <ui/video.h>
 
+#include "FractalParamSaver.h"
 #include "MockDriver.h"
 
 #include <gmock/gmock.h>
@@ -92,31 +93,6 @@ int no_orbit()
 {
     return 0;
 }
-
-class FractalParamSaver
-{
-public:
-    FractalParamSaver()
-    {
-        std::copy(&g_params[0], &g_params[MAX_PARAMS], m_params.begin());
-        m_param_text = g_param_text;
-    }
-
-    ~FractalParamSaver()
-    {
-        std::copy(m_params.begin(), m_params.end(), &g_params[0]);
-        g_param_text = m_param_text;
-    }
-
-    FractalParamSaver(const FractalParamSaver &) = delete;
-    FractalParamSaver(FractalParamSaver &&) = delete;
-    FractalParamSaver &operator=(const FractalParamSaver &) = delete;
-    FractalParamSaver &operator=(FractalParamSaver &&) = delete;
-
-private:
-    std::array<double, MAX_PARAMS> m_params{};
-    std::array<std::string, MAX_PARAMS> m_param_text;
-};
 
 class MinimalImageState
 {

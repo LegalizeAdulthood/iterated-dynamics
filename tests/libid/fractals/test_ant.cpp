@@ -3,6 +3,8 @@
 //
 #include "fractals/Ant.h"
 
+#include "FractalParamSaver.h"
+
 #include "engine/calcfrac.h"
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
@@ -10,7 +12,6 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <array>
 #include <ostream>
 #include <string>
 
@@ -20,25 +21,6 @@ using namespace id::misc;
 
 namespace id::test
 {
-
-class AntRuleParamSaver
-{
-public:
-    AntRuleParamSaver()
-    {
-        std::copy(&g_params[0], &g_params[MAX_PARAMS], m_params.begin());
-        m_param_text = g_param_text;
-    }
-    ~AntRuleParamSaver()
-    {
-        std::copy(m_params.begin(), m_params.end(), &g_params[0]);
-        g_param_text = m_param_text;
-    }
-
-private:
-    std::array<double, MAX_PARAMS> m_params{};
-    std::array<std::string, MAX_PARAMS> m_param_text;
-};
 
 struct AntRuleInput
 {
@@ -59,7 +41,7 @@ class TestAntRuleText : public testing::Test, public testing::WithParamInterface
 protected:
     void SetUp() override;
 
-    AntRuleParamSaver m_saved_params;
+    FractalParamSaver m_saved_params;
     ValueSaver<Version> m_saved_version{g_version, parse_legacy_version(1730)};
 };
 
