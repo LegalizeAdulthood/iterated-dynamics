@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include "MockDriver.h"
+#include "MockSoundOutput.h"
 #include "TestRender.h"
 
 #include <engine/calc_frac_init.h>
@@ -88,17 +89,6 @@ namespace id::test
 namespace
 {
 
-class MockOverlaySound : public SoundOutput
-{
-public:
-    MOCK_METHOD(bool, play, (const SoundSample &), (override));
-    MOCK_METHOD(void, update, (), (override));
-    MOCK_METHOD(bool, ready, (), (const, override));
-    MOCK_METHOD(void, begin_orbit, (), (override));
-    MOCK_METHOD(void, mute, (), (override));
-    MOCK_METHOD(bool, finish, (), (override));
-};
-
 int s_orbit_calls{};
 int s_pixel_calls{};
 std::vector<Point2i> s_pixel_positions;
@@ -144,7 +134,7 @@ protected:
     void select_froth();
 
     MockDriver m_driver;
-    std::shared_ptr<StrictMock<MockOverlaySound>> m_output{std::make_shared<StrictMock<MockOverlaySound>>()};
+    std::shared_ptr<StrictMock<MockSoundOutput>> m_output{std::make_shared<StrictMock<MockSoundOutput>>()};
     FractalSpecific m_specific{*get_fractal_specific(FractalType::MANDEL)};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<SoundOutputPtr> m_saved_sound{g_sound, m_output};
