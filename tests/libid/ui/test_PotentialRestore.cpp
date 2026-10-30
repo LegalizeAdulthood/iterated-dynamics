@@ -4,6 +4,7 @@
 #include "ColorMapSaver.h"
 #include "MockDriver.h"
 #include "RestoreDecodeTestState.h"
+#include "StopMessageTestSupport.h"
 #include "TemporaryDirectory.h"
 
 #include <engine/calcfrac.h>
@@ -261,14 +262,7 @@ TEST_F(TestPotentialRestore, failedUiSetupCannotBeRetriedInsideScanlineOutput)
     g_debug_flag = DebugFlags::FORCE_MEMORY_FROM_DISK;
     EXPECT_CALL(m_driver, display_string(_, _, _, _, StrEq("clearing 16bit pot work area")));
     EXPECT_CALL(m_driver, flush());
-    EXPECT_CALL(m_driver, stack_screen());
-    EXPECT_CALL(m_driver, unstack_screen());
-    EXPECT_CALL(m_driver, move_cursor(_, _));
-    EXPECT_CALL(m_driver, hide_text_cursor());
-    EXPECT_CALL(m_driver, set_attr(_, _, _, _));
-    EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM));
-    EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(AnyNumber());
-    EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
+    expect_stop_messages(m_driver);
     EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
     ASSERT_FALSE(prepare_potential_storage());
     EXPECT_CALL(m_driver, is_disk()).Times(0);

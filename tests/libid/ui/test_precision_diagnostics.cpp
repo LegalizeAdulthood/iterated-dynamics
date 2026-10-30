@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include "MockDriver.h"
+#include "StopMessageTestSupport.h"
 
 #include <engine/bailout_formula.h>
 #include <engine/calc_frac_init.h>
@@ -205,18 +206,6 @@ TEST_F(TestPrecisionDiagnostics, conversionDebugSnapshotPreservesOriginalRegion)
 class TestPrecisionDiagnosticDisplay : public Test
 {
 protected:
-    void expect_dialogs(const int count)
-    {
-        EXPECT_CALL(m_driver, stack_screen()).Times(count);
-        EXPECT_CALL(m_driver, unstack_screen()).Times(count);
-        EXPECT_CALL(m_driver, move_cursor(_, _)).Times(count);
-        EXPECT_CALL(m_driver, hide_text_cursor()).Times(count);
-        EXPECT_CALL(m_driver, set_attr(_, _, _, _)).Times(count);
-        EXPECT_CALL(m_driver, buzzer(Buzzer::PROBLEM)).Times(count);
-        EXPECT_CALL(m_driver, put_string(_, _, _, _)).Times(AnyNumber());
-        EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
-    }
-
     MockDriver m_driver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<bool> m_saved_first_init{g_first_init, false};
@@ -233,7 +222,7 @@ TEST_F(TestPrecisionDiagnosticDisplay, emptyCollectionDoesNotPollOrDisplay)
 TEST_F(TestPrecisionDiagnosticDisplay, acknowledgementDrainsSnapshotsInOrder)
 {
     g_precision_diagnostics = {"first snapshot", "second snapshot"};
-    expect_dialogs(2);
+    expect_stop_messages(m_driver, 2);
     EXPECT_CALL(m_driver, get_key()).WillRepeatedly(Return(ID_KEY_ENTER));
     {
         InSequence sequence;
@@ -250,7 +239,7 @@ TEST_F(TestPrecisionDiagnosticDisplay, acknowledgementDrainsSnapshotsInOrder)
 TEST_F(TestPrecisionDiagnosticDisplay, escapeReturnsExitDecisionToUiOwner)
 {
     g_precision_diagnostics = {"first snapshot", "second snapshot"};
-    expect_dialogs(1);
+    expect_stop_messages(m_driver);
     EXPECT_CALL(m_driver, put_string(_, _, _, StrEq("first snapshot")));
     EXPECT_CALL(m_driver, get_key()).WillOnce(Return(ID_KEY_ESC));
 

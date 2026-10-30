@@ -72,6 +72,7 @@ add_executable(test-id
     include/PassTestFrame.h test/PassTestFrame.cpp
     include/PendingDriverKey.h test/PendingDriverKey.cpp
     include/RestoreDecodeTestState.h
+    include/StopMessageTestSupport.h test/StopMessageTestSupport.cpp
     "include/ValueUnchanged.h"
     "include/test_config_data.h.in"
     "include/test_data.h.in"
