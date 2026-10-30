@@ -23,6 +23,12 @@ PassTestFrame::PassTestFrame() :
 {
 }
 
+PassTestFrame::PassTestFrame(const int width, const int height) :
+    PassTestFrame()
+{
+    reset(width, height);
+}
+
 void PassTestFrame::reset(const int width, const int height)
 {
     m_width = width;

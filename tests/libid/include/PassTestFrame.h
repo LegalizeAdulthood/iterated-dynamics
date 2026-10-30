@@ -16,6 +16,7 @@ class PassTestFrame
 {
 public:
     PassTestFrame();
+    PassTestFrame(int width, int height);
 
     void reset(int width, int height);
     int read_pixel(int col, int row) const;

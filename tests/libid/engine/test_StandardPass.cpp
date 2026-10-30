@@ -5,12 +5,12 @@
 #include <engine/StandardPass.h>
 
 #include "MockDriver.h"
+#include "PassTestFrame.h"
 #include "WorkListSnapshot.h"
 
 #include <engine/calc_frac_init.h>
 #include <engine/engine_timer.h>
 #include <engine/log_map.h>
-#include <engine/LogicalScreen.h>
 #include <engine/NullSoundOutput.h>
 #include <engine/OrbitPlot.h>
 #include <engine/Potential.h>
@@ -127,16 +127,16 @@ class TestStandardPass : public Test
 protected:
     void SetUp() override
     {
-        set_frame(8, 8);
+        m_frame.reset(8, 8);
         g_dispatch.set_calc_type(unexpected_calculation);
         set_normal_dot();
         EXPECT_CALL(m_driver, read_pixel(_, _))
-            .WillRepeatedly(Invoke([this](int col, int row) { return m_pixels.at(row * m_width + col); }));
+            .WillRepeatedly(Invoke([this](int col, int row) { return m_frame.read_pixel(col, row); }));
         EXPECT_CALL(m_driver, write_pixel(_, _, _))
             .WillRepeatedly(Invoke(
                 [this](int col, int row, int color)
                 {
-                    m_pixels.at(row * m_width + col) = color;
+                    m_frame.write_pixel(col, row, color);
                     ++m_plot_count;
                 }));
         EXPECT_CALL(m_driver, key_pressed()).Times(0);
@@ -155,32 +155,11 @@ protected:
         return false;
     }
 
-    void set_frame(int width, int height)
-    {
-        m_width = width;
-        g_screen_x_dots = width;
-        g_screen_y_dots = height;
-        g_logical_screen = {width, height, 0, 0, width - 1.0, height - 1.0};
-        g_start_pt = {0, 0};
-        g_stop_pt = {width - 1, height - 1};
-        g_i_start_pt = g_start_pt;
-        g_i_stop_pt = g_stop_pt;
-        g_begin_pt = g_start_pt;
-        m_pixels.assign(width * height, 0);
-    }
-
     MockDriver m_driver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
-    ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen, LogicalScreen{8, 8, 0, 0, 7, 7}};
-    ValueSaver<int> m_saved_width{g_screen_x_dots, 8};
-    ValueSaver<int> m_saved_height{g_screen_y_dots, 8};
+    PassTestFrame m_frame{8, 8};
     ValueSaver<int> m_saved_colors{g_colors, 256};
     ValueSaver<int> m_saved_mask{g_and_color, 255};
-    ValueSaver<Point2i> m_saved_start{g_start_pt, Point2i{0, 0}};
-    ValueSaver<Point2i> m_saved_stop{g_stop_pt, Point2i{7, 7}};
-    ValueSaver<Point2i> m_saved_i_start{g_i_start_pt, Point2i{0, 0}};
-    ValueSaver<Point2i> m_saved_i_stop{g_i_stop_pt, Point2i{7, 7}};
-    ValueSaver<Point2i> m_saved_begin{g_begin_pt, Point2i{0, 0}};
     ValueSaver<int> m_saved_col{g_col};
     ValueSaver<int> m_saved_row{g_row};
     ValueSaver<int> m_saved_current_col{g_current_column};
@@ -206,8 +185,6 @@ protected:
     ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
     ValueSaver<decltype(g_plot)> m_saved_plot{g_plot, put_color_a};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
-    std::vector<int> m_pixels;
-    int m_width{};
     int m_plot_count{};
 };
 
@@ -254,13 +231,13 @@ TEST_P(TestStandardPassPixel, completionAdvancesTheActivePassOnce)
     EXPECT_EQ(GetParam().next, pass.selected_pixel());
     if (GetParam().mode == CalcMode::TWO_PASS)
     {
-        EXPECT_EQ(13, m_pixels[1]);
-        EXPECT_EQ(13, m_pixels[8]);
-        EXPECT_EQ(13, m_pixels[9]);
+        EXPECT_EQ(13, m_frame.pixels()[1]);
+        EXPECT_EQ(13, m_frame.pixels()[8]);
+        EXPECT_EQ(13, m_frame.pixels()[9]);
     }
     if (GetParam().mode == CalcMode::DIFFUSION)
     {
-        EXPECT_EQ(13, m_pixels[7 * 8 + 7]);
+        EXPECT_EQ(13, m_frame.pixels()[7 * 8 + 7]);
     }
 }
 
@@ -701,7 +678,7 @@ TEST_P(TestAutoLogMapYield, yieldPreservesTheSampleAndPerimeterOrder)
     calculation.iterate();
     EXPECT_TRUE(calculation.done());
     EXPECT_EQ(m_perimeter.size() + 64, s_calculated.size());
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
 }
 
 TEST_P(TestAutoLogMapYield, samplingRejectsSelectedPixelAccess)
@@ -738,7 +715,7 @@ TEST_P(TestAutoLogMap, interruptionSavesUnfinishedSamplingForResume)
     resumed.iterate();
     EXPECT_TRUE(resumed.done());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
 }
 
 TEST_P(TestAutoLogMap, abandoningSamplingRestoresTheIterationLimit)
@@ -808,7 +785,7 @@ TEST_P(TestAutoLogMapResume, suspensionAfterSamplingPreservesUnstartedTraversal)
     g_calc_status = CalcStatus::PARAMS_CHANGED;
     g_resuming = false;
     g_log_map_flag = input.log_map;
-    m_pixels.assign(64, -1);
+    m_frame.pixels().assign(64, -1);
     StandardFractal baseline;
     baseline.resume();
     for (int chunks = 0; chunks < 1000 && !baseline.done(); ++chunks)
@@ -817,8 +794,8 @@ TEST_P(TestAutoLogMapResume, suspensionAfterSamplingPreservesUnstartedTraversal)
     }
     ASSERT_TRUE(baseline.done());
     ASSERT_EQ(CalcStatus::COMPLETED, g_calc_status);
-    ASSERT_THAT(m_pixels, Each(Ge(0)));
-    const std::vector<int> expected{m_pixels};
+    ASSERT_THAT(m_frame.pixels(), Each(Ge(0)));
+    const std::vector<int> expected{m_frame.pixels()};
 
     g_calc_status = CalcStatus::PARAMS_CHANGED;
     g_resuming = false;
@@ -860,7 +837,7 @@ TEST_P(TestAutoLogMapResume, suspensionAfterSamplingPreservesUnstartedTraversal)
     EXPECT_EQ(active.begin, saved_work[0].begin);
     EXPECT_EQ(active.pass, saved_work[0].pass);
     EXPECT_EQ(active.symmetry, saved_work[0].symmetry);
-    m_pixels.assign(64, -1);
+    m_frame.pixels().assign(64, -1);
     s_calculated.clear();
     g_resuming = true;
     StandardFractal resumed;
@@ -873,8 +850,8 @@ TEST_P(TestAutoLogMapResume, suspensionAfterSamplingPreservesUnstartedTraversal)
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_EQ(128L, g_max_iterations);
     EXPECT_EQ(input.log_map > 0 ? 10L : -10L, g_log_map_flag);
-    EXPECT_THAT(m_pixels, Each(Ge(0)));
-    EXPECT_EQ(expected, m_pixels);
+    EXPECT_THAT(m_frame.pixels(), Each(Ge(0)));
+    EXPECT_EQ(expected, m_frame.pixels());
 }
 
 INSTANTIATE_TEST_SUITE_P(ResumeInputs, TestAutoLogMapResume, ValuesIn(auto_log_map_resume_inputs()),
@@ -936,7 +913,7 @@ protected:
 void TestStickyLogMapResume::SetUp()
 {
     initialize_log_map(GetParam().log_map);
-    set_frame(WIDTH, HEIGHT);
+    m_frame.reset(WIDTH, HEIGHT);
     g_std_calc_mode = CalcMode::ORBIT;
     g_draw_mode = GetParam().draw_mode;
     g_inside_color = 7;
@@ -967,7 +944,7 @@ void TestStickyLogMapResume::start_after_sampling(StandardFractal &calculation)
     g_calc_status = CalcStatus::PARAMS_CHANGED;
     g_resuming = false;
     g_log_map_flag = GetParam().log_map;
-    m_pixels.assign(WIDTH * HEIGHT, -1);
+    m_frame.pixels().assign(WIDTH * HEIGHT, -1);
     s_calculated.clear();
     ASSERT_TRUE(calculation.resume().empty());
     for (int chunks = 0; chunks < 100 && g_log_map_flag == GetParam().log_map; ++chunks)
@@ -1002,7 +979,7 @@ TEST_P(TestStickyLogMapResume, suspensionAfterSamplingPreservesUnstartedTraversa
     ASSERT_NO_FATAL_FAILURE(complete(baseline));
     ASSERT_GT(s_calculated.size(), SAMPLE_COUNT);
     const std::vector<Point2i> expected_seeds{s_calculated.begin() + SAMPLE_COUNT, s_calculated.end()};
-    const std::vector<int> expected_pixels{m_pixels};
+    const std::vector<int> expected_pixels{m_frame.pixels()};
 
     StandardFractal calculation;
     ASSERT_NO_FATAL_FAILURE(start_after_sampling(calculation));
@@ -1030,7 +1007,7 @@ TEST_P(TestStickyLogMapResume, suspensionAfterSamplingPreservesUnstartedTraversa
     ASSERT_NO_FATAL_FAILURE(complete(resumed));
 
     EXPECT_EQ(expected_seeds, s_calculated);
-    EXPECT_EQ(expected_pixels, m_pixels);
+    EXPECT_EQ(expected_pixels, m_frame.pixels());
     EXPECT_EQ(128L, g_max_iterations);
     EXPECT_EQ(GetParam().log_map > 0 ? 10L : -10L, g_log_map_flag);
 }
@@ -1324,7 +1301,7 @@ TEST_P(TestStandardFractalPixel, separateOperationsCompleteTheImage)
 
     EXPECT_TRUE(m_calculation->done());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
 }
 
 enum class StandardFractalGuardState
@@ -1450,7 +1427,7 @@ TEST_P(TestStandardFractalScanline, scanlineCalculationRemainsBatched)
 
     EXPECT_TRUE(calculation.done());
     EXPECT_EQ(64U, s_calculated.size());
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
 }
 
 INSTANTIATE_TEST_SUITE_P(ScanlineModes, TestStandardFractalScanline,
@@ -1468,12 +1445,12 @@ TEST_F(TestStandardFractal, scanlineCalculationAcceptsZeroColor)
 
     EXPECT_TRUE(calculation.done());
     EXPECT_EQ(0, g_color);
-    EXPECT_THAT(m_pixels, Each(0));
+    EXPECT_THAT(m_frame.pixels(), Each(0));
 }
 
 TEST_F(TestStandardFractal, boundaryScanKeepsItsCalculationChunk)
 {
-    set_frame(600, 1);
+    m_frame.reset(600, 1);
     g_std_calc_mode = CalcMode::BOUNDARY_TRACE;
     s_checkerboard = true;
     StandardFractal calculation;
@@ -1490,7 +1467,7 @@ TEST_F(TestStandardFractal, boundaryScanKeepsItsCalculationChunk)
 
 TEST_F(TestStandardFractal, boundaryOutlineKeepsItsCalculationChunk)
 {
-    set_frame(600, 2);
+    m_frame.reset(600, 2);
     g_std_calc_mode = CalcMode::BOUNDARY_TRACE;
     StandardFractal calculation;
     calculation.resume();
@@ -1503,7 +1480,7 @@ TEST_F(TestStandardFractal, boundaryOutlineKeepsItsCalculationChunk)
 
 TEST_F(TestStandardFractal, solidGuessKeepsSeedCalculationsBatchedByRow)
 {
-    set_frame(16, 12);
+    m_frame.reset(16, 12);
     g_std_calc_mode = CalcMode::SOLID_GUESS;
     StandardFractal calculation;
     calculation.resume();
@@ -1527,7 +1504,7 @@ TEST_F(TestStandardFractal, solidGuessKeepsSeedCalculationsBatchedByRow)
 
 TEST_F(TestStandardFractal, diffusionKeepsItsCounterChunk)
 {
-    set_frame(64, 32);
+    m_frame.reset(64, 32);
     g_std_calc_mode = CalcMode::DIFFUSION;
     StandardFractal calculation;
     calculation.resume();
@@ -1539,12 +1516,12 @@ TEST_F(TestStandardFractal, diffusionKeepsItsCounterChunk)
     calculation.iterate();
     EXPECT_TRUE(calculation.done());
     EXPECT_EQ(2048U, s_calculated.size());
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
 }
 
 TEST_F(TestStandardFractal, tesseralKeepsBatchedEdges)
 {
-    set_frame(600, 4);
+    m_frame.reset(600, 4);
     g_std_calc_mode = CalcMode::TESSERAL;
     StandardFractal calculation;
     calculation.resume();
@@ -1560,7 +1537,7 @@ TEST_F(TestStandardFractal, tesseralKeepsBatchedEdges)
     EXPECT_FALSE(calculation.done());
     calculation.iterate();
     EXPECT_TRUE(calculation.done());
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
 }
 
 class TestStandardPotential : public TestStandardFractal

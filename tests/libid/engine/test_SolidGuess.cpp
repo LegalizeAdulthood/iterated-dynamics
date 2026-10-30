@@ -5,10 +5,10 @@
 #include <engine/SolidGuess.h>
 
 #include "MockDriver.h"
+#include "PassTestFrame.h"
 #include "WorkListSnapshot.h"
 
 #include <engine/calcfrac.h>
-#include <engine/LogicalScreen.h>
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
@@ -63,25 +63,13 @@ protected:
     {
         s_calculated.clear();
         s_interrupt_after = -1;
-        g_screen_x_dots = 16;
-        g_screen_y_dots = 12;
-        g_logical_screen = {16, 12, 0, 0, 15.0, 11.0};
-        g_start_pt = {0, 0};
-        g_stop_pt = {15, 11};
-        g_i_start_pt = g_start_pt;
-        g_i_stop_pt = g_stop_pt;
-        g_begin_pt = g_start_pt;
+        m_frame.reset(16, 12);
         g_dispatch.set_calc_type(calculate_pixel);
         set_normal_dot();
         EXPECT_CALL(m_driver, read_pixel(_, _))
-            .WillRepeatedly(Invoke([this](int col, int row) { return m_pixels.at(row * 16 + col); }));
+            .WillRepeatedly(Invoke([this](int col, int row) { return m_frame.read_pixel(col, row); }));
         EXPECT_CALL(m_driver, write_pixel(_, _, _))
-            .WillRepeatedly(Invoke(
-                [this](int col, int row, int color)
-                {
-                    m_pixels.at(row * 16 + col) = color;
-                    m_plots.push_back({col, row});
-                }));
+            .WillRepeatedly(Invoke([this](int col, int row, int color) { m_frame.write_pixel(col, row, color); }));
         EXPECT_CALL(m_driver, key_pressed()).Times(0);
         EXPECT_CALL(m_driver, get_key()).Times(0);
     }
@@ -150,16 +138,9 @@ protected:
 
     MockDriver m_driver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
-    ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen};
-    ValueSaver<int> m_saved_width{g_screen_x_dots};
-    ValueSaver<int> m_saved_height{g_screen_y_dots};
+    PassTestFrame m_frame;
     ValueSaver<int> m_saved_colors{g_colors, 256};
     ValueSaver<int> m_saved_mask{g_and_color, 255};
-    ValueSaver<Point2i> m_saved_start{g_start_pt};
-    ValueSaver<Point2i> m_saved_stop{g_stop_pt};
-    ValueSaver<Point2i> m_saved_i_start{g_i_start_pt};
-    ValueSaver<Point2i> m_saved_i_stop{g_i_stop_pt};
-    ValueSaver<Point2i> m_saved_begin{g_begin_pt};
     ValueSaver<int> m_saved_col{g_col};
     ValueSaver<int> m_saved_row{g_row};
     ValueSaver<int> m_saved_current_row{g_current_row};
@@ -177,8 +158,6 @@ protected:
     ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
     ValueSaver<decltype(g_plot)> m_saved_plot{g_plot, put_color_a};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
-    std::vector<int> m_pixels = std::vector<int>(16 * 12, 0);
-    std::vector<Point2i> m_plots;
 };
 
 TEST_F(TestSolidGuess, selectionRetainsTopRowSeedWithoutCalculation)
@@ -197,7 +176,7 @@ TEST_F(TestSolidGuess, selectionRetainsTopRowSeedWithoutCalculation)
     EXPECT_EQ(0, g_col);
     EXPECT_EQ(0, g_row);
     EXPECT_TRUE(s_calculated.empty());
-    EXPECT_THAT(m_pixels, Each(0));
+    EXPECT_THAT(m_frame.pixels(), Each(0));
 }
 
 TEST_F(TestSolidGuess, completionAdvancesOnlyTheSeedCursor)
@@ -264,7 +243,7 @@ TEST_F(TestSolidGuess, lowerRowCompletionContinuesToTheNextSeedRow)
     ASSERT_TRUE(pass.select_pixel());
     EXPECT_EQ((Point2i{0, 8}), pass.selected_pixel());
     finish(pass);
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
 }
 
 TEST_F(TestSolidGuess, firstPassDefersRefinementWhenOtherWorkIsQueued)
@@ -307,7 +286,7 @@ TEST_F(TestSolidGuess, suspensionOfTopRowRestartsItsSeedRow)
     ASSERT_TRUE(resumed.select_pixel());
     EXPECT_EQ((Point2i{0, 0}), resumed.selected_pixel());
     finish(resumed);
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
 }
 
 TEST_F(TestSolidGuess, suspensionOfLowerRowRetainsItsFirstPassResumePosition)
@@ -333,7 +312,7 @@ TEST_F(TestSolidGuess, suspensionOfLowerRowRetainsItsFirstPassResumePosition)
     ASSERT_TRUE(resumed.select_pixel());
     EXPECT_EQ((Point2i{0, 8}), resumed.selected_pixel());
     finish(resumed);
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
 }
 
 enum class SolidGuessGuardState
@@ -441,7 +420,7 @@ TEST_F(TestSolidGuess, blockProbeRetainsSelectionEvenAfterItsPixelWasPlotted)
     const Point2i pending{2, 2};
     EXPECT_EQ(pending, pass.selected_pixel());
     g_plot(pending.x, pending.y, 9);
-    const std::size_t plots{m_plots.size()};
+    const std::size_t plots{m_frame.plots().size()};
     g_color = 99;
     g_col = 99;
     g_row = 99;
@@ -452,7 +431,7 @@ TEST_F(TestSolidGuess, blockProbeRetainsSelectionEvenAfterItsPixelWasPlotted)
     EXPECT_EQ(pending, pass.selected_pixel());
     EXPECT_EQ(2, g_col);
     EXPECT_EQ(2, g_row);
-    EXPECT_EQ(plots, m_plots.size());
+    EXPECT_EQ(plots, m_frame.plots().size());
     EXPECT_TRUE(s_calculated.empty());
     pass.complete_pixel(9);
     ASSERT_TRUE(pass.select_pixel());
@@ -472,11 +451,11 @@ TEST_F(TestSolidGuess, completedProbeColorsDriveTheNextProbeAndBlockFill)
     ASSERT_TRUE(pass.select_pixel());      // finish this block before selecting the next
 
     EXPECT_EQ((Point2i{6, 2}), pass.selected_pixel());
-    EXPECT_EQ(0, m_pixels.at(3 * 16 + 3)); // fills stay buffered until the row is complete
+    EXPECT_EQ(0, m_frame.pixels().at(3 * 16 + 3)); // fills stay buffered until the row is complete
     selection_chunk(pass);
-    EXPECT_EQ(9, m_pixels.at(3 * 16 + 3));
-    EXPECT_EQ(10, m_pixels.at(1 * 16 + 3));
-    EXPECT_EQ(11, m_pixels.at(3 * 16 + 1));
+    EXPECT_EQ(9, m_frame.pixels().at(3 * 16 + 3));
+    EXPECT_EQ(10, m_frame.pixels().at(1 * 16 + 3));
+    EXPECT_EQ(11, m_frame.pixels().at(3 * 16 + 1));
     EXPECT_TRUE(s_calculated.empty());
 }
 
@@ -491,15 +470,15 @@ TEST_F(TestSolidGuess, repairsRetainThePreviousBlocksTopAndCenterColors)
     expect_probe(pass, {6, 0}, 7);
     expect_probe(pass, {4, 2}, 9);
     expect_probe(pass, {2, 0}, 11);
-    const std::size_t plots{m_plots.size()};
+    const std::size_t plots{m_frame.plots().size()};
     ASSERT_TRUE(pass.select_pixel());
     EXPECT_EQ((Point2i{2, 2}), pass.selected_pixel());
     ASSERT_TRUE(pass.select_pixel());
-    EXPECT_EQ(plots, m_plots.size());
+    EXPECT_EQ(plots, m_frame.plots().size());
     provide_pixel(pass, 12);
 
-    EXPECT_EQ(11, m_pixels.at(1 * 16 + 3));
-    EXPECT_EQ(12, m_pixels.at(3 * 16 + 3));
+    EXPECT_EQ(11, m_frame.pixels().at(1 * 16 + 3));
+    EXPECT_EQ(12, m_frame.pixels().at(3 * 16 + 3));
     EXPECT_TRUE(s_calculated.empty());
 }
 
@@ -517,15 +496,15 @@ TEST_F(TestSolidGuess, repairsRetainTheUpperRowColors)
     expect_probe(pass, {2, 2}, 11);
     expect_probe(pass, {6, 6}, 7);
     expect_probe(pass, {4, 6}, 7);
-    const std::size_t plots{m_plots.size()};
+    const std::size_t plots{m_frame.plots().size()};
     ASSERT_TRUE(pass.select_pixel());
     EXPECT_EQ((Point2i{4, 2}), pass.selected_pixel());
     ASSERT_TRUE(pass.select_pixel());
-    EXPECT_EQ(plots, m_plots.size());
+    EXPECT_EQ(plots, m_frame.plots().size());
     provide_pixel(pass, 12);
 
-    EXPECT_EQ(11, m_pixels.at(3 * 16 + 3));
-    EXPECT_EQ(12, m_pixels.at(3 * 16 + 5));
+    EXPECT_EQ(11, m_frame.pixels().at(3 * 16 + 3));
+    EXPECT_EQ(12, m_frame.pixels().at(3 * 16 + 5));
     EXPECT_TRUE(s_calculated.empty());
 }
 
@@ -535,9 +514,9 @@ TEST_F(TestSolidGuess, fillsAndRefinementUseSelectionWithoutCalculating)
 
     const std::vector<Point2i> selected{finish_selection(pass)};
 
-    EXPECT_THAT(m_pixels, Each(7));
-    EXPECT_LT(selected.size(), m_pixels.size());
-    EXPECT_GT(m_plots.size(), selected.size());
+    EXPECT_THAT(m_frame.pixels(), Each(7));
+    EXPECT_LT(selected.size(), m_frame.pixels().size());
+    EXPECT_GT(m_frame.plots().size(), selected.size());
     EXPECT_TRUE(s_calculated.empty());
 }
 
@@ -572,7 +551,7 @@ TEST_F(TestSolidGuess, refinementSuspensionRetainsTheActiveRowAndPass)
     g_num_work_list = 0;
     SolidGuess resumed;
     finish_selection(resumed);
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
     EXPECT_TRUE(s_calculated.empty());
 }
 

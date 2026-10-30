@@ -4,10 +4,10 @@
 #include <engine/Diffusion.h>
 
 #include "MockDriver.h"
+#include "PassTestFrame.h"
 #include "WorkListSnapshot.h"
 
 #include <engine/calcfrac.h>
-#include <engine/LogicalScreen.h>
 #include <engine/pixel.h>
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
@@ -64,31 +64,16 @@ protected:
         g_dispatch.set_calc_type(calculate_pixel);
         set_normal_dot();
         EXPECT_CALL(m_driver, write_pixel(_, _, _))
-            .WillRepeatedly(Invoke(
-                [this](int col, int row, int color)
-                {
-                    m_pixels.at(row * m_width + col) = color;
-                    m_plots.push_back({col, row});
-                }));
+            .WillRepeatedly(Invoke([this](int col, int row, int color) { m_frame.write_pixel(col, row, color); }));
         EXPECT_CALL(m_driver, key_pressed()).Times(0);
         EXPECT_CALL(m_driver, get_key()).Times(0);
     }
 
     void set_frame(const int width, const int height)
     {
-        m_width = width;
-        g_screen_x_dots = width;
-        g_screen_y_dots = height;
-        g_logical_screen = {width, height, 0, 0, width - 1.0, height - 1.0};
-        g_start_pt = {0, 0};
-        g_stop_pt = {width - 1, height - 1};
-        g_i_start_pt = g_start_pt;
-        g_i_stop_pt = g_stop_pt;
-        g_begin_pt = g_start_pt;
+        m_frame.reset(width, height);
         g_num_work_list = 0;
         g_work_pass = 0;
-        m_pixels.assign(width * height, 0);
-        m_plots.clear();
         s_calculated.clear();
     }
 
@@ -121,16 +106,9 @@ protected:
 
     MockDriver m_driver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
-    ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen};
-    ValueSaver<int> m_saved_width{g_screen_x_dots};
-    ValueSaver<int> m_saved_height{g_screen_y_dots};
+    PassTestFrame m_frame;
     ValueSaver<int> m_saved_colors{g_colors, 256};
     ValueSaver<int> m_saved_mask{g_and_color, 255};
-    ValueSaver<Point2i> m_saved_start{g_start_pt};
-    ValueSaver<Point2i> m_saved_stop{g_stop_pt};
-    ValueSaver<Point2i> m_saved_i_start{g_i_start_pt};
-    ValueSaver<Point2i> m_saved_i_stop{g_i_stop_pt};
-    ValueSaver<Point2i> m_saved_begin{g_begin_pt};
     ValueSaver<int> m_saved_col{g_col};
     ValueSaver<int> m_saved_row{g_row};
     ValueSaver<int> m_saved_color{g_color};
@@ -144,9 +122,6 @@ protected:
     ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
     ValueSaver<decltype(g_plot)> m_saved_plot{g_plot, put_color_a};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
-    std::vector<int> m_pixels;
-    std::vector<Point2i> m_plots;
-    int m_width{};
 };
 
 TEST_F(TestDiffusionPass, selectionRetainsItsCounterAndTileUntilCompletion)
@@ -168,7 +143,7 @@ TEST_F(TestDiffusionPass, selectionRetainsItsCounterAndTileUntilCompletion)
     EXPECT_EQ(0, g_col);
     EXPECT_EQ(0, g_row);
     EXPECT_EQ(0UL, pass.counter());
-    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(m_frame.plots().empty());
     EXPECT_TRUE(s_calculated.empty());
     pass.complete_pixel(7);
     EXPECT_EQ(0UL, pass.counter());
@@ -188,7 +163,7 @@ TEST_F(TestDiffusionPass, squareSelectionKeepsDiffusionCounterOrder)
 
     EXPECT_EQ(16UL, pass.counter());
     EXPECT_TRUE(pass.done());
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
     EXPECT_TRUE(s_calculated.empty());
 }
 
@@ -220,13 +195,13 @@ TEST_F(TestDiffusionPass, partialTilesVisitEveryPixelExactlyOnce)
 
     const std::vector<Point2i> selected{finish_selection(pass)};
 
-    ASSERT_EQ(m_pixels.size(), selected.size());
-    std::vector<int> visits(m_pixels.size(), 0);
+    ASSERT_EQ(m_frame.pixels().size(), selected.size());
+    std::vector<int> visits(m_frame.pixels().size(), 0);
     for (const Point2i &point : selected)
     {
-        EXPECT_EQ(0, visits.at(point.y * m_width + point.x)++);
+        EXPECT_EQ(0, visits.at(point.y * m_frame.width() + point.x)++);
     }
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
     EXPECT_TRUE(s_calculated.empty());
 }
 
@@ -243,12 +218,12 @@ TEST_F(TestDiffusionPass, inferredBlocksClipBothPartialTileEdges)
     }
 
     EXPECT_EQ(1UL, pass.counter());
-    EXPECT_EQ(m_pixels.size(), m_plots.size());
+    EXPECT_EQ(m_frame.pixels().size(), m_frame.plots().size());
     for (int row = 0; row < 6; ++row)
     {
         for (int col = 0; col < 11; ++col)
         {
-            EXPECT_EQ((col / 4) * 2 + row / 4 + 1, m_pixels.at(row * m_width + col));
+            EXPECT_EQ((col / 4) * 2 + row / 4 + 1, m_frame.pixels().at(row * m_frame.width() + col));
         }
     }
     EXPECT_TRUE(s_calculated.empty());
@@ -259,17 +234,17 @@ TEST_F(TestDiffusionPass, blockCompletionUsesTheSuppliedColorOnlyOnce)
     g_fill_color = 1;
     Diffusion pass;
     ASSERT_TRUE(pass.select_pixel());
-    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(m_frame.plots().empty());
     g_color = 99;
     g_col = 99;
     g_row = 99;
 
     pass.complete_pixel(13);
 
-    EXPECT_THAT(m_pixels, Each(13));
-    EXPECT_EQ(16U, m_plots.size());
+    EXPECT_THAT(m_frame.pixels(), Each(13));
+    EXPECT_EQ(16U, m_frame.plots().size());
     EXPECT_THROW(pass.complete_pixel(13), std::logic_error);
-    EXPECT_EQ(16U, m_plots.size());
+    EXPECT_EQ(16U, m_frame.plots().size());
     EXPECT_TRUE(s_calculated.empty());
 }
 
@@ -283,19 +258,19 @@ TEST_F(TestDiffusionPass, secondHalfPlotsPointsInsteadOfBlocks)
         pass.complete_pixel(7);
     }
     ASSERT_EQ(8UL, pass.counter());
-    const std::vector<int> before{m_pixels};
-    const std::size_t plots{m_plots.size()};
+    const std::vector<int> before{m_frame.pixels()};
+    const std::size_t plots{m_frame.plots().size()};
     ASSERT_TRUE(pass.select_pixel());
     const Point2i point{pass.selected_pixel()};
 
     pass.complete_pixel(42);
 
-    EXPECT_EQ(plots + 1, m_plots.size());
+    EXPECT_EQ(plots + 1, m_frame.plots().size());
     for (int row = 0; row < 4; ++row)
     {
         for (int col = 0; col < 4; ++col)
         {
-            EXPECT_EQ((Point2i{col, row}) == point ? 42 : before.at(row * 4 + col), m_pixels.at(row * 4 + col));
+            EXPECT_EQ((Point2i{col, row}) == point ? 42 : before.at(row * 4 + col), m_frame.pixels().at(row * 4 + col));
         }
     }
 }
@@ -339,7 +314,7 @@ TEST_F(TestDiffusionPass, suspensionKeepsTheExistingCounterResumeFormat)
     ASSERT_TRUE(resumed.select_pixel());
     EXPECT_EQ((Point2i{0, 0}), resumed.selected_pixel()); // saved work restarts the counter's tile group
     finish_selection(resumed);
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
     EXPECT_TRUE(s_calculated.empty());
 }
 
