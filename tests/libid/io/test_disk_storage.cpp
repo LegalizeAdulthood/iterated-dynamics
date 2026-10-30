@@ -4,6 +4,7 @@
 #include <io/disk_storage.h>
 
 #include "MockDriver.h"
+#include "TemporaryDirectory.h"
 
 #include <io/special_dirs.h>
 #include <misc/debug_flags.h>
@@ -12,7 +13,6 @@
 #include <gtest/gtest.h>
 
 #include <array>
-#include <chrono>
 #include <cstdint>
 #include <cstdio>
 #include <filesystem>
@@ -38,17 +38,15 @@ protected:
     {
         end_disk();
         init_memory();
-        m_directory = std::filesystem::temp_directory_path() /
-            ("id-disk-storage-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-        std::filesystem::create_directory(m_directory);
-        g_temp_dir = m_directory;
+        m_directory.create("id-disk-storage-");
+        g_temp_dir = m_directory.path();
     }
 
     void TearDown() override
     {
         EXPECT_NO_THROW(end_disk());
         EXPECT_TRUE(exit_check().empty());
-        std::filesystem::remove_all(m_directory);
+        m_directory.remove();
     }
 
     void open(const int width, const int height, const int colors, const MemoryLocation location,
@@ -65,7 +63,7 @@ protected:
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
     ValueSaver<std::filesystem::path> m_saved_temp{g_temp_dir};
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
 };
 
 class TestDiskStorageCache : public TestDiskStorage, public WithParamInterface<std::tuple<int, MemoryLocation>>
@@ -198,7 +196,7 @@ TEST_F(TestDiskStorage, failedInitializationReleasesBackingAndAllowsFreshSetup)
     EXPECT_FALSE(g_disk_flag);
     EXPECT_EQ(MemoryLocation::NOWHERE, disk_video_memory_type());
     EXPECT_TRUE(exit_check().empty());
-    EXPECT_TRUE(std::filesystem::is_empty(m_directory));
+    EXPECT_TRUE(std::filesystem::is_empty(m_directory.path()));
     open(16, 16, 256, MemoryLocation::MEMORY);
     write_disk_pixel(15, 15, 42);
     EXPECT_EQ(42, read_disk_pixel(15, 15));
@@ -228,7 +226,7 @@ protected:
 void TestDiskStorageTarga::SetUp()
 {
     TestDiskStorage::SetUp();
-    m_path = m_directory / "backing.tga";
+    m_path = m_directory.path() / "backing.tga";
     write_source("012345678901234567");
 }
 
@@ -287,7 +285,7 @@ TEST_F(TestDiskStorageTarga, failedBackingReadCanBeClosedWithoutUi)
 
 TEST_F(TestDiskStorageTarga, selectingAnotherTargaPathDoesNotChangeTheActiveBackingFile)
 {
-    const std::filesystem::path next{m_directory / "next.tga"};
+    const std::filesystem::path next{m_directory.path() / "next.tga"};
     std::ofstream(next, std::ios::binary) << "keep";
     open_backing(6, 2);
     write_targa_pixel(0, 0, 10, 20, 30);

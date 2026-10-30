@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include "MockDriver.h"
+#include "TemporaryDirectory.h"
 
 #include <io/disk_storage.h>
 #include <io/special_dirs.h>
@@ -14,7 +15,6 @@
 
 #include <algorithm>
 #include <array>
-#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <limits>
@@ -53,23 +53,21 @@ protected:
     void SetUp() override
     {
         init_memory();
-        m_directory = std::filesystem::temp_directory_path() /
-            ("id-memory-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-        std::filesystem::create_directory(m_directory);
-        g_temp_dir = m_directory;
+        m_directory.create("id-memory-");
+        g_temp_dir = m_directory.path();
     }
 
     void TearDown() override
     {
         exit_check();
-        std::filesystem::remove_all(m_directory);
+        m_directory.remove();
     }
 
     MockDriver m_driver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
     ValueSaver<std::filesystem::path> m_saved_temp{g_temp_dir};
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
 };
 
 class TestLargeMemoryTransfer : public TestMemory, public WithParamInterface<MemoryLocation>
@@ -430,7 +428,7 @@ protected:
 void TestMemoryBackingStorage::SetUp()
 {
     TestMemoryResources::SetUp();
-    m_file = m_directory / "backing.dat";
+    m_file = m_directory.path() / "backing.dat";
 }
 
 void TestMemoryBackingStorage::write_backing_file(const std::vector<Byte> &input)
@@ -459,7 +457,7 @@ TEST_F(TestMemoryResources, exhaustedHandleTableCanBeRetriedAfterRelease)
 
 TEST_F(TestMemoryResources, diskAllocationFailureCanBeRetriedWithoutLeakedHandles)
 {
-    g_temp_dir = m_directory / "missing";
+    g_temp_dir = m_directory.path() / "missing";
 
     EXPECT_THROW(allocate(1, 4096, MemoryLocation::DISK), MemoryError);
     EXPECT_TRUE(exit_check().empty());
@@ -515,12 +513,12 @@ TEST_F(TestMemoryResources, newTemporaryFileRequiresItsFullSizeInAvailableSpace)
 {
     EXPECT_THROW(allocate(1, 2, MemoryLocation::DISK, {}, one_byte_available), MemoryError);
     EXPECT_TRUE(exit_check().empty());
-    EXPECT_TRUE(std::filesystem::is_empty(m_directory));
+    EXPECT_TRUE(std::filesystem::is_empty(m_directory.path()));
 
     const MemoryHandle handle{allocate(1, 1, MemoryLocation::DISK, {}, one_byte_available)};
     EXPECT_EQ(1, handle.index);
     release(handle);
-    EXPECT_TRUE(std::filesystem::is_empty(m_directory));
+    EXPECT_TRUE(std::filesystem::is_empty(m_directory.path()));
 }
 
 TEST_F(TestMemoryBackingStorage, shortReadReportsFailureAndAllowsRepairAndRetry)
@@ -545,12 +543,12 @@ TEST_F(TestMemoryBackingStorage, shortReadReportsFailureAndAllowsRepairAndRetry)
 TEST_F(TestMemoryResources, releaseUsesTheAllocatedPathRatherThanCurrentTempDirectory)
 {
     const MemoryHandle handle{allocate(1, 16, MemoryLocation::DISK)};
-    ASSERT_FALSE(std::filesystem::is_empty(m_directory));
-    g_temp_dir = m_directory / "elsewhere";
+    ASSERT_FALSE(std::filesystem::is_empty(m_directory.path()));
+    g_temp_dir = m_directory.path() / "elsewhere";
 
     release(handle);
 
-    EXPECT_TRUE(std::filesystem::is_empty(m_directory));
+    EXPECT_TRUE(std::filesystem::is_empty(m_directory.path()));
 }
 
 TEST_F(TestMemoryResources, shutdownReturnsReportsAfterReleasingAllResources)
@@ -562,7 +560,7 @@ TEST_F(TestMemoryResources, shutdownReturnsReportsAfterReleasingAllResources)
         ElementsAre("Error - not all memory released, I'll get it.", "Memory type memory still allocated.  Handle = 1.",
             "Memory type disk still allocated.  Handle = 2."));
 
-    EXPECT_TRUE(std::filesystem::is_empty(m_directory));
+    EXPECT_TRUE(std::filesystem::is_empty(m_directory.path()));
     EXPECT_TRUE(exit_check().empty());
     const MemoryHandle handle{allocate(1, 16, MemoryLocation::MEMORY)};
     EXPECT_EQ(1, handle.index);

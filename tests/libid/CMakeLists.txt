@@ -72,6 +72,7 @@ add_executable(test-id
     "include/test_library.h.in"
     "include/test_migrate_gif.h.in"
     include/TestRender.h TestRender.cpp
+    include/TemporaryDirectory.h TemporaryDirectory.cpp
     include/WorkListSnapshot.h WorkListSnapshot.cpp
     expected_map.cpp
     engine/test_bailout_formula.cpp
@@ -145,6 +146,7 @@ add_executable(test-id
     math/test_round_float_double.cpp
     misc/test_driver.cpp
     misc/test_memory.cpp
+    misc/test_TemporaryDirectory.cpp
     misc/test_ValueSaver.cpp
     misc/test_version.cpp
     ui/test_ChoiceBuilder.cpp
