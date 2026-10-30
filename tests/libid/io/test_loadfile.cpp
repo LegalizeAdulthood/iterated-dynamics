@@ -1453,15 +1453,8 @@ TEST_P(TestLoadFile, integerTypeMigrated)
 
 TEST_F(TestLoadFile, randomSeedRestored)
 {
-    FractalInfo info{};
-    ExtBlock2 block_2_info{};
-    ExtBlock3 block_3_info{};
-    ExtBlock4 block_4_info{};
-    ExtBlock5 block_5_info{};
-    ExtBlock6 block_6_info{};
-    ExtBlock7 block_7_info{};
-    ASSERT_FALSE(find_fractal_info(ID_TEST_GIF_MANDEL_INT, &info, &block_2_info, &block_3_info, //
-        &block_4_info, &block_5_info, &block_6_info, &block_7_info));
+    FindFractalInfoResult metadata;
+    ASSERT_FALSE(metadata.read(ID_TEST_GIF_MANDEL_INT));
     ValueSaver saved_read_filename{g_read_filename, ID_TEST_GIF_MANDEL_INT};
     ValueSaver saved_random_seed{g_random_seed, -999};
     ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
@@ -1469,8 +1462,8 @@ TEST_F(TestLoadFile, randomSeedRestored)
     const int result{prepare_image_restore(g_viewport)};
 
     EXPECT_EQ(0, result);
-    EXPECT_EQ(info.random_seed, g_random_seed);
-    EXPECT_EQ(info.random_seed_flag != 0, g_random_seed_flag);
+    EXPECT_EQ(metadata.info.random_seed, g_random_seed);
+    EXPECT_EQ(metadata.info.random_seed_flag != 0, g_random_seed_flag);
 }
 
 TEST_F(TestLoadFile, legacyFloatRestored)

@@ -4,13 +4,12 @@
 #include <io/GifWriter.h>
 
 #include "FailingOutputBuffer.h"
+#include "FindFractalInfoState.h"
+#include "FindFractalInfoTestSupport.h"
 #include "GifReadSupport.h"
 
 #include <io/gif_extensions.h>
 #include <io/gif_file.h>
-#include <io/loadfile.h>
-#include <misc/ValueSaver.h>
-#include <ui/make_batch_file.h>
 
 #include <gif_lib.h>
 #include <gtest/gtest.h>
@@ -27,8 +26,6 @@
 #include <vector>
 
 using namespace id::io;
-using namespace id::misc;
-using namespace id::ui;
 using namespace testing;
 
 namespace id::test
@@ -135,11 +132,7 @@ TEST_F(TestGifWriter, writesTwoHalfRowsWithoutKnowingPotentialStoragePolicy)
 
 TEST_F(TestGifWriter, emitsSharedExtensionsWithOriginalGroupingAndEmptyRecords)
 {
-    ValueSaver saved_width{g_file_x_dots};
-    ValueSaver saved_height{g_file_y_dots};
-    ValueSaver saved_colors{g_file_colors};
-    ValueSaver saved_aspect{g_file_aspect_ratio};
-    ValueSaver saved_make_parameter_file{g_make_parameter_file, false};
+    FindFractalInfoState saved_state;
     const std::vector<Byte> resume(511, 0xA5);
     const std::vector<char> parameters(396, 'a');
     put_resume_info(&m_extensions, resume);
@@ -176,21 +169,15 @@ TEST_F(TestGifWriter, emitsSharedExtensionsWithOriginalGroupingAndEmptyRecords)
     EXPECT_EQ(resume, get_resume_info(gif.get()));
     EXPECT_TRUE(has_gif_extension(gif.get(), "fractint005"));
     EXPECT_EQ(parameters, get_extended_param_info(gif.get()));
-    FractalInfo loaded{};
-    ExtBlock2 block2{};
-    ExtBlock3 block3{};
-    ExtBlock4 block4{};
-    ExtBlock5 block5{};
-    ExtBlock6 block6{};
-    ExtBlock7 block7{};
-    ASSERT_FALSE(find_fractal_info(m_path.string(), &loaded, &block2, &block3, &block4, &block5, &block6, &block7));
-    EXPECT_EQ(150, loaded.iterations);
-    EXPECT_TRUE(block2.got_data);
-    EXPECT_EQ(resume, block2.resume_data);
-    EXPECT_TRUE(block4.got_data);
-    EXPECT_TRUE(block4.range_data.empty());
-    EXPECT_TRUE(block5.got_data);
-    EXPECT_EQ(parameters, block5.apm_data);
+    FindFractalInfoResult loaded;
+    ASSERT_FALSE(loaded.read(m_path));
+    EXPECT_EQ(150, loaded.info.iterations);
+    EXPECT_TRUE(loaded.resume.got_data);
+    EXPECT_EQ(resume, loaded.resume.resume_data);
+    EXPECT_TRUE(loaded.ranges.got_data);
+    EXPECT_TRUE(loaded.ranges.range_data.empty());
+    EXPECT_TRUE(loaded.parameters.got_data);
+    EXPECT_EQ(parameters, loaded.parameters.apm_data);
 }
 
 class TestFinishedGifWriter : public TestGifWriter
