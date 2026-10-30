@@ -44,6 +44,7 @@
 
 #include "FractalParamSaver.h"
 #include "MockDriver.h"
+#include "TemporaryDirectory.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -384,27 +385,27 @@ public:
     std::filesystem::path write_overlay(Byte depth);
 
 private:
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
 };
 
-TargaTestFiles::TargaTestFiles() :
-    m_directory{std::filesystem::current_path() /
-        (std::string{"test-line3d-"} + testing::UnitTest::GetInstance()->current_test_info()->name())}
+TargaTestFiles::TargaTestFiles()
 {
-    std::filesystem::create_directories(m_directory / "image");
-    set_save_library(m_directory);
+    m_directory.create(
+        std::string{"test-line3d-"} + testing::UnitTest::GetInstance()->current_test_info()->name() + "-");
+    std::filesystem::create_directory(m_directory.path() / "image");
+    set_save_library(m_directory.path());
 }
 
 TargaTestFiles::~TargaTestFiles()
 {
     clear_save_library();
     std::error_code ignore;
-    std::filesystem::remove_all(m_directory, ignore);
+    m_directory.remove(ignore);
 }
 
 std::filesystem::path TargaTestFiles::path(const std::string &name) const
 {
-    return m_directory / "image" / name;
+    return m_directory.path() / "image" / name;
 }
 
 std::filesystem::path TargaTestFiles::write_overlay(const Byte depth)

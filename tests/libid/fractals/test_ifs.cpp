@@ -4,7 +4,7 @@
 #include <fractals/ifs.h>
 
 #include "MockDriver.h"
-#include "test_data.h"
+#include "TemporaryDirectory.h"
 
 #include <engine/cmdfiles.h>
 #include <io/library.h>
@@ -27,7 +27,6 @@ using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::misc::test;
-using namespace id::test::data;
 using namespace testing;
 
 namespace id::test
@@ -41,7 +40,7 @@ protected:
     void TearDown() override
     {
         std::error_code ignored;
-        std::filesystem::remove(m_path, ignored);
+        m_directory.remove(ignored);
     }
 
     void write_definition(const std::string &text)
@@ -76,6 +75,7 @@ protected:
     ValueSaver<IFSDimension> m_saved_dimension{g_ifs_dim};
     ValueSaver<std::filesystem::path> m_saved_parameter_file{g_parameter_file, std::filesystem::path{}};
     ValueSaver<bool> m_saved_search_current{g_check_cur_dir, false};
+    TemporaryDirectory m_directory;
     std::filesystem::path m_path;
 };
 
@@ -83,7 +83,8 @@ void TestIFSLoad::SetUp()
 {
     std::string name{UnitTest::GetInstance()->current_test_info()->name()};
     std::replace(name.begin(), name.end(), '/', '-');
-    m_path = std::filesystem::path{ID_TEST_DATA_DIR} / ("ifs-" + name + ".ifs");
+    m_directory.create("id-ifs-load-");
+    m_path = m_directory.path() / ("ifs-" + name + ".ifs");
     g_ifs_filename = m_path;
     g_ifs_name = "entry";
     g_ifs_definition = {99.0f};

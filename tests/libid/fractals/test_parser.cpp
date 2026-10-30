@@ -3,6 +3,7 @@
 //
 #include "fractals/formula.h"
 #include "misc/ValueSaver.h"
+#include "TemporaryDirectory.h"
 #include "test_data.h"
 
 #include <engine/cmdfiles.h>
@@ -319,7 +320,7 @@ protected:
     {
         ParserTest::TearDown();
         std::error_code ignored;
-        fs::remove(m_path, ignored);
+        m_directory.remove(ignored);
     }
 
     void write_definition(const std::string &text)
@@ -343,6 +344,7 @@ protected:
         expect_no_program();
     }
 
+    id::test::TemporaryDirectory m_directory;
     fs::path m_path;
     ValueSaver<fs::path> m_parameter_file{g_parameter_file, fs::path{}};
     ValueSaver<bool> m_search_current{g_check_cur_dir, false};
@@ -354,7 +356,8 @@ void FormulaLoadTest::SetUp()
 {
     std::string name{UnitTest::GetInstance()->current_test_info()->name()};
     std::replace(name.begin(), name.end(), '/', '-');
-    m_path = fs::path{ID_TEST_DATA_DIR} / ("formula-" + name + ".frm");
+    m_directory.create("id-formula-load-");
+    m_path = m_directory.path() / ("formula-" + name + ".frm");
 }
 
 struct FormulaLookupFailure
