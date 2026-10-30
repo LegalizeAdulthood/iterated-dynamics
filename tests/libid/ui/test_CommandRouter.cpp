@@ -3,6 +3,8 @@
 //
 #include <ui/CommandRouter.h>
 
+#include "MockSpecialDirectories.h"
+
 #include <config/port_config.h>
 #include <engine/calcfrac.h>
 #include <engine/command_comments.h>
@@ -42,6 +44,8 @@
 #include <vector>
 
 namespace fs = std::filesystem;
+
+using id::io::test::MockSpecialDirectories;
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -1472,13 +1476,6 @@ TEST_P(TestSelectedRdsOrder, preservesRdsAndTextureParameterOrder)
 INSTANTIATE_TEST_SUITE_P(Orders, TestSelectedRdsOrder, Bool(),
     [](const TestParamInfo<bool> &info) { return info.param ? "TextureFirst" : "RandomFirst"; });
 
-class MockCommandDirectories : public SpecialDirectories
-{
-public:
-    MOCK_METHOD(fs::path, program_dir, (), (const, override));
-    MOCK_METHOD(fs::path, documents_dir, (), (const, override));
-};
-
 class TestCommandRouterStartup : public TestCommandRouterFile
 {
 protected:
@@ -1489,8 +1486,8 @@ protected:
     fs::path m_directory;
     fs::path m_library;
     std::vector<fs::path> m_sources;
-    const std::shared_ptr<NiceMock<MockCommandDirectories>> m_directories{
-        std::make_shared<NiceMock<MockCommandDirectories>>()};
+    const std::shared_ptr<NiceMock<MockSpecialDirectories>> m_directories{
+        std::make_shared<NiceMock<MockSpecialDirectories>>()};
     ValueSaver<std::shared_ptr<SpecialDirectories>> m_saved_directories{g_special_dirs, m_directories};
     ValueSaver<Driver *> m_saved_driver{g_driver, nullptr};
     ValueSaver<fs::path> m_saved_temp_dir{g_temp_dir};

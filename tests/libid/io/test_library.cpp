@@ -4,6 +4,7 @@
 #include <io/library.h>
 
 #include "EnvVarSaver.h"
+#include "MockSpecialDirectories.h"
 #include "test_data.h"
 #include "test_library.h"
 
@@ -20,46 +21,19 @@
 #include <memory>
 #include <ostream>
 #include <string>
-#include <utility>
 #include <vector>
 
 using Path = std::filesystem::path;
 
+using id::io::test::MockSpecialDirectories;
+
 using namespace id::io;
 using namespace id::misc;
 using namespace id::test::library;
+using namespace testing;
 
 namespace id::test
 {
-
-namespace
-{
-
-class TestSpecialDirectories : public SpecialDirectories
-{
-public:
-    TestSpecialDirectories(Path program_dir, Path documents_dir) :
-        m_program_dir{std::move(program_dir)},
-        m_documents_dir{std::move(documents_dir)}
-    {
-    }
-
-    Path program_dir() const override
-    {
-        return m_program_dir;
-    }
-
-    Path documents_dir() const override
-    {
-        return m_documents_dir;
-    }
-
-private:
-    Path m_program_dir;
-    Path m_documents_dir;
-};
-
-} // namespace
 
 class TestLibrary : public testing::Test
 {
@@ -107,7 +81,11 @@ void TestLibraryInitialization::prepare_directories(
     std::filesystem::create_directories(config_path.parent_path());
     std::ofstream{config_path} << "; test config\n";
     m_current_directory = std::make_unique<CurrentPathSaver>(current_dir);
-    g_special_dirs = std::make_shared<TestSpecialDirectories>(program_dir, documents_dir);
+    const std::shared_ptr<NiceMock<MockSpecialDirectories>> directories{
+        std::make_shared<NiceMock<MockSpecialDirectories>>()};
+    ON_CALL(*directories, program_dir()).WillByDefault(Return(program_dir));
+    ON_CALL(*directories, documents_dir()).WillByDefault(Return(documents_dir));
+    g_special_dirs = directories;
 }
 
 void TestLibraryInitialization::TearDown()

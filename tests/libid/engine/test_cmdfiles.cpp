@@ -11,6 +11,7 @@
 #include "EnvVarSaver.h"
 #include "fractals/formula.h"
 #include "MockDriver.h"
+#include "MockSpecialDirectories.h"
 #include "test_data.h"
 #include "test_library.h"
 #include "ValueUnchanged.h"
@@ -98,6 +99,8 @@
 #include <vector>
 
 namespace fs = std::filesystem;
+
+using id::io::test::MockSpecialDirectories;
 
 using namespace id;
 using namespace id::config;
@@ -370,30 +373,6 @@ static fs::path home_file(const char *subdir, const char *filename)
 {
     return fs::path{ID_TEST_HOME_DIR} / subdir / filename;
 }
-
-class TestSpecialDirectories : public SpecialDirectories
-{
-public:
-    TestSpecialDirectories(fs::path program_dir, fs::path documents_dir) :
-        m_program_dir{std::move(program_dir)},
-        m_documents_dir{std::move(documents_dir)}
-    {
-    }
-
-    fs::path program_dir() const override
-    {
-        return m_program_dir;
-    }
-
-    fs::path documents_dir() const override
-    {
-        return m_documents_dir;
-    }
-
-private:
-    fs::path m_program_dir;
-    fs::path m_documents_dir;
-};
 
 class TestParameterCommandError : public TestParameterCommand
 {
@@ -2757,12 +2736,22 @@ TEST_F(TestDirectoryParameter, tempDirExisting)
 
 class TestStartupCommand : public TestParameterCommand
 {
+public:
+    TestStartupCommand();
+
 private:
     ValueSaver<bool> m_saved_first_init{g_first_init, true};
-    ValueSaver<std::shared_ptr<SpecialDirectories>> m_saved_special_dirs{g_special_dirs,
-        std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
+    const std::shared_ptr<NiceMock<MockSpecialDirectories>> m_directories{
+        std::make_shared<NiceMock<MockSpecialDirectories>>()};
+    ValueSaver<std::shared_ptr<SpecialDirectories>> m_saved_special_dirs{g_special_dirs, m_directories};
     CurrentPathSaver m_current_directory{ID_TEST_HOME_DIR};
 };
+
+TestStartupCommand::TestStartupCommand()
+{
+    ON_CALL(*m_directories, program_dir()).WillByDefault(Return(fs::path{ID_TEST_HOME_DIR}));
+    ON_CALL(*m_directories, documents_dir()).WillByDefault(Return(fs::path{ID_TEST_DATA_DIR}));
+}
 
 class TestStartupHeadlessCommand : public TestStartupCommand
 {
