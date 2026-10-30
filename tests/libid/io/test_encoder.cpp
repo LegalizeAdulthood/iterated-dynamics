@@ -4,6 +4,7 @@
 #include <io/encoder.h>
 
 #include "ColorMapSaver.h"
+#include "GifReadSupport.h"
 #include "MockDriver.h"
 #include "TemporaryDirectory.h"
 
@@ -174,8 +175,6 @@ INSTANTIATE_TEST_SUITE_P(FloatPolicies, TestEncoderFloatPolicy,
 namespace
 {
 
-using GifFilePtr = std::unique_ptr<GifFileType, void (*)(GifFileType *)>;
-
 class FailingSaveBuffer : public std::stringbuf
 {
 public:
@@ -227,9 +226,7 @@ protected:
     void TearDown() override;
     void configure_image(int width, int height, int colors, int x_offset = 0, int y_offset = 0);
     int save();
-    GifFilePtr read_saved_gif() const;
     std::vector<Byte> image_pixels() const;
-    void expect_raster(const GifFileType &gif, const std::vector<Byte> &pixels, int width, int height) const;
 
     MockDriver m_driver;
     TemporaryDirectory m_directory;
@@ -346,21 +343,6 @@ int TestGifWriterRaster::save()
     return save_image(filename);
 }
 
-GifFilePtr TestGifWriterRaster::read_saved_gif() const
-{
-    int error{};
-    GifFilePtr gif{DGifOpenFileName(m_path.string().c_str(), &error), [](GifFileType *input)
-        {
-            int close_error{};
-            DGifCloseFile(input, &close_error);
-        }};
-    if (!gif || DGifSlurp(gif.get()) == GIF_ERROR)
-    {
-        throw std::runtime_error("Can't decode saved GIF");
-    }
-    return gif;
-}
-
 std::vector<Byte> TestGifWriterRaster::image_pixels() const
 {
     std::vector<Byte> pixels;
@@ -371,23 +353,6 @@ std::vector<Byte> TestGifWriterRaster::image_pixels() const
         pixels.insert(pixels.end(), m_frame.begin() + offset, m_frame.begin() + offset + g_logical_screen.x_dots);
     }
     return pixels;
-}
-
-void TestGifWriterRaster::expect_raster(
-    const GifFileType &gif, const std::vector<Byte> &pixels, const int width, const int height) const
-{
-    EXPECT_EQ(width, gif.SWidth);
-    EXPECT_EQ(height, gif.SHeight);
-    ASSERT_EQ(1, gif.ImageCount);
-    const SavedImage &image{gif.SavedImages[0]};
-    EXPECT_EQ(0, image.ImageDesc.Left);
-    EXPECT_EQ(0, image.ImageDesc.Top);
-    EXPECT_EQ(width, image.ImageDesc.Width);
-    EXPECT_EQ(height, image.ImageDesc.Height);
-    EXPECT_FALSE(image.ImageDesc.Interlace);
-    EXPECT_EQ(nullptr, image.ImageDesc.ColorMap);
-    EXPECT_EQ(
-        pixels, (std::vector<Byte>{image.RasterBits, image.RasterBits + static_cast<std::size_t>(width) * height}));
 }
 
 class TestGifWriterPalette : public TestGifWriterRaster, public WithParamInterface<std::pair<int, bool>>
@@ -404,8 +369,8 @@ TEST_P(TestGifWriterPalette, savesRasterAndPaletteThroughProductionEntry)
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, pixels, 8, 6);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, pixels, 8, 6);
     std::ifstream input{m_path, std::ios::binary};
     std::array<char, 6> signature{};
     input.read(signature.data(), signature.size());
@@ -455,8 +420,8 @@ TEST_F(TestGifWriterRaster, savesLogicalPixelsAtPhysicalScreenOffset)
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, pixels, 9, 5);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, pixels, 9, 5);
     EXPECT_EQ(frame, m_frame);
 }
 
@@ -491,7 +456,7 @@ TEST_P(TestGifWriterAspect, savesAspectByteForExplicitView)
 {
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     EXPECT_EQ(GetParam().byte, gif->AspectByte);
 }
 
@@ -509,7 +474,7 @@ TEST_F(TestGifWriterRaster, savesAutomaticViewAspectFromPhysicalScreen)
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     EXPECT_EQ(49, gif->AspectByte);
     EXPECT_EQ(8, gif->SWidth);
     EXPECT_EQ(3, gif->SHeight);
@@ -528,8 +493,8 @@ TEST_P(TestGifWriterDimensions, savesUnsignedDimensionsThroughProductionEntry)
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, pixels, width, height);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, pixels, width, height);
 }
 
 INSTANTIATE_TEST_SUITE_P(UnsignedBounds, TestGifWriterDimensions,
@@ -569,8 +534,8 @@ TEST_F(TestGifWriterRaster, savesPotentialRowsAsColorsThenLowBytes)
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, stored, 10, 3);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, stored, 10, 3);
     EXPECT_EQ(pixels, image_pixels());
 }
 
@@ -674,8 +639,8 @@ TEST_F(TestGifWriterIncrementalSave, incrementalSaveDoesNotPresentUiOrChangeBusy
     EXPECT_TRUE(m_image->succeeded());
     EXPECT_TRUE(m_image->diagnostic().empty());
     EXPECT_FALSE(g_busy);
-    const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, m_pixels, 8, 3);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, m_pixels, 8, 3);
     EXPECT_EQ(m_pixels, image_pixels());
 }
 
@@ -746,8 +711,8 @@ TEST_F(TestGifWriterExistingImage, existingTemporaryDestinationIsNotDeleted)
     }
 
     EXPECT_TRUE(std::filesystem::is_directory(temporary));
-    const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, m_original_pixels, 8, 6);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, m_original_pixels, 8, 6);
 }
 
 TEST_F(TestGifWriterExistingImage, replacementFailurePreservesOriginalAndExistingBackup)
@@ -770,8 +735,8 @@ TEST_F(TestGifWriterExistingImage, replacementFailurePreservesOriginalAndExistin
     EXPECT_THAT(image.diagnostic(), HasSubstr("Can't replace"));
     EXPECT_TRUE(std::filesystem::exists(backup));
     EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
-    const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, m_original_pixels, 8, 6);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, m_original_pixels, 8, 6);
 }
 
 TEST_F(TestGifWriterRaster, notificationFollowsProgressRestorationAndFileClosure)
@@ -799,8 +764,8 @@ TEST_F(TestGifWriterRaster, savesWithoutConsumingPendingInput)
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, pixels, 8, 6);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, pixels, 8, 6);
     EXPECT_EQ(FRACTAL_INFO_VERSION, get_fractal_info(gif.get()).info_version);
 }
 
@@ -858,8 +823,8 @@ TEST_F(TestGifWriterRaster, flushesProgressAfterEachStoredRowAndRestoresIt)
     ASSERT_EQ(0, save());
 
     EXPECT_EQ(36, writes);
-    const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, pixels, 600, 3);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, pixels, 600, 3);
     EXPECT_FALSE(g_busy);
 }
 
@@ -952,8 +917,8 @@ TEST_F(TestGifWriterExistingImage, failedReplacementPreservesOriginalAndRemovesT
 
     EXPECT_EQ(-1, save_image(filename));
 
-    const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, m_original_pixels, 8, 6);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, m_original_pixels, 8, 6);
     EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
     EXPECT_EQ(BatchMode::BAILOUT_ERROR_NO_SAVE, g_init_batch);
     EXPECT_FALSE(g_busy);
@@ -967,8 +932,8 @@ TEST_F(TestGifWriterExistingImage, overwriteReplacesOriginalOnlyAfterSuccessfulS
 
     ASSERT_EQ(0, save_image(filename));
 
-    const GifFilePtr gif{read_saved_gif()};
-    expect_raster(*gif, pixels, 8, 6);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, pixels, 8, 6);
     EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
 }
 
@@ -1001,8 +966,8 @@ TEST_F(TestGifWriterRaster, autosaveReusesFilenameAndFinalSaveEndsResaving)
     EXPECT_TRUE(g_started_resaves);
     EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
     {
-        const GifFilePtr gif{read_saved_gif()};
-        expect_raster(*gif, pixels, 8, 6);
+        const GifFilePtr gif{read_gif(m_path)};
+        expect_gif_raster(*gif, pixels, 8, 6);
     }
     g_resave_flag = TimedSave::FINAL;
 
@@ -1120,7 +1085,7 @@ TEST_F(TestGifWriterExtensions, savesMainRecordWithoutInapplicableOptionalRecord
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint001"});
     const std::vector<Byte> bytes{payload(gif.get(), "fractint001")};
     ASSERT_EQ(504, bytes.size());
@@ -1168,7 +1133,7 @@ TEST_P(TestGifWriterResume, savesOnlyUsedResumeBytesWithLegacySubBlocks)
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint002", "fractint001"});
     EXPECT_TRUE(has_gif_extension(gif.get(), "fractint002"));
     EXPECT_EQ(expected, get_resume_info(gif.get()));
@@ -1220,7 +1185,7 @@ TEST_P(TestGifWriterResumeOmission, omitsInapplicableResumeRecord)
 {
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint001"});
     ASSERT_FALSE(read_metadata());
     EXPECT_FALSE(m_resume.got_data);
@@ -1255,7 +1220,7 @@ TEST_P(TestGifWriterName, savesSelectedItemNameAndOnlyFormulaUsageFlags)
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint003", "fractint001"});
     FormulaInfo expected{};
     std::copy(name.begin(), name.end(), expected.form_name);
@@ -1305,7 +1270,7 @@ TEST_P(TestGifWriterStoredName, storesTerminatedItemName)
 {
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint003", "fractint001"});
     const FormulaInfo info{get_formula_info(gif.get())};
     EXPECT_EQ(GetParam().substr(0, 39), info.form_name);
@@ -1324,7 +1289,7 @@ TEST_F(TestGifWriterExtensions, savesSignedIterationRangesInLittleEndianOrder)
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint004", "fractint001"});
     EXPECT_EQ((std::vector<Byte>{0xFF, 0xFF, 0x34, 0x12, 0, 0x80, 0xFF, 0x7F}), payload(gif.get(), "fractint004"));
     EXPECT_EQ(g_iteration_ranges, get_ranges_info(gif.get()));
@@ -1341,7 +1306,7 @@ TEST_F(TestGifWriterExtensions, omitsIterationRangesForThreeDimensionalDisplay)
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint001"});
     ASSERT_FALSE(read_metadata());
     EXPECT_FALSE(m_ranges.got_data);
@@ -1361,7 +1326,7 @@ TEST_F(TestGifWriterExtensions, preservesOpaqueArbitraryPrecisionParameters)
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint005", "fractint001"});
     const std::vector<char> expected{parameters.begin(), parameters.end()};
     EXPECT_EQ(parameters, payload(gif.get(), "fractint005"));
@@ -1396,7 +1361,7 @@ TEST_P(TestGifWriterEvolution, savesLiveEvolutionStateWhenNoResumeOrCalculationC
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint006", "fractint001"});
     const EvolutionInfo info{get_evolution_info(gif.get())};
     EXPECT_EQ(1, info.evolving);
@@ -1459,7 +1424,7 @@ TEST_F(TestGifWriterExtensions, savesCachedEvolutionStateForResumableCalculation
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint006", "fractint001"});
     EXPECT_EQ(expected, get_evolution_info(gif.get()));
     ASSERT_FALSE(read_metadata());
@@ -1496,7 +1461,7 @@ TEST_F(TestGifWriterOrbitSettings, serializesOrbitSettingsForOrbitPass)
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint007", "fractint001"});
     const OrbitsInfo info{get_orbits_info(gif.get())};
     EXPECT_EQ(-2.5, info.orbit_corner_min_x);
@@ -1524,7 +1489,7 @@ TEST_F(TestGifWriterOrbitSettings, omitsOrbitSettingsForOtherPass)
 {
     g_std_calc_mode = CalcMode::ONE_PASS;
     ASSERT_EQ(0, save());
-    const GifFilePtr other_pass{read_saved_gif()};
+    const GifFilePtr other_pass{read_gif(m_path)};
     expect_layout(other_pass.get(), {"fractint001"});
     ASSERT_FALSE(read_metadata());
     EXPECT_FALSE(m_orbits.got_data);
@@ -1550,7 +1515,7 @@ TEST_F(TestGifWriterExtensions, preservesCompleteRecordOrderingAndTotalEncodedLe
 
     ASSERT_EQ(0, save());
 
-    const GifFilePtr gif{read_saved_gif()};
+    const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(),
         {"fractint002", "fractint003", "fractint004", "fractint005", "fractint006", "fractint007", "fractint001"});
     ASSERT_FALSE(read_metadata());

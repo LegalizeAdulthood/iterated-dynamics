@@ -3,6 +3,8 @@
 //
 #include <io/GifWriter.h>
 
+#include "GifReadSupport.h"
+
 #include <io/gif_extensions.h>
 #include <io/gif_file.h>
 #include <io/loadfile.h>
@@ -34,8 +36,6 @@ namespace id::test
 
 namespace
 {
-
-using GifFilePtr = std::unique_ptr<GifFileType, void (*)(GifFileType *)>;
 
 class FailingBuffer : public std::stringbuf
 {
@@ -79,8 +79,6 @@ class TestGifWriter : public Test
 protected:
     void SetUp() override;
     void TearDown() override;
-    GifFilePtr read_file() const;
-    void expect_pixels(const GifFileType &gif, const std::vector<Byte> &expected, int width, int height) const;
 
     std::filesystem::path m_path;
     GifFileType m_extensions{};
@@ -99,38 +97,6 @@ void TestGifWriter::TearDown()
 {
     GifFreeExtensions(&m_extensions.ExtensionBlockCount, &m_extensions.ExtensionBlocks);
     std::filesystem::remove(m_path);
-}
-
-GifFilePtr TestGifWriter::read_file() const
-{
-    int error{};
-    GifFilePtr gif{DGifOpenFileName(m_path.string().c_str(), &error), [](GifFileType *input)
-        {
-            int close_error{};
-            DGifCloseFile(input, &close_error);
-        }};
-    if (!gif || DGifSlurp(gif.get()) == GIF_ERROR)
-    {
-        throw std::runtime_error("Can't decode GIF writer test output");
-    }
-    return gif;
-}
-
-void TestGifWriter::expect_pixels(
-    const GifFileType &gif, const std::vector<Byte> &expected, const int width, const int height) const
-{
-    EXPECT_EQ(width, gif.SWidth);
-    EXPECT_EQ(height, gif.SHeight);
-    ASSERT_EQ(1, gif.ImageCount);
-    const SavedImage &image{gif.SavedImages[0]};
-    EXPECT_EQ(0, image.ImageDesc.Left);
-    EXPECT_EQ(0, image.ImageDesc.Top);
-    EXPECT_EQ(width, image.ImageDesc.Width);
-    EXPECT_EQ(height, image.ImageDesc.Height);
-    EXPECT_FALSE(image.ImageDesc.Interlace);
-    EXPECT_EQ(nullptr, image.ImageDesc.ColorMap);
-    EXPECT_EQ(
-        expected, (std::vector<Byte>{image.RasterBits, image.RasterBits + static_cast<std::size_t>(width) * height}));
 }
 
 class TestGifWriterColors : public TestGifWriter, public WithParamInterface<int>
@@ -158,8 +124,8 @@ TEST_P(TestGifWriterColors, writesPaletteHeaderAndScanlinesWithoutChangingInput)
     }
     ASSERT_TRUE(writer.finish());
 
-    const GifFilePtr gif{read_file()};
-    expect_pixels(*gif, expected, 8, 3);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, expected, 8, 3);
     EXPECT_EQ(8, gif->SColorResolution);
     EXPECT_EQ(1, gif->SBackGroundColor);
     EXPECT_EQ(49, gif->AspectByte);
@@ -188,8 +154,8 @@ TEST_F(TestGifWriter, writesTwoHalfRowsWithoutKnowingPotentialStoragePolicy)
     ASSERT_TRUE(writer.write_pixels({204, 205, 206}));
     ASSERT_TRUE(writer.finish());
 
-    const GifFilePtr gif{read_file()};
-    expect_pixels(*gif, {1, 2, 3, 201, 202, 203, 4, 5, 6, 204, 205, 206}, 6, 2);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, {1, 2, 3, 201, 202, 203, 4, 5, 6, 204, 205, 206}, 6, 2);
 }
 
 TEST_F(TestGifWriter, emitsSharedExtensionsWithOriginalGroupingAndEmptyRecords)
@@ -220,8 +186,8 @@ TEST_F(TestGifWriter, emitsSharedExtensionsWithOriginalGroupingAndEmptyRecords)
     ASSERT_TRUE(writer.write_extensions(m_extensions));
     ASSERT_TRUE(writer.finish());
 
-    const GifFilePtr gif{read_file()};
-    expect_pixels(*gif, {0, 1, 1, 0}, 2, 2);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, {0, 1, 1, 0}, 2, 2);
     ASSERT_EQ(m_extensions.ExtensionBlockCount, gif->ExtensionBlockCount);
     for (int i = 0; i < m_extensions.ExtensionBlockCount; ++i)
     {
@@ -706,8 +672,8 @@ TEST_P(TestGifWriterSize, supportsUnsignedDimensionBoundaries)
     }
     ASSERT_TRUE(writer.finish());
 
-    const GifFilePtr gif{read_file()};
-    expect_pixels(*gif, expected, width, height);
+    const GifFilePtr gif{read_gif(m_path)};
+    expect_gif_raster(*gif, expected, width, height);
 }
 
 INSTANTIATE_TEST_SUITE_P(UnsignedBounds, TestGifWriterSize,

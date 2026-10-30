@@ -62,6 +62,7 @@ add_executable(test-id
     include/EnvVarSaver.h test/EnvVarSaver.cpp
     "include/expected_map.h"
     include/FractalParamSaver.h test/FractalParamSaver.cpp
+    include/GifReadSupport.h test/GifReadSupport.cpp
     include/MemoryDiskStorage.h test/MemoryDiskStorage.cpp
     "include/MockDriver.h"
     "include/MockSoundOutput.h"
@@ -150,6 +151,7 @@ add_executable(test-id
     misc/test_ValueSaver.cpp
     misc/test_version.cpp
     test/test_CommandTestFile.cpp
+    test/test_GifReadSupport.cpp
     test/test_TemporaryDirectory.cpp
     ui/test_ChoiceBuilder.cpp
     ui/test_cellular.cpp

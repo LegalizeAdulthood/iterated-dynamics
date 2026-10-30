@@ -3,6 +3,7 @@
 //
 #include <io/loadfile.h>
 
+#include "GifReadSupport.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "test_migrate_gif.h"
@@ -403,16 +404,7 @@ std::filesystem::path TestFindFractalInfo::write_file(const bool legacy_formula)
 {
     m_path = test_path();
     int error{};
-    std::unique_ptr<GifFileType, void (*)(GifFileType *)> input{DGifOpenFileName(ID_TEST_GIF_EXT3_FILE, &error),
-        [](GifFileType *gif)
-        {
-            int close_error{};
-            DGifCloseFile(gif, &close_error);
-        }};
-    if (!input || DGifSlurp(input.get()) == GIF_ERROR)
-    {
-        throw std::runtime_error("Can't read metadata test fixture");
-    }
+    const GifFilePtr input{read_gif(ID_TEST_GIF_EXT3_FILE)};
     std::unique_ptr<GifFileType, void (*)(GifFileType *)> output{
         EGifOpenFileName(m_path.string().c_str(), false, &error), [](GifFileType *gif)
         {
