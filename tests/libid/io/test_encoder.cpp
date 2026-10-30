@@ -4,6 +4,7 @@
 #include <io/encoder.h>
 
 #include "ColorMapSaver.h"
+#include "FailingOutputBuffer.h"
 #include "GifReadSupport.h"
 #include "MockDriver.h"
 #include "TemporaryDirectory.h"
@@ -62,10 +63,8 @@
 #include <filesystem>
 #include <fstream>
 #include <memory>
-#include <limits>
 #include <optional>
 #include <ostream>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -174,29 +173,6 @@ INSTANTIATE_TEST_SUITE_P(FloatPolicies, TestEncoderFloatPolicy,
 
 namespace
 {
-
-class FailingSaveBuffer : public std::stringbuf
-{
-public:
-    std::streamsize remaining{std::numeric_limits<std::streamsize>::max()};
-    bool fail_sync{};
-
-protected:
-    std::streamsize xsputn(const char *data, std::streamsize count) override;
-    int sync() override;
-};
-
-std::streamsize FailingSaveBuffer::xsputn(const char *data, const std::streamsize count)
-{
-    const std::streamsize written{std::stringbuf::xsputn(data, std::min(count, remaining))};
-    remaining -= written;
-    return written;
-}
-
-int FailingSaveBuffer::sync()
-{
-    return fail_sync ? -1 : 0;
-}
 
 constexpr std::array<Byte, 3> EGA_PALETTE[]{
     {0, 0, 0},
@@ -834,7 +810,7 @@ protected:
     void TearDown() override;
     void start_save(int width, int height);
 
-    FailingSaveBuffer m_buffer;
+    FailingOutputBuffer m_buffer;
     std::ostream m_output{&m_buffer};
     std::vector<Byte> m_pixels;
     std::unique_ptr<ImageSave> m_image;

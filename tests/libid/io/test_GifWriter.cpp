@@ -3,6 +3,7 @@
 //
 #include <io/GifWriter.h>
 
+#include "FailingOutputBuffer.h"
 #include "GifReadSupport.h"
 
 #include <io/gif_extensions.h>
@@ -18,7 +19,6 @@
 #include <array>
 #include <filesystem>
 #include <fstream>
-#include <limits>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -36,31 +36,6 @@ namespace id::test
 
 namespace
 {
-
-class FailingBuffer : public std::stringbuf
-{
-public:
-    std::streamsize remaining{std::numeric_limits<std::streamsize>::max()};
-    bool fail_sync{};
-    int sync_count{};
-
-protected:
-    std::streamsize xsputn(const char *data, std::streamsize count) override;
-    int sync() override;
-};
-
-std::streamsize FailingBuffer::xsputn(const char *data, const std::streamsize count)
-{
-    const std::streamsize written{std::stringbuf::xsputn(data, std::min(count, remaining))};
-    remaining -= written;
-    return written;
-}
-
-int FailingBuffer::sync()
-{
-    ++sync_count;
-    return fail_sync ? -1 : 0;
-}
 
 GifWriter::Palette make_palette(const int count)
 {
@@ -223,7 +198,7 @@ class TestFinishedGifWriter : public TestGifWriter
 protected:
     void SetUp() override;
 
-    FailingBuffer m_buffer;
+    FailingOutputBuffer m_buffer;
     std::ostream m_output{&m_buffer};
     std::unique_ptr<GifWriter> m_writer;
     std::string m_complete;
@@ -500,7 +475,7 @@ class GifWriterStreamTest : public TestGifWriter
 protected:
     void open_writer(const GifWriter::Screen &screen);
 
-    FailingBuffer m_buffer;
+    FailingOutputBuffer m_buffer;
     std::ostream m_output{&m_buffer};
     std::unique_ptr<GifWriter> m_writer;
 };
