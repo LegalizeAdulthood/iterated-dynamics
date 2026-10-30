@@ -4,6 +4,7 @@
 #include "MockDriver.h"
 #include "MockSoundOutput.h"
 #include "PendingDriverKey.h"
+#include "TemporaryDirectory.h"
 #include "TestRender.h"
 
 #include <engine/calcfrac.h>
@@ -35,7 +36,6 @@
 #include <gtest/gtest.h>
 
 #include <array>
-#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <limits>
@@ -195,7 +195,7 @@ protected:
     std::vector<DComplex> m_samples;
     std::vector<std::array<int, 3>> m_plots;
     std::vector<std::string> m_events;
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
     int m_key{};
     bool m_ready{true};
 };
@@ -244,11 +244,11 @@ void TestStickyOrbitSoundBase::TearDown()
     reset_calc_interrupted();
     end_resume();
     s_seeds.clear();
-    if (!m_directory.empty())
+    if (!m_directory.path().empty())
     {
         clear_save_library();
         std::error_code ignored;
-        std::filesystem::remove_all(m_directory, ignored);
+        m_directory.remove(ignored);
     }
 }
 
@@ -649,10 +649,8 @@ TEST_P(TestStickyOrbitSound, driverRefusalStillRecordsConstantFrequencyWithoutWa
     ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_Z};
     ValueSaver saved_orbit_flags{g_orbit_save_flags, OSF_MIDI};
     ValueSaver saved_hertz{g_base_hertz, 440};
-    m_directory = std::filesystem::temp_directory_path() /
-        ("id-sticky-sound-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-    ASSERT_TRUE(std::filesystem::create_directory(m_directory));
-    set_save_library(m_directory);
+    m_directory.create("id-sticky-sound-");
+    set_save_library(m_directory.path());
     EXPECT_CALL(m_driver, sound_on(440)).WillRepeatedly(Return(false));
     EXPECT_CALL(m_driver, delay(_)).Times(0);
     EXPECT_CALL(m_driver, mute()).Times(0);
@@ -661,7 +659,7 @@ TEST_P(TestStickyOrbitSound, driverRefusalStillRecordsConstantFrequencyWithoutWa
     EXPECT_EQ(0, render_standard_image());
     EXPECT_TRUE(owner.finish());
 
-    std::ifstream file{m_directory / "sound/sound001.txt"};
+    std::ifstream file{m_directory.path() / "sound/sound001.txt"};
     ASSERT_TRUE(file.good());
     std::size_t tones{};
     for (std::string line; std::getline(file, line);)

@@ -4,6 +4,7 @@
 #include "MockDriver.h"
 #include "MockSoundOutput.h"
 #include "PendingDriverKey.h"
+#include "TemporaryDirectory.h"
 #include "TestRender.h"
 
 #include <engine/calc_frac_init.h>
@@ -56,7 +57,6 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <chrono>
 #include <complex>
 #include <filesystem>
 #include <fstream>
@@ -180,7 +180,7 @@ protected:
     ValueSaver<double> m_saved_param2{g_params[2], 1.02871376822};
     std::vector<std::string> m_events;
     std::vector<SoundSample> m_samples;
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
     int m_plots{};
     int m_key{};
     bool m_ready{true};
@@ -244,11 +244,11 @@ void TestOverlaySound::TearDown()
     free_pixel_grid();
     end_resume();
     reset_calc_interrupted();
-    if (!m_directory.empty())
+    if (!m_directory.path().empty())
     {
         clear_save_library();
         std::error_code ignored;
-        std::filesystem::remove_all(m_directory, ignored);
+        m_directory.remove(ignored);
     }
 }
 
@@ -1261,13 +1261,13 @@ TEST_F(TestOverlaySound, imageSetupReturnsLogMapWarningWithoutPolling)
 
 TEST_F(TestOverlaySound, imageSetupReturnsTargaFailureAndKeepsPaletteRenderingAvailable)
 {
-    m_directory = std::filesystem::current_path() / "test-image-targa-fallback";
-    std::filesystem::create_directories(m_directory / "image" / "blocked.tga");
-    set_save_library(m_directory);
+    m_directory.create("id-test-image-targa-fallback-");
+    std::filesystem::create_directories(m_directory.path() / "image" / "blocked.tga");
+    set_save_library(m_directory.path());
     ValueSaver saved_true_color{g_true_color, true};
     ValueSaver saved_light_name{geometry::g_light_name, std::string{"blocked.tga"}};
     ValueSaver saved_overwrite{g_overwrite_file, true};
-    const std::string path{(m_directory / "image" / "blocked.tga").string()};
+    const std::string path{(m_directory.path() / "image" / "blocked.tga").string()};
     ImageCalculation image;
 
     EXPECT_THAT(image.start(), ElementsAre("OOPS, couldn't open  < " + path + " >"));
@@ -1308,10 +1308,8 @@ void TestTrueColorStorage::SetUp()
     TestOverlaySound::SetUp();
     end_disk();
     init_memory();
-    m_directory = std::filesystem::temp_directory_path() /
-        ("id-truecolor-storage-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-    std::filesystem::create_directory(m_directory);
-    set_save_library(m_directory);
+    m_directory.create("id-truecolor-storage-");
+    set_save_library(m_directory.path());
 }
 
 void TestTrueColorStorage::TearDown()
@@ -1417,7 +1415,7 @@ TEST_F(TestTrueColorStorage, controllerPreparesStorageAndFinishesTheTargaImage)
     EXPECT_EQ(CalcMode::ONE_PASS, g_std_calc_mode);
     EXPECT_FALSE(g_disk_flag);
     EXPECT_TRUE(exit_check().empty());
-    EXPECT_EQ(22U + 2U * 2U * 3U, std::filesystem::file_size(m_directory / "image" / "truecolor.tga"));
+    EXPECT_EQ(22U + 2U * 2U * 3U, std::filesystem::file_size(m_directory.path() / "image" / "truecolor.tga"));
 }
 
 class TestTargaFlushFailure : public TestTrueColorStorage
@@ -1869,11 +1867,9 @@ void TestStandardPotentialStorage::SetUp()
     TestOverlaySound::SetUp();
     end_disk();
     init_memory();
-    m_directory = std::filesystem::temp_directory_path() /
-        ("id-standard-potential-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-    std::filesystem::create_directory(m_directory);
-    g_temp_dir = m_directory / "missing";
-    set_save_library(m_directory);
+    m_directory.create("id-standard-potential-");
+    g_temp_dir = m_directory.path() / "missing";
+    set_save_library(m_directory.path());
     EXPECT_CALL(m_driver, display_string(_, _, _, _, StrEq("clearing 16bit pot work area")));
     EXPECT_CALL(m_driver, flush());
 }
@@ -2477,10 +2473,8 @@ TEST_P(TestOverlaySoundController, recordsBoundariesAndSamplesWhenDriverDoesNotS
 {
     ValueSaver saved_sound_flag{g_sound_flag, SOUNDFLAG_X};
     ValueSaver saved_orbit_flags{g_orbit_save_flags, OSF_MIDI};
-    m_directory = std::filesystem::temp_directory_path() /
-        ("id-overlay-sound-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-    ASSERT_TRUE(std::filesystem::create_directory(m_directory));
-    set_save_library(m_directory);
+    m_directory.create("id-overlay-sound-");
+    set_save_library(m_directory.path());
     std::vector<int> tones;
     EXPECT_CALL(m_driver, sound_on(_))
         .WillRepeatedly(Invoke(
@@ -2505,7 +2499,7 @@ TEST_P(TestOverlaySoundController, recordsBoundariesAndSamplesWhenDriverDoesNotS
         EXPECT_TRUE(owner.finish());
     }
 
-    std::ifstream file{m_directory / "sound/sound001.txt"};
+    std::ifstream file{m_directory.path() / "sound/sound001.txt"};
     ASSERT_TRUE(file.good());
     std::vector<int> recorded_tones;
     int boundaries{};
