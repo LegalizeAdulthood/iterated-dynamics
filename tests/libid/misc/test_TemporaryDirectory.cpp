@@ -9,6 +9,7 @@
 #include <fstream>
 #include <optional>
 #include <stdexcept>
+#include <system_error>
 
 namespace id::test
 {
@@ -70,6 +71,29 @@ TEST_F(TestTemporaryDirectory, destructionDeletesContents)
     m_directory.reset();
 
     EXPECT_FALSE(std::filesystem::exists(path));
+}
+
+TEST_F(TestTemporaryDirectory, errorCodeRemovalDeletesContents)
+{
+    add_contents();
+    const std::filesystem::path path{m_directory->path()};
+    ASSERT_TRUE(std::filesystem::exists(path / "nested" / "file.txt"));
+    std::error_code error{std::make_error_code(std::errc::permission_denied)};
+
+    m_directory->remove(error);
+
+    EXPECT_FALSE(error);
+    EXPECT_FALSE(std::filesystem::exists(path));
+}
+
+TEST_F(TestTemporaryDirectory, inactiveErrorCodeRemovalClearsPreviousError)
+{
+    TemporaryDirectory other;
+    std::error_code error{std::make_error_code(std::errc::permission_denied)};
+
+    other.remove(error);
+
+    EXPECT_FALSE(error);
 }
 
 TEST_F(TestTemporaryDirectory, refusesToReplaceAnOwnedDirectory)

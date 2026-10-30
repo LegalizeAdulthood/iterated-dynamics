@@ -14,11 +14,8 @@ namespace id::test
 
 TemporaryDirectory::~TemporaryDirectory()
 {
-    if (m_owned)
-    {
-        std::error_code ignored;
-        std::filesystem::remove_all(m_path, ignored);
-    }
+    std::error_code ignored;
+    remove(ignored);
 }
 
 void TemporaryDirectory::create(const std::string_view prefix)
@@ -53,6 +50,19 @@ void TemporaryDirectory::remove()
     {
         std::filesystem::remove_all(m_path);
         m_owned = false;
+    }
+}
+
+void TemporaryDirectory::remove(std::error_code &error)
+{
+    error.clear();
+    if (m_owned)
+    {
+        std::filesystem::remove_all(m_path, error);
+        if (!error)
+        {
+            m_owned = false;
+        }
     }
 }
 

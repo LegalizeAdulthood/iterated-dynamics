@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include "MockDriver.h"
+#include "TemporaryDirectory.h"
 
 #include <engine/LogicalScreen.h>
 #include <engine/OrbitPlot.h>
@@ -108,8 +109,7 @@ protected:
     ValueSaver<int> m_saved_y_dots{g_logical_screen.y_dots, 600};
     ValueSaver<int> m_saved_colors{g_colors, 256};
     ValueSaver<bool> m_saved_overwrite{g_overwrite_file, false};
-    fs::path m_directory;
-    bool m_directory_created{};
+    TemporaryDirectory m_directory;
     Clock::time_point m_time{};
     long long m_time_ms{1234};
     int m_now_calls{};
@@ -131,21 +131,15 @@ void TestDriverSoundOutput::SetUp()
     const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
     std::string name{info->name()};
     std::replace(name.begin(), name.end(), '/', '_');
-    m_directory = fs::temp_directory_path() /
-        ("id-driver-sound-" + name + "-" + std::to_string(Clock::now().time_since_epoch().count()));
-    m_directory_created = fs::create_directory(m_directory);
-    ASSERT_TRUE(m_directory_created);
-    set_save_library(m_directory);
+    m_directory.create("id-driver-sound-" + name + "-");
+    set_save_library(m_directory.path());
 }
 
 void TestDriverSoundOutput::TearDown()
 {
     clear_save_library();
-    if (m_directory_created)
-    {
-        std::error_code ignored;
-        fs::remove_all(m_directory, ignored);
-    }
+    std::error_code ignored;
+    m_directory.remove(ignored);
 }
 
 class TestDriverSoundMapping : public TestDriverSoundOutput, public WithParamInterface<MappingCase>
@@ -189,9 +183,9 @@ TEST_P(TestDriverSoundRecording, recordsBeforeDeviceAttemptAndHandlesEitherDevic
     const bool recording{std::get<0>(GetParam())};
     const bool device_accepts{std::get<1>(GetParam())};
     g_orbit_save_flags = recording ? OSF_MIDI : 0;
-    const fs::path path{m_directory / "sound/sound001.txt"};
+    const fs::path path{m_directory.path() / "sound/sound001.txt"};
     DriverSoundOutput output{Source::OVERLAY, m_now, m_timestamp};
-    EXPECT_FALSE(fs::exists(m_directory / "sound"));
+    EXPECT_FALSE(fs::exists(m_directory.path() / "sound"));
     EXPECT_CALL(m_driver, sound_on(230))
         .WillOnce(Invoke(
             [&](int)
@@ -202,7 +196,7 @@ TEST_P(TestDriverSoundRecording, recordsBeforeDeviceAttemptAndHandlesEitherDevic
                 }
                 else
                 {
-                    EXPECT_FALSE(fs::exists(m_directory / "sound"));
+                    EXPECT_FALSE(fs::exists(m_directory.path() / "sound"));
                 }
                 return device_accepts;
             }));
@@ -262,7 +256,7 @@ TEST_F(TestDriverSoundOutput, rejectsPendingSamplesWithoutDuplicateRecordsOrBoun
 
     EXPECT_FALSE(output.play({20, 30, 0}));
     EXPECT_FALSE(output.play({20, 30, 0}));
-    EXPECT_EQ("time=1234\n230\n", read_text(m_directory / "sound/sound001.txt"));
+    EXPECT_EQ("time=1234\n230\n", read_text(m_directory.path() / "sound/sound001.txt"));
     EXPECT_EQ(1, m_timestamp_calls);
 
     EXPECT_CALL(m_driver, sound_off());
@@ -271,7 +265,7 @@ TEST_F(TestDriverSoundOutput, rejectsPendingSamplesWithoutDuplicateRecordsOrBoun
     EXPECT_CALL(m_driver, sound_on(240)).WillOnce(Return(false));
     EXPECT_TRUE(output.play({20, 30, 0}));
     EXPECT_TRUE(output.finish());
-    EXPECT_EQ("time=1234\n230\n240\n", read_text(m_directory / "sound/sound001.txt"));
+    EXPECT_EQ("time=1234\n230\n240\n", read_text(m_directory.path() / "sound/sound001.txt"));
 }
 
 TEST_F(TestDriverSoundOutput, writesOrbitBoundariesWithoutChangingReadiness)
@@ -285,7 +279,7 @@ TEST_F(TestDriverSoundOutput, writesOrbitBoundariesWithoutChangingReadiness)
 
     EXPECT_TRUE(output.ready());
     EXPECT_EQ(0, m_now_calls);
-    EXPECT_EQ("time=1234\ntime=5678\n", read_text(m_directory / "sound/sound001.txt"));
+    EXPECT_EQ("time=1234\ntime=5678\n", read_text(m_directory.path() / "sound/sound001.txt"));
     EXPECT_TRUE(output.finish());
 }
 
@@ -327,7 +321,7 @@ TEST_F(TestDriverSoundOutput, muteClearsOldDeadlineAndRetainsRecordingForLaterPl
 
     EXPECT_TRUE(output.ready());
     EXPECT_TRUE(output.finish());
-    EXPECT_EQ("230\n240\n", read_text(m_directory / "sound/sound001.txt"));
+    EXPECT_EQ("230\n240\n", read_text(m_directory.path() / "sound/sound001.txt"));
 }
 
 TEST_F(TestDriverSoundOutput, cancellationCanFinishWithoutDrainingMutedTone)
@@ -355,7 +349,7 @@ TEST_F(TestDriverSoundOutput, destructionCancelsUnfinishedToneAndClosesRecording
         EXPECT_TRUE(output.play({10, 20, 0}));
     }
 
-    EXPECT_EQ("230\n", read_text(m_directory / "sound/sound001.txt"));
+    EXPECT_EQ("230\n", read_text(m_directory.path() / "sound/sound001.txt"));
 }
 
 struct SoundOverwriteInput
@@ -383,8 +377,8 @@ void TestSoundRecordingOverwrite::SetUp()
     TestDriverSoundOutput::SetUp();
     g_orbit_save_flags = OSF_MIDI;
     g_overwrite_file = GetParam().overwrite;
-    fs::create_directory(m_directory / "sound");
-    write_text(m_directory / "sound/sound001.txt", GetParam().existing_text);
+    fs::create_directory(m_directory.path() / "sound");
+    write_text(m_directory.path() / "sound/sound001.txt", GetParam().existing_text);
 }
 
 TEST_P(TestSoundRecordingOverwrite, appliesOverwritePolicyToExistingRecording)
@@ -395,14 +389,14 @@ TEST_P(TestSoundRecordingOverwrite, appliesOverwritePolicyToExistingRecording)
     EXPECT_TRUE(output.play({10, 20, 0}));
     EXPECT_TRUE(output.finish());
 
-    EXPECT_EQ(GetParam().first_text, read_text(m_directory / "sound/sound001.txt"));
+    EXPECT_EQ(GetParam().first_text, read_text(m_directory.path() / "sound/sound001.txt"));
     if (GetParam().second_text)
     {
-        EXPECT_EQ(GetParam().second_text, read_text(m_directory / "sound/sound002.txt"));
+        EXPECT_EQ(GetParam().second_text, read_text(m_directory.path() / "sound/sound002.txt"));
     }
     else
     {
-        EXPECT_FALSE(fs::exists(m_directory / "sound/sound002.txt"));
+        EXPECT_FALSE(fs::exists(m_directory.path() / "sound/sound002.txt"));
     }
 }
 
@@ -474,32 +468,32 @@ TEST_F(TestDriverSoundOutput, instancesKeepSeparateRecordingFiles)
     EXPECT_TRUE(second.play({30, 40, 0}));
     EXPECT_TRUE(second.finish());
 
-    EXPECT_EQ("230\n", read_text(m_directory / "sound/sound001.txt"));
-    EXPECT_EQ("240\n250\n", read_text(m_directory / "sound/sound002.txt"));
+    EXPECT_EQ("230\n", read_text(m_directory.path() / "sound/sound001.txt"));
+    EXPECT_EQ("240\n250\n", read_text(m_directory.path() / "sound/sound002.txt"));
 }
 
 TEST_F(TestDriverSoundOutput, reportsOpenFailureWithoutPlaybackAndCanRetry)
 {
     g_orbit_save_flags = OSF_MIDI;
     g_overwrite_file = true;
-    fs::create_directories(m_directory / "sound/sound001.txt");
+    fs::create_directories(m_directory.path() / "sound/sound001.txt");
     DriverSoundOutput output{Source::OVERLAY, m_now, m_timestamp};
 
     EXPECT_THROW(output.play({10, 20, 0}), std::runtime_error);
     EXPECT_TRUE(output.ready());
-    fs::remove(m_directory / "sound/sound001.txt");
+    fs::remove(m_directory.path() / "sound/sound001.txt");
     EXPECT_CALL(m_driver, sound_on(230)).WillOnce(Return(false));
     EXPECT_TRUE(output.play({10, 20, 0}));
     EXPECT_TRUE(output.finish());
 
-    EXPECT_EQ("230\n", read_text(m_directory / "sound/sound001.txt"));
+    EXPECT_EQ("230\n", read_text(m_directory.path() / "sound/sound001.txt"));
 }
 
 TEST_F(TestDriverSoundOutput, reportsUnavailableSavePathWithoutPlaybackOrPrompt)
 {
     g_orbit_save_flags = OSF_MIDI;
-    write_text(m_directory / "blocked", "not a directory");
-    set_save_library(m_directory / "blocked/child");
+    write_text(m_directory.path() / "blocked", "not a directory");
+    set_save_library(m_directory.path() / "blocked/child");
     DriverSoundOutput output{Source::OVERLAY, m_now, m_timestamp};
 
     EXPECT_THROW(output.play({10, 20, 0}), std::runtime_error);
@@ -546,7 +540,7 @@ TEST_F(TestDriverSoundOutput, configurationIsCapturedForTheSession)
 
     EXPECT_TRUE(output.play({10, 20, 0}));
     EXPECT_TRUE(output.finish());
-    EXPECT_FALSE(fs::exists(m_directory / "sound"));
+    EXPECT_FALSE(fs::exists(m_directory.path() / "sound"));
 }
 
 TEST_F(TestDriverSoundOutput, inactiveSoundModeDoesNotPlayOrRecordSamples)
@@ -558,7 +552,7 @@ TEST_F(TestDriverSoundOutput, inactiveSoundModeDoesNotPlayOrRecordSamples)
     EXPECT_TRUE(output.play({10, 20, 0}));
     EXPECT_TRUE(output.ready());
     EXPECT_TRUE(output.finish());
-    EXPECT_FALSE(fs::exists(m_directory / "sound"));
+    EXPECT_FALSE(fs::exists(m_directory.path() / "sound"));
 }
 
 TEST_F(TestDriverSoundOutput, defaultClocksDoNotDelayUnsupportedDevice)
@@ -577,7 +571,7 @@ TEST_F(TestDriverSoundOutput, rejectsInvalidMappingBeforeOutput)
     DriverSoundOutput output{Source::ORBIT, m_now, m_timestamp};
 
     EXPECT_THROW(output.play({std::numeric_limits<double>::infinity(), 0, 0}), std::logic_error);
-    EXPECT_FALSE(fs::exists(m_directory / "sound"));
+    EXPECT_FALSE(fs::exists(m_directory.path() / "sound"));
     EXPECT_TRUE(output.finish());
 }
 

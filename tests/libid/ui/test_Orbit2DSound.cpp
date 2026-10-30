@@ -4,6 +4,7 @@
 #include "MockDriver.h"
 #include "MockSoundOutput.h"
 #include "PendingDriverKey.h"
+#include "TemporaryDirectory.h"
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>
@@ -31,7 +32,6 @@
 #include <gtest/gtest.h>
 
 #include <array>
-#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <iterator>
@@ -129,7 +129,7 @@ protected:
     std::vector<std::array<double, 3>> m_samples;
     std::vector<std::array<int, 3>> m_points;
     std::vector<std::array<int, 5>> m_lines;
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
     int m_key{};
     bool m_ready{true};
 };
@@ -181,11 +181,11 @@ void TestOrbit2DSound::TearDown()
     reset_calc_interrupted();
     end_resume();
     s_events.clear();
-    if (!m_directory.empty())
+    if (!m_directory.path().empty())
     {
         clear_save_library();
         std::error_code ignored;
-        std::filesystem::remove_all(m_directory, ignored);
+        m_directory.remove(ignored);
     }
 }
 
@@ -229,10 +229,8 @@ int TestOrbit2DSound::render(SoundSession &sound)
 
 void TestOrbit2DSound::create_save_directory()
 {
-    m_directory = std::filesystem::temp_directory_path() /
-        ("id-orbit2d-sound-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-    ASSERT_TRUE(std::filesystem::create_directory(m_directory));
-    set_save_library(m_directory);
+    m_directory.create("id-orbit2d-sound-");
+    set_save_library(m_directory.path());
 }
 
 std::vector<std::array<double, 3>> TestOrbit2DSound::expected_samples() const
@@ -362,7 +360,7 @@ TEST_P(TestOrbit2DSound, rawOrbitDataIsNotDuplicatedOnRefusal)
         run(calculation);
     }
 
-    EXPECT_EQ("pointlist x y z color\n2 3 0 15\n3 5 0 15\n", read_text(m_directory / "orbit/orbits.raw"));
+    EXPECT_EQ("pointlist x y z color\n2 3 0 15\n3 5 0 15\n", read_text(m_directory.path() / "orbit/orbits.raw"));
     EXPECT_EQ(3, s_math_calls);
 }
 
@@ -488,7 +486,7 @@ TEST_P(TestOrbit2DSound, driverRefusalStillRecordsMappedFrequenciesWithoutWaitin
     EXPECT_TRUE(owner.finish());
 
     EXPECT_EQ(GetParam() == FractalType::LORENZ ? "320\n520\n720\n" : "320\n620\n920\n",
-        read_text(m_directory / "sound/sound001.txt"));
+        read_text(m_directory.path() / "sound/sound001.txt"));
 }
 
 TestOrbit2DSound::ControllerRun::ControllerRun(const SoundOutputPtr &output) :

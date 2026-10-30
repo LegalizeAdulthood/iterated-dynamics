@@ -4,6 +4,7 @@
 #include "MockDriver.h"
 #include "MockSoundOutput.h"
 #include "PendingDriverKey.h"
+#include "TemporaryDirectory.h"
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
@@ -31,7 +32,6 @@
 #include <gtest/gtest.h>
 
 #include <array>
-#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <memory>
@@ -121,7 +121,7 @@ protected:
     ValueSaver<decltype(g_plot)> m_saved_plot{g_plot, put_color_a};
     std::vector<std::array<double, 3>> m_samples;
     std::vector<std::array<int, 5>> m_plots;
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
     int m_key{};
     bool m_ready{true};
 };
@@ -175,11 +175,11 @@ void DynamicSoundTestState::TearDown()
     reset_calc_interrupted();
     end_resume();
     s_events.clear();
-    if (!m_directory.empty())
+    if (!m_directory.path().empty())
     {
         clear_save_library();
         std::error_code ignored;
-        std::filesystem::remove_all(m_directory, ignored);
+        m_directory.remove(ignored);
     }
 }
 
@@ -223,10 +223,8 @@ int DynamicSoundTestState::render(SoundSession &sound)
 
 void DynamicSoundTestState::create_save_directory()
 {
-    m_directory = std::filesystem::temp_directory_path() /
-        ("id-dynamic-sound-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-    ASSERT_TRUE(std::filesystem::create_directory(m_directory));
-    set_save_library(m_directory);
+    m_directory.create("id-dynamic-sound-");
+    set_save_library(m_directory.path());
 }
 
 void DynamicSoundTestState::save_legacy_state(
@@ -579,7 +577,7 @@ TEST_P(TestDynamicSound, rawOrbitDataIsNotDuplicatedOnRefusal)
         run(calculation);
     }
 
-    std::ifstream file{m_directory / "orbit/orbits.raw"};
+    std::ifstream file{m_directory.path() / "orbit/orbits.raw"};
     ASSERT_TRUE(file);
     std::string header;
     std::getline(file, header);
@@ -613,7 +611,7 @@ TEST_P(TestDynamicSound, driverRefusalRecordsZeroZChannelWithoutPlaybackWaiting)
     EXPECT_EQ(0, render());
     EXPECT_TRUE(owner.finish());
 
-    std::ifstream file{m_directory / "sound/sound001.txt"};
+    std::ifstream file{m_directory.path() / "sound/sound001.txt"};
     ASSERT_TRUE(file);
     std::vector<int> frequencies;
     for (int frequency; file >> frequency;)

@@ -5,6 +5,7 @@
 
 #include "MockDriver.h"
 #include "MockSoundOutput.h"
+#include "TemporaryDirectory.h"
 
 #include <engine/cmdfiles.h>
 #include <engine/NullSoundOutput.h>
@@ -19,7 +20,6 @@
 #include <ui/KeyboardHandler.h>
 
 #include <algorithm>
-#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <iterator>
@@ -85,8 +85,7 @@ protected:
     ValueSaver<bool> m_saved_overwrite{g_overwrite_file, false};
     ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
     std::shared_ptr<MockOutput> m_output{std::make_shared<MockOutput>()};
-    fs::path m_directory;
-    bool m_directory_created{};
+    TemporaryDirectory m_directory;
 };
 
 void TestSoundSession::SetUp()
@@ -95,23 +94,16 @@ void TestSoundSession::SetUp()
     const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
     std::string test_name{info->name()};
     std::replace(test_name.begin(), test_name.end(), '/', '-');
-    m_directory = fs::temp_directory_path() /
-        ("id-sound-session-" + test_name + "-" +
-            std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-    m_directory_created = fs::create_directory(m_directory);
-    ASSERT_TRUE(m_directory_created);
-    set_save_library(m_directory);
+    m_directory.create("id-sound-session-" + test_name + "-");
+    set_save_library(m_directory.path());
 }
 
 void TestSoundSession::TearDown()
 {
     reset_calc_interrupted();
     clear_save_library();
-    if (m_directory_created)
-    {
-        std::error_code ignored;
-        fs::remove_all(m_directory, ignored);
-    }
+    std::error_code ignored;
+    m_directory.remove(ignored);
 }
 
 struct SoundSessionModeInput
@@ -144,7 +136,7 @@ TEST_P(TestNullSoundSession, selectsNullOutputWithoutPlaybackOrRecording)
     EXPECT_NE(nullptr, dynamic_cast<NullSoundOutput *>(g_sound.get()));
     EXPECT_TRUE(session.wait_until_ready());
     EXPECT_TRUE(session.finish());
-    EXPECT_FALSE(fs::exists(m_directory / "sound"));
+    EXPECT_FALSE(fs::exists(m_directory.path() / "sound"));
 }
 
 INSTANTIATE_TEST_SUITE_P(Modes, TestNullSoundSession,
@@ -161,7 +153,7 @@ TEST_F(TestSoundSession, recordingRequestRetainsDriverAdapterWithoutPlayback)
 
     EXPECT_TRUE(session.wait_until_ready());
     EXPECT_TRUE(session.finish());
-    EXPECT_THAT(read_text(m_directory / "sound/sound001.txt"), StartsWith("time="));
+    EXPECT_THAT(read_text(m_directory.path() / "sound/sound001.txt"), StartsWith("time="));
 }
 
 TEST_F(TestSoundSession, unsupportedDeviceRecordsWithoutPlaybackWaiting)
@@ -176,7 +168,7 @@ TEST_F(TestSoundSession, unsupportedDeviceRecordsWithoutPlaybackWaiting)
     EXPECT_TRUE(session.wait_until_ready());
     EXPECT_TRUE(session.finish());
 
-    EXPECT_EQ("230\n", read_text(m_directory / "sound/sound001.txt"));
+    EXPECT_EQ("230\n", read_text(m_directory.path() / "sound/sound001.txt"));
 }
 
 TEST_F(TestSoundSession, batchModeDoesNotEnableRecording)
@@ -190,7 +182,7 @@ TEST_F(TestSoundSession, batchModeDoesNotEnableRecording)
     EXPECT_TRUE(session.wait_until_ready());
     EXPECT_TRUE(session.finish());
 
-    EXPECT_FALSE(fs::exists(m_directory / "sound"));
+    EXPECT_FALSE(fs::exists(m_directory.path() / "sound"));
 }
 
 struct SoundProducerMappingInput

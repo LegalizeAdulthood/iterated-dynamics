@@ -4,6 +4,7 @@
 #include "MockDriver.h"
 #include "MockSoundOutput.h"
 #include "PendingDriverKey.h"
+#include "TemporaryDirectory.h"
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>
@@ -38,7 +39,6 @@
 
 #include <algorithm>
 #include <array>
-#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <functional>
@@ -164,7 +164,7 @@ protected:
     std::vector<std::array<double, 3>> m_samples;
     std::vector<std::array<int, 5>> m_plots;
     std::vector<StereoImage> m_eyes;
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
     int m_key{};
     bool m_ready{true};
 };
@@ -216,11 +216,11 @@ void Orbit3DSoundTestState::TearDown()
 {
     reset_calc_interrupted();
     s_on_orbit = {};
-    if (!m_directory.empty())
+    if (!m_directory.path().empty())
     {
         clear_save_library();
         std::error_code ignored;
-        std::filesystem::remove_all(m_directory, ignored);
+        m_directory.remove(ignored);
     }
 }
 
@@ -239,10 +239,8 @@ void Orbit3DSoundTestState::run(Orbit3D &calculation)
 
 void Orbit3DSoundTestState::create_save_directory()
 {
-    m_directory = std::filesystem::temp_directory_path() /
-        ("id-orbit3d-sound-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-    ASSERT_TRUE(std::filesystem::create_directory(m_directory));
-    set_save_library(m_directory);
+    m_directory.create("id-orbit3d-sound-");
+    set_save_library(m_directory.path());
 }
 
 int Orbit3DSoundTestState::render(SoundSession &sound)
@@ -559,7 +557,7 @@ TEST_P(TestOrbit3DSound, rawOrbitDataIsNotDuplicatedOnRefusal)
         run(calculation);
     }
 
-    std::ifstream file{m_directory / "orbit/orbits.raw"};
+    std::ifstream file{m_directory.path() / "orbit/orbits.raw"};
     ASSERT_TRUE(file);
     std::string header;
     std::getline(file, header);
@@ -778,7 +776,7 @@ TEST_P(TestOrbit3DSound, stereoRefusalPreservesSamplesAndEyeOrder)
         ElementsAre(StereoImage::RED, StereoImage::BLUE, StereoImage::RED, StereoImage::BLUE, StereoImage::RED,
             StereoImage::BLUE));
     EXPECT_THAT(sound_eyes, ElementsAre(StereoImage::RED, StereoImage::RED, StereoImage::RED, StereoImage::RED));
-    std::ifstream file{m_directory / "sound/sound001.txt"};
+    std::ifstream file{m_directory.path() / "sound/sound001.txt"};
     ASSERT_TRUE(file);
     std::vector<int> frequencies;
     for (int frequency; file >> frequency;)

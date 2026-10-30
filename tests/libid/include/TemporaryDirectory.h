@@ -5,6 +5,7 @@
 
 #include <filesystem>
 #include <string_view>
+#include <system_error>
 
 namespace id::test
 {
@@ -22,6 +23,7 @@ public:
     void create(std::string_view prefix);
     const std::filesystem::path &path() const;
     void remove();
+    void remove(std::error_code &error);
 
 private:
     std::filesystem::path m_path;
