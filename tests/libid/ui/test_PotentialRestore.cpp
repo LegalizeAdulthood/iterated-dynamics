@@ -3,6 +3,7 @@
 //
 #include "ColorMapSaver.h"
 #include "MockDriver.h"
+#include "TemporaryDirectory.h"
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>
@@ -33,7 +34,6 @@
 #include <gtest/gtest.h>
 
 #include <array>
-#include <chrono>
 #include <filesystem>
 #include <memory>
 #include <optional>
@@ -85,7 +85,7 @@ protected:
     ValueSaver<std::filesystem::path> m_saved_read_filename{g_read_filename};
     std::optional<ColorMapSaver> m_saved_palette;
     std::array<int, 20> m_frame{};
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
 };
 
 void TestPotentialRestore::SetUp()
@@ -94,12 +94,10 @@ void TestPotentialRestore::SetUp()
     init_memory();
     set_normal_dot();
     m_saved_palette.emplace();
-    m_directory = std::filesystem::temp_directory_path() /
-        ("id-potential-restore-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-    std::filesystem::create_directory(m_directory);
-    set_save_library(m_directory);
-    g_temp_dir = m_directory / "missing";
-    g_read_filename = m_directory / "image.pot";
+    m_directory.create("id-potential-restore-");
+    set_save_library(m_directory.path());
+    g_temp_dir = m_directory.path() / "missing";
+    g_read_filename = m_directory.path() / "image.pot";
     GifWriter::Palette palette(256);
     palette[0] = {255, 0, 0};
     GifWriter writer{g_read_filename, {6, 2}, palette};
@@ -134,7 +132,7 @@ void TestPotentialRestore::TearDown()
     clear_save_library();
     m_saved_palette.reset();
     std::error_code ignored;
-    std::filesystem::remove_all(m_directory, ignored);
+    m_directory.remove(ignored);
 }
 
 void TestPotentialRestore::prepare_storage()

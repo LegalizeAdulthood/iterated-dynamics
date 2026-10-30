@@ -6,6 +6,7 @@
 #include "ColorMapSaver.h"
 #include "MockDriver.h"
 #include "MockSoundOutput.h"
+#include "TemporaryDirectory.h"
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>
@@ -79,7 +80,7 @@ protected:
 
     MockDriver m_driver;
     std::shared_ptr<StrictMock<MockSoundOutput>> m_output{std::make_shared<StrictMock<MockSoundOutput>>()};
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
     std::optional<ColorMapSaver> m_saved_palette;
     std::vector<int> m_samples;
     int m_delays{};
@@ -113,11 +114,10 @@ protected:
 void TestRestoredImageSound::SetUp()
 {
     const std::string name{UnitTest::GetInstance()->current_test_info()->name()};
-    m_directory = std::filesystem::temp_directory_path() / ("id-restored-sound-" + name);
-    ASSERT_TRUE(std::filesystem::create_directory(m_directory));
-    g_read_filename = m_directory / "image.gif";
-    g_save_dir = m_directory;
-    set_save_library(m_directory);
+    m_directory.create("id-restored-sound-" + name + "-");
+    g_read_filename = m_directory.path() / "image.gif";
+    g_save_dir = m_directory.path();
+    set_save_library(m_directory.path());
     m_saved_palette.emplace();
     s_restored_pixels.clear();
     GifWriter writer{g_read_filename, {2, 2}, {{255, 0, 0}, {0, 0, 0}}};
@@ -149,7 +149,7 @@ void TestRestoredImageSound::TearDown()
     s_restored_pixels.clear();
     clear_save_library();
     m_saved_palette.reset();
-    std::filesystem::remove_all(m_directory);
+    m_directory.remove();
 }
 
 TEST_F(TestRestoredImageSound, coordinatesScanlinesAndReleaseTailsWithoutConsumingPendingInput)
@@ -281,14 +281,14 @@ TEST_F(TestRestoredImageSound, uiEntrySelectsRestoredMappingAndWritesEachLegacyR
     ASSERT_EQ(0, restore_image());
 
     EXPECT_EQ(previous, g_sound);
-    std::ifstream file{m_directory / "sound/sound001.txt"};
+    std::ifstream file{m_directory.path() / "sound/sound001.txt"};
     ASSERT_TRUE(file.is_open());
     const std::string records{std::istreambuf_iterator<char>{file}, std::istreambuf_iterator<char>{}};
     EXPECT_EQ("220\n407\n407\n220\n", records);
     EXPECT_EQ(4U, s_restored_pixels.size());
     EXPECT_EQ(0, m_delays);
     file.close();
-    EXPECT_TRUE(std::filesystem::remove(m_directory / "sound/sound001.txt"));
+    EXPECT_TRUE(std::filesystem::remove(m_directory.path() / "sound/sound001.txt"));
 }
 
 } // namespace id::test

@@ -5,6 +5,7 @@
 
 #include "ColorMapSaver.h"
 #include "MockDriver.h"
+#include "TemporaryDirectory.h"
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
@@ -231,7 +232,7 @@ protected:
     void expect_raster(const GifFileType &gif, const std::vector<Byte> &pixels, int width, int height) const;
 
     MockDriver m_driver;
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
     std::filesystem::path m_path;
     int m_frame_width{};
     std::vector<Byte> m_frame;
@@ -271,12 +272,11 @@ void TestGifWriterRaster::SetUp()
 {
     std::string name{UnitTest::GetInstance()->current_test_info()->name()};
     std::replace(name.begin(), name.end(), '/', '_');
-    m_directory = std::filesystem::temp_directory_path() / ("id-encoder-" + name);
-    std::filesystem::create_directories(m_directory);
-    m_path = m_directory / "image.gif";
-    g_save_dir = m_directory;
-    g_temp_dir = m_directory;
-    set_save_library(m_directory);
+    m_directory.create("id-encoder-" + name + "-");
+    m_path = m_directory.path() / "image.gif";
+    g_save_dir = m_directory.path();
+    g_temp_dir = m_directory.path();
+    set_save_library(m_directory.path());
     m_saved_palette.emplace();
     for (int color = 0; color < 256; ++color)
     {
@@ -311,7 +311,7 @@ void TestGifWriterRaster::TearDown()
     free_temp_msg();
     clear_save_library();
     m_saved_palette.reset();
-    std::filesystem::remove_all(m_directory);
+    m_directory.remove();
 }
 
 void TestGifWriterRaster::configure_image(
@@ -616,7 +616,7 @@ INSTANTIATE_TEST_SUITE_P(DimensionInputs, TestGifWriterInvalidDimensions,
 
 TEST_F(TestGifWriterRaster, reportsOutputOpenFailure)
 {
-    std::filesystem::path filename{m_directory / "missing" / "image.gif"};
+    std::filesystem::path filename{m_directory.path() / "missing" / "image.gif"};
 
     EXPECT_EQ(-1, save_image(filename));
 
@@ -734,7 +734,7 @@ void TestGifWriterExistingImage::SetUp()
 
 TEST_F(TestGifWriterExistingImage, existingTemporaryDestinationIsNotDeleted)
 {
-    const std::filesystem::path temporary{m_directory / "id.tmp"};
+    const std::filesystem::path temporary{m_directory.path() / "id.tmp"};
     std::filesystem::create_directory(temporary);
     EXPECT_CALL(m_driver, is_disk()).Times(0);
     EXPECT_CALL(m_driver, flush()).Times(0);
@@ -752,7 +752,7 @@ TEST_F(TestGifWriterExistingImage, existingTemporaryDestinationIsNotDeleted)
 
 TEST_F(TestGifWriterExistingImage, replacementFailurePreservesOriginalAndExistingBackup)
 {
-    const std::filesystem::path backup{m_directory / "id.tmp.bak"};
+    const std::filesystem::path backup{m_directory.path() / "id.tmp.bak"};
     {
         std::ofstream reserved{backup};
         reserved << "reserved";
@@ -769,7 +769,7 @@ TEST_F(TestGifWriterExistingImage, replacementFailurePreservesOriginalAndExistin
     EXPECT_FALSE(image.succeeded());
     EXPECT_THAT(image.diagnostic(), HasSubstr("Can't replace"));
     EXPECT_TRUE(std::filesystem::exists(backup));
-    EXPECT_FALSE(std::filesystem::exists(m_directory / "id.tmp"));
+    EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
     const GifFilePtr gif{read_saved_gif()};
     expect_raster(*gif, m_original_pixels, 8, 6);
 }
@@ -784,7 +784,7 @@ TEST_F(TestGifWriterRaster, notificationFollowsProgressRestorationAndFileClosure
             {
                 EXPECT_FALSE(g_busy);
                 EXPECT_EQ(pixels, image_pixels());
-                const std::filesystem::path renamed{m_directory / "closed.gif"};
+                const std::filesystem::path renamed{m_directory.path() / "closed.gif"};
                 EXPECT_NO_THROW(std::filesystem::rename(m_path, renamed));
                 EXPECT_NO_THROW(std::filesystem::rename(renamed, m_path));
             });
@@ -954,7 +954,7 @@ TEST_F(TestGifWriterExistingImage, failedReplacementPreservesOriginalAndRemovesT
 
     const GifFilePtr gif{read_saved_gif()};
     expect_raster(*gif, m_original_pixels, 8, 6);
-    EXPECT_FALSE(std::filesystem::exists(m_directory / "id.tmp"));
+    EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
     EXPECT_EQ(BatchMode::BAILOUT_ERROR_NO_SAVE, g_init_batch);
     EXPECT_FALSE(g_busy);
 }
@@ -969,7 +969,7 @@ TEST_F(TestGifWriterExistingImage, overwriteReplacesOriginalOnlyAfterSuccessfulS
 
     const GifFilePtr gif{read_saved_gif()};
     expect_raster(*gif, pixels, 8, 6);
-    EXPECT_FALSE(std::filesystem::exists(m_directory / "id.tmp"));
+    EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
 }
 
 TEST_F(TestGifWriterExistingImage, selectsNextFilenameWithoutOverwriting)
@@ -979,10 +979,10 @@ TEST_F(TestGifWriterExistingImage, selectsNextFilenameWithoutOverwriting)
 
     ASSERT_EQ(0, save_image(filename));
 
-    EXPECT_EQ(m_directory / "image3.gif", filename);
-    EXPECT_TRUE(std::filesystem::exists(m_directory / "image2.gif"));
+    EXPECT_EQ(m_directory.path() / "image3.gif", filename);
+    EXPECT_TRUE(std::filesystem::exists(m_directory.path() / "image2.gif"));
     EXPECT_TRUE(std::filesystem::exists(m_path));
-    EXPECT_FALSE(std::filesystem::exists(m_directory / "id.tmp"));
+    EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
 }
 
 TEST_F(TestGifWriterRaster, autosaveReusesFilenameAndFinalSaveEndsResaving)
@@ -999,7 +999,7 @@ TEST_F(TestGifWriterRaster, autosaveReusesFilenameAndFinalSaveEndsResaving)
 
     EXPECT_EQ(m_path, filename);
     EXPECT_TRUE(g_started_resaves);
-    EXPECT_FALSE(std::filesystem::exists(m_directory / "id.tmp"));
+    EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
     {
         const GifFilePtr gif{read_saved_gif()};
         expect_raster(*gif, pixels, 8, 6);
@@ -1010,7 +1010,7 @@ TEST_F(TestGifWriterRaster, autosaveReusesFilenameAndFinalSaveEndsResaving)
 
     EXPECT_EQ(TimedSave::NONE, g_resave_flag);
     EXPECT_FALSE(g_started_resaves);
-    EXPECT_EQ(m_directory / "image2.gif", filename);
+    EXPECT_EQ(m_directory.path() / "image2.gif", filename);
 }
 
 class TestGifWriterExtensions : public TestGifWriterRaster

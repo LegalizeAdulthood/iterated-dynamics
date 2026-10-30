@@ -3,6 +3,7 @@
 //
 #include "ColorMapSaver.h"
 #include "MockDriver.h"
+#include "TemporaryDirectory.h"
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>
@@ -31,7 +32,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <chrono>
 #include <filesystem>
 #include <functional>
 #include <optional>
@@ -103,7 +103,7 @@ protected:
     ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
     ValueSaver<std::filesystem::path> m_saved_filename{g_read_filename};
     std::optional<ColorMapSaver> m_saved_palette;
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
     std::vector<StereoImage> m_lines;
     int m_cleanup_count{};
 };
@@ -111,11 +111,9 @@ protected:
 void TestStereoRestore::SetUp()
 {
     m_saved_palette.emplace();
-    m_directory = std::filesystem::temp_directory_path() /
-        ("id-stereo-restore-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-    std::filesystem::create_directory(m_directory);
-    set_save_library(m_directory);
-    g_read_filename = m_directory / "image.gif";
+    m_directory.create("id-stereo-restore-");
+    set_save_library(m_directory.path());
+    g_read_filename = m_directory.path() / "image.gif";
     GifWriter::Palette palette(256);
     palette[1] = {255, 0, 0};
     GifWriter writer{g_read_filename, {4, 3}, palette};
@@ -154,7 +152,7 @@ void TestStereoRestore::TearDown()
     clear_save_library();
     m_saved_palette.reset();
     std::error_code ignored;
-    std::filesystem::remove_all(m_directory, ignored);
+    m_directory.remove(ignored);
 }
 
 void TestStereoRestore::expect_full_screen() const
