@@ -864,6 +864,10 @@ void SolidGuess::plot_block(const int build_row, const int x, int y, const int c
     {
         x_lim = g_i_stop_pt.x+1;
     }
+    if (x >= x_lim)
+    {
+        return;
+    }
     if (build_row >= 0 && !m_guess_plot) // save it for later put_line
     {
         if (build_row == 0)
