@@ -3,6 +3,7 @@
 //
 #include <io/library.h>
 
+#include "EnvVarSaver.h"
 #include "test_data.h"
 #include "test_library.h"
 
@@ -14,7 +15,6 @@
 
 #include <gtest/gtest.h>
 
-#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <memory>
@@ -69,47 +69,6 @@ public:
 protected:
     void SetUp() override;
     void TearDown() override;
-};
-
-class EnvVarSaver
-{
-public:
-    EnvVarSaver(const char *name, const char *value) :
-        m_name{name}
-    {
-        if (const char *old_value = std::getenv(name); old_value != nullptr)
-        {
-            m_had_value = true;
-            m_value = old_value;
-        }
-        set(value);
-    }
-
-    ~EnvVarSaver()
-    {
-        set(m_had_value ? m_value.c_str() : nullptr);
-    }
-
-private:
-    void set(const char *value) const
-    {
-#ifdef _WIN32
-        _putenv_s(m_name.c_str(), value == nullptr ? "" : value);
-#else
-        if (value == nullptr)
-        {
-            unsetenv(m_name.c_str());
-        }
-        else
-        {
-            setenv(m_name.c_str(), value, 1);
-        }
-#endif
-    }
-
-    std::string m_name;
-    bool m_had_value{};
-    std::string m_value;
 };
 
 void TestLibrary::SetUp()

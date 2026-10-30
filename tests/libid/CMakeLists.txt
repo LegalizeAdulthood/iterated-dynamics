@@ -58,6 +58,7 @@ add_executable(test-id
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_library.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_migrate_gif.h"
+    include/EnvVarSaver.h EnvVarSaver.cpp
     "include/expected_map.h"
     include/MemoryDiskStorage.h MemoryDiskStorage.cpp
     "include/MockDriver.h"
