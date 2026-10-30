@@ -5,6 +5,7 @@
 #include <ui/InverseJuliaFractalController.h>
 
 #include "MockDriver.h"
+#include "TemporaryDirectory.h"
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
@@ -38,7 +39,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <chrono>
 #include <cmath>
 #include <filesystem>
 #include <memory>
@@ -381,7 +381,7 @@ protected:
     ValueSaver<double> m_saved_param3{g_params[3], 1024.0};
     ValueSaver<DComplex> m_saved_old_z{g_old_z};
     ValueSaver<DComplex> m_saved_new_z{g_new_z};
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
     std::unique_ptr<NonStandardFractal> m_calculation;
 };
 
@@ -392,11 +392,9 @@ void TestInverseJuliaQueue::SetUp()
     init_memory();
     reset_calc_interrupted();
     g_debug_flag = DebugFlags::NONE;
-    m_directory = std::filesystem::temp_directory_path() /
-        ("id-inverse-queue-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-    std::filesystem::create_directory(m_directory);
-    g_temp_dir = m_directory / "missing";
-    set_save_library(m_directory);
+    m_directory.create("id-inverse-queue-");
+    g_temp_dir = m_directory.path() / "missing";
+    set_save_library(m_directory.path());
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
 }
 
@@ -408,7 +406,7 @@ void TestInverseJuliaQueue::TearDown()
     reset_calc_interrupted();
     clear_save_library();
     std::error_code ignored;
-    std::filesystem::remove_all(m_directory, ignored);
+    m_directory.remove(ignored);
     TestInverseJuliaController::TearDown();
 }
 
@@ -451,7 +449,7 @@ TEST_F(TestInverseJuliaQueue, retryUsesASmallerQueue)
                 EXPECT_EQ(0UL, queue_capacity());
                 EXPECT_FALSE(g_disk_flag);
                 EXPECT_TRUE(exit_check().empty());
-                g_temp_dir = m_directory;
+                g_temp_dir = m_directory.path();
                 return ID_KEY_ENTER;
             }));
 

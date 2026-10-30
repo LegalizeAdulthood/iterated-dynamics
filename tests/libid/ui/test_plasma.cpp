@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include "MockDriver.h"
+#include "TemporaryDirectory.h"
 #include "TestRender.h"
 
 #include <engine/calcfrac.h>
@@ -32,7 +33,6 @@
 
 #include <algorithm>
 #include <array>
-#include <chrono>
 #include <filesystem>
 #include <memory>
 #include <stdexcept>
@@ -293,16 +293,14 @@ protected:
     ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
     ValueSaver<bool> m_saved_good_mode{g_good_mode, true};
     ValueSaver<std::filesystem::path> m_saved_temp{g_temp_dir};
-    std::filesystem::path m_directory;
+    TemporaryDirectory m_directory;
 };
 
 void TestPlasmaStorage::SetUp()
 {
     TestPlasma::SetUp();
-    m_directory = std::filesystem::temp_directory_path() /
-        ("id-plasma-storage-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
-    std::filesystem::create_directory(m_directory);
-    g_temp_dir = m_directory / "missing";
+    m_directory.create("id-plasma-storage-");
+    g_temp_dir = m_directory.path() / "missing";
     EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
     EXPECT_CALL(m_driver, key_pressed()).WillRepeatedly(Return(0));
 }
@@ -311,7 +309,7 @@ void TestPlasmaStorage::TearDown()
 {
     TestPlasma::TearDown();
     std::error_code ignored;
-    std::filesystem::remove_all(m_directory, ignored);
+    m_directory.remove(ignored);
 }
 
 TEST_F(TestPlasmaStorage, controllerPreparesPotentialStorageBeforePlotting)
