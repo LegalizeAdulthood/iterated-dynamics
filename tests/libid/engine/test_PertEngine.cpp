@@ -3,6 +3,7 @@
 //
 #include <engine/PertEngine.h>
 
+#include "MemoryDiskStorage.h"
 #include "MockDriver.h"
 #include "MockSoundOutput.h"
 
@@ -7278,9 +7279,7 @@ void PotentialStorageTest::SetUp()
 {
     PerturbationPotentialTest::SetUp();
     init_memory();
-    std::uint64_t blocks{};
-    ASSERT_TRUE(disk_video_memory_blocks(WIDTH, HEIGHT * 2, 256, 0, blocks));
-    start_disk_storage(WIDTH, HEIGHT * 2, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, blocks, MemoryLocation::MEMORY));
+    open_memory_disk_storage(WIDTH, HEIGHT * 2, 256);
     g_potential = {{23.0, 10.0, 4.0}, true, true};
     g_outside_method = ColorMethod::COLOR;
     g_outside_color = 6;
@@ -8201,10 +8200,7 @@ TEST_P(TestPerturbationIterations, trueColorIterationOutputUsesTheFullCountBefor
     ValueSaver saved_fill{g_fill_type, FillType::POINTS};
     ValueSaver saved_haze{g_haze, 0};
     init_memory();
-    std::uint64_t blocks{};
-    ASSERT_TRUE(disk_video_memory_blocks(WIDTH * 3, HEIGHT, 256, 0, blocks));
-    const MemoryHandle backing{memory_alloc(DISK_STORAGE_BLOCK_SIZE, blocks, MemoryLocation::MEMORY)};
-    start_disk_storage(WIDTH * 3, HEIGHT, 256, backing);
+    open_memory_disk_storage(WIDTH * 3, HEIGHT, 256);
     g_plot = plot_iteration_color;
 
     compare_pixel({}, 257);
