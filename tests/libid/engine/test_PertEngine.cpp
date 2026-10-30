@@ -4,6 +4,7 @@
 #include <engine/PertEngine.h>
 
 #include "MockDriver.h"
+#include "MockSoundOutput.h"
 
 #include <engine/bailout_formula.h>
 #include <engine/BoundaryTrace.h>
@@ -10894,17 +10895,6 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestSynchronousSelection,
 
 INSTANTIATE_TEST_SUITE_P(ReferencePrecision, TestSynchronousPerturbation, Bool());
 
-class MockPerturbationSound : public SoundOutput
-{
-public:
-    MOCK_METHOD(bool, play, (const SoundSample &), (override));
-    MOCK_METHOD(void, begin_orbit, (), (override));
-    MOCK_METHOD(void, update, (), (override));
-    MOCK_METHOD(bool, ready, (), (const, override));
-    MOCK_METHOD(void, mute, (), (override));
-    MOCK_METHOD(bool, finish, (), (override));
-};
-
 class PerturbationOutputTest : public PerturbationIterationTest
 {
 public:
@@ -10917,7 +10907,7 @@ protected:
     std::vector<SoundSample> expected_samples(const std::complex<double> &center) const;
     void expect_samples(const std::vector<SoundSample> &expected) const;
 
-    std::shared_ptr<StrictMock<MockPerturbationSound>> m_output{std::make_shared<StrictMock<MockPerturbationSound>>()};
+    std::shared_ptr<StrictMock<MockSoundOutput>> m_output{std::make_shared<StrictMock<MockSoundOutput>>()};
     ValueSaver<SoundOutputPtr> m_saved_sound{g_sound, m_output};
     ValueSaver<double> m_saved_mx1{g_plot_mx1, -2.0};
     ValueSaver<double> m_saved_mx2{g_plot_mx2, 0.0};

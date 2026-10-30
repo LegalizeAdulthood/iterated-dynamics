@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include "MockDriver.h"
+#include "MockSoundOutput.h"
 
 #include <engine/calcfrac.h>
 #include <engine/LogicalScreen.h>
@@ -37,17 +38,6 @@ namespace id::test
 namespace
 {
 
-class MockRestoredSound : public SoundOutput
-{
-public:
-    MOCK_METHOD(bool, play, (const SoundSample &), (override));
-    MOCK_METHOD(void, update, (), (override));
-    MOCK_METHOD(bool, ready, (), (const, override));
-    MOCK_METHOD(void, begin_orbit, (), (override));
-    MOCK_METHOD(void, mute, (), (override));
-    MOCK_METHOD(bool, finish, (), (override));
-};
-
 std::vector<std::array<int, 3>> s_pixels;
 constexpr Byte REPLACEMENT_PIXELS[]{8, 9};
 constexpr Byte SINGLE_PIXEL[]{1};
@@ -67,7 +57,7 @@ protected:
     void drain(RestoredImageOutput &output);
 
     MockDriver m_driver;
-    std::shared_ptr<StrictMock<MockRestoredSound>> m_sound{std::make_shared<StrictMock<MockRestoredSound>>()};
+    std::shared_ptr<StrictMock<MockSoundOutput>> m_sound{std::make_shared<StrictMock<MockSoundOutput>>()};
     ValueSaver<SoundOutputPtr> m_saved_sound{g_sound, m_sound};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, capture_restored_pixel};
