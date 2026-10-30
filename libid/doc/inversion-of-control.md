@@ -26,14 +26,18 @@ changes who owns a decision or return point:
   waiting internally;
 - application phase and command effect are represented separately.
 
-The standard escape-time renderer should follow the same shape as the
-calculation types that have already been split into UI coordination code
-and calculation objects.
+The release 1.5 input boundary is implemented.  The descriptions below
+record current ownership and behavior, including remaining presentation
+and backend coupling.  They are not instructions to restore an earlier
+design where implementation has superseded it.
+
+The standard escape-time renderer follows the same shape as the other
+calculation types split into UI coordination code and calculation objects.
 
 ## Existing Shape
 
 These files show the calculation-object and UI-controller structure.
-The audit below records the remaining reverse calls inside that structure:
+The audit below records the implemented boundary and its current limits:
 
 - `libid/ui/AntController.cpp` drives selected Ant work in
   `libid/fractals/Ant.cpp`.
@@ -86,7 +90,7 @@ point and plot inputs.  `InverseJuliaController` in
 coordinate messages, mode preferences, and keyboard and mouse scopes.
 `InverseJulia::iterate()` only calculates and plots bounded orbit work.
 
-## Target Shape
+## Standard Render Structure
 
 The standard escape-time calculation object already has this lifecycle:
 
@@ -115,20 +119,21 @@ That includes active row and column, subdivision state, block state, scan
 stack, and decisions about whether a pixel needs real orbit work or can be
 filled from surrounding pixels.
 
-The pass algorithm does not compute the orbit.  It advances traversal and
-fill state, then sets up the state needed for the next call to the
-standard orbit function.  `StandardFractal` calls the correct orbit
-function after the pass has prepared the current pixel state.  The chosen
-function depends on the selected fractal type and orbit algorithm.  During
-this refactor, that communication may remain indirect through existing
-globals such as `g_row`, `g_col`, `g_color`, and `g_plot`.  Removing those
-globals is separate work.
+Pixel traversal passes do not compute the orbit.  They expose
+`select_pixel()`, `selected_pixel()`, and `complete_pixel(color)`;
+`StandardFractal` computes the selected pixel and supplies its color.
+Communication still uses globals such as `g_row`, `g_col`, `g_color`, and
+`g_plot`.  Removing those globals is separate work.
 
-A practical implementation is the current non-virtual `StandardPass`
-router.  It holds a `std::variant` of concrete pass classes.
-`StandardPass` exposes one small public surface, such as `reset()`,
-`select()`, `iterate()`, `status()`, and `suspend()`, and delegates to
-the active variant alternative.
+`SynchronousOrbit` and `StickyOrbits` are different: they advance orbit
+work directly.  `StandardPass::iterate(PertEngine *)` routes their bounded
+work and supplies the selected perturbation strategy when active.  They
+do not use the pixel-pass selection/completion contract.
+
+The non-virtual `StandardPass` router holds a `std::variant` of concrete
+pass classes.  It routes chunk preparation, selection, pixel completion,
+orbit iteration, status, suspension, and resume storage to the active
+alternative.
 
 Each concrete pass owns its state and operation methods in its own class:
 `BoundaryTrace`, `Diffusion`, `OnePass`, `TwoPass`, `SolidGuess`,
@@ -143,11 +148,12 @@ by `g_std_calc_mode`, including `SynchronousOrbit`, `Tesseral`,
 `BoundaryTrace`, `SolidGuess`, `Diffusion`, `StickyOrbits`, and the
 `OnePass` and `TwoPass` paths.
 
-Perturbation is an alternate way to compute an escape-time orbit for a
-pixel.  It belongs below `StandardPass` as an orbit strategy selected by
-`StandardFractal`, separately from traversal.  `passes=p` remains
-compatibility syntax that selects perturbation orbit calculation while
-using the default standard traversal.
+Perturbation is an alternate orbit strategy selected and owned by
+`StandardFractal`, separately from traversal.  Pixel passes receive its
+completed colors; synchronous and sticky orbit work receive the strategy
+through their iteration interface.  `passes=p` remains compatibility
+syntax selecting perturbation with solid-guess traversal, not a separate
+perturbation pass.
 
 The UI polling loop owns input policy.  It constructs or resumes
 `StandardFractal`, polls input through the active UI context, asks the
@@ -165,7 +171,7 @@ compatibility during the refactor, the final shape should still separate:
 
 ## Current Audit Snapshot
 
-The current code is already part-way through this plan:
+The current calculation/UI split is:
 
 - `libid/ui/StandardFractalController.cpp` owns standard-render
   keyboard polling through the handler stack.
@@ -186,7 +192,9 @@ The current code is already part-way through this plan:
   and failure fallback.  Resume reuses its existing storage.  Potential
   high-byte output uses the selected pixel backend, not a driver query.
 - Tesseral is a concrete `StandardPass` alternative.  `Tesseral` has
-  `iterate()`, `done()`, and `suspend()`, and owns its box stack.
+  `begin_chunk()`, `select_pixel()`, `selected_pixel()`,
+  `complete_pixel(color)`, `done()`, and `suspend()`, and owns its box
+  stack.
   Initial edge setup, later edge probes, and box filling run through
   bounded, resumable state.  Tesseral suspend records the active box and
   restarts initial edge setup if interruption happens during that phase.
@@ -210,8 +218,8 @@ The current code is already part-way through this plan:
   color completion; cached lookups and region fills do not request orbit
   calculation.  Scan and outline chunk counters persist across requests.
   `StandardFractal` performs calculation and retains the scan and outline
-  yield checkpoints.  Invalid options still invoke a modal `stop_msg()`
-  from pass initialization.
+  yield checkpoints.  Invalid options throw diagnostics from pass
+  initialization; the outer UI boundary reports them.
 - `Diffusion` owns its counter, tile traversal, and fill state.  Its
   explicit phases advance in bounded counter chunks and suspend through
   `StandardPass`.  Selection retains the active tile coordinate until
@@ -238,11 +246,14 @@ The current code is already part-way through this plan:
   separately from the active traversal mode.  `passes=p` is compatibility
   syntax that selects perturbation without making perturbation a
   `StandardPass` traversal.  `StandardPass` owns all pixel traversal.
-  `PertEngine` always computes the requested pixel, using cached reference
-  orbits.  On reference failure it selects a closer cached reference or
-  adds one at that pixel.  No deferred-pixel queue or retry traversal
-  remains.  BoundaryTrace can use perturbation and receives the same
-  nonzero palette color that is stored in its image cache.
+  `PertEngine` retains one reference point and its orbit, with no reference
+  history.  On reference failure it replaces that reference with the
+  current pixel.  Reference preparation and pixel work can yield while
+  retaining the requested pixel; internal retry does not choose traversal
+  order or defer pixels to a later pass.  BoundaryTrace can use
+  perturbation and receives the same nonzero palette color stored in its
+  image cache.  Synchronous and sticky orbit work also support explicit
+  perturbation orbit increments.
 - `CommandResult` already separates menu command effects from the
   `MainState` application-phase switch.  Some effects still travel through
   `g_calc_status` and `MainContext::more_keys` side effects.
@@ -253,8 +264,9 @@ The current code is already part-way through this plan:
   copies, restoration, and delay in the standard and Lyapunov UI
   controllers.  It restores the image before calculation or traversal
   continues, and does not repeat marker display for an unfinished pixel.
-  Zero-delay work retains calculation batches.  Engine code has no marker
-  display bridge, dispatch wrapper, or marker-specific work scheduling.
+  Zero-delay work retains calculation batches.  Standard calculation code
+  has no marker display bridge, dispatch wrapper, or marker-specific work
+  scheduling.  FrothyBasin retains its separate simple marker path.
 - `Orbit2D`, `Orbit3D`, and `Dynamic2D` submit numerical samples through
   `g_sound`.  Their UI controllers service playback and mute on
   interruption.  Nested producer scopes borrow the same output; the UI
@@ -383,7 +395,7 @@ The current code is already part-way through this plan:
   restoration.  UI owns photographer prompts and shared output cleanup;
   no calculation wrapper calls back into those interactions.
 
-The fresh reverse-call audit also found these live paths:
+The outer control boundary is also implemented:
 
 - `ImageRenderOperation` selects and owns the standard, Lyapunov, or
   non-standard calculation.  The outer UI `ImageRenderContext` owns its
@@ -392,14 +404,15 @@ The fresh reverse-call audit also found these live paths:
   `NonStandardFractal` selects calculation objects for every standalone
   renderer.  `FractalSpecific` stores no UI renderer pointers;
   per-image callbacks perform setup only.
-- Command validation can still invoke modal `stop_msg()` or application
-  shutdown through `goodbye()`.
-- Image loading, image saving, and command parsing still select UI
-  prompts, display status, or exit the application from non-UI modules.
+- Command processing returns diagnostics and requested actions.  UI owns
+  diagnostic presentation, generation, device initialization, and exit.
+- GIF loading and saving return to UI between scanlines for feedback and
+  sound servicing without keyboard interruption during the file command.
+  Codecs and storage backends do not invoke modal UI or application exit.
 
-The numbered slices below cover these paths explicitly.  A controller
-listing, a future-direction paragraph, or a generic no-UI-includes rule
-does not count as an implementation slice for a reverse call.
+No numbered implementation slices remain for the release 1.5 input
+boundary.  The later sections distinguish current presentation policy,
+remaining backend dependencies, and future event-driven work.
 
 ## Input Rules
 
@@ -486,8 +499,9 @@ maps those effects onto the existing `MainState` application-phase switch
 and local-loop behavior.  Keep that distinction as the outer application
 loop is inverted.
 
-Input is the outer loop after control is inverted.  Keyboard, mouse,
-command-file, command-line, and batch input are all command sources.  The
+The broader application-loop inversion remains future work.  In that
+shape, input is the outer loop.  Keyboard, mouse, command-file,
+command-line, and batch input are all command sources.  The
 engine should construct into a default, well-defined render model, but no
 image can be generated until a display target exists.  Selecting a video
 mode supplies the image dimensions; after that, default parameters such
@@ -549,13 +563,8 @@ share syntax processing and preserve the original parameter order.
 
 Shared syntax, recognition, source routing, mixed-parameter ownership,
 initialization, ordering, failure behavior, and consequence reporting are
-agreed below.  The seven design discussions and their implementation
-slices are complete.  Shared command extraction is complete.
-
-Separate parsing, source routing, defaults, and individual handler moves
-in their assigned slices.  Do not bypass that sequence with forwarding
-wrappers, duplicate helpers, relocated UI state, or new engine-to-UI
-dependencies.
+implemented as described below.  `CommandRouter` owns UI-first routing;
+`CommandProcessor` owns incremental source traversal and aggregation.
 
 ### Agreed Shared Syntax
 
@@ -582,8 +591,8 @@ dependencies.
   and handler selection outside `Command`.  For example,
   `maxiter=garbage` can be decomposed syntactically; its handler rejects
   the nonnumeric value.  Do not redesign decoding during extraction.
-- Shared command extraction and direct syntax coverage are complete.
-  Handler ownership, routing, and result semantics remain unchanged.
+- Direct command-syntax tests cover the shared representation separately
+  from handler ownership, routing, and result aggregation.
 
 ### Agreed Recognition
 
@@ -622,9 +631,9 @@ dependencies.
 
 ### Agreed Source Routing
 
-- Introduce a concrete `engine::CommandProcessor` for incremental source
-  processing.  UI owns the outer routing loop; engine never calls a UI
-  handler or receives a UI callback.
+- `engine::CommandProcessor` performs incremental source processing.
+  UI owns the outer routing loop; engine never calls a UI handler or
+  receives a UI callback.
 - Engine retains command-line position, startup configuration, file
   lookup/open/read/close, existing `@file` and `@file/setname` expansion,
   processing context, comments, continuation lines, and set boundaries.
@@ -639,8 +648,9 @@ dependencies.
 - Engine owns per-command, per-file, and overall result accumulation and
   source-specific continuation.  It sees command outcomes, not UI
   settings.  A rejected command or syntax error prevents further handler
-  dispatch for that command; it does not unconditionally stop the UI
-  processing loop.
+  dispatch for that command.  Initial-startup and batch errors also stop
+  later source processing; nonfatal interactive restart errors can
+  continue under the ordering and failure rules below.
 - Support startup/restart sources, a selected parameter set supplied as
   an already-positioned file, and a single interactive parameter.  Adopt
   file ownership explicitly and close files on completion and exceptions.
@@ -661,24 +671,20 @@ dependencies.
   them.  Keep those flags separate from the overall startup result.
   Preserve interactive entry's existing debug-only compatibility path;
   do not apply file-completion rules to every command.
-- Use the coordinator from `main_restart()`, `get_commands()`, and
-  `get_cmd_string()`, including startup-configuration reprocessing.
-  Replace their whole-source `cmd_files()`, `load_commands()`, and
-  textual `cmd_arg()` calls.  Keep diagnostic presentation and action
-  execution at their existing outer UI boundaries.
+- `main_restart()`, `get_commands()`, and `get_cmd_string()` use the
+  coordinator, including startup-configuration reprocessing.  The old
+  whole-source `cmd_files()`, `load_commands()`, and textual `cmd_arg()`
+  entry points are gone.  Diagnostic presentation and action execution
+  remain at the outer UI boundaries.
 - Validate all assembled owner tables in the coordinator before
   processing starts.  Do not retain an application-facing engine-only
   path that bypasses UI ownership.  Engine-handler unit tests may still
   invoke engine handlers directly.
-- Encapsulate source traversal locally before exposing its stepping to
-  UI.  Connect every application entry point before moving individual UI
-  handlers.  Remove temporary runners once their callers are converted;
-  precede any new temporary addition with `// TODO: removed later`.
-- Completed slices 53.8.5 through 53.8.7 implement source processing and
-  routing; 53.9.1 through 53.9.11 move the UI parameters and key-name
-  parser one at a time.  Initialization follows the agreement below;
-  ordering and failure follow their agreement below.  Result
-  interpretation follows the consequence-reporting agreement below.
+- Source traversal is encapsulated in engine and stepped by UI.  The
+  temporary runners used during extraction have been removed.
+- Application startup, selected parameter sets, single-command entry, and
+  fallback configuration processing all use the UI-first coordinator.
+  No whole-source engine runner bypasses UI parameter ownership.
 
 ### Agreed Mixed-Parameter Ownership
 
@@ -766,9 +772,8 @@ dependencies.
   separately; it is not a request to reset application settings.
 - UI restart defaults set `g_ask_video` and `g_virtual_screens` to true
   and clear the pending mode to `-1`.  Explicit `reset=` does not change
-  these settings.  Preserve `g_init_mode`'s existing initial storage
-  value until restart initialization runs; move its storage to UI only
-  when the engine `video` handler has also moved.
+  these settings.  `g_init_mode` storage and the `video` handler are
+  UI-owned; restart initialization clears the pending mode before parsing.
 - History capacity, autokey mode/name, automatic stereo conversion, and
   texture reuse have no reset assignments in these initializers.  Keep
   their process defaults in their owning modules and do not add resets.
@@ -794,11 +799,8 @@ dependencies.
   and action execution outside default initializers.  The UI source
   coordinator selects the appropriate initialization scope; engine
   source traversal does not hide a second initialization operation.
-- Slices 53.8.6.1 through 53.8.6.3 move UI restart defaults after source
-  routing.
-  UI now owns pending-mode storage and exit-confirmation handling and
-  storage.  It coordinates explicit fractal reset.
-  Keep existing slice numbers.
+- UI owns restart defaults, pending-mode storage, exit-confirmation
+  handling and storage, and explicit fractal-reset orchestration.
 
 ### Agreed Ordering And Failure
 
@@ -811,18 +813,23 @@ dependencies.
   transactional command application, or success-only UI assignment.
   Preserve existing rejection side effects rather than assuming every
   rejected command leaves all settings unchanged.
-- Source traversal owns continuation.  After an ordinary command-line
-  argument error, collect diagnostics and continue with later arguments.
-  After an error in startup configuration, stop and close that file,
-  then continue with arguments.  An error in a command-line `@` source
-  stops/closes that source, then resumes later arguments.  A selected
-  set stops/closes and returns to its caller; a single interactive
-  command reports rejection and returns.  UI must not unconditionally
-  break its coordinator loop on `BAD_ARG`.
+- Source traversal owns continuation.  When `g_first_init` is true or
+  batch mode is active, the first error stops all remaining startup
+  sources.  This includes errors in configuration, an indirect file, or
+  an ordinary argument; later arguments and actions do not run.  Accepted
+  settings before the error remain applied.  Startup UI presents the
+  first error through `stop_msg()` and returns failure.
+- During a nonfatal interactive restart, argument errors can accumulate
+  while later arguments run.  A rejected file command stops and closes
+  that file; an enclosing startup processor can then continue with later
+  arguments.  A selected set returns to its caller after rejection, and
+  a single interactive command reports its result and returns.  UI does
+  not impose a second, unconditional stop policy on the coordinator.
 - Warnings alone neither stop processing nor suppress generation.
   For example, command-line arguments
-  `askvideo=no maxiter=bad virtual=no` apply both UI preferences; the
-  same sequence in a parameter file stops before `virtual=no`.
+  `askvideo=no maxiter=bad virtual=no` apply both UI preferences during
+  a nonfatal interactive restart.  Initial startup, batch processing,
+  and a rejected command in a parameter file stop before `virtual=no`.
 - Finalize and close a parameter file after normal completion, early
   rejection, or a generation request.  Apply existing compatibility
   adjustments from that file's accepted change flags, independently of
@@ -841,11 +848,10 @@ dependencies.
 - Keep argument rejection distinct from exceptions.  Do not add a
   blanket coordinator catch that turns unrelated failures into bad
   arguments and continues.  Preserve existing propagation and cleanup.
-- Implement these rules in the existing 53.8 source/coordinator slices
-  and their tests, with real UI-setting coverage as 53.9 handlers move.
-  No additional dispatcher, transaction mechanism, or standalone failure
-  framework is needed.  Reuse current startup, parameter, command-effect,
-  action, and diagnostic tests; extend only the focused ownership gaps.
+- Startup processor and router tests cover first-error termination,
+  nonfatal restart continuation, accepted-prefix changes, warning-only
+  continuation, and action suppression.  Command-effect and diagnostic
+  tests cover the outer UI response.
 
 ### Agreed Consequence Reporting
 
@@ -891,15 +897,14 @@ dependencies.
   and failure handling.  Its return means exit requested, not command
   success.  Ordinary caller responses to change flags remain distinct
   from whether deferred actions were allowed to execute.
-- Implement reporting within the existing extraction, lookup, source,
-  and coordinator slices, not a separate framework.  Add focused tests
-  for aggregation and caller consequences; preserve existing flag
-  assertions as handlers migrate.  Reuse parameter, startup, diagnostic,
-  command-effect, compatibility, autokey, stereo, and batch coverage.
+- Reporting uses the shared extraction, lookup, source, and coordinator
+  types rather than a separate framework.  Tests cover aggregation,
+  caller consequences, compatibility flags, diagnostics, deferred
+  effects, and real application command paths.
 
-## Remaining Inversion-of-Control Slices
+## Implemented Render Boundary
 
-These slices use the existing pattern from `ui::AntController`,
+The implemented controllers use the pattern from `ui::AntController`,
 `ui::BifurcationController`, `ui::CellularController`, and similar types:
 
 ```text
@@ -1100,10 +1105,9 @@ not a behavior to preserve when replacing the codecs with giflib.
 - Preserve saving an incompletely rendered image and its resume metadata.
   An interrupted calculation is not an interrupted GIF write.
 
-The giflib replacement slices must establish this boundary, not leave
-codec polling for the later general load/save UI-ownership cleanup.
-Scanline feedback is part of the run-to-completion command; it is not a
-reason to restore the old keyboard polling.
+The giflib-based codecs implement this boundary.  Scanline feedback is
+part of the run-to-completion command; it is not a reason to restore the
+old keyboard polling.
 
 ## [Sound Output Port](sound.md)
 
@@ -1134,11 +1138,11 @@ preserves other voices and release tails, whereas explicit `mute()`
 immediately silences all voices and resets playback state.  Normal
 completion drains release tails rather than muting them away.
 
-No multimedia library has been selected.  Implement the port first with
-one driver-backed implementation that optionally records each accepted
-tone under `OSF_MIDI` before attempting playback.  These sequential
-behaviors are not two port implementations or a composite.  Private file
-helpers need not implement `SoundOutput`.
+No multimedia library has been selected.  `ui::DriverSoundOutput`
+optionally records each accepted tone under `OSF_MIDI` before attempting
+driver playback.  These sequential behaviors are one implementation, not
+two port implementations or a composite.  Its non-blocking `update()`
+releases a due tone; explicit mute resets playback immediately.
 
 Do not promise audible continuous sound on drivers that currently return
 `false`.  Preserve optional recording regardless of driver capability.
@@ -1154,11 +1158,28 @@ orbit display mechanics by making the engine return after bounded
 plot or scrub work.  The UI controller owns input polling and any
 presentation delay between those engine increments.
 
-Do not settle `orbitdelay` display semantics as part of the mechanical
-inversion slices.  The old DOS delay model may not fit a windowed
-application, and exact FRACTINT microsecond compatibility is not
-necessarily the right goal.  Revisit the entire policy before adding
-new display-delay implementation slices.
+Current behavior is retained, not a settled replacement for DOS display
+semantics.  Standard and FrothyBasin controllers call
+`pace_orbit_display()` after reported overlay output.  That UI helper
+maps delays below 139 units to no display wait; values of 139 or more
+retain 100-microsecond units.  Its input dispatcher is throttled to about
+72 Hz.  This is not frame-based retention or batching of orbit points.
+
+`ShowDotController` separately waits for every positive `g_orbit_delay`,
+using saved marker pixels and the show-dot color/shape settings.
+FrothyBasin still draws its simple `g_show_dot` marker inside
+`start_pixel()` and does not use that controller.  The general pixel
+kernel retains the legacy sound/delay-dependent chunk choice: 16
+iterations with orbit sound and positive delay, otherwise 2048.  That
+choice does not poll or wait inside calculation.
+
+The driver-backed sound port separately interprets `g_orbit_delay` as
+tone duration in 100-microsecond units.  Its duration is not rounded by
+the overlay display threshold.  UI services and waits for playback.
+
+The old DOS delay model may not fit a windowed application, and exact
+FRACTINT microsecond compatibility is not necessarily the right goal.
+Revisit the entire policy before adding display-delay changes.
 
 The policy review must cover every relevant overlay or orbit-inspection
 use:
@@ -1190,29 +1211,30 @@ Done when:
 - new implementation slices separate engine plot work from UI polling,
   without mixing in unresolved delay-policy decisions.
 
-The current `plot_orbit()` name hides two different behaviors:
+The former shared orbit-plot path had two responsibilities.  They are
+now separated:
 
 - Overlay orbit display draws a temporary orbit over an existing image.
-  It saves covered pixels, uses the legacy `color == -1` convention, and
-  later scrubs the overlay away.  This is the `showorbit=yes` behavior
-  for standard escape-time rendering and FrothyBasin.
+  `engine::OrbitPlot` saves covered pixels, XORs the orbit color, and
+  later restores the saved pixels.  This is the `showorbit=yes` behavior
+  for standard escape-time rendering and FrothyBasin.  Its interface has
+  no image-color argument or `color == -1` sentinel.
 - Image-orbit plotting makes the orbit point part of the rendered image.
   It writes an explicit color and must not save or scrub covered pixels.
-  Popcorn belongs here.
+  `Popcorn` owns this plotting directly, without `OrbitPlot`.
 
 Popcorn is not a standard fractal renderer.  It uses screen pixels as
 seed points, iterates a Popcorn map, and plots the produced orbit points
 elsewhere on the screen.  It does not color the seed pixel by orbit
-length, and it does not use StandardPass traversal.  Do not route
-Popcorn presentation state through `StandardFractal`; make `Popcorn` the
-calculation object that owns scan state, orbit state, and image point
-plotting.
+length, and it does not use StandardPass traversal.  `Popcorn` owns
+scan state, orbit state, and image point plotting; its UI controller
+advances the selected operation in `NonStandardFractal`.
 
 Popcorn and PopcornJul are not part of the standard overlay-orbit
 policy.  They hijacked the old orbit plotting machinery to draw image
 pixels, but they are not showing temporary escape-time orbit overlays.
-Their work item is a dependency cleanup: remove the false dependency on
-`OrbitPlot` without treating Popcorn as an orbit-inspection feature.
+The false dependency on `OrbitPlot` has been removed.  Popcorn is not an
+orbit-inspection feature.
 
 The running orbit overlay may eventually be superseded by an orbit tool
 window with an interactive cursor in the main image.  That tool would
@@ -1228,18 +1250,14 @@ not own fractal orbit math.  The engine supplies bounded orbit work; the
 UI decides when to request it, how to present it, and how to handle user
 input while it is visible.
 
-The Popcorn conversion should follow review boundaries, not a guessed
-slice count.  A slice is small enough when it preserves current behavior,
-removes one false dependency, and leaves a reviewable intermediate state.
+## Current Presentation Ownership
 
-## Current Presentation Leaks
-
-The remaining UI-concept leaks outside `libid/ui` are:
-
-- Calculation setup still invokes `stop_msg()` and sometimes `goodbye()`.
-  These are input and application-control leaks even when reachable only
-  on failure or in debug builds.  Memory operations and command
-  diagnostics now report failures without UI or shutdown callbacks.
+Calculation setup, memory operations, and command processing report
+diagnostics without modal UI or shutdown callbacks.  Standard and
+Lyapunov show-dot presentation belongs to `ShowDotController`.
+FrothyBasin's simple marker and the general pixel kernel's legacy
+sound/delay-dependent chunk choice remain as described above.  Neither
+performs keyboard polling or a delay inside calculation.
 
 Command parsing returns diagnostics, generation requests, and the need
 for startup file-entry selection.  UI callers own action execution,
@@ -1250,14 +1268,13 @@ in `ui/restore_image.cpp`.  Video selection, 3D settings, and Tab
 information use pending values; the active image and stacked screen
 remain unchanged when setup is cancelled.
 
-These are not all keyboard polling sites, but they are presentation
-ownership leaks.  The engine and fractal classes may expose bounded
-rendering facts such as "overlay point was drawn" or "scrub restored
+The engine and fractal classes expose bounded rendering facts such as
+"overlay point was drawn" or "scrub restored
 pixels"; the UI controller decides whether that causes display delay or
 input handling.  Sound samples go directly to `SoundOutput`; they are
 not another reason to add UI-consumed flags to calculation objects.
 
-Every presentation-cleanup slice must move behavior to a named UI
+Any future presentation-cleanup slice must move behavior to a named UI
 controller, output adapter, or appropriately owned backend before
 removing the engine-side leak.  Do not merely delete delay, pacing,
 sound, mute, or input behavior.  The sound-port slices preserve
@@ -1330,9 +1347,8 @@ Existing coverage does not imply coverage of live interaction:
   active rendering, cancel the menu, and save a non-resumable checkpoint.
   Changing the iteration limit restarts calculation; saved parameters,
   completion state, and pixels are checked against a fresh seeded image.
-  This is the 49.1 interaction baseline, before calculation ownership
-  changes.  IFS does not support calculation resume.
-  The PHOTO-mode IFS and Lorenz 3D scripts form the 50.1 baseline.
+  IFS does not support calculation resume.
+  The PHOTO-mode IFS and Lorenz 3D scripts remain interaction regressions.
   They reach the first completed eye, acknowledge its notice, save from
   the photographer handler, and continue to the right eye.  Separate
   journeys complete or interrupt that eye after 512 iterations, cancel
@@ -1349,8 +1365,8 @@ Existing coverage does not imply coverage of live interaction:
   compares the restarted image with a fresh calculation.
   The JIIM script checks picker movement and exact-point selection through
   saved Julia parameters, then reopens the orbit window around a menu and
-  verifies restored Mandelbrot pixels.  It is the baseline for moving
-  the temporary tool owner into UI, not a native cursor presentation test.
+  verifies restored Mandelbrot pixels.  It protects the UI-owned tool's
+  behavior, not native cursor presentation.
 - Keyboard-handler tests cover dispatch, interruption flags, and key
   requeueing.  Standard controller tests also cover mid-orbit suspension,
   continuation, scanline resume positions, and perturbation/Lyapunov gates.
@@ -1377,18 +1393,17 @@ Existing coverage does not imply coverage of live interaction:
   rejection before Julibrot initialization.  Current display and disk
   drivers accept only 256-color modes, so Julibrot's low-color failure is
   covered directly rather than through an unreachable autokey path.
-- Perturbation tests cover reference failure, cached-reference reuse,
-  caller-selected pixel order, deep-zoom BoundaryTrace completion, and
-  palette-color consistency.  They also verify BoundaryTrace strategy
-  selection.  Pass-switch tests verify automatic strategy selection,
-  disabled perturbation, fresh reference caches, dispatcher restoration,
-  and big-number stack cleanup between traversals.
-  A separate numerical follow-up remains: with
-  `center-mag=-2/0/1e20 maxiter=300 periodicity=0 inside=7`, automatic
-  perturbation produced a uniform image while `perturbation=no` did not.
-  The reference orbit lands exactly on the default bailout boundary.
-  The pass-switch fixture instead uses `center-mag=0/1/1e20`; it does not
-  cover that numerical edge case.
+- Perturbation tests cover reference failure and replacement without
+  retained history, caller-selected pixel order, bounded reference and
+  pixel increments, deep-zoom BoundaryTrace completion, and palette-color
+  consistency.  They also verify BoundaryTrace strategy selection.
+  Pass-switch tests verify automatic strategy selection, disabled
+  perturbation, fresh reference state, dispatcher restoration, and
+  big-number stack cleanup between traversals.  Current precision tests
+  cover bailout equality and tiny offsets on either side of the boundary,
+  including Mandelbrot near `-2`.  Coloring, periodicity, inversion,
+  synchronous-orbit, sticky-orbit, and output-backpressure regressions
+  cover the later perturbation extensions.
 - Non-standard operation tests cover 2D orbit, dynamic, inverse-Julia,
   and Standard4D selection, setup, completion, suspension, and queue
   ownership.  Autokey menu-return journeys compare Henon, dynamic,
@@ -1410,8 +1425,7 @@ Existing coverage does not imply coverage of live interaction:
   Win32 and X11 drivers do not support continuous tone playback; require
   fake-port, mock-driver, and tone-log tests, not audible manual checks.
 
-The validation requirements in each slice include tests still to be
-implemented, not a claim that those tests already exist.  In particular,
+The coverage described above is implemented.  Future slices should
 automate menu results, preparation-screen lifetime, pass switching, and
 failure cleanup rather than assigning them unspecified manual checks.
 
@@ -1512,6 +1526,25 @@ Future source audits must still trace UI helper and dispatch-pointer
 calls as well as raw driver calls; an empty raw-key search alone does not
 establish inversion.
 
+This is not a claim that every non-UI module is free of UI state or
+headers.  Current backend dependencies include:
+
+- `geometry/line3d.cpp` includes `ui/big_while_loop.h` to register its
+  output-cleanup function in `g_out_line_cleanup`.
+- `io/encoder.cpp` and `io/ImageSave.cpp` include the big-loop and
+  evolution headers.  `ImageSave` reads UI-owned evolution state when
+  constructing metadata.
+- `io/loadfile.cpp` includes evolution and parameter-file UI headers;
+  applying saved extensions restores evolution runtime state and genes.
+- `io/load_config.cpp` uses UI key-name parsing and writes the separate
+  UI-owned video-mode bindings while loading the mode catalog.
+- `io/save_timer.cpp` uses UI-owned `g_finish_row` and `read_ticker()` for
+  autosave scheduling.
+
+These dependencies do not poll keyboard or mouse input.  They are
+distinct from the completed engine/fractal input boundary and from any
+future cleanup of metadata, configuration, or autosave ownership.
+
 The `OrbitPlot` wait loop, delay state, and sound mapping have been
 removed.  It submits numerical samples through `g_sound`; standard and
 FrothyBasin UI controllers own sound servicing and session completion.
@@ -1565,6 +1598,7 @@ Handler-based render controllers that still rely on
 - `libid/ui/LyapunovController.cpp`
 - `libid/ui/OrbitController.cpp`
 - `libid/ui/PopcornController.cpp`
+- `libid/ui/SoundSession.cpp`
 - `libid/ui/StandardFractalController.cpp`
 - `libid/ui/standard_orbit_plot.cpp`
 - `libid/ui/StereoController.cpp`
@@ -1575,26 +1609,30 @@ must become application phases or dialogs before `id_main` can be the
 only keyboard poller:
 
 - `libid/ui/big_while_loop.cpp`
-- `libid/ui/do_pause.cpp`
+- `libid/ui/command_diagnostics.cpp`
 - `libid/ui/editpal.cpp`
 - `libid/ui/file_get_window.cpp`
+- `libid/ui/flip_image.cpp`
 - `libid/ui/full_screen_choice.cpp`
 - `libid/ui/full_screen_prompt.cpp`
 - `libid/ui/get_key_no_help.cpp`
 - `libid/ui/help.cpp`
 - `libid/ui/intro.cpp`
+- `libid/ui/input_field.cpp`
 - `libid/ui/main_menu.cpp`
 - `libid/ui/main_menu_switch.cpp`
 - `libid/ui/rotate.cpp`
+- `libid/ui/slideshw.cpp`
+- `libid/ui/starfield.cpp`
 - `libid/ui/stop_msg.cpp`
 - `libid/ui/temp_msg.cpp`
+- `libid/ui/thinking.cpp`
 - `libid/ui/zoom.cpp`
 
 ## Future Event-Driven Work
 
-This plan leaves the following ideas out of scope for the current polling
-slices.  They should be kept as future direction after direct polling
-calls are moved behind `libid/ui`.
+The following ideas are outside the completed release 1.5 input boundary.
+Input polling is UI-owned, but the application is not yet event-driven.
 
 - Convert `Frame`, `WinText`, and `Plot` to wxWidgets controls while the
   current polling code still pumps GUI events.
@@ -1626,7 +1664,7 @@ calls are moved behind `libid/ui`.
 - After blocking screens and tools own input, remove the `Driver` keyboard
   API, custom message-pumping path, and custom event-loop workarounds.
 
-## Exit Criteria
+## Release 1.5 Boundary Checks
 
 - Top-level image rendering is requested through `libid/ui`, not through
   an engine function that selects UI control paths.
@@ -1636,9 +1674,14 @@ calls are moved behind `libid/ui`.
   resume state.
 - `libid/engine` and `libid/fractals` do not include headers from
   `libid/ui`.
-- `rg "driver_(get_key|key_pressed|wait_key_pressed|unget_key)" \
+- This keyboard-input audit returns no matches:
+
+```text
+rg "driver_(get_key|key_pressed|wait_key_pressed|unget_key|key_cursor)" \
   libid/engine libid/fractals libid/geometry libid/io libid/math \
-  libid/misc` returns no matches.
+  libid/misc
+```
+
 - `rg "MouseNotification|mouse_subscribe|mouse_unsubscribe" \
   libid/engine libid/fractals libid/geometry libid/io libid/math \
   libid/misc` returns no matches.
@@ -1666,8 +1709,9 @@ calls are moved behind `libid/ui`.
 - UI services non-blocking `update()` while rendering, waiting, and
   completing.  Normal voice release and release-tail completion do not
   use mute; interruption explicitly silences and resets playback.
-- Show-dot marker state and all temporary display bridge methods have
-  been removed from calculation code.
+- Standard and Lyapunov show-dot marker state belongs to UI, with no
+  temporary marker bridge in their calculation paths.  FrothyBasin still
+  draws its simple marker in calculation; it does not poll or wait there.
 - Audit source calls and reachable dispatch targets in both release and
   debug configurations.  Ignore comment-only search matches; do not add
   grep-based tests that merely enforce source spelling.
