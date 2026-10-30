@@ -3,6 +3,7 @@
 //
 #include "ColorMapSaver.h"
 #include "MockDriver.h"
+#include "RestoreDecodeTestState.h"
 #include "TemporaryDirectory.h"
 
 #include <engine/calcfrac.h>
@@ -85,23 +86,10 @@ protected:
     ValueSaver<Display3DMode> m_saved_display{g_display_3d, Display3DMode::YES};
     ValueSaver<WritePixel> m_saved_plot{g_plot};
     ValueSaver<WritePixel> m_saved_standard_plot{g_standard_plot};
-    ValueSaver<int> m_saved_colors{g_colors, 256};
-    ValueSaver<int> m_saved_row{g_row_count, 0};
+    RestoreDecodeTestState m_saved_decode;
     ValueSaver<OutLine> m_saved_output{g_out_line, record_line};
     ValueSaver<decltype(g_out_line_cleanup)> m_saved_cleanup{g_out_line_cleanup, clean_up};
     ValueSaver<Potential> m_saved_potential{g_potential, Potential{}};
-    ValueSaver<bool> m_saved_read_color{g_read_color, true};
-    ValueSaver<ColorState> m_saved_color_state{g_color_state};
-    ValueSaver<bool> m_saved_map{g_map_set, false};
-    ValueSaver<bool> m_saved_dither{g_dither_flag, false};
-    ValueSaver<int> m_saved_skip_x{g_skip_x_dots, 0};
-    ValueSaver<int> m_saved_skip_y{g_skip_y_dots, 0};
-    ValueSaver<CalcStatus> m_saved_status{g_calc_status, CalcStatus::COMPLETED};
-    ValueSaver<bool> m_saved_busy{g_busy, false};
-    ValueSaver<bool> m_saved_first_init{g_first_init, false};
-    ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
-    ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
-    ValueSaver<std::filesystem::path> m_saved_filename{g_read_filename};
     std::optional<ColorMapSaver> m_saved_palette;
     TemporaryDirectory m_directory;
     std::vector<StereoImage> m_lines;

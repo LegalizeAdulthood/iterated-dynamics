@@ -3,6 +3,7 @@
 //
 #include "ColorMapSaver.h"
 #include "MockDriver.h"
+#include "RestoreDecodeTestState.h"
 #include "TemporaryDirectory.h"
 
 #include <engine/calcfrac.h>
@@ -63,26 +64,13 @@ protected:
     ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen, LogicalScreen{3, 2, 1, 1, 2.0, 1.0}};
     ValueSaver<int> m_saved_width{g_screen_x_dots, 5};
     ValueSaver<int> m_saved_height{g_screen_y_dots, 4};
-    ValueSaver<int> m_saved_colors{g_colors, 256};
+    RestoreDecodeTestState m_saved_decode;
     ValueSaver<int> m_saved_mask{g_and_color, 255};
     ValueSaver<OutLine> m_saved_out_line{g_out_line, pot_line};
     ValueSaver<Potential> m_saved_potential{g_potential, Potential{{}, true, true}};
-    ValueSaver<int> m_saved_row{g_row_count, 0};
-    ValueSaver<bool> m_saved_read_color{g_read_color, true};
-    ValueSaver<ColorState> m_saved_color_state{g_color_state};
     ValueSaver<Display3DMode> m_saved_3d{g_display_3d, Display3DMode::NONE};
-    ValueSaver<bool> m_saved_map_set{g_map_set, false};
-    ValueSaver<bool> m_saved_dither{g_dither_flag, false};
-    ValueSaver<int> m_saved_skip_x{g_skip_x_dots, 0};
-    ValueSaver<int> m_saved_skip_y{g_skip_y_dots, 0};
-    ValueSaver<CalcStatus> m_saved_status{g_calc_status, CalcStatus::COMPLETED};
-    ValueSaver<bool> m_saved_busy{g_busy, false};
-    ValueSaver<bool> m_saved_first_init{g_first_init, false};
-    ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
-    ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
     ValueSaver<bool> m_saved_good_mode{g_good_mode, true};
     ValueSaver<std::filesystem::path> m_saved_temp{g_temp_dir};
-    ValueSaver<std::filesystem::path> m_saved_read_filename{g_read_filename};
     std::optional<ColorMapSaver> m_saved_palette;
     std::array<int, 20> m_frame{};
     TemporaryDirectory m_directory;

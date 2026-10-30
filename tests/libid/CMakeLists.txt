@@ -71,6 +71,7 @@ add_executable(test-id
     "include/MockSoundOutput.h"
     include/PassTestFrame.h test/PassTestFrame.cpp
     include/PendingDriverKey.h test/PendingDriverKey.cpp
+    include/RestoreDecodeTestState.h
     "include/ValueUnchanged.h"
     "include/test_config_data.h.in"
     "include/test_data.h.in"
