@@ -34,10 +34,10 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <array>
 #include <cstdio>
 #include <filesystem>
+#include <map>
 #include <memory>
 #include <optional>
 #include <ostream>
@@ -1148,7 +1148,6 @@ class TestCommandRouterFile : public TestCommandRouter
 protected:
     void SetUp() override;
     void TearDown() override;
-    static std::string test_name();
 
     TemporaryDirectory m_input_directory;
     std::optional<CommandTestFile> m_file;
@@ -1163,7 +1162,7 @@ void TestCommandRouterFile::SetUp()
 {
     TestCommandRouter::SetUp();
     m_input_directory.create("id-command-input-");
-    m_file.emplace(m_input_directory.path() / (test_name() + ".par"));
+    m_file.emplace(m_input_directory.path() / "input.par");
 }
 
 void TestCommandRouterFile::TearDown()
@@ -1172,14 +1171,6 @@ void TestCommandRouterFile::TearDown()
     std::error_code ignored;
     m_input_directory.remove(ignored);
     clear_command_comments();
-}
-
-std::string TestCommandRouterFile::test_name()
-{
-    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
-    std::string name{std::string{info->test_suite_name()} + '_' + info->name()};
-    std::replace(name.begin(), name.end(), '/', '_');
-    return name;
 }
 
 TEST_F(TestCommandRouterFile, selectedSetUsesPositionAndContextForBothOwners)
@@ -1479,11 +1470,11 @@ class TestCommandRouterStartup : public TestCommandRouterFile
 protected:
     void SetUp() override;
     void TearDown() override;
-    void write_source(const std::string &name, std::string_view text);
+    CommandTestFile &source(const fs::path &name);
 
-    fs::path m_directory;
+    TemporaryDirectory m_directory;
     fs::path m_library;
-    std::vector<fs::path> m_sources;
+    std::map<fs::path, CommandTestFile> m_sources;
     const std::shared_ptr<NiceMock<MockSpecialDirectories>> m_directories{
         std::make_shared<NiceMock<MockSpecialDirectories>>()};
     ValueSaver<std::shared_ptr<SpecialDirectories>> m_saved_directories{g_special_dirs, m_directories};
@@ -1500,46 +1491,35 @@ protected:
 
 void TestCommandRouterStartup::SetUp()
 {
-    m_directory = fs::temp_directory_path() / test_name();
-    m_library = m_directory / ID_PROGRAM_NAME;
+    m_directory.create("id-router-startup-");
+    m_library = m_directory.path() / ID_PROGRAM_NAME;
     fs::create_directories(m_library);
     ON_CALL(*m_directories, program_dir()).WillByDefault(Return(m_library));
-    ON_CALL(*m_directories, documents_dir()).WillByDefault(Return(m_directory));
+    ON_CALL(*m_directories, documents_dir()).WillByDefault(Return(m_directory.path()));
     g_first_init = true;
-    write_source("sstools.ini", "");
+    source("sstools.ini").write("");
 }
 
 void TestCommandRouterStartup::TearDown()
 {
     clear_read_library_path();
     clear_save_library();
-    for (const fs::path &path : m_sources)
-    {
-        std::error_code ignored;
-        fs::remove(path, ignored);
-    }
+    m_sources.clear();
     std::error_code ignored;
-    fs::remove(m_library, ignored);
-    fs::remove(m_directory, ignored);
+    m_directory.remove(ignored);
     TestCommandRouterFile::TearDown();
 }
 
-void TestCommandRouterStartup::write_source(const std::string &name, const std::string_view text)
+CommandTestFile &TestCommandRouterStartup::source(const fs::path &name)
 {
-    const fs::path path{m_library / name};
-    m_sources.push_back(path);
-    const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{std::fopen(path.string().c_str(), "wb"), std::fclose};
-    if (!file || std::fwrite(text.data(), 1, text.size(), file.get()) != text.size())
-    {
-        throw std::runtime_error("Cannot write startup test file: " + path.string());
-    }
+    return m_sources.try_emplace(name, m_library / name).first->second;
 }
 
 TEST_F(TestCommandRouterStartup, routesConfigurationIndirectSetsAndArgumentsInOrder)
 {
-    write_source("sstools.ini", "ui=1 engine=2\n");
-    write_source("whole.par", "entry { engine=3 ui=4 }");
-    write_source("selected.par", "ignored { ui=999 }\nchosen { ui=5 engine=6 }");
+    source("sstools.ini").write("ui=1 engine=2\n");
+    source("whole.par").write("entry { engine=3 ui=4 }");
+    source("selected.par").write("ignored { ui=999 }\nchosen { ui=5 engine=6 }");
     std::vector<std::string> commands;
     std::vector<CmdFile> modes;
     EXPECT_CALL(m_ui_handler, Call(_))
@@ -1572,14 +1552,14 @@ TEST_F(TestCommandRouterStartup, routesConfigurationIndirectSetsAndArgumentsInOr
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_EQ(m_library / "selected.par", g_parameter_file);
     EXPECT_EQ("chosen", g_parameter_set_name);
-    EXPECT_TRUE(fs::remove(m_library / "sstools.ini"));
-    EXPECT_TRUE(fs::remove(m_library / "whole.par"));
-    EXPECT_TRUE(fs::remove(m_library / "selected.par"));
+    EXPECT_TRUE(source("sstools.ini").remove());
+    EXPECT_TRUE(source("whole.par").remove());
+    EXPECT_TRUE(source("selected.par").remove());
 }
 
 TEST_F(TestCommandRouterStartup, configurationRejectionStopsAllStartupSources)
 {
-    write_source("sstools.ini", "engine=111 ui=bad engine=999\n");
+    source("sstools.ini").write("engine=111 ui=bad engine=999\n");
     const InSequence sequence;
     EXPECT_CALL(m_engine_handler, Call(_))
         .WillOnce(
@@ -1595,7 +1575,7 @@ TEST_F(TestCommandRouterStartup, configurationRejectionStopsAllStartupSources)
     EXPECT_EQ(111, g_max_iterations);
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, result.flags);
     EXPECT_THAT(result.diagnostics.errors, ElementsAre(HasSubstr("ui=bad")));
-    EXPECT_TRUE(fs::remove(m_library / "sstools.ini"));
+    EXPECT_TRUE(source("sstools.ini").remove());
 }
 
 struct RouterStartupOwnerInput
@@ -1651,7 +1631,7 @@ void TestRouterStartupRejection::SetUp()
 TEST_P(TestRouterStartupRejection, rejectionStopsAllLaterStartupSources)
 {
     const std::string owner{GetParam().owner};
-    write_source("broken.par", "entry { engine=210 " + owner + "=bad ui=999 }");
+    source("broken.par").write("entry { engine=210 " + owner + "=bad ui=999 }");
 
     const CommandParseResult result{
         m_router.process_startup({"id", "ui=100", owner + "=bad", "engine=200", "@broken", "ui=300"})};
@@ -1661,7 +1641,7 @@ TEST_P(TestRouterStartupRejection, rejectionStopsAllLaterStartupSources)
     EXPECT_EQ(150, g_max_iterations);
     EXPECT_EQ(CmdArgFlags::PARAM_3D, result.flags);
     EXPECT_THAT(result.diagnostics.errors, ElementsAre(HasSubstr(owner + "=bad")));
-    EXPECT_TRUE(fs::remove(m_library / "broken.par"));
+    EXPECT_TRUE(source("broken.par").remove());
 }
 
 INSTANTIATE_TEST_SUITE_P(Owners, TestRouterStartupRejection,
@@ -1670,7 +1650,7 @@ INSTANTIATE_TEST_SUITE_P(Owners, TestRouterStartupRejection,
 
 TEST_F(TestCommandRouterStartup, initializesBeforeConfigurationAndPreservesInitialRequests)
 {
-    write_source("sstools.ini", "ui=yes\n");
+    source("sstools.ini").write("ui=yes\n");
     g_temp_dir.clear();
     g_max_iterations = 999;
     g_init_mode = 9;
@@ -1703,8 +1683,8 @@ TEST_F(TestCommandRouterStartup, initializesBeforeConfigurationAndPreservesIniti
 
 TEST_F(TestCommandRouterStartup, restartPreservesProcessStateAndSuppressesStartupRequests)
 {
-    write_source("sstools.ini", "ui=yes\n");
-    const fs::path process_state{m_directory / "process-state"};
+    source("sstools.ini").write("ui=yes\n");
+    const fs::path process_state{m_directory.path() / "process-state"};
     g_first_init = false;
     g_temp_dir = process_state;
     g_max_iterations = 999;
@@ -1778,7 +1758,7 @@ INSTANTIATE_TEST_SUITE_P(Phases, TestRouterStartupOverride, Bool(),
 
 TEST_F(TestCommandRouterStartup, fallbackReappliesOnlyDefaultsAndConfiguration)
 {
-    write_source("sstools.ini", "type=formula maxiter=321 ui=yes\n");
+    source("sstools.ini").write("type=formula maxiter=321 ui=yes\n");
     const CommandRouter router{CommandHandlerTables{{}, m_ui}, engine_command_handlers()};
     EXPECT_CALL(m_ui_handler, Call(_))
         .Times(2)
@@ -1795,7 +1775,7 @@ TEST_F(TestCommandRouterStartup, fallbackReappliesOnlyDefaultsAndConfiguration)
     const CommandParseResult startup{router.process_startup({"id", "maxiter=999"})};
     ASSERT_TRUE(startup.needs_file_entry);
     ASSERT_EQ(999, g_max_iterations);
-    const fs::path process_state{m_directory / "process-state"};
+    const fs::path process_state{m_directory.path() / "process-state"};
     g_temp_dir = process_state;
     g_first_init = false;
     g_init_mode = 9;
@@ -1812,7 +1792,7 @@ TEST_F(TestCommandRouterStartup, fallbackReappliesOnlyDefaultsAndConfiguration)
     EXPECT_EQ(7, g_init_mode);
     EXPECT_EQ(ShowFile::LOAD_IMAGE, g_show_file);
     EXPECT_FALSE(g_read_color);
-    EXPECT_TRUE(fs::remove(m_library / "sstools.ini"));
+    EXPECT_TRUE(source("sstools.ini").remove());
 }
 
 TEST_F(TestCommandRouterStartup, fallbackFinalizesFirstInitWithoutDebugOverride)
@@ -1831,9 +1811,9 @@ TEST_F(TestCommandRouterStartup, fallbackFinalizesFirstInitWithoutDebugOverride)
     EXPECT_EQ(DebugFlags::NONE, g_debug_flag);
     EXPECT_FALSE(g_first_init);
 
-    const fs::path process_state{m_directory / "process-state"};
+    const fs::path process_state{m_directory.path() / "process-state"};
     g_temp_dir = process_state;
-    write_source("sstools.ini", "ui=yes\n");
+    source("sstools.ini").write("ui=yes\n");
     EXPECT_CALL(m_ui_handler, Call(_))
         .WillOnce(
             [&](const Command &)
@@ -1858,13 +1838,13 @@ TEST_F(TestCommandRouterStartup, fallbackFinalizesFirstInitWithoutDebugOverride)
 
 TEST_F(TestCommandRouterStartup, fallbackRetainsFirstInitWithConfigurationDebugOverride)
 {
-    write_source("sstools.ini", "debugflag=110\n");
+    source("sstools.ini").write("debugflag=110\n");
     const CommandRouter router;
     const CommandParseResult startup{router.process_startup({"id", "type=formula"})};
     ASSERT_TRUE(startup.diagnostics.errors.empty());
     ASSERT_TRUE(startup.needs_file_entry);
     ASSERT_TRUE(g_first_init);
-    const fs::path process_state{m_directory / "process-state"};
+    const fs::path process_state{m_directory.path() / "process-state"};
     g_temp_dir = process_state;
 
     const CommandParseResult fallback{router.reset_startup()};
@@ -1927,9 +1907,9 @@ void TestRouterHistorySources::SetUp()
 {
     TestCommandRouterStartup::SetUp();
     g_max_image_history = GetParam().initial;
-    write_source("sstools.ini", "maxhistory=2\n");
-    write_source("whole.par", "entry { maxhistory=4 }");
-    write_source("selected.par", "ignored { maxhistory=99 }\nchosen { maxhistory=6 }");
+    source("sstools.ini").write("maxhistory=2\n");
+    source("whole.par").write("entry { maxhistory=4 }");
+    source("selected.par").write("ignored { maxhistory=99 }\nchosen { maxhistory=6 }");
 }
 
 TEST_P(TestRouterHistorySources, laterSourcesDetermineTheHistoryCapacity)
@@ -1975,9 +1955,9 @@ void TestRouterSlideSources::SetUp()
 {
     TestCommandRouterStartup::SetUp();
     g_slides = GetParam().initial;
-    write_source("sstools.ini", "autokey=record\n");
-    write_source("whole.par", "entry { autokey=play }");
-    write_source("selected.par", "ignored { autokey=play }\nchosen { autokey=record }");
+    source("sstools.ini").write("autokey=record\n");
+    source("whole.par").write("entry { autokey=play }");
+    source("selected.par").write("ignored { autokey=play }\nchosen { autokey=record }");
 }
 
 TEST_P(TestRouterSlideSources, laterSourcesDetermineTheSlideMode)
@@ -2007,7 +1987,7 @@ TEST_F(TestCommandRouterStartup, autoKeyNameFindsLibraryKeyFileWithOriginalCase)
     clear_read_library_path();
     add_read_library(m_library);
     fs::create_directory(m_library / "key");
-    write_source("key/MixedCase.KEY", "ESC\n");
+    source("key/MixedCase.KEY").write("ESC\n");
     CommandProcessor processor{"autokeyname=MixedCase.KEY", CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
 
@@ -2017,7 +1997,7 @@ TEST_F(TestCommandRouterStartup, autoKeyNameFindsLibraryKeyFileWithOriginalCase)
     EXPECT_EQ(m_library / "key/MixedCase.KEY", g_auto_name);
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_TRUE(result.diagnostics.warnings.empty());
-    EXPECT_TRUE(fs::remove(m_library / "key/MixedCase.KEY"));
+    EXPECT_TRUE(source("key/MixedCase.KEY").remove());
     EXPECT_TRUE(fs::remove(m_library / "key"));
 }
 
@@ -2046,11 +2026,11 @@ void TestRouterAutoNameSources::SetUp()
 {
     TestCommandRouterStartup::SetUp();
     g_auto_name = GetParam().initial;
-    write_source("sstools.ini", "autokeyname=ConfigAutoKeyRoute.KEY\n");
-    write_source("whole.par", "entry { autokeyname=WholeAutoKeyRoute.KEY }");
-    write_source("selected.par",
-        "ignored { autokeyname=IgnoredAutoKeyRoute.KEY }\n"
-        "chosen { autokeyname=SelectedAutoKeyRoute.KEY }");
+    source("sstools.ini").write("autokeyname=ConfigAutoKeyRoute.KEY\n");
+    source("whole.par").write("entry { autokeyname=WholeAutoKeyRoute.KEY }");
+    source("selected.par")
+        .write("ignored { autokeyname=IgnoredAutoKeyRoute.KEY }\n"
+               "chosen { autokeyname=SelectedAutoKeyRoute.KEY }");
 }
 
 TEST_P(TestRouterAutoNameSources, laterSourcesDetermineTheAutokeyFilename)
@@ -2100,9 +2080,9 @@ void TestRouterRdsSources::SetUp()
 {
     TestCommandRouterStartup::SetUp();
     m_rds_state.apply(GetParam().initial);
-    write_source("sstools.ini", "rds=yes/10/none\n");
-    write_source("whole.par", "entry { rds=texture/20/top }");
-    write_source("selected.par", "ignored { rds=no }\nchosen { rds=random/30/middle }");
+    source("sstools.ini").write("rds=yes/10/none\n");
+    source("whole.par").write("entry { rds=texture/20/top }");
+    source("selected.par").write("ignored { rds=no }\nchosen { rds=random/30/middle }");
 }
 
 TEST_P(TestRouterRdsSources, laterSourcesDetermineTheStereoSettings)
@@ -2147,10 +2127,10 @@ void TestRouterTextureSources::SetUp()
 {
     TestCommandRouterStartup::SetUp();
     m_rds_state.apply(GetParam().initial);
-    write_source("sstools.ini", "rds-texture=ConfigTexture.GIF\n");
-    write_source("whole.par", "entry { rds-texture=WholeTexture.GIF }");
-    write_source(
-        "selected.par", "ignored { rds-texture=IgnoredTexture.GIF }\nchosen { rds-texture=SelectedTexture.GIF }");
+    source("sstools.ini").write("rds-texture=ConfigTexture.GIF\n");
+    source("whole.par").write("entry { rds-texture=WholeTexture.GIF }");
+    source("selected.par")
+        .write("ignored { rds-texture=IgnoredTexture.GIF }\nchosen { rds-texture=SelectedTexture.GIF }");
 }
 
 TEST_P(TestRouterTextureSources, laterSourcesDetermineTheTextureSettings)
@@ -2220,12 +2200,12 @@ void TestRouterAskVideoSources::SetUp()
     g_ask_video = false;
     if (GetParam().indirect)
     {
-        write_source("whole.par", "entry { askvideo=no }");
-        write_source("selected.par", "ignored { askvideo=no }\nchosen { askvideo=yes }");
+        source("whole.par").write("entry { askvideo=no }");
+        source("selected.par").write("ignored { askvideo=no }\nchosen { askvideo=yes }");
     }
     else
     {
-        write_source("sstools.ini", "askvideo=no\n");
+        source("sstools.ini").write("askvideo=no\n");
     }
 }
 
@@ -2346,7 +2326,7 @@ TEST_F(TestRouterStartupFallback, restoresExitConfirmationDefault)
 TEST_F(TestCommandRouterStartup, fallbackRetainsVideoPromptConfigurationOverride)
 {
     const CommandRouter router;
-    write_source("sstools.ini", "askvideo=no\n");
+    source("sstools.ini").write("askvideo=no\n");
     g_ask_video = true;
 
     const CommandParseResult result{router.reset_startup()};
@@ -2410,12 +2390,12 @@ void TestRouterVirtualSources::SetUp()
     g_virtual_screens = false;
     if (GetParam().indirect)
     {
-        write_source("whole.par", "entry { virtual=no }");
-        write_source("selected.par", "ignored { virtual=no }\nchosen { virtual=yes }");
+        source("whole.par").write("entry { virtual=no }");
+        source("selected.par").write("ignored { virtual=no }\nchosen { virtual=yes }");
     }
     else
     {
-        write_source("sstools.ini", "virtual=no\n");
+        source("sstools.ini").write("virtual=no\n");
     }
 }
 
@@ -2440,7 +2420,7 @@ INSTANTIATE_TEST_SUITE_P(Sources, TestRouterVirtualSources,
 TEST_F(TestCommandRouterStartup, fallbackRetainsVirtualScreenConfigurationOverride)
 {
     const CommandRouter router;
-    write_source("sstools.ini", "virtual=no\n");
+    source("sstools.ini").write("virtual=no\n");
     g_virtual_screens = true;
 
     const CommandParseResult result{router.reset_startup()};
@@ -2520,9 +2500,9 @@ protected:
 void TestRouterPendingModeSources::SetUp()
 {
     TestRouterPendingMode::SetUp();
-    write_source("sstools.ini", "video=F6\n");
-    write_source("whole.par", "entry { video=F5 }");
-    write_source("selected.par", "ignored { video=F6 }\nchosen { video=F4 }");
+    source("sstools.ini").write("video=F6\n");
+    source("whole.par").write("entry { video=F5 }");
+    source("selected.par").write("ignored { video=F6 }\nchosen { video=F4 }");
     g_init_mode = GetParam().initial;
 }
 
@@ -2577,7 +2557,7 @@ TEST_F(TestCommandRouterStartup, engineFractalDefaultsLeaveExitConfirmationAlone
 TEST_F(TestCommandRouterStartup, fallbackRetainsExitConfirmationConfigurationOverride)
 {
     const CommandRouter router;
-    write_source("sstools.ini", "exitnoask=yes\n");
+    source("sstools.ini").write("exitnoask=yes\n");
     g_escape_exit = false;
 
     const CommandParseResult result{router.reset_startup()};
@@ -2681,9 +2661,9 @@ protected:
 void TestRouterInlineResetSources::SetUp()
 {
     TestCommandRouterStartup::SetUp();
-    write_source("sstools.ini", "exitnoask=yes maxiter=901 reset=1960 maxiter=111\n");
-    write_source("whole.par", "entry { exitnoask=yes maxiter=902 reset=100 maxiter=222 }");
-    write_source("selected.par", "chosen { reset=1/5 exitnoask=yes maxiter=333 }");
+    source("sstools.ini").write("exitnoask=yes maxiter=901 reset=1960 maxiter=111\n");
+    source("whole.par").write("entry { exitnoask=yes maxiter=902 reset=100 maxiter=222 }");
+    source("selected.par").write("chosen { reset=1/5 exitnoask=yes maxiter=333 }");
     g_first_init = GetParam().first_init;
 }
 
@@ -2738,8 +2718,8 @@ protected:
 void TestRouterLegacyFloatSources::SetUp()
 {
     TestCommandRouterStartup::SetUp();
-    write_source("legacy.par", "entry { reset=1824 type=marksjulia params=0.1/0.9/3 }");
-    write_source("float-only.par", GetParam().legacy_float ? "chosen { float=y }" : "chosen { float=n }");
+    source("legacy.par").write("entry { reset=1824 type=marksjulia params=0.1/0.9/3 }");
+    source("float-only.par").write(GetParam().legacy_float ? "chosen { float=y }" : "chosen { float=n }");
     g_first_init = GetParam().first_init;
 }
 

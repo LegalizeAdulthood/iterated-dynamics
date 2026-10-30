@@ -8,10 +8,12 @@
 #include <ui/command_effects.h>
 
 #include "ColorMapSaver.h"
+#include "CommandTestFile.h"
 #include "EnvVarSaver.h"
 #include "fractals/formula.h"
 #include "MockDriver.h"
 #include "MockSpecialDirectories.h"
+#include "TemporaryDirectory.h"
 #include "test_data.h"
 #include "test_library.h"
 #include "ValueUnchanged.h"
@@ -218,36 +220,12 @@ void TestParameterCommand::exec_cmd_arg(const std::string &cur_arg, const CmdFil
 class TestNextCommand : public Test
 {
 protected:
-    void SetUp() override
-    {
-        clear_command_comments();
-    }
-
-    void TearDown() override
-    {
-        if (m_file != nullptr)
-        {
-            std::fclose(m_file);
-            m_file = nullptr;
-        }
-        std::error_code ignored;
-        fs::remove(m_input_path, ignored);
-        clear_command_comments();
-    }
-
-    void open_input(const std::string &text)
-    {
-        m_input_path = test_input_path();
-        ASSERT_FALSE(m_input_path.empty());
-        m_file = std::fopen(m_input_path.string().c_str(), "w+b");
-        ASSERT_NE(nullptr, m_file);
-        ASSERT_EQ(text.size(), std::fwrite(text.data(), 1, text.size(), m_file));
-        std::rewind(m_file);
-    }
+    void SetUp() override;
+    void TearDown() override;
 
     int read_next(const CmdFile mode = CmdFile::AT_CMD_LINE)
     {
-        return next_command(m_command, m_file, m_line_buf, m_line, mode, &m_diagnostics);
+        return next_command(m_command, m_file.get(), m_line_buf, m_line, mode, &m_diagnostics);
     }
 
     std::string command() const
@@ -255,27 +233,34 @@ protected:
         return m_command;
     }
 
-    fs::path test_input_path() const
-    {
-        const TestInfo *info = UnitTest::GetInstance()->current_test_info();
-        std::string name{info->test_suite_name()};
-        name += '_';
-        name += info->name();
-        std::replace_if(name.begin(), name.end(), [](const unsigned char ch) { return std::isalnum(ch) == 0; }, '_');
-        return fs::temp_directory_path() / (name + ".tmp");
-    }
-
     CommandDiagnostics m_diagnostics;
     std::string m_command;
     std::string m_line_buf;
     std::string_view m_line;
-    fs::path m_input_path;
-    std::FILE *m_file{};
+    TemporaryDirectory m_directory;
+    std::optional<CommandTestFile> m_input;
+    std::unique_ptr<std::FILE, decltype(&std::fclose)> m_file{nullptr, std::fclose};
 };
+
+void TestNextCommand::SetUp()
+{
+    clear_command_comments();
+    m_directory.create("id-next-command-");
+    m_input.emplace(m_directory.path() / "input.tmp");
+}
+
+void TestNextCommand::TearDown()
+{
+    m_file.reset();
+    m_input.reset();
+    std::error_code ignored;
+    m_directory.remove(ignored);
+    clear_command_comments();
+}
 
 TEST_F(TestNextCommand, readsCommandsAcrossLines)
 {
-    open_input("  alpha beta\r\n\tgamma\n");
+    m_file.reset(m_input->open_input("  alpha beta\r\n\tgamma\n"));
 
     EXPECT_EQ(5, read_next());
     EXPECT_EQ("alpha", command());
@@ -288,14 +273,14 @@ TEST_F(TestNextCommand, readsCommandsAcrossLines)
 
 TEST_F(TestNextCommand, emptyInputReturnsEof)
 {
-    open_input("");
+    m_file.reset(m_input->open_input(""));
 
     EXPECT_EQ(-1, read_next());
 }
 
 TEST_F(TestNextCommand, semicolonStartsComment)
 {
-    open_input("alpha ; ignored\nbeta\n");
+    m_file.reset(m_input->open_input("alpha ; ignored\nbeta\n"));
 
     EXPECT_EQ(5, read_next());
     EXPECT_EQ("alpha", command());
@@ -306,7 +291,7 @@ TEST_F(TestNextCommand, semicolonStartsComment)
 
 TEST_F(TestNextCommand, savesTrimmedCommentsForCommandSet)
 {
-    open_input("; first\n; \tsecond\n}\n");
+    m_file.reset(m_input->open_input("; first\n; \tsecond\n}\n"));
 
     EXPECT_EQ(1, read_next(CmdFile::AT_CMD_LINE_SET_NAME));
     EXPECT_EQ("}", command());
@@ -316,7 +301,7 @@ TEST_F(TestNextCommand, savesTrimmedCommentsForCommandSet)
 
 TEST_F(TestNextCommand, savesOnlyFourComments)
 {
-    open_input("; one\n; two\n; three\n; four\n; five\n}\n");
+    m_file.reset(m_input->open_input("; one\n; two\n; three\n; four\n; five\n}\n"));
 
     EXPECT_EQ(1, read_next(CmdFile::AT_CMD_LINE_SET_NAME));
     EXPECT_EQ("}", command());
@@ -325,7 +310,7 @@ TEST_F(TestNextCommand, savesOnlyFourComments)
 
 TEST_F(TestNextCommand, ignoresCommentsForCommandLine)
 {
-    open_input("; first\nalpha\n");
+    m_file.reset(m_input->open_input("; first\nalpha\n"));
 
     EXPECT_EQ(5, read_next());
     EXPECT_EQ("alpha", command());
@@ -335,7 +320,7 @@ TEST_F(TestNextCommand, ignoresCommentsForCommandLine)
 TEST_F(TestNextCommand, truncatesSavedCommentToParCommentLength)
 {
     const std::string comment(MAX_COMMENT_LEN + 10, 'x');
-    open_input("; " + comment + "\n}\n");
+    m_file.reset(m_input->open_input("; " + comment + "\n}\n"));
 
     EXPECT_EQ(1, read_next(CmdFile::AT_AFTER_STARTUP));
     EXPECT_EQ("}", command());
@@ -344,7 +329,7 @@ TEST_F(TestNextCommand, truncatesSavedCommentToParCommentLength)
 
 TEST_F(TestNextCommand, joinsContinuationLine)
 {
-    open_input("alpha\\\n    beta gamma\n");
+    m_file.reset(m_input->open_input("alpha\\\n    beta gamma\n"));
 
     EXPECT_EQ(9, read_next());
     EXPECT_EQ("alphabeta", command());
@@ -354,7 +339,7 @@ TEST_F(TestNextCommand, joinsContinuationLine)
 
 TEST_F(TestNextCommand, sstoolsSkipsNonIdSections)
 {
-    open_input("[other]\nfoo\n[ID]\nbar\n");
+    m_file.reset(m_input->open_input("[other]\nfoo\n[ID]\nbar\n"));
 
     EXPECT_EQ(3, read_next(CmdFile::SSTOOLS_INI));
     EXPECT_EQ("bar", command());
@@ -362,7 +347,7 @@ TEST_F(TestNextCommand, sstoolsSkipsNonIdSections)
 
 TEST_F(TestNextCommand, returnsErrorForMissingContinuationLine)
 {
-    open_input("alpha\\");
+    m_file.reset(m_input->open_input("alpha\\"));
 
     EXPECT_EQ(-1, read_next());
     ASSERT_EQ(1U, m_diagnostics.errors.size());

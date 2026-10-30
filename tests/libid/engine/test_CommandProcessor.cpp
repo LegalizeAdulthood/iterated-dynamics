@@ -24,9 +24,9 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <cstdio>
 #include <filesystem>
+#include <map>
 #include <memory>
 #include <optional>
 #include <ostream>
@@ -45,19 +45,6 @@ using namespace testing;
 
 namespace id::test
 {
-
-namespace
-{
-
-std::string test_input_name()
-{
-    const TestInfo *info{UnitTest::GetInstance()->current_test_info()};
-    std::string name{std::string{info->test_suite_name()} + '_' + info->name()};
-    std::replace(name.begin(), name.end(), '/', '_');
-    return name;
-}
-
-} // namespace
 
 class TestCommandProcessor : public Test
 {
@@ -83,7 +70,7 @@ void TestCommandProcessor::SetUp()
 {
     clear_command_comments();
     m_input_directory.create("id-command-input-");
-    m_file.emplace(m_input_directory.path() / (test_input_name() + ".par"));
+    m_file.emplace(m_input_directory.path() / "input.par");
 }
 
 void TestCommandProcessor::TearDown()
@@ -637,11 +624,11 @@ class TestStartupCommandProcessor : public TestCommandProcessor
 protected:
     void SetUp() override;
     void TearDown() override;
-    void write_source(const std::string &name, std::string_view text);
+    CommandTestFile &source(const fs::path &name);
     void run(CommandProcessor &processor);
 
-    fs::path m_directory;
-    std::vector<fs::path> m_sources;
+    TemporaryDirectory m_directory;
+    std::map<fs::path, CommandTestFile> m_sources;
     ValueSaver<bool> m_saved_check_cur_dir{g_check_cur_dir, false};
     ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
     ValueSaver<ShowFile> m_saved_show_file{g_show_file, ShowFile::IMAGE_LOADED};
@@ -657,10 +644,9 @@ protected:
 void TestStartupCommandProcessor::SetUp()
 {
     TestCommandProcessor::SetUp();
-    m_directory = fs::temp_directory_path() / test_input_name();
-    fs::create_directories(m_directory);
+    m_directory.create("id-command-startup-");
     clear_read_library_path();
-    add_read_library(m_directory);
+    add_read_library(m_directory.path());
     set_fractal_type(FractalType::MANDEL);
     g_first_init = true;
 }
@@ -668,25 +654,15 @@ void TestStartupCommandProcessor::SetUp()
 void TestStartupCommandProcessor::TearDown()
 {
     clear_read_library_path();
-    for (const fs::path &path : m_sources)
-    {
-        std::error_code ignored;
-        fs::remove(path, ignored);
-    }
+    m_sources.clear();
     std::error_code ignored;
-    fs::remove(m_directory, ignored);
+    m_directory.remove(ignored);
     TestCommandProcessor::TearDown();
 }
 
-void TestStartupCommandProcessor::write_source(const std::string &name, const std::string_view text)
+CommandTestFile &TestStartupCommandProcessor::source(const fs::path &name)
 {
-    const fs::path path{m_directory / name};
-    m_sources.push_back(path);
-    const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{std::fopen(path.string().c_str(), "wb"), std::fclose};
-    if (!file || std::fwrite(text.data(), 1, text.size(), file.get()) != text.size())
-    {
-        throw std::runtime_error("Cannot write startup test file: " + path.string());
-    }
+    return m_sources.try_emplace(name, m_directory.path() / name).first->second;
 }
 
 void TestStartupCommandProcessor::run(CommandProcessor &processor)
@@ -699,7 +675,7 @@ void TestStartupCommandProcessor::run(CommandProcessor &processor)
 
 TEST_F(TestStartupCommandProcessor, ownsArgumentsAndAdvancesFromConfigurationInOrder)
 {
-    write_source("sstools.ini", "[id]\nmaxiter=111\nhertz=330\n");
+    source("sstools.ini").write("[id]\nmaxiter=111\nhertz=330\n");
     std::vector<std::string> args{"id", "maxiter=222", "hertz=660"};
     g_max_iterations = 432;
     CommandProcessor processor{args};
@@ -723,7 +699,7 @@ TEST_F(TestStartupCommandProcessor, ownsArgumentsAndAdvancesFromConfigurationInO
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
     EXPECT_EQ(CmdFile::AT_CMD_LINE, processor.command().mode);
     EXPECT_EQ("222", processor.command().value);
-    EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
+    EXPECT_TRUE(source("sstools.ini").remove());
     handle_current(processor);
     ASSERT_TRUE(processor.advance());
     EXPECT_EQ(222, g_max_iterations);
@@ -736,7 +712,7 @@ TEST_F(TestStartupCommandProcessor, ownsArgumentsAndAdvancesFromConfigurationInO
 
 TEST_F(TestStartupCommandProcessor, rejectedConfigurationStopsAllStartupSources)
 {
-    write_source("sstools.ini", "maxiter=111\nunknown=yes\nhertz=999\n");
+    source("sstools.ini").write("maxiter=111\nunknown=yes\nhertz=999\n");
     CommandProcessor processor{std::vector<std::string>{"id", "maxiter=bad", "batch=yes", "maxiter=222"}};
 
     ASSERT_TRUE(processor.advance());
@@ -746,7 +722,7 @@ TEST_F(TestStartupCommandProcessor, rejectedConfigurationStopsAllStartupSources)
     EXPECT_FALSE(processor.advance());
     EXPECT_EQ(111, g_max_iterations);
     EXPECT_EQ(440, g_base_hertz);
-    EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
+    EXPECT_TRUE(source("sstools.ini").remove());
 
     EXPECT_EQ(BatchMode::NONE, g_init_batch);
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
@@ -757,7 +733,7 @@ TEST_F(TestStartupCommandProcessor, rejectedConfigurationStopsAllStartupSources)
 TEST_F(TestStartupCommandProcessor, failedPaletteInConfigurationStopsAllStartupSources)
 {
     ValueSaver saved_overwrite{g_overwrite_file, true};
-    write_source("sstools.ini", "maxiter=111 overwrite=no map=missing-startup-palette.map overwrite=yes unknown=yes\n");
+    source("sstools.ini").write("maxiter=111 overwrite=no map=missing-startup-palette.map overwrite=yes unknown=yes\n");
     CommandProcessor processor{std::vector<std::string>{"id", "maxiter=222", "hertz=999"}};
 
     run(processor);
@@ -769,12 +745,12 @@ TEST_F(TestStartupCommandProcessor, failedPaletteInConfigurationStopsAllStartupS
     EXPECT_THAT(
         processor.result().diagnostics.errors, ElementsAre("Could not load color map missing-startup-palette.map"));
     EXPECT_FALSE(processor.advance());
-    EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
+    EXPECT_TRUE(source("sstools.ini").remove());
 }
 
 TEST_F(TestStartupCommandProcessor, configurationWarningsPermitLaterCommandsAndArguments)
 {
-    write_source("sstools.ini", "lfile=missing-startup.l\nmaxiter=111\n");
+    source("sstools.ini").write("lfile=missing-startup.l\nmaxiter=111\n");
     CommandProcessor processor{std::vector<std::string>{"id", "maxiter=222"}};
 
     run(processor);
@@ -786,7 +762,7 @@ TEST_F(TestStartupCommandProcessor, configurationWarningsPermitLaterCommandsAndA
 
 TEST_F(TestStartupCommandProcessor, configurationActionStopsRemainingConfigurationAndArguments)
 {
-    write_source("sstools.ini", "hertz=330\nmakedoc=unused.txt\nmaxiter=999\n");
+    source("sstools.ini").write("hertz=330\nmakedoc=unused.txt\nmaxiter=999\n");
     CommandProcessor processor{std::vector<std::string>{"id", "maxiter=222"}};
 
     run(processor);
@@ -795,7 +771,7 @@ TEST_F(TestStartupCommandProcessor, configurationActionStopsRemainingConfigurati
     EXPECT_EQ(150, g_max_iterations);
     EXPECT_TRUE(std::holds_alternative<MakeHelpDocument>(processor.result().action));
     EXPECT_FALSE(processor.result().needs_file_entry);
-    EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
+    EXPECT_TRUE(source("sstools.ini").remove());
 }
 
 TEST_F(TestStartupCommandProcessor, rejectedArgumentPreventsLaterActions)
@@ -845,7 +821,7 @@ class TestRestartMissingEntries : public TestStartupCommandProcessor, public Wit
 TEST_P(TestRestartMissingEntries, nonfatalRestartErrorStillRequestsMissingEntry)
 {
     g_first_init = false;
-    write_source("sstools.ini", std::string{"type="} + GetParam() + " unknown=yes\n");
+    source("sstools.ini").write(std::string{"type="} + GetParam() + " unknown=yes\n");
     CommandProcessor processor{std::vector<std::string>{"id"}};
 
     run(processor);
@@ -874,8 +850,8 @@ TEST_F(TestStartupCommandProcessor, batchErrorsStopLaterArgumentsAfterInitialSta
 TEST_F(TestStartupCommandProcessor, batchPaletteErrorStopsFileAfterInitialStartup)
 {
     g_first_init = false;
-    write_source(
-        "palette-failure.par", "chosen { maxiter=111 map=missing-startup-palette.map maxiter=222 unknown=yes }");
+    source("palette-failure.par")
+        .write("chosen { maxiter=111 map=missing-startup-palette.map maxiter=222 unknown=yes }");
     CommandProcessor processor{std::vector<std::string>{"id", "batch=yes", "@palette-failure/chosen", "hertz=999"}};
 
     run(processor);
@@ -885,12 +861,12 @@ TEST_F(TestStartupCommandProcessor, batchPaletteErrorStopsFileAfterInitialStartu
     EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
     EXPECT_THAT(
         processor.result().diagnostics.errors, ElementsAre("Could not load color map missing-startup-palette.map"));
-    EXPECT_TRUE(fs::remove(m_directory / "palette-failure.par"));
+    EXPECT_TRUE(source("palette-failure.par").remove());
 }
 
 TEST_F(TestStartupCommandProcessor, bareGifArgumentIsProbedBetweenParameterEffects)
 {
-    write_source("preview.gif", "GIF89a");
+    source("preview.gif").write("GIF89a");
     CommandProcessor processor{std::vector<std::string>{"id", "maxiter=111", "preview.gif", "maxiter=222"}};
 
     ASSERT_TRUE(processor.advance());
@@ -902,10 +878,10 @@ TEST_F(TestStartupCommandProcessor, bareGifArgumentIsProbedBetweenParameterEffec
     EXPECT_EQ("maxiter", processor.command().variable);
     EXPECT_EQ("222", processor.command().value);
     EXPECT_EQ(ShowFile::LOAD_IMAGE, g_show_file);
-    EXPECT_EQ(m_directory / "preview.gif", g_read_filename);
+    EXPECT_EQ(m_directory.path() / "preview.gif", g_read_filename);
     EXPECT_EQ(g_read_filename, g_browse.selected_path);
     EXPECT_EQ("preview.gif", g_browse.name);
-    EXPECT_TRUE(fs::remove(m_directory / "preview.gif"));
+    EXPECT_TRUE(source("preview.gif").remove());
     handle_current(processor);
     EXPECT_FALSE(processor.advance());
     EXPECT_TRUE(processor.result().diagnostics.errors.empty());
@@ -913,7 +889,7 @@ TEST_F(TestStartupCommandProcessor, bareGifArgumentIsProbedBetweenParameterEffec
 
 TEST_F(TestStartupCommandProcessor, nonGifArgumentRejectionStopsLaterArguments)
 {
-    write_source("preview.dat", "NOTGIF");
+    source("preview.dat").write("NOTGIF");
     CommandProcessor processor{std::vector<std::string>{"id", "preview.dat", "maxiter=222"}};
 
     ASSERT_TRUE(processor.advance());
@@ -1010,7 +986,7 @@ TEST_F(TestStartupCommandProcessor, perCommandEntryRequestIsNotAggregated)
 TEST_F(TestStartupCommandProcessor, configurationCompatibilityFinishesBeforeArgumentsAndIsNotRepeated)
 {
     prepare_legacy_compatibility();
-    write_source("sstools.ini", "maxiter=111\n");
+    source("sstools.ini").write("maxiter=111\n");
     CommandProcessor processor{std::vector<std::string>{"id", "maxiter=222"}};
 
     ASSERT_TRUE(processor.advance());
@@ -1027,7 +1003,7 @@ TEST_F(TestStartupCommandProcessor, configurationCompatibilityFinishesBeforeArgu
 TEST_F(TestStartupCommandProcessor, argumentFlagsDoNotTriggerFileCompatibility)
 {
     prepare_legacy_compatibility();
-    write_source("sstools.ini", "hertz=330\n");
+    source("sstools.ini").write("hertz=330\n");
     CommandProcessor processor{std::vector<std::string>{"id", "maxiter=222"}};
 
     run(processor);
@@ -1038,8 +1014,8 @@ TEST_F(TestStartupCommandProcessor, argumentFlagsDoNotTriggerFileCompatibility)
 
 TEST_F(TestStartupCommandProcessor, indirectFilesExposeCommandsInSourceOrder)
 {
-    write_source("whole.par", "entry { maxiter=111 }");
-    write_source("selected.par", "ignored { hertz=999 }\nchosen { hertz=330 }\ntrailing { hertz=888 }");
+    source("whole.par").write("entry { maxiter=111 }");
+    source("selected.par").write("ignored { hertz=999 }\nchosen { hertz=330 }\ntrailing { hertz=888 }");
     CommandProcessor processor{std::vector<std::string>{"id", "@whole", "@selected/chosen", "maxiter=222"}};
 
     ASSERT_TRUE(processor.advance());
@@ -1052,15 +1028,15 @@ TEST_F(TestStartupCommandProcessor, indirectFilesExposeCommandsInSourceOrder)
     EXPECT_EQ(440, g_base_hertz);
     EXPECT_EQ("330", processor.command().value);
     EXPECT_EQ(CmdFile::AT_CMD_LINE_SET_NAME, processor.command().mode);
-    EXPECT_EQ(m_directory / "selected.par", g_parameter_file);
+    EXPECT_EQ(m_directory.path() / "selected.par", g_parameter_file);
     EXPECT_EQ("chosen", g_parameter_set_name);
-    EXPECT_TRUE(fs::remove(m_directory / "whole.par"));
+    EXPECT_TRUE(source("whole.par").remove());
     handle_current(processor);
     ASSERT_TRUE(processor.advance());
     EXPECT_EQ(330, g_base_hertz);
     EXPECT_EQ("222", processor.command().value);
     EXPECT_EQ(CmdFile::AT_CMD_LINE, processor.command().mode);
-    EXPECT_TRUE(fs::remove(m_directory / "selected.par"));
+    EXPECT_TRUE(source("selected.par").remove());
     handle_current(processor);
     EXPECT_FALSE(processor.advance());
 
@@ -1070,10 +1046,9 @@ TEST_F(TestStartupCommandProcessor, indirectFilesExposeCommandsInSourceOrder)
 
 TEST_F(TestStartupCommandProcessor, indirectLookupUsesEarlierLibrarySettings)
 {
-    const fs::path library{m_directory / "late-library"};
+    const fs::path library{m_directory.path() / "late-library"};
     fs::create_directory(library);
-    write_source("late-library/late-choice.par", "chosen { maxiter=222 }");
-    m_sources.push_back(library);
+    source("late-library/late-choice.par").write("chosen { maxiter=222 }");
     CommandProcessor processor{
         std::vector<std::string>{"id", "librarydirs=" + library.string(), "@late-choice/chosen"}};
 
@@ -1094,8 +1069,8 @@ TEST_F(TestStartupCommandProcessor, indirectLookupUsesEarlierLibrarySettings)
 
 TEST_F(TestStartupCommandProcessor, missingIndirectFilePreservesSelectionAndStopsArguments)
 {
-    write_source("available.par", "present { hertz=999 }");
-    g_parameter_file = m_directory / "previous.par";
+    source("available.par").write("present { hertz=999 }");
+    g_parameter_file = m_directory.path() / "previous.par";
     g_parameter_set_name = "previous";
     CommandProcessor processor{std::vector<std::string>{
         "id", "maxiter=111", "@missing-indirect-parameter-file", "@available/missing", "maxiter=222"}};
@@ -1105,18 +1080,18 @@ TEST_F(TestStartupCommandProcessor, missingIndirectFilePreservesSelectionAndStop
     EXPECT_FALSE(processor.advance());
 
     EXPECT_EQ(111, g_max_iterations);
-    EXPECT_EQ(m_directory / "previous.par", g_parameter_file);
+    EXPECT_EQ(m_directory.path() / "previous.par", g_parameter_file);
     EXPECT_EQ("previous", g_parameter_set_name);
     EXPECT_EQ(440, g_base_hertz);
     EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("@missing-indirect-parameter-file")));
-    EXPECT_TRUE(fs::remove(m_directory / "available.par"));
+    EXPECT_TRUE(source("available.par").remove());
     EXPECT_FALSE(processor.advance());
 }
 
 TEST_F(TestStartupCommandProcessor, missingIndirectSetReportsOnlyTheFirstErrorAndStopsArguments)
 {
-    write_source("available.par", "present { hertz=999 }");
-    g_parameter_file = m_directory / "previous.par";
+    source("available.par").write("present { hertz=999 }");
+    g_parameter_file = m_directory.path() / "previous.par";
     g_parameter_set_name = "previous";
     CommandProcessor processor{std::vector<std::string>{"id", "@available/missing", "maxiter=222"}};
 
@@ -1124,17 +1099,17 @@ TEST_F(TestStartupCommandProcessor, missingIndirectSetReportsOnlyTheFirstErrorAn
 
     EXPECT_EQ(150, g_max_iterations);
     EXPECT_EQ(440, g_base_hertz);
-    EXPECT_EQ(m_directory / "previous.par", g_parameter_file);
+    EXPECT_EQ(m_directory.path() / "previous.par", g_parameter_file);
     EXPECT_EQ("previous", g_parameter_set_name);
     EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("'missing' file entry item not found")));
-    EXPECT_TRUE(fs::remove(m_directory / "available.par"));
+    EXPECT_TRUE(source("available.par").remove());
     EXPECT_FALSE(processor.advance());
 }
 
 TEST_F(TestStartupCommandProcessor, rejectedIndirectCommandStopsAllStartupSources)
 {
-    write_source("rejected.par", "entry { maxiter=111 unknown=yes hertz=999 }");
-    write_source("following.par", "entry { hertz=330 }");
+    source("rejected.par").write("entry { maxiter=111 unknown=yes hertz=999 }");
+    source("following.par").write("entry { hertz=330 }");
     CommandProcessor processor{std::vector<std::string>{"id", "@rejected", "@following", "maxiter=222"}};
 
     ASSERT_TRUE(processor.advance());
@@ -1146,8 +1121,8 @@ TEST_F(TestStartupCommandProcessor, rejectedIndirectCommandStopsAllStartupSource
     EXPECT_EQ(111, g_max_iterations);
     EXPECT_EQ(440, g_base_hertz);
     EXPECT_THAT(processor.result().diagnostics.errors, ElementsAre(HasSubstr("unknown=yes")));
-    EXPECT_TRUE(fs::remove(m_directory / "rejected.par"));
-    EXPECT_TRUE(fs::remove(m_directory / "following.par"));
+    EXPECT_TRUE(source("rejected.par").remove());
+    EXPECT_TRUE(source("following.par").remove());
     EXPECT_FALSE(processor.advance());
 
     EXPECT_EQ(111, g_max_iterations);
@@ -1158,9 +1133,9 @@ TEST_F(TestStartupCommandProcessor, rejectedIndirectCommandStopsAllStartupSource
 TEST_F(TestStartupCommandProcessor, failedPaletteInSelectedSetStopsAllStartupSources)
 {
     ValueSaver saved_overwrite{g_overwrite_file, true};
-    write_source("palette-failure.par",
-        "chosen { maxiter=111 overwrite=no map=missing-startup-palette.map overwrite=yes unknown=yes }");
-    write_source("following.par", "entry { hertz=330 }");
+    source("palette-failure.par")
+        .write("chosen { maxiter=111 overwrite=no map=missing-startup-palette.map overwrite=yes unknown=yes }");
+    source("following.par").write("entry { hertz=330 }");
     CommandProcessor processor{std::vector<std::string>{"id", "@palette-failure/chosen", "@following", "maxiter=222"}};
 
     run(processor);
@@ -1172,14 +1147,14 @@ TEST_F(TestStartupCommandProcessor, failedPaletteInSelectedSetStopsAllStartupSou
     EXPECT_THAT(
         processor.result().diagnostics.errors, ElementsAre("Could not load color map missing-startup-palette.map"));
     EXPECT_FALSE(processor.advance());
-    EXPECT_TRUE(fs::remove(m_directory / "palette-failure.par"));
-    EXPECT_TRUE(fs::remove(m_directory / "following.par"));
+    EXPECT_TRUE(source("palette-failure.par").remove());
+    EXPECT_TRUE(source("following.par").remove());
 }
 
 TEST_F(TestStartupCommandProcessor, indirectActionStopsItsFileAndRemainingStartupInput)
 {
-    write_source("action.par", "entry { maxiter=111 makemig=2/3 maxiter=999 }");
-    write_source("following.par", "entry { hertz=999 }");
+    source("action.par").write("entry { maxiter=111 makemig=2/3 maxiter=999 }");
+    source("following.par").write("entry { hertz=999 }");
     CommandProcessor processor{std::vector<std::string>{"id", "@action", "@following", "maxiter=222"}};
 
     run(processor);
@@ -1192,14 +1167,14 @@ TEST_F(TestStartupCommandProcessor, indirectActionStopsItsFileAndRemainingStartu
     EXPECT_EQ(2U, action->x_mult);
     EXPECT_EQ(3U, action->y_mult);
     EXPECT_FALSE(processor.result().needs_file_entry);
-    EXPECT_TRUE(fs::remove(m_directory / "action.par"));
+    EXPECT_TRUE(source("action.par").remove());
 }
 
 TEST_F(TestStartupCommandProcessor, indirectCompatibilityUsesEachFilesFlagsAndFinishesBeforeFollowingArguments)
 {
     prepare_legacy_compatibility();
-    write_source("unchanged.par", "entry { hertz=330 }");
-    write_source("changed.par", "entry { maxiter=222 }");
+    source("unchanged.par").write("entry { hertz=330 }");
+    source("changed.par").write("entry { maxiter=222 }");
     CommandProcessor processor{std::vector<std::string>{"id", "maxiter=111", "@unchanged", "@changed", "maxiter=333"}};
 
     ASSERT_TRUE(processor.advance());
@@ -1222,8 +1197,8 @@ TEST_F(TestStartupCommandProcessor, indirectCompatibilityUsesEachFilesFlagsAndFi
 
 TEST_F(TestStartupCommandProcessor, indirectCommandsDoNotExpandNestedIncludes)
 {
-    write_source("outer.par", "entry { maxiter=111 @nested hertz=999 }");
-    write_source("nested.par", "entry { hertz=330 }");
+    source("outer.par").write("entry { maxiter=111 @nested hertz=999 }");
+    source("nested.par").write("entry { hertz=330 }");
     CommandProcessor processor{std::vector<std::string>{"id", "@outer", "maxiter=222"}};
 
     run(processor);
@@ -1235,7 +1210,7 @@ TEST_F(TestStartupCommandProcessor, indirectCommandsDoNotExpandNestedIncludes)
 
 TEST_F(TestStartupCommandProcessor, abandonmentBetweenIndirectCommandsClosesTheFile)
 {
-    write_source("abandoned.par", "entry { maxiter=111 maxiter=999 }");
+    source("abandoned.par").write("entry { maxiter=111 maxiter=999 }");
     {
         CommandProcessor processor{std::vector<std::string>{"id", "@abandoned"}};
         ASSERT_TRUE(processor.advance());
@@ -1244,13 +1219,13 @@ TEST_F(TestStartupCommandProcessor, abandonmentBetweenIndirectCommandsClosesTheF
     }
 
     EXPECT_EQ(111, g_max_iterations);
-    EXPECT_TRUE(fs::remove(m_directory / "abandoned.par"));
+    EXPECT_TRUE(source("abandoned.par").remove());
 }
 
 TEST_F(TestStartupCommandProcessor, finalIndirectFileCompletesWithoutChangingTheSelectedSet)
 {
-    write_source("final.par", "entry { maxiter=222 hertz=330 }");
-    g_parameter_file = m_directory / "previous.par";
+    source("final.par").write("entry { maxiter=222 hertz=330 }");
+    g_parameter_file = m_directory.path() / "previous.par";
     g_parameter_set_name = "previous";
     CommandProcessor processor{std::vector<std::string>{"id", "@final"}};
 
@@ -1258,11 +1233,11 @@ TEST_F(TestStartupCommandProcessor, finalIndirectFileCompletesWithoutChangingThe
 
     EXPECT_EQ(222, g_max_iterations);
     EXPECT_EQ(330, g_base_hertz);
-    EXPECT_EQ(m_directory / "previous.par", g_parameter_file);
+    EXPECT_EQ(m_directory.path() / "previous.par", g_parameter_file);
     EXPECT_EQ("previous", g_parameter_set_name);
     EXPECT_FALSE(processor.advance());
     EXPECT_TRUE(processor.result().diagnostics.errors.empty());
-    EXPECT_TRUE(fs::remove(m_directory / "final.par"));
+    EXPECT_TRUE(source("final.par").remove());
 }
 
 TEST_F(TestStartupCommandProcessor, noSourcesCompletesWithoutPresentingACommand)
@@ -1278,7 +1253,7 @@ TEST_F(TestStartupCommandProcessor, noSourcesCompletesWithoutPresentingACommand)
 
 TEST_F(TestStartupCommandProcessor, configurationOnlyDoesNotInitializeSettingsOrRequestEntrySelection)
 {
-    write_source("sstools.ini", "type=formula\n");
+    source("sstools.ini").write("type=formula\n");
     g_max_iterations = 432;
     CommandProcessor processor;
 
@@ -1290,7 +1265,7 @@ TEST_F(TestStartupCommandProcessor, configurationOnlyDoesNotInitializeSettingsOr
     EXPECT_FALSE(processor.result().needs_file_entry);
     EXPECT_TRUE(processor.result().diagnostics.errors.empty());
     EXPECT_FALSE(processor.advance());
-    EXPECT_TRUE(fs::remove(m_directory / "sstools.ini"));
+    EXPECT_TRUE(source("sstools.ini").remove());
 }
 
 TEST_F(TestStartupCommandProcessor, missingConfigurationOnlyCompletesWithoutCommands)
@@ -1355,7 +1330,7 @@ void TestTerminalCommandAccess::SetUp()
         break;
     case CommandTerminalCause::STARTUP_COMPLETE:
     {
-        write_source("sstools.ini", "[id]\nmaxiter=111\nhertz=330\n");
+        source("sstools.ini").write("[id]\nmaxiter=111\nhertz=330\n");
         std::vector<std::string> args{"id", "maxiter=222", "hertz=660"};
         g_max_iterations = 432;
         m_processor.emplace(args);
@@ -1363,21 +1338,21 @@ void TestTerminalCommandAccess::SetUp()
         break;
     }
     case CommandTerminalCause::REJECTED_CONFIGURATION:
-        write_source("sstools.ini", "maxiter=111\nunknown=yes\nhertz=999\n");
+        source("sstools.ini").write("maxiter=111\nunknown=yes\nhertz=999\n");
         m_processor.emplace(std::vector<std::string>{"id", "maxiter=bad", "batch=yes", "maxiter=222"});
         break;
     case CommandTerminalCause::FAILED_PALETTE:
         g_overwrite_file = true;
-        write_source(
-            "sstools.ini", "maxiter=111 overwrite=no map=missing-startup-palette.map overwrite=yes unknown=yes\n");
+        source("sstools.ini")
+            .write("maxiter=111 overwrite=no map=missing-startup-palette.map overwrite=yes unknown=yes\n");
         m_processor.emplace(std::vector<std::string>{"id", "maxiter=222", "hertz=999"});
         break;
     case CommandTerminalCause::COMMENT_ARGUMENT:
         m_processor.emplace(std::vector<std::string>{"id", "maxiter=222", "; comment", "maxiter=999"});
         break;
     case CommandTerminalCause::FINAL_INDIRECT_FILE:
-        write_source("final.par", "entry { maxiter=222 hertz=330 }");
-        g_parameter_file = m_directory / "previous.par";
+        source("final.par").write("entry { maxiter=222 hertz=330 }");
+        g_parameter_file = m_directory.path() / "previous.par";
         g_parameter_set_name = "previous";
         m_processor.emplace(std::vector<std::string>{"id", "@final"});
         break;

@@ -23,6 +23,7 @@ public:
     // The caller owns the returned file, positioned at the beginning.
     std::FILE *open_input(std::string_view text);
 
+    void write(std::string_view text);
     const std::filesystem::path &path() const;
     bool remove();
 

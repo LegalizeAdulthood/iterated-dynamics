@@ -8,6 +8,8 @@
 
 #include <cstdio>
 #include <filesystem>
+#include <fstream>
+#include <iterator>
 #include <memory>
 #include <optional>
 #include <string>
@@ -34,8 +36,7 @@ void TestCommandTestFile::SetUp()
 
 void TestCommandTestFile::write_input()
 {
-    const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{
-        m_file->open_input("entry { maxiter=222 }"), std::fclose};
+    m_file->write("entry { maxiter=222 }");
 }
 
 TEST_F(TestCommandTestFile, openInputWritesBinaryBytesAndRewinds)
@@ -49,6 +50,35 @@ TEST_F(TestCommandTestFile, openInputWritesBinaryBytesAndRewinds)
 
     EXPECT_EQ(text, actual);
     EXPECT_EQ(EOF, std::fgetc(file.get()));
+}
+
+TEST_F(TestCommandTestFile, writeStoresBinaryBytes)
+{
+    constexpr char contents[]{"first\r\nsecond\0last"};
+    const std::string_view text{contents, sizeof(contents) - 1};
+
+    m_file->write(text);
+
+    std::ifstream file{m_file->path(), std::ios::binary};
+    ASSERT_TRUE(file.is_open());
+    const std::string actual{std::istreambuf_iterator<char>{file}, std::istreambuf_iterator<char>{}};
+    EXPECT_EQ(text, actual);
+}
+
+TEST_F(TestCommandTestFile, writeClosesTheFile)
+{
+    write_input();
+
+    EXPECT_TRUE(m_file->remove());
+}
+
+TEST_F(TestCommandTestFile, writeReplacesExistingContents)
+{
+    write_input();
+
+    m_file->write("new");
+
+    EXPECT_EQ(3U, std::filesystem::file_size(m_file->path()));
 }
 
 TEST_F(TestCommandTestFile, removalLeavesDirectoryAndOtherFilesIntact)

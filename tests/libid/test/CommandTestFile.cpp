@@ -34,6 +34,11 @@ std::FILE *CommandTestFile::open_input(const std::string_view text)
     return file.release();
 }
 
+void CommandTestFile::write(const std::string_view text)
+{
+    const std::unique_ptr<std::FILE, decltype(&std::fclose)> file{open_input(text), std::fclose};
+}
+
 const std::filesystem::path &CommandTestFile::path() const
 {
     return m_path;
