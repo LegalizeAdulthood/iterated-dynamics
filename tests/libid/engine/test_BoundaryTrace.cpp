@@ -4,6 +4,7 @@
 #include <engine/BoundaryTrace.h>
 
 #include "MockDriver.h"
+#include "WorkListSnapshot.h"
 
 #include <engine/calcfrac.h>
 #include <engine/LogicalScreen.h>
@@ -19,7 +20,6 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <array>
 #include <optional>
 #include <ostream>
 #include <stdexcept>
@@ -63,7 +63,6 @@ class TestBoundaryTrace : public Test
 protected:
     void SetUp() override
     {
-        std::copy_n(g_work_list, MAX_CALC_WORK, m_saved_work.begin());
         s_calculated.clear();
         s_checkerboard = false;
         set_frame(16, 12);
@@ -80,11 +79,6 @@ protected:
                 }));
         EXPECT_CALL(m_driver, key_pressed()).Times(0);
         EXPECT_CALL(m_driver, get_key()).Times(0);
-    }
-
-    void TearDown() override
-    {
-        std::copy(m_saved_work.begin(), m_saved_work.end(), g_work_list);
     }
 
     void set_frame(int width, int height)
@@ -159,7 +153,7 @@ protected:
     ValueSaver<int> m_saved_color{g_color};
     ValueSaver<int> m_saved_fill_color{g_fill_color, -1};
     ValueSaver<int> m_saved_show_dot{g_show_dot, 0};
-    ValueSaver<int> m_saved_work_count{g_num_work_list, 0};
+    WorkListSnapshot m_work_list;
     ValueSaver<int> m_saved_symmetry{g_work_symmetry, 0};
     ValueSaver<bool> m_saved_periodicity{g_reset_periodicity};
     ValueSaver<Passes> m_saved_passes{g_passes};
@@ -168,7 +162,6 @@ protected:
     ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
     ValueSaver<decltype(g_plot)> m_saved_plot{g_plot, put_color_a};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
-    std::array<WorkList, MAX_CALC_WORK> m_saved_work{};
     std::vector<int> m_pixels;
     std::vector<Point2i> m_plots;
     int m_width{};

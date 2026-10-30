@@ -5,6 +5,7 @@
 #include <engine/StandardPass.h>
 
 #include "MockDriver.h"
+#include "WorkListSnapshot.h"
 
 #include <engine/calc_frac_init.h>
 #include <engine/engine_timer.h>
@@ -29,7 +30,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <array>
 #include <ctime>
 #include <initializer_list>
@@ -127,7 +127,6 @@ class TestStandardPass : public Test
 protected:
     void SetUp() override
     {
-        std::copy_n(g_work_list, MAX_CALC_WORK, m_saved_work.begin());
         set_frame(8, 8);
         g_dispatch.set_calc_type(unexpected_calculation);
         set_normal_dot();
@@ -142,11 +141,6 @@ protected:
                 }));
         EXPECT_CALL(m_driver, key_pressed()).Times(0);
         EXPECT_CALL(m_driver, get_key()).Times(0);
-    }
-
-    void TearDown() override
-    {
-        std::copy(m_saved_work.begin(), m_saved_work.end(), g_work_list);
     }
 
     bool select_next(StandardPass &pass)
@@ -199,7 +193,7 @@ protected:
     ValueSaver<int> m_saved_inside_color{g_inside_color, 0};
     ValueSaver<ColorMethod> m_saved_inside{g_inside_method, ColorMethod::ITER};
     ValueSaver<ColorMethod> m_saved_outside{g_outside_method, ColorMethod::ITER};
-    ValueSaver<int> m_saved_work_count{g_num_work_list, 0};
+    WorkListSnapshot m_work_list;
     ValueSaver<int> m_saved_work_pass{g_work_pass, 0};
     ValueSaver<int> m_saved_symmetry{g_work_symmetry, 0};
     ValueSaver<int> m_saved_stop_pass{g_stop_pass, 0};
@@ -212,7 +206,6 @@ protected:
     ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
     ValueSaver<decltype(g_plot)> m_saved_plot{g_plot, put_color_a};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
-    std::array<WorkList, MAX_CALC_WORK> m_saved_work{};
     std::vector<int> m_pixels;
     int m_width{};
     int m_plot_count{};
@@ -289,7 +282,6 @@ void TestStandardPassInstance::SetUp()
 void TestStandardPassInstance::TearDown()
 {
     m_pass.reset();
-    TestStandardPass::TearDown();
 }
 
 enum class StandardPassGuardState
@@ -594,7 +586,6 @@ protected:
     void TearDown() override
     {
         end_resume();
-        TestStandardPass::TearDown();
     }
 
     bool select_next(StandardFractal &calculation)

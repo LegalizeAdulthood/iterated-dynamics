@@ -4,6 +4,7 @@
 #include <engine/ScanlinePass.h>
 
 #include "MockDriver.h"
+#include "WorkListSnapshot.h"
 
 #include <engine/LogicalScreen.h>
 #include <engine/resume.h>
@@ -16,7 +17,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <array>
 #include <optional>
 #include <ostream>
@@ -66,18 +66,12 @@ class TestScanlinePass : public Test
 protected:
     void SetUp() override
     {
-        std::copy_n(g_work_list, MAX_CALC_WORK, m_saved_work.begin());
         s_calculated.clear();
         s_plotted.clear();
         s_interrupt_once = false;
         s_color = 7;
         g_dispatch.set_calc_type(calculate_pixel);
         set_normal_dot();
-    }
-
-    void TearDown() override
-    {
-        std::copy(m_saved_work.begin(), m_saved_work.end(), g_work_list);
     }
 
     std::vector<Point2i> finish(ScanlinePass &pass)
@@ -104,7 +98,7 @@ protected:
     ValueSaver<Point2i> m_saved_begin{g_begin_pt, Point2i{0, 0}};
     ValueSaver<int> m_saved_work_pass{g_work_pass, 0};
     ValueSaver<int> m_saved_symmetry{g_work_symmetry, 0};
-    ValueSaver<int> m_saved_work_count{g_num_work_list, 0};
+    WorkListSnapshot m_work_list;
     ValueSaver<int> m_saved_col{g_col, 0};
     ValueSaver<int> m_saved_row{g_row, 0};
     ValueSaver<int> m_saved_current_row{g_current_row};
@@ -118,7 +112,6 @@ protected:
     ValueSaver<bool> m_saved_periodicity{g_reset_periodicity};
     ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
     ValueSaver<decltype(g_plot)> m_saved_plot{g_plot, plot_pixel};
-    std::array<WorkList, MAX_CALC_WORK> m_saved_work{};
 };
 
 TEST_F(TestScanlinePass, selectionDoesNotCalculateOrAdvance)

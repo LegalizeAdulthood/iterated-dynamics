@@ -5,6 +5,7 @@
 #include <engine/tesseral.h>
 
 #include "MockDriver.h"
+#include "WorkListSnapshot.h"
 
 #include <engine/calcfrac.h>
 #include <engine/LogicalScreen.h>
@@ -17,7 +18,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <optional>
@@ -72,7 +72,6 @@ class TestTesseral : public Test
 protected:
     void SetUp() override
     {
-        std::copy_n(g_work_list, MAX_CALC_WORK, m_saved_work.begin());
         s_interrupt_after = -1;
         s_gradient = false;
         set_frame(6, 5);
@@ -89,11 +88,6 @@ protected:
                 }));
         EXPECT_CALL(m_driver, key_pressed()).Times(0);
         EXPECT_CALL(m_driver, get_key()).Times(0);
-    }
-
-    void TearDown() override
-    {
-        std::copy(m_saved_work.begin(), m_saved_work.end(), g_work_list);
     }
 
     void set_frame(const int width, const int height)
@@ -167,7 +161,7 @@ protected:
     ValueSaver<int> m_saved_current_row{g_current_row};
     ValueSaver<int> m_saved_color{g_color};
     ValueSaver<int> m_saved_fill{g_fill_color, -1};
-    ValueSaver<int> m_saved_work_count{g_num_work_list, 0};
+    WorkListSnapshot m_work_list;
     ValueSaver<int> m_saved_work_pass{g_work_pass, 0};
     ValueSaver<int> m_saved_symmetry{g_work_symmetry, 0};
     ValueSaver<bool> m_saved_periodicity{g_reset_periodicity};
@@ -175,7 +169,6 @@ protected:
     ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
     ValueSaver<decltype(g_plot)> m_saved_plot{g_plot, put_color_a};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
-    std::array<WorkList, MAX_CALC_WORK> m_saved_work{};
     std::vector<int> m_pixels;
     std::vector<Point2i> m_plots;
     int m_width{};
