@@ -59,6 +59,7 @@ add_executable(test-id
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_library.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_migrate_gif.h"
     "include/expected_map.h"
+    include/MemoryDiskStorage.h MemoryDiskStorage.cpp
     "include/MockDriver.h"
     "include/MockSoundOutput.h"
     include/PassTestFrame.h PassTestFrame.cpp

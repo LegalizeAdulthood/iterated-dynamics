@@ -3,6 +3,8 @@
 //
 #include <engine/pixel.h>
 
+#include "MemoryDiskStorage.h"
+
 #include <engine/calcfrac.h>
 #include <engine/LogicalScreen.h>
 #include <engine/Potential.h>
@@ -285,9 +287,8 @@ protected:
 void TestPotentialPixel::SetUp()
 {
     TestPixel::SetUp();
-    id::io::end_disk();
-    init_memory();
-    id::io::start_disk_storage(10, 18, 256, memory_alloc(id::io::DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
+    init_memory_disk_storage();
+    open_memory_disk_storage(10, 18, 256);
     g_potential.store_16bit = true;
 }
 

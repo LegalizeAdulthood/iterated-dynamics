@@ -4,6 +4,7 @@
 #include <engine/pixel.h>
 #include <engine/StandardPass.h>
 
+#include "MemoryDiskStorage.h"
 #include "MockDriver.h"
 #include "PassTestFrame.h"
 #include "WorkListSnapshot.h"
@@ -1554,8 +1555,7 @@ protected:
 void TestStandardPotential::SetUp()
 {
     TestStandardFractal::SetUp();
-    end_disk();
-    init_memory();
+    init_memory_disk_storage();
     g_potential.flag = true;
     g_potential.store_16bit = true;
 }
@@ -1570,7 +1570,7 @@ void TestStandardPotential::TearDown()
 
 void TestStandardPotential::open_storage()
 {
-    start_disk_storage(8, 16, 256, memory_alloc(DISK_STORAGE_BLOCK_SIZE, 1, MemoryLocation::MEMORY));
+    open_memory_disk_storage(8, 16, 256);
     g_disk_16_bit = true;
 }
 
