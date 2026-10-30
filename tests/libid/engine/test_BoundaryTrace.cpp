@@ -4,10 +4,10 @@
 #include <engine/BoundaryTrace.h>
 
 #include "MockDriver.h"
+#include "PassTestFrame.h"
 #include "WorkListSnapshot.h"
 
 #include <engine/calcfrac.h>
-#include <engine/LogicalScreen.h>
 #include <engine/pixel.h>
 #include <engine/show_dot.h>
 #include <engine/VideoInfo.h>
@@ -69,34 +69,18 @@ protected:
         g_dispatch.set_calc_type(calculate_pixel);
         set_normal_dot();
         EXPECT_CALL(m_driver, read_pixel(_, _))
-            .WillRepeatedly(Invoke([this](int col, int row) { return m_pixels.at(row * m_width + col); }));
+            .WillRepeatedly(Invoke([this](int col, int row) { return m_frame.read_pixel(col, row); }));
         EXPECT_CALL(m_driver, write_pixel(_, _, _))
-            .WillRepeatedly(Invoke(
-                [this](int col, int row, int color)
-                {
-                    m_pixels.at(row * m_width + col) = color;
-                    m_plots.push_back({col, row});
-                }));
+            .WillRepeatedly(Invoke([this](int col, int row, int color) { m_frame.write_pixel(col, row, color); }));
         EXPECT_CALL(m_driver, key_pressed()).Times(0);
         EXPECT_CALL(m_driver, get_key()).Times(0);
     }
 
     void set_frame(int width, int height)
     {
-        m_width = width;
-        m_height = height;
-        g_screen_x_dots = width;
-        g_screen_y_dots = height;
-        g_logical_screen = {width, height, 0, 0, width - 1.0, height - 1.0};
-        g_start_pt = {0, 0};
-        g_stop_pt = {width - 1, height - 1};
-        g_i_start_pt = g_start_pt;
-        g_i_stop_pt = g_stop_pt;
-        g_begin_pt = g_start_pt;
+        m_frame.reset(width, height);
         g_num_work_list = 0;
         g_color = 0;
-        m_pixels.assign(width * height, 0);
-        m_plots.clear();
     }
 
     void provide_pixel(BoundaryTrace &pass)
@@ -136,16 +120,9 @@ protected:
 
     MockDriver m_driver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
-    ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen};
-    ValueSaver<int> m_saved_width{g_screen_x_dots};
-    ValueSaver<int> m_saved_height{g_screen_y_dots};
+    PassTestFrame m_frame;
     ValueSaver<int> m_saved_colors{g_colors, 256};
     ValueSaver<int> m_saved_mask{g_and_color, 255};
-    ValueSaver<Point2i> m_saved_start{g_start_pt};
-    ValueSaver<Point2i> m_saved_stop{g_stop_pt};
-    ValueSaver<Point2i> m_saved_i_start{g_i_start_pt};
-    ValueSaver<Point2i> m_saved_i_stop{g_i_stop_pt};
-    ValueSaver<Point2i> m_saved_begin{g_begin_pt};
     ValueSaver<int> m_saved_col{g_col};
     ValueSaver<int> m_saved_row{g_row};
     ValueSaver<int> m_saved_current_col{g_current_column};
@@ -162,10 +139,6 @@ protected:
     ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
     ValueSaver<decltype(g_plot)> m_saved_plot{g_plot, put_color_a};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
-    std::vector<int> m_pixels;
-    std::vector<Point2i> m_plots;
-    int m_width{};
-    int m_height{};
 };
 
 TEST_F(TestBoundaryTrace, selectionRetainsScanPixelWithoutCalculation)
@@ -183,7 +156,7 @@ TEST_F(TestBoundaryTrace, selectionRetainsScanPixelWithoutCalculation)
     EXPECT_EQ(0, g_row);
     EXPECT_FALSE(pass.done());
     EXPECT_TRUE(s_calculated.empty());
-    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(m_frame.plots().empty());
 }
 
 TEST_F(TestBoundaryTrace, completionKeepsTheScanAndOutlineContinuation)
@@ -230,14 +203,14 @@ TEST_F(TestBoundaryTrace, outlineSelectionDoesNotSkipAnAlreadyPlottedPendingPixe
 
 TEST_F(TestBoundaryTrace, cachedPixelsDoNotBecomeCalculationRequests)
 {
-    std::fill(m_pixels.begin(), m_pixels.end(), 7);
+    std::fill(m_frame.pixels().begin(), m_frame.pixels().end(), 7);
     BoundaryTrace pass;
 
     EXPECT_FALSE(pass.select_pixel());
 
     EXPECT_TRUE(pass.done());
     EXPECT_TRUE(s_calculated.empty());
-    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(m_frame.plots().empty());
 }
 
 TEST_F(TestBoundaryTrace, fillingUsesCachedOutlineColorsWithoutRecalculatingPixels)
@@ -246,14 +219,14 @@ TEST_F(TestBoundaryTrace, fillingUsesCachedOutlineColorsWithoutRecalculatingPixe
 
     const std::vector<Point2i> selected{finish(pass)};
 
-    EXPECT_THAT(m_pixels, Each(7));
-    EXPECT_LT(selected.size(), m_pixels.size());
-    EXPECT_GT(m_plots.size(), selected.size());
+    EXPECT_THAT(m_frame.pixels(), Each(7));
+    EXPECT_LT(selected.size(), m_frame.pixels().size());
+    EXPECT_GT(m_frame.plots().size(), selected.size());
     EXPECT_TRUE(s_calculated.empty());
-    std::vector<int> visits(m_pixels.size(), 0);
+    std::vector<int> visits(m_frame.pixels().size(), 0);
     for (const Point2i &point : selected)
     {
-        EXPECT_EQ(0, visits.at(point.y * m_width + point.x)++);
+        EXPECT_EQ(0, visits.at(point.y * m_frame.width() + point.x)++);
     }
 }
 
@@ -279,7 +252,7 @@ TEST_F(TestBoundaryTrace, outlineSelectionKeepsTheExistingChunkSize)
     finish(pass);
 
     EXPECT_TRUE(pass.done());
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
 }
 
 TEST_F(TestBoundaryTrace, suspensionRetainsAnUncomputedScanPixel)
@@ -294,7 +267,7 @@ TEST_F(TestBoundaryTrace, suspensionRetainsAnUncomputedScanPixel)
     EXPECT_EQ((Point2i{0, 0}), g_work_list[0].begin);
     EXPECT_EQ((Point2i{0, 0}), pass.selected_pixel());
     EXPECT_TRUE(s_calculated.empty());
-    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(m_frame.plots().empty());
 }
 
 TEST_F(TestBoundaryTrace, suspensionPreservesCompletedPixelsWithShowDotEnabled)
@@ -305,13 +278,13 @@ TEST_F(TestBoundaryTrace, suspensionPreservesCompletedPixelsWithShowDotEnabled)
     provide_pixel(pass);
     ASSERT_TRUE(pass.select_pixel());
     provide_pixel(pass);
-    const std::vector<int> pixels{m_pixels};
-    const std::vector<Point2i> plots{m_plots};
+    const std::vector<int> pixels{m_frame.pixels()};
+    const std::vector<Point2i> plots{m_frame.plots()};
 
     pass.suspend();
 
-    EXPECT_EQ(pixels, m_pixels);
-    EXPECT_EQ(plots, m_plots);
+    EXPECT_EQ(pixels, m_frame.pixels());
+    EXPECT_EQ(plots, m_frame.plots());
     EXPECT_EQ(1, g_num_work_list);
 }
 
@@ -335,7 +308,7 @@ TEST_F(TestBoundaryTrace, suspensionOfOutlineWorkRestartsAtItsScanCursor)
     ASSERT_TRUE(resumed.select_pixel());
     EXPECT_EQ((Point2i{2, 0}), resumed.selected_pixel());
     finish(resumed);
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
 }
 
 struct BoundaryColorInput
@@ -373,7 +346,7 @@ TEST_P(TestBoundaryTraceInvalidColors, reportsFailureAndAllowsCorrectedSettings)
 
     EXPECT_THROW(pass.select_pixel(), std::runtime_error);
     EXPECT_FALSE(pass.done());
-    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(m_frame.plots().empty());
     EXPECT_TRUE(s_calculated.empty());
 
     g_inside_method = ColorMethod::ITER;
@@ -393,7 +366,7 @@ TEST_F(TestBoundaryTrace, insufficientColorsReportFailureWithoutCompletingOrPoll
 
     EXPECT_THROW(pass.select_pixel(), std::runtime_error);
     EXPECT_FALSE(pass.done());
-    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(m_frame.plots().empty());
     EXPECT_TRUE(s_calculated.empty());
 
     g_colors = 16;

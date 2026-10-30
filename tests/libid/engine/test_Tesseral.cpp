@@ -5,10 +5,10 @@
 #include <engine/tesseral.h>
 
 #include "MockDriver.h"
+#include "PassTestFrame.h"
 #include "WorkListSnapshot.h"
 
 #include <engine/calcfrac.h>
-#include <engine/LogicalScreen.h>
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
@@ -78,33 +78,18 @@ protected:
         g_dispatch.set_calc_type(calculate_pixel);
         set_normal_dot();
         EXPECT_CALL(m_driver, read_pixel(_, _))
-            .WillRepeatedly(Invoke([this](int col, int row) { return m_pixels.at(row * m_width + col); }));
+            .WillRepeatedly(Invoke([this](int col, int row) { return m_frame.read_pixel(col, row); }));
         EXPECT_CALL(m_driver, write_pixel(_, _, _))
-            .WillRepeatedly(Invoke(
-                [this](int col, int row, int color)
-                {
-                    m_pixels.at(row * m_width + col) = color;
-                    m_plots.push_back({col, row});
-                }));
+            .WillRepeatedly(Invoke([this](int col, int row, int color) { m_frame.write_pixel(col, row, color); }));
         EXPECT_CALL(m_driver, key_pressed()).Times(0);
         EXPECT_CALL(m_driver, get_key()).Times(0);
     }
 
     void set_frame(const int width, const int height)
     {
-        m_width = width;
-        g_screen_x_dots = width;
-        g_screen_y_dots = height;
-        g_logical_screen = {width, height, 0, 0, width - 1.0, height - 1.0};
-        g_start_pt = {0, 0};
-        g_stop_pt = {width - 1, height - 1};
-        g_i_start_pt = g_start_pt;
-        g_i_stop_pt = g_stop_pt;
-        g_begin_pt = g_start_pt;
+        m_frame.reset(width, height);
         g_work_pass = 0;
         g_num_work_list = 0;
-        m_pixels.assign(width * height, 0);
-        m_plots.clear();
         s_calculated.clear();
     }
 
@@ -145,16 +130,9 @@ protected:
 
     MockDriver m_driver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
-    ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen};
-    ValueSaver<int> m_saved_width{g_screen_x_dots};
-    ValueSaver<int> m_saved_height{g_screen_y_dots};
+    PassTestFrame m_frame;
     ValueSaver<int> m_saved_colors{g_colors, 256};
     ValueSaver<int> m_saved_mask{g_and_color, 255};
-    ValueSaver<Point2i> m_saved_start{g_start_pt};
-    ValueSaver<Point2i> m_saved_stop{g_stop_pt};
-    ValueSaver<Point2i> m_saved_i_start{g_i_start_pt};
-    ValueSaver<Point2i> m_saved_i_stop{g_i_stop_pt};
-    ValueSaver<Point2i> m_saved_begin{g_begin_pt};
     ValueSaver<int> m_saved_col{g_col};
     ValueSaver<int> m_saved_row{g_row};
     ValueSaver<int> m_saved_current_col{g_current_column};
@@ -169,9 +147,6 @@ protected:
     ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
     ValueSaver<decltype(g_plot)> m_saved_plot{g_plot, put_color_a};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
-    std::vector<int> m_pixels;
-    std::vector<Point2i> m_plots;
-    int m_width{};
 };
 
 TEST_F(TestTesseral, rowSelectionRetainsThePendingPixelWithoutCalculation)
@@ -188,7 +163,7 @@ TEST_F(TestTesseral, rowSelectionRetainsThePendingPixelWithoutCalculation)
     EXPECT_EQ((Point2i{0, 0}), pass.selected_pixel());
     EXPECT_EQ(0, g_col);
     EXPECT_EQ(0, g_row);
-    EXPECT_TRUE(m_plots.empty());
+    EXPECT_TRUE(m_frame.plots().empty());
     EXPECT_TRUE(s_calculated.empty());
     provide_pixel(pass);
     EXPECT_FALSE(g_reset_periodicity);
@@ -213,12 +188,12 @@ TEST_F(TestTesseral, constantEdgesFillTheInteriorUsingCompletedColors)
 {
     Tesseral pass;
     EXPECT_EQ(18U, selection_chunk(pass).size());
-    EXPECT_EQ(0, m_pixels.at(2 * m_width + 1));
+    EXPECT_EQ(0, m_frame.pixels().at(2 * m_frame.width() + 1));
 
     EXPECT_THAT(selection_chunk(pass), ElementsAre(Point2i{2, 1}, Point2i{2, 2}, Point2i{2, 3}));
 
     EXPECT_TRUE(pass.done());
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
     EXPECT_TRUE(s_calculated.empty());
 }
 
@@ -234,14 +209,14 @@ TEST_F(TestTesseral, splitProbeRetainsItsColumnAndBoxContinuation)
     const Point2i pending{2, 2};
     EXPECT_EQ(pending, pass.selected_pixel());
     g_plot(pending.x, pending.y, pixel_color(pending));
-    const std::size_t plots{m_plots.size()};
+    const std::size_t plots{m_frame.plots().size()};
     g_col = 99;
     g_row = 99;
 
     ASSERT_TRUE(pass.select_pixel());
 
     EXPECT_EQ(pending, pass.selected_pixel());
-    EXPECT_EQ(plots, m_plots.size());
+    EXPECT_EQ(plots, m_frame.plots().size());
     provide_pixel(pass);
     ASSERT_TRUE(pass.select_pixel());
     EXPECT_EQ((Point2i{2, 3}), pass.selected_pixel());
@@ -253,7 +228,7 @@ TEST_F(TestTesseral, splitProbeRetainsItsColumnAndBoxContinuation)
     {
         for (int col = 0; col < 6; ++col)
         {
-            EXPECT_EQ(pixel_color({col, row}), m_pixels.at(row * m_width + col));
+            EXPECT_EQ(pixel_color({col, row}), m_frame.pixels().at(row * m_frame.width() + col));
         }
     }
     EXPECT_TRUE(s_calculated.empty());
@@ -276,7 +251,7 @@ TEST_F(TestTesseral, nonuniformMiddleRequiresSubdivision)
 
     // The split starts its own middle-edge probe after the color check.
     EXPECT_EQ((Point2i{2, 1}), pass.selected_pixel());
-    EXPECT_EQ(0, m_pixels.at(2 * m_width + 1));
+    EXPECT_EQ(0, m_frame.pixels().at(2 * m_frame.width() + 1));
     EXPECT_FALSE(pass.done());
     EXPECT_TRUE(s_calculated.empty());
 }
@@ -349,15 +324,15 @@ TEST_F(TestTesseral, spanFillsKeepTheirExistingChunkSize)
     EXPECT_EQ(8U, selection_chunk(pass).size()); // horizontal middle probe, then 64 filled rows
 
     EXPECT_FALSE(pass.done());
-    EXPECT_EQ(7, m_pixels.at(64 * m_width + 1));
-    EXPECT_EQ(0, m_pixels.at(65 * m_width + 1));
+    EXPECT_EQ(7, m_frame.pixels().at(64 * m_frame.width() + 1));
+    EXPECT_EQ(0, m_frame.pixels().at(65 * m_frame.width() + 1));
     EXPECT_TRUE(selection_chunk(pass).empty());
     EXPECT_FALSE(pass.done());
-    EXPECT_EQ(7, m_pixels.at(128 * m_width + 1));
-    EXPECT_EQ(0, m_pixels.at(129 * m_width + 1));
+    EXPECT_EQ(7, m_frame.pixels().at(128 * m_frame.width() + 1));
+    EXPECT_EQ(0, m_frame.pixels().at(129 * m_frame.width() + 1));
     EXPECT_TRUE(selection_chunk(pass).empty());
     EXPECT_TRUE(pass.done());
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
     EXPECT_TRUE(s_calculated.empty());
 }
 
@@ -367,15 +342,15 @@ TEST_F(TestTesseral, pixelFillsKeepTheirExistingChunkSize)
     g_plot = plot_pixel;
     Tesseral pass;
     ASSERT_EQ(396U, selection_chunk(pass).size());
-    const std::size_t plots{m_plots.size()};
+    const std::size_t plots{m_frame.plots().size()};
 
     EXPECT_EQ(98U, selection_chunk(pass).size());
 
     EXPECT_FALSE(pass.done());
-    EXPECT_EQ(plots + 98 + 8192, m_plots.size());
+    EXPECT_EQ(plots + 98 + 8192, m_frame.plots().size());
     EXPECT_TRUE(selection_chunk(pass).empty());
     EXPECT_TRUE(pass.done());
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
     EXPECT_TRUE(s_calculated.empty());
 }
 
@@ -400,7 +375,7 @@ TEST_F(TestTesseral, suspensionDuringInitialEdgesRestartsThePerimeter)
     ASSERT_TRUE(resumed.select_pixel());
     EXPECT_EQ((Point2i{0, 0}), resumed.selected_pixel());
     finish_selection(resumed);
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
     EXPECT_TRUE(s_calculated.empty());
 }
 
@@ -430,7 +405,7 @@ TEST_F(TestTesseral, suspensionDuringSplitPreservesTheActiveBox)
     {
         for (int col = 0; col < 6; ++col)
         {
-            EXPECT_EQ(pixel_color({col, row}), m_pixels.at(row * m_width + col));
+            EXPECT_EQ(pixel_color({col, row}), m_frame.pixels().at(row * m_frame.width() + col));
         }
     }
     EXPECT_TRUE(s_calculated.empty());
@@ -446,7 +421,7 @@ TEST_F(TestTesseral, narrowEdgesKeepTheirExistingSingleSample)
     EXPECT_THAT(selection_chunk(pass), ElementsAre(Point2i{1, 0}));
 
     EXPECT_TRUE(pass.done());
-    EXPECT_THAT(m_pixels, Each(7));
+    EXPECT_THAT(m_frame.pixels(), Each(7));
     EXPECT_TRUE(s_calculated.empty());
 }
 

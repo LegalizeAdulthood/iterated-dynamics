@@ -61,6 +61,7 @@ add_executable(test-id
     "include/expected_map.h"
     "include/MockDriver.h"
     "include/MockSoundOutput.h"
+    include/PassTestFrame.h PassTestFrame.cpp
     include/PendingDriverKey.h PendingDriverKey.cpp
     "include/ValueUnchanged.h"
     "include/test_config_data.h.in"
