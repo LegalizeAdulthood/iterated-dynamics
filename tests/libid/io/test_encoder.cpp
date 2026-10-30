@@ -5,6 +5,8 @@
 
 #include "ColorMapSaver.h"
 #include "FailingOutputBuffer.h"
+#include "FindFractalInfoState.h"
+#include "FindFractalInfoTestSupport.h"
 #include "GifReadSupport.h"
 #include "MockDriver.h"
 #include "TemporaryDirectory.h"
@@ -957,34 +959,17 @@ TEST_F(TestGifWriterRaster, autosaveReusesFilenameAndFinalSaveEndsResaving)
 class TestGifWriterExtensions : public TestGifWriterRaster
 {
 protected:
-    bool read_metadata();
     void expect_layout(GifFileType *gif, const std::vector<std::string> &identifiers) const;
     std::vector<Byte> payload(const GifFileType *gif, const std::string &identifier) const;
 
-    FractalInfo m_info{};
-    ExtBlock2 m_resume{};
-    ExtBlock3 m_formula{};
-    ExtBlock4 m_ranges{};
-    ExtBlock5 m_parameters{};
-    ExtBlock6 m_evolution{};
-    ExtBlock7 m_orbits{};
+    FindFractalInfoResult m_result;
     ValueSaver<std::vector<Byte>> m_saved_resume{g_resume_data, std::vector<Byte>{}};
     ValueSaver<int> m_saved_resume_len{g_resume_len, 0};
     ValueSaver<std::vector<int>> m_saved_ranges{g_iteration_ranges, std::vector<int>{}};
     ValueSaver<Display3DMode> m_saved_display_3d{g_display_3d, Display3DMode::NONE};
     ValueSaver<CompiledFormula> m_saved_formula{g_formula};
-    ValueSaver<int> m_saved_file_width{g_file_x_dots};
-    ValueSaver<int> m_saved_file_height{g_file_y_dots};
-    ValueSaver<int> m_saved_file_colors{g_file_colors};
-    ValueSaver<float> m_saved_file_aspect{g_file_aspect_ratio};
-    ValueSaver<bool> m_saved_make_parameter_file{g_make_parameter_file, false};
+    FindFractalInfoState m_saved_metadata_state;
 };
-
-bool TestGifWriterExtensions::read_metadata()
-{
-    return find_fractal_info(
-        m_path.string(), &m_info, &m_resume, &m_formula, &m_ranges, &m_parameters, &m_evolution, &m_orbits);
-}
 
 void TestGifWriterExtensions::expect_layout(GifFileType *gif, const std::vector<std::string> &identifiers) const
 {
@@ -1069,25 +1054,25 @@ TEST_F(TestGifWriterExtensions, savesMainRecordWithoutInapplicableOptionalRecord
         (std::vector<Byte>{bytes.begin(), bytes.begin() + 12}));
     EXPECT_EQ(
         (std::vector<Byte>{0, 0, 0, 0, 0, 0, 4, 0xC0}), (std::vector<Byte>{bytes.begin() + 12, bytes.begin() + 20}));
-    ASSERT_FALSE(read_metadata());
-    EXPECT_STREQ("Fractal", m_info.info_id);
-    EXPECT_EQ(FRACTAL_INFO_VERSION, m_info.info_version);
-    EXPECT_EQ(0x123456, m_info.iterations);
-    EXPECT_EQ(32767, m_info.iterations_old);
-    EXPECT_EQ(0x12345678, m_info.calc_time);
-    EXPECT_EQ((Version{1, 5, 2, 3, false}), fractal_info_version(m_info));
-    EXPECT_EQ(8, m_info.x_dots);
-    EXPECT_EQ(6, m_info.y_dots);
-    EXPECT_EQ(256, m_info.colors);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_STREQ("Fractal", m_result.info.info_id);
+    EXPECT_EQ(FRACTAL_INFO_VERSION, m_result.info.info_version);
+    EXPECT_EQ(0x123456, m_result.info.iterations);
+    EXPECT_EQ(32767, m_result.info.iterations_old);
+    EXPECT_EQ(0x12345678, m_result.info.calc_time);
+    EXPECT_EQ((Version{1, 5, 2, 3, false}), fractal_info_version(m_result.info));
+    EXPECT_EQ(8, m_result.info.x_dots);
+    EXPECT_EQ(6, m_result.info.y_dots);
+    EXPECT_EQ(256, m_result.info.colors);
     EXPECT_EQ(8, g_file_x_dots);
     EXPECT_EQ(6, g_file_y_dots);
     EXPECT_EQ(256, g_file_colors);
-    EXPECT_FALSE(m_resume.got_data);
-    EXPECT_FALSE(m_formula.got_data);
-    EXPECT_FALSE(m_ranges.got_data);
-    EXPECT_FALSE(m_parameters.got_data);
-    EXPECT_FALSE(m_evolution.got_data);
-    EXPECT_FALSE(m_orbits.got_data);
+    EXPECT_FALSE(m_result.resume.got_data);
+    EXPECT_FALSE(m_result.formula.got_data);
+    EXPECT_FALSE(m_result.ranges.got_data);
+    EXPECT_FALSE(m_result.parameters.got_data);
+    EXPECT_FALSE(m_result.evolution.got_data);
+    EXPECT_FALSE(m_result.orbits.got_data);
 }
 
 class TestGifWriterResume : public TestGifWriterExtensions, public WithParamInterface<int>
@@ -1121,11 +1106,11 @@ TEST_P(TestGifWriterResume, savesOnlyUsedResumeBytesWithLegacySubBlocks)
         EXPECT_EQ(std::min(255, size - i * 255), gif->ExtensionBlocks[i + 1].ByteCount);
     }
     EXPECT_EQ(521 + 15 + size + chunks, get_fractal_info(gif.get()).tot_extend_len);
-    ASSERT_FALSE(read_metadata());
-    EXPECT_EQ(static_cast<int>(CalcStatus::RESUMABLE), m_info.calc_status);
-    EXPECT_TRUE(m_resume.got_data);
-    EXPECT_EQ(size, m_resume.length);
-    EXPECT_EQ(expected, m_resume.resume_data);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_EQ(static_cast<int>(CalcStatus::RESUMABLE), m_result.info.calc_status);
+    EXPECT_TRUE(m_result.resume.got_data);
+    EXPECT_EQ(size, m_result.resume.length);
+    EXPECT_EQ(expected, m_result.resume.resume_data);
 }
 
 INSTANTIATE_TEST_SUITE_P(SubBlockSizes, TestGifWriterResume, Values(0, 1, 254, 255, 256, 510, 511, 4097));
@@ -1163,8 +1148,8 @@ TEST_P(TestGifWriterResumeOmission, omitsInapplicableResumeRecord)
 
     const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint001"});
-    ASSERT_FALSE(read_metadata());
-    EXPECT_FALSE(m_resume.got_data);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_FALSE(m_result.resume.got_data);
 }
 
 INSTANTIATE_TEST_SUITE_P(ResumeOmissionInputs, TestGifWriterResumeOmission,
@@ -1211,17 +1196,17 @@ TEST_P(TestGifWriterName, savesSelectedItemNameAndOnlyFormulaUsageFlags)
     const Byte flag{static_cast<Byte>(formula)};
     EXPECT_EQ((std::vector<Byte>{flag, 0, 0, 0, flag, 0, flag, 0, 0, 0, 0, 0, flag, 0}),
         (std::vector<Byte>{bytes.begin() + 40, bytes.begin() + 54}));
-    ASSERT_FALSE(read_metadata());
-    EXPECT_TRUE(m_formula.got_data);
-    EXPECT_EQ(66, m_formula.length);
-    EXPECT_EQ(name, m_formula.form_name);
-    EXPECT_EQ(formula, m_formula.uses_p1);
-    EXPECT_EQ(formula, m_formula.uses_p3);
-    EXPECT_EQ(formula, m_formula.uses_ismand);
-    EXPECT_EQ(0, m_formula.uses_p2);
-    EXPECT_EQ(0, m_formula.uses_p4);
-    EXPECT_EQ(formula, m_formula.uses_p5);
-    EXPECT_EQ(0, m_formula.ismand);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_TRUE(m_result.formula.got_data);
+    EXPECT_EQ(66, m_result.formula.length);
+    EXPECT_EQ(name, m_result.formula.form_name);
+    EXPECT_EQ(formula, m_result.formula.uses_p1);
+    EXPECT_EQ(formula, m_result.formula.uses_p3);
+    EXPECT_EQ(formula, m_result.formula.uses_ismand);
+    EXPECT_EQ(0, m_result.formula.uses_p2);
+    EXPECT_EQ(0, m_result.formula.uses_p4);
+    EXPECT_EQ(formula, m_result.formula.uses_p5);
+    EXPECT_EQ(0, m_result.formula.ismand);
 }
 
 INSTANTIATE_TEST_SUITE_P(ItemTypes, TestGifWriterName,
@@ -1251,9 +1236,9 @@ TEST_P(TestGifWriterStoredName, storesTerminatedItemName)
     const FormulaInfo info{get_formula_info(gif.get())};
     EXPECT_EQ(GetParam().substr(0, 39), info.form_name);
     EXPECT_EQ(0, info.form_name[39]);
-    ASSERT_FALSE(read_metadata());
-    EXPECT_TRUE(m_formula.got_data);
-    EXPECT_EQ(GetParam().substr(0, 39), m_formula.form_name);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_TRUE(m_result.formula.got_data);
+    EXPECT_EQ(GetParam().substr(0, 39), m_result.formula.form_name);
 }
 
 INSTANTIATE_TEST_SUITE_P(ItemNames, TestGifWriterStoredName, Values(std::string(60, 'A'), std::string{}),
@@ -1269,10 +1254,10 @@ TEST_F(TestGifWriterExtensions, savesSignedIterationRangesInLittleEndianOrder)
     expect_layout(gif.get(), {"fractint004", "fractint001"});
     EXPECT_EQ((std::vector<Byte>{0xFF, 0xFF, 0x34, 0x12, 0, 0x80, 0xFF, 0x7F}), payload(gif.get(), "fractint004"));
     EXPECT_EQ(g_iteration_ranges, get_ranges_info(gif.get()));
-    ASSERT_FALSE(read_metadata());
-    EXPECT_TRUE(m_ranges.got_data);
-    EXPECT_EQ(4, m_ranges.length);
-    EXPECT_EQ(g_iteration_ranges, m_ranges.range_data);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_TRUE(m_result.ranges.got_data);
+    EXPECT_EQ(4, m_result.ranges.length);
+    EXPECT_EQ(g_iteration_ranges, m_result.ranges.range_data);
 }
 
 TEST_F(TestGifWriterExtensions, omitsIterationRangesForThreeDimensionalDisplay)
@@ -1284,8 +1269,8 @@ TEST_F(TestGifWriterExtensions, omitsIterationRangesForThreeDimensionalDisplay)
 
     const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint001"});
-    ASSERT_FALSE(read_metadata());
-    EXPECT_FALSE(m_ranges.got_data);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_FALSE(m_result.ranges.got_data);
 }
 
 TEST_F(TestGifWriterExtensions, preservesOpaqueArbitraryPrecisionParameters)
@@ -1307,11 +1292,11 @@ TEST_F(TestGifWriterExtensions, preservesOpaqueArbitraryPrecisionParameters)
     const std::vector<char> expected{parameters.begin(), parameters.end()};
     EXPECT_EQ(parameters, payload(gif.get(), "fractint005"));
     EXPECT_EQ(expected, get_extended_param_info(gif.get()));
-    ASSERT_FALSE(read_metadata());
-    EXPECT_EQ(static_cast<int>(BFMathType::BIG_FLT), m_info.bf_math);
-    EXPECT_EQ(12, m_info.bf_length);
-    EXPECT_TRUE(m_parameters.got_data);
-    EXPECT_EQ(expected, m_parameters.apm_data);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_EQ(static_cast<int>(BFMathType::BIG_FLT), m_result.info.bf_math);
+    EXPECT_EQ(12, m_result.info.bf_length);
+    EXPECT_TRUE(m_result.parameters.got_data);
+    EXPECT_EQ(expected, m_result.parameters.apm_data);
 }
 
 class TestGifWriterEvolution : public TestGifWriterExtensions, public WithParamInterface<bool>
@@ -1357,13 +1342,13 @@ TEST_P(TestGifWriterEvolution, savesLiveEvolutionStateWhenNoResumeOrCalculationC
     const std::vector<Byte> bytes{payload(gif.get(), "fractint006")};
     ASSERT_EQ(200, bytes.size());
     EXPECT_EQ((std::vector<Byte>{1, 0, 3, 0, 0xCD, 0xAB}), (std::vector<Byte>{bytes.begin(), bytes.begin() + 6}));
-    ASSERT_FALSE(read_metadata());
-    EXPECT_TRUE(m_evolution.got_data);
-    EXPECT_EQ(200, m_evolution.length);
-    EXPECT_EQ(0xABCD, m_evolution.this_generation_random_seed);
-    EXPECT_EQ(9, m_evolution.e_count);
-    EXPECT_EQ(-2.0, m_evolution.x_parameter_offset);
-    EXPECT_EQ(static_cast<int>(Variations::Y), m_evolution.mutate[2]);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_TRUE(m_result.evolution.got_data);
+    EXPECT_EQ(200, m_result.evolution.length);
+    EXPECT_EQ(0xABCD, m_result.evolution.this_generation_random_seed);
+    EXPECT_EQ(9, m_result.evolution.e_count);
+    EXPECT_EQ(-2.0, m_result.evolution.x_parameter_offset);
+    EXPECT_EQ(static_cast<int>(Variations::Y), m_result.evolution.mutate[2]);
 }
 
 INSTANTIATE_TEST_SUITE_P(Completion, TestGifWriterEvolution, Bool());
@@ -1403,14 +1388,14 @@ TEST_F(TestGifWriterExtensions, savesCachedEvolutionStateForResumableCalculation
     const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint006", "fractint001"});
     EXPECT_EQ(expected, get_evolution_info(gif.get()));
-    ASSERT_FALSE(read_metadata());
-    EXPECT_TRUE(m_evolution.got_data);
-    EXPECT_EQ(17, m_evolution.e_count);
-    EXPECT_EQ(5, m_evolution.image_grid_size);
-    EXPECT_EQ(4, m_evolution.x_dots);
-    EXPECT_EQ(3, m_evolution.y_dots);
-    EXPECT_EQ(-7, m_evolution.discrete_x_parameter_offset);
-    EXPECT_EQ(static_cast<int>(Variations::RANDOM), m_evolution.mutate[1]);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_TRUE(m_result.evolution.got_data);
+    EXPECT_EQ(17, m_result.evolution.e_count);
+    EXPECT_EQ(5, m_result.evolution.image_grid_size);
+    EXPECT_EQ(4, m_result.evolution.x_dots);
+    EXPECT_EQ(3, m_result.evolution.y_dots);
+    EXPECT_EQ(-7, m_result.evolution.discrete_x_parameter_offset);
+    EXPECT_EQ(static_cast<int>(Variations::RANDOM), m_result.evolution.mutate[1]);
 }
 
 class TestGifWriterOrbitSettings : public TestGifWriterExtensions
@@ -1452,13 +1437,13 @@ TEST_F(TestGifWriterOrbitSettings, serializesOrbitSettingsForOrbitPass)
     ASSERT_EQ(200, bytes.size());
     EXPECT_EQ((std::vector<Byte>{0, 0, 0, 0, 0, 0, 4, 0xC0}), (std::vector<Byte>{bytes.begin(), bytes.begin() + 8}));
     EXPECT_EQ((std::vector<Byte>{1, 0, 'l', 0}), (std::vector<Byte>{bytes.begin() + 48, bytes.begin() + 52}));
-    ASSERT_FALSE(read_metadata());
-    EXPECT_TRUE(m_orbits.got_data);
-    EXPECT_EQ(200, m_orbits.length);
-    EXPECT_EQ(-2.5, m_orbits.ox_min);
-    EXPECT_EQ(-1.0, m_orbits.oy_3rd);
-    EXPECT_EQ(1, m_orbits.keep_screen_coords);
-    EXPECT_EQ('l', m_orbits.draw_mode);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_TRUE(m_result.orbits.got_data);
+    EXPECT_EQ(200, m_result.orbits.length);
+    EXPECT_EQ(-2.5, m_result.orbits.ox_min);
+    EXPECT_EQ(-1.0, m_result.orbits.oy_3rd);
+    EXPECT_EQ(1, m_result.orbits.keep_screen_coords);
+    EXPECT_EQ('l', m_result.orbits.draw_mode);
 }
 
 TEST_F(TestGifWriterOrbitSettings, omitsOrbitSettingsForOtherPass)
@@ -1467,8 +1452,8 @@ TEST_F(TestGifWriterOrbitSettings, omitsOrbitSettingsForOtherPass)
     ASSERT_EQ(0, save());
     const GifFilePtr other_pass{read_gif(m_path)};
     expect_layout(other_pass.get(), {"fractint001"});
-    ASSERT_FALSE(read_metadata());
-    EXPECT_FALSE(m_orbits.got_data);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_FALSE(m_result.orbits.got_data);
 }
 
 TEST_F(TestGifWriterExtensions, preservesCompleteRecordOrderingAndTotalEncodedLength)
@@ -1494,17 +1479,17 @@ TEST_F(TestGifWriterExtensions, preservesCompleteRecordOrderingAndTotalEncodedLe
     const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(),
         {"fractint002", "fractint003", "fractint004", "fractint005", "fractint006", "fractint007", "fractint001"});
-    ASSERT_FALSE(read_metadata());
-    EXPECT_TRUE(m_resume.got_data);
-    EXPECT_TRUE(m_formula.got_data);
-    EXPECT_TRUE(m_ranges.got_data);
-    EXPECT_TRUE(m_parameters.got_data);
-    EXPECT_TRUE(m_evolution.got_data);
-    EXPECT_TRUE(m_orbits.got_data);
-    EXPECT_EQ((std::vector<Byte>{0x12, 0x34}), m_resume.resume_data);
-    EXPECT_EQ("AllRecords", std::string{m_formula.form_name});
-    EXPECT_EQ((std::vector<int>{16, 32}), m_ranges.range_data);
-    EXPECT_EQ((std::vector<char>{parameters.begin(), parameters.end()}), m_parameters.apm_data);
+    ASSERT_FALSE(m_result.read(m_path));
+    EXPECT_TRUE(m_result.resume.got_data);
+    EXPECT_TRUE(m_result.formula.got_data);
+    EXPECT_TRUE(m_result.ranges.got_data);
+    EXPECT_TRUE(m_result.parameters.got_data);
+    EXPECT_TRUE(m_result.evolution.got_data);
+    EXPECT_TRUE(m_result.orbits.got_data);
+    EXPECT_EQ((std::vector<Byte>{0x12, 0x34}), m_result.resume.resume_data);
+    EXPECT_EQ("AllRecords", std::string{m_result.formula.form_name});
+    EXPECT_EQ((std::vector<int>{16, 32}), m_result.ranges.range_data);
+    EXPECT_EQ((std::vector<char>{parameters.begin(), parameters.end()}), m_result.parameters.apm_data);
 }
 
 } // namespace id::test

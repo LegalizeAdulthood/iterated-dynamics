@@ -3,6 +3,8 @@
 //
 #include <io/loadfile.h>
 
+#include "FindFractalInfoState.h"
+#include "FindFractalInfoTestSupport.h"
 #include "GifReadSupport.h"
 #include "MockDriver.h"
 #include "test_data.h"
@@ -372,22 +374,11 @@ protected:
     std::filesystem::path write_small_file(
         bool extensions_first = false, int ignored_blocks = 0, const GifFileType *trailing_extensions = nullptr);
     void add_main_record(int precision = 0, FractalType type = FractalType::MANDEL);
-    bool read_file(const std::filesystem::path &path);
     void expect_no_optional_blocks() const;
     void TearDown() override;
 
-    ValueSaver<int> saved_file_x_dots{g_file_x_dots};
-    ValueSaver<int> saved_file_y_dots{g_file_y_dots};
-    ValueSaver<int> saved_file_colors{g_file_colors};
-    ValueSaver<float> saved_file_aspect_ratio{g_file_aspect_ratio};
-    ValueSaver<bool> saved_make_parameter_file{g_make_parameter_file, false};
-    FractalInfo m_info{};
-    ExtBlock2 m_block_2{};
-    ExtBlock3 m_block_3{};
-    ExtBlock4 m_block_4{};
-    ExtBlock5 m_block_5{};
-    ExtBlock6 m_block_6{};
-    ExtBlock7 m_block_7{};
+    FindFractalInfoState m_saved_metadata_state;
+    FindFractalInfoResult m_result;
     GifFileType m_extensions{};
     std::filesystem::path m_path;
 };
@@ -543,20 +534,14 @@ void TestFindFractalInfo::add_main_record(const int precision, const FractalType
     put_fractal_info(&m_extensions, main_record(precision, type));
 }
 
-bool TestFindFractalInfo::read_file(const std::filesystem::path &path)
-{
-    return find_fractal_info(
-        path.string(), &m_info, &m_block_2, &m_block_3, &m_block_4, &m_block_5, &m_block_6, &m_block_7);
-}
-
 void TestFindFractalInfo::expect_no_optional_blocks() const
 {
-    EXPECT_FALSE(m_block_2.got_data);
-    EXPECT_FALSE(m_block_3.got_data);
-    EXPECT_FALSE(m_block_4.got_data);
-    EXPECT_FALSE(m_block_5.got_data);
-    EXPECT_FALSE(m_block_6.got_data);
-    EXPECT_FALSE(m_block_7.got_data);
+    EXPECT_FALSE(m_result.resume.got_data);
+    EXPECT_FALSE(m_result.formula.got_data);
+    EXPECT_FALSE(m_result.ranges.got_data);
+    EXPECT_FALSE(m_result.parameters.got_data);
+    EXPECT_FALSE(m_result.evolution.got_data);
+    EXPECT_FALSE(m_result.orbits.got_data);
 }
 
 void TestFindFractalInfo::TearDown()
@@ -649,18 +634,18 @@ TEST_F(TestFindFractalInfo, metadataRetainsExtensionsUntilExplicitCommit)
 
 TEST_F(TestFindFractalInfo, readsMainRecordWithoutOptionalBlocks)
 {
-    m_block_2.got_data = true;
-    m_block_3.got_data = true;
-    m_block_4.got_data = true;
-    m_block_5.got_data = true;
-    m_block_6.got_data = true;
-    m_block_7.got_data = true;
+    m_result.resume.got_data = true;
+    m_result.formula.got_data = true;
+    m_result.ranges.got_data = true;
+    m_result.parameters.got_data = true;
+    m_result.evolution.got_data = true;
+    m_result.orbits.got_data = true;
 
-    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT1_FILE));
+    ASSERT_FALSE(m_result.read(ID_TEST_GIF_EXT1_FILE));
 
-    EXPECT_STREQ("Fractal", m_info.info_id);
-    EXPECT_EQ(17, m_info.info_version);
-    EXPECT_EQ(0, m_info.fractal_type);
+    EXPECT_STREQ("Fractal", m_result.info.info_id);
+    EXPECT_EQ(17, m_result.info.info_version);
+    EXPECT_EQ(0, m_result.info.fractal_type);
     EXPECT_EQ(640, g_file_x_dots);
     EXPECT_EQ(480, g_file_y_dots);
     EXPECT_EQ(256, g_file_colors);
@@ -669,114 +654,115 @@ TEST_F(TestFindFractalInfo, readsMainRecordWithoutOptionalBlocks)
 
 TEST_F(TestFindFractalInfo, plainGifReceivesNonFractalDefaults)
 {
-    ASSERT_FALSE(read_file(write_file(false)));
+    ASSERT_FALSE(m_result.read(write_file(false)));
 
-    EXPECT_STREQ("GIFFILE", m_info.info_id);
-    EXPECT_EQ(0, m_info.info_version);
-    EXPECT_EQ(+FractalType::PLASMA, m_info.fractal_type);
-    EXPECT_EQ(INITIAL_MAX_ITERATIONS, m_info.iterations);
-    EXPECT_EQ(INITIAL_MAX_ITERATIONS, m_info.iterations_old);
-    EXPECT_DOUBLE_EQ(-1.0, m_info.x_min);
-    EXPECT_DOUBLE_EQ(1.0, m_info.x_max);
-    EXPECT_DOUBLE_EQ(-1.0, m_info.y_min);
-    EXPECT_DOUBLE_EQ(1.0, m_info.y_max);
-    EXPECT_EQ(g_file_x_dots, m_info.x_dots);
-    EXPECT_EQ(g_file_y_dots, m_info.y_dots);
-    EXPECT_EQ(g_file_colors, m_info.colors);
+    EXPECT_STREQ("GIFFILE", m_result.info.info_id);
+    EXPECT_EQ(0, m_result.info.info_version);
+    EXPECT_EQ(+FractalType::PLASMA, m_result.info.fractal_type);
+    EXPECT_EQ(INITIAL_MAX_ITERATIONS, m_result.info.iterations);
+    EXPECT_EQ(INITIAL_MAX_ITERATIONS, m_result.info.iterations_old);
+    EXPECT_DOUBLE_EQ(-1.0, m_result.info.x_min);
+    EXPECT_DOUBLE_EQ(1.0, m_result.info.x_max);
+    EXPECT_DOUBLE_EQ(-1.0, m_result.info.y_min);
+    EXPECT_DOUBLE_EQ(1.0, m_result.info.y_max);
+    EXPECT_EQ(g_file_x_dots, m_result.info.x_dots);
+    EXPECT_EQ(g_file_y_dots, m_result.info.y_dots);
+    EXPECT_EQ(g_file_colors, m_result.info.colors);
     expect_no_optional_blocks();
 }
 
 TEST_F(TestFindFractalInfo, legacyNameOnlyRecordUsesDefaultFormulaFlags)
 {
-    ASSERT_FALSE(read_file(write_file(true)));
+    ASSERT_FALSE(m_result.read(write_file(true)));
 
-    EXPECT_STREQ("Fractal", m_info.info_id);
-    ASSERT_TRUE(m_block_3.got_data);
-    EXPECT_EQ(40, m_block_3.length);
-    EXPECT_STREQ("Mandel3", m_block_3.form_name);
-    EXPECT_EQ(1, m_block_3.uses_p1);
-    EXPECT_EQ(1, m_block_3.uses_p2);
-    EXPECT_EQ(1, m_block_3.uses_p3);
-    EXPECT_EQ(0, m_block_3.uses_ismand);
-    EXPECT_EQ(1, m_block_3.ismand);
-    EXPECT_EQ(0, m_block_3.uses_p4);
-    EXPECT_EQ(0, m_block_3.uses_p5);
-    EXPECT_FALSE(m_block_2.got_data);
-    EXPECT_FALSE(m_block_4.got_data);
-    EXPECT_FALSE(m_block_5.got_data);
-    EXPECT_FALSE(m_block_6.got_data);
-    EXPECT_FALSE(m_block_7.got_data);
+    EXPECT_STREQ("Fractal", m_result.info.info_id);
+    ASSERT_TRUE(m_result.formula.got_data);
+    EXPECT_EQ(40, m_result.formula.length);
+    EXPECT_STREQ("Mandel3", m_result.formula.form_name);
+    EXPECT_EQ(1, m_result.formula.uses_p1);
+    EXPECT_EQ(1, m_result.formula.uses_p2);
+    EXPECT_EQ(1, m_result.formula.uses_p3);
+    EXPECT_EQ(0, m_result.formula.uses_ismand);
+    EXPECT_EQ(1, m_result.formula.ismand);
+    EXPECT_EQ(0, m_result.formula.uses_p4);
+    EXPECT_EQ(0, m_result.formula.uses_p5);
+    EXPECT_FALSE(m_result.resume.got_data);
+    EXPECT_FALSE(m_result.ranges.got_data);
+    EXPECT_FALSE(m_result.parameters.got_data);
+    EXPECT_FALSE(m_result.evolution.got_data);
+    EXPECT_FALSE(m_result.orbits.got_data);
 }
 
 TEST_F(TestFindFractalInfo, readsLegacyResumeRecord)
 {
-    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT2_FILE));
-    ASSERT_TRUE(m_block_2.got_data);
-    EXPECT_EQ(196, m_block_2.length);
-    ASSERT_EQ(196, m_block_2.resume_data.size());
+    ASSERT_FALSE(m_result.read(ID_TEST_GIF_EXT2_FILE));
+    ASSERT_TRUE(m_result.resume.got_data);
+    EXPECT_EQ(196, m_result.resume.length);
+    ASSERT_EQ(196, m_result.resume.resume_data.size());
     const std::vector<Byte> resume_prefix{2, 0, 1, 0, 0, 0, 63, 6, 0, 0, 175, 4, 128, 2, 0, 0};
     EXPECT_EQ(resume_prefix,
-        (std::vector<Byte>{m_block_2.resume_data.begin(), m_block_2.resume_data.begin() + resume_prefix.size()}));
+        (std::vector<Byte>{
+            m_result.resume.resume_data.begin(), m_result.resume.resume_data.begin() + resume_prefix.size()}));
 }
 
 TEST_F(TestFindFractalInfo, readsLegacyFormulaRecord)
 {
-    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT3_FILE));
-    ASSERT_TRUE(m_block_3.got_data);
-    EXPECT_EQ(66, m_block_3.length);
-    EXPECT_STREQ("Mandel3", m_block_3.form_name);
-    EXPECT_EQ(0, m_block_3.uses_p1);
-    EXPECT_EQ(1, m_block_3.ismand);
+    ASSERT_FALSE(m_result.read(ID_TEST_GIF_EXT3_FILE));
+    ASSERT_TRUE(m_result.formula.got_data);
+    EXPECT_EQ(66, m_result.formula.length);
+    EXPECT_STREQ("Mandel3", m_result.formula.form_name);
+    EXPECT_EQ(0, m_result.formula.uses_p1);
+    EXPECT_EQ(1, m_result.formula.ismand);
 }
 
 TEST_F(TestFindFractalInfo, readsLegacyRangesRecord)
 {
-    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT4_FILE));
-    ASSERT_TRUE(m_block_4.got_data);
-    EXPECT_EQ(5, m_block_4.length);
-    EXPECT_EQ((std::vector<int>{10, 20, 30, 40, 50}), m_block_4.range_data);
+    ASSERT_FALSE(m_result.read(ID_TEST_GIF_EXT4_FILE));
+    ASSERT_TRUE(m_result.ranges.got_data);
+    EXPECT_EQ(5, m_result.ranges.length);
+    EXPECT_EQ((std::vector<int>{10, 20, 30, 40, 50}), m_result.ranges.range_data);
 }
 
 TEST_F(TestFindFractalInfo, readsLegacyPrecisionRecord)
 {
-    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT5_FILE));
-    ASSERT_TRUE(m_block_5.got_data);
-    EXPECT_EQ(396, m_block_5.apm_data.size());
+    ASSERT_FALSE(m_result.read(ID_TEST_GIF_EXT5_FILE));
+    ASSERT_TRUE(m_result.parameters.got_data);
+    EXPECT_EQ(396, m_result.parameters.apm_data.size());
 }
 
 TEST_F(TestFindFractalInfo, readsLegacyEvolutionRecord)
 {
-    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT6_FILE));
-    ASSERT_TRUE(m_block_6.got_data);
-    EXPECT_EQ(200, m_block_6.length);
-    EXPECT_EQ(1, m_block_6.evolving);
-    EXPECT_EQ(9, m_block_6.image_grid_size);
-    EXPECT_EQ(20596, m_block_6.this_generation_random_seed);
-    EXPECT_DOUBLE_EQ(4.0, m_block_6.x_parameter_range);
-    EXPECT_DOUBLE_EQ(3.0, m_block_6.y_parameter_range);
-    EXPECT_DOUBLE_EQ(-2.0, m_block_6.x_parameter_offset);
-    EXPECT_DOUBLE_EQ(-1.5, m_block_6.y_parameter_offset);
-    EXPECT_EQ(4, m_block_6.px);
-    EXPECT_EQ(4, m_block_6.py);
-    EXPECT_EQ(640, m_block_6.x_dots);
-    EXPECT_EQ(480, m_block_6.y_dots);
-    EXPECT_EQ(81, m_block_6.e_count);
-    EXPECT_EQ(5, m_block_6.mutate[0]);
+    ASSERT_FALSE(m_result.read(ID_TEST_GIF_EXT6_FILE));
+    ASSERT_TRUE(m_result.evolution.got_data);
+    EXPECT_EQ(200, m_result.evolution.length);
+    EXPECT_EQ(1, m_result.evolution.evolving);
+    EXPECT_EQ(9, m_result.evolution.image_grid_size);
+    EXPECT_EQ(20596, m_result.evolution.this_generation_random_seed);
+    EXPECT_DOUBLE_EQ(4.0, m_result.evolution.x_parameter_range);
+    EXPECT_DOUBLE_EQ(3.0, m_result.evolution.y_parameter_range);
+    EXPECT_DOUBLE_EQ(-2.0, m_result.evolution.x_parameter_offset);
+    EXPECT_DOUBLE_EQ(-1.5, m_result.evolution.y_parameter_offset);
+    EXPECT_EQ(4, m_result.evolution.px);
+    EXPECT_EQ(4, m_result.evolution.py);
+    EXPECT_EQ(640, m_result.evolution.x_dots);
+    EXPECT_EQ(480, m_result.evolution.y_dots);
+    EXPECT_EQ(81, m_result.evolution.e_count);
+    EXPECT_EQ(5, m_result.evolution.mutate[0]);
 }
 
 TEST_F(TestFindFractalInfo, readsLegacyOrbitRecord)
 {
-    ASSERT_FALSE(read_file(ID_TEST_GIF_EXT7_FILE));
-    ASSERT_TRUE(m_block_7.got_data);
-    EXPECT_EQ(200, m_block_7.length);
-    EXPECT_DOUBLE_EQ(-1.0, m_block_7.ox_min);
-    EXPECT_DOUBLE_EQ(1.0, m_block_7.ox_max);
-    EXPECT_DOUBLE_EQ(-1.0, m_block_7.oy_min);
-    EXPECT_DOUBLE_EQ(1.0, m_block_7.oy_max);
-    EXPECT_DOUBLE_EQ(-1.0, m_block_7.ox_3rd);
-    EXPECT_DOUBLE_EQ(-1.0, m_block_7.oy_3rd);
-    EXPECT_EQ(1, m_block_7.keep_screen_coords);
-    EXPECT_EQ('r', m_block_7.draw_mode);
+    ASSERT_FALSE(m_result.read(ID_TEST_GIF_EXT7_FILE));
+    ASSERT_TRUE(m_result.orbits.got_data);
+    EXPECT_EQ(200, m_result.orbits.length);
+    EXPECT_DOUBLE_EQ(-1.0, m_result.orbits.ox_min);
+    EXPECT_DOUBLE_EQ(1.0, m_result.orbits.ox_max);
+    EXPECT_DOUBLE_EQ(-1.0, m_result.orbits.oy_min);
+    EXPECT_DOUBLE_EQ(1.0, m_result.orbits.oy_max);
+    EXPECT_DOUBLE_EQ(-1.0, m_result.orbits.ox_3rd);
+    EXPECT_DOUBLE_EQ(-1.0, m_result.orbits.oy_3rd);
+    EXPECT_EQ(1, m_result.orbits.keep_screen_coords);
+    EXPECT_EQ('r', m_result.orbits.draw_mode);
 }
 
 TEST_F(TestFindFractalInfo, extensionsBeforeImageRetainEmptyOptionalRecords)
@@ -785,19 +771,19 @@ TEST_F(TestFindFractalInfo, extensionsBeforeImageRetainEmptyOptionalRecords)
     put_resume_info(&m_extensions, {});
     put_ranges_info(&m_extensions, {});
 
-    ASSERT_FALSE(read_file(write_small_file(true)));
+    ASSERT_FALSE(m_result.read(write_small_file(true)));
 
-    EXPECT_STREQ(INFO_ID, m_info.info_id);
-    EXPECT_TRUE(m_block_2.got_data);
-    EXPECT_EQ(0, m_block_2.length);
-    EXPECT_TRUE(m_block_2.resume_data.empty());
-    EXPECT_TRUE(m_block_4.got_data);
-    EXPECT_EQ(0, m_block_4.length);
-    EXPECT_TRUE(m_block_4.range_data.empty());
-    EXPECT_FALSE(m_block_5.got_data);
-    EXPECT_FALSE(m_block_3.got_data);
-    EXPECT_FALSE(m_block_6.got_data);
-    EXPECT_FALSE(m_block_7.got_data);
+    EXPECT_STREQ(INFO_ID, m_result.info.info_id);
+    EXPECT_TRUE(m_result.resume.got_data);
+    EXPECT_EQ(0, m_result.resume.length);
+    EXPECT_TRUE(m_result.resume.resume_data.empty());
+    EXPECT_TRUE(m_result.ranges.got_data);
+    EXPECT_EQ(0, m_result.ranges.length);
+    EXPECT_TRUE(m_result.ranges.range_data.empty());
+    EXPECT_FALSE(m_result.parameters.got_data);
+    EXPECT_FALSE(m_result.formula.got_data);
+    EXPECT_FALSE(m_result.evolution.got_data);
+    EXPECT_FALSE(m_result.orbits.got_data);
 }
 
 TEST_F(TestFindFractalInfo, readsMultiBlockPayloadsWithoutPollingPendingInput)
@@ -816,15 +802,15 @@ TEST_F(TestFindFractalInfo, readsMultiBlockPayloadsWithoutPollingPendingInput)
     add_main_record(16);
     const std::filesystem::path path{write_small_file()};
 
-    ASSERT_FALSE(read_file(path));
+    ASSERT_FALSE(m_result.read(path));
 
-    EXPECT_EQ(511, m_block_2.length);
-    EXPECT_EQ(resume, m_block_2.resume_data);
-    EXPECT_EQ(5, m_block_4.length);
-    EXPECT_EQ(ranges, m_block_4.range_data);
-    EXPECT_EQ(parameters, m_block_5.apm_data);
+    EXPECT_EQ(511, m_result.resume.length);
+    EXPECT_EQ(resume, m_result.resume.resume_data);
+    EXPECT_EQ(5, m_result.ranges.length);
+    EXPECT_EQ(ranges, m_result.ranges.range_data);
+    EXPECT_EQ(parameters, m_result.parameters.apm_data);
     EXPECT_TRUE(std::filesystem::remove(path));
-    EXPECT_EQ(resume, m_block_2.resume_data);
+    EXPECT_EQ(resume, m_result.resume.resume_data);
 }
 
 class TestMetadataScanner : public TestFindFractalInfo
@@ -977,7 +963,7 @@ TEST_P(TestInvalidPrecisionPayload, finderRejectsInvalidPayloadWithoutChangingAc
 {
     const std::filesystem::path path{write_metadata()};
 
-    EXPECT_TRUE(read_file(path));
+    EXPECT_TRUE(m_result.read(path));
 
     expect_active_image();
     EXPECT_TRUE(std::filesystem::remove(path));
@@ -1133,10 +1119,10 @@ TEST_F(TestFindFractalInfo, skipsInvalidLzwPixelsWhenReadingMetadata)
     }
     ASSERT_LT(restore.result(), 0);
 
-    ASSERT_FALSE(read_file(path));
+    ASSERT_FALSE(m_result.read(path));
 
-    EXPECT_STREQ(INFO_ID, m_info.info_id);
-    EXPECT_EQ(FRACTAL_INFO_VERSION, m_info.info_version);
+    EXPECT_STREQ(INFO_ID, m_result.info.info_id);
+    EXPECT_EQ(FRACTAL_INFO_VERSION, m_result.info.info_version);
 }
 
 TEST_F(TestFindFractalInfo, plainGifUsesUnsignedHeaderDimensionsAspectAndPalette)
@@ -1159,12 +1145,12 @@ TEST_F(TestFindFractalInfo, plainGifUsesUnsignedHeaderDimensionsAspectAndPalette
         file.put(49);
     }
 
-    ASSERT_FALSE(read_file(path));
+    ASSERT_FALSE(m_result.read(path));
 
     EXPECT_EQ(65535, g_file_x_dots);
     EXPECT_EQ(32768, g_file_y_dots);
-    EXPECT_EQ(65535, m_info.x_dots);
-    EXPECT_EQ(32768, m_info.y_dots);
+    EXPECT_EQ(65535, m_result.info.x_dots);
+    EXPECT_EQ(32768, m_result.info.y_dots);
     EXPECT_FLOAT_EQ(32768.0f / 65535.0f, g_file_aspect_ratio);
     EXPECT_EQ(2, g_file_colors);
     EXPECT_EQ(255, g_dac_box[0][0]);
@@ -1194,12 +1180,12 @@ void TestHeaderDimensions::SetUp()
 
 TEST_P(TestHeaderDimensions, readsUnsignedDimensions)
 {
-    ASSERT_FALSE(read_file(m_path));
+    ASSERT_FALSE(m_result.read(m_path));
 
     EXPECT_EQ(GetParam(), g_file_x_dots);
     EXPECT_EQ(GetParam(), g_file_y_dots);
-    EXPECT_EQ(GetParam(), m_info.x_dots);
-    EXPECT_EQ(GetParam(), m_info.y_dots);
+    EXPECT_EQ(GetParam(), m_result.info.x_dots);
+    EXPECT_EQ(GetParam(), m_result.info.y_dots);
 }
 
 INSTANTIATE_TEST_SUITE_P(UnsignedBoundaries, TestHeaderDimensions, Values(32767, 32768, 65535),
@@ -1221,7 +1207,7 @@ void TestInvalidGifHeader::SetUp()
 
 TEST_P(TestInvalidGifHeader, reportsFailureAndClosesInput)
 {
-    EXPECT_TRUE(read_file(m_path));
+    EXPECT_TRUE(m_result.read(m_path));
     EXPECT_TRUE(std::filesystem::remove(m_path));
 }
 
@@ -1233,7 +1219,7 @@ TEST_F(TestFindFractalInfo, missingFileReportsFailure)
     m_path = test_path();
     ASSERT_FALSE(std::filesystem::exists(m_path));
 
-    EXPECT_TRUE(read_file(m_path));
+    EXPECT_TRUE(m_result.read(m_path));
 }
 
 static std::vector<char> metadata_gif_bytes()
@@ -1267,7 +1253,7 @@ void TestTruncatedGifMetadata::SetUp()
 
 TEST_P(TestTruncatedGifMetadata, reportsFailureAndClosesInput)
 {
-    EXPECT_TRUE(read_file(m_path));
+    EXPECT_TRUE(m_result.read(m_path));
     EXPECT_TRUE(std::filesystem::remove(m_path));
 }
 
@@ -1278,7 +1264,7 @@ TEST_F(TestFindFractalInfo, completeMetadataFileIsAccepted)
 {
     add_main_record();
 
-    EXPECT_FALSE(read_file(write_small_file()));
+    EXPECT_FALSE(m_result.read(write_small_file()));
 }
 
 TEST_F(TestFindFractalInfo, malformedFixedRecordReportsFailureAndClosesFile)
@@ -1289,7 +1275,7 @@ TEST_F(TestFindFractalInfo, malformedFixedRecordReportsFailureAndClosesFile)
     m_extensions.ExtensionBlocks[m_extensions.ExtensionBlockCount - 1].ByteCount = 65;
     const std::filesystem::path path{write_small_file()};
 
-    EXPECT_TRUE(read_file(path));
+    EXPECT_TRUE(m_result.read(path));
 
     EXPECT_TRUE(std::filesystem::remove(path));
 }
@@ -1300,7 +1286,7 @@ TEST_F(TestFindFractalInfo, nonApplicationExtensionDoesNotSupplyResumeData)
     m_extensions.ExtensionBlocks[0].Function = COMMENT_EXT_FUNC_CODE;
     add_main_record();
 
-    ASSERT_FALSE(read_file(write_small_file()));
+    ASSERT_FALSE(m_result.read(write_small_file()));
 
     expect_no_optional_blocks();
 }
@@ -1330,10 +1316,10 @@ TEST_P(TestIgnoredMetadataExtensions, scannerRetainsOnlyKnownMetadata)
 
 TEST_P(TestIgnoredMetadataExtensions, readerFindsMainRecordAfterUnrelatedExtensions)
 {
-    ASSERT_FALSE(read_file(m_path));
+    ASSERT_FALSE(m_result.read(m_path));
 
-    EXPECT_STREQ(INFO_ID, m_info.info_id);
-    EXPECT_EQ(+FractalType::MANDEL, m_info.fractal_type);
+    EXPECT_STREQ(INFO_ID, m_result.info.info_id);
+    EXPECT_EQ(+FractalType::MANDEL, m_result.info.fractal_type);
 }
 
 INSTANTIATE_TEST_SUITE_P(Placement, TestIgnoredMetadataExtensions, Bool(),
@@ -1382,7 +1368,7 @@ TEST_P(TestOversizedFixedMetadata, scannerRejectsBeforeRetainingExcessPayload)
 
 TEST_P(TestOversizedFixedMetadata, readerRejectsOversizedRecordAndClosesInput)
 {
-    EXPECT_TRUE(read_file(m_path));
+    EXPECT_TRUE(m_result.read(m_path));
 
     EXPECT_TRUE(std::filesystem::remove(m_path));
 }

@@ -62,6 +62,8 @@ add_executable(test-id
     include/EnvVarSaver.h test/EnvVarSaver.cpp
     "include/expected_map.h"
     include/FailingOutputBuffer.h test/FailingOutputBuffer.cpp
+    include/FindFractalInfoState.h
+    include/FindFractalInfoTestSupport.h test/FindFractalInfoTestSupport.cpp
     include/FractalParamSaver.h test/FractalParamSaver.cpp
     include/GifReadSupport.h test/GifReadSupport.cpp
     include/MemoryDiskStorage.h test/MemoryDiskStorage.cpp
