@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
+#include "ColorMapSaver.h"
 #include "MockDriver.h"
 
 #include <engine/calcfrac.h>
@@ -33,9 +34,9 @@
 
 #include <array>
 #include <chrono>
-#include <cstring>
 #include <filesystem>
 #include <memory>
+#include <optional>
 #include <stdexcept>
 
 using namespace id::engine;
@@ -82,7 +83,7 @@ protected:
     ValueSaver<bool> m_saved_good_mode{g_good_mode, true};
     ValueSaver<std::filesystem::path> m_saved_temp{g_temp_dir};
     ValueSaver<std::filesystem::path> m_saved_read_filename{g_read_filename};
-    Byte m_palette[256][3]{};
+    std::optional<ColorMapSaver> m_saved_palette;
     std::array<int, 20> m_frame{};
     std::filesystem::path m_directory;
 };
@@ -92,7 +93,7 @@ void TestPotentialRestore::SetUp()
     end_disk();
     init_memory();
     set_normal_dot();
-    std::memcpy(m_palette, g_dac_box, sizeof(m_palette));
+    m_saved_palette.emplace();
     m_directory = std::filesystem::temp_directory_path() /
         ("id-potential-restore-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
     std::filesystem::create_directory(m_directory);
@@ -131,7 +132,7 @@ void TestPotentialRestore::TearDown()
     EXPECT_TRUE(exit_check().empty());
     set_null_video();
     clear_save_library();
-    std::memcpy(g_dac_box, m_palette, sizeof(m_palette));
+    m_saved_palette.reset();
     std::error_code ignored;
     std::filesystem::remove_all(m_directory, ignored);
 }

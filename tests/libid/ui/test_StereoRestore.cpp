@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
+#include "ColorMapSaver.h"
 #include "MockDriver.h"
 
 #include <engine/calcfrac.h>
@@ -31,9 +32,9 @@
 #include <gtest/gtest.h>
 
 #include <chrono>
-#include <cstring>
 #include <filesystem>
 #include <functional>
+#include <optional>
 #include <stdexcept>
 #include <vector>
 
@@ -101,7 +102,7 @@ protected:
     ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NONE};
     ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
     ValueSaver<std::filesystem::path> m_saved_filename{g_read_filename};
-    Byte m_palette[256][3]{};
+    std::optional<ColorMapSaver> m_saved_palette;
     std::filesystem::path m_directory;
     std::vector<StereoImage> m_lines;
     int m_cleanup_count{};
@@ -109,7 +110,7 @@ protected:
 
 void TestStereoRestore::SetUp()
 {
-    std::memcpy(m_palette, g_dac_box, sizeof(m_palette));
+    m_saved_palette.emplace();
     m_directory = std::filesystem::temp_directory_path() /
         ("id-stereo-restore-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
     std::filesystem::create_directory(m_directory);
@@ -151,7 +152,7 @@ void TestStereoRestore::TearDown()
     s_output = {};
     s_cleanup = {};
     clear_save_library();
-    std::memcpy(g_dac_box, m_palette, sizeof(m_palette));
+    m_saved_palette.reset();
     std::error_code ignored;
     std::filesystem::remove_all(m_directory, ignored);
 }

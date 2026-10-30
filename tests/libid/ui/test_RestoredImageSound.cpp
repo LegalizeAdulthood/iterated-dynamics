@@ -3,6 +3,7 @@
 //
 #include <ui/restore_image.h>
 
+#include "ColorMapSaver.h"
 #include "MockDriver.h"
 #include "MockSoundOutput.h"
 
@@ -33,11 +34,11 @@
 #include <gtest/gtest.h>
 
 #include <array>
-#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <iterator>
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -79,7 +80,7 @@ protected:
     MockDriver m_driver;
     std::shared_ptr<StrictMock<MockSoundOutput>> m_output{std::make_shared<StrictMock<MockSoundOutput>>()};
     std::filesystem::path m_directory;
-    Byte m_palette[256][3]{};
+    std::optional<ColorMapSaver> m_saved_palette;
     std::vector<int> m_samples;
     int m_delays{};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
@@ -117,7 +118,7 @@ void TestRestoredImageSound::SetUp()
     g_read_filename = m_directory / "image.gif";
     g_save_dir = m_directory;
     set_save_library(m_directory);
-    std::memcpy(m_palette, g_dac_box, sizeof(m_palette));
+    m_saved_palette.emplace();
     s_restored_pixels.clear();
     GifWriter writer{g_read_filename, {2, 2}, {{255, 0, 0}, {0, 0, 0}}};
     ASSERT_TRUE(writer.write_pixels({0, 1}));
@@ -147,7 +148,7 @@ void TestRestoredImageSound::TearDown()
 {
     s_restored_pixels.clear();
     clear_save_library();
-    std::memcpy(g_dac_box, m_palette, sizeof(m_palette));
+    m_saved_palette.reset();
     std::filesystem::remove_all(m_directory);
 }
 

@@ -3,6 +3,7 @@
 //
 #include <io/encoder.h>
 
+#include "ColorMapSaver.h"
 #include "MockDriver.h"
 
 #include <engine/calc_frac_init.h>
@@ -56,11 +57,11 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
-#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <memory>
 #include <limits>
+#include <optional>
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
@@ -234,7 +235,7 @@ protected:
     std::filesystem::path m_path;
     int m_frame_width{};
     std::vector<Byte> m_frame;
-    Byte m_saved_palette[256][3]{};
+    std::optional<ColorMapSaver> m_saved_palette;
     bool m_memory_initialized{};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
@@ -276,7 +277,7 @@ void TestGifWriterRaster::SetUp()
     g_save_dir = m_directory;
     g_temp_dir = m_directory;
     set_save_library(m_directory);
-    std::memcpy(m_saved_palette, g_dac_box, sizeof(m_saved_palette));
+    m_saved_palette.emplace();
     for (int color = 0; color < 256; ++color)
     {
         for (int channel = 0; channel < 3; ++channel)
@@ -309,7 +310,7 @@ void TestGifWriterRaster::TearDown()
     set_null_video();
     free_temp_msg();
     clear_save_library();
-    std::memcpy(g_dac_box, m_saved_palette, sizeof(m_saved_palette));
+    m_saved_palette.reset();
     std::filesystem::remove_all(m_directory);
 }
 
