@@ -58,23 +58,24 @@ add_executable(test-id
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_library.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_migrate_gif.h"
-    include/EnvVarSaver.h EnvVarSaver.cpp
+    include/CommandTestFile.h test/CommandTestFile.cpp
+    include/EnvVarSaver.h test/EnvVarSaver.cpp
     "include/expected_map.h"
-    include/FractalParamSaver.h FractalParamSaver.cpp
-    include/MemoryDiskStorage.h MemoryDiskStorage.cpp
+    include/FractalParamSaver.h test/FractalParamSaver.cpp
+    include/MemoryDiskStorage.h test/MemoryDiskStorage.cpp
     "include/MockDriver.h"
     "include/MockSoundOutput.h"
-    include/PassTestFrame.h PassTestFrame.cpp
-    include/PendingDriverKey.h PendingDriverKey.cpp
+    include/PassTestFrame.h test/PassTestFrame.cpp
+    include/PendingDriverKey.h test/PendingDriverKey.cpp
     "include/ValueUnchanged.h"
     "include/test_config_data.h.in"
     "include/test_data.h.in"
     "include/test_library.h.in"
     "include/test_migrate_gif.h.in"
-    include/TestRender.h TestRender.cpp
-    include/TemporaryDirectory.h TemporaryDirectory.cpp
-    include/WorkListSnapshot.h WorkListSnapshot.cpp
-    expected_map.cpp
+    include/TestRender.h test/TestRender.cpp
+    include/TemporaryDirectory.h test/TemporaryDirectory.cpp
+    include/WorkListSnapshot.h test/WorkListSnapshot.cpp
+    test/expected_map.cpp
     engine/test_bailout_formula.cpp
     engine/test_BoundaryTrace.cpp
     engine/test_calc_frac_init.cpp
@@ -146,9 +147,10 @@ add_executable(test-id
     math/test_round_float_double.cpp
     misc/test_driver.cpp
     misc/test_memory.cpp
-    misc/test_TemporaryDirectory.cpp
     misc/test_ValueSaver.cpp
     misc/test_version.cpp
+    test/test_CommandTestFile.cpp
+    test/test_TemporaryDirectory.cpp
     ui/test_ChoiceBuilder.cpp
     ui/test_cellular.cpp
     ui/test_command_diagnostics.cpp

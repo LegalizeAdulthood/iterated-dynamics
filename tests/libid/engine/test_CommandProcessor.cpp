@@ -3,6 +3,9 @@
 //
 #include <engine/CommandProcessor.h>
 
+#include "CommandTestFile.h"
+#include "TemporaryDirectory.h"
+
 #include <engine/calcfrac.h>
 #include <engine/Browse.h>
 #include <engine/Command.h>
@@ -61,11 +64,11 @@ class TestCommandProcessor : public Test
 protected:
     void SetUp() override;
     void TearDown() override;
-    std::FILE *open_input(std::string_view text);
     void handle_current(CommandProcessor &processor);
     void prepare_legacy_compatibility();
 
-    fs::path m_path;
+    TemporaryDirectory m_input_directory;
+    std::optional<CommandTestFile> m_file;
     ValueSaver<bool> m_saved_first_init{g_first_init, false};
     ValueSaver<long> m_saved_iterations{g_max_iterations, 150L};
     ValueSaver<int> m_saved_hertz{g_base_hertz, 440};
@@ -79,28 +82,16 @@ protected:
 void TestCommandProcessor::SetUp()
 {
     clear_command_comments();
+    m_input_directory.create("id-command-input-");
+    m_file.emplace(m_input_directory.path() / (test_input_name() + ".par"));
 }
 
 void TestCommandProcessor::TearDown()
 {
-    if (!m_path.empty())
-    {
-        std::error_code error;
-        fs::remove(m_path, error);
-    }
+    m_file.reset();
+    std::error_code ignored;
+    m_input_directory.remove(ignored);
     clear_command_comments();
-}
-
-std::FILE *TestCommandProcessor::open_input(const std::string_view text)
-{
-    m_path = fs::temp_directory_path() / (test_input_name() + ".par");
-    std::unique_ptr<std::FILE, decltype(&std::fclose)> file{std::fopen(m_path.string().c_str(), "w+b"), std::fclose};
-    if (!file || std::fwrite(text.data(), 1, text.size(), file.get()) != text.size())
-    {
-        throw std::runtime_error("Cannot write parameter test file: " + m_path.string());
-    }
-    std::rewind(file.get());
-    return file.release();
 }
 
 void TestCommandProcessor::handle_current(CommandProcessor &processor)
@@ -125,7 +116,7 @@ void TestCommandProcessor::prepare_legacy_compatibility()
 
 TEST_F(TestCommandProcessor, advancesOneCommandAndRetainsItUntilNextAdvance)
 {
-    CommandProcessor processor{open_input("entry { params=1/2/3 maxiter=222 }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { params=1/2/3 maxiter=222 }"), CmdFile::AT_AFTER_STARTUP};
     ASSERT_TRUE(processor.advance());
     const Command &first{processor.command()};
     const char *value{first.value.data()};
@@ -155,7 +146,7 @@ TEST_F(TestCommandProcessor, adoptsPositionedSetAndStopsAtItsClosingBrace)
 {
     const std::string prefix{"ignored { maxiter=999 }\n"};
     std::unique_ptr<std::FILE, decltype(&std::fclose)> file{
-        open_input(prefix + "entry (description) { maxiter=222 } maxiter=333"), std::fclose};
+        m_file->open_input(prefix + "entry (description) { maxiter=222 } maxiter=333"), std::fclose};
     ASSERT_EQ(0, std::fseek(file.get(), static_cast<long>(prefix.size()), SEEK_SET));
     CommandProcessor processor{file.release(), CmdFile::AT_AFTER_STARTUP};
 
@@ -165,7 +156,7 @@ TEST_F(TestCommandProcessor, adoptsPositionedSetAndStopsAtItsClosingBrace)
 
     EXPECT_EQ(222, g_max_iterations);
     EXPECT_TRUE(processor.result().diagnostics.errors.empty());
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 class TestCommentedCommandProcessor : public TestCommandProcessor
@@ -182,8 +173,8 @@ void TestCommentedCommandProcessor::SetUp()
 {
     TestCommandProcessor::SetUp();
     g_command_comment[0] = "old comment";
-    m_processor.emplace(
-        open_input("entry {\n; First Comment\nmaxiter=2\\\n  22\n; Second Comment\n}\n"), CmdFile::AT_AFTER_STARTUP);
+    m_processor.emplace(m_file->open_input("entry {\n; First Comment\nmaxiter=2\\\n  22\n; Second Comment\n}\n"),
+        CmdFile::AT_AFTER_STARTUP);
     EXPECT_TRUE(g_command_comment[0].empty());
     ASSERT_TRUE(m_processor->advance());
     m_value = m_processor->command().value;
@@ -211,7 +202,7 @@ TEST_F(TestCommentedCommandProcessor, joinsContinuationLines)
 
 TEST_F(TestCommandProcessor, configurationFileDoesNotRequireSetBraces)
 {
-    CommandProcessor processor{open_input("[other]\nmaxiter=999\n[id]\nmaxiter=222\n"), CmdFile::SSTOOLS_INI};
+    CommandProcessor processor{m_file->open_input("[other]\nmaxiter=999\n[id]\nmaxiter=222\n"), CmdFile::SSTOOLS_INI};
 
     ASSERT_TRUE(processor.advance());
     EXPECT_EQ(CmdFile::SSTOOLS_INI, processor.command().mode);
@@ -219,7 +210,7 @@ TEST_F(TestCommandProcessor, configurationFileDoesNotRequireSetBraces)
     EXPECT_FALSE(processor.advance());
 
     EXPECT_EQ(222, g_max_iterations);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 struct CommandSourceInitializationInput
@@ -251,7 +242,7 @@ void TestCommandSourceInitialization::SetUp()
 
 TEST_P(TestCommandSourceInitialization, sourceControlsEarlierParameterInitialization)
 {
-    CommandProcessor processor{open_input("entry { type=mandel }"), GetParam().source};
+    CommandProcessor processor{m_file->open_input("entry { type=mandel }"), GetParam().source};
 
     ASSERT_TRUE(processor.advance());
     handle_current(processor);
@@ -267,7 +258,7 @@ INSTANTIATE_TEST_SUITE_P(Sources, TestCommandSourceInitialization,
 
 TEST_F(TestCommandProcessor, rejectionRetainsDiagnosticsAndAuxiliaryDataButNotBadFlags)
 {
-    CommandProcessor processor{open_input("entry { first second ignored }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { first second ignored }"), CmdFile::AT_AFTER_STARTUP};
     ASSERT_TRUE(processor.advance());
     processor.command().result.flags = CmdArgFlags::FRACTAL_PARAM;
     processor.command().result.diagnostics.errors.push_back("first error");
@@ -293,12 +284,12 @@ TEST_F(TestCommandProcessor, rejectionRetainsDiagnosticsAndAuxiliaryDataButNotBa
     EXPECT_FALSE(result.needs_file_entry);
     ASSERT_TRUE(std::holds_alternative<MakeHelpDocument>(result.action));
     EXPECT_EQ("output.txt", std::get<MakeHelpDocument>(result.action).filename);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandProcessor, mergesAcceptedFlagsAndRetainsEarlierFmInitializationRequest)
 {
-    CommandProcessor processor{open_input("entry { first second }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { first second }"), CmdFile::AT_AFTER_STARTUP};
     ASSERT_TRUE(processor.advance());
     processor.command().result.flags = CmdArgFlags::FRACTAL_PARAM;
     processor.command().result.initialize_fm = true;
@@ -315,7 +306,8 @@ TEST_F(TestCommandProcessor, mergesAcceptedFlagsAndRetainsEarlierFmInitializatio
 TEST_F(TestCommandProcessor, rejectionFinalizesValidPrefixAndDoesNotApplyLaterCommands)
 {
     prepare_legacy_compatibility();
-    CommandProcessor processor{open_input("entry { maxiter=222 unknown=yes maxiter=333 }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{
+        m_file->open_input("entry { maxiter=222 unknown=yes maxiter=333 }"), CmdFile::AT_AFTER_STARTUP};
     ASSERT_TRUE(processor.advance());
     handle_current(processor);
     ASSERT_TRUE(processor.advance());
@@ -328,13 +320,13 @@ TEST_F(TestCommandProcessor, rejectionFinalizesValidPrefixAndDoesNotApplyLaterCo
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
     EXPECT_EQ(1U, processor.result().diagnostics.errors.size());
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandProcessor, rejectedFlagsAloneDoNotTriggerCompatibility)
 {
     prepare_legacy_compatibility();
-    CommandProcessor processor{open_input("entry { unknown=yes maxiter=333 }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { unknown=yes maxiter=333 }"), CmdFile::AT_AFTER_STARTUP};
     ASSERT_TRUE(processor.advance());
     handle_current(processor);
 
@@ -348,8 +340,8 @@ TEST_F(TestCommandProcessor, rejectedFlagsAloneDoNotTriggerCompatibility)
 TEST_F(TestCommandProcessor, nonfatalPaletteErrorAllowsLaterFileCommands)
 {
     ValueSaver saved_batch{g_init_batch, BatchMode::NONE};
-    CommandProcessor processor{
-        open_input("entry { maxiter=111 map=missing-startup-palette.map maxiter=222 }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { maxiter=111 map=missing-startup-palette.map maxiter=222 }"),
+        CmdFile::AT_AFTER_STARTUP};
 
     while (processor.advance())
     {
@@ -360,12 +352,13 @@ TEST_F(TestCommandProcessor, nonfatalPaletteErrorAllowsLaterFileCommands)
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, processor.result().flags);
     EXPECT_THAT(
         processor.result().diagnostics.errors, ElementsAre("Could not load color map missing-startup-palette.map"));
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandProcessor, actionStopsAfterEarlierDiagnosticsWithoutStoppingOnThoseDiagnostics)
 {
-    CommandProcessor processor{open_input("entry { first makemig=2/3 maxiter=333 }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{
+        m_file->open_input("entry { first makemig=2/3 maxiter=333 }"), CmdFile::AT_AFTER_STARTUP};
     ASSERT_TRUE(processor.advance());
     processor.command().result.diagnostics.errors.push_back("earlier error");
     ASSERT_TRUE(processor.advance());
@@ -379,13 +372,13 @@ TEST_F(TestCommandProcessor, actionStopsAfterEarlierDiagnosticsWithoutStoppingOn
     ASSERT_NE(nullptr, action);
     EXPECT_EQ(2U, action->x_mult);
     EXPECT_EQ(3U, action->y_mult);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandProcessor, successfulCompletionRunsCompatibilityOnlyOnce)
 {
     prepare_legacy_compatibility();
-    CommandProcessor processor{open_input("entry { maxiter=222 }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { maxiter=222 }"), CmdFile::AT_AFTER_STARTUP};
     ASSERT_TRUE(processor.advance());
     handle_current(processor);
     EXPECT_DOUBLE_EQ(1.0, g_params[2]);
@@ -394,7 +387,7 @@ TEST_F(TestCommandProcessor, successfulCompletionRunsCompatibilityOnlyOnce)
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
     EXPECT_FALSE(processor.advance());
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandProcessor, compatibilityUsesOnlyTheCurrentFileFlags)
@@ -403,7 +396,7 @@ TEST_F(TestCommandProcessor, compatibilityUsesOnlyTheCurrentFileFlags)
     CommandParseResult result;
     const Command cmd{"maxiter=222", CmdFile::AT_CMD_LINE, result};
     ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, handle_engine_command(cmd));
-    CommandProcessor processor{open_input("entry { hertz=220 }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { hertz=220 }"), CmdFile::AT_AFTER_STARTUP};
     ASSERT_TRUE(processor.advance());
     handle_current(processor);
 
@@ -417,7 +410,7 @@ TEST_F(TestCommandProcessor, compatibilityUsesOnlyTheCurrentFileFlags)
 TEST_F(TestCommandProcessor, missingContinuationReportsFailureAndFinalizesValidPrefix)
 {
     prepare_legacy_compatibility();
-    CommandProcessor processor{open_input("entry { maxiter=222\nparams=1/\\"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { maxiter=222\nparams=1/\\"), CmdFile::AT_AFTER_STARTUP};
     ASSERT_TRUE(processor.advance());
     handle_current(processor);
 
@@ -427,12 +420,12 @@ TEST_F(TestCommandProcessor, missingContinuationReportsFailureAndFinalizesValidP
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
     EXPECT_THAT(
         processor.result().diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  params=1/"));
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandProcessor, endOfFileWithoutClosingBraceStillCompletesTheFile)
 {
-    CommandProcessor processor{open_input("entry { maxiter=222\n"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { maxiter=222\n"), CmdFile::AT_AFTER_STARTUP};
     ASSERT_TRUE(processor.advance());
     handle_current(processor);
 
@@ -440,13 +433,13 @@ TEST_F(TestCommandProcessor, endOfFileWithoutClosingBraceStillCompletesTheFile)
 
     EXPECT_EQ(222, g_max_iterations);
     EXPECT_TRUE(processor.result().diagnostics.errors.empty());
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandProcessor, syntaxFailureIsRetainedWithoutDispatchingLaterCommands)
 {
     CommandProcessor processor{
-        open_input("entry { " + std::string(33, 'a') + "=1 maxiter=333 }"), CmdFile::AT_AFTER_STARTUP};
+        m_file->open_input("entry { " + std::string(33, 'a') + "=1 maxiter=333 }"), CmdFile::AT_AFTER_STARTUP};
     ASSERT_TRUE(processor.advance());
     EXPECT_EQ(CmdArgFlags::BAD_ARG, processor.command().status);
     EXPECT_EQ(CmdArgFlags::BAD_ARG, processor.command().result.flags);
@@ -460,32 +453,33 @@ TEST_F(TestCommandProcessor, syntaxFailureIsRetainedWithoutDispatchingLaterComma
 
 TEST_F(TestCommandProcessor, emptyFileClosesWithoutPresentingACommand)
 {
-    CommandProcessor processor{open_input(""), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input(""), CmdFile::AT_AFTER_STARTUP};
 
     EXPECT_FALSE(processor.advance());
     EXPECT_FALSE(processor.advance());
 
     EXPECT_EQ(CmdArgFlags::NONE, processor.result().flags);
     EXPECT_TRUE(processor.result().diagnostics.errors.empty());
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandProcessor, abandonmentBetweenCommandsClosesTheFile)
 {
     {
-        CommandProcessor processor{open_input("entry { maxiter=222 maxiter=333 }"), CmdFile::AT_AFTER_STARTUP};
+        CommandProcessor processor{m_file->open_input("entry { maxiter=222 maxiter=333 }"), CmdFile::AT_AFTER_STARTUP};
         ASSERT_TRUE(processor.advance());
     }
 
     EXPECT_EQ(150, g_max_iterations);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandProcessor, handlerExceptionClosesTheFileWithoutRollingBackEarlierEffects)
 {
     EXPECT_THROW(
         {
-            CommandProcessor processor(open_input("entry { maxiter=222 unknown=yes }"), CmdFile::AT_AFTER_STARTUP);
+            CommandProcessor processor(
+                m_file->open_input("entry { maxiter=222 unknown=yes }"), CmdFile::AT_AFTER_STARTUP);
             ASSERT_TRUE(processor.advance());
             handle_current(processor);
             ASSERT_TRUE(processor.advance());
@@ -494,7 +488,7 @@ TEST_F(TestCommandProcessor, handlerExceptionClosesTheFileWithoutRollingBackEarl
         std::runtime_error);
 
     EXPECT_EQ(222, g_max_iterations);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandProcessor, constructionRejectsNullFile)
@@ -525,7 +519,7 @@ protected:
 void TestFileCommandAccess::SetUp()
 {
     TestCommandProcessor::SetUp();
-    m_processor.emplace(open_input("entry { maxiter=222 }"), CmdFile::AT_AFTER_STARTUP);
+    m_processor.emplace(m_file->open_input("entry { maxiter=222 }"), CmdFile::AT_AFTER_STARTUP);
     if (GetParam().completed)
     {
         ASSERT_TRUE(m_processor->advance());

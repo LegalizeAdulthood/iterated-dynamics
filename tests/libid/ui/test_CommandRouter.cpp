@@ -3,7 +3,9 @@
 //
 #include <ui/CommandRouter.h>
 
+#include "CommandTestFile.h"
 #include "MockSpecialDirectories.h"
+#include "TemporaryDirectory.h"
 
 #include <config/port_config.h>
 #include <engine/calcfrac.h>
@@ -37,6 +39,7 @@
 #include <cstdio>
 #include <filesystem>
 #include <memory>
+#include <optional>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -1143,11 +1146,12 @@ INSTANTIATE_TEST_SUITE_P(Textures, TestRouterStereoTexture,
 class TestCommandRouterFile : public TestCommandRouter
 {
 protected:
+    void SetUp() override;
     void TearDown() override;
     static std::string test_name();
-    std::FILE *open_input(std::string_view text);
 
-    fs::path m_path;
+    TemporaryDirectory m_input_directory;
+    std::optional<CommandTestFile> m_file;
     ValueSaver<double> m_saved_param_0{g_params[0], 0.0};
     ValueSaver<double> m_saved_param_2{g_params[2], 0.0};
     ValueSaver<Version> m_saved_version{g_version, current_id_version()};
@@ -1155,13 +1159,18 @@ protected:
     ValueSaver<bool> m_saved_bif_functions{g_new_bifurcation_functions_loaded, true};
 };
 
+void TestCommandRouterFile::SetUp()
+{
+    TestCommandRouter::SetUp();
+    m_input_directory.create("id-command-input-");
+    m_file.emplace(m_input_directory.path() / (test_name() + ".par"));
+}
+
 void TestCommandRouterFile::TearDown()
 {
-    if (!m_path.empty())
-    {
-        std::error_code error;
-        fs::remove(m_path, error);
-    }
+    m_file.reset();
+    std::error_code ignored;
+    m_input_directory.remove(ignored);
     clear_command_comments();
 }
 
@@ -1173,23 +1182,11 @@ std::string TestCommandRouterFile::test_name()
     return name;
 }
 
-std::FILE *TestCommandRouterFile::open_input(const std::string_view text)
-{
-    m_path = fs::temp_directory_path() / (test_name() + ".par");
-    std::unique_ptr<std::FILE, decltype(&std::fclose)> file{std::fopen(m_path.string().c_str(), "w+b"), std::fclose};
-    if (!file || std::fwrite(text.data(), 1, text.size(), file.get()) != text.size())
-    {
-        throw std::runtime_error("Cannot write parameter test file: " + m_path.string());
-    }
-    std::rewind(file.get());
-    return file.release();
-}
-
 TEST_F(TestCommandRouterFile, selectedSetUsesPositionAndContextForBothOwners)
 {
     const std::string prefix{"ignored { ui=no }\n"};
     std::unique_ptr<std::FILE, decltype(&std::fclose)> file{
-        open_input(prefix + "entry (description) { ui=yes engine=yes } ui=no"), std::fclose};
+        m_file->open_input(prefix + "entry (description) { ui=yes engine=yes } ui=no"), std::fclose};
     ASSERT_EQ(0, std::fseek(file.get(), static_cast<long>(prefix.size()), SEEK_SET));
     CommandProcessor processor{file.release(), CmdFile::AT_AFTER_STARTUP};
     const InSequence sequence;
@@ -1218,12 +1215,12 @@ TEST_F(TestCommandRouterFile, selectedSetUsesPositionAndContextForBothOwners)
         CmdArgFlags::RESET | CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D, result.flags);
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_THAT(result.diagnostics.warnings, ElementsAre("UI warning", "engine warning"));
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandRouterFile, uiRejectionRetainsEngineEffectsAndFlagsAndStopsTheSet)
 {
-    CommandProcessor processor{open_input("entry { engine=yes ui=bad engine=no }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { engine=yes ui=bad engine=no }"), CmdFile::AT_AFTER_STARTUP};
     const InSequence sequence;
     EXPECT_CALL(m_engine_handler, Call(_))
         .WillOnce(
@@ -1239,12 +1236,12 @@ TEST_F(TestCommandRouterFile, uiRejectionRetainsEngineEffectsAndFlagsAndStopsThe
     EXPECT_EQ(222, g_max_iterations);
     EXPECT_EQ(CmdArgFlags::RESET | CmdArgFlags::FRACTAL_PARAM, result.flags);
     EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  ui=bad"));
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandRouterFile, engineRejectionRetainsUiEffectsAndFlagsAndStopsTheSet)
 {
-    CommandProcessor processor{open_input("entry { ui=yes engine=bad ui=no }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { ui=yes engine=bad ui=no }"), CmdFile::AT_AFTER_STARTUP};
     const InSequence sequence;
     EXPECT_CALL(m_ui_handler, Call(_))
         .WillOnce(
@@ -1260,7 +1257,7 @@ TEST_F(TestCommandRouterFile, engineRejectionRetainsUiEffectsAndFlagsAndStopsThe
     EXPECT_EQ(550, g_base_hertz);
     EXPECT_EQ(CmdArgFlags::YES_3D | CmdArgFlags::PARAM_3D, result.flags);
     EXPECT_THAT(result.diagnostics.errors, ElementsAre("Oops. I couldn't understand the argument:\n  engine=bad"));
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandRouterFile, uiFlagsTriggerFileCompatibilityOnceEvenAfterRejection)
@@ -1268,7 +1265,7 @@ TEST_F(TestCommandRouterFile, uiFlagsTriggerFileCompatibilityOnceEvenAfterReject
     set_fractal_type(FractalType::MARKS_JULIA);
     g_file_version = parse_legacy_version(1824);
     g_params[2] = 1.0;
-    CommandProcessor processor{open_input("entry { ui=yes engine=bad }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { ui=yes engine=bad }"), CmdFile::AT_AFTER_STARTUP};
     EXPECT_CALL(m_ui_handler, Call(_)).WillOnce(Return(CmdArgFlags::FRACTAL_PARAM));
     EXPECT_CALL(m_engine_handler, Call(_))
         .WillOnce(
@@ -1285,12 +1282,12 @@ TEST_F(TestCommandRouterFile, uiFlagsTriggerFileCompatibilityOnceEvenAfterReject
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
     EXPECT_FALSE(processor.advance());
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandRouterFile, actionStopsTheSetAndRetainsBothOwnersResults)
 {
-    CommandProcessor processor{open_input("entry { ui=yes engine=yes ui=no }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { ui=yes engine=yes ui=no }"), CmdFile::AT_AFTER_STARTUP};
     const InSequence sequence;
     EXPECT_CALL(m_ui_handler, Call(_))
         .WillOnce(
@@ -1314,7 +1311,7 @@ TEST_F(TestCommandRouterFile, actionStopsTheSetAndRetainsBothOwnersResults)
     EXPECT_TRUE(result.diagnostics.errors.empty());
     ASSERT_TRUE(std::holds_alternative<MakeHelpDocument>(result.action));
     EXPECT_EQ("output.txt", std::get<MakeHelpDocument>(result.action).filename);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandRouterFile, defaultRouterRetainsSelectedSetInitializationAndLaterEffects)
@@ -1322,7 +1319,8 @@ TEST_F(TestCommandRouterFile, defaultRouterRetainsSelectedSetInitializationAndLa
     const CommandRouter router;
     CommandProcessor initial{"params=77", CmdFile::AT_CMD_LINE};
     ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, router.process(initial).flags);
-    CommandProcessor processor{open_input("entry { type=mandel maxiter=222 hertz=550 }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{
+        m_file->open_input("entry { type=mandel maxiter=222 hertz=550 }"), CmdFile::AT_AFTER_STARTUP};
 
     const CommandParseResult result{router.process(processor)};
 
@@ -1332,13 +1330,13 @@ TEST_F(TestCommandRouterFile, defaultRouterRetainsSelectedSetInitializationAndLa
     EXPECT_DOUBLE_EQ(0.0, g_params[0]);
     EXPECT_EQ(222, g_max_iterations);
     EXPECT_EQ(550, g_base_hertz);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandRouterFile, selectedSetRoutesVideoPromptParameter)
 {
     ValueSaver saved_ask_video{g_ask_video, true};
-    CommandProcessor processor{open_input("entry { askvideo=no }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { askvideo=no }"), CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
@@ -1346,7 +1344,7 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesVideoPromptParameter)
     EXPECT_EQ(CmdArgFlags::NONE, result.flags);
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_FALSE(g_ask_video);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandRouterFile, selectedSetRoutesVideoSelectionParameter)
@@ -1354,7 +1352,7 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesVideoSelectionParameter)
     ValueSaver saved_video_table_len{g_video_table_len, 1};
     ValueSaver saved_video_key{g_video_mode_keys[0], ID_KEY_F6};
     ValueSaver saved_init_mode{g_init_mode, -1};
-    CommandProcessor processor{open_input("entry { video=F6 }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { video=F6 }"), CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
@@ -1362,7 +1360,7 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesVideoSelectionParameter)
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, result.flags);
     EXPECT_EQ(0, g_init_mode);
     EXPECT_TRUE(result.diagnostics.errors.empty());
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandRouterFile, selectedSetRoutesVirtualScreenParameterAndCompletesCompatibility)
@@ -1371,7 +1369,7 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesVirtualScreenParameterAndComplete
     set_fractal_type(FractalType::MARKS_JULIA);
     g_file_version = parse_legacy_version(1824);
     g_params[2] = 1.0;
-    CommandProcessor processor{open_input("entry { virtual=no }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { virtual=no }"), CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
@@ -1382,7 +1380,7 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesVirtualScreenParameterAndComplete
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
     EXPECT_FALSE(processor.advance());
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandRouterFile, maxHistoryUsesLiveOverrideAndRetainsAcceptedFlagsAtCompletion)
@@ -1394,7 +1392,7 @@ TEST_F(TestCommandRouterFile, maxHistoryUsesLiveOverrideAndRetainsAcceptedFlagsA
     const std::string text{
         "entry { debugflag=" + std::to_string(static_cast<int>(DebugFlags::ALLOW_INIT_COMMANDS_ANYTIME)) +
         " maxhistory=10 debugflag=0 maxhistory=20 }"};
-    CommandProcessor processor{open_input(text), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input(text), CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
@@ -1406,13 +1404,13 @@ TEST_F(TestCommandRouterFile, maxHistoryUsesLiveOverrideAndRetainsAcceptedFlagsA
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
     EXPECT_FALSE(processor.advance());
     EXPECT_DOUBLE_EQ(2.0, g_params[2]);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandRouterFile, selectedSetRoutesAutokeyModeParameter)
 {
     ValueSaver saved_slides{g_slides, SlidesMode::OFF};
-    CommandProcessor processor{open_input("entry { autokey=record autokey=play }"), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input("entry { autokey=record autokey=play }"), CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
@@ -1420,14 +1418,14 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesAutokeyModeParameter)
     EXPECT_EQ(CmdArgFlags::NONE, result.flags);
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_EQ(SlidesMode::PLAY, g_slides);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 TEST_F(TestCommandRouterFile, selectedSetRoutesAutokeyFilenameParameter)
 {
     ValueSaver saved_auto_key_name{g_auto_name, "foo.key"};
     CommandProcessor processor{
-        open_input("entry { autokeyname=SelectedAutokeyFallback.KEY }"), CmdFile::AT_AFTER_STARTUP};
+        m_file->open_input("entry { autokeyname=SelectedAutokeyFallback.KEY }"), CmdFile::AT_AFTER_STARTUP};
     const CommandRouter router;
 
     const CommandParseResult result{router.process(processor)};
@@ -1436,7 +1434,7 @@ TEST_F(TestCommandRouterFile, selectedSetRoutesAutokeyFilenameParameter)
     EXPECT_EQ(fs::path{"SelectedAutokeyFallback.KEY"}, g_auto_name);
     EXPECT_TRUE(result.diagnostics.errors.empty());
     EXPECT_TRUE(result.diagnostics.warnings.empty());
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 class TestSelectedRdsOrder : public TestCommandRouterFile, public WithParamInterface<bool>
@@ -1458,7 +1456,7 @@ TEST_P(TestSelectedRdsOrder, preservesRdsAndTextureParameterOrder)
     const CommandRouter router;
     const std::string_view commands{GetParam() ? "entry { rds-texture=MixedCaseMap.GIF rds=random }"
                                                : "entry { rds=random rds-texture=MixedCaseMap.GIF }"};
-    CommandProcessor processor{open_input(commands), CmdFile::AT_AFTER_STARTUP};
+    CommandProcessor processor{m_file->open_input(commands), CmdFile::AT_AFTER_STARTUP};
 
     const CommandParseResult result{router.process(processor)};
 
@@ -1470,7 +1468,7 @@ TEST_P(TestSelectedRdsOrder, preservesRdsAndTextureParameterOrder)
     EXPECT_EQ("MixedCaseMap.GIF", g_stereo_texture_filename);
     EXPECT_EQ(77, g_auto_stereo_depth);
     EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
-    EXPECT_TRUE(fs::remove(m_path));
+    EXPECT_TRUE(m_file->remove());
 }
 
 INSTANTIATE_TEST_SUITE_P(Orders, TestSelectedRdsOrder, Bool(),
@@ -2624,8 +2622,8 @@ TEST_F(TestCommandRouterStartup, explicitResetPreservesUnrelatedUiPreferences)
 
 TEST_F(TestCommandRouterFile, repeatedResetsRetainLaterSettingsWithoutADeferredReset)
 {
-    CommandProcessor processor{open_input("entry { exitnoask=yes type=julia maxiter=999 reset=1960 maxiter=321 "
-                                          "exitnoask=yes reset=1/5 maxiter=777 exitnoask=yes }"),
+    CommandProcessor processor{m_file->open_input("entry { exitnoask=yes type=julia maxiter=999 reset=1960 maxiter=321 "
+                                                  "exitnoask=yes reset=1/5 maxiter=777 exitnoask=yes }"),
         CmdFile::AT_CMD_LINE_SET_NAME};
     ValueSaver saved_escape_exit{g_escape_exit};
     const CommandRouter router;
@@ -2644,7 +2642,8 @@ TEST_F(TestCommandRouterFile, repeatedResetsRetainLaterSettingsWithoutADeferredR
 TEST_F(TestCommandRouterFile, acceptedResetRemainsEffectiveBeforeALaterError)
 {
     CommandProcessor processor{
-        open_input("entry { maxiter=999 reset=1960 maxiter=321 unknown=yes maxiter=777 }"), CmdFile::AT_AFTER_STARTUP};
+        m_file->open_input("entry { maxiter=999 reset=1960 maxiter=321 unknown=yes maxiter=777 }"),
+        CmdFile::AT_AFTER_STARTUP};
     ValueSaver saved_escape_exit{g_escape_exit, true};
     const CommandRouter router;
 
