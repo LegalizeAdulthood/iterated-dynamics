@@ -344,104 +344,22 @@ changed sound mappings are separate work.
 
 ## Orbit Display And Delay Policy
 
-Orbit plotting is engine work done from inside each pixel's orbit
-iteration.  The UI layer must not plot or scrub orbit points.  The
-inversion work is to remove keyboard and mouse polling buried inside
-orbit display mechanics by making the engine return after bounded
-plot or scrub work.  The UI controller owns input polling and any
-presentation delay between those engine increments.
+See [orbit-delay-timer.md](orbit-delay-timer.md) for timing behavior and
+[sound.md](sound.md) for coordinated audio output.
 
-Current behavior is retained, not a settled replacement for DOS display
-semantics.  Standard and FrothyBasin controllers call
-`pace_orbit_display()` after reported overlay output.  That UI helper
-maps delays below 139 units to no display wait; values of 139 or more
-retain 100-microsecond units.  Its input dispatcher is throttled to about
-72 Hz.  This is not frame-based retention or batching of orbit points.
-
-`ShowDotController` separately waits for every positive `g_orbit_delay`,
-using saved marker pixels and the show-dot color/shape settings.
-FrothyBasin still draws its simple `g_show_dot` marker inside
-`start_pixel()` and does not use that controller.  The general pixel
-kernel retains the legacy sound/delay-dependent chunk choice: 16
-iterations with orbit sound and positive delay, otherwise 2048.  That
-choice does not poll or wait inside calculation.
-
-The driver-backed sound port separately interprets `g_orbit_delay` as
-tone duration in 100-microsecond units.  Its duration is not rounded by
-the overlay display threshold.  UI services and waits for playback.
-
-The old DOS delay model may not fit a windowed application, and exact
-FRACTINT microsecond compatibility is not necessarily the right goal.
-Revisit the entire policy before adding display-delay changes.
-
-The policy review must cover every relevant overlay or orbit-inspection
-use:
-
-- standard escape-time overlay display from `showorbit=yes`;
-- FrothyBasin overlay display;
-- Lorenz and other 2D or 3D orbit plotting paths;
-- any remaining fractal type that uses `g_orbit_delay`, `plot_orbit`,
-  visible point pacing, or sound output timing.
-
-Questions to answer:
-
-- Is `orbitdelay` still a compatibility parameter, a UI presentation
-  cadence, or a legacy value that should be mapped to modern behavior?
-- What should `orbitdelay=0`, small positive values, and large values
-  mean for windowed display?
-- Should visible orbit display use per-point delay, frame-rate-limited
-  sampled presentation, single-step mode, or a separate animation UI?
-- Should batch or headless rendering ignore visible orbit delay?
-- What future sound-duration controls or `orbitdelay` compatibility
-  mapping should replace the interim driver adapter's duration setting?
-
-Done when:
-
-- the chosen policy is documented before implementation;
-- automated tests specify the chosen timing and state behavior; manual
-  arguments and observations cover only remaining native display or input
-  gaps, not every affected fractal type;
-- new implementation slices separate engine plot work from UI polling,
-  without mixing in unresolved delay-policy decisions.
-
-The former shared orbit-plot path had two responsibilities.  They are
-now separated:
-
-- Overlay orbit display draws a temporary orbit over an existing image.
-  `engine::OrbitPlot` saves covered pixels, XORs the orbit color, and
-  later restores the saved pixels.  This is the `showorbit=yes` behavior
-  for standard escape-time rendering and FrothyBasin.  Its interface has
-  no image-color argument or `color == -1` sentinel.
-- Image-orbit plotting makes the orbit point part of the rendered image.
-  It writes an explicit color and must not save or scrub covered pixels.
-  `Popcorn` owns this plotting directly, without `OrbitPlot`.
-
-Popcorn is not a standard fractal renderer.  It uses screen pixels as
-seed points, iterates a Popcorn map, and plots the produced orbit points
-elsewhere on the screen.  It does not color the seed pixel by orbit
-length, and it does not use StandardPass traversal.  `Popcorn` owns
-scan state, orbit state, and image point plotting; its UI controller
-advances the selected operation in `NonStandardFractal`.
-
-Popcorn and PopcornJul are not part of the standard overlay-orbit
-policy.  They hijacked the old orbit plotting machinery to draw image
-pixels, but they are not showing temporary escape-time orbit overlays.
-The false dependency on `OrbitPlot` has been removed.  Popcorn is not an
+Temporary orbit overlays and image-producing orbit plots are distinct.
+Popcorn and PopcornJul use screen pixels as seeds and plot iterated points
+elsewhere in the image, rather than coloring each seed by orbit length.
+Their output is image content, not a temporary overlay or an
 orbit-inspection feature.
 
-The running orbit overlay may eventually be superseded by an orbit tool
-window with an interactive cursor in the main image.  That tool would
-let the UI request orbit calculation for a selected image point, then
-animate, pause, single-step, or play sound independently of image
-rendering.  In that future shape, `showorbit=yes` can become
-compatibility syntax that opens or enables the orbit tool instead of
-forcing rendering to draw, delay, and scrub temporary overlay points.
-
-That direction reinforces the current inversion boundary: image
-rendering should not own input polling or UI pacing, and the UI should
-not own fractal orbit math.  The engine supplies bounded orbit work; the
-UI decides when to request it, how to present it, and how to handle user
-input while it is visible.
+A possible future orbit tool window would use an interactive cursor in
+the main image to select a point for orbit calculation.  It could animate,
+pause, single-step, or play sound independently of image rendering.
+In that design, `showorbit=yes` could become compatibility syntax for
+enabling the tool instead of coupling overlay animation to image
+generation.  This is a future direction, not a selected replacement for
+the existing display policy.
 
 ## Current Presentation Ownership
 
