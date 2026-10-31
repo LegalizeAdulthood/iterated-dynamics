@@ -1,43 +1,78 @@
+<!--
+SPDX-License-Identifier: GPL-3.0-only
+Copyright 2026 Richard Thomson.
+-->
+
 # SIMD Highway Plan
 
-This document describes the implementation plan for using Google Highway in
-selected fractal renderers.
+Use Google Highway to accelerate eligible calculation without changing
+which pass selects pixels or moving rendering into UI.
 
-Phase 1 covers standard escape-time fractals.  The goal is not to replace
-every pass algorithm.  The goal is to add a SIMD implementation for the
-ordinary row scan when the current render state is compatible with vector
-execution.
+## Status And Release 1.5 Boundary
 
-Phase 2 covers 2D and 3D IFS fractal types.  IFS rendering is not a row
-scan.  The scalar renderer advances one random orbit at a time, so the SIMD
-shape is a batch of independent walkers.
+The calculation/pass refactor is implemented.  Highway integration,
+`simd=`, grid views, and SIMD kernels are not yet implemented.
 
-Phase 3 covers non-standard fractal types that do not render through
-`calc_standard_fractal()`.  These renderers have different dependency
-shapes, so each needs its own eligibility and test oracle.
+[Release 1.5](release-1.5.md) includes Phase 1 slices 1-8, including their
+sub-slices.  Slice 9 diagnostics are optional.  Slice 10 eligibility
+expansion, Phase 2 IFS, and Phase 3 non-standard work remain deferred.
+Existing numbering is retained so those release references stay valid.
 
-Existing scalar code remains the complete behavior oracle for unsupported
-states.  Where a SIMD algorithm deliberately changes the execution shape,
-the plan calls that out and adds a scalar batch reference for tests.
+Phase 1 supports only eligible double-precision Mandelbrot and Julia
+calculation under `passes=1|2`.  Unsupported states retain the current
+scalar implementation.  Default `passes=g` is not accelerated by this
+phase.  Moving to worker threads, eliminating all globals, and completing
+the broader [hexagonal boundary](hexagonal.md) are not prerequisites.
+
+## Current Implementation
+
+The relevant boundaries are:
+
+- `StandardFractal` owns setup, timing, work-list handling, active pixel
+  state, dispatch, and the selected perturbation strategy.
+- `StandardPass` routes concrete pass objects through its non-virtual
+  variant.  Pixel passes select coordinates and accept completed colors.
+- `OnePass` and `TwoPass` share `ScanlinePass`.  It owns traversal,
+  first-pass replication, second-pass skips, and suspension coordinates.
+- `StandardFractal::calculate_pixel()` calls `fractals::calc_type()`
+  through `g_dispatch`, then supplies a completed color to the pass.
+  The scalar calculator also plots the primary pixel.
+- `calc_mandelbrot_type()` delegates to
+  `StandardFractal::calculate_mandelbrot_pixel()`.  Its orbit calculation
+  is `mandelbrot_orbit()` in `engine/calmanfp.cpp`.
+- `pixel_grid.cpp` privately owns four coordinate vectors; its public
+  accessors use `g_col` and `g_row`.  No batch/grid-view API exists.
+- `engine/pixel.h` owns pixel/span access.  UI controllers own input,
+  show-dot presentation, sound servicing, and display waits.
+
+The removed free-function pass dispatcher is not an integration point.
+Do not restore it, add another calculation-dispatch global, or put
+calculation callbacks back into the passes.
 
 ## Decisions
 
-- Highway is an implementation detail, not a traversal mode.
-- Do not add `passes=h`.
-- Keep `passes=1`, `passes=2`, `passes=g`, `passes=b`, and the other pass
-  modes focused on traversal strategy.
-- Add a `simd=` option for diagnostics and test control.
-- Use SIMD automatically when the render state is eligible.
-- Fall back to scalar code unless the user explicitly forced SIMD.
-- Keep each SIMD path narrow and easy to prove.
-- Refactor existing pass algorithms later, after the row kernel is trusted.
-- Treat escape-time fractals as Phase 1.
-- Treat 2D and 3D IFS fractal types as Phase 2.
-- Treat other non-standard fractal renderers as Phase 3.
+- Highway is a calculation implementation, not a new pass algorithm.
+- Do not add `passes=h` or a SIMD alternative to the pass variant.
+- Keep traversal, symmetry, work-list, and lifecycle decisions in their
+  current owners.
+- Select SIMD inside `StandardFractal` for an eligible scanline operation,
+  after setup has resolved effective options and dispatch.
+- Keep kernels independent of UI, drivers, mutable global bindings,
+  keyboard polling, and sound servicing.
+- Use bounded batches and retain existing useful interaction checkpoints.
+  A vector or internal state transition is not a reason to poll input.
+- Keep the current scalar path as the oracle and complete fallback.
+- Do not require speculative platform workarounds or a new port framework
+  just to introduce the first kernel.
+
+`passes=p` is compatibility syntax selecting perturbation with
+solid-guess traversal, not an independent perturbation pass.  It is outside
+Phase 1.  Perturbation selection remains orthogonal to traversal and SIMD
+must not silently replace an active perturbation strategy.
 
 ## User Option
 
-Add a command option:
+Add the engine-owned execution policy:
 
 ```text
 simd=auto
@@ -45,367 +80,229 @@ simd=off
 simd=force
 ```
 
-Meanings:
+- `auto` is the default: choose Highway only when the effective state is
+  eligible; otherwise retain scalar calculation.
+- `off` always retains the existing scalar implementation.
+- `force` requires the Highway path and reports a specific reason when
+  it cannot be used.  It must not silently use the legacy calculator.
 
-- `auto`: default.  Use Highway when eligible, otherwise use scalar code.
-- `off`: force scalar code.  This is useful for comparison tests.
-- `force`: require Highway.  If the current render state is ineligible,
-  stop or report a clear ineligibility reason.
+Highway's portable target is still a Highway implementation; `force`
+does not promise a particular hardware instruction set.
 
-Possible later value:
+Keep parsing in engine command handling through the existing
+`CommandRouter`/`CommandProcessor` route, including `@` parameter sets.
+Store requested policy with engine user settings, initialize/reset it
+explicitly, and preserve it through history and PAR output.  This
+execution hint does not need a new GIF metadata field.
 
-```text
-simd=stats
-```
+A forced rejection returns through the existing calculation diagnostic
+boundary; the engine does not open a dialog.  Define rejection before
+committing output rather than discovering an unsupported option halfway
+through a batch.
 
-`stats` can mean `auto` plus diagnostics: selected Highway target,
-eligibility result, fallback reason, row counts, and scalar tail counts.
+Optional diagnostics may later add `simd=stats` or equivalent opt-in
+reporting.  Their absence must not prevent normal release 1.5 use.
 
-## Phases
+## Phase 1: Escape-Time Calculation
 
-Phase 1 is the ordinary escape-time row renderer.  It should be
-byte-for-byte compatible with the existing scalar path for every supported
-state.
+### Eligibility
 
-Phase 2 is the IFS renderer.  A single IFS orbit is sequential, so the SIMD
-algorithm uses multiple independent walkers in lanes.  This is
-deterministic, but it is not the same pixel sequence as the current scalar
-single-walker implementation.  Phase 2 therefore needs its own scalar batch
-reference and should start as `simd=force` only until the compatibility
-policy is accepted.
+Use effective state after image and per-image setup, not just the
+requested fractal name or original `FractalSpecific` entry.
 
-Phase 3 is the set of remaining non-standard fractal renderers.  Some are
-good SIMD targets because they have independent columns, pixels, or walker
-states.  Others are poor targets because they are dominated by ordered grid
-mutation, recursive drawing, or one long dependent trajectory.
+The initial set requires:
 
-## Phase 1: Escape-Time Fractals
+- `type=mandel|julia`, effective `passes=1|2`, and the optimized
+  `calc_mandelbrot_type` dispatch.
+- Double math, valid populated coordinate grids, and no active
+  perturbation.
+- Modulus bailout; normal initialization for the selected type, including
+  the existing Mandelbrot parameter offset and Julia constant.
+- `periodicity=0`; periodicity support belongs to later expansion.
+- Inside `ColorMethod::COLOR` or `ColorMethod::ITER`, with numerical
+  inside color handled separately from the method.
+- Outside `ColorMethod::ITER` and ordinary palette-index coloring.
+- No inversion, distance estimator, decomposition, biomorph, potential,
+  log mapping, finite attractors, or true-color output.
+- No orbit overlay, orbit sound, tone recording, enabled showdot, or
+  output behavior requiring per-orbit presentation.
+- No quick-calculation reuse or unsupported legacy/debug overrides.
 
-### High-Level Shape
+Validate parameters and dimensions accepted by the optimized reference;
+do not add unproved assumptions about bailout, maximum iterations,
+palette size, offsets, or resume positions.  Additional restrictions
+must have a named reason and a test.
 
-The normal pass dispatcher remains responsible for traversal.  SIMD is
-selected inside the ordinary one-pass and two-pass path:
+Reject arbitrary-precision, formula, general-kernel, and other pass
+operations in `force`; fall back in `auto`.  A default render with
+periodicity enabled is initially scalar even under `simd=auto`.
 
-```cpp
-case CalcMode::ONE_PASS:
-case CalcMode::TWO_PASS:
-    if (can_use_highway_pass())
-    {
-        highway_pass();
-    }
-    else
-    {
-        one_or_two_pass();
-    }
-    break;
-```
+Evaluate policy again at an existing safe work boundary if effective
+state changes, for example after orbit display is toggled.  Retain
+already committed pixels and apply the normal fallback/rejection policy
+without bypassing input handling or duplicating work.
 
-In practice this selection may live in the default case that currently
-calls `one_or_two_pass()`, but the behavior should match the shape above.
+### Coordinate And Parameter Data
 
-`highway_pass()` is a row/span implementation.  It does not call
-`g_calc_type()` per pixel.  It gathers the render constants once, uses the
-pixel grid arrays as input, writes a span of color indexes, then passes the
-span to the existing row output path.
-
-### Why Not `passes=h`
-
-The existing `passes=` option chooses a traversal algorithm:
-
-- `1`: one-pass sequential scan
-- `2`: two-pass sequential scan
-- `g`: solid guessing
-- `b`: boundary trace
-- `t`: tesseral
-- `d`: diffusion
-- `o`: orbit pass
-- `p`: perturbation
-
-Highway does not define a new traversal.  It accelerates the pixel math
-used by a traversal.  Making it a pass mode would mix two different
-concepts and would make existing parameter files opt in to an
-implementation detail.
-
-`simd=` is the correct control surface because it expresses implementation
-selection and gives tests a stable way to force scalar or SIMD behavior.
-
-### Initial Eligibility
-
-Start with a deliberately small set of supported states.
-
-Eligible:
-
-- standard escape-time render
-- `passes=1` or `passes=2`
-- double precision math only
-- Mandelbrot or Julia optimized path
-- pixel grid arrays allocated and filled
-- no inversion
-- no distance estimator
-- no orbit display
-- no orbit sound
-- no show-dot wrapper
-- no potential coloring
-- no finite attractor handling
-- no periodicity checking in the first slice
-- simple inside color
-- simple outside iteration color
-- no bignum or bigfloat alternate math
-- no formula interpreter
-
-Everything else falls back to scalar code in `simd=auto` and `simd=off`.
-In `simd=force`, every rejected condition should produce a specific reason.
-
-The first SIMD path should target the same behavior as the optimized
-Mandelbrot/Julia calculator, not the full `standard_fractal_type()` feature
-set.
-
-### Data Model
-
-The current pixel grid is already close to the needed structure of arrays:
+Expose a small read-only view of the four vectors in `pixel_grid.cpp`:
 
 ```text
-x = grid_x0[col] + grid_x1[row]
-y = grid_y0[row] + grid_y1[col]
+x = x0[col] + x1[row]
+y = y0[row] + y1[col]
 ```
 
-Expose read-only spans or pointer/size views from `pixel_grid.cpp`:
+The project currently uses C++17.  Use a domain-specific pointer/count view
+rather than `std::span` or a language-standard upgrade.  Preserve the
+existing grid arithmetic and validate dimensions before accessing it.
+Views are valid only until grid storage is cleared or rebuilt.
 
-```cpp
-struct PixelGridSpans
-{
-    std::span<const double> x0;
-    std::span<const double> y0;
-    std::span<const double> x1;
-    std::span<const double> y1;
-};
-```
+Build an immutable snapshot containing only supported calculation inputs:
+type, initial offset or Julia constant, bailout, iteration limit,
+inside method/color, and palette reduction parameters.
+Do not copy the entire global state or have the kernel read globals
+through a convenience wrapper.
 
-If `std::span` is not available under the current C++ standard/library
-constraints, use a tiny view type:
+The snapshot and selected coordinates are engine data.  They can later
+be supplied by another controller or worker without changing the kernel.
 
-```cpp
-template <typename T>
-struct SpanView
-{
-    const T *data;
-    std::size_t size;
-};
-```
+### Scalar Oracle Before SIMD
 
-The SIMD kernel should not call `dx_pixel()` or `dy_pixel()`.  Those
-functions depend on global `g_col` and `g_row`, which is the scalar shape
-the SIMD path is avoiding.
+First implement the proposed batch calculation in scalar C++.
+Compare it against the current optimized pixel path, not an idealized
+Mandelbrot pseudocode loop.
 
-### Render Constants
+The current Julia path performs an initial recurrence before entering
+the shared loop.  Counter decrement, bailout equality, iteration-limit
+handling, and palette reduction must match exactly.  Preserve arithmetic
+operation order; do not substitute fused multiply-add or fast-math
+transformations that change supported output.
 
-Create a compact immutable parameter object before entering the SIMD pass:
+Produce completed colors and the iteration/counter facts required for
+normal completion and status.  Coloring methods and numerical color
+values are separate inputs.  Use nonnegative colors, not calculation
+sentinels, in completed output buffers.
 
-```cpp
-struct EscapeSimdParams
-{
-    bool julia;
-    double param_x;
-    double param_y;
-    double bailout;
-    long max_iterations;
-    int colors;
-    int and_color;
-    int inside_color;
-};
-```
+### Bounded Calculation And Completion
 
-Add fields only when a supported coloring or formula needs them.  Do not
-copy the entire global render state into this object.  The object is the
-contract for what the SIMD kernel actually supports.
+The current pass API retains one selected pixel until completion.  It
+cannot supply an entire row to a vector kernel without an explicit
+extension.  Add bounded scanline selection in `ScanlinePass`, routed
+through `StandardPass`; do not duplicate traversal in the SIMD backend.
 
-### Row Kernel
+Selection must identify exactly the next permitted positions in the
+active row/pass and retain them until completion.  It must respect
+work-item bounds, offsets, resume starts, and two-pass parity.
+Selection does not calculate, plot, or advance the committed cursor.
 
-The first kernel should be row-oriented:
+`StandardFractal` owns batch calculation and the returned colors.
+Complete accepted results in traversal order through the pass's existing
+completion semantics.  Preserve first-pass neighboring-pixel copies and
+second-pass omissions.  Primary plotting still belongs to calculation,
+not to the kernel's UI caller.
 
-```cpp
-void render_escape_row_highway(
-    const EscapeSimdParams &params,
-    const PixelGridSpans &grid,
-    int row,
-    int first_col,
-    int last_col,
-    Byte *colors);
-```
+A bounded batch may stop before a row ends.  Do not calculate a full row
+to completion merely because it is convenient for vector loads.
+Keep lookahead bounded, retain any uncommitted results, and preserve
+work-budget accounting based on actual iteration work.
 
-The output buffer contains one color index per column from `first_col` to
-`last_col`, inclusive.
+Do not return to UI after every vector or batch unconditionally.
+Accumulate useful work until the existing calculation checkpoint, then
+yield.  Account for the last committed pixel's visible counters and
+status; updating colors alone is insufficient.
 
-The Highway loop owns lane state:
+On suspension, record the first uncommitted selection through the pass.
+Normal resume may recompute uncommitted math, but must not skip or replay
+committed pixel output.  Completion and failure use the existing render
+lifecycle and engine timing.
 
-```text
-cx      pixel real coordinate
-cy      pixel imaginary coordinate
-zx      current orbit real value
-zy      current orbit imaginary value
-iter    iteration count
-active  lanes still iterating
-```
+### Output And Symmetry
 
-Mandelbrot initialization:
+The first implementation can commit colors with existing `g_plot`
+behavior and pass completion.  Vectorized math does not require replacing
+pixel-output ownership in the same slice.
 
-```text
-cx = x
-cy = y
-zx = x + param_x
-zy = y + param_y
-```
+`write_span()` is raw pixel output, not a symmetry/traversal operation.
+`sym_fill_line()` assumes a uniform color and cannot safely mirror
+arbitrary-color SIMD rows.  Do not use it as a general row helper or add
+a wrapper that hides this restriction.
 
-Julia initialization:
+Any later span-output optimization must preserve reversed mirrored
+coordinates, offsets, bounds, and two-pass replication, and must prove
+equivalence with the existing ordered output.  It is not a prerequisite
+for the first release 1.5 vector calculation path.
 
-```text
-cx = param_x
-cy = param_y
-zx = x
-zy = y
-```
+### Highway Build And Dispatch
 
-Core loop:
+The dependency is not currently in the manifest.  Add `highway` to the
+application feature dependencies, using the existing vcpkg configuration.
+The bundled port's usage specifies `find_package(hwy CONFIG REQUIRED)`
+and target `hwy::hwy`; use that version's package rather than assuming
+nightly documentation names match it.
 
-```text
-while any(active) and iter < max_iterations:
-    x2 = zx * zx
-    y2 = zy * zy
-    mag = x2 + y2
-    escaped = active and mag >= bailout
-    record iter for newly escaped lanes
-    active = active and not escaped
-    zy = 2 * zx * zy + cy
-    zx = x2 - y2 + cx
-    iter += active
-```
+Keep target-specific vector code in an engine translation unit and expose
+only ordinary scalar data types at its boundary.  Highway's
+[dynamic dispatch][highway-dispatch] selects a compiled implementation
+for the running CPU.  Keep its required target macros/include machinery
+local; do not expose Highway vector types or platform intrinsics to
+passes, UI, or public calculation APIs.
 
-The exact initialization must be checked against
-`calc_mandelbrot_type()` and `mandelbrot_orbit()` before coding.  Preserve
-current off-by-one iteration semantics even if the loop above changes
-shape.
+Use portable targets/tail handling as required by the chosen Highway
+version.  Do not add project-wide CPU flags, fast math, or unrelated
+compiler-policy changes.  [Highway's correctness notes][highway-faq]
+describe contraction and partial-vector hazards relevant to this work.
 
-### Color Mapping
+Retain existing builds on Windows, Linux, macOS, FreeBSD, OpenBSD, and
+NetBSD.  Fix demonstrated configuration/compiler problems, not guessed
+platform limitations.
 
-Keep first-slice color mapping simple and explicit:
+### Validation
 
-- escaped lanes use the escape iteration, with the existing zero adjustment
-  if needed
-- inside lanes use the configured inside color or `max_iterations`,
-  matching the current optimized Mandelbrot/Julia path
-- apply the same modulo/`g_and_color` behavior used by
-  `calc_mandelbrot_type()`
+Automate the deterministic behavior:
 
-Do not support log map, potential, decomposition, distance estimator, or
-special outside colors in the first slice.  Each one can be added later as
-a small post-process or as a separate kernel path.
+- Parameter parsing, reset/history/PAR policy, and routing through `@`.
+- Each eligibility rejection, including active perturbation and the
+  distinction between requested and effective calculation state.
+- Grid views versus current coordinates for rotated/skewed bounds and
+  logical offsets.
+- Scalar batch versus optimized scalar pixel colors and iteration facts.
+- Highway versus scalar batch across executable CPU targets, short
+  batches, partial vectors, and safe tails.
+- Bailout equality, Julia initialization, interior points, iteration
+  limits, parameter offsets, and palette reduction.
+- Selection/completion order, two-pass parity and replication, symmetry,
+  odd bounds, work-list transitions, and first uncommitted resume state.
+- Controller suspension, menu return, and fallback at existing work
+  boundaries, without asserting exact poll counts or elapsed times.
+- Complete eligible images with `simd=off`, `auto`, and `force`,
+  compared byte-for-byte within the same platform/build.
 
-### Output
+Use the existing scanline/pass/controller fixtures and image/autokey
+harnesses rather than inventing parallel test infrastructure.
+Test arguments must explicitly satisfy initial eligibility, including
+`periodicity=0`; image tests disable sound but do not imply every other
+gate is satisfied.
 
-The SIMD pass should write spans, not individual pixels.
+Also verify that ineligible/default states retain scalar results.
+Use per-scenario or parameterized tests according to existing test rules.
+Native manual testing is needed only for a changed interaction that
+those automated paths cannot cover.
 
-Preferred path:
-
-1. Render a row into a temporary `std::vector<Byte>` or fixed row buffer.
-2. Use the existing symmetry-aware row output helper.
-3. Preserve two-pass behavior by copying coarse-pass pixels the same way
-   the scalar pass does, but at span granularity where practical.
-
-If the existing row helper is private to `calcfrac.cpp`, either move it to
-a small internal engine module or add a narrow wrapper.  Do not duplicate
-the full symmetry logic in the SIMD pass.
-
-### Highway Integration
-
-Add the vcpkg dependency:
-
-```json
-"highway"
-```
-
-Find and link it in `libid/CMakeLists.txt`.  The exact target name should
-be verified from the vcpkg package, but Highway commonly exports
-`hwy::hwy`.
-
-Keep Highway code isolated in its own translation unit, for example:
-
-```text
-engine/highway_escape.cpp
-include/engine/highway_escape.h
-```
-
-Use Highway dynamic dispatch in that file:
-
-```cpp
-#define HWY_TARGET_INCLUDE "engine/highway_escape.cpp"
-#include "hwy/foreach_target.h"
-#include "hwy/highway.h"
-
-HWY_BEFORE_NAMESPACE();
-namespace id::engine::HWY_NAMESPACE
-{
-// target-specific implementation
-}
-HWY_AFTER_NAMESPACE();
-```
-
-The non-target wrapper calls `HWY_DYNAMIC_DISPATCH(...)`.  Do not expose
-Highway vector types in public headers.  Pass scalar pointers, counts, and
-plain parameter structs across the dispatch boundary.
-
-### Testing Strategy
-
-Tests need to compare scalar and SIMD behavior directly.
-
-Add command parsing tests:
-
-- `simd=auto`
-- `simd=off`
-- `simd=force`
-- invalid `simd=` value
-
-Add eligibility tests:
-
-- Mandelbrot eligible
-- Julia eligible
-- inversion rejected
-- distance estimator rejected
-- bignum or bigfloat rejected
-- formula rejected
-- show orbit rejected
-
-Add row-kernel tests:
-
-- fixed grid, fixed params, known Mandelbrot colors
-- odd width row
-- width smaller than the lane count
-- exact lane-count width
-- scalar tail width
-- max-iteration interior points
-- immediate bailout points
-
-Add image tests:
-
-- `type=mandel passes=1 simd=off`
-- `type=mandel passes=1 simd=force`
-- `type=mandel passes=2 simd=off`
-- `type=mandel passes=2 simd=force`
-- `type=julia passes=1 simd=off`
-- `type=julia passes=1 simd=force`
-
-The SIMD and scalar images should match byte-for-byte for the supported
-first-slice feature set.
+Measure kernel and end-to-end calculation performance in optimized builds.
+Do not promise a speedup from lane count alone, change synchronization
+cadence to improve a measurement, or add timing thresholds to correctness
+tests.
 
 ## Phase 2: IFS Fractals
 
 ### Current Shape
 
-The 2D and 3D IFS entry points are:
+`NonStandardFractal` selects and owns `IFS2D` or `IFS3D` according to
+the loaded definition.  Their bounded `iterate()` methods remain in
+`fractals/lorenz.cpp`.
 
-- `ifs2d()`
-- `StereoController::run()` for selected 3D IFS work
-- `IFS2D::iterate()`
-- `IFS3D::iterate()`
+`ui::IFS2DController` and `ui::StereoController` start and step the
+selected calculation.  They own input and presentation, not transformation
+selection or orbit math.  The former synchronous IFS entries are gone.
 
 Both scalar algorithms advance one orbit point per call:
 
@@ -440,14 +337,19 @@ k          selected transform index
 active     lane still inside sane bounds
 ```
 
-The SIMD kernel advances all lanes by one IFS step.  The pass driver calls
-the kernel until the configured point budget is exhausted or every lane is
-unbounded.
+The SIMD kernel advances independent walkers.  The calculation object
+owns their point budget and unbounded state; its UI controller continues
+to drive bounded work without knowing Highway lane types.
 
 This is deterministic if the lane RNG streams are deterministic.  It is not
 byte-for-byte identical to the old scalar single-walker renderer.  The test
 oracle for Phase 2 is a scalar batched walker that uses the same lane
 states, the same RNG streams, and the same lane output order.
+
+Keep logical walker count and stream assignment independent of the
+runtime CPU vector width if results must be stable across Highway
+targets.  Changing vector width must not silently select a different
+rendering experiment.
 
 ### Phase 2 Eligibility
 
@@ -498,8 +400,8 @@ m20, m21, m22, tz
 probability_cdf
 ```
 
-Keep the original vector as the file-format representation.  The SoA object
-is an execution representation built by the SIMD path.
+Keep the loaded definition unchanged.  The SoA object is a separate
+execution representation built by the SIMD path.
 
 ### RNG
 
@@ -624,8 +526,8 @@ the project chooses to rebaseline IFS images for batched SIMD.
 
 ### Scope
 
-Phase 3 covers fractal types whose calculator is not
-`calc_standard_fractal()` and which are not already covered by Phase 2 IFS.
+Phase 3 covers the calculation objects selected by `NonStandardFractal`
+other than the IFS work in Phase 2.  It is not part of release 1.5.
 
 Observed calculator families:
 
@@ -637,7 +539,8 @@ Observed calculator families:
 - orbit 2D
 - orbit 3D
 - plasma
-- popcorn
+- popcorn and popcornjul
+- FrothyBasin
 - ant
 - diffusion
 - L-system
@@ -686,8 +589,9 @@ points into the image.  SIMD can advance several orbits as independent
 walkers, but plotting must remain scalar and lane ordered at first.
 
 Use the same model as IFS: explicit lane state, scalar batch reference,
-SIMD point generation, and ordered scalar plotting.  This avoids image
-differences when two lanes hit the same pixel.
+SIMD point generation, and ordered scalar plotting.  This preserves
+agreement with the scalar batched reference when lanes hit the same pixel;
+it does not establish equivalence with the old single-orbit ordering.
 
 Priority 5: dynamic 2D and Mandel cloud.
 
@@ -753,103 +657,191 @@ Defer:
 - test
 
 Ant and diffusion mutate a shared grid with strong order dependencies.
-L-system rendering is recursive string and turtle work, not a dense numeric
-loop.  The test calculator should not drive the SIMD plan.
+L-system expansion and turtle traversal now use explicit stacks, but
+still are not a dense numeric loop.  FrothyBasin needs its own eligibility
+and overlay policy and remains scalar here.  The TestPoint calculator
+should not drive the SIMD plan.
 
 ## Phase 1 Implementation Slices
 
+Implement these as small commits.  Required sub-slices remain within
+their parent release item.  Run focused tests with `cmake --workflow temp`
+and integrated validation with `cmake --workflow rt-default`, following
+the repository test rules.  Markdown-only work needs neither workflow.
+
+Temporary bridges must identify their removing slice and carry the
+`// TODO: removed later` marker.  Do not leave unused transition APIs.
+
 ### 1. Option Plumbing
 
-- Add `SimdMode {AUTO, OFF, FORCE}`.
-- Add global/user state for the selected mode.
-- Parse `simd=auto|off|force`.
-- Save and restore the option in parameter output and history if
-  appropriate.
-- Add unit tests for parsing.
+- Add `SimdMode` with `AUTO`, `OFF`, and `FORCE` to engine user policy.
+- Add the engine-owned `simd` handler through current command routing.
+- Define process/fractal reset defaults and retain the requested policy
+  in history and PAR output without a new GIF extension.
+- Document values, eligibility limits, and scalar fallback in help.
+- Cover parsing, invalid values, `@` sources, defaults, history, and
+  output round trips.
+- Until activation, report a requested forced backend as unavailable;
+  mark that temporary guard for replacement in slice 7.3.
 
-No Highway dependency is needed in this slice.
+No Highway dependency or automatic SIMD selection is introduced here.
 
 ### 2. Eligibility Report
 
-- Add `can_use_highway_pass()`.
-- Return a small result object, not just `bool`.
-- Include an enum reason for the first rejected condition.
-- Honor `simd=off`.
-- Make `simd=force` report rejection clearly.
-- Add unit tests for eligible and rejected states.
+- Add an engine-owned eligibility result with a named rejection reason.
+- Inspect effective math, active dispatch, traversal, coloring, output,
+  and presentation requirements after setup.
+- Distinguish `off`, supported configuration, and backend availability.
+- Cover each supported/rejected case without invoking UI.
+- Keep all rendering scalar until activation.
 
-This slice still calls scalar rendering only.
+The report describes calculation capability, not a new pass type.
 
 ### 3. Pixel Grid Views
 
-- Expose read-only grid views from `pixel_grid`.
-- Keep `dx_pixel()` and `dy_pixel()` unchanged for scalar users.
-- Add tests that grid views match `dx_pixel()` and `dy_pixel()` for
-  selected rows and columns.
+- Expose C++17 read-only coordinate views with dimensions and lifetime
+  tied to the existing grid storage.
+- Keep scalar `dx_pixel()` and `dy_pixel()` behavior unchanged.
+- Compare coordinates for ordinary, rotated/skewed, offset, and rebuilt
+  grids; reject invalid view dimensions.
 
-This slice is data access only.
+This is data access only.
 
 ### 4. Scalar Row Kernel
 
-- Implement the new row-kernel interface in scalar C++ first.
-- Do not use Highway yet.
-- Match `calc_mandelbrot_type()` for the initial supported feature set.
-- Compare row output against the existing scalar pixel path in unit tests.
+Split the original kernel slice into two reviewable foundations.
 
-This de-risks semantics before adding SIMD.
+#### 4.1. Inputs And Scalar Semantics
+
+- Define compact immutable supported inputs and completed-pixel facts.
+- Match the optimized Mandelbrot/Julia initialization, bailout,
+  iteration, and palette behavior using explicit coordinate inputs.
+- Compare against the existing pixel calculator, including edge cases.
+- Keep calculation, plotting, and pass advancement separate.
+
+#### 4.2. Bounded Scalar Batch
+
+- Calculate an explicit bounded set of selected row positions.
+- Support short groups and explicit sample positions without assuming
+  every column in a row is requested.
+- Return colors and required completion/work-budget facts.
+- Compare every result with the scalar semantic reference.
+- Do not connect the new batch calculator to normal rendering yet.
+
+This reference remains available for Highway comparison.
 
 ### 5. Highway Build Integration
 
-- Add `highway` to `vcpkg.json`.
-- Add `find_package` and link target in `libid/CMakeLists.txt`.
-- Add an empty or scalar-equivalent Highway dispatch function.
-- Verify all platforms still configure and build.
+- Add `highway` to application dependencies in `vcpkg.json`.
+- Find `hwy` and link `hwy::hwy` privately to `libid` using the bundled
+  port's package.
+- Add an isolated dispatch smoke test without selecting it for rendering.
+- Verify existing platform configurations and CPU baseline behavior.
+- Do not raise the language standard or change global CPU/math flags.
 
-No behavior change should occur in this slice.
+No rendering behavior changes in this slice.
 
 ### 6. Highway Row Kernel
 
-- Implement the masked lane loop with Highway.
-- Handle partial final vectors.
-- Keep scalar row kernel available for comparison tests.
-- Add direct unit tests for odd widths and tails.
-- Keep the pass dispatcher using scalar output until the row kernel is
-  proven.
+- Implement masked independent pixel lanes from the scalar batch model.
+- Preserve arithmetic ordering and palette results.
+- Handle short groups and tails without out-of-bounds loads or stores.
+- Compare colors and completion facts with the scalar batch reference on
+  executable Highway targets.
+- Keep automatic rendering on the existing path until slice 7.3.
+
+If target or tail support requires a separate preparatory commit, keep it
+within this parent item rather than combining it with traversal changes.
 
 ### 7. One-Pass Auto Selection
 
-- Route `passes=1 simd=auto` through Highway when eligible.
-- Route `passes=1 simd=off` through scalar code.
-- Route `passes=1 simd=force` through Highway or report rejection.
-- Add image comparison tests.
+The original integration item needs three focused sub-slices.
+
+#### 7.1. Bounded One-Pass Selection
+
+- Extend `ScanlinePass` with bounded selection of the next one-pass
+  positions; route it through the existing `StandardPass` variant.
+- Retain selection until completion; keep the committed cursor unchanged
+  while calculation is pending.
+- Preserve single-pixel behavior for existing consumers.
+- Test bounds, resumed starts, repeated selection, partial completion,
+  and suspension at the first uncommitted position.
+
+No vector math or automatic backend selection belongs in this sub-slice.
+
+#### 7.2. Engine Batch Completion
+
+- Let `StandardFractal` own bounded batch results and ordered completion.
+- Plot primary pixels through existing calculation output and advance
+  the pass only for committed colors.
+- Preserve iteration-based work budgets, current status, engine timing,
+  and suspend/resume behavior.
+- Validate using the scalar batch reference before enabling Highway.
+- Do not add UI callbacks, per-batch input polls, or a general span
+  symmetry helper.
+
+#### 7.3. Activate The One-Pass Backend
+
+- Route eligible `auto` and `force` one-pass work to Highway.
+- Keep `off` on the legacy scalar path and preserve `auto` fallback.
+- Replace the temporary unavailable-backend guard from slice 1.
+- Check effective-state changes at safe boundaries before new selection.
+- Compare complete images and resumed output with scalar controls,
+  including symmetry and logical-screen offsets.
+- Reuse controller/autokey tests for interruption and menu return.
+
+SIMD does not change which layer owns input or output.
 
 ### 8. Two-Pass Auto Selection
 
-- Add the same selection for `passes=2`.
-- Preserve the first-pass pixel replication behavior.
-- Add image comparison tests for both passes.
+Keep traversal preparation separate from backend activation.
+
+#### 8.1. Two-Pass Batch Selection And Completion
+
+- Extend bounded selection for the coarse first pass and sparse
+  second-pass omissions.
+- Preserve parity at odd bounds and resumed starts, neighboring-pixel
+  replication, work-list deferral, and remaining pass state.
+- Test selection and completion with explicit supplied colors.
+- Retain the existing scalar renderer until activation.
+
+#### 8.2. Activate The Two-Pass Backend
+
+- Enable the same calculation policy and kernel for selected positions
+  in both passes, without adding a second traversal implementation.
+- Verify intermediate coarse-pass output as well as the final image.
+- Cover interruption/resume in each pass, deferred work, offsets,
+  symmetry, and scalar fallback.
+- Verify that batching does not add synchronization at vector boundaries.
+- Document the completed release 1.5 supported set.
+
+Completion of slices 1-8, including sub-slices, is the Phase 1 release
+requirement.  No IFS or other non-standard SIMD path is required for 1.5.
 
 ### 9. Diagnostics
 
-- Add optional `simd=stats` or debug logging.
-- Report selected Highway target, rows rendered, scalar fallbacks, and
-  rejection reason.
-- Keep diagnostics out of normal output unless explicitly requested.
+Optional for release 1.5:
+
+- Add opt-in statistics or debug reporting.
+- Report target, selected backend, work counts, and fallback/rejection
+  reasons without changing normal output.
+- Keep presentation in existing UI diagnostic/status owners.
 
 ### 10. Expand Eligibility
 
-Add features one at a time, with scalar/SIMD comparison tests for each:
+Deferred beyond the initial release 1.5 set.
+Add one feature at a time with a scalar oracle:
 
-- periodicity
-- log map
-- potential
-- simple outside methods
-- burning ship
-- distance estimator
-- selected non-Mandel standard fractals
+- Periodicity.
+- Log mapping.
+- Potential.
+- Additional coloring methods.
+- Burning Ship or other standard formulas.
+- Distance estimation.
+- Additional output or presentation support.
 
-Do not merge all special cases into one large kernel.  Prefer small kernels
-or post-processing steps with clear eligibility.
+Do not combine all special cases into one kernel or silently widen
+eligibility before the required state/output behavior is implemented.
 
 ## Phase 2 Implementation Slices
 
@@ -897,7 +889,8 @@ or post-processing steps with clear eligibility.
 
 ### 6. IFS2D Image Tests
 
-- Add fixed-seed `simd=force` image tests for 2D IFS.
+- Compare fixed-seed Highway and scalar-batch 2D images within one
+  platform/build; do not add cross-platform drift-sensitive golds.
 - Keep existing scalar tests on the scalar path.
 - Add tests for transform-index coloring and histogram coloring.
 
@@ -906,7 +899,8 @@ or post-processing steps with clear eligibility.
 - Implement scalar batched IFS3D walkers.
 - Preserve the waste phase and min/max setup.
 - Store projected lane results before plotting.
-- Keep real-time stereo rejected.
+- Keep stereo modes rejected until their projection/view contract is
+  supported explicitly.
 - Add scalar batch reference tests.
 
 ### 8. Highway IFS3D Kernel
@@ -919,7 +913,8 @@ or post-processing steps with clear eligibility.
 
 ### 9. IFS3D Image Tests
 
-- Add fixed-seed `simd=force` image tests for 3D IFS.
+- Compare fixed-seed Highway and scalar-batch 3D images within one
+  platform/build; keep current single-walker controls separate.
 - Cover non-perspective and perspective projection if both are supported.
 - Keep stereo rejected until a separate slice supports it.
 
@@ -943,7 +938,7 @@ or post-processing steps with clear eligibility.
 ### 2. Bifurcation Scalar Column Kernel
 
 - Extract a scalar column kernel for the simplest bifurcation path.
-- Keep old rendering behavior as the oracle.
+- Use current recurrence/sequence tests as the semantic oracle.
 - Reject unsupported variants explicitly.
 - Add tests that the extracted kernel matches the old path.
 
@@ -953,7 +948,8 @@ or post-processing steps with clear eligibility.
 - Keep lane-local recurrence state.
 - Store lane results to temporary arrays before plotting if needed.
 - Compare SIMD output to the scalar column kernel.
-- Add fixed image tests for the supported bifurcation subset.
+- Extend semantic recurrence/sequence comparisons with appropriate
+  floating-point tolerances; do not restore removed bifurcation golds.
 
 ### 4. Cellular Row Kernel
 
@@ -1016,42 +1012,48 @@ or post-processing steps with clear eligibility.
 
 ## Risks
 
-- Iteration counts may differ by one if the optimized scalar path semantics
-  are not matched exactly.
-- Floating-point differences can appear if fused multiply-add changes the
-  arithmetic.  Tests should define whether byte-for-byte output is required
-  for the first slice.
-- Highway dynamic dispatch adds build-system complexity.
-- Some current behavior depends on global side effects such as
-  `g_old_color_iter`, keyboard check counters, and orbit globals.  The
-  first SIMD path should reject states needing those effects.
-- Symmetry and two-pass replication can corrupt output if row-span
-  boundaries are wrong.
-- IFS SIMD changes the execution shape from one walker to many walkers.
-  This is deterministic but not byte-for-byte compatible with the old
-  scalar single-walker output.
-- IFS histogram coloring depends on pixel update order.  The first SIMD
-  path must plot generated points in scalar lane order.
-- IFS direct scatter can produce different results when lanes collide on
-  one pixel.  Scatter should wait until the ordering policy is explicit.
-- IFS 3D setup has a waste phase that computes min/max values.  SIMD must
-  reduce those values consistently before plotting.
-- Phase 3 renderers do not share one SIMD shape.  Treating them as one
-  generic backend would hide eligibility bugs.
-- Walker-style Phase 3 renderers can change pixel update order just like
-  IFS.  Keep ordered scalar plotting until the output policy is explicit.
-- Grid-mutating renderers such as ant and diffusion have strong ordering
-  dependencies and may not repay SIMD work.
+- A conventional escape-time pseudocode loop can differ from the current
+  optimized initialization, bailout equality, or iteration count.
+- Floating-point contraction and reassociation can change colors.
+  Same-build scalar/SIMD pixel equivalence is required for Phase 1;
+  fall back or reject when it cannot be established.
+- A math-only batch can still corrupt resume state, counters, symmetry,
+  or two-pass output if completion does not preserve ownership.
+- Full-row calculation or unconditional vector-boundary yielding can
+  regress interaction or synchronization overhead.
+- Cached eligibility or grid views can become invalid after a restart or
+  effective-state change.
+- Highway packaging/target dispatch must work with the pinned dependency
+  and all current platforms, not just the developer's CPU.
+- IFS and other walker batches can alter RNG streams, pixel ordering, and
+  images.  Their compatibility policy is separate from release 1.5.
+- Grid-mutating and dependent-trajectory algorithms do not become
+  parallel merely by using vector types.
 
 ## Success Criteria
 
-- Existing parameter files keep their `passes=` meaning.
-- `simd=auto` accelerates eligible Mandelbrot and Julia renders.
-- `simd=off` gives the old scalar result.
-- `simd=force` is reliable for tests and reports clear rejection reasons.
-- First-slice scalar and SIMD image outputs match for supported states.
-- Phase 2 SIMD IFS matches the scalar batched IFS reference.
-- Phase 2 keeps existing scalar IFS output available with `simd=off`.
-- Phase 3 accelerates at least bifurcation, cellular, and Julibrot through
-  family-specific SIMD paths.
-- Unsupported states continue to render through existing scalar engines.
+### Release 1.5
+
+- Phase 1 slices 1-8 and their sub-slices are complete.
+- Existing parameter files retain traversal and perturbation semantics.
+- Eligible `passes=1|2` Mandelbrot and Julia work uses Highway under
+  `auto`; `off` preserves the current scalar calculator.
+- `force` takes the requested backend or reports why it cannot.
+- Supported scalar and SIMD output agrees within the same platform/build,
+  including intermediate two-pass state and resumed output.
+- Ineligible states retain scalar behavior under `auto`.
+- Calculation remains engine-owned and input remains UI-owned.
+- Existing builds and tests stay green; optimized-build measurements
+  demonstrate the useful performance of the supported path.
+
+### Deferred Phases
+
+- IFS SIMD matches its scalar batched reference under an explicitly
+  accepted compatibility policy.
+- Non-standard families are added individually with suitable semantic
+  or image comparisons, not a generic SIMD renderer.
+- Existing scalar behavior remains available throughout expansion.
+
+[highway-dispatch]:
+  https://google.github.io/highway/en/master/quick_reference.html
+[highway-faq]: https://google.github.io/highway/en/master/faq.html
