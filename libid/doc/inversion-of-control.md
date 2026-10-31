@@ -366,119 +366,59 @@ enabling the tool instead of coupling overlay animation to image
 generation.  This is a future direction, not a selected replacement for
 the existing display policy.
 
-## Keyboard Polling Still Outside `id_main`
+## Remaining Handler And Dispatch Work
 
-The current release 1.5 boundary is narrower than the final
-event-driven design.  For release 1.5, the key rule is that only
-`libid/ui` talks directly to keyboard and mouse I/O.  The stricter
-future target is that `id_main` or the top application loop is the only
-code that polls the driver key queue.
+The release 1.5 boundary keeps direct input in UI.  Consistent use of the
+handler stack and application-owned input delivery are further work:
 
-To reach the stricter target, split keyboard dispatch from keyboard
-polling:
+- Express each active controller or tool's key behavior through scoped
+  handlers, including contexts that currently only peek and suspend or
+  interpret keys in a private switch.
+- Let handlers consume context-specific keys and decide whether they
+  request interruption.  Route other commands to application handling
+  without requeueing a consumed key in the driver.
+- Separate input acquisition from handler dispatch.  The dispatcher
+  accepts keys supplied by the application; it does not read the driver
+  queue.  Interruption queries observe state rather than pump input.
+- Remove independent input loops from controller waits, menus, prompts,
+  and tools.  Preserve their interaction state while returning control
+  to application input delivery and bounded calculation scheduling.
 
-- `KeyboardHandler.cpp` should hold the handler stack and interruption
-  state, and dispatch keys that are passed to it.
-- `KeyboardHandler.cpp` should not call `driver_key_pressed()` or
-  `driver_get_key()`.
-- The top application loop should read driver keys and feed them to the
-  handler stack.
-- Render controllers already expose bounded stepping.  Their input waits
-  and modal interactions still need event-driven phases before the top
-  loop can be the sole driver-key poller.
-
-Simple render controllers that already wrap calculation objects but
-still poll the driver queue directly:
-
-- `libid/ui/BifurcationController.cpp`
-- `libid/ui/CellularController.cpp`
-- `libid/ui/IFS2DController.cpp`
-- `libid/ui/LSystemController.cpp`
-- `libid/ui/PlasmaController.cpp`
-- `libid/ui/Standard4DController.cpp`
-- `libid/ui/TestPointController.cpp`
-
-Controllers with bespoke interaction or partial handler-stack use that
-still read or write the driver queue directly:
-
-- `libid/ui/AntController.cpp`
-- `libid/ui/inverse_julia.cpp`
-- `libid/ui/ImageRenderContext.cpp`
-- `libid/ui/stereo.cpp`
-
-Handler-based render controllers that still rely on
-`KeyboardHandler.cpp` polling internally:
-
-- `libid/ui/DiffusionController.cpp`
-- `libid/ui/FrothyBasinController.cpp`
-- `libid/ui/InverseJuliaFractalController.cpp`
-- `libid/ui/LyapunovController.cpp`
-- `libid/ui/OrbitController.cpp`
-- `libid/ui/PopcornController.cpp`
-- `libid/ui/SoundSession.cpp`
-- `libid/ui/StandardFractalController.cpp`
-- `libid/ui/standard_orbit_plot.cpp`
-- `libid/ui/StereoController.cpp`
-
-Blocking text screens, modal prompts, and utility UI paths also poll
-directly.  They can remain for the release 1.5 directory boundary, but
-must become application phases or dialogs before `id_main` can be the
-only keyboard poller:
-
-- `libid/ui/big_while_loop.cpp`
-- `libid/ui/command_diagnostics.cpp`
-- `libid/ui/editpal.cpp`
-- `libid/ui/file_get_window.cpp`
-- `libid/ui/flip_image.cpp`
-- `libid/ui/full_screen_choice.cpp`
-- `libid/ui/full_screen_prompt.cpp`
-- `libid/ui/get_key_no_help.cpp`
-- `libid/ui/help.cpp`
-- `libid/ui/intro.cpp`
-- `libid/ui/input_field.cpp`
-- `libid/ui/main_menu.cpp`
-- `libid/ui/main_menu_switch.cpp`
-- `libid/ui/rotate.cpp`
-- `libid/ui/slideshw.cpp`
-- `libid/ui/starfield.cpp`
-- `libid/ui/stop_msg.cpp`
-- `libid/ui/temp_msg.cpp`
-- `libid/ui/thinking.cpp`
-- `libid/ui/zoom.cpp`
+Preserve existing interaction behavior and useful calculation batches.
+Moving polling into another helper is not sufficient if controllers
+still decide when application input can be processed.
 
 ## Future Event-Driven Work
 
-The following ideas are outside the completed release 1.5 input boundary.
-Input polling is UI-owned, but the application is not yet event-driven.
+The application-level input pump supplies the handler stack while driver
+polling remains.  GUI-thread event delivery can then replace that pump
+without changing context-specific key handling.  This is an application
+responsibility, not a requirement that one particular function be named
+`id_main`.
+
+The wider UI transition can proceed incrementally:
 
 - Convert `Frame`, `WinText`, and `Plot` to wxWidgets controls while the
   current polling code still pumps GUI events.
-- Add menu-bar support, with blocking text screens still preventing normal
-  menu interaction until they are migrated.
+- Add menu-bar support, retaining a temporary blocking-screen workaround
+  until those interactions are migrated.
 - Convert blocking text screens to modal dialogs incrementally.  Start
   with simple numeric input, then form-style prompts, then file-entry
-  screens.
-- After text screens are dialogs, remove the menu-bar blocking workaround.
-- Replace polling-driven calculation with idle-processing callbacks first.
-  Treat idle processing as a bridge to later worker-thread or distributed
-  rendering.
-- Plan worker-thread and UI-thread communication as separate follow-up
-  work.  Do not mix thread ownership, cancellation, or result delivery
-  into this polling-boundary refactor.
-- Replace driver polling in the UI dispatcher with GUI-thread event
-  dispatch to the same handler stack.
-- Let event callbacks set calculation-interrupt state through the active
-  handlers once the engine runs on a worker thread.
-- Build a tool interface for image interaction.  A tool should receive
-  mouse, keyboard, and modifier-key events, not only `MouseNotification`
-  calls.
-- Support a tool stack with a permanent default zoom tool.  Events should
-  go to the top tool, with optional fall-through to lower tools.
+  screens.  Remove the menu-bar workaround when it is no longer needed.
+- Use idle-processing callbacks to schedule bounded calculation as a
+  bridge to later worker-thread or distributed rendering.
+- Plan thread ownership, command delivery, cancellation, and result
+  delivery separately.  Active handlers decide command meaning; moving
+  calculation to a worker does not make shared interruption flags a
+  thread-communication design.
+- Build a tool interface for image interaction.  A tool receives mouse,
+  keyboard, and modifier-key events, not only `MouseNotification` calls.
+- Support a tool stack with a permanent default zoom tool.  Events go to
+  the top tool, with optional fall-through to lower tools.
 - Allow multiple zoom tools over time, such as current zoom-box behavior,
   XaoS-style continuous zoom, or ManpWIN-style controls.
-- Preserve accurate zoom-box area selection.  It is a required
-  interaction, not an artifact to discard when adding other zoom modes.
-- After blocking screens and tools own input, remove the `Driver` keyboard
+- Preserve accurate zoom-box area selection as a required interaction.
+- Once GUI events supply input throughout, remove the `Driver` keyboard
   API, custom message-pumping path, and custom event-loop workarounds.
 
 ## Release 1.5 Boundary Checks
