@@ -229,6 +229,11 @@ Menu handlers do not choose application phases.  Distinguish:
 - Local interaction, cancelled dialogs, and ignored input from requests
   to load, save, change the display target, or exit.
 
+Setup dialogs use pending settings and commit them only when accepted.
+Cancelling setup leaves the active image, display state, and stacked
+screen unchanged.  This does not make ordered parameter processing
+transactional or roll back settings accepted before a command error.
+
 Parameter processing shares syntax but separates handler ownership.
 Decode each command once; UI handles UI-owned names and delegates only
 unrecognized names to engine handlers.  Recognition followed by rejection
@@ -360,59 +365,6 @@ In that design, `showorbit=yes` could become compatibility syntax for
 enabling the tool instead of coupling overlay animation to image
 generation.  This is a future direction, not a selected replacement for
 the existing display policy.
-
-## Current Presentation Ownership
-
-Calculation setup, memory operations, and command processing report
-diagnostics without modal UI or shutdown callbacks.  Standard and
-Lyapunov show-dot presentation belongs to `ShowDotController`.
-FrothyBasin's simple marker and the general pixel kernel's legacy
-sound/delay-dependent chunk choice remain as described above.  Neither
-performs keyboard polling or a delay inside calculation.
-
-Command parsing returns diagnostics, generation requests, and the need
-for startup file-entry selection.  UI callers own action execution,
-selection cancellation, device initialization, and application exits.
-Image-save feedback and policy live in `ui/save_image.cpp`, which drives
-scanline encoding through `io/ImageSave`.  Image-load setup choices live
-in `ui/restore_image.cpp`.  Video selection, 3D settings, and Tab
-information use pending values; the active image and stacked screen
-remain unchanged when setup is cancelled.
-
-The engine and fractal classes expose bounded rendering facts such as
-"overlay point was drawn" or "scrub restored
-pixels"; the UI controller decides whether that causes display delay or
-input handling.  Sound samples go directly to `SoundOutput`; they are
-not another reason to add UI-consumed flags to calculation objects.
-
-Any future presentation-cleanup slice must move behavior to a named UI
-controller, output adapter, or appropriately owned backend before
-removing the engine-side leak.  Do not merely delete delay, pacing,
-sound, mute, or input behavior.  The sound-port slices preserve
-`OSF_MIDI` and driver delegation, not the old DOS polling/wait mechanism.
-
-When a slice adds a temporary interface, method, member, or helper only
-as a bridge to a later slice, mark the added declaration or definition
-with this comment immediately before it:
-
-```cpp
-// TODO: removed later
-```
-
-The later slice must remove the marked wart.  Permanent interfaces must
-not use this marker.
-
-Each slice must fit a focused commit.  Split prerequisite state changes
-from ownership changes when either needs independent review.  Do not
-combine all diagnostics, all renderer families, or all backend extraction
-into one cleanup commit.  Every temporary bridge must name the later
-slice that removes it in the plan.
-
-Validation has three complementary layers: image or semantic tests protect
-calculation, autokey scripts protect real application interaction, and
-controller tests cover precise transitions and injected failures.  A
-grep-based test is not a substitute for exercising a callback path.
-Source searches remain audit tools, not repository tests.
 
 ## Validation Audit
 
