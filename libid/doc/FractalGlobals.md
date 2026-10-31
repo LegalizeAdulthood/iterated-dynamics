@@ -1,186 +1,146 @@
-# Global Variables in libid/include/fractals
+<!--
+SPDX-License-Identifier: GPL-3.0-only
+Copyright 2026 Richard Thomson.
+-->
 
-This document identifies groups of global variables in the `libid/include/fractals` directory that are typically used together. These groupings represent variables that are conceptually related and often accessed together in fractal-specific calculations and algorithms.
+# Fractal Global Variables
 
-## 1. Fractal Type/Specification Group
+Inventory of public `g_*` declarations in `libid/include/fractals`.
+Calculation objects retain additional instance state; these declarations
+are not a complete inventory of rendering state.
 
-**Files:** `fractype.h`, `fractalp.h`
+## Fractal Definitions And Active Dispatch
 
-Variables defining the current fractal type and its specifications:
+Headers: `fractype.h`, `fractalp.h`.
 
-- `g_fractal_type` - current fractal type enum value
-- `g_cur_fractal_specific` - pointer to current fractal's specification structure
-- `g_fractal_specific[]` - array of all fractal specifications
-- `g_num_fractal_types` - total number of fractal types
-- `g_alternate_math[]` - alternate math function pointers for fractals
-- `g_more_fractal_params[]` - extended parameter specifications
+- `g_fractal_type` - selected `FractalType`.
+- `g_cur_fractal_specific` - pointer to the selected const specification.
+- `g_fractal_specific` - const table of fractal specifications.
+- `g_num_fractal_types` - number of specifications.
+- `g_alternate_math` - const alternate-numeric-implementation table.
+- `g_more_fractal_params` - const extended parameter descriptions.
+- `g_dispatch` - mutable `FractalDispatch` with the active orbit,
+  per-pixel, per-image, and calculation callbacks.
 
-## 2. Formula Parser Group
+Specifications supply defaults and supported operations.  Runtime
+overrides update `g_dispatch`, not `g_fractal_specific`.
+`set_fractal_type()` selects the specification, initializes dispatch, and
+clears its runtime calculation override.  Callers use dispatch operations
+such as `calc_type()`; the old `g_calc_type` global is gone.
 
-**File:** `parser.h`
+## Formula Compilation And Execution
 
-Variables for user-defined fractal formulas:
+Headers: `formula.h`, `parser.h`, `interpreter.h`.
 
-- `g_formula_filename` - path to formula definition file
-- `g_formula_name` - name of current formula
-- `g_is_mandelbrot` - formula uses Mandelbrot-style calculations
-- `g_frm_uses_ismand` - formula uses ismand variable
-- `g_frm_uses_p1` through `g_frm_uses_p5` - formula uses parameters 1-5
-- `g_max_function` - maximum function ID used in formula
-- `g_max_function_args` - maximum function arguments
-- `g_max_function_ops` - maximum function operations
-- `g_operation_index` - current operation index
-- `g_variable_index` - current variable index
-- `g_last_init_op` - last initialization operation
-- `g_load_index` - load stack index
-- `g_store_index` - store stack index
+- `g_formula_filename`, `g_formula_name` - selected formula source.
+- `g_frm_is_mandelbrot` - current formula Mandelbrot/Julia intent.
+- `g_formula` - `CompiledFormula` containing source text, function-pointer
+  operations, load/store tables, variables, jumps, compilation indices,
+  operation counts, and formula-use flags.
+- `g_runtime` - `RuntimeState` containing the operand stack, execution and
+  initialization indices, and formula random-number state.
 
-## 3. IFS (Iterated Function System) Group
+Former standalone globals such as operation/load/store indices and
+`uses_p1` through `uses_p5` are now members of these objects.
+The read-only `VARIABLES` name table in `interpreter.h` is not a mutable
+`g_*` binding.
 
-**File:** `ifs.h`
+Formula compilation and interpretation still use double-valued
+`math::Arg` storage.  Engine inputs are copied into formula variables;
+evaluation publishes specific orbit results, including `g_old_z` and
+`g_new_z`.  A formula does not have unrestricted access to arbitrary
+application globals.  Parser lookup and compilation report diagnostics
+without entering UI.
 
-Variables for IFS fractals:
+## IFS Definitions
 
-- `g_ifs_definition` - vector of IFS transformation parameters
-- `g_ifs_filename` - path to IFS definition file
-- `g_ifs_name` - name of current IFS
-- `g_ifs_dim` - IFS dimension (2D or 3D)
-- `g_num_affine_transforms` - number of affine transformations
+Header: `ifs.h`.
 
-## 4. L-System Group
+- `g_ifs_filename`, `g_ifs_name` - selected IFS source.
+- `g_ifs_definition` - loaded transformation coefficients.
+- `g_ifs_dim` - definition dimension.
+- `g_num_affine_transforms` - transformation count.
 
-**File:** `lsystem.h`
+`IFS2D` and `IFS3D` retain orbit and rendering state in calculation
+objects.  The definition dimension selects the operation; `type=ifs3d`
+remains compatibility syntax.  UI controllers own input and stereo
+presentation, not coefficient parsing or orbit math.
 
-Variables for L-system fractals:
+## L-System Definitions
 
-- `g_l_system_filename` - path to L-system definition file
-- `g_l_system_name` - name of current L-system
-- `g_max_angle` - maximum angle for L-system drawing
+Header: `lsystem.h`.
 
-## 5. 3D Display/Orbit Group
+- `g_l_system_filename`, `g_l_system_name` - selected definition source.
+- `g_max_angle` - number of angular divisions, not a maximum angle in
+  degrees.
 
-**File:** `lorenz.h`
+Rules and the axiom are cached internally by the loader.  `LSystem`
+retains sizing/drawing traversal state; its UI controller owns thinking
+screens and interruption.  Definition errors are reported without UI.
 
-Variables for 3D fractal display and orbit calculations:
+## Orbit And 3D Configuration
 
-- `g_display_3d` - 3D display mode (NONE, YES, B_COMMAND)
-- `g_orbit_corner` - corner coordinates for orbit calculations
-- `g_orbit_interval` - interval between saved orbit points
-- `g_orbit_save_flags` - flags for orbit data output (RAW, MIDI)
-- `g_orbit_save_name` - filename for saved orbit data
-- `g_set_orbit_corners` - flag to set orbit corners
-- `g_keep_screen_coords` - keep screen coordinates flag
-- `g_max_count` - maximum iteration count for orbits
-- `g_major_method` - orbit traversal method (BREADTH_FIRST, DEPTH_FIRST, RANDOM_WALK, RANDOM_RUN)
-- `g_inverse_julia_minor_method` - inverse Julia minor method (LEFT_FIRST, RIGHT_FIRST)
+Header: `lorenz.h`.
 
-## 6. Julibrot Group
+- `g_display_3d` - 3D display mode.
+- `g_orbit_corner` - orbit image region.
+- `g_orbit_interval` - orbit point plotting interval, not file-record
+  spacing.
+- `g_orbit_save_flags` - orbit-output flags, including `OSF_RAW` and
+  `OSF_MIDI`.
+- `g_orbit_save_name` - orbit data filename.
+- `g_set_orbit_corners` - explicit orbit-corner flag.
+- `g_keep_screen_coords` - retain screen-coordinate settings.
+- `g_max_count` - orbit iteration limit.
+- `g_major_method` - inverse-Julia traversal method.
+- `g_inverse_julia_minor_method` - inverse-Julia branch ordering.
 
-**File:** `julibrot.h`
+`Orbit2D`, `Orbit3D`, and `Dynamic2D` own incremental calculation state.
+Sound samples go to `engine::g_sound`; optional legacy tone recording
+belongs to the sound adapter.  `OSF_MIDI` names a text tone log, not a
+MIDI encoder.  See [sound.md](sound.md).
 
-Variables for Julibrot (4D) fractal calculations:
+## Julibrot
 
-- `g_julibrot` - Julibrot mode enabled flag
-- `g_julibrot_3d_mode` - 3D viewing mode (MONOCULAR, LEFT_EYE, RIGHT_EYE, RED_BLUE)
-- `g_julibrot_x_min`, `g_julibrot_x_max` - x-axis range
-- `g_julibrot_y_min`, `g_julibrot_y_max` - y-axis range
-- `g_julibrot_width` - width of Julibrot slice
-- `g_julibrot_height` - height of Julibrot slice
-- `g_julibrot_depth` - depth of Julibrot slice
-- `g_julibrot_dist` - distance for 3D viewing
-- `g_julibrot_origin` - origin point for Julibrot
-- `g_julibrot_z_dots` - number of z-axis dots
-- `g_eyes` - eye separation for stereo viewing
-- `g_new_orbit_type` - fractal type for orbit calculation
-- `g_save_dac` - save DAC (color palette) flag
-- `g_julibrot_3d_options[]` - array of 3D option strings
+Header: `julibrot.h`.
 
-## 7. Fractal Algorithm Parameters Group
+- `g_julibrot` - Julibrot rendering flag.
+- `g_julibrot_3d_mode` - mono/eye/anaglyph viewing mode.
+- `g_julibrot_x_min`, `g_julibrot_x_max`, `g_julibrot_y_min`,
+  `g_julibrot_y_max` - parameter-plane bounds.
+- `g_julibrot_width`, `g_julibrot_height`, `g_julibrot_depth` - 3D
+  dimensions.
+- `g_julibrot_dist`, `g_julibrot_origin` - viewing configuration.
+- `g_julibrot_z_dots` - depth sampling count.
+- `g_eyes` - stereo eye separation.
+- `g_new_orbit_type` - selected orbit type.
+- `g_save_dac` - palette-save behavior.
+- `g_julibrot_3d_options` - viewing-mode option strings.
 
-**File:** `fractals.h` (in engine)
+Standard-4D calculation state resides in its calculation object.
+`ui::Standard4DController` owns interaction and palette preparation.
 
-Variables for fractal-specific algorithm parameters:
+## Other Fractal State
 
-- `g_basin` - basin calculation parameter
-- `g_degree` - polynomial degree
-- `g_c_exponent` - exponent value for calculations
-- `g_max_color` - maximum color value for current fractal
-- `g_bof_match_book_images` - use normal BOF initialization
-- `g_fudge_half` - fudge factor for calculations
-- `g_power_z` - complex power value
+Headers: `Cellular.h`, `FrothyBasin.h`, `divide_brot.h`,
+`peterson_variations.h`, `population.h`.
 
-## Usage Patterns
+- `g_cellular_next_screen` - Cellular next-screen/continuous-generation
+  request.
+- `g_frothy_basin` - shared `FrothyBasin` calculation object.
+- `g_b_const` - DivideBrot calculation constant.
+- `g_marks_coefficient` - coefficient used by Marks/Peterson variations.
+- `g_population`, `g_rate` - population-map iteration values used by
+  bifurcation calculations.
 
-These variable groups follow typical fractal calculation patterns:
+## Related State And Ownership
 
-1. **Type Selection**: Fractal type variables determine which algorithm to use
-2. **Algorithm Configuration**: Parser, IFS, and L-system variables configure specific fractal algorithms
-3. **3D Visualization**: 3D display and orbit variables control advanced visualization
-4. **4D Extensions**: Julibrot variables extend fractals into four dimensions
-5. **Parameter Control**: Algorithm parameter variables fine-tune fractal behavior
+Shared polynomial, complex, quaternion, and coloring settings declared in
+`engine/fractals.h` and `engine/calcfrac.h` are documented in
+[EngineGlobals.md](EngineGlobals.md), not duplicated here.
 
-## Relationships with Engine and UI Globals
-
-Fractal globals work closely with other global variable groups:
-
-- **Fractal type variables** work with calculation state variables (`calcfrac.h` in engine)
-- **3D display variables** work with screen dimension variables (`VideoInfo.h` in engine)
-- **Orbit variables** work with plotting and symmetry variables (`calcfrac.h` in engine)
-- **Julibrot variables** work with bailout and iteration variables (`calcfrac.h` in engine)
-- **Formula parser variables** may modify any engine calculation variables during formula evaluation
-
-## Fractal-Specific Patterns
-
-### Formula-Based Fractals
-User-defined formula fractals use the parser group variables extensively. The formula parser reads formula files and sets up the calculation based on the parsed formula.
-
-### Attractor Fractals  
-3D attractors (Lorenz, Rossler, Henon) use the orbit group variables to define the viewing transformation and save orbit data.
-
-### IFS Fractals
-IFS fractals use transformation matrices stored in `g_ifs_definition` and apply them probabilistically based on `g_num_affine_transforms`.
-
-### L-System Fractals
-L-system fractals generate their structure through string rewriting rules loaded from files referenced by `g_l_system_filename`.
-
-### Julibrot Fractals
-Julibrot fractals extend 2D Mandelbrot/Julia sets into 4D space, with the extra dimensions controlled by the julibrot group variables.
-
-## Refactoring Considerations
-
-When refactoring to reduce global state in fractal code, consider:
-
-1. **Fractal Type** variables could become part of a `FractalContext` class
-2. **Formula Parser** variables could become a `FormulaEngine` class
-3. **IFS** variables could become an `IFSGenerator` class
-4. **L-System** variables could become an `LSystemGenerator` class
-5. **3D Display** variables could become a `Display3DContext` or `OrbitRenderer` class
-6. **Julibrot** variables could become a `JulibrotEngine` class with 4D parameter management
-
-The fractal-specific variables are good candidates for encapsulation because:
-- They form natural groupings by fractal type
-- Each fractal type has its own set of parameters and state
-- Moving to objects would enable better testing and reusability
-- Polymorphic fractal objects could replace the function pointer arrays
-
-## Cross-Cutting Concerns
-
-Some fractal globals are used throughout the codebase:
-
-- `g_fractal_type` is checked everywhere to determine current fractal behavior
-- `g_cur_fractal_specific` provides function pointers used by the calculation engine
-- `g_display_3d` affects UI, engine, and I/O code paths
-- Formula parser variables can access and modify nearly any other global during evaluation
-- Julibrot mode affects parameter handling throughout the UI
-
-These cross-cutting variables are among the most challenging to refactor due to their wide usage across multiple subsystems.
-
-## Data File Dependencies
-
-Several fractal types depend on external data files:
-
-- **Formula fractals** require `.frm` formula files
-- **IFS fractals** require `.ifs` definition files  
-- **L-systems** require `.l` system definition files
-
-The filename and name variables track which files are loaded, while the definition variables store the parsed content. This pattern of "filename + name + data" appears for each file-based fractal type and could be abstracted into a common file-loading mechanism.
+`NonStandardFractal` selects and owns standalone calculation operations.
+Per-image callbacks perform setup, not UI render loops.  Fractal
+calculation code neither includes UI headers nor polls keyboard/mouse
+input.  Remaining globals and shared bindings still prevent independent
+concurrent renders; the input split is not complete state isolation.

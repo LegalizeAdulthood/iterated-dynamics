@@ -1,172 +1,174 @@
-# Global Variables in libid/include/ui
+<!--
+SPDX-License-Identifier: GPL-3.0-only
+Copyright 2026 Richard Thomson.
+-->
 
-This document identifies groups of global variables in the `libid/include/ui` directory that are typically used together. These groupings represent variables that are conceptually related and often accessed together in the user interface, input handling, and file management pipeline.
+# UI Global Variables
 
-## 1. Text Screen/Cursor Group
+Inventory of public `g_*` declarations in `libid/include/ui`.
+The help binding uses namespace `id::help`; the other bindings below use
+`id::ui`.  Some UI-owned values remain accessible from I/O and geometry,
+so declaration ownership is not yet a complete dependency boundary.
 
-**File:** `text_screen.h`
+## Application And Image Coordination
 
-Variables controlling text mode cursor position:
+Header: `big_while_loop.h`.
 
-- `g_text_col` - current column in text mode
-- `g_text_row` - current row in text mode
-- `g_text_col_base` - g_text_col is relative to this base
-- `g_text_row_base` - g_text_row is relative to this base
+- `g_ask_video` - prompt for a video mode.
+- `g_virtual_screens` - virtual-screen policy.
+- `g_escape_exit` - skip exit confirmation.
+- `g_compare_gif` - restored-image comparison request.
+- `g_from_text` - text/graphics transition state.
+- `g_finish_row` - row boundary selected for a pending autosave.
+- `g_out_line_cleanup` - active output cleanup callback.
+- `g_evolve_info` - retained I/O evolution record.
+- `g_have_evolve_info` - retained evolution resume information is present.
 
-## 2. Mouse Input Group
+`MainState` controls application phases; menu handlers return
+`CommandResult`.  Their state is also carried by `MainContext` and UI
+objects rather than represented only by globals.
 
-**File:** `mouse.h`
+## Video Requests And Key Bindings
 
-Variables controlling mouse behavior and tracking:
+Headers: `video_mode.h`, `video.h`, `diskvid.h`.
 
-- `g_look_at_mouse` - mouse handling mode (IGNORE_MOUSE, NAVIGATE_GRAPHICS, NAVIGATE_TEXT, POSITION)
-- `g_cursor_mouse_tracking` - cursor follows mouse movement
+- `g_init_mode` - pending video catalog index, activated after parameter
+  processing.
+- `g_video_mode_keys` - function-key associations indexed by engine video
+  catalog entry; zero means unassigned.
+- `g_video_entry_key` - binding copied alongside the active or pending
+  selected entry.
+- `g_video_start_x`, `g_video_start_y` - display origin.
+- `g_vesa_x_res`, `g_vesa_y_res` - retained video-resolution state.
+- `g_good_mode` - disk-video UI setup validity flag.
 
-## 3. Tab Display Group
+Active mode information and image dimensions belong to engine
+`VideoInfo.h` and `LogicalScreen.h`.  `VideoInfo` contains no key.
+UI owns key-name parsing, lookup, formatting, and the `video` parameter.
 
-**File:** `tab_display.h`
+Disk-storage flags `g_disk_flag`, `g_disk_16_bit`, and `g_disk_targa`
+belong to `io/disk_storage.h`.  Decoded output position `g_row_count`
+belongs to `io/decoder.h`, not UI video state.
 
-Variables for tab display feature:
+## Text, Help, And Diagnostics
 
-- `g_tab_enabled` - tab display feature enabled/disabled
+Headers: `text_screen.h`, `help.h`, `tab_display.h`, `intro.h`,
+`comments.h`.
 
-## 4. Help System Group
+- `g_text_col`, `g_text_row` - current text cursor position.
+- `g_text_col_base`, `g_text_row_base` - cursor coordinate bases.
+- `id::help::g_help_mode` - context-sensitive help label.
+- `g_tab_enabled` - Tab information-screen enablement.
+- `g_tab_metadata` - shared const pending-image metadata used by Tab
+  display without committing it to active calculation state.
+- `g_slow_display` - introduction/display timing setting.
+- `g_get_cpu_id` - replaceable CPU-description provider for command
+  comment expansion.
 
-**File:** `help.h` (in help namespace)
+The read-only map-name constants in `get_3d_params.h` and `starfield.h`
+are not mutable `g_*` bindings.
 
-Variables for online help system:
+## Mouse And Palette Tools
 
-- `g_help_mode` - current help context/label
+Headers: `mouse.h`, `editpal.h`, `find_special_colors.h`.
 
-## 5. Zoom Box Group
+- `g_look_at_mouse` - mouse interpretation mode.
+- `g_cursor_mouse_tracking` - cursor mouse-tracking enablement.
+- `g_line_buff` - shared row buffer used by palette/JIIM display helpers.
+- `g_using_jiim` - JIIM interaction is active.
+- `g_color_dark`, `g_color_bright`, `g_color_medium` - selected palette
+  indices for contrasting UI presentation.
 
-**File:** `zoom.h`
+Keyboard handler-stack and interrupt state are private to UI input
+plumbing.  `CrossHairCursor` owns its saved pixels, position, and blink
+state.  Calculation code does not subscribe to mouse events or poll keys.
 
-Variables controlling zoom box display and manipulation:
+## Zoom Box
 
-- `g_box_x[]` - array of x coordinates for box
-- `g_box_y[]` - array of y coordinates for box
-- `g_box_values[]` - array of values associated with box points
-- `g_box_color` - color of zoom box
-- `g_box_count` - number of points in box
-- `g_zoom_box_x` - zoom box x position
-- `g_zoom_box_y` - zoom box y position
-- `g_zoom_box_width` - zoom box width
-- `g_zoom_box_height` - zoom box height
-- `g_zoom_box_skew` - zoom box skew angle
-- `g_zoom_box_rotation` - zoom box rotation angle
-- `g_zoom_enabled` - zoom box feature enabled
+Header: `zoom.h`.
 
-## 6. Video/Display Output Group
+- `g_box_x`, `g_box_y` - saved box pixel coordinates.
+- `g_box_values` - original pixels under the box.
+- `g_box_color` - box drawing color.
+- `g_box_count` - number of saved box points.
+- `g_zoom_box_x`, `g_zoom_box_y` - box position.
+- `g_zoom_box_width`, `g_zoom_box_height` - box dimensions.
+- `g_zoom_box_skew` - shear factor, not an angle.
+- `g_zoom_box_rotation` - box rotation setting.
+- `g_zoom_enabled` - zoom interaction enablement.
 
-**File:** `video.h`
+UI converts accepted box geometry into engine image coordinates.
+Manipulating the displayed box is not itself a calculation step.
 
-Variables for video output and line rendering:
+## Slideshow And History
 
-- `g_row_count` - row counter for decoder and out_line
-- `g_video_start_x` - video start x coordinate
-- `g_video_start_y` - video start y coordinate
-- `g_vesa_x_res` - VESA x resolution
-- `g_vesa_y_res` - VESA y resolution
+Headers: `slideshw.h`, `history.h`.
 
-## 7. Disk Video Group
+- `g_slides` - slideshow mode: off, playback, or recording.
+- `g_auto_name` - slideshow keystroke script path, not an automatically
+  generated image filename.
+- `g_busy` - calculation/file-operation state observed by slideshow
+  playback.
+- `g_history_flag` - image-history control flag.
+- `g_history_ptr` - current history position.
+- `g_max_image_history` - history capacity.
 
-**File:** `diskvid.h`
+Image history is UI behavior.  Batch rendering still uses UI-owned
+orchestration and can be interrupted; batch mode does not imply a
+headless application or a separate input-free engine.
 
-Variables for disk-based video (virtual screen in file):
+## Evolution
 
-- `g_disk_flag` - disk video is active
-- `g_disk_16_bit` - using 16-bit disk video mode
-- `g_disk_targa` - disk video is in Targa format
-- `g_good_mode` - video mode is valid
+Header: `evolve.h`.
 
-## 8. Slideshow Mode Group
+- `g_evolving` - evolution bit flags.
+- `g_evolve_image_grid_size` - field-map grid size.
+- `g_evolve_this_generation_random_seed` - generation seed.
+- `g_evolve_max_random_mutation` - mutation magnitude.
+- `g_evolve_mutation_reduction_factor` - mutation reduction setting.
+- `g_evolve_x_parameter_range`, `g_evolve_y_parameter_range` - parameter
+  ranges.
+- `g_evolve_x_parameter_offset`, `g_evolve_y_parameter_offset` - active
+  offsets.
+- `g_evolve_new_x_parameter_offset`, `g_evolve_new_y_parameter_offset` -
+  pending offsets.
+- `g_evolve_discrete_x_parameter_offset`,
+  `g_evolve_discrete_y_parameter_offset` - discrete active offsets.
+- `g_evolve_new_discrete_x_parameter_offset`,
+  `g_evolve_new_discrete_y_parameter_offset` - discrete pending offsets.
+- `g_evolve_param_grid_x`, `g_evolve_param_grid_y` - selected grid cell.
+- `g_evolve_param_box_count`, `g_evolve_param_zoom` - parameter-box state.
+- `g_evolve_dist_per_x`, `g_evolve_dist_per_y` - parameter-grid increments.
+- `g_gene_bank` - variable addresses, variation functions, mutation modes,
+  and descriptions.
 
-**File:** `slideshw.h`
+These runtime controls are distinct from the I/O-owned serialized
+`EvolutionInfo` type.  I/O currently reads/applies some of this UI-owned
+state; that upward dependency remains to be removed.
 
-Variables controlling slideshow/demo mode:
+## Stereogram And Parameter-Output Policy
 
-- `g_slides` - slideshow mode (OFF, PLAY, RECORD)
-- `g_auto_name` - auto-generated filename path
-- `g_busy` - busy flag for slideshow operations
+Headers: `stereo.h`, `make_batch_file.h`.
 
-## 9. Evolution/Genetic Algorithm Group
+- `g_auto_stereo_batch` - automatic stereogram conversion policy.
+- `g_save_rds_params` - include stereogram parameters in PAR output.
+- `g_stereo_texture_reuse` - reuse the selected texture filename.
+- `g_make_parameter_file` - parameter-file generation request/state.
+- `g_make_parameter_file_map` - palette output policy for generation.
 
-**File:** `evolve.h`
+Stereogram depth, physical width, calibration bars, gray-value selection,
+texture enablement, and the texture filename are geometry-owned inputs
+in `geometry/stereo_params.h`.  UI owns the complete `rds` and
+`rds-texture` handlers and coordinates generation actions.
 
-Variables for evolutionary parameter exploration:
+## Current Boundary
 
-- `g_evolving` - evolution mode flags (NONE, FIELD_MAP, RAND_WALK, RAND_PARAM, NO_GROUT, PARAM_BOX)
-- `g_evolve_image_grid_size` - size of evolution image grid
-- `g_evolve_this_generation_random_seed` - random seed for current generation
-- `g_evolve_max_random_mutation` - maximum random mutation amount
-- `g_evolve_mutation_reduction_factor` - factor to reduce mutation over time
-- `g_evolve_x_parameter_range` - range of x parameter variation
-- `g_evolve_y_parameter_range` - range of y parameter variation
-- `g_evolve_x_parameter_offset` - x parameter offset
-- `g_evolve_y_parameter_offset` - y parameter offset
-- `g_evolve_new_x_parameter_offset` - new x parameter offset
-- `g_evolve_new_y_parameter_offset` - new y parameter offset
-- `g_evolve_discrete_x_parameter_offset` - discrete x offset
-- `g_evolve_discrete_y_parameter_offset` - discrete y offset
-- `g_evolve_new_discrete_x_parameter_offset` - new discrete x offset
-- `g_evolve_new_discrete_y_parameter_offset` - new discrete y offset
-- `g_evolve_param_grid_x` - parameter grid x coordinate
-- `g_evolve_param_grid_y` - parameter grid y coordinate
-- `g_evolve_param_box_count` - parameter box count
-- `g_evolve_param_zoom` - parameter zoom level
-- `g_evolve_dist_per_x` - distance per x unit
-- `g_evolve_dist_per_y` - distance per y unit
-- `g_gene_bank[NUM_GENES]` - array of genetic parameters
+UI owns keyboard/mouse polling, key meaning, diagnostics, markers, and
+playback/presentation waits.  Render controllers and sound sessions also
+retain state in objects rather than public globals.
 
-## 10. Display Speed Group
-
-**File:** `intro.h`
-
-Variables controlling display timing:
-
-- `g_slow_display` - slow down display for visual effect
-
-## Usage Patterns
-
-These variable groups follow typical UI interaction patterns:
-
-1. **Input Handling**: Mouse and keyboard variables track user input state
-2. **Text Display**: Text screen variables manage text mode cursor positioning
-3. **Interactive Features**: Zoom box and evolution variables support interactive parameter exploration
-4. **File Operations**: Disk video and slideshow variables handle file-based operations
-5. **Visual Feedback**: Display speed and help system variables enhance user experience
-
-## Relationships with Engine Globals
-
-Many UI globals work in conjunction with engine globals:
-
-- **Zoom box variables** (`zoom.h`) work with image region variables (`ImageRegion.h` in engine)
-- **Video output variables** (`video.h`) work with screen dimension variables (`VideoInfo.h` in engine)
-- **Evolution variables** (`evolve.h`) modify fractal parameter variables (`calcfrac.h` in engine)
-- **Help system** references many engine and fractal-specific globals for context-sensitive help
-
-## Refactoring Considerations
-
-When refactoring to reduce global state in UI code, consider:
-
-1. **Text Screen** variables could become a `TextCursor` class
-2. **Mouse Input** variables could become a `MouseState` class
-3. **Zoom Box** variables could become a `ZoomBox` class with methods for manipulation
-4. **Evolution** variables could become an `EvolutionEngine` class
-5. **Slideshow** variables could become a `SlideshowController` class
-6. **Video Output** variables could be part of a `VideoContext` or `DisplayBuffer` class
-7. **Disk Video** variables could become a `VirtualScreen` or `DiskVideoDevice` class
-
-The evolution system in particular has many related variables that form a natural candidate for encapsulation into a dedicated class that manages the genetic algorithm state and operations.
-
-## Cross-Cutting Concerns
-
-Some UI globals are used throughout both UI and engine code:
-
-- `g_tab_enabled` is checked in many places to enable/disable tab key functionality
-- `g_look_at_mouse` is used in input loops throughout the codebase
-- `g_help_mode` determines context for F1 help across all menu screens
-- Zoom box variables are used in both UI interaction and fractal calculation setup
-
-These cross-cutting variables may require careful interface design during refactoring to maintain functionality while reducing coupling.
+Some backend code still reaches into UI state: surface cleanup, evolution
+metadata, video key bindings, and autosave coordination are examples.
+See [hexagonal.md](hexagonal.md) for that remaining work and
+[inversion-of-control.md](inversion-of-control.md) for the completed input
+boundary and future event-driven work.

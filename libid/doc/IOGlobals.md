@@ -1,242 +1,156 @@
-# Global Variables in libid/include/io
+<!--
+SPDX-License-Identifier: GPL-3.0-only
+Copyright 2026 Richard Thomson.
+-->
 
-This document identifies groups of global variables in the `libid/include/io` directory that are typically used together. These groupings represent variables that are conceptually related and often accessed together in I/O operations, file handling, and image encoding/decoding.
+# I/O Global Variables
 
-## 1. File Loading/Reading Group
+Inventory of public `g_*` declarations in `libid/include/io`.
+Codec objects, metadata values, and private storage/cache state are
+separate from these shared bindings.
 
-**File:** `loadfile.h`
+## Image Loading And Metadata Application
 
-Variables for loading fractal images and managing file state:
+Header: `loadfile.h`.
+
+- `g_read_filename` - requested image path.
+- `g_show_file` - `REQUEST_IMAGE`, `LOAD_IMAGE`, or `IMAGE_LOADED`.
+- `g_file_x_dots`, `g_file_y_dots` - restored image dimensions.
+- `g_file_colors` - restored image palette size.
+- `g_file_aspect_ratio` - restored image aspect ratio.
+- `g_file_version` - producer program version, not GIF metadata revision.
+- `g_skip_x_dots`, `g_skip_y_dots` - horizontal/vertical skip settings
+  used when reducing a loaded image.
+- `g_fast_restore` - view-window reset and mode-warning suppression policy.
+- `g_loaded_3d` - loaded-image 3D flag.
+- `g_overlay_3d` - restore as a 3D overlay.
+- `g_bad_outside` - loaded outside-color compatibility state.
+- `g_new_bifurcation_functions_loaded` - loaded bifurcation compatibility
+  state.
 
-- `g_bad_outside` - flag indicating invalid outside color mode in loaded file
-- `g_fast_restore` - true = reset view windows prior to restore, skip warnings on video mode changes
-- `g_file_aspect_ratio` - aspect ratio of loaded file
-- `g_file_colors` - number of colors in loaded file
-- `g_file_x_dots` - horizontal resolution of loaded file
-- `g_file_y_dots` - vertical resolution of loaded file
-- `g_loaded_3d` - flag indicating 3D image was loaded
-- `g_overlay_3d` - 3D overlay flag
-- `g_new_bifurcation_functions_loaded` - flag for new bifurcation function format
-- `g_skip_x_dots` - number of x pixels to skip during load
-- `g_skip_y_dots` - number of y pixels to skip during load
-- `g_file_version` - version of loaded file format
-- `g_read_filename` - path to file being read
-- `g_show_file` - file display status (REQUEST_IMAGE, LOAD_IMAGE, IMAGE_LOADED)
+`ImageMetadata` contains dimensions, palette, fractal information, and
+extension payloads without first changing the active image.
+`FractalInfo::info_version` is the metadata-format revision, distinct
+from `g_file_version`.  UI owns pending video/3D choices and cancellation;
+accepted metadata is then applied to runtime state.
 
-## 2. File Saving/Writing Group
+## Image Saving
 
-**File:** `encoder.h`
+Headers: `encoder.h`, `check_write_file.h`.
 
-Variables for saving fractal images:
+- `g_save_filename` - current save-name/path state.
+- `g_overwrite_file` - allow replacement instead of selecting another
+  unused filename.
 
-- `g_save_filename` - path to file for saving
+`ImageSave` owns scanline encoding, file state, metadata extensions, and
+temporary-file cleanup.  `GifWriter` owns the giflib writer.
+`ui/save_image.cpp` owns overwrite interaction, feedback, notifications,
+and exit policy.  There is no keyboard-interrupted partial-save workflow.
 
-## 3. Color Map/Palette Group
+## Palette Loading
 
-**File:** `loadmap.h`
+Header: `loadmap.h`.
 
-Variables for color map handling:
+- `g_last_map_name` - last map selected by loading, saving, or
+  `colors=@filename`.
+- `g_map_clut` - saved/default map palette selected by `map=`.
+- `g_map_specified` - default map selection flag.
 
-- `g_last_map_name` - name from last color map load/save or colors=@filename
-- `g_map_clut[256][3]` - color lookup table (default colors from map=)
-- `g_map_specified` - flag indicating map= was specified
+The active rendering palette is `engine::g_dac_box`, declared in
+`engine/spindac.h`.  Loading returns diagnostics without opening UI.
+Missing files preserve palette data; malformed maps retain their valid
+prefix and fill the remainder gray using the existing conversion rules.
 
-## 4. GIF Decoding Group
+## GIF Scanline Output
 
-**File:** `gifview.h`
+Headers: `gifview.h`, `decoder.h`.
 
-Variables for GIF image decoding:
+- `g_dither_flag` - restore dithering request.
+- `g_height` - shared GIF height state.
+- `g_num_colors` - source GIF palette size.
+- `g_out_line` - selected decoded-scanline output function.
+- `g_row_count` - output row counter used by `out_line()` and alternate
+  restore output paths; declared in `decoder.h`, not UI video code.
 
-- `g_dither_flag` - true if dithering is enabled for GIF display
-- `g_height` - height of GIF being decoded
-- `g_num_colors` - number of colors in GIF
-- `g_out_line` - function pointer for output line during decoding (in `decoder.h`)
+`GifRestore` owns giflib decode state and exposes scanlines.
+`RestoredImageOutput` owns coordinated per-pixel output when sound is
+enabled.  UI services sound readiness between bounded output increments.
 
-## 5. Library/Search Path Group
+Loading and saving remain atomic with respect to keyboard input.
+Scanline feedback does not authorize the codec to poll input or invoke
+modal UI.  See [inversion-of-control.md](inversion-of-control.md).
 
-**File:** `library.h`
+## Disk Pixel Storage
 
-Variables for file search paths and directories:
+Header: `disk_storage.h`.
 
-- `g_check_cur_dir` - flag to check current directory for files
-- read libraries - ordered input search paths populated by `librarydirs`,
-  `FRACTDIR`, and the program fallback
+- `g_disk_flag` - active disk-pixel storage.
+- `g_disk_16_bit` - 16-bit potential-image storage.
+- `g_disk_targa` - Targa backing-store mode.
 
-## 6. Special Directories Group
+Cache, backing handles, pixel packing, and storage progress are private to
+`io/disk_storage.cpp`.  The configured cache is 4096 KiB with 2048-byte
+blocks.  Storage may be memory- or disk-backed; these names do not imply
+that every access performs filesystem I/O.
 
-**File:** `special_dirs.h`
+UI owns storage allocation retry/cancel, progress presentation, and pixel
+target activation.  Backing operations themselves do not call UI or
+drivers.  `ui::g_good_mode` is not an I/O storage flag.
 
-Variables for system and working directories:
+## File Search And Directories
 
-- `g_special_dirs` - shared pointer to platform-specific directory interface
-- `g_save_dir` - directory for saving files
-- `g_temp_dir` - name of temporary directory
-- `g_working_dir` - name of directory for miscellaneous files
+Headers: `find_file.h`, `library.h`, `special_dirs.h`.
 
-## 7. Configuration Loading Group
+- `g_dta` - current wildcard-search result: path, filename, and attributes.
+- `g_check_cur_dir` - include the current directory in file lookup.
+- `g_special_dirs` - shared platform-specific directory provider.
+- `g_save_dir` - output directory.
+- `g_temp_dir` - temporary-file directory.
+- `g_working_dir` - miscellaneous working-file directory.
 
-**File:** `load_config.h`
+Ordered read libraries are managed through `library.h` operations, not an
+additional public global array.  They are populated from `librarydirs`,
+`FRACTDIR`, and the executable fallback.  Checked output paths enforce
+the existing save-directory and naming policies.
 
-Variables for configuration file handling:
+## Video Catalog Configuration
 
-- `g_bad_config` - configuration load status (OK, BAD_WITH_MESSAGE, BAD_NO_MESSAGE)
-- `g_cfg_line_nums[MAX_VIDEO_MODES]` - array mapping video modes to config file line numbers
+Header: `load_config.h`.
 
-## 8. Auto-Save/Timed Save Group
+- `g_bad_config` - `OK`, `BAD_WITH_MESSAGE`, or `BAD_NO_MESSAGE`.
+- `g_cfg_line_nums` - source-line mapping for video catalog entries.
 
-**File:** `save_timer.h`
+The catalog contains engine `VideoInfo` values without key fields.
+Current `load_config.cpp` still calls UI key-name parsing and updates
+UI-owned `g_video_mode_keys`.  This is an upward dependency awaiting
+ownership cleanup, not an engine key binding.
 
-Variables for automatic periodic saves:
+## Autosave
 
-- `g_resave_flag` - resave status (NONE, STARTED, FINAL)
-- `g_save_time_interval` - interval in minutes between automatic saves
-- `g_started_resaves` - flag indicating auto-save has been started
-- `g_timed_save` - timed save status (NONE, STARTED, FINAL)
+Header: `save_timer.h`.
 
-## Usage Patterns
+- `g_resave_flag` - repeated-save filename state.
+- `g_save_time_interval` - autosave interval setting in minutes; its
+  absolute value supplies the timer duration.
+- `g_started_resaves` - repeated-save sequence has started.
+- `g_timed_save` - pending timed-save state.
 
-These variable groups follow typical I/O operation patterns:
+`TimedSave` values are `NONE`, `STARTED`, and `FINAL`.
+`save_timer.cpp` retains private start/deadline tick values and uses
+UI-owned `read_ticker()` and `g_finish_row` for scheduling at a row
+boundary.  That coupling remains; it does not poll input itself.
 
-1. **File Loading Flow**: 
-   - Check `g_read_filename` and `g_file_version`
-   - Load image properties (`g_file_x_dots`, `g_file_y_dots`, `g_file_colors`, `g_file_aspect_ratio`)
-   - Set state flags (`g_loaded_3d`, `g_overlay_3d`, `g_bad_outside`)
-   - Update display status with `g_show_file`
+## Persistent Records And Remaining Coupling
 
-2. **File Saving Flow**:
-   - Set `g_save_filename`
-   - Write scanlines and metadata through `GifWriter`
-   - Respect `g_save_time_interval` for auto-saves
-   - Update `g_timed_save` and `g_resave_flag` status
+GIF extension records are I/O-owned values.  They hold fractal settings,
+optional resume bytes, formula information, ranges, arbitrary-precision
+parameters, evolution information, and orbit settings.
+Resume support still depends on the calculation type and saved state;
+saving metadata is not a promise of exact resume from every operation.
 
-3. **Color Map Handling**:
-   - Check `g_map_specified` flag
- - Load palette into `g_map_clut[]`
-   - Remember name in `g_last_map_name`
-
-4. **GIF Decoding**:
-   - Set up `g_height`, `g_num_colors`
-   - Configure `g_dither_flag`
-   - Use `g_out_line` function pointer for line output
-
-5. **File Search**:
-   - Check `g_check_cur_dir` first
-   - Search read libraries in order
-   - Use `g_special_dirs` for system paths
-   - Use `g_working_dir`, `g_save_dir`, and `g_temp_dir` for file operations
-
-6. **Configuration**:
-   - Load settings and populate `g_cfg_line_nums[]`
-   - Set `g_bad_config` status on errors
-
-## Relationships with Other Global Groups
-
-I/O globals work closely with other subsystems:
-
-- **File loading variables** work with fractal specification variables (`fractype.h`) to restore fractal state
-- **Color map variables** work with palette variables in the engine (`VideoInfo.h`)
-- **Save filename** works with image region and calculation state variables for complete state saves
-- **Special directories** are used throughout the codebase for locating formula files, IFS files, L-system files, etc.
-- **Configuration variables** affect nearly all subsystems by loading user preferences
-- **Auto-save variables** work with calculation engine to periodically save work in progress
-
-## File Format Dependencies
-
-The I/O subsystem handles multiple file formats:
-
-- **GIF files**: Primary image format for saving/loading fractals with embedded metadata
-  - Uses extension blocks (`FractalInfo`, `FormulaInfo`, `OrbitsInfo`, etc. in `gif_extensions.h`)
-  - Stores complete fractal state for resume capability
-  
-- **MAP files**: Color palette files
-  - 256 RGB triplets stored in `g_map_clut[]`
-  
-- **FRM files**: Formula definitions (referenced by parser in `fractals/parser.h`)
-
-- **IFS files**: Iterated Function System definitions (referenced in `fractals/ifs.h`)
-
-- **L files**: L-system definitions (referenced in `fractals/lsystem.h`)
-
-- **PAR files**: Parameter sets for fractals
-
-- **Configuration files**: Video mode and program settings
-
-## Refactoring Considerations
-
-When refactoring to reduce global state in I/O code, consider:
-
-1. **File Reading Context**: Variables in the file loading group could become a `FileReader` or `ImageLoader` class that encapsulates file metadata and loading state.
-
-2. **File Writing Context**: Save-related variables could become a `FileSaver` or `ImageEncoder` class with auto-save timer management.
-
-3. **Color Map Manager**: The color map group could become a `PaletteManager` class that handles loading, saving, and applying color maps.
-
-4. **Path Manager**: Library and directory variables could become a `PathResolver` or `FileLocator` class that encapsulates search logic.
-
-5. **Configuration Manager**: Configuration variables could become a `ConfigLoader` class that validates and applies settings.
-
-6. **GIF Codec**: GIF-specific variables could be encapsulated in `GifDecoder` and `GifEncoder` classes.
-
-The I/O variables are good candidates for encapsulation because:
-- They form natural groupings by operation (load, save, search, config)
-- File operations have clear begin/end boundaries suitable for RAII patterns
-- Moving to objects would enable better error handling and resource management
-- Encapsulation would make testing I/O operations much easier
-
-## Cross-Cutting Concerns
-
-Several I/O globals are used throughout the codebase:
-
-- `g_save_filename` is checked in many places to determine the current output file
-- `g_read_filename` is used for display in UI and for resume operations
-- `g_file_x_dots` and `g_file_y_dots` affect viewport and zoom calculations
-- `g_file_aspect_ratio` affects 3D transformations and display
-- `g_special_dirs` provides system paths used by all file-dependent features
-- `g_working_dir`, `g_save_dir`, and `g_temp_dir` are referenced widely
-- `g_map_clut[]` is the active palette used by the rendering engine
-
-These cross-cutting variables would require careful interface design during refactoring. A service locator or dependency injection pattern might be appropriate for path management, while file context variables might be passed explicitly to functions that need them.
-
-## State Machine Patterns
-
-Some I/O operations follow state machine patterns:
-
-### File Display State
-- `g_show_file` transitions: REQUEST_IMAGE ? LOAD_IMAGE ? IMAGE_LOADED
-
-### Save Timer State
-- `g_timed_save` and `g_resave_flag` transition: NONE ? STARTED ? FINAL
-
-### Configuration Loading State
-- `g_bad_config` indicates: OK, BAD_WITH_MESSAGE, or BAD_NO_MESSAGE
-
-These state variables control flow through complex I/O operations and would benefit from explicit state machine implementations or state pattern refactoring.
-
-## Performance Considerations
-
-Some I/O globals are performance-sensitive:
-
-- `g_out_line` function pointer enables fast line-by-line GIF decoding without virtual dispatch
-- `g_skip_x_dots` and `g_skip_y_dots` enable fast preview loading by skipping pixels
-- `g_dither_flag` trades quality for speed in GIF display
-
-When refactoring, these performance-critical variables should remain easily accessible and avoid adding indirection overhead.
-
-## Extension Block Architecture
-
-The GIF file format support includes a sophisticated extension block system defined in `gif_extensions.h`:
-
-- **ExtBlock2**: Resume data (arbitrary length byte vector)
-- **ExtBlock3**: Formula information (40-char name + flags)
-- **ExtBlock4**: Range data (integer vector)
-- **ExtBlock5**: Arbitrary precision math data (char vector)
-- **ExtBlock6**: Evolution parameters (genetic algorithm state)
-- **ExtBlock7**: Orbit drawing parameters (coordinate ranges + flags)
-
-These structures allow Iterated Dynamics to save complete fractal state in GIF files, enabling:
-- Exact resume from any point in calculation
-- Sharing of fractal parameters between users
-- Evolution of fractal parameters across generations
-- Preservation of orbit visualization settings
-
-The extension block system is a key architectural feature that distinguishes Iterated Dynamics files from standard GIF images.
+`ImageSave.cpp` reads UI-owned evolution state while building records.
+`loadfile.cpp` applies evolution state and reads parameter-file UI policy.
+These remaining dependencies are recorded in
+[hexagonal.md](hexagonal.md); the input-polling refactor did not eliminate
+them.  See [EngineGlobals.md](EngineGlobals.md) and
+[UIGlobals.md](UIGlobals.md) for the related bindings.
