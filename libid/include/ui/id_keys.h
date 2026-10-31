@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -107,6 +108,11 @@ enum
     ID_KEY_CTL_TAB         = 1148,
     ID_KEY_FAKE_AUTOSAVE   = 9999,
 };
+
+constexpr int key_to_lower(const int key)
+{
+    return key >= 'A' && key <= 'Z' ? key + ('a' - 'A') : key;
+}
 
 // tests if we have a control character
 inline bool non_alpha(const int c)

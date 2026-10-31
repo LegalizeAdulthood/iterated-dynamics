@@ -53,7 +53,6 @@
 #include <fmt/format.h>
 
 #include <array> // std::size
-#include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -917,7 +916,7 @@ resumeloop:                             // return here on failed overlays
                 }
             }
 
-            context.key = std::tolower(context.key);
+            context.key = key_to_lower(context.key);
             const CommandResult command_result{
                 g_evolving != EvolutionModeFlags::NONE ? evolver_menu_switch(context) : main_menu_switch(context)};
             mms_value = command_result_to_main_state(command_result);

@@ -171,6 +171,7 @@ add_executable(test-id
     ui/test_file_item.cpp
     ui/test_full_screen_prompt.cpp
     ui/test_history.cpp
+    ui/test_id_keys.cpp
     ui/test_input_field.cpp
     ui/test_inverse_julia.cpp
     ui/test_KeyboardHandler.cpp

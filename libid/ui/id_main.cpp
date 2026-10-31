@@ -56,7 +56,6 @@
 #include <config/home_dir.h>
 
 #include <algorithm>
-#include <cctype>
 #include <csignal>
 #include <cstdlib>
 #include <cstring>
@@ -339,7 +338,7 @@ static MainState main_image_start(MainContext &context)
         {
             break;                                 // got a video mode now
         }
-        key = std::tolower(key);
+        key = key_to_lower(key);
         if (key == 'd')
         {
             // shell to DOS

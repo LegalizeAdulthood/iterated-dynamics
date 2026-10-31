@@ -52,7 +52,7 @@ static bool is_julia()
 
 static int menu_check_key(const int key, int /*choice*/)
 {
-    int test_key = key >= 'A' && key <= 'Z' ? key+('a'-'A') : key;
+    int test_key = key_to_lower(key);
     if (test_key == '2')
     {
         test_key = '@';
