@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/color_state.h"
+#include <engine/color_state.h>
 
 namespace id::engine
 {

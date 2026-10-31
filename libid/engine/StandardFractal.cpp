@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/StandardFractal.h"
+#include <engine/StandardFractal.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/calcfrac.h"
-#include "engine/log_map.h"
-#include "engine/LogicalScreen.h"
-#include "engine/OrbitPlot.h"
-#include "engine/Potential.h"
-#include "engine/resume.h"
-#include "engine/SoundOutput.h"
-#include "engine/UserData.h"
-#include "engine/work_list.h"
-#include "fractals/fractalp.h"
-#include "fractals/lyapunov.h"
-#include "math/big.h"
+#include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
+#include <engine/log_map.h>
+#include <engine/LogicalScreen.h>
+#include <engine/OrbitPlot.h>
+#include <engine/Potential.h>
+#include <engine/resume.h>
+#include <engine/SoundOutput.h>
+#include <engine/UserData.h>
+#include <engine/work_list.h>
+#include <fractals/fractalp.h>
+#include <fractals/lyapunov.h>
+#include <math/big.h>
 
 #include <algorithm>
 #include <cmath>

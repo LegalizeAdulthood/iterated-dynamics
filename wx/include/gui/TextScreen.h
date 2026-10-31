@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "gui/Screen.h"
+#include <gui/Screen.h>
 
 #include <wx/stc/stc.h>
 #include <wx/wx.h>

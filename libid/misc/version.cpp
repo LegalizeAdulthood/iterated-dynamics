@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "misc/version.h"
+#include <misc/version.h>
 
 #include <config/port_config.h>
 
-#include "io/loadfile.h"
+#include <io/loadfile.h>
 
 #include <fmt/format.h>
 

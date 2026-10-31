@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "HelpSource.h"
+#include <HelpSource.h>
 
-#include "messages.h"
-#include "modes.h"
+#include <messages.h>
+#include <modes.h>
 
 #include <config/fdio.h>
 #include <config/filelength.h>

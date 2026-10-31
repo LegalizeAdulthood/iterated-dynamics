@@ -17,19 +17,19 @@
 
 #define STRICT
 
-#include "port.h"
-#include "prototyp.h"
+#include <port.h>
+#include <prototyp.h>
 
 #include <windows.h>
 #include <search.h>
 #include <time.h>
 #include <string.h>
 
-#include "winfract.h"
-#include "mathtool.h"
-#include "fractype.h"
-#include "select.h"
-#include "profile.h"
+#include <winfract.h>
+#include <mathtool.h>
+#include <fractype.h>
+#include <select.h>
+#include <profile.h>
 
 unsigned int windows_version;                /* 0x0300 = Win 3.0, 0x030A = 3.1 */
 

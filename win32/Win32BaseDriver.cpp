@@ -5,29 +5,29 @@
  *
  * Routines for a Win32 GDI driver for id.
  */
-#include "Win32BaseDriver.h"
+#include <Win32BaseDriver.h>
 
-#include "config/cmd_shell.h"
-#include "config/path_limits.h"
-#include "Frame.h"
-#include "instance.h"
-#include "ods.h"
+#include <config/cmd_shell.h>
+#include <config/path_limits.h>
+#include <Frame.h>
+#include <instance.h>
+#include <ods.h>
 
-#include "engine/calcfrac.h"
-#include "engine/sound.h"
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
-#include "io/CurrentPathSaver.h"
-#include "io/save_timer.h"
-#include "io/disk_storage.h"
-#include "ui/diskvid.h"
-#include "ui/id_keys.h"
-#include "ui/read_ticker.h"
-#include "ui/slideshw.h"
-#include "ui/stop_msg.h"
-#include "ui/text_screen.h"
-#include "ui/video.h"
-#include "ui/zoom.h"
+#include <engine/calcfrac.h>
+#include <engine/sound.h>
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <io/CurrentPathSaver.h>
+#include <io/save_timer.h>
+#include <io/disk_storage.h>
+#include <ui/diskvid.h>
+#include <ui/id_keys.h>
+#include <ui/read_ticker.h>
+#include <ui/slideshw.h>
+#include <ui/stop_msg.h>
+#include <ui/text_screen.h>
+#include <ui/video.h>
+#include <ui/zoom.h>
 
 #include <crtdbg.h>
 #include <commdlg.h>

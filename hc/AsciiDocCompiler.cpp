@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "AsciiDocCompiler.h"
+#include <AsciiDocCompiler.h>
 
-#include "HelpSource.h"
-#include "messages.h"
+#include <HelpSource.h>
+#include <messages.h>
 
 #include <algorithm>
 #include <cctype>

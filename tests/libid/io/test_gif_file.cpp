@@ -3,7 +3,7 @@
 //
 #include <io/gif_file.h>
 
-#include "test_data.h"
+#include <test_data.h>
 
 #include <engine/calcfrac.h>
 #include <io/gif_extensions.h>

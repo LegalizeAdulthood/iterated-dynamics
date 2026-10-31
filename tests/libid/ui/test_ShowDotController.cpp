@@ -3,9 +3,9 @@
 //
 #include <ui/ShowDotController.h>
 
-#include "MockDriver.h"
-#include "PendingDriverKey.h"
-#include "TestRender.h"
+#include <MockDriver.h>
+#include <PendingDriverKey.h>
+#include <TestRender.h>
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/magnet.h"
+#include <fractals/magnet.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "math/cmplx.h"
+#include <engine/bailout_formula.h>
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <math/cmplx.h>
 
 #include <cfloat>
 #include <limits>

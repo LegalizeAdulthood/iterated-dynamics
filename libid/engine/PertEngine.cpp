@@ -9,27 +9,27 @@
 // Much of perturbation code is based on the work of Shirom Makkad
 // <https://github.com/ShiromMakkad/MandelbrotPerturbation>
 
-#include "engine/PertEngine.h"
+#include <engine/PertEngine.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/calc_frac_init.h"
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/ImageRegion.h"
-#include "engine/Inversion.h"
-#include "engine/log_map.h"
-#include "engine/LogicalScreen.h"
-#include "engine/OrbitPlot.h"
-#include "engine/Potential.h"
-#include "engine/SoundOutput.h"
-#include "engine/VideoInfo.h"
-#include "fractals/fractalp.h"
-#include "fractals/pickover_mandelbrot.h"
-#include "math/biginit.h"
-#include "math/complex_fn.h"
-#include "misc/id.h"
-#include "misc/run_cleanup.h"
-#include "misc/ValueSaver.h"
+#include <engine/bailout_formula.h>
+#include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/ImageRegion.h>
+#include <engine/Inversion.h>
+#include <engine/log_map.h>
+#include <engine/LogicalScreen.h>
+#include <engine/OrbitPlot.h>
+#include <engine/Potential.h>
+#include <engine/SoundOutput.h>
+#include <engine/VideoInfo.h>
+#include <fractals/fractalp.h>
+#include <fractals/pickover_mandelbrot.h>
+#include <math/biginit.h>
+#include <math/complex_fn.h>
+#include <misc/id.h>
+#include <misc/run_cleanup.h>
+#include <misc/ValueSaver.h>
 
 #include <algorithm>
 #include <array>

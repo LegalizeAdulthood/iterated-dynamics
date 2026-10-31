@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/Inversion.h"
+#include <engine/Inversion.h>
 
-#include "math/biginit.h"
+#include <math/biginit.h>
 
 #include <cmath>
 #include <limits>

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "MemoryDiskStorage.h"
+#include <MemoryDiskStorage.h>
 
 #include <io/disk_storage.h>
 #include <misc/memory.h>

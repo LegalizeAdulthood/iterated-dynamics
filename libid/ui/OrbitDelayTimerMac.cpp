@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/OrbitDelayTimer.h"
+#include <ui/OrbitDelayTimer.h>
 
 #include <errno.h>
 #include <mach/mach_time.h>

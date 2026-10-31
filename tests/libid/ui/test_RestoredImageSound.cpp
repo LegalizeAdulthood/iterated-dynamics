@@ -3,10 +3,10 @@
 //
 #include <ui/restore_image.h>
 
-#include "ColorMapSaver.h"
-#include "MockDriver.h"
-#include "MockSoundOutput.h"
-#include "TemporaryDirectory.h"
+#include <ColorMapSaver.h>
+#include <MockDriver.h>
+#include <MockSoundOutput.h>
+#include <TemporaryDirectory.h>
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>

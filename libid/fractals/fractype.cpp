@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/fractype.h"
+#include <fractals/fractype.h>
 
 namespace id::fractals
 {

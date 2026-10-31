@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "MockSpecialDirectories.h"
+#include <MockSpecialDirectories.h>
 
 namespace id::io
 {

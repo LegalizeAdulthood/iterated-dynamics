@@ -5,12 +5,12 @@
 // This file Copyright 1992 Ken Shirriff.  It may be used according to the
 // fractint license conditions, blah blah blah.
 //
-#include "engine/calmanfp.h"
+#include <engine/calmanfp.h>
 
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "fractals/fractype.h"
-#include "misc/id.h"
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <fractals/fractype.h>
+#include <misc/id.h>
 
 #include <algorithm>
 #include <cmath>

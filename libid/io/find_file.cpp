@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "io/find_file.h"
+#include <io/find_file.h>
 
-#include "io/path_match.h"
+#include <io/path_match.h>
 
 #include <filesystem>
 

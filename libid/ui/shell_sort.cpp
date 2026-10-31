@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/shell_sort.h"
+#include <ui/shell_sort.h>
 
 #include <config/string_case_compare.h>
 

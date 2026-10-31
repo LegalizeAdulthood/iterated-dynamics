@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/LyapunovController.h"
+#include <ui/LyapunovController.h>
 
-#include "engine/calcfrac.h"
-#include "engine/StandardFractal.h"
-#include "fractals/lyapunov.h"
-#include "misc/Driver.h"
-#include "misc/run_cleanup.h"
-#include "ui/calculate_image.h"
-#include "ui/diskvid.h"
-#include "ui/standard_orbit_plot.h"
+#include <engine/calcfrac.h>
+#include <engine/StandardFractal.h>
+#include <fractals/lyapunov.h>
+#include <misc/Driver.h>
+#include <misc/run_cleanup.h>
+#include <ui/calculate_image.h>
+#include <ui/diskvid.h>
+#include <ui/standard_orbit_plot.h>
 
 #include <memory>
 #include <stdexcept>

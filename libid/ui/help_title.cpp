@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/help_title.h"
+#include <ui/help_title.h>
 
-#include "engine/text_color.h"
-#include "misc/Driver.h"
-#include "ui/put_string_center.h"
+#include <engine/text_color.h>
+#include <misc/Driver.h>
+#include <ui/put_string_center.h>
 
 #include <config/port_config.h>
 

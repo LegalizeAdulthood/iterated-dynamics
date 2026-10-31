@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 
-#include "ui/read_ticker.h"
+#include <ui/read_ticker.h>
 
 #include <chrono>
 #include <ctime>

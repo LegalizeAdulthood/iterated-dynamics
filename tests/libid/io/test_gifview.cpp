@@ -4,7 +4,7 @@
 #include <io/decoder.h>
 #include <io/loadfile.h>
 
-#include "MockDriver.h"
+#include <MockDriver.h>
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>

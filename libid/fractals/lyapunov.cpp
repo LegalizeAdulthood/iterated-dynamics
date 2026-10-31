@@ -1,23 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "fractals/lyapunov.h"
+#include <fractals/lyapunov.h>
 
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/Inversion.h"
-#include "engine/log_map.h"
-#include "engine/pixel_grid.h"
-#include "engine/random_seed.h"
-#include "engine/StandardFractal.h"
-#include "engine/UserData.h"
-#include "engine/VideoInfo.h"
-#include "fractals/fractalp.h"
-#include "fractals/newton.h"
-#include "fractals/population.h"
-#include "math/fixed_pt.h"
-#include "misc/debug_flags.h"
-#include "misc/version.h"
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/Inversion.h>
+#include <engine/log_map.h>
+#include <engine/pixel_grid.h>
+#include <engine/random_seed.h>
+#include <engine/StandardFractal.h>
+#include <engine/UserData.h>
+#include <engine/VideoInfo.h>
+#include <fractals/fractalp.h>
+#include <fractals/newton.h>
+#include <fractals/population.h>
+#include <math/fixed_pt.h>
+#include <misc/debug_flags.h>
+#include <misc/version.h>
 
 #include <algorithm>
 #include <cmath>

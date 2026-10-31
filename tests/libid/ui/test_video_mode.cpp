@@ -3,7 +3,7 @@
 //
 #include <ui/video_mode.h>
 
-#include "MockDriver.h"
+#include <MockDriver.h>
 
 #include <engine/pixel_limits.h>
 #include <engine/video_mode.h>

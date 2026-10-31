@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/OrbitPlot.h"
+#include <engine/OrbitPlot.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/calcfrac.h"
-#include "engine/ImageRegion.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/SoundOutput.h"
-#include "engine/VideoInfo.h"
-#include "misc/ValueSaver.h"
+#include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
+#include <engine/ImageRegion.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/SoundOutput.h>
+#include <engine/VideoInfo.h>
+#include <misc/ValueSaver.h>
 
 using namespace id::misc;
 

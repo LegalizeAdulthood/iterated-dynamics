@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/video_mode.h"
+#include <ui/video_mode.h>
 
-#include "ui/id_keys.h"
+#include <ui/id_keys.h>
 
 using namespace id::engine;
 

@@ -2,9 +2,9 @@
 // Copyright 2026 Richard Thomson.
 //
 
-#include "ColorMapSaver.h"
-#include "MockDriver.h"
-#include "TestRender.h"
+#include <ColorMapSaver.h>
+#include <MockDriver.h>
+#include <TestRender.h>
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>

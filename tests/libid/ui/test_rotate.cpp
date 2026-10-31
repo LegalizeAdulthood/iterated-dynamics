@@ -3,9 +3,9 @@
 //
 #include <ui/rotate.h>
 
-#include "ColorMapSaver.h"
-#include "MockDriver.h"
-#include "test_data.h"
+#include <ColorMapSaver.h>
+#include <MockDriver.h>
+#include <test_data.h>
 
 #include <engine/cmdfiles.h>
 #include <engine/color_state.h>

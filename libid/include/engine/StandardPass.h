@@ -3,15 +3,15 @@
 //
 #pragma once
 
-#include "engine/BoundaryTrace.h"
-#include "engine/calcfrac.h"
-#include "engine/Diffusion.h"
-#include "engine/ScanlinePass.h"
-#include "engine/SynchronousOrbit.h"
-#include "engine/SolidGuess.h"
-#include "engine/StickyOrbits.h"
-#include "engine/tesseral.h"
-#include "math/Point.h"
+#include <engine/BoundaryTrace.h>
+#include <engine/calcfrac.h>
+#include <engine/Diffusion.h>
+#include <engine/ScanlinePass.h>
+#include <engine/SynchronousOrbit.h>
+#include <engine/SolidGuess.h>
+#include <engine/StickyOrbits.h>
+#include <engine/tesseral.h>
+#include <math/Point.h>
 
 #include <string>
 #include <variant>

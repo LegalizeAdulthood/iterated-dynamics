@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/ShowDotController.h"
+#include <ui/ShowDotController.h>
 
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/OrbitPlot.h"
-#include "engine/pixel.h"
-#include "engine/show_dot.h"
-#include "engine/StandardFractal.h"
-#include "engine/VideoInfo.h"
-#include "misc/Driver.h"
-#include "ui/find_special_colors.h"
+#include <engine/calcfrac.h>
+#include <engine/LogicalScreen.h>
+#include <engine/OrbitPlot.h>
+#include <engine/pixel.h>
+#include <engine/show_dot.h>
+#include <engine/StandardFractal.h>
+#include <engine/VideoInfo.h>
+#include <misc/Driver.h>
+#include <ui/find_special_colors.h>
 
 #include <algorithm>
 #include <chrono>

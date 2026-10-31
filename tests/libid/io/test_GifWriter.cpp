@@ -3,10 +3,10 @@
 //
 #include <io/GifWriter.h>
 
-#include "FailingOutputBuffer.h"
-#include "FindFractalInfoState.h"
-#include "FindFractalInfoTestSupport.h"
-#include "GifReadSupport.h"
+#include <FailingOutputBuffer.h>
+#include <FindFractalInfoState.h>
+#include <FindFractalInfoTestSupport.h>
+#include <GifReadSupport.h>
 
 #include <io/gif_extensions.h>
 #include <io/gif_file.h>

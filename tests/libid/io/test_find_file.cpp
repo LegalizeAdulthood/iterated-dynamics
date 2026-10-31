@@ -3,7 +3,7 @@
 //
 #include <io/find_file.h>
 
-#include "test_data.h"
+#include <test_data.h>
 
 #include <algos/string_algorithms.h>
 #include <io/CurrentPathSaver.h>

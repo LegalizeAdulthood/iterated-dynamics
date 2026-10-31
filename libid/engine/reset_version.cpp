@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/reset_version.h"
+#include <engine/reset_version.h>
 
-#include "engine/Command.h"
-#include "io/loadfile.h"
+#include <engine/Command.h>
+#include <io/loadfile.h>
 
 using namespace id::misc;
 

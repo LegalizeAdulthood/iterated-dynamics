@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "math/cmplx.h"
+#include <math/cmplx.h>
 
-#include "math/fpu087.h"
+#include <math/fpu087.h>
 
 #include <cmath>
 

@@ -3,15 +3,15 @@
 //
 //****************** standalone engine for "cellular" *******************
 
-#include "fractals/Cellular.h"
+#include <fractals/Cellular.h>
 
-#include "engine/calcfrac.h"
-#include "engine/color_state.h"
-#include "engine/pixel.h"
-#include "engine/random_seed.h"
-#include "engine/resume.h"
-#include "engine/spindac.h"
-#include "io/loadmap.h"
+#include <engine/calcfrac.h>
+#include <engine/color_state.h>
+#include <engine/pixel.h>
+#include <engine/random_seed.h>
+#include <engine/resume.h>
+#include <engine/spindac.h>
+#include <io/loadmap.h>
 
 #include <fmt/format.h>
 

@@ -3,7 +3,7 @@
 //
 #include <ui/full_screen_prompt.h>
 
-#include "MockDriver.h"
+#include <MockDriver.h>
 
 #include <misc/ValueSaver.h>
 #include <ui/id_keys.h>

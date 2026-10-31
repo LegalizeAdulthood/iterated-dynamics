@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "io/library.h"
+#include <io/library.h>
 
-#include "io/find_file.h"
-#include "io/special_dirs.h"
+#include <io/find_file.h>
+#include <io/special_dirs.h>
 
 #include <config/home_dir.h>
 #include <config/port_config.h>

@@ -3,10 +3,10 @@
 //
 // Memory allocation routines.
 //
-#include "misc/memory.h"
+#include <misc/memory.h>
 
-#include "io/special_dirs.h"
-#include "misc/debug_flags.h"
+#include <io/special_dirs.h>
+#include <misc/debug_flags.h>
 
 #include <config/getpid.h>
 

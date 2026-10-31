@@ -3,8 +3,8 @@
 //
 #include <io/load_config.h>
 
-#include "MockDriver.h"
-#include "test_config_data.h"
+#include <MockDriver.h>
+#include <test_config_data.h>
 
 #include <engine/pixel_limits.h>
 #include <misc/Driver.h>

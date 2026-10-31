@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/Standard4DController.h"
+#include <ui/Standard4DController.h>
 
-#include "engine/NonStandardFractal.h"
-#include "engine/spindac.h"
-#include "fractals/julibrot.h"
-#include "io/loadmap.h"
-#include "misc/Driver.h"
-#include "misc/run_cleanup.h"
-#include "ui/diskvid.h"
-#include "ui/get_3d_params.h"
-#include "ui/starfield.h"
-#include "ui/stop_msg.h"
+#include <engine/NonStandardFractal.h>
+#include <engine/spindac.h>
+#include <fractals/julibrot.h>
+#include <io/loadmap.h>
+#include <misc/Driver.h>
+#include <misc/run_cleanup.h>
+#include <ui/diskvid.h>
+#include <ui/get_3d_params.h>
+#include <ui/starfield.h>
+#include <ui/stop_msg.h>
 
 #include <stdexcept>
 

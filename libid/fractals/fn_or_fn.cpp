@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/fn_or_fn.h"
+#include <fractals/fn_or_fn.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/get_julia_attractor.h"
-#include "engine/trig_fns.h"
-#include "math/arg.h"
+#include <engine/bailout_formula.h>
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/get_julia_attractor.h>
+#include <engine/trig_fns.h>
+#include <math/arg.h>
 
 using namespace id::engine;
 using namespace id::math;

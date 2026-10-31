@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/show_dot.h"
+#include <engine/show_dot.h>
 
 namespace id::engine
 {

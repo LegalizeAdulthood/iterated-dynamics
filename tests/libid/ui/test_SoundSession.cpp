@@ -3,9 +3,9 @@
 //
 #include <ui/SoundSession.h>
 
-#include "MockDriver.h"
-#include "MockSoundOutput.h"
-#include "TemporaryDirectory.h"
+#include <MockDriver.h>
+#include <MockSoundOutput.h>
+#include <TemporaryDirectory.h>
 
 #include <engine/cmdfiles.h>
 #include <engine/NullSoundOutput.h>

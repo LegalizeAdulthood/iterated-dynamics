@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/text_screen.h"
+#include <ui/text_screen.h>
 
 namespace id::ui
 {

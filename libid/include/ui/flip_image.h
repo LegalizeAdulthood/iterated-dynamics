@@ -2,8 +2,8 @@
 //
 #pragma once
 
-#include "ui/command_result.h"
-#include "ui/main_state.h"
+#include <ui/command_result.h>
+#include <ui/main_state.h>
 
 namespace id::ui
 {

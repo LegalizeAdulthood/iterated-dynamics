@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "messages.h"
+#include <messages.h>
 
 #include <fmt/format.h>
 

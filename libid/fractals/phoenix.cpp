@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/phoenix.h"
+#include <fractals/phoenix.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/Inversion.h"
-#include "engine/pixel_grid.h"
-#include "fractals/fractalp.h"
-#include "fractals/newton.h"
-#include "math/cmplx.h"
-#include "math/fpu087.h"
+#include <engine/bailout_formula.h>
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/Inversion.h>
+#include <engine/pixel_grid.h>
+#include <fractals/fractalp.h>
+#include <fractals/newton.h>
+#include <math/cmplx.h>
+#include <math/fpu087.h>
 
 using namespace id::engine;
 using namespace id::math;

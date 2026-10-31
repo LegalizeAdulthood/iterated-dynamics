@@ -7,13 +7,13 @@
 // tables for speed, and adds a second ant type, multiple ants, and random
 // rules.
 //
-#include "fractals/Ant.h"
+#include <fractals/Ant.h>
 
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/random_seed.h"
-#include "misc/version.h"
+#include <engine/calcfrac.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/random_seed.h>
+#include <misc/version.h>
 
 #include <algorithm>
 #include <cmath>

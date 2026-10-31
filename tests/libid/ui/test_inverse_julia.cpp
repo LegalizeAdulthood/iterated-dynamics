@@ -4,8 +4,8 @@
 #include <ui/inverse_julia.h>
 #include <ui/InverseJuliaFractalController.h>
 
-#include "MockDriver.h"
-#include "TemporaryDirectory.h"
+#include <MockDriver.h>
+#include <TemporaryDirectory.h>
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>

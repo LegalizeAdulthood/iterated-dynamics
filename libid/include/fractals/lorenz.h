@@ -3,9 +3,9 @@
 //
 #pragma once
 
-#include "engine/ImageRegion.h"
-#include "fractals/fractype.h"
-#include "geometry/3d.h"
+#include <engine/ImageRegion.h>
+#include <fractals/fractype.h>
+#include <geometry/3d.h>
 
 #include <cstdio>
 #include <string>

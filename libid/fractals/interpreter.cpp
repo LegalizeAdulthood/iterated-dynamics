@@ -1,15 +1,15 @@
-#include "fractals/interpreter.h"
+#include <fractals/interpreter.h>
 
-#include "engine/calcfrac.h"
-#include "engine/pixel_grid.h"
-#include "engine/random_seed.h"
-#include "fractals/parser.h"
-#include "io/check_write_file.h"
-#include "io/library.h"
-#include "math/arg.h"
-#include "math/fixed_pt.h"
-#include "misc/debug_flags.h"
-#include "misc/version.h"
+#include <engine/calcfrac.h>
+#include <engine/pixel_grid.h>
+#include <engine/random_seed.h>
+#include <fractals/parser.h>
+#include <io/check_write_file.h>
+#include <io/library.h>
+#include <math/arg.h>
+#include <math/fixed_pt.h>
+#include <misc/debug_flags.h>
+#include <misc/version.h>
 
 #include <fmt/format.h>
 

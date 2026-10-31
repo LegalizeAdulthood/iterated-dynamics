@@ -5,16 +5,16 @@
     This file includes miscellaneous plot functions and logic
     for 3D, used by lorenz and line3d
 */
-#include "geometry/plot3d.h"
+#include <geometry/plot3d.h>
 
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/VideoInfo.h"
-#include "fractals/fractype.h"
-#include "geometry/line3d.h"
-#include "io/decoder.h"
-#include "io/disk_storage.h"
+#include <engine/calcfrac.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/VideoInfo.h>
+#include <fractals/fractype.h>
+#include <geometry/line3d.h>
+#include <io/decoder.h>
+#include <io/disk_storage.h>
 
 #include <config/port.h>
 

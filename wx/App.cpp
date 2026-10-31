@@ -5,7 +5,7 @@
 #include <gui/Frame.h>
 #include <io/CurrentPathSaver.h>
 
-#include "wx_id.h"
+#include <wx_id.h>
 
 #include <fmt/format.h>
 

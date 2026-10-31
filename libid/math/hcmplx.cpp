@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // some hyper complex functions
-#include "math/hcmplx.h"
+#include <math/hcmplx.h>
 
-#include "math/arg.h"
-#include "math/cmplx.h"
-#include "math/sqr.h"
+#include <math/arg.h>
+#include <math/cmplx.h>
+#include <math/sqr.h>
 
 namespace id::math
 {

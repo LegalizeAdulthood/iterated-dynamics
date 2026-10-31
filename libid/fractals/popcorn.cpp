@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/popcorn.h"
+#include <fractals/popcorn.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/ImageRegion.h"
-#include "engine/log_map.h"
-#include "engine/LogicalScreen.h"
-#include "engine/resume.h"
-#include "engine/trig_fns.h"
-#include "engine/VideoInfo.h"
-#include "fractals/fractype.h"
-#include "math/arg.h"
-#include "math/fixed_pt.h"
-#include "math/fpu087.h"
-#include "misc/debug_flags.h"
-#include "misc/version.h"
+#include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/ImageRegion.h>
+#include <engine/log_map.h>
+#include <engine/LogicalScreen.h>
+#include <engine/resume.h>
+#include <engine/trig_fns.h>
+#include <engine/VideoInfo.h>
+#include <fractals/fractype.h>
+#include <math/arg.h>
+#include <math/fixed_pt.h>
+#include <math/fpu087.h>
+#include <misc/debug_flags.h>
+#include <misc/version.h>
 
 #include <algorithm>
 #include <cmath>

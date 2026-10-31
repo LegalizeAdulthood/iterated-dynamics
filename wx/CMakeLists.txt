@@ -25,7 +25,7 @@ add_library(gui STATIC
     include/gui/Screen.h
     include/gui/TextScreen.h TextScreen.cpp
 )
-target_include_directories(gui PUBLIC include)
+target_include_directories(gui PRIVATE . PUBLIC include)
 target_link_libraries(gui PUBLIC libid fmt::fmt-header-only wx::stc wx::core wx::base)
 target_folder(gui "Libraries/wx")
 
@@ -39,6 +39,7 @@ target_include_directories(driver-wx PUBLIC .)
 target_folder(driver-wx "Libraries/wx")
 if(WIN32)
     target_sources(driver-wx PRIVATE ../win32/create_minidump.h ../win32/create_minidump.cpp)
+    target_include_directories(driver-wx PRIVATE ../win32)
 endif()
 
 add_executable(id wx_id.h wx_id.cpp)

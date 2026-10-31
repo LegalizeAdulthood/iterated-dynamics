@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/DiffusionController.h"
+#include <ui/DiffusionController.h>
 
-#include "engine/NonStandardFractal.h"
-#include "misc/Driver.h"
-#include "misc/run_cleanup.h"
-#include "ui/diskvid.h"
-#include "ui/standard_orbit_plot.h"
+#include <engine/NonStandardFractal.h>
+#include <misc/Driver.h>
+#include <misc/run_cleanup.h>
+#include <ui/diskvid.h>
+#include <ui/standard_orbit_plot.h>
 
 #include <memory>
 #include <stdexcept>

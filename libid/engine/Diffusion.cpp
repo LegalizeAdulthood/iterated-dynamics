@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/Diffusion.h"
+#include <engine/Diffusion.h>
 
-#include "engine/calcfrac.h"
-#include "engine/work_list.h"
+#include <engine/calcfrac.h>
+#include <engine/work_list.h>
 
 #include <algorithm>
 #include <cmath>

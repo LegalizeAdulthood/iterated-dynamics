@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/flip_image.h"
+#include <ui/flip_image.h>
 
-#include "engine/ImageRegion.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "fractals/fractalp.h"
-#include "misc/Driver.h"
-#include "ui/id_keys.h"
-#include "ui/zoom.h"
+#include <engine/ImageRegion.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <fractals/fractalp.h>
+#include <misc/Driver.h>
+#include <ui/id_keys.h>
+#include <ui/zoom.h>
 
 using namespace id::engine;
 using namespace id::fractals;

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/input_field.h"
+#include <ui/input_field.h>
 
-#include "math/round_float_double.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/id_keys.h"
-#include "ui/mouse.h"
+#include <math/round_float_double.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/id_keys.h>
+#include <ui/mouse.h>
 
 #include <fmt/format.h>
 

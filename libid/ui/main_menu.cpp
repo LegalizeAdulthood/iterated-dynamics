@@ -1,24 +1,24 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/main_menu.h"
+#include <ui/main_menu.h>
 
-#include "engine/spindac.h"
-#include "engine/text_color.h"
-#include "engine/VideoInfo.h"
-#include "fractals/fractalp.h"
-#include "fractals/fractype.h"
-#include "helpcom.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/full_screen_choice.h"
-#include "ui/goodbye.h"
-#include "ui/help.h"
-#include "ui/help_title.h"
-#include "ui/id_keys.h"
-#include "ui/put_string_center.h"
-#include "ui/tab_display.h"
-#include "ui/video_mode.h"
+#include <engine/spindac.h>
+#include <engine/text_color.h>
+#include <engine/VideoInfo.h>
+#include <fractals/fractalp.h>
+#include <fractals/fractype.h>
+#include <helpcom.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/full_screen_choice.h>
+#include <ui/goodbye.h>
+#include <ui/help.h>
+#include <ui/help_title.h>
+#include <ui/id_keys.h>
+#include <ui/put_string_center.h>
+#include <ui/tab_display.h>
+#include <ui/video_mode.h>
 #include <cstring>
 
 using namespace id::engine;

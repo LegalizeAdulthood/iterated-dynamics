@@ -5,7 +5,7 @@
  *
  * Routines for a Win32 GDI driver for id.
  */
-#include "WxDiskDriver.h"
+#include <WxDiskDriver.h>
 
 #include <engine/calcfrac.h>
 #include <engine/pixel.h>

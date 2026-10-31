@@ -1,26 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/get_3d_params.h"
+#include <ui/get_3d_params.h>
 
-#include "engine/cmdfiles.h"
-#include "engine/color_state.h"
-#include "engine/spindac.h"
-#include "fractals/fractype.h"
-#include "geometry/line3d.h"
-#include "geometry/plot3d.h"
-#include "helpdefs.h"
-#include "io/check_write_file.h"
-#include "io/loadfile.h"
-#include "io/loadmap.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/ChoiceBuilder.h"
-#include "ui/field_prompt.h"
-#include "ui/full_screen_choice.h"
-#include "ui/help.h"
-#include "ui/stereo.h"
-#include "ui/stop_msg.h"
+#include <engine/cmdfiles.h>
+#include <engine/color_state.h>
+#include <engine/spindac.h>
+#include <fractals/fractype.h>
+#include <geometry/line3d.h>
+#include <geometry/plot3d.h>
+#include <helpdefs.h>
+#include <io/check_write_file.h>
+#include <io/loadfile.h>
+#include <io/loadmap.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/ChoiceBuilder.h>
+#include <ui/field_prompt.h>
+#include <ui/full_screen_choice.h>
+#include <ui/help.h>
+#include <ui/stereo.h>
+#include <ui/stop_msg.h>
 
 #include <config/path_limits.h>
 

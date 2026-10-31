@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "io/loadmap.h"
+#include <io/loadmap.h>
 
-#include "engine/color_state.h"
-#include "engine/color_utils.h"
-#include "engine/spindac.h"
-#include "io/library.h"
-#include "misc/version.h"
+#include <engine/color_state.h>
+#include <engine/color_utils.h>
+#include <engine/spindac.h>
+#include <io/library.h>
+#include <misc/version.h>
 
 #include <config/port.h>
 

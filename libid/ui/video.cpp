@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/video.h"
+#include <ui/video.h>
 
-#include "engine/pixel.h"
-#include "io/disk_storage.h"
-#include "misc/Driver.h"
+#include <engine/pixel.h>
+#include <io/disk_storage.h>
+#include <misc/Driver.h>
 
 using namespace id::engine;
 using namespace id::io;

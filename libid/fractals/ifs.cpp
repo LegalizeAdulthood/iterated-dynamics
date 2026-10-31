@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "fractals/ifs.h"
+#include <fractals/ifs.h>
 
-#include "io/file_gets.h"
-#include "io/file_item.h"
+#include <io/file_gets.h>
+#include <io/file_item.h>
 
 #include <config/string_lower.h>
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "CommandTestFile.h"
+#include <CommandTestFile.h>
 
 #include <memory>
 #include <stdexcept>

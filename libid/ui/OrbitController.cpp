@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/OrbitController.h"
+#include <ui/OrbitController.h>
 
-#include "engine/NonStandardFractal.h"
-#include "misc/run_cleanup.h"
-#include "ui/diskvid.h"
-#include "ui/SoundSession.h"
+#include <engine/NonStandardFractal.h>
+#include <misc/run_cleanup.h>
+#include <ui/diskvid.h>
+#include <ui/SoundSession.h>
 
 #include <memory>
 #include <stdexcept>

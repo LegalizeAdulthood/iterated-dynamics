@@ -1,33 +1,33 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "io/ImageSave.h"
+#include <io/ImageSave.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/pixel_limits.h"
-#include "engine/resume.h"
-#include "engine/spindac.h"
-#include "engine/StickyOrbits.h"
-#include "engine/VideoInfo.h"
-#include "engine/Viewport.h"
-#include "fractals/formula.h"
-#include "fractals/fractype.h"
-#include "fractals/ifs.h"
-#include "fractals/lorenz.h"
-#include "fractals/lsystem.h"
-#include "fractals/parser.h"
-#include "io/disk_storage.h"
-#include "io/encoder.h"
-#include "io/gif_extensions.h"
-#include "io/gif_file.h"
-#include "io/GifWriter.h"
-#include "math/big.h"
-#include "misc/id.h"
-#include "ui/big_while_loop.h"
-#include "ui/evolve.h"
+#include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/pixel_limits.h>
+#include <engine/resume.h>
+#include <engine/spindac.h>
+#include <engine/StickyOrbits.h>
+#include <engine/VideoInfo.h>
+#include <engine/Viewport.h>
+#include <fractals/formula.h>
+#include <fractals/fractype.h>
+#include <fractals/ifs.h>
+#include <fractals/lorenz.h>
+#include <fractals/lsystem.h>
+#include <fractals/parser.h>
+#include <io/disk_storage.h>
+#include <io/encoder.h>
+#include <io/gif_extensions.h>
+#include <io/gif_file.h>
+#include <io/GifWriter.h>
+#include <math/big.h>
+#include <misc/id.h>
+#include <ui/big_while_loop.h>
+#include <ui/evolve.h>
 
 #include <gif_lib.h>
 

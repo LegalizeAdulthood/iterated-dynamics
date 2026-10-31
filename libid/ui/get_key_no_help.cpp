@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/get_key_no_help.h"
+#include <ui/get_key_no_help.h>
 
-#include "misc/Driver.h"
-#include "ui/id_keys.h"
+#include <misc/Driver.h>
+#include <ui/id_keys.h>
 
 using namespace id::misc;
 

@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/get_toggles.h"
+#include <ui/get_toggles.h>
 
-#include "engine/calcfrac.h"
-#include "engine/log_map.h"
-#include "engine/SolidGuess.h"
-#include "engine/sound.h"
-#include "engine/UserData.h"
-#include "engine/VideoInfo.h"
-#include "fractals/fractype.h"
-#include "helpdefs.h"
-#include "io/check_write_file.h"
-#include "io/encoder.h"
-#include "io/save_timer.h"
-#include "ui/ChoiceBuilder.h"
-#include "ui/help.h"
+#include <engine/calcfrac.h>
+#include <engine/log_map.h>
+#include <engine/SolidGuess.h>
+#include <engine/sound.h>
+#include <engine/UserData.h>
+#include <engine/VideoInfo.h>
+#include <fractals/fractype.h>
+#include <helpdefs.h>
+#include <io/check_write_file.h>
+#include <io/encoder.h>
+#include <io/save_timer.h>
+#include <ui/ChoiceBuilder.h>
+#include <ui/help.h>
 
 #include <algos/string_algorithms.h>
 

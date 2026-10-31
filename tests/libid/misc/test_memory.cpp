@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "MockDriver.h"
-#include "TemporaryDirectory.h"
+#include <MockDriver.h>
+#include <TemporaryDirectory.h>
 
 #include <io/disk_storage.h>
 #include <io/special_dirs.h>

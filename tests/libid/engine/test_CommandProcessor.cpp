@@ -3,8 +3,8 @@
 //
 #include <engine/CommandProcessor.h>
 
-#include "CommandTestFile.h"
-#include "TemporaryDirectory.h"
+#include <CommandTestFile.h>
+#include <TemporaryDirectory.h>
 
 #include <engine/calcfrac.h>
 #include <engine/Browse.h>

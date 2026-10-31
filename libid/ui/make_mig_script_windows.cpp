@@ -2,7 +2,7 @@
 //
 // Copyright 2026 Richard Thomson
 //
-#include "ui/make_mig_script.h"
+#include <ui/make_mig_script.h>
 
 #include <fmt/core.h>
 

@@ -4,15 +4,15 @@
 //
 #include <X11Driver/X11BaseDriver.h>
 
-#include "engine/pixel.h"
-#include "engine/spindac.h"
-#include "engine/video_mode.h"
-#include "engine/VideoInfo.h"
-#include "geometry/plot3d.h"
-#include "io/disk_storage.h"
-#include "ui/diskvid.h"
-#include "ui/video.h"
-#include "ui/zoom.h"
+#include <engine/pixel.h>
+#include <engine/spindac.h>
+#include <engine/video_mode.h>
+#include <engine/VideoInfo.h>
+#include <geometry/plot3d.h>
+#include <io/disk_storage.h>
+#include <ui/diskvid.h>
+#include <ui/video.h>
+#include <ui/zoom.h>
 
 #include <cassert>
 

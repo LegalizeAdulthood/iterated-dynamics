@@ -3,9 +3,9 @@
 //
 #include <io/loadmap.h>
 
-#include "expected_map.h"
-#include "ColorMapSaver.h"
-#include "test_data.h"
+#include <expected_map.h>
+#include <ColorMapSaver.h>
+#include <test_data.h>
 
 #include <engine/color_utils.h>
 #include <engine/color_state.h>

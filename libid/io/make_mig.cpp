@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "io/make_mig.h"
+#include <io/make_mig.h>
 
-#include "io/check_write_file.h"
-#include "io/library.h"
+#include <io/check_write_file.h>
+#include <io/library.h>
 
 #include <fmt/format.h>
 #include <gif_lib.h>

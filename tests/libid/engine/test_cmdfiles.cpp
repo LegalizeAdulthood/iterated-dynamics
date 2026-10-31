@@ -7,16 +7,16 @@
 #include <ui/CommandRouter.h>
 #include <ui/command_effects.h>
 
-#include "ColorMapSaver.h"
-#include "CommandTestFile.h"
-#include "EnvVarSaver.h"
-#include "fractals/formula.h"
-#include "MockDriver.h"
-#include "MockSpecialDirectories.h"
-#include "TemporaryDirectory.h"
-#include "test_data.h"
-#include "test_library.h"
-#include "ValueUnchanged.h"
+#include <ColorMapSaver.h>
+#include <CommandTestFile.h>
+#include <EnvVarSaver.h>
+#include <fractals/formula.h>
+#include <MockDriver.h>
+#include <MockSpecialDirectories.h>
+#include <TemporaryDirectory.h>
+#include <test_data.h>
+#include <test_library.h>
+#include <ValueUnchanged.h>
 
 #include <config/path_limits.h>
 

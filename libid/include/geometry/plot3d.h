@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "math/Point.h"
+#include <math/Point.h>
 
 namespace id::geometry
 {

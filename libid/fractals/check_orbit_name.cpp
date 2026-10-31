@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/check_orbit_name.h"
+#include <fractals/check_orbit_name.h>
 
-#include "fractals/fractalp.h"
-#include "fractals/julibrot.h"
+#include <fractals/fractalp.h>
+#include <fractals/julibrot.h>
 
 namespace id::fractals
 {

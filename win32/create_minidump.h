@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "win_defines.h"
+#include <win_defines.h>
 #include <Windows.h>
 
 namespace id::misc

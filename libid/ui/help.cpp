@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "helpcom.h"
+#include <helpcom.h>
 
-#include "engine/engine_timer.h"
-#include "engine/text_color.h"
-#include "helpdefs.h"
-#include "io/find_path.h"
-#include "io/library.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/help_title.h"
-#include "ui/id_keys.h"
-#include "ui/mouse.h"
-#include "ui/put_string_center.h"
-#include "ui/stop_msg.h"
-#include "ui/tab_display.h"
-#include "ui/text_screen.h"
+#include <engine/engine_timer.h>
+#include <engine/text_color.h>
+#include <helpdefs.h>
+#include <io/find_path.h>
+#include <io/library.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/help_title.h>
+#include <ui/id_keys.h>
+#include <ui/mouse.h>
+#include <ui/put_string_center.h>
+#include <ui/stop_msg.h>
+#include <ui/tab_display.h>
+#include <ui/text_screen.h>
 
 #include <config/port.h>
 

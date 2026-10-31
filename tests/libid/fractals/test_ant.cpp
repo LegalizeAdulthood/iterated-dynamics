@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "fractals/Ant.h"
+#include <fractals/Ant.h>
 
-#include "FractalParamSaver.h"
+#include <FractalParamSaver.h>
 
-#include "engine/calcfrac.h"
-#include "misc/ValueSaver.h"
-#include "misc/version.h"
+#include <engine/calcfrac.h>
+#include <misc/ValueSaver.h>
+#include <misc/version.h>
 
 #include <gtest/gtest.h>
 

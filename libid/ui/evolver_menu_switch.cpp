@@ -1,31 +1,31 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/evolver_menu_switch.h"
+#include <ui/evolver_menu_switch.h>
 
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel_limits.h"
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
-#include "engine/Viewport.h"
-#include "io/encoder.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/big_while_loop.h"
-#include "io/disk_storage.h"
-#include "ui/evolve.h"
-#include "ui/find_special_colors.h"
-#include "ui/get_cmd_string.h"
-#include "ui/get_fract_type.h"
-#include "ui/get_toggles.h"
-#include "ui/get_toggles2.h"
-#include "ui/id_keys.h"
-#include "ui/menu_handler.h"
-#include "ui/passes_options.h"
-#include "ui/save_image.h"
-#include "ui/select_video_mode.h"
-#include "ui/zoom.h"
+#include <engine/calcfrac.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel_limits.h>
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <engine/Viewport.h>
+#include <io/encoder.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/big_while_loop.h>
+#include <io/disk_storage.h>
+#include <ui/evolve.h>
+#include <ui/find_special_colors.h>
+#include <ui/get_cmd_string.h>
+#include <ui/get_fract_type.h>
+#include <ui/get_toggles.h>
+#include <ui/get_toggles2.h>
+#include <ui/id_keys.h>
+#include <ui/menu_handler.h>
+#include <ui/passes_options.h>
+#include <ui/save_image.h>
+#include <ui/select_video_mode.h>
+#include <ui/zoom.h>
 
 #include <algorithm>
 #include <cassert>

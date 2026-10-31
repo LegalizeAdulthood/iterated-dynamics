@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "misc/Driver.h"
+#include <misc/Driver.h>
 
-#include "engine/VideoInfo.h"
+#include <engine/VideoInfo.h>
 
 #include <config/driver_types.h>
 

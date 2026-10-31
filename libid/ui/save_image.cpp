@@ -1,25 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/save_image.h"
+#include <ui/save_image.h>
 
-#include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
-#include "io/check_write_file.h"
-#include "io/disk_storage.h"
-#include "io/ImageSave.h"
-#include "io/is_writeable.h"
-#include "io/library.h"
-#include "io/save_timer.h"
-#include "io/update_save_name.h"
-#include "misc/Driver.h"
-#include "misc/id.h"
-#include "misc/ValueSaver.h"
-#include "ui/goodbye.h"
-#include "ui/SaveImageProgress.h"
-#include "ui/slideshw.h"
-#include "ui/stop_msg.h"
-#include "ui/temp_msg.h"
+#include <engine/calcfrac.h>
+#include <engine/cmdfiles.h>
+#include <io/check_write_file.h>
+#include <io/disk_storage.h>
+#include <io/ImageSave.h>
+#include <io/is_writeable.h>
+#include <io/library.h>
+#include <io/save_timer.h>
+#include <io/update_save_name.h>
+#include <misc/Driver.h>
+#include <misc/id.h>
+#include <misc/ValueSaver.h>
+#include <ui/goodbye.h>
+#include <ui/SaveImageProgress.h>
+#include <ui/slideshw.h>
+#include <ui/stop_msg.h>
+#include <ui/temp_msg.h>
 
 #include <stdexcept>
 

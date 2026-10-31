@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/select_video_mode.h"
+#include <ui/select_video_mode.h>
 
-#include "helpdefs.h"
-#include "io/find_path.h"
-#include "io/is_writeable.h"
-#include "io/library.h"
-#include "io/load_config.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/full_screen_choice.h"
-#include "ui/get_key_no_help.h"
-#include "ui/help.h"
-#include "ui/id_keys.h"
-#include "ui/stop_msg.h"
-#include "ui/tab_display.h"
-#include "ui/video_mode.h"
+#include <helpdefs.h>
+#include <io/find_path.h>
+#include <io/is_writeable.h>
+#include <io/library.h>
+#include <io/load_config.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/full_screen_choice.h>
+#include <ui/get_key_no_help.h>
+#include <ui/help.h>
+#include <ui/id_keys.h>
+#include <ui/stop_msg.h>
+#include <ui/tab_display.h>
+#include <ui/video_mode.h>
 
 #include <fmt/format.h>
 

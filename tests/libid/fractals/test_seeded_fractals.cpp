@@ -42,9 +42,9 @@
 #include <ui/big_while_loop.h>
 #include <ui/video.h>
 
-#include "FractalParamSaver.h"
-#include "MockDriver.h"
-#include "TemporaryDirectory.h"
+#include <FractalParamSaver.h>
+#include <MockDriver.h>
+#include <TemporaryDirectory.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

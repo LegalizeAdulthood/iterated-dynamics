@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/lambda_fn.h"
+#include <fractals/lambda_fn.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/get_julia_attractor.h"
-#include "engine/trig_fns.h"
-#include "fractals/fractalp.h"
-#include "fractals/frasetup.h"
-#include "math/arg.h"
-#include "misc/version.h"
+#include <engine/bailout_formula.h>
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/get_julia_attractor.h>
+#include <engine/trig_fns.h>
+#include <fractals/fractalp.h>
+#include <fractals/frasetup.h>
+#include <math/arg.h>
+#include <misc/version.h>
 
 #include <cmath>
 

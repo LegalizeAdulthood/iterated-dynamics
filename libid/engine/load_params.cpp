@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/load_params.h"
+#include <engine/load_params.h>
 
-#include "engine/find_extra_param.h"
-#include "fractals/fractalp.h"
+#include <engine/find_extra_param.h>
+#include <fractals/fractalp.h>
 
 using namespace id::engine;
 using namespace id::fractals;

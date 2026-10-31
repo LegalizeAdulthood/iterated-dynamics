@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/CommandRouter.h"
+#include <ui/CommandRouter.h>
 
-#include "engine/CommandProcessor.h"
-#include "engine/reset_version.h"
-#include "geometry/stereo_params.h"
-#include "io/library.h"
-#include "io/loadfile.h"
-#include "misc/debug_flags.h"
-#include "ui/big_while_loop.h"
-#include "ui/history.h"
-#include "ui/slideshw.h"
-#include "ui/stereo.h"
-#include "ui/video_mode.h"
+#include <engine/CommandProcessor.h>
+#include <engine/reset_version.h>
+#include <geometry/stereo_params.h>
+#include <io/library.h>
+#include <io/loadfile.h>
+#include <misc/debug_flags.h>
+#include <ui/big_while_loop.h>
+#include <ui/history.h>
+#include <ui/slideshw.h>
+#include <ui/stereo.h>
+#include <ui/video_mode.h>
 
 #include <fmt/format.h>
 

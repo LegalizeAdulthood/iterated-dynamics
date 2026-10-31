@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "HelpCompiler.h"
+#include <HelpCompiler.h>
 
 namespace hc
 {

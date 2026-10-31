@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/ImageRenderOperation.h"
+#include <engine/ImageRenderOperation.h>
 
-#include "engine/OrbitPlot.h"
-#include "fractals/fractalp.h"
-#include "misc/run_cleanup.h"
+#include <engine/OrbitPlot.h>
+#include <fractals/fractalp.h>
+#include <misc/run_cleanup.h>
 
 #include <stdexcept>
 

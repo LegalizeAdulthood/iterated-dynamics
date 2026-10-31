@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/get_julia_attractor.h"
+#include <engine/get_julia_attractor.h>
 
-#include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
-#include "engine/fractals.h"
-#include "fractals/fractalp.h"
-#include "math/cmplx.h"
-#include "math/fixed_pt.h"
+#include <engine/calcfrac.h>
+#include <engine/cmdfiles.h>
+#include <engine/fractals.h>
+#include <fractals/fractalp.h>
+#include <math/cmplx.h>
+#include <math/fixed_pt.h>
 
 #include <algorithm>
 #include <cmath>

@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/StereoController.h"
+#include <ui/StereoController.h>
 
-#include "engine/NonStandardFractal.h"
-#include "geometry/plot3d.h"
-#include "misc/run_cleanup.h"
-#include "ui/diskvid.h"
-#include "ui/KeyboardHandler.h"
-#include "ui/SoundSession.h"
-#include "ui/stereo.h"
-#include "ui/stop_msg.h"
+#include <engine/NonStandardFractal.h>
+#include <geometry/plot3d.h>
+#include <misc/run_cleanup.h>
+#include <ui/diskvid.h>
+#include <ui/KeyboardHandler.h>
+#include <ui/SoundSession.h>
+#include <ui/stereo.h>
+#include <ui/stop_msg.h>
 
 #include <memory>
 #include <stdexcept>

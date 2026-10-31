@@ -40,17 +40,17 @@ to the 'fractalspecific' structure, writing (or re-using one of the existing)
 an appropriate setup, per_image, per_pixel, and orbit routines.
 
 --------------------------------------------------------------------   */
-#include "engine/fractals.h"
+#include <engine/fractals.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/calcfrac.h"
-#include "engine/Inversion.h"
-#include "engine/pixel_grid.h"
-#include "fractals/fractype.h"
-#include "fractals/magnet.h"
-#include "fractals/newton.h"
-#include "math/arg.h"
-#include "math/biginit.h"
+#include <engine/bailout_formula.h>
+#include <engine/calcfrac.h>
+#include <engine/Inversion.h>
+#include <engine/pixel_grid.h>
+#include <fractals/fractype.h>
+#include <fractals/magnet.h>
+#include <fractals/newton.h>
+#include <math/arg.h>
+#include <math/biginit.h>
 
 #include <cfloat>
 #include <cmath>

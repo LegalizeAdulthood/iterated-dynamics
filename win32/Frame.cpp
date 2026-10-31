@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "Frame.h"
+#include <Frame.h>
 
-#include "resource.h"
-#include "WinText.h"
+#include <resource.h>
+#include <WinText.h>
 
-#include "misc/Driver.h"
-#include "ui/goodbye.h"
-#include "ui/id_keys.h"
+#include <misc/Driver.h>
+#include <ui/goodbye.h>
+#include <ui/id_keys.h>
 
-#include "win_defines.h"
+#include <win_defines.h>
 #include <atlbase.h>
 #include <tchar.h>
 #include <Windows.h>

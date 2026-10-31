@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "ui/full_screen_prompt.h"
+#include <ui/full_screen_prompt.h>
 
 #include <algorithm>
 #include <array>

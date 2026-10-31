@@ -53,11 +53,11 @@
 //                       0     0     1     0
 //                       0     0     0     1
 //
-#include "geometry/3d.h"
+#include <geometry/3d.h>
 
-#include "geometry/line3d.h"
-#include "engine/fractals.h"
-#include "math/fixed_pt.h"
+#include <geometry/line3d.h>
+#include <engine/fractals.h>
+#include <math/fixed_pt.h>
 
 #include <cfloat>
 #include <cmath>

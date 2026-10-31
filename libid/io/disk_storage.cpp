@@ -3,7 +3,7 @@
 //
 // Disk-backed pixel and byte storage.
 //
-#include "io/disk_storage.h"
+#include <io/disk_storage.h>
 
 #include <algorithm>
 #include <cstdio>

@@ -3,9 +3,9 @@
 //
 #include <ui/CommandRouter.h>
 
-#include "CommandTestFile.h"
-#include "MockSpecialDirectories.h"
-#include "TemporaryDirectory.h"
+#include <CommandTestFile.h>
+#include <MockSpecialDirectories.h>
+#include <TemporaryDirectory.h>
 
 #include <config/port_config.h>
 #include <engine/calcfrac.h>

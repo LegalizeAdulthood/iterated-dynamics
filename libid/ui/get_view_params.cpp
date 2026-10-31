@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/get_view_params.h"
+#include <ui/get_view_params.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/VideoInfo.h"
-#include "engine/Viewport.h"
-#include "helpdefs.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/full_screen_prompt.h"
-#include "ui/help.h"
-#include "ui/id_keys.h"
-#include "ui/zoom.h"
+#include <engine/calc_frac_init.h>
+#include <engine/VideoInfo.h>
+#include <engine/Viewport.h>
+#include <helpdefs.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/full_screen_prompt.h>
+#include <ui/help.h>
+#include <ui/id_keys.h>
+#include <ui/zoom.h>
 
 #include <fmt/format.h>
 

@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "create_minidump.h"
+#include <create_minidump.h>
 
-#include "engine/cmdfiles.h"
-#include "io/special_dirs.h"
-#include "ui/init_failure.h"
+#include <engine/cmdfiles.h>
+#include <io/special_dirs.h>
+#include <ui/init_failure.h>
 
 #include <config/port.h>
 
-#include "win_defines.h"
+#include <win_defines.h>
 #include <DbgHelp.h>
 #include <Windows.h>
 

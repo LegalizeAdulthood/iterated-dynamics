@@ -4,7 +4,7 @@
 //
 #include <X11Driver/X11Plot.h>
 
-#include "engine/spindac.h"
+#include <engine/spindac.h>
 
 #include <X11/Xutil.h>
 

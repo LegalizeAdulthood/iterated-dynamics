@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "MockDriver.h"
-#include "StopMessageTestSupport.h"
+#include <MockDriver.h>
+#include <StopMessageTestSupport.h>
 
 #include <engine/bailout_formula.h>
 #include <engine/calc_frac_init.h>

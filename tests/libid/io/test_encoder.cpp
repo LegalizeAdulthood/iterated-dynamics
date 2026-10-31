@@ -3,13 +3,13 @@
 //
 #include <io/encoder.h>
 
-#include "ColorMapSaver.h"
-#include "FailingOutputBuffer.h"
-#include "FindFractalInfoState.h"
-#include "FindFractalInfoTestSupport.h"
-#include "GifReadSupport.h"
-#include "MockDriver.h"
-#include "TemporaryDirectory.h"
+#include <ColorMapSaver.h>
+#include <FailingOutputBuffer.h>
+#include <FindFractalInfoState.h>
+#include <FindFractalInfoTestSupport.h>
+#include <GifReadSupport.h>
+#include <MockDriver.h>
+#include <TemporaryDirectory.h>
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>

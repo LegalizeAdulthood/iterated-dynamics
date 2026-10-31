@@ -3,35 +3,35 @@
 /*
         load an existing fractal image, control level
 */
-#include "ui/file_get_window.h"
+#include <ui/file_get_window.h>
 
-#include "config/string_case_compare.h"
-#include "engine/Browse.h"
-#include "engine/calc_frac_init.h"
-#include "engine/Inversion.h"
-#include "engine/LogicalScreen.h"
-#include "engine/trig_fns.h"
-#include "engine/VideoInfo.h"
-#include "fractals/formula.h"
-#include "fractals/fractalp.h"
-#include "fractals/fractype.h"
-#include "fractals/lorenz.h"
-#include "fractals/parser.h"
-#include "io/gif_extensions.h"
-#include "io/library.h"
-#include "io/loadfile.h"
-#include "io/trim_filename.h"
-#include "math/big.h"
-#include "math/biginit.h"
-#include "math/round_float_double.h"
-#include "misc/Driver.h"
-#include "ui/big_while_loop.h"
-#include "ui/field_prompt.h"
-#include "ui/find_special_colors.h"
-#include "ui/get_browse_params.h"
-#include "ui/id_keys.h"
-#include "ui/temp_msg.h"
-#include "ui/zoom.h"
+#include <config/string_case_compare.h>
+#include <engine/Browse.h>
+#include <engine/calc_frac_init.h>
+#include <engine/Inversion.h>
+#include <engine/LogicalScreen.h>
+#include <engine/trig_fns.h>
+#include <engine/VideoInfo.h>
+#include <fractals/formula.h>
+#include <fractals/fractalp.h>
+#include <fractals/fractype.h>
+#include <fractals/lorenz.h>
+#include <fractals/parser.h>
+#include <io/gif_extensions.h>
+#include <io/library.h>
+#include <io/loadfile.h>
+#include <io/trim_filename.h>
+#include <math/big.h>
+#include <math/biginit.h>
+#include <math/round_float_double.h>
+#include <misc/Driver.h>
+#include <ui/big_while_loop.h>
+#include <ui/field_prompt.h>
+#include <ui/find_special_colors.h>
+#include <ui/get_browse_params.h>
+#include <ui/id_keys.h>
+#include <ui/temp_msg.h>
+#include <ui/zoom.h>
 
 #include <fmt/format.h>
 

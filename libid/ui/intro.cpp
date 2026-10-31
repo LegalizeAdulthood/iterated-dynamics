@@ -3,19 +3,19 @@
 /*
  * intro screen (authors & credits)
  */
-#include "ui/intro.h"
+#include <ui/intro.h>
 
-#include "engine/engine_timer.h"
-#include "engine/text_color.h"
-#include "helpcom.h"
-#include "helpdefs.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/help.h"
-#include "ui/help_title.h"
-#include "ui/id_keys.h"
-#include "ui/mouse.h"
-#include "ui/put_string_center.h"
+#include <engine/engine_timer.h>
+#include <engine/text_color.h>
+#include <helpcom.h>
+#include <helpdefs.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/help.h>
+#include <ui/help_title.h>
+#include <ui/id_keys.h>
+#include <ui/mouse.h>
+#include <ui/put_string_center.h>
 
 #include <cstdlib>
 #include <ctime>

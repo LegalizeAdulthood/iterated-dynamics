@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "fractals/Plasma.h"
+#include <fractals/Plasma.h>
 
-#include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
-#include "engine/fractals.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/Potential.h"
-#include "engine/random_seed.h"
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
-#include "io/disk_storage.h"
-#include "io/loadmap.h"
-#include "misc/debug_flags.h"
-#include "misc/sized_types.h"
+#include <engine/calcfrac.h>
+#include <engine/cmdfiles.h>
+#include <engine/fractals.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/Potential.h>
+#include <engine/random_seed.h>
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <io/disk_storage.h>
+#include <io/loadmap.h>
+#include <misc/debug_flags.h>
+#include <misc/sized_types.h>
 
 #include <algorithm>
 #include <stdexcept>

@@ -3,8 +3,8 @@
 //
 #include <engine/ScanlinePass.h>
 
-#include "MockDriver.h"
-#include "WorkListSnapshot.h"
+#include <MockDriver.h>
+#include <WorkListSnapshot.h>
 
 #include <engine/LogicalScreen.h>
 #include <engine/resume.h>

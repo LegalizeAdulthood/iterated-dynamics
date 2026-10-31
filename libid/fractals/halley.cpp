@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/halley.h"
+#include <fractals/halley.h>
 
-#include "engine/fractals.h"
-#include "engine/Inversion.h"
-#include "engine/pixel_grid.h"
-#include "fractals/fractalp.h"
-#include "fractals/fractype.h"
-#include "fractals/newton.h"
-#include "math/fpu087.h"
+#include <engine/fractals.h>
+#include <engine/Inversion.h>
+#include <engine/pixel_grid.h>
+#include <fractals/fractalp.h>
+#include <fractals/fractype.h>
+#include <fractals/newton.h>
+#include <math/fpu087.h>
 
 #include <algorithm>
 #include <cmath>

@@ -3,9 +3,9 @@
 //
 #pragma once
 
-#include "engine/NonStandardFractal.h"
-#include "engine/StandardFractal.h"
-#include "fractals/lyapunov.h"
+#include <engine/NonStandardFractal.h>
+#include <engine/StandardFractal.h>
+#include <fractals/lyapunov.h>
 
 #include <variant>
 

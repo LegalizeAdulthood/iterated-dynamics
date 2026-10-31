@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/stop_msg.h"
+#include <ui/stop_msg.h>
 
-#include "engine/cmdfiles.h"
-#include "engine/text_color.h"
-#include "io/check_write_file.h"
-#include "misc/debug_flags.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/get_key_no_help.h"
-#include "ui/id_keys.h"
-#include "ui/mouse.h"
-#include "ui/text_screen.h"
+#include <engine/cmdfiles.h>
+#include <engine/text_color.h>
+#include <io/check_write_file.h>
+#include <misc/debug_flags.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/get_key_no_help.h>
+#include <ui/id_keys.h>
+#include <ui/mouse.h>
+#include <ui/text_screen.h>
 
 #include <chrono>
 #include <cstdio>

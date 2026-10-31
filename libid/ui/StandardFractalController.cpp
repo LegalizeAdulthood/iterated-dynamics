@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/StandardFractalController.h"
+#include <ui/StandardFractalController.h>
 
-#include "engine/fractalb.h"
-#include "engine/SoundOutput.h"
-#include "engine/StandardFractal.h"
-#include "misc/Driver.h"
-#include "misc/run_cleanup.h"
-#include "ui/calculate_image.h"
-#include "ui/diskvid.h"
-#include "ui/goodbye.h"
-#include "ui/precision_diagnostics.h"
-#include "ui/SoundSession.h"
-#include "ui/standard_orbit_plot.h"
+#include <engine/fractalb.h>
+#include <engine/SoundOutput.h>
+#include <engine/StandardFractal.h>
+#include <misc/Driver.h>
+#include <misc/run_cleanup.h>
+#include <ui/calculate_image.h>
+#include <ui/diskvid.h>
+#include <ui/goodbye.h>
+#include <ui/precision_diagnostics.h>
+#include <ui/SoundSession.h>
+#include <ui/standard_orbit_plot.h>
 
 #include <memory>
 #include <stdexcept>

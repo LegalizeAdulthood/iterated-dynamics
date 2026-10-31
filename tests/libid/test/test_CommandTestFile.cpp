@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "CommandTestFile.h"
-#include "TemporaryDirectory.h"
+#include <CommandTestFile.h>
+#include <TemporaryDirectory.h>
 
 #include <gtest/gtest.h>
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "misc/debug_flags.h"
+#include <misc/debug_flags.h>
 
 namespace id::misc
 {

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/precision_diagnostics.h"
+#include <ui/precision_diagnostics.h>
 
-#include "engine/fractalb.h"
-#include "ui/stop_msg.h"
+#include <engine/fractalb.h>
+#include <ui/stop_msg.h>
 
 #include <string>
 #include <vector>

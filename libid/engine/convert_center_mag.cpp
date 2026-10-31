@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/convert_center_mag.h"
+#include <engine/convert_center_mag.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/convert_corners.h"
-#include "engine/fractalb.h"
-#include "engine/ImageRegion.h"
-#include "math/biginit.h"
-#include "math/sign.h"
-#include "math/sqr.h"
-#include "misc/debug_flags.h"
-#include "misc/id.h"
-#include "misc/ValueSaver.h"
+#include <engine/calc_frac_init.h>
+#include <engine/convert_corners.h>
+#include <engine/fractalb.h>
+#include <engine/ImageRegion.h>
+#include <math/biginit.h>
+#include <math/sign.h>
+#include <math/sqr.h>
+#include <misc/debug_flags.h>
+#include <misc/id.h>
+#include <misc/ValueSaver.h>
 
 #include <cmath>
 

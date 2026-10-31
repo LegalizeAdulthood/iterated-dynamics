@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "fractals/fractype.h"
+#include <fractals/fractype.h>
 
 namespace id::ui
 {

@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/get_corners.h"
+#include <ui/get_corners.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/convert_center_mag.h"
-#include "engine/convert_corners.h"
-#include "engine/ImageRegion.h"
-#include "engine/StickyOrbits.h"
-#include "engine/Viewport.h"
-#include "fractals/fractalp.h"
-#include "fractals/lorenz.h"
-#include "helpdefs.h"
-#include "misc/ValueSaver.h"
-#include "ui/ChoiceBuilder.h"
-#include "ui/double_to_string.h"
-#include "ui/help.h"
-#include "ui/id_keys.h"
-#include "ui/zoom.h"
+#include <engine/calc_frac_init.h>
+#include <engine/convert_center_mag.h>
+#include <engine/convert_corners.h>
+#include <engine/ImageRegion.h>
+#include <engine/StickyOrbits.h>
+#include <engine/Viewport.h>
+#include <fractals/fractalp.h>
+#include <fractals/lorenz.h>
+#include <helpdefs.h>
+#include <misc/ValueSaver.h>
+#include <ui/ChoiceBuilder.h>
+#include <ui/double_to_string.h>
+#include <ui/help.h>
+#include <ui/id_keys.h>
+#include <ui/zoom.h>
 
 #include <config/port.h>
 

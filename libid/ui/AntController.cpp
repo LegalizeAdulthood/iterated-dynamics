@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/AntController.h"
+#include <ui/AntController.h>
 
-#include "engine/NonStandardFractal.h"
-#include "engine/OrbitPlot.h"
-#include "misc/Driver.h"
-#include "misc/run_cleanup.h"
-#include "ui/diskvid.h"
-#include "ui/id_keys.h"
-#include "ui/main_menu_switch.h"
-#include "ui/temp_msg.h"
+#include <engine/NonStandardFractal.h>
+#include <engine/OrbitPlot.h>
+#include <misc/Driver.h>
+#include <misc/run_cleanup.h>
+#include <ui/diskvid.h>
+#include <ui/id_keys.h>
+#include <ui/main_menu_switch.h>
+#include <ui/temp_msg.h>
 
 #include <helpdefs.h>
 

@@ -1,7 +1,7 @@
 //
 // Copyright 2026 Richard Thomson
 //
-#include "algos/string_algorithms.h"
+#include <algos/string_algorithms.h>
 
 namespace id::algos
 {

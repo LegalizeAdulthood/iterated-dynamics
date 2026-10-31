@@ -2,10 +2,10 @@
 //
 #include <X11Driver/X11Frame.h>
 
-#include "misc/Driver.h"
-#include "ui/goodbye.h"
-#include "ui/id_keys.h"
-#include "ui/mouse.h"
+#include <misc/Driver.h>
+#include <ui/goodbye.h>
+#include <ui/id_keys.h>
+#include <ui/mouse.h>
 
 #include <X11/keysym.h>
 #include <X11/Xutil.h>

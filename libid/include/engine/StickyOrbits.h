@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "fractals/lorenz.h"
+#include <fractals/lorenz.h>
 
 namespace id::engine
 {

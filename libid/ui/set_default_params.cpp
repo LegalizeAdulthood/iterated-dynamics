@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/set_default_params.h"
+#include <ui/set_default_params.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/find_extra_param.h"
-#include "engine/ImageRegion.h"
-#include "engine/Viewport.h"
-#include "fractals/fractalp.h"
-#include "fractals/fractype.h"
-#include "math/round_float_double.h"
-#include "misc/debug_flags.h"
-#include "ui/zoom.h"
+#include <engine/calc_frac_init.h>
+#include <engine/find_extra_param.h>
+#include <engine/ImageRegion.h>
+#include <engine/Viewport.h>
+#include <fractals/fractalp.h>
+#include <fractals/fractype.h>
+#include <math/round_float_double.h>
+#include <misc/debug_flags.h>
+#include <ui/zoom.h>
 
 using namespace id::engine;
 using namespace id::fractals;

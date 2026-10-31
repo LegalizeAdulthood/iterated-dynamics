@@ -5,32 +5,32 @@
     routines for zoombox manipulation and for panning
 
 */
-#include "ui/zoom.h"
+#include <ui/zoom.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/calcfrac.h"
-#include "engine/ImageRegion.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/Potential.h"
-#include "engine/resume.h"
-#include "engine/SolidGuess.h"
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
-#include "engine/Viewport.h"
-#include "engine/work_list.h"
-#include "fractals/fractalp.h"
-#include "fractals/lyapunov.h"
-#include "math/big.h"
-#include "math/biginit.h"
-#include "misc/Driver.h"
-#include "misc/id.h"
-#include "ui/big_while_loop.h"
-#include "ui/evolve.h"
-#include "ui/find_special_colors.h"
-#include "ui/id_keys.h"
-#include "ui/mouse.h"
-#include "ui/stop_msg.h"
+#include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
+#include <engine/ImageRegion.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/Potential.h>
+#include <engine/resume.h>
+#include <engine/SolidGuess.h>
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <engine/Viewport.h>
+#include <engine/work_list.h>
+#include <fractals/fractalp.h>
+#include <fractals/lyapunov.h>
+#include <math/big.h>
+#include <math/biginit.h>
+#include <misc/Driver.h>
+#include <misc/id.h>
+#include <ui/big_while_loop.h>
+#include <ui/evolve.h>
+#include <ui/find_special_colors.h>
+#include <ui/id_keys.h>
+#include <ui/mouse.h>
+#include <ui/stop_msg.h>
 
 #include <algorithm>
 #include <cassert>

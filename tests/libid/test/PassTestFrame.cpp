@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "PassTestFrame.h"
+#include <PassTestFrame.h>
 
 #include <engine/calcfrac.h>
 #include <engine/VideoInfo.h>

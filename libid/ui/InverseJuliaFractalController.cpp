@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/InverseJuliaFractalController.h"
+#include <ui/InverseJuliaFractalController.h>
 
-#include "engine/NonStandardFractal.h"
-#include "misc/Driver.h"
-#include "misc/run_cleanup.h"
-#include "ui/inverse_julia.h"
-#include "ui/standard_orbit_plot.h"
-#include "ui/stop_msg.h"
+#include <engine/NonStandardFractal.h>
+#include <misc/Driver.h>
+#include <misc/run_cleanup.h>
+#include <ui/inverse_julia.h>
+#include <ui/standard_orbit_plot.h>
+#include <ui/stop_msg.h>
 
 #include <memory>
 #include <stdexcept>

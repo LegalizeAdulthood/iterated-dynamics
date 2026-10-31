@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/mandelbrot_mix.h"
+#include <fractals/mandelbrot_mix.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/calcfrac.h"
-#include "engine/Inversion.h"
-#include "engine/pixel_grid.h"
-#include "engine/UserData.h"
-#include "fractals/newton.h"
-#include "math/arg.h"
-#include "math/cmplx.h"
-#include "misc/debug_flags.h"
+#include <engine/bailout_formula.h>
+#include <engine/calcfrac.h>
+#include <engine/Inversion.h>
+#include <engine/pixel_grid.h>
+#include <engine/UserData.h>
+#include <fractals/newton.h>
+#include <math/arg.h>
+#include <math/cmplx.h>
+#include <misc/debug_flags.h>
 
 using namespace id::engine;
 using namespace id::math;

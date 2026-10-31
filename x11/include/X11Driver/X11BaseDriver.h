@@ -8,7 +8,7 @@
 #include <X11Driver/X11Plot.h>
 #include <X11Driver/X11Text.h>
 
-#include "misc/Driver.h"
+#include <misc/Driver.h>
 
 #include <chrono>
 #include <string>

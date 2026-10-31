@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/taylor_skinner_variations.h"
+#include <fractals/taylor_skinner_variations.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/trig_fns.h"
-#include "fractals/fractalp.h"
-#include "fractals/frasetup.h"
-#include "math/arg.h"
-#include "misc/debug_flags.h"
+#include <engine/bailout_formula.h>
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/trig_fns.h>
+#include <fractals/fractalp.h>
+#include <fractals/frasetup.h>
+#include <math/arg.h>
+#include <misc/debug_flags.h>
 
 using namespace id::engine;
 using namespace id::math;

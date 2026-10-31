@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/standard_orbit_plot.h"
+#include <ui/standard_orbit_plot.h>
 
-#include "engine/calcfrac.h"
-#include "engine/OrbitPlot.h"
-#include "engine/SoundOutput.h"
-#include "ui/KeyboardHandler.h"
-#include "ui/OrbitDelayTimer.h"
+#include <engine/calcfrac.h>
+#include <engine/OrbitPlot.h>
+#include <engine/SoundOutput.h>
+#include <ui/KeyboardHandler.h>
+#include <ui/OrbitDelayTimer.h>
 
 #include <chrono>
 

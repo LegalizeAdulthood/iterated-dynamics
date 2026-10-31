@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "io/decoder.h"
+#include <io/decoder.h>
 
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/VideoInfo.h"
-#include "misc/Driver.h"
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/VideoInfo.h>
+#include <misc/Driver.h>
 
 using namespace id::engine;
 using namespace id::misc;

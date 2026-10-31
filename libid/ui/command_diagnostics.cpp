@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/command_diagnostics.h"
+#include <ui/command_diagnostics.h>
 
-#include "engine/cmdfiles.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/get_key_no_help.h"
-#include "ui/id_keys.h"
-#include "ui/stop_msg.h"
+#include <engine/cmdfiles.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/get_key_no_help.h>
+#include <ui/id_keys.h>
+#include <ui/stop_msg.h>
 
 #include <algorithm>
 

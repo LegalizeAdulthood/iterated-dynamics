@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/quaternion_mandelbrot.h"
+#include <fractals/quaternion_mandelbrot.h>
 
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/pixel_grid.h"
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/pixel_grid.h>
 
 using namespace id::engine;
 

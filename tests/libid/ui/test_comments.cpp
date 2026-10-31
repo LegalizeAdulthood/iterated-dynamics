@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/VideoInfo.h"
+#include <engine/VideoInfo.h>
 
 #include <ui/comments.h>
 
 #include <config/port.h>
 
 #include <engine/calcfrac.h>
-#include "engine/command_comments.h"
+#include <engine/command_comments.h>
 #include <engine/LogicalScreen.h>
 #include <misc/version.h>
 #include <ui/id_keys.h>

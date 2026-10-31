@@ -1,25 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/starfield.h"
+#include <ui/starfield.h>
 
 #include <algorithm>
 #include <cstdlib>
 
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
-#include "helpdefs.h"
-#include "io/loadmap.h"
-#include "math/fixed_pt.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/ChoiceBuilder.h"
-#include "ui/help.h"
-#include "ui/slideshw.h"
-#include "ui/stop_msg.h"
+#include <engine/calcfrac.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <helpdefs.h>
+#include <io/loadmap.h>
+#include <math/fixed_pt.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/ChoiceBuilder.h>
+#include <ui/help.h>
+#include <ui/slideshw.h>
+#include <ui/stop_msg.h>
 
 using namespace id::engine;
 using namespace id::help;

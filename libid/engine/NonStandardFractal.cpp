@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/NonStandardFractal.h"
+#include <engine/NonStandardFractal.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/fractals.h"
-#include "engine/LogicalScreen.h"
-#include "engine/resume.h"
-#include "engine/VideoInfo.h"
-#include "fractals/bif_may.h"
-#include "fractals/fractalp.h"
-#include "fractals/frasetup.h"
-#include "fractals/ifs.h"
+#include <engine/calc_frac_init.h>
+#include <engine/fractals.h>
+#include <engine/LogicalScreen.h>
+#include <engine/resume.h>
+#include <engine/VideoInfo.h>
+#include <fractals/bif_may.h>
+#include <fractals/fractalp.h>
+#include <fractals/frasetup.h>
+#include <fractals/ifs.h>
 
 #include <cmath>
 #include <stdexcept>

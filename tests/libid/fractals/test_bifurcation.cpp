@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "fractals/Bifurcation.h"
+#include <fractals/Bifurcation.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/ImageRegion.h"
-#include "engine/trig_fns.h"
-#include "engine/VideoInfo.h"
-#include "fractals/bif_may.h"
-#include "fractals/fractalp.h"
-#include "fractals/population.h"
-#include "math/arg.h"
-#include "math/fixed_pt.h"
-#include "misc/ValueSaver.h"
+#include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/ImageRegion.h>
+#include <engine/trig_fns.h>
+#include <engine/VideoInfo.h>
+#include <fractals/bif_may.h>
+#include <fractals/fractalp.h>
+#include <fractals/population.h>
+#include <math/arg.h>
+#include <math/fixed_pt.h>
+#include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
 

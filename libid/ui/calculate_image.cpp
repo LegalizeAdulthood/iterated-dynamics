@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/calculate_image.h"
+#include <ui/calculate_image.h>
 
-#include "engine/calcfrac.h"
-#include "ui/stop_msg.h"
-#include "ui/diskvid.h"
+#include <engine/calcfrac.h>
+#include <ui/stop_msg.h>
+#include <ui/diskvid.h>
 
 #include <string>
 

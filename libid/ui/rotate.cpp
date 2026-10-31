@@ -4,22 +4,22 @@
 /*
     Routines that manipulate the Video DAC on VGA Adapters
 */
-#include "ui/rotate.h"
+#include <ui/rotate.h>
 
-#include "engine/color_state.h"
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
-#include "helpdefs.h"
-#include "io/check_write_file.h"
-#include "io/library.h"
-#include "io/loadmap.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/diskvid.h"
-#include "ui/field_prompt.h"
-#include "ui/help.h"
-#include "ui/id_keys.h"
-#include "ui/stop_msg.h"
+#include <engine/color_state.h>
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <helpdefs.h>
+#include <io/check_write_file.h>
+#include <io/library.h>
+#include <io/loadmap.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/diskvid.h>
+#include <ui/field_prompt.h>
+#include <ui/help.h>
+#include <ui/id_keys.h>
+#include <ui/stop_msg.h>
 
 #include <algorithm>
 #include <cassert>

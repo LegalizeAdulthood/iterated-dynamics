@@ -3,8 +3,8 @@
 //
 #include <fractals/lsystem.h>
 
-#include "MockDriver.h"
-#include "test_data.h"
+#include <MockDriver.h>
+#include <test_data.h>
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>

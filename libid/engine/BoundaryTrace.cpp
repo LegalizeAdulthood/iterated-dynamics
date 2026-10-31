@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/BoundaryTrace.h"
+#include <engine/BoundaryTrace.h>
 
-#include "engine/calcfrac.h"
-#include "engine/pixel.h"
-#include "engine/VideoInfo.h"
-#include "engine/work_list.h"
+#include <engine/calcfrac.h>
+#include <engine/pixel.h>
+#include <engine/VideoInfo.h>
+#include <engine/work_list.h>
 
 #include <cstring>
 #include <stdexcept>

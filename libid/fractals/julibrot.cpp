@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "fractals/julibrot.h"
+#include <fractals/julibrot.h>
 
-#include "engine/fractals.h"
-#include "engine/get_julia_attractor.h"
-#include "engine/ImageRegion.h"
-#include "engine/LogicalScreen.h"
-#include "engine/VideoInfo.h"
-#include "fractals/fractalp.h"
-#include "fractals/fractype.h"
-#include "fractals/pickover_mandelbrot.h"
-#include "math/sqr.h"
-#include "misc/debug_flags.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
+#include <engine/fractals.h>
+#include <engine/get_julia_attractor.h>
+#include <engine/ImageRegion.h>
+#include <engine/LogicalScreen.h>
+#include <engine/VideoInfo.h>
+#include <fractals/fractalp.h>
+#include <fractals/fractype.h>
+#include <fractals/pickover_mandelbrot.h>
+#include <math/sqr.h>
+#include <misc/debug_flags.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
 
 #include <algorithm>
 #include <stdexcept>

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "io/RestoredImageOutput.h"
+#include <io/RestoredImageOutput.h>
 
-#include "engine/calcfrac.h"
-#include "engine/SoundOutput.h"
+#include <engine/calcfrac.h>
+#include <engine/SoundOutput.h>
 
 #include <stdexcept>
 

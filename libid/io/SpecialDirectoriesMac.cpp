@@ -2,7 +2,7 @@
 //
 // Copyright 2026 Richard Thomson
 //
-#include "io/special_dirs.h"
+#include <io/special_dirs.h>
 
 #include <mach-o/dyld.h>
 

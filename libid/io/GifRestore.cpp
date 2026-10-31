@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "io/GifRestore.h"
+#include <io/GifRestore.h>
 
 #include <gif_lib.h>
 

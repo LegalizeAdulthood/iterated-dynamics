@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/resume.h"
+#include <engine/resume.h>
 
-#include "engine/calcfrac.h"
+#include <engine/calcfrac.h>
 
 #include <algorithm>
 #include <cstdarg>

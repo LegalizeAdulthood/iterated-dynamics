@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/get_toggles2.h"
+#include <ui/get_toggles2.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
-#include "engine/Inversion.h"
-#include "engine/Potential.h"
-#include "engine/spindac.h"
-#include "engine/UserData.h"
-#include "helpdefs.h"
-#include "misc/Driver.h"
-#include "ui/ChoiceBuilder.h"
-#include "io/disk_storage.h"
-#include "ui/help.h"
+#include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
+#include <engine/cmdfiles.h>
+#include <engine/Inversion.h>
+#include <engine/Potential.h>
+#include <engine/spindac.h>
+#include <engine/UserData.h>
+#include <helpdefs.h>
+#include <misc/Driver.h>
+#include <ui/ChoiceBuilder.h>
+#include <io/disk_storage.h>
+#include <ui/help.h>
 
 #include <fmt/format.h>
 

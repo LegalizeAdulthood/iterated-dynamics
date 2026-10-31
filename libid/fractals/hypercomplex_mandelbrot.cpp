@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/hypercomplex_mandelbrot.h"
+#include <fractals/hypercomplex_mandelbrot.h>
 
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "math/cmplx.h"
-#include "math/hcmplx.h"
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <math/cmplx.h>
+#include <math/hcmplx.h>
 
 using namespace id::engine;
 using namespace id::math;

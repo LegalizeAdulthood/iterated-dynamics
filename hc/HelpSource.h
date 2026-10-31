@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "modes.h"
+#include <modes.h>
 
 #include <string>
 #include <string_view>

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "misc/stack_avail.h"
-#include "ui/id_main.h"
+#include <misc/stack_avail.h>
+#include <ui/id_main.h>
 
 #include <config/driver_types.h>
 

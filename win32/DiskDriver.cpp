@@ -5,23 +5,23 @@
  *
  * Routines for a Win32 disk video mode driver for id.
  */
-#include "Frame.h"
-#include "ods.h"
-#include "Win32BaseDriver.h"
-#include "WinText.h"
+#include <Frame.h>
+#include <ods.h>
+#include <Win32BaseDriver.h>
+#include <WinText.h>
 
 #include <config/driver_types.h>
 
-#include "engine/calcfrac.h"
-#include "engine/pixel.h"
-#include "engine/spindac.h"
-#include "engine/video_mode.h"
-#include "engine/VideoInfo.h"
-#include "geometry/plot3d.h"
-#include "io/disk_storage.h"
-#include "ui/diskvid.h"
-#include "ui/video.h"
-#include "ui/zoom.h"
+#include <engine/calcfrac.h>
+#include <engine/pixel.h>
+#include <engine/spindac.h>
+#include <engine/video_mode.h>
+#include <engine/VideoInfo.h>
+#include <geometry/plot3d.h>
+#include <io/disk_storage.h>
+#include <ui/diskvid.h>
+#include <ui/video.h>
+#include <ui/zoom.h>
 
 using namespace id::engine;
 using namespace id::io;

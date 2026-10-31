@@ -16,26 +16,26 @@
 
     Mark C. Peterson
 */
-#include "fractals/parser.h"
+#include <fractals/parser.h>
 
-#include "engine/calcfrac.h"
-#include "engine/convert_center_mag.h"
-#include "engine/Inversion.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel_grid.h"
-#include "fractals/formula.h"
-#include "fractals/fractalp.h"
-#include "fractals/interpreter.h"
-#include "fractals/newton.h"
-#include "io/check_write_file.h"
-#include "io/file_item.h"
-#include "io/library.h"
-#include "math/arg.h"
-#include "math/cmplx.h"
-#include "math/fixed_pt.h"
-#include "math/fpu087.h"
-#include "misc/debug_flags.h"
-#include "misc/id.h"
+#include <engine/calcfrac.h>
+#include <engine/convert_center_mag.h>
+#include <engine/Inversion.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel_grid.h>
+#include <fractals/formula.h>
+#include <fractals/fractalp.h>
+#include <fractals/interpreter.h>
+#include <fractals/newton.h>
+#include <io/check_write_file.h>
+#include <io/file_item.h>
+#include <io/library.h>
+#include <math/arg.h>
+#include <math/cmplx.h>
+#include <math/fixed_pt.h>
+#include <math/fpu087.h>
+#include <misc/debug_flags.h>
+#include <misc/id.h>
 
 #include <config/string_case_compare.h>
 

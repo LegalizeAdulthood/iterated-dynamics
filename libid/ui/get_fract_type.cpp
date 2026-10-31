@@ -1,35 +1,35 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/get_fract_type.h"
+#include <ui/get_fract_type.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/Inversion.h"
-#include "engine/param_not_used.h"
-#include "engine/Potential.h"
-#include "engine/trig_fns.h"
-#include "engine/type_has_param.h"
-#include "engine/UserData.h"
-#include "fractals/formula.h"
-#include "fractals/fractalp.h"
-#include "fractals/ifs.h"
-#include "fractals/julibrot.h"
-#include "fractals/lorenz.h"
-#include "fractals/lsystem.h"
-#include "fractals/parser.h"
-#include "helpcom.h"
-#include "io/file_item.h"
-#include "io/load_entry_text.h"
-#include "io/loadfile.h"
-#include "misc/ValueSaver.h"
-#include "ui/full_screen_choice.h"
-#include "ui/full_screen_prompt.h"
-#include "ui/get_corners.h"
-#include "ui/get_file_entry.h"
-#include "ui/help.h"
-#include "ui/id_keys.h"
-#include "ui/set_default_params.h"
-#include "ui/stop_msg.h"
+#include <engine/bailout_formula.h>
+#include <engine/Inversion.h>
+#include <engine/param_not_used.h>
+#include <engine/Potential.h>
+#include <engine/trig_fns.h>
+#include <engine/type_has_param.h>
+#include <engine/UserData.h>
+#include <fractals/formula.h>
+#include <fractals/fractalp.h>
+#include <fractals/ifs.h>
+#include <fractals/julibrot.h>
+#include <fractals/lorenz.h>
+#include <fractals/lsystem.h>
+#include <fractals/parser.h>
+#include <helpcom.h>
+#include <io/file_item.h>
+#include <io/load_entry_text.h>
+#include <io/loadfile.h>
+#include <misc/ValueSaver.h>
+#include <ui/full_screen_choice.h>
+#include <ui/full_screen_prompt.h>
+#include <ui/get_corners.h>
+#include <ui/get_file_entry.h>
+#include <ui/help.h>
+#include <ui/id_keys.h>
+#include <ui/set_default_params.h>
+#include <ui/stop_msg.h>
 
 #include <config/string_case_compare.h>
 #include <fmt/format.h>

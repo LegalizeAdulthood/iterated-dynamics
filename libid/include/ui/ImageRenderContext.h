@@ -3,23 +3,23 @@
 //
 #pragma once
 
-#include "engine/ImageRenderOperation.h"
-#include "ui/AntController.h"
-#include "ui/BifurcationController.h"
-#include "ui/CellularController.h"
-#include "ui/DiffusionController.h"
-#include "ui/FrothyBasinController.h"
-#include "ui/IFS2DController.h"
-#include "ui/InverseJuliaFractalController.h"
-#include "ui/LSystemController.h"
-#include "ui/LyapunovController.h"
-#include "ui/OrbitController.h"
-#include "ui/PlasmaController.h"
-#include "ui/PopcornController.h"
-#include "ui/Standard4DController.h"
-#include "ui/StandardFractalController.h"
-#include "ui/StereoController.h"
-#include "ui/TestPointController.h"
+#include <engine/ImageRenderOperation.h>
+#include <ui/AntController.h>
+#include <ui/BifurcationController.h>
+#include <ui/CellularController.h>
+#include <ui/DiffusionController.h>
+#include <ui/FrothyBasinController.h>
+#include <ui/IFS2DController.h>
+#include <ui/InverseJuliaFractalController.h>
+#include <ui/LSystemController.h>
+#include <ui/LyapunovController.h>
+#include <ui/OrbitController.h>
+#include <ui/PlasmaController.h>
+#include <ui/PopcornController.h>
+#include <ui/Standard4DController.h>
+#include <ui/StandardFractalController.h>
+#include <ui/StereoController.h>
+#include <ui/TestPointController.h>
 
 #include <exception>
 #include <optional>

@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "wx_id.h"
+#include <wx_id.h>
 
 #include <config/driver_types.h>
 #include <misc/stack_avail.h>
 #include <ui/id_main.h>
 
 #ifdef WIN32
-#include "../win32/instance.h"
-#include "../win32/create_minidump.h"
+#include <../win32/instance.h>
+#include <../win32/create_minidump.h>
 
 #include <wx/msw/private.h>
 

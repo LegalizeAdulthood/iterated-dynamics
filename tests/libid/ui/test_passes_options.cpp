@@ -2,7 +2,7 @@
 //
 #include <ui/passes_options.h>
 
-#include "MockDriver.h"
+#include <MockDriver.h>
 
 #include <engine/OrbitPlot.h>
 #include <engine/StickyOrbits.h>

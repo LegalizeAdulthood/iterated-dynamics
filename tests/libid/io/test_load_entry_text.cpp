@@ -3,7 +3,7 @@
 //
 #include <io/load_entry_text.h>
 
-#include "test_data.h"
+#include <test_data.h>
 
 #include <algos/string_algorithms.h>
 

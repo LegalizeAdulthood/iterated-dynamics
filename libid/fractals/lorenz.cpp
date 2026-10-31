@@ -6,33 +6,33 @@
    generators - IFS and LORENZ3D, along with code to generate
    red/blue 3D images.
 */
-#include "fractals/lorenz.h"
+#include <fractals/lorenz.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/ImageRegion.h"
-#include "engine/jiim.h"
-#include "engine/LogicalScreen.h"
-#include "engine/OrbitPlot.h"
-#include "engine/pixel.h"
-#include "engine/random_seed.h"
-#include "engine/resume.h"
-#include "engine/SoundOutput.h"
-#include "engine/VideoInfo.h"
-#include "fractals/fractalp.h"
-#include "fractals/fractype.h"
-#include "fractals/ifs.h"
-#include "geometry/3d.h"
-#include "geometry/line3d.h"
-#include "geometry/plot3d.h"
-#include "io/check_write_file.h"
-#include "io/encoder.h"
-#include "io/library.h"
-#include "math/arg.h"
-#include "math/cmplx.h"
-#include "math/sign.h"
-#include "misc/Driver.h"
+#include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/ImageRegion.h>
+#include <engine/jiim.h>
+#include <engine/LogicalScreen.h>
+#include <engine/OrbitPlot.h>
+#include <engine/pixel.h>
+#include <engine/random_seed.h>
+#include <engine/resume.h>
+#include <engine/SoundOutput.h>
+#include <engine/VideoInfo.h>
+#include <fractals/fractalp.h>
+#include <fractals/fractype.h>
+#include <fractals/ifs.h>
+#include <geometry/3d.h>
+#include <geometry/line3d.h>
+#include <geometry/plot3d.h>
+#include <io/check_write_file.h>
+#include <io/encoder.h>
+#include <io/library.h>
+#include <math/arg.h>
+#include <math/cmplx.h>
+#include <math/sign.h>
+#include <misc/Driver.h>
 
 #include <fmt/format.h>
 

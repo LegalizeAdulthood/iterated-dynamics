@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "io/EvolutionInfo.h"
+#include <io/EvolutionInfo.h>
 
 #include <algorithm>
 #include <cmath>

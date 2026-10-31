@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/thinking.h"
+#include <ui/thinking.h>
 
-#include "engine/text_color.h"
-#include "misc/Driver.h"
-#include "ui/help_title.h"
-#include "ui/text_screen.h"
+#include <engine/text_color.h>
+#include <misc/Driver.h>
+#include <ui/help_title.h>
+#include <ui/text_screen.h>
 
 #include <string>
 

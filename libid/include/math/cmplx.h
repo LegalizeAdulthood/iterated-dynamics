@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "math/sqr.h"
+#include <math/sqr.h>
 
 namespace id::math
 {

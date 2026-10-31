@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/goodbye.h"
+#include <ui/goodbye.h>
 
-#include "engine/cmdfiles.h"
-#include "engine/pixel_grid.h"
-#include "engine/resume.h"
-#include "fractals/ifs.h"
-#include "helpcom.h"
-#include "misc/Driver.h"
-#include "misc/memory.h"
-#include "io/disk_storage.h"
-#include "ui/evolve.h"
-#include "ui/make_batch_file.h"
-#include "ui/slideshw.h"
-#include "ui/stop_msg.h"
+#include <engine/cmdfiles.h>
+#include <engine/pixel_grid.h>
+#include <engine/resume.h>
+#include <fractals/ifs.h>
+#include <helpcom.h>
+#include <misc/Driver.h>
+#include <misc/memory.h>
+#include <io/disk_storage.h>
+#include <ui/evolve.h>
+#include <ui/make_batch_file.h>
+#include <ui/slideshw.h>
+#include <ui/stop_msg.h>
 
 #include <cstdlib>
 

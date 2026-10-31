@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "io/load_config.h"
+#include <io/load_config.h>
 
-#include "engine/pixel_limits.h"
-#include "io/library.h"
-#include "misc/Driver.h"
-#include "ui/video_mode.h"
+#include <engine/pixel_limits.h>
+#include <io/library.h>
+#include <misc/Driver.h>
+#include <ui/video_mode.h>
 
 #include <algorithm>
 #include <array>

@@ -5,7 +5,7 @@
 
 #include <ui/id_keys.h>
 
-#include "MockDriver.h"
+#include <MockDriver.h>
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>

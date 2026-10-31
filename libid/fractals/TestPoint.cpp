@@ -21,13 +21,13 @@ must not be called by any part of Id other than calcfrac.
 The sample code below is a straightforward Mandelbrot routine.
 
 */
-#include "fractals/TestPoint.h"
+#include <fractals/TestPoint.h>
 
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/pixel_grid.h"
-#include "engine/resume.h"
-#include "engine/VideoInfo.h"
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/pixel_grid.h>
+#include <engine/resume.h>
+#include <engine/VideoInfo.h>
 
 using namespace id::engine;
 

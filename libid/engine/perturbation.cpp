@@ -3,11 +3,11 @@
 //
 // Thanks to Shirom Makkad fractaltodesktop@gmail.com
 
-#include "engine/ImageRegion.h"
-#include "engine/StandardFractal.h"
-#include "engine/UserData.h"
-#include "fractals/fractype.h"
-#include "math/biginit.h"
+#include <engine/ImageRegion.h>
+#include <engine/StandardFractal.h>
+#include <engine/UserData.h>
+#include <fractals/fractype.h>
+#include <math/biginit.h>
 
 #include <complex>
 

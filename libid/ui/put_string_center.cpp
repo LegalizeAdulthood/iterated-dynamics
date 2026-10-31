@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/put_string_center.h"
+#include <ui/put_string_center.h>
 
-#include "misc/Driver.h"
+#include <misc/Driver.h>
 
 #include <cstring>
 

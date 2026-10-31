@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "test_data.h"
+#include <test_data.h>
 #include <fractals/fractalp.h>
 #include <misc/ValueSaver.h>
 

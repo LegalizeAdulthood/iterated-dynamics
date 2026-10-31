@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "Plot.h"
+#include <Plot.h>
 
-#include "Frame.h"
+#include <Frame.h>
 
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
-#include "geometry/plot3d.h"
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <geometry/plot3d.h>
 
 #include <windowsx.h>
 

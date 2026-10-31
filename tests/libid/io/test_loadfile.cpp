@@ -3,12 +3,12 @@
 //
 #include <io/loadfile.h>
 
-#include "FindFractalInfoState.h"
-#include "FindFractalInfoTestSupport.h"
-#include "GifReadSupport.h"
-#include "MockDriver.h"
-#include "test_data.h"
-#include "test_migrate_gif.h"
+#include <FindFractalInfoState.h>
+#include <FindFractalInfoTestSupport.h>
+#include <GifReadSupport.h>
+#include <MockDriver.h>
+#include <test_data.h>
+#include <test_migrate_gif.h>
 
 #include <engine/calc_frac_init.h>
 #include <engine/cmdfiles.h>

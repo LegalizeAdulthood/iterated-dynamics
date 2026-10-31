@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/id_main.h"
+#include <ui/id_main.h>
 
-#include "misc/stack_avail.h"
+#include <misc/stack_avail.h>
 
-#include "create_minidump.h"
-#include "instance.h"
+#include <create_minidump.h>
+#include <instance.h>
 
 #include <config/driver_types.h>
 
-#include "win_defines.h"
+#include <win_defines.h>
 #include <crtdbg.h>
 #include <Shlwapi.h>
 #include <Windows.h>

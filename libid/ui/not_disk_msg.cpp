@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/not_disk_msg.h"
+#include <ui/not_disk_msg.h>
 
-#include "ui/stop_msg.h"
+#include <ui/stop_msg.h>
 
 namespace id::ui
 {

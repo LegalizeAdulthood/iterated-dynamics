@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson
 //
-#include "ui/SaveImageProgress.h"
+#include <ui/SaveImageProgress.h>
 
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/VideoInfo.h"
-#include "misc/Driver.h"
-#include "ui/diskvid.h"
+#include <engine/calcfrac.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/VideoInfo.h>
+#include <misc/Driver.h>
+#include <ui/diskvid.h>
 
 #include <stdexcept>
 #include <utility>

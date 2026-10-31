@@ -3,9 +3,9 @@
 //
 #pragma once
 
-#include "engine/color_state.h"
-#include "geometry/line3d.h"
-#include "geometry/plot3d.h"
+#include <engine/color_state.h>
+#include <geometry/line3d.h>
+#include <geometry/plot3d.h>
 
 #include <array>
 #include <string>

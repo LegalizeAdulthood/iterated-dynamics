@@ -4,10 +4,10 @@
 //
 // See help-compiler.txt for source file syntax.
 //
-#include "HelpCompiler.h"
+#include <HelpCompiler.h>
 
-#include "HelpSource.h"
-#include "messages.h"
+#include <HelpSource.h>
+#include <messages.h>
 
 #include <config/fdio.h>
 #include <config/filelength.h>
@@ -793,8 +793,8 @@ void HelpCompiler::write_link_source()
         src << //
             "// SPDX-License-Identifier: GPL-3.0-only\n"
             "//\n"
-            "#include \"helpdefs.h\"\n"
-            "#include \"help_links.h\"\n"
+            "#include <helpdefs.h>\n"
+            "#include <help_links.h>\n"
             "\n"
             "namespace hc\n"
             "{\n"

@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/get_sound_params.h"
+#include <ui/get_sound_params.h>
 
-#include "engine/calcfrac.h"
-#include "engine/OrbitPlot.h"
-#include "engine/sound.h"
-#include "helpdefs.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/ChoiceBuilder.h"
-#include "ui/help.h"
-#include "ui/id_keys.h"
+#include <engine/calcfrac.h>
+#include <engine/OrbitPlot.h>
+#include <engine/sound.h>
+#include <helpdefs.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/ChoiceBuilder.h>
+#include <ui/help.h>
+#include <ui/id_keys.h>
 
 #include <algorithm>
 #include <cmath>

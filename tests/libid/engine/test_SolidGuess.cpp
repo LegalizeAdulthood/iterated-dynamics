@@ -4,9 +4,9 @@
 #include <engine/pixel.h>
 #include <engine/SolidGuess.h>
 
-#include "MockDriver.h"
-#include "PassTestFrame.h"
-#include "WorkListSnapshot.h"
+#include <MockDriver.h>
+#include <PassTestFrame.h>
+#include <WorkListSnapshot.h>
 
 #include <engine/calcfrac.h>
 #include <engine/VideoInfo.h>

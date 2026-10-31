@@ -1,25 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "fractals/frasetup.h"
+#include <fractals/frasetup.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/calc_frac_init.h"
-#include "engine/calcfrac.h"
-#include "engine/calmanfp.h"
-#include "engine/cmdfiles.h"
-#include "engine/fractals.h"
-#include "engine/get_julia_attractor.h"
-#include "engine/sound.h"
-#include "engine/trig_fns.h"
-#include "fractals/fractalp.h"
-#include "fractals/fractype.h"
-#include "fractals/lorenz.h"
-#include "fractals/magnet.h"
-#include "fractals/peterson_variations.h"
-#include "fractals/pickover_mandelbrot.h"
-#include "fractals/popcorn.h"
-#include "misc/debug_flags.h"
+#include <engine/bailout_formula.h>
+#include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
+#include <engine/calmanfp.h>
+#include <engine/cmdfiles.h>
+#include <engine/fractals.h>
+#include <engine/get_julia_attractor.h>
+#include <engine/sound.h>
+#include <engine/trig_fns.h>
+#include <fractals/fractalp.h>
+#include <fractals/fractype.h>
+#include <fractals/lorenz.h>
+#include <fractals/magnet.h>
+#include <fractals/peterson_variations.h>
+#include <fractals/pickover_mandelbrot.h>
+#include <fractals/popcorn.h>
+#include <misc/debug_flags.h>
 
 using namespace id::engine;
 using namespace id::math;

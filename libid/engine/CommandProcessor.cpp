@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/CommandProcessor.h"
+#include <engine/CommandProcessor.h>
 
-#include "engine/Browse.h"
-#include "engine/Command.h"
-#include "engine/command_comments.h"
-#include "fractals/formula.h"
-#include "fractals/fractalp.h"
-#include "fractals/ifs.h"
-#include "fractals/lsystem.h"
-#include "io/file_gets.h"
-#include "io/file_item.h"
-#include "io/has_ext.h"
-#include "io/library.h"
-#include "io/loadfile.h"
+#include <engine/Browse.h>
+#include <engine/Command.h>
+#include <engine/command_comments.h>
+#include <fractals/formula.h>
+#include <fractals/fractalp.h>
+#include <fractals/ifs.h>
+#include <fractals/lsystem.h>
+#include <io/file_gets.h>
+#include <io/file_item.h>
+#include <io/has_ext.h>
+#include <io/library.h>
+#include <io/loadfile.h>
 
 #include <algos/string_algorithms.h>
 

@@ -3,20 +3,20 @@
 //
 #include <ui/make_batch_file.h>
 
-#include "ColorMapSaver.h"
-#include "FractalParamSaver.h"
-#include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
-#include "engine/color_utils.h"
-#include "engine/SolidGuess.h"
-#include "engine/UserData.h"
-#include "fractals/fractalp.h"
-#include "fractals/fractype.h"
-#include "geometry/stereo_params.h"
-#include "misc/debug_flags.h"
-#include "misc/ValueSaver.h"
-#include "misc/version.h"
-#include "ui/stereo.h"
+#include <ColorMapSaver.h>
+#include <FractalParamSaver.h>
+#include <engine/calcfrac.h>
+#include <engine/cmdfiles.h>
+#include <engine/color_utils.h>
+#include <engine/SolidGuess.h>
+#include <engine/UserData.h>
+#include <fractals/fractalp.h>
+#include <fractals/fractype.h>
+#include <geometry/stereo_params.h>
+#include <misc/debug_flags.h>
+#include <misc/ValueSaver.h>
+#include <misc/version.h>
+#include <ui/stereo.h>
 
 #include <gtest/gtest.h>
 

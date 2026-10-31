@@ -2,16 +2,16 @@
 // Copyright 2026 Richard Thomson.
 //
 // GIF scanline pixel output helpers.
-#include "io/decoder.h"
-#include "io/gifview.h"
+#include <io/decoder.h>
+#include <io/gifview.h>
 
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/Potential.h"
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
-#include "io/disk_storage.h"
+#include <engine/calcfrac.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/Potential.h>
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <io/disk_storage.h>
 
 #include <cstdlib>
 #include <algorithm>

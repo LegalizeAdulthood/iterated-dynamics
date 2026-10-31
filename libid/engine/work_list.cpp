@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/work_list.h"
+#include <engine/work_list.h>
 
 using namespace id::math;
 

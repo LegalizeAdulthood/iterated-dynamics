@@ -3,8 +3,8 @@
 //
 #pragma once
 
-#include "io/EvolutionInfo.h"
-#include "io/gif_extensions.h"
+#include <io/EvolutionInfo.h>
+#include <io/gif_extensions.h>
 
 #include <vector>
 

@@ -12,16 +12,16 @@
  * <http://www.cs.tu-berlin.de/~rms/AlmondBread>.
  *
  */
-#include "engine/SynchronousOrbit.h"
+#include <engine/SynchronousOrbit.h>
 
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/ImageRegion.h"
-#include "engine/LogicalScreen.h"
-#include "engine/PertEngine.h"
-#include "engine/work_list.h"
-#include "fractals/fractalp.h"
-#include "misc/stack_avail.h"
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/ImageRegion.h>
+#include <engine/LogicalScreen.h>
+#include <engine/PertEngine.h>
+#include <engine/work_list.h>
+#include <fractals/fractalp.h>
+#include <misc/stack_avail.h>
 
 #include <algorithm>
 #include <cmath>

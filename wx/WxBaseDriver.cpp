@@ -4,11 +4,11 @@
  *
  * Routines for a Win32 GDI driver for id.
  */
-#include "WxBaseDriver.h"
+#include <WxBaseDriver.h>
 
-#include "gui/App.h"
-#include "gui/Colormap.h"
-#include "gui/Frame.h"
+#include <gui/App.h>
+#include <gui/Colormap.h>
+#include <gui/Frame.h>
 
 #include <engine/calcfrac.h>
 #include <engine/spindac.h>

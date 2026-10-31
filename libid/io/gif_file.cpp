@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "io/gif_file.h"
+#include <io/gif_file.h>
 
 #include <config/port.h>
 
-#include "io/gif_extensions.h"
+#include <io/gif_extensions.h>
 
 #include <boost/endian/buffers.hpp>
 #include <boost/endian/conversion.hpp>

@@ -3,10 +3,10 @@
 //
 #pragma once
 
-#include "engine/calcfrac.h"
-#include "fractals/fractype.h"
-#include "helpdefs.h"
-#include "math/big.h"
+#include <engine/calcfrac.h>
+#include <fractals/fractype.h>
+#include <helpdefs.h>
+#include <math/big.h>
 
 #include <complex>
 

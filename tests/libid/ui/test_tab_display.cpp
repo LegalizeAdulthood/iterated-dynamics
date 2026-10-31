@@ -3,8 +3,8 @@
 //
 #include <ui/tab_display.h>
 
-#include "MockDriver.h"
-#include "helpdefs.h"
+#include <MockDriver.h>
+#include <helpdefs.h>
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>

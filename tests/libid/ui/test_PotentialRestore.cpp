@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ColorMapSaver.h"
-#include "MockDriver.h"
-#include "RestoreDecodeTestState.h"
-#include "StopMessageTestSupport.h"
-#include "TemporaryDirectory.h"
+#include <ColorMapSaver.h>
+#include <MockDriver.h>
+#include <RestoreDecodeTestState.h>
+#include <StopMessageTestSupport.h>
+#include <TemporaryDirectory.h>
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>

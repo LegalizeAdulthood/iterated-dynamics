@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "fractals/fractalp.h"
+#include <fractals/fractalp.h>
 
 namespace id::fractals
 {

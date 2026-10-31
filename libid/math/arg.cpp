@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "math/arg.h"
+#include <math/arg.h>
 
-#include "fractals/interpreter.h"
+#include <fractals/interpreter.h>
 
 using namespace id::fractals;
 

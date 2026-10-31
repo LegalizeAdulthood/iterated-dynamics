@@ -6,28 +6,28 @@
 // by the decoder. The purpose is to apply various 3D transformations
 // before displaying points. Called once per line of the input file.
 //**********************************************************************
-#include "geometry/line3d.h"
+#include <geometry/line3d.h>
 
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel_limits.h"
-#include "engine/Potential.h"
-#include "engine/random_seed.h"
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
-#include "geometry/plot3d.h"
-#include "geometry/stereo_params.h"
-#include "io/check_write_file.h"
-#include "io/decoder.h"
-#include "io/gifview.h"
-#include "io/library.h"
-#include "io/loadfile.h"
-#include "misc/debug_flags.h"
-#include "misc/Driver.h"
-#include "misc/id.h"
-#include "misc/version.h"
-#include "ui/big_while_loop.h"
-#include "io/disk_storage.h"
+#include <engine/calcfrac.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel_limits.h>
+#include <engine/Potential.h>
+#include <engine/random_seed.h>
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <geometry/plot3d.h>
+#include <geometry/stereo_params.h>
+#include <io/check_write_file.h>
+#include <io/decoder.h>
+#include <io/gifview.h>
+#include <io/library.h>
+#include <io/loadfile.h>
+#include <misc/debug_flags.h>
+#include <misc/Driver.h>
+#include <misc/id.h>
+#include <misc/version.h>
+#include <ui/big_while_loop.h>
+#include <io/disk_storage.h>
 
 #include <fmt/format.h>
 

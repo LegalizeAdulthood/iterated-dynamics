@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/comments.h"
+#include <ui/comments.h>
 
-#include "engine/calcfrac.h"
-#include "engine/command_comments.h"
-#include "engine/LogicalScreen.h"
-#include "engine/VideoInfo.h"
-#include "misc/version.h"
-#include "ui/get_calculation_time.h"
-#include "ui/stop_msg.h"
-#include "ui/video_mode.h"
+#include <engine/calcfrac.h>
+#include <engine/command_comments.h>
+#include <engine/LogicalScreen.h>
+#include <engine/VideoInfo.h>
+#include <misc/version.h>
+#include <ui/get_calculation_time.h>
+#include <ui/stop_msg.h>
+#include <ui/video_mode.h>
 
 #include <libcpuid/libcpuid.h>
 

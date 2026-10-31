@@ -2,8 +2,8 @@
 //
 #pragma once
 
-#include "gui/Colormap.h"
-#include "gui/Screen.h"
+#include <gui/Colormap.h>
+#include <gui/Screen.h>
 
 #include <wx/app.h>
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "geometry/stereo_params.h"
+#include <geometry/stereo_params.h>
 
 namespace id::geometry
 {

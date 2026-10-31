@@ -3,7 +3,7 @@
 //
 #include <io/find_path.h>
 
-#include "test_data.h"
+#include <test_data.h>
 
 #include <io/CurrentPathSaver.h>
 #include <io/library.h>

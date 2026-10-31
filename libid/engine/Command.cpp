@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/Command.h"
+#include <engine/Command.h>
 
-#include "engine/lowerize_parameter.h"
+#include <engine/lowerize_parameter.h>
 
 #include <cctype>
 #include <charconv>

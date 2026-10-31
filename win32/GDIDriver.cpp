@@ -5,22 +5,22 @@
  *
  * Routines for a Win32 GDI driver for id.
  */
-#include "Frame.h"
-#include "instance.h"
-#include "ods.h"
-#include "Plot.h"
-#include "Win32BaseDriver.h"
+#include <Frame.h>
+#include <instance.h>
+#include <ods.h>
+#include <Plot.h>
+#include <Win32BaseDriver.h>
 
 #include <config/driver_types.h>
 
-#include "engine/calcfrac.h"
-#include "engine/spindac.h"
-#include "engine/video_mode.h"
-#include "engine/VideoInfo.h"
-#include "io/disk_storage.h"
-#include "ui/diskvid.h"
-#include "ui/video.h"
-#include "ui/zoom.h"
+#include <engine/calcfrac.h>
+#include <engine/spindac.h>
+#include <engine/video_mode.h>
+#include <engine/VideoInfo.h>
+#include <io/disk_storage.h>
+#include <ui/diskvid.h>
+#include <ui/video.h>
+#include <ui/zoom.h>
 
 #include <array> // for std::size
 

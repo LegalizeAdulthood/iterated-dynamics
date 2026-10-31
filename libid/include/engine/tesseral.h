@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "math/Point.h"
+#include <math/Point.h>
 
 #include <array>
 #include <vector>

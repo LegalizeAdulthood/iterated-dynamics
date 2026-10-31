@@ -2,26 +2,26 @@
 // Copyright 2026 Richard Thomson.
 //
 // Select a pending image's video mode and scaling without changing it.
-#include "ui/get_video_mode.h"
+#include <ui/get_video_mode.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/cmdfiles.h"
-#include "engine/VideoInfo.h"
-#include "engine/Viewport.h"
-#include "fractals/fractalp.h"
-#include "fractals/lorenz.h"
-#include "io/gif_extensions.h"
-#include "io/loadfile.h"
-#include "io/trim_filename.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "misc/version.h"
-#include "ui/big_while_loop.h"
-#include "ui/full_screen_choice.h"
-#include "ui/help.h"
-#include "ui/make_batch_file.h"
-#include "ui/stop_msg.h"
-#include "ui/video_mode.h"
+#include <engine/calc_frac_init.h>
+#include <engine/cmdfiles.h>
+#include <engine/VideoInfo.h>
+#include <engine/Viewport.h>
+#include <fractals/fractalp.h>
+#include <fractals/lorenz.h>
+#include <io/gif_extensions.h>
+#include <io/loadfile.h>
+#include <io/trim_filename.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <misc/version.h>
+#include <ui/big_while_loop.h>
+#include <ui/full_screen_choice.h>
+#include <ui/help.h>
+#include <ui/make_batch_file.h>
+#include <ui/stop_msg.h>
+#include <ui/video_mode.h>
 
 #include <fmt/format.h>
 

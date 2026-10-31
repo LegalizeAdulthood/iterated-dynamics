@@ -1,27 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/command_effects.h"
+#include <ui/command_effects.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/cmdfiles.h"
-#include "engine/LogicalScreen.h"
-#include "engine/sound.h"
-#include "engine/spindac.h"
-#include "engine/text_color.h"
-#include "engine/Viewport.h"
-#include "helpcom.h"
-#include "io/library.h"
-#include "io/loadfile.h"
-#include "io/loadmap.h"
-#include "io/make_mig.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/get_video_mode.h"
-#include "ui/help_title.h"
-#include "ui/make_batch_file.h"
-#include "ui/video_mode.h"
-#include "ui/zoom.h"
+#include <engine/calc_frac_init.h>
+#include <engine/cmdfiles.h>
+#include <engine/LogicalScreen.h>
+#include <engine/sound.h>
+#include <engine/spindac.h>
+#include <engine/text_color.h>
+#include <engine/Viewport.h>
+#include <helpcom.h>
+#include <io/library.h>
+#include <io/loadfile.h>
+#include <io/loadmap.h>
+#include <io/make_mig.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/get_video_mode.h>
+#include <ui/help_title.h>
+#include <ui/make_batch_file.h>
+#include <ui/video_mode.h>
+#include <ui/zoom.h>
 
 #include <fmt/format.h>
 

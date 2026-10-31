@@ -2,8 +2,8 @@
 //
 #pragma once
 
-#include "math/cmplx.h"
-#include "math/fpu087.h"
+#include <math/cmplx.h>
+#include <math/fpu087.h>
 
 namespace id::math
 {

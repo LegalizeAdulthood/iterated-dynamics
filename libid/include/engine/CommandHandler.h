@@ -3,8 +3,8 @@
 //
 #pragma once
 
-#include "engine/Command.h"
-#include "misc/debug_flags.h"
+#include <engine/Command.h>
+#include <misc/debug_flags.h>
 
 #include <algorithm>
 #include <functional>

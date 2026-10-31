@@ -4,7 +4,7 @@
  * Common help code
  *
  */
-#include "helpcom.h"
+#include <helpcom.h>
 
 #include <cassert>
 #include <string>

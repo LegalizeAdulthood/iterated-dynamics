@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/get_browse_params.h"
+#include <ui/get_browse_params.h>
 
-#include "engine/Browse.h"
-#include "helpdefs.h"
-#include "misc/ValueSaver.h"
-#include "ui/big_while_loop.h"
-#include "ui/ChoiceBuilder.h"
-#include "ui/evolve.h"
-#include "ui/help.h"
-#include "ui/id_keys.h"
+#include <engine/Browse.h>
+#include <helpdefs.h>
+#include <misc/ValueSaver.h>
+#include <ui/big_while_loop.h>
+#include <ui/ChoiceBuilder.h>
+#include <ui/evolve.h>
+#include <ui/help.h>
+#include <ui/id_keys.h>
 
 #include <algorithm>
 #include <filesystem>

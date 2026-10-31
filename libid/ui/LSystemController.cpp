@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/LSystemController.h"
+#include <ui/LSystemController.h>
 
-#include "engine/NonStandardFractal.h"
-#include "misc/Driver.h"
-#include "misc/run_cleanup.h"
-#include "ui/diskvid.h"
-#include "ui/thinking.h"
+#include <engine/NonStandardFractal.h>
+#include <misc/Driver.h>
+#include <misc/run_cleanup.h>
+#include <ui/diskvid.h>
+#include <ui/thinking.h>
 
 #include <stdexcept>
 

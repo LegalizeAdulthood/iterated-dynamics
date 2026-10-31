@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "MockDriver.h"
+#include <MockDriver.h>
 
 #include <engine/cmdfiles.h>
 #include <engine/sound.h>

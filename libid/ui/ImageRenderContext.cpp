@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/ImageRenderContext.h"
+#include <ui/ImageRenderContext.h>
 
-#include "engine/cmdfiles.h"
-#include "math/biginit.h"
-#include "misc/Driver.h"
-#include "misc/run_cleanup.h"
-#include "ui/calculate_image.h"
-#include "ui/SoundSession.h"
-#include "ui/standard_orbit_plot.h"
-#include "ui/stop_msg.h"
+#include <engine/cmdfiles.h>
+#include <math/biginit.h>
+#include <misc/Driver.h>
+#include <misc/run_cleanup.h>
+#include <ui/calculate_image.h>
+#include <ui/SoundSession.h>
+#include <ui/standard_orbit_plot.h>
+#include <ui/stop_msg.h>
 
 #include <memory>
 #include <new>

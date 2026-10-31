@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "config/string_case_compare.h"
+#include <config/string_case_compare.h>
 
 #include <algorithm>
 #include <cctype>

@@ -6,34 +6,34 @@
     Written in Borland 'C++' by Paul de Leeuw.
     From an idea in "New Scientist" 9 October 1993 pages 26 - 29.
 */
-#include "ui/stereo.h"
+#include <ui/stereo.h>
 
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/pixel_limits.h"
-#include "engine/random_seed.h"
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
-#include "geometry/plot3d.h"
-#include "geometry/stereo_params.h"
-#include "helpdefs.h"
-#include "io/decoder.h"
-#include "io/encoder.h"
-#include "io/gifview.h"
-#include "io/loadmap.h"
-#include "ui/restore_image.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/find_special_colors.h"
-#include "ui/help.h"
-#include "ui/id_keys.h"
-#include "ui/KeyboardHandler.h"
-#include "ui/rotate.h"
-#include "ui/save_image.h"
-#include "ui/slideshw.h"
-#include "ui/stop_msg.h"
-#include "ui/temp_msg.h"
+#include <engine/calcfrac.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/pixel_limits.h>
+#include <engine/random_seed.h>
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <geometry/plot3d.h>
+#include <geometry/stereo_params.h>
+#include <helpdefs.h>
+#include <io/decoder.h>
+#include <io/encoder.h>
+#include <io/gifview.h>
+#include <io/loadmap.h>
+#include <ui/restore_image.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/find_special_colors.h>
+#include <ui/help.h>
+#include <ui/id_keys.h>
+#include <ui/KeyboardHandler.h>
+#include <ui/rotate.h>
+#include <ui/save_image.h>
+#include <ui/slideshw.h>
+#include <ui/stop_msg.h>
+#include <ui/temp_msg.h>
 
 #include <algorithm>
 #include <cmath>

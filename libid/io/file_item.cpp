@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "io/file_item.h"
+#include <io/file_item.h>
 
-#include "engine/cmdfiles.h"
-#include "io/library.h"
-#include "misc/id.h"
+#include <engine/cmdfiles.h>
+#include <io/library.h>
+#include <misc/id.h>
 
 #include <config/string_case_compare.h>
 #include <fmt/format.h>

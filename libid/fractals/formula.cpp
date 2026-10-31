@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "fractals/formula.h"
+#include <fractals/formula.h>
 
-#include "engine/calcfrac.h"
-#include "engine/Inversion.h"
-#include "engine/pixel_grid.h"
-#include "fractals/interpreter.h"
-#include "fractals/newton.h"
-#include "fractals/parser.h"
-#include "math/fixed_pt.h"
+#include <engine/calcfrac.h>
+#include <engine/Inversion.h>
+#include <engine/pixel_grid.h>
+#include <fractals/interpreter.h>
+#include <fractals/newton.h>
+#include <fractals/parser.h>
+#include <math/fixed_pt.h>
 
 #include <fmt/format.h>
 

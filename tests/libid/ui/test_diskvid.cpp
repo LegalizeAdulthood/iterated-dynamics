@@ -2,8 +2,8 @@
 //
 // Copyright 2026 Richard Thomson
 //
-#include "MockDriver.h"
-#include "TemporaryDirectory.h"
+#include <MockDriver.h>
+#include <TemporaryDirectory.h>
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>

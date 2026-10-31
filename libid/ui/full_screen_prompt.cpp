@@ -1,28 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/full_screen_prompt.h"
+#include <ui/full_screen_prompt.h>
 
-#include "engine/text_color.h"
-#include "fractals/formula.h"
-#include "fractals/fractype.h"
-#include "fractals/ifs.h"
-#include "fractals/lsystem.h"
-#include "helpdefs.h"
-#include "io/file_item.h"
-#include "io/load_entry_text.h"
-#include "math/round_float_double.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/double_to_string.h"
-#include "ui/help.h"
-#include "ui/help_title.h"
-#include "ui/id_keys.h"
-#include "ui/input_field.h"
-#include "ui/mouse.h"
-#include "ui/put_string_center.h"
-#include "ui/stop_msg.h"
-#include "ui/text_screen.h"
+#include <engine/text_color.h>
+#include <fractals/formula.h>
+#include <fractals/fractype.h>
+#include <fractals/ifs.h>
+#include <fractals/lsystem.h>
+#include <helpdefs.h>
+#include <io/file_item.h>
+#include <io/load_entry_text.h>
+#include <math/round_float_double.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/double_to_string.h>
+#include <ui/help.h>
+#include <ui/help_title.h>
+#include <ui/id_keys.h>
+#include <ui/input_field.h>
+#include <ui/mouse.h>
+#include <ui/put_string_center.h>
+#include <ui/stop_msg.h>
+#include <ui/text_screen.h>
 
 #include <fmt/format.h>
 

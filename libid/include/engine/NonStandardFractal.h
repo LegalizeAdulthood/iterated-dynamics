@@ -3,19 +3,19 @@
 //
 #pragma once
 
-#include "engine/calcfrac.h"
-#include "fractals/Ant.h"
-#include "fractals/Bifurcation.h"
-#include "fractals/Cellular.h"
-#include "fractals/Diffusion.h"
-#include "fractals/FrothyBasin.h"
-#include "fractals/julibrot.h"
-#include "fractals/lorenz.h"
-#include "fractals/lsystem.h"
-#include "fractals/Plasma.h"
-#include "fractals/popcorn.h"
-#include "fractals/TestPoint.h"
-#include "geometry/StereoView.h"
+#include <engine/calcfrac.h>
+#include <fractals/Ant.h>
+#include <fractals/Bifurcation.h>
+#include <fractals/Cellular.h>
+#include <fractals/Diffusion.h>
+#include <fractals/FrothyBasin.h>
+#include <fractals/julibrot.h>
+#include <fractals/lorenz.h>
+#include <fractals/lsystem.h>
+#include <fractals/Plasma.h>
+#include <fractals/popcorn.h>
+#include <fractals/TestPoint.h>
+#include <geometry/StereoView.h>
 
 #include <variant>
 

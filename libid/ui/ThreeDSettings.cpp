@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/ThreeDSettings.h"
+#include <ui/ThreeDSettings.h>
 
-#include "engine/spindac.h"
-#include "geometry/stereo_params.h"
-#include "io/loadmap.h"
+#include <engine/spindac.h>
+#include <geometry/stereo_params.h>
+#include <io/loadmap.h>
 
 #include <algorithm>
 

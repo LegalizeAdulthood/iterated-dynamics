@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/KeyboardHandler.h"
+#include <ui/KeyboardHandler.h>
 
-#include "misc/Driver.h"
+#include <misc/Driver.h>
 
 #include <cassert>
 #include <vector>

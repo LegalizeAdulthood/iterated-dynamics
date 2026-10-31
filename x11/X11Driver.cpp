@@ -3,8 +3,8 @@
 //
 #include <X11Driver/X11BaseDriver.h>
 
-#include "engine/video_mode.h"
-#include "engine/VideoInfo.h"
+#include <engine/video_mode.h>
+#include <engine/VideoInfo.h>
 
 using namespace id::engine;
 

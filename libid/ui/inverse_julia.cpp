@@ -1,34 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/inverse_julia.h"
+#include <ui/inverse_julia.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/calcfrac.h"
-#include "engine/ImageRegion.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/pixel_grid.h"
-#include "engine/random_seed.h"
-#include "engine/jiim.h"
-#include "engine/VideoInfo.h"
-#include "engine/Viewport.h"
-#include "fractals/fractalp.h"
-#include "fractals/lorenz.h"
-#include "io/disk_storage.h"
-#include "misc/debug_flags.h"
-#include "misc/Driver.h"
-#include "misc/memory.h"
-#include "misc/ValueSaver.h"
-#include "ui/editpal.h"
-#include "ui/find_special_colors.h"
-#include "ui/get_a_number.h"
-#include "ui/help.h"
-#include "ui/id_keys.h"
-#include "ui/mouse.h"
-#include "ui/stop_msg.h"
-#include "ui/temp_msg.h"
-#include "ui/video.h"
+#include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
+#include <engine/ImageRegion.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/pixel_grid.h>
+#include <engine/random_seed.h>
+#include <engine/jiim.h>
+#include <engine/VideoInfo.h>
+#include <engine/Viewport.h>
+#include <fractals/fractalp.h>
+#include <fractals/lorenz.h>
+#include <io/disk_storage.h>
+#include <misc/debug_flags.h>
+#include <misc/Driver.h>
+#include <misc/memory.h>
+#include <misc/ValueSaver.h>
+#include <ui/editpal.h>
+#include <ui/find_special_colors.h>
+#include <ui/get_a_number.h>
+#include <ui/help.h>
+#include <ui/id_keys.h>
+#include <ui/mouse.h>
+#include <ui/stop_msg.h>
+#include <ui/temp_msg.h>
+#include <ui/video.h>
 
 #include <fmt/format.h>
 

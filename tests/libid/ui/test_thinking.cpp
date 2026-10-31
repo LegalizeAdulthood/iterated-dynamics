@@ -3,7 +3,7 @@
 //
 #include <ui/thinking.h>
 
-#include "MockDriver.h"
+#include <MockDriver.h>
 
 #include <engine/text_color.h>
 #include <misc/Driver.h>

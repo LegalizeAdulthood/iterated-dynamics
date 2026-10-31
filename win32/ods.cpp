@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ods.h"
+#include <ods.h>
 
-#include "win_defines.h"
+#include <win_defines.h>
 #include <Windows.h>
 
 #include <cstdarg>

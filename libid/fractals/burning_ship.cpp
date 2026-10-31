@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/burning_ship.h"
+#include <fractals/burning_ship.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "math/biginit.h"
-#include "math/complex_fn.h"
+#include <engine/bailout_formula.h>
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <math/biginit.h>
+#include <math/complex_fn.h>
 
 #include <cmath>
 #include <stdexcept>

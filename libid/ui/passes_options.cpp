@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/passes_options.h"
+#include <ui/passes_options.h>
 
-#include "engine/OrbitPlot.h"
-#include "engine/StickyOrbits.h"
-#include "engine/UserData.h"
-#include "fractals/lorenz.h"
-#include "helpdefs.h"
-#include "misc/ValueSaver.h"
-#include "ui/full_screen_prompt.h"
-#include "ui/get_corners.h"
-#include "ui/help.h"
-#include "ui/id_keys.h"
+#include <engine/OrbitPlot.h>
+#include <engine/StickyOrbits.h>
+#include <engine/UserData.h>
+#include <fractals/lorenz.h>
+#include <helpdefs.h>
+#include <misc/ValueSaver.h>
+#include <ui/full_screen_prompt.h>
+#include <ui/get_corners.h>
+#include <ui/help.h>
+#include <ui/id_keys.h>
 
 #include <algorithm>
 #include <array>

@@ -2,9 +2,9 @@
 //
 // Copyright 2026 Richard Thomson
 //
-#include "io/special_dirs.h"
+#include <io/special_dirs.h>
 
-#include "test_executable_dir.h"
+#include <test_executable_dir.h>
 
 #include <gtest/gtest.h>
 

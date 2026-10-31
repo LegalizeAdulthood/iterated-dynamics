@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/pixel.h"
-#include "engine/ScanlinePass.h"
+#include <engine/pixel.h>
+#include <engine/ScanlinePass.h>
 
-#include "engine/calcfrac.h"
-#include "engine/resume.h"
-#include "engine/work_list.h"
+#include <engine/calcfrac.h>
+#include <engine/resume.h>
+#include <engine/work_list.h>
 
 #include <stdexcept>
 

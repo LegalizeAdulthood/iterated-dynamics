@@ -5,9 +5,9 @@
 
 #include <config/port.h>
 
-#include "fractals/fractype.h"
-#include "io/gif_extensions.h"
-#include "misc/version.h"
+#include <fractals/fractype.h>
+#include <io/gif_extensions.h>
+#include <misc/version.h>
 
 #include <array>
 #include <cstdint>

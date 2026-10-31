@@ -1,34 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/menu_handler.h"
+#include <ui/menu_handler.h>
 
-#include "engine/Browse.h"
-#include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
-#include "engine/color_state.h"
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
-#include "fractals/fractalp.h"
-#include "fractals/julibrot.h"
-#include "fractals/lorenz.h"
-#include "io/encoder.h"
-#include "io/loadfile.h"
-#include "io/save_timer.h"
-#include "io/update_save_name.h"
-#include "misc/debug_flags.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "ui/big_while_loop.h"
-#include "ui/editpal.h"
-#include "ui/evolve.h"
-#include "ui/get_fract_type.h"
-#include "ui/help.h"
-#include "ui/history.h"
-#include "ui/id_keys.h"
-#include "ui/rotate.h"
-#include "ui/zoom.h"
-#include "ui/video_mode.h"
+#include <engine/Browse.h>
+#include <engine/calcfrac.h>
+#include <engine/cmdfiles.h>
+#include <engine/color_state.h>
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <fractals/fractalp.h>
+#include <fractals/julibrot.h>
+#include <fractals/lorenz.h>
+#include <io/encoder.h>
+#include <io/loadfile.h>
+#include <io/save_timer.h>
+#include <io/update_save_name.h>
+#include <misc/debug_flags.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <ui/big_while_loop.h>
+#include <ui/editpal.h>
+#include <ui/evolve.h>
+#include <ui/get_fract_type.h>
+#include <ui/help.h>
+#include <ui/history.h>
+#include <ui/id_keys.h>
+#include <ui/rotate.h>
+#include <ui/zoom.h>
+#include <ui/video_mode.h>
 
 #include <cstring>
 

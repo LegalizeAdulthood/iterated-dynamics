@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/find_special_colors.h"
+#include <ui/find_special_colors.h>
 
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
 
 #include <algorithm>
 

@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/diskvid.h"
+#include <ui/diskvid.h>
 
-#include "engine/LogicalScreen.h"
-#include "engine/text_color.h"
-#include "engine/VideoInfo.h"
-#include "io/disk_storage.h"
-#include "io/encoder.h"
-#include "io/get_disk_space.h"
-#include "misc/debug_flags.h"
-#include "misc/Driver.h"
-#include "misc/memory.h"
-#include "ui/help_title.h"
-#include "ui/stop_msg.h"
-#include "ui/temp_msg.h"
-#include "ui/video.h"
+#include <engine/LogicalScreen.h>
+#include <engine/text_color.h>
+#include <engine/VideoInfo.h>
+#include <io/disk_storage.h>
+#include <io/encoder.h>
+#include <io/get_disk_space.h>
+#include <misc/debug_flags.h>
+#include <misc/Driver.h>
+#include <misc/memory.h>
+#include <ui/help_title.h>
+#include <ui/stop_msg.h>
+#include <ui/temp_msg.h>
+#include <ui/video.h>
 
 #include <fmt/format.h>
 

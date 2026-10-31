@@ -4,8 +4,8 @@
 
 #include <config/driver_types.h>
 
-#include "gui/Screen.h"
-#include "misc/Driver.h"
+#include <gui/Screen.h>
+#include <misc/Driver.h>
 
 #include <string>
 #include <vector>

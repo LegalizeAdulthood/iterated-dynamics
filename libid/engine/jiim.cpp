@@ -3,18 +3,18 @@
 //
 // Inverse Julia and orbit calculation, plotting, and MIIM queues.
 //
-#include "engine/jiim.h"
+#include <engine/jiim.h>
 
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel.h"
-#include "engine/random_seed.h"
-#include "engine/VideoInfo.h"
-#include "fractals/fractalp.h"
-#include "fractals/lorenz.h"
-#include "misc/Driver.h"
-#include "misc/ValueSaver.h"
-#include "io/disk_storage.h"
+#include <engine/calcfrac.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
+#include <engine/random_seed.h>
+#include <engine/VideoInfo.h>
+#include <fractals/fractalp.h>
+#include <fractals/lorenz.h>
+#include <misc/Driver.h>
+#include <misc/ValueSaver.h>
+#include <io/disk_storage.h>
 
 #include <cmath>
 #include <limits>

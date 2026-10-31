@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "io/search_path.h"
+#include <io/search_path.h>
 
 #include <algos/string_algorithms.h>
 

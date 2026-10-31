@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "math/arg.h"
+#include <math/arg.h>
 
 #include <array>
 #include <cstdint>

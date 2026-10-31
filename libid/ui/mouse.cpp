@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/mouse.h"
+#include <ui/mouse.h>
 
-#include "misc/ValueSaver.h"
+#include <misc/ValueSaver.h>
 
 #include <cassert>
 #include <functional>

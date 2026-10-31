@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/spindac.h"
+#include <engine/spindac.h>
 
-#include "engine/VideoInfo.h"
-#include "misc/Driver.h"
+#include <engine/VideoInfo.h>
+#include <misc/Driver.h>
 
 #include <cstring>
 

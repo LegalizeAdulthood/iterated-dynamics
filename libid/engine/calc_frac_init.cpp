@@ -1,27 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/calc_frac_init.h"
+#include <engine/calc_frac_init.h>
 
-#include "engine/calcfrac.h"
-#include "engine/convert_center_mag.h"
-#include "engine/convert_corners.h"
-#include "engine/fractalb.h"
-#include "engine/get_prec_big_float.h"
-#include "engine/ImageRegion.h"
-#include "engine/LogicalScreen.h"
-#include "engine/pixel_grid.h"
-#include "engine/pixel_limits.h"
-#include "engine/Potential.h"
-#include "engine/SynchronousOrbit.h"
-#include "engine/type_has_param.h"
-#include "engine/UserData.h"
-#include "engine/VideoInfo.h"
-#include "fractals/fractalp.h"
-#include "math/biginit.h"
-#include "math/sign.h"
-#include "misc/debug_flags.h"
-#include "misc/Driver.h"
+#include <engine/calcfrac.h>
+#include <engine/convert_center_mag.h>
+#include <engine/convert_corners.h>
+#include <engine/fractalb.h>
+#include <engine/get_prec_big_float.h>
+#include <engine/ImageRegion.h>
+#include <engine/LogicalScreen.h>
+#include <engine/pixel_grid.h>
+#include <engine/pixel_limits.h>
+#include <engine/Potential.h>
+#include <engine/SynchronousOrbit.h>
+#include <engine/type_has_param.h>
+#include <engine/UserData.h>
+#include <engine/VideoInfo.h>
+#include <fractals/fractalp.h>
+#include <math/biginit.h>
+#include <math/sign.h>
+#include <misc/debug_flags.h>
+#include <misc/Driver.h>
 
 #include <config/port.h>
 

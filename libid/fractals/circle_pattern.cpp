@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/circle_pattern.h"
+#include <fractals/circle_pattern.h>
 
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "engine/VideoInfo.h"
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/VideoInfo.h>
 
 using namespace id::engine;
 

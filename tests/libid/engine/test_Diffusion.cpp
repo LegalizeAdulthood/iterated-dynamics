@@ -3,9 +3,9 @@
 //
 #include <engine/Diffusion.h>
 
-#include "MockDriver.h"
-#include "PassTestFrame.h"
-#include "WorkListSnapshot.h"
+#include <MockDriver.h>
+#include <PassTestFrame.h>
+#include <WorkListSnapshot.h>
 
 #include <engine/calcfrac.h>
 #include <engine/pixel.h>

@@ -1,27 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/get_file_entry.h"
+#include <ui/get_file_entry.h>
 
-#include "engine/text_color.h"
-#include "fractals/formula.h"
-#include "fractals/fractalp.h"
-#include "fractals/ifs.h"
-#include "fractals/lsystem.h"
-#include "fractals/parser.h"
-#include "io/file_item.h"
-#include "io/library.h"
-#include "io/load_entry_text.h"
-#include "io/trim_filename.h"
-#include "misc/Driver.h"
-#include "ui/full_screen_choice.h"
-#include "ui/get_key_no_help.h"
-#include "ui/help_title.h"
-#include "ui/id_keys.h"
-#include "ui/set_default_params.h"
-#include "ui/shell_sort.h"
-#include "ui/stop_msg.h"
-#include "ui/text_screen.h"
+#include <engine/text_color.h>
+#include <fractals/formula.h>
+#include <fractals/fractalp.h>
+#include <fractals/ifs.h>
+#include <fractals/lsystem.h>
+#include <fractals/parser.h>
+#include <io/file_item.h>
+#include <io/library.h>
+#include <io/load_entry_text.h>
+#include <io/trim_filename.h>
+#include <misc/Driver.h>
+#include <ui/full_screen_choice.h>
+#include <ui/get_key_no_help.h>
+#include <ui/help_title.h>
+#include <ui/id_keys.h>
+#include <ui/set_default_params.h>
+#include <ui/shell_sort.h>
+#include <ui/stop_msg.h>
+#include <ui/text_screen.h>
 
 #include <fmt/format.h>
 

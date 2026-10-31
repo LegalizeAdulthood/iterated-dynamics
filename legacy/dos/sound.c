@@ -134,11 +134,11 @@
 #include <conio.h>
 #include <ctype.h>
 #include <dos.h>
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "externs.h"
-#include "helpdefs.h"
+#include <port.h>
+#include <prototyp.h>
+#include <fractype.h>
+#include <externs.h>
+#include <helpdefs.h>
 
 #define STEREO         /* Define this for SBPro CT-1330 or later card. */
 #define OPL3           /* Also define this for SBPro CT-1600 or later card. */

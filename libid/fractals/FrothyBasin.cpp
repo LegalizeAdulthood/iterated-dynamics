@@ -3,22 +3,22 @@
 //
 // frothy basin routines
 
-#include "fractals/FrothyBasin.h"
+#include <fractals/FrothyBasin.h>
 
-#include "engine/calcfrac.h"
-#include "engine/color_state.h"
-#include "engine/fractals.h"
-#include "engine/Inversion.h"
-#include "engine/OrbitPlot.h"
-#include "engine/pixel_grid.h"
-#include "engine/resume.h"
-#include "engine/show_dot.h"
-#include "engine/SoundOutput.h"
-#include "engine/spindac.h"
-#include "engine/VideoInfo.h"
-#include "fractals/newton.h"
-#include "io/loadmap.h"
-#include "misc/version.h"
+#include <engine/calcfrac.h>
+#include <engine/color_state.h>
+#include <engine/fractals.h>
+#include <engine/Inversion.h>
+#include <engine/OrbitPlot.h>
+#include <engine/pixel_grid.h>
+#include <engine/resume.h>
+#include <engine/show_dot.h>
+#include <engine/SoundOutput.h>
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <fractals/newton.h>
+#include <io/loadmap.h>
+#include <misc/version.h>
 
 #include <algorithm>
 #include <cmath>

@@ -3,8 +3,8 @@
 //
 #include <ui/history.h>
 
-#include "MockDriver.h"
-#include "test_data.h"
+#include <MockDriver.h>
+#include <test_data.h>
 
 #include <engine/UserData.h>
 #include <fractals/fractalp.h>

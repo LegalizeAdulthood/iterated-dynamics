@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "fractals/pickover_mandelbrot.h"
+#include <fractals/pickover_mandelbrot.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/calcfrac.h"
-#include "engine/fractalb.h"
-#include "engine/fractals.h"
-#include "engine/trig_fns.h"
-#include "fractals/frasetup.h"
-#include "math/arg.h"
-#include "math/biginit.h"
-#include "math/complex_fn.h"
-#include "math/fpu087.h"
-#include "misc/debug_flags.h"
-#include "misc/id.h"
+#include <engine/bailout_formula.h>
+#include <engine/calcfrac.h>
+#include <engine/fractalb.h>
+#include <engine/fractals.h>
+#include <engine/trig_fns.h>
+#include <fractals/frasetup.h>
+#include <math/arg.h>
+#include <math/biginit.h>
+#include <math/complex_fn.h>
+#include <math/fpu087.h>
+#include <misc/debug_flags.h>
+#include <misc/id.h>
 
 #include <cmath>
 

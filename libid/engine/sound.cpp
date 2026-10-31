@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/sound.h"
+#include <engine/sound.h>
 
 namespace id::engine
 {

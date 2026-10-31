@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "geometry/StereoView.h"
+#include <geometry/StereoView.h>
 
-#include "engine/calcfrac.h"
-#include "engine/LogicalScreen.h"
-#include "engine/VideoInfo.h"
-#include "engine/Viewport.h"
-#include "fractals/lorenz.h"
-#include "geometry/line3d.h"
+#include <engine/calcfrac.h>
+#include <engine/LogicalScreen.h>
+#include <engine/VideoInfo.h>
+#include <engine/Viewport.h>
+#include <fractals/lorenz.h>
+#include <geometry/line3d.h>
 
 #include <stdexcept>
 

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/bailout_formula.h"
+#include <engine/bailout_formula.h>
 
-#include "engine/calcfrac.h"
-#include "engine/fractalb.h"
-#include "engine/fractals.h"
-#include "math/biginit.h"
+#include <engine/calcfrac.h>
+#include <engine/fractalb.h>
+#include <engine/fractals.h>
+#include <math/biginit.h>
 
 #include <cmath>
 #include <stdexcept>

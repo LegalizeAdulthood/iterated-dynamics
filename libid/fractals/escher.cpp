@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/escher.h"
+#include <fractals/escher.h>
 
-#include "engine/bailout_formula.h"
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "math/cmplx.h"
-#include "math/sqr.h"
+#include <engine/bailout_formula.h>
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <math/cmplx.h>
+#include <math/sqr.h>
 
 using namespace id::engine;
 using namespace id::math;

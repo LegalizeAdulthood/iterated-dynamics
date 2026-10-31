@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/population.h"
+#include <fractals/population.h>
 
 namespace id::fractals
 {

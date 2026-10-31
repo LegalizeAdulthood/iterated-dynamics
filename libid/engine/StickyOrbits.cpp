@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "engine/StickyOrbits.h"
+#include <engine/StickyOrbits.h>
 
-#include "engine/calcfrac.h"
-#include "engine/convert_center_mag.h"
-#include "engine/fractals.h"
-#include "engine/LogicalScreen.h"
-#include "engine/OrbitPlot.h"
-#include "engine/PertEngine.h"
-#include "engine/resume.h"
-#include "engine/SoundOutput.h"
-#include "engine/VideoInfo.h"
-#include "engine/work_list.h"
-#include "fractals/fractalp.h"
-#include "fractals/lorenz.h"
-#include "misc/id.h"
-#include "misc/run_cleanup.h"
+#include <engine/calcfrac.h>
+#include <engine/convert_center_mag.h>
+#include <engine/fractals.h>
+#include <engine/LogicalScreen.h>
+#include <engine/OrbitPlot.h>
+#include <engine/PertEngine.h>
+#include <engine/resume.h>
+#include <engine/SoundOutput.h>
+#include <engine/VideoInfo.h>
+#include <engine/work_list.h>
+#include <fractals/fractalp.h>
+#include <fractals/lorenz.h>
+#include <misc/id.h>
+#include <misc/run_cleanup.h>
 
 #include <algorithm>
 #include <cmath>

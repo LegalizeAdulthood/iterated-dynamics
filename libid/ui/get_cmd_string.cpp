@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "ui/get_cmd_string.h"
+#include <ui/get_cmd_string.h>
 
-#include "engine/cmdfiles.h"
-#include "engine/CommandProcessor.h"
-#include "helpdefs.h"
-#include "io/loadfile.h"
-#include "misc/debug_flags.h"
-#include "misc/ValueSaver.h"
-#include "ui/field_prompt.h"
-#include "ui/help.h"
-#include "ui/command_diagnostics.h"
-#include "ui/command_effects.h"
-#include "ui/CommandRouter.h"
-#include "ui/goodbye.h"
+#include <engine/cmdfiles.h>
+#include <engine/CommandProcessor.h>
+#include <helpdefs.h>
+#include <io/loadfile.h>
+#include <misc/debug_flags.h>
+#include <misc/ValueSaver.h>
+#include <ui/field_prompt.h>
+#include <ui/help.h>
+#include <ui/command_diagnostics.h>
+#include <ui/command_effects.h>
+#include <ui/CommandRouter.h>
+#include <ui/goodbye.h>
 
 #include <vector>
 

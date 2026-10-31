@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include "fractals/interpreter.h"
+#include <fractals/interpreter.h>
 
-#include "engine/random_seed.h"
-#include "fractals/parser.h"
-#include "math/arg.h"
-#include "math/fixed_pt.h"
-#include "misc/ValueSaver.h"
-#include "misc/version.h"
+#include <engine/random_seed.h>
+#include <fractals/parser.h>
+#include <math/arg.h>
+#include <math/fixed_pt.h>
+#include <misc/ValueSaver.h>
+#include <misc/version.h>
 
 #include <gtest/gtest.h>
 

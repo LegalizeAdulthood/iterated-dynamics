@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/unity.h"
+#include <fractals/unity.h>
 
-#include "engine/calc_frac_init.h"
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
-#include "math/sqr.h"
+#include <engine/calc_frac_init.h>
+#include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <math/sqr.h>
 
 #include <cmath>
 

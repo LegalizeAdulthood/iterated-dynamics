@@ -3,10 +3,10 @@
 //
 #pragma once
 
-#include "engine/calcfrac.h"
-#include "engine/PertEngine.h"
-#include "engine/StandardPass.h"
-#include "fractals/fractalp.h"
+#include <engine/calcfrac.h>
+#include <engine/PertEngine.h>
+#include <engine/StandardPass.h>
+#include <fractals/fractalp.h>
 
 #include <array>
 #include <cstddef>
