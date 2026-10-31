@@ -57,6 +57,34 @@ an example: I/O should serialize data without reaching into interactive
 evolution controls.  Its final ownership needs an explicit decision,
 not just relocation of a header.
 
+## Input And Calculation Boundaries
+
+`libid/ui` owns keyboard dispatch, key meaning, mouse subscriptions, and
+input side effects.  While polling I/O remains, the driver owns the
+production key queue; do not add a second queue to decouple calculation.
+Code outside UI must not call `driver_get_key`, `driver_key_pressed`,
+`driver_wait_key_pressed`, or `driver_unget_key`.  Mouse notification,
+subscription, and cursor-tracking facilities such as `MouseNotification`,
+`mouse_subscribe`, `mouse_unsubscribe`, `g_cursor_mouse_tracking`, and
+`g_look_at_mouse` also belong exclusively in UI.
+
+Calculation reports progress, completion, suspension state, and
+calculation decisions; it does not interpret keys.  This boundary applies
+to setup, sizing, completion, errors, and cleanup as well as incremental
+work.  Indirect calls through diagnostics, thinking displays, dispatch
+pointers, cursor helpers, or storage setup must not reintroduce input or
+modal UI.  Changes to engine or fractal code must not add UI includes.
+
+Image plotting and pixel access belong in calculation or storage code.
+The UI owns presentation waits and coordination, not rendering algorithms.
+Moving rendering into UI to remove an upward dependency does not resolve
+the architectural boundary.  Misplaced backend work should instead move
+below UI.
+
+Numerical sound submission follows the same output-port principle, with
+its non-blocking contract and UI-owned playback coordination defined in
+[sound.md](sound.md).
+
 ## Remaining Upward Dependencies
 
 The current starting inventory is:
@@ -152,6 +180,13 @@ For each capability used by calculation code:
 Preserve behavior while changing boundaries.  Do not simultaneously
 redesign platform backends, output semantics, or application threading.
 Temporary adapters are migration tools, not the final architecture.
+
+Preserve the existing synchronization cadence.  An incremental state
+transition is not automatically an input-dispatch, display-refresh, or
+cross-thread synchronization point.  Bounded calculation may process many
+orbit points or pixels before returning to its controller.  Making every
+internal step synchronize would penalize local, threaded, and future
+remote rendering without improving the ownership boundary.
 
 ## Next Planning Step
 

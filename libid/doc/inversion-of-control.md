@@ -169,44 +169,6 @@ compatibility during the refactor, the final shape should still separate:
 - per-pixel escape-time helpers
 - per-orbit helper functions
 
-## Input Rules
-
-- The driver remains the production key queue while polling I/O exists.
-- Do not add a second production key queue.
-- `libid/ui` owns keyboard dispatch, key meaning, mouse subscriptions, and
-  legacy input side effects.
-- Code outside `libid/ui` must not call `driver_get_key`,
-  `driver_key_pressed`, `driver_wait_key_pressed`, or `driver_unget_key`.
-- Code outside `libid/ui` must not use `MouseNotification`,
-  `mouse_subscribe`, `mouse_unsubscribe`, `g_cursor_mouse_tracking`, or
-  `g_look_at_mouse`.
-- A change to a file in `libid/engine` or `libid/fractals` must not add
-  an include from `libid/ui`.
-- Calculation code reports progress, completion, suspension state, and
-  calculation decisions.  It does not interpret keys.
-- Apply that rule to setup, sizing, completion, errors, and cleanup as
-  well as `iterate()`.  Audit indirect calls through `thinking()`, modal
-  diagnostics, dispatch pointers, cursor helpers, and storage setup.
-- Keep image plotting and pixel access in calculation or storage code.
-  Extract misplaced backend work from `libid/ui`; do not move rendering
-  algorithms into UI to eliminate an include.
-- Calculation may submit numerical data to the application-supplied
-  `SoundOutput` port.  Its implementations must not poll input or wait
-  inside a submission.  The UI coordinates playback backpressure with
-  bounded calculation; this is not a callback into UI control flow.
-- Keep behavior first.  Pure call relocation is not a completed slice; the
-  owning state, decision, or return point must become clearer.
-- Preserve the existing synchronization cadence.  A new resumable state
-  must not force input dispatch or display refresh for every orbit point,
-  pixel, or internal state transition.
-- Validate changed calculation control flow with automated tests first.
-  Require manual testing only for a specific changed interaction or native
-  display behavior that those tests do not exercise.  Missing coverage of
-  deterministic state transitions calls for a new automated regression.
-- Trace each changed interaction before giving manual instructions.  Give
-  arguments, actions, expected observations, and the automated coverage
-  gap.  Reuse image tests instead of manually checking rendered results.
-
 ## Keyboard Handler Stack
 
 The handler stack is UI input plumbing.  It supports the standard UI
