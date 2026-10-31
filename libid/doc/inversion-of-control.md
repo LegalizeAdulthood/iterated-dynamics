@@ -2,179 +2,36 @@
 SPDX-License-Identifier: GPL-3.0-only
 -->
 
-# Engine Polling I/O Inversion Plan
+# Rendering Interaction Design And Remaining Work
 
-Goal: invert rendering control so input and presentation code decide when
-to ask for another bounded unit of work, while engine and fractal code own
-calculation state, lifecycle, timing, setup, and cleanup.
+Input and presentation code decide when to request another bounded unit
+of calculation.  Engine and fractal code own calculation state,
+lifecycle, timing, setup, and cleanup.  This document describes that
+interaction design and the remaining handler-stack and event-driven work.
+Dependency direction and output-port ownership are described in
+[hexagonal.md](hexagonal.md).
 
-This is true inversion of control for the existing polling renderer.  It
-is not yet the later worker-thread or event-driven GUI design.  The
-release 1.5 target is a clean directory boundary: only `libid/ui`
-interacts directly with keyboard and mouse input, and engine code never
-selects UI control paths.
+## Traversal And Orbit Calculation
 
-Inversion is not achieved by moving a call to a new function, class,
-callback table, adapter, or wrapper while the same synchronous control
-flow remains hidden inside it.  A slice counts as inversion only when it
-changes who owns a decision or return point:
+Pixel traversal determines which pixels require orbit calculation and
+which can be filled from surrounding results.  It owns traversal and fill
+state, independently of the fractal's orbit calculation.
 
-- input polling and key meaning move outward to `libid/ui`;
-- waiting and presentation pacing move outward to `libid/ui`;
-- calculation work becomes explicit, bounded, and resumable;
-- calculation code returns to its caller instead of polling input or
-  waiting internally;
-- application phase and command effect are represented separately.
+The image calculation owns the selected traversal and orbit strategy.
+It retains an unfinished pixel across bounded increments and delivers a
+completed color to traversal.  Orbit-producing modes can instead advance
+orbit work directly; they need not use a pixel selection/completion
+contract.
 
-The release 1.5 input boundary is implemented.  The descriptions below
-record current ownership and behavior, including remaining presentation
-and backend coupling.  They are not instructions to restore an earlier
-design where implementation has superseded it.
-
-The standard escape-time renderer follows the same shape as the other
-calculation types split into UI coordination code and calculation objects.
-
-## Existing Shape
-
-These files show the calculation-object and UI-controller structure.
-The audit below records the implemented boundary and its current limits:
-
-- `libid/ui/AntController.cpp` drives selected Ant work in
-  `libid/fractals/Ant.cpp`.
-- `libid/ui/BifurcationController.cpp` drives
-  `libid/fractals/Bifurcation.cpp`.
-- `libid/ui/CellularController.cpp` drives selected Cellular work in
-  `libid/fractals/Cellular.cpp`.
-- `libid/ui/DiffusionController.cpp` drives `libid/fractals/Diffusion.cpp`.
-- `libid/ui/OrbitController.cpp` drives selected 2D orbit and Dynamic2D
-  work in `libid/fractals/lorenz.cpp`.
-- `libid/ui/IFS2DController.cpp` drives selected 2D IFS work in
-  `libid/fractals/lorenz.cpp`.
-- `libid/ui/StereoController.cpp` drives selected 3D IFS and orbit work
-  owned by `libid/engine/NonStandardFractal.cpp`.
-- `libid/ui/PlasmaController.cpp` drives `libid/fractals/Plasma.cpp`.
-- `libid/ui/Standard4DController.cpp` drives
-  `libid/fractals/julibrot.cpp`.
-- `libid/ui/LSystemController.cpp` drives selected sizing and drawing
-  work in `libid/fractals/lsystem.cpp`.
-- `libid/ui/PopcornController.cpp` drives selected image work in
-  `libid/fractals/popcorn.cpp`.
-- `libid/ui/FrothyBasinController.cpp` drives selected pixel and overlay
-  work in `libid/fractals/FrothyBasin.cpp`.
-- `libid/ui/TestPointController.cpp` drives `libid/fractals/TestPoint.cpp`.
-
-The common structure is:
-
-```text
-libid/ui/<type>.cpp
-    construct or resume the calculation object
-    poll keyboard input for this UI context
-    suspend or exit when the UI context decides work should stop
-    call bounded iterate() steps until the calculation object is done
-
-libid/fractals/<Type>.cpp or libid/engine/<Type>.cpp
-    own calculation state
-    expose resume(), suspend(), done(), and iterate()
-    do not poll keyboard or mouse input
-```
-
-Cellular exposes initial-generation preparation as calculation state;
-its UI controller owns thinking-screen updates and cleanup.  L-system
-sizing and drawing use explicit frame stacks and advance incrementally.
-Its UI controller owns the thinking screen and interruption in both
-phases; sizing and drawing do not poll input.
-
-JIIM's `InverseJulia` calculation owns orbit state and accepts explicit
-point and plot inputs.  `InverseJuliaController` in
-`libid/ui/inverse_julia.cpp` owns the outer interaction loop, cursor,
-coordinate messages, mode preferences, and keyboard and mouse scopes.
-`InverseJulia::iterate()` only calculates and plots bounded orbit work.
-
-## Standard Render Structure
-
-The standard escape-time calculation object already has this lifecycle:
-
-```cpp
-namespace id::engine
-{
-class StandardFractal
-{
-public:
-    std::vector<std::string> resume();
-    void suspend();
-    void finish();
-    bool done() const;
-    void iterate();
-};
-}
-```
-
-`StandardFractal` owns the standard renderer lifecycle.  That includes the
-work list, the active work-list item, the active `StandardPass`, and the
-active pixel's orbit state when a pixel needs to yield before it is
-finished.
-
-The active `StandardPass` owns pass-specific traversal and fill state.
-That includes active row and column, subdivision state, block state, scan
-stack, and decisions about whether a pixel needs real orbit work or can be
-filled from surrounding pixels.
-
-Pixel traversal passes do not compute the orbit.  They expose
-`select_pixel()`, `selected_pixel()`, and `complete_pixel(color)`;
-`StandardFractal` computes the selected pixel and supplies its color.
-Communication still uses globals such as `g_row`, `g_col`, `g_color`, and
-`g_plot`.  Removing those globals is separate work.
-
-`SynchronousOrbit` and `StickyOrbits` are different: they advance orbit
-work directly.  `StandardPass::iterate(PertEngine *)` routes their bounded
-work and supplies the selected perturbation strategy when active.  They
-do not use the pixel-pass selection/completion contract.
-
-The non-virtual `StandardPass` router holds a `std::variant` of concrete
-pass classes.  It routes chunk preparation, selection, pixel completion,
-orbit iteration, status, suspension, and resume storage to the active
-alternative.
-
-Each concrete pass owns its state and operation methods in its own class:
-`BoundaryTrace`, `Diffusion`, `OnePass`, `TwoPass`, `SolidGuess`,
-`SynchronousOrbit`, `Tesseral`, and `StickyOrbits`.  `OnePass` and
-`TwoPass` share `ScanlinePass`.  `StandardPass` includes the matching
-pass headers, stores the concrete class in the variant, and routes calls
-to it.  Old free-function pass traversal entry points have been removed;
-do not reintroduce them as call adapters.
-
-`StandardFractal` also owns the standard-mode dispatch currently selected
-by `g_std_calc_mode`, including `SynchronousOrbit`, `Tesseral`,
-`BoundaryTrace`, `SolidGuess`, `Diffusion`, `StickyOrbits`, and the
-`OnePass` and `TwoPass` paths.
-
-Perturbation is an alternate orbit strategy selected and owned by
-`StandardFractal`, separately from traversal.  Pixel passes receive its
-completed colors; synchronous and sticky orbit work receive the strategy
-through their iteration interface.  `passes=p` remains compatibility
-syntax selecting perturbation with solid-guess traversal, not a separate
-perturbation pass.
-
-The UI polling loop owns input policy.  It constructs or resumes
-`StandardFractal`, polls input through the active UI context, asks the
-object to suspend when work is interrupted, and calls bounded `iterate()`
-steps until `done()` is true.
-
-The standard pixel kernels are calculation details.  They should not
-double as image-level UI entry points.  If the current names are kept for
-compatibility during the refactor, the final shape should still separate:
-
-- image-level UI polling loop
-- standard calculation object
-- per-pixel escape-time helpers
-- per-orbit helper functions
+Perturbation is an alternate orbit strategy, not a traversal algorithm.
+`passes=p` remains compatibility syntax selecting perturbation with
+solid-guess traversal, not a separate perturbation pass.
 
 ## Keyboard Handler Stack
 
-The handler stack is UI input plumbing.  It supports the standard UI
-polling loop; it is not the calculation-side architecture.
-
-Handlers decide what a key means in a UI context:
+Each active UI context pushes a keyboard handler and pops it when the
+context ends.  Nested contexts take precedence without coupling their
+key handling to one another.
 
 ```cpp
 namespace id::ui
@@ -191,22 +48,18 @@ using KeyboardHandlerPtr = std::shared_ptr<KeyboardHandler>;
 }
 ```
 
-`handle_key()` returns `true` only when the handler consumed the key.  It
-does not return an interrupt result.  Handlers that want calculation to
-yield set UI-owned interruption state.
+Dispatch offers each supplied key to handlers from top to bottom.  The
+first handler returning `true` consumes the key and stops propagation.
+If none consumes it, the key is discarded.
 
-`MainLoopKeyboardHandler` is the outer image UI context.  It consumes keys
-that reach it, records the next main-loop command, and requests
-calculation interruption.
+`handle_key()` reports consumption only.  Each handler decides whether a
+key requests calculation interruption and sets UI-owned state accordingly.
+The caller does not infer interruption from the key or the return value.
+A context can therefore consume an orbit-display toggle without stopping
+calculation, while an outer context handles application commands.
 
-`OrbitToggleKeyboardHandler` is a more-specific render context.  It
-consumes `o` and `O`, toggles orbit display, and does not request
-calculation interruption.
-
-The UI dispatcher polls the driver queue, reads available keys, and offers
-them to the active handler stack from top to bottom.  The first handler
-that returns `true` stops propagation.  If no handler consumes the key,
-the key is discarded.
+Input acquisition is separate from this dispatch contract; its remaining
+centralization work is described below.
 
 ## UI Interaction Design
 
@@ -267,85 +120,36 @@ and [sound.md](sound.md) for coordinated output and backpressure.
 
 ## GIF File Operation Policy
 
-Treat reading or writing a GIF as one atomic, run-to-completion I/O
-operation.  Old DOS keyboard polling compensated for slow LZW work; it is
-not a behavior to preserve when replacing the codecs with giflib.
+Reading or writing a GIF is one atomic, run-to-completion I/O command.
+Atomic means non-interruptible by keyboard input, not feedback-free or
+transactional filesystem replacement.
 
-- Remove direct and indirect keyboard polling, pending-input callbacks,
-  and user-interruption results from GIF load/save during the conversion.
-  Pending keys remain for the outer input loop to handle later.
-- Use giflib's scanline APIs for both reading and writing.  The UI owner
-  coordinates scanline feedback while completing the entire load/save
-  command, without polling or dispatching keyboard input between lines.
-  Atomic means non-interruptible by input, not feedback-free.
-- During loading, process each decoded scanline for pixel output and
-  optional sound before reading the next.  Keep per-pixel sound mapping
-  and coordinated plotting; do not replace it with one tone per line.
-  No full-image buffer, second traversal, or post-close playback stage
-  is required.
-- During saving, update on-screen progress after each completed scanline
-  and call `driver_flush()` before writing the next.  This is a display
-  flush, not a per-scanline disk flush.  Preserve progress restoration
-  without modifying pixels that have not yet been saved.
-- Keep codec work, pixel traversal, and pixel output below UI.  The UI
-  owner services sound through `g_sound`, handles playback backpressure,
-  and draws/flushes save feedback between scanlines.  The codecs do not
-  poll input, service audio, or invoke UI feedback callbacks.
-- Keep mode selection, overwrite decisions, busy-state setup/cleanup,
-  error reporting, and completion notifications around file I/O.  Neither
-  a codec nor scanline feedback may enter a modal UI or pump input during
-  the operation.  Sound servicing may pace loading without making it
-  keyboard-interruptible.
-- Preserve I/O-error handling, resource cleanup, and temporary-file
-  replacement rules.  Atomic here describes control flow, not new
-  transactional filesystem guarantees.  Remove keyboard-interrupted
-  save/keep-partial choices, not actual read/write failure reporting.
-- Preserve saving an incompletely rendered image and its resume metadata.
+- Load and save use giflib's scanline APIs.  Pending keys remain for the
+  outer input loop; neither codecs nor scanline feedback dispatch input
+  or enter modal UI during the operation.
+- During loading, the UI owner coordinates pixel output and optional
+  sound for each decoded scanline before requesting the next.  Audio
+  servicing follows [sound.md](sound.md), without keyboard interruption.
+- During saving, the UI owner updates progress after each completed
+  scanline and flushes the display before writing the next.  This is not
+  a per-scanline disk flush.  Feedback restoration must not alter pixels
+  that have not yet been saved.
+- Codec work, pixel traversal, and image output stay below UI.  Codecs do
+  not service audio or invoke UI feedback callbacks.
+- Mode selection, overwrite decisions, busy-state setup and cleanup,
+  error reporting, and completion notifications surround the file
+  operation rather than interrupting scanline processing.
+- I/O failures still require reporting, resource cleanup, and the
+  existing temporary-file replacement rules.  Non-interruptibility does
+  not suppress read/write errors or introduce keep-partial choices for
+  keyboard interruption.
+- Saving an incompletely rendered image retains its resume metadata.
   An interrupted calculation is not an interrupted GIF write.
-
-The giflib-based codecs implement this boundary.  Scanline feedback is
-part of the run-to-completion command; it is not a reason to restore the
-old keyboard polling.
 
 ## [Sound Output Port](sound.md)
 
-The separate design artifact defines `SoundOutput`, numerical samples,
-session ownership, backpressure, and coordinated interactive playback.
-Calculation submits directly to an output sink.  Do not thread plotted
-coordinates upward through pass and renderer results solely for sound,
-or add sound-notification mailboxes to calculation objects.
-
-Follow the [dependency-injection contract](sound.md#dependency-injection):
-`SoundOutputPtr` aliases `std::shared_ptr<SoundOutput>`.  The application
-installs one shared instance in `g_sound`; calculation calls that
-active port directly and UI services the same instance.  Do not thread
-sound parameters through calculation call chains, add constructor
-injection to every calculation object, or introduce per-pass sound fields
-and forwarding functions.  Tests replace and restore this same binding.
-
-Interactive plotting and audio proceed at the slower rate.  The engine
-returns when output cannot accept the next coordinated unit; UI owns
-waiting and input.  Silent output and recording without device playback
-do not acquire playback waits.  Preserve normal synchronization cadence
-when the sink is ready.
-
-The UI services non-blocking `SoundOutput::update()` during rendering,
-playback waits, and completion.  The implementation releases due voices;
-calculation does not call soundoff or service playback.  Normal release
-preserves other voices and release tails, whereas explicit `mute()`
-immediately silences all voices and resets playback state.  Normal
-completion drains release tails rather than muting them away.
-
-No multimedia library has been selected.  `ui::DriverSoundOutput`
-optionally records each accepted tone under `OSF_MIDI` before attempting
-driver playback.  These sequential behaviors are one implementation, not
-two port implementations or a composite.  Its non-blocking `update()`
-releases a due tone; explicit mute resets playback immediately.
-
-Do not promise audible continuous sound on drivers that currently return
-`false`.  Preserve optional recording regardless of driver capability.
-Future audio-file-only output, new audio libraries, WAV encoding, and
-changed sound mappings are separate work.
+The sound design defines numerical output, dependency injection, session
+ownership, playback backpressure, voice release, and mute semantics.
 
 ## Orbit Display And Delay Policy
 
@@ -368,8 +172,7 @@ the existing display policy.
 
 ## Remaining Handler And Dispatch Work
 
-The release 1.5 boundary keeps direct input in UI.  Consistent use of the
-handler stack and application-owned input delivery are further work:
+To make handler-stack use consistent and input delivery application-owned:
 
 - Express each active controller or tool's key behavior through scoped
   handlers, including contexts that currently only peek and suspend or
@@ -390,11 +193,9 @@ still decide when application input can be processed.
 
 ## Future Event-Driven Work
 
-The application-level input pump supplies the handler stack while driver
-polling remains.  GUI-thread event delivery can then replace that pump
-without changing context-specific key handling.  This is an application
-responsibility, not a requirement that one particular function be named
-`id_main`.
+The target is an application-level input pump supplying the handler stack
+while driver polling remains.  GUI-thread event delivery can then replace
+that pump without changing context-specific key handling.
 
 The wider UI transition can proceed incrementally:
 
