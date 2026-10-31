@@ -1,806 +1,602 @@
-# Plan: BF_MATH Formula Parser
+<!--
+SPDX-License-Identifier: GPL-3.0-only
+Copyright 2026 Richard Thomson.
+-->
 
-## Goal
+# BF Formula Parser Plan
 
-Add arbitrary precision support for `type=formula` so formulas can switch
-from `double` evaluation to `BF_MATH` when image coordinates or formula
-arithmetic need more precision than `double` can provide.
+## Goal And Scope
 
-The first target is issue #11, `Straight_Forward`, where the formula
-parser loses precision evaluating nearly equal complex powers:
+Add arbitrary-precision evaluation for `type=formula` when coordinates or
+formula arithmetic require more precision than double provides.
+Preserve ordinary double behavior and avoid BF allocation for formulas
+that do not need it.
+
+The original target is issue #11's `Straight_Forward` parameter set and
+`MandAutoCritInZ` formula, particularly cancellation between powers:
 
 ```text
 20*z^0.99 - 20*z^1.01
 ```
 
-## Constraints
+Those named fixtures are not currently present under `home` or `tests`.
+Add a minimal, verified formula and parameter fixture before relying on
+them as regressions.  A DOS reference image is supplementary evidence,
+not a substitute for a checked high-precision numerical reference.
 
-- Preserve current `double` formula behavior by default.
-- Reuse existing `BFMathType`, `init_bf_dec()`, `fractal_float_to_bf()`,
-  and `g_alternate_math`.
-- Prefer `BIG_FLT` for formulas. `BIG_NUM` is not a good fit for
-  noninteger powers, logs, exponentials, and trig functions.
-- Keep parser compilation separate from runtime numeric type.
-- Put arbitrary precision math in small units that can be tested without
-  renderer, parser, UI, image-region, or command globals.
-- Pass explicit precision/context objects into new BF formula code. Do not
-  read globals unless wrapping legacy BF allocation or Fractint-compatible
-  entry points.
-- Do not make every formula pay BF cost.
+[Release 1.5](release-1.5.md) explicitly defers this work.
+The implementation slices below remain future work; existing foundations
+are identified separately so they are reused rather than rebuilt.
 
-## Current State
+## Current Implementation
 
-- `formula` has no `BF_MATH` alternate.
-- The parser compiles to operation function pointers in
-  `fractals/parser.cpp`.
-- The interpreter evaluates through `DComplex`, which is
-  `Complex<double>`.
-- `^` is implemented as `log`, multiply, `exp` in
-  `math/cmplx.cpp`.
-- BF complex helpers exist for selected built-in fractals in
-  `engine/fractalb.cpp`.
+### Compilation And Runtime
 
-## Phase 1: Separate Runtime State
+- `CompiledFormula` in `fractals/parser.h` holds source text, operation
+  function pointers, load/store pointer tables, variable values, jumps,
+  pending compile operations, counters, and formula-use flags.
+- `RuntimeState` in `fractals/interpreter.h` already groups the operand
+  stack, execution/init indices, and random state.
+- `g_formula` and `g_runtime` remain shared bindings.  Grouping fields
+  did not make execution independent: operation bodies still use these
+  bindings and `math::g_arg1`/`g_arg2`.
+- `ConstArg` is a struct containing a source-text view and a double-valued
+  `Arg`, not a union or a backend-neutral constant representation.
+- `parse_formula(const FormulaEntry &)` already supports compiling an
+  in-memory definition.  Named operation diagnostics and parser-state
+  dumps already exist; the compiled runtime stream still uses pointers.
+- Parser initialization populates built-ins and parameters from engine
+  globals.  Compilation and runtime variable storage are not yet cleanly
+  separated.
+- `formula_per_image()` resets formula random state and compiles the
+  selected definition.  `formula_per_pixel()` initializes pixel inputs
+  and the initialization section; `formula_orbit()` executes the orbit
+  section and publishes its result.
 
-Use `BFMathType` to select the formula runtime. Do not add another math
-enum. Keep `DComplex` out of shared interpreter state.
+The existing parser tests cover operation order, jumps, diagnostics,
+failed-program cleanup, reload, and source handling.  Extend those tests;
+do not add another parser or discard their compatibility oracle.
 
-Split runtime storage into:
+### Dispatch And Image Lifecycle
 
-- `FormulaRuntimeDbl`
-- `FormulaRuntimeBf`
+`g_fractal_specific` and `g_alternate_math` are const tables.
+`g_dispatch` holds runtime callbacks.  Formula currently has neither
+`FractalFlags::BF_MATH` nor a formula alternate-math row.
 
-Keep compiled formula metadata shared:
+Successful compilation installs the double `formula_per_pixel` and
+`formula_orbit` callbacks into `g_dispatch`.  Merely adding a BF row is
+therefore insufficient: compiling during BF setup would overwrite the
+selected callbacks.
 
-- operation ids
-- load/store references by variable index
-- jump metadata
-- variable names and formula flags
+`StandardFractal` owns calculation and the incremental pixel lifecycle.
+A formula orbit callback is one step inside that lifecycle, not a new
+image renderer.  Per-image callbacks perform setup.  Keep keyboard input,
+diagnostic presentation, and waits in the existing UI owners.
 
-Do not store BF pointers in the existing `ConstArg` union. Use parallel BF
-storage owned by `FormulaRuntimeBf`.
+### Existing Precision Foundations
 
-## Phase 2: Replace Function Pointer Ops
+- `fractal_float_to_bf()` already initializes precision and converts image
+  corners and applicable `g_params` values into BF storage.
+- `cmd_params` retains supplied text in `g_param_text`, but current
+  conversion to `g_bf_params` uses the double values.  That conversion
+  cannot recover digits already rounded away.
+- BF scalar arithmetic, log, exp, sin/cos, and atan/atan2 operations exist
+  in the math implementation.
+- `cmplx_log_bf`, `cmplx_mul_bf`, `cmplx_div_bf`, and `cmplx_pow_bf`
+  exist in `engine/fractalb.cpp`.  They use shared precision/scratch
+  state; division also sets `g_overflow`.
+- `math/complex_fn.h` has BF integer-power support.  That does not alone
+  implement formula powers with noninteger or complex exponents.
+- Precision storage uses the existing static 1 MiB arena and supported
+  length limits.  `BigFloat` is a raw byte pointer and `BFComplex`
+  contains two such pointers; neither owns an allocation.
 
-Convert compiled ops from raw function pointers to compact op ids.
+See [MathGlobals.md](MathGlobals.md) for current lengths, allocations,
+aliases, and stack lifetime.  Preserve the tested low-level arithmetic
+where possible; isolate dependencies instead of rewriting it from scratch.
 
-Today:
+## Design Direction
 
-```cpp
-std::vector<FunctionPtr> fns;
-```
+### Shared Program, Separate Numeric Storage
 
-Target:
+Compile one numeric-neutral program and evaluate it with double or
+`BIG_FLT` storage, selected through existing `BFMathType`.
+Do not introduce another representation-selection enum.
 
-```cpp
-std::vector<FormulaOp> ops;
-```
+The program should describe operation identities, variable-slot indices,
+constant spellings, initialization boundaries, jumps, selected function
+identities, and formula metadata.  It must not contain pointers into a
+particular runtime's values.
 
-Then dispatch through type-specific evaluators:
+Runtime-owned storage includes variables as well as the operand stack,
+execution/init indices, overflow/domain state, and RNG state.
+Two runtime objects sharing a program must not share writable variables.
+Reuse/refactor the existing `RuntimeState` rather than claiming its
+already-grouped fields still need initial extraction.
 
-```cpp
-eval_double(op, runtime);
-eval_bigfloat(op, runtime);
-```
+`FormulaRuntimeDbl`, `FormulaRuntimeBf`, and `FormulaInstruction` are
+proposed names, not existing types.  Keep their implementations simple;
+no generic VM framework or template hierarchy is required.
 
-This prevents duplicating parser compilation and makes BF support an
-interpreter concern.
+Preserve source lifetime for literal/name references, using owned text or
+stable offsets as appropriate.  Construct BF literals directly from their
+original spelling, not from `ConstArg::a.d`.
 
-Keep a short compatibility layer while migrating. Existing parser tests
-can then compare old and new op streams.
+### Inputs And Published Results
 
-## Phase 3: BF Stack And Variables
+Keep numerical interpretation independent of engine configuration.
+Legacy formula entry points gather per-image/per-pixel inputs and publish
+results through the existing calculation contract.
 
-Implement a BF formula stack using `BFComplex`.
+Inputs include the pixel, screen coordinates, dimensions, parameters,
+iteration limit, Mandelbrot intent, selected functions, and the existing
+coordinate-derived built-ins.  Preserve bindings for `pixel`, `z`,
+`LastSqr`, `p1` through `p5`, `pi`, `e`, `rand`, `whitesq`,
+`scrnpix`, `scrnmax`, `maxit`, `ismand`, `center`, `magxmag`, and
+`rotskew`.
 
-Storage:
+BF inputs must come from precise coordinates/parameters where available.
+Reuse BF coordinate and inversion operations at the engine boundary;
+do not convert a double pixel grid into BF and claim deep-zoom accuracy.
+Use retained parameter text when it represents the accepted value.
+Constants such as Pi and e also need BF sources, not rounded doubles.
 
-- `std::vector<BFComplex> vars`
-- `std::vector<BFComplex> stack`
-- `std::vector<int> load_vars`
-- `std::vector<int> store_vars`
+The numerical runtime returns values, continuation/bailout decisions, and
+errors.  Entry points retain existing per-pixel initialization and orbit
+return meanings; do not reinterpret every integer result as a pixel color
+or an image-level interrupt.
 
-Each `BFComplex` owns two `BigFloat` values allocated with
-`alloc_stack(g_r_bf_length + 2)` or equivalent persistent BF allocation.
+Publishing double values for legacy display/coloring is a distinct
+conversion boundary.  Never narrow a BF orbit to double and feed that
+rounded value back into the next BF iteration.  Additional coloring
+methods needing precise orbit state require explicit integration tests.
 
-Required mapped variables:
+### Precision Context And Storage Lifetime
 
-- `z`
-- `pixel`
-- `p1` through `p5`
-- `lastsqr`
-- `rand`
-- constants such as `pi`, `e`, `pixel`, `scrnpix`
+New formula math takes explicit operands and a small precision/allocation
+context.  The context initially adapts existing BF arithmetic; it does not
+make the underlying global lengths and scratch buffers reentrant.
 
-Convert PAR parameters into `g_bf_params[]` in `fractal_float_to_bf()`.
-Then copy them into the BF formula runtime during per-image setup.
+Borrow an initialized `BIG_FLT` arena at fixed precision.  Do not call
+`init_bf_dec()` inside every operation or create nested contexts that
+silently overwrite a live arena.  Current initialization selects numeric
+mode from the fractal's alternate-math support; passing a digit count
+alone does not independently select `BIG_FLT`.
 
-Keep the core runtime free of direct global reads:
+The runtime must own stable backing storage or have an explicitly
+enclosing allocation lifetime.  A vector of `BFComplex` pointers does
+not establish that ownership.  Keep runtime values alive across pixel
+increments and reserve temporary scratch only within operation scopes.
+Rebuild bindings when precision changes.
 
-- no `g_formula`
-- no `g_bf_math`
-- no `g_params`
-- no image-region globals
-- no screen-size globals
+Tests should own precision setup/teardown and borrow that arena for
+operations.  Saving scalar length globals with `ValueSaver` is not a
+snapshot of the arena contents.  Do not promise restoration of a prior
+calculation after destructive reinitialization.
 
-Legacy entry points may gather those values, then pass plain data into the
-runtime.
+Preserve current representation limits and report `PrecisionError`
+without UI.  Separate contexts do not authorize concurrent BF execution
+until the underlying shared arithmetic state is isolated.
 
-## Phase 4: BF Operation Coverage
+### Reuse Arithmetic And Define Its Contracts
 
-Implement BF versions of all parser ops needed by normal formulas.
+Reuse and, where appropriate, move general complex BF helpers from engine
+into math.  Do not introduce a math-to-engine dependency merely to call
+them from a new formula math module.
 
-Minimum for issue #11:
+Tests must establish operand preservation, allowed aliasing, branch
+conventions, zero behavior, and divide/domain failures before helpers are
+used by the VM.  Existing helper names do not prove those contracts.
+Separate numerical failure state from the global `g_overflow`; the legacy
+entry point publishes the corresponding engine state.
 
-- load/store
-- add, subtract, multiply, divide
-- negation
-- real, imag
-- ident
-- power
-- modulus squared
-- less-than bailout
+For noninteger powers, retain the BF log/multiply/exp path and its required
+BF trigonometry.  Preserve intended legacy zero/branch semantics.
+Internal low-precision estimates used by an iterative BF algorithm are
+not the same as falling back to a double result; verify final precision
+against independent references.
 
-Then add common functions:
+Classify supported operations before BF execution.  Do not silently use a
+double operator for an unsupported BF instruction.  Ordinary double-only
+formulas remain supported; requests requiring unavailable BF behavior
+must receive a clear diagnostic.
 
-- sqr, sqrt
-- exp, log
-- sin, cos, sinh, cosh
-- tan, tanh
-- recip, conj, flip
-- abs, cabs
-- floor, ceil
-- comparisons and boolean ops
+## Precision Selection And Restart
 
-Implement `bf_complex_pow()` as:
+### Existing Coordinate Selection
+
+Reuse the coordinate/resolution-error machinery in
+`engine/calc_frac_init.cpp` and existing `bfdigits` handling.
+`get_prec_dbl()` is currently private to that file, not a public context
+API that a new VM can call.
+
+The relevant transition setting is `g_math_tol[1]`.
+The current parameter handler uses the second slash-separated field:
+`mathtolerance=/1` sets that field to one.  A single
+`mathtolerance=1` does not; the old integer-to-float field is ignored.
+
+Current `debugflag=3200` setup has explicit built-in-fractal branches.
+It is not an existing forced-BF formula path.  Add and test formula
+integration rather than assuming the flag already works for formulas.
+
+### Formula Arithmetic Detection
+
+Cancellation monitoring remains proposed work.  A candidate indicator is:
 
 ```text
-pow(x, y) = exp(y * log(x))
+loss estimate = log2((abs(lhs) + abs(rhs)) / abs(result))
 ```
 
-Use BF math for log magnitude, atan2, exp, sin, and cos. If exact BF
-transcendentals are not present, add them before enabling formula BF
-generally. Falling back to `double` here defeats the feature.
+It is a diagnostic heuristic, not a proof that precision is inadequate.
+Handle zero, nonfinite values, legitimate exact cancellation, and scale.
+Do not equate magnification alone with the required coordinate precision
+or adopt an unvalidated fixed lost-bit threshold.
 
-## Phase 5: Precision Detection
+Use checked formula fixtures to establish when higher precision improves
+the result, how much precision is needed, and when ordinary double should
+remain unchanged.  Instrumentation must not change the numerical result
+merely by observing an operation.
 
-Use two triggers.
+### Engine-Owned Transition
 
-### Coordinate Trigger
+Do not switch representations halfway through an orbit while retaining
+already-rounded state.  Prefer deciding before plotting; if a precision
+request arises during calculation, the engine must own a defined restart
+at the appropriate calculation boundary from original inputs.
 
-Keep the existing `mathtolerance` path in `calc_frac_init.cpp`:
+Define whether that restart affects the pixel or the image before enabling
+automatic switching.  Preserve committed output consistency, work-list
+state, random replay, timing, output side effects, and resume behavior.
+A numerical evaluator reports the need; it does not enter a UI loop,
+reinitialize the arena beneath live pointers, or hide a recursive render.
 
-```cpp
-if (ratio_bad(test_x_try, test_x_exact) ||
-    ratio_bad(test_y_try, test_y_exact))
-```
-
-When the current fractal has `BF_MATH`, call `fractal_float_to_bf()` and
-restart.
-
-### Formula Arithmetic Trigger
-
-During `double` formula evaluation, estimate cancellation loss for `+` and
-`-`:
-
-```text
-lost_bits = log2((abs(lhs) + abs(rhs)) / abs(result))
-```
-
-Switch when:
-
-```text
-lost_bits + coord_bits + safety_bits > DBL_MANT_DIG
-```
-
-Use:
-
-```text
-coord_bits = ceil(log2(magnification))
-safety_bits = 8
-```
-
-Start with a conservative fallback:
-
-```text
-lost_bits > 20
-```
-
-Record the trigger in debug output so regressions are explainable.
-
-## Phase 6: Wire Formula Into BF_MATH
-
-Add `FractalFlags::BF_MATH` to the formula fractal entry.
-
-Add an alternate math row:
-
-```cpp
-{FractalType::FORMULA,
- BFMathType::BIG_FLT,
- formula_orbit_bf,
- formula_per_pixel_bf,
- formula_per_image_bf},
-```
-
-Implement:
-
-- `formula_per_image_bf()`
-- `formula_per_pixel_bf()`
-- `formula_orbit_bf()`
-
-These should mirror the `double` formula entry points and differ only in
-runtime storage and operation dispatch.
-
-## Phase 7: Precision Sizing
-
-Initial BF digits should be:
-
-```text
-digits = max(get_prec_dbl(CURRENT), requested_digits)
-```
-
-For formula-triggered precision, add:
-
-```text
-extra_digits = ceil(lost_bits / log2(10)) + 4
-```
-
-Then:
-
-```text
-digits = max(digits, DBL_DIG + extra_digits)
-```
-
-Honor `bfdigits` as an override.
-
-## Phase 8: Tests
-
-Use strict unit tests before image tests. New BF code should take explicit
-inputs and need no renderer state.
-
-Add low-level BF number tests:
-
-- decimal string round-trip
-- add/sub with cancellation
-- multiply/divide with guard digits
-- comparison and sign
-- allocation lifetime through a local precision context
-
-Add BF complex op tests:
-
-- add/sub cancellation
-- multiply/divide
-- `pow(real, real)`
-- `pow(complex, real)`
-- `pow(complex, complex)`
-
-Add BF formula VM tests:
-
-- load/store with explicit variables
-- stack depth and underflow failures
-- jump state reset
-- bailout comparison
-- no reads from parser or renderer globals
-
-Add formula parser tests:
-
-- compile once, run double
-- compile once, run BF
-- compare simple formulas against double at low precision
-- force BF and verify `MandAutoCritInZ` does not use double `pow`
-
-Add image tests:
-
-- `Straight_Forward` renders close to DOS FRACTINT reference
-- a normal formula stays in double
-- `mathtolerance=1` prevents BF switch
-- `debugflag=3200` forces BF switch
-
-Unit tests must assert exact strings or bounded error against checked
-high-precision references. Do not compare only to `double` except for
-low-precision compatibility tests.
-
-## Phase 9: Diagnostics
-
-Add optional formula precision tracing:
-
-```text
-formula_precision_trace=on
-```
-
-Trace:
-
-- pixel
-- iteration
-- op id
-- lost bits
-- switch reason
-- selected BF digits
-
-Keep trace output off by default.
-
-## Risks
-
-- BF transcendental functions are the hard part.
-- Parser op ids may expose hidden function pointer ordering dependencies.
-- Some formulas depend on old overflow or domain behavior.
-- BF formula evaluation will be much slower.
-- Resume files must save enough state to preserve BF formula settings.
+Honor `bfdigits`, transition-disable settings, and debug overrides with
+explicit precedence tests.  Precision allocation failure or an unsupported
+BF instruction must not silently publish a partially converted image.
 
 ## Implementation Slices
 
-Each code slice adds tests with exact state assertions. Unit tests should
-use explicit inputs and `ValueSaver` for any global touched by legacy
-wrappers.
-Code implementation slices should run targeted tests first, then the
-normal workflow. Documentation-only edits do not need a workflow run.
-
-### Slice 1: Name Parser Ops
-
-Goal: make parser output inspectable without changing behavior.
-
-Work:
-
-- Add `FormulaOp`.
-- Map each current parser function pointer to one op id.
-- Add `formula_op_name(FormulaOp)`.
-- Keep the existing `double` interpreter and `g_formula.fns`.
-- Add debug helpers that print op ids by name.
-
-Tests:
-
-- Parse the existing `Moe` fixture.
-- Verify `g_formula.op_count == 40`.
-- Verify selected emitted ops: first load, one power op, store-z, bailout.
-- Verify no emitted op maps to `FormulaOp::UNKNOWN`.
-- Verify unknown op id formats as a stable failure string.
-- After `parser_reset()`, verify:
-  - `g_formula.formula.empty()`
-  - `g_formula.fns.empty()`
-  - `g_formula.op_count == 0`
-
-Done when:
-
-- Existing formula tests pass.
-- Formula debug output names ops without using function pointer addresses.
-- No BF behavior exists yet.
-
-### Slice 2: Emit Formula Instructions
-
-Goal: make compiled formula bytecode numeric-type neutral.
-
-Work:
-
-- Add `FormulaInstruction { FormulaOp op; int arg; }`.
-- Add `CompiledFormula::program`.
-- Populate `program` in parallel with `g_formula.fns`.
-- Rename pending compile ops so `program` is the only runtime op stream.
-- Dispatch `FormulaOp` to existing `double` op bodies.
-- Keep load/store/jump behavior identical.
-
-Tests:
-
-- Parse `Moe`.
-- Verify `program.size() == g_formula.op_count`.
-- Verify each load/store instruction arg matches the old index stream.
-- Verify jump instruction args match `g_formula.jump_control`.
-- Evaluate a simple formula and compare exact `double` output.
-- Save before parse, then verify unchanged globals:
-  - `g_runtime.op_index`
-  - `g_runtime.load_index`
-  - `g_runtime.store_index`
-  - `g_arg1`
-  - `g_arg2`
-
-Done when:
-
-- Formula output matches before/after for a small PAR set.
-- Parser trace shows the same op order as before.
-- No BF storage is introduced.
-
-### Slice 3: Add Runtime Split
-
-Goal: isolate mutable runtime state.
-
-Work:
-
-- Add `FormulaRuntimeDbl`.
-- Move stack, load index, store index, jump index, op index, init indexes,
-  and random state into the runtime.
-- Keep `g_runtime`, `g_arg1`, and `g_arg2` as legacy wrappers only.
-- Run the existing `double` interpreter through `FormulaRuntimeDbl`.
-
-Tests:
-
-- Reset runtime and verify:
-  - `op_index == 0`
-  - `load_index == 0`
-  - `store_index == 0`
-  - `jump_index == 0`
-  - `set_random == false`
-  - `randomized == false`
-- Run two runtimes from one compiled formula without state leakage.
-- Verify both runtimes produce the same `z`, stack top, and op indexes.
-- Verify explicit-runtime execution leaves unchanged:
-  - `g_runtime`
-  - `g_arg1`
-  - `g_arg2`
-- Verify per-pixel reset preserves per-image constants.
-- Verify legacy wrapper still updates:
-  - `g_old_z`
-  - `g_new_z`
-  - `g_runtime.op_index`
-  - `g_runtime.load_index`
-  - `g_runtime.store_index`
+Retain the existing slice numbers.  Sub-slices keep the required work
+small enough to review independently.  Completed foundations described
+above are not instructions to rebuild them.
 
-Done when:
+Use focused tests through `cmake --workflow temp`, followed by integrated
+validation through `cmake --workflow rt-default` as appropriate.
+Documentation-only changes require neither workflow.
+Remove completed slices without renumbering the remaining work.
 
-- No formula behavior changes.
-- Runtime state can be reset per image and per pixel.
-- Global formula compile state no longer owns runtime stack cursors.
+Any temporary bridge must name its removing sub-slice and carry
+`// TODO: removed later`.  Do not add permanent forwarding APIs, new
+assertions, hidden mutable function statics, or a second parser.
 
-### Slice 4: Isolate Formula Inputs
+### Slice 1: Operation Identities
 
-Goal: make core formula execution independent of renderer globals.
-
-Work:
+- Add `FormulaOp` identities covering emitted operations.
+- Reuse the existing operation-name mapping and diagnostics instead of
+  adding a duplicate debug naming system.
+- Keep the current double function stream as the compatibility oracle.
+- Extend named parser fixtures such as `s_moe` to verify operation
+  identities/order and unknown-operation handling.
+- Preserve current failed-compilation and reset behavior.
 
-- Add an immutable formula input object.
-- Include pixel, screen pixel, params, row, col, maxit, and inversion
-  data.
-- Gather globals once in legacy entry points.
-- Pass plain input data into double and BF runtimes.
-
-Tests:
-
-- Construct input without reading renderer globals.
-- Run one orbit from explicit input.
-- Mutate `g_params`, `g_row`, and `g_col` after input creation.
-- Verify result uses captured input, not changed globals.
-- Verify legacy wrapper still writes:
-  - `g_formula.vars[0]` for `pixel`
-  - `g_formula.vars[9]` for white square
-  - `g_formula.vars[10]` for `scrnpix`
+Numeric-neutral execution is not enabled in this slice.
 
-### Slice 5: Add BF Test Context
+### Slice 2: Numeric-Neutral Instructions
 
-Goal: make BF code unit-testable before parser integration.
+#### 2.1. Instruction Stream And Variable References
 
-Work:
+- Emit `FormulaInstruction` records alongside the existing pointer
+  stream during transition.
+- Represent load/store operands by variable indices, not `Arg *`.
+- Preserve raw literal spellings and source lifetime.
+- Verify operation order, variable mapping, and initialization boundaries.
 
-- Add a small BF precision/context wrapper.
-- Allocate BF values through the context, not direct globals.
-- Add helpers to create BF scalars and BF complex values from strings.
-- Add helpers to convert BF values to normalized strings.
+#### 2.2. Jump Metadata And Compatibility
 
-Tests:
+- Preserve jump destinations and initialization/orbit cursor behavior in
+  the new stream, including compiler optimizations.
+- Compare emitted programs and double results against current fixtures.
+- Keep compatibility execution until the explicit runtime is complete;
+  mark the transitional stream/adapter for removal in slice 3.5.
 
-- Save BF globals before creating the context.
-- Create context at 50 decimals.
-- Verify during context:
-  - `g_bf_math == BFMathType::BIG_FLT`
-  - `g_decimals == 50`
-  - `g_bf_length > 0`
-  - `g_r_bf_length > 0`
-- Destroy context.
-- Verify exact restoration of:
-  - `g_bf_math`
-  - `g_bn_length`
-  - `g_bf_length`
-  - `g_r_bf_length`
-  - `g_decimals`
-  - `g_bf_decimals`
-  - `g_bf_digits`
-- Round-trip strings: `0`, `0.1`, `-2.5`, `1e-30`.
-
-Done when:
-
-- BF tests can run without renderer, parser, UI, or image globals.
-- Context teardown leaves no leaked BF stack allocations.
-- No formula entry point uses the context yet.
-
-### Slice 6: Implement Core BF Ops In Isolation
-
-Goal: test arbitrary precision arithmetic before VM integration.
-
-Work:
+No BF values or general automatic selection belong here.
 
-- Implement add, subtract, multiply, divide, and negation.
-- Implement real, imag, flip, ident, conj, and recip.
-- Implement modulus squared and bailout comparison.
-- Put these behind functions that take explicit operands and context.
-- Add focused unit tests for each op.
-
-Tests:
+### Slice 3: Explicit Double Runtime
 
-- Exact string-checked add, sub, mul, div, and neg cases.
-- Cancellation case: `10000000000000000 - 9999999999999999`.
-- Verify result string is exactly `1`.
-- Divide-by-zero and recip-zero set the chosen overflow/error state.
-- Modulus and bailout comparisons at below, equal, and above threshold.
-- Save and verify unchanged:
-  - `g_formula.op_count`
-  - `g_runtime.op_index`
-  - `g_arg1`
-  - `g_arg2`
-
-Done when:
-
-- Core BF op tests pass without formula parser setup.
-- Tests include cancellation cases that exceed `double` precision.
-- No op reads `g_formula`, `g_params`, or image-region globals.
+#### 3.1. Runtime-Owned Values
 
-### Slice 7: Implement BF Power Path In Isolation
+- Reuse the existing runtime grouping for stack, indices, and RNG fields.
+- Separate mutable variable values from compiled metadata.
+- Preserve per-image constants and per-pixel initialization behavior.
+- Prove that two runtimes can share a program without sharing values.
 
-Goal: support the operation needed by `MandAutoCritInZ`.
+#### 3.2. Explicit Operand Evaluation
 
-Work:
+- Convert ordinary arithmetic, loads/stores, and stack operations to
+  explicit runtime operands.
+- Preserve existing double overflow/domain and expression semantics.
+- Test results without rebinding `g_arg1`/`g_arg2` to fake independence.
 
-- Implement BF complex log.
-- Implement BF complex exp.
-- Implement BF complex power.
-- Implement BF sin, cos, and atan2 support needed by log/exp.
-- Add tests for real and complex powers.
-- Add `double_fallback_count` to BF formula diagnostics.
+#### 3.3. Initialization And Control Flow
 
-Tests:
+- Execute initialization, orbit bodies, conditionals, and jumps from the
+  numeric-neutral stream.
+- Retain and restore execution cursors through bounded engine work.
+- Test nested branches, empty initialization, and repeated pixels.
 
-- `pow(real, real)` checked against embedded reference strings.
-- `pow(complex, real)` checked against embedded reference strings.
-- `pow(complex, complex)` checked against embedded reference strings.
-- `log(exp(z))` and `exp(log(z))` round-trip where branch-safe.
-- Verify `z^0.99` and `z^1.01` set:
-  - `double_fallback_count == 0`
-- Verify 50-digit and 70-digit runs have the same checked prefix.
-
-Done when:
-
-- `z^0.99` and `z^1.01` execute without double fallback.
-- BF power tests pass at low and high precision.
-- Any temporary double fallback is deleted before slice completion.
-- Tests compare against checked reference values, not only `double`.
-
-### Slice 8: Add BF Formula Runtime Skeleton
+#### 3.4. Selected Functions And Random State
 
-Goal: connect tested BF ops to a formula VM.
+- Capture `fn1` through `fn4` choices for explicit evaluation.
+- Preserve formula RNG, `srand()`, and per-image/per-pixel sequencing.
+- Compare seeded behavior with the current interpreter.
+- Do not use process-wide trig operand pointers from the new evaluator.
 
-Work:
+#### 3.5. Activate And Remove Compatibility Execution
 
-- Add `FormulaRuntimeBf`.
-- Allocate BF variable and stack storage through the BF context.
-- Implement load and store.
-- Implement stack execution for the ops from slices 5 and 6.
-- Add VM tests using hand-built op streams.
+- Route existing double formula entry points through the explicit runtime.
+- Preserve publication of `g_old_z`, `g_new_z`, and engine overflow.
+- Remove the transitional executable pointer stream/adapters once no
+  callers need them; do not remove unrelated built-in trig bindings.
+- Retain parser diagnostics and double image/semantic regressions.
 
-Tests:
+This slice does not claim that all engine state is thread-isolated.
 
-- Hand-built op stream computes `z*z+c`.
-- Hand-built op stream computes `20*z^0.99-20*z^1.01`.
-- Verify BF runtime state after `z*z+c`:
-  - stored `z`
-  - stack depth
-  - `op_index == program.size()`
-  - expected `load_index`
-  - expected `store_index`
-  - expected `jump_index`
-- Stack underflow, unsupported op, and bad store fail cleanly.
-- Two BF runtimes execute independently from one op stream.
-- Verify unchanged globals:
-  - `g_formula`
-  - `g_runtime`
-  - `g_arg1`
-  - `g_arg2`
-
-Done when:
-
-- Hand-built BF op streams execute without parser globals.
-- Unsupported ops fail cleanly with a fixed message.
-- Stack underflow and type errors are unit tested.
-
-### Slice 9: Add Forced BF Formula Entry Points
-
-Goal: create BF entry points that compile but are not generally enabled.
-
-Work:
-
-- Add `formula_per_image_bf()`.
-- Add `formula_per_pixel_bf()`.
-- Add `formula_orbit_bf()`.
-- Add an alternate math row for formula behind a local feature guard.
-- Make entry points gather globals once, then pass plain data inward.
+### Slice 4: Explicit Formula Inputs
 
-Tests:
-
-- Forced BF entry points build a runtime from explicit formula data.
-- Per-image setup copies params without later reading `g_params`.
-- Per-pixel setup maps pixel coordinates without renderer state in VM.
-- Force BF mode for a simple formula.
-- Verify during BF call:
-  - `g_bf_math == BFMathType::BIG_FLT`
-  - `g_old_z` and `g_new_z` update as expected
-  - `g_overflow` matches the double path for the same formula
-- Verify BF context cleanup restores BF globals listed in slice 5.
-
-Done when:
-
-- Forced BF formula setup reaches the BF entry points.
-- Normal formulas still use `double`.
-- Unit-tested runtime remains independent of renderer globals.
-
-### Slice 10: Run `MandAutoCritInZ` Under Forced BF
-
-Goal: prove the target formula can execute.
-
-Work:
-
-- Force BF for `Straight_Forward`.
-- Verify the formula uses BF ops for both powers.
-- Compare the rendered image to the FRACTINT reference.
-- Tune initial BF digit count if needed.
-
-Tests:
-
-- Unit fixture for `MandAutoCritInZ` first iteration at center pixel.
-- Assert both power ops use BF dispatch.
-- Assert the same fixture is stable at two BF precisions.
-- Verify diagnostics:
-  - power op count is `2`
-  - `double_fallback_count == 0`
-- Verify wrapper state after the run:
-  - `g_old_z`
-  - `g_new_z`
-  - `g_overflow`
-  - `g_bf_math`
-  - BF length globals restored
-
-Done when:
-
-- `Straight_Forward` renders the correct structure.
-- Trace confirms no double power/log/exp path was used.
-- The result is stable across two BF digit counts.
-
-### Slice 11: Add Precision Detection
-
-Goal: switch automatically only when needed.
-
-Work:
-
-- Add cancellation tracking for `+` and `-`.
-- Compute `lost_bits`.
-- Add formula precision state to the runtime.
-- Trigger BF when:
-
-```text
-lost_bits + coord_bits + safety_bits > DBL_MANT_DIG
-```
-
-- Start with `safety_bits = 8`.
-
-Tests:
-
-- Cancellation detector reports expected lost-bit ranges.
-- Detector ignores noncancelling add/sub cases.
-- Detector case:
-  - `abs(lhs) == 20`
-  - `abs(rhs) == 20`
-  - `abs(result) == 1e-12`
-  - expected `lost_bits` is between `45` and `46`
-- `Straight_Forward` fixture triggers BF.
-- Ordinary formula fixtures do not trigger BF.
-- Pure detector leaves unchanged:
-  - `g_bf_math`
-  - `g_runtime`
-  - `g_overflow`
-  - `g_old_z`
-  - `g_new_z`
-
-Done when:
-
-- `Straight_Forward` switches to BF automatically.
-- Ordinary formulas stay in `double`.
-- `mathtolerance=1` still prevents BF switching.
-
-### Slice 12: Enable Formula BF_MATH
-
-Goal: make BF formula support normal behavior.
-
-Work:
-
-- Add `FractalFlags::BF_MATH` to `formula`.
-- Remove the local feature guard from the formula alternate math row.
-- Save and restore BF formula state where needed.
-- Update tab/status output to show BF formula math.
-
-Tests:
-
-- Formula alternate math lookup returns `BIG_FLT`.
-- Verify alternate row state:
-  - fractal type is `FractalType::FORMULA`
-  - math type is `BFMathType::BIG_FLT`
-  - per-image pointer is non-null
-  - per-pixel pointer is non-null
-  - orbit pointer is non-null
-- Save/load preserves BF math and precision fields.
-- Loading a normal formula keeps `g_bf_math == NONE`.
-- Loading a BF-triggering formula selects BF.
-- Verify save/load restores or preserves:
-  - `g_bf_math`
-  - `g_bf_digits`
-  - `g_decimals`
-  - formula name
-  - formula file name
-
-Done when:
-
-- Formula BF works through normal PAR loading.
-- Resume/save/load preserves selected math.
-- Double formulas are not slowed by BF allocation.
-
-### Slice 13: Expand Function Coverage
-
-Goal: cover the full formula language.
-
-Work:
-
-- Add BF trig and hyperbolic functions.
-- Add BF inverse trig functions.
-- Add BF floor, ceil, abs, cabs, and boolean comparisons.
-- Add BF random behavior that matches double semantics.
-- Add tests for each documented formula function.
-
-Tests:
-
-- One unit test per documented formula function.
-- Branch-sensitive functions include quadrant and sign cases.
-- Boolean comparisons test equal, below, above, and zero cases.
-- Random op test uses a fixed seed and expected sequence.
-- Verify random BF op mutates only explicit BF runtime random state.
-- Verify random BF op leaves unchanged:
-  - `g_runtime.rand_num`
-  - `g_runtime.rand_x`
-  - `g_runtime.rand_y`
-
-Done when:
-
-- Unsupported-op failures are rare and documented.
-- Formula coverage is tracked by tests.
-- Known formula packs run without parser-level BF gaps.
+- Extract current implicit engine-input population from compilation into
+  per-image/per-pixel setup.
+- Capture parameters, built-ins, function selection, and coordinate
+  inputs in explicit data.
+- Keep double behavior and diagnostic output unchanged.
+- Verify execution uses captured values after unrelated globals change.
+- Document the BF source for each precision-sensitive input.
+
+Compilation should describe the program, not bind it to one image.
+
+### Slice 5: BF Context And Storage
+
+#### 5.1. Borrowed Precision Context
+
+- Adapt an initialized `BIG_FLT` precision/scratch environment.
+- Make representation, precision, lifetime, and non-reentrancy explicit.
+- Reuse current precision tests and setup rather than assuming
+  `init_bf_dec()` selects BF independently of fractal support.
+- Verify that borrowing a context preserves existing values and restores
+  temporary stack offsets on success and failure.
+
+#### 5.2. Runtime Value Storage
+
+- Define ownership of scalar/complex buffers and their raw-pointer views.
+- Bind stable variable and stack storage for a fixed precision.
+- Parse/format values through existing BF conversion operations.
+- Test pointer lifetime, isolation of stored values, and invalidated
+  bindings after precision changes.
+- Keep tests independent of parser and render setup except for the
+  explicitly acknowledged legacy math initialization fixture.
+
+Do not advertise multiple simultaneous independent arenas.
+
+### Slice 6: Core BF Operations
+
+Reuse/extract existing arithmetic with explicit operands and context.
+
+#### 6.1. Basic Arithmetic
+
+- Add, subtract, multiply, negate, and compare.
+- Test exact representable results, cancellation, and operand aliasing.
+- Keep formula and renderer globals outside the operation interface.
+
+#### 6.2. Division And Complex Projections
+
+- Divide, reciprocal, real/imaginary parts, conjugation, flip, and
+  identity.
+- Define zero/domain behavior and operation-local failure state.
+- Test preservation of operands and bounded scratch lifetime.
+
+#### 6.3. Modulus And Boolean Results
+
+- Modulus squared, comparisons, and required boolean operations.
+- Preserve the formula language's complex/real truth conventions.
+- Test equal/below/above thresholds and zero results.
+
+Do not replace existing low-level BF arithmetic with another implementation
+solely to change its calling shape.
+
+### Slice 7: BF Noninteger Power
+
+#### 7.1. Reusable Log And Power Foundations
+
+- Isolate the existing complex BF log/power helpers and their dependencies
+  at the proper math boundary.
+- Reuse scalar BF log, exp, sin/cos, and atan2 support.
+- Add only missing composition/contract handling, including complex exp
+  where the formula language needs it.
+- Preserve existing built-in callers while validating branch, zero,
+  aliasing, and overflow behavior.
+
+#### 7.2. Precision Regressions
+
+- Check real and complex powers against independent reference values.
+- Cover the nearby exponents in the target expression.
+- Compare stable digits at two supported precisions.
+- Prove no unsupported-operation fallback supplies a double result.
+- Use exact strings only for representable/defined formatting cases;
+  otherwise compare against an explicit numerical error bound.
+
+A diagnostic fallback counter is not a substitute for numerical proof.
+
+### Slice 8: BF Formula Evaluation
+
+#### 8.1. Variables, Stack, And Core Instructions
+
+- Add `FormulaRuntimeBf` over the shared program and owned value storage.
+- Execute the supported operations from slices 6 and 7.
+- Test hand-built programs before adding compilation/setup dependencies.
+- Reject invalid operands, stack underflow, and unsupported instructions
+  with clear diagnostics, not assertions.
+
+#### 8.2. Program Binding And Capability Checks
+
+- Bind parsed literal spellings and explicit BF built-ins/parameters.
+- Classify the program and selected functions before BF evaluation.
+- Test shared-program, separate-runtime values and initialization/orbit
+  sections, including unsupported branch bodies.
+- Do not claim language coverage from testing only `z*z+c`.
+
+The numeric evaluator still has no keyboard, UI, or render-loop callbacks.
+
+### Slice 9: BF Entry Points And Dispatch Ownership
+
+#### 9.1. Compilation Versus Backend Binding
+
+- Separate program compilation from installation of double callbacks.
+- Preserve failure-safe dispatch and existing parser/selection callers.
+- Add an explicit setup step that binds the selected numeric callbacks.
+- Test that compiling/recompiling cannot overwrite a BF selection.
+
+#### 9.2. BF Formula Entry Points
+
+- Add BF per-image, per-pixel, and orbit entry points using the tested
+  runtime and input boundary.
+- Supply precise pixel/inversion values and accepted parameter text.
+- Keep BF state across iterations; publish legacy views only outward.
+- Test direct forced-BF setup/evaluation without advertising general
+  formula `BF_MATH` support yet.
+- Retain current return meanings and cleanup on failure.
+
+Normal engine selection is connected in slice 12.  Do not add a
+production preprocessor feature guard or a new debug flag just for tests.
+
+### Slice 10: Target Formula Regression
+
+- Add verified `MandAutoCritInZ` and `Straight_Forward` fixtures, or a
+  minimal equivalent where provenance/content is not yet available.
+- Exercise the target expression through forced BF runtime/entry tests.
+- Check orbit values against a high-precision reference and stability
+  across two precisions.
+- Keep the current double result as a documented comparison, not the BF
+  correctness oracle.
+- Reserve full render/save comparisons for normal integration in slice 12.
+
+No test should depend on an untracked local formula or DOS installation.
+
+### Slice 11: Automatic Precision Requests
+
+#### 11.1. Detection Without Switching
+
+- Instrument candidate cancellation/precision indicators.
+- Test finite, zero, nonfinite, exact-cancellation, and scale cases.
+- Establish a validated policy from target and ordinary formulas.
+- Keep observation independent of the decision to change representation.
+
+#### 11.2. Restart Policy And Lifecycle
+
+- Specify pixel-versus-image restart and its consequences before coding.
+- Let the calculation owner apply precision requests from original inputs
+  at a bounded lifecycle boundary.
+- Preserve work, counters, image consistency, and seeded random behavior.
+- Test cancellation, errors, output side effects, and arena lifetime.
+- Do not recursively render or initialize BF beneath an active runtime.
+
+#### 11.3. Controls And Capability Gates
+
+- Honor accepted precision overrides and disable settings.
+- Test the second `mathtolerance` field and debug-override precedence.
+- Diagnose an unsupported required-BF program before mixed output is
+  accepted.
+- Keep automatic switching disabled until the normal engine path in
+  slice 12 implements those guarantees.
+
+The lost-bit expression is proposed instrumentation, not a fixed threshold
+already proved by the current implementation.
+
+### Slice 12: Normal Formula BF Integration
+
+#### 12.1. Alternate Math Registration And Setup
+
+- Register formula `BIG_FLT` callbacks in the const alternate table and
+  add the specification's `BF_MATH` capability.
+- Integrate explicit backend binding with current engine image setup.
+- Reuse coordinate precision initialization and existing parameter
+  conversion, adding precise source handling where it is missing.
+- Implement/test formula forcing through applicable existing controls;
+  do not assume the built-in-only `debugflag=3200` branch covers it.
+- Preserve ordinary double selection and supported-program diagnostics.
+
+#### 12.2. Restart, Resume, And Persistence
+
+- Activate the tested automatic restart policy.
+- Verify suspend/resume and setup/failure cleanup through
+  `StandardFractal`, without making formula another image renderer.
+- Check existing GIF precision/corner/parameter extensions, PAR output,
+  history, and formula identity before proposing additional metadata.
+- Verify saved/reloaded BF math and precision rather than serializing
+  arena pointers, bytecode addresses, or a live operand stack.
+- Add stable target-render comparisons where appropriate; do not demand
+  exact DOS raster identity for improved transcendental arithmetic.
+
+#### 12.3. UI Status And Documentation
+
+- Extend existing precision status/diagnostic presentation.
+- Document supported functions, selection controls, and limitations.
+- Keep setup warnings/errors on the established UI reporting path.
+- Automate interactions where existing controller/autokey coverage can
+  observe them; require manual testing only for an identified native gap.
+
+### Slice 13: Remaining Language Coverage
+
+Add unsupported function families in separate commits, each with
+capability updates and focused tests:
+
+- Remaining trig, hyperbolic, and inverse functions.
+- Rounding, absolute value, magnitude, and any remaining boolean rules.
+- Selected-function bindings not covered by the initial subset.
+- BF random/`srand()` behavior matching the defined double sequence policy.
+
+Use one scenario per test, parameterized inputs where appropriate, and
+branch/quadrant/zero cases for branch-sensitive functions.
+Do not call support complete while unimplemented operations silently
+fall back to double.
 
 ### Slice 14: Diagnostics And Cleanup
 
-Goal: make precision decisions explainable.
+- Reuse existing parser/interpreter tracing for operation identities and
+  add optional precision-request, restart, and selected-digit diagnostics.
+- Do not invent a new public parameter merely to duplicate existing debug
+  output; decide an additional control only if the current facility is
+  insufficient.
+- Remove remaining temporary bridges and document genuine limitations.
+- Verify tracing does not alter computed values or lifecycle.
+- Keep explicit failures for unsupported math and invalid runtime use.
 
-Work:
+## Validation And Test Placement
 
-- Add optional formula precision trace output.
-- Report switch reason and selected BF digits.
-- Remove temporary guards and compatibility shims.
-- Document limitations.
+- Reuse `tests/libid/fractals/test_parser.cpp` and interpreter/formula
+  coverage for compiler and double compatibility.
+- Put BF arithmetic/context tests under `tests/libid/math`; use existing
+  string conversion and allocation coverage as foundations.
+- Put compiled-program, runtime, and entry-point tests under
+  `tests/libid/fractals`.
+- Shared test-helper implementations and their tests belong under
+  `tests/libid/test`, with headers under `tests/libid/include`.
+- Register new source files in `tests/libid/CMakeLists.txt`.
+- Keep fixtures responsible for setup/teardown; each test checks one
+  scenario.  Parameterize cases differing only in inputs.
+- Use exact state/order assertions and checked numerical error bounds,
+  not source-grep tests or wall-clock precision expectations.
+- Verify low-level arithmetic first, then VM/setup, and finally image
+  lifecycle and persistence.  Tests must not rely on state from a prior
+  test or claim reentrancy while borrowing shared math storage.
 
-Tests:
+## Risks And Completion
 
-- Trace formatter prints stable switch reason text.
-- Trace output is off by default.
-- Enabling trace does not change computed orbit values.
-- No compatibility shim remains referenced by tests.
-- Verify trace-on changes only diagnostics output, not:
-  - `z`
-  - stack contents
-  - bailout result
-  - `g_overflow`
-  - `g_old_z`
-  - `g_new_z`
+The difficult work is no longer discovering whether BF arithmetic exists.
+It is separating program/value ownership, preserving literal precision,
+binding dispatch safely, defining reliable precision requests/restarts,
+and covering the formula language without hidden narrowing.
 
-Done when:
-
-- A debug trace explains why issue #11 switches to BF.
-- The implementation has no dead double/BF bridging code.
-- The plan document matches the final architecture.
-
-## Test Placement
-
-- Add parser and VM tests under `tests/libid/fractals`.
-- Add BF context and math tests under `tests/libid/math`.
-- Register new files in `tests/libid/CMakeLists.txt`.
-- Use explicit fixtures and `ValueSaver` for globals.
-- No test may depend on parser or runtime state from a prior test.
+The feature is complete only when supported formulas run through the
+normal engine path with correct precision, lifecycle, diagnostics, and
+persistence; ordinary formulas retain their double behavior.
+Concurrent independent render contexts and broader
+[ports-and-adapters work](hexagonal.md) remain separate concerns.
