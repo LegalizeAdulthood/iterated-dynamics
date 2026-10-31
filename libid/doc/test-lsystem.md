@@ -1,146 +1,225 @@
 <!--
 SPDX-License-Identifier: GPL-3.0-only
+Copyright 2026 Richard Thomson.
 -->
 
 # L-System Testing Plan
 
-Goal: add useful L-system tests without relying on image goldens.
-Rendered line pixels are too sensitive to small floating-point differences,
-because a tiny coordinate drift can move a rasterized line onto different
-pixels.  Tests should compare L-system semantics before rasterization.
+## Goal
 
-## Testing Layers
+Extend L-system coverage without cross-platform image goldens.  Small
+floating-point differences can move rasterized lines onto different
+pixels.  Prefer exact symbolic checks and tolerant geometry checks before
+rasterization.  The implementation is the source of truth; existing tests
+already cover much of the original plan.
 
-### Parser Tests
+## Current Implementation
 
-Validate the `.l` parser and file loading rules:
+- [lsystem.h](../include/fractals/lsystem.h) exposes the pimpl-based
+  `LSystem`: `start()`, `iterate()`, `sizing()`, `done()`, `interrupted()`,
+  and `suspend()`.
+- [lsystem.cpp](../fractals/lsystem.cpp) owns explicit sizing and drawing
+  stacks.  Sizing advances by at most 256 traversal steps per `iterate()`;
+  drawing advances one traversal step, which need not draw a line.
+- `LSysTurtleState`, command arrays, and branch snapshots remain private.
+  Definition text, loaded state, and trigonometric tables still have
+  file-scope storage; this is not an independently owned definition model.
+- `lsystem_load()` locates and parses a named file entry.  It throws a
+  diagnostic on failure, clears partial definition state, and leaves
+  `lsystem_loaded()` false.  Starting without a loaded definition throws
+  `std::logic_error`.  Empty rule replacements are valid, not malformed.
+- [NonStandardFractal](../engine/NonStandardFractal.cpp) selects and owns
+  the L-system calculation and manages its image lifecycle.
+- [LSystemController](../ui/LSystemController.cpp) advances that
+  calculation, polls input, and manages the thinking display and cleanup.
+  The calculation does not poll keys or display thinking messages.
+- Drawing commands `lsys_draw_d()` and `lsys_draw_f()` convert turtle
+  endpoints to integers and call `driver_draw_line()`.  No floating-point
+  line sink or semantic event trace exists yet.
 
-- Axiom is loaded.
-- Angle is loaded and validated.
-- Rules are loaded in source order.
-- Bad syntax reports failure.
-- Missing or invalid angle reports failure.
-- Empty or malformed rules report failure.
+Do not interpret `interrupted()` as "a key was detected."  Direct
+`LSystem::suspend()` sets it without completing traversal, and some drawing
+failure paths also set it.  Sizing overflow can instead end calculation
+without setting it.  Controller suspension finalizes the selected
+calculation as non-resumable; it does not save traversal stacks for later
+resumption.
 
-These tests can start with file fixtures through `lsystem_load()`.  Direct
-string-based parser tests can wait until parsing is split from file lookup.
+## Existing Coverage
 
-### Traversal Tests
+### Calculation And Loading
 
-Drive small synthetic systems through `LSystem::start()` and
-`LSystem::iterate()`:
+[Fractal tests](../../tests/libid/fractals/test_lsystem.cpp) already use
+`MockDriver::draw_line()` to record ordered integer endpoints and colors.
+Coordinates allow a one-pixel difference; colors and line counts are
+checked exactly.  These are line-output tests, not raster image goldens.
 
-- Rule expansion depth is honored.
-- Branch push and pop order is preserved.
-- Multiple matching rules, if supported, are applied in the current order.
-- `done()` becomes true after traversal completes.
-- `interrupted()` becomes true on stack overflow or key interruption.
+The parameterized `TestLSystemRender.rendersDefinitionAtOrder` covers:
 
-These tests should not compare pixels.  They should compare command or
-turtle events.
+- Fitting both axes and centering a degenerate axis.
+- Nested branches and branches inside expanded rules.
+- Restoring reverse direction, real angle, and scale after a branch.
+- Including unplotted movement in sizing bounds.
+- Expansion orders zero, one, and two.
+- Matching-rule source order and empty replacements.
+- Deep expansion using explicit stacks rather than recursive calls.
 
-### Semantic Draw Trace
+Additional fixtures cover bounded sizing, the first drawing increment,
+completion, overflow, suspension, cached definitions, and equivalence
+between direct `LSystem` work and `NonStandardFractal` selection.  Selected
+calculation tests forbid driver keyboard and text-screen calls.
 
-Add a test sink below turtle execution but above pixel plotting.  The
-production sink calls `driver_draw_line()`.  The test sink records events:
+Loading coverage includes missing files and entries, missing axioms,
+invalid or missing angles, reserved symbols, extra text, malformed and
+unknown commands, unterminated entries, failed reload cleanup, rejection
+of starts after load failure, and recovery with a valid definition.
 
-- `line(x0, y0, x1, y1, color)`
-- `move(x0, y0, x1, y1)`
-- `turn(angle_index)`
-- `scale(factor)`
-- `push()`
-- `pop()`
-- `color(n)`
+Do not add these scenarios again merely to satisfy the old parser and
+traversal testing sections.
 
-Coordinate checks should use a tolerance.  Event counts, event order,
-colors, branch depth, and final turtle state can be exact where the values
-are integer or symbolic.
+### UI Controller
 
-### Summary Invariants
+[Controller tests](../../tests/libid/ui/test_lsystem.cpp) cover:
 
-For larger built-in L-systems, avoid full trace goldens.  Check summaries:
+- Thinking display lifetime, spinner updates, and closure before drawing.
+- Sizing and drawing interruption with the command left pending.
+- Non-resumable status and definition cleanup after suspension.
+- Input, display, and plotting exceptions with cleanup.
+- Invalid controller lifecycle calls and iteration after completion.
+- Stepwise equivalence with the underlying calculation.
+- Controller destruction closing presentation without prematurely
+  finishing the calculation.
 
-- Line count.
-- Move count.
-- Branch count.
-- Maximum branch depth.
-- Final angle.
-- Final color.
-- Bounding box with tolerance.
-- Total drawn length with tolerance.
-- Command count.
+Keep input and presentation assertions here rather than adding them to
+the turtle execution tests.
 
-This catches large regressions while allowing harmless math drift.
+### Application Integration
 
-### Quantized Trace Hash
+The existing autokey tests provide interaction coverage:
 
-For medium systems, hash semantic events after quantizing coordinates to
-a tolerant grid.  This gives compact regression coverage without comparing
-final image pixels.
+- [lsystem-sizing](../../tests/autokey/lsystem_sizing_test.cmake)
+  interrupts high-order `Koch1` sizing, saves the interrupted result,
+  changes the order, and completes a new calculation.
+- [lsystem-validation](../../tests/autokey/lsystem_validation_test.cmake)
+  exercises invalid selection, correction, and cancellation.  It also
+  checks batch failure diagnostics and the absence of saved batch output.
 
-## Refactoring Slices
+Their checker programs validate metadata, blank versus nonblank output,
+and, for validation recovery, unchanged output within the same run.
+They do not compare L-system pixels against cross-platform gold images.
+They complement semantic tests rather than replacing them.
 
-### Slice 1: Draw Sink Seam
+## Remaining Test Strategy
+
+Use existing line capture when integer endpoints and colors are enough.
+The remaining geometry gap is visibility before integer conversion, not
+the ability to substitute a driver.  A new seam must expose calculation
+output without introducing UI callbacks, input polling, or timing policy.
+Keep plotting in the calculation layer, consistent with
+[the ports-and-adapters direction](hexagonal.md).
+
+For small synthetic systems, compare ordered floating-point segments and
+symbolic operations.  Choose explicit absolute and relative tolerances
+appropriate to the coordinate scale.  Do not make line counts, colors,
+operation order, or branch depth approximate.
+
+For larger definitions, prefer exact counts and tolerant summaries over
+full trace goldens.  Useful summaries include drawn length, bounds,
+branch depth, final turtle position, angle, and color.  Distinguish sizing
+traversal from drawing traversal so events are not counted twice.  Moves
+affect sizing bounds even when they do not draw a segment.
+
+A quantized trace hash remains optional, not the starting point.  Small
+drift near a quantization boundary can still change the hash; tolerance
+comparisons and structural summaries give better failure diagnostics.
+
+## Remaining Implementation Slices
+
+### Slice 1: Floating-Point Line Output
 
 Work:
 
-- Add an optional L-system draw sink.
-- Store the sink in `LSysTurtleState`.
-- Replace direct `driver_draw_line()` calls in the draw commands with
-  `sink.line(...)`.
-- Use a production sink that forwards to `driver_draw_line()`.
-- Add a test sink that records line events.
+- Add a narrow way to capture line endpoints before integer conversion in
+  `lsys_draw_d()` and `lsys_draw_f()`.
+- Preserve the existing production conversion and `driver_draw_line()`
+  output.  Avoid adding a second integer-only draw sink: the mock driver
+  already supplies that seam.
+- Keep any injected output dependency owned by the calculation instance,
+  not a new mutable global or UI-owned turtle callback.
+- Add a tiny synthetic definition test that compares floating-point
+  segments with tolerance and colors exactly.
 
-Done when:
+Done when a test observes unrounded endpoints while existing line-output
+tests continue to verify unchanged production behavior.
 
-- Existing rendering behavior is unchanged.
-- A test can render a tiny L-system and inspect recorded line events.
+### Slice 2: Targeted Turtle Semantics
 
-### Slice 2: Semantic Event Trace
+Split into separately reviewable sub-slices:
 
-Work:
+1. Add capture of unplotted movement and final turtle geometry.  Test
+   fixed-angle and real-angle movement without relying on fitted integer
+   line endpoints.
+2. Expose branch push and restore observations from the explicit stacks.
+   Verify saved position, direction, scale, and color with focused cases.
+3. Add direct coverage for color commands, reversal, turns, and scale
+   factors where current line-output cases do not already distinguish
+   the behavior.  Observe command effects, not UI presentation.
 
-- Extend the sink with move, turn, scale, color, push, and pop events.
-- Emit branch push and pop events from the draw stack.
-- Emit turtle operation events from the existing command functions.
-- Add test helpers for event counts, final state, and tolerant coordinate
-  comparison.
+Use a minimal observation mechanism sufficient for each test.  Do not
+require an event protocol for every internal operation just to duplicate
+coverage already provided by existing rendered segments.  Keep sizing
+and drawing observations distinguishable.
 
-Done when:
+Done when new tests identify previously unobserved turtle behavior with
+exact symbolic checks and tolerant geometry checks.
 
-- Tests can verify expansion order, branch restore behavior, color changes,
-  and approximate geometry without reading pixels.
-
-### Slice 3: Summary Tests
-
-Work:
-
-- Add summary helpers over recorded events.
-- Add tests for one or more built-in L-system definitions.
-- Compare counts exactly and geometry with tolerance.
-
-Done when:
-
-- Larger L-system coverage exists without image goldens.
-- Small floating-point drift does not fail the tests.
-
-### Slice 4: Parser Isolation
+### Slice 3: Larger-System Summaries
 
 Work:
 
-- Split parsed L-system data into an `LSystemDefinition` object.
-- Let tests construct definitions directly from strings.
-- Keep file lookup and `lsystem_load()` as UI or loading concerns.
+- Add summary helpers over the observations from earlier slices.
+- Select representative definitions from
+  [id.l](../../home/lsystem/id.l), including curved geometry and branching,
+  after inspecting their commands and existing coverage.
+- Add focused tests for uncovered counts, branch depth, bounds, drawn
+  length, or final state.  Use independently derived expectations for
+  tractable systems rather than recording implementation output blindly.
+- Reuse `Koch1` lifecycle and sizing coverage; do not add another generic
+  nonblank-image smoke test.
 
-Done when:
+Done when larger-system checks catch semantic or geometric regressions
+without depending on rasterized pixels.
 
-- Parser tests and renderer tests can be written independently.
-- Renderer tests no longer need file-search setup for tiny synthetic
-  systems.
+### Slice 4: Definition And Parser Isolation
 
-## Preferred Starting Point
+This remains separate from the existing parser validation coverage.
+Split into small steps:
 
-Start with the draw sink seam.  It is the smallest useful refactor,
-exercises the real parser and renderer, and fits the current `LSystem`
-pimpl shape.  Parser isolation can come later if file fixtures become too
-noisy.
+1. Extract an owned `LSystemDefinition` containing axiom, angle, and rules.
+   Preserve current rule ordering, empty replacements, diagnostics, and
+   named-entry loading behavior.
+2. Separate definition parsing from file lookup.  Keep loading as an I/O
+   concern without moving engine parsing or geometry into UI.
+3. Allow calculation tests to supply definitions directly.  Retain file
+   integration tests for lookup and load failure behavior; migrate only
+   tests whose subject is independent of file lookup.
+
+Do not claim full reentrancy from a definition object alone: shared
+trigonometric tables and remaining global configuration need separate
+ownership decisions if multiple calculations are required.
+
+Done when parser and turtle tests can use independent definitions
+without file-search setup, while file loading retains its existing
+behavior.
+
+## Validation
+
+- Each test case covers one scenario.  Extract repeated setup and teardown
+  into fixtures; parameterize cases that differ only by inputs.
+- Reuse existing test support.  Place shared helper tests under
+  `tests/libid/test`, not under production `misc` test directories.
+- Run new and affected tests through the `temp` workflow while developing
+  a slice; use `rt-default` for full workflow validation as required.
+- These slices need no repeated manual checks of automated loading,
+  thinking-display, interruption, or image-completion scenarios.  Add a
+  manual check only for a traced interaction gap not covered by those
+  tests.
