@@ -366,68 +366,6 @@ enabling the tool instead of coupling overlay animation to image
 generation.  This is a future direction, not a selected replacement for
 the existing display policy.
 
-## Current Engine Boundary
-
-The synchronous engine-to-UI render dispatch has been removed.
-Non-standard operation selection and per-image setup no longer enter
-renderers or UI.  Engine/fractal sources and headers no longer include
-UI headers.  Parameter ownership and defaults are separated:
-
-- `VideoInfo` is key-free.  UI owns the separate `g_video_mode_keys`
-  associations, the selected-entry binding, key lookup, key-name parsing,
-  and binding-name formatting.  Engine retains disk/display mode
-  validation with no UI key dependency.  UI owns the `video` handler and
-  pending request `g_init_mode`, including its storage and
-  initialization/completion policy.
-- Stereo calculation inputs and `CalibrationBars` are geometry-owned.
-  Automatic conversion and texture-filename reuse remain UI policy.
-  UI owns both the `rds` and `rds-texture` handlers; engine parameter
-  handling no longer depends on UI stereo policy.
-- UI owns `exitnoask`, `g_escape_exit`, and combined fractal-default
-  initialization for startup, fallback, and explicit `reset` commands.
-  Engine owns its defaults and reset-version validation/application.
-  Accepted resets take effect inline, once, before the next command.
-- GIF evolution records and comparisons are I/O-owned; public GIF metadata
-  headers no longer import UI.  `io/loadfile.cpp` explicitly includes
-  `ui/evolve.h` for its existing application of evolution runtime state.
-
-GIF codec operations do not poll input or support keyboard-interrupted
-saves.  Image-save progress, notifications, and exit policy are UI-owned;
-`io/ImageSave` owns encoding and file cleanup.  Image-load setup choices
-and cancellation are UI-owned and do not commit pending image parameters.
-
-Command parsing reports errors, warnings, generation actions, and startup
-selection requests without UI calls.  The command UI owns their effects;
-MIG failures unwind to it rather than exiting from I/O code.
-
-The implementation slices for the release 1.5 boundary are complete.
-Future source audits must still trace UI helper and dispatch-pointer
-calls as well as raw driver calls; an empty raw-key search alone does not
-establish inversion.
-
-This is not a claim that every non-UI module is free of UI state or
-headers.  Current backend dependencies include:
-
-- `geometry/line3d.cpp` includes `ui/big_while_loop.h` to register its
-  output-cleanup function in `g_out_line_cleanup`.
-- `io/encoder.cpp` and `io/ImageSave.cpp` include the big-loop and
-  evolution headers.  `ImageSave` reads UI-owned evolution state when
-  constructing metadata.
-- `io/loadfile.cpp` includes evolution and parameter-file UI headers;
-  applying saved extensions restores evolution runtime state and genes.
-- `io/load_config.cpp` uses UI key-name parsing and writes the separate
-  UI-owned video-mode bindings while loading the mode catalog.
-- `io/save_timer.cpp` uses UI-owned `g_finish_row` and `read_ticker()` for
-  autosave scheduling.
-
-These dependencies do not poll keyboard or mouse input.  They are
-distinct from the completed engine/fractal input boundary and from any
-future cleanup of metadata, configuration, or autosave ownership.
-
-The `OrbitPlot` wait loop, delay state, and sound mapping have been
-removed.  It submits numerical samples through `g_sound`; standard and
-FrothyBasin UI controllers own sound servicing and session completion.
-
 ## Keyboard Polling Still Outside `id_main`
 
 The current release 1.5 boundary is narrower than the final
