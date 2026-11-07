@@ -78,7 +78,10 @@ void make_parameter_file(const MakeParameterFile &request)
             viewport.enabled = false;
         }
         const std::optional<ImageVideoMode> video{get_video_mode(metadata, viewport)};
-        apply_image_parameters(metadata);
+        ImageParameterOptions options;
+        options.apply_palette = true;
+        options.apply_color_count = true;
+        apply_image_parameters(metadata, options);
         if (video)
         {
             video_key = video->mode >= 0 ? g_video_mode_keys[video->mode] : 0;

@@ -3,6 +3,7 @@
 //
 #include <io/loadfile.h>
 
+#include <ColorMapSaver.h>
 #include <FindFractalInfoState.h>
 #include <FindFractalInfoTestSupport.h>
 #include <GifReadSupport.h>
@@ -553,6 +554,56 @@ void TestFindFractalInfo::TearDown()
     }
 }
 
+class TestImageParameterColors : public Test, public WithParamInterface<std::tuple<int, bool, bool>>
+{
+protected:
+    void SetUp() override;
+
+    ColorMapSaver m_saved_palette;
+    FindFractalInfoState m_saved_metadata;
+    ValueSaver<int> m_saved_colors{g_colors, 16};
+    ImageMetadata m_metadata;
+    ImageParameterOptions m_options;
+};
+
+void TestImageParameterColors::SetUp()
+{
+    m_metadata.fractal = main_record();
+    m_metadata.fractal.info_version = static_cast<std::int16_t>(std::get<0>(GetParam()));
+    m_metadata.fractal.colors = 4;
+    m_metadata.width = 2;
+    m_metadata.height = 2;
+    m_metadata.colors = 2;
+    m_metadata.palette[0] = {1, 2, 3};
+    m_metadata.palette[1] = {4, 5, 6};
+    m_options.apply_palette = std::get<1>(GetParam());
+    m_options.apply_color_count = std::get<2>(GetParam());
+    for (int color = 0; color < 3; ++color)
+    {
+        std::fill(std::begin(g_dac_box[color]), std::end(g_dac_box[color]), 42);
+    }
+}
+
+TEST_P(TestImageParameterColors, appliesOnlyTheRequestedColorState)
+{
+    apply_image_parameters(m_metadata, m_options);
+
+    const bool use_file_colors{m_options.apply_color_count && m_metadata.fractal.info_version > 0};
+    EXPECT_EQ(use_file_colors ? 4 : 16, g_colors);
+    EXPECT_EQ(2, g_file_colors);
+    for (int color = 0; color < 3; ++color)
+    {
+        for (int component = 0; component < 3; ++component)
+        {
+            const int expected{m_options.apply_palette && color < 2 ? m_metadata.palette[color][component] : 42};
+            EXPECT_EQ(expected, g_dac_box[color][component]);
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    OptionsAndVersions, TestImageParameterColors, Combine(Values(0, 1, FRACTAL_INFO_VERSION), Bool(), Bool()));
+
 class TestMetadataStatePreservation : public TestFindFractalInfo
 {
 protected:
@@ -981,7 +1032,7 @@ TEST_P(TestInvalidPrecisionPayload, metadataReaderRejectsInvalidPayloadWithoutCh
 
 TEST_P(TestInvalidPrecisionPayload, parameterApplicationRejectsInvalidPayloadWithoutChangingActiveImage)
 {
-    EXPECT_THROW(apply_image_parameters(m_metadata), std::runtime_error);
+    EXPECT_THROW(apply_image_parameters(m_metadata, {}), std::runtime_error);
 
     expect_active_image();
 }
@@ -1127,6 +1178,7 @@ TEST_F(TestFindFractalInfo, skipsInvalidLzwPixelsWhenReadingMetadata)
 
 TEST_F(TestFindFractalInfo, plainGifUsesUnsignedHeaderDimensionsAspectAndPalette)
 {
+    ValueSaver saved_active_colors{g_colors, 16};
     ValueSaver saved_screen_aspect{g_screen_aspect, 0.75f};
     ValueSaver saved_red_0{g_dac_box[0][0]};
     ValueSaver saved_green_0{g_dac_box[0][1]};
@@ -1134,7 +1186,6 @@ TEST_F(TestFindFractalInfo, plainGifUsesUnsignedHeaderDimensionsAspectAndPalette
     ValueSaver saved_red_1{g_dac_box[1][0]};
     ValueSaver saved_green_1{g_dac_box[1][1]};
     ValueSaver saved_blue_1{g_dac_box[1][2]};
-    g_make_parameter_file = true;
     const std::filesystem::path path{write_small_file()};
     {
         std::fstream file{path, std::ios::in | std::ios::out | std::ios::binary};
@@ -1145,7 +1196,7 @@ TEST_F(TestFindFractalInfo, plainGifUsesUnsignedHeaderDimensionsAspectAndPalette
         file.put(49);
     }
 
-    ASSERT_FALSE(m_result.read(path));
+    ASSERT_FALSE(m_result.read(path, true));
 
     EXPECT_EQ(65535, g_file_x_dots);
     EXPECT_EQ(32768, g_file_y_dots);
@@ -1153,12 +1204,25 @@ TEST_F(TestFindFractalInfo, plainGifUsesUnsignedHeaderDimensionsAspectAndPalette
     EXPECT_EQ(32768, m_result.info.y_dots);
     EXPECT_FLOAT_EQ(32768.0f / 65535.0f, g_file_aspect_ratio);
     EXPECT_EQ(2, g_file_colors);
+    EXPECT_EQ(16, g_colors);
     EXPECT_EQ(255, g_dac_box[0][0]);
     EXPECT_EQ(0, g_dac_box[0][1]);
     EXPECT_EQ(0, g_dac_box[0][2]);
     EXPECT_EQ(0, g_dac_box[1][0]);
     EXPECT_EQ(255, g_dac_box[1][1]);
     EXPECT_EQ(0, g_dac_box[1][2]);
+}
+
+TEST_F(TestFindFractalInfo, metadataInspectionPreservesActivePaletteByDefault)
+{
+    ColorMapSaver saved_palette;
+    std::fill(std::begin(g_dac_box[0]), std::end(g_dac_box[0]), 42);
+
+    ASSERT_FALSE(m_result.read(write_small_file()));
+
+    EXPECT_EQ(42, g_dac_box[0][0]);
+    EXPECT_EQ(42, g_dac_box[0][1]);
+    EXPECT_EQ(42, g_dac_box[0][2]);
 }
 
 class TestHeaderDimensions : public TestFindFractalInfo, public WithParamInterface<int>

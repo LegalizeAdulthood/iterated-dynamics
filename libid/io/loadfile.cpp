@@ -44,7 +44,6 @@
 #include <math/round_float_double.h>
 #include <misc/id.h>
 #include <ui/evolve.h>
-#include <ui/make_batch_file.h>
 
 #include <fmt/format.h>
 #include <gif_lib.h>
@@ -339,7 +338,7 @@ Version fractal_info_version(const FractalInfo &read_info)
     return parse_legacy_version(1100);
 }
 
-static void backwards_info1(const FractalInfo &read_info)
+static void backwards_info1(const FractalInfo &read_info, const bool apply_color_count)
 {
     if (read_info.info_version > 0)
     {
@@ -350,7 +349,7 @@ static void backwards_info1(const FractalInfo &read_info)
         g_potential.params[0] = read_info.potential[0];
         g_potential.params[1] = read_info.potential[1];
         g_potential.params[2] = read_info.potential[2];
-        if (g_make_parameter_file)
+        if (apply_color_count)
         {
             g_colors = read_info.colors;
         }
@@ -949,7 +948,7 @@ ImageMetadata read_image_metadata(const std::filesystem::path &path)
     return metadata;
 }
 
-void apply_image_parameters(const ImageMetadata &metadata)
+void apply_image_parameters(const ImageMetadata &metadata, const ImageParameterOptions options)
 {
     validate_precision_metadata(metadata);
     const FractalInfo &read_info{metadata.fractal};
@@ -957,7 +956,7 @@ void apply_image_parameters(const ImageMetadata &metadata)
     g_file_y_dots = metadata.height;
     g_file_colors = metadata.colors;
     g_file_aspect_ratio = metadata.aspect_ratio;
-    if (g_make_parameter_file)
+    if (options.apply_palette)
     {
         std::memcpy(g_dac_box, metadata.palette.data(), metadata.colors * 3);
     }
@@ -973,7 +972,7 @@ void apply_image_parameters(const ImageMetadata &metadata)
     g_file_version = fractal_info_version(read_info);
 
     g_inversion.invert = 0;
-    backwards_info1(read_info);
+    backwards_info1(read_info, options.apply_color_count);
     backwards_info2(read_info);
     backwards_info3(read_info);
     backwards_info4(read_info);
@@ -1152,7 +1151,7 @@ void apply_image_extensions(ImageMetadata &metadata)
 // return true on error, false on success
 bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     ExtBlock2 *blk_2_info, ExtBlock3 *blk_3_info, ExtBlock4 *blk_4_info, //
-    ExtBlock5 *blk_5_info, ExtBlock6 *blk_6_info, ExtBlock7 *blk_7_info)
+    ExtBlock5 *blk_5_info, ExtBlock6 *blk_6_info, ExtBlock7 *blk_7_info, const bool apply_palette)
 {
     *info = {};
     *blk_2_info = {};
@@ -1178,7 +1177,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     g_file_y_dots = metadata.height;
     g_file_colors = metadata.colors;
     g_file_aspect_ratio = metadata.aspect_ratio;
-    if (g_make_parameter_file)
+    if (apply_palette)
     {
         std::memcpy(g_dac_box, metadata.palette.data(), metadata.colors * 3);
     }

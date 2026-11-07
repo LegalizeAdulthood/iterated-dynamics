@@ -21,7 +21,7 @@ struct FindFractalInfoResult
     io::ExtBlock7 orbits{};
 
     // Returns true on error, matching find_fractal_info.
-    bool read(const std::filesystem::path &path);
+    bool read(const std::filesystem::path &path, bool apply_palette = false);
 };
 
 } // namespace id::test

@@ -8,9 +8,10 @@
 namespace id::test
 {
 
-bool FindFractalInfoResult::read(const std::filesystem::path &path)
+bool FindFractalInfoResult::read(const std::filesystem::path &path, const bool apply_palette)
 {
-    return io::find_fractal_info(path.string(), &info, &resume, &formula, &ranges, &parameters, &evolution, &orbits);
+    return io::find_fractal_info(
+        path.string(), &info, &resume, &formula, &ranges, &parameters, &evolution, &orbits, apply_palette);
 }
 
 } // namespace id::test

@@ -78,8 +78,14 @@ struct ImageMetadata
     ExtBlock7 orbits{};
 };
 
+struct ImageParameterOptions
+{
+    bool apply_palette{};
+    bool apply_color_count{}; // Use the saved fractal count for info_version > 0.
+};
+
 ImageMetadata read_image_metadata(const std::filesystem::path &path);
-void apply_image_parameters(const ImageMetadata &metadata);
+void apply_image_parameters(const ImageMetadata &metadata, ImageParameterOptions options);
 void apply_image_extensions(ImageMetadata &metadata);
 void set_if_old_bif();
 void set_function_param_defaults();
@@ -92,7 +98,7 @@ misc::Version fractal_info_version(const FractalInfo &read_info);
 // return true on error, false on success
 bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     ExtBlock2 *blk_2_info, ExtBlock3 *blk_3_info, ExtBlock4 *blk_4_info, //
-    ExtBlock5 *blk_5_info, ExtBlock6 *blk_6_info, ExtBlock7 *blk_7_info);
+    ExtBlock5 *blk_5_info, ExtBlock6 *blk_6_info, ExtBlock7 *blk_7_info, bool apply_palette);
 fractals::FractalType migrate_integer_types(int read_type);
 
 } // namespace id::io

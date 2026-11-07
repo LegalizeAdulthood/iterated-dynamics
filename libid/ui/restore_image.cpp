@@ -108,7 +108,7 @@ int prepare_image_restore(const Viewport &requested_viewport)
         return -1;
     }
 
-    apply_image_parameters(metadata);
+    apply_image_parameters(metadata, {});
     if (video)
     {
         g_init_mode = video->mode;

@@ -882,6 +882,8 @@ protected:
     ValueSaver<std::string> m_saved_comment{g_par_comment[0]};
     ValueSaver<bool> m_saved_fast_restore{g_fast_restore, false};
     ValueSaver<fs::path> m_saved_read_filename{g_read_filename};
+    ValueSaver<int> m_saved_active_colors{g_colors};
+    ColorMapSaver m_saved_palette;
     GifFileType m_extensions{};
     fs::path m_image_path;
     fs::path m_parameter_path;
@@ -929,9 +931,13 @@ std::string TestCommandMakeParView::make_par_for_image(const int width, const in
     EXPECT_CALL(m_driver, set_video_mode(_)).Times(0);
     EXPECT_CALL(m_driver, write_pixel(_, _, _)).Times(0);
 
+    g_colors = 256;
+    g_dac_box[0][0] = 42;
     exec_cmd_arg("makepar=" + m_parameter_path.filename().string() + "/view", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
+    EXPECT_EQ(16, g_colors);
+    EXPECT_EQ(0, g_dac_box[0][0]);
     return read_file_contents(m_parameter_path);
 }
 

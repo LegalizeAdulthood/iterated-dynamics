@@ -218,13 +218,13 @@ rescan:  // entry for changed browse parms
         ExtBlock5 blk_5_info;
         ExtBlock6 blk_6_info;
         ExtBlock7 blk_7_info;
-        if (!find_fractal_info(path.string(), &read_info,                                     //
-                &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info) //
-            && (type_ok(&read_info, &blk_3_info) || !g_browse.check_fractal_type)             //
-            && (params_ok(&read_info) || !g_browse.check_fractal_params)                      //
-            && g_browse.name != path.string()                                                 //
-            && !blk_6_info.got_data                                                           //
-            && window.is_visible(&read_info, &blk_5_info))                                    //
+        if (!find_fractal_info(path.string(), &read_info,                                            //
+                &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info, false) //
+            && (type_ok(&read_info, &blk_3_info) || !g_browse.check_fractal_type)                    //
+            && (params_ok(&read_info) || !g_browse.check_fractal_params)                             //
+            && g_browse.name != path.string()                                                        //
+            && !blk_6_info.got_data                                                                  //
+            && window.is_visible(&read_info, &blk_5_info))                                           //
         {
             window.path = path;
             window.filename = path.filename().string();
