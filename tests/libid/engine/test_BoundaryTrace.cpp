@@ -14,7 +14,6 @@
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
 #include <misc/ValueSaver.h>
-#include <ui/video.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -30,7 +29,6 @@ using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
-using namespace id::ui;
 using namespace testing;
 
 namespace id::test
@@ -67,7 +65,7 @@ protected:
         s_checkerboard = false;
         set_frame(16, 12);
         g_dispatch.set_calc_type(calculate_pixel);
-        set_normal_dot();
+        set_pixel_functions(driver_write_pixel, driver_read_pixel);
         EXPECT_CALL(m_driver, read_pixel(_, _))
             .WillRepeatedly(Invoke([this](int col, int row) { return m_frame.read_pixel(col, row); }));
         EXPECT_CALL(m_driver, write_pixel(_, _, _))

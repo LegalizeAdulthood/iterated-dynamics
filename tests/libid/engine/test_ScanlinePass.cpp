@@ -7,12 +7,12 @@
 #include <WorkListSnapshot.h>
 
 #include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
 #include <engine/resume.h>
 #include <engine/VideoInfo.h>
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
 #include <misc/ValueSaver.h>
-#include <ui/video.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -28,7 +28,6 @@ using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
-using namespace id::ui;
 using namespace testing;
 
 namespace id::test
@@ -71,7 +70,7 @@ protected:
         s_interrupt_once = false;
         s_color = 7;
         g_dispatch.set_calc_type(calculate_pixel);
-        set_normal_dot();
+        set_pixel_functions(driver_write_pixel, driver_read_pixel);
     }
 
     std::vector<Point2i> finish(ScanlinePass &pass)

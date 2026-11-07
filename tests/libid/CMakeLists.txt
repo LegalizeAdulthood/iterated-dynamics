@@ -79,7 +79,6 @@ add_executable(test-id
     "include/test_data.h.in"
     "include/test_library.h.in"
     "include/test_migrate_gif.h.in"
-    include/TestRender.h test/TestRender.cpp
     include/TemporaryDirectory.h test/TemporaryDirectory.cpp
     include/WorkListSnapshot.h test/WorkListSnapshot.cpp
     test/expected_map.cpp
@@ -159,6 +158,7 @@ add_executable(test-id
     test/test_CommandTestFile.cpp
     test/test_GifReadSupport.cpp
     test/test_TemporaryDirectory.cpp
+    include/ui/TestRender.h ui/TestRender.cpp
     ui/test_ChoiceBuilder.cpp
     ui/test_cellular.cpp
     ui/test_command_diagnostics.cpp

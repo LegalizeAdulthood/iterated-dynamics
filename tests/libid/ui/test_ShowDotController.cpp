@@ -5,7 +5,7 @@
 
 #include <MockDriver.h>
 #include <PendingDriverKey.h>
-#include <TestRender.h>
+#include <ui/TestRender.h>
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>

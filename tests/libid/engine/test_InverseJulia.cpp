@@ -14,7 +14,6 @@
 #include <io/disk_storage.h>
 #include <misc/memory.h>
 #include <misc/ValueSaver.h>
-#include <ui/video.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -32,7 +31,6 @@ using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
-using namespace id::ui;
 using namespace testing;
 
 namespace id::test
@@ -65,7 +63,7 @@ protected:
     {
         free_queue();
         init_memory();
-        set_normal_dot();
+        set_pixel_functions(driver_write_pixel, driver_read_pixel);
         g_dispatch.set_per_pixel(start_orbit);
         g_dispatch.set_orbit_calc(step_orbit);
         EXPECT_CALL(m_driver, write_pixel(_, _, _))

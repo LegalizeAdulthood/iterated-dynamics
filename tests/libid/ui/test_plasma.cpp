@@ -3,7 +3,7 @@
 //
 #include <MockDriver.h>
 #include <TemporaryDirectory.h>
-#include <TestRender.h>
+#include <ui/TestRender.h>
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>

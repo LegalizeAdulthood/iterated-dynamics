@@ -5,7 +5,7 @@
 #include <MockSoundOutput.h>
 #include <PendingDriverKey.h>
 #include <TemporaryDirectory.h>
-#include <TestRender.h>
+#include <ui/TestRender.h>
 
 #include <engine/calcfrac.h>
 #include <engine/bailout_formula.h>

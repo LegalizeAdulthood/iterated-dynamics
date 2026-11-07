@@ -41,7 +41,6 @@
 #include <misc/stack_avail.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
-#include <ui/video.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -66,7 +65,6 @@ using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
-using namespace id::ui;
 using namespace testing;
 
 namespace id::test
@@ -714,7 +712,7 @@ void TestPerturbationPixels::SetUp()
     s_reference_coordinates.clear();
     s_reference_values.clear();
     s_parameter_delta = {};
-    set_normal_dot();
+    set_pixel_functions(driver_write_pixel, driver_read_pixel);
     EXPECT_CALL(m_driver, read_pixel(_, _))
         .WillRepeatedly(Invoke([this](const int col, const int row) { return m_pixels.at(row * WIDTH + col); }));
     EXPECT_CALL(m_driver, write_pixel(_, _, _))

@@ -4,7 +4,7 @@
 
 #include <ColorMapSaver.h>
 #include <MockDriver.h>
-#include <TestRender.h>
+#include <ui/TestRender.h>
 
 #include <engine/calcfrac.h>
 #include <engine/cmdfiles.h>

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include <TestRender.h>
+#include <ui/TestRender.h>
 
 #include <engine/SoundOutput.h>
 #include <engine/StandardFractal.h>

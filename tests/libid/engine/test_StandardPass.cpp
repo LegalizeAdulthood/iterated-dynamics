@@ -26,7 +26,6 @@
 #include <io/disk_storage.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
-#include <ui/video.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -47,7 +46,6 @@ using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
-using namespace id::ui;
 using namespace testing;
 
 namespace id::test
@@ -130,7 +128,7 @@ protected:
     {
         m_frame.reset(8, 8);
         g_dispatch.set_calc_type(unexpected_calculation);
-        set_normal_dot();
+        set_pixel_functions(driver_write_pixel, driver_read_pixel);
         EXPECT_CALL(m_driver, read_pixel(_, _))
             .WillRepeatedly(Invoke([this](int col, int row) { return m_frame.read_pixel(col, row); }));
         EXPECT_CALL(m_driver, write_pixel(_, _, _))

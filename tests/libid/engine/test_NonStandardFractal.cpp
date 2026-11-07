@@ -6,7 +6,7 @@
 #include <MockDriver.h>
 #include <ColorMapSaver.h>
 #include <test_data.h>
-#include <TestRender.h>
+#include <ui/TestRender.h>
 
 #include <engine/calc_frac_init.h>
 #include <engine/cmdfiles.h>

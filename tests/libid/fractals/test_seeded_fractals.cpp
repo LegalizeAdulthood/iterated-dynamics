@@ -19,6 +19,7 @@
 #include <engine/ImageRegion.h>
 #include <engine/Inversion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/pixel.h>
 #include <engine/pixel_grid.h>
 #include <engine/Potential.h>
 #include <engine/random_seed.h>
@@ -39,7 +40,6 @@
 #include <misc/debug_flags.h>
 #include <misc/Driver.h>
 #include <misc/ValueSaver.h>
-#include <ui/video.h>
 
 #include <FractalParamSaver.h>
 #include <MockDriver.h>
@@ -66,7 +66,6 @@ using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
-using namespace id::ui;
 
 namespace id::test
 {
@@ -84,6 +83,11 @@ void ignore_plot(int, int, int)
 {
 }
 
+int read_blank_pixel(int, int)
+{
+    return 0;
+}
+
 void capture_plot(int, int, int color)
 {
     s_plotted_colors.push_back(color);
@@ -99,7 +103,7 @@ class MinimalImageState
 public:
     MinimalImageState()
     {
-        set_null_video();
+        set_pixel_functions(ignore_plot, read_blank_pixel);
     }
 
     MinimalImageState(const MinimalImageState &) = delete;
