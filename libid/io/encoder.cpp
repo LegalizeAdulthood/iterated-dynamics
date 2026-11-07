@@ -45,9 +45,7 @@
 #include <misc/debug_flags.h>
 #include <misc/id.h>
 #include <misc/version.h>
-#include <ui/big_while_loop.h>
 #include <io/disk_storage.h>
-#include <ui/evolve.h>
 
 #include <gif_lib.h>
 
@@ -65,7 +63,6 @@ using namespace id::fractals;
 using namespace id::geometry;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::io
 {
