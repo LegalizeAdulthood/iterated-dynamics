@@ -2,5 +2,6 @@
 # Copyright 2026 Richard Thomson.
 #
 add_subdirectory(algos)
+add_subdirectory(config)
 add_subdirectory(core)
 add_subdirectory(ui)

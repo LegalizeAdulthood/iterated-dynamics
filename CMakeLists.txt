@@ -77,7 +77,6 @@ endif()
 # Enable parallel builds with MSVC
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 
-add_subdirectory(config)
 add_subdirectory(hc)
 add_subdirectory(helpcom)
 if(("id" IN_LIST VCPKG_MANIFEST_FEATURES) OR ("wx" IN_LIST VCPKG_MANIFEST_FEATURES) OR NOT VCPKG_MANIFEST_FEATURES)
