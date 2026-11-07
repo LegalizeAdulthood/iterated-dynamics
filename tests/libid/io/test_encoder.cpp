@@ -48,7 +48,6 @@
 #include <misc/version.h>
 #include <io/disk_storage.h>
 #include <ui/diskvid.h>
-#include <ui/big_while_loop.h>
 #include <ui/evolve.h>
 #include <ui/make_batch_file.h>
 #include <ui/slideshw.h>
@@ -69,6 +68,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -592,7 +592,7 @@ void TestGifWriterIncrementalSave::SetUp()
                 EXPECT_FALSE(g_busy);
                 return m_frame.at(static_cast<std::size_t>(y) * m_frame_width + x);
             });
-    m_image = std::make_unique<ImageSave>(m_path);
+    m_image = std::make_unique<ImageSave>(m_path, std::nullopt);
 }
 
 void TestGifWriterIncrementalSave::TearDown()
@@ -650,7 +650,7 @@ TEST_F(TestGifWriterRaster, unfinishedSaveRemovesItsPartialFileWithoutUi)
     EXPECT_CALL(m_driver, is_disk()).Times(0);
     EXPECT_CALL(m_driver, flush()).Times(0);
     {
-        ImageSave image{m_path};
+        ImageSave image{m_path, std::nullopt};
         image.iterate();
         EXPECT_TRUE(std::filesystem::exists(m_path));
         EXPECT_FALSE(image.done());
@@ -682,7 +682,7 @@ TEST_F(TestGifWriterExistingImage, existingTemporaryDestinationIsNotDeleted)
     EXPECT_CALL(m_driver, is_disk()).Times(0);
     EXPECT_CALL(m_driver, flush()).Times(0);
     {
-        ImageSave image{m_path};
+        ImageSave image{m_path, std::nullopt};
         EXPECT_TRUE(image.done());
         EXPECT_FALSE(image.succeeded());
         EXPECT_THAT(image.diagnostic(), HasSubstr("Can't create"));
@@ -703,7 +703,7 @@ TEST_F(TestGifWriterExistingImage, replacementFailurePreservesOriginalAndExistin
     m_frame[0] = 123;
     EXPECT_CALL(m_driver, is_disk()).Times(0);
     EXPECT_CALL(m_driver, flush()).Times(0);
-    ImageSave image{m_path};
+    ImageSave image{m_path, std::nullopt};
     while (!image.done())
     {
         image.iterate();
@@ -822,7 +822,7 @@ void GifWriterSaveStreamTest::start_save(const int width, const int height)
 {
     configure_image(width, height, 256);
     m_pixels = image_pixels();
-    m_image = std::make_unique<ImageSave>(m_output, m_path);
+    m_image = std::make_unique<ImageSave>(m_output, m_path, std::nullopt);
 }
 
 void GifWriterSaveStreamTest::TearDown()
@@ -1299,46 +1299,80 @@ TEST_F(TestGifWriterExtensions, preservesOpaqueArbitraryPrecisionParameters)
     EXPECT_EQ(expected, m_result.parameters.apm_data);
 }
 
-class TestGifWriterEvolution : public TestGifWriterExtensions, public WithParamInterface<bool>
+class TestGifWriterEvolution : public TestGifWriterExtensions, public WithParamInterface<std::tuple<bool, bool>>
 {
 };
 
-TEST_P(TestGifWriterEvolution, savesLiveEvolutionStateWhenNoResumeOrCalculationComplete)
+TEST_P(TestGifWriterEvolution, encodesOnlyTheSuppliedSnapshotForFilesAndStreams)
 {
-    const bool completed{GetParam()};
-    g_evolving = EvolutionModeFlags::FIELD_MAP;
-    g_calc_status = completed ? CalcStatus::COMPLETED : CalcStatus::RESUMABLE;
-    ValueSaver saved_have_info{g_have_evolve_info, completed};
-    ValueSaver saved_grid{g_evolve_image_grid_size, 3};
-    ValueSaver saved_seed{g_evolve_this_generation_random_seed, 0xABCDU};
-    ValueSaver saved_mutation{g_evolve_max_random_mutation, 0.25};
-    ValueSaver saved_x_range{g_evolve_x_parameter_range, 4.0};
-    ValueSaver saved_y_range{g_evolve_y_parameter_range, 3.0};
-    ValueSaver saved_x_offset{g_evolve_x_parameter_offset, -2.0};
-    ValueSaver saved_y_offset{g_evolve_y_parameter_offset, -1.5};
-    ValueSaver saved_px{g_evolve_param_grid_x, 1};
-    ValueSaver saved_py{g_evolve_param_grid_y, 2};
-    ValueSaver saved_gene{g_gene_bank[2].mutate, Variations::Y};
-
-    ASSERT_EQ(0, save());
+    const bool stream{std::get<0>(GetParam())};
+    const bool present{std::get<1>(GetParam())};
+    EvolutionInfo expected{};
+    expected.evolving = 1;
+    expected.image_grid_size = 3;
+    expected.this_generation_random_seed = 0xABCD;
+    expected.max_random_mutation = 0.25;
+    expected.x_parameter_range = 4;
+    expected.y_parameter_range = 3;
+    expected.x_parameter_offset = -2;
+    expected.y_parameter_offset = -1.5;
+    expected.discrete_x_parameter_offset = -7;
+    expected.discrete_y_parameter_offset = 9;
+    expected.px = 1;
+    expected.py = 2;
+    expected.screen_x_offset = 2;
+    expected.screen_y_offset = 1;
+    expected.x_dots = 0xFFFF;
+    expected.y_dots = 0x8000;
+    expected.count = 17;
+    expected.future[0] = -123;
+    for (int i = 0; i < NUM_GENES; ++i)
+    {
+        expected.mutate[i] = static_cast<std::int16_t>(i % 2 == 0 ? -i : i + 7);
+    }
+    std::optional<EvolutionInfo> snapshot;
+    if (present)
+    {
+        snapshot = expected;
+    }
+    std::ofstream output;
+    std::unique_ptr<ImageSave> image;
+    if (stream)
+    {
+        output.open(m_path, std::ios::binary);
+        ASSERT_TRUE(output);
+        image = std::make_unique<ImageSave>(output, m_path, snapshot);
+    }
+    else
+    {
+        image = std::make_unique<ImageSave>(m_path, snapshot);
+    }
+    if (snapshot)
+    {
+        snapshot->count = 99;
+        snapshot->mutate[0] = 99;
+        snapshot.reset();
+    }
+    while (!image->done())
+    {
+        image->iterate();
+    }
+    ASSERT_TRUE(image->succeeded()) << image->diagnostic();
+    image.reset();
+    if (output.is_open())
+    {
+        output.close();
+    }
 
     const GifFilePtr gif{read_gif(m_path)};
+    if (!present)
+    {
+        expect_layout(gif.get(), {"fractint001"});
+        EXPECT_FALSE(has_gif_extension(gif.get(), "fractint006"));
+        return;
+    }
     expect_layout(gif.get(), {"fractint006", "fractint001"});
-    const EvolutionInfo info{get_evolution_info(gif.get())};
-    EXPECT_EQ(1, info.evolving);
-    EXPECT_EQ(3, info.image_grid_size);
-    EXPECT_EQ(0xABCD, info.this_generation_random_seed);
-    EXPECT_EQ(9, info.count);
-    EXPECT_EQ(0.25, info.max_random_mutation);
-    EXPECT_EQ(4.0, info.x_parameter_range);
-    EXPECT_EQ(3.0, info.y_parameter_range);
-    EXPECT_EQ(-2.0, info.x_parameter_offset);
-    EXPECT_EQ(-1.5, info.y_parameter_offset);
-    EXPECT_EQ(1, info.px);
-    EXPECT_EQ(2, info.py);
-    EXPECT_EQ(8, info.x_dots);
-    EXPECT_EQ(6, info.y_dots);
-    EXPECT_EQ(static_cast<int>(Variations::Y), info.mutate[2]);
+    EXPECT_EQ(expected, get_evolution_info(gif.get()));
     const std::vector<Byte> bytes{payload(gif.get(), "fractint006")};
     ASSERT_EQ(200, bytes.size());
     EXPECT_EQ((std::vector<Byte>{1, 0, 3, 0, 0xCD, 0xAB}), (std::vector<Byte>{bytes.begin(), bytes.begin() + 6}));
@@ -1346,57 +1380,14 @@ TEST_P(TestGifWriterEvolution, savesLiveEvolutionStateWhenNoResumeOrCalculationC
     EXPECT_TRUE(m_result.evolution.got_data);
     EXPECT_EQ(200, m_result.evolution.length);
     EXPECT_EQ(0xABCD, m_result.evolution.this_generation_random_seed);
-    EXPECT_EQ(9, m_result.evolution.e_count);
-    EXPECT_EQ(-2.0, m_result.evolution.x_parameter_offset);
-    EXPECT_EQ(static_cast<int>(Variations::Y), m_result.evolution.mutate[2]);
-}
-
-INSTANTIATE_TEST_SUITE_P(Completion, TestGifWriterEvolution, Bool());
-
-TEST_F(TestGifWriterExtensions, savesCachedEvolutionStateForResumableCalculation)
-{
-    g_evolving = EvolutionModeFlags::FIELD_MAP;
-    g_calc_status = CalcStatus::RESUMABLE;
-    ValueSaver saved_have_info{g_have_evolve_info, true};
-    ValueSaver saved_info{g_evolve_info, EvolutionInfo{}};
-    ValueSaver saved_gene{g_gene_bank[1].mutate, Variations::RANDOM};
-    g_evolve_info.image_grid_size = 5;
-    g_evolve_info.evolving = 1;
-    g_evolve_info.this_generation_random_seed = 0x9876;
-    g_evolve_info.max_random_mutation = 0.5;
-    g_evolve_info.x_parameter_range = 8;
-    g_evolve_info.y_parameter_range = 6;
-    g_evolve_info.x_parameter_offset = -4;
-    g_evolve_info.y_parameter_offset = -3;
-    g_evolve_info.discrete_x_parameter_offset = -7;
-    g_evolve_info.discrete_y_parameter_offset = 9;
-    g_evolve_info.px = 3;
-    g_evolve_info.py = 4;
-    g_evolve_info.screen_x_offset = 2;
-    g_evolve_info.screen_y_offset = 1;
-    g_evolve_info.x_dots = 4;
-    g_evolve_info.y_dots = 3;
-    g_evolve_info.count = 17;
-    EvolutionInfo expected{g_evolve_info};
-    for (int i = 0; i < NUM_GENES; ++i)
-    {
-        expected.mutate[i] = static_cast<std::int16_t>(g_gene_bank[i].mutate);
-    }
-
-    ASSERT_EQ(0, save());
-
-    const GifFilePtr gif{read_gif(m_path)};
-    expect_layout(gif.get(), {"fractint006", "fractint001"});
-    EXPECT_EQ(expected, get_evolution_info(gif.get()));
-    ASSERT_FALSE(m_result.read(m_path));
-    EXPECT_TRUE(m_result.evolution.got_data);
     EXPECT_EQ(17, m_result.evolution.e_count);
-    EXPECT_EQ(5, m_result.evolution.image_grid_size);
-    EXPECT_EQ(4, m_result.evolution.x_dots);
-    EXPECT_EQ(3, m_result.evolution.y_dots);
-    EXPECT_EQ(-7, m_result.evolution.discrete_x_parameter_offset);
-    EXPECT_EQ(static_cast<int>(Variations::RANDOM), m_result.evolution.mutate[1]);
+    EXPECT_EQ(-2.0, m_result.evolution.x_parameter_offset);
+    EXPECT_EQ(-2, m_result.evolution.mutate[2]);
+    EXPECT_EQ(65535, m_result.evolution.x_dots);
+    EXPECT_EQ(32768, m_result.evolution.y_dots);
 }
+
+INSTANTIATE_TEST_SUITE_P(OutputsAndPresence, TestGifWriterEvolution, Combine(Bool(), Bool()));
 
 class TestGifWriterOrbitSettings : public TestGifWriterExtensions
 {
@@ -1469,12 +1460,15 @@ TEST_F(TestGifWriterExtensions, preservesCompleteRecordOrderingAndTotalEncodedLe
     ValueSaver saved_bn_length{g_bn_length, 12};
     ValueSaver saved_min{g_bf_x_min, parameters.data()};
     g_bf_math = BFMathType::BIG_FLT;
-    g_evolving = EvolutionModeFlags::FIELD_MAP;
-    ValueSaver saved_have_info{g_have_evolve_info, true};
-    ValueSaver saved_evolution{g_evolve_info, EvolutionInfo{}};
+    const std::optional<EvolutionInfo> evolution{EvolutionInfo{}};
     g_std_calc_mode = CalcMode::ORBIT;
 
-    ASSERT_EQ(0, save());
+    ImageSave image{m_path, evolution};
+    while (!image.done())
+    {
+        image.iterate();
+    }
+    ASSERT_TRUE(image.succeeded()) << image.diagnostic();
 
     const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(),

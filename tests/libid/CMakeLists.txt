@@ -191,6 +191,7 @@ add_executable(test-id
     ui/test_PotentialRestore.cpp
     ui/test_precision_diagnostics.cpp
     ui/test_rotate.cpp
+    ui/test_save_image.cpp
     ui/test_save_timer.cpp
     ui/test_ShowDotController.cpp
     ui/test_slideshw.cpp

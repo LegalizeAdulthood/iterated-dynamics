@@ -5,9 +5,12 @@
 
 #include <config/port.h>
 
+#include <io/EvolutionInfo.h>
+
 #include <filesystem>
 #include <iosfwd>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -21,9 +24,11 @@ class GifWriter;
 class ImageSave
 {
 public:
-    explicit ImageSave(const std::filesystem::path &filename);
+    // Evolution data is encoded during construction; the input is not retained.
+    explicit ImageSave(const std::filesystem::path &filename, const std::optional<EvolutionInfo> &evolution_info);
     // The caller keeps this stream alive until the save is destroyed.
-    ImageSave(std::ostream &output, const std::filesystem::path &filename);
+    ImageSave(std::ostream &output, const std::filesystem::path &filename,
+        const std::optional<EvolutionInfo> &evolution_info);
     ~ImageSave();
     ImageSave(const ImageSave &) = delete;
     ImageSave(ImageSave &&) = delete;
@@ -63,7 +68,7 @@ public:
     }
 
 private:
-    ImageSave(const std::filesystem::path &filename, bool file);
+    ImageSave(const std::filesystem::path &filename, bool file, const std::optional<EvolutionInfo> &evolution_info);
     static void free_extensions(GifFileType *extensions);
     void finish(bool saved);
     bool replace_file();

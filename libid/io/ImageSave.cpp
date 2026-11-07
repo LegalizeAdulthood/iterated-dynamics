@@ -26,8 +26,6 @@
 #include <io/GifWriter.h>
 #include <math/big.h>
 #include <misc/id.h>
-#include <ui/big_while_loop.h>
-#include <ui/evolve.h>
 
 #include <gif_lib.h>
 
@@ -44,7 +42,6 @@ using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::io
 {
@@ -188,7 +185,7 @@ static void store_item_name(GifFileType &extensions, const std::string_view name
     put_formula_info(&extensions, formula_info);
 }
 
-static void setup_save_extensions(GifFileType &extensions)
+static void setup_save_extensions(GifFileType &extensions, const std::optional<EvolutionInfo> &evolution_info)
 {
     FractalInfo save_info{};
     setup_save_info(&save_info);
@@ -226,41 +223,9 @@ static void setup_save_extensions(GifFileType &extensions)
         const char *parameters{reinterpret_cast<const char *>(g_bf_x_min)};
         put_extended_param_info(&extensions, {parameters, parameters + 22 * (g_bf_length + 2)});
     }
-    if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
+    if (evolution_info)
     {
-        EvolutionInfo evolution_info{};
-        if (!g_have_evolve_info || g_calc_status == CalcStatus::COMPLETED)
-        {
-            evolution_info.x_parameter_range = g_evolve_x_parameter_range;
-            evolution_info.y_parameter_range = g_evolve_y_parameter_range;
-            evolution_info.x_parameter_offset = g_evolve_x_parameter_offset;
-            evolution_info.y_parameter_offset = g_evolve_y_parameter_offset;
-            evolution_info.discrete_x_parameter_offset =
-                static_cast<std::int16_t>(g_evolve_discrete_x_parameter_offset);
-            evolution_info.discrete_y_parameter_offset =
-                static_cast<std::int16_t>(g_evolve_discrete_y_parameter_offset);
-            evolution_info.px = static_cast<std::int16_t>(g_evolve_param_grid_x);
-            evolution_info.py = static_cast<std::int16_t>(g_evolve_param_grid_y);
-            evolution_info.screen_x_offset = static_cast<std::int16_t>(g_logical_screen.x_offset);
-            evolution_info.screen_y_offset = static_cast<std::int16_t>(g_logical_screen.y_offset);
-            evolution_info.x_dots = static_cast<std::uint16_t>(g_logical_screen.x_dots);
-            evolution_info.y_dots = static_cast<std::uint16_t>(g_logical_screen.y_dots);
-            evolution_info.image_grid_size = static_cast<std::int16_t>(g_evolve_image_grid_size);
-            evolution_info.evolving = static_cast<std::int16_t>(+g_evolving);
-            evolution_info.this_generation_random_seed =
-                static_cast<std::uint16_t>(g_evolve_this_generation_random_seed);
-            evolution_info.max_random_mutation = g_evolve_max_random_mutation;
-            evolution_info.count = static_cast<std::int16_t>(g_evolve_image_grid_size * g_evolve_image_grid_size);
-        }
-        else
-        {
-            evolution_info = g_evolve_info;
-        }
-        for (int i = 0; i < NUM_GENES; ++i)
-        {
-            evolution_info.mutate[i] = static_cast<std::int16_t>(g_gene_bank[i].mutate);
-        }
-        put_evolution_info(&extensions, evolution_info);
+        put_evolution_info(&extensions, *evolution_info);
     }
     if (g_std_calc_mode == CalcMode::ORBIT)
     {
@@ -293,7 +258,8 @@ static void setup_save_extensions(GifFileType &extensions)
     put_fractal_info(&extensions, save_info);
 }
 
-ImageSave::ImageSave(const std::filesystem::path &filename, const bool file) :
+ImageSave::ImageSave(
+    const std::filesystem::path &filename, const bool file, const std::optional<EvolutionInfo> &evolution_info) :
     m_filename{filename},
     m_width{g_logical_screen.x_dots},
     m_height{g_logical_screen.y_dots},
@@ -314,11 +280,11 @@ ImageSave::ImageSave(const std::filesystem::path &filename, const bool file) :
     }
     m_pixels.resize(m_width);
     m_extensions.reset(new GifFileType{});
-    setup_save_extensions(*m_extensions);
+    setup_save_extensions(*m_extensions, evolution_info);
 }
 
-ImageSave::ImageSave(const std::filesystem::path &filename) :
-    ImageSave{filename, true}
+ImageSave::ImageSave(const std::filesystem::path &filename, const std::optional<EvolutionInfo> &evolution_info) :
+    ImageSave{filename, true, evolution_info}
 {
     if (m_done)
     {
@@ -359,8 +325,9 @@ ImageSave::ImageSave(const std::filesystem::path &filename) :
     }
 }
 
-ImageSave::ImageSave(std::ostream &output, const std::filesystem::path &filename) :
-    ImageSave{filename, false}
+ImageSave::ImageSave(
+    std::ostream &output, const std::filesystem::path &filename, const std::optional<EvolutionInfo> &evolution_info) :
+    ImageSave{filename, false, evolution_info}
 {
     if (!m_done)
     {
