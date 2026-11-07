@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
+//
+// Generated from @CMAKE_CURRENT_LIST_FILE@
+//
+#pragma once
+
+#include <ui/id_keys.h>
+
+namespace id::test::config
+{
+
+// clang-format off
+constexpr int ID_TEST_GDI_FN_KEY{ui::@ID_TEST_GDI_FN_KEY@};
+constexpr int ID_TEST_DISK_FN_KEY{ui::@ID_TEST_DISK_FN_KEY@};
+constexpr int ID_TEST_SAVE_GDI_FN_KEY{ui::@ID_TEST_SAVE_GDI_FN_KEY@};
+// clang-format on
+
+} // namespace id::test::config

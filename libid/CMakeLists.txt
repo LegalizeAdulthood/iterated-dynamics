@@ -268,6 +268,7 @@ add_library(libid
     include/ui/inverse_julia.h ui/inverse_julia.cpp
     include/ui/InverseJuliaFractalController.h ui/InverseJuliaFractalController.cpp
     include/ui/LSystemController.h ui/LSystemController.cpp
+    include/ui/load_config.h ui/load_config.cpp
     include/ui/LyapunovController.h ui/LyapunovController.cpp
     include/ui/make_batch_file.h ui/make_batch_file.cpp
     include/ui/main_menu.h ui/main_menu.cpp

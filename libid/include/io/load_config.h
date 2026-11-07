@@ -1,25 +1,37 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
-#include <engine/VideoInfo.h>
-
+#include <iosfwd>
 #include <string>
 
 namespace id::io
 {
 
-enum class ConfigStatus
+struct VideoConfigEntry
 {
-    OK = 0,
-    BAD_WITH_MESSAGE = 1,
-    BAD_NO_MESSAGE = -1
+    std::string key_name;
+    int x_dots{};
+    int y_dots{};
+    int colors{};
+    std::string driver_name;
+    std::string comment;
+    int line_num{};
 };
 
-extern ConfigStatus          g_bad_config;
-extern int                   g_cfg_line_nums[engine::MAX_VIDEO_MODES];
+class VideoConfigReader
+{
+public:
+    explicit VideoConfigReader(std::istream &input);
+    // Read one record; false means EOF or malformed input. Check failed().
+    bool next(VideoConfigEntry &entry);
+    bool failed() const;
 
-void load_config();
-void load_config(const std::string &cfg_path);
+private:
+    std::istream &m_input;
+    int m_line_num{};
+    bool m_failed{};
+};
 
 } // namespace id::io

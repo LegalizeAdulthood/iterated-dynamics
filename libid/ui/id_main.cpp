@@ -13,7 +13,6 @@
 #include <helpcom.h>
 #include <helpdefs.h>
 #include <io/library.h>
-#include <io/load_config.h>
 #include <io/loadfile.h>
 #include <io/special_dirs.h>
 #include <math/biginit.h>
@@ -41,6 +40,7 @@
 #include <ui/id_keys.h>
 #include <ui/init_failure.h>
 #include <ui/intro.h>
+#include <ui/load_config.h>
 #include <ui/main_menu.h>
 #include <ui/main_state.h>
 #include <ui/make_mig_script.h>

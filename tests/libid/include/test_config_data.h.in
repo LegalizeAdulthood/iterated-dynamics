@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // Generated from @CMAKE_CURRENT_LIST_FILE@
 //
 #pragma once
-
-#include <ui/id_keys.h>
 
 namespace id::test::config
 {
@@ -12,7 +11,6 @@ namespace id::test::config
 // config test data
 // clang-format off
 constexpr const char *ID_TEST_GDI_FN        {"@ID_TEST_GDI_FN@"};
-constexpr int ID_TEST_GDI_FN_KEY            {ui::@ID_TEST_GDI_FN_KEY@};
 constexpr int ID_TEST_GDI_WIDTH             {@ID_TEST_GDI_WIDTH@};
 constexpr int ID_TEST_GDI_HEIGHT            {@ID_TEST_GDI_HEIGHT@};
 constexpr int ID_TEST_GDI_COLORS            {@ID_TEST_GDI_COLORS@};
@@ -20,7 +18,6 @@ constexpr const char *ID_TEST_GDI_COMMENT   {"@ID_TEST_GDI_COMMENT@"};
 constexpr const char *ID_TEST_GDI_DRIVER    {"@ID_TEST_GDI_DRIVER@"};
 
 constexpr const char *ID_TEST_DISK_FN       {"@ID_TEST_DISK_FN@"};
-constexpr int ID_TEST_DISK_FN_KEY           {ui::@ID_TEST_DISK_FN_KEY@};
 constexpr int ID_TEST_DISK_WIDTH            {@ID_TEST_DISK_WIDTH@};
 constexpr int ID_TEST_DISK_HEIGHT           {@ID_TEST_DISK_HEIGHT@};
 constexpr int ID_TEST_DISK_COLORS           {@ID_TEST_DISK_COLORS@};
@@ -28,7 +25,6 @@ constexpr const char *ID_TEST_DISK_COMMENT  {"@ID_TEST_DISK_COMMENT@"};
 constexpr const char *ID_TEST_DISK_DRIVER   {"@ID_TEST_DISK_DRIVER@"};
 
 constexpr const char *ID_TEST_SAVE_GDI_FN       {"@ID_TEST_SAVE_GDI_FN@"};
-constexpr int ID_TEST_SAVE_GDI_FN_KEY           {ui::@ID_TEST_SAVE_GDI_FN_KEY@};
 constexpr int ID_TEST_SAVE_GDI_WIDTH            {@ID_TEST_SAVE_GDI_WIDTH@};
 constexpr int ID_TEST_SAVE_GDI_HEIGHT           {@ID_TEST_SAVE_GDI_HEIGHT@};
 constexpr int ID_TEST_SAVE_GDI_COLORS           {@ID_TEST_SAVE_GDI_COLORS@};

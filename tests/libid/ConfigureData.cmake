@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
+# Copyright 2026 Richard Thomson.
 #
 set(ID_TEST_DATA_DIR        "${CMAKE_CURRENT_BINARY_DIR}/test_data")
 set(ID_TEST_HOME_DIR        "${ID_TEST_DATA_DIR}/home")
@@ -67,6 +68,7 @@ set(ID_TEST_SAVE_CONFIG_FILE    "${ID_TEST_SAVE_DIR}/${ID_TEST_CFG}")
 configure_file("home/test.cfg.in" "${ID_TEST_HOME_CONFIG_FILE}" @ONLY)
 configure_file("home/save.cfg.in" "${ID_TEST_SAVE_CONFIG_FILE}" @ONLY)
 configure_file("include/test_config_data.h.in" "include/test_config_data.h" @ONLY)
+configure_file("ui/test_config_keys.h.in" "include/ui/test_config_keys.h" @ONLY)
 
 # GIF file extensions test data
 set(ID_TEST_GIF_DIR "${ID_TEST_DATA_DIR}/gif")

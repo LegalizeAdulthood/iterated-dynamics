@@ -55,6 +55,7 @@ add_executable(test-id
     "${ID_TEST_MAP_DIR}/${ID_TEST_MAP_FILE}"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_check_write_file_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_config_data.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/ui/test_config_keys.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_library.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_migrate_gif.h"
@@ -176,6 +177,8 @@ add_executable(test-id
     ui/test_inverse_julia.cpp
     ui/test_KeyboardHandler.cpp
     ui/test_lsystem.cpp
+    ui/test_load_config.cpp
+    ui/test_config_keys.h.in
     ui/test_main_menu_switch.cpp
     ui/test_make_batch_file.cpp
     ui/test_Orbit2DSound.cpp
