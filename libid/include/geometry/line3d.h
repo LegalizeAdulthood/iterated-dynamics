@@ -61,6 +61,8 @@ struct Line3DResult
 
 io::TargaStorageRequest prepare_line3d();
 Line3DResult line3d(Byte *pixels, unsigned line_len);
+// Finish after a preparation attempt, including failure, when output is no longer used.
+void finish_line3d();
 int targa_color(int x, int y, int color);
 // Empty diagnostic means success; source remains owned by the caller.
 std::string start_targa_overlay(const std::string &path, std::FILE *source, io::TargaStorageRequest &storage);

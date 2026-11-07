@@ -39,7 +39,6 @@
 #include <misc/debug_flags.h>
 #include <misc/Driver.h>
 #include <misc/ValueSaver.h>
-#include <ui/big_while_loop.h>
 #include <ui/video.h>
 
 #include <FractalParamSaver.h>
@@ -328,7 +327,6 @@ private:
     MockDriver m_driver;
     MinimalImageState m_image;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
-    ValueSaver<void (*)()> m_saved_out_line_cleanup{g_out_line_cleanup};
     ValueSaver<void (*)(int, int, int)> m_saved_standard_plot{g_standard_plot, capture_plot};
     ValueSaver<int> m_saved_file_x_dots{g_file_x_dots};
     ValueSaver<int> m_saved_file_y_dots{g_file_y_dots};
@@ -484,6 +482,7 @@ std::vector<int> line3d_colors_for_current_seed(const int randomize)
 
     EXPECT_TRUE(prepare_line3d().header.empty());
     EXPECT_EQ(0, line3d(pixels.data(), static_cast<unsigned>(pixels.size())).status);
+    finish_line3d();
 
     return s_plotted_colors;
 }
@@ -757,6 +756,7 @@ protected:
     void TearDown() override;
     void block_save_directory();
     TargaStorageRequest prepare_output();
+    void finish_output();
 
     Line3DState state;
     TargaTestFiles files;
@@ -766,10 +766,9 @@ protected:
 
 void TestLine3DOutputPreparation::TearDown()
 {
-    if (m_cleanup_required && g_out_line_cleanup)
+    if (m_cleanup_required)
     {
-        g_out_line_cleanup();
-        g_out_line_cleanup = nullptr;
+        finish_output();
     }
 }
 
@@ -777,6 +776,12 @@ TargaStorageRequest TestLine3DOutputPreparation::prepare_output()
 {
     m_cleanup_required = true;
     return prepare_line3d();
+}
+
+void TestLine3DOutputPreparation::finish_output()
+{
+    m_cleanup_required = false;
+    finish_line3d();
 }
 
 void TestLine3DOutputPreparation::block_save_directory()
@@ -841,9 +846,7 @@ TEST_F(TestLine3DOverlayPreparation, preparedOverlayCanBeDiscardedBeforeAllocati
     EXPECT_EQ(18U, storage.header.size());
     EXPECT_FALSE(g_disk_flag);
     EXPECT_EQ(std::filesystem::file_size(path), std::filesystem::file_size(storage.path));
-    ASSERT_NE(nullptr, g_out_line_cleanup);
-    g_out_line_cleanup();
-    g_out_line_cleanup = nullptr;
+    finish_output();
     EXPECT_FALSE(std::filesystem::exists(storage.path));
     EXPECT_TRUE(std::filesystem::remove(path));
 }
@@ -861,9 +864,7 @@ TEST_F(TestLine3DOverlayPreparation, invalidOverlayClosesSourceAndCleanupRetains
     {
         EXPECT_STREQ("OOPS, can't handle this type of file.", error.what());
     }
-    ASSERT_NE(nullptr, g_out_line_cleanup);
-    g_out_line_cleanup();
-    g_out_line_cleanup = nullptr;
+    finish_output();
 
     EXPECT_TRUE(std::filesystem::exists(path));
     EXPECT_EQ(18U, std::filesystem::file_size(path));
@@ -876,9 +877,7 @@ TEST_F(TestLine3DOverlayPreparation, truncatedOverlayDiscardsPartialCopyAndRetai
     write_overlay(24);
 
     EXPECT_THROW(prepare_output(), std::runtime_error);
-    ASSERT_NE(nullptr, g_out_line_cleanup);
-    g_out_line_cleanup();
-    g_out_line_cleanup = nullptr;
+    finish_output();
 
     EXPECT_TRUE(std::filesystem::exists(path));
     EXPECT_EQ(18U, std::filesystem::file_size(path));
@@ -891,9 +890,7 @@ TEST_F(TestLine3DOutputPreparation, rayOutputOpenFailureStopsBeforePlottingWitho
     g_raytrace_format = RayTraceFormat::DKB_POVRAY;
 
     EXPECT_THROW(prepare_output(), std::runtime_error);
-    ASSERT_NE(nullptr, g_out_line_cleanup);
-    g_out_line_cleanup();
-    g_out_line_cleanup = nullptr;
+    finish_output();
 
     EXPECT_TRUE(s_plotted_colors.empty());
 }
@@ -913,9 +910,7 @@ TEST_F(TestLine3DOutputPreparation, unavailableSaveDirectoryReportsOutputFailure
     {
         EXPECT_STREQ("OOPS, couldn't open  < output.tga >", error.what());
     }
-    ASSERT_NE(nullptr, g_out_line_cleanup);
-    g_out_line_cleanup();
-    g_out_line_cleanup = nullptr;
+    finish_output();
 }
 
 TEST_F(TestLine3DOverlayPreparation, unavailableOverlayCopyDirectoryRetainsOriginal)
@@ -932,9 +927,7 @@ TEST_F(TestLine3DOverlayPreparation, unavailableOverlayCopyDirectoryRetainsOrigi
     {
         EXPECT_STREQ("OOPS, couldn't open  < fractemp.tga >", error.what());
     }
-    ASSERT_NE(nullptr, g_out_line_cleanup);
-    g_out_line_cleanup();
-    g_out_line_cleanup = nullptr;
+    finish_output();
 
     EXPECT_EQ(18U, std::filesystem::file_size(path));
     EXPECT_TRUE(std::filesystem::remove(path));
@@ -963,6 +956,7 @@ TEST_F(TestLine3DDegenerateNormals, degenerateNormalsReturnWarningsWithoutPollin
     EXPECT_TRUE(prepare_line3d().header.empty());
     EXPECT_EQ(0, line3d(pixels.data(), pixels.size()).status);
     const Line3DResult result{line3d(pixels.data(), pixels.size())};
+    finish_line3d();
 
     EXPECT_EQ(0, result.status);
     EXPECT_THAT(result.warnings, testing::Contains("debug, cur.color=bad"));

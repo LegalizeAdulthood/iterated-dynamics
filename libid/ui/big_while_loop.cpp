@@ -62,6 +62,7 @@
 #include <new>
 #include <optional>
 #include <stdexcept>
+#include <utility>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -529,7 +530,7 @@ MainState big_while_loop(MainContext &context)
         if (g_show_file == ShowFile::LOAD_IMAGE)
         {
             // loading an image
-            g_out_line_cleanup = nullptr;            // outln routine can set this
+            g_out_line_cleanup = nullptr;
             if (g_display_3d != Display3DMode::NONE) // set up 3D decoding
             {
                 g_out_line = call_line3d;
@@ -972,6 +973,7 @@ static int call_line3d(Byte *pixels, const int line_len)
     {
         if (g_row_count == 0)
         {
+            g_out_line_cleanup = finish_line3d;
             const TargaStorageRequest storage{prepare_line3d()};
             if (!storage.header.empty() && !prepare_targa_storage(storage))
             {
@@ -1000,7 +1002,7 @@ static int call_line3d(Byte *pixels, const int line_len)
         {
             if (g_out_line_cleanup)
             {
-                g_out_line_cleanup();
+                std::exchange(g_out_line_cleanup, nullptr)();
             }
         }
         catch (const std::runtime_error &error)
@@ -1008,7 +1010,6 @@ static int call_line3d(Byte *pixels, const int line_len)
             failure += "\n";
             failure += error.what();
         }
-        g_out_line_cleanup = nullptr;
         g_calc_status = CalcStatus::NON_RESUMABLE;
         stop_msg(failure);
         if (g_init_batch != BatchMode::NONE)

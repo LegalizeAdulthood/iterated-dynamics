@@ -26,7 +26,6 @@
 #include <misc/Driver.h>
 #include <misc/id.h>
 #include <misc/version.h>
-#include <ui/big_while_loop.h>
 #include <io/disk_storage.h>
 
 #include <fmt/format.h>
@@ -46,7 +45,6 @@
 using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::geometry
 {
@@ -93,7 +91,6 @@ static int ray_header();
 static int start_object();
 static void draw_light_box(const double *origin, const double *direct, Matrix light_m);
 static void draw_rect(Vector v0, Vector v1, Vector v2, Vector v3, int color, bool rect);
-static void line3d_cleanup();
 static void clip_color(int x, int y, int color);
 static void interp_color(int x, int y, int color);
 static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int color);
@@ -2315,7 +2312,7 @@ static int end_object(const bool tri_out)
     return 0;
 }
 
-static void line3d_cleanup()
+void finish_line3d()
 {
     if (g_raytrace_format != RayTraceFormat::NONE && s_raytrace_file)
     {
@@ -2437,7 +2434,6 @@ TargaStorageRequest prepare_line3d()
 {
     TargaStorageRequest storage;
     g_current_row = 0;
-    g_out_line_cleanup = line3d_cleanup;
 
     s_even_odd_row = 0;
     g_calc_time = 0;
