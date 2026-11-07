@@ -5,19 +5,6 @@
 find_package(fmt CONFIG REQUIRED)
 find_package(wxWidgets CONFIG REQUIRED)
 
-if(WIN32)
-    target_sources(os PRIVATE init_failure.cpp)
-    target_link_libraries(os PRIVATE wx::core wx::base)
-else()
-    add_library(os STATIC init_failure.cpp)
-    target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
-    target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
-    target_include_directories(os PRIVATE ../libid/include)
-    target_link_libraries(os PRIVATE wx::core wx::base)
-endif()
-target_folder(os "Libraries")
-add_dependencies(os native-help)
-
 add_library(gui STATIC
     include/gui/App.h App.cpp
     include/gui/Frame.h Frame.cpp
@@ -40,14 +27,16 @@ target_folder(driver-wx "Libraries/wx")
 if(WIN32)
     target_sources(driver-wx PRIVATE ../win32/create_minidump.h ../win32/create_minidump.cpp)
     target_include_directories(driver-wx PRIVATE ../win32)
+    target_link_libraries(driver-wx PRIVATE user32.lib)
 endif()
 
-add_executable(id wx_id.h wx_id.cpp)
+add_executable(id wx_id.h wx_id.cpp init_failure.cpp)
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)
 target_link_libraries(id PUBLIC driver-wx)
 if(WIN32)
     target_id_resources(id)
+    target_link_libraries(id PRIVATE os)
 endif()
 gui_executable(id RUNTIME_NAME "$<IF:$<PLATFORM_ID:Windows>,id,xid>")
 vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")

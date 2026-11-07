@@ -12,8 +12,9 @@
 
 #include <win_defines.h>
 #include <crtdbg.h>
-#include <Shlwapi.h>
 #include <Windows.h>
+
+#include <cstdlib>
 
 using namespace id::misc;
 using namespace id::ui;

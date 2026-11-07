@@ -340,7 +340,7 @@ target_compile_definitions(libid PUBLIC
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PUBLIC include)
 prefer_vcpkg_gif_includes(libid)
-target_link_libraries(libid PRIVATE helpcom os fmt::fmt-header-only)
+target_link_libraries(libid PRIVATE helpcom fmt::fmt-header-only)
 if(WIN32)
     target_link_libraries(libid PRIVATE shell32.lib)
 endif()

@@ -163,6 +163,7 @@ add_executable(test-id
     test/test_TemporaryDirectory.cpp
     include/ui/NonStandardFractalTest.h
     include/ui/TestRender.h ui/TestRender.cpp
+    ui/init_failure.cpp
     ui/test_AntController.cpp
     ui/test_BifurcationController.cpp
     ui/test_ChoiceBuilder.cpp
@@ -236,8 +237,7 @@ endif()
 if(ID_USE_WX)
     target_sources(test-id PRIVATE
         include/MockSpecialDirectories.h
-        io/MockSpecialDirectories.cpp
-        ui/init_failure.cpp)
+        io/MockSpecialDirectories.cpp)
 endif()
 get_property(ID_ORBIT_DELAY_TIMER_AVAILABLE GLOBAL PROPERTY ID_ORBIT_DELAY_TIMER_AVAILABLE)
 if(ID_ORBIT_DELAY_TIMER_AVAILABLE)

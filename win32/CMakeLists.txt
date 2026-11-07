@@ -35,15 +35,10 @@ add_library(os STATIC
     ods.h ods.cpp
     win_defines.h
 )
-if(NOT ID_USE_WX)
-    target_sources(os PRIVATE init_failure.cpp)
-endif()
 target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
-target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
-target_include_directories(os PRIVATE ../libid/include PUBLIC .)
+target_include_directories(os PUBLIC .)
 target_folder(os "Libraries")
-add_dependencies(os native-help)
 
 if(NOT ID_USE_WX)
     add_library(driver-win32 STATIC
@@ -57,16 +52,17 @@ if(NOT ID_USE_WX)
         win_defines.h
     )
 
-    target_link_libraries(driver-win32 PUBLIC libid fmt::fmt-header-only)
+    target_link_libraries(driver-win32 PUBLIC libid fmt::fmt-header-only PRIVATE os gdi32.lib user32.lib)
     target_include_directories(driver-win32 PUBLIC .)
     target_folder(driver-win32 "Libraries")
     add_dependencies(driver-win32 native-help)
 
     add_executable(id
+        init_failure.cpp
         win_main.cpp)
     source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
     target_include_directories(id PUBLIC .)
-    target_link_libraries(id PUBLIC driver-win32)
+    target_link_libraries(id PRIVATE driver-win32 os user32.lib)
     target_id_resources(id)
     gui_executable(id)
     vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")
