@@ -77,6 +77,9 @@ void ImageSaveTest::configure_image(
     g_screen_x_dots = width + x_offset;
     g_screen_y_dots = height + y_offset;
     g_colors = colors;
+    g_video_entry.x_dots = width;
+    g_video_entry.y_dots = height;
+    g_video_entry.colors = colors;
     g_and_color = colors - 1;
     g_viewport.final_aspect_ratio = 0.75f;
     m_frame_width = g_screen_x_dots;

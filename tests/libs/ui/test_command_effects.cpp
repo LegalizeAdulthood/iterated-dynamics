@@ -522,6 +522,7 @@ std::string TestCommandMakeParView::make_par_for_image(const int width, const in
     const std::string name{parameter_test_name()};
     m_image_path = par_path((name + ".gif").c_str());
     m_parameter_path = par_path((name + ".par").c_str());
+    fs::create_directories(m_image_path.parent_path());
     fs::remove(m_image_path);
     fs::remove(m_parameter_path);
     FractalInfo info{};

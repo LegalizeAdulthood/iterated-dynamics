@@ -58,6 +58,7 @@ protected:
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
     ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen};
+    ValueSaver<VideoInfo> m_saved_video{g_video_entry};
     ValueSaver<int> m_saved_x_dots{g_screen_x_dots};
     ValueSaver<int> m_saved_y_dots{g_screen_y_dots};
     ValueSaver<int> m_saved_colors{g_colors};

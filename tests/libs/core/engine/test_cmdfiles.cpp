@@ -2864,7 +2864,7 @@ struct LegacyFloatBailoutInput
     const char *params;
     long bailout;
     bool legacy_float;
-    Version version{current_id_version()};
+    Version version{parse_legacy_version(1730)};
 };
 
 void PrintTo(const LegacyFloatBailoutInput &input, std::ostream *out)
@@ -2927,7 +2927,8 @@ INSTANTIATE_TEST_SUITE_P(TypesAndCommands, TestLegacyFloatBailout,
             LegacyFloatBailoutInput{"Reset1799", "float=y", 2500, true, parse_legacy_version(1799)},
             LegacyFloatBailoutInput{"Reset1800", "float=y", 0, true, parse_legacy_version(1800)},
             LegacyFloatBailoutInput{"Reset2004", "float=y", 0, true, parse_legacy_version(2004)},
-            LegacyFloatBailoutInput{"ResetId14", "float=y", 0, true, Version{1, 4}})),
+            LegacyFloatBailoutInput{"ResetId14", "float=y", 0, true, Version{1, 4}},
+            LegacyFloatBailoutInput{"CurrentIdVersion", "float=y", 0, true, current_id_version()})),
     [](const TestParamInfo<LegacyFloatBailoutParameter> &info)
     { return std::get<0>(info.param) + "_" + std::get<1>(info.param).name; });
 

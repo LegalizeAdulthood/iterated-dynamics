@@ -252,10 +252,8 @@ class TestGifWriterRaster : public ImageSaveTest
 protected:
     void SetUp() override;
     void TearDown() override;
-    void configure_image(int width, int height, int colors, int x_offset = 0, int y_offset = 0);
     int save();
 
-    ValueSaver<VideoInfo> m_saved_video{g_video_entry};
     ValueSaver<bool> m_saved_busy{g_busy, false};
     ValueSaver<EvolutionModeFlags> m_saved_evolving{g_evolving, EvolutionModeFlags::NONE};
 };
@@ -283,15 +281,6 @@ void TestGifWriterRaster::TearDown()
     clear_save_library();
     m_saved_palette.reset();
     m_directory.remove();
-}
-
-void TestGifWriterRaster::configure_image(
-    const int width, const int height, const int colors, const int x_offset, const int y_offset)
-{
-    ImageSaveTest::configure_image(width, height, colors, x_offset, y_offset);
-    g_video_entry.x_dots = width;
-    g_video_entry.y_dots = height;
-    g_video_entry.colors = colors;
 }
 
 int TestGifWriterRaster::save()
