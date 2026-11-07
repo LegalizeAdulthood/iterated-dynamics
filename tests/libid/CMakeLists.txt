@@ -68,6 +68,7 @@ add_executable(test-id
     include/FractalParamSaver.h test/FractalParamSaver.cpp
     include/GifReadSupport.h test/GifReadSupport.cpp
     include/MemoryDiskStorage.h test/MemoryDiskStorage.cpp
+    include/NonStandardFractalTest.h test/NonStandardFractalTest.cpp
     "include/MockDriver.h"
     "include/MockSoundOutput.h"
     include/PassTestFrame.h test/PassTestFrame.cpp
@@ -158,7 +159,10 @@ add_executable(test-id
     test/test_CommandTestFile.cpp
     test/test_GifReadSupport.cpp
     test/test_TemporaryDirectory.cpp
+    include/ui/NonStandardFractalTest.h
     include/ui/TestRender.h ui/TestRender.cpp
+    ui/test_AntController.cpp
+    ui/test_BifurcationController.cpp
     ui/test_ChoiceBuilder.cpp
     ui/test_cellular.cpp
     ui/test_command_diagnostics.cpp
@@ -166,6 +170,7 @@ add_executable(test-id
     ui/test_CommandRouter.cpp
     ui/test_comments.cpp
     ui/test_diskvid.cpp
+    ui/test_DiffusionController.cpp
     ui/test_double_to_string.cpp
     ui/test_DriverSoundOutput.cpp
     ui/test_DynamicSound.cpp
@@ -175,6 +180,7 @@ add_executable(test-id
     ui/test_id_keys.cpp
     ui/test_input_field.cpp
     ui/test_inverse_julia.cpp
+    ui/test_IFS2DController.cpp
     ui/test_KeyboardHandler.cpp
     ui/test_lsystem.cpp
     ui/test_load_config.cpp
@@ -188,6 +194,7 @@ add_executable(test-id
     ui/test_reset_command.cpp
     ui/test_passes_options.cpp
     ui/test_plasma.cpp
+    ui/test_PopcornController.cpp
     ui/test_PotentialRestore.cpp
     ui/test_precision_diagnostics.cpp
     ui/test_restore_image.cpp
@@ -199,9 +206,11 @@ add_executable(test-id
     ui/test_SoundSession.cpp
     ui/test_StickyOrbitSound.cpp
     ui/test_stereo.cpp
+    ui/test_Standard4DController.cpp
     ui/test_StereoRestore.cpp
     ui/test_tab_display.cpp
     ui/test_thinking.cpp
+    ui/test_TestPointController.cpp
     ui/test_video_mode.cpp
     ui/test_zoom.cpp
 )
