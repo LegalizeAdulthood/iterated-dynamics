@@ -170,7 +170,7 @@ const AlternateMath g_alternate_math[] =
     {FractalType::MANDEL, BFMathType::BIG_NUM, julia_orbit_bn, mandel_per_pixel_bn, mandel_per_image_bn},
 #else
     {FractalType::JULIA, BFMathType::BIG_FLT, julia_orbit_bf, julia_per_pixel_bf,  mandel_per_image_bf},
-    {FractalType::MANDEL, BFMathType::BIG_FLT, julia_orbit_bf, mandel_bf_per_pixel, mandel_per_image_bf},
+    {FractalType::MANDEL, BFMathType::BIG_FLT, julia_orbit_bf, mandel_per_pixel_bf, mandel_per_image_bf},
 #endif
     {FractalType::JULIA_Z_POWER, BFMathType::BIG_FLT, julia_z_power_orbit_bf, julia_per_pixel_bf, mandel_per_image_bf},
     {FractalType::MANDEL_Z_POWER, BFMathType::BIG_FLT, julia_z_power_orbit_bf, mandel_per_pixel_bf, mandel_per_image_bf},
