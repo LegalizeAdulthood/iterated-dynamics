@@ -289,6 +289,7 @@ add_library(libid
     include/ui/rotate.h ui/rotate.cpp
     include/ui/SaveImageProgress.h ui/SaveImageProgress.cpp
     include/ui/save_image.h ui/save_image.cpp
+    include/ui/save_timer.h ui/save_timer.cpp
     include/ui/select_video_mode.h ui/select_video_mode.cpp
     include/ui/set_default_params.h ui/set_default_params.cpp
     include/ui/shell_sort.h ui/shell_sort.cpp

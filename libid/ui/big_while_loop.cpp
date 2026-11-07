@@ -42,6 +42,7 @@
 #include <ui/mouse.h>
 #include <ui/precision_diagnostics.h>
 #include <ui/restore_image.h>
+#include <ui/save_timer.h>
 #include <ui/SoundSession.h>
 #include <ui/stop_msg.h>
 #include <ui/temp_msg.h>
@@ -78,7 +79,6 @@ bool g_ask_video{};
 bool g_compare_gif{};
 bool g_escape_exit{};
 bool g_from_text{};
-int g_finish_row{};
 EvolutionInfo g_evolve_info{};
 bool g_have_evolve_info{};
 void (*g_out_line_cleanup)(){};
@@ -627,7 +627,6 @@ MainState big_while_loop(MainContext &context)
                 && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_RESUME))
             {
                 start_save_timer();
-                g_finish_row = -1;
             }
             g_browse.browsing = false;       // regenerate image, turn off browsing
             g_browse.stack.clear(); // reset browse path stack

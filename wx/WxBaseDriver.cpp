@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /* d_win32.c
  *
@@ -16,10 +17,10 @@
 #include <engine/VideoInfo.h>
 #include <geometry/plot3d.h>
 #include <io/disk_storage.h>
-#include <io/save_timer.h>
 #include <ui/diskvid.h>
 #include <ui/id_keys.h>
 #include <ui/read_ticker.h>
+#include <ui/save_timer.h>
 #include <ui/slideshw.h>
 #include <ui/stop_msg.h>
 #include <ui/text_screen.h>
@@ -251,7 +252,7 @@ int WxBaseDriver::key_pressed()
     {
         return m_key_buffer;
     }
-    if (io::auto_save_needed())
+    if (ui::auto_save_needed())
     {
         unget_key(ID_KEY_FAKE_AUTOSAVE);
         assert(m_key_buffer == ID_KEY_FAKE_AUTOSAVE);

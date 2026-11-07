@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -16,9 +17,5 @@ extern TimedSave             g_resave_flag;
 extern int                   g_save_time_interval;
 extern bool                  g_started_resaves;
 extern TimedSave             g_timed_save;
-
-void start_save_timer();
-void stop_save_timer();
-bool auto_save_needed();
 
 } // namespace id::io

@@ -17,12 +17,12 @@
 #include <geometry/plot3d.h>
 #include <io/find_path.h>
 #include <io/path_match.h>
-#include <io/save_timer.h>
 #include <io/trim_filename.h>
 #include <io/disk_storage.h>
 #include <ui/diskvid.h>
 #include <ui/full_screen_choice.h>
 #include <ui/id_keys.h>
+#include <ui/save_timer.h>
 #include <ui/shell_sort.h>
 #include <ui/slideshw.h>
 #include <ui/stop_msg.h>
@@ -709,7 +709,7 @@ int X11BaseDriver::key_pressed()
     {
         return m_key_buffer;
     }
-    if (io::auto_save_needed())
+    if (ui::auto_save_needed())
     {
         unget_key(ID_KEY_FAKE_AUTOSAVE);
         assert(m_key_buffer == ID_KEY_FAKE_AUTOSAVE);
