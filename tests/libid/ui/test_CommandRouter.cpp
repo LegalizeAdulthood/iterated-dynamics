@@ -4,19 +4,24 @@
 #include <ui/CommandRouter.h>
 
 #include <CommandTestFile.h>
+#include <CommandParameterTest.h>
+#include <EnvVarSaver.h>
 #include <MockSpecialDirectories.h>
 #include <TemporaryDirectory.h>
+#include <test_data.h>
 
 #include <config/port_config.h>
 #include <engine/calcfrac.h>
 #include <engine/command_comments.h>
 #include <engine/CommandProcessor.h>
+#include <engine/OrbitPlot.h>
 #include <engine/sound.h>
 #include <engine/UserData.h>
 #include <engine/VideoInfo.h>
 #include <fractals/formula.h>
 #include <fractals/fractalp.h>
 #include <geometry/stereo_params.h>
+#include <io/CurrentPathSaver.h>
 #include <io/library.h>
 #include <io/loadfile.h>
 #include <io/special_dirs.h>
@@ -57,6 +62,8 @@ using namespace id::io;
 using namespace id::misc;
 using namespace id::ui;
 using namespace testing;
+
+using namespace id::test::data;
 
 namespace id::test
 {
@@ -2741,5 +2748,110 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestRouterLegacyFloatSources,
         RouterLegacyFloatInput{"DisabledWholeFile", false, "@float-only", false},
         RouterLegacyFloatInput{"DisabledSelectedSet", false, "@float-only/chosen", false}),
     [](const TestParamInfo<RouterLegacyFloatInput> &info) { return info.param.name; });
+
+class TestStartupCommand : public TestParameterCommand
+{
+public:
+    TestStartupCommand();
+
+private:
+    ValueSaver<bool> m_saved_first_init{g_first_init, true};
+    const std::shared_ptr<NiceMock<MockSpecialDirectories>> m_directories{
+        std::make_shared<NiceMock<MockSpecialDirectories>>()};
+    ValueSaver<std::shared_ptr<SpecialDirectories>> m_saved_special_dirs{g_special_dirs, m_directories};
+    CurrentPathSaver m_current_directory{ID_TEST_HOME_DIR};
+};
+
+TestStartupCommand::TestStartupCommand()
+{
+    ON_CALL(*m_directories, program_dir()).WillByDefault(Return(fs::path{ID_TEST_HOME_DIR}));
+    ON_CALL(*m_directories, documents_dir()).WillByDefault(Return(fs::path{ID_TEST_DATA_DIR}));
+}
+
+class TestStartupHeadlessCommand : public TestStartupCommand
+{
+private:
+    ValueSaver<Driver *> m_saved_driver{g_driver, nullptr};
+};
+
+class TestStartupTempDirectory : public TestStartupCommand
+{
+protected:
+    fs::path m_temp_directory{ID_TEST_DATA_DIR};
+
+private:
+    EnvVarSaver m_saved_tmp{"TMP", nullptr};
+    EnvVarSaver m_saved_temp{"TEMP", nullptr};
+    EnvVarSaver m_saved_tmp_dir{"TMPDIR", m_temp_directory.make_preferred().string().c_str()};
+    ValueSaver<fs::path> m_saved_temp_dir{g_temp_dir, fs::path{}};
+};
+
+TEST_F(TestStartupTempDirectory, startupUsesTmpDirWhenTmpAndTempUnset)
+{
+    const std::vector<std::string> args{"id"};
+
+    const CommandRouter router;
+    router.process_startup(args);
+
+    EXPECT_EQ(m_temp_directory.string(), adjust_dir(g_temp_dir.string()));
+}
+
+TEST_F(TestStartupCommand, startupPreservesOrbitDelayAfterShowDot)
+{
+    ValueSaver saved_video_table_len{g_video_table_len, 1};
+    ValueSaver saved_video_key{g_video_mode_keys[0], ID_KEY_F6};
+    ValueSaver saved_orbit_delay{g_orbit_delay, -999};
+    ValueSaver saved_orbit_skip_points{g_orbit_skip_points, -999};
+    const std::vector<std::string> args{"id", "video=F6", "type=mandel", "showdot=b/20", "orbitdelay=100"};
+
+    const CommandRouter router;
+    router.process_startup(args);
+
+    EXPECT_EQ(100, g_orbit_delay);
+    EXPECT_EQ(100, g_orbit_skip_points);
+}
+
+TEST_F(TestStartupHeadlessCommand, startupErrorStopsBeforeLaterBatchArgument)
+{
+    const CommandRouter router;
+    const CommandParseResult parsed{router.process_startup({"id", "maxiter=bad", "batch=yes"})};
+    const CommandDiagnostics &diagnostics{parsed.diagnostics};
+
+    ASSERT_EQ(1U, diagnostics.errors.size());
+    EXPECT_THAT(diagnostics.errors.front(), HasSubstr("maxiter=bad"));
+    EXPECT_EQ(BatchMode::NONE, g_init_batch);
+}
+
+TEST_F(TestStartupHeadlessCommand, startupCollectsMissingFileWarningsWithoutUi)
+{
+    const CommandRouter router;
+    const CommandParseResult parsed{router.process_startup({"id", "lfile=missing-startup-lsystem.l"})};
+    const CommandDiagnostics &diagnostics{parsed.diagnostics};
+
+    EXPECT_TRUE(diagnostics.errors.empty());
+    ASSERT_EQ(1U, diagnostics.warnings.size());
+    EXPECT_THAT(diagnostics.warnings.front(), HasSubstr("please check command line"));
+}
+
+TEST_F(TestStartupHeadlessCommand, startupReturnsFileEntrySelectionWithoutUi)
+{
+    const CommandRouter router;
+    const CommandParseResult parsed{router.process_startup({"id", "type=formula"})};
+
+    EXPECT_TRUE(parsed.needs_file_entry);
+    EXPECT_TRUE(parsed.diagnostics.errors.empty());
+    EXPECT_TRUE(g_formula_name.empty());
+}
+
+TEST_F(TestStartupHeadlessCommand, startupErrorPreventsLaterAction)
+{
+    const CommandRouter router;
+    const CommandParseResult parsed{router.process_startup({"id", "maxiter=bad", "makedoc=unused.txt", "maxiter=888"})};
+
+    EXPECT_EQ(1U, parsed.diagnostics.errors.size());
+    EXPECT_EQ(0U, parsed.action.index());
+    EXPECT_NE(888, g_max_iterations);
+    EXPECT_FALSE(parsed.needs_file_entry);
+}
 
 } // namespace id::test

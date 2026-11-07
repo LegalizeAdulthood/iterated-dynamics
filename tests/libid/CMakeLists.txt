@@ -60,6 +60,7 @@ add_executable(test-id
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_library.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_migrate_gif.h"
     include/CommandTestFile.h test/CommandTestFile.cpp
+    include/CommandParameterTest.h test/CommandParameterTest.cpp
     include/EnvVarSaver.h test/EnvVarSaver.cpp
     "include/expected_map.h"
     include/FailingOutputBuffer.h test/FailingOutputBuffer.cpp
