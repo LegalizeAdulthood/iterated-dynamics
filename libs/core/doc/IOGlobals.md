@@ -44,8 +44,10 @@ Headers: `encoder.h`, `check_write_file.h`.
 
 `ImageSave` owns scanline encoding, file state, metadata extensions, and
 temporary-file cleanup.  `GifWriter` owns the giflib writer.
-`ui/save_image.cpp` owns overwrite interaction, feedback, notifications,
-and exit policy.  There is no keyboard-interrupted partial-save workflow.
+`libs/ui/save_image.cpp` captures optional evolution metadata and owns
+overwrite interaction, feedback, notifications, and exit policy.
+`ImageSave` receives the metadata as a value rather than reading UI state.
+There is no keyboard-interrupted partial-save workflow.
 
 ## Palette Loading
 
@@ -117,13 +119,14 @@ the existing save-directory and naming policies.
 
 Header: `load_config.h`.
 
-- `g_bad_config` - `OK`, `BAD_WITH_MESSAGE`, or `BAD_NO_MESSAGE`.
-- `g_cfg_line_nums` - source-line mapping for video catalog entries.
+There are no public globals in the core configuration reader.
+`VideoConfigReader` parses stream records into `VideoConfigEntry` values,
+including the unconverted key name and source line number.  It does not
+resolve drivers or key bindings or modify the active catalog.
 
-The catalog contains engine `VideoInfo` values without key fields.
-Current `load_config.cpp` still calls UI key-name parsing and updates
-UI-owned `g_video_mode_keys`.  This is an upward dependency awaiting
-ownership cleanup, not an engine key binding.
+`libs/ui/load_config.cpp` interprets keys and assembles the catalog from
+key-free engine `VideoInfo` values.  Configuration status, line mappings,
+and key associations are UI-owned; see [UIGlobals.md](UIGlobals.md).
 
 ## Autosave
 
@@ -136,11 +139,11 @@ Header: `save_timer.h`.
 - `g_timed_save` - pending timed-save state.
 
 `TimedSave` values are `NONE`, `STARTED`, and `FINAL`.
-`save_timer.cpp` retains private start/deadline tick values and uses
-UI-owned `read_ticker()` and `g_finish_row` for scheduling at a row
-boundary.  That coupling remains; it does not poll input itself.
+Core `save_timer.cpp` only defines these shared settings and flags.
+`ui::SaveTimer` owns start/duration ticks and the pending row boundary;
+UI supplies `read_ticker()` values and coordinates save requests.
 
-## Persistent Records And Remaining Coupling
+## Persistent Records
 
 GIF extension records are I/O-owned values.  They hold fractal settings,
 optional resume bytes, formula information, ranges, arbitrary-precision
@@ -148,9 +151,11 @@ parameters, evolution information, and orbit settings.
 Resume support still depends on the calculation type and saved state;
 saving metadata is not a promise of exact resume from every operation.
 
-`ImageSave.cpp` reads UI-owned evolution state while building records.
-`loadfile.cpp` applies evolution state and reads parameter-file UI policy.
-These remaining dependencies are recorded in
-[hexagonal.md](hexagonal.md); the input-polling refactor did not eliminate
-them.  See [EngineGlobals.md](EngineGlobals.md) and
-[UIGlobals.md](UIGlobals.md) for the related bindings.
+UI captures evolution records before saving and applies normalized
+restored records to its controls.  Core metadata loading and serialization
+do not read or modify UI evolution state.  Parameter-file generation
+policy also remains in UI, outside metadata application.
+
+See [hexagonal.md](hexagonal.md) for the dependency direction and
+[EngineGlobals.md](EngineGlobals.md) and [UIGlobals.md](UIGlobals.md) for
+the related runtime bindings.

@@ -5,10 +5,10 @@ Copyright 2026 Richard Thomson.
 
 # UI Global Variables
 
-Inventory of public `g_*` declarations in `libs/core/include/ui`. The help
+Inventory of public `g_*` declarations in `libs/ui/include/ui`.  The help
 binding uses namespace `id::help`; the other bindings below use `id::ui`.
-Some UI-owned values remain accessible from I/O and geometry, so
-declaration ownership is not yet a complete dependency boundary.
+The `id::ui` library depends on core, not the reverse.  These bindings
+remain shared UI state rather than independent application contexts.
 
 ## Application And Image Coordination
 
@@ -19,7 +19,6 @@ Header: `big_while_loop.h`.
 - `g_escape_exit` - skip exit confirmation.
 - `g_compare_gif` - restored-image comparison request.
 - `g_from_text` - text/graphics transition state.
-- `g_finish_row` - row boundary selected for a pending autosave.
 - `g_out_line_cleanup` - active output cleanup callback.
 - `g_evolve_info` - retained I/O evolution record.
 - `g_have_evolve_info` - retained evolution resume information is present.
@@ -28,9 +27,12 @@ Header: `big_while_loop.h`.
 `CommandResult`.  Their state is also carried by `MainContext` and UI
 objects rather than represented only by globals.
 
+UI registers output cleanup callbacks and invokes core operations such as
+`geometry::finish_line3d()`.  Geometry does not register UI callbacks.
+
 ## Video Requests And Key Bindings
 
-Headers: `video_mode.h`, `video.h`, `diskvid.h`.
+Headers: `video_mode.h`, `video.h`, `diskvid.h`, `load_config.h`.
 
 - `g_init_mode` - pending video catalog index, activated after parameter
   processing.
@@ -41,10 +43,15 @@ Headers: `video_mode.h`, `video.h`, `diskvid.h`.
 - `g_video_start_x`, `g_video_start_y` - display origin.
 - `g_vesa_x_res`, `g_vesa_y_res` - retained video-resolution state.
 - `g_good_mode` - disk-video UI setup validity flag.
+- `g_bad_config` - `ConfigStatus::OK`, `BAD_WITH_MESSAGE`, or
+  `BAD_NO_MESSAGE`.
+- `g_cfg_line_nums` - source-line mapping for video catalog entries.
 
 Active mode information and image dimensions belong to engine
 `VideoInfo.h` and `LogicalScreen.h`.  `VideoInfo` contains no key.
 UI owns key-name parsing, lookup, formatting, and the `video` parameter.
+The UI configuration loader uses core `io::VideoConfigReader` records to
+resolve drivers, populate the catalog, and assign key bindings.
 
 Disk-storage flags `g_disk_flag`, `g_disk_16_bit`, and `g_disk_targa`
 belong to `io/disk_storage.h`.  Decoded output position `g_row_count`
@@ -117,6 +124,16 @@ Image history is UI behavior.  Batch rendering still uses UI-owned
 orchestration and can be interrupted; batch mode does not imply a
 headless application or a separate input-free engine.
 
+## Autosave Scheduling
+
+Header: `save_timer.h`.
+
+`SaveTimer` owns start/duration ticks and the pending row boundary in
+instance members.  UI supplies the clock through `read_ticker()` and
+checks whether a timed save is due.  There is no `g_finish_row` global.
+Shared interval, repeated-save, and pending-save flags remain I/O-owned;
+see [IOGlobals.md](IOGlobals.md).
+
 ## Evolution
 
 Header: `evolve.h`.
@@ -143,8 +160,9 @@ Header: `evolve.h`.
   and descriptions.
 
 These runtime controls are distinct from the I/O-owned serialized
-`EvolutionInfo` type.  I/O currently reads/applies some of this UI-owned
-state; that upward dependency remains to be removed.
+`EvolutionInfo` type.  UI captures a record before saving and applies
+normalized restored records to these controls.  I/O receives or returns
+record values without reaching into UI state.
 
 ## Stereogram And Parameter-Output Policy
 
@@ -167,8 +185,9 @@ UI owns keyboard/mouse polling, key meaning, diagnostics, markers, and
 playback/presentation waits.  Render controllers and sound sessions also
 retain state in objects rather than public globals.
 
-Some backend code still reaches into UI state: surface cleanup, evolution
-metadata, video key bindings, and autosave coordination are examples.
-See [hexagonal.md](hexagonal.md) for that remaining work and
-[inversion-of-control.md](inversion-of-control.md) for the completed input
-boundary and future event-driven work.
+Core code does not include UI headers or access these UI-owned bindings.
+The broad driver interface and shared mutable core state still need
+separate ownership/interface work before independent concurrent renders.
+See [hexagonal.md](hexagonal.md) for that direction and
+[inversion-of-control.md](inversion-of-control.md) for remaining handler
+and input-dispatch work.

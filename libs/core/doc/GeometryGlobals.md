@@ -131,9 +131,13 @@ parameter handlers and writes these geometry inputs.
 
 Geometry does not poll keyboard or mouse input or open modal diagnostics.
 It still uses engine/display settings and I/O backends.
-`line3d.cpp` also registers cleanup through UI-owned
-`g_out_line_cleanup`.  These are remaining dependency-boundary issues,
-not evidence of input polling.
+`line3d.cpp` exposes `finish_line3d()` for output cleanup.  UI registers
+and invokes that operation through its own `g_out_line_cleanup` binding;
+geometry does not access UI state.
+
+Engine, geometry, and I/O still share the core library.  Their finer
+subsystem dependency direction remains separate from the established
+core/UI library boundary.
 
 See [hexagonal.md](hexagonal.md) for target dependencies and
 [UIGlobals.md](UIGlobals.md) for the UI-owned coordination state.

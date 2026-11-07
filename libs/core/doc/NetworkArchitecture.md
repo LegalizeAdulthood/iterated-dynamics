@@ -27,10 +27,15 @@ objects already advance incrementally, and keyboard/mouse input belongs
 to UI controllers.  That provides useful return points for future worker
 control without placing message handling inside calculation loops.
 
+Core and UI now build as separate libraries: UI depends on core, while
+core code has no UI-header or UI-state dependency.  Core tests link without
+the interaction layer.
+
 The separation is not yet sufficient for parallel execution:
 
 - Calculation still uses shared global bindings and numeric temporaries.
-- Some geometry and I/O code still depends on UI-owned state.
+- Engine, geometry, and I/O share one core target; their finer dependency
+  boundaries still need work.
 - The driver exposes input, presentation, and output in one broad API.
 - Batch mode uses application orchestration; it is not inherently headless.
 
@@ -60,9 +65,11 @@ This follows the dependency direction in [hexagonal.md](hexagonal.md):
 UI uses engine and I/O; I/O uses engine; engine uses geometry.  ZeroMQ is
 an adapter technology, not a new dependency of the numerical algorithms.
 
-First resolve ownership of shared data and remove upward UI dependencies.
-Then narrow driver capabilities into appropriate ports.  These changes
-remain useful even if rendering never leaves the local process.
+Build on the established core/UI boundary by isolating shared calculation
+state and narrowing driver capabilities into appropriate ports.  Refine
+dependencies between core subsystems without reintroducing UI access.
+These changes remain useful even if rendering never leaves the local
+process.
 
 ### Why This Simplifies Multiprocessing
 

@@ -6,9 +6,9 @@ Copyright 2026 Richard Thomson.
 # Global Variable Inventories
 
 These inventories describe public `g_*` declarations in the current
-`libs/core/include` subsystem headers.  They group related settings and
-working values, identify declaration ownership, and explain important units
-and lifetimes.
+`libs/core/include` and `libs/ui/include` subsystem headers.  They group
+related settings and working values, identify declaration ownership, and
+explain important units and lifetimes.
 
 They are implementation references, not refactoring plans.  Header
 ownership is not proof of a clean dependency boundary, thread isolation,
@@ -26,16 +26,16 @@ or exclusive use by the declaring subsystem.
   surface rendering, Targa/ray output, stereo projection, and stereogram
   inputs.
 - [IOGlobals.md](IOGlobals.md) - image metadata/application, save policy,
-  scanline output, palette loading, disk storage, paths, video catalog
-  configuration, and autosave.
+  scanline output, palette loading, disk storage, paths, and shared
+  autosave settings, with related object and UI ownership.
 - [MathGlobals.md](MathGlobals.md) - numeric representation, arena
   allocation, temporaries, bounds/parameters, interpreter bindings,
   overflow, and arithmetic contracts.
 - [MiscGlobals.md](MiscGlobals.md) - debug selection, active driver,
   compatibility version, and stack diagnostics.
 - [UIGlobals.md](UIGlobals.md) - application coordination, pending video
-  requests/key bindings, presentation, input tools, history, evolution,
-  and stereogram/parameter-output policy.
+  requests/key bindings, video configuration, presentation, input tools,
+  history, evolution, autosave scheduling, and parameter-output policy.
 
 Scope follows declaration directories.  For example, `g_help_mode` is
 declared under `ui` but uses namespace `id::help`.  Read-only `g_*`
@@ -77,9 +77,10 @@ controllers own interaction and presentation.  Commands, GIF decoding,
 GIF encoding, image saving, and sound sessions also have explicit objects
 instead of being represented only by public globals.
 
-The completed input split does not imply that every non-UI module is free
-of UI dependencies.  Geometry cleanup, evolution metadata, video catalog
-bindings, and autosave still have upward coupling.
+Core and UI are separate libraries.  Core does not reach into UI state;
+UI owns cleanup coordination, evolution capture/application, video key
+bindings, and autosave scheduling.  This dependency boundary does not
+isolate the shared calculation state or segregate the broad driver API.
 
 ## Precision And Memory
 
@@ -110,8 +111,8 @@ per-pixel synchronization merely because state is moved into an object.
 
 - [Ports And Adapters](hexagonal.md) - target dependencies and incremental
   ownership/interface segregation.
-- [Polling I/O Boundary](inversion-of-control.md) - implemented calculation
-  and UI separation, current coupling, and event-driven follow-ups.
+- [Rendering Interaction](inversion-of-control.md) - calculation/UI
+  interaction design and remaining input-dispatch/event-driven work.
 - [Sound Output Port](sound.md) - samples, injection, session ownership,
   readiness, and interactive semantics.
 - [Debug Flags](../../../home/doc/debug-flags.md) - supported numeric debug

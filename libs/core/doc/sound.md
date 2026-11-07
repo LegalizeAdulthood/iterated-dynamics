@@ -10,8 +10,10 @@ the application.  It does not call a UI controller to make sound or pass
 coordinates back through the calculation call chain solely for audio.
 
 This is a durable design description, not an implementation checklist.
-Implementation slices belong in
-[inversion-of-control.md](inversion-of-control.md).
+The port and driver-backed adapter are implemented.  Remaining UI
+input-dispatch and event-driven work is described in
+[inversion-of-control.md](inversion-of-control.md); future audio-backend
+choices are separate from that work.
 
 ## Ownership
 

@@ -21,11 +21,15 @@ Keyboard and mouse polling have been removed from calculation code.
 Calculation objects advance incrementally under UI controllers rather
 than controlling input themselves.
 
-That does not complete the architectural separation.  Some lower-level
-code still includes UI headers and accesses UI-owned state.  The broad
-driver interface also exposes input and presentation capabilities to
-clients that only need output.  Removing runtime input polling is not
-the same as removing source-level dependencies on UI responsibilities.
+`libs/core` builds `id::core`; `libs/ui` builds `id::ui` and depends on
+core.  Core code does not include UI headers or access UI-owned state.
+Core tests link without UI, while UI tests exercise the interaction layer.
+
+This library boundary does not complete the architectural separation.
+Engine, geometry, I/O, math, and support still share one core target.
+The broad driver interface exposes input and presentation capabilities
+to clients that only need output.  Shared mutable calculation state also
+remains; the split does not make concurrent renders safe.
 
 ## Dependency Direction
 
@@ -53,13 +57,13 @@ above.  Do not move a dependency into a callback merely to hide it.
 
 Shared data belongs below UI when its meaning is independent of user
 interaction.  UI coordination remains above it.  Evolution metadata is
-an example: I/O should serialize data without reaching into interactive
-evolution controls.  Its final ownership needs an explicit decision,
-not just relocation of a header.
+an example: I/O owns the serialized `EvolutionInfo` record, while UI
+captures it from evolution controls and applies restored records to those
+controls.  I/O neither reads nor modifies the UI's evolution state.
 
 ## Input And Calculation Boundaries
 
-`libs/core/ui` owns keyboard dispatch, key meaning, mouse subscriptions,
+`libs/ui` owns keyboard dispatch, key meaning, mouse subscriptions,
 and input side effects.  While polling I/O remains, the driver owns the
 production key queue; do not add a second queue to decouple calculation.
 Code outside UI must not call `driver_get_key`, `driver_key_pressed`,
@@ -84,27 +88,6 @@ below UI.
 Numerical sound submission follows the same output-port principle, with
 its non-blocking contract and UI-owned playback coordination defined in
 [sound.md](sound.md).
-
-## Remaining Upward Dependencies
-
-The current starting inventory is:
-
-- `geometry/line3d.cpp` registers cleanup through UI-owned
-  `g_out_line_cleanup` declared in `ui/big_while_loop.h`.
-- `io/ImageSave.cpp` reads evolution state to construct GIF metadata and
-  includes `ui/big_while_loop.h` and `ui/evolve.h`.
-- `io/loadfile.cpp` restores evolution state and reads
-  `g_make_parameter_file` through UI declarations.
-- `io/load_config.cpp` parses video key names and updates UI-owned
-  video key bindings.
-- `io/save_timer.cpp` depends on the UI ticker and `g_finish_row` for
-  autosave coordination.
-- `io/encoder.cpp` still includes `ui/big_while_loop.h` and `ui/evolve.h`;
-  check whether these includes are unused before planning ownership work.
-
-These dependencies do not themselves establish that input polling
-remains.  They establish that UI is not yet wholly a layer above the
-other components.  Audit actual symbol use as well as includes.
 
 ## Driver Interface Segregation
 
@@ -154,18 +137,23 @@ simply preserves the existing dependencies.
 Use two related tracks.  Neither requires replacing the whole driver or
 changing platform implementations at once.
 
-### Remove Upward Dependencies
+### Refine Core Subsystem Dependencies
 
-For each remaining dependency on UI:
+The core/UI library split is established.  Audit dependencies within core
+against the intended engine, geometry, and I/O graph above; sharing one
+target does not enforce those finer boundaries.
 
-1. Identify the specific state or operation the lower layer needs.
-2. Place engine data and lifecycle responsibilities below UI.
-3. Keep interaction and coordination in UI.
-4. Remove the upward dependency and validate preserved behavior.
+For each dependency that crosses an intended boundary:
+
+1. Identify the specific data or capability the consumer needs.
+2. Separate shared data from coordination and backend operations.
+3. Assign ownership or define a narrow output port where appropriate.
+4. Migrate the consumer and validate preserved behavior.
 
 Give each responsibility its own small, cohesive, reviewable slice.
-Do not combine unrelated changes because they use the same UI header.
-Deleting an include alone does not resolve ownership or hidden coupling.
+Do not reintroduce UI dependencies or combine unrelated changes merely
+because they share a header.  Deleting an include alone does not resolve
+ownership or hidden coupling.
 
 ### Split Driver Capabilities
 
@@ -191,8 +179,8 @@ remote rendering without improving the ownership boundary.
 ## Next Planning Step
 
 Inventory driver capabilities and callers against the dependency graph.
-Combine that inventory with the remaining upward dependencies to decide
-port ownership and migration order before writing implementation slices.
+Combine that inventory with core subsystem dependencies and shared-state
+ownership to decide migration order before writing implementation slices.
 
 Audit globals, callback ownership, and reachable capabilities as well as
 headers.  No UI includes is necessary, but not sufficient, for the desired

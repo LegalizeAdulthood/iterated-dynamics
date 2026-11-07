@@ -12,9 +12,11 @@ replacement for DOS display semantics.  Exact microsecond compatibility
 is no longer the display goal.  Visible orbit plotting, responsive input,
 and coordinated sound output are the useful behaviors.
 
-The broader policy review remains in
-[inversion-of-control.md](inversion-of-control.md).  Sound-port ownership
-and interactive backpressure are described in [sound.md](sound.md).
+[Rendering interaction design](inversion-of-control.md) distinguishes
+temporary overlays from image-producing orbit plots and describes a
+possible future orbit-inspection tool.  It does not select a replacement
+delay policy.  Remaining timing decisions are listed below; sound-port
+ownership and backpressure are described in [sound.md](sound.md).
 The implementation is the source of truth.
 
 ## Units And Distinct Uses
