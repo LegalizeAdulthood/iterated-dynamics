@@ -190,6 +190,7 @@ add_executable(test-id
     ui/test_plasma.cpp
     ui/test_PotentialRestore.cpp
     ui/test_precision_diagnostics.cpp
+    ui/test_restore_image.cpp
     ui/test_rotate.cpp
     ui/test_save_image.cpp
     ui/test_save_timer.cpp

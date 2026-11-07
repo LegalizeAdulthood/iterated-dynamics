@@ -6,12 +6,14 @@
 #include <config/port.h>
 
 #include <fractals/fractype.h>
+#include <io/EvolutionInfo.h>
 #include <io/gif_extensions.h>
 #include <misc/version.h>
 
 #include <array>
 #include <cstdint>
 #include <filesystem>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -86,6 +88,8 @@ struct ImageParameterOptions
 
 ImageMetadata read_image_metadata(const std::filesystem::path &path);
 void apply_image_parameters(const ImageMetadata &metadata, ImageParameterOptions options);
+// Convert legacy gene indices and progress without changing the metadata.
+std::optional<EvolutionInfo> normalize_evolution_info(const ImageMetadata &metadata);
 void apply_image_extensions(ImageMetadata &metadata);
 void set_if_old_bif();
 void set_function_param_defaults();

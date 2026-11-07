@@ -3,6 +3,10 @@
 //
 #pragma once
 
+#include <io/EvolutionInfo.h>
+
+#include <optional>
+
 namespace id::engine
 {
 struct Viewport;
@@ -12,6 +16,9 @@ namespace id::ui
 {
 
 class SoundSession;
+
+// Apply normalized evolution controls and retain resumable progress.
+void apply_evolution_info(const std::optional<io::EvolutionInfo> &info);
 
 int prepare_image_restore(const engine::Viewport &viewport);
 

@@ -20,6 +20,7 @@
 #include <ui/get_video_mode.h>
 #include <ui/help_title.h>
 #include <ui/make_batch_file.h>
+#include <ui/restore_image.h>
 #include <ui/video_mode.h>
 #include <ui/zoom.h>
 
@@ -91,6 +92,7 @@ void make_parameter_file(const MakeParameterFile &request)
             g_file_aspect_ratio = video->aspect_ratio;
         }
         apply_image_extensions(metadata);
+        apply_evolution_info(normalize_evolution_info(metadata));
     }
     else if (!g_map_name.empty())
     {

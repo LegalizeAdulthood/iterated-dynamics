@@ -801,6 +801,80 @@ TEST_F(TestFindFractalInfo, readsLegacyEvolutionRecord)
     EXPECT_EQ(5, m_result.evolution.mutate[0]);
 }
 
+TEST(TestNormalizeEvolutionInfo, omitsAbsentRecord)
+{
+    EXPECT_FALSE(normalize_evolution_info(ImageMetadata{}));
+}
+
+class TestEvolutionRecordVersion : public TestFindFractalInfo, public WithParamInterface<int>
+{
+};
+
+TEST_P(TestEvolutionRecordVersion, normalizesGeneIndicesAndProgressWithoutChangingRawMetadata)
+{
+    FractalInfo fractal{main_record()};
+    fractal.info_version = static_cast<std::int16_t>(GetParam());
+    put_fractal_info(&m_extensions, fractal);
+    EvolutionInfo raw{};
+    raw.image_grid_size = 5;
+    raw.count = 23;
+    for (int i = 0; i < NUM_GENES; ++i)
+    {
+        raw.mutate[i] = static_cast<std::int16_t>(100 + i);
+    }
+    put_evolution_info(&m_extensions, raw);
+    const ImageMetadata metadata{read_image_metadata(write_small_file())};
+
+    const std::optional<EvolutionInfo> info{normalize_evolution_info(metadata)};
+
+    ASSERT_TRUE(info);
+    EXPECT_EQ(5, info->image_grid_size);
+    EXPECT_EQ(GetParam() < 15 ? 117 : 23, info->count);
+    for (int i = 0; i < NUM_GENES; ++i)
+    {
+        const int expected{GetParam() >= 15 || i < 6 ? 100 + i : i < 10 ? 0 : 100 + i - 4};
+        EXPECT_EQ(expected, info->mutate[i]) << i;
+        EXPECT_EQ(raw.mutate[i], metadata.evolution.mutate[i]) << i;
+    }
+    EXPECT_EQ(23, metadata.evolution.e_count);
+    EXPECT_EQ(info, normalize_evolution_info(metadata));
+}
+
+INSTANTIATE_TEST_SUITE_P(Versions, TestEvolutionRecordVersion, Values(14, 15, FRACTAL_INFO_VERSION));
+
+TEST_F(TestFindFractalInfo, normalizedEvolutionRecordRetainsGeometryAndDefaultsReservedFields)
+{
+    add_main_record();
+    EvolutionInfo raw{};
+    raw.evolving = 9;
+    raw.image_grid_size = 3;
+    raw.this_generation_random_seed = 0xABCD;
+    raw.max_random_mutation = 0.25;
+    raw.x_parameter_range = 4;
+    raw.y_parameter_range = 3;
+    raw.x_parameter_offset = -2;
+    raw.y_parameter_offset = -1.5;
+    raw.discrete_x_parameter_offset = -7;
+    raw.discrete_y_parameter_offset = 9;
+    raw.px = 1;
+    raw.py = 2;
+    raw.screen_x_offset = 2;
+    raw.screen_y_offset = 1;
+    raw.x_dots = 0xFFFF;
+    raw.y_dots = 0x8000;
+    raw.count = 4;
+    raw.mutate[NUM_GENES - 1] = 6;
+    raw.future[0] = 123;
+    put_evolution_info(&m_extensions, raw);
+    const ImageMetadata metadata{read_image_metadata(write_small_file())};
+
+    const std::optional<EvolutionInfo> info{normalize_evolution_info(metadata)};
+
+    ASSERT_TRUE(info);
+    raw.future[0] = 0; // Reserved fields were never applied by the restore path.
+    EXPECT_EQ(raw, *info);
+}
+
 TEST_F(TestFindFractalInfo, readsLegacyOrbitRecord)
 {
     ASSERT_FALSE(m_result.read(ID_TEST_GIF_EXT7_FILE));

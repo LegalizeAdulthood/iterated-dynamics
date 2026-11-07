@@ -56,6 +56,56 @@ using namespace id::misc;
 namespace id::ui
 {
 
+void apply_evolution_info(const std::optional<EvolutionInfo> &info)
+{
+    g_have_evolve_info = false;
+    if (!info)
+    {
+        g_evolving = EvolutionModeFlags::NONE;
+        return;
+    }
+    if (info->count != info->image_grid_size * info->image_grid_size && g_calc_status != CalcStatus::COMPLETED)
+    {
+        g_calc_status = CalcStatus::RESUMABLE;
+    }
+    else
+    {
+        g_calc_status = CalcStatus::COMPLETED;
+    }
+    g_evolve_x_parameter_range = info->x_parameter_range;
+    g_evolve_y_parameter_range = info->y_parameter_range;
+    g_evolve_new_x_parameter_offset = info->x_parameter_offset;
+    g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
+    g_evolve_new_y_parameter_offset = info->y_parameter_offset;
+    g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
+    g_evolve_new_discrete_x_parameter_offset = static_cast<char>(info->discrete_x_parameter_offset);
+    g_evolve_discrete_x_parameter_offset = g_evolve_new_discrete_x_parameter_offset;
+    g_evolve_new_discrete_y_parameter_offset = static_cast<char>(info->discrete_y_parameter_offset);
+    g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset;
+    g_evolve_param_grid_x = info->px;
+    g_evolve_param_grid_y = info->py;
+    g_logical_screen.x_offset = info->screen_x_offset;
+    g_logical_screen.y_offset = info->screen_y_offset;
+    g_logical_screen.x_dots = info->x_dots;
+    g_logical_screen.y_dots = info->y_dots;
+    g_evolve_image_grid_size = info->image_grid_size;
+    g_evolve_this_generation_random_seed = info->this_generation_random_seed;
+    g_evolve_max_random_mutation = info->max_random_mutation;
+    g_evolving = static_cast<EvolutionModeFlags>(info->evolving);
+    g_viewport.enabled = g_evolving != EvolutionModeFlags::NONE;
+    g_evolve_dist_per_x = g_evolve_x_parameter_range / (g_evolve_image_grid_size - 1);
+    g_evolve_dist_per_y = g_evolve_y_parameter_range / (g_evolve_image_grid_size - 1);
+    for (int i = 0; i < NUM_GENES; ++i)
+    {
+        g_gene_bank[i].mutate = static_cast<Variations>(info->mutate[i]);
+    }
+    g_have_evolve_info = g_calc_status == CalcStatus::RESUMABLE;
+    if (g_have_evolve_info)
+    {
+        g_evolve_info = *info;
+    }
+}
+
 int prepare_image_restore(const Viewport &requested_viewport)
 {
     g_show_file = ShowFile::IMAGE_LOADED;
@@ -141,30 +191,10 @@ int prepare_image_restore(const Viewport &requested_viewport)
     }
 
     apply_image_extensions(metadata);
-    if (metadata.evolution.got_data)
+    const std::optional<EvolutionInfo> evolution{normalize_evolution_info(metadata)};
+    apply_evolution_info(evolution);
+    if (evolution)
     {
-        const ExtBlock6 &blk_6_info{metadata.evolution};
-        g_have_evolve_info = g_calc_status == CalcStatus::RESUMABLE;
-        if (g_have_evolve_info)
-        {
-            g_evolve_info.x_parameter_range = blk_6_info.x_parameter_range;
-            g_evolve_info.y_parameter_range = blk_6_info.y_parameter_range;
-            g_evolve_info.x_parameter_offset = blk_6_info.x_parameter_offset;
-            g_evolve_info.y_parameter_offset = blk_6_info.y_parameter_offset;
-            g_evolve_info.discrete_x_parameter_offset = blk_6_info.discrete_x_parameter_offset;
-            g_evolve_info.discrete_y_parameter_offset = blk_6_info.discrete_y_parameter_offset;
-            g_evolve_info.px = blk_6_info.px;
-            g_evolve_info.py = blk_6_info.py;
-            g_evolve_info.screen_x_offset = blk_6_info.sx_offs;
-            g_evolve_info.screen_y_offset = blk_6_info.sy_offs;
-            g_evolve_info.x_dots = blk_6_info.x_dots;
-            g_evolve_info.y_dots = blk_6_info.y_dots;
-            g_evolve_info.image_grid_size = blk_6_info.image_grid_size;
-            g_evolve_info.evolving = blk_6_info.evolving;
-            g_evolve_info.this_generation_random_seed = blk_6_info.this_generation_random_seed;
-            g_evolve_info.max_random_mutation = blk_6_info.max_random_mutation;
-            g_evolve_info.count = blk_6_info.e_count;
-        }
         save_param_history();
     }
     g_show_file = ShowFile::LOAD_IMAGE;

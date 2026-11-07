@@ -15,7 +15,6 @@
 #include <engine/ImageRegion.h>
 #include <engine/Inversion.h>
 #include <engine/log_map.h>
-#include <engine/LogicalScreen.h>
 #include <engine/OrbitPlot.h>
 #include <engine/Potential.h>
 #include <engine/random_seed.h>
@@ -26,7 +25,6 @@
 #include <engine/trig_fns.h>
 #include <engine/UserData.h>
 #include <engine/VideoInfo.h>
-#include <engine/Viewport.h>
 #include <fractals/formula.h>
 #include <fractals/fractalp.h>
 #include <fractals/ifs.h>
@@ -43,7 +41,6 @@
 #include <math/biginit.h>
 #include <math/round_float_double.h>
 #include <misc/id.h>
-#include <ui/evolve.h>
 
 #include <fmt/format.h>
 #include <gif_lib.h>
@@ -64,7 +61,6 @@ using namespace id::fractals;
 using namespace id::geometry;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::io
 {
@@ -1000,6 +996,46 @@ void apply_image_parameters(const ImageMetadata &metadata, const ImageParameterO
     g_version = g_file_version;
 }
 
+std::optional<EvolutionInfo> normalize_evolution_info(const ImageMetadata &metadata)
+{
+    const ExtBlock6 &block{metadata.evolution};
+    if (!block.got_data)
+    {
+        return std::nullopt;
+    }
+    EvolutionInfo info{};
+    info.evolving = block.evolving;
+    info.image_grid_size = block.image_grid_size;
+    info.this_generation_random_seed = block.this_generation_random_seed;
+    info.max_random_mutation = block.max_random_mutation;
+    info.x_parameter_range = block.x_parameter_range;
+    info.y_parameter_range = block.y_parameter_range;
+    info.x_parameter_offset = block.x_parameter_offset;
+    info.y_parameter_offset = block.y_parameter_offset;
+    info.discrete_x_parameter_offset = block.discrete_x_parameter_offset;
+    info.discrete_y_parameter_offset = block.discrete_y_parameter_offset;
+    info.px = block.px;
+    info.py = block.py;
+    info.screen_x_offset = block.sx_offs;
+    info.screen_y_offset = block.sy_offs;
+    info.x_dots = block.x_dots;
+    info.y_dots = block.y_dots;
+    if (metadata.fractal.info_version < 15)
+    {
+        // Four parameter genes were inserted after the first six genes.
+        // The old progress count occupies the next slot after 17 genes.
+        info.count = block.mutate[NUM_GENES - 4];
+        std::copy_n(block.mutate, 6, info.mutate);
+        std::copy_n(block.mutate + 6, NUM_GENES - 10, info.mutate + 10);
+    }
+    else
+    {
+        info.count = block.e_count;
+        std::copy_n(block.mutate, NUM_GENES, info.mutate);
+    }
+    return info;
+}
+
 void apply_image_extensions(ImageMetadata &metadata)
 {
     validate_precision_metadata(metadata);
@@ -1008,7 +1044,6 @@ void apply_image_extensions(ImageMetadata &metadata)
     ExtBlock3 &blk_3_info{metadata.formula};
     ExtBlock4 &blk_4_info{metadata.ranges};
     ExtBlock5 &blk_5_info{metadata.extended};
-    ExtBlock6 &blk_6_info{metadata.evolution};
     ExtBlock7 &blk_7_info{metadata.orbits};
     g_resume_data.clear();
 
@@ -1058,77 +1093,6 @@ void apply_image_extensions(ImageMetadata &metadata)
     else
     {
         g_bf_math = BFMathType::NONE;
-    }
-
-    if (blk_6_info.got_data)
-    {
-        GeneBase gene[NUM_GENES];
-        copy_genes_from_bank(gene);
-        if (read_info.info_version < 15)
-        {
-            // Increasing NUM_GENES moves ecount in the data structure
-            // We added 4 to NUM_GENES, so ecount is at NUM_GENES-4
-            blk_6_info.e_count = blk_6_info.mutate[NUM_GENES - 4];
-        }
-        if (blk_6_info.e_count != blk_6_info.image_grid_size *blk_6_info.image_grid_size
-            && g_calc_status != CalcStatus::COMPLETED)
-        {
-            g_calc_status = CalcStatus::RESUMABLE;
-        }
-        else
-        {
-            g_calc_status = CalcStatus::COMPLETED;
-        }
-        g_evolve_x_parameter_range = blk_6_info.x_parameter_range;
-        g_evolve_y_parameter_range = blk_6_info.y_parameter_range;
-        g_evolve_new_x_parameter_offset = blk_6_info.x_parameter_offset;
-        g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
-        g_evolve_new_y_parameter_offset = blk_6_info.y_parameter_offset;
-        g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
-        g_evolve_new_discrete_x_parameter_offset = static_cast<char>(blk_6_info.discrete_x_parameter_offset);
-        g_evolve_discrete_x_parameter_offset = g_evolve_new_discrete_x_parameter_offset;
-        g_evolve_new_discrete_y_parameter_offset = static_cast<char>(blk_6_info.discrete_y_parameter_offset);
-        g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset;
-        g_evolve_param_grid_x           = blk_6_info.px;
-        g_evolve_param_grid_y           = blk_6_info.py;
-        g_logical_screen.x_offset       = blk_6_info.sx_offs;
-        g_logical_screen.y_offset       = blk_6_info.sy_offs;
-        g_logical_screen.x_dots        = blk_6_info.x_dots;
-        g_logical_screen.y_dots        = blk_6_info.y_dots;
-        g_evolve_image_grid_size = blk_6_info.image_grid_size;
-        g_evolve_this_generation_random_seed = blk_6_info.this_generation_random_seed;
-        g_evolve_max_random_mutation = blk_6_info.max_random_mutation;
-        g_evolving = static_cast<EvolutionModeFlags>(blk_6_info.evolving);
-        g_viewport.enabled = g_evolving != EvolutionModeFlags::NONE;
-        g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size - 1);
-        g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size - 1);
-        if (read_info.info_version > 14)
-        {
-            for (int i = 0; i < NUM_GENES; i++)
-            {
-                gene[i].mutate = static_cast<Variations>(blk_6_info.mutate[i]);
-            }
-        }
-        else
-        {
-            for (int i = 0; i < 6; i++)
-            {
-                gene[i].mutate = static_cast<Variations>(blk_6_info.mutate[i]);
-            }
-            for (int i = 6; i < 10; i++)
-            {
-                gene[i].mutate = Variations::NONE;
-            }
-            for (int i = 10; i < NUM_GENES; i++)
-            {
-                gene[i].mutate = static_cast<Variations>(blk_6_info.mutate[i-4]);
-            }
-        }
-        copy_genes_to_bank(gene);
-    }
-    else
-    {
-        g_evolving = EvolutionModeFlags::NONE;
     }
 
     if (blk_7_info.got_data)
