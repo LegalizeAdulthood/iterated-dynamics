@@ -68,6 +68,7 @@ add_executable(test-id
     include/FindFractalInfoTestSupport.h test/FindFractalInfoTestSupport.cpp
     include/FractalParamSaver.h test/FractalParamSaver.cpp
     include/GifReadSupport.h test/GifReadSupport.cpp
+    include/ImageSaveTest.h test/ImageSaveTest.cpp
     include/MemoryDiskStorage.h test/MemoryDiskStorage.cpp
     include/NonStandardFractalTest.h test/NonStandardFractalTest.cpp
     "include/MockDriver.h"

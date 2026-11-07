@@ -13,7 +13,6 @@
 #include <io/loadfile.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
-#include <ui/slideshw.h>
 
 #include <filesystem>
 
@@ -31,7 +30,6 @@ class RestoreDecodeTestState
     misc::ValueSaver<int> m_saved_skip_x{io::g_skip_x_dots, 0};
     misc::ValueSaver<int> m_saved_skip_y{io::g_skip_y_dots, 0};
     misc::ValueSaver<engine::CalcStatus> m_saved_status{engine::g_calc_status, engine::CalcStatus::COMPLETED};
-    misc::ValueSaver<bool> m_saved_busy{ui::g_busy, false};
     misc::ValueSaver<bool> m_saved_first_init{engine::g_first_init, false};
     misc::ValueSaver<engine::BatchMode> m_saved_batch{engine::g_init_batch, engine::BatchMode::NONE};
     misc::ValueSaver<misc::DebugFlags> m_saved_debug{misc::g_debug_flag, misc::DebugFlags::NONE};

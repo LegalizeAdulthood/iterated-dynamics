@@ -66,6 +66,7 @@ protected:
     ValueSaver<int> m_saved_width{g_screen_x_dots, 5};
     ValueSaver<int> m_saved_height{g_screen_y_dots, 4};
     RestoreDecodeTestState m_saved_decode;
+    ValueSaver<bool> m_saved_busy{g_busy, false};
     ValueSaver<int> m_saved_mask{g_and_color, 255};
     ValueSaver<OutLine> m_saved_out_line{g_out_line, pot_line};
     ValueSaver<Potential> m_saved_potential{g_potential, Potential{{}, true, true}};

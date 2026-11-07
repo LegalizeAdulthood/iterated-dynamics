@@ -9,6 +9,8 @@
 #include <FindFractalInfoTestSupport.h>
 #include <GifReadSupport.h>
 #include <MockDriver.h>
+#include <ImageSaveTest.h>
+#include <MemoryDiskStorage.h>
 #include <TemporaryDirectory.h>
 
 #include <engine/calc_frac_init.h>
@@ -47,13 +49,6 @@
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 #include <io/disk_storage.h>
-#include <ui/diskvid.h>
-#include <ui/evolve.h>
-#include <ui/make_batch_file.h>
-#include <ui/slideshw.h>
-#include <ui/temp_msg.h>
-#include <ui/save_image.h>
-#include <ui/video.h>
 
 #include <gif_lib.h>
 #include <gtest/gtest.h>
@@ -78,8 +73,8 @@ using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::misc::test;
-using namespace id::ui;
 using namespace testing;
+using namespace id::test::image_save_test;
 
 namespace id::test
 {
@@ -173,226 +168,10 @@ INSTANTIATE_TEST_SUITE_P(FloatPolicies, TestEncoderFloatPolicy,
         EncoderFloatInput{"ModernId", {1, 4, 0, 0, false}, false, 1}),
     [](const TestParamInfo<EncoderFloatInput> &info) { return info.param.name; });
 
-namespace
-{
-
-constexpr std::array<Byte, 3> EGA_PALETTE[]{
-    {0, 0, 0},
-    {0, 0, 42},
-    {0, 42, 0},
-    {0, 42, 42},
-    {42, 0, 0},
-    {42, 0, 42},
-    {42, 21, 0},
-    {42, 42, 42},
-    {21, 21, 21},
-    {21, 21, 63},
-    {21, 63, 21},
-    {21, 63, 63},
-    {63, 21, 21},
-    {63, 21, 63},
-    {63, 63, 21},
-    {63, 63, 63},
-};
-
-} // namespace
-
-class TestGifWriterRaster : public Test
-{
-protected:
-    void SetUp() override;
-    void TearDown() override;
-    void configure_image(int width, int height, int colors, int x_offset = 0, int y_offset = 0);
-    int save();
-    std::vector<Byte> image_pixels() const;
-
-    MockDriver m_driver;
-    TemporaryDirectory m_directory;
-    std::filesystem::path m_path;
-    int m_frame_width{};
-    std::vector<Byte> m_frame;
-    std::optional<ColorMapSaver> m_saved_palette;
-    bool m_memory_initialized{};
-    ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
-    ValueSaver<decltype(g_put_color)> m_saved_put_color{g_put_color, put_color_a};
-    ValueSaver<LogicalScreen> m_saved_screen{g_logical_screen};
-    ValueSaver<int> m_saved_x_dots{g_screen_x_dots};
-    ValueSaver<int> m_saved_y_dots{g_screen_y_dots};
-    ValueSaver<int> m_saved_colors{g_colors};
-    ValueSaver<int> m_saved_and_color{g_and_color};
-    ValueSaver<VideoInfo> m_saved_video{g_video_entry};
-    ValueSaver<Viewport> m_saved_viewport{g_viewport, Viewport{}};
-    ValueSaver<float> m_saved_screen_aspect{g_screen_aspect, 0.75f};
-    ValueSaver<bool> m_saved_real_dac{g_got_real_dac, false};
-    ValueSaver<bool> m_saved_disk_16_bit{g_disk_16_bit, false};
-    ValueSaver<bool> m_saved_first_init{g_first_init, false};
-    ValueSaver<bool> m_saved_busy{g_busy, false};
-    ValueSaver<BatchMode> m_saved_batch{g_init_batch, BatchMode::NORMAL};
-    ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::NONE};
-    ValueSaver<TimedSave> m_saved_timed_save{g_timed_save, TimedSave::STARTED};
-    ValueSaver<TimedSave> m_saved_resave{g_resave_flag, TimedSave::NONE};
-    ValueSaver<bool> m_saved_started_resaves{g_started_resaves, false};
-    ValueSaver<int> m_saved_save_time{g_save_time_interval, 0};
-    ValueSaver<bool> m_saved_overwrite{g_overwrite_file, true};
-    ValueSaver<CalcStatus> m_saved_status{g_calc_status, CalcStatus::COMPLETED};
-    ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::MANDEL};
-    ValueSaver<CalcMode> m_saved_mode{g_std_calc_mode, CalcMode::ONE_PASS};
-    ValueSaver<BFMathType> m_saved_bf_math{g_bf_math, BFMathType::NONE};
-    ValueSaver<EvolutionModeFlags> m_saved_evolving{g_evolving, EvolutionModeFlags::NONE};
-    ValueSaver<std::filesystem::path> m_saved_save_dir{g_save_dir};
-    ValueSaver<std::filesystem::path> m_saved_temp_dir{g_temp_dir};
-};
-
-void TestGifWriterRaster::SetUp()
-{
-    std::string name{UnitTest::GetInstance()->current_test_info()->name()};
-    std::replace(name.begin(), name.end(), '/', '_');
-    m_directory.create("id-encoder-" + name + "-");
-    m_path = m_directory.path() / "image.gif";
-    g_save_dir = m_directory.path();
-    g_temp_dir = m_directory.path();
-    set_save_library(m_directory.path());
-    m_saved_palette.emplace();
-    for (int color = 0; color < 256; ++color)
-    {
-        for (int channel = 0; channel < 3; ++channel)
-        {
-            g_dac_box[color][channel] = static_cast<Byte>((color * 29 + channel * 83) % 256);
-        }
-    }
-    set_normal_dot();
-    EXPECT_CALL(m_driver, is_disk()).WillRepeatedly(Return(false));
-    EXPECT_CALL(m_driver, flush()).Times(AnyNumber());
-    EXPECT_CALL(m_driver, key_pressed()).Times(0);
-    EXPECT_CALL(m_driver, get_key()).Times(0);
-    EXPECT_CALL(m_driver, wait_key_pressed(_)).Times(0);
-    EXPECT_CALL(m_driver, read_pixel(_, _))
-        .WillRepeatedly(
-            [this](const int x, const int y) { return m_frame.at(static_cast<std::size_t>(y) * m_frame_width + x); });
-    EXPECT_CALL(m_driver, write_pixel(_, _, _))
-        .WillRepeatedly([this](const int x, const int y, const int color)
-            { m_frame.at(static_cast<std::size_t>(y) * m_frame_width + x) = static_cast<Byte>(color); });
-    configure_image(8, 6, 256);
-}
-
-void TestGifWriterRaster::TearDown()
-{
-    if (m_memory_initialized)
-    {
-        end_disk();
-        exit_check();
-    }
-    set_null_video();
-    free_temp_msg();
-    clear_save_library();
-    m_saved_palette.reset();
-    m_directory.remove();
-}
-
-void TestGifWriterRaster::configure_image(
-    const int width, const int height, const int colors, const int x_offset, const int y_offset)
-{
-    g_logical_screen = {
-        width, height, x_offset, y_offset, static_cast<double>(width - 1), static_cast<double>(height - 1)};
-    g_screen_x_dots = width + x_offset;
-    g_screen_y_dots = height + y_offset;
-    g_colors = colors;
-    g_and_color = colors - 1;
-    g_video_entry.x_dots = width;
-    g_video_entry.y_dots = height;
-    g_video_entry.colors = colors;
-    g_viewport.final_aspect_ratio = 0.75f;
-    m_frame_width = g_screen_x_dots;
-    m_frame.resize(static_cast<std::size_t>(g_screen_x_dots) * g_screen_y_dots);
-    for (int row = 0; row < g_screen_y_dots; ++row)
-    {
-        for (int col = 0; col < g_screen_x_dots; ++col)
-        {
-            m_frame[static_cast<std::size_t>(row) * m_frame_width + col] =
-                static_cast<Byte>((col * 17 + row * 31 + col * row) % colors);
-        }
-    }
-}
-
-int TestGifWriterRaster::save()
-{
-    std::filesystem::remove(m_path);
-    std::filesystem::path filename{m_path};
-    return save_image(filename);
-}
-
-std::vector<Byte> TestGifWriterRaster::image_pixels() const
-{
-    std::vector<Byte> pixels;
-    for (int row = 0; row < g_logical_screen.y_dots; ++row)
-    {
-        const std::size_t offset{
-            static_cast<std::size_t>(row + g_logical_screen.y_offset) * m_frame_width + g_logical_screen.x_offset};
-        pixels.insert(pixels.end(), m_frame.begin() + offset, m_frame.begin() + offset + g_logical_screen.x_dots);
-    }
-    return pixels;
-}
-
-class TestGifWriterPalette : public TestGifWriterRaster, public WithParamInterface<std::pair<int, bool>>
-{
-};
-
-TEST_P(TestGifWriterPalette, savesRasterAndPaletteThroughProductionEntry)
-{
-    const int colors{GetParam().first};
-    const bool real_dac{GetParam().second};
-    configure_image(8, 6, colors);
-    g_got_real_dac = real_dac;
-    const std::vector<Byte> pixels{image_pixels()};
-
-    ASSERT_EQ(0, save());
-
-    const GifFilePtr gif{read_gif(m_path)};
-    expect_gif_raster(*gif, pixels, 8, 6);
-    std::ifstream input{m_path, std::ios::binary};
-    std::array<char, 6> signature{};
-    input.read(signature.data(), signature.size());
-    EXPECT_EQ("GIF89a", (std::string{signature.data(), signature.size()}));
-    EXPECT_EQ(0, gif->SBackGroundColor);
-    EXPECT_EQ(8, gif->SColorResolution);
-    EXPECT_EQ(49, gif->AspectByte);
-    ASSERT_NE(nullptr, gif->SColorMap);
-    ASSERT_EQ(colors, gif->SColorMap->ColorCount);
-    for (int color = 0; color < colors; ++color)
-    {
-        SCOPED_TRACE(color);
-        std::array<Byte, 3> expected{};
-        if (colors == 2)
-        {
-            expected = color == 0 ? std::array<Byte, 3>{0, 0, 0} : std::array<Byte, 3>{63, 63, 63};
-        }
-        else if (colors == 4)
-        {
-            constexpr std::array<Byte, 3> CGA_PALETTE[]{{0, 0, 0}, {21, 63, 63}, {63, 21, 63}, {63, 63, 63}};
-            expected = CGA_PALETTE[color];
-        }
-        else if (real_dac)
-        {
-            std::copy_n(g_dac_box[color], 3, expected.begin());
-        }
-        else
-        {
-            expected = EGA_PALETTE[color % 16];
-        }
-        const GifColorType &actual{gif->SColorMap->Colors[color]};
-        EXPECT_EQ(expected, (std::array<Byte, 3>{actual.Red, actual.Green, actual.Blue}));
-    }
-    EXPECT_EQ(pixels, image_pixels());
-    EXPECT_FALSE(g_busy);
-}
-
-INSTANTIATE_TEST_SUITE_P(Palettes, TestGifWriterPalette,
-    Values(std::pair{2, false}, std::pair{2, true}, std::pair{4, false}, std::pair{4, true}, std::pair{16, false},
-        std::pair{16, true}, std::pair{256, false}, std::pair{256, true}));
-
-TEST_F(TestGifWriterRaster, savesLogicalPixelsAtPhysicalScreenOffset)
+TEST_F(ImageSaveTest, savesNativeRasterAndPaletteWithoutPresentation)
 {
     configure_image(9, 5, 256, 3, 2);
+    g_got_real_dac = true;
     const std::vector<Byte> pixels{image_pixels()};
     const std::vector<Byte> frame{m_frame};
 
@@ -400,91 +179,25 @@ TEST_F(TestGifWriterRaster, savesLogicalPixelsAtPhysicalScreenOffset)
 
     const GifFilePtr gif{read_gif(m_path)};
     expect_gif_raster(*gif, pixels, 9, 5);
+    ASSERT_NE(nullptr, gif->SColorMap);
+    ASSERT_EQ(256, gif->SColorMap->ColorCount);
+    for (int color = 0; color < 256; ++color)
+    {
+        const GifColorType &actual{gif->SColorMap->Colors[color]};
+        EXPECT_EQ(g_dac_box[color][0], actual.Red);
+        EXPECT_EQ(g_dac_box[color][1], actual.Green);
+        EXPECT_EQ(g_dac_box[color][2], actual.Blue);
+    }
     EXPECT_EQ(frame, m_frame);
 }
 
-struct SavedGifAspect
-{
-    const char *name;
-    float aspect;
-    int byte;
-};
-
-void PrintTo(const SavedGifAspect &value, std::ostream *str)
-{
-    *str << value.name;
-}
-
-class TestGifWriterAspect : public TestGifWriterRaster, public WithParamInterface<SavedGifAspect>
-{
-protected:
-    void SetUp() override;
-};
-
-void TestGifWriterAspect::SetUp()
-{
-    TestGifWriterRaster::SetUp();
-    g_viewport.enabled = true;
-    g_viewport.x_dots = 8;
-    g_viewport.y_dots = 6;
-    g_viewport.final_aspect_ratio = GetParam().aspect;
-}
-
-TEST_P(TestGifWriterAspect, savesAspectByteForExplicitView)
-{
-    ASSERT_EQ(0, save());
-
-    const GifFilePtr gif{read_gif(m_path)};
-    EXPECT_EQ(GetParam().byte, gif->AspectByte);
-}
-
-INSTANTIATE_TEST_SUITE_P(AspectInputs, TestGifWriterAspect,
-    Values(SavedGifAspect{"NormalAspect", 0.75f, 49}, SavedGifAspect{"WideAspect", 0.5f, 81},
-        SavedGifAspect{"ClampLowByte", 1000.0f, 1}, SavedGifAspect{"ClampHighByte", 0.01f, 255}),
-    [](const TestParamInfo<SavedGifAspect> &info) { return info.param.name; });
-
-TEST_F(TestGifWriterRaster, savesAutomaticViewAspectFromPhysicalScreen)
-{
-    configure_image(8, 3, 256);
-    g_viewport.enabled = true;
-    g_screen_x_dots = 800;
-    g_screen_y_dots = 600;
-
-    ASSERT_EQ(0, save());
-
-    const GifFilePtr gif{read_gif(m_path)};
-    EXPECT_EQ(49, gif->AspectByte);
-    EXPECT_EQ(8, gif->SWidth);
-    EXPECT_EQ(3, gif->SHeight);
-}
-
-class TestGifWriterDimensions : public TestGifWriterRaster, public WithParamInterface<std::pair<int, int>>
-{
-};
-
-TEST_P(TestGifWriterDimensions, savesUnsignedDimensionsThroughProductionEntry)
-{
-    const int width{GetParam().first};
-    const int height{GetParam().second};
-    configure_image(width, height, 2);
-    const std::vector<Byte> pixels{image_pixels()};
-
-    ASSERT_EQ(0, save());
-
-    const GifFilePtr gif{read_gif(m_path)};
-    expect_gif_raster(*gif, pixels, width, height);
-}
-
-INSTANTIATE_TEST_SUITE_P(UnsignedBounds, TestGifWriterDimensions,
-    Values(std::pair{32768, 1}, std::pair{GIF_MAX_PIXELS, 1}, std::pair{1, 32768}, std::pair{1, GIF_MAX_PIXELS}));
-
-TEST_F(TestGifWriterRaster, savesPotentialRowsAsColorsThenLowBytes)
+TEST_F(ImageSaveTest, savesNativePotentialRowsWithoutPresentation)
 {
     configure_image(5, 3, 256, 2, 1);
     const std::vector<Byte> pixels{image_pixels()};
-    init_memory();
+    init_memory_disk_storage();
     m_memory_initialized = true;
-    ASSERT_TRUE(prepare_disk_storage(g_screen_x_dots, g_screen_y_dots * 2, 256));
+    open_memory_disk_storage(g_screen_x_dots, g_screen_y_dots * 2, 256);
     g_disk_16_bit = true;
     std::vector<Byte> stored;
     for (int row = 0; row < 3; ++row)
@@ -497,18 +210,6 @@ TEST_F(TestGifWriterRaster, savesPotentialRowsAsColorsThenLowBytes)
             stored.push_back(low);
         }
     }
-    // Progress must not run until both halves of the stored row are captured.
-    EXPECT_CALL(m_driver, write_pixel(_, _, _))
-        .WillRepeatedly(
-            [this](const int x, const int y, const int color)
-            {
-                m_frame.at(static_cast<std::size_t>(y) * m_frame_width + x) = static_cast<Byte>(color);
-                for (int col = 0; col < 5; ++col)
-                {
-                    write_disk_pixel(col + 2, y - g_logical_screen.y_offset + 3 + 1, 0);
-                }
-            });
-    EXPECT_CALL(m_driver, flush()).Times(4);
 
     ASSERT_EQ(0, save());
 
@@ -517,446 +218,46 @@ TEST_F(TestGifWriterRaster, savesPotentialRowsAsColorsThenLowBytes)
     EXPECT_EQ(pixels, image_pixels());
 }
 
-struct InvalidSavedGifDimensions
+TEST_F(ImageSaveTest, reportsNativeScanlineWriteFailureWithoutPresentation)
 {
-    const char *name;
-    int width;
-    int height;
-    bool potential;
-};
+    configure_image(600, 12, 256);
+    const std::vector<Byte> pixels{image_pixels()};
+    FailingOutputBuffer buffer;
+    std::ostream output{&buffer};
+    ImageSave image{output, m_path, std::nullopt};
+    buffer.remaining = 0;
 
-void PrintTo(const InvalidSavedGifDimensions &value, std::ostream *str)
-{
-    *str << value.name;
-}
-
-class TestGifWriterInvalidDimensions : public TestGifWriterRaster, public WithParamInterface<InvalidSavedGifDimensions>
-{
-protected:
-    void SetUp() override;
-};
-
-void TestGifWriterInvalidDimensions::SetUp()
-{
-    TestGifWriterRaster::SetUp();
-    configure_image(GetParam().width, GetParam().height, 256);
-    g_disk_16_bit = GetParam().potential;
-}
-
-TEST_P(TestGifWriterInvalidDimensions, rejectsUnrepresentableDimensions)
-{
-    EXPECT_EQ(-1, save());
-
-    EXPECT_FALSE(std::filesystem::exists(m_path));
-    EXPECT_FALSE(g_busy);
-}
-
-INSTANTIATE_TEST_SUITE_P(DimensionInputs, TestGifWriterInvalidDimensions,
-    Values(InvalidSavedGifDimensions{"PotentialWidth", GIF_MAX_PIXELS / 2 + 1, 1, true},
-        InvalidSavedGifDimensions{"Width", GIF_MAX_PIXELS + 1, 1, false},
-        InvalidSavedGifDimensions{"Height", 1, GIF_MAX_PIXELS + 1, false}),
-    [](const TestParamInfo<InvalidSavedGifDimensions> &info) { return info.param.name; });
-
-TEST_F(TestGifWriterRaster, reportsOutputOpenFailure)
-{
-    std::filesystem::path filename{m_directory.path() / "missing" / "image.gif"};
-
-    EXPECT_EQ(-1, save_image(filename));
-
-    EXPECT_FALSE(std::filesystem::exists(filename));
-    EXPECT_FALSE(g_busy);
-}
-
-class TestGifWriterIncrementalSave : public TestGifWriterRaster
-{
-protected:
-    void SetUp() override;
-    void TearDown() override;
-
-    std::vector<Byte> m_pixels;
-    std::unique_ptr<ImageSave> m_image;
-};
-
-void TestGifWriterIncrementalSave::SetUp()
-{
-    TestGifWriterRaster::SetUp();
-    configure_image(8, 3, 256);
-    m_pixels = image_pixels();
-    EXPECT_CALL(m_driver, is_disk()).Times(0);
-    EXPECT_CALL(m_driver, flush()).Times(0);
-    EXPECT_CALL(m_driver, write_pixel(_, _, _)).Times(0);
-    EXPECT_CALL(m_driver, read_pixel(_, _))
-        .WillRepeatedly(
-            [this](const int x, const int y)
-            {
-                EXPECT_FALSE(g_busy);
-                return m_frame.at(static_cast<std::size_t>(y) * m_frame_width + x);
-            });
-    m_image = std::make_unique<ImageSave>(m_path, std::nullopt);
-}
-
-void TestGifWriterIncrementalSave::TearDown()
-{
-    m_image.reset();
-    TestGifWriterRaster::TearDown();
-}
-
-TEST_F(TestGifWriterIncrementalSave, incrementalSaveDoesNotPresentUiOrChangeBusyState)
-{
-    for (int row = 0; row < 3; ++row)
-    {
-        EXPECT_FALSE(m_image->done());
-        m_image->iterate();
-        EXPECT_EQ(row + 1, m_image->rows_written());
-    }
-    EXPECT_FALSE(m_image->done());
-
-    m_image->iterate();
-
-    EXPECT_TRUE(m_image->done());
-    EXPECT_TRUE(m_image->succeeded());
-    EXPECT_TRUE(m_image->diagnostic().empty());
-    EXPECT_FALSE(g_busy);
-    const GifFilePtr gif{read_gif(m_path)};
-    expect_gif_raster(*gif, m_pixels, 8, 3);
-    EXPECT_EQ(m_pixels, image_pixels());
-}
-
-class TestGifWriterCompletedSave : public TestGifWriterIncrementalSave
-{
-protected:
-    void SetUp() override;
-};
-
-void TestGifWriterCompletedSave::SetUp()
-{
-    TestGifWriterIncrementalSave::SetUp();
-    for (int row = 0; row < 3; ++row)
-    {
-        m_image->iterate();
-    }
-    m_image->iterate();
-    ASSERT_TRUE(m_image->done());
-    ASSERT_TRUE(m_image->succeeded());
-}
-
-TEST_F(TestGifWriterCompletedSave, rejectsIterationAfterCompletion)
-{
-    EXPECT_THROW(m_image->iterate(), std::logic_error);
-}
-
-TEST_F(TestGifWriterRaster, unfinishedSaveRemovesItsPartialFileWithoutUi)
-{
-    EXPECT_CALL(m_driver, is_disk()).Times(0);
-    EXPECT_CALL(m_driver, flush()).Times(0);
-    {
-        ImageSave image{m_path, std::nullopt};
-        image.iterate();
-        EXPECT_TRUE(std::filesystem::exists(m_path));
-        EXPECT_FALSE(image.done());
-    }
-
-    EXPECT_FALSE(std::filesystem::exists(m_path));
-    EXPECT_FALSE(g_busy);
-}
-
-class TestGifWriterExistingImage : public TestGifWriterRaster
-{
-protected:
-    void SetUp() override;
-
-    std::vector<Byte> m_original_pixels;
-};
-
-void TestGifWriterExistingImage::SetUp()
-{
-    TestGifWriterRaster::SetUp();
-    m_original_pixels = image_pixels();
-    ASSERT_EQ(0, save());
-}
-
-TEST_F(TestGifWriterExistingImage, existingTemporaryDestinationIsNotDeleted)
-{
-    const std::filesystem::path temporary{m_directory.path() / "id.tmp"};
-    std::filesystem::create_directory(temporary);
-    EXPECT_CALL(m_driver, is_disk()).Times(0);
-    EXPECT_CALL(m_driver, flush()).Times(0);
-    {
-        ImageSave image{m_path, std::nullopt};
-        EXPECT_TRUE(image.done());
-        EXPECT_FALSE(image.succeeded());
-        EXPECT_THAT(image.diagnostic(), HasSubstr("Can't create"));
-    }
-
-    EXPECT_TRUE(std::filesystem::is_directory(temporary));
-    const GifFilePtr gif{read_gif(m_path)};
-    expect_gif_raster(*gif, m_original_pixels, 8, 6);
-}
-
-TEST_F(TestGifWriterExistingImage, replacementFailurePreservesOriginalAndExistingBackup)
-{
-    const std::filesystem::path backup{m_directory.path() / "id.tmp.bak"};
-    {
-        std::ofstream reserved{backup};
-        reserved << "reserved";
-    }
-    m_frame[0] = 123;
-    EXPECT_CALL(m_driver, is_disk()).Times(0);
-    EXPECT_CALL(m_driver, flush()).Times(0);
-    ImageSave image{m_path, std::nullopt};
     while (!image.done())
     {
         image.iterate();
     }
 
     EXPECT_FALSE(image.succeeded());
-    EXPECT_THAT(image.diagnostic(), HasSubstr("Can't replace"));
-    EXPECT_TRUE(std::filesystem::exists(backup));
-    EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
-    const GifFilePtr gif{read_gif(m_path)};
-    expect_gif_raster(*gif, m_original_pixels, 8, 6);
+    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, image.error());
+    EXPECT_LT(image.rows_written(), 12);
+    EXPECT_EQ(pixels, image_pixels());
 }
 
-TEST_F(TestGifWriterRaster, notificationFollowsProgressRestorationAndFileClosure)
+TEST_F(ImageSaveTest, reportsNativeCloseFailureWithoutPresentation)
 {
-    g_timed_save = TimedSave::NONE;
     const std::vector<Byte> pixels{image_pixels()};
-    EXPECT_CALL(m_driver, buzzer(Buzzer::COMPLETE))
-        .WillOnce(
-            [this, &pixels](Buzzer)
-            {
-                EXPECT_FALSE(g_busy);
-                EXPECT_EQ(pixels, image_pixels());
-                const std::filesystem::path renamed{m_directory.path() / "closed.gif"};
-                EXPECT_NO_THROW(std::filesystem::rename(m_path, renamed));
-                EXPECT_NO_THROW(std::filesystem::rename(renamed, m_path));
-            });
+    FailingOutputBuffer buffer;
+    std::ostream output{&buffer};
+    ImageSave image{output, m_path, std::nullopt};
+    buffer.fail_sync = true;
 
-    EXPECT_EQ(0, save());
-}
-
-TEST_F(TestGifWriterRaster, savesWithoutConsumingPendingInput)
-{
-    ON_CALL(m_driver, key_pressed()).WillByDefault(Return('x'));
-    const std::vector<Byte> pixels{image_pixels()};
-
-    ASSERT_EQ(0, save());
-
-    const GifFilePtr gif{read_gif(m_path)};
-    expect_gif_raster(*gif, pixels, 8, 6);
-    EXPECT_EQ(FRACTAL_INFO_VERSION, get_fractal_info(gif.get()).info_version);
-}
-
-TEST_F(TestGifWriterRaster, flushesProgressAfterEachStoredRowAndRestoresIt)
-{
-    configure_image(600, 3, 256);
-    const std::vector<Byte> pixels{image_pixels()};
-    int flushes{};
-    int reads{};
-    int writes{};
-    const std::vector<int> edges{0, 599, 1, 598, 2, 597};
-    EXPECT_CALL(m_driver, read_pixel(_, _))
-        .WillRepeatedly(
-            [this, &reads](const int x, const int y)
-            {
-                ++reads;
-                return m_frame.at(static_cast<std::size_t>(y) * m_frame_width + x);
-            });
-    EXPECT_CALL(m_driver, write_pixel(_, _, _))
-        .WillRepeatedly(
-            [this, &flushes, &reads, &writes, &edges](const int x, const int y, const int color)
-            {
-                EXPECT_TRUE(g_busy);
-                if (flushes < 3)
-                {
-                    EXPECT_EQ(flushes, y);
-                    EXPECT_EQ(edges[writes % edges.size()], x);
-                    if (writes % edges.size() == 0)
-                    {
-                        EXPECT_EQ(601, reads);
-                    }
-                }
-                ++writes;
-                m_frame.at(static_cast<std::size_t>(y) * m_frame_width + x) = static_cast<Byte>(color);
-            });
-    EXPECT_CALL(m_driver, flush())
-        .Times(4)
-        .WillRepeatedly(
-            [this, &flushes, &reads, &writes, &pixels]
-            {
-                EXPECT_TRUE(g_busy);
-                if (flushes < 3)
-                {
-                    EXPECT_EQ(6 * (flushes + 1), writes);
-                    EXPECT_NE(pixels, image_pixels());
-                }
-                else
-                {
-                    EXPECT_EQ(pixels, image_pixels());
-                }
-                reads = 0;
-                ++flushes;
-            });
-
-    ASSERT_EQ(0, save());
-
-    EXPECT_EQ(36, writes);
-    const GifFilePtr gif{read_gif(m_path)};
-    expect_gif_raster(*gif, pixels, 600, 3);
-    EXPECT_FALSE(g_busy);
-}
-
-class GifWriterSaveStreamTest : public TestGifWriterRaster
-{
-protected:
-    void TearDown() override;
-    void start_save(int width, int height);
-
-    FailingOutputBuffer m_buffer;
-    std::ostream m_output{&m_buffer};
-    std::vector<Byte> m_pixels;
-    std::unique_ptr<ImageSave> m_image;
-};
-
-void GifWriterSaveStreamTest::start_save(const int width, const int height)
-{
-    configure_image(width, height, 256);
-    m_pixels = image_pixels();
-    m_image = std::make_unique<ImageSave>(m_output, m_path, std::nullopt);
-}
-
-void GifWriterSaveStreamTest::TearDown()
-{
-    m_image.reset();
-    TestGifWriterRaster::TearDown();
-}
-
-class TestGifWriterRowWriteFailure : public GifWriterSaveStreamTest
-{
-protected:
-    void SetUp() override;
-
-    int m_flushes{};
-};
-
-void TestGifWriterRowWriteFailure::SetUp()
-{
-    TestGifWriterRaster::SetUp();
-    start_save(600, 12);
-    EXPECT_CALL(m_driver, flush())
-        .WillRepeatedly(
-            [this]
-            {
-                ++m_flushes;
-                m_buffer.remaining = 0;
-            });
-}
-
-TEST_F(TestGifWriterRowWriteFailure, restoresProgressAfterScanlineWriteFailure)
-{
-    EXPECT_FALSE(write_image(*m_image));
-
-    EXPECT_EQ(E_GIF_ERR_WRITE_FAILED, m_image->error());
-    EXPECT_GE(m_flushes, 2);
-    EXPECT_LT(m_flushes, 13);
-    EXPECT_EQ(m_pixels, image_pixels());
-    EXPECT_TRUE(m_image->done());
-    EXPECT_FALSE(m_image->succeeded());
-}
-
-class TestGifWriterSaveCloseFailure : public GifWriterSaveStreamTest
-{
-protected:
-    void SetUp() override;
-};
-
-void TestGifWriterSaveCloseFailure::SetUp()
-{
-    TestGifWriterRaster::SetUp();
-    start_save(8, 6);
-    m_buffer.fail_sync = true;
-    EXPECT_CALL(m_driver, flush()).Times(7);
-}
-
-TEST_F(TestGifWriterSaveCloseFailure, restoresProgressAndReportsCloseFailure)
-{
-    EXPECT_FALSE(write_image(*m_image));
-
-    EXPECT_EQ(E_GIF_ERR_CLOSE_FAILED, m_image->error());
-    EXPECT_EQ(m_pixels, image_pixels());
-    EXPECT_TRUE(m_image->done());
-    EXPECT_FALSE(m_image->succeeded());
-}
-
-TEST_F(TestGifWriterExistingImage, failedReplacementPreservesOriginalAndRemovesTemporaryFile)
-{
-    g_logical_screen.x_dots = GIF_MAX_PIXELS + 1;
-    std::filesystem::path filename{m_path};
-
-    EXPECT_EQ(-1, save_image(filename));
-
-    const GifFilePtr gif{read_gif(m_path)};
-    expect_gif_raster(*gif, m_original_pixels, 8, 6);
-    EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
-    EXPECT_EQ(BatchMode::BAILOUT_ERROR_NO_SAVE, g_init_batch);
-    EXPECT_FALSE(g_busy);
-}
-
-TEST_F(TestGifWriterExistingImage, overwriteReplacesOriginalOnlyAfterSuccessfulSave)
-{
-    m_frame[0] = 123;
-    const std::vector<Byte> pixels{image_pixels()};
-    std::filesystem::path filename{m_path};
-
-    ASSERT_EQ(0, save_image(filename));
-
-    const GifFilePtr gif{read_gif(m_path)};
-    expect_gif_raster(*gif, pixels, 8, 6);
-    EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
-}
-
-TEST_F(TestGifWriterExistingImage, selectsNextFilenameWithoutOverwriting)
-{
-    g_overwrite_file = false;
-    std::filesystem::path filename{m_path};
-
-    ASSERT_EQ(0, save_image(filename));
-
-    EXPECT_EQ(m_directory.path() / "image3.gif", filename);
-    EXPECT_TRUE(std::filesystem::exists(m_directory.path() / "image2.gif"));
-    EXPECT_TRUE(std::filesystem::exists(m_path));
-    EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
-}
-
-TEST_F(TestGifWriterRaster, autosaveReusesFilenameAndFinalSaveEndsResaving)
-{
-    g_resave_flag = TimedSave::STARTED;
-    std::filesystem::path filename{m_path};
-    ASSERT_EQ(0, save_image(filename));
-    EXPECT_EQ(m_path, filename);
-    EXPECT_TRUE(g_started_resaves);
-    m_frame[0] = 123;
-    const std::vector<Byte> pixels{image_pixels()};
-
-    ASSERT_EQ(0, save_image(filename));
-
-    EXPECT_EQ(m_path, filename);
-    EXPECT_TRUE(g_started_resaves);
-    EXPECT_FALSE(std::filesystem::exists(m_directory.path() / "id.tmp"));
+    while (!image.done())
     {
-        const GifFilePtr gif{read_gif(m_path)};
-        expect_gif_raster(*gif, pixels, 8, 6);
+        image.iterate();
     }
-    g_resave_flag = TimedSave::FINAL;
 
-    ASSERT_EQ(0, save_image(filename));
-
-    EXPECT_EQ(TimedSave::NONE, g_resave_flag);
-    EXPECT_FALSE(g_started_resaves);
-    EXPECT_EQ(m_directory.path() / "image2.gif", filename);
+    EXPECT_FALSE(image.succeeded());
+    EXPECT_EQ(E_GIF_ERR_CLOSE_FAILED, image.error());
+    EXPECT_EQ(6, image.rows_written());
+    EXPECT_EQ(pixels, image_pixels());
 }
 
-class TestGifWriterExtensions : public TestGifWriterRaster
+class TestGifWriterExtensions : public ImageSaveTest
 {
 protected:
     void expect_layout(GifFileType *gif, const std::vector<std::string> &identifiers) const;

@@ -88,6 +88,7 @@ protected:
     ValueSaver<WritePixel> m_saved_plot{g_plot};
     ValueSaver<WritePixel> m_saved_standard_plot{g_standard_plot};
     RestoreDecodeTestState m_saved_decode;
+    ValueSaver<bool> m_saved_busy{g_busy, false};
     ValueSaver<OutLine> m_saved_output{g_out_line, record_line};
     ValueSaver<decltype(g_out_line_cleanup)> m_saved_cleanup{g_out_line_cleanup, clean_up};
     ValueSaver<Potential> m_saved_potential{g_potential, Potential{}};
