@@ -10,8 +10,10 @@ which pass selects pixels or moving rendering into UI.
 
 ## Status And Release 1.5 Boundary
 
-The calculation/pass refactor is implemented.  Highway integration,
-`simd=`, grid views, and SIMD kernels are not yet implemented.
+The calculation/pass refactor and core/UI library split are implemented.
+All Phase 1 implementation slices below remain pending: `simd=`,
+eligibility reporting, grid views, scalar batches, Highway integration,
+vector kernels, and batch selection/completion are not yet implemented.
 
 [Release 1.5](release-1.5.md) includes Phase 1 slices 1-8, including their
 sub-slices.  Slice 9 diagnostics are optional.  Slice 10 eligibility
@@ -26,12 +28,34 @@ the broader [hexagonal boundary](hexagonal.md) are not prerequisites.
 
 ## Current Implementation
 
+### Library Boundary
+
+- `libs/core` builds `id::core`: engine, fractals, geometry, I/O, math,
+  and low-level support.  Its public headers are in `libs/core/include`.
+- `libs/ui` builds `id::ui` and depends on `id::core`.  Controllers,
+  command routing, history, PAR generation, and presentation live here.
+- `test-core` tests core code without linking UI.  `test-ui` links
+  `id::ui` and shared `id-test-support`; image and autokey tests exercise
+  application integration.
+- Highway is absent from the application manifest and core CMake target.
+  No SIMD execution policy or batch calculator exists yet.
+
+Add calculation implementations to `libs/core/engine` and expose any
+required engine headers through `libs/core/include/engine`.  Do not add
+UI include paths or an `id::ui` dependency to core or its tests.  The
+existing broad driver remains below UI, but SIMD kernels must not use it.
+
+### Calculation And Controllers
+
 The relevant boundaries are:
 
-- `StandardFractal` owns setup, timing, work-list handling, active pixel
-  state, dispatch, and the selected perturbation strategy.
+- `ImageCalculation` provides shared setup, cleanup, and image timing.
+  `StandardFractal` owns standard work-list handling, active pixel state,
+  dispatch, and the selected perturbation strategy.
 - `StandardPass` routes concrete pass objects through its non-virtual
-  variant.  Pixel passes select coordinates and accept completed colors.
+  variant.  Pixel passes use `select_pixel()`, `selected_pixel()`, and
+  `complete_pixel(color)`; synchronous and sticky orbit work uses
+  `iterate()` instead.
 - `OnePass` and `TwoPass` share `ScanlinePass`.  It owns traversal,
   first-pass replication, second-pass skips, and suspension coordinates.
 - `StandardFractal::calculate_pixel()` calls `fractals::calc_type()`
@@ -42,8 +66,23 @@ The relevant boundaries are:
   is `mandelbrot_orbit()` in `engine/calmanfp.cpp`.
 - `pixel_grid.cpp` privately owns four coordinate vectors; its public
   accessors use `g_col` and `g_row`.  No batch/grid-view API exists.
-- `engine/pixel.h` owns pixel/span access.  UI controllers own input,
-  show-dot presentation, sound servicing, and display waits.
+- `engine/pixel.h` owns pixel/span access.  Engine output uses `g_plot`
+  for the selected symmetry behavior.
+- `ui::StandardFractalController` advances the calculation object and
+  owns interaction.  It uses `ShowDotController` for marker display and
+  `SoundSession` for sound servicing; display waits remain in UI.
+
+`StandardFractal::iterate()` starts a work chunk, selects and calculates
+pixels, and stops at a traversal yield or work-item boundary.  The
+show-dot controller can instead drive its public single-pixel operations.
+Phase 1 excludes showdot; retain that existing scalar route unchanged.
+
+The optimized path still uses `g_keyboard_check_interval` as a work
+budget, despite its historical name.  It samples exhaustion before an
+orbit, resets the budget when needed, and charges orbit work to it.
+`consume_traversal_yield()` exposes the completed chunk to the controller;
+these engine operations do not poll input.  Batch integration must
+preserve this accounting and checkpoint behavior, not yield per vector.
 
 The removed free-function pass dispatcher is not an integration point.
 Do not restore it, add another calculation-dispatch global, or put
@@ -89,11 +128,17 @@ simd=force
 Highway's portable target is still a Highway implementation; `force`
 does not promise a particular hardware instruction set.
 
-Keep parsing in engine command handling through the existing
-`CommandRouter`/`CommandProcessor` route, including `@` parameter sets.
-Store requested policy with engine user settings, initialize/reset it
-explicitly, and preserve it through history and PAR output.  This
-execution hint does not need a new GIF metadata field.
+Add `simd` to the engine handler tables in
+`libs/core/engine/cmdfiles.cpp` and store its policy in engine `UserData`.
+`engine::CommandProcessor` exposes the ordered command stream, including
+`@` sources.  `ui::CommandRouter` tries UI handlers first and delegates
+unrecognized commands to engine handlers; do not reverse this dependency
+or add a UI callback to the processor.
+
+Initialize/reset the policy through the existing engine initialization
+functions.  Preserve it through UI-owned history and PAR output in
+`libs/ui/history.cpp` and `libs/ui/make_batch_file.cpp`.  This execution
+hint does not need a new GIF metadata field.
 
 A forced rejection returns through the existing calculation diagnostic
 boundary; the engine does not open a dialog.  Define rejection before
@@ -155,6 +200,8 @@ The project currently uses C++17.  Use a domain-specific pointer/count view
 rather than `std::span` or a language-standard upgrade.  Preserve the
 existing grid arithmetic and validate dimensions before accessing it.
 Views are valid only until grid storage is cleared or rebuilt.
+The existing storage is indexed in logical image coordinates; physical
+display offsets belong to output, not a second offset in the grid view.
 
 Build an immutable snapshot containing only supported calculation inputs:
 type, initial offset or Julia constant, bailout, iteration limit,
@@ -175,19 +222,23 @@ The current Julia path performs an initial recurrence before entering
 the shared loop.  Counter decrement, bailout equality, iteration-limit
 handling, and palette reduction must match exactly.  Preserve arithmetic
 operation order; do not substitute fused multiply-add or fast-math
-transformations that change supported output.
+transformations that change supported output.  Compare final colors
+against `calculate_mandelbrot_pixel()`, not only the raw orbit return:
+that method also applies palette reduction and plots the primary pixel.
 
 Produce completed colors and the iteration/counter facts required for
-normal completion and status.  Coloring methods and numerical color
-values are separate inputs.  Use nonnegative colors, not calculation
-sentinels, in completed output buffers.
+normal completion, work budgeting, and status.  Coloring methods and
+numerical color values are separate inputs.  Use nonnegative colors, not
+calculation sentinels, in completed output buffers.  Keep the pure kernel
+free of plotting and global-state updates; the engine commits its facts.
 
 ### Bounded Calculation And Completion
 
-The current pass API retains one selected pixel until completion.  It
-cannot supply an entire row to a vector kernel without an explicit
-extension.  Add bounded scanline selection in `ScanlinePass`, routed
-through `StandardPass`; do not duplicate traversal in the SIMD backend.
+The current pass API retains one selected pixel until completion, and
+`StandardFractal::calculate_pixel()` reports whether it completed.  It
+does not expose batches.  Add bounded scanline selection in
+`ScanlinePass`, routed through `StandardPass`; do not duplicate traversal
+in the SIMD backend or reinterpret a scalar continuation as a color.
 
 Selection must identify exactly the next permitted positions in the
 active row/pass and retain them until completion.  It must respect
@@ -234,10 +285,16 @@ for the first release 1.5 vector calculation path.
 ### Highway Build And Dispatch
 
 The dependency is not currently in the manifest.  Add `highway` to the
-application feature dependencies, using the existing vcpkg configuration.
-The bundled port's usage specifies `find_package(hwy CONFIG REQUIRED)`
-and target `hwy::hwy`; use that version's package rather than assuming
-nightly documentation names match it.
+`id` feature dependencies in `vcpkg.json`, using the existing vcpkg
+configuration.  The bundled port is Highway 1.2.0; its usage specifies
+`find_package(hwy CONFIG REQUIRED)` and target `hwy::hwy`.
+
+Find the package in `libs/core/CMakeLists.txt` and link it privately to
+`id::core`.  Register core kernel tests in
+`tests/libs/core/CMakeLists.txt`; only tests that directly use Highway APIs
+need their own Highway usage requirements.  No Highway dependency belongs
+on `id::ui` merely to invoke the engine backend.  Use the bundled version's
+APIs, not assumptions from nightly documentation.
 
 Keep target-specific vector code in an engine translation unit and expose
 only ordinary scalar data types at its boundary.  Highway's
@@ -276,8 +333,13 @@ Automate the deterministic behavior:
 - Complete eligible images with `simd=off`, `auto`, and `force`,
   compared byte-for-byte within the same platform/build.
 
-Use the existing scanline/pass/controller fixtures and image/autokey
-harnesses rather than inventing parallel test infrastructure.
+Keep eligibility, grids, kernel math, traversal, and completion tests in
+`tests/libs/core`, using the existing core fixtures such as
+`PassTestFrame`.  Test UI routing, history, PAR output, and interaction in
+`tests/libs/ui`, with application scenarios in the image/autokey harnesses.
+Reuse `id-test-support` without adding UI dependencies to it or
+`test-core`.
+
 Test arguments must explicitly satisfy initial eligibility, including
 `periodicity=0`; image tests disable sound but do not imply every other
 gate is satisfied.
@@ -298,11 +360,13 @@ tests.
 
 `NonStandardFractal` selects and owns `IFS2D` or `IFS3D` according to
 the loaded definition.  Their bounded `iterate()` methods remain in
-`fractals/lorenz.cpp`.
+`libs/core/fractals/lorenz.cpp`; each advances one orbit point.
 
-`ui::IFS2DController` and `ui::StereoController` start and step the
-selected calculation.  They own input and presentation, not transformation
-selection or orbit math.  The former synchronous IFS entries are gone.
+`ui::ImageRenderContext` starts the calculation and selects the matching
+UI controller.  `ui::IFS2DController` and `ui::StereoController` step it
+and own input and presentation, not transformation selection or orbit
+math.  Engine `StereoView` owns view progression for 3D calculation; UI
+owns stereo palette setup and photographer prompts.
 
 Both scalar algorithms advance one orbit point per call:
 
@@ -357,7 +421,7 @@ Start narrow.
 
 Eligible:
 
-- `type=ifs`
+- `type=ifs|ifs3d`
 - 2D IFS definitions loaded from `g_ifs_definition`
 - 3D IFS definitions loaded from `g_ifs_definition`
 - no orbit save file in the first slice
@@ -475,8 +539,10 @@ col = cvt.a * view.x + cvt.b * view.y + cvt.e + g_xx_adjust
 row = cvt.c * view.x + cvt.d * view.y + cvt.f + g_yy_adjust
 ```
 
-The current 3D path has a waste phase that finds min and max values before
-plotting.  Phase 2 can handle this in two steps:
+The current 3D view transformation has a waste phase that finds min and
+max values before plotting.  Keep this engine-owned alongside
+`StereoView`; a vector backend must not put projection or view setup in
+`StereoController`.  Phase 2 can handle the waste phase in two steps:
 
 1. Batch the waste phase and reduce lane min/max values into scalar
    min/max values.
@@ -675,12 +741,13 @@ Temporary bridges must identify their removing slice and carry the
 ### 1. Option Plumbing
 
 - Add `SimdMode` with `AUTO`, `OFF`, and `FORCE` to engine user policy.
-- Add the engine-owned `simd` handler through current command routing.
+- Register `simd` with core engine command handlers; keep source traversal
+  in `CommandProcessor` and UI-first delegation in `CommandRouter`.
 - Define process/fractal reset defaults and retain the requested policy
-  in history and PAR output without a new GIF extension.
+  in UI-owned history and PAR output without a new GIF extension.
 - Document values, eligibility limits, and scalar fallback in help.
 - Cover parsing, invalid values, `@` sources, defaults, history, and
-  output round trips.
+  output round trips in the appropriate core and UI test executables.
 - Until activation, report a requested forced backend as unavailable;
   mark that temporary guard for replacement in slice 7.3.
 
@@ -700,7 +767,7 @@ The report describes calculation capability, not a new pass type.
 ### 3. Pixel Grid Views
 
 - Expose C++17 read-only coordinate views with dimensions and lifetime
-  tied to the existing grid storage.
+  tied to the existing grid storage in `libs/core/engine/pixel_grid.cpp`.
 - Keep scalar `dx_pixel()` and `dy_pixel()` behavior unchanged.
 - Compare coordinates for ordinary, rotated/skewed, offset, and rebuilt
   grids; reject invalid view dimensions.
@@ -732,10 +799,11 @@ This reference remains available for Highway comparison.
 
 ### 5. Highway Build Integration
 
-- Add `highway` to application dependencies in `vcpkg.json`.
-- Find `hwy` and link `hwy::hwy` privately to `id::core` using the bundled
-  port's package.
+- Add `highway` to the `id` feature dependencies in `vcpkg.json`.
+- Find `hwy` in `libs/core/CMakeLists.txt` and link `hwy::hwy` privately
+  to `id::core` using the bundled port's package.
 - Add an isolated dispatch smoke test without selecting it for rendering.
+- Keep kernel/dispatch tests in `test-core`, without linking `id::ui`.
 - Verify existing platform configurations and CPU baseline behavior.
 - Do not raise the language standard or change global CPU/math flags.
 
@@ -776,6 +844,8 @@ No vector math or automatic backend selection belongs in this sub-slice.
   the pass only for committed colors.
 - Preserve iteration-based work budgets, current status, engine timing,
   and suspend/resume behavior.
+- Match existing optimized-path budget exhaustion and completed-pixel
+  bookkeeping before allowing the controller to process input.
 - Validate using the scalar batch reference before enabling Highway.
 - Do not add UI callbacks, per-batch input polls, or a general span
   symmetry helper.
@@ -789,6 +859,8 @@ No vector math or automatic backend selection belongs in this sub-slice.
 - Compare complete images and resumed output with scalar controls,
   including symmetry and logical-screen offsets.
 - Reuse controller/autokey tests for interruption and menu return.
+- Keep `StandardFractalController` driving calculation through its current
+  operations; do not put backend selection or kernel calls in UI.
 
 SIMD does not change which layer owns input or output.
 
