@@ -266,7 +266,8 @@ jobs:
         include_roots=(
           wx
           wx/include
-          libid/include
+          libs/core/include
+          libs/ui/include
           config/include
           algos/include
           helpcom/include

@@ -114,14 +114,15 @@ WARN_LOGFILE           =
 # Configuration options related to the input files
 #---------------------------------------------------------------------------
 
-INPUT                  = libid/include \
-                         libid/engine \
-                         libid/fractals \
-                         libid/geometry \
-                         libid/io \
-                         libid/math \
-                         libid/misc \
-                         libid/ui \
+INPUT                  = libs/core/include \
+                         libs/ui/include \
+                         libs/core/engine \
+                         libs/core/fractals \
+                         libs/core/geometry \
+                         libs/core/io \
+                         libs/core/math \
+                         libs/core/misc \
+                         libs/ui \
                          hc \
                          helpcom \
                          win32 \

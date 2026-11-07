@@ -160,12 +160,12 @@ area](https://github.com/LegalizeAdulthood/iterated-dynamics/discussions).
 
 # Code Structure
 
-Most of the source code is in a library named `libid` in a directory by the same
-name.  Additional subdirectories serve to categorize the role of the source files in
-that directory.  Include files are similarly grouped in subdirectories of 
-`include`.  The subdirectories are:
+Most source code is in `libs/core` and `libs/ui`, built as `id-core` and
+`id-ui`. CMake consumers use the aliases `id::core` and `id::ui`. UI links
+to core; core has no UI include path. Each library publishes its own
+`include` directory. Core source and header subdirectories are:
 
-- **3d**
+- **geometry**
       Files containing 3D drawing support.  Eventually these should be
       subsumed into the driver interface, with this sofwtare implementation
       as a fallback if the driver doesn't support 3D rendering.
@@ -191,9 +191,12 @@ that directory.  Include files are similarly grouped in subdirectories of
       Miscellaneous routines that don't fit elesewhere like memory and
       driver management.
 
-- **ui**
-      Anything to do with displaying menu screens, help screens, intro
-      screen, etc.
+UI sources in `libs/ui` implement menu, help, input, and application
+control. Their public headers live in `libs/ui/include/ui`.
+
+Unit tests are split into `tests/libs/core` and `tests/libs/ui`, built as
+`test-core` and `test-ui`. Neutral fixtures are shared through the
+`id-test-support` target, which depends only on core.
 
 Additional files are in the following directories:
 

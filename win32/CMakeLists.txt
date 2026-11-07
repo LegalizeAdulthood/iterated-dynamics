@@ -52,7 +52,7 @@ if(NOT ID_USE_WX)
         win_defines.h
     )
 
-    target_link_libraries(driver-win32 PUBLIC libid fmt::fmt-header-only PRIVATE os gdi32.lib user32.lib)
+    target_link_libraries(driver-win32 PUBLIC id::ui fmt::fmt-header-only PRIVATE os gdi32.lib user32.lib)
     target_include_directories(driver-win32 PUBLIC .)
     target_folder(driver-win32 "Libraries")
     add_dependencies(driver-win32 native-help)

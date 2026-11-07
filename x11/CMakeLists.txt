@@ -18,7 +18,7 @@ add_library(driver-x11 STATIC
     include/X11Driver/X11Text.h X11Text.cpp
 )
 
-target_link_libraries(driver-x11 PUBLIC libid X11::X11)
+target_link_libraries(driver-x11 PUBLIC id::ui X11::X11)
 target_include_directories(driver-x11 PUBLIC include)
 target_folder(driver-x11 "Libraries")
 add_dependencies(driver-x11 native-help)

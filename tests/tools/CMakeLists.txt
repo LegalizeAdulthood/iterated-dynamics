@@ -20,71 +20,71 @@ target_link_libraries(colormap-compare PUBLIC image-tool)
 target_folder(colormap-compare "Tests/Tools")
 
 add_executable(check-command-actions check_command_actions.cpp)
-target_link_libraries(check-command-actions PRIVATE libid fmt::fmt-header-only)
+target_link_libraries(check-command-actions PRIVATE id::core fmt::fmt-header-only)
 target_folder(check-command-actions "Tests/Tools")
 
 add_executable(check-command-diagnostics check_command_diagnostics.cpp)
-target_link_libraries(check-command-diagnostics PRIVATE libid fmt::fmt-header-only)
+target_link_libraries(check-command-diagnostics PRIVATE id::core fmt::fmt-header-only)
 target_folder(check-command-diagnostics "Tests/Tools")
 
 add_executable(check-image-restore check_image_restore.cpp)
-target_link_libraries(check-image-restore PRIVATE libid fmt::fmt-header-only)
+target_link_libraries(check-image-restore PRIVATE id::core fmt::fmt-header-only)
 target_folder(check-image-restore "Tests/Tools")
 
 add_executable(check-standard-resume check_standard_resume.cpp)
-target_link_libraries(check-standard-resume PRIVATE image-tool libid)
+target_link_libraries(check-standard-resume PRIVATE image-tool id::core)
 target_folder(check-standard-resume "Tests/Tools")
 
 add_executable(check-diffusion-resume check_diffusion_resume.cpp)
-target_link_libraries(check-diffusion-resume PRIVATE image-tool libid fmt::fmt-header-only)
+target_link_libraries(check-diffusion-resume PRIVATE image-tool id::core fmt::fmt-header-only)
 target_folder(check-diffusion-resume "Tests/Tools")
 
 add_executable(check-show-dot check_show_dot.cpp)
-target_link_libraries(check-show-dot PRIVATE image-tool libid fmt::fmt-header-only)
+target_link_libraries(check-show-dot PRIVATE image-tool id::core fmt::fmt-header-only)
 target_folder(check-show-dot "Tests/Tools")
 
 add_executable(check-standard-validation check_standard_validation.cpp)
-target_link_libraries(check-standard-validation PRIVATE image-tool libid fmt::fmt-header-only)
+target_link_libraries(check-standard-validation PRIVATE image-tool id::core fmt::fmt-header-only)
 target_folder(check-standard-validation "Tests/Tools")
 
 add_executable(check-ifs-validation check_ifs_validation.cpp)
-target_link_libraries(check-ifs-validation PRIVATE image-tool libid fmt::fmt-header-only)
+target_link_libraries(check-ifs-validation PRIVATE image-tool id::core fmt::fmt-header-only)
 target_folder(check-ifs-validation "Tests/Tools")
 
 add_executable(check-ifs-interrupt check_ifs_interrupt.cpp)
-target_link_libraries(check-ifs-interrupt PRIVATE image-tool libid fmt::fmt-header-only)
+target_link_libraries(check-ifs-interrupt PRIVATE image-tool id::core fmt::fmt-header-only)
 target_folder(check-ifs-interrupt "Tests/Tools")
 
 add_executable(check-stereo-photo check_stereo_photo.cpp)
-target_link_libraries(check-stereo-photo PRIVATE image-tool libid fmt::fmt-header-only)
+target_link_libraries(check-stereo-photo PRIVATE image-tool id::core fmt::fmt-header-only)
 target_folder(check-stereo-photo "Tests/Tools")
 
 add_executable(check-formula-validation check_formula_validation.cpp)
-target_link_libraries(check-formula-validation PRIVATE image-tool libid fmt::fmt-header-only)
+target_link_libraries(check-formula-validation PRIVATE image-tool id::core fmt::fmt-header-only)
 target_folder(check-formula-validation "Tests/Tools")
 
 add_executable(check-pass-switch check_pass_switch.cpp)
-target_link_libraries(check-pass-switch PRIVATE image-tool libid)
+target_link_libraries(check-pass-switch PRIVATE image-tool id::core)
 target_folder(check-pass-switch "Tests/Tools")
 
 add_executable(check-cellular-preparation check_cellular_preparation.cpp)
-target_link_libraries(check-cellular-preparation PRIVATE image-tool libid)
+target_link_libraries(check-cellular-preparation PRIVATE image-tool id::core)
 target_folder(check-cellular-preparation "Tests/Tools")
 
 add_executable(check-lsystem-sizing check_lsystem_sizing.cpp)
-target_link_libraries(check-lsystem-sizing PRIVATE image-tool libid)
+target_link_libraries(check-lsystem-sizing PRIVATE image-tool id::core)
 target_folder(check-lsystem-sizing "Tests/Tools")
 
 add_executable(check-lsystem-validation check_lsystem_validation.cpp)
-target_link_libraries(check-lsystem-validation PRIVATE image-tool libid fmt::fmt-header-only)
+target_link_libraries(check-lsystem-validation PRIVATE image-tool id::core fmt::fmt-header-only)
 target_folder(check-lsystem-validation "Tests/Tools")
 
 add_executable(check-lyapunov-setup check_lyapunov_setup.cpp)
-target_link_libraries(check-lyapunov-setup PRIVATE image-tool libid fmt::fmt-header-only)
+target_link_libraries(check-lyapunov-setup PRIVATE image-tool id::core fmt::fmt-header-only)
 target_folder(check-lyapunov-setup "Tests/Tools")
 
 add_executable(check-jiim check_jiim.cpp)
-target_link_libraries(check-jiim PRIVATE image-tool libid)
+target_link_libraries(check-jiim PRIVATE image-tool id::core)
 target_folder(check-jiim "Tests/Tools")
 
 if(WIN32)

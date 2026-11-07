@@ -13,7 +13,7 @@ add_library(gui STATIC
     include/gui/TextScreen.h TextScreen.cpp
 )
 target_include_directories(gui PRIVATE . PUBLIC include)
-target_link_libraries(gui PUBLIC libid fmt::fmt-header-only wx::stc wx::core wx::base)
+target_link_libraries(gui PUBLIC id::ui fmt::fmt-header-only wx::stc wx::core wx::base)
 target_folder(gui "Libraries/wx")
 
 add_library(driver-wx STATIC
@@ -21,7 +21,7 @@ add_library(driver-wx STATIC
     WxDiskDriver.h WxDiskDriver.cpp
     WxDriver.h WxDriver.cpp
 )
-target_link_libraries(driver-wx PUBLIC gui libid)
+target_link_libraries(driver-wx PUBLIC gui id::ui)
 target_include_directories(driver-wx PUBLIC .)
 target_folder(driver-wx "Libraries/wx")
 if(WIN32)
