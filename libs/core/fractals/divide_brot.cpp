@@ -22,30 +22,6 @@ namespace id::fractals
 
 LDouble g_b_const{};
 
-int divide_brot5_bn_per_pixel()
-{
-    /* parm.x = xxmin + g_col*delx + g_row*delx2 */
-    mult_bn_int(g_param_z_bn.x, g_delta_x_bn, static_cast<U16>(g_col));
-    mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
-
-    add_a_bn(g_param_z_bn.x, g_bn_tmp);
-    add_a_bn(g_param_z_bn.x, g_x_min_bn);
-
-    /* parm.y = yymax - g_row*dely - g_col*dely2; */
-    /* note: in next four lines, g_old_z_bn is just used as a temporary variable */
-    mult_bn_int(g_old_z_bn.x, g_delta_y_bn, static_cast<U16>(g_row));
-    mult_bn_int(g_old_z_bn.y, g_delta2_y_bn, static_cast<U16>(g_col));
-    add_a_bn(g_old_z_bn.x, g_old_z_bn.y);
-    sub_bn(g_param_z_bn.y, g_y_max_bn, g_old_z_bn.x);
-
-    clear_bn(g_tmp_sqr_x_bn);
-    clear_bn(g_tmp_sqr_y_bn);
-    clear_bn(g_old_z_bn.x);
-    clear_bn(g_old_z_bn.y);
-
-    return 0; /* 1st iteration has NOT been done */
-}
-
 int divide_brot5_bf_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
@@ -68,54 +44,6 @@ int divide_brot5_bf_per_pixel()
     clear_bf(g_old_z_bf.y);
 
     return 0; /* 1st iteration has NOT been done */
-}
-
-int divide_brot5_bn_fractal()
-{
-    BigStackSaver saved;
-    BNComplex bn_tmp_new;
-    BNComplex bn_numer;
-    BNComplex bn_c_exp;
-
-    bn_tmp_new.x = alloc_stack(g_r_length);
-    bn_tmp_new.y = alloc_stack(g_r_length);
-    bn_numer.x = alloc_stack(g_r_length);
-    bn_numer.y = alloc_stack(g_r_length);
-    bn_c_exp.x = alloc_stack(g_bn_length);
-    bn_c_exp.y = alloc_stack(g_bn_length);
-    BigNum tmp1 = alloc_stack(g_bn_length);
-    BigNum tmp2 = alloc_stack(g_r_length);
-
-    /* g_tmp_sqr_x_bn and g_tmp_sqr_y_bn were previously squared before getting to */
-    /* this function, so they must be shifted.                           */
-
-    /* sqr(z) */
-    /* bnnumer.x = g_tmp_sqr_x_bn - g_tmp_sqr_y_bn;   */
-    sub_bn(bn_numer.x, g_tmp_sqr_x_bn + g_shift_factor, g_tmp_sqr_y_bn + g_shift_factor);
-
-    /* bnnumer.y = 2 * g_old_z_bn.x * g_old_z_bn.y; */
-    mult_bn(tmp2, g_old_z_bn.x, g_old_z_bn.y);
-    double_a_bn(tmp2 + g_shift_factor);
-    copy_bn(bn_numer.y, tmp2 + g_shift_factor);
-
-    /* z^(a) */
-    int_to_bn(bn_c_exp.x, g_c_exponent);
-    clear_bn(bn_c_exp.y);
-    cmplx_pow_bn(&bn_tmp_new, &g_old_z_bn, &bn_c_exp);
-    /* then add b */
-    float_to_bn(tmp1, g_b_const);
-    add_bn(bn_tmp_new.x, tmp1, bn_tmp_new.x + g_shift_factor);
-    /* need to g_shift_factor bntmpnew.y */
-    copy_bn(tmp2, bn_tmp_new.y + g_shift_factor);
-    copy_bn(bn_tmp_new.y, tmp2);
-
-    /* sqr(z)/(z^(a)+b) */
-    cmplx_div_bn(&g_new_z_bn, &bn_numer, &bn_tmp_new);
-
-    add_a_bn(g_new_z_bn.x, g_param_z_bn.x);
-    add_a_bn(g_new_z_bn.y, g_param_z_bn.y);
-
-    return g_bailout_bignum();
 }
 
 int divide_brot5_orbit_bf()

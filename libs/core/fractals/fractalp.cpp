@@ -172,12 +172,6 @@ const AlternateMath g_alternate_math[] =
     {FractalType::JULIA, BFMathType::BIG_FLT, julia_orbit_bf, julia_per_pixel_bf,  mandel_per_image_bf},
     {FractalType::MANDEL, BFMathType::BIG_FLT, julia_orbit_bf, mandel_bf_per_pixel, mandel_per_image_bf},
 #endif
-    /*
-    NOTE: The default precision for g_bf_math=BIGNUM is not high enough
-          for JuliaZpowerbnFractal.  If you want to test BIGNUM (1) instead
-          of the usual BIGFLT (2), then set bfdigits on the command to
-          increase the precision.
-    */
     {FractalType::JULIA_Z_POWER, BFMathType::BIG_FLT, julia_z_power_orbit_bf, julia_per_pixel_bf, mandel_per_image_bf},
     {FractalType::MANDEL_Z_POWER, BFMathType::BIG_FLT, julia_z_power_orbit_bf, mandel_per_pixel_bf, mandel_per_image_bf},
     {FractalType::DIVIDE_BROT5, BFMathType::BIG_FLT, divide_brot5_orbit_bf, divide_brot5_bf_per_pixel, mandel_per_image_bf},

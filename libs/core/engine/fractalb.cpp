@@ -682,22 +682,6 @@ int julia_orbit_bf()
     return g_bailout_bigfloat();
 }
 
-int julia_z_power_bn_fractal()
-{
-    BigStackSaver saved;
-    BNComplex param2;
-
-    param2.x = alloc_stack(g_bn_length);
-    param2.y = alloc_stack(g_bn_length);
-
-    float_to_bn(param2.x, g_params[2]);
-    float_to_bn(param2.y, g_params[3]);
-    cmplx_pow_bn(&g_new_z_bn, &g_old_z_bn, &param2);
-    add_bn(g_new_z_bn.x, g_param_z_bn.x, g_new_z_bn.x+g_shift_factor);
-    add_bn(g_new_z_bn.y, g_param_z_bn.y, g_new_z_bn.y+g_shift_factor);
-    return g_bailout_bignum();
-}
-
 int julia_z_power_orbit_bf()
 {
     BigStackSaver saved;
@@ -801,101 +785,6 @@ BFComplex *cmplx_pow_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
     sin_cos_bf(sin_y, cos_y, tmp.y);
     mult_bf(t->x, e2x, cos_y);
     mult_bf(t->y, e2x, sin_y);
-    return t;
-}
-
-BNComplex *cmplx_log_bn(BNComplex *t, BNComplex *s)
-{
-    if (is_bn_zero(s->x) && is_bn_zero(s->y))
-    {
-        clear_bn(t->x);
-        clear_bn(t->y);
-    }
-    else
-    {
-        add_bn(t->x, t->x + g_shift_factor, t->y + g_shift_factor);
-        ln_bn(t->x, t->x);
-        half_a_bn(t->x);
-        atan2_bn(t->y, s->y, s->x);
-    }
-    return t;
-}
-
-BNComplex *cmplx_mul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
-{
-    BigStackSaver saved;
-    BigNum tmp1 = alloc_stack(g_r_length);
-    mult_bn(t->x, x->x, y->x);
-    mult_bn(t->y, x->y, y->y);
-    sub_bn(t->x, t->x + g_shift_factor, t->y + g_shift_factor);
-
-    mult_bn(tmp1, x->x, y->y);
-    mult_bn(t->y, x->y, y->x);
-    add_bn(t->y, tmp1 + g_shift_factor, t->y + g_shift_factor);
-    return t;
-}
-
-BNComplex *cmplx_div_bn(BNComplex *t, BNComplex *x, BNComplex *y)
-{
-    BigStackSaver saved;
-    BigNum tmp1 = alloc_stack(g_r_length);
-    BigNum tmp2 = alloc_stack(g_r_length);
-    BigNum denom = alloc_stack(g_r_length);
-
-    square_bn(tmp1, y->x);
-    square_bn(tmp2, y->y);
-    add_bn(denom, tmp1 + g_shift_factor, tmp2 + g_shift_factor);
-
-    if (is_bn_zero(x->x) && is_bn_zero(x->y))
-    {
-        clear_bn(t->x);
-        clear_bn(t->y);
-    }
-    else if (is_bn_zero(denom))
-    {
-        g_overflow = true;
-    }
-    else
-    {
-        mult_bn(tmp1, x->x, y->x);
-        mult_bn(t->x, x->y, y->y);
-        add_bn(tmp2, tmp1 + g_shift_factor, t->x + g_shift_factor);
-        div_bn(t->x, tmp2, denom);
-
-        mult_bn(tmp1, x->y, y->x);
-        mult_bn(t->y, x->x, y->y);
-        sub_bn(tmp2, tmp1 + g_shift_factor, t->y + g_shift_factor);
-        div_bn(t->y, tmp2, denom);
-    }
-
-    return t;
-}
-
-// note: ComplexPower_bn() returns need to be +g_shift_factor'ed
-BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
-{
-    BigStackSaver saved;
-    BNComplex tmp;
-    BigNum e2x = alloc_stack(g_r_length);
-    BigNum sin_y = alloc_stack(g_r_length);
-    BigNum cos_y = alloc_stack(g_r_length);
-    tmp.x = alloc_stack(g_r_length);
-    tmp.y = alloc_stack(g_r_length);
-
-    // 0 raised to anything is 0
-    if (is_bn_zero(xx->x) && is_bn_zero(xx->y))
-    {
-        clear_bn(t->x);
-        clear_bn(t->y);
-        return t;
-    }
-
-    cmplx_log_bn(t, xx);
-    cmplx_mul_bn(&tmp, t, yy);
-    exp_bn(e2x, tmp.x);
-    sin_cos_bn(sin_y, cos_y, tmp.y);
-    mult_bn(t->x, e2x, cos_y);
-    mult_bn(t->y, e2x, sin_y);
     return t;
 }
 
