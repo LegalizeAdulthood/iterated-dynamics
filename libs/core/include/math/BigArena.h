@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <functional>
+#include <memory>
 #include <memory_resource>
 
 namespace id::math
@@ -34,6 +35,7 @@ public:
         // Accessors and cloning require a live allocation.
         BigArena &arena() const noexcept;
         Index index() const noexcept;
+        std::size_t blocks() const noexcept;
         Byte *data() noexcept;
         const Byte *data() const noexcept;
         // Copy all allocation bytes, preserving its width and allocator.
@@ -50,6 +52,24 @@ public:
 
         BigArena *m_arena{};
         Index m_index{};
+    };
+
+    class Relocation
+    {
+    public:
+        ~Relocation();
+        Relocation(Relocation &&) noexcept;
+        Relocation &operator=(Relocation &&) noexcept;
+        Relocation(const Relocation &) = delete;
+        Relocation &operator=(const Relocation &) = delete;
+        // Commit once, after all related arenas have prepared successfully.
+        void commit() noexcept;
+
+    private:
+        friend class BigArena;
+        Relocation(BigArena &arena, std::unique_ptr<BigArena> replacement);
+        BigArena *m_arena;
+        std::unique_ptr<BigArena> m_replacement;
     };
 
     // Allocation requests carry no byte count.
@@ -72,6 +92,7 @@ public:
     // leaves the old storage and handles usable. Borrowed addresses expire
     // only after successful relocation, including when the stride is unchanged.
     void relocate(std::size_t block_size, const Migrate &migrate);
+    Relocation prepare_relocation(std::size_t block_size, const Migrate &migrate);
 
     std::size_t block_size() const noexcept;
     std::size_t capacity() const noexcept;

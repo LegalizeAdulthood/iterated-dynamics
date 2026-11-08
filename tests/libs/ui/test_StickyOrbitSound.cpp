@@ -79,7 +79,7 @@ int initialize_mandel_sticky_pixel()
     if (g_bf_math == BFMathType::BIG_NUM)
     {
         BigStackSaver saved;
-        const BigNumPtr offset{alloc_stack(g_bn_length)};
+        const BigNumPtr offset{bn_stack().allocate_single()};
         float_to_bn(offset, 1e-40);
         mult_bn_int(offset, offset, static_cast<U16>(g_col));
         float_to_bn(g_param_z_bn.x, g_init.x);
@@ -91,7 +91,7 @@ int initialize_mandel_sticky_pixel()
     else if (g_bf_math == BFMathType::BIG_FLT)
     {
         BigStackSaver saved;
-        const BigFloatPtr offset{alloc_stack(g_r_bf_length + 2)};
+        const BigFloatPtr offset{bf_stack().allocate_single()};
         float_to_bf(offset, 1e-40);
         mult_a_bf_int(offset, static_cast<U16>(g_col));
         float_to_bf(g_param_z_bf.x, g_init.x);

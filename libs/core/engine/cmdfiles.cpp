@@ -776,8 +776,8 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
     }
     g_use_center_mag = true;
     BigStackSaver saved;
-    BigFloatPtr b_x_ctr = alloc_stack(g_bf_length + 2);
-    BigFloatPtr b_y_ctr = alloc_stack(g_bf_length + 2);
+    BigFloatPtr b_x_ctr = bf_stack().allocate_single();
+    BigFloatPtr b_y_ctr = bf_stack().allocate_single();
     get_bf(b_x_ctr, cmd.float_val_strs[0]);
     get_bf(b_y_ctr, cmd.float_val_strs[1]);
     double x_mag_factor = 1;

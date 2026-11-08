@@ -24,7 +24,7 @@
 #include <io/gif_extensions.h>
 #include <io/gif_file.h>
 #include <io/GifWriter.h>
-#include <math/big.h>
+#include <math/big_init.h>
 #include <misc/id.h>
 
 #include <gif_lib.h>
@@ -219,9 +219,7 @@ static void setup_save_extensions(GifFileType &extensions, const std::optional<E
         {
             throw std::logic_error("Invalid arbitrary precision save parameters");
         }
-        // The saved corners and parameters occupy consecutive big-float slots.
-        const char *parameters{reinterpret_cast<const char *>(g_bf_x_min)};
-        put_extended_param_info(&extensions, {parameters, parameters + 22 * (g_bf_length + 2)});
+        put_extended_param_info(&extensions, pack_bf_parameters());
     }
     if (evolution_info)
     {

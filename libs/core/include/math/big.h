@@ -243,7 +243,6 @@ enum
 {
     MATH_BITS = 32,
     MATH_BYTES = MATH_BITS / 8,
-    NUM_VARS = 30, // room for this many on stack
 };
 
 // Request the precision needed to distinguish adjacent pixels at the

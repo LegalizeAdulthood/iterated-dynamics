@@ -96,28 +96,35 @@ does not increase those representation limits.
 
 ## Arena And Scratch Stack
 
-Header: `biginit.h`.
+Header: `big_init.h`.
 
 - `g_bf_digits` - explicit decimal-precision override.
-- `g_bf_save_len` - precision length of the retained corner/parameter area.
-- `g_start_stack` - scratch-stack starting byte offset.
-- `g_max_stack` - scratch-stack upper bound, before persistent values.
-- `g_bignum_max_stack_addr` - high-water byte offset.
+- `bn_arena()` and `bf_arena()` select persistent, working, or temporary
+  storage for their representation through `BigLifetime`.
+- `big_memory_stats()` reports global and temporary high-water payload
+  bytes and total payload capacity across the six arenas.
 
-The allocator partitions one static 1 MiB arena into working values,
-scratch stack, and a persistent area containing six corners, six saved
-corners, and ten parameters.  The pointers listed below designate slices
-of that arena, not separate heap allocations.
+Each arena starts with about 1 MiB of payload capacity. Blocks and backing
+storage are aligned to 64 bytes. Precision changes replace backing storage
+at the new stride while preserving live allocation indices and widths.
+All six replacements are prepared before any new layout is published.
+The six corners, ten parameters, and six saved corners use persistent
+BigFloat blocks. Image boundaries explicitly pack these 22 values in
+their historical order, excluding block padding and allocator metadata.
 
 `init_bf_dec()` and `init_bf_length()` establish lengths and bindings.
-`alloc_stack()`, `save_stack()`, `restore_stack()`, and `BigStackSaver`
-manage temporary storage.  Rejected precision and stack requests preserve
-the active allocation state.  Exhaustion raises `PrecisionError`;
+`bn_stack()` and `bf_stack()` retain handles for legacy raw workspaces;
+their `allocate_single()` and `allocate_double()` requests take no byte
+count. `save_stack()`, `restore_stack()`, and `BigStackSaver` mark and
+rewind both adapters together. Rejected precision and stack requests
+preserve the active allocation state. Exhaustion raises `PrecisionError`;
 uninitialized stack use raises `std::logic_error`, without UI calls.
 
-`free_bf_vars()` resets allocator and active-math state.  It does not free
-individual buffers or release the static arena; retained pointer values
-must not be used as evidence that an arena is active.
+`free_bf_vars()` clears active raw bindings and releases stack-adapter
+reservations. The arenas remain alive for attached owning handles;
+subsequent initialization migrates these values and creates fresh active
+corner bindings. `calc_lengths()` remains allocation-free for temporary
+Newton working-length changes within already reserved storage.
 
 ## BigNum Temporaries
 

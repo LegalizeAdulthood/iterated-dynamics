@@ -154,7 +154,7 @@ int file_get_window()
     int color_of_box;
     FileWindow window;
     bool vid_too_big{};
-    int saved;
+    BigStackMark saved;
 
     s_old_bf_math = g_bf_math;
     g_bf_math = BFMathType::BIG_FLT;
@@ -165,12 +165,12 @@ int file_get_window()
         g_calc_status = old_calc_status;
     }
     saved = save_stack();
-    s_bt_a = alloc_stack(g_r_bf_length+2);
-    s_bt_b = alloc_stack(g_r_bf_length+2);
-    s_bt_c = alloc_stack(g_r_bf_length+2);
-    s_bt_d = alloc_stack(g_r_bf_length+2);
-    s_bt_e = alloc_stack(g_r_bf_length+2);
-    s_bt_f = alloc_stack(g_r_bf_length + 2);
+    s_bt_a = bf_stack().allocate_single();
+    s_bt_b = bf_stack().allocate_single();
+    s_bt_c = bf_stack().allocate_single();
+    s_bt_d = bf_stack().allocate_single();
+    s_bt_e = bf_stack().allocate_single();
+    s_bt_f = bf_stack().allocate_single();
 
     const int num_dots = g_screen_x_dots + g_screen_y_dots;
     vid_too_big = num_dots > 4096;
@@ -536,28 +536,27 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
           calc_lengths();
        }
     */
-    const int two_len = g_bf_length + 2;
-    BigFloatPtr bt_x = alloc_stack(two_len);
-    BigFloatPtr bt_y = alloc_stack(two_len);
-    BigFloatPtr bt_x_min = alloc_stack(two_len);
-    BigFloatPtr bt_x_max = alloc_stack(two_len);
-    BigFloatPtr bt_y_min = alloc_stack(two_len);
-    BigFloatPtr bt_y_max = alloc_stack(two_len);
-    BigFloatPtr bt_x_3rd = alloc_stack(two_len);
-    BigFloatPtr bt_y_3rd = alloc_stack(two_len);
+    BigFloatPtr bt_x = bf_stack().allocate_single();
+    BigFloatPtr bt_y = bf_stack().allocate_single();
+    BigFloatPtr bt_x_min = bf_stack().allocate_single();
+    BigFloatPtr bt_x_max = bf_stack().allocate_single();
+    BigFloatPtr bt_y_min = bf_stack().allocate_single();
+    BigFloatPtr bt_y_max = bf_stack().allocate_single();
+    BigFloatPtr bt_x_3rd = bf_stack().allocate_single();
+    BigFloatPtr bt_y_3rd = bf_stack().allocate_single();
 
     if (info->bf_math)
     {
-        const int di_bf_length = info->bf_length + g_bn_step;
-        const int two_di_len = di_bf_length + 2;
-        const int two_r_bf = g_r_bf_length + 2;
+        // The validated payload already includes stored precision rounding.
+        const int two_di_len = static_cast<int>(blk_5_info->apm_data.size() / 22);
+        const int di_bf_length = two_di_len - 2;
 
-        s_n_a     = alloc_stack(two_r_bf);
-        s_n_b     = alloc_stack(two_r_bf);
-        s_n_c     = alloc_stack(two_r_bf);
-        s_n_d     = alloc_stack(two_r_bf);
-        s_n_e     = alloc_stack(two_r_bf);
-        s_n_f     = alloc_stack(two_r_bf);
+        s_n_a = bf_stack().allocate_single();
+        s_n_b = bf_stack().allocate_single();
+        s_n_c = bf_stack().allocate_single();
+        s_n_d = bf_stack().allocate_single();
+        s_n_e = bf_stack().allocate_single();
+        s_n_f = bf_stack().allocate_single();
 
         convert_bf(s_n_a, s_bt_a, g_r_bf_length, orig_r_bf_length);
         convert_bf(s_n_b, s_bt_b, g_r_bf_length, orig_r_bf_length);
@@ -566,26 +565,13 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
         convert_bf(s_n_e, s_bt_e, g_r_bf_length, orig_r_bf_length);
         convert_bf(s_n_f, s_bt_f, g_r_bf_length, orig_r_bf_length);
 
-        BigFloatPtr bt_t1 = alloc_stack(two_di_len);
-        BigFloatPtr bt_t2 = alloc_stack(two_di_len);
-        BigFloatPtr bt_t3 = alloc_stack(two_di_len);
-        BigFloatPtr bt_t4 = alloc_stack(two_di_len);
-        BigFloatPtr bt_t5 = alloc_stack(two_di_len);
-        BigFloatPtr bt_t6 = alloc_stack(two_di_len);
-
-        std::memcpy(bt_t1, blk_5_info->apm_data.data(), two_di_len);
-        std::memcpy(bt_t2, &blk_5_info->apm_data[two_di_len], two_di_len);
-        std::memcpy(bt_t3, &blk_5_info->apm_data[2*two_di_len], two_di_len);
-        std::memcpy(bt_t4, &blk_5_info->apm_data[3*two_di_len], two_di_len);
-        std::memcpy(bt_t5, &blk_5_info->apm_data[4*two_di_len], two_di_len);
-        std::memcpy(bt_t6, &blk_5_info->apm_data[5*two_di_len], two_di_len);
-
-        convert_bf(bt_x_min, bt_t1, two_len, two_di_len);
-        convert_bf(bt_x_max, bt_t2, two_len, two_di_len);
-        convert_bf(bt_y_min, bt_t3, two_len, two_di_len);
-        convert_bf(bt_y_max, bt_t4, two_len, two_di_len);
-        convert_bf(bt_x_3rd, bt_t5, two_len, two_di_len);
-        convert_bf(bt_y_3rd, bt_t6, two_len, two_di_len);
+        const Byte *parameters = reinterpret_cast<const Byte *>(blk_5_info->apm_data.data());
+        convert_bf(bt_x_min, parameters, g_bf_length, di_bf_length);
+        convert_bf(bt_x_max, parameters + two_di_len, g_bf_length, di_bf_length);
+        convert_bf(bt_y_min, parameters + 2 * two_di_len, g_bf_length, di_bf_length);
+        convert_bf(bt_y_max, parameters + 3 * two_di_len, g_bf_length, di_bf_length);
+        convert_bf(bt_x_3rd, parameters + 4 * two_di_len, g_bf_length, di_bf_length);
+        convert_bf(bt_y_3rd, parameters + 5 * two_di_len, g_bf_length, di_bf_length);
     }
 
     /* transform maps real plane co-ords onto the current screen view see above */
@@ -849,13 +835,13 @@ static void bf_setup_convert_to_screen()
     // setup_convert_to_screen() in LORENZ.C, converted to g_bf_math
     // Call only from within fgetwindow()
 
-    BigFloatPtr bt_inter1 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr bt_inter2 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr bt_det = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr bt_xd = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr bt_yd = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr bt_tmp1 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr bt_tmp2 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr bt_inter1 = bf_stack().allocate_single();
+    BigFloatPtr bt_inter2 = bf_stack().allocate_single();
+    BigFloatPtr bt_det = bf_stack().allocate_single();
+    BigFloatPtr bt_xd = bf_stack().allocate_single();
+    BigFloatPtr bt_yd = bf_stack().allocate_single();
+    BigFloatPtr bt_tmp1 = bf_stack().allocate_single();
+    BigFloatPtr bt_tmp2 = bf_stack().allocate_single();
 
     // xx3rd-xxmin
     sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_min);
@@ -930,8 +916,8 @@ static void bf_setup_convert_to_screen()
 static void bf_transform(const BigFloatPtr bt_x, const BigFloatPtr bt_y, DblCoords *point)
 {
     BigStackSaver saved;
-    BigFloatPtr bt_tmp1 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr bt_tmp2 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr bt_tmp1 = bf_stack().allocate_single();
+    BigFloatPtr bt_tmp2 = bf_stack().allocate_single();
 
     //  point->x = cvt->a * point->x + cvt->b * point->y + cvt->e;
     mult_bf(bt_tmp1, s_n_a, bt_x);

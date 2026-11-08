@@ -200,9 +200,9 @@ std::string format_three_bf(
 std::string format_aspect(const char *s)
 {
     BigStackSaver saved;
-    BigFloatPtr bt1 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr bt2 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr aspect = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr bt1 = bf_stack().allocate_single();
+    BigFloatPtr bt2 = bf_stack().allocate_single();
+    BigFloatPtr aspect = bf_stack().allocate_single();
     sub_bf(bt1, g_bf_x_max, g_bf_x_min);
     sub_bf(bt2, g_bf_y_max, g_bf_y_min);
     div_bf(aspect, bt2, bt1);
@@ -273,8 +273,8 @@ bool mandel_per_image_bn()
 {
     BigStackSaver saved;
     // this should be set up dynamically based on corners
-    BigNumPtr bn_temp1 = alloc_stack(g_bn_length);
-    BigNumPtr bn_temp2 = alloc_stack(g_bn_length);
+    BigNumPtr bn_temp1 = bn_stack().allocate_single();
+    BigNumPtr bn_temp2 = bn_stack().allocate_single();
 
     bf_to_bn(g_x_min_bn, g_bf_x_min);
     bf_to_bn(g_x_max_bn, g_bf_x_max);
@@ -386,8 +386,8 @@ bool mandel_per_image_bf()
 
     // this should be set up dynamically based on corners
     BigStackSaver saved;
-    BigFloatPtr bf_temp1{alloc_stack(g_bf_length + 2)};
-    BigFloatPtr bf_temp2{alloc_stack(g_bf_length + 2)};
+    BigFloatPtr bf_temp1{bf_stack().allocate_single()};
+    BigFloatPtr bf_temp2{bf_stack().allocate_single()};
 
     g_bf_math = BFMathType::BIG_FLT;
 
@@ -687,8 +687,8 @@ int julia_z_power_orbit_bf()
     BigStackSaver saved;
     BFPtrComplex param2;
 
-    param2.x = alloc_stack(g_bf_length+2);
-    param2.y = alloc_stack(g_bf_length+2);
+    param2.x = bf_stack().allocate_single();
+    param2.y = bf_stack().allocate_single();
 
     float_to_bf(param2.x, g_params[2]);
     float_to_bf(param2.y, g_params[3]);

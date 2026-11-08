@@ -159,7 +159,7 @@ TEST_P(TestBigNumLayout, legacyFloatConversionRetainsOverflowAndUnderflowRules)
 
 TEST_F(TestBigNumValue, zeroConstructionDoesNotAllocateArenaStorage)
 {
-    const int marker = save_stack();
+    const auto marker = save_stack();
 
     const BigNum value;
 
@@ -205,16 +205,16 @@ TEST_F(TestBigNumValue, supportsSmallestAndLargestLegacyLayouts)
 
 TEST_F(TestBigNumValue, importedBytesSurviveArenaRewindAndReuse)
 {
-    const int marker = save_stack();
+    const auto marker = save_stack();
     const std::size_t size = static_cast<std::size_t>(g_bn_length);
-    BigNumPtr source = alloc_stack(size);
+    BigNumPtr source = bn_stack().allocate_single();
     str_to_bn(source, "-1.23456789012345678901234567890123456789");
     const std::vector<Byte> expected(source, source + size);
     const BigNumConstPtr input = source;
 
     const BigNum value = BigNum::from_legacy(input, size);
     restore_stack(marker);
-    BigNumPtr reused = alloc_stack(size);
+    BigNumPtr reused = bn_stack().allocate_single();
     ASSERT_EQ(source, reused);
     std::fill_n(reused, size, Byte{0xff});
 
@@ -559,13 +559,13 @@ TEST_P(TestBigNumLayout, expressionsMatchLegacySequencesAndOutliveTheirTemporari
     div_bn(quotient.data(), expected.data(), raw_divisor.data());
     mult_bn(product.data(), quotient.data(), raw_left.data());
     sub_bn(expected.data(), product.data() + g_shift_factor, raw_right.data());
-    const int marker = save_stack();
+    const auto marker = save_stack();
 
     const BigNum result = ((left + right) / divisor) * left - right;
     const BigNum unrelated = BigNum{-8} * BigNum{-9};
 
     EXPECT_EQ(marker, save_stack());
-    alloc_stack(g_r_length);
+    bn_stack().allocate_single();
     restore_stack(marker);
     EXPECT_EQ(expected, encoded_value(result));
     EXPECT_EQ("72.", unrelated.to_string(8));

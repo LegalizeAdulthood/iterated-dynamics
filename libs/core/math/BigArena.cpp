@@ -100,6 +100,11 @@ BigArena::Index BigArena::Allocation::index() const noexcept
     return m_index;
 }
 
+std::size_t BigArena::Allocation::blocks() const noexcept
+{
+    return m_arena->m_widths[m_index];
+}
+
 Byte *BigArena::Allocation::data() noexcept
 {
     return m_arena->data(m_index);
@@ -136,6 +141,27 @@ void BigArena::Allocation::reset() noexcept
         m_arena->release(m_index);
         m_arena = nullptr;
     }
+}
+
+BigArena::Relocation::Relocation(BigArena &arena, std::unique_ptr<BigArena> replacement) :
+    m_arena(&arena),
+    m_replacement(std::move(replacement))
+{
+}
+
+BigArena::Relocation::~Relocation() = default;
+BigArena::Relocation::Relocation(Relocation &&) noexcept = default;
+BigArena::Relocation &BigArena::Relocation::operator=(Relocation &&) noexcept = default;
+
+void BigArena::Relocation::commit() noexcept
+{
+    std::swap(m_arena->m_block_size, m_replacement->m_block_size);
+    std::swap(m_arena->m_storage_size, m_replacement->m_storage_size);
+    std::swap(m_arena->m_storage, m_replacement->m_storage);
+    std::swap(m_arena->m_widths, m_replacement->m_widths);
+    std::swap(m_arena->m_free_pairs, m_replacement->m_free_pairs);
+    std::swap(m_arena->m_free_halves, m_replacement->m_free_halves);
+    m_replacement.reset();
 }
 
 BigArena::BigArena(const std::size_t block_size, const std::size_t block_count, const Reduce reduce,
@@ -188,7 +214,14 @@ BigArena::Allocation BigArena::allocate_double()
 
 void BigArena::relocate(const std::size_t block_size, const Migrate &migrate)
 {
-    BigArena replacement{block_size, m_capacity, m_reduce, m_resource};
+    auto pending = prepare_relocation(block_size, migrate);
+    pending.commit();
+}
+
+BigArena::Relocation BigArena::prepare_relocation(const std::size_t block_size, const Migrate &migrate)
+{
+    auto storage = std::make_unique<BigArena>(block_size, m_capacity, m_reduce, m_resource);
+    BigArena &replacement = *storage;
     replacement.m_high_water = m_high_water;
     for (Index index = 0; index < m_high_water;)
     {
@@ -228,13 +261,7 @@ void BigArena::relocate(const std::size_t block_size, const Migrate &migrate)
         }
     }
 
-    // Publish the complete replacement before its destructor frees old storage.
-    std::swap(m_block_size, replacement.m_block_size);
-    std::swap(m_storage_size, replacement.m_storage_size);
-    std::swap(m_storage, replacement.m_storage);
-    std::swap(m_widths, replacement.m_widths);
-    std::swap(m_free_pairs, replacement.m_free_pairs);
-    std::swap(m_free_halves, replacement.m_free_halves);
+    return Relocation{*this, std::move(storage)};
 }
 
 std::size_t BigArena::block_size() const noexcept

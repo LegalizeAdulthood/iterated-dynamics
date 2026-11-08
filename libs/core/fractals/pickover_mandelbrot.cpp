@@ -170,8 +170,8 @@ void mandel_z_power_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
 {
     BigStackSaver saved;
     BFPtrComplex tmp;
-    tmp.x = alloc_stack(g_r_bf_length + 2);
-    tmp.y = alloc_stack(g_r_bf_length + 2);
+    tmp.x = bf_stack().allocate_single();
+    tmp.y = bf_stack().allocate_single();
     // The ordinary arbitrary-precision power kernel defines 0^n as 0,
     // including zero and negative exponents.
     if (is_bf_zero(z.x) && is_bf_zero(z.y))
@@ -181,7 +181,7 @@ void mandel_z_power_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
     }
     else if (mandel_z_power_uses_complex_power())
     {
-        BFPtrComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        BFPtrComplex exponent{bf_stack().allocate_single(), bf_stack().allocate_single()};
         float_to_bf(exponent.x, g_params[2]);
         float_to_bf(exponent.y, g_params[3]);
         cmplx_pow_bf(&tmp, &z, &exponent);
@@ -196,8 +196,8 @@ void mandel_z_power_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
     }
     else
     {
-        const BigFloatPtr denominator{alloc_stack(g_r_bf_length + 2)};
-        BFPtrComplex powered{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        const BigFloatPtr denominator{bf_stack().allocate_single()};
+        BFPtrComplex powered{bf_stack().allocate_single(), bf_stack().allocate_single()};
         power(tmp, z, -(g_c_exponent + 1));
         cmplx_mul_bf(&powered, &tmp, &z);
         square_bf(tmp.x, powered.x);

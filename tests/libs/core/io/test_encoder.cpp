@@ -260,6 +260,8 @@ TEST_F(ImageSaveTest, reportsNativeCloseFailureWithoutPresentation)
 class TestGifWriterExtensions : public ImageSaveTest
 {
 protected:
+    void TearDown() override;
+    void prepare_parameters(const std::vector<Byte> &parameters);
     void expect_layout(GifFileType *gif, const std::vector<std::string> &identifiers) const;
     std::vector<Byte> payload(const GifFileType *gif, const std::string &identifier) const;
 
@@ -271,6 +273,18 @@ protected:
     ValueSaver<CompiledFormula> m_saved_formula{g_formula};
     FindFractalInfoState m_saved_metadata_state;
 };
+
+void TestGifWriterExtensions::TearDown()
+{
+    free_bf_vars();
+    ImageSaveTest::TearDown();
+}
+
+void TestGifWriterExtensions::prepare_parameters(const std::vector<Byte> &parameters)
+{
+    init_bf_length(12);
+    unpack_bf_parameters({parameters.begin(), parameters.end()});
+}
 
 void TestGifWriterExtensions::expect_layout(GifFileType *gif, const std::vector<std::string> &identifiers) const
 {
@@ -581,9 +595,7 @@ TEST_F(TestGifWriterExtensions, preservesOpaqueArbitraryPrecisionParameters)
     {
         parameters[i] = static_cast<Byte>(i * 53 + 157);
     }
-    ValueSaver saved_bf_length{g_bf_length, 16};
-    ValueSaver saved_bn_length{g_bn_length, 12};
-    ValueSaver saved_min{g_bf_x_min, parameters.data()};
+    prepare_parameters(parameters);
     g_bf_math = BFMathType::BIG_FLT;
 
     ASSERT_EQ(0, save());
@@ -757,9 +769,7 @@ TEST_F(TestGifWriterExtensions, preservesCompleteRecordOrderingAndTotalEncodedLe
     g_calc_status = CalcStatus::RESUMABLE;
     g_iteration_ranges = {16, 32};
     std::vector<Byte> parameters(22 * (16 + 2), 0xA5);
-    ValueSaver saved_bf_length{g_bf_length, 16};
-    ValueSaver saved_bn_length{g_bn_length, 12};
-    ValueSaver saved_min{g_bf_x_min, parameters.data()};
+    prepare_parameters(parameters);
     g_bf_math = BFMathType::BIG_FLT;
     const std::optional<EvolutionInfo> evolution{EvolutionInfo{}};
     g_std_calc_mode = CalcMode::ORBIT;

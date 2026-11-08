@@ -54,13 +54,13 @@ int divide_brot5_orbit_bf()
     BFPtrComplex bf_numer;
     BFPtrComplex bf_c_exp;
 
-    bf_tmp_new.x = alloc_stack(g_r_bf_length + 2);
-    bf_tmp_new.y = alloc_stack(g_r_bf_length + 2);
-    bf_numer.x = alloc_stack(g_r_bf_length + 2);
-    bf_numer.y = alloc_stack(g_r_bf_length + 2);
-    bf_c_exp.x = alloc_stack(g_bf_length + 2);
-    bf_c_exp.y = alloc_stack(g_bf_length + 2);
-    BigFloatPtr tmp1 = alloc_stack(g_bf_length + 2);
+    bf_tmp_new.x = bf_stack().allocate_single();
+    bf_tmp_new.y = bf_stack().allocate_single();
+    bf_numer.x = bf_stack().allocate_single();
+    bf_numer.y = bf_stack().allocate_single();
+    bf_c_exp.x = bf_stack().allocate_single();
+    bf_c_exp.y = bf_stack().allocate_single();
+    BigFloatPtr tmp1 = bf_stack().allocate_single();
 
     /* sqr(z) */
     /* bfnumer.x = g_tmp_sqr_x_bf - g_tmp_sqr_y_bf;   */

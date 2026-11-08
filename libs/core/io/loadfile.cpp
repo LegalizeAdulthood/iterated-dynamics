@@ -1088,7 +1088,7 @@ void apply_image_extensions(ImageMetadata &metadata)
     if (blk_5_info.got_data)
     {
         init_bf_length(read_info.bf_length);
-        std::memcpy(g_bf_x_min, blk_5_info.apm_data.data(), blk_5_info.apm_data.size());
+        unpack_bf_parameters(blk_5_info.apm_data);
     }
     else
     {

@@ -848,7 +848,7 @@ protected:
     ValueSaver<long> m_saved_iterations{g_max_iterations, 1234};
     ValueSaver<std::vector<Byte>> m_saved_resume{g_resume_data, std::vector<Byte>{1, 2, 3}};
     int m_length{};
-    int m_stack{};
+    BigStackMark m_stack{};
 };
 
 void TestFindPrecisionMetadata::SetUp()

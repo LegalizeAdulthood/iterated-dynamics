@@ -162,7 +162,7 @@ TEST_F(TestPrecisionDiagnostics, oversizedBigNumLabelIsTruncated)
 
 TEST_F(TestPrecisionDiagnostics, aspectFormattingRestoresTemporaryStack)
 {
-    const int stack{save_stack()};
+    const auto stack{save_stack()};
 
     EXPECT_THAT(format_aspect("ratio"), AllOf(StartsWith("aspect ratio\n"), HasSubstr("bf     0.75")));
 

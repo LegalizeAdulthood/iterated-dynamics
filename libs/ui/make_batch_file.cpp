@@ -989,8 +989,8 @@ static void write_batch_params(
     BigFloatPtr bf_y_ctr = nullptr;
     if (g_bf_math != BFMathType::NONE)
     {
-        bf_x_ctr = alloc_stack(g_bf_length+2);
-        bf_y_ctr = alloc_stack(g_bf_length+2);
+        bf_x_ctr = bf_stack().allocate_single();
+        bf_y_ctr = bf_stack().allocate_single();
     }
 
     s_wb_data.buf.clear(); // force first parm to start on new line

@@ -116,7 +116,7 @@ std::complex<double> initialize_orbit(const std::complex<double> &coordinate)
 void initialize_orbit_bf(const BFPtrComplex z, const BFPtrComplex &coordinate)
 {
     BigStackSaver saved;
-    const BigFloatPtr offset{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr offset{bf_stack().allocate_single()};
     float_to_bf(z.x, g_params[0]);
     float_to_bf(z.y, g_params[1]);
     if (!bof_initialization())
@@ -162,7 +162,7 @@ double bailout_limit()
 bool relative_delta(const BFPtrComplex &value, const BFPtrComplex &reference, std::complex<double> &delta)
 {
     BigStackSaver saved;
-    const BFPtrComplex difference{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BFPtrComplex difference{bf_stack().allocate_single(), bf_stack().allocate_single()};
     sub_bf(difference.x, value.x, reference.x);
     sub_bf(difference.y, value.y, reference.y);
     delta = {static_cast<double>(bf_to_float(difference.x)), static_cast<double>(bf_to_float(difference.y))};
@@ -205,10 +205,10 @@ bool ambiguous_bailout(const std::complex<double> &reference, const std::complex
 bool precise_bailout_reached(const BFPtrComplex &z)
 {
     BigStackSaver saved;
-    const BigFloatPtr x{alloc_stack(g_r_bf_length + 2)};
-    const BigFloatPtr y{alloc_stack(g_r_bf_length + 2)};
-    const BigFloatPtr metric{alloc_stack(g_r_bf_length + 2)};
-    const BigFloatPtr limit{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr x{bf_stack().allocate_single()};
+    const BigFloatPtr y{bf_stack().allocate_single()};
+    const BigFloatPtr metric{bf_stack().allocate_single()};
+    const BigFloatPtr limit{bf_stack().allocate_single()};
     float_to_bf(limit, bailout_limit());
     const auto reached = [limit](const BigFloatPtr value)
     {
@@ -278,10 +278,10 @@ BFPtrComplex PertEngine::initialize_frame_bf(
     reset_for_frame(half_horizontal, half_vertical);
     m_saved_stack = save_stack();
     m_center_stack_saved = true;
-    m_center_bf.x = alloc_stack(g_bf_length + 2);
-    m_center_bf.y = alloc_stack(g_bf_length + 2);
-    m_half_horizontal_bf = {alloc_stack(g_bf_length + 2), alloc_stack(g_bf_length + 2)};
-    m_half_vertical_bf = {alloc_stack(g_bf_length + 2), alloc_stack(g_bf_length + 2)};
+    m_center_bf.x = bf_stack().allocate_single();
+    m_center_bf.y = bf_stack().allocate_single();
+    m_half_horizontal_bf = {bf_stack().allocate_single(), bf_stack().allocate_single()};
+    m_half_vertical_bf = {bf_stack().allocate_single(), bf_stack().allocate_single()};
     float_to_bf(m_half_horizontal_bf.x, half_horizontal.real());
     float_to_bf(m_half_horizontal_bf.y, half_horizontal.imag());
     float_to_bf(m_half_vertical_bf.x, half_vertical.real());
@@ -530,8 +530,8 @@ bool PertEngine::advance_bailout()
         }
         {
             BigStackSaver saved;
-            const BigFloatPtr real{alloc_stack(g_r_bf_length + 2)};
-            const BigFloatPtr imag{alloc_stack(g_r_bf_length + 2)};
+            const BigFloatPtr real{bf_stack().allocate_single()};
+            const BigFloatPtr imag{bf_stack().allocate_single()};
             square_bf(real, m_pixel.precise_orbit.x);
             square_bf(imag, m_pixel.precise_orbit.y);
             sub_bf(real, real, imag);
@@ -749,14 +749,14 @@ void PertEngine::allocate_working_values()
 {
     if (g_bf_math != BFMathType::NONE)
     {
-        m_reference_coordinate_bf.x = alloc_stack(g_r_bf_length + 2);
-        m_reference_coordinate_bf.y = alloc_stack(g_r_bf_length + 2);
-        m_reference_z_bf.x = alloc_stack(g_r_bf_length + 2);
-        m_reference_z_bf.y = alloc_stack(g_r_bf_length + 2);
-        m_reference_initial_bf = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-        m_orbit_parameter_bf = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-        m_orbit_initial_bf = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-        m_tmp_bf = alloc_stack(g_r_bf_length + 2);
+        m_reference_coordinate_bf.x = bf_stack().allocate_single();
+        m_reference_coordinate_bf.y = bf_stack().allocate_single();
+        m_reference_z_bf.x = bf_stack().allocate_single();
+        m_reference_z_bf.y = bf_stack().allocate_single();
+        m_reference_initial_bf = {bf_stack().allocate_single(), bf_stack().allocate_single()};
+        m_orbit_parameter_bf = {bf_stack().allocate_single(), bf_stack().allocate_single()};
+        m_orbit_initial_bf = {bf_stack().allocate_single(), bf_stack().allocate_single()};
+        m_tmp_bf = bf_stack().allocate_single();
     }
 }
 
@@ -807,10 +807,10 @@ std::complex<double> PertEngine::inverted_coordinate(const std::complex<double> 
 void PertEngine::inverted_coordinate(const BFPtrComplex coordinate, const std::complex<double> &pixel_position) const
 {
     BigStackSaver saved;
-    const BigFloatPtr horizontal{alloc_stack(g_r_bf_length + 2)};
-    const BigFloatPtr vertical{alloc_stack(g_r_bf_length + 2)};
-    const BigFloatPtr scale{alloc_stack(g_r_bf_length + 2)};
-    const BigFloatPtr delta{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr horizontal{bf_stack().allocate_single()};
+    const BigFloatPtr vertical{bf_stack().allocate_single()};
+    const BigFloatPtr scale{bf_stack().allocate_single()};
+    const BigFloatPtr delta{bf_stack().allocate_single()};
     float_to_bf(horizontal, pixel_position.real());
     float_to_bf(scale, g_logical_screen.x_dots - 1);
     div_bf(horizontal, horizontal, scale);
@@ -840,9 +840,9 @@ void PertEngine::inverted_coordinate(const BFPtrComplex coordinate, const std::c
 void PertEngine::pixel_delta(const BFPtrComplex delta, const std::complex<double> &pixel_position) const
 {
     BigStackSaver saved;
-    const BigFloatPtr factor{alloc_stack(g_r_bf_length + 2)};
-    const BigFloatPtr divisor{alloc_stack(g_r_bf_length + 2)};
-    const BigFloatPtr term{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr factor{bf_stack().allocate_single()};
+    const BigFloatPtr divisor{bf_stack().allocate_single()};
+    const BigFloatPtr term{bf_stack().allocate_single()};
     clear_bf(delta.x);
     clear_bf(delta.y);
     const double width{g_logical_screen.x_dots - 1.0};
@@ -880,7 +880,7 @@ bool PertEngine::parameter_delta(const std::complex<double> &pixel_position, std
         return true;
     }
     BigStackSaver saved;
-    const BFPtrComplex coordinate{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BFPtrComplex coordinate{bf_stack().allocate_single(), bf_stack().allocate_single()};
     coordinate_bf(coordinate, pixel_position);
     return relative_delta(coordinate, m_reference_coordinate_bf, delta);
 }
@@ -1093,8 +1093,8 @@ bool PertEngine::advance_precise_orbit(const std::size_t target, std::size_t &re
 {
     if (m_pixel.precise_orbit.x == nullptr)
     {
-        m_pixel.precise_coordinate = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-        m_pixel.precise_orbit = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        m_pixel.precise_coordinate = {bf_stack().allocate_single(), bf_stack().allocate_single()};
+        m_pixel.precise_orbit = {bf_stack().allocate_single(), bf_stack().allocate_single()};
         if (m_explicit_orbit)
         {
             if (m_orbit_input.precise)
@@ -1157,8 +1157,8 @@ bool PertEngine::save_precise_value(std::size_t &remaining)
 {
     if (m_pixel.precise_saved.x == nullptr)
     {
-        m_pixel.precise_saved = {alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-        m_pixel.precise_tolerance = alloc_stack(g_r_bf_length + 2);
+        m_pixel.precise_saved = {bf_stack().allocate_single(), bf_stack().allocate_single()};
+        m_pixel.precise_tolerance = bf_stack().allocate_single();
         if (g_bf_math == BFMathType::BIG_NUM)
         {
             bn_to_bf(m_pixel.precise_tolerance, g_close_enough_bn);
@@ -1694,9 +1694,9 @@ void PertEngine::advance_reference_bf(const std::size_t end)
 {
     BigStackSaver saved;
 
-    BigFloatPtr temp_real_bf = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr temp_imag_bf = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr tmp_bf = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr temp_real_bf = bf_stack().allocate_single();
+    BigFloatPtr temp_imag_bf = bf_stack().allocate_single();
+    BigFloatPtr tmp_bf = bf_stack().allocate_single();
 
     float_to_bf(tmp_bf, m_glitch_tolerance);
     for (; m_reference_sample < end; ++m_reference_sample)

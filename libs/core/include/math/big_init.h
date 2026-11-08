@@ -4,9 +4,11 @@
 #pragma once
 
 #include <math/big.h>
+#include <math/BigArena.h>
 
-#include <stddef.h>
+#include <cstddef>
 #include <stdexcept>
+#include <vector>
 
 namespace id::fractals
 {
@@ -23,15 +25,63 @@ public:
 };
 
 extern int g_bf_digits;                 // digits to use (force) for g_bf_math
-extern int g_bf_save_len;
-extern long g_bignum_max_stack_addr;
-extern long g_max_stack;
-extern long g_start_stack;
+
+enum class BigLifetime
+{
+    PERSISTENT,
+    WORKING,
+    TEMPORARY
+};
+
+// Arenas have stable addresses and outlive active legacy bindings.
+// Call init_bf_dec or init_bf_length before obtaining an arena.
+BigArena &bn_arena(BigLifetime lifetime);
+BigArena &bf_arena(BigLifetime lifetime);
+
+class BigStack
+{
+public:
+    explicit BigStack(BigArena &arena);
+    BigStack(const BigStack &) = delete;
+    BigStack &operator=(const BigStack &) = delete;
+    // Retain each allocation's handle until the matching stack rewind.
+    Byte *allocate_single();
+    Byte *allocate_double();
+    std::size_t mark() const;
+    void restore(std::size_t mark);
+    bool contains(const Byte *address) const;
+
+private:
+    BigArena &m_arena;
+    std::vector<BigArena::Allocation> m_values;
+};
+
+BigStack &bn_stack();
+BigStack &bf_stack();
+
+struct BigStackMark
+{
+    std::size_t big_num{};
+    std::size_t big_float{};
+    bool operator==(const BigStackMark &right) const;
+    bool operator!=(const BigStackMark &right) const;
+    bool operator>(const BigStackMark &right) const;
+};
+
+struct BigMemoryStats
+{
+    std::size_t globals{};
+    std::size_t temporaries{};
+    std::size_t capacity{};
+};
+
+BigMemoryStats big_memory_stats();
+std::vector<char> pack_bf_parameters();
+void unpack_bf_parameters(const std::vector<char> &parameters);
 
 void free_bf_vars();
-BigNumPtr alloc_stack(size_t size);
-int save_stack();
-void restore_stack(int old_offset);
+BigStackMark save_stack();
+void restore_stack(BigStackMark old_mark);
 void init_bf_dec(int dec);
 void init_bf_length(int bnl);
 // Validate stored precision and return the corner/parameter payload size.
@@ -41,21 +91,15 @@ void init_big_pi();
 class BigStackSaver
 {
 public:
-    BigStackSaver() :
-        m_offset(save_stack())
-    {
-    }
+    BigStackSaver();
     BigStackSaver(const BigStackSaver &rhs) = delete;
     BigStackSaver(BigStackSaver &&rhs) = delete;
-    ~BigStackSaver()
-    {
-        restore_stack(m_offset);
-    }
+    ~BigStackSaver();
     BigStackSaver &operator=(const BigStackSaver &rhs) = delete;
     BigStackSaver &operator=(BigStackSaver &&rhs) = delete;
 
 private:
-    int m_offset;
+    BigStackMark m_mark;
 };
 
 } // namespace id::math

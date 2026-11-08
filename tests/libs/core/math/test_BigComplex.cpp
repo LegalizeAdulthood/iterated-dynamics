@@ -134,7 +134,7 @@ void TestBigComplex::TearDown()
 
 BFPtrComplex TestBigComplex::legacy(const LDouble real, const LDouble imag)
 {
-    BFPtrComplex result{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex result{bf_stack().allocate_single(), bf_stack().allocate_single()};
     float_to_bf(result.x, real);
     float_to_bf(result.y, imag);
     return result;
@@ -335,7 +335,7 @@ TEST_P(TestBigComplex, realValueFunctionsPreserveTheirOperands)
 
 TEST_P(TestBigComplex, owningCalculationsDoNotAllocateArenaStorage)
 {
-    const int marker = save_stack();
+    const auto marker = save_stack();
     const BFComplex base{BigFloat{-0.75L}, BigFloat{0.125L}};
 
     const BFComplex result = pow(base, BFComplex{BigFloat{0.375L}, BigFloat{-0.25L}});

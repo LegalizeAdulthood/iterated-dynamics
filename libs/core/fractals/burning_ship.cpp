@@ -207,13 +207,13 @@ void burning_ship_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
 {
     const int degree = static_cast<int>(g_params[2]);
     BigStackSaver saved;
-    BigFloatPtr temp_real = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr real_sqr = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr imag_sqr = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr real_imag = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr temp_real = bf_stack().allocate_single();
+    BigFloatPtr real_sqr = bf_stack().allocate_single();
+    BigFloatPtr imag_sqr = bf_stack().allocate_single();
+    BigFloatPtr real_imag = bf_stack().allocate_single();
     BFPtrComplex z2;
-    z2.x = alloc_stack(g_r_bf_length + 2);
-    z2.y = alloc_stack(g_r_bf_length + 2);
+    z2.x = bf_stack().allocate_single();
+    z2.y = bf_stack().allocate_single();
     double_bf(z2.x, z.x);
     double_bf(z2.y, z.y);
     if (degree == 2)
@@ -255,8 +255,8 @@ int burning_ship_bf_fractal()
     else if (degree > 2) // Burning Ship to higher power
     {
         BFPtrComplex big_z;
-        big_z.x = alloc_stack(g_bf_length + 2);
-        big_z.y = alloc_stack(g_bf_length + 2);
+        big_z.x = bf_stack().allocate_single();
+        big_z.y = bf_stack().allocate_single();
         abs_bf(big_z.x, g_old_z_bf.x);
         abs_bf(big_z.y, g_old_z_bf.y);
         neg_a_bf(big_z.y);

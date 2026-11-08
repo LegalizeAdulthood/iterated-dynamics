@@ -130,8 +130,8 @@ void cvt_center_mag_bf(
     if (!cmp_bf(g_bf_x_3rd, g_bf_x_min) && !cmp_bf(g_bf_y_3rd, g_bf_y_min))
     {
         // no rotation or skewing, but stretching is allowed
-        const BigFloatPtr width_bf = alloc_stack(g_bf_length + 2);
-        const BigFloatPtr height_bf = alloc_stack(g_bf_length + 2);
+        const BigFloatPtr width_bf = bf_stack().allocate_single();
+        const BigFloatPtr height_bf = bf_stack().allocate_single();
         // width  = x_max - x_min;
         sub_bf(width_bf, g_bf_x_max, g_bf_x_min);
         const LDouble width = bf_to_float(width_bf);
@@ -151,8 +151,8 @@ void cvt_center_mag_bf(
     }
     else
     {
-        const BigFloatPtr tmp_x_bf = alloc_stack(g_bf_length + 2);
-        const BigFloatPtr tmp_y_bf = alloc_stack(g_bf_length + 2);
+        const BigFloatPtr tmp_x_bf = bf_stack().allocate_single();
+        const BigFloatPtr tmp_y_bf = bf_stack().allocate_single();
 
         // set up triangle ABC, having sides abc
         // side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd)

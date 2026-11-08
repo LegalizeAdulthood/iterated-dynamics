@@ -1996,7 +1996,7 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     bool y_axis_between = false; // if axis between 2 pixels, not on one
     double f_temp;
     BigFloatPtr bft1;
-    int saved = 0;
+    BigStackMark saved{};
     g_symmetry = SymmetryType::X_AXIS;
     if (g_std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT || g_std_calc_mode == CalcMode::ORBIT)
     {
@@ -2081,7 +2081,7 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     if (g_bf_math != BFMathType::NONE)
     {
         saved = save_stack();
-        bft1    = alloc_stack(g_r_bf_length+2);
+        bft1 = bf_stack().allocate_single();
         x_axis_on_screen = sign_bf(g_bf_y_min) != sign_bf(g_bf_y_max);
         y_axis_on_screen = sign_bf(g_bf_x_min) != sign_bf(g_bf_x_max);
     }

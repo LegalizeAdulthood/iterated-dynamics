@@ -7,6 +7,7 @@
 #include <engine/Point.h>
 #include <engine/UserData.h>
 #include <math/big.h>
+#include <math/big_init.h>
 
 #include <array>
 #include <complex>
@@ -120,7 +121,7 @@ private:
         double magnitude{};
         int saved_incr{1};
         int epsilon_axis{};
-        int stack{};
+        math::BigStackMark stack{};
         bool active{};
         bool star_trail{};
         bool high_precision{};
@@ -192,7 +193,7 @@ private:
     bool m_orbit_output_pending{};
     bool m_orbit_overlay_displayed{};
     double m_glitch_tolerance{DEFAULT_PERTURBATION_TOLERANCE};
-    int m_saved_stack{};
+    math::BigStackMark m_saved_stack{};
 };
 
 } // namespace id::engine

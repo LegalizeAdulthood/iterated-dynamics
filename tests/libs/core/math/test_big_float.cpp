@@ -10,6 +10,9 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <array>
+#include <cstdint>
 #include <limits>
 #include <string>
 #include <string_view>
@@ -90,7 +93,7 @@ class TestBigFloatParse : public TestBigFloat, public testing::WithParamInterfac
 TEST_P(TestBigFloatParse, parsesTheSpecifiedText)
 {
     const std::string_view text{GetParam().storage.data(), GetParam().length};
-    BigFloatPtr value{alloc_stack(g_bf_length + 2)};
+    BigFloatPtr value{bf_stack().allocate_single()};
 
     str_to_bf(value, text);
 
@@ -112,7 +115,7 @@ protected:
 
 void TestBigFloatFormat::prepare_value(const char *text)
 {
-    m_value = alloc_stack(g_bf_length + 2);
+    m_value = bf_stack().allocate_single();
     if (text)
     {
         str_to_bf(m_value, text);
@@ -258,7 +261,7 @@ protected:
 
     int m_length{};
     int m_decimals{};
-    int m_stack{};
+    BigStackMark m_stack{};
     BigFloatPtr m_corner{};
 };
 
@@ -384,7 +387,7 @@ void TestArenaPrecisionLimit::SetUp()
 
 TEST_P(TestArenaPrecisionLimit, rejectsRequestsPastTheBackendLimit)
 {
-    const int stack{save_stack()};
+    const auto stack{save_stack()};
 
     EXPECT_THROW(init_bf_length(GetParam().length + 1), PrecisionError);
 
@@ -400,31 +403,33 @@ INSTANTIATE_TEST_SUITE_P(Backends, TestArenaPrecisionLimit,
 
 TEST_F(TestBigFloat, stackStorageCrossesSixtyFourKilobytes)
 {
-    constexpr size_t OLD_ARENA_SIZE{64 * 1024};
-    const int stack{save_stack()};
+    constexpr std::size_t OLD_ARENA_SIZE{64 * 1024};
+    const auto stack = save_stack();
     float_to_bf(g_bf_x_min, 1.25);
     {
         BigStackSaver saved;
-        alloc_stack(OLD_ARENA_SIZE);
-        const BigFloatPtr value{alloc_stack(g_bf_length + 2)};
-        EXPECT_GT(save_stack(), OLD_ARENA_SIZE);
+        const std::size_t stride = bf_arena(BigLifetime::TEMPORARY).block_size();
+        for (std::size_t bytes = 0; bytes < OLD_ARENA_SIZE; bytes += stride)
+        {
+            bf_stack().allocate_single();
+        }
+        BigFloatPtr value = bf_stack().allocate_single();
         float_to_bf(value, 2.5);
         add_bf(value, value, g_bf_x_min);
-
+        EXPECT_GT(big_memory_stats().temporaries, OLD_ARENA_SIZE);
         EXPECT_EQ(3.75L, bf_to_float(value));
         EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
     }
     EXPECT_EQ(stack, save_stack());
-    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
 }
 
 class TestArenaStack : public TestBigFloat
 {
 protected:
     void SetUp() override;
+    void fill_stack();
 
-    int m_stack{};
-    long m_high_water{};
+    BigStackMark m_stack{};
     std::size_t m_available{};
 };
 
@@ -432,31 +437,21 @@ void TestArenaStack::SetUp()
 {
     TestBigFloat::SetUp();
     m_stack = save_stack();
-    m_high_water = g_bignum_max_stack_addr;
-    m_available = static_cast<std::size_t>(g_max_stack - m_stack);
+    m_available = bf_arena(BigLifetime::TEMPORARY).capacity();
 }
 
-class TestOversizedArenaStack : public TestArenaStack, public testing::WithParamInterface<bool>
+void TestArenaStack::fill_stack()
 {
-};
-
-TEST_P(TestOversizedArenaStack, rejectionPreservesAllocationState)
-{
-    const std::size_t request{GetParam() ? std::numeric_limits<std::size_t>::max() : m_available + 1};
-
-    EXPECT_THROW(alloc_stack(request), PrecisionError);
-
-    EXPECT_EQ(m_stack, save_stack());
-    EXPECT_EQ(m_high_water, g_bignum_max_stack_addr);
+    for (std::size_t i = 0; i < m_available; ++i)
+    {
+        bf_stack().allocate_single();
+    }
 }
 
-INSTANTIATE_TEST_SUITE_P(Requests, TestOversizedArenaStack, testing::Bool(),
-    [](const testing::TestParamInfo<bool> &info) { return info.param ? "MaximumSize" : "AvailablePlusOne"; });
-
-TEST_F(TestArenaStack, exactExhaustionAllocatesTheRemainingStorage)
+TEST_F(TestArenaStack, exactExhaustionAllocatesEveryRemainingBlock)
 {
-    EXPECT_NE(nullptr, alloc_stack(m_available));
-    EXPECT_EQ(g_max_stack, save_stack());
+    EXPECT_NO_THROW(fill_stack());
+    EXPECT_EQ(m_available, save_stack().big_float);
 }
 
 class TestExhaustedArenaStack : public TestArenaStack
@@ -468,35 +463,46 @@ protected:
 void TestExhaustedArenaStack::SetUp()
 {
     TestArenaStack::SetUp();
-    ASSERT_NE(nullptr, alloc_stack(m_available));
-    ASSERT_EQ(g_max_stack, save_stack());
+    fill_stack();
+}
+
+TEST_F(TestExhaustedArenaStack, rejectionPreservesAllocationStateForBothWidths)
+{
+    const auto before = save_stack();
+    const auto high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
+
+    EXPECT_THROW(bf_stack().allocate_single(), PrecisionError);
+    EXPECT_THROW(bf_stack().allocate_double(), PrecisionError);
+
+    EXPECT_EQ(before, save_stack());
+    EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
+    EXPECT_NO_THROW(bn_stack().allocate_double());
 }
 
 TEST_F(TestExhaustedArenaStack, restoringStackAfterRejectionAllowsReuse)
 {
-    EXPECT_THROW(alloc_stack(1), PrecisionError);
-
+    EXPECT_THROW(bf_stack().allocate_single(), PrecisionError);
     restore_stack(m_stack);
-
-    BigFloatPtr value{alloc_stack(g_bf_length + 2)};
+    BigFloatPtr value = bf_stack().allocate_single();
     str_to_bf(value, "1.25");
     EXPECT_EQ(1.25L, bf_to_float(value));
 }
 
 TEST_F(TestBigFloat, stackSaverUnwindsAfterExhaustion)
 {
-    const int stack{save_stack()};
-
+    const auto stack = save_stack();
     EXPECT_THROW(
         {
             BigStackSaver saved;
-            alloc_stack(g_bf_length + 2);
-            alloc_stack(static_cast<size_t>(g_max_stack));
+            for (std::size_t i = 0; i < bf_arena(BigLifetime::TEMPORARY).capacity(); ++i)
+            {
+                bf_stack().allocate_single();
+            }
+            bf_stack().allocate_double();
         },
         PrecisionError);
-
     EXPECT_EQ(stack, save_stack());
-    EXPECT_NO_THROW(alloc_stack(g_bf_length + 2));
+    EXPECT_NO_THROW(bf_stack().allocate_single());
 }
 
 class TestFreedArena : public TestBigFloat
@@ -509,29 +515,39 @@ void TestFreedArena::SetUp()
 {
     TestBigFloat::SetUp();
     float_to_bf(g_bf_x_min, 1.25);
-    alloc_stack(g_bf_length + 2);
+    bf_stack().allocate_single();
     free_bf_vars();
 }
 
-TEST_F(TestFreedArena, releasesActiveArenaState)
+TEST_F(TestFreedArena, releasesActiveArenaBindings)
 {
     EXPECT_EQ(BFMathType::NONE, g_bf_math);
-    EXPECT_EQ(0, save_stack());
-    EXPECT_EQ(0, g_start_stack);
-    EXPECT_EQ(0, g_max_stack);
-    EXPECT_EQ(0, g_bignum_max_stack_addr);
+    EXPECT_EQ(BigStackMark{}, save_stack());
+    EXPECT_EQ(nullptr, g_bf_x_min);
+    EXPECT_EQ(nullptr, g_bn_tmp1);
+    EXPECT_EQ(nullptr, g_bf_tmp1);
+}
+
+TEST_F(TestFreedArena, changingMathFlagDoesNotReactivateFreedBindings)
+{
+    g_bf_math = BFMathType::BIG_FLT;
+
+    EXPECT_THROW(bf_stack().allocate_single(), std::logic_error);
+    EXPECT_THROW(bn_stack().allocate_double(), std::logic_error);
+    EXPECT_EQ(BigStackMark{}, save_stack());
 }
 
 TEST_F(TestFreedArena, initializesFreshStorageAfterRejectedOperations)
 {
-    EXPECT_THROW(alloc_stack(1), std::logic_error);
+    EXPECT_THROW(bf_stack().allocate_single(), std::logic_error);
+    EXPECT_THROW(bn_stack().allocate_double(), std::logic_error);
     EXPECT_THROW(init_bf_dec(2000), PrecisionError);
     EXPECT_EQ(BFMathType::NONE, g_bf_math);
 
     init_bf_dec(20);
 
     EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min));
-    BigFloatPtr value{alloc_stack(g_bf_length + 2)};
+    BigFloatPtr value = bf_stack().allocate_single();
     str_to_bf(value, "1.25");
     EXPECT_EQ(1.25L, bf_to_float(value));
 }
@@ -540,12 +556,206 @@ TEST_F(TestBigFloat, loweringPrecisionPreservesCornersWithoutOverrunningArena)
 {
     init_bf_dec(1200);
     float_to_bf(g_bf_x_min, 1.25);
-
     init_bf_dec(20);
-
     EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
-    EXPECT_EQ(g_start_stack, save_stack());
-    EXPECT_NO_THROW(alloc_stack(g_bf_length + 2));
+    EXPECT_EQ(BigStackMark{}, save_stack());
+    EXPECT_NO_THROW(bf_stack().allocate_single());
+}
+
+TEST_F(TestBigFloat, precisionChangesPreserveAllCornersSavedCornersAndParameters)
+{
+    const auto parameters = []
+    {
+        return std::array<BigFloatPtr, 22>{g_bf_x_min, g_bf_x_max, g_bf_y_min, g_bf_y_max, g_bf_x_3rd, g_bf_y_3rd,
+            g_bf_params[0], g_bf_params[1], g_bf_params[2], g_bf_params[3], g_bf_params[4], g_bf_params[5],
+            g_bf_params[6], g_bf_params[7], g_bf_params[8], g_bf_params[9], g_bf_save_x_min, g_bf_save_x_max,
+            g_bf_save_y_min, g_bf_save_y_max, g_bf_save_x_3rd, g_bf_save_y_3rd};
+    };
+    std::vector<std::vector<Byte>> expected;
+    for (BigFloatPtr value : parameters())
+    {
+        str_to_bf(value, "-1.2345678901234567890123456789e-200");
+        value[0] = static_cast<Byte>(expected.size() + 1);
+        expected.emplace_back(value, value + g_bf_length + 2);
+    }
+    for (int length : {64, 12, 32})
+    {
+        const int old_length = g_bf_length;
+        init_bf_length(length);
+        const auto values = parameters();
+        for (std::size_t i = 0; i < values.size(); ++i)
+        {
+            std::vector<Byte> converted(g_bf_length + 2);
+            convert_bf(converted.data(), expected[i].data(), g_bf_length, old_length);
+            EXPECT_EQ(converted, (std::vector<Byte>{values[i], values[i] + g_bf_length + 2}));
+            expected[i] = std::move(converted);
+        }
+    }
+}
+
+TEST_F(TestBigFloat, nestedStackRewindsPreserveOuterValuesAndPersistentCorners)
+{
+    const auto start = save_stack();
+    float_to_bf(g_bf_x_min, -1.25);
+    {
+        BigStackSaver outer;
+        BigNumPtr fixed = bn_stack().allocate_single();
+        BigFloatPtr floating = bf_stack().allocate_single();
+        float_to_bn(fixed, 2.5);
+        float_to_bf(floating, -3.75);
+        const auto middle = save_stack();
+        {
+            BigStackSaver inner;
+            float_to_bn(bn_stack().allocate_double(), -7.5);
+            float_to_bf(bf_stack().allocate_double(), 8.25);
+            EXPECT_GT(save_stack(), middle);
+        }
+        EXPECT_EQ(middle, save_stack());
+        EXPECT_EQ(2.5L, bn_to_float(fixed));
+        EXPECT_EQ(-3.75L, bf_to_float(floating));
+        EXPECT_EQ(-1.25L, bf_to_float(g_bf_x_min));
+    }
+    EXPECT_EQ(start, save_stack());
+    EXPECT_EQ(-1.25L, bf_to_float(g_bf_x_min));
+}
+
+TEST_F(TestBigFloat, eachRepresentationAndLifetimeHasItsOwnAlignedArena)
+{
+    std::vector<BigArena::Allocation> values;
+    std::vector<const BigArena *> arenas;
+    for (BigLifetime lifetime : {BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY})
+    {
+        for (BigArena *arena : {&bn_arena(lifetime), &bf_arena(lifetime)})
+        {
+            EXPECT_EQ(arenas.end(), std::find(arenas.begin(), arenas.end(), arena));
+            arenas.push_back(arena);
+            values.push_back(arena->allocate_single());
+            EXPECT_EQ(0, reinterpret_cast<std::uintptr_t>(values.back().data()) % 64);
+            EXPECT_EQ(0, arena->block_size() % 64);
+        }
+    }
+}
+
+TEST_F(TestBigFloat, bothStackAdaptersRewindWhileOwnedPersistentAndWorkingValuesSurvive)
+{
+    auto persistent = bf_arena(BigLifetime::PERSISTENT).allocate_single();
+    auto working = bn_arena(BigLifetime::WORKING).allocate_single();
+    float_to_bf(persistent.data(), -2.5);
+    float_to_bn(working.data(), 3.75);
+    const auto before = save_stack();
+    {
+        BigStackSaver scope;
+        float_to_bn(bn_stack().allocate_single(), -5.5);
+        float_to_bf(bf_stack().allocate_double(), 6.25);
+        const auto middle = save_stack();
+        EXPECT_GT(middle.big_num, before.big_num);
+        EXPECT_GT(middle.big_float, before.big_float);
+        {
+            BigStackSaver inner;
+            bn_stack().allocate_double();
+            bf_stack().allocate_single();
+        }
+        EXPECT_EQ(middle, save_stack());
+    }
+    EXPECT_EQ(before, save_stack());
+    EXPECT_EQ(-2.5L, bf_to_float(persistent.data()));
+    EXPECT_EQ(3.75L, bn_to_float(working.data()));
+}
+
+TEST_F(TestBigFloat, stackRewindCoalescesAReleasedNarrowedAllocationWithItsBorrowedHalf)
+{
+    const auto before = save_stack();
+    auto &arena = bf_arena(BigLifetime::TEMPORARY);
+    BigArena::Index index{};
+    {
+        BigStackSaver scope;
+        auto wide = arena.allocate_double();
+        index = wide.index();
+        float_to_bf(wide.data() + g_padding, -2.5);
+        wide.reduce();
+        const auto middle = save_stack();
+        {
+            BigStackSaver inner;
+            BigFloatPtr half = bf_stack().allocate_single();
+            EXPECT_EQ(wide.data() + arena.block_size(), half);
+            float_to_bf(half, 3.75);
+            bn_stack().allocate_double();
+        }
+        EXPECT_EQ(middle, save_stack());
+        EXPECT_EQ(-2.5L, bf_to_float(wide.data()));
+        bf_stack().allocate_single();
+        // The owning first half is released before the scope rewinds the second.
+    }
+    EXPECT_EQ(before, save_stack());
+    const auto reused = arena.allocate_double();
+    EXPECT_EQ(index, reused.index());
+}
+
+TEST_F(TestBigFloat, ownedArenaValuesSurviveContextResetAndLaterPrecisionGrowth)
+{
+    auto floating = bf_arena(BigLifetime::WORKING).allocate_single();
+    auto fixed = bn_arena(BigLifetime::PERSISTENT).allocate_single();
+    float_to_bf(floating.data(), -2.5);
+    float_to_bn(fixed.data(), 3.75);
+    const auto floating_index = floating.index();
+    const auto fixed_index = fixed.index();
+
+    free_bf_vars();
+    EXPECT_NE(nullptr, floating.data());
+    EXPECT_NE(nullptr, fixed.data());
+    init_bf_length(64);
+
+    EXPECT_EQ(floating_index, floating.index());
+    EXPECT_EQ(fixed_index, fixed.index());
+    EXPECT_EQ(-2.5L, bf_to_float(floating.data()));
+    EXPECT_EQ(3.75L, bn_to_float(fixed.data()));
+    EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min));
+}
+
+TEST_F(TestBigFloat, eachRepresentationReducesProductsThroughItsConfiguredFunction)
+{
+    auto fixed = bn_arena(BigLifetime::TEMPORARY).allocate_double();
+    auto floating = bf_arena(BigLifetime::TEMPORARY).allocate_double();
+    std::vector<Byte> expected_num(g_bn_length);
+    std::vector<Byte> expected_float(g_bf_length + 2);
+    str_to_bn(expected_num.data(), "-1.234567890123456789");
+    str_to_bf(expected_float.data(), "-1.234567890123456789e-200");
+    std::copy(expected_num.begin(), expected_num.end(), fixed.data() + g_shift_factor);
+    std::copy(expected_float.begin(), expected_float.end(), floating.data() + g_padding);
+    const auto fixed_index = fixed.index();
+    const auto floating_index = floating.index();
+
+    fixed.reduce();
+    floating.reduce();
+
+    EXPECT_EQ(expected_num, (std::vector<Byte>{fixed.data(), fixed.data() + expected_num.size()}));
+    EXPECT_EQ(expected_float, (std::vector<Byte>{floating.data(), floating.data() + expected_float.size()}));
+    EXPECT_EQ(fixed_index, fixed.index());
+    EXPECT_EQ(floating_index, floating.index());
+    const auto fixed_half = bn_arena(BigLifetime::TEMPORARY).allocate_single();
+    const auto floating_half = bf_arena(BigLifetime::TEMPORARY).allocate_single();
+    EXPECT_EQ(fixed_index + 1, fixed_half.index());
+    EXPECT_EQ(floating_index + 1, floating_half.index());
+}
+
+TEST_F(TestBigFloat, parameterPackingPreservesOpaqueBytesAndRejectsIncompletePayloads)
+{
+    std::vector<char> expected(22 * (g_bf_length + 2));
+    for (std::size_t i = 0; i < expected.size(); ++i)
+    {
+        expected[i] = static_cast<char>(i * 53 + 157);
+    }
+    unpack_bf_parameters(expected);
+
+    EXPECT_EQ(expected, pack_bf_parameters());
+    const auto first = reinterpret_cast<const char *>(g_bf_x_min);
+    const auto second = reinterpret_cast<const char *>(g_bf_x_max);
+    EXPECT_TRUE(std::equal(expected.begin(), expected.begin() + g_bf_length + 2, first));
+    EXPECT_TRUE(std::equal(expected.begin() + g_bf_length + 2, expected.begin() + 2 * (g_bf_length + 2), second));
+    auto incomplete = expected;
+    incomplete.pop_back();
+    EXPECT_THROW(unpack_bf_parameters(incomplete), std::invalid_argument);
+    EXPECT_EQ(expected, pack_bf_parameters());
 }
 
 } // namespace id::test

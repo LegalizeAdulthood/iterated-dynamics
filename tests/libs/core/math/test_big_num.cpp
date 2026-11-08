@@ -36,7 +36,7 @@ protected:
 
     std::string round_trip(char *input, const int decimals)
     {
-        BigNumPtr value{alloc_stack(g_bn_length)};
+        BigNumPtr value{bn_stack().allocate_single()};
         str_to_bn(value, input);
         return format(value, decimals);
     }
@@ -76,7 +76,7 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestBigNumFormatting,
 
 TEST_F(TestBigNum, formatsZeroValue)
 {
-    BigNumPtr value{alloc_stack(g_bn_length)};
+    BigNumPtr value{bn_stack().allocate_single()};
     int_to_bn(value, 0);
 
     EXPECT_EQ("0.", format(value, 5));

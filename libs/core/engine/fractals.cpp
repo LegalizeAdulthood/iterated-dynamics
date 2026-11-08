@@ -221,13 +221,13 @@ void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z)
 void mandel_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
 {
     BigStackSaver saved;
-    BigFloatPtr temp_real = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr real_sqr = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr imag_sqr = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr real_imag = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr temp_real = bf_stack().allocate_single();
+    BigFloatPtr real_sqr = bf_stack().allocate_single();
+    BigFloatPtr imag_sqr = bf_stack().allocate_single();
+    BigFloatPtr real_imag = bf_stack().allocate_single();
     BFPtrComplex z2;
-    z2.x = alloc_stack(g_r_bf_length + 2);
-    z2.y = alloc_stack(g_r_bf_length + 2);
+    z2.x = bf_stack().allocate_single();
+    z2.y = bf_stack().allocate_single();
     double_bf(z2.x, z.x);
     double_bf(z2.y, z.y);
 

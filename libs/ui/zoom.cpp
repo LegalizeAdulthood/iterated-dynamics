@@ -80,9 +80,9 @@ static void calc_corner(
     BigFloatPtr target, BigFloatPtr p1, const double p2, BigFloatPtr p3, const double p4, BigFloatPtr p5)
 {
     BigStackSaver saved;
-    const BigFloatPtr b_tmp1 = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr b_tmp2 = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr b_tmp3 = alloc_stack(g_r_bf_length + 2);
+    const BigFloatPtr b_tmp1 = bf_stack().allocate_single();
+    const BigFloatPtr b_tmp2 = bf_stack().allocate_single();
+    const BigFloatPtr b_tmp3 = bf_stack().allocate_single();
 
     // use target as temporary variable
     float_to_bf(b_tmp3, p2);
@@ -148,7 +148,7 @@ void draw_box(const bool draw_it)
         return;
     }
 
-    int saved = 0;
+    BigStackMark saved{};
     BigFloatPtr bf_f_x_width;
     BigFloatPtr bf_f_x_skew;
     BigFloatPtr bf_f_y_height;
@@ -157,11 +157,11 @@ void draw_box(const bool draw_it)
     if (g_bf_math != BFMathType::NONE)
     {
         saved = save_stack();
-        bf_f_x_width = alloc_stack(g_r_bf_length+2);
-        bf_f_x_skew  = alloc_stack(g_r_bf_length+2);
-        bf_f_y_height = alloc_stack(g_r_bf_length+2);
-        bf_f_y_skew  = alloc_stack(g_r_bf_length+2);
-        bf_f_x_adj   = alloc_stack(g_r_bf_length+2);
+        bf_f_x_width = bf_stack().allocate_single();
+        bf_f_x_skew = bf_stack().allocate_single();
+        bf_f_y_height = bf_stack().allocate_single();
+        bf_f_y_skew = bf_stack().allocate_single();
+        bf_f_x_adj = bf_stack().allocate_single();
     }
     double f_temp1 = PI * g_zoom_box_rotation / 72; // convert to radians
     const double rot_cos = std::cos(f_temp1);   // sin & cos of rotation
@@ -464,14 +464,14 @@ static void zoom_out_calc(BigFloatPtr bf_dx, BigFloatPtr bf_dy, //
     BigFloatPtr bf_f_temp)
 {
     BigStackSaver saved;
-    BigFloatPtr b_tmp1 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_tmp2 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_tmp3 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_tmp4 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_tmp2a = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_tmp4a = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_temp_x = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_temp_y = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr b_tmp1 = bf_stack().allocate_single();
+    BigFloatPtr b_tmp2 = bf_stack().allocate_single();
+    BigFloatPtr b_tmp3 = bf_stack().allocate_single();
+    BigFloatPtr b_tmp4 = bf_stack().allocate_single();
+    BigFloatPtr b_tmp2a = bf_stack().allocate_single();
+    BigFloatPtr b_tmp4a = bf_stack().allocate_single();
+    BigFloatPtr b_temp_x = bf_stack().allocate_single();
+    BigFloatPtr b_temp_y = bf_stack().allocate_single();
 
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0,0) topleft through (1,1) bottom right */
@@ -532,19 +532,19 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
        new actual corners
        */
     BigStackSaver saved;
-    const BigFloatPtr save_bf_x_min = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr save_bf_y_max = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr bf_f_temp = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr tmp1 = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr tmp2 = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr tmp3 = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr tmp4 = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr tmp5 = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr tmp6 = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr bf_plot_mx1 = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr bf_plot_mx2 = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr bf_plot_my1 = alloc_stack(g_r_bf_length + 2);
-    const BigFloatPtr bf_plot_my2 = alloc_stack(g_r_bf_length + 2);
+    const BigFloatPtr save_bf_x_min = bf_stack().allocate_single();
+    const BigFloatPtr save_bf_y_max = bf_stack().allocate_single();
+    const BigFloatPtr bf_f_temp = bf_stack().allocate_single();
+    const BigFloatPtr tmp1 = bf_stack().allocate_single();
+    const BigFloatPtr tmp2 = bf_stack().allocate_single();
+    const BigFloatPtr tmp3 = bf_stack().allocate_single();
+    const BigFloatPtr tmp4 = bf_stack().allocate_single();
+    const BigFloatPtr tmp5 = bf_stack().allocate_single();
+    const BigFloatPtr tmp6 = bf_stack().allocate_single();
+    const BigFloatPtr bf_plot_mx1 = bf_stack().allocate_single();
+    const BigFloatPtr bf_plot_mx2 = bf_stack().allocate_single();
+    const BigFloatPtr bf_plot_my1 = bf_stack().allocate_single();
+    const BigFloatPtr bf_plot_my2 = bf_stack().allocate_single();
     // ftemp = (yymin-yy3rd)*(xx3rd-xxmin) - (xxmax-xx3rd)*(yy3rd-yymax);
     sub_bf(tmp1, g_bf_y_min, g_bf_y_3rd);
     sub_bf(tmp2, g_bf_x_3rd, g_bf_x_min);

@@ -30,10 +30,10 @@ double Inversion::apply(DComplex &point) const
 void Inversion::apply(const BFPtrComplex point) const
 {
     BigStackSaver saved;
-    const BigFloatPtr center_x{alloc_stack(g_r_bf_length + 2)};
-    const BigFloatPtr center_y{alloc_stack(g_r_bf_length + 2)};
-    const BigFloatPtr magnitude{alloc_stack(g_r_bf_length + 2)};
-    const BigFloatPtr scale{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr center_x{bf_stack().allocate_single()};
+    const BigFloatPtr center_y{bf_stack().allocate_single()};
+    const BigFloatPtr magnitude{bf_stack().allocate_single()};
+    const BigFloatPtr scale{bf_stack().allocate_single()};
     float_to_bf(center_x, center.x);
     float_to_bf(center_y, center.y);
     sub_a_bf(point.x, center_x);

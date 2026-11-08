@@ -184,11 +184,10 @@ static bool tab_display2()
 
     const std::string version{to_string(current_id_version())};
     write_row(++row, "Version {:s}", version);
-    write_row(++row, "{:d} of {:d} bignum memory used", g_bignum_max_stack_addr, g_max_stack);
-    write_row(++row, "   {:d} used for bignum globals", g_start_stack);
-    write_row(++row, "   {:d} stack used == {:d} variables of length {:d}", //
-        g_bignum_max_stack_addr - g_start_stack,                            //
-        (g_bignum_max_stack_addr - g_start_stack) / (g_r_bf_length + 2), g_r_bf_length + 2);
+    const BigMemoryStats memory = big_memory_stats();
+    write_row(++row, "{:d} of {:d} bignum memory used", memory.globals + memory.temporaries, memory.capacity);
+    write_row(++row, "   {:d} used for bignum globals", memory.globals);
+    write_row(++row, "   {:d} used for temporary values", memory.temporaries);
     if (g_bf_math != BFMathType::NONE)
     {
         write_row(++row, "g_int_length {:d} g_bf_length {:d} ", g_int_length, g_bf_length);
@@ -332,7 +331,7 @@ int tab_display() // display the status of the current image
     BigFloatPtr bf_y_ctr = nullptr;
     char msg[350];
     const char *msg_ptr;
-    int saved = 0;
+    BigStackMark saved{};
     int has_form_param = 0;
 
     if (g_calc_status < CalcStatus::PARAMS_CHANGED) // no active fractal image
@@ -347,8 +346,8 @@ int tab_display() // display the status of the current image
     if (g_bf_math != BFMathType::NONE)
     {
         saved = save_stack();
-        bf_x_ctr = alloc_stack(g_bf_length + 2);
-        bf_y_ctr = alloc_stack(g_bf_length + 2);
+        bf_x_ctr = bf_stack().allocate_single();
+        bf_y_ctr = bf_stack().allocate_single();
     }
     if (g_fractal_type == FractalType::FORMULA)
     {

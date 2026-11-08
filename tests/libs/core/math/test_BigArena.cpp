@@ -879,4 +879,56 @@ TEST_P(TestBigArenaNumericMigration, repeatedGrowthAndReductionPreserveEncodedVa
 
 INSTANTIATE_TEST_SUITE_P(Representations, TestBigArenaNumericMigration, testing::Bool());
 
+TEST(TestBigArena, preparedRelocationPublishesOnlyWhenCommitted)
+{
+    CountingResource resource;
+    BigArena arena{17, 2, keep_first_block, resource};
+    auto value = arena.allocate_single();
+    value.data()[0] = 42;
+    const Byte *old_address = value.data();
+    auto pending = arena.prepare_relocation(
+        65, [](Byte *destination, const Byte *source, std::size_t) { destination[0] = source[0]; });
+
+    EXPECT_EQ(old_address, value.data());
+    EXPECT_EQ(64, arena.block_size());
+    EXPECT_EQ(2, resource.allocations);
+    EXPECT_EQ(0, resource.deallocations);
+
+    pending.commit();
+
+    EXPECT_NE(old_address, value.data());
+    EXPECT_EQ(128, arena.block_size());
+    EXPECT_EQ(42, value.data()[0]);
+    EXPECT_EQ(1, resource.deallocations);
+}
+
+TEST(TestBigArena, failurePreparingAnotherArenaDiscardsUncommittedRelocations)
+{
+    CountingResource first_resource;
+    CountingResource second_resource;
+    BigArena first{17, 2, keep_first_block, first_resource};
+    BigArena second{17, 2, keep_first_block, second_resource};
+    auto value = first.allocate_single();
+    value.data()[0] = 42;
+    const Byte *old_address = value.data();
+    second_resource.fail_next = true;
+    const auto migrate = [](Byte *destination, const Byte *source, std::size_t) { destination[0] = source[0]; };
+
+    EXPECT_THROW(
+        {
+            auto first_pending = first.prepare_relocation(65, migrate);
+            auto second_pending = second.prepare_relocation(65, migrate);
+        },
+        std::bad_alloc);
+
+    EXPECT_EQ(old_address, value.data());
+    EXPECT_EQ(42, value.data()[0]);
+    EXPECT_EQ(64, first.block_size());
+    EXPECT_EQ(64, second.block_size());
+    EXPECT_EQ(1, first_resource.deallocations);
+    EXPECT_EQ(0, second_resource.deallocations);
+    const auto half = first.allocate_single();
+    EXPECT_EQ(1, half.index());
+}
+
 } // namespace id::test

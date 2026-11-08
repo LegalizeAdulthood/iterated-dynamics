@@ -410,9 +410,9 @@ void adjust_corner_bf()
     LDouble magnification;
 
     BigStackSaver saved;
-    BigFloatPtr bf_temp = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr bf_temp2 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_tmp1 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr bf_temp = bf_stack().allocate_single();
+    BigFloatPtr bf_temp2 = bf_stack().allocate_single();
+    BigFloatPtr b_tmp1 = bf_stack().allocate_single();
 
     // While we're at it, let's adjust the x_mag_factor as well
     // use bf_temp, bftemp2 as bfXctr, bfYctr
@@ -533,27 +533,27 @@ static bool adjust_to_limits_bf(const double expand)
     BigStackSaver saved;
     BigFloatPtr b_corner_x[4];
     BigFloatPtr b_corner_y[4];
-    b_corner_x[0] = alloc_stack(g_r_bf_length+2);
-    b_corner_x[1] = alloc_stack(g_r_bf_length+2);
-    b_corner_x[2] = alloc_stack(g_r_bf_length+2);
-    b_corner_x[3] = alloc_stack(g_r_bf_length+2);
-    b_corner_y[0] = alloc_stack(g_r_bf_length+2);
-    b_corner_y[1] = alloc_stack(g_r_bf_length+2);
-    b_corner_y[2] = alloc_stack(g_r_bf_length+2);
-    b_corner_y[3] = alloc_stack(g_r_bf_length+2);
-    BigFloatPtr b_low_x = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_high_x = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_low_y = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_high_y = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_limit = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr bf_temp = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_center_x = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_center_y = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_adj_x = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_adj_y = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_tmp1 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_tmp2 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr b_expand = alloc_stack(g_r_bf_length + 2);
+    b_corner_x[0] = bf_stack().allocate_single();
+    b_corner_x[1] = bf_stack().allocate_single();
+    b_corner_x[2] = bf_stack().allocate_single();
+    b_corner_x[3] = bf_stack().allocate_single();
+    b_corner_y[0] = bf_stack().allocate_single();
+    b_corner_y[1] = bf_stack().allocate_single();
+    b_corner_y[2] = bf_stack().allocate_single();
+    b_corner_y[3] = bf_stack().allocate_single();
+    BigFloatPtr b_low_x = bf_stack().allocate_single();
+    BigFloatPtr b_high_x = bf_stack().allocate_single();
+    BigFloatPtr b_low_y = bf_stack().allocate_single();
+    BigFloatPtr b_high_y = bf_stack().allocate_single();
+    BigFloatPtr b_limit = bf_stack().allocate_single();
+    BigFloatPtr bf_temp = bf_stack().allocate_single();
+    BigFloatPtr b_center_x = bf_stack().allocate_single();
+    BigFloatPtr b_center_y = bf_stack().allocate_single();
+    BigFloatPtr b_adj_x = bf_stack().allocate_single();
+    BigFloatPtr b_adj_y = bf_stack().allocate_single();
+    BigFloatPtr b_tmp1 = bf_stack().allocate_single();
+    BigFloatPtr b_tmp2 = bf_stack().allocate_single();
+    BigFloatPtr b_expand = bf_stack().allocate_single();
 
     constexpr LDouble limit = 32767.99;
 
@@ -890,7 +890,7 @@ static void smallest_add(double *num)
 static void smallest_add_bf(BigFloatPtr num)
 {
     BigStackSaver saved;
-    BigFloatPtr b_tmp1 = alloc_stack(g_bf_length + 2);
+    BigFloatPtr b_tmp1 = bf_stack().allocate_single();
     mult_bf(b_tmp1, float_to_bf(b_tmp1, 5.0e-16), num);
     add_a_bf(num, b_tmp1);
 }

@@ -19,7 +19,11 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include <fmt/format.h>
 
 #include <algorithm>
+#include <array>
 #include <cstring>
+#include <memory>
+#include <utility>
+#include <vector>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -115,13 +119,6 @@ constexpr long BIGNUM_ARENA_SIZE{1024L * 1024};
 constexpr int MAX_BIGNUM_LENGTH{672};
 constexpr int MAX_BIGFLOAT_LENGTH{708};
 
-static char s_storage[BIGNUM_ARENA_SIZE];
-static BigNumPtr s_bn_root{};
-static BigNumPtr s_stack_ptr{}; // memory allocator base after global variables
-
-static int save_bf_vars();
-static int restore_bf_vars();
-
 /*********************************************************************/
 // given g_bn_length, calc_lengths will calculate all the other lengths
 void calc_lengths()
@@ -155,11 +152,6 @@ void calc_lengths()
 // intended only to be called from init_bf_dec() or init_bf_length().
 // initialize bignumber global variables
 
-long g_bignum_max_stack_addr{};
-long g_start_stack{};
-long g_max_stack{};
-int g_bf_save_len{};
-
 static BFMathType select_bf_math(const FractalType type)
 {
     if (const int i = find_alternate_math(type, BFMathType::BIG_NUM); i > -1)
@@ -192,239 +184,474 @@ size_t bf_parameter_bytes(const int bn_length, const FractalType type)
     return 22 * static_cast<size_t>(bf_length_for_bn_length(bn_length) + 2);
 }
 
+namespace
+{
+
+void reduce_bn_product(Byte *value)
+{
+    std::memmove(value, value + g_shift_factor, g_bn_length);
+}
+
+void reduce_bf_product(Byte *value)
+{
+    std::memmove(value, value + g_padding, g_bf_length + 2);
+}
+
+std::size_t arena_blocks(const std::size_t block_size)
+{
+    const std::size_t stride = (block_size + BigArena::ALIGNMENT - 1) / BigArena::ALIGNMENT * BigArena::ALIGNMENT;
+    return static_cast<std::size_t>(BIGNUM_ARENA_SIZE) / stride & ~std::size_t{1};
+}
+
+using WorkingBinding = std::pair<BigNumPtr *, BigArena::Allocation>;
+
+std::array<BigFloatPtr *, 22> parameter_bindings()
+{
+    return {&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd, &g_bf_params[0],
+        &g_bf_params[1], &g_bf_params[2], &g_bf_params[3], &g_bf_params[4], &g_bf_params[5], &g_bf_params[6],
+        &g_bf_params[7], &g_bf_params[8], &g_bf_params[9], &g_bf_save_x_min, &g_bf_save_x_max, &g_bf_save_y_min,
+        &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
+}
+
+class NumericArenas
+{
+public:
+    NumericArenas(std::size_t block_size, BigArena::Reduce reduce);
+    BigArena &get(BigLifetime lifetime);
+    void single(BigNumPtr &target);
+    void wide(BigNumPtr &target);
+    bool is_workspace(const Byte *source) const;
+    void bind_working();
+    void unbind_working();
+
+    BigArena persistent;
+    BigArena working;
+    BigArena temporary;
+    BigStack stack;
+    std::vector<WorkingBinding> bindings;
+};
+
+NumericArenas::NumericArenas(const std::size_t block_size, const BigArena::Reduce reduce) :
+    persistent(block_size, arena_blocks(block_size), reduce),
+    working(block_size, arena_blocks(block_size), reduce),
+    temporary(block_size, arena_blocks(block_size), reduce),
+    stack(temporary)
+{
+}
+
+BigArena &NumericArenas::get(const BigLifetime lifetime)
+{
+    switch (lifetime)
+    {
+    case BigLifetime::PERSISTENT:
+        return persistent;
+    case BigLifetime::WORKING:
+        return working;
+    case BigLifetime::TEMPORARY:
+        return temporary;
+    }
+    throw std::invalid_argument("Unknown big-number storage lifetime");
+}
+
+void NumericArenas::single(BigNumPtr &target)
+{
+    bindings.emplace_back(&target, working.allocate_single());
+}
+
+void NumericArenas::wide(BigNumPtr &target)
+{
+    bindings.emplace_back(&target, working.allocate_double());
+}
+
+bool NumericArenas::is_workspace(const Byte *source) const
+{
+    return stack.contains(source) ||
+        std::any_of(bindings.begin(), bindings.end(),
+            [source](const WorkingBinding &binding) { return binding.second.data() == source; });
+}
+
+void NumericArenas::bind_working()
+{
+    for (auto &binding : bindings)
+    {
+        *binding.first = binding.second.data();
+        std::memset(binding.second.data(), 0, binding.second.blocks() * working.block_size());
+    }
+}
+
+void NumericArenas::unbind_working()
+{
+    for (const auto &binding : bindings)
+    {
+        *binding.first = nullptr;
+    }
+}
+
+class MathArenas
+{
+public:
+    MathArenas(int bn_length, int bf_length, int int_length, int padding);
+    void change_precision(int bn_length, int bf_length, int int_length, int padding, bool preserve_parameters);
+    void bind(bool preserve_parameters);
+    void unbind();
+    bool bound() const;
+
+    NumericArenas big_num;
+    NumericArenas big_float;
+
+private:
+    int m_bn_length;
+    int m_bf_length;
+    int m_int_length;
+    bool m_bound{};
+    std::array<BigArena::Allocation, 22> m_parameters;
+};
+
+MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_length, const int padding) :
+    big_num(static_cast<std::size_t>(bn_length + padding), reduce_bn_product),
+    big_float(static_cast<std::size_t>(bf_length + padding + 2), reduce_bf_product),
+    m_bn_length(bn_length),
+    m_bf_length(bf_length),
+    m_int_length(int_length)
+{
+    big_num.single(g_bn_tmp1);
+    big_num.single(g_bn_tmp2);
+    big_num.single(g_bn_tmp3);
+    big_num.single(g_bn_tmp4);
+    big_num.single(g_bn_tmp5);
+    big_num.single(g_bn_tmp6);
+    big_num.wide(g_bn_tmp_copy1);
+    big_num.wide(g_bn_tmp_copy2);
+    big_num.single(g_x_min_bn);
+    big_num.single(g_x_max_bn);
+    big_num.single(g_y_min_bn);
+    big_num.single(g_y_max_bn);
+    big_num.single(g_x_3rd_bn);
+    big_num.single(g_y_3rd_bn);
+    big_num.single(g_delta_x_bn);
+    big_num.single(g_delta_y_bn);
+    big_num.single(g_delta2_x_bn);
+    big_num.single(g_delta2_y_bn);
+    big_num.single(g_old_z_bn.x);
+    big_num.single(g_old_z_bn.y);
+    big_num.single(g_new_z_bn.x);
+    big_num.single(g_new_z_bn.y);
+    big_num.single(g_saved_z_bn.x);
+    big_num.single(g_saved_z_bn.y);
+    big_num.single(g_close_enough_bn);
+    big_num.single(g_param_z_bn.x);
+    big_num.single(g_param_z_bn.y);
+    big_num.single(g_tmp_sqr_x_bn);
+    big_num.single(g_tmp_sqr_y_bn);
+    big_num.single(g_bn_tmp);
+    big_float.single(g_bf_tmp1);
+    big_float.single(g_bf_tmp2);
+    big_float.single(g_bf_tmp3);
+    big_float.single(g_bf_tmp4);
+    big_float.single(g_bf_tmp5);
+    big_float.single(g_bf_tmp6);
+    big_float.wide(g_bf_tmp_copy1);
+    big_float.wide(g_bf_tmp_copy2);
+    big_float.single(g_delta_x_bf);
+    big_float.single(g_delta_y_bf);
+    big_float.single(g_delta2_x_bf);
+    big_float.single(g_delta2_y_bf);
+    big_float.single(g_old_z_bf.x);
+    big_float.single(g_old_z_bf.y);
+    big_float.single(g_new_z_bf.x);
+    big_float.single(g_new_z_bf.y);
+    big_float.single(g_saved_z_bf.x);
+    big_float.single(g_saved_z_bf.y);
+    big_float.single(g_close_enough_bf);
+    big_float.single(g_param_z_bf.x);
+    big_float.single(g_param_z_bf.y);
+    big_float.single(g_tmp_sqr_x_bf);
+    big_float.single(g_tmp_sqr_y_bf);
+    big_float.single(g_big_pi);
+    big_float.single(g_bf_tmp);
+    for (auto &value : m_parameters)
+    {
+        value = big_float.persistent.allocate_single();
+    }
+}
+
+void MathArenas::change_precision(
+    const int bn_length, const int bf_length, const int int_length, const int padding, const bool preserve_parameters)
+{
+    if (bn_length == m_bn_length && bf_length == m_bf_length && int_length == m_int_length)
+    {
+        return;
+    }
+    std::vector<BigArena::Relocation> replacements;
+    replacements.reserve(6);
+    const std::size_t bn_stride = (bn_length + padding + 63) / 64 * 64;
+    const std::size_t bf_stride = (bf_length + padding + 2 + 63) / 64 * 64;
+    for (BigLifetime lifetime : {BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY})
+    {
+        replacements.push_back(big_num.get(lifetime).prepare_relocation(bn_length + padding,
+            [&](Byte *destination, const Byte *source, std::size_t blocks)
+            {
+                std::memset(destination, 0, blocks * bn_stride);
+                if (!big_num.is_workspace(source))
+                {
+                    convert_bn(destination, source, bn_length, int_length, m_bn_length, m_int_length);
+                }
+            }));
+        replacements.push_back(big_float.get(lifetime).prepare_relocation(bf_length + padding + 2,
+            [&](Byte *destination, const Byte *source, std::size_t blocks)
+            {
+                std::memset(destination, 0, blocks * bf_stride);
+                const bool discarded_parameter = !preserve_parameters &&
+                    std::any_of(m_parameters.begin(), m_parameters.end(),
+                        [source](const BigArena::Allocation &value) { return value.data() == source; });
+                if (!big_float.is_workspace(source) && !discarded_parameter)
+                {
+                    convert_bf(destination, source, bf_length, m_bf_length);
+                }
+            }));
+    }
+    for (auto &replacement : replacements)
+    {
+        replacement.commit();
+    }
+    m_bn_length = bn_length;
+    m_bf_length = bf_length;
+    m_int_length = int_length;
+}
+
+void MathArenas::bind(const bool preserve_parameters)
+{
+    big_num.stack.restore(0);
+    big_float.stack.restore(0);
+    big_num.bind_working();
+    big_float.bind_working();
+    const auto targets = parameter_bindings();
+    for (std::size_t i = 0; i < targets.size(); ++i)
+    {
+        *targets[i] = m_parameters[i].data();
+        if (!preserve_parameters)
+        {
+            std::memset(m_parameters[i].data(), 0, big_float.persistent.block_size());
+        }
+    }
+    m_bound = true;
+}
+
+void MathArenas::unbind()
+{
+    m_bound = false;
+    big_num.stack.restore(0);
+    big_float.stack.restore(0);
+    big_num.unbind_working();
+    big_float.unbind_working();
+    for (auto target : parameter_bindings())
+    {
+        *target = nullptr;
+    }
+}
+
+bool MathArenas::bound() const
+{
+    return m_bound;
+}
+
+std::unique_ptr<MathArenas> s_arenas;
+
+} // namespace
+
 static void init_bf2(const int bn_length, const int int_length, const int decimals)
 {
-    const BFMathType math{select_bf_math(g_fractal_type)};
+    const BFMathType math = select_bf_math(g_fractal_type);
     if (!supported_bn_length(bn_length, math))
     {
         throw PrecisionError(fmt::format("Requested precision of {} too high", decimals));
     }
-    const int bf_length{bf_length_for_bn_length(bn_length)};
-    const int rounded_length{bf_length - 4};
-    const int padding{rounded_length == 4 ? 4 : 8};
-    const int r_length{rounded_length + padding};
-    const int r_bf_length{bf_length + padding};
-    // Check scratch globals, persistent values, and temporary stack space
-    // before saving or changing the active precision and arena.
-    long required{10 * r_length + 10 * (r_bf_length + 2)};
-    required +=
-        math == BFMathType::BIG_NUM ? 15 * rounded_length + 7 * r_length : 10 * (bf_length + 2) + 7 * (r_bf_length + 2);
-    required = (required + 1) & ~1L;
-    if (required + NUM_VARS * (bf_length + 2) > BIGNUM_ARENA_SIZE - 22 * (bf_length + 2))
+    const int bf_length = bf_length_for_bn_length(bn_length);
+    const int rounded_length = bf_length - 4;
+    const int padding = rounded_length == 4 ? 4 : 8;
+    const bool preserve_parameters = s_arenas && s_arenas->bound();
+    if (s_arenas)
     {
-        throw PrecisionError(fmt::format("Requested precision of {} too high", decimals));
+        s_arenas->change_precision(rounded_length, bf_length, int_length, padding, preserve_parameters);
     }
-
-    save_bf_vars(); // copy corners values for conversion
-    g_bn_length = bn_length;
+    else
+    {
+        s_arenas = std::make_unique<MathArenas>(rounded_length, bf_length, int_length, padding);
+    }
+    // All potentially throwing storage preparation has completed.
+    g_bn_length = rounded_length;
     g_int_length = int_length;
     g_decimals = decimals;
     calc_lengths();
     g_bf_math = math;
-    s_bn_root = reinterpret_cast<BigFloatPtr>(&s_storage[0]);
+    s_arenas->bind(preserve_parameters);
+}
 
-    // Now split up the memory among the pointers
-    long ptr{};
-    const auto alloc_size = [&ptr](const int size)
+BigArena &bn_arena(const BigLifetime lifetime)
+{
+    return s_arenas->big_num.get(lifetime);
+}
+
+BigArena &bf_arena(const BigLifetime lifetime)
+{
+    return s_arenas->big_float.get(lifetime);
+}
+
+BigStack::BigStack(BigArena &arena) :
+    m_arena(arena)
+{
+}
+
+Byte *BigStack::allocate_single()
+{
+    auto value = m_arena.allocate_single();
+    Byte *result = value.data();
+    std::memset(result, 0, m_arena.block_size());
+    m_values.push_back(std::move(value));
+    return result;
+}
+
+Byte *BigStack::allocate_double()
+{
+    auto value = m_arena.allocate_double();
+    Byte *result = value.data();
+    std::memset(result, 0, 2 * m_arena.block_size());
+    m_values.push_back(std::move(value));
+    return result;
+}
+
+std::size_t BigStack::mark() const
+{
+    return m_values.size();
+}
+
+void BigStack::restore(const std::size_t mark)
+{
+    while (m_values.size() > mark)
     {
-        BigNumPtr result = s_bn_root + ptr;
-        ptr += size;
-        return result;
-    };
-    g_bn_tmp1 = alloc_size(g_r_length);
-    g_bn_tmp2 = alloc_size(g_r_length);
-    g_bn_tmp3 = alloc_size(g_r_length);
-    g_bn_tmp4 = alloc_size(g_r_length);
-    g_bn_tmp5 = alloc_size(g_r_length);
-    g_bn_tmp6 = alloc_size(g_r_length);
-
-    g_bf_tmp1 = alloc_size(g_r_bf_length+2);
-    g_bf_tmp2 = alloc_size(g_r_bf_length+2);
-    g_bf_tmp3 = alloc_size(g_r_bf_length+2);
-    g_bf_tmp4 = alloc_size(g_r_bf_length+2);
-    g_bf_tmp5 = alloc_size(g_r_bf_length+2);
-    g_bf_tmp6 = alloc_size(g_r_bf_length+2);
-
-    g_bf_tmp_copy1 = alloc_size((g_r_bf_length+2)*2);
-    g_bf_tmp_copy2 = alloc_size((g_r_bf_length+2)*2);
-
-    g_bn_tmp_copy1 = alloc_size(g_r_length * 2);
-    g_bn_tmp_copy2 = alloc_size(g_r_length * 2);
-
-    if (g_bf_math == BFMathType::BIG_NUM)
-    {
-        g_x_min_bn = alloc_size(g_bn_length);
-        g_x_max_bn = alloc_size(g_bn_length);
-        g_y_min_bn = alloc_size(g_bn_length);
-        g_y_max_bn = alloc_size(g_bn_length);
-        g_x_3rd_bn = alloc_size(g_bn_length);
-        g_y_3rd_bn = alloc_size(g_bn_length);
-        g_delta_x_bn = alloc_size(g_bn_length);
-        g_delta_y_bn = alloc_size(g_bn_length);
-        g_delta2_x_bn = alloc_size(g_bn_length);
-        g_delta2_y_bn = alloc_size(g_bn_length);
-        g_old_z_bn.x = alloc_size(g_r_length);
-        g_old_z_bn.y = alloc_size(g_r_length);
-        g_new_z_bn.x = alloc_size(g_r_length);
-        g_new_z_bn.y = alloc_size(g_r_length);
-        g_saved_z_bn.x = alloc_size(g_bn_length);
-        g_saved_z_bn.y = alloc_size(g_bn_length);
-        g_close_enough_bn = alloc_size(g_bn_length);
-        g_param_z_bn.x = alloc_size(g_bn_length);
-        g_param_z_bn.y = alloc_size(g_bn_length);
-        g_tmp_sqr_x_bn = alloc_size(g_r_length);
-        g_tmp_sqr_y_bn = alloc_size(g_r_length);
-        g_bn_tmp = alloc_size(g_r_length);
+        m_values.pop_back();
     }
-    else if (g_bf_math == BFMathType::BIG_FLT)
+}
+
+bool BigStack::contains(const Byte *address) const
+{
+    return std::any_of(m_values.begin(), m_values.end(),
+        [address](const BigArena::Allocation &value) { return value.data() == address; });
+}
+
+BigStack &bn_stack()
+{
+    if (!s_arenas || !s_arenas->bound() || g_bf_math == BFMathType::NONE)
     {
-        g_delta_x_bf = alloc_size(g_bf_length+2);
-        g_delta_y_bf = alloc_size(g_bf_length+2);
-        g_delta2_x_bf = alloc_size(g_bf_length+2);
-        g_delta2_y_bf = alloc_size(g_bf_length+2);
-        g_old_z_bf.x = alloc_size(g_r_bf_length+2);
-        g_old_z_bf.y = alloc_size(g_r_bf_length+2);
-        g_new_z_bf.x = alloc_size(g_r_bf_length+2);
-        g_new_z_bf.y = alloc_size(g_r_bf_length+2);
-        g_saved_z_bf.x = alloc_size(g_bf_length+2);
-        g_saved_z_bf.y = alloc_size(g_bf_length+2);
-        g_close_enough_bf = alloc_size(g_bf_length+2);
-        g_param_z_bf.x = alloc_size(g_bf_length+2);
-        g_param_z_bf.y = alloc_size(g_bf_length+2);
-        g_tmp_sqr_x_bf = alloc_size(g_r_bf_length+2);
-        g_tmp_sqr_y_bf = alloc_size(g_r_bf_length+2);
-        g_big_pi = alloc_size(g_bf_length+2);
-        g_bf_tmp = alloc_size(g_r_bf_length+2);
+        throw std::logic_error("BigNum stack called without initialized arbitrary precision");
     }
+    return s_arenas->big_num.stack;
+}
 
-    // ptr needs to be 16-bit aligned on some systems
-    ptr = ptr + 1 &~1;
-
-    s_stack_ptr  = s_bn_root + ptr;
-    g_start_stack = ptr;
-
-    // max stack offset from s_bn_root
-    g_max_stack = BIGNUM_ARENA_SIZE - (g_bf_length + 2) * 22;
-
-    // room for 6 corners + 6 save corners + 10 params at top of extraseg
-    // this area is safe - use for variables that are used outside fractal
-    // generation - e.g. zoom box variables
-    ptr  = g_max_stack;
-    g_bf_x_min = alloc_size(g_bf_length+2);
-    g_bf_x_max = alloc_size(g_bf_length+2);
-    g_bf_y_min = alloc_size(g_bf_length+2);
-    g_bf_y_max = alloc_size(g_bf_length+2);
-    g_bf_x_3rd = alloc_size(g_bf_length+2);
-    g_bf_y_3rd = alloc_size(g_bf_length+2);
-    for (BigFloatPtr &param : g_bf_params)
+BigStack &bf_stack()
+{
+    if (!s_arenas || !s_arenas->bound() || g_bf_math == BFMathType::NONE)
     {
-        param = s_bn_root + ptr;
-        ptr += g_bf_length + 2;
+        throw std::logic_error("BigFloat stack called without initialized arbitrary precision");
     }
-    g_bf_save_x_min = alloc_size(g_bf_length+2);
-    g_bf_save_x_max = alloc_size(g_bf_length+2);
-    g_bf_save_y_min = alloc_size(g_bf_length+2);
-    g_bf_save_y_max = alloc_size(g_bf_length+2);
-    g_bf_save_x_3rd = alloc_size(g_bf_length+2);
-    g_bf_save_y_3rd    = s_bn_root+ptr;
-    // end safe vars
+    return s_arenas->big_float.stack;
+}
 
-    // good citizens initialize variables
-    if (g_bf_save_len > 0)    // leave save area
+bool BigStackMark::operator==(const BigStackMark &right) const
+{
+    return big_num == right.big_num && big_float == right.big_float;
+}
+
+bool BigStackMark::operator!=(const BigStackMark &right) const
+{
+    return !(*this == right);
+}
+
+bool BigStackMark::operator>(const BigStackMark &right) const
+{
+    return big_num + big_float > right.big_num + right.big_float;
+}
+
+BigStackMark save_stack()
+{
+    return !s_arenas || !s_arenas->bound()
+        ? BigStackMark{}
+        : BigStackMark{s_arenas->big_num.stack.mark(), s_arenas->big_float.stack.mark()};
+}
+
+void restore_stack(const BigStackMark old_mark)
+{
+    if (s_arenas)
     {
-        const long saved_size{(g_bf_save_len + 2) * 22};
-        if (g_start_stack > saved_size)
+        s_arenas->big_num.stack.restore(old_mark.big_num);
+        s_arenas->big_float.stack.restore(old_mark.big_float);
+    }
+}
+
+BigStackSaver::BigStackSaver() :
+    m_mark(save_stack())
+{
+}
+
+BigStackSaver::~BigStackSaver()
+{
+    restore_stack(m_mark);
+}
+
+BigMemoryStats big_memory_stats()
+{
+    BigMemoryStats result;
+    if (s_arenas)
+    {
+        for (BigLifetime lifetime : {BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY})
         {
-            std::memset(s_bn_root + saved_size, 0, static_cast<size_t>(g_start_stack - saved_size));
+            for (const BigArena *arena : {&bn_arena(lifetime), &bf_arena(lifetime)})
+            {
+                const std::size_t used = arena->high_water_mark() * arena->block_size();
+                (lifetime == BigLifetime::TEMPORARY ? result.temporaries : result.globals) += used;
+                result.capacity += arena->capacity() * arena->block_size();
+            }
         }
     }
-    else   // first time through - nothing saved
-    {
-        // high variables
-        std::memset(s_bn_root+g_max_stack, 0, (g_bf_length+2)*22);
-        // low variables
-        std::memset(s_bn_root, 0, static_cast<unsigned>(g_start_stack));
-    }
-
-    restore_bf_vars();
+    return result;
 }
 
-/**********************************************************/
-// save current corners and parameters to start of s_bn_root
-// to preserve values across calls to init_bf()
-static int save_bf_vars()
+std::vector<char> pack_bf_parameters()
 {
-    int ret;
-    if (s_bn_root != nullptr)
+    const std::size_t length = static_cast<std::size_t>(g_bf_length) + 2;
+    std::vector<char> result(22 * length);
+    std::size_t offset = 0;
+    for (BigFloatPtr *value : parameter_bindings())
     {
-        const unsigned int mem = (g_bf_length+2)*22;  // 6 corners + 6 save corners + 10 params
-        g_bf_save_len = g_bf_length;
-        std::memcpy(s_bn_root, g_bf_x_min, mem);
-        // scrub old high area
-        std::memset(g_bf_x_min, 0, mem);
-        ret = 0;
+        std::memcpy(result.data() + offset, *value, length);
+        offset += length;
     }
-    else
-    {
-        g_bf_save_len = 0;
-        ret = -1;
-    }
-    return ret;
+    return result;
 }
 
-/************************************************************************/
-// copy current corners and parameters from save location
-static int restore_bf_vars()
+void unpack_bf_parameters(const std::vector<char> &parameters)
 {
-    if (g_bf_save_len == 0)
+    const std::size_t length = static_cast<std::size_t>(g_bf_length) + 2;
+    if (parameters.size() != 22 * length)
     {
-        return -1;
+        throw std::invalid_argument("Incomplete arbitrary precision parameter payload");
     }
-    BigFloatPtr ptr = s_bn_root;
-    convert_bf(g_bf_x_min, ptr, g_bf_length, g_bf_save_len);
-    ptr += g_bf_save_len+2;
-    convert_bf(g_bf_x_max, ptr, g_bf_length, g_bf_save_len);
-    ptr += g_bf_save_len+2;
-    convert_bf(g_bf_y_min, ptr, g_bf_length, g_bf_save_len);
-    ptr += g_bf_save_len+2;
-    convert_bf(g_bf_y_max, ptr, g_bf_length, g_bf_save_len);
-    ptr += g_bf_save_len+2;
-    convert_bf(g_bf_x_3rd, ptr, g_bf_length, g_bf_save_len);
-    ptr += g_bf_save_len+2;
-    convert_bf(g_bf_y_3rd, ptr, g_bf_length, g_bf_save_len);
-    ptr += g_bf_save_len+2;
-    for (BigFloatPtr &param : g_bf_params)
+    std::size_t offset = 0;
+    for (BigFloatPtr *value : parameter_bindings())
     {
-        convert_bf(param, ptr, g_bf_length, g_bf_save_len);
-        ptr += g_bf_save_len + 2;
+        std::memcpy(*value, parameters.data() + offset, length);
+        offset += length;
     }
-    convert_bf(g_bf_save_x_min, ptr, g_bf_length, g_bf_save_len);
-    ptr += g_bf_save_len+2;
-    convert_bf(g_bf_save_x_max, ptr, g_bf_length, g_bf_save_len);
-    ptr += g_bf_save_len+2;
-    convert_bf(g_bf_save_y_min, ptr, g_bf_length, g_bf_save_len);
-    ptr += g_bf_save_len+2;
-    convert_bf(g_bf_save_y_max, ptr, g_bf_length, g_bf_save_len);
-    ptr += g_bf_save_len+2;
-    convert_bf(g_bf_save_x_3rd, ptr, g_bf_length, g_bf_save_len);
-    ptr += g_bf_save_len+2;
-    convert_bf(g_bf_save_y_3rd, ptr, g_bf_length, g_bf_save_len);
-
-    // scrub save area
-    std::memset(s_bn_root, 0, (g_bf_save_len+2)*22);
-    return 0;
 }
 
-/*******************************************/
-// free corners and parameters save memory
 void free_bf_vars()
 {
-    s_bn_root = nullptr;
-    s_stack_ptr = nullptr;
-    g_start_stack = 0;
-    g_max_stack = 0;
-    g_bignum_max_stack_addr = 0;
-    g_bf_save_len = 0;
+    if (s_arenas)
+    {
+        s_arenas->unbind();
+    }
+    g_bf_pi = nullptr;
+    g_bn_pi = nullptr;
     g_bf_math = BFMathType::NONE;
     g_bn_step = 0;
     g_bn_length = 0;
@@ -437,47 +664,6 @@ void free_bf_vars()
     g_r_bf_length = 0;
     g_bf_decimals = 0;
 }
-
-/************************************************************************/
-// Memory allocator routines start here.
-/************************************************************************/
-// Allocates a BigNum variable on stack
-BigNumPtr alloc_stack(const size_t size)
-{
-    if (g_bf_math == BFMathType::NONE || s_bn_root == nullptr || s_stack_ptr == nullptr)
-    {
-        throw std::logic_error("alloc_stack called without initialized arbitrary precision");
-    }
-    const long current_addr{static_cast<long>(s_stack_ptr - s_bn_root)};
-    if (size > static_cast<size_t>(g_max_stack - current_addr))
-    {
-        throw PrecisionError("Out of Bignum Stack Space");
-    }
-    const long stack_addr{current_addr + static_cast<long>(size)};
-    // keep track of max ptr
-    g_bignum_max_stack_addr = std::max(stack_addr, g_bignum_max_stack_addr);
-    s_stack_ptr += size;   // increment stack pointer
-    return s_stack_ptr - size;
-}
-
-/************************************************************************/
-// Returns stack pointer offset so it can be saved.
-int save_stack()
-{
-    return s_bn_root == nullptr ? 0 : static_cast<int>(s_stack_ptr - s_bn_root);
-}
-
-/************************************************************************/
-// Restores stack pointer, effectively freeing local variables
-//    allocated since save_stack()
-void restore_stack(const int old_offset)
-{
-    s_stack_ptr = s_bn_root == nullptr ? nullptr : s_bn_root + old_offset;
-}
-
-/************************************************************************/
-// Memory allocator routines end here.
-/************************************************************************/
 
 static int integer_length()
 {

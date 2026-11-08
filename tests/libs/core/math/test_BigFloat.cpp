@@ -72,7 +72,7 @@ void TestBigFloatValue::TearDown()
 
 TEST_F(TestBigFloatValue, zeroConstructionDoesNotAllocateArenaStorage)
 {
-    const int marker = save_stack();
+    const auto marker = save_stack();
 
     const BigFloat value;
 
@@ -119,7 +119,7 @@ TEST_F(TestBigFloatValue, supportsTheLargestLegacyLayout)
 TEST_F(TestBigFloatValue, importsEncodedBytesWithoutMachineFloatConversion)
 {
     const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    BigFloatPtr source = alloc_stack(size);
+    BigFloatPtr source = bf_stack().allocate_single();
     str_to_bf(source, "-1.23456789012345678901234567890123456789e-400");
     const std::vector<Byte> expected(source, source + size);
 
@@ -131,15 +131,15 @@ TEST_F(TestBigFloatValue, importsEncodedBytesWithoutMachineFloatConversion)
 
 TEST_F(TestBigFloatValue, valueSurvivesArenaRewindAndReuse)
 {
-    const int marker = save_stack();
+    const auto marker = save_stack();
     const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    BigFloatPtr source = alloc_stack(size);
+    BigFloatPtr source = bf_stack().allocate_single();
     str_to_bf(source, "1.23456789012345678901234567890123456789");
     const BigFloat value = BigFloat::from_legacy(source, size);
     const auto expected = encoded_value(value);
 
     restore_stack(marker);
-    BigFloatPtr reused = alloc_stack(size);
+    BigFloatPtr reused = bf_stack().allocate_single();
     ASSERT_EQ(source, reused);
     std::fill_n(reused, size, Byte{0xff});
 
@@ -411,11 +411,11 @@ TEST_P(TestBigFloatArithmetic, expressionsMatchLegacySequencesAndOutliveTheirTem
     mult_bf(expected.data(), expected.data(), raw_left.data());
     sub_bf(expected.data(), expected.data(), raw_right.data());
     expected.resize(static_cast<std::size_t>(g_bf_length + 2));
-    const int marker = save_stack();
+    const auto marker = save_stack();
 
     const BigFloat result = ((left + right) / divisor) * left - right;
     const BigFloat unrelated = BigFloat{"-8"} * BigFloat{"-9"};
-    alloc_stack(g_r_bf_length + 2);
+    bf_stack().allocate_single();
     restore_stack(marker);
 
     EXPECT_EQ(expected, encoded_value(result));
