@@ -36,7 +36,7 @@
 #include <geometry/3d.h>
 #include <geometry/line3d.h>
 #include <io/disk_storage.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/debug_flags.h>
 #include <misc/stack_avail.h>
 #include <misc/ValueSaver.h>

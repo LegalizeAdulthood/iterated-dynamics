@@ -27,7 +27,7 @@
 #include <fractals/burning_ship.h>
 #include <io/library.h>
 #include <misc/ValueSaver.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <ui/KeyboardHandler.h>
 #include <ui/SoundSession.h>
 #include <ui/video.h>

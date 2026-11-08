@@ -28,7 +28,7 @@
 #include <io/gif_extensions.h>
 #include <io/gif_file.h>
 #include <io/GifRestore.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/ValueSaver.h>
 
 #include <gif_lib.h>

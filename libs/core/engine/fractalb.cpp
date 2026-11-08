@@ -16,7 +16,7 @@
 #include <fractals/divide_brot.h>
 #include <fractals/fractalp.h>
 #include <fractals/frasetup.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <math/fixed_pt.h>
 
 #include <fmt/format.h>

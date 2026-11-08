@@ -39,7 +39,7 @@
 #include <io/special_dirs.h>
 #include <io/check_write_file.h>
 #include <geometry/line3d.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/ValueSaver.h>
 #include <misc/memory.h>
 #include <misc/debug_flags.h>

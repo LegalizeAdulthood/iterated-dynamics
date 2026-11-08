@@ -6,7 +6,7 @@
 #include <engine/bailout_formula.h>
 #include <engine/calcfrac.h>
 #include <engine/fractals.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <math/complex_fn.h>
 
 #include <cmath>

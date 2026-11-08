@@ -55,7 +55,7 @@
 #include <io/library.h>
 #include <io/save_timer.h>
 #include <io/update_save_name.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <math/fixed_pt.h>
 #include <math/sign.h>
 #include <misc/debug_flags.h>

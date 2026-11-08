@@ -49,7 +49,7 @@
 #include <io/loadfile.h>
 #include <io/loadmap.h>
 #include <math/big.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <math/sign.h>
 #include <misc/debug_flags.h>
 #include <misc/Driver.h>

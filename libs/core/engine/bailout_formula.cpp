@@ -6,7 +6,7 @@
 #include <engine/calcfrac.h>
 #include <engine/fractalb.h>
 #include <engine/fractals.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 
 #include <cmath>
 #include <stdexcept>

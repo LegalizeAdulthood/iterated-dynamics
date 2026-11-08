@@ -4,7 +4,7 @@
 #pragma once
 
 #include <math/big.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <math/sqr.h>
 
 #include <algorithm>

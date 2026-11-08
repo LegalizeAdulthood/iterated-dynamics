@@ -20,7 +20,7 @@
 #include <io/disk_storage.h>
 #include <io/save_timer.h>
 #include <io/special_dirs.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 

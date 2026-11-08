@@ -6,7 +6,7 @@
 #include <engine/bailout_formula.h>
 #include <engine/UserData.h>
 #include <fractals/fractype.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>

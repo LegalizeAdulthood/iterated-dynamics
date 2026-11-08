@@ -3,7 +3,7 @@
 //
 #include <engine/Inversion.h>
 
-#include <math/biginit.h>
+#include <math/big_init.h>
 
 #include <cmath>
 #include <limits>

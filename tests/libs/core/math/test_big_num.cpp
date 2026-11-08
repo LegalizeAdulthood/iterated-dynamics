@@ -2,7 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include <math/big.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>

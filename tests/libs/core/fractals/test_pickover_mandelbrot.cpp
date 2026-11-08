@@ -9,7 +9,7 @@
 #include <fractals/fractalp.h>
 #include <fractals/frasetup.h>
 #include <fractals/fractype.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/ValueSaver.h>
 #include <misc/debug_flags.h>
 

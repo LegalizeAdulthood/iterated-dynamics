@@ -7,7 +7,7 @@
 #include <engine/StandardFractal.h>
 #include <engine/UserData.h>
 #include <fractals/fractype.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 
 #include <complex>
 

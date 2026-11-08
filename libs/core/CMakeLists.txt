@@ -167,11 +167,11 @@ add_library(id-core
     include/math/arg.h math/arg.cpp
     include/math/big.h
     include/math/BigFloat.h math/BigFloat.cpp
-    include/math/BigNum.h math/BigNumValue.cpp
-    math/bigflt.cpp
-    include/math/biginit.h math/biginit.cpp
-    math/bignum.cpp
-    math/bignumc.cpp
+    include/math/BigNum.h math/BigNum.cpp
+    math/big_float.cpp
+    include/math/big_init.h math/big_init.cpp
+    math/big_num.cpp
+    math/big_numc.cpp
     include/math/cmplx.h math/cmplx.cpp
     include/math/complex_fn.h
     include/math/fixed_pt.h math/fixed_pt.cpp

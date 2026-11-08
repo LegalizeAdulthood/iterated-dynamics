@@ -51,7 +51,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <fractals/magnet.h>
 #include <fractals/newton.h>
 #include <math/arg.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 
 #include <cfloat>
 #include <cmath>

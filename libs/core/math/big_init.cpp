@@ -8,7 +8,7 @@ Note: This is NOT the biginit.c file that come the standard BigNum library,
 but is a customized version specific to the original Fractint code.
 The biggest difference is in the allocations of memory for the big numbers.
 */
-#include <math/biginit.h>
+#include <math/big_init.h>
 
 #include <engine/bailout_formula.h>
 #include <engine/calcfrac.h>

@@ -35,7 +35,7 @@
 #include <io/gif_extensions.h>
 #include <io/gif_file.h>
 #include <io/GifRestore.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <ui/get_video_mode.h>
 #include <ui/video_mode.h>
 #include <ui/get_3d_params.h>

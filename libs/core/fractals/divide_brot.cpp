@@ -11,7 +11,7 @@
 #include <engine/pixel_grid.h>
 #include <fractals/newton.h>
 #include <math/big.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <math/fpu087.h>
 
 using namespace id::engine;

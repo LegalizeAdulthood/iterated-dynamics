@@ -10,7 +10,7 @@
 #include <engine/trig_fns.h>
 #include <fractals/frasetup.h>
 #include <math/arg.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <math/complex_fn.h>
 #include <math/fpu087.h>
 #include <misc/debug_flags.h>

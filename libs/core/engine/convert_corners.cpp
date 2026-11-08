@@ -5,7 +5,7 @@
 
 #include <engine/calc_frac_init.h>
 #include <engine/ImageRegion.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/id.h>
 
 #include <cmath>

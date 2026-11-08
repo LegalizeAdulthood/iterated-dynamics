@@ -23,7 +23,7 @@
 #include <io/loadfile.h>
 #include <io/trim_filename.h>
 #include <math/big.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <math/round_float_double.h>
 #include <misc/Driver.h>
 #include <ui/big_while_loop.h>

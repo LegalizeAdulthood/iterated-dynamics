@@ -22,7 +22,7 @@
 #include <fractals/fractalp.h>
 #include <fractals/lyapunov.h>
 #include <math/big.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/Driver.h>
 #include <misc/id.h>
 #include <ui/big_while_loop.h>

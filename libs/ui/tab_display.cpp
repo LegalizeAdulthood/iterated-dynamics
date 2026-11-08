@@ -32,7 +32,7 @@
 #include <io/loadfile.h>
 #include <io/special_dirs.h>
 #include <io/trim_filename.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/Driver.h>
 #include <misc/version.h>
 #include <misc/ValueSaver.h>

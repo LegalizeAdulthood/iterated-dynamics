@@ -29,7 +29,7 @@
 #include <io/loadfile.h>
 #include <io/loadmap.h>
 #include <io/special_dirs.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 #include <ui/comments.h>

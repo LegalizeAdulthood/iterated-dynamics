@@ -25,7 +25,7 @@
 #include <engine/VideoInfo.h>
 #include <fractals/fractalp.h>
 #include <fractals/pickover_mandelbrot.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <math/complex_fn.h>
 #include <misc/id.h>
 #include <misc/run_cleanup.h>

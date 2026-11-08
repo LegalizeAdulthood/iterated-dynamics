@@ -13,7 +13,7 @@
 #include <engine/UserData.h>
 #include <engine/VideoInfo.h>
 #include <fractals/fractalp.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 

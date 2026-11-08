@@ -61,7 +61,7 @@
 #include <io/loadmap.h>
 #include <io/save_timer.h>
 #include <io/special_dirs.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/debug_flags.h>
 #include <misc/id.h>
 #include <misc/version.h>

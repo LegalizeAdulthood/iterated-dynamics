@@ -4,7 +4,7 @@
 #include <ui/ImageRenderContext.h>
 
 #include <engine/cmdfiles.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/Driver.h>
 #include <misc/run_cleanup.h>
 #include <ui/calculate_image.h>

@@ -64,6 +64,7 @@ add_executable(test-core
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_library.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_migrate_gif.h"
+
     engine/test_bailout_formula.cpp
     engine/test_BoundaryTrace.cpp
     engine/test_calc_frac_init.cpp
@@ -90,6 +91,7 @@ add_executable(test-core
     engine/test_StandardPass.cpp
     engine/test_Tesseral.cpp
     engine/test_trig_fns.cpp
+
     fractals/test_ant.cpp
     fractals/test_bifurcation.cpp
     fractals/test_check_orbit_name.cpp
@@ -104,7 +106,9 @@ add_executable(test-core
     fractals/test_parser.cpp
     fractals/test_pickover_mandelbrot.cpp
     fractals/test_seeded_fractals.cpp
+
     geometry/test_StereoView.cpp
+
     io/test_check_write_file.cpp
     io/test_check_write_file_data.h.in
     io/test_disk_storage.cpp
@@ -127,17 +131,20 @@ add_executable(test-core
     io/test_search_path.cpp
     io/test_trim_filename.cpp
     io/test_update_save_name.cpp
-    math/test_bignum.cpp
+
+    math/test_big_float.cpp
+    math/test_big_num.cpp
     math/test_BigFloat.cpp
-    math/test_BigNumValue.cpp
-    math/test_bigflt.cpp
+    math/test_BigNum.cpp
     math/test_cmplx.cpp
     math/test_fpu087.cpp
     math/test_math.cpp
     math/test_round_float_double.cpp
+
     misc/test_driver.cpp
     misc/test_memory.cpp
     misc/test_ValueSaver.cpp
+
     misc/test_version.cpp
     test/test_CommandTestFile.cpp
     test/test_GifReadSupport.cpp

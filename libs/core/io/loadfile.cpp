@@ -38,7 +38,7 @@
 #include <io/gif_extensions.h>
 #include <io/gif_file.h>
 #include <io/library.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <math/round_float_double.h>
 #include <misc/id.h>
 

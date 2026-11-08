@@ -7,7 +7,7 @@
 #include <engine/convert_corners.h>
 #include <engine/fractalb.h>
 #include <engine/ImageRegion.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <math/sign.h>
 #include <math/sqr.h>
 #include <misc/debug_flags.h>

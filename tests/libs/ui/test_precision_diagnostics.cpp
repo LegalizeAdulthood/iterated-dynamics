@@ -14,7 +14,7 @@
 #include <engine/LogicalScreen.h>
 #include <engine/UserData.h>
 #include <fractals/fractype.h>
-#include <math/biginit.h>
+#include <math/big_init.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 #include <ui/id_keys.h>
