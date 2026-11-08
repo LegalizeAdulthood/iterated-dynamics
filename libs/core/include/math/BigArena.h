@@ -29,9 +29,15 @@ public:
         Allocation &operator=(Allocation &&other) noexcept;
 
         explicit operator bool() const noexcept;
+        // Accessors and cloning require a live allocation.
+        BigArena &arena() const noexcept;
         Index index() const noexcept;
         Byte *data() noexcept;
         const Byte *data() const noexcept;
+        // Copy all allocation bytes, preserving its width and allocator.
+        Allocation clone() const;
+        // The selected arena must have the same block size and numeric layout.
+        Allocation clone(BigArena &arena) const;
         // Requires a live allocation obtained through allocate_double().
         void reduce();
 

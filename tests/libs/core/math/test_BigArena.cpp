@@ -120,6 +120,162 @@ TEST_P(TestBigArenaAlignment, alignsEveryBlockAndBothHalvesOfPairs)
 
 INSTANTIATE_TEST_SUITE_P(BlockBytes, TestBigArenaAlignment, testing::Values(1U, 63U, 64U, 65U, 129U, 720U));
 
+TEST(TestBigArena, cloningASingleAllocationRetainsItsArenaAndOwnsAnIndependentBlock)
+{
+    BigArena arena{17, 2, keep_first_block};
+    auto original = arena.allocate_single();
+    std::fill_n(original.data(), arena.block_size(), Byte{0x5a});
+
+    auto copy = std::as_const(original).clone();
+
+    EXPECT_EQ(&arena, &copy.arena());
+    EXPECT_NE(original.index(), copy.index());
+    EXPECT_NE(original.data(), copy.data());
+    EXPECT_TRUE(std::equal(original.data(), original.data() + arena.block_size(), copy.data()));
+    copy.data()[0] = 0x33;
+    EXPECT_EQ(0x5a, original.data()[0]);
+    EXPECT_THROW(arena.allocate_single(), PrecisionError);
+    const auto copy_index = copy.index();
+    copy = {};
+    const auto reused = arena.allocate_single();
+    EXPECT_EQ(copy_index, reused.index());
+    EXPECT_EQ(0x5a, original.data()[0]);
+}
+
+TEST(TestBigArena, cloningAWideAllocationCopiesBothBlocksAndReleasesBoth)
+{
+    BigArena arena{65, 4, keep_first_block};
+    auto original = arena.allocate_double();
+    const auto size = 2 * arena.block_size();
+    std::fill_n(original.data(), arena.block_size(), Byte{0x11});
+    std::fill_n(original.data() + arena.block_size(), arena.block_size(), Byte{0x5a});
+
+    auto copy = original.clone();
+
+    EXPECT_EQ(&arena, &copy.arena());
+    EXPECT_EQ(2, copy.index());
+    EXPECT_TRUE(std::equal(original.data(), original.data() + size, copy.data()));
+    copy.data()[size - 1] = 0x33;
+    EXPECT_EQ(0x5a, original.data()[size - 1]);
+    EXPECT_THROW(arena.allocate_single(), PrecisionError);
+    copy = {};
+    const auto reused = arena.allocate_double();
+    EXPECT_EQ(2, reused.index());
+    EXPECT_EQ(0x5a, original.data()[size - 1]);
+}
+
+class TestBigArenaClone : public testing::TestWithParam<bool>
+{
+};
+
+TEST_P(TestBigArenaClone, cloningIntoASelectedArenaBindsAndReleasesThroughThatArena)
+{
+    BigArena source{65, 2, keep_first_block};
+    BigArena destination{65, 2, keep_first_block};
+    auto original = GetParam() ? source.allocate_double() : source.allocate_single();
+    const auto size = (GetParam() ? 2 : 1) * source.block_size();
+    std::fill_n(original.data(), size, Byte{0x5a});
+
+    auto copy = original.clone(destination);
+
+    EXPECT_EQ(&source, &original.arena());
+    EXPECT_EQ(&destination, &copy.arena());
+    EXPECT_NE(original.data(), copy.data());
+    EXPECT_TRUE(std::equal(original.data(), original.data() + size, copy.data()));
+    copy.data()[size - 1] = 0x33;
+    EXPECT_EQ(0x5a, original.data()[size - 1]);
+    copy = {};
+    const auto reused = destination.allocate_double();
+    EXPECT_EQ(0, reused.index());
+    EXPECT_THROW(source.allocate_double(), PrecisionError);
+    EXPECT_EQ(0x5a, original.data()[size - 1]);
+}
+
+INSTANTIATE_TEST_SUITE_P(Widths, TestBigArenaClone, testing::Bool());
+
+TEST(TestBigArena, cloningAReducedAllocationUsesItsCurrentWidth)
+{
+    BigArena source{17, 2, reduce_from_second_block};
+    BigArena destination{17, 2, keep_first_block};
+    auto original = source.allocate_double();
+    std::fill_n(original.data(), 128, Byte{0x5a});
+    original.reduce();
+    auto source_half = source.allocate_single();
+    std::fill_n(source_half.data(), 64, Byte{0x33});
+
+    const auto copy = original.clone(destination);
+
+    EXPECT_TRUE(std::equal(original.data(), original.data() + 64, copy.data()));
+    const auto destination_half = destination.allocate_single();
+    EXPECT_EQ(1, destination_half.index());
+    EXPECT_EQ(0x33, source_half.data()[0]);
+}
+
+TEST(TestBigArena, clonedWideAllocationsUseTheSelectedArenasReducer)
+{
+    BigArena source{17, 2, reduce_from_second_block};
+    BigArena destination{17, 2, reduce_from_end};
+    auto original = source.allocate_double();
+    std::fill_n(original.data(), 128, Byte{});
+    original.data()[64] = 23;
+    original.data()[127] = 29;
+    auto copy = original.clone(destination);
+    const auto index = copy.index();
+
+    copy.reduce();
+
+    EXPECT_EQ(&destination, &copy.arena());
+    EXPECT_EQ(index, copy.index());
+    EXPECT_EQ(29, copy.data()[0]);
+    EXPECT_EQ(0, original.data()[0]);
+    EXPECT_EQ(23, original.data()[64]);
+    const auto released_half = destination.allocate_single();
+    EXPECT_EQ(index + 1, released_half.index());
+    EXPECT_THROW(source.allocate_single(), PrecisionError);
+}
+
+TEST(TestBigArena, failedCloningPreservesTheSourceAndDestinationFreeHalf)
+{
+    BigArena source{17, 2, keep_first_block};
+    BigArena destination{17, 2, keep_first_block};
+    auto original = source.allocate_double();
+    std::fill_n(original.data(), 128, Byte{0x5a});
+    auto occupied = destination.allocate_single();
+    occupied.data()[0] = 0x33;
+
+    EXPECT_THROW(original.clone(), PrecisionError);
+    EXPECT_THROW(original.clone(destination), PrecisionError);
+
+    EXPECT_TRUE(std::all_of(original.data(), original.data() + 128, [](Byte value) { return value == 0x5a; }));
+    EXPECT_EQ(0x33, occupied.data()[0]);
+    const auto remaining = destination.allocate_single();
+    EXPECT_EQ(1, remaining.index());
+    EXPECT_EQ(2, destination.high_water_mark());
+}
+
+TEST(TestBigArena, repeatedCloningReusesBlocksWithoutBackingAllocations)
+{
+    CountingResource source_resource;
+    CountingResource destination_resource;
+    BigArena source{17, 4, keep_first_block, source_resource};
+    BigArena destination{17, 4, keep_first_block, destination_resource};
+    for (int i = 0; i < 1000; ++i)
+    {
+        auto original = i % 2 == 0 ? source.allocate_single() : source.allocate_double();
+        const auto size = (i % 2 == 0 ? 1 : 2) * source.block_size();
+        std::fill_n(original.data(), size, Byte{0x5a});
+        const auto local = original.clone();
+        const auto selected = original.clone(destination);
+        EXPECT_EQ(0x5a, local.data()[size - 1]);
+        EXPECT_EQ(0x5a, selected.data()[size - 1]);
+    }
+
+    EXPECT_EQ(4, source.high_water_mark());
+    EXPECT_EQ(2, destination.high_water_mark());
+    EXPECT_EQ(1, source_resource.allocations);
+    EXPECT_EQ(1, destination_resource.allocations);
+}
+
 TEST(TestBigArena, reservesFreshStorageInPairs)
 {
     BigArena arena{17, 8, keep_first_block};

@@ -90,6 +90,11 @@ BigArena::Allocation::operator bool() const noexcept
     return m_arena != nullptr;
 }
 
+BigArena &BigArena::Allocation::arena() const noexcept
+{
+    return *m_arena;
+}
+
 BigArena::Index BigArena::Allocation::index() const noexcept
 {
     return m_index;
@@ -103,6 +108,20 @@ Byte *BigArena::Allocation::data() noexcept
 const Byte *BigArena::Allocation::data() const noexcept
 {
     return std::as_const(*m_arena).data(m_index);
+}
+
+BigArena::Allocation BigArena::Allocation::clone() const
+{
+    return clone(*m_arena);
+}
+
+BigArena::Allocation BigArena::Allocation::clone(BigArena &arena) const
+{
+    assert(arena.m_block_size == m_arena->m_block_size);
+    const Byte width = m_arena->m_widths[m_index];
+    Allocation result = width == 1 ? arena.allocate_single() : arena.allocate_double();
+    std::memcpy(result.data(), data(), width * m_arena->m_block_size);
+    return result;
 }
 
 void BigArena::Allocation::reduce()
