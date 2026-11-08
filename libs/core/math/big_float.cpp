@@ -695,22 +695,11 @@ bool is_bf_zero(BigFloatConstPtr n)
 
 /************************************************************************/
 // convert_bf  -- convert bigfloat numbers from old to new lengths
-int convert_bf(BigFloatPtr new_num, BigFloatPtr old_num, const int new_bf_len, const int old_bf_len)
+int convert_bf(BigFloatPtr new_num, BigFloatConstPtr old_num, const int new_bf_len, const int old_bf_len)
 {
-    // save lengths so not dependent on external environment
-    int save_bf_length = g_bf_length;
-    g_bf_length      = new_bf_len;
-    clear_bf(new_num);
-    g_bf_length      = save_bf_length;
-
-    if (new_bf_len > old_bf_len)
-    {
-        std::memcpy(new_num+new_bf_len-old_bf_len, old_num, old_bf_len+2);
-    }
-    else
-    {
-        std::memcpy(new_num, old_num+old_bf_len-new_bf_len, new_bf_len+2);
-    }
+    const int retained = std::min(new_bf_len, old_bf_len);
+    std::memset(new_num, 0, new_bf_len + 2);
+    std::memcpy(new_num + new_bf_len - retained, old_num + old_bf_len - retained, retained + 2);
     return 0;
 }
 

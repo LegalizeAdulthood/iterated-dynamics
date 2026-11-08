@@ -186,6 +186,57 @@ BigArena::Allocation BigArena::allocate_double()
     return Allocation{*this, index};
 }
 
+void BigArena::relocate(const std::size_t block_size, const Migrate &migrate)
+{
+    BigArena replacement{block_size, m_capacity, m_reduce, m_resource};
+    replacement.m_high_water = m_high_water;
+    for (Index index = 0; index < m_high_water;)
+    {
+        const Byte width = m_widths[index];
+        if (width != 0)
+        {
+            migrate(replacement.data(index), data(index), width);
+            replacement.m_widths[index] = width;
+            index += width;
+        }
+        else
+        {
+            ++index;
+        }
+    }
+
+    // Rebuild links in free blocks only; a wide companion is not a free half.
+    for (Index index = 0; index < m_high_water; index += 2)
+    {
+        if (replacement.m_widths[index] == 2)
+        {
+            continue;
+        }
+        if (replacement.m_widths[index] == 0 && replacement.m_widths[index + 1] == 0)
+        {
+            replacement.push(replacement.m_free_pairs, index);
+        }
+        else
+        {
+            for (Index half = index; half < index + 2; ++half)
+            {
+                if (replacement.m_widths[half] == 0)
+                {
+                    replacement.push(replacement.m_free_halves, half);
+                }
+            }
+        }
+    }
+
+    // Publish the complete replacement before its destructor frees old storage.
+    std::swap(m_block_size, replacement.m_block_size);
+    std::swap(m_storage_size, replacement.m_storage_size);
+    std::swap(m_storage, replacement.m_storage);
+    std::swap(m_widths, replacement.m_widths);
+    std::swap(m_free_pairs, replacement.m_free_pairs);
+    std::swap(m_free_halves, replacement.m_free_halves);
+}
+
 std::size_t BigArena::block_size() const noexcept
 {
     return m_block_size;

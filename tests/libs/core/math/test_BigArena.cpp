@@ -9,8 +9,11 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <functional>
 #include <limits>
 #include <memory_resource>
+#include <new>
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -29,25 +32,50 @@ public:
     std::size_t deallocations{};
     std::size_t bytes{};
     std::size_t alignment{};
+    bool fail_next{};
+    std::function<void()> on_deallocate;
 
 private:
+    struct Block
+    {
+        void *pointer;
+        std::size_t size;
+        std::size_t alignment;
+    };
+
     void *do_allocate(std::size_t size, std::size_t align) override;
     void do_deallocate(void *pointer, std::size_t size, std::size_t align) override;
     bool do_is_equal(const std::pmr::memory_resource &other) const noexcept override;
+
+    std::vector<Block> m_blocks;
 };
 
 void *CountingResource::do_allocate(const std::size_t size, const std::size_t align)
 {
+    if (std::exchange(fail_next, false))
+    {
+        throw std::bad_alloc{};
+    }
+    void *pointer = std::pmr::new_delete_resource()->allocate(size, align);
+    m_blocks.push_back({pointer, size, align});
     ++allocations;
     bytes = size;
     alignment = align;
-    return std::pmr::new_delete_resource()->allocate(size, align);
+    return pointer;
 }
 
 void CountingResource::do_deallocate(void *pointer, const std::size_t size, const std::size_t align)
 {
-    EXPECT_EQ(bytes, size);
-    EXPECT_EQ(alignment, align);
+    const auto block = std::find_if(
+        m_blocks.begin(), m_blocks.end(), [pointer](const Block &entry) { return entry.pointer == pointer; });
+    ASSERT_NE(m_blocks.end(), block);
+    EXPECT_EQ(block->size, size);
+    EXPECT_EQ(block->alignment, align);
+    m_blocks.erase(block);
+    if (on_deallocate)
+    {
+        on_deallocate();
+    }
     ++deallocations;
     std::pmr::new_delete_resource()->deallocate(pointer, size, align);
 }
@@ -568,5 +596,287 @@ TEST(TestBigArena, rejectsEmptyGeometryAndMissingReductionBeforeAllocating)
     EXPECT_THROW((BigArena{17, 2, nullptr, resource}), std::invalid_argument);
     EXPECT_EQ(0, resource.allocations);
 }
+
+TEST(TestBigArena, relocationPreservesIndicesWidthsHolesAndTheHighWaterMark)
+{
+    CountingResource resource;
+    BigArena arena{17, 10, reduce_from_end, resource};
+    auto first = arena.allocate_single();
+    auto second = arena.allocate_single();
+    auto third = arena.allocate_single();
+    auto fourth = arena.allocate_single();
+    auto wide = arena.allocate_double();
+    auto released_pair = arena.allocate_double();
+    second = {};
+    third = {};
+    released_pair = {};
+    std::fill_n(first.data(), 64, Byte{0x11});
+    std::fill_n(fourth.data(), 64, Byte{0x33});
+    std::fill_n(wide.data(), 128, Byte{0x55});
+    wide.data()[127] = 0x7b;
+    const Byte *old_first = first.data();
+    const Byte *old_fourth = fourth.data();
+    const Byte *old_wide = wide.data();
+    std::vector<std::size_t> widths;
+    std::vector<const Byte *> sources;
+    resource.on_deallocate = [&]
+    {
+        EXPECT_NE(old_first, first.data());
+        EXPECT_EQ(128, arena.block_size());
+        EXPECT_EQ(0x11, first.data()[0]);
+        EXPECT_EQ(0x7b, wide.data()[127]);
+    };
+
+    arena.relocate(65,
+        [&](Byte *destination, const Byte *source, std::size_t width)
+        {
+            EXPECT_EQ(old_first, first.data());
+            EXPECT_EQ(0, resource.deallocations);
+            widths.push_back(width);
+            sources.push_back(source);
+            std::fill_n(destination, width * 128, Byte{});
+            std::copy_n(source, width * 64, destination);
+        });
+
+    resource.on_deallocate = {};
+    EXPECT_EQ((std::vector<std::size_t>{1, 1, 2}), widths);
+    EXPECT_EQ((std::vector<const Byte *>{old_first, old_fourth, old_wide}), sources);
+    EXPECT_EQ(10, arena.capacity());
+    EXPECT_EQ(8, arena.high_water_mark());
+    EXPECT_EQ(2, resource.allocations);
+    EXPECT_EQ(1, resource.deallocations);
+    EXPECT_EQ(0, resource.bytes % 64);
+    EXPECT_EQ(64, resource.alignment);
+    EXPECT_EQ(&arena, &first.arena());
+    EXPECT_EQ(0, first.index());
+    EXPECT_EQ(3, fourth.index());
+    EXPECT_EQ(4, wide.index());
+    EXPECT_EQ(0x33, fourth.data()[0]);
+    EXPECT_EQ(0, reinterpret_cast<std::uintptr_t>(fourth.data()) % 64);
+    EXPECT_EQ(0, reinterpret_cast<std::uintptr_t>(wide.data() + 128) % 64);
+
+    auto half_a = arena.allocate_single();
+    auto half_b = arena.allocate_single();
+    EXPECT_EQ(1, std::min(half_a.index(), half_b.index()));
+    EXPECT_EQ(2, std::max(half_a.index(), half_b.index()));
+    const auto pair = arena.allocate_double();
+    EXPECT_EQ(6, pair.index());
+    EXPECT_EQ(8, arena.high_water_mark());
+    const auto fresh = arena.allocate_double();
+    EXPECT_EQ(8, fresh.index());
+    EXPECT_EQ(10, arena.high_water_mark());
+    EXPECT_THROW(arena.allocate_single(), PrecisionError);
+
+    first = {};
+    half_a = {};
+    half_b = {};
+    wide.reduce();
+    EXPECT_EQ(4, wide.index());
+    EXPECT_EQ(0x7b, wide.data()[0]);
+    auto second_half = arena.allocate_single();
+    EXPECT_EQ(5, second_half.index());
+    const auto copy = wide.clone();
+    EXPECT_EQ(&arena, &copy.arena());
+    EXPECT_EQ(0x7b, copy.data()[0]);
+    EXPECT_EQ(0x55, copy.data()[126]);
+    wide = {};
+    second_half = {};
+    const auto coalesced = arena.allocate_double();
+    EXPECT_EQ(4, coalesced.index());
+}
+
+TEST(TestBigArena, failedBackingAllocationLeavesTheOldLayoutAndFreeListsUsable)
+{
+    CountingResource resource;
+    BigArena arena{17, 4, keep_first_block, resource};
+    auto first = arena.allocate_single();
+    auto wide = arena.allocate_double();
+    first.data()[0] = 23;
+    wide.data()[127] = 29;
+    const Byte *old_address = first.data();
+    resource.fail_next = true;
+    int conversions = 0;
+
+    EXPECT_THROW(arena.relocate(65, [&](Byte *, const Byte *, std::size_t) { ++conversions; }), std::bad_alloc);
+
+    EXPECT_EQ(0, conversions);
+    EXPECT_EQ(1, resource.allocations);
+    EXPECT_EQ(0, resource.deallocations);
+    EXPECT_EQ(old_address, first.data());
+    EXPECT_EQ(64, arena.block_size());
+    EXPECT_EQ(4, arena.high_water_mark());
+    EXPECT_EQ(23, first.data()[0]);
+    EXPECT_EQ(29, wide.data()[127]);
+    const auto half = arena.allocate_single();
+    EXPECT_EQ(1, half.index());
+    wide = {};
+    const auto reused = arena.allocate_double();
+    EXPECT_EQ(2, reused.index());
+}
+
+TEST(TestBigArena, failedConversionDiscardsTheReplacementAndAllowsARetry)
+{
+    CountingResource resource;
+    BigArena arena{17, 6, keep_first_block, resource};
+    auto first = arena.allocate_single();
+    auto wide = arena.allocate_double();
+    auto released_pair = arena.allocate_double();
+    released_pair = {};
+    std::fill_n(first.data(), 64, Byte{0x11});
+    std::fill_n(wide.data(), 128, Byte{0x55});
+    const Byte *old_address = first.data();
+    int conversions = 0;
+    const auto migrate = [&](Byte *destination, const Byte *source, std::size_t width)
+    {
+        ++conversions;
+        std::fill_n(destination, width * 128, Byte{});
+        std::copy_n(source, width * 64, destination);
+        if (conversions == 2)
+        {
+            throw std::runtime_error("conversion failed");
+        }
+    };
+
+    EXPECT_THROW(arena.relocate(65, migrate), std::runtime_error);
+
+    EXPECT_EQ(2, conversions);
+    EXPECT_EQ(2, resource.allocations);
+    EXPECT_EQ(1, resource.deallocations);
+    EXPECT_EQ(old_address, first.data());
+    EXPECT_EQ(64, arena.block_size());
+    EXPECT_EQ(6, arena.high_water_mark());
+    EXPECT_EQ(0x11, first.data()[63]);
+    EXPECT_EQ(0x55, wide.data()[127]);
+
+    arena.relocate(65, migrate);
+
+    EXPECT_EQ(4, conversions);
+    EXPECT_EQ(3, resource.allocations);
+    EXPECT_EQ(2, resource.deallocations);
+    EXPECT_EQ(0x11, first.data()[63]);
+    EXPECT_EQ(0x55, wide.data()[127]);
+    const auto half = arena.allocate_single();
+    const auto pair = arena.allocate_double();
+    EXPECT_EQ(1, half.index());
+    EXPECT_EQ(4, pair.index());
+    EXPECT_EQ(6, arena.high_water_mark());
+}
+
+TEST(TestBigArena, relocatingAnEmptyArenaDoesNotConvertOrReserveBlocks)
+{
+    BigArena arena{17, 4, keep_first_block};
+    int conversions = 0;
+
+    arena.relocate(129, [&](Byte *, const Byte *, std::size_t) { ++conversions; });
+
+    EXPECT_EQ(0, conversions);
+    EXPECT_EQ(192, arena.block_size());
+    EXPECT_EQ(0, arena.high_water_mark());
+    const auto wide = arena.allocate_double();
+    EXPECT_EQ(0, wide.index());
+}
+
+TEST(TestBigArena, rejectedRelocationGeometryLeavesLiveHandlesUntouched)
+{
+    CountingResource resource;
+    BigArena arena{17, 2, keep_first_block, resource};
+    auto value = arena.allocate_single();
+    value.data()[0] = 42;
+    const Byte *address = value.data();
+    const auto migrate = [](Byte *, const Byte *, std::size_t) { ADD_FAILURE(); };
+
+    EXPECT_THROW(arena.relocate(0, migrate), std::invalid_argument);
+    EXPECT_THROW(arena.relocate(std::numeric_limits<std::size_t>::max(), migrate), std::length_error);
+
+    EXPECT_EQ(1, resource.allocations);
+    EXPECT_EQ(0, resource.deallocations);
+    EXPECT_EQ(address, value.data());
+    EXPECT_EQ(42, value.data()[0]);
+    EXPECT_EQ(64, arena.block_size());
+    const auto half = arena.allocate_single();
+    EXPECT_EQ(1, half.index());
+}
+
+class TestBigArenaNumericMigration : public testing::TestWithParam<bool>
+{
+};
+
+TEST_P(TestBigArenaNumericMigration, repeatedGrowthAndReductionPreserveEncodedValues)
+{
+    const int exponent_bytes = GetParam() ? 2 : 0;
+    int old_length = 28;
+    BigArena arena{static_cast<std::size_t>(old_length + exponent_bytes), 8, keep_first_block};
+    std::vector<BigArena::Allocation> values;
+    values.push_back(arena.allocate_single());
+    values.push_back(arena.allocate_single());
+    values.push_back(arena.allocate_single());
+    values.push_back(arena.allocate_double());
+    const std::vector<BigArena::Index> indices{0, 1, 2, 4};
+    const std::vector<int> widths{1, 1, 1, 2};
+    std::vector<std::vector<Byte>> expected;
+    for (std::size_t i = 0; i < values.size(); ++i)
+    {
+        const int length = widths[i] * old_length;
+        std::vector<Byte> encoded(length + exponent_bytes);
+        if (i != 2)
+        {
+            encoded[0] = 0x35;
+            encoded[1] = 0x7b;
+            encoded[length - 2] = i == 0 ? 0x7f : 0x80;
+            encoded[length - 1] = i == 0 ? 0 : 0xff;
+            if (GetParam())
+            {
+                encoded[length] = 0x19;
+                encoded[length + 1] = i == 0 ? 0 : 0xff;
+            }
+        }
+        std::copy(encoded.begin(), encoded.end(), values[i].data());
+        expected.push_back(std::move(encoded));
+    }
+
+    // The first growth keeps the same aligned stride; later changes cross it.
+    for (const int new_length : {60, 124, 20, 28})
+    {
+        SCOPED_TRACE(new_length);
+        arena.relocate(static_cast<std::size_t>(new_length + exponent_bytes),
+            [&](Byte *destination, const Byte *source, std::size_t width)
+            {
+                const int blocks = static_cast<int>(width);
+                if (GetParam())
+                {
+                    convert_bf(destination, source, blocks * new_length, blocks * old_length);
+                }
+                else
+                {
+                    convert_bn(destination, source, blocks * new_length, blocks * 2, blocks * old_length, blocks * 2);
+                }
+            });
+
+        for (std::size_t i = 0; i < values.size(); ++i)
+        {
+            const int old_mantissa = widths[i] * old_length;
+            const int new_mantissa = widths[i] * new_length;
+            const int retained = std::min(old_mantissa, new_mantissa);
+            std::vector<Byte> converted(new_mantissa + exponent_bytes);
+            std::copy_n(expected[i].data() + old_mantissa - retained, retained + exponent_bytes,
+                converted.data() + new_mantissa - retained);
+            expected[i] = std::move(converted);
+            EXPECT_EQ(expected[i], (std::vector<Byte>{values[i].data(), values[i].data() + expected[i].size()}));
+            EXPECT_EQ(indices[i], values[i].index());
+            EXPECT_EQ(&arena, &values[i].arena());
+            EXPECT_EQ(0, reinterpret_cast<std::uintptr_t>(values[i].data()) % 64);
+        }
+        EXPECT_EQ(6, arena.high_water_mark());
+        EXPECT_EQ(8, arena.capacity());
+        EXPECT_EQ(0, arena.block_size() % 64);
+        old_length = new_length;
+    }
+    values.clear();
+    const auto reused = arena.allocate_double();
+    EXPECT_EQ(6, arena.high_water_mark());
+    EXPECT_EQ(0, reused.index() % 2);
+}
+
+INSTANTIATE_TEST_SUITE_P(Representations, TestBigArenaNumericMigration, testing::Bool());
 
 } // namespace id::test

@@ -271,34 +271,15 @@ S16 BIG_SET_S16(S16 *addr, S16 val)
 
 /************************************************************************/
 // convert_bn  -- convert bignum numbers from old to new lengths
-int convert_bn(BigNumPtr new_num, BigNumPtr old_num, const int new_bn_len, const int new_int_len, const int old_bn_len,
-    const int old_int_len)
+int convert_bn(BigNumPtr new_num, BigNumConstPtr old_num, const int new_bn_len, const int new_int_len,
+    const int old_bn_len, const int old_int_len)
 {
-    // save lengths so not dependent on external environment
-    int save_int_length = g_int_length;
-    int save_bn_length = g_bn_length;
-
-    g_int_length     = new_int_len;
-    g_bn_length      = new_bn_len;
-    clear_bn(new_num);
-
-    if (new_bn_len - new_int_len > old_bn_len - old_int_len)
-    {
-
-        // This will keep the integer part from overflowing past the array.
-        g_bn_length = old_bn_len - old_int_len + std::min(old_int_len, new_int_len);
-
-        std::memcpy(new_num+new_bn_len-new_int_len-old_bn_len+old_int_len,
-               old_num, g_bn_length);
-    }
-    else
-    {
-        g_bn_length = new_bn_len - new_int_len + std::min(old_int_len, new_int_len);
-        std::memcpy(new_num, old_num+old_bn_len-old_int_len-new_bn_len+new_int_len,
-               g_bn_length);
-    }
-    g_int_length = save_int_length;
-    g_bn_length  = save_bn_length;
+    const int new_fraction = new_bn_len - new_int_len;
+    const int old_fraction = old_bn_len - old_int_len;
+    const int fraction = std::min(new_fraction, old_fraction);
+    const int integer = std::min(new_int_len, old_int_len);
+    std::memset(new_num, 0, new_bn_len);
+    std::memcpy(new_num + new_fraction - fraction, old_num + old_fraction - fraction, fraction + integer);
     return 0;
 }
 

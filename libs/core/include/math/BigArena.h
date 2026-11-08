@@ -6,6 +6,7 @@
 #include <config/port.h>
 
 #include <cstddef>
+#include <functional>
 #include <memory_resource>
 
 namespace id::math
@@ -16,6 +17,7 @@ class BigArena
 public:
     using Index = std::size_t;
     using Reduce = void (*)(Byte *);
+    using Migrate = std::function<void(Byte *, const Byte *, std::size_t)>;
     static constexpr std::size_t ALIGNMENT = 64;
 
     class Allocation
@@ -50,7 +52,7 @@ public:
         Index m_index{};
     };
 
-    // Geometry is configured once; allocation requests carry no byte count.
+    // Allocation requests carry no byte count.
     // The arena and memory resource must outlive their allocations.
     BigArena(std::size_t block_size, std::size_t block_count, Reduce reduce,
         std::pmr::memory_resource &resource = *std::pmr::new_delete_resource());
@@ -63,6 +65,13 @@ public:
     // Payload bytes are uninitialized; numeric constructors initialize values.
     Allocation allocate_single();
     Allocation allocate_double();
+
+    // Preserve indices, widths, capacity, and high-water mark in a new layout.
+    // The callback receives the allocation width (1 or 2) and must initialize
+    // its destination without modifying the source or this arena. Failure
+    // leaves the old storage and handles usable. Borrowed addresses expire
+    // only after successful relocation, including when the stride is unchanged.
+    void relocate(std::size_t block_size, const Migrate &migrate);
 
     std::size_t block_size() const noexcept;
     std::size_t capacity() const noexcept;

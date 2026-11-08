@@ -13,6 +13,7 @@
 #include <limits>
 #include <string>
 #include <string_view>
+#include <vector>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -48,6 +49,31 @@ protected:
     ValueSaver<int> m_saved_bf_digits;
     ValueSaver<FractalType> m_saved_fractal_type;
 };
+
+TEST_F(TestBigFloat, conversionRelocatesTheExponentAndTruncatesLowMantissaBytes)
+{
+    const int active_length = g_bf_length;
+    std::vector<Byte> source{0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12};
+    const auto original = source;
+    const std::vector<Byte> cases[]{
+        {0, 0, 0, 0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12},
+        {0x55, 0x66, 0x77, 0xfe, 0x34, 0x12},
+        original,
+    };
+    for (const auto &expected : cases)
+    {
+        SCOPED_TRACE(expected.size());
+        std::vector<Byte> destination(expected.size() + 2, 0xcc);
+
+        EXPECT_EQ(0, convert_bf(destination.data() + 1, source.data(), static_cast<int>(expected.size()) - 2, 8));
+
+        EXPECT_EQ(expected, (std::vector<Byte>{destination.begin() + 1, destination.end() - 1}));
+        EXPECT_EQ(0xcc, destination.front());
+        EXPECT_EQ(0xcc, destination.back());
+        EXPECT_EQ(original, source);
+        EXPECT_EQ(active_length, g_bf_length);
+    }
+}
 
 struct BigFloatParseInput
 {

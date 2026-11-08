@@ -150,7 +150,8 @@ BigNumPtr unsafe_ln_bn(BigNumPtr r, BigNumPtr n);
 BigNumPtr unsafe_sin_cos_bn(BigNumPtr s, BigNumPtr c, BigNumPtr n);
 BigNumPtr unsafe_atan_bn(BigNumPtr r, BigNumPtr n);
 BigNumPtr unsafe_atan2_bn(BigNumPtr r, BigNumPtr ny, BigNumPtr nx);
-int convert_bn(BigNumPtr new_num, BigNumPtr old_num, int new_bn_len, int new_int_len, int old_bn_len, int old_int_len);
+int convert_bn(
+    BigNumPtr new_num, BigNumConstPtr old_num, int new_bn_len, int new_int_len, int old_bn_len, int old_int_len);
 // "safe" versions
 BigNumPtr full_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2);
 BigNumPtr mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2);
@@ -207,7 +208,7 @@ BigFloatPtr sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n);
 BigFloatPtr atan_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx);
 bool is_bf_zero(BigFloatConstPtr n);
-int convert_bf(BigFloatPtr new_num, BigFloatPtr old_num, int new_bf_len, int old_bf_len);
+int convert_bf(BigFloatPtr new_num, BigFloatConstPtr old_num, int new_bf_len, int old_bf_len);
 LDouble extract_value(LDouble f, LDouble b, int *exp_ptr);
 LDouble scale_value(LDouble f, LDouble b , int n);
 LDouble extract_10(LDouble f, int *exp_ptr);
