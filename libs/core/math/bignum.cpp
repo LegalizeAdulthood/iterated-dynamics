@@ -229,19 +229,19 @@ std::string unsafe_bn_to_string(BigNumPtr r, int dec)
 * the bignumber format could be reversed.
 **************************************************************************/
 #ifdef ACCESS_BY_BYTE
-U32 BIG_ACCESS32(Byte *addr)
+U32 BIG_ACCESS32(const Byte *addr)
 {
     return addr[0] | ((U32)addr[1] << 8) | ((U32)addr[2] << 16) | ((U32)addr[3] << 24);
 }
 
-U16 BIG_ACCESS16(Byte *addr)
+U16 BIG_ACCESS16(const Byte *addr)
 {
     return (U16)addr[0] | ((U16)addr[1] << 8);
 }
 
-S16 BIG_ACCESS_S16(S16 *addr)
+S16 BIG_ACCESS_S16(const S16 *addr)
 {
-    return (S16)((Byte *)addr)[0] | ((S16)((Byte *)addr)[1] << 8);
+    return (S16) ((const Byte *) addr)[0] | ((S16) ((const Byte *) addr)[1] << 8);
 }
 
 U32 BIG_SET32(Byte *addr, U32 val)

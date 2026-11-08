@@ -349,7 +349,7 @@ long bf_to_int(BigFloatPtr f)
 
 /********************************************************************/
 // sign(r)
-int sign_bf(BigFloatPtr n)
+int sign_bf(BigFloatConstPtr n)
 {
     return is_bf_neg(n) ? -1 : is_bf_not_zero(n) ? 1 : 0;
 }
@@ -473,48 +473,6 @@ BigFloatPtr unsafe_inv_bf(BigFloatPtr r, BigFloatPtr n)
     int r_exp = static_cast<S16>(BIG_ACCESS16(r + g_bf_length));
     r_exp -= f_exp;
     BIG_SET16(r+g_bf_length, static_cast<S16>(r_exp)); // adjust result exponent
-    return r;
-}
-
-/********************************************************************/
-// r = n1/n2
-//      r - result of length g_bf_length
-// uses g_bf_tmp1 - g_bf_tmp2 - global temp bigfloats
-//  SIDE-EFFECTS:
-//      n1, n2 end up as |n1|/256^x, |n2|/256^x
-//      Make copies first if necessary.
-BigFloatPtr unsafe_div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    // first, check for valid data
-
-    const int a_exp = static_cast<S16>(BIG_ACCESS16(n1 + g_bf_length));
-    BIG_SET16(n1+g_bf_length, static_cast<S16>(0)); // put within LDouble range
-
-    LDouble a = bf_to_float(n1);
-    if (a == 0)                                     // division into zero
-    {
-        clear_bf(r);                                // return 0
-        return r;
-    }
-
-    const int b_exp = static_cast<S16>(BIG_ACCESS16(n2 + g_bf_length));
-    BIG_SET16(n2+g_bf_length, static_cast<S16>(0)); // put within LDouble range
-
-    LDouble b = bf_to_float(n2);
-    if (b == 0) // division by zero
-    {
-        max_bf(r);
-        return r;
-    }
-
-    unsafe_inv_bf(r, n2);
-    unsafe_mult_bf(g_bf_tmp1, n1, r);
-    copy_bf(r, g_bf_tmp1); // r = g_bf_tmp1
-
-    int r_exp = static_cast<S16>(BIG_ACCESS16(r + g_bf_length));
-    r_exp += a_exp - b_exp;
-    BIG_SET16(r+g_bf_length, static_cast<S16>(r_exp)); // adjust result exponent
-
     return r;
 }
 
@@ -1116,55 +1074,12 @@ BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
 /**********************************************************************/
 
 /**********************************************************************/
-BigFloatPtr add_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    copy_bf(g_bf_tmp_copy1, n1);
-    copy_bf(g_bf_tmp_copy2, n2);
-    unsafe_add_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
-    return r;
-}
-
-/**********************************************************************/
-BigFloatPtr add_a_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    copy_bf(g_bf_tmp_copy1, n);
-    unsafe_add_a_bf(r, g_bf_tmp_copy1);
-    return r;
-}
-
-/**********************************************************************/
-BigFloatPtr sub_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    copy_bf(g_bf_tmp_copy1, n1);
-    copy_bf(g_bf_tmp_copy2, n2);
-    unsafe_sub_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
-    return r;
-}
-
-/**********************************************************************/
-BigFloatPtr sub_a_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    copy_bf(g_bf_tmp_copy1, n);
-    unsafe_sub_a_bf(r, g_bf_tmp_copy1);
-    return r;
-}
-
-/**********************************************************************/
 // mult and div only change sign
 BigFloatPtr full_mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 {
     copy_bf(g_bf_tmp_copy1, n1);
     copy_bf(g_bf_tmp_copy2, n2);
     unsafe_full_mult_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
-    return r;
-}
-
-/**********************************************************************/
-BigFloatPtr mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    copy_bf(g_bf_tmp_copy1, n1);
-    copy_bf(g_bf_tmp_copy2, n2);
-    unsafe_mult_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
     return r;
 }
 
@@ -1230,15 +1145,6 @@ BigFloatPtr inv_bf(BigFloatPtr r, BigFloatPtr n)
 }
 
 /**********************************************************************/
-BigFloatPtr div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    copy_bf(g_bf_tmp_copy1, n1);
-    copy_bf(g_bf_tmp_copy2, n2);
-    unsafe_div_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
-    return r;
-}
-
-/**********************************************************************/
 BigFloatPtr sqrt_bf(BigFloatPtr r, BigFloatPtr n)
 {
     copy_bf(g_bf_tmp_copy1, n);
@@ -1279,7 +1185,7 @@ BigFloatPtr atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
 }
 
 /**********************************************************************/
-bool is_bf_zero(BigFloatPtr n)
+bool is_bf_zero(BigFloatConstPtr n)
 {
     return !is_bf_not_zero(n);
 }
@@ -1357,60 +1263,6 @@ void norm_sign_bf(BigFloatPtr r, const bool positive)
     norm_bf(r);
     r[g_bf_length-1] = static_cast<Byte>(positive ? 0x00 : 0xFF);
 }
-/******************************************************/
-// adjust n1, n2 for before addition or subtraction
-// by forcing exp's to match.
-// returns the value of the adjusted exponents
-S16 adjust_bf_add(BigFloatPtr n1, BigFloatPtr n2)
-{
-    int scale;
-    int fill_byte;
-    S16 r_exp;
-
-    // scale n1 or n2
-    // compare exp's
-    S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
-    S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
-    if (BIG_ACCESS_S16(n1_exp) > BIG_ACCESS_S16(n2_exp))
-    {
-        // scale n2
-        scale = BIG_ACCESS_S16(n1_exp) - BIG_ACCESS_S16(n2_exp); // n1exp - n2exp
-        if (scale < g_bf_length)
-        {
-            fill_byte = is_bf_neg(n2) ? 0xFF : 0x00;
-            std::memmove(n2, n2+scale, g_bf_length-scale);
-            std::memset(n2+g_bf_length-scale, fill_byte, scale);
-        }
-        else
-        {
-            clear_bf(n2);
-        }
-        BIG_SET_S16(n2_exp, BIG_ACCESS_S16(n1_exp)); // *n2exp = *n1exp; set exp's =
-        r_exp = BIG_ACCESS_S16(n2_exp);
-    }
-    else if (BIG_ACCESS_S16(n1_exp) < BIG_ACCESS_S16(n2_exp))
-    {
-        // scale n1
-        scale = BIG_ACCESS_S16(n2_exp) - BIG_ACCESS_S16(n1_exp);  // n2exp - n1exp
-        if (scale < g_bf_length)
-        {
-            fill_byte = is_bf_neg(n1) ? 0xFF : 0x00;
-            std::memmove(n1, n1+scale, g_bf_length-scale);
-            std::memset(n1+g_bf_length-scale, fill_byte, scale);
-        }
-        else
-        {
-            clear_bf(n1);
-        }
-        BIG_SET_S16(n1_exp, BIG_ACCESS_S16(n2_exp)); // *n1exp = *n2exp; set exp's =
-        r_exp = BIG_ACCESS_S16(n2_exp);
-    }
-    else
-    {
-        r_exp = BIG_ACCESS_S16(n1_exp);
-    }
-    return r_exp;
-}
 
 /********************************************************************/
 // r = max positive value
@@ -1421,75 +1273,10 @@ BigFloatPtr max_bf(BigFloatPtr r)
     return r;
 }
 
-/****************************************************************************/
-// n1 != n2 ?
-// RETURNS:
-//  if n1 == n2 returns 0
-//  if n1 > n2 returns a positive (bytes left to go when mismatch occurred)
-//  if n1 < n2 returns a negative (bytes left to go when mismatch occurred)
-
-int cmp_bf(BigFloatPtr n1, BigFloatPtr n2)
-{
-    // compare signs
-    const int sign1 = sign_bf(n1);
-    const int sign2 = sign_bf(n2);
-    if (sign1 > sign2)
-    {
-        return g_bf_length;
-    }
-    if (sign1 < sign2)
-    {
-        return -g_bf_length;
-    }
-    // signs are the same
-
-    // compare exponents, using signed comparisons
-    S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
-    S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
-    if (BIG_ACCESS_S16(n1_exp) > BIG_ACCESS_S16(n2_exp))
-    {
-        return sign1*g_bf_length;
-    }
-    if (BIG_ACCESS_S16(n1_exp) < BIG_ACCESS_S16(n2_exp))
-    {
-        return -sign1*g_bf_length;
-    }
-
-    // To get to this point, the signs must match
-    // so unsigned comparison is ok.
-    // two bytes at a time
-    for (int i = g_bf_length-2; i >= 0; i -= 2)
-    {
-        const U16 value1 = BIG_ACCESS16(n1 + i);
-        const U16 value2 = BIG_ACCESS16(n2 + i);
-        if (value1 > value2)
-        {
-            // now determine which of the two bytes was different
-            if ((value1&0xFF00) > (value2&0xFF00))     // compare just high bytes
-            {
-                return i+2; // high byte was different
-            }
-
-            return i+1; // low byte was different
-        }
-        if (value1 < value2)
-        {
-            // now determine which of the two bytes was different
-            if ((value1&0xFF00) < (value2&0xFF00))     // compare just high bytes
-            {
-                return -(i+2); // high byte was different
-            }
-
-            return -(i+1); // low byte was different
-        }
-    }
-    return 0;
-}
-
 /********************************************************************/
 // r < 0 ?
 // returns 1 if negative, 0 if positive or zero
-bool is_bf_neg(BigFloatPtr n)
+bool is_bf_neg(BigFloatConstPtr n)
 {
     return static_cast<S8>(n[g_bf_length - 1]) < 0;
 }
@@ -1498,121 +1285,9 @@ bool is_bf_neg(BigFloatPtr n)
 // n != 0 ?
 // RETURNS: if n != 0 returns 1
 //          else returns 0
-bool is_bf_not_zero(BigFloatPtr n)
+bool is_bf_not_zero(BigFloatConstPtr n)
 {
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    const bool result = is_bn_not_zero(n);
-    g_bn_length = bnl;
-
-    return result;
-}
-
-/********************************************************************/
-// r = n1 + n2
-// SIDE-EFFECTS: n1 and n2 can be "de-normalized" and lose precision
-BigFloatPtr unsafe_add_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    if (is_bf_zero(n1))
-    {
-        copy_bf(r, n2);
-        return r;
-    }
-    if (is_bf_zero(n2))
-    {
-        copy_bf(r, n1);
-        return r;
-    }
-
-    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
-    BIG_SET_S16(r_exp, adjust_bf_add(n1, n2));
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    add_bn(r, n1, n2);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
-}
-
-/********************************************************************/
-// r += n
-BigFloatPtr unsafe_add_a_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    if (is_bf_zero(r))
-    {
-        copy_bf(r, n);
-        return r;
-    }
-    if (is_bf_zero(n))
-    {
-        return r;
-    }
-
-    adjust_bf_add(r, n);
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    add_a_bn(r, n);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-
-    return r;
-}
-
-/********************************************************************/
-// r = n1 - n2
-// SIDE-EFFECTS: n1 and n2 can be "de-normalized" and lose precision
-BigFloatPtr unsafe_sub_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    if (is_bf_zero(n1))
-    {
-        neg_bf(r, n2);
-        return r;
-    }
-    if (is_bf_zero(n2))
-    {
-        copy_bf(r, n1);
-        return r;
-    }
-
-    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
-    BIG_SET_S16(r_exp, adjust_bf_add(n1, n2));
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    sub_bn(r, n1, n2);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
-}
-
-/********************************************************************/
-// r -= n
-BigFloatPtr unsafe_sub_a_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    if (is_bf_zero(r))
-    {
-        neg_bf(r, n);
-        return r;
-    }
-    if (is_bf_zero(n))
-    {
-        return r;
-    }
-
-    adjust_bf_add(r, n);
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    sub_a_bn(r, n);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
+    return std::any_of(n, n + g_bf_length, [](const Byte digit) { return digit != 0; });
 }
 
 /********************************************************************/
@@ -1626,19 +1301,6 @@ BigFloatPtr neg_bf(BigFloatPtr r, BigFloatPtr n)
     int bnl = g_bn_length;
     g_bn_length = g_bf_length;
     neg_bn(r, n);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
-}
-
-/********************************************************************/
-// r *= -1
-BigFloatPtr neg_a_bf(BigFloatPtr r)
-{
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    neg_a_bn(r);
     g_bn_length = bnl;
 
     norm_bf(r);
@@ -1732,45 +1394,6 @@ BigFloatPtr unsafe_full_mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
     g_bn_length = bnl;
 
     // handle normalizing full mult on individual basis
-
-    return r;
-}
-
-/************************************************************************/
-// r = n1 * n2 calculating only the top g_r_length bytes
-// Note: r will be of length g_r_length
-//       2*g_bf_length <= g_r_length < g_bf_length
-//       n1 and n2 can be the same pointer
-// SIDE-EFFECTS: n1 and n2 are changed to their absolute values
-BigFloatPtr unsafe_mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    if (is_bf_zero(n1) || is_bf_zero(n2))
-    {
-        clear_bf(r);
-        return r;
-    }
-
-    S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
-    S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
-    // add exp's
-    const int r_exp = BIG_ACCESS_S16(n1_exp) + BIG_ACCESS_S16(n2_exp);
-
-    const bool positive = is_bf_neg(n1) == is_bf_neg(n2); // are they the same sign?
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    int rl = g_r_length;
-    g_r_length = g_r_bf_length;
-    unsafe_mult_bn(r, n1, n2);
-    g_bn_length = bnl;
-    g_r_length = rl;
-
-    int bfl = g_bf_length;
-    g_bf_length = g_r_bf_length;
-    BIG_SET16(r+g_bf_length, static_cast<S16>(r_exp + 2)); // adjust after mult
-    norm_sign_bf(r, positive);
-    g_bf_length = bfl;
-    std::memmove(r, r+g_padding, g_bf_length+2); // shift back
 
     return r;
 }

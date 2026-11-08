@@ -117,9 +117,9 @@ LDouble scale256(LDouble f, int n);
 
 #ifdef ACCESS_BY_BYTE
 // prototypes
-U32 BIG_ACCESS32(Byte *addr);
-U16 BIG_ACCESS16(Byte *addr);
-S16 BIG_ACCESS_S16(S16 *addr);
+U32 BIG_ACCESS32(const Byte *addr);
+U16 BIG_ACCESS16(const Byte *addr);
+S16 BIG_ACCESS_S16(const S16 *addr);
 U32 BIG_SET32(Byte *addr, U32 val);
 U16 BIG_SET16(Byte *addr, U16 val);
 S16 BIG_SET_S16(S16 *addr, S16 val);
@@ -173,7 +173,7 @@ BigNumPtr bf_to_bn(BigNumPtr n, BigFloatPtr f);
 BigNumPtr bn_to_bf(BigFloatPtr f, BigNumPtr n);
 long bf_to_int(BigFloatPtr f);
 BigFloatPtr int_to_bf(BigFloatPtr r, long value);
-int sign_bf(BigFloatPtr n);
+int sign_bf(BigFloatConstPtr n);
 BigFloatPtr abs_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr abs_a_bf(BigFloatPtr r);
 BigFloatPtr unsafe_inv_bf(BigFloatPtr r, BigFloatPtr n);
@@ -204,7 +204,7 @@ BigFloatPtr ln_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n);
 BigFloatPtr atan_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx);
-bool is_bf_zero(BigFloatPtr n);
+bool is_bf_zero(BigFloatConstPtr n);
 int convert_bf(BigFloatPtr new_num, BigFloatPtr old_num, int new_bf_len, int old_bf_len);
 LDouble extract_value(LDouble f, LDouble b, int *exp_ptr);
 LDouble scale_value(LDouble f, LDouble b , int n);
@@ -213,11 +213,10 @@ LDouble scale_10(LDouble f, int n);
 
 BigFloatPtr norm_bf(BigFloatPtr r);
 void norm_sign_bf(BigFloatPtr r, bool positive);
-misc::S16 adjust_bf_add(BigFloatPtr n1, BigFloatPtr n2);
 BigFloatPtr max_bf(BigFloatPtr r);
-int cmp_bf(BigFloatPtr n1, BigFloatPtr n2);
-bool is_bf_neg(BigFloatPtr n);
-bool is_bf_not_zero(BigFloatPtr n);
+int cmp_bf(BigFloatConstPtr n1, BigFloatConstPtr n2);
+bool is_bf_neg(BigFloatConstPtr n);
+bool is_bf_not_zero(BigFloatConstPtr n);
 BigFloatPtr unsafe_add_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2);
 BigFloatPtr unsafe_add_a_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr unsafe_sub_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2);

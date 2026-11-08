@@ -37,10 +37,16 @@ own their storage.
 `BigFloat` in `math/BigFloat.h` owns canonical value bytes independently
 of the arena. Copies, moves, destruction, and legacy-buffer export use
 the vector's own storage size. Constructors use the active legacy
-lengths. Scalar conversion, parsing, and formatting use the existing
-global precision and shared scratch. Callers establish a compatible
-context, as with the raw routines; there is no custom precision object
-or per-operation initialization or precision validation.
+lengths. Arithmetic, scalar conversion, parsing, and formatting use the
+existing global precision and shared scratch. Callers establish a
+compatible context, as with the raw routines; there is no custom precision
+object or per-operation initialization or precision validation.
+
+Arithmetic operators preserve their operands. Compound assignments update
+only their destination, including self-assignment. Multiplication owns its
+wider workspace and returns canonical bytes. Numerical comparisons read
+values directly. Operators and temporary raw adapters share private
+arithmetic kernels in `math/BigFloat.cpp`.
 
 Precision selection depends on coordinate/resolution error, overrides,
 and the fractal's supported alternate math.  There is no fixed zoom ladder

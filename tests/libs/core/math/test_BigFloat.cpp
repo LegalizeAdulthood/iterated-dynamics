@@ -263,4 +263,213 @@ TEST_F(TestBigFloatValue, formattingRejectsNegativeDigitCounts)
     EXPECT_THROW(value.to_string(-1), std::invalid_argument);
 }
 
+class TestBigFloatArithmetic : public TestBigFloatValue, public testing::WithParamInterface<int>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigFloatArithmetic::SetUp()
+{
+    TestBigFloatValue::SetUp();
+    init_bf_length(GetParam());
+}
+
+TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
+{
+    auto left = encoded_value(BigFloat{"-7.5"});
+    auto right = encoded_value(BigFloat{"2.5"});
+    const auto original_left = left;
+    const auto original_right = right;
+    std::vector<Byte> result(static_cast<std::size_t>(g_r_bf_length + 2));
+
+    add_bf(result.data(), left.data(), right.data());
+    EXPECT_EQ("-5.0", bf_to_string(result.data(), 8));
+    sub_bf(result.data(), left.data(), right.data());
+    EXPECT_EQ("-10.0", bf_to_string(result.data(), 8));
+    mult_bf(result.data(), left.data(), right.data());
+    EXPECT_EQ("-18.75", bf_to_string(result.data(), 8));
+    div_bf(result.data(), left.data(), right.data());
+    EXPECT_EQ("-3.0", bf_to_string(result.data(), 8));
+
+    EXPECT_EQ(original_left, left);
+    EXPECT_EQ(original_right, right);
+}
+
+TEST_P(TestBigFloatArithmetic, legacyInPlaceSamplesPreserveTheRightOperand)
+{
+    auto left = encoded_value(BigFloat{"-7.5"});
+    auto right = encoded_value(BigFloat{"2.5"});
+    const auto original_right = right;
+
+    add_a_bf(left.data(), right.data());
+    EXPECT_EQ("-5.0", bf_to_string(left.data(), 8));
+    sub_a_bf(left.data(), right.data());
+    EXPECT_EQ("-7.5", bf_to_string(left.data(), 8));
+    add_a_bf(left.data(), left.data());
+    EXPECT_EQ("-15.0", bf_to_string(left.data(), 8));
+    sub_a_bf(left.data(), left.data());
+    EXPECT_EQ("0.0", bf_to_string(left.data(), 8));
+
+    EXPECT_EQ(original_right, right);
+}
+
+TEST_P(TestBigFloatArithmetic, arithmeticPreservesOperandsAndReturnsIndependentValues)
+{
+    const BigFloat left{"-7.5"};
+    const BigFloat right{"2.5"};
+    const auto original_left = encoded_value(left);
+    const auto original_right = encoded_value(right);
+
+    BigFloat sum = left + right;
+    EXPECT_EQ("-5.0", sum.to_string(8));
+    EXPECT_EQ("-10.0", (left - right).to_string(8));
+    EXPECT_EQ("-18.75", (left * right).to_string(8));
+    EXPECT_EQ("-3.0", (left / right).to_string(8));
+    sum = 0;
+
+    EXPECT_EQ(original_left, encoded_value(left));
+    EXPECT_EQ(original_right, encoded_value(right));
+}
+
+TEST_P(TestBigFloatArithmetic, negationPreservesItsOperand)
+{
+    const BigFloat value{"-7.5"};
+    const auto original = encoded_value(value);
+
+    EXPECT_EQ("7.5", (-value).to_string(8));
+    EXPECT_EQ(original, encoded_value(value));
+    EXPECT_EQ("0.0", (-BigFloat{}).to_string(8));
+    EXPECT_EQ(original, encoded_value(-(-value)));
+}
+
+TEST_P(TestBigFloatArithmetic, compoundAssignmentChangesOnlyItsDestination)
+{
+    BigFloat value{"-7.5"};
+    const BigFloat right{"2.5"};
+    const auto original_right = encoded_value(right);
+    const BigFloat copy = value;
+
+    EXPECT_EQ(&value, &(value += right));
+    EXPECT_EQ("-5.0", value.to_string(8));
+    EXPECT_EQ(&value, &(value -= right));
+    EXPECT_EQ("-7.5", value.to_string(8));
+    EXPECT_EQ(&value, &(value *= right));
+    EXPECT_EQ("-18.75", value.to_string(8));
+    EXPECT_EQ(&value, &(value /= right));
+    EXPECT_EQ("-7.5", value.to_string(8));
+
+    EXPECT_EQ("-7.5", copy.to_string(8));
+    EXPECT_EQ(original_right, encoded_value(right));
+}
+
+TEST_P(TestBigFloatArithmetic, repeatedOperandsAndSelfAssignmentAreSafe)
+{
+    BigFloat value{"-7.5"};
+
+    EXPECT_EQ("56.25", (value * value).to_string(8));
+    EXPECT_EQ("-7.5", value.to_string(8));
+    value *= value;
+    EXPECT_EQ("56.25", value.to_string(8));
+    value /= value;
+    EXPECT_EQ("1.0", value.to_string(8));
+    value += value;
+    EXPECT_EQ("2.0", value.to_string(8));
+    value -= value;
+    EXPECT_EQ("0.0", value.to_string(8));
+}
+
+TEST_P(TestBigFloatArithmetic, assignmentCanAlsoSupplyTheRightOperand)
+{
+    const BigFloat left{"3.5"};
+    BigFloat value{"-2.5"};
+
+    value = left + value;
+    EXPECT_EQ("1.0", value.to_string(8));
+    value = left - value;
+    EXPECT_EQ("2.5", value.to_string(8));
+    value = left * value;
+    EXPECT_EQ("8.75", value.to_string(8));
+    value = left / value;
+    EXPECT_EQ("0.4", value.to_string(8));
+}
+
+TEST_P(TestBigFloatArithmetic, expressionsMatchLegacySequencesAndOutliveTheirTemporaries)
+{
+    const BigFloat left{"-1.234567890123456789e-400"};
+    const BigFloat right{"2.345678901234567890e-400"};
+    const BigFloat divisor{"-3.456789012345678901e-400"};
+    const auto original_left = encoded_value(left);
+    const auto original_right = encoded_value(right);
+    const auto original_divisor = encoded_value(divisor);
+    auto raw_left = original_left;
+    auto raw_right = original_right;
+    auto raw_divisor = original_divisor;
+    std::vector<Byte> expected(static_cast<std::size_t>(g_r_bf_length + 2));
+    add_bf(expected.data(), raw_left.data(), raw_right.data());
+    div_bf(expected.data(), expected.data(), raw_divisor.data());
+    mult_bf(expected.data(), expected.data(), raw_left.data());
+    sub_bf(expected.data(), expected.data(), raw_right.data());
+    expected.resize(static_cast<std::size_t>(g_bf_length + 2));
+    const int marker = save_stack();
+
+    const BigFloat result = ((left + right) / divisor) * left - right;
+    const BigFloat unrelated = BigFloat{"-8"} * BigFloat{"-9"};
+    alloc_stack(g_r_bf_length + 2);
+    restore_stack(marker);
+
+    EXPECT_EQ(expected, encoded_value(result));
+    EXPECT_EQ("72.0", unrelated.to_string(8));
+    EXPECT_EQ(original_left, encoded_value(left));
+    EXPECT_EQ(original_right, encoded_value(right));
+    EXPECT_EQ(original_divisor, encoded_value(divisor));
+}
+
+TEST_P(TestBigFloatArithmetic, zeroAndDivisionByZeroKeepLegacyResults)
+{
+    const BigFloat zero;
+    const BigFloat value{"-7.5"};
+    auto raw_value = encoded_value(value);
+    auto raw_zero = encoded_value(zero);
+    std::vector<Byte> expected(static_cast<std::size_t>(g_r_bf_length + 2));
+    div_bf(expected.data(), raw_value.data(), raw_zero.data());
+    expected.resize(static_cast<std::size_t>(g_bf_length + 2));
+
+    EXPECT_EQ(encoded_value(value), encoded_value(value + zero));
+    EXPECT_EQ(encoded_value(value), encoded_value(value - zero));
+    EXPECT_EQ(encoded_value(-value), encoded_value(zero - value));
+    EXPECT_EQ(encoded_value(zero), encoded_value(value * zero));
+    EXPECT_EQ(encoded_value(zero), encoded_value(zero / value));
+    EXPECT_EQ(encoded_value(zero), encoded_value(zero / zero));
+    EXPECT_EQ(expected, encoded_value(value / zero));
+}
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatArithmetic, testing::Values(4, 32, 708));
+
+TEST_F(TestBigFloatValue, comparisonsUseNumericalValuesWithoutChangingOperands)
+{
+    const BigFloat values[]{BigFloat{"-1e400"}, BigFloat{"-2"}, BigFloat{"-1e-400"}, BigFloat{}, BigFloat{"1e-400"},
+        BigFloat{"1"}, BigFloat{"1.000000000000000000000000000001"}, BigFloat{"1e400"}};
+
+    for (std::size_t i = 0; i < std::size(values); ++i)
+    {
+        for (std::size_t j = 0; j < std::size(values); ++j)
+        {
+            const auto left = encoded_value(values[i]);
+            const auto right = encoded_value(values[j]);
+            const BigFloat copy = values[j];
+
+            EXPECT_EQ(i == j, values[i] == copy);
+            EXPECT_EQ(i != j, values[i] != copy);
+            EXPECT_EQ(i < j, values[i] < copy);
+            EXPECT_EQ(i <= j, values[i] <= copy);
+            EXPECT_EQ(i > j, values[i] > copy);
+            EXPECT_EQ(i >= j, values[i] >= copy);
+            EXPECT_EQ(left, encoded_value(values[i]));
+            EXPECT_EQ(right, encoded_value(values[j]));
+            EXPECT_EQ(right, encoded_value(copy));
+        }
+    }
+}
+
 } // namespace id::test
