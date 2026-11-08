@@ -485,7 +485,7 @@ TEST_P(TestBigNumLayout, arithmeticPreservesOperandsAndUsesCanonicalResults)
     EXPECT_EQ("-18.75", (left * right).to_string(8));
     EXPECT_EQ("-15.", (left / BigNum{"0.5"}).to_string(8));
     EXPECT_EQ("7.5", (-left).to_string(8));
-    EXPECT_EQ("56.25", left.square().to_string(8));
+    EXPECT_EQ("56.25", left.sqr().to_string(8));
     EXPECT_EQ(original_left, encoded_value(left));
     EXPECT_EQ(original_right, encoded_value(right));
 }
@@ -515,7 +515,7 @@ TEST_P(TestBigNumLayout, repeatedNegativeOperandsAndSelfAssignmentAreSafe)
     const auto original = encoded_value(value);
 
     EXPECT_EQ("4.", (value * value).to_string(8));
-    EXPECT_EQ("4.", value.square().to_string(8));
+    EXPECT_EQ("4.", value.sqr().to_string(8));
     EXPECT_EQ(original, encoded_value(value));
     value *= value;
     EXPECT_EQ("4.", value.to_string(8));
@@ -611,7 +611,7 @@ TEST_P(TestBigNumProducts, productsAndSquaresReturnOnlyCanonicalBytes)
     const std::vector<Byte> expected(product.data() + g_shift_factor, product.data() + g_shift_factor + g_bn_length);
 
     EXPECT_EQ(expected, encoded_value(value * value));
-    EXPECT_EQ(expected, encoded_value(value.square()));
+    EXPECT_EQ(expected, encoded_value(value.sqr()));
     EXPECT_EQ(original, encoded_value(value));
 }
 
@@ -624,7 +624,7 @@ TEST_P(TestBigNumProducts, normalizationPreservesSignedLowBitTruncation)
     const auto zero = encoded_value(BigNum{});
 
     EXPECT_EQ(zero, encoded_value(positive * half));
-    EXPECT_EQ(zero, encoded_value(positive.square()));
+    EXPECT_EQ(zero, encoded_value(positive.sqr()));
     neg_a_bn(quantum.data());
     const BigNum negative = BigNum::from_legacy(quantum.data(), quantum.size());
     EXPECT_EQ(quantum, encoded_value(negative * half));

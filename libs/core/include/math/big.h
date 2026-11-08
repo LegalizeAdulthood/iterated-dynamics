@@ -47,6 +47,7 @@ using BigFloatConstPtr = const Byte *;
 
 using BFPtrComplex = Complex<BigFloatPtr>;
 using BNPtrComplex = Complex<BigNumPtr>;
+using BFConstPtrComplex = Complex<BigFloatConstPtr>;
 
 // globals
 extern BFMathType g_bf_math;

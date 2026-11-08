@@ -55,7 +55,7 @@ uses `g_int_length` high bytes for the signed integer part and
 uses the legacy fixed-decimal syntax; formatting retains legacy output.
 `BigNumConstPtr` denotes read-only legacy bytes.
 
-`BigNum` member operators and `square()` share private arithmetic kernels
+`BigNum` member operators and `sqr()` share private arithmetic kernels
 with legacy adapters in `math/BigNum.cpp`. Multiplication and squaring
 use separate work buffers and copy the `g_bn_length` bytes at
 `g_shift_factor` into the owning result. Addition, subtraction, and
@@ -63,9 +63,25 @@ comparisons read operands directly; destructive kernels receive scratch
 copies. Truncation, fixed-width overflow, division saturation, and zero
 handling retain legacy behavior.
 
-Raw division can retain low-bit differences from reused destination
-bytes. Value `/` and `/=` use a fresh zero-initialized result, so compound
-division agrees with the corresponding value expression.
+Legacy Newton iterations can retain guard-digit differences from reused
+destination bytes. Value division, logarithms, and arctangents start with
+fresh results. Compound division agrees with the corresponding value
+expression. Comparisons with legacy calculations retain the requested
+decimal precision rather than depending on old destination contents.
+
+`BNComplex` and `BFComplex` in `math/BigComplex.h` own two scalar values
+through `Complex<T>`. Member multiplication and division compute both
+components before assignment. The legacy complex signatures import their
+inputs before exporting results, including when outputs alias inputs.
+`BFConstPtrComplex` provides a read-only view for these imports.
+
+Complex `log` and `pow` use named BigFloat value functions backed by the
+private legacy kernels. Trigonometric calculations still require
+`init_big_pi()` in the active context. Complex division by zero sets
+`g_overflow` and returns zero. Complex logarithms of zero and complex
+powers with a zero base return zero. Integer `power` retains the separate
+legacy rule that nonpositive degrees return one. Existing branch and
+sine/cosine axis behavior is retained.
 
 Explicit constructors convert between `BigNum` and `BigFloat`. Their
 conversion export adapters write directly into destination storage with

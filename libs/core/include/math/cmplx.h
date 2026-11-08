@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // various complex number definitions
 
 #pragma once
 
+#include <math/fixed_pt.h>
 #include <math/sqr.h>
+
+#include <utility>
 
 namespace id::math
 {
@@ -14,6 +18,11 @@ struct Complex
 {
     T x{};
     T y{};
+
+    Complex operator*(const Complex &rhs) const;
+    Complex operator/(const Complex &rhs) const;
+    Complex &operator*=(const Complex &rhs);
+    Complex &operator/=(const Complex &rhs);
 
     Complex &operator+=(const Complex &rhs)
     {
@@ -36,6 +45,52 @@ struct Complex
         return *this;
     }
 };
+
+template <typename T>
+Complex<T> Complex<T>::operator*(const Complex &rhs) const
+{
+    T real = x * rhs.x;
+    const T imag_product = y * rhs.y;
+    real = real - imag_product;
+    T imag = x * rhs.y;
+    const T cross = y * rhs.x;
+    imag = imag + cross;
+    return {std::move(real), std::move(imag)};
+}
+
+template <typename T>
+Complex<T> Complex<T>::operator/(const Complex &rhs) const
+{
+    const T real_squared = sqr(rhs.x);
+    const T imag_squared = sqr(rhs.y);
+    const T denominator = real_squared + imag_squared;
+    if (denominator == T{})
+    {
+        g_overflow = true;
+        return {};
+    }
+    T real = x * rhs.x;
+    const T imag_product = y * rhs.y;
+    real = (real + imag_product) / denominator;
+    T imag = y * rhs.x;
+    const T cross = x * rhs.y;
+    imag = (imag - cross) / denominator;
+    return {std::move(real), std::move(imag)};
+}
+
+template <typename T>
+Complex<T> &Complex<T>::operator*=(const Complex &rhs)
+{
+    *this = *this * rhs;
+    return *this;
+}
+
+template <typename T>
+Complex<T> &Complex<T>::operator/=(const Complex &rhs)
+{
+    *this = *this / rhs;
+    return *this;
+}
 
 template <typename T>
 Complex<T> operator+(const Complex<T> &val)
@@ -69,7 +124,7 @@ template <typename T>
 Complex<T> operator*(const Complex<T> &lhs, double rhs)
 {
     Complex<T> result = lhs;
-    result *= rhs;
+    result *= T(rhs);
     return result;
 }
 
@@ -77,7 +132,7 @@ template <typename T>
 Complex<T> operator*(double lhs, const Complex<T> &rhs)
 {
     Complex<T> result = rhs;
-    result *= lhs;
+    result *= T(lhs);
     return result;
 }
 
@@ -93,9 +148,11 @@ bool operator!=(const Complex<T> &lhs, const Complex<U> &rhs)
 }
 
 template <typename T>
-double mag_squared(const Complex<T> &z)
+auto mag_squared(const Complex<T> &z)
 {
-    return sqr(z.x) + sqr(z.y);
+    const auto real_squared = sqr(z.x);
+    const auto imag_squared = sqr(z.y);
+    return real_squared + imag_squared;
 }
 
 using DComplex = Complex<double>;

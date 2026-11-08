@@ -4,11 +4,11 @@
 #pragma once
 
 #include <math/big.h>
-#include <math/big_init.h>
 #include <math/sqr.h>
 
 #include <algorithm>
 #include <complex>
+#include <utility>
 
 namespace id::math
 {
@@ -27,27 +27,19 @@ inline std::complex<double> cube(const std::complex<double> &z)
     return {z.real() * (r2 - (i2 + i2 + i2)), z.imag() * (r2 + r2 + r2 - i2)};
 }
 
-// Cube c + jd = (a + jb) * (a + jb) * (a + jb)
-inline void cube(BFPtrComplex &out, const BFPtrComplex &in)
+template <typename T>
+Complex<T> cube(const Complex<T> &z)
 {
-    BigStackSaver saved;
-    BigFloatPtr t = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr t1 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr t2 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr sqr_real = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr sqr_imag = alloc_stack(g_r_bf_length + 2);
-
-    mult_bf(sqr_real, in.x, in.x); // sqr_real = x * x;
-    mult_bf(sqr_imag, in.y, in.y); // sqr_imag = y * y;
-    int_to_bf(t, 3);
-    mult_bf(t1, t, sqr_imag); // sqr_real + sqr_real + sqr_real
-    sub_bf(t2, sqr_real, t1); // sqr_real - (sqr_imag + sqr_imag + sqr_imag)
-    mult_bf(out.x, in.x, t2); // c = x * (sqr_real - (sqr_imag + sqr_imag + sqr_imag))
-
-    mult_bf(t1, t, sqr_real); // sqr_imag + sqr_imag + sqr_imag
-    sub_bf(t2, t1, sqr_imag); // (sqr_real + sqr_real + sqr_real) - sqr_imag
-    mult_bf(out.y, in.y, t2); // d = y * ((sqr_real + sqr_real + sqr_real) - sqr_imag)
+    const T real_squared = z.x * z.x;
+    const T imag_squared = z.y * z.y;
+    const T three{3};
+    T real = z.x * (real_squared - three * imag_squared);
+    T imag = z.y * (three * real_squared - imag_squared);
+    return {std::move(real), std::move(imag)};
 }
+
+// Cube c + jd = (a + jb) * (a + jb) * (a + jb)
+void cube(BFPtrComplex &out, const BFPtrComplex &in);
 
 // base^exp
 inline std::complex<double> power(const std::complex<double> &base, int exp)
@@ -87,54 +79,34 @@ inline std::complex<double> power(const std::complex<double> &base, int exp)
     return result;
 }
 
-inline void power(BFPtrComplex &result, const BFPtrComplex &z, int degree)
+template <typename T>
+Complex<T> power(const Complex<T> &base, int degree)
 {
-    BigStackSaver saved;
-    BigFloatPtr t = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr t1 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr t2 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr t3 = alloc_stack(g_r_bf_length + 2);
-    BigFloatPtr t4 = alloc_stack(g_r_bf_length + 2);
-
     degree = std::max(degree, 0);
-
-    copy_bf(t1, z.x); // BigTemp1 = xt
-    copy_bf(t2, z.y); // BigTemp2 = yt
-
-    if (degree & 1)
-    {
-        copy_bf(result.x, t1); // new.x = result real
-        copy_bf(result.y, t2); // new.y = result imag
-    }
-    else
-    {
-        int_to_bf(result.x, 1);
-        int_to_bf(result.y, 0);
-    }
-
+    Complex<T> result = (degree & 1) ? base : Complex<T>{T{1}, T{}};
     degree >>= 1;
+    if (degree == 0)
+    {
+        return result;
+    }
+    Complex<T> factor = base;
     while (degree)
     {
-        sub_bf(t, t1, t2);  // (xt - yt)
-        add_bf(t3, t1, t2); // (xt + yt)
-        mult_bf(t4, t, t3); // t2 = (xt + yt) * (xt - yt)
-        copy_bf(t, t2);
-        mult_bf(t3, t, t1); // yt = xt * yt
-        add_bf(t2, t3, t3); // yt = yt + yt
-        copy_bf(t1, t4);
-
+        const T difference = factor.x - factor.y;
+        const T sum = factor.x + factor.y;
+        T real = difference * sum;
+        const T cross = factor.y * factor.x;
+        factor.y = cross + cross;
+        factor.x = std::move(real);
         if (degree & 1)
         {
-            mult_bf(t, t1, result.x);  // xt * result->x
-            mult_bf(t3, t2, result.y); // yt * result->y
-            sub_bf(t4, t, t3);         // t2 = xt * result->x - yt * result->y
-            mult_bf(t, t1, result.y);  // xt * result->y
-            mult_bf(t3, t2, result.x); // yt * result->x
-            add_bf(result.y, t, t3);   // result->y = result->y * xt + yt * result->x
-            copy_bf(result.x, t4);     // result->x = t2
+            result = factor * result;
         }
         degree >>= 1;
     }
+    return result;
 }
+
+void power(BFPtrComplex &result, const BFPtrComplex &z, int degree);
 
 } // namespace id::math

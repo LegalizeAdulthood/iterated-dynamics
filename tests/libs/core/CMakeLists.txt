@@ -134,6 +134,7 @@ add_executable(test-core
 
     math/test_big_float.cpp
     math/test_big_num.cpp
+    math/test_BigComplex.cpp
     math/test_BigFloat.cpp
     math/test_BigNum.cpp
     math/test_cmplx.cpp

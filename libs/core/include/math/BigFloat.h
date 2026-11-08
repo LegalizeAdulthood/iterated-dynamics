@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 namespace id::math
@@ -35,6 +36,12 @@ public:
     BigFloat operator-(const BigFloat &right) const;
     BigFloat operator*(const BigFloat &right) const;
     BigFloat operator/(const BigFloat &right) const;
+    BigFloat sqr() const;
+    BigFloat half() const;
+    BigFloat log() const;
+    BigFloat exp() const;
+    std::pair<BigFloat, BigFloat> sin_cos() const;
+    BigFloat atan2(const BigFloat &x) const;
 
     bool operator==(const BigFloat &right) const;
     bool operator!=(const BigFloat &right) const;
@@ -55,5 +62,11 @@ private:
 
     std::vector<Byte> m_storage;
 };
+
+BigFloat sqr(const BigFloat &value);
+BigFloat log(const BigFloat &value);
+BigFloat exp(const BigFloat &value);
+std::pair<BigFloat, BigFloat> sin_cos(const BigFloat &value);
+BigFloat atan2(const BigFloat &y, const BigFloat &x);
 
 } // namespace id::math

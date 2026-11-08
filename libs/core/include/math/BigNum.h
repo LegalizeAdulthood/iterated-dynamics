@@ -35,7 +35,7 @@ public:
     BigNum operator-(const BigNum &right) const;
     BigNum operator*(const BigNum &right) const;
     BigNum operator/(const BigNum &right) const;
-    BigNum square() const;
+    BigNum sqr() const;
 
     bool operator==(const BigNum &right) const;
     bool operator!=(const BigNum &right) const;
@@ -56,5 +56,7 @@ private:
     // The remaining g_bn_length - g_int_length bytes are fractional.
     std::vector<Byte> m_storage;
 };
+
+BigNum sqr(const BigNum &value);
 
 } // namespace id::math

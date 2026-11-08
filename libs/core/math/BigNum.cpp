@@ -774,7 +774,7 @@ BigNum BigNum::operator/(const BigNum &right) const
     return result;
 }
 
-BigNum BigNum::square() const
+BigNum BigNum::sqr() const
 {
     BigNum result;
     normalized_square(result.m_storage.data(), m_storage.data());
@@ -838,6 +838,11 @@ void BigNum::copy_to_legacy_float(BigFloatPtr destination, const std::size_t siz
 {
     validate_buffer(destination, size, static_cast<std::size_t>(g_bf_length) + 2);
     bn_to_bf(destination, m_storage.data());
+}
+
+BigNum sqr(const BigNum &value)
+{
+    return value.sqr();
 }
 
 // Raw compatibility adapters for callers not yet using owning values.
