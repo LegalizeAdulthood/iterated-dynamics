@@ -56,7 +56,7 @@ BigNumPtr max_bn(BigNumPtr r)
 
 /********************************************************************/
 // r = n
-BigNumPtr copy_bn(BigNumPtr r, BigNumPtr n)
+BigNumPtr copy_bn(BigNumPtr r, BigNumConstPtr n)
 {
     std::memcpy(r, n, g_bn_length);
     return r;
@@ -127,7 +127,7 @@ int cmp_bn(BigNumPtr n1, BigNumPtr n2)
 /********************************************************************/
 // r < 0 ?
 // returns 1 if negative, 0 if positive or zero
-bool is_bn_neg(BigNumPtr n)
+bool is_bn_neg(BigNumConstPtr n)
 {
     return static_cast<S8>(n[g_bn_length - 1]) < 0;
 }

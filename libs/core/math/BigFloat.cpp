@@ -5,6 +5,8 @@
 //
 #include <math/BigFloat.h>
 
+#include <math/BigNum.h>
+
 #include <algorithm>
 #include <cmath>
 #include <cstring>
@@ -353,6 +355,12 @@ BigFloat::BigFloat(const std::string_view text) :
     str_to_bf(m_storage.data(), text);
 }
 
+BigFloat::BigFloat(const BigNum &value) :
+    BigFloat()
+{
+    value.copy_to_legacy_float(m_storage.data(), m_storage.size());
+}
+
 BigFloat &BigFloat::operator=(const LDouble value)
 {
     if (!std::isfinite(value))
@@ -481,6 +489,12 @@ void BigFloat::copy_to_legacy(BigFloatPtr destination, const std::size_t size) c
 {
     validate_buffer(destination, size, m_storage.size());
     std::copy(m_storage.begin(), m_storage.end(), destination);
+}
+
+void BigFloat::copy_to_legacy_num(BigNumPtr destination, const std::size_t size) const
+{
+    validate_buffer(destination, size, static_cast<std::size_t>(g_bn_length));
+    bf_to_bn(destination, m_storage.data());
 }
 
 // Raw compatibility adapters for callers not yet using owning values.

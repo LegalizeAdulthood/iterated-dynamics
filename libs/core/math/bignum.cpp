@@ -1377,7 +1377,7 @@ BigNumPtr div_bn_int(BigNumPtr r, BigNumPtr n, const U16 u)
 }
 
 /**********************************************************************/
-std::string bn_to_string(BigNumPtr r, const int dec)
+std::string bn_to_string(BigNumConstPtr r, const int dec)
 {
     return unsafe_bn_to_string(copy_bn(g_bn_tmp_copy2, r), dec);
 }

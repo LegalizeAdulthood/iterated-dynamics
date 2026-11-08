@@ -41,6 +41,7 @@ enum class BFMathType
 
 using Big = unsigned char *;
 using BigNumPtr = Big; // for clarification purposes
+using BigNumConstPtr = const Byte *;
 using BigFloatPtr = Big;
 using BigFloatConstPtr = const Byte *;
 
@@ -84,9 +85,9 @@ extern Big g_big_pi;
 void calc_lengths();
 BigNumPtr clear_bn(BigNumPtr r);
 BigNumPtr max_bn(BigNumPtr r);
-BigNumPtr copy_bn(BigNumPtr r, BigNumPtr n);
+BigNumPtr copy_bn(BigNumPtr r, BigNumConstPtr n);
 int cmp_bn(BigNumPtr n1, BigNumPtr n2);
-bool is_bn_neg(BigNumPtr n);
+bool is_bn_neg(BigNumConstPtr n);
 bool is_bn_not_zero(BigNumPtr n);
 BigNumPtr add_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2);
 BigNumPtr add_a_bn(BigNumPtr r, BigNumPtr n);
@@ -155,7 +156,7 @@ BigNumPtr mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2);
 BigNumPtr full_square_bn(BigNumPtr r, BigNumPtr n);
 BigNumPtr square_bn(BigNumPtr r, BigNumPtr n);
 BigNumPtr div_bn_int(BigNumPtr r, BigNumPtr n, misc::U16 u);
-std::string bn_to_string(BigNumPtr r, int dec);
+std::string bn_to_string(BigNumConstPtr r, int dec);
 BigNumPtr inv_bn(BigNumPtr r, BigNumPtr n);
 BigNumPtr div_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2);
 BigNumPtr ln_bn(BigNumPtr r, BigNumPtr n);
@@ -169,8 +170,8 @@ BigNumPtr float_to_bn(BigNumPtr r, LDouble f);
 void bf_hex_dump(BigFloatPtr r);
 BigFloatPtr str_to_bf(BigFloatPtr r, std::string_view s);
 int strlen_needed_bf();
-BigNumPtr bf_to_bn(BigNumPtr n, BigFloatPtr f);
-BigNumPtr bn_to_bf(BigFloatPtr f, BigNumPtr n);
+BigNumPtr bf_to_bn(BigNumPtr n, BigFloatConstPtr f);
+BigFloatPtr bn_to_bf(BigFloatPtr f, BigNumConstPtr n);
 long bf_to_int(BigFloatPtr f);
 BigFloatPtr int_to_bf(BigFloatPtr r, long value);
 int sign_bf(BigFloatConstPtr n);

@@ -48,6 +48,18 @@ wider workspace and returns canonical bytes. Numerical comparisons read
 values directly. Operators and temporary raw adapters share private
 arithmetic kernels in `math/BigFloat.cpp`.
 
+`BigNum` in `math/BigNum.h` owns canonical fixed-point bytes with the same
+lifetime and active-context contract. Its little-endian representation
+uses `g_int_length` high bytes for the signed integer part and
+`g_bn_length - g_int_length` low bytes for the fractional part. Parsing
+uses the legacy fixed-decimal syntax; formatting retains legacy output.
+`BigNumConstPtr` denotes read-only legacy bytes.
+
+Explicit constructors convert between `BigNum` and `BigFloat`. Their
+conversion export adapters write directly into destination storage with
+`bn_to_bf` and `bf_to_bn`, preserving the existing truncation, saturation,
+and underflow behavior without a machine floating-point intermediate.
+
 Precision selection depends on coordinate/resolution error, overrides,
 and the fractal's supported alternate math.  There is no fixed zoom ladder
 from double to BigNum to BigFloat.  Current supported `g_bn_length`

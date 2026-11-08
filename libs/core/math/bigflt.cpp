@@ -270,7 +270,7 @@ std::string unsafe_bf_to_string_f(BigFloatPtr r, const int dec)
 //  bn = floor(bf)
 //  Converts a bigfloat to a bignumber (integer)
 //  g_bf_length must be at least g_bn_length+2
-BigNumPtr bf_to_bn(BigNumPtr n, BigFloatPtr f)
+BigNumPtr bf_to_bn(BigNumPtr n, BigFloatConstPtr f)
 {
     const int f_exp = static_cast<S16>(BIG_ACCESS16(f + g_bf_length));
     if (f_exp >= g_int_length)
@@ -302,7 +302,7 @@ BigNumPtr bf_to_bn(BigNumPtr n, BigFloatPtr f)
 //  bf = bn
 //  Converts a bignumber (integer) to a bigfloat
 //  g_bf_length must be at least g_bn_length+2
-BigFloatPtr bn_to_bf(BigFloatPtr f, BigNumPtr n)
+BigFloatPtr bn_to_bf(BigFloatPtr f, BigNumConstPtr n)
 {
     std::memcpy(f+g_bf_length-g_bn_length-1, n, g_bn_length);
     std::memset(f, 0, g_bf_length - g_bn_length - 1);

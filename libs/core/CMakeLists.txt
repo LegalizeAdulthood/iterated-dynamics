@@ -167,6 +167,7 @@ add_library(id-core
     include/math/arg.h math/arg.cpp
     include/math/big.h
     include/math/BigFloat.h math/BigFloat.cpp
+    include/math/BigNum.h math/BigNumValue.cpp
     math/bigflt.cpp
     include/math/biginit.h math/biginit.cpp
     math/bignum.cpp

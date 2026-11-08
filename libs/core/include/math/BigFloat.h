@@ -13,6 +13,8 @@
 namespace id::math
 {
 
+class BigNum;
+
 class BigFloat
 {
 public:
@@ -20,6 +22,7 @@ public:
     BigFloat();
     explicit BigFloat(LDouble value);
     explicit BigFloat(std::string_view text);
+    explicit BigFloat(const BigNum &value);
     BigFloat &operator=(LDouble value);
 
     BigFloat operator-() const;
@@ -45,6 +48,7 @@ public:
     // Adapters copy canonical mantissa/exponent bytes, without scalar conversion.
     static BigFloat from_legacy(BigFloatConstPtr source, std::size_t size);
     void copy_to_legacy(BigFloatPtr destination, std::size_t size) const;
+    void copy_to_legacy_num(BigNumPtr destination, std::size_t size) const;
 
 private:
     explicit BigFloat(std::vector<Byte> storage);
