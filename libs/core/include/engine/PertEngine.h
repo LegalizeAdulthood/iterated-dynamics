@@ -104,7 +104,7 @@ private:
         math::BFComplex precise_coordinate{};
         math::BFComplex precise_orbit{};
         math::BFComplex precise_saved{};
-        math::BigFloat precise_tolerance{};
+        math::BigFloatPtr precise_tolerance{};
         std::size_t sample{};
         std::size_t saved_sample{};
         std::size_t precise_sample{};
@@ -169,7 +169,7 @@ private:
     math::BFComplex m_reference_initial_bf{};
     math::BFComplex m_orbit_parameter_bf{};
     math::BFComplex m_orbit_initial_bf{};
-    math::BigFloat m_tmp_bf{};
+    math::BigFloatPtr m_tmp_bf{};
     math::BFComplex m_center_bf{};
     math::BFComplex m_half_horizontal_bf{};
     math::BFComplex m_half_vertical_bf{};

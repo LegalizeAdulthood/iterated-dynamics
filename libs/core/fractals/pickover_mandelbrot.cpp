@@ -196,7 +196,7 @@ void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
     }
     else
     {
-        const BigFloat denominator{alloc_stack(g_r_bf_length + 2)};
+        const BigFloatPtr denominator{alloc_stack(g_r_bf_length + 2)};
         BFComplex powered{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
         power(tmp, z, -(g_c_exponent + 1));
         cmplx_mul_bf(&powered, &tmp, &z);

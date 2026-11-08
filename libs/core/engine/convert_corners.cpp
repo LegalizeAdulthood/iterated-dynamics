@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <engine/convert_corners.h>
 
@@ -80,11 +81,11 @@ void cvt_corners(const double ctr_x, const double ctr_y, const LDouble mag, doub
 
 // convert center/mag to corners using bf
 void cvt_corners_bf(
-    BigFloat ctr_x, BigFloat ctr_y, const LDouble mag, double x_mag_factor, double rot, const double skew)
+    BigFloatPtr ctr_x, BigFloatPtr ctr_y, const LDouble mag, double x_mag_factor, double rot, const double skew)
 {
     BigStackSaver saved;
-    BigFloat bfh = alloc_stack(g_bf_length + 2);
-    BigFloat bfw = alloc_stack(g_bf_length + 2);
+    BigFloatPtr bfh = alloc_stack(g_bf_length + 2);
+    BigFloatPtr bfw = alloc_stack(g_bf_length + 2);
 
     if (x_mag_factor == 0.0)
     {
@@ -113,7 +114,7 @@ void cvt_corners_bf(
         return;
     }
 
-    BigFloat bf_tmp = alloc_stack(g_bf_length + 2);
+    BigFloatPtr bf_tmp = alloc_stack(g_bf_length + 2);
     // in unrotated, untranslated coordinate system
     const double tan_skew = std::tan(deg_to_rad(skew));
     const LDouble x_min = -w + h * tan_skew;

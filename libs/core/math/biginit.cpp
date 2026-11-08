@@ -39,76 +39,76 @@ int g_decimals{};
 int g_bf_length{};
 int g_r_bf_length{};
 int g_bf_decimals{};
-BigNum g_bn_tmp1{};
-BigNum g_bn_tmp2{};
-BigNum g_bn_tmp3{};
-BigNum g_bn_tmp4{};
-BigNum g_bn_tmp5{};
-BigNum g_bn_tmp6{};
-BigNum g_bn_tmp_copy1{};
-BigNum g_bn_tmp_copy2{};
+BigNumPtr g_bn_tmp1{};
+BigNumPtr g_bn_tmp2{};
+BigNumPtr g_bn_tmp3{};
+BigNumPtr g_bn_tmp4{};
+BigNumPtr g_bn_tmp5{};
+BigNumPtr g_bn_tmp6{};
+BigNumPtr g_bn_tmp_copy1{};
+BigNumPtr g_bn_tmp_copy2{};
 // used by other routines, g_bn_length
-BigNum g_x_min_bn{};
-BigNum g_x_max_bn{};
-BigNum g_y_min_bn{};
-BigNum g_y_max_bn{};
-BigNum g_x_3rd_bn{};
-BigNum g_y_3rd_bn{};
+BigNumPtr g_x_min_bn{};
+BigNumPtr g_x_max_bn{};
+BigNumPtr g_y_min_bn{};
+BigNumPtr g_y_max_bn{};
+BigNumPtr g_x_3rd_bn{};
+BigNumPtr g_y_3rd_bn{};
 // g_bn_length
-BigNum g_delta_x_bn{};
-BigNum g_delta_y_bn{};
-BigNum g_delta2_x_bn{};
-BigNum g_delta2_y_bn{};
-BigNum g_close_enough_bn{};
+BigNumPtr g_delta_x_bn{};
+BigNumPtr g_delta_y_bn{};
+BigNumPtr g_delta2_x_bn{};
+BigNumPtr g_delta2_y_bn{};
+BigNumPtr g_close_enough_bn{};
 // g_r_length
-BigNum g_tmp_sqr_x_bn{};
-BigNum g_tmp_sqr_y_bn{};
-BigNum g_bn_tmp{};
+BigNumPtr g_tmp_sqr_x_bn{};
+BigNumPtr g_tmp_sqr_y_bn{};
+BigNumPtr g_bn_tmp{};
 // g_bn_length
 BNComplex g_old_z_bn{};
 BNComplex g_param_z_bn{};
 BNComplex g_saved_z_bn{};
 BNComplex g_new_z_bn{};   // g_r_length
-BigNum g_bn_pi{};                      // TAKES NO SPACE
+BigNumPtr g_bn_pi{};      // TAKES NO SPACE
 // g_r_bf_length+2
-BigFloat g_bf_tmp1{};
-BigFloat g_bf_tmp2{};
-BigFloat g_bf_tmp3{};
-BigFloat g_bf_tmp4{};
-BigFloat g_bf_tmp5{};
-BigFloat g_bf_tmp6{};
-BigFloat g_bf_tmp_copy1{};
-BigFloat g_bf_tmp_copy2{};
-BigFloat g_delta_x_bf{};
-BigFloat g_delta_y_bf{};
-BigFloat g_delta2_x_bf{};
-BigFloat g_delta2_y_bf{};
-BigFloat g_close_enough_bf{};
-BigFloat g_tmp_sqr_x_bf{};
-BigFloat g_tmp_sqr_y_bf{};
+BigFloatPtr g_bf_tmp1{};
+BigFloatPtr g_bf_tmp2{};
+BigFloatPtr g_bf_tmp3{};
+BigFloatPtr g_bf_tmp4{};
+BigFloatPtr g_bf_tmp5{};
+BigFloatPtr g_bf_tmp6{};
+BigFloatPtr g_bf_tmp_copy1{};
+BigFloatPtr g_bf_tmp_copy2{};
+BigFloatPtr g_delta_x_bf{};
+BigFloatPtr g_delta_y_bf{};
+BigFloatPtr g_delta2_x_bf{};
+BigFloatPtr g_delta2_y_bf{};
+BigFloatPtr g_close_enough_bf{};
+BigFloatPtr g_tmp_sqr_x_bf{};
+BigFloatPtr g_tmp_sqr_y_bf{};
 // g_bf_length+2
 BFComplex g_param_z_bf{};
 BFComplex g_saved_z_bf{};
 // g_r_bf_length+2
 BFComplex g_old_z_bf{};
 BFComplex g_new_z_bf{};
-BigFloat g_bf_pi{};      // TAKES NO SPACE
-BigFloat g_big_pi{};     // g_bf_length+2
+BigFloatPtr g_bf_pi{};  // TAKES NO SPACE
+BigFloatPtr g_big_pi{}; // g_bf_length+2
 // g_bf_length+2
-BigFloat g_bf_x_min{};
-BigFloat g_bf_x_max{};
-BigFloat g_bf_y_min{};
-BigFloat g_bf_y_max{};
-BigFloat g_bf_x_3rd{};
-BigFloat g_bf_y_3rd{};
-BigFloat g_bf_save_x_min{};
-BigFloat g_bf_save_x_max{};
-BigFloat g_bf_save_y_min{};
-BigFloat g_bf_save_y_max{};
-BigFloat g_bf_save_x_3rd{};
-BigFloat g_bf_save_y_3rd{};
-BigFloat g_bf_params[10]{}; // (g_bf_length + 2)*10
-BigFloat g_bf_tmp{};
+BigFloatPtr g_bf_x_min{};
+BigFloatPtr g_bf_x_max{};
+BigFloatPtr g_bf_y_min{};
+BigFloatPtr g_bf_y_max{};
+BigFloatPtr g_bf_x_3rd{};
+BigFloatPtr g_bf_y_3rd{};
+BigFloatPtr g_bf_save_x_min{};
+BigFloatPtr g_bf_save_x_max{};
+BigFloatPtr g_bf_save_y_min{};
+BigFloatPtr g_bf_save_y_max{};
+BigFloatPtr g_bf_save_x_3rd{};
+BigFloatPtr g_bf_save_y_3rd{};
+BigFloatPtr g_bf_params[10]{}; // (g_bf_length + 2)*10
+BigFloatPtr g_bf_tmp{};
 
 constexpr long BIGNUM_ARENA_SIZE{1024L * 1024};
 // Supported g_bn_length limits are independent of working storage capacity.
@@ -116,8 +116,8 @@ constexpr int MAX_BIGNUM_LENGTH{672};
 constexpr int MAX_BIGFLOAT_LENGTH{708};
 
 static char s_storage[BIGNUM_ARENA_SIZE];
-static BigNum s_bn_root{};
-static BigNum s_stack_ptr{}; // memory allocator base after global variables
+static BigNumPtr s_bn_root{};
+static BigNumPtr s_stack_ptr{}; // memory allocator base after global variables
 
 static int save_bf_vars();
 static int restore_bf_vars();
@@ -221,13 +221,13 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
     g_decimals = decimals;
     calc_lengths();
     g_bf_math = math;
-    s_bn_root = reinterpret_cast<BigFloat>(&s_storage[0]);
+    s_bn_root = reinterpret_cast<BigFloatPtr>(&s_storage[0]);
 
     // Now split up the memory among the pointers
     long ptr{};
     const auto alloc_size = [&ptr](const int size)
     {
-        BigNum result = s_bn_root + ptr;
+        BigNumPtr result = s_bn_root + ptr;
         ptr += size;
         return result;
     };
@@ -316,7 +316,7 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
     g_bf_y_max = alloc_size(g_bf_length+2);
     g_bf_x_3rd = alloc_size(g_bf_length+2);
     g_bf_y_3rd = alloc_size(g_bf_length+2);
-    for (BigFloat &param : g_bf_params)
+    for (BigFloatPtr &param : g_bf_params)
     {
         param = s_bn_root + ptr;
         ptr += g_bf_length + 2;
@@ -380,7 +380,7 @@ static int restore_bf_vars()
     {
         return -1;
     }
-    BigFloat ptr = s_bn_root;
+    BigFloatPtr ptr = s_bn_root;
     convert_bf(g_bf_x_min, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
     convert_bf(g_bf_x_max, ptr, g_bf_length, g_bf_save_len);
@@ -393,7 +393,7 @@ static int restore_bf_vars()
     ptr += g_bf_save_len+2;
     convert_bf(g_bf_y_3rd, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    for (BigFloat &param : g_bf_params)
+    for (BigFloatPtr &param : g_bf_params)
     {
         convert_bf(param, ptr, g_bf_length, g_bf_save_len);
         ptr += g_bf_save_len + 2;
@@ -442,7 +442,7 @@ void free_bf_vars()
 // Memory allocator routines start here.
 /************************************************************************/
 // Allocates a BigNum variable on stack
-BigNum alloc_stack(const size_t size)
+BigNumPtr alloc_stack(const size_t size)
 {
     if (g_bf_math == BFMathType::NONE || s_bn_root == nullptr || s_stack_ptr == nullptr)
     {

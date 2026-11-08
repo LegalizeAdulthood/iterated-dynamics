@@ -43,7 +43,7 @@ namespace id::engine
 std::vector<std::string> g_precision_diagnostics;
 
 //********************************************************************
-std::string format_var_bn(const char *s, BigNum n)
+std::string format_var_bn(const char *s, BigNumPtr n)
 {
     std::string msg{s};
     msg += ' ' + math::bn_to_string(n, 40);
@@ -175,7 +175,7 @@ std::string format_corners_bf_save(const char *s)
         bf_to_string(g_bf_save_y_3rd, dec), g_image_region.m_3rd.y);
 }
 
-std::string format_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat t2, const int digits)
+std::string format_two_bf(const char *s1, BigFloatPtr t1, const char *s2, BigFloatPtr t2, const int digits)
 {
     return fmt::format("\n"
                        "{:s}->{:s}\n"
@@ -185,7 +185,7 @@ std::string format_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat 
 }
 
 std::string format_three_bf(
-    const char *s1, BigFloat t1, const char *s2, BigFloat t2, const char *s3, BigFloat t3, const int digits)
+    const char *s1, BigFloatPtr t1, const char *s2, BigFloatPtr t2, const char *s3, BigFloatPtr t3, const int digits)
 {
     return fmt::format("\n"
                        "{:s}->{:s}\n"
@@ -200,9 +200,9 @@ std::string format_three_bf(
 std::string format_aspect(const char *s)
 {
     BigStackSaver saved;
-    BigFloat bt1 = alloc_stack(g_r_bf_length + 2);
-    BigFloat bt2 = alloc_stack(g_r_bf_length + 2);
-    BigFloat aspect = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr bt1 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr bt2 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr aspect = alloc_stack(g_r_bf_length + 2);
     sub_bf(bt1, g_bf_x_max, g_bf_x_min);
     sub_bf(bt2, g_bf_y_max, g_bf_y_min);
     div_bf(aspect, bt2, bt1);
@@ -216,7 +216,7 @@ std::string format_aspect(const char *s)
 }
 
 // compare a double and bignumber
-std::string format_compare_values(const char *s, const LDouble x, BigNum bnx)
+std::string format_compare_values(const char *s, const LDouble x, BigNumPtr bnx)
 {
     constexpr int dec{40};
     return fmt::format("{:s}\n"
@@ -229,7 +229,7 @@ std::string format_compare_values(const char *s, const LDouble x, BigNum bnx)
 }
 
 // compare a double and bignumber
-std::string format_compare_values_bf(const char *s, const LDouble x, BigFloat bfx)
+std::string format_compare_values_bf(const char *s, const LDouble x, BigFloatPtr bfx)
 {
     constexpr int dec{40};
     return fmt::format("{:s}\n"
@@ -242,7 +242,7 @@ std::string format_compare_values_bf(const char *s, const LDouble x, BigFloat bf
 }
 
 //********************************************************************
-std::string format_var_bf(const char *, BigFloat n)
+std::string format_var_bf(const char *, BigFloatPtr n)
 {
     std::string msg{bf_to_string_e(n, 40)};
     msg.resize(std::min(msg.size(), size_t{79}));
@@ -273,8 +273,8 @@ bool mandel_per_image_bn()
 {
     BigStackSaver saved;
     // this should be set up dynamically based on corners
-    BigNum bn_temp1 = alloc_stack(g_bn_length);
-    BigNum bn_temp2 = alloc_stack(g_bn_length);
+    BigNumPtr bn_temp1 = alloc_stack(g_bn_length);
+    BigNumPtr bn_temp2 = alloc_stack(g_bn_length);
 
     bf_to_bn(g_x_min_bn, g_bf_x_min);
     bf_to_bn(g_x_max_bn, g_bf_x_max);
@@ -386,8 +386,8 @@ bool mandel_per_image_bf()
 
     // this should be set up dynamically based on corners
     BigStackSaver saved;
-    BigFloat bf_temp1{alloc_stack(g_bf_length + 2)};
-    BigFloat bf_temp2{alloc_stack(g_bf_length + 2)};
+    BigFloatPtr bf_temp1{alloc_stack(g_bf_length + 2)};
+    BigFloatPtr bf_temp2{alloc_stack(g_bf_length + 2)};
 
     g_bf_math = BFMathType::BIG_FLT;
 
@@ -720,7 +720,7 @@ BFComplex *cmplx_log_bf(BFComplex *t, BFComplex *s)
 BFComplex *cmplx_mul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {
     BigStackSaver saved;
-    BigFloat tmp1 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr tmp1 = alloc_stack(g_r_bf_length + 2);
     mult_bf(t->x, x->x, y->x);
     mult_bf(t->y, x->y, y->y);
     sub_bf(t->x, t->x, t->y);
@@ -734,8 +734,8 @@ BFComplex *cmplx_mul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 BFComplex *cmplx_div_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {
     BigStackSaver saved;
-    BigFloat tmp1 = alloc_stack(g_r_bf_length + 2);
-    BigFloat denom = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr tmp1 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr denom = alloc_stack(g_r_bf_length + 2);
 
     square_bf(t->x, y->x);
     square_bf(t->y, y->y);
@@ -765,9 +765,9 @@ BFComplex *cmplx_pow_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
 {
     BigStackSaver saved;
     BFComplex tmp;
-    BigFloat e2x = alloc_stack(g_r_bf_length + 2);
-    BigFloat sin_y = alloc_stack(g_r_bf_length + 2);
-    BigFloat cos_y = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr e2x = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr sin_y = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr cos_y = alloc_stack(g_r_bf_length + 2);
     tmp.x = alloc_stack(g_r_bf_length+2);
     tmp.y = alloc_stack(g_r_bf_length+2);
 

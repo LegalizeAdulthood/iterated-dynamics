@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <fractals/divide_brot.h>
 
@@ -59,7 +60,7 @@ int divide_brot5_orbit_bf()
     bf_numer.y = alloc_stack(g_r_bf_length + 2);
     bf_c_exp.x = alloc_stack(g_bf_length + 2);
     bf_c_exp.y = alloc_stack(g_bf_length + 2);
-    BigFloat tmp1 = alloc_stack(g_bf_length + 2);
+    BigFloatPtr tmp1 = alloc_stack(g_bf_length + 2);
 
     /* sqr(z) */
     /* bfnumer.x = g_tmp_sqr_x_bf - g_tmp_sqr_y_bf;   */

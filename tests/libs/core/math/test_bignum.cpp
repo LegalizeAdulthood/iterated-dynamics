@@ -35,12 +35,12 @@ protected:
 
     std::string round_trip(char *input, const int decimals)
     {
-        BigNum value{alloc_stack(g_bn_length)};
+        BigNumPtr value{alloc_stack(g_bn_length)};
         str_to_bn(value, input);
         return format(value, decimals);
     }
 
-    static std::string format(BigNum value, const int decimals)
+    static std::string format(BigNumPtr value, const int decimals)
     {
         return bn_to_string(value, decimals);
     }
@@ -75,7 +75,7 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestBigNumFormatting,
 
 TEST_F(TestBigNum, formatsZeroValue)
 {
-    BigNum value{alloc_stack(g_bn_length)};
+    BigNumPtr value{alloc_stack(g_bn_length)};
     int_to_bn(value, 0);
 
     EXPECT_EQ("0.", format(value, 5));

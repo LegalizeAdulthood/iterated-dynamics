@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 /*
 Actually calculate the fractal images (well, SOMEBODY had to do it!).
@@ -220,10 +221,10 @@ void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z)
 void mandel_ref_pt_bf(const BFComplex &center, BFComplex &z)
 {
     BigStackSaver saved;
-    BigFloat temp_real = alloc_stack(g_r_bf_length + 2);
-    BigFloat real_sqr = alloc_stack(g_r_bf_length + 2);
-    BigFloat imag_sqr = alloc_stack(g_r_bf_length + 2);
-    BigFloat real_imag = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr temp_real = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr real_sqr = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr imag_sqr = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr real_imag = alloc_stack(g_r_bf_length + 2);
     BFComplex z2;
     z2.x = alloc_stack(g_r_bf_length + 2);
     z2.y = alloc_stack(g_r_bf_length + 2);

@@ -64,7 +64,7 @@ class TestBigFloatParse : public TestBigFloat, public testing::WithParamInterfac
 TEST_P(TestBigFloatParse, parsesTheSpecifiedText)
 {
     const std::string_view text{GetParam().storage.data(), GetParam().length};
-    BigFloat value{alloc_stack(g_bf_length + 2)};
+    BigFloatPtr value{alloc_stack(g_bf_length + 2)};
 
     str_to_bf(value, text);
 
@@ -81,7 +81,7 @@ class TestBigFloatFormat : public TestBigFloat
 protected:
     void prepare_value(const char *text);
 
-    BigFloat m_value{};
+    BigFloatPtr m_value{};
 };
 
 void TestBigFloatFormat::prepare_value(const char *text)
@@ -232,7 +232,7 @@ protected:
     int m_length{};
     int m_decimals{};
     int m_stack{};
-    BigFloat m_corner{};
+    BigFloatPtr m_corner{};
 };
 
 void TestActivePrecisionArena::prepare_active_arena(const FractalType type)
@@ -379,7 +379,7 @@ TEST_F(TestBigFloat, stackStorageCrossesSixtyFourKilobytes)
     {
         BigStackSaver saved;
         alloc_stack(OLD_ARENA_SIZE);
-        const BigFloat value{alloc_stack(g_bf_length + 2)};
+        const BigFloatPtr value{alloc_stack(g_bf_length + 2)};
         EXPECT_GT(save_stack(), OLD_ARENA_SIZE);
         float_to_bf(value, 2.5);
         add_bf(value, value, g_bf_x_min);
@@ -451,7 +451,7 @@ TEST_F(TestExhaustedArenaStack, restoringStackAfterRejectionAllowsReuse)
 
     restore_stack(m_stack);
 
-    BigFloat value{alloc_stack(g_bf_length + 2)};
+    BigFloatPtr value{alloc_stack(g_bf_length + 2)};
     str_to_bf(value, "1.25");
     EXPECT_EQ(1.25L, bf_to_float(value));
 }
@@ -504,7 +504,7 @@ TEST_F(TestFreedArena, initializesFreshStorageAfterRejectedOperations)
     init_bf_dec(20);
 
     EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min));
-    BigFloat value{alloc_stack(g_bf_length + 2)};
+    BigFloatPtr value{alloc_stack(g_bf_length + 2)};
     str_to_bf(value, "1.25");
     EXPECT_EQ(1.25L, bf_to_float(value));
 }

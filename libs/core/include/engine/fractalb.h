@@ -47,18 +47,18 @@ math::BFComplex *cmplx_pow_bf(math::BFComplex *t, math::BFComplex *xx, math::BFC
 // Numeric snapshots collected by debug checks and reported by UI owners.
 extern std::vector<std::string> g_precision_diagnostics;
 
-std::string format_var_bn(const char *s, math::BigNum n);
+std::string format_var_bn(const char *s, math::BigNumPtr n);
 std::string format_corners_dbl(const char *s);
 std::string format_corners_bn(const char *s);
 std::string format_globals_bf(const char *s);
 std::string format_corners_bf(const char *s);
 std::string format_corners_bf_save(const char *s);
-std::string format_two_bf(const char *s1, math::BigFloat t1, const char *s2, math::BigFloat t2, int digits);
-std::string format_three_bf(const char *s1, math::BigFloat t1, const char *s2, math::BigFloat t2, const char *s3,
-    math::BigFloat t3, int digits);
+std::string format_two_bf(const char *s1, math::BigFloatPtr t1, const char *s2, math::BigFloatPtr t2, int digits);
+std::string format_three_bf(const char *s1, math::BigFloatPtr t1, const char *s2, math::BigFloatPtr t2, const char *s3,
+    math::BigFloatPtr t3, int digits);
 std::string format_aspect(const char *s);
-std::string format_compare_values(const char *s, LDouble x, math::BigNum bnx);
-std::string format_compare_values_bf(const char *s, LDouble x, math::BigFloat bfx);
-std::string format_var_bf(const char *s, math::BigFloat n);
+std::string format_compare_values(const char *s, LDouble x, math::BigNumPtr bnx);
+std::string format_compare_values_bf(const char *s, LDouble x, math::BigFloatPtr bfx);
+std::string format_var_bf(const char *s, math::BigFloatPtr n);
 
 } // namespace id::engine

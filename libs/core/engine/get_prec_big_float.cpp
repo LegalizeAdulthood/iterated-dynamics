@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <engine/get_prec_big_float.h>
 
@@ -28,8 +29,8 @@ int get_prec_bf_mag()
     LDouble magnification;
 
     BigStackSaver saved;
-    BigFloat b_x_ctr = alloc_stack(g_bf_length + 2);
-    BigFloat b_y_ctr = alloc_stack(g_bf_length + 2);
+    BigFloatPtr b_x_ctr = alloc_stack(g_bf_length + 2);
+    BigFloatPtr b_y_ctr = alloc_stack(g_bf_length + 2);
     // this is just to find magnification
     cvt_center_mag_bf(b_x_ctr, b_y_ctr, magnification, x_mag_factor, rotation, skew);
 
@@ -48,13 +49,13 @@ int get_prec_bf(const ResolutionFlag flag)
 {
     BigStackSaver saved;
     int res;
-    BigFloat del1 = alloc_stack(g_bf_length + 2);
-    BigFloat del2 = alloc_stack(g_bf_length + 2);
-    BigFloat one = alloc_stack(g_bf_length + 2);
-    BigFloat bf_x_delta = alloc_stack(g_bf_length + 2);
-    BigFloat bf_x_delta2 = alloc_stack(g_bf_length + 2);
-    BigFloat bf_y_delta = alloc_stack(g_bf_length + 2);
-    BigFloat bf_y_delta2 = alloc_stack(g_bf_length + 2);
+    BigFloatPtr del1 = alloc_stack(g_bf_length + 2);
+    BigFloatPtr del2 = alloc_stack(g_bf_length + 2);
+    BigFloatPtr one = alloc_stack(g_bf_length + 2);
+    BigFloatPtr bf_x_delta = alloc_stack(g_bf_length + 2);
+    BigFloatPtr bf_x_delta2 = alloc_stack(g_bf_length + 2);
+    BigFloatPtr bf_y_delta = alloc_stack(g_bf_length + 2);
+    BigFloatPtr bf_y_delta2 = alloc_stack(g_bf_length + 2);
     float_to_bf(one, 1.0);
     if (flag == ResolutionFlag::MAX)
     {

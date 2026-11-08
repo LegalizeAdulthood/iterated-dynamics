@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -30,11 +31,11 @@ inline std::complex<double> cube(const std::complex<double> &z)
 inline void cube(BFComplex &out, const BFComplex &in)
 {
     BigStackSaver saved;
-    BigFloat t = alloc_stack(g_r_bf_length + 2);
-    BigFloat t1 = alloc_stack(g_r_bf_length + 2);
-    BigFloat t2 = alloc_stack(g_r_bf_length + 2);
-    BigFloat sqr_real = alloc_stack(g_r_bf_length + 2);
-    BigFloat sqr_imag = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr t = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr t1 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr t2 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr sqr_real = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr sqr_imag = alloc_stack(g_r_bf_length + 2);
 
     mult_bf(sqr_real, in.x, in.x); // sqr_real = x * x;
     mult_bf(sqr_imag, in.y, in.y); // sqr_imag = y * y;
@@ -89,11 +90,11 @@ inline std::complex<double> power(const std::complex<double> &base, int exp)
 inline void power(BFComplex &result, const BFComplex &z, int degree)
 {
     BigStackSaver saved;
-    BigFloat t = alloc_stack(g_r_bf_length + 2);
-    BigFloat t1 = alloc_stack(g_r_bf_length + 2);
-    BigFloat t2 = alloc_stack(g_r_bf_length + 2);
-    BigFloat t3 = alloc_stack(g_r_bf_length + 2);
-    BigFloat t4 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr t = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr t1 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr t2 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr t3 = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr t4 = alloc_stack(g_r_bf_length + 2);
 
     degree = std::max(degree, 0);
 

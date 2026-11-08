@@ -112,7 +112,7 @@ template <typename... Args>
 static void put_param(const char *param, const Args &...args);
 static void put_param_line();
 static void put_float(int slash, double value, int prec);
-static void put_bf(int slash, BigFloat r, int prec);
+static void put_bf(int slash, BigFloatPtr r, int prec);
 static void put_filename(WriteBatchData &wb_data, const char *keyword, const char *fname);
 static void put_filename(const char *keyword, const char *fname);
 static void strip_zeros(std::string &buf);
@@ -985,8 +985,8 @@ static void write_batch_params(
     const char *color_inf, const bool colors_only, const int max_color, const int ii, const int jj)
 {
     BigStackSaver saved;
-    BigFloat bf_x_ctr = nullptr;
-    BigFloat bf_y_ctr = nullptr;
+    BigFloatPtr bf_x_ctr = nullptr;
+    BigFloatPtr bf_y_ctr = nullptr;
     if (g_bf_math != BFMathType::NONE)
     {
         bf_x_ctr = alloc_stack(g_bf_length+2);
@@ -1927,7 +1927,7 @@ static void put_float(const int slash, const double value, const int prec)
     put_param(buf.c_str());
 }
 
-static void put_bf(const int slash, const BigFloat r, const int prec)
+static void put_bf(const int slash, const BigFloatPtr r, const int prec)
 {
     std::string value{bf_to_string(r, prec)};
     strip_zeros(value);

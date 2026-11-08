@@ -28,10 +28,11 @@ Header: `big.h`.
 - `g_r_bf_length` - mantissa working length including padding.
 - `g_bf_decimals` - decimal precision derived from mantissa length.
 
-`BigNum` is binary fixed-point, not exact decimal arithmetic.
-`BigFloat` has a base-256 mantissa and a two-byte exponent.  `Big`,
-`BigNum`, and `BigFloat` are raw byte-pointer aliases; `BNComplex` and
-`BFComplex` contain two such pointers and do not own their storage.
+`BigNumPtr` points to binary fixed-point storage, not exact decimal
+arithmetic. `BigFloatPtr` points to a base-256 mantissa and a two-byte
+exponent. `Big`, `BigNumPtr`, and `BigFloatPtr` are raw byte-pointer
+aliases; `BNComplex` and `BFComplex` contain two such pointers and do not
+own their storage.
 
 Precision selection depends on coordinate/resolution error, overrides,
 and the fractal's supported alternate math.  There is no fixed zoom ladder

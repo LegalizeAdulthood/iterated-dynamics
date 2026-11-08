@@ -176,7 +176,7 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
     BFComplex expected{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     BFComplex powered{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     BFComplex product{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    const BigFloat difference{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr difference{alloc_stack(g_r_bf_length + 2)};
     str_to_bf(center.x, "-0.12500000000000000000000000000000000000001");
     str_to_bf(center.y, "0.000125");
     str_to_bf(actual.x, "0.99900000000000000000000000000000000000001");
@@ -434,7 +434,7 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     BFComplex seed{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     BFComplex expected{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     const BFComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    const BigFloat difference{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr difference{alloc_stack(g_r_bf_length + 2)};
     int_to_bf(exponent.x, GetParam().exponent);
     clear_bf(exponent.y);
     float_to_bf(center.x, 0.125);
@@ -770,7 +770,7 @@ TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
     BFComplex expected{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     BFComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     const BFComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    const BigFloat difference{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr difference{alloc_stack(g_r_bf_length + 2)};
     float_to_bf(exponent.x, GetParam().exponent.real());
     float_to_bf(exponent.y, GetParam().exponent.imag());
     float_to_bf(center.x, 0.0625);

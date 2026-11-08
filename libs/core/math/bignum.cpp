@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // C routines for bignumbers
 
@@ -157,7 +158,7 @@ long parse_long(const std::string_view text)
     return value;
 }
 
-void set_integer_part(BigNum ones_byte, const long value)
+void set_integer_part(BigNumPtr ones_byte, const long value)
 {
     switch (g_int_length)
     {
@@ -174,7 +175,7 @@ void set_integer_part(BigNum ones_byte, const long value)
     }
 }
 
-std::string unsafe_bn_to_string(BigNum r, int dec)
+std::string unsafe_bn_to_string(BigNumPtr r, int dec)
 {
     long value = 0;
 
@@ -182,7 +183,7 @@ std::string unsafe_bn_to_string(BigNum r, int dec)
     {
         dec = g_decimals;
     }
-    BigNum ones_byte = r + g_bn_length - g_int_length;
+    BigNumPtr ones_byte = r + g_bn_length - g_int_length;
 
     std::string result;
     if (is_bn_neg(r))
@@ -270,8 +271,8 @@ S16 BIG_SET_S16(S16 *addr, S16 val)
 
 /************************************************************************/
 // convert_bn  -- convert bignum numbers from old to new lengths
-int convert_bn(BigNum new_num, BigNum old_num, const int new_bn_len, const int new_int_len,
-    const int old_bn_len, const int old_int_len)
+int convert_bn(BigNumPtr new_num, BigNumPtr old_num, const int new_bn_len, const int new_int_len, const int old_bn_len,
+    const int old_int_len)
 {
     // save lengths so not dependent on external environment
     int save_int_length = g_int_length;
@@ -304,7 +305,7 @@ int convert_bn(BigNum new_num, BigNum old_num, const int new_bn_len, const int n
 /********************************************************************/
 // bn_hexdump() - for debugging, dumps to stdout
 
-void bn_hex_dump(BigNum r)
+void bn_hex_dump(BigNumPtr r)
 {
     for (int i = 0; i < g_bn_length; i++)
     {
@@ -320,12 +321,12 @@ void bn_hex_dump(BigNum r)
 //   note: the string may not be empty or have extra space and may
 //   not use scientific notation (2.3e4).
 
-BigNum str_to_bn(BigNum r, std::string_view s)
+BigNumPtr str_to_bn(BigNumPtr r, std::string_view s)
 {
     bool sign_flag = false;
 
     clear_bn(r);
-    BigNum ones_byte = r + g_bn_length - g_int_length;
+    BigNumPtr ones_byte = r + g_bn_length - g_int_length;
 
     if (s[0] == '+') // for + sign
     {
@@ -400,10 +401,10 @@ int strlen_needed_bn()
 
 //  b = l
 //  Converts a long to a bignumber
-BigNum int_to_bn(BigNum r, const long value)
+BigNumPtr int_to_bn(BigNumPtr r, const long value)
 {
     clear_bn(r);
-    BigNum ones_byte = r + g_bn_length - g_int_length;
+    BigNumPtr ones_byte = r + g_bn_length - g_int_length;
     switch (g_int_length)
     {
         // only 1, 2, or 4 are allowed
@@ -423,11 +424,11 @@ BigNum int_to_bn(BigNum r, const long value)
 /*********************************************************************/
 //  l = floor(b), floor rounds down
 //  Converts the integer part a bignumber to a long
-long bn_to_int(BigNum n)
+long bn_to_int(BigNumPtr n)
 {
     long value = 0;
 
-    BigNum ones_byte = n + g_bn_length - g_int_length;
+    BigNumPtr ones_byte = n + g_bn_length - g_int_length;
     switch (g_int_length)
     {
         // only 1, 2, or 4 are allowed
@@ -447,12 +448,12 @@ long bn_to_int(BigNum n)
 /*********************************************************************/
 //  b = f
 //  Converts a double to a bignumber
-BigNum float_to_bn(BigNum r, LDouble f)
+BigNumPtr float_to_bn(BigNumPtr r, LDouble f)
 {
     bool sign_flag = false;
 
     clear_bn(r);
-    BigNum ones_byte = r + g_bn_length - g_int_length;
+    BigNumPtr ones_byte = r + g_bn_length - g_int_length;
 
     if (f < 0)
     {
@@ -492,14 +493,14 @@ BigNum float_to_bn(BigNum r, LDouble f)
 
 /********************************************************************/
 // sign(r)
-int sign_bn(BigNum n)
+int sign_bn(BigNumPtr n)
 {
     return is_bn_neg(n) ? -1 : is_bn_not_zero(n) ? 1 : 0;
 }
 
 /********************************************************************/
 // r = |n|
-BigNum abs_bn(BigNum r, BigNum n)
+BigNumPtr abs_bn(BigNumPtr r, BigNumPtr n)
 {
     copy_bn(r, n);
     if (is_bn_neg(r))
@@ -511,7 +512,7 @@ BigNum abs_bn(BigNum r, BigNum n)
 
 /********************************************************************/
 // r = |r|
-BigNum abs_a_bn(BigNum r)
+BigNumPtr abs_a_bn(BigNumPtr r)
 {
     if (is_bn_neg(r))
     {
@@ -525,7 +526,7 @@ BigNum abs_a_bn(BigNum r)
 // uses g_bn_tmp1 - g_bn_tmp3 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n ends up as |n|    Make copy first if necessary.
-BigNum unsafe_inv_bn(BigNum r, BigNum n)
+BigNumPtr unsafe_inv_bn(BigNumPtr r, BigNumPtr n)
 {
     // use Newton's recursive method for zeroing in on 1/n : r=r(2-rn)
 
@@ -565,8 +566,8 @@ BigNum unsafe_inv_bn(BigNum r, BigNum n)
     int orig_padding = g_padding;
     int orig_r_length = g_r_length;
     int orig_shift_factor = g_shift_factor;
-    BigNum orig_r = r;
-    BigNum orig_n = n;
+    BigNumPtr orig_r = r;
+    BigNumPtr orig_n = n;
     // orig_bntmp1        = g_bn_tmp1;
 
     // calculate new starting values
@@ -624,7 +625,7 @@ BigNum unsafe_inv_bn(BigNum r, BigNum n)
 //  SIDE-EFFECTS:
 //      n1, n2 can end up as GARBAGE
 //      Make copies first if necessary.
-BigNum unsafe_div_bn(BigNum r, BigNum n1, BigNum n2)
+BigNumPtr unsafe_div_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
 {
     // first, check for valid data
     const LDouble a = bn_to_float(n1);
@@ -725,7 +726,7 @@ BigNum unsafe_div_bn(BigNum r, BigNum n1, BigNum n2)
 // uses g_bn_tmp1 - g_bn_tmp6 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n ends up as |n|
-BigNum sqrt_bn(BigNum r, BigNum n)
+BigNumPtr sqrt_bn(BigNumPtr r, BigNumPtr n)
 {
     int almost_match = 0;
 
@@ -754,8 +755,8 @@ BigNum sqrt_bn(BigNum r, BigNum n)
     int orig_padding = g_padding;
     int orig_r_length = g_r_length;
     int orig_shift_factor = g_shift_factor;
-    BigNum orig_r = r;
-    BigNum orig_n = n;
+    BigNumPtr orig_r = r;
+    BigNumPtr orig_n = n;
 
     // calculate new starting values
     g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
@@ -812,7 +813,7 @@ BigNum sqrt_bn(BigNum r, BigNum n)
 /********************************************************************/
 // exp(r)
 // uses g_bn_tmp1, g_bn_tmp2, g_bn_tmp3 - global temp bignumbers
-BigNum exp_bn(BigNum r, BigNum n)
+BigNumPtr exp_bn(BigNumPtr r, BigNumPtr n)
 {
     U16 fact = 1;
 
@@ -846,7 +847,7 @@ BigNum exp_bn(BigNum r, BigNum n)
 // uses g_bn_tmp1 - g_bn_tmp6 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n ends up as |n|
-BigNum unsafe_ln_bn(BigNum r, BigNum n)
+BigNumPtr unsafe_ln_bn(BigNumPtr r, BigNumPtr n)
 {
     int almost_match = 0;
 
@@ -883,10 +884,10 @@ BigNum unsafe_ln_bn(BigNum r, BigNum n)
     int orig_padding = g_padding;
     int orig_r_length = g_r_length;
     int orig_shift_factor = g_shift_factor;
-    BigNum orig_r = r;
-    BigNum orig_n = n;
-    BigNum orig_bn_tmp5 = g_bn_tmp5;
-    BigNum orig_bn_tmp4 = g_bn_tmp4;
+    BigNumPtr orig_r = r;
+    BigNumPtr orig_n = n;
+    BigNumPtr orig_bn_tmp5 = g_bn_tmp5;
+    BigNumPtr orig_bn_tmp4 = g_bn_tmp4;
 
     int_to_bn(g_bn_tmp4, 1); // set before setting new values
 
@@ -954,7 +955,7 @@ BigNum unsafe_ln_bn(BigNum r, BigNum n)
 // uses g_bn_tmp1 - g_bn_tmp2 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n ends up as |n| mod (pi/4)
-BigNum unsafe_sin_cos_bn(BigNum s, BigNum c, BigNum n)
+BigNumPtr unsafe_sin_cos_bn(BigNumPtr s, BigNumPtr c, BigNumPtr n)
 {
     U16 fact = 2;
     bool k = false;
@@ -1117,7 +1118,7 @@ BigNum unsafe_sin_cos_bn(BigNum s, BigNum c, BigNum n)
 // uses g_bn_tmp1 - g_bn_tmp5 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n ends up as |n| or 1/|n|
-BigNum unsafe_atan_bn(BigNum r, BigNum n)
+BigNumPtr unsafe_atan_bn(BigNumPtr r, BigNumPtr n)
 {
     int almost_match = 0;
 
@@ -1151,10 +1152,10 @@ BigNum unsafe_atan_bn(BigNum r, BigNum n)
     int orig_padding = g_padding;
     int orig_r_length = g_r_length;
     int orig_shift_factor = g_shift_factor;
-    BigNum orig_bn_pi = g_bn_pi;
-    BigNum orig_r = r;
-    BigNum orig_n = n;
-    BigNum orig_bn_tmp3 = g_bn_tmp3;
+    BigNumPtr orig_bn_pi = g_bn_pi;
+    BigNumPtr orig_r = r;
+    BigNumPtr orig_n = n;
+    BigNumPtr orig_bn_tmp3 = g_bn_tmp3;
 
     // calculate new starting values
     g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
@@ -1251,7 +1252,7 @@ BigNum unsafe_atan_bn(BigNum r, BigNum n)
 /********************************************************************/
 // atan2(r, ny, nx)
 // uses g_bn_tmp1 - g_bn_tmp6 - global temp bigfloats
-BigNum unsafe_atan2_bn(BigNum r, BigNum ny, BigNum nx)
+BigNumPtr unsafe_atan2_bn(BigNumPtr r, BigNumPtr ny, BigNumPtr nx)
 {
     const int sign_x = sign_bn(nx);
     const int sign_y = sign_bn(ny);
@@ -1306,7 +1307,7 @@ BigNum unsafe_atan2_bn(BigNum r, BigNum ny, BigNum nx)
 /**********************************************************************/
 
 /**********************************************************************/
-BigNum full_mult_bn(BigNum r, BigNum n1, BigNum n2)
+BigNumPtr full_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
 {
     const bool sign1 = is_bn_neg(n1);
     const bool sign2 = is_bn_neg(n2);
@@ -1323,7 +1324,7 @@ BigNum full_mult_bn(BigNum r, BigNum n1, BigNum n2)
 }
 
 /**********************************************************************/
-BigNum mult_bn(BigNum r, BigNum n1, BigNum n2)
+BigNumPtr mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
 {
     const bool sign1 = is_bn_neg(n1);
     const bool sign2 = is_bn_neg(n2);
@@ -1340,7 +1341,7 @@ BigNum mult_bn(BigNum r, BigNum n1, BigNum n2)
 }
 
 /**********************************************************************/
-BigNum full_square_bn(BigNum r, BigNum n)
+BigNumPtr full_square_bn(BigNumPtr r, BigNumPtr n)
 {
     const bool sign = is_bn_neg(n);
     unsafe_full_square_bn(r, n);
@@ -1352,7 +1353,7 @@ BigNum full_square_bn(BigNum r, BigNum n)
 }
 
 /**********************************************************************/
-BigNum square_bn(BigNum r, BigNum n)
+BigNumPtr square_bn(BigNumPtr r, BigNumPtr n)
 {
     const bool sign = is_bn_neg(n);
     unsafe_square_bn(r, n);
@@ -1364,7 +1365,7 @@ BigNum square_bn(BigNum r, BigNum n)
 }
 
 /**********************************************************************/
-BigNum div_bn_int(BigNum r, BigNum n, const U16 u)
+BigNumPtr div_bn_int(BigNumPtr r, BigNumPtr n, const U16 u)
 {
     const bool sign = is_bn_neg(n);
     unsafe_div_bn_int(r, n, u);
@@ -1376,13 +1377,13 @@ BigNum div_bn_int(BigNum r, BigNum n, const U16 u)
 }
 
 /**********************************************************************/
-std::string bn_to_string(BigNum r, const int dec)
+std::string bn_to_string(BigNumPtr r, const int dec)
 {
     return unsafe_bn_to_string(copy_bn(g_bn_tmp_copy2, r), dec);
 }
 
 /**********************************************************************/
-BigNum inv_bn(BigNum r, BigNum n)
+BigNumPtr inv_bn(BigNumPtr r, BigNumPtr n)
 {
     const bool sign = is_bn_neg(n);
     unsafe_inv_bn(r, n);
@@ -1394,7 +1395,7 @@ BigNum inv_bn(BigNum r, BigNum n)
 }
 
 /**********************************************************************/
-BigNum div_bn(BigNum r, BigNum n1, BigNum n2)
+BigNumPtr div_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
 {
     copy_bn(g_bn_tmp_copy1, n1);
     copy_bn(g_bn_tmp_copy2, n2);
@@ -1402,7 +1403,7 @@ BigNum div_bn(BigNum r, BigNum n1, BigNum n2)
 }
 
 /**********************************************************************/
-BigNum ln_bn(BigNum r, BigNum n)
+BigNumPtr ln_bn(BigNumPtr r, BigNumPtr n)
 {
     copy_bn(g_bn_tmp_copy1, n); // allows r and n to overlap memory
     unsafe_ln_bn(r, g_bn_tmp_copy1);
@@ -1410,13 +1411,13 @@ BigNum ln_bn(BigNum r, BigNum n)
 }
 
 /**********************************************************************/
-BigNum sin_cos_bn(BigNum s, BigNum c, BigNum n)
+BigNumPtr sin_cos_bn(BigNumPtr s, BigNumPtr c, BigNumPtr n)
 {
     return unsafe_sin_cos_bn(s, c, copy_bn(g_bn_tmp_copy1, n));
 }
 
 /**********************************************************************/
-BigNum atan_bn(BigNum r, BigNum n)
+BigNumPtr atan_bn(BigNumPtr r, BigNumPtr n)
 {
     const bool sign = is_bn_neg(n);
     unsafe_atan_bn(r, n);
@@ -1428,7 +1429,7 @@ BigNum atan_bn(BigNum r, BigNum n)
 }
 
 /**********************************************************************/
-BigNum atan2_bn(BigNum r, BigNum ny, BigNum nx)
+BigNumPtr atan2_bn(BigNumPtr r, BigNumPtr ny, BigNumPtr nx)
 {
     copy_bn(g_bn_tmp_copy1, ny);
     copy_bn(g_bn_tmp_copy2, nx);
@@ -1436,7 +1437,7 @@ BigNum atan2_bn(BigNum r, BigNum ny, BigNum nx)
     return r;
 }
 
-bool is_bn_zero(BigNum n)
+bool is_bn_zero(BigNumPtr n)
 {
     return !is_bn_not_zero(n);
 }

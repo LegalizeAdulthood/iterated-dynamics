@@ -328,8 +328,8 @@ int tab_display() // display the status of the current image
         return metadata_tab_display(*g_tab_metadata);
     }
     int add_row = 0;
-    BigFloat bf_x_ctr = nullptr;
-    BigFloat bf_y_ctr = nullptr;
+    BigFloatPtr bf_x_ctr = nullptr;
+    BigFloatPtr bf_y_ctr = nullptr;
     char msg[350];
     const char *msg_ptr;
     int saved = 0;

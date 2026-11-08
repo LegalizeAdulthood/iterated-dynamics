@@ -44,9 +44,9 @@ protected:
     void SetUp() override
     {
         init_bf_dec(20);
-        const BigFloat corners[]{g_bf_x_min, g_bf_x_max, g_bf_y_min, g_bf_y_max, g_bf_x_3rd, g_bf_y_3rd,
+        const BigFloatPtr corners[]{g_bf_x_min, g_bf_x_max, g_bf_y_min, g_bf_y_max, g_bf_x_3rd, g_bf_y_3rd,
             g_bf_save_x_min, g_bf_save_x_max, g_bf_save_y_min, g_bf_save_y_max, g_bf_save_x_3rd, g_bf_save_y_3rd};
-        const BigNum bn_corners[]{g_x_min_bn, g_x_max_bn, g_y_min_bn, g_y_max_bn, g_x_3rd_bn, g_y_3rd_bn};
+        const BigNumPtr bn_corners[]{g_x_min_bn, g_x_max_bn, g_y_min_bn, g_y_max_bn, g_x_3rd_bn, g_y_3rd_bn};
         const double values[]{-2.0, 2.0, -1.5, 1.5, -2.0, -1.5};
         for (size_t i = 0; i < std::size(corners); ++i)
         {

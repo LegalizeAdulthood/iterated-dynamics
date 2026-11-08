@@ -571,8 +571,8 @@ void record_reference_bf(const BFComplex &center, BFComplex &z)
 void record_deep_reference_bf(const BFComplex &center, BFComplex &z)
 {
     BigStackSaver saved;
-    const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
-    const BigFloat scale{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr offset{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr scale{alloc_stack(g_r_bf_length + 2)};
     str_to_bf(scale, "1e-400");
     int_to_bf(offset, -2);
     sub_bf(offset, center.x, offset);
@@ -10523,7 +10523,7 @@ TEST_F(TestPrecisePerturbationContinuation, preciseReferenceReplacementYieldsWit
     BigStackSaver saved;
     const BFComplex parameter{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     const BFComplex value{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr offset{alloc_stack(g_r_bf_length + 2)};
     float_to_bf(parameter.x, 0.25);
     clear_bf(parameter.y);
     copy_bf(value.x, parameter.x);
@@ -10590,7 +10590,7 @@ TEST_F(TestPerturbationPixels, preciseContinuationPreservesSubDoubleParameterAnd
     BigStackSaver saved;
     const BFComplex parameter{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     const BFComplex value{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr offset{alloc_stack(g_r_bf_length + 2)};
     float_to_bf(parameter.x, 0.25);
     clear_bf(parameter.y);
     copy_bf(value.x, parameter.x);
@@ -11292,7 +11292,7 @@ TEST_F(TestPerturbationPixels, highPrecisionInitialOffsetPreservesCancellation)
     clear_bf(center.y);
     {
         BigStackSaver saved;
-        const BigFloat delta{alloc_stack(g_bf_length + 2)};
+        const BigFloatPtr delta{alloc_stack(g_bf_length + 2)};
         float_to_bf(delta, 1e-40);
         add_a_bf(center.x, delta);
     }
@@ -11395,7 +11395,7 @@ void TestPreciseBailoutBoundary::SetUp()
     if (reference_mode == 0)
     {
         BigStackSaver saved;
-        const BigFloat delta{alloc_stack(g_r_bf_length + 2)};
+        const BigFloatPtr delta{alloc_stack(g_r_bf_length + 2)};
         float_to_bf(delta, offset);
         add_a_bf(boundary.imaginary ? center.y : center.x, delta);
     }
@@ -11403,7 +11403,7 @@ void TestPreciseBailoutBoundary::SetUp()
     {
         BigStackSaver saved;
         const BFComplex coordinate{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-        const BigFloat delta{alloc_stack(g_r_bf_length + 2)};
+        const BigFloatPtr delta{alloc_stack(g_r_bf_length + 2)};
         float_to_bf(coordinate.x, boundary.point.x);
         float_to_bf(coordinate.y, boundary.point.y);
         float_to_bf(delta, offset);
@@ -11461,15 +11461,15 @@ void TestPreciseMandelBoundary::SetUp()
     clear_bf(center.y);
     {
         BigStackSaver saved;
-        const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+        const BigFloatPtr offset{alloc_stack(g_r_bf_length + 2)};
         float_to_bf(offset, sign * 1e-40);
         add_a_bf(center.x, offset);
     }
 
     {
         BigStackSaver saved;
-        const BigFloat z{alloc_stack(g_r_bf_length + 2)};
-        const BigFloat square{alloc_stack(g_r_bf_length + 2)};
+        const BigFloatPtr z{alloc_stack(g_r_bf_length + 2)};
+        const BigFloatPtr square{alloc_stack(g_r_bf_length + 2)};
         copy_bf(z, center.x);
         for (long i = 0; i < (sign >= 0 ? g_max_iterations - 1 : 1); ++i)
         {
@@ -11548,10 +11548,10 @@ TEST_F(TestPerturbationPixels, deepAffineFramePreservesBothBasisVectors)
     g_max_iterations = 2;
     init_bf_dec(60);
     m_big_float = true;
-    const auto set_offset = [](const BigFloat value, const double center, const double offset)
+    const auto set_offset = [](const BigFloatPtr value, const double center, const double offset)
     {
         BigStackSaver saved;
-        const BigFloat delta{alloc_stack(g_bf_length + 2)};
+        const BigFloatPtr delta{alloc_stack(g_bf_length + 2)};
         float_to_bf(value, center);
         float_to_bf(delta, offset);
         add_a_bf(value, delta);
@@ -12453,7 +12453,7 @@ void TestDeepPerturbationGeometry::initialize_corners()
 {
     {
         BigStackSaver saved;
-        const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+        const BigFloatPtr offset{alloc_stack(g_r_bf_length + 2)};
         str_to_bf(offset, "3e-400");
         int_to_bf(g_bf_x_min, -2);
         sub_a_bf(g_bf_x_min, offset);
@@ -12564,7 +12564,7 @@ TEST_F(TestDeepPerturbationGeometry, frameRetainsPreciseGeometryForReplacementRe
     str_to_bf(g_bf_y_3rd, "-1e-400");
     {
         BigStackSaver saved;
-        const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+        const BigFloatPtr offset{alloc_stack(g_r_bf_length + 2)};
         str_to_bf(offset, "1e-400");
         int_to_bf(g_bf_x_3rd, -2);
         sub_a_bf(g_bf_x_3rd, offset);

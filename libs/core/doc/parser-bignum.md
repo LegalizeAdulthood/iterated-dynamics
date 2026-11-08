@@ -88,7 +88,7 @@ diagnostic presentation, and waits in the existing UI owners.
 - `math/complex_fn.h` has BF integer-power support.  That does not alone
   implement formula powers with noninteger or complex exponents.
 - Precision storage uses the existing static 1 MiB arena and supported
-  length limits.  `BigFloat` is a raw byte pointer and `BFComplex`
+  length limits.  `BigFloatPtr` is a raw byte pointer and `BFComplex`
   contains two such pointers; neither owns an allocation.
 
 See [MathGlobals.md](MathGlobals.md) for current lengths, allocations,

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // C routines equivalent to ASM routines in bignuma.asm
 
@@ -38,7 +39,7 @@ namespace id::math
 
 /********************************************************************/
 // r = 0
-BigNum clear_bn(BigNum r)
+BigNumPtr clear_bn(BigNumPtr r)
 {
     std::memset(r, 0, g_bn_length);  // set array to zero
     return r;
@@ -46,7 +47,7 @@ BigNum clear_bn(BigNum r)
 
 /********************************************************************/
 // r = max positive value
-BigNum max_bn(BigNum r)
+BigNumPtr max_bn(BigNumPtr r)
 {
     std::memset(r, 0xFF, g_bn_length-1);  // set to max values
     r[g_bn_length-1] = 0x7F;  // turn off the sign bit
@@ -55,7 +56,7 @@ BigNum max_bn(BigNum r)
 
 /********************************************************************/
 // r = n
-BigNum copy_bn(BigNum r, BigNum n)
+BigNumPtr copy_bn(BigNumPtr r, BigNumPtr n)
 {
     std::memcpy(r, n, g_bn_length);
     return r;
@@ -67,7 +68,7 @@ BigNum copy_bn(BigNum r, BigNum n)
 //  if n1 == n2 returns 0
 //  if n1 > n2 returns a positive (bytes left to go when mismatch occured)
 //  if n1 < n2 returns a negative (bytes left to go when mismatch occured)
-int cmp_bn(BigNum n1, BigNum n2)
+int cmp_bn(BigNumPtr n1, BigNumPtr n2)
 {
     // two bytes at a time
     // signed comparison for msb
@@ -126,7 +127,7 @@ int cmp_bn(BigNum n1, BigNum n2)
 /********************************************************************/
 // r < 0 ?
 // returns 1 if negative, 0 if positive or zero
-bool is_bn_neg(BigNum n)
+bool is_bn_neg(BigNumPtr n)
 {
     return static_cast<S8>(n[g_bn_length - 1]) < 0;
 }
@@ -134,7 +135,7 @@ bool is_bn_neg(BigNum n)
 /********************************************************************/
 // n != 0 ?
 // RETURNS: true if n != 0
-bool is_bn_not_zero(BigNum n)
+bool is_bn_not_zero(BigNumPtr n)
 {
     // two bytes at a time
     for (int i = 0; i < g_bn_length; i += 2)
@@ -149,7 +150,7 @@ bool is_bn_not_zero(BigNum n)
 
 /********************************************************************/
 // r = n1 + n2
-BigNum add_bn(BigNum r, BigNum n1, BigNum n2)
+BigNumPtr add_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
 {
     U32 sum = 0;
 
@@ -165,7 +166,7 @@ BigNum add_bn(BigNum r, BigNum n1, BigNum n2)
 
 /********************************************************************/
 // r += n
-BigNum add_a_bn(BigNum r, BigNum n)
+BigNumPtr add_a_bn(BigNumPtr r, BigNumPtr n)
 {
     U32 sum = 0;
 
@@ -181,7 +182,7 @@ BigNum add_a_bn(BigNum r, BigNum n)
 
 /********************************************************************/
 // r = n1 - n2
-BigNum sub_bn(BigNum r, BigNum n1, BigNum n2)
+BigNumPtr sub_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
 {
     U32 diff = 0;
 
@@ -197,7 +198,7 @@ BigNum sub_bn(BigNum r, BigNum n1, BigNum n2)
 
 /********************************************************************/
 // r -= n
-BigNum sub_a_bn(BigNum r, BigNum n)
+BigNumPtr sub_a_bn(BigNumPtr r, BigNumPtr n)
 {
     U32 diff = 0;
 
@@ -213,7 +214,7 @@ BigNum sub_a_bn(BigNum r, BigNum n)
 
 /********************************************************************/
 // r = -n
-BigNum neg_bn(BigNum r, BigNum n)
+BigNumPtr neg_bn(BigNumPtr r, BigNumPtr n)
 {
     int i;
     U32 neg = 1; // to get the 2's complement started
@@ -237,7 +238,7 @@ BigNum neg_bn(BigNum r, BigNum n)
 
 /********************************************************************/
 // r *= -1
-BigNum neg_a_bn(BigNum r)
+BigNumPtr neg_a_bn(BigNumPtr r)
 {
     int i;
     U32 neg = 1; // to get the 2's complement started
@@ -261,7 +262,7 @@ BigNum neg_a_bn(BigNum r)
 
 /********************************************************************/
 // r = 2*n
-BigNum double_bn(BigNum r, BigNum n)
+BigNumPtr double_bn(BigNumPtr r, BigNumPtr n)
 {
     U32 prod = 0;
 
@@ -277,7 +278,7 @@ BigNum double_bn(BigNum r, BigNum n)
 
 /********************************************************************/
 // r *= 2
-BigNum double_a_bn(BigNum r)
+BigNumPtr double_a_bn(BigNumPtr r)
 {
     U32 prod = 0;
 
@@ -293,7 +294,7 @@ BigNum double_a_bn(BigNum r)
 
 /********************************************************************/
 // r = n/2
-BigNum half_bn(BigNum r, BigNum n)
+BigNumPtr half_bn(BigNumPtr r, BigNumPtr n)
 {
     U32 quot = 0;
 
@@ -321,7 +322,7 @@ BigNum half_bn(BigNum r, BigNum n)
 
 /********************************************************************/
 // r /= 2
-BigNum half_a_bn(BigNum r)
+BigNumPtr half_a_bn(BigNumPtr r)
 {
     U32 quot = 0;
 
@@ -351,12 +352,12 @@ BigNum half_a_bn(BigNum r)
 // Note: r will be a double wide result, 2*g_bn_length
 //       n1 and n2 can be the same pointer
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
-BigNum unsafe_full_mult_bn(BigNum r, BigNum n1, BigNum n2)
+BigNumPtr unsafe_full_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
 {
     bool sign2 = false;
     int double_steps;
     // pointers for n1, n2
-    BigNum rp2;
+    BigNumPtr rp2;
     // pointers for r
 
     const bool sign1 = is_bn_neg(n1);
@@ -374,23 +375,23 @@ BigNum unsafe_full_mult_bn(BigNum r, BigNum n1, BigNum n2)
         }
     }
 
-    BigNum n1_p = n1;
+    BigNumPtr n1_p = n1;
     const int steps = g_bn_length >> 1; // two bytes at a time
     int carry_steps = double_steps = (steps << 1) - 2;
     g_bn_length <<= 1;
     clear_bn(r);        // double width
     g_bn_length >>= 1;
-    BigNum rp1 = rp2 = r;
+    BigNumPtr rp1 = rp2 = r;
     for (int i = 0; i < steps; i++)
     {
-        BigNum n2_p = n2;
+        BigNumPtr n2_p = n2;
         for (int j = 0; j < steps; j++)
         {
             const U32 prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
             U32 sum = static_cast<U32>(BIG_ACCESS16(rp2)) + prod; // add to previous, including overflow
             BIG_SET16(rp2, static_cast<U16>(sum)); // save the lower 2 bytes
             sum >>= 16;             // keep just the upper 2 bytes
-            BigNum rp3 = rp2 + 2;          // move over 2 bytes
+            BigNumPtr rp3 = rp2 + 2;      // move over 2 bytes
             sum += BIG_ACCESS16(rp3);     // add what was the upper two bytes
             BIG_SET16(rp3 , static_cast<U16>(sum)); // save what was the upper two bytes
             sum >>= 16;             // keep just the overflow
@@ -426,12 +427,12 @@ BigNum unsafe_full_mult_bn(BigNum r, BigNum n1, BigNum n2)
 //       2*g_bn_length <= g_r_length < g_bn_length
 //       n1 and n2 can be the same pointer
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
-BigNum unsafe_mult_bn(BigNum r, BigNum n1, BigNum n2)
+BigNumPtr unsafe_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
 {
     bool sign2 = false;
     int double_steps;
     // pointers for n1, n2
-    BigNum rp1;
+    BigNumPtr rp1;
 
     int bnl = g_bn_length;
     const bool sign1 = is_bn_neg(n1);
@@ -448,7 +449,7 @@ BigNum unsafe_mult_bn(BigNum r, BigNum n1, BigNum n2)
             neg_a_bn(n2);
         }
     }
-    BigNum n1_p = n1;
+    BigNumPtr n1_p = n1;
     n2 += (g_bn_length << 1) - g_r_length;  // shift n2 over to where it is needed
 
     g_bn_length = g_r_length;
@@ -458,17 +459,17 @@ BigNum unsafe_mult_bn(BigNum r, BigNum n1, BigNum n2)
     int steps = (g_r_length - g_bn_length) >> 1;
     int skips = (g_bn_length >> 1) - steps;
     int carry_steps = double_steps = (g_r_length >> 1) - 2;
-    BigNum rp2 = rp1 = r;
+    BigNumPtr rp2 = rp1 = r;
     for (int i = g_bn_length >> 1; i > 0; i--)
     {
-        BigNum n2_p = n2;
+        BigNumPtr n2_p = n2;
         for (int j = 0; j < steps; j++)
         {
             const U32 prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
             U32 sum = static_cast<U32>(BIG_ACCESS16(rp2)) + prod; // add to previous, including overflow
             BIG_SET16(rp2, static_cast<U16>(sum)); // save the lower 2 bytes
             sum >>= 16;             // keep just the upper 2 bytes
-            BigNum rp3 = rp2 + 2;          // move over 2 bytes
+            BigNumPtr rp3 = rp2 + 2;      // move over 2 bytes
             sum += BIG_ACCESS16(rp3);     // add what was the upper two bytes
             BIG_SET16(rp3, static_cast<U16>(sum)); // save what was the upper two bytes
             sum >>= 16;             // keep just the overflow
@@ -520,11 +521,11 @@ BigNum unsafe_mult_bn(BigNum r, BigNum n1, BigNum n2)
 //  uses the fact that (a+b+c+...)^2 = (a^2+b^2+c^2+...)+2(ab+ac+bc+...)
 //
 // SIDE-EFFECTS: n is changed to its absolute value
-BigNum unsafe_full_square_bn(BigNum r, BigNum n)
+BigNumPtr unsafe_full_square_bn(BigNumPtr r, BigNumPtr n)
 {
     int double_steps;
-    BigNum rp1;
-    BigNum rp3;
+    BigNumPtr rp1;
+    BigNumPtr rp3;
     U32 prod;
     U32 sum;
 
@@ -539,13 +540,13 @@ BigNum unsafe_full_square_bn(BigNum r, BigNum n)
 
     int steps = (g_bn_length >> 1) - 1;
     int carry_steps = double_steps = (steps << 1) - 1;
-    BigNum rp2 = rp1 = r + 2;  // start with second two-byte word
-    BigNum n1_p = n;
+    BigNumPtr rp2 = rp1 = r + 2; // start with second two-byte word
+    BigNumPtr n1_p = n;
     if (steps != 0) // if zero, then skip all the middle term calculations
     {
         for (int i = steps; i > 0; i--) // steps gets altered, count backwards
         {
-            BigNum n2_p = n1_p + 2;  // set n2p pointer to 1 step beyond n1p
+            BigNumPtr n2_p = n1_p + 2;  // set n2p pointer to 1 step beyond n1p
             for (int j = 0; j < steps; j++)
             {
                 prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
@@ -621,12 +622,12 @@ BigNum unsafe_full_square_bn(BigNum r, BigNum n)
 // Note: r will be of length g_r_length
 //       2*g_bn_length >= g_r_length > g_bn_length
 // SIDE-EFFECTS: n is changed to its absolute value
-BigNum unsafe_square_bn(BigNum r, BigNum n)
+BigNumPtr unsafe_square_bn(BigNumPtr r, BigNumPtr n)
 {
     int double_steps;
-    BigNum n2_p;
-    BigNum rp1;
-    BigNum rp3;
+    BigNumPtr n2_p;
+    BigNumPtr rp1;
+    BigNumPtr rp3;
     U32 prod;
     U32 sum;
 
@@ -654,9 +655,9 @@ BigNum unsafe_square_bn(BigNum r, BigNum n)
     int steps = (g_r_length - g_bn_length) >> 1;
     int carry_steps = double_steps = (g_bn_length >> 1) + steps - 2;
     int skips = (i - steps) >> 1;     // how long to skip over pointer shifts
-    BigNum rp2 = rp1 = r;
-    BigNum n1_p = n;
-    BigNum n3_p = n2_p = n1_p + (((g_bn_length >> 1) - steps) << 1);    // n2p = n1p + 2*(g_bn_length/2 - steps)
+    BigNumPtr rp2 = rp1 = r;
+    BigNumPtr n1_p = n;
+    BigNumPtr n3_p = n2_p = n1_p + (((g_bn_length >> 1) - steps) << 1); // n2p = n1p + 2*(g_bn_length/2 - steps)
     if (i != 0) // if zero, skip middle term calculations
     {
         // i is already set
@@ -753,7 +754,7 @@ BigNum unsafe_square_bn(BigNum r, BigNum n)
 
 /********************************************************************/
 // r = n * u  where u is an unsigned integer
-BigNum mult_bn_int(BigNum r, BigNum n, const U16 u)
+BigNumPtr mult_bn_int(BigNumPtr r, BigNumPtr n, const U16 u)
 {
     U32 prod = 0;
 
@@ -769,7 +770,7 @@ BigNum mult_bn_int(BigNum r, BigNum n, const U16 u)
 
 /********************************************************************/
 // r *= u  where u is an unsigned integer
-BigNum mult_a_bn_int(BigNum r, const U16 u)
+BigNumPtr mult_a_bn_int(BigNumPtr r, const U16 u)
 {
     U32 prod = 0;
 
@@ -785,7 +786,7 @@ BigNum mult_a_bn_int(BigNum r, const U16 u)
 
 /********************************************************************/
 // r = n / u  where u is an unsigned integer
-BigNum unsafe_div_bn_int(BigNum r, BigNum n, const U16 u)
+BigNumPtr unsafe_div_bn_int(BigNumPtr r, BigNumPtr n, const U16 u)
 {
     U16 rem = 0;
 
@@ -823,7 +824,7 @@ BigNum unsafe_div_bn_int(BigNum r, BigNum n, const U16 u)
 
 /********************************************************************/
 // r /= u  where u is an unsigned integer
-BigNum div_a_bn_int(BigNum r, const U16 u)
+BigNumPtr div_a_bn_int(BigNumPtr r, const U16 u)
 {
     U16 rem = 0;
 
@@ -862,7 +863,7 @@ BigNum div_a_bn_int(BigNum r, const U16 u)
 /*********************************************************************/
 //  f = b
 //  Converts a bignumber to a double
-LDouble bn_to_float(BigNum n)
+LDouble bn_to_float(BigNumPtr n)
 {
     LDouble f = 0;
 
@@ -874,7 +875,7 @@ LDouble bn_to_float(BigNum n)
     }
 
     int exponent = g_int_length - 1;
-    BigNum get_byte = n + g_bn_length - 1;
+    BigNumPtr get_byte = n + g_bn_length - 1;
     while (*get_byte == 0 && get_byte >= n)
     {
         get_byte--;
@@ -903,7 +904,7 @@ LDouble bn_to_float(BigNum n)
 
 /********************************************************************/
 // r = 0
-BigFloat clear_bf(BigFloat r)
+BigFloatPtr clear_bf(BigFloatPtr r)
 {
     std::memset(r, 0, g_bf_length+2);  // set array to zero
     return r;
@@ -911,7 +912,7 @@ BigFloat clear_bf(BigFloat r)
 
 /********************************************************************/
 // r = n
-BigFloat copy_bf(BigFloat r, BigFloat n)
+BigFloatPtr copy_bf(BigFloatPtr r, BigFloatPtr n)
 {
     std::memcpy(r, n, g_bf_length+2);
     return r;
@@ -920,7 +921,7 @@ BigFloat copy_bf(BigFloat r, BigFloat n)
 /*********************************************************************/
 //  b = f
 //  Converts a double to a bigfloat
-BigFloat float_to_bf(BigFloat r, LDouble f)
+BigFloatPtr float_to_bf(BigFloatPtr r, LDouble f)
 {
     int power;
     if (f == 0)
@@ -948,7 +949,7 @@ BigFloat float_to_bf(BigFloat r, LDouble f)
 /*********************************************************************/
 //  b = f
 //  Converts a long double to a bigfloat
-BigFloat float_to_bf1(BigFloat r, const LDouble f)
+BigFloatPtr float_to_bf1(BigFloatPtr r, const LDouble f)
 {
     char msg[80];
     std::snprintf(msg, std::size(msg), "%-.22Le", f);
@@ -959,7 +960,7 @@ BigFloat float_to_bf1(BigFloat r, const LDouble f)
 /*********************************************************************/
 //  f = b
 //  Converts a bigfloat to a double
-LDouble bf_to_float(BigFloat n)
+LDouble bf_to_float(BigFloatPtr n)
 {
     int bnl = g_bn_length;
     g_bn_length = g_bf_length;

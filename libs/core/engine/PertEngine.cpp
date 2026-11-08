@@ -116,7 +116,7 @@ std::complex<double> initialize_orbit(const std::complex<double> &coordinate)
 void initialize_orbit_bf(const BFComplex z, const BFComplex &coordinate)
 {
     BigStackSaver saved;
-    const BigFloat offset{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr offset{alloc_stack(g_r_bf_length + 2)};
     float_to_bf(z.x, g_params[0]);
     float_to_bf(z.y, g_params[1]);
     if (!bof_initialization())
@@ -205,12 +205,12 @@ bool ambiguous_bailout(const std::complex<double> &reference, const std::complex
 bool precise_bailout_reached(const BFComplex &z)
 {
     BigStackSaver saved;
-    const BigFloat x{alloc_stack(g_r_bf_length + 2)};
-    const BigFloat y{alloc_stack(g_r_bf_length + 2)};
-    const BigFloat metric{alloc_stack(g_r_bf_length + 2)};
-    const BigFloat limit{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr x{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr y{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr metric{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr limit{alloc_stack(g_r_bf_length + 2)};
     float_to_bf(limit, bailout_limit());
-    const auto reached = [limit](const BigFloat value)
+    const auto reached = [limit](const BigFloatPtr value)
     {
         const int comparison{cmp_bf(value, limit)};
         return g_bf_math == BFMathType::BIG_FLT ? comparison > 0 : comparison >= 0;
@@ -530,8 +530,8 @@ bool PertEngine::advance_bailout()
         }
         {
             BigStackSaver saved;
-            const BigFloat real{alloc_stack(g_r_bf_length + 2)};
-            const BigFloat imag{alloc_stack(g_r_bf_length + 2)};
+            const BigFloatPtr real{alloc_stack(g_r_bf_length + 2)};
+            const BigFloatPtr imag{alloc_stack(g_r_bf_length + 2)};
             square_bf(real, m_pixel.precise_orbit.x);
             square_bf(imag, m_pixel.precise_orbit.y);
             sub_bf(real, real, imag);
@@ -807,10 +807,10 @@ std::complex<double> PertEngine::inverted_coordinate(const std::complex<double> 
 void PertEngine::inverted_coordinate(const BFComplex coordinate, const std::complex<double> &pixel_position) const
 {
     BigStackSaver saved;
-    const BigFloat horizontal{alloc_stack(g_r_bf_length + 2)};
-    const BigFloat vertical{alloc_stack(g_r_bf_length + 2)};
-    const BigFloat scale{alloc_stack(g_r_bf_length + 2)};
-    const BigFloat delta{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr horizontal{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr vertical{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr scale{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr delta{alloc_stack(g_r_bf_length + 2)};
     float_to_bf(horizontal, pixel_position.real());
     float_to_bf(scale, g_logical_screen.x_dots - 1);
     div_bf(horizontal, horizontal, scale);
@@ -840,9 +840,9 @@ void PertEngine::inverted_coordinate(const BFComplex coordinate, const std::comp
 void PertEngine::pixel_delta(const BFComplex delta, const std::complex<double> &pixel_position) const
 {
     BigStackSaver saved;
-    const BigFloat factor{alloc_stack(g_r_bf_length + 2)};
-    const BigFloat divisor{alloc_stack(g_r_bf_length + 2)};
-    const BigFloat term{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr factor{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr divisor{alloc_stack(g_r_bf_length + 2)};
+    const BigFloatPtr term{alloc_stack(g_r_bf_length + 2)};
     clear_bf(delta.x);
     clear_bf(delta.y);
     const double width{g_logical_screen.x_dots - 1.0};
@@ -1694,9 +1694,9 @@ void PertEngine::advance_reference_bf(const std::size_t end)
 {
     BigStackSaver saved;
 
-    BigFloat temp_real_bf = alloc_stack(g_r_bf_length + 2);
-    BigFloat temp_imag_bf = alloc_stack(g_r_bf_length + 2);
-    BigFloat tmp_bf = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr temp_real_bf = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr temp_imag_bf = alloc_stack(g_r_bf_length + 2);
+    BigFloatPtr tmp_bf = alloc_stack(g_r_bf_length + 2);
 
     float_to_bf(tmp_bf, m_glitch_tolerance);
     for (; m_reference_sample < end; ++m_reference_sample)

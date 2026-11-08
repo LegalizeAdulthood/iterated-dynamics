@@ -1995,7 +1995,7 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     bool x_axis_between = false;
     bool y_axis_between = false; // if axis between 2 pixels, not on one
     double f_temp;
-    BigFloat bft1;
+    BigFloatPtr bft1;
     int saved = 0;
     g_symmetry = SymmetryType::X_AXIS;
     if (g_std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT || g_std_calc_mode == CalcMode::ORBIT)
