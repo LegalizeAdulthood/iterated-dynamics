@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #include <io/library.h>
 
 #include <io/find_file.h>
 #include <io/special_dirs.h>
 
-#include <config/home_dir.h>
 #include <config/port_config.h>
 
 #include <cstdlib>
@@ -151,9 +151,9 @@ void init_default_read_libraries()
         add_fallback_read_library(".");
     }
     add_fallback_read_library(g_special_dirs->program_dir());
-    if (fs::exists(id::config::HOME_DIR))
+    if (const fs::path resources{g_special_dirs->resource_dir()}; fs::exists(resources))
     {
-        add_fallback_read_library(id::config::HOME_DIR);
+        add_fallback_read_library(resources);
     }
 }
 

@@ -120,6 +120,47 @@ TEST_F(TestLibraryInitialization, defaultReadLibrariesPreferProgramDirectoryToCo
     EXPECT_EQ(config_path, find_file(ReadFile::ID_CONFIG, "id.cfg"));
 }
 
+namespace
+{
+
+class ResourceDirectories : public SpecialDirectories
+{
+public:
+    Path program_dir() const override
+    {
+        return {};
+    }
+
+    Path documents_dir() const override
+    {
+        return {};
+    }
+
+    Path resource_dir() const override
+    {
+        return resource;
+    }
+
+    Path resource;
+};
+
+} // namespace
+
+TEST_F(TestLibraryInitialization, defaultReadLibrariesUseTheInjectedResourceDirectory)
+{
+    const Path current_dir{Path{data::ID_TEST_DATA_DIR} / "resource-current-dir"};
+    const Path resources{Path{data::ID_TEST_DATA_DIR} / "resources"};
+    const Path config_path{resources / "config" / "id.cfg"};
+    prepare_directories(current_dir, "missing-program-dir", "missing-documents-dir", config_path);
+    const auto directories = std::make_shared<ResourceDirectories>();
+    directories->resource = resources;
+    g_special_dirs = directories;
+
+    init_default_read_libraries();
+
+    EXPECT_EQ(config_path, find_file(ReadFile::ID_CONFIG, "id.cfg"));
+}
+
 struct LibraryLookupInput
 {
     const char *name;

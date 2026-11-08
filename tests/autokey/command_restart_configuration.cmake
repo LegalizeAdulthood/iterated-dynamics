@@ -3,7 +3,7 @@
 #
 foreach(attempt RANGE 0 199)
     if(EXISTS image/restart-ready.gif)
-        file(COPY_FILE restart.ini sstools.ini)
+        file(COPY_FILE restart.ini "${TEST_CONFIGURATION}")
         return()
     endif()
     execute_process(COMMAND "${CMAKE_COMMAND}" -E sleep 0.05)

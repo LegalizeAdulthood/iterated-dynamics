@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 #pragma once
 
@@ -16,6 +17,8 @@ public:
 
     virtual std::filesystem::path program_dir() const = 0;
     virtual std::filesystem::path documents_dir() const = 0;
+    // Default resources supplied with this build.
+    virtual std::filesystem::path resource_dir() const;
 };
 
 extern std::shared_ptr<SpecialDirectories> create_special_directories();

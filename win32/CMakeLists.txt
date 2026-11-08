@@ -57,12 +57,16 @@ if(NOT ID_USE_WX)
     target_folder(driver-win32 "Libraries")
     add_dependencies(driver-win32 native-help)
 
-    add_executable(id
+    add_library(id-entry OBJECT
         init_failure.cpp
         win_main.cpp)
+    target_include_directories(id-entry PUBLIC .)
+    target_link_libraries(id-entry PUBLIC driver-win32 os user32.lib)
+    target_folder(id-entry "Libraries")
+
+    add_executable(id)
     source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
-    target_include_directories(id PUBLIC .)
-    target_link_libraries(id PRIVATE driver-win32 os user32.lib)
+    target_link_libraries(id PRIVATE id-entry)
     target_id_resources(id)
     gui_executable(id)
     vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")

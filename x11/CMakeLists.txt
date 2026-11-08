@@ -23,11 +23,15 @@ target_include_directories(driver-x11 PUBLIC include)
 target_folder(driver-x11 "Libraries")
 add_dependencies(driver-x11 native-help)
 
-add_executable(id
+add_library(id-entry OBJECT
     init_failure.cpp
     x11_main.cpp)
-target_include_directories(id PUBLIC .)
-target_link_libraries(id PUBLIC driver-x11)
+target_include_directories(id-entry PUBLIC .)
+target_link_libraries(id-entry PUBLIC driver-x11)
+target_folder(id-entry "Libraries")
+
+add_executable(id)
+target_link_libraries(id PRIVATE id-entry)
 gui_executable(id RUNTIME_NAME xid)
 vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")
 install(TARGETS id DESTINATION .)

@@ -7,6 +7,14 @@ find_package(tgautils CONFIG REQUIRED)
 
 add_subdirectory(image-tool)
 
+add_executable(id-test TestSpecialDirectories.cpp)
+target_link_libraries(id-test PRIVATE id-entry)
+if(WIN32)
+    target_id_resources(id-test)
+endif()
+gui_executable(id-test)
+target_folder(id-test "Tests/Tools")
+
 add_executable(image-compare image_compare.cpp)
 target_link_libraries(image-compare PUBLIC image-tool fmt::fmt-header-only PNG::PNG tgautils::tga)
 target_folder(image-compare "Tests/Tools")

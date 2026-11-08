@@ -1,10 +1,25 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # Copyright 2026 Richard Thomson.
 #
-file(MAKE_DIRECTORY image formula)
+file(MAKE_DIRECTORY image formula tmp "documents/Iterated Dynamics")
+file(REAL_PATH "." TEST_DIRECTORY)
+set(TEST_CONFIGURATION "${TEST_DIRECTORY}/documents/Iterated Dynamics/sstools.ini")
+set(ENV{FRACTDIR} "${TEST_DIRECTORY}")
+set(ENV{TEMP} "${TEST_DIRECTORY}/tmp")
+set(ENV{TMPDIR} "${TEST_DIRECTORY}/tmp")
+set(DEFAULT_CONFIGURATION [=[
+[id]
+inside=0
+formulafile=selection.frm
+savedir=.
+librarydirs=.
+map=default.map
+float=yes
+]=])
+file(WRITE "${TEST_CONFIGURATION}" "${DEFAULT_CONFIGURATION}")
+file(COPY_FILE "${HELP_FILE}" id.hlp)
 file(REMOVE image/accepted.gif image/cancelled.gif image/fractmig.gif
     action-help.txt par/action.par debug/stopmsg.txt)
-file(READ sstools.ini DEFAULT_CONFIGURATION)
 file(WRITE formula/selection.frm "one {\n z = pixel:\n z = sqr(z) + pixel\n |z| <= 4\n}\n")
 set(COMMON "video=F6" "askvideo=no" "sound=off" "savedir=."
     "librarydirs=." "exitnoask=yes" "overwrite=yes")
@@ -87,7 +102,7 @@ foreach(startup_image IN ITEMS no yes)
     if(startup_image)
         string(APPEND CONFIGURATION "filename=accepted.gif\n")
     endif()
-    file(WRITE sstools.ini "${CONFIGURATION}savename=startup-initial.gif\n")
+    file(WRITE "${TEST_CONFIGURATION}" "${CONFIGURATION}savename=startup-initial.gif\n")
     execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${COMMON}
         "type=formula" "formulafile=selection.frm" "maxiter=321"
         "autokeyname=command_initial_cancel.key" "autokey=play"
@@ -106,7 +121,7 @@ foreach(startup_image IN ITEMS no yes)
         message(FATAL_ERROR "Initial cancellation restored the wrong image (image=${startup_image})")
     endif()
 
-    file(WRITE sstools.ini "${CONFIGURATION}savename=startup-unexpected.gif\n")
+    file(WRITE "${TEST_CONFIGURATION}" "${CONFIGURATION}savename=startup-unexpected.gif\n")
     execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${COMMON}
         "type=formula" "formulafile=selection.frm" "maxiter=321"
         "autokeyname=command_restart_cancel.key" "autokey=play"
@@ -121,18 +136,19 @@ foreach(startup_image IN ITEMS no yes)
         message(FATAL_ERROR "Restart cancellation did not render default Mandelbrot (image=${startup_image})")
     endif()
 endforeach()
-file(WRITE sstools.ini "${DEFAULT_CONFIGURATION}")
+file(WRITE "${TEST_CONFIGURATION}" "${DEFAULT_CONFIGURATION}")
 
-file(WRITE restart.ini "${DEFAULT_CONFIGURATION}\nunknown=yes\n")
+file(WRITE restart.ini "${DEFAULT_CONFIGURATION}\ndebugflag=1\nunknown=yes\n")
 foreach(selection IN ITEMS accept cancel)
-    file(WRITE sstools.ini "${DEFAULT_CONFIGURATION}")
+    file(WRITE "${TEST_CONFIGURATION}" "${DEFAULT_CONFIGURATION}")
     file(REMOVE image/restart-ready.gif image/restart-accepted.gif
         image/restart-cancelled.gif debug/stopmsg.txt)
     execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${COMMON}
         "type=formula" "formulafile=selection.frm" "maxiter=321" "debugflag=1"
         "savename=restart-ready.gif"
         "autokeyname=command_restart_error_${selection}.key" "autokey=play"
-        COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_LIST_DIR}/command_restart_configuration.cmake"
+        COMMAND "${CMAKE_COMMAND}" "-DTEST_CONFIGURATION=${TEST_CONFIGURATION}"
+            -P "${CMAKE_CURRENT_LIST_DIR}/command_restart_configuration.cmake"
         RESULTS_VARIABLE RESULTS TIMEOUT 40 COMMAND_ECHO STDOUT)
     if(NOT RESULTS STREQUAL "0;0")
         message(FATAL_ERROR "Restart entry ${selection} after a nonfatal error failed: ${RESULTS}")
@@ -152,4 +168,4 @@ foreach(selection IN ITEMS accept cancel)
         message(FATAL_ERROR "Restart entry ${selection} did not produce the expected image")
     endif()
 endforeach()
-file(WRITE sstools.ini "${DEFAULT_CONFIGURATION}")
+file(WRITE "${TEST_CONFIGURATION}" "${DEFAULT_CONFIGURATION}")
