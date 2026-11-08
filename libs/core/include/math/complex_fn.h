@@ -83,13 +83,22 @@ template <typename T>
 Complex<T> power(const Complex<T> &base, int degree)
 {
     degree = std::max(degree, 0);
-    Complex<T> result = (degree & 1) ? base : Complex<T>{T{1}, T{}};
+    Complex<T> result;
+    if (degree & 1)
+    {
+        result = base;
+    }
+    else
+    {
+        result.x = T{1};
+    }
     degree >>= 1;
     if (degree == 0)
     {
         return result;
     }
-    Complex<T> factor = base;
+    Complex<T> factor;
+    factor = base;
     while (degree)
     {
         const T difference = factor.x - factor.y;

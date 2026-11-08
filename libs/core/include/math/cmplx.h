@@ -95,7 +95,9 @@ Complex<T> &Complex<T>::operator/=(const Complex &rhs)
 template <typename T>
 Complex<T> operator+(const Complex<T> &val)
 {
-    return val;
+    Complex<T> result;
+    result = val;
+    return result;
 }
 
 template <typename T>
@@ -107,7 +109,8 @@ Complex<T> operator-(const Complex<T> &val)
 template <typename T>
 Complex<T> operator+(const Complex<T> &lhs, const Complex<T> &rhs)
 {
-    Complex<T> result = lhs;
+    Complex<T> result;
+    result = lhs;
     result += rhs;
     return result;
 }
@@ -115,7 +118,8 @@ Complex<T> operator+(const Complex<T> &lhs, const Complex<T> &rhs)
 template <typename T>
 Complex<T> operator-(const Complex<T> &lhs, const Complex<T> &rhs)
 {
-    Complex<T> result = lhs;
+    Complex<T> result;
+    result = lhs;
     result -= rhs;
     return result;
 }
@@ -123,7 +127,8 @@ Complex<T> operator-(const Complex<T> &lhs, const Complex<T> &rhs)
 template <typename T>
 Complex<T> operator*(const Complex<T> &lhs, double rhs)
 {
-    Complex<T> result = lhs;
+    Complex<T> result;
+    result = lhs;
     result *= T(rhs);
     return result;
 }
@@ -131,7 +136,8 @@ Complex<T> operator*(const Complex<T> &lhs, double rhs)
 template <typename T>
 Complex<T> operator*(double lhs, const Complex<T> &rhs)
 {
-    Complex<T> result = rhs;
+    Complex<T> result;
+    result = rhs;
     result *= T(lhs);
     return result;
 }

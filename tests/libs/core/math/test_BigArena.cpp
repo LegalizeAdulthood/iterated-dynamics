@@ -931,4 +931,56 @@ TEST(TestBigArena, failurePreparingAnotherArenaDiscardsUncommittedRelocations)
     EXPECT_EQ(1, half.index());
 }
 
+TEST(TestBigArena, canonicalValueSizeIsIndependentOfStrideAndAllocationWidth)
+{
+    BigArena arena{17, 33, 4, keep_first_block};
+    const auto single = arena.allocate_single();
+    const auto wide = arena.allocate_double();
+
+    EXPECT_EQ(17, arena.value_size());
+    EXPECT_EQ(64, arena.block_size());
+    EXPECT_EQ(1, single.blocks());
+    EXPECT_EQ(2, wide.blocks());
+}
+
+TEST(TestBigArena, canonicalSizeChangesOnlyWhenPreparedRelocationIsCommitted)
+{
+    BigArena arena{17, 33, 2, keep_first_block};
+    auto value = arena.allocate_single();
+    value.data()[0] = 42;
+    auto pending = arena.prepare_relocation(
+        65, 73, [](Byte *destination, const Byte *source, std::size_t) { destination[0] = source[0]; });
+
+    EXPECT_EQ(17, arena.value_size());
+    EXPECT_EQ(64, arena.block_size());
+    pending.commit();
+    EXPECT_EQ(65, arena.value_size());
+    EXPECT_EQ(128, arena.block_size());
+    EXPECT_EQ(42, value.data()[0]);
+}
+
+TEST(TestBigArena, rejectsACanonicalValueLargerThanItsSlotBeforeAllocating)
+{
+    CountingResource resource;
+
+    EXPECT_THROW((BigArena{65, 33, 2, keep_first_block, resource}), std::invalid_argument);
+    EXPECT_EQ(0, resource.allocations);
+}
+
+TEST(TestBigArena, movedFromHandlesRetainTheirAllocatorBindingWithoutOwningABlock)
+{
+    BigArena arena{17, 2, keep_first_block};
+    auto source = arena.allocate_double();
+    auto moved = std::move(source);
+
+    EXPECT_FALSE(source);
+    EXPECT_EQ(&arena, &source.arena());
+    EXPECT_EQ(&arena, &moved.arena());
+    EXPECT_THROW(arena.allocate_single(), PrecisionError);
+    moved = {};
+    source = source.arena().allocate_single();
+    EXPECT_TRUE(source);
+    EXPECT_EQ(0, source.index());
+}
+
 } // namespace id::test

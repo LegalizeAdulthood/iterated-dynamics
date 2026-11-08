@@ -5,12 +5,16 @@
 //
 #include <math/BigNum.h>
 
+#include "BigStorage.h"
+
+#include <math/big_init.h>
 #include <math/BigFloat.h>
 
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <stdexcept>
+#include <utility>
 
 using namespace id::misc;
 
@@ -662,35 +666,62 @@ BigNumPtr binary_operation(BigNumPtr result, BigNumConstPtr left, BigNumConstPtr
     return operation(result, g_bn_tmp_copy1, g_bn_tmp_copy2);
 }
 
-void normalized_product(BigNumPtr result, BigNumConstPtr left, BigNumConstPtr right)
+void validate_scalar(const LDouble value)
 {
-    std::vector<Byte> product(static_cast<std::size_t>(g_r_length));
-    binary_operation(product.data(), left, right, multiply);
-    std::copy_n(product.data() + g_shift_factor, g_bn_length, result);
+    if (!std::isfinite(value))
+    {
+        throw std::invalid_argument("BigNum requires a finite scalar value");
+    }
 }
 
-void normalized_square(BigNumPtr result, BigNumConstPtr value)
+BigArena::Allocation native_storage(BigArena &arena, const LDouble value)
 {
-    std::vector<Byte> product(static_cast<std::size_t>(g_r_length));
-    copy_bn(g_bn_tmp_copy1, value);
-    square(product.data(), g_bn_tmp_copy1);
-    std::copy_n(product.data() + g_shift_factor, g_bn_length, result);
+    validate_scalar(value);
+    auto storage = arena.allocate_single();
+    std::memset(storage.data(), 0, arena.block_size());
+    float_to_bn(storage.data(), value);
+    return storage;
 }
 
 } // namespace
 
+void detail::reduce_bn_product(Byte *value)
+{
+    std::memmove(value, value + g_shift_factor, g_bn_length);
+}
+
 BigNum::BigNum() :
-    m_storage(static_cast<std::size_t>(g_bn_length))
+    BigNum(bn_arena(BigLifetime::WORKING))
 {
 }
 
-BigNum::BigNum(const LDouble value)
+BigNum::BigNum(const LDouble value) :
+    BigNum(bn_arena(BigLifetime::WORKING), value)
 {
-    *this = value;
 }
 
 BigNum::BigNum(const std::string_view text) :
-    BigNum()
+    BigNum(bn_arena(BigLifetime::WORKING), text)
+{
+}
+
+BigNum::BigNum(const BigFloat &value) :
+    BigNum(bn_arena(BigLifetime::WORKING), value)
+{
+}
+
+BigNum::BigNum(BigArena &arena) :
+    BigNum(arena.allocate_single())
+{
+}
+
+BigNum::BigNum(BigArena &arena, const LDouble value) :
+    m_storage(native_storage(arena, value))
+{
+}
+
+BigNum::BigNum(BigArena &arena, const std::string_view text) :
+    BigNum(arena)
 {
     if (!text.empty())
     {
@@ -698,19 +729,67 @@ BigNum::BigNum(const std::string_view text) :
     }
 }
 
-BigNum::BigNum(const BigFloat &value) :
-    BigNum()
+BigNum::BigNum(BigArena &arena, const BigFloat &value) :
+    BigNum(arena)
 {
-    value.copy_to_legacy_num(m_storage.data(), m_storage.size());
+    value.copy_to_legacy_num(m_storage.data(), encoded_size());
+}
+
+BigNum::BigNum(const BigNum &value) :
+    m_storage(value.m_storage.clone())
+{
+}
+
+BigNum::BigNum(BigArena &arena, const BigNum &value) :
+    m_storage(value.m_storage.clone(arena))
+{
+}
+
+BigNum::BigNum(BigNum &&value) noexcept = default;
+
+BigNum::BigNum(BigArena::Allocation storage) :
+    m_storage(std::move(storage))
+{
+    std::memset(m_storage.data(), 0, m_storage.blocks() * arena().block_size());
+}
+
+BigNum &BigNum::operator=(const BigNum &value)
+{
+    if (this != &value)
+    {
+        if (!m_storage)
+        {
+            m_storage = arena().allocate_single();
+        }
+        std::memcpy(m_storage.data(), value.m_storage.data(), encoded_size());
+    }
+    return *this;
+}
+
+BigNum &BigNum::operator=(BigNum &&value)
+{
+    if (this != &value)
+    {
+        if (&arena() == &value.arena())
+        {
+            m_storage = std::move(value.m_storage);
+        }
+        else
+        {
+            *this = static_cast<const BigNum &>(value);
+        }
+    }
+    return *this;
 }
 
 BigNum &BigNum::operator=(const LDouble value)
 {
-    if (!std::isfinite(value))
+    validate_scalar(value);
+    if (!m_storage)
     {
-        throw std::invalid_argument("BigNum requires a finite scalar value");
+        m_storage = arena().allocate_single();
+        std::memset(m_storage.data(), 0, arena().block_size());
     }
-    m_storage.resize(static_cast<std::size_t>(g_bn_length));
     float_to_bn(m_storage.data(), value);
     return *this;
 }
@@ -724,19 +803,19 @@ BigNum BigNum::operator-() const
 
 BigNum &BigNum::operator+=(const BigNum &right)
 {
-    *this = *this + right;
+    add(m_storage.data(), m_storage.data(), right.m_storage.data());
     return *this;
 }
 
 BigNum &BigNum::operator-=(const BigNum &right)
 {
-    *this = *this - right;
+    subtract(m_storage.data(), m_storage.data(), right.m_storage.data());
     return *this;
 }
 
 BigNum &BigNum::operator*=(const BigNum &right)
 {
-    normalized_product(m_storage.data(), m_storage.data(), right.m_storage.data());
+    *this = *this * right;
     return *this;
 }
 
@@ -762,8 +841,9 @@ BigNum BigNum::operator-(const BigNum &right) const
 
 BigNum BigNum::operator*(const BigNum &right) const
 {
-    BigNum result;
-    normalized_product(result.m_storage.data(), m_storage.data(), right.m_storage.data());
+    BigNum result{bn_arena(BigLifetime::WORKING).allocate_double()};
+    binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), multiply);
+    result.m_storage.reduce();
     return result;
 }
 
@@ -776,8 +856,10 @@ BigNum BigNum::operator/(const BigNum &right) const
 
 BigNum BigNum::sqr() const
 {
-    BigNum result;
-    normalized_square(result.m_storage.data(), m_storage.data());
+    BigNum result{bn_arena(BigLifetime::WORKING).allocate_double()};
+    copy_bn(g_bn_tmp_copy1, m_storage.data());
+    square(result.m_storage.data(), g_bn_tmp_copy1);
+    result.m_storage.reduce();
     return result;
 }
 
@@ -822,16 +904,21 @@ std::string BigNum::to_string(const int digits) const
 
 BigNum BigNum::from_legacy(BigNumConstPtr source, const std::size_t size)
 {
-    BigNum result;
-    validate_buffer(source, size, result.m_storage.size());
-    std::copy_n(source, result.m_storage.size(), result.m_storage.data());
+    return from_legacy(bn_arena(BigLifetime::WORKING), source, size);
+}
+
+BigNum BigNum::from_legacy(BigArena &arena, BigNumConstPtr source, const std::size_t size)
+{
+    BigNum result{arena};
+    validate_buffer(source, size, result.encoded_size());
+    std::copy_n(source, result.encoded_size(), result.m_storage.data());
     return result;
 }
 
 void BigNum::copy_to_legacy(BigNumPtr destination, const std::size_t size) const
 {
-    validate_buffer(destination, size, m_storage.size());
-    std::copy(m_storage.begin(), m_storage.end(), destination);
+    validate_buffer(destination, size, encoded_size());
+    std::copy_n(m_storage.data(), encoded_size(), destination);
 }
 
 void BigNum::copy_to_legacy_float(BigFloatPtr destination, const std::size_t size) const

@@ -10,6 +10,8 @@ The biggest difference is in the allocations of memory for the big numbers.
 */
 #include <math/big_init.h>
 
+#include "BigStorage.h"
+
 #include <engine/bailout_formula.h>
 #include <engine/calcfrac.h>
 #include <engine/UserData.h>
@@ -187,16 +189,6 @@ size_t bf_parameter_bytes(const int bn_length, const FractalType type)
 namespace
 {
 
-void reduce_bn_product(Byte *value)
-{
-    std::memmove(value, value + g_shift_factor, g_bn_length);
-}
-
-void reduce_bf_product(Byte *value)
-{
-    std::memmove(value, value + g_padding, g_bf_length + 2);
-}
-
 std::size_t arena_blocks(const std::size_t block_size)
 {
     const std::size_t stride = (block_size + BigArena::ALIGNMENT - 1) / BigArena::ALIGNMENT * BigArena::ALIGNMENT;
@@ -216,7 +208,7 @@ std::array<BigFloatPtr *, 22> parameter_bindings()
 class NumericArenas
 {
 public:
-    NumericArenas(std::size_t block_size, BigArena::Reduce reduce);
+    NumericArenas(std::size_t value_size, std::size_t block_size, BigArena::Reduce reduce);
     BigArena &get(BigLifetime lifetime);
     void single(BigNumPtr &target);
     void wide(BigNumPtr &target);
@@ -231,10 +223,11 @@ public:
     std::vector<WorkingBinding> bindings;
 };
 
-NumericArenas::NumericArenas(const std::size_t block_size, const BigArena::Reduce reduce) :
-    persistent(block_size, arena_blocks(block_size), reduce),
-    working(block_size, arena_blocks(block_size), reduce),
-    temporary(block_size, arena_blocks(block_size), reduce),
+NumericArenas::NumericArenas(
+    const std::size_t value_size, const std::size_t block_size, const BigArena::Reduce reduce) :
+    persistent(value_size, block_size, arena_blocks(block_size), reduce),
+    working(value_size, block_size, arena_blocks(block_size), reduce),
+    temporary(value_size, block_size, arena_blocks(block_size), reduce),
     stack(temporary)
 {
 }
@@ -308,8 +301,8 @@ private:
 };
 
 MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_length, const int padding) :
-    big_num(static_cast<std::size_t>(bn_length + padding), reduce_bn_product),
-    big_float(static_cast<std::size_t>(bf_length + padding + 2), reduce_bf_product),
+    big_num(bn_length, static_cast<std::size_t>(bn_length + padding), detail::reduce_bn_product),
+    big_float(bf_length + 2, static_cast<std::size_t>(bf_length + padding + 2), detail::reduce_bf_product),
     m_bn_length(bn_length),
     m_bf_length(bf_length),
     m_int_length(int_length)
@@ -388,16 +381,23 @@ void MathArenas::change_precision(
     const std::size_t bf_stride = (bf_length + padding + 2 + 63) / 64 * 64;
     for (BigLifetime lifetime : {BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY})
     {
-        replacements.push_back(big_num.get(lifetime).prepare_relocation(bn_length + padding,
+        replacements.push_back(big_num.get(lifetime).prepare_relocation(bn_length, bn_length + padding,
             [&](Byte *destination, const Byte *source, std::size_t blocks)
             {
                 std::memset(destination, 0, blocks * bn_stride);
                 if (!big_num.is_workspace(source))
                 {
                     convert_bn(destination, source, bn_length, int_length, m_bn_length, m_int_length);
+                    // Legacy scratch conversion zero-fills new integer bytes;
+                    // live signed values require sign extension instead.
+                    if (int_length > m_int_length && (source[m_bn_length - 1] & 0x80) != 0)
+                    {
+                        const int extension = int_length - m_int_length;
+                        std::memset(destination + bn_length - extension, 0xff, extension);
+                    }
                 }
             }));
-        replacements.push_back(big_float.get(lifetime).prepare_relocation(bf_length + padding + 2,
+        replacements.push_back(big_float.get(lifetime).prepare_relocation(bf_length + 2, bf_length + padding + 2,
             [&](Byte *destination, const Byte *source, std::size_t blocks)
             {
                 std::memset(destination, 0, blocks * bf_stride);

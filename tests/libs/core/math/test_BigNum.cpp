@@ -157,7 +157,7 @@ TEST_P(TestBigNumLayout, legacyFloatConversionRetainsOverflowAndUnderflowRules)
     }
 }
 
-TEST_F(TestBigNumValue, zeroConstructionDoesNotAllocateArenaStorage)
+TEST_F(TestBigNumValue, zeroConstructionLeavesTheLegacyStackUnchanged)
 {
     const auto marker = save_stack();
 
@@ -250,7 +250,7 @@ TEST_F(TestBigNumValue, copyingMovingAndExportDoNotRequireAnActiveArena)
     EXPECT_EQ(expected, encoded_value(moved));
 }
 
-TEST_F(TestBigNumValue, copyAssignmentAndDestructionUseTheOwnedByteCount)
+TEST_F(TestBigNumValue, copyAssignmentAndDestructionUseTheRelocatedArenaLayout)
 {
     const BigNum original{"-1.25"};
     const auto expected = encoded_value(original);
@@ -260,16 +260,37 @@ TEST_F(TestBigNumValue, copyAssignmentAndDestructionUseTheOwnedByteCount)
     {
         BigNum assigned{2.5L};
         assigned = original;
-        std::vector<Byte> exported(expected.size());
+        std::vector<Byte> too_small(expected.size());
+        EXPECT_THROW(assigned.copy_to_legacy(too_small.data(), too_small.size()), std::invalid_argument);
+        std::vector<Byte> exported(g_bn_length);
         assigned.copy_to_legacy(exported.data(), exported.size());
 
-        EXPECT_EQ(expected, exported);
+        EXPECT_EQ(encoded_value(BigNum{-1.25L}), exported);
         free_bf_vars();
     }
 
     g_bailout_test = Bailout::MOD;
     init_bf_dec(40);
     EXPECT_EQ("-1.25", original.to_string());
+}
+
+TEST_F(TestBigNumValue, relocationSignExtendsNegativeValuesWhenTheIntegerPartGrows)
+{
+    BigNum value{bn_arena(BigLifetime::PERSISTENT), -1.25L};
+    ASSERT_EQ(1, g_int_length);
+    g_bailout_test = Bailout::REAL;
+    init_bf_dec(80);
+    ASSERT_EQ(2, g_int_length);
+    EXPECT_EQ(BigNum{-1.25L}, value);
+    g_user.bailout_value = 100;
+    init_bf_dec(80);
+    ASSERT_EQ(4, g_int_length);
+    EXPECT_EQ(BigNum{-1.25L}, value);
+    g_bailout_test = Bailout::MOD;
+    g_user.bailout_value = 0;
+    init_bf_dec(40);
+    ASSERT_EQ(1, g_int_length);
+    EXPECT_EQ(BigNum{-1.25L}, value);
 }
 
 TEST_F(TestBigNumValue, movedFromValueCanBeReassigned)

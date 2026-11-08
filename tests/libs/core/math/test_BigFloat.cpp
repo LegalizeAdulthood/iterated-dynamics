@@ -70,7 +70,7 @@ void TestBigFloatValue::TearDown()
     free_bf_vars();
 }
 
-TEST_F(TestBigFloatValue, zeroConstructionDoesNotAllocateArenaStorage)
+TEST_F(TestBigFloatValue, zeroConstructionLeavesTheLegacyStackUnchanged)
 {
     const auto marker = save_stack();
 
@@ -195,18 +195,22 @@ TEST_F(TestBigFloatValue, copyingAndMovingRemainValidWithoutAnActiveArena)
     EXPECT_EQ(expected, encoded_value(moved));
 }
 
-TEST_F(TestBigFloatValue, copyAssignmentUsesTheOwnedByteCount)
+TEST_F(TestBigFloatValue, copyAssignmentUsesTheRelocatedArenaLayout)
 {
     const BigFloat original{"1.23456789012345678901234567890123456789"};
     const auto expected = encoded_value(original);
+    const int old_length = g_bf_length;
     init_bf_dec(80);
     BigFloat assigned{2.5L};
 
     assigned = original;
 
-    std::vector<Byte> exported(expected.size());
+    std::vector<Byte> exported(g_bf_length + 2);
+    std::vector<Byte> widened(g_bf_length + 2);
+    convert_bf(widened.data(), expected.data(), g_bf_length, old_length);
     assigned.copy_to_legacy(exported.data(), exported.size());
-    EXPECT_EQ(expected, exported);
+    EXPECT_EQ(widened, exported);
+    EXPECT_EQ(widened, encoded_value(original));
     init_bf_dec(40);
     EXPECT_EQ(expected, encoded_value(assigned));
 }

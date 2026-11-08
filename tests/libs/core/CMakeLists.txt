@@ -138,6 +138,7 @@ add_executable(test-core
     math/test_BigComplex.cpp
     math/test_BigFloat.cpp
     math/test_BigNum.cpp
+    math/test_BigValueStorage.cpp
     math/test_cmplx.cpp
     math/test_fpu087.cpp
     math/test_math.cpp

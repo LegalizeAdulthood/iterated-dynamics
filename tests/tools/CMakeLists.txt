@@ -15,6 +15,10 @@ endif()
 gui_executable(id-test)
 target_folder(id-test "Tests/Tools")
 
+add_executable(check-big-value-storage check_big_value_storage.cpp)
+target_link_libraries(check-big-value-storage PRIVATE id::core fmt::fmt-header-only)
+target_folder(check-big-value-storage "Tests/Tools")
+
 add_executable(image-compare image_compare.cpp)
 target_link_libraries(image-compare PUBLIC image-tool fmt::fmt-header-only PNG::PNG tgautils::tga)
 target_folder(image-compare "Tests/Tools")

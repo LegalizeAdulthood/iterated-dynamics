@@ -5,6 +5,9 @@
 //
 #include <math/BigFloat.h>
 
+#include "BigStorage.h"
+
+#include <math/big_init.h>
 #include <math/BigNum.h>
 
 #include <algorithm>
@@ -184,11 +187,11 @@ BigFloatPtr subtract_assign(BigFloatPtr r, BigFloatPtr n)
 }
 
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
-BigFloatPtr multiply(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
+BigFloatPtr multiply_wide(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 {
     if (is_bf_zero(n1) || is_bf_zero(n2))
     {
-        clear_bf(r);
+        std::memset(r, 0, g_r_bf_length + 2);
         return r;
     }
 
@@ -212,8 +215,18 @@ BigFloatPtr multiply(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
     BIG_SET16(r + g_bf_length, static_cast<S16>(r_exp + 2)); // adjust after mult
     norm_sign_bf(r, positive);
     g_bf_length = bfl;
-    std::memmove(r, r + g_padding, g_bf_length + 2);         // shift back
 
+    return r;
+}
+
+BigFloatPtr multiply(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
+{
+    if (is_bf_zero(n1) || is_bf_zero(n2))
+    {
+        return clear_bf(r);
+    }
+    multiply_wide(r, n1, n2);
+    detail::reduce_bf_product(r);
     return r;
 }
 
@@ -325,11 +338,11 @@ int compare(BigFloatConstPtr n1, BigFloatConstPtr n2)
 }
 
 // Legacy real math kernels; operands may be destroyed as before.
-BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
+BigFloatPtr square_wide(BigFloatPtr r, BigFloatPtr n)
 {
     if (is_bf_zero(n))
     {
-        clear_bf(r);
+        std::memset(r, 0, g_r_bf_length + 2);
         return r;
     }
 
@@ -350,8 +363,18 @@ BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
 
     norm_sign_bf(r, true);
     g_bf_length = bfl;
-    std::memmove(r, r + g_padding, g_bf_length + 2); // shift back
 
+    return r;
+}
+
+BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
+{
+    if (is_bf_zero(n))
+    {
+        return clear_bf(r);
+    }
+    square_wide(r, n);
+    detail::reduce_bf_product(r);
     return r;
 }
 
@@ -859,49 +882,134 @@ BigFloatPtr compound_operation(
     return operation(result, g_bf_tmp_copy1);
 }
 
-} // namespace
-
-BigFloat::BigFloat() :
-    m_storage(static_cast<std::size_t>(g_bf_length) + 2)
-{
-}
-
-BigFloat::BigFloat(const LDouble value)
-{
-    *this = value;
-}
-
-BigFloat::BigFloat(const std::string_view text) :
-    BigFloat()
-{
-    str_to_bf(m_storage.data(), text);
-}
-
-BigFloat::BigFloat(const BigNum &value) :
-    BigFloat()
-{
-    value.copy_to_legacy_float(m_storage.data(), m_storage.size());
-}
-
-BigFloat &BigFloat::operator=(const LDouble value)
+void validate_scalar(const LDouble value)
 {
     if (!std::isfinite(value))
     {
         throw std::invalid_argument("BigFloat requires a finite scalar value");
     }
-    m_storage.resize(static_cast<std::size_t>(g_bf_length) + 2);
+}
+
+BigArena::Allocation native_storage(BigArena &arena, const LDouble value)
+{
+    validate_scalar(value);
+    auto storage = arena.allocate_single();
+    std::memset(storage.data(), 0, arena.block_size());
+    float_to_bf(storage.data(), value);
+    return storage;
+}
+
+} // namespace
+
+void detail::reduce_bf_product(Byte *value)
+{
+    std::memmove(value, value + g_padding, g_bf_length + 2);
+}
+
+BigFloat::BigFloat() :
+    BigFloat(bf_arena(BigLifetime::WORKING))
+{
+}
+
+BigFloat::BigFloat(const LDouble value) :
+    BigFloat(bf_arena(BigLifetime::WORKING), value)
+{
+}
+
+BigFloat::BigFloat(const std::string_view text) :
+    BigFloat(bf_arena(BigLifetime::WORKING), text)
+{
+}
+
+BigFloat::BigFloat(const BigNum &value) :
+    BigFloat(bf_arena(BigLifetime::WORKING), value)
+{
+}
+
+BigFloat::BigFloat(BigArena &arena) :
+    BigFloat(arena.allocate_single())
+{
+}
+
+BigFloat::BigFloat(BigArena &arena, const LDouble value) :
+    m_storage(native_storage(arena, value))
+{
+}
+
+BigFloat::BigFloat(BigArena &arena, const std::string_view text) :
+    BigFloat(arena)
+{
+    str_to_bf(m_storage.data(), text);
+}
+
+BigFloat::BigFloat(BigArena &arena, const BigNum &value) :
+    BigFloat(arena)
+{
+    value.copy_to_legacy_float(m_storage.data(), encoded_size());
+}
+
+BigFloat::BigFloat(const BigFloat &value) :
+    m_storage(value.m_storage.clone())
+{
+}
+
+BigFloat::BigFloat(BigArena &arena, const BigFloat &value) :
+    m_storage(value.m_storage.clone(arena))
+{
+}
+
+BigFloat::BigFloat(BigFloat &&value) noexcept = default;
+
+BigFloat::BigFloat(BigArena::Allocation storage) :
+    m_storage(std::move(storage))
+{
+    std::memset(m_storage.data(), 0, m_storage.blocks() * arena().block_size());
+}
+
+BigFloat &BigFloat::operator=(const BigFloat &value)
+{
+    if (this != &value)
+    {
+        if (!m_storage)
+        {
+            m_storage = arena().allocate_single();
+        }
+        std::memcpy(m_storage.data(), value.m_storage.data(), encoded_size());
+    }
+    return *this;
+}
+
+BigFloat &BigFloat::operator=(BigFloat &&value)
+{
+    if (this != &value)
+    {
+        if (&arena() == &value.arena())
+        {
+            m_storage = std::move(value.m_storage);
+        }
+        else
+        {
+            *this = static_cast<const BigFloat &>(value);
+        }
+    }
+    return *this;
+}
+
+BigFloat &BigFloat::operator=(const LDouble value)
+{
+    validate_scalar(value);
+    if (!m_storage)
+    {
+        m_storage = arena().allocate_single();
+        std::memset(m_storage.data(), 0, arena().block_size());
+    }
     float_to_bf(m_storage.data(), value);
     return *this;
 }
 
-BigFloat::BigFloat(std::vector<Byte> storage) :
-    m_storage(std::move(storage))
-{
-}
-
 BigFloat BigFloat::operator-() const
 {
-    BigFloat result{*this};
+    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
     negate(result.m_storage.data());
     return result;
 }
@@ -946,9 +1054,9 @@ BigFloat BigFloat::operator-(const BigFloat &right) const
 
 BigFloat BigFloat::operator*(const BigFloat &right) const
 {
-    BigFloat result{std::vector<Byte>(static_cast<std::size_t>(g_r_bf_length) + 2)};
-    binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), multiply);
-    result.m_storage.resize(static_cast<std::size_t>(g_bf_length) + 2);
+    BigFloat result{bf_arena(BigLifetime::WORKING).allocate_double()};
+    binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), multiply_wide);
+    result.m_storage.reduce();
     return result;
 }
 
@@ -961,16 +1069,16 @@ BigFloat BigFloat::operator/(const BigFloat &right) const
 
 BigFloat BigFloat::sqr() const
 {
-    BigFloat result{std::vector<Byte>(static_cast<std::size_t>(g_r_bf_length) + 2)};
+    BigFloat result{bf_arena(BigLifetime::WORKING).allocate_double()};
     copy_bf(g_bf_tmp_copy1, m_storage.data());
-    square_value(result.m_storage.data(), g_bf_tmp_copy1);
-    result.m_storage.resize(static_cast<std::size_t>(g_bf_length) + 2);
+    square_wide(result.m_storage.data(), g_bf_tmp_copy1);
+    result.m_storage.reduce();
     return result;
 }
 
 BigFloat BigFloat::half() const
 {
-    BigFloat result{*this};
+    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
     halve(result.m_storage.data());
     return result;
 }
@@ -1072,16 +1180,21 @@ std::string BigFloat::to_string(const int digits) const
 
 BigFloat BigFloat::from_legacy(BigFloatConstPtr source, const std::size_t size)
 {
-    BigFloat result;
-    validate_buffer(source, size, result.m_storage.size());
-    std::copy_n(source, result.m_storage.size(), result.m_storage.data());
+    return from_legacy(bf_arena(BigLifetime::WORKING), source, size);
+}
+
+BigFloat BigFloat::from_legacy(BigArena &arena, BigFloatConstPtr source, const std::size_t size)
+{
+    BigFloat result{arena};
+    validate_buffer(source, size, result.encoded_size());
+    std::copy_n(source, result.encoded_size(), result.m_storage.data());
     return result;
 }
 
 void BigFloat::copy_to_legacy(BigFloatPtr destination, const std::size_t size) const
 {
-    validate_buffer(destination, size, m_storage.size());
-    std::copy(m_storage.begin(), m_storage.end(), destination);
+    validate_buffer(destination, size, encoded_size());
+    std::copy_n(m_storage.data(), encoded_size(), destination);
 }
 
 void BigFloat::copy_to_legacy_num(BigNumPtr destination, const std::size_t size) const

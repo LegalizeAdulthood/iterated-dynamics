@@ -4,11 +4,11 @@
 #pragma once
 
 #include <math/big.h>
+#include <math/BigArena.h>
 
 #include <cstddef>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace id::math
 {
@@ -23,7 +23,21 @@ public:
     explicit BigNum(LDouble value);
     explicit BigNum(std::string_view text);
     explicit BigNum(const BigFloat &value);
+    explicit BigNum(BigArena &arena);
+    BigNum(BigArena &arena, LDouble value);
+    BigNum(BigArena &arena, std::string_view text);
+    BigNum(BigArena &arena, const BigFloat &value);
+    BigNum(const BigNum &value);
+    BigNum(BigArena &arena, const BigNum &value);
+    BigNum(BigNum &&value) noexcept;
+    BigNum &operator=(const BigNum &value);
+    BigNum &operator=(BigNum &&value);
     BigNum &operator=(LDouble value);
+
+    BigArena &arena() const noexcept
+    {
+        return m_storage.arena();
+    }
 
     BigNum operator-() const;
     BigNum &operator+=(const BigNum &right);
@@ -48,13 +62,20 @@ public:
 
     // Adapters copy encoded values without machine floating-point conversion.
     static BigNum from_legacy(BigNumConstPtr source, std::size_t size);
+    static BigNum from_legacy(BigArena &arena, BigNumConstPtr source, std::size_t size);
     void copy_to_legacy(BigNumPtr destination, std::size_t size) const;
     void copy_to_legacy_float(BigFloatPtr destination, std::size_t size) const;
 
 private:
+    explicit BigNum(BigArena::Allocation storage);
+
+    std::size_t encoded_size() const noexcept
+    {
+        return arena().value_size();
+    }
     // Signed little-endian fixed point: g_int_length high bytes are integral.
     // The remaining g_bn_length - g_int_length bytes are fractional.
-    std::vector<Byte> m_storage;
+    BigArena::Allocation m_storage;
 };
 
 BigNum sqr(const BigNum &value);

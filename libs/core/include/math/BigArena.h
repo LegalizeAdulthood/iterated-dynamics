@@ -9,6 +9,7 @@
 #include <functional>
 #include <memory>
 #include <memory_resource>
+#include <utility>
 
 namespace id::math
 {
@@ -31,19 +32,45 @@ public:
         Allocation &operator=(const Allocation &) = delete;
         Allocation &operator=(Allocation &&other) noexcept;
 
-        explicit operator bool() const noexcept;
-        // Accessors and cloning require a live allocation.
-        BigArena &arena() const noexcept;
-        Index index() const noexcept;
-        std::size_t blocks() const noexcept;
-        Byte *data() noexcept;
-        const Byte *data() const noexcept;
+        explicit operator bool() const noexcept
+        {
+            return m_index != NO_INDEX;
+        }
+
+        // Arena binding survives a move; data and cloning require a live block.
+        BigArena &arena() const noexcept
+        {
+            return *m_arena;
+        }
+
+        Index index() const noexcept
+        {
+            return m_index;
+        }
+
+        std::size_t blocks() const noexcept
+        {
+            return m_arena->m_widths[m_index];
+        }
+
+        Byte *data() noexcept
+        {
+            return m_arena->data(m_index);
+        }
+
+        const Byte *data() const noexcept
+        {
+            return std::as_const(*m_arena).data(m_index);
+        }
         // Copy all allocation bytes, preserving its width and allocator.
         Allocation clone() const;
         // The selected arena must have the same block size and numeric layout.
         Allocation clone(BigArena &arena) const;
         // Requires a live allocation obtained through allocate_double().
-        void reduce();
+        void reduce()
+        {
+            m_arena->reduce(m_index);
+        }
 
     private:
         friend class BigArena;
@@ -51,7 +78,7 @@ public:
         void reset() noexcept;
 
         BigArena *m_arena{};
-        Index m_index{};
+        Index m_index{NO_INDEX};
     };
 
     class Relocation
@@ -76,6 +103,8 @@ public:
     // The arena and memory resource must outlive their allocations.
     BigArena(std::size_t block_size, std::size_t block_count, Reduce reduce,
         std::pmr::memory_resource &resource = *std::pmr::new_delete_resource());
+    BigArena(std::size_t value_size, std::size_t block_size, std::size_t block_count, Reduce reduce,
+        std::pmr::memory_resource &resource = *std::pmr::new_delete_resource());
     ~BigArena();
     BigArena(const BigArena &) = delete;
     BigArena(BigArena &&) = delete;
@@ -92,11 +121,30 @@ public:
     // leaves the old storage and handles usable. Borrowed addresses expire
     // only after successful relocation, including when the stride is unchanged.
     void relocate(std::size_t block_size, const Migrate &migrate);
+    void relocate(std::size_t value_size, std::size_t block_size, const Migrate &migrate);
     Relocation prepare_relocation(std::size_t block_size, const Migrate &migrate);
+    Relocation prepare_relocation(std::size_t value_size, std::size_t block_size, const Migrate &migrate);
 
-    std::size_t block_size() const noexcept;
-    std::size_t capacity() const noexcept;
-    std::size_t high_water_mark() const noexcept;
+    // Canonical encoded extent, independent of aligned capacity and width.
+    std::size_t value_size() const noexcept
+    {
+        return m_value_size;
+    }
+
+    std::size_t block_size() const noexcept
+    {
+        return m_block_size;
+    }
+
+    std::size_t capacity() const noexcept
+    {
+        return m_capacity;
+    }
+
+    std::size_t high_water_mark() const noexcept
+    {
+        return m_high_water;
+    }
 
 private:
     static constexpr Index NO_INDEX = static_cast<Index>(-1);
@@ -107,8 +155,15 @@ private:
         Index next;
     };
 
-    Byte *data(Index index) noexcept;
-    const Byte *data(Index index) const noexcept;
+    Byte *data(Index index) noexcept
+    {
+        return m_storage + index * m_block_size;
+    }
+
+    const Byte *data(Index index) const noexcept
+    {
+        return m_storage + index * m_block_size;
+    }
     FreeLink links(Index index) const noexcept;
     void set_links(Index index, FreeLink value) noexcept;
     void push(Index &head, Index index) noexcept;
@@ -117,6 +172,7 @@ private:
     void release(Index index) noexcept;
     void reduce(Index index);
 
+    std::size_t m_value_size;
     std::size_t m_block_size;
     std::size_t m_capacity;
     std::size_t m_storage_size;

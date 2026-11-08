@@ -34,18 +34,26 @@ exponent. `Big`, `BigNumPtr`, and `BigFloatPtr` are raw byte-pointer
 aliases; `BNPtrComplex` and `BFPtrComplex` contain two such pointers and
 do not own their storage.
 
-`BigFloat` in `math/BigFloat.h` owns canonical value bytes independently
-of the arena. Copies, moves, destruction, and legacy-buffer export use
-the vector's own storage size. Constructors use the active legacy
-lengths. Arithmetic, scalar conversion, parsing, and formatting use the
-existing global precision and shared scratch. Callers establish a
-compatible context, as with the raw routines; there is no custom precision
-object or per-operation initialization or precision validation.
+`BigFloat` in `math/BigFloat.h` owns an indexed arena allocation. Default
+construction and eager results use the working arena. Constructors can
+select another compatible allocator explicitly. Copy construction keeps
+the source allocator; assignment keeps the destination allocator. Moves
+within one arena transfer a block. Moves across arenas copy the encoded
+value into destination storage. Moved-from objects keep their allocator
+binding for later assignment.
+
+The allocator records canonical byte counts separately from aligned block
+stride and allocation width. Copies, moves, destruction, and legacy-buffer
+export remain valid after `free_bf_vars()`. Precision changes migrate all
+attached values and update their allocator's canonical size. There is no
+per-value precision object. Arithmetic, scalar conversion, parsing, and
+formatting retain the compatible active-context precondition and shared
+scratch, without per-operation initialization or precision validation.
 
 Arithmetic operators preserve their operands. Compound assignments update
 only their destination, including self-assignment. Multiplication owns its
-wider workspace and returns canonical bytes. Numerical comparisons read
-values directly. Operators and temporary raw adapters share private
+wider paired allocation and returns canonical bytes. Numerical comparisons
+read values directly. Operators and temporary raw adapters share private
 arithmetic kernels in `math/BigFloat.cpp`.
 
 `BigNum` in `math/BigNum.h` owns canonical fixed-point bytes with the same
@@ -57,11 +65,19 @@ uses the legacy fixed-decimal syntax; formatting retains legacy output.
 
 `BigNum` member operators and `sqr()` share private arithmetic kernels
 with legacy adapters in `math/BigNum.cpp`. Multiplication and squaring
-use separate work buffers and copy the `g_bn_length` bytes at
-`g_shift_factor` into the owning result. Addition, subtraction, and
+use paired result storage. The configured reducer moves `g_bn_length`
+bytes at `g_shift_factor` into the first block, then releases the second
+block without changing the handle. BigFloat's wide kernels normalize
+once before its reducer moves the canonical mantissa and exponent at
+`g_padding` into the first block. Addition, subtraction, and
 comparisons read operands directly; destructive kernels receive scratch
 copies. Truncation, fixed-width overflow, division saturation, and zero
 handling retain legacy behavior.
+
+Precision migration sign-extends new BigNum integer bytes for live signed
+values. The legacy `convert_bn()` scratch-conversion behavior remains
+unchanged. Canonical import/export excludes alignment padding and free
+list links.
 
 Legacy Newton iterations can retain guard-digit differences from reused
 destination bytes. Value division, logarithms, and arctangents start with
@@ -93,6 +109,35 @@ and the fractal's supported alternate math.  There is no fixed zoom ladder
 from double to BigNum to BigFloat.  Current supported `g_bn_length`
 limits are 672 bytes for `BIG_NUM` and 708 for `BIG_FLT`; arena capacity
 does not increase those representation limits.
+
+### Value Storage Measurements
+
+`check-big-value-storage` measures warmed scalar expressions, integer
+complex powers, and the actual Julia orbit callbacks. Its allocation
+hooks are confined to the measurement executable. The following results
+compare vector storage with indexed arena handles on Windows/MSVC,
+Release, at 40 decimal digits. Times are medians of three runs in
+milliseconds; heap counts are calls to the replacement `operator new`.
+
+| Case | Reps | Heap before | Heap after | ms before | ms after |
+|---|---|---|---|---|---|
+| BN scalar | 10000 | 50000 | 0 | 2.688 | 1.819 |
+| BN complex power | 10000 | 450000 | 0 | 23.866 | 17.019 |
+| BN Julia orbit | 10000 | 0 | 0 | 2.373 | 2.473 |
+| BF scalar | 10000 | 30000 | 0 | 4.062 | 3.654 |
+| BF complex power | 10000 | 310000 | 0 | 38.118 | 33.030 |
+| BF Julia orbit | 10000 | 0 | 0 | 5.102 | 5.262 |
+| BF Julia power orbit | 250 | 6250 | 0 | 35.503 | 36.203 |
+
+Every case had zero arena high-water growth after warmup, before and
+after the change. Arena free lists reuse released value blocks without
+repeated backing allocations. Scalar and complex timings improved in
+these runs; fractal timings were slightly slower. These short timings
+depend on the machine and load and are not a rendering-speed guarantee.
+
+Build the `check-big-value-storage` target and run
+`tests/tools/Release/check-big-value-storage.exe` from the build directory
+to repeat the measurement.
 
 ## Arena And Scratch Stack
 
