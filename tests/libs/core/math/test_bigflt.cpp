@@ -216,10 +216,11 @@ TEST_F(TestBigFloatFormat, repeatedFormattingPreservesTheValue)
 {
     prepare_value("-1.234567890123456789");
     const std::string original{reinterpret_cast<const char *>(m_value), static_cast<std::size_t>(g_bf_length + 2)};
+    BigFloatConstPtr input = m_value;
 
-    EXPECT_EQ("-1.23", bf_to_string(m_value, 3));
-    EXPECT_EQ("-1.234567890123456789e0", bf_to_string_e(m_value, 0));
-    EXPECT_EQ("-1.2346", bf_to_string_f(m_value, 5));
+    EXPECT_EQ("-1.23", bf_to_string(input, 3));
+    EXPECT_EQ("-1.234567890123456789e0", bf_to_string_e(input, 0));
+    EXPECT_EQ("-1.2346", bf_to_string_f(input, 5));
     EXPECT_EQ(original, (std::string{reinterpret_cast<const char *>(m_value), original.size()}));
 }
 

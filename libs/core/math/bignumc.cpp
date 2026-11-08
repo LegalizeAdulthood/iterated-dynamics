@@ -912,7 +912,7 @@ BigFloatPtr clear_bf(BigFloatPtr r)
 
 /********************************************************************/
 // r = n
-BigFloatPtr copy_bf(BigFloatPtr r, BigFloatPtr n)
+BigFloatPtr copy_bf(BigFloatPtr r, BigFloatConstPtr n)
 {
     std::memcpy(r, n, g_bf_length+2);
     return r;

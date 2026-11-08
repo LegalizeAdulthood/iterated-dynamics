@@ -34,6 +34,14 @@ exponent. `Big`, `BigNumPtr`, and `BigFloatPtr` are raw byte-pointer
 aliases; `BNComplex` and `BFComplex` contain two such pointers and do not
 own their storage.
 
+`BigFloat` in `math/BigFloat.h` owns canonical value bytes independently
+of the arena. Copies, moves, destruction, and legacy-buffer export use
+the vector's own storage size. Constructors use the active legacy
+lengths. Scalar conversion, parsing, and formatting use the existing
+global precision and shared scratch. Callers establish a compatible
+context, as with the raw routines; there is no custom precision object
+or per-operation initialization or precision validation.
+
 Precision selection depends on coordinate/resolution error, overrides,
 and the fractal's supported alternate math.  There is no fixed zoom ladder
 from double to BigNum to BigFloat.  Current supported `g_bn_length`

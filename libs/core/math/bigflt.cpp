@@ -227,8 +227,7 @@ std::string unsafe_bf_to_string(BigFloatPtr r, const int dec)
 
     std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
     BigFloat10 decimal{storage.data()};
-    copy_bf(g_bf_tmp1, r);
-    unsafe_bf_to_bf10(decimal, dec, g_bf_tmp1);
+    unsafe_bf_to_bf10(decimal, dec, r);
     int power = static_cast<S16>(BIG_ACCESS16(decimal + dec + 2));    // where the exponent is stored
     if (power > -4 && power < 6)                                      // tinker with this
     {
@@ -247,8 +246,7 @@ std::string unsafe_bf_to_string_e(BigFloatPtr r, const int dec)
 
     std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
     BigFloat10 decimal{storage.data()};
-    copy_bf(g_bf_tmp1, r);
-    unsafe_bf_to_bf10(decimal, dec, g_bf_tmp1);
+    unsafe_bf_to_bf10(decimal, dec, r);
     return bf10_to_string_e(decimal, dec);
 }
 
@@ -262,8 +260,7 @@ std::string unsafe_bf_to_string_f(BigFloatPtr r, const int dec)
 
     std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
     BigFloat10 decimal{storage.data()};
-    copy_bf(g_bf_tmp1, r);
-    unsafe_bf_to_bf10(decimal, dec, g_bf_tmp1);
+    unsafe_bf_to_bf10(decimal, dec, r);
     return bf10_to_string_f(decimal, dec);
 }
 
@@ -1204,21 +1201,21 @@ BigFloatPtr div_bf_int(BigFloatPtr r, BigFloatPtr n, const U16 u)
 }
 
 /**********************************************************************/
-std::string bf_to_string(BigFloatPtr r, const int dec)
+std::string bf_to_string(BigFloatConstPtr r, const int dec)
 {
     copy_bf(g_bf_tmp_copy1, r);
     return unsafe_bf_to_string(g_bf_tmp_copy1, dec);
 }
 
 /**********************************************************************/
-std::string bf_to_string_e(BigFloatPtr r, const int dec)
+std::string bf_to_string_e(BigFloatConstPtr r, const int dec)
 {
     copy_bf(g_bf_tmp_copy1, r);
     return unsafe_bf_to_string_e(g_bf_tmp_copy1, dec);
 }
 
 /**********************************************************************/
-std::string bf_to_string_f(BigFloatPtr r, const int dec)
+std::string bf_to_string_f(BigFloatConstPtr r, const int dec)
 {
     copy_bf(g_bf_tmp_copy1, r);
     return unsafe_bf_to_string_f(g_bf_tmp_copy1, dec);

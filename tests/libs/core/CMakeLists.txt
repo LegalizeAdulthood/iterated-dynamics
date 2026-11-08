@@ -128,6 +128,7 @@ add_executable(test-core
     io/test_trim_filename.cpp
     io/test_update_save_name.cpp
     math/test_bignum.cpp
+    math/test_BigFloat.cpp
     math/test_bigflt.cpp
     math/test_cmplx.cpp
     math/test_fpu087.cpp

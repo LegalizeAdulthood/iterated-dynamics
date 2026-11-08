@@ -42,6 +42,7 @@ enum class BFMathType
 using Big = unsigned char *;
 using BigNumPtr = Big; // for clarification purposes
 using BigFloatPtr = Big;
+using BigFloatConstPtr = const Byte *;
 
 using BFComplex = Complex<BigFloatPtr>;
 using BNComplex = Complex<BigNumPtr>;
@@ -106,7 +107,7 @@ BigNumPtr mult_a_bn_int(BigNumPtr r, misc::U16 u);
 BigNumPtr unsafe_div_bn_int(BigNumPtr r, BigNumPtr n, misc::U16 u);
 BigNumPtr div_a_bn_int(BigNumPtr r, misc::U16 u);
 BigFloatPtr clear_bf(BigFloatPtr r);
-BigFloatPtr copy_bf(BigFloatPtr r, BigFloatPtr n);
+BigFloatPtr copy_bf(BigFloatPtr r, BigFloatConstPtr n);
 BigFloatPtr float_to_bf(BigFloatPtr r, LDouble f);
 BigFloatPtr float_to_bf1(BigFloatPtr r, LDouble f);
 LDouble bf_to_float(BigFloatPtr n);
@@ -193,9 +194,9 @@ BigFloatPtr full_square_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr square_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr mult_bf_int(BigFloatPtr r, BigFloatPtr n, misc::U16 u);
 BigFloatPtr div_bf_int(BigFloatPtr r, BigFloatPtr n, misc::U16 u);
-std::string bf_to_string(BigFloatPtr r, int dec);
-std::string bf_to_string_e(BigFloatPtr r, int dec);
-std::string bf_to_string_f(BigFloatPtr r, int dec);
+std::string bf_to_string(BigFloatConstPtr r, int dec);
+std::string bf_to_string_e(BigFloatConstPtr r, int dec);
+std::string bf_to_string_f(BigFloatConstPtr r, int dec);
 BigFloatPtr inv_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2);
 BigFloatPtr sqrt_bf(BigFloatPtr r, BigFloatPtr n);
