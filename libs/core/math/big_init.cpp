@@ -65,10 +65,10 @@ BigNumPtr g_tmp_sqr_x_bn{};
 BigNumPtr g_tmp_sqr_y_bn{};
 BigNumPtr g_bn_tmp{};
 // g_bn_length
-BNComplex g_old_z_bn{};
-BNComplex g_param_z_bn{};
-BNComplex g_saved_z_bn{};
-BNComplex g_new_z_bn{};   // g_r_length
+BNPtrComplex g_old_z_bn{};
+BNPtrComplex g_param_z_bn{};
+BNPtrComplex g_saved_z_bn{};
+BNPtrComplex g_new_z_bn{}; // g_r_length
 BigNumPtr g_bn_pi{};      // TAKES NO SPACE
 // g_r_bf_length+2
 BigFloatPtr g_bf_tmp1{};
@@ -87,11 +87,11 @@ BigFloatPtr g_close_enough_bf{};
 BigFloatPtr g_tmp_sqr_x_bf{};
 BigFloatPtr g_tmp_sqr_y_bf{};
 // g_bf_length+2
-BFComplex g_param_z_bf{};
-BFComplex g_saved_z_bf{};
+BFPtrComplex g_param_z_bf{};
+BFPtrComplex g_saved_z_bf{};
 // g_r_bf_length+2
-BFComplex g_old_z_bf{};
-BFComplex g_new_z_bf{};
+BFPtrComplex g_old_z_bf{};
+BFPtrComplex g_new_z_bf{};
 BigFloatPtr g_bf_pi{};  // TAKES NO SPACE
 BigFloatPtr g_big_pi{}; // g_bf_length+2
 // g_bf_length+2

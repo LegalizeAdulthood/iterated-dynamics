@@ -203,7 +203,7 @@ void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double
     }
 }
 
-void burning_ship_ref_pt_bf(const BFComplex &center, BFComplex &z)
+void burning_ship_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
 {
     const int degree = static_cast<int>(g_params[2]);
     BigStackSaver saved;
@@ -211,7 +211,7 @@ void burning_ship_ref_pt_bf(const BFComplex &center, BFComplex &z)
     BigFloatPtr real_sqr = alloc_stack(g_r_bf_length + 2);
     BigFloatPtr imag_sqr = alloc_stack(g_r_bf_length + 2);
     BigFloatPtr real_imag = alloc_stack(g_r_bf_length + 2);
-    BFComplex z2;
+    BFPtrComplex z2;
     z2.x = alloc_stack(g_r_bf_length + 2);
     z2.y = alloc_stack(g_r_bf_length + 2);
     double_bf(z2.x, z.x);
@@ -254,7 +254,7 @@ int burning_ship_bf_fractal()
     }
     else if (degree > 2) // Burning Ship to higher power
     {
-        BFComplex big_z;
+        BFPtrComplex big_z;
         big_z.x = alloc_stack(g_bf_length + 2);
         big_z.y = alloc_stack(g_bf_length + 2);
         abs_bf(big_z.x, g_old_z_bf.x);

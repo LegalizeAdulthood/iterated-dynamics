@@ -22,9 +22,10 @@ public:
     // Validate the sample count for both reference buffers without allocating.
     static std::size_t reference_sample_count(long max_iterations);
 
-    math::BFComplex initialize_frame_bf(
+    math::BFPtrComplex initialize_frame_bf(
         const std::complex<double> &half_horizontal, const std::complex<double> &half_vertical);
-    void initialize_frame_bf(const math::BFComplex &min, const math::BFComplex &max, const math::BFComplex &third);
+    void initialize_frame_bf(
+        const math::BFPtrComplex &min, const math::BFPtrComplex &max, const math::BFPtrComplex &third);
     void initialize_frame(const std::complex<double> &center, const std::complex<double> &half_horizontal,
         const std::complex<double> &half_vertical);
     // Advance one reference chunk; true when the reference is complete.
@@ -34,8 +35,8 @@ public:
     int calculate_pixel(int col, int row, bool incremental = false);
 
     void begin_orbit(const std::complex<double> &parameter, const std::complex<double> &value, long iteration);
-    void begin_orbit_bf(const math::BFComplex &parameter, const math::BFComplex &value, long iteration);
-    void begin_orbit_bn(const math::BNComplex &parameter, const math::BNComplex &value, long iteration);
+    void begin_orbit_bf(const math::BFPtrComplex &parameter, const math::BFPtrComplex &value, long iteration);
+    void begin_orbit_bn(const math::BNPtrComplex &parameter, const math::BNPtrComplex &value, long iteration);
     // Advance at most one recurrence update; true at bailout or the iteration limit.
     // Reference preparation can return false without advancing orbit_iteration().
     // continue_bailout retains Mandel's cached-square updates after a bailout.
@@ -101,9 +102,9 @@ private:
         std::complex<double> saved_z{};
         std::complex<double> precise_previous{};
         std::array<double, STAR_TRAIL_ITERATIONS> tan_table{};
-        math::BFComplex precise_coordinate{};
-        math::BFComplex precise_orbit{};
-        math::BFComplex precise_saved{};
+        math::BFPtrComplex precise_coordinate{};
+        math::BFPtrComplex precise_orbit{};
+        math::BFPtrComplex precise_saved{};
         math::BigFloatPtr precise_tolerance{};
         std::size_t sample{};
         std::size_t saved_sample{};
@@ -140,11 +141,11 @@ private:
     bool iterate_reference();
     bool advance_bailout();
     std::complex<double> pixel_delta(const std::complex<double> &pixel_position) const;
-    void pixel_delta(math::BFComplex delta, const std::complex<double> &pixel_position) const;
+    void pixel_delta(math::BFPtrComplex delta, const std::complex<double> &pixel_position) const;
     bool parameter_delta(const std::complex<double> &pixel_position, std::complex<double> &delta) const;
     std::complex<double> inverted_coordinate(const std::complex<double> &pixel_position) const;
-    void inverted_coordinate(math::BFComplex coordinate, const std::complex<double> &pixel_position) const;
-    void coordinate_bf(math::BFComplex coordinate, const std::complex<double> &pixel_position) const;
+    void inverted_coordinate(math::BFPtrComplex coordinate, const std::complex<double> &pixel_position) const;
+    void coordinate_bf(math::BFPtrComplex coordinate, const std::complex<double> &pixel_position) const;
     void reset_for_frame(const std::complex<double> &half_horizontal, const std::complex<double> &half_vertical);
     void begin_point(const Point &pt);
     void clear_point();
@@ -164,15 +165,15 @@ private:
     DistanceEstimator m_distance_estimator{};
     int m_reference_count{};
     long m_cycle_len{-1};
-    math::BFComplex m_reference_coordinate_bf{};
-    math::BFComplex m_reference_z_bf{};
-    math::BFComplex m_reference_initial_bf{};
-    math::BFComplex m_orbit_parameter_bf{};
-    math::BFComplex m_orbit_initial_bf{};
+    math::BFPtrComplex m_reference_coordinate_bf{};
+    math::BFPtrComplex m_reference_z_bf{};
+    math::BFPtrComplex m_reference_initial_bf{};
+    math::BFPtrComplex m_orbit_parameter_bf{};
+    math::BFPtrComplex m_orbit_initial_bf{};
     math::BigFloatPtr m_tmp_bf{};
-    math::BFComplex m_center_bf{};
-    math::BFComplex m_half_horizontal_bf{};
-    math::BFComplex m_half_vertical_bf{};
+    math::BFPtrComplex m_center_bf{};
+    math::BFPtrComplex m_half_horizontal_bf{};
+    math::BFPtrComplex m_half_vertical_bf{};
     std::complex<double> m_center{};
     std::complex<double> m_reference_z{};
     std::size_t m_reference_sample{};

@@ -88,8 +88,8 @@ diagnostic presentation, and waits in the existing UI owners.
 - `math/complex_fn.h` has BF integer-power support.  That does not alone
   implement formula powers with noninteger or complex exponents.
 - Precision storage uses the existing static 1 MiB arena and supported
-  length limits.  `BigFloatPtr` is a raw byte pointer and `BFComplex`
-  contains two such pointers; neither owns an allocation.
+  length limits. `BigFloatPtr` is a raw byte pointer, and
+  `BFPtrComplex` contains two such pointers; neither owns an allocation.
 
 See [MathGlobals.md](MathGlobals.md) for current lengths, allocations,
 aliases, and stack lifetime.  Preserve the tested low-level arithmetic
@@ -164,7 +164,7 @@ mode from the fractal's alternate-math support; passing a digit count
 alone does not independently select `BIG_FLT`.
 
 The runtime must own stable backing storage or have an explicitly
-enclosing allocation lifetime.  A vector of `BFComplex` pointers does
+enclosing allocation lifetime. A vector of `BFPtrComplex` values does
 not establish that ownership.  Keep runtime values alive across pixel
 increments and reserve temporary scratch only within operation scopes.
 Rebuild bindings when precision changes.

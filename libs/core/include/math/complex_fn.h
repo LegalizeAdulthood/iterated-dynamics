@@ -28,7 +28,7 @@ inline std::complex<double> cube(const std::complex<double> &z)
 }
 
 // Cube c + jd = (a + jb) * (a + jb) * (a + jb)
-inline void cube(BFComplex &out, const BFComplex &in)
+inline void cube(BFPtrComplex &out, const BFPtrComplex &in)
 {
     BigStackSaver saved;
     BigFloatPtr t = alloc_stack(g_r_bf_length + 2);
@@ -87,7 +87,7 @@ inline std::complex<double> power(const std::complex<double> &base, int exp)
     return result;
 }
 
-inline void power(BFComplex &result, const BFComplex &z, int degree)
+inline void power(BFPtrComplex &result, const BFPtrComplex &z, int degree)
 {
     BigStackSaver saved;
     BigFloatPtr t = alloc_stack(g_r_bf_length + 2);

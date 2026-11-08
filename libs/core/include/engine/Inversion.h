@@ -16,7 +16,7 @@ using InversionParams = std::array<double, 3>; // radius, x center, y center
 struct Inversion
 {
     double apply(math::DComplex &point) const;
-    void apply(math::BFComplex point) const;
+    void apply(math::BFPtrComplex point) const;
 
     int invert{};
     double radius{};

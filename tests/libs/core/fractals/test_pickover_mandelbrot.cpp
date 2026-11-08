@@ -171,11 +171,11 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
 {
     initialize_precision();
     BigStackSaver saved;
-    const BFComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex actual{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex expected{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex powered{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex product{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BFPtrComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex actual{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex expected{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex powered{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex product{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     const BigFloatPtr difference{alloc_stack(g_r_bf_length + 2)};
     str_to_bf(center.x, "-0.12500000000000000000000000000000000000001");
     str_to_bf(center.y, "0.000125");
@@ -269,9 +269,9 @@ void TestSignedPowerState::initialize_signed_precision()
 std::complex<double> TestSignedPowerState::precise_power(const std::complex<double> &z)
 {
     BigStackSaver saved;
-    BFComplex value{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex result{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex value{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex result{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     float_to_bf(value.x, z.real());
     float_to_bf(value.y, z.imag());
     int_to_bf(exponent.x, g_c_exponent);
@@ -429,11 +429,11 @@ void TestPreciseSignedPowerReference::SetUp()
 TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
 {
     BigStackSaver saved;
-    BFComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex actual{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex seed{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex expected{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    const BFComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex actual{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex seed{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex expected{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BFPtrComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     const BigFloatPtr difference{alloc_stack(g_r_bf_length + 2)};
     int_to_bf(exponent.x, GetParam().exponent);
     clear_bf(exponent.y);
@@ -765,11 +765,11 @@ void TestPreciseComplexPowerReference::SetUp()
 TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
 {
     BigStackSaver saved;
-    BFComplex seed{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex actual{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex expected{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    BFComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    const BFComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex seed{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex actual{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex expected{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BFPtrComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     const BigFloatPtr difference{alloc_stack(g_r_bf_length + 2)};
     float_to_bf(exponent.x, GetParam().exponent.real());
     float_to_bf(exponent.y, GetParam().exponent.imag());
@@ -809,8 +809,8 @@ void TestPreciseComplexPowerZero::SetUp()
 TEST_P(TestPreciseComplexPowerZero, zeroReferenceProducesTheCenter)
 {
     BigStackSaver saved;
-    BFComplex actual{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
-    const BFComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    BFPtrComplex actual{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BFPtrComplex center{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     float_to_bf(center.x, 0.0625);
     float_to_bf(center.y, -0.03125);
     clear_bf(actual.x);

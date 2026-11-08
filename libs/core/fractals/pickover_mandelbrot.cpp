@@ -166,10 +166,10 @@ void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<doub
     }
 }
 
-void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
+void mandel_z_power_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
 {
     BigStackSaver saved;
-    BFComplex tmp;
+    BFPtrComplex tmp;
     tmp.x = alloc_stack(g_r_bf_length + 2);
     tmp.y = alloc_stack(g_r_bf_length + 2);
     // The ordinary arbitrary-precision power kernel defines 0^n as 0,
@@ -181,7 +181,7 @@ void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
     }
     else if (mandel_z_power_uses_complex_power())
     {
-        BFComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        BFPtrComplex exponent{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
         float_to_bf(exponent.x, g_params[2]);
         float_to_bf(exponent.y, g_params[3]);
         cmplx_pow_bf(&tmp, &z, &exponent);
@@ -197,7 +197,7 @@ void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
     else
     {
         const BigFloatPtr denominator{alloc_stack(g_r_bf_length + 2)};
-        BFComplex powered{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+        BFPtrComplex powered{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
         power(tmp, z, -(g_c_exponent + 1));
         cmplx_mul_bf(&powered, &tmp, &z);
         square_bf(tmp.x, powered.x);

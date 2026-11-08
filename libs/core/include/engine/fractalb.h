@@ -13,7 +13,7 @@
 namespace id::engine
 {
 
-inline math::DComplex cmplx_bn_to_float(const math::BNComplex &s)
+inline math::DComplex cmplx_bn_to_float(const math::BNPtrComplex &s)
 {
     math::DComplex t;
     t.x = static_cast<double>(math::bn_to_float(s.x));
@@ -21,7 +21,7 @@ inline math::DComplex cmplx_bn_to_float(const math::BNComplex &s)
     return t;
 }
 
-inline math::DComplex cmplx_bf_to_float(const math::BFComplex &s)
+inline math::DComplex cmplx_bf_to_float(const math::BFPtrComplex &s)
 {
     math::DComplex t;
     t.x = static_cast<double>(math::bf_to_float(s.x));
@@ -39,10 +39,10 @@ int mandel_per_pixel_bf();
 int julia_per_pixel_bf();
 int julia_orbit_bf();
 int julia_z_power_orbit_bf();
-math::BFComplex *cmplx_log_bf(math::BFComplex *t, math::BFComplex *s);
-math::BFComplex *cmplx_mul_bf(math::BFComplex *t, math::BFComplex *x, math::BFComplex *y);
-math::BFComplex *cmplx_div_bf(math::BFComplex *t, math::BFComplex *x, math::BFComplex *y);
-math::BFComplex *cmplx_pow_bf(math::BFComplex *t, math::BFComplex *xx, math::BFComplex *yy);
+math::BFPtrComplex *cmplx_log_bf(math::BFPtrComplex *t, math::BFPtrComplex *s);
+math::BFPtrComplex *cmplx_mul_bf(math::BFPtrComplex *t, math::BFPtrComplex *x, math::BFPtrComplex *y);
+math::BFPtrComplex *cmplx_div_bf(math::BFPtrComplex *t, math::BFPtrComplex *x, math::BFPtrComplex *y);
+math::BFPtrComplex *cmplx_pow_bf(math::BFPtrComplex *t, math::BFPtrComplex *xx, math::BFPtrComplex *yy);
 
 // Numeric snapshots collected by debug checks and reported by UI owners.
 extern std::vector<std::string> g_precision_diagnostics;

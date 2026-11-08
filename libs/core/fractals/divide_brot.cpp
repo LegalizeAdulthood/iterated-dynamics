@@ -50,9 +50,9 @@ int divide_brot5_bf_per_pixel()
 int divide_brot5_orbit_bf()
 {
     BigStackSaver saved;
-    BFComplex bf_tmp_new;
-    BFComplex bf_numer;
-    BFComplex bf_c_exp;
+    BFPtrComplex bf_tmp_new;
+    BFPtrComplex bf_numer;
+    BFPtrComplex bf_c_exp;
 
     bf_tmp_new.x = alloc_stack(g_r_bf_length + 2);
     bf_tmp_new.y = alloc_stack(g_r_bf_length + 2);

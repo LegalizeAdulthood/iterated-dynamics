@@ -45,8 +45,8 @@ using BigNumConstPtr = const Byte *;
 using BigFloatPtr = Big;
 using BigFloatConstPtr = const Byte *;
 
-using BFComplex = Complex<BigFloatPtr>;
-using BNComplex = Complex<BigNumPtr>;
+using BFPtrComplex = Complex<BigFloatPtr>;
+using BNPtrComplex = Complex<BigNumPtr>;
 
 // globals
 extern BFMathType g_bf_math;
@@ -269,10 +269,10 @@ extern BigNumPtr g_close_enough_bn;
 extern BigNumPtr g_tmp_sqr_x_bn;
 extern BigNumPtr g_tmp_sqr_y_bn;
 // g_bn_length
-extern BNComplex g_old_z_bn;
-extern BNComplex g_param_z_bn;
-extern BNComplex g_saved_z_bn;
-extern BNComplex g_new_z_bn; // g_r_length
+extern BNPtrComplex g_old_z_bn;
+extern BNPtrComplex g_param_z_bn;
+extern BNPtrComplex g_saved_z_bn;
+extern BNPtrComplex g_new_z_bn; // g_r_length
 // g_r_bf_length+2
 extern BigFloatPtr g_delta_x_bf;
 extern BigFloatPtr g_delta_y_bf;
@@ -281,10 +281,10 @@ extern BigFloatPtr g_delta2_y_bf;
 extern BigFloatPtr g_close_enough_bf;
 extern BigFloatPtr g_tmp_sqr_x_bf;
 extern BigFloatPtr g_tmp_sqr_y_bf;
-extern BFComplex g_param_z_bf;
-extern BFComplex g_saved_z_bf;
-extern BFComplex g_old_z_bf;
-extern BFComplex g_new_z_bf;
+extern BFPtrComplex g_param_z_bf;
+extern BFPtrComplex g_saved_z_bf;
+extern BFPtrComplex g_old_z_bf;
+extern BFPtrComplex g_new_z_bf;
 
 // for testing only
 // used by other routines

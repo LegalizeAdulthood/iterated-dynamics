@@ -31,8 +31,8 @@ Header: `big.h`.
 `BigNumPtr` points to binary fixed-point storage, not exact decimal
 arithmetic. `BigFloatPtr` points to a base-256 mantissa and a two-byte
 exponent. `Big`, `BigNumPtr`, and `BigFloatPtr` are raw byte-pointer
-aliases; `BNComplex` and `BFComplex` contain two such pointers and do not
-own their storage.
+aliases; `BNPtrComplex` and `BFPtrComplex` contain two such pointers and
+do not own their storage.
 
 `BigFloat` in `math/BigFloat.h` owns canonical value bytes independently
 of the arena. Copies, moves, destruction, and legacy-buffer export use

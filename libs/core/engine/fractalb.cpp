@@ -685,7 +685,7 @@ int julia_orbit_bf()
 int julia_z_power_orbit_bf()
 {
     BigStackSaver saved;
-    BFComplex param2;
+    BFPtrComplex param2;
 
     param2.x = alloc_stack(g_bf_length+2);
     param2.y = alloc_stack(g_bf_length+2);
@@ -698,7 +698,7 @@ int julia_z_power_orbit_bf()
     return g_bailout_bigfloat();
 }
 
-BFComplex *cmplx_log_bf(BFComplex *t, BFComplex *s)
+BFPtrComplex *cmplx_log_bf(BFPtrComplex *t, BFPtrComplex *s)
 {
     if (is_bf_zero(s->x) && is_bf_zero(s->y))
     {
@@ -717,7 +717,7 @@ BFComplex *cmplx_log_bf(BFComplex *t, BFComplex *s)
     return t;
 }
 
-BFComplex *cmplx_mul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
+BFPtrComplex *cmplx_mul_bf(BFPtrComplex *t, BFPtrComplex *x, BFPtrComplex *y)
 {
     BigStackSaver saved;
     BigFloatPtr tmp1 = alloc_stack(g_r_bf_length + 2);
@@ -731,7 +731,7 @@ BFComplex *cmplx_mul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
     return t;
 }
 
-BFComplex *cmplx_div_bf(BFComplex *t, BFComplex *x, BFComplex *y)
+BFPtrComplex *cmplx_div_bf(BFPtrComplex *t, BFPtrComplex *x, BFPtrComplex *y)
 {
     BigStackSaver saved;
     BigFloatPtr tmp1 = alloc_stack(g_r_bf_length + 2);
@@ -761,10 +761,10 @@ BFComplex *cmplx_div_bf(BFComplex *t, BFComplex *x, BFComplex *y)
     return t;
 }
 
-BFComplex *cmplx_pow_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
+BFPtrComplex *cmplx_pow_bf(BFPtrComplex *t, BFPtrComplex *xx, BFPtrComplex *yy)
 {
     BigStackSaver saved;
-    BFComplex tmp;
+    BFPtrComplex tmp;
     BigFloatPtr e2x = alloc_stack(g_r_bf_length + 2);
     BigFloatPtr sin_y = alloc_stack(g_r_bf_length + 2);
     BigFloatPtr cos_y = alloc_stack(g_r_bf_length + 2);

@@ -71,7 +71,7 @@ std::complex<double> star_trail_point(const std::complex<double> &z)
     return {std::max(std::min(z.real(), LIMIT), -LIMIT), std::max(std::min(z.imag(), LIMIT), -LIMIT)};
 }
 
-void clamp_star_trail_point(const BFComplex &z)
+void clamp_star_trail_point(const BFPtrComplex &z)
 {
     const std::complex<double> value{static_cast<double>(bf_to_float(z.x)), static_cast<double>(bf_to_float(z.y))};
     const std::complex<double> bounded{star_trail_point(value)};
@@ -113,7 +113,7 @@ std::complex<double> initialize_orbit(const std::complex<double> &coordinate)
     return native_orbit_value(value);
 }
 
-void initialize_orbit_bf(const BFComplex z, const BFComplex &coordinate)
+void initialize_orbit_bf(const BFPtrComplex z, const BFPtrComplex &coordinate)
 {
     BigStackSaver saved;
     const BigFloatPtr offset{alloc_stack(g_r_bf_length + 2)};
@@ -159,10 +159,10 @@ double bailout_limit()
     return g_bf_math == BFMathType::BIG_NUM ? static_cast<long>(g_magnitude_limit) : g_magnitude_limit;
 }
 
-bool relative_delta(const BFComplex &value, const BFComplex &reference, std::complex<double> &delta)
+bool relative_delta(const BFPtrComplex &value, const BFPtrComplex &reference, std::complex<double> &delta)
 {
     BigStackSaver saved;
-    const BFComplex difference{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BFPtrComplex difference{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     sub_bf(difference.x, value.x, reference.x);
     sub_bf(difference.y, value.y, reference.y);
     delta = {static_cast<double>(bf_to_float(difference.x)), static_cast<double>(bf_to_float(difference.y))};
@@ -202,7 +202,7 @@ bool ambiguous_bailout(const std::complex<double> &reference, const std::complex
     throw std::logic_error("Unknown bailout test");
 }
 
-bool precise_bailout_reached(const BFComplex &z)
+bool precise_bailout_reached(const BFPtrComplex &z)
 {
     BigStackSaver saved;
     const BigFloatPtr x{alloc_stack(g_r_bf_length + 2)};
@@ -272,7 +272,7 @@ std::size_t PertEngine::reference_sample_count(const long max_iterations)
     return static_cast<std::size_t>(iterations) + 1;
 }
 
-BFComplex PertEngine::initialize_frame_bf(
+BFPtrComplex PertEngine::initialize_frame_bf(
     const std::complex<double> &half_horizontal, const std::complex<double> &half_vertical)
 {
     reset_for_frame(half_horizontal, half_vertical);
@@ -289,7 +289,7 @@ BFComplex PertEngine::initialize_frame_bf(
     return m_center_bf;
 }
 
-void PertEngine::initialize_frame_bf(const BFComplex &min, const BFComplex &max, const BFComplex &third)
+void PertEngine::initialize_frame_bf(const BFPtrComplex &min, const BFPtrComplex &max, const BFPtrComplex &third)
 {
     initialize_frame_bf({}, {});
     add_bf(m_center_bf.x, min.x, max.x);
@@ -454,7 +454,7 @@ void PertEngine::begin_orbit(
     }
 }
 
-void PertEngine::begin_orbit_bf(const BFComplex &parameter, const BFComplex &value, const long iteration)
+void PertEngine::begin_orbit_bf(const BFPtrComplex &parameter, const BFPtrComplex &value, const long iteration)
 {
     if (g_bf_math == BFMathType::NONE)
     {
@@ -484,7 +484,7 @@ void PertEngine::begin_orbit_bf(const BFComplex &parameter, const BFComplex &val
     }
 }
 
-void PertEngine::begin_orbit_bn(const BNComplex &parameter, const BNComplex &value, const long iteration)
+void PertEngine::begin_orbit_bn(const BNPtrComplex &parameter, const BNPtrComplex &value, const long iteration)
 {
     if (g_bf_math != BFMathType::BIG_NUM)
     {
@@ -804,7 +804,7 @@ std::complex<double> PertEngine::inverted_coordinate(const std::complex<double> 
     return {coordinate.x, coordinate.y};
 }
 
-void PertEngine::inverted_coordinate(const BFComplex coordinate, const std::complex<double> &pixel_position) const
+void PertEngine::inverted_coordinate(const BFPtrComplex coordinate, const std::complex<double> &pixel_position) const
 {
     BigStackSaver saved;
     const BigFloatPtr horizontal{alloc_stack(g_r_bf_length + 2)};
@@ -837,7 +837,7 @@ void PertEngine::inverted_coordinate(const BFComplex coordinate, const std::comp
     }
 }
 
-void PertEngine::pixel_delta(const BFComplex delta, const std::complex<double> &pixel_position) const
+void PertEngine::pixel_delta(const BFPtrComplex delta, const std::complex<double> &pixel_position) const
 {
     BigStackSaver saved;
     const BigFloatPtr factor{alloc_stack(g_r_bf_length + 2)};
@@ -880,12 +880,12 @@ bool PertEngine::parameter_delta(const std::complex<double> &pixel_position, std
         return true;
     }
     BigStackSaver saved;
-    const BFComplex coordinate{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
+    const BFPtrComplex coordinate{alloc_stack(g_r_bf_length + 2), alloc_stack(g_r_bf_length + 2)};
     coordinate_bf(coordinate, pixel_position);
     return relative_delta(coordinate, m_reference_coordinate_bf, delta);
 }
 
-void PertEngine::coordinate_bf(const BFComplex coordinate, const std::complex<double> &pixel_position) const
+void PertEngine::coordinate_bf(const BFPtrComplex coordinate, const std::complex<double> &pixel_position) const
 {
     if (g_inversion.invert != 0)
     {

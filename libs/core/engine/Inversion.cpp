@@ -27,7 +27,7 @@ double Inversion::apply(DComplex &point) const
     return scale;
 }
 
-void Inversion::apply(const BFComplex point) const
+void Inversion::apply(const BFPtrComplex point) const
 {
     BigStackSaver saved;
     const BigFloatPtr center_x{alloc_stack(g_r_bf_length + 2)};
