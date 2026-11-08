@@ -380,4 +380,307 @@ TEST_F(TestBigNumValue, conversionAdaptersValidateDestinationBuffers)
 
 INSTANTIATE_TEST_SUITE_P(IntegerBytes, TestBigNumLayout, testing::Values(1, 2, 4));
 
+TEST_P(TestBigNumLayout, legacyArithmeticSamplesPreserveDistinctOperands)
+{
+    auto left = encoded_value(BigNum{"-7.5"});
+    auto right = encoded_value(BigNum{"2.5"});
+    const auto original_left = left;
+    const auto original_right = right;
+    std::vector<Byte> result(static_cast<std::size_t>(g_r_length));
+
+    add_bn(result.data(), left.data(), right.data());
+    EXPECT_EQ("-5.", bn_to_string(result.data(), 8));
+    sub_bn(result.data(), left.data(), right.data());
+    EXPECT_EQ("-10.", bn_to_string(result.data(), 8));
+    mult_bn(result.data(), left.data(), right.data());
+    EXPECT_EQ("-18.75", bn_to_string(result.data() + g_shift_factor, 8));
+    auto half = encoded_value(BigNum{"0.5"});
+    div_bn(result.data(), left.data(), half.data());
+    EXPECT_EQ("-15.", bn_to_string(result.data(), 8));
+
+    EXPECT_EQ(original_left, left);
+    EXPECT_EQ(original_right, right);
+}
+
+TEST_P(TestBigNumLayout, legacyDivisionKeepsSaturationAndZeroRules)
+{
+    std::vector<Byte> maximum(static_cast<std::size_t>(g_bn_length));
+    max_bn(maximum.data());
+    auto numerator = maximum;
+    auto denominator = encoded_value(BigNum{"0.25"});
+    std::vector<Byte> result(maximum.size());
+
+    div_bn(result.data(), numerator.data(), denominator.data());
+    EXPECT_EQ(maximum, result);
+    neg_a_bn(numerator.data());
+    neg_a_bn(maximum.data());
+    div_bn(result.data(), numerator.data(), denominator.data());
+    EXPECT_EQ(maximum, result);
+    std::fill(denominator.begin(), denominator.end(), Byte{0});
+    div_bn(result.data(), numerator.data(), denominator.data());
+    max_bn(maximum.data());
+    EXPECT_EQ(maximum, result);
+    std::fill(numerator.begin(), numerator.end(), Byte{0});
+    div_bn(result.data(), numerator.data(), denominator.data());
+    EXPECT_EQ(numerator, result);
+}
+
+class TestBigNumProducts : public TestBigNumValue, public testing::WithParamInterface<int>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumProducts::SetUp()
+{
+    init_bf_length(GetParam());
+}
+
+TEST_P(TestBigNumProducts, legacyProductsUseTheirDocumentedOffsets)
+{
+    auto value = encoded_value(BigNum{"-7.5"});
+    auto other = value;
+    const auto original = value;
+    std::vector<Byte> partial(static_cast<std::size_t>(g_r_length));
+    std::vector<Byte> full(static_cast<std::size_t>(2 * g_bn_length));
+
+    mult_bn(partial.data(), value.data(), other.data());
+    EXPECT_EQ("56.25", bn_to_string(partial.data() + g_shift_factor, 8));
+    square_bn(partial.data(), value.data());
+    EXPECT_EQ("56.25", bn_to_string(partial.data() + g_shift_factor, 8));
+    full_mult_bn(full.data(), value.data(), other.data());
+    EXPECT_EQ("56.25", bn_to_string(full.data() + g_bn_length - g_int_length, 8));
+    full_square_bn(full.data(), value.data());
+    EXPECT_EQ("56.25", bn_to_string(full.data() + g_bn_length - g_int_length, 8));
+    EXPECT_EQ(original, value);
+    EXPECT_EQ(original, other);
+}
+
+TEST_P(TestBigNumProducts, legacyProductTruncationKeepsTheSignedLowBit)
+{
+    std::vector<Byte> quantum(static_cast<std::size_t>(g_bn_length));
+    quantum.front() = 1;
+    auto half = encoded_value(BigNum{"0.5"});
+    std::vector<Byte> product(static_cast<std::size_t>(g_r_length));
+    const std::vector<Byte> zero(quantum.size());
+
+    mult_bn(product.data(), quantum.data(), half.data());
+    EXPECT_TRUE(std::equal(zero.begin(), zero.end(), product.data() + g_shift_factor));
+    neg_a_bn(quantum.data());
+    const auto negative_quantum = quantum;
+    mult_bn(product.data(), quantum.data(), half.data());
+    EXPECT_TRUE(std::equal(negative_quantum.begin(), negative_quantum.end(), product.data() + g_shift_factor));
+    EXPECT_EQ(negative_quantum, quantum);
+}
+
+TEST_P(TestBigNumLayout, arithmeticPreservesOperandsAndUsesCanonicalResults)
+{
+    const BigNum left{"-7.5"};
+    const BigNum right{"2.5"};
+    const auto original_left = encoded_value(left);
+    const auto original_right = encoded_value(right);
+
+    EXPECT_EQ("-5.", (left + right).to_string(8));
+    EXPECT_EQ("-10.", (left - right).to_string(8));
+    EXPECT_EQ("-18.75", (left * right).to_string(8));
+    EXPECT_EQ("-15.", (left / BigNum{"0.5"}).to_string(8));
+    EXPECT_EQ("7.5", (-left).to_string(8));
+    EXPECT_EQ("56.25", left.square().to_string(8));
+    EXPECT_EQ(original_left, encoded_value(left));
+    EXPECT_EQ(original_right, encoded_value(right));
+}
+
+TEST_P(TestBigNumLayout, compoundAssignmentChangesOnlyItsDestination)
+{
+    BigNum value{"1.5"};
+    const BigNum right{2};
+    const BigNum copy = value;
+    const auto original_right = encoded_value(right);
+
+    EXPECT_EQ(&value, &(value += right));
+    EXPECT_EQ("3.5", value.to_string(8));
+    EXPECT_EQ(&value, &(value -= right));
+    EXPECT_EQ("1.5", value.to_string(8));
+    EXPECT_EQ(&value, &(value *= right));
+    EXPECT_EQ("3.", value.to_string(8));
+    EXPECT_EQ(&value, &(value /= right));
+    EXPECT_EQ("1.5", value.to_string(8));
+    EXPECT_EQ("1.5", copy.to_string(8));
+    EXPECT_EQ(original_right, encoded_value(right));
+}
+
+TEST_P(TestBigNumLayout, repeatedNegativeOperandsAndSelfAssignmentAreSafe)
+{
+    BigNum value{-2};
+    const auto original = encoded_value(value);
+
+    EXPECT_EQ("4.", (value * value).to_string(8));
+    EXPECT_EQ("4.", value.square().to_string(8));
+    EXPECT_EQ(original, encoded_value(value));
+    value *= value;
+    EXPECT_EQ("4.", value.to_string(8));
+    value /= value;
+    EXPECT_EQ("1.", value.to_string(8));
+    value += value;
+    EXPECT_EQ("2.", value.to_string(8));
+    value -= value;
+    EXPECT_EQ("0.", value.to_string(8));
+}
+
+TEST_P(TestBigNumLayout, assignmentCanAlsoSupplyTheRightOperand)
+{
+    const BigNum left{8};
+    BigNum value{2};
+
+    value = left + value;
+    EXPECT_EQ("10.", value.to_string(8));
+    value = left - value;
+    EXPECT_EQ("-2.", value.to_string(8));
+    value = left * value;
+    EXPECT_EQ("-16.", value.to_string(8));
+    value = left / value;
+    EXPECT_EQ("-0.5", value.to_string(8));
+}
+
+TEST_P(TestBigNumLayout, expressionsMatchLegacySequencesAndOutliveTheirTemporaries)
+{
+    const BigNum left{"-1.234567890123456789"};
+    const BigNum right{"2.345678901234567890"};
+    const BigNum divisor{"-0.5"};
+    auto raw_left = encoded_value(left);
+    auto raw_right = encoded_value(right);
+    auto raw_divisor = encoded_value(divisor);
+    std::vector<Byte> expected(static_cast<std::size_t>(g_bn_length));
+    std::vector<Byte> quotient(expected.size());
+    std::vector<Byte> product(static_cast<std::size_t>(g_r_length));
+    // Value expressions use fresh results. Reusing a legacy division
+    // destination can retain low-bit differences from its previous contents.
+    add_bn(expected.data(), raw_left.data(), raw_right.data());
+    div_bn(quotient.data(), expected.data(), raw_divisor.data());
+    mult_bn(product.data(), quotient.data(), raw_left.data());
+    sub_bn(expected.data(), product.data() + g_shift_factor, raw_right.data());
+    const int marker = save_stack();
+
+    const BigNum result = ((left + right) / divisor) * left - right;
+    const BigNum unrelated = BigNum{-8} * BigNum{-9};
+
+    EXPECT_EQ(marker, save_stack());
+    alloc_stack(g_r_length);
+    restore_stack(marker);
+    EXPECT_EQ(expected, encoded_value(result));
+    EXPECT_EQ("72.", unrelated.to_string(8));
+    EXPECT_EQ(raw_left, encoded_value(left));
+    EXPECT_EQ(raw_right, encoded_value(right));
+    EXPECT_EQ(raw_divisor, encoded_value(divisor));
+}
+
+TEST_P(TestBigNumLayout, divisionAssignmentMatchesAFreshResult)
+{
+    BigNum value = BigNum{"-1.234567890123456789"} + BigNum{"2.345678901234567890"};
+    const BigNum divisor{"-0.5"};
+    const auto expected = encoded_value(value / divisor);
+
+    value /= divisor;
+
+    EXPECT_EQ(expected, encoded_value(value));
+}
+
+TEST_P(TestBigNumLayout, divisionKeepsLegacySaturationAndZeroResults)
+{
+    std::vector<Byte> maximum(static_cast<std::size_t>(g_bn_length));
+    max_bn(maximum.data());
+    const BigNum positive = BigNum::from_legacy(maximum.data(), maximum.size());
+    const BigNum quarter{"0.25"};
+    const BigNum zero;
+
+    EXPECT_EQ(maximum, encoded_value(positive / quarter));
+    EXPECT_EQ(maximum, encoded_value((-positive) / zero));
+    neg_a_bn(maximum.data());
+    EXPECT_EQ(maximum, encoded_value((-positive) / quarter));
+    EXPECT_EQ(encoded_value(zero), encoded_value(zero / zero));
+    EXPECT_EQ(encoded_value(zero), encoded_value(zero / quarter));
+}
+
+TEST_P(TestBigNumProducts, productsAndSquaresReturnOnlyCanonicalBytes)
+{
+    const BigNum value{"-7.5"};
+    const auto original = encoded_value(value);
+    auto raw = original;
+    std::vector<Byte> product(static_cast<std::size_t>(g_r_length));
+    square_bn(product.data(), raw.data());
+    const std::vector<Byte> expected(product.data() + g_shift_factor, product.data() + g_shift_factor + g_bn_length);
+
+    EXPECT_EQ(expected, encoded_value(value * value));
+    EXPECT_EQ(expected, encoded_value(value.square()));
+    EXPECT_EQ(original, encoded_value(value));
+}
+
+TEST_P(TestBigNumProducts, normalizationPreservesSignedLowBitTruncation)
+{
+    std::vector<Byte> quantum(static_cast<std::size_t>(g_bn_length));
+    quantum.front() = 1;
+    const BigNum positive = BigNum::from_legacy(quantum.data(), quantum.size());
+    const BigNum half{"0.5"};
+    const auto zero = encoded_value(BigNum{});
+
+    EXPECT_EQ(zero, encoded_value(positive * half));
+    EXPECT_EQ(zero, encoded_value(positive.square()));
+    neg_a_bn(quantum.data());
+    const BigNum negative = BigNum::from_legacy(quantum.data(), quantum.size());
+    EXPECT_EQ(quantum, encoded_value(negative * half));
+    EXPECT_EQ(quantum, encoded_value(negative));
+}
+
+TEST_F(TestBigNumValue, arithmeticKeepsFixedWidthOverflow)
+{
+    std::vector<Byte> maximum(static_cast<std::size_t>(g_bn_length));
+    max_bn(maximum.data());
+    std::vector<Byte> minimum(maximum.size());
+    minimum.back() = 0x80;
+    std::vector<Byte> quantum(maximum.size());
+    quantum.front() = 1;
+    const BigNum high = BigNum::from_legacy(maximum.data(), maximum.size());
+    const BigNum low = BigNum::from_legacy(minimum.data(), minimum.size());
+    const BigNum unit = BigNum::from_legacy(quantum.data(), quantum.size());
+    std::vector<Byte> negative_twice_quantum(maximum.size(), Byte{0xff});
+    negative_twice_quantum.front() = 0xfe;
+
+    EXPECT_EQ(minimum, encoded_value(high + unit));
+    EXPECT_EQ(maximum, encoded_value(low - unit));
+    EXPECT_EQ(minimum, encoded_value(-low));
+    EXPECT_EQ(negative_twice_quantum, encoded_value(high * BigNum{2}));
+}
+
+TEST_F(TestBigNumValue, comparisonsReadNumericalValuesWithoutChangingOperands)
+{
+    std::vector<Byte> quantum(static_cast<std::size_t>(g_bn_length));
+    quantum.front() = 1;
+    const BigNum tiny = BigNum::from_legacy(quantum.data(), quantum.size());
+    auto above_one = encoded_value(BigNum{1});
+    above_one.front() = 1;
+    const BigNum values[]{BigNum{-7.5L}, BigNum{-1}, -tiny, BigNum{}, tiny, BigNum{1},
+        BigNum::from_legacy(above_one.data(), above_one.size()), BigNum{7.5L}};
+
+    for (std::size_t i = 0; i < std::size(values); ++i)
+    {
+        for (std::size_t j = 0; j < std::size(values); ++j)
+        {
+            const auto left = encoded_value(values[i]);
+            const auto right = encoded_value(values[j]);
+            const BigNum copy = values[j];
+
+            EXPECT_EQ(i == j, values[i] == copy);
+            EXPECT_EQ(i != j, values[i] != copy);
+            EXPECT_EQ(i < j, values[i] < copy);
+            EXPECT_EQ(i <= j, values[i] <= copy);
+            EXPECT_EQ(i > j, values[i] > copy);
+            EXPECT_EQ(i >= j, values[i] >= copy);
+            EXPECT_EQ(left, encoded_value(values[i]));
+            EXPECT_EQ(right, encoded_value(copy));
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigNumProducts, testing::Values(4, 8, 12, 672));
+
 } // namespace id::test

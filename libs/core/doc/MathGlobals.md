@@ -55,6 +55,18 @@ uses `g_int_length` high bytes for the signed integer part and
 uses the legacy fixed-decimal syntax; formatting retains legacy output.
 `BigNumConstPtr` denotes read-only legacy bytes.
 
+`BigNum` member operators and `square()` share private arithmetic kernels
+with legacy adapters in `math/BigNum.cpp`. Multiplication and squaring
+use separate work buffers and copy the `g_bn_length` bytes at
+`g_shift_factor` into the owning result. Addition, subtraction, and
+comparisons read operands directly; destructive kernels receive scratch
+copies. Truncation, fixed-width overflow, division saturation, and zero
+handling retain legacy behavior.
+
+Raw division can retain low-bit differences from reused destination
+bytes. Value `/` and `/=` use a fresh zero-initialized result, so compound
+division agrees with the corresponding value expression.
+
 Explicit constructors convert between `BigNum` and `BigFloat`. Their
 conversion export adapters write directly into destination storage with
 `bn_to_bf` and `bf_to_bn`, preserving the existing truncation, saturation,

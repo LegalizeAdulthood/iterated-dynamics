@@ -619,109 +619,6 @@ BigNumPtr unsafe_inv_bn(BigNumPtr r, BigNumPtr n)
 }
 
 /********************************************************************/
-// r = n1/n2
-//      r - result of length g_bn_length
-// uses g_bn_tmp1 - g_bn_tmp3 - global temp bignumbers
-//  SIDE-EFFECTS:
-//      n1, n2 can end up as GARBAGE
-//      Make copies first if necessary.
-BigNumPtr unsafe_div_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
-{
-    // first, check for valid data
-    const LDouble a = bn_to_float(n1);
-    if (a == 0)      // division into zero
-    {
-        clear_bn(r); // return 0
-        return r;
-    }
-    const LDouble b = bn_to_float(n2);
-    if (b == 0) // division by zero
-    {
-        max_bn(r);
-        return r;
-    }
-    const LDouble f = a / b; // approximate quotient
-    const long max_val = (1L << ((g_int_length << 3) - 1)) - 1;
-    if (f > max_val) // check for overflow
-    {
-        max_bn(r);
-        return r;
-    }
-    if (f <= -max_val)
-    {
-        max_bn(r);
-        neg_a_bn(r);
-        return r;
-    }
-    // appears to be ok, do division
-
-    bool sign = false;
-    if (is_bn_neg(n1))
-    {
-        neg_a_bn(n1);
-        sign = !sign;
-    }
-    if (is_bn_neg(n2))
-    {
-        neg_a_bn(n2);
-        sign = !sign;
-    }
-
-    // scale n1 and n2 so: |n| >= 1/256
-    // scale = (int)(log(1/fabs(a))/LOG_256) = LOG_256(1/|a|)
-    int i = g_bn_length - 1;
-    while (i >= 0 && n1[i] == 0)
-    {
-        i--;
-    }
-    int scale1 = g_bn_length - i - 2;
-    scale1 = std::max(scale1, 0);
-    i = g_bn_length-1;
-    while (i >= 0 && n2[i] == 0)
-    {
-        i--;
-    }
-    int scale2 = g_bn_length - i - 2;
-    scale2 = std::max(scale2, 0);
-
-    // shift n1, n2
-    // important!, use std::memmove(), not std::memcpy()
-    std::memmove(n1+scale1, n1, g_bn_length-scale1); // shift bytes over
-    std::memset(n1, 0, scale1);  // zero out the rest
-    std::memmove(n2+scale2, n2, g_bn_length-scale2); // shift bytes over
-    std::memset(n2, 0, scale2);  // zero out the rest
-
-    unsafe_inv_bn(r, n2);
-    unsafe_mult_bn(g_bn_tmp1, n1, r);
-    copy_bn(r, g_bn_tmp1+g_shift_factor); // r = g_bn_tmp1
-
-    if (scale1 != scale2)
-    {
-        // Rescale r back to what it should be.  Overflow has already been checked
-        if (scale1 > scale2) // answer is too big, adjust it
-        {
-            const int scale = scale1-scale2;
-            std::memmove(r, r+scale, g_bn_length-scale); // shift bytes over
-            std::memset(r+g_bn_length-scale, 0, scale);  // zero out the rest
-        }
-        else if (scale1 < scale2) // answer is too small, adjust it
-        {
-            const int scale = scale2-scale1;
-            std::memmove(r+scale, r, g_bn_length-scale); // shift bytes over
-            std::memset(r, 0, scale);                 // zero out the rest
-        }
-        // else scale1 == scale2
-    }
-
-    if (sign)
-    {
-        neg_a_bn(r);
-    }
-
-    return r;
-}
-
-/********************************************************************/
 // sqrt(r)
 // uses g_bn_tmp1 - g_bn_tmp6 - global temp bignumbers
 //  SIDE-EFFECTS:
@@ -1307,64 +1204,6 @@ BigNumPtr unsafe_atan2_bn(BigNumPtr r, BigNumPtr ny, BigNumPtr nx)
 /**********************************************************************/
 
 /**********************************************************************/
-BigNumPtr full_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
-{
-    const bool sign1 = is_bn_neg(n1);
-    const bool sign2 = is_bn_neg(n2);
-    unsafe_full_mult_bn(r, n1, n2);
-    if (sign1)
-    {
-        neg_a_bn(n1);
-    }
-    if (sign2)
-    {
-        neg_a_bn(n2);
-    }
-    return r;
-}
-
-/**********************************************************************/
-BigNumPtr mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
-{
-    const bool sign1 = is_bn_neg(n1);
-    const bool sign2 = is_bn_neg(n2);
-    unsafe_mult_bn(r, n1, n2);
-    if (sign1)
-    {
-        neg_a_bn(n1);
-    }
-    if (sign2)
-    {
-        neg_a_bn(n2);
-    }
-    return r;
-}
-
-/**********************************************************************/
-BigNumPtr full_square_bn(BigNumPtr r, BigNumPtr n)
-{
-    const bool sign = is_bn_neg(n);
-    unsafe_full_square_bn(r, n);
-    if (sign)
-    {
-        neg_a_bn(n);
-    }
-    return r;
-}
-
-/**********************************************************************/
-BigNumPtr square_bn(BigNumPtr r, BigNumPtr n)
-{
-    const bool sign = is_bn_neg(n);
-    unsafe_square_bn(r, n);
-    if (sign)
-    {
-        neg_a_bn(n);
-    }
-    return r;
-}
-
-/**********************************************************************/
 BigNumPtr div_bn_int(BigNumPtr r, BigNumPtr n, const U16 u)
 {
     const bool sign = is_bn_neg(n);
@@ -1392,14 +1231,6 @@ BigNumPtr inv_bn(BigNumPtr r, BigNumPtr n)
         neg_a_bn(n);
     }
     return r;
-}
-
-/**********************************************************************/
-BigNumPtr div_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
-{
-    copy_bn(g_bn_tmp_copy1, n1);
-    copy_bn(g_bn_tmp_copy2, n2);
-    return unsafe_div_bn(r, g_bn_tmp_copy1, g_bn_tmp_copy2);
 }
 
 /**********************************************************************/

@@ -25,6 +25,25 @@ public:
     explicit BigNum(const BigFloat &value);
     BigNum &operator=(LDouble value);
 
+    BigNum operator-() const;
+    BigNum &operator+=(const BigNum &right);
+    BigNum &operator-=(const BigNum &right);
+    BigNum &operator*=(const BigNum &right);
+    BigNum &operator/=(const BigNum &right);
+
+    BigNum operator+(const BigNum &right) const;
+    BigNum operator-(const BigNum &right) const;
+    BigNum operator*(const BigNum &right) const;
+    BigNum operator/(const BigNum &right) const;
+    BigNum square() const;
+
+    bool operator==(const BigNum &right) const;
+    bool operator!=(const BigNum &right) const;
+    bool operator<(const BigNum &right) const;
+    bool operator<=(const BigNum &right) const;
+    bool operator>(const BigNum &right) const;
+    bool operator>=(const BigNum &right) const;
+
     std::string to_string(int digits = 0) const;
 
     // Adapters copy encoded values without machine floating-point conversion.
