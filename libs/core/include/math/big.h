@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer
 #pragma once
@@ -41,7 +42,6 @@ enum class BFMathType
 using Big = unsigned char *;
 using BigNum = Big;  // for clarification purposes
 using BigFloat = Big;
-using BigFloat10 = Big;
 
 using BFComplex = Complex<BigFloat>;
 using BNComplex = Complex<BigNum>;
@@ -77,8 +77,7 @@ extern BigFloat g_bf_tmp6;      // g_r_bf_length+2
 extern BigFloat g_bf_tmp_copy1; // g_r_bf_length+2
 extern BigFloat g_bf_tmp_copy2; // g_r_bf_length+2
 extern BigFloat g_bf_pi;
-extern BigFloat g_bf_tmp;     // g_r_bf_length
-extern BigFloat10 g_bf10_tmp; // dec+4
+extern BigFloat g_bf_tmp;       // g_r_bf_length
 extern Big g_big_pi;
 
 void calc_lengths();
@@ -210,9 +209,6 @@ LDouble extract_value(LDouble f, LDouble b, int *exp_ptr);
 LDouble scale_value(LDouble f, LDouble b , int n);
 LDouble extract_10(LDouble f, int *exp_ptr);
 LDouble scale_10(LDouble f, int n);
-BigFloat10 unsafe_bf_to_bf10(BigFloat10 r, int dec, BigFloat n);
-BigFloat10 mult_a_bf10_int(BigFloat10 r, int dec, misc::U16 n);
-BigFloat10 div_a_bf10_int(BigFloat10 r, int dec, misc::U16 n);
 
 BigFloat norm_bf(BigFloat r);
 void norm_sign_bf(BigFloat r, bool positive);

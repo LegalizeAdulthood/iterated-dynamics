@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// Copyright 2026 Richard Thomson.
 //
 // C routines for big floating point numbers
 
@@ -13,6 +14,7 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include <cstdio>
 #include <cstring>
 #include <string>
+#include <vector>
 
 using namespace id::misc;
 
@@ -22,6 +24,11 @@ namespace id::math
 namespace
 {
 
+using BigFloat10 = Byte *;
+
+BigFloat10 unsafe_bf_to_bf10(BigFloat10 r, int dec, BigFloat n);
+BigFloat10 mult_a_bf10_int(BigFloat10 r, int dec, U16 n);
+BigFloat10 div_a_bf10_int(BigFloat10 r, int dec, U16 n);
 std::string unsafe_bf_to_string(BigFloat r, int dec);
 std::string unsafe_bf_to_string_e(BigFloat r, int dec);
 std::string unsafe_bf_to_string_f(BigFloat r, int dec);
@@ -218,14 +225,16 @@ std::string unsafe_bf_to_string(BigFloat r, const int dec)
         return "0.0";
     }
 
+    std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
+    BigFloat10 decimal{storage.data()};
     copy_bf(g_bf_tmp1, r);
-    unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
-    int power = static_cast<S16>(BIG_ACCESS16(g_bf10_tmp + dec + 2)); // where the exponent is stored
+    unsafe_bf_to_bf10(decimal, dec, g_bf_tmp1);
+    int power = static_cast<S16>(BIG_ACCESS16(decimal + dec + 2));    // where the exponent is stored
     if (power > -4 && power < 6)                                      // tinker with this
     {
-        return bf10_to_string_f(g_bf10_tmp, dec);
+        return bf10_to_string_f(decimal, dec);
     }
-    return bf10_to_string_e(g_bf10_tmp, dec);
+    return bf10_to_string_e(decimal, dec);
 }
 
 std::string unsafe_bf_to_string_e(BigFloat r, const int dec)
@@ -236,9 +245,11 @@ std::string unsafe_bf_to_string_e(BigFloat r, const int dec)
         return "0.0";
     }
 
+    std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
+    BigFloat10 decimal{storage.data()};
     copy_bf(g_bf_tmp1, r);
-    unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
-    return bf10_to_string_e(g_bf10_tmp, dec);
+    unsafe_bf_to_bf10(decimal, dec, g_bf_tmp1);
+    return bf10_to_string_e(decimal, dec);
 }
 
 std::string unsafe_bf_to_string_f(BigFloat r, const int dec)
@@ -249,9 +260,11 @@ std::string unsafe_bf_to_string_f(BigFloat r, const int dec)
         return "0.0";
     }
 
+    std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
+    BigFloat10 decimal{storage.data()};
     copy_bf(g_bf_tmp1, r);
-    unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
-    return bf10_to_string_f(g_bf10_tmp, dec);
+    unsafe_bf_to_bf10(decimal, dec, g_bf_tmp1);
+    return bf10_to_string_f(decimal, dec);
 }
 
 } // namespace
@@ -2094,6 +2107,9 @@ n <><------------- dec --------------><> <->
 // dec - number of decimals, not including the one extra for rounding
 //  SIDE-EFFECTS: n is changed to |n|.  Make copy of n if necessary.
 
+namespace
+{
+
 BigFloat10 unsafe_bf_to_bf10(BigFloat10 r, int dec, BigFloat n)
 {
     if (is_bf_zero(n))
@@ -2278,9 +2294,6 @@ BigFloat10 div_a_bf10_int(BigFloat10 r, const int dec, const U16 n)
 // Takes a bf10 number and converts it to an ascii string, sci. notation
 // dec - number of decimals, not including the one extra for rounding
 
-namespace
-{
-
 std::string bf10_to_string_e(BigFloat10 n, int dec)
 {
     if (n[1] == 0)
@@ -2328,14 +2341,9 @@ std::string bf10_to_string_e(BigFloat10 n, int dec)
     return text;
 }
 
-} // namespace
-
 /****************************************************************************/
 // bf10tostring_f()
 // Takes a bf10 number and converts it to an ascii string, decimal notation
-
-namespace
-{
 
 std::string bf10_to_string_f(BigFloat10 n, int dec)
 {
@@ -2369,7 +2377,7 @@ std::string bf10_to_string_f(BigFloat10 n, int dec)
         int d;
         for (d = 1; d <= p + 1; d++)
         {
-            text.push_back(static_cast<char>(n[d] + '0'));
+            text.push_back(d < dec ? static_cast<char>(n[d] + '0') : '0');
         }
         text.push_back('.');
         for (; d <= dec; d++)

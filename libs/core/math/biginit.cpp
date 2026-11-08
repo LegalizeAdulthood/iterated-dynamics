@@ -109,7 +109,6 @@ BigFloat g_bf_save_x_3rd{};
 BigFloat g_bf_save_y_3rd{};
 BigFloat g_bf_params[10]{}; // (g_bf_length + 2)*10
 BigFloat g_bf_tmp{};
-BigFloat g_bf10_tmp{}; // g_bf_decimals + 4
 
 constexpr long BIGNUM_ARENA_SIZE{1024L * 1024};
 // Supported g_bn_length limits are independent of working storage capacity.
@@ -210,7 +209,6 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
     long required{10 * r_length + 10 * (r_bf_length + 2)};
     required +=
         math == BFMathType::BIG_NUM ? 15 * rounded_length + 7 * r_length : 10 * (bf_length + 2) + 7 * (r_bf_length + 2);
-    required += static_cast<int>((bf_length - 2) * LOG10_256) + 4;
     required = (required + 1) & ~1L;
     if (required + NUM_VARS * (bf_length + 2) > BIGNUM_ARENA_SIZE - 22 * (bf_length + 2))
     {
@@ -298,7 +296,6 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
         g_big_pi = alloc_size(g_bf_length+2);
         g_bf_tmp = alloc_size(g_r_bf_length+2);
     }
-    g_bf10_tmp = alloc_size(g_bf_decimals+4);
 
     // ptr needs to be 16-bit aligned on some systems
     ptr = ptr + 1 &~1;

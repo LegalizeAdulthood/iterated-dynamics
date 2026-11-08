@@ -112,6 +112,36 @@ struct BigFloatFormatInput
     const char *expected;
 };
 
+class TestBigFloatGeneralFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigFloatGeneralFormat::SetUp()
+{
+    TestBigFloat::SetUp();
+    prepare_value(GetParam().input);
+}
+
+TEST_P(TestBigFloatGeneralFormat, selectsNotationAndFormatsDecimal)
+{
+    EXPECT_EQ(GetParam().expected, bf_to_string(m_value, GetParam().decimals));
+}
+
+// Preserve the legacy carry truncation while refactoring decimal storage.
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatGeneralFormat,
+    testing::Values(BigFloatFormatInput{"Negative", "-1.25", 5, "-1.25"},
+        BigFloatFormatInput{"RoundDown", "1.2344", 4, "1.234"}, BigFloatFormatInput{"RoundUp", "1.2346", 4, "1.235"},
+        BigFloatFormatInput{"LegacyCarryTruncation", "9.9996", 4, "9.999"},
+        BigFloatFormatInput{"SmallFixed", "0.00125", 8, "0.00125"},
+        BigFloatFormatInput{"SmallScientific", "0.000125", 8, "1.25e-4"},
+        BigFloatFormatInput{"LargeFixed", "125000", 8, "125000.0"},
+        BigFloatFormatInput{"FewDigitsLargeFixed", "125000", 3, "125000.0"},
+        BigFloatFormatInput{"LargeScientific", "1250000", 8, "1.25e6"},
+        BigFloatFormatInput{"DefaultPrecision", "1.0000123456789012345", 0, "1.0000123456789012345"}),
+    [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
+
 class TestBigFloatFixedFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
 {
 protected:
@@ -130,8 +160,15 @@ TEST_P(TestBigFloatFixedFormat, formatsFixedDecimal)
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatFixedFormat,
-    testing::Values(
-        BigFloatFormatInput{"Zero", nullptr, 5, "0.0"}, BigFloatFormatInput{"PositiveDecimal", "1.25", 5, "1.25"}),
+    testing::Values(BigFloatFormatInput{"Zero", nullptr, 5, "0.0"},
+        BigFloatFormatInput{"PositiveDecimal", "1.25", 5, "1.25"}, BigFloatFormatInput{"Negative", "-1.25", 5, "-1.25"},
+        BigFloatFormatInput{"RoundDown", "1.2344", 4, "1.234"}, BigFloatFormatInput{"RoundUp", "1.2346", 4, "1.235"},
+        BigFloatFormatInput{"LegacyCarryTruncation", "9.9996", 4, "9.999"},
+        BigFloatFormatInput{"SmallExponent", "0.000125", 8, "0.000125"},
+        BigFloatFormatInput{"LargeExponent", "1250000", 8, "1250000.0"},
+        BigFloatFormatInput{"FewDigitsLargeExponent", "1250000", 3, "1250000.0"},
+        BigFloatFormatInput{"SingleDigit", "1.25", 1, "1.0"},
+        BigFloatFormatInput{"DefaultPrecision", "1.234567890123456789", 0, "1.234567890123456789"}),
     [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
 
 class TestBigFloatScientificFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
@@ -152,9 +189,39 @@ TEST_P(TestBigFloatScientificFormat, formatsScientificDecimal)
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatScientificFormat,
-    testing::Values(
-        BigFloatFormatInput{"Zero", nullptr, 5, "0.0"}, BigFloatFormatInput{"PositiveDecimal", "1.25", 5, "1.25e0"}),
+    testing::Values(BigFloatFormatInput{"Zero", nullptr, 5, "0.0"},
+        BigFloatFormatInput{"PositiveDecimal", "1.25", 5, "1.25e0"},
+        BigFloatFormatInput{"Negative", "-1.25", 5, "-1.25e0"},
+        BigFloatFormatInput{"RoundDown", "1.2344", 4, "1.234e0"},
+        BigFloatFormatInput{"RoundUp", "1.2346", 4, "1.235e0"},
+        BigFloatFormatInput{"LegacyCarryTruncation", "9.9996", 4, "9.999e0"},
+        BigFloatFormatInput{"SmallExponent", "0.000125", 8, "1.25e-4"},
+        BigFloatFormatInput{"LargeExponent", "1250000", 8, "1.25e6"},
+        BigFloatFormatInput{"SingleDigit", "1.25", 1, "1.0e0"},
+        BigFloatFormatInput{"DefaultPrecision", "1.234567890123456789", 0, "1.234567890123456789e0"}),
     [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
+
+TEST_F(TestBigFloatFormat, formatsAtMaximumSupportedPrecision)
+{
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    init_bf_length(708);
+    prepare_value("-1.25");
+
+    EXPECT_EQ("-1.25", bf_to_string(m_value, g_bf_decimals));
+    EXPECT_EQ("-1.25", bf_to_string_f(m_value, g_bf_decimals));
+    EXPECT_EQ("-1.25e0", bf_to_string_e(m_value, g_bf_decimals));
+}
+
+TEST_F(TestBigFloatFormat, repeatedFormattingPreservesTheValue)
+{
+    prepare_value("-1.234567890123456789");
+    const std::string original{reinterpret_cast<const char *>(m_value), static_cast<std::size_t>(g_bf_length + 2)};
+
+    EXPECT_EQ("-1.23", bf_to_string(m_value, 3));
+    EXPECT_EQ("-1.234567890123456789e0", bf_to_string_e(m_value, 0));
+    EXPECT_EQ("-1.2346", bf_to_string_f(m_value, 5));
+    EXPECT_EQ(original, (std::string{reinterpret_cast<const char *>(m_value), original.size()}));
+}
 
 class TestActivePrecisionArena : public TestBigFloat
 {

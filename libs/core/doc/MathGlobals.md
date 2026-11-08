@@ -84,7 +84,6 @@ Header: `big.h`.
 - `g_bf_tmp_copy1`, `g_bf_tmp_copy2` - preservation buffers, each
   `2 * (g_r_bf_length + 2)` bytes.
 - `g_bf_tmp` - additional temporary, `g_r_bf_length + 2` bytes.
-- `g_bf10_tmp` - decimal-conversion temporary, `g_bf_decimals + 4` bytes.
 - `g_big_pi` - shared Pi storage.
 - `g_bf_pi` - floating-point alias of `g_big_pi`.
 
@@ -176,6 +175,10 @@ C++ `float`; consult their declarations for `LDouble` arguments/results.
 `bn_to_string()`, `bf_to_string()`, `bf_to_string_e()`, and
 `bf_to_string_f()` return `std::string`.  There is no current
 `bn_to_str()` caller-buffer API.
+
+BigFloat formatting keeps its decimal representation and conversion
+helpers private to the formatter. Each call owns its decimal scratch
+buffer; this storage is outside the shared arena.
 
 Shared arena, temporaries, lengths, and interpreter bindings are not
 thread-isolated.  Future ownership work belongs in
