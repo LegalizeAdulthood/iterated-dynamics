@@ -97,6 +97,7 @@ add_executable(test-core
     fractals/test_ant.cpp
     fractals/test_bifurcation.cpp
     fractals/test_check_orbit_name.cpp
+    fractals/test_divide_brot.cpp
     fractals/test_frothy_basin.cpp
     fractals/test_fractalp.cpp
     fractals/test_get_ifs_token.cpp
