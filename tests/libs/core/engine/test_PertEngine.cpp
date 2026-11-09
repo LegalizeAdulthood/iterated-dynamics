@@ -796,6 +796,30 @@ TEST_F(TestPerturbationPixels, frameCenterReferenceKeepsOwnershipAndCleanupAtThe
     EXPECT_EQ(BigFloat{0}, next_center.y);
 }
 
+TEST_F(TestPerturbationPixels, finishingOwnedFramePreservesBorrowedCallerStorage)
+{
+    init_bf_dec(60);
+    m_big_float = true;
+    g_max_iterations = 4;
+    BigStackSaver caller_storage;
+    BFComplex &center{m_engine.initialize_frame_bf({}, {})};
+    center.x = 0.125;
+    center.y = 0;
+    ASSERT_TRUE(m_engine.initialize_pixel_strategy());
+    const BigFloatPtr borrowed{bf_stack().allocate_single()};
+    float_to_bf(borrowed, 0.375);
+
+    m_engine.finish();
+
+    EXPECT_TRUE(bf_stack().contains(borrowed));
+    if (bf_stack().contains(borrowed))
+    {
+        EXPECT_DOUBLE_EQ(0.375, static_cast<double>(bf_to_float(borrowed)));
+    }
+    EXPECT_FALSE(center.x);
+    EXPECT_FALSE(center.y);
+}
+
 TEST_F(TestPerturbationPixels, referenceCallbacksPreserveTheCenterAndDestinationArena)
 {
     const ValueSaver saved_exponent{g_c_exponent, 2};
@@ -842,7 +866,7 @@ TEST_F(TestPerturbationPixels, finishingReleasesReferenceWorkingStorageAndAllows
         clear_bf(center.y.data());
         EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
         EXPECT_EQ(1, m_engine.reference_count());
-        EXPECT_GT(save_stack(), initial_stack);
+        EXPECT_EQ(save_stack(), initial_stack);
 
         m_engine.finish();
 
@@ -1809,7 +1833,7 @@ TEST_F(TestPerturbationPixels, finishingPartialReferenceReleasesPersistentBigFlo
         float_to_bf(center.x.data(), 0.125);
         float_to_bf(center.y.data(), 0.125);
         ASSERT_FALSE(m_engine.initialize_pixel_strategy());
-        EXPECT_GT(save_stack(), stack);
+        EXPECT_EQ(save_stack(), stack);
 
         m_engine.finish();
 
@@ -10087,13 +10111,12 @@ void TestSignedSubDoublePower::SetUp()
 
 TEST_P(TestSignedSubDoublePower, resolvesNearZeroInputAfterReferenceReplacement)
 {
-    BigStackSaver saved;
-    const BFPtrComplex parameter{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    const BFPtrComplex value{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    float_to_bf(parameter.x, 0.125);
-    clear_bf(parameter.y);
-    int_to_bf(value.x, 1);
-    clear_bf(value.y);
+    BFComplex parameter{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    float_to_bf(parameter.x.data(), 0.125);
+    clear_bf(parameter.y.data());
+    int_to_bf(value.x.data(), 1);
+    clear_bf(value.y.data());
     m_engine.begin_orbit_bf(parameter, value, 0);
     for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
     {
@@ -10102,11 +10125,11 @@ TEST_P(TestSignedSubDoublePower, resolvesNearZeroInputAfterReferenceReplacement)
     ASSERT_EQ(1, m_engine.orbit_iteration());
     m_engine.finish_orbit();
     const int references{m_engine.reference_count()};
-    str_to_bf(value.x, "1e-40");
-    copy_bf(g_param_z_bf.x.data(), parameter.x);
-    copy_bf(g_param_z_bf.y.data(), parameter.y);
-    copy_bf(g_old_z_bf.x.data(), value.x);
-    copy_bf(g_old_z_bf.y.data(), value.y);
+    str_to_bf(value.x.data(), "1e-40");
+    copy_bf(g_param_z_bf.x.data(), parameter.x.data());
+    copy_bf(g_param_z_bf.y.data(), parameter.y.data());
+    copy_bf(g_old_z_bf.x.data(), value.x.data());
+    copy_bf(g_old_z_bf.y.data(), value.y.data());
     const bool escaped{julia_z_power_orbit_bf() != 0};
     const double expected{static_cast<double>(bf_to_float(g_new_z_bf.x.data()))};
 
@@ -10148,12 +10171,11 @@ class TestZeroPowerSeed : public TestPerturbationPixels, public WithParamInterfa
 protected:
     void SetUp() override;
     void TearDown() override;
-    BFPtrComplex m_center{};
-    BFPtrComplex m_value{};
+    BFComplex *m_center{};
+    BFComplex m_value{};
 
 private:
     ValueSaver<int> m_saved_exponent{g_c_exponent, 0};
-    std::optional<BigStackSaver> m_stack;
 };
 
 void TestZeroPowerSeed::SetUp()
@@ -10164,21 +10186,19 @@ void TestZeroPowerSeed::SetUp()
     g_max_iterations = 2;
     init_bf_dec(60);
     m_big_float = true;
-    BFComplex &center{m_engine.initialize_frame_bf({}, {})};
-    m_center = {center.x.data(), center.y.data()};
-    clear_bf(m_center.x);
-    clear_bf(m_center.y);
+    m_center = &m_engine.initialize_frame_bf({}, {});
+    clear_bf(m_center->x.data());
+    clear_bf(m_center->y.data());
     while (!m_engine.initialize_pixel_strategy())
     {
     }
-    m_stack.emplace();
-    m_value = {bf_stack().allocate_single(), bf_stack().allocate_single()};
-    clear_bf(m_value.y);
+    m_value = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
+    clear_bf(m_value.y.data());
     // Exact zero must retain the reference left by the underflowed seed.
     if (GetParam().underflowed_reference)
     {
-        str_to_bf(m_value.x, "1e-400");
-        m_engine.begin_orbit_bf(m_center, m_value, 0);
+        str_to_bf(m_value.x.data(), "1e-400");
+        m_engine.begin_orbit_bf(*m_center, m_value, 0);
         for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
         {
             m_engine.iterate_orbit();
@@ -10190,7 +10210,7 @@ void TestZeroPowerSeed::SetUp()
 
 void TestZeroPowerSeed::TearDown()
 {
-    m_stack.reset();
+    m_value = {};
     TestPerturbationPixels::TearDown();
 }
 
@@ -10198,14 +10218,14 @@ TEST_P(TestZeroPowerSeed, distinguishesExactZeroFromUnderflowedReference)
 {
     if (GetParam().exact_zero)
     {
-        clear_bf(m_value.x);
+        clear_bf(m_value.x.data());
     }
     else
     {
-        str_to_bf(m_value.x, "1e-400");
+        str_to_bf(m_value.x.data(), "1e-400");
     }
 
-    m_engine.begin_orbit_bf(m_center, m_value, 0);
+    m_engine.begin_orbit_bf(*m_center, m_value, 0);
     for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
     {
         m_engine.iterate_orbit();
@@ -10683,8 +10703,8 @@ private:
     ValueSaver<double> m_saved_real{g_params[2], 0.5};
     ValueSaver<double> m_saved_imaginary{g_params[3], 0.0};
     std::optional<BigStackSaver> m_stack;
-    BFPtrComplex m_center{};
-    BFPtrComplex m_value{};
+    BFComplex *m_center{};
+    BFComplex m_value{};
     BFPtrComplex m_native{};
     BFPtrComplex m_exponent{};
 };
@@ -10697,43 +10717,43 @@ void TestSubDoublePowerBranch::SetUp()
     g_max_iterations = 2;
     init_bf_dec(60);
     m_big_float = true;
-    BFComplex &center{m_engine.initialize_frame_bf({}, {})};
-    m_center = {center.x.data(), center.y.data()};
-    clear_bf(m_center.x);
-    clear_bf(m_center.y);
+    m_center = &m_engine.initialize_frame_bf({}, {});
+    clear_bf(m_center->x.data());
+    clear_bf(m_center->y.data());
     while (!m_engine.initialize_pixel_strategy())
     {
     }
     m_stack.emplace();
-    m_value = {bf_stack().allocate_single(), bf_stack().allocate_single()};
+    m_value = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
     m_native = {bf_stack().allocate_single(), bf_stack().allocate_single()};
     m_exponent = {bf_stack().allocate_single(), bf_stack().allocate_single()};
     float_to_bf(m_exponent.x, 0.5);
     clear_bf(m_exponent.y);
-    int_to_bf(m_value.x, -1);
+    int_to_bf(m_value.x.data(), -1);
     // Retain the positive branch's reference when crossing below the cut.
     ASSERT_NO_FATAL_FAILURE(compare_branch(1));
 }
 
 void TestSubDoublePowerBranch::TearDown()
 {
+    m_value = {};
     m_stack.reset();
     TestPerturbationPixels::TearDown();
 }
 
 void TestSubDoublePowerBranch::compare_branch(const int sign)
 {
-    str_to_bf(m_value.y, sign > 0 ? "1e-400" : "-1e-400");
-    EXPECT_DOUBLE_EQ(-1.0, static_cast<double>(bf_to_float(m_value.x)));
-    EXPECT_EQ(sign, sign_bf(m_value.y));
+    str_to_bf(m_value.y.data(), sign > 0 ? "1e-400" : "-1e-400");
+    EXPECT_DOUBLE_EQ(-1.0, static_cast<double>(bf_to_float(m_value.x.data())));
+    EXPECT_EQ(sign, sign_bf(m_value.y.data()));
     EXPECT_NEAR(std::acos(-1.0), static_cast<double>(bf_to_float(g_bf_pi)), 1e-12);
-    BFPtrComplex native_seed{m_value};
+    BFPtrComplex native_seed{m_value.x.data(), m_value.y.data()};
     cmplx_pow_bf(&m_native, &native_seed, &m_exponent);
     // Preserve the native kernel's behavior beyond its initial floating-
     // point approximation range, rather than substituting a new policy.
     const std::complex<double> expected{
         static_cast<double>(bf_to_float(m_native.x)), static_cast<double>(bf_to_float(m_native.y))};
-    m_engine.begin_orbit_bf(m_center, m_value, 0);
+    m_engine.begin_orbit_bf(*m_center, m_value, 0);
     for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
     {
         m_engine.iterate_orbit();
@@ -10857,25 +10877,25 @@ TEST_F(TestPrecisePerturbationContinuation, preciseReferenceReplacementYieldsWit
     {
     }
     BigStackSaver saved;
-    const BFPtrComplex parameter{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    const BFPtrComplex value{bf_stack().allocate_single(), bf_stack().allocate_single()};
+    BFComplex parameter{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     const BigFloatPtr offset{bf_stack().allocate_single()};
-    float_to_bf(parameter.x, 0.25);
-    clear_bf(parameter.y);
-    copy_bf(value.x, parameter.x);
-    clear_bf(value.y);
+    float_to_bf(parameter.x.data(), 0.25);
+    clear_bf(parameter.y.data());
+    copy_bf(value.x.data(), parameter.x.data());
+    clear_bf(value.y.data());
     m_engine.begin_orbit_bf(parameter, value, 0);
     while (!m_engine.iterate_orbit())
     {
     }
     m_engine.finish_orbit();
-    float_to_bf(parameter.x, 0.125);
-    float_to_bf(parameter.y, 0.0625);
-    float_to_bf(value.x, 0.03125);
-    float_to_bf(value.y, -0.0625);
+    float_to_bf(parameter.x.data(), 0.125);
+    float_to_bf(parameter.y.data(), 0.0625);
+    float_to_bf(value.x.data(), 0.03125);
+    float_to_bf(value.y.data(), -0.0625);
     float_to_bf(offset, 1e-40);
-    add_a_bf(parameter.x, offset);
-    add_a_bf(value.x, offset);
+    add_a_bf(parameter.x.data(), offset);
+    add_a_bf(value.x.data(), offset);
     s_perturbation_orbit.clear();
     m_specific.pert_pt =
         [](const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &displacement)
@@ -10924,13 +10944,13 @@ TEST_F(TestPerturbationPixels, preciseContinuationPreservesSubDoubleParameterAnd
     clear_bf(center.y.data());
     ASSERT_TRUE(m_engine.initialize_pixel_strategy());
     BigStackSaver saved;
-    const BFPtrComplex parameter{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    const BFPtrComplex value{bf_stack().allocate_single(), bf_stack().allocate_single()};
+    BFComplex parameter{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     const BigFloatPtr offset{bf_stack().allocate_single()};
-    float_to_bf(parameter.x, 0.25);
-    clear_bf(parameter.y);
-    copy_bf(value.x, parameter.x);
-    clear_bf(value.y);
+    float_to_bf(parameter.x.data(), 0.25);
+    clear_bf(parameter.y.data());
+    copy_bf(value.x.data(), parameter.x.data());
+    clear_bf(value.y.data());
     m_engine.begin_orbit_bf(parameter, value, 0);
     while (!m_engine.iterate_orbit())
     {
@@ -10938,8 +10958,8 @@ TEST_F(TestPerturbationPixels, preciseContinuationPreservesSubDoubleParameterAnd
     m_engine.finish_orbit();
     float_to_bf(offset, 1e-40);
     const int references{m_engine.reference_count()};
-    add_a_bf(parameter.x, offset);
-    add_a_bf(value.x, offset);
+    add_a_bf(parameter.x.data(), offset);
+    add_a_bf(value.x.data(), offset);
     s_perturbation_orbit.clear();
     m_specific.pert_pt = record_coordinate;
     s_coordinates.clear();
@@ -12673,16 +12693,15 @@ void TestSubnormalPerturbation::SetUp()
 
 TEST_F(TestSubnormalPerturbation, continuationReplacesSubnormalParameterAndSeedDisplacements)
 {
-    BigStackSaver saved;
-    const BFPtrComplex parameter{bf_stack().allocate_single(), bf_stack().allocate_single()};
+    BFComplex parameter{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     for (const char *coordinate : {"0", "4e-324"})
     {
         SCOPED_TRACE(coordinate);
-        str_to_bf(parameter.x, coordinate);
-        clear_bf(parameter.y);
-        copy_bf(g_param_z_bf.x.data(), parameter.x);
+        str_to_bf(parameter.x.data(), coordinate);
+        clear_bf(parameter.y.data());
+        copy_bf(g_param_z_bf.x.data(), parameter.x.data());
         clear_bf(g_param_z_bf.y.data());
-        copy_bf(g_old_z_bf.x.data(), parameter.x);
+        copy_bf(g_old_z_bf.x.data(), parameter.x.data());
         clear_bf(g_old_z_bf.y.data());
         m_engine.begin_orbit_bf(parameter, parameter, 0);
         long iteration{};
@@ -12961,13 +12980,12 @@ TEST_F(TestDeepPerturbationGeometry, frameRetainsPreciseGeometryForReplacementRe
 TEST_F(TestDeepPerturbationGeometry, continuationReplacesUnrepresentableParameterAndSeedDisplacements)
 {
     initialize_frame();
-    BigStackSaver saved;
-    const BFPtrComplex parameter{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    const BFPtrComplex value{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    int_to_bf(parameter.x, -2);
-    clear_bf(parameter.y);
-    copy_bf(value.x, parameter.x);
-    clear_bf(value.y);
+    BFComplex parameter{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    int_to_bf(parameter.x.data(), -2);
+    clear_bf(parameter.y.data());
+    copy_bf(value.x.data(), parameter.x.data());
+    clear_bf(value.y.data());
     m_engine.begin_orbit_bf(parameter, value, 0);
     bool done{};
     for (int step = 0; step < 100 && !done; ++step)
@@ -12979,8 +12997,8 @@ TEST_F(TestDeepPerturbationGeometry, continuationReplacesUnrepresentableParamete
     EXPECT_EQ(g_max_iterations, m_engine.orbit_iteration());
     m_engine.finish_orbit();
     const int references{m_engine.reference_count()};
-    copy_bf(parameter.x, g_bf_x_min);
-    copy_bf(value.x, parameter.x);
+    copy_bf(parameter.x.data(), g_bf_x_min);
+    copy_bf(value.x.data(), parameter.x.data());
 
     m_engine.begin_orbit_bf(parameter, value, 0);
     done = false;

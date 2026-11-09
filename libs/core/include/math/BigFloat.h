@@ -73,6 +73,7 @@ public:
     bool operator>(const BigFloat &right) const;
     bool operator>=(const BigFloat &right) const;
 
+    LDouble to_float() const;
     std::string to_string(int digits = 0) const;
 
     // Borrowed buffers require a numeric value and expire on arena relocation.

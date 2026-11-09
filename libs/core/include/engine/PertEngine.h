@@ -36,7 +36,7 @@ public:
     int calculate_pixel(int col, int row, bool incremental = false);
 
     void begin_orbit(const std::complex<double> &parameter, const std::complex<double> &value, long iteration);
-    void begin_orbit_bf(const math::BFPtrComplex &parameter, const math::BFPtrComplex &value, long iteration);
+    void begin_orbit_bf(const math::BFComplex &parameter, const math::BFComplex &value, long iteration);
     void begin_orbit_bn(const math::BNComplex &parameter, const math::BNComplex &value, long iteration);
     // Advance at most one recurrence update; true at bailout or the iteration limit.
     // Reference preparation can return false without advancing orbit_iteration().
@@ -169,8 +169,8 @@ private:
     math::BFComplex m_reference_coordinate_bf{};
     math::BFComplex m_reference_z_bf{};
     math::BFComplex m_reference_initial_bf{};
-    math::BFPtrComplex m_orbit_parameter_bf{};
-    math::BFPtrComplex m_orbit_initial_bf{};
+    math::BFComplex m_orbit_parameter_bf{};
+    math::BFComplex m_orbit_initial_bf{};
     math::BigFloat m_tmp_bf{};
     math::BFComplex m_center_bf{};
     math::BFComplex m_half_horizontal_bf{};
@@ -183,7 +183,6 @@ private:
     std::size_t m_orbit_output_sample{};
     std::complex<double> m_half_horizontal{};
     std::complex<double> m_half_vertical{};
-    bool m_center_stack_saved{};
     bool m_done{true};
     bool m_frame_initialized{};
     bool m_reference_ready{};
@@ -193,7 +192,6 @@ private:
     bool m_orbit_output_pending{};
     bool m_orbit_overlay_displayed{};
     double m_glitch_tolerance{DEFAULT_PERTURBATION_TOLERANCE};
-    math::BigStackMark m_saved_stack{};
 };
 
 } // namespace id::engine

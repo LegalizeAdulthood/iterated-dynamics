@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <limits>
 #include <type_traits>
 #include <utility>
@@ -543,6 +544,26 @@ TEST_P(TestBigFloatArithmetic, absoluteValuePreservesItsOperandAndDestinationAre
         EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &member_result.arena());
         EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &result.arena());
         EXPECT_EQ(&persistent, &assigned.arena());
+    }
+}
+
+TEST_P(TestBigFloatArithmetic, constMachineConversionRetainsLegacyResultsAndInputBytes)
+{
+    for (const char *text :
+        {"0", "7.5", "-7.5", "1.2345678901234567890123456789e-400", "-1.2345678901234567890123456789e-400",
+            "1.2345678901234567890123456789e400", "-1.2345678901234567890123456789e400"})
+    {
+        SCOPED_TRACE(text);
+        const BigFloat source{bf_arena(BigLifetime::PERSISTENT), text};
+        const auto original = encoded_value(source);
+        auto legacy = original;
+        const LDouble expected{bf_to_float(legacy.data())};
+
+        const LDouble actual{source.to_float()};
+
+        EXPECT_EQ(expected, actual);
+        EXPECT_EQ(std::signbit(expected), std::signbit(actual));
+        EXPECT_EQ(original, encoded_value(source));
     }
 }
 

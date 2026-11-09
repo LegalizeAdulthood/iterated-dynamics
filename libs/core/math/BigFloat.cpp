@@ -1207,6 +1207,12 @@ bool BigFloat::operator>=(const BigFloat &right) const
     return compare(m_storage.data(), right.m_storage.data()) >= 0;
 }
 
+LDouble BigFloat::to_float() const
+{
+    copy_bf(g_bf_tmp_copy1, m_storage.data());
+    return bf_to_float(g_bf_tmp_copy1);
+}
+
 std::string BigFloat::to_string(const int digits) const
 {
     if (digits < 0)
