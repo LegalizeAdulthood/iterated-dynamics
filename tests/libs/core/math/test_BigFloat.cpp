@@ -228,6 +228,24 @@ TEST_F(TestBigFloatValue, destructionDoesNotRequireTheOriginalPrecision)
     EXPECT_EQ("2.5", value.to_string());
 }
 
+TEST_F(TestBigFloatValue, legacyBorrowsAccessOwnedStorageAndResolveRelocatedHandles)
+{
+    static_assert(std::is_same_v<decltype(std::declval<BigFloat &>().data()), BigFloatPtr>);
+    static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().data()), BigFloatConstPtr>);
+    BigFloat value{-1.25L};
+    const auto *before = std::as_const(value).data();
+    EXPECT_EQ(before, value.data());
+    EXPECT_EQ(encoded_value(value), std::vector<Byte>(before, before + g_bf_length + 2));
+
+    float_to_bf(value.data(), 2.5L);
+    EXPECT_EQ(BigFloat{2.5L}, value);
+    init_bf_dec(80);
+
+    EXPECT_NE(before, std::as_const(value).data());
+    EXPECT_EQ(BigFloat{2.5L}, value);
+    EXPECT_EQ(encoded_value(value), std::vector<Byte>(value.data(), value.data() + g_bf_length + 2));
+}
+
 TEST_F(TestBigFloatValue, movedFromValueCanBeReassigned)
 {
     BigFloat original{"-1.25"};

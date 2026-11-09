@@ -51,6 +51,8 @@ using BFConstPtrComplex = Complex<BigFloatConstPtr>;
 
 class BigNum;
 using BNComplex = Complex<BigNum>;
+class BigFloat;
+using BFComplex = Complex<BigFloat>;
 
 // globals
 extern BFMathType g_bf_math;
@@ -83,7 +85,7 @@ extern BigFloatPtr g_bf_tmp6;      // g_r_bf_length+2
 extern BigFloatPtr g_bf_tmp_copy1; // g_r_bf_length+2
 extern BigFloatPtr g_bf_tmp_copy2; // g_r_bf_length+2
 extern BigFloatPtr g_bf_pi;
-extern BigFloatPtr g_bf_tmp;       // g_r_bf_length
+extern BigFloat g_bf_tmp;
 extern Big g_big_pi;
 
 void calc_lengths();
@@ -282,13 +284,13 @@ extern BigFloatPtr g_delta_x_bf;
 extern BigFloatPtr g_delta_y_bf;
 extern BigFloatPtr g_delta2_x_bf;
 extern BigFloatPtr g_delta2_y_bf;
-extern BigFloatPtr g_close_enough_bf;
-extern BigFloatPtr g_tmp_sqr_x_bf;
-extern BigFloatPtr g_tmp_sqr_y_bf;
+extern BigFloat g_close_enough_bf;
+extern BigFloat g_tmp_sqr_x_bf;
+extern BigFloat g_tmp_sqr_y_bf;
 extern BFPtrComplex g_param_z_bf;
-extern BFPtrComplex g_saved_z_bf;
-extern BFPtrComplex g_old_z_bf;
-extern BFPtrComplex g_new_z_bf;
+extern BFComplex g_saved_z_bf;
+extern BFComplex g_old_z_bf;
+extern BFComplex g_new_z_bf;
 
 // for testing only
 // used by other routines

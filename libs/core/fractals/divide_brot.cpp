@@ -12,6 +12,7 @@
 #include <fractals/newton.h>
 #include <math/big.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <math/fpu087.h>
 
 using namespace id::engine;
@@ -27,22 +28,22 @@ int divide_brot5_bf_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
     mult_bf_int(g_param_z_bf.x, g_delta_x_bf, static_cast<U16>(g_col));
-    mult_bf_int(g_bf_tmp, g_delta2_x_bf, static_cast<U16>(g_row));
+    mult_bf_int(g_bf_tmp.data(), g_delta2_x_bf, static_cast<U16>(g_row));
 
-    add_a_bf(g_param_z_bf.x, g_bf_tmp);
+    add_a_bf(g_param_z_bf.x, g_bf_tmp.data());
     add_a_bf(g_param_z_bf.x, g_bf_x_min);
 
     /* parm.y = yymax - g_row*dely - g_col*dely2; */
     /* note: in next four lines, g_old_z_bf is just used as a temporary variable */
-    mult_bf_int(g_old_z_bf.x, g_delta_y_bf, static_cast<U16>(g_row));
-    mult_bf_int(g_old_z_bf.y, g_delta2_y_bf, static_cast<U16>(g_col));
-    add_a_bf(g_old_z_bf.x, g_old_z_bf.y);
-    sub_bf(g_param_z_bf.y, g_bf_y_max, g_old_z_bf.x);
+    mult_bf_int(g_old_z_bf.x.data(), g_delta_y_bf, static_cast<U16>(g_row));
+    mult_bf_int(g_old_z_bf.y.data(), g_delta2_y_bf, static_cast<U16>(g_col));
+    add_a_bf(g_old_z_bf.x.data(), g_old_z_bf.y.data());
+    sub_bf(g_param_z_bf.y, g_bf_y_max, g_old_z_bf.x.data());
 
-    clear_bf(g_tmp_sqr_x_bf);
-    clear_bf(g_tmp_sqr_y_bf);
-    clear_bf(g_old_z_bf.x);
-    clear_bf(g_old_z_bf.y);
+    clear_bf(g_tmp_sqr_x_bf.data());
+    clear_bf(g_tmp_sqr_y_bf.data());
+    clear_bf(g_old_z_bf.x.data());
+    clear_bf(g_old_z_bf.y.data());
 
     return 0; /* 1st iteration has NOT been done */
 }
@@ -64,25 +65,27 @@ int divide_brot5_orbit_bf()
 
     /* sqr(z) */
     /* bfnumer.x = g_tmp_sqr_x_bf - g_tmp_sqr_y_bf;   */
-    sub_bf(bf_numer.x, g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
+    sub_bf(bf_numer.x, g_tmp_sqr_x_bf.data(), g_tmp_sqr_y_bf.data());
 
     /* bfnumer.y = 2 * g_old_z_bf.x * g_old_z_bf.y; */
-    mult_bf(bf_numer.y, g_old_z_bf.x, g_old_z_bf.y);
+    mult_bf(bf_numer.y, g_old_z_bf.x.data(), g_old_z_bf.y.data());
     double_a_bf(bf_numer.y);
 
     /* z^(a) */
     int_to_bf(bf_c_exp.x, g_c_exponent);
     clear_bf(bf_c_exp.y);
-    cmplx_pow_bf(&bf_tmp_new, &g_old_z_bf, &bf_c_exp);
+    BFPtrComplex old_z{g_old_z_bf.x.data(), g_old_z_bf.y.data()};
+    cmplx_pow_bf(&bf_tmp_new, &old_z, &bf_c_exp);
     /* then add b */
     float_to_bf(tmp1, g_b_const);
     add_a_bf(bf_tmp_new.x, tmp1);
 
     /* sqr(z)/(z^(a)+b) */
-    cmplx_div_bf(&g_new_z_bf, &bf_numer, &bf_tmp_new);
+    BFPtrComplex new_z{g_new_z_bf.x.data(), g_new_z_bf.y.data()};
+    cmplx_div_bf(&new_z, &bf_numer, &bf_tmp_new);
 
-    add_a_bf(g_new_z_bf.x, g_param_z_bf.x);
-    add_a_bf(g_new_z_bf.y, g_param_z_bf.y);
+    add_a_bf(g_new_z_bf.x.data(), g_param_z_bf.x);
+    add_a_bf(g_new_z_bf.y.data(), g_param_z_bf.y);
 
     return g_bailout_bigfloat();
 }

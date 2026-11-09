@@ -86,11 +86,11 @@ fresh results. Compound division agrees with the corresponding value
 expression. Comparisons with legacy calculations retain the requested
 decimal precision rather than depending on old destination contents.
 
-`BNComplex` and `BFComplex` in `math/BigComplex.h` own two scalar values
-through `Complex<T>`. Member multiplication and division compute both
-components before assignment. The legacy complex signatures import their
-inputs before exporting results, including when outputs alias inputs.
-`BFConstPtrComplex` provides a read-only view for these imports.
+`BNComplex` and `BFComplex`, available through `math/BigComplex.h`, own
+two scalar values through `Complex<T>`. Multiplication and division
+compute both components before assignment. The legacy signatures import
+their inputs before exporting results, including when outputs alias
+inputs. `BFConstPtrComplex` provides a read-only view for these imports.
 
 Complex `log` and `pow` use named BigFloat value functions backed by the
 private legacy kernels. Trigonometric calculations still require
@@ -166,8 +166,9 @@ rewind both adapters together. Rejected precision and stack requests
 preserve the active allocation state. Exhaustion raises `PrecisionError`;
 uninitialized stack use raises `std::logic_error`, without UI calls.
 
-`free_bf_vars()` clears active raw bindings and releases stack-adapter
-reservations. The arenas remain alive for attached owning handles;
+`free_bf_vars()` clears active raw bindings, resets the owning iteration
+globals, and releases stack-adapter reservations. The arenas remain
+alive for other attached owning handles;
 subsequent initialization migrates these values and creates fresh active
 corner bindings. `calc_lengths()` remains allocation-free for temporary
 Newton working-length changes within already reserved storage.
@@ -191,7 +192,8 @@ Header: `big.h`.
   `g_bf_tmp6` - general temporaries, each `g_r_bf_length + 2` bytes.
 - `g_bf_tmp_copy1`, `g_bf_tmp_copy2` - preservation buffers, each
   `2 * (g_r_bf_length + 2)` bytes.
-- `g_bf_tmp` - additional temporary, `g_r_bf_length + 2` bytes.
+- `g_bf_tmp` - owning `BigFloat` temporary, `g_bf_length + 2` encoded
+  bytes in the working arena.
 - `g_big_pi` - shared Pi storage.
 - `g_bf_pi` - floating-point alias of `g_big_pi`.
 
@@ -234,13 +236,20 @@ Header: `big.h`.
 
 - `g_delta_x_bf`, `g_delta_y_bf`, `g_delta2_x_bf`, `g_delta2_y_bf` -
   increments, each `g_bf_length + 2` bytes.
-- `g_close_enough_bf` - threshold, `g_bf_length + 2` bytes.
-- `g_tmp_sqr_x_bf`, `g_tmp_sqr_y_bf` - squared values,
-  each `g_r_bf_length + 2` bytes.
-- `g_old_z_bf`, `g_new_z_bf` - complex iteration values,
-  `g_r_bf_length + 2` bytes per component.
-- `g_param_z_bf`, `g_saved_z_bf` - complex parameter and saved value,
-  `g_bf_length + 2` bytes per component.
+- `g_close_enough_bf` - owning `BigFloat` threshold.
+- `g_tmp_sqr_x_bf`, `g_tmp_sqr_y_bf` - owning `BigFloat` square caches.
+- `g_old_z_bf`, `g_new_z_bf`, `g_saved_z_bf` - owning `BFComplex`
+  iteration values.
+- `g_param_z_bf` - raw complex parameter, `g_bf_length + 2` bytes per
+  component.
+
+The owning globals have canonical `g_bf_length + 2` bytes per scalar.
+Their handles start null. `MathArenas::bind` initializes them in the
+BigFloat working arena and clears existing values on later binds.
+`MathArenas::unbind` releases their blocks before arena destruction.
+Remaining legacy callers borrow buffers with `BigFloat::data()` or
+local `BFPtrComplex` views. Each bailout's threshold is an owning
+temporary-arena value, assigned at the existing scalar conversion site.
 
 ## Persistent BigFloat Bounds And Parameters
 

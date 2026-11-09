@@ -17,6 +17,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include <engine/UserData.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
+#include <math/BigFloat.h>
 #include <math/BigNum.h>
 
 #include <fmt/format.h>
@@ -90,15 +91,15 @@ BigFloatPtr g_delta_x_bf{};
 BigFloatPtr g_delta_y_bf{};
 BigFloatPtr g_delta2_x_bf{};
 BigFloatPtr g_delta2_y_bf{};
-BigFloatPtr g_close_enough_bf{};
-BigFloatPtr g_tmp_sqr_x_bf{};
-BigFloatPtr g_tmp_sqr_y_bf{};
+BigFloat g_close_enough_bf{};
+BigFloat g_tmp_sqr_x_bf{};
+BigFloat g_tmp_sqr_y_bf{};
 // g_bf_length+2
 BFPtrComplex g_param_z_bf{};
-BFPtrComplex g_saved_z_bf{};
-// g_r_bf_length+2
-BFPtrComplex g_old_z_bf{};
-BFPtrComplex g_new_z_bf{};
+BFComplex g_saved_z_bf{};
+// g_bf_length+2
+BFComplex g_old_z_bf{};
+BFComplex g_new_z_bf{};
 BigFloatPtr g_bf_pi{};  // TAKES NO SPACE
 BigFloatPtr g_big_pi{}; // g_bf_length+2
 // g_bf_length+2
@@ -115,7 +116,7 @@ BigFloatPtr g_bf_save_y_max{};
 BigFloatPtr g_bf_save_x_3rd{};
 BigFloatPtr g_bf_save_y_3rd{};
 BigFloatPtr g_bf_params[10]{}; // (g_bf_length + 2)*10
-BigFloatPtr g_bf_tmp{};
+BigFloat g_bf_tmp{};
 
 constexpr long BIGNUM_ARENA_SIZE{1024L * 1024};
 // Supported g_bn_length limits are independent of working storage capacity.
@@ -346,19 +347,9 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
     big_float.single(g_delta_y_bf);
     big_float.single(g_delta2_x_bf);
     big_float.single(g_delta2_y_bf);
-    big_float.single(g_old_z_bf.x);
-    big_float.single(g_old_z_bf.y);
-    big_float.single(g_new_z_bf.x);
-    big_float.single(g_new_z_bf.y);
-    big_float.single(g_saved_z_bf.x);
-    big_float.single(g_saved_z_bf.y);
-    big_float.single(g_close_enough_bf);
     big_float.single(g_param_z_bf.x);
     big_float.single(g_param_z_bf.y);
-    big_float.single(g_tmp_sqr_x_bf);
-    big_float.single(g_tmp_sqr_y_bf);
     big_float.single(g_big_pi);
-    big_float.single(g_bf_tmp);
     for (auto &value : m_parameters)
     {
         value = big_float.persistent.allocate_single();
@@ -432,6 +423,16 @@ void MathArenas::bind(const bool preserve_parameters)
     g_saved_z_bn.y = 0;
     g_close_enough_bn = 0;
     big_float.bind_working();
+    g_old_z_bf.x = 0;
+    g_old_z_bf.y = 0;
+    g_new_z_bf.x = 0;
+    g_new_z_bf.y = 0;
+    g_saved_z_bf.x = 0;
+    g_saved_z_bf.y = 0;
+    g_close_enough_bf = 0;
+    g_tmp_sqr_x_bf = 0;
+    g_tmp_sqr_y_bf = 0;
+    g_bf_tmp = 0;
     const auto targets = parameter_bindings();
     for (std::size_t i = 0; i < targets.size(); ++i)
     {
@@ -454,6 +455,13 @@ void MathArenas::unbind()
     g_saved_z_bn = {};
     g_close_enough_bn = BigNum{};
     big_float.unbind_working();
+    g_old_z_bf = {};
+    g_new_z_bf = {};
+    g_saved_z_bf = {};
+    g_close_enough_bf = BigFloat{};
+    g_tmp_sqr_x_bf = BigFloat{};
+    g_tmp_sqr_y_bf = BigFloat{};
+    g_bf_tmp = BigFloat{};
     for (auto target : parameter_bindings())
     {
         *target = nullptr;

@@ -56,6 +56,7 @@
 #include <io/save_timer.h>
 #include <io/update_save_name.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <math/BigNum.h>
 #include <math/fixed_pt.h>
 #include <math/sign.h>
@@ -934,7 +935,7 @@ static void set_new_z_from_bignum()
     }
     else if (g_bf_math == BFMathType::BIG_FLT)
     {
-        g_new_z = cmplx_bf_to_float(g_new_z_bf);
+        g_new_z = cmplx_bf_to_float({g_new_z_bf.x.data(), g_new_z_bf.y.data()});
     }
 }
 
@@ -1113,8 +1114,8 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             }
             else if (g_bf_math == BFMathType::BIG_FLT)
             {
-                clear_bf(g_saved_z_bf.x);
-                clear_bf(g_saved_z_bf.y);
+                g_saved_z_bf.x = 0;
+                g_saved_z_bf.y = 0;
             }
         }
         g_init.y = dy_pixel();
@@ -1161,7 +1162,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             }
             else if (g_bf_math == BFMathType::BIG_FLT)
             {
-                g_old_z = cmplx_bf_to_float(g_old_z_bf);
+                g_old_z = cmplx_bf_to_float({g_old_z_bf.x.data(), g_old_z_bf.y.data()});
             }
             m_last_z.x = g_old_z.x;
             m_last_z.y = g_old_z.y;
@@ -1391,8 +1392,8 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                 }
                 else if (g_bf_math == BFMathType::BIG_FLT)
                 {
-                    copy_bf(g_saved_z_bf.x, g_new_z_bf.x);
-                    copy_bf(g_saved_z_bf.y, g_new_z_bf.y);
+                    g_saved_z_bf.x = g_new_z_bf.x;
+                    g_saved_z_bf.y = g_new_z_bf.y;
                 }
                 else
                 {
@@ -1421,11 +1422,11 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                 }
                 else if (g_bf_math == BFMathType::BIG_FLT)
                 {
-                    if (cmp_bf(abs_a_bf(sub_bf(g_bf_tmp, g_saved_z_bf.x, g_new_z_bf.x)), g_close_enough_bf) <
+                    if (cmp_bf(abs_a_bf((g_bf_tmp = g_saved_z_bf.x - g_new_z_bf.x).data()), g_close_enough_bf.data()) <
                         0)
                     {
-                        if (cmp_bf(abs_a_bf(sub_bf(g_bf_tmp, g_saved_z_bf.y, g_new_z_bf.y)),
-                                g_close_enough_bf) < 0)
+                        if (cmp_bf(abs_a_bf((g_bf_tmp = g_saved_z_bf.y - g_new_z_bf.y).data()),
+                                g_close_enough_bf.data()) < 0)
                         {
                             m_caught_a_cycle = true;
                         }
@@ -1484,8 +1485,8 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         }
         else if (g_bf_math == BFMathType::BIG_FLT)
         {
-            g_new_z.x = static_cast<double>(bf_to_float(g_new_z_bf.x));
-            g_new_z.y = static_cast<double>(bf_to_float(g_new_z_bf.y));
+            g_new_z.x = static_cast<double>(bf_to_float(g_new_z_bf.x.data()));
+            g_new_z.y = static_cast<double>(bf_to_float(g_new_z_bf.y.data()));
         }
         g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
         g_color_iter = potential(g_magnitude, g_color_iter);

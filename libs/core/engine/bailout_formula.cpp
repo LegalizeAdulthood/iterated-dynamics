@@ -7,6 +7,7 @@
 #include <engine/fractalb.h>
 #include <engine/fractals.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <math/BigNum.h>
 
 #include <cmath>
@@ -250,36 +251,36 @@ static int bn_manr_bailout()
 static int bf_mod_bailout()
 {
     BigStackSaver saved;
-    BigFloatPtr tmp1 = bf_stack().allocate_single();
+    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
 
-    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
-    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    add_bf(g_bf_tmp, g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
-    float_to_bf(tmp1, g_magnitude_limit);
-    if (cmp_bf(g_bf_tmp, tmp1) > 0)
+    g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
+    g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
+    g_bf_tmp = g_tmp_sqr_x_bf + g_tmp_sqr_y_bf;
+    tmp1 = g_magnitude_limit;
+    if (g_bf_tmp > tmp1)
     {
         return 1;
     }
-    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
-    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    g_old_z_bf.x = g_new_z_bf.x;
+    g_old_z_bf.y = g_new_z_bf.y;
     return 0;
 }
 
 static int bf_real_bailout()
 {
     BigStackSaver saved;
-    BigFloatPtr tmp1 = bf_stack().allocate_single();
+    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
 
-    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
-    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    float_to_bf(tmp1, g_magnitude_limit);
-    if (cmp_bf(g_tmp_sqr_x_bf, tmp1) > 0)
+    g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
+    g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
+    tmp1 = g_magnitude_limit;
+    if (g_tmp_sqr_x_bf > tmp1)
     {
         return 1;
     }
 
-    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
-    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    g_old_z_bf.x = g_new_z_bf.x;
+    g_old_z_bf.y = g_new_z_bf.y;
     return 0;
 }
 
@@ -287,98 +288,98 @@ static int bf_real_bailout()
 static int bf_imag_bailout()
 {
     BigStackSaver saved;
-    BigFloatPtr tmp1 = bf_stack().allocate_single();
+    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
 
-    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
-    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    float_to_bf(tmp1, g_magnitude_limit);
-    if (cmp_bf(g_tmp_sqr_y_bf, tmp1) > 0)
+    g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
+    g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
+    tmp1 = g_magnitude_limit;
+    if (g_tmp_sqr_y_bf > tmp1)
     {
         return 1;
     }
 
-    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
-    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    g_old_z_bf.x = g_new_z_bf.x;
+    g_old_z_bf.y = g_new_z_bf.y;
     return 0;
 }
 
 static int bf_or_bailout()
 {
     BigStackSaver saved;
-    BigFloatPtr tmp1 = bf_stack().allocate_single();
+    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
 
-    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
-    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    float_to_bf(tmp1, g_magnitude_limit);
-    if (cmp_bf(g_tmp_sqr_x_bf, tmp1) > 0 || cmp_bf(g_tmp_sqr_y_bf, tmp1) > 0)
+    g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
+    g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
+    tmp1 = g_magnitude_limit;
+    if (g_tmp_sqr_x_bf > tmp1 || g_tmp_sqr_y_bf > tmp1)
     {
         return 1;
     }
 
-    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
-    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    g_old_z_bf.x = g_new_z_bf.x;
+    g_old_z_bf.y = g_new_z_bf.y;
     return 0;
 }
 
 static int bf_and_bailout()
 {
     BigStackSaver saved;
-    BigFloatPtr tmp1 = bf_stack().allocate_single();
+    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
 
-    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
-    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    float_to_bf(tmp1, g_magnitude_limit);
-    if (cmp_bf(g_tmp_sqr_x_bf, tmp1) > 0 && cmp_bf(g_tmp_sqr_y_bf, tmp1) > 0)
+    g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
+    g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
+    tmp1 = g_magnitude_limit;
+    if (g_tmp_sqr_x_bf > tmp1 && g_tmp_sqr_y_bf > tmp1)
     {
         return 1;
     }
 
-    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
-    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    g_old_z_bf.x = g_new_z_bf.x;
+    g_old_z_bf.y = g_new_z_bf.y;
     return 0;
 }
 
 static int bf_manh_bailout()
 {
     BigStackSaver saved;
-    BigFloatPtr tmp1 = bf_stack().allocate_single();
+    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
 
-    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
-    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
+    g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
+    g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
     // note: in next five lines, g_old_z_bf is just used as a temporary variable
-    abs_bf(g_old_z_bf.x, g_new_z_bf.x);
-    abs_bf(g_old_z_bf.y, g_new_z_bf.y);
-    add_bf(g_bf_tmp, g_old_z_bf.x, g_old_z_bf.y);
-    square_bf(g_old_z_bf.x, g_bf_tmp);
-    float_to_bf(tmp1, g_magnitude_limit);
-    if (cmp_bf(g_old_z_bf.x, tmp1) > 0)
+    abs_bf(g_old_z_bf.x.data(), g_new_z_bf.x.data());
+    abs_bf(g_old_z_bf.y.data(), g_new_z_bf.y.data());
+    g_bf_tmp = g_old_z_bf.x + g_old_z_bf.y;
+    g_old_z_bf.x = sqr(g_bf_tmp);
+    tmp1 = g_magnitude_limit;
+    if (g_old_z_bf.x > tmp1)
     {
         return 1;
     }
 
-    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
-    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    g_old_z_bf.x = g_new_z_bf.x;
+    g_old_z_bf.y = g_new_z_bf.y;
     return 0;
 }
 
 static int bf_manr_bailout()
 {
     BigStackSaver saved;
-    BigFloatPtr tmp1 = bf_stack().allocate_single();
+    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
 
-    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
-    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    add_bf(g_bf_tmp, g_new_z_bf.x, g_new_z_bf.y); // don't need abs since we square it next
+    g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
+    g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
+    g_bf_tmp = g_new_z_bf.x + g_new_z_bf.y; // don't need abs since we square it next
     // note: in next two lines, g_old_z_bf is just used as a temporary variable
-    square_bf(g_old_z_bf.x, g_bf_tmp);
-    float_to_bf(tmp1, g_magnitude_limit);
-    if (cmp_bf(g_old_z_bf.x, tmp1) > 0)
+    g_old_z_bf.x = sqr(g_bf_tmp);
+    tmp1 = g_magnitude_limit;
+    if (g_old_z_bf.x > tmp1)
     {
         return 1;
     }
 
-    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
-    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    g_old_z_bf.x = g_new_z_bf.x;
+    g_old_z_bf.y = g_new_z_bf.y;
     return 0;
 }
 

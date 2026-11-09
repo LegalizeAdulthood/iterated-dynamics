@@ -17,6 +17,7 @@
 #include <fractals/fractalp.h>
 #include <fractals/frasetup.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <math/BigNum.h>
 #include <math/fixed_pt.h>
 
@@ -408,27 +409,27 @@ bool mandel_per_image_bf()
     sub_bf(g_delta2_y_bf, g_bf_y_3rd, g_bf_y_min);
     div_a_bf_int(g_delta2_y_bf, static_cast<U16>(g_logical_screen.x_dots - 1));
 
-    abs_bf(g_close_enough_bf, g_delta_x_bf);
-    if (cmp_bf(abs_bf(bf_temp1, g_delta2_x_bf), g_close_enough_bf) > 0)
+    abs_bf(g_close_enough_bf.data(), g_delta_x_bf);
+    if (cmp_bf(abs_bf(bf_temp1, g_delta2_x_bf), g_close_enough_bf.data()) > 0)
     {
-        copy_bf(g_close_enough_bf, bf_temp1);
+        copy_bf(g_close_enough_bf.data(), bf_temp1);
     }
     if (cmp_bf(abs_bf(bf_temp1, g_delta_y_bf), abs_bf(bf_temp2, g_delta2_y_bf)) > 0)
     {
-        if (cmp_bf(bf_temp1, g_close_enough_bf) > 0)
+        if (cmp_bf(bf_temp1, g_close_enough_bf.data()) > 0)
         {
-            copy_bf(g_close_enough_bf, bf_temp1);
+            copy_bf(g_close_enough_bf.data(), bf_temp1);
         }
     }
-    else if (cmp_bf(bf_temp2, g_close_enough_bf) > 0)
+    else if (cmp_bf(bf_temp2, g_close_enough_bf.data()) > 0)
     {
-        copy_bf(g_close_enough_bf, bf_temp2);
+        copy_bf(g_close_enough_bf.data(), bf_temp2);
     }
     {
         int t{std::abs(g_periodicity_check)};
         while (t--)
         {
-            half_a_bf(g_close_enough_bf);
+            half_a_bf(g_close_enough_bf.data());
         }
     }
 
@@ -554,44 +555,44 @@ int mandel_per_pixel_bf()
     }
     // parm.x = x_min + col*delx + row*delx2
     mult_bf_int(g_param_z_bf.x, g_delta_x_bf, static_cast<U16>(g_col));
-    mult_bf_int(g_bf_tmp, g_delta2_x_bf, static_cast<U16>(g_row));
+    mult_bf_int(g_bf_tmp.data(), g_delta2_x_bf, static_cast<U16>(g_row));
 
-    add_a_bf(g_param_z_bf.x, g_bf_tmp);
+    add_a_bf(g_param_z_bf.x, g_bf_tmp.data());
     add_a_bf(g_param_z_bf.x, g_bf_x_min);
 
     // parm.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bf is just used as a temporary variable
-    mult_bf_int(g_old_z_bf.x, g_delta_y_bf, static_cast<U16>(g_row));
-    mult_bf_int(g_old_z_bf.y, g_delta2_y_bf, static_cast<U16>(g_col));
-    add_a_bf(g_old_z_bf.x, g_old_z_bf.y);
-    sub_bf(g_param_z_bf.y, g_bf_y_max, g_old_z_bf.x);
+    mult_bf_int(g_old_z_bf.x.data(), g_delta_y_bf, static_cast<U16>(g_row));
+    mult_bf_int(g_old_z_bf.y.data(), g_delta2_y_bf, static_cast<U16>(g_col));
+    add_a_bf(g_old_z_bf.x.data(), g_old_z_bf.y.data());
+    sub_bf(g_param_z_bf.y, g_bf_y_max, g_old_z_bf.x.data());
 
-    copy_bf(g_old_z_bf.x, g_param_z_bf.x);
-    copy_bf(g_old_z_bf.y, g_param_z_bf.y);
+    copy_bf(g_old_z_bf.x.data(), g_param_z_bf.x);
+    copy_bf(g_old_z_bf.y.data(), g_param_z_bf.y);
 
     if ((g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61) && g_bof_match_book_images)
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        float_to_bf(g_old_z_bf.x, g_params[0]); // initial perturbation of parameters set
-        float_to_bf(g_old_z_bf.y, g_params[1]);
+        float_to_bf(g_old_z_bf.x.data(), g_params[0]); // initial perturbation of parameters set
+        float_to_bf(g_old_z_bf.y.data(), g_params[1]);
         g_color_iter = -1;
     }
     else
     {
-        float_to_bf(g_new_z_bf.x, g_params[0]);
-        float_to_bf(g_new_z_bf.y, g_params[1]);
-        add_a_bf(g_old_z_bf.x, g_new_z_bf.x);
-        add_a_bf(g_old_z_bf.y, g_new_z_bf.y);
+        float_to_bf(g_new_z_bf.x.data(), g_params[0]);
+        float_to_bf(g_new_z_bf.y.data(), g_params[1]);
+        add_a_bf(g_old_z_bf.x.data(), g_new_z_bf.x.data());
+        add_a_bf(g_old_z_bf.y.data(), g_new_z_bf.y.data());
     }
 
     // square has side effect - must copy first
-    copy_bf(g_new_z_bf.x, g_old_z_bf.x);
-    copy_bf(g_new_z_bf.y, g_old_z_bf.y);
+    copy_bf(g_new_z_bf.x.data(), g_old_z_bf.x.data());
+    copy_bf(g_new_z_bf.y.data(), g_old_z_bf.y.data());
 
     // Square these to g_r_bf_length bytes of precision
-    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
-    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
+    square_bf(g_tmp_sqr_x_bf.data(), g_new_z_bf.x.data());
+    square_bf(g_tmp_sqr_y_bf.data(), g_new_z_bf.y.data());
 
     return 1;                  // 1st iteration has been done
 }
@@ -626,26 +627,26 @@ int julia_per_pixel_bn()
 int julia_per_pixel_bf()
 {
     // old.x = x_min + col*delx + row*delx2
-    mult_bf_int(g_old_z_bf.x, g_delta_x_bf, static_cast<U16>(g_col));
-    mult_bf_int(g_bf_tmp, g_delta2_x_bf, static_cast<U16>(g_row));
+    mult_bf_int(g_old_z_bf.x.data(), g_delta_x_bf, static_cast<U16>(g_col));
+    mult_bf_int(g_bf_tmp.data(), g_delta2_x_bf, static_cast<U16>(g_row));
 
-    add_a_bf(g_old_z_bf.x, g_bf_tmp);
-    add_a_bf(g_old_z_bf.x, g_bf_x_min);
+    add_a_bf(g_old_z_bf.x.data(), g_bf_tmp.data());
+    add_a_bf(g_old_z_bf.x.data(), g_bf_x_min);
 
     // old.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bf is just used as a temporary variable
-    mult_bf_int(g_new_z_bf.x, g_delta_y_bf, static_cast<U16>(g_row));
-    mult_bf_int(g_new_z_bf.y, g_delta2_y_bf, static_cast<U16>(g_col));
-    add_a_bf(g_new_z_bf.x, g_new_z_bf.y);
-    sub_bf(g_old_z_bf.y, g_bf_y_max, g_new_z_bf.x);
+    mult_bf_int(g_new_z_bf.x.data(), g_delta_y_bf, static_cast<U16>(g_row));
+    mult_bf_int(g_new_z_bf.y.data(), g_delta2_y_bf, static_cast<U16>(g_col));
+    add_a_bf(g_new_z_bf.x.data(), g_new_z_bf.y.data());
+    sub_bf(g_old_z_bf.y.data(), g_bf_y_max, g_new_z_bf.x.data());
 
     // square has side effect - must copy first
-    copy_bf(g_new_z_bf.x, g_old_z_bf.x);
-    copy_bf(g_new_z_bf.y, g_old_z_bf.y);
+    copy_bf(g_new_z_bf.x.data(), g_old_z_bf.x.data());
+    copy_bf(g_new_z_bf.y.data(), g_old_z_bf.y.data());
 
     // Square these to g_r_bf_length bytes of precision
-    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
-    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
+    square_bf(g_tmp_sqr_x_bf.data(), g_new_z_bf.x.data());
+    square_bf(g_tmp_sqr_y_bf.data(), g_new_z_bf.y.data());
 
     return 1;                  // 1st iteration has been done
 }
@@ -673,13 +674,13 @@ int julia_orbit_bn()
 int julia_orbit_bf()
 {
     // new.x = tmpsqrx - tmpsqry + parm.x;
-    sub_a_bf(g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
-    add_bf(g_new_z_bf.x, g_tmp_sqr_x_bf, g_param_z_bf.x);
+    sub_a_bf(g_tmp_sqr_x_bf.data(), g_tmp_sqr_y_bf.data());
+    add_bf(g_new_z_bf.x.data(), g_tmp_sqr_x_bf.data(), g_param_z_bf.x);
 
     // new.y = 2 * g_old_z_bf.x * g_old_z_bf.y + parm.y;
-    mult_bf(g_bf_tmp, g_old_z_bf.x, g_old_z_bf.y); // ok to use unsafe here
-    double_a_bf(g_bf_tmp);
-    add_bf(g_new_z_bf.y, g_bf_tmp, g_param_z_bf.y);
+    mult_bf(g_bf_tmp.data(), g_old_z_bf.x.data(), g_old_z_bf.y.data()); // ok to use unsafe here
+    double_a_bf(g_bf_tmp.data());
+    add_bf(g_new_z_bf.y.data(), g_bf_tmp.data(), g_param_z_bf.y);
     return g_bailout_bigfloat();
 }
 
@@ -693,9 +694,11 @@ int julia_z_power_orbit_bf()
 
     float_to_bf(param2.x, g_params[2]);
     float_to_bf(param2.y, g_params[3]);
-    cmplx_pow_bf(&g_new_z_bf, &g_old_z_bf, &param2);
-    add_bf(g_new_z_bf.x, g_param_z_bf.x, g_new_z_bf.x);
-    add_bf(g_new_z_bf.y, g_param_z_bf.y, g_new_z_bf.y);
+    BFPtrComplex new_z{g_new_z_bf.x.data(), g_new_z_bf.y.data()};
+    BFPtrComplex old_z{g_old_z_bf.x.data(), g_old_z_bf.y.data()};
+    cmplx_pow_bf(&new_z, &old_z, &param2);
+    add_bf(g_new_z_bf.x.data(), g_param_z_bf.x, g_new_z_bf.x.data());
+    add_bf(g_new_z_bf.y.data(), g_param_z_bf.y, g_new_z_bf.y.data());
     return g_bailout_bigfloat();
 }
 

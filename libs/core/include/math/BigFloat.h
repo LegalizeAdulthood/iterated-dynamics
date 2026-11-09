@@ -72,6 +72,17 @@ public:
 
     std::string to_string(int digits = 0) const;
 
+    // Borrowed buffers require a numeric value and expire on arena relocation.
+    BigFloatPtr data() noexcept
+    {
+        return m_storage.data();
+    }
+
+    BigFloatConstPtr data() const noexcept
+    {
+        return m_storage.data();
+    }
+
     // Adapters copy canonical mantissa/exponent bytes, without scalar conversion.
     static BigFloat from_legacy(BigFloatConstPtr source, std::size_t size);
     static BigFloat from_legacy(BigArena &arena, BigFloatConstPtr source, std::size_t size);

@@ -37,6 +37,7 @@
 #include <geometry/line3d.h>
 #include <io/disk_storage.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <math/BigNum.h>
 #include <misc/debug_flags.h>
 #include <misc/stack_avail.h>
@@ -910,10 +911,10 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
     {
         float_to_bf(g_param_z_bf.x, 2.0);
         float_to_bf(g_param_z_bf.y, input.imag);
-        clear_bf(g_old_z_bf.x);
-        clear_bf(g_old_z_bf.y);
-        square_bf(g_tmp_sqr_x_bf, g_old_z_bf.x);
-        square_bf(g_tmp_sqr_y_bf, g_old_z_bf.y);
+        clear_bf(g_old_z_bf.x.data());
+        clear_bf(g_old_z_bf.y.data());
+        square_bf(g_tmp_sqr_x_bf.data(), g_old_z_bf.x.data());
+        square_bf(g_tmp_sqr_y_bf.data(), g_old_z_bf.y.data());
     }
     std::vector<DComplex> expected;
     bool escaped{};
@@ -931,7 +932,7 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
             break;
         case BFMathType::BIG_FLT:
             escaped = julia_orbit_bf() != 0;
-            expected.push_back(cmplx_bf_to_float(g_new_z_bf));
+            expected.push_back(cmplx_bf_to_float({g_new_z_bf.x.data(), g_new_z_bf.y.data()}));
             break;
         }
     }
@@ -1058,7 +1059,7 @@ void PerturbationIterationTest::initialize_reference(
             }
             else
             {
-                float_to_bf(g_close_enough_bf, g_close_enough);
+                float_to_bf(g_close_enough_bf.data(), g_close_enough);
             }
         }
         const BFPtrComplex center_bf{m_engine.initialize_frame_bf({half_width, 0.0}, {0.0, half_height})};
@@ -7581,7 +7582,7 @@ void TestDeepPeriodicity::SetUp()
     }
     else
     {
-        float_to_bf(g_close_enough_bf, GetParam().tolerance);
+        float_to_bf(g_close_enough_bf.data(), GetParam().tolerance);
     }
     const BFPtrComplex center{m_engine.initialize_frame_bf({1e-40, 0.0}, {})};
     float_to_bf(center.x, -2.0);
@@ -7712,7 +7713,7 @@ TEST_F(TestPerturbationPixels, subDoublePeriodicityToleranceStillDetectsExactCyc
     }
     m_big_float = true;
     ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
-    str_to_bf(g_close_enough_bf, "1e-350");
+    str_to_bf(g_close_enough_bf.data(), "1e-350");
     g_periodicity_check = 1;
     g_first_saved_and = 1;
     g_periodicity_next_saved_incr = 1;
@@ -8483,7 +8484,8 @@ BurningShipPerturbationTest::BurningShipPerturbationTest(const bool use_big_floa
 
 int BurningShipPerturbationTest::record_native_orbit()
 {
-    const DComplex value{g_bf_math == BFMathType::NONE ? g_old_z : cmplx_bf_to_float(g_old_z_bf)};
+    const DComplex value{
+        g_bf_math == BFMathType::NONE ? g_old_z : cmplx_bf_to_float({g_old_z_bf.x.data(), g_old_z_bf.y.data()})};
     s_standard_orbit.emplace_back(value.x, value.y);
     return g_bf_math == BFMathType::NONE ? burning_ship_orbit() : burning_ship_bf_fractal();
 }
@@ -8553,7 +8555,8 @@ void BurningShipPerturbationTest::compare_native_pixel(
     StandardFractal standard;
     const int expected_color{standard.calculate_standard_pixel(false)};
     const long expected_iterations{g_real_color_iter};
-    const DComplex expected_value{m_use_big_float ? cmplx_bf_to_float(g_new_z_bf) : g_new_z};
+    const DComplex expected_value{
+        m_use_big_float ? cmplx_bf_to_float({g_new_z_bf.x.data(), g_new_z_bf.y.data()}) : g_new_z};
     const DComplex expected_previous{g_old_z};
 
     const int color{m_engine.calculate_pixel(g_col, g_row)};
@@ -9657,8 +9660,8 @@ void TestSignedIntegerOrbit::SetUp()
     {
         clear_bf(g_param_z_bf.x);
         clear_bf(g_param_z_bf.y);
-        clear_bf(g_old_z_bf.x);
-        clear_bf(g_old_z_bf.y);
+        clear_bf(g_old_z_bf.x.data());
+        clear_bf(g_old_z_bf.y.data());
     }
     ASSERT_NO_FATAL_FAILURE(prepare_orbit_reference({}, {}, 2000));
     m_native_parameter = {GetParam().parameter.real(), GetParam().parameter.imag()};
@@ -9666,8 +9669,8 @@ void TestSignedIntegerOrbit::SetUp()
     {
         float_to_bf(g_param_z_bf.x, GetParam().parameter.real());
         float_to_bf(g_param_z_bf.y, GetParam().parameter.imag());
-        float_to_bf(g_old_z_bf.x, GetParam().seed.real());
-        float_to_bf(g_old_z_bf.y, GetParam().seed.imag());
+        float_to_bf(g_old_z_bf.x.data(), GetParam().seed.real());
+        float_to_bf(g_old_z_bf.y.data(), GetParam().seed.imag());
     }
 }
 
@@ -9687,8 +9690,8 @@ TEST_P(TestSignedIntegerOrbit, matchesNativeOrbitAndBailout)
             if (GetParam().big_float)
             {
                 escaped = julia_z_power_orbit_bf() != 0;
-                expected = {
-                    static_cast<double>(bf_to_float(g_new_z_bf.x)), static_cast<double>(bf_to_float(g_new_z_bf.y))};
+                expected = {static_cast<double>(bf_to_float(g_new_z_bf.x.data())),
+                    static_cast<double>(bf_to_float(g_new_z_bf.y.data()))};
             }
             else
             {
@@ -9772,10 +9775,10 @@ TEST_P(TestSignedSubDoublePower, resolvesNearZeroInputAfterReferenceReplacement)
     str_to_bf(value.x, "1e-40");
     copy_bf(g_param_z_bf.x, parameter.x);
     copy_bf(g_param_z_bf.y, parameter.y);
-    copy_bf(g_old_z_bf.x, value.x);
-    copy_bf(g_old_z_bf.y, value.y);
+    copy_bf(g_old_z_bf.x.data(), value.x);
+    copy_bf(g_old_z_bf.y.data(), value.y);
     const bool escaped{julia_z_power_orbit_bf() != 0};
-    const double expected{static_cast<double>(bf_to_float(g_new_z_bf.x))};
+    const double expected{static_cast<double>(bf_to_float(g_new_z_bf.x.data()))};
 
     m_engine.begin_orbit_bf(parameter, value, 0);
     for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
@@ -10055,8 +10058,8 @@ void ComplexPerturbationContinuationTest::check_orbit(
     {
         float_to_bf(g_param_z_bf.x, parameter.real());
         float_to_bf(g_param_z_bf.y, parameter.imag());
-        float_to_bf(g_old_z_bf.x, seed.real());
-        float_to_bf(g_old_z_bf.y, seed.imag());
+        float_to_bf(g_old_z_bf.x.data(), seed.real());
+        float_to_bf(g_old_z_bf.y.data(), seed.imag());
     }
     std::complex<double> expected{seed};
     m_engine.begin_orbit(parameter, seed, 0);
@@ -10072,8 +10075,8 @@ void ComplexPerturbationContinuationTest::check_orbit(
             if (m_use_big_float)
             {
                 escaped = julia_z_power_orbit_bf() != 0;
-                expected = {
-                    static_cast<double>(bf_to_float(g_new_z_bf.x)), static_cast<double>(bf_to_float(g_new_z_bf.y))};
+                expected = {static_cast<double>(bf_to_float(g_new_z_bf.x.data())),
+                    static_cast<double>(bf_to_float(g_new_z_bf.y.data()))};
             }
             else
             {
@@ -11243,8 +11246,8 @@ void TestShipOrbitOutput::SetUp()
     {
         float_to_bf(g_param_z_bf.x, point.real());
         float_to_bf(g_param_z_bf.y, point.imag());
-        copy_bf(g_old_z_bf.x, g_param_z_bf.x);
-        copy_bf(g_old_z_bf.y, g_param_z_bf.y);
+        copy_bf(g_old_z_bf.x.data(), g_param_z_bf.x);
+        copy_bf(g_old_z_bf.y.data(), g_param_z_bf.y);
     }
     m_expected_samples.clear();
     for (long iteration = 1; iteration < g_max_iterations; ++iteration)
@@ -11254,7 +11257,8 @@ void TestShipOrbitOutput::SetUp()
         {
             break;
         }
-        const DComplex value{GetParam().big_float ? cmplx_bf_to_float(g_new_z_bf) : g_new_z};
+        const DComplex value{
+            GetParam().big_float ? cmplx_bf_to_float({g_new_z_bf.x.data(), g_new_z_bf.y.data()}) : g_new_z};
         const int x{static_cast<int>((value.y - 1.5) * -2.0)};
         const int y{static_cast<int>((value.x + 2.0) * 1.25)};
         if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
@@ -12347,8 +12351,8 @@ TEST_F(TestSubnormalPerturbation, continuationReplacesSubnormalParameterAndSeedD
         clear_bf(parameter.y);
         copy_bf(g_param_z_bf.x, parameter.x);
         clear_bf(g_param_z_bf.y);
-        copy_bf(g_old_z_bf.x, parameter.x);
-        clear_bf(g_old_z_bf.y);
+        copy_bf(g_old_z_bf.x.data(), parameter.x);
+        clear_bf(g_old_z_bf.y.data());
         m_engine.begin_orbit_bf(parameter, parameter, 0);
         long iteration{};
         bool done{};
@@ -12359,8 +12363,8 @@ TEST_F(TestSubnormalPerturbation, continuationReplacesSubnormalParameterAndSeedD
             {
                 ASSERT_EQ(iteration + 1, m_engine.orbit_iteration());
                 const bool escaped{julia_z_power_orbit_bf() != 0};
-                const std::complex<double> expected{
-                    static_cast<double>(bf_to_float(g_new_z_bf.x)), static_cast<double>(bf_to_float(g_new_z_bf.y))};
+                const std::complex<double> expected{static_cast<double>(bf_to_float(g_new_z_bf.x.data())),
+                    static_cast<double>(bf_to_float(g_new_z_bf.y.data()))};
                 ++iteration;
                 EXPECT_EQ(escaped, m_engine.orbit_escaped());
                 EXPECT_EQ(escaped || iteration == g_max_iterations, done);
@@ -12378,8 +12382,8 @@ TEST_F(TestSubnormalPerturbation, displacedPixelMatchesNativeBigFloatOrbit)
 {
     copy_bf(g_param_z_bf.x, g_bf_x_max);
     clear_bf(g_param_z_bf.y);
-    copy_bf(g_old_z_bf.x, g_bf_x_max);
-    clear_bf(g_old_z_bf.y);
+    copy_bf(g_old_z_bf.x.data(), g_bf_x_max);
+    clear_bf(g_old_z_bf.y.data());
     // Native BF conversion also depends on the platform's floating-point range.
     long iteration{};
     bool escaped{};
@@ -12390,7 +12394,7 @@ TEST_F(TestSubnormalPerturbation, displacedPixelMatchesNativeBigFloatOrbit)
         escaped = julia_z_power_orbit_bf() != 0;
     }
     const std::complex<double> expected{
-        static_cast<double>(bf_to_float(g_new_z_bf.x)), static_cast<double>(bf_to_float(g_new_z_bf.y))};
+        static_cast<double>(bf_to_float(g_new_z_bf.x.data())), static_cast<double>(bf_to_float(g_new_z_bf.y.data()))};
 
     EXPECT_EQ(escaped ? iteration : g_inside_color, m_engine.calculate_pixel(WIDTH - 1, 0));
 

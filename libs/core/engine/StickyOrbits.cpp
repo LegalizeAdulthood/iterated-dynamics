@@ -15,6 +15,7 @@
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
 #include <fractals/lorenz.h>
+#include <math/BigFloat.h>
 #include <misc/id.h>
 #include <misc/run_cleanup.h>
 
@@ -304,12 +305,13 @@ void StickyOrbits::start_orbit(PertEngine *perturbation)
             }
             if (conjugate_value)
             {
-                math::neg_a_bf(math::g_old_z_bf.y);
+                math::neg_a_bf(math::g_old_z_bf.y.data());
             }
             std::exception_ptr failure;
             try
             {
-                perturbation->begin_orbit_bf(math::g_param_z_bf, math::g_old_z_bf, 0);
+                perturbation->begin_orbit_bf(
+                    math::g_param_z_bf, {math::g_old_z_bf.x.data(), math::g_old_z_bf.y.data()}, 0);
             }
             catch (...)
             {
@@ -328,7 +330,7 @@ void StickyOrbits::start_orbit(PertEngine *perturbation)
                 {
                     if (conjugate_value)
                     {
-                        math::neg_a_bf(math::g_old_z_bf.y);
+                        math::neg_a_bf(math::g_old_z_bf.y.data());
                     }
                 });
         }

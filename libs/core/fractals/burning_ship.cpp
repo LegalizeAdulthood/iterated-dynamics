@@ -7,6 +7,7 @@
 #include <engine/calcfrac.h>
 #include <engine/fractals.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <math/complex_fn.h>
 
 #include <cmath>
@@ -230,9 +231,10 @@ void burning_ship_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
     {
         abs_bf(z2.x, z.x);
         abs_bf(z2.y, z.y);
-        power(g_new_z_bf, z2, degree);
-        add_bf(z.x, g_new_z_bf.x, center.x);
-        add_bf(z.y, g_new_z_bf.y, center.y);
+        BFPtrComplex new_z{g_new_z_bf.x.data(), g_new_z_bf.y.data()};
+        power(new_z, z2, degree);
+        add_bf(z.x, g_new_z_bf.x.data(), center.x);
+        add_bf(z.y, g_new_z_bf.y.data(), center.y);
     }
 }
 
@@ -243,26 +245,27 @@ int burning_ship_bf_fractal()
 
     if (degree == 2) // Burning Ship
     {
-        square_bf(g_tmp_sqr_x_bf, g_old_z_bf.x);
-        square_bf(g_tmp_sqr_y_bf, g_old_z_bf.y);
-        sub_bf(g_bf_tmp, g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
-        add_bf(g_new_z_bf.x, g_bf_tmp, g_param_z_bf.x);
-        mult_bf(g_bf_tmp, g_old_z_bf.x, g_old_z_bf.y);
-        double_a_bf(g_bf_tmp);
-        abs_a_bf(g_bf_tmp);
-        sub_bf(g_new_z_bf.y, g_bf_tmp, g_param_z_bf.y);
+        square_bf(g_tmp_sqr_x_bf.data(), g_old_z_bf.x.data());
+        square_bf(g_tmp_sqr_y_bf.data(), g_old_z_bf.y.data());
+        sub_bf(g_bf_tmp.data(), g_tmp_sqr_x_bf.data(), g_tmp_sqr_y_bf.data());
+        add_bf(g_new_z_bf.x.data(), g_bf_tmp.data(), g_param_z_bf.x);
+        mult_bf(g_bf_tmp.data(), g_old_z_bf.x.data(), g_old_z_bf.y.data());
+        double_a_bf(g_bf_tmp.data());
+        abs_a_bf(g_bf_tmp.data());
+        sub_bf(g_new_z_bf.y.data(), g_bf_tmp.data(), g_param_z_bf.y);
     }
     else if (degree > 2) // Burning Ship to higher power
     {
         BFPtrComplex big_z;
         big_z.x = bf_stack().allocate_single();
         big_z.y = bf_stack().allocate_single();
-        abs_bf(big_z.x, g_old_z_bf.x);
-        abs_bf(big_z.y, g_old_z_bf.y);
+        abs_bf(big_z.x, g_old_z_bf.x.data());
+        abs_bf(big_z.y, g_old_z_bf.y.data());
         neg_a_bf(big_z.y);
-        power(g_new_z_bf, big_z, degree);
-        add_a_bf(g_new_z_bf.x, g_param_z_bf.x);
-        add_a_bf(g_new_z_bf.y, g_param_z_bf.y);
+        BFPtrComplex new_z{g_new_z_bf.x.data(), g_new_z_bf.y.data()};
+        power(new_z, big_z, degree);
+        add_a_bf(g_new_z_bf.x.data(), g_param_z_bf.x);
+        add_a_bf(g_new_z_bf.y.data(), g_param_z_bf.y);
     }
     return g_bailout_bigfloat();
 }

@@ -10,8 +10,6 @@
 namespace id::math
 {
 
-using BFComplex = Complex<BigFloat>;
-
 BFComplex log(const BFComplex &value);
 BFComplex pow(const BFComplex &base, const BFComplex &exponent);
 
