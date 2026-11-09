@@ -1273,20 +1273,9 @@ BigFloatPtr unsafe_sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
     return sine_cosine(s, c, n);
 }
 
-BigFloatPtr unsafe_atan_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    return arctangent(r, n);
-}
-
 BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr y, BigFloatPtr x)
 {
     return arctangent2(r, y, x);
-}
-
-// Raw compatibility adapters for callers not yet using owning values.
-BigFloatPtr unsafe_add_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    return add(r, n1, n2);
 }
 
 BigFloatPtr unsafe_add_a_bf(BigFloatPtr r, BigFloatPtr n)

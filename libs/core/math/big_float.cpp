@@ -190,21 +190,6 @@ BigFloatPtr str_to_bf(BigFloatPtr r, std::string_view s)
 }
 
 /********************************************************************/
-// std::strlen_needed_bf() - returns string length needed to hold bigfloat
-
-int strlen_needed_bf()
-{
-    // first space for integer part
-    int length = 1;
-    length += g_decimals;  // decimal part
-    length += 2;         // decimal point and sign
-    length += 2;         // e and sign
-    length += 4;         // exponent
-    length += 4;         // null and a little extra for safety
-    return length;
-}
-
-/********************************************************************/
 // bftostring() - converts a bigfloat into a scientific notation string
 // dec - decimal places, 0 for max
 //   r - bigfloat
@@ -322,29 +307,6 @@ BigFloatPtr int_to_bf(BigFloatPtr r, const long value)
     BIG_SET16(r+g_bf_length, static_cast<S16>(2));
     norm_bf(r);
     return r;
-}
-
-/*********************************************************************/
-//  l = floor(b), floor rounds down
-//  Converts a bigfloat to a long
-//  note: a bf value of 2.999... will be return a value of 2, not 3
-long bf_to_int(BigFloatPtr f)
-{
-    long result;
-
-    const int f_exp = static_cast<S16>(BIG_ACCESS16(f + g_bf_length));
-    if (f_exp > 3)
-    {
-        result = 0x7FFFFFFFL;
-        if (is_bf_neg(f))
-        {
-            result = -result;
-        }
-        return result;
-    }
-    result = BIG_ACCESS32(f+g_bf_length-5);
-    result >>= 8*(3-f_exp);
-    return result;
 }
 
 /********************************************************************/
@@ -476,95 +438,6 @@ BigFloatPtr unsafe_inv_bf(BigFloatPtr r, BigFloatPtr n)
     return r;
 }
 
-/********************************************************************/
-// sqrt(r)
-// uses g_bf_tmp1 - g_bf_tmp3 - global temp bigfloats
-//  SIDE-EFFECTS:
-//      n ends up as |n|
-BigFloatPtr unsafe_sqrt_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    int almost_match = 0;
-
-    // use Newton's recursive method for zeroing in on sqrt(n): r=.5(r+n/r)
-
-    if (is_bf_neg(n))
-    {
-        // sqrt of a neg, return 0
-        clear_bf(r);
-        return r;
-    }
-
-    LDouble f = bf_to_float(n);
-    if (f == 0) // division by zero will occur
-    {
-        clear_bf(r); // sqrt(0) = 0
-        return r;
-    }
-    f = std::sqrt(f); // approximate square root
-    // no need to check overflow
-
-    // With Newton's Method, there is no need to calculate all the digits
-    // every time.  The precision approximately doubles each iteration.
-    // Save original values.
-    int orig_bf_length = g_bf_length;
-    int orig_bn_length = g_bn_length;
-    int orig_padding = g_padding;
-    int orig_r_length = g_r_length;
-    int orig_shift_factor = g_shift_factor;
-    int orig_r_bf_length = g_r_bf_length;
-    BigFloatPtr orig_r = r;
-    BigFloatPtr orig_n = n;
-
-    // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
-    g_bn_length = std::min(g_bn_length, orig_bn_length);
-    calc_lengths();
-
-    // adjust pointers
-    r = orig_r + orig_bf_length - g_bf_length;
-
-    float_to_bf(r, f); // start with approximate sqrt
-
-    for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
-    {
-        // adjust lengths
-        g_bn_length <<= 1; // double precision
-        g_bn_length = std::min(g_bn_length, orig_bn_length);
-        calc_lengths();
-        r = orig_r + orig_bf_length - g_bf_length;
-        n = orig_n + orig_bf_length - g_bf_length;
-
-        unsafe_div_bf(g_bf_tmp3, n, r);
-        unsafe_add_a_bf(r, g_bf_tmp3);
-        half_a_bf(r);
-        if (g_bf_length == orig_bf_length)
-        {
-            const int comp = std::abs(cmp_bf(r, g_bf_tmp3));  // if match or almost match
-            if (comp < 8)
-            {
-                if (comp < 4  // perfect or near perfect match
-                    || almost_match == 1)   // close enough for 2nd time
-                {
-                    break;
-                }
-                // this is the first time they almost matched
-                almost_match++;
-            }
-        }
-    }
-
-    // restore original values
-    g_bf_length      = orig_bf_length;
-    g_bn_length   = orig_bn_length;
-    g_padding     = orig_padding;
-    g_r_length    = orig_r_length;
-    g_shift_factor = orig_shift_factor;
-    g_r_bf_length = orig_r_bf_length;
-    r             = orig_r;
-
-    return r;
-}
-
 
 
 
@@ -576,23 +449,6 @@ BigFloatPtr unsafe_sqrt_bf(BigFloatPtr r, BigFloatPtr n)
 // Most bf routines change values of parameters, not just the sign.
 /**********************************************************************/
 
-/**********************************************************************/
-// mult and div only change sign
-BigFloatPtr full_mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    copy_bf(g_bf_tmp_copy1, n1);
-    copy_bf(g_bf_tmp_copy2, n2);
-    unsafe_full_mult_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
-    return r;
-}
-
-/**********************************************************************/
-BigFloatPtr full_square_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    copy_bf(g_bf_tmp_copy1, n);
-    unsafe_full_square_bf(r, g_bf_tmp_copy1);
-    return r;
-}
 
 /**********************************************************************/
 BigFloatPtr square_bf(BigFloatPtr r, BigFloatPtr n)
@@ -607,14 +463,6 @@ BigFloatPtr mult_bf_int(BigFloatPtr r, BigFloatConstPtr n, const U16 u)
 {
     copy_bf(g_bf_tmp_copy1, n);
     unsafe_mult_bf_int(r, g_bf_tmp_copy1, u);
-    return r;
-}
-
-/**********************************************************************/
-BigFloatPtr div_bf_int(BigFloatPtr r, BigFloatPtr n, const U16 u)
-{
-    copy_bf(g_bf_tmp_copy1, n);
-    unsafe_div_bf_int(r, g_bf_tmp_copy1, u);
     return r;
 }
 
@@ -640,22 +488,6 @@ std::string bf_to_string_f(BigFloatConstPtr r, const int dec)
 }
 
 /**********************************************************************/
-BigFloatPtr inv_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    copy_bf(g_bf_tmp_copy1, n);
-    unsafe_inv_bf(r, g_bf_tmp_copy1);
-    return r;
-}
-
-/**********************************************************************/
-BigFloatPtr sqrt_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    copy_bf(g_bf_tmp_copy1, n);
-    unsafe_sqrt_bf(r, g_bf_tmp_copy1);
-    return r;
-}
-
-/**********************************************************************/
 BigFloatPtr ln_bf(BigFloatPtr r, BigFloatPtr n)
 {
     copy_bf(g_bf_tmp_copy1, n);
@@ -668,14 +500,6 @@ BigFloatPtr sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
 {
     copy_bf(g_bf_tmp_copy1, n);
     return unsafe_sin_cos_bf(s, c, g_bf_tmp_copy1);
-}
-
-/**********************************************************************/
-BigFloatPtr atan_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    copy_bf(g_bf_tmp_copy1, n);
-    unsafe_atan_bf(r, g_bf_tmp_copy1);
-    return r;
 }
 
 /**********************************************************************/
@@ -843,72 +667,6 @@ BigFloatPtr half_bf(BigFloatPtr r, BigFloatPtr n)
     g_bn_length = bnl;
 
     norm_bf(r);
-    return r;
-}
-
-
-/************************************************************************/
-// r = n1 * n2
-// Note: r will be a double wide result, 2*g_bf_length
-//       n1 and n2 can be the same pointer
-// SIDE-EFFECTS: n1 and n2 are changed to their absolute values
-BigFloatPtr unsafe_full_mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    if (is_bf_zero(n1) || is_bf_zero(n2))
-    {
-        g_bf_length <<= 1;
-        clear_bf(r);
-        g_bf_length >>= 1;
-        return r;
-    }
-
-    S16 *r_exp = reinterpret_cast<S16 *>(r + 2 * g_bf_length);
-    S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
-    S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
-    // add exp's
-    BIG_SET_S16(r_exp, static_cast<S16>(BIG_ACCESS_S16(n1_exp) + BIG_ACCESS_S16(n2_exp)));
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    unsafe_full_mult_bn(r, n1, n2);
-    g_bn_length = bnl;
-
-    // handle normalizing full mult on individual basis
-
-    return r;
-}
-
-/************************************************************************/
-// r = n^2
-//   because of the symmetry involved, n^2 is much faster than n*n
-//   for a bignumber of length l
-//      n*n takes l^2 multiplications
-//      n^2 takes (l^2+l)/2 multiplications
-//          which is about 1/2 n*n as l gets large
-//  uses the fact that (a+b+c+...)^2 = (a^2+b^2+c^2+...)+2(ab+ac+bc+...)
-/*                                                                      */
-// SIDE-EFFECTS: n is changed to its absolute value
-BigFloatPtr unsafe_full_square_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    if (is_bf_zero(n))
-    {
-        g_bf_length <<= 1;
-        clear_bf(r);
-        g_bf_length >>= 1;
-        return r;
-    }
-
-    S16 *r_exp = reinterpret_cast<S16 *>(r + 2 * g_bf_length);
-    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
-    BIG_SET_S16(r_exp, 2 * BIG_ACCESS_S16(n_exp));
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    unsafe_full_square_bn(r, n);
-    g_bn_length = bnl;
-
-    // handle normalizing full mult on individual basis
-
     return r;
 }
 

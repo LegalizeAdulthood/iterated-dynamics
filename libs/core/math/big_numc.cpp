@@ -10,7 +10,6 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 
 #include <array>
 #include <cfloat>
-#include <cstdio>
 #include <cstring>
 
 using namespace id::misc;
@@ -364,17 +363,6 @@ BigFloatPtr float_to_bf(BigFloatPtr r, LDouble f)
 
     BIG_SET16(r + g_bf_length, static_cast<S16>(power)); // exp
 
-    return r;
-}
-
-/*********************************************************************/
-//  b = f
-//  Converts a long double to a bigfloat
-BigFloatPtr float_to_bf1(BigFloatPtr r, const LDouble f)
-{
-    char msg[80];
-    std::snprintf(msg, std::size(msg), "%-.22Le", f);
-    str_to_bf(r, msg);
     return r;
 }
 

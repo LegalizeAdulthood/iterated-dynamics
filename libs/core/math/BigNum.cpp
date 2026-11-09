@@ -982,19 +982,9 @@ BigNumPtr neg_bn(BigNumPtr r, BigNumConstPtr n)
     return negate(r, n);
 }
 
-BigNumPtr unsafe_full_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
-{
-    return full_multiply(r, n1, n2);
-}
-
 BigNumPtr unsafe_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
 {
     return multiply(r, n1, n2);
-}
-
-BigNumPtr unsafe_full_square_bn(BigNumPtr r, BigNumPtr n)
-{
-    return full_square(r, n);
 }
 
 BigNumPtr unsafe_square_bn(BigNumPtr r, BigNumPtr n)
