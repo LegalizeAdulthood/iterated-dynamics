@@ -50,10 +50,12 @@ public:
     BigNum &operator-=(const BigNum &right);
     BigNum &operator*=(const BigNum &right);
     BigNum &operator/=(const BigNum &right);
+    BigNum &operator/=(misc::U16 right);
 
     BigNum operator+(const BigNum &right) const;
     BigNum operator-(const BigNum &right) const;
     BigNum operator*(const BigNum &right) const;
+    BigNum operator*(misc::U16 right) const;
     BigNum operator/(const BigNum &right) const;
     BigNum sqr() const;
 

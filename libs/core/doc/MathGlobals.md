@@ -65,15 +65,20 @@ uses the legacy fixed-decimal syntax; formatting retains legacy output.
 `BigNumConstPtr` denotes read-only legacy bytes.
 
 `BigNum` member operators and `sqr()` share private arithmetic kernels
-with legacy adapters in `math/BigNum.cpp`. Multiplication and squaring
-use paired result storage. The configured reducer moves `g_bn_length`
-bytes at `g_shift_factor` into the first block, then releases the second
-block without changing the handle. BigFloat's wide kernels normalize
-once before its reducer moves the canonical mantissa and exponent at
-`g_padding` into the first block. Addition, subtraction, and
-comparisons read operands directly; destructive kernels receive scratch
-copies. Truncation, fixed-width overflow, division saturation, and zero
-handling retain legacy behavior.
+with legacy adapters in `math/BigNum.cpp`. Products of two `BigNum`
+values and `sqr()` use paired result storage. The reducer moves
+`g_bn_length` bytes at `g_shift_factor` into the first block, then
+releases the second block without changing the handle. BigFloat's wide
+kernels normalize once before its reducer moves the canonical mantissa
+and exponent at `g_padding` into the first block. Addition, subtraction,
+and comparisons read operands directly; destructive kernels receive
+scratch copies. Truncation, fixed-width overflow, division saturation,
+and zero handling retain legacy behavior.
+
+`operator*(U16)` and `operator/=(U16)` use the existing integer kernels.
+They preserve all unsigned operand bits, fixed-width overflow, division
+rounding, and zero-divisor saturation without a fixed-point conversion
+of the integer operand.
 
 Precision migration sign-extends new BigNum integer bytes for live signed
 values. The legacy `convert_bn()` scratch-conversion behavior remains
@@ -205,7 +210,8 @@ the three names are not independently allocated constants.
 
 Header: `big.h`.
 
-Each coordinate or increment below reserves `g_bn_length` bytes:
+Each coordinate, increment, or threshold below owns a `BigNum` with
+`g_bn_length` canonical bytes:
 
 - `g_x_min_bn`, `g_x_max_bn`, `g_y_min_bn`, `g_y_max_bn` - image bounds.
 - `g_x_3rd_bn`, `g_y_3rd_bn` - third corner.
@@ -213,10 +219,11 @@ Each coordinate or increment below reserves `g_bn_length` bytes:
   pixel-coordinate increments.
 - `g_close_enough_bn` - comparison threshold.
 
-`g_close_enough_bn` owns a `BigNum`. `g_new_z_bn` and `g_saved_z_bn`
-own `BNComplex` components with canonical `g_bn_length` bytes. These
-globals start with null handles. `MathArenas::bind` initializes them in
-the BigNum working arena and clears existing values on later binds.
+`g_param_z_bn`, `g_new_z_bn`, and `g_saved_z_bn` own `BNComplex`
+components with canonical `g_bn_length` bytes. These globals and the
+scalar globals above start with null handles. `MathArenas::bind`
+initializes them in the BigNum working arena and clears existing values
+on later binds.
 `MathArenas::unbind` releases their blocks. The arena owner also unbinds
 them before destruction. Remaining legacy calls borrow their buffers
 explicitly with `BigNum::data()`; borrowed addresses expire on relocation.
@@ -227,8 +234,6 @@ Iteration state uses these reservations:
   `g_r_length` bytes each.
 - `g_old_z_bn` - raw complex iteration values, with `g_r_length` bytes
   per component to retain Manhattan bailout's unreduced scratch product.
-- `g_param_z_bn` - raw complex parameter, `g_bn_length` bytes per
-  component.
 
 ## BigFloat Coordinates And Iteration State
 

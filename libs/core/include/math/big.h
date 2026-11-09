@@ -109,7 +109,7 @@ BigNumPtr unsafe_full_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2);
 BigNumPtr unsafe_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2);
 BigNumPtr unsafe_full_square_bn(BigNumPtr r, BigNumPtr n);
 BigNumPtr unsafe_square_bn(BigNumPtr r, BigNumPtr n);
-BigNumPtr mult_bn_int(BigNumPtr r, BigNumPtr n, misc::U16 u);
+BigNumPtr mult_bn_int(BigNumPtr r, BigNumConstPtr n, misc::U16 u);
 BigNumPtr mult_a_bn_int(BigNumPtr r, misc::U16 u);
 BigNumPtr unsafe_div_bn_int(BigNumPtr r, BigNumPtr n, misc::U16 u);
 BigNumPtr div_a_bn_int(BigNumPtr r, misc::U16 u);
@@ -260,23 +260,23 @@ enum class ResolutionFlag
 
 // used by other routines
 // g_bn_length
-extern BigNumPtr g_x_min_bn;
-extern BigNumPtr g_x_max_bn;
-extern BigNumPtr g_y_min_bn;
-extern BigNumPtr g_y_max_bn;
-extern BigNumPtr g_x_3rd_bn;
-extern BigNumPtr g_y_3rd_bn;
-extern BigNumPtr g_delta_x_bn;
-extern BigNumPtr g_delta_y_bn;
-extern BigNumPtr g_delta2_x_bn;
-extern BigNumPtr g_delta2_y_bn;
+extern BigNum g_x_min_bn;
+extern BigNum g_x_max_bn;
+extern BigNum g_y_min_bn;
+extern BigNum g_y_max_bn;
+extern BigNum g_x_3rd_bn;
+extern BigNum g_y_3rd_bn;
+extern BigNum g_delta_x_bn;
+extern BigNum g_delta_y_bn;
+extern BigNum g_delta2_x_bn;
+extern BigNum g_delta2_y_bn;
 extern BigNum g_close_enough_bn;
 // g_r_length
 extern BigNumPtr g_tmp_sqr_x_bn;
 extern BigNumPtr g_tmp_sqr_y_bn;
 // g_bn_length
 extern BNPtrComplex g_old_z_bn;
-extern BNPtrComplex g_param_z_bn;
+extern BNComplex g_param_z_bn;
 extern BNComplex g_saved_z_bn;
 extern BNComplex g_new_z_bn;
 // g_r_bf_length+2

@@ -29,6 +29,7 @@
 #include <misc/ValueSaver.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
+#include <math/BigNum.h>
 #include <ui/KeyboardHandler.h>
 #include <ui/SoundSession.h>
 #include <ui/video.h>
@@ -83,11 +84,11 @@ int initialize_mandel_sticky_pixel()
         const BigNumPtr offset{bn_stack().allocate_single()};
         float_to_bn(offset, 1e-40);
         mult_bn_int(offset, offset, static_cast<U16>(g_col));
-        float_to_bn(g_param_z_bn.x, g_init.x);
-        add_a_bn(g_param_z_bn.x, offset);
-        float_to_bn(g_param_z_bn.y, g_init.y);
-        copy_bn(g_old_z_bn.x, g_param_z_bn.x);
-        copy_bn(g_old_z_bn.y, g_param_z_bn.y);
+        float_to_bn(g_param_z_bn.x.data(), g_init.x);
+        add_a_bn(g_param_z_bn.x.data(), offset);
+        float_to_bn(g_param_z_bn.y.data(), g_init.y);
+        copy_bn(g_old_z_bn.x, g_param_z_bn.x.data());
+        copy_bn(g_old_z_bn.y, g_param_z_bn.y.data());
     }
     else if (g_bf_math == BFMathType::BIG_FLT)
     {

@@ -104,8 +104,10 @@ TEST_F(TestBigNumBailout, canonicalGlobalsOwnWorkingStorageThroughBindingAndClea
     static_assert(std::is_same_v<decltype(g_new_z_bn), Complex<BigNum>>);
     static_assert(std::is_same_v<decltype(g_saved_z_bn), Complex<BigNum>>);
     static_assert(std::is_same_v<decltype(g_close_enough_bn), BigNum>);
-    const std::array<BigNum *, 5> values{
-        &g_new_z_bn.x, &g_new_z_bn.y, &g_saved_z_bn.x, &g_saved_z_bn.y, &g_close_enough_bn};
+    static_assert(std::is_same_v<decltype(g_param_z_bn), Complex<BigNum>>);
+    const std::array<BigNum *, 17> values{&g_new_z_bn.x, &g_new_z_bn.y, &g_saved_z_bn.x, &g_saved_z_bn.y,
+        &g_close_enough_bn, &g_x_min_bn, &g_x_max_bn, &g_y_min_bn, &g_y_max_bn, &g_x_3rd_bn, &g_y_3rd_bn, &g_delta_x_bn,
+        &g_delta_y_bn, &g_delta2_x_bn, &g_delta2_y_bn, &g_param_z_bn.x, &g_param_z_bn.y};
     auto &working = bn_arena(BigLifetime::WORKING);
     for (auto *value : values)
     {
@@ -115,8 +117,11 @@ TEST_F(TestBigNumBailout, canonicalGlobalsOwnWorkingStorageThroughBindingAndClea
         *value = -1.25L;
     }
 
-    const std::array<BigNumConstPtr, 5> buffers{g_new_z_bn.x.data(), g_new_z_bn.y.data(), g_saved_z_bn.x.data(),
-        g_saved_z_bn.y.data(), g_close_enough_bn.data()};
+    std::array<BigNumConstPtr, 17> buffers;
+    for (std::size_t i = 0; i < values.size(); ++i)
+    {
+        buffers[i] = values[i]->data();
+    }
     const auto high_water = working.high_water_mark();
     init_bf_dec(40);
     EXPECT_EQ(high_water, working.high_water_mark());

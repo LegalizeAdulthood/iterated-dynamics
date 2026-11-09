@@ -92,13 +92,13 @@ std::string format_corners_bn(const char *s)
                        "y_3rd_bn={:s}\n"
                        "y_3rd   ={:.20f}\n"
                        "\n",
-        s,                                                           //
-        math::bn_to_string(g_x_min_bn, dec), g_image_region.m_min.x, //
-        math::bn_to_string(g_x_max_bn, dec), g_image_region.m_max.x, //
-        math::bn_to_string(g_y_min_bn, dec), g_image_region.m_min.y, //
-        math::bn_to_string(g_y_max_bn, dec), g_image_region.m_max.y, //
-        math::bn_to_string(g_x_3rd_bn, dec), g_image_region.m_3rd.x, //
-        math::bn_to_string(g_y_3rd_bn, dec), g_image_region.m_3rd.y);
+        s,                                                                  //
+        math::bn_to_string(g_x_min_bn.data(), dec), g_image_region.m_min.x, //
+        math::bn_to_string(g_x_max_bn.data(), dec), g_image_region.m_max.x, //
+        math::bn_to_string(g_y_min_bn.data(), dec), g_image_region.m_min.y, //
+        math::bn_to_string(g_y_max_bn.data(), dec), g_image_region.m_max.y, //
+        math::bn_to_string(g_x_3rd_bn.data(), dec), g_image_region.m_3rd.x, //
+        math::bn_to_string(g_y_3rd_bn.data(), dec), g_image_region.m_3rd.y);
 }
 
 // show globals
@@ -275,49 +275,49 @@ bool mandel_per_image_bn()
 {
     BigStackSaver saved;
     // this should be set up dynamically based on corners
-    BigNumPtr bn_temp1 = bn_stack().allocate_single();
-    BigNumPtr bn_temp2 = bn_stack().allocate_single();
+    BigNum bn_temp1{bn_arena(BigLifetime::TEMPORARY)};
+    BigNum bn_temp2{bn_arena(BigLifetime::TEMPORARY)};
 
-    bf_to_bn(g_x_min_bn, g_bf_x_min);
-    bf_to_bn(g_x_max_bn, g_bf_x_max);
-    bf_to_bn(g_y_min_bn, g_bf_y_min);
-    bf_to_bn(g_y_max_bn, g_bf_y_max);
-    bf_to_bn(g_x_3rd_bn, g_bf_x_3rd);
-    bf_to_bn(g_y_3rd_bn, g_bf_y_3rd);
+    bf_to_bn(g_x_min_bn.data(), g_bf_x_min);
+    bf_to_bn(g_x_max_bn.data(), g_bf_x_max);
+    bf_to_bn(g_y_min_bn.data(), g_bf_y_min);
+    bf_to_bn(g_y_max_bn.data(), g_bf_y_max);
+    bf_to_bn(g_x_3rd_bn.data(), g_bf_x_3rd);
+    bf_to_bn(g_y_3rd_bn.data(), g_bf_y_3rd);
 
     g_bf_math = BFMathType::BIG_NUM;
 
     // g_delta_x_bn = (g_x_max_bn - g_x_3rd_bn)/(xdots-1)
-    sub_bn(g_delta_x_bn, g_x_max_bn, g_x_3rd_bn);
-    div_a_bn_int(g_delta_x_bn, static_cast<U16>(g_logical_screen.x_dots - 1));
+    g_delta_x_bn = g_x_max_bn - g_x_3rd_bn;
+    g_delta_x_bn /= static_cast<U16>(g_logical_screen.x_dots - 1);
 
     // g_delta_y_bn = (g_y_max_bn - g_y_3rd_bn)/(ydots-1)
-    sub_bn(g_delta_y_bn, g_y_max_bn, g_y_3rd_bn);
-    div_a_bn_int(g_delta_y_bn, static_cast<U16>(g_logical_screen.y_dots - 1));
+    g_delta_y_bn = g_y_max_bn - g_y_3rd_bn;
+    g_delta_y_bn /= static_cast<U16>(g_logical_screen.y_dots - 1);
 
     // g_delta2_x_bn = (g_x_3rd_bn - g_x_min_bn)/(ydots-1)
-    sub_bn(g_delta2_x_bn, g_x_3rd_bn, g_x_min_bn);
-    div_a_bn_int(g_delta2_x_bn, static_cast<U16>(g_logical_screen.y_dots - 1));
+    g_delta2_x_bn = g_x_3rd_bn - g_x_min_bn;
+    g_delta2_x_bn /= static_cast<U16>(g_logical_screen.y_dots - 1);
 
     // g_delta2_y_bn = (g_y_3rd_bn - g_y_min_bn)/(xdots-1)
-    sub_bn(g_delta2_y_bn, g_y_3rd_bn, g_y_min_bn);
-    div_a_bn_int(g_delta2_y_bn, static_cast<U16>(g_logical_screen.x_dots - 1));
+    g_delta2_y_bn = g_y_3rd_bn - g_y_min_bn;
+    g_delta2_y_bn /= static_cast<U16>(g_logical_screen.x_dots - 1);
 
-    abs_bn(g_close_enough_bn.data(), g_delta_x_bn);
-    if (cmp_bn(abs_bn(bn_temp1, g_delta2_x_bn), g_close_enough_bn.data()) > 0)
+    abs_bn(g_close_enough_bn.data(), g_delta_x_bn.data());
+    if (cmp_bn(abs_bn(bn_temp1.data(), g_delta2_x_bn.data()), g_close_enough_bn.data()) > 0)
     {
-        copy_bn(g_close_enough_bn.data(), bn_temp1);
+        g_close_enough_bn = bn_temp1;
     }
-    if (cmp_bn(abs_bn(bn_temp1, g_delta_y_bn), abs_bn(bn_temp2, g_delta2_y_bn)) > 0)
+    if (cmp_bn(abs_bn(bn_temp1.data(), g_delta_y_bn.data()), abs_bn(bn_temp2.data(), g_delta2_y_bn.data())) > 0)
     {
-        if (cmp_bn(bn_temp1, g_close_enough_bn.data()) > 0)
+        if (bn_temp1 > g_close_enough_bn)
         {
-            copy_bn(g_close_enough_bn.data(), bn_temp1);
+            g_close_enough_bn = bn_temp1;
         }
     }
-    else if (cmp_bn(bn_temp2, g_close_enough_bn.data()) > 0)
+    else if (bn_temp2 > g_close_enough_bn)
     {
-        copy_bn(g_close_enough_bn.data(), bn_temp2);
+        g_close_enough_bn = bn_temp2;
     }
     {
         int t = std::abs(g_periodicity_check);
@@ -336,8 +336,8 @@ bool mandel_per_image_bn()
     switch (g_fractal_type)
     {
     case FractalType::JULIA:
-        bf_to_bn(g_param_z_bn.x, g_bf_params[0]);
-        bf_to_bn(g_param_z_bn.y, g_bf_params[1]);
+        bf_to_bn(g_param_z_bn.x.data(), g_bf_params[0]);
+        bf_to_bn(g_param_z_bn.y.data(), g_bf_params[1]);
         break;
 
     case FractalType::MANDEL_Z_POWER:
@@ -354,8 +354,8 @@ bool mandel_per_image_bn()
 
     case FractalType::JULIA_Z_POWER:
         init_big_pi();
-        bf_to_bn(g_param_z_bn.x, g_bf_params[0]);
-        bf_to_bn(g_param_z_bn.y, g_bf_params[1]);
+        bf_to_bn(g_param_z_bn.x.data(), g_bf_params[0]);
+        bf_to_bn(g_param_z_bn.y.data(), g_bf_params[1]);
         if (g_c_exponent & 1 || g_params[3] != 0.0 || static_cast<double>(g_c_exponent) != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
@@ -501,21 +501,21 @@ int mandel_per_pixel_bn()
         return true;
     }
     // parm.x = x_min + col*delx + row*delx2
-    mult_bn_int(g_param_z_bn.x, g_delta_x_bn, static_cast<U16>(g_col));
-    mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
+    g_param_z_bn.x = g_delta_x_bn * static_cast<U16>(g_col);
+    mult_bn_int(g_bn_tmp, g_delta2_x_bn.data(), static_cast<U16>(g_row));
 
-    add_a_bn(g_param_z_bn.x, g_bn_tmp);
-    add_a_bn(g_param_z_bn.x, g_x_min_bn);
+    add_a_bn(g_param_z_bn.x.data(), g_bn_tmp);
+    g_param_z_bn.x += g_x_min_bn;
 
     // parm.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bn is just used as a temporary variable
-    mult_bn_int(g_old_z_bn.x, g_delta_y_bn, static_cast<U16>(g_row));
-    mult_bn_int(g_old_z_bn.y, g_delta2_y_bn, static_cast<U16>(g_col));
+    mult_bn_int(g_old_z_bn.x, g_delta_y_bn.data(), static_cast<U16>(g_row));
+    mult_bn_int(g_old_z_bn.y, g_delta2_y_bn.data(), static_cast<U16>(g_col));
     add_a_bn(g_old_z_bn.x, g_old_z_bn.y);
-    sub_bn(g_param_z_bn.y, g_y_max_bn, g_old_z_bn.x);
+    sub_bn(g_param_z_bn.y.data(), g_y_max_bn.data(), g_old_z_bn.x);
 
-    copy_bn(g_old_z_bn.x, g_param_z_bn.x);
-    copy_bn(g_old_z_bn.y, g_param_z_bn.y);
+    copy_bn(g_old_z_bn.x, g_param_z_bn.x.data());
+    copy_bn(g_old_z_bn.y, g_param_z_bn.y.data());
 
     if ((g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61) && g_bof_match_book_images)
     {
@@ -527,8 +527,8 @@ int mandel_per_pixel_bn()
     }
     else
     {
-        float_to_bn(g_new_z_bn.x.data(), g_params[0]);
-        float_to_bn(g_new_z_bn.y.data(), g_params[1]);
+        g_new_z_bn.x = g_params[0];
+        g_new_z_bn.y = g_params[1];
         add_a_bn(g_old_z_bn.x, g_new_z_bn.x.data());
         add_a_bn(g_old_z_bn.y, g_new_z_bn.y.data());
     }
@@ -600,18 +600,18 @@ int mandel_per_pixel_bf()
 int julia_per_pixel_bn()
 {
     // old.x = x_min + col*delx + row*delx2
-    mult_bn_int(g_old_z_bn.x, g_delta_x_bn, static_cast<U16>(g_col));
-    mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
+    mult_bn_int(g_old_z_bn.x, g_delta_x_bn.data(), static_cast<U16>(g_col));
+    mult_bn_int(g_bn_tmp, g_delta2_x_bn.data(), static_cast<U16>(g_row));
 
     add_a_bn(g_old_z_bn.x, g_bn_tmp);
-    add_a_bn(g_old_z_bn.x, g_x_min_bn);
+    add_a_bn(g_old_z_bn.x, g_x_min_bn.data());
 
     // old.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bn is just used as a temporary variable
-    mult_bn_int(g_new_z_bn.x.data(), g_delta_y_bn, static_cast<U16>(g_row));
-    mult_bn_int(g_new_z_bn.y.data(), g_delta2_y_bn, static_cast<U16>(g_col));
+    mult_bn_int(g_new_z_bn.x.data(), g_delta_y_bn.data(), static_cast<U16>(g_row));
+    mult_bn_int(g_new_z_bn.y.data(), g_delta2_y_bn.data(), static_cast<U16>(g_col));
     add_a_bn(g_new_z_bn.x.data(), g_new_z_bn.y.data());
-    sub_bn(g_old_z_bn.y, g_y_max_bn, g_new_z_bn.x.data());
+    sub_bn(g_old_z_bn.y, g_y_max_bn.data(), g_new_z_bn.x.data());
 
     // square has side effect - must copy first
     copy_bn(g_new_z_bn.x.data(), g_old_z_bn.x);
@@ -661,12 +661,12 @@ int julia_orbit_bn()
 
     // new.x = tmpsqrx - tmpsqry + parm.x;
     sub_a_bn(g_tmp_sqr_x_bn+g_shift_factor, g_tmp_sqr_y_bn+g_shift_factor);
-    add_bn(g_new_z_bn.x.data(), g_tmp_sqr_x_bn + g_shift_factor, g_param_z_bn.x);
+    add_bn(g_new_z_bn.x.data(), g_tmp_sqr_x_bn + g_shift_factor, g_param_z_bn.x.data());
 
     // new.y = 2 * g_old_z_bn.x * g_old_z_bn.y + parm.y;
     mult_bn(g_bn_tmp, g_old_z_bn.x, g_old_z_bn.y); // ok to use unsafe here
     double_a_bn(g_bn_tmp+g_shift_factor);
-    add_bn(g_new_z_bn.y.data(), g_bn_tmp + g_shift_factor, g_param_z_bn.y);
+    add_bn(g_new_z_bn.y.data(), g_bn_tmp + g_shift_factor, g_param_z_bn.y.data());
 
     return g_bailout_bignum();
 }

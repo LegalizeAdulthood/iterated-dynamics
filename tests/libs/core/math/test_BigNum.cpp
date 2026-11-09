@@ -13,6 +13,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <stdexcept>
 #include <type_traits>
@@ -415,6 +416,61 @@ TEST_F(TestBigNumValue, conversionAdaptersValidateDestinationBuffers)
     EXPECT_THROW(floating.copy_to_legacy_num(bn_buffer.data(), bn_buffer.size() - 1), std::invalid_argument);
     EXPECT_EQ(original_bn, bn_buffer);
     EXPECT_EQ(original_bf, bf_buffer);
+}
+
+TEST_P(TestBigNumLayout, unsignedScalingPreservesAllOperandBitsAndFixedWidthOverflow)
+{
+    const std::array<U16, 7> factors{0, 1, 2, 255, 256, 32768, 65535};
+    auto &persistent = bn_arena(BigLifetime::PERSISTENT);
+    for (const char *text : {"-1.2345678901234567890123456789", "0", "1.2345678901234567890123456789"})
+    {
+        const BigNum source{persistent, text};
+        const auto original = encoded_value(source);
+        for (const U16 factor : factors)
+        {
+            SCOPED_TRACE(text);
+            SCOPED_TRACE(factor);
+            auto expected = original;
+            mult_bn_int(expected.data(), expected.data(), factor);
+
+            const BigNum result = source * factor;
+
+            EXPECT_EQ(expected, encoded_value(result));
+            EXPECT_EQ(original, encoded_value(source));
+            EXPECT_EQ(&bn_arena(BigLifetime::WORKING), &result.arena());
+        }
+    }
+}
+
+TEST_P(TestBigNumLayout, unsignedDivisionAssignmentPreservesRoundingAndZeroDivisorSaturation)
+{
+    const std::array<U16, 7> divisors{0, 1, 2, 255, 256, 32768, 65535};
+    auto &persistent = bn_arena(BigLifetime::PERSISTENT);
+    std::vector<std::vector<Byte>> inputs{encoded_value(BigNum{"-1.2345678901234567890123456789"}),
+        encoded_value(BigNum{0}), encoded_value(BigNum{"1.2345678901234567890123456789"})};
+    std::vector<Byte> minimum(g_bn_length);
+    minimum.back() = 0x80;
+    inputs.push_back(minimum);
+    std::vector<Byte> quantum(g_bn_length);
+    quantum.front() = 1;
+    inputs.push_back(quantum);
+    neg_a_bn(quantum.data());
+    inputs.push_back(quantum);
+    for (const auto &input : inputs)
+    {
+        for (const U16 divisor : divisors)
+        {
+            SCOPED_TRACE(divisor);
+            auto expected = input;
+            div_a_bn_int(expected.data(), divisor);
+            BigNum value = BigNum::from_legacy(persistent, input.data(), input.size());
+
+            EXPECT_EQ(&value, &(value /= divisor));
+
+            EXPECT_EQ(expected, encoded_value(value));
+            EXPECT_EQ(&persistent, &value.arena());
+        }
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(IntegerBytes, TestBigNumLayout, testing::Values(1, 2, 4));

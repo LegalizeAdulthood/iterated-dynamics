@@ -900,8 +900,8 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
     g_temp_sqr_x = g_temp_sqr_y = 0.0;
     if (input.math == BFMathType::BIG_NUM)
     {
-        float_to_bn(g_param_z_bn.x, 2.0);
-        float_to_bn(g_param_z_bn.y, input.imag);
+        float_to_bn(g_param_z_bn.x.data(), 2.0);
+        float_to_bn(g_param_z_bn.y.data(), input.imag);
         clear_bn(g_old_z_bn.x);
         clear_bn(g_old_z_bn.y);
         square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
@@ -7655,12 +7655,12 @@ void TestPeriodicityReplay::SetUp()
         init_bf_dec(1610);
         m_big_float = true;
         ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
-        clear_bn(g_x_min_bn);
-        clear_bn(g_y_max_bn);
-        clear_bn(g_delta_x_bn);
-        clear_bn(g_delta_y_bn);
-        clear_bn(g_delta2_x_bn);
-        clear_bn(g_delta2_y_bn);
+        clear_bn(g_x_min_bn.data());
+        clear_bn(g_y_max_bn.data());
+        clear_bn(g_delta_x_bn.data());
+        clear_bn(g_delta_y_bn.data());
+        clear_bn(g_delta2_x_bn.data());
+        clear_bn(g_delta2_y_bn.data());
         float_to_bn(g_close_enough_bn.data(), g_close_enough);
         g_dispatch.set_per_pixel(mandel_per_pixel_bn);
         g_dispatch.set_orbit_calc(julia_orbit_bn);

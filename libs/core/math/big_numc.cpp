@@ -175,7 +175,7 @@ BigNumPtr half_a_bn(BigNumPtr r)
 
 /********************************************************************/
 // r = n * u  where u is an unsigned integer
-BigNumPtr mult_bn_int(BigNumPtr r, BigNumPtr n, const U16 u)
+BigNumPtr mult_bn_int(BigNumPtr r, BigNumConstPtr n, const U16 u)
 {
     U32 prod = 0;
 

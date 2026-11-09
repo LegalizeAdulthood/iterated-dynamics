@@ -835,6 +835,12 @@ BigNum &BigNum::operator/=(const BigNum &right)
     return *this;
 }
 
+BigNum &BigNum::operator/=(const U16 right)
+{
+    div_a_bn_int(m_storage.data(), right);
+    return *this;
+}
+
 BigNum BigNum::operator+(const BigNum &right) const
 {
     BigNum result{bn_arena(BigLifetime::WORKING)};
@@ -854,6 +860,13 @@ BigNum BigNum::operator*(const BigNum &right) const
     BigNum result{bn_arena(BigLifetime::WORKING).allocate_double()};
     binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), multiply);
     result.m_storage.reduce();
+    return result;
+}
+
+BigNum BigNum::operator*(const U16 right) const
+{
+    BigNum result{bn_arena(BigLifetime::WORKING)};
+    mult_bn_int(result.m_storage.data(), m_storage.data(), right);
     return result;
 }
 

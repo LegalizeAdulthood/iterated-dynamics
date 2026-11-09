@@ -15,6 +15,7 @@
 #include <engine/UserData.h>
 #include <fractals/fractype.h>
 #include <math/big_init.h>
+#include <math/BigNum.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 #include <ui/id_keys.h>
@@ -46,7 +47,8 @@ protected:
         init_bf_dec(20);
         const BigFloatPtr corners[]{g_bf_x_min, g_bf_x_max, g_bf_y_min, g_bf_y_max, g_bf_x_3rd, g_bf_y_3rd,
             g_bf_save_x_min, g_bf_save_x_max, g_bf_save_y_min, g_bf_save_y_max, g_bf_save_x_3rd, g_bf_save_y_3rd};
-        const BigNumPtr bn_corners[]{g_x_min_bn, g_x_max_bn, g_y_min_bn, g_y_max_bn, g_x_3rd_bn, g_y_3rd_bn};
+        const BigNumPtr bn_corners[]{g_x_min_bn.data(), g_x_max_bn.data(), g_y_min_bn.data(), g_y_max_bn.data(),
+            g_x_3rd_bn.data(), g_y_3rd_bn.data()};
         const double values[]{-2.0, 2.0, -1.5, 1.5, -2.0, -1.5};
         for (size_t i = 0; i < std::size(corners); ++i)
         {
@@ -114,7 +116,7 @@ TEST_F(TestPrecisionDiagnostics, formatsBigFloatGlobals)
 
 TEST_F(TestPrecisionDiagnostics, formatsBigNumVariable)
 {
-    EXPECT_THAT(format_var_bn("value", g_y_min_bn), StartsWith("value -1.5"));
+    EXPECT_THAT(format_var_bn("value", g_y_min_bn.data()), StartsWith("value -1.5"));
 }
 
 TEST_F(TestPrecisionDiagnostics, formatsBigFloatVariable)
@@ -136,7 +138,7 @@ TEST_F(TestPrecisionDiagnostics, formatsThreeBigFloatValues)
 
 TEST_F(TestPrecisionDiagnostics, formatsBigNumComparison)
 {
-    EXPECT_THAT(format_compare_values("bn", -1.5L, g_y_min_bn),
+    EXPECT_THAT(format_compare_values("bn", -1.5L, g_y_min_bn.data()),
         AllOf(HasSubstr("bignum=-1.5"), HasSubstr("double=-1.50000000000000000000")));
 }
 
@@ -147,7 +149,7 @@ TEST_F(TestPrecisionDiagnostics, formatsBigFloatComparison)
 
 TEST_F(TestPrecisionDiagnostics, shortBigNumValueDoesNotRequirePadding)
 {
-    EXPECT_LT(format_var_bn("n", g_x_min_bn).size(), 79U);
+    EXPECT_LT(format_var_bn("n", g_x_min_bn.data()).size(), 79U);
 }
 
 TEST_F(TestPrecisionDiagnostics, shortBigFloatValueDoesNotRequirePadding)
@@ -157,7 +159,7 @@ TEST_F(TestPrecisionDiagnostics, shortBigFloatValueDoesNotRequirePadding)
 
 TEST_F(TestPrecisionDiagnostics, oversizedBigNumLabelIsTruncated)
 {
-    EXPECT_EQ(std::string(79, 'x'), format_var_bn(std::string(100, 'x').c_str(), g_x_min_bn));
+    EXPECT_EQ(std::string(79, 'x'), format_var_bn(std::string(100, 'x').c_str(), g_x_min_bn.data()));
 }
 
 TEST_F(TestPrecisionDiagnostics, aspectFormattingRestoresTemporaryStack)
