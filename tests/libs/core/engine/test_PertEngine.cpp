@@ -1044,6 +1044,75 @@ void PerturbationIterationTest::TearDown()
     TestPerturbationPixels::TearDown();
 }
 
+class TestJuliaZPowerPeriodicity : public PerturbationIterationTest
+{
+public:
+    TestJuliaZPowerPeriodicity();
+};
+
+TestJuliaZPowerPeriodicity::TestJuliaZPowerPeriodicity() :
+    PerturbationIterationTest{true}
+{
+}
+
+TEST_F(TestJuliaZPowerPeriodicity, nativeBigFloatDetectsAndHighlightsCycles)
+{
+    const ValueSaver saved_real{g_params[2], 2.0};
+    const ValueSaver saved_imaginary{g_params[3], 0.0};
+    const ValueSaver saved_exponent{g_c_exponent};
+    const ValueSaver saved_symmetry{g_symmetry};
+    m_specific = *get_fractal_specific(FractalType::JULIA_Z_POWER);
+    g_fractal_type = FractalType::JULIA_Z_POWER;
+    g_dispatch = FractalDispatch{m_specific};
+    init_bf_dec(60);
+    m_big_float = true;
+    ASSERT_TRUE(select_alternate_math_dispatch());
+    clear_bf(g_bf_params[0]);
+    clear_bf(g_bf_params[1]);
+    float_to_bf(g_bf_x_min, 0);
+    float_to_bf(g_bf_x_max, 1);
+    float_to_bf(g_bf_x_3rd, 0);
+    float_to_bf(g_bf_y_min, -1);
+    float_to_bf(g_bf_y_max, 0);
+    float_to_bf(g_bf_y_3rd, -1);
+    g_image_region = ImageRegion{{0, -1}, {1, 0}, {0, -1}};
+    fill_pixel_grid();
+    g_col = g_row = 0;
+    g_max_iterations = 64;
+    g_inside_method = ColorMethod::ITER;
+    g_first_saved_and = 1;
+    g_dispatch.set_orbit_calc(+[]
+        {
+            s_standard_orbit.emplace_back(static_cast<double>(bf_to_float(g_old_z_bf.x.data())),
+                static_cast<double>(bf_to_float(g_old_z_bf.y.data())));
+            return julia_z_power_orbit_bf();
+        });
+    std::size_t full_iterations{};
+    for (const int periodicity : {0, 1, -1})
+    {
+        SCOPED_TRACE(periodicity);
+        g_periodicity_check = periodicity;
+        ASSERT_TRUE(g_dispatch.per_image()());
+        g_old_color_iter = 0;
+        s_standard_orbit.clear();
+        StandardFractal standard;
+
+        const int color = standard.calculate_standard_pixel(false);
+
+        EXPECT_EQ(g_max_iterations, g_real_color_iter);
+        EXPECT_EQ(periodicity < 0 ? 7 : g_max_iterations, color);
+        ASSERT_FALSE(s_standard_orbit.empty());
+        if (periodicity == 0)
+        {
+            full_iterations = s_standard_orbit.size();
+        }
+        else
+        {
+            EXPECT_LT(s_standard_orbit.size(), full_iterations);
+        }
+    }
+}
+
 class TestBigFloatMandelbrot : public PerturbationIterationTest
 {
 public:

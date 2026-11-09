@@ -8,6 +8,7 @@
 #include <engine/fractals.h>
 #include <engine/LogicalScreen.h>
 #include <engine/UserData.h>
+#include <fractals/fractalp.h>
 #include <fractals/fractype.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
@@ -15,8 +16,10 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <array>
 #include <cmath>
+#include <complex>
 #include <limits>
 #include <ostream>
 #include <string>
@@ -82,6 +85,24 @@ std::vector<Byte> encoded(const LDouble value)
     float_to_bf(result.data(), value);
     return result;
 }
+
+struct JuliaZPowerInput
+{
+    const char *name;
+    std::complex<double> exponent;
+    SymmetryType symmetry;
+};
+
+void PrintTo(const JuliaZPowerInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+const std::array<JuliaZPowerInput, 8> JULIA_Z_POWERS{
+    {{"Even", {2, 0}, SymmetryType::ORIGIN}, {"Odd", {3, 0}, SymmetryType::NONE},
+        {"NegativeEven", {-2, 0}, SymmetryType::ORIGIN}, {"NegativeOdd", {-3, 0}, SymmetryType::NONE},
+        {"Fractional", {0.5, 0}, SymmetryType::NONE}, {"Complex", {0.5, 0.25}, SymmetryType::NONE},
+        {"Imaginary", {0, -0.25}, SymmetryType::NONE}, {"Zero", {0, 0}, SymmetryType::ORIGIN}}};
 
 } // namespace
 
@@ -353,5 +374,111 @@ TEST_F(TestBigFloatJulia, viewportTransitionRestoresJuliaParameterAndKeepsStrict
     EXPECT_EQ(BigFloat{4}, g_old_z_bf.x);
     EXPECT_EQ(BigFloat{0}, g_old_z_bf.y);
 }
+
+class TestBigFloatJuliaZPower : public TestBigFloatJulia, public testing::WithParamInterface<JuliaZPowerInput>
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<double> m_power_real{g_params[2]};
+    ValueSaver<double> m_power_imaginary{g_params[3]};
+    ValueSaver<SymmetryType> m_symmetry{g_symmetry, SymmetryType::ORIGIN};
+    ValueSaver<FractalDispatch> m_dispatch{g_dispatch};
+    ValueSaver<const FractalSpecific *> m_specific{
+        g_cur_fractal_specific, get_fractal_specific(FractalType::JULIA_Z_POWER)};
+};
+
+void TestBigFloatJuliaZPower::SetUp()
+{
+    TestBigFloatJulia::SetUp();
+    g_fractal_type = FractalType::JULIA_Z_POWER;
+    g_params[2] = GetParam().exponent.real();
+    g_params[3] = GetParam().exponent.imag();
+    g_dispatch = FractalDispatch{*g_cur_fractal_specific};
+    ASSERT_TRUE(select_alternate_math_dispatch());
+    float_to_bf(g_bf_x_min, 0);
+    float_to_bf(g_bf_x_max, 1);
+    float_to_bf(g_bf_x_3rd, 0);
+    float_to_bf(g_bf_y_min, 0);
+    float_to_bf(g_bf_y_max, 0.5);
+    float_to_bf(g_bf_y_3rd, 0);
+    str_to_bf(g_bf_params[0], "0.12500000000000000001");
+    str_to_bf(g_bf_params[1], "-0.06250000000000000001");
+    g_magnitude_limit = 1024;
+}
+
+TEST_P(TestBigFloatJuliaZPower, setupSeedsAndOrbitKeepTheFixedParameterAndExponentRules)
+{
+    const auto parameter_x = encoded(g_bf_params[0]);
+    const auto parameter_y = encoded(g_bf_params[1]);
+    EXPECT_EQ(mandel_per_image_bf, g_dispatch.per_image());
+    EXPECT_EQ(julia_per_pixel_bf, g_dispatch.per_pixel());
+    EXPECT_EQ(julia_z_power_orbit_bf, g_dispatch.orbit_calc());
+    EXPECT_EQ(nullptr, g_cur_fractal_specific->pert_ref);
+    EXPECT_EQ(nullptr, g_cur_fractal_specific->pert_ref_bf);
+    EXPECT_EQ(nullptr, g_cur_fractal_specific->pert_pt);
+
+    ASSERT_TRUE(g_dispatch.per_image()());
+
+    EXPECT_EQ(static_cast<int>(GetParam().exponent.real()), g_c_exponent);
+    EXPECT_EQ(GetParam().symmetry, g_symmetry);
+    EXPECT_EQ(parameter_x, encoded(g_param_z_bf.x.data()));
+    EXPECT_EQ(parameter_y, encoded(g_param_z_bf.y.data()));
+    g_col = 128;
+    g_row = 256;
+    ASSERT_EQ(1, g_dispatch.per_pixel()());
+    EXPECT_EQ(37, g_color_iter);
+    EXPECT_NEAR(0.5, static_cast<double>(bf_to_float(g_old_z_bf.x.data())), 1e-14);
+    EXPECT_NEAR(0.25, static_cast<double>(bf_to_float(g_old_z_bf.y.data())), 1e-14);
+    const std::complex<double> expected =
+        std::pow(std::complex<double>{0.5, 0.25}, GetParam().exponent) + std::complex<double>{0.125, -0.0625};
+    const double tolerance = 1e-12 * std::max(1.0, std::abs(expected));
+
+    EXPECT_EQ(0, g_dispatch.orbit_calc()());
+
+    EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(g_new_z_bf.x.data())), tolerance);
+    EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(g_new_z_bf.y.data())), tolerance);
+    EXPECT_EQ(parameter_x, encoded(g_param_z_bf.x.data()));
+    EXPECT_EQ(parameter_y, encoded(g_param_z_bf.y.data()));
+}
+
+TEST_P(TestBigFloatJuliaZPower, zeroSeedRetainsTheLegacyPowerConvention)
+{
+    ASSERT_TRUE(g_dispatch.per_image()());
+    g_col = 0;
+    g_row = 512;
+    ASSERT_EQ(1, g_dispatch.per_pixel()());
+    ASSERT_EQ(BigFloat{0}, g_old_z_bf.x);
+    ASSERT_EQ(BigFloat{0}, g_old_z_bf.y);
+
+    EXPECT_EQ(0, g_dispatch.orbit_calc()());
+
+    EXPECT_NEAR(0.125, static_cast<double>(bf_to_float(g_new_z_bf.x.data())), 1e-14);
+    EXPECT_NEAR(-0.0625, static_cast<double>(bf_to_float(g_new_z_bf.y.data())), 1e-14);
+}
+
+TEST_P(TestBigFloatJuliaZPower, unitSeedKeepsTheStrictBailoutBoundary)
+{
+    clear_bf(g_bf_params[0]);
+    clear_bf(g_bf_params[1]);
+    ASSERT_TRUE(g_dispatch.per_image()());
+    g_col = 256;
+    g_row = 512;
+    ASSERT_EQ(1, g_dispatch.per_pixel()());
+    ASSERT_EQ(BigFloat{1}, g_old_z_bf.x);
+    ASSERT_EQ(BigFloat{0}, g_old_z_bf.y);
+    g_magnitude_limit = 1;
+
+    EXPECT_EQ(0, g_dispatch.orbit_calc()());
+
+    EXPECT_EQ(BigFloat{1}, g_new_z_bf.x);
+    EXPECT_EQ(BigFloat{0}, g_new_z_bf.y);
+    g_magnitude_limit = 0.5;
+
+    EXPECT_EQ(1, g_dispatch.orbit_calc()());
+}
+
+INSTANTIATE_TEST_SUITE_P(Exponents, TestBigFloatJuliaZPower, testing::ValuesIn(JULIA_Z_POWERS),
+    [](const testing::TestParamInfo<JuliaZPowerInput> &info) { return info.param.name; });
 
 } // namespace id::test
