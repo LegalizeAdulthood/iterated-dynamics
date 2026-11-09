@@ -3,6 +3,7 @@
 //
 #include <fractals/pickover_mandelbrot.h>
 
+#include <engine/bailout_formula.h>
 #include <engine/fractals.h>
 #include <engine/fractalb.h>
 #include <engine/LogicalScreen.h>
@@ -10,6 +11,7 @@
 #include <fractals/frasetup.h>
 #include <fractals/fractype.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <misc/ValueSaver.h>
 #include <misc/debug_flags.h>
 
@@ -55,6 +57,37 @@ void TestMandelPowerState::initialize_precision()
 {
     init_bf_dec(60);
     m_big_float = true;
+}
+
+TEST_F(TestMandelPowerState, nativeBigFloatReadsBothExponentComponentsOnEveryCall)
+{
+    const ValueSaver saved_real{g_params[2]};
+    const ValueSaver saved_imaginary{g_params[3]};
+    const ValueSaver saved_bailout{g_bailout_bigfloat, +[] { return 17; }};
+    initialize_precision();
+    init_big_pi();
+    const std::complex<double> seed{0.5, 0.25};
+    const std::complex<double> parameter{0.125, -0.0625};
+    g_param_z_bf.x = parameter.real();
+    g_param_z_bf.y = parameter.imag();
+    const auto stack = save_stack();
+    for (const std::complex<double> exponent :
+        {std::complex<double>{2, 0}, {3, 0}, {-1, 0}, {0.5, 0.25}, {0.5, -0.25}, {0, 0}})
+    {
+        SCOPED_TRACE(exponent);
+        g_params[2] = exponent.real();
+        g_params[3] = exponent.imag();
+        g_old_z_bf.x = seed.real();
+        g_old_z_bf.y = seed.imag();
+        const std::complex<double> expected = std::pow(seed, exponent) + parameter;
+        const double tolerance = 1e-12 * std::max(1.0, std::abs(expected));
+
+        EXPECT_EQ(17, julia_z_power_orbit_bf());
+
+        EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(g_new_z_bf.x.data())), tolerance);
+        EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(g_new_z_bf.y.data())), tolerance);
+        EXPECT_EQ(stack, save_stack());
+    }
 }
 
 class TestMandelZPowerPerturbation : public TestMandelPowerState, public WithParamInterface<int>

@@ -17,6 +17,7 @@
 #include <fractals/fractalp.h>
 #include <fractals/frasetup.h>
 #include <math/big_init.h>
+#include <math/BigComplex.h>
 #include <math/BigFloat.h>
 #include <math/BigNum.h>
 #include <math/fixed_pt.h>
@@ -687,18 +688,13 @@ int julia_orbit_bf()
 int julia_z_power_orbit_bf()
 {
     BigStackSaver saved;
-    BFPtrComplex param2;
+    BFComplex param2{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
 
-    param2.x = bf_stack().allocate_single();
-    param2.y = bf_stack().allocate_single();
-
-    float_to_bf(param2.x, g_params[2]);
-    float_to_bf(param2.y, g_params[3]);
-    BFPtrComplex new_z{g_new_z_bf.x.data(), g_new_z_bf.y.data()};
-    BFPtrComplex old_z{g_old_z_bf.x.data(), g_old_z_bf.y.data()};
-    cmplx_pow_bf(&new_z, &old_z, &param2);
-    add_bf(g_new_z_bf.x.data(), g_param_z_bf.x.data(), g_new_z_bf.x.data());
-    add_bf(g_new_z_bf.y.data(), g_param_z_bf.y.data(), g_new_z_bf.y.data());
+    param2.x = g_params[2];
+    param2.y = g_params[3];
+    g_new_z_bf = math::pow(g_old_z_bf, param2);
+    g_new_z_bf.x = g_param_z_bf.x + g_new_z_bf.x;
+    g_new_z_bf.y = g_param_z_bf.y + g_new_z_bf.y;
     return g_bailout_bigfloat();
 }
 

@@ -11,6 +11,7 @@
 #include <fractals/frasetup.h>
 #include <math/arg.h>
 #include <math/big_init.h>
+#include <math/BigComplex.h>
 #include <math/complex_fn.h>
 #include <math/fpu087.h>
 #include <misc/debug_flags.h>
@@ -169,46 +170,48 @@ void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<doub
 void mandel_z_power_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
 {
     BigStackSaver saved;
-    BFPtrComplex tmp;
-    tmp.x = bf_stack().allocate_single();
-    tmp.y = bf_stack().allocate_single();
+    BFComplex tmp{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     // The ordinary arbitrary-precision power kernel defines 0^n as 0,
     // including zero and negative exponents.
     if (is_bf_zero(z.x) && is_bf_zero(z.y))
     {
-        clear_bf(tmp.x);
-        clear_bf(tmp.y);
+        tmp.x = 0;
+        tmp.y = 0;
     }
     else if (mandel_z_power_uses_complex_power())
     {
-        BFPtrComplex exponent{bf_stack().allocate_single(), bf_stack().allocate_single()};
-        float_to_bf(exponent.x, g_params[2]);
-        float_to_bf(exponent.y, g_params[3]);
-        cmplx_pow_bf(&tmp, &z, &exponent);
+        BFComplex exponent{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+        exponent.x = g_params[2];
+        exponent.y = g_params[3];
+        tmp = pow(BFComplex{BigFloat::from_legacy(z.x, g_bf_length + 2), BigFloat::from_legacy(z.y, g_bf_length + 2)},
+            exponent);
     }
     else if (g_c_exponent == 3)
     {
-        cube(tmp, z);
+        tmp = cube(BFComplex{BigFloat::from_legacy(z.x, g_bf_length + 2), BigFloat::from_legacy(z.y, g_bf_length + 2)});
     }
     else if (g_c_exponent >= 0)
     {
-        power(tmp, z, g_c_exponent);
+        tmp = power(BFComplex{BigFloat::from_legacy(z.x, g_bf_length + 2), BigFloat::from_legacy(z.y, g_bf_length + 2)},
+            g_c_exponent);
     }
     else
     {
-        const BigFloatPtr denominator{bf_stack().allocate_single()};
-        BFPtrComplex powered{bf_stack().allocate_single(), bf_stack().allocate_single()};
-        power(tmp, z, -(g_c_exponent + 1));
-        cmplx_mul_bf(&powered, &tmp, &z);
-        square_bf(tmp.x, powered.x);
-        square_bf(tmp.y, powered.y);
-        add_bf(denominator, tmp.x, tmp.y);
-        div_bf(tmp.x, powered.x, denominator);
-        div_bf(tmp.y, powered.y, denominator);
-        neg_a_bf(tmp.y);
+        BigFloat denominator{bf_arena(BigLifetime::TEMPORARY)};
+        BFComplex powered{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+        tmp = power(BFComplex{BigFloat::from_legacy(z.x, g_bf_length + 2), BigFloat::from_legacy(z.y, g_bf_length + 2)},
+            -(g_c_exponent + 1));
+        powered =
+            tmp * BFComplex{BigFloat::from_legacy(z.x, g_bf_length + 2), BigFloat::from_legacy(z.y, g_bf_length + 2)};
+        tmp.x = sqr(powered.x);
+        tmp.y = sqr(powered.y);
+        denominator = tmp.x + tmp.y;
+        tmp.x = powered.x / denominator;
+        tmp.y = powered.y / denominator;
+        tmp.y = -tmp.y;
     }
-    add_bf(z.x, tmp.x, center.x);
-    add_bf(z.y, tmp.y, center.y);
+    add_bf(z.x, tmp.x.data(), center.x);
+    add_bf(z.y, tmp.y.data(), center.y);
 }
 
 void mandel_z_power_perturb(
