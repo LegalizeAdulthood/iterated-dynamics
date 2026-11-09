@@ -627,26 +627,26 @@ int julia_per_pixel_bn()
 int julia_per_pixel_bf()
 {
     // old.x = x_min + col*delx + row*delx2
-    mult_bf_int(g_old_z_bf.x.data(), g_delta_x_bf.data(), static_cast<U16>(g_col));
-    mult_bf_int(g_bf_tmp.data(), g_delta2_x_bf.data(), static_cast<U16>(g_row));
+    g_old_z_bf.x = g_delta_x_bf * static_cast<U16>(g_col);
+    g_bf_tmp = g_delta2_x_bf * static_cast<U16>(g_row);
 
-    add_a_bf(g_old_z_bf.x.data(), g_bf_tmp.data());
+    g_old_z_bf.x += g_bf_tmp;
     add_a_bf(g_old_z_bf.x.data(), g_bf_x_min);
 
     // old.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bf is just used as a temporary variable
-    mult_bf_int(g_new_z_bf.x.data(), g_delta_y_bf.data(), static_cast<U16>(g_row));
-    mult_bf_int(g_new_z_bf.y.data(), g_delta2_y_bf.data(), static_cast<U16>(g_col));
-    add_a_bf(g_new_z_bf.x.data(), g_new_z_bf.y.data());
+    g_new_z_bf.x = g_delta_y_bf * static_cast<U16>(g_row);
+    g_new_z_bf.y = g_delta2_y_bf * static_cast<U16>(g_col);
+    g_new_z_bf.x += g_new_z_bf.y;
     sub_bf(g_old_z_bf.y.data(), g_bf_y_max, g_new_z_bf.x.data());
 
     // square has side effect - must copy first
-    copy_bf(g_new_z_bf.x.data(), g_old_z_bf.x.data());
-    copy_bf(g_new_z_bf.y.data(), g_old_z_bf.y.data());
+    g_new_z_bf.x = g_old_z_bf.x;
+    g_new_z_bf.y = g_old_z_bf.y;
 
     // Square these to g_r_bf_length bytes of precision
-    square_bf(g_tmp_sqr_x_bf.data(), g_new_z_bf.x.data());
-    square_bf(g_tmp_sqr_y_bf.data(), g_new_z_bf.y.data());
+    g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
+    g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
 
     return 1;                  // 1st iteration has been done
 }
