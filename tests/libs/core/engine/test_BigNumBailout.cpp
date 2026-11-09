@@ -4,6 +4,9 @@
 #include <engine/bailout_formula.h>
 
 #include <engine/calcfrac.h>
+#include <engine/fractals.h>
+#include <engine/fractalb.h>
+#include <engine/LogicalScreen.h>
 #include <engine/UserData.h>
 #include <fractals/fractype.h>
 #include <math/big_init.h>
@@ -214,6 +217,116 @@ TEST_F(TestBigNumBailout, retainsWideProductBytesBeyondMachinePrecision)
         EXPECT_EQ(original_x, std::vector<Byte>(g_new_z_bn.x.data(), g_new_z_bn.x.data() + g_bn_length));
         EXPECT_EQ(original_y, std::vector<Byte>(g_new_z_bn.y.data(), g_new_z_bn.y.data() + g_bn_length));
     }
+}
+
+class TestBigNumJulia : public TestBigNumBailout
+{
+protected:
+    void SetUp() override;
+
+    ValueSaver<CalcMode> m_mode{g_std_calc_mode, CalcMode::ONE_PASS};
+    ValueSaver<LogicalScreen> m_screen{g_logical_screen, LogicalScreen{257, 513, 0, 0, 256, 512}};
+    ValueSaver<int> m_col{g_col, 0};
+    ValueSaver<int> m_row{g_row, 0};
+    ValueSaver<long> m_iteration{g_color_iter, 37};
+    ValueSaver<int> m_periodicity{g_periodicity_check, 0};
+    ValueSaver<ColorMethod> m_inside{g_inside_method, ColorMethod::COLOR};
+    ValueSaver<bool> m_book{g_bof_match_book_images, false};
+    ValueSaver<int> m_exponent{g_c_exponent};
+    ValueSaver<double> m_real{g_params[0], 0.5};
+    ValueSaver<double> m_imaginary{g_params[1], 0.375};
+};
+
+void TestBigNumJulia::SetUp()
+{
+    g_fractal_type = FractalType::JULIA;
+    TestBigNumBailout::SetUp();
+    set_bailout_formula(Bailout::MOD);
+}
+
+TEST_F(TestBigNumJulia, affineSeedsKeepPreciseFixedParameterAndWideSquareCaches)
+{
+    float_to_bf(g_bf_x_min, -2);
+    float_to_bf(g_bf_x_max, 2);
+    float_to_bf(g_bf_y_min, -1);
+    float_to_bf(g_bf_y_max, 1);
+    float_to_bf(g_bf_x_3rd, -1.5);
+    float_to_bf(g_bf_y_3rd, -0.75);
+    str_to_bf(g_bf_params[0], "0.25000000000000000001");
+    str_to_bf(g_bf_params[1], "-0.12500000000000000001");
+    std::vector<Byte> parameter_x(g_bn_length), parameter_y(g_bn_length);
+    bf_to_bn(parameter_x.data(), g_bf_params[0]);
+    bf_to_bn(parameter_y.data(), g_bf_params[1]);
+    g_magnitude_limit = 1024;
+
+    ASSERT_TRUE(mandel_per_image_bn());
+    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    for (const int col : {0, 128, 256})
+    {
+        for (const int row : {0, 256, 512})
+        {
+            SCOPED_TRACE(col);
+            SCOPED_TRACE(row);
+            g_col = col;
+            g_row = row;
+            const double real = -2 + col * (7.0 / 512) + row * (1.0 / 1024);
+            const double imag = 1 - (row * (7.0 / 2048) + col * (1.0 / 1024));
+
+            EXPECT_EQ(1, julia_per_pixel_bn());
+
+            EXPECT_EQ(37, g_color_iter);
+            EXPECT_DOUBLE_EQ(real, static_cast<double>(bn_to_float(g_old_z_bn.x)));
+            EXPECT_DOUBLE_EQ(imag, static_cast<double>(bn_to_float(g_old_z_bn.y)));
+            EXPECT_DOUBLE_EQ(real, static_cast<double>(bn_to_float(g_new_z_bn.x.data())));
+            EXPECT_DOUBLE_EQ(imag, static_cast<double>(bn_to_float(g_new_z_bn.y.data())));
+            EXPECT_DOUBLE_EQ(real * real, static_cast<double>(bn_to_float(g_tmp_sqr_x_bn + g_shift_factor)));
+            EXPECT_DOUBLE_EQ(imag * imag, static_cast<double>(bn_to_float(g_tmp_sqr_y_bn + g_shift_factor)));
+            EXPECT_EQ(parameter_x, std::vector<Byte>(g_param_z_bn.x.data(), g_param_z_bn.x.data() + g_bn_length));
+            EXPECT_EQ(parameter_y, std::vector<Byte>(g_param_z_bn.y.data(), g_param_z_bn.y.data() + g_bn_length));
+
+            EXPECT_EQ(0, julia_orbit_bn());
+
+            EXPECT_EQ(BigNum{real * real - imag * imag} + g_param_z_bn.x, g_new_z_bn.x);
+            EXPECT_EQ(BigNum{2 * real * imag} + g_param_z_bn.y, g_new_z_bn.y);
+            EXPECT_EQ(parameter_x, std::vector<Byte>(g_param_z_bn.x.data(), g_param_z_bn.x.data() + g_bn_length));
+            EXPECT_EQ(parameter_y, std::vector<Byte>(g_param_z_bn.y.data(), g_param_z_bn.y.data() + g_bn_length));
+        }
+    }
+}
+
+TEST_F(TestBigNumJulia, viewportTransitionRestoresJuliaParameterAndKeepsBailoutEquality)
+{
+    float_to_bf(g_bf_x_min, 1);
+    float_to_bf(g_bf_x_max, 3);
+    float_to_bf(g_bf_x_3rd, 1);
+    float_to_bf(g_bf_y_min, -1);
+    float_to_bf(g_bf_y_max, 1);
+    float_to_bf(g_bf_y_3rd, -1);
+    clear_bf(g_bf_params[0]);
+    clear_bf(g_bf_params[1]);
+    g_col = 128;
+    g_row = 256;
+    g_magnitude_limit = 16;
+    g_fractal_type = FractalType::MANDEL;
+    ASSERT_TRUE(mandel_per_image_bn());
+    ASSERT_EQ(1, mandel_per_pixel_bn());
+    ASSERT_EQ(BigNum{2}, g_param_z_bn.x);
+
+    g_fractal_type = FractalType::JULIA;
+    ASSERT_TRUE(mandel_per_image_bn());
+    ASSERT_EQ(BigNum{0}, g_param_z_bn.x);
+    ASSERT_EQ(BigNum{0}, g_param_z_bn.y);
+    ASSERT_EQ(1, julia_per_pixel_bn());
+    EXPECT_EQ(37, g_color_iter);
+    EXPECT_EQ(2, bn_to_float(g_old_z_bn.x));
+    EXPECT_EQ(0, bn_to_float(g_old_z_bn.y));
+
+    EXPECT_EQ(1, julia_orbit_bn());
+
+    EXPECT_EQ(BigNum{4}, g_new_z_bn.x);
+    EXPECT_EQ(BigNum{0}, g_new_z_bn.y);
+    EXPECT_EQ(2, bn_to_float(g_old_z_bn.x));
+    EXPECT_EQ(0, bn_to_float(g_old_z_bn.y));
 }
 
 } // namespace id::test

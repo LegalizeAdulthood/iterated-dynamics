@@ -608,9 +608,9 @@ int julia_per_pixel_bn()
 
     // old.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bn is just used as a temporary variable
-    mult_bn_int(g_new_z_bn.x.data(), g_delta_y_bn.data(), static_cast<U16>(g_row));
-    mult_bn_int(g_new_z_bn.y.data(), g_delta2_y_bn.data(), static_cast<U16>(g_col));
-    add_a_bn(g_new_z_bn.x.data(), g_new_z_bn.y.data());
+    g_new_z_bn.x = g_delta_y_bn * static_cast<U16>(g_row);
+    g_new_z_bn.y = g_delta2_y_bn * static_cast<U16>(g_col);
+    g_new_z_bn.x += g_new_z_bn.y;
     sub_bn(g_old_z_bn.y, g_y_max_bn.data(), g_new_z_bn.x.data());
 
     // square has side effect - must copy first
