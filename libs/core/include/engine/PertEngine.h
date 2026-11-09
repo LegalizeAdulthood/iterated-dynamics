@@ -166,12 +166,12 @@ private:
     DistanceEstimator m_distance_estimator{};
     int m_reference_count{};
     long m_cycle_len{-1};
-    math::BFPtrComplex m_reference_coordinate_bf{};
-    math::BFPtrComplex m_reference_z_bf{};
-    math::BFPtrComplex m_reference_initial_bf{};
+    math::BFComplex m_reference_coordinate_bf{};
+    math::BFComplex m_reference_z_bf{};
+    math::BFComplex m_reference_initial_bf{};
     math::BFPtrComplex m_orbit_parameter_bf{};
     math::BFPtrComplex m_orbit_initial_bf{};
-    math::BigFloatPtr m_tmp_bf{};
+    math::BigFloat m_tmp_bf{};
     math::BFComplex m_center_bf{};
     math::BFComplex m_half_horizontal_bf{};
     math::BFComplex m_half_vertical_bf{};

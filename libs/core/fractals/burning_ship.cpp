@@ -204,7 +204,7 @@ void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double
     }
 }
 
-void burning_ship_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
+void burning_ship_ref_pt_bf(const BFComplex &center, BFComplex &z)
 {
     const int degree = static_cast<int>(g_params[2]);
     BigStackSaver saved;
@@ -215,25 +215,25 @@ void burning_ship_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
     BFComplex z2;
     z2.x = BigFloat{bf_arena(BigLifetime::TEMPORARY)};
     z2.y = BigFloat{bf_arena(BigLifetime::TEMPORARY)};
-    double_bf(z2.x.data(), z.x);
-    double_bf(z2.y.data(), z.y);
+    double_bf(z2.x.data(), z.x.data());
+    double_bf(z2.y.data(), z.y.data());
     if (degree == 2)
     {
-        square_bf(real_sqr.data(), z.x);
-        square_bf(imag_sqr.data(), z.y);
+        real_sqr = sqr(z.x);
+        imag_sqr = sqr(z.y);
         temp_real = real_sqr - imag_sqr;
-        add_bf(z.x, temp_real.data(), center.x);
-        mult_bf(real_imag.data(), z2.x.data(), z.y);
+        z.x = temp_real + center.x;
+        real_imag = z2.x * z.y;
         real_imag = abs(real_imag);
-        add_bf(z.y, real_imag.data(), center.y);
+        z.y = real_imag + center.y;
     }
     else if (degree > 2)
     {
-        abs_bf(z2.x.data(), z.x);
-        abs_bf(z2.y.data(), z.y);
+        z2.x = abs(z.x);
+        z2.y = abs(z.y);
         g_new_z_bf = power(z2, degree);
-        add_bf(z.x, g_new_z_bf.x.data(), center.x);
-        add_bf(z.y, g_new_z_bf.y.data(), center.y);
+        z.x = g_new_z_bf.x + center.x;
+        z.y = g_new_z_bf.y + center.y;
     }
 }
 

@@ -72,6 +72,16 @@ using namespace testing;
 namespace id::test
 {
 
+TEST(TestPerturbationLifetime, ordinaryFrameFinishesWithoutArbitraryPrecision)
+{
+    const ValueSaver saved_math{g_bf_math, BFMathType::NONE};
+    PertEngine engine;
+    engine.initialize_frame({}, {}, {});
+
+    EXPECT_NO_THROW(engine.finish());
+    EXPECT_NO_THROW(engine.finish());
+}
+
 struct GlitchToleranceInput
 {
     const char *name;
@@ -551,7 +561,7 @@ void record_coordinate(
     mandel_perturb(reference, delta, parameter_delta);
 }
 
-void fail_reference_bf(const BFPtrComplex &, BFPtrComplex &)
+void fail_reference_bf(const BFComplex &, BFComplex &)
 {
     throw std::bad_array_new_length{};
 }
@@ -563,25 +573,26 @@ void record_reference(const std::complex<double> &center, std::complex<double> &
     mandel_ref_pt(center, z);
 }
 
-void record_reference_bf(const BFPtrComplex &center, BFPtrComplex &z)
+void record_reference_bf(const BFComplex &center, BFComplex &z)
 {
-    s_reference_coordinates.emplace_back(bf_to_float(center.x), bf_to_float(center.y));
-    s_reference_values.emplace_back(bf_to_float(z.x), bf_to_float(z.y));
+    BFComplex coordinate{center};
+    s_reference_coordinates.emplace_back(bf_to_float(coordinate.x.data()), bf_to_float(coordinate.y.data()));
+    s_reference_values.emplace_back(bf_to_float(z.x.data()), bf_to_float(z.y.data()));
     mandel_ref_pt_bf(center, z);
 }
 
-void record_deep_reference_bf(const BFPtrComplex &center, BFPtrComplex &z)
+void record_deep_reference_bf(const BFComplex &center, BFComplex &z)
 {
     BigStackSaver saved;
-    const BigFloatPtr offset{bf_stack().allocate_single()};
-    const BigFloatPtr scale{bf_stack().allocate_single()};
-    str_to_bf(scale, "1e-400");
-    int_to_bf(offset, -2);
-    sub_bf(offset, center.x, offset);
-    div_bf(offset, offset, scale);
-    const double x{static_cast<double>(bf_to_float(offset))};
-    div_bf(offset, center.y, scale);
-    const std::complex<double> coordinate{x, static_cast<double>(bf_to_float(offset))};
+    BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat scale{bf_arena(BigLifetime::TEMPORARY)};
+    str_to_bf(scale.data(), "1e-400");
+    offset = -2;
+    offset = center.x - offset;
+    offset /= scale;
+    const double x{static_cast<double>(bf_to_float(offset.data()))};
+    offset = center.y / scale;
+    const std::complex<double> coordinate{x, static_cast<double>(bf_to_float(offset.data()))};
     if (s_reference_coordinates.empty() || s_reference_coordinates.back() != coordinate)
     {
         s_reference_coordinates.push_back(coordinate);
@@ -783,6 +794,38 @@ TEST_F(TestPerturbationPixels, frameCenterReferenceKeepsOwnershipAndCleanupAtThe
     EXPECT_EQ(&center, &next_center);
     EXPECT_EQ(BigFloat{0}, next_center.x);
     EXPECT_EQ(BigFloat{0}, next_center.y);
+}
+
+TEST_F(TestPerturbationPixels, referenceCallbacksPreserveTheCenterAndDestinationArena)
+{
+    const ValueSaver saved_exponent{g_c_exponent, 2};
+    const ValueSaver saved_real{g_params[2], 2.0};
+    const ValueSaver saved_imag{g_params[3], 0.0};
+    const ValueSaver saved_debug{g_debug_flag, DebugFlags::NONE};
+    init_bf_dec(60);
+    m_big_float = true;
+    const BFComplex center{
+        BigFloat{bf_arena(BigLifetime::PERSISTENT), 0.125}, BigFloat{bf_arena(BigLifetime::PERSISTENT), 0.0625}};
+    const std::vector<Byte> original_x{center.x.data(), center.x.data() + g_bf_length + 2};
+    const std::vector<Byte> original_y{center.y.data(), center.y.data() + g_bf_length + 2};
+    const std::array<PerturbationReferenceBF, 3> callbacks{
+        mandel_ref_pt_bf, mandel_z_power_ref_pt_bf, burning_ship_ref_pt_bf};
+    const std::array<std::complex<double>, 3> expected{{{0.3125, -0.1875}, {0.3125, -0.1875}, {0.3125, 0.3125}}};
+    for (std::size_t i = 0; i < callbacks.size(); ++i)
+    {
+        SCOPED_TRACE(i);
+        BFComplex orbit{
+            BigFloat{bf_arena(BigLifetime::TEMPORARY), 0.5}, BigFloat{bf_arena(BigLifetime::TEMPORARY), -0.25}};
+
+        callbacks[i](center, orbit);
+
+        EXPECT_NEAR(expected[i].real(), static_cast<double>(bf_to_float(orbit.x.data())), 1e-14);
+        EXPECT_NEAR(expected[i].imag(), static_cast<double>(bf_to_float(orbit.y.data())), 1e-14);
+        EXPECT_EQ(original_x, (std::vector<Byte>{center.x.data(), center.x.data() + g_bf_length + 2}));
+        EXPECT_EQ(original_y, (std::vector<Byte>{center.y.data(), center.y.data() + g_bf_length + 2}));
+        EXPECT_EQ(&bf_arena(BigLifetime::TEMPORARY), &orbit.x.arena());
+        EXPECT_EQ(&bf_arena(BigLifetime::TEMPORARY), &orbit.y.arena());
+    }
 }
 
 TEST_F(TestPerturbationPixels, finishingReleasesReferenceWorkingStorageAndAllowsAnotherFrame)
@@ -1695,7 +1738,7 @@ TEST_P(TestPerturbationIterations, referenceFailureAfterYieldDiscardsPartialStor
         }
         record_reference(center, z);
     };
-    m_specific.pert_ref_bf = [](const BFPtrComplex &center, BFPtrComplex &z)
+    m_specific.pert_ref_bf = [](const BFComplex &center, BFComplex &z)
     {
         if (s_reference_coordinates.size() == 2048)
         {
@@ -1736,7 +1779,7 @@ TEST_P(TestPerturbationIterations, replacementFailureAfterYieldDoesNotPublishOrP
         }
         record_reference(center, z);
     };
-    m_specific.pert_ref_bf = [](const BFPtrComplex &center, BFPtrComplex &z)
+    m_specific.pert_ref_bf = [](const BFComplex &center, BFComplex &z)
     {
         if (s_reference_coordinates.size() == 5000 + 2048)
         {
@@ -4227,7 +4270,7 @@ TEST_P(TestPerturbationIterations, starTrailRestoresTheLimitAfterReferenceFailur
         EXPECT_EQ(16, g_max_iterations);
         throw std::runtime_error{"reference failure"};
     };
-    m_specific.pert_ref_bf = [](const BFPtrComplex &, BFPtrComplex &)
+    m_specific.pert_ref_bf = [](const BFComplex &, BFComplex &)
     {
         EXPECT_EQ(16, g_max_iterations);
         throw std::runtime_error{"reference failure"};
@@ -11705,14 +11748,14 @@ TEST_F(TestPerturbationPixels, highPrecisionFixedOrbitPreservesSmallParameterOff
     BFComplex &center{m_engine.initialize_frame_bf({}, {})};
     float_to_bf(center.x.data(), 0.5);
     float_to_bf(center.y.data(), -0.125);
-    m_specific.pert_ref_bf = [](const BFPtrComplex &parameter, BFPtrComplex &z)
+    m_specific.pert_ref_bf = [](const BFComplex &parameter, BFComplex &z)
     {
         BigStackSaver saved;
         const BFPtrComplex displacement{bf_stack().allocate_single(), bf_stack().allocate_single()};
         float_to_bf(displacement.x, 0.25);
         float_to_bf(displacement.y, 0.125);
-        sub_bf(displacement.x, z.x, displacement.x);
-        sub_bf(displacement.y, z.y, displacement.y);
+        sub_bf(displacement.x, z.x.data(), displacement.x);
+        sub_bf(displacement.y, z.y.data(), displacement.y);
         s_reference_coordinates.emplace_back(bf_to_float(displacement.x), bf_to_float(displacement.y));
         mandel_ref_pt_bf(parameter, z);
     };

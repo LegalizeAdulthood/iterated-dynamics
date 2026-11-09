@@ -723,7 +723,7 @@ void PertEngine::cleanup()
     m_reference_sample = 0;
     m_reference_samples = 0;
     m_reference_ready = false;
-    m_tmp_bf = {};
+    m_tmp_bf = BigFloat{};
     m_center_bf = {};
     m_half_horizontal_bf = {};
     m_half_vertical_bf = {};
@@ -752,14 +752,14 @@ void PertEngine::allocate_working_values()
 {
     if (g_bf_math != BFMathType::NONE)
     {
-        m_reference_coordinate_bf.x = bf_stack().allocate_single();
-        m_reference_coordinate_bf.y = bf_stack().allocate_single();
-        m_reference_z_bf.x = bf_stack().allocate_single();
-        m_reference_z_bf.y = bf_stack().allocate_single();
-        m_reference_initial_bf = {bf_stack().allocate_single(), bf_stack().allocate_single()};
+        m_reference_coordinate_bf.x = BigFloat{bf_arena(BigLifetime::WORKING)};
+        m_reference_coordinate_bf.y = BigFloat{bf_arena(BigLifetime::WORKING)};
+        m_reference_z_bf.x = BigFloat{bf_arena(BigLifetime::WORKING)};
+        m_reference_z_bf.y = BigFloat{bf_arena(BigLifetime::WORKING)};
+        m_reference_initial_bf = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
         m_orbit_parameter_bf = {bf_stack().allocate_single(), bf_stack().allocate_single()};
         m_orbit_initial_bf = {bf_stack().allocate_single(), bf_stack().allocate_single()};
-        m_tmp_bf = bf_stack().allocate_single();
+        m_tmp_bf = BigFloat{bf_arena(BigLifetime::WORKING)};
     }
 }
 
@@ -885,11 +885,7 @@ bool PertEngine::parameter_delta(const std::complex<double> &pixel_position, std
     BigStackSaver saved;
     BFComplex coordinate{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     coordinate_bf(coordinate, pixel_position);
-    const auto size = static_cast<std::size_t>(g_bf_length + 2);
-    return relative_delta(coordinate,
-        {BigFloat::from_legacy(m_reference_coordinate_bf.x, size),
-            BigFloat::from_legacy(m_reference_coordinate_bf.y, size)},
-        delta);
+    return relative_delta(coordinate, m_reference_coordinate_bf, delta);
 }
 
 void PertEngine::coordinate_bf(BFComplex &coordinate, const std::complex<double> &pixel_position) const
@@ -917,12 +913,9 @@ void PertEngine::set_reference_point(const std::complex<double> &pixel_position)
 
     if (g_bf_math != BFMathType::NONE)
     {
-        BFComplex coordinate{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-        coordinate_bf(coordinate, pixel_position);
-        const auto size = static_cast<std::size_t>(g_bf_length + 2);
-        coordinate.x.copy_to_legacy(m_reference_coordinate_bf.x, size);
-        coordinate.y.copy_to_legacy(m_reference_coordinate_bf.y, size);
-        initialize_orbit_bf(m_reference_z_bf, m_reference_coordinate_bf);
+        coordinate_bf(m_reference_coordinate_bf, pixel_position);
+        initialize_orbit_bf({m_reference_z_bf.x.data(), m_reference_z_bf.y.data()},
+            {m_reference_coordinate_bf.x.data(), m_reference_coordinate_bf.y.data()});
     }
     else
     {
@@ -944,20 +937,20 @@ void PertEngine::set_reference_orbit()
     {
         if (m_orbit_input.precise)
         {
-            copy_bf(m_reference_coordinate_bf.x, m_orbit_parameter_bf.x);
-            copy_bf(m_reference_coordinate_bf.y, m_orbit_parameter_bf.y);
-            copy_bf(m_reference_z_bf.x, m_orbit_initial_bf.x);
-            copy_bf(m_reference_z_bf.y, m_orbit_initial_bf.y);
+            copy_bf(m_reference_coordinate_bf.x.data(), m_orbit_parameter_bf.x);
+            copy_bf(m_reference_coordinate_bf.y.data(), m_orbit_parameter_bf.y);
+            copy_bf(m_reference_z_bf.x.data(), m_orbit_initial_bf.x);
+            copy_bf(m_reference_z_bf.y.data(), m_orbit_initial_bf.y);
         }
         else
         {
-            float_to_bf(m_reference_coordinate_bf.x, m_orbit_input.parameter.real());
-            float_to_bf(m_reference_coordinate_bf.y, m_orbit_input.parameter.imag());
-            float_to_bf(m_reference_z_bf.x, m_orbit_input.value.real());
-            float_to_bf(m_reference_z_bf.y, m_orbit_input.value.imag());
+            m_reference_coordinate_bf.x = m_orbit_input.parameter.real();
+            m_reference_coordinate_bf.y = m_orbit_input.parameter.imag();
+            m_reference_z_bf.x = m_orbit_input.value.real();
+            m_reference_z_bf.y = m_orbit_input.value.imag();
         }
-        copy_bf(m_reference_initial_bf.x, m_reference_z_bf.x);
-        copy_bf(m_reference_initial_bf.y, m_reference_z_bf.y);
+        m_reference_initial_bf.x = m_reference_z_bf.x;
+        m_reference_initial_bf.y = m_reference_z_bf.y;
     }
 }
 
@@ -1033,14 +1026,10 @@ void PertEngine::begin_point(const Point &pt)
             const auto size = static_cast<std::size_t>(g_bf_length + 2);
             const bool parameter_fits{relative_delta({BigFloat::from_legacy(m_orbit_parameter_bf.x, size),
                                                          BigFloat::from_legacy(m_orbit_parameter_bf.y, size)},
-                {BigFloat::from_legacy(m_reference_coordinate_bf.x, size),
-                    BigFloat::from_legacy(m_reference_coordinate_bf.y, size)},
-                m_pixel.parameter_displacement)};
+                m_reference_coordinate_bf, m_pixel.parameter_displacement)};
             const bool orbit_fits{relative_delta(
                 {BigFloat::from_legacy(m_orbit_initial_bf.x, size), BigFloat::from_legacy(m_orbit_initial_bf.y, size)},
-                {BigFloat::from_legacy(m_reference_initial_bf.x, size),
-                    BigFloat::from_legacy(m_reference_initial_bf.y, size)},
-                m_pixel.orbit_displacement)};
+                m_reference_initial_bf, m_pixel.orbit_displacement)};
             if (!parameter_fits || !orbit_fits)
             {
                 m_pixel.phase = PixelState::Phase::REBASE;
@@ -1171,7 +1160,15 @@ bool PertEngine::advance_precise_orbit(const std::size_t target, std::size_t &re
         }
         m_pixel.precise_previous = {static_cast<double>(bf_to_float(m_pixel.precise_orbit.x)),
             static_cast<double>(bf_to_float(m_pixel.precise_orbit.y))};
-        g_cur_fractal_specific->pert_ref_bf(m_pixel.precise_coordinate, m_pixel.precise_orbit);
+        const auto size = static_cast<std::size_t>(g_bf_length + 2);
+        const BFComplex coordinate{
+            BigFloat::from_legacy(bf_arena(BigLifetime::TEMPORARY), m_pixel.precise_coordinate.x, size),
+            BigFloat::from_legacy(bf_arena(BigLifetime::TEMPORARY), m_pixel.precise_coordinate.y, size)};
+        BFComplex orbit{BigFloat::from_legacy(bf_arena(BigLifetime::TEMPORARY), m_pixel.precise_orbit.x, size),
+            BigFloat::from_legacy(bf_arena(BigLifetime::TEMPORARY), m_pixel.precise_orbit.y, size)};
+        g_cur_fractal_specific->pert_ref_bf(coordinate, orbit);
+        orbit.x.copy_to_legacy(m_pixel.precise_orbit.x, size);
+        orbit.y.copy_to_legacy(m_pixel.precise_orbit.y, size);
     }
     return true;
 }
@@ -1526,9 +1523,9 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
             {
                 return CALC_YIELDED;
             }
-            if (cmp_bf(abs_a_bf(sub_bf(m_tmp_bf, m_pixel.precise_saved.x, m_pixel.precise_orbit.x)),
+            if (cmp_bf(abs_a_bf(sub_bf(m_tmp_bf.data(), m_pixel.precise_saved.x, m_pixel.precise_orbit.x)),
                     m_pixel.precise_tolerance) < 0 &&
-                cmp_bf(abs_a_bf(sub_bf(m_tmp_bf, m_pixel.precise_saved.y, m_pixel.precise_orbit.y)),
+                cmp_bf(abs_a_bf(sub_bf(m_tmp_bf.data(), m_pixel.precise_saved.y, m_pixel.precise_orbit.y)),
                     m_pixel.precise_tolerance) < 0)
             {
                 m_cycle_len = m_pixel.iteration - m_pixel.saved_iteration;
@@ -1717,16 +1714,16 @@ void PertEngine::advance_reference_bf(const std::size_t end)
 {
     BigStackSaver saved;
 
-    BigFloatPtr temp_real_bf = bf_stack().allocate_single();
-    BigFloatPtr temp_imag_bf = bf_stack().allocate_single();
-    BigFloatPtr tmp_bf = bf_stack().allocate_single();
+    BigFloat temp_real_bf{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat temp_imag_bf{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp_bf{bf_arena(BigLifetime::TEMPORARY)};
 
-    float_to_bf(tmp_bf, m_glitch_tolerance);
+    tmp_bf = m_glitch_tolerance;
     for (; m_reference_sample < end; ++m_reference_sample)
     {
         std::complex<double> c;
-        c.real(bf_to_float(m_reference_z_bf.x));
-        c.imag(bf_to_float(m_reference_z_bf.y));
+        c.real(bf_to_float(m_reference_z_bf.x.data()));
+        c.imag(bf_to_float(m_reference_z_bf.y.data()));
 
         m_reference.orbit.push_back(c);
         // Norm is the squared version of abs and the perturbation tolerance is squared.
@@ -1734,11 +1731,11 @@ void PertEngine::advance_reference_bf(const std::size_t end)
         // value to see if the value is glitched. We are leaving it squared because otherwise we'd need to do
         // a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 
-        mult_bf(temp_real_bf, m_reference_z_bf.x, tmp_bf);
-        mult_bf(temp_imag_bf, m_reference_z_bf.y, tmp_bf);
+        temp_real_bf = m_reference_z_bf.x * tmp_bf;
+        temp_imag_bf = m_reference_z_bf.y * tmp_bf;
         std::complex<double> tolerance;
-        tolerance.real(bf_to_float(temp_real_bf));
-        tolerance.imag(bf_to_float(temp_imag_bf));
+        tolerance.real(bf_to_float(temp_real_bf.data()));
+        tolerance.imag(bf_to_float(temp_imag_bf.data()));
 
         m_reference.tolerance.push_back(mag_squared(tolerance));
 
@@ -1751,7 +1748,7 @@ void PertEngine::advance_reference_bf(const std::size_t end)
         {
             if (!m_reference.explicit_orbit && g_inside_method == ColorMethod::STAR_TRAIL && m_reference_sample > 0)
             {
-                clamp_star_trail_point(m_reference_z_bf);
+                clamp_star_trail_point({m_reference_z_bf.x.data(), m_reference_z_bf.y.data()});
             }
             g_cur_fractal_specific->pert_ref_bf(m_reference_coordinate_bf, m_reference_z_bf);
         }

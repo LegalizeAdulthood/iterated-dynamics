@@ -167,13 +167,13 @@ void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<doub
     }
 }
 
-void mandel_z_power_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
+void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
 {
     BigStackSaver saved;
     BFComplex tmp{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     // The ordinary arbitrary-precision power kernel defines 0^n as 0,
     // including zero and negative exponents.
-    if (is_bf_zero(z.x) && is_bf_zero(z.y))
+    if (is_bf_zero(z.x.data()) && is_bf_zero(z.y.data()))
     {
         tmp.x = 0;
         tmp.y = 0;
@@ -183,26 +183,22 @@ void mandel_z_power_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
         BFComplex exponent{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
         exponent.x = g_params[2];
         exponent.y = g_params[3];
-        tmp = pow(BFComplex{BigFloat::from_legacy(z.x, g_bf_length + 2), BigFloat::from_legacy(z.y, g_bf_length + 2)},
-            exponent);
+        tmp = pow(z, exponent);
     }
     else if (g_c_exponent == 3)
     {
-        tmp = cube(BFComplex{BigFloat::from_legacy(z.x, g_bf_length + 2), BigFloat::from_legacy(z.y, g_bf_length + 2)});
+        tmp = cube(z);
     }
     else if (g_c_exponent >= 0)
     {
-        tmp = power(BFComplex{BigFloat::from_legacy(z.x, g_bf_length + 2), BigFloat::from_legacy(z.y, g_bf_length + 2)},
-            g_c_exponent);
+        tmp = power(z, g_c_exponent);
     }
     else
     {
         BigFloat denominator{bf_arena(BigLifetime::TEMPORARY)};
         BFComplex powered{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-        tmp = power(BFComplex{BigFloat::from_legacy(z.x, g_bf_length + 2), BigFloat::from_legacy(z.y, g_bf_length + 2)},
-            -(g_c_exponent + 1));
-        powered =
-            tmp * BFComplex{BigFloat::from_legacy(z.x, g_bf_length + 2), BigFloat::from_legacy(z.y, g_bf_length + 2)};
+        tmp = power(z, -(g_c_exponent + 1));
+        powered = tmp * z;
         tmp.x = sqr(powered.x);
         tmp.y = sqr(powered.y);
         denominator = tmp.x + tmp.y;
@@ -210,8 +206,8 @@ void mandel_z_power_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
         tmp.y = powered.y / denominator;
         tmp.y = -tmp.y;
     }
-    add_bf(z.x, tmp.x.data(), center.x);
-    add_bf(z.y, tmp.y.data(), center.y);
+    z.x = tmp.x + center.x;
+    z.y = tmp.y + center.y;
 }
 
 void mandel_z_power_perturb(

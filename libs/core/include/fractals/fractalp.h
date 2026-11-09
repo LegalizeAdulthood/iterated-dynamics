@@ -7,6 +7,7 @@
 #include <fractals/fractype.h>
 #include <helpdefs.h>
 #include <math/big.h>
+#include <math/BigFloat.h>
 
 #include <complex>
 
@@ -98,7 +99,7 @@ inline bool bit_clear(const FractalFlags value, const FractalFlags bit)
 }
 
 using PerturbationReference = void (*)(const std::complex<double> &center, std::complex<double> &z);
-using PerturbationReferenceBF = void (*)(const math::BFPtrComplex &center, math::BFPtrComplex &z);
+using PerturbationReferenceBF = void (*)(const math::BFComplex &center, math::BFComplex &z);
 using PerturbationPoint = void (*)(
     const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0);
 
@@ -125,7 +126,7 @@ struct FractalSpecific
     CalcType calc_type;                     // name of main fractal function
     int orbit_bailout;                      // usual bailout value for orbit calc
     PerturbationReference pert_ref{};       // compute perturbation reference orbit
-    PerturbationReferenceBF pert_ref_bf{};  // compute BFPtrComplex perturbation reference orbit
+    PerturbationReferenceBF pert_ref_bf{};  // compute BFComplex perturbation reference orbit
     PerturbationPoint pert_pt{};            // compute point via perturbation
 };
 

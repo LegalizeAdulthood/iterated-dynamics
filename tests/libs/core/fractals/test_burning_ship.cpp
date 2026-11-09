@@ -146,14 +146,14 @@ TEST_P(TestBurningShipPoint, referenceOrbitKeepsItsOrientationAndScratchRoles)
     const auto &input = GetParam();
     g_params[2] = input.degree;
     BigStackSaver saved;
-    BFPtrComplex point{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    const BFPtrComplex center{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    float_to_bf(point.x, input.point.real());
-    float_to_bf(point.y, input.point.imag());
-    float_to_bf(center.x, 0.125);
-    float_to_bf(center.y, -0.0625);
-    const auto center_x = encoded(center.x);
-    const auto center_y = encoded(center.y);
+    BFComplex point{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    point.x = input.point.real();
+    point.y = input.point.imag();
+    center.x = 0.125;
+    center.y = -0.0625;
+    const auto center_x = encoded(center.x.data());
+    const auto center_y = encoded(center.y.data());
     g_new_z_bf.x = 7;
     g_new_z_bf.y = 9;
     std::complex<double> expected;
@@ -173,10 +173,10 @@ TEST_P(TestBurningShipPoint, referenceOrbitKeepsItsOrientationAndScratchRoles)
 
     burning_ship_ref_pt_bf(center, point);
 
-    EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(point.x)), tolerance);
-    EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(point.y)), tolerance);
-    EXPECT_EQ(center_x, encoded(center.x));
-    EXPECT_EQ(center_y, encoded(center.y));
+    EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(point.x.data())), tolerance);
+    EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(point.y.data())), tolerance);
+    EXPECT_EQ(center_x, encoded(center.x.data()));
+    EXPECT_EQ(center_y, encoded(center.y.data()));
     EXPECT_EQ(stack, save_stack());
     if (input.degree == 2)
     {
