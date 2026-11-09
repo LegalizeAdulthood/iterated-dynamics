@@ -12,6 +12,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <type_traits>
 #include <utility>
@@ -464,6 +465,56 @@ TEST_P(TestBigFloatArithmetic, zeroAndDivisionByZeroKeepLegacyResults)
     EXPECT_EQ(encoded_value(zero), encoded_value(zero / value));
     EXPECT_EQ(encoded_value(zero), encoded_value(zero / zero));
     EXPECT_EQ(expected, encoded_value(value / zero));
+}
+
+TEST_P(TestBigFloatArithmetic, unsignedScalingRetainsLegacyNormalizationAndOperands)
+{
+    const std::array<U16, 7> factors{0, 1, 2, 255, 256, 32768, 65535};
+    auto &persistent = bf_arena(BigLifetime::PERSISTENT);
+    for (const char *text : {"0", "-1.2345678901234567890123456789e-400", "1.2345678901234567890123456789e400"})
+    {
+        const BigFloat source{persistent, text};
+        const auto original = encoded_value(source);
+        for (const U16 factor : factors)
+        {
+            SCOPED_TRACE(text);
+            SCOPED_TRACE(factor);
+            std::vector<Byte> expected(g_r_bf_length + 2);
+            mult_bf_int(expected.data(), original.data(), factor);
+            expected.resize(g_bf_length + 2);
+
+            const BigFloat result = source * factor;
+
+            EXPECT_EQ(expected, encoded_value(result));
+            EXPECT_EQ(original, encoded_value(source));
+            EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &result.arena());
+        }
+    }
+}
+
+TEST_P(TestBigFloatArithmetic, unsignedDivisionAssignmentRetainsRoundingAndZeroDivisorSaturation)
+{
+    const std::array<U16, 7> divisors{0, 1, 2, 255, 256, 32768, 65535};
+    auto &persistent = bf_arena(BigLifetime::PERSISTENT);
+    for (const char *text : {"0", "-1.2345678901234567890123456789e-400", "1.2345678901234567890123456789e400"})
+    {
+        const BigFloat source{persistent, text};
+        const auto original = encoded_value(source);
+        for (const U16 divisor : divisors)
+        {
+            SCOPED_TRACE(text);
+            SCOPED_TRACE(divisor);
+            auto expected = original;
+            div_a_bf_int(expected.data(), divisor);
+            BigFloat value{source};
+
+            EXPECT_EQ(&value, &(value /= divisor));
+
+            EXPECT_EQ(expected, encoded_value(value));
+            EXPECT_EQ(original, encoded_value(source));
+            EXPECT_EQ(&persistent, &value.arena());
+        }
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatArithmetic, testing::Values(4, 32, 708));

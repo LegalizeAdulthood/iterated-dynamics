@@ -1048,6 +1048,12 @@ BigFloat &BigFloat::operator/=(const BigFloat &right)
     return *this;
 }
 
+BigFloat &BigFloat::operator/=(const U16 right)
+{
+    div_a_bf_int(m_storage.data(), right);
+    return *this;
+}
+
 BigFloat BigFloat::operator+(const BigFloat &right) const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
@@ -1067,6 +1073,13 @@ BigFloat BigFloat::operator*(const BigFloat &right) const
     BigFloat result{bf_arena(BigLifetime::WORKING).allocate_double()};
     binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), multiply_wide);
     result.m_storage.reduce();
+    return result;
+}
+
+BigFloat BigFloat::operator*(const U16 right) const
+{
+    BigFloat result{bf_arena(BigLifetime::WORKING)};
+    mult_bf_int(result.m_storage.data(), m_storage.data(), right);
     return result;
 }
 

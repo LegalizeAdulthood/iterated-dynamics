@@ -603,7 +603,7 @@ BigFloatPtr square_bf(BigFloatPtr r, BigFloatPtr n)
 }
 
 /**********************************************************************/
-BigFloatPtr mult_bf_int(BigFloatPtr r, BigFloatPtr n, const U16 u)
+BigFloatPtr mult_bf_int(BigFloatPtr r, BigFloatConstPtr n, const U16 u)
 {
     copy_bf(g_bf_tmp_copy1, n);
     unsafe_mult_bf_int(r, g_bf_tmp_copy1, u);

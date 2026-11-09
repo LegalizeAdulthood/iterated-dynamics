@@ -909,8 +909,8 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
     }
     else if (input.math == BFMathType::BIG_FLT)
     {
-        float_to_bf(g_param_z_bf.x, 2.0);
-        float_to_bf(g_param_z_bf.y, input.imag);
+        float_to_bf(g_param_z_bf.x.data(), 2.0);
+        float_to_bf(g_param_z_bf.y.data(), input.imag);
         clear_bf(g_old_z_bf.x.data());
         clear_bf(g_old_z_bf.y.data());
         square_bf(g_tmp_sqr_x_bf.data(), g_old_z_bf.x.data());
@@ -1042,6 +1042,84 @@ void PerturbationIterationTest::TearDown()
     end_disk();
     free_pixel_grid();
     TestPerturbationPixels::TearDown();
+}
+
+class TestBigFloatMandelbrot : public PerturbationIterationTest
+{
+public:
+    TestBigFloatMandelbrot();
+};
+
+TestBigFloatMandelbrot::TestBigFloatMandelbrot() :
+    PerturbationIterationTest{true}
+{
+}
+
+TEST_F(TestBigFloatMandelbrot, directAlternativePreservesAffineCoordinatesSeedsAndFirstIteration)
+{
+    const ValueSaver saved_type{g_fractal_type, FractalType::MANDEL_Z_POWER};
+    init_bf_dec(60);
+    m_big_float = true;
+    g_fractal_type = FractalType::MANDEL;
+    g_logical_screen = LogicalScreen{257, 513, 0, 0, 256, 512};
+    g_magnitude_limit = 1024;
+    set_initial_offset({0.125, -0.25});
+    float_to_bf(g_bf_x_min, -2);
+    float_to_bf(g_bf_x_max, 2);
+    float_to_bf(g_bf_y_min, -1);
+    float_to_bf(g_bf_y_max, 1);
+    float_to_bf(g_bf_x_3rd, -1.5);
+    float_to_bf(g_bf_y_3rd, -0.75);
+
+    ASSERT_TRUE(mandel_per_image_bf());
+    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
+    EXPECT_DOUBLE_EQ(7.0 / 512, static_cast<double>(bf_to_float(g_delta_x_bf.data())));
+    EXPECT_DOUBLE_EQ(7.0 / 2048, static_cast<double>(bf_to_float(g_delta_y_bf.data())));
+    EXPECT_DOUBLE_EQ(1.0 / 1024, static_cast<double>(bf_to_float(g_delta2_x_bf.data())));
+    EXPECT_DOUBLE_EQ(1.0 / 1024, static_cast<double>(bf_to_float(g_delta2_y_bf.data())));
+    for (const bool book : {false, true})
+    {
+        g_bof_match_book_images = book;
+        for (const ColorMethod inside : {ColorMethod::COLOR, ColorMethod::BOF60, ColorMethod::BOF61})
+        {
+            g_inside_method = inside;
+            const bool book_seed = book && inside != ColorMethod::COLOR;
+            for (const int col : {0, 128, 256})
+            {
+                for (const int row : {0, 256, 512})
+                {
+                    SCOPED_TRACE(book);
+                    SCOPED_TRACE(static_cast<int>(inside));
+                    SCOPED_TRACE(col);
+                    SCOPED_TRACE(row);
+                    g_col = col;
+                    g_row = row;
+                    g_color_iter = 0;
+                    const double real = -2 + col * (7.0 / 512) + row * (1.0 / 1024);
+                    const double imag = 1 - (row * (7.0 / 2048) + col * (1.0 / 1024));
+                    const double seed_real = book_seed ? 0.125 : real + 0.125;
+                    const double seed_imag = book_seed ? -0.25 : imag - 0.25;
+
+                    EXPECT_EQ(1, mandel_per_pixel_bf());
+
+                    EXPECT_EQ(book_seed ? -1 : 0, g_color_iter);
+                    EXPECT_DOUBLE_EQ(real, static_cast<double>(bf_to_float(g_param_z_bf.x.data())));
+                    EXPECT_DOUBLE_EQ(imag, static_cast<double>(bf_to_float(g_param_z_bf.y.data())));
+                    EXPECT_DOUBLE_EQ(seed_real, static_cast<double>(bf_to_float(g_old_z_bf.x.data())));
+                    EXPECT_DOUBLE_EQ(seed_imag, static_cast<double>(bf_to_float(g_old_z_bf.y.data())));
+                    EXPECT_DOUBLE_EQ(sqr(seed_real), static_cast<double>(bf_to_float(g_tmp_sqr_x_bf.data())));
+                    EXPECT_DOUBLE_EQ(sqr(seed_imag), static_cast<double>(bf_to_float(g_tmp_sqr_y_bf.data())));
+
+                    EXPECT_EQ(0, julia_orbit_bf());
+
+                    EXPECT_DOUBLE_EQ(
+                        sqr(seed_real) - sqr(seed_imag) + real, static_cast<double>(bf_to_float(g_new_z_bf.x.data())));
+                    EXPECT_DOUBLE_EQ(
+                        2 * seed_real * seed_imag + imag, static_cast<double>(bf_to_float(g_new_z_bf.y.data())));
+                }
+            }
+        }
+    }
 }
 
 void PerturbationIterationTest::initialize_reference(
@@ -8533,10 +8611,10 @@ void BurningShipPerturbationTest::compare_native_pixel(
         g_dispatch.set_per_pixel(mandel_per_pixel_bf);
         float_to_bf(g_bf_x_min, point.real());
         float_to_bf(g_bf_y_max, point.imag());
-        clear_bf(g_delta_x_bf);
-        clear_bf(g_delta_y_bf);
-        clear_bf(g_delta2_x_bf);
-        clear_bf(g_delta2_y_bf);
+        clear_bf(g_delta_x_bf.data());
+        clear_bf(g_delta_y_bf.data());
+        clear_bf(g_delta2_x_bf.data());
+        clear_bf(g_delta2_y_bf.data());
     }
     g_dispatch.set_orbit_calc(record_native_orbit);
     m_specific.pert_pt = record_perturbation;
@@ -9658,8 +9736,8 @@ void TestSignedIntegerOrbit::SetUp()
     g_float_param = &m_native_parameter;
     if (GetParam().big_float)
     {
-        clear_bf(g_param_z_bf.x);
-        clear_bf(g_param_z_bf.y);
+        clear_bf(g_param_z_bf.x.data());
+        clear_bf(g_param_z_bf.y.data());
         clear_bf(g_old_z_bf.x.data());
         clear_bf(g_old_z_bf.y.data());
     }
@@ -9667,8 +9745,8 @@ void TestSignedIntegerOrbit::SetUp()
     m_native_parameter = {GetParam().parameter.real(), GetParam().parameter.imag()};
     if (GetParam().big_float)
     {
-        float_to_bf(g_param_z_bf.x, GetParam().parameter.real());
-        float_to_bf(g_param_z_bf.y, GetParam().parameter.imag());
+        float_to_bf(g_param_z_bf.x.data(), GetParam().parameter.real());
+        float_to_bf(g_param_z_bf.y.data(), GetParam().parameter.imag());
         float_to_bf(g_old_z_bf.x.data(), GetParam().seed.real());
         float_to_bf(g_old_z_bf.y.data(), GetParam().seed.imag());
     }
@@ -9773,8 +9851,8 @@ TEST_P(TestSignedSubDoublePower, resolvesNearZeroInputAfterReferenceReplacement)
     m_engine.finish_orbit();
     const int references{m_engine.reference_count()};
     str_to_bf(value.x, "1e-40");
-    copy_bf(g_param_z_bf.x, parameter.x);
-    copy_bf(g_param_z_bf.y, parameter.y);
+    copy_bf(g_param_z_bf.x.data(), parameter.x);
+    copy_bf(g_param_z_bf.y.data(), parameter.y);
     copy_bf(g_old_z_bf.x.data(), value.x);
     copy_bf(g_old_z_bf.y.data(), value.y);
     const bool escaped{julia_z_power_orbit_bf() != 0};
@@ -10056,8 +10134,8 @@ void ComplexPerturbationContinuationTest::check_orbit(
     ValueSaver saved_parameter{g_float_param, &native_parameter};
     if (m_use_big_float)
     {
-        float_to_bf(g_param_z_bf.x, parameter.real());
-        float_to_bf(g_param_z_bf.y, parameter.imag());
+        float_to_bf(g_param_z_bf.x.data(), parameter.real());
+        float_to_bf(g_param_z_bf.y.data(), parameter.imag());
         float_to_bf(g_old_z_bf.x.data(), seed.real());
         float_to_bf(g_old_z_bf.y.data(), seed.imag());
     }
@@ -11244,10 +11322,10 @@ void TestShipOrbitOutput::SetUp()
     g_old_z = g_init;
     if (GetParam().big_float)
     {
-        float_to_bf(g_param_z_bf.x, point.real());
-        float_to_bf(g_param_z_bf.y, point.imag());
-        copy_bf(g_old_z_bf.x.data(), g_param_z_bf.x);
-        copy_bf(g_old_z_bf.y.data(), g_param_z_bf.y);
+        float_to_bf(g_param_z_bf.x.data(), point.real());
+        float_to_bf(g_param_z_bf.y.data(), point.imag());
+        copy_bf(g_old_z_bf.x.data(), g_param_z_bf.x.data());
+        copy_bf(g_old_z_bf.y.data(), g_param_z_bf.y.data());
     }
     m_expected_samples.clear();
     for (long iteration = 1; iteration < g_max_iterations; ++iteration)
@@ -12349,8 +12427,8 @@ TEST_F(TestSubnormalPerturbation, continuationReplacesSubnormalParameterAndSeedD
         SCOPED_TRACE(coordinate);
         str_to_bf(parameter.x, coordinate);
         clear_bf(parameter.y);
-        copy_bf(g_param_z_bf.x, parameter.x);
-        clear_bf(g_param_z_bf.y);
+        copy_bf(g_param_z_bf.x.data(), parameter.x);
+        clear_bf(g_param_z_bf.y.data());
         copy_bf(g_old_z_bf.x.data(), parameter.x);
         clear_bf(g_old_z_bf.y.data());
         m_engine.begin_orbit_bf(parameter, parameter, 0);
@@ -12380,8 +12458,8 @@ TEST_F(TestSubnormalPerturbation, continuationReplacesSubnormalParameterAndSeedD
 
 TEST_F(TestSubnormalPerturbation, displacedPixelMatchesNativeBigFloatOrbit)
 {
-    copy_bf(g_param_z_bf.x, g_bf_x_max);
-    clear_bf(g_param_z_bf.y);
+    copy_bf(g_param_z_bf.x.data(), g_bf_x_max);
+    clear_bf(g_param_z_bf.y.data());
     copy_bf(g_old_z_bf.x.data(), g_bf_x_max);
     clear_bf(g_old_z_bf.y.data());
     // Native BF conversion also depends on the platform's floating-point range.
@@ -12482,6 +12560,28 @@ void TestDeepPerturbationGeometry::initialize_frame()
 {
     m_engine.initialize_frame_bf({g_bf_x_min, g_bf_y_min}, {g_bf_x_max, g_bf_y_max}, {g_bf_x_3rd, g_bf_y_3rd});
     ASSERT_TRUE(m_engine.initialize_pixel_strategy());
+}
+
+TEST_F(TestDeepPerturbationGeometry, directBigFloatMandelbrotDistinguishesSubDoubleViewport)
+{
+    ASSERT_TRUE(mandel_per_image_bf());
+    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
+    g_row = HEIGHT / 2;
+    for (int col = 0; col < WIDTH; ++col)
+    {
+        SCOPED_TRACE(col);
+        g_col = col;
+        ASSERT_EQ(1, mandel_per_pixel_bf());
+        bool escaped = false;
+        int iterations = 0;
+        while (!escaped && iterations < g_max_iterations)
+        {
+            escaped = julia_orbit_bf() != 0;
+            ++iterations;
+        }
+        EXPECT_EQ(col < WIDTH / 2, escaped);
+        EXPECT_EQ(col < WIDTH / 2 ? 1 : g_max_iterations, iterations);
+    }
 }
 
 class TestDeepViewportPass : public TestDeepPerturbationGeometry, public WithParamInterface<CalcMode>

@@ -80,6 +80,12 @@ They preserve all unsigned operand bits, fixed-width overflow, division
 rounding, and zero-divisor saturation without a fixed-point conversion
 of the integer operand.
 
+BigFloat's `U16` multiplication and division-assignment overloads also
+use the existing integer kernels, retaining their mantissa normalization,
+rounding, and zero-divisor saturation. Reference callbacks keep their
+pointer signatures and use temporary-arena values for local storage.
+Their doubling operations remain at their original calculation sites.
+
 Precision migration sign-extends new BigNum integer bytes for live signed
 values. The legacy `convert_bn()` scratch-conversion behavior remains
 unchanged. Canonical import/export excludes alignment padding and free
@@ -240,13 +246,11 @@ Iteration state uses these reservations:
 Header: `big.h`.
 
 - `g_delta_x_bf`, `g_delta_y_bf`, `g_delta2_x_bf`, `g_delta2_y_bf` -
-  increments, each `g_bf_length + 2` bytes.
+  owning `BigFloat` increments.
 - `g_close_enough_bf` - owning `BigFloat` threshold.
 - `g_tmp_sqr_x_bf`, `g_tmp_sqr_y_bf` - owning `BigFloat` square caches.
-- `g_old_z_bf`, `g_new_z_bf`, `g_saved_z_bf` - owning `BFComplex`
-  iteration values.
-- `g_param_z_bf` - raw complex parameter, `g_bf_length + 2` bytes per
-  component.
+- `g_old_z_bf`, `g_new_z_bf`, `g_saved_z_bf`, `g_param_z_bf` - owning
+  `BFComplex` iteration values and parameter.
 
 The owning globals have canonical `g_bf_length + 2` bytes per scalar.
 Their handles start null. `MathArenas::bind` initializes them in the

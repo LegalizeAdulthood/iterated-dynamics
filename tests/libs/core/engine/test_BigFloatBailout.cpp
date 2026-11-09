@@ -121,9 +121,11 @@ TEST_F(TestBigFloatBailout, canonicalGlobalsOwnWorkingStorageThroughBindingAndCl
     static_assert(std::is_same_v<decltype(g_tmp_sqr_x_bf), BigFloat>);
     static_assert(std::is_same_v<decltype(g_tmp_sqr_y_bf), BigFloat>);
     static_assert(std::is_same_v<decltype(g_bf_tmp), BigFloat>);
-    const std::array<BigFloat *, 10> values{&g_old_z_bf.x, &g_old_z_bf.y, &g_new_z_bf.x, &g_new_z_bf.y, &g_saved_z_bf.x,
-        &g_saved_z_bf.y, &g_close_enough_bf, &g_tmp_sqr_x_bf, &g_tmp_sqr_y_bf, &g_bf_tmp};
-    std::array<BigFloatConstPtr, 10> buffers;
+    static_assert(std::is_same_v<decltype(g_param_z_bf), Complex<BigFloat>>);
+    const std::array<BigFloat *, 16> values{&g_old_z_bf.x, &g_old_z_bf.y, &g_new_z_bf.x, &g_new_z_bf.y, &g_saved_z_bf.x,
+        &g_saved_z_bf.y, &g_close_enough_bf, &g_tmp_sqr_x_bf, &g_tmp_sqr_y_bf, &g_bf_tmp, &g_delta_x_bf, &g_delta_y_bf,
+        &g_delta2_x_bf, &g_delta2_y_bf, &g_param_z_bf.x, &g_param_z_bf.y};
+    std::array<BigFloatConstPtr, 16> buffers;
     auto &working = bf_arena(BigLifetime::WORKING);
     for (std::size_t i = 0; i < values.size(); ++i)
     {

@@ -51,10 +51,12 @@ public:
     BigFloat &operator-=(const BigFloat &right);
     BigFloat &operator*=(const BigFloat &right);
     BigFloat &operator/=(const BigFloat &right);
+    BigFloat &operator/=(misc::U16 right);
 
     BigFloat operator+(const BigFloat &right) const;
     BigFloat operator-(const BigFloat &right) const;
     BigFloat operator*(const BigFloat &right) const;
+    BigFloat operator*(misc::U16 right) const;
     BigFloat operator/(const BigFloat &right) const;
     BigFloat sqr() const;
     BigFloat half() const;

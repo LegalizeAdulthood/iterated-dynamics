@@ -87,15 +87,15 @@ BigFloatPtr g_bf_tmp5{};
 BigFloatPtr g_bf_tmp6{};
 BigFloatPtr g_bf_tmp_copy1{};
 BigFloatPtr g_bf_tmp_copy2{};
-BigFloatPtr g_delta_x_bf{};
-BigFloatPtr g_delta_y_bf{};
-BigFloatPtr g_delta2_x_bf{};
-BigFloatPtr g_delta2_y_bf{};
+BigFloat g_delta_x_bf{};
+BigFloat g_delta_y_bf{};
+BigFloat g_delta2_x_bf{};
+BigFloat g_delta2_y_bf{};
 BigFloat g_close_enough_bf{};
 BigFloat g_tmp_sqr_x_bf{};
 BigFloat g_tmp_sqr_y_bf{};
 // g_bf_length+2
-BFPtrComplex g_param_z_bf{};
+BFComplex g_param_z_bf{};
 BFComplex g_saved_z_bf{};
 // g_bf_length+2
 BFComplex g_old_z_bf{};
@@ -331,12 +331,6 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
     big_float.single(g_bf_tmp6);
     big_float.wide(g_bf_tmp_copy1);
     big_float.wide(g_bf_tmp_copy2);
-    big_float.single(g_delta_x_bf);
-    big_float.single(g_delta_y_bf);
-    big_float.single(g_delta2_x_bf);
-    big_float.single(g_delta2_y_bf);
-    big_float.single(g_param_z_bf.x);
-    big_float.single(g_param_z_bf.y);
     big_float.single(g_big_pi);
     for (auto &value : m_parameters)
     {
@@ -423,6 +417,12 @@ void MathArenas::bind(const bool preserve_parameters)
     g_saved_z_bn.y = 0;
     g_close_enough_bn = 0;
     big_float.bind_working();
+    g_delta_x_bf = 0;
+    g_delta_y_bf = 0;
+    g_delta2_x_bf = 0;
+    g_delta2_y_bf = 0;
+    g_param_z_bf.x = 0;
+    g_param_z_bf.y = 0;
     g_old_z_bf.x = 0;
     g_old_z_bf.y = 0;
     g_new_z_bf.x = 0;
@@ -466,6 +466,11 @@ void MathArenas::unbind()
     g_saved_z_bn = {};
     g_close_enough_bn = BigNum{};
     big_float.unbind_working();
+    g_delta_x_bf = BigFloat{};
+    g_delta_y_bf = BigFloat{};
+    g_delta2_x_bf = BigFloat{};
+    g_delta2_y_bf = BigFloat{};
+    g_param_z_bf = {};
     g_old_z_bf = {};
     g_new_z_bf = {};
     g_saved_z_bf = {};

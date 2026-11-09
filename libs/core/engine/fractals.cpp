@@ -52,6 +52,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <fractals/newton.h>
 #include <math/arg.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 
 #include <cfloat>
 #include <cmath>
@@ -221,22 +222,20 @@ void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z)
 void mandel_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
 {
     BigStackSaver saved;
-    BigFloatPtr temp_real = bf_stack().allocate_single();
-    BigFloatPtr real_sqr = bf_stack().allocate_single();
-    BigFloatPtr imag_sqr = bf_stack().allocate_single();
-    BigFloatPtr real_imag = bf_stack().allocate_single();
-    BFPtrComplex z2;
-    z2.x = bf_stack().allocate_single();
-    z2.y = bf_stack().allocate_single();
-    double_bf(z2.x, z.x);
-    double_bf(z2.y, z.y);
+    BigFloat temp_real{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat real_sqr{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat imag_sqr{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat real_imag{bf_arena(BigLifetime::TEMPORARY)};
+    BFComplex z2{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    double_bf(z2.x.data(), z.x);
+    double_bf(z2.y.data(), z.y);
 
-    square_bf(real_sqr, z.x);
-    square_bf(imag_sqr, z.y);
-    sub_bf(temp_real, real_sqr, imag_sqr);
-    add_bf(z.x, temp_real, center.x);
-    mult_bf(real_imag, z2.x, z.y);
-    add_bf(z.y, real_imag, center.y);
+    square_bf(real_sqr.data(), z.x);
+    square_bf(imag_sqr.data(), z.y);
+    temp_real = real_sqr - imag_sqr;
+    add_bf(z.x, temp_real.data(), center.x);
+    mult_bf(real_imag.data(), z2.x.data(), z.y);
+    add_bf(z.y, real_imag.data(), center.y);
 }
 
 void mandel_perturb(

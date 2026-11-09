@@ -186,8 +186,8 @@ int main()
     measure_values<BigFloat>("bf_scalar", "bf_complex_power");
     float_to_bf(g_old_z_bf.x.data(), 0.25);
     float_to_bf(g_old_z_bf.y.data(), 0.125);
-    float_to_bf(g_param_z_bf.x, -0.2);
-    float_to_bf(g_param_z_bf.y, 0.4);
+    float_to_bf(g_param_z_bf.x.data(), -0.2);
+    float_to_bf(g_param_z_bf.y.data(), 0.4);
     square_bf(g_tmp_sqr_x_bf.data(), g_old_z_bf.x.data());
     square_bf(g_tmp_sqr_y_bf.data(), g_old_z_bf.y.data());
     measure("bf_julia_orbit", 10000, [] { s_result = julia_orbit_bf() != 0; });

@@ -303,7 +303,7 @@ void StickyOrbits::start_orbit(PertEngine *perturbation)
         {
             if (burning_ship)
             {
-                math::neg_a_bf(math::g_param_z_bf.y);
+                math::neg_a_bf(math::g_param_z_bf.y.data());
             }
             if (conjugate_value)
             {
@@ -312,8 +312,8 @@ void StickyOrbits::start_orbit(PertEngine *perturbation)
             std::exception_ptr failure;
             try
             {
-                perturbation->begin_orbit_bf(
-                    math::g_param_z_bf, {math::g_old_z_bf.x.data(), math::g_old_z_bf.y.data()}, 0);
+                perturbation->begin_orbit_bf({math::g_param_z_bf.x.data(), math::g_param_z_bf.y.data()},
+                    {math::g_old_z_bf.x.data(), math::g_old_z_bf.y.data()}, 0);
             }
             catch (...)
             {
@@ -325,7 +325,7 @@ void StickyOrbits::start_orbit(PertEngine *perturbation)
                 {
                     if (burning_ship)
                     {
-                        math::neg_a_bf(math::g_param_z_bf.y);
+                        math::neg_a_bf(math::g_param_z_bf.y.data());
                     }
                 },
                 [conjugate_value]
