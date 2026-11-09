@@ -24,6 +24,7 @@
 #include <io/trim_filename.h>
 #include <math/big.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <math/round_float_double.h>
 #include <misc/Driver.h>
 #include <ui/big_while_loop.h>
@@ -90,7 +91,7 @@ static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info);
 static bool function_ok(const FractalInfo *info, int num_fn);
 static void check_history(const char *old_name, const char *new_name);
 static void bf_setup_convert_to_screen();
-static void bf_transform(BigFloatPtr bt_x, BigFloatPtr bt_y, DblCoords *point);
+static void bf_transform(BigFloat &bt_x, BigFloat &bt_y, DblCoords *point);
 
 static std::vector<FileWindow> s_browse_windows;
 static std::vector<int> s_browse_box_x;
@@ -98,12 +99,12 @@ static std::vector<int> s_browse_box_y;
 static std::vector<int> s_browse_box_values;
 // here because must be visible inside several routines
 static Affine *s_cvt{};
-static BigFloatPtr s_bt_a{};
-static BigFloatPtr s_bt_b{};
-static BigFloatPtr s_bt_c{};
-static BigFloatPtr s_bt_d{};
-static BigFloatPtr s_bt_e{};
-static BigFloatPtr s_bt_f{};
+static BigFloat s_bt_a{};
+static BigFloat s_bt_b{};
+static BigFloat s_bt_c{};
+static BigFloat s_bt_d{};
+static BigFloat s_bt_e{};
+static BigFloat s_bt_f{};
 static BigFloatPtr s_n_a{};
 static BigFloatPtr s_n_b{};
 static BigFloatPtr s_n_c{};
@@ -154,7 +155,6 @@ int file_get_window()
     int color_of_box;
     FileWindow window;
     bool vid_too_big{};
-    BigStackMark saved;
 
     s_old_bf_math = g_bf_math;
     g_bf_math = BFMathType::BIG_FLT;
@@ -164,13 +164,12 @@ int file_get_window()
         fractal_float_to_bf();
         g_calc_status = old_calc_status;
     }
-    saved = save_stack();
-    s_bt_a = bf_stack().allocate_single();
-    s_bt_b = bf_stack().allocate_single();
-    s_bt_c = bf_stack().allocate_single();
-    s_bt_d = bf_stack().allocate_single();
-    s_bt_e = bf_stack().allocate_single();
-    s_bt_f = bf_stack().allocate_single();
+    s_bt_a = BigFloat{bf_arena(BigLifetime::WORKING)};
+    s_bt_b = BigFloat{bf_arena(BigLifetime::WORKING)};
+    s_bt_c = BigFloat{bf_arena(BigLifetime::WORKING)};
+    s_bt_d = BigFloat{bf_arena(BigLifetime::WORKING)};
+    s_bt_e = BigFloat{bf_arena(BigLifetime::WORKING)};
+    s_bt_f = BigFloat{bf_arena(BigLifetime::WORKING)};
 
     const int num_dots = g_screen_x_dots + g_screen_y_dots;
     vid_too_big = num_dots > 4096;
@@ -188,12 +187,12 @@ int file_get_window()
         s_cvt = &stack_cvt; // use stack
         setup_convert_to_screen(s_cvt);
         // put in bf variables
-        float_to_bf(s_bt_a, s_cvt->a);
-        float_to_bf(s_bt_b, s_cvt->b);
-        float_to_bf(s_bt_c, s_cvt->c);
-        float_to_bf(s_bt_d, s_cvt->d);
-        float_to_bf(s_bt_e, s_cvt->e);
-        float_to_bf(s_bt_f, s_cvt->f);
+        s_bt_a = s_cvt->a;
+        s_bt_b = s_cvt->b;
+        s_bt_c = s_cvt->c;
+        s_bt_d = s_cvt->d;
+        s_bt_e = s_cvt->e;
+        s_bt_f = s_cvt->f;
     }
     find_special_colors();
     color_of_box = g_color_medium;
@@ -466,7 +465,12 @@ rescan:  // entry for changed browse parms
     s_browse_box_x.clear();
     s_browse_box_y.clear();
     s_browse_box_values.clear();
-    restore_stack(saved);
+    s_bt_a = BigFloat{};
+    s_bt_b = BigFloat{};
+    s_bt_c = BigFloat{};
+    s_bt_d = BigFloat{};
+    s_bt_e = BigFloat{};
+    s_bt_f = BigFloat{};
     if (s_old_bf_math == BFMathType::NONE)
     {
         free_bf_vars();
@@ -536,14 +540,14 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
           calc_lengths();
        }
     */
-    BigFloatPtr bt_x = bf_stack().allocate_single();
-    BigFloatPtr bt_y = bf_stack().allocate_single();
-    BigFloatPtr bt_x_min = bf_stack().allocate_single();
-    BigFloatPtr bt_x_max = bf_stack().allocate_single();
-    BigFloatPtr bt_y_min = bf_stack().allocate_single();
-    BigFloatPtr bt_y_max = bf_stack().allocate_single();
-    BigFloatPtr bt_x_3rd = bf_stack().allocate_single();
-    BigFloatPtr bt_y_3rd = bf_stack().allocate_single();
+    BigFloat bt_x{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_y{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_x_min{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_x_max{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_y_min{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_y_max{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_x_3rd{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_y_3rd{bf_arena(BigLifetime::TEMPORARY)};
 
     if (info->bf_math)
     {
@@ -558,20 +562,20 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
         s_n_e = bf_stack().allocate_single();
         s_n_f = bf_stack().allocate_single();
 
-        convert_bf(s_n_a, s_bt_a, g_r_bf_length, orig_r_bf_length);
-        convert_bf(s_n_b, s_bt_b, g_r_bf_length, orig_r_bf_length);
-        convert_bf(s_n_c, s_bt_c, g_r_bf_length, orig_r_bf_length);
-        convert_bf(s_n_d, s_bt_d, g_r_bf_length, orig_r_bf_length);
-        convert_bf(s_n_e, s_bt_e, g_r_bf_length, orig_r_bf_length);
-        convert_bf(s_n_f, s_bt_f, g_r_bf_length, orig_r_bf_length);
+        convert_bf(s_n_a, s_bt_a.data(), g_r_bf_length, orig_r_bf_length);
+        convert_bf(s_n_b, s_bt_b.data(), g_r_bf_length, orig_r_bf_length);
+        convert_bf(s_n_c, s_bt_c.data(), g_r_bf_length, orig_r_bf_length);
+        convert_bf(s_n_d, s_bt_d.data(), g_r_bf_length, orig_r_bf_length);
+        convert_bf(s_n_e, s_bt_e.data(), g_r_bf_length, orig_r_bf_length);
+        convert_bf(s_n_f, s_bt_f.data(), g_r_bf_length, orig_r_bf_length);
 
         const Byte *parameters = reinterpret_cast<const Byte *>(blk_5_info->apm_data.data());
-        convert_bf(bt_x_min, parameters, g_bf_length, di_bf_length);
-        convert_bf(bt_x_max, parameters + two_di_len, g_bf_length, di_bf_length);
-        convert_bf(bt_y_min, parameters + 2 * two_di_len, g_bf_length, di_bf_length);
-        convert_bf(bt_y_max, parameters + 3 * two_di_len, g_bf_length, di_bf_length);
-        convert_bf(bt_x_3rd, parameters + 4 * two_di_len, g_bf_length, di_bf_length);
-        convert_bf(bt_y_3rd, parameters + 5 * two_di_len, g_bf_length, di_bf_length);
+        convert_bf(bt_x_min.data(), parameters, g_bf_length, di_bf_length);
+        convert_bf(bt_x_max.data(), parameters + two_di_len, g_bf_length, di_bf_length);
+        convert_bf(bt_y_min.data(), parameters + 2 * two_di_len, g_bf_length, di_bf_length);
+        convert_bf(bt_y_max.data(), parameters + 3 * two_di_len, g_bf_length, di_bf_length);
+        convert_bf(bt_x_3rd.data(), parameters + 4 * two_di_len, g_bf_length, di_bf_length);
+        convert_bf(bt_y_3rd.data(), parameters + 5 * two_di_len, g_bf_length, di_bf_length);
     }
 
     /* transform maps real plane co-ords onto the current screen view see above */
@@ -579,13 +583,13 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     {
         if (!info->bf_math)
         {
-            float_to_bf(bt_x, info->x_min);
-            float_to_bf(bt_y, info->y_max);
+            bt_x = info->x_min;
+            bt_y = info->y_max;
         }
         else
         {
-            copy_bf(bt_x, bt_x_min);
-            copy_bf(bt_y, bt_y_max);
+            bt_x = bt_x_min;
+            bt_y = bt_y_max;
         }
         bf_transform(bt_x, bt_y, &tl);
     }
@@ -601,15 +605,15 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     {
         if (!info->bf_math)
         {
-            float_to_bf(bt_x, info->x_max -(info->x3rd-info->x_min));
-            float_to_bf(bt_y, info->y_max +(info->y_min-info->y3rd));
+            bt_x = info->x_max - (info->x3rd - info->x_min);
+            bt_y = info->y_max + (info->y_min - info->y3rd);
         }
         else
         {
-            neg_a_bf(sub_bf(bt_x, bt_x_3rd, bt_x_min));
-            add_a_bf(bt_x, bt_x_max);
-            sub_bf(bt_y, bt_y_min, bt_y_3rd);
-            add_a_bf(bt_y, bt_y_max);
+            bt_x = -(bt_x = bt_x_3rd - bt_x_min);
+            bt_x += bt_x_max;
+            bt_y = bt_y_min - bt_y_3rd;
+            bt_y += bt_y_max;
         }
         bf_transform(bt_x, bt_y, &tr);
     }
@@ -625,13 +629,13 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     {
         if (!info->bf_math)
         {
-            float_to_bf(bt_x, info->x3rd);
-            float_to_bf(bt_y, info->y3rd);
+            bt_x = info->x3rd;
+            bt_y = info->y3rd;
         }
         else
         {
-            copy_bf(bt_x, bt_x_3rd);
-            copy_bf(bt_y, bt_y_3rd);
+            bt_x = bt_x_3rd;
+            bt_y = bt_y_3rd;
         }
         bf_transform(bt_x, bt_y, &bl);
     }
@@ -647,13 +651,13 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     {
         if (!info->bf_math)
         {
-            float_to_bf(bt_x, info->x_max);
-            float_to_bf(bt_y, info->y_min);
+            bt_x = info->x_max;
+            bt_y = info->y_min;
         }
         else
         {
-            copy_bf(bt_x, bt_x_max);
-            copy_bf(bt_y, bt_y_min);
+            bt_x = bt_x_max;
+            bt_y = bt_y_min;
         }
         bf_transform(bt_x, bt_y, &br);
     }
@@ -830,108 +834,106 @@ static void check_history(const char *old_name, const char *new_name)
 
 static void bf_setup_convert_to_screen()
 {
-    BigStackSaver saved;
 
     // setup_convert_to_screen() in LORENZ.C, converted to g_bf_math
     // Call only from within fgetwindow()
 
-    BigFloatPtr bt_inter1 = bf_stack().allocate_single();
-    BigFloatPtr bt_inter2 = bf_stack().allocate_single();
-    BigFloatPtr bt_det = bf_stack().allocate_single();
-    BigFloatPtr bt_xd = bf_stack().allocate_single();
-    BigFloatPtr bt_yd = bf_stack().allocate_single();
-    BigFloatPtr bt_tmp1 = bf_stack().allocate_single();
-    BigFloatPtr bt_tmp2 = bf_stack().allocate_single();
+    BigFloat bt_inter1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_inter2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_det{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_xd{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_yd{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_tmp2{bf_arena(BigLifetime::TEMPORARY)};
 
     // xx3rd-xxmin
-    sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_min);
+    sub_bf(bt_inter1.data(), g_bf_x_3rd, g_bf_x_min);
     // yymin-yymax
-    sub_bf(bt_inter2, g_bf_y_min, g_bf_y_max);
+    sub_bf(bt_inter2.data(), g_bf_y_min, g_bf_y_max);
     // (xx3rd-xxmin)*(yymin-yymax)
-    mult_bf(bt_tmp1, bt_inter1, bt_inter2);
+    bt_tmp1 = bt_inter1 * bt_inter2;
 
     // yymax-yy3rd
-    sub_bf(bt_inter1, g_bf_y_max, g_bf_y_3rd);
+    sub_bf(bt_inter1.data(), g_bf_y_max, g_bf_y_3rd);
     // xxmax-xxmin
-    sub_bf(bt_inter2, g_bf_x_max, g_bf_x_min);
+    sub_bf(bt_inter2.data(), g_bf_x_max, g_bf_x_min);
     // (yymax-yy3rd)*(xxmax-xxmin)
-    mult_bf(bt_tmp2, bt_inter1, bt_inter2);
+    bt_tmp2 = bt_inter1 * bt_inter2;
 
     // det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin)
-    add_bf(bt_det, bt_tmp1, bt_tmp2);
+    bt_det = bt_tmp1 + bt_tmp2;
 
     // xd = x_size_d/det
-    float_to_bf(bt_tmp1, g_logical_screen.x_size_dots);
-    div_bf(bt_xd, bt_tmp1, bt_det);
+    bt_tmp1 = g_logical_screen.x_size_dots;
+    bt_xd = bt_tmp1 / bt_det;
 
     // a =  xd*(yymax-yy3rd)
-    sub_bf(bt_inter1, g_bf_y_max, g_bf_y_3rd);
-    mult_bf(s_bt_a, bt_xd, bt_inter1);
+    sub_bf(bt_inter1.data(), g_bf_y_max, g_bf_y_3rd);
+    s_bt_a = bt_xd * bt_inter1;
 
     // b =  xd*(xx3rd-xxmin)
-    sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_min);
-    mult_bf(s_bt_b, bt_xd, bt_inter1);
+    sub_bf(bt_inter1.data(), g_bf_x_3rd, g_bf_x_min);
+    s_bt_b = bt_xd * bt_inter1;
 
     // e = -(a*xxmin + b*yymax)
-    mult_bf(bt_tmp1, s_bt_a, g_bf_x_min);
-    mult_bf(bt_tmp2, s_bt_b, g_bf_y_max);
-    neg_a_bf(add_bf(s_bt_e, bt_tmp1, bt_tmp2));
+    mult_bf(bt_tmp1.data(), s_bt_a.data(), g_bf_x_min);
+    mult_bf(bt_tmp2.data(), s_bt_b.data(), g_bf_y_max);
+    s_bt_e = -(s_bt_e = bt_tmp1 + bt_tmp2);
 
     // xx3rd-xxmax
-    sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_max);
+    sub_bf(bt_inter1.data(), g_bf_x_3rd, g_bf_x_max);
     // yymin-yymax
-    sub_bf(bt_inter2, g_bf_y_min, g_bf_y_max);
+    sub_bf(bt_inter2.data(), g_bf_y_min, g_bf_y_max);
     // (xx3rd-xxmax)*(yymin-yymax)
-    mult_bf(bt_tmp1, bt_inter1, bt_inter2);
+    bt_tmp1 = bt_inter1 * bt_inter2;
 
     // yymin-yy3rd
-    sub_bf(bt_inter1, g_bf_y_min, g_bf_y_3rd);
+    sub_bf(bt_inter1.data(), g_bf_y_min, g_bf_y_3rd);
     // xxmax-xxmin
-    sub_bf(bt_inter2, g_bf_x_max, g_bf_x_min);
+    sub_bf(bt_inter2.data(), g_bf_x_max, g_bf_x_min);
     // (yymin-yy3rd)*(xxmax-xxmin)
-    mult_bf(bt_tmp2, bt_inter1, bt_inter2);
+    bt_tmp2 = bt_inter1 * bt_inter2;
 
     // det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-yy3rd)*(xxmax-xxmin)
-    add_bf(bt_det, bt_tmp1, bt_tmp2);
+    bt_det = bt_tmp1 + bt_tmp2;
 
     // yd = y_size_d/det
-    float_to_bf(bt_tmp2, g_logical_screen.y_size_dots);
-    div_bf(bt_yd, bt_tmp2, bt_det);
+    bt_tmp2 = g_logical_screen.y_size_dots;
+    bt_yd = bt_tmp2 / bt_det;
 
     // c =  yd*(yymin-yy3rd)
-    sub_bf(bt_inter1, g_bf_y_min, g_bf_y_3rd);
-    mult_bf(s_bt_c, bt_yd, bt_inter1);
+    sub_bf(bt_inter1.data(), g_bf_y_min, g_bf_y_3rd);
+    s_bt_c = bt_yd * bt_inter1;
 
     // d =  yd*(xx3rd-xxmax)
-    sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_max);
-    mult_bf(s_bt_d, bt_yd, bt_inter1);
+    sub_bf(bt_inter1.data(), g_bf_x_3rd, g_bf_x_max);
+    s_bt_d = bt_yd * bt_inter1;
 
     // f = -(c*xxmin + d*yymax)
-    mult_bf(bt_tmp1, s_bt_c, g_bf_x_min);
-    mult_bf(bt_tmp2, s_bt_d, g_bf_y_max);
-    neg_a_bf(add_bf(s_bt_f, bt_tmp1, bt_tmp2));
+    mult_bf(bt_tmp1.data(), s_bt_c.data(), g_bf_x_min);
+    mult_bf(bt_tmp2.data(), s_bt_d.data(), g_bf_y_max);
+    s_bt_f = -(s_bt_f = bt_tmp1 + bt_tmp2);
 }
 
 // maps points onto view screen
-static void bf_transform(const BigFloatPtr bt_x, const BigFloatPtr bt_y, DblCoords *point)
+static void bf_transform(BigFloat &bt_x, BigFloat &bt_y, DblCoords *point)
 {
-    BigStackSaver saved;
-    BigFloatPtr bt_tmp1 = bf_stack().allocate_single();
-    BigFloatPtr bt_tmp2 = bf_stack().allocate_single();
+    BigFloat bt_tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_tmp2{bf_arena(BigLifetime::TEMPORARY)};
 
     //  point->x = cvt->a * point->x + cvt->b * point->y + cvt->e;
-    mult_bf(bt_tmp1, s_n_a, bt_x);
-    mult_bf(bt_tmp2, s_n_b, bt_y);
-    add_a_bf(bt_tmp1, bt_tmp2);
-    add_a_bf(bt_tmp1, s_n_e);
-    point->x = static_cast<double>(bf_to_float(bt_tmp1));
+    mult_bf(bt_tmp1.data(), s_n_a, bt_x.data());
+    mult_bf(bt_tmp2.data(), s_n_b, bt_y.data());
+    bt_tmp1 += bt_tmp2;
+    add_a_bf(bt_tmp1.data(), s_n_e);
+    point->x = static_cast<double>(bt_tmp1.to_float());
 
     //  point->y = cvt->c * point->x + cvt->d * point->y + cvt->f;
-    mult_bf(bt_tmp1, s_n_c, bt_x);
-    mult_bf(bt_tmp2, s_n_d, bt_y);
-    add_a_bf(bt_tmp1, bt_tmp2);
-    add_a_bf(bt_tmp1, s_n_f);
-    point->y = static_cast<double>(bf_to_float(bt_tmp1));
+    mult_bf(bt_tmp1.data(), s_n_c, bt_x.data());
+    mult_bf(bt_tmp2.data(), s_n_d, bt_y.data());
+    bt_tmp1 += bt_tmp2;
+    add_a_bf(bt_tmp1.data(), s_n_f);
+    point->y = static_cast<double>(bt_tmp1.to_float());
 }
 
 } // namespace id::ui

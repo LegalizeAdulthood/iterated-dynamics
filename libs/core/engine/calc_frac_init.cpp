@@ -19,6 +19,7 @@
 #include <engine/VideoInfo.h>
 #include <fractals/fractalp.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <math/sign.h>
 #include <misc/debug_flags.h>
 #include <misc/Driver.h>
@@ -409,10 +410,9 @@ void adjust_corner_bf()
     double skew;
     LDouble magnification;
 
-    BigStackSaver saved;
-    BigFloatPtr bf_temp = bf_stack().allocate_single();
-    BigFloatPtr bf_temp2 = bf_stack().allocate_single();
-    BigFloatPtr b_tmp1 = bf_stack().allocate_single();
+    BigFloat bf_temp{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_temp2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp1{bf_arena(BigLifetime::TEMPORARY)};
 
     // While we're at it, let's adjust the x_mag_factor as well
     // use bf_temp, bftemp2 as bfXctr, bfYctr
@@ -421,21 +421,20 @@ void adjust_corner_bf()
         f_temp != 1 && f_temp >= 1 - g_aspect_drift && f_temp <= 1 + g_aspect_drift)
     {
         x_mag_factor = sign(x_mag_factor);
-        cvt_corners_bf(bf_temp, bf_temp2, magnification, x_mag_factor, rotation, skew);
+        cvt_corners_bf(bf_temp.data(), bf_temp2.data(), magnification, x_mag_factor, rotation, skew);
     }
 
     // ftemp=fabs(xx3rd-xxmin);
-    abs_a_bf(sub_bf(bf_temp, g_bf_x_3rd, g_bf_x_min));
+    abs_a_bf(sub_bf(bf_temp.data(), g_bf_x_3rd, g_bf_x_min));
 
     // ftemp2=fabs(xxmax-xx3rd);
-    abs_a_bf(sub_bf(bf_temp2, g_bf_x_max, g_bf_x_3rd));
+    abs_a_bf(sub_bf(bf_temp2.data(), g_bf_x_max, g_bf_x_3rd));
 
     // if ( (ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd)) )
-    if (cmp_bf(bf_temp, bf_temp2) < 0)
+    if (bf_temp < bf_temp2)
     {
         // if (ftemp*10000 < ftemp2 && yy3rd != yymax)
-        if (cmp_bf(mult_bf_int(b_tmp1, bf_temp, 10000), bf_temp2) < 0
-            && cmp_bf(g_bf_y_3rd, g_bf_y_max) != 0)
+        if (((b_tmp1 = bf_temp * 10000) < bf_temp2) && cmp_bf(g_bf_y_3rd, g_bf_y_max) != 0)
         {
             // xx3rd = xxmin;
             copy_bf(g_bf_x_3rd, g_bf_x_min);
@@ -443,25 +442,23 @@ void adjust_corner_bf()
     }
 
     // else if (ftemp2*10000 < ftemp && yy3rd != yymin)
-    if (cmp_bf(mult_bf_int(b_tmp1, bf_temp2, 10000), bf_temp) < 0
-        && cmp_bf(g_bf_y_3rd, g_bf_y_min) != 0)
+    if (((b_tmp1 = bf_temp2 * 10000) < bf_temp) && cmp_bf(g_bf_y_3rd, g_bf_y_min) != 0)
     {
         // xx3rd = xxmax;
         copy_bf(g_bf_x_3rd, g_bf_x_max);
     }
 
     // ftemp=fabs(yy3rd-yymin);
-    abs_a_bf(sub_bf(bf_temp, g_bf_y_3rd, g_bf_y_min));
+    abs_a_bf(sub_bf(bf_temp.data(), g_bf_y_3rd, g_bf_y_min));
 
     // ftemp2=fabs(yymax-yy3rd);
-    abs_a_bf(sub_bf(bf_temp2, g_bf_y_max, g_bf_y_3rd));
+    abs_a_bf(sub_bf(bf_temp2.data(), g_bf_y_max, g_bf_y_3rd));
 
     // if ( (ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd)) )
-    if (cmp_bf(bf_temp, bf_temp2) < 0)
+    if (bf_temp < bf_temp2)
     {
         // if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
-        if (cmp_bf(mult_bf_int(b_tmp1, bf_temp, 10000), bf_temp2) < 0
-            && cmp_bf(g_bf_x_3rd, g_bf_x_max) != 0)
+        if (((b_tmp1 = bf_temp * 10000) < bf_temp2) && cmp_bf(g_bf_x_3rd, g_bf_x_max) != 0)
         {
             // yy3rd = yymin;
             copy_bf(g_bf_y_3rd, g_bf_y_min);
@@ -469,8 +466,7 @@ void adjust_corner_bf()
     }
 
     // else if (ftemp2*10000 < ftemp && xx3rd != xxmin)
-    if (cmp_bf(mult_bf_int(b_tmp1, bf_temp2, 10000), bf_temp) < 0
-        && cmp_bf(g_bf_x_3rd, g_bf_x_min) != 0)
+    if (((b_tmp1 = bf_temp2 * 10000) < bf_temp) && cmp_bf(g_bf_x_3rd, g_bf_x_min) != 0)
     {
         // yy3rd = yymax;
         copy_bf(g_bf_y_3rd, g_bf_y_max);
@@ -530,100 +526,99 @@ void adjust_corner()
 
 static bool adjust_to_limits_bf(const double expand)
 {
-    BigStackSaver saved;
-    BigFloatPtr b_corner_x[4];
-    BigFloatPtr b_corner_y[4];
-    b_corner_x[0] = bf_stack().allocate_single();
-    b_corner_x[1] = bf_stack().allocate_single();
-    b_corner_x[2] = bf_stack().allocate_single();
-    b_corner_x[3] = bf_stack().allocate_single();
-    b_corner_y[0] = bf_stack().allocate_single();
-    b_corner_y[1] = bf_stack().allocate_single();
-    b_corner_y[2] = bf_stack().allocate_single();
-    b_corner_y[3] = bf_stack().allocate_single();
-    BigFloatPtr b_low_x = bf_stack().allocate_single();
-    BigFloatPtr b_high_x = bf_stack().allocate_single();
-    BigFloatPtr b_low_y = bf_stack().allocate_single();
-    BigFloatPtr b_high_y = bf_stack().allocate_single();
-    BigFloatPtr b_limit = bf_stack().allocate_single();
-    BigFloatPtr bf_temp = bf_stack().allocate_single();
-    BigFloatPtr b_center_x = bf_stack().allocate_single();
-    BigFloatPtr b_center_y = bf_stack().allocate_single();
-    BigFloatPtr b_adj_x = bf_stack().allocate_single();
-    BigFloatPtr b_adj_y = bf_stack().allocate_single();
-    BigFloatPtr b_tmp1 = bf_stack().allocate_single();
-    BigFloatPtr b_tmp2 = bf_stack().allocate_single();
-    BigFloatPtr b_expand = bf_stack().allocate_single();
+    BigFloat b_corner_x[4];
+    BigFloat b_corner_y[4];
+    b_corner_x[0] = BigFloat{bf_arena(BigLifetime::WORKING)};
+    b_corner_x[1] = BigFloat{bf_arena(BigLifetime::WORKING)};
+    b_corner_x[2] = BigFloat{bf_arena(BigLifetime::WORKING)};
+    b_corner_x[3] = BigFloat{bf_arena(BigLifetime::WORKING)};
+    b_corner_y[0] = BigFloat{bf_arena(BigLifetime::WORKING)};
+    b_corner_y[1] = BigFloat{bf_arena(BigLifetime::WORKING)};
+    b_corner_y[2] = BigFloat{bf_arena(BigLifetime::WORKING)};
+    b_corner_y[3] = BigFloat{bf_arena(BigLifetime::WORKING)};
+    BigFloat b_low_x{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_high_x{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_low_y{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_high_y{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_limit{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_temp{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_center_x{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_center_y{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_adj_x{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_adj_y{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_expand{bf_arena(BigLifetime::TEMPORARY)};
 
     constexpr LDouble limit = 32767.99;
 
     /*   if (bitshift >= 24) limit = 31.99;
        if (bitshift >= 29) limit = 3.99; */
-    float_to_bf(b_limit, limit);
-    float_to_bf(b_expand, expand);
+    b_limit = limit;
+    b_expand = expand;
 
-    add_bf(b_center_x, g_bf_x_min, g_bf_x_max);
-    half_a_bf(b_center_x);
+    add_bf(b_center_x.data(), g_bf_x_min, g_bf_x_max);
+    b_center_x = b_center_x.half();
 
     // center_y = (yymin+yymax)/2;
-    add_bf(b_center_y, g_bf_y_min, g_bf_y_max);
-    half_a_bf(b_center_y);
+    add_bf(b_center_y.data(), g_bf_y_min, g_bf_y_max);
+    b_center_y = b_center_y.half();
 
     // if (xxmin == center_x) {
-    if (cmp_bf(g_bf_x_min, b_center_x) == 0)
+    if (cmp_bf(g_bf_x_min, b_center_x.data()) == 0)
     {
         // ohoh, infinitely thin, fix it
         smallest_add_bf(g_bf_x_max);
         // bfxmin -= bfxmax-center_x;
-        sub_a_bf(g_bf_x_min, sub_bf(b_tmp1, g_bf_x_max, b_center_x));
+        sub_a_bf(g_bf_x_min, sub_bf(b_tmp1.data(), g_bf_x_max, b_center_x.data()));
     }
 
     // if (bfymin == center_y)
-    if (cmp_bf(g_bf_y_min, b_center_y) == 0)
+    if (cmp_bf(g_bf_y_min, b_center_y.data()) == 0)
     {
         smallest_add_bf(g_bf_y_max);
         // bfymin -= bfymax-center_y;
-        sub_a_bf(g_bf_y_min, sub_bf(b_tmp1, g_bf_y_max, b_center_y));
+        sub_a_bf(g_bf_y_min, sub_bf(b_tmp1.data(), g_bf_y_max, b_center_y.data()));
     }
 
     // if (bfx3rd == center_x)
-    if (cmp_bf(g_bf_x_3rd, b_center_x) == 0)
+    if (cmp_bf(g_bf_x_3rd, b_center_x.data()) == 0)
     {
         smallest_add_bf(g_bf_x_3rd);
     }
 
     // if (bfy3rd == center_y)
-    if (cmp_bf(g_bf_y_3rd, b_center_y) == 0)
+    if (cmp_bf(g_bf_y_3rd, b_center_y.data()) == 0)
     {
         smallest_add_bf(g_bf_y_3rd);
     }
 
     // setup array for easier manipulation
     // corner_x[0] = xxmin;
-    copy_bf(b_corner_x[0], g_bf_x_min);
+    copy_bf(b_corner_x[0].data(), g_bf_x_min);
 
     // corner_x[1] = xxmax;
-    copy_bf(b_corner_x[1], g_bf_x_max);
+    copy_bf(b_corner_x[1].data(), g_bf_x_max);
 
     // corner_x[2] = xx3rd;
-    copy_bf(b_corner_x[2], g_bf_x_3rd);
+    copy_bf(b_corner_x[2].data(), g_bf_x_3rd);
 
     // corner_x[3] = xxmin+(xxmax-xx3rd);
-    sub_bf(b_corner_x[3], g_bf_x_max, g_bf_x_3rd);
-    add_a_bf(b_corner_x[3], g_bf_x_min);
+    sub_bf(b_corner_x[3].data(), g_bf_x_max, g_bf_x_3rd);
+    add_a_bf(b_corner_x[3].data(), g_bf_x_min);
 
     // corner_y[0] = yymax;
-    copy_bf(b_corner_y[0], g_bf_y_max);
+    copy_bf(b_corner_y[0].data(), g_bf_y_max);
 
     // corner_y[1] = yymin;
-    copy_bf(b_corner_y[1], g_bf_y_min);
+    copy_bf(b_corner_y[1].data(), g_bf_y_min);
 
     // corner_y[2] = yy3rd;
-    copy_bf(b_corner_y[2], g_bf_y_3rd);
+    copy_bf(b_corner_y[2].data(), g_bf_y_3rd);
 
     // corner_y[3] = yymin+(yymax-yy3rd);
-    sub_bf(b_corner_y[3], g_bf_y_max, g_bf_y_3rd);
-    add_a_bf(b_corner_y[3], g_bf_y_min);
+    sub_bf(b_corner_y[3].data(), g_bf_y_max, g_bf_y_3rd);
+    add_a_bf(b_corner_y[3].data(), g_bf_y_min);
 
     // if caller wants image size adjusted, do that first
     if (expand != 1.0)
@@ -631,139 +626,135 @@ static bool adjust_to_limits_bf(const double expand)
         for (int i = 0; i < 4; ++i)
         {
             // corner_x[i] = center_x + (corner_x[i]-center_x)*expand;
-            sub_bf(b_tmp1, b_corner_x[i], b_center_x);
-            mult_bf(b_corner_x[i], b_tmp1, b_expand);
-            add_a_bf(b_corner_x[i], b_center_x);
+            b_tmp1 = b_corner_x[i] - b_center_x;
+            b_corner_x[i] = b_tmp1 * b_expand;
+            b_corner_x[i] += b_center_x;
 
             // corner_y[i] = center_y + (corner_y[i]-center_y)*expand;
-            sub_bf(b_tmp1, b_corner_y[i], b_center_y);
-            mult_bf(b_corner_y[i], b_tmp1, b_expand);
-            add_a_bf(b_corner_y[i], b_center_y);
+            b_tmp1 = b_corner_y[i] - b_center_y;
+            b_corner_y[i] = b_tmp1 * b_expand;
+            b_corner_y[i] += b_center_y;
         }
     }
 
     // get min/max x/y values
     // low_x = high_x = corner_x[0];
-    copy_bf(b_low_x, b_corner_x[0]);
-    copy_bf(b_high_x, b_corner_x[0]);
+    b_low_x = b_corner_x[0];
+    b_high_x = b_corner_x[0];
 
     // low_y = high_y = corner_y[0];
-    copy_bf(b_low_y, b_corner_y[0]);
-    copy_bf(b_high_y, b_corner_y[0]);
+    b_low_y = b_corner_y[0];
+    b_high_y = b_corner_y[0];
 
     for (int i = 1; i < 4; ++i)
     {
         // if (corner_x[i] < low_x)               low_x  = corner_x[i];
-        if (cmp_bf(b_corner_x[i], b_low_x) < 0)
+        if (b_corner_x[i] < b_low_x)
         {
-            copy_bf(b_low_x, b_corner_x[i]);
+            b_low_x = b_corner_x[i];
         }
 
         // if (corner_x[i] > high_x)              high_x = corner_x[i];
-        if (cmp_bf(b_corner_x[i], b_high_x) > 0)
+        if (b_corner_x[i] > b_high_x)
         {
-            copy_bf(b_high_x, b_corner_x[i]);
+            b_high_x = b_corner_x[i];
         }
 
         // if (corner_y[i] < low_y)               low_y  = corner_y[i];
-        if (cmp_bf(b_corner_y[i], b_low_y) < 0)
+        if (b_corner_y[i] < b_low_y)
         {
-            copy_bf(b_low_y, b_corner_y[i]);
+            b_low_y = b_corner_y[i];
         }
 
         // if (corner_y[i] > high_y)              high_y = corner_y[i];
-        if (cmp_bf(b_corner_y[i], b_high_y) > 0)
+        if (b_corner_y[i] > b_high_y)
         {
-            copy_bf(b_high_y, b_corner_y[i]);
+            b_high_y = b_corner_y[i];
         }
     }
 
     // if image is too large, downsize it maintaining center
     // ftemp = high_x-low_x;
-    sub_bf(bf_temp, b_high_x, b_low_x);
+    bf_temp = b_high_x - b_low_x;
 
     // if (high_y-low_y > ftemp) ftemp = high_y-low_y;
-    if (cmp_bf(sub_bf(b_tmp1, b_high_y, b_low_y), bf_temp) > 0)
+    if ((b_tmp1 = b_high_y - b_low_y) > bf_temp)
     {
-        copy_bf(bf_temp, b_tmp1);
+        bf_temp = b_tmp1;
     }
 
     // if image is too large, downsize it maintaining center
 
-    float_to_bf(b_tmp1, limit*2.0);
-    copy_bf(b_tmp2, bf_temp);
-    div_bf(bf_temp, b_tmp1, b_tmp2);
-    float_to_bf(b_tmp1, 1.0);
-    if (cmp_bf(bf_temp, b_tmp1) < 0)
+    b_tmp1 = limit * 2.0;
+    b_tmp2 = bf_temp;
+    bf_temp = b_tmp1 / b_tmp2;
+    b_tmp1 = 1.0;
+    if (bf_temp < b_tmp1)
     {
         for (int i = 0; i < 4; ++i)
         {
             // corner_x[i] = center_x + (corner_x[i]-center_x)*ftemp;
-            sub_bf(b_tmp1, b_corner_x[i], b_center_x);
-            mult_bf(b_corner_x[i], b_tmp1, bf_temp);
-            add_a_bf(b_corner_x[i], b_center_x);
+            b_tmp1 = b_corner_x[i] - b_center_x;
+            b_corner_x[i] = b_tmp1 * bf_temp;
+            b_corner_x[i] += b_center_x;
 
             // corner_y[i] = center_y + (corner_y[i]-center_y)*ftemp;
-            sub_bf(b_tmp1, b_corner_y[i], b_center_y);
-            mult_bf(b_corner_y[i], b_tmp1, bf_temp);
-            add_a_bf(b_corner_y[i], b_center_y);
+            b_tmp1 = b_corner_y[i] - b_center_y;
+            b_corner_y[i] = b_tmp1 * bf_temp;
+            b_corner_y[i] += b_center_y;
         }
     }
 
     // if any corner has x or y past limit, move the image
     // adj_x = adj_y = 0;
-    clear_bf(b_adj_x);
-    clear_bf(b_adj_y);
+    b_adj_x = 0;
+    b_adj_y = 0;
 
     for (int i = 0; i < 4; ++i)
     {
         /* if (corner_x[i] > limit && (ftemp = corner_x[i] - limit) > adj_x)
            adj_x = ftemp; */
-        if (cmp_bf(b_corner_x[i], b_limit) > 0
-            && cmp_bf(sub_bf(bf_temp, b_corner_x[i], b_limit), b_adj_x) > 0)
+        if ((b_corner_x[i] > b_limit) && ((bf_temp = b_corner_x[i] - b_limit) > b_adj_x))
         {
-            copy_bf(b_adj_x, bf_temp);
+            b_adj_x = bf_temp;
         }
 
         /* if (corner_x[i] < 0.0-limit && (ftemp = corner_x[i] + limit) < adj_x)
            adj_x = ftemp; */
-        if (cmp_bf(b_corner_x[i], neg_bf(b_tmp1, b_limit)) < 0
-            && cmp_bf(add_bf(bf_temp, b_corner_x[i], b_limit), b_adj_x) < 0)
+        if ((b_corner_x[i] < (b_tmp1 = -b_limit)) && ((bf_temp = b_corner_x[i] + b_limit) < b_adj_x))
         {
-            copy_bf(b_adj_x, bf_temp);
+            b_adj_x = bf_temp;
         }
 
         /* if (corner_y[i] > limit  && (ftemp = corner_y[i] - limit) > adj_y)
            adj_y = ftemp; */
-        if (cmp_bf(b_corner_y[i], b_limit) > 0
-            && cmp_bf(sub_bf(bf_temp, b_corner_y[i], b_limit), b_adj_y) > 0)
+        if ((b_corner_y[i] > b_limit) && ((bf_temp = b_corner_y[i] - b_limit) > b_adj_y))
         {
-            copy_bf(b_adj_y, bf_temp);
+            b_adj_y = bf_temp;
         }
 
         /* if (corner_y[i] < 0.0-limit && (ftemp = corner_y[i] + limit) < adj_y)
            adj_y = ftemp; */
-        if (cmp_bf(b_corner_y[i], neg_bf(b_tmp1, b_limit)) < 0
-            && cmp_bf(add_bf(bf_temp, b_corner_y[i], b_limit), b_adj_y) < 0)
+        if ((b_corner_y[i] < (b_tmp1 = -b_limit)) && ((bf_temp = b_corner_y[i] + b_limit) < b_adj_y))
         {
-            copy_bf(b_adj_y, bf_temp);
+            b_adj_y = bf_temp;
         }
     }
 
-    const bool translated = is_bf_not_zero(b_adj_x) || is_bf_not_zero(b_adj_y);
+    const bool translated = (b_adj_x != BigFloat{0}) || (b_adj_y != BigFloat{0});
 
     // xxmin = corner_x[0] - adj_x;
-    sub_bf(g_bf_x_min, b_corner_x[0], b_adj_x);
+    sub_bf(g_bf_x_min, b_corner_x[0].data(), b_adj_x.data());
     // xxmax = corner_x[1] - adj_x;
-    sub_bf(g_bf_x_max, b_corner_x[1], b_adj_x);
+    sub_bf(g_bf_x_max, b_corner_x[1].data(), b_adj_x.data());
     // xx3rd = corner_x[2] - adj_x;
-    sub_bf(g_bf_x_3rd, b_corner_x[2], b_adj_x);
+    sub_bf(g_bf_x_3rd, b_corner_x[2].data(), b_adj_x.data());
     // yymax = corner_y[0] - adj_y;
-    sub_bf(g_bf_y_max, b_corner_y[0], b_adj_y);
+    sub_bf(g_bf_y_max, b_corner_y[0].data(), b_adj_y.data());
     // yymin = corner_y[1] - adj_y;
-    sub_bf(g_bf_y_min, b_corner_y[1], b_adj_y);
+    sub_bf(g_bf_y_min, b_corner_y[1].data(), b_adj_y.data());
     // yy3rd = corner_y[2] - adj_y;
-    sub_bf(g_bf_y_3rd, b_corner_y[2], b_adj_y);
+    sub_bf(g_bf_y_3rd, b_corner_y[2].data(), b_adj_y.data());
 
     adjust_corner_bf(); // make 3rd corner exact if very near other co-ords
     return translated;
@@ -889,10 +880,9 @@ static void smallest_add(double *num)
 
 static void smallest_add_bf(BigFloatPtr num)
 {
-    BigStackSaver saved;
-    BigFloatPtr b_tmp1 = bf_stack().allocate_single();
-    mult_bf(b_tmp1, float_to_bf(b_tmp1, 5.0e-16), num);
-    add_a_bf(num, b_tmp1);
+    BigFloat b_tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    mult_bf(b_tmp1.data(), (b_tmp1 = 5.0e-16).data(), num);
+    add_a_bf(num, b_tmp1.data());
 }
 
 static bool ratio_bad(const double actual, const double desired)

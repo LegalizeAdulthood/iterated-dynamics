@@ -8,6 +8,7 @@
 #include <engine/pixel_limits.h>
 #include <math/big.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 
 #include <config/port.h>
 
@@ -28,9 +29,8 @@ int get_prec_bf_mag()
     double skew;
     LDouble magnification;
 
-    BigStackSaver saved;
-    BigFloatPtr b_x_ctr = bf_stack().allocate_single();
-    BigFloatPtr b_y_ctr = bf_stack().allocate_single();
+    BigFloat b_x_ctr{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_y_ctr{bf_arena(BigLifetime::TEMPORARY)};
     // this is just to find magnification
     cvt_center_mag_bf(b_x_ctr, b_y_ctr, magnification, x_mag_factor, rotation, skew);
 
@@ -47,16 +47,15 @@ int get_prec_bf_mag()
    (if res==Resolution::MAX) or at current resolution (if res==Resolution::CURRENT)    */
 int get_prec_bf(const ResolutionFlag flag)
 {
-    BigStackSaver saved;
     int res;
-    BigFloatPtr del1 = bf_stack().allocate_single();
-    BigFloatPtr del2 = bf_stack().allocate_single();
-    BigFloatPtr one = bf_stack().allocate_single();
-    BigFloatPtr bf_x_delta = bf_stack().allocate_single();
-    BigFloatPtr bf_x_delta2 = bf_stack().allocate_single();
-    BigFloatPtr bf_y_delta = bf_stack().allocate_single();
-    BigFloatPtr bf_y_delta2 = bf_stack().allocate_single();
-    float_to_bf(one, 1.0);
+    BigFloat del1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat del2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat one{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_x_delta{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_x_delta2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_y_delta{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_y_delta2{bf_arena(BigLifetime::TEMPORARY)};
+    one = 1.0;
     if (flag == ResolutionFlag::MAX)
     {
         res = OLD_MAX_PIXELS -1;
@@ -67,12 +66,12 @@ int get_prec_bf(const ResolutionFlag flag)
     }
 
     // bfxxdel = (bfxmax - bfx3rd)/(xdots-1)
-    sub_bf(bf_x_delta, g_bf_x_max, g_bf_x_3rd);
-    div_a_bf_int(bf_x_delta, static_cast<U16>(res));
+    sub_bf(bf_x_delta.data(), g_bf_x_max, g_bf_x_3rd);
+    bf_x_delta /= static_cast<U16>(res);
 
     // bfyydel2 = (bfy3rd - bfymin)/(xdots-1)
-    sub_bf(bf_y_delta2, g_bf_y_3rd, g_bf_y_min);
-    div_a_bf_int(bf_y_delta2, static_cast<U16>(res));
+    sub_bf(bf_y_delta2.data(), g_bf_y_3rd, g_bf_y_min);
+    bf_y_delta2 /= static_cast<U16>(res);
 
     if (flag == ResolutionFlag::CURRENT)
     {
@@ -80,28 +79,28 @@ int get_prec_bf(const ResolutionFlag flag)
     }
 
     // bfyydel = (bfymax - bfy3rd)/(ydots-1)
-    sub_bf(bf_y_delta, g_bf_y_max, g_bf_y_3rd);
-    div_a_bf_int(bf_y_delta, static_cast<U16>(res));
+    sub_bf(bf_y_delta.data(), g_bf_y_max, g_bf_y_3rd);
+    bf_y_delta /= static_cast<U16>(res);
 
     // bfxxdel2 = (bfx3rd - bfxmin)/(ydots-1)
-    sub_bf(bf_x_delta2, g_bf_x_3rd, g_bf_x_min);
-    div_a_bf_int(bf_x_delta2, static_cast<U16>(res));
+    sub_bf(bf_x_delta2.data(), g_bf_x_3rd, g_bf_x_min);
+    bf_x_delta2 /= static_cast<U16>(res);
 
-    abs_a_bf(add_bf(del1, bf_x_delta, bf_x_delta2));
-    abs_a_bf(add_bf(del2, bf_y_delta, bf_y_delta2));
-    if (cmp_bf(del2, del1) < 0)
+    del1 = abs(del1 = bf_x_delta + bf_x_delta2);
+    del2 = abs(del2 = bf_y_delta + bf_y_delta2);
+    if (del2 < del1)
     {
-        copy_bf(del1, del2);
+        del1 = del2;
     }
-    if (cmp_bf(del1, clear_bf(del2)) == 0)
+    if (del1 == (del2 = 0))
     {
         return -1;
     }
     int digits = 1;
-    while (cmp_bf(del1, one) < 0)
+    while (del1 < one)
     {
         digits++;
-        mult_a_bf_int(del1, 10);
+        del1 = del1 * 10;
     }
     digits = std::max(digits, 3);
     return std::max(digits, get_prec_bf_mag());

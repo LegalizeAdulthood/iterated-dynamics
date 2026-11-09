@@ -50,6 +50,7 @@
 #include <io/loadmap.h>
 #include <math/big.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <math/sign.h>
 #include <misc/debug_flags.h>
 #include <misc/Driver.h>
@@ -984,13 +985,12 @@ void put_rds_params(WriteBatchData &wb_data)
 static void write_batch_params(
     const char *color_inf, const bool colors_only, const int max_color, const int ii, const int jj)
 {
-    BigStackSaver saved;
-    BigFloatPtr bf_x_ctr = nullptr;
-    BigFloatPtr bf_y_ctr = nullptr;
+    BigFloat bf_x_ctr{};
+    BigFloat bf_y_ctr{};
     if (g_bf_math != BFMathType::NONE)
     {
-        bf_x_ctr = bf_stack().allocate_single();
-        bf_y_ctr = bf_stack().allocate_single();
+        bf_x_ctr = BigFloat{bf_arena(BigLifetime::WORKING)};
+        bf_y_ctr = BigFloat{bf_arena(BigLifetime::WORKING)};
     }
 
     s_wb_data.buf.clear(); // force first parm to start on new line
@@ -1084,8 +1084,8 @@ static void write_batch_params(
                 cvt_center_mag_bf(bf_x_ctr, bf_y_ctr, magnification, x_mag_factor, rotation, skew);
                 const int digits = get_prec_bf(ResolutionFlag::MAX);
                 put_param(" center-mag=");
-                put_bf(0, bf_x_ctr, digits);
-                put_bf(1, bf_y_ctr, digits);
+                put_bf(0, bf_x_ctr.data(), digits);
+                put_bf(1, bf_y_ctr.data(), digits);
             }
             else // !g_bf_math
             {

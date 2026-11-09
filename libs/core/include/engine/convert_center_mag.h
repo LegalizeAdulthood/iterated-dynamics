@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <math/big.h>
+#include <math/BigFloat.h>
 
 #include <config/port.h>
 
@@ -15,6 +15,6 @@ extern bool g_use_center_mag; // use center-mag corners
 void cvt_center_mag(
     double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_factor, double &rot, double &skew);
 void cvt_center_mag_bf(
-    math::BigFloatPtr ctr_x, math::BigFloatPtr ctr_y, LDouble &mag, double &x_mag_factor, double &rot, double &skew);
+    math::BigFloat &ctr_x, math::BigFloat &ctr_y, LDouble &mag, double &x_mag_factor, double &rot, double &skew);
 
 } // namespace id::engine

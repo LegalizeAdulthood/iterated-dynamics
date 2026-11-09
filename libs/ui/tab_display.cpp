@@ -33,6 +33,7 @@
 #include <io/special_dirs.h>
 #include <io/trim_filename.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <misc/Driver.h>
 #include <misc/version.h>
 #include <misc/ValueSaver.h>
@@ -327,11 +328,10 @@ int tab_display() // display the status of the current image
         return metadata_tab_display(*g_tab_metadata);
     }
     int add_row = 0;
-    BigFloatPtr bf_x_ctr = nullptr;
-    BigFloatPtr bf_y_ctr = nullptr;
+    BigFloat bf_x_ctr{};
+    BigFloat bf_y_ctr{};
     char msg[350];
     const char *msg_ptr;
-    BigStackMark saved{};
     int has_form_param = 0;
 
     if (g_calc_status < CalcStatus::PARAMS_CHANGED) // no active fractal image
@@ -345,9 +345,8 @@ int tab_display() // display the status of the current image
     driver_stack_screen();
     if (g_bf_math != BFMathType::NONE)
     {
-        saved = save_stack();
-        bf_x_ctr = bf_stack().allocate_single();
-        bf_y_ctr = bf_stack().allocate_single();
+        bf_x_ctr = BigFloat{bf_arena(BigLifetime::WORKING)};
+        bf_y_ctr = BigFloat{bf_arena(BigLifetime::WORKING)};
     }
     if (g_fractal_type == FractalType::FORMULA)
     {
@@ -544,13 +543,13 @@ top:
             const int truncate_row = g_row;
             driver_put_string(++start_row, 2, C_GENERAL_MED, "Ctr");
             driver_put_string(start_row, 8, C_GENERAL_MED, "x");
-            const std::string x_center{bf_to_string(bf_x_ctr, dec)};
+            const std::string x_center{bf_to_string(bf_x_ctr.data(), dec)};
             if (put_string_wrap(&start_row, 10, 78, C_GENERAL_HI, x_center, 5))
             {
                 truncate = true;
             }
             driver_put_string(++start_row, 8, C_GENERAL_MED, "y");
-            const std::string y_center{bf_to_string(bf_y_ctr, dec)};
+            const std::string y_center{bf_to_string(bf_y_ctr.data(), dec)};
             if (put_string_wrap(&start_row, 10, 78, C_GENERAL_HI, y_center, 5) || truncate)
             {
                 driver_put_string(truncate_row, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");
@@ -686,7 +685,8 @@ top:
     g_engine_timer_start = std::clock(); // tab display was "time out"
     if (g_bf_math != BFMathType::NONE)
     {
-        restore_stack(saved);
+        bf_x_ctr = BigFloat{};
+        bf_y_ctr = BigFloat{};
     }
     return 0;
 }

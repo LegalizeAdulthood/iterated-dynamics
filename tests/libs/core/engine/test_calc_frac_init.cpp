@@ -138,6 +138,30 @@ INSTANTIATE_TEST_SUITE_P(TranslationInputs, TestCalcFracInitBounds,
             "TranslatedArbitraryPrecision", TRANSLATION_INPUT, TRANSLATION_EXPECTED, true, true, 1e-8}),
     [](const TestParamInfo<ImageTranslationInput> &info) { return info.param.name; });
 
+TEST_F(TestCalcFracInit, arbitraryPrecisionBoundsShrinkOversizedRegionsAtTheSameCenter)
+{
+    set_region({{-65535.98, -49151.985}, {65535.98, 49151.985}, {-65535.98, -49151.985}}, true);
+
+    EXPECT_TRUE(calc_frac_init());
+
+    const ImageRegion region{current_region()};
+    EXPECT_NEAR(-32767.99, region.m_min.x, 1e-7);
+    EXPECT_NEAR(32767.99, region.m_max.x, 1e-7);
+    EXPECT_NEAR(-24575.9925, region.m_min.y, 1e-7);
+    EXPECT_NEAR(24575.9925, region.m_max.y, 1e-7);
+    EXPECT_EQ(region.m_min, region.m_3rd);
+}
+
+TEST_F(TestCalcFracInit, arbitraryPrecisionCornerAdjustmentSnapsNearlyAxisAlignedEdges)
+{
+    set_region({{-2.0, -1.5}, {2.0, 1.5}, {-1.99999999, -1.49999999}}, true);
+
+    adjust_corner_bf();
+
+    EXPECT_EQ(0, cmp_bf(g_bf_x_min, g_bf_x_3rd));
+    EXPECT_EQ(0, cmp_bf(g_bf_y_min, g_bf_y_3rd));
+}
+
 TEST_F(TestCalcFracInit, enteringArbitraryPrecisionStillInvalidatesResume)
 {
     set_region({{-2.0, -1.5}, {2.0, 1.5}, {-2.0, -1.5}}, false);

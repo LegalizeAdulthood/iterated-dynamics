@@ -23,6 +23,7 @@
 #include <fractals/lyapunov.h>
 #include <math/big.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <misc/Driver.h>
 #include <misc/id.h>
 #include <ui/big_while_loop.h>
@@ -77,18 +78,17 @@ static void move_row(int from_row, int to_row, int col);
 
 // big number declarations
 static void calc_corner(
-    BigFloatPtr target, BigFloatPtr p1, const double p2, BigFloatPtr p3, const double p4, BigFloatPtr p5)
+    BigFloatPtr target, BigFloatPtr p1, const double p2, BigFloat &p3, const double p4, BigFloat &p5)
 {
-    BigStackSaver saved;
-    const BigFloatPtr b_tmp1 = bf_stack().allocate_single();
-    const BigFloatPtr b_tmp2 = bf_stack().allocate_single();
-    const BigFloatPtr b_tmp3 = bf_stack().allocate_single();
+    BigFloat b_tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp3{bf_arena(BigLifetime::TEMPORARY)};
 
     // use target as temporary variable
-    float_to_bf(b_tmp3, p2);
-    mult_bf(b_tmp1, b_tmp3, p3);
-    mult_bf(b_tmp2, float_to_bf(target, p4), p5);
-    add_bf(target, b_tmp1, b_tmp2);
+    b_tmp3 = p2;
+    b_tmp1 = b_tmp3 * p3;
+    mult_bf(b_tmp2.data(), float_to_bf(target, p4), p5.data());
+    add_bf(target, b_tmp1.data(), b_tmp2.data());
     add_a_bf(target, p1);
 }
 
@@ -148,20 +148,18 @@ void draw_box(const bool draw_it)
         return;
     }
 
-    BigStackMark saved{};
-    BigFloatPtr bf_f_x_width;
-    BigFloatPtr bf_f_x_skew;
-    BigFloatPtr bf_f_y_height;
-    BigFloatPtr bf_f_y_skew;
-    BigFloatPtr bf_f_x_adj;
+    BigFloat bf_f_x_width{};
+    BigFloat bf_f_x_skew{};
+    BigFloat bf_f_y_height{};
+    BigFloat bf_f_y_skew{};
+    BigFloat bf_f_x_adj{};
     if (g_bf_math != BFMathType::NONE)
     {
-        saved = save_stack();
-        bf_f_x_width = bf_stack().allocate_single();
-        bf_f_x_skew = bf_stack().allocate_single();
-        bf_f_y_height = bf_stack().allocate_single();
-        bf_f_y_skew = bf_stack().allocate_single();
-        bf_f_x_adj = bf_stack().allocate_single();
+        bf_f_x_width = BigFloat{bf_arena(BigLifetime::WORKING)};
+        bf_f_x_skew = BigFloat{bf_arena(BigLifetime::WORKING)};
+        bf_f_y_height = BigFloat{bf_arena(BigLifetime::WORKING)};
+        bf_f_y_skew = BigFloat{bf_arena(BigLifetime::WORKING)};
+        bf_f_x_adj = BigFloat{bf_arena(BigLifetime::WORKING)};
     }
     double f_temp1 = PI * g_zoom_box_rotation / 72; // convert to radians
     const double rot_cos = std::cos(f_temp1);   // sin & cos of rotation
@@ -177,11 +175,11 @@ void draw_box(const bool draw_it)
     if (g_bf_math != BFMathType::NONE)
     {
         // do some calcs just once here to reduce fp work a bit
-        sub_bf(bf_f_x_width, g_bf_save_x_max, g_bf_save_x_3rd);
-        sub_bf(bf_f_x_skew, g_bf_save_x_3rd, g_bf_save_x_min);
-        sub_bf(bf_f_y_height, g_bf_save_y_3rd, g_bf_save_y_max);
-        sub_bf(bf_f_y_skew, g_bf_save_y_min, g_bf_save_y_3rd);
-        float_to_bf(bf_f_x_adj, f_x_adj);
+        sub_bf(bf_f_x_width.data(), g_bf_save_x_max, g_bf_save_x_3rd);
+        sub_bf(bf_f_x_skew.data(), g_bf_save_x_3rd, g_bf_save_x_min);
+        sub_bf(bf_f_y_height.data(), g_bf_save_y_3rd, g_bf_save_y_max);
+        sub_bf(bf_f_y_skew.data(), g_bf_save_y_min, g_bf_save_y_3rd);
+        bf_f_x_adj = f_x_adj;
     }
 
     // calc co-ords of topleft & botright corners of box
@@ -235,7 +233,11 @@ void draw_box(const bool draw_it)
     {
         calc_corner(g_bf_x_3rd, g_bf_save_x_min, f_temp1, bf_f_x_width, f_temp2, bf_f_x_skew);
         calc_corner(g_bf_y_3rd, g_bf_save_y_max, f_temp2, bf_f_y_height, f_temp1, bf_f_y_skew);
-        restore_stack(saved);
+        bf_f_x_width = BigFloat{};
+        bf_f_x_skew = BigFloat{};
+        bf_f_y_height = BigFloat{};
+        bf_f_y_skew = BigFloat{};
+        bf_f_x_adj = BigFloat{};
     }
     f_temp1 = g_zoom_box_x + g_zoom_box_width - dx + f_x_adj;
     f_temp2 = g_zoom_box_y - dy/g_viewport.final_aspect_ratio;
@@ -457,55 +459,54 @@ void change_box(const int dw, const int dh)
     change_box(dw / g_logical_screen.x_size_dots, dh / g_logical_screen.y_size_dots);
 }
 
-static void zoom_out_calc(BigFloatPtr bf_dx, BigFloatPtr bf_dy, //
-    BigFloatPtr bf_new_x, BigFloatPtr bf_new_y,                 //
-    BigFloatPtr bf_plot_mx1, BigFloatPtr bf_plot_mx2,           //
-    BigFloatPtr bf_plot_my1, BigFloatPtr bf_plot_my2,           //
-    BigFloatPtr bf_f_temp)
+static void zoom_out_calc(BigFloat &bf_dx, BigFloat &bf_dy, //
+    BigFloatPtr bf_new_x, BigFloatPtr bf_new_y,             //
+    BigFloat &bf_plot_mx1, BigFloat &bf_plot_mx2,           //
+    BigFloat &bf_plot_my1, BigFloat &bf_plot_my2,           //
+    BigFloat &bf_f_temp)
 {
-    BigStackSaver saved;
-    BigFloatPtr b_tmp1 = bf_stack().allocate_single();
-    BigFloatPtr b_tmp2 = bf_stack().allocate_single();
-    BigFloatPtr b_tmp3 = bf_stack().allocate_single();
-    BigFloatPtr b_tmp4 = bf_stack().allocate_single();
-    BigFloatPtr b_tmp2a = bf_stack().allocate_single();
-    BigFloatPtr b_tmp4a = bf_stack().allocate_single();
-    BigFloatPtr b_temp_x = bf_stack().allocate_single();
-    BigFloatPtr b_temp_y = bf_stack().allocate_single();
+    BigFloat b_tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp3{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp4{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp2a{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp4a{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_temp_x{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_temp_y{bf_arena(BigLifetime::TEMPORARY)};
 
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0,0) topleft through (1,1) bottom right */
 
     // tempx = dy * plotmx1 - dx * plotmx2;
-    mult_bf(b_tmp1, bf_dy, bf_plot_mx1);
-    mult_bf(b_tmp2, bf_dx, bf_plot_mx2);
-    sub_bf(b_temp_x, b_tmp1, b_tmp2);
+    b_tmp1 = bf_dy * bf_plot_mx1;
+    b_tmp2 = bf_dx * bf_plot_mx2;
+    b_temp_x = b_tmp1 - b_tmp2;
 
     // tempy = dx * plotmy1 - dy * plotmy2;
-    mult_bf(b_tmp1, bf_dx, bf_plot_my1);
-    mult_bf(b_tmp2, bf_dy, bf_plot_my2);
-    sub_bf(b_temp_y, b_tmp1, b_tmp2);
+    b_tmp1 = bf_dx * bf_plot_my1;
+    b_tmp2 = bf_dy * bf_plot_my2;
+    b_temp_y = b_tmp1 - b_tmp2;
 
     // calc new corner by extending from current screen corners
     // *newx = sxmin + tempx*(sxmax-sx3rd)/ftemp + tempy*(sx3rd-sxmin)/ftemp;
-    sub_bf(b_tmp1, g_bf_save_x_max, g_bf_save_x_3rd);
-    mult_bf(b_tmp2, b_temp_x, b_tmp1);
-    div_bf(b_tmp2a, b_tmp2, bf_f_temp);
-    sub_bf(b_tmp3, g_bf_save_x_3rd, g_bf_save_x_min);
-    mult_bf(b_tmp4, b_temp_y, b_tmp3);
-    div_bf(b_tmp4a, b_tmp4, bf_f_temp);
-    add_bf(bf_new_x, g_bf_save_x_min, b_tmp2a);
-    add_a_bf(bf_new_x, b_tmp4a);
+    sub_bf(b_tmp1.data(), g_bf_save_x_max, g_bf_save_x_3rd);
+    b_tmp2 = b_temp_x * b_tmp1;
+    b_tmp2a = b_tmp2 / bf_f_temp;
+    sub_bf(b_tmp3.data(), g_bf_save_x_3rd, g_bf_save_x_min);
+    b_tmp4 = b_temp_y * b_tmp3;
+    b_tmp4a = b_tmp4 / bf_f_temp;
+    add_bf(bf_new_x, g_bf_save_x_min, b_tmp2a.data());
+    add_a_bf(bf_new_x, b_tmp4a.data());
 
     // *newy = symax + tempy*(sy3rd-symax)/ftemp + tempx*(symin-sy3rd)/ftemp;
-    sub_bf(b_tmp1, g_bf_save_y_3rd, g_bf_save_y_max);
-    mult_bf(b_tmp2, b_temp_y, b_tmp1);
-    div_bf(b_tmp2a, b_tmp2, bf_f_temp);
-    sub_bf(b_tmp3, g_bf_save_y_min, g_bf_save_y_3rd);
-    mult_bf(b_tmp4, b_temp_x, b_tmp3);
-    div_bf(b_tmp4a, b_tmp4, bf_f_temp);
-    add_bf(bf_new_y, g_bf_save_y_max, b_tmp2a);
-    add_a_bf(bf_new_y, b_tmp4a);
+    sub_bf(b_tmp1.data(), g_bf_save_y_3rd, g_bf_save_y_max);
+    b_tmp2 = b_temp_y * b_tmp1;
+    b_tmp2a = b_tmp2 / bf_f_temp;
+    sub_bf(b_tmp3.data(), g_bf_save_y_min, g_bf_save_y_3rd);
+    b_tmp4 = b_temp_x * b_tmp3;
+    b_tmp4a = b_tmp4 / bf_f_temp;
+    add_bf(bf_new_y, g_bf_save_y_max, b_tmp2a.data());
+    add_a_bf(bf_new_y, b_tmp4a.data());
 }
 
 static void zoom_out_calc(const double dx, const double dy, double *new_x, double *new_y, const double f_temp)
@@ -531,49 +532,48 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
        then extend these co-ords from current real screen corners to get
        new actual corners
        */
-    BigStackSaver saved;
-    const BigFloatPtr save_bf_x_min = bf_stack().allocate_single();
-    const BigFloatPtr save_bf_y_max = bf_stack().allocate_single();
-    const BigFloatPtr bf_f_temp = bf_stack().allocate_single();
-    const BigFloatPtr tmp1 = bf_stack().allocate_single();
-    const BigFloatPtr tmp2 = bf_stack().allocate_single();
-    const BigFloatPtr tmp3 = bf_stack().allocate_single();
-    const BigFloatPtr tmp4 = bf_stack().allocate_single();
-    const BigFloatPtr tmp5 = bf_stack().allocate_single();
-    const BigFloatPtr tmp6 = bf_stack().allocate_single();
-    const BigFloatPtr bf_plot_mx1 = bf_stack().allocate_single();
-    const BigFloatPtr bf_plot_mx2 = bf_stack().allocate_single();
-    const BigFloatPtr bf_plot_my1 = bf_stack().allocate_single();
-    const BigFloatPtr bf_plot_my2 = bf_stack().allocate_single();
+    BigFloat save_bf_x_min{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat save_bf_y_max{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_f_temp{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp3{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp4{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp5{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp6{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_plot_mx1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_plot_mx2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_plot_my1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_plot_my2{bf_arena(BigLifetime::TEMPORARY)};
     // ftemp = (yymin-yy3rd)*(xx3rd-xxmin) - (xxmax-xx3rd)*(yy3rd-yymax);
-    sub_bf(tmp1, g_bf_y_min, g_bf_y_3rd);
-    sub_bf(tmp2, g_bf_x_3rd, g_bf_x_min);
-    sub_bf(tmp3, g_bf_x_max, g_bf_x_3rd);
-    sub_bf(tmp4, g_bf_y_3rd, g_bf_y_max);
-    mult_bf(tmp5, tmp1, tmp2);
-    mult_bf(tmp6, tmp3, tmp4);
-    sub_bf(bf_f_temp, tmp5, tmp6);
+    sub_bf(tmp1.data(), g_bf_y_min, g_bf_y_3rd);
+    sub_bf(tmp2.data(), g_bf_x_3rd, g_bf_x_min);
+    sub_bf(tmp3.data(), g_bf_x_max, g_bf_x_3rd);
+    sub_bf(tmp4.data(), g_bf_y_3rd, g_bf_y_max);
+    tmp5 = tmp1 * tmp2;
+    tmp6 = tmp3 * tmp4;
+    bf_f_temp = tmp5 - tmp6;
     // plotmx1 = (xx3rd-xxmin); */ ; /* reuse the plotxxx vars is safe
-    copy_bf(bf_plot_mx1, tmp2);
+    bf_plot_mx1 = tmp2;
     // plotmx2 = (yy3rd-yymax);
-    copy_bf(bf_plot_mx2, tmp4);
+    bf_plot_mx2 = tmp4;
     // plotmy1 = (yymin-yy3rd);
-    copy_bf(bf_plot_my1, tmp1);
+    bf_plot_my1 = tmp1;
     // plotmy2 = (xxmax-xx3rd);
-    copy_bf(bf_plot_my2, tmp3);
+    bf_plot_my2 = tmp3;
 
     // savxxmin = xxmin; savyymax = yymax;
-    copy_bf(save_bf_x_min, g_bf_x_min);
-    copy_bf(save_bf_y_max, g_bf_y_max);
+    copy_bf(save_bf_x_min.data(), g_bf_x_min);
+    copy_bf(save_bf_y_max.data(), g_bf_y_max);
 
-    sub_bf(tmp1, g_bf_save_x_min, save_bf_x_min);
-    sub_bf(tmp2, g_bf_save_y_max, save_bf_y_max);
+    sub_bf(tmp1.data(), g_bf_save_x_min, save_bf_x_min.data());
+    sub_bf(tmp2.data(), g_bf_save_y_max, save_bf_y_max.data());
     zoom_out_calc(tmp1, tmp2, g_bf_x_min, g_bf_y_max, bf_plot_mx1, bf_plot_mx2, bf_plot_my1, bf_plot_my2, bf_f_temp);
-    sub_bf(tmp1, g_bf_save_x_max, save_bf_x_min);
-    sub_bf(tmp2, g_bf_save_y_min, save_bf_y_max);
+    sub_bf(tmp1.data(), g_bf_save_x_max, save_bf_x_min.data());
+    sub_bf(tmp2.data(), g_bf_save_y_min, save_bf_y_max.data());
     zoom_out_calc(tmp1, tmp2, g_bf_x_max, g_bf_y_min, bf_plot_mx1, bf_plot_mx2, bf_plot_my1, bf_plot_my2, bf_f_temp);
-    sub_bf(tmp1, g_bf_save_x_3rd, save_bf_x_min);
-    sub_bf(tmp2, g_bf_save_y_3rd, save_bf_y_max);
+    sub_bf(tmp1.data(), g_bf_save_x_3rd, save_bf_x_min.data());
+    sub_bf(tmp2.data(), g_bf_save_y_3rd, save_bf_y_max.data());
     zoom_out_calc(tmp1, tmp2, g_bf_x_3rd, g_bf_y_3rd, bf_plot_mx1, bf_plot_mx2, bf_plot_my1, bf_plot_my2, bf_f_temp);
 }
 
