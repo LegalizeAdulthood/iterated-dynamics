@@ -50,9 +50,6 @@ int g_bf_decimals{};
 BigNumPtr g_bn_tmp1{};
 BigNumPtr g_bn_tmp2{};
 BigNumPtr g_bn_tmp3{};
-BigNumPtr g_bn_tmp4{};
-BigNumPtr g_bn_tmp5{};
-BigNumPtr g_bn_tmp6{};
 BigNumPtr g_bn_tmp_copy1{};
 BigNumPtr g_bn_tmp_copy2{};
 // used by other routines, g_bn_length
@@ -77,7 +74,6 @@ BNPtrComplex g_old_z_bn{};
 BNComplex g_param_z_bn{};
 BNComplex g_saved_z_bn{};
 BNComplex g_new_z_bn{};
-BigNumPtr g_bn_pi{};      // TAKES NO SPACE
 // g_r_bf_length+2
 BigFloatPtr g_bf_tmp1{};
 BigFloatPtr g_bf_tmp2{};
@@ -313,9 +309,6 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
     big_num.single(g_bn_tmp1);
     big_num.single(g_bn_tmp2);
     big_num.single(g_bn_tmp3);
-    big_num.single(g_bn_tmp4);
-    big_num.single(g_bn_tmp5);
-    big_num.single(g_bn_tmp6);
     big_num.wide(g_bn_tmp_copy1);
     big_num.wide(g_bn_tmp_copy2);
     big_num.single(g_old_z_bn.x);
@@ -685,7 +678,6 @@ void free_bf_vars()
         s_arenas->unbind();
     }
     g_bf_pi = nullptr;
-    g_bn_pi = nullptr;
     g_bf_math = BFMathType::NONE;
     g_bn_step = 0;
     g_bn_length = 0;
@@ -836,9 +828,7 @@ void init_big_pi()
     const int pi_offset = sizeof(pi_table) - length;
     std::memcpy(g_big_pi, pi_table + pi_offset, length);
 
-    // notice that g_bf_pi and g_bn_pi can share the same memory space
     g_bf_pi = g_big_pi;
-    g_bn_pi = g_big_pi + (g_bf_length-2) - (g_bn_length-g_int_length);
 }
 
 } // namespace id::math

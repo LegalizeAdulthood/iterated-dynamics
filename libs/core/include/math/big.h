@@ -69,12 +69,8 @@ extern int g_bf_decimals;
 extern BigNumPtr g_bn_tmp1;        // g_r_length
 extern BigNumPtr g_bn_tmp2;        // g_r_length
 extern BigNumPtr g_bn_tmp3;        // g_r_length
-extern BigNumPtr g_bn_tmp4;        // g_r_length
-extern BigNumPtr g_bn_tmp5;        // g_r_length
-extern BigNumPtr g_bn_tmp6;        // g_r_length
 extern BigNumPtr g_bn_tmp_copy1;   // g_bn_length
 extern BigNumPtr g_bn_tmp_copy2;   // g_bn_length
-extern BigNumPtr g_bn_pi;
 extern BigNumPtr g_bn_tmp;         // g_r_length
 extern BigFloatPtr g_bf_tmp1;      // g_r_bf_length+2
 extern BigFloatPtr g_bf_tmp2;      // g_r_bf_length+2
@@ -141,20 +137,11 @@ S16 BIG_SET_S16(S16 *addr, S16 val);
 #endif
 void bn_hex_dump(BigNumPtr r);
 BigNumPtr str_to_bn(BigNumPtr r, std::string_view s);
-int strlen_needed_bn();
 BigNumPtr int_to_bn(BigNumPtr r, long value);
 long bn_to_int(BigNumPtr n);
-int sign_bn(BigNumPtr n);
 BigNumPtr abs_bn(BigNumPtr r, BigNumPtr n);
 BigNumPtr abs_a_bn(BigNumPtr r);
 BigNumPtr unsafe_inv_bn(BigNumPtr r, BigNumPtr n);
-BigNumPtr unsafe_div_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2);
-BigNumPtr sqrt_bn(BigNumPtr r, BigNumPtr n);
-BigNumPtr exp_bn(BigNumPtr r, BigNumPtr n);
-BigNumPtr unsafe_ln_bn(BigNumPtr r, BigNumPtr n);
-BigNumPtr unsafe_sin_cos_bn(BigNumPtr s, BigNumPtr c, BigNumPtr n);
-BigNumPtr unsafe_atan_bn(BigNumPtr r, BigNumPtr n);
-BigNumPtr unsafe_atan2_bn(BigNumPtr r, BigNumPtr ny, BigNumPtr nx);
 int convert_bn(
     BigNumPtr new_num, BigNumConstPtr old_num, int new_bn_len, int new_int_len, int old_bn_len, int old_int_len);
 // "safe" versions
@@ -162,14 +149,8 @@ BigNumPtr full_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2);
 BigNumPtr mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2);
 BigNumPtr full_square_bn(BigNumPtr r, BigNumPtr n);
 BigNumPtr square_bn(BigNumPtr r, BigNumPtr n);
-BigNumPtr div_bn_int(BigNumPtr r, BigNumPtr n, misc::U16 u);
 std::string bn_to_string(BigNumConstPtr r, int dec);
-BigNumPtr inv_bn(BigNumPtr r, BigNumPtr n);
 BigNumPtr div_bn(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2);
-BigNumPtr ln_bn(BigNumPtr r, BigNumPtr n);
-BigNumPtr sin_cos_bn(BigNumPtr s, BigNumPtr c, BigNumPtr n);
-BigNumPtr atan_bn(BigNumPtr r, BigNumPtr n);
-BigNumPtr atan2_bn(BigNumPtr r, BigNumPtr ny, BigNumPtr nx);
 // misc
 bool is_bn_zero(BigNumPtr n);
 BigNumPtr float_to_bn(BigNumPtr r, LDouble f);

@@ -1002,11 +1002,6 @@ BigNumPtr unsafe_square_bn(BigNumPtr r, BigNumPtr n)
     return square(r, n);
 }
 
-BigNumPtr unsafe_div_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
-{
-    return divide(r, n1, n2);
-}
-
 BigNumPtr add_a_bn(BigNumPtr r, BigNumConstPtr n)
 {
     return add(r, r, n);
