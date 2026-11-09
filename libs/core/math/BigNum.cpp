@@ -916,6 +916,12 @@ bool BigNum::operator>=(const BigNum &right) const
     return compare(m_storage.data(), right.m_storage.data()) >= 0;
 }
 
+LDouble BigNum::to_float() const
+{
+    copy_bn(g_bn_tmp_copy1, m_storage.data());
+    return bn_to_float(g_bn_tmp_copy1);
+}
+
 std::string BigNum::to_string(const int digits) const
 {
     if (digits < 0)

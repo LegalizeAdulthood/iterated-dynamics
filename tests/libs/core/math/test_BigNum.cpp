@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <limits>
 #include <stdexcept>
 #include <type_traits>
@@ -773,6 +774,32 @@ TEST_F(TestBigNumValue, comparisonsReadNumericalValuesWithoutChangingOperands)
             EXPECT_EQ(left, encoded_value(values[i]));
             EXPECT_EQ(right, encoded_value(copy));
         }
+    }
+}
+
+TEST_P(TestBigNumProducts, constMachineConversionRetainsLegacyResultsAndInputBytes)
+{
+    std::vector<std::vector<Byte>> inputs{encoded_value(BigNum{0}),
+        encoded_value(BigNum{"-1.2345678901234567890123456789"}),
+        encoded_value(BigNum{"1.2345678901234567890123456789"})};
+    inputs.emplace_back(g_bn_length, 0);
+    inputs.back().front() = 1;
+    inputs.emplace_back(g_bn_length, 0xff);
+    inputs.emplace_back(g_bn_length, 0);
+    inputs.back().back() = 0x80;
+    inputs.emplace_back(g_bn_length, 0xff);
+    inputs.back().back() = 0x7f;
+    for (const auto &bytes : inputs)
+    {
+        const BigNum value = BigNum::from_legacy(bn_arena(BigLifetime::PERSISTENT), bytes.data(), bytes.size());
+        auto legacy = bytes;
+        const LDouble expected = bn_to_float(legacy.data());
+
+        const LDouble actual = value.to_float();
+
+        EXPECT_EQ(expected, actual);
+        EXPECT_EQ(std::signbit(expected), std::signbit(actual));
+        EXPECT_EQ(bytes, encoded_value(value));
     }
 }
 

@@ -37,7 +37,7 @@ public:
 
     void begin_orbit(const std::complex<double> &parameter, const std::complex<double> &value, long iteration);
     void begin_orbit_bf(const math::BFPtrComplex &parameter, const math::BFPtrComplex &value, long iteration);
-    void begin_orbit_bn(const math::BNPtrComplex &parameter, const math::BNPtrComplex &value, long iteration);
+    void begin_orbit_bn(const math::BNComplex &parameter, const math::BNComplex &value, long iteration);
     // Advance at most one recurrence update; true at bailout or the iteration limit.
     // Reference preparation can return false without advancing orbit_iteration().
     // continue_bailout retains Mandel's cached-square updates after a bailout.

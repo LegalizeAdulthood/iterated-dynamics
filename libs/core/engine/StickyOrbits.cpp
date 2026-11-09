@@ -296,8 +296,11 @@ void StickyOrbits::start_orbit(PertEngine *perturbation)
         const bool conjugate_value{burning_ship && static_cast<int>(g_params[2]) > 2};
         if (math::g_bf_math == math::BFMathType::BIG_NUM)
         {
-            perturbation->begin_orbit_bn(
-                {math::g_param_z_bn.x.data(), math::g_param_z_bn.y.data()}, math::g_old_z_bn, 0);
+            const auto size = static_cast<std::size_t>(math::g_bn_length);
+            perturbation->begin_orbit_bn(math::g_param_z_bn,
+                {math::BigNum::from_legacy(math::g_old_z_bn.x, size),
+                    math::BigNum::from_legacy(math::g_old_z_bn.y, size)},
+                0);
         }
         else if (math::g_bf_math == math::BFMathType::BIG_FLT)
         {

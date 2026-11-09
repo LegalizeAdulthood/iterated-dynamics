@@ -487,23 +487,24 @@ void PertEngine::begin_orbit_bf(const BFPtrComplex &parameter, const BFPtrComple
     }
 }
 
-void PertEngine::begin_orbit_bn(const BNPtrComplex &parameter, const BNPtrComplex &value, const long iteration)
+void PertEngine::begin_orbit_bn(const BNComplex &parameter, const BNComplex &value, const long iteration)
 {
     if (g_bf_math != BFMathType::BIG_NUM)
     {
         throw std::logic_error("Fixed-point orbit continuation requires fixed-point math");
     }
     const bool replace_reference{!m_reference.explicit_orbit || iteration != m_reference.iteration};
-    begin_orbit(std::complex<double>{static_cast<double>(bn_to_float(parameter.x)),
-                    static_cast<double>(bn_to_float(parameter.y))},
-        std::complex<double>{static_cast<double>(bn_to_float(value.x)), static_cast<double>(bn_to_float(value.y))},
+    begin_orbit(
+        std::complex<double>{static_cast<double>(parameter.x.to_float()), static_cast<double>(parameter.y.to_float())},
+        std::complex<double>{static_cast<double>(value.x.to_float()), static_cast<double>(value.y.to_float())},
         iteration);
     try
     {
-        bn_to_bf(m_orbit_parameter_bf.x, parameter.x);
-        bn_to_bf(m_orbit_parameter_bf.y, parameter.y);
-        bn_to_bf(m_orbit_initial_bf.x, value.x);
-        bn_to_bf(m_orbit_initial_bf.y, value.y);
+        const auto size = static_cast<std::size_t>(g_bf_length + 2);
+        parameter.x.copy_to_legacy_float(m_orbit_parameter_bf.x, size);
+        parameter.y.copy_to_legacy_float(m_orbit_parameter_bf.y, size);
+        value.x.copy_to_legacy_float(m_orbit_initial_bf.x, size);
+        value.y.copy_to_legacy_float(m_orbit_initial_bf.y, size);
         m_orbit_input.precise = true;
         if (replace_reference)
         {

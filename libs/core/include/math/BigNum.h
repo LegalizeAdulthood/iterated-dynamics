@@ -66,6 +66,7 @@ public:
     bool operator>(const BigNum &right) const;
     bool operator>=(const BigNum &right) const;
 
+    LDouble to_float() const;
     std::string to_string(int digits = 0) const;
 
     // Borrowed buffers require a numeric value and expire on arena relocation.

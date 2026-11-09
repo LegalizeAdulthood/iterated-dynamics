@@ -8001,6 +8001,65 @@ TEST_F(TestPerturbationPixels, preciseZeroCycleKeepsOwningValuesUntilPixelCleanu
     }
 }
 
+TEST_F(TestPerturbationPixels, fixedPointInputsRetainSubMachineDigitsAndPreserveOperands)
+{
+    init_bf_dec(80);
+    m_big_float = true;
+    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    g_max_iterations = 4;
+    BFComplex &center{m_engine.initialize_frame_bf({}, {})};
+    center.x = 0.25;
+    center.y = 0;
+    ASSERT_TRUE(m_engine.initialize_pixel_strategy());
+    BNComplex parameter{BigNum{bn_arena(BigLifetime::TEMPORARY)}, BigNum{bn_arena(BigLifetime::TEMPORARY)}};
+    BNComplex value{BigNum{bn_arena(BigLifetime::TEMPORARY)}, BigNum{bn_arena(BigLifetime::TEMPORARY)}};
+    str_to_bn(parameter.x.data(), "0.125" + std::string(36, '0') + "1");
+    str_to_bn(parameter.y.data(), "-0.0625" + std::string(35, '0') + "2");
+    str_to_bn(value.x.data(), "0.25" + std::string(37, '0') + "3");
+    str_to_bn(value.y.data(), "-0.125" + std::string(36, '0') + "4");
+    const auto encoded = [](BigNumConstPtr number) { return std::vector<Byte>{number, number + g_bn_length}; };
+    const std::array original{
+        encoded(parameter.x.data()), encoded(parameter.y.data()), encoded(value.x.data()), encoded(value.y.data())};
+    m_specific.pert_ref_bf = [](const BFComplex &parameter, BFComplex &z)
+    {
+        const BigFloat scale{"1e-40"};
+        BFComplex parameter_delta{parameter.x - BigFloat{0.125}, parameter.y - BigFloat{-0.0625}};
+        BFComplex value_delta{z.x - BigFloat{0.25}, z.y - BigFloat{-0.125}};
+        parameter_delta.x /= scale;
+        parameter_delta.y /= scale;
+        value_delta.x /= scale;
+        value_delta.y /= scale;
+        s_reference_coordinates.emplace_back(
+            bf_to_float(parameter_delta.x.data()), bf_to_float(parameter_delta.y.data()));
+        s_reference_values.emplace_back(bf_to_float(value_delta.x.data()), bf_to_float(value_delta.y.data()));
+        mandel_ref_pt_bf(parameter, z);
+    };
+    s_reference_coordinates.clear();
+    s_reference_values.clear();
+
+    m_engine.begin_orbit_bn(parameter, value, 1);
+
+    EXPECT_EQ(1, m_engine.orbit_iteration());
+    bool done{};
+    for (int step = 0; step < 10 && !done; ++step)
+    {
+        done = m_engine.iterate_orbit();
+    }
+    EXPECT_TRUE(done);
+    EXPECT_EQ(4, m_engine.orbit_iteration());
+    ASSERT_FALSE(s_reference_coordinates.empty());
+    ASSERT_FALSE(s_reference_values.empty());
+    EXPECT_NEAR(1.0, s_reference_coordinates.front().real(), 1e-12);
+    EXPECT_NEAR(-2.0, s_reference_coordinates.front().imag(), 1e-12);
+    EXPECT_NEAR(3.0, s_reference_values.front().real(), 1e-12);
+    EXPECT_NEAR(-4.0, s_reference_values.front().imag(), 1e-12);
+    EXPECT_EQ(original[0], encoded(parameter.x.data()));
+    EXPECT_EQ(original[1], encoded(parameter.y.data()));
+    EXPECT_EQ(original[2], encoded(value.x.data()));
+    EXPECT_EQ(original[3], encoded(value.y.data()));
+    m_engine.finish_orbit();
+}
+
 struct PerturbationBailoutMethod
 {
     const char *name;
