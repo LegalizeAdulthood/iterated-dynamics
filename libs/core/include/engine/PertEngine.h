@@ -103,10 +103,10 @@ private:
         std::complex<double> saved_z{};
         std::complex<double> precise_previous{};
         std::array<double, STAR_TRAIL_ITERATIONS> tan_table{};
-        math::BFPtrComplex precise_coordinate{};
-        math::BFPtrComplex precise_orbit{};
-        math::BFPtrComplex precise_saved{};
-        math::BigFloatPtr precise_tolerance{};
+        math::BFComplex precise_coordinate{};
+        math::BFComplex precise_orbit{};
+        math::BFComplex precise_saved{};
+        math::BigFloat precise_tolerance{};
         std::size_t sample{};
         std::size_t saved_sample{};
         std::size_t precise_sample{};

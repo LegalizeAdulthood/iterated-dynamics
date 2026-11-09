@@ -7953,6 +7953,54 @@ TEST_F(TestPerturbationPixels, subDoublePeriodicityToleranceStillDetectsExactCyc
     EXPECT_EQ(3, s_perturbation_orbit.size());
 }
 
+TEST_F(TestPerturbationPixels, preciseZeroCycleKeepsOwningValuesUntilPixelCleanup)
+{
+    const ValueSaver saved_initial{g_use_init_orbit, InitOrbitMode::NORMAL};
+    const ValueSaver saved_parameter{g_param_z1, DComplex{}};
+    const ValueSaver saved_real{g_params[0], 0.0};
+    const ValueSaver saved_imag{g_params[1], 0.0};
+    {
+        const ValueSaver saved_type{g_fractal_type, FractalType::JULIA_Z_POWER};
+        init_bf_dec(80);
+    }
+    m_big_float = true;
+    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
+    g_close_enough_bf = 1e-50;
+    g_periodicity_check = 1;
+    g_first_saved_and = 1;
+    g_periodicity_next_saved_incr = 1;
+    g_max_iterations = 16;
+    m_specific.pert_ref_bf = [](const BFComplex &coordinate, BFComplex &orbit)
+    {
+        const std::array<const BigFloat *, 4> values{&coordinate.x, &coordinate.y, &orbit.x, &orbit.y};
+        for (const BigFloat *value : values)
+        {
+            ASSERT_TRUE(*value);
+            EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &value->arena());
+        }
+        record_reference_bf(coordinate, orbit);
+    };
+    m_specific.pert_pt = record_perturbation_orbit;
+    BFComplex &center{m_engine.initialize_frame_bf({}, {})};
+    center.x = 0;
+    center.y = 0;
+    ASSERT_TRUE(m_engine.initialize_pixel_strategy());
+    const auto stack{save_stack()};
+    for (int col = 0; col < 2; ++col)
+    {
+        SCOPED_TRACE(col);
+        g_old_color_iter = 0;
+        s_perturbation_orbit.clear();
+
+        EXPECT_EQ(7, m_engine.calculate_pixel(col, 0));
+
+        EXPECT_EQ(16, g_real_color_iter);
+        EXPECT_EQ(3, s_perturbation_orbit.size());
+        EXPECT_EQ(1, m_engine.reference_count());
+        EXPECT_EQ(stack, save_stack());
+    }
+}
+
 struct PerturbationBailoutMethod
 {
     const char *name;
