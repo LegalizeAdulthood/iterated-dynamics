@@ -906,10 +906,7 @@ void detail::reduce_bf_product(Byte *value)
     std::memmove(value, value + g_padding, g_bf_length + 2);
 }
 
-BigFloat::BigFloat() :
-    BigFloat(bf_arena(BigLifetime::WORKING))
-{
-}
+BigFloat::BigFloat() noexcept = default;
 
 BigFloat::BigFloat(const LDouble value) :
     BigFloat(bf_arena(BigLifetime::WORKING), value)
@@ -970,11 +967,19 @@ BigFloat &BigFloat::operator=(const BigFloat &value)
 {
     if (this != &value)
     {
-        if (!m_storage)
+        if (!value.m_storage)
         {
-            m_storage = arena().allocate_single();
+            m_storage.reset();
         }
-        std::memcpy(m_storage.data(), value.m_storage.data(), encoded_size());
+        else
+        {
+            if (!m_storage)
+            {
+                BigArena &destination = m_storage.arena_ptr() != nullptr ? arena() : bf_arena(BigLifetime::WORKING);
+                m_storage = destination.allocate_single();
+            }
+            std::memcpy(m_storage.data(), value.m_storage.data(), encoded_size());
+        }
     }
     return *this;
 }
@@ -983,7 +988,11 @@ BigFloat &BigFloat::operator=(BigFloat &&value)
 {
     if (this != &value)
     {
-        if (&arena() == &value.arena())
+        if (!value.m_storage)
+        {
+            m_storage.reset();
+        }
+        else if ((m_storage.arena_ptr() != nullptr ? &arena() : &bf_arena(BigLifetime::WORKING)) == &value.arena())
         {
             m_storage = std::move(value.m_storage);
         }
@@ -1000,7 +1009,8 @@ BigFloat &BigFloat::operator=(const LDouble value)
     validate_scalar(value);
     if (!m_storage)
     {
-        m_storage = arena().allocate_single();
+        BigArena &destination = m_storage.arena_ptr() != nullptr ? arena() : bf_arena(BigLifetime::WORKING);
+        m_storage = destination.allocate_single();
         std::memset(m_storage.data(), 0, arena().block_size());
     }
     float_to_bf(m_storage.data(), value);
@@ -1040,14 +1050,14 @@ BigFloat &BigFloat::operator/=(const BigFloat &right)
 
 BigFloat BigFloat::operator+(const BigFloat &right) const
 {
-    BigFloat result;
+    BigFloat result{bf_arena(BigLifetime::WORKING)};
     binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), add);
     return result;
 }
 
 BigFloat BigFloat::operator-(const BigFloat &right) const
 {
-    BigFloat result;
+    BigFloat result{bf_arena(BigLifetime::WORKING)};
     binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), subtract);
     return result;
 }
@@ -1062,7 +1072,7 @@ BigFloat BigFloat::operator*(const BigFloat &right) const
 
 BigFloat BigFloat::operator/(const BigFloat &right) const
 {
-    BigFloat result;
+    BigFloat result{bf_arena(BigLifetime::WORKING)};
     binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), divide);
     return result;
 }
@@ -1085,7 +1095,7 @@ BigFloat BigFloat::half() const
 
 BigFloat BigFloat::log() const
 {
-    BigFloat result;
+    BigFloat result{bf_arena(BigLifetime::WORKING)};
     copy_bf(g_bf_tmp_copy1, m_storage.data());
     logarithm(result.m_storage.data(), g_bf_tmp_copy1);
     return result;
@@ -1093,14 +1103,15 @@ BigFloat BigFloat::log() const
 
 BigFloat BigFloat::exp() const
 {
-    BigFloat result;
+    BigFloat result{bf_arena(BigLifetime::WORKING)};
     exponential(result.m_storage.data(), m_storage.data());
     return result;
 }
 
 std::pair<BigFloat, BigFloat> BigFloat::sin_cos() const
 {
-    std::pair<BigFloat, BigFloat> result;
+    std::pair<BigFloat, BigFloat> result{
+        BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
     copy_bf(g_bf_tmp_copy1, m_storage.data());
     sine_cosine(result.first.m_storage.data(), result.second.m_storage.data(), g_bf_tmp_copy1);
     return result;
@@ -1108,7 +1119,7 @@ std::pair<BigFloat, BigFloat> BigFloat::sin_cos() const
 
 BigFloat BigFloat::atan2(const BigFloat &x) const
 {
-    BigFloat result;
+    BigFloat result{bf_arena(BigLifetime::WORKING)};
     binary_operation(result.m_storage.data(), m_storage.data(), x.m_storage.data(), arctangent2);
     return result;
 }

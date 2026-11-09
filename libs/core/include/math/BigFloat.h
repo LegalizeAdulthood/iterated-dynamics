@@ -19,8 +19,8 @@ class BigNum;
 class BigFloat
 {
 public:
-    // Callers establish a compatible legacy context for construction and math.
-    BigFloat();
+    // Default construction is null; numeric construction and math need a context.
+    BigFloat() noexcept;
     explicit BigFloat(LDouble value);
     explicit BigFloat(std::string_view text);
     explicit BigFloat(const BigNum &value);
@@ -34,6 +34,12 @@ public:
     BigFloat &operator=(const BigFloat &value);
     BigFloat &operator=(BigFloat &&value);
     BigFloat &operator=(LDouble value);
+
+    // Tests for an allocated value, including numeric zero.
+    explicit operator bool() const noexcept
+    {
+        return static_cast<bool>(m_storage);
+    }
 
     BigArena &arena() const noexcept
     {

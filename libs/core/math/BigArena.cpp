@@ -55,7 +55,7 @@ std::size_t storage_size(const std::size_t block_size, const std::size_t count)
 
 } // namespace
 
-BigArena::Allocation::Allocation() = default;
+BigArena::Allocation::Allocation() noexcept = default;
 
 BigArena::Allocation::Allocation(BigArena &arena, const Index index) :
     m_arena(&arena),
@@ -87,11 +87,17 @@ BigArena::Allocation &BigArena::Allocation::operator=(Allocation &&other) noexce
 
 BigArena::Allocation BigArena::Allocation::clone() const
 {
-    return clone(*m_arena);
+    return m_arena != nullptr ? clone(*m_arena) : Allocation{};
 }
 
 BigArena::Allocation BigArena::Allocation::clone(BigArena &arena) const
 {
+    if (!*this)
+    {
+        Allocation result;
+        result.m_arena = &arena;
+        return result;
+    }
     assert(arena.m_block_size == m_arena->m_block_size);
     const Byte width = m_arena->m_widths[m_index];
     Allocation result = width == 1 ? arena.allocate_single() : arena.allocate_double();

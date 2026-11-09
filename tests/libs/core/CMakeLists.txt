@@ -66,6 +66,7 @@ add_executable(test-core
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_migrate_gif.h"
 
     engine/test_bailout_formula.cpp
+    engine/test_BigNumBailout.cpp
     engine/test_BoundaryTrace.cpp
     engine/test_calc_frac_init.cpp
     engine/test_color_utils.cpp

@@ -161,7 +161,7 @@ TEST_F(TestBigNumValue, zeroConstructionLeavesTheLegacyStackUnchanged)
 {
     const auto marker = save_stack();
 
-    const BigNum value;
+    const BigNum value{0};
 
     EXPECT_EQ(marker, save_stack());
     EXPECT_EQ("0.", value.to_string());
@@ -612,7 +612,7 @@ TEST_P(TestBigNumLayout, divisionKeepsLegacySaturationAndZeroResults)
     max_bn(maximum.data());
     const BigNum positive = BigNum::from_legacy(maximum.data(), maximum.size());
     const BigNum quarter{"0.25"};
-    const BigNum zero;
+    const BigNum zero{0};
 
     EXPECT_EQ(maximum, encoded_value(positive / quarter));
     EXPECT_EQ(maximum, encoded_value((-positive) / zero));
@@ -642,7 +642,7 @@ TEST_P(TestBigNumProducts, normalizationPreservesSignedLowBitTruncation)
     quantum.front() = 1;
     const BigNum positive = BigNum::from_legacy(quantum.data(), quantum.size());
     const BigNum half{"0.5"};
-    const auto zero = encoded_value(BigNum{});
+    const auto zero = encoded_value(BigNum{0});
 
     EXPECT_EQ(zero, encoded_value(positive * half));
     EXPECT_EQ(zero, encoded_value(positive.sqr()));
@@ -679,7 +679,7 @@ TEST_F(TestBigNumValue, comparisonsReadNumericalValuesWithoutChangingOperands)
     const BigNum tiny = BigNum::from_legacy(quantum.data(), quantum.size());
     auto above_one = encoded_value(BigNum{1});
     above_one.front() = 1;
-    const BigNum values[]{BigNum{-7.5L}, BigNum{-1}, -tiny, BigNum{}, tiny, BigNum{1},
+    const BigNum values[]{BigNum{-7.5L}, BigNum{-1}, -tiny, BigNum{0}, tiny, BigNum{1},
         BigNum::from_legacy(above_one.data(), above_one.size()), BigNum{7.5L}};
 
     for (std::size_t i = 0; i < std::size(values); ++i)

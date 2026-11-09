@@ -74,7 +74,7 @@ TEST_F(TestBigFloatValue, zeroConstructionLeavesTheLegacyStackUnchanged)
 {
     const auto marker = save_stack();
 
-    const BigFloat value;
+    const BigFloat value{0};
 
     EXPECT_EQ(marker, save_stack());
     EXPECT_EQ("0.0", value.to_string());
@@ -343,7 +343,7 @@ TEST_P(TestBigFloatArithmetic, negationPreservesItsOperand)
 
     EXPECT_EQ("7.5", (-value).to_string(8));
     EXPECT_EQ(original, encoded_value(value));
-    EXPECT_EQ("0.0", (-BigFloat{}).to_string(8));
+    EXPECT_EQ("0.0", (-BigFloat{0}).to_string(8));
     EXPECT_EQ(original, encoded_value(-(-value)));
 }
 
@@ -431,7 +431,7 @@ TEST_P(TestBigFloatArithmetic, expressionsMatchLegacySequencesAndOutliveTheirTem
 
 TEST_P(TestBigFloatArithmetic, zeroAndDivisionByZeroKeepLegacyResults)
 {
-    const BigFloat zero;
+    const BigFloat zero{0};
     const BigFloat value{"-7.5"};
     auto raw_value = encoded_value(value);
     auto raw_zero = encoded_value(zero);
@@ -452,7 +452,7 @@ INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatArithmetic, testing::Values(4, 
 
 TEST_F(TestBigFloatValue, comparisonsUseNumericalValuesWithoutChangingOperands)
 {
-    const BigFloat values[]{BigFloat{"-1e400"}, BigFloat{"-2"}, BigFloat{"-1e-400"}, BigFloat{}, BigFloat{"1e-400"},
+    const BigFloat values[]{BigFloat{"-1e400"}, BigFloat{"-2"}, BigFloat{"-1e-400"}, BigFloat{0}, BigFloat{"1e-400"},
         BigFloat{"1"}, BigFloat{"1.000000000000000000000000000001"}, BigFloat{"1e400"}};
 
     for (std::size_t i = 0; i < std::size(values); ++i)

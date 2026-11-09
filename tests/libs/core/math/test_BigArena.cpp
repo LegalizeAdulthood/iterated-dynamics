@@ -102,6 +102,7 @@ void reduce_from_end(Byte *value)
 static_assert(!std::is_copy_constructible_v<BigArena>);
 static_assert(!std::is_move_constructible_v<BigArena>);
 static_assert(!std::is_copy_constructible_v<BigArena::Allocation>);
+static_assert(std::is_nothrow_default_constructible_v<BigArena::Allocation>);
 static_assert(std::is_nothrow_move_constructible_v<BigArena::Allocation>);
 static_assert(std::is_nothrow_move_assignable_v<BigArena::Allocation>);
 
@@ -147,6 +148,45 @@ TEST_P(TestBigArenaAlignment, alignsEveryBlockAndBothHalvesOfPairs)
 }
 
 INSTANTIATE_TEST_SUITE_P(BlockBytes, TestBigArenaAlignment, testing::Values(1U, 63U, 64U, 65U, 129U, 720U));
+
+TEST(TestBigArena, nullAllocationCloningAndMovingNeedNoArena)
+{
+    BigArena::Allocation null;
+    EXPECT_FALSE(null);
+    EXPECT_EQ(nullptr, null.arena_ptr());
+    auto copy = null.clone();
+    EXPECT_FALSE(copy);
+    EXPECT_EQ(nullptr, copy.arena_ptr());
+    BigArena::Allocation moved{std::move(copy)};
+    EXPECT_FALSE(copy);
+    EXPECT_FALSE(moved);
+    null = std::move(moved);
+    EXPECT_FALSE(null);
+    null.reset();
+    EXPECT_FALSE(null);
+}
+
+TEST(TestBigArena, resettingAndCloningAnEmptyAllocationRetainItsArenaWithoutAllocating)
+{
+    BigArena arena{17, 2, keep_first_block};
+    auto allocation = arena.allocate_single();
+    const auto index = allocation.index();
+    const auto high_water = arena.high_water_mark();
+
+    allocation.reset();
+    auto copy = allocation.clone();
+    auto selected = BigArena::Allocation{}.clone(arena);
+
+    EXPECT_FALSE(allocation);
+    EXPECT_FALSE(copy);
+    EXPECT_FALSE(selected);
+    EXPECT_EQ(&arena, allocation.arena_ptr());
+    EXPECT_EQ(&arena, copy.arena_ptr());
+    EXPECT_EQ(&arena, selected.arena_ptr());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    allocation = arena.allocate_single();
+    EXPECT_EQ(index, allocation.index());
+}
 
 TEST(TestBigArena, cloningASingleAllocationRetainsItsArenaAndOwnsAnIndependentBlock)
 {

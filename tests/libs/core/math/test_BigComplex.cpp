@@ -67,7 +67,7 @@ void check_owning_arithmetic()
     const Complex<T> right{T{2}, T{-1}};
     EXPECT_EQ((Complex<T>{T{4}, T{3}}), left * right);
     // Preserve scalar division rounding, including fixed-point 5/5.
-    EXPECT_EQ((Complex<T>{T{}, T{5} / T{5}}), left / right);
+    EXPECT_EQ((Complex<T>{T{0}, T{5} / T{5}}), left / right);
     EXPECT_EQ(T{5}, mag_squared(left));
     EXPECT_EQ((Complex<T>{T{2}, T{4}}), left * 2.0);
     EXPECT_EQ(left * 2.0, 2.0 * left);
@@ -76,16 +76,16 @@ void check_owning_arithmetic()
     EXPECT_EQ(&copy, &(copy *= copy));
     EXPECT_EQ((Complex<T>{T{-3}, T{4}}), copy);
     EXPECT_EQ(&copy, &(copy /= copy));
-    EXPECT_EQ((Complex<T>{T{25} / T{25}, T{}}), copy);
+    EXPECT_EQ((Complex<T>{T{25} / T{25}, T{0}}), copy);
     copy = left;
     copy += copy;
     EXPECT_EQ(left * 2.0, copy);
     copy -= copy;
-    EXPECT_EQ(Complex<T>{}, copy);
+    EXPECT_EQ((Complex<T>{T{0}, T{0}}), copy);
     EXPECT_EQ((Complex<T>{T{1}, T{2}}), left);
 
     g_overflow = false;
-    EXPECT_EQ(Complex<T>{}, left / Complex<T>{});
+    EXPECT_EQ((Complex<T>{T{0}, T{0}}), (left / Complex<T>{T{0}, T{0}}));
     EXPECT_TRUE(g_overflow);
     EXPECT_EQ((Complex<T>{T{-11}, T{-2}}), cube(left));
     EXPECT_EQ(cube(left), power(left, 3));
@@ -297,15 +297,15 @@ TEST_P(TestBigComplex, valueMathAgreesWithLegacyCalculations)
 
 TEST_P(TestBigComplex, owningLogAndPowerKeepZeroAndBranchConventions)
 {
-    const BFComplex zero;
+    const BFComplex zero{BigFloat{0}, BigFloat{0}};
     EXPECT_EQ(zero, log(zero));
     for (const BFComplex exponent :
-        {zero, BFComplex{BigFloat{-2}, BigFloat{}}, BFComplex{BigFloat{0.25L}, BigFloat{-0.5L}}})
+        {zero, BFComplex{BigFloat{-2}, BigFloat{0}}, BFComplex{BigFloat{0.25L}, BigFloat{-0.5L}}})
     {
         EXPECT_EQ(zero, pow(zero, exponent));
     }
-    const BFComplex negative{BigFloat{-1}, BigFloat{}};
-    EXPECT_EQ((BFComplex{BigFloat{1}, BigFloat{}}), pow(negative, BFComplex{BigFloat{0.5L}, BigFloat{}}));
+    const BFComplex negative{BigFloat{-1}, BigFloat{0}};
+    EXPECT_EQ((BFComplex{BigFloat{1}, BigFloat{0}}), pow(negative, BFComplex{BigFloat{0.5L}, BigFloat{0}}));
     BFPtrComplex raw = legacy(-1, -1);
     BFPtrComplex result = legacy(0, 0);
     cmplx_log_bf(&result, &raw);

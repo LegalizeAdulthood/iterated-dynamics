@@ -30,9 +30,9 @@ void export_bf(const BFComplex &value, const BFPtrComplex &destination)
 
 BFComplex log(const BFComplex &value)
 {
-    if (value == BFComplex{})
+    if (value == BFComplex{BigFloat{0}, BigFloat{0}})
     {
-        return {};
+        return {BigFloat{0}, BigFloat{0}};
     }
     BigFloat real = log(mag_squared(value)).half();
     BigFloat imag = atan2(value.y, value.x);
@@ -42,9 +42,9 @@ BFComplex log(const BFComplex &value)
 BFComplex pow(const BFComplex &base, const BFComplex &exponent)
 {
     // Preserve the legacy convention, including zero and negative exponents.
-    if (base == BFComplex{})
+    if (base == BFComplex{BigFloat{0}, BigFloat{0}})
     {
-        return {};
+        return {BigFloat{0}, BigFloat{0}};
     }
     const BFComplex product = log(base) * exponent;
     const BigFloat magnitude = exp(product.x);

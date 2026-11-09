@@ -64,10 +64,10 @@ Complex<T> Complex<T>::operator/(const Complex &rhs) const
     const T real_squared = sqr(rhs.x);
     const T imag_squared = sqr(rhs.y);
     const T denominator = real_squared + imag_squared;
-    if (denominator == T{})
+    if (denominator == T{0})
     {
         g_overflow = true;
-        return {};
+        return {T{0}, T{0}};
     }
     T real = x * rhs.x;
     const T imag_product = y * rhs.y;

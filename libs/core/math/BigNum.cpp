@@ -690,10 +690,7 @@ void detail::reduce_bn_product(Byte *value)
     std::memmove(value, value + g_shift_factor, g_bn_length);
 }
 
-BigNum::BigNum() :
-    BigNum(bn_arena(BigLifetime::WORKING))
-{
-}
+BigNum::BigNum() noexcept = default;
 
 BigNum::BigNum(const LDouble value) :
     BigNum(bn_arena(BigLifetime::WORKING), value)
@@ -757,11 +754,19 @@ BigNum &BigNum::operator=(const BigNum &value)
 {
     if (this != &value)
     {
-        if (!m_storage)
+        if (!value.m_storage)
         {
-            m_storage = arena().allocate_single();
+            m_storage.reset();
         }
-        std::memcpy(m_storage.data(), value.m_storage.data(), encoded_size());
+        else
+        {
+            if (!m_storage)
+            {
+                BigArena &destination = m_storage.arena_ptr() != nullptr ? arena() : bn_arena(BigLifetime::WORKING);
+                m_storage = destination.allocate_single();
+            }
+            std::memcpy(m_storage.data(), value.m_storage.data(), encoded_size());
+        }
     }
     return *this;
 }
@@ -770,7 +775,11 @@ BigNum &BigNum::operator=(BigNum &&value)
 {
     if (this != &value)
     {
-        if (&arena() == &value.arena())
+        if (!value.m_storage)
+        {
+            m_storage.reset();
+        }
+        else if ((m_storage.arena_ptr() != nullptr ? &arena() : &bn_arena(BigLifetime::WORKING)) == &value.arena())
         {
             m_storage = std::move(value.m_storage);
         }
@@ -787,7 +796,8 @@ BigNum &BigNum::operator=(const LDouble value)
     validate_scalar(value);
     if (!m_storage)
     {
-        m_storage = arena().allocate_single();
+        BigArena &destination = m_storage.arena_ptr() != nullptr ? arena() : bn_arena(BigLifetime::WORKING);
+        m_storage = destination.allocate_single();
         std::memset(m_storage.data(), 0, arena().block_size());
     }
     float_to_bn(m_storage.data(), value);
@@ -796,7 +806,7 @@ BigNum &BigNum::operator=(const LDouble value)
 
 BigNum BigNum::operator-() const
 {
-    BigNum result;
+    BigNum result{bn_arena(BigLifetime::WORKING)};
     negate(result.m_storage.data(), m_storage.data());
     return result;
 }
@@ -827,14 +837,14 @@ BigNum &BigNum::operator/=(const BigNum &right)
 
 BigNum BigNum::operator+(const BigNum &right) const
 {
-    BigNum result;
+    BigNum result{bn_arena(BigLifetime::WORKING)};
     add(result.m_storage.data(), m_storage.data(), right.m_storage.data());
     return result;
 }
 
 BigNum BigNum::operator-(const BigNum &right) const
 {
-    BigNum result;
+    BigNum result{bn_arena(BigLifetime::WORKING)};
     subtract(result.m_storage.data(), m_storage.data(), right.m_storage.data());
     return result;
 }
@@ -849,7 +859,7 @@ BigNum BigNum::operator*(const BigNum &right) const
 
 BigNum BigNum::operator/(const BigNum &right) const
 {
-    BigNum result;
+    BigNum result{bn_arena(BigLifetime::WORKING)};
     binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), divide);
     return result;
 }

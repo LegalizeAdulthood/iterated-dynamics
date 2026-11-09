@@ -25,7 +25,7 @@ public:
     class Allocation
     {
     public:
-        Allocation();
+        Allocation() noexcept;
         ~Allocation();
         Allocation(const Allocation &) = delete;
         Allocation(Allocation &&other) noexcept;
@@ -37,7 +37,12 @@ public:
             return m_index != NO_INDEX;
         }
 
-        // Arena binding survives a move; data and cloning require a live block.
+        // Arena binding survives a move; data requires a live block.
+        BigArena *arena_ptr() const noexcept
+        {
+            return m_arena;
+        }
+
         BigArena &arena() const noexcept
         {
             return *m_arena;
@@ -66,6 +71,8 @@ public:
         Allocation clone() const;
         // The selected arena must have the same block size and numeric layout.
         Allocation clone(BigArena &arena) const;
+        // Release the block, retaining the arena binding for reassignment.
+        void reset() noexcept;
         // Requires a live allocation obtained through allocate_double().
         void reduce()
         {
@@ -75,7 +82,6 @@ public:
     private:
         friend class BigArena;
         Allocation(BigArena &arena, Index index);
-        void reset() noexcept;
 
         BigArena *m_arena{};
         Index m_index{NO_INDEX};

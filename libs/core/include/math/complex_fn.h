@@ -91,6 +91,7 @@ Complex<T> power(const Complex<T> &base, int degree)
     else
     {
         result.x = T{1};
+        result.y = T{0};
     }
     degree >>= 1;
     if (degree == 0)

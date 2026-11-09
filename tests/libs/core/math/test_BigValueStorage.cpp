@@ -84,6 +84,102 @@ void TestBigValueStorage<Value>::TearDown()
 using ValueTypes = testing::Types<BigNum, BigFloat>;
 TYPED_TEST_SUITE(TestBigValueStorage, ValueTypes);
 
+template <typename Value>
+class TestBigNullValue : public testing::Test
+{
+};
+
+TYPED_TEST_SUITE(TestBigNullValue, ValueTypes);
+
+TYPED_TEST(TestBigNullValue, defaultConstructionAndNullLifetimeOperationsNeedNoArena)
+{
+    EXPECT_TRUE(std::is_nothrow_default_constructible_v<TypeParam>);
+    TypeParam value;
+    EXPECT_FALSE(value);
+    const TypeParam copy{value};
+    EXPECT_FALSE(copy);
+    TypeParam moved{std::move(value)};
+    EXPECT_FALSE(value);
+    EXPECT_FALSE(moved);
+    value = copy;
+    EXPECT_FALSE(value);
+    value = std::move(moved);
+    EXPECT_FALSE(value);
+    EXPECT_FALSE(moved);
+    const Complex<TypeParam> complex;
+    EXPECT_FALSE(complex.x);
+    EXPECT_FALSE(complex.y);
+}
+
+TYPED_TEST(TestBigValueStorage, assignmentInitializesNullValuesInTheWorkingAllocator)
+{
+    auto &working = value_arena<TypeParam>(BigLifetime::WORKING);
+    TypeParam source{value_arena<TypeParam>(BigLifetime::PERSISTENT), -1.25L};
+    TypeParam working_source{2.5L};
+    TypeParam copied;
+    TypeParam moved;
+    TypeParam moved_from_working;
+    TypeParam scalar;
+
+    copied = source;
+    moved = std::move(source);
+    moved_from_working = std::move(working_source);
+    scalar = 0;
+
+    EXPECT_TRUE(copied);
+    EXPECT_TRUE(moved);
+    EXPECT_TRUE(moved_from_working);
+    EXPECT_FALSE(working_source);
+    EXPECT_TRUE(scalar);
+    EXPECT_EQ(&working, &copied.arena());
+    EXPECT_EQ(&working, &moved.arena());
+    EXPECT_EQ(&working, &moved_from_working.arena());
+    EXPECT_EQ(&working, &scalar.arena());
+    EXPECT_EQ(TypeParam{-1.25L}, copied);
+    EXPECT_EQ(TypeParam{-1.25L}, moved);
+    EXPECT_EQ(TypeParam{2.5L}, moved_from_working);
+    EXPECT_EQ(TypeParam{0}, scalar);
+}
+
+TYPED_TEST(TestBigValueStorage, copyingNullWithASelectedAllocatorDoesNotAllocate)
+{
+    auto &working = value_arena<TypeParam>(BigLifetime::WORKING);
+    BigArena arena{working.value_size(), working.block_size(), 2, unused_reducer};
+    const TypeParam null;
+
+    const TypeParam selected{arena, null};
+    const TypeParam copy{selected};
+
+    EXPECT_FALSE(selected);
+    EXPECT_FALSE(copy);
+    EXPECT_EQ(&arena, &selected.arena());
+    EXPECT_EQ(&arena, &copy.arena());
+    EXPECT_EQ(0, arena.high_water_mark());
+}
+
+TYPED_TEST(TestBigValueStorage, assigningNullReleasesStorageAndRetainsTheDestinationAllocator)
+{
+    auto &working = value_arena<TypeParam>(BigLifetime::WORKING);
+    BigArena arena{working.value_size(), working.block_size(), 2, unused_reducer};
+    TypeParam value{arena, 1.25L};
+    const TypeParam occupied{arena, 2.5L};
+    TypeParam null;
+
+    value = null;
+    EXPECT_FALSE(value);
+    EXPECT_EQ(&arena, &value.arena());
+    value = -1.25L;
+    EXPECT_EQ(TypeParam{-1.25L}, value);
+    value = std::move(null);
+    EXPECT_FALSE(value);
+    EXPECT_FALSE(null);
+    EXPECT_EQ(&arena, &value.arena());
+    value = 0;
+    EXPECT_TRUE(value);
+    EXPECT_EQ(TypeParam{0}, value);
+    EXPECT_EQ(TypeParam{2.5L}, occupied);
+}
+
 TYPED_TEST(TestBigValueStorage, constructionAndCopiesUseTheSelectedAllocator)
 {
     auto &persistent = value_arena<TypeParam>(BigLifetime::PERSISTENT);
