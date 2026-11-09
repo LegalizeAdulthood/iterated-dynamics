@@ -35,7 +35,8 @@ aliases; `BNPtrComplex` and `BFPtrComplex` contain two such pointers and
 do not own their storage.
 
 `BigFloat` in `math/BigFloat.h` owns an indexed arena allocation. Default
-construction and eager results use the working arena. Constructors can
+construction leaves a null handle; eager results use the working arena.
+The first assignment to an unbound value uses that arena. Constructors can
 select another compatible allocator explicitly. Copy construction keeps
 the source allocator; assignment keeps the destination allocator. Moves
 within one arena transfer a block. Moves across arenas copy the encoded
@@ -210,14 +211,22 @@ Each coordinate or increment below reserves `g_bn_length` bytes:
   pixel-coordinate increments.
 - `g_close_enough_bn` - comparison threshold.
 
+`g_close_enough_bn` owns a `BigNum`. `g_new_z_bn` and `g_saved_z_bn`
+own `BNComplex` components with canonical `g_bn_length` bytes. These
+globals start with null handles. `MathArenas::bind` initializes them in
+the BigNum working arena and clears existing values on later binds.
+`MathArenas::unbind` releases their blocks. The arena owner also unbinds
+them before destruction. Remaining legacy calls borrow their buffers
+explicitly with `BigNum::data()`; borrowed addresses expire on relocation.
+
 Iteration state uses these reservations:
 
 - `g_tmp_sqr_x_bn`, `g_tmp_sqr_y_bn` - squared values,
   `g_r_length` bytes each.
-- `g_old_z_bn`, `g_new_z_bn` - complex iteration values,
-  `g_r_length` bytes per component.
-- `g_param_z_bn`, `g_saved_z_bn` - complex parameter and saved value,
-  `g_bn_length` bytes per component.
+- `g_old_z_bn` - raw complex iteration values, with `g_r_length` bytes
+  per component to retain Manhattan bailout's unreduced scratch product.
+- `g_param_z_bn` - raw complex parameter, `g_bn_length` bytes per
+  component.
 
 ## BigFloat Coordinates And Iteration State
 

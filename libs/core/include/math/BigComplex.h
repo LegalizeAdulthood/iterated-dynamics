@@ -10,7 +10,6 @@
 namespace id::math
 {
 
-using BNComplex = Complex<BigNum>;
 using BFComplex = Complex<BigFloat>;
 
 BFComplex log(const BFComplex &value);

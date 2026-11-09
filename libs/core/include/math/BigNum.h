@@ -66,6 +66,17 @@ public:
 
     std::string to_string(int digits = 0) const;
 
+    // Borrowed buffers require a numeric value and expire on arena relocation.
+    BigNumPtr data() noexcept
+    {
+        return m_storage.data();
+    }
+
+    BigNumConstPtr data() const noexcept
+    {
+        return m_storage.data();
+    }
+
     // Adapters copy encoded values without machine floating-point conversion.
     static BigNum from_legacy(BigNumConstPtr source, std::size_t size);
     static BigNum from_legacy(BigArena &arena, BigNumConstPtr source, std::size_t size);

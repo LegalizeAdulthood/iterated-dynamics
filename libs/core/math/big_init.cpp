@@ -17,6 +17,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include <engine/UserData.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
+#include <math/BigNum.h>
 
 #include <fmt/format.h>
 
@@ -65,7 +66,7 @@ BigNumPtr g_delta_x_bn{};
 BigNumPtr g_delta_y_bn{};
 BigNumPtr g_delta2_x_bn{};
 BigNumPtr g_delta2_y_bn{};
-BigNumPtr g_close_enough_bn{};
+BigNum g_close_enough_bn{};
 // g_r_length
 BigNumPtr g_tmp_sqr_x_bn{};
 BigNumPtr g_tmp_sqr_y_bn{};
@@ -73,8 +74,8 @@ BigNumPtr g_bn_tmp{};
 // g_bn_length
 BNPtrComplex g_old_z_bn{};
 BNPtrComplex g_param_z_bn{};
-BNPtrComplex g_saved_z_bn{};
-BNPtrComplex g_new_z_bn{}; // g_r_length
+BNComplex g_saved_z_bn{};
+BNComplex g_new_z_bn{};
 BigNumPtr g_bn_pi{};      // TAKES NO SPACE
 // g_r_bf_length+2
 BigFloatPtr g_bf_tmp1{};
@@ -284,6 +285,7 @@ class MathArenas
 {
 public:
     MathArenas(int bn_length, int bf_length, int int_length, int padding);
+    ~MathArenas();
     void change_precision(int bn_length, int bf_length, int int_length, int padding, bool preserve_parameters);
     void bind(bool preserve_parameters);
     void unbind();
@@ -327,11 +329,6 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
     big_num.single(g_delta2_y_bn);
     big_num.single(g_old_z_bn.x);
     big_num.single(g_old_z_bn.y);
-    big_num.single(g_new_z_bn.x);
-    big_num.single(g_new_z_bn.y);
-    big_num.single(g_saved_z_bn.x);
-    big_num.single(g_saved_z_bn.y);
-    big_num.single(g_close_enough_bn);
     big_num.single(g_param_z_bn.x);
     big_num.single(g_param_z_bn.y);
     big_num.single(g_tmp_sqr_x_bn);
@@ -366,6 +363,11 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
     {
         value = big_float.persistent.allocate_single();
     }
+}
+
+MathArenas::~MathArenas()
+{
+    unbind();
 }
 
 void MathArenas::change_precision(
@@ -424,6 +426,11 @@ void MathArenas::bind(const bool preserve_parameters)
     big_num.stack.restore(0);
     big_float.stack.restore(0);
     big_num.bind_working();
+    g_new_z_bn.x = 0;
+    g_new_z_bn.y = 0;
+    g_saved_z_bn.x = 0;
+    g_saved_z_bn.y = 0;
+    g_close_enough_bn = 0;
     big_float.bind_working();
     const auto targets = parameter_bindings();
     for (std::size_t i = 0; i < targets.size(); ++i)
@@ -443,6 +450,9 @@ void MathArenas::unbind()
     big_num.stack.restore(0);
     big_float.stack.restore(0);
     big_num.unbind_working();
+    g_new_z_bn = {};
+    g_saved_z_bn = {};
+    g_close_enough_bn = BigNum{};
     big_float.unbind_working();
     for (auto target : parameter_bindings())
     {

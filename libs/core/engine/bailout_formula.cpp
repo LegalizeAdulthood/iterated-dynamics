@@ -7,6 +7,7 @@
 #include <engine/fractalb.h>
 #include <engine/fractals.h>
 #include <math/big_init.h>
+#include <math/BigNum.h>
 
 #include <cmath>
 #include <stdexcept>
@@ -138,8 +139,8 @@ static int fp_manr_bailout()
 
 static int bn_mod_bailout()
 {
-    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y.data());
     add_bn(g_bn_tmp, g_tmp_sqr_x_bn+g_shift_factor, g_tmp_sqr_y_bn+g_shift_factor);
 
     if (const long long_magnitude = bn_to_int(g_bn_tmp);
@@ -147,76 +148,76 @@ static int bn_mod_bailout()
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
-    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x.data());
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y.data());
     return 0;
 }
 
 static int bn_real_bailout()
 {
-    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y.data());
     if (const long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
         long_temp_sqr_x >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
-    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x.data());
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y.data());
     return 0;
 }
 
 static int bn_imag_bailout()
 {
-    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y.data());
     if (const long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
         long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
-    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x.data());
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y.data());
     return 0;
 }
 
 static int bn_or_bailout()
 {
-    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y.data());
     const long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
     if (const long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
         long_temp_sqr_x >= static_cast<long>(g_magnitude_limit) || long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
-    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x.data());
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y.data());
     return 0;
 }
 
 static int bn_and_bailout()
 {
-    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y.data());
     const long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
     if (const long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
         long_temp_sqr_x >= static_cast<long>(g_magnitude_limit) && long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
-    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x.data());
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y.data());
     return 0;
 }
 
 static int bn_manh_bailout()
 {
-    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y.data());
     // note: in next five lines, g_old_z_bn is just used as a temporary variable
-    abs_bn(g_old_z_bn.x, g_new_z_bn.x);
-    abs_bn(g_old_z_bn.y, g_new_z_bn.y);
+    abs_bn(g_old_z_bn.x, g_new_z_bn.x.data());
+    abs_bn(g_old_z_bn.y, g_new_z_bn.y.data());
     add_bn(g_bn_tmp, g_old_z_bn.x, g_old_z_bn.y);
     square_bn(g_old_z_bn.x, g_bn_tmp);
     if (const long long_temp_mag = bn_to_int(g_old_z_bn.x + g_shift_factor);
@@ -224,16 +225,16 @@ static int bn_manh_bailout()
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
-    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x.data());
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y.data());
     return 0;
 }
 
 static int bn_manr_bailout()
 {
-    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    add_bn(g_bn_tmp, g_new_z_bn.x, g_new_z_bn.y); // don't need abs since we square it next
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y.data());
+    add_bn(g_bn_tmp, g_new_z_bn.x.data(), g_new_z_bn.y.data()); // don't need abs since we square it next
     // note: in next two lines, g_old_z_bn is just used as a temporary variable
     square_bn(g_old_z_bn.x, g_bn_tmp);
     if (const long long_temp_mag = bn_to_int(g_old_z_bn.x + g_shift_factor);
@@ -241,8 +242,8 @@ static int bn_manr_bailout()
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
-    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x.data());
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y.data());
     return 0;
 }
 

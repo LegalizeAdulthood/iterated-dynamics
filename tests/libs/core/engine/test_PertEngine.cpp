@@ -37,6 +37,7 @@
 #include <geometry/line3d.h>
 #include <io/disk_storage.h>
 #include <math/big_init.h>
+#include <math/BigNum.h>
 #include <misc/debug_flags.h>
 #include <misc/stack_avail.h>
 #include <misc/ValueSaver.h>
@@ -926,7 +927,7 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
             break;
         case BFMathType::BIG_NUM:
             escaped = julia_orbit_bn() != 0;
-            expected.push_back(cmplx_bn_to_float(g_new_z_bn));
+            expected.push_back(cmplx_bn_to_float({g_new_z_bn.x.data(), g_new_z_bn.y.data()}));
             break;
         case BFMathType::BIG_FLT:
             escaped = julia_orbit_bf() != 0;
@@ -1053,7 +1054,7 @@ void PerturbationIterationTest::initialize_reference(
         {
             if (g_bf_math == BFMathType::BIG_NUM)
             {
-                float_to_bn(g_close_enough_bn, g_close_enough);
+                float_to_bn(g_close_enough_bn.data(), g_close_enough);
             }
             else
             {
@@ -7576,7 +7577,7 @@ void TestDeepPeriodicity::SetUp()
     ASSERT_EQ(GetParam().math, g_bf_math);
     if (GetParam().math == BFMathType::BIG_NUM)
     {
-        float_to_bn(g_close_enough_bn, GetParam().tolerance);
+        float_to_bn(g_close_enough_bn.data(), GetParam().tolerance);
     }
     else
     {
@@ -7659,7 +7660,7 @@ void TestPeriodicityReplay::SetUp()
         clear_bn(g_delta_y_bn);
         clear_bn(g_delta2_x_bn);
         clear_bn(g_delta2_y_bn);
-        float_to_bn(g_close_enough_bn, g_close_enough);
+        float_to_bn(g_close_enough_bn.data(), g_close_enough);
         g_dispatch.set_per_pixel(mandel_per_pixel_bn);
         g_dispatch.set_orbit_calc(julia_orbit_bn);
     }

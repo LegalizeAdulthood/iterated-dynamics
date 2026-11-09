@@ -26,6 +26,7 @@
 #include <fractals/fractalp.h>
 #include <fractals/pickover_mandelbrot.h>
 #include <math/big_init.h>
+#include <math/BigNum.h>
 #include <math/complex_fn.h>
 #include <misc/id.h>
 #include <misc/run_cleanup.h>
@@ -1161,7 +1162,7 @@ bool PertEngine::save_precise_value(std::size_t &remaining)
         m_pixel.precise_tolerance = bf_stack().allocate_single();
         if (g_bf_math == BFMathType::BIG_NUM)
         {
-            bn_to_bf(m_pixel.precise_tolerance, g_close_enough_bn);
+            bn_to_bf(m_pixel.precise_tolerance, g_close_enough_bn.data());
         }
         else
         {
@@ -1469,7 +1470,7 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                 if (m_pixel.high_precision)
                 {
                     const double tolerance{
-                        static_cast<double>(g_bf_math == BFMathType::BIG_NUM ? bn_to_float(g_close_enough_bn)
+                        static_cast<double>(g_bf_math == BFMathType::BIG_NUM ? bn_to_float(g_close_enough_bn.data())
                                                                              : bf_to_float(g_close_enough_bf))};
                     const double candidate_tolerance{tolerance + m_pixel.saved_error + error};
                     caught = difference_x <= candidate_tolerance && difference_y <= candidate_tolerance;

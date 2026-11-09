@@ -293,6 +293,24 @@ TEST_F(TestBigNumValue, relocationSignExtendsNegativeValuesWhenTheIntegerPartGro
     EXPECT_EQ(BigNum{-1.25L}, value);
 }
 
+TEST_F(TestBigNumValue, legacyBorrowsAccessOwnedStorageAndResolveRelocatedHandles)
+{
+    static_assert(std::is_same_v<decltype(std::declval<BigNum &>().data()), BigNumPtr>);
+    static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().data()), BigNumConstPtr>);
+    BigNum value{-1.25L};
+    const auto *before = std::as_const(value).data();
+    EXPECT_EQ(before, value.data());
+    EXPECT_EQ(encoded_value(value), std::vector<Byte>(before, before + g_bn_length));
+
+    float_to_bn(value.data(), 2.5L);
+    EXPECT_EQ(BigNum{2.5L}, value);
+    init_bf_dec(80);
+
+    EXPECT_NE(before, std::as_const(value).data());
+    EXPECT_EQ(BigNum{2.5L}, value);
+    EXPECT_EQ(encoded_value(value), std::vector<Byte>(value.data(), value.data() + g_bn_length));
+}
+
 TEST_F(TestBigNumValue, movedFromValueCanBeReassigned)
 {
     BigNum original{"-1.25"};

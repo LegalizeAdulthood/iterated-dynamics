@@ -49,6 +49,9 @@ using BFPtrComplex = Complex<BigFloatPtr>;
 using BNPtrComplex = Complex<BigNumPtr>;
 using BFConstPtrComplex = Complex<BigFloatConstPtr>;
 
+class BigNum;
+using BNComplex = Complex<BigNum>;
+
 // globals
 extern BFMathType g_bf_math;
 extern int g_bn_step;
@@ -265,15 +268,15 @@ extern BigNumPtr g_delta_x_bn;
 extern BigNumPtr g_delta_y_bn;
 extern BigNumPtr g_delta2_x_bn;
 extern BigNumPtr g_delta2_y_bn;
-extern BigNumPtr g_close_enough_bn;
+extern BigNum g_close_enough_bn;
 // g_r_length
 extern BigNumPtr g_tmp_sqr_x_bn;
 extern BigNumPtr g_tmp_sqr_y_bn;
 // g_bn_length
 extern BNPtrComplex g_old_z_bn;
 extern BNPtrComplex g_param_z_bn;
-extern BNPtrComplex g_saved_z_bn;
-extern BNPtrComplex g_new_z_bn; // g_r_length
+extern BNComplex g_saved_z_bn;
+extern BNComplex g_new_z_bn;
 // g_r_bf_length+2
 extern BigFloatPtr g_delta_x_bf;
 extern BigFloatPtr g_delta_y_bf;

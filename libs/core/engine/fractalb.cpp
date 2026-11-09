@@ -17,6 +17,7 @@
 #include <fractals/fractalp.h>
 #include <fractals/frasetup.h>
 #include <math/big_init.h>
+#include <math/BigNum.h>
 #include <math/fixed_pt.h>
 
 #include <fmt/format.h>
@@ -301,27 +302,27 @@ bool mandel_per_image_bn()
     sub_bn(g_delta2_y_bn, g_y_3rd_bn, g_y_min_bn);
     div_a_bn_int(g_delta2_y_bn, static_cast<U16>(g_logical_screen.x_dots - 1));
 
-    abs_bn(g_close_enough_bn, g_delta_x_bn);
-    if (cmp_bn(abs_bn(bn_temp1, g_delta2_x_bn), g_close_enough_bn) > 0)
+    abs_bn(g_close_enough_bn.data(), g_delta_x_bn);
+    if (cmp_bn(abs_bn(bn_temp1, g_delta2_x_bn), g_close_enough_bn.data()) > 0)
     {
-        copy_bn(g_close_enough_bn, bn_temp1);
+        copy_bn(g_close_enough_bn.data(), bn_temp1);
     }
     if (cmp_bn(abs_bn(bn_temp1, g_delta_y_bn), abs_bn(bn_temp2, g_delta2_y_bn)) > 0)
     {
-        if (cmp_bn(bn_temp1, g_close_enough_bn) > 0)
+        if (cmp_bn(bn_temp1, g_close_enough_bn.data()) > 0)
         {
-            copy_bn(g_close_enough_bn, bn_temp1);
+            copy_bn(g_close_enough_bn.data(), bn_temp1);
         }
     }
-    else if (cmp_bn(bn_temp2, g_close_enough_bn) > 0)
+    else if (cmp_bn(bn_temp2, g_close_enough_bn.data()) > 0)
     {
-        copy_bn(g_close_enough_bn, bn_temp2);
+        copy_bn(g_close_enough_bn.data(), bn_temp2);
     }
     {
         int t = std::abs(g_periodicity_check);
         while (t--)
         {
-            half_a_bn(g_close_enough_bn);
+            half_a_bn(g_close_enough_bn.data());
         }
     }
 
@@ -525,19 +526,19 @@ int mandel_per_pixel_bn()
     }
     else
     {
-        float_to_bn(g_new_z_bn.x, g_params[0]);
-        float_to_bn(g_new_z_bn.y, g_params[1]);
-        add_a_bn(g_old_z_bn.x, g_new_z_bn.x);
-        add_a_bn(g_old_z_bn.y, g_new_z_bn.y);
+        float_to_bn(g_new_z_bn.x.data(), g_params[0]);
+        float_to_bn(g_new_z_bn.y.data(), g_params[1]);
+        add_a_bn(g_old_z_bn.x, g_new_z_bn.x.data());
+        add_a_bn(g_old_z_bn.y, g_new_z_bn.y.data());
     }
 
     // square has side effect - must copy first
-    copy_bn(g_new_z_bn.x, g_old_z_bn.x);
-    copy_bn(g_new_z_bn.y, g_old_z_bn.y);
+    copy_bn(g_new_z_bn.x.data(), g_old_z_bn.x);
+    copy_bn(g_new_z_bn.y.data(), g_old_z_bn.y);
 
     // Square these to g_r_length bytes of precision
-    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y.data());
 
     return 1;                  // 1st iteration has been done
 }
@@ -606,18 +607,18 @@ int julia_per_pixel_bn()
 
     // old.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bn is just used as a temporary variable
-    mult_bn_int(g_new_z_bn.x, g_delta_y_bn, static_cast<U16>(g_row));
-    mult_bn_int(g_new_z_bn.y, g_delta2_y_bn, static_cast<U16>(g_col));
-    add_a_bn(g_new_z_bn.x, g_new_z_bn.y);
-    sub_bn(g_old_z_bn.y, g_y_max_bn, g_new_z_bn.x);
+    mult_bn_int(g_new_z_bn.x.data(), g_delta_y_bn, static_cast<U16>(g_row));
+    mult_bn_int(g_new_z_bn.y.data(), g_delta2_y_bn, static_cast<U16>(g_col));
+    add_a_bn(g_new_z_bn.x.data(), g_new_z_bn.y.data());
+    sub_bn(g_old_z_bn.y, g_y_max_bn, g_new_z_bn.x.data());
 
     // square has side effect - must copy first
-    copy_bn(g_new_z_bn.x, g_old_z_bn.x);
-    copy_bn(g_new_z_bn.y, g_old_z_bn.y);
+    copy_bn(g_new_z_bn.x.data(), g_old_z_bn.x);
+    copy_bn(g_new_z_bn.y.data(), g_old_z_bn.y);
 
     // Square these to g_r_length bytes of precision
-    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y.data());
 
     return 1;                  // 1st iteration has been done
 }
@@ -659,12 +660,12 @@ int julia_orbit_bn()
 
     // new.x = tmpsqrx - tmpsqry + parm.x;
     sub_a_bn(g_tmp_sqr_x_bn+g_shift_factor, g_tmp_sqr_y_bn+g_shift_factor);
-    add_bn(g_new_z_bn.x, g_tmp_sqr_x_bn+g_shift_factor, g_param_z_bn.x);
+    add_bn(g_new_z_bn.x.data(), g_tmp_sqr_x_bn + g_shift_factor, g_param_z_bn.x);
 
     // new.y = 2 * g_old_z_bn.x * g_old_z_bn.y + parm.y;
     mult_bn(g_bn_tmp, g_old_z_bn.x, g_old_z_bn.y); // ok to use unsafe here
     double_a_bn(g_bn_tmp+g_shift_factor);
-    add_bn(g_new_z_bn.y, g_bn_tmp+g_shift_factor, g_param_z_bn.y);
+    add_bn(g_new_z_bn.y.data(), g_bn_tmp + g_shift_factor, g_param_z_bn.y);
 
     return g_bailout_bignum();
 }
