@@ -1045,9 +1045,9 @@ void TestStickyHighPrecision::SetUp()
         init_bf_dec(60);
     }
     m_big_float = true;
-    const BFPtrComplex center{m_engine.initialize_frame_bf({}, {})};
-    float_to_bf(center.x, 0.25);
-    float_to_bf(center.y, 0.25);
+    BFComplex &center{m_engine.initialize_frame_bf({}, {})};
+    center.x = 0.25;
+    center.y = 0.25;
     forbid_ordinary_orbits();
 }
 

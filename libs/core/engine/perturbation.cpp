@@ -8,6 +8,7 @@
 #include <engine/UserData.h>
 #include <fractals/fractype.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 
 #include <complex>
 
@@ -24,7 +25,11 @@ void StandardFractal::start_perturbation_frame()
     std::complex<double> half_vertical;
     if (g_bf_math != BFMathType::NONE)
     {
-        m_pert_engine.initialize_frame_bf({g_bf_x_min, g_bf_y_min}, {g_bf_x_max, g_bf_y_max}, {g_bf_x_3rd, g_bf_y_3rd});
+        const auto size = static_cast<std::size_t>(g_bf_length + 2);
+        m_pert_engine.initialize_frame_bf(
+            {BigFloat::from_legacy(g_bf_x_min, size), BigFloat::from_legacy(g_bf_y_min, size)},
+            {BigFloat::from_legacy(g_bf_x_max, size), BigFloat::from_legacy(g_bf_y_max, size)},
+            {BigFloat::from_legacy(g_bf_x_3rd, size), BigFloat::from_legacy(g_bf_y_3rd, size)});
         m_pert_engine.initialize_pixel_strategy();
     }
     else
