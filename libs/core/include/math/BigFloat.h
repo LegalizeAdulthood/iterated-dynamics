@@ -58,6 +58,7 @@ public:
     BigFloat operator*(const BigFloat &right) const;
     BigFloat operator*(misc::U16 right) const;
     BigFloat operator/(const BigFloat &right) const;
+    BigFloat abs() const;
     BigFloat sqr() const;
     BigFloat half() const;
     BigFloat log() const;
@@ -102,6 +103,7 @@ private:
     BigArena::Allocation m_storage;
 };
 
+BigFloat abs(const BigFloat &value);
 BigFloat sqr(const BigFloat &value);
 BigFloat log(const BigFloat &value);
 BigFloat exp(const BigFloat &value);

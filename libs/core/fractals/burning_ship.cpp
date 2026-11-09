@@ -208,31 +208,30 @@ void burning_ship_ref_pt_bf(const BFPtrComplex &center, BFPtrComplex &z)
 {
     const int degree = static_cast<int>(g_params[2]);
     BigStackSaver saved;
-    BigFloatPtr temp_real = bf_stack().allocate_single();
-    BigFloatPtr real_sqr = bf_stack().allocate_single();
-    BigFloatPtr imag_sqr = bf_stack().allocate_single();
-    BigFloatPtr real_imag = bf_stack().allocate_single();
-    BFPtrComplex z2;
-    z2.x = bf_stack().allocate_single();
-    z2.y = bf_stack().allocate_single();
-    double_bf(z2.x, z.x);
-    double_bf(z2.y, z.y);
+    BigFloat temp_real{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat real_sqr{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat imag_sqr{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat real_imag{bf_arena(BigLifetime::TEMPORARY)};
+    BFComplex z2;
+    z2.x = BigFloat{bf_arena(BigLifetime::TEMPORARY)};
+    z2.y = BigFloat{bf_arena(BigLifetime::TEMPORARY)};
+    double_bf(z2.x.data(), z.x);
+    double_bf(z2.y.data(), z.y);
     if (degree == 2)
     {
-        square_bf(real_sqr, z.x);
-        square_bf(imag_sqr, z.y);
-        sub_bf(temp_real, real_sqr, imag_sqr);
-        add_bf(z.x, temp_real, center.x);
-        mult_bf(real_imag, z2.x, z.y);
-        abs_bf(real_imag, real_imag);
-        add_bf(z.y, real_imag, center.y);
+        square_bf(real_sqr.data(), z.x);
+        square_bf(imag_sqr.data(), z.y);
+        temp_real = real_sqr - imag_sqr;
+        add_bf(z.x, temp_real.data(), center.x);
+        mult_bf(real_imag.data(), z2.x.data(), z.y);
+        real_imag = abs(real_imag);
+        add_bf(z.y, real_imag.data(), center.y);
     }
     else if (degree > 2)
     {
-        abs_bf(z2.x, z.x);
-        abs_bf(z2.y, z.y);
-        BFPtrComplex new_z{g_new_z_bf.x.data(), g_new_z_bf.y.data()};
-        power(new_z, z2, degree);
+        abs_bf(z2.x.data(), z.x);
+        abs_bf(z2.y.data(), z.y);
+        g_new_z_bf = power(z2, degree);
         add_bf(z.x, g_new_z_bf.x.data(), center.x);
         add_bf(z.y, g_new_z_bf.y.data(), center.y);
     }
@@ -245,27 +244,26 @@ int burning_ship_bf_fractal()
 
     if (degree == 2) // Burning Ship
     {
-        square_bf(g_tmp_sqr_x_bf.data(), g_old_z_bf.x.data());
-        square_bf(g_tmp_sqr_y_bf.data(), g_old_z_bf.y.data());
-        sub_bf(g_bf_tmp.data(), g_tmp_sqr_x_bf.data(), g_tmp_sqr_y_bf.data());
-        add_bf(g_new_z_bf.x.data(), g_bf_tmp.data(), g_param_z_bf.x.data());
-        mult_bf(g_bf_tmp.data(), g_old_z_bf.x.data(), g_old_z_bf.y.data());
+        g_tmp_sqr_x_bf = sqr(g_old_z_bf.x);
+        g_tmp_sqr_y_bf = sqr(g_old_z_bf.y);
+        g_bf_tmp = g_tmp_sqr_x_bf - g_tmp_sqr_y_bf;
+        g_new_z_bf.x = g_bf_tmp + g_param_z_bf.x;
+        g_bf_tmp = g_old_z_bf.x * g_old_z_bf.y;
         double_a_bf(g_bf_tmp.data());
-        abs_a_bf(g_bf_tmp.data());
-        sub_bf(g_new_z_bf.y.data(), g_bf_tmp.data(), g_param_z_bf.y.data());
+        g_bf_tmp = abs(g_bf_tmp);
+        g_new_z_bf.y = g_bf_tmp - g_param_z_bf.y;
     }
     else if (degree > 2) // Burning Ship to higher power
     {
-        BFPtrComplex big_z;
-        big_z.x = bf_stack().allocate_single();
-        big_z.y = bf_stack().allocate_single();
-        abs_bf(big_z.x, g_old_z_bf.x.data());
-        abs_bf(big_z.y, g_old_z_bf.y.data());
-        neg_a_bf(big_z.y);
-        BFPtrComplex new_z{g_new_z_bf.x.data(), g_new_z_bf.y.data()};
-        power(new_z, big_z, degree);
-        add_a_bf(g_new_z_bf.x.data(), g_param_z_bf.x.data());
-        add_a_bf(g_new_z_bf.y.data(), g_param_z_bf.y.data());
+        BFComplex big_z;
+        big_z.x = BigFloat{bf_arena(BigLifetime::TEMPORARY)};
+        big_z.y = BigFloat{bf_arena(BigLifetime::TEMPORARY)};
+        big_z.x = abs(g_old_z_bf.x);
+        big_z.y = abs(g_old_z_bf.y);
+        big_z.y = -big_z.y;
+        g_new_z_bf = power(big_z, degree);
+        g_new_z_bf.x += g_param_z_bf.x;
+        g_new_z_bf.y += g_param_z_bf.y;
     }
     return g_bailout_bigfloat();
 }

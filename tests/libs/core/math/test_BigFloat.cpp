@@ -517,6 +517,35 @@ TEST_P(TestBigFloatArithmetic, unsignedDivisionAssignmentRetainsRoundingAndZeroD
     }
 }
 
+TEST_P(TestBigFloatArithmetic, absoluteValuePreservesItsOperandAndDestinationArena)
+{
+    auto &persistent = bf_arena(BigLifetime::PERSISTENT);
+    for (const char *text :
+        {"0", "2.5", "-2.5", "1.2345678901234567890123456789e-400", "-1.2345678901234567890123456789e-400",
+            "1.2345678901234567890123456789e400", "-1.2345678901234567890123456789e400"})
+    {
+        SCOPED_TRACE(text);
+        const BigFloat source{persistent, text};
+        const auto original = encoded_value(source);
+        auto raw_source = original;
+        std::vector<Byte> expected(original.size());
+        abs_bf(expected.data(), raw_source.data());
+
+        const BigFloat member_result = source.abs();
+        const BigFloat result = abs(source);
+        BigFloat assigned{persistent, source};
+        assigned = abs(assigned);
+
+        EXPECT_EQ(expected, encoded_value(member_result));
+        EXPECT_EQ(expected, encoded_value(result));
+        EXPECT_EQ(expected, encoded_value(assigned));
+        EXPECT_EQ(original, encoded_value(source));
+        EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &member_result.arena());
+        EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &result.arena());
+        EXPECT_EQ(&persistent, &assigned.arena());
+    }
+}
+
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatArithmetic, testing::Values(4, 32, 708));
 
 TEST_F(TestBigFloatValue, comparisonsUseNumericalValuesWithoutChangingOperands)

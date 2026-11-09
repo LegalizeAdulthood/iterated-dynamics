@@ -1090,6 +1090,16 @@ BigFloat BigFloat::operator/(const BigFloat &right) const
     return result;
 }
 
+BigFloat BigFloat::abs() const
+{
+    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    if (is_bf_neg(result.m_storage.data()))
+    {
+        negate(result.m_storage.data());
+    }
+    return result;
+}
+
 BigFloat BigFloat::sqr() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING).allocate_double()};
@@ -1135,6 +1145,11 @@ BigFloat BigFloat::atan2(const BigFloat &x) const
     BigFloat result{bf_arena(BigLifetime::WORKING)};
     binary_operation(result.m_storage.data(), m_storage.data(), x.m_storage.data(), arctangent2);
     return result;
+}
+
+BigFloat abs(const BigFloat &value)
+{
+    return value.abs();
 }
 
 BigFloat sqr(const BigFloat &value)
