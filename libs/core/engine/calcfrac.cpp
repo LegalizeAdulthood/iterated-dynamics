@@ -77,8 +77,10 @@
 #include <cstdlib>
 #include <cstring>
 #include <limits>
+#include <memory>
 #include <new>
 #include <stdexcept>
+#include <utility>
 #include <vector>
 
 using namespace id::fractals;
@@ -1997,7 +1999,7 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     bool x_axis_between = false;
     bool y_axis_between = false; // if axis between 2 pixels, not on one
     double f_temp;
-    BigFloatPtr bft1;
+    BigFloat bft1;
     BigStackMark saved{};
     g_symmetry = SymmetryType::X_AXIS;
     if (g_std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT || g_std_calc_mode == CalcMode::ORBIT)
@@ -2083,7 +2085,9 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     if (g_bf_math != BFMathType::NONE)
     {
         saved = save_stack();
-        bft1 = bf_stack().allocate_single();
+        BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+        std::destroy_at(&bft1);
+        ::new (&bft1) BigFloat{std::move(value)};
         x_axis_on_screen = sign_bf(g_bf_y_min.data()) != sign_bf(g_bf_y_max.data());
         y_axis_on_screen = sign_bf(g_bf_x_min.data()) != sign_bf(g_bf_x_max.data());
     }
@@ -2096,10 +2100,10 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     {
         if (g_bf_math != BFMathType::NONE)
         {
-            sub_bf(bft1, g_bf_y_min.data(), g_bf_y_max.data());
-            div_bf(bft1, g_bf_y_max.data(), bft1);
-            neg_a_bf(bft1);
-            f_temp = static_cast<double>(bf_to_float(bft1));
+            bft1 = g_bf_y_min - g_bf_y_max;
+            bft1 = g_bf_y_max / bft1;
+            bft1 = -bft1;
+            f_temp = static_cast<double>(bft1.to_float());
         }
         else
         {
@@ -2118,10 +2122,10 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     {
         if (g_bf_math != BFMathType::NONE)
         {
-            sub_bf(bft1, g_bf_x_max.data(), g_bf_x_min.data());
-            div_bf(bft1, g_bf_x_min.data(), bft1);
-            neg_a_bf(bft1);
-            f_temp = static_cast<double>(bf_to_float(bft1));
+            bft1 = g_bf_x_max - g_bf_x_min;
+            bft1 = g_bf_x_min / bft1;
+            bft1 = -bft1;
+            f_temp = static_cast<double>(bft1.to_float());
         }
         else
         {
@@ -2250,7 +2254,8 @@ origin_symmetry:
     case SymmetryType::PI_SYM:                      // PI symmetry
         if (g_bf_math != BFMathType::NONE)
         {
-            if (static_cast<double>(bf_to_float(abs_a_bf(sub_bf(bft1, g_bf_x_max.data(), g_bf_x_min.data())))) < PI / 4)
+            bft1 = abs(g_bf_x_max - g_bf_x_min);
+            if (static_cast<double>(bft1.to_float()) < PI / 4)
             {
                 break; // no point in pi symmetry if values too close
             }
@@ -2287,10 +2292,10 @@ origin_symmetry:
         }
         if (g_bf_math != BFMathType::NONE)
         {
-            sub_bf(bft1, g_bf_x_max.data(), g_bf_x_min.data());
-            abs_a_bf(bft1);
-            g_pi_in_pixels = static_cast<int>(
-                PI / static_cast<double>(bf_to_float(bft1)) * g_logical_screen.x_dots); // PI in pixels
+            bft1 = g_bf_x_max - g_bf_x_min;
+            bft1 = abs(bft1);
+            g_pi_in_pixels =
+                static_cast<int>(PI / static_cast<double>(bft1.to_float()) * g_logical_screen.x_dots); // PI in pixels
         }
         else
         {
@@ -2310,6 +2315,7 @@ origin_symmetry:
     }
     if (g_bf_math != BFMathType::NONE)
     {
+        bft1 = BigFloat{};
         restore_stack(saved);
     }
 }

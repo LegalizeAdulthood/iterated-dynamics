@@ -89,6 +89,7 @@ add_executable(test-core
     engine/test_reset_version.cpp
     engine/test_resume.cpp
     engine/test_ScanlinePass.cpp
+    engine/test_set_symmetry.cpp
     engine/test_SolidGuess.cpp
     engine/test_SoundOutput.cpp
     engine/test_StandardPass.cpp
