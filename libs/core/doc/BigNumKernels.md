@@ -9,7 +9,7 @@ This records owning BigNum kernel storage and the remaining member
 interface contracts. Calculation bodies, statement order, precision
 ramps, operand copies, and scratch reuse are preserved. The member
 interfaces below are proposed APIs except for the implemented
-`sqr_product` member.
+`sqr_product` and `mult_product` members.
 
 ## Storage And Lifetime
 
@@ -68,9 +68,9 @@ current operand-copy policy and allocation/reduction sites stay intact:
   result; their compound forms retain their existing implementations.
 
 The [orbit product contract](BigNumProducts.md) requires unreduced
-results and partial writes into existing slots. `sqr_product` is
-implemented; the other member operations remain proposed for their
-existing calls:
+results and partial writes into existing slots. `sqr_product` and
+`mult_product` are implemented; the other member operations remain
+proposed for their existing calls:
 
 ```cpp
 BigNum &sqr_product(BigNum &source);
@@ -253,9 +253,16 @@ cover both signs, integer widths one, two, and four, and lengths 4, 8,
 12, 56, 60, 64, and 672. Existing bailout tests retain their exact scratch
 byte expectations after conversion to `sqr_product`.
 
+`TestBigNumRetainedMultiply` checks every retained byte, destination
+identity, unchanged padding and lengths, and the arena high-water mark.
+It covers all four distinct-input sign combinations and both shared-input
+signs at the same precisions and integer widths as the retained-square
+tests. Operand expectations preserve the raw adapter's existing behavior.
+
 Both `mult_bn` and `full_mult_bn` restore a shared negative input twice.
 The shared-source kernel makes it positive once; the two adapter restores
-therefore leave it positive. Distinct negative inputs are restored.
+therefore leave it positive. `mult_product` preserves this sequence and
+behavior. Distinct negative inputs are restored.
 The existing value `operator*` copies inputs into separate scratch
 buffers and preserves the original value even for self-multiplication.
 The tests record this pre-existing defect separately. The ownership

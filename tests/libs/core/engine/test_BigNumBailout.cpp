@@ -340,7 +340,7 @@ TEST_P(TestBigNumProductWindows, shiftedSubtractionAndDoublingPreserveTheOtherPr
     std::copy(doubled.begin(), doubled.end(), expected_product.begin() + g_shift_factor);
 
     sub_a_bn(g_tmp_sqr_x_bn.data() + g_shift_factor, g_tmp_sqr_y_bn.data() + g_shift_factor);
-    mult_bn(g_bn_tmp.data(), g_new_z_bn.x.data(), g_new_z_bn.y.data());
+    g_bn_tmp.mult_product(g_new_z_bn.x, g_new_z_bn.y);
     double_a_bn(g_bn_tmp.data() + g_shift_factor);
 
     EXPECT_EQ(expected_x, std::vector<Byte>(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_r_length));

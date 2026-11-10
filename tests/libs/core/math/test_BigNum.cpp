@@ -939,6 +939,19 @@ enum class KernelProduct
     UNSAFE_SQR
 };
 
+struct RetainedMultiplyInput
+{
+    const char *name;
+    int left;
+    int right;
+    bool shared;
+};
+
+void PrintTo(const RetainedMultiplyInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
 std::array<int, 9> kernel_lengths()
 {
     return {g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding, g_shift_factor, g_bf_length, g_r_bf_length,
@@ -946,6 +959,72 @@ std::array<int, 9> kernel_lengths()
 }
 
 } // namespace
+
+class TestBigNumRetainedMultiply : public TestBigNumValue,
+                                   public testing::WithParamInterface<std::tuple<int, int, RetainedMultiplyInput>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumRetainedMultiply::SetUp()
+{
+    const int length = std::get<0>(GetParam());
+    const int integer_length = std::get<1>(GetParam());
+    g_user.bailout_value = integer_length == 4 ? 100 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(length);
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumRetainedMultiply, preservesProductAllocationPaddingAndLegacyOperandMutation)
+{
+    const auto input = std::get<2>(GetParam());
+    auto &arena = bn_arena(BigLifetime::WORKING);
+    BigNum left{static_cast<LDouble>(input.left)};
+    BigNum distinct_right{static_cast<LDouble>(input.right)};
+    BigNum &right = input.shared ? left : distinct_right;
+    BigNum destination{arena};
+    std::fill(left.data() + g_bn_length, left.data() + arena.block_size(), Byte{0x5a});
+    std::fill(distinct_right.data() + g_bn_length, distinct_right.data() + arena.block_size(), Byte{0x6b});
+    std::vector<Byte> expected_left(left.data(), left.data() + arena.block_size());
+    const std::vector<Byte> original_right(distinct_right.data(), distinct_right.data() + arena.block_size());
+    auto raw_left = encoded_value(left);
+    auto raw_right = encoded_value(distinct_right);
+    std::vector<Byte> expected(static_cast<std::size_t>(g_r_length));
+    mult_bn(expected.data(), raw_left.data(), input.shared ? raw_left.data() : raw_right.data());
+    // The existing adapter restores a shared negative source twice, leaving it positive.
+    const int restored_left = input.shared && input.left < 0 ? -input.left : input.left;
+    EXPECT_EQ(encoded_value(BigNum{static_cast<LDouble>(restored_left)}), raw_left);
+    EXPECT_EQ(encoded_value(distinct_right), raw_right);
+    std::copy(raw_left.begin(), raw_left.end(), expected_left.begin());
+    std::fill_n(destination.data(), arena.block_size(), Byte{0xa5});
+    const auto original_destination = destination.data();
+    const auto high_water = arena.high_water_mark();
+    const auto lengths = kernel_lengths();
+
+    BigNum &result = destination.mult_product(left, right);
+
+    EXPECT_EQ(&destination, &result);
+    EXPECT_EQ(original_destination, destination.data());
+    EXPECT_EQ(&arena, &destination.arena());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(lengths, kernel_lengths());
+    EXPECT_EQ(expected, std::vector<Byte>(destination.data(), destination.data() + g_r_length));
+    EXPECT_EQ(expected_left, std::vector<Byte>(left.data(), left.data() + arena.block_size()));
+    EXPECT_EQ(original_right, std::vector<Byte>(distinct_right.data(), distinct_right.data() + arena.block_size()));
+    EXPECT_EQ(std::vector<Byte>(arena.block_size() - g_r_length, 0xa5),
+        std::vector<Byte>(destination.data() + g_r_length, destination.data() + arena.block_size()));
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsSignsAndAliasing, TestBigNumRetainedMultiply,
+    testing::Combine(testing::Values(4, 8, 12, 56, 60, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(RetainedMultiplyInput{"PositivePositive", 2, 3, false},
+            RetainedMultiplyInput{"PositiveNegative", 2, -3, false},
+            RetainedMultiplyInput{"NegativePositive", -2, 3, false},
+            RetainedMultiplyInput{"NegativeNegative", -2, -3, false},
+            RetainedMultiplyInput{"SharedPositive", 2, 3, true},
+            RetainedMultiplyInput{"SharedNegative", -2, 3, true})));
 
 class TestBigNumKernelProducts : public TestBigNumValue,
                                  public testing::WithParamInterface<std::tuple<int, KernelProduct>>

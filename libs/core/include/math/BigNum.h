@@ -59,6 +59,7 @@ public:
     BigNum operator/(const BigNum &right) const;
     BigNum sqr() const;
     BigNum &sqr_product(BigNum &source);
+    BigNum &mult_product(BigNum &left, BigNum &right);
 
     bool operator==(const BigNum &right) const;
     bool operator!=(const BigNum &right) const;

@@ -45,8 +45,10 @@ Use `destination.sqr_product(source)` at each existing retained-square
 statement. It writes `R` bytes into the existing allocation, saves and
 restores the source sign, and returns the destination by reference.
 It neither copies the source nor allocates or reduces the result.
-Keep `mult_bn(destination.data(), left.data(), right.data())` at its
-existing statements; it also writes `R` bytes and restores signed inputs.
+Use `destination.mult_product(left, right)` at each existing retained
+multiply statement. It writes `R` bytes into the existing allocation and
+keeps `mult_bn`'s two sign saves, kernel call, and two sign restores.
+It adds no copies, allocation, reduction, or shared-input special case.
 Do not replace them with `sqr(source)` or `left * right`: those owning
 operations reduce a paired result to `N` canonical bytes and lose the
 retained product. Do not call `Allocation::reduce()` on these singles.

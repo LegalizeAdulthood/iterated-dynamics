@@ -665,7 +665,7 @@ int julia_orbit_bn()
     add_bn(g_new_z_bn.x.data(), g_tmp_sqr_x_bn.data() + g_shift_factor, g_param_z_bn.x.data());
 
     // new.y = 2 * g_old_z_bn.x * g_old_z_bn.y + parm.y;
-    mult_bn(g_bn_tmp.data(), g_old_z_bn.x.data(), g_old_z_bn.y.data()); // ok to use unsafe here
+    g_bn_tmp.mult_product(g_old_z_bn.x, g_old_z_bn.y); // ok to use unsafe here
     double_a_bn(g_bn_tmp.data() + g_shift_factor);
     add_bn(g_new_z_bn.y.data(), g_bn_tmp.data() + g_shift_factor, g_param_z_bn.y.data());
 

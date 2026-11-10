@@ -897,6 +897,22 @@ BigNum &BigNum::sqr_product(BigNum &source)
     return *this;
 }
 
+BigNum &BigNum::mult_product(BigNum &left, BigNum &right)
+{
+    const bool sign1 = is_bn_neg(left.m_storage.data());
+    const bool sign2 = is_bn_neg(right.m_storage.data());
+    multiply(m_storage.data(), left.m_storage.data(), right.m_storage.data());
+    if (sign1)
+    {
+        neg_a_bn(left.m_storage.data());
+    }
+    if (sign2)
+    {
+        neg_a_bn(right.m_storage.data());
+    }
+    return *this;
+}
+
 bool BigNum::operator==(const BigNum &right) const
 {
     return compare(m_storage.data(), right.m_storage.data()) == 0;
