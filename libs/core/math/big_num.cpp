@@ -527,7 +527,7 @@ BigNumPtr unsafe_inv_bn(BigNumPtr r, BigNumPtr n)
     // g_bn_tmp1 = orig_bntmp1 + orig_bn_length - g_bn_length;
 
     float_to_bn(r, f); // start with approximate inverse
-    clear_bn(g_bn_tmp2); // will be used as 1.0 and 2.0
+    clear_bn(g_bn_tmp2.data());  // will be used as 1.0 and 2.0
 
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
@@ -539,16 +539,17 @@ BigNumPtr unsafe_inv_bn(BigNumPtr r, BigNumPtr n)
         n = orig_n + orig_bn_length - g_bn_length;
         // g_bn_tmp1 = orig_bntmp1 + orig_bn_length - g_bn_length;
 
-        unsafe_mult_bn(g_bn_tmp1, r, n); // g_bn_tmp1=rn
-        int_to_bn(g_bn_tmp2, 1);  // g_bn_tmp2 = 1.0
-        if (g_bn_length == orig_bn_length && cmp_bn(g_bn_tmp2, g_bn_tmp1+g_shift_factor) == 0)    // if not different
+        unsafe_mult_bn(g_bn_tmp1.data(), r, n);                               // g_bn_tmp1=rn
+        int_to_bn(g_bn_tmp2.data(), 1);                                       // g_bn_tmp2 = 1.0
+        if (g_bn_length == orig_bn_length &&
+            cmp_bn(g_bn_tmp2.data(), g_bn_tmp1.data() + g_shift_factor) == 0) // if not different
         {
             break;  // they must be the same
         }
-        int_to_bn(g_bn_tmp2, 2); // g_bn_tmp2 = 2.0
-        sub_bn(g_bn_tmp3, g_bn_tmp2, g_bn_tmp1+g_shift_factor); // g_bn_tmp3=2-rn
-        unsafe_mult_bn(g_bn_tmp1, r, g_bn_tmp3); // g_bn_tmp1=r(2-rn)
-        copy_bn(r, g_bn_tmp1+g_shift_factor); // r = g_bn_tmp1
+        int_to_bn(g_bn_tmp2.data(), 2);                                                // g_bn_tmp2 = 2.0
+        sub_bn(g_bn_tmp3.data(), g_bn_tmp2.data(), g_bn_tmp1.data() + g_shift_factor); // g_bn_tmp3=2-rn
+        unsafe_mult_bn(g_bn_tmp1.data(), r, g_bn_tmp3.data());                         // g_bn_tmp1=r(2-rn)
+        copy_bn(r, g_bn_tmp1.data() + g_shift_factor);                                 // r = g_bn_tmp1
     }
 
     // restore original values
@@ -568,7 +569,7 @@ BigNumPtr unsafe_inv_bn(BigNumPtr r, BigNumPtr n)
 /**********************************************************************/
 std::string bn_to_string(BigNumConstPtr r, const int dec)
 {
-    return unsafe_bn_to_string(copy_bn(g_bn_tmp_copy2, r), dec);
+    return unsafe_bn_to_string(copy_bn(g_bn_tmp_copy2.data(), r), dec);
 }
 
 bool is_bn_zero(BigNumPtr n)

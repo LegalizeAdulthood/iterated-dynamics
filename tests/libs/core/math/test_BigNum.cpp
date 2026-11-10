@@ -1065,4 +1065,169 @@ TEST_P(TestBigNumKernelWindows, bigFloatMantissaProductsRestoreTheBigNumContext)
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndLayouts, TestBigNumKernelWindows,
     testing::Combine(testing::Values(12, 32, 672), testing::Values(1, 2, 4), testing::Bool()));
 
+namespace
+{
+
+enum class KernelSlot
+{
+    TMP1,
+    TMP2,
+    TMP3,
+    COPY1,
+    COPY2
+};
+
+} // namespace
+
+class TestBigNumKernelStorage : public TestBigNumValue, public testing::WithParamInterface<std::tuple<int, KernelSlot>>
+{
+protected:
+    void SetUp() override;
+    Byte *buffer() const;
+    bool allocated() const;
+    std::size_t reservation_size() const;
+    void expect_owner() const;
+};
+
+void TestBigNumKernelStorage::SetUp()
+{
+    init_bf_length(std::get<0>(GetParam()));
+}
+
+Byte *TestBigNumKernelStorage::buffer() const
+{
+    switch (std::get<1>(GetParam()))
+    {
+    case KernelSlot::TMP1:
+        return g_bn_tmp1.data();
+    case KernelSlot::TMP2:
+        return g_bn_tmp2.data();
+    case KernelSlot::TMP3:
+        return g_bn_tmp3.data();
+    case KernelSlot::COPY1:
+        return g_bn_tmp_copy1.data();
+    case KernelSlot::COPY2:
+        return g_bn_tmp_copy2.data();
+    }
+    return nullptr;
+}
+
+bool TestBigNumKernelStorage::allocated() const
+{
+    switch (std::get<1>(GetParam()))
+    {
+    case KernelSlot::TMP1:
+        return static_cast<bool>(g_bn_tmp1);
+    case KernelSlot::TMP2:
+        return static_cast<bool>(g_bn_tmp2);
+    case KernelSlot::TMP3:
+        return static_cast<bool>(g_bn_tmp3);
+    case KernelSlot::COPY1:
+        return static_cast<bool>(g_bn_tmp_copy1);
+    case KernelSlot::COPY2:
+        return static_cast<bool>(g_bn_tmp_copy2);
+    }
+    return false;
+}
+
+std::size_t TestBigNumKernelStorage::reservation_size() const
+{
+    const auto slot = std::get<1>(GetParam());
+    const std::size_t width = slot == KernelSlot::COPY1 || slot == KernelSlot::COPY2 ? 2 : 1;
+    return width * bn_arena(BigLifetime::WORKING).block_size();
+}
+
+void TestBigNumKernelStorage::expect_owner() const
+{
+    static_assert(std::is_same_v<decltype(g_bn_tmp1), BigNum>);
+    static_assert(std::is_same_v<decltype(g_bn_tmp2), BigNum>);
+    static_assert(std::is_same_v<decltype(g_bn_tmp3), BigNum>);
+    static_assert(std::is_same_v<decltype(g_bn_tmp_copy1), BigArena::Allocation>);
+    static_assert(std::is_same_v<decltype(g_bn_tmp_copy2), BigArena::Allocation>);
+    auto &working = bn_arena(BigLifetime::WORKING);
+    switch (std::get<1>(GetParam()))
+    {
+    case KernelSlot::TMP1:
+        EXPECT_EQ(&working, &g_bn_tmp1.arena());
+        break;
+    case KernelSlot::TMP2:
+        EXPECT_EQ(&working, &g_bn_tmp2.arena());
+        break;
+    case KernelSlot::TMP3:
+        EXPECT_EQ(&working, &g_bn_tmp3.arena());
+        break;
+    case KernelSlot::COPY1:
+        EXPECT_EQ(&working, &g_bn_tmp_copy1.arena());
+        EXPECT_EQ(2U, g_bn_tmp_copy1.blocks());
+        break;
+    case KernelSlot::COPY2:
+        EXPECT_EQ(&working, &g_bn_tmp_copy2.arena());
+        EXPECT_EQ(2U, g_bn_tmp_copy2.blocks());
+        break;
+    }
+}
+
+TEST_P(TestBigNumKernelStorage, rebindingClearsTheWholeReservationWithoutAllocatingAgain)
+{
+    ASSERT_TRUE(allocated());
+    expect_owner();
+    auto *const original = buffer();
+    std::fill_n(original, reservation_size(), Byte{0xa5});
+    const auto high_water = bn_arena(BigLifetime::WORKING).high_water_mark();
+
+    init_bf_length(std::get<0>(GetParam()));
+
+    ASSERT_TRUE(allocated());
+    expect_owner();
+    EXPECT_EQ(original, buffer());
+    EXPECT_EQ(high_water, bn_arena(BigLifetime::WORKING).high_water_mark());
+    EXPECT_EQ(std::vector<Byte>(reservation_size()), std::vector<Byte>(buffer(), buffer() + reservation_size()));
+}
+
+TEST_P(TestBigNumKernelStorage, precisionChangesDiscardTheWholeScratchReservation)
+{
+    ASSERT_TRUE(allocated());
+    expect_owner();
+    std::fill_n(buffer(), reservation_size(), Byte{0xa5});
+    const int original_length = std::get<0>(GetParam());
+
+    init_bf_length(original_length == 672 ? 4 : 672);
+
+    ASSERT_TRUE(allocated());
+    expect_owner();
+    EXPECT_EQ(std::vector<Byte>(reservation_size()), std::vector<Byte>(buffer(), buffer() + reservation_size()));
+    std::fill_n(buffer(), reservation_size(), Byte{0x5a});
+
+    init_bf_length(original_length);
+
+    ASSERT_TRUE(allocated());
+    expect_owner();
+    EXPECT_EQ(std::vector<Byte>(reservation_size()), std::vector<Byte>(buffer(), buffer() + reservation_size()));
+}
+
+TEST_P(TestBigNumKernelStorage, repeatedCleanupUnbindsAndReinitializationClearsScratch)
+{
+    ASSERT_TRUE(allocated());
+    expect_owner();
+    std::fill_n(buffer(), reservation_size(), Byte{0xa5});
+
+    free_bf_vars();
+
+    EXPECT_FALSE(allocated());
+
+    free_bf_vars();
+
+    EXPECT_FALSE(allocated());
+
+    init_bf_length(std::get<0>(GetParam()));
+
+    ASSERT_TRUE(allocated());
+    expect_owner();
+    EXPECT_EQ(std::vector<Byte>(reservation_size()), std::vector<Byte>(buffer(), buffer() + reservation_size()));
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndSlots, TestBigNumKernelStorage,
+    testing::Combine(testing::Values(4, 12, 64, 672),
+        testing::Values(KernelSlot::TMP1, KernelSlot::TMP2, KernelSlot::TMP3, KernelSlot::COPY1, KernelSlot::COPY2)));
+
 } // namespace id::test

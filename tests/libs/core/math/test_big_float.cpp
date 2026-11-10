@@ -7,6 +7,7 @@
 #include <math/big.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
+#include <math/BigNum.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
@@ -540,7 +541,7 @@ TEST_F(TestFreedArena, releasesActiveArenaBindings)
     EXPECT_EQ(BFMathType::NONE, g_bf_math);
     EXPECT_EQ(BigStackMark{}, save_stack());
     EXPECT_FALSE(g_bf_x_min);
-    EXPECT_EQ(nullptr, g_bn_tmp1);
+    EXPECT_FALSE(g_bn_tmp1);
     EXPECT_EQ(nullptr, g_bf_tmp1);
 }
 

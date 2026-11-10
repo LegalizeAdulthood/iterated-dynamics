@@ -48,11 +48,11 @@ int g_decimals{};
 int g_bf_length{};
 int g_r_bf_length{};
 int g_bf_decimals{};
-BigNumPtr g_bn_tmp1{};
-BigNumPtr g_bn_tmp2{};
-BigNumPtr g_bn_tmp3{};
-BigNumPtr g_bn_tmp_copy1{};
-BigNumPtr g_bn_tmp_copy2{};
+BigNum g_bn_tmp1{};
+BigNum g_bn_tmp2{};
+BigNum g_bn_tmp3{};
+BigArena::Allocation g_bn_tmp_copy1{};
+BigArena::Allocation g_bn_tmp_copy2{};
 // used by other routines, g_bn_length
 BigNum g_x_min_bn{};
 BigNum g_x_max_bn{};
@@ -306,11 +306,23 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
     m_bf_length(bf_length),
     m_int_length(int_length)
 {
-    big_num.single(g_bn_tmp1);
-    big_num.single(g_bn_tmp2);
-    big_num.single(g_bn_tmp3);
-    big_num.wide(g_bn_tmp_copy1);
-    big_num.wide(g_bn_tmp_copy2);
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_bn_tmp1);
+        ::new (&g_bn_tmp1) BigNum{std::move(value)};
+    }
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_bn_tmp2);
+        ::new (&g_bn_tmp2) BigNum{std::move(value)};
+    }
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_bn_tmp3);
+        ::new (&g_bn_tmp3) BigNum{std::move(value)};
+    }
+    g_bn_tmp_copy1 = big_num.working.allocate_double();
+    g_bn_tmp_copy2 = big_num.working.allocate_double();
     {
         BigNum value{big_num.working};
         std::destroy_at(&g_old_z_bn.x);
@@ -369,7 +381,11 @@ void MathArenas::change_precision(const int bn_length, const int bf_length, cons
             [&](Byte *destination, const Byte *source, std::size_t blocks)
             {
                 std::memset(destination, 0, blocks * bn_stride);
-                const bool mixed_workspace = (g_old_z_bn.x && source == g_old_z_bn.x.data()) ||
+                const bool mixed_workspace = (g_bn_tmp1 && source == g_bn_tmp1.data()) ||
+                    (g_bn_tmp2 && source == g_bn_tmp2.data()) || (g_bn_tmp3 && source == g_bn_tmp3.data()) ||
+                    (g_bn_tmp_copy1 && source == g_bn_tmp_copy1.data()) ||
+                    (g_bn_tmp_copy2 && source == g_bn_tmp_copy2.data()) ||
+                    (g_old_z_bn.x && source == g_old_z_bn.x.data()) ||
                     (g_old_z_bn.y && source == g_old_z_bn.y.data()) ||
                     (g_tmp_sqr_x_bn && source == g_tmp_sqr_x_bn.data()) ||
                     (g_tmp_sqr_y_bn && source == g_tmp_sqr_y_bn.data()) || (g_bn_tmp && source == g_bn_tmp.data());
@@ -409,6 +425,37 @@ void MathArenas::bind(const bool preserve_parameters)
     big_num.stack.restore(0);
     big_float.stack.restore(0);
     big_num.bind_working();
+    if (!g_bn_tmp1)
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_bn_tmp1);
+        ::new (&g_bn_tmp1) BigNum{std::move(value)};
+    }
+    std::memset(g_bn_tmp1.data(), 0, big_num.working.block_size());
+    if (!g_bn_tmp2)
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_bn_tmp2);
+        ::new (&g_bn_tmp2) BigNum{std::move(value)};
+    }
+    std::memset(g_bn_tmp2.data(), 0, big_num.working.block_size());
+    if (!g_bn_tmp3)
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_bn_tmp3);
+        ::new (&g_bn_tmp3) BigNum{std::move(value)};
+    }
+    std::memset(g_bn_tmp3.data(), 0, big_num.working.block_size());
+    if (!g_bn_tmp_copy1)
+    {
+        g_bn_tmp_copy1 = big_num.working.allocate_double();
+    }
+    std::memset(g_bn_tmp_copy1.data(), 0, 2 * big_num.working.block_size());
+    if (!g_bn_tmp_copy2)
+    {
+        g_bn_tmp_copy2 = big_num.working.allocate_double();
+    }
+    std::memset(g_bn_tmp_copy2.data(), 0, 2 * big_num.working.block_size());
     if (!g_old_z_bn.x)
     {
         BigNum value{big_num.working};
@@ -496,6 +543,11 @@ void MathArenas::unbind()
     big_num.stack.restore(0);
     big_float.stack.restore(0);
     big_num.unbind_working();
+    g_bn_tmp1 = BigNum{};
+    g_bn_tmp2 = BigNum{};
+    g_bn_tmp3 = BigNum{};
+    g_bn_tmp_copy1.reset();
+    g_bn_tmp_copy2.reset();
     g_old_z_bn = {};
     g_tmp_sqr_x_bn = BigNum{};
     g_tmp_sqr_y_bn = BigNum{};

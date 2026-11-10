@@ -4,6 +4,7 @@
 // Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer
 #pragma once
 
+#include <math/BigArena.h>
 #include <math/cmplx.h>
 #include <misc/sized_types.h>
 
@@ -66,11 +67,14 @@ extern int g_shift_factor;
 extern int g_bf_length;
 extern int g_r_bf_length;
 extern int g_bf_decimals;
-extern BigNumPtr g_bn_tmp1;        // g_r_length
-extern BigNumPtr g_bn_tmp2;        // g_r_length
-extern BigNumPtr g_bn_tmp3;        // g_r_length
-extern BigNumPtr g_bn_tmp_copy1;   // g_bn_length
-extern BigNumPtr g_bn_tmp_copy2;   // g_bn_length
+extern BigNum g_bn_tmp1; // g_r_length
+extern BigNum g_bn_tmp2; // g_r_length
+extern BigNum g_bn_tmp3; // g_r_length
+
+// Paired operand-preservation workspaces.
+extern BigArena::Allocation g_bn_tmp_copy1;
+extern BigArena::Allocation g_bn_tmp_copy2;
+
 extern BigNum g_bn_tmp;            // g_r_length
 extern BigFloatPtr g_bf_tmp1;      // g_r_bf_length+2
 extern BigFloatPtr g_bf_tmp2;      // g_r_bf_length+2

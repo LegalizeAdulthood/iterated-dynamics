@@ -5,10 +5,10 @@ Copyright 2026 Richard Thomson.
 
 # BigNum Kernel Ownership Contract
 
-This specifies the remaining BigNum kernel ownership conversion. It
-keeps calculation bodies, statement order, precision ramps, operand
-copies, and scratch reuse. The member interfaces below are proposed
-implementation contracts, not implemented APIs.
+This records owning BigNum kernel storage and the remaining member
+interface contracts. Calculation bodies, statement order, precision
+ramps, operand copies, and scratch reuse are preserved. The member
+interfaces below are proposed APIs.
 
 ## Storage And Lifetime
 
@@ -18,7 +18,7 @@ active kernel lengths. `N0` is the entry length of a precision ramp.
 Arena canonical sizes and aligned strides remain at their outer widths;
 `calc_lengths()` changes the active globals without reallocating arenas.
 
-| Global | Owning replacement | Reservation |
+| Global | Owner | Reservation |
 |---|---|---|
 | `g_bn_tmp1` | `BigNum` | Working `allocate_single()` |
 | `g_bn_tmp2` | `BigNum` | Working `allocate_single()` |
@@ -37,19 +37,20 @@ formatter scratch. Keep both existing paired reservations. They are
 encoded workspaces, not independent canonical values. Do not reduce
 their handles or replace their reservations with singles.
 
-Construct these five owners at their current `MathArenas` reservation
-sites, in the same order. Stage each single-slot BigNum in
-`big_num.working`, then placement-move it into its global. Assign each
-paired handle directly from `big_num.working.allocate_double()`.
-Remove the corresponding five raw `WorkingBinding` entries.
+`MathArenas` constructs these five owners at their former reservation
+sites, in the same order. Each single-slot BigNum is staged in
+`big_num.working`, then placement-moved into its global. Each paired
+handle is assigned directly from `big_num.working.allocate_double()`.
+These slots have no raw `WorkingBinding` entries.
 
-In `bind`, reconstruct null owners at the existing working setup site.
-Clear a single's full block and each pair's two full blocks. Add all
-five live base addresses to the guarded workspace test in
-`change_precision`; relocation discards their bytes and preserves width
-metadata and indices. In `unbind`, release the three BigNum values with
-`BigNum{}` and reset both allocation handles before arena destruction.
-Do not add allocations, change widths, or convert scratch as live values.
+`bind` reconstructs null owners at the existing working setup site,
+then clears a single's full block or a pair's two full blocks. The
+guarded workspace test in `change_precision` includes all five live
+base addresses; relocation discards their bytes and preserves width
+metadata and indices. `unbind` releases the three BigNum values with
+`BigNum{}` and resets both allocation handles before arena destruction.
+Rebinding live owners does not allocate additional slots. Working
+scratch is discarded rather than converted as a live numeric value.
 
 ## Canonical Arithmetic And Retained Products
 
@@ -229,6 +230,12 @@ actual owner, active extent, mutation, and call lifetime. Do not remove
 debugging aids or untested arithmetic bodies merely to erase a name.
 
 ## Characterization And Pre-Existing Defect
+
+`TestBigNumKernelStorage` covers all five slots at lengths 4, 12, 64,
+and 672. It verifies working-arena ownership, both pairs' width metadata,
+full-reservation clearing, stable addresses and high-water marks on
+same-precision binds, precision-change scratch discard, repeated cleanup,
+and reinitialization.
 
 `TestBigNumKernelProducts` records complete partial/full product bytes,
 destination return aliases, operand mutation, and guard bytes at lengths

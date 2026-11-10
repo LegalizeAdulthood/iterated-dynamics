@@ -188,10 +188,12 @@ Newton working-length changes within already reserved storage.
 
 Header: `big.h`.
 
-- `g_bn_tmp1`, `g_bn_tmp2`, `g_bn_tmp3`, `g_bn_tmp4`, `g_bn_tmp5`,
-  `g_bn_tmp6` - general temporaries, each `g_r_length` bytes.
-- `g_bn_tmp_copy1`, `g_bn_tmp_copy2` - operand-preservation buffers, each
-  `2 * g_r_length` bytes.
+- `g_bn_tmp1`, `g_bn_tmp2`, `g_bn_tmp3` - owning `BigNum` kernel
+  workspaces, each in one padded working-arena slot. Reciprocal precision
+  ramps retain their existing base addresses and active byte windows.
+- `g_bn_tmp_copy1`, `g_bn_tmp_copy2` - owning `BigArena::Allocation`
+  handles, each reserving two working-arena blocks for operand copies
+  and destructive formatter scratch. Their paired widths are retained.
 - `g_bn_tmp` - owning `BigNum` temporary retaining `g_r_length` bytes in
   its padded working-arena slot.
 - `g_bn_pi` - fixed-point view into shared Pi storage, not another buffer.
@@ -215,9 +217,9 @@ the three names are not independently allocated constants.
 
 ## BigNum Coordinates And Iteration State
 
-The [kernel ownership contract](BigNumKernels.md) specifies the remaining
-three reciprocal workspaces, two paired copy buffers, borrowed precision
-windows, and proposed member interfaces for their conversion.
+The [kernel ownership contract](BigNumKernels.md) records the three
+reciprocal workspace owners, two paired copy buffers, borrowed precision
+windows, and proposed member interfaces for the remaining conversions.
 
 Header: `big.h`.
 

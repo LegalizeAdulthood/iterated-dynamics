@@ -629,8 +629,8 @@ BigNumPtr divide(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
     std::memset(n2, 0, scale2);                          // zero out the rest
 
     unsafe_inv_bn(r, n2);
-    multiply(g_bn_tmp1, n1, r);
-    copy_bn(r, g_bn_tmp1 + g_shift_factor); // r = g_bn_tmp1
+    multiply(g_bn_tmp1.data(), n1, r);
+    copy_bn(r, g_bn_tmp1.data() + g_shift_factor); // r = g_bn_tmp1
 
     if (scale1 != scale2)
     {
@@ -661,9 +661,9 @@ BigNumPtr divide(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
 BigNumPtr binary_operation(BigNumPtr result, BigNumConstPtr left, BigNumConstPtr right,
     BigNumPtr (*operation)(BigNumPtr, BigNumPtr, BigNumPtr))
 {
-    copy_bn(g_bn_tmp_copy1, left);
-    copy_bn(g_bn_tmp_copy2, right);
-    return operation(result, g_bn_tmp_copy1, g_bn_tmp_copy2);
+    copy_bn(g_bn_tmp_copy1.data(), left);
+    copy_bn(g_bn_tmp_copy2.data(), right);
+    return operation(result, g_bn_tmp_copy1.data(), g_bn_tmp_copy2.data());
 }
 
 void validate_scalar(const LDouble value)
@@ -880,8 +880,8 @@ BigNum BigNum::operator/(const BigNum &right) const
 BigNum BigNum::sqr() const
 {
     BigNum result{bn_arena(BigLifetime::WORKING).allocate_double()};
-    copy_bn(g_bn_tmp_copy1, m_storage.data());
-    square(result.m_storage.data(), g_bn_tmp_copy1);
+    copy_bn(g_bn_tmp_copy1.data(), m_storage.data());
+    square(result.m_storage.data(), g_bn_tmp_copy1.data());
     result.m_storage.reduce();
     return result;
 }
@@ -918,8 +918,8 @@ bool BigNum::operator>=(const BigNum &right) const
 
 LDouble BigNum::to_float() const
 {
-    copy_bn(g_bn_tmp_copy1, m_storage.data());
-    return bn_to_float(g_bn_tmp_copy1);
+    copy_bn(g_bn_tmp_copy1.data(), m_storage.data());
+    return bn_to_float(g_bn_tmp_copy1.data());
 }
 
 std::string BigNum::to_string(const int digits) const
