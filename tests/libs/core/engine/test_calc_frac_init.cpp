@@ -22,6 +22,8 @@
 #include <gtest/gtest.h>
 
 #include <ostream>
+#include <string>
+#include <tuple>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -174,6 +176,79 @@ TEST_F(TestCalcFracInit, enteringArbitraryPrecisionStillInvalidatesResume)
     EXPECT_NE(BFMathType::NONE, g_bf_math);
     EXPECT_EQ(CalcStatus::PARAMS_CHANGED, g_calc_status);
 }
+
+struct MinimumIncrementPrecision
+{
+    int digits;
+    const char *positive;
+    const char *negative;
+};
+
+void PrintTo(const MinimumIncrementPrecision &value, std::ostream *str)
+{
+    *str << value.digits;
+}
+
+struct MinimumIncrementCoordinate
+{
+    const char *name;
+    ImageRegion region;
+    const BigFloat *target;
+    bool negative;
+};
+
+void PrintTo(const MinimumIncrementCoordinate &value, std::ostream *str)
+{
+    *str << value.name;
+}
+
+class TestBigFloatMinimumIncrement
+    : public TestCalcFracInit,
+      public WithParamInterface<std::tuple<MinimumIncrementPrecision, MinimumIncrementCoordinate>>
+{
+};
+
+TEST_P(TestBigFloatMinimumIncrement, preservesExactCoordinateBytesAtActivePrecision)
+{
+    const auto &precision = std::get<0>(GetParam());
+    const auto &coordinate = std::get<1>(GetParam());
+    g_bf_digits = precision.digits;
+    g_logical_screen = {2, 3, 0, 0, 1.0, 2.0};
+    ValueSaver saved_drift{g_aspect_drift, 0.0F};
+    set_region(coordinate.region, true);
+    const auto saved = save_stack();
+
+    EXPECT_FALSE(calc_frac_init());
+
+    EXPECT_EQ(precision.digits, g_decimals);
+    EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
+    EXPECT_EQ(saved, save_stack());
+    EXPECT_EQ(&bf_arena(BigLifetime::PERSISTENT), &coordinate.target->arena());
+    std::string encoded;
+    constexpr char hex_digits[]{"0123456789abcdef"};
+    for (int i = 0; i < g_bf_length + 2; ++i)
+    {
+        const Byte value = coordinate.target->data()[i];
+        encoded.push_back(hex_digits[value >> 4]);
+        encoded.push_back(hex_digits[value & 15]);
+    }
+    EXPECT_EQ(coordinate.negative ? precision.negative : precision.positive, encoded);
+}
+
+// Canonical byte snapshots from the pointer-based increment, including
+// precision-dependent truncation of the low mantissa bytes.
+INSTANTIATE_TEST_SUITE_P(Coordinates, TestBigFloatMinimumIncrement,
+    Combine(Values(MinimumIncrementPrecision{10, "0d37092d00000000004001000000", "e591eda5ffffffffff7ffdff0000"},
+                MinimumIncrementPrecision{
+                    20, "003757420d37092d00000000004001000000", "0092517be591eda5ffffffffff7ffdff0000"},
+                MinimumIncrementPrecision{50, "000000000000000000000000003757420d37092d00000000004001000000",
+                    "0000000000000000000000000092517be591eda5ffffffffff7ffdff0000"}),
+        Values(MinimumIncrementCoordinate{"XMax", {{1.25, -3}, {1.25, -2}, {2.25, -3}}, &g_bf_x_max, false},
+            MinimumIncrementCoordinate{"YMax", {{0.25, -2.5}, {2.25, -2.5}, {0.25, -3.5}}, &g_bf_y_max, true},
+            MinimumIncrementCoordinate{"XThird", {{0.25, -3}, {2.25, -2}, {1.25, -3}}, &g_bf_x_3rd, false},
+            MinimumIncrementCoordinate{"YThird", {{0.25, -3}, {2.25, -2}, {0.25, -2.5}}, &g_bf_y_3rd, true})),
+    [](const TestParamInfo<std::tuple<MinimumIncrementPrecision, MinimumIncrementCoordinate>> &info)
+    { return std::string{std::get<1>(info.param).name} + std::to_string(std::get<0>(info.param).digits); });
 
 TEST_F(TestCalcFracInit, potentialDisablesDistanceEstimation)
 {

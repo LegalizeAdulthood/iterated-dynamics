@@ -57,7 +57,7 @@ static bool adjust_to_limits(double expand);
 static void smallest_add(double *num);
 static bool ratio_bad(double actual, double desired);
 static bool adjust_to_limits_bf(double expand);
-static void smallest_add_bf(BigFloatPtr num);
+static void smallest_add_bf(BigFloat &num);
 
 /* This function calculates the precision needed to distinguish adjacent
    pixels at the maximum resolution of MAX_PIXELS by MAX_PIXELS
@@ -568,7 +568,7 @@ static bool adjust_to_limits_bf(const double expand)
     if (cmp_bf(g_bf_x_min.data(), b_center_x.data()) == 0)
     {
         // ohoh, infinitely thin, fix it
-        smallest_add_bf(g_bf_x_max.data());
+        smallest_add_bf(g_bf_x_max);
         // bfxmin -= bfxmax-center_x;
         sub_a_bf(g_bf_x_min.data(), sub_bf(b_tmp1.data(), g_bf_x_max.data(), b_center_x.data()));
     }
@@ -576,7 +576,7 @@ static bool adjust_to_limits_bf(const double expand)
     // if (bfymin == center_y)
     if (cmp_bf(g_bf_y_min.data(), b_center_y.data()) == 0)
     {
-        smallest_add_bf(g_bf_y_max.data());
+        smallest_add_bf(g_bf_y_max);
         // bfymin -= bfymax-center_y;
         sub_a_bf(g_bf_y_min.data(), sub_bf(b_tmp1.data(), g_bf_y_max.data(), b_center_y.data()));
     }
@@ -584,13 +584,13 @@ static bool adjust_to_limits_bf(const double expand)
     // if (bfx3rd == center_x)
     if (cmp_bf(g_bf_x_3rd.data(), b_center_x.data()) == 0)
     {
-        smallest_add_bf(g_bf_x_3rd.data());
+        smallest_add_bf(g_bf_x_3rd);
     }
 
     // if (bfy3rd == center_y)
     if (cmp_bf(g_bf_y_3rd.data(), b_center_y.data()) == 0)
     {
-        smallest_add_bf(g_bf_y_3rd.data());
+        smallest_add_bf(g_bf_y_3rd);
     }
 
     // setup array for easier manipulation
@@ -878,11 +878,12 @@ static void smallest_add(double *num)
     *num += *num * 5.0e-16;
 }
 
-static void smallest_add_bf(BigFloatPtr num)
+static void smallest_add_bf(BigFloat &num)
 {
     BigFloat b_tmp1{bf_arena(BigLifetime::TEMPORARY)};
-    mult_bf(b_tmp1.data(), (b_tmp1 = 5.0e-16).data(), num);
-    add_a_bf(num, b_tmp1.data());
+    b_tmp1 = 5.0e-16;
+    b_tmp1 *= num;
+    num += b_tmp1;
 }
 
 static bool ratio_bad(const double actual, const double desired)
