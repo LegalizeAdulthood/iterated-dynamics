@@ -113,7 +113,7 @@ template <typename... Args>
 static void put_param(const char *param, const Args &...args);
 static void put_param_line();
 static void put_float(int slash, double value, int prec);
-static void put_bf(int slash, BigFloatPtr r, int prec);
+static void put_bf(int slash, const BigFloat &r, int prec);
 static void put_filename(WriteBatchData &wb_data, const char *keyword, const char *fname);
 static void put_filename(const char *keyword, const char *fname);
 static void strip_zeros(std::string &buf);
@@ -1084,8 +1084,8 @@ static void write_batch_params(
                 cvt_center_mag_bf(bf_x_ctr, bf_y_ctr, magnification, x_mag_factor, rotation, skew);
                 const int digits = get_prec_bf(ResolutionFlag::MAX);
                 put_param(" center-mag=");
-                put_bf(0, bf_x_ctr.data(), digits);
-                put_bf(1, bf_y_ctr.data(), digits);
+                put_bf(0, bf_x_ctr, digits);
+                put_bf(1, bf_y_ctr, digits);
             }
             else // !g_bf_math
             {
@@ -1145,14 +1145,14 @@ static void write_batch_params(
             if (g_bf_math != BFMathType::NONE)
             {
                 const int digits = get_prec_bf(ResolutionFlag::MAX);
-                put_bf(0, g_bf_x_min, digits);
-                put_bf(1, g_bf_x_max, digits);
-                put_bf(1, g_bf_y_min, digits);
-                put_bf(1, g_bf_y_max, digits);
+                put_bf(0, BigFloat::from_legacy(g_bf_x_min, static_cast<std::size_t>(g_bf_length + 2)), digits);
+                put_bf(1, BigFloat::from_legacy(g_bf_x_max, static_cast<std::size_t>(g_bf_length + 2)), digits);
+                put_bf(1, BigFloat::from_legacy(g_bf_y_min, static_cast<std::size_t>(g_bf_length + 2)), digits);
+                put_bf(1, BigFloat::from_legacy(g_bf_y_max, static_cast<std::size_t>(g_bf_length + 2)), digits);
                 if (cmp_bf(g_bf_x_3rd, g_bf_x_min) || cmp_bf(g_bf_y_3rd, g_bf_y_min))
                 {
-                    put_bf(1, g_bf_x_3rd, digits);
-                    put_bf(1, g_bf_y_3rd, digits);
+                    put_bf(1, BigFloat::from_legacy(g_bf_x_3rd, static_cast<std::size_t>(g_bf_length + 2)), digits);
+                    put_bf(1, BigFloat::from_legacy(g_bf_y_3rd, static_cast<std::size_t>(g_bf_length + 2)), digits);
                 }
             }
             else
@@ -1927,9 +1927,9 @@ static void put_float(const int slash, const double value, const int prec)
     put_param(buf.c_str());
 }
 
-static void put_bf(const int slash, const BigFloatPtr r, const int prec)
+static void put_bf(const int slash, const BigFloat &r, const int prec)
 {
-    std::string value{bf_to_string(r, prec)};
+    std::string value{bf_to_string(r.data(), prec)};
     strip_zeros(value);
     if (slash)
     {

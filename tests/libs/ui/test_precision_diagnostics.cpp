@@ -15,6 +15,7 @@
 #include <engine/UserData.h>
 #include <fractals/fractype.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <math/BigNum.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
@@ -42,6 +43,15 @@ namespace id::test
 
 static_assert(std::is_same_v<decltype(&format_var_bn), std::string (*)(const char *, const BigNum &)>);
 static_assert(std::is_same_v<decltype(&format_compare_values), std::string (*)(const char *, LDouble, const BigNum &)>);
+
+static_assert(std::is_same_v<decltype(&format_var_bf), std::string (*)(const char *, const BigFloat &)>);
+static_assert(
+    std::is_same_v<decltype(&format_compare_values_bf), std::string (*)(const char *, LDouble, const BigFloat &)>);
+static_assert(std::is_same_v<decltype(&format_two_bf),
+    std::string (*)(const char *, const BigFloat &, const char *, const BigFloat &, int)>);
+static_assert(std::is_same_v<decltype(&format_three_bf),
+    std::string (*)(
+        const char *, const BigFloat &, const char *, const BigFloat &, const char *, const BigFloat &, int)>);
 
 class TestPrecisionDiagnostics : public Test
 {
@@ -125,19 +135,23 @@ TEST_F(TestPrecisionDiagnostics, formatsBigNumVariable)
 
 TEST_F(TestPrecisionDiagnostics, formatsBigFloatVariable)
 {
-    EXPECT_THAT(format_var_bf("value", g_bf_y_min), StartsWith("-1.5e0"));
+    EXPECT_EQ(
+        "-1.5e0", format_var_bf("value", BigFloat::from_legacy(g_bf_y_min, static_cast<std::size_t>(g_bf_length + 2))));
 }
 
 TEST_F(TestPrecisionDiagnostics, formatsTwoBigFloatValues)
 {
-    EXPECT_THAT(format_two_bf("left", g_bf_x_min, "right", g_bf_x_max, 8),
-        AllOf(HasSubstr("left->-2.0e0"), HasSubstr("right->2.0e0")));
+    EXPECT_EQ("\nleft->-2.0e0\nright->2.0e0",
+        format_two_bf("left", BigFloat::from_legacy(g_bf_x_min, static_cast<std::size_t>(g_bf_length + 2)), "right",
+            BigFloat::from_legacy(g_bf_x_max, static_cast<std::size_t>(g_bf_length + 2)), 8));
 }
 
 TEST_F(TestPrecisionDiagnostics, formatsThreeBigFloatValues)
 {
-    EXPECT_THAT(
-        format_three_bf("left", g_bf_x_min, "right", g_bf_x_max, "bottom", g_bf_y_min, 8), HasSubstr("bottom->-1.5e0"));
+    EXPECT_EQ("\nleft->-2.0e0\nright->2.0e0\nbottom->-1.5e0",
+        format_three_bf("left", BigFloat::from_legacy(g_bf_x_min, static_cast<std::size_t>(g_bf_length + 2)), "right",
+            BigFloat::from_legacy(g_bf_x_max, static_cast<std::size_t>(g_bf_length + 2)), "bottom",
+            BigFloat::from_legacy(g_bf_y_min, static_cast<std::size_t>(g_bf_length + 2)), 8));
 }
 
 TEST_F(TestPrecisionDiagnostics, formatsBigNumComparison)
@@ -147,7 +161,9 @@ TEST_F(TestPrecisionDiagnostics, formatsBigNumComparison)
 
 TEST_F(TestPrecisionDiagnostics, formatsBigFloatComparison)
 {
-    EXPECT_THAT(format_compare_values_bf("bf", -1.5L, g_bf_y_min), HasSubstr("bignum=-1.5e0"));
+    EXPECT_EQ("bf\nbignum=-1.5e0\ndouble=-1.50000000000000000000\n\n",
+        format_compare_values_bf(
+            "bf", -1.5L, BigFloat::from_legacy(g_bf_y_min, static_cast<std::size_t>(g_bf_length + 2))));
 }
 
 TEST_F(TestPrecisionDiagnostics, shortBigNumValueDoesNotRequirePadding)
@@ -157,7 +173,8 @@ TEST_F(TestPrecisionDiagnostics, shortBigNumValueDoesNotRequirePadding)
 
 TEST_F(TestPrecisionDiagnostics, shortBigFloatValueDoesNotRequirePadding)
 {
-    EXPECT_LT(format_var_bf("n", g_bf_x_min).size(), 79U);
+    EXPECT_EQ(
+        "-2.0e0", format_var_bf("n", BigFloat::from_legacy(g_bf_x_min, static_cast<std::size_t>(g_bf_length + 2))));
 }
 
 TEST_F(TestPrecisionDiagnostics, oversizedBigNumLabelIsTruncated)
@@ -165,7 +182,7 @@ TEST_F(TestPrecisionDiagnostics, oversizedBigNumLabelIsTruncated)
     EXPECT_EQ(std::string(79, 'x'), format_var_bn(std::string(100, 'x').c_str(), g_x_min_bn));
 }
 
-struct BigNumDiagnosticInput
+struct PrecisionDiagnosticInput
 {
     const char *name;
     int length;
@@ -173,7 +190,8 @@ struct BigNumDiagnosticInput
     const char *number;
 };
 
-class TestBigNumPrecisionDiagnostics : public TestPrecisionDiagnostics, public WithParamInterface<BigNumDiagnosticInput>
+class TestBigNumPrecisionDiagnostics : public TestPrecisionDiagnostics,
+                                       public WithParamInterface<PrecisionDiagnosticInput>
 {
 };
 
@@ -192,20 +210,53 @@ TEST_P(TestBigNumPrecisionDiagnostics, preservesExactOutputAndInputBytes)
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestBigNumPrecisionDiagnostics,
-    Values(BigNumDiagnosticInput{"MinimumZero", 4, "0", "0."},
-        BigNumDiagnosticInput{"MinimumNegative", 4, "-1.5", "-1.5"},
-        BigNumDiagnosticInput{"MaximumZero", 672, "0", "0."},
-        BigNumDiagnosticInput{"MaximumNegative", 672, "-1.5", "-1.5"}),
-    [](const TestParamInfo<BigNumDiagnosticInput> &info) { return info.param.name; });
+    Values(PrecisionDiagnosticInput{"MinimumZero", 4, "0", "0."},
+        PrecisionDiagnosticInput{"MinimumNegative", 4, "-1.5", "-1.5"},
+        PrecisionDiagnosticInput{"MaximumZero", 672, "0", "0."},
+        PrecisionDiagnosticInput{"MaximumNegative", 672, "-1.5", "-1.5"}),
+    [](const TestParamInfo<PrecisionDiagnosticInput> &info) { return info.param.name; });
 
 TEST_F(TestPrecisionDiagnostics, aspectFormattingRestoresTemporaryStack)
 {
     const auto stack{save_stack()};
 
-    EXPECT_THAT(format_aspect("ratio"), AllOf(StartsWith("aspect ratio\n"), HasSubstr("bf     0.75")));
+    EXPECT_EQ("aspect ratio\nfloat   0.7500000000\nbf     0.75\n\n", format_aspect("ratio"));
 
     EXPECT_EQ(stack, save_stack());
 }
+
+class TestBigFloatPrecisionDiagnostics : public TestPrecisionDiagnostics,
+                                         public WithParamInterface<PrecisionDiagnosticInput>
+{
+};
+
+TEST_P(TestBigFloatPrecisionDiagnostics, preservesExactOutputAndInputBytes)
+{
+    const auto &input = GetParam();
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    init_bf_length(input.length);
+    const BigFloat value{input.text};
+    const std::vector<Byte> original(value.data(), value.data() + g_bf_length + 2);
+    const auto stack = save_stack();
+    const std::string number{input.number};
+
+    EXPECT_EQ(number, format_var_bf("ignored label", value));
+    EXPECT_EQ("\nleft->" + number + "\nright->" + number, format_two_bf("left", value, "right", value, 8));
+    EXPECT_EQ("\nleft->" + number + "\nright->" + number + "\nbottom->" + number,
+        format_three_bf("left", value, "right", value, "bottom", value, 8));
+    EXPECT_EQ(
+        "bf\nbignum=" + number + "\ndouble=-1.50000000000000000000\n\n", format_compare_values_bf("bf", -1.5L, value));
+
+    EXPECT_EQ(original, (std::vector<Byte>{value.data(), value.data() + g_bf_length + 2}));
+    EXPECT_EQ(stack, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatPrecisionDiagnostics,
+    Values(PrecisionDiagnosticInput{"MinimumZero", 4, "0", "0.0"},
+        PrecisionDiagnosticInput{"MinimumNegative", 4, "-1.5", "-1.5e0"},
+        PrecisionDiagnosticInput{"MaximumZero", 708, "0", "0.0"},
+        PrecisionDiagnosticInput{"MaximumNegative", 708, "-1.5", "-1.5e0"}),
+    [](const TestParamInfo<PrecisionDiagnosticInput> &info) { return info.param.name; });
 
 TEST_F(TestPrecisionDiagnostics, collapsedCoordinatesCollectDebugSnapshotWithoutInput)
 {

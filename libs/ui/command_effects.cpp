@@ -98,11 +98,15 @@ void make_parameter_file(const MakeParameterFile &request)
     {
         g_make_parameter_file_map = true;
     }
-    g_logical_screen.x_dots = g_file_x_dots;
-    g_logical_screen.y_dots = g_file_y_dots;
-    g_logical_screen.x_size_dots = g_logical_screen.x_dots - 1;
-    g_logical_screen.y_size_dots = g_logical_screen.y_dots - 1;
-    invalidate_translated_resume(calc_frac_init());
+    // Map-only startup has no image dimensions or pixel grid to initialize.
+    if (g_file_x_dots > 0 && g_file_y_dots > 0)
+    {
+        g_logical_screen.x_dots = g_file_x_dots;
+        g_logical_screen.y_dots = g_file_y_dots;
+        g_logical_screen.x_size_dots = g_logical_screen.x_dots - 1;
+        g_logical_screen.y_size_dots = g_logical_screen.y_dots - 1;
+        invalidate_translated_resume(calc_frac_init());
+    }
     ValueSaver saved_video_key{g_video_entry_key, video_key};
     make_batch_file();
 }

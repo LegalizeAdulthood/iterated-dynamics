@@ -178,44 +178,44 @@ std::string format_corners_bf_save(const char *s)
         bf_to_string(g_bf_save_y_3rd, dec), g_image_region.m_3rd.y);
 }
 
-std::string format_two_bf(const char *s1, BigFloatPtr t1, const char *s2, BigFloatPtr t2, const int digits)
+std::string format_two_bf(const char *s1, const BigFloat &t1, const char *s2, const BigFloat &t2, const int digits)
 {
     return fmt::format("\n"
                        "{:s}->{:s}\n"
                        "{:s}->{:s}",
-        s1, bf_to_string_e(t1, digits), //
-        s2, bf_to_string_e(t2, digits));
+        s1, bf_to_string_e(t1.data(), digits), //
+        s2, bf_to_string_e(t2.data(), digits));
 }
 
-std::string format_three_bf(
-    const char *s1, BigFloatPtr t1, const char *s2, BigFloatPtr t2, const char *s3, BigFloatPtr t3, const int digits)
+std::string format_three_bf(const char *s1, const BigFloat &t1, const char *s2, const BigFloat &t2, const char *s3,
+    const BigFloat &t3, const int digits)
 {
     return fmt::format("\n"
                        "{:s}->{:s}\n"
                        "{:s}->{:s}\n"
                        "{:s}->{:s}",
-        s1, bf_to_string_e(t1, digits), //
-        s2, bf_to_string_e(t2, digits), //
-        s3, bf_to_string_e(t3, digits));
+        s1, bf_to_string_e(t1.data(), digits), //
+        s2, bf_to_string_e(t2.data(), digits), //
+        s3, bf_to_string_e(t3.data(), digits));
 }
 
 // for aspect ratio debugging
 std::string format_aspect(const char *s)
 {
     BigStackSaver saved;
-    BigFloatPtr bt1 = bf_stack().allocate_single();
-    BigFloatPtr bt2 = bf_stack().allocate_single();
-    BigFloatPtr aspect = bf_stack().allocate_single();
-    sub_bf(bt1, g_bf_x_max, g_bf_x_min);
-    sub_bf(bt2, g_bf_y_max, g_bf_y_min);
-    div_bf(aspect, bt2, bt1);
+    BigFloat bt1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat aspect{bf_arena(BigLifetime::TEMPORARY)};
+    sub_bf(bt1.data(), g_bf_x_max, g_bf_x_min);
+    sub_bf(bt2.data(), g_bf_y_max, g_bf_y_min);
+    div_bf(aspect.data(), bt2.data(), bt1.data());
     return fmt::format("aspect {:s}\n"
                        "float  {:13.10f}\n"
                        "bf     {:s}\n"
                        "\n",
         s,                                                //
         g_image_region.height() / g_image_region.width(), //
-        bf_to_string(aspect, 10));
+        bf_to_string(aspect.data(), 10));
 }
 
 // compare a double and bignumber
@@ -232,22 +232,22 @@ std::string format_compare_values(const char *s, const LDouble x, const BigNum &
 }
 
 // compare a double and bignumber
-std::string format_compare_values_bf(const char *s, const LDouble x, BigFloatPtr bfx)
+std::string format_compare_values_bf(const char *s, const LDouble x, const BigFloat &bfx)
 {
     constexpr int dec{40};
     return fmt::format("{:s}\n"
                        "bignum={:s}\n"
                        "double={:.20Lf}\n"
                        "\n",
-        s,                        //
-        bf_to_string_e(bfx, dec), //
+        s,                               //
+        bf_to_string_e(bfx.data(), dec), //
         x);
 }
 
 //********************************************************************
-std::string format_var_bf(const char *, BigFloatPtr n)
+std::string format_var_bf(const char *, const BigFloat &n)
 {
-    std::string msg{bf_to_string_e(n, 40)};
+    std::string msg{bf_to_string_e(n.data(), 40)};
     msg.resize(std::min(msg.size(), size_t{79}));
     return msg;
 }

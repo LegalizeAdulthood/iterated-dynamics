@@ -38,13 +38,35 @@ file(MAKE_DIRECTORY "${TEST_HOME}")
 file(MAKE_DIRECTORY "${TEST_WORK_DIR}")
 file(MAKE_DIRECTORY "${TEST_SAVE_DIR}")
 
+set(IMAGE_ARGS "${INPUT_IMAGE}")
+set(COORDINATE_ARGS)
+if(STARTUP_CASE STREQUAL "corners")
+    set(IMAGE_ARGS)
+    list(APPEND COORDINATE_ARGS "type=mandel"
+        "corners=-2.00000000000000000000/2/-1.5/1.5/-1.75/-1.25")
+elseif(STARTUP_CASE STREQUAL "center")
+    set(IMAGE_ARGS)
+    list(APPEND COORDINATE_ARGS "type=mandel"
+        "corners=-2.00000000000000000000/2/-1/1" "center-mag=")
+elseif(STARTUP_CASE STREQUAL "double")
+    set(IMAGE_ARGS)
+    list(APPEND COORDINATE_ARGS "type=mandel" "corners=-2/2/-1/1")
+endif()
+if(DEFINED STARTUP_CASE)
+    set(TEST_MAP_FILE "${TEST_HOME}/startup.map")
+    string(REPEAT "0 0 0\n" 256 MAP_TEXT)
+    file(WRITE "${TEST_MAP_FILE}" "${MAP_TEXT}")
+    list(APPEND COORDINATE_ARGS "map=${TEST_MAP_FILE}")
+endif()
+
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E env
         "HOME=${TEST_HOME}"
         "XDG_CONFIG_HOME="
         "XDG_DOCUMENTS_DIR="
-        "${ID}" ${ID_EXTRA_ARGS} "batch=yes" "${INPUT_IMAGE}"
+        "${ID}" ${ID_EXTRA_ARGS} "batch=yes" ${IMAGE_ARGS}
             "savedir=${TEST_SAVE_DIR}" "askvideo=no" "sound=off"
+            ${COORDINATE_ARGS}
             "makepar=from-any-dir/from-any-dir" "exitnoask=yes"
     RESULT_VARIABLE ID_RESULT
     COMMAND_ECHO ${COMMAND_ECHO}
@@ -69,4 +91,13 @@ file(READ "${TEST_PAR_FILE}" PAR_TEXT)
 if(NOT PAR_TEXT MATCHES "from-any-dir[ ]*\\{")
     message(FATAL_ERROR
         "Parameter file '${TEST_PAR_FILE}' does not contain from-any-dir.")
+endif()
+
+if(DEFINED STARTUP_CASE)
+    if(NOT PAR_TEXT MATCHES "colors=")
+        message(FATAL_ERROR "Expected map colors in parameter output:\n${PAR_TEXT}")
+    endif()
+    if(PAR_TEXT MATCHES "corners=|center-mag=")
+        message(FATAL_ERROR "Map-only output contains image coordinates:\n${PAR_TEXT}")
+    endif()
 endif()

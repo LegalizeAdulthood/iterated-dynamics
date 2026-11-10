@@ -32,6 +32,20 @@ add_test(NAME AcceptanceTest.makepar-from-any-directory
 set_tests_properties(AcceptanceTest.makepar-from-any-directory
     PROPERTIES LABELS "acceptance;makepar")
 
+foreach(STARTUP_CASE IN ITEMS corners center double)
+    add_test(NAME AcceptanceTest.makepar-startup-${STARTUP_CASE}
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+            "-DINPUT_IMAGE=${CMAKE_SOURCE_DIR}/tests/images/gold-manfn-plus-exp.gif"
+            "-DTEST_ROOT=${CMAKE_CURRENT_BINARY_DIR}/makepar-startup-${STARTUP_CASE}"
+            "-DSTARTUP_CASE=${STARTUP_CASE}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/makepar_test.cmake"
+    )
+    set_tests_properties(AcceptanceTest.makepar-startup-${STARTUP_CASE}
+        PROPERTIES LABELS "acceptance;makepar" TIMEOUT 60)
+endforeach()
+
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     add_executable(version-resource-check version_resource_check.cpp)
     target_link_libraries(version-resource-check Version.lib)
