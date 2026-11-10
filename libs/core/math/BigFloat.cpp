@@ -512,7 +512,7 @@ BigFloatPtr logarithm(BigFloatPtr r, BigFloatPtr n)
     return r;
 }
 
-BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
+BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n, [[maybe_unused]] BigFloatPtr pi)
 {
     U16 fact = 2;
     S16 *test_exp = reinterpret_cast<S16 *>(g_bf_tmp1.data() + g_bf_length);
@@ -537,7 +537,7 @@ BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
     }
     // n >= 0
 
-    double_bf(g_bf_tmp1.data(), g_bf_pi); // 2*pi
+    double_bf(g_bf_tmp1.data(), pi); // 2*pi
     // this could be done with remainders, but it would probably be slower
     while (cmp_bf(n, g_bf_tmp1.data()) >= 0) // while n >= 2*pi
     {
@@ -547,7 +547,7 @@ BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
     // 0 <= n < 2*pi
 
     bool sign_cos = false;
-    copy_bf(g_bf_tmp1.data(), g_bf_pi);   // pi
+    copy_bf(g_bf_tmp1.data(), pi);        // pi
     if (cmp_bf(n, g_bf_tmp1.data()) >= 0) // if n >= pi
     {
         unsafe_sub_a_bf(n, g_bf_tmp1.data());
@@ -556,22 +556,22 @@ BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
     }
     // 0 <= n < pi
 
-    half_bf(g_bf_tmp1.data(), g_bf_pi);  // pi/2
+    half_bf(g_bf_tmp1.data(), pi);       // pi/2
     if (cmp_bf(n, g_bf_tmp1.data()) > 0) // if n > pi/2
     {
-        copy_bf(g_bf_tmp2.data(), g_bf_pi);
+        copy_bf(g_bf_tmp2.data(), pi);
         unsafe_sub_bf(n, g_bf_tmp2.data(), n);
         sign_cos = !sign_cos;
     }
     // 0 <= n < pi/2
 
     bool switch_sin_cos = false;
-    half_bf(g_bf_tmp1.data(), g_bf_pi);                       // pi/2
+    half_bf(g_bf_tmp1.data(), pi);                            // pi/2
     halve(g_bf_tmp1.data());                                  // pi/4
     if (cmp_bf(n, g_bf_tmp1.data()) > 0)                      // if n > pi/4
     {
         copy_bf(g_bf_tmp2.data(), n);
-        half_bf(g_bf_tmp1.data(), g_bf_pi);                   // pi/2
+        half_bf(g_bf_tmp1.data(), pi);                        // pi/2
         unsafe_sub_bf(n, g_bf_tmp1.data(), g_bf_tmp2.data()); // pi/2 - n
         switch_sin_cos = !switch_sin_cos;
     }
@@ -720,7 +720,8 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
     int orig_r_length = g_r_length;
     int orig_shift_factor = g_shift_factor;
     int orig_r_bf_length = g_r_bf_length;
-    BigFloatPtr orig_bf_pi = g_bf_pi;
+    BigFloatPtr orig_bf_pi = g_bf_pi.data();
+    BigFloatPtr bf_pi = orig_bf_pi;
     BigFloatPtr orig_r = r;
     BigFloatPtr orig_n = n;
     BigFloatPtr orig_bf_tmp3 = g_bf_tmp3.data();
@@ -733,7 +734,7 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
 
     // adjust pointers
     r = orig_r + orig_bf_length - g_bf_length;
-    g_bf_pi = orig_bf_pi + orig_bf_length - g_bf_length;
+    bf_pi = orig_bf_pi + orig_bf_length - g_bf_length;
     bf_tmp3 = orig_bf_tmp3 + orig_bf_length - g_bf_length;
 
     f = atanl(f); // approximate arctangent
@@ -750,13 +751,13 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
         calc_lengths();
         r = orig_r + orig_bf_length - g_bf_length;
         n = orig_n + orig_bf_length - g_bf_length;
-        g_bf_pi = orig_bf_pi + orig_bf_length - g_bf_length;
+        bf_pi = orig_bf_pi + orig_bf_length - g_bf_length;
         bf_tmp3 = orig_bf_tmp3 + orig_bf_length - g_bf_length;
 
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
         std::printf("\natan() loop #%i, g_bf_length=%i\nsincos() loops\n", i, g_bf_length);
 #endif
-        sine_cosine(g_bf_tmp4.data(), g_bf_tmp5.data(), bf_tmp3);             // sin(r), cos(r)
+        sine_cosine(g_bf_tmp4.data(), g_bf_tmp5.data(), bf_tmp3, bf_pi);      // sin(r), cos(r)
         copy_bf(bf_tmp3, r);                                                  // restore bf_tmp3 from sincos_bf()
         copy_bf(g_bf_tmp1.data(), g_bf_tmp5.data());
         unsafe_mult_bf(g_bf_tmp2.data(), n, g_bf_tmp1.data());                // n*cos(r)
@@ -806,13 +807,13 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
     g_r_length = orig_r_length;
     g_shift_factor = orig_shift_factor;
     g_r_bf_length = orig_r_bf_length;
-    g_bf_pi = orig_bf_pi;
+    bf_pi = orig_bf_pi;
     r = orig_r;
     bf_tmp3 = orig_bf_tmp3;
 
     if (large_arg)
     {
-        half_bf(bf_tmp3, g_bf_pi); // pi/2
+        half_bf(bf_tmp3, bf_pi);   // pi/2
         sub_a_bf(bf_tmp3, r);      // pi/2 - atan(1/n)
         copy_bf(r, bf_tmp3);
     }
@@ -833,7 +834,7 @@ BigFloatPtr arctangent2(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
     {
         if (sign_x < 0)
         {
-            copy_bf(r, g_bf_pi); // negative x axis, 180 deg
+            copy_bf(r, g_bf_pi.data()); // negative x axis, 180 deg
         }
         else                     // sign_x >= 0    positive x axis, 0
         {
@@ -843,7 +844,7 @@ BigFloatPtr arctangent2(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
     }
     if (sign_x == 0)
     {
-        copy_bf(r, g_bf_pi); // y axis
+        copy_bf(r, g_bf_pi.data()); // y axis
         halve(r);            // +90 deg
         if (sign_y < 0)
         {
@@ -864,7 +865,7 @@ BigFloatPtr arctangent2(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
     arctangent(r, g_bf_tmp6.data());
     if (sign_x < 0)
     {
-        sub_bf(r, g_bf_pi, r);
+        sub_bf(r, g_bf_pi.data(), r);
     }
     if (sign_y < 0)
     {
@@ -1142,7 +1143,7 @@ std::pair<BigFloat, BigFloat> BigFloat::sin_cos() const
     std::pair<BigFloat, BigFloat> result{
         BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
     copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
-    sine_cosine(result.first.m_storage.data(), result.second.m_storage.data(), g_bf_tmp_copy1.data());
+    sine_cosine(result.first.m_storage.data(), result.second.m_storage.data(), g_bf_tmp_copy1.data(), g_bf_pi.data());
     return result;
 }
 
@@ -1276,7 +1277,7 @@ BigFloatPtr unsafe_ln_bf(BigFloatPtr r, BigFloatPtr n)
 
 BigFloatPtr unsafe_sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
 {
-    return sine_cosine(s, c, n);
+    return sine_cosine(s, c, n, g_bf_pi.data());
 }
 
 BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr y, BigFloatPtr x)

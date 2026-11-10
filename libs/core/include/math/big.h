@@ -23,7 +23,7 @@ enum
     BN_INT_LENGTH = 4
 };
 
-/* #define CALCULATING_BIG_PI */ /* define for generating g_big_pi[] table */
+/* #define CALCULATING_BIG_PI */ /* define for generating the Pi table */
 /****************************************************************
  The rest is handled by the compiler
 ****************************************************************/
@@ -84,9 +84,8 @@ extern BigFloat g_bf_tmp5;         // g_r_bf_length+2
 extern BigFloat g_bf_tmp6;         // g_r_bf_length+2
 extern BigArena::Allocation g_bf_tmp_copy1; // Paired operand-preservation workspace.
 extern BigArena::Allocation g_bf_tmp_copy2; // Paired operand-preservation workspace.
-extern BigFloatPtr g_bf_pi;
+extern BigFloat g_bf_pi;
 extern BigFloat g_bf_tmp;
-extern Big g_big_pi;
 
 void calc_lengths();
 BigNumPtr clear_bn(BigNumPtr r);

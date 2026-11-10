@@ -10756,7 +10756,7 @@ void TestSubDoublePowerBranch::compare_branch(const int sign)
     str_to_bf(m_value.y.data(), sign > 0 ? "1e-400" : "-1e-400");
     EXPECT_DOUBLE_EQ(-1.0, static_cast<double>(bf_to_float(m_value.x.data())));
     EXPECT_EQ(sign, sign_bf(m_value.y.data()));
-    EXPECT_NEAR(std::acos(-1.0), static_cast<double>(bf_to_float(g_bf_pi)), 1e-12);
+    EXPECT_NEAR(std::acos(-1.0), static_cast<double>(bf_to_float(g_bf_pi.data())), 1e-12);
     m_native = pow(m_value, m_exponent);
     // Preserve the native kernel's behavior beyond its initial floating-
     // point approximation range, rather than substituting a new policy.

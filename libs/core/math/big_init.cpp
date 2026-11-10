@@ -97,8 +97,7 @@ BFComplex g_saved_z_bf{};
 // g_bf_length+2
 BFComplex g_old_z_bf{};
 BFComplex g_new_z_bf{};
-BigFloatPtr g_bf_pi{};  // TAKES NO SPACE
-BigFloatPtr g_big_pi{}; // g_bf_length+2
+BigFloat g_bf_pi{}; // g_bf_length+2
 // g_bf_length+2
 BigFloat g_bf_x_min{};
 BigFloat g_bf_x_max{};
@@ -194,8 +193,6 @@ std::size_t arena_blocks(const std::size_t block_size)
     return static_cast<std::size_t>(BIGNUM_ARENA_SIZE) / stride & ~std::size_t{1};
 }
 
-using WorkingBinding = std::pair<BigNumPtr *, BigArena::Allocation>;
-
 std::array<BigFloat *, 22> parameter_bindings()
 {
     return {&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd, &g_bf_params[0],
@@ -209,17 +206,12 @@ class NumericArenas
 public:
     NumericArenas(std::size_t value_size, std::size_t block_size, BigArena::Reduce reduce);
     BigArena &get(BigLifetime lifetime);
-    void single(BigNumPtr &target);
-    void wide(BigNumPtr &target);
     bool is_workspace(const Byte *source) const;
-    void bind_working();
-    void unbind_working();
 
     BigArena persistent;
     BigArena working;
     BigArena temporary;
     BigStack stack;
-    std::vector<WorkingBinding> bindings;
 };
 
 NumericArenas::NumericArenas(
@@ -245,38 +237,9 @@ BigArena &NumericArenas::get(const BigLifetime lifetime)
     throw std::invalid_argument("Unknown big-number storage lifetime");
 }
 
-void NumericArenas::single(BigNumPtr &target)
-{
-    bindings.emplace_back(&target, working.allocate_single());
-}
-
-void NumericArenas::wide(BigNumPtr &target)
-{
-    bindings.emplace_back(&target, working.allocate_double());
-}
-
 bool NumericArenas::is_workspace(const Byte *source) const
 {
-    return stack.contains(source) ||
-        std::any_of(bindings.begin(), bindings.end(),
-            [source](const WorkingBinding &binding) { return binding.second.data() == source; });
-}
-
-void NumericArenas::bind_working()
-{
-    for (auto &binding : bindings)
-    {
-        *binding.first = binding.second.data();
-        std::memset(binding.second.data(), 0, binding.second.blocks() * working.block_size());
-    }
-}
-
-void NumericArenas::unbind_working()
-{
-    for (const auto &binding : bindings)
-    {
-        *binding.first = nullptr;
-    }
+    return stack.contains(source);
 }
 
 class MathArenas
@@ -336,7 +299,7 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
     init_big_float(g_bf_tmp6);
     g_bf_tmp_copy1 = big_float.working.allocate_double();
     g_bf_tmp_copy2 = big_float.working.allocate_double();
-    big_float.single(g_big_pi);
+    init_big_float(g_bf_pi);
 }
 
 MathArenas::~MathArenas()
@@ -389,7 +352,7 @@ void MathArenas::change_precision(const int bn_length, const int bf_length, cons
                     (g_bf_tmp2 && source == g_bf_tmp2.data()) || (g_bf_tmp3 && source == g_bf_tmp3.data()) ||
                     (g_bf_tmp4 && source == g_bf_tmp4.data()) || (g_bf_tmp5 && source == g_bf_tmp5.data()) ||
                     (g_bf_tmp6 && source == g_bf_tmp6.data()) || (g_bf_tmp_copy1 && source == g_bf_tmp_copy1.data()) ||
-                    (g_bf_tmp_copy2 && source == g_bf_tmp_copy2.data());
+                    (g_bf_tmp_copy2 && source == g_bf_tmp_copy2.data()) || (g_bf_pi && source == g_bf_pi.data());
                 if (!mixed_workspace && !big_float.is_workspace(source))
                 {
                     convert_bf(destination, source, bf_length, m_bf_length);
@@ -409,7 +372,6 @@ void MathArenas::bind(const bool preserve_parameters)
 {
     big_num.stack.restore(0);
     big_float.stack.restore(0);
-    big_num.bind_working();
     const auto init_big_num = [this](BigNum &target)
     {
         if (!target)
@@ -455,7 +417,6 @@ void MathArenas::bind(const bool preserve_parameters)
     g_saved_z_bn.x = 0;
     g_saved_z_bn.y = 0;
     g_close_enough_bn = 0;
-    big_float.bind_working();
     const auto init_big_float = [this](BigFloat &target)
     {
         if (!target)
@@ -466,6 +427,7 @@ void MathArenas::bind(const bool preserve_parameters)
         }
         std::memset(target.data(), 0, big_float.working.block_size());
     };
+    init_big_float(g_bf_pi);
     init_big_float(g_bf_tmp1);
     init_big_float(g_bf_tmp2);
     init_big_float(g_bf_tmp3);
@@ -515,7 +477,6 @@ void MathArenas::unbind()
     m_bound = false;
     big_num.stack.restore(0);
     big_float.stack.restore(0);
-    big_num.unbind_working();
     g_bn_tmp1 = BigNum{};
     g_bn_tmp2 = BigNum{};
     g_bn_tmp3 = BigNum{};
@@ -539,7 +500,7 @@ void MathArenas::unbind()
     g_new_z_bn = {};
     g_saved_z_bn = {};
     g_close_enough_bn = BigNum{};
-    big_float.unbind_working();
+    g_bf_pi = BigFloat{};
     g_bf_tmp1 = BigFloat{};
     g_bf_tmp2 = BigFloat{};
     g_bf_tmp3 = BigFloat{};
@@ -766,7 +727,6 @@ void free_bf_vars()
     {
         s_arenas->unbind();
     }
-    g_bf_pi = nullptr;
     g_bf_math = BFMathType::NONE;
     g_bn_step = 0;
     g_bn_length = 0;
@@ -915,9 +875,7 @@ void init_big_pi()
 
     int length = g_bf_length + 2; // 2 byte exp
     const int pi_offset = sizeof(pi_table) - length;
-    std::memcpy(g_big_pi, pi_table + pi_offset, length);
-
-    g_bf_pi = g_big_pi;
+    std::memcpy(g_bf_pi.data(), pi_table + pi_offset, length);
 }
 
 } // namespace id::math

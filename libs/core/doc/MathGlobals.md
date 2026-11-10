@@ -216,7 +216,6 @@ Header: `big.h`.
   and destructive formatter scratch. Their paired widths are retained.
 - `g_bn_tmp` - owning `BigNum` temporary retaining `g_r_length` bytes in
   its padded working-arena slot.
-- `g_bn_pi` - fixed-point view into shared Pi storage, not another buffer.
 
 ## BigFloat Temporaries
 
@@ -231,8 +230,8 @@ Header: `big.h`.
   and destructive formatter scratch.
 - `g_bf_tmp` - owning `BigFloat` temporary, `g_bf_length + 2` encoded
   bytes in the working arena.
-- `g_big_pi` - shared Pi storage.
-- `g_bf_pi` - floating-point alias of `g_big_pi`.
+- `g_bf_pi` - owning `BigFloat` Pi storage in one padded working-arena
+  slot, with `g_bf_length + 2` canonical bytes.
 
 `MathArenas` constructs these six kernel values and two paired buffers
 in their existing allocation order. Binding clears each full reservation
@@ -247,8 +246,22 @@ addresses while the existing loops change the active lengths. Exponent
 cursors and operand-copy pointers are also borrows, not new values.
 
 `init_big_pi()` copies the appropriate precision from a constant table.
-`g_bf_pi` aliases its start and `g_bn_pi` points into the same storage;
-the three names are not independently allocated constants.
+It writes the existing `g_bf_pi` slot. Pointer callers borrow `data()`.
+Arctangent preserves its existing precision offsets in a local borrowed
+pointer and passes that shortened view to the private sine/cosine
+helper. The owner keeps its base allocation throughout.
+
+Pi is allocated after the kernel copy buffers. Binding clears the full
+slot before the other BigFloat workspaces; repeated binding reuses it.
+Precision relocation discards its bytes, as the previous raw binding
+did. Callers repopulate the table with `init_big_pi()`; `data()` resolves
+the relocated slot. Temporary rewinds leave the working slot intact.
+Unbinding releases the owner and leaves `g_bf_pi` null.
+
+The 22 parameter bindings already refer to owning BigFloat values in the
+persistent arena. Their construction, precision conversion, and payload
+copy sites are unchanged. Pi was the last raw working binding, so the
+`WorkingBinding` table and its single/wide binding methods are retired.
 
 ## BigNum Coordinates And Iteration State
 
