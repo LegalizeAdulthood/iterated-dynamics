@@ -82,11 +82,11 @@ void cvt_corners(const double ctr_x, const double ctr_y, const LDouble mag, doub
 
 // convert center/mag to corners using bf
 void cvt_corners_bf(
-    BigFloatPtr ctr_x, BigFloatPtr ctr_y, const LDouble mag, double x_mag_factor, double rot, const double skew)
+    const BigFloat &ctr_x, const BigFloat &ctr_y, const LDouble mag, double x_mag_factor, double rot, const double skew)
 {
     BigStackSaver saved;
-    BigFloatPtr bfh = bf_stack().allocate_single();
-    BigFloatPtr bfw = bf_stack().allocate_single();
+    BigFloat bfh{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bfw{bf_arena(BigLifetime::TEMPORARY)};
 
     if (x_mag_factor == 0.0)
     {
@@ -95,27 +95,27 @@ void cvt_corners_bf(
 
     // half height, width
     const LDouble h = 1 / mag;
-    float_to_bf(bfh, h);
+    bfh = h;
     const LDouble w = h / (DEFAULT_ASPECT * x_mag_factor);
-    float_to_bf(bfw, w);
+    bfw = w;
 
     if (rot == 0.0 && skew == 0.0)
     {
         // simple, faster case
         // xx3rd = xxmin = x_ctr - w;
-        sub_bf(g_bf_x_min.data(), ctr_x, bfw);
-        copy_bf(g_bf_x_3rd.data(), g_bf_x_min.data());
+        g_bf_x_min = ctr_x - bfw;
+        g_bf_x_3rd = g_bf_x_min;
         // xxmax = x_ctr + w;
-        add_bf(g_bf_x_max.data(), ctr_x, bfw);
+        g_bf_x_max = ctr_x + bfw;
         // yy3rd = yymin = y_ctr - h;
-        sub_bf(g_bf_y_min.data(), ctr_y, bfh);
-        copy_bf(g_bf_y_3rd.data(), g_bf_y_min.data());
+        g_bf_y_min = ctr_y - bfh;
+        g_bf_y_3rd = g_bf_y_min;
         // yymax = y_ctr + h;
-        add_bf(g_bf_y_max.data(), ctr_y, bfh);
+        g_bf_y_max = ctr_y + bfh;
         return;
     }
 
-    BigFloatPtr bf_tmp = bf_stack().allocate_single();
+    BigFloat bf_tmp{bf_arena(BigLifetime::TEMPORARY)};
     // in unrotated, untranslated coordinate system
     const double tan_skew = std::tan(deg_to_rad(skew));
     const LDouble x_min = -w + h * tan_skew;
@@ -134,31 +134,31 @@ void cvt_corners_bf(
     LDouble x = x_min * cos_rot + y_max * sin_rot;
     LDouble y = -x_min * sin_rot + y_max * cos_rot;
     // xxmin = x + x_ctr;
-    float_to_bf(bf_tmp, x);
-    add_bf(g_bf_x_min.data(), bf_tmp, ctr_x);
+    bf_tmp = x;
+    g_bf_x_min = bf_tmp + ctr_x;
     // yymax = y + y_ctr;
-    float_to_bf(bf_tmp, y);
-    add_bf(g_bf_y_max.data(), bf_tmp, ctr_y);
+    bf_tmp = y;
+    g_bf_y_max = bf_tmp + ctr_y;
 
     // bottom right
     x =  x_max * cos_rot + y_min *  sin_rot;
     y = -x_max * sin_rot + y_min *  cos_rot;
     // xxmax = x + x_ctr;
-    float_to_bf(bf_tmp, x);
-    add_bf(g_bf_x_max.data(), bf_tmp, ctr_x);
+    bf_tmp = x;
+    g_bf_x_max = bf_tmp + ctr_x;
     // yymin = y + y_ctr;
-    float_to_bf(bf_tmp, y);
-    add_bf(g_bf_y_min.data(), bf_tmp, ctr_y);
+    bf_tmp = y;
+    g_bf_y_min = bf_tmp + ctr_y;
 
     // bottom left
     x =  x_3rd * cos_rot + y_3rd *  sin_rot;
     y = -x_3rd * sin_rot + y_3rd *  cos_rot;
     // xx3rd = x + x_ctr;
-    float_to_bf(bf_tmp, x);
-    add_bf(g_bf_x_3rd.data(), bf_tmp, ctr_x);
+    bf_tmp = x;
+    g_bf_x_3rd = bf_tmp + ctr_x;
     // yy3rd = y + y_ctr;
-    float_to_bf(bf_tmp, y);
-    add_bf(g_bf_y_3rd.data(), bf_tmp, ctr_y);
+    bf_tmp = y;
+    g_bf_y_3rd = bf_tmp + ctr_y;
 }
 
 } // namespace id::engine

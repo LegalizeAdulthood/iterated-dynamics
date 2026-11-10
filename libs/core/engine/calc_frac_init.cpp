@@ -421,7 +421,7 @@ void adjust_corner_bf()
         f_temp != 1 && f_temp >= 1 - g_aspect_drift && f_temp <= 1 + g_aspect_drift)
     {
         x_mag_factor = sign(x_mag_factor);
-        cvt_corners_bf(bf_temp.data(), bf_temp2.data(), magnification, x_mag_factor, rotation, skew);
+        cvt_corners_bf(bf_temp, bf_temp2, magnification, x_mag_factor, rotation, skew);
     }
 
     // ftemp=fabs(xx3rd-xxmin);

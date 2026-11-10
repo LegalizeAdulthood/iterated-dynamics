@@ -2630,7 +2630,7 @@ TEST_P(TestBigFloatCenterInput, preservesParsedCentersOptionsAndTemporaryLifetim
 {
     BigFloat x{"-1.234567890123456789012345"};
     BigFloat y{"2.345678901234567890123456"};
-    cvt_corners_bf(x.data(), y.data(), 1e30L, GetParam().x_factor, GetParam().rotation, GetParam().skew);
+    cvt_corners_bf(x, y, 1e30L, GetParam().x_factor, GetParam().rotation, GetParam().skew);
     const auto expected = pack_bf_parameters();
     unpack_bf_parameters(std::vector<char>(expected.size()));
     const auto saved = save_stack();

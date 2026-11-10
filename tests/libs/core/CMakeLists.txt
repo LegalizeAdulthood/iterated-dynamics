@@ -75,6 +75,7 @@ add_executable(test-core
     engine/test_Command.cpp
     engine/test_CommandHandler.cpp
     engine/test_CommandProcessor.cpp
+    engine/test_convert_corners.cpp
     engine/test_Diffusion.cpp
     engine/test_get_prec_big_float.cpp
     engine/test_ImageRenderOperation.cpp

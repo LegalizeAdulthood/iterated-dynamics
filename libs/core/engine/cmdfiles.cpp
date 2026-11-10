@@ -801,7 +801,7 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
         skew = cmd.float_vals[5];
     }
     // calculate bounds
-    cvt_corners_bf(b_x_ctr.data(), b_y_ctr.data(), magnification, x_mag_factor, rotation, skew);
+    cvt_corners_bf(b_x_ctr, b_y_ctr, magnification, x_mag_factor, rotation, skew);
     bf_corners_to_float();
     return CmdArgFlags::FRACTAL_PARAM;
 }
