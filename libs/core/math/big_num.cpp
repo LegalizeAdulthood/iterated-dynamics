@@ -131,6 +131,7 @@ double wide number can then be ignored.
 //
 /************************************************************************/
 #include <math/big.h>
+#include <math/BigNum.h>
 
 #include <config/port.h>
 
@@ -284,11 +285,11 @@ int convert_bn(BigNumPtr new_num, BigNumConstPtr old_num, const int new_bn_len, 
 /********************************************************************/
 // bn_hexdump() - for debugging, dumps to stdout
 
-void bn_hex_dump(BigNumPtr r)
+void bn_hex_dump(const BigNum &r)
 {
     for (int i = 0; i < g_bn_length; i++)
     {
-        std::printf("%02X ", r[i]);
+        std::printf("%02X ", r.data()[i]);
     }
     std::printf("\n");
 }

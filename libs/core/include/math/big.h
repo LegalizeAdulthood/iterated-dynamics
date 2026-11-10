@@ -132,7 +132,7 @@ S16 BIG_SET_S16(S16 *addr, S16 val);
 #define BIG_SET16(addr, val) (*(U16 *)(addr) = (U16)(val))
 #define BIG_SET_S16(addr, val) (*(S16 *)(addr) = (S16)(val))
 #endif
-void bn_hex_dump(BigNumPtr r);
+void bn_hex_dump(const BigNum &r);
 BigNumPtr str_to_bn(BigNumPtr r, std::string_view s);
 BigNumPtr int_to_bn(BigNumPtr r, long value);
 long bn_to_int(BigNumPtr n);
