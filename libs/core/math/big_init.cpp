@@ -67,11 +67,11 @@ BigNum g_delta2_x_bn{};
 BigNum g_delta2_y_bn{};
 BigNum g_close_enough_bn{};
 // g_r_length
-BigNumPtr g_tmp_sqr_x_bn{};
-BigNumPtr g_tmp_sqr_y_bn{};
-BigNumPtr g_bn_tmp{};
-// g_bn_length
-BNPtrComplex g_old_z_bn{};
+BigNum g_tmp_sqr_x_bn{};
+BigNum g_tmp_sqr_y_bn{};
+BigNum g_bn_tmp{};
+// g_bn_length; g_old_z_bn also retains g_r_length scratch products
+BNComplex g_old_z_bn{};
 BNComplex g_param_z_bn{};
 BNComplex g_saved_z_bn{};
 BNComplex g_new_z_bn{};
@@ -311,11 +311,31 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
     big_num.single(g_bn_tmp3);
     big_num.wide(g_bn_tmp_copy1);
     big_num.wide(g_bn_tmp_copy2);
-    big_num.single(g_old_z_bn.x);
-    big_num.single(g_old_z_bn.y);
-    big_num.single(g_tmp_sqr_x_bn);
-    big_num.single(g_tmp_sqr_y_bn);
-    big_num.single(g_bn_tmp);
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_old_z_bn.x);
+        ::new (&g_old_z_bn.x) BigNum{std::move(value)};
+    }
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_old_z_bn.y);
+        ::new (&g_old_z_bn.y) BigNum{std::move(value)};
+    }
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_tmp_sqr_x_bn);
+        ::new (&g_tmp_sqr_x_bn) BigNum{std::move(value)};
+    }
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_tmp_sqr_y_bn);
+        ::new (&g_tmp_sqr_y_bn) BigNum{std::move(value)};
+    }
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_bn_tmp);
+        ::new (&g_bn_tmp) BigNum{std::move(value)};
+    }
     big_float.single(g_bf_tmp1);
     big_float.single(g_bf_tmp2);
     big_float.single(g_bf_tmp3);
@@ -349,7 +369,11 @@ void MathArenas::change_precision(const int bn_length, const int bf_length, cons
             [&](Byte *destination, const Byte *source, std::size_t blocks)
             {
                 std::memset(destination, 0, blocks * bn_stride);
-                if (!big_num.is_workspace(source))
+                const bool mixed_workspace = (g_old_z_bn.x && source == g_old_z_bn.x.data()) ||
+                    (g_old_z_bn.y && source == g_old_z_bn.y.data()) ||
+                    (g_tmp_sqr_x_bn && source == g_tmp_sqr_x_bn.data()) ||
+                    (g_tmp_sqr_y_bn && source == g_tmp_sqr_y_bn.data()) || (g_bn_tmp && source == g_bn_tmp.data());
+                if (!mixed_workspace && !big_num.is_workspace(source))
                 {
                     convert_bn(destination, source, bn_length, int_length, m_bn_length, m_int_length);
                     // Legacy scratch conversion zero-fills new integer bytes;
@@ -385,6 +409,41 @@ void MathArenas::bind(const bool preserve_parameters)
     big_num.stack.restore(0);
     big_float.stack.restore(0);
     big_num.bind_working();
+    if (!g_old_z_bn.x)
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_old_z_bn.x);
+        ::new (&g_old_z_bn.x) BigNum{std::move(value)};
+    }
+    std::memset(g_old_z_bn.x.data(), 0, big_num.working.block_size());
+    if (!g_old_z_bn.y)
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_old_z_bn.y);
+        ::new (&g_old_z_bn.y) BigNum{std::move(value)};
+    }
+    std::memset(g_old_z_bn.y.data(), 0, big_num.working.block_size());
+    if (!g_tmp_sqr_x_bn)
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_tmp_sqr_x_bn);
+        ::new (&g_tmp_sqr_x_bn) BigNum{std::move(value)};
+    }
+    std::memset(g_tmp_sqr_x_bn.data(), 0, big_num.working.block_size());
+    if (!g_tmp_sqr_y_bn)
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_tmp_sqr_y_bn);
+        ::new (&g_tmp_sqr_y_bn) BigNum{std::move(value)};
+    }
+    std::memset(g_tmp_sqr_y_bn.data(), 0, big_num.working.block_size());
+    if (!g_bn_tmp)
+    {
+        BigNum value{big_num.working};
+        std::destroy_at(&g_bn_tmp);
+        ::new (&g_bn_tmp) BigNum{std::move(value)};
+    }
+    std::memset(g_bn_tmp.data(), 0, big_num.working.block_size());
     g_x_min_bn = 0;
     g_x_max_bn = 0;
     g_y_min_bn = 0;
@@ -437,6 +496,10 @@ void MathArenas::unbind()
     big_num.stack.restore(0);
     big_float.stack.restore(0);
     big_num.unbind_working();
+    g_old_z_bn = {};
+    g_tmp_sqr_x_bn = BigNum{};
+    g_tmp_sqr_y_bn = BigNum{};
+    g_bn_tmp = BigNum{};
     g_x_min_bn = BigNum{};
     g_x_max_bn = BigNum{};
     g_y_min_bn = BigNum{};

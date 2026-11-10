@@ -933,7 +933,7 @@ static void set_new_z_from_bignum()
 {
     if (g_bf_math == BFMathType::BIG_NUM)
     {
-        g_new_z = cmplx_bn_to_float({g_new_z_bn.x.data(), g_new_z_bn.y.data()});
+        g_new_z = cmplx_bn_to_float(g_new_z_bn);
     }
     else if (g_bf_math == BFMathType::BIG_FLT)
     {
@@ -1412,10 +1412,10 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                 // floating-pt periodicity chk
                 if (g_bf_math == BFMathType::BIG_NUM)
                 {
-                    if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp, g_saved_z_bn.x.data(), g_new_z_bn.x.data())),
+                    if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp.data(), g_saved_z_bn.x.data(), g_new_z_bn.x.data())),
                             g_close_enough_bn.data()) < 0)
                     {
-                        if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp, g_saved_z_bn.y.data(), g_new_z_bn.y.data())),
+                        if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp.data(), g_saved_z_bn.y.data(), g_new_z_bn.y.data())),
                                 g_close_enough_bn.data()) < 0)
                         {
                             m_caught_a_cycle = true;

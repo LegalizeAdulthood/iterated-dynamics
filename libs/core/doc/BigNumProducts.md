@@ -5,10 +5,9 @@ Copyright 2026 Richard Thomson.
 
 # BigNum Orbit Product Storage Contract
 
-This specifies the ownership conversion of `g_old_z_bn`,
-`g_tmp_sqr_x_bn`, `g_tmp_sqr_y_bn`, and `g_bn_tmp`. It preserves their
-existing storage windows and calculation statements. The production
-declarations and calculations have not yet been converted.
+This specifies the owning storage of `g_old_z_bn`, `g_tmp_sqr_x_bn`,
+`g_tmp_sqr_y_bn`, and `g_bn_tmp`. Their existing storage windows and
+calculation statements are preserved.
 
 ## Extents And Existing Operations
 
@@ -29,8 +28,8 @@ precisions. At `N = 4` and `N = 8`, `R = 2 * N`; the same single block
 also fits that full product. At larger precisions these callers retain
 only `R` bytes, not a complete `2 * N` product.
 
-Replace `g_old_z_bn` with `BNComplex`, and each of the three scalar
-globals with `BigNum`. Each component owns one working-arena single
+`g_old_z_bn` is a `BNComplex`; each of the three scalar globals is a
+`BigNum`. Each component owns one working-arena single
 allocation. No paired allocation, new allocator metadata, representation
 flag, handle accessor, or new arithmetic API is required for these five
 slots. Keep the existing reduction callback configured on the arena.
@@ -69,7 +68,7 @@ zero-extends one- and two-byte integer parts. Its four-byte result uses
 the existing unsigned-32-bit-to-`long` conversion, signed on Windows.
 Preserve that extraction and the `long` conversion of the bailout limit.
 Do not replace an integer threshold test with a full-precision
-comparison. `cmplx_bn_to_float` will take `const BNComplex &` and call
+comparison. `cmplx_bn_to_float` takes `const BNComplex &` and calls
 each component's `to_float()` at offset zero. It must not silently shift
 an observation after an escaping Manhattan bailout.
 
@@ -116,12 +115,12 @@ A return on escape leaves scratch exactly as written before that return.
 
 ## Construction Relocation And Release
 
-At each of the five current `big_num.single(...)` sites in the
-`MathArenas` constructor, construct a `BigNum` in `big_num.working`.
-Stage that value before destroying the default-null global component,
-then placement-move it into that component. This uses the same allocation
-order without depending on the not-yet-installed global arena owner.
-Remove only those five raw `WorkingBinding` reservations.
+The five former `big_num.single(...)` reservations in the `MathArenas`
+constructor are now `BigNum` values in `big_num.working`. Each value is
+staged before destroying its default-null global component, then
+placement-moved into that component. This uses the same allocation order
+without depending on the not-yet-installed global arena owner. These
+five slots have no raw `WorkingBinding` reservations.
 
 In `MathArenas::bind`, construct any released component in the same
 working arena before clearing it. Use the same staged construction,
@@ -131,11 +130,11 @@ working-buffer initialization, before the coordinate assignments. A
 canonical assignment of zero alone does not clear the retained tail.
 Do not allocate a duplicate reservation or clear only canonical bytes.
 
-Before changing these declarations, extend the BigNum migration lambda
-in `MathArenas::change_precision`. Its workspace test must include all
-five owning components in addition to `big_num.is_workspace(source)`.
-For each component, guard its `data()` comparison with its existing
-allocated-value test. Do not obtain an address from a null handle.
+The BigNum migration lambda in `MathArenas::change_precision` includes
+all five owning components in its workspace test, in addition to
+`big_num.is_workspace(source)`. Each component's `data()` comparison is
+guarded by its allocated-value test. No address is obtained from a null
+handle.
 This preserves the current zero-fill-and-discard treatment for working
 scratch; it must not apply signed canonical conversion to a product.
 Keep each single allocation's index and width through relocation.
@@ -164,5 +163,3 @@ limits retain their existing behavior.
 - Exact integer byte expectations avoid floating-point tolerances.
   `TestBigNumWideBailout` separately retains the sub-machine-precision
   product comparisons against the original kernels.
-
-The contract adds no production arithmetic or storage implementation.

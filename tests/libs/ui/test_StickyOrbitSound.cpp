@@ -87,8 +87,8 @@ int initialize_mandel_sticky_pixel()
         float_to_bn(g_param_z_bn.x.data(), g_init.x);
         add_a_bn(g_param_z_bn.x.data(), offset);
         float_to_bn(g_param_z_bn.y.data(), g_init.y);
-        copy_bn(g_old_z_bn.x, g_param_z_bn.x.data());
-        copy_bn(g_old_z_bn.y, g_param_z_bn.y.data());
+        copy_bn(g_old_z_bn.x.data(), g_param_z_bn.x.data());
+        copy_bn(g_old_z_bn.y.data(), g_param_z_bn.y.data());
     }
     else if (g_bf_math == BFMathType::BIG_FLT)
     {

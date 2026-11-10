@@ -5,6 +5,7 @@
 
 #include <math/big.h>
 #include <math/BigFloat.h>
+#include <math/BigNum.h>
 
 #include <config/port.h>
 
@@ -14,11 +15,11 @@
 namespace id::engine
 {
 
-inline math::DComplex cmplx_bn_to_float(const math::BNPtrComplex &s)
+inline math::DComplex cmplx_bn_to_float(const math::BNComplex &s)
 {
     math::DComplex t;
-    t.x = static_cast<double>(math::bn_to_float(s.x));
-    t.y = static_cast<double>(math::bn_to_float(s.y));
+    t.x = static_cast<double>(s.x.to_float());
+    t.y = static_cast<double>(s.y.to_float());
     return t;
 }
 

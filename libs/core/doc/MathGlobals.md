@@ -192,7 +192,8 @@ Header: `big.h`.
   `g_bn_tmp6` - general temporaries, each `g_r_length` bytes.
 - `g_bn_tmp_copy1`, `g_bn_tmp_copy2` - operand-preservation buffers, each
   `2 * g_r_length` bytes.
-- `g_bn_tmp` - additional fixed-point temporary, `g_r_length` bytes.
+- `g_bn_tmp` - owning `BigNum` temporary retaining `g_r_length` bytes in
+  its padded working-arena slot.
 - `g_bn_pi` - fixed-point view into shared Pi storage, not another buffer.
 
 ## BigFloat Temporaries
@@ -236,14 +237,21 @@ explicitly with `BigNum::data()`; borrowed addresses expire on relocation.
 
 Iteration state uses these reservations:
 
-- `g_tmp_sqr_x_bn`, `g_tmp_sqr_y_bn` - squared values,
-  `g_r_length` bytes each.
-- `g_old_z_bn` - raw complex iteration values, with `g_r_length` bytes
-  per component to retain Manhattan bailout's unreduced scratch product.
+- `g_tmp_sqr_x_bn`, `g_tmp_sqr_y_bn` - owning `BigNum` values retaining
+  `g_r_length` product bytes in each padded working-arena slot.
+- `g_old_z_bn` - owning `BNComplex` iteration values. Each component's
+  padded slot retains Manhattan bailout's unreduced scratch product.
+
+These five mixed-role slots, including `g_bn_tmp`, use existing single
+allocations. The MathArenas constructor installs their owners at the
+former raw reservation sites. Binding reconstructs released owners and
+clears the entire slots; unbinding releases them. Precision migration
+discards their scratch contents. Product writes and shifted reads borrow
+their existing byte windows through `data()` without reducing products.
 
 The [orbit product storage contract](BigNumProducts.md) records these
 mixed canonical/product roles, exact byte windows, and construction and
-cleanup requirements for their owning conversion.
+cleanup requirements.
 
 ## BigFloat Coordinates And Iteration State
 

@@ -1004,10 +1004,10 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
     {
         float_to_bn(g_param_z_bn.x.data(), 2.0);
         float_to_bn(g_param_z_bn.y.data(), input.imag);
-        clear_bn(g_old_z_bn.x);
-        clear_bn(g_old_z_bn.y);
-        square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
-        square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+        clear_bn(g_old_z_bn.x.data());
+        clear_bn(g_old_z_bn.y.data());
+        square_bn(g_tmp_sqr_x_bn.data(), g_old_z_bn.x.data());
+        square_bn(g_tmp_sqr_y_bn.data(), g_old_z_bn.y.data());
     }
     else if (input.math == BFMathType::BIG_FLT)
     {
@@ -1030,7 +1030,7 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
             break;
         case BFMathType::BIG_NUM:
             escaped = julia_orbit_bn() != 0;
-            expected.push_back(cmplx_bn_to_float({g_new_z_bn.x.data(), g_new_z_bn.y.data()}));
+            expected.push_back(cmplx_bn_to_float(g_new_z_bn));
             break;
         case BFMathType::BIG_FLT:
             escaped = julia_orbit_bf() != 0;
