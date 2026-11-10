@@ -39,6 +39,9 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <memory>
+#include <new>
+#include <utility>
 
 using namespace id::config;
 using namespace id::engine;
@@ -105,12 +108,12 @@ static BigFloat s_bt_c{};
 static BigFloat s_bt_d{};
 static BigFloat s_bt_e{};
 static BigFloat s_bt_f{};
-static BigFloatPtr s_n_a{};
-static BigFloatPtr s_n_b{};
-static BigFloatPtr s_n_c{};
-static BigFloatPtr s_n_d{};
-static BigFloatPtr s_n_e{};
-static BigFloatPtr s_n_f{};
+static BigFloat s_n_a{};
+static BigFloat s_n_b{};
+static BigFloat s_n_c{};
+static BigFloat s_n_d{};
+static BigFloat s_n_e{};
+static BigFloat s_n_f{};
 static BFMathType s_old_bf_math{};
 
 // browse code RB
@@ -549,25 +552,52 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     BigFloat bt_x_3rd{bf_arena(BigLifetime::TEMPORARY)};
     BigFloat bt_y_3rd{bf_arena(BigLifetime::TEMPORARY)};
 
+    if (s_old_bf_math != BFMathType::NONE || info->bf_math != 0)
+    {
+        {
+            BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+            std::destroy_at(&s_n_a);
+            ::new (&s_n_a) BigFloat{std::move(value)};
+        }
+        {
+            BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+            std::destroy_at(&s_n_b);
+            ::new (&s_n_b) BigFloat{std::move(value)};
+        }
+        {
+            BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+            std::destroy_at(&s_n_c);
+            ::new (&s_n_c) BigFloat{std::move(value)};
+        }
+        {
+            BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+            std::destroy_at(&s_n_d);
+            ::new (&s_n_d) BigFloat{std::move(value)};
+        }
+        {
+            BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+            std::destroy_at(&s_n_e);
+            ::new (&s_n_e) BigFloat{std::move(value)};
+        }
+        {
+            BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+            std::destroy_at(&s_n_f);
+            ::new (&s_n_f) BigFloat{std::move(value)};
+        }
+
+        s_n_a = s_bt_a;
+        s_n_b = s_bt_b;
+        s_n_c = s_bt_c;
+        s_n_d = s_bt_d;
+        s_n_e = s_bt_e;
+        s_n_f = s_bt_f;
+    }
+
     if (info->bf_math)
     {
         // The validated payload already includes stored precision rounding.
         const int two_di_len = static_cast<int>(blk_5_info->apm_data.size() / 22);
         const int di_bf_length = two_di_len - 2;
-
-        s_n_a = bf_stack().allocate_single();
-        s_n_b = bf_stack().allocate_single();
-        s_n_c = bf_stack().allocate_single();
-        s_n_d = bf_stack().allocate_single();
-        s_n_e = bf_stack().allocate_single();
-        s_n_f = bf_stack().allocate_single();
-
-        convert_bf(s_n_a, s_bt_a.data(), g_r_bf_length, orig_r_bf_length);
-        convert_bf(s_n_b, s_bt_b.data(), g_r_bf_length, orig_r_bf_length);
-        convert_bf(s_n_c, s_bt_c.data(), g_r_bf_length, orig_r_bf_length);
-        convert_bf(s_n_d, s_bt_d.data(), g_r_bf_length, orig_r_bf_length);
-        convert_bf(s_n_e, s_bt_e.data(), g_r_bf_length, orig_r_bf_length);
-        convert_bf(s_n_f, s_bt_f.data(), g_r_bf_length, orig_r_bf_length);
 
         const Byte *parameters = reinterpret_cast<const Byte *>(blk_5_info->apm_data.data());
         convert_bf(bt_x_min.data(), parameters, g_bf_length, di_bf_length);
@@ -688,6 +718,12 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
 
     if (cant_see)   // do it this way so bignum stack is released
     {
+        s_n_a = BigFloat{};
+        s_n_b = BigFloat{};
+        s_n_c = BigFloat{};
+        s_n_d = BigFloat{};
+        s_n_e = BigFloat{};
+        s_n_f = BigFloat{};
         return false;
     }
 
@@ -713,6 +749,12 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
         corner_count++;
     }
 
+    s_n_a = BigFloat{};
+    s_n_b = BigFloat{};
+    s_n_c = BigFloat{};
+    s_n_d = BigFloat{};
+    s_n_e = BigFloat{};
+    s_n_f = BigFloat{};
     return corner_count >= 1;
 }
 
@@ -922,17 +964,17 @@ static void bf_transform(BigFloat &bt_x, BigFloat &bt_y, DblCoords *point)
     BigFloat bt_tmp2{bf_arena(BigLifetime::TEMPORARY)};
 
     //  point->x = cvt->a * point->x + cvt->b * point->y + cvt->e;
-    mult_bf(bt_tmp1.data(), s_n_a, bt_x.data());
-    mult_bf(bt_tmp2.data(), s_n_b, bt_y.data());
+    bt_tmp1 = s_n_a * bt_x;
+    bt_tmp2 = s_n_b * bt_y;
     bt_tmp1 += bt_tmp2;
-    add_a_bf(bt_tmp1.data(), s_n_e);
+    bt_tmp1 += s_n_e;
     point->x = static_cast<double>(bt_tmp1.to_float());
 
     //  point->y = cvt->c * point->x + cvt->d * point->y + cvt->f;
-    mult_bf(bt_tmp1.data(), s_n_c, bt_x.data());
-    mult_bf(bt_tmp2.data(), s_n_d, bt_y.data());
+    bt_tmp1 = s_n_c * bt_x;
+    bt_tmp2 = s_n_d * bt_y;
     bt_tmp1 += bt_tmp2;
-    add_a_bf(bt_tmp1.data(), s_n_f);
+    bt_tmp1 += s_n_f;
     point->y = static_cast<double>(bt_tmp1.to_float());
 }
 

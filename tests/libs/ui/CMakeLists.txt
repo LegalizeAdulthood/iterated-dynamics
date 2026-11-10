@@ -19,6 +19,7 @@ add_executable(test-ui
     test_DriverSoundOutput.cpp
     test_DynamicSound.cpp
     test_file_item.cpp
+    test_file_get_window.cpp
     test_full_screen_prompt.cpp
     test_history.cpp
     test_id_keys.cpp
