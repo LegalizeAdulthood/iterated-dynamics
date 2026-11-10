@@ -293,6 +293,7 @@ TEST_F(TestBigNumValue, hexDumpPrintsHighBitBytesInStorageOrder)
 
 TEST_F(TestBigNumValue, importedBytesSurviveArenaRewindAndReuse)
 {
+    // Borrow BigStack buffers here to test importing bytes across a real rewind.
     const auto marker = save_stack();
     const std::size_t size = static_cast<std::size_t>(g_bn_length);
     BigNumPtr source = bn_stack().allocate_single();
