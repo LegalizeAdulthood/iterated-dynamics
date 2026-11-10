@@ -148,8 +148,8 @@ static int bn_mod_bailout()
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x.data(), g_new_z_bn.x.data());
-    copy_bn(g_old_z_bn.y.data(), g_new_z_bn.y.data());
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
     return 0;
 }
 
@@ -162,8 +162,8 @@ static int bn_real_bailout()
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x.data(), g_new_z_bn.x.data());
-    copy_bn(g_old_z_bn.y.data(), g_new_z_bn.y.data());
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
     return 0;
 }
 
@@ -176,8 +176,8 @@ static int bn_imag_bailout()
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x.data(), g_new_z_bn.x.data());
-    copy_bn(g_old_z_bn.y.data(), g_new_z_bn.y.data());
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
     return 0;
 }
 
@@ -192,8 +192,8 @@ static int bn_or_bailout()
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x.data(), g_new_z_bn.x.data());
-    copy_bn(g_old_z_bn.y.data(), g_new_z_bn.y.data());
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
     return 0;
 }
 
@@ -208,8 +208,8 @@ static int bn_and_bailout()
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x.data(), g_new_z_bn.x.data());
-    copy_bn(g_old_z_bn.y.data(), g_new_z_bn.y.data());
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
     return 0;
 }
 
@@ -227,8 +227,8 @@ static int bn_manh_bailout()
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x.data(), g_new_z_bn.x.data());
-    copy_bn(g_old_z_bn.y.data(), g_new_z_bn.y.data());
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
     return 0;
 }
 
@@ -244,8 +244,8 @@ static int bn_manr_bailout()
     {
         return 1;
     }
-    copy_bn(g_old_z_bn.x.data(), g_new_z_bn.x.data());
-    copy_bn(g_old_z_bn.y.data(), g_new_z_bn.y.data());
+    copy_bn(g_old_z_bn.x, g_new_z_bn.x);
+    copy_bn(g_old_z_bn.y, g_new_z_bn.y);
     return 0;
 }
 

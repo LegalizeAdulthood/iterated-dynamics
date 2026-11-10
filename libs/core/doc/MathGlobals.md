@@ -93,6 +93,13 @@ They preserve all unsigned operand bits, fixed-width overflow, division
 rounding, and zero-divisor saturation without a fixed-point conversion
 of the integer operand.
 
+Owning `add_bn`, `sub_bn`, `mult_bn_int`, and `abs_bn` free functions
+return independent canonical values in one working-arena single slot.
+Owning `copy_bn`, `add_a_bn`, `sub_a_bn`, and `abs_a_bn` procedures return
+`void`; they keep the destination allocation and write only N bytes.
+Nested and retained-tail-sensitive raw calls remain at their existing
+sites until their separate operator or representation conversion.
+
 BigFloat's `U16` multiplication and division-assignment overloads also
 use the existing integer kernels, retaining their mantissa normalization,
 rounding, and zero-divisor saturation. Reference callbacks keep their

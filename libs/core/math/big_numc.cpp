@@ -7,6 +7,8 @@
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 */
 #include <math/big.h>
+#include <math/big_init.h>
+#include <math/BigNum.h>
 
 #include <array>
 #include <cfloat>
@@ -59,6 +61,11 @@ BigNumPtr copy_bn(BigNumPtr r, BigNumConstPtr n)
 {
     std::memcpy(r, n, g_bn_length);
     return r;
+}
+
+void copy_bn(BigNum &result, const BigNum &source)
+{
+    copy_bn(result.data(), source.data());
 }
 
 /********************************************************************/
@@ -174,6 +181,13 @@ BigNumPtr half_a_bn(BigNumPtr r)
 
 /********************************************************************/
 // r = n * u  where u is an unsigned integer
+BigNum mult_bn_int(const BigNum &source, const U16 factor)
+{
+    BigNum result{bn_arena(BigLifetime::WORKING)};
+    mult_bn_int(result.data(), source.data(), factor);
+    return result;
+}
+
 BigNumPtr mult_bn_int(BigNumPtr r, BigNumConstPtr n, const U16 u)
 {
     U32 prod = 0;

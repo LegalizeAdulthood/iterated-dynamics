@@ -997,9 +997,23 @@ BigNumPtr add_bn(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2)
     return add(r, n1, n2);
 }
 
+BigNum add_bn(const BigNum &left, const BigNum &right)
+{
+    BigNum result{bn_arena(BigLifetime::WORKING)};
+    add(result.data(), left.data(), right.data());
+    return result;
+}
+
 BigNumPtr sub_bn(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2)
 {
     return subtract(r, n1, n2);
+}
+
+BigNum sub_bn(const BigNum &left, const BigNum &right)
+{
+    BigNum result{bn_arena(BigLifetime::WORKING)};
+    subtract(result.data(), left.data(), right.data());
+    return result;
 }
 
 BigNumPtr neg_bn(BigNumPtr r, BigNumConstPtr n)
@@ -1022,9 +1036,19 @@ BigNumPtr add_a_bn(BigNumPtr r, BigNumConstPtr n)
     return add(r, r, n);
 }
 
+void add_a_bn(BigNum &result, const BigNum &source)
+{
+    add(result.data(), result.data(), source.data());
+}
+
 BigNumPtr sub_a_bn(BigNumPtr r, BigNumConstPtr n)
 {
     return subtract(r, r, n);
+}
+
+void sub_a_bn(BigNum &result, const BigNum &source)
+{
+    subtract(result.data(), result.data(), source.data());
 }
 
 BigNumPtr neg_a_bn(BigNumPtr r)

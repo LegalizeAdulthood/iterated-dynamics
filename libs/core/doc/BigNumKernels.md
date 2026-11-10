@@ -85,31 +85,50 @@ mutable input roles; do not add operand copies. The result must be
 separate from the product inputs, as required by the existing clearing
 kernels. No new alias validation or initialization checks are added.
 
-### Superseded Member Proposals
-
-The canonical and shifted-window member proposals below are historical,
-not implementation instructions. The value-type plan requires owning
-free functions first and operators later, without new named member APIs.
+### Canonical Owning Free Functions
 
 ```cpp
-BigNum &add(const BigNum &left, const BigNum &right);
-BigNum &sub(const BigNum &left, const BigNum &right);
-BigNum &mult(const BigNum &source, misc::U16 factor);
-BigNum &abs(const BigNum &source);
-BigNum &abs();
+BigNum add_bn(const BigNum &left, const BigNum &right);
+BigNum sub_bn(const BigNum &left, const BigNum &right);
+BigNum mult_bn_int(const BigNum &source, misc::U16 factor);
+BigNum abs_bn(const BigNum &source);
+void abs_a_bn(BigNum &result);
+void copy_bn(BigNum &result, const BigNum &source);
+void add_a_bn(BigNum &result, const BigNum &source);
+void sub_a_bn(BigNum &result, const BigNum &source);
 ```
 
-`add` and `sub` call the existing byte addition/subtraction kernels into
-`[0, N)`. `mult` uses `mult_bn_int` at the same destination and width.
-The two `abs` forms preserve the distinct copy-then-negate and in-place
-negation paths. Bytes outside the written range remain unchanged.
-Qualify existing calls to the anonymous-namespace `add` kernel in
-BigNum's operator bodies so the new member does not hide that name.
+The four value-producing functions construct one working-arena single
+result and call the existing N-byte kernels. Only absolute value copies
+its operand, preserving the existing copy/negate sequence. Results are
+independent owning values; inputs are const. Current move/copy assignment
+policy is unchanged. The in-place procedures return `void`, allocate
+nothing, and preserve the destination handle and bytes beyond N.
 
-Canonical `copy_bn` calls between owning values become lvalue copy
-assignment. Canonical `add_a_bn` and `sub_a_bn` calls become `+=` and
-`-=`. Three-operand writes into mixed-role buffers use the members above;
-an rvalue assignment would replace their allocations and retained tails.
+Image setup assigns `g_close_enough_bn = abs_bn(g_delta_x_bn)`;
+Mandelbrot pixel setup assigns `g_param_z_bn.y = sub_bn(...)`. These are
+canonical destinations. Copies and in-place additions use the owning
+procedures in setup and bailouts. Nested expressions stay raw until
+their operator stage; no member chaining is introduced.
+
+Mixed-role scalar multiplies into `g_old_z_bn` and `g_bn_tmp`, Julia's
+subtraction into old y, and MANH/MANR's absolute-value/addition writes
+into old x/y and `g_bn_tmp` retain their raw destinations. Assigning a
+fresh value would replace those scratch allocations and retained tails.
+Do not force these conversions by changing assignment or allocator policy.
+
+`TestBigNumCanonicalValues` compares all canonical bytes with independent
+raw calls and checks result storage, source preservation, and independent
+lifetime. `TestBigNumCanonicalProcedures` checks complete padded slots,
+destination identity, aliases, unchanged sources, and high-water marks.
+Both use lengths 4, 12, 64, and 672 with all three integer widths.
+Compile-time checks require value results and `void` procedure returns.
+
+### Superseded Shifted-Window Member Proposals
+
+The shifted-window member proposals below are historical, not
+implementation instructions. Follow the value-type plan's free-function
+stage and later operator stage; do not add named member APIs.
 
 Keep each unreduced cache in its existing variable. For shifted calls,
 add these exact member interfaces:

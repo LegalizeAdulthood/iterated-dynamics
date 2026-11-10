@@ -59,15 +59,19 @@ Keep `sub_a_bn(cache_x.data() + S, cache_y.data() + S)` and
 changes exactly `N` bytes. Bytes before and after that window remain
 as produced by the original product operation.
 
-For these mixed-role destinations, retain the existing scalar raw calls
-through `data()` in the first ownership conversion. This includes
-`copy_bn`, `float_to_bn`, `mult_bn_int`, `abs_bn`, additions,
-subtractions, and periodicity's `abs_a_bn`. Their canonical writes touch
-only `[0, N)` and leave the rest of the slot unchanged. An assignment
-from an owning expression can replace the allocation through move
-assignment; it is not a substitute for these partial-buffer writes.
-Canonical inputs and outputs that already own values keep their existing
-operations. Further kernel encapsulation is separate work.
+Copies and in-place additions in setup and bailouts use owning
+`copy_bn` and `add_a_bn` procedures. They write only `[0, N)` in the
+existing allocation and preserve the retained tail. The owning
+`sub_a_bn` and `abs_a_bn` procedures have the same storage contract.
+
+Keep raw scalar multiplies into old x/y and `g_bn_tmp`, Julia's
+subtraction into old y, and MANH/MANR's absolute-value/addition writes
+into old x/y and `g_bn_tmp`. A value assignment can replace the allocation
+through move assignment and discard retained tails. The ordinary
+canonical threshold and parameter-Y destinations can accept value results
+from owning `abs_bn` and `sub_bn`. Scalar conversions, shifted windows,
+and nested expressions retain their existing calls. Operator replacement
+is a separate stage.
 
 `bn_to_int` reads the same base or shifted pointer as before. It
 zero-extends one- and two-byte integer parts. Its four-byte result uses

@@ -304,7 +304,7 @@ bool mandel_per_image_bn()
     g_delta2_y_bn = g_y_3rd_bn - g_y_min_bn;
     g_delta2_y_bn /= static_cast<U16>(g_logical_screen.x_dots - 1);
 
-    abs_bn(g_close_enough_bn.data(), g_delta_x_bn.data());
+    g_close_enough_bn = abs_bn(g_delta_x_bn);
     if (cmp_bn(abs_bn(bn_temp1.data(), g_delta2_x_bn.data()), g_close_enough_bn.data()) > 0)
     {
         g_close_enough_bn = bn_temp1;
@@ -505,18 +505,18 @@ int mandel_per_pixel_bn()
     g_param_z_bn.x = g_delta_x_bn * static_cast<U16>(g_col);
     mult_bn_int(g_bn_tmp.data(), g_delta2_x_bn.data(), static_cast<U16>(g_row));
 
-    add_a_bn(g_param_z_bn.x.data(), g_bn_tmp.data());
+    add_a_bn(g_param_z_bn.x, g_bn_tmp);
     g_param_z_bn.x += g_x_min_bn;
 
     // parm.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bn is just used as a temporary variable
     mult_bn_int(g_old_z_bn.x.data(), g_delta_y_bn.data(), static_cast<U16>(g_row));
     mult_bn_int(g_old_z_bn.y.data(), g_delta2_y_bn.data(), static_cast<U16>(g_col));
-    add_a_bn(g_old_z_bn.x.data(), g_old_z_bn.y.data());
-    sub_bn(g_param_z_bn.y.data(), g_y_max_bn.data(), g_old_z_bn.x.data());
+    add_a_bn(g_old_z_bn.x, g_old_z_bn.y);
+    g_param_z_bn.y = sub_bn(g_y_max_bn, g_old_z_bn.x);
 
-    copy_bn(g_old_z_bn.x.data(), g_param_z_bn.x.data());
-    copy_bn(g_old_z_bn.y.data(), g_param_z_bn.y.data());
+    copy_bn(g_old_z_bn.x, g_param_z_bn.x);
+    copy_bn(g_old_z_bn.y, g_param_z_bn.y);
 
     if ((g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61) && g_bof_match_book_images)
     {
@@ -530,13 +530,13 @@ int mandel_per_pixel_bn()
     {
         g_new_z_bn.x = g_params[0];
         g_new_z_bn.y = g_params[1];
-        add_a_bn(g_old_z_bn.x.data(), g_new_z_bn.x.data());
-        add_a_bn(g_old_z_bn.y.data(), g_new_z_bn.y.data());
+        add_a_bn(g_old_z_bn.x, g_new_z_bn.x);
+        add_a_bn(g_old_z_bn.y, g_new_z_bn.y);
     }
 
     // square has side effect - must copy first
-    copy_bn(g_new_z_bn.x.data(), g_old_z_bn.x.data());
-    copy_bn(g_new_z_bn.y.data(), g_old_z_bn.y.data());
+    copy_bn(g_new_z_bn.x, g_old_z_bn.x);
+    copy_bn(g_new_z_bn.y, g_old_z_bn.y);
 
     // Square these to g_r_length bytes of precision
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
@@ -604,8 +604,8 @@ int julia_per_pixel_bn()
     mult_bn_int(g_old_z_bn.x.data(), g_delta_x_bn.data(), static_cast<U16>(g_col));
     mult_bn_int(g_bn_tmp.data(), g_delta2_x_bn.data(), static_cast<U16>(g_row));
 
-    add_a_bn(g_old_z_bn.x.data(), g_bn_tmp.data());
-    add_a_bn(g_old_z_bn.x.data(), g_x_min_bn.data());
+    add_a_bn(g_old_z_bn.x, g_bn_tmp);
+    add_a_bn(g_old_z_bn.x, g_x_min_bn);
 
     // old.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bn is just used as a temporary variable
@@ -615,8 +615,8 @@ int julia_per_pixel_bn()
     sub_bn(g_old_z_bn.y.data(), g_y_max_bn.data(), g_new_z_bn.x.data());
 
     // square has side effect - must copy first
-    copy_bn(g_new_z_bn.x.data(), g_old_z_bn.x.data());
-    copy_bn(g_new_z_bn.y.data(), g_old_z_bn.y.data());
+    copy_bn(g_new_z_bn.x, g_old_z_bn.x);
+    copy_bn(g_new_z_bn.y, g_old_z_bn.y);
 
     // Square these to g_r_length bytes of precision
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);

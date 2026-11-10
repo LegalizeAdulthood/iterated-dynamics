@@ -101,5 +101,13 @@ private:
 BigNum sqr(const BigNum &value);
 void square_bn(BigNum &result, BigNum &source);
 void mult_bn(BigNum &result, BigNum &left, BigNum &right);
+BigNum add_bn(const BigNum &left, const BigNum &right);
+BigNum sub_bn(const BigNum &left, const BigNum &right);
+BigNum mult_bn_int(const BigNum &source, misc::U16 factor);
+BigNum abs_bn(const BigNum &source);
+void abs_a_bn(BigNum &result);
+void copy_bn(BigNum &result, const BigNum &source);
+void add_a_bn(BigNum &result, const BigNum &source);
+void sub_a_bn(BigNum &result, const BigNum &source);
 
 } // namespace id::math

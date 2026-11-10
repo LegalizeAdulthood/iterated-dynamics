@@ -41,6 +41,14 @@ static_assert(!std::is_convertible_v<BigFloat, BigNum>);
 static_assert(!std::is_convertible_v<LDouble, BigNum>);
 static_assert(std::is_same_v<decltype(&bn_hex_dump), void (*)(const BigNum &)>);
 static_assert(std::is_void_v<decltype(square_bn(std::declval<BigNum &>(), std::declval<BigNum &>()))>);
+static_assert(std::is_same_v<decltype(add_bn(std::declval<const BigNum &>(), std::declval<const BigNum &>())), BigNum>);
+static_assert(std::is_same_v<decltype(sub_bn(std::declval<const BigNum &>(), std::declval<const BigNum &>())), BigNum>);
+static_assert(std::is_same_v<decltype(mult_bn_int(std::declval<const BigNum &>(), U16{})), BigNum>);
+static_assert(std::is_same_v<decltype(abs_bn(std::declval<const BigNum &>())), BigNum>);
+static_assert(std::is_void_v<decltype(abs_a_bn(std::declval<BigNum &>()))>);
+static_assert(std::is_void_v<decltype(copy_bn(std::declval<BigNum &>(), std::declval<const BigNum &>()))>);
+static_assert(std::is_void_v<decltype(add_a_bn(std::declval<BigNum &>(), std::declval<const BigNum &>()))>);
+static_assert(std::is_void_v<decltype(sub_a_bn(std::declval<BigNum &>(), std::declval<const BigNum &>()))>);
 static_assert(
     std::is_void_v<decltype(mult_bn(std::declval<BigNum &>(), std::declval<BigNum &>(), std::declval<BigNum &>()))>);
 
@@ -1026,6 +1034,173 @@ INSTANTIATE_TEST_SUITE_P(LayoutsSignsAndAliasing, TestBigNumRetainedMultiply,
             RetainedMultiplyInput{"NegativeNegative", -2, -3, false},
             RetainedMultiplyInput{"SharedPositive", 2, 3, true},
             RetainedMultiplyInput{"SharedNegative", -2, 3, true})));
+
+namespace
+{
+
+enum class CanonicalValue
+{
+    ADD,
+    SUB,
+    MULT,
+    ABS_NEGATIVE,
+    ABS_POSITIVE
+};
+
+enum class CanonicalProcedure
+{
+    COPY,
+    COPY_SELF,
+    ADD,
+    ADD_SELF,
+    SUB,
+    SUB_SELF,
+    ABS_NEGATIVE,
+    ABS_POSITIVE
+};
+
+} // namespace
+
+class TestBigNumCanonicalValues : public TestBigNumValue,
+                                  public testing::WithParamInterface<std::tuple<int, int, CanonicalValue>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumCanonicalValues::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    g_user.bailout_value = integer_length == 4 ? 100 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(std::get<0>(GetParam()));
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumCanonicalValues, returnsIndependentCanonicalStorageAndPreservesInputs)
+{
+    const auto operation = std::get<2>(GetParam());
+    auto &arena = bn_arena(BigLifetime::WORKING);
+    BigNum left{operation == CanonicalValue::ABS_POSITIVE ? 7.0L : -7.0L};
+    BigNum right{3};
+    std::fill(left.data() + g_bn_length, left.data() + arena.block_size(), Byte{0x5a});
+    std::fill(right.data() + g_bn_length, right.data() + arena.block_size(), Byte{0x6b});
+    const std::vector<Byte> original_left(left.data(), left.data() + arena.block_size());
+    const std::vector<Byte> original_right(right.data(), right.data() + arena.block_size());
+    auto raw_left = encoded_value(left);
+    auto raw_right = encoded_value(right);
+    std::vector<Byte> expected(static_cast<std::size_t>(g_bn_length));
+    BigNum result;
+
+    switch (operation)
+    {
+    case CanonicalValue::ADD:
+        add_bn(expected.data(), raw_left.data(), raw_right.data());
+        result = add_bn(left, right);
+        break;
+    case CanonicalValue::SUB:
+        sub_bn(expected.data(), raw_left.data(), raw_right.data());
+        result = sub_bn(left, right);
+        break;
+    case CanonicalValue::MULT:
+        mult_bn_int(expected.data(), raw_left.data(), U16{65535});
+        result = mult_bn_int(left, U16{65535});
+        break;
+    case CanonicalValue::ABS_NEGATIVE:
+    case CanonicalValue::ABS_POSITIVE:
+        abs_bn(expected.data(), raw_left.data());
+        result = abs_bn(left);
+        break;
+    }
+
+    ASSERT_TRUE(result);
+    EXPECT_EQ(&arena, &result.arena());
+    EXPECT_NE(left.data(), result.data());
+    EXPECT_NE(right.data(), result.data());
+    EXPECT_EQ(expected, encoded_value(result));
+    EXPECT_EQ(original_left, std::vector<Byte>(left.data(), left.data() + arena.block_size()));
+    EXPECT_EQ(original_right, std::vector<Byte>(right.data(), right.data() + arena.block_size()));
+    left = 0;
+    right = 0;
+    EXPECT_EQ(expected, encoded_value(result));
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndOperations, TestBigNumCanonicalValues,
+    testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(CanonicalValue::ADD, CanonicalValue::SUB, CanonicalValue::MULT, CanonicalValue::ABS_NEGATIVE,
+            CanonicalValue::ABS_POSITIVE)));
+
+class TestBigNumCanonicalProcedures : public TestBigNumValue,
+                                      public testing::WithParamInterface<std::tuple<int, int, CanonicalProcedure>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumCanonicalProcedures::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    g_user.bailout_value = integer_length == 4 ? 100 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(std::get<0>(GetParam()));
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumCanonicalProcedures, preservesDestinationIdentityTailsAliasesAndUnchangedSources)
+{
+    const auto operation = std::get<2>(GetParam());
+    auto &arena = bn_arena(BigLifetime::WORKING);
+    BigNum source{-7};
+    BigNum separate{operation == CanonicalProcedure::ABS_NEGATIVE ? -2.0L : 2.0L};
+    const bool self = operation == CanonicalProcedure::COPY_SELF || operation == CanonicalProcedure::ADD_SELF ||
+        operation == CanonicalProcedure::SUB_SELF;
+    BigNum &destination = self ? source : separate;
+    std::fill_n(destination.data() + g_bn_length, arena.block_size() - g_bn_length, Byte{0xa5});
+    const std::vector<Byte> original_source(source.data(), source.data() + arena.block_size());
+    auto raw_source = encoded_value(source);
+    std::vector<Byte> expected(destination.data(), destination.data() + arena.block_size());
+    const auto original_destination = destination.data();
+    const auto high_water = arena.high_water_mark();
+
+    switch (operation)
+    {
+    case CanonicalProcedure::COPY:
+    case CanonicalProcedure::COPY_SELF:
+        copy_bn(expected.data(), raw_source.data());
+        copy_bn(destination, source);
+        break;
+    case CanonicalProcedure::ADD:
+    case CanonicalProcedure::ADD_SELF:
+        add_a_bn(expected.data(), raw_source.data());
+        add_a_bn(destination, source);
+        break;
+    case CanonicalProcedure::SUB:
+    case CanonicalProcedure::SUB_SELF:
+        sub_a_bn(expected.data(), raw_source.data());
+        sub_a_bn(destination, source);
+        break;
+    case CanonicalProcedure::ABS_NEGATIVE:
+    case CanonicalProcedure::ABS_POSITIVE:
+        abs_a_bn(expected.data());
+        abs_a_bn(destination);
+        break;
+    }
+
+    EXPECT_EQ(original_destination, destination.data());
+    EXPECT_EQ(&arena, &destination.arena());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(expected, std::vector<Byte>(destination.data(), destination.data() + arena.block_size()));
+    if (!self)
+    {
+        EXPECT_EQ(original_source, std::vector<Byte>(source.data(), source.data() + arena.block_size()));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndAliases, TestBigNumCanonicalProcedures,
+    testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(CanonicalProcedure::COPY, CanonicalProcedure::COPY_SELF, CanonicalProcedure::ADD,
+            CanonicalProcedure::ADD_SELF, CanonicalProcedure::SUB, CanonicalProcedure::SUB_SELF,
+            CanonicalProcedure::ABS_NEGATIVE, CanonicalProcedure::ABS_POSITIVE)));
 
 class TestBigNumKernelProducts : public TestBigNumValue,
                                  public testing::WithParamInterface<std::tuple<int, KernelProduct>>
