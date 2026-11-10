@@ -7,6 +7,7 @@
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 */
 #include <math/big.h>
+#include <math/BigFloat.h>
 
 #include <algorithm>
 #include <cfloat>
@@ -70,13 +71,13 @@ int parse_exponent(std::string_view text)
 /********************************************************************/
 // bf_hexdump() - for debugging, dumps to stdout
 
-void bf_hex_dump(BigFloatPtr r)
+void bf_hex_dump(const BigFloat &r)
 {
     for (int i = 0; i < g_bf_length; i++)
     {
-        std::printf("%02X ", *(r+i));
+        std::printf("%02X ", *(r.data() + i));
     }
-    std::printf(" e %04hX\n", static_cast<S16>(BIG_ACCESS16(r + g_bf_length)));
+    std::printf(" e %04hX\n", static_cast<S16>(BIG_ACCESS16(r.data() + g_bf_length)));
 }
 
 /**********************************************************************/

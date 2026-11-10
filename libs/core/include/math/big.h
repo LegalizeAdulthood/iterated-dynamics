@@ -152,7 +152,7 @@ BigNumPtr div_bn(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2);
 bool is_bn_zero(BigNumPtr n);
 BigNumPtr float_to_bn(BigNumPtr r, LDouble f);
 
-void bf_hex_dump(BigFloatPtr r);
+void bf_hex_dump(const BigFloat &r);
 BigFloatPtr str_to_bf(BigFloatPtr r, std::string_view s);
 BigNumPtr bf_to_bn(BigNumPtr n, BigFloatConstPtr f);
 BigFloatPtr bn_to_bf(BigFloatPtr f, BigNumConstPtr n);

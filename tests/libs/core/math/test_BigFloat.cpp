@@ -15,6 +15,7 @@
 #include <array>
 #include <cmath>
 #include <limits>
+#include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -31,12 +32,25 @@ namespace
 
 static_assert(!std::is_convertible_v<BigFloat, BigFloatPtr>);
 static_assert(!std::is_convertible_v<BigFloatPtr, BigFloat>);
+static_assert(std::is_same_v<decltype(&bf_hex_dump), void (*)(const BigFloat &)>);
 
 std::vector<Byte> encoded_value(const BigFloat &value)
 {
     std::vector<Byte> result(static_cast<std::size_t>(g_bf_length + 2));
     value.copy_to_legacy(result.data(), result.size());
     return result;
+}
+
+void expect_hex_dump(const BigFloat &value, const std::string &expected)
+{
+    const auto original = encoded_value(value);
+    testing::internal::CaptureStdout();
+
+    bf_hex_dump(value);
+
+    const std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(expected + '\n', output);
+    EXPECT_EQ(original, encoded_value(value));
 }
 
 } // namespace
@@ -116,6 +130,97 @@ TEST_F(TestBigFloatValue, supportsTheLargestLegacyLayout)
 
     EXPECT_EQ("-1.25", value.to_string());
     EXPECT_EQ(static_cast<std::size_t>(g_bf_length + 2), encoded_value(value).size());
+}
+
+TEST_F(TestBigFloatValue, hexDumpPrintsZeroAndPreservesInput)
+{
+    for (const int length : {4, 708})
+    {
+        SCOPED_TRACE(length);
+        init_bf_length(length);
+        ASSERT_EQ(length + 4, g_bf_length);
+        std::vector<Byte> bytes(static_cast<std::size_t>(g_bf_length + 2));
+        std::string expected;
+        for (int i = 0; i < g_bf_length; ++i)
+        {
+            expected += "00 ";
+        }
+
+        expect_hex_dump(BigFloat::from_legacy(bytes.data(), bytes.size()), expected + " e 0000");
+    }
+}
+
+TEST_F(TestBigFloatValue, hexDumpPrintsNegativeValueAndPreservesInput)
+{
+    for (const int length : {4, 708})
+    {
+        SCOPED_TRACE(length);
+        init_bf_length(length);
+        ASSERT_EQ(length + 4, g_bf_length);
+        std::vector<Byte> bytes(static_cast<std::size_t>(g_bf_length + 2));
+        bytes[bytes.size() - 4] = 0xc0;
+        bytes[bytes.size() - 3] = 0xfe;
+        std::string expected;
+        for (int i = 0; i < g_bf_length - 2; ++i)
+        {
+            expected += "00 ";
+        }
+
+        expect_hex_dump(BigFloat::from_legacy(bytes.data(), bytes.size()), expected + "C0 FE  e 0000");
+    }
+}
+
+TEST_F(TestBigFloatValue, hexDumpPrintsHighBitMantissaAndSignedExponents)
+{
+    const std::array<Byte, 4> pattern{0x00, 0x09, 0x8a, 0xff};
+
+    struct Case
+    {
+        std::array<Byte, 2> exponent;
+        const char *expected;
+    };
+
+    const Case cases[]{{{0x34, 0x12}, "1234"}, {{0xfe, 0xff}, "FFFE"}};
+    for (const int length : {4, 708})
+    {
+        SCOPED_TRACE(length);
+        init_bf_length(length);
+        ASSERT_EQ(length + 4, g_bf_length);
+        std::vector<Byte> bytes(static_cast<std::size_t>(g_bf_length + 2));
+        std::string expected;
+        for (int i = 0; i < g_bf_length; i += 4)
+        {
+            std::copy(pattern.begin(), pattern.end(), bytes.begin() + i);
+            expected += "00 09 8A FF ";
+        }
+        for (const Case &test : cases)
+        {
+            SCOPED_TRACE(test.expected);
+            std::copy(test.exponent.begin(), test.exponent.end(), bytes.end() - 2);
+
+            expect_hex_dump(BigFloat::from_legacy(bytes.data(), bytes.size()), expected + " e " + test.expected);
+        }
+    }
+}
+
+TEST_F(TestBigFloatValue, hexDumpPrintsShiftedShortenedWorkspace)
+{
+    const int original_length = g_bf_length;
+    ASSERT_GT(original_length, 8);
+    std::vector<Byte> workspace(static_cast<std::size_t>(original_length + 2), 0xcc);
+    const ValueSaver<int> active_length{g_bf_length, 8};
+    BigFloatPtr shortened = workspace.data() + original_length - g_bf_length;
+    const std::array<Byte, 10> bytes{0x00, 0x09, 0x8a, 0xff, 0x12, 0x34, 0x80, 0xfe, 0xfe, 0xff};
+    std::copy(bytes.begin(), bytes.end(), shortened);
+    const auto original = workspace;
+    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
+    ASSERT_GT(bf_arena(BigLifetime::WORKING).value_size(), size);
+    BigArena dump_arena{size, 2, [](Byte *) {}};
+
+    expect_hex_dump(BigFloat::from_legacy(dump_arena, shortened, size), "00 09 8A FF 12 34 80 FE  e FFFE");
+
+    EXPECT_EQ(original, workspace);
+    EXPECT_EQ(8, g_bf_length);
 }
 
 TEST_F(TestBigFloatValue, importsEncodedBytesWithoutMachineFloatConversion)

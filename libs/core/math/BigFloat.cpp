@@ -764,7 +764,11 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
         unsafe_sub_a_bf(r, g_bf_tmp1);                   // r - cos(r) * (sin(r) - n*cos(r))
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
         putchar('\n');
-        bf_hexdump(r);
+        {
+            const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
+            BigArena dump_arena{size, 2, detail::reduce_bf_product};
+            bf_hex_dump(BigFloat::from_legacy(dump_arena, r, size));
+        }
 #endif
         if (g_bf_length == orig_bf_length)
         {
