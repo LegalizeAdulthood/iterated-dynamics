@@ -26,6 +26,7 @@
 
 #include <iterator>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 using namespace id::engine;
@@ -38,6 +39,9 @@ using namespace testing;
 
 namespace id::test
 {
+
+static_assert(std::is_same_v<decltype(&format_var_bn), std::string (*)(const char *, const BigNum &)>);
+static_assert(std::is_same_v<decltype(&format_compare_values), std::string (*)(const char *, LDouble, const BigNum &)>);
 
 class TestPrecisionDiagnostics : public Test
 {
@@ -116,7 +120,7 @@ TEST_F(TestPrecisionDiagnostics, formatsBigFloatGlobals)
 
 TEST_F(TestPrecisionDiagnostics, formatsBigNumVariable)
 {
-    EXPECT_THAT(format_var_bn("value", g_y_min_bn.data()), StartsWith("value -1.5"));
+    EXPECT_EQ("value -1.5", format_var_bn("value", g_y_min_bn));
 }
 
 TEST_F(TestPrecisionDiagnostics, formatsBigFloatVariable)
@@ -138,8 +142,7 @@ TEST_F(TestPrecisionDiagnostics, formatsThreeBigFloatValues)
 
 TEST_F(TestPrecisionDiagnostics, formatsBigNumComparison)
 {
-    EXPECT_THAT(format_compare_values("bn", -1.5L, g_y_min_bn.data()),
-        AllOf(HasSubstr("bignum=-1.5"), HasSubstr("double=-1.50000000000000000000")));
+    EXPECT_EQ("bn\nbignum=-1.5\ndouble=-1.50000000000000000000\n\n", format_compare_values("bn", -1.5L, g_y_min_bn));
 }
 
 TEST_F(TestPrecisionDiagnostics, formatsBigFloatComparison)
@@ -149,7 +152,7 @@ TEST_F(TestPrecisionDiagnostics, formatsBigFloatComparison)
 
 TEST_F(TestPrecisionDiagnostics, shortBigNumValueDoesNotRequirePadding)
 {
-    EXPECT_LT(format_var_bn("n", g_x_min_bn.data()).size(), 79U);
+    EXPECT_EQ("n -2.", format_var_bn("n", g_x_min_bn));
 }
 
 TEST_F(TestPrecisionDiagnostics, shortBigFloatValueDoesNotRequirePadding)
@@ -159,8 +162,41 @@ TEST_F(TestPrecisionDiagnostics, shortBigFloatValueDoesNotRequirePadding)
 
 TEST_F(TestPrecisionDiagnostics, oversizedBigNumLabelIsTruncated)
 {
-    EXPECT_EQ(std::string(79, 'x'), format_var_bn(std::string(100, 'x').c_str(), g_x_min_bn.data()));
+    EXPECT_EQ(std::string(79, 'x'), format_var_bn(std::string(100, 'x').c_str(), g_x_min_bn));
 }
+
+struct BigNumDiagnosticInput
+{
+    const char *name;
+    int length;
+    const char *text;
+    const char *number;
+};
+
+class TestBigNumPrecisionDiagnostics : public TestPrecisionDiagnostics, public WithParamInterface<BigNumDiagnosticInput>
+{
+};
+
+TEST_P(TestBigNumPrecisionDiagnostics, preservesExactOutputAndInputBytes)
+{
+    const auto &input = GetParam();
+    init_bf_length(input.length);
+    const BigNum value{input.text};
+    const std::vector<Byte> original(value.data(), value.data() + g_bn_length);
+
+    EXPECT_EQ(std::string{"value "} + input.number, format_var_bn("value", value));
+    EXPECT_EQ(std::string{"bn\nbignum="} + input.number + "\ndouble=-1.50000000000000000000\n\n",
+        format_compare_values("bn", -1.5L, value));
+
+    EXPECT_EQ(original, (std::vector<Byte>{value.data(), value.data() + g_bn_length}));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigNumPrecisionDiagnostics,
+    Values(BigNumDiagnosticInput{"MinimumZero", 4, "0", "0."},
+        BigNumDiagnosticInput{"MinimumNegative", 4, "-1.5", "-1.5"},
+        BigNumDiagnosticInput{"MaximumZero", 672, "0", "0."},
+        BigNumDiagnosticInput{"MaximumNegative", 672, "-1.5", "-1.5"}),
+    [](const TestParamInfo<BigNumDiagnosticInput> &info) { return info.param.name; });
 
 TEST_F(TestPrecisionDiagnostics, aspectFormattingRestoresTemporaryStack)
 {

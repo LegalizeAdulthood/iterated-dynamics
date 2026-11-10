@@ -46,10 +46,10 @@ namespace id::engine
 std::vector<std::string> g_precision_diagnostics;
 
 //********************************************************************
-std::string format_var_bn(const char *s, BigNumPtr n)
+std::string format_var_bn(const char *s, const BigNum &n)
 {
     std::string msg{s};
-    msg += ' ' + math::bn_to_string(n, 40);
+    msg += ' ' + n.to_string(40);
     msg.resize(std::min(msg.size(), size_t{79}));
     return msg;
 }
@@ -219,15 +219,15 @@ std::string format_aspect(const char *s)
 }
 
 // compare a double and bignumber
-std::string format_compare_values(const char *s, const LDouble x, BigNumPtr bnx)
+std::string format_compare_values(const char *s, const LDouble x, const BigNum &bnx)
 {
     constexpr int dec{40};
     return fmt::format("{:s}\n"
                        "bignum={:s}\n"
                        "double={:.20Lf}\n"
                        "\n",
-        s,                            //
-        math::bn_to_string(bnx, dec), //
+        s,                  //
+        bnx.to_string(dec), //
         x);
 }
 
