@@ -241,6 +241,10 @@ Iteration state uses these reservations:
 - `g_old_z_bn` - raw complex iteration values, with `g_r_length` bytes
   per component to retain Manhattan bailout's unreduced scratch product.
 
+The [orbit product storage contract](BigNumProducts.md) records these
+mixed canonical/product roles, exact byte windows, and construction and
+cleanup requirements for their owning conversion.
+
 ## BigFloat Coordinates And Iteration State
 
 Header: `big.h`.

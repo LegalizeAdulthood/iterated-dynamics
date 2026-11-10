@@ -12,14 +12,18 @@
 #include <fractals/fractype.h>
 #include <math/big_init.h>
 #include <math/BigNum.h>
+#include <math/fixed_pt.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <ostream>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <vector>
 
@@ -84,6 +88,7 @@ protected:
     ValueSaver<Bailout> m_test{g_bailout_test};
     ValueSaver<double> m_limit{g_magnitude_limit};
     ValueSaver<double> m_magnitude{g_magnitude, -17};
+    ValueSaver<bool> m_overflow{g_overflow};
     ValueSaver<decltype(g_bailout_float)> m_fp{g_bailout_float};
     ValueSaver<decltype(g_bailout_bignum)> m_bn{g_bailout_bignum};
     ValueSaver<decltype(g_bailout_bigfloat)> m_bf{g_bailout_bigfloat};
@@ -196,29 +201,278 @@ TEST_P(TestBigNumBailoutCases, preservesThresholdExtractionCachesAndOldOrbit)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestBigNumBailoutCases, testing::ValuesIn(inputs()),
     [](const testing::TestParamInfo<BigNumBailoutInput> &info) { return info.param.name; });
 
-TEST_F(TestBigNumBailout, retainsWideProductBytesBeyondMachinePrecision)
+class TestBigNumWideBailout : public TestBigNumBailout, public testing::WithParamInterface<Bailout>
 {
-    for (int test = 0; test < 7; ++test)
-    {
-        SCOPED_TRACE(test);
-        set_bailout_formula(static_cast<Bailout>(test));
-        g_magnitude_limit = 0;
-        str_to_bn(g_new_z_bn.x.data(), "0.123456789012345678901234567890123456789");
-        str_to_bn(g_new_z_bn.y.data(), "-0.345678901234567890123456789012345678901");
-        std::vector<Byte> expected_x(g_r_length), expected_y(g_r_length);
-        square_bn(expected_x.data(), g_new_z_bn.x.data());
-        square_bn(expected_y.data(), g_new_z_bn.y.data());
-        const std::vector<Byte> original_x(g_new_z_bn.x.data(), g_new_z_bn.x.data() + g_bn_length);
-        const std::vector<Byte> original_y(g_new_z_bn.y.data(), g_new_z_bn.y.data() + g_bn_length);
+};
 
-        EXPECT_EQ(1, g_bailout_bignum());
+TEST_P(TestBigNumWideBailout, retainsWideProductBytesBeyondMachinePrecision)
+{
+    set_bailout_formula(GetParam());
+    g_magnitude_limit = 0;
+    str_to_bn(g_new_z_bn.x.data(), "0.123456789012345678901234567890123456789");
+    str_to_bn(g_new_z_bn.y.data(), "-0.345678901234567890123456789012345678901");
+    std::vector<Byte> expected_x(g_r_length), expected_y(g_r_length);
+    square_bn(expected_x.data(), g_new_z_bn.x.data());
+    square_bn(expected_y.data(), g_new_z_bn.y.data());
+    const std::vector<Byte> original_x(g_new_z_bn.x.data(), g_new_z_bn.x.data() + g_bn_length);
+    const std::vector<Byte> original_y(g_new_z_bn.y.data(), g_new_z_bn.y.data() + g_bn_length);
 
-        EXPECT_EQ(expected_x, std::vector<Byte>(g_tmp_sqr_x_bn, g_tmp_sqr_x_bn + g_r_length));
-        EXPECT_EQ(expected_y, std::vector<Byte>(g_tmp_sqr_y_bn, g_tmp_sqr_y_bn + g_r_length));
-        EXPECT_EQ(original_x, std::vector<Byte>(g_new_z_bn.x.data(), g_new_z_bn.x.data() + g_bn_length));
-        EXPECT_EQ(original_y, std::vector<Byte>(g_new_z_bn.y.data(), g_new_z_bn.y.data() + g_bn_length));
-    }
+    EXPECT_EQ(1, g_bailout_bignum());
+
+    EXPECT_EQ(expected_x, std::vector<Byte>(g_tmp_sqr_x_bn, g_tmp_sqr_x_bn + g_r_length));
+    EXPECT_EQ(expected_y, std::vector<Byte>(g_tmp_sqr_y_bn, g_tmp_sqr_y_bn + g_r_length));
+    EXPECT_EQ(original_x, std::vector<Byte>(g_new_z_bn.x.data(), g_new_z_bn.x.data() + g_bn_length));
+    EXPECT_EQ(original_y, std::vector<Byte>(g_new_z_bn.y.data(), g_new_z_bn.y.data() + g_bn_length));
 }
+
+INSTANTIATE_TEST_SUITE_P(Modes, TestBigNumWideBailout,
+    testing::Values(
+        Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR));
+
+namespace
+{
+
+// Exact integer samples avoid floating-point tolerances. The product has
+// twice the integer width, before the legacy shifted canonical read.
+std::vector<Byte> integer_bytes(const std::int64_t value, const int length, const int integer_length)
+{
+    std::vector<Byte> result(length);
+    const auto bits = static_cast<std::uint64_t>(value);
+    for (int byte = 0; byte < integer_length; ++byte)
+    {
+        result[length - integer_length + byte] = static_cast<Byte>(bits >> (8 * byte));
+    }
+    return result;
+}
+
+std::int64_t wrapped_integer(const std::int64_t value)
+{
+    const std::int64_t modulus = std::int64_t{1} << (8 * g_int_length);
+    const std::int64_t low = value & (modulus - 1);
+    return low >= modulus / 2 ? low - modulus : low;
+}
+
+std::int64_t extracted_integer(const std::int64_t value)
+{
+    const std::int64_t modulus = std::int64_t{1} << (8 * g_int_length);
+    return g_int_length == 4 ? static_cast<long>(static_cast<std::uint32_t>(value)) : value & (modulus - 1);
+}
+
+void replace_canonical(std::vector<Byte> &bytes, const std::int64_t value)
+{
+    const auto canonical = integer_bytes(value, g_bn_length, g_int_length);
+    std::copy(canonical.begin(), canonical.end(), bytes.begin());
+}
+
+struct ProductBailoutInput
+{
+    const char *name;
+    int real;
+    int imaginary;
+    int limit;
+};
+
+void PrintTo(const ProductBailoutInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+} // namespace
+
+class TestBigNumProductWindows : public TestBigNumBailout, public testing::WithParamInterface<std::tuple<int, int>>
+{
+protected:
+    void SetUp() override;
+    void initialize_product_precision(int length, int integer_length);
+};
+
+void TestBigNumProductWindows::initialize_product_precision(const int length, const int integer_length)
+{
+    g_user.bailout_value = integer_length == 4 ? 11 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(length);
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+void TestBigNumProductWindows::SetUp()
+{
+    TestBigNumBailout::SetUp();
+    initialize_product_precision(std::get<0>(GetParam()), std::get<1>(GetParam()));
+}
+
+TEST_P(TestBigNumProductWindows, singleAllocationContainsTheEntireRetainedProduct)
+{
+    auto &arena = bn_arena(BigLifetime::WORKING);
+    auto storage = arena.allocate_single();
+    ASSERT_EQ(1U, storage.blocks());
+    ASSERT_LE(static_cast<std::size_t>(g_r_length), arena.block_size());
+    EXPECT_EQ(0U, arena.block_size() % BigArena::ALIGNMENT);
+    std::fill_n(storage.data(), arena.block_size(), Byte{0xa5});
+    g_new_z_bn.x = -3;
+
+    square_bn(storage.data(), g_new_z_bn.x.data());
+
+    const auto expected = integer_bytes(9, g_r_length, 2 * g_int_length);
+    EXPECT_EQ(expected, std::vector<Byte>(storage.data(), storage.data() + g_r_length));
+    EXPECT_EQ(std::vector<Byte>(arena.block_size() - g_r_length, 0xa5),
+        std::vector<Byte>(storage.data() + g_r_length, storage.data() + arena.block_size()));
+    EXPECT_EQ(1U, storage.blocks());
+    EXPECT_EQ(BigNum{-3}, g_new_z_bn.x);
+}
+
+TEST_P(TestBigNumProductWindows, shiftedSubtractionAndDoublingPreserveTheOtherProductBytes)
+{
+    g_new_z_bn.x = 3;
+    g_new_z_bn.y = -2;
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y.data());
+    auto expected_x = integer_bytes(9, g_r_length, 2 * g_int_length);
+    auto expected_product = integer_bytes(-6, g_r_length, 2 * g_int_length);
+    const auto difference = integer_bytes(5, g_bn_length, g_int_length);
+    const auto doubled = integer_bytes(-12, g_bn_length, g_int_length);
+    std::copy(difference.begin(), difference.end(), expected_x.begin() + g_shift_factor);
+    std::copy(doubled.begin(), doubled.end(), expected_product.begin() + g_shift_factor);
+
+    sub_a_bn(g_tmp_sqr_x_bn + g_shift_factor, g_tmp_sqr_y_bn + g_shift_factor);
+    mult_bn(g_bn_tmp, g_new_z_bn.x.data(), g_new_z_bn.y.data());
+    double_a_bn(g_bn_tmp + g_shift_factor);
+
+    EXPECT_EQ(expected_x, std::vector<Byte>(g_tmp_sqr_x_bn, g_tmp_sqr_x_bn + g_r_length));
+    EXPECT_EQ(expected_product, std::vector<Byte>(g_bn_tmp, g_bn_tmp + g_r_length));
+    EXPECT_EQ(5, bn_to_int(g_tmp_sqr_x_bn + g_shift_factor));
+    EXPECT_EQ(extracted_integer(-12), bn_to_int(g_bn_tmp + g_shift_factor));
+    EXPECT_EQ(BigNum{3}, g_new_z_bn.x);
+    EXPECT_EQ(BigNum{-2}, g_new_z_bn.y);
+}
+
+TEST_P(TestBigNumProductWindows, bindingAndPrecisionChangesClearMixedStorageAndCleanupUnbindsIt)
+{
+    std::fill_n(g_old_z_bn.x, g_r_length, Byte{0xa5});
+    std::fill_n(g_old_z_bn.y, g_r_length, Byte{0x5a});
+    std::fill_n(g_tmp_sqr_x_bn, g_r_length, Byte{0x3c});
+    std::fill_n(g_tmp_sqr_y_bn, g_r_length, Byte{0xc3});
+    std::fill_n(g_bn_tmp, g_r_length, Byte{0x69});
+    const int length = g_bn_length;
+    init_bf_length(length == 4 ? 8 : 4);
+    init_bf_length(length);
+
+    const std::vector<Byte> zero(g_r_length);
+    EXPECT_EQ(zero, std::vector<Byte>(g_old_z_bn.x, g_old_z_bn.x + g_r_length));
+    EXPECT_EQ(zero, std::vector<Byte>(g_old_z_bn.y, g_old_z_bn.y + g_r_length));
+    EXPECT_EQ(zero, std::vector<Byte>(g_tmp_sqr_x_bn, g_tmp_sqr_x_bn + g_r_length));
+    EXPECT_EQ(zero, std::vector<Byte>(g_tmp_sqr_y_bn, g_tmp_sqr_y_bn + g_r_length));
+    EXPECT_EQ(zero, std::vector<Byte>(g_bn_tmp, g_bn_tmp + g_r_length));
+
+    free_bf_vars();
+
+    EXPECT_EQ(nullptr, g_old_z_bn.x);
+    EXPECT_EQ(nullptr, g_old_z_bn.y);
+    EXPECT_EQ(nullptr, g_tmp_sqr_x_bn);
+    EXPECT_EQ(nullptr, g_tmp_sqr_y_bn);
+    EXPECT_EQ(nullptr, g_bn_tmp);
+    init_bf_length(length);
+    EXPECT_EQ(zero, std::vector<Byte>(g_old_z_bn.x, g_old_z_bn.x + g_r_length));
+    EXPECT_EQ(zero, std::vector<Byte>(g_bn_tmp, g_bn_tmp + g_r_length));
+}
+
+INSTANTIATE_TEST_SUITE_P(Layouts, TestBigNumProductWindows,
+    testing::Combine(testing::Values(4, 8, 12, 56, 60, 64, 672), testing::Values(1, 2, 4)));
+
+class TestBigNumProductBailout
+    : public TestBigNumBailout,
+      public testing::WithParamInterface<std::tuple<int, int, Bailout, ProductBailoutInput, bool>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumProductBailout::SetUp()
+{
+    TestBigNumBailout::SetUp();
+    const auto [length, integer_length, mode, input, overflow] = GetParam();
+    g_user.bailout_value = integer_length == 4 ? 11 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(length);
+    ASSERT_EQ(integer_length, g_int_length);
+    set_bailout_formula(mode);
+    g_magnitude_limit = input.limit;
+    g_overflow = overflow;
+}
+
+TEST_P(TestBigNumProductBailout, preservesFullScratchBytesAndFixedWidthOverflow)
+{
+    const auto [length, integer_length, mode, input, overflow] = GetParam();
+    const auto x2 = static_cast<std::int64_t>(input.real) * input.real;
+    const auto y2 = static_cast<std::int64_t>(input.imaginary) * input.imaginary;
+    const auto sum = wrapped_integer(
+        mode == Bailout::MANH ? std::abs(input.real) + std::abs(input.imaginary) : input.real + input.imaginary);
+    const auto old_product = integer_bytes(sum * sum, g_r_length, 2 * integer_length);
+    const auto expected_x = integer_bytes(x2, g_r_length, 2 * integer_length);
+    const auto expected_y = integer_bytes(y2, g_r_length, 2 * integer_length);
+    const auto rx = extracted_integer(x2);
+    const auto ry = extracted_integer(y2);
+    const auto magnitude = extracted_integer(rx + ry);
+    const auto man_metric = extracted_integer(sum * sum);
+    const bool escaped = mode == Bailout::MOD ? magnitude >= input.limit
+        : mode == Bailout::REAL               ? rx >= input.limit
+        : mode == Bailout::IMAG               ? ry >= input.limit
+        : mode == Bailout::OR                 ? rx >= input.limit || ry >= input.limit
+        : mode == Bailout::AND                ? rx >= input.limit && ry >= input.limit
+                                              : man_metric >= input.limit;
+    std::vector<Byte> expected_old_x(g_r_length, 0xa5), expected_old_y(g_r_length, 0x5a);
+    std::vector<Byte> expected_tmp(g_r_length, 0x3c);
+    replace_canonical(expected_old_x, -7);
+    replace_canonical(expected_old_y, 9);
+    std::copy(expected_old_x.begin(), expected_old_x.end(), g_old_z_bn.x);
+    std::copy(expected_old_y.begin(), expected_old_y.end(), g_old_z_bn.y);
+    std::copy(expected_tmp.begin(), expected_tmp.end(), g_bn_tmp);
+    g_new_z_bn.x = input.real;
+    g_new_z_bn.y = input.imaginary;
+    if (mode == Bailout::MOD)
+    {
+        replace_canonical(expected_tmp, magnitude);
+    }
+    else if (mode == Bailout::MANH || mode == Bailout::MANR)
+    {
+        replace_canonical(expected_tmp, sum);
+        expected_old_x = old_product;
+        if (mode == Bailout::MANH)
+        {
+            replace_canonical(expected_old_y, std::abs(input.imaginary));
+        }
+    }
+    if (!escaped)
+    {
+        replace_canonical(expected_old_x, input.real);
+        replace_canonical(expected_old_y, input.imaginary);
+    }
+
+    EXPECT_EQ(escaped, g_bailout_bignum() != 0);
+
+    EXPECT_EQ(expected_x, std::vector<Byte>(g_tmp_sqr_x_bn, g_tmp_sqr_x_bn + g_r_length));
+    EXPECT_EQ(expected_y, std::vector<Byte>(g_tmp_sqr_y_bn, g_tmp_sqr_y_bn + g_r_length));
+    EXPECT_EQ(expected_old_x, std::vector<Byte>(g_old_z_bn.x, g_old_z_bn.x + g_r_length));
+    EXPECT_EQ(expected_old_y, std::vector<Byte>(g_old_z_bn.y, g_old_z_bn.y + g_r_length));
+    EXPECT_EQ(expected_tmp, std::vector<Byte>(g_bn_tmp, g_bn_tmp + g_r_length));
+    EXPECT_EQ(integer_bytes(input.real, length, integer_length),
+        std::vector<Byte>(g_new_z_bn.x.data(), g_new_z_bn.x.data() + length));
+    EXPECT_EQ(integer_bytes(input.imaginary, length, integer_length),
+        std::vector<Byte>(g_new_z_bn.y.data(), g_new_z_bn.y.data() + length));
+    EXPECT_EQ(rx, bn_to_int(g_tmp_sqr_x_bn + g_shift_factor));
+    EXPECT_EQ(ry, bn_to_int(g_tmp_sqr_y_bn + g_shift_factor));
+    EXPECT_EQ(overflow, g_overflow);
+    EXPECT_EQ(-17, g_magnitude);
+    EXPECT_EQ(length, g_bn_length);
+    EXPECT_EQ(integer_length, g_int_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndModes, TestBigNumProductBailout,
+    testing::Combine(testing::Values(4, 8, 12, 56, 60, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(
+            Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR),
+        testing::Values(ProductBailoutInput{"Continue", 1, -2, 1000}, ProductBailoutInput{"Escape", -3, 2, 1},
+            ProductBailoutInput{"Wrap", 100, 100, 1}),
+        testing::Bool()));
 
 class TestBigNumJulia : public TestBigNumBailout
 {
