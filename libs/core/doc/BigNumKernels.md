@@ -8,7 +8,8 @@ Copyright 2026 Richard Thomson.
 This records owning BigNum kernel storage and the remaining member
 interface contracts. Calculation bodies, statement order, precision
 ramps, operand copies, and scratch reuse are preserved. The member
-interfaces below are proposed APIs.
+interfaces below are proposed APIs except for the implemented
+`sqr_product` member.
 
 ## Storage And Lifetime
 
@@ -67,8 +68,9 @@ current operand-copy policy and allocation/reduction sites stay intact:
   result; their compound forms retain their existing implementations.
 
 The [orbit product contract](BigNumProducts.md) requires unreduced
-results and partial writes into existing slots. Add only the following
-member operations for those existing calls:
+results and partial writes into existing slots. `sqr_product` is
+implemented; the other member operations remain proposed for their
+existing calls:
 
 ```cpp
 BigNum &sqr_product(BigNum &source);
@@ -243,6 +245,13 @@ destination return aliases, operand mutation, and guard bytes at lengths
 ramps, both division output aliases, and BigFloat mantissa products at
 lengths 12, 32, and 672 with one, two, and four integer bytes. Expected
 values are exact dyadic samples; no floating-point tolerance is needed.
+
+`TestBigNumRetainedSqr` compares every retained byte with the raw adapter,
+checks source restoration and unchanged padding, and preserves the
+destination address, arena, and high-water mark. Its parameterized cases
+cover both signs, integer widths one, two, and four, and lengths 4, 8,
+12, 56, 60, 64, and 672. Existing bailout tests retain their exact scratch
+byte expectations after conversion to `sqr_product`.
 
 Both `mult_bn` and `full_mult_bn` restore a shared negative input twice.
 The shared-source kernel makes it positive once; the two adapter restores

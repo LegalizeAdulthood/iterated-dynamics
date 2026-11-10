@@ -58,6 +58,7 @@ public:
     BigNum operator*(misc::U16 right) const;
     BigNum operator/(const BigNum &right) const;
     BigNum sqr() const;
+    BigNum &sqr_product(BigNum &source);
 
     bool operator==(const BigNum &right) const;
     bool operator!=(const BigNum &right) const;

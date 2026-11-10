@@ -880,6 +880,51 @@ TEST_P(TestBigNumProducts, constMachineConversionRetainsLegacyResultsAndInputByt
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigNumProducts, testing::Values(4, 8, 12, 672));
 
+class TestBigNumRetainedSqr : public TestBigNumValue, public testing::WithParamInterface<std::tuple<int, int, bool>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumRetainedSqr::SetUp()
+{
+    const int length = std::get<0>(GetParam());
+    const int integer_length = std::get<1>(GetParam());
+    g_user.bailout_value = integer_length == 4 ? 100 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(length);
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumRetainedSqr, preservesProductSourceAllocationAndPadding)
+{
+    auto &arena = bn_arena(BigLifetime::WORKING);
+    BigNum source{std::get<2>(GetParam()) ? "-2.25" : "2.25"};
+    BigNum destination{arena};
+    std::fill(source.data() + g_bn_length, source.data() + arena.block_size(), Byte{0x5a});
+    const std::vector<Byte> original_source(source.data(), source.data() + arena.block_size());
+    auto raw_source = encoded_value(source);
+    std::vector<Byte> expected(static_cast<std::size_t>(g_r_length));
+    square_bn(expected.data(), raw_source.data());
+    std::fill_n(destination.data(), arena.block_size(), Byte{0xa5});
+    const auto original_destination = destination.data();
+    const auto high_water = arena.high_water_mark();
+
+    BigNum &result = destination.sqr_product(source);
+
+    EXPECT_EQ(&destination, &result);
+    EXPECT_EQ(original_destination, destination.data());
+    EXPECT_EQ(&arena, &destination.arena());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(expected, std::vector<Byte>(destination.data(), destination.data() + g_r_length));
+    EXPECT_EQ(original_source, std::vector<Byte>(source.data(), source.data() + arena.block_size()));
+    EXPECT_EQ(std::vector<Byte>(arena.block_size() - g_r_length, 0xa5),
+        std::vector<Byte>(destination.data() + g_r_length, destination.data() + arena.block_size()));
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndSigns, TestBigNumRetainedSqr,
+    testing::Combine(testing::Values(4, 8, 12, 56, 60, 64, 672), testing::Values(1, 2, 4), testing::Bool()));
+
 namespace
 {
 

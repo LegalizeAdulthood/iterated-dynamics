@@ -31,8 +31,8 @@ only `R` bytes, not a complete `2 * N` product.
 `g_old_z_bn` is a `BNComplex`; each of the three scalar globals is a
 `BigNum`. Each component owns one working-arena single
 allocation. No paired allocation, new allocator metadata, representation
-flag, handle accessor, or new arithmetic API is required for these five
-slots. Keep the existing reduction callback configured on the arena.
+flag, or handle accessor is required for these five slots. Keep the
+existing reduction callback configured on the arena.
 
 Use existing `BigNum::data()` for borrowed representation windows.
 `data()` addresses the slot base; `data() + S` addresses its existing
@@ -41,9 +41,12 @@ addresses do not survive arena relocation and must not be retained.
 `BigNum::arena().block_size()` supplies the existing aligned capacity
 when clearing these working slots.
 
-Keep `square_bn(destination.data(), source.data())` and
-`mult_bn(destination.data(), left.data(), right.data())` at their
-existing statements. They write `R` bytes and restore signed operands.
+Use `destination.sqr_product(source)` at each existing retained-square
+statement. It writes `R` bytes into the existing allocation, saves and
+restores the source sign, and returns the destination by reference.
+It neither copies the source nor allocates or reduces the result.
+Keep `mult_bn(destination.data(), left.data(), right.data())` at its
+existing statements; it also writes `R` bytes and restores signed inputs.
 Do not replace them with `sqr(source)` or `left * right`: those owning
 operations reduce a paired result to `N` canonical bytes and lose the
 retained product. Do not call `Allocation::reduce()` on these singles.

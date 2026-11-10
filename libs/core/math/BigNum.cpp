@@ -886,6 +886,17 @@ BigNum BigNum::sqr() const
     return result;
 }
 
+BigNum &BigNum::sqr_product(BigNum &source)
+{
+    const bool sign = is_bn_neg(source.m_storage.data());
+    square(m_storage.data(), source.m_storage.data());
+    if (sign)
+    {
+        neg_a_bn(source.m_storage.data());
+    }
+    return *this;
+}
+
 bool BigNum::operator==(const BigNum &right) const
 {
     return compare(m_storage.data(), right.m_storage.data()) == 0;

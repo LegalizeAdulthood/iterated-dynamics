@@ -75,6 +75,11 @@ and comparisons read operands directly; destructive kernels receive
 scratch copies. Truncation, fixed-width overflow, division saturation,
 and zero handling retain legacy behavior.
 
+`BigNum::sqr_product` writes all `g_r_length` retained product bytes into
+its existing destination slot and restores its mutable source's sign.
+It returns the destination by reference without allocating, copying its
+source, or reducing the product. Ordinary `sqr()` remains canonical.
+
 `operator*(U16)` and `operator/=(U16)` use the existing integer kernels.
 They preserve all unsigned operand bits, fixed-width overflow, division
 rounding, and zero-divisor saturation without a fixed-point conversion

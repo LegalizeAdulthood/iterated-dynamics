@@ -330,8 +330,8 @@ TEST_P(TestBigNumProductWindows, shiftedSubtractionAndDoublingPreserveTheOtherPr
 {
     g_new_z_bn.x = 3;
     g_new_z_bn.y = -2;
-    square_bn(g_tmp_sqr_x_bn.data(), g_new_z_bn.x.data());
-    square_bn(g_tmp_sqr_y_bn.data(), g_new_z_bn.y.data());
+    g_tmp_sqr_x_bn.sqr_product(g_new_z_bn.x);
+    g_tmp_sqr_y_bn.sqr_product(g_new_z_bn.y);
     auto expected_x = integer_bytes(9, g_r_length, 2 * g_int_length);
     auto expected_product = integer_bytes(-6, g_r_length, 2 * g_int_length);
     const auto difference = integer_bytes(5, g_bn_length, g_int_length);
