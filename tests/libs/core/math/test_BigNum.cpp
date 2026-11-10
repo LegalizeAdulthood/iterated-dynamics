@@ -18,6 +18,7 @@
 #include <limits>
 #include <stdexcept>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -878,5 +879,190 @@ TEST_P(TestBigNumProducts, constMachineConversionRetainsLegacyResultsAndInputByt
 }
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigNumProducts, testing::Values(4, 8, 12, 672));
+
+namespace
+{
+
+enum class KernelProduct
+{
+    SAFE_DISTINCT,
+    SAFE_SAME,
+    UNSAFE_DISTINCT,
+    UNSAFE_SAME,
+    FULL_SAME,
+    SAFE_SQR,
+    UNSAFE_SQR
+};
+
+std::array<int, 9> kernel_lengths()
+{
+    return {g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding, g_shift_factor, g_bf_length, g_r_bf_length,
+        g_bf_decimals};
+}
+
+} // namespace
+
+class TestBigNumKernelProducts : public TestBigNumValue,
+                                 public testing::WithParamInterface<std::tuple<int, KernelProduct>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumKernelProducts::SetUp()
+{
+    init_bf_length(std::get<0>(GetParam()));
+}
+
+TEST_P(TestBigNumKernelProducts, retainsFullBytesReturnAliasAndLegacyOperandMutation)
+{
+    const auto kind = std::get<1>(GetParam());
+    BigNum left{-2};
+    BigNum right{3};
+    const bool squared = kind != KernelProduct::SAFE_DISTINCT && kind != KernelProduct::UNSAFE_DISTINCT;
+    const int extent = kind == KernelProduct::FULL_SAME ? 2 * g_bn_length : g_r_length;
+    std::vector<Byte> guarded(extent + 2, 0xa5);
+    auto *const result = guarded.data() + 1;
+    std::vector<Byte> expected(extent, squared ? 0 : 0xff);
+    // The retained product has two integer bytes in this one-byte layout.
+    expected[extent - 2] = squared ? 4 : 0xfa;
+    if (!squared)
+    {
+        std::fill(expected.begin(), expected.end() - 2, Byte{0});
+    }
+    const auto lengths = kernel_lengths();
+
+    switch (kind)
+    {
+    case KernelProduct::SAFE_DISTINCT:
+        EXPECT_EQ(result, mult_bn(result, left.data(), right.data()));
+        break;
+    case KernelProduct::SAFE_SAME:
+        EXPECT_EQ(result, mult_bn(result, left.data(), left.data()));
+        break;
+    case KernelProduct::UNSAFE_DISTINCT:
+        EXPECT_EQ(result, unsafe_mult_bn(result, left.data(), right.data()));
+        break;
+    case KernelProduct::UNSAFE_SAME:
+        EXPECT_EQ(result, unsafe_mult_bn(result, left.data(), left.data()));
+        break;
+    case KernelProduct::FULL_SAME:
+        EXPECT_EQ(result, full_mult_bn(result, left.data(), left.data()));
+        break;
+    case KernelProduct::SAFE_SQR:
+        EXPECT_EQ(result, square_bn(result, left.data()));
+        break;
+    case KernelProduct::UNSAFE_SQR:
+        EXPECT_EQ(result, unsafe_square_bn(result, left.data()));
+        break;
+    }
+
+    EXPECT_EQ(expected, std::vector<Byte>(result, result + extent));
+    EXPECT_EQ(0xa5, guarded.front());
+    EXPECT_EQ(0xa5, guarded.back());
+    const bool restored = kind == KernelProduct::SAFE_DISTINCT || kind == KernelProduct::SAFE_SQR;
+    // The safe binary adapters restore a shared negative input twice.
+    // Preserve this pre-existing behavior separately from value operators.
+    EXPECT_EQ(encoded_value(BigNum{restored ? -2.0L : 2.0L}), encoded_value(left));
+    EXPECT_EQ(encoded_value(BigNum{3}), encoded_value(right));
+    EXPECT_EQ(lengths, kernel_lengths());
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndAliasing, TestBigNumKernelProducts,
+    testing::Combine(testing::Values(4, 8, 12, 672),
+        testing::Values(KernelProduct::SAFE_DISTINCT, KernelProduct::SAFE_SAME, KernelProduct::UNSAFE_DISTINCT,
+            KernelProduct::UNSAFE_SAME, KernelProduct::FULL_SAME, KernelProduct::SAFE_SQR, KernelProduct::UNSAFE_SQR)));
+
+class TestBigNumKernelWindows : public TestBigNumValue, public testing::WithParamInterface<std::tuple<int, int, bool>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumKernelWindows::SetUp()
+{
+    const auto [length, integer_length, flag] = GetParam();
+    g_user.bailout_value = integer_length == 4 ? 100 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(length);
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumKernelWindows, reciprocalRestoresPrecisionAndReturnsTheOriginalDestination)
+{
+    BigNum source{std::get<2>(GetParam()) ? -2.0L : 2.0L};
+    const auto expected = encoded_value(BigNum{std::get<2>(GetParam()) ? -0.5L : 0.5L});
+    const auto expected_source = encoded_value(BigNum{2});
+    std::vector<Byte> guarded(g_bn_length + 2, 0xa5);
+    std::fill(guarded.begin() + 1, guarded.end() - 1, Byte{0});
+    auto *const result = guarded.data() + 1;
+    const auto lengths = kernel_lengths();
+    const auto stack = save_stack();
+    const auto high_water = bn_arena(BigLifetime::WORKING).high_water_mark();
+
+    EXPECT_EQ(result, unsafe_inv_bn(result, source.data()));
+
+    EXPECT_EQ(lengths, kernel_lengths());
+    EXPECT_EQ(stack, save_stack());
+    EXPECT_EQ(high_water, bn_arena(BigLifetime::WORKING).high_water_mark());
+    EXPECT_EQ(expected, std::vector<Byte>(result, result + g_bn_length));
+    EXPECT_EQ(expected_source, encoded_value(source));
+    EXPECT_EQ(0xa5, guarded.front());
+    EXPECT_EQ(0xa5, guarded.back());
+}
+
+TEST_P(TestBigNumKernelWindows, divisionCapturesBothInputsBeforeAnAliasedWrite)
+{
+    BigNum left{-6};
+    BigNum right{2};
+    const bool alias_left = std::get<2>(GetParam());
+    BigNum &output = alias_left ? left : right;
+    const auto expected = encoded_value(BigNum{-3});
+    const auto other = encoded_value(alias_left ? right : left);
+    auto *const result = output.data();
+    const auto lengths = kernel_lengths();
+    const auto stack = save_stack();
+
+    EXPECT_EQ(result, div_bn(result, left.data(), right.data()));
+
+    EXPECT_EQ(expected, encoded_value(output));
+    EXPECT_EQ(other, encoded_value(alias_left ? right : left));
+    EXPECT_EQ(lengths, kernel_lengths());
+    EXPECT_EQ(stack, save_stack());
+}
+
+TEST_P(TestBigNumKernelWindows, bigFloatMantissaProductsRestoreTheBigNumContext)
+{
+    const bool negative = std::get<2>(GetParam());
+    BigFloat left{negative ? -0.75L : 0.75L};
+    BigFloat right{0.5L};
+    const auto original_left = encoded_value(left);
+    const auto original_right = encoded_value(right);
+    const auto expected_product = encoded_value(BigFloat{negative ? -0.375L : 0.375L});
+    const auto expected_sqr = encoded_value(BigFloat{0.5625L});
+    std::vector<Byte> guarded(g_r_bf_length + 4, 0xa5);
+    auto *const result = guarded.data() + 1;
+    const auto lengths = kernel_lengths();
+    const auto stack = save_stack();
+
+    EXPECT_EQ(result, mult_bf(result, left.data(), right.data()));
+
+    EXPECT_EQ(expected_product, std::vector<Byte>(result, result + g_bf_length + 2));
+    EXPECT_EQ(original_left, encoded_value(left));
+    EXPECT_EQ(original_right, encoded_value(right));
+    EXPECT_EQ(lengths, kernel_lengths());
+
+    EXPECT_EQ(result, square_bf(result, left.data()));
+
+    EXPECT_EQ(expected_sqr, std::vector<Byte>(result, result + g_bf_length + 2));
+    EXPECT_EQ(original_left, encoded_value(left));
+    EXPECT_EQ(lengths, kernel_lengths());
+    EXPECT_EQ(stack, save_stack());
+    EXPECT_EQ(0xa5, guarded.front());
+    EXPECT_EQ(0xa5, guarded.back());
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndLayouts, TestBigNumKernelWindows,
+    testing::Combine(testing::Values(12, 32, 672), testing::Values(1, 2, 4), testing::Bool()));
 
 } // namespace id::test

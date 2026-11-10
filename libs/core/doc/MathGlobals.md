@@ -215,6 +215,10 @@ the three names are not independently allocated constants.
 
 ## BigNum Coordinates And Iteration State
 
+The [kernel ownership contract](BigNumKernels.md) specifies the remaining
+three reciprocal workspaces, two paired copy buffers, borrowed precision
+windows, and proposed member interfaces for their conversion.
+
 Header: `big.h`.
 
 Each coordinate, increment, or threshold below owns a `BigNum` with
