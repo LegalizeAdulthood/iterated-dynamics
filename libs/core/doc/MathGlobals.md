@@ -223,13 +223,28 @@ Header: `big.h`.
 Header: `big.h`.
 
 - `g_bf_tmp1`, `g_bf_tmp2`, `g_bf_tmp3`, `g_bf_tmp4`, `g_bf_tmp5`,
-  `g_bf_tmp6` - general temporaries, each `g_r_bf_length + 2` bytes.
-- `g_bf_tmp_copy1`, `g_bf_tmp_copy2` - preservation buffers, each
-  `2 * (g_r_bf_length + 2)` bytes.
+  `g_bf_tmp6` - owning `BigFloat` kernel workspaces, each in one padded
+  working-arena slot. They retain canonical, full-product, and shortened
+  scratch representations at the existing calculation sites.
+- `g_bf_tmp_copy1`, `g_bf_tmp_copy2` - owning `BigArena::Allocation`
+  handles, each reserving two working-arena blocks for operand copies
+  and destructive formatter scratch.
 - `g_bf_tmp` - owning `BigFloat` temporary, `g_bf_length + 2` encoded
   bytes in the working arena.
 - `g_big_pi` - shared Pi storage.
 - `g_bf_pi` - floating-point alias of `g_big_pi`.
+
+`MathArenas` constructs these six kernel values and two paired buffers
+in their existing allocation order. Binding clears each full reservation
+and reuses its allocation; unbinding releases it and leaves a null owner.
+Precision relocation discards these mixed-format scratch bytes rather
+than converting them as live canonical values. Temporary stack rewinds
+do not release working-arena owners.
+
+Logarithm uses a borrowed, shifted window into `g_bf_tmp5`; arctangent
+does the same with `g_bf_tmp3`. Their `orig_*` pointers retain the base
+addresses while the existing loops change the active lengths. Exponent
+cursors and operand-copy pointers are also borrows, not new values.
 
 `init_big_pi()` copies the appropriate precision from a constant table.
 `g_bf_pi` aliases its start and `g_bn_pi` points into the same storage;

@@ -256,8 +256,8 @@ BigFloatPtr divide(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
     }
 
     unsafe_inv_bf(r, n2);
-    multiply(g_bf_tmp1, n1, r);
-    copy_bf(r, g_bf_tmp1); // r = g_bf_tmp1
+    multiply(g_bf_tmp1.data(), n1, r);
+    copy_bf(r, g_bf_tmp1.data()); // r = g_bf_tmp1
 
     int r_exp = static_cast<S16>(BIG_ACCESS16(r + g_bf_length));
     r_exp += a_exp - b_exp;
@@ -392,7 +392,7 @@ BigFloatPtr halve(BigFloatPtr r)
 BigFloatPtr exponential(BigFloatPtr r, BigFloatConstPtr n)
 {
     U16 fact = 1;
-    S16 *test_exp = reinterpret_cast<S16 *>(g_bf_tmp2 + g_bf_length);
+    S16 *test_exp = reinterpret_cast<S16 *>(g_bf_tmp2.data() + g_bf_length);
     S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
 
     if (is_bf_zero(n))
@@ -403,17 +403,17 @@ BigFloatPtr exponential(BigFloatPtr r, BigFloatConstPtr n)
 
     // use Taylor Series (very slow convergence)
     int_to_bf(r, 1); // start with r=1.0
-    copy_bf(g_bf_tmp2, r);
+    copy_bf(g_bf_tmp2.data(), r);
     while (true)
     {
-        copy_bf(g_bf_tmp1, n);
-        unsafe_mult_bf(g_bf_tmp3, g_bf_tmp2, g_bf_tmp1);
-        unsafe_div_bf_int(g_bf_tmp2, g_bf_tmp3, fact);
+        copy_bf(g_bf_tmp1.data(), n);
+        unsafe_mult_bf(g_bf_tmp3.data(), g_bf_tmp2.data(), g_bf_tmp1.data());
+        unsafe_div_bf_int(g_bf_tmp2.data(), g_bf_tmp3.data(), fact);
         if (BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(r_exp) - (g_bf_length - 2))
         {
             break; // too small to register
         }
-        unsafe_add_a_bf(r, g_bf_tmp2);
+        unsafe_add_a_bf(r, g_bf_tmp2.data());
         fact++;
     }
 
@@ -450,7 +450,8 @@ BigFloatPtr logarithm(BigFloatPtr r, BigFloatPtr n)
     int orig_r_bf_length = g_r_bf_length;
     BigFloatPtr orig_r = r;
     BigFloatPtr orig_n = n;
-    BigFloatPtr orig_bf_tmp5 = g_bf_tmp5;
+    BigFloatPtr orig_bf_tmp5 = g_bf_tmp5.data();
+    BigFloatPtr bf_tmp5 = orig_bf_tmp5;
 
     // calculate new starting values
     g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
@@ -459,11 +460,11 @@ BigFloatPtr logarithm(BigFloatPtr r, BigFloatPtr n)
 
     // adjust pointers
     r = orig_r + orig_bf_length - g_bf_length;
-    g_bf_tmp5 = orig_bf_tmp5 + orig_bf_length - g_bf_length;
+    bf_tmp5 = orig_bf_tmp5 + orig_bf_length - g_bf_length;
 
     float_to_bf(r, f);           // start with approximate ln
     neg_a_bf(r);                 // -r
-    copy_bf(g_bf_tmp5, r);       // -r
+    copy_bf(bf_tmp5, r);         // -r
 
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
@@ -473,16 +474,16 @@ BigFloatPtr logarithm(BigFloatPtr r, BigFloatPtr n)
         calc_lengths();
         r = orig_r + orig_bf_length - g_bf_length;
         n = orig_n + orig_bf_length - g_bf_length;
-        g_bf_tmp5 = orig_bf_tmp5 + orig_bf_length - g_bf_length;
+        bf_tmp5 = orig_bf_tmp5 + orig_bf_length - g_bf_length;
 
-        exponential(g_bf_tmp6, r);               // exp(-r)
-        unsafe_mult_bf(g_bf_tmp2, g_bf_tmp6, n); // n*exp(-r)
-        int_to_bf(g_bf_tmp4, 1);
-        unsafe_sub_a_bf(g_bf_tmp2, g_bf_tmp4);   // n*exp(-r) - 1
-        unsafe_sub_a_bf(r, g_bf_tmp2);           // -r - (n*exp(-r) - 1)
+        exponential(g_bf_tmp6.data(), r);                      // exp(-r)
+        unsafe_mult_bf(g_bf_tmp2.data(), g_bf_tmp6.data(), n); // n*exp(-r)
+        int_to_bf(g_bf_tmp4.data(), 1);
+        unsafe_sub_a_bf(g_bf_tmp2.data(), g_bf_tmp4.data());   // n*exp(-r) - 1
+        unsafe_sub_a_bf(r, g_bf_tmp2.data());                  // -r - (n*exp(-r) - 1)
         if (g_bf_length == orig_bf_length)
         {
-            const int comp = std::abs(cmp_bf(r, g_bf_tmp5));
+            const int comp = std::abs(cmp_bf(r, bf_tmp5));
             if (comp < 8)                 // if match or almost match
             {
                 if (comp < 4              // perfect or near perfect match
@@ -494,7 +495,7 @@ BigFloatPtr logarithm(BigFloatPtr r, BigFloatPtr n)
                 almost_match++;
             }
         }
-        copy_bf(g_bf_tmp5, r); // -r
+        copy_bf(bf_tmp5, r); // -r
     }
 
     // restore original values
@@ -505,7 +506,7 @@ BigFloatPtr logarithm(BigFloatPtr r, BigFloatPtr n)
     g_shift_factor = orig_shift_factor;
     g_r_bf_length = orig_r_bf_length;
     r = orig_r;
-    g_bf_tmp5 = orig_bf_tmp5;
+    bf_tmp5 = orig_bf_tmp5;
 
     neg_a_bf(r); // -(-r)
     return r;
@@ -514,7 +515,7 @@ BigFloatPtr logarithm(BigFloatPtr r, BigFloatPtr n)
 BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
 {
     U16 fact = 2;
-    S16 *test_exp = reinterpret_cast<S16 *>(g_bf_tmp1 + g_bf_length);
+    S16 *test_exp = reinterpret_cast<S16 *>(g_bf_tmp1.data() + g_bf_length);
     S16 *c_exp = reinterpret_cast<S16 *>(c + g_bf_length);
     S16 *s_exp = reinterpret_cast<S16 *>(s + g_bf_length);
 
@@ -536,42 +537,42 @@ BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
     }
     // n >= 0
 
-    double_bf(g_bf_tmp1, g_bf_pi); // 2*pi
+    double_bf(g_bf_tmp1.data(), g_bf_pi); // 2*pi
     // this could be done with remainders, but it would probably be slower
-    while (cmp_bf(n, g_bf_tmp1) >= 0) // while n >= 2*pi
+    while (cmp_bf(n, g_bf_tmp1.data()) >= 0) // while n >= 2*pi
     {
-        copy_bf(g_bf_tmp2, g_bf_tmp1);
-        unsafe_sub_a_bf(n, g_bf_tmp2);
+        copy_bf(g_bf_tmp2.data(), g_bf_tmp1.data());
+        unsafe_sub_a_bf(n, g_bf_tmp2.data());
     }
     // 0 <= n < 2*pi
 
     bool sign_cos = false;
-    copy_bf(g_bf_tmp1, g_bf_pi);   // pi
-    if (cmp_bf(n, g_bf_tmp1) >= 0) // if n >= pi
+    copy_bf(g_bf_tmp1.data(), g_bf_pi);   // pi
+    if (cmp_bf(n, g_bf_tmp1.data()) >= 0) // if n >= pi
     {
-        unsafe_sub_a_bf(n, g_bf_tmp1);
+        unsafe_sub_a_bf(n, g_bf_tmp1.data());
         sign_sin = !sign_sin;
         sign_cos = !sign_cos;
     }
     // 0 <= n < pi
 
-    half_bf(g_bf_tmp1, g_bf_pi);  // pi/2
-    if (cmp_bf(n, g_bf_tmp1) > 0) // if n > pi/2
+    half_bf(g_bf_tmp1.data(), g_bf_pi);  // pi/2
+    if (cmp_bf(n, g_bf_tmp1.data()) > 0) // if n > pi/2
     {
-        copy_bf(g_bf_tmp2, g_bf_pi);
-        unsafe_sub_bf(n, g_bf_tmp2, n);
+        copy_bf(g_bf_tmp2.data(), g_bf_pi);
+        unsafe_sub_bf(n, g_bf_tmp2.data(), n);
         sign_cos = !sign_cos;
     }
     // 0 <= n < pi/2
 
     bool switch_sin_cos = false;
-    half_bf(g_bf_tmp1, g_bf_pi);                // pi/2
-    halve(g_bf_tmp1);                           // pi/4
-    if (cmp_bf(n, g_bf_tmp1) > 0)               // if n > pi/4
+    half_bf(g_bf_tmp1.data(), g_bf_pi);                       // pi/2
+    halve(g_bf_tmp1.data());                                  // pi/4
+    if (cmp_bf(n, g_bf_tmp1.data()) > 0)                      // if n > pi/4
     {
-        copy_bf(g_bf_tmp2, n);
-        half_bf(g_bf_tmp1, g_bf_pi);            // pi/2
-        unsafe_sub_bf(n, g_bf_tmp1, g_bf_tmp2); // pi/2 - n
+        copy_bf(g_bf_tmp2.data(), n);
+        half_bf(g_bf_tmp1.data(), g_bf_pi);                   // pi/2
+        unsafe_sub_bf(n, g_bf_tmp1.data(), g_bf_tmp2.data()); // pi/2 - n
         switch_sin_cos = !switch_sin_cos;
     }
     // 0 <= n < pi/4
@@ -600,16 +601,16 @@ BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
     // use Taylor Series (very slow convergence)
     copy_bf(s, n);         // start with s=n
     int_to_bf(c, 1);       // start with c=1
-    copy_bf(g_bf_tmp1, n); // the current x^n/n!
+    copy_bf(g_bf_tmp1.data(), n); // the current x^n/n!
     bool sin_done = false;
     bool cos_done = false;
     bool k = false;
     do
     {
         // even terms for cosine
-        copy_bf(g_bf_tmp2, g_bf_tmp1);
-        unsafe_mult_bf(g_bf_tmp1, g_bf_tmp2, n);
-        div_a_bf_int(g_bf_tmp1, fact++);
+        copy_bf(g_bf_tmp2.data(), g_bf_tmp1.data());
+        unsafe_mult_bf(g_bf_tmp1.data(), g_bf_tmp2.data(), n);
+        div_a_bf_int(g_bf_tmp1.data(), fact++);
         if (!cos_done)
         {
             cos_done = BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(c_exp) - (g_bf_length - 2); // too small to register
@@ -617,19 +618,19 @@ BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
             {
                 if (k) // alternate between adding and subtracting
                 {
-                    unsafe_add_a_bf(c, g_bf_tmp1);
+                    unsafe_add_a_bf(c, g_bf_tmp1.data());
                 }
                 else
                 {
-                    unsafe_sub_a_bf(c, g_bf_tmp1);
+                    unsafe_sub_a_bf(c, g_bf_tmp1.data());
                 }
             }
         }
 
         // odd terms for sine
-        copy_bf(g_bf_tmp2, g_bf_tmp1);
-        unsafe_mult_bf(g_bf_tmp1, g_bf_tmp2, n);
-        div_a_bf_int(g_bf_tmp1, fact++);
+        copy_bf(g_bf_tmp2.data(), g_bf_tmp1.data());
+        unsafe_mult_bf(g_bf_tmp1.data(), g_bf_tmp2.data(), n);
+        div_a_bf_int(g_bf_tmp1.data(), fact++);
         if (!sin_done)
         {
             sin_done = BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(s_exp) - (g_bf_length - 2); // too small to register
@@ -637,11 +638,11 @@ BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
             {
                 if (k) // alternate between adding and subtracting
                 {
-                    unsafe_add_a_bf(s, g_bf_tmp1);
+                    unsafe_add_a_bf(s, g_bf_tmp1.data());
                 }
                 else
                 {
-                    unsafe_sub_a_bf(s, g_bf_tmp1);
+                    unsafe_sub_a_bf(s, g_bf_tmp1.data());
                 }
             }
         }
@@ -655,19 +656,19 @@ BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
     // now need to undo what was done by cutting angles in half
     for (int i = 0; i < halves; i++)
     {
-        unsafe_mult_bf(g_bf_tmp2, s, c); // no need for safe mult
-        double_bf(s, g_bf_tmp2);         // sin(2x) = 2*sin(x)*cos(x)
-        square_value(g_bf_tmp2, c);
-        double_a_bf(g_bf_tmp2);
-        int_to_bf(g_bf_tmp1, 1);
-        unsafe_sub_bf(c, g_bf_tmp2, g_bf_tmp1); // cos(2x) = 2*cos(x)*cos(x) - 1
+        unsafe_mult_bf(g_bf_tmp2.data(), s, c); // no need for safe mult
+        double_bf(s, g_bf_tmp2.data());         // sin(2x) = 2*sin(x)*cos(x)
+        square_value(g_bf_tmp2.data(), c);
+        double_a_bf(g_bf_tmp2.data());
+        int_to_bf(g_bf_tmp1.data(), 1);
+        unsafe_sub_bf(c, g_bf_tmp2.data(), g_bf_tmp1.data()); // cos(2x) = 2*cos(x)*cos(x) - 1
     }
 
     if (switch_sin_cos)
     {
-        copy_bf(g_bf_tmp1, s);
+        copy_bf(g_bf_tmp1.data(), s);
         copy_bf(s, c);
-        copy_bf(c, g_bf_tmp1);
+        copy_bf(c, g_bf_tmp1.data());
     }
     if (sign_sin)
     {
@@ -703,12 +704,12 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
     const bool large_arg = f > 1.0;
     if (large_arg)
     {
-        unsafe_inv_bf(g_bf_tmp3, n);
-        copy_bf(n, g_bf_tmp3);
+        unsafe_inv_bf(g_bf_tmp3.data(), n);
+        copy_bf(n, g_bf_tmp3.data());
         f = bf_to_float(n);
     }
 
-    clear_bf(g_bf_tmp3); // not really necessary, but makes things more consistent
+    clear_bf(g_bf_tmp3.data()); // not really necessary, but makes things more consistent
 
     // With Newton's Method, there is no need to calculate all the digits
     // every time.  The precision approximately doubles each iteration.
@@ -722,7 +723,8 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
     BigFloatPtr orig_bf_pi = g_bf_pi;
     BigFloatPtr orig_r = r;
     BigFloatPtr orig_n = n;
-    BigFloatPtr orig_bf_tmp3 = g_bf_tmp3;
+    BigFloatPtr orig_bf_tmp3 = g_bf_tmp3.data();
+    BigFloatPtr bf_tmp3 = orig_bf_tmp3;
 
     // calculate new starting values
     g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
@@ -732,13 +734,13 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
     // adjust pointers
     r = orig_r + orig_bf_length - g_bf_length;
     g_bf_pi = orig_bf_pi + orig_bf_length - g_bf_length;
-    g_bf_tmp3 = orig_bf_tmp3 + orig_bf_length - g_bf_length;
+    bf_tmp3 = orig_bf_tmp3 + orig_bf_length - g_bf_length;
 
     f = atanl(f); // approximate arctangent
     // no need to check overflow
 
     float_to_bf(r, f);           // start with approximate atan
-    copy_bf(g_bf_tmp3, r);
+    copy_bf(bf_tmp3, r);
 
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
@@ -749,19 +751,19 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
         r = orig_r + orig_bf_length - g_bf_length;
         n = orig_n + orig_bf_length - g_bf_length;
         g_bf_pi = orig_bf_pi + orig_bf_length - g_bf_length;
-        g_bf_tmp3 = orig_bf_tmp3 + orig_bf_length - g_bf_length;
+        bf_tmp3 = orig_bf_tmp3 + orig_bf_length - g_bf_length;
 
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
         std::printf("\natan() loop #%i, g_bf_length=%i\nsincos() loops\n", i, g_bf_length);
 #endif
-        sine_cosine(g_bf_tmp4, g_bf_tmp5, g_bf_tmp3);    // sin(r), cos(r)
-        copy_bf(g_bf_tmp3, r);                           // restore g_bf_tmp3 from sincos_bf()
-        copy_bf(g_bf_tmp1, g_bf_tmp5);
-        unsafe_mult_bf(g_bf_tmp2, n, g_bf_tmp1);         // n*cos(r)
-        unsafe_sub_a_bf(g_bf_tmp4, g_bf_tmp2);           // sin(r) - n*cos(r)
-        unsafe_mult_bf(g_bf_tmp1, g_bf_tmp5, g_bf_tmp4); // cos(r) * (sin(r) - n*cos(r))
-        copy_bf(g_bf_tmp3, r);
-        unsafe_sub_a_bf(r, g_bf_tmp1);                   // r - cos(r) * (sin(r) - n*cos(r))
+        sine_cosine(g_bf_tmp4.data(), g_bf_tmp5.data(), bf_tmp3);             // sin(r), cos(r)
+        copy_bf(bf_tmp3, r);                                                  // restore bf_tmp3 from sincos_bf()
+        copy_bf(g_bf_tmp1.data(), g_bf_tmp5.data());
+        unsafe_mult_bf(g_bf_tmp2.data(), n, g_bf_tmp1.data());                // n*cos(r)
+        unsafe_sub_a_bf(g_bf_tmp4.data(), g_bf_tmp2.data());                  // sin(r) - n*cos(r)
+        unsafe_mult_bf(g_bf_tmp1.data(), g_bf_tmp5.data(), g_bf_tmp4.data()); // cos(r) * (sin(r) - n*cos(r))
+        copy_bf(bf_tmp3, r);
+        unsafe_sub_a_bf(r, g_bf_tmp1.data());                                 // r - cos(r) * (sin(r) - n*cos(r))
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
         putchar('\n');
         {
@@ -772,7 +774,7 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
 #endif
         if (g_bf_length == orig_bf_length)
         {
-            const int comp = std::abs(cmp_bf(r, g_bf_tmp3));
+            const int comp = std::abs(cmp_bf(r, bf_tmp3));
             if (comp < 8) // if match or almost match
             {
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
@@ -794,7 +796,7 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
 #endif
         }
 
-        copy_bf(g_bf_tmp3, r); // make a copy for later comparison
+        copy_bf(bf_tmp3, r); // make a copy for later comparison
     }
 
     // restore original values
@@ -806,13 +808,13 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
     g_r_bf_length = orig_r_bf_length;
     g_bf_pi = orig_bf_pi;
     r = orig_r;
-    g_bf_tmp3 = orig_bf_tmp3;
+    bf_tmp3 = orig_bf_tmp3;
 
     if (large_arg)
     {
-        half_bf(g_bf_tmp3, g_bf_pi); // pi/2
-        sub_a_bf(g_bf_tmp3, r);      // pi/2 - atan(1/n)
-        copy_bf(r, g_bf_tmp3);
+        half_bf(bf_tmp3, g_bf_pi); // pi/2
+        sub_a_bf(bf_tmp3, r);      // pi/2 - atan(1/n)
+        copy_bf(r, bf_tmp3);
     }
 
     if (sign_flag)
@@ -858,8 +860,8 @@ BigFloatPtr arctangent2(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
     {
         neg_a_bf(nx);
     }
-    unsafe_div_bf(g_bf_tmp6, ny, nx);
-    arctangent(r, g_bf_tmp6);
+    unsafe_div_bf(g_bf_tmp6.data(), ny, nx);
+    arctangent(r, g_bf_tmp6.data());
     if (sign_x < 0)
     {
         sub_bf(r, g_bf_pi, r);
@@ -874,16 +876,16 @@ BigFloatPtr arctangent2(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
 BigFloatPtr binary_operation(BigFloatPtr result, BigFloatConstPtr left, BigFloatConstPtr right,
     BigFloatPtr (*operation)(BigFloatPtr, BigFloatPtr, BigFloatPtr))
 {
-    copy_bf(g_bf_tmp_copy1, left);
-    copy_bf(g_bf_tmp_copy2, right);
-    return operation(result, g_bf_tmp_copy1, g_bf_tmp_copy2);
+    copy_bf(g_bf_tmp_copy1.data(), left);
+    copy_bf(g_bf_tmp_copy2.data(), right);
+    return operation(result, g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data());
 }
 
 BigFloatPtr compound_operation(
     BigFloatPtr result, BigFloatConstPtr right, BigFloatPtr (*operation)(BigFloatPtr, BigFloatPtr))
 {
-    copy_bf(g_bf_tmp_copy1, right);
-    return operation(result, g_bf_tmp_copy1);
+    copy_bf(g_bf_tmp_copy1.data(), right);
+    return operation(result, g_bf_tmp_copy1.data());
 }
 
 void validate_scalar(const LDouble value)
@@ -1107,8 +1109,8 @@ BigFloat BigFloat::abs() const
 BigFloat BigFloat::sqr() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING).allocate_double()};
-    copy_bf(g_bf_tmp_copy1, m_storage.data());
-    square_wide(result.m_storage.data(), g_bf_tmp_copy1);
+    copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
+    square_wide(result.m_storage.data(), g_bf_tmp_copy1.data());
     result.m_storage.reduce();
     return result;
 }
@@ -1123,8 +1125,8 @@ BigFloat BigFloat::half() const
 BigFloat BigFloat::log() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    copy_bf(g_bf_tmp_copy1, m_storage.data());
-    logarithm(result.m_storage.data(), g_bf_tmp_copy1);
+    copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
+    logarithm(result.m_storage.data(), g_bf_tmp_copy1.data());
     return result;
 }
 
@@ -1139,8 +1141,8 @@ std::pair<BigFloat, BigFloat> BigFloat::sin_cos() const
 {
     std::pair<BigFloat, BigFloat> result{
         BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
-    copy_bf(g_bf_tmp_copy1, m_storage.data());
-    sine_cosine(result.first.m_storage.data(), result.second.m_storage.data(), g_bf_tmp_copy1);
+    copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
+    sine_cosine(result.first.m_storage.data(), result.second.m_storage.data(), g_bf_tmp_copy1.data());
     return result;
 }
 
@@ -1213,8 +1215,8 @@ bool BigFloat::operator>=(const BigFloat &right) const
 
 LDouble BigFloat::to_float() const
 {
-    copy_bf(g_bf_tmp_copy1, m_storage.data());
-    return bf_to_float(g_bf_tmp_copy1);
+    copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
+    return bf_to_float(g_bf_tmp_copy1.data());
 }
 
 std::string BigFloat::to_string(const int digits) const

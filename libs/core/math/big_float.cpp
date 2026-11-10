@@ -128,8 +128,8 @@ BigFloatPtr str_to_bf(BigFloatPtr r, std::string_view s)
         while (l > 0 && is_digit(s[l - 1]))          // while a digit
         {
             ones_byte = static_cast<Byte>(s[--l] - '0');
-            int_to_bf(g_bf_tmp1, ones_byte);
-            unsafe_add_a_bf(r, g_bf_tmp1);
+            int_to_bf(g_bf_tmp1.data(), ones_byte);
+            unsafe_add_a_bf(r, g_bf_tmp1.data());
             div_a_bf_int(r, 10);
         }
 
@@ -140,8 +140,8 @@ BigFloatPtr str_to_bf(BigFloatPtr r, std::string_view s)
             while (keep_looping) // while a digit
             {
                 ones_byte = static_cast<Byte>(s[--l] - '0');
-                int_to_bf(g_bf_tmp1, ones_byte);
-                unsafe_add_a_bf(r, g_bf_tmp1);
+                int_to_bf(g_bf_tmp1.data(), ones_byte);
+                unsafe_add_a_bf(r, g_bf_tmp1.data());
                 keep_looping = l > 0 && is_digit(s[l - 1]);
                 if (keep_looping)
                 {
@@ -157,8 +157,8 @@ BigFloatPtr str_to_bf(BigFloatPtr r, std::string_view s)
         while (keep_looping) // while a digit
         {
             ones_byte = static_cast<Byte>(s[--l] - '0');
-            int_to_bf(g_bf_tmp1, ones_byte);
-            unsafe_add_a_bf(r, g_bf_tmp1);
+            int_to_bf(g_bf_tmp1.data(), ones_byte);
+            unsafe_add_a_bf(r, g_bf_tmp1.data());
             keep_looping = l > 0 && is_digit(s[l - 1]);
             if (keep_looping)
             {
@@ -404,19 +404,19 @@ BigFloatPtr unsafe_inv_bf(BigFloatPtr r, BigFloatPtr n)
         n = orig_n + orig_bf_length - g_bf_length;
         // g_bf_tmp1 = orig_bftmp1 + orig_bf_length - g_bf_length;
 
-        unsafe_mult_bf(g_bf_tmp1, r, n); // g_bf_tmp1=rn
-        int_to_bf(g_bf_tmp2, 1); // will be used as 1.0
+        unsafe_mult_bf(g_bf_tmp1.data(), r, n); // g_bf_tmp1=rn
+        int_to_bf(g_bf_tmp2.data(), 1);         // will be used as 1.0
 
         // There seems to very little difficulty getting g_bf_tmp1 to be EXACTLY 1
-        if (g_bf_length == orig_bf_length && cmp_bf(g_bf_tmp1, g_bf_tmp2) == 0)
+        if (g_bf_length == orig_bf_length && cmp_bf(g_bf_tmp1.data(), g_bf_tmp2.data()) == 0)
         {
             break;
         }
 
-        int_to_bf(g_bf_tmp2, 2); // will be used as 2.0
-        unsafe_sub_a_bf(g_bf_tmp2, g_bf_tmp1); // g_bf_tmp2=2-rn
-        unsafe_mult_bf(g_bf_tmp1, r, g_bf_tmp2); // g_bf_tmp1=r(2-rn)
-        copy_bf(r, g_bf_tmp1); // r = g_bf_tmp1
+        int_to_bf(g_bf_tmp2.data(), 2);                        // will be used as 2.0
+        unsafe_sub_a_bf(g_bf_tmp2.data(), g_bf_tmp1.data());   // g_bf_tmp2=2-rn
+        unsafe_mult_bf(g_bf_tmp1.data(), r, g_bf_tmp2.data()); // g_bf_tmp1=r(2-rn)
+        copy_bf(r, g_bf_tmp1.data());                          // r = g_bf_tmp1
     }
 
     // restore original values
@@ -454,61 +454,61 @@ BigFloatPtr unsafe_inv_bf(BigFloatPtr r, BigFloatPtr n)
 /**********************************************************************/
 BigFloatPtr square_bf(BigFloatPtr r, BigFloatPtr n)
 {
-    copy_bf(g_bf_tmp_copy1, n);
-    unsafe_square_bf(r, g_bf_tmp_copy1);
+    copy_bf(g_bf_tmp_copy1.data(), n);
+    unsafe_square_bf(r, g_bf_tmp_copy1.data());
     return r;
 }
 
 /**********************************************************************/
 BigFloatPtr mult_bf_int(BigFloatPtr r, BigFloatConstPtr n, const U16 u)
 {
-    copy_bf(g_bf_tmp_copy1, n);
-    unsafe_mult_bf_int(r, g_bf_tmp_copy1, u);
+    copy_bf(g_bf_tmp_copy1.data(), n);
+    unsafe_mult_bf_int(r, g_bf_tmp_copy1.data(), u);
     return r;
 }
 
 /**********************************************************************/
 std::string bf_to_string(BigFloatConstPtr r, const int dec)
 {
-    copy_bf(g_bf_tmp_copy1, r);
-    return unsafe_bf_to_string(g_bf_tmp_copy1, dec);
+    copy_bf(g_bf_tmp_copy1.data(), r);
+    return unsafe_bf_to_string(g_bf_tmp_copy1.data(), dec);
 }
 
 /**********************************************************************/
 std::string bf_to_string_e(BigFloatConstPtr r, const int dec)
 {
-    copy_bf(g_bf_tmp_copy1, r);
-    return unsafe_bf_to_string_e(g_bf_tmp_copy1, dec);
+    copy_bf(g_bf_tmp_copy1.data(), r);
+    return unsafe_bf_to_string_e(g_bf_tmp_copy1.data(), dec);
 }
 
 /**********************************************************************/
 std::string bf_to_string_f(BigFloatConstPtr r, const int dec)
 {
-    copy_bf(g_bf_tmp_copy1, r);
-    return unsafe_bf_to_string_f(g_bf_tmp_copy1, dec);
+    copy_bf(g_bf_tmp_copy1.data(), r);
+    return unsafe_bf_to_string_f(g_bf_tmp_copy1.data(), dec);
 }
 
 /**********************************************************************/
 BigFloatPtr ln_bf(BigFloatPtr r, BigFloatPtr n)
 {
-    copy_bf(g_bf_tmp_copy1, n);
-    unsafe_ln_bf(r, g_bf_tmp_copy1);
+    copy_bf(g_bf_tmp_copy1.data(), n);
+    unsafe_ln_bf(r, g_bf_tmp_copy1.data());
     return r;
 }
 
 /**********************************************************************/
 BigFloatPtr sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
 {
-    copy_bf(g_bf_tmp_copy1, n);
-    return unsafe_sin_cos_bf(s, c, g_bf_tmp_copy1);
+    copy_bf(g_bf_tmp_copy1.data(), n);
+    return unsafe_sin_cos_bf(s, c, g_bf_tmp_copy1.data());
 }
 
 /**********************************************************************/
 BigFloatPtr atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
 {
-    copy_bf(g_bf_tmp_copy1, ny);
-    copy_bf(g_bf_tmp_copy2, nx);
-    unsafe_atan2_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
+    copy_bf(g_bf_tmp_copy1.data(), ny);
+    copy_bf(g_bf_tmp_copy2.data(), nx);
+    unsafe_atan2_bf(r, g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data());
     return r;
 }
 

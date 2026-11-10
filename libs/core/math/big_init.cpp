@@ -76,14 +76,14 @@ BNComplex g_param_z_bn{};
 BNComplex g_saved_z_bn{};
 BNComplex g_new_z_bn{};
 // g_r_bf_length+2
-BigFloatPtr g_bf_tmp1{};
-BigFloatPtr g_bf_tmp2{};
-BigFloatPtr g_bf_tmp3{};
-BigFloatPtr g_bf_tmp4{};
-BigFloatPtr g_bf_tmp5{};
-BigFloatPtr g_bf_tmp6{};
-BigFloatPtr g_bf_tmp_copy1{};
-BigFloatPtr g_bf_tmp_copy2{};
+BigFloat g_bf_tmp1{};
+BigFloat g_bf_tmp2{};
+BigFloat g_bf_tmp3{};
+BigFloat g_bf_tmp4{};
+BigFloat g_bf_tmp5{};
+BigFloat g_bf_tmp6{};
+BigArena::Allocation g_bf_tmp_copy1{};
+BigArena::Allocation g_bf_tmp_copy2{};
 BigFloat g_delta_x_bf{};
 BigFloat g_delta_y_bf{};
 BigFloat g_delta2_x_bf{};
@@ -306,56 +306,36 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
     m_bf_length(bf_length),
     m_int_length(int_length)
 {
+    const auto init_big_num = [this](BigNum &target)
     {
         BigNum value{big_num.working};
-        std::destroy_at(&g_bn_tmp1);
-        ::new (&g_bn_tmp1) BigNum{std::move(value)};
-    }
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_bn_tmp2);
-        ::new (&g_bn_tmp2) BigNum{std::move(value)};
-    }
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_bn_tmp3);
-        ::new (&g_bn_tmp3) BigNum{std::move(value)};
-    }
+        std::destroy_at(&target);
+        ::new (&target) BigNum{std::move(value)};
+    };
+    init_big_num(g_bn_tmp1);
+    init_big_num(g_bn_tmp2);
+    init_big_num(g_bn_tmp3);
     g_bn_tmp_copy1 = big_num.working.allocate_double();
     g_bn_tmp_copy2 = big_num.working.allocate_double();
+    init_big_num(g_old_z_bn.x);
+    init_big_num(g_old_z_bn.y);
+    init_big_num(g_tmp_sqr_x_bn);
+    init_big_num(g_tmp_sqr_y_bn);
+    init_big_num(g_bn_tmp);
+    const auto init_big_float = [this](BigFloat &target)
     {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_old_z_bn.x);
-        ::new (&g_old_z_bn.x) BigNum{std::move(value)};
-    }
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_old_z_bn.y);
-        ::new (&g_old_z_bn.y) BigNum{std::move(value)};
-    }
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_tmp_sqr_x_bn);
-        ::new (&g_tmp_sqr_x_bn) BigNum{std::move(value)};
-    }
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_tmp_sqr_y_bn);
-        ::new (&g_tmp_sqr_y_bn) BigNum{std::move(value)};
-    }
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_bn_tmp);
-        ::new (&g_bn_tmp) BigNum{std::move(value)};
-    }
-    big_float.single(g_bf_tmp1);
-    big_float.single(g_bf_tmp2);
-    big_float.single(g_bf_tmp3);
-    big_float.single(g_bf_tmp4);
-    big_float.single(g_bf_tmp5);
-    big_float.single(g_bf_tmp6);
-    big_float.wide(g_bf_tmp_copy1);
-    big_float.wide(g_bf_tmp_copy2);
+        BigFloat value{big_float.working};
+        std::destroy_at(&target);
+        ::new (&target) BigFloat{std::move(value)};
+    };
+    init_big_float(g_bf_tmp1);
+    init_big_float(g_bf_tmp2);
+    init_big_float(g_bf_tmp3);
+    init_big_float(g_bf_tmp4);
+    init_big_float(g_bf_tmp5);
+    init_big_float(g_bf_tmp6);
+    g_bf_tmp_copy1 = big_float.working.allocate_double();
+    g_bf_tmp_copy2 = big_float.working.allocate_double();
     big_float.single(g_big_pi);
 }
 
@@ -405,7 +385,12 @@ void MathArenas::change_precision(const int bn_length, const int bf_length, cons
             [&](Byte *destination, const Byte *source, std::size_t blocks)
             {
                 std::memset(destination, 0, blocks * bf_stride);
-                if (!big_float.is_workspace(source))
+                const bool mixed_workspace = (g_bf_tmp1 && source == g_bf_tmp1.data()) ||
+                    (g_bf_tmp2 && source == g_bf_tmp2.data()) || (g_bf_tmp3 && source == g_bf_tmp3.data()) ||
+                    (g_bf_tmp4 && source == g_bf_tmp4.data()) || (g_bf_tmp5 && source == g_bf_tmp5.data()) ||
+                    (g_bf_tmp6 && source == g_bf_tmp6.data()) || (g_bf_tmp_copy1 && source == g_bf_tmp_copy1.data()) ||
+                    (g_bf_tmp_copy2 && source == g_bf_tmp_copy2.data());
+                if (!mixed_workspace && !big_float.is_workspace(source))
                 {
                     convert_bf(destination, source, bf_length, m_bf_length);
                 }
@@ -425,72 +410,34 @@ void MathArenas::bind(const bool preserve_parameters)
     big_num.stack.restore(0);
     big_float.stack.restore(0);
     big_num.bind_working();
-    if (!g_bn_tmp1)
+    const auto init_big_num = [this](BigNum &target)
     {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_bn_tmp1);
-        ::new (&g_bn_tmp1) BigNum{std::move(value)};
-    }
-    std::memset(g_bn_tmp1.data(), 0, big_num.working.block_size());
-    if (!g_bn_tmp2)
+        if (!target)
+        {
+            BigNum value{big_num.working};
+            std::destroy_at(&target);
+            ::new (&target) BigNum{std::move(value)};
+        }
+        std::memset(target.data(), 0, big_num.working.block_size());
+    };
+    init_big_num(g_bn_tmp1);
+    init_big_num(g_bn_tmp2);
+    init_big_num(g_bn_tmp3);
+    const auto init_big_num_copy = [this](BigArena::Allocation &target)
     {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_bn_tmp2);
-        ::new (&g_bn_tmp2) BigNum{std::move(value)};
-    }
-    std::memset(g_bn_tmp2.data(), 0, big_num.working.block_size());
-    if (!g_bn_tmp3)
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_bn_tmp3);
-        ::new (&g_bn_tmp3) BigNum{std::move(value)};
-    }
-    std::memset(g_bn_tmp3.data(), 0, big_num.working.block_size());
-    if (!g_bn_tmp_copy1)
-    {
-        g_bn_tmp_copy1 = big_num.working.allocate_double();
-    }
-    std::memset(g_bn_tmp_copy1.data(), 0, 2 * big_num.working.block_size());
-    if (!g_bn_tmp_copy2)
-    {
-        g_bn_tmp_copy2 = big_num.working.allocate_double();
-    }
-    std::memset(g_bn_tmp_copy2.data(), 0, 2 * big_num.working.block_size());
-    if (!g_old_z_bn.x)
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_old_z_bn.x);
-        ::new (&g_old_z_bn.x) BigNum{std::move(value)};
-    }
-    std::memset(g_old_z_bn.x.data(), 0, big_num.working.block_size());
-    if (!g_old_z_bn.y)
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_old_z_bn.y);
-        ::new (&g_old_z_bn.y) BigNum{std::move(value)};
-    }
-    std::memset(g_old_z_bn.y.data(), 0, big_num.working.block_size());
-    if (!g_tmp_sqr_x_bn)
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_tmp_sqr_x_bn);
-        ::new (&g_tmp_sqr_x_bn) BigNum{std::move(value)};
-    }
-    std::memset(g_tmp_sqr_x_bn.data(), 0, big_num.working.block_size());
-    if (!g_tmp_sqr_y_bn)
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_tmp_sqr_y_bn);
-        ::new (&g_tmp_sqr_y_bn) BigNum{std::move(value)};
-    }
-    std::memset(g_tmp_sqr_y_bn.data(), 0, big_num.working.block_size());
-    if (!g_bn_tmp)
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&g_bn_tmp);
-        ::new (&g_bn_tmp) BigNum{std::move(value)};
-    }
-    std::memset(g_bn_tmp.data(), 0, big_num.working.block_size());
+        if (!target)
+        {
+            target = big_num.working.allocate_double();
+        }
+        std::memset(target.data(), 0, 2 * big_num.working.block_size());
+    };
+    init_big_num_copy(g_bn_tmp_copy1);
+    init_big_num_copy(g_bn_tmp_copy2);
+    init_big_num(g_old_z_bn.x);
+    init_big_num(g_old_z_bn.y);
+    init_big_num(g_tmp_sqr_x_bn);
+    init_big_num(g_tmp_sqr_y_bn);
+    init_big_num(g_bn_tmp);
     g_x_min_bn = 0;
     g_x_max_bn = 0;
     g_y_min_bn = 0;
@@ -509,6 +456,32 @@ void MathArenas::bind(const bool preserve_parameters)
     g_saved_z_bn.y = 0;
     g_close_enough_bn = 0;
     big_float.bind_working();
+    const auto init_big_float = [this](BigFloat &target)
+    {
+        if (!target)
+        {
+            BigFloat value{big_float.working};
+            std::destroy_at(&target);
+            ::new (&target) BigFloat{std::move(value)};
+        }
+        std::memset(target.data(), 0, big_float.working.block_size());
+    };
+    init_big_float(g_bf_tmp1);
+    init_big_float(g_bf_tmp2);
+    init_big_float(g_bf_tmp3);
+    init_big_float(g_bf_tmp4);
+    init_big_float(g_bf_tmp5);
+    init_big_float(g_bf_tmp6);
+    const auto init_big_float_copy = [this](BigArena::Allocation &target)
+    {
+        if (!target)
+        {
+            target = big_float.working.allocate_double();
+        }
+        std::memset(target.data(), 0, 2 * big_float.working.block_size());
+    };
+    init_big_float_copy(g_bf_tmp_copy1);
+    init_big_float_copy(g_bf_tmp_copy2);
     g_delta_x_bf = 0;
     g_delta_y_bf = 0;
     g_delta2_x_bf = 0;
@@ -567,6 +540,14 @@ void MathArenas::unbind()
     g_saved_z_bn = {};
     g_close_enough_bn = BigNum{};
     big_float.unbind_working();
+    g_bf_tmp1 = BigFloat{};
+    g_bf_tmp2 = BigFloat{};
+    g_bf_tmp3 = BigFloat{};
+    g_bf_tmp4 = BigFloat{};
+    g_bf_tmp5 = BigFloat{};
+    g_bf_tmp6 = BigFloat{};
+    g_bf_tmp_copy1.reset();
+    g_bf_tmp_copy2.reset();
     g_delta_x_bf = BigFloat{};
     g_delta_y_bf = BigFloat{};
     g_delta2_x_bf = BigFloat{};
