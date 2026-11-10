@@ -14,7 +14,10 @@
 
 #include <gtest/gtest.h>
 
+#include <array>
 #include <ostream>
+#include <string>
+#include <tuple>
 #include <vector>
 
 using namespace id::engine;
@@ -68,7 +71,7 @@ INSTANTIATE_TEST_SUITE_P(BoundsAdjustment, TestZoomResume,
         ResumeCase{true, 1.0, CalcStatus::NON_RESUMABLE, CalcStatus::NON_RESUMABLE},
         ResumeCase{true, 1.0, CalcStatus::COMPLETED, CalcStatus::COMPLETED}));
 
-class TestBigFloatZoom : public TestWithParam<int>
+class TestBigFloatZoomBase : public Test
 {
 protected:
     void SetUp() override
@@ -78,7 +81,7 @@ protected:
         g_zoom_box_width = 0.5;
         g_zoom_box_x = 0.25;
         g_zoom_box_y = 0.25;
-        g_zoom_box_rotation = GetParam();
+        g_zoom_box_rotation = 0;
         g_zoom_box_skew = 0.125;
         g_viewport.final_aspect_ratio = 0.75f;
         const BigFloatPtr corners[]{g_bf_save_x_min.data(), g_bf_save_x_max.data(), g_bf_save_y_min.data(),
@@ -135,6 +138,44 @@ protected:
     ValueSaver<double> m_saved_skew{g_zoom_box_skew};
 };
 
+TEST_F(TestBigFloatZoomBase, unrotatedBoxPreservesExactCornerBytes)
+{
+    const auto original = saved_corners();
+    const auto stack = save_stack();
+
+    draw_box(false);
+
+    const std::array<const BigFloat *, 6> corners{
+        &g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd};
+    const std::array<const char *, 6> texts{"-0.765625", "0.765625", "-0.734375", "0.734375", "-1.109375", "-0.609375"};
+    for (std::size_t i = 0; i < corners.size(); ++i)
+    {
+        SCOPED_TRACE(i);
+        const BigFloat expected{texts[i]};
+        EXPECT_EQ(std::vector<Byte>(expected.data(), expected.data() + g_bf_length + 2),
+            std::vector<Byte>(corners[i]->data(), corners[i]->data() + g_bf_length + 2));
+    }
+    EXPECT_EQ(original, saved_corners());
+    EXPECT_EQ(stack, save_stack());
+}
+
+class TestBigFloatZoom : public TestBigFloatZoomBase, public WithParamInterface<std::tuple<int, int, bool>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigFloatZoom::SetUp()
+{
+    TestBigFloatZoomBase::SetUp();
+    init_bf_dec(std::get<0>(GetParam()));
+    g_zoom_box_rotation = std::get<1>(GetParam());
+    if (std::get<2>(GetParam()))
+    {
+        init_bf_dec(std::get<0>(GetParam()) + 40);
+    }
+}
+
 TEST_P(TestBigFloatZoom, preservesZoomCoordinatesSavedBytesAndStackLifetime)
 {
     const auto original{saved_corners()};
@@ -145,6 +186,14 @@ TEST_P(TestBigFloatZoom, preservesZoomCoordinatesSavedBytesAndStackLifetime)
 
     expect_current_region(g_image_region);
     EXPECT_EQ(original, saved_corners());
+    EXPECT_EQ(stack, save_stack());
+    const auto first_draw = pack_bf_parameters();
+    const auto high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
+
+    draw_box(false);
+
+    EXPECT_EQ(first_draw, pack_bf_parameters());
+    EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
     EXPECT_EQ(stack, save_stack());
     const ImageRegion zoomed{g_image_region};
     g_bf_math = BFMathType::NONE;
@@ -164,6 +213,15 @@ TEST_P(TestBigFloatZoom, preservesZoomCoordinatesSavedBytesAndStackLifetime)
     EXPECT_EQ(original, saved_corners());
 }
 
-INSTANTIATE_TEST_SUITE_P(Rotations, TestBigFloatZoom, Values(0, 9, -7));
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatZoom, Combine(Values(20, 80, 200), Values(0, 9, -7), Bool()),
+    [](const TestParamInfo<std::tuple<int, int, bool>> &info)
+    {
+        const int digits = std::get<0>(info.param);
+        const int rotation = std::get<1>(info.param);
+        const bool grow = std::get<2>(info.param);
+        return "Digits" + std::to_string(digits) + "Rotation" +
+            (rotation < 0 ? "Negative" + std::to_string(-rotation) : std::to_string(rotation)) +
+            (grow ? "Relocated" : "Fixed");
+    });
 
 } // namespace id::test
