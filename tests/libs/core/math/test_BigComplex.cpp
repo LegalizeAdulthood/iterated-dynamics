@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include <ostream>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
@@ -43,6 +44,11 @@ void PrintTo(const Complex<T> &value, std::ostream *out)
     *out << '(' << value.x.to_string(g_bf_decimals) << ", " << value.y.to_string(g_bf_decimals) << ')';
 }
 
+void PrintTo(const DComplex &value, std::ostream *out)
+{
+    *out << '(' << value.x << ", " << value.y << ')';
+}
+
 } // namespace id::math
 
 namespace id::test
@@ -53,12 +59,6 @@ namespace
 static_assert(std::is_same_v<BFConstPtrComplex, Complex<BigFloatConstPtr>>);
 static_assert(!std::is_convertible_v<BFPtrComplex, BFComplex>);
 static_assert(!std::is_convertible_v<BNPtrComplex, BNComplex>);
-
-BFComplex owned(const BFPtrComplex &value)
-{
-    const auto size = static_cast<std::size_t>(g_bf_length + 2);
-    return {BigFloat::from_legacy(value.x, size), BigFloat::from_legacy(value.y, size)};
-}
 
 template <typename T>
 void check_owning_arithmetic()
@@ -94,14 +94,14 @@ void check_owning_arithmetic()
 
 } // namespace
 
-class TestBigComplex : public testing::TestWithParam<int>
+class TestBigComplexBase : public testing::Test
 {
 protected:
-    TestBigComplex();
-    void SetUp() override;
+    TestBigComplexBase();
+    void initialize_precision(int precision);
     void TearDown() override;
-    BFPtrComplex legacy(LDouble real, LDouble imag);
-    void expect_value(const BFPtrComplex &value, double real, double imag);
+    BFComplex value(LDouble real, LDouble imag);
+    void expect_value(const BFComplex &value, double real, double imag);
     void expect_precision(const BigFloat &expected, const BigFloat &actual);
     void expect_precision(const BFComplex &expected, const BFComplex &actual);
 
@@ -112,7 +112,7 @@ protected:
     ValueSaver<bool> m_saved_overflow;
 };
 
-TestBigComplex::TestBigComplex() :
+TestBigComplexBase::TestBigComplexBase() :
     m_saved_bailout_value(g_user.bailout_value, 0),
     m_saved_bailout_test(g_bailout_test, Bailout::MOD),
     m_saved_bf_digits(g_bf_digits, 0),
@@ -121,135 +121,208 @@ TestBigComplex::TestBigComplex() :
 {
 }
 
-void TestBigComplex::SetUp()
+void TestBigComplexBase::initialize_precision(const int precision)
 {
-    init_bf_dec(GetParam());
+    init_bf_dec(precision);
     init_big_pi();
 }
 
-void TestBigComplex::TearDown()
+void TestBigComplexBase::TearDown()
 {
     free_bf_vars();
 }
 
-BFPtrComplex TestBigComplex::legacy(const LDouble real, const LDouble imag)
+BFComplex TestBigComplexBase::value(const LDouble real, const LDouble imag)
 {
-    BFPtrComplex result{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    float_to_bf(result.x, real);
-    float_to_bf(result.y, imag);
+    BFComplex result{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    result.x = real;
+    result.y = imag;
     return result;
 }
 
-void TestBigComplex::expect_value(const BFPtrComplex &value, const double real, const double imag)
+void TestBigComplexBase::expect_value(const BFComplex &value, const double real, const double imag)
 {
     const DComplex actual = cmplx_bf_to_float(value);
     EXPECT_NEAR(real, actual.x, 1e-14);
     EXPECT_NEAR(imag, actual.y, 1e-14);
 }
 
-void TestBigComplex::expect_precision(const BigFloat &expected, const BigFloat &actual)
+void TestBigComplexBase::expect_precision(const BigFloat &expected, const BigFloat &actual)
 {
-    EXPECT_EQ(expected.to_string(GetParam()), actual.to_string(GetParam()));
+    EXPECT_EQ(expected.to_string(g_decimals), actual.to_string(g_decimals));
 }
 
-void TestBigComplex::expect_precision(const BFComplex &expected, const BFComplex &actual)
+void TestBigComplexBase::expect_precision(const BFComplex &expected, const BFComplex &actual)
 {
     expect_precision(expected.x, actual.x);
     expect_precision(expected.y, actual.y);
 }
 
-TEST_P(TestBigComplex, legacyProductAndQuotient)
+class TestBigComplex : public TestBigComplexBase, public testing::WithParamInterface<int>
 {
-    BFPtrComplex left = legacy(1.25L, -0.5L);
-    BFPtrComplex right = legacy(-0.75L, 2);
-    BFPtrComplex result = legacy(0, 0);
+protected:
+    void SetUp() override;
+};
 
-    EXPECT_EQ(&result, cmplx_mul_bf(&result, &left, &right));
+class TestBigComplexLogBranch : public TestBigComplexBase, public testing::WithParamInterface<std::tuple<int, DComplex>>
+{
+protected:
+    void SetUp() override;
+};
+
+class TestBigComplexZeroPower : public TestBigComplexBase, public testing::WithParamInterface<std::tuple<int, DComplex>>
+{
+protected:
+    void SetUp() override;
+};
+
+class TestBigComplexPower : public TestBigComplexBase, public testing::WithParamInterface<std::tuple<int, DComplex>>
+{
+protected:
+    void SetUp() override;
+};
+
+class TestBigComplexIntegerPower : public TestBigComplexBase, public testing::WithParamInterface<std::tuple<int, int>>
+{
+protected:
+    void SetUp() override;
+};
+
+enum class ComplexBinaryOperation
+{
+    MULTIPLY,
+    DIVIDE,
+    POWER
+};
+
+class TestBigComplexBinaryAlias : public TestBigComplexBase,
+                                  public testing::WithParamInterface<std::tuple<int, ComplexBinaryOperation, bool>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigComplex::SetUp()
+{
+    initialize_precision(GetParam());
+}
+
+void TestBigComplexLogBranch::SetUp()
+{
+    initialize_precision(std::get<0>(GetParam()));
+}
+
+void TestBigComplexZeroPower::SetUp()
+{
+    initialize_precision(std::get<0>(GetParam()));
+}
+
+void TestBigComplexPower::SetUp()
+{
+    initialize_precision(std::get<0>(GetParam()));
+}
+
+void TestBigComplexIntegerPower::SetUp()
+{
+    initialize_precision(std::get<0>(GetParam()));
+}
+
+void TestBigComplexBinaryAlias::SetUp()
+{
+    initialize_precision(std::get<0>(GetParam()));
+}
+
+TEST_P(TestBigComplex, productAndQuotient)
+{
+    BFComplex left = value(1.25L, -0.5L);
+    BFComplex right = value(-0.75L, 2);
+    BFComplex result = value(0, 0);
+
+    result = left * right;
     expect_value(result, 0.0625, 2.875);
-    EXPECT_EQ(&result, cmplx_div_bf(&result, &left, &right));
+    result = left / right;
     expect_value(result, -31.0 / 73.0, -34.0 / 73.0);
     EXPECT_FALSE(g_overflow);
     expect_value(left, 1.25, -0.5);
     expect_value(right, -0.75, 2);
 }
 
-TEST_P(TestBigComplex, legacyDivisionByZeroSetsOverflowAndReturnsZero)
+TEST_P(TestBigComplex, divisionByZeroSetsOverflowAndReturnsZero)
 {
-    BFPtrComplex left = legacy(1, -2);
-    BFPtrComplex zero = legacy(0, 0);
-    BFPtrComplex result = legacy(7, 9);
+    BFComplex left = value(1, -2);
+    BFComplex zero = value(0, 0);
+    BFComplex result = value(7, 9);
 
-    cmplx_div_bf(&result, &left, &zero);
+    result = left / zero;
 
     EXPECT_TRUE(g_overflow);
     expect_value(result, 0, 0);
 }
 
-TEST_P(TestBigComplex, legacyLogarithmBranches)
+TEST_P(TestBigComplexLogBranch, logarithmBranches)
 {
-    BFPtrComplex result = legacy(0, 0);
-    for (const DComplex base : {DComplex{}, DComplex{-1, 0}, DComplex{0, -1}, DComplex{-1, -1}})
-    {
-        BFPtrComplex input = legacy(base.x, base.y);
-        cmplx_log_bf(&result, &input);
-        const bool zero = base == DComplex{};
-        expect_value(result, zero ? 0 : std::log(std::hypot(base.x, base.y)), zero ? 0 : std::atan2(base.y, base.x));
-        expect_value(input, base.x, base.y);
-    }
+    BFComplex result = value(0, 0);
+    const DComplex base = std::get<1>(GetParam());
+    BFComplex input = value(base.x, base.y);
+    result = log(input);
+    const bool zero = base == DComplex{};
+    expect_value(result, zero ? 0 : std::log(std::hypot(base.x, base.y)), zero ? 0 : std::atan2(base.y, base.x));
+    expect_value(input, base.x, base.y);
 }
 
-TEST_P(TestBigComplex, legacyZeroBasePowerAlwaysReturnsZero)
+TEST_P(TestBigComplexZeroPower, zeroBasePowerAlwaysReturnsZero)
 {
-    BFPtrComplex base = legacy(0, 0);
-    BFPtrComplex result = legacy(7, 9);
-    for (const DComplex exponent : {DComplex{}, DComplex{-2, 0}, DComplex{1.25, -0.5}})
-    {
-        BFPtrComplex exp = legacy(exponent.x, exponent.y);
-        cmplx_pow_bf(&result, &base, &exp);
-        expect_value(result, 0, 0);
-    }
+    BFComplex base = value(0, 0);
+    BFComplex result = value(7, 9);
+    const DComplex exponent = std::get<1>(GetParam());
+    BFComplex exp = value(exponent.x, exponent.y);
+    result = pow(base, exp);
+    expect_value(result, 0, 0);
 }
 
-TEST_P(TestBigComplex, legacyPowerHandlesNegativeAndComplexExponents)
+TEST_P(TestBigComplexPower, powerHandlesNegativeAndComplexExponents)
 {
-    BFPtrComplex result = legacy(0, 0);
-    for (const DComplex exponent : {DComplex{}, DComplex{-2, 0}, DComplex{0.25, -0.5}})
-    {
-        BFPtrComplex base = legacy(-1, 0);
-        BFPtrComplex exp = legacy(exponent.x, exponent.y);
-        cmplx_pow_bf(&result, &base, &exp);
-        const std::complex<double> expected =
-            std::pow(std::complex<double>{-1, 0}, std::complex<double>{exponent.x, exponent.y});
-        expect_value(result, expected.real(), expected.imag());
-        expect_value(base, -1, 0);
-        expect_value(exp, exponent.x, exponent.y);
-    }
+    BFComplex result = value(0, 0);
+    const DComplex exponent = std::get<1>(GetParam());
+    BFComplex base = value(-1, 0);
+    BFComplex exp = value(exponent.x, exponent.y);
+    result = pow(base, exp);
+    const std::complex<double> expected =
+        std::pow(std::complex<double>{-1, 0}, std::complex<double>{exponent.x, exponent.y});
+    expect_value(result, expected.real(), expected.imag());
+    expect_value(base, -1, 0);
+    expect_value(exp, exponent.x, exponent.y);
 }
 
-TEST_P(TestBigComplex, legacyPowerPreservesTheExactHalfPiSineCosineQuirk)
+TEST_P(TestBigComplex, powerPreservesTheExactHalfPiSineCosineQuirk)
 {
-    BFPtrComplex base = legacy(-1, 0);
-    BFPtrComplex exponent = legacy(0.5L, 0);
-    BFPtrComplex result = legacy(0, 0);
+    BFComplex base = value(-1, 0);
+    BFComplex exponent = value(0.5L, 0);
+    BFComplex result = value(0, 0);
 
-    cmplx_pow_bf(&result, &base, &exponent);
+    result = pow(base, exponent);
 
     // Range reduction returns early before applying the quadrant change.
     expect_value(result, 1, 0);
 }
 
-TEST_P(TestBigComplex, legacyCubeAndIntegerPower)
+TEST_P(TestBigComplex, cube)
 {
-    BFPtrComplex base = legacy(0.75L, -0.5L);
-    BFPtrComplex result = legacy(0, 0);
-    cube(result, base);
+    BFComplex base = value(0.75L, -0.5L);
+    BFComplex result = value(0, 0);
+    result = cube(base);
     expect_value(result, -0.140625, -0.71875);
-    for (const int degree : {-3, 0, 1, 2, 3, 6, 13})
-    {
-        power(result, base, degree);
-        const auto expected = std::pow(std::complex<double>{0.75, -0.5}, std::max(degree, 0));
-        expect_value(result, expected.real(), expected.imag());
-    }
+    expect_value(base, 0.75, -0.5);
+}
+
+TEST_P(TestBigComplexIntegerPower, integerPower)
+{
+    BFComplex base = value(0.75L, -0.5L);
+    BFComplex result = value(0, 0);
+    const int degree = std::get<1>(GetParam());
+    result = power(base, degree);
+    const auto expected = std::pow(std::complex<double>{0.75, -0.5}, std::max(degree, 0));
+    expect_value(result, expected.real(), expected.imag());
     expect_value(base, 0.75, -0.5);
 }
 
@@ -263,74 +336,25 @@ TEST_P(TestBigComplex, owningBigNumArithmeticPreservesOperandsAndHandlesSelfAssi
     check_owning_arithmetic<BigNum>();
 }
 
-TEST_P(TestBigComplex, valueMathAgreesWithLegacyCalculations)
-{
-    BFPtrComplex left = legacy(0, 0);
-    BFPtrComplex right = legacy(0, 0);
-    str_to_bf(left.x, "-1.2345678901234567890123456789012345");
-    str_to_bf(left.y, "0.8765432109876543210987654321098765");
-    str_to_bf(right.x, "-0.375");
-    str_to_bf(right.y, "0.0625");
-    const BFComplex x = owned(left);
-    const BFComplex y = owned(right);
-    BFPtrComplex result = legacy(0, 0);
-
-    cmplx_mul_bf(&result, &left, &right);
-    EXPECT_EQ(owned(result), x * y);
-    cmplx_div_bf(&result, &left, &right);
-    // Newton iterations retain guard-digit differences from reused outputs.
-    expect_precision(owned(result), x / y);
-    cmplx_log_bf(&result, &left);
-    expect_precision(owned(result), log(x));
-    cmplx_pow_bf(&result, &left, &right);
-    expect_precision(owned(result), pow(x, y));
-    cube(result, left);
-    EXPECT_EQ(owned(result), cube(x));
-    for (const int degree : {-2, 0, 1, 2, 3, 6, 13})
-    {
-        power(result, left, degree);
-        EXPECT_EQ(owned(result), power(x, degree)) << degree;
-    }
-    EXPECT_EQ(x, owned(left));
-    EXPECT_EQ(y, owned(right));
-}
-
-TEST_P(TestBigComplex, owningLogAndPowerKeepZeroAndBranchConventions)
-{
-    const BFComplex zero{BigFloat{0}, BigFloat{0}};
-    EXPECT_EQ(zero, log(zero));
-    for (const BFComplex exponent :
-        {zero, BFComplex{BigFloat{-2}, BigFloat{0}}, BFComplex{BigFloat{0.25L}, BigFloat{-0.5L}}})
-    {
-        EXPECT_EQ(zero, pow(zero, exponent));
-    }
-    const BFComplex negative{BigFloat{-1}, BigFloat{0}};
-    EXPECT_EQ((BFComplex{BigFloat{1}, BigFloat{0}}), pow(negative, BFComplex{BigFloat{0.5L}, BigFloat{0}}));
-    BFPtrComplex raw = legacy(-1, -1);
-    BFPtrComplex result = legacy(0, 0);
-    cmplx_log_bf(&result, &raw);
-    EXPECT_EQ(owned(result), log(owned(raw)));
-}
-
 TEST_P(TestBigComplex, realValueFunctionsPreserveTheirOperands)
 {
-    BFPtrComplex raw = legacy(0.375L, -0.625L);
-    BFPtrComplex result = legacy(0, 0);
-    const BFComplex input = owned(raw);
-    square_bf(result.x, raw.x);
-    EXPECT_EQ(owned(result).x, sqr(input.x));
-    half_bf(result.x, raw.x);
-    EXPECT_EQ(owned(result).x, input.x.half());
-    exp_bf(result.x, raw.y);
-    EXPECT_EQ(owned(result).x, exp(input.y));
-    ln_bf(result.x, raw.x);
-    expect_precision(owned(result).x, log(input.x));
-    atan2_bf(result.x, raw.y, raw.x);
-    expect_precision(owned(result).x, atan2(input.y, input.x));
-    sin_cos_bf(result.x, result.y, raw.y);
+    BFComplex raw = value(0.375L, -0.625L);
+    BFComplex result = value(0, 0);
+    const BFComplex input = raw;
+    square_bf(result.x.data(), raw.x.data());
+    EXPECT_EQ(result.x, sqr(input.x));
+    half_bf(result.x.data(), raw.x.data());
+    EXPECT_EQ(result.x, input.x.half());
+    exp_bf(result.x.data(), raw.y.data());
+    EXPECT_EQ(result.x, exp(input.y));
+    ln_bf(result.x.data(), raw.x.data());
+    expect_precision(result.x, log(input.x));
+    atan2_bf(result.x.data(), raw.y.data(), raw.x.data());
+    expect_precision(result.x, atan2(input.y, input.x));
+    sin_cos_bf(result.x.data(), result.y.data(), raw.y.data());
     const auto [sine, cosine] = sin_cos(input.y);
-    EXPECT_EQ(owned(result), (BFComplex{sine, cosine}));
-    EXPECT_EQ(input, owned(raw));
+    EXPECT_EQ(result, (BFComplex{sine, cosine}));
+    EXPECT_EQ(input, raw);
 }
 
 TEST_P(TestBigComplex, owningCalculationsDoNotAllocateArenaStorage)
@@ -365,49 +389,65 @@ TEST_P(TestBigComplex, logarithmAndPowerMatchRecordedLegacySamples)
     expect_precision(expected_power, pow(base, exponent));
 }
 
-TEST_P(TestBigComplex, legacyBinaryAdaptersCaptureBothInputsBeforeWriting)
+TEST_P(TestBigComplexBinaryAlias, binaryOperationsCaptureBothInputsBeforeWriting)
 {
-    for (const auto operation : {cmplx_mul_bf, cmplx_div_bf, cmplx_pow_bf})
-    {
-        for (const bool alias_left : {false, true})
-        {
-            BigStackSaver saved;
-            BFPtrComplex left = legacy(-0.75L, 0.25L);
-            BFPtrComplex right = legacy(0.375L, -0.125L);
-            BFPtrComplex output = alias_left ? left : right;
-            const BFComplex x = owned(left);
-            const BFComplex y = owned(right);
-            const BFComplex expected = operation == cmplx_mul_bf ? x * y
-                : operation == cmplx_div_bf                      ? x / y
-                                                                 : pow(x, y);
+    const auto kind = std::get<1>(GetParam());
+    const bool alias_left = std::get<2>(GetParam());
+    BigStackSaver saved;
+    BFComplex left = value(-0.75L, 0.25L);
+    BFComplex right = value(0.375L, -0.125L);
+    BFComplex &output = alias_left ? left : right;
+    const BFComplex x = left;
+    const BFComplex y = right;
+    const BFComplex expected = kind == ComplexBinaryOperation::MULTIPLY ? x * y
+        : kind == ComplexBinaryOperation::DIVIDE                        ? x / y
+                                                                        : pow(x, y);
 
-            EXPECT_EQ(&output, operation(&output, &left, &right));
+    output = kind == ComplexBinaryOperation::MULTIPLY ? left * right
+        : kind == ComplexBinaryOperation::DIVIDE      ? left / right
+                                                      : pow(left, right);
 
-            EXPECT_EQ(expected, owned(output));
-            EXPECT_EQ(alias_left ? y : x, owned(alias_left ? right : left));
-        }
-    }
+    EXPECT_EQ(expected, output);
+    EXPECT_EQ(alias_left ? y : x, (alias_left ? right : left));
 }
 
-TEST_P(TestBigComplex, legacyLogCubeAndIntegerPowerAllowInPlaceResults)
+TEST_P(TestBigComplex, logAndCubeAllowInPlaceResults)
 {
-    BFPtrComplex raw = legacy(-0.75L, 0.25L);
-    BFComplex expected = log(owned(raw));
-    cmplx_log_bf(&raw, &raw);
-    EXPECT_EQ(expected, owned(raw));
+    BFComplex raw = value(-0.75L, 0.25L);
+    BFComplex expected = log(raw);
+    raw = log(raw);
+    EXPECT_EQ(expected, raw);
 
-    raw = legacy(-0.75L, 0.25L);
-    expected = cube(owned(raw));
-    cube(raw, raw);
-    EXPECT_EQ(expected, owned(raw));
-    for (const int degree : {-2, 0, 1, 3, 6})
-    {
-        raw = legacy(-0.75L, 0.25L);
-        expected = power(owned(raw), degree);
-        power(raw, raw, degree);
-        EXPECT_EQ(expected, owned(raw));
-    }
+    raw = value(-0.75L, 0.25L);
+    expected = cube(raw);
+    raw = cube(raw);
+    EXPECT_EQ(expected, raw);
 }
+
+TEST_P(TestBigComplexIntegerPower, integerPowerAllowsInPlaceResult)
+{
+    BFComplex raw = value(-0.75L, 0.25L);
+    const int degree = std::get<1>(GetParam());
+    const BFComplex expected = power(raw, degree);
+    raw = power(raw, degree);
+    EXPECT_EQ(expected, raw);
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigComplexLogBranch,
+    testing::Combine(
+        testing::Values(20, 80), testing::Values(DComplex{}, DComplex{-1, 0}, DComplex{0, -1}, DComplex{-1, -1})));
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigComplexZeroPower,
+    testing::Combine(testing::Values(20, 80),
+        testing::Values(DComplex{}, DComplex{-2, 0}, DComplex{1.25, -0.5}, DComplex{0.25, -0.5})));
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigComplexPower,
+    testing::Combine(testing::Values(20, 80), testing::Values(DComplex{}, DComplex{-2, 0}, DComplex{0.25, -0.5})));
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigComplexIntegerPower,
+    testing::Combine(testing::Values(20, 80), testing::Values(-3, -2, 0, 1, 2, 3, 6, 13)));
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigComplexBinaryAlias,
+    testing::Combine(testing::Values(20, 80),
+        testing::Values(
+            ComplexBinaryOperation::MULTIPLY, ComplexBinaryOperation::DIVIDE, ComplexBinaryOperation::POWER),
+        testing::Bool()));
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigComplex, testing::Values(20, 80));
 

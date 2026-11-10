@@ -37,6 +37,7 @@
 #include <geometry/line3d.h>
 #include <io/disk_storage.h>
 #include <math/big_init.h>
+#include <math/BigComplex.h>
 #include <math/BigFloat.h>
 #include <math/BigNum.h>
 #include <misc/debug_flags.h>
@@ -58,6 +59,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 using namespace id::engine;
@@ -1032,7 +1034,7 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
             break;
         case BFMathType::BIG_FLT:
             escaped = julia_orbit_bf() != 0;
-            expected.push_back(cmplx_bf_to_float({g_new_z_bf.x.data(), g_new_z_bf.y.data()}));
+            expected.push_back(cmplx_bf_to_float(g_new_z_bf));
             break;
         }
     }
@@ -8838,8 +8840,7 @@ BurningShipPerturbationTest::BurningShipPerturbationTest(const bool use_big_floa
 
 int BurningShipPerturbationTest::record_native_orbit()
 {
-    const DComplex value{
-        g_bf_math == BFMathType::NONE ? g_old_z : cmplx_bf_to_float({g_old_z_bf.x.data(), g_old_z_bf.y.data()})};
+    const DComplex value{g_bf_math == BFMathType::NONE ? g_old_z : cmplx_bf_to_float(g_old_z_bf)};
     s_standard_orbit.emplace_back(value.x, value.y);
     return g_bf_math == BFMathType::NONE ? burning_ship_orbit() : burning_ship_bf_fractal();
 }
@@ -8909,8 +8910,7 @@ void BurningShipPerturbationTest::compare_native_pixel(
     StandardFractal standard;
     const int expected_color{standard.calculate_standard_pixel(false)};
     const long expected_iterations{g_real_color_iter};
-    const DComplex expected_value{
-        m_use_big_float ? cmplx_bf_to_float({g_new_z_bf.x.data(), g_new_z_bf.y.data()}) : g_new_z};
+    const DComplex expected_value{m_use_big_float ? cmplx_bf_to_float(g_new_z_bf) : g_new_z};
     const DComplex expected_previous{g_old_z};
 
     const int color{m_engine.calculate_pixel(g_col, g_row)};
@@ -10705,8 +10705,8 @@ private:
     std::optional<BigStackSaver> m_stack;
     BFComplex *m_center{};
     BFComplex m_value{};
-    BFPtrComplex m_native{};
-    BFPtrComplex m_exponent{};
+    BFComplex m_native{};
+    BFComplex m_exponent{};
 };
 
 void TestSubDoublePowerBranch::SetUp()
@@ -10725,10 +10725,18 @@ void TestSubDoublePowerBranch::SetUp()
     }
     m_stack.emplace();
     m_value = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
-    m_native = {bf_stack().allocate_single(), bf_stack().allocate_single()};
-    m_exponent = {bf_stack().allocate_single(), bf_stack().allocate_single()};
-    float_to_bf(m_exponent.x, 0.5);
-    clear_bf(m_exponent.y);
+    {
+        BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+        std::destroy_at(&m_native);
+        ::new (&m_native) BFComplex{std::move(value)};
+    }
+    {
+        BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+        std::destroy_at(&m_exponent);
+        ::new (&m_exponent) BFComplex{std::move(value)};
+    }
+    float_to_bf(m_exponent.x.data(), 0.5);
+    clear_bf(m_exponent.y.data());
     int_to_bf(m_value.x.data(), -1);
     // Retain the positive branch's reference when crossing below the cut.
     ASSERT_NO_FATAL_FAILURE(compare_branch(1));
@@ -10737,6 +10745,8 @@ void TestSubDoublePowerBranch::SetUp()
 void TestSubDoublePowerBranch::TearDown()
 {
     m_value = {};
+    m_native = {};
+    m_exponent = {};
     m_stack.reset();
     TestPerturbationPixels::TearDown();
 }
@@ -10747,12 +10757,11 @@ void TestSubDoublePowerBranch::compare_branch(const int sign)
     EXPECT_DOUBLE_EQ(-1.0, static_cast<double>(bf_to_float(m_value.x.data())));
     EXPECT_EQ(sign, sign_bf(m_value.y.data()));
     EXPECT_NEAR(std::acos(-1.0), static_cast<double>(bf_to_float(g_bf_pi)), 1e-12);
-    BFPtrComplex native_seed{m_value.x.data(), m_value.y.data()};
-    cmplx_pow_bf(&m_native, &native_seed, &m_exponent);
+    m_native = pow(m_value, m_exponent);
     // Preserve the native kernel's behavior beyond its initial floating-
     // point approximation range, rather than substituting a new policy.
     const std::complex<double> expected{
-        static_cast<double>(bf_to_float(m_native.x)), static_cast<double>(bf_to_float(m_native.y))};
+        static_cast<double>(bf_to_float(m_native.x.data())), static_cast<double>(bf_to_float(m_native.y.data()))};
     m_engine.begin_orbit_bf(*m_center, m_value, 0);
     for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
     {
@@ -11609,8 +11618,7 @@ void TestShipOrbitOutput::SetUp()
         {
             break;
         }
-        const DComplex value{
-            GetParam().big_float ? cmplx_bf_to_float({g_new_z_bf.x.data(), g_new_z_bf.y.data()}) : g_new_z};
+        const DComplex value{GetParam().big_float ? cmplx_bf_to_float(g_new_z_bf) : g_new_z};
         const int x{static_cast<int>((value.y - 1.5) * -2.0)};
         const int y{static_cast<int>((value.x + 2.0) * 1.25)};
         if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
@@ -11759,13 +11767,14 @@ void TestPreciseBailoutBoundary::SetUp()
 
     {
         BigStackSaver saved;
-        const BFPtrComplex coordinate{bf_stack().allocate_single(), bf_stack().allocate_single()};
+        BFComplex coordinate{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
         const BigFloatPtr delta{bf_stack().allocate_single()};
-        float_to_bf(coordinate.x, boundary.point.x);
-        float_to_bf(coordinate.y, boundary.point.y);
+        float_to_bf(coordinate.x.data(), boundary.point.x);
+        float_to_bf(coordinate.y.data(), boundary.point.y);
         float_to_bf(delta, offset);
-        add_a_bf(boundary.imaginary ? coordinate.y : coordinate.x, delta);
-        m_expected = {static_cast<double>(bf_to_float(coordinate.x)), static_cast<double>(bf_to_float(coordinate.y))};
+        add_a_bf(boundary.imaginary ? coordinate.y.data() : coordinate.x.data(), delta);
+        m_expected = {static_cast<double>(bf_to_float(coordinate.x.data())),
+            static_cast<double>(bf_to_float(coordinate.y.data()))};
     }
     m_engine.set_glitch_tolerance(reference_mode == 2 ? 2.0 : 0.0);
     m_escaped = sign == boundary.outward_sign;
@@ -11878,12 +11887,12 @@ TEST_F(TestPerturbationPixels, highPrecisionFixedOrbitPreservesSmallParameterOff
     m_specific.pert_ref_bf = [](const BFComplex &parameter, BFComplex &z)
     {
         BigStackSaver saved;
-        const BFPtrComplex displacement{bf_stack().allocate_single(), bf_stack().allocate_single()};
-        float_to_bf(displacement.x, 0.25);
-        float_to_bf(displacement.y, 0.125);
-        sub_bf(displacement.x, z.x.data(), displacement.x);
-        sub_bf(displacement.y, z.y.data(), displacement.y);
-        s_reference_coordinates.emplace_back(bf_to_float(displacement.x), bf_to_float(displacement.y));
+        BFComplex displacement{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+        float_to_bf(displacement.x.data(), 0.25);
+        float_to_bf(displacement.y.data(), 0.125);
+        sub_bf(displacement.x.data(), z.x.data(), displacement.x.data());
+        sub_bf(displacement.y.data(), z.y.data(), displacement.y.data());
+        s_reference_coordinates.emplace_back(bf_to_float(displacement.x.data()), bf_to_float(displacement.y.data()));
         mandel_ref_pt_bf(parameter, z);
     };
 

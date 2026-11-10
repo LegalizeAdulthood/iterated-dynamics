@@ -82,9 +82,9 @@ diagnostic presentation, and waits in the existing UI owners.
   cannot recover digits already rounded away.
 - BF scalar arithmetic, log, exp, sin/cos, and atan/atan2 operations exist
   in the math implementation.
-- `cmplx_log_bf`, `cmplx_mul_bf`, `cmplx_div_bf`, and `cmplx_pow_bf`
-  exist in `engine/fractalb.cpp`.  They use shared precision/scratch
-  state; division also sets `g_overflow`.
+- `BFComplex` supports multiplication, division, `log`, and `pow` through
+  owning values. These operations use shared precision/scratch state;
+  division also sets `g_overflow`.
 - `math/complex_fn.h` has BF integer-power support.  That does not alone
   implement formula powers with noninteger or complex exponents.
 - Precision storage uses the existing static 1 MiB arena and supported

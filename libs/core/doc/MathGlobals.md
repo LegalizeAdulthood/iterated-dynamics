@@ -99,9 +99,9 @@ decimal precision rather than depending on old destination contents.
 
 `BNComplex` and `BFComplex`, available through `math/BigComplex.h`, own
 two scalar values through `Complex<T>`. Multiplication and division
-compute both components before assignment. The legacy signatures import
-their inputs before exporting results, including when outputs alias
-inputs. `BFConstPtrComplex` provides a read-only view for these imports.
+compute both components before assignment, including when the result
+replaces an input. Complex callers use owning values directly; the raw
+BigFloat complex arithmetic adapters have been removed.
 
 Complex `log` and `pow` use named BigFloat value functions backed by the
 private legacy kernels. Trigonometric calculations still require
@@ -256,9 +256,9 @@ The owning globals have canonical `g_bf_length + 2` bytes per scalar.
 Their handles start null. `MathArenas::bind` initializes them in the
 BigFloat working arena and clears existing values on later binds.
 `MathArenas::unbind` releases their blocks before arena destruction.
-Remaining legacy callers borrow buffers with `BigFloat::data()` or
-local `BFPtrComplex` views. Each bailout's threshold is an owning
-temporary-arena value, assigned at the existing scalar conversion site.
+Remaining legacy scalar callers borrow buffers with `BigFloat::data()`.
+Each bailout's threshold is an owning temporary-arena value, assigned at
+the existing scalar conversion site.
 
 ## Persistent BigFloat Bounds And Parameters
 

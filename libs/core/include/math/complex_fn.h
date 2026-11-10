@@ -38,9 +38,6 @@ Complex<T> cube(const Complex<T> &z)
     return {std::move(real), std::move(imag)};
 }
 
-// Cube c + jd = (a + jb) * (a + jb) * (a + jb)
-void cube(BFPtrComplex &out, const BFPtrComplex &in);
-
 // base^exp
 inline std::complex<double> power(const std::complex<double> &base, int exp)
 {
@@ -116,7 +113,5 @@ Complex<T> power(const Complex<T> &base, int degree)
     }
     return result;
 }
-
-void power(BFPtrComplex &result, const BFPtrComplex &z, int degree);
 
 } // namespace id::math

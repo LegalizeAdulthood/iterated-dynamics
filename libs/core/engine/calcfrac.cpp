@@ -937,7 +937,7 @@ static void set_new_z_from_bignum()
     }
     else if (g_bf_math == BFMathType::BIG_FLT)
     {
-        g_new_z = cmplx_bf_to_float({g_new_z_bf.x.data(), g_new_z_bf.y.data()});
+        g_new_z = cmplx_bf_to_float(g_new_z_bf);
     }
 }
 
@@ -1164,7 +1164,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             }
             else if (g_bf_math == BFMathType::BIG_FLT)
             {
-                g_old_z = cmplx_bf_to_float({g_old_z_bf.x.data(), g_old_z_bf.y.data()});
+                g_old_z = cmplx_bf_to_float(g_old_z_bf);
             }
             m_last_z.x = g_old_z.x;
             m_last_z.y = g_old_z.y;

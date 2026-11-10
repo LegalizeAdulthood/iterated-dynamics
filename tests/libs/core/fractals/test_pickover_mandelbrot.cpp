@@ -11,6 +11,7 @@
 #include <fractals/frasetup.h>
 #include <fractals/fractype.h>
 #include <math/big_init.h>
+#include <math/BigComplex.h>
 #include <math/BigFloat.h>
 #include <misc/ValueSaver.h>
 #include <misc/debug_flags.h>
@@ -206,37 +207,37 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
     BigStackSaver saved;
     BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex actual{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFPtrComplex expected{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    BFPtrComplex powered{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    BFPtrComplex product{bf_stack().allocate_single(), bf_stack().allocate_single()};
+    BFComplex expected{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex powered{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex product{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     const BigFloatPtr difference{bf_stack().allocate_single()};
     str_to_bf(center.x.data(), "-0.12500000000000000000000000000000000000001");
     str_to_bf(center.y.data(), "0.000125");
     str_to_bf(actual.x.data(), "0.99900000000000000000000000000000000000001");
     str_to_bf(actual.y.data(), "-0.000125");
-    copy_bf(expected.x, actual.x.data());
-    copy_bf(expected.y, actual.y.data());
+    copy_bf(expected.x.data(), actual.x.data());
+    copy_bf(expected.y.data(), actual.y.data());
 
     for (int step = 0; step < 8; ++step)
     {
         SCOPED_TRACE(step);
-        int_to_bf(powered.x, 1);
-        clear_bf(powered.y);
+        int_to_bf(powered.x.data(), 1);
+        clear_bf(powered.y.data());
         for (int factor = 0; factor < GetParam(); ++factor)
         {
-            cmplx_mul_bf(&product, &powered, &expected);
-            copy_bf(powered.x, product.x);
-            copy_bf(powered.y, product.y);
+            product = powered * expected;
+            copy_bf(powered.x.data(), product.x.data());
+            copy_bf(powered.y.data(), product.y.data());
         }
-        add_bf(expected.x, powered.x, center.x.data());
-        add_bf(expected.y, powered.y, center.y.data());
+        add_bf(expected.x.data(), powered.x.data(), center.x.data());
+        add_bf(expected.y.data(), powered.y.data(), center.y.data());
         mandel_z_power_ref_pt_bf(center, actual);
-        sub_bf(difference, actual.x.data(), expected.x);
+        sub_bf(difference, actual.x.data(), expected.x.data());
         EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-50);
-        sub_bf(difference, actual.y.data(), expected.y);
+        sub_bf(difference, actual.y.data(), expected.y.data());
         EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-50);
-        if (std::norm(std::complex<double>{
-                static_cast<double>(bf_to_float(expected.x)), static_cast<double>(bf_to_float(expected.y))}) >= 4.0)
+        if (std::norm(std::complex<double>{static_cast<double>(bf_to_float(expected.x.data())),
+                static_cast<double>(bf_to_float(expected.y.data()))}) >= 4.0)
         {
             break;
         }
@@ -302,15 +303,15 @@ void TestSignedPowerState::initialize_signed_precision()
 std::complex<double> TestSignedPowerState::precise_power(const std::complex<double> &z)
 {
     BigStackSaver saved;
-    BFPtrComplex value{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    BFPtrComplex exponent{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    BFPtrComplex result{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    float_to_bf(value.x, z.real());
-    float_to_bf(value.y, z.imag());
-    int_to_bf(exponent.x, g_c_exponent);
-    clear_bf(exponent.y);
-    cmplx_pow_bf(&result, &value, &exponent);
-    return {static_cast<double>(bf_to_float(result.x)), static_cast<double>(bf_to_float(result.y))};
+    BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex exponent{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex result{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    float_to_bf(value.x.data(), z.real());
+    float_to_bf(value.y.data(), z.imag());
+    int_to_bf(exponent.x.data(), g_c_exponent);
+    clear_bf(exponent.y.data());
+    result = pow(value, exponent);
+    return {static_cast<double>(bf_to_float(result.x.data())), static_cast<double>(bf_to_float(result.y.data()))};
 }
 
 std::string signed_power_name(const int exponent)
@@ -462,36 +463,36 @@ void TestPreciseSignedPowerReference::SetUp()
 TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
 {
     BigStackSaver saved;
-    BFPtrComplex exponent{bf_stack().allocate_single(), bf_stack().allocate_single()};
+    BFComplex exponent{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex actual{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFPtrComplex seed{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    BFPtrComplex expected{bf_stack().allocate_single(), bf_stack().allocate_single()};
+    BFComplex seed{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex expected{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     const BigFloatPtr difference{bf_stack().allocate_single()};
-    int_to_bf(exponent.x, GetParam().exponent);
-    clear_bf(exponent.y);
+    int_to_bf(exponent.x.data(), GetParam().exponent);
+    clear_bf(exponent.y.data());
     float_to_bf(center.x.data(), 0.125);
     float_to_bf(center.y.data(), -0.0625);
-    str_to_bf(seed.x, GetParam().real);
-    if (is_bf_zero(seed.x))
+    str_to_bf(seed.x.data(), GetParam().real);
+    if (is_bf_zero(seed.x.data()))
     {
-        clear_bf(seed.y);
+        clear_bf(seed.y.data());
     }
     else
     {
-        float_to_bf(seed.y, 0.125);
+        float_to_bf(seed.y.data(), 0.125);
     }
-    copy_bf(actual.x.data(), seed.x);
-    copy_bf(actual.y.data(), seed.y);
-    cmplx_pow_bf(&expected, &seed, &exponent);
-    add_a_bf(expected.x, center.x.data());
-    add_a_bf(expected.y, center.y.data());
+    copy_bf(actual.x.data(), seed.x.data());
+    copy_bf(actual.y.data(), seed.y.data());
+    expected = pow(seed, exponent);
+    add_a_bf(expected.x.data(), center.x.data());
+    add_a_bf(expected.y.data(), center.y.data());
 
     mandel_z_power_ref_pt_bf(center, actual);
 
-    sub_bf(difference, actual.x.data(), expected.x);
+    sub_bf(difference, actual.x.data(), expected.x.data());
     EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
-    sub_bf(difference, actual.y.data(), expected.y);
+    sub_bf(difference, actual.y.data(), expected.y.data());
     EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
 }
 
@@ -798,29 +799,29 @@ void TestPreciseComplexPowerReference::SetUp()
 TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
 {
     BigStackSaver saved;
-    BFPtrComplex seed{bf_stack().allocate_single(), bf_stack().allocate_single()};
+    BFComplex seed{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex actual{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFPtrComplex expected{bf_stack().allocate_single(), bf_stack().allocate_single()};
-    BFPtrComplex exponent{bf_stack().allocate_single(), bf_stack().allocate_single()};
+    BFComplex expected{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex exponent{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     const BigFloatPtr difference{bf_stack().allocate_single()};
-    float_to_bf(exponent.x, GetParam().exponent.real());
-    float_to_bf(exponent.y, GetParam().exponent.imag());
+    float_to_bf(exponent.x.data(), GetParam().exponent.real());
+    float_to_bf(exponent.y.data(), GetParam().exponent.imag());
     float_to_bf(center.x.data(), 0.0625);
     float_to_bf(center.y.data(), -0.03125);
-    str_to_bf(seed.x, "-0.75000000000000000000000000000000000000001");
-    str_to_bf(seed.y, GetParam().imaginary);
-    copy_bf(actual.x.data(), seed.x);
-    copy_bf(actual.y.data(), seed.y);
-    cmplx_pow_bf(&expected, &seed, &exponent);
-    add_a_bf(expected.x, center.x.data());
-    add_a_bf(expected.y, center.y.data());
+    str_to_bf(seed.x.data(), "-0.75000000000000000000000000000000000000001");
+    str_to_bf(seed.y.data(), GetParam().imaginary);
+    copy_bf(actual.x.data(), seed.x.data());
+    copy_bf(actual.y.data(), seed.y.data());
+    expected = pow(seed, exponent);
+    add_a_bf(expected.x.data(), center.x.data());
+    add_a_bf(expected.y.data(), center.y.data());
 
     mandel_z_power_ref_pt_bf(center, actual);
 
-    sub_bf(difference, actual.x.data(), expected.x);
+    sub_bf(difference, actual.x.data(), expected.x.data());
     EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
-    sub_bf(difference, actual.y.data(), expected.y);
+    sub_bf(difference, actual.y.data(), expected.y.data());
     EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
 }
 

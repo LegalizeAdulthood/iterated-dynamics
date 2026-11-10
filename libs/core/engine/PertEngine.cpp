@@ -73,17 +73,17 @@ std::complex<double> star_trail_point(const std::complex<double> &z)
     return {std::max(std::min(z.real(), LIMIT), -LIMIT), std::max(std::min(z.imag(), LIMIT), -LIMIT)};
 }
 
-void clamp_star_trail_point(const BFPtrComplex &z)
+void clamp_star_trail_point(BFComplex &z)
 {
-    const std::complex<double> value{static_cast<double>(bf_to_float(z.x)), static_cast<double>(bf_to_float(z.y))};
+    const std::complex<double> value{static_cast<double>(z.x.to_float()), static_cast<double>(z.y.to_float())};
     const std::complex<double> bounded{star_trail_point(value)};
     if (bounded.real() != value.real())
     {
-        float_to_bf(z.x, bounded.real());
+        z.x = bounded.real();
     }
     if (bounded.imag() != value.imag())
     {
-        float_to_bf(z.y, bounded.imag());
+        z.y = bounded.imag();
     }
 }
 
@@ -1139,7 +1139,7 @@ bool PertEngine::advance_precise_orbit(const std::size_t target, std::size_t &re
         --remaining;
         if (m_pixel.star_trail && m_pixel.precise_sample > 0)
         {
-            clamp_star_trail_point({m_pixel.precise_orbit.x.data(), m_pixel.precise_orbit.y.data()});
+            clamp_star_trail_point(m_pixel.precise_orbit);
         }
         m_pixel.precise_previous = {static_cast<double>(bf_to_float(m_pixel.precise_orbit.x.data())),
             static_cast<double>(bf_to_float(m_pixel.precise_orbit.y.data()))};
@@ -1723,7 +1723,7 @@ void PertEngine::advance_reference_bf(const std::size_t end)
         {
             if (!m_reference.explicit_orbit && g_inside_method == ColorMethod::STAR_TRAIL && m_reference_sample > 0)
             {
-                clamp_star_trail_point({m_reference_z_bf.x.data(), m_reference_z_bf.y.data()});
+                clamp_star_trail_point(m_reference_z_bf);
             }
             g_cur_fractal_specific->pert_ref_bf(m_reference_coordinate_bf, m_reference_z_bf);
         }

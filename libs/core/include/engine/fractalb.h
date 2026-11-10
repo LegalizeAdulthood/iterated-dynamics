@@ -4,6 +4,7 @@
 #pragma once
 
 #include <math/big.h>
+#include <math/BigFloat.h>
 
 #include <config/port.h>
 
@@ -21,11 +22,11 @@ inline math::DComplex cmplx_bn_to_float(const math::BNPtrComplex &s)
     return t;
 }
 
-inline math::DComplex cmplx_bf_to_float(const math::BFPtrComplex &s)
+inline math::DComplex cmplx_bf_to_float(const math::BFComplex &s)
 {
     math::DComplex t;
-    t.x = static_cast<double>(math::bf_to_float(s.x));
-    t.y = static_cast<double>(math::bf_to_float(s.y));
+    t.x = static_cast<double>(s.x.to_float());
+    t.y = static_cast<double>(s.y.to_float());
     return t;
 }
 
@@ -39,10 +40,6 @@ int mandel_per_pixel_bf();
 int julia_per_pixel_bf();
 int julia_orbit_bf();
 int julia_z_power_orbit_bf();
-math::BFPtrComplex *cmplx_log_bf(math::BFPtrComplex *t, math::BFPtrComplex *s);
-math::BFPtrComplex *cmplx_mul_bf(math::BFPtrComplex *t, math::BFPtrComplex *x, math::BFPtrComplex *y);
-math::BFPtrComplex *cmplx_div_bf(math::BFPtrComplex *t, math::BFPtrComplex *x, math::BFPtrComplex *y);
-math::BFPtrComplex *cmplx_pow_bf(math::BFPtrComplex *t, math::BFPtrComplex *xx, math::BFPtrComplex *yy);
 
 // Numeric snapshots collected by debug checks and reported by UI owners.
 extern std::vector<std::string> g_precision_diagnostics;
