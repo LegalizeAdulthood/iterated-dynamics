@@ -22,6 +22,7 @@
 #include <engine/calcfrac.h>
 #include <engine/color_utils.h>
 #include <engine/convert_center_mag.h>
+#include <engine/convert_corners.h>
 #include <engine/engine_timer.h>
 #include <engine/fractals.h>
 #include <engine/ImageRegion.h>
@@ -66,6 +67,7 @@
 #include <io/save_timer.h>
 #include <io/special_dirs.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
@@ -2543,6 +2545,147 @@ TEST_F(TestParameterCommand, cornersLongValueSelectsBigFloatPrecision)
     EXPECT_EQ(expected_decimals, g_decimals);
     EXPECT_FALSE(g_use_center_mag);
 }
+
+class TestBigFloatCommandInputs : public TestParameterCommand
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+private:
+    ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::MANDEL_Z_POWER};
+    ValueSaver<int> m_saved_digits{g_bf_digits, 0};
+    ValueSaver<DebugFlags> m_saved_debug{g_debug_flag, DebugFlags::FORCE_ARBITRARY_PRECISION_MATH};
+    ValueSaver<bool> m_saved_center_mag{g_use_center_mag};
+    ValueSaver<ImageRegion> m_saved_region{g_image_region};
+};
+
+void TestBigFloatCommandInputs::SetUp()
+{
+    TestParameterCommand::SetUp();
+    init_bf_dec(50);
+}
+
+void TestBigFloatCommandInputs::TearDown()
+{
+    free_bf_vars();
+    TestParameterCommand::TearDown();
+}
+
+struct BigFloatCornersInput
+{
+    const char *name;
+    const char *argument;
+    std::array<const char *, 6> expected;
+};
+
+class TestBigFloatCornersInput : public TestBigFloatCommandInputs, public WithParamInterface<BigFloatCornersInput>
+{
+};
+
+TEST_P(TestBigFloatCornersInput, parsesEachSlashDelimitedCoordinateExactly)
+{
+    const auto saved = save_stack();
+
+    exec_cmd_arg(GetParam().argument);
+
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_TRUE(m_parsed.diagnostics.errors.empty());
+    EXPECT_FALSE(g_use_center_mag);
+    EXPECT_EQ(saved, save_stack());
+    const std::array<const BigFloat *, 6> values{
+        &g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd};
+    for (std::size_t i = 0; i < values.size(); ++i)
+    {
+        SCOPED_TRACE(i);
+        const BigFloat expected{GetParam().expected[i]};
+        EXPECT_EQ(std::vector<Byte>(expected.data(), expected.data() + g_bf_length + 2),
+            std::vector<Byte>(values[i]->data(), values[i]->data() + g_bf_length + 2));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatCornersInput,
+    Values(BigFloatCornersInput{"FourValues", "corners=-1.25/2.5/-3.75/4e0",
+               {"-1.25", "2.5", "-3.75", "4", "-1.25", "-3.75"}},
+        BigFloatCornersInput{"SixValues", "corners=-1.234567890123456789012345/2.5/-3.75/4/0.125/-2.25",
+            {"-1.234567890123456789012345", "2.5", "-3.75", "4", "0.125", "-2.25"}},
+        BigFloatCornersInput{"PrecisionGrowth", "corners=-1e-80/2e-80/-3e-80/4e-80",
+            {"-1e-80", "2e-80", "-3e-80", "4e-80", "-1e-80", "-3e-80"}}),
+    [](const TestParamInfo<BigFloatCornersInput> &info) { return info.param.name; });
+
+struct BigFloatCenterInput
+{
+    const char *name;
+    const char *argument;
+    double x_factor;
+    double rotation;
+    double skew;
+};
+
+class TestBigFloatCenterInput : public TestBigFloatCommandInputs, public WithParamInterface<BigFloatCenterInput>
+{
+};
+
+TEST_P(TestBigFloatCenterInput, preservesParsedCentersOptionsAndTemporaryLifetime)
+{
+    BigFloat x{"-1.234567890123456789012345"};
+    BigFloat y{"2.345678901234567890123456"};
+    cvt_corners_bf(x.data(), y.data(), 1e30L, GetParam().x_factor, GetParam().rotation, GetParam().skew);
+    const auto expected = pack_bf_parameters();
+    unpack_bf_parameters(std::vector<char>(expected.size()));
+    const auto saved = save_stack();
+
+    exec_cmd_arg(GetParam().argument);
+
+    ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_TRUE(g_use_center_mag);
+    EXPECT_TRUE(m_parsed.diagnostics.errors.empty());
+    EXPECT_EQ(expected, pack_bf_parameters());
+    EXPECT_EQ(saved, save_stack());
+    EXPECT_EQ(static_cast<double>(g_bf_x_min.to_float()), g_image_region.m_min.x);
+    EXPECT_EQ(static_cast<double>(g_bf_x_max.to_float()), g_image_region.m_max.x);
+    EXPECT_EQ(static_cast<double>(g_bf_y_min.to_float()), g_image_region.m_min.y);
+    EXPECT_EQ(static_cast<double>(g_bf_y_max.to_float()), g_image_region.m_max.y);
+    EXPECT_EQ(static_cast<double>(g_bf_x_3rd.to_float()), g_image_region.m_3rd.x);
+    EXPECT_EQ(static_cast<double>(g_bf_y_3rd.to_float()), g_image_region.m_3rd.y);
+    const auto high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
+
+    exec_cmd_arg(GetParam().argument);
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(expected, pack_bf_parameters());
+    EXPECT_EQ(saved, save_stack());
+    EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatCenterInput,
+    Values(BigFloatCenterInput{"Defaults", "center-mag=-1.234567890123456789012345/2.345678901234567890123456/1e30", 1,
+               0, 0},
+        BigFloatCenterInput{
+            "ZeroFactor", "center-mag=-1.234567890123456789012345/2.345678901234567890123456/1e30/0", 1, 0, 0},
+        BigFloatCenterInput{"RotatedSkewed",
+            "center-mag=-1.234567890123456789012345/2.345678901234567890123456/1e30/2/30/15", 2, 30, 15}),
+    [](const TestParamInfo<BigFloatCenterInput> &info) { return info.param.name; });
+
+class TestInvalidBigFloatCommandInput : public TestBigFloatCommandInputs, public WithParamInterface<const char *>
+{
+};
+
+TEST_P(TestInvalidBigFloatCommandInput, reportsErrorWithoutChangingCoordinateBytes)
+{
+    const auto expected = pack_bf_parameters();
+    const auto saved = save_stack();
+
+    exec_cmd_arg(GetParam());
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
+    EXPECT_EQ(expected, pack_bf_parameters());
+    EXPECT_EQ(saved, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInvalidBigFloatCommandInput,
+    Values("corners=1/2/bad/4", "center-mag=1/2/0", "center-mag=1/2", "center-mag=bad/2/1e30"));
 
 class TestOrbitCornersParameter : public TestParameterCommand, public WithParamInterface<RegionParameterInput>
 {

@@ -107,7 +107,7 @@ namespace id::engine
 
 static void init_vars3d();
 static void reset_ifs_definition();
-static int get_bf(BigFloatPtr bf, const char *cur_arg);
+static int get_bf(BigFloat &bf, const char *cur_arg);
 
 // variables defined by the command line/files processor
 int g_max_line_length{72};
@@ -777,8 +777,8 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
     }
     g_use_center_mag = true;
     BigStackSaver saved;
-    BigFloatPtr b_x_ctr = bf_stack().allocate_single();
-    BigFloatPtr b_y_ctr = bf_stack().allocate_single();
+    BigFloat b_x_ctr{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_y_ctr{bf_arena(BigLifetime::TEMPORARY)};
     get_bf(b_x_ctr, cmd.float_val_strs[0]);
     get_bf(b_y_ctr, cmd.float_val_strs[1]);
     double x_mag_factor = 1;
@@ -801,7 +801,7 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
         skew = cmd.float_vals[5];
     }
     // calculate bounds
-    cvt_corners_bf(b_x_ctr, b_y_ctr, magnification, x_mag_factor, rotation, skew);
+    cvt_corners_bf(b_x_ctr.data(), b_y_ctr.data(), magnification, x_mag_factor, rotation, skew);
     bf_corners_to_float();
     return CmdArgFlags::FRACTAL_PARAM;
 }
@@ -1074,26 +1074,26 @@ static CmdArgFlags cmd_corners(const Command &cmd)
         }
 
         // xx3rd = xxmin = floatval[0];
-        get_bf(g_bf_x_min.data(), cmd.float_val_strs[0]);
-        get_bf(g_bf_x_3rd.data(), cmd.float_val_strs[0]);
+        get_bf(g_bf_x_min, cmd.float_val_strs[0]);
+        get_bf(g_bf_x_3rd, cmd.float_val_strs[0]);
 
         // xxmax = floatval[1];
-        get_bf(g_bf_x_max.data(), cmd.float_val_strs[1]);
+        get_bf(g_bf_x_max, cmd.float_val_strs[1]);
 
         // yy3rd = yymin = floatval[2];
-        get_bf(g_bf_y_min.data(), cmd.float_val_strs[2]);
-        get_bf(g_bf_y_3rd.data(), cmd.float_val_strs[2]);
+        get_bf(g_bf_y_min, cmd.float_val_strs[2]);
+        get_bf(g_bf_y_3rd, cmd.float_val_strs[2]);
 
         // yymax = floatval[3];
-        get_bf(g_bf_y_max.data(), cmd.float_val_strs[3]);
+        get_bf(g_bf_y_max, cmd.float_val_strs[3]);
 
         if (cmd.total_params == 6)
         {
             // xx3rd = floatval[4];
-            get_bf(g_bf_x_3rd.data(), cmd.float_val_strs[4]);
+            get_bf(g_bf_x_3rd, cmd.float_val_strs[4]);
 
             // yy3rd = floatval[5];
-            get_bf(g_bf_y_3rd.data(), cmd.float_val_strs[5]);
+            get_bf(g_bf_y_3rd, cmd.float_val_strs[5]);
         }
 
         // now that all the corners have been read in, get a more
@@ -1117,26 +1117,26 @@ static CmdArgFlags cmd_corners(const Command &cmd)
             }
 
             // xx3rd = xxmin = floatval[0];
-            get_bf(g_bf_x_min.data(), cmd.float_val_strs[0]);
-            get_bf(g_bf_x_3rd.data(), cmd.float_val_strs[0]);
+            get_bf(g_bf_x_min, cmd.float_val_strs[0]);
+            get_bf(g_bf_x_3rd, cmd.float_val_strs[0]);
 
             // xxmax = floatval[1];
-            get_bf(g_bf_x_max.data(), cmd.float_val_strs[1]);
+            get_bf(g_bf_x_max, cmd.float_val_strs[1]);
 
             // yy3rd = yymin = floatval[2];
-            get_bf(g_bf_y_min.data(), cmd.float_val_strs[2]);
-            get_bf(g_bf_y_3rd.data(), cmd.float_val_strs[2]);
+            get_bf(g_bf_y_min, cmd.float_val_strs[2]);
+            get_bf(g_bf_y_3rd, cmd.float_val_strs[2]);
 
             // yymax = floatval[3];
-            get_bf(g_bf_y_max.data(), cmd.float_val_strs[3]);
+            get_bf(g_bf_y_max, cmd.float_val_strs[3]);
 
             if (cmd.total_params == 6)
             {
                 // xx3rd = floatval[4];
-                get_bf(g_bf_x_3rd.data(), cmd.float_val_strs[4]);
+                get_bf(g_bf_x_3rd, cmd.float_val_strs[4]);
 
                 // yy3rd = floatval[5];
-                get_bf(g_bf_y_3rd.data(), cmd.float_val_strs[5]);
+                get_bf(g_bf_y_3rd, cmd.float_val_strs[5]);
             }
         }
     }
@@ -3269,15 +3269,15 @@ void set_3d_defaults()
 }
 
 // copy a big number from a string, up to slash
-static int get_bf(BigFloatPtr bf, const char *cur_arg)
+static int get_bf(BigFloat &bf, const char *cur_arg)
 {
     if (const char *s = std::strchr(cur_arg, '/'); s)
     {
-        str_to_bf(bf, std::string_view{cur_arg, static_cast<std::size_t>(s - cur_arg)});
+        str_to_bf(bf.data(), std::string_view{cur_arg, static_cast<std::size_t>(s - cur_arg)});
     }
     else
     {
-        str_to_bf(bf, cur_arg);
+        str_to_bf(bf.data(), cur_arg);
     }
     return 0;
 }
