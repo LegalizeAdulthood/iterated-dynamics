@@ -108,18 +108,18 @@ static int get_prec_dbl(const ResolutionFlag flag)
 void fractal_float_to_bf()
 {
     init_bf_dec(get_prec_dbl(ResolutionFlag::CURRENT));
-    float_to_bf(g_bf_x_min, g_image_region.m_min.x);
-    float_to_bf(g_bf_x_max, g_image_region.m_max.x);
-    float_to_bf(g_bf_y_min, g_image_region.m_min.y);
-    float_to_bf(g_bf_y_max, g_image_region.m_max.y);
-    float_to_bf(g_bf_x_3rd, g_image_region.m_3rd.x);
-    float_to_bf(g_bf_y_3rd, g_image_region.m_3rd.y);
+    float_to_bf(g_bf_x_min.data(), g_image_region.m_min.x);
+    float_to_bf(g_bf_x_max.data(), g_image_region.m_max.x);
+    float_to_bf(g_bf_y_min.data(), g_image_region.m_min.y);
+    float_to_bf(g_bf_y_max.data(), g_image_region.m_max.y);
+    float_to_bf(g_bf_x_3rd.data(), g_image_region.m_3rd.x);
+    float_to_bf(g_bf_y_3rd.data(), g_image_region.m_3rd.y);
 
     for (int i = 0; i < MAX_PARAMS; i++)
     {
         if (type_has_param(g_fractal_type, i))
         {
-            float_to_bf(g_bf_params[i], g_params[i]);
+            float_to_bf(g_bf_params[i].data(), g_params[i]);
         }
     }
     g_calc_status = CalcStatus::PARAMS_CHANGED;
@@ -425,51 +425,51 @@ void adjust_corner_bf()
     }
 
     // ftemp=fabs(xx3rd-xxmin);
-    abs_a_bf(sub_bf(bf_temp.data(), g_bf_x_3rd, g_bf_x_min));
+    abs_a_bf(sub_bf(bf_temp.data(), g_bf_x_3rd.data(), g_bf_x_min.data()));
 
     // ftemp2=fabs(xxmax-xx3rd);
-    abs_a_bf(sub_bf(bf_temp2.data(), g_bf_x_max, g_bf_x_3rd));
+    abs_a_bf(sub_bf(bf_temp2.data(), g_bf_x_max.data(), g_bf_x_3rd.data()));
 
     // if ( (ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd)) )
     if (bf_temp < bf_temp2)
     {
         // if (ftemp*10000 < ftemp2 && yy3rd != yymax)
-        if (((b_tmp1 = bf_temp * 10000) < bf_temp2) && cmp_bf(g_bf_y_3rd, g_bf_y_max) != 0)
+        if (((b_tmp1 = bf_temp * 10000) < bf_temp2) && cmp_bf(g_bf_y_3rd.data(), g_bf_y_max.data()) != 0)
         {
             // xx3rd = xxmin;
-            copy_bf(g_bf_x_3rd, g_bf_x_min);
+            copy_bf(g_bf_x_3rd.data(), g_bf_x_min.data());
         }
     }
 
     // else if (ftemp2*10000 < ftemp && yy3rd != yymin)
-    if (((b_tmp1 = bf_temp2 * 10000) < bf_temp) && cmp_bf(g_bf_y_3rd, g_bf_y_min) != 0)
+    if (((b_tmp1 = bf_temp2 * 10000) < bf_temp) && cmp_bf(g_bf_y_3rd.data(), g_bf_y_min.data()) != 0)
     {
         // xx3rd = xxmax;
-        copy_bf(g_bf_x_3rd, g_bf_x_max);
+        copy_bf(g_bf_x_3rd.data(), g_bf_x_max.data());
     }
 
     // ftemp=fabs(yy3rd-yymin);
-    abs_a_bf(sub_bf(bf_temp.data(), g_bf_y_3rd, g_bf_y_min));
+    abs_a_bf(sub_bf(bf_temp.data(), g_bf_y_3rd.data(), g_bf_y_min.data()));
 
     // ftemp2=fabs(yymax-yy3rd);
-    abs_a_bf(sub_bf(bf_temp2.data(), g_bf_y_max, g_bf_y_3rd));
+    abs_a_bf(sub_bf(bf_temp2.data(), g_bf_y_max.data(), g_bf_y_3rd.data()));
 
     // if ( (ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd)) )
     if (bf_temp < bf_temp2)
     {
         // if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
-        if (((b_tmp1 = bf_temp * 10000) < bf_temp2) && cmp_bf(g_bf_x_3rd, g_bf_x_max) != 0)
+        if (((b_tmp1 = bf_temp * 10000) < bf_temp2) && cmp_bf(g_bf_x_3rd.data(), g_bf_x_max.data()) != 0)
         {
             // yy3rd = yymin;
-            copy_bf(g_bf_y_3rd, g_bf_y_min);
+            copy_bf(g_bf_y_3rd.data(), g_bf_y_min.data());
         }
     }
 
     // else if (ftemp2*10000 < ftemp && xx3rd != xxmin)
-    if (((b_tmp1 = bf_temp2 * 10000) < bf_temp) && cmp_bf(g_bf_x_3rd, g_bf_x_min) != 0)
+    if (((b_tmp1 = bf_temp2 * 10000) < bf_temp) && cmp_bf(g_bf_x_3rd.data(), g_bf_x_min.data()) != 0)
     {
         // yy3rd = yymax;
-        copy_bf(g_bf_y_3rd, g_bf_y_max);
+        copy_bf(g_bf_y_3rd.data(), g_bf_y_max.data());
     }
 }
 
@@ -557,68 +557,68 @@ static bool adjust_to_limits_bf(const double expand)
     b_limit = limit;
     b_expand = expand;
 
-    add_bf(b_center_x.data(), g_bf_x_min, g_bf_x_max);
+    add_bf(b_center_x.data(), g_bf_x_min.data(), g_bf_x_max.data());
     b_center_x = b_center_x.half();
 
     // center_y = (yymin+yymax)/2;
-    add_bf(b_center_y.data(), g_bf_y_min, g_bf_y_max);
+    add_bf(b_center_y.data(), g_bf_y_min.data(), g_bf_y_max.data());
     b_center_y = b_center_y.half();
 
     // if (xxmin == center_x) {
-    if (cmp_bf(g_bf_x_min, b_center_x.data()) == 0)
+    if (cmp_bf(g_bf_x_min.data(), b_center_x.data()) == 0)
     {
         // ohoh, infinitely thin, fix it
-        smallest_add_bf(g_bf_x_max);
+        smallest_add_bf(g_bf_x_max.data());
         // bfxmin -= bfxmax-center_x;
-        sub_a_bf(g_bf_x_min, sub_bf(b_tmp1.data(), g_bf_x_max, b_center_x.data()));
+        sub_a_bf(g_bf_x_min.data(), sub_bf(b_tmp1.data(), g_bf_x_max.data(), b_center_x.data()));
     }
 
     // if (bfymin == center_y)
-    if (cmp_bf(g_bf_y_min, b_center_y.data()) == 0)
+    if (cmp_bf(g_bf_y_min.data(), b_center_y.data()) == 0)
     {
-        smallest_add_bf(g_bf_y_max);
+        smallest_add_bf(g_bf_y_max.data());
         // bfymin -= bfymax-center_y;
-        sub_a_bf(g_bf_y_min, sub_bf(b_tmp1.data(), g_bf_y_max, b_center_y.data()));
+        sub_a_bf(g_bf_y_min.data(), sub_bf(b_tmp1.data(), g_bf_y_max.data(), b_center_y.data()));
     }
 
     // if (bfx3rd == center_x)
-    if (cmp_bf(g_bf_x_3rd, b_center_x.data()) == 0)
+    if (cmp_bf(g_bf_x_3rd.data(), b_center_x.data()) == 0)
     {
-        smallest_add_bf(g_bf_x_3rd);
+        smallest_add_bf(g_bf_x_3rd.data());
     }
 
     // if (bfy3rd == center_y)
-    if (cmp_bf(g_bf_y_3rd, b_center_y.data()) == 0)
+    if (cmp_bf(g_bf_y_3rd.data(), b_center_y.data()) == 0)
     {
-        smallest_add_bf(g_bf_y_3rd);
+        smallest_add_bf(g_bf_y_3rd.data());
     }
 
     // setup array for easier manipulation
     // corner_x[0] = xxmin;
-    copy_bf(b_corner_x[0].data(), g_bf_x_min);
+    copy_bf(b_corner_x[0].data(), g_bf_x_min.data());
 
     // corner_x[1] = xxmax;
-    copy_bf(b_corner_x[1].data(), g_bf_x_max);
+    copy_bf(b_corner_x[1].data(), g_bf_x_max.data());
 
     // corner_x[2] = xx3rd;
-    copy_bf(b_corner_x[2].data(), g_bf_x_3rd);
+    copy_bf(b_corner_x[2].data(), g_bf_x_3rd.data());
 
     // corner_x[3] = xxmin+(xxmax-xx3rd);
-    sub_bf(b_corner_x[3].data(), g_bf_x_max, g_bf_x_3rd);
-    add_a_bf(b_corner_x[3].data(), g_bf_x_min);
+    sub_bf(b_corner_x[3].data(), g_bf_x_max.data(), g_bf_x_3rd.data());
+    add_a_bf(b_corner_x[3].data(), g_bf_x_min.data());
 
     // corner_y[0] = yymax;
-    copy_bf(b_corner_y[0].data(), g_bf_y_max);
+    copy_bf(b_corner_y[0].data(), g_bf_y_max.data());
 
     // corner_y[1] = yymin;
-    copy_bf(b_corner_y[1].data(), g_bf_y_min);
+    copy_bf(b_corner_y[1].data(), g_bf_y_min.data());
 
     // corner_y[2] = yy3rd;
-    copy_bf(b_corner_y[2].data(), g_bf_y_3rd);
+    copy_bf(b_corner_y[2].data(), g_bf_y_3rd.data());
 
     // corner_y[3] = yymin+(yymax-yy3rd);
-    sub_bf(b_corner_y[3].data(), g_bf_y_max, g_bf_y_3rd);
-    add_a_bf(b_corner_y[3].data(), g_bf_y_min);
+    sub_bf(b_corner_y[3].data(), g_bf_y_max.data(), g_bf_y_3rd.data());
+    add_a_bf(b_corner_y[3].data(), g_bf_y_min.data());
 
     // if caller wants image size adjusted, do that first
     if (expand != 1.0)
@@ -744,17 +744,17 @@ static bool adjust_to_limits_bf(const double expand)
     const bool translated = (b_adj_x != BigFloat{0}) || (b_adj_y != BigFloat{0});
 
     // xxmin = corner_x[0] - adj_x;
-    sub_bf(g_bf_x_min, b_corner_x[0].data(), b_adj_x.data());
+    sub_bf(g_bf_x_min.data(), b_corner_x[0].data(), b_adj_x.data());
     // xxmax = corner_x[1] - adj_x;
-    sub_bf(g_bf_x_max, b_corner_x[1].data(), b_adj_x.data());
+    sub_bf(g_bf_x_max.data(), b_corner_x[1].data(), b_adj_x.data());
     // xx3rd = corner_x[2] - adj_x;
-    sub_bf(g_bf_x_3rd, b_corner_x[2].data(), b_adj_x.data());
+    sub_bf(g_bf_x_3rd.data(), b_corner_x[2].data(), b_adj_x.data());
     // yymax = corner_y[0] - adj_y;
-    sub_bf(g_bf_y_max, b_corner_y[0].data(), b_adj_y.data());
+    sub_bf(g_bf_y_max.data(), b_corner_y[0].data(), b_adj_y.data());
     // yymin = corner_y[1] - adj_y;
-    sub_bf(g_bf_y_min, b_corner_y[1].data(), b_adj_y.data());
+    sub_bf(g_bf_y_min.data(), b_corner_y[1].data(), b_adj_y.data());
     // yy3rd = corner_y[2] - adj_y;
-    sub_bf(g_bf_y_3rd, b_corner_y[2].data(), b_adj_y.data());
+    sub_bf(g_bf_y_3rd.data(), b_corner_y[2].data(), b_adj_y.data());
 
     adjust_corner_bf(); // make 3rd corner exact if very near other co-ords
     return translated;

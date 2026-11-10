@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include <io/loadfile.h>
+#include <math/BigFloat.h>
 
 #include <ColorMapSaver.h>
 #include <FindFractalInfoState.h>
@@ -854,7 +855,7 @@ protected:
 void TestFindPrecisionMetadata::SetUp()
 {
     init_bf_dec(20);
-    float_to_bf(g_bf_x_min, 1.25);
+    float_to_bf(g_bf_x_min.data(), 1.25);
     g_file_x_dots = 987;
     m_length = g_bf_length;
     m_stack = save_stack();
@@ -874,7 +875,7 @@ void TestFindPrecisionMetadata::expect_active_image() const
     EXPECT_EQ(BFMathType::BIG_NUM, g_bf_math);
     EXPECT_EQ(m_length, g_bf_length);
     EXPECT_EQ(m_stack, save_stack());
-    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
+    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min.data()));
     EXPECT_EQ((std::vector<Byte>{1, 2, 3}), g_resume_data);
 }
 

@@ -260,18 +260,18 @@ extern BFComplex g_new_z_bf;
 // for testing only
 // used by other routines
 // g_bf_length+2
-extern BigFloatPtr g_bf_x_min;
-extern BigFloatPtr g_bf_x_max;
-extern BigFloatPtr g_bf_y_min;
-extern BigFloatPtr g_bf_y_max;
-extern BigFloatPtr g_bf_x_3rd;
-extern BigFloatPtr g_bf_y_3rd;
-extern BigFloatPtr g_bf_save_x_min;
-extern BigFloatPtr g_bf_save_x_max;
-extern BigFloatPtr g_bf_save_y_min;
-extern BigFloatPtr g_bf_save_y_max;
-extern BigFloatPtr g_bf_save_x_3rd;
-extern BigFloatPtr g_bf_save_y_3rd;
-extern BigFloatPtr g_bf_params[10]; // (g_bf_length+2)*10
+extern BigFloat g_bf_x_min;
+extern BigFloat g_bf_x_max;
+extern BigFloat g_bf_y_min;
+extern BigFloat g_bf_y_max;
+extern BigFloat g_bf_x_3rd;
+extern BigFloat g_bf_y_3rd;
+extern BigFloat g_bf_save_x_min;
+extern BigFloat g_bf_save_x_max;
+extern BigFloat g_bf_save_y_min;
+extern BigFloat g_bf_save_y_max;
+extern BigFloat g_bf_save_x_3rd;
+extern BigFloat g_bf_save_y_3rd;
+extern BigFloat g_bf_params[10]; // (g_bf_length+2)*10
 
 } // namespace id::math

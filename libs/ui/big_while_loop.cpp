@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include <ui/big_while_loop.h>
+#include <math/BigFloat.h>
 
 #include <engine/Browse.h>
 #include <engine/calc_frac_init.h>
@@ -596,12 +597,12 @@ MainState big_while_loop(MainContext &context)
 
         if (g_bf_math != BFMathType::NONE)
         {
-            copy_bf(g_bf_save_x_min, g_bf_x_min);
-            copy_bf(g_bf_save_x_max, g_bf_x_max);
-            copy_bf(g_bf_save_y_min, g_bf_y_min);
-            copy_bf(g_bf_save_y_max, g_bf_y_max);
-            copy_bf(g_bf_save_x_3rd, g_bf_x_3rd);
-            copy_bf(g_bf_save_y_3rd, g_bf_y_3rd);
+            copy_bf(g_bf_save_x_min.data(), g_bf_x_min.data());
+            copy_bf(g_bf_save_x_max.data(), g_bf_x_max.data());
+            copy_bf(g_bf_save_y_min.data(), g_bf_y_min.data());
+            copy_bf(g_bf_save_y_max.data(), g_bf_y_max.data());
+            copy_bf(g_bf_save_x_3rd.data(), g_bf_x_3rd.data());
+            copy_bf(g_bf_save_y_3rd.data(), g_bf_y_3rd.data());
         }
         save_history_info();
 

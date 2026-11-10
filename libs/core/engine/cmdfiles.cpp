@@ -4,6 +4,7 @@
 // Command-line / Command-File Parser Routines
 //
 #include <engine/cmdfiles.h>
+#include <math/BigFloat.h>
 #include <engine/command_comments.h>
 
 #include <engine/bailout_formula.h>
@@ -771,7 +772,7 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
     {
         for (int k = 0; k < MAX_PARAMS; k++)
         {
-            float_to_bf(g_bf_params[k], g_params[k]);
+            float_to_bf(g_bf_params[k].data(), g_params[k]);
         }
     }
     g_use_center_mag = true;
@@ -1068,31 +1069,31 @@ static CmdArgFlags cmd_corners(const Command &cmd)
         {
             for (int k = 0; k < MAX_PARAMS; k++)
             {
-                float_to_bf(g_bf_params[k], g_params[k]);
+                float_to_bf(g_bf_params[k].data(), g_params[k]);
             }
         }
 
         // xx3rd = xxmin = floatval[0];
-        get_bf(g_bf_x_min, cmd.float_val_strs[0]);
-        get_bf(g_bf_x_3rd, cmd.float_val_strs[0]);
+        get_bf(g_bf_x_min.data(), cmd.float_val_strs[0]);
+        get_bf(g_bf_x_3rd.data(), cmd.float_val_strs[0]);
 
         // xxmax = floatval[1];
-        get_bf(g_bf_x_max, cmd.float_val_strs[1]);
+        get_bf(g_bf_x_max.data(), cmd.float_val_strs[1]);
 
         // yy3rd = yymin = floatval[2];
-        get_bf(g_bf_y_min, cmd.float_val_strs[2]);
-        get_bf(g_bf_y_3rd, cmd.float_val_strs[2]);
+        get_bf(g_bf_y_min.data(), cmd.float_val_strs[2]);
+        get_bf(g_bf_y_3rd.data(), cmd.float_val_strs[2]);
 
         // yymax = floatval[3];
-        get_bf(g_bf_y_max, cmd.float_val_strs[3]);
+        get_bf(g_bf_y_max.data(), cmd.float_val_strs[3]);
 
         if (cmd.total_params == 6)
         {
             // xx3rd = floatval[4];
-            get_bf(g_bf_x_3rd, cmd.float_val_strs[4]);
+            get_bf(g_bf_x_3rd.data(), cmd.float_val_strs[4]);
 
             // yy3rd = floatval[5];
-            get_bf(g_bf_y_3rd, cmd.float_val_strs[5]);
+            get_bf(g_bf_y_3rd.data(), cmd.float_val_strs[5]);
         }
 
         // now that all the corners have been read in, get a more
@@ -1112,30 +1113,30 @@ static CmdArgFlags cmd_corners(const Command &cmd)
             // decimal setting
             for (int k = 0; k < MAX_PARAMS; k++)
             {
-                float_to_bf(g_bf_params[k], g_params[k]);
+                float_to_bf(g_bf_params[k].data(), g_params[k]);
             }
 
             // xx3rd = xxmin = floatval[0];
-            get_bf(g_bf_x_min, cmd.float_val_strs[0]);
-            get_bf(g_bf_x_3rd, cmd.float_val_strs[0]);
+            get_bf(g_bf_x_min.data(), cmd.float_val_strs[0]);
+            get_bf(g_bf_x_3rd.data(), cmd.float_val_strs[0]);
 
             // xxmax = floatval[1];
-            get_bf(g_bf_x_max, cmd.float_val_strs[1]);
+            get_bf(g_bf_x_max.data(), cmd.float_val_strs[1]);
 
             // yy3rd = yymin = floatval[2];
-            get_bf(g_bf_y_min, cmd.float_val_strs[2]);
-            get_bf(g_bf_y_3rd, cmd.float_val_strs[2]);
+            get_bf(g_bf_y_min.data(), cmd.float_val_strs[2]);
+            get_bf(g_bf_y_3rd.data(), cmd.float_val_strs[2]);
 
             // yymax = floatval[3];
-            get_bf(g_bf_y_max, cmd.float_val_strs[3]);
+            get_bf(g_bf_y_max.data(), cmd.float_val_strs[3]);
 
             if (cmd.total_params == 6)
             {
                 // xx3rd = floatval[4];
-                get_bf(g_bf_x_3rd, cmd.float_val_strs[4]);
+                get_bf(g_bf_x_3rd.data(), cmd.float_val_strs[4]);
 
                 // yy3rd = floatval[5];
-                get_bf(g_bf_y_3rd, cmd.float_val_strs[5]);
+                get_bf(g_bf_y_3rd.data(), cmd.float_val_strs[5]);
             }
         }
     }
@@ -2119,7 +2120,7 @@ static CmdArgFlags cmd_params(const Command &cmd)
     {
         for (int k = 0; k < MAX_PARAMS; k++)
         {
-            float_to_bf(g_bf_params[k], g_params[k]);
+            float_to_bf(g_bf_params[k].data(), g_params[k]);
         }
     }
     return CmdArgFlags::FRACTAL_PARAM;

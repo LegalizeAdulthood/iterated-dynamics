@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include <ui/zoom.h>
+#include <math/BigFloat.h>
 
 #include <engine/calcfrac.h>
 #include <engine/ImageRegion.h>
@@ -80,8 +81,8 @@ protected:
         g_zoom_box_rotation = GetParam();
         g_zoom_box_skew = 0.125;
         g_viewport.final_aspect_ratio = 0.75f;
-        const BigFloatPtr corners[]{
-            g_bf_save_x_min, g_bf_save_x_max, g_bf_save_y_min, g_bf_save_y_max, g_bf_save_x_3rd, g_bf_save_y_3rd};
+        const BigFloatPtr corners[]{g_bf_save_x_min.data(), g_bf_save_x_max.data(), g_bf_save_y_min.data(),
+            g_bf_save_y_max.data(), g_bf_save_x_3rd.data(), g_bf_save_y_3rd.data()};
         const double values[]{-2.0, 2.0, -1.5, 1.5, -1.75, -1.25};
         for (std::size_t i = 0; i < std::size(corners); ++i)
         {
@@ -96,7 +97,8 @@ protected:
 
     void expect_current_region(const ImageRegion &expected)
     {
-        const BigFloatPtr corners[]{g_bf_x_min, g_bf_x_max, g_bf_y_min, g_bf_y_max, g_bf_x_3rd, g_bf_y_3rd};
+        const BigFloatPtr corners[]{g_bf_x_min.data(), g_bf_x_max.data(), g_bf_y_min.data(), g_bf_y_max.data(),
+            g_bf_x_3rd.data(), g_bf_y_3rd.data()};
         const double values[]{
             expected.m_min.x, expected.m_max.x, expected.m_min.y, expected.m_max.y, expected.m_3rd.x, expected.m_3rd.y};
         for (std::size_t i = 0; i < std::size(corners); ++i)
@@ -108,8 +110,8 @@ protected:
     std::vector<Byte> saved_corners() const
     {
         std::vector<Byte> result;
-        for (BigFloatConstPtr corner :
-            {g_bf_save_x_min, g_bf_save_x_max, g_bf_save_y_min, g_bf_save_y_max, g_bf_save_x_3rd, g_bf_save_y_3rd})
+        for (BigFloatConstPtr corner : {g_bf_save_x_min.data(), g_bf_save_x_max.data(), g_bf_save_y_min.data(),
+                 g_bf_save_y_max.data(), g_bf_save_x_3rd.data(), g_bf_save_y_3rd.data()})
         {
             result.insert(result.end(), corner, corner + g_bf_length + 2);
         }

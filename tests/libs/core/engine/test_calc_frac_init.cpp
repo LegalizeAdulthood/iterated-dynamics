@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include <engine/calc_frac_init.h>
+#include <math/BigFloat.h>
 
 #include <MockDriver.h>
 
@@ -67,9 +68,10 @@ protected:
         {
             return g_image_region;
         }
-        return {{static_cast<double>(bf_to_float(g_bf_x_min)), static_cast<double>(bf_to_float(g_bf_y_min))},
-            {static_cast<double>(bf_to_float(g_bf_x_max)), static_cast<double>(bf_to_float(g_bf_y_max))},
-            {static_cast<double>(bf_to_float(g_bf_x_3rd)), static_cast<double>(bf_to_float(g_bf_y_3rd))}};
+        return {
+            {static_cast<double>(bf_to_float(g_bf_x_min.data())), static_cast<double>(bf_to_float(g_bf_y_min.data()))},
+            {static_cast<double>(bf_to_float(g_bf_x_max.data())), static_cast<double>(bf_to_float(g_bf_y_max.data()))},
+            {static_cast<double>(bf_to_float(g_bf_x_3rd.data())), static_cast<double>(bf_to_float(g_bf_y_3rd.data()))}};
     }
 
     MockDriver m_driver;
@@ -158,8 +160,8 @@ TEST_F(TestCalcFracInit, arbitraryPrecisionCornerAdjustmentSnapsNearlyAxisAligne
 
     adjust_corner_bf();
 
-    EXPECT_EQ(0, cmp_bf(g_bf_x_min, g_bf_x_3rd));
-    EXPECT_EQ(0, cmp_bf(g_bf_y_min, g_bf_y_3rd));
+    EXPECT_EQ(0, cmp_bf(g_bf_x_min.data(), g_bf_x_3rd.data()));
+    EXPECT_EQ(0, cmp_bf(g_bf_y_min.data(), g_bf_y_3rd.data()));
 }
 
 TEST_F(TestCalcFracInit, enteringArbitraryPrecisionStillInvalidatesResume)

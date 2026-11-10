@@ -78,12 +78,12 @@ protected:
 
     void set_corners(const ImageRegion &region)
     {
-        float_to_bf(g_bf_x_min, region.m_min.x);
-        float_to_bf(g_bf_x_max, region.m_max.x);
-        float_to_bf(g_bf_y_min, region.m_min.y);
-        float_to_bf(g_bf_y_max, region.m_max.y);
-        float_to_bf(g_bf_x_3rd, region.m_3rd.x);
-        float_to_bf(g_bf_y_3rd, region.m_3rd.y);
+        float_to_bf(g_bf_x_min.data(), region.m_min.x);
+        float_to_bf(g_bf_x_max.data(), region.m_max.x);
+        float_to_bf(g_bf_y_min.data(), region.m_min.y);
+        float_to_bf(g_bf_y_max.data(), region.m_max.y);
+        float_to_bf(g_bf_x_3rd.data(), region.m_3rd.x);
+        float_to_bf(g_bf_y_3rd.data(), region.m_3rd.y);
     }
 
     ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::MANDEL};
@@ -104,12 +104,12 @@ TEST_F(TestBigFloatViewportPrecision, retainsResolutionAndMagnificationDigitSele
     EXPECT_EQ(4, get_prec_bf(ResolutionFlag::MAX));
     EXPECT_EQ(stack, save_stack());
 
-    str_to_bf(g_bf_x_min, "-2e-40");
-    str_to_bf(g_bf_x_max, "2e-40");
-    str_to_bf(g_bf_x_3rd, "-2e-40");
-    str_to_bf(g_bf_y_min, "-1.5e-40");
-    str_to_bf(g_bf_y_max, "1.5e-40");
-    str_to_bf(g_bf_y_3rd, "-1.5e-40");
+    str_to_bf(g_bf_x_min.data(), "-2e-40");
+    str_to_bf(g_bf_x_max.data(), "2e-40");
+    str_to_bf(g_bf_x_3rd.data(), "-2e-40");
+    str_to_bf(g_bf_y_min.data(), "-1.5e-40");
+    str_to_bf(g_bf_y_max.data(), "1.5e-40");
+    str_to_bf(g_bf_y_3rd.data(), "-1.5e-40");
 
     EXPECT_EQ(43, get_prec_bf_mag());
     EXPECT_EQ(43, get_prec_bf(ResolutionFlag::CURRENT));
@@ -169,12 +169,12 @@ TEST_F(TestBigFloatViewportPrecision, subtractsDeepCornersBeforeMachineConversio
 {
     set_corners({{0.25, 0.125}, {0.25, 0.125}, {0.25, 0.125}});
     BigFloat offset{"1e-40"};
-    add_a_bf(g_bf_x_max, offset.data());
-    sub_a_bf(g_bf_x_min, offset.data());
-    sub_a_bf(g_bf_x_3rd, offset.data());
-    add_a_bf(g_bf_y_max, offset.data());
-    sub_a_bf(g_bf_y_min, offset.data());
-    sub_a_bf(g_bf_y_3rd, offset.data());
+    add_a_bf(g_bf_x_max.data(), offset.data());
+    sub_a_bf(g_bf_x_min.data(), offset.data());
+    sub_a_bf(g_bf_x_3rd.data(), offset.data());
+    add_a_bf(g_bf_y_max.data(), offset.data());
+    sub_a_bf(g_bf_y_min.data(), offset.data());
+    sub_a_bf(g_bf_y_3rd.data(), offset.data());
     BigFloat x{bf_arena(BigLifetime::TEMPORARY)};
     BigFloat y{bf_arena(BigLifetime::TEMPORARY)};
     LDouble mag;

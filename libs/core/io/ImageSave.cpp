@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include <io/ImageSave.h>
+#include <math/BigFloat.h>
 
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
@@ -215,7 +216,7 @@ static void setup_save_extensions(GifFileType &extensions, const std::optional<E
     }
     if (g_bf_math != BFMathType::NONE)
     {
-        if (g_bf_x_min == nullptr || g_bf_length < 0 || g_bf_length > std::numeric_limits<int>::max() / 22 - 2)
+        if (!g_bf_x_min || g_bf_length < 0 || g_bf_length > std::numeric_limits<int>::max() / 22 - 2)
         {
             throw std::logic_error("Invalid arbitrary precision save parameters");
         }

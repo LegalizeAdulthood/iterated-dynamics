@@ -847,16 +847,16 @@ static void bf_setup_convert_to_screen()
     BigFloat bt_tmp2{bf_arena(BigLifetime::TEMPORARY)};
 
     // xx3rd-xxmin
-    sub_bf(bt_inter1.data(), g_bf_x_3rd, g_bf_x_min);
+    sub_bf(bt_inter1.data(), g_bf_x_3rd.data(), g_bf_x_min.data());
     // yymin-yymax
-    sub_bf(bt_inter2.data(), g_bf_y_min, g_bf_y_max);
+    sub_bf(bt_inter2.data(), g_bf_y_min.data(), g_bf_y_max.data());
     // (xx3rd-xxmin)*(yymin-yymax)
     bt_tmp1 = bt_inter1 * bt_inter2;
 
     // yymax-yy3rd
-    sub_bf(bt_inter1.data(), g_bf_y_max, g_bf_y_3rd);
+    sub_bf(bt_inter1.data(), g_bf_y_max.data(), g_bf_y_3rd.data());
     // xxmax-xxmin
-    sub_bf(bt_inter2.data(), g_bf_x_max, g_bf_x_min);
+    sub_bf(bt_inter2.data(), g_bf_x_max.data(), g_bf_x_min.data());
     // (yymax-yy3rd)*(xxmax-xxmin)
     bt_tmp2 = bt_inter1 * bt_inter2;
 
@@ -868,29 +868,29 @@ static void bf_setup_convert_to_screen()
     bt_xd = bt_tmp1 / bt_det;
 
     // a =  xd*(yymax-yy3rd)
-    sub_bf(bt_inter1.data(), g_bf_y_max, g_bf_y_3rd);
+    sub_bf(bt_inter1.data(), g_bf_y_max.data(), g_bf_y_3rd.data());
     s_bt_a = bt_xd * bt_inter1;
 
     // b =  xd*(xx3rd-xxmin)
-    sub_bf(bt_inter1.data(), g_bf_x_3rd, g_bf_x_min);
+    sub_bf(bt_inter1.data(), g_bf_x_3rd.data(), g_bf_x_min.data());
     s_bt_b = bt_xd * bt_inter1;
 
     // e = -(a*xxmin + b*yymax)
-    mult_bf(bt_tmp1.data(), s_bt_a.data(), g_bf_x_min);
-    mult_bf(bt_tmp2.data(), s_bt_b.data(), g_bf_y_max);
+    mult_bf(bt_tmp1.data(), s_bt_a.data(), g_bf_x_min.data());
+    mult_bf(bt_tmp2.data(), s_bt_b.data(), g_bf_y_max.data());
     s_bt_e = -(s_bt_e = bt_tmp1 + bt_tmp2);
 
     // xx3rd-xxmax
-    sub_bf(bt_inter1.data(), g_bf_x_3rd, g_bf_x_max);
+    sub_bf(bt_inter1.data(), g_bf_x_3rd.data(), g_bf_x_max.data());
     // yymin-yymax
-    sub_bf(bt_inter2.data(), g_bf_y_min, g_bf_y_max);
+    sub_bf(bt_inter2.data(), g_bf_y_min.data(), g_bf_y_max.data());
     // (xx3rd-xxmax)*(yymin-yymax)
     bt_tmp1 = bt_inter1 * bt_inter2;
 
     // yymin-yy3rd
-    sub_bf(bt_inter1.data(), g_bf_y_min, g_bf_y_3rd);
+    sub_bf(bt_inter1.data(), g_bf_y_min.data(), g_bf_y_3rd.data());
     // xxmax-xxmin
-    sub_bf(bt_inter2.data(), g_bf_x_max, g_bf_x_min);
+    sub_bf(bt_inter2.data(), g_bf_x_max.data(), g_bf_x_min.data());
     // (yymin-yy3rd)*(xxmax-xxmin)
     bt_tmp2 = bt_inter1 * bt_inter2;
 
@@ -902,16 +902,16 @@ static void bf_setup_convert_to_screen()
     bt_yd = bt_tmp2 / bt_det;
 
     // c =  yd*(yymin-yy3rd)
-    sub_bf(bt_inter1.data(), g_bf_y_min, g_bf_y_3rd);
+    sub_bf(bt_inter1.data(), g_bf_y_min.data(), g_bf_y_3rd.data());
     s_bt_c = bt_yd * bt_inter1;
 
     // d =  yd*(xx3rd-xxmax)
-    sub_bf(bt_inter1.data(), g_bf_x_3rd, g_bf_x_max);
+    sub_bf(bt_inter1.data(), g_bf_x_3rd.data(), g_bf_x_max.data());
     s_bt_d = bt_yd * bt_inter1;
 
     // f = -(c*xxmin + d*yymax)
-    mult_bf(bt_tmp1.data(), s_bt_c.data(), g_bf_x_min);
-    mult_bf(bt_tmp2.data(), s_bt_d.data(), g_bf_y_max);
+    mult_bf(bt_tmp1.data(), s_bt_c.data(), g_bf_x_min.data());
+    mult_bf(bt_tmp2.data(), s_bt_d.data(), g_bf_y_max.data());
     s_bt_f = -(s_bt_f = bt_tmp1 + bt_tmp2);
 }
 

@@ -281,16 +281,16 @@ void TestBigFloatJulia::SetUp()
 
 TEST_F(TestBigFloatJulia, affineSeedsKeepPreciseFixedParameterAndSquareCaches)
 {
-    float_to_bf(g_bf_x_min, -2);
-    float_to_bf(g_bf_x_max, 2);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 1);
-    float_to_bf(g_bf_x_3rd, -1.5);
-    float_to_bf(g_bf_y_3rd, -0.75);
-    str_to_bf(g_bf_params[0], "0.25000000000000000001");
-    str_to_bf(g_bf_params[1], "-0.12500000000000000001");
-    const auto parameter_x = encoded(g_bf_params[0]);
-    const auto parameter_y = encoded(g_bf_params[1]);
+    float_to_bf(g_bf_x_min.data(), -2);
+    float_to_bf(g_bf_x_max.data(), 2);
+    float_to_bf(g_bf_y_min.data(), -1);
+    float_to_bf(g_bf_y_max.data(), 1);
+    float_to_bf(g_bf_x_3rd.data(), -1.5);
+    float_to_bf(g_bf_y_3rd.data(), -0.75);
+    str_to_bf(g_bf_params[0].data(), "0.25000000000000000001");
+    str_to_bf(g_bf_params[1].data(), "-0.12500000000000000001");
+    const auto parameter_x = encoded(g_bf_params[0].data());
+    const auto parameter_y = encoded(g_bf_params[1].data());
     // These bounded reference values use double, including scalar conversion.
     constexpr double tolerance = 64 * std::numeric_limits<double>::epsilon();
     g_magnitude_limit = 1024;
@@ -335,14 +335,14 @@ TEST_F(TestBigFloatJulia, affineSeedsKeepPreciseFixedParameterAndSquareCaches)
 
 TEST_F(TestBigFloatJulia, viewportTransitionRestoresJuliaParameterAndKeepsStrictBailout)
 {
-    float_to_bf(g_bf_x_min, 1);
-    float_to_bf(g_bf_x_max, 3);
-    float_to_bf(g_bf_x_3rd, 1);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 1);
-    float_to_bf(g_bf_y_3rd, -1);
-    clear_bf(g_bf_params[0]);
-    clear_bf(g_bf_params[1]);
+    float_to_bf(g_bf_x_min.data(), 1);
+    float_to_bf(g_bf_x_max.data(), 3);
+    float_to_bf(g_bf_x_3rd.data(), 1);
+    float_to_bf(g_bf_y_min.data(), -1);
+    float_to_bf(g_bf_y_max.data(), 1);
+    float_to_bf(g_bf_y_3rd.data(), -1);
+    clear_bf(g_bf_params[0].data());
+    clear_bf(g_bf_params[1].data());
     g_col = 128;
     g_row = 256;
     g_magnitude_limit = 16;
@@ -396,21 +396,21 @@ void TestBigFloatJuliaZPower::SetUp()
     g_params[3] = GetParam().exponent.imag();
     g_dispatch = FractalDispatch{*g_cur_fractal_specific};
     ASSERT_TRUE(select_alternate_math_dispatch());
-    float_to_bf(g_bf_x_min, 0);
-    float_to_bf(g_bf_x_max, 1);
-    float_to_bf(g_bf_x_3rd, 0);
-    float_to_bf(g_bf_y_min, 0);
-    float_to_bf(g_bf_y_max, 0.5);
-    float_to_bf(g_bf_y_3rd, 0);
-    str_to_bf(g_bf_params[0], "0.12500000000000000001");
-    str_to_bf(g_bf_params[1], "-0.06250000000000000001");
+    float_to_bf(g_bf_x_min.data(), 0);
+    float_to_bf(g_bf_x_max.data(), 1);
+    float_to_bf(g_bf_x_3rd.data(), 0);
+    float_to_bf(g_bf_y_min.data(), 0);
+    float_to_bf(g_bf_y_max.data(), 0.5);
+    float_to_bf(g_bf_y_3rd.data(), 0);
+    str_to_bf(g_bf_params[0].data(), "0.12500000000000000001");
+    str_to_bf(g_bf_params[1].data(), "-0.06250000000000000001");
     g_magnitude_limit = 1024;
 }
 
 TEST_P(TestBigFloatJuliaZPower, setupSeedsAndOrbitKeepTheFixedParameterAndExponentRules)
 {
-    const auto parameter_x = encoded(g_bf_params[0]);
-    const auto parameter_y = encoded(g_bf_params[1]);
+    const auto parameter_x = encoded(g_bf_params[0].data());
+    const auto parameter_y = encoded(g_bf_params[1].data());
     EXPECT_EQ(mandel_per_image_bf, g_dispatch.per_image());
     EXPECT_EQ(julia_per_pixel_bf, g_dispatch.per_pixel());
     EXPECT_EQ(julia_z_power_orbit_bf, g_dispatch.orbit_calc());
@@ -459,8 +459,8 @@ TEST_P(TestBigFloatJuliaZPower, zeroSeedRetainsTheLegacyPowerConvention)
 
 TEST_P(TestBigFloatJuliaZPower, unitSeedKeepsTheStrictBailoutBoundary)
 {
-    clear_bf(g_bf_params[0]);
-    clear_bf(g_bf_params[1]);
+    clear_bf(g_bf_params[0].data());
+    clear_bf(g_bf_params[1].data());
     ASSERT_TRUE(g_dispatch.per_image()());
     g_col = 256;
     g_row = 512;

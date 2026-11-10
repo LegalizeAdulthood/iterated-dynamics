@@ -26,6 +26,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include <array>
 #include <cstring>
 #include <memory>
+#include <new>
 #include <utility>
 #include <vector>
 
@@ -99,19 +100,19 @@ BFComplex g_new_z_bf{};
 BigFloatPtr g_bf_pi{};  // TAKES NO SPACE
 BigFloatPtr g_big_pi{}; // g_bf_length+2
 // g_bf_length+2
-BigFloatPtr g_bf_x_min{};
-BigFloatPtr g_bf_x_max{};
-BigFloatPtr g_bf_y_min{};
-BigFloatPtr g_bf_y_max{};
-BigFloatPtr g_bf_x_3rd{};
-BigFloatPtr g_bf_y_3rd{};
-BigFloatPtr g_bf_save_x_min{};
-BigFloatPtr g_bf_save_x_max{};
-BigFloatPtr g_bf_save_y_min{};
-BigFloatPtr g_bf_save_y_max{};
-BigFloatPtr g_bf_save_x_3rd{};
-BigFloatPtr g_bf_save_y_3rd{};
-BigFloatPtr g_bf_params[10]{}; // (g_bf_length + 2)*10
+BigFloat g_bf_x_min{};
+BigFloat g_bf_x_max{};
+BigFloat g_bf_y_min{};
+BigFloat g_bf_y_max{};
+BigFloat g_bf_x_3rd{};
+BigFloat g_bf_y_3rd{};
+BigFloat g_bf_save_x_min{};
+BigFloat g_bf_save_x_max{};
+BigFloat g_bf_save_y_min{};
+BigFloat g_bf_save_y_max{};
+BigFloat g_bf_save_x_3rd{};
+BigFloat g_bf_save_y_3rd{};
+BigFloat g_bf_params[10]{}; // (g_bf_length + 2)*10
 BigFloat g_bf_tmp{};
 
 constexpr long BIGNUM_ARENA_SIZE{1024L * 1024};
@@ -195,7 +196,7 @@ std::size_t arena_blocks(const std::size_t block_size)
 
 using WorkingBinding = std::pair<BigNumPtr *, BigArena::Allocation>;
 
-std::array<BigFloatPtr *, 22> parameter_bindings()
+std::array<BigFloat *, 22> parameter_bindings()
 {
     return {&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd, &g_bf_params[0],
         &g_bf_params[1], &g_bf_params[2], &g_bf_params[3], &g_bf_params[4], &g_bf_params[5], &g_bf_params[6],
@@ -296,7 +297,6 @@ private:
     int m_bf_length;
     int m_int_length;
     bool m_bound{};
-    std::array<BigArena::Allocation, 22> m_parameters;
 };
 
 MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_length, const int padding) :
@@ -325,10 +325,6 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
     big_float.wide(g_bf_tmp_copy1);
     big_float.wide(g_bf_tmp_copy2);
     big_float.single(g_big_pi);
-    for (auto &value : m_parameters)
-    {
-        value = big_float.persistent.allocate_single();
-    }
 }
 
 MathArenas::~MathArenas()
@@ -336,8 +332,8 @@ MathArenas::~MathArenas()
     unbind();
 }
 
-void MathArenas::change_precision(
-    const int bn_length, const int bf_length, const int int_length, const int padding, const bool preserve_parameters)
+void MathArenas::change_precision(const int bn_length, const int bf_length, const int int_length, const int padding,
+    const bool /*preserve_parameters*/)
 {
     if (bn_length == m_bn_length && bf_length == m_bf_length && int_length == m_int_length)
     {
@@ -369,10 +365,7 @@ void MathArenas::change_precision(
             [&](Byte *destination, const Byte *source, std::size_t blocks)
             {
                 std::memset(destination, 0, blocks * bf_stride);
-                const bool discarded_parameter = !preserve_parameters &&
-                    std::any_of(m_parameters.begin(), m_parameters.end(),
-                        [source](const BigArena::Allocation &value) { return value.data() == source; });
-                if (!big_float.is_workspace(source) && !discarded_parameter)
+                if (!big_float.is_workspace(source))
                 {
                     convert_bf(destination, source, bf_length, m_bf_length);
                 }
@@ -426,13 +419,13 @@ void MathArenas::bind(const bool preserve_parameters)
     g_tmp_sqr_x_bf = 0;
     g_tmp_sqr_y_bf = 0;
     g_bf_tmp = 0;
-    const auto targets = parameter_bindings();
-    for (std::size_t i = 0; i < targets.size(); ++i)
+    if (!preserve_parameters)
     {
-        *targets[i] = m_parameters[i].data();
-        if (!preserve_parameters)
+        for (auto target : parameter_bindings())
         {
-            std::memset(m_parameters[i].data(), 0, big_float.persistent.block_size());
+            BigFloat value{big_float.persistent};
+            std::destroy_at(target);
+            ::new (target) BigFloat{std::move(value)};
         }
     }
     m_bound = true;
@@ -473,7 +466,7 @@ void MathArenas::unbind()
     g_bf_tmp = BigFloat{};
     for (auto target : parameter_bindings())
     {
-        *target = nullptr;
+        *target = BigFloat{};
     }
 }
 
@@ -648,9 +641,9 @@ std::vector<char> pack_bf_parameters()
     const std::size_t length = static_cast<std::size_t>(g_bf_length) + 2;
     std::vector<char> result(22 * length);
     std::size_t offset = 0;
-    for (BigFloatPtr *value : parameter_bindings())
+    for (BigFloat *value : parameter_bindings())
     {
-        std::memcpy(result.data() + offset, *value, length);
+        std::memcpy(result.data() + offset, value->data(), length);
         offset += length;
     }
     return result;
@@ -664,9 +657,9 @@ void unpack_bf_parameters(const std::vector<char> &parameters)
         throw std::invalid_argument("Incomplete arbitrary precision parameter payload");
     }
     std::size_t offset = 0;
-    for (BigFloatPtr *value : parameter_bindings())
+    for (BigFloat *value : parameter_bindings())
     {
-        std::memcpy(*value, parameters.data() + offset, length);
+        std::memcpy(value->data(), parameters.data() + offset, length);
         offset += length;
     }
 }

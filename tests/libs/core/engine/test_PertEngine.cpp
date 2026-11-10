@@ -1167,14 +1167,14 @@ TEST_F(TestJuliaZPowerPeriodicity, nativeBigFloatDetectsAndHighlightsCycles)
     init_bf_dec(60);
     m_big_float = true;
     ASSERT_TRUE(select_alternate_math_dispatch());
-    clear_bf(g_bf_params[0]);
-    clear_bf(g_bf_params[1]);
-    float_to_bf(g_bf_x_min, 0);
-    float_to_bf(g_bf_x_max, 1);
-    float_to_bf(g_bf_x_3rd, 0);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 0);
-    float_to_bf(g_bf_y_3rd, -1);
+    clear_bf(g_bf_params[0].data());
+    clear_bf(g_bf_params[1].data());
+    float_to_bf(g_bf_x_min.data(), 0);
+    float_to_bf(g_bf_x_max.data(), 1);
+    float_to_bf(g_bf_x_3rd.data(), 0);
+    float_to_bf(g_bf_y_min.data(), -1);
+    float_to_bf(g_bf_y_max.data(), 0);
+    float_to_bf(g_bf_y_3rd.data(), -1);
     g_image_region = ImageRegion{{0, -1}, {1, 0}, {0, -1}};
     fill_pixel_grid();
     g_col = g_row = 0;
@@ -1233,12 +1233,12 @@ TEST_F(TestBigFloatMandelbrot, directAlternativePreservesAffineCoordinatesSeedsA
     g_logical_screen = LogicalScreen{257, 513, 0, 0, 256, 512};
     g_magnitude_limit = 1024;
     set_initial_offset({0.125, -0.25});
-    float_to_bf(g_bf_x_min, -2);
-    float_to_bf(g_bf_x_max, 2);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 1);
-    float_to_bf(g_bf_x_3rd, -1.5);
-    float_to_bf(g_bf_y_3rd, -0.75);
+    float_to_bf(g_bf_x_min.data(), -2);
+    float_to_bf(g_bf_x_max.data(), 2);
+    float_to_bf(g_bf_y_min.data(), -1);
+    float_to_bf(g_bf_y_max.data(), 1);
+    float_to_bf(g_bf_x_3rd.data(), -1.5);
+    float_to_bf(g_bf_y_3rd.data(), -0.75);
 
     ASSERT_TRUE(mandel_per_image_bf());
     ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
@@ -8730,12 +8730,12 @@ void TestPerturbationFrameCoordinates::SetUp()
     {
         init_bf_dec(60);
         m_big_float = true;
-        float_to_bf(g_bf_x_min, g_image_region.m_min.x);
-        float_to_bf(g_bf_x_max, g_image_region.m_max.x);
-        float_to_bf(g_bf_y_min, g_image_region.m_min.y);
-        float_to_bf(g_bf_y_max, g_image_region.m_max.y);
-        float_to_bf(g_bf_x_3rd, region.m_3rd.x);
-        float_to_bf(g_bf_y_3rd, region.m_3rd.y);
+        float_to_bf(g_bf_x_min.data(), g_image_region.m_min.x);
+        float_to_bf(g_bf_x_max.data(), g_image_region.m_max.x);
+        float_to_bf(g_bf_y_min.data(), g_image_region.m_min.y);
+        float_to_bf(g_bf_y_max.data(), g_image_region.m_max.y);
+        float_to_bf(g_bf_x_3rd.data(), region.m_3rd.x);
+        float_to_bf(g_bf_y_3rd.data(), region.m_3rd.y);
     }
     g_std_calc_mode = input.context.pass;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
@@ -8885,8 +8885,8 @@ void BurningShipPerturbationTest::compare_native_pixel(
     if (m_use_big_float)
     {
         g_dispatch.set_per_pixel(mandel_per_pixel_bf);
-        float_to_bf(g_bf_x_min, point.real());
-        float_to_bf(g_bf_y_max, point.imag());
+        float_to_bf(g_bf_x_min.data(), point.real());
+        float_to_bf(g_bf_y_max.data(), point.imag());
         clear_bf(g_delta_x_bf.data());
         clear_bf(g_delta_y_bf.data());
         clear_bf(g_delta2_x_bf.data());
@@ -9413,12 +9413,12 @@ void TestShipPassBailout::SetUp()
     {
         init_bf_dec(60);
         m_big_float = true;
-        float_to_bf(g_bf_x_min, 1.0);
-        float_to_bf(g_bf_x_max, 1.0);
-        float_to_bf(g_bf_x_3rd, 1.0);
-        clear_bf(g_bf_y_min);
-        clear_bf(g_bf_y_max);
-        clear_bf(g_bf_y_3rd);
+        float_to_bf(g_bf_x_min.data(), 1.0);
+        float_to_bf(g_bf_x_max.data(), 1.0);
+        float_to_bf(g_bf_x_3rd.data(), 1.0);
+        clear_bf(g_bf_y_min.data());
+        clear_bf(g_bf_y_max.data());
+        clear_bf(g_bf_y_3rd.data());
         m_specific.per_image = mandel_per_image_bf;
         m_specific.per_pixel = mandel_per_pixel_bf;
         m_specific.orbit_calc = burning_ship_bf_fractal;
@@ -10314,12 +10314,12 @@ void TestFrameIntegerPower::SetUp()
     {
         init_bf_dec(60);
         m_big_float = true;
-        float_to_bf(g_bf_x_min, 0.875);
-        float_to_bf(g_bf_x_max, 0.875);
-        float_to_bf(g_bf_x_3rd, 0.875);
-        float_to_bf(g_bf_y_min, 0.000125);
-        float_to_bf(g_bf_y_max, 0.000125);
-        float_to_bf(g_bf_y_3rd, 0.000125);
+        float_to_bf(g_bf_x_min.data(), 0.875);
+        float_to_bf(g_bf_x_max.data(), 0.875);
+        float_to_bf(g_bf_x_3rd.data(), 0.875);
+        float_to_bf(g_bf_y_min.data(), 0.000125);
+        float_to_bf(g_bf_y_max.data(), 0.000125);
+        float_to_bf(g_bf_y_3rd.data(), 0.000125);
     }
     g_c_exponent = GetParam().exponent;
     g_params[2] = GetParam().exponent;
@@ -10612,12 +10612,12 @@ void TestComplexPowerFrame::SetUp()
     g_image_region = ImageRegion{{0.125, 0.0625}, {0.125, 0.0625}, {0.125, 0.0625}};
     if (GetParam().big_float)
     {
-        float_to_bf(g_bf_x_min, 0.125);
-        float_to_bf(g_bf_x_max, 0.125);
-        float_to_bf(g_bf_x_3rd, 0.125);
-        float_to_bf(g_bf_y_min, 0.0625);
-        float_to_bf(g_bf_y_max, 0.0625);
-        float_to_bf(g_bf_y_3rd, 0.0625);
+        float_to_bf(g_bf_x_min.data(), 0.125);
+        float_to_bf(g_bf_x_max.data(), 0.125);
+        float_to_bf(g_bf_x_3rd.data(), 0.125);
+        float_to_bf(g_bf_y_min.data(), 0.0625);
+        float_to_bf(g_bf_y_max.data(), 0.0625);
+        float_to_bf(g_bf_y_3rd.data(), 0.0625);
     }
     g_calc_status = CalcStatus::PARAMS_CHANGED;
 }
@@ -11022,12 +11022,12 @@ void SynchronousPerturbationTest::prepare(
     initialize_reference({-0.5, 0.0}, 2.0, 1.5);
     if (m_use_big_float)
     {
-        float_to_bf(g_bf_x_min, region.m_min.x);
-        float_to_bf(g_bf_x_max, region.m_max.x);
-        float_to_bf(g_bf_y_min, region.m_min.y);
-        float_to_bf(g_bf_y_max, region.m_max.y);
-        copy_bf(g_bf_x_3rd, g_bf_x_min);
-        copy_bf(g_bf_y_3rd, g_bf_y_min);
+        float_to_bf(g_bf_x_min.data(), region.m_min.x);
+        float_to_bf(g_bf_x_max.data(), region.m_max.x);
+        float_to_bf(g_bf_y_min.data(), region.m_min.y);
+        float_to_bf(g_bf_y_max.data(), region.m_max.y);
+        copy_bf(g_bf_x_3rd.data(), g_bf_x_min.data());
+        copy_bf(g_bf_y_3rd.data(), g_bf_y_min.data());
     }
     m_specific.pert_pt = record_perturbation_orbit;
     m_specific.pert_ref = record_reference;
@@ -11913,12 +11913,12 @@ TEST_F(TestPerturbationPixels, deepAffineFramePreservesBothBasisVectors)
         float_to_bf(delta, offset);
         add_a_bf(value, delta);
     };
-    set_offset(g_bf_x_min, 0.25, -3e-40);
-    set_offset(g_bf_x_max, 0.25, 3e-40);
-    set_offset(g_bf_x_3rd, 0.25, -1e-40);
-    set_offset(g_bf_y_min, 0.125, -1e-40);
-    set_offset(g_bf_y_max, 0.125, 1e-40);
-    set_offset(g_bf_y_3rd, 0.125, -3e-40);
+    set_offset(g_bf_x_min.data(), 0.25, -3e-40);
+    set_offset(g_bf_x_max.data(), 0.25, 3e-40);
+    set_offset(g_bf_x_3rd.data(), 0.25, -1e-40);
+    set_offset(g_bf_y_min.data(), 0.125, -1e-40);
+    set_offset(g_bf_y_max.data(), 0.125, 1e-40);
+    set_offset(g_bf_y_3rd.data(), 0.125, -3e-40);
     m_specific.calc_type = standard_fractal_type;
     m_specific.per_image = [] { return true; };
     m_specific.symmetry = SymmetryType::NONE;
@@ -12181,12 +12181,12 @@ void TestFixedPassColors::render(const PerturbationMode mode)
     {
         init_bf_dec(60);
         m_big_float = true;
-        float_to_bf(g_bf_x_min, -0.5);
-        float_to_bf(g_bf_x_max, 0.5);
-        float_to_bf(g_bf_x_3rd, -0.5);
-        float_to_bf(g_bf_y_min, 0.0);
-        float_to_bf(g_bf_y_max, 0.5);
-        float_to_bf(g_bf_y_3rd, 0.0);
+        float_to_bf(g_bf_x_min.data(), -0.5);
+        float_to_bf(g_bf_x_max.data(), 0.5);
+        float_to_bf(g_bf_x_3rd.data(), -0.5);
+        float_to_bf(g_bf_y_min.data(), 0.0);
+        float_to_bf(g_bf_y_max.data(), 0.5);
+        float_to_bf(g_bf_y_3rd.data(), 0.0);
     }
     StandardFractal calculation;
     calculation.resume();
@@ -12387,12 +12387,12 @@ void TestInvertedDeepZoom::SetUp()
     init_bf_dec(60);
     m_big_float = true;
     g_bf_math = BFMathType::BIG_FLT;
-    str_to_bf(g_bf_x_min, "1.4999999999999999999999999999999999999999");
-    str_to_bf(g_bf_x_max, "1.5000000000000000000000000000000000000001");
-    str_to_bf(g_bf_y_min, "-1e-40");
-    str_to_bf(g_bf_y_max, "1e-40");
-    copy_bf(g_bf_x_3rd, g_bf_x_min);
-    copy_bf(g_bf_y_3rd, g_bf_y_min);
+    str_to_bf(g_bf_x_min.data(), "1.4999999999999999999999999999999999999999");
+    str_to_bf(g_bf_x_max.data(), "1.5000000000000000000000000000000000000001");
+    str_to_bf(g_bf_y_min.data(), "-1e-40");
+    str_to_bf(g_bf_y_max.data(), "1e-40");
+    copy_bf(g_bf_x_3rd.data(), g_bf_x_min.data());
+    copy_bf(g_bf_y_3rd.data(), g_bf_y_min.data());
     g_inversion = {3, 1.0, {1.0, 0.0}, {1.0, 1.0, 0.0}};
     m_specific.pert_ref_bf = record_reference_bf;
     m_specific.pert_pt = record_delta;
@@ -12503,12 +12503,12 @@ void TestPerturbationPixels::check_pass_switch(const PerturbationMode mode)
         g_image_region, ImageRegion{{0.25 - 1e-10, -1e-10}, {0.25 + 1e-10, 1e-10}, {0.25 - 1e-10, -1e-10}}};
     init_bf_dec(60);
     m_big_float = true;
-    float_to_bf(g_bf_x_min, g_image_region.m_min.x);
-    float_to_bf(g_bf_x_max, g_image_region.m_max.x);
-    float_to_bf(g_bf_y_min, g_image_region.m_min.y);
-    float_to_bf(g_bf_y_max, g_image_region.m_max.y);
-    copy_bf(g_bf_x_3rd, g_bf_x_min);
-    copy_bf(g_bf_y_3rd, g_bf_y_min);
+    float_to_bf(g_bf_x_min.data(), g_image_region.m_min.x);
+    float_to_bf(g_bf_x_max.data(), g_image_region.m_max.x);
+    float_to_bf(g_bf_y_min.data(), g_image_region.m_min.y);
+    float_to_bf(g_bf_y_max.data(), g_image_region.m_max.y);
+    copy_bf(g_bf_x_3rd.data(), g_bf_x_min.data());
+    copy_bf(g_bf_y_3rd.data(), g_bf_y_min.data());
     g_user.perturbation = mode;
     g_user.perturbation_tolerance = 2.0;
     m_specific.calc_type = calculate_control_pixel;
@@ -12678,16 +12678,17 @@ void TestSubnormalPerturbation::SetUp()
     g_max_iterations = 4;
     g_magnitude_limit = 16;
     set_bailout_formula(Bailout::MOD);
-    str_to_bf(g_bf_x_min, "-4e-324");
-    str_to_bf(g_bf_x_max, "4e-324");
-    copy_bf(g_bf_x_3rd, g_bf_x_min);
-    clear_bf(g_bf_y_min);
-    clear_bf(g_bf_y_max);
-    clear_bf(g_bf_y_3rd);
+    str_to_bf(g_bf_x_min.data(), "-4e-324");
+    str_to_bf(g_bf_x_max.data(), "4e-324");
+    copy_bf(g_bf_x_3rd.data(), g_bf_x_min.data());
+    clear_bf(g_bf_y_min.data());
+    clear_bf(g_bf_y_max.data());
+    clear_bf(g_bf_y_3rd.data());
     const auto size = static_cast<std::size_t>(g_bf_length + 2);
-    m_engine.initialize_frame_bf({BigFloat::from_legacy(g_bf_x_min, size), BigFloat::from_legacy(g_bf_y_min, size)},
-        {BigFloat::from_legacy(g_bf_x_max, size), BigFloat::from_legacy(g_bf_y_max, size)},
-        {BigFloat::from_legacy(g_bf_x_3rd, size), BigFloat::from_legacy(g_bf_y_3rd, size)});
+    m_engine.initialize_frame_bf(
+        {BigFloat::from_legacy(g_bf_x_min.data(), size), BigFloat::from_legacy(g_bf_y_min.data(), size)},
+        {BigFloat::from_legacy(g_bf_x_max.data(), size), BigFloat::from_legacy(g_bf_y_max.data(), size)},
+        {BigFloat::from_legacy(g_bf_x_3rd.data(), size), BigFloat::from_legacy(g_bf_y_3rd.data(), size)});
     ASSERT_TRUE(m_engine.initialize_pixel_strategy());
 }
 
@@ -12730,9 +12731,9 @@ TEST_F(TestSubnormalPerturbation, continuationReplacesSubnormalParameterAndSeedD
 
 TEST_F(TestSubnormalPerturbation, displacedPixelMatchesNativeBigFloatOrbit)
 {
-    copy_bf(g_param_z_bf.x.data(), g_bf_x_max);
+    copy_bf(g_param_z_bf.x.data(), g_bf_x_max.data());
     clear_bf(g_param_z_bf.y.data());
-    copy_bf(g_old_z_bf.x.data(), g_bf_x_max);
+    copy_bf(g_old_z_bf.x.data(), g_bf_x_max.data());
     clear_bf(g_old_z_bf.y.data());
     // Native BF conversion also depends on the platform's floating-point range.
     long iteration{};
@@ -12810,15 +12811,15 @@ void TestDeepPerturbationGeometry::initialize_corners()
         BigStackSaver saved;
         const BigFloatPtr offset{bf_stack().allocate_single()};
         str_to_bf(offset, "3e-400");
-        int_to_bf(g_bf_x_min, -2);
-        sub_a_bf(g_bf_x_min, offset);
-        int_to_bf(g_bf_x_max, -2);
-        add_a_bf(g_bf_x_max, offset);
+        int_to_bf(g_bf_x_min.data(), -2);
+        sub_a_bf(g_bf_x_min.data(), offset);
+        int_to_bf(g_bf_x_max.data(), -2);
+        add_a_bf(g_bf_x_max.data(), offset);
     }
-    copy_bf(g_bf_x_3rd, g_bf_x_min);
-    clear_bf(g_bf_y_min);
-    clear_bf(g_bf_y_max);
-    clear_bf(g_bf_y_3rd);
+    copy_bf(g_bf_x_3rd.data(), g_bf_x_min.data());
+    clear_bf(g_bf_y_min.data());
+    clear_bf(g_bf_y_max.data());
+    clear_bf(g_bf_y_3rd.data());
 }
 
 void TestDeepPerturbationGeometry::TearDown()
@@ -12831,9 +12832,10 @@ void TestDeepPerturbationGeometry::TearDown()
 void TestDeepPerturbationGeometry::initialize_frame()
 {
     const auto size = static_cast<std::size_t>(g_bf_length + 2);
-    m_engine.initialize_frame_bf({BigFloat::from_legacy(g_bf_x_min, size), BigFloat::from_legacy(g_bf_y_min, size)},
-        {BigFloat::from_legacy(g_bf_x_max, size), BigFloat::from_legacy(g_bf_y_max, size)},
-        {BigFloat::from_legacy(g_bf_x_3rd, size), BigFloat::from_legacy(g_bf_y_3rd, size)});
+    m_engine.initialize_frame_bf(
+        {BigFloat::from_legacy(g_bf_x_min.data(), size), BigFloat::from_legacy(g_bf_y_min.data(), size)},
+        {BigFloat::from_legacy(g_bf_x_max.data(), size), BigFloat::from_legacy(g_bf_y_max.data(), size)},
+        {BigFloat::from_legacy(g_bf_x_3rd.data(), size), BigFloat::from_legacy(g_bf_y_3rd.data(), size)});
     ASSERT_TRUE(m_engine.initialize_pixel_strategy());
 }
 
@@ -12939,23 +12941,23 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestDeepViewportPass, Values(CalcMode::BOUNDARY
 
 TEST_F(TestDeepPerturbationGeometry, frameRetainsPreciseGeometryForReplacementReferences)
 {
-    str_to_bf(g_bf_y_min, "-3e-400");
-    str_to_bf(g_bf_y_max, "3e-400");
-    str_to_bf(g_bf_y_3rd, "-1e-400");
+    str_to_bf(g_bf_y_min.data(), "-3e-400");
+    str_to_bf(g_bf_y_max.data(), "3e-400");
+    str_to_bf(g_bf_y_3rd.data(), "-1e-400");
     {
         BigStackSaver saved;
         const BigFloatPtr offset{bf_stack().allocate_single()};
         str_to_bf(offset, "1e-400");
-        int_to_bf(g_bf_x_3rd, -2);
-        sub_a_bf(g_bf_x_3rd, offset);
+        int_to_bf(g_bf_x_3rd.data(), -2);
+        sub_a_bf(g_bf_x_3rd.data(), offset);
     }
     initialize_frame();
-    int_to_bf(g_bf_x_min, -2);
-    int_to_bf(g_bf_x_max, -2);
-    int_to_bf(g_bf_x_3rd, -2);
-    clear_bf(g_bf_y_min);
-    clear_bf(g_bf_y_max);
-    clear_bf(g_bf_y_3rd);
+    int_to_bf(g_bf_x_min.data(), -2);
+    int_to_bf(g_bf_x_max.data(), -2);
+    int_to_bf(g_bf_x_3rd.data(), -2);
+    clear_bf(g_bf_y_min.data());
+    clear_bf(g_bf_y_max.data());
+    clear_bf(g_bf_y_3rd.data());
 
     EXPECT_EQ(1, m_engine.calculate_pixel(0, 0));
     EXPECT_EQ(7, m_engine.calculate_pixel(WIDTH - 1, HEIGHT - 1));
@@ -12997,7 +12999,7 @@ TEST_F(TestDeepPerturbationGeometry, continuationReplacesUnrepresentableParamete
     EXPECT_EQ(g_max_iterations, m_engine.orbit_iteration());
     m_engine.finish_orbit();
     const int references{m_engine.reference_count()};
-    copy_bf(parameter.x.data(), g_bf_x_min);
+    copy_bf(parameter.x.data(), g_bf_x_min.data());
     copy_bf(value.x.data(), parameter.x.data());
 
     m_engine.begin_orbit_bf(parameter, value, 0);

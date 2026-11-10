@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include <engine/convert_corners.h>
+#include <math/BigFloat.h>
 
 #include <engine/calc_frac_init.h>
 #include <engine/ImageRegion.h>
@@ -102,15 +103,15 @@ void cvt_corners_bf(
     {
         // simple, faster case
         // xx3rd = xxmin = x_ctr - w;
-        sub_bf(g_bf_x_min, ctr_x, bfw);
-        copy_bf(g_bf_x_3rd, g_bf_x_min);
+        sub_bf(g_bf_x_min.data(), ctr_x, bfw);
+        copy_bf(g_bf_x_3rd.data(), g_bf_x_min.data());
         // xxmax = x_ctr + w;
-        add_bf(g_bf_x_max, ctr_x, bfw);
+        add_bf(g_bf_x_max.data(), ctr_x, bfw);
         // yy3rd = yymin = y_ctr - h;
-        sub_bf(g_bf_y_min, ctr_y, bfh);
-        copy_bf(g_bf_y_3rd, g_bf_y_min);
+        sub_bf(g_bf_y_min.data(), ctr_y, bfh);
+        copy_bf(g_bf_y_3rd.data(), g_bf_y_min.data());
         // yymax = y_ctr + h;
-        add_bf(g_bf_y_max, ctr_y, bfh);
+        add_bf(g_bf_y_max.data(), ctr_y, bfh);
         return;
     }
 
@@ -134,30 +135,30 @@ void cvt_corners_bf(
     LDouble y = -x_min * sin_rot + y_max * cos_rot;
     // xxmin = x + x_ctr;
     float_to_bf(bf_tmp, x);
-    add_bf(g_bf_x_min, bf_tmp, ctr_x);
+    add_bf(g_bf_x_min.data(), bf_tmp, ctr_x);
     // yymax = y + y_ctr;
     float_to_bf(bf_tmp, y);
-    add_bf(g_bf_y_max, bf_tmp, ctr_y);
+    add_bf(g_bf_y_max.data(), bf_tmp, ctr_y);
 
     // bottom right
     x =  x_max * cos_rot + y_min *  sin_rot;
     y = -x_max * sin_rot + y_min *  cos_rot;
     // xxmax = x + x_ctr;
     float_to_bf(bf_tmp, x);
-    add_bf(g_bf_x_max, bf_tmp, ctr_x);
+    add_bf(g_bf_x_max.data(), bf_tmp, ctr_x);
     // yymin = y + y_ctr;
     float_to_bf(bf_tmp, y);
-    add_bf(g_bf_y_min, bf_tmp, ctr_y);
+    add_bf(g_bf_y_min.data(), bf_tmp, ctr_y);
 
     // bottom left
     x =  x_3rd * cos_rot + y_3rd *  sin_rot;
     y = -x_3rd * sin_rot + y_3rd *  cos_rot;
     // xx3rd = x + x_ctr;
     float_to_bf(bf_tmp, x);
-    add_bf(g_bf_x_3rd, bf_tmp, ctr_x);
+    add_bf(g_bf_x_3rd.data(), bf_tmp, ctr_x);
     // yy3rd = y + y_ctr;
     float_to_bf(bf_tmp, y);
-    add_bf(g_bf_y_3rd, bf_tmp, ctr_y);
+    add_bf(g_bf_y_3rd.data(), bf_tmp, ctr_y);
 }
 
 } // namespace id::engine

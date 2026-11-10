@@ -27,9 +27,9 @@ void StandardFractal::start_perturbation_frame()
     {
         const auto size = static_cast<std::size_t>(g_bf_length + 2);
         m_pert_engine.initialize_frame_bf(
-            {BigFloat::from_legacy(g_bf_x_min, size), BigFloat::from_legacy(g_bf_y_min, size)},
-            {BigFloat::from_legacy(g_bf_x_max, size), BigFloat::from_legacy(g_bf_y_max, size)},
-            {BigFloat::from_legacy(g_bf_x_3rd, size), BigFloat::from_legacy(g_bf_y_3rd, size)});
+            {BigFloat::from_legacy(g_bf_x_min.data(), size), BigFloat::from_legacy(g_bf_y_min.data(), size)},
+            {BigFloat::from_legacy(g_bf_x_max.data(), size), BigFloat::from_legacy(g_bf_y_max.data(), size)},
+            {BigFloat::from_legacy(g_bf_x_3rd.data(), size), BigFloat::from_legacy(g_bf_y_3rd.data(), size)});
         m_pert_engine.initialize_pixel_strategy();
     }
     else

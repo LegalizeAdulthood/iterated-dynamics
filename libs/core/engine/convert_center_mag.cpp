@@ -126,22 +126,22 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
 
     // simple normal case first
     // if (g_image_region.m_3rd.x == g_image_region.m_min.x && g_image_region.m_3rd.y == g_image_region.m_min.y)
-    if (!cmp_bf(g_bf_x_3rd, g_bf_x_min) && !cmp_bf(g_bf_y_3rd, g_bf_y_min))
+    if (!cmp_bf(g_bf_x_3rd.data(), g_bf_x_min.data()) && !cmp_bf(g_bf_y_3rd.data(), g_bf_y_min.data()))
     {
         // no rotation or skewing, but stretching is allowed
         BigFloat width_bf{bf_arena(BigLifetime::TEMPORARY)};
         BigFloat height_bf{bf_arena(BigLifetime::TEMPORARY)};
         // width  = x_max - x_min;
-        sub_bf(width_bf.data(), g_bf_x_max, g_bf_x_min);
+        sub_bf(width_bf.data(), g_bf_x_max.data(), g_bf_x_min.data());
         const LDouble width = width_bf.to_float();
         // height = y_max - y_min;
-        sub_bf(height_bf.data(), g_bf_y_max, g_bf_y_min);
+        sub_bf(height_bf.data(), g_bf_y_max.data(), g_bf_y_min.data());
         const LDouble height = height_bf.to_float();
         // *ctr_x = (x_min + x_max)/2;
-        add_bf(ctr_x.data(), g_bf_x_min, g_bf_x_max);
+        add_bf(ctr_x.data(), g_bf_x_min.data(), g_bf_x_max.data());
         ctr_x = ctr_x.half();
         // *ctr_y = (y_min + y_max)/2;
-        add_bf(ctr_y.data(), g_bf_y_min, g_bf_y_max);
+        add_bf(ctr_y.data(), g_bf_y_min.data(), g_bf_y_max.data());
         ctr_y = ctr_y.half();
         mag  = 2/height;
         x_mag_factor = static_cast<double>(height / (DEFAULT_ASPECT * width));
@@ -158,19 +158,19 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
         // IMPORTANT: convert from bf AFTER subtracting
 
         // tmpx = x_max - x_min;
-        sub_bf(tmp_x_bf.data(), g_bf_x_max, g_bf_x_min);
+        sub_bf(tmp_x_bf.data(), g_bf_x_max.data(), g_bf_x_min.data());
         LDouble tmp_x1 = tmp_x_bf.to_float();
         // tmpy = y_max - y_min;
-        sub_bf(tmp_y_bf.data(), g_bf_y_max, g_bf_y_min);
+        sub_bf(tmp_y_bf.data(), g_bf_y_max.data(), g_bf_y_min.data());
         LDouble tmp_y1 = tmp_y_bf.to_float();
         const LDouble c2 = tmp_x1*tmp_x1 + tmp_y1*tmp_y1;
 
         // tmpx = x_max - x_3rd;
-        sub_bf(tmp_x_bf.data(), g_bf_x_max, g_bf_x_3rd);
+        sub_bf(tmp_x_bf.data(), g_bf_x_max.data(), g_bf_x_3rd.data());
         tmp_x1 = tmp_x_bf.to_float();
 
         // tmpy = y_min - y_3rd;
-        sub_bf(tmp_y_bf.data(), g_bf_y_min, g_bf_y_3rd);
+        sub_bf(tmp_y_bf.data(), g_bf_y_min.data(), g_bf_y_3rd.data());
         tmp_y1 = tmp_y_bf.to_float();
         const LDouble a2 = tmp_x1 * tmp_x1 + tmp_y1 * tmp_y1;
         const LDouble a = std::sqrt(a2);
@@ -186,10 +186,10 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
         rot = -rad_to_deg(std::atan2(static_cast<double>(tmp_y), sign_x));   // negative for image rotation
 
         // tmpx = x_min - x_3rd;
-        sub_bf(tmp_x_bf.data(), g_bf_x_min, g_bf_x_3rd);
+        sub_bf(tmp_x_bf.data(), g_bf_x_min.data(), g_bf_x_3rd.data());
         const LDouble tmp_x2 = tmp_x_bf.to_float();
         // tmpy = y_max - y_3rd;
-        sub_bf(tmp_y_bf.data(), g_bf_y_max, g_bf_y_3rd);
+        sub_bf(tmp_y_bf.data(), g_bf_y_max.data(), g_bf_y_3rd.data());
         const LDouble tmp_y2 = tmp_y_bf.to_float();
         const LDouble b2 = tmp_x2 * tmp_x2 + tmp_y2 * tmp_y2;
         const LDouble b = std::sqrt(b2);
@@ -199,10 +199,10 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
 
         // these are the only two variables that must use big precision
         // *ctr_x = (x_min + x_max)/2;
-        add_bf(ctr_x.data(), g_bf_x_min, g_bf_x_max);
+        add_bf(ctr_x.data(), g_bf_x_min.data(), g_bf_x_max.data());
         ctr_x = ctr_x.half();
         // *ctr_y = (y_min + y_max)/2;
-        add_bf(ctr_y.data(), g_bf_y_min, g_bf_y_max);
+        add_bf(ctr_y.data(), g_bf_y_min.data(), g_bf_y_max.data());
         ctr_y = ctr_y.half();
 
         const LDouble height = b * std::sin(tmp_a);

@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include <engine/bailout_formula.h>
+#include <math/BigFloat.h>
 
 #include <engine/calcfrac.h>
 #include <engine/fractals.h>
@@ -246,17 +247,17 @@ void TestBigNumJulia::SetUp()
 
 TEST_F(TestBigNumJulia, affineSeedsKeepPreciseFixedParameterAndWideSquareCaches)
 {
-    float_to_bf(g_bf_x_min, -2);
-    float_to_bf(g_bf_x_max, 2);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 1);
-    float_to_bf(g_bf_x_3rd, -1.5);
-    float_to_bf(g_bf_y_3rd, -0.75);
-    str_to_bf(g_bf_params[0], "0.25000000000000000001");
-    str_to_bf(g_bf_params[1], "-0.12500000000000000001");
+    float_to_bf(g_bf_x_min.data(), -2);
+    float_to_bf(g_bf_x_max.data(), 2);
+    float_to_bf(g_bf_y_min.data(), -1);
+    float_to_bf(g_bf_y_max.data(), 1);
+    float_to_bf(g_bf_x_3rd.data(), -1.5);
+    float_to_bf(g_bf_y_3rd.data(), -0.75);
+    str_to_bf(g_bf_params[0].data(), "0.25000000000000000001");
+    str_to_bf(g_bf_params[1].data(), "-0.12500000000000000001");
     std::vector<Byte> parameter_x(g_bn_length), parameter_y(g_bn_length);
-    bf_to_bn(parameter_x.data(), g_bf_params[0]);
-    bf_to_bn(parameter_y.data(), g_bf_params[1]);
+    bf_to_bn(parameter_x.data(), g_bf_params[0].data());
+    bf_to_bn(parameter_y.data(), g_bf_params[1].data());
     g_magnitude_limit = 1024;
 
     ASSERT_TRUE(mandel_per_image_bn());
@@ -296,14 +297,14 @@ TEST_F(TestBigNumJulia, affineSeedsKeepPreciseFixedParameterAndWideSquareCaches)
 
 TEST_F(TestBigNumJulia, viewportTransitionRestoresJuliaParameterAndKeepsBailoutEquality)
 {
-    float_to_bf(g_bf_x_min, 1);
-    float_to_bf(g_bf_x_max, 3);
-    float_to_bf(g_bf_x_3rd, 1);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 1);
-    float_to_bf(g_bf_y_3rd, -1);
-    clear_bf(g_bf_params[0]);
-    clear_bf(g_bf_params[1]);
+    float_to_bf(g_bf_x_min.data(), 1);
+    float_to_bf(g_bf_x_max.data(), 3);
+    float_to_bf(g_bf_x_3rd.data(), 1);
+    float_to_bf(g_bf_y_min.data(), -1);
+    float_to_bf(g_bf_y_max.data(), 1);
+    float_to_bf(g_bf_y_3rd.data(), -1);
+    clear_bf(g_bf_params[0].data());
+    clear_bf(g_bf_params[1].data());
     g_col = 128;
     g_row = 256;
     g_magnitude_limit = 16;

@@ -2014,7 +2014,7 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     // also any rotation other than 180deg and any off-axis stretch
     if (g_bf_math != BFMathType::NONE)
     {
-        if (cmp_bf(g_bf_x_min, g_bf_x_3rd) || cmp_bf(g_bf_y_min, g_bf_y_3rd))
+        if (cmp_bf(g_bf_x_min.data(), g_bf_x_3rd.data()) || cmp_bf(g_bf_y_min.data(), g_bf_y_3rd.data()))
         {
             return;
         }
@@ -2084,8 +2084,8 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     {
         saved = save_stack();
         bft1 = bf_stack().allocate_single();
-        x_axis_on_screen = sign_bf(g_bf_y_min) != sign_bf(g_bf_y_max);
-        y_axis_on_screen = sign_bf(g_bf_x_min) != sign_bf(g_bf_x_max);
+        x_axis_on_screen = sign_bf(g_bf_y_min.data()) != sign_bf(g_bf_y_max.data());
+        y_axis_on_screen = sign_bf(g_bf_x_min.data()) != sign_bf(g_bf_x_max.data());
     }
     else
     {
@@ -2096,8 +2096,8 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     {
         if (g_bf_math != BFMathType::NONE)
         {
-            sub_bf(bft1, g_bf_y_min, g_bf_y_max);
-            div_bf(bft1, g_bf_y_max, bft1);
+            sub_bf(bft1, g_bf_y_min.data(), g_bf_y_max.data());
+            div_bf(bft1, g_bf_y_max.data(), bft1);
             neg_a_bf(bft1);
             f_temp = static_cast<double>(bf_to_float(bft1));
         }
@@ -2118,8 +2118,8 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     {
         if (g_bf_math != BFMathType::NONE)
         {
-            sub_bf(bft1, g_bf_x_max, g_bf_x_min);
-            div_bf(bft1, g_bf_x_min, bft1);
+            sub_bf(bft1, g_bf_x_max.data(), g_bf_x_min.data());
+            div_bf(bft1, g_bf_x_min.data(), bft1);
             neg_a_bf(bft1);
             f_temp = static_cast<double>(bf_to_float(bft1));
         }
@@ -2250,7 +2250,7 @@ origin_symmetry:
     case SymmetryType::PI_SYM:                      // PI symmetry
         if (g_bf_math != BFMathType::NONE)
         {
-            if (static_cast<double>(bf_to_float(abs_a_bf(sub_bf(bft1, g_bf_x_max, g_bf_x_min)))) < PI/4)
+            if (static_cast<double>(bf_to_float(abs_a_bf(sub_bf(bft1, g_bf_x_max.data(), g_bf_x_min.data())))) < PI / 4)
             {
                 break; // no point in pi symmetry if values too close
             }
@@ -2287,7 +2287,7 @@ origin_symmetry:
         }
         if (g_bf_math != BFMathType::NONE)
         {
-            sub_bf(bft1, g_bf_x_max, g_bf_x_min);
+            sub_bf(bft1, g_bf_x_max.data(), g_bf_x_min.data());
             abs_a_bf(bft1);
             g_pi_in_pixels = static_cast<int>(
                 PI / static_cast<double>(bf_to_float(bft1)) * g_logical_screen.x_dots); // PI in pixels

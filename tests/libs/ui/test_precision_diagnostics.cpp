@@ -59,8 +59,9 @@ protected:
     void SetUp() override
     {
         init_bf_dec(20);
-        const BigFloatPtr corners[]{g_bf_x_min, g_bf_x_max, g_bf_y_min, g_bf_y_max, g_bf_x_3rd, g_bf_y_3rd,
-            g_bf_save_x_min, g_bf_save_x_max, g_bf_save_y_min, g_bf_save_y_max, g_bf_save_x_3rd, g_bf_save_y_3rd};
+        const BigFloatPtr corners[]{g_bf_x_min.data(), g_bf_x_max.data(), g_bf_y_min.data(), g_bf_y_max.data(),
+            g_bf_x_3rd.data(), g_bf_y_3rd.data(), g_bf_save_x_min.data(), g_bf_save_x_max.data(),
+            g_bf_save_y_min.data(), g_bf_save_y_max.data(), g_bf_save_x_3rd.data(), g_bf_save_y_3rd.data()};
         const BigNumPtr bn_corners[]{g_x_min_bn.data(), g_x_max_bn.data(), g_y_min_bn.data(), g_y_max_bn.data(),
             g_x_3rd_bn.data(), g_y_3rd_bn.data()};
         const double values[]{-2.0, 2.0, -1.5, 1.5, -2.0, -1.5};
@@ -135,23 +136,18 @@ TEST_F(TestPrecisionDiagnostics, formatsBigNumVariable)
 
 TEST_F(TestPrecisionDiagnostics, formatsBigFloatVariable)
 {
-    EXPECT_EQ(
-        "-1.5e0", format_var_bf("value", BigFloat::from_legacy(g_bf_y_min, static_cast<std::size_t>(g_bf_length + 2))));
+    EXPECT_EQ("-1.5e0", format_var_bf("value", g_bf_y_min));
 }
 
 TEST_F(TestPrecisionDiagnostics, formatsTwoBigFloatValues)
 {
-    EXPECT_EQ("\nleft->-2.0e0\nright->2.0e0",
-        format_two_bf("left", BigFloat::from_legacy(g_bf_x_min, static_cast<std::size_t>(g_bf_length + 2)), "right",
-            BigFloat::from_legacy(g_bf_x_max, static_cast<std::size_t>(g_bf_length + 2)), 8));
+    EXPECT_EQ("\nleft->-2.0e0\nright->2.0e0", format_two_bf("left", g_bf_x_min, "right", g_bf_x_max, 8));
 }
 
 TEST_F(TestPrecisionDiagnostics, formatsThreeBigFloatValues)
 {
     EXPECT_EQ("\nleft->-2.0e0\nright->2.0e0\nbottom->-1.5e0",
-        format_three_bf("left", BigFloat::from_legacy(g_bf_x_min, static_cast<std::size_t>(g_bf_length + 2)), "right",
-            BigFloat::from_legacy(g_bf_x_max, static_cast<std::size_t>(g_bf_length + 2)), "bottom",
-            BigFloat::from_legacy(g_bf_y_min, static_cast<std::size_t>(g_bf_length + 2)), 8));
+        format_three_bf("left", g_bf_x_min, "right", g_bf_x_max, "bottom", g_bf_y_min, 8));
 }
 
 TEST_F(TestPrecisionDiagnostics, formatsBigNumComparison)
@@ -161,9 +157,8 @@ TEST_F(TestPrecisionDiagnostics, formatsBigNumComparison)
 
 TEST_F(TestPrecisionDiagnostics, formatsBigFloatComparison)
 {
-    EXPECT_EQ("bf\nbignum=-1.5e0\ndouble=-1.50000000000000000000\n\n",
-        format_compare_values_bf(
-            "bf", -1.5L, BigFloat::from_legacy(g_bf_y_min, static_cast<std::size_t>(g_bf_length + 2))));
+    EXPECT_EQ(
+        "bf\nbignum=-1.5e0\ndouble=-1.50000000000000000000\n\n", format_compare_values_bf("bf", -1.5L, g_bf_y_min));
 }
 
 TEST_F(TestPrecisionDiagnostics, shortBigNumValueDoesNotRequirePadding)
@@ -173,8 +168,7 @@ TEST_F(TestPrecisionDiagnostics, shortBigNumValueDoesNotRequirePadding)
 
 TEST_F(TestPrecisionDiagnostics, shortBigFloatValueDoesNotRequirePadding)
 {
-    EXPECT_EQ(
-        "-2.0e0", format_var_bf("n", BigFloat::from_legacy(g_bf_x_min, static_cast<std::size_t>(g_bf_length + 2))));
+    EXPECT_EQ("-2.0e0", format_var_bf("n", g_bf_x_min));
 }
 
 TEST_F(TestPrecisionDiagnostics, oversizedBigNumLabelIsTruncated)
@@ -270,7 +264,7 @@ TEST_F(TestPrecisionDiagnostics, collapsedCoordinatesCollectDebugSnapshotWithout
 #else
     EXPECT_TRUE(g_precision_diagnostics.empty());
 #endif
-    EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min));
+    EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min.data()));
 }
 
 TEST_F(TestPrecisionDiagnostics, conversionDebugSnapshotPreservesOriginalRegion)

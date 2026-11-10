@@ -137,14 +137,14 @@ std::string format_corners_bf(const char *s)
                        "bf_y_3rd={:s}\n"
                        "y_3rd= {:.20f}\n"
                        "\n",
-        s,                                                     //
-        bf_to_string(g_bf_x_min, dec),                         //
-        g_image_region.m_min.x, g_decimals, g_bf_length,       //
-        bf_to_string(g_bf_x_max, dec), g_image_region.m_max.x, //
-        bf_to_string(g_bf_y_min, dec), g_image_region.m_min.y, //
-        bf_to_string(g_bf_y_max, dec), g_image_region.m_max.y, //
-        bf_to_string(g_bf_x_3rd, dec), g_image_region.m_3rd.x, //
-        bf_to_string(g_bf_y_3rd, dec), g_image_region.m_3rd.y);
+        s,                                                            //
+        bf_to_string(g_bf_x_min.data(), dec),                         //
+        g_image_region.m_min.x, g_decimals, g_bf_length,              //
+        bf_to_string(g_bf_x_max.data(), dec), g_image_region.m_max.x, //
+        bf_to_string(g_bf_y_min.data(), dec), g_image_region.m_min.y, //
+        bf_to_string(g_bf_y_max.data(), dec), g_image_region.m_max.y, //
+        bf_to_string(g_bf_x_3rd.data(), dec), g_image_region.m_3rd.x, //
+        bf_to_string(g_bf_y_3rd.data(), dec), g_image_region.m_3rd.y);
 }
 
 std::string format_corners_bf_save(const char *s)
@@ -169,13 +169,13 @@ std::string format_corners_bf_save(const char *s)
                        "bf_save_y_3rd={:s}\n"
                        "y_3rd= {:.20f}\n"
                        "\n",
-        s,                                                          //
-        bf_to_string(g_bf_save_x_min, dec), g_image_region.m_min.x, //
-        bf_to_string(g_bf_save_x_max, dec), g_image_region.m_max.x, //
-        bf_to_string(g_bf_save_y_min, dec), g_image_region.m_min.y, //
-        bf_to_string(g_bf_save_y_max, dec), g_image_region.m_max.y, //
-        bf_to_string(g_bf_save_x_3rd, dec), g_image_region.m_3rd.x, //
-        bf_to_string(g_bf_save_y_3rd, dec), g_image_region.m_3rd.y);
+        s,                                                                 //
+        bf_to_string(g_bf_save_x_min.data(), dec), g_image_region.m_min.x, //
+        bf_to_string(g_bf_save_x_max.data(), dec), g_image_region.m_max.x, //
+        bf_to_string(g_bf_save_y_min.data(), dec), g_image_region.m_min.y, //
+        bf_to_string(g_bf_save_y_max.data(), dec), g_image_region.m_max.y, //
+        bf_to_string(g_bf_save_x_3rd.data(), dec), g_image_region.m_3rd.x, //
+        bf_to_string(g_bf_save_y_3rd.data(), dec), g_image_region.m_3rd.y);
 }
 
 std::string format_two_bf(const char *s1, const BigFloat &t1, const char *s2, const BigFloat &t2, const int digits)
@@ -206,8 +206,8 @@ std::string format_aspect(const char *s)
     BigFloat bt1{bf_arena(BigLifetime::TEMPORARY)};
     BigFloat bt2{bf_arena(BigLifetime::TEMPORARY)};
     BigFloat aspect{bf_arena(BigLifetime::TEMPORARY)};
-    sub_bf(bt1.data(), g_bf_x_max, g_bf_x_min);
-    sub_bf(bt2.data(), g_bf_y_max, g_bf_y_min);
+    sub_bf(bt1.data(), g_bf_x_max.data(), g_bf_x_min.data());
+    sub_bf(bt2.data(), g_bf_y_max.data(), g_bf_y_min.data());
     div_bf(aspect.data(), bt2.data(), bt1.data());
     return fmt::format("aspect {:s}\n"
                        "float  {:13.10f}\n"
@@ -256,18 +256,18 @@ void bf_corners_to_float()
 {
     if (g_bf_math != BFMathType::NONE)
     {
-        g_image_region.m_min.x = static_cast<double>(bf_to_float(g_bf_x_min));
-        g_image_region.m_min.y = static_cast<double>(bf_to_float(g_bf_y_min));
-        g_image_region.m_max.x = static_cast<double>(bf_to_float(g_bf_x_max));
-        g_image_region.m_max.y = static_cast<double>(bf_to_float(g_bf_y_max));
-        g_image_region.m_3rd.x = static_cast<double>(bf_to_float(g_bf_x_3rd));
-        g_image_region.m_3rd.y = static_cast<double>(bf_to_float(g_bf_y_3rd));
+        g_image_region.m_min.x = static_cast<double>(bf_to_float(g_bf_x_min.data()));
+        g_image_region.m_min.y = static_cast<double>(bf_to_float(g_bf_y_min.data()));
+        g_image_region.m_max.x = static_cast<double>(bf_to_float(g_bf_x_max.data()));
+        g_image_region.m_max.y = static_cast<double>(bf_to_float(g_bf_y_max.data()));
+        g_image_region.m_3rd.x = static_cast<double>(bf_to_float(g_bf_x_3rd.data()));
+        g_image_region.m_3rd.y = static_cast<double>(bf_to_float(g_bf_y_3rd.data()));
     }
     for (int i = 0; i < MAX_PARAMS; i++)
     {
         if (type_has_param(g_fractal_type, i))
         {
-            g_params[i] = static_cast<double>(bf_to_float(g_bf_params[i]));
+            g_params[i] = static_cast<double>(bf_to_float(g_bf_params[i].data()));
         }
     }
 }
@@ -279,12 +279,12 @@ bool mandel_per_image_bn()
     BigNum bn_temp1{bn_arena(BigLifetime::TEMPORARY)};
     BigNum bn_temp2{bn_arena(BigLifetime::TEMPORARY)};
 
-    bf_to_bn(g_x_min_bn.data(), g_bf_x_min);
-    bf_to_bn(g_x_max_bn.data(), g_bf_x_max);
-    bf_to_bn(g_y_min_bn.data(), g_bf_y_min);
-    bf_to_bn(g_y_max_bn.data(), g_bf_y_max);
-    bf_to_bn(g_x_3rd_bn.data(), g_bf_x_3rd);
-    bf_to_bn(g_y_3rd_bn.data(), g_bf_y_3rd);
+    bf_to_bn(g_x_min_bn.data(), g_bf_x_min.data());
+    bf_to_bn(g_x_max_bn.data(), g_bf_x_max.data());
+    bf_to_bn(g_y_min_bn.data(), g_bf_y_min.data());
+    bf_to_bn(g_y_max_bn.data(), g_bf_y_max.data());
+    bf_to_bn(g_x_3rd_bn.data(), g_bf_x_3rd.data());
+    bf_to_bn(g_y_3rd_bn.data(), g_bf_y_3rd.data());
 
     g_bf_math = BFMathType::BIG_NUM;
 
@@ -337,8 +337,8 @@ bool mandel_per_image_bn()
     switch (g_fractal_type)
     {
     case FractalType::JULIA:
-        bf_to_bn(g_param_z_bn.x.data(), g_bf_params[0]);
-        bf_to_bn(g_param_z_bn.y.data(), g_bf_params[1]);
+        bf_to_bn(g_param_z_bn.x.data(), g_bf_params[0].data());
+        bf_to_bn(g_param_z_bn.y.data(), g_bf_params[1].data());
         break;
 
     case FractalType::MANDEL_Z_POWER:
@@ -355,8 +355,8 @@ bool mandel_per_image_bn()
 
     case FractalType::JULIA_Z_POWER:
         init_big_pi();
-        bf_to_bn(g_param_z_bn.x.data(), g_bf_params[0]);
-        bf_to_bn(g_param_z_bn.y.data(), g_bf_params[1]);
+        bf_to_bn(g_param_z_bn.x.data(), g_bf_params[0].data());
+        bf_to_bn(g_param_z_bn.y.data(), g_bf_params[1].data());
         if (g_c_exponent & 1 || g_params[3] != 0.0 || static_cast<double>(g_c_exponent) != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
@@ -395,19 +395,19 @@ bool mandel_per_image_bf()
     g_bf_math = BFMathType::BIG_FLT;
 
     // g_delta_x_bf = (g_bf_x_max - g_bf_x_3rd)/(xdots-1)
-    sub_bf(g_delta_x_bf.data(), g_bf_x_max, g_bf_x_3rd);
+    sub_bf(g_delta_x_bf.data(), g_bf_x_max.data(), g_bf_x_3rd.data());
     g_delta_x_bf /= static_cast<U16>(g_logical_screen.x_dots - 1);
 
     // g_delta_y_bf = (g_bf_y_max - g_bf_y_3rd)/(ydots-1)
-    sub_bf(g_delta_y_bf.data(), g_bf_y_max, g_bf_y_3rd);
+    sub_bf(g_delta_y_bf.data(), g_bf_y_max.data(), g_bf_y_3rd.data());
     g_delta_y_bf /= static_cast<U16>(g_logical_screen.y_dots - 1);
 
     // g_delta2_x_bf = (g_bf_x_3rd - g_bf_x_min)/(ydots-1)
-    sub_bf(g_delta2_x_bf.data(), g_bf_x_3rd, g_bf_x_min);
+    sub_bf(g_delta2_x_bf.data(), g_bf_x_3rd.data(), g_bf_x_min.data());
     g_delta2_x_bf /= static_cast<U16>(g_logical_screen.y_dots - 1);
 
     // g_delta2_y_bf = (g_bf_y_3rd - g_bf_y_min)/(xdots-1)
-    sub_bf(g_delta2_y_bf.data(), g_bf_y_3rd, g_bf_y_min);
+    sub_bf(g_delta2_y_bf.data(), g_bf_y_3rd.data(), g_bf_y_min.data());
     g_delta2_y_bf /= static_cast<U16>(g_logical_screen.x_dots - 1);
 
     abs_bf(g_close_enough_bf.data(), g_delta_x_bf.data());
@@ -451,8 +451,8 @@ bool mandel_per_image_bf()
         break;
 
     case FractalType::JULIA:
-        copy_bf(g_param_z_bf.x.data(), g_bf_params[0]);
-        copy_bf(g_param_z_bf.y.data(), g_bf_params[1]);
+        copy_bf(g_param_z_bf.x.data(), g_bf_params[0].data());
+        copy_bf(g_param_z_bf.y.data(), g_bf_params[1].data());
         break;
 
     case FractalType::MANDEL_Z_POWER:
@@ -473,8 +473,8 @@ bool mandel_per_image_bf()
 
     case FractalType::JULIA_Z_POWER:
         init_big_pi();
-        copy_bf(g_param_z_bf.x.data(), g_bf_params[0]);
-        copy_bf(g_param_z_bf.y.data(), g_bf_params[1]);
+        copy_bf(g_param_z_bf.x.data(), g_bf_params[0].data());
+        copy_bf(g_param_z_bf.y.data(), g_bf_params[1].data());
         if (g_c_exponent & 1 || g_params[3] != 0.0 || static_cast<double>(g_c_exponent) != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
@@ -559,14 +559,14 @@ int mandel_per_pixel_bf()
     g_bf_tmp = g_delta2_x_bf * static_cast<U16>(g_row);
 
     g_param_z_bf.x += g_bf_tmp;
-    add_a_bf(g_param_z_bf.x.data(), g_bf_x_min);
+    add_a_bf(g_param_z_bf.x.data(), g_bf_x_min.data());
 
     // parm.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bf is just used as a temporary variable
     g_old_z_bf.x = g_delta_y_bf * static_cast<U16>(g_row);
     g_old_z_bf.y = g_delta2_y_bf * static_cast<U16>(g_col);
     g_old_z_bf.x += g_old_z_bf.y;
-    sub_bf(g_param_z_bf.y.data(), g_bf_y_max, g_old_z_bf.x.data());
+    sub_bf(g_param_z_bf.y.data(), g_bf_y_max.data(), g_old_z_bf.x.data());
 
     g_old_z_bf.x = g_param_z_bf.x;
     g_old_z_bf.y = g_param_z_bf.y;
@@ -632,14 +632,14 @@ int julia_per_pixel_bf()
     g_bf_tmp = g_delta2_x_bf * static_cast<U16>(g_row);
 
     g_old_z_bf.x += g_bf_tmp;
-    add_a_bf(g_old_z_bf.x.data(), g_bf_x_min);
+    add_a_bf(g_old_z_bf.x.data(), g_bf_x_min.data());
 
     // old.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bf is just used as a temporary variable
     g_new_z_bf.x = g_delta_y_bf * static_cast<U16>(g_row);
     g_new_z_bf.y = g_delta2_y_bf * static_cast<U16>(g_col);
     g_new_z_bf.x += g_new_z_bf.y;
-    sub_bf(g_old_z_bf.y.data(), g_bf_y_max, g_new_z_bf.x.data());
+    sub_bf(g_old_z_bf.y.data(), g_bf_y_max.data(), g_new_z_bf.x.data());
 
     // square has side effect - must copy first
     g_new_z_bf.x = g_old_z_bf.x;

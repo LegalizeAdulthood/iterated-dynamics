@@ -1145,14 +1145,14 @@ static void write_batch_params(
             if (g_bf_math != BFMathType::NONE)
             {
                 const int digits = get_prec_bf(ResolutionFlag::MAX);
-                put_bf(0, BigFloat::from_legacy(g_bf_x_min, static_cast<std::size_t>(g_bf_length + 2)), digits);
-                put_bf(1, BigFloat::from_legacy(g_bf_x_max, static_cast<std::size_t>(g_bf_length + 2)), digits);
-                put_bf(1, BigFloat::from_legacy(g_bf_y_min, static_cast<std::size_t>(g_bf_length + 2)), digits);
-                put_bf(1, BigFloat::from_legacy(g_bf_y_max, static_cast<std::size_t>(g_bf_length + 2)), digits);
-                if (cmp_bf(g_bf_x_3rd, g_bf_x_min) || cmp_bf(g_bf_y_3rd, g_bf_y_min))
+                put_bf(0, g_bf_x_min, digits);
+                put_bf(1, g_bf_x_max, digits);
+                put_bf(1, g_bf_y_min, digits);
+                put_bf(1, g_bf_y_max, digits);
+                if (cmp_bf(g_bf_x_3rd.data(), g_bf_x_min.data()) || cmp_bf(g_bf_y_3rd.data(), g_bf_y_min.data()))
                 {
-                    put_bf(1, BigFloat::from_legacy(g_bf_x_3rd, static_cast<std::size_t>(g_bf_length + 2)), digits);
-                    put_bf(1, BigFloat::from_legacy(g_bf_y_3rd, static_cast<std::size_t>(g_bf_length + 2)), digits);
+                    put_bf(1, g_bf_x_3rd, digits);
+                    put_bf(1, g_bf_y_3rd, digits);
                 }
             }
             else
