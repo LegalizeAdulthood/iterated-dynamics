@@ -58,8 +58,6 @@ public:
     BigNum operator*(misc::U16 right) const;
     BigNum operator/(const BigNum &right) const;
     BigNum sqr() const;
-    BigNum &sqr_product(BigNum &source);
-    BigNum &mult_product(BigNum &left, BigNum &right);
 
     bool operator==(const BigNum &right) const;
     bool operator!=(const BigNum &right) const;
@@ -101,5 +99,7 @@ private:
 };
 
 BigNum sqr(const BigNum &value);
+void square_bn(BigNum &result, BigNum &source);
+void mult_bn(BigNum &result, BigNum &left, BigNum &right);
 
 } // namespace id::math

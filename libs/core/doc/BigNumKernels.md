@@ -8,8 +8,9 @@ Copyright 2026 Richard Thomson.
 This records owning BigNum kernel storage and the remaining member
 interface contracts. Calculation bodies, statement order, precision
 ramps, operand copies, and scratch reuse are preserved. The member
-interfaces below are proposed APIs except for the implemented
-`sqr_product` and `mult_product` members.
+proposals below are superseded by the
+[value-type plan](../../../../plans/bignum-value.md). Implemented retained
+products use the owning free functions described here.
 
 ## Storage And Lifetime
 
@@ -68,27 +69,35 @@ current operand-copy policy and allocation/reduction sites stay intact:
   result; their compound forms retain their existing implementations.
 
 The [orbit product contract](BigNumProducts.md) requires unreduced
-results and partial writes into existing slots. `sqr_product` and
-`mult_product` are implemented; the other member operations remain
-proposed for their existing calls:
+results and partial writes into existing slots. The implemented owning
+free-function overloads are:
 
 ```cpp
-BigNum &sqr_product(BigNum &source);
-BigNum &mult_product(BigNum &left, BigNum &right);
+void square_bn(BigNum &result, BigNum &source);
+void mult_bn(BigNum &result, BigNum &left, BigNum &right);
+```
+
+These return `void`. They neither allocate nor replace the destination's
+handle. Owning `square_bn` writes `[0, R)` with the existing
+`square_bn` sign-save, kernel call, and sign-restore sequence.
+Owning `mult_bn` retains the existing `mult_bn` sequence. Keep their
+mutable input roles; do not add operand copies. The result must be
+separate from the product inputs, as required by the existing clearing
+kernels. No new alias validation or initialization checks are added.
+
+### Superseded Member Proposals
+
+The canonical and shifted-window member proposals below are historical,
+not implementation instructions. The value-type plan requires owning
+free functions first and operators later, without new named member APIs.
+
+```cpp
 BigNum &add(const BigNum &left, const BigNum &right);
 BigNum &sub(const BigNum &left, const BigNum &right);
 BigNum &mult(const BigNum &source, misc::U16 factor);
 BigNum &abs(const BigNum &source);
 BigNum &abs();
 ```
-
-These return their destination by reference. They neither allocate nor
-replace its handle. `sqr_product` writes `[0, R)` with the existing
-`square_bn` sign-save, kernel call, and sign-restore sequence.
-`mult_product` retains the corresponding `mult_bn` sequence. Keep their
-mutable input roles; do not add operand copies. The result must be
-separate from the product inputs, as required by the existing clearing
-kernels. No new alias validation or initialization checks are added.
 
 `add` and `sub` call the existing byte addition/subtraction kernels into
 `[0, N)`. `mult` uses `mult_bn_int` at the same destination and width.
@@ -251,7 +260,7 @@ checks source restoration and unchanged padding, and preserves the
 destination address, arena, and high-water mark. Its parameterized cases
 cover both signs, integer widths one, two, and four, and lengths 4, 8,
 12, 56, 60, 64, and 672. Existing bailout tests retain their exact scratch
-byte expectations after conversion to `sqr_product`.
+byte expectations after conversion to owning `square_bn`.
 
 `TestBigNumRetainedMultiply` checks every retained byte, destination
 identity, unchanged padding and lengths, and the arena high-water mark.
@@ -261,7 +270,7 @@ tests. Operand expectations preserve the raw adapter's existing behavior.
 
 Both `mult_bn` and `full_mult_bn` restore a shared negative input twice.
 The shared-source kernel makes it positive once; the two adapter restores
-therefore leave it positive. `mult_product` preserves this sequence and
+therefore leave it positive. Owning `mult_bn` preserves this sequence and
 behavior. Distinct negative inputs are restored.
 The existing value `operator*` copies inputs into separate scratch
 buffers and preserves the original value even for self-multiplication.

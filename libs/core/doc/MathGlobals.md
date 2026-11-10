@@ -75,16 +75,18 @@ and comparisons read operands directly; destructive kernels receive
 scratch copies. Truncation, fixed-width overflow, division saturation,
 and zero handling retain legacy behavior.
 
-`BigNum::sqr_product` writes all `g_r_length` retained product bytes into
-its existing destination slot and restores its mutable source's sign.
-It returns the destination by reference without allocating, copying its
-source, or reducing the product. Ordinary `sqr()` remains canonical.
+The owning `square_bn(BigNum &, BigNum &)` free function writes all
+`g_r_length` retained product bytes into the existing destination slot
+and restores its mutable source's sign. It returns `void` without
+allocating, copying its source, or reducing the product. Ordinary `sqr()`
+remains canonical.
 
-`BigNum::mult_product` likewise writes the retained product into its
-existing slot. It preserves the raw adapter's mutable input roles and
-sign-restoration sequence, including shared-input behavior, without
-copies, allocation, or reduction. Ordinary `operator*` keeps its existing
-operand copies and returns canonical bytes.
+The owning `mult_bn` free function likewise writes the retained product
+into its existing slot. It preserves the raw adapter's mutable input
+roles and sign-restoration sequence, including shared-input behavior,
+without copies, allocation, or reduction. It returns `void`.
+Ordinary `operator*` keeps its existing operand copies and returns
+canonical bytes.
 
 `operator*(U16)` and `operator/=(U16)` use the existing integer kernels.
 They preserve all unsigned operand bits, fixed-width overflow, division

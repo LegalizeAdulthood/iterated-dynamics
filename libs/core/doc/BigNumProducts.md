@@ -41,14 +41,15 @@ addresses do not survive arena relocation and must not be retained.
 `BigNum::arena().block_size()` supplies the existing aligned capacity
 when clearing these working slots.
 
-Use `destination.sqr_product(source)` at each existing retained-square
+Use `square_bn(destination, source)` at each existing retained-square
 statement. It writes `R` bytes into the existing allocation, saves and
-restores the source sign, and returns the destination by reference.
+restores the source sign, and returns `void`.
 It neither copies the source nor allocates or reduces the result.
-Use `destination.mult_product(left, right)` at each existing retained
+Use `mult_bn(destination, left, right)` at each existing retained
 multiply statement. It writes `R` bytes into the existing allocation and
 keeps `mult_bn`'s two sign saves, kernel call, and two sign restores.
 It adds no copies, allocation, reduction, or shared-input special case.
+It also returns `void`.
 Do not replace them with `sqr(source)` or `left * right`: those owning
 operations reduce a paired result to `N` canonical bytes and lose the
 retained product. Do not call `Allocation::reduce()` on these singles.

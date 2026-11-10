@@ -40,6 +40,9 @@ static_assert(!std::is_convertible_v<BigNum, BigFloat>);
 static_assert(!std::is_convertible_v<BigFloat, BigNum>);
 static_assert(!std::is_convertible_v<LDouble, BigNum>);
 static_assert(std::is_same_v<decltype(&bn_hex_dump), void (*)(const BigNum &)>);
+static_assert(std::is_void_v<decltype(square_bn(std::declval<BigNum &>(), std::declval<BigNum &>()))>);
+static_assert(
+    std::is_void_v<decltype(mult_bn(std::declval<BigNum &>(), std::declval<BigNum &>(), std::declval<BigNum &>()))>);
 
 std::vector<Byte> encoded_value(const BigNum &value)
 {
@@ -910,9 +913,8 @@ TEST_P(TestBigNumRetainedSqr, preservesProductSourceAllocationAndPadding)
     const auto original_destination = destination.data();
     const auto high_water = arena.high_water_mark();
 
-    BigNum &result = destination.sqr_product(source);
+    square_bn(destination, source);
 
-    EXPECT_EQ(&destination, &result);
     EXPECT_EQ(original_destination, destination.data());
     EXPECT_EQ(&arena, &destination.arena());
     EXPECT_EQ(high_water, arena.high_water_mark());
@@ -1003,9 +1005,8 @@ TEST_P(TestBigNumRetainedMultiply, preservesProductAllocationPaddingAndLegacyOpe
     const auto high_water = arena.high_water_mark();
     const auto lengths = kernel_lengths();
 
-    BigNum &result = destination.mult_product(left, right);
+    mult_bn(destination, left, right);
 
-    EXPECT_EQ(&destination, &result);
     EXPECT_EQ(original_destination, destination.data());
     EXPECT_EQ(&arena, &destination.arena());
     EXPECT_EQ(high_water, arena.high_water_mark());

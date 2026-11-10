@@ -539,8 +539,8 @@ int mandel_per_pixel_bn()
     copy_bn(g_new_z_bn.y.data(), g_old_z_bn.y.data());
 
     // Square these to g_r_length bytes of precision
-    g_tmp_sqr_x_bn.sqr_product(g_new_z_bn.x);
-    g_tmp_sqr_y_bn.sqr_product(g_new_z_bn.y);
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
 
     return 1;                  // 1st iteration has been done
 }
@@ -619,8 +619,8 @@ int julia_per_pixel_bn()
     copy_bn(g_new_z_bn.y.data(), g_old_z_bn.y.data());
 
     // Square these to g_r_length bytes of precision
-    g_tmp_sqr_x_bn.sqr_product(g_new_z_bn.x);
-    g_tmp_sqr_y_bn.sqr_product(g_new_z_bn.y);
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
 
     return 1;                  // 1st iteration has been done
 }
@@ -665,7 +665,7 @@ int julia_orbit_bn()
     add_bn(g_new_z_bn.x.data(), g_tmp_sqr_x_bn.data() + g_shift_factor, g_param_z_bn.x.data());
 
     // new.y = 2 * g_old_z_bn.x * g_old_z_bn.y + parm.y;
-    g_bn_tmp.mult_product(g_old_z_bn.x, g_old_z_bn.y); // ok to use unsafe here
+    mult_bn(g_bn_tmp, g_old_z_bn.x, g_old_z_bn.y); // ok to use unsafe here
     double_a_bn(g_bn_tmp.data() + g_shift_factor);
     add_bn(g_new_z_bn.y.data(), g_bn_tmp.data() + g_shift_factor, g_param_z_bn.y.data());
 

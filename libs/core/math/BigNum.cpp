@@ -886,31 +886,29 @@ BigNum BigNum::sqr() const
     return result;
 }
 
-BigNum &BigNum::sqr_product(BigNum &source)
+void square_bn(BigNum &result, BigNum &source)
 {
-    const bool sign = is_bn_neg(source.m_storage.data());
-    square(m_storage.data(), source.m_storage.data());
+    const bool sign = is_bn_neg(source.data());
+    square(result.data(), source.data());
     if (sign)
     {
-        neg_a_bn(source.m_storage.data());
+        neg_a_bn(source.data());
     }
-    return *this;
 }
 
-BigNum &BigNum::mult_product(BigNum &left, BigNum &right)
+void mult_bn(BigNum &result, BigNum &left, BigNum &right)
 {
-    const bool sign1 = is_bn_neg(left.m_storage.data());
-    const bool sign2 = is_bn_neg(right.m_storage.data());
-    multiply(m_storage.data(), left.m_storage.data(), right.m_storage.data());
+    const bool sign1 = is_bn_neg(left.data());
+    const bool sign2 = is_bn_neg(right.data());
+    multiply(result.data(), left.data(), right.data());
     if (sign1)
     {
-        neg_a_bn(left.m_storage.data());
+        neg_a_bn(left.data());
     }
     if (sign2)
     {
-        neg_a_bn(right.m_storage.data());
+        neg_a_bn(right.data());
     }
-    return *this;
 }
 
 bool BigNum::operator==(const BigNum &right) const
