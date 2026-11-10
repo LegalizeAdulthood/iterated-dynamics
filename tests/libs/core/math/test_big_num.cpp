@@ -39,12 +39,12 @@ protected:
     {
         BigNum value{bn_arena(BigLifetime::TEMPORARY)};
         str_to_bn(value.data(), input);
-        return format(value.data(), decimals);
+        return format(value, decimals);
     }
 
-    static std::string format(BigNumPtr value, const int decimals)
+    static std::string format(const BigNum &value, const int decimals)
     {
-        return bn_to_string(value, decimals);
+        return bn_to_string(value.data(), decimals);
     }
 
     ValueSaver<int> m_saved_bf_digits;
@@ -98,7 +98,7 @@ TEST_F(TestBigNum, formatsZeroValue)
         BigNum value{bn_arena(BigLifetime::TEMPORARY)};
         int_to_bn(value.data(), 0);
 
-        EXPECT_EQ("0.", format(value.data(), 5));
+        EXPECT_EQ("0.", format(value, 5));
     }
     EXPECT_EQ(marker, save_stack());
 }

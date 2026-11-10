@@ -8043,9 +8043,9 @@ TEST_F(TestPerturbationPixels, fixedPointInputsRetainSubMachineDigitsAndPreserve
     str_to_bn(parameter.y.data(), "-0.0625" + std::string(35, '0') + "2");
     str_to_bn(value.x.data(), "0.25" + std::string(37, '0') + "3");
     str_to_bn(value.y.data(), "-0.125" + std::string(36, '0') + "4");
-    const auto encoded = [](BigNumConstPtr number) { return std::vector<Byte>{number, number + g_bn_length}; };
-    const std::array original{
-        encoded(parameter.x.data()), encoded(parameter.y.data()), encoded(value.x.data()), encoded(value.y.data())};
+    const auto encoded = [](const BigNum &number)
+    { return std::vector<Byte>{number.data(), number.data() + g_bn_length}; };
+    const std::array original{encoded(parameter.x), encoded(parameter.y), encoded(value.x), encoded(value.y)};
     m_specific.pert_ref_bf = [](const BFComplex &parameter, BFComplex &z)
     {
         const BigFloat scale{"1e-40"};
@@ -8079,10 +8079,10 @@ TEST_F(TestPerturbationPixels, fixedPointInputsRetainSubMachineDigitsAndPreserve
     EXPECT_NEAR(-2.0, s_reference_coordinates.front().imag(), 1e-12);
     EXPECT_NEAR(3.0, s_reference_values.front().real(), 1e-12);
     EXPECT_NEAR(-4.0, s_reference_values.front().imag(), 1e-12);
-    EXPECT_EQ(original[0], encoded(parameter.x.data()));
-    EXPECT_EQ(original[1], encoded(parameter.y.data()));
-    EXPECT_EQ(original[2], encoded(value.x.data()));
-    EXPECT_EQ(original[3], encoded(value.y.data()));
+    EXPECT_EQ(original[0], encoded(parameter.x));
+    EXPECT_EQ(original[1], encoded(parameter.y));
+    EXPECT_EQ(original[2], encoded(value.x));
+    EXPECT_EQ(original[3], encoded(value.y));
     m_engine.finish_orbit();
 }
 
