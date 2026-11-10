@@ -210,7 +210,7 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
     BFComplex expected{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex powered{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex product{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    const BigFloatPtr difference{bf_stack().allocate_single()};
+    BigFloat difference{bf_arena(BigLifetime::TEMPORARY)};
     str_to_bf(center.x.data(), "-0.12500000000000000000000000000000000000001");
     str_to_bf(center.y.data(), "0.000125");
     str_to_bf(actual.x.data(), "0.99900000000000000000000000000000000000001");
@@ -232,10 +232,10 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
         add_bf(expected.x.data(), powered.x.data(), center.x.data());
         add_bf(expected.y.data(), powered.y.data(), center.y.data());
         mandel_z_power_ref_pt_bf(center, actual);
-        sub_bf(difference, actual.x.data(), expected.x.data());
-        EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-50);
-        sub_bf(difference, actual.y.data(), expected.y.data());
-        EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-50);
+        sub_bf(difference.data(), actual.x.data(), expected.x.data());
+        EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference.data())), 1e-50);
+        sub_bf(difference.data(), actual.y.data(), expected.y.data());
+        EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference.data())), 1e-50);
         if (std::norm(std::complex<double>{static_cast<double>(bf_to_float(expected.x.data())),
                 static_cast<double>(bf_to_float(expected.y.data()))}) >= 4.0)
         {
@@ -468,7 +468,7 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     BFComplex seed{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex expected{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    const BigFloatPtr difference{bf_stack().allocate_single()};
+    BigFloat difference{bf_arena(BigLifetime::TEMPORARY)};
     int_to_bf(exponent.x.data(), GetParam().exponent);
     clear_bf(exponent.y.data());
     float_to_bf(center.x.data(), 0.125);
@@ -490,10 +490,10 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
 
     mandel_z_power_ref_pt_bf(center, actual);
 
-    sub_bf(difference, actual.x.data(), expected.x.data());
-    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
-    sub_bf(difference, actual.y.data(), expected.y.data());
-    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
+    sub_bf(difference.data(), actual.x.data(), expected.x.data());
+    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference.data())), 1e-48);
+    sub_bf(difference.data(), actual.y.data(), expected.y.data());
+    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference.data())), 1e-48);
 }
 
 INSTANTIATE_TEST_SUITE_P(SignedPowers, TestPreciseSignedPowerReference, ValuesIn(precise_signed_reference_inputs()),
@@ -804,7 +804,7 @@ TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
     BFComplex expected{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex exponent{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    const BigFloatPtr difference{bf_stack().allocate_single()};
+    BigFloat difference{bf_arena(BigLifetime::TEMPORARY)};
     float_to_bf(exponent.x.data(), GetParam().exponent.real());
     float_to_bf(exponent.y.data(), GetParam().exponent.imag());
     float_to_bf(center.x.data(), 0.0625);
@@ -819,10 +819,10 @@ TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
 
     mandel_z_power_ref_pt_bf(center, actual);
 
-    sub_bf(difference, actual.x.data(), expected.x.data());
-    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
-    sub_bf(difference, actual.y.data(), expected.y.data());
-    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
+    sub_bf(difference.data(), actual.x.data(), expected.x.data());
+    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference.data())), 1e-48);
+    sub_bf(difference.data(), actual.y.data(), expected.y.data());
+    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference.data())), 1e-48);
 }
 
 INSTANTIATE_TEST_SUITE_P(ComplexPowers, TestPreciseComplexPowerReference, ValuesIn(precise_complex_reference_inputs()),

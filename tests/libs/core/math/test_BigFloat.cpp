@@ -226,18 +226,19 @@ TEST_F(TestBigFloatValue, hexDumpPrintsShiftedShortenedWorkspace)
 TEST_F(TestBigFloatValue, importsEncodedBytesWithoutMachineFloatConversion)
 {
     const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    BigFloatPtr source = bf_stack().allocate_single();
-    str_to_bf(source, "-1.23456789012345678901234567890123456789e-400");
-    const std::vector<Byte> expected(source, source + size);
+    BigFloat source{bf_arena(BigLifetime::TEMPORARY)};
+    str_to_bf(source.data(), "-1.23456789012345678901234567890123456789e-400");
+    const std::vector<Byte> expected(source.data(), source.data() + size);
 
-    const BigFloat value = BigFloat::from_legacy(source, size);
-    std::fill_n(source, size, Byte{0});
+    const BigFloat value = BigFloat::from_legacy(source.data(), size);
+    std::fill_n(source.data(), size, Byte{0});
 
     EXPECT_EQ(expected, encoded_value(value));
 }
 
 TEST_F(TestBigFloatValue, valueSurvivesArenaRewindAndReuse)
 {
+    // Borrow BigStack buffers here to test importing bytes across a real rewind.
     const auto marker = save_stack();
     const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
     BigFloatPtr source = bf_stack().allocate_single();
