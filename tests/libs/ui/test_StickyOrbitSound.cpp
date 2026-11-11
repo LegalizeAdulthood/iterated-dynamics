@@ -737,7 +737,8 @@ INSTANTIATE_TEST_SUITE_P(RectangleAndLine, TestStickyOrbitSound, Values(OrbitDra
     [](const TestParamInfo<OrbitDrawMode> &info)
     { return info.param == OrbitDrawMode::RECTANGLE ? "Rectangle" : "Line"; });
 
-class TestStickyBigNumBailout : public TestStickyOrbitSoundBase, public WithParamInterface<std::tuple<Bailout, int>>
+class TestStickyBailout : public TestStickyOrbitSoundBase,
+                          public WithParamInterface<std::tuple<Bailout, int, BFMathType>>
 {
 protected:
     void SetUp() override;
@@ -761,7 +762,7 @@ protected:
     ValueSaver<decltype(g_bailout_bigfloat)> m_bf{g_bailout_bigfloat};
 };
 
-void TestStickyBigNumBailout::SetUp()
+void TestStickyBailout::SetUp()
 {
     prepare(OrbitDrawMode::RECTANGLE);
     g_fractal_type = FractalType::JULIA;
@@ -788,23 +789,36 @@ void TestStickyBigNumBailout::SetUp()
                 square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
                 square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
             }
+            else if (g_bf_math == BFMathType::BIG_FLT)
+            {
+                g_old_z_bf.x = 1;
+                g_old_z_bf.y = 1;
+                g_param_z_bf.x = 0;
+                g_param_z_bf.y = 0;
+                g_tmp_sqr_x_bf = sqr(g_old_z_bf.x);
+                g_tmp_sqr_y_bf = sqr(g_old_z_bf.y);
+            }
             return 0;
         });
     g_dispatch.set_orbit_calc(
         []()
         {
             ++s_math_calls;
-            return g_bf_math == BFMathType::NONE ? julia_orbit() : julia_orbit_bn();
+            if (g_bf_math == BFMathType::NONE)
+            {
+                return julia_orbit();
+            }
+            return g_bf_math == BFMathType::BIG_NUM ? julia_orbit_bn() : julia_orbit_bf();
         });
 }
 
-void TestStickyBigNumBailout::TearDown()
+void TestStickyBailout::TearDown()
 {
     free_bf_vars();
     TestStickyOrbitSoundBase::TearDown();
 }
 
-TEST_P(TestStickyBigNumBailout, nativeContinuationKeepsTheOrdinaryEscapedOrbitState)
+TEST_P(TestStickyBailout, nativeContinuationKeepsTheOrdinaryEscapedOrbitState)
 {
     {
         StickyOrbits ordinary;
@@ -817,22 +831,37 @@ TEST_P(TestStickyBigNumBailout, nativeContinuationKeepsTheOrdinaryEscapedOrbitSt
     EXPECT_EQ(1, expected_old.y);
     EXPECT_EQ(12, expected_new.x);
     EXPECT_EQ(2, expected_new.y);
-    init_bf_dec(40);
-    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    const BFMathType math_type = std::get<2>(GetParam());
+    {
+        ValueSaver<FractalType> allocator_type{
+            g_fractal_type, math_type == BFMathType::BIG_NUM ? FractalType::JULIA : FractalType::MANDEL_Z_POWER};
+        init_bf_dec(40);
+    }
+    ASSERT_EQ(math_type, g_bf_math);
     s_math_calls = 0;
-    StickyOrbits big_num;
+    StickyOrbits arbitrary_precision;
 
-    run(big_num);
+    run(arbitrary_precision);
 
     EXPECT_EQ(3, s_math_calls);
-    EXPECT_EQ(expected_old.x, g_old_z_bn.x.to_float());
-    EXPECT_EQ(expected_old.y, g_old_z_bn.y.to_float());
-    EXPECT_EQ(expected_new.x, g_new_z_bn.x.to_float());
-    EXPECT_EQ(expected_new.y, g_new_z_bn.y.to_float());
+    if (math_type == BFMathType::BIG_NUM)
+    {
+        EXPECT_EQ(expected_old.x, g_old_z_bn.x.to_float());
+        EXPECT_EQ(expected_old.y, g_old_z_bn.y.to_float());
+        EXPECT_EQ(expected_new.x, g_new_z_bn.x.to_float());
+        EXPECT_EQ(expected_new.y, g_new_z_bn.y.to_float());
+    }
+    else
+    {
+        EXPECT_EQ(expected_old.x, g_old_z_bf.x.to_float());
+        EXPECT_EQ(expected_old.y, g_old_z_bf.y.to_float());
+        EXPECT_EQ(expected_new.x, g_new_z_bf.x.to_float());
+        EXPECT_EQ(expected_new.y, g_new_z_bf.y.to_float());
+    }
 }
 
-INSTANTIATE_TEST_SUITE_P(
-    ModesAndPeriodicity, TestStickyBigNumBailout, Combine(Values(Bailout::MANH, Bailout::MANR), Values(0, 1)));
+INSTANTIATE_TEST_SUITE_P(ModesPeriodicityAndMath, TestStickyBailout,
+    Combine(Values(Bailout::MANH, Bailout::MANR), Values(0, 1), Values(BFMathType::BIG_NUM, BFMathType::BIG_FLT)));
 
 class TestStickyPerturbationBase : public TestStickyOrbitSoundBase
 {

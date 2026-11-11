@@ -350,16 +350,18 @@ static int bf_manh_bailout()
 {
     BigStackSaver saved;
     BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat abs_x{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat abs_y{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat metric{bf_arena(BigLifetime::TEMPORARY)};
 
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
-    // note: in next five lines, g_old_z_bf is just used as a temporary variable
-    abs_bf(g_old_z_bf.x.data(), g_new_z_bf.x.data());
-    abs_bf(g_old_z_bf.y.data(), g_new_z_bf.y.data());
-    g_bf_tmp = g_old_z_bf.x + g_old_z_bf.y;
-    g_old_z_bf.x = sqr(g_bf_tmp);
+    abs_bf(abs_x.data(), g_new_z_bf.x.data());
+    abs_bf(abs_y.data(), g_new_z_bf.y.data());
+    g_bf_tmp = abs_x + abs_y;
+    metric = sqr(g_bf_tmp);
     tmp1 = g_magnitude_limit;
-    if (g_old_z_bf.x > tmp1)
+    if (metric > tmp1)
     {
         return 1;
     }
@@ -373,14 +375,14 @@ static int bf_manr_bailout()
 {
     BigStackSaver saved;
     BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat metric{bf_arena(BigLifetime::TEMPORARY)};
 
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
     g_bf_tmp = g_new_z_bf.x + g_new_z_bf.y; // don't need abs since we square it next
-    // note: in next two lines, g_old_z_bf is just used as a temporary variable
-    g_old_z_bf.x = sqr(g_bf_tmp);
+    metric = sqr(g_bf_tmp);
     tmp1 = g_magnitude_limit;
-    if (g_old_z_bf.x > tmp1)
+    if (metric > tmp1)
     {
         return 1;
     }

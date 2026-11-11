@@ -12,6 +12,7 @@
 #include <fractals/fractype.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
+#include <math/sqr.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
@@ -23,6 +24,7 @@
 #include <limits>
 #include <ostream>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <vector>
 
@@ -216,8 +218,8 @@ TEST_P(TestBigFloatBailoutCases, preservesStrictThresholdCachesAndOldOrbit)
     { return std::vector<Byte>{v.data(), v.data() + g_bf_length + 2}; };
     EXPECT_EQ(slice(expected_x), encoded(g_tmp_sqr_x_bf));
     EXPECT_EQ(slice(expected_y), encoded(g_tmp_sqr_y_bf));
-    EXPECT_EQ(encoded(escaped ? ((manh || manr) ? input.metric : -7) : input.point.x), encoded(g_old_z_bf.x));
-    EXPECT_EQ(encoded(escaped ? (manh ? std::abs(input.point.y) : 9) : input.point.y), encoded(g_old_z_bf.y));
+    EXPECT_EQ(encoded(escaped ? -7 : input.point.x), encoded(g_old_z_bf.x));
+    EXPECT_EQ(encoded(escaped ? 9 : input.point.y), encoded(g_old_z_bf.y));
     EXPECT_EQ(encoded(input.point.x), encoded(g_new_z_bf.x));
     EXPECT_EQ(encoded(input.point.y), encoded(g_new_z_bf.y));
     if (manh || manr || input.test == Bailout::MOD)
@@ -256,6 +258,56 @@ TEST_F(TestBigFloatBailout, strictComparisonRetainsDisplacementsBelowMachinePrec
         }
     }
 }
+
+class TestBigFloatBailoutContinuation : public TestBigFloatBailout,
+                                        public testing::WithParamInterface<std::tuple<Bailout, bool>>
+{
+};
+
+TEST_P(TestBigFloatBailoutContinuation, repeatedOrbitCallsMatchTheOrdinaryBailoutContract)
+{
+    const Bailout mode = std::get<0>(GetParam());
+    const bool escape = std::get<1>(GetParam());
+    ValueSaver<DComplex> saved_old{g_old_z, DComplex{1, 1}};
+    ValueSaver<DComplex> saved_new{g_new_z};
+    ValueSaver<DComplex> saved_parameter{g_param_z1, DComplex{1, 0}};
+    ValueSaver<DComplex *> saved_float_parameter{g_float_param, &g_param_z1};
+    ValueSaver<double> saved_sqr_x{g_temp_sqr_x, 1};
+    ValueSaver<double> saved_sqr_y{g_temp_sqr_y, 1};
+    set_bailout_formula(mode);
+    g_magnitude_limit = escape ? 1 : 100;
+    g_old_z_bf.x = 1;
+    g_old_z_bf.y = 1;
+    g_param_z_bf.x = 1;
+    g_param_z_bf.y = 0;
+    g_tmp_sqr_x_bf = sqr(g_old_z_bf.x);
+    g_tmp_sqr_y_bf = sqr(g_old_z_bf.y);
+    const std::array<DComplex, 2> expected{{{1, 2}, {-2, escape ? 2.0 : 4.0}}};
+
+    for (int iteration = 0; iteration < 2; ++iteration)
+    {
+        const int ordinary_result = julia_orbit();
+        const BigStackMark mark = save_stack();
+        const std::size_t temporaries = big_memory_stats().temporaries;
+
+        EXPECT_EQ(ordinary_result, julia_orbit_bf());
+
+        EXPECT_EQ(mark, save_stack());
+        if (iteration != 0)
+        {
+            EXPECT_EQ(temporaries, big_memory_stats().temporaries);
+        }
+        EXPECT_EQ(expected[iteration].x, g_new_z_bf.x.to_float());
+        EXPECT_EQ(expected[iteration].y, g_new_z_bf.y.to_float());
+        EXPECT_EQ(g_old_z.x, g_old_z_bf.x.to_float());
+        EXPECT_EQ(g_old_z.y, g_old_z_bf.y.to_float());
+        EXPECT_EQ(encoded(sqr(expected[iteration].x)), encoded(g_tmp_sqr_x_bf));
+        EXPECT_EQ(encoded(sqr(expected[iteration].y)), encoded(g_tmp_sqr_y_bf));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(ModesAndOutcomes, TestBigFloatBailoutContinuation,
+    testing::Combine(testing::Values(Bailout::MANH, Bailout::MANR), testing::Bool()));
 
 class TestBigFloatJulia : public TestBigFloatBailout
 {
