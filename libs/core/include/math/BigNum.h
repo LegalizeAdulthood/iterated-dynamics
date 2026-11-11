@@ -105,7 +105,7 @@ BigNum add_bn(const BigNum &left, const BigNum &right);
 BigNum sub_bn(const BigNum &left, const BigNum &right);
 BigNum mult_bn_int(const BigNum &source, misc::U16 factor);
 BigNum abs_bn(const BigNum &source);
-void abs_a_bn(BigNum &result);
+BigNum &abs_a_bn(BigNum &r);
 void copy_bn(BigNum &result, const BigNum &source);
 void add_a_bn(BigNum &result, const BigNum &source);
 void sub_a_bn(BigNum &result, const BigNum &source);

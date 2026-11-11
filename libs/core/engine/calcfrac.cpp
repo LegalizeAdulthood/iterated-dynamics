@@ -1412,11 +1412,9 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                 // floating-pt periodicity chk
                 if (g_bf_math == BFMathType::BIG_NUM)
                 {
-                    if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp.data(), g_saved_z_bn.x.data(), g_new_z_bn.x.data())),
-                            g_close_enough_bn.data()) < 0)
+                    if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp, g_saved_z_bn.x, g_new_z_bn.x)), g_close_enough_bn) < 0)
                     {
-                        if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp.data(), g_saved_z_bn.y.data(), g_new_z_bn.y.data())),
-                                g_close_enough_bn.data()) < 0)
+                        if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp, g_saved_z_bn.y, g_new_z_bn.y)), g_close_enough_bn) < 0)
                         {
                             m_caught_a_cycle = true;
                         }

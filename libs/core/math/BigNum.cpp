@@ -992,6 +992,11 @@ int cmp_bn(BigNumConstPtr n1, BigNumConstPtr n2)
     return compare(n1, n2);
 }
 
+int cmp_bn(const BigNum &n1, const BigNum &n2)
+{
+    return compare(n1.data(), n2.data());
+}
+
 BigNumPtr add_bn(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2)
 {
     return add(r, n1, n2);
@@ -1007,6 +1012,12 @@ BigNum add_bn(const BigNum &left, const BigNum &right)
 BigNumPtr sub_bn(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2)
 {
     return subtract(r, n1, n2);
+}
+
+BigNum &sub_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
+{
+    sub_bn(r.data(), n1.data(), n2.data());
+    return r;
 }
 
 BigNum sub_bn(const BigNum &left, const BigNum &right)

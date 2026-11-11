@@ -45,7 +45,7 @@ static_assert(std::is_same_v<decltype(add_bn(std::declval<const BigNum &>(), std
 static_assert(std::is_same_v<decltype(sub_bn(std::declval<const BigNum &>(), std::declval<const BigNum &>())), BigNum>);
 static_assert(std::is_same_v<decltype(mult_bn_int(std::declval<const BigNum &>(), U16{})), BigNum>);
 static_assert(std::is_same_v<decltype(abs_bn(std::declval<const BigNum &>())), BigNum>);
-static_assert(std::is_void_v<decltype(abs_a_bn(std::declval<BigNum &>()))>);
+static_assert(!std::is_void_v<decltype(abs_a_bn(std::declval<BigNum &>()))>);
 static_assert(std::is_void_v<decltype(copy_bn(std::declval<BigNum &>(), std::declval<const BigNum &>()))>);
 static_assert(std::is_void_v<decltype(add_a_bn(std::declval<BigNum &>(), std::declval<const BigNum &>()))>);
 static_assert(std::is_void_v<decltype(sub_a_bn(std::declval<BigNum &>(), std::declval<const BigNum &>()))>);

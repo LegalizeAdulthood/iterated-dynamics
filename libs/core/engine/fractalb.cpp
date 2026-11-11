@@ -612,7 +612,7 @@ int julia_per_pixel_bn()
     g_new_z_bn.x = g_delta_y_bn * static_cast<U16>(g_row);
     g_new_z_bn.y = g_delta2_y_bn * static_cast<U16>(g_col);
     g_new_z_bn.x += g_new_z_bn.y;
-    sub_bn(g_old_z_bn.y.data(), g_y_max_bn.data(), g_new_z_bn.x.data());
+    sub_bn(g_old_z_bn.y, g_y_max_bn, g_new_z_bn.x);
 
     // square has side effect - must copy first
     copy_bn(g_new_z_bn.x, g_old_z_bn.x);

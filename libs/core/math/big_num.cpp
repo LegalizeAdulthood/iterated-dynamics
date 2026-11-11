@@ -471,12 +471,13 @@ BigNumPtr abs_bn(BigNumPtr r, BigNumPtr n)
 
 /********************************************************************/
 // r = |r|
-void abs_a_bn(BigNum &result)
+BigNum &abs_a_bn(BigNum &r)
 {
-    if (is_bn_neg(result.data()))
+    if (is_bn_neg(r.data()))
     {
-        neg_a_bn(result.data());
+        neg_a_bn(r.data());
     }
+    return r;
 }
 
 BigNumPtr abs_a_bn(BigNumPtr r)
