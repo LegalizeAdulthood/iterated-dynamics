@@ -852,19 +852,17 @@ TEST_F(TestBigFloat, precisionChangesPreserveAllCornersSavedCornersAndParameters
 {
     const auto parameters = []
     {
-        return std::array<BigFloatPtr, 22>{g_bf_x_min.data(), g_bf_x_max.data(), g_bf_y_min.data(), g_bf_y_max.data(),
-            g_bf_x_3rd.data(), g_bf_y_3rd.data(), g_bf_params[0].data(), g_bf_params[1].data(), g_bf_params[2].data(),
-            g_bf_params[3].data(), g_bf_params[4].data(), g_bf_params[5].data(), g_bf_params[6].data(),
-            g_bf_params[7].data(), g_bf_params[8].data(), g_bf_params[9].data(), g_bf_save_x_min.data(),
-            g_bf_save_x_max.data(), g_bf_save_y_min.data(), g_bf_save_y_max.data(), g_bf_save_x_3rd.data(),
-            g_bf_save_y_3rd.data()};
+        return std::array<BigFloat *, 22>{&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd,
+            &g_bf_params[0], &g_bf_params[1], &g_bf_params[2], &g_bf_params[3], &g_bf_params[4], &g_bf_params[5],
+            &g_bf_params[6], &g_bf_params[7], &g_bf_params[8], &g_bf_params[9], &g_bf_save_x_min, &g_bf_save_x_max,
+            &g_bf_save_y_min, &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
     };
     std::vector<std::vector<Byte>> expected;
-    for (BigFloatPtr value : parameters())
+    for (BigFloat *value : parameters())
     {
-        str_to_bf(value, "-1.2345678901234567890123456789e-200");
-        value[0] = static_cast<Byte>(expected.size() + 1);
-        expected.emplace_back(value, value + g_bf_length + 2);
+        str_to_bf(value->data(), "-1.2345678901234567890123456789e-200");
+        value->data()[0] = static_cast<Byte>(expected.size() + 1);
+        expected.emplace_back(value->data(), value->data() + g_bf_length + 2);
     }
     for (int length : {64, 12, 32})
     {
@@ -875,7 +873,7 @@ TEST_F(TestBigFloat, precisionChangesPreserveAllCornersSavedCornersAndParameters
         {
             std::vector<Byte> converted(g_bf_length + 2);
             convert_bf(converted.data(), expected[i].data(), g_bf_length, old_length);
-            EXPECT_EQ(converted, (std::vector<Byte>{values[i], values[i] + g_bf_length + 2}));
+            EXPECT_EQ(converted, (std::vector<Byte>{values[i]->data(), values[i]->data() + g_bf_length + 2}));
             expected[i] = std::move(converted);
         }
     }
@@ -1055,19 +1053,17 @@ TEST_P(TestPersistentBigFloatParameters, preservesEverySerializedFieldAndRejects
     g_fractal_type = FractalType::MANDEL_Z_POWER;
     init_bf_length(GetParam());
     const std::size_t width = static_cast<std::size_t>(g_bf_length + 2);
-    const std::array<BigFloatPtr, 22> values{g_bf_x_min.data(), g_bf_x_max.data(), g_bf_y_min.data(), g_bf_y_max.data(),
-        g_bf_x_3rd.data(), g_bf_y_3rd.data(), g_bf_params[0].data(), g_bf_params[1].data(), g_bf_params[2].data(),
-        g_bf_params[3].data(), g_bf_params[4].data(), g_bf_params[5].data(), g_bf_params[6].data(),
-        g_bf_params[7].data(), g_bf_params[8].data(), g_bf_params[9].data(), g_bf_save_x_min.data(),
-        g_bf_save_x_max.data(), g_bf_save_y_min.data(), g_bf_save_y_max.data(), g_bf_save_x_3rd.data(),
-        g_bf_save_y_3rd.data()};
+    const std::array<BigFloat *, 22> values{&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd,
+        &g_bf_y_3rd, &g_bf_params[0], &g_bf_params[1], &g_bf_params[2], &g_bf_params[3], &g_bf_params[4],
+        &g_bf_params[5], &g_bf_params[6], &g_bf_params[7], &g_bf_params[8], &g_bf_params[9], &g_bf_save_x_min,
+        &g_bf_save_x_max, &g_bf_save_y_min, &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
     std::vector<char> expected(values.size() * width);
     for (std::size_t field = 0; field < values.size(); ++field)
     {
         for (std::size_t byte = 0; byte < width; ++byte)
         {
             const Byte value = static_cast<Byte>(field * 17 + byte * 53);
-            values[field][byte] = value;
+            values[field]->data()[byte] = value;
             expected[field * width + byte] = static_cast<char>(value);
         }
     }
@@ -1088,26 +1084,23 @@ TEST_P(TestPersistentBigFloatParameters, preservesValuesAcrossRelocationAndClear
 {
     g_fractal_type = FractalType::MANDEL_Z_POWER;
     init_bf_length(GetParam());
-    std::array<BigFloatPtr, 22> values{g_bf_x_min.data(), g_bf_x_max.data(), g_bf_y_min.data(), g_bf_y_max.data(),
-        g_bf_x_3rd.data(), g_bf_y_3rd.data(), g_bf_params[0].data(), g_bf_params[1].data(), g_bf_params[2].data(),
-        g_bf_params[3].data(), g_bf_params[4].data(), g_bf_params[5].data(), g_bf_params[6].data(),
-        g_bf_params[7].data(), g_bf_params[8].data(), g_bf_params[9].data(), g_bf_save_x_min.data(),
-        g_bf_save_x_max.data(), g_bf_save_y_min.data(), g_bf_save_y_max.data(), g_bf_save_x_3rd.data(),
-        g_bf_save_y_3rd.data()};
+    std::array<BigFloat *, 22> values{&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd,
+        &g_bf_params[0], &g_bf_params[1], &g_bf_params[2], &g_bf_params[3], &g_bf_params[4], &g_bf_params[5],
+        &g_bf_params[6], &g_bf_params[7], &g_bf_params[8], &g_bf_params[9], &g_bf_save_x_min, &g_bf_save_x_max,
+        &g_bf_save_y_min, &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
     for (std::size_t i = 0; i < values.size(); ++i)
     {
-        float_to_bf(values[i], -static_cast<LDouble>(i + 1));
+        float_to_bf(values[i]->data(), -static_cast<LDouble>(i + 1));
     }
     const int next_length = GetParam() == 4 ? 32 : 4;
     init_bf_length(next_length);
-    values = {g_bf_x_min.data(), g_bf_x_max.data(), g_bf_y_min.data(), g_bf_y_max.data(), g_bf_x_3rd.data(),
-        g_bf_y_3rd.data(), g_bf_params[0].data(), g_bf_params[1].data(), g_bf_params[2].data(), g_bf_params[3].data(),
-        g_bf_params[4].data(), g_bf_params[5].data(), g_bf_params[6].data(), g_bf_params[7].data(),
-        g_bf_params[8].data(), g_bf_params[9].data(), g_bf_save_x_min.data(), g_bf_save_x_max.data(),
-        g_bf_save_y_min.data(), g_bf_save_y_max.data(), g_bf_save_x_3rd.data(), g_bf_save_y_3rd.data()};
+    values = {&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd, &g_bf_params[0],
+        &g_bf_params[1], &g_bf_params[2], &g_bf_params[3], &g_bf_params[4], &g_bf_params[5], &g_bf_params[6],
+        &g_bf_params[7], &g_bf_params[8], &g_bf_params[9], &g_bf_save_x_min, &g_bf_save_x_max, &g_bf_save_y_min,
+        &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
     for (std::size_t i = 0; i < values.size(); ++i)
     {
-        EXPECT_EQ(-static_cast<LDouble>(i + 1), bf_to_float(values[i]));
+        EXPECT_EQ(-static_cast<LDouble>(i + 1), bf_to_float(values[i]->data()));
     }
     const auto high_water = bf_arena(BigLifetime::PERSISTENT).high_water_mark();
     free_bf_vars();
