@@ -218,9 +218,9 @@ static int bn_manh_bailout()
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     // note: in next five lines, g_old_z_bn is just used as a temporary variable
-    abs_bn(g_old_z_bn.x.data(), g_new_z_bn.x.data());
-    abs_bn(g_old_z_bn.y.data(), g_new_z_bn.y.data());
-    add_bn(g_bn_tmp.data(), g_old_z_bn.x.data(), g_old_z_bn.y.data());
+    abs_bn(g_old_z_bn.x, g_new_z_bn.x);
+    abs_bn(g_old_z_bn.y, g_new_z_bn.y);
+    add_bn(g_bn_tmp, g_old_z_bn.x, g_old_z_bn.y);
     square_bn(g_old_z_bn.x, g_bn_tmp);
     if (const long long_temp_mag = bn_to_int(g_old_z_bn.x.data() + g_shift_factor);
         long_temp_mag >= static_cast<long>(g_magnitude_limit))
@@ -236,7 +236,7 @@ static int bn_manr_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    add_bn(g_bn_tmp.data(), g_new_z_bn.x.data(), g_new_z_bn.y.data()); // don't need abs since we square it next
+    add_bn(g_bn_tmp, g_new_z_bn.x, g_new_z_bn.y); // don't need abs since we square it next
     // note: in next two lines, g_old_z_bn is just used as a temporary variable
     square_bn(g_old_z_bn.x, g_bn_tmp);
     if (const long long_temp_mag = bn_to_int(g_old_z_bn.x.data() + g_shift_factor);

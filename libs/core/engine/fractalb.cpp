@@ -304,12 +304,12 @@ bool mandel_per_image_bn()
     g_delta2_y_bn = g_y_3rd_bn - g_y_min_bn;
     g_delta2_y_bn /= static_cast<U16>(g_logical_screen.x_dots - 1);
 
-    g_close_enough_bn = abs_bn(g_delta_x_bn);
-    if (cmp_bn(abs_bn(bn_temp1.data(), g_delta2_x_bn.data()), g_close_enough_bn.data()) > 0)
+    abs_bn(g_close_enough_bn, g_delta_x_bn);
+    if (cmp_bn(abs_bn(bn_temp1, g_delta2_x_bn), g_close_enough_bn) > 0)
     {
         g_close_enough_bn = bn_temp1;
     }
-    if (cmp_bn(abs_bn(bn_temp1.data(), g_delta_y_bn.data()), abs_bn(bn_temp2.data(), g_delta2_y_bn.data())) > 0)
+    if (cmp_bn(abs_bn(bn_temp1, g_delta_y_bn), abs_bn(bn_temp2, g_delta2_y_bn)) > 0)
     {
         if (bn_temp1 > g_close_enough_bn)
         {
@@ -503,17 +503,17 @@ int mandel_per_pixel_bn()
     }
     // parm.x = x_min + col*delx + row*delx2
     g_param_z_bn.x = g_delta_x_bn * static_cast<U16>(g_col);
-    mult_bn_int(g_bn_tmp.data(), g_delta2_x_bn.data(), static_cast<U16>(g_row));
+    mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
 
     add_a_bn(g_param_z_bn.x, g_bn_tmp);
     g_param_z_bn.x += g_x_min_bn;
 
     // parm.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bn is just used as a temporary variable
-    mult_bn_int(g_old_z_bn.x.data(), g_delta_y_bn.data(), static_cast<U16>(g_row));
-    mult_bn_int(g_old_z_bn.y.data(), g_delta2_y_bn.data(), static_cast<U16>(g_col));
+    mult_bn_int(g_old_z_bn.x, g_delta_y_bn, static_cast<U16>(g_row));
+    mult_bn_int(g_old_z_bn.y, g_delta2_y_bn, static_cast<U16>(g_col));
     add_a_bn(g_old_z_bn.x, g_old_z_bn.y);
-    g_param_z_bn.y = sub_bn(g_y_max_bn, g_old_z_bn.x);
+    sub_bn(g_param_z_bn.y, g_y_max_bn, g_old_z_bn.x);
 
     copy_bn(g_old_z_bn.x, g_param_z_bn.x);
     copy_bn(g_old_z_bn.y, g_param_z_bn.y);
@@ -601,8 +601,8 @@ int mandel_per_pixel_bf()
 int julia_per_pixel_bn()
 {
     // old.x = x_min + col*delx + row*delx2
-    mult_bn_int(g_old_z_bn.x.data(), g_delta_x_bn.data(), static_cast<U16>(g_col));
-    mult_bn_int(g_bn_tmp.data(), g_delta2_x_bn.data(), static_cast<U16>(g_row));
+    mult_bn_int(g_old_z_bn.x, g_delta_x_bn, static_cast<U16>(g_col));
+    mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
 
     add_a_bn(g_old_z_bn.x, g_bn_tmp);
     add_a_bn(g_old_z_bn.x, g_x_min_bn);

@@ -45,6 +45,12 @@ static_assert(std::is_same_v<decltype(add_bn(std::declval<const BigNum &>(), std
 static_assert(std::is_same_v<decltype(sub_bn(std::declval<const BigNum &>(), std::declval<const BigNum &>())), BigNum>);
 static_assert(std::is_same_v<decltype(mult_bn_int(std::declval<const BigNum &>(), U16{})), BigNum>);
 static_assert(std::is_same_v<decltype(abs_bn(std::declval<const BigNum &>())), BigNum>);
+static_assert(std::is_same_v<decltype(add_bn(std::declval<BigNum &>(), std::declval<const BigNum &>(),
+                                 std::declval<const BigNum &>())),
+    BigNum &>);
+static_assert(
+    std::is_same_v<decltype(mult_bn_int(std::declval<BigNum &>(), std::declval<const BigNum &>(), U16{})), BigNum &>);
+static_assert(std::is_same_v<decltype(abs_bn(std::declval<BigNum &>(), std::declval<const BigNum &>())), BigNum &>);
 static_assert(!std::is_void_v<decltype(abs_a_bn(std::declval<BigNum &>()))>);
 static_assert(std::is_void_v<decltype(copy_bn(std::declval<BigNum &>(), std::declval<const BigNum &>()))>);
 static_assert(std::is_void_v<decltype(add_a_bn(std::declval<BigNum &>(), std::declval<const BigNum &>()))>);
@@ -1057,7 +1063,16 @@ enum class CanonicalProcedure
     SUB,
     SUB_SELF,
     ABS_NEGATIVE,
-    ABS_POSITIVE
+    ABS_POSITIVE,
+    ADD_TO,
+    ADD_TO_SELF,
+    SUB_TO,
+    SUB_TO_SELF,
+    MULT_TO,
+    MULT_TO_SELF,
+    ABS_TO,
+    ABS_TO_SELF,
+    ABS_TO_POSITIVE
 };
 
 } // namespace
@@ -1151,10 +1166,12 @@ TEST_P(TestBigNumCanonicalProcedures, preservesDestinationIdentityTailsAliasesAn
 {
     const auto operation = std::get<2>(GetParam());
     auto &arena = bn_arena(BigLifetime::WORKING);
-    BigNum source{-7};
+    BigNum source{operation == CanonicalProcedure::ABS_TO_POSITIVE ? 7.0L : -7.0L};
     BigNum separate{operation == CanonicalProcedure::ABS_NEGATIVE ? -2.0L : 2.0L};
     const bool self = operation == CanonicalProcedure::COPY_SELF || operation == CanonicalProcedure::ADD_SELF ||
-        operation == CanonicalProcedure::SUB_SELF;
+        operation == CanonicalProcedure::SUB_SELF || operation == CanonicalProcedure::ADD_TO_SELF ||
+        operation == CanonicalProcedure::SUB_TO_SELF || operation == CanonicalProcedure::MULT_TO_SELF ||
+        operation == CanonicalProcedure::ABS_TO_SELF;
     BigNum &destination = self ? source : separate;
     std::fill_n(destination.data() + g_bn_length, arena.block_size() - g_bn_length, Byte{0xa5});
     const std::vector<Byte> original_source(source.data(), source.data() + arena.block_size());
@@ -1185,6 +1202,27 @@ TEST_P(TestBigNumCanonicalProcedures, preservesDestinationIdentityTailsAliasesAn
         abs_a_bn(expected.data());
         abs_a_bn(destination);
         break;
+    case CanonicalProcedure::ADD_TO:
+    case CanonicalProcedure::ADD_TO_SELF:
+        add_bn(expected.data(), expected.data(), raw_source.data());
+        EXPECT_EQ(&destination, &add_bn(destination, destination, source));
+        break;
+    case CanonicalProcedure::SUB_TO:
+    case CanonicalProcedure::SUB_TO_SELF:
+        sub_bn(expected.data(), expected.data(), raw_source.data());
+        EXPECT_EQ(&destination, &sub_bn(destination, destination, source));
+        break;
+    case CanonicalProcedure::MULT_TO:
+    case CanonicalProcedure::MULT_TO_SELF:
+        mult_bn_int(expected.data(), raw_source.data(), U16{3});
+        EXPECT_EQ(&destination, &mult_bn_int(destination, source, U16{3}));
+        break;
+    case CanonicalProcedure::ABS_TO:
+    case CanonicalProcedure::ABS_TO_SELF:
+    case CanonicalProcedure::ABS_TO_POSITIVE:
+        abs_bn(expected.data(), raw_source.data());
+        EXPECT_EQ(&destination, &abs_bn(destination, source));
+        break;
     }
 
     EXPECT_EQ(original_destination, destination.data());
@@ -1201,7 +1239,10 @@ INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndAliases, TestBigNumCanonicalProcedu
     testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
         testing::Values(CanonicalProcedure::COPY, CanonicalProcedure::COPY_SELF, CanonicalProcedure::ADD,
             CanonicalProcedure::ADD_SELF, CanonicalProcedure::SUB, CanonicalProcedure::SUB_SELF,
-            CanonicalProcedure::ABS_NEGATIVE, CanonicalProcedure::ABS_POSITIVE)));
+            CanonicalProcedure::ABS_NEGATIVE, CanonicalProcedure::ABS_POSITIVE, CanonicalProcedure::ADD_TO,
+            CanonicalProcedure::ADD_TO_SELF, CanonicalProcedure::SUB_TO, CanonicalProcedure::SUB_TO_SELF,
+            CanonicalProcedure::MULT_TO, CanonicalProcedure::MULT_TO_SELF, CanonicalProcedure::ABS_TO,
+            CanonicalProcedure::ABS_TO_SELF, CanonicalProcedure::ABS_TO_POSITIVE)));
 
 class TestBigNumKernelProducts : public TestBigNumValue,
                                  public testing::WithParamInterface<std::tuple<int, KernelProduct>>

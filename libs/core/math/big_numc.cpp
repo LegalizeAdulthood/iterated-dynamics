@@ -8,7 +8,6 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 */
 #include <math/big.h>
 #include <math/big_init.h>
-#include <math/BigNum.h>
 
 #include <array>
 #include <cfloat>
@@ -53,19 +52,6 @@ BigNumPtr max_bn(BigNumPtr r)
     std::memset(r, 0xFF, g_bn_length-1);  // set to max values
     r[g_bn_length-1] = 0x7F;  // turn off the sign bit
     return r;
-}
-
-/********************************************************************/
-// r = n
-BigNumPtr copy_bn(BigNumPtr r, BigNumConstPtr n)
-{
-    std::memcpy(r, n, g_bn_length);
-    return r;
-}
-
-void copy_bn(BigNum &result, const BigNum &source)
-{
-    copy_bn(result.data(), source.data());
 }
 
 /********************************************************************/
@@ -175,29 +161,6 @@ BigNumPtr half_a_bn(BigNumPtr r)
         quot += static_cast<U32>(BIG_ACCESS16(r + i)) << 16 >> 1; // shift to upper 2 bytes and half it
         BIG_SET16(r + i, static_cast<U16>(quot >> 16));                         // store the upper 2 bytes
         quot <<= 16;                                                  // shift the underflow for next time
-    }
-    return r;
-}
-
-/********************************************************************/
-// r = n * u  where u is an unsigned integer
-BigNum mult_bn_int(const BigNum &source, const U16 factor)
-{
-    BigNum result{bn_arena(BigLifetime::WORKING)};
-    mult_bn_int(result.data(), source.data(), factor);
-    return result;
-}
-
-BigNumPtr mult_bn_int(BigNumPtr r, BigNumConstPtr n, const U16 u)
-{
-    U32 prod = 0;
-
-    // two bytes at a time
-    for (int i = 0; i < g_bn_length; i += 2)
-    {
-        prod += static_cast<U32>(BIG_ACCESS16(n + i)) * u; // n*u
-        BIG_SET16(r+i, static_cast<U16>(prod));   // store the lower 2 bytes
-        prod >>= 16; // shift the overflow for next time
     }
     return r;
 }

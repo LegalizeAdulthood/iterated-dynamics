@@ -7,6 +7,7 @@
 
 #include "BigStorage.h"
 
+#include <math/big.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
 
@@ -91,39 +92,6 @@ int compare(BigNumConstPtr n1, BigNumConstPtr n2)
         }
     }
     return 0;
-}
-
-/********************************************************************/
-// r = n1 + n2
-BigNumPtr add(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2)
-{
-    U32 sum = 0;
-
-    // two bytes at a time
-    for (int i = 0; i < g_bn_length; i += 2)
-    {
-        sum += static_cast<U32>(BIG_ACCESS16(n1 + i)) + static_cast<U32>(BIG_ACCESS16(n2 + i)); // add 'em up
-        BIG_SET16(r + i, static_cast<U16>(sum)); // store the lower 2 bytes
-        sum >>= 16;                              // shift the overflow for next time
-    }
-    return r;
-}
-
-/********************************************************************/
-// r = n1 - n2
-BigNumPtr subtract(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2)
-{
-    U32 diff = 0;
-
-    // two bytes at a time
-    for (int i = 0; i < g_bn_length; i += 2)
-    {
-        diff = static_cast<U32>(BIG_ACCESS16(n1 + i)) -
-            (static_cast<U32>(BIG_ACCESS16(n2 + i)) - static_cast<S32>(static_cast<S16>(diff))); // subtract with borrow
-        BIG_SET16(r + i, static_cast<U16>(diff)); // store the lower 2 bytes
-        diff >>= 16;                              // shift the underflow for next time
-    }
-    return r;
 }
 
 /********************************************************************/
@@ -722,14 +690,14 @@ BigNum::BigNum(BigArena &arena, const std::string_view text) :
 {
     if (!text.empty())
     {
-        str_to_bn(m_storage.data(), text);
+        str_to_bn(data(), text);
     }
 }
 
 BigNum::BigNum(BigArena &arena, const BigFloat &value) :
     BigNum(arena)
 {
-    value.copy_to_legacy_num(m_storage.data(), encoded_size());
+    value.copy_to_legacy_num(data(), encoded_size());
 }
 
 BigNum::BigNum(const BigNum &value) :
@@ -747,7 +715,7 @@ BigNum::BigNum(BigNum &&value) noexcept = default;
 BigNum::BigNum(BigArena::Allocation storage) :
     m_storage(std::move(storage))
 {
-    std::memset(m_storage.data(), 0, m_storage.blocks() * arena().block_size());
+    std::memset(data(), 0, m_storage.blocks() * arena().block_size());
 }
 
 BigNum &BigNum::operator=(const BigNum &value)
@@ -765,7 +733,7 @@ BigNum &BigNum::operator=(const BigNum &value)
                 BigArena &destination = m_storage.arena_ptr() != nullptr ? arena() : bn_arena(BigLifetime::WORKING);
                 m_storage = destination.allocate_single();
             }
-            std::memcpy(m_storage.data(), value.m_storage.data(), encoded_size());
+            std::memcpy(data(), value.data(), encoded_size());
         }
     }
     return *this;
@@ -798,28 +766,28 @@ BigNum &BigNum::operator=(const LDouble value)
     {
         BigArena &destination = m_storage.arena_ptr() != nullptr ? arena() : bn_arena(BigLifetime::WORKING);
         m_storage = destination.allocate_single();
-        std::memset(m_storage.data(), 0, arena().block_size());
+        std::memset(data(), 0, arena().block_size());
     }
-    float_to_bn(m_storage.data(), value);
+    float_to_bn(data(), value);
     return *this;
 }
 
 BigNum BigNum::operator-() const
 {
     BigNum result{bn_arena(BigLifetime::WORKING)};
-    negate(result.m_storage.data(), m_storage.data());
+    negate(result.data(), data());
     return result;
 }
 
 BigNum &BigNum::operator+=(const BigNum &right)
 {
-    add(m_storage.data(), m_storage.data(), right.m_storage.data());
+    add_bn(data(), data(), right.data());
     return *this;
 }
 
 BigNum &BigNum::operator-=(const BigNum &right)
 {
-    subtract(m_storage.data(), m_storage.data(), right.m_storage.data());
+    sub_bn(data(), data(), right.data());
     return *this;
 }
 
@@ -837,28 +805,28 @@ BigNum &BigNum::operator/=(const BigNum &right)
 
 BigNum &BigNum::operator/=(const U16 right)
 {
-    div_a_bn_int(m_storage.data(), right);
+    div_a_bn_int(data(), right);
     return *this;
 }
 
 BigNum BigNum::operator+(const BigNum &right) const
 {
     BigNum result{bn_arena(BigLifetime::WORKING)};
-    add(result.m_storage.data(), m_storage.data(), right.m_storage.data());
+    add_bn(result.data(), data(), right.data());
     return result;
 }
 
 BigNum BigNum::operator-(const BigNum &right) const
 {
     BigNum result{bn_arena(BigLifetime::WORKING)};
-    subtract(result.m_storage.data(), m_storage.data(), right.m_storage.data());
+    sub_bn(result.data(), data(), right.data());
     return result;
 }
 
 BigNum BigNum::operator*(const BigNum &right) const
 {
     BigNum result{bn_arena(BigLifetime::WORKING).allocate_double()};
-    binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), multiply);
+    binary_operation(result.data(), data(), right.data(), multiply);
     result.m_storage.reduce();
     return result;
 }
@@ -866,22 +834,22 @@ BigNum BigNum::operator*(const BigNum &right) const
 BigNum BigNum::operator*(const U16 right) const
 {
     BigNum result{bn_arena(BigLifetime::WORKING)};
-    mult_bn_int(result.m_storage.data(), m_storage.data(), right);
+    mult_bn_int(result.data(), data(), right);
     return result;
 }
 
 BigNum BigNum::operator/(const BigNum &right) const
 {
     BigNum result{bn_arena(BigLifetime::WORKING)};
-    binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), divide);
+    binary_operation(result.data(), data(), right.data(), divide);
     return result;
 }
 
 BigNum BigNum::sqr() const
 {
     BigNum result{bn_arena(BigLifetime::WORKING).allocate_double()};
-    copy_bn(g_bn_tmp_copy1.data(), m_storage.data());
-    square(result.m_storage.data(), g_bn_tmp_copy1.data());
+    copy_bn(g_bn_tmp_copy1.data(), data());
+    square(result.data(), g_bn_tmp_copy1.data());
     result.m_storage.reduce();
     return result;
 }
@@ -913,37 +881,37 @@ void mult_bn(BigNum &result, BigNum &left, BigNum &right)
 
 bool BigNum::operator==(const BigNum &right) const
 {
-    return compare(m_storage.data(), right.m_storage.data()) == 0;
+    return compare(data(), right.data()) == 0;
 }
 
 bool BigNum::operator!=(const BigNum &right) const
 {
-    return compare(m_storage.data(), right.m_storage.data()) != 0;
+    return compare(data(), right.data()) != 0;
 }
 
 bool BigNum::operator<(const BigNum &right) const
 {
-    return compare(m_storage.data(), right.m_storage.data()) < 0;
+    return compare(data(), right.data()) < 0;
 }
 
 bool BigNum::operator<=(const BigNum &right) const
 {
-    return compare(m_storage.data(), right.m_storage.data()) <= 0;
+    return compare(data(), right.data()) <= 0;
 }
 
 bool BigNum::operator>(const BigNum &right) const
 {
-    return compare(m_storage.data(), right.m_storage.data()) > 0;
+    return compare(data(), right.data()) > 0;
 }
 
 bool BigNum::operator>=(const BigNum &right) const
 {
-    return compare(m_storage.data(), right.m_storage.data()) >= 0;
+    return compare(data(), right.data()) >= 0;
 }
 
 LDouble BigNum::to_float() const
 {
-    copy_bn(g_bn_tmp_copy1.data(), m_storage.data());
+    copy_bn(g_bn_tmp_copy1.data(), data());
     return bn_to_float(g_bn_tmp_copy1.data());
 }
 
@@ -953,7 +921,7 @@ std::string BigNum::to_string(const int digits) const
     {
         throw std::invalid_argument("BigNum formatting requires a nonnegative digit count");
     }
-    return bn_to_string(m_storage.data(), digits);
+    return bn_to_string(data(), digits);
 }
 
 BigNum BigNum::from_legacy(BigNumConstPtr source, const std::size_t size)
@@ -965,20 +933,20 @@ BigNum BigNum::from_legacy(BigArena &arena, BigNumConstPtr source, const std::si
 {
     BigNum result{arena};
     validate_buffer(source, size, result.encoded_size());
-    std::copy_n(source, result.encoded_size(), result.m_storage.data());
+    std::copy_n(source, result.encoded_size(), result.data());
     return result;
 }
 
 void BigNum::copy_to_legacy(BigNumPtr destination, const std::size_t size) const
 {
     validate_buffer(destination, size, encoded_size());
-    std::copy_n(m_storage.data(), encoded_size(), destination);
+    std::copy_n(data(), encoded_size(), destination);
 }
 
 void BigNum::copy_to_legacy_float(BigFloatPtr destination, const std::size_t size) const
 {
     validate_buffer(destination, size, static_cast<std::size_t>(g_bf_length) + 2);
-    bn_to_bf(destination, m_storage.data());
+    bn_to_bf(destination, data());
 }
 
 BigNum sqr(const BigNum &value)
@@ -997,21 +965,17 @@ int cmp_bn(const BigNum &n1, const BigNum &n2)
     return compare(n1.data(), n2.data());
 }
 
-BigNumPtr add_bn(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2)
+BigNum &add_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
 {
-    return add(r, n1, n2);
+    add_bn(r.data(), n1.data(), n2.data());
+    return r;
 }
 
 BigNum add_bn(const BigNum &left, const BigNum &right)
 {
     BigNum result{bn_arena(BigLifetime::WORKING)};
-    add(result.data(), left.data(), right.data());
+    add_bn(result.data(), left.data(), right.data());
     return result;
-}
-
-BigNumPtr sub_bn(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2)
-{
-    return subtract(r, n1, n2);
 }
 
 BigNum &sub_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
@@ -1023,7 +987,7 @@ BigNum &sub_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
 BigNum sub_bn(const BigNum &left, const BigNum &right)
 {
     BigNum result{bn_arena(BigLifetime::WORKING)};
-    subtract(result.data(), left.data(), right.data());
+    sub_bn(result.data(), left.data(), right.data());
     return result;
 }
 
@@ -1042,24 +1006,14 @@ BigNumPtr unsafe_square_bn(BigNumPtr r, BigNumPtr n)
     return square(r, n);
 }
 
-BigNumPtr add_a_bn(BigNumPtr r, BigNumConstPtr n)
-{
-    return add(r, r, n);
-}
-
 void add_a_bn(BigNum &result, const BigNum &source)
 {
-    add(result.data(), result.data(), source.data());
-}
-
-BigNumPtr sub_a_bn(BigNumPtr r, BigNumConstPtr n)
-{
-    return subtract(r, r, n);
+    add_bn(result.data(), result.data(), source.data());
 }
 
 void sub_a_bn(BigNum &result, const BigNum &source)
 {
-    subtract(result.data(), result.data(), source.data());
+    sub_bn(result.data(), result.data(), source.data());
 }
 
 BigNumPtr neg_a_bn(BigNumPtr r)
@@ -1124,6 +1078,50 @@ BigNumPtr square_bn(BigNumPtr r, BigNumPtr n)
 BigNumPtr div_bn(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2)
 {
     return binary_operation(r, n1, n2, divide);
+}
+
+void copy_bn(BigNum &result, const BigNum &source)
+{
+    copy_bn(result.data(), source.data());
+}
+
+BigNum mult_bn_int(const BigNum &source, const U16 factor)
+{
+    BigNum result{bn_arena(BigLifetime::WORKING)};
+    mult_bn_int(result.data(), source.data(), factor);
+    return result;
+}
+
+BigNum &mult_bn_int(BigNum &r, const BigNum &source, const U16 factor)
+{
+    mult_bn_int(r.data(), source.data(), factor);
+    return r;
+}
+
+BigNum abs_bn(const BigNum &source)
+{
+    BigNum result{bn_arena(BigLifetime::WORKING)};
+    copy_bn(result.data(), source.data());
+    if (is_bn_neg(result.data()))
+    {
+        neg_a_bn(result.data());
+    }
+    return result;
+}
+
+BigNum &abs_bn(BigNum &r, const BigNum &source)
+{
+    abs_bn(r.data(), source.data());
+    return r;
+}
+
+BigNum &abs_a_bn(BigNum &r)
+{
+    if (is_bn_neg(r.data()))
+    {
+        neg_a_bn(r.data());
+    }
+    return r;
 }
 
 } // namespace id::math

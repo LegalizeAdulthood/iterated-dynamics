@@ -165,7 +165,7 @@ add_library(id-core
     include/io/update_save_name.h io/update_save_name.cpp
 
     include/math/arg.h math/arg.cpp
-    include/math/big.h
+    include/math/big.h math/big.cpp
     include/math/BigArena.h math/BigArena.cpp
     include/math/BigComplex.h math/BigComplex.cpp
     include/math/BigFloat.h math/BigFloat.cpp

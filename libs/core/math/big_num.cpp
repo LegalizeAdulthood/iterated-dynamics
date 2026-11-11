@@ -447,49 +447,6 @@ BigNumPtr float_to_bn(BigNumPtr r, LDouble f)
 }
 
 /********************************************************************/
-// r = |n|
-BigNum abs_bn(const BigNum &source)
-{
-    BigNum result{bn_arena(BigLifetime::WORKING)};
-    copy_bn(result.data(), source.data());
-    if (is_bn_neg(result.data()))
-    {
-        neg_a_bn(result.data());
-    }
-    return result;
-}
-
-BigNumPtr abs_bn(BigNumPtr r, BigNumPtr n)
-{
-    copy_bn(r, n);
-    if (is_bn_neg(r))
-    {
-        neg_a_bn(r);
-    }
-    return r;
-}
-
-/********************************************************************/
-// r = |r|
-BigNum &abs_a_bn(BigNum &r)
-{
-    if (is_bn_neg(r.data()))
-    {
-        neg_a_bn(r.data());
-    }
-    return r;
-}
-
-BigNumPtr abs_a_bn(BigNumPtr r)
-{
-    if (is_bn_neg(r))
-    {
-        neg_a_bn(r);
-    }
-    return r;
-}
-
-/********************************************************************/
 // r = 1/n
 // uses g_bn_tmp1 - g_bn_tmp3 - global temp bignumbers
 //  SIDE-EFFECTS:

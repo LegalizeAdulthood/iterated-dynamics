@@ -519,8 +519,10 @@ TEST_F(TestBigNumJulia, affineSeedsKeepPreciseFixedParameterAndWideSquareCaches)
     bf_to_bn(parameter_x.data(), g_bf_params[0].data());
     bf_to_bn(parameter_y.data(), g_bf_params[1].data());
     g_magnitude_limit = 1024;
+    const Byte *const close_enough_storage = g_close_enough_bn.data();
 
     ASSERT_TRUE(mandel_per_image_bn());
+    EXPECT_EQ(close_enough_storage, g_close_enough_bn.data());
     ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
     for (const int col : {0, 128, 256})
     {
@@ -569,8 +571,10 @@ TEST_F(TestBigNumJulia, viewportTransitionRestoresJuliaParameterAndKeepsBailoutE
     g_row = 256;
     g_magnitude_limit = 16;
     g_fractal_type = FractalType::MANDEL;
+    const Byte *const parameter_y_storage = g_param_z_bn.y.data();
     ASSERT_TRUE(mandel_per_image_bn());
     ASSERT_EQ(1, mandel_per_pixel_bn());
+    EXPECT_EQ(parameter_y_storage, g_param_z_bn.y.data());
     ASSERT_EQ(BigNum{2}, g_param_z_bn.x);
 
     g_fractal_type = FractalType::JULIA;
