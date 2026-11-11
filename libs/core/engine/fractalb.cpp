@@ -324,7 +324,7 @@ bool mandel_per_image_bn()
         int t = std::abs(g_periodicity_check);
         while (t--)
         {
-            half_a_bn(g_close_enough_bn.data());
+            half_a_bn(g_close_enough_bn);
         }
     }
 

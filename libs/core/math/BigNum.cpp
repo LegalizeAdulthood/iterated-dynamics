@@ -32,92 +32,6 @@ void validate_buffer(BigNumConstPtr buffer, const std::size_t size, const std::s
     }
 }
 
-/***************************************************************************/
-// n1 != n2 ?
-// RETURNS:
-//  if n1 == n2 returns 0
-//  if n1 > n2 returns a positive (bytes left to go when mismatch occured)
-//  if n1 < n2 returns a negative (bytes left to go when mismatch occured)
-int compare(BigNumConstPtr n1, BigNumConstPtr n2)
-{
-    // two bytes at a time
-    // signed comparison for msb
-    const S16 value1 = BIG_ACCESS_S16(reinterpret_cast<const S16 *>(n1 + g_bn_length - 2));
-    const S16 value2 = BIG_ACCESS_S16(reinterpret_cast<const S16 *>(n2 + g_bn_length - 2));
-    if (value1 > value2)
-    {
-        // now determine which of the two bytes was different
-        if (static_cast<S16>(value1 & 0xFF00) > static_cast<S16>(value2 & 0xFF00)) // compare just high bytes
-        {
-            return g_bn_length;                                                    // high byte was different
-        }
-
-        return g_bn_length - 1;                                                    // low byte was different
-    }
-    if (value1 < value2)
-    {
-        // now determine which of the two bytes was different
-        if (static_cast<S16>(value1 & 0xFF00) < static_cast<S16>(value2 & 0xFF00)) // compare just high bytes
-        {
-            return -g_bn_length;                                                   // high byte was different
-        }
-
-        return -(g_bn_length - 1);                                                 // low byte was different
-    }
-
-    // unsigned comparison for the rest
-    for (int i = g_bn_length - 4; i >= 0; i -= 2)
-    {
-        const U16 n1_value = BIG_ACCESS16(n1 + i);
-        const U16 n2_value = BIG_ACCESS16(n2 + i);
-        if (n1_value > n2_value)
-        {
-            // now determine which of the two bytes was different
-            if ((n1_value & 0xFF00) > (n2_value & 0xFF00)) // compare just high bytes
-            {
-                return i + 2;                              // high byte was different
-            }
-
-            return i + 1;                                  // low byte was different
-        }
-        if (n1_value < n2_value)
-        {
-            // now determine which of the two bytes was different
-            if ((n1_value & 0xFF00) < (n2_value & 0xFF00)) // compare just high bytes
-            {
-                return -(i + 2);                           // high byte was different
-            }
-
-            return -(i + 1);                               // low byte was different
-        }
-    }
-    return 0;
-}
-
-/********************************************************************/
-// r = -n
-BigNumPtr negate(BigNumPtr r, BigNumConstPtr n)
-{
-    int i;
-    U32 neg = 1; // to get the 2's complement started
-
-    // two bytes at a time
-    for (i = 0; neg != 0 && i < g_bn_length; i += 2)
-    {
-        const U16 t_short = ~BIG_ACCESS16(n + i);
-        neg += static_cast<U32>(t_short);        // two's complement
-        BIG_SET16(r + i, static_cast<U16>(neg)); // store the lower 2 bytes
-        neg >>= 16;                              // shift the sign bit for next time
-    }
-    // if neg was 0, then just "not" the rest
-    for (; i < g_bn_length; i += 2)
-    {
-        // notice that BIG_ACCESS16() and BIG_SET16() are not needed here
-        *reinterpret_cast<U16 *>(r + i) = ~*reinterpret_cast<const U16 *>(n + i); // toggle all the bits
-    }
-    return r;
-}
-
 /************************************************************************/
 // r = n1 * n2
 // Note: r will be a double wide result, 2*g_bn_length
@@ -775,7 +689,7 @@ BigNum &BigNum::operator=(const LDouble value)
 BigNum BigNum::operator-() const
 {
     BigNum result{bn_arena(BigLifetime::WORKING)};
-    negate(result.data(), data());
+    neg_bn(result.data(), data());
     return result;
 }
 
@@ -881,32 +795,32 @@ void mult_bn(BigNum &result, BigNum &left, BigNum &right)
 
 bool BigNum::operator==(const BigNum &right) const
 {
-    return compare(data(), right.data()) == 0;
+    return cmp_bn(data(), right.data()) == 0;
 }
 
 bool BigNum::operator!=(const BigNum &right) const
 {
-    return compare(data(), right.data()) != 0;
+    return cmp_bn(data(), right.data()) != 0;
 }
 
 bool BigNum::operator<(const BigNum &right) const
 {
-    return compare(data(), right.data()) < 0;
+    return cmp_bn(data(), right.data()) < 0;
 }
 
 bool BigNum::operator<=(const BigNum &right) const
 {
-    return compare(data(), right.data()) <= 0;
+    return cmp_bn(data(), right.data()) <= 0;
 }
 
 bool BigNum::operator>(const BigNum &right) const
 {
-    return compare(data(), right.data()) > 0;
+    return cmp_bn(data(), right.data()) > 0;
 }
 
 bool BigNum::operator>=(const BigNum &right) const
 {
-    return compare(data(), right.data()) >= 0;
+    return cmp_bn(data(), right.data()) >= 0;
 }
 
 LDouble BigNum::to_float() const
@@ -954,15 +868,9 @@ BigNum sqr(const BigNum &value)
     return value.sqr();
 }
 
-// Raw compatibility adapters for callers not yet using owning values.
-int cmp_bn(BigNumConstPtr n1, BigNumConstPtr n2)
-{
-    return compare(n1, n2);
-}
-
 int cmp_bn(const BigNum &n1, const BigNum &n2)
 {
-    return compare(n1.data(), n2.data());
+    return cmp_bn(n1.data(), n2.data());
 }
 
 BigNum &add_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
@@ -991,11 +899,6 @@ BigNum sub_bn(const BigNum &left, const BigNum &right)
     return result;
 }
 
-BigNumPtr neg_bn(BigNumPtr r, BigNumConstPtr n)
-{
-    return negate(r, n);
-}
-
 BigNumPtr unsafe_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
 {
     return multiply(r, n1, n2);
@@ -1014,11 +917,6 @@ void add_a_bn(BigNum &result, const BigNum &source)
 void sub_a_bn(BigNum &result, const BigNum &source)
 {
     sub_bn(result.data(), result.data(), source.data());
-}
-
-BigNumPtr neg_a_bn(BigNumPtr r)
-{
-    return negate(r, r);
 }
 
 BigNumPtr full_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
@@ -1121,6 +1019,75 @@ BigNum &abs_a_bn(BigNum &r)
     {
         neg_a_bn(r.data());
     }
+    return r;
+}
+
+BigNum &clear_bn(BigNum &r)
+{
+    clear_bn(r.data());
+    return r;
+}
+
+BigNum &max_bn(BigNum &r)
+{
+    max_bn(r.data());
+    return r;
+}
+
+bool is_bn_neg(const BigNum &n)
+{
+    return is_bn_neg(n.data());
+}
+
+bool is_bn_zero(const BigNum &n)
+{
+    return is_bn_zero(n.data());
+}
+
+bool is_bn_not_zero(const BigNum &n)
+{
+    return is_bn_not_zero(n.data());
+}
+
+BigNum &neg_bn(BigNum &r, const BigNum &n)
+{
+    neg_bn(r.data(), n.data());
+    return r;
+}
+
+BigNum &neg_a_bn(BigNum &r)
+{
+    neg_a_bn(r.data());
+    return r;
+}
+
+BigNum &double_bn(BigNum &r, const BigNum &n)
+{
+    double_bn(r.data(), n.data());
+    return r;
+}
+
+BigNum &double_a_bn(BigNum &r)
+{
+    double_a_bn(r.data());
+    return r;
+}
+
+BigNum &half_bn(BigNum &r, const BigNum &n)
+{
+    half_bn(r.data(), n.data());
+    return r;
+}
+
+BigNum &half_a_bn(BigNum &r)
+{
+    half_a_bn(r.data());
+    return r;
+}
+
+BigNum &mult_a_bn_int(BigNum &r, const U16 u)
+{
+    mult_a_bn_int(r.data(), u);
     return r;
 }
 

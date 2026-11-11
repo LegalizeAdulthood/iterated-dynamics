@@ -550,9 +550,4 @@ std::string bn_to_string(BigNumConstPtr r, const int dec)
     return unsafe_bn_to_string(copy_bn(g_bn_tmp_copy2.data(), r), dec);
 }
 
-bool is_bn_zero(BigNumPtr n)
-{
-    return !is_bn_not_zero(n);
-}
-
 } // namespace id::math

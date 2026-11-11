@@ -58,6 +58,19 @@ static_assert(std::is_void_v<decltype(sub_a_bn(std::declval<BigNum &>(), std::de
 static_assert(
     std::is_void_v<decltype(mult_bn(std::declval<BigNum &>(), std::declval<BigNum &>(), std::declval<BigNum &>()))>);
 
+static_assert(std::is_same_v<decltype(clear_bn(std::declval<BigNum &>())), BigNum &>);
+static_assert(std::is_same_v<decltype(max_bn(std::declval<BigNum &>())), BigNum &>);
+static_assert(std::is_same_v<decltype(neg_a_bn(std::declval<BigNum &>())), BigNum &>);
+static_assert(std::is_same_v<decltype(double_a_bn(std::declval<BigNum &>())), BigNum &>);
+static_assert(std::is_same_v<decltype(half_a_bn(std::declval<BigNum &>())), BigNum &>);
+static_assert(std::is_same_v<decltype(neg_bn(std::declval<BigNum &>(), std::declval<const BigNum &>())), BigNum &>);
+static_assert(std::is_same_v<decltype(double_bn(std::declval<BigNum &>(), std::declval<const BigNum &>())), BigNum &>);
+static_assert(std::is_same_v<decltype(half_bn(std::declval<BigNum &>(), std::declval<const BigNum &>())), BigNum &>);
+static_assert(std::is_same_v<decltype(mult_a_bn_int(std::declval<BigNum &>(), U16{})), BigNum &>);
+static_assert(std::is_same_v<decltype(is_bn_neg(std::declval<const BigNum &>())), bool>);
+static_assert(std::is_same_v<decltype(is_bn_zero(std::declval<const BigNum &>())), bool>);
+static_assert(std::is_same_v<decltype(is_bn_not_zero(std::declval<const BigNum &>())), bool>);
+
 std::vector<Byte> encoded_value(const BigNum &value)
 {
     std::vector<Byte> result(static_cast<std::size_t>(g_bn_length));
@@ -1243,6 +1256,211 @@ INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndAliases, TestBigNumCanonicalProcedu
             CanonicalProcedure::ADD_TO_SELF, CanonicalProcedure::SUB_TO, CanonicalProcedure::SUB_TO_SELF,
             CanonicalProcedure::MULT_TO, CanonicalProcedure::MULT_TO_SELF, CanonicalProcedure::ABS_TO,
             CanonicalProcedure::ABS_TO_SELF, CanonicalProcedure::ABS_TO_POSITIVE)));
+
+namespace
+{
+
+enum class UnaryOperation
+{
+    CLEAR,
+    MAX,
+    NEGATE,
+    NEGATE_ASSIGN,
+    DOUBLE,
+    DOUBLE_ASSIGN,
+    HALF,
+    HALF_ASSIGN,
+    MULT_ASSIGN
+};
+
+struct EncodedPattern
+{
+    U16 low;
+    Byte fill;
+    Byte high;
+};
+
+std::vector<Byte> encoded_pattern(const EncodedPattern &pattern)
+{
+    std::vector<Byte> bytes(static_cast<std::size_t>(g_bn_length), pattern.fill);
+    bytes[0] = static_cast<Byte>(pattern.low);
+    bytes[1] = static_cast<Byte>(pattern.low >> 8);
+    bytes.back() = pattern.high;
+    return bytes;
+}
+
+struct UnaryInput
+{
+    const char *name;
+    UnaryOperation operation;
+    EncodedPattern source;
+    EncodedPattern expected;
+    U16 factor{};
+};
+
+void PrintTo(const UnaryInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+struct ObservationInput
+{
+    const char *name;
+    EncodedPattern source;
+    int mismatch;
+    bool high_byte;
+};
+
+void PrintTo(const ObservationInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+} // namespace
+
+class TestBigNumUnary : public TestBigNumValue,
+                        public testing::WithParamInterface<std::tuple<int, int, UnaryInput, bool>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumUnary::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    g_user.bailout_value = integer_length == 4 ? 100 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(std::get<0>(GetParam()));
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumUnary, preservesDestinationIdentityTailsAliasesAndAllocation)
+{
+    const UnaryInput &input = std::get<2>(GetParam());
+    const bool self = std::get<3>(GetParam());
+    const std::vector<Byte> source_bytes = encoded_pattern(input.source);
+    BigNum source = BigNum::from_legacy(source_bytes.data(), source_bytes.size());
+    BigNum separate = BigNum::from_legacy(source_bytes.data(), source_bytes.size());
+    BigNum &destination = self ? source : separate;
+    BigArena &arena = destination.arena();
+    std::fill_n(destination.data() + g_bn_length, arena.block_size() - g_bn_length, Byte{0xa5});
+    const std::vector<Byte> original_source(source.data(), source.data() + arena.block_size());
+    const Byte *const original_destination = destination.data();
+    const std::size_t high_water = arena.high_water_mark();
+    const std::vector<Byte> expected_bytes = encoded_pattern(input.expected);
+    std::vector<Byte> expected(destination.data(), destination.data() + arena.block_size());
+    std::copy(expected_bytes.begin(), expected_bytes.end(), expected.begin());
+
+    switch (input.operation)
+    {
+    case UnaryOperation::CLEAR:
+        EXPECT_EQ(&destination, &clear_bn(destination));
+        break;
+    case UnaryOperation::MAX:
+        EXPECT_EQ(&destination, &max_bn(destination));
+        break;
+    case UnaryOperation::NEGATE:
+        EXPECT_EQ(&destination, &neg_bn(destination, std::as_const(source)));
+        break;
+    case UnaryOperation::NEGATE_ASSIGN:
+        EXPECT_EQ(&destination, &neg_a_bn(destination));
+        break;
+    case UnaryOperation::DOUBLE:
+        EXPECT_EQ(&destination, &double_bn(destination, std::as_const(source)));
+        break;
+    case UnaryOperation::DOUBLE_ASSIGN:
+        EXPECT_EQ(&destination, &double_a_bn(destination));
+        break;
+    case UnaryOperation::HALF:
+        EXPECT_EQ(&destination, &half_bn(destination, std::as_const(source)));
+        break;
+    case UnaryOperation::HALF_ASSIGN:
+        EXPECT_EQ(&destination, &half_a_bn(destination));
+        break;
+    case UnaryOperation::MULT_ASSIGN:
+        EXPECT_EQ(&destination, &mult_a_bn_int(destination, input.factor));
+        break;
+    }
+
+    EXPECT_EQ(original_destination, destination.data());
+    EXPECT_EQ(&arena, &destination.arena());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(expected, std::vector<Byte>(destination.data(), destination.data() + arena.block_size()));
+    if (!self)
+    {
+        EXPECT_EQ(original_source, std::vector<Byte>(source.data(), source.data() + arena.block_size()));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndAliases, TestBigNumUnary,
+    testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(UnaryInput{"Clear", UnaryOperation::CLEAR, {0xfffd, 0xff, 0xff}, {0, 0, 0}},
+            UnaryInput{"Maximum", UnaryOperation::MAX, {3, 0, 0}, {0xffff, 0xff, 0x7f}},
+            UnaryInput{"NegatePositive", UnaryOperation::NEGATE, {3, 0, 0}, {0xfffd, 0xff, 0xff}},
+            UnaryInput{"NegateNegative", UnaryOperation::NEGATE, {0xfffd, 0xff, 0xff}, {3, 0, 0}},
+            UnaryInput{"NegateMinimum", UnaryOperation::NEGATE, {0, 0, 0x80}, {0, 0, 0x80}},
+            UnaryInput{"NegateInPlace", UnaryOperation::NEGATE_ASSIGN, {0xfffd, 0xff, 0xff}, {3, 0, 0}},
+            UnaryInput{"DoublePositive", UnaryOperation::DOUBLE, {3, 0, 0}, {6, 0, 0}},
+            UnaryInput{"DoubleNegative", UnaryOperation::DOUBLE, {0xfffd, 0xff, 0xff}, {0xfffa, 0xff, 0xff}},
+            UnaryInput{"DoubleOverflow", UnaryOperation::DOUBLE, {0xffff, 0xff, 0x7f}, {0xfffe, 0xff, 0xff}},
+            UnaryInput{"DoubleInPlace", UnaryOperation::DOUBLE_ASSIGN, {0xffff, 0xff, 0x7f}, {0xfffe, 0xff, 0xff}},
+            UnaryInput{"HalfPositiveOdd", UnaryOperation::HALF, {3, 0, 0}, {1, 0, 0}},
+            UnaryInput{"HalfNegativeOdd", UnaryOperation::HALF, {0xfffd, 0xff, 0xff}, {0xfffe, 0xff, 0xff}},
+            UnaryInput{"HalfMinimum", UnaryOperation::HALF, {0, 0, 0x80}, {0, 0, 0xc0}},
+            UnaryInput{"HalfInPlace", UnaryOperation::HALF_ASSIGN, {0xfffd, 0xff, 0xff}, {0xfffe, 0xff, 0xff}},
+            UnaryInput{"MultiplyZero", UnaryOperation::MULT_ASSIGN, {0xfffd, 0xff, 0xff}, {0, 0, 0}, 0},
+            UnaryInput{"MultiplyOne", UnaryOperation::MULT_ASSIGN, {0xffff, 0xff, 0x7f}, {0xffff, 0xff, 0x7f}, 1},
+            UnaryInput{"MultiplyUnsigned", UnaryOperation::MULT_ASSIGN, {0xffff, 0xff, 0xff}, {1, 0xff, 0xff}, 65535},
+            UnaryInput{"MultiplyOverflow", UnaryOperation::MULT_ASSIGN, {0, 0, 0x80}, {0, 0, 0}, 2}),
+        testing::Bool()));
+
+class TestBigNumObservations : public TestBigNumValue,
+                               public testing::WithParamInterface<std::tuple<int, int, ObservationInput>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumObservations::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    g_user.bailout_value = integer_length == 4 ? 100 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(std::get<0>(GetParam()));
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumObservations, readsConstOwnersWithoutMutationOrAllocation)
+{
+    const ObservationInput &input = std::get<2>(GetParam());
+    const std::vector<Byte> bytes = encoded_pattern(input.source);
+    const BigNum value = BigNum::from_legacy(bytes.data(), bytes.size());
+    const BigNum zero{0};
+    BigArena &arena = value.arena();
+    const std::vector<Byte> original(value.data(), value.data() + arena.block_size());
+    const std::vector<Byte> original_zero(zero.data(), zero.data() + arena.block_size());
+    const std::size_t high_water = arena.high_water_mark();
+    const int comparison = input.high_byte ? input.mismatch * g_bn_length : input.mismatch;
+
+    EXPECT_EQ(input.mismatch < 0, is_bn_neg(value));
+    EXPECT_EQ(input.mismatch == 0, is_bn_zero(value));
+    EXPECT_EQ(input.mismatch != 0, is_bn_not_zero(value));
+    EXPECT_EQ(comparison, cmp_bn(value, zero));
+    EXPECT_EQ(-comparison, cmp_bn(zero, value));
+    EXPECT_EQ(0, cmp_bn(value, value));
+
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(original, std::vector<Byte>(value.data(), value.data() + arena.block_size()));
+    EXPECT_EQ(original_zero, std::vector<Byte>(zero.data(), zero.data() + arena.block_size()));
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndValues, TestBigNumObservations,
+    testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(ObservationInput{"Zero", {0, 0, 0}, 0, false}, ObservationInput{"Quantum", {1, 0, 0}, 1, false},
+            ObservationInput{"SecondByte", {256, 0, 0}, 2, false},
+            ObservationInput{"NegativeQuantum", {0xffff, 0xff, 0xff}, -1, true},
+            ObservationInput{"Maximum", {0xffff, 0xff, 0x7f}, 1, true},
+            ObservationInput{"Minimum", {0, 0, 0x80}, -1, true}, ObservationInput{"HighByte", {0, 0, 1}, 1, true})));
 
 class TestBigNumKernelProducts : public TestBigNumValue,
                                  public testing::WithParamInterface<std::tuple<int, KernelProduct>>
