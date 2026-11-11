@@ -59,9 +59,9 @@ std::vector<ShipPointInput> point_inputs()
     return inputs;
 }
 
-std::vector<Byte> encoded(BigFloatConstPtr value)
+std::vector<Byte> encoded(const BigFloat &value)
 {
-    return {value, value + g_bf_length + 2};
+    return {value.data(), value.data() + g_bf_length + 2};
 }
 
 } // namespace
@@ -113,8 +113,8 @@ TEST_P(TestBurningShipPoint, nativeOrbitRetainsAbsoluteValuesAndParameterSigns)
     g_old_z_bf.y = input.point.imag();
     g_param_z_bf.x = parameter.real();
     g_param_z_bf.y = parameter.imag();
-    const auto original_x = encoded(g_old_z_bf.x.data());
-    const auto original_y = encoded(g_old_z_bf.y.data());
+    const auto original_x = encoded(g_old_z_bf.x);
+    const auto original_y = encoded(g_old_z_bf.y);
     g_bailout_bigfloat = +[] { return 17; };
     std::complex<double> expected;
     if (input.degree == 2)
@@ -136,8 +136,8 @@ TEST_P(TestBurningShipPoint, nativeOrbitRetainsAbsoluteValuesAndParameterSigns)
 
     EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(g_new_z_bf.x.data())), tolerance);
     EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(g_new_z_bf.y.data())), tolerance);
-    EXPECT_EQ(original_x, encoded(g_old_z_bf.x.data()));
-    EXPECT_EQ(original_y, encoded(g_old_z_bf.y.data()));
+    EXPECT_EQ(original_x, encoded(g_old_z_bf.x));
+    EXPECT_EQ(original_y, encoded(g_old_z_bf.y));
     EXPECT_EQ(stack, save_stack());
 }
 
@@ -152,8 +152,8 @@ TEST_P(TestBurningShipPoint, referenceOrbitKeepsItsOrientationAndScratchRoles)
     point.y = input.point.imag();
     center.x = 0.125;
     center.y = -0.0625;
-    const auto center_x = encoded(center.x.data());
-    const auto center_y = encoded(center.y.data());
+    const auto center_x = encoded(center.x);
+    const auto center_y = encoded(center.y);
     g_new_z_bf.x = 7;
     g_new_z_bf.y = 9;
     std::complex<double> expected;
@@ -175,8 +175,8 @@ TEST_P(TestBurningShipPoint, referenceOrbitKeepsItsOrientationAndScratchRoles)
 
     EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(point.x.data())), tolerance);
     EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(point.y.data())), tolerance);
-    EXPECT_EQ(center_x, encoded(center.x.data()));
-    EXPECT_EQ(center_y, encoded(center.y.data()));
+    EXPECT_EQ(center_x, encoded(center.x));
+    EXPECT_EQ(center_y, encoded(center.y));
     EXPECT_EQ(stack, save_stack());
     if (input.degree == 2)
     {

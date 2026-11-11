@@ -11914,20 +11914,20 @@ TEST_F(TestPerturbationPixels, deepAffineFramePreservesBothBasisVectors)
     g_max_iterations = 2;
     init_bf_dec(60);
     m_big_float = true;
-    const auto set_offset = [](const BigFloatPtr value, const double center, const double offset)
+    const auto set_offset = [](BigFloat &value, const double center, const double offset)
     {
         BigStackSaver saved;
         BigFloat delta{bf_arena(BigLifetime::TEMPORARY)};
-        float_to_bf(value, center);
+        float_to_bf(value.data(), center);
         float_to_bf(delta.data(), offset);
-        add_a_bf(value, delta.data());
+        add_a_bf(value.data(), delta.data());
     };
-    set_offset(g_bf_x_min.data(), 0.25, -3e-40);
-    set_offset(g_bf_x_max.data(), 0.25, 3e-40);
-    set_offset(g_bf_x_3rd.data(), 0.25, -1e-40);
-    set_offset(g_bf_y_min.data(), 0.125, -1e-40);
-    set_offset(g_bf_y_max.data(), 0.125, 1e-40);
-    set_offset(g_bf_y_3rd.data(), 0.125, -3e-40);
+    set_offset(g_bf_x_min, 0.25, -3e-40);
+    set_offset(g_bf_x_max, 0.25, 3e-40);
+    set_offset(g_bf_x_3rd, 0.25, -1e-40);
+    set_offset(g_bf_y_min, 0.125, -1e-40);
+    set_offset(g_bf_y_max, 0.125, 1e-40);
+    set_offset(g_bf_y_3rd, 0.125, -3e-40);
     m_specific.calc_type = standard_fractal_type;
     m_specific.per_image = [] { return true; };
     m_specific.symmetry = SymmetryType::NONE;
