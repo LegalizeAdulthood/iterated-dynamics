@@ -84,12 +84,12 @@ protected:
         g_zoom_box_rotation = 0;
         g_zoom_box_skew = 0.125;
         g_viewport.final_aspect_ratio = 0.75f;
-        const BigFloatPtr corners[]{g_bf_save_x_min.data(), g_bf_save_x_max.data(), g_bf_save_y_min.data(),
-            g_bf_save_y_max.data(), g_bf_save_x_3rd.data(), g_bf_save_y_3rd.data()};
+        BigFloat *const corners[]{
+            &g_bf_save_x_min, &g_bf_save_x_max, &g_bf_save_y_min, &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
         const double values[]{-2.0, 2.0, -1.5, 1.5, -1.75, -1.25};
         for (std::size_t i = 0; i < std::size(corners); ++i)
         {
-            float_to_bf(corners[i], values[i]);
+            float_to_bf(corners[i]->data(), values[i]);
         }
     }
 
@@ -113,10 +113,10 @@ protected:
     std::vector<Byte> saved_corners() const
     {
         std::vector<Byte> result;
-        for (BigFloatConstPtr corner : {g_bf_save_x_min.data(), g_bf_save_x_max.data(), g_bf_save_y_min.data(),
-                 g_bf_save_y_max.data(), g_bf_save_x_3rd.data(), g_bf_save_y_3rd.data()})
+        for (const BigFloat *corner : {&g_bf_save_x_min, &g_bf_save_x_max, &g_bf_save_y_min, &g_bf_save_y_max,
+                 &g_bf_save_x_3rd, &g_bf_save_y_3rd})
         {
-            result.insert(result.end(), corner, corner + g_bf_length + 2);
+            result.insert(result.end(), corner->data(), corner->data() + g_bf_length + 2);
         }
         return result;
     }
