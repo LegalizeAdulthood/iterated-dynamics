@@ -62,8 +62,7 @@ protected:
         const BigFloatPtr corners[]{g_bf_x_min.data(), g_bf_x_max.data(), g_bf_y_min.data(), g_bf_y_max.data(),
             g_bf_x_3rd.data(), g_bf_y_3rd.data(), g_bf_save_x_min.data(), g_bf_save_x_max.data(),
             g_bf_save_y_min.data(), g_bf_save_y_max.data(), g_bf_save_x_3rd.data(), g_bf_save_y_3rd.data()};
-        const BigNumPtr bn_corners[]{g_x_min_bn.data(), g_x_max_bn.data(), g_y_min_bn.data(), g_y_max_bn.data(),
-            g_x_3rd_bn.data(), g_y_3rd_bn.data()};
+        BigNum *const bn_corners[]{&g_x_min_bn, &g_x_max_bn, &g_y_min_bn, &g_y_max_bn, &g_x_3rd_bn, &g_y_3rd_bn};
         const double values[]{-2.0, 2.0, -1.5, 1.5, -2.0, -1.5};
         for (size_t i = 0; i < std::size(corners); ++i)
         {
@@ -71,7 +70,7 @@ protected:
         }
         for (size_t i = 0; i < std::size(bn_corners); ++i)
         {
-            float_to_bn(bn_corners[i], values[i]);
+            float_to_bn(bn_corners[i]->data(), values[i]);
         }
     }
 
