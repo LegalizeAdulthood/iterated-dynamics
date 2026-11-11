@@ -215,14 +215,18 @@ static int bn_and_bailout()
 
 static int bn_manh_bailout()
 {
+    BigStackSaver saved;
+    BigNum abs_x{bn_arena(BigLifetime::TEMPORARY)};
+    BigNum abs_y{bn_arena(BigLifetime::TEMPORARY)};
+    BigNum metric{bn_arena(BigLifetime::TEMPORARY)};
+
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    // note: in next five lines, g_old_z_bn is just used as a temporary variable
-    abs_bn(g_old_z_bn.x, g_new_z_bn.x);
-    abs_bn(g_old_z_bn.y, g_new_z_bn.y);
-    add_bn(g_bn_tmp, g_old_z_bn.x, g_old_z_bn.y);
-    square_bn(g_old_z_bn.x, g_bn_tmp);
-    if (const long long_temp_mag = bn_to_int(g_old_z_bn.x.data() + g_shift_factor);
+    abs_bn(abs_x, g_new_z_bn.x);
+    abs_bn(abs_y, g_new_z_bn.y);
+    add_bn(g_bn_tmp, abs_x, abs_y);
+    square_bn(metric, g_bn_tmp);
+    if (const long long_temp_mag = bn_to_int(metric.data() + g_shift_factor);
         long_temp_mag >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
@@ -234,12 +238,14 @@ static int bn_manh_bailout()
 
 static int bn_manr_bailout()
 {
+    BigStackSaver saved;
+    BigNum metric{bn_arena(BigLifetime::TEMPORARY)};
+
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     add_bn(g_bn_tmp, g_new_z_bn.x, g_new_z_bn.y); // don't need abs since we square it next
-    // note: in next two lines, g_old_z_bn is just used as a temporary variable
-    square_bn(g_old_z_bn.x, g_bn_tmp);
-    if (const long long_temp_mag = bn_to_int(g_old_z_bn.x.data() + g_shift_factor);
+    square_bn(metric, g_bn_tmp);
+    if (const long long_temp_mag = bn_to_int(metric.data() + g_shift_factor);
         long_temp_mag >= static_cast<long>(g_magnitude_limit))
     {
         return 1;

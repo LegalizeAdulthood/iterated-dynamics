@@ -9,6 +9,7 @@
 
 #include <engine/calcfrac.h>
 #include <engine/bailout_formula.h>
+#include <engine/fractalb.h>
 #include <engine/fractals.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
@@ -46,6 +47,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <tuple>
 #include <vector>
 
 using namespace id::engine;
@@ -734,6 +736,103 @@ TEST_P(TestStickyOrbitSound, driverRefusalStillRecordsConstantFrequencyWithoutWa
 INSTANTIATE_TEST_SUITE_P(RectangleAndLine, TestStickyOrbitSound, Values(OrbitDrawMode::RECTANGLE, OrbitDrawMode::LINE),
     [](const TestParamInfo<OrbitDrawMode> &info)
     { return info.param == OrbitDrawMode::RECTANGLE ? "Rectangle" : "Line"; });
+
+class TestStickyBigNumBailout : public TestStickyOrbitSoundBase, public WithParamInterface<std::tuple<Bailout, int>>
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    ValueSaver<BFMathType> m_math{g_bf_math, BFMathType::NONE};
+    ValueSaver<int> m_digits{g_bf_digits, 0};
+    ValueSaver<long> m_bailout{g_user.bailout_value, 0};
+    ValueSaver<Bailout> m_test{g_bailout_test};
+    ValueSaver<double> m_limit{g_magnitude_limit, 1};
+    ValueSaver<double> m_magnitude{g_magnitude};
+    ValueSaver<bool> m_overflow{g_overflow, false};
+    ValueSaver<DComplex> m_old{g_old_z};
+    ValueSaver<DComplex> m_new{g_new_z};
+    ValueSaver<DComplex> m_parameter{g_param_z1, DComplex{0, 0}};
+    ValueSaver<DComplex *> m_float_parameter{g_float_param, &g_param_z1};
+    ValueSaver<double> m_sqr_x{g_temp_sqr_x};
+    ValueSaver<double> m_sqr_y{g_temp_sqr_y};
+    ValueSaver<decltype(g_bailout_float)> m_fp{g_bailout_float};
+    ValueSaver<decltype(g_bailout_bignum)> m_bn{g_bailout_bignum};
+    ValueSaver<decltype(g_bailout_bigfloat)> m_bf{g_bailout_bigfloat};
+};
+
+void TestStickyBigNumBailout::SetUp()
+{
+    prepare(OrbitDrawMode::RECTANGLE);
+    g_fractal_type = FractalType::JULIA;
+    g_stop_pt = {0, 0};
+    g_i_stop_pt = {0, 0};
+    g_periodicity_check = std::get<1>(GetParam());
+    g_image_region.m_min = {-16, -16};
+    g_image_region.m_max = {16, 16};
+    g_image_region.m_3rd = {-16, -16};
+    set_bailout_formula(std::get<0>(GetParam()));
+    g_dispatch.set_per_pixel(
+        []()
+        {
+            g_old_z = {1, 1};
+            g_new_z = {};
+            g_temp_sqr_x = 1;
+            g_temp_sqr_y = 1;
+            if (g_bf_math == BFMathType::BIG_NUM)
+            {
+                g_old_z_bn.x = 1;
+                g_old_z_bn.y = 1;
+                g_param_z_bn.x = 0;
+                g_param_z_bn.y = 0;
+                square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
+                square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+            }
+            return 0;
+        });
+    g_dispatch.set_orbit_calc(
+        []()
+        {
+            ++s_math_calls;
+            return g_bf_math == BFMathType::NONE ? julia_orbit() : julia_orbit_bn();
+        });
+}
+
+void TestStickyBigNumBailout::TearDown()
+{
+    free_bf_vars();
+    TestStickyOrbitSoundBase::TearDown();
+}
+
+TEST_P(TestStickyBigNumBailout, nativeContinuationKeepsTheOrdinaryEscapedOrbitState)
+{
+    {
+        StickyOrbits ordinary;
+        run(ordinary);
+    }
+    ASSERT_EQ(3, s_math_calls);
+    const DComplex expected_old{g_old_z};
+    const DComplex expected_new{g_new_z};
+    EXPECT_EQ(1, expected_old.x);
+    EXPECT_EQ(1, expected_old.y);
+    EXPECT_EQ(12, expected_new.x);
+    EXPECT_EQ(2, expected_new.y);
+    init_bf_dec(40);
+    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    s_math_calls = 0;
+    StickyOrbits big_num;
+
+    run(big_num);
+
+    EXPECT_EQ(3, s_math_calls);
+    EXPECT_EQ(expected_old.x, g_old_z_bn.x.to_float());
+    EXPECT_EQ(expected_old.y, g_old_z_bn.y.to_float());
+    EXPECT_EQ(expected_new.x, g_new_z_bn.x.to_float());
+    EXPECT_EQ(expected_new.y, g_new_z_bn.y.to_float());
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    ModesAndPeriodicity, TestStickyBigNumBailout, Combine(Values(Bailout::MANH, Bailout::MANR), Values(0, 1)));
 
 class TestStickyPerturbationBase : public TestStickyOrbitSoundBase
 {

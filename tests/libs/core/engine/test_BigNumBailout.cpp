@@ -13,6 +13,7 @@
 #include <math/big_init.h>
 #include <math/BigNum.h>
 #include <math/fixed_pt.h>
+#include <math/sqr.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
@@ -169,8 +170,6 @@ TEST_P(TestBigNumBailoutCases, preservesThresholdExtractionCachesAndOldOrbit)
 {
     const auto &input = GetParam();
     const bool escaped = static_cast<long>(input.metric) >= static_cast<long>(input.limit);
-    const bool manh = input.test == Bailout::MANH;
-    const bool manr = input.test == Bailout::MANR;
     set_bailout_formula(input.test);
     g_magnitude_limit = input.limit;
     float_to_bn(g_old_z_bn.x.data(), -7);
@@ -180,25 +179,15 @@ TEST_P(TestBigNumBailoutCases, preservesThresholdExtractionCachesAndOldOrbit)
     std::vector<Byte> expected_x(g_r_length), expected_y(g_r_length), expected_old(g_r_length);
     square_bn(expected_x.data(), g_new_z_bn.x.data());
     square_bn(expected_y.data(), g_new_z_bn.y.data());
-    if (escaped && (manh || manr))
-    {
-        float_to_bn(
-            g_bn_tmp.data(), manh ? std::abs(input.point.x) + std::abs(input.point.y) : input.point.x + input.point.y);
-        square_bn(expected_old.data(), g_bn_tmp.data());
-    }
-    else
-    {
-        float_to_bn(expected_old.data(), escaped ? -7 : input.point.x);
-    }
+    float_to_bn(expected_old.data(), escaped ? -7 : input.point.x);
 
     EXPECT_EQ(escaped, g_bailout_bignum() != 0);
 
     EXPECT_EQ(expected_x, std::vector<Byte>(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_r_length));
     EXPECT_EQ(expected_y, std::vector<Byte>(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_r_length));
-    const int old_size = escaped && (manh || manr) ? g_r_length : g_bn_length;
-    EXPECT_EQ(std::vector<Byte>(expected_old.begin(), expected_old.begin() + old_size),
-        std::vector<Byte>(g_old_z_bn.x.data(), g_old_z_bn.x.data() + old_size));
-    EXPECT_EQ(escaped ? (manh ? std::abs(input.point.y) : 9) : input.point.y, bn_to_float(g_old_z_bn.y.data()));
+    EXPECT_EQ(std::vector<Byte>(expected_old.begin(), expected_old.begin() + g_bn_length),
+        std::vector<Byte>(g_old_z_bn.x.data(), g_old_z_bn.x.data() + g_bn_length));
+    EXPECT_EQ(escaped ? 9 : input.point.y, bn_to_float(g_old_z_bn.y.data()));
     EXPECT_EQ(input.point.x, bn_to_float(g_new_z_bn.x.data()));
     EXPECT_EQ(input.point.y, bn_to_float(g_new_z_bn.y.data()));
     EXPECT_EQ(-17, g_magnitude);
@@ -412,7 +401,6 @@ TEST_P(TestBigNumProductBailout, preservesFullScratchBytesAndFixedWidthOverflow)
     const auto y2 = static_cast<std::int64_t>(input.imaginary) * input.imaginary;
     const auto sum = wrapped_integer(
         mode == Bailout::MANH ? std::abs(input.real) + std::abs(input.imaginary) : input.real + input.imaginary);
-    const auto old_product = integer_bytes(sum * sum, g_r_length, 2 * integer_length);
     const auto expected_x = integer_bytes(x2, g_r_length, 2 * integer_length);
     const auto expected_y = integer_bytes(y2, g_r_length, 2 * integer_length);
     const auto rx = extracted_integer(x2);
@@ -441,11 +429,6 @@ TEST_P(TestBigNumProductBailout, preservesFullScratchBytesAndFixedWidthOverflow)
     else if (mode == Bailout::MANH || mode == Bailout::MANR)
     {
         replace_canonical(expected_tmp, sum);
-        expected_old_x = old_product;
-        if (mode == Bailout::MANH)
-        {
-            replace_canonical(expected_old_y, std::abs(input.imaginary));
-        }
     }
     if (!escaped)
     {
@@ -479,6 +462,58 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndModes, TestBigNumProductBailout,
         testing::Values(ProductBailoutInput{"Continue", 1, -2, 1000}, ProductBailoutInput{"Escape", -3, 2, 1},
             ProductBailoutInput{"Wrap", 100, 100, 1}),
         testing::Bool()));
+
+class TestBigNumBailoutContinuation : public TestBigNumBailout,
+                                      public testing::WithParamInterface<std::tuple<Bailout, bool>>
+{
+};
+
+TEST_P(TestBigNumBailoutContinuation, repeatedOrbitCallsMatchTheOrdinaryBailoutContract)
+{
+    const Bailout mode = std::get<0>(GetParam());
+    const bool escape = std::get<1>(GetParam());
+    ValueSaver<DComplex> saved_old{g_old_z, DComplex{1, 1}};
+    ValueSaver<DComplex> saved_new{g_new_z};
+    ValueSaver<DComplex> saved_parameter{g_param_z1, DComplex{1, 0}};
+    ValueSaver<DComplex *> saved_float_parameter{g_float_param, &g_param_z1};
+    ValueSaver<double> saved_sqr_x{g_temp_sqr_x, 1};
+    ValueSaver<double> saved_sqr_y{g_temp_sqr_y, 1};
+    set_bailout_formula(mode);
+    g_magnitude_limit = escape ? 1 : 100;
+    g_old_z_bn.x = 1;
+    g_old_z_bn.y = 1;
+    g_param_z_bn.x = 1;
+    g_param_z_bn.y = 0;
+    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
+    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+    const std::array<DComplex, 2> expected{{{1, 2}, {-2, escape ? 2.0 : 4.0}}};
+
+    for (int iteration = 0; iteration < 2; ++iteration)
+    {
+        const int ordinary_result = julia_orbit();
+        const BigStackMark mark = save_stack();
+        const std::size_t temporaries = big_memory_stats().temporaries;
+
+        EXPECT_EQ(ordinary_result, julia_orbit_bn());
+
+        EXPECT_EQ(mark, save_stack());
+        if (iteration != 0)
+        {
+            EXPECT_EQ(temporaries, big_memory_stats().temporaries);
+        }
+        EXPECT_EQ(expected[iteration].x, g_new_z_bn.x.to_float());
+        EXPECT_EQ(expected[iteration].y, g_new_z_bn.y.to_float());
+        EXPECT_EQ(g_old_z.x, g_old_z_bn.x.to_float());
+        EXPECT_EQ(g_old_z.y, g_old_z_bn.y.to_float());
+        EXPECT_EQ(integer_bytes(static_cast<std::int64_t>(sqr(expected[iteration].x)), g_r_length, 2 * g_int_length),
+            std::vector<Byte>(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_r_length));
+        EXPECT_EQ(integer_bytes(static_cast<std::int64_t>(sqr(expected[iteration].y)), g_r_length, 2 * g_int_length),
+            std::vector<Byte>(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_r_length));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(ModesAndOutcomes, TestBigNumBailoutContinuation,
+    testing::Combine(testing::Values(Bailout::MANH, Bailout::MANR), testing::Bool()));
 
 class TestBigNumJulia : public TestBigNumBailout
 {
