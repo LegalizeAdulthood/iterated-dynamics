@@ -6441,6 +6441,224 @@ INSTANTIATE_TEST_SUITE_P(OrbitsAndLegacyRequests, TestNativeBigNumDistanceInputs
                     {{2, 1}, {1, 5}, {-14.5, 0.5}, {50.1875, 5.5625}}}),
         Bool()));
 
+struct NativeBigFloatDistanceInput
+{
+    const char *name;
+    DComplex point;
+    std::vector<DComplex> outputs;
+    std::vector<DComplex> derivatives;
+    double tail{};
+};
+
+void PrintTo(const NativeBigFloatDistanceInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<std::vector<Byte>> s_distance_float_inputs;
+std::vector<std::vector<Byte>> s_distance_float_outputs;
+
+std::vector<Byte> distance_float_bytes(const BFComplex &value)
+{
+    std::vector<Byte> result(value.x.data(), value.x.data() + g_bf_length + 2);
+    result.insert(result.end(), value.y.data(), value.y.data() + g_bf_length + 2);
+    return result;
+}
+
+int record_native_bigfloat_distance()
+{
+    s_standard_orbit.emplace_back(g_old_z.x, g_old_z.y);
+    s_standard_derivatives.push_back(s_standard_distance->derivative());
+    s_native_distance_inputs.push_back(
+        {static_cast<double>(g_old_z_bf.x.to_float()), static_cast<double>(g_old_z_bf.y.to_float())});
+    s_distance_float_inputs.push_back(distance_float_bytes(g_old_z_bf));
+    const int escaped = julia_z_power_orbit_bf();
+    s_native_distance_outputs.push_back(
+        {static_cast<double>(g_new_z_bf.x.to_float()), static_cast<double>(g_new_z_bf.y.to_float())});
+    s_distance_float_outputs.push_back(distance_float_bytes(g_new_z_bf));
+    return escaped;
+}
+
+class TestNativeBigFloatDistanceInputs : public PerturbationIterationTest,
+                                         public WithParamInterface<std::tuple<NativeBigFloatDistanceInput, bool>>
+{
+public:
+    TestNativeBigFloatDistanceInputs();
+
+protected:
+    void SetUp() override;
+
+    ValueSaver<UserData> m_user{g_user, UserData{}};
+    ValueSaver<CalcStatus> m_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
+    ValueSaver<bool> m_resuming{g_resuming, false};
+    ValueSaver<bool> m_legacy{g_use_old_distance_estimator};
+    ValueSaver<bool> m_old_colors{g_old_demm_colors, false};
+    ValueSaver<int> m_width{g_distance_estimator_width_factor, 1};
+    ValueSaver<int> m_virtual_width{g_distance_estimator_x_dots, 0};
+    ValueSaver<int> m_virtual_height{g_distance_estimator_y_dots, 0};
+    ValueSaver<int> m_digits{g_bf_digits, 80};
+    ValueSaver<int> m_exponent{g_c_exponent};
+    ValueSaver<double> m_power_real{g_params[2], 2};
+    ValueSaver<double> m_power_imaginary{g_params[3], 0};
+    ValueSaver<DebugFlags> m_debug{g_debug_flag, DebugFlags::FORCE_ARBITRARY_PRECISION_MATH};
+    ValueSaver<std::array<double, 2>> m_tolerance{g_math_tol, std::array<double, 2>{0.05, 0.05}};
+    ValueSaver<bool> m_start_orbit{g_start_show_orbit, false};
+    ValueSaver<bool> m_true_color{g_true_color, false};
+    ValueSaver<SymmetryType> m_symmetry{g_symmetry};
+};
+
+TestNativeBigFloatDistanceInputs::TestNativeBigFloatDistanceInputs() :
+    PerturbationIterationTest{false}
+{
+}
+
+void TestNativeBigFloatDistanceInputs::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
+    g_dispatch = FractalDispatch{*g_cur_fractal_specific};
+    const NativeBigFloatDistanceInput &input = std::get<0>(GetParam());
+    const DComplex point = input.point;
+    g_image_region = ImageRegion{{point.x, point.y - 2}, {point.x + 2, point.y}, {point.x, point.y - 2}};
+    g_user.std_calc_mode = CalcMode::ONE_PASS;
+    g_user.perturbation = PerturbationMode::NO;
+    g_user.distance_estimator_value = 1;
+    g_user.periodicity_value = 0;
+    g_user.biomorph_value = -1;
+    g_user.bailout_value = 4;
+    g_use_old_distance_estimator = std::get<1>(GetParam());
+    m_big_float = true;
+    EXPECT_CALL(m_driver, check_memory()).Times(AnyNumber());
+    static_cast<void>(calc_frac_init());
+    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
+    ASSERT_EQ(1, g_distance_estimator);
+    ASSERT_EQ(std::get<1>(GetParam()), g_use_old_distance_estimator);
+    if (input.tail != 0)
+    {
+        const BigFloat tail{input.tail};
+        g_bf_x_min += tail;
+        g_bf_x_max += tail;
+        g_bf_x_3rd += tail;
+    }
+    g_inside_method = ColorMethod::ITER;
+    g_max_iterations = 16;
+    set_bailout_formula(Bailout::MOD);
+    s_standard_orbit.clear();
+    s_standard_derivatives.clear();
+    s_native_distance_inputs.clear();
+    s_native_distance_outputs.clear();
+    s_distance_float_inputs.clear();
+    s_distance_float_outputs.clear();
+}
+
+TEST_P(TestNativeBigFloatDistanceInputs, nativeSetupSuppliesCurrentObservationsAndRetainsOwningPrecision)
+{
+    const NativeBigFloatDistanceInput &input = std::get<0>(GetParam());
+    StandardFractal standard;
+    ASSERT_TRUE(standard.resume().empty());
+    bool selected = false;
+    for (int call = 0; call < 10 && !selected; ++call)
+    {
+        selected = standard.select_pixel();
+    }
+    ASSERT_TRUE(selected);
+    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
+    ASSERT_EQ(1, g_distance_estimator);
+    ASSERT_EQ(julia_z_power_orbit_bf, g_dispatch.orbit_calc());
+    ASSERT_EQ(mandel_per_pixel_bf, g_dispatch.per_pixel());
+    ASSERT_EQ(standard_fractal_type, g_dispatch.calc_type());
+    ASSERT_EQ(2, g_c_exponent);
+    // Real setup resets legacy requests; do not force that mode back on.
+    ASSERT_FALSE(g_use_old_distance_estimator);
+    const BigFloat expected_x = BigFloat{input.point.x} + BigFloat{input.tail};
+    ASSERT_EQ(expected_x, g_bf_x_min);
+    ASSERT_EQ(BigFloat{input.point.y}, g_bf_y_max);
+    g_col = g_row = 0;
+    g_old_z = {-7, 9};
+    g_new_z = {-11, 13};
+    g_magnitude = -17;
+    g_dispatch.set_orbit_calc(record_native_bigfloat_distance);
+    ValueSaver recording{s_standard_distance, &standard.distance_estimator()};
+    DistanceEstimator native_reference = standard_distance_estimator();
+    DistanceEstimator terminal_estimator;
+    DComplex terminal;
+    double magnitude = 0;
+    long iterations = 0;
+    EXPECT_CALL(m_driver, write_pixel(_, _, _))
+        .WillRepeatedly(
+            [&](int, int, int)
+            {
+                terminal_estimator = standard.distance_estimator();
+                terminal = g_new_z;
+                magnitude = g_magnitude;
+                iterations = g_real_color_iter;
+            });
+
+    static_cast<void>(standard.calculate_standard_pixel(false));
+
+    ASSERT_EQ(input.outputs.size(), s_native_distance_inputs.size());
+    ASSERT_EQ(input.outputs.size(), s_native_distance_outputs.size());
+    ASSERT_EQ(input.outputs.size(), s_standard_orbit.size());
+    ASSERT_EQ(input.outputs.size(), s_standard_derivatives.size());
+    ASSERT_EQ(input.outputs.size(), s_distance_float_inputs.size());
+    ASSERT_EQ(input.outputs.size(), s_distance_float_outputs.size());
+    const BFComplex initial{expected_x, BigFloat{input.point.y}};
+    EXPECT_EQ(distance_float_bytes(initial), s_distance_float_inputs.front());
+    if (input.tail != 0)
+    {
+        EXPECT_NE(BigFloat{input.point.x}, expected_x);
+    }
+    for (std::size_t i = 0; i < input.outputs.size(); ++i)
+    {
+        SCOPED_TRACE(i);
+        const DComplex expected = i == 0 ? input.point : input.outputs[i - 1];
+        // The legacy power kernel uses exp/log, even for quadratic powers.
+        // Characterize that arithmetic separately from exact synchronization.
+        constexpr double tolerance = 1e-12;
+        EXPECT_NEAR(expected.x, s_native_distance_inputs[i].x, tolerance);
+        EXPECT_NEAR(expected.y, s_native_distance_inputs[i].y, tolerance);
+        EXPECT_NEAR(input.outputs[i].x, s_native_distance_outputs[i].x, tolerance);
+        EXPECT_NEAR(input.outputs[i].y, s_native_distance_outputs[i].y, tolerance);
+        EXPECT_NEAR(input.derivatives[i].x, s_standard_derivatives[i].x, tolerance);
+        EXPECT_NEAR(input.derivatives[i].y, s_standard_derivatives[i].y, tolerance);
+        const DComplex native = s_native_distance_inputs[i];
+        EXPECT_EQ(std::complex<double>(native.x, native.y), s_standard_orbit[i]);
+        ASSERT_TRUE(native_reference.advance(native));
+        EXPECT_EQ(native_reference.derivative(), s_standard_derivatives[i]);
+        if (i > 0)
+        {
+            EXPECT_EQ(s_distance_float_outputs[i - 1], s_distance_float_inputs[i]);
+        }
+    }
+    const DComplex expected_terminal = s_native_distance_outputs.back();
+    const double expected_magnitude =
+        expected_terminal.x * expected_terminal.x + expected_terminal.y * expected_terminal.y;
+    EXPECT_EQ(static_cast<long>(input.outputs.size()), iterations);
+    EXPECT_EQ(expected_terminal, terminal);
+    EXPECT_DOUBLE_EQ(expected_magnitude, magnitude);
+    EXPECT_GT(magnitude, 0);
+    EXPECT_EQ(native_reference.derivative(), terminal_estimator.derivative());
+    EXPECT_EQ(native_reference.distance_squared(expected_terminal), terminal_estimator.distance_squared(terminal));
+    EXPECT_EQ(-1, terminal_estimator.escape_iteration());
+    standard.finish();
+}
+
+INSTANTIATE_TEST_SUITE_P(OrbitsAndLegacyRequests, TestNativeBigFloatDistanceInputs,
+    Combine(Values(NativeBigFloatDistanceInput{"FirstRealEscape", {1, 0}, {{2, 0}}, {{3, 0}}},
+                NativeBigFloatDistanceInput{"FirstComplexEscape", {1, 0.5}, {{1.75, 1.5}}, {{3, 1}}},
+                NativeBigFloatDistanceInput{"ContinuedReal", {0.5, 0},
+                    {{0.75, 0}, {1.0625, 0}, {1.62890625, 0}, {3.1533355712890625, 0}},
+                    {{2, 0}, {4, 0}, {9.5, 0}, {31.94921875, 0}}},
+                NativeBigFloatDistanceInput{"ContinuedComplex", {0.5, 0.25},
+                    {{0.6875, 0.5}, {0.72265625, 0.9375}, {0.1433258056640625, 1.60498046875},
+                        {-2.055420018499717, 0.7100702375173569}},
+                    {{2, 0.5}, {3.25, 2.6875}, {0.658203125, 9.97802734375}, {-30.840403020381927, 4.973023936152458}}},
+                NativeBigFloatDistanceInput{"PreciseContinuedReal", {0.5, 0},
+                    {{0.75, 0}, {1.0625, 0}, {1.62890625, 0}, {3.1533355712890625, 0}},
+                    {{2, 0}, {4, 0}, {9.5, 0}, {31.94921875, 0}}, 0x1p-80}),
+        Bool()));
+
 struct DistanceDerivativeInput
 {
     std::string name;
