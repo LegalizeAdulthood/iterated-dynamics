@@ -4531,6 +4531,253 @@ INSTANTIATE_TEST_SUITE_P(ModesAndOrbits, TestBigNumStarTrailContinuation,
             StarTrailJuliaInput{"Precise", {1, 1}, {1, 0}, true, 0}),
         Bool()));
 
+struct StarTrailFloatInput
+{
+    const char *name;
+    DComplex seed;
+    DComplex parameter;
+    DComplex tail;
+    int edge;
+};
+
+void PrintTo(const StarTrailFloatInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+struct StarTrailFloatStep
+{
+    StarTrailJuliaStep actual;
+    std::vector<Byte> expected_input;
+    std::vector<Byte> expected_cache_x;
+    std::vector<Byte> expected_cache_y;
+    int clamp_x;
+    int clamp_y;
+};
+
+std::vector<StarTrailFloatStep> s_star_trail_float_steps;
+
+std::vector<Byte> star_trail_float_bytes(const BigFloat &value)
+{
+    return {value.data(), value.data() + g_bf_length + 2};
+}
+
+int record_star_trail_julia_bf()
+{
+    StarTrailFloatStep step{};
+    step.actual.input = {static_cast<double>(g_old_z_bf.x.to_float()), static_cast<double>(g_old_z_bf.y.to_float())};
+    step.actual.observation = g_new_z;
+    step.actual.observed_old = g_old_z;
+    step.actual.square_x = g_temp_sqr_x;
+    step.actual.square_y = g_temp_sqr_y;
+    step.actual.magnitude = g_magnitude;
+    step.actual.input_bytes = star_trail_float_bytes(g_old_z_bf.x);
+    const std::vector<Byte> input_y = star_trail_float_bytes(g_old_z_bf.y);
+    step.actual.input_bytes.insert(step.actual.input_bytes.end(), input_y.begin(), input_y.end());
+    step.actual.cache_x_before = star_trail_float_bytes(g_tmp_sqr_x_bf);
+    step.actual.cache_y_before = star_trail_float_bytes(g_tmp_sqr_y_bf);
+    const int escaped = julia_orbit_bf();
+    step.actual.output = {static_cast<double>(g_new_z_bf.x.to_float()), static_cast<double>(g_new_z_bf.y.to_float())};
+    step.actual.output_bytes = star_trail_float_bytes(g_new_z_bf.x);
+    const std::vector<Byte> output_y = star_trail_float_bytes(g_new_z_bf.y);
+    step.actual.output_bytes.insert(step.actual.output_bytes.end(), output_y.begin(), output_y.end());
+    step.actual.cache_x_after = star_trail_float_bytes(g_tmp_sqr_x_bf);
+    step.actual.cache_y_after = star_trail_float_bytes(g_tmp_sqr_y_bf);
+
+    const BigFloat maximum{std::numeric_limits<float>::max()};
+    const BigFloat minimum{-std::numeric_limits<float>::max()};
+    if (g_color_iter > 0)
+    {
+        step.clamp_x = g_new_z_bf.x > maximum ? 1 : g_new_z_bf.x < minimum ? -1 : 0;
+        step.clamp_y = g_new_z_bf.y > maximum ? 1 : g_new_z_bf.y < minimum ? -1 : 0;
+    }
+    const BigFloat &next_x = step.clamp_x > 0 ? maximum : step.clamp_x < 0 ? minimum : g_new_z_bf.x;
+    const BigFloat &next_y = step.clamp_y > 0 ? maximum : step.clamp_y < 0 ? minimum : g_new_z_bf.y;
+    step.expected_input = star_trail_float_bytes(next_x);
+    const std::vector<Byte> expected_y = star_trail_float_bytes(next_y);
+    step.expected_input.insert(step.expected_input.end(), expected_y.begin(), expected_y.end());
+    step.expected_cache_x = step.clamp_x ? star_trail_float_bytes(sqr(next_x)) : step.actual.cache_x_after;
+    step.expected_cache_y = step.clamp_y ? star_trail_float_bytes(sqr(next_y)) : step.actual.cache_y_after;
+    s_star_trail_float_steps.push_back(std::move(step));
+    return escaped;
+}
+
+class TestBigFloatStarTrailContinuation : public PerturbationIterationTest,
+                                          public WithParamInterface<std::tuple<Bailout, StarTrailFloatInput, bool>>
+{
+public:
+    TestBigFloatStarTrailContinuation();
+
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    std::shared_ptr<NiceMock<MockSoundOutput>> m_output{std::make_shared<NiceMock<MockSoundOutput>>()};
+    ValueSaver<SoundOutputPtr> m_sound{g_sound, m_output};
+    ValueSaver<int> m_digits{g_bf_digits, 0};
+    ValueSaver<int> m_exponent{g_c_exponent};
+    ValueSaver<bool> m_overflow{g_overflow};
+    ValueSaver<bool> m_orbit_flag{g_orbit_save_flag, false};
+    ValueSaver<double> m_mx1{g_plot_mx1, 0};
+    ValueSaver<double> m_mx2{g_plot_mx2, 0};
+    ValueSaver<double> m_my1{g_plot_my1, 0};
+    ValueSaver<double> m_my2{g_plot_my2, 0};
+    ValueSaver<LDouble> m_delta_x{g_delta_x, 0};
+    ValueSaver<LDouble> m_delta_y{g_delta_y, 0};
+    ValueSaver<LDouble> m_delta2_x{g_delta_x2, 0};
+    ValueSaver<LDouble> m_delta2_y{g_delta_y2, 0};
+    bool m_plot_ready{};
+};
+
+TestBigFloatStarTrailContinuation::TestBigFloatStarTrailContinuation() :
+    PerturbationIterationTest{false}
+{
+}
+
+void TestBigFloatStarTrailContinuation::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    // Allocate the BigFloat context used by the disabled Julia alternative.
+    g_fractal_type = FractalType::JULIA_Z_POWER;
+    init_bf_dec(160);
+    m_big_float = true;
+    g_fractal_type = FractalType::JULIA;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    g_dispatch = FractalDispatch{m_specific};
+    const AlternateMath alternate{
+        FractalType::JULIA, BFMathType::BIG_FLT, record_star_trail_julia_bf, julia_per_pixel_bf, mandel_per_image_bf};
+    g_dispatch.set_current_alternate_math(alternate);
+    const StarTrailFloatInput &input = std::get<1>(GetParam());
+    set_bailout_formula(std::get<0>(GetParam()));
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    g_magnitude_limit = input.edge ? 1e80 : 100;
+    g_max_iterations = 128;
+    g_col = g_row = 0;
+    g_show_orbit = std::get<2>(GetParam());
+    g_image_region = ImageRegion{input.seed, input.seed, input.seed};
+    fill_pixel_grid();
+    const BigFloat x = BigFloat{input.seed.x} + BigFloat{input.tail.x};
+    const BigFloat y = BigFloat{input.seed.y} + BigFloat{input.tail.y};
+    g_bf_x_min = x;
+    g_bf_x_max = x;
+    g_bf_x_3rd = x;
+    g_bf_y_min = y;
+    g_bf_y_max = y;
+    g_bf_y_3rd = y;
+    g_bf_params[0] = input.parameter.x;
+    g_bf_params[1] = input.parameter.y;
+    if (input.edge)
+    {
+        const BigFloat epsilon{input.edge * 0x1p-80};
+        g_bf_params[0] = x - sqr(x) + epsilon;
+    }
+    ASSERT_TRUE(g_dispatch.per_image()());
+    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
+    s_star_trail_float_steps.clear();
+    ON_CALL(*m_output, ready()).WillByDefault(Return(true));
+    ON_CALL(*m_output, play(_))
+        .WillByDefault(
+            [this](const SoundSample &)
+            {
+                m_plot_ready = !m_plot_ready;
+                return !m_plot_ready;
+            });
+}
+
+void TestBigFloatStarTrailContinuation::TearDown()
+{
+    orbit_plot().scrub();
+    s_star_trail_float_steps.clear();
+    PerturbationIterationTest::TearDown();
+}
+
+TEST_P(TestBigFloatStarTrailContinuation, preservesBoundedValuesCachesSamplesAndYieldTiming)
+{
+    StandardFractal standard;
+    int color = CALC_YIELDED;
+    int yields = 0;
+    for (int call = 0; call < 100 && color == CALC_YIELDED; ++call)
+    {
+        const std::size_t before = s_star_trail_float_steps.size();
+        color = standard.calculate_standard_pixel(false);
+        if (color == CALC_YIELDED)
+        {
+            ++yields;
+            ASSERT_EQ(before + 1, s_star_trail_float_steps.size());
+            const StarTrailJuliaStep &pending = s_star_trail_float_steps.back().actual;
+            std::vector<Byte> output = star_trail_float_bytes(g_new_z_bf.x);
+            const std::vector<Byte> output_y = star_trail_float_bytes(g_new_z_bf.y);
+            output.insert(output.end(), output_y.begin(), output_y.end());
+            EXPECT_EQ(pending.output_bytes, output);
+            EXPECT_EQ(pending.cache_x_after, star_trail_float_bytes(g_tmp_sqr_x_bf));
+            EXPECT_EQ(pending.cache_y_after, star_trail_float_bytes(g_tmp_sqr_y_bf));
+            EXPECT_EQ(16, g_max_iterations);
+        }
+    }
+    ASSERT_NE(CALC_YIELDED, color);
+    ASSERT_EQ(16U, s_star_trail_float_steps.size());
+    EXPECT_EQ(std::get<2>(GetParam()) ? 16 : 0, yields);
+    EXPECT_EQ(16, g_real_color_iter);
+    EXPECT_EQ(128, g_max_iterations);
+    const StarTrailFloatInput &input = std::get<1>(GetParam());
+    if (input.parameter.x == 1 && input.tail.x == 0)
+    {
+        EXPECT_EQ((DComplex{1, 2}), s_star_trail_float_steps[0].actual.output);
+        EXPECT_EQ((DComplex{-2, 4}), s_star_trail_float_steps[1].actual.output);
+    }
+    if (input.edge)
+    {
+        EXPECT_EQ(input.edge > 0 ? 1 : 0, s_star_trail_float_steps[1].clamp_x);
+        EXPECT_EQ(static_cast<double>(std::numeric_limits<float>::max()), s_star_trail_float_steps[1].actual.output.x);
+    }
+    std::array<double, 15> samples{};
+    for (std::size_t i = 1; i < s_star_trail_float_steps.size(); ++i)
+    {
+        SCOPED_TRACE(i);
+        const StarTrailFloatStep &previous = s_star_trail_float_steps[i - 1];
+        const StarTrailJuliaStep &current = s_star_trail_float_steps[i].actual;
+        EXPECT_EQ(previous.expected_input, current.input_bytes);
+        EXPECT_EQ(previous.expected_cache_x, current.cache_x_before);
+        EXPECT_EQ(previous.expected_cache_y, current.cache_y_before);
+        if (i > 1)
+        {
+            EXPECT_EQ(current.observation, current.observed_old);
+            EXPECT_DOUBLE_EQ(current.observation.x * current.observation.x, current.square_x);
+            EXPECT_DOUBLE_EQ(current.observation.y * current.observation.y, current.square_y);
+            EXPECT_DOUBLE_EQ(current.square_x + current.square_y, current.magnitude);
+            samples[i - 2] = current.observation.y / (current.observation.x + 0.000001);
+        }
+    }
+    const StarTrailFloatStep &last = s_star_trail_float_steps.back();
+    std::vector<Byte> final_value = star_trail_float_bytes(g_old_z_bf.x);
+    const std::vector<Byte> final_y = star_trail_float_bytes(g_old_z_bf.y);
+    final_value.insert(final_value.end(), final_y.begin(), final_y.end());
+    EXPECT_EQ(last.expected_input, final_value);
+    EXPECT_EQ(last.expected_cache_x, star_trail_float_bytes(g_tmp_sqr_x_bf));
+    EXPECT_EQ(last.expected_cache_y, star_trail_float_bytes(g_tmp_sqr_y_bf));
+    samples.back() = g_new_z.y / (g_new_z.x + 0.000001);
+    int expected_color = 0;
+    for (std::size_t i = 1; i < 16; ++i)
+    {
+        if (std::abs(samples[0] - (i < samples.size() ? samples[i] : 0)) < 0.05)
+        {
+            expected_color = static_cast<int>(i);
+            break;
+        }
+    }
+    EXPECT_EQ(expected_color, color);
+}
+
+INSTANTIATE_TEST_SUITE_P(ModesOrbitsAndYielding, TestBigFloatStarTrailContinuation,
+    Combine(Values(Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR),
+        Values(StarTrailFloatInput{"Growing", {1, 1}, {1, 0}, {}, 0}, StarTrailFloatInput{"Bounded", {0, 1}, {}, {}, 0},
+            StarTrailFloatInput{"Precise", {1, 1}, {1, 0}, {0x1p-80, 0x1p-80}, 0},
+            StarTrailFloatInput{"RealClamp", {2, 0}, {}, {0, 0x1p-200}, 0},
+            StarTrailFloatInput{"ImagClamp", {0, 2}, {}, {0x1p-200, 0}, 0},
+            StarTrailFloatInput{"AboveBound", {std::numeric_limits<float>::max(), 0}, {}, {}, 1},
+            StarTrailFloatInput{"BelowBound", {std::numeric_limits<float>::max(), 0}, {}, {}, -1}),
+        Bool()));
+
 struct StarTrailPaletteInput
 {
     const char *name;

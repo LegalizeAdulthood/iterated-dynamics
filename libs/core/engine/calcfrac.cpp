@@ -1297,6 +1297,34 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                         g_old_z_bn.x = g_new_z_bn.x;
                         g_old_z_bn.y = g_new_z_bn.y;
                     }
+                    else if (g_bf_math == BFMathType::BIG_FLT)
+                    {
+                        BigStackSaver saved;
+                        const BigFloat maximum{bf_arena(BigLifetime::TEMPORARY), STAR_TRAIL_MAX};
+                        const BigFloat minimum{bf_arena(BigLifetime::TEMPORARY), STAR_TRAIL_MIN};
+                        if (g_new_z_bf.x > maximum)
+                        {
+                            g_new_z_bf.x = maximum;
+                            g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
+                        }
+                        else if (g_new_z_bf.x < minimum)
+                        {
+                            g_new_z_bf.x = minimum;
+                            g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
+                        }
+                        if (g_new_z_bf.y > maximum)
+                        {
+                            g_new_z_bf.y = maximum;
+                            g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
+                        }
+                        else if (g_new_z_bf.y < minimum)
+                        {
+                            g_new_z_bf.y = minimum;
+                            g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
+                        }
+                        g_old_z_bf.x = g_new_z_bf.x;
+                        g_old_z_bf.y = g_new_z_bf.y;
+                    }
                     {
                         const int tmp_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
                         m_tan_table[tmp_color - 1] = g_new_z.y / (g_new_z.x + .000001);
