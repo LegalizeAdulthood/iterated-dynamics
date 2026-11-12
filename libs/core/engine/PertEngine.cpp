@@ -157,7 +157,7 @@ double reference_conversion_error()
 
 double bailout_limit()
 {
-    return g_bf_math == BFMathType::BIG_NUM ? static_cast<long>(g_magnitude_limit) : g_magnitude_limit;
+    return g_magnitude_limit;
 }
 
 bool relative_delta(const BFComplex &value, const BFComplex &reference, std::complex<double> &delta)

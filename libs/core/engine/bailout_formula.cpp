@@ -11,6 +11,7 @@
 #include <math/BigNum.h>
 
 #include <cmath>
+#include <limits>
 #include <stdexcept>
 
 using namespace id::math;
@@ -138,13 +139,50 @@ static int fp_manr_bailout()
 // No need to set magnitude
 // as color schemes that need it calculate it later.
 
+static bool bn_bailout_reached(const Byte *metric)
+{
+    // Keep bn_to_int's unsigned 1/2-byte and signed 4-byte ranges,
+    // including wrapped metrics, but compare their fractional bytes too.
+    const bool signed_metric = g_int_length == 4;
+    const double upper = std::ldexp(1.0, 8 * g_int_length - (signed_metric ? 1 : 0));
+    if (g_magnitude_limit < (signed_metric ? -upper : 0))
+    {
+        return true;
+    }
+    if (g_magnitude_limit >= upper)
+    {
+        return false;
+    }
+
+    double threshold = g_magnitude_limit;
+    const int fractional_bits = 8 * (g_bn_length - g_int_length);
+    if (threshold != 0 && fractional_bits < std::numeric_limits<double>::digits - std::ilogb(threshold))
+    {
+        // The metric is on this fixed-point grid. Round the threshold up
+        // so metric >= threshold also holds when the limit lies between
+        // two representable values.
+        threshold = std::ldexp(std::ceil(std::ldexp(threshold, fractional_bits)), -fractional_bits);
+        if (threshold >= upper)
+        {
+            return false;
+        }
+    }
+    BigStackSaver saved;
+    const BigNum limit{bn_arena(BigLifetime::TEMPORARY), threshold};
+    if (!signed_metric && ((metric[g_bn_length - 1] ^ limit.data()[g_bn_length - 1]) & 0x80) != 0)
+    {
+        return (metric[g_bn_length - 1] & 0x80) != 0;
+    }
+    return cmp_bn(metric, limit.data()) >= 0;
+}
+
 static int bn_mod_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     add_bn(g_bn_tmp.data(), g_tmp_sqr_x_bn.data() + g_shift_factor, g_tmp_sqr_y_bn.data() + g_shift_factor);
 
-    if (const long long_magnitude = bn_to_int(g_bn_tmp.data()); long_magnitude >= static_cast<long>(g_magnitude_limit))
+    if (bn_bailout_reached(g_bn_tmp.data()))
     {
         return 1;
     }
@@ -157,8 +195,7 @@ static int bn_real_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    if (const long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn.data() + g_shift_factor);
-        long_temp_sqr_x >= static_cast<long>(g_magnitude_limit))
+    if (bn_bailout_reached(g_tmp_sqr_x_bn.data() + g_shift_factor))
     {
         return 1;
     }
@@ -171,8 +208,7 @@ static int bn_imag_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    if (const long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn.data() + g_shift_factor);
-        long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
+    if (bn_bailout_reached(g_tmp_sqr_y_bn.data() + g_shift_factor))
     {
         return 1;
     }
@@ -185,10 +221,8 @@ static int bn_or_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    const long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn.data() + g_shift_factor);
-    if (const long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn.data() + g_shift_factor);
-        long_temp_sqr_x >= static_cast<long>(g_magnitude_limit) ||
-        long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
+    if (bn_bailout_reached(g_tmp_sqr_x_bn.data() + g_shift_factor) ||
+        bn_bailout_reached(g_tmp_sqr_y_bn.data() + g_shift_factor))
     {
         return 1;
     }
@@ -201,10 +235,8 @@ static int bn_and_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    const long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn.data() + g_shift_factor);
-    if (const long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn.data() + g_shift_factor);
-        long_temp_sqr_x >= static_cast<long>(g_magnitude_limit) &&
-        long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
+    if (bn_bailout_reached(g_tmp_sqr_x_bn.data() + g_shift_factor) &&
+        bn_bailout_reached(g_tmp_sqr_y_bn.data() + g_shift_factor))
     {
         return 1;
     }
@@ -226,8 +258,7 @@ static int bn_manh_bailout()
     abs_bn(abs_y, g_new_z_bn.y);
     add_bn(g_bn_tmp, abs_x, abs_y);
     square_bn(metric, g_bn_tmp);
-    if (const long long_temp_mag = bn_to_int(metric.data() + g_shift_factor);
-        long_temp_mag >= static_cast<long>(g_magnitude_limit))
+    if (bn_bailout_reached(metric.data() + g_shift_factor))
     {
         return 1;
     }
@@ -245,8 +276,7 @@ static int bn_manr_bailout()
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     add_bn(g_bn_tmp, g_new_z_bn.x, g_new_z_bn.y); // don't need abs since we square it next
     square_bn(metric, g_bn_tmp);
-    if (const long long_temp_mag = bn_to_int(metric.data() + g_shift_factor);
-        long_temp_mag >= static_cast<long>(g_magnitude_limit))
+    if (bn_bailout_reached(metric.data() + g_shift_factor))
     {
         return 1;
     }

@@ -1010,8 +1010,7 @@ TEST_P(TestPerturbationBailout, firstStepUsesInclusiveThreshold)
         center.y = 0;
     }
     m_engine.begin_orbit({2, input.imag}, {}, 0);
-    const double limit = input.math == BFMathType::BIG_NUM ? static_cast<long>(input.limit) : input.limit;
-    const bool escaped = input.metric >= limit;
+    const bool escaped = input.metric >= input.limit;
 
     EXPECT_EQ(escaped, m_engine.iterate_orbit());
 

@@ -6,7 +6,9 @@
 
 #include <MockDriver.h>
 
+#include <engine/bailout_formula.h>
 #include <engine/calcfrac.h>
+#include <engine/fractalb.h>
 #include <engine/ImageRegion.h>
 #include <engine/LogicalScreen.h>
 #include <engine/pixel_grid.h>
@@ -15,6 +17,7 @@
 #include <engine/VideoInfo.h>
 #include <fractals/fractalp.h>
 #include <math/big_init.h>
+#include <math/BigNum.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 
@@ -265,6 +268,32 @@ TEST_F(TestCalcFracInit, potentialDisablesDistanceEstimation)
     EXPECT_TRUE(g_potential.flag);
     EXPECT_EQ(0, g_distance_estimator);
     EXPECT_EQ(0, g_user.distance_estimator_value);
+}
+
+TEST_F(TestCalcFracInit, bigNumBailoutPreservesFractionalPotentialLimit)
+{
+    ValueSaver saved_potential{g_potential, Potential{}};
+    ValueSaver saved_distance{g_distance_estimator};
+    ValueSaver saved_limit{g_magnitude_limit};
+    ValueSaver saved_colors{g_colors, 256};
+    ValueSaver saved_test{g_bailout_test};
+    ValueSaver saved_float{g_bailout_float};
+    ValueSaver saved_bn{g_bailout_bignum};
+    ValueSaver saved_bf{g_bailout_bigfloat};
+    g_potential.params = {32.0, 10.0, 1.5};
+    set_bailout_formula(Bailout::MOD);
+    set_region({{-2.0, -1.5}, {2.0, 1.5}, {-2.0, -1.5}}, true);
+
+    EXPECT_FALSE(calc_frac_init());
+
+    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    ASSERT_TRUE(g_potential.flag);
+    ASSERT_EQ(1.5, g_magnitude_limit);
+    g_new_z_bn.x = 1;
+    g_new_z_bn.y = 0.5;
+    EXPECT_EQ(0, g_bailout_bignum());
+    EXPECT_EQ(BigNum{1}, g_old_z_bn.x);
+    EXPECT_EQ(BigNum{0.5}, g_old_z_bn.y);
 }
 
 } // namespace id::test

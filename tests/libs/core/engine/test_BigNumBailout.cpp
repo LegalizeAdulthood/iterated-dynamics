@@ -56,10 +56,11 @@ std::vector<BigNumBailoutInput> inputs()
 {
     std::vector<BigNumBailoutInput> result;
     const std::array<const char *, 7> names{"Mod", "Real", "Imag", "Or", "And", "Manh", "Manr"};
-    const std::array<DComplex, 3> points{{{1.5, -1}, {-0.5, 1.25}, {0, 0}}};
-    const std::array<std::array<double, 7>, 3> metrics{{{3.25, 2.25, 1, 2.25, 1, 6.25, 0.25},
-        {1.8125, 0.25, 1.5625, 1.5625, 0.25, 3.0625, 0.5625}, {0, 0, 0, 0, 0, 0, 0}}};
-    for (int point = 0; point < 3; ++point)
+    const std::array<DComplex, 4> points{{{1.5, -1}, {-0.5, 1.25}, {0, 0}, {1, 0.5}}};
+    const std::array<std::array<double, 7>, 4> metrics{
+        {{3.25, 2.25, 1, 2.25, 1, 6.25, 0.25}, {1.8125, 0.25, 1.5625, 1.5625, 0.25, 3.0625, 0.5625},
+            {0, 0, 0, 0, 0, 0, 0}, {1.25, 1, 0.25, 1, 0.25, 2.25, 2.25}}};
+    for (int point = 0; point < 4; ++point)
     {
         for (int test = 0; test < 7; ++test)
         {
@@ -166,10 +167,10 @@ TEST_F(TestBigNumBailout, canonicalGlobalsOwnWorkingStorageThroughBindingAndClea
     }
 }
 
-TEST_P(TestBigNumBailoutCases, preservesThresholdExtractionCachesAndOldOrbit)
+TEST_P(TestBigNumBailoutCases, comparesFractionalThresholdsAndPreservesCachesAndOldOrbit)
 {
     const auto &input = GetParam();
-    const bool escaped = static_cast<long>(input.metric) >= static_cast<long>(input.limit);
+    const bool escaped = input.metric >= input.limit;
     set_bailout_formula(input.test);
     g_magnitude_limit = input.limit;
     float_to_bn(g_old_z_bn.x.data(), -7);
@@ -220,6 +221,17 @@ TEST_P(TestBigNumWideBailout, retainsWideProductBytesBeyondMachinePrecision)
     EXPECT_EQ(original_y, std::vector<Byte>(g_new_z_bn.y.data(), g_new_z_bn.y.data() + g_bn_length));
 }
 
+TEST_P(TestBigNumWideBailout, comparesMetricBytesBelowMachinePrecision)
+{
+    const Bailout test = GetParam();
+    set_bailout_formula(test);
+    g_magnitude_limit = test == Bailout::MOD ? 2 : test == Bailout::MANH || test == Bailout::MANR ? 4 : 1;
+    g_new_z_bn.x = BigNum{"0.999999999999999999999999999999999999999"};
+    g_new_z_bn.y = g_new_z_bn.x;
+
+    EXPECT_EQ(0, g_bailout_bignum());
+}
+
 INSTANTIATE_TEST_SUITE_P(Modes, TestBigNumWideBailout,
     testing::Values(
         Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR));
@@ -264,7 +276,7 @@ struct ProductBailoutInput
     const char *name;
     int real;
     int imaginary;
-    int limit;
+    double limit;
 };
 
 void PrintTo(const ProductBailoutInput &input, std::ostream *out)
@@ -293,6 +305,26 @@ void TestBigNumProductWindows::SetUp()
 {
     TestBigNumBailout::SetUp();
     initialize_product_precision(std::get<0>(GetParam()), std::get<1>(GetParam()));
+}
+
+TEST_P(TestBigNumProductWindows, fractionalThresholdAboveTheMetricDoesNotRoundDownToEquality)
+{
+    set_bailout_formula(Bailout::REAL);
+    g_magnitude_limit = std::nextafter(1.0, 2.0);
+    g_new_z_bn.x = 1;
+    g_new_z_bn.y = 0;
+
+    EXPECT_EQ(0, g_bailout_bignum());
+}
+
+TEST_P(TestBigNumProductWindows, smallPositiveThresholdRemainsGreaterThanZero)
+{
+    set_bailout_formula(Bailout::REAL);
+    g_magnitude_limit = std::ldexp(1.0, -80);
+    g_new_z_bn.x = 0;
+    g_new_z_bn.y = 0;
+
+    EXPECT_EQ(0, g_bailout_bignum());
 }
 
 TEST_P(TestBigNumProductWindows, singleAllocationContainsTheEntireRetainedProduct)
@@ -460,7 +492,10 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndModes, TestBigNumProductBailout,
         testing::Values(
             Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR),
         testing::Values(ProductBailoutInput{"Continue", 1, -2, 1000}, ProductBailoutInput{"Escape", -3, 2, 1},
-            ProductBailoutInput{"Wrap", 100, 100, 1}),
+            ProductBailoutInput{"Wrap", 100, 100, 1}, ProductBailoutInput{"FractionAbove", 1, 0, 1.25},
+            ProductBailoutInput{"UnsignedHighAbove", 12, 0, 144.25},
+            ProductBailoutInput{"UnsignedCrossSign", 12, 0, 127.75},
+            ProductBailoutInput{"WideUnsignedAbove", 100, 100, 40000.25}),
         testing::Bool()));
 
 class TestBigNumBailoutContinuation : public TestBigNumBailout,
