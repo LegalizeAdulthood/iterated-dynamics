@@ -515,8 +515,16 @@ int mandel_per_pixel_bn()
     add_a_bn(g_old_z_bn.x, g_old_z_bn.y);
     sub_bn(g_param_z_bn.y, g_y_max_bn, g_old_z_bn.x);
 
-    copy_bn(g_old_z_bn.x, g_param_z_bn.x);
-    copy_bn(g_old_z_bn.y, g_param_z_bn.y);
+    if (g_use_init_orbit == InitOrbitMode::VALUE)
+    {
+        g_old_z_bn.x = g_init_orbit.x;
+        g_old_z_bn.y = g_init_orbit.y;
+    }
+    else
+    {
+        copy_bn(g_old_z_bn.x, g_param_z_bn.x);
+        copy_bn(g_old_z_bn.y, g_param_z_bn.y);
+    }
 
     if ((g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61) && g_bof_match_book_images)
     {

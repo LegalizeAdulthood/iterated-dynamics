@@ -59,6 +59,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -2093,6 +2094,48 @@ TEST_P(TestInitialOffsetReplacement, preservesDisplacedInitialization)
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestInitialOffsetReplacement, ValuesIn(initial_offset_replacement_inputs()),
     [](const TestParamInfo<InitialOffsetReplacementInput> &info) { return info.param.name; });
+
+class TestBigNumMandelbrotPerturbationInitialization
+    : public PerturbationIterationTest,
+      public WithParamInterface<std::tuple<InitOrbitMode, ColorMethod, bool, bool>>
+{
+public:
+    TestBigNumMandelbrotPerturbationInitialization();
+};
+
+TestBigNumMandelbrotPerturbationInitialization::TestBigNumMandelbrotPerturbationInitialization() :
+    PerturbationIterationTest{true}
+{
+}
+
+TEST_P(TestBigNumMandelbrotPerturbationInitialization, matchesRegularSeedAndFirstIterateWithBofPrecedence)
+{
+    g_use_init_orbit = std::get<0>(GetParam());
+    g_inside_method = std::get<1>(GetParam());
+    g_bof_match_book_images = std::get<2>(GetParam());
+    g_init_orbit = std::get<3>(GetParam()) ? DComplex{} : DComplex{0.5, -0.25};
+    set_initial_offset({0.125, -0.0625});
+    const bool bof =
+        g_bof_match_book_images && (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61);
+    const std::complex<double> pixel{-0.375, 0.125};
+    std::complex<double> seed = bof                ? std::complex<double>{}
+        : g_use_init_orbit == InitOrbitMode::VALUE ? std::complex<double>{g_init_orbit.x, g_init_orbit.y}
+                                                   : pixel;
+    seed += std::complex<double>{0.125, -0.0625};
+    const std::complex<double> first{seed.real() * seed.real() - seed.imag() * seed.imag() + pixel.real(),
+        2 * seed.real() * seed.imag() + pixel.imag()};
+
+    compare_pixel(pixel, 4);
+
+    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    ASSERT_GE(s_perturbation_orbit.size(), 2U);
+    EXPECT_EQ(seed, s_perturbation_orbit.front());
+    EXPECT_EQ(first, s_perturbation_orbit[1]);
+}
+
+INSTANTIATE_TEST_SUITE_P(ModesAndBof, TestBigNumMandelbrotPerturbationInitialization,
+    Combine(Values(InitOrbitMode::NORMAL, InitOrbitMode::VALUE, InitOrbitMode::PIXEL),
+        Values(ColorMethod::COLOR, ColorMethod::BOF60, ColorMethod::BOF61), Bool(), Bool()));
 
 TEST_P(TestPerturbationIterations, fixedZeroInitialOrbitMatchesStandardOrbit)
 {

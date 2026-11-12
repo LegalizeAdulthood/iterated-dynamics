@@ -4,16 +4,22 @@
 #include <engine/bailout_formula.h>
 #include <math/BigFloat.h>
 
+#include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
 #include <engine/fractals.h>
 #include <engine/fractalb.h>
+#include <engine/ImageRegion.h>
+#include <engine/Inversion.h>
 #include <engine/LogicalScreen.h>
+#include <engine/pixel_grid.h>
 #include <engine/UserData.h>
+#include <fractals/fractalp.h>
 #include <fractals/fractype.h>
 #include <math/big_init.h>
 #include <math/BigNum.h>
 #include <math/fixed_pt.h>
 #include <math/sqr.h>
+#include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
@@ -549,6 +555,123 @@ TEST_P(TestBigNumBailoutContinuation, repeatedOrbitCallsMatchTheOrdinaryBailoutC
 
 INSTANTIATE_TEST_SUITE_P(ModesAndOutcomes, TestBigNumBailoutContinuation,
     testing::Combine(testing::Values(Bailout::MANH, Bailout::MANR), testing::Bool()));
+
+class TestBigNumMandelbrotInitialization
+    : public TestBigNumBailout,
+      public testing::WithParamInterface<std::tuple<InitOrbitMode, ColorMethod, bool, bool>>
+{
+protected:
+    void TearDown() override;
+
+    ValueSaver<const FractalSpecific *> m_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
+    ValueSaver<FractalDispatch> m_dispatch{g_dispatch, FractalDispatch{FractalType::MANDEL}};
+    ValueSaver<InitOrbitMode> m_initial_mode{g_use_init_orbit};
+    ValueSaver<DComplex> m_initial_value{g_init_orbit};
+    ValueSaver<DComplex> m_parameter{g_param_z1, DComplex{0.125, -0.0625}};
+    ValueSaver<double> m_real{g_params[0], 0.125};
+    ValueSaver<double> m_imaginary{g_params[1], -0.0625};
+    ValueSaver<CalcMode> m_mode{g_std_calc_mode, CalcMode::ONE_PASS};
+    ValueSaver<LogicalScreen> m_screen{g_logical_screen, LogicalScreen{5, 5, 0, 0, 4, 4}};
+    ValueSaver<ImageRegion> m_region{g_image_region, ImageRegion{{-1, -1}, {1, 1}, {-0.5, -0.5}}};
+    ValueSaver<Inversion> m_inversion{g_inversion, Inversion{}};
+    ValueSaver<LDouble> m_delta_x{g_delta_x, 0.375};
+    ValueSaver<LDouble> m_delta_y{g_delta_y, 0.375};
+    ValueSaver<LDouble> m_delta2_x{g_delta_x2, 0.125};
+    ValueSaver<LDouble> m_delta2_y{g_delta_y2, 0.125};
+    ValueSaver<int> m_col{g_col, 1};
+    ValueSaver<int> m_row{g_row, 2};
+    ValueSaver<int> m_periodicity{g_periodicity_check, 0};
+    ValueSaver<ColorMethod> m_inside{g_inside_method};
+    ValueSaver<bool> m_book{g_bof_match_book_images};
+    ValueSaver<long> m_iteration{g_color_iter, 37};
+    ValueSaver<int> m_exponent{g_c_exponent};
+    ValueSaver<DComplex> m_power{g_power_z};
+    ValueSaver<DComplex *> m_float_parameter{g_float_param};
+    ValueSaver<DComplex> m_init{g_init};
+    ValueSaver<DComplex> m_old{g_old_z};
+    ValueSaver<DComplex> m_new{g_new_z};
+    ValueSaver<DComplex> m_tmp{g_tmp_z};
+    ValueSaver<double> m_sqr_x{g_temp_sqr_x};
+    ValueSaver<double> m_sqr_y{g_temp_sqr_y};
+    ValueSaver<DebugFlags> m_debug{g_debug_flag, DebugFlags::FORCE_STANDARD_FRACTAL};
+};
+
+void TestBigNumMandelbrotInitialization::TearDown()
+{
+    free_pixel_grid();
+    TestBigNumBailout::TearDown();
+}
+
+TEST_P(TestBigNumMandelbrotInitialization, dispatchMatchesRegularSeedParameterCachesAndFirstIterate)
+{
+    const InitOrbitMode mode = std::get<0>(GetParam());
+    const ColorMethod inside = std::get<1>(GetParam());
+    const bool book = std::get<2>(GetParam());
+    const bool zero = std::get<3>(GetParam());
+    g_use_init_orbit = mode;
+    g_init_orbit = zero ? DComplex{} : DComplex{0.5, -0.25};
+    g_inside_method = inside;
+    g_bof_match_book_images = book;
+    g_magnitude_limit = 4;
+    set_bailout_formula(Bailout::MOD);
+    const DComplex pixel{-0.375, 0.125};
+    const bool bof = book && (inside == ColorMethod::BOF60 || inside == ColorMethod::BOF61);
+    DComplex seed = bof ? DComplex{} : mode == InitOrbitMode::VALUE ? g_init_orbit : pixel;
+    seed += g_param_z1;
+    const long iteration = bof ? -1 : 37;
+    alloc_pixel_grid();
+    fill_pixel_grid();
+    ASSERT_TRUE(g_dispatch.per_image()());
+    ASSERT_EQ(mandel_per_pixel, g_dispatch.per_pixel());
+    ASSERT_EQ(1, g_dispatch.per_pixel()());
+    EXPECT_EQ(seed, g_old_z);
+    EXPECT_EQ(pixel, g_init);
+    EXPECT_EQ(iteration, g_color_iter);
+    EXPECT_EQ(sqr(seed.x), g_temp_sqr_x);
+    EXPECT_EQ(sqr(seed.y), g_temp_sqr_y);
+    ASSERT_EQ(0, g_dispatch.orbit_calc()());
+    const DComplex first = g_new_z;
+    EXPECT_EQ(sqr(seed.x) - sqr(seed.y) + pixel.x, first.x);
+    EXPECT_EQ(2 * seed.x * seed.y + pixel.y, first.y);
+
+    init_bf_dec(40);
+    g_bf_x_min = -1;
+    g_bf_x_max = 1;
+    g_bf_y_min = -1;
+    g_bf_y_max = 1;
+    g_bf_x_3rd = -0.5;
+    g_bf_y_3rd = -0.5;
+    g_color_iter = 37;
+    g_dispatch = FractalDispatch{FractalType::MANDEL};
+    ASSERT_TRUE(select_alternate_math_dispatch());
+    ASSERT_EQ(mandel_per_pixel_bn, g_dispatch.per_pixel());
+    ASSERT_TRUE(g_dispatch.per_image()());
+    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
+
+    ASSERT_EQ(1, g_dispatch.per_pixel()());
+
+    EXPECT_EQ(BigNum{seed.x}, g_old_z_bn.x);
+    EXPECT_EQ(BigNum{seed.y}, g_old_z_bn.y);
+    EXPECT_EQ(BigNum{seed.x}, g_new_z_bn.x);
+    EXPECT_EQ(BigNum{seed.y}, g_new_z_bn.y);
+    EXPECT_EQ(BigNum{pixel.x}, g_param_z_bn.x);
+    EXPECT_EQ(BigNum{pixel.y}, g_param_z_bn.y);
+    EXPECT_EQ(iteration, g_color_iter);
+    EXPECT_EQ(sqr(seed.x), bn_to_float(g_tmp_sqr_x_bn.data() + g_shift_factor));
+    EXPECT_EQ(sqr(seed.y), bn_to_float(g_tmp_sqr_y_bn.data() + g_shift_factor));
+
+    ASSERT_EQ(0, g_dispatch.orbit_calc()());
+
+    EXPECT_EQ(BigNum{first.x}, g_new_z_bn.x);
+    EXPECT_EQ(BigNum{first.y}, g_new_z_bn.y);
+    EXPECT_EQ(BigNum{pixel.x}, g_param_z_bn.x);
+    EXPECT_EQ(BigNum{pixel.y}, g_param_z_bn.y);
+    EXPECT_EQ(iteration, g_color_iter);
+}
+
+INSTANTIATE_TEST_SUITE_P(ModesAndBof, TestBigNumMandelbrotInitialization,
+    testing::Combine(testing::Values(InitOrbitMode::NORMAL, InitOrbitMode::VALUE, InitOrbitMode::PIXEL),
+        testing::Values(ColorMethod::COLOR, ColorMethod::BOF60, ColorMethod::BOF61), testing::Bool(), testing::Bool()));
 
 class TestBigNumJulia : public TestBigNumBailout
 {
