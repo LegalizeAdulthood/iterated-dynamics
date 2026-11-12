@@ -215,7 +215,7 @@ bool precise_bailout_reached(const BFComplex &z)
     const auto reached = [&limit](const BigFloat &value)
     {
         const int comparison{cmp_bf(value.data(), limit.data())};
-        return g_bf_math == BFMathType::BIG_FLT ? comparison > 0 : comparison >= 0;
+        return comparison >= 0;
     };
     x = sqr(z.x);
     y = sqr(z.y);
@@ -1270,8 +1270,7 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
         case PixelState::Phase::BAILOUT:
         {
             const std::complex<double> value{native_orbit_value(m_pixel.w)};
-            bool escaped{bailout_reached(
-                g_bailout_test, value.real(), value.imag(), bailout_limit(), g_bf_math == BFMathType::BIG_FLT)};
+            bool escaped{bailout_reached(g_bailout_test, value.real(), value.imag(), bailout_limit())};
             const bool resolve_zero_power{g_fractal_type == FractalType::MANDEL_Z_POWER && g_c_exponent == 0 &&
                 m_pixel.old == std::complex<double>{}};
             const bool resolve_power_branch{g_fractal_type == FractalType::MANDEL_Z_POWER &&

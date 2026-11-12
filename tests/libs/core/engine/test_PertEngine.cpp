@@ -911,6 +911,7 @@ struct PerturbationBailoutInput
     BFMathType math;
     double imag;
     Bailout bailout;
+    double metric;
     double limit;
 };
 
@@ -951,12 +952,14 @@ std::vector<PerturbationBailoutInput> perturbation_bailout_inputs()
                      {"Manhattan", Bailout::MANH}, {"ManhattanReal", Bailout::MANR}})
             {
                 const double metric{metrics[static_cast<std::size_t>(bailout.value)]};
-                for (const Threshold &threshold : {Threshold{"Below", std::nextafter(metric, 0.0)}, {"At", metric},
-                         {"Above", std::nextafter(metric, std::numeric_limits<double>::infinity())}})
+                for (const Threshold &threshold :
+                    {Threshold{"FarBelow", metric - 0.25}, {"Below", std::nextafter(metric, 0.0)}, {"At", metric},
+                        {"Above", std::nextafter(metric, std::numeric_limits<double>::infinity())},
+                        {"FarAbove", metric + 0.25}})
                 {
                     inputs.push_back({std::string{math.name} + (imag < 0.0 ? "_NegativeImag_" : "_PositiveImag_") +
                             bailout.name + "_" + threshold.name,
-                        math.value, imag, bailout.value, threshold.value});
+                        math.value, imag, bailout.value, metric, threshold.value});
                 }
             }
         }
@@ -988,6 +991,34 @@ void TestPerturbationBailout::SetUp()
     }
     ASSERT_EQ(GetParam().math, g_bf_math);
     g_max_iterations = 4;
+}
+
+TEST_P(TestPerturbationBailout, firstStepUsesInclusiveThreshold)
+{
+    const PerturbationBailoutInput &input = GetParam();
+    g_bailout_test = input.bailout;
+    g_magnitude_limit = input.limit;
+    m_engine.finish();
+    if (input.math == BFMathType::NONE)
+    {
+        m_engine.initialize_frame({}, {}, {});
+    }
+    else
+    {
+        BFComplex &center = m_engine.initialize_frame_bf({}, {});
+        center.x = 0;
+        center.y = 0;
+    }
+    m_engine.begin_orbit({2, input.imag}, {}, 0);
+    const double limit = input.math == BFMathType::BIG_NUM ? static_cast<long>(input.limit) : input.limit;
+    const bool escaped = input.metric >= limit;
+
+    EXPECT_EQ(escaped, m_engine.iterate_orbit());
+
+    EXPECT_EQ(1, m_engine.orbit_iteration());
+    EXPECT_EQ(escaped, m_engine.orbit_escaped());
+    EXPECT_DOUBLE_EQ(2, m_engine.orbit_value().real());
+    EXPECT_DOUBLE_EQ(input.imag, m_engine.orbit_value().imag());
 }
 
 TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
@@ -9057,8 +9088,8 @@ void TestShipPreciseManr::SetUp()
     BurningShipReferenceTest::SetUp();
     g_bailout_test = Bailout::MANR;
     set_bailout_formula(Bailout::MANR);
-    // Near, but not equal to, the native metric: BF uses a strict comparison.
-    g_magnitude_limit = std::nextafter(4.0, 0.0);
+    // Equality must agree between the native and precise predicates.
+    g_magnitude_limit = 4.0;
 }
 
 TEST_P(TestShipPreciseManr, replaysNativeCoordinates)
@@ -9443,7 +9474,7 @@ TEST_P(TestShipPassBailout, retainsPerturbationAtBailoutEquality)
     ASSERT_TRUE(calculation.done());
     EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
     EXPECT_EQ(GetParam().pass, g_std_calc_mode);
-    EXPECT_THAT(m_pixels, Each(GetParam().big_float ? 2 : 1));
+    EXPECT_THAT(m_pixels, Each(1));
     ASSERT_FALSE(m_plot_statuses.empty());
     for (const StandardPassStatus &status : m_plot_statuses)
     {
@@ -11777,7 +11808,7 @@ void TestPreciseBailoutBoundary::SetUp()
             static_cast<double>(bf_to_float(coordinate.y.data()))};
     }
     m_engine.set_glitch_tolerance(reference_mode == 2 ? 2.0 : 0.0);
-    m_escaped = sign == boundary.outward_sign;
+    m_escaped = sign == 0 || sign == boundary.outward_sign;
 }
 
 TEST_P(TestPreciseBailoutBoundary, preservesSmallDisplacement)
@@ -11837,14 +11868,14 @@ void TestPreciseMandelBoundary::SetUp()
         BigFloat z{bf_arena(BigLifetime::TEMPORARY)};
         BigFloat square{bf_arena(BigLifetime::TEMPORARY)};
         copy_bf(z.data(), center.x.data());
-        for (long i = 0; i < (sign >= 0 ? g_max_iterations - 1 : 1); ++i)
+        for (long i = 0; i < (sign > 0 ? g_max_iterations - 1 : 1); ++i)
         {
             m_expected_old = static_cast<double>(bf_to_float(z.data()));
             square_bf(square.data(), z.data());
             add_bf(z.data(), square.data(), center.x.data());
         }
         m_expected_new = static_cast<double>(bf_to_float(z.data()));
-        if (sign >= 0)
+        if (sign > 0)
         {
             m_expected_old = m_expected_new;
         }
@@ -11855,15 +11886,15 @@ void TestPreciseMandelBoundary::SetUp()
 TEST_P(TestPreciseMandelBoundary, retainsOnlyCurrentPreciseOrbitValue)
 {
     const int sign{GetParam()};
-    EXPECT_EQ(sign >= 0 ? 7 : 1, m_engine.calculate_pixel(0, 0));
+    EXPECT_EQ(sign > 0 ? 7 : 1, m_engine.calculate_pixel(0, 0));
 
-    EXPECT_EQ(sign >= 0 ? 16 : 1, g_real_color_iter);
+    EXPECT_EQ(sign > 0 ? 16 : 1, g_real_color_iter);
     EXPECT_DOUBLE_EQ(m_expected_new, g_new_z.x);
     EXPECT_DOUBLE_EQ(0.0, g_new_z.y);
     EXPECT_DOUBLE_EQ(m_expected_old, g_old_z.x);
     EXPECT_DOUBLE_EQ(m_expected_new * m_expected_new, g_magnitude);
     EXPECT_EQ(1, m_engine.reference_count());
-    EXPECT_EQ(g_max_iterations + (sign >= 0 ? g_max_iterations - 1 : 1), s_reference_coordinates.size());
+    EXPECT_EQ(g_max_iterations + (sign > 0 ? g_max_iterations - 1 : 1), s_reference_coordinates.size());
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestPreciseMandelBoundary, Values(-1, 0, 1), [](const TestParamInfo<int> &info)
@@ -13004,8 +13035,8 @@ TEST_F(TestDeepPerturbationGeometry, continuationReplacesUnrepresentableParamete
         done = m_engine.iterate_orbit();
     }
     ASSERT_TRUE(done);
-    EXPECT_FALSE(m_engine.orbit_escaped());
-    EXPECT_EQ(g_max_iterations, m_engine.orbit_iteration());
+    EXPECT_TRUE(m_engine.orbit_escaped());
+    EXPECT_EQ(1, m_engine.orbit_iteration());
     m_engine.finish_orbit();
     const int references{m_engine.reference_count()};
     copy_bf(parameter.x.data(), g_bf_x_min.data());

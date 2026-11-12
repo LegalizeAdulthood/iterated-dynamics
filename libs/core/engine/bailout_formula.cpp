@@ -264,7 +264,7 @@ static int bf_mod_bailout()
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
     g_bf_tmp = g_tmp_sqr_x_bf + g_tmp_sqr_y_bf;
     tmp1 = g_magnitude_limit;
-    if (g_bf_tmp > tmp1)
+    if (g_bf_tmp >= tmp1)
     {
         return 1;
     }
@@ -281,7 +281,7 @@ static int bf_real_bailout()
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
     tmp1 = g_magnitude_limit;
-    if (g_tmp_sqr_x_bf > tmp1)
+    if (g_tmp_sqr_x_bf >= tmp1)
     {
         return 1;
     }
@@ -300,7 +300,7 @@ static int bf_imag_bailout()
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
     tmp1 = g_magnitude_limit;
-    if (g_tmp_sqr_y_bf > tmp1)
+    if (g_tmp_sqr_y_bf >= tmp1)
     {
         return 1;
     }
@@ -318,7 +318,7 @@ static int bf_or_bailout()
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
     tmp1 = g_magnitude_limit;
-    if (g_tmp_sqr_x_bf > tmp1 || g_tmp_sqr_y_bf > tmp1)
+    if (g_tmp_sqr_x_bf >= tmp1 || g_tmp_sqr_y_bf >= tmp1)
     {
         return 1;
     }
@@ -336,7 +336,7 @@ static int bf_and_bailout()
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
     tmp1 = g_magnitude_limit;
-    if (g_tmp_sqr_x_bf > tmp1 && g_tmp_sqr_y_bf > tmp1)
+    if (g_tmp_sqr_x_bf >= tmp1 && g_tmp_sqr_y_bf >= tmp1)
     {
         return 1;
     }
@@ -361,7 +361,7 @@ static int bf_manh_bailout()
     g_bf_tmp = abs_x + abs_y;
     metric = sqr(g_bf_tmp);
     tmp1 = g_magnitude_limit;
-    if (metric > tmp1)
+    if (metric >= tmp1)
     {
         return 1;
     }
@@ -382,7 +382,7 @@ static int bf_manr_bailout()
     g_bf_tmp = g_new_z_bf.x + g_new_z_bf.y; // don't need abs since we square it next
     metric = sqr(g_bf_tmp);
     tmp1 = g_magnitude_limit;
-    if (metric > tmp1)
+    if (metric >= tmp1)
     {
         return 1;
     }

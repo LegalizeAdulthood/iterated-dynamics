@@ -56,11 +56,11 @@ std::vector<BigFloatBailoutInput> inputs()
 {
     std::vector<BigFloatBailoutInput> result;
     const std::array<const char *, 7> names{"Mod", "Real", "Imag", "Or", "And", "Manh", "Manr"};
-    const std::array<DComplex, 4> points{{{1.5, -1}, {-0.5, 1.25}, {0, 0}, {-0.5, -1.25}}};
-    const std::array<std::array<double, 7>, 4> metrics{
+    const std::array<DComplex, 5> points{{{1.5, -1}, {-0.5, 1.25}, {0, 0}, {-0.5, -1.25}, {2, 0}}};
+    const std::array<std::array<double, 7>, 5> metrics{
         {{3.25, 2.25, 1, 2.25, 1, 6.25, 0.25}, {1.8125, 0.25, 1.5625, 1.5625, 0.25, 3.0625, 0.5625},
-            {0, 0, 0, 0, 0, 0, 0}, {1.8125, 0.25, 1.5625, 1.5625, 0.25, 3.0625, 3.0625}}};
-    for (int point = 0; point < 4; ++point)
+            {0, 0, 0, 0, 0, 0, 0}, {1.8125, 0.25, 1.5625, 1.5625, 0.25, 3.0625, 3.0625}, {4, 4, 0, 4, 0, 4, 4}}};
+    for (int point = 0; point < 5; ++point)
     {
         for (int test = 0; test < 7; ++test)
         {
@@ -193,10 +193,10 @@ TEST_F(TestBigFloatBailout, canonicalGlobalsOwnWorkingStorageThroughBindingAndCl
     }
 }
 
-TEST_P(TestBigFloatBailoutCases, preservesStrictThresholdCachesAndOldOrbit)
+TEST_P(TestBigFloatBailoutCases, preservesInclusiveThresholdCachesAndOldOrbit)
 {
     const auto &input = GetParam();
-    const bool escaped = input.metric > input.limit;
+    const bool escaped = input.metric >= input.limit;
     const bool manh = input.test == Bailout::MANH;
     const bool manr = input.test == Bailout::MANR;
     set_bailout_formula(input.test);
@@ -233,31 +233,35 @@ TEST_P(TestBigFloatBailoutCases, preservesStrictThresholdCachesAndOldOrbit)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatBailoutCases, testing::ValuesIn(inputs()),
     [](const testing::TestParamInfo<BigFloatBailoutInput> &info) { return info.param.name; });
 
-TEST_F(TestBigFloatBailout, strictComparisonRetainsDisplacementsBelowMachinePrecision)
+class TestBigFloatBailoutPrecision : public TestBigFloatBailout,
+                                     public testing::WithParamInterface<std::tuple<Bailout, int>>
+{
+};
+
+TEST_P(TestBigFloatBailoutPrecision, inclusiveComparisonRetainsDisplacementsBelowMachinePrecision)
 {
     const std::array<double, 7> limits{0.5, 0.25, 0.25, 0.25, 0.25, 1, 1};
     const std::array<const char *, 3> values{
         "0.4999999999999999999999999999999", "0.5", "0.5000000000000000000000000000001"};
-    for (int test = 0; test < 7; ++test)
-    {
-        SCOPED_TRACE(test);
-        set_bailout_formula(static_cast<Bailout>(test));
-        g_magnitude_limit = limits[test];
-        for (int point = 0; point < 3; ++point)
-        {
-            SCOPED_TRACE(point);
-            str_to_bf(g_new_z_bf.x.data(), values[point]);
-            str_to_bf(g_new_z_bf.y.data(), values[point]);
-            const auto original_x = encoded(g_new_z_bf.x);
-            const auto original_y = encoded(g_new_z_bf.y);
+    const Bailout mode = std::get<0>(GetParam());
+    const int point = std::get<1>(GetParam());
+    set_bailout_formula(mode);
+    g_magnitude_limit = limits[static_cast<std::size_t>(mode)];
+    str_to_bf(g_new_z_bf.x.data(), values[point]);
+    str_to_bf(g_new_z_bf.y.data(), values[point]);
+    const std::vector<Byte> original_x = encoded(g_new_z_bf.x);
+    const std::vector<Byte> original_y = encoded(g_new_z_bf.y);
 
-            EXPECT_EQ(point == 2, g_bailout_bigfloat() != 0);
+    EXPECT_EQ(point != 0, g_bailout_bigfloat() != 0);
 
-            EXPECT_EQ(original_x, encoded(g_new_z_bf.x));
-            EXPECT_EQ(original_y, encoded(g_new_z_bf.y));
-        }
-    }
+    EXPECT_EQ(original_x, encoded(g_new_z_bf.x));
+    EXPECT_EQ(original_y, encoded(g_new_z_bf.y));
 }
+
+INSTANTIATE_TEST_SUITE_P(ModesAndDisplacements, TestBigFloatBailoutPrecision,
+    testing::Combine(testing::Values(Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND,
+                         Bailout::MANH, Bailout::MANR),
+        testing::Values(0, 1, 2)));
 
 class TestBigFloatBailoutContinuation : public TestBigFloatBailout,
                                         public testing::WithParamInterface<std::tuple<Bailout, bool>>
@@ -388,7 +392,7 @@ TEST_F(TestBigFloatJulia, affineSeedsKeepPreciseFixedParameterAndSquareCaches)
     }
 }
 
-TEST_F(TestBigFloatJulia, viewportTransitionRestoresJuliaParameterAndKeepsStrictBailout)
+TEST_F(TestBigFloatJulia, viewportTransitionRestoresJuliaParameterAndKeepsBailoutEquality)
 {
     float_to_bf(g_bf_x_min.data(), 1);
     float_to_bf(g_bf_x_max.data(), 3);
@@ -415,18 +419,18 @@ TEST_F(TestBigFloatJulia, viewportTransitionRestoresJuliaParameterAndKeepsStrict
     EXPECT_EQ(BigFloat{2}, g_old_z_bf.x);
     EXPECT_EQ(BigFloat{0}, g_old_z_bf.y);
 
-    EXPECT_EQ(0, julia_orbit_bf());
+    EXPECT_EQ(1, julia_orbit_bf());
 
     EXPECT_EQ(BigFloat{4}, g_new_z_bf.x);
     EXPECT_EQ(BigFloat{0}, g_new_z_bf.y);
-    EXPECT_EQ(BigFloat{4}, g_old_z_bf.x);
+    EXPECT_EQ(BigFloat{2}, g_old_z_bf.x);
     EXPECT_EQ(BigFloat{0}, g_old_z_bf.y);
 
     EXPECT_EQ(1, julia_orbit_bf());
 
     EXPECT_EQ(BigFloat{16}, g_new_z_bf.x);
     EXPECT_EQ(BigFloat{0}, g_new_z_bf.y);
-    EXPECT_EQ(BigFloat{4}, g_old_z_bf.x);
+    EXPECT_EQ(BigFloat{2}, g_old_z_bf.x);
     EXPECT_EQ(BigFloat{0}, g_old_z_bf.y);
 }
 
@@ -512,7 +516,7 @@ TEST_P(TestBigFloatJuliaZPower, zeroSeedRetainsTheLegacyPowerConvention)
     EXPECT_NEAR(-0.0625, static_cast<double>(bf_to_float(g_new_z_bf.y.data())), 1e-14);
 }
 
-TEST_P(TestBigFloatJuliaZPower, unitSeedKeepsTheStrictBailoutBoundary)
+TEST_P(TestBigFloatJuliaZPower, unitSeedKeepsTheInclusiveBailoutBoundary)
 {
     clear_bf(g_bf_params[0].data());
     clear_bf(g_bf_params[1].data());
@@ -524,7 +528,7 @@ TEST_P(TestBigFloatJuliaZPower, unitSeedKeepsTheStrictBailoutBoundary)
     ASSERT_EQ(BigFloat{0}, g_old_z_bf.y);
     g_magnitude_limit = 1;
 
-    EXPECT_EQ(0, g_dispatch.orbit_calc()());
+    EXPECT_EQ(1, g_dispatch.orbit_calc()());
 
     EXPECT_EQ(BigFloat{1}, g_new_z_bf.x);
     EXPECT_EQ(BigFloat{0}, g_new_z_bf.y);
