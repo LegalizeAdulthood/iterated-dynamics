@@ -1292,6 +1292,11 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                     g_temp_sqr_y = g_new_z.y * g_new_z.y;
                     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
                     g_old_z = g_new_z;
+                    if (g_bf_math == BFMathType::BIG_NUM)
+                    {
+                        g_old_z_bn.x = g_new_z_bn.x;
+                        g_old_z_bn.y = g_new_z_bn.y;
+                    }
                     {
                         const int tmp_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
                         m_tan_table[tmp_color - 1] = g_new_z.y / (g_new_z.x + .000001);

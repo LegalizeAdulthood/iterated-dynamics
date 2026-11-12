@@ -4286,6 +4286,251 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestStarTrailEscape,
         StarTrailEscapeInput{"HighPrecisionFixedSeed", true, {}, 8, DComplex{0.0, 2.0}}),
     [](const TestParamInfo<StarTrailEscapeInput> &info) { return info.param.name; });
 
+struct StarTrailJuliaInput
+{
+    const char *name;
+    DComplex seed;
+    DComplex parameter;
+    bool precise;
+    std::size_t shared_steps;
+};
+
+void PrintTo(const StarTrailJuliaInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+struct StarTrailJuliaStep
+{
+    DComplex input;
+    DComplex output;
+    DComplex observation;
+    DComplex observed_old;
+    double square_x;
+    double square_y;
+    double magnitude;
+    std::vector<Byte> input_bytes;
+    std::vector<Byte> output_bytes;
+    std::vector<Byte> cache_x_before;
+    std::vector<Byte> cache_y_before;
+    std::vector<Byte> cache_x_after;
+    std::vector<Byte> cache_y_after;
+};
+
+std::vector<StarTrailJuliaStep> s_star_trail_julia_steps;
+
+int record_star_trail_julia()
+{
+    const bool big_num = g_bf_math == BFMathType::BIG_NUM;
+    StarTrailJuliaStep step{};
+    step.input = big_num
+        ? DComplex{static_cast<double>(g_old_z_bn.x.to_float()), static_cast<double>(g_old_z_bn.y.to_float())}
+        : g_old_z;
+    step.observation = g_new_z;
+    step.observed_old = g_old_z;
+    step.square_x = g_temp_sqr_x;
+    step.square_y = g_temp_sqr_y;
+    step.magnitude = g_magnitude;
+    if (big_num)
+    {
+        step.input_bytes.assign(g_old_z_bn.x.data(), g_old_z_bn.x.data() + g_bn_length);
+        step.input_bytes.insert(step.input_bytes.end(), g_old_z_bn.y.data(), g_old_z_bn.y.data() + g_bn_length);
+        step.cache_x_before.assign(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_r_length);
+        step.cache_y_before.assign(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_r_length);
+    }
+    const int escaped = big_num ? julia_orbit_bn() : julia_orbit();
+    step.output = big_num
+        ? DComplex{static_cast<double>(g_new_z_bn.x.to_float()), static_cast<double>(g_new_z_bn.y.to_float())}
+        : g_new_z;
+    if (big_num)
+    {
+        step.output_bytes.assign(g_new_z_bn.x.data(), g_new_z_bn.x.data() + g_bn_length);
+        step.output_bytes.insert(step.output_bytes.end(), g_new_z_bn.y.data(), g_new_z_bn.y.data() + g_bn_length);
+        step.cache_x_after.assign(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_r_length);
+        step.cache_y_after.assign(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_r_length);
+    }
+    s_star_trail_julia_steps.push_back(std::move(step));
+    return escaped;
+}
+
+struct StarTrailJuliaResult
+{
+    std::vector<StarTrailJuliaStep> steps;
+    std::array<double, 15> samples;
+    DComplex final_observation;
+    int color;
+};
+
+class TestBigNumStarTrailContinuation : public PerturbationIterationTest,
+                                        public WithParamInterface<std::tuple<Bailout, StarTrailJuliaInput, bool>>
+{
+public:
+    TestBigNumStarTrailContinuation();
+
+protected:
+    void SetUp() override;
+    StarTrailJuliaResult calculate(bool big_num);
+
+    ValueSaver<long> m_bailout_value{g_user.bailout_value, 11};
+    ValueSaver<int> m_digits{g_bf_digits, 0};
+    ValueSaver<int> m_exponent{g_c_exponent};
+    ValueSaver<bool> m_overflow{g_overflow};
+    ValueSaver<LDouble> m_delta_x{g_delta_x, 0};
+    ValueSaver<LDouble> m_delta_y{g_delta_y, 0};
+    ValueSaver<LDouble> m_delta2_x{g_delta_x2, 0};
+    ValueSaver<LDouble> m_delta2_y{g_delta_y2, 0};
+};
+
+TestBigNumStarTrailContinuation::TestBigNumStarTrailContinuation() :
+    PerturbationIterationTest{false}
+{
+}
+
+void TestBigNumStarTrailContinuation::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_fractal_type = FractalType::JULIA;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    g_inside_method = ColorMethod::STAR_TRAIL;
+    g_max_iterations = 128;
+    g_col = g_row = 0;
+    g_float_param = &g_param_z1;
+    s_star_trail_julia_steps.clear();
+}
+
+StarTrailJuliaResult TestBigNumStarTrailContinuation::calculate(const bool big_num)
+{
+    const StarTrailJuliaInput &input = std::get<1>(GetParam());
+    set_bailout_formula(std::get<0>(GetParam()));
+    g_magnitude_limit = std::get<2>(GetParam()) ? 10 : 100;
+    g_param_z1 = input.parameter;
+    g_image_region = ImageRegion{input.seed, input.seed, input.seed};
+    fill_pixel_grid();
+    g_dispatch = FractalDispatch{m_specific};
+    if (big_num)
+    {
+        init_bf_dec(60);
+        m_big_float = true;
+        EXPECT_EQ(4, g_int_length);
+        g_bf_x_min = input.seed.x;
+        g_bf_x_max = input.seed.x;
+        g_bf_x_3rd = input.seed.x;
+        g_bf_y_min = input.seed.y;
+        g_bf_y_max = input.seed.y;
+        g_bf_y_3rd = input.seed.y;
+        if (input.precise)
+        {
+            const BigFloat epsilon{0x1p-80};
+            g_bf_x_min += epsilon;
+            g_bf_x_max += epsilon;
+            g_bf_x_3rd += epsilon;
+            g_bf_y_min += epsilon;
+            g_bf_y_max += epsilon;
+            g_bf_y_3rd += epsilon;
+        }
+        g_bf_params[0] = input.parameter.x;
+        g_bf_params[1] = input.parameter.y;
+        EXPECT_TRUE(select_alternate_math_dispatch());
+        EXPECT_TRUE(g_dispatch.per_image()());
+    }
+    g_dispatch.set_orbit_calc(record_star_trail_julia);
+    s_star_trail_julia_steps.clear();
+    StandardFractal standard;
+    StarTrailJuliaResult result{};
+    result.color = standard.calculate_standard_pixel(false);
+    result.steps = std::move(s_star_trail_julia_steps);
+    result.final_observation = g_new_z;
+    EXPECT_EQ(16, g_real_color_iter);
+    EXPECT_EQ(128, g_max_iterations);
+    EXPECT_EQ(16U, result.steps.size());
+    // Julia's iteration zero is not a STAR_TRAIL sample. Observe each
+    // bounded sample at the next orbit call, and the last after finishing.
+    for (std::size_t i = 0; i < result.samples.size(); ++i)
+    {
+        const DComplex point = i + 2 < result.steps.size() ? result.steps[i + 2].observation : g_new_z;
+        result.samples[i] = point.y / (point.x + 0.000001);
+    }
+    int expected_color = 0;
+    for (std::size_t i = 1; i < 16; ++i)
+    {
+        const double sample = i < result.samples.size() ? result.samples[i] : 0;
+        if (std::abs(result.samples[0] - sample) < 0.05)
+        {
+            expected_color = static_cast<int>(i);
+            break;
+        }
+    }
+    EXPECT_EQ(expected_color, result.color);
+    return result;
+}
+
+TEST_P(TestBigNumStarTrailContinuation, preservesCanonicalContinuationCachesAndSampleTiming)
+{
+    const StarTrailJuliaInput &input = std::get<1>(GetParam());
+    const StarTrailJuliaResult regular = calculate(false);
+    const StarTrailJuliaResult big_num = calculate(true);
+    ASSERT_EQ(16U, regular.steps.size());
+    ASSERT_EQ(16U, big_num.steps.size());
+    if (input.precise)
+    {
+        const BigNum coordinate = BigNum{1} + BigNum{0x1p-80};
+        std::vector<Byte> expected(coordinate.data(), coordinate.data() + g_bn_length);
+        expected.insert(expected.end(), coordinate.data(), coordinate.data() + g_bn_length);
+        EXPECT_EQ(expected, big_num.steps.front().input_bytes);
+    }
+    EXPECT_EQ(big_num.steps.back().output, big_num.final_observation);
+    if (input.shared_steps == 15)
+    {
+        EXPECT_EQ(regular.samples, big_num.samples);
+        EXPECT_EQ(regular.final_observation, big_num.final_observation);
+    }
+    if (input.parameter.x == 1)
+    {
+        EXPECT_EQ((DComplex{1, 2}), regular.steps[0].output);
+        EXPECT_EQ((DComplex{-2, 4}), regular.steps[1].output);
+        EXPECT_TRUE(std::any_of(regular.steps.begin(), regular.steps.end(),
+            [](const StarTrailJuliaStep &step)
+            {
+                return std::abs(step.observation.x) == std::numeric_limits<float>::max() ||
+                    std::abs(step.observation.y) == std::numeric_limits<float>::max();
+            }));
+    }
+    for (std::size_t i = 0; i < input.shared_steps; ++i)
+    {
+        SCOPED_TRACE(i);
+        EXPECT_EQ(regular.steps[i].input, big_num.steps[i].input);
+        EXPECT_EQ(regular.steps[i].output, big_num.steps[i].output);
+        if (i > 0)
+        {
+            EXPECT_DOUBLE_EQ(regular.samples[i - 1], big_num.samples[i - 1]);
+        }
+    }
+    for (std::size_t i = 1; i < big_num.steps.size(); ++i)
+    {
+        SCOPED_TRACE(i);
+        const StarTrailJuliaStep &previous = big_num.steps[i - 1];
+        const StarTrailJuliaStep &current = big_num.steps[i];
+        EXPECT_EQ(previous.output_bytes, current.input_bytes);
+        EXPECT_EQ(previous.cache_x_after, current.cache_x_before);
+        EXPECT_EQ(previous.cache_y_after, current.cache_y_before);
+        if (i > 1)
+        {
+            EXPECT_EQ(previous.output, current.observation);
+            EXPECT_EQ(current.observation, current.observed_old);
+            EXPECT_DOUBLE_EQ(current.observation.x * current.observation.x, current.square_x);
+            EXPECT_DOUBLE_EQ(current.observation.y * current.observation.y, current.square_y);
+            EXPECT_DOUBLE_EQ(current.square_x + current.square_y, current.magnitude);
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(ModesAndOrbits, TestBigNumStarTrailContinuation,
+    Combine(Values(Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR),
+        Values(StarTrailJuliaInput{"Growing", {1, 1}, {1, 0}, false, 5},
+            StarTrailJuliaInput{"Bounded", {0, 1}, {0, 0}, false, 15},
+            StarTrailJuliaInput{"Precise", {1, 1}, {1, 0}, true, 0}),
+        Bool()));
+
 struct StarTrailPaletteInput
 {
     const char *name;
