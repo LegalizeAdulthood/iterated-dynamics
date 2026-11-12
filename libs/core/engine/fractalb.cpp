@@ -576,8 +576,17 @@ int mandel_per_pixel_bf()
     g_old_z_bf.x += g_old_z_bf.y;
     sub_bf(g_param_z_bf.y.data(), g_bf_y_max.data(), g_old_z_bf.x.data());
 
-    g_old_z_bf.x = g_param_z_bf.x;
-    g_old_z_bf.y = g_param_z_bf.y;
+    if ((g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDEL_Z_POWER) &&
+        g_use_init_orbit == InitOrbitMode::VALUE)
+    {
+        g_old_z_bf.x = g_init_orbit.x;
+        g_old_z_bf.y = g_init_orbit.y;
+    }
+    else
+    {
+        g_old_z_bf.x = g_param_z_bf.x;
+        g_old_z_bf.y = g_param_z_bf.y;
+    }
 
     if ((g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61) && g_bof_match_book_images)
     {

@@ -2137,6 +2137,69 @@ INSTANTIATE_TEST_SUITE_P(ModesAndBof, TestBigNumMandelbrotPerturbationInitializa
     Combine(Values(InitOrbitMode::NORMAL, InitOrbitMode::VALUE, InitOrbitMode::PIXEL),
         Values(ColorMethod::COLOR, ColorMethod::BOF60, ColorMethod::BOF61), Bool(), Bool()));
 
+class TestBigFloatMandelbrotPerturbationInitialization : public PerturbationIterationTest,
+                                                         public WithParamInterface<std::tuple<InitOrbitMode, bool>>
+{
+public:
+    TestBigFloatMandelbrotPerturbationInitialization();
+
+protected:
+    void SetUp() override;
+
+    ValueSaver<double> m_exponent_real{g_params[2], 2};
+    ValueSaver<double> m_exponent_imaginary{g_params[3], 0};
+    ValueSaver<int> m_exponent{g_c_exponent};
+    ValueSaver<DComplex> m_power{g_power_z};
+    ValueSaver<SymmetryType> m_symmetry{g_symmetry};
+};
+
+TestBigFloatMandelbrotPerturbationInitialization::TestBigFloatMandelbrotPerturbationInitialization() :
+    PerturbationIterationTest{true}
+{
+}
+
+void TestBigFloatMandelbrotPerturbationInitialization::SetUp()
+{
+    PerturbationIterationTest::SetUp();
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    m_specific = *get_fractal_specific(g_fractal_type);
+    g_dispatch = FractalDispatch{m_specific};
+    g_inside_method = ColorMethod::ITER;
+    ASSERT_TRUE(g_dispatch.per_image()());
+}
+
+TEST_P(TestBigFloatMandelbrotPerturbationInitialization, usesSelectedSeedAndFirstIterate)
+{
+    g_use_init_orbit = std::get<0>(GetParam());
+    g_init_orbit = std::get<1>(GetParam()) ? DComplex{} : DComplex{0.5, -0.25};
+    set_initial_offset({0.125, -0.0625});
+    const std::complex<double> pixel{-0.375, 0.125};
+    const std::complex<double> seed =
+        (g_use_init_orbit == InitOrbitMode::VALUE ? std::complex<double>{g_init_orbit.x, g_init_orbit.y} : pixel) +
+        std::complex<double>{0.125, -0.0625};
+    const std::complex<double> first{seed.real() * seed.real() - seed.imag() * seed.imag() + pixel.real(),
+        2 * seed.real() * seed.imag() + pixel.imag()};
+
+    g_max_iterations = 4;
+    s_perturbation_orbit.clear();
+    m_specific.pert_pt = record_perturbation_orbit;
+    initialize_reference(pixel);
+    int color = CALC_YIELDED;
+    for (int step = 0; step < 100 && color == CALC_YIELDED; ++step)
+    {
+        color = m_engine.calculate_pixel(g_col, g_row, false);
+    }
+
+    ASSERT_NE(CALC_YIELDED, color);
+    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
+    ASSERT_GE(s_perturbation_orbit.size(), 2U);
+    EXPECT_EQ(seed, s_perturbation_orbit.front());
+    EXPECT_EQ(first, s_perturbation_orbit[1]);
+}
+
+INSTANTIATE_TEST_SUITE_P(ModesAndSeeds, TestBigFloatMandelbrotPerturbationInitialization,
+    Combine(Values(InitOrbitMode::NORMAL, InitOrbitMode::VALUE, InitOrbitMode::PIXEL), Bool()));
+
 TEST_P(TestPerturbationIterations, fixedZeroInitialOrbitMatchesStandardOrbit)
 {
     g_use_init_orbit = InitOrbitMode::VALUE;
