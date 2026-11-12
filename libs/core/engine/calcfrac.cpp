@@ -1220,6 +1220,10 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 
         if (g_distance_estimator && !m_standard_pixel_orbit_calc_completed)
         {
+            if (g_bf_math == BFMathType::BIG_NUM)
+            {
+                g_old_z = cmplx_bn_to_float(g_old_z_bn);
+            }
             if (!m_distance_estimator.advance(g_old_z))
             {
                 break;
@@ -1242,6 +1246,11 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 
         if (g_distance_estimator)
         {
+            if (g_bf_math == BFMathType::BIG_NUM)
+            {
+                g_new_z = cmplx_bn_to_float(g_new_z_bn);
+                g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
+            }
             if (orbit_calc_result || g_overflow)
             {
                 const bool complete{m_distance_estimator.escaped(g_new_z, g_color_iter, g_magnitude)};
