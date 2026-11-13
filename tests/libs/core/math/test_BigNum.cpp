@@ -1692,19 +1692,19 @@ bool TestBigNumKernelStorage::allocated() const
 
 std::size_t TestBigNumKernelStorage::reservation_size() const
 {
-    const auto slot = std::get<1>(GetParam());
-    const std::size_t width = slot == KernelSlot::COPY1 || slot == KernelSlot::COPY2 ? 2 : 1;
+    const KernelSlot slot = std::get<1>(GetParam());
+    const std::size_t width = slot == KernelSlot::TMP2 || slot == KernelSlot::TMP3 ? 1 : 2;
     return width * bn_arena(BigLifetime::WORKING).block_size();
 }
 
 void TestBigNumKernelStorage::expect_owner() const
 {
-    static_assert(std::is_same_v<decltype(g_bn_tmp1), BigNum>);
+    static_assert(std::is_same_v<decltype(g_bn_tmp1), BigNumProduct>);
     static_assert(std::is_same_v<decltype(g_bn_tmp2), BigNum>);
     static_assert(std::is_same_v<decltype(g_bn_tmp3), BigNum>);
     static_assert(std::is_same_v<decltype(g_bn_tmp_copy1), BigArena::Allocation>);
     static_assert(std::is_same_v<decltype(g_bn_tmp_copy2), BigArena::Allocation>);
-    auto &working = bn_arena(BigLifetime::WORKING);
+    BigArena &working = bn_arena(BigLifetime::WORKING);
     switch (std::get<1>(GetParam()))
     {
     case KernelSlot::TMP1:
@@ -1742,6 +1742,22 @@ TEST_P(TestBigNumKernelStorage, rebindingClearsTheWholeReservationWithoutAllocat
     EXPECT_EQ(original, buffer());
     EXPECT_EQ(high_water, bn_arena(BigLifetime::WORKING).high_water_mark());
     EXPECT_EQ(std::vector<Byte>(reservation_size()), std::vector<Byte>(buffer(), buffer() + reservation_size()));
+}
+
+TEST_P(TestBigNumKernelStorage, kernelWritesPreserveBytesBeyondTheDocumentedExtent)
+{
+    ASSERT_TRUE(allocated());
+    expect_owner();
+    const KernelSlot slot = std::get<1>(GetParam());
+    const std::size_t extent = slot == KernelSlot::TMP1 ? g_r_length : g_bn_length;
+    ASSERT_LE(extent, reservation_size());
+    std::fill_n(buffer(), reservation_size(), Byte{0xa5});
+
+    const BigNum quotient = BigNum{6} / BigNum{2};
+
+    EXPECT_EQ(BigNum{3}, quotient);
+    EXPECT_EQ(std::vector<Byte>(reservation_size() - extent, 0xa5),
+        std::vector<Byte>(buffer() + extent, buffer() + reservation_size()));
 }
 
 TEST_P(TestBigNumKernelStorage, precisionChangesDiscardTheWholeScratchReservation)
@@ -1787,7 +1803,7 @@ TEST_P(TestBigNumKernelStorage, repeatedCleanupUnbindsAndReinitializationClearsS
 }
 
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndSlots, TestBigNumKernelStorage,
-    testing::Combine(testing::Values(4, 12, 64, 672),
+    testing::Combine(testing::Values(4, 8, 12, 56, 60, 64, 672),
         testing::Values(KernelSlot::TMP1, KernelSlot::TMP2, KernelSlot::TMP3, KernelSlot::COPY1, KernelSlot::COPY2)));
 
 namespace

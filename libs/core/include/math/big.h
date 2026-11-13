@@ -68,9 +68,10 @@ extern int g_shift_factor;
 extern int g_bf_length;
 extern int g_r_bf_length;
 extern int g_bf_decimals;
-extern BigNum g_bn_tmp1; // g_r_length
-extern BigNum g_bn_tmp2; // g_r_length
-extern BigNum g_bn_tmp3; // g_r_length
+// Kernel workspaces; active lengths may be shortened.
+extern BigNumProduct g_bn_tmp1; // g_r_length
+extern BigNum g_bn_tmp2;        // g_bn_length
+extern BigNum g_bn_tmp3;        // g_bn_length
 
 // Paired operand-preservation workspaces.
 extern BigArena::Allocation g_bn_tmp_copy1;

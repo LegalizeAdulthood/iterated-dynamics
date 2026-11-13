@@ -48,7 +48,7 @@ int g_decimals{};
 int g_bf_length{};
 int g_r_bf_length{};
 int g_bf_decimals{};
-BigNum g_bn_tmp1{};
+BigNumProduct g_bn_tmp1{};
 BigNum g_bn_tmp2{};
 BigNum g_bn_tmp3{};
 BigArena::Allocation g_bn_tmp_copy1{};
@@ -277,19 +277,19 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
         std::destroy_at(&target);
         ::new (&target) BigNum{std::move(value)};
     };
-    init_big_num(g_bn_tmp1);
-    init_big_num(g_bn_tmp2);
-    init_big_num(g_bn_tmp3);
-    g_bn_tmp_copy1 = big_num.working.allocate_double();
-    g_bn_tmp_copy2 = big_num.working.allocate_double();
-    init_big_num(g_old_z_bn.x);
-    init_big_num(g_old_z_bn.y);
     const auto init_big_num_product = [this](BigNumProduct &target)
     {
         BigNumProduct value{big_num.working};
         std::destroy_at(&target);
         ::new (&target) BigNumProduct{std::move(value)};
     };
+    init_big_num_product(g_bn_tmp1);
+    init_big_num(g_bn_tmp2);
+    init_big_num(g_bn_tmp3);
+    g_bn_tmp_copy1 = big_num.working.allocate_double();
+    g_bn_tmp_copy2 = big_num.working.allocate_double();
+    init_big_num(g_old_z_bn.x);
+    init_big_num(g_old_z_bn.y);
     init_big_num_product(g_tmp_sqr_x_bn);
     init_big_num_product(g_tmp_sqr_y_bn);
     init_big_num(g_bn_tmp);
@@ -396,7 +396,17 @@ void MathArenas::bind(const bool preserve_parameters)
         }
         std::memset(target.data(), 0, big_num.working.block_size());
     };
-    init_big_num(g_bn_tmp1);
+    const auto init_big_num_product = [this](BigNumProduct &target)
+    {
+        if (!target)
+        {
+            BigNumProduct value{big_num.working};
+            std::destroy_at(&target);
+            ::new (&target) BigNumProduct{std::move(value)};
+        }
+        std::memset(target.data(), 0, 2 * big_num.working.block_size());
+    };
+    init_big_num_product(g_bn_tmp1);
     init_big_num(g_bn_tmp2);
     init_big_num(g_bn_tmp3);
     const auto init_big_num_copy = [this](BigArena::Allocation &target)
@@ -411,16 +421,6 @@ void MathArenas::bind(const bool preserve_parameters)
     init_big_num_copy(g_bn_tmp_copy2);
     init_big_num(g_old_z_bn.x);
     init_big_num(g_old_z_bn.y);
-    const auto init_big_num_product = [this](BigNumProduct &target)
-    {
-        if (!target)
-        {
-            BigNumProduct value{big_num.working};
-            std::destroy_at(&target);
-            ::new (&target) BigNumProduct{std::move(value)};
-        }
-        std::memset(target.data(), 0, 2 * big_num.working.block_size());
-    };
     init_big_num_product(g_tmp_sqr_x_bn);
     init_big_num_product(g_tmp_sqr_y_bn);
     init_big_num(g_bn_tmp);
@@ -501,7 +501,7 @@ void MathArenas::unbind()
     m_bound = false;
     big_num.stack.restore(0);
     big_float.stack.restore(0);
-    g_bn_tmp1 = BigNum{};
+    g_bn_tmp1 = BigNumProduct{};
     g_bn_tmp2 = BigNum{};
     g_bn_tmp3 = BigNum{};
     g_bn_tmp_copy1.reset();
