@@ -589,6 +589,11 @@ BigNum::BigNum(const BigFloat &value) :
 {
 }
 
+BigNum::BigNum(BigNumProduct &&value) :
+    m_storage(std::move(value).release_reduced_storage())
+{
+}
+
 BigNum::BigNum(BigArena &arena) :
     BigNum(arena.allocate_single())
 {
@@ -739,10 +744,9 @@ BigNum BigNum::operator-(const BigNum &right) const
 
 BigNum BigNum::operator*(const BigNum &right) const
 {
-    BigNum result{bn_arena(BigLifetime::WORKING).allocate_double()};
+    BigNumProduct result{bn_arena(BigLifetime::WORKING)};
     binary_operation(result.data(), data(), right.data(), multiply);
-    result.m_storage.reduce();
-    return result;
+    return BigNum{std::move(result)};
 }
 
 BigNum BigNum::operator*(const U16 right) const
@@ -761,10 +765,80 @@ BigNum BigNum::operator/(const BigNum &right) const
 
 BigNum BigNum::sqr() const
 {
-    BigNum result{bn_arena(BigLifetime::WORKING).allocate_double()};
+    BigNumProduct result{bn_arena(BigLifetime::WORKING)};
     copy_bn(g_bn_tmp_copy1.data(), data());
     square(result.data(), g_bn_tmp_copy1.data());
-    result.m_storage.reduce();
+    return BigNum{std::move(result)};
+}
+
+BigNumProduct::BigNumProduct() noexcept = default;
+
+BigNumProduct::BigNumProduct(BigArena &arena) :
+    m_storage(arena.allocate_double())
+{
+    std::memset(data(), 0, 2 * arena.block_size());
+}
+
+BigNumProduct::BigNumProduct(const BigNumProduct &value) :
+    m_storage(value.m_storage.clone())
+{
+}
+
+BigNumProduct::BigNumProduct(BigArena &arena, const BigNumProduct &value) :
+    m_storage(value.m_storage.clone(arena))
+{
+}
+
+BigNumProduct::BigNumProduct(BigNumProduct &&value) noexcept = default;
+
+BigNumProduct &BigNumProduct::operator=(const BigNumProduct &value)
+{
+    if (this != &value)
+    {
+        if (!value.m_storage)
+        {
+            m_storage.reset();
+        }
+        else
+        {
+            if (!m_storage)
+            {
+                BigArena &destination = m_storage.arena_ptr() != nullptr ? arena() : bn_arena(BigLifetime::WORKING);
+                m_storage = destination.allocate_double();
+            }
+            std::memcpy(data(), value.data(), g_r_length);
+        }
+    }
+    return *this;
+}
+
+BigNumProduct &BigNumProduct::operator=(BigNumProduct &&value)
+{
+    if (this != &value)
+    {
+        if (!value.m_storage)
+        {
+            m_storage.reset();
+        }
+        else if ((m_storage.arena_ptr() != nullptr ? &arena() : &bn_arena(BigLifetime::WORKING)) == &value.arena())
+        {
+            m_storage = std::move(value.m_storage);
+        }
+        else
+        {
+            *this = static_cast<const BigNumProduct &>(value);
+        }
+    }
+    return *this;
+}
+
+BigArena::Allocation BigNumProduct::release_reduced_storage() &&
+{
+    BigArena::Allocation result = std::move(m_storage);
+    if (result)
+    {
+        result.reduce();
+    }
     return result;
 }
 

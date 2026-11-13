@@ -14,6 +14,7 @@ namespace id::math
 {
 
 class BigFloat;
+class BigNumProduct;
 
 class BigNum
 {
@@ -23,6 +24,7 @@ public:
     explicit BigNum(LDouble value);
     explicit BigNum(std::string_view text);
     explicit BigNum(const BigFloat &value);
+    explicit BigNum(BigNumProduct &&value);
     explicit BigNum(BigArena &arena);
     BigNum(BigArena &arena, LDouble value);
     BigNum(BigArena &arena, std::string_view text);
@@ -95,6 +97,45 @@ private:
     }
     // Signed little-endian fixed point: g_int_length high bytes are integral.
     // The remaining g_bn_length - g_int_length bytes are fractional.
+    BigArena::Allocation m_storage;
+};
+
+class BigNumProduct
+{
+public:
+    BigNumProduct() noexcept;
+    explicit BigNumProduct(BigArena &arena);
+    BigNumProduct(const BigNumProduct &value);
+    BigNumProduct(BigArena &arena, const BigNumProduct &value);
+    BigNumProduct(BigNumProduct &&value) noexcept;
+    BigNumProduct &operator=(const BigNumProduct &value);
+    BigNumProduct &operator=(BigNumProduct &&value);
+
+    explicit operator bool() const noexcept
+    {
+        return static_cast<bool>(m_storage);
+    }
+
+    BigArena &arena() const noexcept
+    {
+        return m_storage.arena();
+    }
+
+    BigNumPtr data() noexcept
+    {
+        return m_storage.data();
+    }
+
+    BigNumConstPtr data() const noexcept
+    {
+        return m_storage.data();
+    }
+
+    // Consume the product, reduce its bytes, and release its companion slot.
+    BigArena::Allocation release_reduced_storage() &&;
+
+private:
+    // g_r_length retained bytes in two slots, including fractional guards.
     BigArena::Allocation m_storage;
 };
 

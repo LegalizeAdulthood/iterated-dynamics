@@ -1790,4 +1790,310 @@ INSTANTIATE_TEST_SUITE_P(PrecisionsAndSlots, TestBigNumKernelStorage,
     testing::Combine(testing::Values(4, 12, 64, 672),
         testing::Values(KernelSlot::TMP1, KernelSlot::TMP2, KernelSlot::TMP3, KernelSlot::COPY1, KernelSlot::COPY2)));
 
+namespace
+{
+
+static_assert(!std::is_convertible_v<BigNumProduct &&, BigNum>);
+static_assert(std::is_constructible_v<BigNum, BigNumProduct &&>);
+static_assert(!std::is_constructible_v<BigNum, BigNumProduct &>);
+static_assert(std::is_same_v<decltype(std::declval<const BigNum &>() * std::declval<const BigNum &>()), BigNum>);
+static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().sqr()), BigNum>);
+static_assert(std::is_same_v<decltype(std::declval<const BigNumProduct &>().data()), BigNumConstPtr>);
+static_assert(std::is_invocable_v<decltype(&BigNumProduct::release_reduced_storage), BigNumProduct &&>);
+static_assert(!std::is_invocable_v<decltype(&BigNumProduct::release_reduced_storage), BigNumProduct &>);
+
+std::vector<Byte> retained_bytes(const BigNumProduct &value)
+{
+    return {value.data(), value.data() + g_r_length};
+}
+
+std::vector<Byte> retained_pattern()
+{
+    std::vector<Byte> result(g_r_length);
+    for (int i = 0; i < g_r_length; ++i)
+    {
+        result[i] = static_cast<Byte>(37 * i + 19);
+    }
+    return result;
+}
+
+} // namespace
+
+TEST(TestBigNumProductLifetime, nullConstructionCopyMoveAndReductionNeedNoArena)
+{
+    BigNumProduct original;
+    const BigNumProduct copy{original};
+    BigNumProduct moved{std::move(original)};
+    const BigNum reduced{std::move(moved)};
+    const BigArena::Allocation released = std::move(original).release_reduced_storage();
+
+    EXPECT_FALSE(original);
+    EXPECT_FALSE(copy);
+    EXPECT_FALSE(moved);
+    EXPECT_FALSE(reduced);
+    EXPECT_FALSE(released);
+}
+
+class TestBigNumProductOwnership : public TestBigNumValue,
+                                   public testing::WithParamInterface<std::tuple<int, int, BigLifetime>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumProductOwnership::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    g_user.bailout_value = integer_length == 4 ? 100 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(std::get<0>(GetParam()));
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumProductOwnership, reservesAndReleasesTwoZeroedSlotsWithoutChangingTheStack)
+{
+    BigArena &arena = bn_arena(std::get<2>(GetParam()));
+    const BigStackMark mark = save_stack();
+    Byte *address;
+    {
+        BigNumProduct value{arena};
+        ASSERT_TRUE(value);
+        EXPECT_EQ(&arena, &value.arena());
+        address = value.data();
+        EXPECT_EQ(
+            std::vector<Byte>(2 * arena.block_size()), std::vector<Byte>(address, address + 2 * arena.block_size()));
+        EXPECT_EQ(mark, save_stack());
+    }
+
+    BigArena::Allocation reused = arena.allocate_double();
+
+    EXPECT_EQ(address, reused.data());
+    EXPECT_EQ(2U, reused.blocks());
+    EXPECT_EQ(mark, save_stack());
+}
+
+TEST_P(TestBigNumProductOwnership, copiesAllRetainedBytesIndependentlyAndPreservesAssignmentBinding)
+{
+    BigArena &arena = bn_arena(std::get<2>(GetParam()));
+    BigArena &other =
+        bn_arena(std::get<2>(GetParam()) == BigLifetime::PERSISTENT ? BigLifetime::WORKING : BigLifetime::PERSISTENT);
+    const std::vector<Byte> bytes = retained_pattern();
+    BigNumProduct source{arena};
+    std::copy(bytes.begin(), bytes.end(), source.data());
+    const BigNumProduct copy{source};
+    const BigNumProduct selected{other, source};
+    BigNumProduct destination{other};
+    std::fill_n(destination.data(), 2 * other.block_size(), Byte{0xa5});
+    const Byte *const address = destination.data();
+
+    EXPECT_EQ(&destination, &(destination = source));
+
+    EXPECT_EQ(&arena, &copy.arena());
+    EXPECT_EQ(&other, &selected.arena());
+    EXPECT_EQ(&other, &destination.arena());
+    EXPECT_EQ(address, destination.data());
+    EXPECT_NE(source.data(), copy.data());
+    EXPECT_EQ(bytes, retained_bytes(copy));
+    EXPECT_EQ(bytes, retained_bytes(selected));
+    EXPECT_EQ(bytes, retained_bytes(destination));
+    EXPECT_EQ(std::vector<Byte>(2 * other.block_size() - g_r_length, 0xa5),
+        std::vector<Byte>(destination.data() + g_r_length, destination.data() + 2 * other.block_size()));
+    EXPECT_EQ(&source, &(source = source));
+    destination.data()[0] ^= 0xff;
+    EXPECT_EQ(bytes, retained_bytes(source));
+    EXPECT_EQ(bytes, retained_bytes(copy));
+}
+
+TEST_P(TestBigNumProductOwnership, movesKeepBindingAndNullAssignmentsCanBeReused)
+{
+    BigArena &arena = bn_arena(std::get<2>(GetParam()));
+    BigArena &other =
+        bn_arena(std::get<2>(GetParam()) == BigLifetime::PERSISTENT ? BigLifetime::WORKING : BigLifetime::PERSISTENT);
+    const std::vector<Byte> bytes = retained_pattern();
+    BigNumProduct source{arena};
+    std::copy(bytes.begin(), bytes.end(), source.data());
+    const Byte *const address = source.data();
+    BigNumProduct moved{std::move(source)};
+    EXPECT_FALSE(source);
+    EXPECT_EQ(address, moved.data());
+    EXPECT_EQ(&arena, &source.arena());
+    BigNumProduct destination{arena};
+    EXPECT_EQ(&destination, &(destination = std::move(moved)));
+    EXPECT_FALSE(moved);
+    EXPECT_EQ(address, destination.data());
+    EXPECT_EQ(&destination, &(destination = std::move(destination)));
+    EXPECT_EQ(bytes, retained_bytes(destination));
+    BigNumProduct foreign{other};
+    EXPECT_EQ(&foreign, &(foreign = std::move(destination)));
+    EXPECT_TRUE(destination);
+    EXPECT_EQ(address, destination.data());
+    EXPECT_EQ(&other, &foreign.arena());
+    EXPECT_EQ(bytes, retained_bytes(foreign));
+    source = destination;
+    EXPECT_TRUE(source);
+    EXPECT_EQ(&arena, &source.arena());
+    EXPECT_EQ(bytes, retained_bytes(source));
+    source = BigNumProduct{};
+    EXPECT_FALSE(source);
+    EXPECT_EQ(&arena, &source.arena());
+    source = foreign;
+    EXPECT_EQ(&arena, &source.arena());
+    EXPECT_EQ(bytes, retained_bytes(source));
+    BigNumProduct unbound;
+    unbound = destination;
+    EXPECT_EQ(&bn_arena(BigLifetime::WORKING), &unbound.arena());
+    EXPECT_EQ(bytes, retained_bytes(unbound));
+}
+
+TEST_P(TestBigNumProductOwnership, consumingReductionKeepsTheFirstSlotAndReleasesTheCompanion)
+{
+    BigArena &arena = bn_arena(std::get<2>(GetParam()));
+    const std::vector<Byte> bytes = retained_pattern();
+    const std::vector<Byte> expected(bytes.begin() + g_shift_factor, bytes.begin() + g_shift_factor + g_bn_length);
+    BigNumProduct product{arena};
+    std::copy(bytes.begin(), bytes.end(), product.data());
+    const Byte *const address = product.data();
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    const BigNum canonical{std::move(product)};
+
+    EXPECT_FALSE(product);
+    EXPECT_EQ(address, canonical.data());
+    EXPECT_EQ(&arena, &canonical.arena());
+    EXPECT_EQ(&arena, &product.arena());
+    EXPECT_EQ(expected, encoded_value(canonical));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+    BigArena::Allocation companion = arena.allocate_single();
+    EXPECT_EQ(address + arena.block_size(), companion.data());
+    EXPECT_EQ(1U, companion.blocks());
+    EXPECT_EQ(expected, encoded_value(canonical));
+}
+
+TEST_P(TestBigNumProductOwnership, rvalueTransferReturnsReducedSingleSlotOwnership)
+{
+    BigArena &arena = bn_arena(std::get<2>(GetParam()));
+    const std::vector<Byte> bytes = retained_pattern();
+    const std::vector<Byte> expected(bytes.begin() + g_shift_factor, bytes.begin() + g_shift_factor + g_bn_length);
+    BigNumProduct product{arena};
+    std::copy(bytes.begin(), bytes.end(), product.data());
+    const Byte *const address = product.data();
+    const std::size_t high_water = arena.high_water_mark();
+
+    const BigArena::Allocation released = std::move(product).release_reduced_storage();
+
+    ASSERT_TRUE(released);
+    EXPECT_FALSE(product);
+    EXPECT_EQ(address, released.data());
+    EXPECT_EQ(&arena, &released.arena());
+    EXPECT_EQ(&arena, &product.arena());
+    EXPECT_EQ(1U, released.blocks());
+    EXPECT_EQ(expected, std::vector<Byte>(released.data(), released.data() + g_bn_length));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    BigArena::Allocation companion = arena.allocate_single();
+    EXPECT_EQ(address + arena.block_size(), companion.data());
+}
+
+TEST_P(TestBigNumProductOwnership, consumingReductionNeedsNoSpareArenaSpace)
+{
+    BigArena arena{static_cast<std::size_t>(g_bn_length), bn_arena(std::get<2>(GetParam())).block_size(), 2,
+        [](Byte *value) { std::copy_n(value + g_shift_factor, g_bn_length, value); }};
+    const std::vector<Byte> bytes = retained_pattern();
+    BigNumProduct product{arena};
+    std::copy(bytes.begin(), bytes.end(), product.data());
+    ASSERT_EQ(2U, arena.high_water_mark());
+
+    const BigNum canonical{std::move(product)};
+
+    EXPECT_EQ(std::vector<Byte>(bytes.begin() + g_shift_factor, bytes.begin() + g_shift_factor + g_bn_length),
+        encoded_value(canonical));
+    BigArena::Allocation companion = arena.allocate_single();
+    EXPECT_EQ(canonical.data() + arena.block_size(), companion.data());
+    EXPECT_THROW(arena.allocate_single(), PrecisionError);
+}
+
+TEST_P(TestBigNumProductOwnership, temporaryRewindsPreserveLiveProducts)
+{
+    BigArena &arena = bn_arena(std::get<2>(GetParam()));
+    const std::vector<Byte> bytes = retained_pattern();
+    BigNumProduct product{arena};
+    std::copy(bytes.begin(), bytes.end(), product.data());
+    const BigStackMark mark = save_stack();
+    {
+        BigStackSaver saved;
+        bn_stack().allocate_double();
+        BigNumProduct temporary{bn_arena(BigLifetime::TEMPORARY), product};
+        EXPECT_EQ(bytes, retained_bytes(temporary));
+    }
+
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(bytes, retained_bytes(product));
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndLifetimes, TestBigNumProductOwnership,
+    testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
+
+class TestBigNumProductRelocation
+    : public TestBigNumValue,
+      public testing::WithParamInterface<std::tuple<int, std::pair<int, int>, bool, BigLifetime>>
+{
+};
+
+TEST_P(TestBigNumProductRelocation, relocatesRetainedBytesRatherThanTreatingTheirBaseAsCanonical)
+{
+    const int old_length = std::get<0>(GetParam());
+    const std::pair<int, int> integers = std::get<1>(GetParam());
+    const bool negative = std::get<2>(GetParam());
+    g_user.bailout_value = integers.first == 4 ? 100 : 0;
+    g_bailout_test = integers.first == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(old_length);
+    BigArena &arena = bn_arena(std::get<3>(GetParam()));
+    BigNumProduct product{arena};
+    const BigNum canonical{arena, -7};
+    const int old_fraction = g_r_length - 2 * g_int_length;
+    const int guard = g_shift_factor - 1;
+    std::fill_n(product.data(), g_r_length, Byte{0});
+    std::fill(product.data() + old_fraction, product.data() + g_r_length, negative ? Byte{0xff} : Byte{0});
+    product.data()[old_fraction] = negative ? 0xee : 18;
+    if (guard >= 0)
+    {
+        product.data()[guard] = 0x5a;
+    }
+    const Byte *const address = product.data();
+    g_user.bailout_value = integers.second == 4 ? 100 : 0;
+    g_bailout_test = integers.second == 2 ? Bailout::REAL : Bailout::MOD;
+
+    init_bf_length(old_length <= 12 ? 64 : 12);
+
+    ASSERT_EQ(integers.second, g_int_length);
+    const int fraction = g_r_length - 2 * g_int_length;
+    std::vector<Byte> expected(g_r_length);
+    std::fill(expected.begin() + fraction, expected.end(), negative ? Byte{0xff} : Byte{0});
+    expected[fraction] = negative ? 0xee : 18;
+    const int relocated_guard = guard + fraction - old_fraction;
+    if (guard >= 0 && relocated_guard >= 0)
+    {
+        expected[relocated_guard] = 0x5a;
+    }
+    EXPECT_NE(address, product.data());
+    EXPECT_EQ(&arena, &product.arena());
+    EXPECT_EQ(expected, retained_bytes(product));
+    EXPECT_EQ(BigNum{-7}, canonical);
+    const Byte *const relocated = product.data();
+    const BigNum reduced{std::move(product)};
+    EXPECT_EQ(relocated, reduced.data());
+    EXPECT_EQ(std::vector<Byte>(expected.begin() + g_shift_factor, expected.begin() + g_shift_factor + g_bn_length),
+        encoded_value(reduced));
+    BigArena::Allocation companion = arena.allocate_single();
+    EXPECT_EQ(relocated + arena.block_size(), companion.data());
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsSignsAndLifetimes, TestBigNumProductRelocation,
+    testing::Combine(testing::Values(4, 12, 64, 672),
+        testing::Values(
+            std::pair<int, int>{1, 1}, std::pair<int, int>{1, 2}, std::pair<int, int>{2, 4}, std::pair<int, int>{4, 1}),
+        testing::Bool(), testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
+
 } // namespace id::test
