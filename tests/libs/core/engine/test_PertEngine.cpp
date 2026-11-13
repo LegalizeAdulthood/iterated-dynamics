@@ -1037,8 +1037,8 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
         float_to_bn(g_param_z_bn.y.data(), input.imag);
         clear_bn(g_old_z_bn.x);
         clear_bn(g_old_z_bn.y);
-        square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
-        square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+        square_bn(g_tmp_sqr_x_bn.data(), g_old_z_bn.x.data());
+        square_bn(g_tmp_sqr_y_bn.data(), g_old_z_bn.y.data());
     }
     else if (input.math == BFMathType::BIG_FLT)
     {

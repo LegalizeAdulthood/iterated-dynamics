@@ -929,27 +929,27 @@ void TestBigNumRetainedSqr::SetUp()
 
 TEST_P(TestBigNumRetainedSqr, preservesProductSourceAllocationAndPadding)
 {
-    auto &arena = bn_arena(BigLifetime::WORKING);
+    BigArena &arena = bn_arena(BigLifetime::WORKING);
     BigNum source{std::get<2>(GetParam()) ? "-2.25" : "2.25"};
-    BigNum destination{arena};
+    BigNumProduct destination{arena};
     std::fill(source.data() + g_bn_length, source.data() + arena.block_size(), Byte{0x5a});
     const std::vector<Byte> original_source(source.data(), source.data() + arena.block_size());
-    auto raw_source = encoded_value(source);
+    std::vector<Byte> raw_source = encoded_value(source);
     std::vector<Byte> expected(static_cast<std::size_t>(g_r_length));
     square_bn(expected.data(), raw_source.data());
-    std::fill_n(destination.data(), arena.block_size(), Byte{0xa5});
-    const auto original_destination = destination.data();
-    const auto high_water = arena.high_water_mark();
+    std::fill_n(destination.data(), 2 * arena.block_size(), Byte{0xa5});
+    const Byte *const original_destination = destination.data();
+    const std::size_t high_water = arena.high_water_mark();
 
-    square_bn(destination, source);
+    square_bn(destination.data(), source.data());
 
     EXPECT_EQ(original_destination, destination.data());
     EXPECT_EQ(&arena, &destination.arena());
     EXPECT_EQ(high_water, arena.high_water_mark());
     EXPECT_EQ(expected, std::vector<Byte>(destination.data(), destination.data() + g_r_length));
     EXPECT_EQ(original_source, std::vector<Byte>(source.data(), source.data() + arena.block_size()));
-    EXPECT_EQ(std::vector<Byte>(arena.block_size() - g_r_length, 0xa5),
-        std::vector<Byte>(destination.data() + g_r_length, destination.data() + arena.block_size()));
+    EXPECT_EQ(std::vector<Byte>(2 * arena.block_size() - g_r_length, 0xa5),
+        std::vector<Byte>(destination.data() + g_r_length, destination.data() + 2 * arena.block_size()));
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsAndSigns, TestBigNumRetainedSqr,
@@ -1009,18 +1009,18 @@ void TestBigNumRetainedMultiply::SetUp()
 
 TEST_P(TestBigNumRetainedMultiply, preservesProductAllocationPaddingAndLegacyOperandMutation)
 {
-    const auto input = std::get<2>(GetParam());
-    auto &arena = bn_arena(BigLifetime::WORKING);
+    const RetainedMultiplyInput input = std::get<2>(GetParam());
+    BigArena &arena = bn_arena(BigLifetime::WORKING);
     BigNum left{static_cast<LDouble>(input.left)};
     BigNum distinct_right{static_cast<LDouble>(input.right)};
     BigNum &right = input.shared ? left : distinct_right;
-    BigNum destination{arena};
+    BigNumProduct destination{arena};
     std::fill(left.data() + g_bn_length, left.data() + arena.block_size(), Byte{0x5a});
     std::fill(distinct_right.data() + g_bn_length, distinct_right.data() + arena.block_size(), Byte{0x6b});
     std::vector<Byte> expected_left(left.data(), left.data() + arena.block_size());
     const std::vector<Byte> original_right(distinct_right.data(), distinct_right.data() + arena.block_size());
-    auto raw_left = encoded_value(left);
-    auto raw_right = encoded_value(distinct_right);
+    std::vector<Byte> raw_left = encoded_value(left);
+    std::vector<Byte> raw_right = encoded_value(distinct_right);
     std::vector<Byte> expected(static_cast<std::size_t>(g_r_length));
     mult_bn(expected.data(), raw_left.data(), input.shared ? raw_left.data() : raw_right.data());
     // The existing adapter restores a shared negative source twice, leaving it positive.
@@ -1028,12 +1028,12 @@ TEST_P(TestBigNumRetainedMultiply, preservesProductAllocationPaddingAndLegacyOpe
     EXPECT_EQ(encoded_value(BigNum{static_cast<LDouble>(restored_left)}), raw_left);
     EXPECT_EQ(encoded_value(distinct_right), raw_right);
     std::copy(raw_left.begin(), raw_left.end(), expected_left.begin());
-    std::fill_n(destination.data(), arena.block_size(), Byte{0xa5});
-    const auto original_destination = destination.data();
-    const auto high_water = arena.high_water_mark();
-    const auto lengths = kernel_lengths();
+    std::fill_n(destination.data(), 2 * arena.block_size(), Byte{0xa5});
+    const Byte *const original_destination = destination.data();
+    const std::size_t high_water = arena.high_water_mark();
+    const std::array<int, 9> lengths = kernel_lengths();
 
-    mult_bn(destination, left, right);
+    mult_bn(destination.data(), left.data(), right.data());
 
     EXPECT_EQ(original_destination, destination.data());
     EXPECT_EQ(&arena, &destination.arena());
@@ -1042,8 +1042,8 @@ TEST_P(TestBigNumRetainedMultiply, preservesProductAllocationPaddingAndLegacyOpe
     EXPECT_EQ(expected, std::vector<Byte>(destination.data(), destination.data() + g_r_length));
     EXPECT_EQ(expected_left, std::vector<Byte>(left.data(), left.data() + arena.block_size()));
     EXPECT_EQ(original_right, std::vector<Byte>(distinct_right.data(), distinct_right.data() + arena.block_size()));
-    EXPECT_EQ(std::vector<Byte>(arena.block_size() - g_r_length, 0xa5),
-        std::vector<Byte>(destination.data() + g_r_length, destination.data() + arena.block_size()));
+    EXPECT_EQ(std::vector<Byte>(2 * arena.block_size() - g_r_length, 0xa5),
+        std::vector<Byte>(destination.data() + g_r_length, destination.data() + 2 * arena.block_size()));
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsSignsAndAliasing, TestBigNumRetainedMultiply,

@@ -32,6 +32,7 @@
 #include <string>
 #include <tuple>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 using namespace id::engine;
@@ -123,13 +124,11 @@ TEST_F(TestBigNumBailout, canonicalGlobalsOwnWorkingStorageThroughBindingAndClea
     static_assert(std::is_same_v<decltype(g_close_enough_bn), BigNum>);
     static_assert(std::is_same_v<decltype(g_param_z_bn), Complex<BigNum>>);
     static_assert(std::is_same_v<decltype(g_old_z_bn), BNComplex>);
-    static_assert(std::is_same_v<decltype(g_tmp_sqr_x_bn), BigNum>);
-    static_assert(std::is_same_v<decltype(g_tmp_sqr_y_bn), BigNum>);
     static_assert(std::is_same_v<decltype(g_bn_tmp), BigNum>);
-    const std::array<BigNum *, 22> values{&g_new_z_bn.x, &g_new_z_bn.y, &g_saved_z_bn.x, &g_saved_z_bn.y,
+    const std::array<BigNum *, 20> values{&g_new_z_bn.x, &g_new_z_bn.y, &g_saved_z_bn.x, &g_saved_z_bn.y,
         &g_close_enough_bn, &g_x_min_bn, &g_x_max_bn, &g_y_min_bn, &g_y_max_bn, &g_x_3rd_bn, &g_y_3rd_bn, &g_delta_x_bn,
         &g_delta_y_bn, &g_delta2_x_bn, &g_delta2_y_bn, &g_param_z_bn.x, &g_param_z_bn.y, &g_old_z_bn.x, &g_old_z_bn.y,
-        &g_tmp_sqr_x_bn, &g_tmp_sqr_y_bn, &g_bn_tmp};
+        &g_bn_tmp};
     auto &working = bn_arena(BigLifetime::WORKING);
     for (auto *value : values)
     {
@@ -139,7 +138,7 @@ TEST_F(TestBigNumBailout, canonicalGlobalsOwnWorkingStorageThroughBindingAndClea
         *value = -1.25L;
     }
 
-    std::array<BigNumConstPtr, 22> buffers;
+    std::array<BigNumConstPtr, 20> buffers;
     for (std::size_t i = 0; i < values.size(); ++i)
     {
         buffers[i] = values[i]->data();
@@ -357,8 +356,8 @@ TEST_P(TestBigNumProductWindows, shiftedSubtractionAndDoublingPreserveTheOtherPr
 {
     g_new_z_bn.x = 3;
     g_new_z_bn.y = -2;
-    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
+    square_bn(g_tmp_sqr_x_bn.data(), g_new_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn.data(), g_new_z_bn.y.data());
     auto expected_x = integer_bytes(9, g_r_length, 2 * g_int_length);
     auto expected_product = integer_bytes(-6, g_r_length, 2 * g_int_length);
     const auto difference = integer_bytes(5, g_bn_length, g_int_length);
@@ -525,8 +524,8 @@ TEST_P(TestBigNumBailoutContinuation, repeatedOrbitCallsMatchTheOrdinaryBailoutC
     g_old_z_bn.y = 1;
     g_param_z_bn.x = 1;
     g_param_z_bn.y = 0;
-    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+    square_bn(g_tmp_sqr_x_bn.data(), g_old_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn.data(), g_old_z_bn.y.data());
     const std::array<DComplex, 2> expected{{{1, 2}, {-2, escape ? 2.0 : 4.0}}};
 
     for (int iteration = 0; iteration < 2; ++iteration)
@@ -786,5 +785,127 @@ TEST_F(TestBigNumJulia, viewportTransitionRestoresJuliaParameterAndKeepsBailoutE
     EXPECT_EQ(2, bn_to_float(g_old_z_bn.x.data()));
     EXPECT_EQ(0, bn_to_float(g_old_z_bn.y.data()));
 }
+
+class TestBigNumSqrStorage : public TestBigNumBailout, public testing::WithParamInterface<std::tuple<int, bool>>
+{
+protected:
+    void SetUp() override;
+    BigNumProduct &cache() const;
+};
+
+void TestBigNumSqrStorage::SetUp()
+{
+    g_bailout_test = Bailout::MOD;
+    init_bf_length(std::get<0>(GetParam()));
+}
+
+BigNumProduct &TestBigNumSqrStorage::cache() const
+{
+    return std::get<1>(GetParam()) ? g_tmp_sqr_y_bn : g_tmp_sqr_x_bn;
+}
+
+TEST_P(TestBigNumSqrStorage, writesRetainedBytesAndPreservesBothSlotTails)
+{
+    static_assert(std::is_same_v<decltype(g_tmp_sqr_x_bn), BigNumProduct>);
+    static_assert(std::is_same_v<decltype(g_tmp_sqr_y_bn), BigNumProduct>);
+    BigNumProduct &value = cache();
+    BigNumProduct &other = std::get<1>(GetParam()) ? g_tmp_sqr_x_bn : g_tmp_sqr_y_bn;
+    BigArena &arena = bn_arena(BigLifetime::WORKING);
+    ASSERT_TRUE(value);
+    EXPECT_EQ(&arena, &value.arena());
+    const std::size_t reservation = 2 * arena.block_size();
+    EXPECT_EQ(std::vector<Byte>(reservation), std::vector<Byte>(value.data(), value.data() + reservation));
+    std::fill_n(other.data(), reservation, Byte{0x5a});
+    std::fill_n(value.data(), reservation, Byte{0xa5});
+    BigNum source{-3};
+    const Byte *const address = value.data();
+    const std::size_t high_water = arena.high_water_mark();
+
+    square_bn(value.data(), source.data());
+
+    EXPECT_EQ(address, value.data());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(
+        integer_bytes(9, g_r_length, 2 * g_int_length), std::vector<Byte>(value.data(), value.data() + g_r_length));
+    EXPECT_EQ(std::vector<Byte>(reservation - g_r_length, 0xa5),
+        std::vector<Byte>(value.data() + g_r_length, value.data() + reservation));
+    EXPECT_EQ(std::vector<Byte>(reservation, 0x5a), std::vector<Byte>(other.data(), other.data() + reservation));
+    EXPECT_EQ(BigNum{-3}, source);
+    BigNumProduct copy{value};
+    const Byte *const copy_address = copy.data();
+    const BigNum reduced{std::move(copy)};
+    EXPECT_EQ(BigNum{9}, reduced);
+    BigArena::Allocation companion = arena.allocate_single();
+    EXPECT_EQ(copy_address + arena.block_size(), companion.data());
+}
+
+TEST_P(TestBigNumSqrStorage, repeatedBindingClearsBothSlotsWithoutAnotherAllocation)
+{
+    BigNumProduct &value = cache();
+    BigArena &arena = value.arena();
+    const std::size_t reservation = 2 * arena.block_size();
+    std::fill_n(value.data(), reservation, Byte{0xa5});
+    const Byte *const address = value.data();
+    const std::size_t high_water = arena.high_water_mark();
+
+    init_bf_length(std::get<0>(GetParam()));
+
+    EXPECT_EQ(&arena, &value.arena());
+    EXPECT_EQ(address, value.data());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(std::vector<Byte>(reservation), std::vector<Byte>(value.data(), value.data() + reservation));
+}
+
+TEST_P(TestBigNumSqrStorage, precisionChangesClearTheWholeRelocatedReservation)
+{
+    BigNumProduct &value = cache();
+    BigArena &arena = value.arena();
+    std::fill_n(value.data(), 2 * arena.block_size(), Byte{0xa5});
+    const Byte *const address = value.data();
+
+    init_bf_length(std::get<0>(GetParam()) <= 12 ? 64 : 12);
+
+    ASSERT_TRUE(value);
+    EXPECT_EQ(&arena, &value.arena());
+    EXPECT_NE(address, value.data());
+    const std::size_t reservation = 2 * arena.block_size();
+    EXPECT_EQ(std::vector<Byte>(reservation), std::vector<Byte>(value.data(), value.data() + reservation));
+}
+
+TEST_P(TestBigNumSqrStorage, cleanupUnbindsAndReinitializationClearsBothSlots)
+{
+    BigNumProduct &value = cache();
+    BigArena &arena = value.arena();
+    std::fill_n(value.data(), 2 * arena.block_size(), Byte{0xa5});
+
+    free_bf_vars();
+    EXPECT_FALSE(value);
+    free_bf_vars();
+    EXPECT_FALSE(value);
+    init_bf_length(std::get<0>(GetParam()));
+
+    ASSERT_TRUE(value);
+    EXPECT_EQ(&arena, &value.arena());
+    const std::size_t reservation = 2 * arena.block_size();
+    EXPECT_EQ(std::vector<Byte>(reservation), std::vector<Byte>(value.data(), value.data() + reservation));
+}
+
+TEST_P(TestBigNumSqrStorage, temporaryRewindsPreserveTheWholeReservation)
+{
+    BigNumProduct &value = cache();
+    const std::size_t reservation = 2 * value.arena().block_size();
+    std::fill_n(value.data(), reservation, Byte{0xa5});
+    const BigStackMark mark = save_stack();
+    {
+        BigStackSaver saved;
+        bn_stack().allocate_double();
+    }
+
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(std::vector<Byte>(reservation, 0xa5), std::vector<Byte>(value.data(), value.data() + reservation));
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndComponents, TestBigNumSqrStorage,
+    testing::Combine(testing::Values(4, 12, 56, 64, 672), testing::Bool()));
 
 } // namespace id::test

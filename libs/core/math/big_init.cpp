@@ -67,8 +67,8 @@ BigNum g_delta2_x_bn{};
 BigNum g_delta2_y_bn{};
 BigNum g_close_enough_bn{};
 // g_r_length
-BigNum g_tmp_sqr_x_bn{};
-BigNum g_tmp_sqr_y_bn{};
+BigNumProduct g_tmp_sqr_x_bn{};
+BigNumProduct g_tmp_sqr_y_bn{};
 BigNum g_bn_tmp{};
 // g_bn_length; g_old_z_bn also retains g_r_length scratch products
 BNComplex g_old_z_bn{};
@@ -284,8 +284,14 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
     g_bn_tmp_copy2 = big_num.working.allocate_double();
     init_big_num(g_old_z_bn.x);
     init_big_num(g_old_z_bn.y);
-    init_big_num(g_tmp_sqr_x_bn);
-    init_big_num(g_tmp_sqr_y_bn);
+    const auto init_big_num_product = [this](BigNumProduct &target)
+    {
+        BigNumProduct value{big_num.working};
+        std::destroy_at(&target);
+        ::new (&target) BigNumProduct{std::move(value)};
+    };
+    init_big_num_product(g_tmp_sqr_x_bn);
+    init_big_num_product(g_tmp_sqr_y_bn);
     init_big_num(g_bn_tmp);
     const auto init_big_float = [this](BigFloat &target)
     {
@@ -405,8 +411,18 @@ void MathArenas::bind(const bool preserve_parameters)
     init_big_num_copy(g_bn_tmp_copy2);
     init_big_num(g_old_z_bn.x);
     init_big_num(g_old_z_bn.y);
-    init_big_num(g_tmp_sqr_x_bn);
-    init_big_num(g_tmp_sqr_y_bn);
+    const auto init_big_num_product = [this](BigNumProduct &target)
+    {
+        if (!target)
+        {
+            BigNumProduct value{big_num.working};
+            std::destroy_at(&target);
+            ::new (&target) BigNumProduct{std::move(value)};
+        }
+        std::memset(target.data(), 0, 2 * big_num.working.block_size());
+    };
+    init_big_num_product(g_tmp_sqr_x_bn);
+    init_big_num_product(g_tmp_sqr_y_bn);
     init_big_num(g_bn_tmp);
     g_x_min_bn = 0;
     g_x_max_bn = 0;
@@ -491,8 +507,8 @@ void MathArenas::unbind()
     g_bn_tmp_copy1.reset();
     g_bn_tmp_copy2.reset();
     g_old_z_bn = {};
-    g_tmp_sqr_x_bn = BigNum{};
-    g_tmp_sqr_y_bn = BigNum{};
+    g_tmp_sqr_x_bn = BigNumProduct{};
+    g_tmp_sqr_y_bn = BigNumProduct{};
     g_bn_tmp = BigNum{};
     g_x_min_bn = BigNum{};
     g_x_max_bn = BigNum{};
