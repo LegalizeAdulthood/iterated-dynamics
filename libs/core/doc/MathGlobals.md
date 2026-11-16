@@ -222,23 +222,29 @@ Header: `big.h`.
 Header: `big.h`.
 
 - `g_bf_tmp1`, `g_bf_tmp2`, `g_bf_tmp3`, `g_bf_tmp4`, `g_bf_tmp5`,
-  `g_bf_tmp6` - owning `BigFloat` kernel workspaces, each in one padded
-  working-arena slot. They retain canonical, full-product, and shortened
-  scratch representations at the existing calculation sites.
+  `g_bf_tmp6` - owning canonical `BigFloat` kernel workspaces, each in one
+  working-arena slot. They hold `g_bf_length + 2` bytes or shortened
+  scratch values at the existing calculation sites.
 - `g_bf_tmp_copy1`, `g_bf_tmp_copy2` - owning `BigArena::Allocation`
   handles, each reserving two working-arena blocks for operand copies
   and destructive formatter scratch.
 - `g_bf_tmp` - owning `BigFloat` temporary, `g_bf_length + 2` encoded
   bytes in the working arena.
-- `g_bf_pi` - owning `BigFloat` Pi storage in one padded working-arena
+- `g_bf_pi` - owning `BigFloat` Pi storage in one working-arena
   slot, with `g_bf_length + 2` canonical bytes.
+
+Single slots are sized from `g_bf_length + 2`, rounded up to 64 bytes.
+Multiply and sqr use separate `BigFloatProduct` temporaries, each owning
+two adjacent slots for `g_r_bf_length + 2` wide bytes. The existing
+reduction keeps canonical bytes in the first slot and releases the
+second. Square caches and bailout metrics remain canonical `BigFloat`.
 
 `MathArenas` constructs these six kernel values and two paired buffers
 in their existing allocation order. Binding clears each full reservation
 and reuses its allocation; unbinding releases it and leaves a null owner.
-Precision relocation discards these mixed-format scratch bytes rather
-than converting them as live canonical values. Temporary stack rewinds
-do not release working-arena owners.
+Precision relocation discards kernel scratch, copy-buffer, and pi bytes.
+Live canonical values and products retain their existing conversions.
+Temporary stack rewinds do not release working-arena owners.
 
 Logarithm uses a borrowed, shifted window into `g_bf_tmp5`; arctangent
 does the same with `g_bf_tmp3`. Their `orig_*` pointers retain the base

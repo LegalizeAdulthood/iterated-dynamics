@@ -78,12 +78,12 @@ extern BigArena::Allocation g_bn_tmp_copy1;
 extern BigArena::Allocation g_bn_tmp_copy2;
 
 extern BigNum g_bn_tmp;            // g_bn_length
-extern BigFloat g_bf_tmp1;         // g_r_bf_length+2
-extern BigFloat g_bf_tmp2;         // g_r_bf_length+2
-extern BigFloat g_bf_tmp3;         // g_r_bf_length+2
-extern BigFloat g_bf_tmp4;         // g_r_bf_length+2
-extern BigFloat g_bf_tmp5;         // g_r_bf_length+2
-extern BigFloat g_bf_tmp6;         // g_r_bf_length+2
+extern BigFloat g_bf_tmp1;         // g_bf_length+2
+extern BigFloat g_bf_tmp2;         // g_bf_length+2
+extern BigFloat g_bf_tmp3;         // g_bf_length+2
+extern BigFloat g_bf_tmp4;         // g_bf_length+2
+extern BigFloat g_bf_tmp5;         // g_bf_length+2
+extern BigFloat g_bf_tmp6;         // g_bf_length+2
 extern BigArena::Allocation g_bf_tmp_copy1; // Paired operand-preservation workspace.
 extern BigArena::Allocation g_bf_tmp_copy2; // Paired operand-preservation workspace.
 extern BigFloat g_bf_pi;
@@ -249,7 +249,7 @@ extern BNComplex g_old_z_bn;
 extern BNComplex g_param_z_bn;
 extern BNComplex g_saved_z_bn;
 extern BNComplex g_new_z_bn;
-// g_r_bf_length+2
+// g_bf_length+2
 extern BigFloat g_delta_x_bf;
 extern BigFloat g_delta_y_bf;
 extern BigFloat g_delta2_x_bf;

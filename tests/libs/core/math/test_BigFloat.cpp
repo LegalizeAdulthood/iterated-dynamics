@@ -764,6 +764,10 @@ TEST_P(TestBigFloatProductRelocation, relocatesTheWideMantissaExponentAndFractio
     const int guard = g_padding - 1;
     const bool negative = std::get<1>(GetParam());
     BigArena &arena = bf_arena(std::get<2>(GetParam()));
+    const std::size_t stride = (g_bf_length + 2 + 63) / 64 * 64;
+    constexpr std::size_t ARENA_BYTES{1024 * 1024};
+    EXPECT_EQ(stride, arena.block_size());
+    EXPECT_EQ((ARENA_BYTES / stride) & ~std::size_t{1}, arena.capacity());
     BigFloatProduct product{arena};
     const std::vector<Byte> bytes = wide_float_fixture(old_length, negative, guard);
     std::copy(bytes.begin(), bytes.end(), product.data());
@@ -771,9 +775,10 @@ TEST_P(TestBigFloatProductRelocation, relocatesTheWideMantissaExponentAndFractio
     const Byte *const address = product.data();
     const std::size_t capacity = arena.capacity();
 
-    init_bf_length(std::get<0>(GetParam()) <= 56 ? 64 : 12);
+    init_bf_length(std::get<0>(GetParam()) == 56 ? 64 : 56);
 
     const std::vector<Byte> expected = wide_float_fixture(g_r_bf_length, negative, guard + g_r_bf_length - old_length);
+    EXPECT_EQ(static_cast<std::size_t>((g_bf_length + 2 + 63) / 64 * 64), arena.block_size());
     EXPECT_NE(address, product.data());
     EXPECT_EQ(&arena, &product.arena());
     EXPECT_EQ(capacity, arena.capacity());
