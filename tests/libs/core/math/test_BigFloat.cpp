@@ -16,6 +16,7 @@
 #include <cmath>
 #include <cstring>
 #include <limits>
+#include <ostream>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -1022,5 +1023,129 @@ TEST_P(TestBigFloatProductOwnership, temporaryRewindsPreserveLiveProductsAndRele
 INSTANTIATE_TEST_SUITE_P(LayoutsAndLifetimes, TestBigFloatProductOwnership,
     testing::Combine(testing::Values(4, 12, 52, 56, 64, 708),
         testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
+
+namespace
+{
+
+struct BigFloatOperatorProductInput
+{
+    const char *name;
+    int left;
+    int right;
+    int left_exponent;
+    int right_exponent;
+    int product;
+    int product_exponent;
+    int squared;
+    int squared_exponent;
+    bool shared;
+};
+
+void PrintTo(const BigFloatOperatorProductInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+std::vector<Byte> integer_float_bytes(const int length, const int value, const int exponent)
+{
+    std::vector<Byte> bytes(length + 2);
+    bytes[length - 2] = static_cast<Byte>(value);
+    bytes[length - 1] = value < 0 ? 0xff : 0;
+    bytes[length] = static_cast<Byte>(exponent);
+    bytes[length + 1] = static_cast<Byte>(static_cast<unsigned>(exponent) >> 8);
+    return bytes;
+}
+
+} // namespace
+
+class TestBigFloatOperatorProducts
+    : public TestBigFloatValue,
+      public testing::WithParamInterface<std::tuple<int, bool, BigFloatOperatorProductInput>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigFloatOperatorProducts::SetUp()
+{
+    init_bf_length(std::get<0>(GetParam()));
+}
+
+TEST_P(TestBigFloatOperatorProducts, preservesExactBytesOperandsAndPairedAllocationReductionAndRelease)
+{
+    const bool squared = std::get<1>(GetParam());
+    const BigFloatOperatorProductInput &input = std::get<2>(GetParam());
+    BigArena &working = bf_arena(BigLifetime::WORKING);
+    BigArena &persistent = bf_arena(BigLifetime::PERSISTENT);
+    const std::vector<Byte> left_bytes = integer_float_bytes(g_bf_length, input.left, input.left_exponent);
+    const std::vector<Byte> right_bytes = integer_float_bytes(g_bf_length, input.right, input.right_exponent);
+    BigFloat left = BigFloat::from_legacy(persistent, left_bytes.data(), left_bytes.size());
+    BigFloat distinct_right = BigFloat::from_legacy(persistent, right_bytes.data(), right_bytes.size());
+    const BigFloat &right = input.shared ? left : distinct_right;
+    std::fill(left.data() + left_bytes.size(), left.data() + persistent.block_size(), Byte{0x5a});
+    std::fill(distinct_right.data() + right_bytes.size(), distinct_right.data() + persistent.block_size(), Byte{0x6c});
+    const std::vector<Byte> original_left(left.data(), left.data() + persistent.block_size());
+    const std::vector<Byte> original_right(distinct_right.data(), distinct_right.data() + persistent.block_size());
+    BigArena::Allocation guard = working.allocate_single();
+    std::fill_n(guard.data(), working.block_size(), Byte{0x3c});
+    std::fill_n(g_bf_tmp_copy1.data(), 2 * working.block_size(), Byte{0x69});
+    std::fill_n(g_bf_tmp_copy2.data(), 2 * working.block_size(), Byte{0x96});
+    BigArena::Allocation reservation = working.allocate_double();
+    Byte *const address = reservation.data();
+    std::fill_n(address, 2 * working.block_size(), Byte{0xa5});
+    reservation.reset();
+    const std::size_t high_water = working.high_water_mark();
+    const BigStackMark mark = save_stack();
+    const int expected_value = squared ? input.squared : input.product;
+    const int expected_exponent = squared ? input.squared_exponent : input.product_exponent;
+    const std::vector<Byte> expected = integer_float_bytes(g_bf_length, expected_value, expected_exponent);
+    const std::vector<Byte> wide = integer_float_bytes(g_r_bf_length, expected_value, expected_exponent);
+    std::vector<Byte> expected_slot(2 * working.block_size());
+    std::copy(wide.begin(), wide.end(), expected_slot.begin());
+    std::copy(expected.begin(), expected.end(), expected_slot.begin());
+    expected_slot.resize(working.block_size());
+    {
+        const BigFloat result = squared ? left.sqr() : left * right;
+
+        EXPECT_EQ(address, result.data());
+        EXPECT_EQ(&working, &result.arena());
+        EXPECT_EQ(high_water, working.high_water_mark());
+        EXPECT_EQ(mark, save_stack());
+        EXPECT_EQ(expected, encoded_value(result));
+        EXPECT_EQ(expected_slot, std::vector<Byte>(result.data(), result.data() + working.block_size()));
+        EXPECT_EQ(original_left, std::vector<Byte>(left.data(), left.data() + persistent.block_size()));
+        EXPECT_EQ(
+            original_right, std::vector<Byte>(distinct_right.data(), distinct_right.data() + persistent.block_size()));
+        EXPECT_EQ(std::vector<Byte>(working.block_size(), 0x3c),
+            std::vector<Byte>(guard.data(), guard.data() + working.block_size()));
+        EXPECT_EQ(std::vector<Byte>(2 * working.block_size() - expected.size(), 0x69),
+            std::vector<Byte>(
+                g_bf_tmp_copy1.data() + expected.size(), g_bf_tmp_copy1.data() + 2 * working.block_size()));
+        EXPECT_EQ(std::vector<Byte>(2 * working.block_size() - expected.size(), 0x96),
+            std::vector<Byte>(
+                g_bf_tmp_copy2.data() + expected.size(), g_bf_tmp_copy2.data() + 2 * working.block_size()));
+        BigArena::Allocation companion = working.allocate_single();
+        EXPECT_EQ(address + working.block_size(), companion.data());
+        EXPECT_EQ(high_water, working.high_water_mark());
+        std::fill_n(companion.data(), working.block_size(), Byte{0xc3});
+        EXPECT_EQ(expected, encoded_value(result));
+    }
+    BigArena::Allocation reused = working.allocate_double();
+    EXPECT_EQ(address, reused.data());
+    EXPECT_EQ(high_water, working.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndInputs, TestBigFloatOperatorProducts,
+    testing::Combine(testing::Values(4, 12, 52, 56, 64, 708), testing::Bool(),
+        testing::Values(BigFloatOperatorProductInput{"Positive", 2, 3, 0, 0, 6, 0, 4, 0, false},
+            BigFloatOperatorProductInput{"NegativeLeft", -2, 3, 0, 0, -6, 0, 4, 0, false},
+            BigFloatOperatorProductInput{"NegativeRight", 2, -3, 0, 0, -6, 0, 4, 0, false},
+            BigFloatOperatorProductInput{"NegativeBoth", -2, -3, 0, 0, 6, 0, 4, 0, false},
+            BigFloatOperatorProductInput{"LargeExponents", 2, 3, 500, 700, 6, 1200, 4, 1000, false},
+            BigFloatOperatorProductInput{"SmallExponents", -2, 3, -500, -700, -6, -1200, 4, -1000, false},
+            BigFloatOperatorProductInput{"ZeroLeft", 0, 3, 0, 700, 0, 0, 0, 0, false},
+            BigFloatOperatorProductInput{"ZeroRight", -2, 0, -500, 0, 0, 0, 4, -1000, false},
+            BigFloatOperatorProductInput{"Shared", -3, -3, 1000, 1000, 9, 2000, 9, 2000, true})));
 
 } // namespace id::test

@@ -1082,10 +1082,9 @@ BigFloat BigFloat::operator-(const BigFloat &right) const
 
 BigFloat BigFloat::operator*(const BigFloat &right) const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING).allocate_double()};
-    binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), multiply_wide);
-    result.m_storage.reduce();
-    return result;
+    BigFloatProduct result{bf_arena(BigLifetime::WORKING)};
+    binary_operation(result.data(), m_storage.data(), right.m_storage.data(), multiply_wide);
+    return BigFloat{std::move(result)};
 }
 
 BigFloat BigFloat::operator*(const U16 right) const
@@ -1114,11 +1113,10 @@ BigFloat BigFloat::abs() const
 
 BigFloat BigFloat::sqr() const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING).allocate_double()};
+    BigFloatProduct result{bf_arena(BigLifetime::WORKING)};
     copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
-    square_wide(result.m_storage.data(), g_bf_tmp_copy1.data());
-    result.m_storage.reduce();
-    return result;
+    square_wide(result.data(), g_bf_tmp_copy1.data());
+    return BigFloat{std::move(result)};
 }
 
 BigFloat BigFloat::half() const
