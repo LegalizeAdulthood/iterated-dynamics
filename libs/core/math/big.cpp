@@ -21,6 +21,36 @@ namespace id::math
 namespace
 {
 
+bool is_digit(const char c)
+{
+    return c >= '0' && c <= '9';
+}
+
+int parse_exponent(std::string_view text)
+{
+    bool negative = false;
+    if (!text.empty() && text.front() == '+')
+    {
+        text.remove_prefix(1);
+    }
+    else if (!text.empty() && text.front() == '-')
+    {
+        negative = true;
+        text.remove_prefix(1);
+    }
+
+    int exponent = 0;
+    for (const char c : text)
+    {
+        if (!is_digit(c))
+        {
+            break;
+        }
+        exponent = exponent * 10 + c - '0';
+    }
+    return negative ? -exponent : exponent;
+}
+
 long parse_long(const std::string_view text)
 {
     long value{};
@@ -1210,6 +1240,116 @@ std::string unsafe_bn_to_string(Byte *r, int dec)
     }
 
     return result;
+}
+
+/**********************************************************************/
+// strtobf() - converts a string into a bigfloat
+//   r - pointer to a bigfloat
+//   s - string in the floating point format [+-][dig].[dig]e[+-][dig]
+//   note: the string may not be empty or have extra space.
+//         It may use scientific notation.
+// USES: tmp1
+
+Byte *str_to_bf(Byte *r, std::string_view s, Byte *tmp1)
+{
+    Byte ones_byte;
+    bool sign_flag = false;
+    int power_ten = 0;
+
+    clear_bf(r);
+    if (s.empty())
+    {
+        return r;
+    }
+
+    if (s[0] == '+') // for + sign
+    {
+        s.remove_prefix(1);
+    }
+    else if (s[0] == '-') // for neg sign
+    {
+        sign_flag = true;
+        s.remove_prefix(1);
+    }
+    if (s.empty())
+    {
+        return r;
+    }
+
+    const std::size_t d = s.find('.');
+    const std::size_t e = s.find_first_of("eE");
+    std::size_t l = s.size();
+    if (e != std::string_view::npos)
+    {
+        power_ten = parse_exponent(s.substr(e + 1)); // read in the e (x10^) part
+        l = e;                                       // just after last mantissa char
+    }
+
+    if (d != std::string_view::npos)                 // is there a decimal point?
+    {
+        while (l > 0 && is_digit(s[l - 1]))          // while a digit
+        {
+            ones_byte = static_cast<Byte>(s[--l] - '0');
+            int_to_bf(tmp1, ones_byte);
+            unsafe_add_a_bf(r, tmp1);
+            div_a_bf_int(r, 10);
+        }
+
+        if (l > 0 && s[l - 1] == '.') // the digit was found
+        {
+            --l;
+            bool keep_looping = l > 0 && is_digit(s[l - 1]);
+            while (keep_looping) // while a digit
+            {
+                ones_byte = static_cast<Byte>(s[--l] - '0');
+                int_to_bf(tmp1, ones_byte);
+                unsafe_add_a_bf(r, tmp1);
+                keep_looping = l > 0 && is_digit(s[l - 1]);
+                if (keep_looping)
+                {
+                    div_a_bf_int(r, 10);
+                    power_ten++; // increase the power of ten
+                }
+            }
+        }
+    }
+    else
+    {
+        bool keep_looping = l > 0 && is_digit(s[l - 1]);
+        while (keep_looping) // while a digit
+        {
+            ones_byte = static_cast<Byte>(s[--l] - '0');
+            int_to_bf(tmp1, ones_byte);
+            unsafe_add_a_bf(r, tmp1);
+            keep_looping = l > 0 && is_digit(s[l - 1]);
+            if (keep_looping)
+            {
+                div_a_bf_int(r, 10);
+                power_ten++; // increase the power of ten
+            }
+        }
+    }
+
+    if (power_ten > 0)
+    {
+        for (; power_ten > 0; power_ten--)
+        {
+            mult_a_bf_int(r, 10);
+        }
+    }
+    else if (power_ten < 0)
+    {
+        for (; power_ten < 0; power_ten++)
+        {
+            div_a_bf_int(r, 10);
+        }
+    }
+    if (sign_flag)
+    {
+        neg_a_bf(r);
+    }
+
+    return r;
 }
 
 /**********************************************************************/

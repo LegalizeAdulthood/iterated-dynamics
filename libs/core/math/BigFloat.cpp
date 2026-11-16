@@ -952,7 +952,7 @@ BigFloat::BigFloat(BigArena &arena, const LDouble value) :
 BigFloat::BigFloat(BigArena &arena, const std::string_view text) :
     BigFloat(arena)
 {
-    str_to_bf(m_storage.data(), text);
+    str_to_bf(*this, text);
 }
 
 BigFloat::BigFloat(BigArena &arena, const BigNum &value) :
@@ -1159,6 +1159,12 @@ BigFloat BigFloat::atan2(const BigFloat &x) const
     BigFloat result{bf_arena(BigLifetime::WORKING)};
     binary_operation(result.m_storage.data(), m_storage.data(), x.m_storage.data(), arctangent2);
     return result;
+}
+
+BigFloat &str_to_bf(BigFloat &r, const std::string_view text)
+{
+    str_to_bf(r.data(), text, g_bf_tmp1.data());
+    return r;
 }
 
 BigFloat abs(const BigFloat &value)

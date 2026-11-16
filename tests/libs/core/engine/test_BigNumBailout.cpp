@@ -1099,8 +1099,8 @@ TEST_F(TestBigNumJulia, affineSeedsKeepPreciseFixedParameterAndWideSquareCaches)
     float_to_bf(g_bf_y_max.data(), 1);
     float_to_bf(g_bf_x_3rd.data(), -1.5);
     float_to_bf(g_bf_y_3rd.data(), -0.75);
-    str_to_bf(g_bf_params[0].data(), "0.25000000000000000001");
-    str_to_bf(g_bf_params[1].data(), "-0.12500000000000000001");
+    str_to_bf(g_bf_params[0], "0.25000000000000000001");
+    str_to_bf(g_bf_params[1], "-0.12500000000000000001");
     std::vector<Byte> parameter_x(g_bn_length), parameter_y(g_bn_length);
     bf_to_bn(parameter_x.data(), g_bf_params[0].data());
     bf_to_bn(parameter_y.data(), g_bf_params[1].data());

@@ -453,7 +453,7 @@ TEST_P(TestBigNumLayout, legacyFloatConversionRetainsOverflowAndUnderflowRules)
     {
         SCOPED_TRACE(text);
         std::vector<Byte> floating(static_cast<std::size_t>(g_bf_length + 2));
-        str_to_bf(floating.data(), text);
+        BigFloat{text}.copy_to_legacy(floating.data(), floating.size());
         const auto original = floating;
         std::vector<Byte> result(static_cast<std::size_t>(g_bn_length));
         std::vector<Byte> expected(result.size());

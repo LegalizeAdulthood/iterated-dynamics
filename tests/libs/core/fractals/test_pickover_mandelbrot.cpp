@@ -211,10 +211,10 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
     BFComplex powered{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex product{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BigFloat difference{bf_arena(BigLifetime::TEMPORARY)};
-    str_to_bf(center.x.data(), "-0.12500000000000000000000000000000000000001");
-    str_to_bf(center.y.data(), "0.000125");
-    str_to_bf(actual.x.data(), "0.99900000000000000000000000000000000000001");
-    str_to_bf(actual.y.data(), "-0.000125");
+    str_to_bf(center.x, "-0.12500000000000000000000000000000000000001");
+    str_to_bf(center.y, "0.000125");
+    str_to_bf(actual.x, "0.99900000000000000000000000000000000000001");
+    str_to_bf(actual.y, "-0.000125");
     copy_bf(expected.x.data(), actual.x.data());
     copy_bf(expected.y.data(), actual.y.data());
 
@@ -473,7 +473,7 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     clear_bf(exponent.y.data());
     float_to_bf(center.x.data(), 0.125);
     float_to_bf(center.y.data(), -0.0625);
-    str_to_bf(seed.x.data(), GetParam().real);
+    str_to_bf(seed.x, GetParam().real);
     if (is_bf_zero(seed.x.data()))
     {
         clear_bf(seed.y.data());
@@ -809,8 +809,8 @@ TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
     float_to_bf(exponent.y.data(), GetParam().exponent.imag());
     float_to_bf(center.x.data(), 0.0625);
     float_to_bf(center.y.data(), -0.03125);
-    str_to_bf(seed.x.data(), "-0.75000000000000000000000000000000000000001");
-    str_to_bf(seed.y.data(), GetParam().imaginary);
+    str_to_bf(seed.x, "-0.75000000000000000000000000000000000000001");
+    str_to_bf(seed.y, GetParam().imaginary);
     copy_bf(actual.x.data(), seed.x.data());
     copy_bf(actual.y.data(), seed.y.data());
     expected = pow(seed, exponent);

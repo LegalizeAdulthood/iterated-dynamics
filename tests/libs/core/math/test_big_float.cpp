@@ -351,7 +351,7 @@ TEST_P(TestBigFloatParse, parsesTheSpecifiedText)
     {
         BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
 
-        str_to_bf(value.data(), text);
+        str_to_bf(value, text);
 
         EXPECT_EQ(GetParam().expected, bf_to_float(value.data()));
     }
@@ -379,7 +379,7 @@ void TestBigFloatFormat::prepare_value(const char *text)
     ::new (&m_value) BigFloat{std::move(value)};
     if (text)
     {
-        str_to_bf(m_value.data(), text);
+        str_to_bf(m_value, text);
     }
     else
     {
@@ -773,7 +773,7 @@ TEST_F(TestExhaustedArenaStack, restoringStackAfterRejectionAllowsReuse)
     EXPECT_THROW(bf_stack().allocate_single(), PrecisionError);
     restore_stack(m_stack);
     BigFloatPtr value = bf_stack().allocate_single();
-    str_to_bf(value, "1.25");
+    BigFloat{"1.25"}.copy_to_legacy(value, static_cast<std::size_t>(g_bf_length + 2));
     EXPECT_EQ(1.25L, bf_to_float(value));
 }
 
@@ -837,7 +837,7 @@ TEST_F(TestFreedArena, initializesFreshStorageAfterRejectedOperations)
 
     EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min.data()));
     BigFloatPtr value = bf_stack().allocate_single();
-    str_to_bf(value, "1.25");
+    BigFloat{"1.25"}.copy_to_legacy(value, static_cast<std::size_t>(g_bf_length + 2));
     EXPECT_EQ(1.25L, bf_to_float(value));
 }
 
@@ -863,7 +863,7 @@ TEST_F(TestBigFloat, precisionChangesPreserveAllCornersSavedCornersAndParameters
     std::vector<std::vector<Byte>> expected;
     for (BigFloat *value : parameters())
     {
-        str_to_bf(value->data(), "-1.2345678901234567890123456789e-200");
+        str_to_bf(*value, "-1.2345678901234567890123456789e-200");
         value->data()[0] = static_cast<Byte>(expected.size() + 1);
         expected.emplace_back(value->data(), value->data() + g_bf_length + 2);
     }
@@ -1008,7 +1008,7 @@ TEST_F(TestBigFloat, eachRepresentationReducesProductsThroughItsConfiguredFuncti
     std::vector<Byte> expected_num(g_bn_length);
     std::vector<Byte> expected_float(g_bf_length + 2);
     BigNum{"-1.234567890123456789"}.copy_to_legacy(expected_num.data(), expected_num.size());
-    str_to_bf(expected_float.data(), "-1.234567890123456789e-200");
+    BigFloat{"-1.234567890123456789e-200"}.copy_to_legacy(expected_float.data(), expected_float.size());
     std::copy(expected_num.begin(), expected_num.end(), fixed.data() + g_shift_factor);
     std::copy(expected_float.begin(), expected_float.end(), floating.data() + g_padding);
     const auto fixed_index = fixed.index();

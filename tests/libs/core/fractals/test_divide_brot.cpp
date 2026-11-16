@@ -200,9 +200,9 @@ TEST_F(TestDivideBrot5, affinePixelCoordinatesClearTheSeedWithoutCountingAnItera
 
 TEST_F(TestDivideBrot5, pixelCoordinatesRetainSubDoubleDisplacements)
 {
-    str_to_bf(g_bf_x_min.data(), "0.75");
-    str_to_bf(g_bf_x_3rd.data(), "0.75");
-    str_to_bf(g_bf_x_max.data(), "0.7500000000000000000000000000000000000256");
+    str_to_bf(g_bf_x_min, "0.75");
+    str_to_bf(g_bf_x_3rd, "0.75");
+    str_to_bf(g_bf_x_max, "0.7500000000000000000000000000000000000256");
     float_to_bf(g_bf_y_min.data(), 0.25);
     float_to_bf(g_bf_y_max.data(), 0.25);
     float_to_bf(g_bf_y_3rd.data(), 0.25);

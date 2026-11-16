@@ -252,8 +252,8 @@ TEST_P(TestBigFloatBailoutPrecision, inclusiveComparisonRetainsDisplacementsBelo
     const int point = std::get<1>(GetParam());
     set_bailout_formula(mode);
     g_magnitude_limit = limits[static_cast<std::size_t>(mode)];
-    str_to_bf(g_new_z_bf.x.data(), values[point]);
-    str_to_bf(g_new_z_bf.y.data(), values[point]);
+    str_to_bf(g_new_z_bf.x, values[point]);
+    str_to_bf(g_new_z_bf.y, values[point]);
     const std::vector<Byte> original_x = encoded(g_new_z_bf.x);
     const std::vector<Byte> original_y = encoded(g_new_z_bf.y);
 
@@ -567,8 +567,8 @@ TEST_F(TestBigFloatJulia, affineSeedsKeepPreciseFixedParameterAndSquareCaches)
     float_to_bf(g_bf_y_max.data(), 1);
     float_to_bf(g_bf_x_3rd.data(), -1.5);
     float_to_bf(g_bf_y_3rd.data(), -0.75);
-    str_to_bf(g_bf_params[0].data(), "0.25000000000000000001");
-    str_to_bf(g_bf_params[1].data(), "-0.12500000000000000001");
+    str_to_bf(g_bf_params[0], "0.25000000000000000001");
+    str_to_bf(g_bf_params[1], "-0.12500000000000000001");
     const auto parameter_x = encoded(g_bf_params[0]);
     const auto parameter_y = encoded(g_bf_params[1]);
     // These bounded reference values use double, including scalar conversion.
@@ -682,8 +682,8 @@ void TestBigFloatJuliaZPower::SetUp()
     float_to_bf(g_bf_y_min.data(), 0);
     float_to_bf(g_bf_y_max.data(), 0.5);
     float_to_bf(g_bf_y_3rd.data(), 0);
-    str_to_bf(g_bf_params[0].data(), "0.12500000000000000001");
-    str_to_bf(g_bf_params[1].data(), "-0.06250000000000000001");
+    str_to_bf(g_bf_params[0], "0.12500000000000000001");
+    str_to_bf(g_bf_params[1], "-0.06250000000000000001");
     g_magnitude_limit = 1024;
 }
 

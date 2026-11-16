@@ -104,12 +104,12 @@ TEST_F(TestBigFloatViewportPrecision, retainsResolutionAndMagnificationDigitSele
     EXPECT_EQ(4, get_prec_bf(ResolutionFlag::MAX));
     EXPECT_EQ(stack, save_stack());
 
-    str_to_bf(g_bf_x_min.data(), "-2e-40");
-    str_to_bf(g_bf_x_max.data(), "2e-40");
-    str_to_bf(g_bf_x_3rd.data(), "-2e-40");
-    str_to_bf(g_bf_y_min.data(), "-1.5e-40");
-    str_to_bf(g_bf_y_max.data(), "1.5e-40");
-    str_to_bf(g_bf_y_3rd.data(), "-1.5e-40");
+    str_to_bf(g_bf_x_min, "-2e-40");
+    str_to_bf(g_bf_x_max, "2e-40");
+    str_to_bf(g_bf_x_3rd, "-2e-40");
+    str_to_bf(g_bf_y_min, "-1.5e-40");
+    str_to_bf(g_bf_y_max, "1.5e-40");
+    str_to_bf(g_bf_y_3rd, "-1.5e-40");
 
     EXPECT_EQ(43, get_prec_bf_mag());
     EXPECT_EQ(43, get_prec_bf(ResolutionFlag::CURRENT));
