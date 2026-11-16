@@ -506,6 +506,88 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndModes, TestBigNumProductBailout,
             ProductBailoutInput{"WideUnsignedAbove", 100, 100, 40000.25}),
         testing::Bool()));
 
+class TestBigNumBailoutProductStorage : public TestBigNumBailout,
+                                        public testing::WithParamInterface<std::tuple<int, int, Bailout, bool>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumBailoutProductStorage::SetUp()
+{
+    TestBigNumBailout::SetUp();
+    const int integer_length = std::get<1>(GetParam());
+    g_user.bailout_value = integer_length == 4 ? 11 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(std::get<0>(GetParam()));
+    ASSERT_EQ(integer_length, g_int_length);
+    set_bailout_formula(std::get<2>(GetParam()));
+    g_magnitude_limit = std::get<3>(GetParam()) ? 0.5 : 32;
+}
+
+TEST_P(TestBigNumBailoutProductStorage, reservesPairedMetricAndReleasesTemporariesWithoutTouchingNeighbors)
+{
+    const Bailout mode = std::get<2>(GetParam());
+    const bool escape = std::get<3>(GetParam());
+    BigStackSaver saved;
+    BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
+    ASSERT_EQ(0U, temporary.high_water_mark());
+    BigNum survivor{temporary, -7};
+    const std::size_t stride = temporary.block_size();
+    std::fill(survivor.data() + g_bn_length, survivor.data() + stride, Byte{0x69});
+    const std::vector<Byte> survivor_bytes(survivor.data(), survivor.data() + stride);
+    Byte *const borrowed = bn_stack().allocate_single();
+    std::fill_n(borrowed, stride, Byte{0x3c});
+    BigNumProduct guard{temporary};
+    std::fill_n(guard.data(), 2 * stride, Byte{0xa5});
+    const BigStackMark mark = save_stack();
+    const std::size_t high_water = temporary.high_water_mark();
+    ASSERT_EQ(4U, high_water);
+    g_old_z_bn.x = -7;
+    g_old_z_bn.y = 9;
+    g_new_z_bn.x = -3;
+    g_new_z_bn.y = 2;
+
+    EXPECT_EQ(escape ? 1 : 0, g_bailout_bignum());
+
+    // abs_x/abs_y share one pair in MANH. The retained metric needs
+    // its own pair; the canonical comparison limit needs another.
+    EXPECT_EQ(high_water + (mode == Bailout::MANH ? 6U : 4U), temporary.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+    const std::size_t warmed_high_water = temporary.high_water_mark();
+    EXPECT_EQ(escape ? 1 : 0, g_bailout_bignum());
+    EXPECT_EQ(warmed_high_water, temporary.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(survivor_bytes, std::vector<Byte>(survivor.data(), survivor.data() + stride));
+    EXPECT_EQ(std::vector<Byte>(stride, 0x3c), std::vector<Byte>(borrowed, borrowed + stride));
+    EXPECT_EQ(std::vector<Byte>(2 * stride, 0xa5), std::vector<Byte>(guard.data(), guard.data() + 2 * stride));
+    EXPECT_EQ(integer_bytes(9, g_r_length, 2 * g_int_length),
+        std::vector<Byte>(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_r_length));
+    EXPECT_EQ(integer_bytes(4, g_r_length, 2 * g_int_length),
+        std::vector<Byte>(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_r_length));
+    EXPECT_EQ(BigNum{-3}, g_new_z_bn.x);
+    EXPECT_EQ(BigNum{2}, g_new_z_bn.y);
+    EXPECT_EQ(BigNum{escape ? -7.0L : -3.0L}, g_old_z_bn.x);
+    EXPECT_EQ(BigNum{escape ? 9.0L : 2.0L}, g_old_z_bn.y);
+    EXPECT_EQ(BigNum{mode == Bailout::MANH ? 5.0L : -1.0L}, g_bn_tmp);
+
+    BigArena::Allocation first = temporary.allocate_double();
+    BigArena::Allocation second = temporary.allocate_double();
+    if (mode == Bailout::MANH)
+    {
+        BigArena::Allocation third = temporary.allocate_double();
+        EXPECT_EQ(warmed_high_water, temporary.high_water_mark());
+    }
+    else
+    {
+        EXPECT_EQ(warmed_high_water, temporary.high_water_mark());
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsModesAndOutcomes, TestBigNumBailoutProductStorage,
+    testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(Bailout::MANH, Bailout::MANR), testing::Bool()));
+
 class TestBigNumBailoutContinuation : public TestBigNumBailout,
                                       public testing::WithParamInterface<std::tuple<Bailout, bool>>
 {

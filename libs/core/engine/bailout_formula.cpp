@@ -250,14 +250,14 @@ static int bn_manh_bailout()
     BigStackSaver saved;
     BigNum abs_x{bn_arena(BigLifetime::TEMPORARY)};
     BigNum abs_y{bn_arena(BigLifetime::TEMPORARY)};
-    BigNum metric{bn_arena(BigLifetime::TEMPORARY)};
+    BigNumProduct metric{bn_arena(BigLifetime::TEMPORARY)};
 
     square_bn(g_tmp_sqr_x_bn.data(), g_new_z_bn.x.data());
     square_bn(g_tmp_sqr_y_bn.data(), g_new_z_bn.y.data());
     abs_bn(abs_x, g_new_z_bn.x);
     abs_bn(abs_y, g_new_z_bn.y);
     add_bn(g_bn_tmp, abs_x, abs_y);
-    square_bn(metric, g_bn_tmp);
+    square_bn(metric.data(), g_bn_tmp.data());
     if (bn_bailout_reached(metric.data() + g_shift_factor))
     {
         return 1;
@@ -270,12 +270,12 @@ static int bn_manh_bailout()
 static int bn_manr_bailout()
 {
     BigStackSaver saved;
-    BigNum metric{bn_arena(BigLifetime::TEMPORARY)};
+    BigNumProduct metric{bn_arena(BigLifetime::TEMPORARY)};
 
     square_bn(g_tmp_sqr_x_bn.data(), g_new_z_bn.x.data());
     square_bn(g_tmp_sqr_y_bn.data(), g_new_z_bn.y.data());
     add_bn(g_bn_tmp, g_new_z_bn.x, g_new_z_bn.y); // don't need abs since we square it next
-    square_bn(metric, g_bn_tmp);
+    square_bn(metric.data(), g_bn_tmp.data());
     if (bn_bailout_reached(metric.data() + g_shift_factor))
     {
         return 1;
