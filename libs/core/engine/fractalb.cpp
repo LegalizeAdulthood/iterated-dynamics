@@ -547,8 +547,8 @@ int mandel_per_pixel_bn()
     copy_bn(g_new_z_bn.y, g_old_z_bn.y);
 
     // Square these to g_r_length bytes of precision
-    square_bn(g_tmp_sqr_x_bn.data(), g_new_z_bn.x.data());
-    square_bn(g_tmp_sqr_y_bn.data(), g_new_z_bn.y.data());
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
 
     return 1;                  // 1st iteration has been done
 }
@@ -636,8 +636,8 @@ int julia_per_pixel_bn()
     copy_bn(g_new_z_bn.y, g_old_z_bn.y);
 
     // Square these to g_r_length bytes of precision
-    square_bn(g_tmp_sqr_x_bn.data(), g_new_z_bn.x.data());
-    square_bn(g_tmp_sqr_y_bn.data(), g_new_z_bn.y.data());
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
 
     return 1;                  // 1st iteration has been done
 }

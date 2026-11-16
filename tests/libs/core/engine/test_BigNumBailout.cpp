@@ -366,8 +366,8 @@ TEST_P(TestBigNumProductWindows, shiftedSubtractionAndDoublingPreserveTheOtherPr
     BigNumProduct product{bn_arena(BigLifetime::TEMPORARY)};
     g_new_z_bn.x = 3;
     g_new_z_bn.y = -2;
-    square_bn(g_tmp_sqr_x_bn.data(), g_new_z_bn.x.data());
-    square_bn(g_tmp_sqr_y_bn.data(), g_new_z_bn.y.data());
+    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
+    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     auto expected_x = integer_bytes(9, g_r_length, 2 * g_int_length);
     auto expected_product = integer_bytes(-6, g_r_length, 2 * g_int_length);
     const auto difference = integer_bytes(5, g_bn_length, g_int_length);
@@ -645,8 +645,8 @@ TEST_P(TestBigNumBailoutContinuation, repeatedOrbitCallsMatchTheOrdinaryBailoutC
     g_old_z_bn.y = 1;
     g_param_z_bn.x = 1;
     g_param_z_bn.y = 0;
-    square_bn(g_tmp_sqr_x_bn.data(), g_old_z_bn.x.data());
-    square_bn(g_tmp_sqr_y_bn.data(), g_old_z_bn.y.data());
+    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
+    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
     const std::array<DComplex, 2> expected{{{1, 2}, {-2, escape ? 2.0 : 4.0}}};
 
     for (int iteration = 0; iteration < 2; ++iteration)
@@ -745,8 +745,8 @@ TEST_P(TestBigNumJuliaProduct, preservesRetainedBytesCanonicalScratchOperandsAnd
     g_old_z_bn.y = input.initial.y;
     g_param_z_bn.x = input.parameter.x;
     g_param_z_bn.y = input.parameter.y;
-    square_bn(g_tmp_sqr_x_bn.data(), g_old_z_bn.x.data());
-    square_bn(g_tmp_sqr_y_bn.data(), g_old_z_bn.y.data());
+    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
+    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
     const std::vector<Byte> old_x(g_old_z_bn.x.data(), g_old_z_bn.x.data() + working_stride);
     const std::vector<Byte> old_y(g_old_z_bn.y.data(), g_old_z_bn.y.data() + working_stride);
     g_bn_tmp = -17;
@@ -1083,7 +1083,7 @@ TEST_P(TestBigNumSqrStorage, writesRetainedBytesAndPreservesBothSlotTails)
     const Byte *const address = value.data();
     const std::size_t high_water = arena.high_water_mark();
 
-    square_bn(value.data(), source.data());
+    square_bn(value, source);
 
     EXPECT_EQ(address, value.data());
     EXPECT_EQ(high_water, arena.high_water_mark());

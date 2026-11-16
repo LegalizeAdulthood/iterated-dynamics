@@ -40,7 +40,7 @@ static_assert(!std::is_convertible_v<BigNum, BigFloat>);
 static_assert(!std::is_convertible_v<BigFloat, BigNum>);
 static_assert(!std::is_convertible_v<LDouble, BigNum>);
 static_assert(std::is_same_v<decltype(&bn_hex_dump), void (*)(const BigNum &)>);
-static_assert(std::is_void_v<decltype(square_bn(std::declval<BigNum &>(), std::declval<BigNum &>()))>);
+static_assert(std::is_void_v<decltype(square_bn(std::declval<BigNumProduct &>(), std::declval<BigNum &>()))>);
 static_assert(std::is_same_v<decltype(add_bn(std::declval<const BigNum &>(), std::declval<const BigNum &>())), BigNum>);
 static_assert(std::is_same_v<decltype(sub_bn(std::declval<const BigNum &>(), std::declval<const BigNum &>())), BigNum>);
 static_assert(std::is_same_v<decltype(mult_bn_int(std::declval<const BigNum &>(), U16{})), BigNum>);
@@ -941,7 +941,7 @@ TEST_P(TestBigNumRetainedSqr, preservesProductSourceAllocationAndPadding)
     const Byte *const original_destination = destination.data();
     const std::size_t high_water = arena.high_water_mark();
 
-    square_bn(destination.data(), source.data());
+    square_bn(destination, source);
 
     EXPECT_EQ(original_destination, destination.data());
     EXPECT_EQ(&arena, &destination.arena());

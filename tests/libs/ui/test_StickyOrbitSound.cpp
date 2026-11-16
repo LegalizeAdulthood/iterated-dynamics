@@ -786,8 +786,8 @@ void TestStickyBailout::SetUp()
                 g_old_z_bn.y = 1;
                 g_param_z_bn.x = 0;
                 g_param_z_bn.y = 0;
-                square_bn(g_tmp_sqr_x_bn.data(), g_old_z_bn.x.data());
-                square_bn(g_tmp_sqr_y_bn.data(), g_old_z_bn.y.data());
+                square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
+                square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
             }
             else if (g_bf_math == BFMathType::BIG_FLT)
             {

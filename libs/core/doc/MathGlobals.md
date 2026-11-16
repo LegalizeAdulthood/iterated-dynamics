@@ -75,8 +75,8 @@ and comparisons read operands directly; destructive kernels receive
 scratch copies. Truncation, fixed-width overflow, division saturation,
 and zero handling retain legacy behavior.
 
-The owning `square_bn(BigNum &, BigNum &)` free function writes all
-`g_r_length` retained product bytes into the existing destination slot
+The owning `square_bn(BigNumProduct &, BigNum &)` free function writes
+`g_r_length` retained product bytes into the existing paired destination
 and restores its mutable source's sign. It returns `void` without
 allocating, copying its source, or reducing the product. Ordinary `sqr()`
 remains canonical.

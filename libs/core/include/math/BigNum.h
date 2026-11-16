@@ -140,7 +140,7 @@ private:
 };
 
 BigNum sqr(const BigNum &value);
-void square_bn(BigNum &result, BigNum &source);
+void square_bn(BigNumProduct &result, BigNum &source);
 void mult_bn(BigNum &result, BigNum &left, BigNum &right);
 int cmp_bn(const BigNum &n1, const BigNum &n2);
 BigNum &clear_bn(BigNum &r);

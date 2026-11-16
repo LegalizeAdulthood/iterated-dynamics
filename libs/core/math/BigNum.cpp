@@ -842,7 +842,7 @@ BigArena::Allocation BigNumProduct::release_reduced_storage() &&
     return result;
 }
 
-void square_bn(BigNum &result, BigNum &source)
+void square_bn(BigNumProduct &result, BigNum &source)
 {
     const bool sign = is_bn_neg(source.data());
     square(result.data(), source.data());

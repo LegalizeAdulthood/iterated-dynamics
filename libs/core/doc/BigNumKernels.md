@@ -73,7 +73,7 @@ results and partial writes into existing slots. The implemented owning
 free-function overloads are:
 
 ```cpp
-void square_bn(BigNum &result, BigNum &source);
+void square_bn(BigNumProduct &result, BigNum &source);
 void mult_bn(BigNum &result, BigNum &left, BigNum &right);
 ```
 
