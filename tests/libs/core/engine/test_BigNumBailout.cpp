@@ -726,7 +726,7 @@ void TestBigNumJuliaProduct::SetUp()
     g_magnitude_limit = std::get<3>(GetParam()) ? 1 : 10000;
 }
 
-TEST_P(TestBigNumJuliaProduct, preservesRetainedBytesCanonicalScratchOperandsAndTemporaryLifetimes)
+TEST_P(TestBigNumJuliaProduct, preservesCanonicalBytesScratchOperandsAndTemporaryLifetimes)
 {
     const JuliaProductInput &input = std::get<2>(GetParam());
     const bool escape = std::get<3>(GetParam());
@@ -741,23 +741,30 @@ TEST_P(TestBigNumJuliaProduct, preservesRetainedBytesCanonicalScratchOperandsAnd
     Byte *const prior_borrow = bn_stack().allocate_single();
     std::fill_n(prior_borrow, temporary_stride, Byte{0x3c});
     const BigStackMark mark = save_stack();
-    BigArena::Allocation reservation = temporary.allocate_double();
-    Byte *const product_address = reservation.data();
-    std::fill_n(product_address, 2 * temporary_stride, Byte{0xa5});
-    reservation.reset();
-
     g_old_z_bn.x = input.initial.x;
     g_old_z_bn.y = input.initial.y;
     g_param_z_bn.x = input.parameter.x;
     g_param_z_bn.y = input.parameter.y;
     square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+    BigArena::Allocation reservation = temporary.allocate_single();
+    Byte *const product_address = reservation.data();
+    std::fill_n(product_address, temporary_stride, Byte{0xa5});
+    BigNum companion{temporary, -19};
+    std::fill(companion.data() + g_bn_length, companion.data() + temporary_stride, Byte{0x5a});
+    const std::vector<Byte> companion_bytes(companion.data(), companion.data() + temporary_stride);
+    BigArena::Allocation scratch = temporary.allocate_double();
+    Byte *const scratch_address = scratch.data();
+    scratch.reset();
+    reservation.reset();
+    const std::vector<Byte> product_tail(temporary_stride - g_bn_length);
+    const std::size_t high_water = temporary.high_water_mark();
     const std::vector<Byte> old_x(g_old_z_bn.x.data(), g_old_z_bn.x.data() + working_stride);
     const std::vector<Byte> old_y(g_old_z_bn.y.data(), g_old_z_bn.y.data() + working_stride);
     g_bn_tmp = -17;
     std::fill(g_bn_tmp.data() + g_bn_length, g_bn_tmp.data() + working_stride, Byte{0x69});
     const std::vector<Byte> canonical_scratch(g_bn_tmp.data(), g_bn_tmp.data() + working_stride);
-    const std::vector<Byte> product = integer_bytes(input.doubled_product, g_r_length, 2 * g_int_length);
+    const std::vector<Byte> product = integer_bytes(input.doubled_product, g_bn_length, g_int_length);
     Byte *borrowed{};
     int (*const bailout)() = g_bailout_bignum;
     testing::MockFunction<int()> callback;
@@ -767,13 +774,19 @@ TEST_P(TestBigNumJuliaProduct, preservesRetainedBytesCanonicalScratchOperandsAnd
         .WillOnce(
             [&]
             {
-                EXPECT_EQ(product, std::vector<Byte>(product_address, product_address + g_r_length));
+                EXPECT_EQ(product, std::vector<Byte>(product_address, product_address + g_bn_length));
+                EXPECT_EQ(
+                    product_tail, std::vector<Byte>(product_address + g_bn_length, product_address + temporary_stride));
+                EXPECT_EQ(companion_bytes, std::vector<Byte>(companion.data(), companion.data() + temporary_stride));
                 EXPECT_EQ(canonical_scratch, std::vector<Byte>(g_bn_tmp.data(), g_bn_tmp.data() + working_stride));
                 EXPECT_EQ(old_x, std::vector<Byte>(g_old_z_bn.x.data(), g_old_z_bn.x.data() + working_stride));
                 EXPECT_EQ(old_y, std::vector<Byte>(g_old_z_bn.y.data(), g_old_z_bn.y.data() + working_stride));
                 {
                     BigArena::Allocation probe = temporary.allocate_double();
-                    EXPECT_NE(product_address, probe.data());
+                    EXPECT_EQ(scratch_address, probe.data());
+                    EXPECT_EQ(high_water, temporary.high_water_mark());
+                    BigArena::Allocation single = temporary.allocate_single();
+                    EXPECT_NE(product_address, single.data());
                 }
                 if (borrow_stack)
                 {
@@ -785,6 +798,7 @@ TEST_P(TestBigNumJuliaProduct, preservesRetainedBytesCanonicalScratchOperandsAnd
     EXPECT_EQ(escape ? 1 : 0, julia_orbit_bn());
 
     EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(companion_bytes, std::vector<Byte>(companion.data(), companion.data() + temporary_stride));
     EXPECT_EQ(live_bytes, std::vector<Byte>(survivor.data(), survivor.data() + temporary_stride));
     EXPECT_EQ(
         std::vector<Byte>(temporary_stride, 0x3c), std::vector<Byte>(prior_borrow, prior_borrow + temporary_stride));
@@ -801,16 +815,13 @@ TEST_P(TestBigNumJuliaProduct, preservesRetainedBytesCanonicalScratchOperandsAnd
         std::vector<Byte>(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_bn_length));
     EXPECT_EQ(std::vector<Byte>(working_stride - g_bn_length, 0x69),
         std::vector<Byte>(g_bn_tmp.data() + g_bn_length, g_bn_tmp.data() + working_stride));
-    BigArena::Allocation released = temporary.allocate_double();
+    BigArena::Allocation released = temporary.allocate_single();
+    EXPECT_EQ(product_address, released.data());
+    BigArena::Allocation reused_scratch = temporary.allocate_double();
+    EXPECT_EQ(scratch_address, reused_scratch.data());
     if (borrow_stack)
     {
-        BigArena::Allocation extra = temporary.allocate_double();
-        EXPECT_THAT((std::array<Byte *, 2>{released.data(), extra.data()}),
-            testing::UnorderedElementsAre(product_address, borrowed));
-    }
-    else
-    {
-        EXPECT_EQ(product_address, released.data());
+        EXPECT_EQ(scratch_address, borrowed);
     }
 }
 
@@ -821,6 +832,81 @@ INSTANTIATE_TEST_SUITE_P(LayoutsSignsOutcomesAndStackBorrows, TestBigNumJuliaPro
             JuliaProductInput{"NegativePositive", {-2, 3}, {0, 0}, {-5, -12}, -12},
             JuliaProductInput{"Negative", {-2, -2}, {1, 0}, {1, 8}, 8}),
         testing::Bool(), testing::Bool()));
+
+class TestBigNumJuliaCanonicalProduct : public TestBigNumBailout,
+                                        public testing::WithParamInterface<std::tuple<int, int, bool>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumJuliaCanonicalProduct::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    g_user.bailout_value = integer_length == 4 ? 11 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(std::get<0>(GetParam()));
+    ASSERT_EQ(integer_length, g_int_length);
+    set_bailout_formula(Bailout::REAL);
+    g_magnitude_limit = 0;
+    g_param_z_bn.x = 0;
+    g_param_z_bn.y = 0;
+}
+
+TEST_P(TestBigNumJuliaCanonicalProduct, discardsLowProductBitsBeforeDoubling)
+{
+    const bool negative = std::get<2>(GetParam());
+    std::vector<Byte> quantum(g_bn_length, negative ? Byte{0xff} : Byte{0});
+    quantum.front() = negative ? Byte{0xff} : Byte{1};
+    g_old_z_bn.x = BigNum::from_legacy(quantum.data(), quantum.size());
+    g_old_z_bn.y = 0.5L;
+    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
+    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+    std::vector<Byte> expected_x(g_bn_length);
+    std::fill(expected_x.end() - g_int_length, expected_x.end(), Byte{0xff});
+    expected_x[g_bn_length - g_int_length - 1] = 0xc0;
+    std::vector<Byte> expected_y(g_bn_length, negative ? Byte{0xff} : Byte{0});
+    expected_y.front() = negative ? Byte{0xfe} : Byte{0};
+
+    EXPECT_EQ(1, julia_orbit_bn());
+
+    EXPECT_EQ(expected_x, std::vector<Byte>(g_new_z_bn.x.data(), g_new_z_bn.x.data() + g_bn_length));
+    EXPECT_EQ(expected_y, std::vector<Byte>(g_new_z_bn.y.data(), g_new_z_bn.y.data() + g_bn_length));
+    EXPECT_EQ(quantum, std::vector<Byte>(g_old_z_bn.x.data(), g_old_z_bn.x.data() + g_bn_length));
+    EXPECT_EQ(BigNum{0.5L}, g_old_z_bn.y);
+}
+
+TEST_P(TestBigNumJuliaCanonicalProduct, preservesFixedWidthOverflowDestinationIdentityAndTails)
+{
+    const bool negative = std::get<2>(GetParam());
+    g_old_z_bn.x = negative ? -100 : 100;
+    g_old_z_bn.y = 100;
+    g_param_z_bn.x = 1;
+    g_overflow = true;
+    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
+    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+    const std::size_t stride = bn_arena(BigLifetime::WORKING).block_size();
+    Byte *const new_x = g_new_z_bn.x.data();
+    Byte *const new_y = g_new_z_bn.y.data();
+    std::fill(new_x + g_bn_length, new_x + stride, Byte{0xa5});
+    std::fill(new_y + g_bn_length, new_y + stride, Byte{0x5a});
+
+    EXPECT_EQ(1, julia_orbit_bn());
+
+    EXPECT_EQ(new_x, g_new_z_bn.x.data());
+    EXPECT_EQ(new_y, g_new_z_bn.y.data());
+    EXPECT_EQ(integer_bytes(1, g_bn_length, g_int_length), std::vector<Byte>(new_x, new_x + g_bn_length));
+    EXPECT_EQ(integer_bytes(negative ? -20000 : 20000, g_bn_length, g_int_length),
+        std::vector<Byte>(new_y, new_y + g_bn_length));
+    EXPECT_EQ(std::vector<Byte>(stride - g_bn_length, 0xa5), std::vector<Byte>(new_x + g_bn_length, new_x + stride));
+    EXPECT_EQ(std::vector<Byte>(stride - g_bn_length, 0x5a), std::vector<Byte>(new_y + g_bn_length, new_y + stride));
+    EXPECT_EQ(BigNum{negative ? -100.0L : 100.0L}, g_old_z_bn.x);
+    EXPECT_EQ(BigNum{100}, g_old_z_bn.y);
+    EXPECT_TRUE(g_overflow);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndSigns, TestBigNumJuliaCanonicalProduct,
+    testing::Combine(testing::Values(8, 12, 60, 64, 672), testing::Values(1, 2, 4), testing::Bool()));
 
 class TestBigNumMandelbrotInitialization
     : public TestBigNumBailout,

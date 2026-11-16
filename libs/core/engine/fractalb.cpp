@@ -672,19 +672,16 @@ int julia_per_pixel_bf()
 int julia_orbit_bn()
 {
     BigStackSaver saved;
-    BigNumProduct product{bn_arena(BigLifetime::TEMPORARY)};
-
-    // The square caches are canonical. Only the local cross-product
-    // below needs a shifted canonical window.
+    BigNum product{bn_arena(BigLifetime::TEMPORARY)};
 
     // new.x = tmpsqrx - tmpsqry + parm.x;
-    sub_a_bn(g_tmp_sqr_x_bn.data(), g_tmp_sqr_y_bn.data());
-    add_bn(g_new_z_bn.x.data(), g_tmp_sqr_x_bn.data(), g_param_z_bn.x.data());
+    sub_a_bn(g_tmp_sqr_x_bn, g_tmp_sqr_y_bn);
+    add_bn(g_new_z_bn.x, g_tmp_sqr_x_bn, g_param_z_bn.x);
 
     // new.y = 2 * g_old_z_bn.x * g_old_z_bn.y + parm.y;
-    mult_bn(product.data(), g_old_z_bn.x.data(), g_old_z_bn.y.data()); // ok to use unsafe here
-    double_a_bn(product.data() + g_shift_factor);
-    add_bn(g_new_z_bn.y.data(), product.data() + g_shift_factor, g_param_z_bn.y.data());
+    mult_bn(product, g_old_z_bn.x, g_old_z_bn.y);
+    double_a_bn(product);
+    add_bn(g_new_z_bn.y, product, g_param_z_bn.y);
 
     return g_bailout_bignum();
 }

@@ -34,9 +34,14 @@ the existing destination, and releases the pair on return. The cache
 address and bytes after `N` remain unchanged.
 
 `square_bn(BigNumProduct &, BigNum &)` still writes `R` bytes into
-an existing pair without allocation or reduction. Julia's local
-cross-product and Manhattan bailout metrics retain their existing
-BigNumProduct storage and shifted observations.
+an existing pair without allocation or reduction. Manhattan bailout
+metrics retain their existing BigNumProduct storage and shifted reads.
+
+Julia's local cross-product is a single-slot BigNum in the temporary
+arena. `mult_bn(BigNum &, BigNum &, BigNum &)` computes in a private
+temporary-arena pair, restores the operands, copies exactly `N` bytes
+from `msb_bn` into the existing destination, and releases that pair on
+return. No product-read conversion or operand-copy allocation is added.
 
 ## Statement-Level Width Transitions
 
@@ -46,9 +51,10 @@ BigNumProduct storage and shifted observations.
 
 - `julia_orbit_bn`: Subtract canonical cache y from cache x in place,
   writing exactly `N` bytes. Add canonical cache x to the real
-  parameter. Multiply old x/y into the existing local paired product,
-  double its shifted `N`-byte window, and add that window to the
-  imaginary parameter. Call the selected bailout at its existing site.
+  parameter. Multiply old x/y into the local canonical product, double
+  that `N`-byte value, and add it to the imaginary parameter. These use
+  owning free functions in the same statement order. Call the selected
+  bailout at its existing site.
 
 - MOD bailout: Write both canonical square caches, then add them into
   canonical `g_bn_tmp`. Test the existing threshold and copy the new
@@ -88,6 +94,11 @@ single-slot width.
 destruction. Temporary stack rewinds leave these working slots intact.
 Borrowed addresses from `data()` expire on arena relocation.
 
+Julia reserves its single-slot local before subtraction. The multiply's
+private pair is released before doubling and bailout. The local stays
+alive through bailout, then releases its slot before the surrounding
+BigStackSaver rewinds borrowed temporaries.
+
 ## Characterization
 
 - `TestBigNumSqrStorage` checks independently encoded canonical cache
@@ -101,6 +112,12 @@ Borrowed addresses from `data()` expire on arena relocation.
 
 - `TestBigNumRetainedSqr` retains full product-byte checks, consuming
   reduction, companion-slot release, source restoration, and padding.
+
+- `TestBigNumJuliaProduct` checks the canonical local, untouched slot
+  tails and neighbors, private multiply scratch release before bailout,
+  local release before rewind, source restoration, and both outcomes.
+  `TestBigNumJuliaCanonicalProduct` checks discarded low bits before
+  doubling, fixed-width overflow, and destination identity and tails.
 
 - Existing setup, Julia, bailout, and continuation fixtures check the
   same orbit results and fixed-width overflow with canonical caches.
