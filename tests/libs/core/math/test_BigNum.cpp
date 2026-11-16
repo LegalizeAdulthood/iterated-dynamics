@@ -15,7 +15,9 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <limits>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <tuple>
@@ -71,6 +73,7 @@ static_assert(std::is_same_v<decltype(mult_a_bn_int(std::declval<BigNum &>(), U1
 static_assert(std::is_same_v<decltype(is_bn_neg(std::declval<const BigNum &>())), bool>);
 static_assert(std::is_same_v<decltype(is_bn_zero(std::declval<const BigNum &>())), bool>);
 static_assert(std::is_same_v<decltype(is_bn_not_zero(std::declval<const BigNum &>())), bool>);
+static_assert(std::is_same_v<decltype(bn_to_int(std::declval<const BigNum &>())), long>);
 
 std::vector<Byte> encoded_value(const BigNum &value)
 {
@@ -130,6 +133,90 @@ void TestBigNumValue::TearDown()
 {
     free_bf_vars();
 }
+
+namespace
+{
+
+struct BigNumIntegerInput
+{
+    const char *name;
+    std::uint32_t integer_bits;
+    bool fractional;
+    std::array<long, 3> expected;
+};
+
+void PrintTo(const BigNumIntegerInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+} // namespace
+
+class TestBigNumIntegerObservation : public TestBigNumValue,
+                                     public testing::WithParamInterface<std::tuple<int, int, BigNumIntegerInput>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumIntegerObservation::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    g_user.bailout_value = integer_length == 4 ? 100 : 0;
+    init_bf_length(std::get<0>(GetParam()));
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumIntegerObservation, extractsIntegerBitsWithoutChangingSourceStorageOrAllocating)
+{
+    const BigNumIntegerInput &input = std::get<2>(GetParam());
+    std::vector<Byte> bytes(g_bn_length, input.fractional ? Byte{0x80} : Byte{0});
+    for (int byte = 0; byte < g_int_length; ++byte)
+    {
+        bytes[g_bn_length - g_int_length + byte] = static_cast<Byte>(input.integer_bits >> (8 * byte));
+    }
+    BigStackSaver saved;
+    const BigStackMark mark = save_stack();
+    BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
+    BigArena::Allocation reservation = temporary.allocate_single();
+    const Byte *const address = reservation.data();
+    reservation.reset();
+    const std::size_t working_high_water = bn_arena(BigLifetime::WORKING).high_water_mark();
+    {
+        BigNum value = BigNum::from_legacy(temporary, bytes.data(), bytes.size());
+        const std::size_t stride = temporary.block_size();
+        std::fill(value.data() + g_bn_length, value.data() + stride, Byte{0xa5});
+        const std::vector<Byte> original(value.data(), value.data() + stride);
+        const std::size_t high_water = temporary.high_water_mark();
+        const BigNum &source = value;
+
+        const long result = bn_to_int(source);
+
+        const int expected_index = g_int_length == 1 ? 0 : g_int_length == 2 ? 1 : 2;
+        EXPECT_EQ(input.expected[expected_index], result);
+        EXPECT_EQ(address, value.data());
+        EXPECT_EQ(original, std::vector<Byte>(value.data(), value.data() + stride));
+        EXPECT_EQ(bytes, encoded_value(value));
+        EXPECT_EQ(working_high_water, bn_arena(BigLifetime::WORKING).high_water_mark());
+        EXPECT_EQ(high_water, temporary.high_water_mark());
+        EXPECT_EQ(mark, save_stack());
+    }
+    EXPECT_EQ(mark, save_stack());
+    BigArena::Allocation reused = temporary.allocate_single();
+    EXPECT_EQ(address, reused.data());
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndInputs, TestBigNumIntegerObservation,
+    testing::Combine(testing::Values(4, 8, 12, 60, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(BigNumIntegerInput{"Zero", 0, false, {0, 0, 0}}, BigNumIntegerInput{"One", 1, false, {1, 1, 1}},
+            BigNumIntegerInput{"BelowSign", 0x7fffffff, false, {255, 65535, 2147483647}},
+            BigNumIntegerInput{"AtSign", 0x80000000, false, {0, 0, static_cast<long>(std::uint32_t{0x80000000})}},
+            BigNumIntegerInput{
+                "AllOnes", 0xffffffff, false, {255, 65535, static_cast<long>(std::uint32_t{0xffffffff})}},
+            BigNumIntegerInput{"PositiveFraction", 1, true, {1, 1, 1}},
+            BigNumIntegerInput{
+                "NegativeFraction", 0xfffffffe, true, {254, 65534, static_cast<long>(std::uint32_t{0xfffffffe})}})));
 
 class TestBigNumLayout : public TestBigNumValue, public testing::WithParamInterface<int>
 {

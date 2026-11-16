@@ -496,6 +496,30 @@ const Byte *msb_bn(const Byte *value)
     return value + g_shift_factor;
 }
 
+/*********************************************************************/
+//  l = floor(b), floor rounds down
+//  Converts the integer part a bignumber to a long
+long bn_to_int(const Byte *n)
+{
+    long value = 0;
+
+    const Byte *ones_byte = n + g_bn_length - g_int_length;
+    switch (g_int_length)
+    {
+        // only 1, 2, or 4 are allowed
+    case 1:
+        value = *ones_byte;
+        break;
+    case 2:
+        value = BIG_ACCESS16(ones_byte);
+        break;
+    case 4:
+        value = BIG_ACCESS32(ones_byte);
+        break;
+    }
+    return value;
+}
+
 // r = n
 Byte *copy_bn(Byte *r, const Byte *n)
 {

@@ -142,7 +142,7 @@ S16 BIG_SET_S16(S16 *addr, S16 val);
 void bn_hex_dump(const BigNum &r);
 BigNumPtr str_to_bn(BigNumPtr r, std::string_view s);
 BigNumPtr int_to_bn(BigNumPtr r, long value);
-long bn_to_int(BigNumPtr n);
+long bn_to_int(const Byte *n);
 Byte *abs_bn(Byte *r, const Byte *n);
 Byte *abs_a_bn(Byte *r);
 BigNumPtr unsafe_inv_bn(BigNumPtr r, BigNumPtr n);

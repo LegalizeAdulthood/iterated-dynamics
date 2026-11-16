@@ -51,6 +51,14 @@ temporary-arena pair, restores the operands, copies exactly `N` bytes
 from `msb_bn` into the existing destination, and releases that pair on
 return. No product-read conversion or operand-copy allocation is added.
 
+`bn_to_int(const BigNum &)` observes a canonical value at offset zero.
+It borrows bytes for `bn_to_int(const Byte *)` in big.cpp and returns
+long without allocating or changing the source. Extraction still
+zero-extends one/two integer bytes and uses the native U32-to-long
+conversion for four bytes. It does not normalize signedness or convert
+through machine floating point. Encoded product-window fixtures retain
+their byte-level observations.
+
 ## Statement-Level Width Transitions
 
 - `mandel_per_pixel_bn` and `julia_per_pixel_bn`: Keep the canonical
@@ -146,3 +154,9 @@ locals before their surrounding BigStackSaver rewinds.
   Wide fractional cases compare the selected bytes of encoded kernel
   products against each cache. Exact byte expectations avoid numerical
   tolerances.
+
+- `TestBigNumIntegerObservation` checks independent integer results,
+  negative fractions, boundary bits, const inputs, unchanged canonical
+  bytes and padding, and temporary slot release at all integer widths.
+  Canonical cache fixtures observe subtraction and doubling through the
+  owning interface.

@@ -546,6 +546,11 @@ BigNum sqr(const BigNum &value)
     return value.sqr();
 }
 
+long bn_to_int(const BigNum &n)
+{
+    return bn_to_int(n.data());
+}
+
 int cmp_bn(const BigNum &n1, const BigNum &n2)
 {
     return cmp_bn(n1.data(), n2.data());

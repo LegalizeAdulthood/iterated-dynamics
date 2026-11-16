@@ -550,8 +550,8 @@ TEST_P(TestBigNumProductBailout, preservesFullScratchBytesAndFixedWidthOverflow)
         std::vector<Byte>(g_new_z_bn.x.data(), g_new_z_bn.x.data() + length));
     EXPECT_EQ(integer_bytes(input.imaginary, length, integer_length),
         std::vector<Byte>(g_new_z_bn.y.data(), g_new_z_bn.y.data() + length));
-    EXPECT_EQ(rx, bn_to_int(g_tmp_sqr_x_bn.data()));
-    EXPECT_EQ(ry, bn_to_int(g_tmp_sqr_y_bn.data()));
+    EXPECT_EQ(rx, bn_to_int(g_tmp_sqr_x_bn));
+    EXPECT_EQ(ry, bn_to_int(g_tmp_sqr_y_bn));
     EXPECT_EQ(overflow, g_overflow);
     EXPECT_EQ(-17, g_magnitude);
     EXPECT_EQ(length, g_bn_length);
@@ -1237,7 +1237,7 @@ TEST_P(TestBigNumSqrStorage, writesCanonicalBytesAndPreservesSlotTails)
     EXPECT_EQ(temporary_high_water, temporary.high_water_mark());
 }
 
-TEST_P(TestBigNumSqrStorage, subtractionWritesCanonicalBytesAndPreservesTheOtherCache)
+TEST_P(TestBigNumSqrStorage, subtractionAndDoublingWriteCanonicalBytesAndPreserveTheOtherCache)
 {
     BigNum &value = cache();
     BigNum &other = std::get<1>(GetParam()) ? g_tmp_sqr_x_bn : g_tmp_sqr_y_bn;
@@ -1251,6 +1251,11 @@ TEST_P(TestBigNumSqrStorage, subtractionWritesCanonicalBytesAndPreservesTheOther
     sub_a_bn(value.data(), other.data());
 
     EXPECT_EQ(integer_bytes(5, g_bn_length, g_int_length), std::vector<Byte>(value.data(), value.data() + g_bn_length));
+    EXPECT_EQ(5, bn_to_int(value));
+    double_a_bn(value);
+    EXPECT_EQ(10, bn_to_int(value));
+    EXPECT_EQ(
+        integer_bytes(10, g_bn_length, g_int_length), std::vector<Byte>(value.data(), value.data() + g_bn_length));
     EXPECT_EQ(std::vector<Byte>(stride - g_bn_length, 0xa5),
         std::vector<Byte>(value.data() + g_bn_length, value.data() + stride));
     EXPECT_EQ(original_other, std::vector<Byte>(other.data(), other.data() + stride));
