@@ -225,8 +225,10 @@ BigFloatPtr multiply(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
     {
         return clear_bf(r);
     }
-    multiply_wide(r, n1, n2);
-    detail::reduce_bf_product(r);
+    BigFloatProduct product{bf_arena(BigLifetime::TEMPORARY)};
+    multiply_wide(product.data(), n1, n2);
+    const BigFloat canonical{std::move(product)};
+    copy_bf(r, canonical.data());
     return r;
 }
 
