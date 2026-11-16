@@ -22,7 +22,7 @@ Arena canonical sizes and aligned strides remain at their outer widths;
 
 | Global | Owner | Reservation |
 |---|---|---|
-| `g_bn_tmp1` | `BigNum` | Working `allocate_single()` |
+| `g_bn_tmp1` | `BigNumProduct` | Working `allocate_double()` |
 | `g_bn_tmp2` | `BigNum` | Working `allocate_single()` |
 | `g_bn_tmp3` | `BigNum` | Working `allocate_single()` |
 | `g_bn_tmp_copy1` | `BigArena::Allocation` | Working `allocate_double()` |
@@ -45,12 +45,13 @@ sites, in the same order. Each single-slot BigNum is staged in
 handle is assigned directly from `big_num.working.allocate_double()`.
 These slots have no raw `WorkingBinding` entries.
 
+The retained tmp1 product keeps its existing paired reservation.
 `bind` reconstructs null owners at the existing working setup site,
 then clears a single's full block or a pair's two full blocks. The
 guarded workspace test in `change_precision` includes all five live
 base addresses; relocation discards their bytes and preserves width
-metadata and indices. `unbind` releases the three BigNum values with
-`BigNum{}` and resets both allocation handles before arena destruction.
+metadata and indices. `unbind` releases the three numeric owners and
+resets both allocation handles before arena destruction.
 Rebinding live owners does not allocate additional slots. Working
 scratch is discarded rather than converted as a live numeric value.
 
@@ -161,6 +162,63 @@ full-precision comparison replaces an integer bailout test.
 
 ## Reciprocal Division And Borrowed Windows
 
+The old destination-return interfaces were:
+
+```cpp
+BigNumPtr div_bn(BigNumPtr r, BigNumConstPtr left, BigNumConstPtr right);
+BigNumPtr unsafe_inv_bn(BigNumPtr r, BigNumPtr source);
+BigNumPtr unsafe_div_bn_int(BigNumPtr r, BigNumPtr source,
+    misc::U16 divisor);
+BigNumPtr div_a_bn_int(BigNumPtr r, misc::U16 divisor);
+```
+
+The owning interfaces preserve those destination-return aliases:
+
+```cpp
+BigNum &div_bn(BigNum &r, const BigNum &left, const BigNum &right);
+BigNum &unsafe_inv_bn(BigNum &r, BigNum &source);
+BigNum &unsafe_div_bn_int(BigNum &r, BigNum &source, misc::U16 divisor);
+BigNum &div_a_bn_int(BigNum &r, misc::U16 divisor);
+```
+
+These write the existing N-byte destination and return its identity;
+they do not allocate results or alter assignment policy. Division copies
+both const operands into the existing paired copy buffers, in their
+existing order, before any destination write. Either operand may alias
+the destination. Reciprocal and distinct integer division keep their
+destructive source behavior; the in-place integer form changes only its
+destination. Slot tails stay outside the active N-byte write extent.
+
+The numeric callers are BigNum's division operators and these fixtures
+in test_BigNum.cpp:
+
+- `unsignedDivisionAssignmentPreservesRoundingAndZeroDivisorSaturation`
+- `legacyArithmeticSamplesPreserveDistinctOperands`
+- `legacyDivisionKeepsSaturationAndZeroRules`
+- `expressionsMatchLegacySequencesAndOutliveTheirTemporaries`
+- `reciprocalRestoresPrecisionAndReturnsTheOriginalDestination`
+- `divisionCapturesBothInputsBeforeAnAliasedWrite`
+- `divisionCopiesASharedInputBeforeWritingItsDestination`
+- `reciprocalZeroKeepsSaturationAndPrecision`
+- `reciprocalOverflowKeepsEarlyReturnSignAndSourceMutation`
+
+The fixtures use owning destinations and existing encoded import/export
+boundaries. Reciprocal guard slots still surround its destination,
+including during ramps. The parameterized integer-division cases cover
+distinct and aliased unsafe calls and the in-place entry, with divisors
+zero, one, two, and 256 at all integer widths and both signs. Reciprocal
+edge cases retain zero and overflow early returns and source mutation.
+
+The byte entries in big.h/big.cpp use Byte pointers. unsafe_inv_bn and
+divide receive borrowed tmp1/tmp2/tmp3 buffers from BigNum.cpp; div_bn
+also receives the two existing copy buffers. The byte binary_operation
+helper receives its two borrowed copy buffers explicitly and retains
+the existing copy/copy/callback sequence for multiplication. Division's
+byte entry keeps that same copy/copy/divide sequence with explicit
+scratch arguments. No new workspace, allocation, or operand copy is
+introduced. str_to_bn, unsafe_div_bf_int, and div_a_bf_int remain byte
+callers of integer division at their existing active lengths.
+
 `unsafe_inv_bn` borrows its destination and mutable input from their
 owning caller. It saves `orig_r` and `orig_n`, starts at the existing
 LDouble estimate, and doubles the active precision for at most 25
@@ -180,7 +238,8 @@ Keep the private callback's representation signature:
 
 ```cpp
 Byte *binary_operation(Byte *result, const Byte *left,
-    const Byte *right, Byte *(*operation)(Byte *, Byte *, Byte *));
+    const Byte *right, Byte *copy1, Byte *copy2,
+    Byte *(*operation)(Byte *, Byte *, Byte *));
 ```
 
 The result borrows its owning BigNum's storage. The callback's inputs
@@ -210,9 +269,9 @@ windows are selected by those existing functions, including temporary
 length changes. Do not construct BigNum values from those mantissas or
 copy them into the BigNum arena to call an owning operation.
 
-Use the existing math-private `BigStorage.h` for the necessary byte
-declarations once public numeric/test callers have migrated. Bodies stay
-in their existing files and namespaces. Representative signatures are:
+Use <math/big.h> for byte declarations. Bodies move to big.cpp in their
+named slices; owning declarations and definitions remain in the value
+headers and implementations. Representative byte signatures are:
 
 ```cpp
 Byte *clear_bn(Byte *r);
@@ -242,8 +301,12 @@ Byte *full_mult_bn(Byte *r, Byte *left, Byte *right);
 Byte *mult_bn(Byte *r, Byte *left, Byte *right);
 Byte *full_square_bn(Byte *r, Byte *source);
 Byte *square_bn(Byte *r, Byte *source);
-Byte *unsafe_inv_bn(Byte *r, Byte *source);
-Byte *div_bn(Byte *r, const Byte *left, const Byte *right);
+Byte *unsafe_inv_bn(Byte *r, Byte *source,
+    Byte *tmp1, Byte *tmp2, Byte *tmp3);
+Byte *divide(Byte *r, Byte *left, Byte *right,
+    Byte *tmp1, Byte *tmp2, Byte *tmp3);
+Byte *div_bn(Byte *r, const Byte *left, const Byte *right,
+    Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *copy1, Byte *copy2);
 long bn_to_int(const Byte *n);
 ```
 
@@ -256,13 +319,13 @@ BigNum.cpp's owning multiply, `operator*`, and division helper call
 `unsafe_mult_bn`; owning `square_bn` and `sqr()` call `unsafe_square_bn`.
 Copies, allocation, calculation order, and the full-width sqr fallback
 remain unchanged. The remaining anonymous `compare`, `add`, `subtract`,
-`negate`, and `divide` implementations stay in BigNum.cpp with their
+and `negate` implementations stay in BigNum.cpp with their
 existing argument roles. Their byte cursors continue borrowing
 the owning arguments or copy allocations; no additional values are
 constructed inside their loops.
 Public operators continue taking BigNum references. Representation
-tests may include this private boundary through a test-core-only include
-directory for `libs/core/math`. Do not add a new public byte wrapper.
+tests use owning interfaces or existing encoded import/export boundaries.
+Do not add private-header includes to tests or a new public byte wrapper.
 
 Spelling a pointer `Byte *` is not an ownership conversion. Keep each
 necessary byte declaration and cursor in the final audit, with its

@@ -4,7 +4,10 @@
 // Wesley Loewer's Big Numbers. (C) 1994-95, Wesley B. Loewer
 //
 #include <math/big.h>
+#include <math/big_init.h>
 
+#include <algorithm>
+#include <cfloat>
 #include <cstring>
 
 using namespace id::misc;
@@ -844,6 +847,297 @@ Byte *mult_a_bn_int(Byte *r, const U16 u)
 bool is_bn_zero(const Byte *n)
 {
     return !is_bn_not_zero(n);
+}
+
+/********************************************************************/
+// r = n / u  where u is an unsigned integer
+Byte *unsafe_div_bn_int(Byte *r, Byte *n, const U16 u)
+{
+    U16 rem = 0;
+
+    const bool sign = is_bn_neg(n);
+    if (sign)
+    {
+        neg_a_bn(n);
+    }
+
+    if (u == 0) // division by zero
+    {
+        max_bn(r);
+        if (sign)
+        {
+            neg_a_bn(r);
+        }
+        return r;
+    }
+
+    // two bytes at a time
+    for (int i = g_bn_length - 2; i >= 0; i -= 2)
+    {
+        const U32 full_number = (static_cast<U32>(rem) << 16) + static_cast<U32>(BIG_ACCESS16(n + i));
+        const U16 quot = static_cast<U16>(full_number / u);
+        rem = static_cast<U16>(full_number % u);
+        BIG_SET16(r + i, quot);
+    }
+
+    if (sign)
+    {
+        neg_a_bn(r);
+    }
+    return r;
+}
+
+/********************************************************************/
+// r /= u  where u is an unsigned integer
+Byte *div_a_bn_int(Byte *r, const U16 u)
+{
+    U16 rem = 0;
+
+    const bool sign = is_bn_neg(r);
+    if (sign)
+    {
+        neg_a_bn(r);
+    }
+
+    if (u == 0) // division by zero
+    {
+        max_bn(r);
+        if (sign)
+        {
+            neg_a_bn(r);
+        }
+        return r;
+    }
+
+    // two bytes at a time
+    for (int i = g_bn_length - 2; i >= 0; i -= 2)
+    {
+        const U32 full_number = (static_cast<U32>(rem) << 16) + static_cast<U32>(BIG_ACCESS16(r + i));
+        const U16 quot = static_cast<U16>(full_number / u);
+        rem = static_cast<U16>(full_number % u);
+        BIG_SET16(r + i, quot);
+    }
+
+    if (sign)
+    {
+        neg_a_bn(r);
+    }
+    return r;
+}
+
+/********************************************************************/
+// r = 1/n
+// uses tmp1 - tmp3 - global temp bignumbers
+//  SIDE-EFFECTS:
+//      n ends up as |n|    Make copy first if necessary.
+Byte *unsafe_inv_bn(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3)
+{
+    // use Newton's recursive method for zeroing in on 1/n : r=r(2-rn)
+
+    bool sign_flag = false;
+    if (is_bn_neg(n))
+    {
+        // will be a lot easier to deal with just positives
+        sign_flag = true;
+        neg_a_bn(n);
+    }
+
+    LDouble f = bn_to_float(n);
+    if (f == 0) // division by zero
+    {
+        max_bn(r);
+        return r;
+    }
+    f = 1 / f;       // approximate inverse
+    const long max_val = (1L << ((g_int_length << 3) - 1)) - 1;
+    if (f > max_val) // check for overflow
+    {
+        max_bn(r);
+        return r;
+    }
+    if (f <= -max_val)
+    {
+        max_bn(r);
+        neg_a_bn(r);
+        return r;
+    }
+
+    // With Newton's Method, there is no need to calculate all the digits
+    // every time.  The precision approximately doubles each iteration.
+    // Save original values.
+    // orig_bntmp1 not needed here
+    int orig_bn_length = g_bn_length;
+    int orig_padding = g_padding;
+    int orig_r_length = g_r_length;
+    int orig_shift_factor = g_shift_factor;
+    Byte *orig_r = r;
+    Byte *orig_n = n;
+    // orig_bntmp1        = tmp1;
+
+    // calculate new starting values
+    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
+    g_bn_length = std::min(g_bn_length, orig_bn_length);
+    calc_lengths();
+
+    // adjust pointers
+    r = orig_r + orig_bn_length - g_bn_length;
+    // tmp1 = orig_bntmp1 + orig_bn_length - g_bn_length;
+
+    float_to_bn(r, f);           // start with approximate inverse
+    clear_bn(tmp2);              // will be used as 1.0 and 2.0
+
+    for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
+    {
+        // adjust lengths
+        g_bn_length <<= 1; // double precision
+        g_bn_length = std::min(g_bn_length, orig_bn_length);
+        calc_lengths();
+        r = orig_r + orig_bn_length - g_bn_length;
+        n = orig_n + orig_bn_length - g_bn_length;
+        // tmp1 = orig_bntmp1 + orig_bn_length - g_bn_length;
+
+        unsafe_mult_bn(tmp1, r, n);                                                    // tmp1=rn
+        int_to_bn(tmp2, 1);                                                            // tmp2 = 1.0
+        if (g_bn_length == orig_bn_length && cmp_bn(tmp2, tmp1 + g_shift_factor) == 0) // if not different
+        {
+            break;                                                                     // they must be the same
+        }
+        int_to_bn(tmp2, 2);                                                            // tmp2 = 2.0
+        sub_bn(tmp3, tmp2, tmp1 + g_shift_factor);                                     // tmp3=2-rn
+        unsafe_mult_bn(tmp1, r, tmp3);                                                 // tmp1=r(2-rn)
+        copy_bn(r, tmp1 + g_shift_factor);                                             // r = tmp1
+    }
+
+    // restore original values
+    g_bn_length = orig_bn_length;
+    g_padding = orig_padding;
+    g_r_length = orig_r_length;
+    g_shift_factor = orig_shift_factor;
+    r = orig_r;
+
+    if (sign_flag)
+    {
+        neg_a_bn(r);
+    }
+    return r;
+}
+
+/********************************************************************/
+// r = n1/n2
+//      r - result of length g_bn_length
+// uses tmp1 - tmp3 - global temp bignumbers
+//  SIDE-EFFECTS:
+//      n1, n2 can end up as GARBAGE
+//      Make copies first if necessary.
+Byte *divide(Byte *r, Byte *n1, Byte *n2, Byte *tmp1, Byte *tmp2, Byte *tmp3)
+{
+    // first, check for valid data
+    const LDouble a = bn_to_float(n1);
+    if (a == 0)      // division into zero
+    {
+        clear_bn(r); // return 0
+        return r;
+    }
+    const LDouble b = bn_to_float(n2);
+    if (b == 0) // division by zero
+    {
+        max_bn(r);
+        return r;
+    }
+    const LDouble f = a / b; // approximate quotient
+    const long max_val = (1L << ((g_int_length << 3) - 1)) - 1;
+    if (f > max_val)         // check for overflow
+    {
+        max_bn(r);
+        return r;
+    }
+    if (f <= -max_val)
+    {
+        max_bn(r);
+        neg_a_bn(r);
+        return r;
+    }
+    // appears to be ok, do division
+
+    bool sign = false;
+    if (is_bn_neg(n1))
+    {
+        neg_a_bn(n1);
+        sign = !sign;
+    }
+    if (is_bn_neg(n2))
+    {
+        neg_a_bn(n2);
+        sign = !sign;
+    }
+
+    // scale n1 and n2 so: |n| >= 1/256
+    // scale = (int)(log(1/fabs(a))/LOG_256) = LOG_256(1/|a|)
+    int i = g_bn_length - 1;
+    while (i >= 0 && n1[i] == 0)
+    {
+        i--;
+    }
+    int scale1 = g_bn_length - i - 2;
+    scale1 = std::max(scale1, 0);
+    i = g_bn_length - 1;
+    while (i >= 0 && n2[i] == 0)
+    {
+        i--;
+    }
+    int scale2 = g_bn_length - i - 2;
+    scale2 = std::max(scale2, 0);
+
+    // shift n1, n2
+    // important!, use std::memmove(), not std::memcpy()
+    std::memmove(n1 + scale1, n1, g_bn_length - scale1); // shift bytes over
+    std::memset(n1, 0, scale1);                          // zero out the rest
+    std::memmove(n2 + scale2, n2, g_bn_length - scale2); // shift bytes over
+    std::memset(n2, 0, scale2);                          // zero out the rest
+
+    unsafe_inv_bn(r, n2, tmp1, tmp2, tmp3);
+    unsafe_mult_bn(tmp1, n1, r);
+    copy_bn(r, tmp1 + g_shift_factor); // r = tmp1
+
+    if (scale1 != scale2)
+    {
+        // Rescale r back to what it should be.  Overflow has already been checked
+        if (scale1 > scale2)                                 // answer is too big, adjust it
+        {
+            const int scale = scale1 - scale2;
+            std::memmove(r, r + scale, g_bn_length - scale); // shift bytes over
+            std::memset(r + g_bn_length - scale, 0, scale);  // zero out the rest
+        }
+        else if (scale1 < scale2)                            // answer is too small, adjust it
+        {
+            const int scale = scale2 - scale1;
+            std::memmove(r + scale, r, g_bn_length - scale); // shift bytes over
+            std::memset(r, 0, scale);                        // zero out the rest
+        }
+        // else scale1 == scale2
+    }
+
+    if (sign)
+    {
+        neg_a_bn(r);
+    }
+
+    return r;
+}
+
+Byte *binary_operation(Byte *result, const Byte *left, const Byte *right, Byte *copy1, Byte *copy2,
+    Byte *(*operation)(Byte *, Byte *, Byte *) )
+{
+    copy_bn(copy1, left);
+    copy_bn(copy2, right);
+    return operation(result, copy1, copy2);
+}
+
+Byte *div_bn(Byte *r, const Byte *n1, const Byte *n2, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *copy1, Byte *copy2)
+{
+    copy_bn(copy1, n1);
+    copy_bn(copy2, n2);
+    return divide(r, copy1, copy2, tmp1, tmp2, tmp3);
 }
 
 } // namespace id::math

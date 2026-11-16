@@ -112,8 +112,8 @@ Byte *unsafe_mult_bn(Byte *r, Byte *n1, Byte *n2);
 Byte *unsafe_square_bn(Byte *r, Byte *n);
 Byte *mult_bn_int(Byte *r, const Byte *n, misc::U16 u);
 Byte *mult_a_bn_int(Byte *r, misc::U16 u);
-BigNumPtr unsafe_div_bn_int(BigNumPtr r, BigNumPtr n, misc::U16 u);
-BigNumPtr div_a_bn_int(BigNumPtr r, misc::U16 u);
+Byte *unsafe_div_bn_int(Byte *r, Byte *n, misc::U16 u);
+Byte *div_a_bn_int(Byte *r, misc::U16 u);
 BigFloatPtr clear_bf(BigFloatPtr r);
 BigFloatPtr copy_bf(BigFloatPtr r, BigFloatConstPtr n);
 BigFloatPtr float_to_bf(BigFloatPtr r, LDouble f);
@@ -145,7 +145,10 @@ BigNumPtr int_to_bn(BigNumPtr r, long value);
 long bn_to_int(const Byte *n);
 Byte *abs_bn(Byte *r, const Byte *n);
 Byte *abs_a_bn(Byte *r);
-BigNumPtr unsafe_inv_bn(BigNumPtr r, BigNumPtr n);
+Byte *unsafe_inv_bn(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3);
+Byte *divide(Byte *r, Byte *n1, Byte *n2, Byte *tmp1, Byte *tmp2, Byte *tmp3);
+Byte *binary_operation(Byte *result, const Byte *left, const Byte *right, Byte *copy1, Byte *copy2,
+    Byte *(*operation)(Byte *, Byte *, Byte *) );
 int convert_bn(
     BigNumPtr new_num, BigNumConstPtr old_num, int new_bn_len, int new_int_len, int old_bn_len, int old_int_len);
 // "safe" versions
@@ -154,7 +157,7 @@ Byte *mult_bn(Byte *r, Byte *n1, Byte *n2);
 Byte *full_square_bn(Byte *r, Byte *n);
 Byte *square_bn(Byte *r, Byte *n);
 std::string bn_to_string(BigNumConstPtr r, int dec);
-BigNumPtr div_bn(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2);
+Byte *div_bn(Byte *r, const Byte *n1, const Byte *n2, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *copy1, Byte *copy2);
 // misc
 bool is_bn_zero(const Byte *n);
 BigNumPtr float_to_bn(BigNumPtr r, LDouble f);
