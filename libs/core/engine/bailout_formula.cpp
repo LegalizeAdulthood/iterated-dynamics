@@ -139,7 +139,7 @@ static int fp_manr_bailout()
 // No need to set magnitude
 // as color schemes that need it calculate it later.
 
-static bool bn_bailout_reached(const Byte *metric)
+static bool bn_bailout_reached(const BigNum &metric)
 {
     // Keep bn_to_int's unsigned 1/2-byte and signed 4-byte ranges,
     // including wrapped metrics, but compare their fractional bytes too.
@@ -169,20 +169,20 @@ static bool bn_bailout_reached(const Byte *metric)
     }
     BigStackSaver saved;
     const BigNum limit{bn_arena(BigLifetime::TEMPORARY), threshold};
-    if (!signed_metric && ((metric[g_bn_length - 1] ^ limit.data()[g_bn_length - 1]) & 0x80) != 0)
+    if (!signed_metric && is_bn_neg(metric) != is_bn_neg(limit))
     {
-        return (metric[g_bn_length - 1] & 0x80) != 0;
+        return is_bn_neg(metric);
     }
-    return cmp_bn(metric, limit.data()) >= 0;
+    return cmp_bn(metric, limit) >= 0;
 }
 
 static int bn_mod_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    add_bn(g_bn_tmp.data(), g_tmp_sqr_x_bn.data(), g_tmp_sqr_y_bn.data());
+    add_bn(g_bn_tmp, g_tmp_sqr_x_bn, g_tmp_sqr_y_bn);
 
-    if (bn_bailout_reached(g_bn_tmp.data()))
+    if (bn_bailout_reached(g_bn_tmp))
     {
         return 1;
     }
@@ -195,7 +195,7 @@ static int bn_real_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    if (bn_bailout_reached(g_tmp_sqr_x_bn.data()))
+    if (bn_bailout_reached(g_tmp_sqr_x_bn))
     {
         return 1;
     }
@@ -208,7 +208,7 @@ static int bn_imag_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    if (bn_bailout_reached(g_tmp_sqr_y_bn.data()))
+    if (bn_bailout_reached(g_tmp_sqr_y_bn))
     {
         return 1;
     }
@@ -221,7 +221,7 @@ static int bn_or_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    if (bn_bailout_reached(g_tmp_sqr_x_bn.data()) || bn_bailout_reached(g_tmp_sqr_y_bn.data()))
+    if (bn_bailout_reached(g_tmp_sqr_x_bn) || bn_bailout_reached(g_tmp_sqr_y_bn))
     {
         return 1;
     }
@@ -234,7 +234,7 @@ static int bn_and_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    if (bn_bailout_reached(g_tmp_sqr_x_bn.data()) && bn_bailout_reached(g_tmp_sqr_y_bn.data()))
+    if (bn_bailout_reached(g_tmp_sqr_x_bn) && bn_bailout_reached(g_tmp_sqr_y_bn))
     {
         return 1;
     }
@@ -248,7 +248,7 @@ static int bn_manh_bailout()
     BigStackSaver saved;
     BigNum abs_x{bn_arena(BigLifetime::TEMPORARY)};
     BigNum abs_y{bn_arena(BigLifetime::TEMPORARY)};
-    BigNumProduct metric{bn_arena(BigLifetime::TEMPORARY)};
+    BigNum metric{bn_arena(BigLifetime::TEMPORARY)};
 
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
@@ -256,7 +256,7 @@ static int bn_manh_bailout()
     abs_bn(abs_y, g_new_z_bn.y);
     add_bn(g_bn_tmp, abs_x, abs_y);
     square_bn(metric, g_bn_tmp);
-    if (bn_bailout_reached(metric.data() + g_shift_factor))
+    if (bn_bailout_reached(metric))
     {
         return 1;
     }
@@ -268,13 +268,13 @@ static int bn_manh_bailout()
 static int bn_manr_bailout()
 {
     BigStackSaver saved;
-    BigNumProduct metric{bn_arena(BigLifetime::TEMPORARY)};
+    BigNum metric{bn_arena(BigLifetime::TEMPORARY)};
 
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     add_bn(g_bn_tmp, g_new_z_bn.x, g_new_z_bn.y); // don't need abs since we square it next
     square_bn(metric, g_bn_tmp);
-    if (bn_bailout_reached(metric.data() + g_shift_factor))
+    if (bn_bailout_reached(metric))
     {
         return 1;
     }

@@ -337,6 +337,28 @@ TEST_P(TestBigNumProductWindows, smallPositiveThresholdRemainsGreaterThanZero)
     EXPECT_EQ(0, g_bailout_bignum());
 }
 
+TEST_P(TestBigNumProductWindows, highBitMetricRemainsBelowItsFractionalUpperThreshold)
+{
+    set_bailout_formula(Bailout::REAL);
+    g_new_z_bn.x = g_int_length == 1 ? 12 : g_int_length == 2 ? 200 : 50000;
+    g_new_z_bn.y = 0;
+    const double metric = g_int_length == 1 ? 144 : g_int_length == 2 ? 40000 : -1794967296.0;
+    g_magnitude_limit = metric + 0.25;
+
+    EXPECT_EQ(0, g_bailout_bignum());
+}
+
+TEST_P(TestBigNumProductWindows, highBitMetricReachesItsFractionalLowerThreshold)
+{
+    set_bailout_formula(Bailout::REAL);
+    g_new_z_bn.x = g_int_length == 1 ? 12 : g_int_length == 2 ? 200 : 50000;
+    g_new_z_bn.y = 0;
+    const double metric = g_int_length == 1 ? 144 : g_int_length == 2 ? 40000 : -1794967296.0;
+    g_magnitude_limit = metric - 0.25;
+
+    EXPECT_EQ(1, g_bailout_bignum());
+}
+
 TEST_P(TestBigNumProductWindows, canonicalSlotAndPairedProductHaveSeparateExtents)
 {
     BigArena &arena = bn_arena(BigLifetime::WORKING);
@@ -566,7 +588,7 @@ void TestBigNumBailoutProductStorage::SetUp()
     g_magnitude_limit = std::get<3>(GetParam()) ? 0.5 : 32;
 }
 
-TEST_P(TestBigNumBailoutProductStorage, reservesPairedMetricAndReleasesTemporariesWithoutTouchingNeighbors)
+TEST_P(TestBigNumBailoutProductStorage, reservesCanonicalMetricAndReusesPrivateSqrScratchWithoutTouchingNeighbors)
 {
     const Bailout mode = std::get<2>(GetParam());
     const bool escape = std::get<3>(GetParam());
@@ -582,8 +604,23 @@ TEST_P(TestBigNumBailoutProductStorage, reservesPairedMetricAndReleasesTemporari
     BigNumProduct guard{temporary};
     std::fill_n(guard.data(), 2 * stride, Byte{0xa5});
     const BigStackMark mark = save_stack();
+    ASSERT_EQ(4U, temporary.high_water_mark());
+    BigArena::Allocation slot = temporary.allocate_single();
+    Byte *const slot_address = slot.data();
+    BigNum neighbor{temporary, -11};
+    std::fill(neighbor.data() + g_bn_length, neighbor.data() + stride, Byte{0x5a});
+    const std::vector<Byte> neighbor_bytes(neighbor.data(), neighbor.data() + stride);
+    BigArena::Allocation scratch = temporary.allocate_double();
+    Byte *const scratch_address = scratch.data();
+    BigArena::Allocation second_pair;
+    if (mode == Bailout::MANH)
+    {
+        second_pair = temporary.allocate_double();
+    }
+    second_pair.reset();
+    scratch.reset();
+    slot.reset();
     const std::size_t high_water = temporary.high_water_mark();
-    ASSERT_EQ(4U, high_water);
     g_old_z_bn.x = -7;
     g_old_z_bn.y = 9;
     g_new_z_bn.x = -3;
@@ -591,10 +628,12 @@ TEST_P(TestBigNumBailoutProductStorage, reservesPairedMetricAndReleasesTemporari
 
     EXPECT_EQ(escape ? 1 : 0, g_bailout_bignum());
 
-    // abs_x/abs_y share one pair in MANH. The retained metric needs
-    // its own pair; the canonical comparison limit needs another.
-    EXPECT_EQ(high_water + (mode == Bailout::MANH ? 6U : 4U), temporary.high_water_mark());
+    // The isolated half holds abs_x (MANH) or the metric (MANR).
+    // MANH's abs_y and metric share a pair. Only sqr scratch needs
+    // another pair, released before the canonical limit is constructed.
+    EXPECT_EQ(high_water, temporary.high_water_mark());
     EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(neighbor_bytes, std::vector<Byte>(neighbor.data(), neighbor.data() + stride));
     const std::size_t warmed_high_water = temporary.high_water_mark();
     EXPECT_EQ(escape ? 1 : 0, g_bailout_bignum());
     EXPECT_EQ(warmed_high_water, temporary.high_water_mark());
@@ -612,11 +651,13 @@ TEST_P(TestBigNumBailoutProductStorage, reservesPairedMetricAndReleasesTemporari
     EXPECT_EQ(BigNum{escape ? 9.0L : 2.0L}, g_old_z_bn.y);
     EXPECT_EQ(BigNum{mode == Bailout::MANH ? 5.0L : -1.0L}, g_bn_tmp);
 
+    BigArena::Allocation reused_slot = temporary.allocate_single();
+    EXPECT_EQ(slot_address, reused_slot.data());
     BigArena::Allocation first = temporary.allocate_double();
-    BigArena::Allocation second = temporary.allocate_double();
+    EXPECT_EQ(scratch_address, first.data());
     if (mode == Bailout::MANH)
     {
-        BigArena::Allocation third = temporary.allocate_double();
+        BigArena::Allocation second = temporary.allocate_double();
         EXPECT_EQ(warmed_high_water, temporary.high_water_mark());
     }
     else

@@ -7,7 +7,8 @@ Copyright 2026 Richard Thomson.
 
 This specifies the owning storage of `g_old_z_bn`, `g_tmp_sqr_x_bn`,
 `g_tmp_sqr_y_bn`, and `g_bn_tmp`. The square caches now contain
-canonical values. Retained products use separate paired temporaries.
+canonical values, as do the orbit locals and bailout metrics. Retained
+products use private paired temporaries in the value implementation.
 
 ## Extents And Existing Operations
 
@@ -34,8 +35,15 @@ the existing destination, and releases the pair on return. The cache
 address and bytes after `N` remain unchanged.
 
 `square_bn(BigNumProduct &, BigNum &)` still writes `R` bytes into
-an existing pair without allocation or reduction. Manhattan bailout
-metrics retain their existing BigNumProduct storage and shifted reads.
+an existing pair without allocation or reduction. The MANH and MANR
+bailout metrics use canonical BigNum destinations and the same private
+paired scratch/copy/release as the square caches.
+
+`bn_bailout_reached` borrows a canonical value through `const BigNum &`.
+It uses the existing owning sign and comparison functions without a
+product conversion or numeric copy. The unsigned one/two-byte and signed
+four-byte interpretations, fractional threshold adjustment, range
+checks, and temporary limit construction stay in place.
 
 Julia's local cross-product is a single-slot BigNum in the temporary
 arena. `mult_bn(BigNum &, BigNum &, BigNum &)` computes in a private
@@ -65,8 +73,8 @@ return. No product-read conversion or operand-copy allocation is added.
   Copy the canonical orbit only on continuation.
 
 - MANH and MANR: Write both canonical square caches. Keep the existing
-  separate absolute-value/addition statements and paired metric square.
-  Test the metric's shifted canonical window. Old x/y remain orbit
+  separate absolute-value/addition statements and canonical metric
+  square. Test that canonical metric directly. Old x/y remain orbit
   values and are copied from the new orbit only on continuation.
 
 - Periodicity and orbit observations: Keep their existing canonical
@@ -99,6 +107,13 @@ private pair is released before doubling and bailout. The local stays
 alive through bailout, then releases its slot before the surrounding
 BigStackSaver rewinds borrowed temporaries.
 
+MANH reserves its two single-slot absolute components and one single-slot
+metric at the existing sites. MANR reserves one single-slot metric.
+Each metric square releases its private pair before threshold comparison.
+The helper constructs only its existing canonical limit; it does not
+allocate or copy a metric at entry. Both bailout outcomes release the
+locals before their surrounding BigStackSaver rewinds.
+
 ## Characterization
 
 - `TestBigNumSqrStorage` checks independently encoded canonical cache
@@ -118,6 +133,13 @@ BigStackSaver rewinds borrowed temporaries.
   local release before rewind, source restoration, and both outcomes.
   `TestBigNumJuliaCanonicalProduct` checks discarded low bits before
   doubling, fixed-width overflow, and destination identity and tails.
+
+- `TestBigNumBailoutProductStorage` pins a neighboring slot and checks
+  that canonical metrics and private sqr scratch reuse the available
+  single/paired reservations on escape and continuation. Existing
+  independent bailout fixtures retain their numerical expectations;
+  high-bit metric tests also cover signed four-byte wrap and fractional
+  thresholds on both sides of the metric.
 
 - Existing setup, Julia, bailout, and continuation fixtures check the
   same orbit results and fixed-width overflow with canonical caches.
