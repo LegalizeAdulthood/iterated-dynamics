@@ -33,170 +33,6 @@ void validate_buffer(BigNumConstPtr buffer, const std::size_t size, const std::s
 }
 
 /************************************************************************/
-// r = n1 * n2
-// Note: r will be a double wide result, 2*g_bn_length
-//       n1 and n2 can be the same pointer
-// SIDE-EFFECTS: n1 and n2 are changed to their absolute values
-BigNumPtr full_multiply(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
-{
-    bool sign2 = false;
-    int double_steps;
-    // pointers for n1, n2
-    BigNumPtr rp2;
-    // pointers for r
-
-    const bool sign1 = is_bn_neg(n1);
-    if (sign1) // =, not ==
-    {
-        neg_a_bn(n1);
-    }
-    const bool same_var = n1 == n2;
-    if (!same_var) // check to see if they're the same pointer
-    {
-        sign2 = is_bn_neg(n2);
-        if (sign2) // =, not ==
-        {
-            neg_a_bn(n2);
-        }
-    }
-
-    BigNumPtr n1_p = n1;
-    const int steps = g_bn_length >> 1; // two bytes at a time
-    int carry_steps = double_steps = (steps << 1) - 2;
-    g_bn_length <<= 1;
-    clear_bn(r);                        // double width
-    g_bn_length >>= 1;
-    BigNumPtr rp1 = rp2 = r;
-    for (int i = 0; i < steps; i++)
-    {
-        BigNumPtr n2_p = n2;
-        for (int j = 0; j < steps; j++)
-        {
-            const U32 prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
-            U32 sum = static_cast<U32>(BIG_ACCESS16(rp2)) + prod; // add to previous, including overflow
-            BIG_SET16(rp2, static_cast<U16>(sum));                // save the lower 2 bytes
-            sum >>= 16;                                           // keep just the upper 2 bytes
-            BigNumPtr rp3 = rp2 + 2;                              // move over 2 bytes
-            sum += BIG_ACCESS16(rp3);                             // add what was the upper two bytes
-            BIG_SET16(rp3, static_cast<U16>(sum));                // save what was the upper two bytes
-            sum >>= 16;                                           // keep just the overflow
-            for (int k = 0; sum != 0 && k < carry_steps; k++)
-            {
-                rp3 += 2;                                         // move over 2 bytes
-                sum += BIG_ACCESS16(rp3);                         // add to what was the overflow
-                BIG_SET16(rp3, static_cast<U16>(sum));            // save what was the overflow
-                sum >>= 16;                                       // keep just the new overflow
-            }
-            n2_p += 2;                                            // to next word
-            rp2 += 2;
-            carry_steps--;                                        // use one less step
-        }
-        n1_p += 2;                                                // to next word
-        rp2 = rp1 += 2;
-        carry_steps = --double_steps;                             // decrease doubles steps and reset carry_steps
-    }
-
-    // if they were the same or same sign, the product must be positive
-    if (!same_var && sign1 != sign2)
-    {
-        g_bn_length <<= 1; // for a double wide number
-        neg_a_bn(r);
-        g_bn_length >>= 1; // restore g_bn_length
-    }
-    return r;
-}
-
-/************************************************************************/
-// r = n1 * n2 calculating only the top g_r_length bytes
-// Note: r will be of length g_r_length
-//       2*g_bn_length <= g_r_length < g_bn_length
-//       n1 and n2 can be the same pointer
-// SIDE-EFFECTS: n1 and n2 are changed to their absolute values
-BigNumPtr multiply(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
-{
-    bool sign2 = false;
-    int double_steps;
-    // pointers for n1, n2
-    BigNumPtr rp1;
-
-    int bnl = g_bn_length;
-    const bool sign1 = is_bn_neg(n1);
-    if (sign1 != 0) // =, not ==
-    {
-        neg_a_bn(n1);
-    }
-    const bool same_var = n1 == n2;
-    if (!same_var) // check to see if they're the same pointer
-    {
-        sign2 = is_bn_neg(n2);
-        if (sign2) // =, not ==
-        {
-            neg_a_bn(n2);
-        }
-    }
-    BigNumPtr n1_p = n1;
-    n2 += (g_bn_length << 1) - g_r_length; // shift n2 over to where it is needed
-
-    g_bn_length = g_r_length;
-    clear_bn(r);                           // zero out r, g_r_length width
-    g_bn_length = bnl;
-
-    int steps = (g_r_length - g_bn_length) >> 1;
-    int skips = (g_bn_length >> 1) - steps;
-    int carry_steps = double_steps = (g_r_length >> 1) - 2;
-    BigNumPtr rp2 = rp1 = r;
-    for (int i = g_bn_length >> 1; i > 0; i--)
-    {
-        BigNumPtr n2_p = n2;
-        for (int j = 0; j < steps; j++)
-        {
-            const U32 prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
-            U32 sum = static_cast<U32>(BIG_ACCESS16(rp2)) + prod; // add to previous, including overflow
-            BIG_SET16(rp2, static_cast<U16>(sum));                // save the lower 2 bytes
-            sum >>= 16;                                           // keep just the upper 2 bytes
-            BigNumPtr rp3 = rp2 + 2;                              // move over 2 bytes
-            sum += BIG_ACCESS16(rp3);                             // add what was the upper two bytes
-            BIG_SET16(rp3, static_cast<U16>(sum));                // save what was the upper two bytes
-            sum >>= 16;                                           // keep just the overflow
-            for (int k = 0; sum != 0 && k < carry_steps; k++)
-            {
-                rp3 += 2;                                         // move over 2 bytes
-                sum += BIG_ACCESS16(rp3);                         // add to what was the overflow
-                BIG_SET16(rp3, static_cast<U16>(sum));            // save what was the overflow
-                sum >>= 16;                                       // keep just the new overflow
-            }
-            n2_p += 2;                                            // increase by two bytes
-            rp2 += 2;
-            carry_steps--;
-        }
-        n1_p += 2; // increase by two bytes
-
-        if (skips != 0)
-        {
-            n2 -= 2; // shift n2 back a word
-            steps++; // one more step this time
-            skips--; // keep track of how many times we've done this
-        }
-        else
-        {
-            rp1 += 2;       // shift forward a word
-            double_steps--; // reduce the carry steps needed next time
-        }
-        rp2 = rp1;
-        carry_steps = double_steps;
-    }
-
-    // if they were the same or same sign, the product must be positive
-    if (!same_var && sign1 != sign2)
-    {
-        g_bn_length = g_r_length;
-        neg_a_bn(r); // wider bignumber
-        g_bn_length = bnl;
-    }
-    return r;
-}
-
-/************************************************************************/
 // r = n^2
 //   because of the symetry involved, n^2 is much faster than n*n
 //   for a bignumber of length l
@@ -511,7 +347,7 @@ BigNumPtr divide(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
     std::memset(n2, 0, scale2);                          // zero out the rest
 
     unsafe_inv_bn(r, n2);
-    multiply(g_bn_tmp1.data(), n1, r);
+    unsafe_mult_bn(g_bn_tmp1.data(), n1, r);
     copy_bn(r, g_bn_tmp1.data() + g_shift_factor); // r = g_bn_tmp1
 
     if (scale1 != scale2)
@@ -745,7 +581,7 @@ BigNum BigNum::operator-(const BigNum &right) const
 BigNum BigNum::operator*(const BigNum &right) const
 {
     BigNumProduct result{bn_arena(BigLifetime::WORKING)};
-    binary_operation(result.data(), data(), right.data(), multiply);
+    binary_operation(result.data(), data(), right.data(), unsafe_mult_bn);
     return BigNum{std::move(result)};
 }
 
@@ -857,7 +693,7 @@ void mult_bn(BigNum &result, BigNum &left, BigNum &right)
     const bool sign1 = is_bn_neg(left.data());
     const bool sign2 = is_bn_neg(right.data());
     BigNumProduct product{bn_arena(BigLifetime::TEMPORARY)};
-    multiply(product.data(), left.data(), right.data());
+    unsafe_mult_bn(product.data(), left.data(), right.data());
     if (sign1)
     {
         neg_a_bn(left.data());
@@ -975,11 +811,6 @@ BigNum sub_bn(const BigNum &left, const BigNum &right)
     return result;
 }
 
-BigNumPtr unsafe_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
-{
-    return multiply(r, n1, n2);
-}
-
 BigNumPtr unsafe_square_bn(BigNumPtr r, BigNumPtr n)
 {
     return square(r, n);
@@ -993,38 +824,6 @@ void add_a_bn(BigNum &result, const BigNum &source)
 void sub_a_bn(BigNum &result, const BigNum &source)
 {
     sub_bn(result.data(), result.data(), source.data());
-}
-
-BigNumPtr full_mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
-{
-    const bool sign1 = is_bn_neg(n1);
-    const bool sign2 = is_bn_neg(n2);
-    full_multiply(r, n1, n2);
-    if (sign1)
-    {
-        neg_a_bn(n1);
-    }
-    if (sign2)
-    {
-        neg_a_bn(n2);
-    }
-    return r;
-}
-
-BigNumPtr mult_bn(BigNumPtr r, BigNumPtr n1, BigNumPtr n2)
-{
-    const bool sign1 = is_bn_neg(n1);
-    const bool sign2 = is_bn_neg(n2);
-    multiply(r, n1, n2);
-    if (sign1)
-    {
-        neg_a_bn(n1);
-    }
-    if (sign2)
-    {
-        neg_a_bn(n2);
-    }
-    return r;
 }
 
 BigNumPtr full_square_bn(BigNumPtr r, BigNumPtr n)
