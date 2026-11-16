@@ -486,6 +486,16 @@ Byte *square_bn(Byte *r, Byte *n)
     return r;
 }
 
+Byte *msb_bn(Byte *value)
+{
+    return value + g_shift_factor;
+}
+
+const Byte *msb_bn(const Byte *value)
+{
+    return value + g_shift_factor;
+}
+
 // r = n
 Byte *copy_bn(Byte *r, const Byte *n)
 {

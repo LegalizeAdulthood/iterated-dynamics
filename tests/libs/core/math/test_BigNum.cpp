@@ -41,6 +41,7 @@ static_assert(!std::is_convertible_v<BigFloat, BigNum>);
 static_assert(!std::is_convertible_v<LDouble, BigNum>);
 static_assert(std::is_same_v<decltype(&bn_hex_dump), void (*)(const BigNum &)>);
 static_assert(std::is_void_v<decltype(square_bn(std::declval<BigNumProduct &>(), std::declval<BigNum &>()))>);
+static_assert(std::is_void_v<decltype(square_bn(std::declval<BigNum &>(), std::declval<BigNum &>()))>);
 static_assert(std::is_same_v<decltype(add_bn(std::declval<const BigNum &>(), std::declval<const BigNum &>())), BigNum>);
 static_assert(std::is_same_v<decltype(sub_bn(std::declval<const BigNum &>(), std::declval<const BigNum &>())), BigNum>);
 static_assert(std::is_same_v<decltype(mult_bn_int(std::declval<const BigNum &>(), U16{})), BigNum>);
@@ -952,8 +953,84 @@ TEST_P(TestBigNumRetainedSqr, preservesProductSourceAllocationAndPadding)
         std::vector<Byte>(destination.data() + g_r_length, destination.data() + 2 * arena.block_size()));
 }
 
+TEST_P(TestBigNumRetainedSqr, canonicalSquarePreservesDestinationSourceAndScratchLifetime)
+{
+    BigArena &arena = bn_arena(BigLifetime::WORKING);
+    BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
+    BigNum source{std::get<2>(GetParam()) ? -2.0L : 2.0L};
+    BigNum destination{arena};
+    const std::vector<Byte> expected = encoded_value(BigNum{4});
+    std::fill(source.data() + g_bn_length, source.data() + arena.block_size(), Byte{0x5a});
+    const std::vector<Byte> original_source(source.data(), source.data() + arena.block_size());
+    std::fill_n(destination.data(), arena.block_size(), Byte{0xa5});
+    const Byte *const original_destination = destination.data();
+    BigArena::Allocation scratch = temporary.allocate_double();
+    const Byte *const scratch_address = scratch.data();
+    scratch.reset();
+    const std::size_t working_high_water = arena.high_water_mark();
+    const std::size_t temporary_high_water = temporary.high_water_mark();
+    const BigStackMark stack_mark = save_stack();
+
+    square_bn(destination, source);
+
+    EXPECT_EQ(expected, encoded_value(destination));
+    EXPECT_EQ(original_destination, destination.data());
+    EXPECT_EQ(&arena, &destination.arena());
+    EXPECT_EQ(working_high_water, arena.high_water_mark());
+    EXPECT_EQ(temporary_high_water, temporary.high_water_mark());
+    EXPECT_EQ(stack_mark, save_stack());
+    EXPECT_EQ(original_source, std::vector<Byte>(source.data(), source.data() + arena.block_size()));
+    EXPECT_EQ(std::vector<Byte>(arena.block_size() - g_bn_length, 0xa5),
+        std::vector<Byte>(destination.data() + g_bn_length, destination.data() + arena.block_size()));
+    BigArena::Allocation reused = temporary.allocate_double();
+    EXPECT_EQ(scratch_address, reused.data());
+    EXPECT_EQ(temporary_high_water, temporary.high_water_mark());
+}
+
+TEST_P(TestBigNumRetainedSqr, canonicalSquarePreservesFixedWidthOverflow)
+{
+    // Squaring the largest signed integer wraps to 1 at the canonical width.
+    const LDouble magnitude = std::ldexp(LDouble{1}, 8 * g_int_length - 1) - 1;
+    BigNum source{std::get<2>(GetParam()) ? -magnitude : magnitude};
+    const std::vector<Byte> original_source = encoded_value(source);
+    BigNum destination{bn_arena(BigLifetime::WORKING)};
+    const std::vector<Byte> expected = encoded_value(BigNum{1});
+
+    square_bn(destination, source);
+
+    EXPECT_EQ(expected, encoded_value(destination));
+    EXPECT_EQ(original_source, encoded_value(source));
+}
+
 INSTANTIATE_TEST_SUITE_P(LayoutsAndSigns, TestBigNumRetainedSqr,
     testing::Combine(testing::Values(4, 8, 12, 56, 60, 64, 672), testing::Values(1, 2, 4), testing::Bool()));
+
+class TestBigNumCanonicalSqrFraction : public TestBigNumRetainedSqr
+{
+};
+
+TEST_P(TestBigNumCanonicalSqrFraction, discardsLowProductBitsBeforeReturningTheCanonicalResult)
+{
+    const bool negative = std::get<2>(GetParam());
+    const std::size_t fractional_bytes = static_cast<std::size_t>(g_bn_length - g_int_length);
+    std::vector<Byte> source_bytes(static_cast<std::size_t>(g_bn_length), negative ? Byte{0xff} : Byte{0});
+    source_bytes.front() = negative ? Byte{0xff} : Byte{1};
+    source_bytes[fractional_bytes] = negative ? Byte{0xfe} : Byte{1};
+    BigNum source = BigNum::from_legacy(source_bytes.data(), source_bytes.size());
+    BigNum destination{bn_arena(BigLifetime::WORKING)};
+    // For |source| = 1 + q, q is one canonical LSB; q*q is discarded.
+    std::vector<Byte> expected(source_bytes.size());
+    expected.front() = 2;
+    expected[fractional_bytes] = 1;
+
+    square_bn(destination, source);
+
+    EXPECT_EQ(expected, encoded_value(destination));
+    EXPECT_EQ(source_bytes, encoded_value(source));
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndSigns, TestBigNumCanonicalSqrFraction,
+    testing::Combine(testing::Values(8, 12, 56, 60, 64, 672), testing::Values(1, 2, 4), testing::Bool()));
 
 namespace
 {

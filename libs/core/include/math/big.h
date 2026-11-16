@@ -93,6 +93,8 @@ void calc_lengths();
 Byte *clear_bn(Byte *r);
 Byte *max_bn(Byte *r);
 Byte *copy_bn(Byte *r, const Byte *n);
+Byte *msb_bn(Byte *value);
+const Byte *msb_bn(const Byte *value);
 int cmp_bn(const Byte *n1, const Byte *n2);
 bool is_bn_neg(const Byte *n);
 bool is_bn_not_zero(const Byte *n);

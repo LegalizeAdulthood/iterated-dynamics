@@ -81,10 +81,16 @@ and restores its mutable source's sign. It returns `void` without
 allocating, copying its source, or reducing the product. Ordinary `sqr()`
 remains canonical.
 
+The canonical `square_bn(BigNum &, BigNum &)` overload uses a private
+temporary-arena paired product and the same sign-restoring square path.
+It copies only `g_bn_length` bytes selected by private `msb_bn` into the
+existing single-slot destination, then releases scratch. It returns
+`void`, without a source copy or destination-handle replacement.
+
 The owning `mult_bn` free function returns `void` and writes canonical
 bytes into its existing single-slot destination. A private paired
 temporary holds the retained product; the wrapper copies `g_bn_length`
-bytes at `g_shift_factor`, then releases that temporary. It preserves
+bytes selected by `msb_bn`, then releases that temporary. It preserves
 the raw adapter's mutable input roles and sign-restoration sequence,
 including shared-input behavior, without operand copies.
 Ordinary `operator*` keeps its existing operand copies and returns

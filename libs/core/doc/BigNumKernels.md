@@ -72,18 +72,23 @@ The [orbit product contract](BigNumProducts.md) describes the retained
 byte-buffer calls. The implemented owning destination overloads are:
 
 ```cpp
+void square_bn(BigNum &result, BigNum &source);
 void square_bn(BigNumProduct &result, BigNum &source);
 void mult_bn(BigNum &result, BigNum &left, BigNum &right);
 ```
 
-Both return `void` and retain the destination's handle. Owning
-`square_bn` writes `[0, R)` without allocating, preserving its sign-save,
-kernel call, and sign-restore sequence. Owning `mult_bn` calculates in
-one temporary-arena paired product, preserves both sign saves/restores,
-and copies the N bytes at S into the existing canonical destination.
-Its paired scratch is released on return. Neither overload copies its
-operands. Existing result/input separation requirements remain; no new
-alias validation or initialization checks are added.
+All return `void` and retain the destination's handle. The retained
+`square_bn` overload writes `[0, R)` without allocating, preserving its
+sign-save, kernel call, and sign-restore sequence. Canonical `square_bn`
+uses that overload with one private temporary-arena paired product;
+canonical `mult_bn` likewise uses one pair and its existing sign sequence.
+Both copy N bytes selected by `msb_bn` into the existing destination and
+release their scratch on return. No operand copies are added.
+
+The private mutable and const `msb_bn` overloads return the supplied
+pointer plus S, without copying or allocating. Consuming product reduction
+uses the same selector. Existing result/input separation requirements
+remain; no new alias validation or initialization checks are added.
 
 ### Canonical Owning Free Functions
 
@@ -285,6 +290,13 @@ destination address, arena, and high-water mark. Its parameterized cases
 cover both signs, integer widths one, two, and four, and lengths 4, 8,
 12, 56, 60, 64, and 672. Existing bailout tests retain their exact scratch
 byte expectations after conversion to owning `square_bn`.
+
+Its canonical-square cases independently check integer results, fixed
+width overflow, source restoration, destination identity and tails, and
+temporary pair reuse/release. `TestBigNumCanonicalSqrFraction` supplies
+positive and negative `1 + q`, where q is one canonical LSB. Its expected
+bytes are `1 + 2*q`; the `q*q` term is below the canonical precision.
+These tests use exact bytes rather than floating-point tolerances.
 
 `TestBigNumRetainedMultiply` checks every retained byte, destination
 identity, unchanged padding and lengths, and the arena high-water mark.

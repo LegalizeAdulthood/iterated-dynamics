@@ -164,7 +164,7 @@ BigArena::Allocation native_storage(BigArena &arena, const LDouble value)
 
 void detail::reduce_bn_product(Byte *value)
 {
-    std::memmove(value, value + g_shift_factor, g_bn_length);
+    std::memmove(value, msb_bn(value), g_bn_length);
 }
 
 BigNum::BigNum() noexcept = default;
@@ -447,6 +447,13 @@ void square_bn(BigNumProduct &result, BigNum &source)
     }
 }
 
+void square_bn(BigNum &result, BigNum &source)
+{
+    BigNumProduct product{bn_arena(BigLifetime::TEMPORARY)};
+    square_bn(product, source);
+    copy_bn(result.data(), msb_bn(product.data()));
+}
+
 void mult_bn(BigNum &result, BigNum &left, BigNum &right)
 {
     const bool sign1 = is_bn_neg(left.data());
@@ -461,7 +468,7 @@ void mult_bn(BigNum &result, BigNum &left, BigNum &right)
     {
         neg_a_bn(right.data());
     }
-    copy_bn(result.data(), product.data() + g_shift_factor);
+    copy_bn(result.data(), msb_bn(product.data()));
 }
 
 bool BigNum::operator==(const BigNum &right) const
