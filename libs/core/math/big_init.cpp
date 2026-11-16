@@ -69,6 +69,7 @@ BigNum g_close_enough_bn{};
 // g_r_length
 BigNumProduct g_tmp_sqr_x_bn{};
 BigNumProduct g_tmp_sqr_y_bn{};
+// g_bn_length
 BigNum g_bn_tmp{};
 // g_bn_length; g_old_z_bn also retains g_r_length scratch products
 BNComplex g_old_z_bn{};

@@ -77,7 +77,7 @@ extern BigNum g_bn_tmp3;        // g_bn_length
 extern BigArena::Allocation g_bn_tmp_copy1;
 extern BigArena::Allocation g_bn_tmp_copy2;
 
-extern BigNum g_bn_tmp;            // g_r_length
+extern BigNum g_bn_tmp;            // g_bn_length
 extern BigFloat g_bf_tmp1;         // g_r_bf_length+2
 extern BigFloat g_bf_tmp2;         // g_r_bf_length+2
 extern BigFloat g_bf_tmp3;         // g_r_bf_length+2

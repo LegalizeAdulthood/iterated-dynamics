@@ -22,6 +22,7 @@
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <algorithm>
@@ -354,6 +355,8 @@ TEST_P(TestBigNumProductWindows, singleAllocationContainsTheEntireRetainedProduc
 
 TEST_P(TestBigNumProductWindows, shiftedSubtractionAndDoublingPreserveTheOtherProductBytes)
 {
+    BigStackSaver saved;
+    BigNumProduct product{bn_arena(BigLifetime::TEMPORARY)};
     g_new_z_bn.x = 3;
     g_new_z_bn.y = -2;
     square_bn(g_tmp_sqr_x_bn.data(), g_new_z_bn.x.data());
@@ -366,13 +369,13 @@ TEST_P(TestBigNumProductWindows, shiftedSubtractionAndDoublingPreserveTheOtherPr
     std::copy(doubled.begin(), doubled.end(), expected_product.begin() + g_shift_factor);
 
     sub_a_bn(g_tmp_sqr_x_bn.data() + g_shift_factor, g_tmp_sqr_y_bn.data() + g_shift_factor);
-    mult_bn(g_bn_tmp, g_new_z_bn.x, g_new_z_bn.y);
-    double_a_bn(g_bn_tmp.data() + g_shift_factor);
+    mult_bn(product.data(), g_new_z_bn.x.data(), g_new_z_bn.y.data());
+    double_a_bn(product.data() + g_shift_factor);
 
     EXPECT_EQ(expected_x, std::vector<Byte>(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_r_length));
-    EXPECT_EQ(expected_product, std::vector<Byte>(g_bn_tmp.data(), g_bn_tmp.data() + g_r_length));
+    EXPECT_EQ(expected_product, std::vector<Byte>(product.data(), product.data() + g_r_length));
     EXPECT_EQ(5, bn_to_int(g_tmp_sqr_x_bn.data() + g_shift_factor));
-    EXPECT_EQ(extracted_integer(-12), bn_to_int(g_bn_tmp.data() + g_shift_factor));
+    EXPECT_EQ(extracted_integer(-12), bn_to_int(product.data() + g_shift_factor));
     EXPECT_EQ(BigNum{3}, g_new_z_bn.x);
     EXPECT_EQ(BigNum{-2}, g_new_z_bn.y);
 }
@@ -554,6 +557,147 @@ TEST_P(TestBigNumBailoutContinuation, repeatedOrbitCallsMatchTheOrdinaryBailoutC
 
 INSTANTIATE_TEST_SUITE_P(ModesAndOutcomes, TestBigNumBailoutContinuation,
     testing::Combine(testing::Values(Bailout::MANH, Bailout::MANR), testing::Bool()));
+
+namespace
+{
+
+struct JuliaProductInput
+{
+    const char *name;
+    DComplex initial;
+    DComplex parameter;
+    DComplex next;
+    int doubled_product;
+};
+
+void PrintTo(const JuliaProductInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+testing::MockFunction<int()> *s_julia_product_bailout{};
+
+int inspect_julia_product_bailout()
+{
+    return s_julia_product_bailout->Call();
+}
+
+} // namespace
+
+class TestBigNumJuliaProduct : public TestBigNumBailout,
+                               public testing::WithParamInterface<std::tuple<int, int, JuliaProductInput, bool, bool>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumJuliaProduct::SetUp()
+{
+    TestBigNumBailout::SetUp();
+    const int integer_length = std::get<1>(GetParam());
+    g_user.bailout_value = integer_length == 4 ? 11 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(std::get<0>(GetParam()));
+    ASSERT_EQ(integer_length, g_int_length);
+    set_bailout_formula(Bailout::MOD);
+    g_magnitude_limit = std::get<3>(GetParam()) ? 1 : 10000;
+}
+
+TEST_P(TestBigNumJuliaProduct, preservesRetainedBytesCanonicalScratchOperandsAndTemporaryLifetimes)
+{
+    const JuliaProductInput &input = std::get<2>(GetParam());
+    const bool escape = std::get<3>(GetParam());
+    const bool borrow_stack = std::get<4>(GetParam());
+    BigStackSaver saved_stack;
+    BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
+    BigNum survivor{temporary, -7};
+    const std::size_t working_stride = bn_arena(BigLifetime::WORKING).block_size();
+    const std::size_t temporary_stride = temporary.block_size();
+    std::fill(survivor.data() + g_bn_length, survivor.data() + temporary_stride, Byte{0x6c});
+    const std::vector<Byte> live_bytes(survivor.data(), survivor.data() + temporary_stride);
+    Byte *const prior_borrow = bn_stack().allocate_single();
+    std::fill_n(prior_borrow, temporary_stride, Byte{0x3c});
+    const BigStackMark mark = save_stack();
+    BigArena::Allocation reservation = temporary.allocate_double();
+    Byte *const product_address = reservation.data();
+    std::fill_n(product_address, 2 * temporary_stride, Byte{0xa5});
+    reservation.reset();
+
+    g_old_z_bn.x = input.initial.x;
+    g_old_z_bn.y = input.initial.y;
+    g_param_z_bn.x = input.parameter.x;
+    g_param_z_bn.y = input.parameter.y;
+    square_bn(g_tmp_sqr_x_bn.data(), g_old_z_bn.x.data());
+    square_bn(g_tmp_sqr_y_bn.data(), g_old_z_bn.y.data());
+    const std::vector<Byte> old_x(g_old_z_bn.x.data(), g_old_z_bn.x.data() + working_stride);
+    const std::vector<Byte> old_y(g_old_z_bn.y.data(), g_old_z_bn.y.data() + working_stride);
+    g_bn_tmp = -17;
+    std::fill(g_bn_tmp.data() + g_bn_length, g_bn_tmp.data() + working_stride, Byte{0x69});
+    const std::vector<Byte> canonical_scratch(g_bn_tmp.data(), g_bn_tmp.data() + working_stride);
+    const std::vector<Byte> product = integer_bytes(input.doubled_product, g_r_length, 2 * g_int_length);
+    Byte *borrowed{};
+    int (*const bailout)() = g_bailout_bignum;
+    testing::MockFunction<int()> callback;
+    const ValueSaver<testing::MockFunction<int()> *> saved_callback{s_julia_product_bailout, &callback};
+    const ValueSaver<decltype(g_bailout_bignum)> saved_bailout{g_bailout_bignum, inspect_julia_product_bailout};
+    EXPECT_CALL(callback, Call())
+        .WillOnce(
+            [&]
+            {
+                EXPECT_EQ(product, std::vector<Byte>(product_address, product_address + g_r_length));
+                EXPECT_EQ(canonical_scratch, std::vector<Byte>(g_bn_tmp.data(), g_bn_tmp.data() + working_stride));
+                EXPECT_EQ(old_x, std::vector<Byte>(g_old_z_bn.x.data(), g_old_z_bn.x.data() + working_stride));
+                EXPECT_EQ(old_y, std::vector<Byte>(g_old_z_bn.y.data(), g_old_z_bn.y.data() + working_stride));
+                {
+                    BigArena::Allocation probe = temporary.allocate_double();
+                    EXPECT_NE(product_address, probe.data());
+                }
+                if (borrow_stack)
+                {
+                    borrowed = bn_stack().allocate_double();
+                }
+                return bailout();
+            });
+
+    EXPECT_EQ(escape ? 1 : 0, julia_orbit_bn());
+
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(live_bytes, std::vector<Byte>(survivor.data(), survivor.data() + temporary_stride));
+    EXPECT_EQ(
+        std::vector<Byte>(temporary_stride, 0x3c), std::vector<Byte>(prior_borrow, prior_borrow + temporary_stride));
+    EXPECT_EQ(integer_bytes(static_cast<std::int64_t>(input.next.x), g_bn_length, g_int_length),
+        std::vector<Byte>(g_new_z_bn.x.data(), g_new_z_bn.x.data() + g_bn_length));
+    EXPECT_EQ(integer_bytes(static_cast<std::int64_t>(input.next.y), g_bn_length, g_int_length),
+        std::vector<Byte>(g_new_z_bn.y.data(), g_new_z_bn.y.data() + g_bn_length));
+    const DComplex old = escape ? input.initial : input.next;
+    EXPECT_EQ(BigNum{old.x}, g_old_z_bn.x);
+    EXPECT_EQ(BigNum{old.y}, g_old_z_bn.y);
+    EXPECT_EQ(integer_bytes(static_cast<std::int64_t>(sqr(input.next.x)), g_r_length, 2 * g_int_length),
+        std::vector<Byte>(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_r_length));
+    EXPECT_EQ(integer_bytes(static_cast<std::int64_t>(sqr(input.next.y)), g_r_length, 2 * g_int_length),
+        std::vector<Byte>(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_r_length));
+    EXPECT_EQ(std::vector<Byte>(working_stride - g_bn_length, 0x69),
+        std::vector<Byte>(g_bn_tmp.data() + g_bn_length, g_bn_tmp.data() + working_stride));
+    BigArena::Allocation released = temporary.allocate_double();
+    if (borrow_stack)
+    {
+        BigArena::Allocation extra = temporary.allocate_double();
+        EXPECT_THAT((std::array<Byte *, 2>{released.data(), extra.data()}),
+            testing::UnorderedElementsAre(product_address, borrowed));
+    }
+    else
+    {
+        EXPECT_EQ(product_address, released.data());
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsSignsOutcomesAndStackBorrows, TestBigNumJuliaProduct,
+    testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(JuliaProductInput{"Positive", {1, 1}, {1, 0}, {1, 2}, 2},
+            JuliaProductInput{"PositiveNegative", {2, -1}, {0, 1}, {3, -3}, -4},
+            JuliaProductInput{"NegativePositive", {-2, 3}, {0, 0}, {-5, -12}, -12},
+            JuliaProductInput{"Negative", {-2, -2}, {1, 0}, {1, 8}, 8}),
+        testing::Bool(), testing::Bool()));
 
 class TestBigNumMandelbrotInitialization
     : public TestBigNumBailout,

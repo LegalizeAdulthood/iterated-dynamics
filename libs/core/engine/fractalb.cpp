@@ -671,6 +671,9 @@ int julia_per_pixel_bf()
 
 int julia_orbit_bn()
 {
+    BigStackSaver saved;
+    BigNumProduct product{bn_arena(BigLifetime::TEMPORARY)};
+
     // Don't forget, with BigNum numbers, after multiplying or squaring
     // you must shift over by g_shift_factor to get the bn number.
 
@@ -682,9 +685,9 @@ int julia_orbit_bn()
     add_bn(g_new_z_bn.x.data(), g_tmp_sqr_x_bn.data() + g_shift_factor, g_param_z_bn.x.data());
 
     // new.y = 2 * g_old_z_bn.x * g_old_z_bn.y + parm.y;
-    mult_bn(g_bn_tmp, g_old_z_bn.x, g_old_z_bn.y); // ok to use unsafe here
-    double_a_bn(g_bn_tmp.data() + g_shift_factor);
-    add_bn(g_new_z_bn.y.data(), g_bn_tmp.data() + g_shift_factor, g_param_z_bn.y.data());
+    mult_bn(product.data(), g_old_z_bn.x.data(), g_old_z_bn.y.data()); // ok to use unsafe here
+    double_a_bn(product.data() + g_shift_factor);
+    add_bn(g_new_z_bn.y.data(), product.data() + g_shift_factor, g_param_z_bn.y.data());
 
     return g_bailout_bignum();
 }
