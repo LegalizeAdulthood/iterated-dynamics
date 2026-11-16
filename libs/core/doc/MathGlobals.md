@@ -305,20 +305,22 @@ explicitly with `BigNum::data()`; borrowed addresses expire on relocation.
 
 Iteration state uses these reservations:
 
-- `g_tmp_sqr_x_bn`, `g_tmp_sqr_y_bn` - owning `BigNum` values retaining
-  `g_r_length` product bytes in each padded working-arena slot.
-- `g_old_z_bn` - owning `BNComplex` iteration values. Each component's
-  padded slot retains Manhattan bailout's unreduced scratch product.
+- `g_tmp_sqr_x_bn`, `g_tmp_sqr_y_bn` - owning `BigNum` square caches,
+  each with `g_bn_length` canonical bytes in one working-arena slot.
+- `g_old_z_bn` - owning `BNComplex` iteration values, one canonical
+  working-arena slot per component.
 
-These five mixed-role slots, including `g_bn_tmp`, use existing single
+These five slots, including canonical `g_bn_tmp`, use single
 allocations. The MathArenas constructor installs their owners at the
 former raw reservation sites. Binding reconstructs released owners and
 clears the entire slots; unbinding releases them. Precision migration
-discards their scratch contents. Product writes and shifted reads borrow
-their existing byte windows through `data()` without reducing products.
+discards their scratch contents. Each cache square uses a private
+temporary-arena pair in `BigNum.cpp`, copies the canonical result into
+the existing cache, and releases the pair. Application cache reads use
+`data()` at offset zero.
 
 The [orbit product storage contract](BigNumProducts.md) records these
-mixed canonical/product roles, exact byte windows, and construction and
+canonical caches, remaining paired temporaries, and construction and
 cleanup requirements.
 
 ## BigFloat Coordinates And Iteration State

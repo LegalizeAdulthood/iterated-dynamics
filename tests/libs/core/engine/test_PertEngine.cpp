@@ -4335,8 +4335,8 @@ int record_star_trail_julia()
     {
         step.input_bytes.assign(g_old_z_bn.x.data(), g_old_z_bn.x.data() + g_bn_length);
         step.input_bytes.insert(step.input_bytes.end(), g_old_z_bn.y.data(), g_old_z_bn.y.data() + g_bn_length);
-        step.cache_x_before.assign(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_r_length);
-        step.cache_y_before.assign(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_r_length);
+        step.cache_x_before.assign(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_bn_length);
+        step.cache_y_before.assign(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_bn_length);
     }
     const int escaped = big_num ? julia_orbit_bn() : julia_orbit();
     step.output = big_num
@@ -4346,8 +4346,8 @@ int record_star_trail_julia()
     {
         step.output_bytes.assign(g_new_z_bn.x.data(), g_new_z_bn.x.data() + g_bn_length);
         step.output_bytes.insert(step.output_bytes.end(), g_new_z_bn.y.data(), g_new_z_bn.y.data() + g_bn_length);
-        step.cache_x_after.assign(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_r_length);
-        step.cache_y_after.assign(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_r_length);
+        step.cache_x_after.assign(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_bn_length);
+        step.cache_y_after.assign(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_bn_length);
     }
     s_star_trail_julia_steps.push_back(std::move(step));
     return escaped;

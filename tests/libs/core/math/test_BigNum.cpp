@@ -951,6 +951,13 @@ TEST_P(TestBigNumRetainedSqr, preservesProductSourceAllocationAndPadding)
     EXPECT_EQ(original_source, std::vector<Byte>(source.data(), source.data() + arena.block_size()));
     EXPECT_EQ(std::vector<Byte>(2 * arena.block_size() - g_r_length, 0xa5),
         std::vector<Byte>(destination.data() + g_r_length, destination.data() + 2 * arena.block_size()));
+    BigNumProduct copy{destination};
+    const Byte *const copy_address = copy.data();
+    const BigNum reduced{std::move(copy)};
+    EXPECT_EQ(std::vector<Byte>(expected.begin() + g_shift_factor, expected.begin() + g_shift_factor + g_bn_length),
+        encoded_value(reduced));
+    BigArena::Allocation companion = arena.allocate_single();
+    EXPECT_EQ(copy_address + arena.block_size(), companion.data());
 }
 
 TEST_P(TestBigNumRetainedSqr, canonicalSquarePreservesDestinationSourceAndScratchLifetime)

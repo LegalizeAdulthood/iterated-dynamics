@@ -546,7 +546,7 @@ int mandel_per_pixel_bn()
     copy_bn(g_new_z_bn.x, g_old_z_bn.x);
     copy_bn(g_new_z_bn.y, g_old_z_bn.y);
 
-    // Square these to g_r_length bytes of precision
+    // Store canonical g_bn_length-byte squares in the caches.
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
 
@@ -635,7 +635,7 @@ int julia_per_pixel_bn()
     copy_bn(g_new_z_bn.x, g_old_z_bn.x);
     copy_bn(g_new_z_bn.y, g_old_z_bn.y);
 
-    // Square these to g_r_length bytes of precision
+    // Store canonical g_bn_length-byte squares in the caches.
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
 
@@ -674,15 +674,12 @@ int julia_orbit_bn()
     BigStackSaver saved;
     BigNumProduct product{bn_arena(BigLifetime::TEMPORARY)};
 
-    // Don't forget, with BigNum numbers, after multiplying or squaring
-    // you must shift over by g_shift_factor to get the bn number.
-
-    // g_tmp_sqr_x_bn and g_tmp_sqr_y_bn were previously squared before getting to
-    // this function, so they must be shifted.
+    // The square caches are canonical. Only the local cross-product
+    // below needs a shifted canonical window.
 
     // new.x = tmpsqrx - tmpsqry + parm.x;
-    sub_a_bn(g_tmp_sqr_x_bn.data() + g_shift_factor, g_tmp_sqr_y_bn.data() + g_shift_factor);
-    add_bn(g_new_z_bn.x.data(), g_tmp_sqr_x_bn.data() + g_shift_factor, g_param_z_bn.x.data());
+    sub_a_bn(g_tmp_sqr_x_bn.data(), g_tmp_sqr_y_bn.data());
+    add_bn(g_new_z_bn.x.data(), g_tmp_sqr_x_bn.data(), g_param_z_bn.x.data());
 
     // new.y = 2 * g_old_z_bn.x * g_old_z_bn.y + parm.y;
     mult_bn(product.data(), g_old_z_bn.x.data(), g_old_z_bn.y.data()); // ok to use unsafe here

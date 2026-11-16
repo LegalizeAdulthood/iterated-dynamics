@@ -180,7 +180,7 @@ static int bn_mod_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    add_bn(g_bn_tmp.data(), g_tmp_sqr_x_bn.data() + g_shift_factor, g_tmp_sqr_y_bn.data() + g_shift_factor);
+    add_bn(g_bn_tmp.data(), g_tmp_sqr_x_bn.data(), g_tmp_sqr_y_bn.data());
 
     if (bn_bailout_reached(g_bn_tmp.data()))
     {
@@ -195,7 +195,7 @@ static int bn_real_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    if (bn_bailout_reached(g_tmp_sqr_x_bn.data() + g_shift_factor))
+    if (bn_bailout_reached(g_tmp_sqr_x_bn.data()))
     {
         return 1;
     }
@@ -208,7 +208,7 @@ static int bn_imag_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    if (bn_bailout_reached(g_tmp_sqr_y_bn.data() + g_shift_factor))
+    if (bn_bailout_reached(g_tmp_sqr_y_bn.data()))
     {
         return 1;
     }
@@ -221,8 +221,7 @@ static int bn_or_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    if (bn_bailout_reached(g_tmp_sqr_x_bn.data() + g_shift_factor) ||
-        bn_bailout_reached(g_tmp_sqr_y_bn.data() + g_shift_factor))
+    if (bn_bailout_reached(g_tmp_sqr_x_bn.data()) || bn_bailout_reached(g_tmp_sqr_y_bn.data()))
     {
         return 1;
     }
@@ -235,8 +234,7 @@ static int bn_and_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    if (bn_bailout_reached(g_tmp_sqr_x_bn.data() + g_shift_factor) &&
-        bn_bailout_reached(g_tmp_sqr_y_bn.data() + g_shift_factor))
+    if (bn_bailout_reached(g_tmp_sqr_x_bn.data()) && bn_bailout_reached(g_tmp_sqr_y_bn.data()))
     {
         return 1;
     }

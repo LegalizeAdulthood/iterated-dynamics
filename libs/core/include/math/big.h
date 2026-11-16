@@ -243,9 +243,9 @@ extern BigNum g_delta_y_bn;
 extern BigNum g_delta2_x_bn;
 extern BigNum g_delta2_y_bn;
 extern BigNum g_close_enough_bn;
-// g_r_length
-extern BigNumProduct g_tmp_sqr_x_bn;
-extern BigNumProduct g_tmp_sqr_y_bn;
+// g_bn_length
+extern BigNum g_tmp_sqr_x_bn;
+extern BigNum g_tmp_sqr_y_bn;
 // g_bn_length; g_old_z_bn also retains g_r_length scratch products
 extern BNComplex g_old_z_bn;
 extern BNComplex g_param_z_bn;
