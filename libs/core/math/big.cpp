@@ -1242,6 +1242,18 @@ std::string unsafe_bn_to_string(Byte *r, int dec)
     return result;
 }
 
+/*********************************************************************/
+//  b = l
+//  Converts a long to a bigfloat
+Byte *int_to_bf(Byte *r, const long value)
+{
+    clear_bf(r);
+    BIG_SET32(r + g_bf_length - 4, static_cast<S32>(value));
+    BIG_SET16(r + g_bf_length, static_cast<S16>(2));
+    norm_bf(r);
+    return r;
+}
+
 /**********************************************************************/
 // strtobf() - converts a string into a bigfloat
 //   r - pointer to a bigfloat

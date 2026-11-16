@@ -38,6 +38,7 @@ static_assert(!std::is_convertible_v<BigFloat, BigFloatPtr>);
 static_assert(!std::is_convertible_v<BigFloatPtr, BigFloat>);
 static_assert(std::is_same_v<decltype(&bf_hex_dump), void (*)(const BigFloat &)>);
 static_assert(std::is_same_v<decltype(str_to_bf(std::declval<BigFloat &>(), std::string_view{})), BigFloat &>);
+static_assert(std::is_same_v<decltype(int_to_bf(std::declval<BigFloat &>(), long{})), BigFloat &>);
 
 std::vector<Byte> encoded_value(const BigFloat &value)
 {
@@ -172,6 +173,68 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndInputs, TestBigFloatParseInterface,
             BigFloatParseCase{"-0", {}}, BigFloatParseCase{"", {}}, BigFloatParseCase{"+", {}},
             BigFloatParseCase{"-", {}}, BigFloatParseCase{".", {}}, BigFloatParseCase{"garbage", {}},
             BigFloatParseCase{"1.25x", {}})));
+
+struct BigFloatIntegerInput
+{
+    long value;
+    std::array<Byte, 7> tail;
+};
+
+class TestBigFloatIntegerInterface : public TestBigFloatValue,
+                                     public testing::WithParamInterface<std::tuple<int, BigFloatIntegerInput>>
+{
+};
+
+TEST_P(TestBigFloatIntegerInterface, preservesBytesDestinationAndAllocation)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const BigFloatIntegerInput &input = std::get<1>(GetParam());
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    BigFloat value{arena};
+    const Byte *const address = value.data();
+    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
+    const std::size_t stride = arena.block_size();
+    std::vector<Byte> expected(size);
+    std::copy(input.tail.begin(), input.tail.end(), expected.end() - 7);
+    std::fill_n(value.data(), stride, Byte{0xa5});
+    std::fill_n(g_bf_tmp1.data(), stride, Byte{0x3c});
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+    const int bn_length = g_bn_length;
+    const int bf_length = g_bf_length;
+
+    EXPECT_EQ(&value, &int_to_bf(value, input.value));
+
+    EXPECT_EQ(expected, encoded_value(value));
+    EXPECT_EQ(address, value.data());
+    EXPECT_EQ(&arena, &value.arena());
+    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(value.data() + size, value.data() + stride));
+    EXPECT_EQ(std::vector<Byte>(stride, 0x3c), std::vector<Byte>(g_bf_tmp1.data(), g_bf_tmp1.data() + stride));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(bn_length, g_bn_length);
+    EXPECT_EQ(bf_length, g_bf_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndIntegers, TestBigFloatIntegerInterface,
+    testing::Combine(testing::Values(4, 12, 60, 64, 708),
+        testing::Values(BigFloatIntegerInput{0, {}},
+            BigFloatIntegerInput{1, {0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}},
+            BigFloatIntegerInput{-1, {0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff}},
+            BigFloatIntegerInput{127, {0x00, 0x00, 0x00, 0x7f, 0x00, 0x00, 0x00}},
+            BigFloatIntegerInput{-127, {0x00, 0x00, 0x00, 0x81, 0xff, 0x00, 0x00}},
+            BigFloatIntegerInput{128, {0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00}},
+            BigFloatIntegerInput{-128, {0x00, 0x00, 0x00, 0x80, 0xff, 0x00, 0x00}},
+            BigFloatIntegerInput{255, {0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00}},
+            BigFloatIntegerInput{-255, {0x00, 0x00, 0x00, 0x01, 0xff, 0x00, 0x00}},
+            BigFloatIntegerInput{256, {0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00}},
+            BigFloatIntegerInput{-256, {0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00}},
+            BigFloatIntegerInput{65535, {0x00, 0x00, 0xff, 0xff, 0x00, 0x01, 0x00}},
+            BigFloatIntegerInput{-65535, {0x00, 0x00, 0x01, 0x00, 0xff, 0x01, 0x00}},
+            BigFloatIntegerInput{65536, {0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00}},
+            BigFloatIntegerInput{-65536, {0x00, 0x00, 0x00, 0x00, 0xff, 0x01, 0x00}},
+            BigFloatIntegerInput{std::numeric_limits<S32>::max(), {0xff, 0xff, 0xff, 0x7f, 0x00, 0x03, 0x00}},
+            BigFloatIntegerInput{std::numeric_limits<S32>::min(), {0x00, 0x00, 0x00, 0x80, 0xff, 0x03, 0x00}})));
 
 TEST_F(TestBigFloatValue, assignsNativeScalarValues)
 {

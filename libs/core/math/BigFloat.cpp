@@ -1167,6 +1167,12 @@ BigFloat &str_to_bf(BigFloat &r, const std::string_view text)
     return r;
 }
 
+BigFloat &int_to_bf(BigFloat &r, const long value)
+{
+    int_to_bf(r.data(), value);
+    return r;
+}
+
 BigFloat abs(const BigFloat &value)
 {
     return value.abs();

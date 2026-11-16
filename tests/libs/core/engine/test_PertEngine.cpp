@@ -11131,7 +11131,7 @@ TEST_P(TestSignedSubDoublePower, resolvesNearZeroInputAfterReferenceReplacement)
     BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     float_to_bf(parameter.x.data(), 0.125);
     clear_bf(parameter.y.data());
-    int_to_bf(value.x.data(), 1);
+    int_to_bf(value.x, 1);
     clear_bf(value.y.data());
     m_engine.begin_orbit_bf(parameter, value, 0);
     for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
@@ -11753,7 +11753,7 @@ void TestSubDoublePowerBranch::SetUp()
     }
     float_to_bf(m_exponent.x.data(), 0.5);
     clear_bf(m_exponent.y.data());
-    int_to_bf(m_value.x.data(), -1);
+    int_to_bf(m_value.x, -1);
     // Retain the positive branch's reference when crossing below the cut.
     ASSERT_NO_FATAL_FAILURE(compare_branch(1));
 }
@@ -13836,9 +13836,9 @@ void TestDeepPerturbationGeometry::initialize_corners()
         BigStackSaver saved;
         BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
         str_to_bf(offset, "3e-400");
-        int_to_bf(g_bf_x_min.data(), -2);
+        int_to_bf(g_bf_x_min, -2);
         sub_a_bf(g_bf_x_min.data(), offset.data());
-        int_to_bf(g_bf_x_max.data(), -2);
+        int_to_bf(g_bf_x_max, -2);
         add_a_bf(g_bf_x_max.data(), offset.data());
     }
     copy_bf(g_bf_x_3rd.data(), g_bf_x_min.data());
@@ -13973,13 +13973,13 @@ TEST_F(TestDeepPerturbationGeometry, frameRetainsPreciseGeometryForReplacementRe
         BigStackSaver saved;
         BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
         str_to_bf(offset, "1e-400");
-        int_to_bf(g_bf_x_3rd.data(), -2);
+        int_to_bf(g_bf_x_3rd, -2);
         sub_a_bf(g_bf_x_3rd.data(), offset.data());
     }
     initialize_frame();
-    int_to_bf(g_bf_x_min.data(), -2);
-    int_to_bf(g_bf_x_max.data(), -2);
-    int_to_bf(g_bf_x_3rd.data(), -2);
+    int_to_bf(g_bf_x_min, -2);
+    int_to_bf(g_bf_x_max, -2);
+    int_to_bf(g_bf_x_3rd, -2);
     clear_bf(g_bf_y_min.data());
     clear_bf(g_bf_y_max.data());
     clear_bf(g_bf_y_3rd.data());
@@ -14009,7 +14009,7 @@ TEST_F(TestDeepPerturbationGeometry, continuationReplacesUnrepresentableParamete
     initialize_frame();
     BFComplex parameter{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    int_to_bf(parameter.x.data(), -2);
+    int_to_bf(parameter.x, -2);
     clear_bf(parameter.y.data());
     copy_bf(value.x.data(), parameter.x.data());
     clear_bf(value.y.data());

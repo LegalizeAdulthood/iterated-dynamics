@@ -158,18 +158,6 @@ BigFloatPtr bn_to_bf(BigFloatPtr f, BigNumConstPtr n)
     return f;
 }
 
-/*********************************************************************/
-//  b = l
-//  Converts a long to a bigfloat
-BigFloatPtr int_to_bf(BigFloatPtr r, const long value)
-{
-    clear_bf(r);
-    BIG_SET32(r+g_bf_length-4, static_cast<S32>(value));
-    BIG_SET16(r+g_bf_length, static_cast<S16>(2));
-    norm_bf(r);
-    return r;
-}
-
 /********************************************************************/
 // sign(r)
 int sign_bf(BigFloatConstPtr n)

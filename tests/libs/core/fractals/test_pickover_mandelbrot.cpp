@@ -221,7 +221,7 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
     for (int step = 0; step < 8; ++step)
     {
         SCOPED_TRACE(step);
-        int_to_bf(powered.x.data(), 1);
+        int_to_bf(powered.x, 1);
         clear_bf(powered.y.data());
         for (int factor = 0; factor < GetParam(); ++factor)
         {
@@ -308,7 +308,7 @@ std::complex<double> TestSignedPowerState::precise_power(const std::complex<doub
     BFComplex result{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     float_to_bf(value.x.data(), z.real());
     float_to_bf(value.y.data(), z.imag());
-    int_to_bf(exponent.x.data(), g_c_exponent);
+    int_to_bf(exponent.x, g_c_exponent);
     clear_bf(exponent.y.data());
     result = pow(value, exponent);
     return {static_cast<double>(bf_to_float(result.x.data())), static_cast<double>(bf_to_float(result.y.data()))};
@@ -469,7 +469,7 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     BFComplex expected{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BigFloat difference{bf_arena(BigLifetime::TEMPORARY)};
-    int_to_bf(exponent.x.data(), GetParam().exponent);
+    int_to_bf(exponent.x, GetParam().exponent);
     clear_bf(exponent.y.data());
     float_to_bf(center.x.data(), 0.125);
     float_to_bf(center.y.data(), -0.0625);
