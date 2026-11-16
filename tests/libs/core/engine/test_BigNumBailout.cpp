@@ -333,23 +333,30 @@ TEST_P(TestBigNumProductWindows, smallPositiveThresholdRemainsGreaterThanZero)
     EXPECT_EQ(0, g_bailout_bignum());
 }
 
-TEST_P(TestBigNumProductWindows, singleAllocationContainsTheEntireRetainedProduct)
+TEST_P(TestBigNumProductWindows, canonicalSlotAndPairedProductHaveSeparateExtents)
 {
-    auto &arena = bn_arena(BigLifetime::WORKING);
-    auto storage = arena.allocate_single();
-    ASSERT_EQ(1U, storage.blocks());
-    ASSERT_LE(static_cast<std::size_t>(g_r_length), arena.block_size());
-    EXPECT_EQ(0U, arena.block_size() % BigArena::ALIGNMENT);
-    std::fill_n(storage.data(), arena.block_size(), Byte{0xa5});
+    BigArena &arena = bn_arena(BigLifetime::WORKING);
+    const std::size_t stride = (g_bn_length + 63) / 64 * 64;
+    EXPECT_EQ(stride, arena.block_size());
+    BigArena::Allocation canonical = arena.allocate_single();
+    BigArena::Allocation product = arena.allocate_double();
+    ASSERT_EQ(1U, canonical.blocks());
+    ASSERT_EQ(2U, product.blocks());
+    ASSERT_LE(static_cast<std::size_t>(g_r_length), 2 * arena.block_size());
+    std::fill_n(canonical.data(), arena.block_size(), Byte{0x5a});
+    std::fill_n(product.data(), 2 * arena.block_size(), Byte{0xa5});
     g_new_z_bn.x = -3;
 
-    square_bn(storage.data(), g_new_z_bn.x.data());
+    square_bn(product.data(), g_new_z_bn.x.data());
 
-    const auto expected = integer_bytes(9, g_r_length, 2 * g_int_length);
-    EXPECT_EQ(expected, std::vector<Byte>(storage.data(), storage.data() + g_r_length));
-    EXPECT_EQ(std::vector<Byte>(arena.block_size() - g_r_length, 0xa5),
-        std::vector<Byte>(storage.data() + g_r_length, storage.data() + arena.block_size()));
-    EXPECT_EQ(1U, storage.blocks());
+    const std::vector<Byte> expected = integer_bytes(9, g_r_length, 2 * g_int_length);
+    EXPECT_EQ(expected, std::vector<Byte>(product.data(), product.data() + g_r_length));
+    EXPECT_EQ(std::vector<Byte>(2 * arena.block_size() - g_r_length, 0xa5),
+        std::vector<Byte>(product.data() + g_r_length, product.data() + 2 * arena.block_size()));
+    EXPECT_EQ(std::vector<Byte>(arena.block_size(), 0x5a),
+        std::vector<Byte>(canonical.data(), canonical.data() + arena.block_size()));
+    EXPECT_EQ(1U, canonical.blocks());
+    EXPECT_EQ(2U, product.blocks());
     EXPECT_EQ(BigNum{-3}, g_new_z_bn.x);
 }
 
@@ -380,23 +387,25 @@ TEST_P(TestBigNumProductWindows, shiftedSubtractionAndDoublingPreserveTheOtherPr
     EXPECT_EQ(BigNum{-2}, g_new_z_bn.y);
 }
 
-TEST_P(TestBigNumProductWindows, bindingAndPrecisionChangesClearMixedStorageAndCleanupUnbindsIt)
+TEST_P(TestBigNumProductWindows, bindingAndPrecisionChangesClearCanonicalAndProductStorageAndCleanupUnbindsIt)
 {
-    std::fill_n(g_old_z_bn.x.data(), g_r_length, Byte{0xa5});
-    std::fill_n(g_old_z_bn.y.data(), g_r_length, Byte{0x5a});
-    std::fill_n(g_tmp_sqr_x_bn.data(), g_r_length, Byte{0x3c});
-    std::fill_n(g_tmp_sqr_y_bn.data(), g_r_length, Byte{0xc3});
-    std::fill_n(g_bn_tmp.data(), g_r_length, Byte{0x69});
+    const std::size_t stride = bn_arena(BigLifetime::WORKING).block_size();
+    std::fill_n(g_old_z_bn.x.data(), stride, Byte{0xa5});
+    std::fill_n(g_old_z_bn.y.data(), stride, Byte{0x5a});
+    std::fill_n(g_tmp_sqr_x_bn.data(), 2 * stride, Byte{0x3c});
+    std::fill_n(g_tmp_sqr_y_bn.data(), 2 * stride, Byte{0xc3});
+    std::fill_n(g_bn_tmp.data(), stride, Byte{0x69});
     const int length = g_bn_length;
     init_bf_length(length == 4 ? 8 : 4);
     init_bf_length(length);
 
-    const std::vector<Byte> zero(g_r_length);
-    EXPECT_EQ(zero, std::vector<Byte>(g_old_z_bn.x.data(), g_old_z_bn.x.data() + g_r_length));
-    EXPECT_EQ(zero, std::vector<Byte>(g_old_z_bn.y.data(), g_old_z_bn.y.data() + g_r_length));
-    EXPECT_EQ(zero, std::vector<Byte>(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_r_length));
-    EXPECT_EQ(zero, std::vector<Byte>(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_r_length));
-    EXPECT_EQ(zero, std::vector<Byte>(g_bn_tmp.data(), g_bn_tmp.data() + g_r_length));
+    const std::vector<Byte> zero(stride);
+    const std::vector<Byte> product_zero(2 * stride);
+    EXPECT_EQ(zero, std::vector<Byte>(g_old_z_bn.x.data(), g_old_z_bn.x.data() + stride));
+    EXPECT_EQ(zero, std::vector<Byte>(g_old_z_bn.y.data(), g_old_z_bn.y.data() + stride));
+    EXPECT_EQ(product_zero, std::vector<Byte>(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + 2 * stride));
+    EXPECT_EQ(product_zero, std::vector<Byte>(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + 2 * stride));
+    EXPECT_EQ(zero, std::vector<Byte>(g_bn_tmp.data(), g_bn_tmp.data() + stride));
 
     free_bf_vars();
 
@@ -406,12 +415,38 @@ TEST_P(TestBigNumProductWindows, bindingAndPrecisionChangesClearMixedStorageAndC
     EXPECT_FALSE(g_tmp_sqr_y_bn);
     EXPECT_FALSE(g_bn_tmp);
     init_bf_length(length);
-    EXPECT_EQ(zero, std::vector<Byte>(g_old_z_bn.x.data(), g_old_z_bn.x.data() + g_r_length));
-    EXPECT_EQ(zero, std::vector<Byte>(g_bn_tmp.data(), g_bn_tmp.data() + g_r_length));
+    EXPECT_EQ(zero, std::vector<Byte>(g_old_z_bn.x.data(), g_old_z_bn.x.data() + stride));
+    EXPECT_EQ(zero, std::vector<Byte>(g_bn_tmp.data(), g_bn_tmp.data() + stride));
 }
 
 INSTANTIATE_TEST_SUITE_P(Layouts, TestBigNumProductWindows,
-    testing::Combine(testing::Values(4, 8, 12, 56, 60, 64, 672), testing::Values(1, 2, 4)));
+    testing::Combine(testing::Values(4, 8, 12, 56, 60, 64, 68, 672), testing::Values(1, 2, 4)));
+
+class TestBigNumSlotSizing : public TestBigNumBailout, public testing::WithParamInterface<std::tuple<int, BigLifetime>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumSlotSizing::SetUp()
+{
+    g_bailout_test = Bailout::MOD;
+    init_bf_length(std::get<0>(GetParam()));
+}
+
+TEST_P(TestBigNumSlotSizing, initialStrideAndCapacityUseOnlyTheCanonicalExtent)
+{
+    const BigArena &arena = bn_arena(std::get<1>(GetParam()));
+    const std::size_t stride = (std::get<0>(GetParam()) + 63) / 64 * 64;
+    EXPECT_EQ(std::get<0>(GetParam()), arena.value_size());
+    EXPECT_EQ(stride, arena.block_size());
+    EXPECT_EQ((1024U * 1024 / stride) & ~std::size_t{1}, arena.capacity());
+    EXPECT_EQ(0U, arena.capacity() * arena.block_size() % 64);
+}
+
+INSTANTIATE_TEST_SUITE_P(LengthsAndLifetimes, TestBigNumSlotSizing,
+    testing::Combine(testing::Values(4, 56, 60, 64, 68, 672),
+        testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
 
 class TestBigNumProductBailout
     : public TestBigNumBailout,
@@ -453,8 +488,9 @@ TEST_P(TestBigNumProductBailout, preservesFullScratchBytesAndFixedWidthOverflow)
         : mode == Bailout::OR                 ? rx >= input.limit || ry >= input.limit
         : mode == Bailout::AND                ? rx >= input.limit && ry >= input.limit
                                               : man_metric >= input.limit;
-    std::vector<Byte> expected_old_x(g_r_length, 0xa5), expected_old_y(g_r_length, 0x5a);
-    std::vector<Byte> expected_tmp(g_r_length, 0x3c);
+    const std::size_t stride = bn_arena(BigLifetime::WORKING).block_size();
+    std::vector<Byte> expected_old_x(stride, 0xa5), expected_old_y(stride, 0x5a);
+    std::vector<Byte> expected_tmp(stride, 0x3c);
     replace_canonical(expected_old_x, -7);
     replace_canonical(expected_old_y, 9);
     std::copy(expected_old_x.begin(), expected_old_x.end(), g_old_z_bn.x.data());
@@ -480,9 +516,9 @@ TEST_P(TestBigNumProductBailout, preservesFullScratchBytesAndFixedWidthOverflow)
 
     EXPECT_EQ(expected_x, std::vector<Byte>(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_r_length));
     EXPECT_EQ(expected_y, std::vector<Byte>(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_r_length));
-    EXPECT_EQ(expected_old_x, std::vector<Byte>(g_old_z_bn.x.data(), g_old_z_bn.x.data() + g_r_length));
-    EXPECT_EQ(expected_old_y, std::vector<Byte>(g_old_z_bn.y.data(), g_old_z_bn.y.data() + g_r_length));
-    EXPECT_EQ(expected_tmp, std::vector<Byte>(g_bn_tmp.data(), g_bn_tmp.data() + g_r_length));
+    EXPECT_EQ(expected_old_x, std::vector<Byte>(g_old_z_bn.x.data(), g_old_z_bn.x.data() + stride));
+    EXPECT_EQ(expected_old_y, std::vector<Byte>(g_old_z_bn.y.data(), g_old_z_bn.y.data() + stride));
+    EXPECT_EQ(expected_tmp, std::vector<Byte>(g_bn_tmp.data(), g_bn_tmp.data() + stride));
     EXPECT_EQ(integer_bytes(input.real, length, integer_length),
         std::vector<Byte>(g_new_z_bn.x.data(), g_new_z_bn.x.data() + length));
     EXPECT_EQ(integer_bytes(input.imaginary, length, integer_length),

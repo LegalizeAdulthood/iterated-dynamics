@@ -265,7 +265,7 @@ private:
 };
 
 MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_length, const int padding) :
-    big_num(bn_length, static_cast<std::size_t>(bn_length + padding), detail::reduce_bn_product),
+    big_num(bn_length, static_cast<std::size_t>(bn_length), detail::reduce_bn_product),
     big_float(bf_length + 2, static_cast<std::size_t>(bf_length + padding + 2), detail::reduce_bf_product),
     m_bn_length(bn_length),
     m_bf_length(bf_length),
@@ -325,11 +325,11 @@ void MathArenas::change_precision(const int bn_length, const int bf_length, cons
     }
     std::vector<BigArena::Relocation> replacements;
     replacements.reserve(6);
-    const std::size_t bn_stride = (bn_length + padding + 63) / 64 * 64;
+    const std::size_t bn_stride = (bn_length + 63) / 64 * 64;
     const std::size_t bf_stride = (bf_length + padding + 2 + 63) / 64 * 64;
     for (BigLifetime lifetime : {BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY})
     {
-        replacements.push_back(big_num.get(lifetime).prepare_relocation(bn_length, bn_length + padding,
+        replacements.push_back(big_num.get(lifetime).prepare_relocation(bn_length, bn_length,
             [&](Byte *destination, const Byte *source, std::size_t blocks)
             {
                 std::memset(destination, 0, blocks * bn_stride);

@@ -2066,6 +2066,8 @@ TEST_P(TestBigNumProductRelocation, relocatesRetainedBytesRatherThanTreatingThei
     g_bailout_test = integers.first == 2 ? Bailout::REAL : Bailout::MOD;
     init_bf_length(old_length);
     BigArena &arena = bn_arena(std::get<3>(GetParam()));
+    EXPECT_EQ(static_cast<std::size_t>((old_length + 63) / 64 * 64), arena.block_size());
+    const std::size_t capacity = arena.capacity();
     BigNumProduct product{arena};
     const BigNum canonical{arena, -7};
     const int old_fraction = g_r_length - 2 * g_int_length;
@@ -2084,6 +2086,8 @@ TEST_P(TestBigNumProductRelocation, relocatesRetainedBytesRatherThanTreatingThei
     init_bf_length(old_length <= 12 ? 64 : 12);
 
     ASSERT_EQ(integers.second, g_int_length);
+    EXPECT_EQ(static_cast<std::size_t>((g_bn_length + 63) / 64 * 64), arena.block_size());
+    EXPECT_EQ(capacity, arena.capacity());
     const int fraction = g_r_length - 2 * g_int_length;
     std::vector<Byte> expected(g_r_length);
     std::fill(expected.begin() + fraction, expected.end(), negative ? Byte{0xff} : Byte{0});
@@ -2096,6 +2100,8 @@ TEST_P(TestBigNumProductRelocation, relocatesRetainedBytesRatherThanTreatingThei
     EXPECT_NE(address, product.data());
     EXPECT_EQ(&arena, &product.arena());
     EXPECT_EQ(expected, retained_bytes(product));
+    EXPECT_EQ(std::vector<Byte>(2 * arena.block_size() - g_r_length),
+        std::vector<Byte>(product.data() + g_r_length, product.data() + 2 * arena.block_size()));
     EXPECT_EQ(BigNum{-7}, canonical);
     const Byte *const relocated = product.data();
     const BigNum reduced{std::move(product)};
