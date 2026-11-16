@@ -254,6 +254,52 @@ There is no arena relocation or stack rewind while these windows are
 borrowed. Keep the existing mark/rewind boundaries outside the kernels;
 do not add a mark, rewind, temporary arena, or precision class inside.
 
+## BigNum Scalar And Formatter Boundary
+
+The old scalar and formatting entry points were:
+
+```cpp
+BigNumPtr str_to_bn(BigNumPtr r, std::string_view text);
+BigNumPtr int_to_bn(BigNumPtr r, long value);
+BigNumPtr float_to_bn(BigNumPtr r, LDouble value);
+LDouble bn_to_float(BigNumPtr value);
+std::string bn_to_string(BigNumConstPtr value, int digits);
+```
+
+The owning entry points now separate owners from bytes:
+
+```cpp
+BigNum &str_to_bn(BigNum &r, std::string_view text);
+BigNum &int_to_bn(BigNum &r, long value);
+BigNum &float_to_bn(BigNum &r, LDouble value);
+LDouble bn_to_float(BigNum &value);
+std::string bn_to_string(const BigNum &value, int digits);
+```
+
+The three writes retain their N-byte destination and returned identity.
+They add no allocation, copy, validation, or assignment-policy change.
+The existing constructors and assignment retain their current checks.
+The mutable machine conversion keeps its temporary sign changes and
+restoration. The const to_float member still makes its existing copy
+into copy1 before conversion. Do not add a const conversion overload
+that silently adds another copy or casts away constness.
+
+The const formatter copies N bytes into the existing paired copy2
+reservation once, then calls unsafe_bn_to_string in big.cpp. Its owning
+entry point and to_string member remain in BigNum.cpp. The member keeps
+its existing digit validation. The unsafe formatter, parser, integer
+cursor, scalar loops, and temporary get_byte cursor use Byte pointers
+in big.cpp. Their parsing, truncation, malformed-input handling, strings,
+and sign behavior stay unchanged.
+
+Numeric callers in PertEngine.cpp, calcfrac.cpp, fractalb.cpp, the
+storage measurement tool, orbit tests, and precision diagnostics pass
+their existing BigNum owners. Representation and stack-lifetime tests
+keep their encoded or borrowed buffers, using the existing explicit
+BigNum import/export boundary when passing those bytes through numeric
+operations. Product windows in encoded fixtures are imported explicitly;
+the numeric formatter does not accept products or select their windows.
+
 ## Shared BigFloat Mantissa Boundary
 
 BigFloat's `multiply_wide` and `square_wide` temporarily set BigNum

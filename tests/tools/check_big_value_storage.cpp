@@ -8,6 +8,7 @@
 #include <fractals/fractype.h>
 #include <math/big_init.h>
 #include <math/BigComplex.h>
+#include <math/BigNum.h>
 #include <math/complex_fn.h>
 
 #include <fmt/format.h>
@@ -172,10 +173,10 @@ int main()
     g_fractal_type = FractalType::MANDEL;
     init_bf_dec(40);
     measure_values<BigNum>("bn_scalar", "bn_complex_power");
-    float_to_bn(g_old_z_bn.x.data(), 0.25);
-    float_to_bn(g_old_z_bn.y.data(), 0.125);
-    float_to_bn(g_param_z_bn.x.data(), -0.2);
-    float_to_bn(g_param_z_bn.y.data(), 0.4);
+    float_to_bn(g_old_z_bn.x, 0.25);
+    float_to_bn(g_old_z_bn.y, 0.125);
+    float_to_bn(g_param_z_bn.x, -0.2);
+    float_to_bn(g_param_z_bn.y, 0.4);
     square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
     measure("bn_julia_orbit", 10000, [] { s_result = julia_orbit_bn() != 0; });

@@ -890,17 +890,17 @@ TEST_F(TestBigFloat, nestedStackRewindsPreserveOuterValuesAndPersistentCorners)
         BigStackSaver outer;
         BigNumPtr fixed = bn_stack().allocate_single();
         BigFloatPtr floating = bf_stack().allocate_single();
-        float_to_bn(fixed, 2.5);
+        BigNum{2.5L}.copy_to_legacy(fixed, g_bn_length);
         float_to_bf(floating, -3.75);
         const auto middle = save_stack();
         {
             BigStackSaver inner;
-            float_to_bn(bn_stack().allocate_double(), -7.5);
+            BigNum{-7.5L}.copy_to_legacy(bn_stack().allocate_double(), g_bn_length);
             float_to_bf(bf_stack().allocate_double(), 8.25);
             EXPECT_GT(save_stack(), middle);
         }
         EXPECT_EQ(middle, save_stack());
-        EXPECT_EQ(2.5L, bn_to_float(fixed));
+        EXPECT_EQ(2.5L, BigNum::from_legacy(fixed, g_bn_length).to_float());
         EXPECT_EQ(-3.75L, bf_to_float(floating));
         EXPECT_EQ(-1.25L, bf_to_float(g_bf_x_min.data()));
     }
@@ -930,11 +930,11 @@ TEST_F(TestBigFloat, bothStackAdaptersRewindWhileOwnedPersistentAndWorkingValues
     auto persistent = bf_arena(BigLifetime::PERSISTENT).allocate_single();
     auto working = bn_arena(BigLifetime::WORKING).allocate_single();
     float_to_bf(persistent.data(), -2.5);
-    float_to_bn(working.data(), 3.75);
+    BigNum{3.75L}.copy_to_legacy(working.data(), g_bn_length);
     const auto before = save_stack();
     {
         BigStackSaver scope;
-        float_to_bn(bn_stack().allocate_single(), -5.5);
+        BigNum{-5.5L}.copy_to_legacy(bn_stack().allocate_single(), g_bn_length);
         float_to_bf(bf_stack().allocate_double(), 6.25);
         const auto middle = save_stack();
         EXPECT_GT(middle.big_num, before.big_num);
@@ -948,7 +948,7 @@ TEST_F(TestBigFloat, bothStackAdaptersRewindWhileOwnedPersistentAndWorkingValues
     }
     EXPECT_EQ(before, save_stack());
     EXPECT_EQ(-2.5L, bf_to_float(persistent.data()));
-    EXPECT_EQ(3.75L, bn_to_float(working.data()));
+    EXPECT_EQ(3.75L, BigNum::from_legacy(working.data(), g_bn_length).to_float());
 }
 
 TEST_F(TestBigFloat, stackRewindCoalescesAReleasedNarrowedAllocationWithItsBorrowedHalf)
@@ -985,7 +985,7 @@ TEST_F(TestBigFloat, ownedArenaValuesSurviveContextResetAndLaterPrecisionGrowth)
     auto floating = bf_arena(BigLifetime::WORKING).allocate_single();
     auto fixed = bn_arena(BigLifetime::PERSISTENT).allocate_single();
     float_to_bf(floating.data(), -2.5);
-    float_to_bn(fixed.data(), 3.75);
+    BigNum{3.75L}.copy_to_legacy(fixed.data(), g_bn_length);
     const auto floating_index = floating.index();
     const auto fixed_index = fixed.index();
 
@@ -997,7 +997,7 @@ TEST_F(TestBigFloat, ownedArenaValuesSurviveContextResetAndLaterPrecisionGrowth)
     EXPECT_EQ(floating_index, floating.index());
     EXPECT_EQ(fixed_index, fixed.index());
     EXPECT_EQ(-2.5L, bf_to_float(floating.data()));
-    EXPECT_EQ(3.75L, bn_to_float(fixed.data()));
+    EXPECT_EQ(3.75L, BigNum::from_legacy(fixed.data(), g_bn_length).to_float());
     EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min.data()));
 }
 
@@ -1007,7 +1007,7 @@ TEST_F(TestBigFloat, eachRepresentationReducesProductsThroughItsConfiguredFuncti
     auto floating = bf_arena(BigLifetime::TEMPORARY).allocate_double();
     std::vector<Byte> expected_num(g_bn_length);
     std::vector<Byte> expected_float(g_bf_length + 2);
-    str_to_bn(expected_num.data(), "-1.234567890123456789");
+    BigNum{"-1.234567890123456789"}.copy_to_legacy(expected_num.data(), expected_num.size());
     str_to_bf(expected_float.data(), "-1.234567890123456789e-200");
     std::copy(expected_num.begin(), expected_num.end(), fixed.data() + g_shift_factor);
     std::copy(expected_float.begin(), expected_float.end(), floating.data() + g_padding);

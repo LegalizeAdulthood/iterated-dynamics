@@ -37,45 +37,6 @@ namespace id::math
 
 *********************************************************************/
 
-/*********************************************************************/
-//  f = b
-//  Converts a bignumber to a double
-LDouble bn_to_float(BigNumPtr n)
-{
-    LDouble f = 0;
-
-    bool sign_flag = false;
-    if (is_bn_neg(n))
-    {
-        sign_flag = true;
-        neg_a_bn(n);
-    }
-
-    int exponent = g_int_length - 1;
-    BigNumPtr get_byte = n + g_bn_length - 1;
-    while (*get_byte == 0 && get_byte >= n)
-    {
-        get_byte--;
-        exponent--;
-    }
-
-    // There is no need to use all g_bn_length bytes.  To get the full
-    // precision of LDouble, all you need is LDBL_MANT_DIG/8+1.
-    for (int i = 0; i < LDBL_MANT_DIG / 8 + 1 && get_byte >= n; i++, get_byte--)
-    {
-        f += scale256(*get_byte, -i);
-    }
-
-    f = scale256(f, exponent);
-
-    if (sign_flag)
-    {
-        f = -f;
-        neg_a_bn(n);
-    }
-    return f;
-}
-
 /*****************************************/
 // the following used to be in bigfltc.c
 

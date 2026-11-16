@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include <math/big.h>
 #include <math/big_init.h>
 #include <math/BigNum.h>
 #include <misc/ValueSaver.h>
@@ -38,13 +37,13 @@ protected:
     std::string round_trip(char *input, const int decimals)
     {
         BigNum value{bn_arena(BigLifetime::TEMPORARY)};
-        str_to_bn(value.data(), input);
+        str_to_bn(value, input);
         return format(value, decimals);
     }
 
     static std::string format(const BigNum &value, const int decimals)
     {
-        return bn_to_string(value.data(), decimals);
+        return bn_to_string(value, decimals);
     }
 
     ValueSaver<int> m_saved_bf_digits;
@@ -96,7 +95,7 @@ TEST_F(TestBigNum, formatsZeroValue)
     const auto marker = save_stack();
     {
         BigNum value{bn_arena(BigLifetime::TEMPORARY)};
-        int_to_bn(value.data(), 0);
+        int_to_bn(value, 0);
 
         EXPECT_EQ("0.", format(value, 5));
     }

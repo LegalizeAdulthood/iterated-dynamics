@@ -93,13 +93,13 @@ std::string format_corners_bn(const char *s)
                        "y_3rd_bn={:s}\n"
                        "y_3rd   ={:.20f}\n"
                        "\n",
-        s,                                                                  //
-        math::bn_to_string(g_x_min_bn.data(), dec), g_image_region.m_min.x, //
-        math::bn_to_string(g_x_max_bn.data(), dec), g_image_region.m_max.x, //
-        math::bn_to_string(g_y_min_bn.data(), dec), g_image_region.m_min.y, //
-        math::bn_to_string(g_y_max_bn.data(), dec), g_image_region.m_max.y, //
-        math::bn_to_string(g_x_3rd_bn.data(), dec), g_image_region.m_3rd.x, //
-        math::bn_to_string(g_y_3rd_bn.data(), dec), g_image_region.m_3rd.y);
+        s,                                                           //
+        math::bn_to_string(g_x_min_bn, dec), g_image_region.m_min.x, //
+        math::bn_to_string(g_x_max_bn, dec), g_image_region.m_max.x, //
+        math::bn_to_string(g_y_min_bn, dec), g_image_region.m_min.y, //
+        math::bn_to_string(g_y_max_bn, dec), g_image_region.m_max.y, //
+        math::bn_to_string(g_x_3rd_bn, dec), g_image_region.m_3rd.x, //
+        math::bn_to_string(g_y_3rd_bn, dec), g_image_region.m_3rd.y);
 }
 
 // show globals
@@ -530,8 +530,8 @@ int mandel_per_pixel_bn()
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        float_to_bn(g_old_z_bn.x.data(), g_params[0]); // initial perturbation of parameters set
-        float_to_bn(g_old_z_bn.y.data(), g_params[1]);
+        float_to_bn(g_old_z_bn.x, g_params[0]); // initial perturbation of parameters set
+        float_to_bn(g_old_z_bn.y, g_params[1]);
         g_color_iter = -1;
     }
     else

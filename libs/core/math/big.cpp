@@ -8,6 +8,9 @@
 
 #include <algorithm>
 #include <cfloat>
+#include <charconv>
+#include <string>
+#include <string_view>
 #include <cstring>
 
 using namespace id::misc;
@@ -17,6 +20,13 @@ namespace id::math
 
 namespace
 {
+
+long parse_long(const std::string_view text)
+{
+    long value{};
+    std::from_chars(text.data(), text.data() + text.size(), value);
+    return value;
+}
 
 /************************************************************************/
 // r = n1 * n2
@@ -1138,6 +1148,234 @@ Byte *div_bn(Byte *r, const Byte *n1, const Byte *n2, Byte *tmp1, Byte *tmp2, By
     copy_bn(copy1, n1);
     copy_bn(copy2, n2);
     return divide(r, copy1, copy2, tmp1, tmp2, tmp3);
+}
+
+void set_integer_part(Byte *ones_byte, const long value)
+{
+    switch (g_int_length)
+    {
+        // only 1, 2, or 4 are allowed
+    case 1:
+        *ones_byte = static_cast<Byte>(value);
+        break;
+    case 2:
+        BIG_SET16(ones_byte, static_cast<U16>(value));
+        break;
+    case 4:
+        BIG_SET32(ones_byte, value);
+        break;
+    }
+}
+
+std::string unsafe_bn_to_string(Byte *r, int dec)
+{
+    long value = 0;
+
+    if (dec == 0)
+    {
+        dec = g_decimals;
+    }
+    Byte *ones_byte = r + g_bn_length - g_int_length;
+
+    std::string result;
+    if (is_bn_neg(r))
+    {
+        neg_a_bn(r);
+        result += '-';
+    }
+    switch (g_int_length)
+    {
+        // only 1, 2, or 4 are allowed
+    case 1:
+        value = *ones_byte;
+        break;
+    case 2:
+        value = BIG_ACCESS16(ones_byte);
+        break;
+    case 4:
+        value = BIG_ACCESS32(ones_byte);
+        break;
+    }
+    result += std::to_string(value);
+    result += '.';
+    for (int d = 0; d < dec; d++)
+    {
+        *ones_byte = 0; // clear out highest byte
+        mult_a_bn_int(r, 10);
+        if (is_bn_zero(r))
+        {
+            break;
+        }
+        result += static_cast<char>(*ones_byte + '0');
+    }
+
+    return result;
+}
+
+/**********************************************************************/
+// strtobn() - converts a string into a bignumer
+//   r - pointer to a bignumber
+//   s - string in the floating point format [-][digits].[digits]
+//   note: the string may not be empty or have extra space and may
+//   not use scientific notation (2.3e4).
+
+Byte *str_to_bn(Byte *r, std::string_view s)
+{
+    bool sign_flag = false;
+
+    clear_bn(r);
+    Byte *ones_byte = r + g_bn_length - g_int_length;
+
+    if (s[0] == '+') // for + sign
+    {
+        s.remove_prefix(1);
+    }
+    else if (s[0] == '-') // for neg sign
+    {
+        sign_flag = true;
+        s.remove_prefix(1);
+    }
+
+    if (s.find('.') != std::string_view::npos)              // is there a decimal point?
+    {
+        std::size_t l = s.size();                           // start just past the last digit
+        while (l > 0 && s[l - 1] >= '0' && s[l - 1] <= '9') // while a digit
+        {
+            *ones_byte = static_cast<Byte>(s[--l] - '0');
+            div_a_bn_int(r, 10);
+        }
+
+        if (l > 0 && s[l - 1] == '.')
+        {
+            set_integer_part(ones_byte, parse_long(s));
+        }
+    }
+    else
+    {
+        set_integer_part(ones_byte, parse_long(s));
+    }
+
+    if (sign_flag)
+    {
+        neg_a_bn(r);
+    }
+
+    return r;
+}
+
+/********************************************************************/
+// bntostr() - converts a bignumber into a string
+//   s - string, must be large enough to hold the number.
+//   r - bignumber
+//   will covert to a floating point notation
+//   SIDE-EFFECT: the bignumber, r, is destroyed.
+//                Copy it first if necessary.
+
+//  b = l
+//  Converts a long to a bignumber
+Byte *int_to_bn(Byte *r, const long value)
+{
+    clear_bn(r);
+    Byte *ones_byte = r + g_bn_length - g_int_length;
+    switch (g_int_length)
+    {
+        // only 1, 2, or 4 are allowed
+    case 1:
+        *ones_byte = static_cast<Byte>(value);
+        break;
+    case 2:
+        BIG_SET16(ones_byte, static_cast<U16>(value));
+        break;
+    case 4:
+        BIG_SET32(ones_byte, value);
+        break;
+    }
+    return r;
+}
+
+/*********************************************************************/
+//  b = f
+//  Converts a double to a bignumber
+Byte *float_to_bn(Byte *r, LDouble f)
+{
+    bool sign_flag = false;
+
+    clear_bn(r);
+    Byte *ones_byte = r + g_bn_length - g_int_length;
+
+    if (f < 0)
+    {
+        sign_flag = true;
+        f = -f;
+    }
+
+    switch (g_int_length)
+    {
+        // only 1, 2, or 4 are allowed
+    case 1:
+        *ones_byte = static_cast<Byte>(f);
+        break;
+    case 2:
+        BIG_SET16(ones_byte, static_cast<U16>(f));
+        break;
+    case 4:
+        BIG_SET32(ones_byte, static_cast<U32>(f));
+        break;
+    }
+
+    f -= static_cast<long>(f); // keep only the decimal part
+    for (int i = g_bn_length - g_int_length - 1; i >= 0 && f != 0.0; i--)
+    {
+        f *= 256;
+        r[i] = static_cast<Byte>(f); // keep use the integer part
+        f -= static_cast<Byte>(f);   // now throw away the integer part
+    }
+
+    if (sign_flag)
+    {
+        neg_a_bn(r);
+    }
+
+    return r;
+}
+
+/*********************************************************************/
+//  f = b
+//  Converts a bignumber to a double
+LDouble bn_to_float(Byte *n)
+{
+    LDouble f = 0;
+
+    bool sign_flag = false;
+    if (is_bn_neg(n))
+    {
+        sign_flag = true;
+        neg_a_bn(n);
+    }
+
+    int exponent = g_int_length - 1;
+    Byte *get_byte = n + g_bn_length - 1;
+    while (*get_byte == 0 && get_byte >= n)
+    {
+        get_byte--;
+        exponent--;
+    }
+
+    // There is no need to use all g_bn_length bytes.  To get the full
+    // precision of LDouble, all you need is LDBL_MANT_DIG/8+1.
+    for (int i = 0; i < LDBL_MANT_DIG / 8 + 1 && get_byte >= n; i++, get_byte--)
+    {
+        f += scale256(*get_byte, -i);
+    }
+
+    f = scale256(f, exponent);
+
+    if (sign_flag)
+    {
+        f = -f;
+        neg_a_bn(n);
+    }
+    return f;
 }
 
 } // namespace id::math

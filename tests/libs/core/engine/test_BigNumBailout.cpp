@@ -179,14 +179,14 @@ TEST_P(TestBigNumBailoutCases, comparesFractionalThresholdsAndPreservesCachesAnd
     const bool escaped = input.metric >= input.limit;
     set_bailout_formula(input.test);
     g_magnitude_limit = input.limit;
-    float_to_bn(g_old_z_bn.x.data(), -7);
-    float_to_bn(g_old_z_bn.y.data(), 9);
-    float_to_bn(g_new_z_bn.x.data(), input.point.x);
-    float_to_bn(g_new_z_bn.y.data(), input.point.y);
+    float_to_bn(g_old_z_bn.x, -7);
+    float_to_bn(g_old_z_bn.y, 9);
+    float_to_bn(g_new_z_bn.x, input.point.x);
+    float_to_bn(g_new_z_bn.y, input.point.y);
     std::vector<Byte> expected_x(g_r_length), expected_y(g_r_length), expected_old(g_r_length);
     square_bn(expected_x.data(), g_new_z_bn.x.data());
     square_bn(expected_y.data(), g_new_z_bn.y.data());
-    float_to_bn(expected_old.data(), escaped ? -7 : input.point.x);
+    BigNum{escaped ? -7 : input.point.x}.copy_to_legacy(expected_old.data(), expected_old.size());
 
     EXPECT_EQ(escaped, g_bailout_bignum() != 0);
 
@@ -196,9 +196,9 @@ TEST_P(TestBigNumBailoutCases, comparesFractionalThresholdsAndPreservesCachesAnd
         std::vector<Byte>(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_bn_length));
     EXPECT_EQ(std::vector<Byte>(expected_old.begin(), expected_old.begin() + g_bn_length),
         std::vector<Byte>(g_old_z_bn.x.data(), g_old_z_bn.x.data() + g_bn_length));
-    EXPECT_EQ(escaped ? 9 : input.point.y, bn_to_float(g_old_z_bn.y.data()));
-    EXPECT_EQ(input.point.x, bn_to_float(g_new_z_bn.x.data()));
-    EXPECT_EQ(input.point.y, bn_to_float(g_new_z_bn.y.data()));
+    EXPECT_EQ(escaped ? 9 : input.point.y, bn_to_float(g_old_z_bn.y));
+    EXPECT_EQ(input.point.x, bn_to_float(g_new_z_bn.x));
+    EXPECT_EQ(input.point.y, bn_to_float(g_new_z_bn.y));
     EXPECT_EQ(-17, g_magnitude);
 }
 
@@ -213,8 +213,8 @@ TEST_P(TestBigNumWideBailout, retainsWideProductBytesBeyondMachinePrecision)
 {
     set_bailout_formula(GetParam());
     g_magnitude_limit = 0;
-    str_to_bn(g_new_z_bn.x.data(), "0.123456789012345678901234567890123456789");
-    str_to_bn(g_new_z_bn.y.data(), "-0.345678901234567890123456789012345678901");
+    str_to_bn(g_new_z_bn.x, "0.123456789012345678901234567890123456789");
+    str_to_bn(g_new_z_bn.y, "-0.345678901234567890123456789012345678901");
     std::vector<Byte> expected_x(g_r_length), expected_y(g_r_length);
     square_bn(expected_x.data(), g_new_z_bn.x.data());
     square_bn(expected_y.data(), g_new_z_bn.y.data());
@@ -1050,8 +1050,8 @@ TEST_P(TestBigNumMandelbrotInitialization, dispatchMatchesRegularSeedParameterCa
     EXPECT_EQ(BigNum{pixel.x}, g_param_z_bn.x);
     EXPECT_EQ(BigNum{pixel.y}, g_param_z_bn.y);
     EXPECT_EQ(iteration, g_color_iter);
-    EXPECT_EQ(sqr(seed.x), bn_to_float(g_tmp_sqr_x_bn.data()));
-    EXPECT_EQ(sqr(seed.y), bn_to_float(g_tmp_sqr_y_bn.data()));
+    EXPECT_EQ(sqr(seed.x), bn_to_float(g_tmp_sqr_x_bn));
+    EXPECT_EQ(sqr(seed.y), bn_to_float(g_tmp_sqr_y_bn));
 
     ASSERT_EQ(0, g_dispatch.orbit_calc()());
 
@@ -1124,12 +1124,12 @@ TEST_F(TestBigNumJulia, affineSeedsKeepPreciseFixedParameterAndWideSquareCaches)
             EXPECT_EQ(1, julia_per_pixel_bn());
 
             EXPECT_EQ(37, g_color_iter);
-            EXPECT_DOUBLE_EQ(real, static_cast<double>(bn_to_float(g_old_z_bn.x.data())));
-            EXPECT_DOUBLE_EQ(imag, static_cast<double>(bn_to_float(g_old_z_bn.y.data())));
-            EXPECT_DOUBLE_EQ(real, static_cast<double>(bn_to_float(g_new_z_bn.x.data())));
-            EXPECT_DOUBLE_EQ(imag, static_cast<double>(bn_to_float(g_new_z_bn.y.data())));
-            EXPECT_DOUBLE_EQ(real * real, static_cast<double>(bn_to_float(g_tmp_sqr_x_bn.data())));
-            EXPECT_DOUBLE_EQ(imag * imag, static_cast<double>(bn_to_float(g_tmp_sqr_y_bn.data())));
+            EXPECT_DOUBLE_EQ(real, static_cast<double>(bn_to_float(g_old_z_bn.x)));
+            EXPECT_DOUBLE_EQ(imag, static_cast<double>(bn_to_float(g_old_z_bn.y)));
+            EXPECT_DOUBLE_EQ(real, static_cast<double>(bn_to_float(g_new_z_bn.x)));
+            EXPECT_DOUBLE_EQ(imag, static_cast<double>(bn_to_float(g_new_z_bn.y)));
+            EXPECT_DOUBLE_EQ(real * real, static_cast<double>(bn_to_float(g_tmp_sqr_x_bn)));
+            EXPECT_DOUBLE_EQ(imag * imag, static_cast<double>(bn_to_float(g_tmp_sqr_y_bn)));
             EXPECT_EQ(parameter_x, std::vector<Byte>(g_param_z_bn.x.data(), g_param_z_bn.x.data() + g_bn_length));
             EXPECT_EQ(parameter_y, std::vector<Byte>(g_param_z_bn.y.data(), g_param_z_bn.y.data() + g_bn_length));
 
@@ -1169,15 +1169,15 @@ TEST_F(TestBigNumJulia, viewportTransitionRestoresJuliaParameterAndKeepsBailoutE
     ASSERT_EQ(BigNum{0}, g_param_z_bn.y);
     ASSERT_EQ(1, julia_per_pixel_bn());
     EXPECT_EQ(37, g_color_iter);
-    EXPECT_EQ(2, bn_to_float(g_old_z_bn.x.data()));
-    EXPECT_EQ(0, bn_to_float(g_old_z_bn.y.data()));
+    EXPECT_EQ(2, bn_to_float(g_old_z_bn.x));
+    EXPECT_EQ(0, bn_to_float(g_old_z_bn.y));
 
     EXPECT_EQ(1, julia_orbit_bn());
 
     EXPECT_EQ(BigNum{4}, g_new_z_bn.x);
     EXPECT_EQ(BigNum{0}, g_new_z_bn.y);
-    EXPECT_EQ(2, bn_to_float(g_old_z_bn.x.data()));
-    EXPECT_EQ(0, bn_to_float(g_old_z_bn.y.data()));
+    EXPECT_EQ(2, bn_to_float(g_old_z_bn.x));
+    EXPECT_EQ(0, bn_to_float(g_old_z_bn.y));
 }
 
 class TestBigNumSqrStorage : public TestBigNumBailout, public testing::WithParamInterface<std::tuple<int, bool>>

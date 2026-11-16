@@ -118,7 +118,7 @@ BigFloatPtr clear_bf(BigFloatPtr r);
 BigFloatPtr copy_bf(BigFloatPtr r, BigFloatConstPtr n);
 BigFloatPtr float_to_bf(BigFloatPtr r, LDouble f);
 LDouble bf_to_float(BigFloatPtr n);
-LDouble bn_to_float(BigNumPtr n);
+LDouble bn_to_float(Byte *n);
 LDouble extract256(LDouble f, int *exp_ptr);
 LDouble scale256(LDouble f, int n);
 
@@ -140,8 +140,10 @@ S16 BIG_SET_S16(S16 *addr, S16 val);
 #define BIG_SET_S16(addr, val) (*(S16 *)(addr) = (S16)(val))
 #endif
 void bn_hex_dump(const BigNum &r);
-BigNumPtr str_to_bn(BigNumPtr r, std::string_view s);
-BigNumPtr int_to_bn(BigNumPtr r, long value);
+Byte *str_to_bn(Byte *r, std::string_view s);
+Byte *int_to_bn(Byte *r, long value);
+void set_integer_part(Byte *ones_byte, long value);
+std::string unsafe_bn_to_string(Byte *r, int dec);
 long bn_to_int(const Byte *n);
 Byte *abs_bn(Byte *r, const Byte *n);
 Byte *abs_a_bn(Byte *r);
@@ -156,11 +158,10 @@ Byte *full_mult_bn(Byte *r, Byte *n1, Byte *n2);
 Byte *mult_bn(Byte *r, Byte *n1, Byte *n2);
 Byte *full_square_bn(Byte *r, Byte *n);
 Byte *square_bn(Byte *r, Byte *n);
-std::string bn_to_string(BigNumConstPtr r, int dec);
 Byte *div_bn(Byte *r, const Byte *n1, const Byte *n2, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *copy1, Byte *copy2);
 // misc
 bool is_bn_zero(const Byte *n);
-BigNumPtr float_to_bn(BigNumPtr r, LDouble f);
+Byte *float_to_bn(Byte *r, LDouble f);
 
 void bf_hex_dump(const BigFloat &r);
 BigFloatPtr str_to_bf(BigFloatPtr r, std::string_view s);

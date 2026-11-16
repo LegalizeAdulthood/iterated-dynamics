@@ -2,6 +2,7 @@
 // Copyright 2026 Richard Thomson.
 //
 #include <math/BigFloat.h>
+#include <math/BigNum.h>
 
 #include <engine/bailout_formula.h>
 #include <engine/UserData.h>
@@ -1016,7 +1017,7 @@ TEST_P(TestBigFloatProductOwnership, temporaryRewindsPreserveLiveProductsAndRele
         BigStackSaver saved;
         Byte *const fixed = bn_stack().allocate_double();
         Byte *const floating = bf_stack().allocate_double();
-        float_to_bn(fixed, -5);
+        BigNum{-5}.copy_to_legacy(fixed, g_bn_length);
         float_to_bf(floating, 6.25L);
         const BigFloatProduct local{temporary, product};
         const BigStackMark middle = save_stack();
@@ -1028,7 +1029,7 @@ TEST_P(TestBigFloatProductOwnership, temporaryRewindsPreserveLiveProductsAndRele
             EXPECT_EQ(bytes, product_bytes(nested));
         }
         EXPECT_EQ(middle, save_stack());
-        EXPECT_EQ(-5.0L, bn_to_float(fixed));
+        EXPECT_EQ(-5.0L, BigNum::from_legacy(fixed, g_bn_length).to_float());
         EXPECT_EQ(6.25L, bf_to_float(floating));
         EXPECT_EQ(bytes, product_bytes(local));
         EXPECT_EQ(bytes, product_bytes(product));

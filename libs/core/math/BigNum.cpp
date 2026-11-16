@@ -402,7 +402,7 @@ std::string BigNum::to_string(const int digits) const
     {
         throw std::invalid_argument("BigNum formatting requires a nonnegative digit count");
     }
-    return bn_to_string(data(), digits);
+    return bn_to_string(*this, digits);
 }
 
 BigNum BigNum::from_legacy(BigNumConstPtr source, const std::size_t size)
@@ -433,6 +433,34 @@ void BigNum::copy_to_legacy_float(BigFloatPtr destination, const std::size_t siz
 BigNum sqr(const BigNum &value)
 {
     return value.sqr();
+}
+
+BigNum &str_to_bn(BigNum &r, const std::string_view text)
+{
+    str_to_bn(r.data(), text);
+    return r;
+}
+
+BigNum &int_to_bn(BigNum &r, const long value)
+{
+    int_to_bn(r.data(), value);
+    return r;
+}
+
+BigNum &float_to_bn(BigNum &r, const LDouble value)
+{
+    float_to_bn(r.data(), value);
+    return r;
+}
+
+LDouble bn_to_float(BigNum &value)
+{
+    return bn_to_float(value.data());
+}
+
+std::string bn_to_string(const BigNum &value, const int digits)
+{
+    return unsafe_bn_to_string(copy_bn(g_bn_tmp_copy2.data(), value.data()), digits);
 }
 
 long bn_to_int(const BigNum &n)
