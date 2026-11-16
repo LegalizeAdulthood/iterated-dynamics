@@ -1001,19 +1001,39 @@ TEST_P(TestBigFloatProductOwnership, temporaryRewindsPreserveLiveProductsAndRele
 {
     BigArena &arena = bf_arena(std::get<1>(GetParam()));
     BigArena &temporary = bf_arena(BigLifetime::TEMPORARY);
+    const BigFloat persistent{bf_arena(BigLifetime::PERSISTENT), -2.5L};
+    const BigFloat working{bf_arena(BigLifetime::WORKING), 3.75L};
     const std::vector<Byte> bytes = wide_float_pattern();
     BigFloatProduct product{arena};
     std::copy(bytes.begin(), bytes.end(), product.data());
     const BigStackMark mark = save_stack();
     {
         BigStackSaver saved;
-        bn_stack().allocate_double();
-        bf_stack().allocate_double();
+        Byte *const fixed = bn_stack().allocate_double();
+        Byte *const floating = bf_stack().allocate_double();
+        float_to_bn(fixed, -5);
+        float_to_bf(floating, 6.25L);
         const BigFloatProduct local{temporary, product};
+        const BigStackMark middle = save_stack();
+        {
+            BigStackSaver inner;
+            bn_stack().allocate_double();
+            bf_stack().allocate_double();
+            const BigFloatProduct nested{temporary, product};
+            EXPECT_EQ(bytes, product_bytes(nested));
+        }
+        EXPECT_EQ(middle, save_stack());
+        EXPECT_EQ(-5.0L, bn_to_float(fixed));
+        EXPECT_EQ(6.25L, bf_to_float(floating));
         EXPECT_EQ(bytes, product_bytes(local));
+        EXPECT_EQ(bytes, product_bytes(product));
+        EXPECT_EQ(-2.5L, persistent.to_float());
+        EXPECT_EQ(3.75L, working.to_float());
     }
     EXPECT_EQ(mark, save_stack());
     EXPECT_EQ(bytes, product_bytes(product));
+    EXPECT_EQ(-2.5L, persistent.to_float());
+    EXPECT_EQ(3.75L, working.to_float());
     const std::size_t high_water = temporary.high_water_mark();
     BigArena::Allocation first = temporary.allocate_double();
     BigArena::Allocation second = temporary.allocate_double();
