@@ -39,6 +39,7 @@ static_assert(!std::is_convertible_v<BigFloatPtr, BigFloat>);
 static_assert(std::is_same_v<decltype(&bf_hex_dump), void (*)(const BigFloat &)>);
 static_assert(std::is_same_v<decltype(str_to_bf(std::declval<BigFloat &>(), std::string_view{})), BigFloat &>);
 static_assert(std::is_same_v<decltype(int_to_bf(std::declval<BigFloat &>(), long{})), BigFloat &>);
+static_assert(std::is_same_v<decltype(float_to_bf(std::declval<BigFloat &>(), LDouble{})), BigFloat &>);
 
 std::vector<Byte> encoded_value(const BigFloat &value)
 {
@@ -235,6 +236,80 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndIntegers, TestBigFloatIntegerInterface,
             BigFloatIntegerInput{-65536, {0x00, 0x00, 0x00, 0x00, 0xff, 0x01, 0x00}},
             BigFloatIntegerInput{std::numeric_limits<S32>::max(), {0xff, 0xff, 0xff, 0x7f, 0x00, 0x03, 0x00}},
             BigFloatIntegerInput{std::numeric_limits<S32>::min(), {0x00, 0x00, 0x00, 0x80, 0xff, 0x03, 0x00}})));
+
+struct BigFloatFloatingInput
+{
+    LDouble value;
+    std::array<Byte, 7> tail;
+    int fractional_bit{};
+};
+
+class TestBigFloatFloatingInput : public TestBigFloatValue,
+                                  public testing::WithParamInterface<std::tuple<int, int, BigFloatFloatingInput>>
+{
+};
+
+TEST_P(TestBigFloatFloatingInput, preservesBytesDestinationAndSharedLengthsWithoutAllocating)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const ValueSaver<int> integer_length{g_int_length, std::get<1>(GetParam())};
+    const BigFloatFloatingInput &input = std::get<2>(GetParam());
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    BigFloat value{arena};
+    const Byte *const address = value.data();
+    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
+    const std::size_t stride = arena.block_size();
+    std::vector<Byte> expected(size);
+    std::copy(input.tail.begin(), input.tail.end(), expected.end() - 7);
+    if (input.fractional_bit != 0)
+    {
+        const int position = g_bf_length - 2 - (input.fractional_bit + 7) / 8;
+        if (position >= 0)
+        {
+            expected[position] |= static_cast<Byte>(1U << ((8 - input.fractional_bit % 8) % 8));
+        }
+    }
+    std::fill_n(value.data(), stride, Byte{0xa5});
+    std::fill_n(g_bf_tmp1.data(), stride, Byte{0x3c});
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+    const int bn_length = g_bn_length;
+    const int bf_length = g_bf_length;
+    const int int_length = g_int_length;
+
+    EXPECT_EQ(&value, &float_to_bf(value, input.value));
+
+    EXPECT_EQ(expected, encoded_value(value));
+    EXPECT_EQ(address, value.data());
+    EXPECT_EQ(&arena, &value.arena());
+    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(value.data() + size, value.data() + stride));
+    EXPECT_EQ(std::vector<Byte>(stride, 0x3c), std::vector<Byte>(g_bf_tmp1.data(), g_bf_tmp1.data() + stride));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(bn_length, g_bn_length);
+    EXPECT_EQ(bf_length, g_bf_length);
+    EXPECT_EQ(int_length, g_int_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsIntegerLengthsAndInputs, TestBigFloatFloatingInput,
+    testing::Combine(testing::Values(4, 12, 60, 64, 708), testing::Values(1, 2, 4),
+        testing::Values(BigFloatFloatingInput{0, {}}, BigFloatFloatingInput{-0.0L, {}},
+            BigFloatFloatingInput{1, {0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}},
+            BigFloatFloatingInput{-1, {0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00}},
+            BigFloatFloatingInput{1.25L, {0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0x00}},
+            BigFloatFloatingInput{-1.25L, {0x00, 0x00, 0xc0, 0xfe, 0xff, 0x00, 0x00}},
+            BigFloatFloatingInput{0.5L, {0x00, 0x00, 0x00, 0x80, 0x00, 0xff, 0xff}},
+            BigFloatFloatingInput{-0.5L, {0x00, 0x00, 0x00, 0x80, 0xff, 0xff, 0xff}},
+            BigFloatFloatingInput{255, {0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00}},
+            BigFloatFloatingInput{256, {0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00}},
+            BigFloatFloatingInput{257, {0x00, 0x00, 0x01, 0x01, 0x00, 0x01, 0x00}},
+            BigFloatFloatingInput{65536, {0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00}},
+            BigFloatFloatingInput{1.0L / 256, {0x00, 0x00, 0x00, 0x01, 0x00, 0xff, 0xff}},
+            BigFloatFloatingInput{1.0L / 65536, {0x00, 0x00, 0x00, 0x01, 0x00, 0xfe, 0xff}},
+            BigFloatFloatingInput{std::ldexp(1.0L, 1023), {0x00, 0x00, 0x00, 0x80, 0x00, 0x7f, 0x00}},
+            BigFloatFloatingInput{-std::ldexp(1.0L, 1023), {0x00, 0x00, 0x00, 0x80, 0xff, 0x7f, 0x00}},
+            BigFloatFloatingInput{std::ldexp(1.0L, -1022), {0x00, 0x00, 0x00, 0x04, 0x00, 0x80, 0xff}},
+            BigFloatFloatingInput{1.0L + std::ldexp(1.0L, -52), {0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}, 52})));
 
 TEST_F(TestBigFloatValue, assignsNativeScalarValues)
 {
@@ -476,7 +551,7 @@ TEST_F(TestBigFloatValue, legacyBorrowsAccessOwnedStorageAndResolveRelocatedHand
     EXPECT_EQ(before, value.data());
     EXPECT_EQ(encoded_value(value), std::vector<Byte>(before, before + g_bf_length + 2));
 
-    float_to_bf(value.data(), 2.5L);
+    float_to_bf(value, 2.5L);
     EXPECT_EQ(BigFloat{2.5L}, value);
     init_bf_dec(80);
 
@@ -1145,7 +1220,7 @@ TEST_P(TestBigFloatProductOwnership, temporaryRewindsPreserveLiveProductsAndRele
         Byte *const fixed = bn_stack().allocate_double();
         Byte *const floating = bf_stack().allocate_double();
         BigNum{-5}.copy_to_legacy(fixed, g_bn_length);
-        float_to_bf(floating, 6.25L);
+        BigFloat{6.25L}.copy_to_legacy(floating, static_cast<std::size_t>(g_bf_length + 2));
         const BigFloatProduct local{temporary, product};
         const BigStackMark middle = save_stack();
         {

@@ -116,7 +116,7 @@ Byte *unsafe_div_bn_int(Byte *r, Byte *n, misc::U16 u);
 Byte *div_a_bn_int(Byte *r, misc::U16 u);
 BigFloatPtr clear_bf(BigFloatPtr r);
 BigFloatPtr copy_bf(BigFloatPtr r, BigFloatConstPtr n);
-BigFloatPtr float_to_bf(BigFloatPtr r, LDouble f);
+Byte *float_to_bf(Byte *r, LDouble f);
 LDouble bf_to_float(BigFloatPtr n);
 LDouble bn_to_float(Byte *n);
 LDouble extract256(LDouble f, int *exp_ptr);

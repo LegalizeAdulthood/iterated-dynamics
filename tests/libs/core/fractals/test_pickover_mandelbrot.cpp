@@ -306,8 +306,8 @@ std::complex<double> TestSignedPowerState::precise_power(const std::complex<doub
     BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex exponent{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex result{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    float_to_bf(value.x.data(), z.real());
-    float_to_bf(value.y.data(), z.imag());
+    float_to_bf(value.x, z.real());
+    float_to_bf(value.y, z.imag());
     int_to_bf(exponent.x, g_c_exponent);
     clear_bf(exponent.y.data());
     result = pow(value, exponent);
@@ -471,8 +471,8 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     BigFloat difference{bf_arena(BigLifetime::TEMPORARY)};
     int_to_bf(exponent.x, GetParam().exponent);
     clear_bf(exponent.y.data());
-    float_to_bf(center.x.data(), 0.125);
-    float_to_bf(center.y.data(), -0.0625);
+    float_to_bf(center.x, 0.125);
+    float_to_bf(center.y, -0.0625);
     str_to_bf(seed.x, GetParam().real);
     if (is_bf_zero(seed.x.data()))
     {
@@ -480,7 +480,7 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     }
     else
     {
-        float_to_bf(seed.y.data(), 0.125);
+        float_to_bf(seed.y, 0.125);
     }
     copy_bf(actual.x.data(), seed.x.data());
     copy_bf(actual.y.data(), seed.y.data());
@@ -805,10 +805,10 @@ TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
     BFComplex exponent{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BigFloat difference{bf_arena(BigLifetime::TEMPORARY)};
-    float_to_bf(exponent.x.data(), GetParam().exponent.real());
-    float_to_bf(exponent.y.data(), GetParam().exponent.imag());
-    float_to_bf(center.x.data(), 0.0625);
-    float_to_bf(center.y.data(), -0.03125);
+    float_to_bf(exponent.x, GetParam().exponent.real());
+    float_to_bf(exponent.y, GetParam().exponent.imag());
+    float_to_bf(center.x, 0.0625);
+    float_to_bf(center.y, -0.03125);
     str_to_bf(seed.x, "-0.75000000000000000000000000000000000000001");
     str_to_bf(seed.y, GetParam().imaginary);
     copy_bf(actual.x.data(), seed.x.data());
@@ -845,8 +845,8 @@ TEST_P(TestPreciseComplexPowerZero, zeroReferenceProducesTheCenter)
     BigStackSaver saved;
     BFComplex actual{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    float_to_bf(center.x.data(), 0.0625);
-    float_to_bf(center.y.data(), -0.03125);
+    float_to_bf(center.x, 0.0625);
+    float_to_bf(center.y, -0.03125);
     clear_bf(actual.x.data());
     clear_bf(actual.y.data());
 

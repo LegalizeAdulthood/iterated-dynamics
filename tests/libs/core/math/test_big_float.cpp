@@ -558,7 +558,7 @@ void TestActivePrecisionArena::prepare_active_arena(const FractalType type)
 {
     g_fractal_type = type;
     init_bf_dec(20);
-    float_to_bf(g_bf_x_min.data(), 1.25);
+    float_to_bf(g_bf_x_min, 1.25);
     m_length = g_bf_length;
     m_decimals = g_decimals;
     m_stack = save_stack();
@@ -671,7 +671,7 @@ void TestArenaPrecisionLimit::SetUp()
     init_bf_length(GetParam().length);
     ASSERT_EQ(GetParam().math, g_bf_math);
     ASSERT_EQ(GetParam().length, g_bn_length);
-    float_to_bf(g_bf_x_min.data(), 1.25);
+    float_to_bf(g_bf_x_min, 1.25);
 }
 
 TEST_P(TestArenaPrecisionLimit, rejectsRequestsPastTheBackendLimit)
@@ -694,7 +694,7 @@ TEST_F(TestBigFloat, stackStorageCrossesSixtyFourKilobytes)
 {
     constexpr std::size_t OLD_ARENA_SIZE{64 * 1024};
     const auto stack = save_stack();
-    float_to_bf(g_bf_x_min.data(), 1.25);
+    float_to_bf(g_bf_x_min, 1.25);
     {
         BigStackSaver saved;
         const std::size_t stride = bf_arena(BigLifetime::TEMPORARY).block_size();
@@ -703,7 +703,7 @@ TEST_F(TestBigFloat, stackStorageCrossesSixtyFourKilobytes)
             bf_stack().allocate_single();
         }
         BigFloatPtr value = bf_stack().allocate_single();
-        float_to_bf(value, 2.5);
+        BigFloat{2.5}.copy_to_legacy(value, static_cast<std::size_t>(g_bf_length + 2));
         add_bf(value, value, g_bf_x_min.data());
         EXPECT_GT(big_memory_stats().temporaries, OLD_ARENA_SIZE);
         EXPECT_EQ(3.75L, bf_to_float(value));
@@ -803,7 +803,7 @@ protected:
 void TestFreedArena::SetUp()
 {
     TestBigFloat::SetUp();
-    float_to_bf(g_bf_x_min.data(), 1.25);
+    float_to_bf(g_bf_x_min, 1.25);
     bf_stack().allocate_single();
     free_bf_vars();
 }
@@ -844,7 +844,7 @@ TEST_F(TestFreedArena, initializesFreshStorageAfterRejectedOperations)
 TEST_F(TestBigFloat, loweringPrecisionPreservesCornersWithoutOverrunningArena)
 {
     init_bf_dec(1200);
-    float_to_bf(g_bf_x_min.data(), 1.25);
+    float_to_bf(g_bf_x_min, 1.25);
     init_bf_dec(20);
     EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min.data()));
     EXPECT_EQ(BigStackMark{}, save_stack());
@@ -885,18 +885,18 @@ TEST_F(TestBigFloat, precisionChangesPreserveAllCornersSavedCornersAndParameters
 TEST_F(TestBigFloat, nestedStackRewindsPreserveOuterValuesAndPersistentCorners)
 {
     const auto start = save_stack();
-    float_to_bf(g_bf_x_min.data(), -1.25);
+    float_to_bf(g_bf_x_min, -1.25);
     {
         BigStackSaver outer;
         BigNumPtr fixed = bn_stack().allocate_single();
         BigFloatPtr floating = bf_stack().allocate_single();
         BigNum{2.5L}.copy_to_legacy(fixed, g_bn_length);
-        float_to_bf(floating, -3.75);
+        BigFloat{-3.75}.copy_to_legacy(floating, static_cast<std::size_t>(g_bf_length + 2));
         const auto middle = save_stack();
         {
             BigStackSaver inner;
             BigNum{-7.5L}.copy_to_legacy(bn_stack().allocate_double(), g_bn_length);
-            float_to_bf(bf_stack().allocate_double(), 8.25);
+            BigFloat{8.25}.copy_to_legacy(bf_stack().allocate_double(), static_cast<std::size_t>(g_bf_length + 2));
             EXPECT_GT(save_stack(), middle);
         }
         EXPECT_EQ(middle, save_stack());
@@ -929,13 +929,13 @@ TEST_F(TestBigFloat, bothStackAdaptersRewindWhileOwnedPersistentAndWorkingValues
 {
     auto persistent = bf_arena(BigLifetime::PERSISTENT).allocate_single();
     auto working = bn_arena(BigLifetime::WORKING).allocate_single();
-    float_to_bf(persistent.data(), -2.5);
+    BigFloat{-2.5}.copy_to_legacy(persistent.data(), static_cast<std::size_t>(g_bf_length + 2));
     BigNum{3.75L}.copy_to_legacy(working.data(), g_bn_length);
     const auto before = save_stack();
     {
         BigStackSaver scope;
         BigNum{-5.5L}.copy_to_legacy(bn_stack().allocate_single(), g_bn_length);
-        float_to_bf(bf_stack().allocate_double(), 6.25);
+        BigFloat{6.25}.copy_to_legacy(bf_stack().allocate_double(), static_cast<std::size_t>(g_bf_length + 2));
         const auto middle = save_stack();
         EXPECT_GT(middle.big_num, before.big_num);
         EXPECT_GT(middle.big_float, before.big_float);
@@ -960,14 +960,14 @@ TEST_F(TestBigFloat, stackRewindCoalescesAReleasedNarrowedAllocationWithItsBorro
         BigStackSaver scope;
         auto wide = arena.allocate_double();
         index = wide.index();
-        float_to_bf(wide.data() + g_padding, -2.5);
+        BigFloat{-2.5}.copy_to_legacy(wide.data() + g_padding, static_cast<std::size_t>(g_bf_length + 2));
         wide.reduce();
         const auto middle = save_stack();
         {
             BigStackSaver inner;
             BigFloatPtr half = bf_stack().allocate_single();
             EXPECT_EQ(wide.data() + arena.block_size(), half);
-            float_to_bf(half, 3.75);
+            BigFloat{3.75}.copy_to_legacy(half, static_cast<std::size_t>(g_bf_length + 2));
             bn_stack().allocate_double();
         }
         EXPECT_EQ(middle, save_stack());
@@ -984,7 +984,7 @@ TEST_F(TestBigFloat, ownedArenaValuesSurviveContextResetAndLaterPrecisionGrowth)
 {
     auto floating = bf_arena(BigLifetime::WORKING).allocate_single();
     auto fixed = bn_arena(BigLifetime::PERSISTENT).allocate_single();
-    float_to_bf(floating.data(), -2.5);
+    BigFloat{-2.5}.copy_to_legacy(floating.data(), static_cast<std::size_t>(g_bf_length + 2));
     BigNum{3.75L}.copy_to_legacy(fixed.data(), g_bn_length);
     const auto floating_index = floating.index();
     const auto fixed_index = fixed.index();
@@ -1093,7 +1093,7 @@ TEST_P(TestPersistentBigFloatParameters, preservesValuesAcrossRelocationAndClear
         &g_bf_save_y_min, &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
     for (std::size_t i = 0; i < values.size(); ++i)
     {
-        float_to_bf(values[i]->data(), -static_cast<LDouble>(i + 1));
+        float_to_bf(*values[i], -static_cast<LDouble>(i + 1));
     }
     const int next_length = GetParam() == 4 ? 32 : 4;
     init_bf_length(next_length);

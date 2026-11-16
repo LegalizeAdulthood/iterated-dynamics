@@ -1242,6 +1242,93 @@ std::string unsafe_bn_to_string(Byte *r, int dec)
     return result;
 }
 
+/********************************************************************/
+// extracts the mantissa and exponent of f
+// finds m and n such that 1<=|m|<b and f = m*b^n
+// n is stored in *exp_ptr and m is returned, sort of like frexp()
+LDouble extract_value(LDouble f, LDouble b, int *exp_ptr)
+{
+    LDouble value[15];
+
+    if (b <= 0 || f == 0)
+    {
+        *exp_ptr = 0;
+        return 0;
+    }
+
+    const LDouble orig_b = b;
+    const LDouble af = f >= 0 ? f : -f; // abs value
+    LDouble ff = af > 1 ? af : 1 / af;
+    int n = 0;
+    unsigned power_two = 1;
+    while (b < ff)
+    {
+        value[n] = b;
+        n++;
+        power_two <<= 1;
+        b *= b;
+    }
+
+    *exp_ptr = 0;
+    for (; n > 0; n--)
+    {
+        power_two >>= 1;
+        if (value[n - 1] < ff)
+        {
+            ff /= value[n - 1];
+            *exp_ptr += power_two;
+        }
+    }
+    if (f < 0)
+    {
+        ff = -ff;
+    }
+    if (af < 1)
+    {
+        ff = orig_b / ff;
+        *exp_ptr = -*exp_ptr - 1;
+    }
+
+    return ff;
+}
+
+/********************************************************************/
+// extracts the mantissa and exponent of f
+// finds m and n such that 1<=|m|<256 and f = m*256^n
+// n is stored in *exp_ptr and m is returned, sort of like frexp()
+LDouble extract256(const LDouble f, int *exp_ptr)
+{
+    return extract_value(f, 256, exp_ptr);
+}
+
+/*********************************************************************/
+//  b = f
+//  Converts a double to a bigfloat
+Byte *float_to_bf(Byte *r, LDouble f)
+{
+    int power;
+    if (f == 0)
+    {
+        clear_bf(r);
+        return r;
+    }
+
+    // remove the exp part
+    f = extract256(f, &power);
+
+    int bnl = g_bn_length;
+    g_bn_length = g_bf_length;
+    int il = g_int_length;
+    g_int_length = 2;
+    float_to_bn(r, f);
+    g_bn_length = bnl;
+    g_int_length = il;
+
+    BIG_SET16(r + g_bf_length, static_cast<S16>(power)); // exp
+
+    return r;
+}
+
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bigfloat

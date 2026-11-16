@@ -96,11 +96,11 @@ int initialize_mandel_sticky_pixel()
     {
         BigStackSaver saved;
         BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
-        float_to_bf(offset.data(), 1e-40);
+        float_to_bf(offset, 1e-40);
         mult_a_bf_int(offset.data(), static_cast<U16>(g_col));
-        float_to_bf(g_param_z_bf.x.data(), g_init.x);
+        float_to_bf(g_param_z_bf.x, g_init.x);
         add_a_bf(g_param_z_bf.x.data(), offset.data());
-        float_to_bf(g_param_z_bf.y.data(), g_init.y);
+        float_to_bf(g_param_z_bf.y, g_init.y);
         copy_bf(g_old_z_bf.x.data(), g_param_z_bf.x.data());
         copy_bf(g_old_z_bf.y.data(), g_param_z_bf.y.data());
     }

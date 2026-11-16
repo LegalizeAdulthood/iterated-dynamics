@@ -78,12 +78,12 @@ protected:
 
     void set_corners(const ImageRegion &region)
     {
-        float_to_bf(g_bf_x_min.data(), region.m_min.x);
-        float_to_bf(g_bf_x_max.data(), region.m_max.x);
-        float_to_bf(g_bf_y_min.data(), region.m_min.y);
-        float_to_bf(g_bf_y_max.data(), region.m_max.y);
-        float_to_bf(g_bf_x_3rd.data(), region.m_3rd.x);
-        float_to_bf(g_bf_y_3rd.data(), region.m_3rd.y);
+        float_to_bf(g_bf_x_min, region.m_min.x);
+        float_to_bf(g_bf_x_max, region.m_max.x);
+        float_to_bf(g_bf_y_min, region.m_min.y);
+        float_to_bf(g_bf_y_max, region.m_max.y);
+        float_to_bf(g_bf_x_3rd, region.m_3rd.x);
+        float_to_bf(g_bf_y_3rd, region.m_3rd.y);
     }
 
     ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::MANDEL};

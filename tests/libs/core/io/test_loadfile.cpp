@@ -855,7 +855,7 @@ protected:
 void TestFindPrecisionMetadata::SetUp()
 {
     init_bf_dec(20);
-    float_to_bf(g_bf_x_min.data(), 1.25);
+    float_to_bf(g_bf_x_min, 1.25);
     g_file_x_dots = 987;
     m_length = g_bf_length;
     m_stack = save_stack();

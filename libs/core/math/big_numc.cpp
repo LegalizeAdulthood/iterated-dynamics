@@ -57,34 +57,6 @@ BigFloatPtr copy_bf(BigFloatPtr r, BigFloatConstPtr n)
 }
 
 /*********************************************************************/
-//  b = f
-//  Converts a double to a bigfloat
-BigFloatPtr float_to_bf(BigFloatPtr r, LDouble f)
-{
-    int power;
-    if (f == 0)
-    {
-        clear_bf(r);
-        return r;
-    }
-
-    // remove the exp part
-    f = extract256(f, &power);
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    int il = g_int_length;
-    g_int_length = 2;
-    float_to_bn(r, f);
-    g_bn_length = bnl;
-    g_int_length = il;
-
-    BIG_SET16(r + g_bf_length, static_cast<S16>(power)); // exp
-
-    return r;
-}
-
-/*********************************************************************/
 //  f = b
 //  Converts a bigfloat to a double
 LDouble bf_to_float(BigFloatPtr n)
@@ -101,15 +73,6 @@ LDouble bf_to_float(BigFloatPtr n)
     f = scale256(f, power);
 
     return f;
-}
-
-/********************************************************************/
-// extracts the mantissa and exponent of f
-// finds m and n such that 1<=|m|<256 and f = m*256^n
-// n is stored in *exp_ptr and m is returned, sort of like frexp()
-LDouble extract256(const LDouble f, int *exp_ptr)
-{
-    return extract_value(f, 256, exp_ptr);
 }
 
 /********************************************************************/

@@ -635,56 +635,6 @@ BigFloatPtr div_a_bf_int(BigFloatPtr r, const U16 u)
 }
 
 /********************************************************************/
-// extracts the mantissa and exponent of f
-// finds m and n such that 1<=|m|<b and f = m*b^n
-// n is stored in *exp_ptr and m is returned, sort of like frexp()
-LDouble extract_value(LDouble f, LDouble b, int *exp_ptr)
-{
-    LDouble value[15];
-
-    if (b <= 0 || f == 0)
-    {
-        *exp_ptr = 0;
-        return 0;
-    }
-
-    const LDouble orig_b = b;
-    const LDouble af = f >= 0 ? f : -f;     // abs value
-    LDouble ff = af > 1 ? af : 1 / af;
-    int n = 0;
-    unsigned power_two = 1;
-    while (b < ff)
-    {
-        value[n] = b;
-        n++;
-        power_two <<= 1;
-        b *= b;
-    }
-
-    *exp_ptr = 0;
-    for (; n > 0; n--)
-    {
-        power_two >>= 1;
-        if (value[n-1] < ff)
-        {
-            ff /= value[n-1];
-            *exp_ptr += power_two;
-        }
-    }
-    if (f < 0)
-    {
-        ff = -ff;
-    }
-    if (af < 1)
-    {
-        ff = orig_b/ff;
-        *exp_ptr = -*exp_ptr - 1;
-    }
-
-    return ff;
-}
-
-/********************************************************************/
 // calculates and returns the value of f*b^n
 // sort of like ldexp()
 LDouble scale_value(LDouble f, LDouble b , const int n)

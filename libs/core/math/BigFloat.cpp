@@ -1173,6 +1173,12 @@ BigFloat &int_to_bf(BigFloat &r, const long value)
     return r;
 }
 
+BigFloat &float_to_bf(BigFloat &r, const LDouble value)
+{
+    float_to_bf(r.data(), value);
+    return r;
+}
+
 BigFloat abs(const BigFloat &value)
 {
     return value.abs();

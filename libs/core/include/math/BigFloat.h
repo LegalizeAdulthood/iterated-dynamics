@@ -147,6 +147,7 @@ private:
 
 BigFloat &str_to_bf(BigFloat &r, std::string_view text);
 BigFloat &int_to_bf(BigFloat &r, long value);
+BigFloat &float_to_bf(BigFloat &r, LDouble value);
 BigFloat abs(const BigFloat &value);
 BigFloat sqr(const BigFloat &value);
 BigFloat log(const BigFloat &value);
