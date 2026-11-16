@@ -269,7 +269,7 @@ TEST_P(TestBigFloatPiStorage, repeatedCleanupUnbindsPiAndReinitializationRestore
     expect_pi_bytes();
 }
 
-INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatPiStorage, testing::Values(4, 12, 64, 708));
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatPiStorage, testing::Values(4, 12, 56, 64, 708));
 
 struct BigFloatRampInput
 {
@@ -1349,7 +1349,7 @@ TEST_P(TestBigFloatKernelStorage, temporaryRewindsLeaveWorkingScratchUntouched)
 }
 
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndSlots, TestBigFloatKernelStorage,
-    testing::Combine(testing::Values(4, 12, 64, 708),
+    testing::Combine(testing::Values(4, 12, 56, 64, 708),
         testing::Values(KernelSlot::TMP1, KernelSlot::TMP2, KernelSlot::TMP3, KernelSlot::TMP4, KernelSlot::TMP5,
             KernelSlot::TMP6, KernelSlot::COPY1, KernelSlot::COPY2)));
 
