@@ -179,6 +179,247 @@ Byte *multiply(Byte *r, Byte *n1, Byte *n2)
     return r;
 }
 
+/************************************************************************/
+// r = n^2
+//   because of the symetry involved, n^2 is much faster than n*n
+//   for a bignumber of length l
+//      n*n takes l^2 multiplications
+//      n^2 takes (l^2+l)/2 multiplications
+//          which is about 1/2 n*n as l gets large
+//  uses the fact that (a+b+c+...)^2 = (a^2+b^2+c^2+...)+2(ab+ac+bc+...)
+//
+// SIDE-EFFECTS: n is changed to its absolute value
+Byte *full_square(Byte *r, Byte *n)
+{
+    int double_steps;
+    Byte *rp1;
+    Byte *rp3;
+    U32 prod;
+    U32 sum;
+
+    if (is_bn_neg(n)) // don't need to keep track of sign since the
+    {
+        neg_a_bn(n);  // answer must be positive.
+    }
+
+    g_bn_length <<= 1;
+    clear_bn(r); // zero out r, double width
+    g_bn_length >>= 1;
+
+    int steps = (g_bn_length >> 1) - 1;
+    int carry_steps = double_steps = (steps << 1) - 1;
+    Byte *rp2 = rp1 = r + 2;            // start with second two-byte word
+    Byte *n1_p = n;
+    if (steps != 0)                     // if zero, then skip all the middle term calculations
+    {
+        for (int i = steps; i > 0; i--) // steps gets altered, count backwards
+        {
+            Byte *n2_p = n1_p + 2;      // set n2p pointer to 1 step beyond n1p
+            for (int j = 0; j < steps; j++)
+            {
+                prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
+                sum = static_cast<U32>(BIG_ACCESS16(rp2)) + prod; // add to previous, including overflow
+                BIG_SET16(rp2, static_cast<U16>(sum));            // save the lower 2 bytes
+                sum >>= 16;                                       // keep just the upper 2 bytes
+                rp3 = rp2 + 2;                                    // move over 2 bytes
+                sum += BIG_ACCESS16(rp3);                         // add what was the upper two bytes
+                BIG_SET16(rp3, static_cast<U16>(sum));            // save what was the upper two bytes
+                sum >>= 16;                                       // keep just the overflow
+                for (int k = 0; sum != 0 && k < carry_steps; k++)
+                {
+                    rp3 += 2;                                     // move over 2 bytes
+                    sum += BIG_ACCESS16(rp3);                     // add to what was the overflow
+                    BIG_SET16(rp3, static_cast<U16>(sum));        // save what was the overflow
+                    sum >>= 16;                                   // keep just the new overflow
+                }
+                n2_p += 2;                                        // increase by two bytes
+                rp2 += 2;
+                carry_steps--;
+            }
+            n1_p += 2;                       // increase by two bytes
+            rp2 = rp1 += 4;                  // increase by 2 * two bytes
+            carry_steps = double_steps -= 2; // reduce the carry steps needed
+            steps--;
+        }
+        // All the middle terms have been multiplied.  Now double it.
+        g_bn_length <<= 1; // double wide bignumber
+        double_a_bn(r);
+        g_bn_length >>= 1;
+        // finished with middle terms
+    }
+
+    // Now go back and add in the squared terms.
+    n1_p = n;
+    steps = g_bn_length >> 1;
+    carry_steps = double_steps = (steps << 1) - 2;
+    rp1 = r;
+    for (int i = 0; i < steps; i++)
+    {
+        // square it
+        prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n1_p)); // U16*U16=U32
+        sum = static_cast<U32>(BIG_ACCESS16(rp1)) + prod; // add to previous, including overflow
+        BIG_SET16(rp1, static_cast<U16>(sum));            // save the lower 2 bytes
+        sum >>= 16;                                       // keep just the upper 2 bytes
+        rp3 = rp1 + 2;                                    // move over 2 bytes
+        sum += BIG_ACCESS16(rp3);                         // add what was the upper two bytes
+        BIG_SET16(rp3, static_cast<U16>(sum));            // save what was the upper two bytes
+        sum >>= 16;                                       // keep just the overflow
+        for (int k = 0; sum != 0 && k < carry_steps; k++)
+        {
+            rp3 += 2;                                     // move over 2 bytes
+            sum += BIG_ACCESS16(rp3);                     // add to what was the overflow
+            BIG_SET16(rp3, static_cast<U16>(sum));        // save what was the overflow
+            sum >>= 16;                                   // keep just the new overflow
+        }
+        n1_p += 2;                                        // increase by 2 bytes
+        rp1 += 4;                                         // increase by 4 bytes
+        carry_steps = double_steps -= 2;
+    }
+    return r;
+}
+
+/************************************************************************/
+// r = n^2
+//   because of the symetry involved, n^2 is much faster than n*n
+//   for a bignumber of length l
+//      n*n takes l^2 multiplications
+//      n^2 takes (l^2+l)/2 multiplications
+//          which is about 1/2 n*n as l gets large
+//  uses the fact that (a+b+c+...)^2 = (a^2+b^2+c^2+...)+2(ab+ac+bc+...)
+//
+// Note: r will be of length g_r_length
+//       2*g_bn_length >= g_r_length > g_bn_length
+// SIDE-EFFECTS: n is changed to its absolute value
+Byte *square(Byte *r, Byte *n)
+{
+    int double_steps;
+    Byte *n2_p;
+    Byte *rp1;
+    Byte *rp3;
+    U32 prod;
+    U32 sum;
+
+    // This whole procedure would be a great deal simpler if we could assume that
+    // g_r_length < 2*g_bn_length (that is, not =).  Therefore, we will take the
+    // easy way out and call full_square_bn() if it is.
+    if (g_r_length == g_bn_length << 1) // g_r_length == 2*g_bn_length
+    {
+        return full_square(r, n);       // call full_square_bn() and quit
+    }
+
+    if (is_bn_neg(n))                   // don't need to keep track of sign since the
+    {
+        neg_a_bn(n);                    // answer must be positive.
+    }
+
+    int bnl = g_bn_length;
+    g_bn_length = g_r_length;
+    clear_bn(r); // zero out r, of width g_r_length
+    g_bn_length = bnl;
+
+    // determine whether r is on an odd or even two-byte word in the number
+    const int rodd = static_cast<U16>(((g_bn_length << 1) - g_r_length) >> 1) & 0x0001;
+    int i = (g_bn_length >> 1) - 1;
+    int steps = (g_r_length - g_bn_length) >> 1;
+    int carry_steps = double_steps = (g_bn_length >> 1) + steps - 2;
+    int skips = (i - steps) >> 1;                                   // how long to skip over pointer shifts
+    Byte *rp2 = rp1 = r;
+    Byte *n1_p = n;
+    Byte *n3_p = n2_p = n1_p + (((g_bn_length >> 1) - steps) << 1); // n2p = n1p + 2*(g_bn_length/2 - steps)
+    if (i != 0)                                                     // if zero, skip middle term calculations
+    {
+        // i is already set
+        for (; i > 0; i--)
+        {
+            for (int j = 0; j < steps; j++)
+            {
+                prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
+                sum = static_cast<U32>(BIG_ACCESS16(rp2)) + prod; // add to previous, including overflow
+                BIG_SET16(rp2, static_cast<U16>(sum));            // save the lower 2 bytes
+                sum >>= 16;                                       // keep just the upper 2 bytes
+                rp3 = rp2 + 2;                                    // move over 2 bytes
+                sum += BIG_ACCESS16(rp3);                         // add what was the upper two bytes
+                BIG_SET16(rp3, static_cast<U16>(sum));            // save what was the upper two bytes
+                sum >>= 16;                                       // keep just the overflow
+                for (int k = 0; sum != 0 && k < carry_steps; k++)
+                {
+                    rp3 += 2;                                     // move over 2 bytes
+                    sum += BIG_ACCESS16(rp3);                     // add to what was the overflow
+                    BIG_SET16(rp3, static_cast<U16>(sum));        // save what was the overflow
+                    sum >>= 16;                                   // keep just the new overflow
+                }
+                n2_p += 2;                                        // increase by 2-byte word size
+                rp2 += 2;
+                carry_steps--;
+            }
+            n1_p += 2; // increase by 2-byte word size
+            if (skips > 0)
+            {
+                n2_p = n3_p -= 2;
+                steps++;
+                skips--;
+            }
+            else if (skips == 0) // only gets executed once
+            {
+                steps -= rodd;   // rodd is 1 or 0
+                double_steps -= rodd + 1;
+                rp1 += (rodd + 1) << 1;
+                n2_p = n1_p + 2;
+                skips--;
+            }
+            else // skips < 0
+            {
+                steps--;
+                double_steps -= 2;
+                rp1 += 4; // add two 2-byte words
+                n2_p = n1_p + 2;
+            }
+            rp2 = rp1;
+            carry_steps = double_steps;
+        }
+        // All the middle terms have been multiplied.  Now double it.
+        g_bn_length = g_r_length;
+        double_a_bn(r);
+        g_bn_length = bnl;
+    }
+    // Now go back and add in the squared terms.
+
+    // be careful, the next dozen or so lines are confusing!
+    // determine whether r is on an odd or even word in the number
+    // using i as a temporary variable here
+    i = (g_bn_length << 1) - g_r_length;
+    rp1 = r + (static_cast<U16>(i) & static_cast<U16>(0x0002));
+    i = static_cast<U16>((i >> 1) + 1) & static_cast<U16>(0xFFFE);
+    n1_p = n + i;
+    // i here is no longer a temp var., but will be used as a loop counter
+    i = (g_bn_length - i) >> 1;
+    carry_steps = double_steps = (i << 1) - 2;
+    // i is already set
+    for (; i > 0; i--)
+    {
+        // square it
+        prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n1_p)); // U16*U16=U32
+        sum = static_cast<U32>(BIG_ACCESS16(rp1)) + prod; // add to previous, including overflow
+        BIG_SET16(rp1, static_cast<U16>(sum));            // save the lower 2 bytes
+        sum >>= 16;                                       // keep just the upper 2 bytes
+        rp3 = rp1 + 2;                                    // move over 2 bytes
+        sum += BIG_ACCESS16(rp3);                         // add what was the upper two bytes
+        BIG_SET16(rp3, static_cast<U16>(sum));            // save what was the upper two bytes
+        sum >>= 16;                                       // keep just the overflow
+        for (int k = 0; sum != 0 && k < carry_steps; k++)
+        {
+            rp3 += 2;                                     // move over 2 bytes
+            sum += BIG_ACCESS16(rp3);                     // add to what was the overflow
+            BIG_SET16(rp3, static_cast<U16>(sum));        // save what was the overflow
+            sum >>= 16;                                   // keep just the new overflow
+        }
+        n1_p += 2;
+        rp1 += 4;
+        carry_steps = double_steps -= 2;
+    }
+    return r;
+}
+
 } // namespace
 
 Byte *unsafe_mult_bn(Byte *r, Byte *n1, Byte *n2)
@@ -214,6 +455,33 @@ Byte *mult_bn(Byte *r, Byte *n1, Byte *n2)
     if (sign2)
     {
         neg_a_bn(n2);
+    }
+    return r;
+}
+
+Byte *unsafe_square_bn(Byte *r, Byte *n)
+{
+    return square(r, n);
+}
+
+Byte *full_square_bn(Byte *r, Byte *n)
+{
+    const bool sign = is_bn_neg(n);
+    full_square(r, n);
+    if (sign)
+    {
+        neg_a_bn(n);
+    }
+    return r;
+}
+
+Byte *square_bn(Byte *r, Byte *n)
+{
+    const bool sign = is_bn_neg(n);
+    square(r, n);
+    if (sign)
+    {
+        neg_a_bn(n);
     }
     return r;
 }

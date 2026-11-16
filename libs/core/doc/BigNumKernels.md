@@ -62,7 +62,7 @@ current operand-copy policy and allocation/reduction sites stay intact:
 - `operator*` allocates a paired working result, copies both operands
   through the two copy buffers, calls `unsafe_mult_bn`, then reduces once.
 - `sqr()` allocates a paired working result, copies its operand into
-  copy1, calls `square`, then reduces once.
+  copy1, calls `unsafe_square_bn`, then reduces once.
 - `operator/` allocates a single result, copies both operands before the
   destructive callback, and returns canonical bytes.
 - Addition, subtraction, negation, and U16 multiplication allocate one
@@ -244,13 +244,14 @@ long bn_to_int(const Byte *n);
 
 All signatures keep their current pointer constness, scalar parameters,
 return alias, and active byte extent. Only the integer observation gains
-constness as specified above. The anonymous `multiply` and
-`full_multiply` implementations and byte `unsafe_mult_bn`, `full_mult_bn`,
-and `mult_bn` entry points live in big.cpp with `Byte *` buffers.
+constness as specified above. The anonymous `multiply`, `full_multiply`,
+`square`, and `full_square` implementations and their unsafe and
+source-restoring byte entry points live in big.cpp with `Byte *` buffers.
 BigNum.cpp's owning multiply, `operator*`, and division helper call
-`unsafe_mult_bn` without changing copies, allocation, or calculation order.
-The remaining anonymous `compare`, `add`, `subtract`, `negate`, `square`,
-`full_square`, and `divide` implementations stay in BigNum.cpp with their
+`unsafe_mult_bn`; owning `square_bn` and `sqr()` call `unsafe_square_bn`.
+Copies, allocation, calculation order, and the full-width sqr fallback
+remain unchanged. The remaining anonymous `compare`, `add`, `subtract`,
+`negate`, and `divide` implementations stay in BigNum.cpp with their
 existing argument roles. Their byte cursors continue borrowing
 the owning arguments or copy allocations; no additional values are
 constructed inside their loops.

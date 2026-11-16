@@ -107,7 +107,7 @@ Byte *double_a_bn(Byte *r);
 Byte *half_bn(Byte *r, const Byte *n);
 Byte *half_a_bn(Byte *r);
 Byte *unsafe_mult_bn(Byte *r, Byte *n1, Byte *n2);
-BigNumPtr unsafe_square_bn(BigNumPtr r, BigNumPtr n);
+Byte *unsafe_square_bn(Byte *r, Byte *n);
 Byte *mult_bn_int(Byte *r, const Byte *n, misc::U16 u);
 Byte *mult_a_bn_int(Byte *r, misc::U16 u);
 BigNumPtr unsafe_div_bn_int(BigNumPtr r, BigNumPtr n, misc::U16 u);
@@ -149,8 +149,8 @@ int convert_bn(
 // "safe" versions
 Byte *full_mult_bn(Byte *r, Byte *n1, Byte *n2);
 Byte *mult_bn(Byte *r, Byte *n1, Byte *n2);
-BigNumPtr full_square_bn(BigNumPtr r, BigNumPtr n);
-BigNumPtr square_bn(BigNumPtr r, BigNumPtr n);
+Byte *full_square_bn(Byte *r, Byte *n);
+Byte *square_bn(Byte *r, Byte *n);
 std::string bn_to_string(BigNumConstPtr r, int dec);
 BigNumPtr div_bn(BigNumPtr r, BigNumConstPtr n1, BigNumConstPtr n2);
 // misc
