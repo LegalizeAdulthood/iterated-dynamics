@@ -856,7 +856,8 @@ void mult_bn(BigNum &result, BigNum &left, BigNum &right)
 {
     const bool sign1 = is_bn_neg(left.data());
     const bool sign2 = is_bn_neg(right.data());
-    multiply(result.data(), left.data(), right.data());
+    BigNumProduct product{bn_arena(BigLifetime::TEMPORARY)};
+    multiply(product.data(), left.data(), right.data());
     if (sign1)
     {
         neg_a_bn(left.data());
@@ -865,6 +866,7 @@ void mult_bn(BigNum &result, BigNum &left, BigNum &right)
     {
         neg_a_bn(right.data());
     }
+    copy_bn(result.data(), product.data() + g_shift_factor);
 }
 
 bool BigNum::operator==(const BigNum &right) const

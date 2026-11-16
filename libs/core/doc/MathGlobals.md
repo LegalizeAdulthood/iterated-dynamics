@@ -81,10 +81,12 @@ and restores its mutable source's sign. It returns `void` without
 allocating, copying its source, or reducing the product. Ordinary `sqr()`
 remains canonical.
 
-The owning `mult_bn` free function likewise writes the retained product
-into its existing slot. It preserves the raw adapter's mutable input
-roles and sign-restoration sequence, including shared-input behavior,
-without copies, allocation, or reduction. It returns `void`.
+The owning `mult_bn` free function returns `void` and writes canonical
+bytes into its existing single-slot destination. A private paired
+temporary holds the retained product; the wrapper copies `g_bn_length`
+bytes at `g_shift_factor`, then releases that temporary. It preserves
+the raw adapter's mutable input roles and sign-restoration sequence,
+including shared-input behavior, without operand copies.
 Ordinary `operator*` keeps its existing operand copies and returns
 canonical bytes.
 

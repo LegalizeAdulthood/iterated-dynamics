@@ -68,22 +68,22 @@ current operand-copy policy and allocation/reduction sites stay intact:
 - Addition, subtraction, negation, and U16 multiplication allocate one
   result; their compound forms retain their existing implementations.
 
-The [orbit product contract](BigNumProducts.md) requires unreduced
-results and partial writes into existing slots. The implemented owning
-free-function overloads are:
+The [orbit product contract](BigNumProducts.md) describes the retained
+byte-buffer calls. The implemented owning destination overloads are:
 
 ```cpp
 void square_bn(BigNumProduct &result, BigNum &source);
 void mult_bn(BigNum &result, BigNum &left, BigNum &right);
 ```
 
-These return `void`. They neither allocate nor replace the destination's
-handle. Owning `square_bn` writes `[0, R)` with the existing
-`square_bn` sign-save, kernel call, and sign-restore sequence.
-Owning `mult_bn` retains the existing `mult_bn` sequence. Keep their
-mutable input roles; do not add operand copies. The result must be
-separate from the product inputs, as required by the existing clearing
-kernels. No new alias validation or initialization checks are added.
+Both return `void` and retain the destination's handle. Owning
+`square_bn` writes `[0, R)` without allocating, preserving its sign-save,
+kernel call, and sign-restore sequence. Owning `mult_bn` calculates in
+one temporary-arena paired product, preserves both sign saves/restores,
+and copies the N bytes at S into the existing canonical destination.
+Its paired scratch is released on return. Neither overload copies its
+operands. Existing result/input separation requirements remain; no new
+alias validation or initialization checks are added.
 
 ### Canonical Owning Free Functions
 
@@ -286,6 +286,14 @@ identity, unchanged padding and lengths, and the arena high-water mark.
 It covers all four distinct-input sign combinations and both shared-input
 signs at the same precisions and integer widths as the retained-square
 tests. Operand expectations preserve the raw adapter's existing behavior.
+
+Its owning-multiply cases check independently encoded canonical integer
+results, destination identity and tails, operand mutation, unchanged
+lengths and stack marks, and reuse/release of temporary paired scratch.
+`TestBigNumCanonicalMultiplyFraction` checks exact positive and negative
+half-quantum products at lengths 8, 12, 56, 60, 64, and 672 with one,
+two, and four integer bytes. These cases preserve low-bit truncation
+without floating-point tolerances. Raw retained-byte fixtures remain.
 
 Both `mult_bn` and `full_mult_bn` restore a shared negative input twice.
 The shared-source kernel makes it positive once; the two adapter restores

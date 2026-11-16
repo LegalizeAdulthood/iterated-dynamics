@@ -1046,6 +1046,52 @@ TEST_P(TestBigNumRetainedMultiply, preservesProductAllocationPaddingAndLegacyOpe
         std::vector<Byte>(destination.data() + g_r_length, destination.data() + 2 * arena.block_size()));
 }
 
+TEST_P(TestBigNumRetainedMultiply, owningMultiplyWritesCanonicalBytesAndPreservesStorageAndOperands)
+{
+    const RetainedMultiplyInput input = std::get<2>(GetParam());
+    BigArena &arena = bn_arena(BigLifetime::WORKING);
+    BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
+    BigNum left{static_cast<LDouble>(input.left)};
+    BigNum distinct_right{static_cast<LDouble>(input.right)};
+    BigNum &right = input.shared ? left : distinct_right;
+    BigNum destination{arena};
+    const int product = input.left * (input.shared ? input.left : input.right);
+    const std::vector<Byte> expected = encoded_value(BigNum{static_cast<LDouble>(product)});
+    const int restored_left = input.shared && input.left < 0 ? -input.left : input.left;
+    const std::vector<Byte> expected_left_bytes = encoded_value(BigNum{static_cast<LDouble>(restored_left)});
+    std::fill(left.data() + g_bn_length, left.data() + arena.block_size(), Byte{0x5a});
+    std::fill(distinct_right.data() + g_bn_length, distinct_right.data() + arena.block_size(), Byte{0x6b});
+    std::vector<Byte> expected_left(left.data(), left.data() + arena.block_size());
+    std::copy(expected_left_bytes.begin(), expected_left_bytes.end(), expected_left.begin());
+    const std::vector<Byte> original_right(distinct_right.data(), distinct_right.data() + arena.block_size());
+    std::fill_n(destination.data(), arena.block_size(), Byte{0xa5});
+    const Byte *const original_destination = destination.data();
+    BigArena::Allocation scratch = temporary.allocate_double();
+    const Byte *const scratch_address = scratch.data();
+    scratch.reset();
+    const std::size_t working_high_water = arena.high_water_mark();
+    const std::size_t temporary_high_water = temporary.high_water_mark();
+    const BigStackMark stack_mark = save_stack();
+    const std::array<int, 9> lengths = kernel_lengths();
+
+    mult_bn(destination, left, right);
+
+    EXPECT_EQ(expected, encoded_value(destination));
+    EXPECT_EQ(original_destination, destination.data());
+    EXPECT_EQ(&arena, &destination.arena());
+    EXPECT_EQ(working_high_water, arena.high_water_mark());
+    EXPECT_EQ(temporary_high_water, temporary.high_water_mark());
+    EXPECT_EQ(stack_mark, save_stack());
+    EXPECT_EQ(lengths, kernel_lengths());
+    EXPECT_EQ(expected_left, std::vector<Byte>(left.data(), left.data() + arena.block_size()));
+    EXPECT_EQ(original_right, std::vector<Byte>(distinct_right.data(), distinct_right.data() + arena.block_size()));
+    EXPECT_EQ(std::vector<Byte>(arena.block_size() - g_bn_length, 0xa5),
+        std::vector<Byte>(destination.data() + g_bn_length, destination.data() + arena.block_size()));
+    BigArena::Allocation reused = temporary.allocate_double();
+    EXPECT_EQ(scratch_address, reused.data());
+    EXPECT_EQ(temporary_high_water, temporary.high_water_mark());
+}
+
 INSTANTIATE_TEST_SUITE_P(LayoutsSignsAndAliasing, TestBigNumRetainedMultiply,
     testing::Combine(testing::Values(4, 8, 12, 56, 60, 64, 672), testing::Values(1, 2, 4),
         testing::Values(RetainedMultiplyInput{"PositivePositive", 2, 3, false},
@@ -1054,6 +1100,46 @@ INSTANTIATE_TEST_SUITE_P(LayoutsSignsAndAliasing, TestBigNumRetainedMultiply,
             RetainedMultiplyInput{"NegativeNegative", -2, -3, false},
             RetainedMultiplyInput{"SharedPositive", 2, 3, true},
             RetainedMultiplyInput{"SharedNegative", -2, 3, true})));
+
+class TestBigNumCanonicalMultiplyFraction : public TestBigNumValue,
+                                            public testing::WithParamInterface<std::tuple<int, int, bool>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumCanonicalMultiplyFraction::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    g_user.bailout_value = integer_length == 4 ? 100 : 0;
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    init_bf_length(std::get<0>(GetParam()));
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumCanonicalMultiplyFraction, discardsFractionalProductBytesAtTheExistingWindow)
+{
+    const bool negative = std::get<2>(GetParam());
+    std::vector<Byte> quantum(static_cast<std::size_t>(g_bn_length), negative ? Byte{0xff} : Byte{0});
+    if (!negative)
+    {
+        quantum.front() = 1;
+    }
+    BigNum left = BigNum::from_legacy(quantum.data(), quantum.size());
+    BigNum right{"0.5"};
+    const std::vector<Byte> original_right = encoded_value(right);
+    BigNum destination{bn_arena(BigLifetime::WORKING)};
+    const std::vector<Byte> expected(quantum.size(), negative ? Byte{0xff} : Byte{0});
+
+    mult_bn(destination, left, right);
+
+    EXPECT_EQ(expected, encoded_value(destination));
+    EXPECT_EQ(quantum, encoded_value(left));
+    EXPECT_EQ(original_right, encoded_value(right));
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndSigns, TestBigNumCanonicalMultiplyFraction,
+    testing::Combine(testing::Values(8, 12, 56, 60, 64, 672), testing::Values(1, 2, 4), testing::Bool()));
 
 namespace
 {
