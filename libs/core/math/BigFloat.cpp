@@ -930,6 +930,11 @@ BigFloat::BigFloat(const BigNum &value) :
 {
 }
 
+BigFloat::BigFloat(BigFloatProduct &&value) :
+    m_storage(std::move(value).release_reduced_storage())
+{
+}
+
 BigFloat::BigFloat(BigArena &arena) :
     BigFloat(arena.allocate_single())
 {
@@ -1253,6 +1258,77 @@ void BigFloat::copy_to_legacy_num(BigNumPtr destination, const std::size_t size)
 {
     validate_buffer(destination, size, static_cast<std::size_t>(g_bn_length));
     bf_to_bn(destination, m_storage.data());
+}
+
+BigFloatProduct::BigFloatProduct() noexcept = default;
+
+BigFloatProduct::BigFloatProduct(BigArena &arena) :
+    m_storage(arena.allocate_double())
+{
+    std::memset(data(), 0, 2 * arena.block_size());
+}
+
+BigFloatProduct::BigFloatProduct(const BigFloatProduct &value) :
+    m_storage(value.m_storage.clone())
+{
+}
+
+BigFloatProduct::BigFloatProduct(BigArena &arena, const BigFloatProduct &value) :
+    m_storage(value.m_storage.clone(arena))
+{
+}
+
+BigFloatProduct::BigFloatProduct(BigFloatProduct &&value) noexcept = default;
+
+BigFloatProduct &BigFloatProduct::operator=(const BigFloatProduct &value)
+{
+    if (this != &value)
+    {
+        if (!value.m_storage)
+        {
+            m_storage.reset();
+        }
+        else
+        {
+            if (!m_storage)
+            {
+                BigArena &destination = m_storage.arena_ptr() != nullptr ? arena() : bf_arena(BigLifetime::WORKING);
+                m_storage = destination.allocate_double();
+            }
+            std::memcpy(data(), value.data(), g_r_bf_length + 2);
+        }
+    }
+    return *this;
+}
+
+BigFloatProduct &BigFloatProduct::operator=(BigFloatProduct &&value)
+{
+    if (this != &value)
+    {
+        if (!value.m_storage)
+        {
+            m_storage.reset();
+        }
+        else if ((m_storage.arena_ptr() != nullptr ? &arena() : &bf_arena(BigLifetime::WORKING)) == &value.arena())
+        {
+            m_storage = std::move(value.m_storage);
+        }
+        else
+        {
+            *this = static_cast<const BigFloatProduct &>(value);
+        }
+    }
+    return *this;
+}
+
+BigArena::Allocation BigFloatProduct::release_reduced_storage() &&
+{
+    BigArena::Allocation result = std::move(m_storage);
+    if (result)
+    {
+        result.reduce();
+    }
+    return result;
 }
 
 BigFloatPtr unsafe_square_bf(BigFloatPtr r, BigFloatPtr n)

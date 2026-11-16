@@ -14,8 +14,10 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstring>
 #include <limits>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -700,5 +702,325 @@ TEST_F(TestBigFloatValue, comparisonsUseNumericalValuesWithoutChangingOperands)
         }
     }
 }
+
+namespace
+{
+
+static_assert(!std::is_same_v<BigFloatProduct, BigFloat>);
+static_assert(!std::is_convertible_v<BigFloatProduct, BigFloat>);
+static_assert(std::is_constructible_v<BigFloat, BigFloatProduct &&>);
+static_assert(!std::is_constructible_v<BigFloat, BigFloatProduct &>);
+static_assert(std::is_same_v<decltype(std::declval<const BigFloatProduct &>().data()), BigFloatConstPtr>);
+static_assert(std::is_invocable_v<decltype(&BigFloatProduct::release_reduced_storage), BigFloatProduct &&>);
+static_assert(!std::is_invocable_v<decltype(&BigFloatProduct::release_reduced_storage), BigFloatProduct &>);
+
+std::vector<Byte> wide_float_fixture(const int length, const bool negative, const int guard)
+{
+    std::vector<Byte> bytes(length + 2);
+    bytes[length - 2] = negative ? 0xee : 0x12;
+    bytes[length - 1] = negative ? 0xff : 0;
+    bytes[length] = negative ? 0xdc : 0x34;
+    bytes[length + 1] = negative ? 0xfe : 0x12;
+    if (guard >= 0 && guard < length - 2)
+    {
+        bytes[guard] = 0x5a;
+    }
+    return bytes;
+}
+
+std::vector<Byte> wide_float_pattern()
+{
+    std::vector<Byte> bytes(g_r_bf_length + 2);
+    for (int i = 0; i < g_r_bf_length + 2; ++i)
+    {
+        bytes[i] = static_cast<Byte>(37 * i + 19);
+    }
+    return bytes;
+}
+
+std::vector<Byte> product_bytes(const BigFloatProduct &value)
+{
+    return {value.data(), value.data() + g_r_bf_length + 2};
+}
+
+} // namespace
+
+class TestBigFloatProductRelocation : public TestBigFloatValue,
+                                      public testing::WithParamInterface<std::tuple<int, bool, BigLifetime>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigFloatProductRelocation::SetUp()
+{
+    init_bf_length(std::get<0>(GetParam()));
+}
+
+TEST_P(TestBigFloatProductRelocation, relocatesTheWideMantissaExponentAndFractionalGuard)
+{
+    const int old_length = g_r_bf_length;
+    const int guard = g_padding - 1;
+    const bool negative = std::get<1>(GetParam());
+    BigArena &arena = bf_arena(std::get<2>(GetParam()));
+    BigFloatProduct product{arena};
+    const std::vector<Byte> bytes = wide_float_fixture(old_length, negative, guard);
+    std::copy(bytes.begin(), bytes.end(), product.data());
+    const BigFloat canonical{arena, -7.5L};
+    const Byte *const address = product.data();
+    const std::size_t capacity = arena.capacity();
+
+    init_bf_length(std::get<0>(GetParam()) <= 56 ? 64 : 12);
+
+    const std::vector<Byte> expected = wide_float_fixture(g_r_bf_length, negative, guard + g_r_bf_length - old_length);
+    EXPECT_NE(address, product.data());
+    EXPECT_EQ(&arena, &product.arena());
+    EXPECT_EQ(capacity, arena.capacity());
+    EXPECT_EQ(expected, std::vector<Byte>(product.data(), product.data() + g_r_bf_length + 2));
+    EXPECT_EQ(std::vector<Byte>(2 * arena.block_size() - g_r_bf_length - 2),
+        std::vector<Byte>(product.data() + g_r_bf_length + 2, product.data() + 2 * arena.block_size()));
+    EXPECT_EQ(BigFloat{-7.5L}, canonical);
+    const Byte *const relocated = product.data();
+    const BigFloat reduced{std::move(product)};
+    EXPECT_EQ(relocated, reduced.data());
+    EXPECT_EQ(std::vector<Byte>(expected.begin() + g_padding, expected.end()), encoded_value(reduced));
+    BigArena::Allocation companion = arena.allocate_single();
+    EXPECT_EQ(relocated + arena.block_size(), companion.data());
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsSignsAndLifetimes, TestBigFloatProductRelocation,
+    testing::Combine(testing::Values(4, 12, 52, 56, 64, 708), testing::Bool(),
+        testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
+
+TEST(TestBigFloatProductLifetime, nullConstructionCopyMoveAndReductionNeedNoArena)
+{
+    static_assert(std::is_nothrow_default_constructible_v<BigFloatProduct>);
+    BigFloatProduct original;
+    const BigFloatProduct copy{original};
+    BigFloatProduct moved{std::move(original)};
+    const BigFloat reduced{std::move(moved)};
+    const BigArena::Allocation released = std::move(original).release_reduced_storage();
+    original = copy;
+    original = std::move(moved);
+
+    EXPECT_FALSE(original);
+    EXPECT_FALSE(copy);
+    EXPECT_FALSE(moved);
+    EXPECT_FALSE(reduced);
+    EXPECT_FALSE(released);
+}
+
+class TestBigFloatProductOwnership : public TestBigFloatValue,
+                                     public testing::WithParamInterface<std::tuple<int, BigLifetime>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigFloatProductOwnership::SetUp()
+{
+    init_bf_length(std::get<0>(GetParam()));
+}
+
+TEST_P(TestBigFloatProductOwnership, reservesAndReleasesTwoZeroedSlotsWithoutChangingTheStack)
+{
+    BigArena &arena = bf_arena(std::get<1>(GetParam()));
+    const BigStackMark mark = save_stack();
+    BigArena::Allocation previous = arena.allocate_double();
+    Byte *const address = previous.data();
+    std::fill_n(address, 2 * arena.block_size(), Byte{0xa5});
+    previous.reset();
+    {
+        const BigFloatProduct product{arena};
+        ASSERT_TRUE(product);
+        EXPECT_EQ(&arena, &product.arena());
+        EXPECT_EQ(address, product.data());
+        EXPECT_EQ(std::vector<Byte>(2 * arena.block_size()),
+            std::vector<Byte>(product.data(), product.data() + 2 * arena.block_size()));
+        EXPECT_EQ(mark, save_stack());
+    }
+    BigArena::Allocation reused = arena.allocate_double();
+    EXPECT_EQ(address, reused.data());
+    EXPECT_EQ(2U, reused.blocks());
+    EXPECT_EQ(mark, save_stack());
+}
+
+TEST_P(TestBigFloatProductOwnership, copiesWideBytesIndependentlyAndPreservesDestinationBindingAndTails)
+{
+    BigArena &arena = bf_arena(std::get<1>(GetParam()));
+    BigArena &other =
+        bf_arena(std::get<1>(GetParam()) == BigLifetime::PERSISTENT ? BigLifetime::WORKING : BigLifetime::PERSISTENT);
+    const std::vector<Byte> bytes = wide_float_pattern();
+    BigFloatProduct source{arena};
+    std::copy(bytes.begin(), bytes.end(), source.data());
+    const BigFloatProduct copy{source};
+    const BigFloatProduct selected{other, source};
+    BigFloatProduct destination{other};
+    std::fill_n(destination.data(), 2 * other.block_size(), Byte{0xa5});
+    const Byte *const address = destination.data();
+
+    EXPECT_EQ(&destination, &(destination = source));
+
+    EXPECT_EQ(&arena, &copy.arena());
+    EXPECT_EQ(&other, &selected.arena());
+    EXPECT_EQ(&other, &destination.arena());
+    EXPECT_EQ(address, destination.data());
+    EXPECT_NE(source.data(), copy.data());
+    EXPECT_EQ(bytes, product_bytes(copy));
+    EXPECT_EQ(bytes, product_bytes(selected));
+    EXPECT_EQ(bytes, product_bytes(destination));
+    EXPECT_EQ(std::vector<Byte>(2 * other.block_size() - bytes.size(), 0xa5),
+        std::vector<Byte>(destination.data() + bytes.size(), destination.data() + 2 * other.block_size()));
+    EXPECT_EQ(&source, &(source = source));
+    destination.data()[0] ^= 0xff;
+    EXPECT_EQ(bytes, product_bytes(source));
+    EXPECT_EQ(bytes, product_bytes(copy));
+}
+
+TEST_P(TestBigFloatProductOwnership, movesAndNullAssignmentsRetainExistingAllocatorSemantics)
+{
+    BigArena &arena = bf_arena(std::get<1>(GetParam()));
+    BigArena &other =
+        bf_arena(std::get<1>(GetParam()) == BigLifetime::PERSISTENT ? BigLifetime::WORKING : BigLifetime::PERSISTENT);
+    const std::vector<Byte> bytes = wide_float_pattern();
+    BigFloatProduct source{arena};
+    std::copy(bytes.begin(), bytes.end(), source.data());
+    const Byte *const address = source.data();
+    BigFloatProduct moved{std::move(source)};
+    EXPECT_FALSE(source);
+    EXPECT_EQ(&arena, &source.arena());
+    EXPECT_EQ(address, moved.data());
+    BigFloatProduct destination{arena};
+    EXPECT_EQ(&destination, &(destination = std::move(moved)));
+    EXPECT_FALSE(moved);
+    EXPECT_EQ(address, destination.data());
+    EXPECT_EQ(&destination, &(destination = std::move(destination)));
+    BigFloatProduct foreign{other};
+    EXPECT_EQ(&foreign, &(foreign = std::move(destination)));
+    EXPECT_TRUE(destination);
+    EXPECT_EQ(address, destination.data());
+    EXPECT_EQ(&other, &foreign.arena());
+    EXPECT_EQ(bytes, product_bytes(foreign));
+    source = destination;
+    EXPECT_EQ(&arena, &source.arena());
+    EXPECT_EQ(bytes, product_bytes(source));
+    source = BigFloatProduct{};
+    EXPECT_FALSE(source);
+    EXPECT_EQ(&arena, &source.arena());
+    source = foreign;
+    EXPECT_EQ(&arena, &source.arena());
+    EXPECT_EQ(bytes, product_bytes(source));
+    BigFloatProduct unbound;
+    unbound = destination;
+    EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &unbound.arena());
+    EXPECT_EQ(bytes, product_bytes(unbound));
+    const BigFloatProduct null;
+    const BigFloatProduct selected_null{arena, null};
+    EXPECT_FALSE(selected_null);
+    EXPECT_EQ(&arena, &selected_null.arena());
+}
+
+TEST_P(TestBigFloatProductOwnership, consumingReductionKeepsTheFirstSlotAndReleasesTheCompanion)
+{
+    BigArena &arena = bf_arena(std::get<1>(GetParam()));
+    const std::vector<Byte> bytes = wide_float_pattern();
+    const std::vector<Byte> expected(bytes.begin() + g_padding, bytes.end());
+    BigFloatProduct product{arena};
+    std::copy(bytes.begin(), bytes.end(), product.data());
+    const Byte *const address = product.data();
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    const BigFloat canonical{std::move(product)};
+
+    EXPECT_FALSE(product);
+    EXPECT_EQ(&arena, &product.arena());
+    EXPECT_EQ(&arena, &canonical.arena());
+    EXPECT_EQ(address, canonical.data());
+    EXPECT_EQ(expected, encoded_value(canonical));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+    BigArena::Allocation companion = arena.allocate_single();
+    EXPECT_EQ(address + arena.block_size(), companion.data());
+    EXPECT_EQ(1U, companion.blocks());
+    std::fill_n(companion.data(), arena.block_size(), Byte{0xa5});
+    EXPECT_EQ(expected, encoded_value(canonical));
+}
+
+TEST_P(TestBigFloatProductOwnership, rvalueTransferReturnsReducedSingleSlotOwnership)
+{
+    BigArena &arena = bf_arena(std::get<1>(GetParam()));
+    const std::vector<Byte> bytes = wide_float_pattern();
+    const std::vector<Byte> expected(bytes.begin() + g_padding, bytes.end());
+    BigFloatProduct product{arena};
+    std::copy(bytes.begin(), bytes.end(), product.data());
+    const Byte *const address = product.data();
+    const std::size_t high_water = arena.high_water_mark();
+
+    const BigArena::Allocation released = std::move(product).release_reduced_storage();
+
+    ASSERT_TRUE(released);
+    EXPECT_FALSE(product);
+    EXPECT_EQ(address, released.data());
+    EXPECT_EQ(&arena, &released.arena());
+    EXPECT_EQ(1U, released.blocks());
+    EXPECT_EQ(expected, std::vector<Byte>(released.data(), released.data() + expected.size()));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    BigArena::Allocation companion = arena.allocate_single();
+    EXPECT_EQ(address + arena.block_size(), companion.data());
+}
+
+TEST_P(TestBigFloatProductOwnership, consumingReductionUsesTheConfiguredCallbackWithoutSpareArenaSpace)
+{
+    BigArena &working = bf_arena(std::get<1>(GetParam()));
+    BigArena arena{working.value_size(), working.block_size(), 2, [](Byte *value)
+        {
+            std::memmove(value, value + g_padding, g_bf_length + 2);
+            value[0] ^= 0xff;
+        }};
+    const std::vector<Byte> bytes = wide_float_pattern();
+    std::vector<Byte> expected(bytes.begin() + g_padding, bytes.end());
+    expected[0] ^= 0xff;
+    BigFloatProduct product{arena};
+    std::copy(bytes.begin(), bytes.end(), product.data());
+    const Byte *const address = product.data();
+    ASSERT_EQ(2U, arena.high_water_mark());
+    EXPECT_THROW(arena.allocate_single(), PrecisionError);
+
+    const BigFloat canonical{std::move(product)};
+
+    EXPECT_EQ(address, canonical.data());
+    EXPECT_EQ(expected, encoded_value(canonical));
+    BigArena::Allocation companion = arena.allocate_single();
+    EXPECT_EQ(address + arena.block_size(), companion.data());
+    EXPECT_THROW(arena.allocate_single(), PrecisionError);
+}
+
+TEST_P(TestBigFloatProductOwnership, temporaryRewindsPreserveLiveProductsAndReleaseLocalOwners)
+{
+    BigArena &arena = bf_arena(std::get<1>(GetParam()));
+    BigArena &temporary = bf_arena(BigLifetime::TEMPORARY);
+    const std::vector<Byte> bytes = wide_float_pattern();
+    BigFloatProduct product{arena};
+    std::copy(bytes.begin(), bytes.end(), product.data());
+    const BigStackMark mark = save_stack();
+    {
+        BigStackSaver saved;
+        bn_stack().allocate_double();
+        bf_stack().allocate_double();
+        const BigFloatProduct local{temporary, product};
+        EXPECT_EQ(bytes, product_bytes(local));
+    }
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(bytes, product_bytes(product));
+    const std::size_t high_water = temporary.high_water_mark();
+    BigArena::Allocation first = temporary.allocate_double();
+    BigArena::Allocation second = temporary.allocate_double();
+    EXPECT_EQ(high_water, temporary.high_water_mark());
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndLifetimes, TestBigFloatProductOwnership,
+    testing::Combine(testing::Values(4, 12, 52, 56, 64, 708),
+        testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
 
 } // namespace id::test
