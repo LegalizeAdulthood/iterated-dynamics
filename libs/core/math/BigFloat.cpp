@@ -375,8 +375,10 @@ BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
     {
         return clear_bf(r);
     }
-    square_wide(r, n);
-    detail::reduce_bf_product(r);
+    BigFloatProduct product{bf_arena(BigLifetime::TEMPORARY)};
+    square_wide(product.data(), n);
+    const BigFloat canonical{std::move(product)};
+    copy_bf(r, canonical.data());
     return r;
 }
 

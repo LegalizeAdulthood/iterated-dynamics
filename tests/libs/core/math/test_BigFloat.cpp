@@ -1300,4 +1300,138 @@ INSTANTIATE_TEST_SUITE_P(LayoutsCallsAndInputs, TestBigFloatLegacyMultiply,
             LegacyMultiplyInput{"ZeroRight", -2, 0, -500, 0, 0, 0, false},
             LegacyMultiplyInput{"Shared", -3, -3, 1000, 1000, 9, 2000, true})));
 
+namespace
+{
+
+enum class LegacySqrCall
+{
+    SAFE,
+    SAFE_IN_PLACE,
+    CACHE_X,
+    CACHE_Y,
+    UNSAFE
+};
+
+struct LegacySqrInput
+{
+    const char *name;
+    int source;
+    int exponent;
+    int squared;
+    int squared_exponent;
+};
+
+void PrintTo(const LegacySqrInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+} // namespace
+
+class TestBigFloatLegacySqr : public TestBigFloatValue,
+                              public testing::WithParamInterface<std::tuple<int, LegacySqrCall, LegacySqrInput>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigFloatLegacySqr::SetUp()
+{
+    init_bf_length(std::get<0>(GetParam()));
+}
+
+TEST_P(TestBigFloatLegacySqr, preservesCanonicalBoundsCachesReturnIdentitySourceEffectsAndTemporaryLifetime)
+{
+    const LegacySqrCall call = std::get<1>(GetParam());
+    const LegacySqrInput &input = std::get<2>(GetParam());
+    BigStackSaver saved;
+    BigArena &persistent = bf_arena(BigLifetime::PERSISTENT);
+    BigArena &temporary = bf_arena(BigLifetime::TEMPORARY);
+    const std::size_t working_stride = bf_arena(BigLifetime::WORKING).block_size();
+    const std::vector<Byte> source_bytes = integer_float_bytes(g_bf_length, input.source, input.exponent);
+    BigFloat source = BigFloat::from_legacy(persistent, source_bytes.data(), source_bytes.size());
+    std::fill(source.data() + source_bytes.size(), source.data() + persistent.block_size(), Byte{0x5a});
+    std::vector<Byte> expected_source(source.data(), source.data() + persistent.block_size());
+    std::fill_n(g_tmp_sqr_x_bf.data(), working_stride, Byte{0x69});
+    std::fill_n(g_tmp_sqr_y_bf.data(), working_stride, Byte{0x96});
+    std::vector<Byte> expected_x(working_stride, 0x69);
+    std::vector<Byte> expected_y(working_stride, 0x96);
+    std::vector<Byte> output(g_r_bf_length + 4, 0xa5);
+    std::vector<Byte> expected_output = output;
+    Byte *result = output.data() + 1;
+    const std::vector<Byte> expected = integer_float_bytes(g_bf_length, input.squared, input.squared_exponent);
+    if (call == LegacySqrCall::SAFE_IN_PLACE)
+    {
+        result = source.data();
+        std::copy(expected.begin(), expected.end(), expected_source.begin());
+    }
+    else if (call == LegacySqrCall::CACHE_X)
+    {
+        result = g_tmp_sqr_x_bf.data();
+        std::copy(expected.begin(), expected.end(), expected_x.begin());
+    }
+    else if (call == LegacySqrCall::CACHE_Y)
+    {
+        result = g_tmp_sqr_y_bf.data();
+        std::copy(expected.begin(), expected.end(), expected_y.begin());
+    }
+    else
+    {
+        std::copy(expected.begin(), expected.end(), expected_output.begin() + 1);
+        if (call == LegacySqrCall::UNSAFE && input.source != 0)
+        {
+            const std::vector<Byte> absolute_source =
+                integer_float_bytes(g_bf_length, std::abs(input.source), input.exponent);
+            std::copy(absolute_source.begin(), absolute_source.end(), expected_source.begin());
+        }
+    }
+    BigFloat survivor{temporary, -7};
+    std::fill(survivor.data() + source_bytes.size(), survivor.data() + temporary.block_size(), Byte{0x77});
+    const std::vector<Byte> survivor_bytes(survivor.data(), survivor.data() + temporary.block_size());
+    Byte *const borrowed = bf_stack().allocate_single();
+    std::fill_n(borrowed, temporary.block_size(), Byte{0x3c});
+    Byte *const num_borrowed = bn_stack().allocate_single();
+    const std::size_t num_stride = bn_arena(BigLifetime::TEMPORARY).block_size();
+    std::fill_n(num_borrowed, num_stride, Byte{0x6c});
+    BigArena::Allocation reservation = temporary.allocate_double();
+    Byte *const product_address = reservation.data();
+    std::fill_n(product_address, 2 * temporary.block_size(), Byte{0xa5});
+    reservation.reset();
+    const std::vector<Byte> free_bytes(product_address, product_address + 2 * temporary.block_size());
+    const std::size_t high_water = temporary.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    Byte *const returned =
+        call == LegacySqrCall::UNSAFE ? unsafe_square_bf(result, source.data()) : square_bf(result, source.data());
+
+    EXPECT_EQ(result, returned);
+    EXPECT_EQ(expected, std::vector<Byte>(result, result + expected.size()));
+    EXPECT_EQ(expected_output, output);
+    EXPECT_EQ(expected_source, std::vector<Byte>(source.data(), source.data() + persistent.block_size()));
+    EXPECT_EQ(expected_x, std::vector<Byte>(g_tmp_sqr_x_bf.data(), g_tmp_sqr_x_bf.data() + working_stride));
+    EXPECT_EQ(expected_y, std::vector<Byte>(g_tmp_sqr_y_bf.data(), g_tmp_sqr_y_bf.data() + working_stride));
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(high_water, temporary.high_water_mark());
+    EXPECT_EQ(survivor_bytes, std::vector<Byte>(survivor.data(), survivor.data() + temporary.block_size()));
+    EXPECT_EQ(std::vector<Byte>(temporary.block_size(), 0x3c),
+        std::vector<Byte>(borrowed, borrowed + temporary.block_size()));
+    EXPECT_EQ(std::vector<Byte>(num_stride, 0x6c), std::vector<Byte>(num_borrowed, num_borrowed + num_stride));
+    BigArena::Allocation reused = temporary.allocate_double();
+    EXPECT_EQ(product_address, reused.data());
+    EXPECT_EQ(2U, reused.blocks());
+    EXPECT_EQ(high_water, temporary.high_water_mark());
+    if (input.source == 0)
+    {
+        EXPECT_EQ(free_bytes, std::vector<Byte>(reused.data(), reused.data() + 2 * temporary.block_size()));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsCallsAndInputs, TestBigFloatLegacySqr,
+    testing::Combine(testing::Values(4, 12, 52, 56, 64, 708),
+        testing::Values(LegacySqrCall::SAFE, LegacySqrCall::SAFE_IN_PLACE, LegacySqrCall::CACHE_X,
+            LegacySqrCall::CACHE_Y, LegacySqrCall::UNSAFE),
+        testing::Values(LegacySqrInput{"Positive", 2, 0, 4, 0}, LegacySqrInput{"Negative", -3, 0, 9, 0},
+            LegacySqrInput{"LargeExponent", -2, 500, 4, 1000}, LegacySqrInput{"SmallExponent", 3, -700, 9, -1400},
+            LegacySqrInput{"Zero", 0, 0, 0, 0})));
+
 } // namespace id::test
