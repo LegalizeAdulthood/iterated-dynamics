@@ -515,6 +515,15 @@ int convert_bf(Byte *new_num, const Byte *old_num, const int new_bf_len, const i
     return 0;
 }
 
+void migrate_bf(Byte *destination, const Byte *source, const std::size_t blocks, const int new_bf_length,
+    const int new_padding, const int old_bf_length, const int old_padding)
+{
+    const bool product = blocks == 2;
+    const int old_length = product ? old_bf_length + old_padding : old_bf_length;
+    const int new_length = product ? new_bf_length + new_padding : new_bf_length;
+    convert_bf(destination, source, new_length, old_length);
+}
+
 Byte *unsafe_mult_bn(Byte *r, Byte *n1, Byte *n2)
 {
     return multiply(r, n1, n2);

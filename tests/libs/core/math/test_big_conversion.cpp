@@ -167,6 +167,54 @@ INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteConversion,
         BigFloatConversionInput{"SameLength", {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}}),
     [](const testing::TestParamInfo<BigFloatConversionInput> &info) { return info.param.name; });
 
+struct BigFloatMigrationInput
+{
+    const char *name;
+    std::size_t blocks;
+    int old_length;
+    int old_padding;
+    int new_length;
+    int new_padding;
+    std::vector<Byte> source;
+    std::vector<Byte> expected;
+};
+
+class TestBigFloatByteMigration : public testing::TestWithParam<BigFloatMigrationInput>
+{
+};
+
+TEST_P(TestBigFloatByteMigration, preservesCanonicalOrWideExtentExponentSourceAndGuards)
+{
+    const BigFloatMigrationInput &input = GetParam();
+    const std::vector<Byte> original = input.source;
+    std::vector<Byte> destination(input.expected.size() + 2, 0xcc);
+
+    migrate_bf(destination.data() + 1, input.source.data(), input.blocks, input.new_length, input.new_padding,
+        input.old_length, input.old_padding);
+
+    EXPECT_EQ(input.expected, (std::vector<Byte>{destination.begin() + 1, destination.end() - 1}));
+    EXPECT_EQ(0xcc, destination.front());
+    EXPECT_EQ(0xcc, destination.back());
+    EXPECT_EQ(original, input.source);
+}
+
+INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteMigration,
+    testing::Values(BigFloatMigrationInput{"CanonicalGrowth", 1, 8, 4, 12, 8,
+                        {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12},
+                        {0, 0, 0, 0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}},
+        BigFloatMigrationInput{"CanonicalShrink", 1, 12, 8, 8, 4,
+            {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xfe, 0xfe, 0xff},
+            {0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xfe, 0xfe, 0xff}},
+        BigFloatMigrationInput{"WideGrowth", 2, 8, 4, 12, 8,
+            {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xfe, 0x78, 0x56},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xfe, 0x78,
+                0x56}},
+        BigFloatMigrationInput{"WideShrink", 2, 12, 8, 8, 4,
+            {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x91, 0xa2, 0xb3, 0xc4, 0xd5, 0xe6, 0xf7, 0x08, 0x19, 0x2a,
+                0x3b, 0xfe, 0x80, 0xff},
+            {0x91, 0xa2, 0xb3, 0xc4, 0xd5, 0xe6, 0xf7, 0x08, 0x19, 0x2a, 0x3b, 0xfe, 0x80, 0xff}}),
+    [](const testing::TestParamInfo<BigFloatMigrationInput> &info) { return info.param.name; });
+
 class TestBigArenaNumericMigration : public testing::TestWithParam<bool>
 {
 };

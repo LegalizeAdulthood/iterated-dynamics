@@ -359,10 +359,7 @@ void MathArenas::change_precision(const int bn_length, const int bf_length, cons
                     (g_bf_tmp_copy2 && source == g_bf_tmp_copy2.data()) || (g_bf_pi && source == g_bf_pi.data());
                 if (!mixed_workspace && !big_float.is_workspace(source))
                 {
-                    const bool product = blocks == 2;
-                    const int old_length = product ? m_bf_length + m_padding : m_bf_length;
-                    const int new_length = product ? bf_length + padding : bf_length;
-                    convert_bf(destination, source, new_length, old_length);
+                    migrate_bf(destination, source, blocks, bf_length, padding, m_bf_length, m_padding);
                 }
             }));
     }
