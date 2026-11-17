@@ -515,6 +515,12 @@ int convert_bf(Byte *new_num, const Byte *old_num, const int new_bf_len, const i
     return 0;
 }
 
+const Byte *unpack_bf(Byte *destination, const Byte *source, const int stored_length)
+{
+    convert_bf(destination, source, g_bf_length, stored_length);
+    return source + stored_length + 2;
+}
+
 void migrate_bf(Byte *destination, const Byte *source, const std::size_t blocks, const int new_bf_length,
     const int new_padding, const int old_bf_length, const int old_padding)
 {

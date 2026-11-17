@@ -13,6 +13,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <array>
 #include <cstdint>
 #include <type_traits>
 #include <vector>
@@ -158,6 +159,28 @@ TEST_P(TestBigFloatByteConversion, conversionRelocatesTheExponentAndTruncatesLow
     EXPECT_EQ(0xcc, destination.back());
     EXPECT_EQ(original, source);
     EXPECT_EQ(active_length, g_bf_length);
+}
+
+TEST_P(TestBigFloatByteConversion, unpackConvertsAtCurrentLengthAndReturnsTheNextStoredCursor)
+{
+    const BigFloatConversionInput &input = GetParam();
+    ValueSaver<int> length{g_bf_length, static_cast<int>(input.expected.size()) - 2};
+    const std::array<int, 7> lengths{
+        g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+    std::array<Byte, 12> source{0xaa, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12, 0xbb};
+    const std::array<Byte, 12> original = source;
+    std::vector<Byte> destination(input.expected.size() + 4, 0xcc);
+    std::vector<Byte> expected_destination = destination;
+    std::copy(input.expected.begin(), input.expected.end(), expected_destination.begin() + 1);
+
+    const Byte *const cursor = unpack_bf(destination.data() + 1, source.data() + 1, 8);
+
+    EXPECT_EQ(source.data() + 11, cursor);
+    EXPECT_EQ(expected_destination, destination);
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(lengths,
+        (std::array<int, 7>{
+            g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
 }
 
 INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteConversion,

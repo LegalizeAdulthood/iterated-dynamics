@@ -200,6 +200,8 @@ BigFloatPtr sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n);
 BigFloatPtr atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx);
 bool is_bf_zero(BigFloatConstPtr n);
 int convert_bf(Byte *new_num, const Byte *old_num, int new_bf_len, int old_bf_len);
+// Decode a stored mantissa and exponent; return the next packed value.
+const Byte *unpack_bf(Byte *destination, const Byte *source, int stored_length);
 void migrate_bf(Byte *destination, const Byte *source, std::size_t blocks, int new_bf_length, int new_padding,
     int old_bf_length, int old_padding);
 LDouble extract_value(LDouble f, LDouble b, int *exp_ptr);
