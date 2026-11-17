@@ -184,7 +184,6 @@ BigFloatPtr sub_a_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2);
 BigFloatPtr square_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr mult_bf_int(BigFloatPtr r, BigFloatConstPtr n, misc::U16 u);
-std::string bf_to_string_e(BigFloatConstPtr r, int dec);
 std::string bf_to_string_f(BigFloatConstPtr r, int dec);
 Byte *unsafe_bf_to_bf10(Byte *r, int dec, Byte *n);
 Byte *mult_a_bf10_int(Byte *r, int dec, misc::U16 n);

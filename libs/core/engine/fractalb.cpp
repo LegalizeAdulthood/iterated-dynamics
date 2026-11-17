@@ -183,8 +183,8 @@ std::string format_two_bf(const char *s1, const BigFloat &t1, const char *s2, co
     return fmt::format("\n"
                        "{:s}->{:s}\n"
                        "{:s}->{:s}",
-        s1, bf_to_string_e(t1.data(), digits), //
-        s2, bf_to_string_e(t2.data(), digits));
+        s1, bf_to_string_e(t1, digits), //
+        s2, bf_to_string_e(t2, digits));
 }
 
 std::string format_three_bf(const char *s1, const BigFloat &t1, const char *s2, const BigFloat &t2, const char *s3,
@@ -194,9 +194,9 @@ std::string format_three_bf(const char *s1, const BigFloat &t1, const char *s2, 
                        "{:s}->{:s}\n"
                        "{:s}->{:s}\n"
                        "{:s}->{:s}",
-        s1, bf_to_string_e(t1.data(), digits), //
-        s2, bf_to_string_e(t2.data(), digits), //
-        s3, bf_to_string_e(t3.data(), digits));
+        s1, bf_to_string_e(t1, digits), //
+        s2, bf_to_string_e(t2, digits), //
+        s3, bf_to_string_e(t3, digits));
 }
 
 // for aspect ratio debugging
@@ -240,14 +240,14 @@ std::string format_compare_values_bf(const char *s, const LDouble x, const BigFl
                        "double={:.20Lf}\n"
                        "\n",
         s,                               //
-        bf_to_string_e(bfx.data(), dec), //
+        bf_to_string_e(bfx, dec), //
         x);
 }
 
 //********************************************************************
 std::string format_var_bf(const char *, const BigFloat &n)
 {
-    std::string msg{bf_to_string_e(n.data(), 40)};
+    std::string msg{bf_to_string_e(n, 40)};
     msg.resize(std::min(msg.size(), size_t{79}));
     return msg;
 }

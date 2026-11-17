@@ -42,6 +42,7 @@ static_assert(std::is_same_v<decltype(int_to_bf(std::declval<BigFloat &>(), long
 static_assert(std::is_same_v<decltype(float_to_bf(std::declval<BigFloat &>(), LDouble{})), BigFloat &>);
 static_assert(std::is_same_v<decltype(bf_to_float(std::declval<BigFloat &>())), LDouble>);
 static_assert(std::is_same_v<decltype(&bf_to_string), std::string (*)(const BigFloat &, int)>);
+static_assert(std::is_same_v<decltype(&bf_to_string_e), std::string (*)(const BigFloat &, int)>);
 
 std::vector<Byte> encoded_value(const BigFloat &value)
 {

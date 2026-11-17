@@ -1252,9 +1252,9 @@ std::string bf_to_string(const BigFloat &r, const int dec)
 }
 
 /**********************************************************************/
-std::string bf_to_string_e(BigFloatConstPtr r, const int dec)
+std::string bf_to_string_e(const BigFloat &r, const int dec)
 {
-    copy_bf(g_bf_tmp_copy1.data(), r);
+    copy_bf(g_bf_tmp_copy1.data(), r.data());
     return unsafe_bf_to_string_e(g_bf_tmp_copy1.data(), dec);
 }
 
