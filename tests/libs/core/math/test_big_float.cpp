@@ -353,7 +353,7 @@ TEST_P(TestBigFloatParse, parsesTheSpecifiedText)
 
         str_to_bf(value, text);
 
-        EXPECT_EQ(GetParam().expected, bf_to_float(value.data()));
+        EXPECT_EQ(GetParam().expected, bf_to_float(value));
     }
     EXPECT_EQ(marker, save_stack());
 }
@@ -571,7 +571,7 @@ void TestActivePrecisionArena::expect_preserved_arena()
     EXPECT_EQ(m_decimals, g_decimals);
     EXPECT_EQ(m_stack, save_stack());
     EXPECT_EQ(m_corner, g_bf_x_min.data());
-    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min.data()));
+    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
 }
 
 struct RejectedDecimalPrecisionInput
@@ -605,7 +605,7 @@ TEST_P(TestRejectedDecimalPrecision, preservesActiveArenaAndAllowsCorrection)
     expect_preserved_arena();
     EXPECT_EQ(integer_length, g_bn_length);
     EXPECT_NO_THROW(init_bf_dec(40));
-    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min.data()));
+    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
 }
 
 INSTANTIATE_TEST_SUITE_P(Requests, TestRejectedDecimalPrecision,
@@ -633,7 +633,7 @@ TEST_P(TestRejectedBytePrecision, preservesActiveArenaAndAllowsCorrection)
 
     expect_preserved_arena();
     init_bf_dec(40);
-    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min.data()));
+    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
 }
 
 INSTANTIATE_TEST_SUITE_P(Requests, TestRejectedBytePrecision,
@@ -682,7 +682,7 @@ TEST_P(TestArenaPrecisionLimit, rejectsRequestsPastTheBackendLimit)
 
     EXPECT_EQ(GetParam().length, g_bn_length);
     EXPECT_EQ(stack, save_stack());
-    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min.data()));
+    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
 }
 
 INSTANTIATE_TEST_SUITE_P(Backends, TestArenaPrecisionLimit,
@@ -706,8 +706,9 @@ TEST_F(TestBigFloat, stackStorageCrossesSixtyFourKilobytes)
         BigFloat{2.5}.copy_to_legacy(value, static_cast<std::size_t>(g_bf_length + 2));
         add_bf(value, value, g_bf_x_min.data());
         EXPECT_GT(big_memory_stats().temporaries, OLD_ARENA_SIZE);
-        EXPECT_EQ(3.75L, bf_to_float(value));
-        EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min.data()));
+        BigFloat observed_float = BigFloat::from_legacy(value, static_cast<std::size_t>(g_bf_length + 2));
+        EXPECT_EQ(3.75L, bf_to_float(observed_float));
+        EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
     }
     EXPECT_EQ(stack, save_stack());
 }
@@ -774,7 +775,8 @@ TEST_F(TestExhaustedArenaStack, restoringStackAfterRejectionAllowsReuse)
     restore_stack(m_stack);
     BigFloatPtr value = bf_stack().allocate_single();
     BigFloat{"1.25"}.copy_to_legacy(value, static_cast<std::size_t>(g_bf_length + 2));
-    EXPECT_EQ(1.25L, bf_to_float(value));
+    BigFloat observed_float = BigFloat::from_legacy(value, static_cast<std::size_t>(g_bf_length + 2));
+    EXPECT_EQ(1.25L, bf_to_float(observed_float));
 }
 
 TEST_F(TestBigFloat, stackSaverUnwindsAfterExhaustion)
@@ -835,10 +837,11 @@ TEST_F(TestFreedArena, initializesFreshStorageAfterRejectedOperations)
 
     init_bf_dec(20);
 
-    EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min.data()));
+    EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min));
     BigFloatPtr value = bf_stack().allocate_single();
     BigFloat{"1.25"}.copy_to_legacy(value, static_cast<std::size_t>(g_bf_length + 2));
-    EXPECT_EQ(1.25L, bf_to_float(value));
+    BigFloat observed_float = BigFloat::from_legacy(value, static_cast<std::size_t>(g_bf_length + 2));
+    EXPECT_EQ(1.25L, bf_to_float(observed_float));
 }
 
 TEST_F(TestBigFloat, loweringPrecisionPreservesCornersWithoutOverrunningArena)
@@ -846,7 +849,7 @@ TEST_F(TestBigFloat, loweringPrecisionPreservesCornersWithoutOverrunningArena)
     init_bf_dec(1200);
     float_to_bf(g_bf_x_min, 1.25);
     init_bf_dec(20);
-    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min.data()));
+    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
     EXPECT_EQ(BigStackMark{}, save_stack());
     EXPECT_NO_THROW(bf_stack().allocate_single());
 }
@@ -901,11 +904,12 @@ TEST_F(TestBigFloat, nestedStackRewindsPreserveOuterValuesAndPersistentCorners)
         }
         EXPECT_EQ(middle, save_stack());
         EXPECT_EQ(2.5L, BigNum::from_legacy(fixed, g_bn_length).to_float());
-        EXPECT_EQ(-3.75L, bf_to_float(floating));
-        EXPECT_EQ(-1.25L, bf_to_float(g_bf_x_min.data()));
+        BigFloat observed_float = BigFloat::from_legacy(floating, static_cast<std::size_t>(g_bf_length + 2));
+        EXPECT_EQ(-3.75L, bf_to_float(observed_float));
+        EXPECT_EQ(-1.25L, bf_to_float(g_bf_x_min));
     }
     EXPECT_EQ(start, save_stack());
-    EXPECT_EQ(-1.25L, bf_to_float(g_bf_x_min.data()));
+    EXPECT_EQ(-1.25L, bf_to_float(g_bf_x_min));
 }
 
 TEST_F(TestBigFloat, eachRepresentationAndLifetimeHasItsOwnAlignedArena)
@@ -947,7 +951,8 @@ TEST_F(TestBigFloat, bothStackAdaptersRewindWhileOwnedPersistentAndWorkingValues
         EXPECT_EQ(middle, save_stack());
     }
     EXPECT_EQ(before, save_stack());
-    EXPECT_EQ(-2.5L, bf_to_float(persistent.data()));
+    BigFloat observed_float = BigFloat::from_legacy(persistent.data(), static_cast<std::size_t>(g_bf_length + 2));
+    EXPECT_EQ(-2.5L, bf_to_float(observed_float));
     EXPECT_EQ(3.75L, BigNum::from_legacy(working.data(), g_bn_length).to_float());
 }
 
@@ -971,7 +976,8 @@ TEST_F(TestBigFloat, stackRewindCoalescesAReleasedNarrowedAllocationWithItsBorro
             bn_stack().allocate_double();
         }
         EXPECT_EQ(middle, save_stack());
-        EXPECT_EQ(-2.5L, bf_to_float(wide.data()));
+        BigFloat observed_float = BigFloat::from_legacy(wide.data(), static_cast<std::size_t>(g_bf_length + 2));
+        EXPECT_EQ(-2.5L, bf_to_float(observed_float));
         bf_stack().allocate_single();
         // The owning first half is released before the scope rewinds the second.
     }
@@ -996,9 +1002,10 @@ TEST_F(TestBigFloat, ownedArenaValuesSurviveContextResetAndLaterPrecisionGrowth)
 
     EXPECT_EQ(floating_index, floating.index());
     EXPECT_EQ(fixed_index, fixed.index());
-    EXPECT_EQ(-2.5L, bf_to_float(floating.data()));
+    BigFloat observed_float = BigFloat::from_legacy(floating.data(), static_cast<std::size_t>(g_bf_length + 2));
+    EXPECT_EQ(-2.5L, bf_to_float(observed_float));
     EXPECT_EQ(3.75L, BigNum::from_legacy(fixed.data(), g_bn_length).to_float());
-    EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min.data()));
+    EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min));
 }
 
 TEST_F(TestBigFloat, eachRepresentationReducesProductsThroughItsConfiguredFunction)
@@ -1103,7 +1110,7 @@ TEST_P(TestPersistentBigFloatParameters, preservesValuesAcrossRelocationAndClear
         &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
     for (std::size_t i = 0; i < values.size(); ++i)
     {
-        EXPECT_EQ(-static_cast<LDouble>(i + 1), bf_to_float(values[i]->data()));
+        EXPECT_EQ(-static_cast<LDouble>(i + 1), bf_to_float(*values[i]));
     }
     const auto high_water = bf_arena(BigLifetime::PERSISTENT).high_water_mark();
     free_bf_vars();

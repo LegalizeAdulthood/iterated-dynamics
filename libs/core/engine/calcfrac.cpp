@@ -1536,8 +1536,8 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
         }
         else if (g_bf_math == BFMathType::BIG_FLT)
         {
-            g_new_z.x = static_cast<double>(bf_to_float(g_new_z_bf.x.data()));
-            g_new_z.y = static_cast<double>(bf_to_float(g_new_z_bf.y.data()));
+            g_new_z.x = static_cast<double>(bf_to_float(g_new_z_bf.x));
+            g_new_z.y = static_cast<double>(bf_to_float(g_new_z_bf.y));
         }
         g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
         g_color_iter = potential(g_magnitude, g_color_iter);

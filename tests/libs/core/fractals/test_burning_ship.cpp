@@ -134,8 +134,8 @@ TEST_P(TestBurningShipPoint, nativeOrbitRetainsAbsoluteValuesAndParameterSigns)
 
     EXPECT_EQ(17, burning_ship_bf_fractal());
 
-    EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(g_new_z_bf.x.data())), tolerance);
-    EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(g_new_z_bf.y.data())), tolerance);
+    EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(g_new_z_bf.x)), tolerance);
+    EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(g_new_z_bf.y)), tolerance);
     EXPECT_EQ(original_x, encoded(g_old_z_bf.x));
     EXPECT_EQ(original_y, encoded(g_old_z_bf.y));
     EXPECT_EQ(stack, save_stack());
@@ -173,8 +173,8 @@ TEST_P(TestBurningShipPoint, referenceOrbitKeepsItsOrientationAndScratchRoles)
 
     burning_ship_ref_pt_bf(center, point);
 
-    EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(point.x.data())), tolerance);
-    EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(point.y.data())), tolerance);
+    EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(point.x)), tolerance);
+    EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(point.y)), tolerance);
     EXPECT_EQ(center_x, encoded(center.x));
     EXPECT_EQ(center_y, encoded(center.y));
     EXPECT_EQ(stack, save_stack());
@@ -185,8 +185,8 @@ TEST_P(TestBurningShipPoint, referenceOrbitKeepsItsOrientationAndScratchRoles)
     }
     else
     {
-        EXPECT_NEAR(expected.real() - 0.125, static_cast<double>(bf_to_float(g_new_z_bf.x.data())), tolerance);
-        EXPECT_NEAR(expected.imag() + 0.0625, static_cast<double>(bf_to_float(g_new_z_bf.y.data())), tolerance);
+        EXPECT_NEAR(expected.real() - 0.125, static_cast<double>(bf_to_float(g_new_z_bf.x)), tolerance);
+        EXPECT_NEAR(expected.imag() + 0.0625, static_cast<double>(bf_to_float(g_new_z_bf.y)), tolerance);
     }
 }
 

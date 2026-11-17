@@ -579,8 +579,8 @@ void record_reference(const std::complex<double> &center, std::complex<double> &
 void record_reference_bf(const BFComplex &center, BFComplex &z)
 {
     BFComplex coordinate{center};
-    s_reference_coordinates.emplace_back(bf_to_float(coordinate.x.data()), bf_to_float(coordinate.y.data()));
-    s_reference_values.emplace_back(bf_to_float(z.x.data()), bf_to_float(z.y.data()));
+    s_reference_coordinates.emplace_back(bf_to_float(coordinate.x), bf_to_float(coordinate.y));
+    s_reference_values.emplace_back(bf_to_float(z.x), bf_to_float(z.y));
     mandel_ref_pt_bf(center, z);
 }
 
@@ -593,9 +593,9 @@ void record_deep_reference_bf(const BFComplex &center, BFComplex &z)
     offset = -2;
     offset = center.x - offset;
     offset /= scale;
-    const double x{static_cast<double>(bf_to_float(offset.data()))};
+    const double x{static_cast<double>(bf_to_float(offset))};
     offset = center.y / scale;
-    const std::complex<double> coordinate{x, static_cast<double>(bf_to_float(offset.data()))};
+    const std::complex<double> coordinate{x, static_cast<double>(bf_to_float(offset))};
     if (s_reference_coordinates.empty() || s_reference_coordinates.back() != coordinate)
     {
         s_reference_coordinates.push_back(coordinate);
@@ -817,7 +817,8 @@ TEST_F(TestPerturbationPixels, finishingOwnedFramePreservesBorrowedCallerStorage
     EXPECT_TRUE(bf_stack().contains(borrowed));
     if (bf_stack().contains(borrowed))
     {
-        EXPECT_DOUBLE_EQ(0.375, static_cast<double>(bf_to_float(borrowed)));
+        BigFloat observed_float = BigFloat::from_legacy(borrowed, static_cast<std::size_t>(g_bf_length + 2));
+        EXPECT_DOUBLE_EQ(0.375, static_cast<double>(bf_to_float(observed_float)));
     }
     EXPECT_FALSE(center.x);
     EXPECT_FALSE(center.y);
@@ -846,8 +847,8 @@ TEST_F(TestPerturbationPixels, referenceCallbacksPreserveTheCenterAndDestination
 
         callbacks[i](center, orbit);
 
-        EXPECT_NEAR(expected[i].real(), static_cast<double>(bf_to_float(orbit.x.data())), 1e-14);
-        EXPECT_NEAR(expected[i].imag(), static_cast<double>(bf_to_float(orbit.y.data())), 1e-14);
+        EXPECT_NEAR(expected[i].real(), static_cast<double>(bf_to_float(orbit.x)), 1e-14);
+        EXPECT_NEAR(expected[i].imag(), static_cast<double>(bf_to_float(orbit.y)), 1e-14);
         EXPECT_EQ(original_x, (std::vector<Byte>{center.x.data(), center.x.data() + g_bf_length + 2}));
         EXPECT_EQ(original_y, (std::vector<Byte>{center.y.data(), center.y.data() + g_bf_length + 2}));
         EXPECT_EQ(&bf_arena(BigLifetime::TEMPORARY), &orbit.x.arena());
@@ -1216,8 +1217,8 @@ TEST_F(TestJuliaZPowerPeriodicity, nativeBigFloatDetectsAndHighlightsCycles)
     g_first_saved_and = 1;
     g_dispatch.set_orbit_calc(+[]
         {
-            s_standard_orbit.emplace_back(static_cast<double>(bf_to_float(g_old_z_bf.x.data())),
-                static_cast<double>(bf_to_float(g_old_z_bf.y.data())));
+            s_standard_orbit.emplace_back(
+                static_cast<double>(bf_to_float(g_old_z_bf.x)), static_cast<double>(bf_to_float(g_old_z_bf.y)));
             return julia_z_power_orbit_bf();
         });
     std::size_t full_iterations{};
@@ -1275,10 +1276,10 @@ TEST_F(TestBigFloatMandelbrot, directAlternativePreservesAffineCoordinatesSeedsA
 
     ASSERT_TRUE(mandel_per_image_bf());
     ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
-    EXPECT_DOUBLE_EQ(7.0 / 512, static_cast<double>(bf_to_float(g_delta_x_bf.data())));
-    EXPECT_DOUBLE_EQ(7.0 / 2048, static_cast<double>(bf_to_float(g_delta_y_bf.data())));
-    EXPECT_DOUBLE_EQ(1.0 / 1024, static_cast<double>(bf_to_float(g_delta2_x_bf.data())));
-    EXPECT_DOUBLE_EQ(1.0 / 1024, static_cast<double>(bf_to_float(g_delta2_y_bf.data())));
+    EXPECT_DOUBLE_EQ(7.0 / 512, static_cast<double>(bf_to_float(g_delta_x_bf)));
+    EXPECT_DOUBLE_EQ(7.0 / 2048, static_cast<double>(bf_to_float(g_delta_y_bf)));
+    EXPECT_DOUBLE_EQ(1.0 / 1024, static_cast<double>(bf_to_float(g_delta2_x_bf)));
+    EXPECT_DOUBLE_EQ(1.0 / 1024, static_cast<double>(bf_to_float(g_delta2_y_bf)));
     for (const bool book : {false, true})
     {
         g_bof_match_book_images = book;
@@ -1305,19 +1306,18 @@ TEST_F(TestBigFloatMandelbrot, directAlternativePreservesAffineCoordinatesSeedsA
                     EXPECT_EQ(1, mandel_per_pixel_bf());
 
                     EXPECT_EQ(book_seed ? -1 : 0, g_color_iter);
-                    EXPECT_DOUBLE_EQ(real, static_cast<double>(bf_to_float(g_param_z_bf.x.data())));
-                    EXPECT_DOUBLE_EQ(imag, static_cast<double>(bf_to_float(g_param_z_bf.y.data())));
-                    EXPECT_DOUBLE_EQ(seed_real, static_cast<double>(bf_to_float(g_old_z_bf.x.data())));
-                    EXPECT_DOUBLE_EQ(seed_imag, static_cast<double>(bf_to_float(g_old_z_bf.y.data())));
-                    EXPECT_DOUBLE_EQ(sqr(seed_real), static_cast<double>(bf_to_float(g_tmp_sqr_x_bf.data())));
-                    EXPECT_DOUBLE_EQ(sqr(seed_imag), static_cast<double>(bf_to_float(g_tmp_sqr_y_bf.data())));
+                    EXPECT_DOUBLE_EQ(real, static_cast<double>(bf_to_float(g_param_z_bf.x)));
+                    EXPECT_DOUBLE_EQ(imag, static_cast<double>(bf_to_float(g_param_z_bf.y)));
+                    EXPECT_DOUBLE_EQ(seed_real, static_cast<double>(bf_to_float(g_old_z_bf.x)));
+                    EXPECT_DOUBLE_EQ(seed_imag, static_cast<double>(bf_to_float(g_old_z_bf.y)));
+                    EXPECT_DOUBLE_EQ(sqr(seed_real), static_cast<double>(bf_to_float(g_tmp_sqr_x_bf)));
+                    EXPECT_DOUBLE_EQ(sqr(seed_imag), static_cast<double>(bf_to_float(g_tmp_sqr_y_bf)));
 
                     EXPECT_EQ(0, julia_orbit_bf());
 
                     EXPECT_DOUBLE_EQ(
-                        sqr(seed_real) - sqr(seed_imag) + real, static_cast<double>(bf_to_float(g_new_z_bf.x.data())));
-                    EXPECT_DOUBLE_EQ(
-                        2 * seed_real * seed_imag + imag, static_cast<double>(bf_to_float(g_new_z_bf.y.data())));
+                        sqr(seed_real) - sqr(seed_imag) + real, static_cast<double>(bf_to_float(g_new_z_bf.x)));
+                    EXPECT_DOUBLE_EQ(2 * seed_real * seed_imag + imag, static_cast<double>(bf_to_float(g_new_z_bf.y)));
                 }
             }
         }
@@ -9071,9 +9071,8 @@ TEST_F(TestPerturbationPixels, fixedPointInputsRetainSubMachineDigitsAndPreserve
         parameter_delta.y /= scale;
         value_delta.x /= scale;
         value_delta.y /= scale;
-        s_reference_coordinates.emplace_back(
-            bf_to_float(parameter_delta.x.data()), bf_to_float(parameter_delta.y.data()));
-        s_reference_values.emplace_back(bf_to_float(value_delta.x.data()), bf_to_float(value_delta.y.data()));
+        s_reference_coordinates.emplace_back(bf_to_float(parameter_delta.x), bf_to_float(parameter_delta.y));
+        s_reference_values.emplace_back(bf_to_float(value_delta.x), bf_to_float(value_delta.y));
         mandel_ref_pt_bf(parameter, z);
     };
     s_reference_coordinates.clear();
@@ -11060,8 +11059,8 @@ TEST_P(TestSignedIntegerOrbit, matchesNativeOrbitAndBailout)
             if (GetParam().big_float)
             {
                 escaped = julia_z_power_orbit_bf() != 0;
-                expected = {static_cast<double>(bf_to_float(g_new_z_bf.x.data())),
-                    static_cast<double>(bf_to_float(g_new_z_bf.y.data()))};
+                expected = {
+                    static_cast<double>(bf_to_float(g_new_z_bf.x)), static_cast<double>(bf_to_float(g_new_z_bf.y))};
             }
             else
             {
@@ -11147,7 +11146,7 @@ TEST_P(TestSignedSubDoublePower, resolvesNearZeroInputAfterReferenceReplacement)
     copy_bf(g_old_z_bf.x.data(), value.x.data());
     copy_bf(g_old_z_bf.y.data(), value.y.data());
     const bool escaped{julia_z_power_orbit_bf() != 0};
-    const double expected{static_cast<double>(bf_to_float(g_new_z_bf.x.data()))};
+    const double expected{static_cast<double>(bf_to_float(g_new_z_bf.x))};
 
     m_engine.begin_orbit_bf(parameter, value, 0);
     for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
@@ -11442,8 +11441,8 @@ void ComplexPerturbationContinuationTest::check_orbit(
             if (m_use_big_float)
             {
                 escaped = julia_z_power_orbit_bf() != 0;
-                expected = {static_cast<double>(bf_to_float(g_new_z_bf.x.data())),
-                    static_cast<double>(bf_to_float(g_new_z_bf.y.data()))};
+                expected = {
+                    static_cast<double>(bf_to_float(g_new_z_bf.x)), static_cast<double>(bf_to_float(g_new_z_bf.y))};
             }
             else
             {
@@ -11770,14 +11769,14 @@ void TestSubDoublePowerBranch::TearDown()
 void TestSubDoublePowerBranch::compare_branch(const int sign)
 {
     str_to_bf(m_value.y, sign > 0 ? "1e-400" : "-1e-400");
-    EXPECT_DOUBLE_EQ(-1.0, static_cast<double>(bf_to_float(m_value.x.data())));
+    EXPECT_DOUBLE_EQ(-1.0, static_cast<double>(bf_to_float(m_value.x)));
     EXPECT_EQ(sign, sign_bf(m_value.y.data()));
-    EXPECT_NEAR(std::acos(-1.0), static_cast<double>(bf_to_float(g_bf_pi.data())), 1e-12);
+    EXPECT_NEAR(std::acos(-1.0), static_cast<double>(bf_to_float(g_bf_pi)), 1e-12);
     m_native = pow(m_value, m_exponent);
     // Preserve the native kernel's behavior beyond its initial floating-
     // point approximation range, rather than substituting a new policy.
     const std::complex<double> expected{
-        static_cast<double>(bf_to_float(m_native.x.data())), static_cast<double>(bf_to_float(m_native.y.data()))};
+        static_cast<double>(bf_to_float(m_native.x)), static_cast<double>(bf_to_float(m_native.y))};
     m_engine.begin_orbit_bf(*m_center, m_value, 0);
     for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
     {
@@ -12789,8 +12788,7 @@ void TestPreciseBailoutBoundary::SetUp()
         float_to_bf(coordinate.y, boundary.point.y);
         float_to_bf(delta, offset);
         add_a_bf(boundary.imaginary ? coordinate.y.data() : coordinate.x.data(), delta.data());
-        m_expected = {static_cast<double>(bf_to_float(coordinate.x.data())),
-            static_cast<double>(bf_to_float(coordinate.y.data()))};
+        m_expected = {static_cast<double>(bf_to_float(coordinate.x)), static_cast<double>(bf_to_float(coordinate.y))};
     }
     m_engine.set_glitch_tolerance(reference_mode == 2 ? 2.0 : 0.0);
     m_escaped = sign == 0 || sign == boundary.outward_sign;
@@ -12855,11 +12853,11 @@ void TestPreciseMandelBoundary::SetUp()
         copy_bf(z.data(), center.x.data());
         for (long i = 0; i < (sign > 0 ? g_max_iterations - 1 : 1); ++i)
         {
-            m_expected_old = static_cast<double>(bf_to_float(z.data()));
+            m_expected_old = static_cast<double>(bf_to_float(z));
             square_bf(square.data(), z.data());
             add_bf(z.data(), square.data(), center.x.data());
         }
-        m_expected_new = static_cast<double>(bf_to_float(z.data()));
+        m_expected_new = static_cast<double>(bf_to_float(z));
         if (sign > 0)
         {
             m_expected_old = m_expected_new;
@@ -12908,7 +12906,7 @@ TEST_F(TestPerturbationPixels, highPrecisionFixedOrbitPreservesSmallParameterOff
         float_to_bf(displacement.y, 0.125);
         sub_bf(displacement.x.data(), z.x.data(), displacement.x.data());
         sub_bf(displacement.y.data(), z.y.data(), displacement.y.data());
-        s_reference_coordinates.emplace_back(bf_to_float(displacement.x.data()), bf_to_float(displacement.y.data()));
+        s_reference_coordinates.emplace_back(bf_to_float(displacement.x), bf_to_float(displacement.y));
         mandel_ref_pt_bf(parameter, z);
     };
 
@@ -13511,8 +13509,8 @@ TEST_P(TestNearCenterInversion, usesSameLimitAtBothPrecisions)
     m_inversion.apply(m_point_bf);
 
     EXPECT_DOUBLE_EQ(GetParam().value == 1.0 ? 2.0 : std::numeric_limits<float>::max(), scale);
-    EXPECT_NEAR(point.x, bf_to_float(m_point_bf.x.data()), 1e-16);
-    EXPECT_DOUBLE_EQ(0.0, bf_to_float(m_point_bf.y.data()));
+    EXPECT_NEAR(point.x, bf_to_float(m_point_bf.x), 1e-16);
+    EXPECT_DOUBLE_EQ(0.0, bf_to_float(m_point_bf.y));
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestNearCenterInversion,
@@ -13739,8 +13737,8 @@ TEST_F(TestSubnormalPerturbation, continuationReplacesSubnormalParameterAndSeedD
             {
                 ASSERT_EQ(iteration + 1, m_engine.orbit_iteration());
                 const bool escaped{julia_z_power_orbit_bf() != 0};
-                const std::complex<double> expected{static_cast<double>(bf_to_float(g_new_z_bf.x.data())),
-                    static_cast<double>(bf_to_float(g_new_z_bf.y.data()))};
+                const std::complex<double> expected{
+                    static_cast<double>(bf_to_float(g_new_z_bf.x)), static_cast<double>(bf_to_float(g_new_z_bf.y))};
                 ++iteration;
                 EXPECT_EQ(escaped, m_engine.orbit_escaped());
                 EXPECT_EQ(escaped || iteration == g_max_iterations, done);
@@ -13770,7 +13768,7 @@ TEST_F(TestSubnormalPerturbation, displacedPixelMatchesNativeBigFloatOrbit)
         escaped = julia_z_power_orbit_bf() != 0;
     }
     const std::complex<double> expected{
-        static_cast<double>(bf_to_float(g_new_z_bf.x.data())), static_cast<double>(bf_to_float(g_new_z_bf.y.data()))};
+        static_cast<double>(bf_to_float(g_new_z_bf.x)), static_cast<double>(bf_to_float(g_new_z_bf.y))};
 
     EXPECT_EQ(escaped ? iteration : g_inside_color, m_engine.calculate_pixel(WIDTH - 1, 0));
 

@@ -1179,6 +1179,11 @@ BigFloat &float_to_bf(BigFloat &r, const LDouble value)
     return r;
 }
 
+LDouble bf_to_float(BigFloat &value)
+{
+    return bf_to_float(value.data());
+}
+
 BigFloat abs(const BigFloat &value)
 {
     return value.abs();

@@ -9,9 +9,10 @@
 #include <algorithm>
 #include <cfloat>
 #include <charconv>
+#include <cmath>
+#include <cstring>
 #include <string>
 #include <string_view>
-#include <cstring>
 
 using namespace id::misc;
 
@@ -1240,6 +1241,76 @@ std::string unsafe_bn_to_string(Byte *r, int dec)
     }
 
     return result;
+}
+
+/********************************************************************/
+// calculates and returns the value of f*b^n
+// sort of like ldexp()
+LDouble scale_value(LDouble f, LDouble b, const int n)
+{
+    LDouble total = 1;
+
+    if (b == 0 || f == 0)
+    {
+        return 0;
+    }
+
+    if (n == 0)
+    {
+        return f;
+    }
+
+    int an = std::abs(n);
+
+    while (an != 0)
+    {
+        if (an & 0x0001)
+        {
+            total *= b;
+        }
+        b *= b;
+        an >>= 1;
+    }
+
+    if (n > 0)
+    {
+        f *= total;
+    }
+    else // n < 0
+    {
+        f /= total;
+    }
+    return f;
+}
+
+/********************************************************************/
+// calculates and returns the value of f*256^n
+// sort of like ldexp()
+//
+// n must be in the range -2^12 <= n < 2^12 (2^12=4096),
+// which should not be a problem
+LDouble scale256(const LDouble f, const int n)
+{
+    return scale_value(f, 256, n);
+}
+
+/*********************************************************************/
+//  f = b
+//  Converts a bigfloat to a double
+LDouble bf_to_float(Byte *n)
+{
+    int bnl = g_bn_length;
+    g_bn_length = g_bf_length;
+    int il = g_int_length;
+    g_int_length = 2;
+    LDouble f = bn_to_float(n);
+    g_bn_length = bnl;
+    g_int_length = il;
+
+    const int power = static_cast<S16>(BIG_ACCESS16(n + g_bf_length));
+    f = scale256(f, power);
+
+    return f;
 }
 
 /********************************************************************/

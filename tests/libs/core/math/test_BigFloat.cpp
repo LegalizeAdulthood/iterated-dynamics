@@ -40,6 +40,7 @@ static_assert(std::is_same_v<decltype(&bf_hex_dump), void (*)(const BigFloat &)>
 static_assert(std::is_same_v<decltype(str_to_bf(std::declval<BigFloat &>(), std::string_view{})), BigFloat &>);
 static_assert(std::is_same_v<decltype(int_to_bf(std::declval<BigFloat &>(), long{})), BigFloat &>);
 static_assert(std::is_same_v<decltype(float_to_bf(std::declval<BigFloat &>(), LDouble{})), BigFloat &>);
+static_assert(std::is_same_v<decltype(bf_to_float(std::declval<BigFloat &>())), LDouble>);
 
 std::vector<Byte> encoded_value(const BigFloat &value)
 {
@@ -310,6 +311,90 @@ INSTANTIATE_TEST_SUITE_P(LayoutsIntegerLengthsAndInputs, TestBigFloatFloatingInp
             BigFloatFloatingInput{-std::ldexp(1.0L, 1023), {0x00, 0x00, 0x00, 0x80, 0xff, 0x7f, 0x00}},
             BigFloatFloatingInput{std::ldexp(1.0L, -1022), {0x00, 0x00, 0x00, 0x04, 0x00, 0x80, 0xff}},
             BigFloatFloatingInput{1.0L + std::ldexp(1.0L, -52), {0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}, 52})));
+
+struct BigFloatOutputInput
+{
+    std::array<Byte, 7> tail;
+    LDouble expected;
+};
+
+class TestBigFloatOutputInterface : public TestBigFloatValue,
+                                    public testing::WithParamInterface<std::tuple<int, int, BigFloatOutputInput>>
+{
+};
+
+TEST_P(TestBigFloatOutputInterface, restoresInputAndLengthsAndPreservesTheExistingCopyPolicy)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const ValueSaver<int> integer_length{g_int_length, std::get<1>(GetParam())};
+    const BigFloatOutputInput &input = std::get<2>(GetParam());
+    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
+    std::vector<Byte> bytes(size);
+    std::copy(input.tail.begin(), input.tail.end(), bytes.end() - 7);
+    BigFloat value = BigFloat::from_legacy(bytes.data(), bytes.size());
+    BigArena &arena = value.arena();
+    const std::size_t stride = arena.block_size();
+    const std::size_t copy_size = 2 * stride;
+    std::fill(value.data() + size, value.data() + stride, Byte{0xa5});
+    const std::vector<Byte> original(value.data(), value.data() + stride);
+    std::fill_n(g_bf_tmp_copy1.data(), copy_size, Byte{0x5a});
+    std::fill_n(g_bf_tmp_copy2.data(), copy_size, Byte{0x3c});
+    const Byte *const address = value.data();
+    const Byte *const copy = g_bf_tmp_copy1.data();
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+    const int bn_length = g_bn_length;
+    const int bf_length = g_bf_length;
+    const int int_length = g_int_length;
+
+    const LDouble actual = bf_to_float(value);
+
+    EXPECT_EQ(input.expected, actual);
+    EXPECT_EQ(std::signbit(input.expected), std::signbit(actual));
+    EXPECT_EQ(original, std::vector<Byte>(value.data(), value.data() + stride));
+    EXPECT_EQ(std::vector<Byte>(copy_size, 0x5a),
+        std::vector<Byte>(g_bf_tmp_copy1.data(), g_bf_tmp_copy1.data() + copy_size));
+    EXPECT_EQ(std::vector<Byte>(copy_size, 0x3c),
+        std::vector<Byte>(g_bf_tmp_copy2.data(), g_bf_tmp_copy2.data() + copy_size));
+
+    const BigFloat &source = value;
+    const LDouble member_result = source.to_float();
+
+    EXPECT_EQ(input.expected, member_result);
+    EXPECT_EQ(std::signbit(input.expected), std::signbit(member_result));
+    EXPECT_EQ(bytes, std::vector<Byte>(g_bf_tmp_copy1.data(), g_bf_tmp_copy1.data() + size));
+    EXPECT_EQ(std::vector<Byte>(copy_size - size, 0x5a),
+        std::vector<Byte>(g_bf_tmp_copy1.data() + size, g_bf_tmp_copy1.data() + copy_size));
+    EXPECT_EQ(std::vector<Byte>(copy_size, 0x3c),
+        std::vector<Byte>(g_bf_tmp_copy2.data(), g_bf_tmp_copy2.data() + copy_size));
+    EXPECT_EQ(original, std::vector<Byte>(value.data(), value.data() + stride));
+    EXPECT_EQ(address, value.data());
+    EXPECT_EQ(copy, g_bf_tmp_copy1.data());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(bn_length, g_bn_length);
+    EXPECT_EQ(bf_length, g_bf_length);
+    EXPECT_EQ(int_length, g_int_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsIntegerLengthsAndInputs, TestBigFloatOutputInterface,
+    testing::Combine(testing::Values(4, 12, 60, 64, 708), testing::Values(1, 2, 4),
+        testing::Values(BigFloatOutputInput{{}, 0}, BigFloatOutputInput{{0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}, 1},
+            BigFloatOutputInput{{0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00}, -1},
+            BigFloatOutputInput{{0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0x00}, 1.25L},
+            BigFloatOutputInput{{0x00, 0x00, 0xc0, 0xfe, 0xff, 0x00, 0x00}, -1.25L},
+            BigFloatOutputInput{{0x00, 0x00, 0x00, 0x80, 0x00, 0xff, 0xff}, 0.5L},
+            BigFloatOutputInput{{0x00, 0x00, 0x00, 0x80, 0xff, 0xff, 0xff}, -0.5L},
+            BigFloatOutputInput{{0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00}, 255},
+            BigFloatOutputInput{{0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00}, 256},
+            BigFloatOutputInput{{0x00, 0x00, 0x00, 0xff, 0x7f, 0x00, 0x00}, 32767},
+            BigFloatOutputInput{{0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00}, -32768},
+            BigFloatOutputInput{{0x00, 0x00, 0x40, 0x01, 0x00, 0x0c, 0x00}, std::ldexp(1.25L, 96)},
+            BigFloatOutputInput{{0x00, 0x00, 0xc0, 0xfe, 0xff, 0xf4, 0xff}, -std::ldexp(1.25L, -96)},
+            BigFloatOutputInput{{0x00, 0x00, 0x00, 0x01, 0x00, 0xb8, 0x0b}, std::numeric_limits<LDouble>::infinity()},
+            BigFloatOutputInput{{0x00, 0x00, 0x00, 0xff, 0xff, 0xb8, 0x0b}, -std::numeric_limits<LDouble>::infinity()},
+            BigFloatOutputInput{{0x00, 0x00, 0x00, 0x01, 0x00, 0x48, 0xf4}, 0.0L},
+            BigFloatOutputInput{{0x00, 0x00, 0x00, 0xff, 0xff, 0x48, 0xf4}, -0.0L})));
 
 TEST_F(TestBigFloatValue, assignsNativeScalarValues)
 {
@@ -868,8 +953,8 @@ TEST_P(TestBigFloatArithmetic, constMachineConversionRetainsLegacyResultsAndInpu
         SCOPED_TRACE(text);
         const BigFloat source{bf_arena(BigLifetime::PERSISTENT), text};
         const auto original = encoded_value(source);
-        auto legacy = original;
-        const LDouble expected{bf_to_float(legacy.data())};
+        BigFloat legacy = BigFloat::from_legacy(original.data(), original.size());
+        const LDouble expected{bf_to_float(legacy)};
 
         const LDouble actual{source.to_float()};
 
@@ -1232,7 +1317,8 @@ TEST_P(TestBigFloatProductOwnership, temporaryRewindsPreserveLiveProductsAndRele
         }
         EXPECT_EQ(middle, save_stack());
         EXPECT_EQ(-5.0L, BigNum::from_legacy(fixed, g_bn_length).to_float());
-        EXPECT_EQ(6.25L, bf_to_float(floating));
+        BigFloat observed_float = BigFloat::from_legacy(floating, static_cast<std::size_t>(g_bf_length + 2));
+        EXPECT_EQ(6.25L, bf_to_float(observed_float));
         EXPECT_EQ(bytes, product_bytes(local));
         EXPECT_EQ(bytes, product_bytes(product));
         EXPECT_EQ(-2.5L, persistent.to_float());

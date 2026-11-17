@@ -85,8 +85,8 @@ TEST_F(TestMandelPowerState, nativeBigFloatReadsBothExponentComponentsOnEveryCal
 
         EXPECT_EQ(17, julia_z_power_orbit_bf());
 
-        EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(g_new_z_bf.x.data())), tolerance);
-        EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(g_new_z_bf.y.data())), tolerance);
+        EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(g_new_z_bf.x)), tolerance);
+        EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(g_new_z_bf.y)), tolerance);
         EXPECT_EQ(stack, save_stack());
     }
 }
@@ -233,11 +233,11 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
         add_bf(expected.y.data(), powered.y.data(), center.y.data());
         mandel_z_power_ref_pt_bf(center, actual);
         sub_bf(difference.data(), actual.x.data(), expected.x.data());
-        EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference.data())), 1e-50);
+        EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-50);
         sub_bf(difference.data(), actual.y.data(), expected.y.data());
-        EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference.data())), 1e-50);
-        if (std::norm(std::complex<double>{static_cast<double>(bf_to_float(expected.x.data())),
-                static_cast<double>(bf_to_float(expected.y.data()))}) >= 4.0)
+        EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-50);
+        if (std::norm(std::complex<double>{
+                static_cast<double>(bf_to_float(expected.x)), static_cast<double>(bf_to_float(expected.y))}) >= 4.0)
         {
             break;
         }
@@ -311,7 +311,7 @@ std::complex<double> TestSignedPowerState::precise_power(const std::complex<doub
     int_to_bf(exponent.x, g_c_exponent);
     clear_bf(exponent.y.data());
     result = pow(value, exponent);
-    return {static_cast<double>(bf_to_float(result.x.data())), static_cast<double>(bf_to_float(result.y.data()))};
+    return {static_cast<double>(bf_to_float(result.x)), static_cast<double>(bf_to_float(result.y))};
 }
 
 std::string signed_power_name(const int exponent)
@@ -491,9 +491,9 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     mandel_z_power_ref_pt_bf(center, actual);
 
     sub_bf(difference.data(), actual.x.data(), expected.x.data());
-    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference.data())), 1e-48);
+    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
     sub_bf(difference.data(), actual.y.data(), expected.y.data());
-    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference.data())), 1e-48);
+    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
 }
 
 INSTANTIATE_TEST_SUITE_P(SignedPowers, TestPreciseSignedPowerReference, ValuesIn(precise_signed_reference_inputs()),
@@ -820,9 +820,9 @@ TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
     mandel_z_power_ref_pt_bf(center, actual);
 
     sub_bf(difference.data(), actual.x.data(), expected.x.data());
-    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference.data())), 1e-48);
+    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
     sub_bf(difference.data(), actual.y.data(), expected.y.data());
-    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference.data())), 1e-48);
+    EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
 }
 
 INSTANTIATE_TEST_SUITE_P(ComplexPowers, TestPreciseComplexPowerReference, ValuesIn(precise_complex_reference_inputs()),

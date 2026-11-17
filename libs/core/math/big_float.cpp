@@ -635,46 +635,6 @@ BigFloatPtr div_a_bf_int(BigFloatPtr r, const U16 u)
 }
 
 /********************************************************************/
-// calculates and returns the value of f*b^n
-// sort of like ldexp()
-LDouble scale_value(LDouble f, LDouble b , const int n)
-{
-    LDouble total = 1;
-
-    if (b == 0 || f == 0)
-    {
-        return 0;
-    }
-
-    if (n == 0)
-    {
-        return f;
-    }
-
-    int an = std::abs(n);
-
-    while (an != 0)
-    {
-        if (an & 0x0001)
-        {
-            total *= b;
-        }
-        b *= b;
-        an >>= 1;
-    }
-
-    if (n > 0)
-    {
-        f *= total;
-    }
-    else     // n < 0
-    {
-        f /= total;
-    }
-    return f;
-}
-
-/********************************************************************/
 // extracts the mantissa and exponent of f
 // finds m and n such that 1<=|m|<10 and f = m*10^n
 // n is stored in *exp_ptr and m is returned, sort of like frexp()

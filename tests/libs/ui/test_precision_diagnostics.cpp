@@ -262,7 +262,7 @@ TEST_F(TestPrecisionDiagnostics, collapsedCoordinatesCollectDebugSnapshotWithout
 #else
     EXPECT_TRUE(g_precision_diagnostics.empty());
 #endif
-    EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min.data()));
+    EXPECT_EQ(0.0L, bf_to_float(g_bf_x_min));
 }
 
 TEST_F(TestPrecisionDiagnostics, conversionDebugSnapshotPreservesOriginalRegion)

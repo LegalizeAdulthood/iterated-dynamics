@@ -828,10 +828,10 @@ void SynchronousOrbit::start()
     m_started = true;
     if (g_bf_math != BFMathType::NONE)
     {
-        xx_min_l = static_cast<double>(bf_to_float(g_bf_x_min.data()));
-        yy_min_l = static_cast<double>(bf_to_float(g_bf_y_min.data()));
-        xx_max_l = static_cast<double>(bf_to_float(g_bf_x_max.data()));
-        yy_max_l = static_cast<double>(bf_to_float(g_bf_y_max.data()));
+        xx_min_l = static_cast<double>(bf_to_float(g_bf_x_min));
+        yy_min_l = static_cast<double>(bf_to_float(g_bf_y_min));
+        xx_max_l = static_cast<double>(bf_to_float(g_bf_x_max));
+        yy_max_l = static_cast<double>(bf_to_float(g_bf_y_max));
     }
     else
     {

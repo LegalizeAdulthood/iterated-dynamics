@@ -256,18 +256,18 @@ void bf_corners_to_float()
 {
     if (g_bf_math != BFMathType::NONE)
     {
-        g_image_region.m_min.x = static_cast<double>(bf_to_float(g_bf_x_min.data()));
-        g_image_region.m_min.y = static_cast<double>(bf_to_float(g_bf_y_min.data()));
-        g_image_region.m_max.x = static_cast<double>(bf_to_float(g_bf_x_max.data()));
-        g_image_region.m_max.y = static_cast<double>(bf_to_float(g_bf_y_max.data()));
-        g_image_region.m_3rd.x = static_cast<double>(bf_to_float(g_bf_x_3rd.data()));
-        g_image_region.m_3rd.y = static_cast<double>(bf_to_float(g_bf_y_3rd.data()));
+        g_image_region.m_min.x = static_cast<double>(bf_to_float(g_bf_x_min));
+        g_image_region.m_min.y = static_cast<double>(bf_to_float(g_bf_y_min));
+        g_image_region.m_max.x = static_cast<double>(bf_to_float(g_bf_x_max));
+        g_image_region.m_max.y = static_cast<double>(bf_to_float(g_bf_y_max));
+        g_image_region.m_3rd.x = static_cast<double>(bf_to_float(g_bf_x_3rd));
+        g_image_region.m_3rd.y = static_cast<double>(bf_to_float(g_bf_y_3rd));
     }
     for (int i = 0; i < MAX_PARAMS; i++)
     {
         if (type_has_param(g_fractal_type, i))
         {
-            g_params[i] = static_cast<double>(bf_to_float(g_bf_params[i].data()));
+            g_params[i] = static_cast<double>(bf_to_float(g_bf_params[i]));
         }
     }
 }
