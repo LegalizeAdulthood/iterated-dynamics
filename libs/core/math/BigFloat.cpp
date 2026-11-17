@@ -17,6 +17,7 @@
 #include <cstring>
 #include <stdexcept>
 #include <utility>
+#include <vector>
 
 using namespace id::misc;
 
@@ -24,6 +25,65 @@ namespace id::math
 {
 namespace
 {
+
+using BigFloat10 = Byte *;
+
+/********************************************************************/
+// bftostring() - converts a bigfloat into a scientific notation string
+// dec - decimal places, 0 for max
+//   r - bigfloat
+//   will convert to a floating point notation
+//   SIDE-EFFECT: the bigfloat, r, is destroyed.
+//                Copy it first if necessary.
+// USES: g_bf_tmp1 - g_bf_tmp2
+/********************************************************************/
+
+std::string unsafe_bf_to_string(BigFloatPtr r, const int dec)
+{
+    LDouble value = bf_to_float(r);
+    if (value == 0.0)
+    {
+        return "0.0";
+    }
+
+    std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
+    BigFloat10 decimal{storage.data()};
+    unsafe_bf_to_bf10(decimal, dec, r);
+    int power = static_cast<S16>(BIG_ACCESS16(decimal + dec + 2)); // where the exponent is stored
+    if (power > -4 && power < 6)                                   // tinker with this
+    {
+        return bf10_to_string_f(decimal, dec);
+    }
+    return bf10_to_string_e(decimal, dec);
+}
+
+std::string unsafe_bf_to_string_e(BigFloatPtr r, const int dec)
+{
+    LDouble value = bf_to_float(r);
+    if (value == 0.0)
+    {
+        return "0.0";
+    }
+
+    std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
+    BigFloat10 decimal{storage.data()};
+    unsafe_bf_to_bf10(decimal, dec, r);
+    return bf10_to_string_e(decimal, dec);
+}
+
+std::string unsafe_bf_to_string_f(BigFloatPtr r, const int dec)
+{
+    LDouble value = bf_to_float(r);
+    if (value == 0.0)
+    {
+        return "0.0";
+    }
+
+    std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
+    BigFloat10 decimal{storage.data()};
+    unsafe_bf_to_bf10(decimal, dec, r);
+    return bf10_to_string_f(decimal, dec);
+}
 
 void validate_buffer(BigFloatConstPtr buffer, const std::size_t size, const std::size_t required)
 {
@@ -1182,6 +1242,27 @@ BigFloat &float_to_bf(BigFloat &r, const LDouble value)
 LDouble bf_to_float(BigFloat &value)
 {
     return bf_to_float(value.data());
+}
+
+/**********************************************************************/
+std::string bf_to_string(BigFloatConstPtr r, const int dec)
+{
+    copy_bf(g_bf_tmp_copy1.data(), r);
+    return unsafe_bf_to_string(g_bf_tmp_copy1.data(), dec);
+}
+
+/**********************************************************************/
+std::string bf_to_string_e(BigFloatConstPtr r, const int dec)
+{
+    copy_bf(g_bf_tmp_copy1.data(), r);
+    return unsafe_bf_to_string_e(g_bf_tmp_copy1.data(), dec);
+}
+
+/**********************************************************************/
+std::string bf_to_string_f(BigFloatConstPtr r, const int dec)
+{
+    copy_bf(g_bf_tmp_copy1.data(), r);
+    return unsafe_bf_to_string_f(g_bf_tmp_copy1.data(), dec);
 }
 
 BigFloat abs(const BigFloat &value)

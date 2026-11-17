@@ -1688,4 +1688,337 @@ LDouble bn_to_float(Byte *n)
     return f;
 }
 
+// big10flt.c - C routines for base 10 big floating point numbers
+
+/**********************************************************
+(Just when you thought it was safe to go back in the water.)
+Just when you thought you have seen every type of format possible,
+16 bit integer, 32 bit integer, double, long double, mpmath,
+BigNum, BigFloat, I now give you BigFloat10 (big float base 10)!
+
+Why, because this is the only way (I can think of) to properly do a
+bftostr() without rounding errors.  Without this, then
+   -1.9999999999( > LDBL_DIG of 9's)9999999123456789...
+will round to -2.0.  The good news is that we only need to do two
+mathematical operations: multiplication and division by integers
+
+BigFloat10 format: (notice the position of the MSB and LSB)
+
+MSB                                         LSB
+  _  _  _  _  _  _  _  _  _  _  _  _ _ _ _ _
+n <><------------- dec --------------><> <->
+  1 byte pad            1 byte rounding   2 byte exponent.
+
+  total length = dec + 4
+
+***********************************************************/
+
+/**********************************************************************/
+// unsafe_bftobf10() - converts a bigfloat into a bigfloat10
+//   n - pointer to a bigfloat
+//   r - result array of Byte big enough to hold the BigFloat10 number
+// dec - number of decimals, not including the one extra for rounding
+//  SIDE-EFFECTS: n is changed to |n|.  Make copy of n if necessary.
+
+Byte *unsafe_bf_to_bf10(Byte *r, int dec, Byte *n)
+{
+    if (is_bf_zero(n))
+    {
+        // in scientific notation, the leading digit can't be zero
+        r[1] = static_cast<Byte>(0); // unless the number is zero
+        return r;
+    }
+
+    Byte *ones_byte = n + g_bf_length - 1;                                    // really it's n+g_bf_length-2
+    const int power256 = static_cast<S16>(BIG_ACCESS16(n + g_bf_length)) + 1; // so adjust power256 by 1
+
+    if (dec == 0)
+    {
+        dec = g_decimals;
+    }
+    dec++; // one extra byte for rounding
+    Byte *power10 = r + dec + 1;
+
+    if (is_bf_neg(n))
+    {
+        neg_a_bf(n);
+        r[0] = 1; // sign flag
+    }
+    else
+    {
+        r[0] = 0;
+    }
+
+    int p = -1; // multiply by 10 right away
+    int bnl = g_bn_length;
+    g_bn_length = g_bf_length;
+    for (int d = 1; d <= dec; d++)
+    {
+        // pretend it's a BigNum instead of a BigFloat
+        // this leaves n un-normalized, which is what we want here
+        mult_a_bn_int(n, 10);
+
+        r[d] = *ones_byte;
+        if (d == 1 && r[d] == 0)
+        {
+            d = 0; // back up a digit
+            p--;   // and decrease by a factor of 10
+        }
+        *ones_byte = 0;
+    }
+    g_bn_length = bnl;
+    BIG_SET16(power10, static_cast<U16>(p)); // save power of ten
+
+    // the digits are all read in, now scale it by 256^power256
+    if (power256 > 0)
+    {
+        for (int d = 0; d < power256; d++)
+        {
+            mult_a_bf10_int(r, dec, 256);
+        }
+    }
+    else if (power256 < 0)
+    {
+        for (int d = 0; d > power256; d--)
+        {
+            div_a_bf10_int(r, dec, 256);
+        }
+    }
+
+    // else power256 is zero, don't do anything
+
+    // round the last digit
+    if (r[dec] >= 5)
+    {
+        int d = dec - 1;
+        while (d > 0)   // stop before you get to the sign flag
+        {
+            r[d]++;     // round up
+            if (r[d] < 10)
+            {
+                d = -1; // flag for below
+                break;  // finished rounding
+            }
+            r[d] = 0;
+            d--;
+        }
+        if (d == 0) // rounding went back to the first digit and it overflowed
+        {
+            r[1] = 0;
+            std::memmove(r + 2, r + 1, dec - 1);
+            r[1] = 1;
+            p = static_cast<S16>(BIG_ACCESS16(power10));
+            BIG_SET16(power10, static_cast<U16>(p + 1));
+        }
+    }
+    r[dec] = 0; // truncate the rounded digit
+
+    return r;
+}
+
+/**********************************************************************/
+// mult_a_bf10_int()
+// r *= n
+// dec - number of decimals, including the one extra for rounding
+
+Byte *mult_a_bf10_int(Byte *r, const int dec, const U16 n)
+{
+    if (r[1] == 0 || n == 0)
+    {
+        r[1] = 0;
+        return r;
+    }
+
+    Byte *power10 = r + dec + 1;
+    int p = static_cast<S16>(BIG_ACCESS16(power10));
+
+    const int sign_flag = r[0]; // r[0] to be used as a padding
+    unsigned overflow = 0;
+    for (int d = dec; d > 0; d--)
+    {
+        const unsigned value = r[d] * n + overflow;
+        r[d] = static_cast<Byte>(value % 10);
+        overflow = value / 10;
+    }
+    while (overflow)
+    {
+        p++;
+        std::memmove(r + 2, r + 1, dec - 1);
+        r[1] = static_cast<Byte>(overflow % 10);
+        overflow = overflow / 10;
+    }
+    BIG_SET16(power10, static_cast<U16>(p)); // save power of ten
+    r[0] = static_cast<Byte>(sign_flag);     // restore sign flag
+    return r;
+}
+
+/**********************************************************************/
+// div_a_bf10_int()
+// r /= n
+// dec - number of decimals, including the one extra for rounding
+
+Byte *div_a_bf10_int(Byte *r, const int dec, const U16 n)
+{
+    unsigned value;
+
+    if (r[1] == 0 || n == 0)
+    {
+        r[1] = 0;
+        return r;
+    }
+
+    Byte *power10 = r + dec + 1;
+    int p = static_cast<S16>(BIG_ACCESS16(power10));
+
+    unsigned remainder = 0;
+    int dest = 1;
+    for (int src = 1; src <= dec; dest++, src++)
+    {
+        value = 10 * remainder + r[src];
+        r[dest] = static_cast<Byte>(value / n);
+        remainder = value % n;
+        if (dest == 1 && r[dest] == 0)
+        {
+            dest = 0; // back up a digit
+            p--;      // and decrease by a factor of 10
+        }
+    }
+    for (; dest <= dec; dest++)
+    {
+        value = 10 * remainder;
+        r[dest] = static_cast<Byte>(value / n);
+        remainder = value % n;
+        if (dest == 1 && r[dest] == 0)
+        {
+            dest = 0; // back up a digit
+            p--;      // and decrease by a factor of 10
+        }
+    }
+
+    BIG_SET16(power10, static_cast<U16>(p)); // save power of ten
+    return r;
+}
+
+/*************************************************************************/
+// bf10tostring_e()
+// Takes a bf10 number and converts it to an ascii string, sci. notation
+// dec - number of decimals, not including the one extra for rounding
+
+std::string bf10_to_string_e(const Byte *n, int dec)
+{
+    if (n[1] == 0)
+    {
+        return "0.0";
+    }
+
+    if (dec == 0)
+    {
+        dec = g_decimals;
+    }
+    dec++; // one extra byte for rounding
+    const Byte *power10 = n + dec + 1;
+    const int p = static_cast<S16>(BIG_ACCESS16(power10));
+
+    // if p is negative, it is not necessary to show all the decimal places
+    if (p < 0 && dec > 8)       // 8 sounds like a reasonable value
+    {
+        dec = dec + p;
+        dec = std::max(dec, 8); // let's keep at least a few
+    }
+
+    std::string text;
+    if (n[0] == 1) // sign flag
+    {
+        text.push_back('-');
+    }
+    text.push_back(static_cast<char>(n[1] + '0'));
+    text.push_back('.');
+    for (int d = 2; d <= dec; d++)
+    {
+        text.push_back(static_cast<char>(n[d] + '0'));
+    }
+    // clean up trailing 0's
+    while (text.back() == '0')
+    {
+        text.pop_back();
+    }
+    if (text.back() == '.') // put at least one 0 after the decimal
+    {
+        text.push_back('0');
+    }
+    text.push_back('e');
+    text += std::to_string(p);
+    return text;
+}
+
+/****************************************************************************/
+// bf10tostring_f()
+// Takes a bf10 number and converts it to an ascii string, decimal notation
+
+std::string bf10_to_string_f(const Byte *n, int dec)
+{
+    if (n[1] == 0)
+    {
+        return "0.0";
+    }
+
+    if (dec == 0)
+    {
+        dec = g_decimals;
+    }
+    dec++; // one extra byte for rounding
+    const Byte *power10 = n + dec + 1;
+    const int p = static_cast<S16>(BIG_ACCESS16(power10));
+
+    // if p is negative, it is not necessary to show all the decimal places
+    if (p < 0 && dec > 8)       // 8 sounds like a reasonable value
+    {
+        dec = dec + p;
+        dec = std::max(dec, 8); // let's keep at least a few
+    }
+
+    std::string text;
+    if (n[0] == 1) // sign flag
+    {
+        text.push_back('-');
+    }
+    if (p >= 0)
+    {
+        int d;
+        for (d = 1; d <= p + 1; d++)
+        {
+            text.push_back(d < dec ? static_cast<char>(n[d] + '0') : '0');
+        }
+        text.push_back('.');
+        for (; d <= dec; d++)
+        {
+            text.push_back(static_cast<char>(n[d] + '0'));
+        }
+    }
+    else
+    {
+        text.push_back('0');
+        text.push_back('.');
+        for (int d = 0; d > p + 1; d--)
+        {
+            text.push_back('0');
+        }
+        for (int d = 1; d <= dec; d++)
+        {
+            text.push_back(static_cast<char>(n[d] + '0'));
+        }
+    }
+
+    // clean up trailing 0's
+    while (text.back() == '0')
+    {
+        text.pop_back();
+    }
+    if (text.back() == '.') // put at least one 0 after the decimal
+    {
+        text.push_back('0');
+    }
+    return text;
+}
+
 } // namespace id::math

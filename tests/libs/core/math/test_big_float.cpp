@@ -518,6 +518,78 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatScientificFormat,
         BigFloatFormatInput{"DefaultPrecision", "1.234567890123456789", 0, "1.234567890123456789e0"}),
     [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
 
+enum class BigFloatFormatMode
+{
+    GENERAL,
+    SCIENTIFIC,
+    FIXED
+};
+
+class TestBigFloatFormatterStorage : public TestBigFloatFormat,
+                                     public testing::WithParamInterface<std::tuple<int, BigFloatFormatMode, bool>>
+{
+};
+
+TEST_P(TestBigFloatFormatterStorage, preservesInputScratchBoundsSharedLengthsAndExistingReservations)
+{
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    init_bf_length(std::get<0>(GetParam()));
+    const BigFloatFormatMode mode = std::get<1>(GetParam());
+    const bool negative = std::get<2>(GetParam());
+    prepare_value(negative ? "-1.25" : "1.25");
+    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
+    const std::size_t stride = m_value.arena().block_size();
+    const std::size_t copy_size = 2 * bf_arena(BigLifetime::WORKING).block_size();
+    std::fill(m_value.data() + size, m_value.data() + stride, Byte{0xa5});
+    const std::vector<Byte> original(m_value.data(), m_value.data() + stride);
+    std::fill_n(g_bf_tmp_copy1.data(), copy_size, Byte{0x5a});
+    std::fill_n(g_bf_tmp_copy2.data(), copy_size, Byte{0x3c});
+    const Byte *const input = m_value.data();
+    const Byte *const scratch = g_bf_tmp_copy1.data();
+    const std::size_t working_high_water = bf_arena(BigLifetime::WORKING).high_water_mark();
+    const std::size_t temporary_high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
+    const BigStackMark mark = save_stack();
+    const int bn_length = g_bn_length;
+    const int bf_length = g_bf_length;
+    const int int_length = g_int_length;
+    std::string expected{negative ? "-1.25" : "1.25"};
+    std::string actual;
+
+    switch (mode)
+    {
+    case BigFloatFormatMode::GENERAL:
+        actual = bf_to_string(m_value.data(), 12);
+        break;
+    case BigFloatFormatMode::SCIENTIFIC:
+        expected += "e0";
+        actual = bf_to_string_e(m_value.data(), 12);
+        break;
+    case BigFloatFormatMode::FIXED:
+        actual = bf_to_string_f(m_value.data(), 12);
+        break;
+    }
+
+    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(original, std::vector<Byte>(m_value.data(), m_value.data() + stride));
+    EXPECT_EQ(std::vector<Byte>(size, 0), std::vector<Byte>(scratch, scratch + size));
+    EXPECT_EQ(std::vector<Byte>(copy_size - size, 0x5a), std::vector<Byte>(scratch + size, scratch + copy_size));
+    EXPECT_EQ(std::vector<Byte>(copy_size, 0x3c),
+        std::vector<Byte>(g_bf_tmp_copy2.data(), g_bf_tmp_copy2.data() + copy_size));
+    EXPECT_EQ(input, m_value.data());
+    EXPECT_EQ(scratch, g_bf_tmp_copy1.data());
+    EXPECT_EQ(working_high_water, bf_arena(BigLifetime::WORKING).high_water_mark());
+    EXPECT_EQ(temporary_high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(bn_length, g_bn_length);
+    EXPECT_EQ(bf_length, g_bf_length);
+    EXPECT_EQ(int_length, g_int_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsModesAndSigns, TestBigFloatFormatterStorage,
+    testing::Combine(testing::Values(4, 12, 64, 708),
+        testing::Values(BigFloatFormatMode::GENERAL, BigFloatFormatMode::SCIENTIFIC, BigFloatFormatMode::FIXED),
+        testing::Bool()));
+
 TEST_F(TestBigFloatFormat, formatsAtMaximumSupportedPrecision)
 {
     g_fractal_type = FractalType::MANDEL_Z_POWER;
