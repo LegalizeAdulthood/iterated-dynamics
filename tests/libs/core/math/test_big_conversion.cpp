@@ -3,6 +3,9 @@
 //
 #include <math/big.h>
 
+#include <engine/bailout_formula.h>
+#include <engine/UserData.h>
+#include <fractals/fractype.h>
 #include <math/big_init.h>
 #include <math/BigArena.h>
 #include <misc/ValueSaver.h>
@@ -111,6 +114,58 @@ TEST_P(TestBigNumSignedConversion, integerWideningPreservesTheSignWithoutChangin
 }
 
 INSTANTIATE_TEST_SUITE_P(Signs, TestBigNumSignedConversion, testing::Bool());
+
+struct BigFloatConversionInput
+{
+    const char *name;
+    std::vector<Byte> expected;
+};
+
+class TestBigFloatByteConversion : public testing::TestWithParam<BigFloatConversionInput>
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    ValueSaver<long> m_saved_bailout_value{engine::g_user.bailout_value, 0};
+    ValueSaver<engine::Bailout> m_saved_bailout_test{engine::g_bailout_test, engine::Bailout::MOD};
+    ValueSaver<int> m_saved_bf_digits{g_bf_digits, 0};
+    ValueSaver<fractals::FractalType> m_saved_fractal_type{fractals::g_fractal_type, fractals::FractalType::MANDEL};
+};
+
+void TestBigFloatByteConversion::SetUp()
+{
+    init_bf_dec(20);
+}
+
+void TestBigFloatByteConversion::TearDown()
+{
+    free_bf_vars();
+}
+
+TEST_P(TestBigFloatByteConversion, conversionRelocatesTheExponentAndTruncatesLowMantissaBytes)
+{
+    const int active_length = g_bf_length;
+    const std::vector<Byte> source{0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12};
+    const std::vector<Byte> original = source;
+    const BigFloatConversionInput &input = GetParam();
+    std::vector<Byte> destination(input.expected.size() + 2, 0xcc);
+
+    EXPECT_EQ(0, convert_bf(destination.data() + 1, source.data(), static_cast<int>(input.expected.size()) - 2, 8));
+
+    EXPECT_EQ(input.expected, (std::vector<Byte>{destination.begin() + 1, destination.end() - 1}));
+    EXPECT_EQ(0xcc, destination.front());
+    EXPECT_EQ(0xcc, destination.back());
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(active_length, g_bf_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteConversion,
+    testing::Values(BigFloatConversionInput{"WidenMantissa",
+                        {0, 0, 0, 0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}},
+        BigFloatConversionInput{"NarrowMantissa", {0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}},
+        BigFloatConversionInput{"SameLength", {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}}),
+    [](const testing::TestParamInfo<BigFloatConversionInput> &info) { return info.param.name; });
 
 class TestBigArenaNumericMigration : public testing::TestWithParam<bool>
 {

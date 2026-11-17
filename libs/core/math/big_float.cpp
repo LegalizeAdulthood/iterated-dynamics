@@ -265,16 +265,6 @@ bool is_bf_zero(BigFloatConstPtr n)
     return !is_bf_not_zero(n);
 }
 
-/************************************************************************/
-// convert_bf  -- convert bigfloat numbers from old to new lengths
-int convert_bf(BigFloatPtr new_num, BigFloatConstPtr old_num, const int new_bf_len, const int old_bf_len)
-{
-    const int retained = std::min(new_bf_len, old_bf_len);
-    std::memset(new_num, 0, new_bf_len + 2);
-    std::memcpy(new_num + new_bf_len - retained, old_num + old_bf_len - retained, retained + 2);
-    return 0;
-}
-
 // The following used to be in bigfltc.c
 /********************************************************************/
 // normalize big float

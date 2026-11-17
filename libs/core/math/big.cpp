@@ -505,6 +505,16 @@ void migrate_bn(Byte *destination, const Byte *source, const std::size_t blocks,
     convert_bn_signed(destination, source, new_length, new_integer, old_length, old_integer);
 }
 
+/************************************************************************/
+// convert_bf  -- convert bigfloat numbers from old to new lengths
+int convert_bf(Byte *new_num, const Byte *old_num, const int new_bf_len, const int old_bf_len)
+{
+    const int retained = std::min(new_bf_len, old_bf_len);
+    std::memset(new_num, 0, new_bf_len + 2);
+    std::memcpy(new_num + new_bf_len - retained, old_num + old_bf_len - retained, retained + 2);
+    return 0;
+}
+
 Byte *unsafe_mult_bn(Byte *r, Byte *n1, Byte *n2)
 {
     return multiply(r, n1, n2);

@@ -199,7 +199,7 @@ BigFloatPtr ln_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n);
 BigFloatPtr atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx);
 bool is_bf_zero(BigFloatConstPtr n);
-int convert_bf(BigFloatPtr new_num, BigFloatConstPtr old_num, int new_bf_len, int old_bf_len);
+int convert_bf(Byte *new_num, const Byte *old_num, int new_bf_len, int old_bf_len);
 LDouble extract_value(LDouble f, LDouble b, int *exp_ptr);
 LDouble scale_value(LDouble f, LDouble b , int n);
 LDouble extract_10(LDouble f, int *exp_ptr);
