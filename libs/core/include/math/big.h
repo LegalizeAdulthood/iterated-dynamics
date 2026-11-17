@@ -171,7 +171,7 @@ Byte *float_to_bn(Byte *r, LDouble f);
 void bf_hex_dump(const BigFloat &r);
 Byte *str_to_bf(Byte *r, std::string_view s, Byte *tmp1);
 BigNumPtr bf_to_bn(BigNumPtr n, BigFloatConstPtr f);
-BigFloatPtr bn_to_bf(BigFloatPtr f, BigNumConstPtr n);
+Byte *bn_to_bf(Byte *f, const Byte *n);
 Byte *int_to_bf(Byte *r, long value);
 int sign_bf(BigFloatConstPtr n);
 BigFloatPtr abs_bf(BigFloatPtr r, BigFloatPtr n);

@@ -64,20 +64,6 @@ BigNumPtr bf_to_bn(BigNumPtr n, BigFloatConstPtr f)
     return n;
 }
 
-/*********************************************************************/
-//  bf = bn
-//  Converts a bignumber (integer) to a bigfloat
-//  g_bf_length must be at least g_bn_length+2
-BigFloatPtr bn_to_bf(BigFloatPtr f, BigNumConstPtr n)
-{
-    std::memcpy(f+g_bf_length-g_bn_length-1, n, g_bn_length);
-    std::memset(f, 0, g_bf_length - g_bn_length - 1);
-    *(f+g_bf_length-1) = static_cast<Byte>(is_bn_neg(n) ? 0xFF : 0x00); // sign extend
-    BIG_SET16(f+g_bf_length, static_cast<S16>(g_int_length - 1)); // exp
-    norm_bf(f);
-    return f;
-}
-
 /********************************************************************/
 // sign(r)
 int sign_bf(BigFloatConstPtr n)

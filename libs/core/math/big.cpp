@@ -505,6 +505,20 @@ void migrate_bn(Byte *destination, const Byte *source, const std::size_t blocks,
     convert_bn_signed(destination, source, new_length, new_integer, old_length, old_integer);
 }
 
+/*********************************************************************/
+//  bf = bn
+//  Converts a bignumber (integer) to a bigfloat
+//  g_bf_length must be at least g_bn_length+2
+Byte *bn_to_bf(Byte *f, const Byte *n)
+{
+    std::memcpy(f + g_bf_length - g_bn_length - 1, n, g_bn_length);
+    std::memset(f, 0, g_bf_length - g_bn_length - 1);
+    *(f + g_bf_length - 1) = static_cast<Byte>(is_bn_neg(n) ? 0xFF : 0x00); // sign extend
+    BIG_SET16(f + g_bf_length, static_cast<S16>(g_int_length - 1));         // exp
+    norm_bf(f);
+    return f;
+}
+
 /************************************************************************/
 // convert_bf  -- convert bigfloat numbers from old to new lengths
 int convert_bf(Byte *new_num, const Byte *old_num, const int new_bf_len, const int old_bf_len)
