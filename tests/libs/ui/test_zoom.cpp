@@ -100,13 +100,12 @@ protected:
 
     void expect_current_region(const ImageRegion &expected)
     {
-        const BigFloatPtr corners[]{g_bf_x_min.data(), g_bf_x_max.data(), g_bf_y_min.data(), g_bf_y_max.data(),
-            g_bf_x_3rd.data(), g_bf_y_3rd.data()};
+        BigFloat *const corners[]{&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd};
         const double values[]{
             expected.m_min.x, expected.m_max.x, expected.m_min.y, expected.m_max.y, expected.m_3rd.x, expected.m_3rd.y};
         for (std::size_t i = 0; i < std::size(corners); ++i)
         {
-            EXPECT_NEAR(values[i], static_cast<double>(bf_to_float(corners[i])), 1e-12);
+            EXPECT_NEAR(values[i], static_cast<double>(bf_to_float(*corners[i])), 1e-12);
         }
     }
 
