@@ -723,16 +723,22 @@ std::vector<char> pack_bf_parameters()
 
 void unpack_bf_parameters(const std::vector<char> &parameters)
 {
-    const std::size_t length = static_cast<std::size_t>(g_bf_length) + 2;
-    if (parameters.size() != 22 * length)
+    const std::size_t length = parameters.size() / 22;
+    if (parameters.size() % 22 != 0 || length <= 6 || length > static_cast<std::size_t>(MAX_BIGFLOAT_LENGTH) + 6)
     {
         throw std::invalid_argument("Incomplete arbitrary precision parameter payload");
     }
-    std::size_t offset = 0;
+    // Two exponent bytes and four extra BigFloat mantissa bytes.
+    const int bn_length = static_cast<int>(length) - 6;
+    if (parameters.size() != bf_parameter_bytes(bn_length, g_fractal_type))
+    {
+        throw std::invalid_argument("Incomplete arbitrary precision parameter payload");
+    }
+    init_bf_length(bn_length);
+    const Byte *cursor = reinterpret_cast<const Byte *>(parameters.data());
     for (BigFloat *value : parameter_bindings())
     {
-        std::memcpy(value->data(), parameters.data() + offset, length);
-        offset += length;
+        cursor = unpack_bf(*value, cursor, g_bf_length);
     }
 }
 

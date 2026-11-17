@@ -43,6 +43,7 @@
 #include <io/save_timer.h>
 #include <io/special_dirs.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <misc/debug_flags.h>
 #include <misc/Driver.h>
 #include <misc/memory.h>
@@ -611,6 +612,42 @@ TEST_F(TestGifWriterExtensions, preservesOpaqueArbitraryPrecisionParameters)
     EXPECT_TRUE(m_result.parameters.got_data);
     EXPECT_EQ(expected, m_result.parameters.apm_data);
 }
+
+class TestGifWriterPrecisionRestore : public TestGifWriterExtensions, public WithParamInterface<int>
+{
+};
+
+TEST_P(TestGifWriterPrecisionRestore, restoresTheSavedPayloadAndMetadataPrecisionFromADifferentActiveLength)
+{
+    ValueSaver<FractalType> type{g_fractal_type, FractalType::MANDEL_Z_POWER};
+    init_bf_length(GetParam());
+    const int stored_bn_length = g_bn_length;
+    g_bf_x_min = 1.25L;
+    g_bf_params[9] = -2.5L;
+    g_bf_save_y_3rd = 3.75L;
+    const std::vector<char> expected = pack_bf_parameters();
+    ASSERT_EQ(0, save());
+    ImageMetadata metadata = read_image_metadata(m_path);
+    ASSERT_EQ(stored_bn_length, metadata.fractal.bf_length);
+    ASSERT_EQ(expected, metadata.extended.apm_data);
+    init_bf_length(metadata.fractal.bf_length);
+    const std::array<int, 10> expected_lengths{g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length,
+        g_r_bf_length, g_shift_factor, g_bn_step, g_decimals, g_bf_decimals};
+    init_bf_length(stored_bn_length == 4 ? 64 : 4);
+
+    apply_image_extensions(metadata);
+
+    EXPECT_EQ(expected, pack_bf_parameters());
+    EXPECT_EQ(expected, metadata.extended.apm_data);
+    EXPECT_EQ(1.25L, g_bf_x_min.to_float());
+    EXPECT_EQ(-2.5L, g_bf_params[9].to_float());
+    EXPECT_EQ(3.75L, g_bf_save_y_3rd.to_float());
+    EXPECT_EQ(expected_lengths,
+        (std::array<int, 10>{g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length,
+            g_shift_factor, g_bn_step, g_decimals, g_bf_decimals}));
+}
+
+INSTANTIATE_TEST_SUITE_P(StoredPrecisions, TestGifWriterPrecisionRestore, Values(4, 5, 12, 708));
 
 class TestGifWriterEvolution : public TestGifWriterExtensions, public WithParamInterface<std::tuple<bool, bool>>
 {

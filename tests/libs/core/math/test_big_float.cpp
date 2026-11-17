@@ -1104,6 +1104,59 @@ TEST_F(TestBigFloat, parameterPackingPreservesOpaqueBytesAndRejectsIncompletePay
     EXPECT_EQ(expected, pack_bf_parameters());
 }
 
+class TestBigFloatParameterPrecision : public TestBigFloat, public testing::WithParamInterface<std::tuple<int, int>>
+{
+};
+
+TEST_P(TestBigFloatParameterPrecision, derivesTheSavedPrecisionBeforeUnpacking)
+{
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    init_bf_length(std::get<0>(GetParam()));
+    const int stored_bn_length = g_bn_length;
+    init_bf_length(stored_bn_length);
+    const std::array<int, 10> expected_lengths{g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length,
+        g_r_bf_length, g_shift_factor, g_bn_step, g_decimals, g_bf_decimals};
+    g_bf_x_min = 1.25L;
+    g_bf_params[9] = -2.5L;
+    g_bf_save_y_3rd = 3.75L;
+    std::vector<char> payload = pack_bf_parameters();
+    const std::vector<char> expected = payload;
+    init_bf_length(std::get<1>(GetParam()));
+
+    ASSERT_NO_THROW(unpack_bf_parameters(payload));
+
+    EXPECT_EQ(expected, pack_bf_parameters());
+    EXPECT_EQ(1.25L, g_bf_x_min.to_float());
+    EXPECT_EQ(-2.5L, g_bf_params[9].to_float());
+    EXPECT_EQ(3.75L, g_bf_save_y_3rd.to_float());
+    EXPECT_EQ(expected_lengths,
+        (std::array<int, 10>{g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length,
+            g_shift_factor, g_bn_step, g_decimals, g_bf_decimals}));
+    EXPECT_EQ(expected, payload);
+}
+
+INSTANTIATE_TEST_SUITE_P(StoredAndActivePrecisions, TestBigFloatParameterPrecision,
+    testing::Combine(testing::Values(4, 5, 12, 65, 708), testing::Values(4, 64)));
+
+class TestBigFloatParameterPayload : public TestBigFloat, public testing::WithParamInterface<int>
+{
+};
+
+TEST_P(TestBigFloatParameterPayload, rejectsMalformedSizesWithoutChangingPrecisionOrParameters)
+{
+    g_bf_x_min = 1.25L;
+    const std::vector<char> expected = pack_bf_parameters();
+    const std::array<int, 4> lengths{g_bn_length, g_bf_length, g_decimals, g_bf_decimals};
+    const std::vector<char> malformed(GetParam(), 0);
+
+    EXPECT_THROW(unpack_bf_parameters(malformed), std::invalid_argument);
+
+    EXPECT_EQ(expected, pack_bf_parameters());
+    EXPECT_EQ(lengths, (std::array<int, 4>{g_bn_length, g_bf_length, g_decimals, g_bf_decimals}));
+}
+
+INSTANTIATE_TEST_SUITE_P(Sizes, TestBigFloatParameterPayload, testing::Values(0, 1, 132, 154, 219, 221, 242, 15730));
+
 class TestPersistentBigFloatParameters : public TestBigFloat, public testing::WithParamInterface<int>
 {
 };
@@ -1130,6 +1183,10 @@ TEST_P(TestPersistentBigFloatParameters, preservesEverySerializedFieldAndRejects
 
     EXPECT_EQ(expected, pack_bf_parameters());
     const std::vector<char> zeros(expected.size());
+    const Byte *const address = g_bf_x_min.data();
+    BigArena &arena = bf_arena(BigLifetime::PERSISTENT);
+    const std::size_t high_water = arena.high_water_mark();
+    std::fill(g_bf_x_min.data() + width, g_bf_x_min.data() + arena.block_size(), Byte{0xa5});
     unpack_bf_parameters(zeros);
     EXPECT_EQ(zeros, pack_bf_parameters());
     unpack_bf_parameters(expected);
@@ -1138,6 +1195,10 @@ TEST_P(TestPersistentBigFloatParameters, preservesEverySerializedFieldAndRejects
     incomplete.pop_back();
     EXPECT_THROW(unpack_bf_parameters(incomplete), std::invalid_argument);
     EXPECT_EQ(expected, pack_bf_parameters());
+    EXPECT_EQ(address, g_bf_x_min.data());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(std::vector<Byte>(arena.block_size() - width, 0xa5),
+        std::vector<Byte>(g_bf_x_min.data() + width, g_bf_x_min.data() + arena.block_size()));
 }
 
 TEST_P(TestPersistentBigFloatParameters, preservesValuesAcrossRelocationAndClearsThemOnReinitialization)

@@ -1087,7 +1087,6 @@ void apply_image_extensions(ImageMetadata &metadata)
 
     if (blk_5_info.got_data)
     {
-        init_bf_length(read_info.bf_length);
         unpack_bf_parameters(blk_5_info.apm_data);
     }
     else
