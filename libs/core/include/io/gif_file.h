@@ -49,7 +49,7 @@ void put_evolution_info(GifFileType *gif, const EvolutionInfo &info);
 OrbitsInfo get_orbits_info(const GifFileType *gif);
 void put_orbits_info(GifFileType *gif, const OrbitsInfo &info);
 
-std::vector<char> get_extended_param_info(const GifFileType *gif);
-void put_extended_param_info(GifFileType *gif, const std::vector<char> &params);
+std::vector<Byte> get_extended_param_info(const GifFileType *gif);
+void put_extended_param_info(GifFileType *gif, const std::vector<Byte> &params);
 
 } // namespace id::io

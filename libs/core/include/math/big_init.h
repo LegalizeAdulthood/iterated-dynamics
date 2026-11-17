@@ -76,8 +76,8 @@ struct BigMemoryStats
 };
 
 BigMemoryStats big_memory_stats();
-std::vector<char> pack_bf_parameters();
-void unpack_bf_parameters(const std::vector<char> &parameters);
+std::vector<Byte> pack_bf_parameters();
+void unpack_bf_parameters(const std::vector<Byte> &parameters);
 
 void free_bf_vars();
 BigStackMark save_stack();

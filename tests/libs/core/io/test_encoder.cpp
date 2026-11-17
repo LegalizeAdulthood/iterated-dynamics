@@ -284,7 +284,7 @@ void TestGifWriterExtensions::TearDown()
 void TestGifWriterExtensions::prepare_parameters(const std::vector<Byte> &parameters)
 {
     init_bf_length(12);
-    unpack_bf_parameters({parameters.begin(), parameters.end()});
+    unpack_bf_parameters(parameters);
 }
 
 void TestGifWriterExtensions::expect_layout(GifFileType *gif, const std::vector<std::string> &identifiers) const
@@ -603,14 +603,13 @@ TEST_F(TestGifWriterExtensions, preservesOpaqueArbitraryPrecisionParameters)
 
     const GifFilePtr gif{read_gif(m_path)};
     expect_layout(gif.get(), {"fractint005", "fractint001"});
-    const std::vector<char> expected{parameters.begin(), parameters.end()};
     EXPECT_EQ(parameters, payload(gif.get(), "fractint005"));
-    EXPECT_EQ(expected, get_extended_param_info(gif.get()));
+    EXPECT_EQ(parameters, get_extended_param_info(gif.get()));
     ASSERT_FALSE(m_result.read(m_path));
     EXPECT_EQ(static_cast<int>(BFMathType::BIG_FLT), m_result.info.bf_math);
     EXPECT_EQ(12, m_result.info.bf_length);
     EXPECT_TRUE(m_result.parameters.got_data);
-    EXPECT_EQ(expected, m_result.parameters.apm_data);
+    EXPECT_EQ(parameters, m_result.parameters.apm_data);
 }
 
 class TestGifWriterPrecisionRestore : public TestGifWriterExtensions, public WithParamInterface<int>
@@ -625,7 +624,7 @@ TEST_P(TestGifWriterPrecisionRestore, restoresTheSavedPayloadAndMetadataPrecisio
     g_bf_x_min = 1.25L;
     g_bf_params[9] = -2.5L;
     g_bf_save_y_3rd = 3.75L;
-    const std::vector<char> expected = pack_bf_parameters();
+    const std::vector<Byte> expected = pack_bf_parameters();
     ASSERT_EQ(0, save());
     ImageMetadata metadata = read_image_metadata(m_path);
     ASSERT_EQ(stored_bn_length, metadata.fractal.bf_length);
@@ -831,7 +830,7 @@ TEST_F(TestGifWriterExtensions, preservesCompleteRecordOrderingAndTotalEncodedLe
     EXPECT_EQ((std::vector<Byte>{0x12, 0x34}), m_result.resume.resume_data);
     EXPECT_EQ("AllRecords", std::string{m_result.formula.form_name});
     EXPECT_EQ((std::vector<int>{16, 32}), m_result.ranges.range_data);
-    EXPECT_EQ((std::vector<char>{parameters.begin(), parameters.end()}), m_result.parameters.apm_data);
+    EXPECT_EQ(parameters, m_result.parameters.apm_data);
 }
 
 } // namespace id::test

@@ -920,19 +920,14 @@ void put_ranges_info(GifFileType *gif, const std::vector<int> &info)
     add_gif_extension(gif, "fractint004", bytes.data(), bytes.size());
 }
 
-std::vector<char> get_extended_param_info(const GifFileType *gif)
+std::vector<Byte> get_extended_param_info(const GifFileType *gif)
 {
-    const std::vector<Byte> bytes{get_gif_extension(gif, "fractint005")};
-
-    std::vector<char> parameters;
-    parameters.resize(bytes.size());
-    std::transform(bytes.begin(), bytes.end(), parameters.begin(), [](const Byte byte) { return static_cast<char>(byte); });
-    return parameters;
+    return get_gif_extension(gif, "fractint005");
 }
 
-void put_extended_param_info(GifFileType *gif, const std::vector<char> &params)
+void put_extended_param_info(GifFileType *gif, const std::vector<Byte> &params)
 {
-    add_gif_extension(gif, "fractint005", reinterpret_cast<const Byte *>(params.data()), params.size());
+    add_gif_extension(gif, "fractint005", params.data(), params.size());
 }
 
 EvolutionInfo get_evolution_info(const GifFileType *gif)

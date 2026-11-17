@@ -708,10 +708,10 @@ BigMemoryStats big_memory_stats()
     return result;
 }
 
-std::vector<char> pack_bf_parameters()
+std::vector<Byte> pack_bf_parameters()
 {
     const std::size_t length = static_cast<std::size_t>(g_bf_length) + 2;
-    std::vector<char> result(22 * length);
+    std::vector<Byte> result(22 * length);
     std::size_t offset = 0;
     for (BigFloat *value : parameter_bindings())
     {
@@ -721,7 +721,7 @@ std::vector<char> pack_bf_parameters()
     return result;
 }
 
-void unpack_bf_parameters(const std::vector<char> &parameters)
+void unpack_bf_parameters(const std::vector<Byte> &parameters)
 {
     const std::size_t length = parameters.size() / 22;
     if (parameters.size() % 22 != 0 || length <= 6 || length > static_cast<std::size_t>(MAX_BIGFLOAT_LENGTH) + 6)
@@ -735,7 +735,7 @@ void unpack_bf_parameters(const std::vector<char> &parameters)
         throw std::invalid_argument("Incomplete arbitrary precision parameter payload");
     }
     init_bf_length(bn_length);
-    const Byte *cursor = reinterpret_cast<const Byte *>(parameters.data());
+    const Byte *cursor = parameters.data();
     for (BigFloat *value : parameter_bindings())
     {
         cursor = unpack_bf(*value, cursor, g_bf_length);

@@ -134,7 +134,7 @@ TEST_F(TestGifWriter, emitsSharedExtensionsWithOriginalGroupingAndEmptyRecords)
 {
     FindFractalInfoState saved_state;
     const std::vector<Byte> resume(511, 0xA5);
-    const std::vector<char> parameters(396, 'a');
+    const std::vector<Byte> parameters(396, 'a');
     put_resume_info(&m_extensions, resume);
     put_extended_param_info(&m_extensions, parameters);
     put_ranges_info(&m_extensions, {});

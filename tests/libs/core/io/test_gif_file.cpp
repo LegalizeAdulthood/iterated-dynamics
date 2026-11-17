@@ -579,6 +579,42 @@ TEST_P(TestGIFResumeRoundTrip, preservesOpaqueBytesAndSubBlockBoundaries)
 
 INSTANTIATE_TEST_SUITE_P(SubBlockSizes, TestGIFResumeRoundTrip, testing::Values(0, 1, 254, 255, 256, 510, 511));
 
+class TestGIFPrecisionPayload : public TestGIFExtensions, public testing::WithParamInterface<int>
+{
+};
+
+TEST_P(TestGIFPrecisionPayload, preservesIndependentBinaryBytesAndOwnsTheDecodedPayload)
+{
+    const std::array<Byte, 4> pattern{0x00, 0x80, 0xff, 0x7f};
+    std::vector<Byte> expected(GetParam());
+    for (std::size_t i = 0; i < expected.size(); ++i)
+    {
+        expected[i] = pattern[i % pattern.size()];
+    }
+
+    put_extended_param_info(&m_gif, expected);
+
+    ASSERT_EQ(1 + (GetParam() + 254) / 255, m_gif.ExtensionBlockCount);
+    ASSERT_EQ(APPLICATION_EXT_FUNC_CODE, m_gif.ExtensionBlocks[0].Function);
+    ASSERT_EQ(11, m_gif.ExtensionBlocks[0].ByteCount);
+    EXPECT_EQ("fractint005", std::string(reinterpret_cast<const char *>(m_gif.ExtensionBlocks[0].Bytes), 11));
+    std::vector<Byte> written;
+    for (int i = 1; i < m_gif.ExtensionBlockCount; ++i)
+    {
+        const ExtensionBlock &block = m_gif.ExtensionBlocks[i];
+        EXPECT_EQ(CONTINUE_EXT_FUNC_CODE, block.Function);
+        EXPECT_EQ(std::min(255, GetParam() - (i - 1) * 255), block.ByteCount);
+        written.insert(written.end(), block.Bytes, block.Bytes + block.ByteCount);
+    }
+    EXPECT_EQ(expected, written);
+    const std::vector<Byte> decoded = get_extended_param_info(&m_gif);
+    EXPECT_EQ(expected, decoded);
+    GifFreeExtensions(&m_gif.ExtensionBlockCount, &m_gif.ExtensionBlocks);
+    EXPECT_EQ(expected, decoded);
+}
+
+INSTANTIATE_TEST_SUITE_P(SubBlockSizes, TestGIFPrecisionPayload, testing::Values(0, 4, 254, 255, 256, 510, 511));
+
 TEST_F(TestGIFExtensions, absentResumeRecordHasNoData)
 {
     EXPECT_FALSE(has_gif_extension(&m_gif, "fractint002"));
@@ -678,7 +714,7 @@ TEST_F(TestGIFExtensions, resumeDataStopsAtNextApplicationAndOwnsItsBytes)
     const std::vector<Byte> actual{get_resume_info(&m_gif)};
 
     EXPECT_EQ(expected, actual);
-    EXPECT_EQ((std::vector<char>{'x', 'y'}), get_extended_param_info(&m_gif));
+    EXPECT_EQ((std::vector<Byte>{'x', 'y'}), get_extended_param_info(&m_gif));
     GifFreeExtensions(&m_gif.ExtensionBlockCount, &m_gif.ExtensionBlocks);
     EXPECT_EQ(expected, actual);
 }

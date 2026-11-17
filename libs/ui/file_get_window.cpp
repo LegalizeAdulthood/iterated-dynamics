@@ -599,7 +599,7 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
         const int two_di_len = static_cast<int>(blk_5_info->apm_data.size() / 22);
         const int di_bf_length = two_di_len - 2;
 
-        const Byte *parameters = reinterpret_cast<const Byte *>(blk_5_info->apm_data.data());
+        const Byte *parameters = blk_5_info->apm_data.data();
         convert_bf(bt_x_min.data(), parameters, g_bf_length, di_bf_length);
         convert_bf(bt_x_max.data(), parameters + two_di_len, g_bf_length, di_bf_length);
         convert_bf(bt_y_min.data(), parameters + 2 * two_di_len, g_bf_length, di_bf_length);

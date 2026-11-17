@@ -750,7 +750,7 @@ TEST_F(TestFindFractalInfo, readsMultiBlockPayloadsWithoutPollingPendingInput)
     EXPECT_CALL(driver, key_pressed()).Times(0);
     EXPECT_CALL(driver, get_key()).Times(0);
     const std::vector<Byte> resume(511, 0xA5);
-    const std::vector<char> parameters(484, 'a');
+    const std::vector<Byte> parameters(484, 'a');
     const std::vector<int> ranges{-1, 128, 255, 32767, -32768};
     put_resume_info(&m_extensions, resume);
     put_ranges_info(&m_extensions, ranges);
@@ -911,7 +911,7 @@ void TestInvalidPrecisionPayload::SetUp()
 std::filesystem::path TestInvalidPrecisionPayload::write_metadata()
 {
     add_main_record(16);
-    put_extended_param_info(&m_extensions, std::vector<char>(GetParam().bytes, 'a'));
+    put_extended_param_info(&m_extensions, std::vector<Byte>(GetParam().bytes, 'a'));
     return write_small_file();
 }
 
@@ -995,7 +995,7 @@ INSTANTIATE_TEST_SUITE_P(DeclaredPrecision, TestUnsupportedPrecision,
 TEST_F(TestFindPrecisionMetadata, duplicateMainRecordsDoNotChangeActiveImage)
 {
     add_main_record(16);
-    put_extended_param_info(&m_extensions, std::vector<char>(484));
+    put_extended_param_info(&m_extensions, std::vector<Byte>(484));
     const std::filesystem::path path{write_small_file(true, 0, &m_extensions)};
 
     EXPECT_THROW(read_image_metadata(path), std::runtime_error);
@@ -1024,7 +1024,7 @@ class TestValidPrecisionMetadata : public TestFindPrecisionMetadata, public With
 protected:
     void SetUp() override;
 
-    std::vector<char> m_parameters;
+    std::vector<Byte> m_parameters;
 };
 
 void TestValidPrecisionMetadata::SetUp()

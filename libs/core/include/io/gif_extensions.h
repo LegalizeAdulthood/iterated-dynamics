@@ -208,7 +208,7 @@ struct ExtBlock4
 struct ExtBlock5
 {
     bool got_data;
-    std::vector<char> apm_data;
+    std::vector<Byte> apm_data;
 };
 
 // parameter evolution stuff

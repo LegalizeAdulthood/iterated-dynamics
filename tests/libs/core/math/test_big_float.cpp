@@ -1086,16 +1086,16 @@ TEST_F(TestBigFloat, eachRepresentationReducesProductsThroughItsConfiguredFuncti
 
 TEST_F(TestBigFloat, parameterPackingPreservesOpaqueBytesAndRejectsIncompletePayloads)
 {
-    std::vector<char> expected(22 * (g_bf_length + 2));
+    std::vector<Byte> expected(22 * (g_bf_length + 2));
     for (std::size_t i = 0; i < expected.size(); ++i)
     {
-        expected[i] = static_cast<char>(i * 53 + 157);
+        expected[i] = static_cast<Byte>(i * 53 + 157);
     }
     unpack_bf_parameters(expected);
 
     EXPECT_EQ(expected, pack_bf_parameters());
-    const auto first = reinterpret_cast<const char *>(g_bf_x_min.data());
-    const auto second = reinterpret_cast<const char *>(g_bf_x_max.data());
+    const Byte *const first = g_bf_x_min.data();
+    const Byte *const second = g_bf_x_max.data();
     EXPECT_TRUE(std::equal(expected.begin(), expected.begin() + g_bf_length + 2, first));
     EXPECT_TRUE(std::equal(expected.begin() + g_bf_length + 2, expected.begin() + 2 * (g_bf_length + 2), second));
     auto incomplete = expected;
@@ -1119,8 +1119,8 @@ TEST_P(TestBigFloatParameterPrecision, derivesTheSavedPrecisionBeforeUnpacking)
     g_bf_x_min = 1.25L;
     g_bf_params[9] = -2.5L;
     g_bf_save_y_3rd = 3.75L;
-    std::vector<char> payload = pack_bf_parameters();
-    const std::vector<char> expected = payload;
+    std::vector<Byte> payload = pack_bf_parameters();
+    const std::vector<Byte> expected = payload;
     init_bf_length(std::get<1>(GetParam()));
 
     ASSERT_NO_THROW(unpack_bf_parameters(payload));
@@ -1145,9 +1145,9 @@ class TestBigFloatParameterPayload : public TestBigFloat, public testing::WithPa
 TEST_P(TestBigFloatParameterPayload, rejectsMalformedSizesWithoutChangingPrecisionOrParameters)
 {
     g_bf_x_min = 1.25L;
-    const std::vector<char> expected = pack_bf_parameters();
+    const std::vector<Byte> expected = pack_bf_parameters();
     const std::array<int, 4> lengths{g_bn_length, g_bf_length, g_decimals, g_bf_decimals};
-    const std::vector<char> malformed(GetParam(), 0);
+    const std::vector<Byte> malformed(GetParam(), 0);
 
     EXPECT_THROW(unpack_bf_parameters(malformed), std::invalid_argument);
 
@@ -1170,19 +1170,19 @@ TEST_P(TestPersistentBigFloatParameters, preservesEverySerializedFieldAndRejects
         &g_bf_y_3rd, &g_bf_params[0], &g_bf_params[1], &g_bf_params[2], &g_bf_params[3], &g_bf_params[4],
         &g_bf_params[5], &g_bf_params[6], &g_bf_params[7], &g_bf_params[8], &g_bf_params[9], &g_bf_save_x_min,
         &g_bf_save_x_max, &g_bf_save_y_min, &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
-    std::vector<char> expected(values.size() * width);
+    std::vector<Byte> expected(values.size() * width);
     for (std::size_t field = 0; field < values.size(); ++field)
     {
         for (std::size_t byte = 0; byte < width; ++byte)
         {
             const Byte value = static_cast<Byte>(field * 17 + byte * 53);
             values[field]->data()[byte] = value;
-            expected[field * width + byte] = static_cast<char>(value);
+            expected[field * width + byte] = value;
         }
     }
 
     EXPECT_EQ(expected, pack_bf_parameters());
-    const std::vector<char> zeros(expected.size());
+    const std::vector<Byte> zeros(expected.size());
     const Byte *const address = g_bf_x_min.data();
     BigArena &arena = bf_arena(BigLifetime::PERSISTENT);
     const std::size_t high_water = arena.high_water_mark();
@@ -1226,7 +1226,7 @@ TEST_P(TestPersistentBigFloatParameters, preservesValuesAcrossRelocationAndClear
     const auto high_water = bf_arena(BigLifetime::PERSISTENT).high_water_mark();
     free_bf_vars();
     init_bf_length(GetParam());
-    EXPECT_EQ(std::vector<char>(22 * (g_bf_length + 2)), pack_bf_parameters());
+    EXPECT_EQ(std::vector<Byte>(22 * (g_bf_length + 2)), pack_bf_parameters());
     EXPECT_EQ(high_water, bf_arena(BigLifetime::PERSISTENT).high_water_mark());
 }
 
