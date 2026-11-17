@@ -141,6 +141,9 @@ TEST_P(TestBigFloatBrowser, preservesExactCornersInputsAndTemporaryLifetimeAcros
 {
     const auto bytes = pack_bf_parameters();
     const auto saved = save_stack();
+    const int bf_length = g_bf_length;
+    const int bn_length = g_bn_length;
+    const int decimals = g_decimals;
 
     EXPECT_EQ(ID_KEY_ENTER, browse());
 
@@ -155,6 +158,9 @@ TEST_P(TestBigFloatBrowser, preservesExactCornersInputsAndTemporaryLifetimeAcros
     EXPECT_EQ(5, g_box_y[3]);
     EXPECT_EQ(bytes, pack_bf_parameters());
     EXPECT_EQ(saved, save_stack());
+    EXPECT_EQ(bf_length, g_bf_length);
+    EXPECT_EQ(bn_length, g_bn_length);
+    EXPECT_EQ(decimals, g_decimals);
     const auto high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
 
     EXPECT_EQ(ID_KEY_ENTER, browse());
@@ -163,6 +169,9 @@ TEST_P(TestBigFloatBrowser, preservesExactCornersInputsAndTemporaryLifetimeAcros
     EXPECT_EQ(bytes, pack_bf_parameters());
     EXPECT_EQ(saved, save_stack());
     EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
+    EXPECT_EQ(bf_length, g_bf_length);
+    EXPECT_EQ(bn_length, g_bn_length);
+    EXPECT_EQ(decimals, g_decimals);
 }
 
 TEST_P(TestBigFloatBrowser, preservesOrdinaryViewAcrossBrowsing)
@@ -228,6 +237,6 @@ TEST_P(TestBigFloatBrowser, releasesTemporaryValuesWhenAllCornersAreOffScreen)
     expect_rejected();
 }
 
-INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatBrowser, Combine(Values(32, 56), Values(0, 4, 200)));
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatBrowser, Combine(Values(32, 56), Values(0, 4, 32, 56, 200)));
 
 } // namespace id::test

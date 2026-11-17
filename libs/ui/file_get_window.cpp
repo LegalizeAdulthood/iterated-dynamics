@@ -22,7 +22,6 @@
 #include <io/library.h>
 #include <io/loadfile.h>
 #include <io/trim_filename.h>
-#include <math/big.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
 #include <math/round_float_double.h>
@@ -599,13 +598,13 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
         const int two_di_len = static_cast<int>(blk_5_info->apm_data.size() / 22);
         const int di_bf_length = two_di_len - 2;
 
-        const Byte *parameters = blk_5_info->apm_data.data();
-        convert_bf(bt_x_min.data(), parameters, g_bf_length, di_bf_length);
-        convert_bf(bt_x_max.data(), parameters + two_di_len, g_bf_length, di_bf_length);
-        convert_bf(bt_y_min.data(), parameters + 2 * two_di_len, g_bf_length, di_bf_length);
-        convert_bf(bt_y_max.data(), parameters + 3 * two_di_len, g_bf_length, di_bf_length);
-        convert_bf(bt_x_3rd.data(), parameters + 4 * two_di_len, g_bf_length, di_bf_length);
-        convert_bf(bt_y_3rd.data(), parameters + 5 * two_di_len, g_bf_length, di_bf_length);
+        const Byte *cursor = blk_5_info->apm_data.data();
+        cursor = unpack_bf(bt_x_min, cursor, di_bf_length);
+        cursor = unpack_bf(bt_x_max, cursor, di_bf_length);
+        cursor = unpack_bf(bt_y_min, cursor, di_bf_length);
+        cursor = unpack_bf(bt_y_max, cursor, di_bf_length);
+        cursor = unpack_bf(bt_x_3rd, cursor, di_bf_length);
+        cursor = unpack_bf(bt_y_3rd, cursor, di_bf_length);
     }
 
     /* transform maps real plane co-ords onto the current screen view see above */
