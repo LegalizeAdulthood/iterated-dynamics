@@ -5,10 +5,10 @@
 
 #include <config/port.h>
 
-namespace id::math::detail
+namespace id::math
 {
 
 void reduce_bn_product(Byte *value);
 void reduce_bf_product(Byte *value);
 
-} // namespace id::math::detail
+} // namespace id::math

@@ -466,6 +466,45 @@ Byte *square(Byte *r, Byte *n)
 
 } // namespace
 
+/************************************************************************/
+// convert_bn  -- convert bignum numbers from old to new lengths
+int convert_bn(Byte *new_num, const Byte *old_num, const int new_bn_len, const int new_int_len, const int old_bn_len,
+    const int old_int_len)
+{
+    const int new_fraction = new_bn_len - new_int_len;
+    const int old_fraction = old_bn_len - old_int_len;
+    const int fraction = std::min(new_fraction, old_fraction);
+    const int integer = std::min(new_int_len, old_int_len);
+    std::memset(new_num, 0, new_bn_len);
+    std::memcpy(new_num + new_fraction - fraction, old_num + old_fraction - fraction, fraction + integer);
+    return 0;
+}
+
+void convert_bn_signed(Byte *new_num, const Byte *old_num, const int new_bn_len, const int new_int_len,
+    const int old_bn_len, const int old_int_len)
+{
+    convert_bn(new_num, old_num, new_bn_len, new_int_len, old_bn_len, old_int_len);
+    // Legacy scratch conversion zero-fills new integer bytes;
+    // live signed values require sign extension instead.
+    if (new_int_len > old_int_len && (old_num[old_bn_len - 1] & 0x80) != 0)
+    {
+        const int extension = new_int_len - old_int_len;
+        std::memset(new_num + new_bn_len - extension, 0xff, extension);
+    }
+}
+
+void migrate_bn(Byte *destination, const Byte *source, const std::size_t blocks, const int new_bn_length,
+    const int new_int_length, const int new_padding, const int old_bn_length, const int old_int_length,
+    const int old_padding)
+{
+    const bool product = blocks == 2;
+    const int old_length = product ? old_bn_length + old_padding : old_bn_length;
+    const int old_integer = product ? 2 * old_int_length : old_int_length;
+    const int new_length = product ? new_bn_length + new_padding : new_bn_length;
+    const int new_integer = product ? 2 * new_int_length : new_int_length;
+    convert_bn_signed(destination, source, new_length, new_integer, old_length, old_integer);
+}
+
 Byte *unsafe_mult_bn(Byte *r, Byte *n1, Byte *n2)
 {
     return multiply(r, n1, n2);

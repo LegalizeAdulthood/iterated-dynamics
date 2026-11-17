@@ -140,6 +140,7 @@ add_executable(test-core
 
     math/test_big_float.cpp
     math/test_big_num.cpp
+    math/test_big_conversion.cpp
     math/test_BigArena.cpp
     math/test_BigComplex.cpp
     math/test_BigFloat.cpp

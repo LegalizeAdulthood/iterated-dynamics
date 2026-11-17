@@ -345,14 +345,17 @@ TYPED_TEST(TestBigValueStorage, precisionChangesMigrateEveryAttachedLifetime)
     for (int digits : {80, 20, 40})
     {
         const auto old_bytes = encoded(values.front());
-        const int old_bn = g_bn_length;
         const int old_bf = g_bf_length;
         const int old_integer = g_int_length;
         init_bf_dec(digits);
         std::vector<Byte> expected(values.front().arena().value_size());
         if constexpr (std::is_same_v<TypeParam, BigNum>)
         {
-            convert_bn(expected.data(), old_bytes.data(), g_bn_length, g_int_length, old_bn, old_integer);
+            ASSERT_EQ(old_integer, g_int_length);
+            // An unchanged integer width keeps the most significant fixture
+            // bytes; growth adds zero bytes at the fractional end.
+            const std::size_t retained = std::min(old_bytes.size(), expected.size());
+            std::copy(old_bytes.end() - retained, old_bytes.end(), expected.end() - retained);
         }
         else
         {

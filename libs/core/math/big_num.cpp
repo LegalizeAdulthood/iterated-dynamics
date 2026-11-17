@@ -195,20 +195,6 @@ S16 BIG_SET_S16(S16 *addr, S16 val)
 
 #endif
 
-/************************************************************************/
-// convert_bn  -- convert bignum numbers from old to new lengths
-int convert_bn(BigNumPtr new_num, BigNumConstPtr old_num, const int new_bn_len, const int new_int_len,
-    const int old_bn_len, const int old_int_len)
-{
-    const int new_fraction = new_bn_len - new_int_len;
-    const int old_fraction = old_bn_len - old_int_len;
-    const int fraction = std::min(new_fraction, old_fraction);
-    const int integer = std::min(new_int_len, old_int_len);
-    std::memset(new_num, 0, new_bn_len);
-    std::memcpy(new_num + new_fraction - fraction, old_num + old_fraction - fraction, fraction + integer);
-    return 0;
-}
-
 /********************************************************************/
 // bn_hexdump() - for debugging, dumps to stdout
 

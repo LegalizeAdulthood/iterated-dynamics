@@ -833,7 +833,7 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
         putchar('\n');
         {
             const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-            BigArena dump_arena{size, 2, detail::reduce_bf_product};
+            BigArena dump_arena{size, 2, reduce_bf_product};
             bf_hex_dump(BigFloat::from_legacy(dump_arena, r, size));
         }
 #endif
@@ -972,7 +972,7 @@ BigArena::Allocation native_storage(BigArena &arena, const LDouble value)
 
 } // namespace
 
-void detail::reduce_bf_product(Byte *value)
+void reduce_bf_product(Byte *value)
 {
     std::memmove(value, value + g_padding, g_bf_length + 2);
 }

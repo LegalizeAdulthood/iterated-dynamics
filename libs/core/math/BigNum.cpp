@@ -51,7 +51,7 @@ BigArena::Allocation native_storage(BigArena &arena, const LDouble value)
 
 } // namespace
 
-void detail::reduce_bn_product(Byte *value)
+void reduce_bn_product(Byte *value)
 {
     std::memmove(value, msb_bn(value), g_bn_length);
 }

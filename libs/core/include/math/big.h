@@ -10,6 +10,7 @@
 
 #include <config/port.h>
 
+#include <cstddef>
 #include <string>
 #include <string_view>
 
@@ -151,8 +152,12 @@ Byte *unsafe_inv_bn(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3);
 Byte *divide(Byte *r, Byte *n1, Byte *n2, Byte *tmp1, Byte *tmp2, Byte *tmp3);
 Byte *binary_operation(Byte *result, const Byte *left, const Byte *right, Byte *copy1, Byte *copy2,
     Byte *(*operation)(Byte *, Byte *, Byte *) );
-int convert_bn(
-    BigNumPtr new_num, BigNumConstPtr old_num, int new_bn_len, int new_int_len, int old_bn_len, int old_int_len);
+int convert_bn(Byte *new_num, const Byte *old_num, int new_bn_len, int new_int_len, int old_bn_len, int old_int_len);
+void convert_bn_signed(
+    Byte *new_num, const Byte *old_num, int new_bn_len, int new_int_len, int old_bn_len, int old_int_len);
+
+void migrate_bn(Byte *destination, const Byte *source, std::size_t blocks, int new_bn_length, int new_int_length,
+    int new_padding, int old_bn_length, int old_int_length, int old_padding);
 // "safe" versions
 Byte *full_mult_bn(Byte *r, Byte *n1, Byte *n2);
 Byte *mult_bn(Byte *r, Byte *n1, Byte *n2);

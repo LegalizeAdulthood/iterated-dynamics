@@ -17,6 +17,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include <engine/UserData.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
+#include <math/big.h>
 #include <math/BigFloat.h>
 #include <math/BigNum.h>
 
@@ -265,8 +266,8 @@ private:
 };
 
 MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_length, const int padding) :
-    big_num(bn_length, static_cast<std::size_t>(bn_length), detail::reduce_bn_product),
-    big_float(bf_length + 2, static_cast<std::size_t>(bf_length + 2), detail::reduce_bf_product),
+    big_num(bn_length, static_cast<std::size_t>(bn_length), reduce_bn_product),
+    big_float(bf_length + 2, static_cast<std::size_t>(bf_length + 2), reduce_bf_product),
     m_bn_length(bn_length),
     m_bf_length(bf_length),
     m_int_length(int_length),
@@ -343,19 +344,8 @@ void MathArenas::change_precision(const int bn_length, const int bf_length, cons
                     (g_tmp_sqr_y_bn && source == g_tmp_sqr_y_bn.data()) || (g_bn_tmp && source == g_bn_tmp.data());
                 if (!mixed_workspace && !big_num.is_workspace(source))
                 {
-                    const bool product = blocks == 2;
-                    const int old_length = product ? m_bn_length + m_padding : m_bn_length;
-                    const int old_integer = product ? 2 * m_int_length : m_int_length;
-                    const int new_length = product ? bn_length + padding : bn_length;
-                    const int new_integer = product ? 2 * int_length : int_length;
-                    convert_bn(destination, source, new_length, new_integer, old_length, old_integer);
-                    // Legacy scratch conversion zero-fills new integer bytes;
-                    // live signed values require sign extension instead.
-                    if (new_integer > old_integer && (source[old_length - 1] & 0x80) != 0)
-                    {
-                        const int extension = new_integer - old_integer;
-                        std::memset(destination + new_length - extension, 0xff, extension);
-                    }
+                    migrate_bn(destination, source, blocks, bn_length, int_length, padding, m_bn_length, m_int_length,
+                        m_padding);
                 }
             }));
         replacements.push_back(big_float.get(lifetime).prepare_relocation(bf_length + 2, bf_length + 2,
