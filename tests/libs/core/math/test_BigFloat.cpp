@@ -530,6 +530,63 @@ TEST_F(TestBigFloatValue, importsEncodedBytesWithoutMachineFloatConversion)
     EXPECT_EQ(expected, encoded_value(value));
 }
 
+struct BigFloatUnpackInput
+{
+    int bn_length;
+    int stored_length;
+    std::vector<Byte> source;
+    std::vector<Byte> expected;
+};
+
+class TestBigFloatUnpack : public TestBigFloatValue,
+                           public testing::WithParamInterface<std::tuple<BigLifetime, BigFloatUnpackInput>>
+{
+};
+
+TEST_P(TestBigFloatUnpack, preservesDestinationStorageSourceCursorAndPrecision)
+{
+    const BigFloatUnpackInput &input = std::get<1>(GetParam());
+    init_bf_length(input.bn_length);
+    BigArena &arena = bf_arena(std::get<0>(GetParam()));
+    BigFloat destination{arena};
+    Byte *const address = destination.data();
+    const std::size_t stride = arena.block_size();
+    std::fill_n(address, stride, Byte{0xcc});
+    std::vector<Byte> source{0xaa};
+    source.insert(source.end(), input.source.begin(), input.source.end());
+    source.push_back(0xbb);
+    const std::vector<Byte> original = source;
+    const std::array<int, 7> lengths{
+        g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    const Byte *const cursor = unpack_bf(destination, source.data() + 1, input.stored_length);
+
+    EXPECT_EQ(source.data() + source.size() - 1, cursor);
+    EXPECT_EQ(input.expected, encoded_value(destination));
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(address, destination.data());
+    EXPECT_EQ(&arena, &destination.arena());
+    EXPECT_EQ(std::vector<Byte>(stride - input.expected.size(), 0xcc),
+        std::vector<Byte>(address + input.expected.size(), address + stride));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(lengths,
+        (std::array<int, 7>{
+            g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndLifetimes, TestBigFloatUnpack,
+    testing::Combine(testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY),
+        testing::Values(BigFloatUnpackInput{8, 8, {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12},
+                            {0, 0, 0, 0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}},
+            BigFloatUnpackInput{4, 12,
+                {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xfe, 0xfe, 0xff},
+                {0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xfe, 0xfe, 0xff}},
+            BigFloatUnpackInput{4, 8, {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12},
+                {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}})));
+
 TEST_F(TestBigFloatValue, valueSurvivesArenaRewindAndReuse)
 {
     // Borrow BigStack buffers here to test importing bytes across a real rewind.

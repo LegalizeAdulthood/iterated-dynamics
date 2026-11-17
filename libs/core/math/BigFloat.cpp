@@ -1244,6 +1244,11 @@ LDouble bf_to_float(BigFloat &value)
     return bf_to_float(value.data());
 }
 
+const Byte *unpack_bf(BigFloat &destination, const Byte *source, const int stored_length)
+{
+    return unpack_bf(destination.data(), source, stored_length);
+}
+
 /**********************************************************************/
 std::string bf_to_string(const BigFloat &r, const int dec)
 {
