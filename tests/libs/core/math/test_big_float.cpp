@@ -321,7 +321,7 @@ TEST_P(TestBigFloatWorkspaceRamp, preservesOperandsAndRestoresBorrowedWorkspaceW
     EXPECT_EQ(high_water, bf_arena(BigLifetime::WORKING).high_water_mark());
     EXPECT_EQ(stack, save_stack());
     EXPECT_EQ(original, (std::vector<Byte>{input.data(), input.data() + g_bf_length + 2}));
-    EXPECT_EQ(test.expected, bf_to_string(result.data(), 12));
+    EXPECT_EQ(test.expected, bf_to_string(result, 12));
 }
 
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndOperations, TestBigFloatWorkspaceRamp,
@@ -397,7 +397,7 @@ TEST_F(TestBigFloatFormat, generalFormatHandlesZero)
 {
     prepare_value(nullptr);
 
-    EXPECT_EQ("0.0", bf_to_string(m_value.data(), 5));
+    EXPECT_EQ("0.0", bf_to_string(m_value, 5));
 }
 
 TEST_F(TestBigFloatFormat, resetReleasesItsTemporarySlot)
@@ -410,7 +410,7 @@ TEST_F(TestBigFloatFormat, resetReleasesItsTemporarySlot)
 
     prepare_value("1.25");
     EXPECT_EQ(&temporary, &m_value.arena());
-    EXPECT_EQ("1.25", bf_to_string(m_value.data(), 5));
+    EXPECT_EQ("1.25", bf_to_string(m_value, 5));
     EXPECT_EQ(marker, save_stack());
 
     m_value = BigFloat{};
@@ -443,7 +443,8 @@ void TestBigFloatGeneralFormat::SetUp()
 
 TEST_P(TestBigFloatGeneralFormat, selectsNotationAndFormatsDecimal)
 {
-    EXPECT_EQ(GetParam().expected, bf_to_string(m_value.data(), GetParam().decimals));
+    const BigFloat &input = m_value;
+    EXPECT_EQ(GetParam().expected, bf_to_string(input, GetParam().decimals));
 }
 
 // Preserve the legacy carry truncation while refactoring decimal storage.
@@ -558,7 +559,7 @@ TEST_P(TestBigFloatFormatterStorage, preservesInputScratchBoundsSharedLengthsAnd
     switch (mode)
     {
     case BigFloatFormatMode::GENERAL:
-        actual = bf_to_string(m_value.data(), 12);
+        actual = bf_to_string(m_value, 12);
         break;
     case BigFloatFormatMode::SCIENTIFIC:
         expected += "e0";
@@ -596,7 +597,7 @@ TEST_F(TestBigFloatFormat, formatsAtMaximumSupportedPrecision)
     init_bf_length(708);
     prepare_value("-1.25");
 
-    EXPECT_EQ("-1.25", bf_to_string(m_value.data(), g_bf_decimals));
+    EXPECT_EQ("-1.25", bf_to_string(m_value, g_bf_decimals));
     EXPECT_EQ("-1.25", bf_to_string_f(m_value.data(), g_bf_decimals));
     EXPECT_EQ("-1.25e0", bf_to_string_e(m_value.data(), g_bf_decimals));
 }
@@ -608,7 +609,7 @@ TEST_F(TestBigFloatFormat, repeatedFormattingPreservesTheValue)
         reinterpret_cast<const char *>(m_value.data()), static_cast<std::size_t>(g_bf_length + 2)};
     const BigFloat &input = m_value;
 
-    EXPECT_EQ("-1.23", bf_to_string(input.data(), 3));
+    EXPECT_EQ("-1.23", bf_to_string(input, 3));
     EXPECT_EQ("-1.234567890123456789e0", bf_to_string_e(input.data(), 0));
     EXPECT_EQ("-1.2346", bf_to_string_f(input.data(), 5));
     EXPECT_EQ(original, (std::string{reinterpret_cast<const char *>(m_value.data()), original.size()}));

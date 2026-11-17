@@ -41,6 +41,7 @@ static_assert(std::is_same_v<decltype(str_to_bf(std::declval<BigFloat &>(), std:
 static_assert(std::is_same_v<decltype(int_to_bf(std::declval<BigFloat &>(), long{})), BigFloat &>);
 static_assert(std::is_same_v<decltype(float_to_bf(std::declval<BigFloat &>(), LDouble{})), BigFloat &>);
 static_assert(std::is_same_v<decltype(bf_to_float(std::declval<BigFloat &>())), LDouble>);
+static_assert(std::is_same_v<decltype(&bf_to_string), std::string (*)(const BigFloat &, int)>);
 
 std::vector<Byte> encoded_value(const BigFloat &value)
 {
@@ -705,13 +706,13 @@ TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
     std::vector<Byte> result(static_cast<std::size_t>(g_r_bf_length + 2));
 
     add_bf(result.data(), left.data(), right.data());
-    EXPECT_EQ("-5.0", bf_to_string(result.data(), 8));
+    EXPECT_EQ("-5.0", bf_to_string(BigFloat::from_legacy(result.data(), result.size()), 8));
     sub_bf(result.data(), left.data(), right.data());
-    EXPECT_EQ("-10.0", bf_to_string(result.data(), 8));
+    EXPECT_EQ("-10.0", bf_to_string(BigFloat::from_legacy(result.data(), result.size()), 8));
     mult_bf(result.data(), left.data(), right.data());
-    EXPECT_EQ("-18.75", bf_to_string(result.data(), 8));
+    EXPECT_EQ("-18.75", bf_to_string(BigFloat::from_legacy(result.data(), result.size()), 8));
     div_bf(result.data(), left.data(), right.data());
-    EXPECT_EQ("-3.0", bf_to_string(result.data(), 8));
+    EXPECT_EQ("-3.0", bf_to_string(BigFloat::from_legacy(result.data(), result.size()), 8));
 
     EXPECT_EQ(original_left, left);
     EXPECT_EQ(original_right, right);
@@ -724,13 +725,13 @@ TEST_P(TestBigFloatArithmetic, legacyInPlaceSamplesPreserveTheRightOperand)
     const auto original_right = right;
 
     add_a_bf(left.data(), right.data());
-    EXPECT_EQ("-5.0", bf_to_string(left.data(), 8));
+    EXPECT_EQ("-5.0", bf_to_string(BigFloat::from_legacy(left.data(), left.size()), 8));
     sub_a_bf(left.data(), right.data());
-    EXPECT_EQ("-7.5", bf_to_string(left.data(), 8));
+    EXPECT_EQ("-7.5", bf_to_string(BigFloat::from_legacy(left.data(), left.size()), 8));
     add_a_bf(left.data(), left.data());
-    EXPECT_EQ("-15.0", bf_to_string(left.data(), 8));
+    EXPECT_EQ("-15.0", bf_to_string(BigFloat::from_legacy(left.data(), left.size()), 8));
     sub_a_bf(left.data(), left.data());
-    EXPECT_EQ("0.0", bf_to_string(left.data(), 8));
+    EXPECT_EQ("0.0", bf_to_string(BigFloat::from_legacy(left.data(), left.size()), 8));
 
     EXPECT_EQ(original_right, right);
 }

@@ -1929,7 +1929,7 @@ static void put_float(const int slash, const double value, const int prec)
 
 static void put_bf(const int slash, const BigFloat &r, const int prec)
 {
-    std::string value{bf_to_string(r.data(), prec)};
+    std::string value{bf_to_string(r, prec)};
     strip_zeros(value);
     if (slash)
     {

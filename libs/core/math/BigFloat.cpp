@@ -1245,9 +1245,9 @@ LDouble bf_to_float(BigFloat &value)
 }
 
 /**********************************************************************/
-std::string bf_to_string(BigFloatConstPtr r, const int dec)
+std::string bf_to_string(const BigFloat &r, const int dec)
 {
-    copy_bf(g_bf_tmp_copy1.data(), r);
+    copy_bf(g_bf_tmp_copy1.data(), r.data());
     return unsafe_bf_to_string(g_bf_tmp_copy1.data(), dec);
 }
 
@@ -1338,7 +1338,7 @@ std::string BigFloat::to_string(const int digits) const
         throw std::invalid_argument("BigFloat formatting requires a nonnegative digit count");
     }
     const int default_digits = g_decimals > 0 ? g_decimals : static_cast<int>((g_bf_length - 2) * LOG10_256);
-    return bf_to_string(m_storage.data(), digits == 0 ? default_digits : digits);
+    return bf_to_string(*this, digits == 0 ? default_digits : digits);
 }
 
 BigFloat BigFloat::from_legacy(BigFloatConstPtr source, const std::size_t size)

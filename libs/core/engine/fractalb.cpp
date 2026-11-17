@@ -137,14 +137,14 @@ std::string format_corners_bf(const char *s)
                        "bf_y_3rd={:s}\n"
                        "y_3rd= {:.20f}\n"
                        "\n",
-        s,                                                            //
-        bf_to_string(g_bf_x_min.data(), dec),                         //
-        g_image_region.m_min.x, g_decimals, g_bf_length,              //
-        bf_to_string(g_bf_x_max.data(), dec), g_image_region.m_max.x, //
-        bf_to_string(g_bf_y_min.data(), dec), g_image_region.m_min.y, //
-        bf_to_string(g_bf_y_max.data(), dec), g_image_region.m_max.y, //
-        bf_to_string(g_bf_x_3rd.data(), dec), g_image_region.m_3rd.x, //
-        bf_to_string(g_bf_y_3rd.data(), dec), g_image_region.m_3rd.y);
+        s,                                                     //
+        bf_to_string(g_bf_x_min, dec),                         //
+        g_image_region.m_min.x, g_decimals, g_bf_length,       //
+        bf_to_string(g_bf_x_max, dec), g_image_region.m_max.x, //
+        bf_to_string(g_bf_y_min, dec), g_image_region.m_min.y, //
+        bf_to_string(g_bf_y_max, dec), g_image_region.m_max.y, //
+        bf_to_string(g_bf_x_3rd, dec), g_image_region.m_3rd.x, //
+        bf_to_string(g_bf_y_3rd, dec), g_image_region.m_3rd.y);
 }
 
 std::string format_corners_bf_save(const char *s)
@@ -169,13 +169,13 @@ std::string format_corners_bf_save(const char *s)
                        "bf_save_y_3rd={:s}\n"
                        "y_3rd= {:.20f}\n"
                        "\n",
-        s,                                                                 //
-        bf_to_string(g_bf_save_x_min.data(), dec), g_image_region.m_min.x, //
-        bf_to_string(g_bf_save_x_max.data(), dec), g_image_region.m_max.x, //
-        bf_to_string(g_bf_save_y_min.data(), dec), g_image_region.m_min.y, //
-        bf_to_string(g_bf_save_y_max.data(), dec), g_image_region.m_max.y, //
-        bf_to_string(g_bf_save_x_3rd.data(), dec), g_image_region.m_3rd.x, //
-        bf_to_string(g_bf_save_y_3rd.data(), dec), g_image_region.m_3rd.y);
+        s,                                                          //
+        bf_to_string(g_bf_save_x_min, dec), g_image_region.m_min.x, //
+        bf_to_string(g_bf_save_x_max, dec), g_image_region.m_max.x, //
+        bf_to_string(g_bf_save_y_min, dec), g_image_region.m_min.y, //
+        bf_to_string(g_bf_save_y_max, dec), g_image_region.m_max.y, //
+        bf_to_string(g_bf_save_x_3rd, dec), g_image_region.m_3rd.x, //
+        bf_to_string(g_bf_save_y_3rd, dec), g_image_region.m_3rd.y);
 }
 
 std::string format_two_bf(const char *s1, const BigFloat &t1, const char *s2, const BigFloat &t2, const int digits)
@@ -215,7 +215,7 @@ std::string format_aspect(const char *s)
                        "\n",
         s,                                                //
         g_image_region.height() / g_image_region.width(), //
-        bf_to_string(aspect.data(), 10));
+        bf_to_string(aspect, 10));
 }
 
 // compare a double and bignumber

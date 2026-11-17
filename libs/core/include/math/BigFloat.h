@@ -149,6 +149,7 @@ BigFloat &str_to_bf(BigFloat &r, std::string_view text);
 BigFloat &int_to_bf(BigFloat &r, long value);
 BigFloat &float_to_bf(BigFloat &r, LDouble value);
 LDouble bf_to_float(BigFloat &value);
+std::string bf_to_string(const BigFloat &r, int dec);
 BigFloat abs(const BigFloat &value);
 BigFloat sqr(const BigFloat &value);
 BigFloat log(const BigFloat &value);
