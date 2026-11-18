@@ -49,6 +49,7 @@ static_assert(std::is_same_v<decltype(&div_bf), BigFloat &(*)(BigFloat &, const 
 static_assert(std::is_same_v<decltype(unsafe_div_bf_int(std::declval<BigFloat &>(), std::declval<BigFloat &>(), U16{})),
     BigFloat &>);
 static_assert(std::is_same_v<decltype(div_a_bf_int(std::declval<BigFloat &>(), U16{})), BigFloat &>);
+static_assert(std::is_same_v<decltype(exp_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>())), BigFloat &>);
 static_assert(std::is_same_v<decltype(&bf_to_string), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_e), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_f), std::string (*)(const BigFloat &, int)>);
@@ -1241,6 +1242,46 @@ TEST_P(TestBigFloatDivision, writesAndReturnsTheDestinationWithAliasedInputs)
 INSTANTIATE_TEST_SUITE_P(Destinations, TestBigFloatDivision,
     testing::Values(DivisionDestination::SEPARATE, DivisionDestination::NUMERATOR, DivisionDestination::DENOMINATOR,
         DivisionDestination::SHARED_INPUT));
+
+struct BigFloatExponentialInput
+{
+    LDouble input;
+    LDouble expected;
+    LDouble tolerance;
+};
+
+class TestBigFloatExponential : public TestBigFloatValue, public testing::WithParamInterface<BigFloatExponentialInput>
+{
+};
+
+TEST_P(TestBigFloatExponential, preservesSourceAndReturnsTheExistingDestination)
+{
+    const BigFloatExponentialInput &test = GetParam();
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    const BigFloat source{arena, test.input};
+    BigFloat result{arena};
+    const std::vector<Byte> original = encoded_value(source);
+    const std::size_t size = arena.value_size();
+    const std::size_t stride = arena.block_size();
+    std::fill(result.data() + size, result.data() + stride, Byte{0xa5});
+    const Byte *const address = result.data();
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(&result, &exp_bf(result, source));
+
+    EXPECT_NEAR(test.expected, result.to_float(), test.tolerance);
+    EXPECT_EQ(original, encoded_value(source));
+    EXPECT_EQ(address, result.data());
+    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(result.data() + size, result.data() + stride));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatExponential,
+    testing::Values(BigFloatExponentialInput{0.0L, 1.0L, 0.0L},
+        BigFloatExponentialInput{0.375L, 1.4549914146182013L, 1e-12L},
+        BigFloatExponentialInput{-0.625L, 0.5352614285189903L, 1e-12L}));
 
 TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
 {

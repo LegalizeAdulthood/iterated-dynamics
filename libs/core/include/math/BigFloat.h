@@ -174,6 +174,7 @@ BigFloat &unsafe_inv_bf(BigFloat &r, BigFloat &n);
 BigFloat &div_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2);
 BigFloat &unsafe_div_bf_int(BigFloat &r, BigFloat &n, misc::U16 u);
 BigFloat &div_a_bf_int(BigFloat &r, misc::U16 u);
+BigFloat &exp_bf(BigFloat &r, const BigFloat &n);
 BigFloat &str_to_bf(BigFloat &r, std::string_view text);
 BigFloat &int_to_bf(BigFloat &r, long value);
 BigFloat &float_to_bf(BigFloat &r, LDouble value);

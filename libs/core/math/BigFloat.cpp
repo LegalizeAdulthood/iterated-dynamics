@@ -134,37 +134,6 @@ BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
     return r;
 }
 
-BigFloatPtr exponential(BigFloatPtr r, BigFloatConstPtr n)
-{
-    U16 fact = 1;
-    S16 *test_exp = reinterpret_cast<S16 *>(g_bf_tmp2.data() + g_bf_length);
-    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
-
-    if (is_bf_zero(n))
-    {
-        int_to_bf(r, 1);
-        return r;
-    }
-
-    // use Taylor Series (very slow convergence)
-    int_to_bf(r, 1); // start with r=1.0
-    copy_bf(g_bf_tmp2.data(), r);
-    while (true)
-    {
-        copy_bf(g_bf_tmp1.data(), n);
-        unsafe_mult_bf(g_bf_tmp3.data(), g_bf_tmp2.data(), g_bf_tmp1.data());
-        unsafe_div_bf_int(g_bf_tmp2.data(), g_bf_tmp3.data(), fact);
-        if (BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(r_exp) - (g_bf_length - 2))
-        {
-            break; // too small to register
-        }
-        unsafe_add_a_bf(r, g_bf_tmp2.data());
-        fact++;
-    }
-
-    return r;
-}
-
 BigFloatPtr logarithm(BigFloatPtr r, BigFloatPtr n)
 {
     int almost_match = 0;
@@ -221,7 +190,7 @@ BigFloatPtr logarithm(BigFloatPtr r, BigFloatPtr n)
         n = orig_n + orig_bf_length - g_bf_length;
         bf_tmp5 = orig_bf_tmp5 + orig_bf_length - g_bf_length;
 
-        exponential(g_bf_tmp6.data(), r);                      // exp(-r)
+        exp_bf(g_bf_tmp6.data(), r, g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data()); // exp(-r)
         unsafe_mult_bf(g_bf_tmp2.data(), g_bf_tmp6.data(), n); // n*exp(-r)
         int_to_bf(g_bf_tmp4.data(), 1);
         unsafe_sub_a_bf(g_bf_tmp2.data(), g_bf_tmp4.data());   // n*exp(-r) - 1
@@ -861,7 +830,7 @@ BigFloat BigFloat::log() const
 BigFloat BigFloat::exp() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    exponential(result.m_storage.data(), m_storage.data());
+    exp_bf(result, *this);
     return result;
 }
 
@@ -1045,6 +1014,12 @@ BigFloat &unsafe_div_bf_int(BigFloat &r, BigFloat &n, const U16 u)
 BigFloat &div_a_bf_int(BigFloat &r, const U16 u)
 {
     div_a_bf_int(r.data(), u);
+    return r;
+}
+
+BigFloat &exp_bf(BigFloat &r, const BigFloat &n)
+{
+    exp_bf(r.data(), n.data(), g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data());
     return r;
 }
 
@@ -1272,11 +1247,6 @@ BigArena::Allocation BigFloatProduct::release_reduced_storage() &&
 Byte *unsafe_square_bf(Byte *r, Byte *n)
 {
     return square_value(r, n);
-}
-
-BigFloatPtr exp_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    return exponential(r, n);
 }
 
 BigFloatPtr unsafe_ln_bf(BigFloatPtr r, BigFloatPtr n)

@@ -178,7 +178,7 @@ Byte *abs_bf(Byte *r, const Byte *n);
 Byte *abs_a_bf(Byte *r);
 Byte *unsafe_inv_bf(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2);
 Byte *unsafe_div_bf(Byte *r, Byte *n1, Byte *n2, Byte *tmp1, Byte *tmp2);
-BigFloatPtr exp_bf(BigFloatPtr r, BigFloatPtr n);
+Byte *exp_bf(Byte *r, const Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3);
 BigFloatPtr unsafe_ln_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr unsafe_sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n);
 BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx);

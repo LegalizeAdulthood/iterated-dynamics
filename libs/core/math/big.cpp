@@ -2001,6 +2001,37 @@ Byte *unsafe_div_bf(Byte *r, Byte *n1, Byte *n2, Byte *tmp1, Byte *tmp2)
     return r;
 }
 
+Byte *exp_bf(Byte *r, const Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3)
+{
+    U16 fact = 1;
+    S16 *test_exp = reinterpret_cast<S16 *>(tmp2 + g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
+
+    if (is_bf_zero(n))
+    {
+        int_to_bf(r, 1);
+        return r;
+    }
+
+    // use Taylor Series (very slow convergence)
+    int_to_bf(r, 1); // start with r=1.0
+    copy_bf(tmp2, r);
+    while (true)
+    {
+        copy_bf(tmp1, n);
+        unsafe_mult_bf(tmp3, tmp2, tmp1);
+        unsafe_div_bf_int(tmp2, tmp3, fact);
+        if (BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(r_exp) - (g_bf_length - 2))
+        {
+            break; // too small to register
+        }
+        unsafe_add_a_bf(r, tmp2);
+        fact++;
+    }
+
+    return r;
+}
+
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
 Byte *multiply_wide(Byte *r, Byte *n1, Byte *n2)
 {

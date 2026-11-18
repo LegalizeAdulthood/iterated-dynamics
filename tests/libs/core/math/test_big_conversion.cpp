@@ -793,6 +793,54 @@ TEST(TestBigFloatByteScalarDivisionZero, distinguishesAliasedAndInPlaceSaturatio
     EXPECT_EQ(length, g_bf_length);
 }
 
+class TestBigFloatByteExponential : public TestBigNumConversionBase
+{
+};
+
+TEST_F(TestBigFloatByteExponential, truncatesTheFirstTinyTermWithinTheBorrowedWindows)
+{
+    init_bf_length(4);
+    constexpr int length = 8;
+    constexpr int size = length + 2;
+    constexpr int offset = 4;
+    ASSERT_EQ(length, g_bf_length);
+    alignas(U16) std::array<Byte, offset + size + 2> source{};
+    std::fill_n(source.begin(), offset, Byte{0xa5});
+    source[offset + length - 2] = 1;
+    source[offset + length] = 0xf8; // exponent -8
+    source[offset + length + 1] = 0xff;
+    source.back() = 0xa5;
+    const std::array<Byte, offset + size + 2> original = source;
+    alignas(U16) std::array<Byte, offset + size + 2> result{};
+    result.fill(0xa5);
+    Byte *const output = result.data() + offset;
+    alignas(U16) std::array<Byte, size + 2> tmp1{};
+    alignas(U16) std::array<Byte, size + 2> tmp2{};
+    alignas(U16) std::array<Byte, size + 2> tmp3{};
+    tmp1.fill(0xa5);
+    tmp2.fill(0xa5);
+    tmp3.fill(0xa5);
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(output, exp_bf(output, source.data() + offset, tmp1.data(), tmp2.data(), tmp3.data()));
+
+    std::array<Byte, offset + size + 2> expected{};
+    expected.fill(0xa5);
+    std::fill_n(expected.begin() + offset, size, Byte{0});
+    expected[offset + length - 2] = 1;
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(original, source);
+    std::array<Byte, size + 2> term{};
+    term.fill(0xa5);
+    std::copy_n(original.begin() + offset, size, term.begin());
+    EXPECT_EQ(term, tmp1);
+    EXPECT_EQ(term, tmp2);
+    EXPECT_EQ(term, tmp3);
+    EXPECT_EQ(4, g_bn_length);
+    EXPECT_EQ(length, g_bf_length);
+    EXPECT_EQ(mark, save_stack());
+}
+
 struct BigNumConversionInput
 {
     const char *name;
