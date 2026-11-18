@@ -592,6 +592,11 @@ BigFloat &float_to_bf(BigFloat &r, const LDouble value)
     return r;
 }
 
+void bn_to_bf(BigFloat &destination, const BigNum &source)
+{
+    source.copy_to_legacy_float(destination.data(), static_cast<std::size_t>(g_bf_length + 2));
+}
+
 LDouble bf_to_float(BigFloat &value)
 {
     return bf_to_float(value.data());
