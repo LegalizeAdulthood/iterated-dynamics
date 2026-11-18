@@ -272,6 +272,46 @@ INSTANTIATE_TEST_SUITE_P(PrecisionsAndInputs, TestBigFloatComparison,
             BigFloatComparisonInput{-512.0L, -1.5L, 0}, BigFloatComparisonInput{1.25L, 2.25L, 1},
             BigFloatComparisonInput{-1.5L, -1.25L, 2})));
 
+class TestBigFloatNegation : public TestBigFloatValue, public testing::WithParamInterface<int>
+{
+};
+
+TEST_P(TestBigFloatNegation, preservesDestinationIdentitySourceAndPadding)
+{
+    init_bf_length(GetParam());
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    BigFloat source{arena, 1.0L};
+    BigFloat result{arena};
+    const Byte *const source_address = source.data();
+    const Byte *const result_address = result.data();
+    const std::size_t size = arena.value_size();
+    const std::size_t stride = arena.block_size();
+    std::fill_n(source.data() + size, stride - size, Byte{0x5a});
+    std::fill_n(result.data(), stride, Byte{0xa5});
+    const std::vector<Byte> original(source.data(), source.data() + stride);
+    std::vector<Byte> negative(size);
+    std::fill_n(negative.end() - 3, 3, Byte{0xff});
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(&result, &neg_bf(result, std::as_const(source)));
+    EXPECT_EQ(negative, encoded_value(result));
+    EXPECT_EQ(original, std::vector<Byte>(source.data(), source.data() + stride));
+
+    EXPECT_EQ(&source, &neg_bf(source, std::as_const(source)));
+    EXPECT_EQ(negative, encoded_value(source));
+    EXPECT_EQ(&source, &neg_a_bf(source));
+    EXPECT_EQ(original, std::vector<Byte>(source.data(), source.data() + stride));
+
+    EXPECT_EQ(source_address, source.data());
+    EXPECT_EQ(result_address, result.data());
+    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(result.data() + size, result.data() + stride));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatNegation, testing::Values(4, 64, 708));
+
 struct BigFloatParseCase
 {
     std::string_view text;

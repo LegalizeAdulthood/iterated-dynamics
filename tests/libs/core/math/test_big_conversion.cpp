@@ -177,6 +177,58 @@ INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteComparison,
         BigFloatByteComparisonInput{{0x40, 1, 0, 0, 0}, {0x40, 2, 0, 0, 0}, -7},
         BigFloatByteComparisonInput{{0x40, 1, 0, 0, 0}, {0x80, 1, 0, 0, 0}, -6}));
 
+struct BigFloatByteNegationInput
+{
+    std::array<Byte, 5> source_tail;
+    std::array<Byte, 5> result_tail;
+};
+
+class TestBigFloatByteNegation : public testing::TestWithParam<BigFloatByteNegationInput>
+{
+};
+
+TEST_P(TestBigFloatByteNegation, preservesExponentNormalizationAliasesAndPadding)
+{
+    constexpr int length = 8;
+    constexpr int size = length + 2;
+    const ValueSaver<int> bf_length{g_bf_length, length};
+    const ValueSaver<int> bn_length{g_bn_length, 4};
+    const BigFloatByteNegationInput &input = GetParam();
+    alignas(U16) std::array<Byte, size + 2> source{};
+    std::copy(input.source_tail.begin(), input.source_tail.end(), source.begin() + size - 5);
+    source[size] = 0xa5;
+    source[size + 1] = 0x5a;
+    const std::array<Byte, size + 2> original = source;
+    std::array<Byte, size + 2> expected{};
+    std::copy(input.result_tail.begin(), input.result_tail.end(), expected.begin() + size - 5);
+    expected[size] = 0xa5;
+    expected[size + 1] = 0x5a;
+    alignas(U16) std::array<Byte, size + 2> result;
+    result.fill(0x3c);
+    result[size] = 0xa5;
+    result[size + 1] = 0x5a;
+
+    EXPECT_EQ(result.data(), neg_bf(result.data(), source.data()));
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(4, g_bn_length);
+
+    EXPECT_EQ(source.data(), neg_bf(source.data(), source.data()));
+    EXPECT_EQ(expected, source);
+    EXPECT_EQ(4, g_bn_length);
+
+    source = original;
+    EXPECT_EQ(source.data(), neg_a_bf(source.data()));
+    EXPECT_EQ(expected, source);
+    EXPECT_EQ(4, g_bn_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteNegation,
+    testing::Values(BigFloatByteNegationInput{{0, 0, 0, 0x12, 0}, {}},
+        BigFloatByteNegationInput{{0x40, 1, 0, 0, 0}, {0xc0, 0xfe, 0xff, 0, 0}},
+        BigFloatByteNegationInput{{0, 1, 0, 0, 0}, {0, 0, 0xff, 0xff, 0xff}},
+        BigFloatByteNegationInput{{0, 0, 0xff, 0xff, 0xff}, {0, 1, 0, 0, 0}}));
+
 struct BigNumConversionInput
 {
     const char *name;

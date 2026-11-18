@@ -328,18 +328,6 @@ BigFloatPtr divide(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
     return r;
 }
 
-// r *= -1
-BigFloatPtr negate(BigFloatPtr r)
-{
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    neg_a_bn(r);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
-}
-
 // Legacy real math kernels; operands may be destroyed as before.
 BigFloatPtr square_wide(BigFloatPtr r, BigFloatPtr n)
 {
@@ -1037,7 +1025,7 @@ BigFloat &BigFloat::operator=(const LDouble value)
 BigFloat BigFloat::operator-() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING), *this};
-    negate(result.m_storage.data());
+    neg_a_bf(result);
     return result;
 }
 
@@ -1111,7 +1099,7 @@ BigFloat BigFloat::abs() const
     BigFloat result{bf_arena(BigLifetime::WORKING), *this};
     if (is_bf_neg(result))
     {
-        negate(result.m_storage.data());
+        neg_a_bf(result);
     }
     return result;
 }
@@ -1203,6 +1191,18 @@ bool is_bf_not_zero(const BigFloat &n)
 int cmp_bf(const BigFloat &n1, const BigFloat &n2)
 {
     return cmp_bf(n1.data(), n2.data());
+}
+
+BigFloat &neg_bf(BigFloat &r, const BigFloat &n)
+{
+    neg_bf(r.data(), n.data());
+    return r;
+}
+
+BigFloat &neg_a_bf(BigFloat &r)
+{
+    neg_a_bf(r.data());
+    return r;
 }
 
 BigFloat &str_to_bf(BigFloat &r, const std::string_view text)
@@ -1479,11 +1479,6 @@ BigFloatPtr unsafe_mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 BigFloatPtr unsafe_div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 {
     return divide(r, n1, n2);
-}
-
-BigFloatPtr neg_a_bf(BigFloatPtr r)
-{
-    return negate(r);
 }
 
 BigFloatPtr add_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)

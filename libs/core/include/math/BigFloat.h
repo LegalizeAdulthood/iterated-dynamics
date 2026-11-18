@@ -153,6 +153,8 @@ bool is_bf_zero(const BigFloat &n);
 bool is_bf_neg(const BigFloat &n);
 bool is_bf_not_zero(const BigFloat &n);
 int cmp_bf(const BigFloat &n1, const BigFloat &n2);
+BigFloat &neg_bf(BigFloat &r, const BigFloat &n);
+BigFloat &neg_a_bf(BigFloat &r);
 BigFloat &str_to_bf(BigFloat &r, std::string_view text);
 BigFloat &int_to_bf(BigFloat &r, long value);
 BigFloat &float_to_bf(BigFloat &r, LDouble value);

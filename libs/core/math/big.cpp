@@ -1617,6 +1617,34 @@ int cmp_bf(const Byte *n1, const Byte *n2)
     return 0;
 }
 
+// r = -n
+Byte *neg_bf(Byte *r, const Byte *n)
+{
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
+    const S16 *n_exp = reinterpret_cast<const S16 *>(n + g_bf_length);
+    BIG_SET_S16(r_exp, BIG_ACCESS_S16(n_exp)); // *r_exp = *n_exp;
+
+    int bnl = g_bn_length;
+    g_bn_length = g_bf_length;
+    neg_bn(r, n);
+    g_bn_length = bnl;
+
+    norm_bf(r);
+    return r;
+}
+
+// r *= -1
+Byte *neg_a_bf(Byte *r)
+{
+    int bnl = g_bn_length;
+    g_bn_length = g_bf_length;
+    neg_a_bn(r);
+    g_bn_length = bnl;
+
+    norm_bf(r);
+    return r;
+}
+
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bigfloat
