@@ -48,7 +48,6 @@
 #include <io/library.h>
 #include <io/loadfile.h>
 #include <io/loadmap.h>
-#include <math/big.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
 #include <math/sign.h>

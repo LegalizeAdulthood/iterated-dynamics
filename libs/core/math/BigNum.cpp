@@ -414,7 +414,7 @@ void BigNum::copy_to_legacy(BigNumPtr destination, const std::size_t size) const
     std::copy_n(data(), encoded_size(), destination);
 }
 
-void BigNum::copy_to_legacy_float(BigFloatPtr destination, const std::size_t size) const
+void BigNum::copy_to_legacy_float(Byte *destination, const std::size_t size) const
 {
     validate_buffer(destination, size, static_cast<std::size_t>(g_bf_length) + 2);
     bn_to_bf(destination, data());

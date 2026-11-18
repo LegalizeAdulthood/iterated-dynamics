@@ -6,7 +6,6 @@
 #include <engine/convert_center_mag.h>
 #include <engine/LogicalScreen.h>
 #include <engine/pixel_limits.h>
-#include <math/big.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
 

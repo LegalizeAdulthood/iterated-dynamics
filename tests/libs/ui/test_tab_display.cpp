@@ -20,7 +20,7 @@
 #include <fractals/lorenz.h>
 #include <io/encoder.h>
 #include <io/loadfile.h>
-#include <math/big.h>
+#include <math/big_init.h>
 #include <misc/ValueSaver.h>
 #include <ui/help.h>
 #include <ui/id_keys.h>

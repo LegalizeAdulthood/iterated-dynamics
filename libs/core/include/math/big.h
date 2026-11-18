@@ -4,7 +4,6 @@
 // Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer
 #pragma once
 
-#include <math/BigArena.h>
 #include <math/cmplx.h>
 #include <misc/sized_types.h>
 
@@ -30,65 +29,11 @@ enum
 ****************************************************************/
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
-// values that g_bf_math can hold,
-// 0 = g_bf_math is not being used
-// 1 = g_bf_math is being used
-enum class BFMathType
-{
-    // cppcheck-suppress variableHidingEnum
-    NONE = 0,
-    BIG_NUM = 1,         // g_bf_math is being used with BigNum numbers
-    BIG_FLT = 2          // g_bf_math is being used with BigFloat numbers
-};
-
 using Big = unsigned char *;
-using BigNumPtr = Big; // for clarification purposes
-using BigNumConstPtr = const Byte *;
-using BigFloatPtr = Big;
-using BigFloatConstPtr = const Byte *;
+using BFPtrComplex = Complex<Byte *>;
+using BNPtrComplex = Complex<Byte *>;
+using BFConstPtrComplex = Complex<const Byte *>;
 
-using BFPtrComplex = Complex<BigFloatPtr>;
-using BNPtrComplex = Complex<BigNumPtr>;
-using BFConstPtrComplex = Complex<BigFloatConstPtr>;
-
-class BigNum;
-using BNComplex = Complex<BigNum>;
-class BigFloat;
-using BFComplex = Complex<BigFloat>;
-
-// globals
-extern BFMathType g_bf_math;
-extern int g_bn_step;
-extern int g_int_length;
-extern int g_bn_length;
-extern int g_r_length;
-extern int g_padding;
-extern int g_decimals;
-extern int g_shift_factor;
-extern int g_bf_length;
-extern int g_r_bf_length;
-extern int g_bf_decimals;
-// Kernel workspaces; active lengths may be shortened.
-extern BigNum g_bn_tmp2;        // g_bn_length
-extern BigNum g_bn_tmp3;        // g_bn_length
-
-// Paired operand-preservation workspaces.
-extern BigArena::Allocation g_bn_tmp_copy1;
-extern BigArena::Allocation g_bn_tmp_copy2;
-
-extern BigNum g_bn_tmp;            // g_bn_length
-extern BigFloat g_bf_tmp1;         // g_bf_length+2
-extern BigFloat g_bf_tmp2;         // g_bf_length+2
-extern BigFloat g_bf_tmp3;         // g_bf_length+2
-extern BigFloat g_bf_tmp4;         // g_bf_length+2
-extern BigFloat g_bf_tmp5;         // g_bf_length+2
-extern BigFloat g_bf_tmp6;         // g_bf_length+2
-extern BigArena::Allocation g_bf_tmp_copy1; // Paired operand-preservation workspace.
-extern BigArena::Allocation g_bf_tmp_copy2; // Paired operand-preservation workspace.
-extern BigFloat g_bf_pi;
-extern BigFloat g_bf_tmp;
-
-void calc_lengths();
 Byte *clear_bn(Byte *r);
 Byte *max_bn(Byte *r);
 Byte *copy_bn(Byte *r, const Byte *n);
@@ -141,7 +86,6 @@ misc::S16 BIG_SET_S16(misc::S16 *addr, misc::S16 val);
 #define BIG_SET16(addr, val) (*(U16 *)(addr) = (U16)(val))
 #define BIG_SET_S16(addr, val) (*(S16 *)(addr) = (S16)(val))
 #endif
-void bn_hex_dump(const BigNum &r);
 Byte *str_to_bn(Byte *r, std::string_view s);
 Byte *int_to_bn(Byte *r, long value);
 void set_integer_part(Byte *ones_byte, long value);
@@ -169,7 +113,6 @@ Byte *div_bn(Byte *r, const Byte *n1, const Byte *n2, Byte *tmp1, Byte *tmp2, By
 bool is_bn_zero(const Byte *n);
 Byte *float_to_bn(Byte *r, LDouble f);
 
-void bf_hex_dump(const BigFloat &r);
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
 void bf_hex_dump_snapshot(const Byte *r);
 #endif
@@ -240,64 +183,5 @@ enum
     MATH_BITS = 32,
     MATH_BYTES = MATH_BITS / 8,
 };
-
-// Request the precision needed to distinguish adjacent pixels at the
-// maximum resolution of MAX_PIXELS by MAX_PIXELS or at current resolution
-enum class ResolutionFlag
-{
-    MAX = 0,
-    CURRENT = 1,
-};
-
-// used by other routines
-// g_bn_length
-extern BigNum g_x_min_bn;
-extern BigNum g_x_max_bn;
-extern BigNum g_y_min_bn;
-extern BigNum g_y_max_bn;
-extern BigNum g_x_3rd_bn;
-extern BigNum g_y_3rd_bn;
-extern BigNum g_delta_x_bn;
-extern BigNum g_delta_y_bn;
-extern BigNum g_delta2_x_bn;
-extern BigNum g_delta2_y_bn;
-extern BigNum g_close_enough_bn;
-// g_bn_length
-extern BigNum g_tmp_sqr_x_bn;
-extern BigNum g_tmp_sqr_y_bn;
-// g_bn_length; g_old_z_bn also retains g_r_length scratch products
-extern BNComplex g_old_z_bn;
-extern BNComplex g_param_z_bn;
-extern BNComplex g_saved_z_bn;
-extern BNComplex g_new_z_bn;
-// g_bf_length+2
-extern BigFloat g_delta_x_bf;
-extern BigFloat g_delta_y_bf;
-extern BigFloat g_delta2_x_bf;
-extern BigFloat g_delta2_y_bf;
-extern BigFloat g_close_enough_bf;
-extern BigFloat g_tmp_sqr_x_bf;
-extern BigFloat g_tmp_sqr_y_bf;
-extern BFComplex g_param_z_bf;
-extern BFComplex g_saved_z_bf;
-extern BFComplex g_old_z_bf;
-extern BFComplex g_new_z_bf;
-
-// for testing only
-// used by other routines
-// g_bf_length+2
-extern BigFloat g_bf_x_min;
-extern BigFloat g_bf_x_max;
-extern BigFloat g_bf_y_min;
-extern BigFloat g_bf_y_max;
-extern BigFloat g_bf_x_3rd;
-extern BigFloat g_bf_y_3rd;
-extern BigFloat g_bf_save_x_min;
-extern BigFloat g_bf_save_x_max;
-extern BigFloat g_bf_save_y_min;
-extern BigFloat g_bf_save_y_max;
-extern BigFloat g_bf_save_x_3rd;
-extern BigFloat g_bf_save_y_3rd;
-extern BigFloat g_bf_params[10]; // (g_bf_length+2)*10
 
 } // namespace id::math

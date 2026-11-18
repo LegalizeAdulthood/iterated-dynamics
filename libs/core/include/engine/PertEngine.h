@@ -6,9 +6,9 @@
 #include <engine/calcfrac.h>
 #include <engine/Point.h>
 #include <engine/UserData.h>
-#include <math/big.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
+#include <math/BigNum.h>
 
 #include <array>
 #include <complex>

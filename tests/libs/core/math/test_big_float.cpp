@@ -862,13 +862,13 @@ TEST_F(TestBigFloat, precisionChangesPreserveAllCornersSavedCornersAndParameters
     }
     for (int length : {64, 12, 32})
     {
-        const int old_length = g_bf_length;
         init_bf_length(length);
         const auto values = parameters();
         for (std::size_t i = 0; i < values.size(); ++i)
         {
             std::vector<Byte> converted(g_bf_length + 2);
-            convert_bf(converted.data(), expected[i].data(), g_bf_length, old_length);
+            const std::size_t retained = std::min(converted.size(), expected[i].size());
+            std::copy_n(expected[i].end() - retained, retained, converted.end() - retained);
             EXPECT_EQ(converted, (std::vector<Byte>{values[i]->data(), values[i]->data() + g_bf_length + 2}));
             expected[i] = std::move(converted);
         }

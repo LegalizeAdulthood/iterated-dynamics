@@ -9,6 +9,7 @@
 #include <math/big_init.h>
 #include <math/BigArena.h>
 #include <math/BigFloat.h>
+#include <math/BigNum.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
@@ -31,6 +32,10 @@ namespace id::test
 {
 namespace
 {
+
+static_assert(std::is_same_v<BFConstPtrComplex, Complex<BigFloatConstPtr>>);
+static_assert(!std::is_convertible_v<BFPtrComplex, BFComplex>);
+static_assert(!std::is_convertible_v<BNPtrComplex, BNComplex>);
 
 void keep_first_block(Byte *)
 {
@@ -1724,6 +1729,80 @@ TEST_P(TestBigNumProductLifetime, temporaryRewindsPreserveLivePairedAllocations)
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndLifetimes, TestBigNumProductLifetime,
     testing::Combine(testing::Values(4, 12, 64, 672),
         testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
+
+class TestBigNumByteProductWindows : public TestBigNumByteKernel,
+                                     public testing::WithParamInterface<std::tuple<int, int>>
+{
+};
+
+TEST_P(TestBigNumByteProductWindows, canonicalSlotAndPairedProductHaveSeparateExtents)
+{
+    init_layout(std::get<0>(GetParam()), std::get<1>(GetParam()));
+    BigArena &arena = bn_arena(BigLifetime::WORKING);
+    const std::size_t stride = (g_bn_length + 63) / 64 * 64;
+    EXPECT_EQ(stride, arena.block_size());
+    BigArena::Allocation canonical = arena.allocate_single();
+    BigArena::Allocation product = arena.allocate_double();
+    ASSERT_EQ(1U, canonical.blocks());
+    ASSERT_EQ(2U, product.blocks());
+    ASSERT_LE(static_cast<std::size_t>(g_r_length), 2 * arena.block_size());
+    std::fill_n(canonical.data(), arena.block_size(), Byte{0x5a});
+    std::fill_n(product.data(), 2 * arena.block_size(), Byte{0xa5});
+    std::vector<Byte> input = fixed_sample(g_bn_length, g_bn_length - g_int_length, -3);
+    const std::vector<Byte> original = input;
+
+    square_bn(product.data(), input.data());
+
+    const std::vector<Byte> expected = fixed_sample(g_r_length, g_r_length - 2 * g_int_length, 9);
+    EXPECT_EQ(expected, std::vector<Byte>(product.data(), product.data() + g_r_length));
+    EXPECT_EQ(std::vector<Byte>(2 * arena.block_size() - g_r_length, 0xa5),
+        std::vector<Byte>(product.data() + g_r_length, product.data() + 2 * arena.block_size()));
+    EXPECT_EQ(std::vector<Byte>(arena.block_size(), 0x5a),
+        std::vector<Byte>(canonical.data(), canonical.data() + arena.block_size()));
+    EXPECT_EQ(1U, canonical.blocks());
+    EXPECT_EQ(2U, product.blocks());
+    EXPECT_EQ(original, input);
+}
+
+TEST_P(TestBigNumByteProductWindows, shiftedSubtractionAndDoublingPreserveTheOtherProductBytes)
+{
+    init_layout(std::get<0>(GetParam()), std::get<1>(GetParam()));
+    BigStackSaver saved;
+    BigArena::Allocation product = bn_arena(BigLifetime::TEMPORARY).allocate_double();
+    const int fraction = g_bn_length - g_int_length;
+    const int wide_fraction = g_r_length - 2 * g_int_length;
+    std::vector<Byte> x = fixed_sample(g_bn_length, fraction, 3);
+    std::vector<Byte> y = fixed_sample(g_bn_length, fraction, -2);
+    const std::vector<Byte> original_x = x;
+    const std::vector<Byte> original_y = y;
+    std::vector<Byte> cache_x(g_r_length), cache_y(g_r_length);
+    square_bn(cache_x.data(), x.data());
+    square_bn(cache_y.data(), y.data());
+    std::vector<Byte> expected_x = fixed_sample(g_r_length, wide_fraction, 9);
+    std::vector<Byte> expected_product = fixed_sample(g_r_length, wide_fraction, -6);
+    const std::vector<Byte> difference = fixed_sample(g_bn_length, fraction, 5);
+    const std::vector<Byte> doubled = fixed_sample(g_bn_length, fraction, -12);
+    std::copy(difference.begin(), difference.end(), expected_x.begin() + g_shift_factor);
+    std::copy(doubled.begin(), doubled.end(), expected_product.begin() + g_shift_factor);
+
+    sub_a_bn(cache_x.data() + g_shift_factor, cache_y.data() + g_shift_factor);
+    mult_bn(product.data(), x.data(), y.data());
+    double_a_bn(product.data() + g_shift_factor);
+
+    EXPECT_EQ(expected_x, cache_x);
+    EXPECT_EQ(fixed_sample(g_r_length, wide_fraction, 4), cache_y);
+    EXPECT_EQ(expected_product, std::vector<Byte>(product.data(), product.data() + g_r_length));
+    EXPECT_EQ(5, bn_to_int(cache_x.data() + g_shift_factor));
+    const std::int64_t modulus = std::int64_t{1} << (8 * g_int_length);
+    const std::int64_t extracted =
+        g_int_length == 4 ? static_cast<long>(static_cast<std::uint32_t>(-12)) : modulus - 12;
+    EXPECT_EQ(extracted, bn_to_int(product.data() + g_shift_factor));
+    EXPECT_EQ(original_x, x);
+    EXPECT_EQ(original_y, y);
+}
+
+INSTANTIATE_TEST_SUITE_P(Layouts, TestBigNumByteProductWindows,
+    testing::Combine(testing::Values(4, 8, 12, 56, 60, 64, 68, 672), testing::Values(1, 2, 4)));
 
 struct BigNumConversionInput
 {

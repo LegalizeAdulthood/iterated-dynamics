@@ -3,8 +3,11 @@
 //
 #pragma once
 
-#include <math/big.h>
 #include <math/BigArena.h>
+#include <math/cmplx.h>
+#include <misc/sized_types.h>
+
+#include <config/port.h>
 
 #include <cstddef>
 #include <string>
@@ -12,6 +15,9 @@
 
 namespace id::math
 {
+
+using BigNumPtr = Byte *;
+using BigNumConstPtr = const Byte *;
 
 class BigFloat;
 class BigNum
@@ -83,7 +89,7 @@ public:
     static BigNum from_legacy(BigNumConstPtr source, std::size_t size);
     static BigNum from_legacy(BigArena &arena, BigNumConstPtr source, std::size_t size);
     void copy_to_legacy(BigNumPtr destination, std::size_t size) const;
-    void copy_to_legacy_float(BigFloatPtr destination, std::size_t size) const;
+    void copy_to_legacy_float(Byte *destination, std::size_t size) const;
 
 private:
     explicit BigNum(BigArena::Allocation storage);
@@ -135,5 +141,36 @@ BigNum &abs_a_bn(BigNum &r);
 void copy_bn(BigNum &result, const BigNum &source);
 void add_a_bn(BigNum &result, const BigNum &source);
 void sub_a_bn(BigNum &result, const BigNum &source);
+
+using BNComplex = Complex<BigNum>;
+
+// Kernel workspaces; active lengths may be shortened.
+extern BigNum g_bn_tmp2; // g_bn_length
+extern BigNum g_bn_tmp3; // g_bn_length
+
+extern BigNum g_bn_tmp;  // g_bn_length
+
+// g_bn_length
+extern BigNum g_x_min_bn;
+extern BigNum g_x_max_bn;
+extern BigNum g_y_min_bn;
+extern BigNum g_y_max_bn;
+extern BigNum g_x_3rd_bn;
+extern BigNum g_y_3rd_bn;
+extern BigNum g_delta_x_bn;
+extern BigNum g_delta_y_bn;
+extern BigNum g_delta2_x_bn;
+extern BigNum g_delta2_y_bn;
+extern BigNum g_close_enough_bn;
+// g_bn_length
+extern BigNum g_tmp_sqr_x_bn;
+extern BigNum g_tmp_sqr_y_bn;
+// Canonical orbit values.
+extern BNComplex g_old_z_bn;
+extern BNComplex g_param_z_bn;
+extern BNComplex g_saved_z_bn;
+extern BNComplex g_new_z_bn;
+
+void bn_hex_dump(const BigNum &r);
 
 } // namespace id::math

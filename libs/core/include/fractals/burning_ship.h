@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <math/big.h>
+#include <math/BigFloat.h>
 
 #include <complex>
 

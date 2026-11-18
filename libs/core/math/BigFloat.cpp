@@ -718,7 +718,7 @@ void BigFloat::copy_to_legacy(BigFloatPtr destination, const std::size_t size) c
     std::copy_n(m_storage.data(), encoded_size(), destination);
 }
 
-void BigFloat::copy_to_legacy_num(BigNumPtr destination, const std::size_t size) const
+void BigFloat::copy_to_legacy_num(Byte *destination, const std::size_t size) const
 {
     validate_buffer(destination, size, static_cast<std::size_t>(g_bn_length));
     bf_to_bn(destination, m_storage.data());

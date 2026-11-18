@@ -15,7 +15,7 @@
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
 #include <fractals/lyapunov.h>
-#include <math/big.h>
+#include <math/big_init.h>
 
 #include <algorithm>
 #include <cmath>

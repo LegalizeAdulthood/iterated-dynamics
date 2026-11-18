@@ -21,7 +21,6 @@
 #include <engine/work_list.h>
 #include <fractals/fractalp.h>
 #include <fractals/lyapunov.h>
-#include <math/big.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
 #include <misc/Driver.h>

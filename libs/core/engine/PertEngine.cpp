@@ -1155,7 +1155,7 @@ bool PertEngine::save_precise_value(std::size_t &remaining)
         m_pixel.precise_tolerance = BigFloat{bf_arena(BigLifetime::WORKING)};
         if (g_bf_math == BFMathType::BIG_NUM)
         {
-            bn_to_bf(m_pixel.precise_tolerance.data(), g_close_enough_bn.data());
+            g_close_enough_bn.copy_to_legacy_float(m_pixel.precise_tolerance.data(), g_bf_length + 2);
         }
         else
         {

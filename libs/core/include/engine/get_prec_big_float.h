@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include <math/big.h>
+#include <math/big_init.h>
 
 namespace id::engine
 {

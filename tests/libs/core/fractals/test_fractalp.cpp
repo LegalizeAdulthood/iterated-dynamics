@@ -24,7 +24,7 @@
 #include <fractals/taylor_skinner_variations.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <math/big.h>
+#include <math/big_init.h>
 #include <misc/debug_flags.h>
 #include <misc/version.h>
 

@@ -3,7 +3,6 @@
 //
 #pragma once
 
-#include <math/big.h>
 #include <math/BigArena.h>
 
 #include <cstddef>
@@ -24,7 +23,40 @@ public:
     using std::runtime_error::runtime_error;
 };
 
-extern int g_bf_digits;                 // digits to use (force) for g_bf_math
+// values that g_bf_math can hold,
+// 0 = g_bf_math is not being used
+// 1 = g_bf_math is being used
+enum class BFMathType
+{
+    // cppcheck-suppress variableHidingEnum
+    NONE = 0,
+    BIG_NUM = 1, // g_bf_math is being used with BigNum numbers
+    BIG_FLT = 2  // g_bf_math is being used with BigFloat numbers
+};
+
+// globals
+extern BFMathType g_bf_math;
+extern int g_bn_step;
+extern int g_int_length;
+extern int g_bn_length;
+extern int g_r_length;
+extern int g_padding;
+extern int g_decimals;
+extern int g_shift_factor;
+extern int g_bf_length;
+extern int g_r_bf_length;
+extern int g_bf_decimals;
+extern int g_bf_digits; // digits to use (force) for g_bf_math
+
+// Request the precision needed to distinguish adjacent pixels at the
+// maximum resolution of MAX_PIXELS by MAX_PIXELS or at current resolution
+enum class ResolutionFlag
+{
+    MAX = 0,
+    CURRENT = 1,
+};
+
+void calc_lengths();
 
 enum class BigLifetime
 {
@@ -37,6 +69,12 @@ enum class BigLifetime
 // Call init_bf_dec or init_bf_length before obtaining an arena.
 BigArena &bn_arena(BigLifetime lifetime);
 BigArena &bf_arena(BigLifetime lifetime);
+
+// Paired operand-preservation workspaces.
+extern BigArena::Allocation g_bn_tmp_copy1;
+extern BigArena::Allocation g_bn_tmp_copy2;
+extern BigArena::Allocation g_bf_tmp_copy1; // Paired operand-preservation workspace.
+extern BigArena::Allocation g_bf_tmp_copy2; // Paired operand-preservation workspace.
 
 void init_bn_product_scratch(BigArena &working);
 bool is_bn_product_scratch(const Byte *source);

@@ -4,7 +4,7 @@
 #pragma once
 
 #include <math/cmplx.h>
-#include <math/big.h>
+#include <math/big_init.h>
 #include <math/Point.h>
 #include <io/disk_storage.h>
 
