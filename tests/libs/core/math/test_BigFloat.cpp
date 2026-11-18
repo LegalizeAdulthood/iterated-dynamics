@@ -45,6 +45,7 @@ static_assert(
     std::is_same_v<decltype(copy_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>())), BigFloat &>);
 static_assert(std::is_same_v<decltype(clear_bf(std::declval<BigFloat &>())), BigFloat &>);
 static_assert(std::is_same_v<decltype(max_bf(std::declval<BigFloat &>())), BigFloat &>);
+static_assert(std::is_same_v<decltype(&div_bf), BigFloat &(*)(BigFloat &, const BigFloat &, const BigFloat &)>);
 static_assert(std::is_same_v<decltype(&bf_to_string), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_e), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_f), std::string (*)(const BigFloat &, int)>);
@@ -1184,6 +1185,60 @@ TEST_F(TestBigFloatValue, reciprocalOfZeroSaturatesInPlace)
     EXPECT_EQ(std::vector<Byte>(size), encoded_value(source));
 }
 
+enum class DivisionDestination
+{
+    SEPARATE,
+    NUMERATOR,
+    DENOMINATOR,
+    SHARED_INPUT
+};
+
+class TestBigFloatDivision : public TestBigFloatValue, public testing::WithParamInterface<DivisionDestination>
+{
+};
+
+TEST_P(TestBigFloatDivision, writesAndReturnsTheDestinationWithAliasedInputs)
+{
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    BigFloat numerator{arena, -8.0L};
+    BigFloat denominator{arena, -4.0L};
+    BigFloat result{arena};
+    const DivisionDestination target = GetParam();
+    const bool shared_input = target == DivisionDestination::SHARED_INPUT;
+    const BigFloat &divisor = shared_input ? numerator : denominator;
+    BigFloat &numerator_or_result = target == DivisionDestination::SEPARATE ? result : numerator;
+    BigFloat &output = target == DivisionDestination::DENOMINATOR ? denominator : numerator_or_result;
+    const BigFloat expected{arena, shared_input ? 1.0L : 2.0L};
+    const std::vector<Byte> original_numerator = encoded_value(numerator);
+    const std::vector<Byte> original_denominator = encoded_value(denominator);
+    const std::size_t size = arena.value_size();
+    const std::size_t stride = arena.block_size();
+    std::fill(output.data() + size, output.data() + stride, Byte{0xa5});
+    const Byte *const address = output.data();
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(&output, &div_bf(output, std::as_const(numerator), divisor));
+
+    EXPECT_EQ(encoded_value(expected), encoded_value(output));
+    EXPECT_EQ(address, output.data());
+    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(output.data() + size, output.data() + stride));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+    if (&output != &numerator)
+    {
+        EXPECT_EQ(original_numerator, encoded_value(numerator));
+    }
+    if (&output != &denominator)
+    {
+        EXPECT_EQ(original_denominator, encoded_value(denominator));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Destinations, TestBigFloatDivision,
+    testing::Values(DivisionDestination::SEPARATE, DivisionDestination::NUMERATOR, DivisionDestination::DENOMINATOR,
+        DivisionDestination::SHARED_INPUT));
+
 TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
 {
     BigFloat left{"-7.5"};
@@ -1198,7 +1253,7 @@ TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
     EXPECT_EQ("-10.0", bf_to_string(result, 8));
     mult_bf(result, left, right);
     EXPECT_EQ("-18.75", bf_to_string(result, 8));
-    div_bf(result.data(), left.data(), right.data());
+    div_bf(result, left, right);
     EXPECT_EQ("-3.0", bf_to_string(result, 8));
 
     EXPECT_EQ(original_left, encoded_value(left));
@@ -1311,10 +1366,9 @@ TEST_P(TestBigFloatArithmetic, expressionsMatchLegacySequencesAndOutliveTheirTem
     const auto original_left = encoded_value(left);
     const auto original_right = encoded_value(right);
     const auto original_divisor = encoded_value(divisor);
-    auto raw_divisor = original_divisor;
     BigFloat expected{bf_arena(BigLifetime::WORKING)};
     add_bf(expected, left, right);
-    div_bf(expected.data(), expected.data(), raw_divisor.data());
+    div_bf(expected, expected, divisor);
     mult_bf(expected, expected, left);
     sub_bf(expected, expected, right);
     const auto marker = save_stack();
@@ -1335,11 +1389,10 @@ TEST_P(TestBigFloatArithmetic, zeroAndDivisionByZeroKeepLegacyResults)
 {
     const BigFloat zero{0};
     const BigFloat value{"-7.5"};
-    auto raw_value = encoded_value(value);
-    auto raw_zero = encoded_value(zero);
-    std::vector<Byte> expected(static_cast<std::size_t>(g_r_bf_length + 2));
-    div_bf(expected.data(), raw_value.data(), raw_zero.data());
-    expected.resize(static_cast<std::size_t>(g_bf_length + 2));
+    BigFloat maximum{bf_arena(BigLifetime::WORKING)};
+    max_bf(maximum);
+    BigFloat result{bf_arena(BigLifetime::WORKING)};
+    div_bf(result, value, zero);
 
     EXPECT_EQ(encoded_value(value), encoded_value(value + zero));
     EXPECT_EQ(encoded_value(value), encoded_value(value - zero));
@@ -1347,7 +1400,8 @@ TEST_P(TestBigFloatArithmetic, zeroAndDivisionByZeroKeepLegacyResults)
     EXPECT_EQ(encoded_value(zero), encoded_value(value * zero));
     EXPECT_EQ(encoded_value(zero), encoded_value(zero / value));
     EXPECT_EQ(encoded_value(zero), encoded_value(zero / zero));
-    EXPECT_EQ(expected, encoded_value(value / zero));
+    EXPECT_EQ(encoded_value(maximum), encoded_value(result));
+    EXPECT_EQ(encoded_value(maximum), encoded_value(value / zero));
 }
 
 class TestBigFloatScalarMultiply : public TestBigFloatValue,

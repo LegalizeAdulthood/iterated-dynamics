@@ -121,42 +121,6 @@ BigFloatPtr multiply(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
     return r;
 }
 
-// Division destroys both operands; the result needs only canonical bytes.
-BigFloatPtr divide(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    // first, check for valid data
-
-    const int a_exp = static_cast<S16>(BIG_ACCESS16(n1 + g_bf_length));
-    BIG_SET16(n1 + g_bf_length, static_cast<S16>(0)); // put within LDouble range
-
-    LDouble a = bf_to_float(n1);
-    if (a == 0)                                       // division into zero
-    {
-        clear_bf(r);                                  // return 0
-        return r;
-    }
-
-    const int b_exp = static_cast<S16>(BIG_ACCESS16(n2 + g_bf_length));
-    BIG_SET16(n2 + g_bf_length, static_cast<S16>(0)); // put within LDouble range
-
-    LDouble b = bf_to_float(n2);
-    if (b == 0)                                       // division by zero
-    {
-        max_bf(r);
-        return r;
-    }
-
-    unsafe_inv_bf(r, n2, g_bf_tmp1.data(), g_bf_tmp2.data());
-    multiply(g_bf_tmp1.data(), n1, r);
-    copy_bf(r, g_bf_tmp1.data()); // r = g_bf_tmp1
-
-    int r_exp = static_cast<S16>(BIG_ACCESS16(r + g_bf_length));
-    r_exp += a_exp - b_exp;
-    BIG_SET16(r + g_bf_length, static_cast<S16>(r_exp)); // adjust result exponent
-
-    return r;
-}
-
 BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
 {
     if (is_bf_zero(n))
@@ -642,7 +606,7 @@ BigFloatPtr arctangent2(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
     {
         neg_a_bf(nx);
     }
-    unsafe_div_bf(g_bf_tmp6.data(), ny, nx);
+    unsafe_div_bf(g_bf_tmp6.data(), ny, nx, g_bf_tmp1.data(), g_bf_tmp2.data());
     arctangent(r, g_bf_tmp6.data());
     if (sign_x < 0)
     {
@@ -861,7 +825,7 @@ BigFloat BigFloat::operator*(const U16 right) const
 BigFloat BigFloat::operator/(const BigFloat &right) const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), divide);
+    div_bf(result, *this, right);
     return result;
 }
 
@@ -1062,6 +1026,14 @@ BigFloat &half_a_bf(BigFloat &r)
 BigFloat &unsafe_inv_bf(BigFloat &r, BigFloat &n)
 {
     unsafe_inv_bf(r.data(), n.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
+    return r;
+}
+
+BigFloat &div_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2)
+{
+    copy_bf(g_bf_tmp_copy1.data(), n1.data());
+    copy_bf(g_bf_tmp_copy2.data(), n2.data());
+    unsafe_div_bf(r.data(), g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
     return r;
 }
 
@@ -1314,16 +1286,6 @@ BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr y, BigFloatPtr x)
 Byte *unsafe_mult_bf(Byte *r, Byte *n1, Byte *n2)
 {
     return multiply(r, n1, n2);
-}
-
-BigFloatPtr unsafe_div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    return divide(r, n1, n2);
-}
-
-BigFloatPtr div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    return binary_operation(r, n1, n2, divide);
 }
 
 } // namespace id::math

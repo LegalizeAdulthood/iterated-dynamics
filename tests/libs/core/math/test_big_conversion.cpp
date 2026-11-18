@@ -669,6 +669,48 @@ TEST_P(TestBigFloatByteReciprocal, restoresPrecisionAndKeepsDestructiveWindowEff
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatByteReciprocal, testing::Values(4, 64));
 
+class TestBigFloatByteDivision : public TestBigNumConversionBase, public testing::WithParamInterface<int>
+{
+};
+
+TEST_P(TestBigFloatByteDivision, reappliesExponentsAndKeepsDestructiveOperandEffects)
+{
+    init_bf_length(GetParam());
+    const int size = g_bf_length + 2;
+    const std::array<int, 6> lengths{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+    std::vector<Byte> numerator(size + 2);
+    std::vector<Byte> denominator(size + 2);
+    std::vector<Byte> result(size + 2);
+    constexpr std::array<Byte, 6> numerator_tail{0xf4, 0xff, 2, 0, 0xa5, 0xa5};   // -12 * 256^2
+    constexpr std::array<Byte, 6> denominator_tail{0xfc, 0xff, 1, 0, 0xa5, 0xa5}; // -4 * 256
+    std::copy(numerator_tail.begin(), numerator_tail.end(), numerator.end() - 6);
+    std::copy(denominator_tail.begin(), denominator_tail.end(), denominator.end() - 6);
+    std::fill(result.begin() + size, result.end(), Byte{0xa5});
+
+    std::vector<Byte> tmp1(size + 2, 0xa5);
+    std::vector<Byte> tmp2(size + 2, 0xa5);
+
+    EXPECT_EQ(
+        result.data(), unsafe_div_bf(result.data(), numerator.data(), denominator.data(), tmp1.data(), tmp2.data()));
+
+    std::vector<Byte> expected(size + 2);
+    constexpr std::array<Byte, 6> result_tail{3, 0, 1, 0, 0xa5, 0xa5};
+    std::copy(result_tail.begin(), result_tail.end(), expected.end() - 6);
+    EXPECT_EQ(expected, result);
+    expected[size - 2] = 0;
+    EXPECT_EQ(expected, tmp1);
+    expected[size - 4] = 1;
+    EXPECT_EQ(expected, tmp2);
+    expected[size - 4] = 12;
+    EXPECT_EQ(expected, numerator);
+    expected[size - 4] = 4;
+    EXPECT_EQ(expected, denominator);
+    EXPECT_EQ(
+        lengths, (std::array<int, 6>{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+}
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatByteDivision, testing::Values(4, 64));
+
 struct BigNumConversionInput
 {
     const char *name;

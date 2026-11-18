@@ -1965,6 +1965,42 @@ Byte *unsafe_inv_bf(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2)
     return r;
 }
 
+// Division destroys both operands; the result needs only canonical bytes.
+Byte *unsafe_div_bf(Byte *r, Byte *n1, Byte *n2, Byte *tmp1, Byte *tmp2)
+{
+    // first, check for valid data
+
+    const int a_exp = static_cast<S16>(BIG_ACCESS16(n1 + g_bf_length));
+    BIG_SET16(n1 + g_bf_length, static_cast<S16>(0)); // put within LDouble range
+
+    LDouble a = bf_to_float(n1);
+    if (a == 0)                                       // division into zero
+    {
+        clear_bf(r);                                  // return 0
+        return r;
+    }
+
+    const int b_exp = static_cast<S16>(BIG_ACCESS16(n2 + g_bf_length));
+    BIG_SET16(n2 + g_bf_length, static_cast<S16>(0)); // put within LDouble range
+
+    LDouble b = bf_to_float(n2);
+    if (b == 0)                                       // division by zero
+    {
+        max_bf(r);
+        return r;
+    }
+
+    unsafe_inv_bf(r, n2, tmp1, tmp2);
+    unsafe_mult_bf(tmp1, n1, r);
+    copy_bf(r, tmp1); // r = tmp1
+
+    int r_exp = static_cast<S16>(BIG_ACCESS16(r + g_bf_length));
+    r_exp += a_exp - b_exp;
+    BIG_SET16(r + g_bf_length, static_cast<S16>(r_exp)); // adjust result exponent
+
+    return r;
+}
+
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
 Byte *multiply_wide(Byte *r, Byte *n1, Byte *n2)
 {
