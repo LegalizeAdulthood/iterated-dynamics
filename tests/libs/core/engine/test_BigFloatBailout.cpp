@@ -210,19 +210,18 @@ TEST_P(TestBigFloatBailoutCases, preservesInclusiveThresholdCachesAndOldOrbit)
     float_to_bf(g_old_z_bf.y, 9);
     float_to_bf(g_new_z_bf.x, input.point.x);
     float_to_bf(g_new_z_bf.y, input.point.y);
-    std::vector<Byte> expected_x(g_r_bf_length + 2);
-    std::vector<Byte> expected_y(g_r_bf_length + 2);
-    square_bf(expected_x.data(), g_new_z_bf.x.data());
-    square_bf(expected_y.data(), g_new_z_bf.y.data());
+    BigArena &working = bf_arena(BigLifetime::WORKING);
+    BigFloat expected_x{working};
+    BigFloat expected_y{working};
+    square_bf(expected_x, g_new_z_bf.x);
+    square_bf(expected_y, g_new_z_bf.y);
     const auto marker = save_stack();
 
     EXPECT_EQ(escaped, g_bailout_bigfloat() != 0);
 
     EXPECT_EQ(marker, save_stack());
-    const auto slice = [](const std::vector<Byte> &v)
-    { return std::vector<Byte>{v.data(), v.data() + g_bf_length + 2}; };
-    EXPECT_EQ(slice(expected_x), encoded(g_tmp_sqr_x_bf));
-    EXPECT_EQ(slice(expected_y), encoded(g_tmp_sqr_y_bf));
+    EXPECT_EQ(encoded(expected_x), encoded(g_tmp_sqr_x_bf));
+    EXPECT_EQ(encoded(expected_y), encoded(g_tmp_sqr_y_bf));
     EXPECT_EQ(encoded(escaped ? -7 : input.point.x), encoded(g_old_z_bf.x));
     EXPECT_EQ(encoded(escaped ? 9 : input.point.y), encoded(g_old_z_bf.y));
     EXPECT_EQ(encoded(input.point.x), encoded(g_new_z_bf.x));

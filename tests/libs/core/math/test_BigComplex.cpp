@@ -341,7 +341,7 @@ TEST_P(TestBigComplex, realValueFunctionsPreserveTheirOperands)
     BFComplex raw = value(0.375L, -0.625L);
     BFComplex result = value(0, 0);
     const BFComplex input = raw;
-    square_bf(result.x.data(), raw.x.data());
+    square_bf(result.x, raw.x);
     EXPECT_EQ(result.x, sqr(input.x));
     half_bf(result.x.data(), raw.x.data());
     EXPECT_EQ(result.x, input.x.half());

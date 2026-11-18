@@ -1047,8 +1047,8 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
         float_to_bf(g_param_z_bf.y, input.imag);
         clear_bf(g_old_z_bf.x);
         clear_bf(g_old_z_bf.y);
-        square_bf(g_tmp_sqr_x_bf.data(), g_old_z_bf.x.data());
-        square_bf(g_tmp_sqr_y_bf.data(), g_old_z_bf.y.data());
+        square_bf(g_tmp_sqr_x_bf, g_old_z_bf.x);
+        square_bf(g_tmp_sqr_y_bf, g_old_z_bf.y);
     }
     std::vector<DComplex> expected;
     bool escaped{};
@@ -12854,7 +12854,7 @@ void TestPreciseMandelBoundary::SetUp()
         for (long i = 0; i < (sign > 0 ? g_max_iterations - 1 : 1); ++i)
         {
             m_expected_old = static_cast<double>(bf_to_float(z));
-            square_bf(square.data(), z.data());
+            square_bf(square, z);
             add_bf(z, square, center.x);
         }
         m_expected_new = static_cast<double>(bf_to_float(z));

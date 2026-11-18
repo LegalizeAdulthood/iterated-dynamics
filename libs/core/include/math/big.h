@@ -182,7 +182,6 @@ BigFloatPtr exp_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr unsafe_ln_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr unsafe_sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n);
 BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx);
-BigFloatPtr square_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr mult_bf_int(BigFloatPtr r, BigFloatConstPtr n, misc::U16 u);
 Byte *unsafe_bf_to_bf10(Byte *r, int dec, Byte *n);
 Byte *mult_a_bf10_int(Byte *r, int dec, misc::U16 n);
@@ -222,9 +221,10 @@ BigFloatPtr half_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr half_a_bf(BigFloatPtr r);
 // Wide product: g_r_bf_length mantissa bytes followed by the exponent.
 Byte *multiply_wide(Byte *r, Byte *n1, Byte *n2);
-// Canonical product bridge implemented in the value layer.
+Byte *square_wide(Byte *r, Byte *n);
+// Canonical product bridges implemented in the value layer.
 Byte *unsafe_mult_bf(Byte *r, Byte *n1, Byte *n2);
-BigFloatPtr unsafe_square_bf(BigFloatPtr r, BigFloatPtr n);
+Byte *unsafe_square_bf(Byte *r, Byte *n);
 BigFloatPtr unsafe_mult_bf_int(BigFloatPtr r, BigFloatPtr n, misc::U16 u);
 BigFloatPtr mult_a_bf_int(BigFloatPtr r, misc::U16 u);
 BigFloatPtr unsafe_div_bf_int(BigFloatPtr r, BigFloatPtr n, misc::U16 u);

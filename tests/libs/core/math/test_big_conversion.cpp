@@ -425,6 +425,53 @@ INSTANTIATE_TEST_SUITE_P(SignsAndZero, TestBigFloatByteMultiply,
         BigFloatByteMultiplyInput{2, -3, 2, 3, -6, 1}, BigFloatByteMultiplyInput{-2, -3, 2, 3, 6, 1},
         BigFloatByteMultiplyInput{0, -3, 0, -3, 0, 0}));
 
+struct BigFloatByteSqrInput
+{
+    int source;
+    int source_after;
+    int exponent;
+    int squared;
+    int squared_exponent;
+};
+
+class TestBigFloatByteSqr : public TestBigNumConversionBase, public testing::WithParamInterface<BigFloatByteSqrInput>
+{
+};
+
+TEST_P(TestBigFloatByteSqr, writesCompleteWideProductAndRestoresLengths)
+{
+    const BigFloatByteSqrInput &input = GetParam();
+    const std::array<int, 7> lengths{
+        g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+    std::vector<Byte> source(g_bf_length + 2);
+    source[g_bf_length - 2] = static_cast<Byte>(input.source);
+    source[g_bf_length - 1] = input.source < 0 ? 0xff : 0;
+    source[g_bf_length] = static_cast<Byte>(input.exponent);
+    source[g_bf_length + 1] = static_cast<Byte>(static_cast<unsigned>(input.exponent) >> 8);
+    std::vector<Byte> expected_source = source;
+    expected_source[g_bf_length - 2] = static_cast<Byte>(input.source_after);
+    expected_source[g_bf_length - 1] = 0;
+    std::vector<Byte> guarded(g_r_bf_length + 6, 0xa5);
+    std::vector<Byte> expected = guarded;
+    std::fill_n(expected.begin() + 2, g_r_bf_length + 2, Byte{0});
+    expected[g_r_bf_length] = static_cast<Byte>(input.squared);
+    expected[g_r_bf_length + 2] = static_cast<Byte>(input.squared_exponent);
+    expected[g_r_bf_length + 3] = static_cast<Byte>(static_cast<unsigned>(input.squared_exponent) >> 8);
+    Byte *const result = guarded.data() + 2;
+
+    EXPECT_EQ(result, square_wide(result, source.data()));
+
+    EXPECT_EQ(expected, guarded);
+    EXPECT_EQ(expected_source, source);
+    EXPECT_EQ(lengths,
+        (std::array<int, 7>{
+            g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+}
+
+INSTANTIATE_TEST_SUITE_P(SignsAndExponents, TestBigFloatByteSqr,
+    testing::Values(BigFloatByteSqrInput{3, 3, -700, 9, -1400}, BigFloatByteSqrInput{-2, 2, 500, 4, 1000},
+        BigFloatByteSqrInput{0, 0, -1, 0, 0}));
+
 struct BigNumConversionInput
 {
     const char *name;

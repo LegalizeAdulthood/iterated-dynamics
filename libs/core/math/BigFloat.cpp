@@ -157,36 +157,6 @@ BigFloatPtr divide(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
     return r;
 }
 
-// Legacy real math kernels; operands may be destroyed as before.
-BigFloatPtr square_wide(BigFloatPtr r, BigFloatPtr n)
-{
-    if (is_bf_zero(n))
-    {
-        std::memset(r, 0, g_r_bf_length + 2);
-        return r;
-    }
-
-    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
-    const int r_exp = static_cast<S16>(2 * BIG_ACCESS_S16(n_exp));
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    int rl = g_r_length;
-    g_r_length = g_r_bf_length;
-    unsafe_square_bn(r, n);
-    g_bn_length = bnl;
-    g_r_length = rl;
-
-    int bfl = g_bf_length;
-    g_bf_length = g_r_bf_length;
-    BIG_SET16(r + g_bf_length, static_cast<S16>(r_exp + 2)); // adjust after mult
-
-    norm_sign_bf(r, true);
-    g_bf_length = bfl;
-
-    return r;
-}
-
 BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
 {
     if (is_bf_zero(n))
@@ -1056,6 +1026,13 @@ BigFloat &mult_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2)
     return r;
 }
 
+BigFloat &square_bf(BigFloat &r, const BigFloat &n)
+{
+    copy_bf(g_bf_tmp_copy1.data(), n.data());
+    square_value(r.data(), g_bf_tmp_copy1.data());
+    return r;
+}
+
 BigFloat &str_to_bf(BigFloat &r, const std::string_view text)
 {
     str_to_bf(r.data(), text, g_bf_tmp1.data());
@@ -1277,7 +1254,7 @@ BigArena::Allocation BigFloatProduct::release_reduced_storage() &&
     return result;
 }
 
-BigFloatPtr unsafe_square_bf(BigFloatPtr r, BigFloatPtr n)
+Byte *unsafe_square_bf(Byte *r, Byte *n)
 {
     return square_value(r, n);
 }

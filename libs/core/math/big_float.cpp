@@ -144,14 +144,6 @@ BigFloatPtr unsafe_inv_bf(BigFloatPtr r, BigFloatPtr n)
 
 
 /**********************************************************************/
-BigFloatPtr square_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    copy_bf(g_bf_tmp_copy1.data(), n);
-    unsafe_square_bf(r, g_bf_tmp_copy1.data());
-    return r;
-}
-
-/**********************************************************************/
 BigFloatPtr mult_bf_int(BigFloatPtr r, BigFloatConstPtr n, const U16 u)
 {
     copy_bf(g_bf_tmp_copy1.data(), n);

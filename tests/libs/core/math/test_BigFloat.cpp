@@ -2081,35 +2081,43 @@ TEST_P(TestBigFloatLegacySqr, preservesCanonicalBoundsCachesReturnIdentitySource
     std::fill_n(g_tmp_sqr_y_bf.data(), working_stride, Byte{0x96});
     std::vector<Byte> expected_x(working_stride, 0x69);
     std::vector<Byte> expected_y(working_stride, 0x96);
+    BigFloat separate{persistent};
+    std::fill_n(separate.data(), persistent.block_size(), Byte{0xa5});
+    std::vector<Byte> expected_separate(persistent.block_size(), 0xa5);
     std::vector<Byte> output(g_r_bf_length + 4, 0xa5);
     std::vector<Byte> expected_output = output;
-    Byte *result = output.data() + 1;
+    BigFloat *destination = &separate;
     const std::vector<Byte> expected = integer_float_bytes(g_bf_length, input.squared, input.squared_exponent);
     if (call == LegacySqrCall::SAFE_IN_PLACE)
     {
-        result = source.data();
+        destination = &source;
         std::copy(expected.begin(), expected.end(), expected_source.begin());
     }
     else if (call == LegacySqrCall::CACHE_X)
     {
-        result = g_tmp_sqr_x_bf.data();
+        destination = &g_tmp_sqr_x_bf;
         std::copy(expected.begin(), expected.end(), expected_x.begin());
     }
     else if (call == LegacySqrCall::CACHE_Y)
     {
-        result = g_tmp_sqr_y_bf.data();
+        destination = &g_tmp_sqr_y_bf;
         std::copy(expected.begin(), expected.end(), expected_y.begin());
     }
-    else
+    else if (call == LegacySqrCall::UNSAFE)
     {
         std::copy(expected.begin(), expected.end(), expected_output.begin() + 1);
-        if (call == LegacySqrCall::UNSAFE && input.source != 0)
+        if (input.source != 0)
         {
             const std::vector<Byte> absolute_source =
                 integer_float_bytes(g_bf_length, std::abs(input.source), input.exponent);
             std::copy(absolute_source.begin(), absolute_source.end(), expected_source.begin());
         }
     }
+    else
+    {
+        std::copy(expected.begin(), expected.end(), expected_separate.begin());
+    }
+    Byte *const result = call == LegacySqrCall::UNSAFE ? output.data() + 1 : destination->data();
     BigFloat survivor{temporary, -7};
     std::fill(survivor.data() + source_bytes.size(), survivor.data() + temporary.block_size(), Byte{0x77});
     const std::vector<Byte> survivor_bytes(survivor.data(), survivor.data() + temporary.block_size());
@@ -2126,11 +2134,18 @@ TEST_P(TestBigFloatLegacySqr, preservesCanonicalBoundsCachesReturnIdentitySource
     const std::size_t high_water = temporary.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    Byte *const returned =
-        call == LegacySqrCall::UNSAFE ? unsafe_square_bf(result, source.data()) : square_bf(result, source.data());
-
-    EXPECT_EQ(result, returned);
+    if (call == LegacySqrCall::UNSAFE)
+    {
+        EXPECT_EQ(result, unsafe_square_bf(result, source.data()));
+    }
+    else
+    {
+        BigFloat &returned = square_bf(*destination, std::as_const(source));
+        EXPECT_EQ(destination, &returned);
+        EXPECT_EQ(result, returned.data());
+    }
     EXPECT_EQ(expected, std::vector<Byte>(result, result + expected.size()));
+    EXPECT_EQ(expected_separate, std::vector<Byte>(separate.data(), separate.data() + persistent.block_size()));
     EXPECT_EQ(expected_output, output);
     EXPECT_EQ(expected_source, std::vector<Byte>(source.data(), source.data() + persistent.block_size()));
     EXPECT_EQ(expected_x, std::vector<Byte>(g_tmp_sqr_x_bf.data(), g_tmp_sqr_x_bf.data() + working_stride));

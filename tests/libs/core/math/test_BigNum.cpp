@@ -2199,8 +2199,6 @@ TEST_P(TestBigNumKernelWindows, bigFloatMantissaProductsRestoreTheBigNumContext)
     const auto original_right = encoded_value(right);
     const auto expected_product = encoded_value(BigFloat{negative ? -0.375L : 0.375L});
     const auto expected_sqr = encoded_value(BigFloat{0.5625L});
-    std::vector<Byte> guarded(g_r_bf_length + 4, 0xa5);
-    auto *const result = guarded.data() + 1;
     const auto lengths = kernel_lengths();
     const auto stack = save_stack();
 
@@ -2217,14 +2215,14 @@ TEST_P(TestBigNumKernelWindows, bigFloatMantissaProductsRestoreTheBigNumContext)
     EXPECT_EQ(original_right, encoded_value(right));
     EXPECT_EQ(lengths, kernel_lengths());
 
-    EXPECT_EQ(result, square_bf(result, left.data()));
+    EXPECT_EQ(&product, &square_bf(product, left));
 
-    EXPECT_EQ(expected_sqr, std::vector<Byte>(result, result + g_bf_length + 2));
+    EXPECT_EQ(expected_sqr, encoded_value(product));
+    EXPECT_EQ(std::vector<Byte>(stride - canonical_size, 0xa5),
+        std::vector<Byte>(product.data() + canonical_size, product.data() + stride));
     EXPECT_EQ(original_left, encoded_value(left));
     EXPECT_EQ(lengths, kernel_lengths());
     EXPECT_EQ(stack, save_stack());
-    EXPECT_EQ(0xa5, guarded.front());
-    EXPECT_EQ(0xa5, guarded.back());
 }
 
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndLayouts, TestBigNumKernelWindows,

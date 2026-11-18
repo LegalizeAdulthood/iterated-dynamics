@@ -1905,6 +1905,36 @@ Byte *multiply_wide(Byte *r, Byte *n1, Byte *n2)
     return r;
 }
 
+// SIDE-EFFECTS: n is changed to its absolute value.
+Byte *square_wide(Byte *r, Byte *n)
+{
+    if (is_bf_zero(n))
+    {
+        std::memset(r, 0, g_r_bf_length + 2);
+        return r;
+    }
+
+    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
+    const int r_exp = static_cast<S16>(2 * BIG_ACCESS_S16(n_exp));
+
+    int bnl = g_bn_length;
+    g_bn_length = g_bf_length;
+    int rl = g_r_length;
+    g_r_length = g_r_bf_length;
+    unsafe_square_bn(r, n);
+    g_bn_length = bnl;
+    g_r_length = rl;
+
+    int bfl = g_bf_length;
+    g_bf_length = g_r_bf_length;
+    BIG_SET16(r + g_bf_length, static_cast<S16>(r_exp + 2)); // adjust after mult
+
+    norm_sign_bf(r, true);
+    g_bf_length = bfl;
+
+    return r;
+}
+
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bigfloat
