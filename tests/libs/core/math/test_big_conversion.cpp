@@ -8,6 +8,7 @@
 #include <fractals/fractype.h>
 #include <math/big_init.h>
 #include <math/BigArena.h>
+#include <math/BigFloat.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
@@ -15,6 +16,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
+#include <string>
 #include <type_traits>
 #include <vector>
 
@@ -239,6 +241,36 @@ INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteConversion,
         BigFloatConversionInput{"NarrowMantissa", {0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}},
         BigFloatConversionInput{"SameLength", {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}}),
     [](const testing::TestParamInfo<BigFloatConversionInput> &info) { return info.param.name; });
+
+TEST(TestBigFloatDiagnosticBytes, hexDumpPrintsShiftedShortenedWorkspace)
+{
+    const int original_length = 28;
+    std::vector<Byte> workspace(static_cast<std::size_t>(original_length + 2), 0xcc);
+    const ValueSaver<int> active_length{g_bf_length, 8};
+    Byte *const shortened = workspace.data() + original_length - g_bf_length;
+    const std::array<Byte, 10> bytes{0x00, 0x09, 0x8a, 0xff, 0x12, 0x34, 0x80, 0xfe, 0xfe, 0xff};
+    std::copy(bytes.begin(), bytes.end(), shortened);
+    const std::vector<Byte> original = workspace;
+    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
+    ASSERT_GT(workspace.size(), size);
+    BigArena dump_arena{size, 2, [](Byte *) {}};
+    const BigFloat snapshot = BigFloat::from_legacy(dump_arena, shortened, size);
+    EXPECT_EQ(&dump_arena, &snapshot.arena());
+    EXPECT_NE(shortened, snapshot.data());
+    std::array<Byte, 10> observed{};
+    snapshot.copy_to_legacy(observed.data(), observed.size());
+    EXPECT_EQ(bytes, observed);
+    testing::internal::CaptureStdout();
+
+    bf_hex_dump(snapshot);
+
+    const std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ("00 09 8A FF 12 34 80 FE  e FFFE\n", output);
+    snapshot.copy_to_legacy(observed.data(), observed.size());
+    EXPECT_EQ(bytes, observed);
+    EXPECT_EQ(original, workspace);
+    EXPECT_EQ(8, g_bf_length);
+}
 
 struct BigFloatMigrationInput
 {

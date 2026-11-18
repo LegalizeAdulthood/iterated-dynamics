@@ -497,26 +497,6 @@ TEST_F(TestBigFloatValue, hexDumpPrintsHighBitMantissaAndSignedExponents)
     }
 }
 
-TEST_F(TestBigFloatValue, hexDumpPrintsShiftedShortenedWorkspace)
-{
-    const int original_length = g_bf_length;
-    ASSERT_GT(original_length, 8);
-    std::vector<Byte> workspace(static_cast<std::size_t>(original_length + 2), 0xcc);
-    const ValueSaver<int> active_length{g_bf_length, 8};
-    BigFloatPtr shortened = workspace.data() + original_length - g_bf_length;
-    const std::array<Byte, 10> bytes{0x00, 0x09, 0x8a, 0xff, 0x12, 0x34, 0x80, 0xfe, 0xfe, 0xff};
-    std::copy(bytes.begin(), bytes.end(), shortened);
-    const auto original = workspace;
-    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    ASSERT_GT(bf_arena(BigLifetime::WORKING).value_size(), size);
-    BigArena dump_arena{size, 2, [](Byte *) {}};
-
-    expect_hex_dump(BigFloat::from_legacy(dump_arena, shortened, size), "00 09 8A FF 12 34 80 FE  e FFFE");
-
-    EXPECT_EQ(original, workspace);
-    EXPECT_EQ(8, g_bf_length);
-}
-
 TEST_F(TestBigFloatValue, importsEncodedBytesWithoutMachineFloatConversion)
 {
     const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
