@@ -2212,7 +2212,23 @@ Byte *TestBigNumKernelStorage::buffer() const
     switch (std::get<1>(GetParam()))
     {
     case KernelSlot::TMP1:
-        return g_bn_tmp1.data();
+    {
+        BigArena &working = bn_arena(BigLifetime::WORKING);
+        const Byte *scratch{};
+        // Probe the working arena without committing or changing its storage.
+        working.prepare_relocation(working.value_size(), working.block_size(),
+            [&](Byte *destination, const Byte *source, std::size_t blocks)
+            {
+                std::fill_n(destination, blocks * working.block_size(), Byte{0});
+                if (is_bn_product_scratch(source))
+                {
+                    EXPECT_EQ(2U, blocks);
+                    scratch = source;
+                }
+            });
+        // The live arena storage is mutable outside the relocation callback.
+        return const_cast<Byte *>(scratch);
+    }
     case KernelSlot::TMP2:
         return g_bn_tmp2.data();
     case KernelSlot::TMP3:
@@ -2230,7 +2246,7 @@ bool TestBigNumKernelStorage::allocated() const
     switch (std::get<1>(GetParam()))
     {
     case KernelSlot::TMP1:
-        return static_cast<bool>(g_bn_tmp1);
+        return buffer() != nullptr;
     case KernelSlot::TMP2:
         return static_cast<bool>(g_bn_tmp2);
     case KernelSlot::TMP3:
@@ -2252,7 +2268,6 @@ std::size_t TestBigNumKernelStorage::reservation_size() const
 
 void TestBigNumKernelStorage::expect_owner() const
 {
-    static_assert(std::is_same_v<decltype(g_bn_tmp1), BigNumProduct>);
     static_assert(std::is_same_v<decltype(g_bn_tmp2), BigNum>);
     static_assert(std::is_same_v<decltype(g_bn_tmp3), BigNum>);
     static_assert(std::is_same_v<decltype(g_bn_tmp_copy1), BigArena::Allocation>);
@@ -2261,7 +2276,7 @@ void TestBigNumKernelStorage::expect_owner() const
     switch (std::get<1>(GetParam()))
     {
     case KernelSlot::TMP1:
-        EXPECT_EQ(&working, &g_bn_tmp1.arena());
+        EXPECT_NE(nullptr, buffer());
         break;
     case KernelSlot::TMP2:
         EXPECT_EQ(&working, &g_bn_tmp2.arena());

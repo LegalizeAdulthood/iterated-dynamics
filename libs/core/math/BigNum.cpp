@@ -13,6 +13,8 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <memory>
+#include <new>
 #include <stdexcept>
 #include <utility>
 
@@ -22,6 +24,14 @@ namespace id::math
 {
 namespace
 {
+
+BigNumProduct &bn_product_scratch()
+{
+    // First use follows arena owner initialization, so this releases its
+    // allocation before the working arena is destroyed.
+    static BigNumProduct scratch;
+    return scratch;
+}
 
 void validate_buffer(BigNumConstPtr buffer, const std::size_t size, const std::size_t required)
 {
@@ -49,6 +59,32 @@ BigArena::Allocation native_storage(BigArena &arena, const LDouble value)
 }
 
 } // namespace
+
+void init_bn_product_scratch(BigArena &working)
+{
+    BigNumProduct &scratch = bn_product_scratch();
+    if (!scratch)
+    {
+        BigNumProduct value{working};
+        std::destroy_at(&scratch);
+        ::new (&scratch) BigNumProduct{std::move(value)};
+    }
+    else
+    {
+        std::memset(scratch.data(), 0, 2 * working.block_size());
+    }
+}
+
+bool is_bn_product_scratch(const Byte *source)
+{
+    const BigNumProduct &scratch = bn_product_scratch();
+    return scratch && source == scratch.data();
+}
+
+void free_bn_product_scratch()
+{
+    bn_product_scratch() = BigNumProduct{};
+}
 
 BigNum::BigNum() noexcept = default;
 
@@ -505,14 +541,14 @@ void sub_a_bn(BigNum &result, const BigNum &source)
 
 BigNum &div_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
 {
-    div_bn(r.data(), n1.data(), n2.data(), g_bn_tmp1.data(), g_bn_tmp2.data(), g_bn_tmp3.data(), g_bn_tmp_copy1.data(),
-        g_bn_tmp_copy2.data());
+    div_bn(r.data(), n1.data(), n2.data(), bn_product_scratch().data(), g_bn_tmp2.data(), g_bn_tmp3.data(),
+        g_bn_tmp_copy1.data(), g_bn_tmp_copy2.data());
     return r;
 }
 
 BigNum &unsafe_inv_bn(BigNum &r, BigNum &n)
 {
-    unsafe_inv_bn(r.data(), n.data(), g_bn_tmp1.data(), g_bn_tmp2.data(), g_bn_tmp3.data());
+    unsafe_inv_bn(r.data(), n.data(), bn_product_scratch().data(), g_bn_tmp2.data(), g_bn_tmp3.data());
     return r;
 }
 

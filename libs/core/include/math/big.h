@@ -52,7 +52,6 @@ using BNPtrComplex = Complex<BigNumPtr>;
 using BFConstPtrComplex = Complex<BigFloatConstPtr>;
 
 class BigNum;
-class BigNumProduct;
 using BNComplex = Complex<BigNum>;
 class BigFloat;
 using BFComplex = Complex<BigFloat>;
@@ -70,7 +69,6 @@ extern int g_bf_length;
 extern int g_r_bf_length;
 extern int g_bf_decimals;
 // Kernel workspaces; active lengths may be shortened.
-extern BigNumProduct g_bn_tmp1; // g_r_length
 extern BigNum g_bn_tmp2;        // g_bn_length
 extern BigNum g_bn_tmp3;        // g_bn_length
 

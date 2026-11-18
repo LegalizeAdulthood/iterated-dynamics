@@ -47,7 +47,6 @@ int g_decimals{};
 int g_bf_length{};
 int g_r_bf_length{};
 int g_bf_decimals{};
-BigNumProduct g_bn_tmp1{};
 BigNum g_bn_tmp2{};
 BigNum g_bn_tmp3{};
 BigArena::Allocation g_bn_tmp_copy1{};
@@ -249,7 +248,7 @@ public:
     ~MathArenas();
     void change_precision(int bn_length, int bf_length, int int_length, int padding, bool preserve_parameters);
     void bind(bool preserve_parameters);
-    void unbind();
+    void unbind(bool release_bn_product_scratch);
     bool bound() const;
 
     NumericArenas big_num;
@@ -277,13 +276,7 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
         std::destroy_at(&target);
         ::new (&target) BigNum{std::move(value)};
     };
-    const auto init_big_num_product = [this](BigNumProduct &target)
-    {
-        BigNumProduct value{big_num.working};
-        std::destroy_at(&target);
-        ::new (&target) BigNumProduct{std::move(value)};
-    };
-    init_big_num_product(g_bn_tmp1);
+    init_bn_product_scratch(big_num.working);
     init_big_num(g_bn_tmp2);
     init_big_num(g_bn_tmp3);
     g_bn_tmp_copy1 = big_num.working.allocate_double();
@@ -312,7 +305,8 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
 
 MathArenas::~MathArenas()
 {
-    unbind();
+    // The private scratch owner has already released its allocation at exit.
+    unbind(false);
 }
 
 void MathArenas::change_precision(const int bn_length, const int bf_length, const int int_length, const int padding,
@@ -332,7 +326,7 @@ void MathArenas::change_precision(const int bn_length, const int bf_length, cons
             [&](Byte *destination, const Byte *source, std::size_t blocks)
             {
                 std::memset(destination, 0, blocks * bn_stride);
-                const bool mixed_workspace = (g_bn_tmp1 && source == g_bn_tmp1.data()) ||
+                const bool mixed_workspace = is_bn_product_scratch(source) ||
                     (g_bn_tmp2 && source == g_bn_tmp2.data()) || (g_bn_tmp3 && source == g_bn_tmp3.data()) ||
                     (g_bn_tmp_copy1 && source == g_bn_tmp_copy1.data()) ||
                     (g_bn_tmp_copy2 && source == g_bn_tmp_copy2.data()) ||
@@ -385,17 +379,7 @@ void MathArenas::bind(const bool preserve_parameters)
         }
         std::memset(target.data(), 0, big_num.working.block_size());
     };
-    const auto init_big_num_product = [this](BigNumProduct &target)
-    {
-        if (!target)
-        {
-            BigNumProduct value{big_num.working};
-            std::destroy_at(&target);
-            ::new (&target) BigNumProduct{std::move(value)};
-        }
-        std::memset(target.data(), 0, 2 * big_num.working.block_size());
-    };
-    init_big_num_product(g_bn_tmp1);
+    init_bn_product_scratch(big_num.working);
     init_big_num(g_bn_tmp2);
     init_big_num(g_bn_tmp3);
     const auto init_big_num_copy = [this](BigArena::Allocation &target)
@@ -485,12 +469,15 @@ void MathArenas::bind(const bool preserve_parameters)
     m_bound = true;
 }
 
-void MathArenas::unbind()
+void MathArenas::unbind(const bool release_bn_product_scratch)
 {
     m_bound = false;
     big_num.stack.restore(0);
     big_float.stack.restore(0);
-    g_bn_tmp1 = BigNumProduct{};
+    if (release_bn_product_scratch)
+    {
+        free_bn_product_scratch();
+    }
     g_bn_tmp2 = BigNum{};
     g_bn_tmp3 = BigNum{};
     g_bn_tmp_copy1.reset();
@@ -744,7 +731,7 @@ void free_bf_vars()
 {
     if (s_arenas)
     {
-        s_arenas->unbind();
+        s_arenas->unbind(true);
     }
     g_bf_math = BFMathType::NONE;
     g_bn_step = 0;

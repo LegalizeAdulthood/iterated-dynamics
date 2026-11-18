@@ -38,6 +38,10 @@ enum class BigLifetime
 BigArena &bn_arena(BigLifetime lifetime);
 BigArena &bf_arena(BigLifetime lifetime);
 
+void init_bn_product_scratch(BigArena &working);
+bool is_bn_product_scratch(const Byte *source);
+void free_bn_product_scratch();
+
 class BigStack
 {
 public:
