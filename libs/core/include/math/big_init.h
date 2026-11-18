@@ -6,7 +6,6 @@
 #include <math/BigArena.h>
 
 #include <cstddef>
-#include <stdexcept>
 #include <vector>
 
 namespace id::fractals
@@ -16,12 +15,6 @@ enum class FractalType;
 
 namespace id::math
 {
-
-class PrecisionError : public std::runtime_error
-{
-public:
-    using std::runtime_error::runtime_error;
-};
 
 // values that g_bf_math can hold,
 // 0 = g_bf_math is not being used

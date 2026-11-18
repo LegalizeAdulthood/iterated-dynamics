@@ -3,8 +3,6 @@
 //
 #include <math/BigArena.h>
 
-#include <math/big_init.h>
-
 #include <cassert>
 #include <cstring>
 #include <limits>
