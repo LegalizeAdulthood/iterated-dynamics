@@ -9,11 +9,7 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include <math/big.h>
 #include <math/BigFloat.h>
 
-#include <algorithm>
-#include <cfloat>
-#include <cmath>
 #include <cstdio>
-#include <cstring>
 
 using namespace id::misc;
 
@@ -31,110 +27,6 @@ void bf_hex_dump(const BigFloat &r)
     }
     std::printf(" e %04hX\n", static_cast<S16>(BIG_ACCESS16(r.data() + g_bf_length)));
 }
-
-/********************************************************************/
-// r = 1/n
-// uses g_bf_tmp1 - g_bf_tmp2 - global temp bigfloats
-//  SIDE-EFFECTS:
-//      n ends up as |n|/256^exp    Make copy first if necessary.
-BigFloatPtr unsafe_inv_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    bool sign_flag = false;
-
-    // use Newton's recursive method for zeroing in on 1/n : r=r(2-rn)
-
-    if (is_bf_neg(n))
-    {
-        // will be a lot easier to deal with just positives
-        sign_flag = true;
-        neg_a_bf(n);
-    }
-
-    const int f_exp = static_cast<S16>(BIG_ACCESS16(n + g_bf_length));
-    BIG_SET16(n+g_bf_length, static_cast<S16>(0)); // put within LDouble range
-
-    LDouble f = bf_to_float(n);
-    if (f == 0) // division by zero
-    {
-        max_bf(r);
-        return r;
-    }
-    f = 1/f; // approximate inverse
-
-    // With Newton's Method, there is no need to calculate all the digits
-    // every time.  The precision approximately doubles each iteration.
-    // Save original values.
-    // orig_bftmp1 not needed here
-    int orig_bf_length = g_bf_length;
-    int orig_bn_length = g_bn_length;
-    int orig_padding = g_padding;
-    int orig_r_length = g_r_length;
-    int orig_shift_factor = g_shift_factor;
-    int orig_r_bf_length = g_r_bf_length;
-    BigFloatPtr orig_r = r;
-    BigFloatPtr orig_n = n;
-    // orig_bftmp1        = g_bf_tmp1;
-
-    // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
-    g_bn_length = std::min(g_bn_length, orig_bn_length);
-    calc_lengths();
-
-    // adjust pointers
-    r = orig_r + orig_bf_length - g_bf_length;
-    // g_bf_tmp1 = orig_bftmp1 + orig_bf_length - g_bf_length;
-
-    float_to_bf(r, f); // start with approximate inverse
-
-    for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
-    {
-        // adjust lengths
-        g_bn_length <<= 1; // double precision
-        g_bn_length = std::min(g_bn_length, orig_bn_length);
-        calc_lengths();
-        r = orig_r + orig_bf_length - g_bf_length;
-        n = orig_n + orig_bf_length - g_bf_length;
-        // g_bf_tmp1 = orig_bftmp1 + orig_bf_length - g_bf_length;
-
-        unsafe_mult_bf(g_bf_tmp1.data(), r, n); // g_bf_tmp1=rn
-        int_to_bf(g_bf_tmp2.data(), 1);         // will be used as 1.0
-
-        // There seems to very little difficulty getting g_bf_tmp1 to be EXACTLY 1
-        if (g_bf_length == orig_bf_length && cmp_bf(g_bf_tmp1.data(), g_bf_tmp2.data()) == 0)
-        {
-            break;
-        }
-
-        int_to_bf(g_bf_tmp2.data(), 2);                        // will be used as 2.0
-        unsafe_sub_a_bf(g_bf_tmp2.data(), g_bf_tmp1.data());   // g_bf_tmp2=2-rn
-        unsafe_mult_bf(g_bf_tmp1.data(), r, g_bf_tmp2.data()); // g_bf_tmp1=r(2-rn)
-        copy_bf(r, g_bf_tmp1.data());                          // r = g_bf_tmp1
-    }
-
-    // restore original values
-    g_bf_length      = orig_bf_length;
-    g_bn_length   = orig_bn_length;
-    g_padding     = orig_padding;
-    g_r_length    = orig_r_length;
-    g_shift_factor = orig_shift_factor;
-    g_r_bf_length = orig_r_bf_length;
-    r             = orig_r;
-    // g_bf_tmp1        = orig_bftmp1;
-
-    if (sign_flag)
-    {
-        neg_a_bf(r);
-    }
-    int r_exp = static_cast<S16>(BIG_ACCESS16(r + g_bf_length));
-    r_exp -= f_exp;
-    BIG_SET16(r+g_bf_length, static_cast<S16>(r_exp)); // adjust result exponent
-    return r;
-}
-
-
-
-
-
 
 /**********************************************************************/
 // The rest of the functions are "safe" versions of the routines that

@@ -146,7 +146,7 @@ BigFloatPtr divide(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
         return r;
     }
 
-    unsafe_inv_bf(r, n2);
+    unsafe_inv_bf(r, n2, g_bf_tmp1.data(), g_bf_tmp2.data());
     multiply(g_bf_tmp1.data(), n1, r);
     copy_bf(r, g_bf_tmp1.data()); // r = g_bf_tmp1
 
@@ -485,7 +485,7 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
     const bool large_arg = f > 1.0;
     if (large_arg)
     {
-        unsafe_inv_bf(g_bf_tmp3.data(), n);
+        unsafe_inv_bf(g_bf_tmp3.data(), n, g_bf_tmp1.data(), g_bf_tmp2.data());
         copy_bf(n, g_bf_tmp3.data());
         f = bf_to_float(n);
     }
@@ -1056,6 +1056,12 @@ BigFloat &half_bf(BigFloat &r, const BigFloat &n)
 BigFloat &half_a_bf(BigFloat &r)
 {
     half_a_bf(r.data());
+    return r;
+}
+
+BigFloat &unsafe_inv_bf(BigFloat &r, BigFloat &n)
+{
+    unsafe_inv_bf(r.data(), n.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
     return r;
 }
 

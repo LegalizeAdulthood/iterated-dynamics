@@ -628,6 +628,47 @@ INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteHalving,
         BigFloatByteHalvingInput{{0, 0xfe, 0xff, 0, 0}, {0, 0, 0xff, 0xff, 0xff}},
         BigFloatByteHalvingInput{{0, 0xfd, 0xff, 0, 0}, {0x80, 0xfe, 0xff, 0, 0}, 3, 1}));
 
+class TestBigFloatByteReciprocal : public TestBigNumConversionBase, public testing::WithParamInterface<int>
+{
+};
+
+TEST_P(TestBigFloatByteReciprocal, restoresPrecisionAndKeepsDestructiveWindowEffects)
+{
+    init_bf_length(GetParam());
+    const int size = g_bf_length + 2;
+    const std::array<int, 6> lengths{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+    constexpr std::array<Byte, 4> source_tail{0xfe, 0xff, 1, 0}; // -2 * 256
+    constexpr std::array<Byte, 4> result_tail{0x80, 0xff, 0xfe, 0xff};
+    std::vector<Byte> source(size + 2);
+    std::copy(source_tail.begin(), source_tail.end(), source.begin() + size - 4);
+    source.back() = 0xa5;
+    std::vector<Byte> result(size + 2);
+    std::fill(result.begin() + size, result.end(), Byte{0xa5});
+
+    std::vector<Byte> tmp1(size + 2, 0xa5);
+    std::vector<Byte> tmp2(size + 2, 0xa5);
+
+    EXPECT_EQ(result.data(), unsafe_inv_bf(result.data(), source.data(), tmp1.data(), tmp2.data()));
+
+    std::vector<Byte> expected_source(size + 2);
+    expected_source[size - 4] = 2;
+    expected_source.back() = 0xa5;
+    std::vector<Byte> expected_result(size + 2);
+    std::copy(result_tail.begin(), result_tail.end(), expected_result.begin() + size - 4);
+    std::fill(expected_result.begin() + size, expected_result.end(), Byte{0xa5});
+    EXPECT_EQ(expected_source, source);
+    EXPECT_EQ(expected_result, result);
+    std::vector<Byte> expected_tmp(size + 2);
+    expected_tmp[size - 4] = 1;
+    std::fill(expected_tmp.begin() + size, expected_tmp.end(), Byte{0xa5});
+    EXPECT_EQ(expected_tmp, tmp1);
+    EXPECT_EQ(expected_tmp, tmp2);
+    EXPECT_EQ(
+        lengths, (std::array<int, 6>{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+}
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatByteReciprocal, testing::Values(4, 64));
+
 struct BigNumConversionInput
 {
     const char *name;

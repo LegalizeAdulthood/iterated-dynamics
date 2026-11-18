@@ -176,7 +176,7 @@ Byte *int_to_bf(Byte *r, long value);
 int sign_bf(const Byte *n);
 Byte *abs_bf(Byte *r, const Byte *n);
 Byte *abs_a_bf(Byte *r);
-BigFloatPtr unsafe_inv_bf(BigFloatPtr r, BigFloatPtr n);
+Byte *unsafe_inv_bf(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2);
 BigFloatPtr unsafe_div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2);
 BigFloatPtr exp_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr unsafe_ln_bf(BigFloatPtr r, BigFloatPtr n);

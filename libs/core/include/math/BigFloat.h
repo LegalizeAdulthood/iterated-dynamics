@@ -169,6 +169,8 @@ BigFloat &double_bf(BigFloat &r, const BigFloat &n);
 BigFloat &double_a_bf(BigFloat &r);
 BigFloat &half_bf(BigFloat &r, const BigFloat &n);
 BigFloat &half_a_bf(BigFloat &r);
+// r and n are distinct. The input is made positive and its exponent cleared.
+BigFloat &unsafe_inv_bf(BigFloat &r, BigFloat &n);
 BigFloat &str_to_bf(BigFloat &r, std::string_view text);
 BigFloat &int_to_bf(BigFloat &r, long value);
 BigFloat &float_to_bf(BigFloat &r, LDouble value);

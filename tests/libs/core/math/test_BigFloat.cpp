@@ -1136,6 +1136,54 @@ TEST_P(TestBigFloatHalving, preservesSourceDestinationIdentityAndPadding)
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatHalving, testing::Values(4, 64, 708));
 
+class TestBigFloatReciprocal : public TestBigFloatValue, public testing::WithParamInterface<LDouble>
+{
+};
+
+TEST_P(TestBigFloatReciprocal, returnsExistingDestinationAndMakesSourcePositive)
+{
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    BigFloat source{arena, GetParam()};
+    BigFloat result{arena};
+    const BigFloat expected_source{arena, 2.0L};
+    const BigFloat expected_result{arena, GetParam() < 0 ? -0.5L : 0.5L};
+    const std::size_t size = arena.value_size();
+    const std::size_t stride = arena.block_size();
+    std::fill(result.data() + size, result.data() + stride, Byte{0xa5});
+    const Byte *const address = result.data();
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(&result, &unsafe_inv_bf(result, source));
+
+    EXPECT_EQ(encoded_value(expected_result), encoded_value(result));
+    EXPECT_EQ(encoded_value(expected_source), encoded_value(source));
+    EXPECT_EQ(address, result.data());
+    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(result.data() + size, result.data() + stride));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(Signs, TestBigFloatReciprocal, testing::Values(-2.0L, 2.0L));
+
+TEST_F(TestBigFloatValue, reciprocalOfZeroSaturatesInPlace)
+{
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    BigFloat source{arena};
+    BigFloat result{arena, 1.0L};
+    constexpr int exponent = std::numeric_limits<LDouble>::max_exponent / 8;
+    const int size = g_bf_length + 2;
+    std::vector<Byte> expected(size);
+    expected[size - 4] = 1;
+    expected[size - 2] = static_cast<Byte>(exponent);
+    expected[size - 1] = static_cast<Byte>(exponent >> 8);
+
+    EXPECT_EQ(&result, &unsafe_inv_bf(result, source));
+
+    EXPECT_EQ(expected, encoded_value(result));
+    EXPECT_EQ(std::vector<Byte>(size), encoded_value(source));
+}
+
 TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
 {
     BigFloat left{"-7.5"};
