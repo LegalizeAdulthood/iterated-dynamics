@@ -15,7 +15,6 @@ namespace id::math
 {
 
 class BigNum;
-class BigFloatProduct;
 
 class BigFloat
 {
@@ -25,7 +24,6 @@ public:
     explicit BigFloat(LDouble value);
     explicit BigFloat(std::string_view text);
     explicit BigFloat(const BigNum &value);
-    explicit BigFloat(BigFloatProduct &&value);
     explicit BigFloat(BigArena &arena);
     BigFloat(BigArena &arena, LDouble value);
     BigFloat(BigArena &arena, std::string_view text);
@@ -103,45 +101,6 @@ private:
         return arena().value_size();
     }
 
-    BigArena::Allocation m_storage;
-};
-
-class BigFloatProduct
-{
-public:
-    BigFloatProduct() noexcept;
-    explicit BigFloatProduct(BigArena &arena);
-    BigFloatProduct(const BigFloatProduct &value);
-    BigFloatProduct(BigArena &arena, const BigFloatProduct &value);
-    BigFloatProduct(BigFloatProduct &&value) noexcept;
-    BigFloatProduct &operator=(const BigFloatProduct &value);
-    BigFloatProduct &operator=(BigFloatProduct &&value);
-
-    explicit operator bool() const noexcept
-    {
-        return static_cast<bool>(m_storage);
-    }
-
-    BigArena &arena() const noexcept
-    {
-        return m_storage.arena();
-    }
-
-    BigFloatPtr data() noexcept
-    {
-        return m_storage.data();
-    }
-
-    BigFloatConstPtr data() const noexcept
-    {
-        return m_storage.data();
-    }
-
-    // Consume the product, reduce its bytes, and release its companion slot.
-    BigArena::Allocation release_reduced_storage() &&;
-
-private:
-    // g_r_bf_length mantissa bytes and the exponent in two slots.
     BigArena::Allocation m_storage;
 };
 
