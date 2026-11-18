@@ -1667,7 +1667,7 @@ Byte *abs_a_bf(Byte *r)
 }
 
 // Align both mantissas in place; return their common exponent.
-S16 align_exponents(Byte *n1, Byte *n2)
+static S16 align_exponents(Byte *n1, Byte *n2)
 {
     int scale;
     int fill_byte;
@@ -1766,6 +1766,56 @@ Byte *unsafe_add_a_bf(Byte *r, Byte *n)
 
     norm_bf(r);
 
+    return r;
+}
+
+// SIDE-EFFECTS: n1 and n2 can be "de-normalized" and lose precision
+Byte *unsafe_sub_bf(Byte *r, Byte *n1, Byte *n2)
+{
+    if (is_bf_zero(n1))
+    {
+        neg_bf(r, n2);
+        return r;
+    }
+    if (is_bf_zero(n2))
+    {
+        copy_bf(r, n1);
+        return r;
+    }
+
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
+    BIG_SET_S16(r_exp, align_exponents(n1, n2));
+
+    int bnl = g_bn_length;
+    g_bn_length = g_bf_length;
+    sub_bn(r, n1, n2);
+    g_bn_length = bnl;
+
+    norm_bf(r);
+    return r;
+}
+
+// r -= n
+Byte *unsafe_sub_a_bf(Byte *r, Byte *n)
+{
+    if (is_bf_zero(r))
+    {
+        neg_bf(r, n);
+        return r;
+    }
+    if (is_bf_zero(n))
+    {
+        return r;
+    }
+
+    align_exponents(r, n);
+
+    int bnl = g_bn_length;
+    g_bn_length = g_bf_length;
+    sub_a_bn(r, n);
+    g_bn_length = bnl;
+
+    norm_bf(r);
     return r;
 }
 

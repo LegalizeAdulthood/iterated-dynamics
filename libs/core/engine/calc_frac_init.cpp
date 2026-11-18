@@ -425,10 +425,10 @@ void adjust_corner_bf()
     }
 
     // ftemp=fabs(xx3rd-xxmin);
-    abs_a_bf(sub_bf(bf_temp.data(), g_bf_x_3rd.data(), g_bf_x_min.data()));
+    abs_a_bf(sub_bf(bf_temp, g_bf_x_3rd, g_bf_x_min));
 
     // ftemp2=fabs(xxmax-xx3rd);
-    abs_a_bf(sub_bf(bf_temp2.data(), g_bf_x_max.data(), g_bf_x_3rd.data()));
+    abs_a_bf(sub_bf(bf_temp2, g_bf_x_max, g_bf_x_3rd));
 
     // if ( (ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd)) )
     if (bf_temp < bf_temp2)
@@ -449,10 +449,10 @@ void adjust_corner_bf()
     }
 
     // ftemp=fabs(yy3rd-yymin);
-    abs_a_bf(sub_bf(bf_temp.data(), g_bf_y_3rd.data(), g_bf_y_min.data()));
+    abs_a_bf(sub_bf(bf_temp, g_bf_y_3rd, g_bf_y_min));
 
     // ftemp2=fabs(yymax-yy3rd);
-    abs_a_bf(sub_bf(bf_temp2.data(), g_bf_y_max.data(), g_bf_y_3rd.data()));
+    abs_a_bf(sub_bf(bf_temp2, g_bf_y_max, g_bf_y_3rd));
 
     // if ( (ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd)) )
     if (bf_temp < bf_temp2)
@@ -570,7 +570,7 @@ static bool adjust_to_limits_bf(const double expand)
         // ohoh, infinitely thin, fix it
         smallest_add_bf(g_bf_x_max);
         // bfxmin -= bfxmax-center_x;
-        sub_a_bf(g_bf_x_min.data(), sub_bf(b_tmp1.data(), g_bf_x_max.data(), b_center_x.data()));
+        sub_a_bf(g_bf_x_min, sub_bf(b_tmp1, g_bf_x_max, b_center_x));
     }
 
     // if (bfymin == center_y)
@@ -578,7 +578,7 @@ static bool adjust_to_limits_bf(const double expand)
     {
         smallest_add_bf(g_bf_y_max);
         // bfymin -= bfymax-center_y;
-        sub_a_bf(g_bf_y_min.data(), sub_bf(b_tmp1.data(), g_bf_y_max.data(), b_center_y.data()));
+        sub_a_bf(g_bf_y_min, sub_bf(b_tmp1, g_bf_y_max, b_center_y));
     }
 
     // if (bfx3rd == center_x)
@@ -604,7 +604,7 @@ static bool adjust_to_limits_bf(const double expand)
     copy_bf(b_corner_x[2], g_bf_x_3rd);
 
     // corner_x[3] = xxmin+(xxmax-xx3rd);
-    sub_bf(b_corner_x[3].data(), g_bf_x_max.data(), g_bf_x_3rd.data());
+    sub_bf(b_corner_x[3], g_bf_x_max, g_bf_x_3rd);
     add_a_bf(b_corner_x[3], g_bf_x_min);
 
     // corner_y[0] = yymax;
@@ -617,7 +617,7 @@ static bool adjust_to_limits_bf(const double expand)
     copy_bf(b_corner_y[2], g_bf_y_3rd);
 
     // corner_y[3] = yymin+(yymax-yy3rd);
-    sub_bf(b_corner_y[3].data(), g_bf_y_max.data(), g_bf_y_3rd.data());
+    sub_bf(b_corner_y[3], g_bf_y_max, g_bf_y_3rd);
     add_a_bf(b_corner_y[3], g_bf_y_min);
 
     // if caller wants image size adjusted, do that first
@@ -744,17 +744,17 @@ static bool adjust_to_limits_bf(const double expand)
     const bool translated = (b_adj_x != BigFloat{0}) || (b_adj_y != BigFloat{0});
 
     // xxmin = corner_x[0] - adj_x;
-    sub_bf(g_bf_x_min.data(), b_corner_x[0].data(), b_adj_x.data());
+    sub_bf(g_bf_x_min, b_corner_x[0], b_adj_x);
     // xxmax = corner_x[1] - adj_x;
-    sub_bf(g_bf_x_max.data(), b_corner_x[1].data(), b_adj_x.data());
+    sub_bf(g_bf_x_max, b_corner_x[1], b_adj_x);
     // xx3rd = corner_x[2] - adj_x;
-    sub_bf(g_bf_x_3rd.data(), b_corner_x[2].data(), b_adj_x.data());
+    sub_bf(g_bf_x_3rd, b_corner_x[2], b_adj_x);
     // yymax = corner_y[0] - adj_y;
-    sub_bf(g_bf_y_max.data(), b_corner_y[0].data(), b_adj_y.data());
+    sub_bf(g_bf_y_max, b_corner_y[0], b_adj_y);
     // yymin = corner_y[1] - adj_y;
-    sub_bf(g_bf_y_min.data(), b_corner_y[1].data(), b_adj_y.data());
+    sub_bf(g_bf_y_min, b_corner_y[1], b_adj_y);
     // yy3rd = corner_y[2] - adj_y;
-    sub_bf(g_bf_y_3rd.data(), b_corner_y[2].data(), b_adj_y.data());
+    sub_bf(g_bf_y_3rd, b_corner_y[2], b_adj_y);
 
     adjust_corner_bf(); // make 3rd corner exact if very near other co-ords
     return translated;

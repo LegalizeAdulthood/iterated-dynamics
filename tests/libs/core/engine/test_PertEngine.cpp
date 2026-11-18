@@ -12904,8 +12904,8 @@ TEST_F(TestPerturbationPixels, highPrecisionFixedOrbitPreservesSmallParameterOff
         BFComplex displacement{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
         float_to_bf(displacement.x, 0.25);
         float_to_bf(displacement.y, 0.125);
-        sub_bf(displacement.x.data(), z.x.data(), displacement.x.data());
-        sub_bf(displacement.y.data(), z.y.data(), displacement.y.data());
+        sub_bf(displacement.x, z.x, displacement.x);
+        sub_bf(displacement.y, z.y, displacement.y);
         s_reference_coordinates.emplace_back(bf_to_float(displacement.x), bf_to_float(displacement.y));
         mandel_ref_pt_bf(parameter, z);
     };
@@ -13835,7 +13835,7 @@ void TestDeepPerturbationGeometry::initialize_corners()
         BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
         str_to_bf(offset, "3e-400");
         int_to_bf(g_bf_x_min, -2);
-        sub_a_bf(g_bf_x_min.data(), offset.data());
+        sub_a_bf(g_bf_x_min, offset);
         int_to_bf(g_bf_x_max, -2);
         add_a_bf(g_bf_x_max, offset);
     }
@@ -13972,7 +13972,7 @@ TEST_F(TestDeepPerturbationGeometry, frameRetainsPreciseGeometryForReplacementRe
         BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
         str_to_bf(offset, "1e-400");
         int_to_bf(g_bf_x_3rd, -2);
-        sub_a_bf(g_bf_x_3rd.data(), offset.data());
+        sub_a_bf(g_bf_x_3rd, offset);
     }
     initialize_frame();
     int_to_bf(g_bf_x_min, -2);

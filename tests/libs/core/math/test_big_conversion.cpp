@@ -317,6 +317,62 @@ INSTANTIATE_TEST_SUITE_P(Alignment, TestBigFloatByteAddition,
         BigFloatByteAdditionInput{{0, 0x80, 0, 0xff, 0xff}, {0x40, 1, 0, 0, 0}, {0x40, 1, 0, 0, 0}, {0xc0, 1, 0, 0, 0}},
         BigFloatByteAdditionInput{{0x40, 1, 0, 0, 0}, {0, 1, 0, 0xf8, 0xff}, {}, {0x40, 1, 0, 0, 0}}));
 
+struct BigFloatByteSubtractionInput
+{
+    std::array<Byte, 5> left_tail;
+    std::array<Byte, 5> right_tail;
+    std::array<Byte, 5> aligned_right_tail;
+    std::array<Byte, 5> result_tail;
+};
+
+class TestBigFloatByteSubtraction : public testing::TestWithParam<BigFloatByteSubtractionInput>
+{
+};
+
+TEST_P(TestBigFloatByteSubtraction, preservesExtentAndAlignsScratchOperands)
+{
+    constexpr int length = 8;
+    constexpr int size = length + 2;
+    const ValueSaver<int> bf_length{g_bf_length, length};
+    const ValueSaver<int> bn_length{g_bn_length, 4};
+    const BigFloatByteSubtractionInput &input = GetParam();
+    alignas(U16) std::array<Byte, size + 2> left{};
+    alignas(U16) std::array<Byte, size + 2> right{};
+    std::copy(input.left_tail.begin(), input.left_tail.end(), left.begin() + size - 5);
+    std::copy(input.right_tail.begin(), input.right_tail.end(), right.begin() + size - 5);
+    left.back() = 0x5a;
+    right.back() = 0xa5;
+    const std::array<Byte, size + 2> original_left = left;
+    const std::array<Byte, size + 2> original_right = right;
+    std::array<Byte, size + 2> expected{};
+    std::array<Byte, size + 2> expected_right{};
+    std::copy(input.result_tail.begin(), input.result_tail.end(), expected.begin() + size - 5);
+    std::copy(input.aligned_right_tail.begin(), input.aligned_right_tail.end(), expected_right.begin() + size - 5);
+    expected.back() = 0x5a;
+    expected_right.back() = 0xa5;
+    alignas(U16) std::array<Byte, size + 2> result{};
+    result.back() = 0x5a;
+
+    EXPECT_EQ(result.data(), unsafe_sub_bf(result.data(), left.data(), right.data()));
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(original_left, left);
+    EXPECT_EQ(expected_right, right);
+    EXPECT_EQ(4, g_bn_length);
+
+    right = original_right;
+    EXPECT_EQ(left.data(), unsafe_sub_a_bf(left.data(), right.data()));
+    EXPECT_EQ(expected, left);
+    EXPECT_EQ(expected_right, right);
+    EXPECT_EQ(4, g_bn_length);
+    EXPECT_EQ(length, g_bf_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(Operations, TestBigFloatByteSubtraction,
+    testing::Values(BigFloatByteSubtractionInput{{0x40, 1, 0, 0, 0}, {0, 0x80, 0xff, 0xff, 0xff},
+                        {0x80, 0xff, 0xff, 0, 0}, {0xc0, 1, 0, 0, 0}},
+        BigFloatByteSubtractionInput{{}, {0, 1, 0, 0, 0}, {0, 1, 0, 0, 0}, {0, 0, 0xff, 0xff, 0xff}},
+        BigFloatByteSubtractionInput{{0x40, 1, 0, 0, 0}, {}, {}, {0x40, 1, 0, 0, 0}}));
+
 struct BigNumConversionInput
 {
     const char *name;

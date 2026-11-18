@@ -66,9 +66,9 @@ CommandResult flip_image(MainContext &context)
         if (g_bf_math != BFMathType::NONE)
         {
             add_bf(g_bf_save_x_min, g_bf_x_max, g_bf_x_min); // sxmin = xxmax + xxmin - xx3rd;
-            sub_a_bf(g_bf_save_x_min.data(), g_bf_x_3rd.data());
+            sub_a_bf(g_bf_save_x_min, g_bf_x_3rd);
             add_bf(g_bf_save_y_max, g_bf_y_max, g_bf_y_min); // symax = yymax + yymin - yy3rd;
-            sub_a_bf(g_bf_save_y_max.data(), g_bf_y_3rd.data());
+            sub_a_bf(g_bf_save_y_max, g_bf_y_3rd);
             copy_bf(g_bf_save_x_max, g_bf_x_3rd);                                 // sxmax = xx3rd;
             copy_bf(g_bf_save_y_min, g_bf_y_3rd);                                 // symin = yy3rd;
             copy_bf(g_bf_save_x_3rd, g_bf_x_max);                                 // sx3rd = xxmax;
@@ -100,9 +100,9 @@ CommandResult flip_image(MainContext &context)
             copy_bf(g_bf_save_x_min, g_bf_x_3rd);                                 // sxmin = xx3rd;
             copy_bf(g_bf_save_y_max, g_bf_y_3rd);                                 // symax = yy3rd;
             add_bf(g_bf_save_x_max, g_bf_x_max, g_bf_x_min); // sxmax = xxmax + xxmin - xx3rd;
-            sub_a_bf(g_bf_save_x_max.data(), g_bf_x_3rd.data());
+            sub_a_bf(g_bf_save_x_max, g_bf_x_3rd);
             add_bf(g_bf_save_y_min, g_bf_y_max, g_bf_y_min); // symin = yymax + yymin - yy3rd;
-            sub_a_bf(g_bf_save_y_min.data(), g_bf_y_3rd.data());
+            sub_a_bf(g_bf_save_y_min, g_bf_y_3rd);
             copy_bf(g_bf_save_x_3rd, g_bf_x_min);                                 // sx3rd = xxmin;
             copy_bf(g_bf_save_y_3rd, g_bf_y_max);                                 // sy3rd = yymax;
         }
@@ -131,9 +131,9 @@ CommandResult flip_image(MainContext &context)
             copy_bf(g_bf_save_x_max, g_bf_x_min);                                 // sxmax = xxmin;
             copy_bf(g_bf_save_y_min, g_bf_y_max);                                 // symin = yymax;
             add_bf(g_bf_save_x_3rd, g_bf_x_max, g_bf_x_min); // sx3rd = xxmax + xxmin - xx3rd;
-            sub_a_bf(g_bf_save_x_3rd.data(), g_bf_x_3rd.data());
+            sub_a_bf(g_bf_save_x_3rd, g_bf_x_3rd);
             add_bf(g_bf_save_y_3rd, g_bf_y_max, g_bf_y_min); // sy3rd = yymax + yymin - yy3rd;
-            sub_a_bf(g_bf_save_y_3rd.data(), g_bf_y_3rd.data());
+            sub_a_bf(g_bf_save_y_3rd, g_bf_y_3rd);
         }
         break;
     }

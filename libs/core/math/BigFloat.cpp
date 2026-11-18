@@ -93,54 +93,19 @@ void validate_buffer(BigFloatConstPtr buffer, const std::size_t size, const std:
     }
 }
 
-// SIDE-EFFECTS: n1 and n2 can be "de-normalized" and lose precision
-BigFloatPtr subtract(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
+BigFloatPtr binary_operation(BigFloatPtr result, BigFloatConstPtr left, BigFloatConstPtr right,
+    BigFloatPtr (*operation)(BigFloatPtr, BigFloatPtr, BigFloatPtr))
 {
-    if (is_bf_zero(n1))
-    {
-        neg_bf(r, n2);
-        return r;
-    }
-    if (is_bf_zero(n2))
-    {
-        copy_bf(r, n1);
-        return r;
-    }
-
-    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
-    BIG_SET_S16(r_exp, align_exponents(n1, n2));
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    sub_bn(r, n1, n2);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
+    copy_bf(g_bf_tmp_copy1.data(), left);
+    copy_bf(g_bf_tmp_copy2.data(), right);
+    return operation(result, g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data());
 }
 
-// r -= n
-BigFloatPtr subtract_assign(BigFloatPtr r, BigFloatPtr n)
+BigFloatPtr compound_operation(
+    BigFloatPtr result, BigFloatConstPtr right, BigFloatPtr (*operation)(BigFloatPtr, BigFloatPtr))
 {
-    if (is_bf_zero(r))
-    {
-        neg_bf(r, n);
-        return r;
-    }
-    if (is_bf_zero(n))
-    {
-        return r;
-    }
-
-    align_exponents(r, n);
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    sub_a_bn(r, n);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
+    copy_bf(g_bf_tmp_copy1.data(), right);
+    return operation(result, g_bf_tmp_copy1.data());
 }
 
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
@@ -704,7 +669,7 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
     if (large_arg)
     {
         half_bf(bf_tmp3, bf_pi);   // pi/2
-        sub_a_bf(bf_tmp3, r);      // pi/2 - atan(1/n)
+        compound_operation(bf_tmp3, r, unsafe_sub_a_bf); // pi/2 - atan(1/n)
         copy_bf(r, bf_tmp3);
     }
 
@@ -755,28 +720,13 @@ BigFloatPtr arctangent2(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
     arctangent(r, g_bf_tmp6.data());
     if (sign_x < 0)
     {
-        sub_bf(r, g_bf_pi.data(), r);
+        binary_operation(r, g_bf_pi.data(), r, unsafe_sub_bf);
     }
     if (sign_y < 0)
     {
         neg_a_bf(r);
     }
     return r;
-}
-
-BigFloatPtr binary_operation(BigFloatPtr result, BigFloatConstPtr left, BigFloatConstPtr right,
-    BigFloatPtr (*operation)(BigFloatPtr, BigFloatPtr, BigFloatPtr))
-{
-    copy_bf(g_bf_tmp_copy1.data(), left);
-    copy_bf(g_bf_tmp_copy2.data(), right);
-    return operation(result, g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data());
-}
-
-BigFloatPtr compound_operation(
-    BigFloatPtr result, BigFloatConstPtr right, BigFloatPtr (*operation)(BigFloatPtr, BigFloatPtr))
-{
-    copy_bf(g_bf_tmp_copy1.data(), right);
-    return operation(result, g_bf_tmp_copy1.data());
 }
 
 void validate_scalar(const LDouble value)
@@ -933,8 +883,7 @@ BigFloat &BigFloat::operator+=(const BigFloat &right)
 
 BigFloat &BigFloat::operator-=(const BigFloat &right)
 {
-    compound_operation(m_storage.data(), right.m_storage.data(), subtract_assign);
-    return *this;
+    return sub_a_bf(*this, right);
 }
 
 BigFloat &BigFloat::operator*=(const BigFloat &right)
@@ -965,7 +914,7 @@ BigFloat BigFloat::operator+(const BigFloat &right) const
 BigFloat BigFloat::operator-(const BigFloat &right) const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), subtract);
+    sub_bf(result, *this, right);
     return result;
 }
 
@@ -1119,6 +1068,18 @@ BigFloat &add_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2)
 BigFloat &add_a_bf(BigFloat &r, const BigFloat &n)
 {
     compound_operation(r.data(), n.data(), unsafe_add_a_bf);
+    return r;
+}
+
+BigFloat &sub_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2)
+{
+    binary_operation(r.data(), n1.data(), n2.data(), unsafe_sub_bf);
+    return r;
+}
+
+BigFloat &sub_a_bf(BigFloat &r, const BigFloat &n)
+{
+    compound_operation(r.data(), n.data(), unsafe_sub_a_bf);
     return r;
 }
 
@@ -1373,16 +1334,6 @@ BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr y, BigFloatPtr x)
     return arctangent2(r, y, x);
 }
 
-BigFloatPtr unsafe_sub_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    return subtract(r, n1, n2);
-}
-
-BigFloatPtr unsafe_sub_a_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    return subtract_assign(r, n);
-}
-
 BigFloatPtr unsafe_mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 {
     return multiply(r, n1, n2);
@@ -1393,11 +1344,6 @@ BigFloatPtr unsafe_div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
     return divide(r, n1, n2);
 }
 
-BigFloatPtr sub_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    return binary_operation(r, n1, n2, subtract);
-}
-
 BigFloatPtr mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 {
     return binary_operation(r, n1, n2, multiply);
@@ -1406,11 +1352,6 @@ BigFloatPtr mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 BigFloatPtr div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 {
     return binary_operation(r, n1, n2, divide);
-}
-
-BigFloatPtr sub_a_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    return compound_operation(r, n, subtract_assign);
 }
 
 } // namespace id::math

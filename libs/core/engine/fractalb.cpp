@@ -206,8 +206,8 @@ std::string format_aspect(const char *s)
     BigFloat bt1{bf_arena(BigLifetime::TEMPORARY)};
     BigFloat bt2{bf_arena(BigLifetime::TEMPORARY)};
     BigFloat aspect{bf_arena(BigLifetime::TEMPORARY)};
-    sub_bf(bt1.data(), g_bf_x_max.data(), g_bf_x_min.data());
-    sub_bf(bt2.data(), g_bf_y_max.data(), g_bf_y_min.data());
+    sub_bf(bt1, g_bf_x_max, g_bf_x_min);
+    sub_bf(bt2, g_bf_y_max, g_bf_y_min);
     div_bf(aspect.data(), bt2.data(), bt1.data());
     return fmt::format("aspect {:s}\n"
                        "float  {:13.10f}\n"
@@ -395,19 +395,19 @@ bool mandel_per_image_bf()
     g_bf_math = BFMathType::BIG_FLT;
 
     // g_delta_x_bf = (g_bf_x_max - g_bf_x_3rd)/(xdots-1)
-    sub_bf(g_delta_x_bf.data(), g_bf_x_max.data(), g_bf_x_3rd.data());
+    sub_bf(g_delta_x_bf, g_bf_x_max, g_bf_x_3rd);
     g_delta_x_bf /= static_cast<U16>(g_logical_screen.x_dots - 1);
 
     // g_delta_y_bf = (g_bf_y_max - g_bf_y_3rd)/(ydots-1)
-    sub_bf(g_delta_y_bf.data(), g_bf_y_max.data(), g_bf_y_3rd.data());
+    sub_bf(g_delta_y_bf, g_bf_y_max, g_bf_y_3rd);
     g_delta_y_bf /= static_cast<U16>(g_logical_screen.y_dots - 1);
 
     // g_delta2_x_bf = (g_bf_x_3rd - g_bf_x_min)/(ydots-1)
-    sub_bf(g_delta2_x_bf.data(), g_bf_x_3rd.data(), g_bf_x_min.data());
+    sub_bf(g_delta2_x_bf, g_bf_x_3rd, g_bf_x_min);
     g_delta2_x_bf /= static_cast<U16>(g_logical_screen.y_dots - 1);
 
     // g_delta2_y_bf = (g_bf_y_3rd - g_bf_y_min)/(xdots-1)
-    sub_bf(g_delta2_y_bf.data(), g_bf_y_3rd.data(), g_bf_y_min.data());
+    sub_bf(g_delta2_y_bf, g_bf_y_3rd, g_bf_y_min);
     g_delta2_y_bf /= static_cast<U16>(g_logical_screen.x_dots - 1);
 
     abs_bf(g_close_enough_bf, g_delta_x_bf);
@@ -574,7 +574,7 @@ int mandel_per_pixel_bf()
     g_old_z_bf.x = g_delta_y_bf * static_cast<U16>(g_row);
     g_old_z_bf.y = g_delta2_y_bf * static_cast<U16>(g_col);
     g_old_z_bf.x += g_old_z_bf.y;
-    sub_bf(g_param_z_bf.y.data(), g_bf_y_max.data(), g_old_z_bf.x.data());
+    sub_bf(g_param_z_bf.y, g_bf_y_max, g_old_z_bf.x);
 
     if ((g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDEL_Z_POWER) &&
         g_use_init_orbit == InitOrbitMode::VALUE)
@@ -656,7 +656,7 @@ int julia_per_pixel_bf()
     g_new_z_bf.x = g_delta_y_bf * static_cast<U16>(g_row);
     g_new_z_bf.y = g_delta2_y_bf * static_cast<U16>(g_col);
     g_new_z_bf.x += g_new_z_bf.y;
-    sub_bf(g_old_z_bf.y.data(), g_bf_y_max.data(), g_new_z_bf.x.data());
+    sub_bf(g_old_z_bf.y, g_bf_y_max, g_new_z_bf.x);
 
     // square has side effect - must copy first
     g_new_z_bf.x = g_old_z_bf.x;

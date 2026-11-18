@@ -232,9 +232,9 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
         add_bf(expected.x, powered.x, center.x);
         add_bf(expected.y, powered.y, center.y);
         mandel_z_power_ref_pt_bf(center, actual);
-        sub_bf(difference.data(), actual.x.data(), expected.x.data());
+        sub_bf(difference, actual.x, expected.x);
         EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-50);
-        sub_bf(difference.data(), actual.y.data(), expected.y.data());
+        sub_bf(difference, actual.y, expected.y);
         EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-50);
         if (std::norm(std::complex<double>{
                 static_cast<double>(bf_to_float(expected.x)), static_cast<double>(bf_to_float(expected.y))}) >= 4.0)
@@ -490,9 +490,9 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
 
     mandel_z_power_ref_pt_bf(center, actual);
 
-    sub_bf(difference.data(), actual.x.data(), expected.x.data());
+    sub_bf(difference, actual.x, expected.x);
     EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
-    sub_bf(difference.data(), actual.y.data(), expected.y.data());
+    sub_bf(difference, actual.y, expected.y);
     EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
 }
 
@@ -819,9 +819,9 @@ TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
 
     mandel_z_power_ref_pt_bf(center, actual);
 
-    sub_bf(difference.data(), actual.x.data(), expected.x.data());
+    sub_bf(difference, actual.x, expected.x);
     EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
-    sub_bf(difference.data(), actual.y.data(), expected.y.data());
+    sub_bf(difference, actual.y, expected.y);
     EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
 }
 
