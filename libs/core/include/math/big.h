@@ -214,8 +214,8 @@ Byte *unsafe_sub_bf(Byte *r, Byte *n1, Byte *n2);
 Byte *unsafe_sub_a_bf(Byte *r, Byte *n);
 Byte *neg_bf(Byte *r, const Byte *n);
 Byte *neg_a_bf(Byte *r);
-BigFloatPtr double_bf(BigFloatPtr r, BigFloatPtr n);
-BigFloatPtr double_a_bf(BigFloatPtr r);
+Byte *double_bf(Byte *r, const Byte *n);
+Byte *double_a_bf(Byte *r);
 BigFloatPtr half_bf(BigFloatPtr r, BigFloatPtr n);
 BigFloatPtr half_a_bf(BigFloatPtr r);
 // Wide product: g_r_bf_length mantissa bytes followed by the exponent.

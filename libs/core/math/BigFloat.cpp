@@ -1046,6 +1046,18 @@ BigFloat &mult_a_bf_int(BigFloat &r, const U16 u)
     return r;
 }
 
+BigFloat &double_bf(BigFloat &r, const BigFloat &n)
+{
+    double_bf(r.data(), n.data());
+    return r;
+}
+
+BigFloat &double_a_bf(BigFloat &r)
+{
+    double_a_bf(r.data());
+    return r;
+}
+
 BigFloat &str_to_bf(BigFloat &r, const std::string_view text)
 {
     str_to_bf(r.data(), text, g_bf_tmp1.data());

@@ -168,36 +168,6 @@ BigFloatPtr atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
 }
 
 /********************************************************************/
-// r = 2*n
-BigFloatPtr double_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
-    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
-    BIG_SET_S16(r_exp, BIG_ACCESS_S16(n_exp)); // *r_exp = *n_exp;
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    double_bn(r, n);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
-}
-
-/********************************************************************/
-// r *= 2
-BigFloatPtr double_a_bf(BigFloatPtr r)
-{
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    double_a_bn(r);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
-}
-
-/********************************************************************/
 // r = n/2
 BigFloatPtr half_bf(BigFloatPtr r, BigFloatPtr n)
 {

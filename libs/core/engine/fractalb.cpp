@@ -694,7 +694,7 @@ int julia_orbit_bf()
 
     // new.y = 2 * g_old_z_bf.x * g_old_z_bf.y + parm.y;
     g_bf_tmp = g_old_z_bf.x * g_old_z_bf.y; // ok to use unsafe here
-    double_a_bf(g_bf_tmp.data());
+    double_a_bf(g_bf_tmp);
     g_new_z_bf.y = g_bf_tmp + g_param_z_bf.y;
     return g_bailout_bigfloat();
 }

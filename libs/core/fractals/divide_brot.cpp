@@ -63,7 +63,7 @@ int divide_brot5_orbit_bf()
 
     /* bfnumer.y = 2 * g_old_z_bf.x * g_old_z_bf.y; */
     bf_numer.y = g_old_z_bf.x * g_old_z_bf.y;
-    double_a_bf(bf_numer.y.data());
+    double_a_bf(bf_numer.y);
 
     /* z^(a) */
     bf_c_exp.x = g_c_exponent;

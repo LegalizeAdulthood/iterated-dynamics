@@ -526,6 +526,55 @@ INSTANTIATE_TEST_SUITE_P(Factors, TestBigFloatByteScalarMultiply,
         BigFloatByteScalarMultiplyInput{true, 256, {0, 0, 0xfe, 0xff, 1, 0}},
         BigFloatByteScalarMultiplyInput{false, 65535, {0xfe, 0xff, 1, 0, 2, 0}}));
 
+struct BigFloatByteDoublingInput
+{
+    std::array<Byte, 5> source_tail;
+    std::array<Byte, 5> result_tail;
+};
+
+class TestBigFloatByteDoubling : public testing::TestWithParam<BigFloatByteDoublingInput>
+{
+};
+
+TEST_P(TestBigFloatByteDoubling, preservesExponentNormalizationAndCanonicalExtent)
+{
+    constexpr int length = 8;
+    constexpr int size = length + 2;
+    const ValueSaver<int> bf_length{g_bf_length, length};
+    const ValueSaver<int> bn_length{g_bn_length, 4};
+    const BigFloatByteDoublingInput &input = GetParam();
+    alignas(U16) std::array<Byte, size + 2> source{};
+    std::copy(input.source_tail.begin(), input.source_tail.end(), source.begin() + size - 5);
+    source.back() = 0xa5;
+    const std::array<Byte, size + 2> original = source;
+    std::array<Byte, size + 2> expected{};
+    std::copy(input.result_tail.begin(), input.result_tail.end(), expected.begin() + size - 5);
+    expected.back() = 0xa5;
+    alignas(U16) std::array<Byte, size + 2> result{};
+    result.back() = 0xa5;
+
+    EXPECT_EQ(result.data(), double_bf(result.data(), source.data()));
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(4, g_bn_length);
+
+    EXPECT_EQ(source.data(), double_bf(source.data(), source.data()));
+    EXPECT_EQ(expected, source);
+    EXPECT_EQ(4, g_bn_length);
+
+    source = original;
+    EXPECT_EQ(source.data(), double_a_bf(source.data()));
+    EXPECT_EQ(expected, source);
+    EXPECT_EQ(4, g_bn_length);
+    EXPECT_EQ(length, g_bf_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteDoubling,
+    testing::Values(BigFloatByteDoublingInput{{0, 0, 0, 0x12, 0}, {}},
+        BigFloatByteDoublingInput{{0x40, 1, 0, 0, 0}, {0x80, 2, 0, 0, 0}},
+        BigFloatByteDoublingInput{{0, 0x80, 0, 0, 0}, {0, 1, 0, 1, 0}},
+        BigFloatByteDoublingInput{{0, 0x7f, 0xff, 0, 0}, {0xfe, 0xfe, 0xff, 1, 0}}));
+
 struct BigNumConversionInput
 {
     const char *name;

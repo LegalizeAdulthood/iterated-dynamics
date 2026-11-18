@@ -215,8 +215,8 @@ void burning_ship_ref_pt_bf(const BFComplex &center, BFComplex &z)
     BFComplex z2;
     z2.x = BigFloat{bf_arena(BigLifetime::TEMPORARY)};
     z2.y = BigFloat{bf_arena(BigLifetime::TEMPORARY)};
-    double_bf(z2.x.data(), z.x.data());
-    double_bf(z2.y.data(), z.y.data());
+    double_bf(z2.x, z.x);
+    double_bf(z2.y, z.y);
     if (degree == 2)
     {
         real_sqr = sqr(z.x);
@@ -249,7 +249,7 @@ int burning_ship_bf_fractal()
         g_bf_tmp = g_tmp_sqr_x_bf - g_tmp_sqr_y_bf;
         g_new_z_bf.x = g_bf_tmp + g_param_z_bf.x;
         g_bf_tmp = g_old_z_bf.x * g_old_z_bf.y;
-        double_a_bf(g_bf_tmp.data());
+        double_a_bf(g_bf_tmp);
         g_bf_tmp = abs(g_bf_tmp);
         g_new_z_bf.y = g_bf_tmp - g_param_z_bf.y;
     }
