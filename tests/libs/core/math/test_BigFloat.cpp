@@ -46,6 +46,9 @@ static_assert(
 static_assert(std::is_same_v<decltype(clear_bf(std::declval<BigFloat &>())), BigFloat &>);
 static_assert(std::is_same_v<decltype(max_bf(std::declval<BigFloat &>())), BigFloat &>);
 static_assert(std::is_same_v<decltype(&div_bf), BigFloat &(*)(BigFloat &, const BigFloat &, const BigFloat &)>);
+static_assert(std::is_same_v<decltype(unsafe_div_bf_int(std::declval<BigFloat &>(), std::declval<BigFloat &>(), U16{})),
+    BigFloat &>);
+static_assert(std::is_same_v<decltype(div_a_bf_int(std::declval<BigFloat &>(), U16{})), BigFloat &>);
 static_assert(std::is_same_v<decltype(&bf_to_string), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_e), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_f), std::string (*)(const BigFloat &, int)>);
@@ -1465,30 +1468,70 @@ TEST_P(TestBigFloatArithmetic, unsignedScalingPreservesDestinationAliasesPadding
     EXPECT_EQ(mark, save_stack());
 }
 
-TEST_P(TestBigFloatArithmetic, unsignedDivisionAssignmentRetainsRoundingAndZeroDivisorSaturation)
+class TestBigFloatScalarDivision : public TestBigFloatValue,
+                                   public testing::WithParamInterface<std::tuple<int, const char *, U16>>
 {
-    const std::array<U16, 7> divisors{0, 1, 2, 255, 256, 32768, 65535};
-    auto &persistent = bf_arena(BigLifetime::PERSISTENT);
-    for (const char *text : {"0", "-1.2345678901234567890123456789e-400", "1.2345678901234567890123456789e400"})
-    {
-        const BigFloat source{persistent, text};
-        const auto original = encoded_value(source);
-        for (const U16 divisor : divisors)
-        {
-            SCOPED_TRACE(text);
-            SCOPED_TRACE(divisor);
-            auto expected = original;
-            div_a_bf_int(expected.data(), divisor);
-            BigFloat value{source};
+};
 
-            EXPECT_EQ(&value, &(value /= divisor));
+TEST_P(TestBigFloatScalarDivision, assignmentMatchesInPlaceDivision)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const U16 divisor = std::get<2>(GetParam());
+    BigArena &persistent = bf_arena(BigLifetime::PERSISTENT);
+    const BigFloat source{persistent, std::get<1>(GetParam())};
+    const std::vector<Byte> original = encoded_value(source);
+    BigFloat expected{source};
+    BigFloat value{source};
+    const Byte *const address = value.data();
+    const std::size_t high_water = persistent.high_water_mark();
+    const BigStackMark mark = save_stack();
 
-            EXPECT_EQ(expected, encoded_value(value));
-            EXPECT_EQ(original, encoded_value(source));
-            EXPECT_EQ(&persistent, &value.arena());
-        }
-    }
+    EXPECT_EQ(&expected, &div_a_bf_int(expected, divisor));
+    EXPECT_EQ(&value, &(value /= divisor));
+
+    EXPECT_EQ(encoded_value(expected), encoded_value(value));
+    EXPECT_EQ(original, encoded_value(source));
+    EXPECT_EQ(address, value.data());
+    EXPECT_EQ(&persistent, &value.arena());
+    EXPECT_EQ(high_water, persistent.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatScalarDivision,
+    testing::Combine(testing::Values(4, 32, 708),
+        testing::Values("0", "-1.2345678901234567890123456789e-400", "1.2345678901234567890123456789e400"),
+        testing::Values(U16{0}, U16{1}, U16{2}, U16{255}, U16{256}, U16{32768}, U16{65535})));
+
+class TestBigFloatScalarDivisionDestination : public TestBigFloatValue, public testing::WithParamInterface<bool>
+{
+};
+
+TEST_P(TestBigFloatScalarDivisionDestination, reusesTheDestinationAndRetainsSourceMutation)
+{
+    BigArena &working = bf_arena(BigLifetime::WORKING);
+    BigFloat source{working, -6.0L};
+    BigFloat result{working};
+    BigFloat &output = GetParam() ? source : result;
+    const BigFloat quotient{working, -3.0L};
+    const BigFloat magnitude{working, 6.0L};
+    const std::size_t size = working.value_size();
+    const std::size_t stride = working.block_size();
+    std::fill(output.data() + size, output.data() + stride, Byte{0xa5});
+    const Byte *const address = output.data();
+    const std::size_t high_water = working.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(&output, &unsafe_div_bf_int(output, source, 2));
+
+    EXPECT_EQ(encoded_value(quotient), encoded_value(output));
+    EXPECT_EQ(encoded_value(GetParam() ? quotient : magnitude), encoded_value(source));
+    EXPECT_EQ(address, output.data());
+    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(output.data() + size, output.data() + stride));
+    EXPECT_EQ(high_water, working.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(Aliases, TestBigFloatScalarDivisionDestination, testing::Bool());
 
 class TestBigFloatAbs : public TestBigFloatValue, public testing::WithParamInterface<std::tuple<int, const char *>>
 {

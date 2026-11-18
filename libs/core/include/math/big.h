@@ -225,8 +225,8 @@ Byte *unsafe_mult_bf(Byte *r, Byte *n1, Byte *n2);
 Byte *unsafe_square_bf(Byte *r, Byte *n);
 Byte *unsafe_mult_bf_int(Byte *r, Byte *n, misc::U16 u);
 Byte *mult_a_bf_int(Byte *r, misc::U16 u);
-BigFloatPtr unsafe_div_bf_int(BigFloatPtr r, BigFloatPtr n, misc::U16 u);
-BigFloatPtr div_a_bf_int(BigFloatPtr r, misc::U16 u);
+Byte *unsafe_div_bf_int(Byte *r, Byte *n, misc::U16 u);
+Byte *div_a_bf_int(Byte *r, misc::U16 u);
 
 enum
 {

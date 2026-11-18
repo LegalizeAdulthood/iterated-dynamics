@@ -711,6 +711,88 @@ TEST_P(TestBigFloatByteDivision, reappliesExponentsAndKeepsDestructiveOperandEff
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatByteDivision, testing::Values(4, 64));
 
+struct BigFloatByteScalarDivisionInput
+{
+    std::array<Byte, 4> source_tail;
+    U16 divisor;
+    std::array<Byte, 4> result_tail;
+};
+
+class TestBigFloatByteScalarDivision : public testing::TestWithParam<BigFloatByteScalarDivisionInput>
+{
+};
+
+TEST_P(TestBigFloatByteScalarDivision, preservesShortenedExtentAndMakesTheSourcePositive)
+{
+    constexpr int length = 8;
+    constexpr int size = length + 2;
+    const ValueSaver<int> bf_length{g_bf_length, length};
+    const ValueSaver<int> bn_length{g_bn_length, 4};
+    const BigFloatByteScalarDivisionInput &input = GetParam();
+    alignas(U16) std::array<Byte, size + 2> source{};
+    std::copy(input.source_tail.begin(), input.source_tail.end(), source.begin() + length - 2);
+    source.back() = 0xa5;
+    const std::array<Byte, size + 2> original = source;
+    std::array<Byte, size + 2> expected_source = original;
+    expected_source[length - 2] = 6;
+    expected_source[length - 1] = 0;
+    alignas(U16) std::array<Byte, size + 2> result{};
+    result.back() = 0xa5;
+    std::array<Byte, size + 2> expected{};
+    std::copy(input.result_tail.begin(), input.result_tail.end(), expected.begin() + length - 2);
+    expected.back() = 0xa5;
+
+    EXPECT_EQ(result.data(), unsafe_div_bf_int(result.data(), source.data(), input.divisor));
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(expected_source, source);
+    EXPECT_EQ(4, g_bn_length);
+
+    source = original;
+    EXPECT_EQ(source.data(), unsafe_div_bf_int(source.data(), source.data(), input.divisor));
+    EXPECT_EQ(expected, source);
+    EXPECT_EQ(4, g_bn_length);
+
+    source = original;
+    EXPECT_EQ(source.data(), div_a_bf_int(source.data(), input.divisor));
+    EXPECT_EQ(expected, source);
+    EXPECT_EQ(4, g_bn_length);
+    EXPECT_EQ(length, g_bf_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(Divisors, TestBigFloatByteScalarDivision,
+    testing::Values(BigFloatByteScalarDivisionInput{{0xfa, 0xff, 2, 0}, 2, {0xfd, 0xff, 2, 0}},
+        BigFloatByteScalarDivisionInput{{6, 0, 2, 0}, 32768, {12, 0, 0, 0}}));
+
+TEST(TestBigFloatByteScalarDivisionZero, distinguishesAliasedAndInPlaceSaturation)
+{
+    constexpr int length = 8;
+    constexpr int size = length + 2;
+    constexpr int max_exp = std::numeric_limits<LDouble>::max_exponent / 8;
+    const ValueSaver<int> bf_length{g_bf_length, length};
+    const ValueSaver<int> bn_length{g_bn_length, 4};
+    alignas(U16) std::array<Byte, size + 2> source{0, 0, 0, 0, 0, 0, 0xfa, 0xff, 2, 0, 0, 0xa5};
+    const std::array<Byte, size + 2> original = source;
+    alignas(U16) std::array<Byte, size + 2> result{};
+    result.back() = 0xa5;
+    const std::array<Byte, size + 2> positive{
+        0, 0, 0, 0, 0, 0, 1, 0, static_cast<Byte>(max_exp), static_cast<Byte>(max_exp >> 8), 0, 0xa5};
+    const std::array<Byte, size + 2> negative{
+        0, 0, 0, 0, 0, 0, 0, 0xff, static_cast<Byte>(max_exp - 1), static_cast<Byte>((max_exp - 1) >> 8), 0, 0xa5};
+
+    EXPECT_EQ(result.data(), unsafe_div_bf_int(result.data(), source.data(), 0));
+    EXPECT_EQ(negative, result);
+    EXPECT_EQ(original, source);
+
+    EXPECT_EQ(source.data(), unsafe_div_bf_int(source.data(), source.data(), 0));
+    EXPECT_EQ(positive, source);
+
+    source = original;
+    EXPECT_EQ(source.data(), div_a_bf_int(source.data(), 0));
+    EXPECT_EQ(negative, source);
+    EXPECT_EQ(4, g_bn_length);
+    EXPECT_EQ(length, g_bf_length);
+}
+
 struct BigNumConversionInput
 {
     const char *name;

@@ -60,60 +60,6 @@ BigFloatPtr atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
 }
 
 /********************************************************************/
-// r = n / u  where u is an unsigned integer
-BigFloatPtr unsafe_div_bf_int(BigFloatPtr r, BigFloatPtr n, const U16 u)
-{
-    if (u == 0) // division by zero
-    {
-        max_bf(r);
-        if (is_bf_neg(n))
-        {
-            neg_a_bf(r);
-        }
-        return r;
-    }
-
-    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
-    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
-    BIG_SET_S16(r_exp, BIG_ACCESS_S16(n_exp)); // *r_exp = *n_exp;
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    unsafe_div_bn_int(r, n, u);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
-}
-
-/********************************************************************/
-// r /= u  where u is an unsigned integer
-BigFloatPtr div_a_bf_int(BigFloatPtr r, const U16 u)
-{
-    if (u == 0) // division by zero
-    {
-        if (is_bf_neg(r))
-        {
-            max_bf(r);
-            neg_a_bf(r);
-        }
-        else
-        {
-            max_bf(r);
-        }
-        return r;
-    }
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    div_a_bn_int(r, u);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
-}
-
-/********************************************************************/
 // extracts the mantissa and exponent of f
 // finds m and n such that 1<=|m|<10 and f = m*10^n
 // n is stored in *exp_ptr and m is returned, sort of like frexp()
