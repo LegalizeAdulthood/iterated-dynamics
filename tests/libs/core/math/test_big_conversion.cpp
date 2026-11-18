@@ -1042,6 +1042,276 @@ INSTANTIATE_TEST_SUITE_P(QuadrantsAndAxes, TestBigFloatByteArctangent2,
     testing::Values(
         std::make_tuple(1L, -2L), std::make_tuple(-1L, -2L), std::make_tuple(0L, -2L), std::make_tuple(-1L, 0L)));
 
+namespace
+{
+
+std::vector<Byte> fixed_sample(const int length, const int fractional_bytes, const int whole, const Byte fraction = 0)
+{
+    std::vector<Byte> result(length, whole < 0 ? Byte{0xff} : Byte{0});
+    std::fill_n(result.begin(), fractional_bytes, Byte{0});
+    result[fractional_bytes - 1] = fraction;
+    result[fractional_bytes] = static_cast<Byte>(whole);
+    return result;
+}
+
+} // namespace
+
+class TestBigNumByteKernel : public TestBigNumConversionBase
+{
+protected:
+    void init_layout(const int length, const int integer_bytes)
+    {
+        engine::g_bailout_test = integer_bytes == 2 ? engine::Bailout::REAL : engine::Bailout::MOD;
+        engine::g_user.bailout_value = integer_bytes == 4 ? 100 : 0;
+        init_bf_length(length);
+    }
+
+private:
+    ValueSaver<long> m_bailout_value{engine::g_user.bailout_value, 0};
+    ValueSaver<engine::Bailout> m_bailout_test{engine::g_bailout_test, engine::Bailout::MOD};
+    ValueSaver<fractals::FractalType> m_fractal_type{fractals::g_fractal_type, fractals::FractalType::MANDEL};
+};
+
+class TestBigNumByteLayout : public TestBigNumByteKernel, public testing::WithParamInterface<int>
+{
+};
+
+TEST_P(TestBigNumByteLayout, roundTripPreservesEncodedValuesAndInputs)
+{
+    init_layout(32, GetParam());
+    ASSERT_EQ(GetParam(), g_int_length);
+    const int fractional_bytes = g_bn_length - g_int_length;
+    std::vector<Byte> fixed = fixed_sample(g_bn_length, fractional_bytes, -2, 0xc3);
+    for (int i = 0; i < fractional_bytes - 1; ++i)
+    {
+        fixed[i] = static_cast<Byte>(0x11 + i * 0x6f);
+    }
+    const std::vector<Byte> original_fixed = fixed;
+    std::vector<Byte> floating(g_bf_length + 2);
+    std::vector<Byte> restored(g_bn_length);
+    std::vector<Byte> expected_float(g_bf_length + 2);
+    std::copy_n(fixed.begin(), fractional_bytes + 1, expected_float.begin() + g_bf_length - fractional_bytes - 2);
+    expected_float[g_bf_length - 1] = 0xff;
+
+    EXPECT_EQ(floating.data(), bn_to_bf(floating.data(), fixed.data()));
+    EXPECT_EQ(expected_float, floating);
+    EXPECT_EQ(restored.data(), bf_to_bn(restored.data(), floating.data()));
+
+    EXPECT_EQ(original_fixed, fixed);
+    EXPECT_EQ(expected_float, floating);
+    EXPECT_EQ(original_fixed, restored);
+}
+
+TEST_P(TestBigNumByteLayout, arithmeticSamplesPreserveDistinctOperands)
+{
+    init_layout(32, GetParam());
+    ASSERT_EQ(GetParam(), g_int_length);
+    const int fractional_bytes = g_bn_length - g_int_length;
+    std::vector<Byte> left = fixed_sample(g_bn_length, fractional_bytes, -8, 0x80);
+    std::vector<Byte> right = fixed_sample(g_bn_length, fractional_bytes, 2, 0x80);
+    const std::vector<Byte> original_left = left;
+    const std::vector<Byte> original_right = right;
+    std::vector<Byte> result(g_r_length);
+
+    EXPECT_EQ(result.data(), add_bn(result.data(), left.data(), right.data()));
+    EXPECT_EQ(fixed_sample(g_bn_length, fractional_bytes, -5),
+        std::vector<Byte>(result.begin(), result.begin() + g_bn_length));
+    EXPECT_EQ(result.data(), sub_bn(result.data(), left.data(), right.data()));
+    EXPECT_EQ(fixed_sample(g_bn_length, fractional_bytes, -10),
+        std::vector<Byte>(result.begin(), result.begin() + g_bn_length));
+    EXPECT_EQ(result.data(), mult_bn(result.data(), left.data(), right.data()));
+    EXPECT_EQ(fixed_sample(g_r_length, g_r_length - 2 * g_int_length, -19, 0x40), result);
+    EXPECT_EQ(original_left, left);
+    EXPECT_EQ(original_right, right);
+}
+
+INSTANTIATE_TEST_SUITE_P(IntegerBytes, TestBigNumByteLayout, testing::Values(1, 2, 4));
+
+class TestBigNumByteConversionLimits : public TestBigNumByteKernel,
+                                       public testing::WithParamInterface<std::tuple<int, bool, bool>>
+{
+};
+
+TEST_P(TestBigNumByteConversionLimits, preservesFloatConversionOverflowAndUnderflowRules)
+{
+    const int integer_bytes = std::get<0>(GetParam());
+    init_layout(32, integer_bytes);
+    ASSERT_EQ(integer_bytes, g_int_length);
+    const bool overflow = std::get<1>(GetParam());
+    const bool negative = std::get<2>(GetParam());
+    std::vector<Byte> source(g_bf_length + 2);
+    source[g_bf_length - 2] = negative ? 0xfe : 2;
+    source[g_bf_length - 1] = negative ? 0xff : 0;
+    // Base-256 exponents of 166 and -167 exceed the fixed-point range.
+    source[g_bf_length] = overflow ? 166 : 0x59;
+    source[g_bf_length + 1] = overflow ? 0 : 0xff;
+    const std::vector<Byte> original = source;
+    std::vector<Byte> result(g_bn_length);
+    std::vector<Byte> expected(g_bn_length, overflow && !negative ? Byte{0xff} : Byte{0});
+    if (overflow)
+    {
+        expected.front() = negative ? 1 : 0xff;
+        expected.back() = negative ? 0x80 : 0x7f;
+    }
+
+    EXPECT_EQ(result.data(), bf_to_bn(result.data(), source.data()));
+
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(original, source);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndLimits, TestBigNumByteConversionLimits,
+    testing::Combine(testing::Values(1, 2, 4), testing::Bool(), testing::Bool()));
+
+class TestBigNumByteProducts : public TestBigNumByteKernel, public testing::WithParamInterface<int>
+{
+};
+
+TEST_P(TestBigNumByteProducts, legacyProductsUseTheirDocumentedOffsets)
+{
+    init_layout(GetParam(), 1);
+    const int fractional_bytes = g_bn_length - g_int_length;
+    std::vector<Byte> value = fixed_sample(g_bn_length, fractional_bytes, -8, 0x80);
+    std::vector<Byte> other = value;
+    const std::vector<Byte> original = value;
+    std::vector<Byte> partial(g_r_length);
+    std::vector<Byte> full(2 * g_bn_length);
+    const std::vector<Byte> expected_partial = fixed_sample(g_r_length, g_r_length - 2 * g_int_length, 56, 0x40);
+    const std::vector<Byte> expected_full = fixed_sample(2 * g_bn_length, 2 * fractional_bytes, 56, 0x40);
+
+    EXPECT_EQ(partial.data(), mult_bn(partial.data(), value.data(), other.data()));
+    EXPECT_EQ(expected_partial, partial);
+    EXPECT_EQ(partial.data(), square_bn(partial.data(), value.data()));
+    EXPECT_EQ(expected_partial, partial);
+    EXPECT_EQ(full.data(), full_mult_bn(full.data(), value.data(), other.data()));
+    EXPECT_EQ(expected_full, full);
+    EXPECT_EQ(full.data(), full_square_bn(full.data(), value.data()));
+    EXPECT_EQ(expected_full, full);
+    EXPECT_EQ(original, value);
+    EXPECT_EQ(original, other);
+}
+
+TEST_P(TestBigNumByteProducts, legacyProductTruncationKeepsTheSignedLowBit)
+{
+    init_layout(GetParam(), 1);
+    std::vector<Byte> quantum(g_bn_length);
+    quantum.front() = 1;
+    std::vector<Byte> half = fixed_sample(g_bn_length, g_bn_length - g_int_length, 0, 0x80);
+    std::vector<Byte> product(g_r_length);
+    const std::vector<Byte> zero(g_bn_length);
+
+    mult_bn(product.data(), quantum.data(), half.data());
+    EXPECT_EQ(zero, std::vector<Byte>(product.data() + g_shift_factor, product.data() + g_shift_factor + g_bn_length));
+
+    std::fill(quantum.begin(), quantum.end(), Byte{0xff});
+    const std::vector<Byte> negative_quantum = quantum;
+    mult_bn(product.data(), quantum.data(), half.data());
+    EXPECT_EQ(negative_quantum,
+        std::vector<Byte>(product.data() + g_shift_factor, product.data() + g_shift_factor + g_bn_length));
+    EXPECT_EQ(negative_quantum, quantum);
+}
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigNumByteProducts, testing::Values(4, 8, 12, 672));
+
+TEST(TestBigNumByteProcedures, saturationAndNegationWriteOnlyTheCanonicalBytes)
+{
+    const ValueSaver<int> length{g_bn_length, 4};
+    alignas(U32) std::array<Byte, 8> value{0, 0, 0, 0, 0xa5, 0xa5, 0xa5, 0xa5};
+    constexpr std::array<Byte, 8> maximum{0xff, 0xff, 0xff, 0x7f, 0xa5, 0xa5, 0xa5, 0xa5};
+    constexpr std::array<Byte, 8> negative_maximum{1, 0, 0, 0x80, 0xa5, 0xa5, 0xa5, 0xa5};
+
+    EXPECT_EQ(value.data(), max_bn(value.data()));
+    EXPECT_EQ(maximum, value);
+    EXPECT_EQ(value.data(), neg_a_bn(value.data()));
+    EXPECT_EQ(negative_maximum, value);
+}
+
+enum class KernelProduct
+{
+    SAFE_DISTINCT,
+    SAFE_SAME,
+    UNSAFE_DISTINCT,
+    UNSAFE_SAME,
+    FULL_SAME,
+    SAFE_SQR,
+    UNSAFE_SQR
+};
+
+class TestBigNumKernelProducts : public TestBigNumByteKernel,
+                                 public testing::WithParamInterface<std::tuple<int, KernelProduct>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumKernelProducts::SetUp()
+{
+    init_layout(std::get<0>(GetParam()), 1);
+}
+
+TEST_P(TestBigNumKernelProducts, retainsFullBytesReturnAliasAndLegacyOperandMutation)
+{
+    const KernelProduct kind = std::get<1>(GetParam());
+    const int fractional_bytes = g_bn_length - g_int_length;
+    std::vector<Byte> left = fixed_sample(g_bn_length, fractional_bytes, -2);
+    std::vector<Byte> right = fixed_sample(g_bn_length, fractional_bytes, 3);
+    const bool squared = kind != KernelProduct::SAFE_DISTINCT && kind != KernelProduct::UNSAFE_DISTINCT;
+    const int extent = kind == KernelProduct::FULL_SAME ? 2 * g_bn_length : g_r_length;
+    std::vector<Byte> guarded(extent + 2, 0xa5);
+    Byte *const result = guarded.data() + 1;
+    std::vector<Byte> expected(extent, squared ? 0 : 0xff);
+    // The retained product has two integer bytes in this one-byte layout.
+    expected[extent - 2] = squared ? 4 : 0xfa;
+    if (!squared)
+    {
+        std::fill(expected.begin(), expected.end() - 2, Byte{0});
+    }
+    const std::array<int, 9> lengths{g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding, g_shift_factor,
+        g_bf_length, g_r_bf_length, g_bf_decimals};
+
+    switch (kind)
+    {
+    case KernelProduct::SAFE_DISTINCT:
+        EXPECT_EQ(result, mult_bn(result, left.data(), right.data()));
+        break;
+    case KernelProduct::SAFE_SAME:
+        EXPECT_EQ(result, mult_bn(result, left.data(), left.data()));
+        break;
+    case KernelProduct::UNSAFE_DISTINCT:
+        EXPECT_EQ(result, unsafe_mult_bn(result, left.data(), right.data()));
+        break;
+    case KernelProduct::UNSAFE_SAME:
+        EXPECT_EQ(result, unsafe_mult_bn(result, left.data(), left.data()));
+        break;
+    case KernelProduct::FULL_SAME:
+        EXPECT_EQ(result, full_mult_bn(result, left.data(), left.data()));
+        break;
+    case KernelProduct::SAFE_SQR:
+        EXPECT_EQ(result, square_bn(result, left.data()));
+        break;
+    case KernelProduct::UNSAFE_SQR:
+        EXPECT_EQ(result, unsafe_square_bn(result, left.data()));
+        break;
+    }
+
+    EXPECT_EQ(expected, std::vector<Byte>(result, result + extent));
+    EXPECT_EQ(0xa5, guarded.front());
+    EXPECT_EQ(0xa5, guarded.back());
+    const bool restored = kind == KernelProduct::SAFE_DISTINCT || kind == KernelProduct::SAFE_SQR;
+    // The safe binary adapters restore a shared negative input twice.
+    // Preserve this pre-existing behavior separately from value operators.
+    EXPECT_EQ(fixed_sample(g_bn_length, fractional_bytes, restored ? -2 : 2), left);
+    EXPECT_EQ(fixed_sample(g_bn_length, fractional_bytes, 3), right);
+    EXPECT_EQ(lengths,
+        (std::array<int, 9>{g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding, g_shift_factor, g_bf_length,
+            g_r_bf_length, g_bf_decimals}));
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndAliasing, TestBigNumKernelProducts,
+    testing::Combine(testing::Values(4, 8, 12, 672),
+        testing::Values(KernelProduct::SAFE_DISTINCT, KernelProduct::SAFE_SAME, KernelProduct::UNSAFE_DISTINCT,
+            KernelProduct::UNSAFE_SAME, KernelProduct::FULL_SAME, KernelProduct::SAFE_SQR, KernelProduct::UNSAFE_SQR)));
+
 struct BigNumConversionInput
 {
     const char *name;

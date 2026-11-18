@@ -101,6 +101,25 @@ std::vector<Byte> encoded_value(const BigFloat &value)
     return result;
 }
 
+std::vector<Byte> encoded_integer(const long value)
+{
+    std::vector<Byte> result(g_bn_length);
+    const std::uint32_t bits = static_cast<std::uint32_t>(value);
+    for (int byte = 0; byte < g_int_length; ++byte)
+    {
+        result[g_bn_length - g_int_length + byte] = static_cast<Byte>(bits >> (8 * byte));
+    }
+    return result;
+}
+
+std::vector<Byte> saturation_bytes(const bool negative)
+{
+    std::vector<Byte> result(g_bn_length, negative ? Byte{0} : Byte{0xff});
+    result.front() = negative ? Byte{1} : Byte{0xff};
+    result.back() = negative ? Byte{0x80} : Byte{0x7f};
+    return result;
+}
+
 void expect_hex_dump(const BigNum &value, const std::string &expected)
 {
     const auto original = encoded_value(value);
@@ -368,6 +387,18 @@ INSTANTIATE_TEST_SUITE_P(LayoutsInputsAndCalls, TestBigNumScalarInterfaces,
             BigNumScalarInput{"12e3", 12, false, false, "12.", "12."}),
         testing::Values(BigNumScalarCall::PARSE, BigNumScalarCall::INTEGER, BigNumScalarCall::FLOAT)));
 
+namespace
+{
+
+void init_layout_precision(const int integer_length)
+{
+    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
+    g_user.bailout_value = integer_length == 4 ? 100 : 0;
+    init_bf_length(32);
+}
+
+} // namespace
+
 class TestBigNumLayout : public TestBigNumValue, public testing::WithParamInterface<int>
 {
 protected:
@@ -376,33 +407,8 @@ protected:
 
 void TestBigNumLayout::SetUp()
 {
-    if (GetParam() == 2)
-    {
-        g_bailout_test = Bailout::REAL;
-    }
-    else if (GetParam() == 4)
-    {
-        g_user.bailout_value = 100;
-    }
-    init_bf_length(32);
+    init_layout_precision(GetParam());
     ASSERT_EQ(GetParam(), g_int_length);
-}
-
-TEST_P(TestBigNumLayout, legacyConversionsPreserveEncodedValuesAndInputs)
-{
-    std::vector<Byte> fixed(static_cast<std::size_t>(g_bn_length));
-    BigNum{"-1.23456789012345678901234567890123456789"}.copy_to_legacy(fixed.data(), fixed.size());
-    const auto original_fixed = fixed;
-    std::vector<Byte> floating(static_cast<std::size_t>(g_bf_length + 2));
-    std::vector<Byte> restored(fixed.size());
-
-    bn_to_bf(floating.data(), fixed.data());
-    const auto original_float = floating;
-    bf_to_bn(restored.data(), floating.data());
-
-    EXPECT_EQ(original_fixed, fixed);
-    EXPECT_EQ(original_float, floating);
-    EXPECT_EQ(original_fixed, restored);
 }
 
 TEST_P(TestBigNumLayout, integerScalarMaximumRetainsLowIntegerBytes)
@@ -445,32 +451,6 @@ TEST_P(TestBigNumLayout, legacyFormattingPreservesInputBytes)
     EXPECT_EQ("-12.5", bn_to_string(value, 8));
     EXPECT_EQ("-12.5", bn_to_string(value, 0));
     EXPECT_EQ(original, encoded_value(value));
-}
-
-TEST_P(TestBigNumLayout, legacyFloatConversionRetainsOverflowAndUnderflowRules)
-{
-    for (const char *text : {"1e400", "-1e400", "1e-400", "-1e-400"})
-    {
-        SCOPED_TRACE(text);
-        std::vector<Byte> floating(static_cast<std::size_t>(g_bf_length + 2));
-        BigFloat{text}.copy_to_legacy(floating.data(), floating.size());
-        const auto original = floating;
-        std::vector<Byte> result(static_cast<std::size_t>(g_bn_length));
-        std::vector<Byte> expected(result.size());
-        if (std::string_view{text}.find("e-") == std::string_view::npos)
-        {
-            max_bn(expected.data());
-            if (text[0] == '-')
-            {
-                neg_a_bn(expected.data());
-            }
-        }
-
-        bf_to_bn(result.data(), floating.data());
-
-        EXPECT_EQ(expected, result);
-        EXPECT_EQ(original, floating);
-    }
 }
 
 TEST_F(TestBigNumValue, zeroConstructionLeavesTheLegacyStackUnchanged)
@@ -759,23 +739,33 @@ TEST_P(TestBigNumLayout, explicitConversionsPreserveBitsBeyondMachinePrecision)
     EXPECT_EQ(original_float, encoded_value(floating));
 }
 
-TEST_P(TestBigNumLayout, owningConversionsKeepLegacyOverflowAndUnderflowResults)
+class TestBigNumLayoutConversion : public TestBigNumValue,
+                                   public testing::WithParamInterface<std::tuple<int, std::pair<const char *, int>>>
 {
-    for (const char *text : {"1e400", "-1e400", "1e-400", "-1e-400"})
-    {
-        SCOPED_TRACE(text);
-        const BigFloat floating{text};
-        const auto original = encoded_value(floating);
-        auto raw = original;
-        std::vector<Byte> expected(static_cast<std::size_t>(g_bn_length));
-        bf_to_bn(expected.data(), raw.data());
+};
 
-        const BigNum fixed{floating};
+TEST_P(TestBigNumLayoutConversion, owningConversionsKeepLegacyOverflowAndUnderflowResults)
+{
+    const int integer_length = std::get<0>(GetParam());
+    init_layout_precision(integer_length);
+    ASSERT_EQ(integer_length, g_int_length);
+    const std::pair<const char *, int> &input = std::get<1>(GetParam());
+    const BigFloat floating{input.first};
+    const std::vector<Byte> original = encoded_value(floating);
+    const int saturation = input.second;
+    const std::vector<Byte> expected =
+        saturation == 0 ? std::vector<Byte>(g_bn_length) : saturation_bytes(saturation < 0);
 
-        EXPECT_EQ(expected, encoded_value(fixed));
-        EXPECT_EQ(original, encoded_value(floating));
-    }
+    const BigNum fixed{floating};
+
+    EXPECT_EQ(expected, encoded_value(fixed));
+    EXPECT_EQ(original, encoded_value(floating));
 }
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndLimits, TestBigNumLayoutConversion,
+    testing::Combine(testing::Values(1, 2, 4),
+        testing::Values(std::make_pair("1e400", 1), std::make_pair("-1e400", -1), std::make_pair("1e-400", 0),
+            std::make_pair("-1e-400", 0))));
 
 TEST_F(TestBigNumValue, conversionAdaptersValidateDestinationBuffers)
 {
@@ -794,91 +784,173 @@ TEST_F(TestBigNumValue, conversionAdaptersValidateDestinationBuffers)
     EXPECT_EQ(original_bf, bf_buffer);
 }
 
-TEST_P(TestBigNumLayout, unsignedScalingPreservesAllOperandBitsAndFixedWidthOverflow)
+namespace
 {
-    const std::array<U16, 7> factors{0, 1, 2, 255, 256, 32768, 65535};
-    auto &persistent = bn_arena(BigLifetime::PERSISTENT);
-    for (const char *text : {"-1.2345678901234567890123456789", "0", "1.2345678901234567890123456789"})
+
+enum class LayoutScalarInput
+{
+    NEGATIVE,
+    ZERO,
+    POSITIVE,
+    MINIMUM,
+    QUANTUM,
+    NEGATIVE_QUANTUM
+};
+
+std::vector<Byte> scalar_input_bytes(const LayoutScalarInput input)
+{
+    switch (input)
     {
-        const BigNum source{persistent, text};
-        const auto original = encoded_value(source);
-        for (const U16 factor : factors)
-        {
-            SCOPED_TRACE(text);
-            SCOPED_TRACE(factor);
-            auto expected = original;
-            mult_bn_int(expected.data(), expected.data(), factor);
+    case LayoutScalarInput::NEGATIVE:
+        return encoded_value(BigNum{"-1.2345678901234567890123456789"});
+    case LayoutScalarInput::ZERO:
+        return std::vector<Byte>(g_bn_length);
+    case LayoutScalarInput::POSITIVE:
+        return encoded_value(BigNum{"1.2345678901234567890123456789"});
+    case LayoutScalarInput::MINIMUM:
+    {
+        std::vector<Byte> result(g_bn_length);
+        result.back() = 0x80;
+        return result;
+    }
+    case LayoutScalarInput::QUANTUM:
+    {
+        std::vector<Byte> result(g_bn_length);
+        result.front() = 1;
+        return result;
+    }
+    case LayoutScalarInput::NEGATIVE_QUANTUM:
+        return std::vector<Byte>(g_bn_length, 0xff);
+    }
+    throw std::logic_error("Unexpected scalar input");
+}
 
-            const BigNum result = source * factor;
-
-            EXPECT_EQ(expected, encoded_value(result));
-            EXPECT_EQ(original, encoded_value(source));
-            EXPECT_EQ(&bn_arena(BigLifetime::WORKING), &result.arena());
-        }
+void negate_encoded_bytes(std::vector<Byte> &value)
+{
+    unsigned carry = 1;
+    for (Byte &byte : value)
+    {
+        const unsigned digit = (byte ^ 0xff) + carry;
+        byte = static_cast<Byte>(digit);
+        carry = digit >> 8;
     }
 }
 
-TEST_P(TestBigNumLayout, unsignedDivisionAssignmentPreservesRoundingAndZeroDivisorSaturation)
+std::vector<Byte> scalar_quotient_bytes(std::vector<Byte> value, const U16 divisor)
 {
-    const std::array<U16, 7> divisors{0, 1, 2, 255, 256, 32768, 65535};
-    auto &persistent = bn_arena(BigLifetime::PERSISTENT);
-    std::vector<std::vector<Byte>> inputs{encoded_value(BigNum{"-1.2345678901234567890123456789"}),
-        encoded_value(BigNum{0}), encoded_value(BigNum{"1.2345678901234567890123456789"})};
-    std::vector<Byte> minimum(g_bn_length);
-    minimum.back() = 0x80;
-    inputs.push_back(minimum);
-    std::vector<Byte> quantum(g_bn_length);
-    quantum.front() = 1;
-    inputs.push_back(quantum);
-    neg_a_bn(quantum.data());
-    inputs.push_back(quantum);
-    for (const auto &input : inputs)
+    const bool negative = (value.back() & 0x80) != 0;
+    if (divisor == 0)
     {
-        for (const U16 divisor : divisors)
-        {
-            SCOPED_TRACE(divisor);
-            BigNum expected = BigNum::from_legacy(input.data(), input.size());
-            div_a_bn_int(expected, divisor);
-            BigNum value = BigNum::from_legacy(persistent, input.data(), input.size());
-
-            EXPECT_EQ(&value, &(value /= divisor));
-
-            EXPECT_EQ(encoded_value(expected), encoded_value(value));
-            EXPECT_EQ(&persistent, &value.arena());
-        }
+        return saturation_bytes(negative);
     }
+    if (negative)
+    {
+        negate_encoded_bytes(value);
+    }
+    unsigned remainder = 0;
+    for (std::size_t i = value.size(); i > 0; --i)
+    {
+        Byte &byte = value[i - 1];
+        const unsigned digit = (remainder << 8) | byte;
+        byte = static_cast<Byte>(digit / divisor);
+        remainder = digit % divisor;
+    }
+    if (negative)
+    {
+        negate_encoded_bytes(value);
+    }
+    return value;
 }
+
+} // namespace
+
+class TestBigNumLayoutScalar : public TestBigNumValue,
+                               public testing::WithParamInterface<std::tuple<int, LayoutScalarInput, U16>>
+{
+protected:
+    void SetUp() override
+    {
+        const int integer_length = std::get<0>(GetParam());
+        init_layout_precision(integer_length);
+        ASSERT_EQ(integer_length, g_int_length);
+    }
+};
+
+class TestBigNumLayoutScaling : public TestBigNumLayoutScalar
+{
+};
+
+TEST_P(TestBigNumLayoutScaling, unsignedScalingPreservesAllOperandBitsAndFixedWidthOverflow)
+{
+    const U16 factor = std::get<2>(GetParam());
+    BigArena &persistent = bn_arena(BigLifetime::PERSISTENT);
+    const std::vector<Byte> original = scalar_input_bytes(std::get<1>(GetParam()));
+    const BigNum source = BigNum::from_legacy(persistent, original.data(), original.size());
+    std::vector<Byte> expected = original;
+    unsigned carry = 0;
+    for (Byte &byte : expected)
+    {
+        const unsigned digit = static_cast<unsigned>(byte) * factor + carry;
+        byte = static_cast<Byte>(digit);
+        carry = digit >> 8;
+    }
+
+    const BigNum result = source * factor;
+
+    EXPECT_EQ(expected, encoded_value(result));
+    EXPECT_EQ(original, encoded_value(source));
+    EXPECT_EQ(&bn_arena(BigLifetime::WORKING), &result.arena());
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsInputsAndFactors, TestBigNumLayoutScaling,
+    testing::Combine(testing::Values(1, 2, 4),
+        testing::Values(LayoutScalarInput::NEGATIVE, LayoutScalarInput::ZERO, LayoutScalarInput::POSITIVE),
+        testing::Values<U16>(0, 1, 2, 255, 256, 32768, 65535)));
+
+class TestBigNumLayoutScalarDivision : public TestBigNumLayoutScalar
+{
+};
+
+TEST_P(TestBigNumLayoutScalarDivision, unsignedDivisionAssignmentPreservesRoundingAndZeroDivisorSaturation)
+{
+    const U16 divisor = std::get<2>(GetParam());
+    BigArena &persistent = bn_arena(BigLifetime::PERSISTENT);
+    const std::vector<Byte> input = scalar_input_bytes(std::get<1>(GetParam()));
+    BigNum value = BigNum::from_legacy(persistent, input.data(), input.size());
+
+    EXPECT_EQ(&value, &(value /= divisor));
+
+    EXPECT_EQ(scalar_quotient_bytes(input, divisor), encoded_value(value));
+    EXPECT_EQ(&persistent, &value.arena());
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsInputsAndDivisors, TestBigNumLayoutScalarDivision,
+    testing::Combine(testing::Values(1, 2, 4),
+        testing::Values(LayoutScalarInput::NEGATIVE, LayoutScalarInput::ZERO, LayoutScalarInput::POSITIVE,
+            LayoutScalarInput::MINIMUM, LayoutScalarInput::QUANTUM, LayoutScalarInput::NEGATIVE_QUANTUM),
+        testing::Values<U16>(0, 1, 2, 255, 256, 32768, 65535)));
 
 INSTANTIATE_TEST_SUITE_P(IntegerBytes, TestBigNumLayout, testing::Values(1, 2, 4));
 
-TEST_P(TestBigNumLayout, legacyArithmeticSamplesPreserveDistinctOperands)
+TEST_P(TestBigNumLayout, divisionWritesTheDestinationAndPreservesDistinctOperands)
 {
-    auto left = encoded_value(BigNum{"-7.5"});
-    auto right = encoded_value(BigNum{"2.5"});
-    const auto original_left = left;
-    const auto original_right = right;
-    std::vector<Byte> result(static_cast<std::size_t>(g_r_length));
+    const BigNum numerator{"-7.5"};
+    const BigNum denominator{"0.5"};
+    const std::vector<Byte> original_numerator = encoded_value(numerator);
+    const std::vector<Byte> original_denominator = encoded_value(denominator);
+    BigNum quotient{bn_arena(BigLifetime::WORKING)};
 
-    add_bn(result.data(), left.data(), right.data());
-    EXPECT_EQ("-5.", bn_to_string(BigNum::from_legacy(result.data(), g_bn_length), 8));
-    sub_bn(result.data(), left.data(), right.data());
-    EXPECT_EQ("-10.", bn_to_string(BigNum::from_legacy(result.data(), g_bn_length), 8));
-    mult_bn(result.data(), left.data(), right.data());
-    EXPECT_EQ("-18.75", bn_to_string(BigNum::from_legacy(result.data() + g_shift_factor, g_bn_length), 8));
-    const BigNum half{"0.5"};
-    const BigNum numerator = BigNum::from_legacy(left.data(), left.size());
-    BigNum quotient = BigNum::from_legacy(result.data(), result.size());
-    div_bn(quotient, numerator, half);
-    EXPECT_EQ("-15.", quotient.to_string(8));
+    EXPECT_EQ(&quotient, &div_bn(quotient, numerator, denominator));
 
-    EXPECT_EQ(original_left, left);
-    EXPECT_EQ(original_right, right);
+    EXPECT_EQ(encoded_integer(-15), encoded_value(quotient));
+    EXPECT_EQ(original_numerator, encoded_value(numerator));
+    EXPECT_EQ(original_denominator, encoded_value(denominator));
 }
 
 TEST_P(TestBigNumLayout, legacyDivisionKeepsSaturationAndZeroRules)
 {
-    std::vector<Byte> maximum(static_cast<std::size_t>(g_bn_length));
-    max_bn(maximum.data());
+    const std::vector<Byte> maximum = saturation_bytes(false);
+    const std::vector<Byte> negative_maximum = saturation_bytes(true);
     BigNum numerator = BigNum::from_legacy(maximum.data(), maximum.size());
     BigNum denominator{"0.25"};
     BigNum result{bn_arena(BigLifetime::WORKING)};
@@ -886,16 +958,14 @@ TEST_P(TestBigNumLayout, legacyDivisionKeepsSaturationAndZeroRules)
     div_bn(result, numerator, denominator);
     EXPECT_EQ(maximum, encoded_value(result));
     neg_a_bn(numerator);
-    neg_a_bn(maximum.data());
     div_bn(result, numerator, denominator);
-    EXPECT_EQ(maximum, encoded_value(result));
+    EXPECT_EQ(negative_maximum, encoded_value(result));
     clear_bn(denominator);
     div_bn(result, numerator, denominator);
-    max_bn(maximum.data());
     EXPECT_EQ(maximum, encoded_value(result));
     clear_bn(numerator);
     div_bn(result, numerator, denominator);
-    EXPECT_EQ(encoded_value(numerator), encoded_value(result));
+    EXPECT_EQ(encoded_integer(0), encoded_value(result));
 }
 
 class TestBigNumProducts : public TestBigNumValue, public testing::WithParamInterface<int>
@@ -907,43 +977,6 @@ protected:
 void TestBigNumProducts::SetUp()
 {
     init_bf_length(GetParam());
-}
-
-TEST_P(TestBigNumProducts, legacyProductsUseTheirDocumentedOffsets)
-{
-    auto value = encoded_value(BigNum{"-7.5"});
-    auto other = value;
-    const auto original = value;
-    std::vector<Byte> partial(static_cast<std::size_t>(g_r_length));
-    std::vector<Byte> full(static_cast<std::size_t>(2 * g_bn_length));
-
-    mult_bn(partial.data(), value.data(), other.data());
-    EXPECT_EQ("56.25", bn_to_string(BigNum::from_legacy(partial.data() + g_shift_factor, g_bn_length), 8));
-    square_bn(partial.data(), value.data());
-    EXPECT_EQ("56.25", bn_to_string(BigNum::from_legacy(partial.data() + g_shift_factor, g_bn_length), 8));
-    full_mult_bn(full.data(), value.data(), other.data());
-    EXPECT_EQ("56.25", bn_to_string(BigNum::from_legacy(full.data() + g_bn_length - g_int_length, g_bn_length), 8));
-    full_square_bn(full.data(), value.data());
-    EXPECT_EQ("56.25", bn_to_string(BigNum::from_legacy(full.data() + g_bn_length - g_int_length, g_bn_length), 8));
-    EXPECT_EQ(original, value);
-    EXPECT_EQ(original, other);
-}
-
-TEST_P(TestBigNumProducts, legacyProductTruncationKeepsTheSignedLowBit)
-{
-    std::vector<Byte> quantum(static_cast<std::size_t>(g_bn_length));
-    quantum.front() = 1;
-    auto half = encoded_value(BigNum{"0.5"});
-    std::vector<Byte> product(static_cast<std::size_t>(g_r_length));
-    const std::vector<Byte> zero(quantum.size());
-
-    mult_bn(product.data(), quantum.data(), half.data());
-    EXPECT_TRUE(std::equal(zero.begin(), zero.end(), product.data() + g_shift_factor));
-    neg_a_bn(quantum.data());
-    const auto negative_quantum = quantum;
-    mult_bn(product.data(), quantum.data(), half.data());
-    EXPECT_TRUE(std::equal(negative_quantum.begin(), negative_quantum.end(), product.data() + g_shift_factor));
-    EXPECT_EQ(negative_quantum, quantum);
 }
 
 TEST_P(TestBigNumLayout, arithmeticPreservesOperandsAndUsesCanonicalResults)
@@ -1015,25 +1048,26 @@ TEST_P(TestBigNumLayout, assignmentCanAlsoSupplyTheRightOperand)
     EXPECT_EQ("-0.5", value.to_string(8));
 }
 
-TEST_P(TestBigNumLayout, expressionsMatchLegacySequencesAndOutliveTheirTemporaries)
+TEST_P(TestBigNumLayout, expressionsMatchDestinationProceduresAndOutliveTheirTemporaries)
 {
     const BigNum left{"-1.234567890123456789"};
     const BigNum right{"2.345678901234567890"};
     const BigNum divisor{"-0.5"};
-    auto raw_left = encoded_value(left);
-    auto raw_right = encoded_value(right);
-    auto raw_divisor = encoded_value(divisor);
-    std::vector<Byte> expected(static_cast<std::size_t>(g_bn_length));
-    BigNum quotient{bn_arena(BigLifetime::WORKING)};
-    std::vector<Byte> product(static_cast<std::size_t>(g_r_length));
-    // Value expressions use fresh results. Reusing a legacy division
-    // destination can retain low-bit differences from its previous contents.
-    add_bn(expected.data(), raw_left.data(), raw_right.data());
-    const BigNum numerator = BigNum::from_legacy(expected.data(), expected.size());
+    const std::vector<Byte> original_left = encoded_value(left);
+    const std::vector<Byte> original_right = encoded_value(right);
+    const std::vector<Byte> original_divisor = encoded_value(divisor);
+    BigArena &working = bn_arena(BigLifetime::WORKING);
+    BigNum numerator{working};
+    BigNum quotient{working};
+    BigNum product{working};
+    BigNum expected{working};
+    BigNum left_copy{left};
+    // Use fresh destinations so division starts with zero low bytes.
+    add_bn(numerator, left, right);
     div_bn(quotient, numerator, divisor);
-    mult_bn(product.data(), quotient.data(), raw_left.data());
-    sub_bn(expected.data(), product.data() + g_shift_factor, raw_right.data());
-    const auto marker = save_stack();
+    mult_bn(product, quotient, left_copy);
+    sub_bn(expected, product, right);
+    const BigStackMark marker = save_stack();
 
     const BigNum result = ((left + right) / divisor) * left - right;
     const BigNum unrelated = BigNum{-8} * BigNum{-9};
@@ -1041,11 +1075,11 @@ TEST_P(TestBigNumLayout, expressionsMatchLegacySequencesAndOutliveTheirTemporari
     EXPECT_EQ(marker, save_stack());
     bn_stack().allocate_single();
     restore_stack(marker);
-    EXPECT_EQ(expected, encoded_value(result));
+    EXPECT_EQ(encoded_value(expected), encoded_value(result));
     EXPECT_EQ("72.", unrelated.to_string(8));
-    EXPECT_EQ(raw_left, encoded_value(left));
-    EXPECT_EQ(raw_right, encoded_value(right));
-    EXPECT_EQ(raw_divisor, encoded_value(divisor));
+    EXPECT_EQ(original_left, encoded_value(left));
+    EXPECT_EQ(original_right, encoded_value(right));
+    EXPECT_EQ(original_divisor, encoded_value(divisor));
 }
 
 TEST_P(TestBigNumLayout, divisionAssignmentMatchesAFreshResult)
@@ -1061,28 +1095,24 @@ TEST_P(TestBigNumLayout, divisionAssignmentMatchesAFreshResult)
 
 TEST_P(TestBigNumLayout, divisionKeepsLegacySaturationAndZeroResults)
 {
-    std::vector<Byte> maximum(static_cast<std::size_t>(g_bn_length));
-    max_bn(maximum.data());
+    const std::vector<Byte> maximum = saturation_bytes(false);
     const BigNum positive = BigNum::from_legacy(maximum.data(), maximum.size());
     const BigNum quarter{"0.25"};
     const BigNum zero{0};
 
     EXPECT_EQ(maximum, encoded_value(positive / quarter));
     EXPECT_EQ(maximum, encoded_value((-positive) / zero));
-    neg_a_bn(maximum.data());
-    EXPECT_EQ(maximum, encoded_value((-positive) / quarter));
-    EXPECT_EQ(encoded_value(zero), encoded_value(zero / zero));
-    EXPECT_EQ(encoded_value(zero), encoded_value(zero / quarter));
+    EXPECT_EQ(saturation_bytes(true), encoded_value((-positive) / quarter));
+    EXPECT_EQ(encoded_integer(0), encoded_value(zero / zero));
+    EXPECT_EQ(encoded_integer(0), encoded_value(zero / quarter));
 }
 
 TEST_P(TestBigNumProducts, productsAndSquaresReturnOnlyCanonicalBytes)
 {
     const BigNum value{"-7.5"};
-    const auto original = encoded_value(value);
-    auto raw = original;
-    std::vector<Byte> product(static_cast<std::size_t>(g_r_length));
-    square_bn(product.data(), raw.data());
-    const std::vector<Byte> expected(product.data() + g_shift_factor, product.data() + g_shift_factor + g_bn_length);
+    const std::vector<Byte> original = encoded_value(value);
+    std::vector<Byte> expected = encoded_integer(56);
+    expected[g_bn_length - g_int_length - 1] = 0x40;
 
     EXPECT_EQ(expected, encoded_value(value * value));
     EXPECT_EQ(expected, encoded_value(value.sqr()));
@@ -1099,7 +1129,7 @@ TEST_P(TestBigNumProducts, normalizationPreservesSignedLowBitTruncation)
 
     EXPECT_EQ(zero, encoded_value(positive * half));
     EXPECT_EQ(zero, encoded_value(positive.sqr()));
-    neg_a_bn(quantum.data());
+    std::fill(quantum.begin(), quantum.end(), Byte{0xff});
     const BigNum negative = BigNum::from_legacy(quantum.data(), quantum.size());
     EXPECT_EQ(quantum, encoded_value(negative * half));
     EXPECT_EQ(quantum, encoded_value(negative));
@@ -1107,8 +1137,7 @@ TEST_P(TestBigNumProducts, normalizationPreservesSignedLowBitTruncation)
 
 TEST_F(TestBigNumValue, arithmeticKeepsFixedWidthOverflow)
 {
-    std::vector<Byte> maximum(static_cast<std::size_t>(g_bn_length));
-    max_bn(maximum.data());
+    const std::vector<Byte> maximum = saturation_bytes(false);
     std::vector<Byte> minimum(maximum.size());
     minimum.back() = 0x80;
     std::vector<Byte> quantum(maximum.size());
@@ -1312,17 +1341,6 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndSigns, TestBigNumCanonicalSqrFraction,
 
 namespace
 {
-
-enum class KernelProduct
-{
-    SAFE_DISTINCT,
-    SAFE_SAME,
-    UNSAFE_DISTINCT,
-    UNSAFE_SAME,
-    FULL_SAME,
-    SAFE_SQR,
-    UNSAFE_SQR
-};
 
 struct RetainedMultiplyInput
 {
@@ -1549,40 +1567,39 @@ void TestBigNumCanonicalValues::SetUp()
 
 TEST_P(TestBigNumCanonicalValues, returnsIndependentCanonicalStorageAndPreservesInputs)
 {
-    const auto operation = std::get<2>(GetParam());
-    auto &arena = bn_arena(BigLifetime::WORKING);
+    const CanonicalValue operation = std::get<2>(GetParam());
+    BigArena &arena = bn_arena(BigLifetime::WORKING);
     BigNum left{operation == CanonicalValue::ABS_POSITIVE ? 7.0L : -7.0L};
     BigNum right{3};
     std::fill(left.data() + g_bn_length, left.data() + arena.block_size(), Byte{0x5a});
     std::fill(right.data() + g_bn_length, right.data() + arena.block_size(), Byte{0x6b});
     const std::vector<Byte> original_left(left.data(), left.data() + arena.block_size());
     const std::vector<Byte> original_right(right.data(), right.data() + arena.block_size());
-    auto raw_left = encoded_value(left);
-    auto raw_right = encoded_value(right);
-    std::vector<Byte> expected(static_cast<std::size_t>(g_bn_length));
+    long expected_integer{};
     BigNum result;
 
     switch (operation)
     {
     case CanonicalValue::ADD:
-        add_bn(expected.data(), raw_left.data(), raw_right.data());
+        expected_integer = -4;
         result = add_bn(left, right);
         break;
     case CanonicalValue::SUB:
-        sub_bn(expected.data(), raw_left.data(), raw_right.data());
+        expected_integer = -10;
         result = sub_bn(left, right);
         break;
     case CanonicalValue::MULT:
-        mult_bn_int(expected.data(), raw_left.data(), U16{65535});
+        expected_integer = -7L * 65535;
         result = mult_bn_int(left, U16{65535});
         break;
     case CanonicalValue::ABS_NEGATIVE:
     case CanonicalValue::ABS_POSITIVE:
-        abs_bn(expected.data(), raw_left.data());
+        expected_integer = 7;
         result = abs_bn(left);
         break;
     }
 
+    const std::vector<Byte> expected = encoded_integer(expected_integer);
     ASSERT_TRUE(result);
     EXPECT_EQ(&arena, &result.arena());
     EXPECT_NE(left.data(), result.data());
@@ -1618,10 +1635,12 @@ void TestBigNumCanonicalProcedures::SetUp()
 
 TEST_P(TestBigNumCanonicalProcedures, preservesDestinationIdentityTailsAliasesAndUnchangedSources)
 {
-    const auto operation = std::get<2>(GetParam());
-    auto &arena = bn_arena(BigLifetime::WORKING);
-    BigNum source{operation == CanonicalProcedure::ABS_TO_POSITIVE ? 7.0L : -7.0L};
-    BigNum separate{operation == CanonicalProcedure::ABS_NEGATIVE ? -2.0L : 2.0L};
+    const CanonicalProcedure operation = std::get<2>(GetParam());
+    BigArena &arena = bn_arena(BigLifetime::WORKING);
+    const long source_integer = operation == CanonicalProcedure::ABS_TO_POSITIVE ? 7 : -7;
+    const long separate_integer = operation == CanonicalProcedure::ABS_NEGATIVE ? -2 : 2;
+    BigNum source{static_cast<LDouble>(source_integer)};
+    BigNum separate{static_cast<LDouble>(separate_integer)};
     const bool self = operation == CanonicalProcedure::COPY_SELF || operation == CanonicalProcedure::ADD_SELF ||
         operation == CanonicalProcedure::SUB_SELF || operation == CanonicalProcedure::ADD_TO_SELF ||
         operation == CanonicalProcedure::SUB_TO_SELF || operation == CanonicalProcedure::MULT_TO_SELF ||
@@ -1629,56 +1648,58 @@ TEST_P(TestBigNumCanonicalProcedures, preservesDestinationIdentityTailsAliasesAn
     BigNum &destination = self ? source : separate;
     std::fill_n(destination.data() + g_bn_length, arena.block_size() - g_bn_length, Byte{0xa5});
     const std::vector<Byte> original_source(source.data(), source.data() + arena.block_size());
-    auto raw_source = encoded_value(source);
-    std::vector<Byte> expected(destination.data(), destination.data() + arena.block_size());
-    const auto original_destination = destination.data();
-    const auto high_water = arena.high_water_mark();
+    const long initial = self ? source_integer : separate_integer;
+    long expected_integer{};
+    const Byte *const original_destination = destination.data();
+    const std::size_t high_water = arena.high_water_mark();
 
     switch (operation)
     {
     case CanonicalProcedure::COPY:
     case CanonicalProcedure::COPY_SELF:
-        copy_bn(expected.data(), raw_source.data());
+        expected_integer = source_integer;
         copy_bn(destination, source);
         break;
     case CanonicalProcedure::ADD:
     case CanonicalProcedure::ADD_SELF:
-        add_a_bn(expected.data(), raw_source.data());
+        expected_integer = initial + source_integer;
         add_a_bn(destination, source);
         break;
     case CanonicalProcedure::SUB:
     case CanonicalProcedure::SUB_SELF:
-        sub_a_bn(expected.data(), raw_source.data());
+        expected_integer = initial - source_integer;
         sub_a_bn(destination, source);
         break;
     case CanonicalProcedure::ABS_NEGATIVE:
     case CanonicalProcedure::ABS_POSITIVE:
-        abs_a_bn(expected.data());
+        expected_integer = std::abs(initial);
         abs_a_bn(destination);
         break;
     case CanonicalProcedure::ADD_TO:
     case CanonicalProcedure::ADD_TO_SELF:
-        add_bn(expected.data(), expected.data(), raw_source.data());
+        expected_integer = initial + source_integer;
         EXPECT_EQ(&destination, &add_bn(destination, destination, source));
         break;
     case CanonicalProcedure::SUB_TO:
     case CanonicalProcedure::SUB_TO_SELF:
-        sub_bn(expected.data(), expected.data(), raw_source.data());
+        expected_integer = initial - source_integer;
         EXPECT_EQ(&destination, &sub_bn(destination, destination, source));
         break;
     case CanonicalProcedure::MULT_TO:
     case CanonicalProcedure::MULT_TO_SELF:
-        mult_bn_int(expected.data(), raw_source.data(), U16{3});
+        expected_integer = source_integer * 3;
         EXPECT_EQ(&destination, &mult_bn_int(destination, source, U16{3}));
         break;
     case CanonicalProcedure::ABS_TO:
     case CanonicalProcedure::ABS_TO_SELF:
     case CanonicalProcedure::ABS_TO_POSITIVE:
-        abs_bn(expected.data(), raw_source.data());
+        expected_integer = std::abs(source_integer);
         EXPECT_EQ(&destination, &abs_bn(destination, source));
         break;
     }
 
+    std::vector<Byte> expected = encoded_integer(expected_integer);
+    expected.resize(arena.block_size(), 0xa5);
     EXPECT_EQ(original_destination, destination.data());
     EXPECT_EQ(&arena, &destination.arena());
     EXPECT_EQ(high_water, arena.high_water_mark());
@@ -1902,77 +1923,6 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndValues, TestBigNumObservations,
             ObservationInput{"NegativeQuantum", {0xffff, 0xff, 0xff}, -1, true},
             ObservationInput{"Maximum", {0xffff, 0xff, 0x7f}, 1, true},
             ObservationInput{"Minimum", {0, 0, 0x80}, -1, true}, ObservationInput{"HighByte", {0, 0, 1}, 1, true})));
-
-class TestBigNumKernelProducts : public TestBigNumValue,
-                                 public testing::WithParamInterface<std::tuple<int, KernelProduct>>
-{
-protected:
-    void SetUp() override;
-};
-
-void TestBigNumKernelProducts::SetUp()
-{
-    init_bf_length(std::get<0>(GetParam()));
-}
-
-TEST_P(TestBigNumKernelProducts, retainsFullBytesReturnAliasAndLegacyOperandMutation)
-{
-    const auto kind = std::get<1>(GetParam());
-    BigNum left{-2};
-    BigNum right{3};
-    const bool squared = kind != KernelProduct::SAFE_DISTINCT && kind != KernelProduct::UNSAFE_DISTINCT;
-    const int extent = kind == KernelProduct::FULL_SAME ? 2 * g_bn_length : g_r_length;
-    std::vector<Byte> guarded(extent + 2, 0xa5);
-    auto *const result = guarded.data() + 1;
-    std::vector<Byte> expected(extent, squared ? 0 : 0xff);
-    // The retained product has two integer bytes in this one-byte layout.
-    expected[extent - 2] = squared ? 4 : 0xfa;
-    if (!squared)
-    {
-        std::fill(expected.begin(), expected.end() - 2, Byte{0});
-    }
-    const auto lengths = kernel_lengths();
-
-    switch (kind)
-    {
-    case KernelProduct::SAFE_DISTINCT:
-        EXPECT_EQ(result, mult_bn(result, left.data(), right.data()));
-        break;
-    case KernelProduct::SAFE_SAME:
-        EXPECT_EQ(result, mult_bn(result, left.data(), left.data()));
-        break;
-    case KernelProduct::UNSAFE_DISTINCT:
-        EXPECT_EQ(result, unsafe_mult_bn(result, left.data(), right.data()));
-        break;
-    case KernelProduct::UNSAFE_SAME:
-        EXPECT_EQ(result, unsafe_mult_bn(result, left.data(), left.data()));
-        break;
-    case KernelProduct::FULL_SAME:
-        EXPECT_EQ(result, full_mult_bn(result, left.data(), left.data()));
-        break;
-    case KernelProduct::SAFE_SQR:
-        EXPECT_EQ(result, square_bn(result, left.data()));
-        break;
-    case KernelProduct::UNSAFE_SQR:
-        EXPECT_EQ(result, unsafe_square_bn(result, left.data()));
-        break;
-    }
-
-    EXPECT_EQ(expected, std::vector<Byte>(result, result + extent));
-    EXPECT_EQ(0xa5, guarded.front());
-    EXPECT_EQ(0xa5, guarded.back());
-    const bool restored = kind == KernelProduct::SAFE_DISTINCT || kind == KernelProduct::SAFE_SQR;
-    // The safe binary adapters restore a shared negative input twice.
-    // Preserve this pre-existing behavior separately from value operators.
-    EXPECT_EQ(encoded_value(BigNum{restored ? -2.0L : 2.0L}), encoded_value(left));
-    EXPECT_EQ(encoded_value(BigNum{3}), encoded_value(right));
-    EXPECT_EQ(lengths, kernel_lengths());
-}
-
-INSTANTIATE_TEST_SUITE_P(PrecisionsAndAliasing, TestBigNumKernelProducts,
-    testing::Combine(testing::Values(4, 8, 12, 672),
-        testing::Values(KernelProduct::SAFE_DISTINCT, KernelProduct::SAFE_SAME, KernelProduct::UNSAFE_DISTINCT,
-            KernelProduct::UNSAFE_SAME, KernelProduct::FULL_SAME, KernelProduct::SAFE_SQR, KernelProduct::UNSAFE_SQR)));
 
 enum class IntegerDivisionCall
 {
