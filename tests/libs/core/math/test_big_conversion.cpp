@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <limits>
 #include <string>
@@ -968,6 +969,78 @@ TEST_F(TestBigFloatByteArctangent, restoresPrecisionAndKeepsLargeArgumentScratch
     EXPECT_EQ(mark, save_stack());
     EXPECT_NEAR(1.1071487177940905L, bf_to_float(output), 1e-11L);
 }
+
+class TestBigFloatByteArctangent2 : public TestBigNumConversionBase,
+                                    public testing::WithParamInterface<std::tuple<long, long>>
+{
+};
+
+TEST_P(TestBigFloatByteArctangent2, preservesQuadrantReductionAndScratchWrites)
+{
+    init_bf_length(64);
+    init_big_pi();
+    const long y = std::get<0>(GetParam());
+    const long x = std::get<1>(GetParam());
+    const bool subtract_from_pi = x < 0 && y != 0;
+    const int size = g_bf_length + 2;
+    constexpr int offset = 2;
+    std::vector<Byte> pi(size + 2 * offset, 0xa5);
+    std::copy_n(g_bf_pi.data(), size, pi.begin() + offset);
+    const std::vector<Byte> original_pi = pi;
+    int_to_bf(g_bf_pi.data(), 4);
+    std::vector<Byte> y_storage(size + 2 * offset, 0xa5);
+    std::vector<Byte> x_storage(size + 2 * offset, 0xa5);
+    std::vector<Byte> result(size + 2 * offset, 0xa5);
+    Byte *const ny = y_storage.data() + offset;
+    Byte *const nx = x_storage.data() + offset;
+    Byte *const output = result.data() + offset;
+    int_to_bf(ny, y);
+    int_to_bf(nx, x);
+    clear_bf(output);
+    std::vector<Byte> copy1(size + offset, 0xa5);
+    std::vector<Byte> copy2(size + offset, 0xa5);
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(output,
+        unsafe_atan2_bf(output, ny, nx, pi.data() + offset, g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data(),
+            g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data(), copy1.data(), copy2.data()));
+
+    ASSERT_EQ(size, g_bf_length + 2);
+    std::vector<Byte> expected_y(size + 2 * offset, 0xa5);
+    std::vector<Byte> expected_x(size + 2 * offset, 0xa5);
+    int_to_bf(expected_y.data() + offset, subtract_from_pi ? std::abs(y) : y);
+    int_to_bf(expected_x.data() + offset, subtract_from_pi ? -x : x);
+    EXPECT_EQ(expected_y, y_storage);
+    EXPECT_EQ(expected_x, x_storage);
+    EXPECT_EQ(original_pi, pi);
+    EXPECT_EQ(0xa5, result.front());
+    EXPECT_EQ(0xa5, result.back());
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_NEAR(std::atan2(static_cast<LDouble>(y), static_cast<LDouble>(x)), bf_to_float(output), 1e-11L);
+    std::vector<Byte> expected_copy1(size + offset, 0xa5);
+    if (subtract_from_pi)
+    {
+        std::copy_n(pi.begin() + offset, size, expected_copy1.begin());
+        EXPECT_EQ(0, BIG_ACCESS16(copy2.data() + g_bf_length));
+        EXPECT_NEAR(0.4636476090008061L, bf_to_float(copy2.data()), 1e-11L);
+        EXPECT_EQ(0xa5, copy2[size]);
+        EXPECT_EQ(0xa5, copy2[size + 1]);
+    }
+    else
+    {
+        EXPECT_EQ(expected_copy1, copy2);
+    }
+    EXPECT_EQ(expected_copy1, copy1);
+    if (y == 0)
+    {
+        EXPECT_EQ(std::vector<Byte>(pi.begin() + offset, pi.begin() + offset + size),
+            std::vector<Byte>(output, output + size));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(QuadrantsAndAxes, TestBigFloatByteArctangent2,
+    testing::Values(
+        std::make_tuple(1L, -2L), std::make_tuple(-1L, -2L), std::make_tuple(0L, -2L), std::make_tuple(-1L, 0L)));
 
 struct BigNumConversionInput
 {

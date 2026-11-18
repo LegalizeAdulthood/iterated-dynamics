@@ -2436,6 +2436,58 @@ Byte *arctangent(
     return r;
 }
 
+Byte *unsafe_atan2_bf(Byte *r, Byte *ny, Byte *nx, const Byte *pi, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *tmp4,
+    Byte *tmp5, Byte *tmp6, Byte *copy1, Byte *copy2)
+{
+    const int sign_x = sign_bf(nx);
+    const int sign_y = sign_bf(ny);
+
+    if (sign_y == 0)
+    {
+        if (sign_x < 0)
+        {
+            copy_bf(r, pi); // negative x axis, 180 deg
+        }
+        else                // sign_x >= 0    positive x axis, 0
+        {
+            clear_bf(r);
+        }
+        return r;
+    }
+    if (sign_x == 0)
+    {
+        copy_bf(r, pi);  // y axis
+        half_a_bf(r);    // +90 deg
+        if (sign_y < 0)
+        {
+            neg_a_bf(r); // -90 deg
+        }
+        return r;
+    }
+
+    if (sign_y < 0)
+    {
+        neg_a_bf(ny);
+    }
+    if (sign_x < 0)
+    {
+        neg_a_bf(nx);
+    }
+    unsafe_div_bf(tmp6, ny, nx, tmp1, tmp2);
+    arctangent(r, tmp6, pi, tmp1, tmp2, tmp3, tmp4, tmp5, copy1);
+    if (sign_x < 0)
+    {
+        copy_bf(copy1, pi);
+        copy_bf(copy2, r);
+        unsafe_sub_bf(r, copy1, copy2);
+    }
+    if (sign_y < 0)
+    {
+        neg_a_bf(r);
+    }
+    return r;
+}
+
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
 Byte *multiply_wide(Byte *r, Byte *n1, Byte *n2)
 {

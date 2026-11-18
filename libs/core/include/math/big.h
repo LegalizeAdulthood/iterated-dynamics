@@ -186,7 +186,8 @@ Byte *unsafe_ln_bf(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *t
 Byte *unsafe_sin_cos_bf(Byte *s, Byte *c, Byte *n, const Byte *pi, Byte *tmp1, Byte *tmp2);
 Byte *arctangent(
     Byte *r, Byte *n, const Byte *pi, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *tmp4, Byte *tmp5, Byte *copy1);
-BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx);
+Byte *unsafe_atan2_bf(Byte *r, Byte *ny, Byte *nx, const Byte *pi, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *tmp4,
+    Byte *tmp5, Byte *tmp6, Byte *copy1, Byte *copy2);
 Byte *unsafe_bf_to_bf10(Byte *r, int dec, Byte *n);
 Byte *mult_a_bf10_int(Byte *r, int dec, misc::U16 n);
 Byte *div_a_bf10_int(Byte *r, int dec, misc::U16 n);

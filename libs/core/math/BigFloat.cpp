@@ -132,56 +132,6 @@ BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
     return r;
 }
 
-BigFloatPtr arctangent2(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
-{
-    const int sign_x = sign_bf(nx);
-    const int sign_y = sign_bf(ny);
-
-    if (sign_y == 0)
-    {
-        if (sign_x < 0)
-        {
-            copy_bf(r, g_bf_pi.data()); // negative x axis, 180 deg
-        }
-        else                     // sign_x >= 0    positive x axis, 0
-        {
-            clear_bf(r);
-        }
-        return r;
-    }
-    if (sign_x == 0)
-    {
-        copy_bf(r, g_bf_pi.data()); // y axis
-        half_a_bf(r);        // +90 deg
-        if (sign_y < 0)
-        {
-            neg_a_bf(r);     // -90 deg
-        }
-        return r;
-    }
-
-    if (sign_y < 0)
-    {
-        neg_a_bf(ny);
-    }
-    if (sign_x < 0)
-    {
-        neg_a_bf(nx);
-    }
-    unsafe_div_bf(g_bf_tmp6.data(), ny, nx, g_bf_tmp1.data(), g_bf_tmp2.data());
-    arctangent(r, g_bf_tmp6.data(), g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data(),
-        g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp_copy1.data());
-    if (sign_x < 0)
-    {
-        binary_operation(r, g_bf_pi.data(), r, unsafe_sub_bf);
-    }
-    if (sign_y < 0)
-    {
-        neg_a_bf(r);
-    }
-    return r;
-}
-
 void validate_scalar(const LDouble value)
 {
     if (!std::isfinite(value))
@@ -447,7 +397,11 @@ std::pair<BigFloat, BigFloat> BigFloat::sin_cos() const
 BigFloat BigFloat::atan2(const BigFloat &x) const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    binary_operation(result.m_storage.data(), m_storage.data(), x.m_storage.data(), arctangent2);
+    copy_bf(g_bf_tmp_copy1.data(), data());
+    copy_bf(g_bf_tmp_copy2.data(), x.data());
+    unsafe_atan2_bf(result.data(), g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data(), g_bf_pi.data(), g_bf_tmp1.data(),
+        g_bf_tmp2.data(), g_bf_tmp3.data(), g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data(), g_bf_tmp_copy1.data(),
+        g_bf_tmp_copy2.data());
     return result;
 }
 
@@ -863,11 +817,6 @@ BigArena::Allocation BigFloatProduct::release_reduced_storage() &&
 Byte *unsafe_square_bf(Byte *r, Byte *n)
 {
     return square_value(r, n);
-}
-
-BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr y, BigFloatPtr x)
-{
-    return arctangent2(r, y, x);
 }
 
 Byte *unsafe_mult_bf(Byte *r, Byte *n1, Byte *n2)

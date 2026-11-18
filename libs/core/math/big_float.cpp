@@ -40,7 +40,9 @@ BigFloatPtr atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
 {
     copy_bf(g_bf_tmp_copy1.data(), ny);
     copy_bf(g_bf_tmp_copy2.data(), nx);
-    unsafe_atan2_bf(r, g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data());
+    unsafe_atan2_bf(r, g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data(), g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data(),
+        g_bf_tmp3.data(), g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data(), g_bf_tmp_copy1.data(),
+        g_bf_tmp_copy2.data());
     return r;
 }
 
