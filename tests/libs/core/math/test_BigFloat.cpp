@@ -227,6 +227,51 @@ TEST_P(TestBigFloatSign, observesConstValueWithoutChangingItsBytesOrStorage)
 INSTANTIATE_TEST_SUITE_P(
     PrecisionsAndSigns, TestBigFloatSign, testing::Combine(testing::Values(4, 64, 708), testing::Values(-1, 0, 1)));
 
+struct BigFloatComparisonInput
+{
+    LDouble left;
+    LDouble right;
+    int offset;
+};
+
+class TestBigFloatComparison : public TestBigFloatValue,
+                               public testing::WithParamInterface<std::tuple<int, BigFloatComparisonInput>>
+{
+};
+
+TEST_P(TestBigFloatComparison, preservesTheMismatchPositionAndBothOperands)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const BigFloatComparisonInput &input = std::get<1>(GetParam());
+    const BigFloat left{input.left};
+    const BigFloat right{input.right};
+    const std::vector<Byte> left_bytes = encoded_value(left);
+    const std::vector<Byte> right_bytes = encoded_value(right);
+    const Byte *const left_address = left.data();
+    const Byte *const right_address = right.data();
+    const BigArena &arena = left.arena();
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+    const int position = g_bf_length - input.offset;
+
+    EXPECT_EQ(-position, cmp_bf(left, right));
+    EXPECT_EQ(position, cmp_bf(right, left));
+    EXPECT_EQ(0, cmp_bf(left, left));
+
+    EXPECT_EQ(left_bytes, encoded_value(left));
+    EXPECT_EQ(right_bytes, encoded_value(right));
+    EXPECT_EQ(left_address, left.data());
+    EXPECT_EQ(right_address, right.data());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndInputs, TestBigFloatComparison,
+    testing::Combine(testing::Values(4, 64, 708),
+        testing::Values(BigFloatComparisonInput{-1.25L, 0.0L, 0}, BigFloatComparisonInput{0.5L, 1.25L, 0},
+            BigFloatComparisonInput{-512.0L, -1.5L, 0}, BigFloatComparisonInput{1.25L, 2.25L, 1},
+            BigFloatComparisonInput{-1.5L, -1.25L, 2})));
+
 struct BigFloatParseCase
 {
     std::string_view text;

@@ -1149,7 +1149,7 @@ static void write_batch_params(
                 put_bf(1, g_bf_x_max, digits);
                 put_bf(1, g_bf_y_min, digits);
                 put_bf(1, g_bf_y_max, digits);
-                if (cmp_bf(g_bf_x_3rd.data(), g_bf_x_min.data()) || cmp_bf(g_bf_y_3rd.data(), g_bf_y_min.data()))
+                if (cmp_bf(g_bf_x_3rd, g_bf_x_min) || cmp_bf(g_bf_y_3rd, g_bf_y_min))
                 {
                     put_bf(1, g_bf_x_3rd, digits);
                     put_bf(1, g_bf_y_3rd, digits);

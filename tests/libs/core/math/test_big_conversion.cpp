@@ -140,6 +140,43 @@ INSTANTIATE_TEST_SUITE_P(Mantissas, TestBigFloatByteSign,
     testing::Values(BigFloatByteSignInput{0, 0, 0}, BigFloatByteSignInput{0x80, 0, 1},
         BigFloatByteSignInput{0, 0x01, 1}, BigFloatByteSignInput{0, 0x80, -1}));
 
+struct BigFloatByteComparisonInput
+{
+    std::array<Byte, 5> left_tail;
+    std::array<Byte, 5> right_tail;
+    int expected;
+};
+
+class TestBigFloatByteComparison : public testing::TestWithParam<BigFloatByteComparisonInput>
+{
+};
+
+TEST_P(TestBigFloatByteComparison, returnsTheSignedMismatchPosition)
+{
+    constexpr int length = 8;
+    const ValueSaver<int> bf_length{g_bf_length, length};
+    const BigFloatByteComparisonInput &input = GetParam();
+    alignas(U16) std::array<Byte, length + 2> left{};
+    alignas(U16) std::array<Byte, length + 2> right{};
+    std::copy(input.left_tail.begin(), input.left_tail.end(), left.end() - 5);
+    std::copy(input.right_tail.begin(), input.right_tail.end(), right.end() - 5);
+    const std::array<Byte, length + 2> original_left = left;
+    const std::array<Byte, length + 2> original_right = right;
+
+    EXPECT_EQ(input.expected, cmp_bf(left.data(), right.data()));
+    EXPECT_EQ(-input.expected, cmp_bf(right.data(), left.data()));
+    EXPECT_EQ(original_left, left);
+    EXPECT_EQ(original_right, right);
+}
+
+INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteComparison,
+    testing::Values(BigFloatByteComparisonInput{{0x40, 1, 0, 0, 0}, {0x40, 1, 0, 0, 0}, 0},
+        BigFloatByteComparisonInput{{0, 0, 0, 0, 0}, {0xc0, 0xfe, 0xff, 0, 0}, 8},
+        BigFloatByteComparisonInput{{0, 0x80, 0, 0xff, 0xff}, {0x40, 1, 0, 0, 0}, -8},
+        BigFloatByteComparisonInput{{0, 0xfe, 0xff, 1, 0}, {0xc0, 0xfe, 0xff, 0, 0}, -8},
+        BigFloatByteComparisonInput{{0x40, 1, 0, 0, 0}, {0x40, 2, 0, 0, 0}, -7},
+        BigFloatByteComparisonInput{{0x40, 1, 0, 0, 0}, {0x80, 1, 0, 0, 0}, -6}));
+
 struct BigNumConversionInput
 {
     const char *name;

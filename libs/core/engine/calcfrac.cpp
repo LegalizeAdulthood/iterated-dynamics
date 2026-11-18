@@ -2065,7 +2065,7 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     // also any rotation other than 180deg and any off-axis stretch
     if (g_bf_math != BFMathType::NONE)
     {
-        if (cmp_bf(g_bf_x_min.data(), g_bf_x_3rd.data()) || cmp_bf(g_bf_y_min.data(), g_bf_y_3rd.data()))
+        if (cmp_bf(g_bf_x_min, g_bf_x_3rd) || cmp_bf(g_bf_y_min, g_bf_y_3rd))
         {
             return;
         }

@@ -340,65 +340,6 @@ BigFloatPtr negate(BigFloatPtr r)
     return r;
 }
 
-// Keep the legacy signed mismatch position for raw comparison callers.
-int compare(BigFloatConstPtr n1, BigFloatConstPtr n2)
-{
-    // compare signs
-    const int sign1 = sign_bf(n1);
-    const int sign2 = sign_bf(n2);
-    if (sign1 > sign2)
-    {
-        return g_bf_length;
-    }
-    if (sign1 < sign2)
-    {
-        return -g_bf_length;
-    }
-    // signs are the same
-
-    // compare exponents, using signed comparisons
-    const S16 *n1_exp = reinterpret_cast<const S16 *>(n1 + g_bf_length);
-    const S16 *n2_exp = reinterpret_cast<const S16 *>(n2 + g_bf_length);
-    if (BIG_ACCESS_S16(n1_exp) > BIG_ACCESS_S16(n2_exp))
-    {
-        return sign1 * g_bf_length;
-    }
-    if (BIG_ACCESS_S16(n1_exp) < BIG_ACCESS_S16(n2_exp))
-    {
-        return -sign1 * g_bf_length;
-    }
-
-    // To get to this point, the signs must match
-    // so unsigned comparison is ok.
-    // two bytes at a time
-    for (int i = g_bf_length - 2; i >= 0; i -= 2)
-    {
-        const U16 value1 = BIG_ACCESS16(n1 + i);
-        const U16 value2 = BIG_ACCESS16(n2 + i);
-        if (value1 > value2)
-        {
-            // now determine which of the two bytes was different
-            if ((value1 & 0xFF00) > (value2 & 0xFF00)) // compare just high bytes
-            {
-                return i + 2;                          // high byte was different
-            }
-
-            return i + 1;                              // low byte was different
-        }
-        if (value1 < value2)
-        {
-            // now determine which of the two bytes was different
-            if ((value1 & 0xFF00) < (value2 & 0xFF00)) // compare just high bytes
-            {
-                return -(i + 2);                       // high byte was different
-            }
-
-            return -(i + 1);                           // low byte was different
-        }
-    }
-    return 0;
-}
-
 // Legacy real math kernels; operands may be destroyed as before.
 BigFloatPtr square_wide(BigFloatPtr r, BigFloatPtr n)
 {
@@ -1259,6 +1200,11 @@ bool is_bf_not_zero(const BigFloat &n)
     return is_bf_not_zero(n.data());
 }
 
+int cmp_bf(const BigFloat &n1, const BigFloat &n2)
+{
+    return cmp_bf(n1.data(), n2.data());
+}
+
 BigFloat &str_to_bf(BigFloat &r, const std::string_view text)
 {
     str_to_bf(r.data(), text, g_bf_tmp1.data());
@@ -1340,32 +1286,32 @@ BigFloat atan2(const BigFloat &y, const BigFloat &x)
 
 bool BigFloat::operator==(const BigFloat &right) const
 {
-    return compare(m_storage.data(), right.m_storage.data()) == 0;
+    return cmp_bf(m_storage.data(), right.m_storage.data()) == 0;
 }
 
 bool BigFloat::operator!=(const BigFloat &right) const
 {
-    return compare(m_storage.data(), right.m_storage.data()) != 0;
+    return cmp_bf(m_storage.data(), right.m_storage.data()) != 0;
 }
 
 bool BigFloat::operator<(const BigFloat &right) const
 {
-    return compare(m_storage.data(), right.m_storage.data()) < 0;
+    return cmp_bf(m_storage.data(), right.m_storage.data()) < 0;
 }
 
 bool BigFloat::operator<=(const BigFloat &right) const
 {
-    return compare(m_storage.data(), right.m_storage.data()) <= 0;
+    return cmp_bf(m_storage.data(), right.m_storage.data()) <= 0;
 }
 
 bool BigFloat::operator>(const BigFloat &right) const
 {
-    return compare(m_storage.data(), right.m_storage.data()) > 0;
+    return cmp_bf(m_storage.data(), right.m_storage.data()) > 0;
 }
 
 bool BigFloat::operator>=(const BigFloat &right) const
 {
-    return compare(m_storage.data(), right.m_storage.data()) >= 0;
+    return cmp_bf(m_storage.data(), right.m_storage.data()) >= 0;
 }
 
 LDouble BigFloat::to_float() const
@@ -1538,11 +1484,6 @@ BigFloatPtr unsafe_div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 BigFloatPtr neg_a_bf(BigFloatPtr r)
 {
     return negate(r);
-}
-
-int cmp_bf(BigFloatConstPtr n1, BigFloatConstPtr n2)
-{
-    return compare(n1, n2);
 }
 
 BigFloatPtr add_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)

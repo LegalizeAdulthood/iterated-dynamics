@@ -1558,6 +1558,65 @@ int sign_bf(const Byte *n)
     return is_bf_neg(n) ? -1 : is_bf_not_zero(n) ? 1 : 0;
 }
 
+// Keep the legacy signed mismatch position.
+int cmp_bf(const Byte *n1, const Byte *n2)
+{
+    // compare signs
+    const int sign1 = sign_bf(n1);
+    const int sign2 = sign_bf(n2);
+    if (sign1 > sign2)
+    {
+        return g_bf_length;
+    }
+    if (sign1 < sign2)
+    {
+        return -g_bf_length;
+    }
+    // signs are the same
+
+    // compare exponents, using signed comparisons
+    const S16 *n1_exp = reinterpret_cast<const S16 *>(n1 + g_bf_length);
+    const S16 *n2_exp = reinterpret_cast<const S16 *>(n2 + g_bf_length);
+    if (BIG_ACCESS_S16(n1_exp) > BIG_ACCESS_S16(n2_exp))
+    {
+        return sign1 * g_bf_length;
+    }
+    if (BIG_ACCESS_S16(n1_exp) < BIG_ACCESS_S16(n2_exp))
+    {
+        return -sign1 * g_bf_length;
+    }
+
+    // To get to this point, the signs must match
+    // so unsigned comparison is ok.
+    // two bytes at a time
+    for (int i = g_bf_length - 2; i >= 0; i -= 2)
+    {
+        const U16 value1 = BIG_ACCESS16(n1 + i);
+        const U16 value2 = BIG_ACCESS16(n2 + i);
+        if (value1 > value2)
+        {
+            // now determine which of the two bytes was different
+            if ((value1 & 0xFF00) > (value2 & 0xFF00)) // compare just high bytes
+            {
+                return i + 2;                          // high byte was different
+            }
+
+            return i + 1;                              // low byte was different
+        }
+        if (value1 < value2)
+        {
+            // now determine which of the two bytes was different
+            if ((value1 & 0xFF00) < (value2 & 0xFF00)) // compare just high bytes
+            {
+                return -(i + 2);                       // high byte was different
+            }
+
+            return -(i + 1);                           // low byte was different
+        }
+    }
+    return 0;
+}
+
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bigfloat

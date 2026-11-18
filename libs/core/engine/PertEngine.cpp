@@ -213,7 +213,7 @@ bool precise_bailout_reached(const BFComplex &z)
     limit = bailout_limit();
     const auto reached = [&limit](const BigFloat &value)
     {
-        const int comparison{cmp_bf(value.data(), limit.data())};
+        const int comparison{cmp_bf(value, limit)};
         return comparison >= 0;
     };
     x = sqr(z.x);

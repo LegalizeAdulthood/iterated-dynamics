@@ -212,7 +212,7 @@ LDouble scale_10(LDouble f, int n);
 BigFloatPtr norm_bf(BigFloatPtr r);
 void norm_sign_bf(BigFloatPtr r, bool positive);
 Byte *max_bf(Byte *r);
-int cmp_bf(BigFloatConstPtr n1, BigFloatConstPtr n2);
+int cmp_bf(const Byte *n1, const Byte *n2);
 bool is_bf_neg(const Byte *n);
 bool is_bf_not_zero(const Byte *n);
 BigFloatPtr unsafe_add_a_bf(BigFloatPtr r, BigFloatPtr n);

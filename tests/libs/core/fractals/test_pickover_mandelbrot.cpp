@@ -852,8 +852,8 @@ TEST_P(TestPreciseComplexPowerZero, zeroReferenceProducesTheCenter)
 
     mandel_z_power_ref_pt_bf(center, actual);
 
-    EXPECT_EQ(0, cmp_bf(center.x.data(), actual.x.data()));
-    EXPECT_EQ(0, cmp_bf(center.y.data(), actual.y.data()));
+    EXPECT_EQ(0, cmp_bf(center.x, actual.x));
+    EXPECT_EQ(0, cmp_bf(center.y, actual.y));
 }
 
 INSTANTIATE_TEST_SUITE_P(ComplexPowers, TestPreciseComplexPowerZero, ValuesIn(COMPLEX_POWER_EXPONENTS),
