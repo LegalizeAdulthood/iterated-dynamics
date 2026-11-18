@@ -118,6 +118,66 @@ TEST_P(TestBigNumSignedConversion, integerWideningPreservesTheSignWithoutChangin
 
 INSTANTIATE_TEST_SUITE_P(Signs, TestBigNumSignedConversion, testing::Bool());
 
+struct BigFloatToBigNumInput
+{
+    const char *name;
+    int integer_length;
+    std::vector<Byte> source;
+    std::array<Byte, 4> expected;
+};
+
+class TestBigFloatToBigNumBytes : public TestBigNumConversionBase,
+                                  public testing::WithParamInterface<BigFloatToBigNumInput>
+{
+};
+
+TEST_P(TestBigFloatToBigNumBytes, preservesScalingSaturationSourceReturnIdentityAndDestinationBounds)
+{
+    const BigFloatToBigNumInput &input = GetParam();
+    ValueSaver<int> bn_length{g_bn_length, 4};
+    ValueSaver<int> bf_length{g_bf_length, static_cast<int>(input.source.size()) - 2};
+    ValueSaver<int> integer_length{g_int_length, input.integer_length};
+    const std::array<int, 7> lengths{
+        g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+    std::vector<Byte> source{0xaa};
+    source.insert(source.end(), input.source.begin(), input.source.end());
+    source.push_back(0xbb);
+    const std::vector<Byte> original = source;
+    std::array<Byte, 8> destination;
+    destination.fill(0xcc);
+    std::array<Byte, 8> expected_destination = destination;
+    std::copy(input.expected.begin(), input.expected.end(), expected_destination.begin() + 1);
+
+    EXPECT_EQ(destination.data() + 1, bf_to_bn(destination.data() + 1, source.data() + 1));
+
+    EXPECT_EQ(expected_destination, destination);
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(lengths,
+        (std::array<int, 7>{
+            g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+}
+
+INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatToBigNumBytes,
+    testing::Values(BigFloatToBigNumInput{"Zero", 1, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {}},
+        BigFloatToBigNumInput{
+            "Positive", 1, {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0, 0, 0}, {0x44, 0x55, 0x66, 0x77}},
+        BigFloatToBigNumInput{
+            "Negative", 1, {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0xfe, 0xff, 0, 0}, {0x44, 0x55, 0x66, 0xfe}},
+        BigFloatToBigNumInput{
+            "TwoIntegerBytes", 2, {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0, 0, 0}, {0x55, 0x66, 0x77, 0}},
+        BigFloatToBigNumInput{"NegativeIntegerTruncation", 4, {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0xfe, 0xff, 0, 0},
+            {0xfe, 0xff, 0xff, 0xff}},
+        BigFloatToBigNumInput{
+            "NegativeExponent", 1, {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0, 0xff, 0xff}, {0x55, 0x66, 0x77, 0}},
+        BigFloatToBigNumInput{"SmallestFraction", 1, {0, 0, 0, 0, 0, 0, 1, 0, 0xfd, 0xff}, {1, 0, 0, 0}},
+        BigFloatToBigNumInput{"PositiveUnderflow", 1, {0, 0, 0, 0, 0, 0, 1, 0, 0xfc, 0xff}, {}},
+        BigFloatToBigNumInput{"NegativeUnderflow", 1, {0, 0, 0, 0, 0, 0, 0xfe, 0xff, 0xfc, 0xff}, {}},
+        BigFloatToBigNumInput{"PositiveOverflow", 1, {0, 0, 0, 0, 0, 0, 1, 0, 1, 0}, {0xff, 0xff, 0xff, 0x7f}},
+        BigFloatToBigNumInput{"NegativeOverflow", 1, {0, 0, 0, 0, 0, 0, 0xfe, 0xff, 1, 0}, {1, 0, 0, 0x80}},
+        BigFloatToBigNumInput{
+            "ShortenedMantissa", 1, {0x11, 0x22, 0x33, 0x44, 0x55, 0, 0, 0}, {0x22, 0x33, 0x44, 0x55}}),
+    [](const testing::TestParamInfo<BigFloatToBigNumInput> &info) { return info.param.name; });
+
 struct BigNumToBigFloatInput
 {
     const char *name;

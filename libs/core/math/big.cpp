@@ -506,6 +506,38 @@ void migrate_bn(Byte *destination, const Byte *source, const std::size_t blocks,
 }
 
 /*********************************************************************/
+//  bn = floor(bf)
+//  Converts a bigfloat to a bignumber (integer)
+//  g_bf_length must be at least g_bn_length+2
+Byte *bf_to_bn(Byte *n, const Byte *f)
+{
+    const int f_exp = static_cast<S16>(BIG_ACCESS16(f + g_bf_length));
+    if (f_exp >= g_int_length)
+    {
+        // if it's too big, use max value
+        max_bn(n);
+        if (is_bf_neg(f))
+        {
+            neg_a_bn(n);
+        }
+        return n;
+    }
+
+    if (-f_exp > g_bn_length - g_int_length) // too small, return zero
+    {
+        clear_bn(n);
+        return n;
+    }
+
+    // already checked for over/underflow, this should be ok
+    const int move_bytes = g_bn_length - g_int_length + f_exp + 1;
+    std::memcpy(n, f + g_bf_length - move_bytes - 1, move_bytes);
+    const Byte hi_byte = *(f + g_bf_length - 1);
+    std::memset(n + move_bytes, hi_byte, g_bn_length - move_bytes); // sign extends
+    return n;
+}
+
+/*********************************************************************/
 //  bf = bn
 //  Converts a bignumber (integer) to a bigfloat
 //  g_bf_length must be at least g_bn_length+2
