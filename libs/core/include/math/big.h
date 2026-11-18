@@ -125,12 +125,12 @@ LDouble scale256(LDouble f, int n);
 
 #ifdef ACCESS_BY_BYTE
 // prototypes
-U32 BIG_ACCESS32(const Byte *addr);
-U16 BIG_ACCESS16(const Byte *addr);
-S16 BIG_ACCESS_S16(const S16 *addr);
-U32 BIG_SET32(Byte *addr, U32 val);
-U16 BIG_SET16(Byte *addr, U16 val);
-S16 BIG_SET_S16(S16 *addr, S16 val);
+misc::U32 BIG_ACCESS32(const Byte *addr);
+misc::U16 BIG_ACCESS16(const Byte *addr);
+misc::S16 BIG_ACCESS_S16(const misc::S16 *addr);
+misc::U32 BIG_SET32(Byte *addr, misc::U32 val);
+misc::U16 BIG_SET16(Byte *addr, misc::U16 val);
+misc::S16 BIG_SET_S16(misc::S16 *addr, misc::S16 val);
 #else
 // equivalent defines
 #define BIG_ACCESS32(addr)   (*(U32 *)(addr))
@@ -189,6 +189,9 @@ Byte *arctangent(
 Byte *unsafe_atan2_bf(Byte *r, Byte *ny, Byte *nx, const Byte *pi, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *tmp4,
     Byte *tmp5, Byte *tmp6, Byte *copy1, Byte *copy2);
 Byte *unsafe_bf_to_bf10(Byte *r, int dec, Byte *n);
+std::string unsafe_bf_to_string(Byte *r, int dec);
+std::string unsafe_bf_to_string_e(Byte *r, int dec);
+std::string unsafe_bf_to_string_f(Byte *r, int dec);
 Byte *mult_a_bf10_int(Byte *r, int dec, misc::U16 n);
 Byte *div_a_bf10_int(Byte *r, int dec, misc::U16 n);
 std::string bf10_to_string_e(const Byte *n, int dec);

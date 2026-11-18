@@ -14,14 +14,64 @@
 #include <cstring>
 #include <string>
 #include <string_view>
+#include <vector>
 
 using namespace id::misc;
 
 namespace id::math
 {
 
+/*************************************************************************
+ * The original bignumber code was written specifically for a Little Endian
+ * system (80x86).  The following is not particularly efficient, but was
+ * simple to incorporate.  If speed with a Big Endian machine is critical,
+ * the bignumber format could be reversed.
+ **************************************************************************/
+#ifdef ACCESS_BY_BYTE
+U32 BIG_ACCESS32(const Byte *addr)
+{
+    return addr[0] | ((U32) addr[1] << 8) | ((U32) addr[2] << 16) | ((U32) addr[3] << 24);
+}
+
+U16 BIG_ACCESS16(const Byte *addr)
+{
+    return (U16) addr[0] | ((U16) addr[1] << 8);
+}
+
+S16 BIG_ACCESS_S16(const S16 *addr)
+{
+    return (S16) ((const Byte *) addr)[0] | ((S16) ((const Byte *) addr)[1] << 8);
+}
+
+U32 BIG_SET32(Byte *addr, U32 val)
+{
+    addr[0] = (Byte) (val & 0xff);
+    addr[1] = (Byte) ((val >> 8) & 0xff);
+    addr[2] = (Byte) ((val >> 16) & 0xff);
+    addr[3] = (Byte) ((val >> 24) & 0xff);
+    return val;
+}
+
+U16 BIG_SET16(Byte *addr, U16 val)
+{
+    addr[0] = (Byte) (val & 0xff);
+    addr[1] = (Byte) ((val >> 8) & 0xff);
+    return val;
+}
+
+S16 BIG_SET_S16(S16 *addr, S16 val)
+{
+    ((Byte *) addr)[0] = (Byte) (val & 0xff);
+    ((Byte *) addr)[1] = (Byte) ((val >> 8) & 0xff);
+    return val;
+}
+
+#endif
+
 namespace
 {
+
+using BigFloat10 = Byte *;
 
 bool is_digit(const char c)
 {
@@ -1405,6 +1455,14 @@ LDouble scale256(const LDouble f, const int n)
     return scale_value(f, 256, n);
 }
 
+/********************************************************************/
+// calculates and returns the value of f*10^n
+// sort of like ldexp()
+LDouble scale_10(LDouble f, const int n)
+{
+    return scale_value(f, 10, n);
+}
+
 /*********************************************************************/
 //  f = b
 //  Converts a bigfloat to a double
@@ -1481,6 +1539,15 @@ LDouble extract_value(LDouble f, LDouble b, int *exp_ptr)
 LDouble extract256(const LDouble f, int *exp_ptr)
 {
     return extract_value(f, 256, exp_ptr);
+}
+
+/********************************************************************/
+// extracts the mantissa and exponent of f
+// finds m and n such that 1<=|m|<10 and f = m*10^n
+// n is stored in *exp_ptr and m is returned, sort of like frexp()
+LDouble extract_10(LDouble f, int *exp_ptr)
+{
+    return extract_value(f, 10, exp_ptr);
 }
 
 /*********************************************************************/
@@ -3344,6 +3411,63 @@ std::string bf10_to_string_f(const Byte *n, int dec)
         text.push_back('0');
     }
     return text;
+}
+
+/********************************************************************/
+// bftostring() - converts a bigfloat into a scientific notation string
+// dec - decimal places, 0 for max
+//   r - bigfloat
+//   will convert to a floating point notation
+//   SIDE-EFFECT: the bigfloat, r, is destroyed.
+//                Copy it first if necessary.
+// USES: g_bf_tmp1 - g_bf_tmp2
+/********************************************************************/
+
+std::string unsafe_bf_to_string(Byte *r, const int dec)
+{
+    LDouble value = bf_to_float(r);
+    if (value == 0.0)
+    {
+        return "0.0";
+    }
+
+    std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
+    BigFloat10 decimal{storage.data()};
+    unsafe_bf_to_bf10(decimal, dec, r);
+    int power = static_cast<S16>(BIG_ACCESS16(decimal + dec + 2)); // where the exponent is stored
+    if (power > -4 && power < 6)                                   // tinker with this
+    {
+        return bf10_to_string_f(decimal, dec);
+    }
+    return bf10_to_string_e(decimal, dec);
+}
+
+std::string unsafe_bf_to_string_e(Byte *r, const int dec)
+{
+    LDouble value = bf_to_float(r);
+    if (value == 0.0)
+    {
+        return "0.0";
+    }
+
+    std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
+    BigFloat10 decimal{storage.data()};
+    unsafe_bf_to_bf10(decimal, dec, r);
+    return bf10_to_string_e(decimal, dec);
+}
+
+std::string unsafe_bf_to_string_f(Byte *r, const int dec)
+{
+    LDouble value = bf_to_float(r);
+    if (value == 0.0)
+    {
+        return "0.0";
+    }
+
+    std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
+    BigFloat10 decimal{storage.data()};
+    unsafe_bf_to_bf10(decimal, dec, r);
+    return bf10_to_string_f(decimal, dec);
 }
 
 } // namespace id::math

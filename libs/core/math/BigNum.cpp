@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <cstring>
 #include <stdexcept>
 #include <utility>
@@ -645,6 +646,18 @@ BigNum &mult_a_bn_int(BigNum &r, const U16 u)
 {
     mult_a_bn_int(r.data(), u);
     return r;
+}
+
+/********************************************************************/
+// bn_hexdump() - for debugging, dumps to stdout
+
+void bn_hex_dump(const BigNum &r)
+{
+    for (int i = 0; i < g_bn_length; i++)
+    {
+        std::printf("%02X ", r.data()[i]);
+    }
+    std::printf("\n");
 }
 
 } // namespace id::math
