@@ -1220,29 +1220,65 @@ TEST_P(TestBigFloatArithmetic, zeroAndDivisionByZeroKeepLegacyResults)
     EXPECT_EQ(expected, encoded_value(value / zero));
 }
 
-TEST_P(TestBigFloatArithmetic, unsignedScalingRetainsLegacyNormalizationAndOperands)
+class TestBigFloatScalarMultiply : public TestBigFloatValue,
+                                   public testing::WithParamInterface<std::tuple<int, const char *, U16>>
 {
-    const std::array<U16, 7> factors{0, 1, 2, 255, 256, 32768, 65535};
-    auto &persistent = bf_arena(BigLifetime::PERSISTENT);
-    for (const char *text : {"0", "-1.2345678901234567890123456789e-400", "1.2345678901234567890123456789e400"})
-    {
-        const BigFloat source{persistent, text};
-        const auto original = encoded_value(source);
-        for (const U16 factor : factors)
-        {
-            SCOPED_TRACE(text);
-            SCOPED_TRACE(factor);
-            std::vector<Byte> expected(g_r_bf_length + 2);
-            mult_bf_int(expected.data(), original.data(), factor);
-            expected.resize(g_bf_length + 2);
+};
 
-            const BigFloat result = source * factor;
+TEST_P(TestBigFloatScalarMultiply, operatorMatchesDestinationFormAndPreservesSource)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    BigArena &persistent = bf_arena(BigLifetime::PERSISTENT);
+    const BigFloat source{persistent, std::get<1>(GetParam())};
+    const U16 factor = std::get<2>(GetParam());
+    const std::vector<Byte> original = encoded_value(source);
+    BigFloat expected{persistent};
+    mult_bf_int(expected, source, factor);
 
-            EXPECT_EQ(expected, encoded_value(result));
-            EXPECT_EQ(original, encoded_value(source));
-            EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &result.arena());
-        }
-    }
+    const BigFloat result = source * factor;
+
+    EXPECT_EQ(encoded_value(expected), encoded_value(result));
+    EXPECT_EQ(original, encoded_value(source));
+    EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &result.arena());
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsValuesAndFactors, TestBigFloatScalarMultiply,
+    testing::Combine(testing::Values(4, 32, 708),
+        testing::Values("0", "-1.2345678901234567890123456789e-400", "1.2345678901234567890123456789e400"),
+        testing::Values(U16{0}, U16{1}, U16{2}, U16{255}, U16{256}, U16{32768}, U16{65535})));
+
+TEST_P(TestBigFloatArithmetic, unsignedScalingPreservesDestinationAliasesPaddingAndStorage)
+{
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    const BigFloat source{arena, 2.0L};
+    BigFloat result{arena};
+    const Byte *const address = result.data();
+    const std::size_t size = arena.value_size();
+    const std::size_t stride = arena.block_size();
+    std::fill_n(result.data(), stride, Byte{0xa5});
+    const std::vector<Byte> original = encoded_value(source);
+    const std::array<Byte, 6> tail{0xfe, 0xff, 1, 0, 2, 0};
+    std::vector<Byte> expected(stride, 0xa5);
+    std::fill_n(expected.begin(), size, Byte{0});
+    std::copy(tail.begin(), tail.end(), expected.begin() + size - tail.size());
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(&result, &mult_bf_int(result, source, 65535));
+    EXPECT_EQ(expected, std::vector<Byte>(result.data(), result.data() + stride));
+
+    copy_bf(result, source);
+    EXPECT_EQ(&result, &mult_bf_int(result, std::as_const(result), 65535));
+    EXPECT_EQ(expected, std::vector<Byte>(result.data(), result.data() + stride));
+
+    copy_bf(result, source);
+    EXPECT_EQ(&result, &mult_a_bf_int(result, 65535));
+    EXPECT_EQ(expected, std::vector<Byte>(result.data(), result.data() + stride));
+
+    EXPECT_EQ(original, encoded_value(source));
+    EXPECT_EQ(address, result.data());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
 }
 
 TEST_P(TestBigFloatArithmetic, unsignedDivisionAssignmentRetainsRoundingAndZeroDivisorSaturation)

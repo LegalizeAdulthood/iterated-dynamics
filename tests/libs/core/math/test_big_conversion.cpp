@@ -472,6 +472,60 @@ INSTANTIATE_TEST_SUITE_P(SignsAndExponents, TestBigFloatByteSqr,
     testing::Values(BigFloatByteSqrInput{3, 3, -700, 9, -1400}, BigFloatByteSqrInput{-2, 2, 500, 4, 1000},
         BigFloatByteSqrInput{0, 0, -1, 0, 0}));
 
+struct BigFloatByteScalarMultiplyInput
+{
+    bool negative;
+    U16 factor;
+    std::array<Byte, 6> result_tail;
+};
+
+class TestBigFloatByteScalarMultiply : public testing::TestWithParam<BigFloatByteScalarMultiplyInput>
+{
+};
+
+TEST_P(TestBigFloatByteScalarMultiply, preservesExtentAndLegacyNormalization)
+{
+    constexpr int length = 8;
+    constexpr int size = length + 2;
+    const ValueSaver<int> bf_length{g_bf_length, length};
+    const ValueSaver<int> bn_length{g_bn_length, 4};
+    const BigFloatByteScalarMultiplyInput &input = GetParam();
+    alignas(U16) std::array<Byte, size + 2> source{};
+    source[length - 2] = input.negative ? 0xfe : 2;
+    source[length - 1] = input.negative ? 0xff : 0;
+    source.back() = 0xa5;
+    const std::array<Byte, size + 2> original = source;
+    std::array<Byte, size + 2> expected_source = original;
+    if (input.factor > 255)
+    {
+        expected_source[length - 3] = original[length - 2];
+        expected_source[length - 2] = original[length - 1];
+    }
+    alignas(U16) std::array<Byte, size + 2> result{};
+    result.back() = 0xa5;
+    std::array<Byte, size + 2> expected{};
+    std::copy(input.result_tail.begin(), input.result_tail.end(), expected.begin() + size - 6);
+    expected.back() = 0xa5;
+
+    EXPECT_EQ(result.data(), unsafe_mult_bf_int(result.data(), source.data(), input.factor));
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(expected_source, source);
+    EXPECT_EQ(4, g_bn_length);
+
+    source = original;
+    EXPECT_EQ(source.data(), mult_a_bf_int(source.data(), input.factor));
+    EXPECT_EQ(expected, source);
+    EXPECT_EQ(4, g_bn_length);
+    EXPECT_EQ(length, g_bf_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(Factors, TestBigFloatByteScalarMultiply,
+    testing::Values(BigFloatByteScalarMultiplyInput{false, 0, {}},
+        BigFloatByteScalarMultiplyInput{true, 0, {0, 0, 0, 0xff, 0, 0}},
+        BigFloatByteScalarMultiplyInput{false, 255, {0, 0xfe, 1, 0, 1, 0}},
+        BigFloatByteScalarMultiplyInput{true, 256, {0, 0, 0xfe, 0xff, 1, 0}},
+        BigFloatByteScalarMultiplyInput{false, 65535, {0xfe, 0xff, 1, 0, 2, 0}}));
+
 struct BigNumConversionInput
 {
     const char *name;

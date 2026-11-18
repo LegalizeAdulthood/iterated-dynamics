@@ -865,7 +865,7 @@ BigFloat BigFloat::operator*(const BigFloat &right) const
 BigFloat BigFloat::operator*(const U16 right) const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    mult_bf_int(result.m_storage.data(), m_storage.data(), right);
+    mult_bf_int(result, *this, right);
     return result;
 }
 
@@ -1030,6 +1030,19 @@ BigFloat &square_bf(BigFloat &r, const BigFloat &n)
 {
     copy_bf(g_bf_tmp_copy1.data(), n.data());
     square_value(r.data(), g_bf_tmp_copy1.data());
+    return r;
+}
+
+BigFloat &mult_bf_int(BigFloat &r, const BigFloat &n, const U16 u)
+{
+    copy_bf(g_bf_tmp_copy1.data(), n.data());
+    unsafe_mult_bf_int(r.data(), g_bf_tmp_copy1.data(), u);
+    return r;
+}
+
+BigFloat &mult_a_bf_int(BigFloat &r, const U16 u)
+{
+    mult_a_bf_int(r.data(), u);
     return r;
 }
 

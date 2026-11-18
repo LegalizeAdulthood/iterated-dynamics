@@ -1935,6 +1935,66 @@ Byte *square_wide(Byte *r, Byte *n)
     return r;
 }
 
+/********************************************************************/
+// r = n * u  where u is an unsigned integer
+// SIDE-EFFECTS: n can be "de-normalized" and lose precision
+Byte *unsafe_mult_bf_int(Byte *r, Byte *n, const U16 u)
+{
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
+    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
+    BIG_SET_S16(r_exp, BIG_ACCESS_S16(n_exp)); // *r_exp = *n_exp;
+
+    const bool positive = !is_bf_neg(n);
+
+    /*
+    if u > 0x00FF, then the integer part of the mantissa will overflow the
+    2 byte (16 bit) integer size.  Therefore, make adjustment before
+    multiplication is performed.
+    */
+    if (u > 0x00FF)
+    {
+        // un-normalize n
+        std::memmove(n, n + 1, g_bf_length - 1); // this sign extends as well
+        BIG_SET_S16(r_exp, BIG_ACCESS_S16(r_exp) + static_cast<S16>(1));
+    }
+
+    int bnl = g_bn_length;
+    g_bn_length = g_bf_length;
+    mult_bn_int(r, n, u);
+    g_bn_length = bnl;
+
+    norm_sign_bf(r, positive);
+    return r;
+}
+
+/********************************************************************/
+// r *= u  where u is an unsigned integer
+Byte *mult_a_bf_int(Byte *r, const U16 u)
+{
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
+    const bool positive = !is_bf_neg(r);
+
+    /*
+    if u > 0x00FF, then the integer part of the mantissa will overflow the
+    2 byte (16 bit) integer size.  Therefore, make adjustment before
+    multiplication is performed.
+    */
+    if (u > 0x00FF)
+    {
+        // un-normalize n
+        std::memmove(r, r + 1, g_bf_length - 1); // this sign extends as well
+        BIG_SET_S16(r_exp, BIG_ACCESS_S16(r_exp) + static_cast<S16>(1));
+    }
+
+    int bnl = g_bn_length;
+    g_bn_length = g_bf_length;
+    mult_a_bn_int(r, u);
+    g_bn_length = bnl;
+
+    norm_sign_bf(r, positive);
+    return r;
+}
+
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bigfloat
