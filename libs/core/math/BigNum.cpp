@@ -443,6 +443,11 @@ BigNum &float_to_bn(BigNum &r, const LDouble value)
     return r;
 }
 
+void bf_to_bn(BigNum &destination, const BigFloat &source)
+{
+    source.copy_to_legacy_num(destination.data(), static_cast<std::size_t>(g_bn_length));
+}
+
 LDouble bn_to_float(BigNum &value)
 {
     return bn_to_float(value.data());
