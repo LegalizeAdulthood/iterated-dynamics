@@ -10,6 +10,7 @@
 #include <cfloat>
 #include <charconv>
 #include <cmath>
+#include <cstdio>
 #include <cstring>
 #include <string>
 #include <string_view>
@@ -2122,6 +2123,177 @@ Byte *unsafe_ln_bf(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *t
 
     neg_a_bf(r); // -(-r)
     return r;
+}
+
+Byte *unsafe_sin_cos_bf(Byte *s, Byte *c, Byte *n, [[maybe_unused]] const Byte *pi, Byte *tmp1, Byte *tmp2)
+{
+    U16 fact = 2;
+    S16 *test_exp = reinterpret_cast<S16 *>(tmp1 + g_bf_length);
+    S16 *c_exp = reinterpret_cast<S16 *>(c + g_bf_length);
+    S16 *s_exp = reinterpret_cast<S16 *>(s + g_bf_length);
+
+#ifndef CALCULATING_BIG_PI
+    // assure range 0 <= x < pi/4
+
+    if (is_bf_zero(n))
+    {
+        clear_bf(s);     // sin(0) = 0
+        int_to_bf(c, 1); // cos(0) = 1
+        return s;
+    }
+
+    bool sign_sin = false;
+    if (is_bf_neg(n))
+    {
+        sign_sin = !sign_sin; // sin(-x) = -sin(x), odd; cos(-x) = cos(x), even
+        neg_a_bf(n);
+    }
+    // n >= 0
+
+    double_bf(tmp1, pi); // 2*pi
+    // this could be done with remainders, but it would probably be slower
+    while (cmp_bf(n, tmp1) >= 0) // while n >= 2*pi
+    {
+        copy_bf(tmp2, tmp1);
+        unsafe_sub_a_bf(n, tmp2);
+    }
+    // 0 <= n < 2*pi
+
+    bool sign_cos = false;
+    copy_bf(tmp1, pi);        // pi
+    if (cmp_bf(n, tmp1) >= 0) // if n >= pi
+    {
+        unsafe_sub_a_bf(n, tmp1);
+        sign_sin = !sign_sin;
+        sign_cos = !sign_cos;
+    }
+    // 0 <= n < pi
+
+    half_bf(tmp1, pi);       // pi/2
+    if (cmp_bf(n, tmp1) > 0) // if n > pi/2
+    {
+        copy_bf(tmp2, pi);
+        unsafe_sub_bf(n, tmp2, n);
+        sign_cos = !sign_cos;
+    }
+    // 0 <= n < pi/2
+
+    bool switch_sin_cos = false;
+    half_bf(tmp1, pi);                // pi/2
+    half_a_bf(tmp1);                  // pi/4
+    if (cmp_bf(n, tmp1) > 0)          // if n > pi/4
+    {
+        copy_bf(tmp2, n);
+        half_bf(tmp1, pi);            // pi/2
+        unsafe_sub_bf(n, tmp1, tmp2); // pi/2 - n
+        switch_sin_cos = !switch_sin_cos;
+    }
+    // 0 <= n < pi/4
+
+    // this looks redundant, but n could now be zero when it wasn't before
+    if (is_bf_zero(n))
+    {
+        clear_bf(s);     // sin(0) = 0
+        int_to_bf(c, 1); // cos(0) = 1
+        return s;
+    }
+
+    // at this point, the double angle trig identities could be used as many
+    // times as desired to reduce the range to pi/8, pi/16, etc...  Each time
+    // the range is cut in half, the number of iterations required is reduced
+    // by "quite a bit."  It's just a matter of testing to see what gives the
+    // optimal results.
+    // halves = g_bf_length / 10;  // this is experimental
+    const int halves = 1;
+    for (int i = 0; i < halves; i++)
+    {
+        half_a_bf(n);
+    }
+#endif
+
+    // use Taylor Series (very slow convergence)
+    copy_bf(s, n);    // start with s=n
+    int_to_bf(c, 1);  // start with c=1
+    copy_bf(tmp1, n); // the current x^n/n!
+    bool sin_done = false;
+    bool cos_done = false;
+    bool k = false;
+    do
+    {
+        // even terms for cosine
+        copy_bf(tmp2, tmp1);
+        unsafe_mult_bf(tmp1, tmp2, n);
+        div_a_bf_int(tmp1, fact++);
+        if (!cos_done)
+        {
+            cos_done = BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(c_exp) - (g_bf_length - 2); // too small to register
+            if (!cos_done)
+            {
+                if (k) // alternate between adding and subtracting
+                {
+                    unsafe_add_a_bf(c, tmp1);
+                }
+                else
+                {
+                    unsafe_sub_a_bf(c, tmp1);
+                }
+            }
+        }
+
+        // odd terms for sine
+        copy_bf(tmp2, tmp1);
+        unsafe_mult_bf(tmp1, tmp2, n);
+        div_a_bf_int(tmp1, fact++);
+        if (!sin_done)
+        {
+            sin_done = BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(s_exp) - (g_bf_length - 2); // too small to register
+            if (!sin_done)
+            {
+                if (k) // alternate between adding and subtracting
+                {
+                    unsafe_add_a_bf(s, tmp1);
+                }
+                else
+                {
+                    unsafe_sub_a_bf(s, tmp1);
+                }
+            }
+        }
+        k = !k;           // toggle
+#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
+        std::printf("."); // lets you know it's doing something
+#endif
+    } while (!cos_done || !sin_done);
+
+#ifndef CALCULATING_BIG_PI
+    // now need to undo what was done by cutting angles in half
+    for (int i = 0; i < halves; i++)
+    {
+        unsafe_mult_bf(tmp2, s, c); // no need for safe mult
+        double_bf(s, tmp2);         // sin(2x) = 2*sin(x)*cos(x)
+        unsafe_square_bf(tmp2, c);
+        double_a_bf(tmp2);
+        int_to_bf(tmp1, 1);
+        unsafe_sub_bf(c, tmp2, tmp1); // cos(2x) = 2*cos(x)*cos(x) - 1
+    }
+
+    if (switch_sin_cos)
+    {
+        copy_bf(tmp1, s);
+        copy_bf(s, c);
+        copy_bf(c, tmp1);
+    }
+    if (sign_sin)
+    {
+        neg_a_bf(s);
+    }
+    if (sign_cos)
+    {
+        neg_a_bf(c);
+    }
+#endif
+
+    return s; // return sine I guess
 }
 
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values

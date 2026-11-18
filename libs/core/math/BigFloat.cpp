@@ -134,177 +134,6 @@ BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
     return r;
 }
 
-BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n, [[maybe_unused]] BigFloatPtr pi)
-{
-    U16 fact = 2;
-    S16 *test_exp = reinterpret_cast<S16 *>(g_bf_tmp1.data() + g_bf_length);
-    S16 *c_exp = reinterpret_cast<S16 *>(c + g_bf_length);
-    S16 *s_exp = reinterpret_cast<S16 *>(s + g_bf_length);
-
-#ifndef CALCULATING_BIG_PI
-    // assure range 0 <= x < pi/4
-
-    if (is_bf_zero(n))
-    {
-        clear_bf(s);     // sin(0) = 0
-        int_to_bf(c, 1); // cos(0) = 1
-        return s;
-    }
-
-    bool sign_sin = false;
-    if (is_bf_neg(n))
-    {
-        sign_sin = !sign_sin; // sin(-x) = -sin(x), odd; cos(-x) = cos(x), even
-        neg_a_bf(n);
-    }
-    // n >= 0
-
-    double_bf(g_bf_tmp1.data(), pi); // 2*pi
-    // this could be done with remainders, but it would probably be slower
-    while (cmp_bf(n, g_bf_tmp1.data()) >= 0) // while n >= 2*pi
-    {
-        copy_bf(g_bf_tmp2.data(), g_bf_tmp1.data());
-        unsafe_sub_a_bf(n, g_bf_tmp2.data());
-    }
-    // 0 <= n < 2*pi
-
-    bool sign_cos = false;
-    copy_bf(g_bf_tmp1.data(), pi);        // pi
-    if (cmp_bf(n, g_bf_tmp1.data()) >= 0) // if n >= pi
-    {
-        unsafe_sub_a_bf(n, g_bf_tmp1.data());
-        sign_sin = !sign_sin;
-        sign_cos = !sign_cos;
-    }
-    // 0 <= n < pi
-
-    half_bf(g_bf_tmp1.data(), pi);       // pi/2
-    if (cmp_bf(n, g_bf_tmp1.data()) > 0) // if n > pi/2
-    {
-        copy_bf(g_bf_tmp2.data(), pi);
-        unsafe_sub_bf(n, g_bf_tmp2.data(), n);
-        sign_cos = !sign_cos;
-    }
-    // 0 <= n < pi/2
-
-    bool switch_sin_cos = false;
-    half_bf(g_bf_tmp1.data(), pi);                            // pi/2
-    half_a_bf(g_bf_tmp1.data());                              // pi/4
-    if (cmp_bf(n, g_bf_tmp1.data()) > 0)                      // if n > pi/4
-    {
-        copy_bf(g_bf_tmp2.data(), n);
-        half_bf(g_bf_tmp1.data(), pi);                        // pi/2
-        unsafe_sub_bf(n, g_bf_tmp1.data(), g_bf_tmp2.data()); // pi/2 - n
-        switch_sin_cos = !switch_sin_cos;
-    }
-    // 0 <= n < pi/4
-
-    // this looks redundant, but n could now be zero when it wasn't before
-    if (is_bf_zero(n))
-    {
-        clear_bf(s);     // sin(0) = 0
-        int_to_bf(c, 1); // cos(0) = 1
-        return s;
-    }
-
-    // at this point, the double angle trig identities could be used as many
-    // times as desired to reduce the range to pi/8, pi/16, etc...  Each time
-    // the range is cut in half, the number of iterations required is reduced
-    // by "quite a bit."  It's just a matter of testing to see what gives the
-    // optimal results.
-    // halves = g_bf_length / 10;  // this is experimental
-    const int halves = 1;
-    for (int i = 0; i < halves; i++)
-    {
-        half_a_bf(n);
-    }
-#endif
-
-    // use Taylor Series (very slow convergence)
-    copy_bf(s, n);         // start with s=n
-    int_to_bf(c, 1);       // start with c=1
-    copy_bf(g_bf_tmp1.data(), n); // the current x^n/n!
-    bool sin_done = false;
-    bool cos_done = false;
-    bool k = false;
-    do
-    {
-        // even terms for cosine
-        copy_bf(g_bf_tmp2.data(), g_bf_tmp1.data());
-        unsafe_mult_bf(g_bf_tmp1.data(), g_bf_tmp2.data(), n);
-        div_a_bf_int(g_bf_tmp1.data(), fact++);
-        if (!cos_done)
-        {
-            cos_done = BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(c_exp) - (g_bf_length - 2); // too small to register
-            if (!cos_done)
-            {
-                if (k) // alternate between adding and subtracting
-                {
-                    unsafe_add_a_bf(c, g_bf_tmp1.data());
-                }
-                else
-                {
-                    unsafe_sub_a_bf(c, g_bf_tmp1.data());
-                }
-            }
-        }
-
-        // odd terms for sine
-        copy_bf(g_bf_tmp2.data(), g_bf_tmp1.data());
-        unsafe_mult_bf(g_bf_tmp1.data(), g_bf_tmp2.data(), n);
-        div_a_bf_int(g_bf_tmp1.data(), fact++);
-        if (!sin_done)
-        {
-            sin_done = BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(s_exp) - (g_bf_length - 2); // too small to register
-            if (!sin_done)
-            {
-                if (k) // alternate between adding and subtracting
-                {
-                    unsafe_add_a_bf(s, g_bf_tmp1.data());
-                }
-                else
-                {
-                    unsafe_sub_a_bf(s, g_bf_tmp1.data());
-                }
-            }
-        }
-        k = !k;           // toggle
-#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-        std::printf("."); // lets you know it's doing something
-#endif
-    } while (!cos_done || !sin_done);
-
-#ifndef CALCULATING_BIG_PI
-    // now need to undo what was done by cutting angles in half
-    for (int i = 0; i < halves; i++)
-    {
-        unsafe_mult_bf(g_bf_tmp2.data(), s, c); // no need for safe mult
-        double_bf(s, g_bf_tmp2.data());         // sin(2x) = 2*sin(x)*cos(x)
-        square_value(g_bf_tmp2.data(), c);
-        double_a_bf(g_bf_tmp2.data());
-        int_to_bf(g_bf_tmp1.data(), 1);
-        unsafe_sub_bf(c, g_bf_tmp2.data(), g_bf_tmp1.data()); // cos(2x) = 2*cos(x)*cos(x) - 1
-    }
-
-    if (switch_sin_cos)
-    {
-        copy_bf(g_bf_tmp1.data(), s);
-        copy_bf(s, c);
-        copy_bf(c, g_bf_tmp1.data());
-    }
-    if (sign_sin)
-    {
-        neg_a_bf(s);
-    }
-    if (sign_cos)
-    {
-        neg_a_bf(c);
-    }
-#endif
-
-    return s; // return sine I guess
-}
-
 BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
 {
     int almost_match = 0;
@@ -379,7 +208,7 @@ BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
         std::printf("\natan() loop #%i, g_bf_length=%i\nsincos() loops\n", i, g_bf_length);
 #endif
-        sine_cosine(g_bf_tmp4.data(), g_bf_tmp5.data(), bf_tmp3, bf_pi);      // sin(r), cos(r)
+        unsafe_sin_cos_bf(g_bf_tmp4.data(), g_bf_tmp5.data(), bf_tmp3, bf_pi, g_bf_tmp1.data(), g_bf_tmp2.data()); // sin(r), cos(r)
         copy_bf(bf_tmp3, r);                                                  // restore bf_tmp3 from sincos_bf()
         copy_bf(g_bf_tmp1.data(), g_bf_tmp5.data());
         unsafe_mult_bf(g_bf_tmp2.data(), n, g_bf_tmp1.data());                // n*cos(r)
@@ -746,7 +575,8 @@ std::pair<BigFloat, BigFloat> BigFloat::sin_cos() const
     std::pair<BigFloat, BigFloat> result{
         BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
     copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
-    sine_cosine(result.first.m_storage.data(), result.second.m_storage.data(), g_bf_tmp_copy1.data(), g_bf_pi.data());
+    unsafe_sin_cos_bf(result.first.m_storage.data(), result.second.m_storage.data(), g_bf_tmp_copy1.data(),
+        g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
     return result;
 }
 
@@ -1162,11 +992,6 @@ BigArena::Allocation BigFloatProduct::release_reduced_storage() &&
 Byte *unsafe_square_bf(Byte *r, Byte *n)
 {
     return square_value(r, n);
-}
-
-BigFloatPtr unsafe_sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
-{
-    return sine_cosine(s, c, n, g_bf_pi.data());
 }
 
 BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr y, BigFloatPtr x)

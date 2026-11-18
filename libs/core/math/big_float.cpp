@@ -39,7 +39,7 @@ void bf_hex_dump(const BigFloat &r)
 BigFloatPtr sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
 {
     copy_bf(g_bf_tmp_copy1.data(), n);
-    return unsafe_sin_cos_bf(s, c, g_bf_tmp_copy1.data());
+    return unsafe_sin_cos_bf(s, c, g_bf_tmp_copy1.data(), g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
 }
 
 /**********************************************************************/

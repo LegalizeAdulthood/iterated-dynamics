@@ -180,7 +180,7 @@ Byte *unsafe_inv_bf(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2);
 Byte *unsafe_div_bf(Byte *r, Byte *n1, Byte *n2, Byte *tmp1, Byte *tmp2);
 Byte *exp_bf(Byte *r, const Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3);
 Byte *unsafe_ln_bf(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *tmp4, Byte *tmp5, Byte *tmp6);
-BigFloatPtr unsafe_sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n);
+Byte *unsafe_sin_cos_bf(Byte *s, Byte *c, Byte *n, const Byte *pi, Byte *tmp1, Byte *tmp2);
 BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx);
 Byte *unsafe_bf_to_bf10(Byte *r, int dec, Byte *n);
 Byte *mult_a_bf10_int(Byte *r, int dec, misc::U16 n);

@@ -876,6 +876,55 @@ TEST_F(TestBigFloatByteLogarithm, confinesThePrecisionRampToTheBorrowedWindows)
     EXPECT_EQ(mark, save_stack());
 }
 
+class TestBigFloatByteSineCosine : public TestBigNumConversionBase
+{
+};
+
+TEST_F(TestBigFloatByteSineCosine, reducesTheBorrowedHalfPiWindowAndPreservesGuards)
+{
+    init_bf_length(4);
+    constexpr int length = 8;
+    constexpr int size = length + 2;
+    constexpr int offset = 4;
+    ASSERT_EQ(length, g_bf_length);
+    // Use an exact pi substitute of 3.125 so the half-pi branch is exact.
+    alignas(U16) std::array<Byte, offset + size + 2> pi{
+        0xa5, 0xa5, 0xa5, 0xa5, 0, 0, 0, 0, 0, 0x20, 3, 0, 0, 0, 0xa5, 0xa5};
+    const std::array<Byte, offset + size + 2> original_pi = pi;
+    alignas(U16) std::array<Byte, offset + size + 2> input{
+        0xa5, 0xa5, 0xa5, 0xa5, 0, 0, 0, 0, 0, 0x70, 0xfe, 0xff, 0, 0, 0xa5, 0xa5};
+    alignas(U16) std::array<Byte, size + 2> sine{};
+    alignas(U16) std::array<Byte, size + 2> cosine{};
+    sine.fill(0xa5);
+    cosine.fill(0xa5);
+    int_to_bf(g_bf_pi.data(), 4);
+    alignas(U16) std::array<Byte, size + 2> tmp1{};
+    alignas(U16) std::array<Byte, size + 2> tmp2{};
+    tmp1.fill(0xa5);
+    tmp2.fill(0xa5);
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(sine.data(),
+        unsafe_sin_cos_bf(
+            sine.data(), cosine.data(), input.data() + offset, pi.data() + offset, tmp1.data(), tmp2.data()));
+
+    std::array<Byte, offset + size + 2> reduced{};
+    reduced.fill(0xa5);
+    std::fill_n(reduced.begin() + offset, size, Byte{0});
+    constexpr std::array<Byte, size + 2> zero{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xa5, 0xa5};
+    constexpr std::array<Byte, size + 2> one{0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0xa5, 0xa5};
+    constexpr std::array<Byte, size + 2> half_pi{0, 0, 0, 0, 0, 0x90, 1, 0, 0, 0, 0xa5, 0xa5};
+    EXPECT_EQ(reduced, input);
+    EXPECT_EQ(zero, sine);
+    EXPECT_EQ(one, cosine);
+    EXPECT_EQ(original_pi, pi);
+    EXPECT_EQ(half_pi, tmp1);
+    EXPECT_EQ(half_pi, tmp2);
+    EXPECT_EQ(4, g_bn_length);
+    EXPECT_EQ(length, g_bf_length);
+    EXPECT_EQ(mark, save_stack());
+}
+
 struct BigNumConversionInput
 {
     const char *name;
