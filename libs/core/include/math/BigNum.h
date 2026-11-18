@@ -14,8 +14,6 @@ namespace id::math
 {
 
 class BigFloat;
-class BigNumProduct;
-
 class BigNum
 {
 public:
@@ -24,7 +22,6 @@ public:
     explicit BigNum(LDouble value);
     explicit BigNum(std::string_view text);
     explicit BigNum(const BigFloat &value);
-    explicit BigNum(BigNumProduct &&value);
     explicit BigNum(BigArena &arena);
     BigNum(BigArena &arena, LDouble value);
     BigNum(BigArena &arena, std::string_view text);
@@ -100,48 +97,8 @@ private:
     BigArena::Allocation m_storage;
 };
 
-class BigNumProduct
-{
-public:
-    BigNumProduct() noexcept;
-    explicit BigNumProduct(BigArena &arena);
-    BigNumProduct(const BigNumProduct &value);
-    BigNumProduct(BigArena &arena, const BigNumProduct &value);
-    BigNumProduct(BigNumProduct &&value) noexcept;
-    BigNumProduct &operator=(const BigNumProduct &value);
-    BigNumProduct &operator=(BigNumProduct &&value);
-
-    explicit operator bool() const noexcept
-    {
-        return static_cast<bool>(m_storage);
-    }
-
-    BigArena &arena() const noexcept
-    {
-        return m_storage.arena();
-    }
-
-    BigNumPtr data() noexcept
-    {
-        return m_storage.data();
-    }
-
-    BigNumConstPtr data() const noexcept
-    {
-        return m_storage.data();
-    }
-
-    // Consume the product, reduce its bytes, and release its companion slot.
-    BigArena::Allocation release_reduced_storage() &&;
-
-private:
-    // g_r_length retained bytes in two slots, including fractional guards.
-    BigArena::Allocation m_storage;
-};
-
 BigNum sqr(const BigNum &value);
 void square_bn(BigNum &result, BigNum &source);
-void square_bn(BigNumProduct &result, BigNum &source);
 void mult_bn(BigNum &result, BigNum &left, BigNum &right);
 BigNum &div_bn(BigNum &r, const BigNum &n1, const BigNum &n2);
 BigNum &unsafe_inv_bn(BigNum &r, BigNum &n);

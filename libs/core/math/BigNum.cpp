@@ -13,8 +13,6 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
-#include <memory>
-#include <new>
 #include <stdexcept>
 #include <utility>
 
@@ -24,6 +22,51 @@ namespace id::math
 {
 namespace
 {
+
+class BigNumProduct
+{
+public:
+    BigNumProduct() noexcept = default;
+    explicit BigNumProduct(BigArena &arena);
+
+    explicit operator bool() const noexcept
+    {
+        return static_cast<bool>(m_storage);
+    }
+
+    BigNumPtr data() noexcept
+    {
+        return m_storage.data();
+    }
+
+    BigNumConstPtr data() const noexcept
+    {
+        return m_storage.data();
+    }
+
+    void reset() noexcept
+    {
+        m_storage.reset();
+    }
+
+    BigArena::Allocation release_reduced_storage() &&;
+
+private:
+    // g_r_length retained bytes in two slots, including fractional guards.
+    BigArena::Allocation m_storage;
+};
+
+BigNumProduct::BigNumProduct(BigArena &arena) :
+    m_storage(arena.allocate_double())
+{
+    std::memset(data(), 0, 2 * arena.block_size());
+}
+
+BigArena::Allocation BigNumProduct::release_reduced_storage() &&
+{
+    m_storage.reduce();
+    return std::move(m_storage);
+}
 
 BigNumProduct &bn_product_scratch()
 {
@@ -65,9 +108,7 @@ void init_bn_product_scratch(BigArena &working)
     BigNumProduct &scratch = bn_product_scratch();
     if (!scratch)
     {
-        BigNumProduct value{working};
-        std::destroy_at(&scratch);
-        ::new (&scratch) BigNumProduct{std::move(value)};
+        scratch = BigNumProduct{working};
     }
     else
     {
@@ -83,7 +124,7 @@ bool is_bn_product_scratch(const Byte *source)
 
 void free_bn_product_scratch()
 {
-    bn_product_scratch() = BigNumProduct{};
+    bn_product_scratch().reset();
 }
 
 BigNum::BigNum() noexcept = default;
@@ -100,11 +141,6 @@ BigNum::BigNum(const std::string_view text) :
 
 BigNum::BigNum(const BigFloat &value) :
     BigNum(bn_arena(BigLifetime::WORKING), value)
-{
-}
-
-BigNum::BigNum(BigNumProduct &&value) :
-    m_storage(std::move(value).release_reduced_storage())
 {
 }
 
@@ -258,9 +294,12 @@ BigNum BigNum::operator-(const BigNum &right) const
 
 BigNum BigNum::operator*(const BigNum &right) const
 {
-    BigNumProduct result{bn_arena(BigLifetime::WORKING)};
-    binary_operation(result.data(), data(), right.data(), g_bn_tmp_copy1.data(), g_bn_tmp_copy2.data(), unsafe_mult_bn);
-    return BigNum{std::move(result)};
+    BigNumProduct product{bn_arena(BigLifetime::WORKING)};
+    binary_operation(
+        product.data(), data(), right.data(), g_bn_tmp_copy1.data(), g_bn_tmp_copy2.data(), unsafe_mult_bn);
+    BigNum result;
+    result.m_storage = std::move(product).release_reduced_storage();
+    return result;
 }
 
 BigNum BigNum::operator*(const U16 right) const
@@ -279,97 +318,18 @@ BigNum BigNum::operator/(const BigNum &right) const
 
 BigNum BigNum::sqr() const
 {
-    BigNumProduct result{bn_arena(BigLifetime::WORKING)};
+    BigNumProduct product{bn_arena(BigLifetime::WORKING)};
     copy_bn(g_bn_tmp_copy1.data(), data());
-    unsafe_square_bn(result.data(), g_bn_tmp_copy1.data());
-    return BigNum{std::move(result)};
-}
-
-BigNumProduct::BigNumProduct() noexcept = default;
-
-BigNumProduct::BigNumProduct(BigArena &arena) :
-    m_storage(arena.allocate_double())
-{
-    std::memset(data(), 0, 2 * arena.block_size());
-}
-
-BigNumProduct::BigNumProduct(const BigNumProduct &value) :
-    m_storage(value.m_storage.clone())
-{
-}
-
-BigNumProduct::BigNumProduct(BigArena &arena, const BigNumProduct &value) :
-    m_storage(value.m_storage.clone(arena))
-{
-}
-
-BigNumProduct::BigNumProduct(BigNumProduct &&value) noexcept = default;
-
-BigNumProduct &BigNumProduct::operator=(const BigNumProduct &value)
-{
-    if (this != &value)
-    {
-        if (!value.m_storage)
-        {
-            m_storage.reset();
-        }
-        else
-        {
-            if (!m_storage)
-            {
-                BigArena &destination = m_storage.arena_ptr() != nullptr ? arena() : bn_arena(BigLifetime::WORKING);
-                m_storage = destination.allocate_double();
-            }
-            std::memcpy(data(), value.data(), g_r_length);
-        }
-    }
-    return *this;
-}
-
-BigNumProduct &BigNumProduct::operator=(BigNumProduct &&value)
-{
-    if (this != &value)
-    {
-        if (!value.m_storage)
-        {
-            m_storage.reset();
-        }
-        else if ((m_storage.arena_ptr() != nullptr ? &arena() : &bn_arena(BigLifetime::WORKING)) == &value.arena())
-        {
-            m_storage = std::move(value.m_storage);
-        }
-        else
-        {
-            *this = static_cast<const BigNumProduct &>(value);
-        }
-    }
-    return *this;
-}
-
-BigArena::Allocation BigNumProduct::release_reduced_storage() &&
-{
-    BigArena::Allocation result = std::move(m_storage);
-    if (result)
-    {
-        result.reduce();
-    }
+    unsafe_square_bn(product.data(), g_bn_tmp_copy1.data());
+    BigNum result;
+    result.m_storage = std::move(product).release_reduced_storage();
     return result;
-}
-
-void square_bn(BigNumProduct &result, BigNum &source)
-{
-    const bool sign = is_bn_neg(source.data());
-    unsafe_square_bn(result.data(), source.data());
-    if (sign)
-    {
-        neg_a_bn(source.data());
-    }
 }
 
 void square_bn(BigNum &result, BigNum &source)
 {
     BigNumProduct product{bn_arena(BigLifetime::TEMPORARY)};
-    square_bn(product, source);
+    square_bn(product.data(), source.data());
     copy_bn(result.data(), msb_bn(product.data()));
 }
 

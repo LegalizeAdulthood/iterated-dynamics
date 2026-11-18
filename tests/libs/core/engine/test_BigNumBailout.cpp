@@ -389,7 +389,7 @@ TEST_P(TestBigNumProductWindows, canonicalSlotAndPairedProductHaveSeparateExtent
 TEST_P(TestBigNumProductWindows, shiftedSubtractionAndDoublingPreserveTheOtherProductBytes)
 {
     BigStackSaver saved;
-    BigNumProduct product{bn_arena(BigLifetime::TEMPORARY)};
+    BigArena::Allocation product = bn_arena(BigLifetime::TEMPORARY).allocate_double();
     g_new_z_bn.x = 3;
     g_new_z_bn.y = -2;
     std::vector<Byte> cache_x(g_r_length), cache_y(g_r_length);
@@ -601,7 +601,7 @@ TEST_P(TestBigNumBailoutProductStorage, reservesCanonicalMetricAndReusesPrivateS
     const std::vector<Byte> survivor_bytes(survivor.data(), survivor.data() + stride);
     Byte *const borrowed = bn_stack().allocate_single();
     std::fill_n(borrowed, stride, Byte{0x3c});
-    BigNumProduct guard{temporary};
+    BigArena::Allocation guard = temporary.allocate_double();
     std::fill_n(guard.data(), 2 * stride, Byte{0xa5});
     const BigStackMark mark = save_stack();
     ASSERT_EQ(4U, temporary.high_water_mark());
