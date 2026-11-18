@@ -170,17 +170,6 @@ BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
     return r;
 }
 
-BigFloatPtr halve(BigFloatPtr r)
-{
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    half_a_bn(r);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
-}
-
 BigFloatPtr exponential(BigFloatPtr r, BigFloatConstPtr n)
 {
     U16 fact = 1;
@@ -359,7 +348,7 @@ BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n, [[maybe_unu
 
     bool switch_sin_cos = false;
     half_bf(g_bf_tmp1.data(), pi);                            // pi/2
-    halve(g_bf_tmp1.data());                                  // pi/4
+    half_a_bf(g_bf_tmp1.data());                              // pi/4
     if (cmp_bf(n, g_bf_tmp1.data()) > 0)                      // if n > pi/4
     {
         copy_bf(g_bf_tmp2.data(), n);
@@ -386,7 +375,7 @@ BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n, [[maybe_unu
     const int halves = 1;
     for (int i = 0; i < halves; i++)
     {
-        halve(n);
+        half_a_bf(n);
     }
 #endif
 
@@ -637,7 +626,7 @@ BigFloatPtr arctangent2(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
     if (sign_x == 0)
     {
         copy_bf(r, g_bf_pi.data()); // y axis
-        halve(r);            // +90 deg
+        half_a_bf(r);        // +90 deg
         if (sign_y < 0)
         {
             neg_a_bf(r);     // -90 deg
@@ -894,7 +883,7 @@ BigFloat BigFloat::sqr() const
 BigFloat BigFloat::half() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING), *this};
-    halve(result.m_storage.data());
+    half_a_bf(result);
     return result;
 }
 
@@ -1055,6 +1044,18 @@ BigFloat &double_bf(BigFloat &r, const BigFloat &n)
 BigFloat &double_a_bf(BigFloat &r)
 {
     double_a_bf(r.data());
+    return r;
+}
+
+BigFloat &half_bf(BigFloat &r, const BigFloat &n)
+{
+    half_bf(r.data(), n.data());
+    return r;
+}
+
+BigFloat &half_a_bf(BigFloat &r)
+{
+    half_a_bf(r.data());
     return r;
 }
 
@@ -1282,11 +1283,6 @@ BigArena::Allocation BigFloatProduct::release_reduced_storage() &&
 Byte *unsafe_square_bf(Byte *r, Byte *n)
 {
     return square_value(r, n);
-}
-
-BigFloatPtr half_a_bf(BigFloatPtr r)
-{
-    return halve(r);
 }
 
 BigFloatPtr exp_bf(BigFloatPtr r, BigFloatPtr n)

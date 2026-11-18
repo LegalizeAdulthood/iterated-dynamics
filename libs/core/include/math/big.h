@@ -216,8 +216,8 @@ Byte *neg_bf(Byte *r, const Byte *n);
 Byte *neg_a_bf(Byte *r);
 Byte *double_bf(Byte *r, const Byte *n);
 Byte *double_a_bf(Byte *r);
-BigFloatPtr half_bf(BigFloatPtr r, BigFloatPtr n);
-BigFloatPtr half_a_bf(BigFloatPtr r);
+Byte *half_bf(Byte *r, const Byte *n);
+Byte *half_a_bf(Byte *r);
 // Wide product: g_r_bf_length mantissa bytes followed by the exponent.
 Byte *multiply_wide(Byte *r, Byte *n1, Byte *n2);
 Byte *square_wide(Byte *r, Byte *n);

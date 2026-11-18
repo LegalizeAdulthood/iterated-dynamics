@@ -1095,6 +1095,47 @@ TEST_P(TestBigFloatDoubling, preservesSourceDestinationIdentityAndPadding)
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatDoubling, testing::Values(4, 64, 708));
 
+class TestBigFloatHalving : public TestBigFloatValue, public testing::WithParamInterface<int>
+{
+};
+
+TEST_P(TestBigFloatHalving, preservesSourceDestinationIdentityAndPadding)
+{
+    init_bf_length(GetParam());
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    const BigFloat source{arena, 1.0L};
+    BigFloat result{arena};
+    const Byte *const address = result.data();
+    const std::size_t size = arena.value_size();
+    const std::size_t stride = arena.block_size();
+    std::fill_n(result.data(), stride, Byte{0xa5});
+    const std::vector<Byte> original = encoded_value(source);
+    const std::array<Byte, 5> tail{0, 0x80, 0, 0xff, 0xff};
+    std::vector<Byte> expected(stride, 0xa5);
+    std::fill_n(expected.begin(), size, Byte{0});
+    std::copy(tail.begin(), tail.end(), expected.begin() + size - tail.size());
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(&result, &half_bf(result, source));
+    EXPECT_EQ(expected, std::vector<Byte>(result.data(), result.data() + stride));
+
+    copy_bf(result, source);
+    EXPECT_EQ(&result, &half_bf(result, std::as_const(result)));
+    EXPECT_EQ(expected, std::vector<Byte>(result.data(), result.data() + stride));
+
+    copy_bf(result, source);
+    EXPECT_EQ(&result, &half_a_bf(result));
+    EXPECT_EQ(expected, std::vector<Byte>(result.data(), result.data() + stride));
+
+    EXPECT_EQ(original, encoded_value(source));
+    EXPECT_EQ(address, result.data());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatHalving, testing::Values(4, 64, 708));
+
 TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
 {
     BigFloat left{"-7.5"};

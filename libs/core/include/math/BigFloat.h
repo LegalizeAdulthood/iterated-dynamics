@@ -167,6 +167,8 @@ BigFloat &mult_bf_int(BigFloat &r, const BigFloat &n, misc::U16 u);
 BigFloat &mult_a_bf_int(BigFloat &r, misc::U16 u);
 BigFloat &double_bf(BigFloat &r, const BigFloat &n);
 BigFloat &double_a_bf(BigFloat &r);
+BigFloat &half_bf(BigFloat &r, const BigFloat &n);
+BigFloat &half_a_bf(BigFloat &r);
 BigFloat &str_to_bf(BigFloat &r, std::string_view text);
 BigFloat &int_to_bf(BigFloat &r, long value);
 BigFloat &float_to_bf(BigFloat &r, LDouble value);

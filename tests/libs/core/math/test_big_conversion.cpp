@@ -575,6 +575,59 @@ INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteDoubling,
         BigFloatByteDoublingInput{{0, 0x80, 0, 0, 0}, {0, 1, 0, 1, 0}},
         BigFloatByteDoublingInput{{0, 0x7f, 0xff, 0, 0}, {0xfe, 0xfe, 0xff, 1, 0}}));
 
+struct BigFloatByteHalvingInput
+{
+    std::array<Byte, 5> source_tail;
+    std::array<Byte, 5> result_tail;
+    Byte source_low{};
+    Byte result_low{};
+};
+
+class TestBigFloatByteHalving : public testing::TestWithParam<BigFloatByteHalvingInput>
+{
+};
+
+TEST_P(TestBigFloatByteHalving, preservesRoundingNormalizationAndCanonicalExtent)
+{
+    constexpr int length = 8;
+    constexpr int size = length + 2;
+    const ValueSaver<int> bf_length{g_bf_length, length};
+    const ValueSaver<int> bn_length{g_bn_length, 4};
+    const BigFloatByteHalvingInput &input = GetParam();
+    alignas(U16) std::array<Byte, size + 2> source{};
+    std::copy(input.source_tail.begin(), input.source_tail.end(), source.begin() + size - 5);
+    source.front() = input.source_low;
+    source.back() = 0xa5;
+    const std::array<Byte, size + 2> original = source;
+    std::array<Byte, size + 2> expected{};
+    std::copy(input.result_tail.begin(), input.result_tail.end(), expected.begin() + size - 5);
+    expected.front() = input.result_low;
+    expected.back() = 0xa5;
+    alignas(U16) std::array<Byte, size + 2> result{};
+    result.back() = 0xa5;
+
+    EXPECT_EQ(result.data(), half_bf(result.data(), source.data()));
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(4, g_bn_length);
+
+    EXPECT_EQ(source.data(), half_bf(source.data(), source.data()));
+    EXPECT_EQ(expected, source);
+    EXPECT_EQ(4, g_bn_length);
+
+    source = original;
+    EXPECT_EQ(source.data(), half_a_bf(source.data()));
+    EXPECT_EQ(expected, source);
+    EXPECT_EQ(4, g_bn_length);
+    EXPECT_EQ(length, g_bf_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteHalving,
+    testing::Values(BigFloatByteHalvingInput{{0, 0, 0, 0x12, 0}, {}},
+        BigFloatByteHalvingInput{{0, 1, 0, 0, 0}, {0, 0x80, 0, 0xff, 0xff}},
+        BigFloatByteHalvingInput{{0, 0xfe, 0xff, 0, 0}, {0, 0, 0xff, 0xff, 0xff}},
+        BigFloatByteHalvingInput{{0, 0xfd, 0xff, 0, 0}, {0x80, 0xfe, 0xff, 0, 0}, 3, 1}));
+
 struct BigNumConversionInput
 {
     const char *name;
