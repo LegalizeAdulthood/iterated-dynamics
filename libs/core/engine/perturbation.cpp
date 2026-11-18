@@ -25,11 +25,14 @@ void StandardFractal::start_perturbation_frame()
     std::complex<double> half_vertical;
     if (g_bf_math != BFMathType::NONE)
     {
-        const auto size = static_cast<std::size_t>(g_bf_length + 2);
-        m_pert_engine.initialize_frame_bf(
-            {BigFloat::from_legacy(g_bf_x_min.data(), size), BigFloat::from_legacy(g_bf_y_min.data(), size)},
-            {BigFloat::from_legacy(g_bf_x_max.data(), size), BigFloat::from_legacy(g_bf_y_max.data(), size)},
-            {BigFloat::from_legacy(g_bf_x_3rd.data(), size), BigFloat::from_legacy(g_bf_y_3rd.data(), size)});
+        const auto copy_corner = [](const BigFloat &source)
+        {
+            BigFloat result{bf_arena(BigLifetime::WORKING)};
+            copy_bf(result, source);
+            return result;
+        };
+        m_pert_engine.initialize_frame_bf({copy_corner(g_bf_x_min), copy_corner(g_bf_y_min)},
+            {copy_corner(g_bf_x_max), copy_corner(g_bf_y_max)}, {copy_corner(g_bf_x_3rd), copy_corner(g_bf_y_3rd)});
         m_pert_engine.initialize_pixel_strategy();
     }
     else
