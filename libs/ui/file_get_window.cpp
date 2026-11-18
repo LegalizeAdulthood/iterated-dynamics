@@ -917,8 +917,8 @@ static void bf_setup_convert_to_screen()
     s_bt_b = bt_xd * bt_inter1;
 
     // e = -(a*xxmin + b*yymax)
-    mult_bf(bt_tmp1.data(), s_bt_a.data(), g_bf_x_min.data());
-    mult_bf(bt_tmp2.data(), s_bt_b.data(), g_bf_y_max.data());
+    mult_bf(bt_tmp1, s_bt_a, g_bf_x_min);
+    mult_bf(bt_tmp2, s_bt_b, g_bf_y_max);
     s_bt_e = -(s_bt_e = bt_tmp1 + bt_tmp2);
 
     // xx3rd-xxmax
@@ -951,8 +951,8 @@ static void bf_setup_convert_to_screen()
     s_bt_d = bt_yd * bt_inter1;
 
     // f = -(c*xxmin + d*yymax)
-    mult_bf(bt_tmp1.data(), s_bt_c.data(), g_bf_x_min.data());
-    mult_bf(bt_tmp2.data(), s_bt_d.data(), g_bf_y_max.data());
+    mult_bf(bt_tmp1, s_bt_c, g_bf_x_min);
+    mult_bf(bt_tmp2, s_bt_d, g_bf_y_max);
     s_bt_f = -(s_bt_f = bt_tmp1 + bt_tmp2);
 }
 

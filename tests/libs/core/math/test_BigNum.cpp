@@ -2204,9 +2204,15 @@ TEST_P(TestBigNumKernelWindows, bigFloatMantissaProductsRestoreTheBigNumContext)
     const auto lengths = kernel_lengths();
     const auto stack = save_stack();
 
-    EXPECT_EQ(result, mult_bf(result, left.data(), right.data()));
+    BigFloat product{bf_arena(BigLifetime::WORKING)};
+    const std::size_t canonical_size = product.arena().value_size();
+    const std::size_t stride = product.arena().block_size();
+    std::fill_n(product.data(), stride, Byte{0xa5});
+    EXPECT_EQ(&product, &mult_bf(product, left, right));
 
-    EXPECT_EQ(expected_product, std::vector<Byte>(result, result + g_bf_length + 2));
+    EXPECT_EQ(expected_product, encoded_value(product));
+    EXPECT_EQ(std::vector<Byte>(stride - canonical_size, 0xa5),
+        std::vector<Byte>(product.data() + canonical_size, product.data() + stride));
     EXPECT_EQ(original_left, encoded_value(left));
     EXPECT_EQ(original_right, encoded_value(right));
     EXPECT_EQ(lengths, kernel_lengths());

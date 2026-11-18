@@ -108,39 +108,6 @@ BigFloatPtr compound_operation(
     return operation(result, g_bf_tmp_copy1.data());
 }
 
-// SIDE-EFFECTS: n1 and n2 are changed to their absolute values
-BigFloatPtr multiply_wide(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    if (is_bf_zero(n1) || is_bf_zero(n2))
-    {
-        std::memset(r, 0, g_r_bf_length + 2);
-        return r;
-    }
-
-    S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
-    S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
-    // add exp's
-    const int r_exp = BIG_ACCESS_S16(n1_exp) + BIG_ACCESS_S16(n2_exp);
-
-    const bool positive = is_bf_neg(n1) == is_bf_neg(n2); // are they the same sign?
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    int rl = g_r_length;
-    g_r_length = g_r_bf_length;
-    unsafe_mult_bn(r, n1, n2);
-    g_bn_length = bnl;
-    g_r_length = rl;
-
-    int bfl = g_bf_length;
-    g_bf_length = g_r_bf_length;
-    BIG_SET16(r + g_bf_length, static_cast<S16>(r_exp + 2)); // adjust after mult
-    norm_sign_bf(r, positive);
-    g_bf_length = bfl;
-
-    return r;
-}
-
 BigFloatPtr multiply(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 {
     if (is_bf_zero(n1) || is_bf_zero(n2))
@@ -1083,6 +1050,12 @@ BigFloat &sub_a_bf(BigFloat &r, const BigFloat &n)
     return r;
 }
 
+BigFloat &mult_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2)
+{
+    binary_operation(r.data(), n1.data(), n2.data(), multiply);
+    return r;
+}
+
 BigFloat &str_to_bf(BigFloat &r, const std::string_view text)
 {
     str_to_bf(r.data(), text, g_bf_tmp1.data());
@@ -1334,7 +1307,7 @@ BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr y, BigFloatPtr x)
     return arctangent2(r, y, x);
 }
 
-BigFloatPtr unsafe_mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
+Byte *unsafe_mult_bf(Byte *r, Byte *n1, Byte *n2)
 {
     return multiply(r, n1, n2);
 }
@@ -1342,11 +1315,6 @@ BigFloatPtr unsafe_mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 BigFloatPtr unsafe_div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 {
     return divide(r, n1, n2);
-}
-
-BigFloatPtr mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    return binary_operation(r, n1, n2, multiply);
 }
 
 BigFloatPtr div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)

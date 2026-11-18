@@ -1872,6 +1872,39 @@ Byte *unsafe_sub_a_bf(Byte *r, Byte *n)
     return r;
 }
 
+// SIDE-EFFECTS: n1 and n2 are changed to their absolute values
+Byte *multiply_wide(Byte *r, Byte *n1, Byte *n2)
+{
+    if (is_bf_zero(n1) || is_bf_zero(n2))
+    {
+        std::memset(r, 0, g_r_bf_length + 2);
+        return r;
+    }
+
+    S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
+    S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
+    // add exp's
+    const int r_exp = BIG_ACCESS_S16(n1_exp) + BIG_ACCESS_S16(n2_exp);
+
+    const bool positive = is_bf_neg(n1) == is_bf_neg(n2); // are they the same sign?
+
+    int bnl = g_bn_length;
+    g_bn_length = g_bf_length;
+    int rl = g_r_length;
+    g_r_length = g_r_bf_length;
+    unsafe_mult_bn(r, n1, n2);
+    g_bn_length = bnl;
+    g_r_length = rl;
+
+    int bfl = g_bf_length;
+    g_bf_length = g_r_bf_length;
+    BIG_SET16(r + g_bf_length, static_cast<S16>(r_exp + 2)); // adjust after mult
+    norm_sign_bf(r, positive);
+    g_bf_length = bfl;
+
+    return r;
+}
+
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bigfloat

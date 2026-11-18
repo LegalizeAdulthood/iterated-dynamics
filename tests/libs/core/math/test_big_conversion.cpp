@@ -373,6 +373,58 @@ INSTANTIATE_TEST_SUITE_P(Operations, TestBigFloatByteSubtraction,
         BigFloatByteSubtractionInput{{}, {0, 1, 0, 0, 0}, {0, 1, 0, 0, 0}, {0, 0, 0xff, 0xff, 0xff}},
         BigFloatByteSubtractionInput{{0x40, 1, 0, 0, 0}, {}, {}, {0x40, 1, 0, 0, 0}}));
 
+struct BigFloatByteMultiplyInput
+{
+    int left;
+    int right;
+    int left_after;
+    int right_after;
+    int product;
+    int product_exponent;
+};
+
+class TestBigFloatByteMultiply : public TestBigNumConversionBase,
+                                 public testing::WithParamInterface<BigFloatByteMultiplyInput>
+{
+};
+
+TEST_P(TestBigFloatByteMultiply, writesCompleteWideProductAndRestoresLengths)
+{
+    const BigFloatByteMultiplyInput &input = GetParam();
+    const std::array<int, 7> lengths{
+        g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+    const auto encode = [](int length, int mantissa, int exponent)
+    {
+        std::vector<Byte> bytes(length + 2);
+        bytes[length - 2] = static_cast<Byte>(mantissa);
+        bytes[length - 1] = mantissa < 0 ? 0xff : 0;
+        bytes[length] = static_cast<Byte>(exponent);
+        bytes[length + 1] = static_cast<Byte>(static_cast<unsigned>(exponent) >> 8);
+        return bytes;
+    };
+    std::vector<Byte> left = encode(g_bf_length, input.left, 2);
+    std::vector<Byte> right = encode(g_bf_length, input.right, -1);
+    const std::vector<Byte> product = encode(g_r_bf_length, input.product, input.product_exponent);
+    std::vector<Byte> guarded(product.size() + 4, 0xa5);
+    std::vector<Byte> expected = guarded;
+    std::copy(product.begin(), product.end(), expected.begin() + 2);
+    Byte *const result = guarded.data() + 2;
+
+    EXPECT_EQ(result, multiply_wide(result, left.data(), right.data()));
+
+    EXPECT_EQ(expected, guarded);
+    EXPECT_EQ(encode(g_bf_length, input.left_after, 2), left);
+    EXPECT_EQ(encode(g_bf_length, input.right_after, -1), right);
+    EXPECT_EQ(lengths,
+        (std::array<int, 7>{
+            g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+}
+
+INSTANTIATE_TEST_SUITE_P(SignsAndZero, TestBigFloatByteMultiply,
+    testing::Values(BigFloatByteMultiplyInput{2, 3, 2, 3, 6, 1}, BigFloatByteMultiplyInput{-2, 3, 2, 3, -6, 1},
+        BigFloatByteMultiplyInput{2, -3, 2, 3, -6, 1}, BigFloatByteMultiplyInput{-2, -3, 2, 3, 6, 1},
+        BigFloatByteMultiplyInput{0, -3, 0, -3, 0, 0}));
+
 struct BigNumConversionInput
 {
     const char *name;

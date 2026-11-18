@@ -1066,7 +1066,7 @@ TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
     EXPECT_EQ("-5.0", bf_to_string(result, 8));
     sub_bf(result, left, right);
     EXPECT_EQ("-10.0", bf_to_string(result, 8));
-    mult_bf(result.data(), left.data(), right.data());
+    mult_bf(result, left, right);
     EXPECT_EQ("-18.75", bf_to_string(result, 8));
     div_bf(result.data(), left.data(), right.data());
     EXPECT_EQ("-3.0", bf_to_string(result, 8));
@@ -1181,12 +1181,11 @@ TEST_P(TestBigFloatArithmetic, expressionsMatchLegacySequencesAndOutliveTheirTem
     const auto original_left = encoded_value(left);
     const auto original_right = encoded_value(right);
     const auto original_divisor = encoded_value(divisor);
-    auto raw_left = original_left;
     auto raw_divisor = original_divisor;
     BigFloat expected{bf_arena(BigLifetime::WORKING)};
     add_bf(expected, left, right);
     div_bf(expected.data(), expected.data(), raw_divisor.data());
-    mult_bf(expected.data(), expected.data(), raw_left.data());
+    mult_bf(expected, expected, left);
     sub_bf(expected, expected, right);
     const auto marker = save_stack();
 
@@ -1921,17 +1920,21 @@ TEST_P(TestBigFloatLegacyMultiply, preservesCanonicalBoundsReturnIdentityOperand
     std::vector<Byte> expected_right(right.data(), right.data() + persistent.block_size());
     Byte *const left_source = left.data();
     Byte *const right_source = input.shared ? left.data() : right.data();
+    BigFloat separate{persistent};
+    std::fill_n(separate.data(), persistent.block_size(), Byte{0xa5});
+    std::vector<Byte> expected_separate(persistent.block_size(), 0xa5);
     std::vector<Byte> output(g_r_bf_length + 4, 0xa5);
     std::vector<Byte> expected_output = output;
-    Byte *result = output.data() + 1;
+    BigFloat *destination = &separate;
     if (call == LegacyMultiplyCall::SAFE_LEFT)
     {
-        result = left_source;
+        destination = &left;
     }
     else if (call == LegacyMultiplyCall::SAFE_RIGHT)
     {
-        result = right_source;
+        destination = input.shared ? &left : &right;
     }
+    Byte *const result = safe ? destination->data() : output.data() + 1;
     const std::vector<Byte> expected = integer_float_bytes(g_bf_length, input.product, input.product_exponent);
     if (!safe && nonzero)
     {
@@ -1953,6 +1956,10 @@ TEST_P(TestBigFloatLegacyMultiply, preservesCanonicalBoundsReturnIdentityOperand
     {
         std::copy(expected.begin(), expected.end(), expected_right.begin());
     }
+    else if (safe)
+    {
+        std::copy(expected.begin(), expected.end(), expected_separate.begin());
+    }
     else
     {
         std::copy(expected.begin(), expected.end(), expected_output.begin() + 1);
@@ -1973,11 +1980,18 @@ TEST_P(TestBigFloatLegacyMultiply, preservesCanonicalBoundsReturnIdentityOperand
     const std::size_t high_water = temporary.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    Byte *const returned =
-        safe ? mult_bf(result, left_source, right_source) : unsafe_mult_bf(result, left_source, right_source);
-
-    EXPECT_EQ(result, returned);
+    if (safe)
+    {
+        BigFloat &returned = mult_bf(*destination, left, input.shared ? left : right);
+        EXPECT_EQ(destination, &returned);
+        EXPECT_EQ(result, returned.data());
+    }
+    else
+    {
+        EXPECT_EQ(result, unsafe_mult_bf(result, left_source, right_source));
+    }
     EXPECT_EQ(expected, std::vector<Byte>(result, result + expected.size()));
+    EXPECT_EQ(expected_separate, std::vector<Byte>(separate.data(), separate.data() + persistent.block_size()));
     EXPECT_EQ(expected_output, output);
     EXPECT_EQ(expected_left, std::vector<Byte>(left.data(), left.data() + persistent.block_size()));
     EXPECT_EQ(expected_right, std::vector<Byte>(right.data(), right.data() + persistent.block_size()));
